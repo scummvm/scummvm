@@ -371,12 +371,14 @@ bool DecompressorDCL::unpack(ReadStream *src, byte *dest, uint32 nPacked, uint32
 			debug(8, "\nCOPY(%d from %d)\n", val_length, val_distance);
 
 			if (val_length + _dwWrote > _szUnpacked) {
-				warning("DCL-INFLATE Error: Write out of bounds while copying %d bytes", val_length);
+				warning("DCL-INFLATE Error: Write out of bounds while copying %d bytes (declared unpacked size is %d bytes, current is %d + %d bytes)",
+						val_length, _szUnpacked, _dwWrote, val_length);
 				return false;
 			}
 
 			if (_dwWrote < val_distance) {
-				warning("DCL-INFLATE Error: Attempt to copy from before beginning of input stream");
+				warning("DCL-INFLATE Error: Attempt to copy from before beginning of input stream (declared unpacked size is %d bytes, current is %d bytes)",
+						_szUnpacked, _dwWrote);
 				return false;
 			}
 

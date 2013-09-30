@@ -895,7 +895,7 @@ uint32 AsScene2809Spew::handleMessage(int messageNum, const MessageParam &param,
 }
 
 AsScene2810Rope::AsScene2810Rope(NeverhoodEngine *vm, Scene *parentScene, int16 x)
-	: AnimatedSprite(vm, 1100) {
+	: AnimatedSprite(vm, 1100), _parentScene(parentScene) {
 
 	createSurface(990, 68, 476);
 	SetUpdateHandler(&AnimatedSprite::update);

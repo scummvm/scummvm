@@ -66,6 +66,11 @@ void Palette::init() {
 	_status = 0;
 	_palette = new byte[1024];
 	_basePalette = new byte[1024];
+	_palCounter = 0;
+	_fadeToR = 0;
+	_fadeToG = 0;
+	_fadeToB = 0;
+	_fadeStep = 0;
 }
 
 void Palette::usePalette() {

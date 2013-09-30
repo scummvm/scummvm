@@ -630,7 +630,7 @@ void AsScene1303Balloon::stPopBalloon() {
 }
 
 Scene1303::Scene1303(NeverhoodEngine *vm, Module *parentModule)
-	: Scene(vm, parentModule) {
+	: Scene(vm, parentModule), _asBalloon(NULL) {
 
 	SetMessageHandler(&Scene1303::handleMessage);
 

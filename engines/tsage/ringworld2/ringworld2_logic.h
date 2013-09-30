@@ -228,6 +228,7 @@ public:
 class Ringworld2Game: public Game {
 public:
 	virtual void start();
+	virtual void restartGame();
 	virtual void restart();
 	virtual void endGame(int resNum, int lineNum);
 
@@ -441,7 +442,7 @@ public:
 
 class AnimationPlayerExt: public AnimationPlayer {
 public:
-	int _v;
+	bool _isActive;
 public:
 	AnimationPlayerExt();
 

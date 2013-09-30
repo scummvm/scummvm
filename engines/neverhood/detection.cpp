@@ -52,12 +52,20 @@ Common::Platform NeverhoodEngine::getPlatform() const {
 	return _gameDescription->desc.platform;
 }
 
+Common::Language NeverhoodEngine::getLanguage() const {
+	return _gameDescription->desc.language;
+}
+
 uint16 NeverhoodEngine::getVersion() const {
 	return _gameDescription->version;
 }
 
 bool NeverhoodEngine::isDemo() const {
 	return _gameDescription->desc.flags & ADGF_DEMO;
+}
+
+bool NeverhoodEngine::applyResourceFixes() const {
+	return getLanguage() == Common::RU_RUS;
 }
 
 }

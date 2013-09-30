@@ -48,6 +48,15 @@ namespace Composer {
 ComposerEngine::ComposerEngine(OSystem *syst, const ComposerGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
 	_rnd = new Common::RandomSource("composer");
 	_audioStream = NULL;
+	_currSoundPriority = 0;
+	_currentTime = 0;
+	_lastTime = 0;
+	_needsUpdate = true;
+	_directoriesToStrip = 1;
+	_mouseVisible = true;
+	_mouseEnabled = false;
+	_mouseSpriteId = 0;
+	_lastButton = NULL;
 }
 
 ComposerEngine::~ComposerEngine() {
@@ -79,12 +88,6 @@ Common::Error ComposerEngine::run() {
 		_queuedScripts[i]._scriptId = 0;
 	}
 
-	_mouseVisible = true;
-	_mouseEnabled = false;
-	_mouseSpriteId = 0;
-	_lastButton = NULL;
-
-	_directoriesToStrip = 1;
 	if (!_bookIni.loadFromFile("book.ini")) {
 		_directoriesToStrip = 0;
 		if (!_bookIni.loadFromFile("programs/book.ini")) {
@@ -103,7 +106,6 @@ Common::Error ComposerEngine::run() {
 		height = atoi(getStringFromConfig("Common", "Height").c_str());
 	initGraphics(width, height, true);
 	_screen.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
-	_needsUpdate = true;
 
 	Graphics::Cursor *cursor = Graphics::makeDefaultWinCursor();
 	CursorMan.replaceCursor(cursor->getSurface(), cursor->getWidth(), cursor->getHeight(), cursor->getHotspotX(),
@@ -113,11 +115,12 @@ Common::Error ComposerEngine::run() {
 
 	loadLibrary(0);
 
-	_currentTime = 0;
-	_lastTime = 0;
-
 	uint fps = atoi(getStringFromConfig("Common", "FPS").c_str());
-	uint frameTime = 1000 / fps;
+	uint frameTime = 125; // Default to 125ms (1000/8)
+	if (fps != 0)
+		frameTime = 1000 / fps;
+	else
+		warning("FPS in book.ini is zero. Defaulting to 8...");
 	uint32 lastDrawTime = 0;
 
 	while (!shouldQuit()) {

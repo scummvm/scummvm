@@ -547,10 +547,10 @@ public:
 	SpeakerMiranda3400 _mirandaSpeaker;
 	SpeakerWebbster3400 _webbsterSpeaker;
 	SpeakerTeal3400 _tealSpeaker;
-	SceneActor _actor1;
-	SceneActor _actor2;
-	SceneActor _actor3;
-	SceneActor _actor4;
+	SceneActor _companion1;
+	SceneActor _companion2;
+	SceneActor _webbster;
+	SceneActor _teal;
 	SceneActor _actor5;
 	SceneActor _actor6;
 	SceneActor _actor7;
@@ -704,7 +704,7 @@ class Scene3600 : public SceneExt {
 		virtual bool startAction(CursorType action, Event &event);
 	};
 
-	class Actor13 : public SceneActorExt {
+	class Protector : public SceneActorExt {
 		virtual bool startAction(CursorType action, Event &event);
 	};
 public:
@@ -732,7 +732,7 @@ public:
 	SceneActor _actor10;
 	SceneActor _actor11;
 	SceneActor _actor12;
-	Actor13 _actor13;
+	Protector _protector;
 	SequenceManager _sequenceManager1;
 	SequenceManager _sequenceManager2;
 	SequenceManager _sequenceManager3;
@@ -743,7 +743,7 @@ public:
 	int _field254A;
 	int _field254C;
 	int _field254E;
-	bool _field2550;
+	bool _ghoulTeleported;
 
 	Scene3600();
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
@@ -759,10 +759,10 @@ public:
 	SpeakerQuinn3700 _quinnSpeaker;
 	SpeakerSeeker3700 _seekerSpeaker;
 	SpeakerMiranda3700 _mirandaSpeaker;
-	SceneActor _actor1;
-	SceneActor _actor2;
-	SceneActor _actor3;
-	SceneActor _actor4;
+	SceneActor _quinn;
+	SceneActor _seeker;
+	SceneActor _miranda;
+	SceneActor _webbster;
 	SceneActor _actor5;
 	SequenceManager _sequenceManager;
 

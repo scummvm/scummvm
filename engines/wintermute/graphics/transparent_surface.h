@@ -101,8 +101,6 @@ struct TransparentSurface : public Graphics::Surface {
 	    ALPHA_FULL = 2
 	};
 
-	AlphaType _alphaMode;
-
 	#ifdef SCUMM_LITTLE_ENDIAN
 	static const int kAIndex = 0;
 	static const int kBIndex = 1;
@@ -180,6 +178,11 @@ struct TransparentSurface : public Graphics::Surface {
 	 * 
 	 */
 	TransparentSurface *rotoscale(const TransformStruct &transform) const;
+	AlphaType getAlphaMode() const;
+	void setAlphaMode(AlphaType);
+private:
+	AlphaType _alphaMode;
+
 };
 
 /**

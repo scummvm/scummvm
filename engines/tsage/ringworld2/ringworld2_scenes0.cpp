@@ -228,6 +228,7 @@ bool Scene100::Terminal::startAction(CursorType action, Event &event) {
 void Scene100::postInit(SceneObjectList *OwnerList) {
 	loadScene(100);
 	R2_GLOBALS._scenePalette.loadPalette(0);
+	R2_GLOBALS._scenePalette.setEntry(255, 255, 255, 255);
 	SceneExt::postInit();
 
 	if (R2_GLOBALS._sceneManager._previousScene != 125)
@@ -1480,14 +1481,14 @@ void Scene180::Action1::signal() {
 	case 0:
 	case 1:
 	case 2:
-		scene->_object5.setStrip((_actionIndex == 1) ? 1 : 2);
-		scene->_object5.setFrame(1);
-		scene->_object5.animate(ANIM_MODE_5, this);
+		scene->_shipDisplay.setStrip((_actionIndex == 1) ? 1 : 2);
+		scene->_shipDisplay.setFrame(1);
+		scene->_shipDisplay.animate(ANIM_MODE_5, this);
 		break;
 	case 4:
-		scene->_object5.setStrip(3);
-		scene->_object5.setFrame(1);
-		scene->_object5.animate(ANIM_MODE_5, this);
+		scene->_shipDisplay.setStrip(3);
+		scene->_shipDisplay.setFrame(1);
+		scene->_shipDisplay.animate(ANIM_MODE_5, this);
 		_actionIndex = 0;
 		break;
 	}
@@ -1495,7 +1496,7 @@ void Scene180::Action1::signal() {
 
 /*--------------------------------------------------------------------------*/
 
-Scene180::Scene180(): SceneExt(), _webbsterSpeaker(27) {
+Scene180::Scene180(): SceneExt() {
 	_field412 = 0;
 	_frameInc = 0;
 	_frameNumber = R2_GLOBALS._events.getFrameNumber();
@@ -1562,7 +1563,7 @@ void Scene180::signal() {
 		_field412 = 1;
 		R2_GLOBALS._sceneManager._hasPalette = true;
 		_animationPlayer._paletteMode = ANIMPALMODE_NONE;
-		_animationPlayer._v = 1;
+		_animationPlayer._isActive = true;
 		_animationPlayer._objectMode = ANIMOBJMODE_1;
 		R2_GLOBALS._scene180Mode = 1;
 
@@ -1605,7 +1606,7 @@ void Scene180::signal() {
 
 	case 5:
 		_animationPlayer._paletteMode = ANIMPALMODE_NONE;
-		_animationPlayer._v = 1;
+		_animationPlayer._isActive = true;
 		_animationPlayer._objectMode = ANIMOBJMODE_1;
 		R2_GLOBALS._scene180Mode = 2;
 		_animationPlayer.load(2);
@@ -1648,9 +1649,9 @@ void Scene180::signal() {
 
 	case 11:
 		_field412 = 1;
-		_object4.postInit();
-		_object5.postInit();
-		setAction(&_sequenceManager, this, 4000, &_object4, &_object5, NULL);
+		_door.postInit();
+		_shipDisplay.postInit();
+		setAction(&_sequenceManager, this, 4000, &_door, &_shipDisplay, NULL);
 		break;
 
 	case 12:
@@ -1666,37 +1667,37 @@ void Scene180::signal() {
 		break;
 
 	case 13:
-		setAction(&_sequenceManager, this, 4001, &_object4, &_object5, NULL);
+		setAction(&_sequenceManager, this, 4001, &_door, &_shipDisplay, NULL);
 		break;
 
 	case 15:
-		setAction(&_sequenceManager, this, 4002, &_object4, &_object5, NULL);
+		setAction(&_sequenceManager, this, 4002, &_door, &_shipDisplay, NULL);
 		break;
 
 	case 17:
-		setAction(&_sequenceManager, this, 4003, &_object4, &_object5, NULL);
+		setAction(&_sequenceManager, this, 4003, &_door, &_shipDisplay, NULL);
 		break;
 
 	case 19:
-		setAction(&_sequenceManager, this, 4004, &_object4, &_object5, NULL);
+		setAction(&_sequenceManager, this, 4004, &_door, &_shipDisplay, NULL);
 		break;
 
 	case 21:
-		setAction(&_sequenceManager, this, 4005, &_object4, &_object5, NULL);
+		setAction(&_sequenceManager, this, 4005, &_door, &_shipDisplay, NULL);
 		break;
 
 	case 23:
-		setAction(&_sequenceManager, this, 4006, &_object4, &_object5, NULL);
+		setAction(&_sequenceManager, this, 4006, &_door, &_shipDisplay, NULL);
 		break;
 
 	case 25:
-		setAction(&_sequenceManager, this, 4007, &_object4, &_object5, NULL);
+		setAction(&_sequenceManager, this, 4007, &_door, &_shipDisplay, NULL);
 		break;
 
 	case 27:
 		_field412 = 0;
-		_object4.remove();
-		_object5.remove();
+		_door.remove();
+		_shipDisplay.remove();
 		setSceneDelay(2);
 		break;
 
@@ -1710,7 +1711,7 @@ void Scene180::signal() {
 	case 29:
 		_field412 = 1;
 		_animationPlayer._paletteMode = ANIMPALMODE_REPLACE_PALETTE;
-		_animationPlayer._v = 1;
+		_animationPlayer._isActive = true;
 		_animationPlayer._objectMode = ANIMOBJMODE_42;
 		R2_GLOBALS._scene180Mode = 3;
 		_animationPlayer.load(3);
@@ -1719,12 +1720,12 @@ void Scene180::signal() {
 	case 31:
 		R2_GLOBALS._sound2.play(7);
 
-		_object4.postInit();
-		_object4.setVisage(76);
-		_object4.setStrip(1);
-		_object4.setFrame(1);
-		_object4.setPosition(Common::Point(288, 143));
-		_object4.fixPriority(210);
+		_door.postInit();
+		_door.setVisage(76);
+		_door.setStrip(1);
+		_door.setFrame(1);
+		_door.setPosition(Common::Point(288, 143));
+		_door.fixPriority(210);
 
 		loadScene(75);
 
@@ -1739,68 +1740,71 @@ void Scene180::signal() {
 	case 32:
 		_field412 = 1;
 
-		_object2.postInit();
-		_object2.setPosition(Common::Point(161, 97));
-		_object2.hide();
+		_teal.postInit();
+		_teal.setPosition(Common::Point(161, 97));
+		_teal.hide();
 
-		_object3.postInit();
-		_object3.setPosition(Common::Point(60, 96));
-		_object3.hide();
-		R2_GLOBALS._scenePalette.addFader(_palette._palette, 256, 11, this);
+		_webbser.postInit();
+		_webbser.setPosition(Common::Point(60, 96));
+		_webbser.hide();
+		_stripManager.start(11, this);
 		break;
 
 	case 33:
-		_object2.hide();
+		_teal.hide();
 
-		_object3.setup(76, 4, 1);
-		_object3.setFrame(_object3.getFrameCount());
+		_webbser.setup(76, 4, 1);
+		_webbser.setFrame(_webbser.getFrameCount());
 
-		_object5.postInit();
-		_object5.setup(75, 1, 1);
-		_object5.setPosition(Common::Point(221, 125));
-		_object5.fixPriority(210);
-		_object5.setAction(&_action1);
-		R2_GLOBALS._scenePalette.addFader(_palette._palette, 256, 12, this);
+		_shipDisplay.postInit();
+		_shipDisplay.setup(75, 1, 1);
+		_shipDisplay.setPosition(Common::Point(221, 125));
+		_shipDisplay.fixPriority(210);
+		_shipDisplay.setAction(&_action1);
+		_stripManager.start(12, this);
 		break;
 
 	case 34:
-		_object2.hide();
-		_object3.hide();
+		_teal.hide();
+		_webbser.hide();
 
-		_object1.postInit();
-		_object1.setup(76, 2, 1);
-		_object1.setPosition(Common::Point(287, 135));
-		_object1.fixPriority(200);
+		_dutyOfficer.postInit();
+		_dutyOfficer.setup(76, 2, 1);
+		_dutyOfficer.setPosition(Common::Point(287, 135));
+		_dutyOfficer.fixPriority(200);
 
 		_sound1.play(19);
-		R2_GLOBALS._scenePalette.addFader(_palette._palette, 256, 5, this);
+		_door.animate(ANIM_MODE_5, this);
 		break;
 
 	case 35:
-		R2_GLOBALS._scenePalette.addFader(_palette._palette, 256, 13, this);
+		_stripManager.start(13, this);
 		break;
 
 	case 36:
-		_object2.remove();
+		_teal.remove();
 		_sound1.play(19);
-
-		R2_GLOBALS._scenePalette.addFader(_palette._palette, 256, 6, this);
+		_door.animate(ANIM_MODE_6, this);
 		break;
 
 	case 37:
 		_field412 = 0;
-		_object1.remove();
+		_dutyOfficer.remove();
 		_palette.loadPalette(9998);
 		R2_GLOBALS._scenePalette.addFader(_palette._palette, 256, 8, this);
 		break;
 
 	case 38:
-		_object4.remove();
-		_object5.setAction(NULL);
-		_object5.remove();
+		_door.remove();
+		_shipDisplay.setAction(NULL);
+		_shipDisplay.remove();
 
+		// TODO: Figure out why end action on sounds aren't firing. For now, I'm
+		// simply setting up a scene delay to ensure the signal() method gets
+		// called again after a brief delay
+		setSceneDelay(10);
 		R2_GLOBALS._sound2.fadeOut2(NULL);
-		R2_GLOBALS._sound1.fadeOut2(NULL);
+		R2_GLOBALS._sound1.fadeOut2(NULL /* this */);
 		break;
 
 	case 39:
@@ -1823,7 +1827,7 @@ void Scene180::signal() {
 
 	case 41:
 		_field412 = 1;
-		_animationPlayer._v = 1;
+		_animationPlayer._isActive = true;
 		break;
 
 	case 42:
@@ -1842,13 +1846,14 @@ void Scene180::signal() {
 		break;
 
 	case 45:
-		R2_GLOBALS._scenePalette.addFader(_animationPlayer._subData._palData, 256, 28, this);
+		_field412 = 1;
+		_stripManager.start(28, this);
 		break;
 
 	case 48:
 		_field412 = 1;
 		_animationPlayer._paletteMode = ANIMPALMODE_NONE;
-		_animationPlayer._v = 1;
+		_animationPlayer._isActive = true;
 		_animationPlayer._objectMode = ANIMOBJMODE_1;
 		R2_GLOBALS._scene180Mode = 15;
 		_animationPlayer.load(15, NULL);
@@ -1905,9 +1910,9 @@ void Scene180::dispatch() {
 		}
 	}
 
-	if (_animationPlayer._v) {
+	if (_animationPlayer._isActive) {
 		if (_animationPlayer.isCompleted()) {
-			_animationPlayer._v = 0;
+			_animationPlayer._isActive = false;
 			_animationPlayer.close();
 			_animationPlayer.remove();
 
@@ -2805,12 +2810,12 @@ void Scene300::Action1::signal() {
 
 	switch (_actionIndex) {
 	case 0:
-		setAction(&scene->_sequenceManager2, this, 311, (R2_GLOBALS._player._characterIndex == 1) ?
+		setAction(&scene->_sequenceManager2, this, 311, (R2_GLOBALS._player._characterIndex == R2_QUINN) ?
 			(SceneObject *)&R2_GLOBALS._player : (SceneObject *)&scene->_quinn);
 		_actionIndex = 2;
 		break;
 	case 1:
-		setAction(&scene->_sequenceManager2, this, 312, (R2_GLOBALS._player._characterIndex == 1) ?
+		setAction(&scene->_sequenceManager2, this, 312, (R2_GLOBALS._player._characterIndex == R2_QUINN) ?
 			(SceneObject *)&R2_GLOBALS._player : (SceneObject *)&scene->_quinn);
 		_actionIndex = 0;
 		break;
@@ -2904,7 +2909,7 @@ bool Scene300::QuinnWorkstation::startAction(CursorType action, Event &event) {
 		return true;
 
 	case CURSOR_LOOK:
-		if (R2_GLOBALS._player._characterIndex == 1) {
+		if (R2_GLOBALS._player._characterIndex == R2_QUINN) {
 			SceneItem::display2(300, 47);
 			return true;
 		}
@@ -2927,7 +2932,7 @@ bool Scene300::MirandaWorkstation::startAction(CursorType action, Event &event) 
 		return true;
 
 	case CURSOR_LOOK:
-		if (R2_GLOBALS._player._characterIndex == 3) {
+		if (R2_GLOBALS._player._characterIndex == R2_MIRANDA) {
 			SceneItem::display2(300, 47);
 			return true;
 		}
@@ -2943,7 +2948,7 @@ bool Scene300::MirandaWorkstation::startAction(CursorType action, Event &event) 
 bool Scene300::SeekerWorkstation::startAction(CursorType action, Event &event) {
 	switch (action) {
 	case CURSOR_LOOK:
-		if (R2_GLOBALS._player._characterIndex == 2) {
+		if (R2_GLOBALS._player._characterIndex == R2_SEEKER) {
 			SceneItem::display2(300, 47);
 			return true;
 		}
@@ -3452,8 +3457,8 @@ void Scene300::postInit(SceneObjectList *OwnerList) {
 
 	case 3:
 		if (R2_GLOBALS._sceneManager._previousScene == 1500) {
-			R2_GLOBALS._player._oldCharacterScene[3] = 3150;
-			R2_GLOBALS._player._characterScene[3] = 3150;
+			R2_GLOBALS._player._oldCharacterScene[R2_MIRANDA] = 3150;
+			R2_GLOBALS._player._characterScene[R2_MIRANDA] = 3150;
 			R2_GLOBALS._player._effect = 0;
 			R2_GLOBALS._player.setAction(NULL);
 			R2_GLOBALS._player.disableControl();
@@ -4281,7 +4286,7 @@ void Scene325::consoleAction(int id) {
 		break;
 
 	case 11:
-		if (R2_GLOBALS.getFlag(57) && (R2_GLOBALS._player._characterIndex == 1) && !R2_GLOBALS.getFlag(25)) {
+		if (R2_GLOBALS.getFlag(57) && (R2_GLOBALS._player._characterIndex == R2_QUINN) && !R2_GLOBALS.getFlag(25)) {
 			R2_GLOBALS._player.disableControl();
 			R2_GLOBALS._events.setCursor(CURSOR_ARROW);
 			_sceneMode = 13;

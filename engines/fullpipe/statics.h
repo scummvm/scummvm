@@ -140,6 +140,8 @@ class Movement : public GameObject {
 	Common::Point *getCenter(Common::Point *p);
 	Common::Point *getDimensionsOfPhase(Common::Point *p, int phaseIndex);
 
+	Common::Point *calcSomeXY(Common::Point &p, int idx);
+
 	void initStatics(StaticANIObject *ani);
 	void updateCurrDynamicPhase();
 

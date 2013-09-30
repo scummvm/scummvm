@@ -1012,7 +1012,7 @@ void AsScene1002VenusFlyTrap::swallowKlaymen() {
 }
 
 AsScene1002OutsideDoorBackground::AsScene1002OutsideDoorBackground(NeverhoodEngine *vm)
-	: AnimatedSprite(vm, 1200), _countdown(0) {
+	: AnimatedSprite(vm, 1200), _countdown(0), _isDoorClosed(true) {
 
 	createSurface(850, 186, 212);
 	_x = 320;

@@ -186,7 +186,7 @@ static void SceneTinselProcess(CORO_PARAM, const void *param) {
 void SendSceneTinselProcess(TINSEL_EVENT event) {
 	SCENE_STRUC	*ss;
 
-	if (g_SceneHandle != (SCNHANDLE)NULL) {
+	if (g_SceneHandle != 0) {
 		ss = (SCENE_STRUC *) FindChunk(g_SceneHandle, CHUNK_SCENE);
 
 		if (ss->hSceneScript) {

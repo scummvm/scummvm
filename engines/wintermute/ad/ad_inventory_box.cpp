@@ -120,8 +120,8 @@ bool AdInventoryBox::display() {
 
 	if (_closeButton) {
 		_closeButton->_posX = _closeButton->_posY = 0;
-		_closeButton->_width = _gameRef->_renderer->getWidth();
-		_closeButton->_height = _gameRef->_renderer->getHeight();
+		_closeButton->setWidth(_gameRef->_renderer->getWidth());
+		_closeButton->setHeight(_gameRef->_renderer->getHeight());
 
 		_closeButton->display();
 	}
@@ -323,7 +323,7 @@ bool AdInventoryBox::loadBuffer(byte *buffer, bool complete) {
 
 	if (_window) {
 		for (uint32 i = 0; i < _window->_widgets.size(); i++) {
-			if (!_window->_widgets[i]->_listenerObject) {
+			if (!_window->_widgets[i]->getListener()) {
 				_window->_widgets[i]->setListener(this, _window->_widgets[i], 0);
 			}
 		}

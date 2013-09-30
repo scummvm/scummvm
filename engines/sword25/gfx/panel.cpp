@@ -104,7 +104,7 @@ bool Panel::unpersist(InputPersistenceBlock &reader) {
 
 	result &= RenderObject::unpersist(reader);
 
-	uint color;
+	uint32 color;
 	reader.read(color);
 	setColor(color);
 

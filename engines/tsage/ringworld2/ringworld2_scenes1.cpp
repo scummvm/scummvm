@@ -1520,7 +1520,7 @@ void Scene1200::postInit(SceneObjectList *OwnerList) {
 	R2_GLOBALS._player.setup(3156, 1, 6);
 	R2_GLOBALS._player.setPosition(Common::Point(160, 70));
 	R2_GLOBALS._player._numFrames = 10;
-	R2_GLOBALS._player._oldCharacterScene[3] = 1200;
+	R2_GLOBALS._player._oldCharacterScene[R2_MIRANDA] = 1200;
 
 	_actor1.postInit();
 	_actor1.hide();

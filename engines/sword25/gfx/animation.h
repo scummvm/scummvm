@@ -159,18 +159,18 @@ private:
 		BACKWARD
 	};
 
-	int _relX;
-	int _relY;
+	int32 _relX;
+	int32 _relY;
 	float _scaleFactorX;
 	float _scaleFactorY;
-	uint _modulationColor;
-	uint _currentFrame;
-	int  _currentFrameTime;
+	uint32 _modulationColor;
+	uint32 _currentFrame;
+	int32  _currentFrameTime;
 	bool _running;
 	bool _finished;
 	Direction _direction;
 	AnimationResource *_animationResourcePtr;
-	uint _animationTemplateHandle;
+	uint32 _animationTemplateHandle;
 	bool _framesLocked;
 
 	ANIMATION_CALLBACK _loopPointCallback;

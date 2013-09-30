@@ -27,6 +27,7 @@
 #include "common/list.h"
 
 #include "fullpipe/objects.h"
+#include "fullpipe/statics.h"
 #include "fullpipe/motion.h"
 #include "fullpipe/messages.h"
 #include "fullpipe/gameloader.h"
@@ -50,7 +51,9 @@ bool MctlCompound::load(MfcArchive &file) {
 
 	for (int i = 0; i < count; i++) {
 		debug(6, "CompoundArray[%d]", i);
-		MctlCompoundArrayItem *obj = (MctlCompoundArrayItem *)file.readClass();
+		MctlCompoundArrayItem *obj = new MctlCompoundArrayItem();
+
+		obj->_motionControllerObj = (MotionController *)file.readClass();
 
 		int count1 = file.readUint32LE();
 
@@ -68,16 +71,15 @@ bool MctlCompound::load(MfcArchive &file) {
 		debug(6, "graphReact");
 		obj->_movGraphReactObj = (MovGraphReact *)file.readClass();
 
-		_motionControllers.push_back(*obj);
+		_motionControllers.push_back(obj);
 	}
 
 	return true;
 }
 
-int MctlCompound::addObject(StaticANIObject *obj) {
-	warning("STUB: MctlCompound::addObject()");
-
-	return 0;
+void MctlCompound::addObject(StaticANIObject *obj) {
+	for (uint i = 0; i < _motionControllers.size(); i++)
+		_motionControllers[i]->_motionControllerObj->addObject(obj);
 }
 
 int MctlCompound::removeObject(StaticANIObject *obj) {
@@ -87,7 +89,6 @@ int MctlCompound::removeObject(StaticANIObject *obj) {
 }
 
 void MctlCompound::initMovGraph2() {
-#if 0
 	if (_objtype != kObjTypeMctlCompound)
 		return;
 
@@ -97,10 +98,10 @@ void MctlCompound::initMovGraph2() {
 
 		MovGraph *gr = (MovGraph *)_motionControllers[i]->_motionControllerObj;
 
-		CMovGraph2 *newgr = new MovGraph2();
+		MovGraph2 *newgr = new MovGraph2();
 
-		newgr->_links.push_back(gr->_links);
-		newgr->_nodes.push_back(gr->_nodes);
+		newgr->_links = gr->_links;
+		newgr->_nodes = gr->_nodes;
 
 		gr->_links.clear();
 		gr->_nodes.clear();
@@ -109,7 +110,6 @@ void MctlCompound::initMovGraph2() {
 
 		_motionControllers[i]->_motionControllerObj = newgr;
 	}
-#endif
 }
 
 void MctlCompound::freeItems() {
@@ -167,14 +167,277 @@ bool MovGraph::load(MfcArchive &file) {
 	return true;
 }
 
-int MovGraph::addObject(StaticANIObject *obj) {
+void MovGraph::addObject(StaticANIObject *obj) {
 	warning("STUB: MovGraph::addObject()");
+}
+
+int MovGraph::removeObject(StaticANIObject *obj) {
+	warning("STUB: MovGraph::removeObject()");
+
+	return 0;
+}
+
+void MovGraph::freeItems() {
+	warning("STUB: MovGraph::freeItems()");
+}
+
+int MovGraph::method28() {
+	warning("STUB: MovGraph::method28()");
+
+	return 0;
+}
+
+int MovGraph::method2C() {
+	warning("STUB: MovGraph::method2C()");
+
+	return 0;
+}
+
+MessageQueue *MovGraph::method34(StaticANIObject *subj, int xpos, int ypos, int flag, int staticsId) {
+	warning("STUB: MovGraph::method34()");
+
+	return 0;
+}
+
+int MovGraph::changeCallback() {
+	warning("STUB: MovGraph::changeCallback()");
+
+	return 0;
+}
+
+int MovGraph::method3C() {
+	warning("STUB: MovGraph::method3C()");
+
+	return 0;
+}
+
+int MovGraph::method44() {
+	warning("STUB: MovGraph::method44()");
+
+	return 0;
+}
+
+MessageQueue *MovGraph::method4C(StaticANIObject *subj, int xpos, int ypos, int flag, int staticsId) {
+	warning("STUB: MovGraph::method4C()");
+
+	return 0;
+}
+
+int MovGraph::method50() {
+	warning("STUB: MovGraph::method50()");
 
 	return 0;
 }
 
 double MovGraph::calcDistance(Common::Point *point, MovGraphLink *link, int flag) {
-	warning("STUB: MovGraph::calcDistance()");
+	int n1x = link->_movGraphNode1->_x;
+	int n1y = link->_movGraphNode1->_y;
+	int n2x = link->_movGraphNode2->_x;
+	int n2y = link->_movGraphNode2->_y;
+	double dist1x = (double)(point->x - n1x);
+	double dist1y = (double)(n1y - point->y);
+	double dist2x = (double)(n2x - n1x);
+	double dist2y = (double)(n2y - n1y);
+	double dist1 = sqrt(dist1y * dist1y + dist1x * dist1x);
+	double dist2 = ((double)(n1y - n2y) * dist1y + dist2x * dist1x) / link->_distance / dist1;
+	double distm = dist2 * dist1;
+	double res = sqrt(1.0 - dist2 * dist2) * dist1;
+
+	if (dist2 <= 0.0 || distm >= link->_distance) {
+		if (flag) {
+			if (dist2 > 0.0) {
+				if (distm >= link->_distance) {
+					point->x = n2x;
+					point->y = n2y;
+				}
+			} else {
+				point->x = n1x;
+				point->y = n1y;
+			}
+		} else {
+			return -1.0;
+		}
+	} else {
+		point->x = n1x + (dist2x * distm / link->_distance);
+		point->y = n1y + (dist2y * distm / link->_distance);
+	}
+
+	return res;
+}
+
+int MovGraph2::getItemIndexByGameObjectId(int objectId) {
+	for (uint i = 0; i < _items.size(); i++)
+		if (_items[i]->_objectId == objectId)
+			return i;
+
+	return -1;
+}
+
+bool MovGraph2::initDirections(StaticANIObject *obj, MovGraph2Item *item) {
+	item->_obj = obj;
+	item->_objectId = obj->_id;
+
+	GameVar *var = g_fullpipe->getGameLoaderGameVar()->getSubVarByName(obj->_objectName);
+	if (!var)
+		return false;
+
+	var = var->getSubVarByName("Test_walk");
+
+	if (!var)
+		return false;
+
+	GameVar *varD = 0;
+	Common::Point point;
+
+	for (int dir = 0; dir < 4; dir++) {
+		switch (dir) {
+		case 0:
+			varD = var->getSubVarByName("Right");
+			break;
+		case 1:
+			varD = var->getSubVarByName("Left");
+			break;
+		case 2:
+			varD = var->getSubVarByName("Up");
+			break;
+		case 3:
+			varD = var->getSubVarByName("Down");
+			break;
+		}
+
+		if (!varD)
+			return false;
+
+		for (int act = 0; act < 3; act++) {
+			int idx;
+
+			switch(act) {
+			case 0:
+				idx = varD->getSubVarAsInt("Start");
+				break;
+			case 1:
+				idx = varD->getSubVarAsInt("Go");
+				break;
+			case 2:
+				idx = varD->getSubVarAsInt("Stop");
+				break;
+			}
+
+			item->_subItems[dir]._walk[act]._movementId = idx;
+
+			Movement *mov = obj->getMovementById(idx);
+
+			item->_subItems[dir]._walk[act]._mov = mov;
+			if (mov) {
+				mov->calcSomeXY(point, 0);
+				item->_subItems[dir]._walk[act]._mx = point.x;
+				item->_subItems[dir]._walk[act]._my = point.y;
+			}
+		}
+
+		for (int act = 0; act < 4; act++) {
+			int idx;
+
+			switch(act) {
+			case 0:
+				idx = varD->getSubVarAsInt("TurnR");
+				break;
+			case 1:
+				idx = varD->getSubVarAsInt("TurnL");
+				break;
+			case 2:
+				idx = varD->getSubVarAsInt("TurnU");
+				break;
+			case 3:
+				idx = varD->getSubVarAsInt("TurnD");
+				break;
+			}
+
+			item->_subItems[dir]._turn[act]._movementId = idx;
+
+			Movement *mov = obj->getMovementById(idx);
+
+			item->_subItems[dir]._turn[act]._mov = mov;
+			if (mov) {
+				mov->calcSomeXY(point, 0);
+				item->_subItems[dir]._turn[act]._mx = point.x;
+				item->_subItems[dir]._turn[act]._my = point.y;
+			}
+		}
+
+		for (int act = 0; act < 4; act++) {
+			int idx;
+
+			switch(act) {
+			case 0:
+				idx = varD->getSubVarAsInt("TurnSR");
+				break;
+			case 1:
+				idx = varD->getSubVarAsInt("TurnSL");
+				break;
+			case 2:
+				idx = varD->getSubVarAsInt("TurnSU");
+				break;
+			case 3:
+				idx = varD->getSubVarAsInt("TurnSD");
+				break;
+			}
+
+			item->_subItems[dir]._turnS[act]._movementId = idx;
+
+			Movement *mov = obj->getMovementById(idx);
+
+			item->_subItems[dir]._turnS[act]._mov = mov;
+			if (mov) {
+				mov->calcSomeXY(point, 0);
+				item->_subItems[dir]._turnS[act]._mx = point.x;
+				item->_subItems[dir]._turnS[act]._my = point.y;
+			}
+		}
+
+		item->_subItems[dir]._staticsId1 = item->_subItems[dir]._walk[0]._mov->_staticsObj1->_staticsId;
+		item->_subItems[dir]._staticsId2 = item->_subItems[dir]._walk[0]._mov->_staticsObj2->_staticsId;
+
+	}
+	return true;
+}
+
+void MovGraph2::addObject(StaticANIObject *obj) {
+	MovGraph::addObject(obj);
+
+	int id = getItemIndexByGameObjectId(obj->_id);
+
+	if (id >= 0) {
+		_items[id]->_obj = obj;
+	} else {
+		MovGraph2Item *item = new MovGraph2Item;
+
+		if (initDirections(obj, item)) {
+			_items.push_back(item);
+		} else {
+			delete item;
+		}
+	}
+}
+
+int MovGraph2::removeObject(StaticANIObject *obj) {
+	warning("STUB: MovGraph2::removeObject()");
+
+	return 0;
+}
+
+void MovGraph2::freeItems() {
+	warning("STUB: MovGraph2::freeItems()");
+}
+
+MessageQueue *MovGraph2::method34(StaticANIObject *subj, int xpos, int ypos, int flag, int staticsId) {
+	warning("STUB: MovGraph2::method34()");
+
+	return 0;
+}
+
+MessageQueue *MovGraph2::method4C(StaticANIObject *subj, int xpos, int ypos, int flag, int staticsId) {
+	warning("STUB: MovGraph2::method4C()");
 
 	return 0;
 }
@@ -184,7 +447,6 @@ MovGraphNode *MovGraph::calcOffset(int ox, int oy) {
 
 	return 0;
 }
-
 
 MovGraphLink::MovGraphLink() {
 	_distance = 0;

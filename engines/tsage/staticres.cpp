@@ -229,6 +229,7 @@ char const *const RESTORE_GAME = "Restore game";
 char const *const SHOW_CREDITS = "Show credits";
 char const *const PAUSE_GAME = "Pause game";
 char const *const RESUME_PLAY = "  Resume play  ";
+char const *const R2_RESTART_MSG = "Go to the beginning of game?";
 char const *const F2 = "F2";
 char const *const F3 = "F3";
 char const *const F4 = "F4";

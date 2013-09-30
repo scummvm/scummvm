@@ -182,6 +182,7 @@ extern char const *const RESTORE_GAME;
 extern char const *const SHOW_CREDITS;
 extern char const *const PAUSE_GAME;
 extern char const *const RESUME_PLAY;
+extern char const *const R2_RESTART_MSG;
 extern char const *const F2;
 extern char const *const F3;
 extern char const *const F4;

@@ -50,6 +50,9 @@ Scene::Scene(NeverhoodEngine *vm, Module *parentModule)
 	_smackerPlayer = NULL;
 	_isMessageListBusy = false;
 	_messageValue = -1;
+	_messageListStatus = 0;
+	_messageListCount = 0;
+	_messageListIndex = 0;
 
 	_backgroundFileHash = _cursorFileHash = 0;
 

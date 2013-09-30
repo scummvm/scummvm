@@ -660,7 +660,7 @@ bool UIButton::display(int offsetX, int offsetY) {
 	_hover = (!_disable && _gameRef->_activeObject == this && (_gameRef->_interactive || _gameRef->_state == GAME_SEMI_FROZEN));
 
 	if ((_press && _hover && !_gameRef->_mouseLeftDown) ||
-	        (_oneTimePress && g_system->getMillis() - _oneTimePressTime >= 100)) {
+			(_oneTimePress && g_system->getMillis() - _oneTimePressTime >= 100)) {
 		press();
 	}
 
@@ -1204,6 +1204,30 @@ bool UIButton::persist(BasePersistenceManager *persistMgr) {
 	}
 
 	return STATUS_OK;
+}
+
+void UIButton::setFontHover(BaseFont *font) {
+	_fontHover = font;
+}
+
+BaseFont *UIButton::getFontHover() {
+	return _fontHover;
+}
+
+void UIButton::setFontPress(BaseFont *font) {
+	_fontPress = font;
+}
+
+void UIButton::setImageHover(BaseSprite *sprite) {
+	_imageHover = sprite;
+}
+
+void UIButton::setImagePress(BaseSprite *sprite) {
+	_imagePress = sprite;
+}
+
+void UIButton::setTextAlign(TTextAlign align) {
+	_align = align;
 }
 
 } // End of namespace Wintermute
