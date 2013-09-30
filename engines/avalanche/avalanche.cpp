@@ -388,7 +388,6 @@ bool AvalancheEngine::loadGame(const int16 slot) {
 	refreshObjectList();
 	_animation->updateSpeed();
 	drawDirection();
-	_onToolbar = false;
 	_animation->animLink();
 	_background->update();
 
