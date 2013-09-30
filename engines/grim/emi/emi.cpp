@@ -23,6 +23,7 @@
 #include "common/foreach.h"
 
 #include "engines/grim/emi/emi.h"
+#include "engines/grim/emi/emi_registry.h"
 #include "engines/grim/emi/lua_v2.h"
 #include "engines/grim/primitives.h"
 #include "engines/grim/set.h"
@@ -37,11 +38,15 @@ EMIEngine *g_emi = NULL;
 EMIEngine::EMIEngine(OSystem *syst, uint32 gameFlags, GrimGameType gameType, Common::Platform platform, Common::Language language) :
 		GrimEngine(syst, gameFlags, gameType, platform, language), _sortOrderInvalidated(false) {
 	g_emi = this;
+	g_emiregistry = new EmiRegistry();
 }
+
 
 
 EMIEngine::~EMIEngine() {
 	g_emi = NULL;
+	delete g_emiregistry;
+	g_emiregistry = NULL;
 }
 
 LuaBase *EMIEngine::createLua() {

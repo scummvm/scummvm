@@ -9,6 +9,7 @@ f 0644 root sys usr/ResidualVM/README README residualvm.man.readme
 f 0755 root sys usr/ResidualVM/residualvm residualvm residualvm.sw.eoe tag('0x5260dbec')
 f 0644 root sys usr/ResidualVM/share/pixmaps/residualvm.xpm residualvm.xpm residualvm.sw.eoe
 f 0644 root sys usr/ResidualVM/share/residualvm/residualvm-grim-patch.lab residualvm-grim-patch.lab residualvm.sw.eoe
+f 0644 root sys usr/ResidualVM/share/residualvm/residualvm-emi-patch.m4b residualvm-emi-patch.m4b residualvm.sw.eoe
 f 0644 root sys usr/ResidualVM/share/residualvm/modern.zip modern.zip residualvm.sw.eoe
 l 0000 root sys usr/bin/residualvm residualvm residualvm.sw.eoe symval(/usr/ResidualVM/residualvm)
 f 0644 root sys usr/lib/filetype/local/ResidualVM.ftr ResidualVM.ftr residualvm.sw.eoe exitop('if test -r $rbase/usr/lib/filetype/Makefile ; then chroot $rbase /sbin/sh -c "cd /usr/lib/filetype ; make -u > /dev/null" ; fi')

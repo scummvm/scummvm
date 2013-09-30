@@ -92,12 +92,7 @@ private:
 	Value _movement;
 	Value _joystick;
 	Value _spewOnError;
-	Value _showFps;
-	Value _softRenderer;
-	Value _fullscreen;
-	Value _engineSpeed;
 	Value _transcript;
-	Value _useArbShaders;
 
 	bool _dirty;
 

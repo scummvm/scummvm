@@ -12,6 +12,7 @@ IDI_ICON               ICON    DISCARDABLE     "icons/residualvm.ico"
 IDI_COUNT              ICON    DISCARDABLE     "icons/count.ico"
 
 residualvm-grim-patch.lab        FILE    "dists/engine-data/residualvm-grim-patch.lab"
+residualvm-emi-patch.m4b        FILE    "dists/engine-data/residualvm-emi-patch.m4b"
 modern.zip        FILE    "gui/themes/modern.zip"
 #ifdef USE_TRANSLATION
 translations.dat       FILE    "gui/themes/translations.dat"

@@ -83,13 +83,25 @@ GrimEngine::GrimEngine(OSystem *syst, uint32 gameFlags, GrimGameType gameType, C
 	_gamePlatform = platform;
 	_gameLanguage = language;
 
-	g_registry = new Registry();
+	if (getGameType() == GType_GRIM)
+		g_registry = new Registry();
+	else
+		g_registry = NULL;
+
 	g_resourceloader = NULL;
 	g_localizer = NULL;
 	g_movie = NULL;
 	g_imuse = NULL;
 
-	_showFps = g_registry->getBool("show_fps");
+	//Set default settings
+	ConfMan.registerDefault("soft_renderer", false);
+	ConfMan.registerDefault("engine_speed", 60);
+	ConfMan.registerDefault("fullscreen", false);
+	ConfMan.registerDefault("show_fps", false);
+	ConfMan.registerDefault("use_arb_shaders", true);
+
+	_showFps = ConfMan.getBool("show_fps");
+
 	_softRenderer = true;
 
 	_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, 192);
@@ -109,14 +121,12 @@ GrimEngine::GrimEngine(OSystem *syst, uint32 gameFlags, GrimGameType gameType, C
 	_textSpeed = 7;
 	_mode = _previousMode = NormalMode;
 	_flipEnable = true;
-	int speed = g_registry->getInt("engine_speed");
+	int speed = ConfMan.getInt("engine_speed");
 	if (speed <= 0 || speed > 100)
 		_speedLimitMs = 1000 / 60;
 	else
 		_speedLimitMs = 1000 / speed;
-	char buf[20];
-	sprintf(buf, "%d", 1000 / _speedLimitMs);
-	g_registry->setString("engine_speed", buf);
+	ConfMan.setInt("engine_speed", 1000 / _speedLimitMs);
 	_refreshDrawNeeded = true;
 	_listFilesIter = NULL;
 	_savedState = NULL;
@@ -184,6 +194,7 @@ GrimEngine::~GrimEngine() {
 	delete _iris;
 	delete _debugger;
 
+	ConfMan.flushToDisk();
 	DebugMan.clearAllDebugChannels();
 }
 
@@ -205,7 +216,7 @@ LuaBase *GrimEngine::createLua() {
 
 void GrimEngine::createRenderer() {
 #ifdef USE_OPENGL
-	_softRenderer = g_registry->getBool("soft_renderer");
+	_softRenderer = ConfMan.getBool("soft_renderer");
 #endif
 
 	if (!_softRenderer && !g_system->hasFeature(OSystem::kFeatureOpenGL)) {
@@ -271,7 +282,7 @@ Common::Error GrimEngine::run() {
 	g_imuse = new Imuse(20, demo);
 	g_sound = new SoundPlayer();
 
-	bool fullscreen = g_registry->getBool("fullscreen");
+	bool fullscreen = ConfMan.getBool("fullscreen");
 	createRenderer();
 	g_driver->setupScreen(640, 480, fullscreen);
 
@@ -650,7 +661,7 @@ void GrimEngine::mainLoop() {
 				fullscreen = !fullscreen;
 			}
 			g_system->setFeatureState(OSystem::kFeatureFullscreenMode, fullscreen);
-			g_registry->setBool("fullscreen", fullscreen);
+			ConfMan.setBool("fullscreen", fullscreen);
 
 			uint screenWidth = g_driver->getScreenWidth();
 			uint screenHeight = g_driver->getScreenHeight();

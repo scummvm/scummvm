@@ -45,11 +45,6 @@ Registry *g_registry = NULL;
 // LastSavedGame
 // good_times
 
-// show_fps
-// soft_renderer
-// fullscreen
-// engine_speed
-
 void Registry::Value::setString(const Common::String &str) {
 	_val._str = str;
 	_type = Registry::String;
@@ -100,21 +95,12 @@ Registry::Registry() : _dirty(true) {
 	// Default settings for GRIM
 	ConfMan.registerDefault("subtitles", true);
 	ConfMan.registerDefault("talkspeed", 179);
-	ConfMan.registerDefault("soft_renderer", false);
-	ConfMan.registerDefault("engine_speed", 60);
-	ConfMan.registerDefault("fullscreen", false);
 	ConfMan.registerDefault("game_devel_mode", false);
-	ConfMan.registerDefault("use_arb_shaders", true);
 
 	// Read settings
 	_spewOnError.setString(ConfMan.get("spew_on_error"));
-	_showFps.setBool(ConfMan.getBool("show_fps"));
-	_softRenderer.setBool(ConfMan.getBool("soft_renderer"));
-	_fullscreen.setBool(ConfMan.getBool("fullscreen"));
-	_engineSpeed.setInt(ConfMan.getInt("engine_speed"));
 	_dataPath.setString(ConfMan.get("path"));
 	_savePath.setString(ConfMan.get("savepath"));
-	_useArbShaders.setBool(ConfMan.getBool("use_arb_shaders"));
 	_develMode.setBool(ConfMan.getBool("game_devel_mode"));
 	_lastSet.setString(ConfMan.get("last_set"));
 	_musicVolume.setInt(convertVolumeFromMixer(ConfMan.getInt("music_volume")));
@@ -164,18 +150,8 @@ Registry::Value &Registry::value(const Common::String &key) {
 		return _joystick;
 	} else if (scumm_stricmp("SpewOnError", key.c_str()) == 0) {
 		return _spewOnError;
-	} else if (scumm_stricmp("show_fps", key.c_str()) == 0) {
-		return _showFps;
-	} else if (scumm_stricmp("soft_renderer", key.c_str()) == 0) {
-		return _softRenderer;
-	} else if (scumm_stricmp("fullscreen", key.c_str()) == 0) {
-		return _fullscreen;
-	} else if (scumm_stricmp("engine_speed", key.c_str()) == 0) {
-		return _engineSpeed;
 	} else if (scumm_stricmp("Transcript", key.c_str()) == 0) {
 		return _transcript;
-	} else if (scumm_stricmp("use_arb_shaders", key.c_str()) == 0) {
-		return _useArbShaders;
 	}
 
 	assert(0);
@@ -212,18 +188,8 @@ const Registry::Value &Registry::value(const Common::String &key) const {
 		return _joystick;
 	} else if (scumm_stricmp("SpewOnError", key.c_str()) == 0) {
 		return _spewOnError;
-	} else if (scumm_stricmp("show_fps", key.c_str()) == 0) {
-		return _showFps;
-	} else if (scumm_stricmp("soft_renderer", key.c_str()) == 0) {
-		return _softRenderer;
-	} else if (scumm_stricmp("fullscreen", key.c_str()) == 0) {
-		return _fullscreen;
-	} else if (scumm_stricmp("engine_speed", key.c_str()) == 0) {
-		return _engineSpeed;
 	} else if (scumm_stricmp("Transcript", key.c_str()) == 0) {
 		return _transcript;
-	} else if (scumm_stricmp("use_arb_shaders", key.c_str()) == 0) {
-		return _useArbShaders;
 	}
 
 	assert(0);
@@ -265,14 +231,9 @@ void Registry::save() {
 		return;
 
 	ConfMan.set("spew_on_error", _spewOnError.getString());
-	ConfMan.setBool("show_fps", _showFps.getBool());
-	ConfMan.setBool("soft_renderer", _softRenderer.getBool());
-	ConfMan.setBool("fullscreen", _fullscreen.getBool());
-	ConfMan.setInt("engine_speed", _engineSpeed.getInt());
 	ConfMan.set("path", _dataPath.getString());
 	ConfMan.set("savepath", _savePath.getString());
 	ConfMan.set("last_set", _lastSet.getString());
-	ConfMan.setBool("use_arb_shaders", _useArbShaders.getBool());
 	ConfMan.setBool("game_devel_mode", _develMode.getBool());
 	ConfMan.setInt("music_volume", convertVolumeToMixer(_musicVolume.getInt()));
 	ConfMan.setInt("sfx_volume", convertVolumeToMixer(_sfxVolume.getInt()));
@@ -287,8 +248,6 @@ void Registry::save() {
 	ConfMan.set("joystick", _joystick.getString());
 	ConfMan.set("voice_effects", _voiceEffects.getString());
 	ConfMan.set("transcript", _transcript.getString());
-
-	ConfMan.flushToDisk();
 
 	_dirty = false;
 }

@@ -170,6 +170,9 @@ protected:
 	//PS2:
 	DECLARE_LUA_OPCODE(GetMemoryCardId);
 	DECLARE_LUA_OPCODE(OverWorldToScreen);
+	//ResidualVM-hacks:
+	DECLARE_LUA_OPCODE(GetResidualVMPreference);
+	DECLARE_LUA_OPCODE(SetResidualVMPreference);
 };
 
 } // end of namespace Grim

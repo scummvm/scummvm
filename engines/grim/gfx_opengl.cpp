@@ -28,6 +28,7 @@
 
 #include "common/endian.h"
 #include "common/system.h"
+#include "common/config-manager.h"
 
 #include "graphics/surface.h"
 #include "graphics/pixelbuffer.h"
@@ -164,7 +165,7 @@ byte *GfxOpenGL::setupScreen(int screenW, int screenH, bool fullscreen) {
 }
 
 void GfxOpenGL::initExtensions() {
-	if (!g_registry->getBool("use_arb_shaders")) {
+	if (!ConfMan.getBool("use_arb_shaders")) {
 		return;
 	}
 

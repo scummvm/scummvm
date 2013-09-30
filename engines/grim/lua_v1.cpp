@@ -23,6 +23,7 @@
 #include "common/endian.h"
 #include "common/savefile.h"
 #include "common/system.h"
+#include "common/config-manager.h"
 
 #include "graphics/pixelbuffer.h"
 #include "graphics/colormasks.h"
@@ -284,7 +285,7 @@ void Lua_V1::Is3DHardwareEnabled() {
 void Lua_V1::SetHardwareState() {
 	// changing only in config setup (software/hardware rendering)
 	bool accel = getbool(1);
-	g_registry->setBool("soft_renderer", !accel);
+	ConfMan.setBool("soft_renderer", !accel);
 	g_grim->changeHardwareState();
 }
 
