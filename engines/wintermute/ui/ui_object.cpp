@@ -668,7 +668,7 @@ void UIObject::setHeight(int32 height) {
 
 bool UIObject::isDisabled() const {
 	return _disable;
-} 
+}
 
 bool UIObject::isVisible() const {
 	return _visible;

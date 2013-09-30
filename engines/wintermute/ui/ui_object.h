@@ -89,7 +89,7 @@ public:
 protected:
 	BaseScriptHolder *_listenerParamObject;
 	uint32 _listenerParamDWORD;
-	BaseScriptHolder *_listenerObject;	
+	BaseScriptHolder *_listenerObject;
 	BaseSprite *_image;
 	BaseFont *_font;
 	bool _sharedFonts;

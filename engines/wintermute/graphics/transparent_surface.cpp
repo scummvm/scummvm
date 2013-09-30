@@ -181,7 +181,7 @@ void doBlitOpaque(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pit
 
 void doBlitBinary(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep) {
 	byte *in, *out;
-	
+
 #ifdef SCUMM_LITTLE_ENDIAN
 	const int aIndex = 0;
 #else

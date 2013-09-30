@@ -57,11 +57,11 @@ public:
 	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
 	virtual const char *scToString() override;
 
-	
+
 	void setFontHover(BaseFont *font);
 	BaseFont *getFontHover();
 	void setFontPress(BaseFont *font);
-	
+
 	void setTextAlign(TTextAlign align);
 
 	void setImageHover(BaseSprite *sprite);

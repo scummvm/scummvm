@@ -72,7 +72,7 @@ public:
 	virtual bool scSetProperty(const char *name, ScValue *value) override;
 	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
 	virtual const char *scToString();
-	
+
 	bool getInGame() const;
 	TWindowMode getMode() const;
 
