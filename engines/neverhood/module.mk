@@ -32,10 +32,13 @@ MODULE_OBJS = \
 	modules/module2500.o \
 	modules/module2600.o \
 	modules/module2700.o \
+	modules/module2700_sprites.o \
 	modules/module2800.o \
 	modules/module2800_sprites.o \
 	modules/module2900.o \
+	modules/module2900_sprites.o \
 	modules/module3000.o \
+	modules/module3000_sprites.o \
 	mouse.o \
 	navigationscene.o \
 	neverhood.o \

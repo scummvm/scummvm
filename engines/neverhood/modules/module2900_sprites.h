@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef NEVERHOOD_MODULES_MODULE2900_H
-#define NEVERHOOD_MODULES_MODULE2900_H
+#ifndef NEVERHOOD_MODULES_MODULE2900_SPRITES_H
+#define NEVERHOOD_MODULES_MODULE2900_SPRITES_H
 
 #include "neverhood/neverhood.h"
 #include "neverhood/module.h"
@@ -31,38 +31,42 @@ namespace Neverhood {
 
 // Module2900
 
-class Module2900 : public Module {
+class SsScene2901LocationButton : public StaticSprite {
 public:
-	Module2900(NeverhoodEngine *vm, Module *parentModule, int which);
+	SsScene2901LocationButton(NeverhoodEngine *vm, Scene *parentScene, int which, uint index);
 protected:
-	int _sceneNum;
-	int _teleporterModuleResult;
-	void createScene(int sceneNum, int which);
-	void updateScene();
-	void updateMusic(bool halfVolume);
+	Scene *_parentScene;
+	uint _index;
+	int _countdown1;
+	void update();
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
-class SsScene2901LocationButtonLight;
-
-class Scene2901 : public Scene {
+class SsScene2901LocationButtonLight : public StaticSprite {
 public:
-	Scene2901(NeverhoodEngine *vm, Module *parentModule, int which);
+	SsScene2901LocationButtonLight(NeverhoodEngine *vm, int which, uint index);
+	void show();
+	void hide();
 protected:
-	Sprite *_ssLocationButtons[6];
-	SsScene2901LocationButtonLight *_ssLocationButtonLights[6];
-	Sprite *_ssBigButton;
-	int _currWhirlButtonNum;
-	int _prevWhirlButtonNum;
+	uint _index;
+};
+
+class SsScene2901BrokenButton : public StaticSprite {
+public:
+	SsScene2901BrokenButton(NeverhoodEngine *vm, int which);
+};
+
+class SsScene2901BigButton : public StaticSprite {
+public:
+	SsScene2901BigButton(NeverhoodEngine *vm, Scene *parentScene, int which);
+protected:
+	Scene *_parentScene;
+	int _which;
 	int _countdown1;
-	int _currLocationButtonNum;
-	int _selectedButtonNum;
-	int _skipCountdown;
-	int _blinkOn;
-	bool _isButton2Broken;
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
 } // End of namespace Neverhood
 
-#endif /* NEVERHOOD_MODULES_MODULE2900_H */
+#endif /* NEVERHOOD_MODULES_MODULE2900_SPRITES_H */

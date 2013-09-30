@@ -26,7 +26,6 @@
 #include "neverhood/neverhood.h"
 #include "neverhood/module.h"
 #include "neverhood/scene.h"
-#include "neverhood/modules/module1200.h"
 
 namespace Neverhood {
 
@@ -41,89 +40,11 @@ protected:
 	void updateScene();
 };
 
-// Scene3009
-
-class Scene3009;
-
-class SsScene3009FireCannonButton : public StaticSprite {
-public:
-	SsScene3009FireCannonButton(NeverhoodEngine *vm, Scene3009 *parentScene);
-protected:
-	Scene3009 *_parentScene;
-	bool _isClicked;
-	void update();
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-};
-
-class SsScene3009SymbolEdges : public StaticSprite {
-public:
-	SsScene3009SymbolEdges(NeverhoodEngine *vm, int index);
-	void show();
-	void hide();
-	void startBlinking();
-protected:
-	int _blinkCountdown;
-	bool _blinkToggle;
-	void update();
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-};
-
-class SsScene3009TargetLine : public StaticSprite {
-public:
-	SsScene3009TargetLine(NeverhoodEngine *vm, int index);
-	void show();
-};
-
-class SsScene3009SymbolArrow : public StaticSprite {
-public:
-	SsScene3009SymbolArrow(NeverhoodEngine *vm, Sprite *asSymbol, int index);
-	void hide();
-protected:
-	Sprite *_asSymbol;
-	int _index;
-	int _incrDecr;
-	bool _enabled;
-	int _countdown;
-	void update();
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-};
-
-class AsScene3009VerticalIndicator : public AnimatedSprite {
-public:
-	AsScene3009VerticalIndicator(NeverhoodEngine *vm, Scene3009 *parentScene, int index);
-	void show();
-protected:
-	Scene3009 *_parentScene;
-	bool _enabled;
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-};
-
-class AsScene3009HorizontalIndicator : public AnimatedSprite {
-public:
-	AsScene3009HorizontalIndicator(NeverhoodEngine *vm, Scene3009 *parentScene, uint32 cannonTargetStatus);
-	void show();
-	void stMoveLeft();
-	void stMoveRight();
-protected:
-	Scene3009 *_parentScene;
-	bool _enabled;
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	void suMoveLeft();
-	void suMoveRight();
-};
-
-class AsScene3009Symbol : public AnimatedSprite {
-public:
-	AsScene3009Symbol(NeverhoodEngine *vm, Scene3009 *parentScene, int symbolPosition);
-	void hide();
-protected:
-	Scene3009 *_parentScene;
-	int _symbolPosition;
-	uint32 _symbolIndex;
-	SsScene3009SymbolArrow *_ssArrowPrev;
-	SsScene3009SymbolArrow *_ssArrowNext;
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-};
+class SsScene3009SymbolEdges;
+class SsScene3009TargetLine;
+class AsScene3009VerticalIndicator;
+class AsScene3009HorizontalIndicator;
+class AsScene3009Symbol;
 
 class Scene3009 : public Scene {
 public:
@@ -153,45 +74,8 @@ protected:
 	void openSmacker(uint32 fileHash, bool keepLastFrame);
 };
 
-// Scene3010
-
-class SsScene3010DeadBoltButton : public StaticSprite {
-public:
-	SsScene3010DeadBoltButton(NeverhoodEngine *vm, Scene *parentScene, int buttonIndex, int initCountdown, bool initDisabled);
-	void setCountdown(int count);
-protected:
-	Scene *_parentScene;
-	int _buttonIndex;
-	bool _buttonEnabled;
-	bool _buttonLocked;
-	int _countdown1;
-	int _countdown2;
-	void update();
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	void disableButton();
-	void setSprite(uint32 fileHash);
-};
-
-class AsScene3010DeadBolt : public AnimatedSprite {
-public:
-	AsScene3010DeadBolt(NeverhoodEngine *vm, Scene *parentScene, int boltIndex, bool initUnlocked);
-	void setCountdown(int count);
-	void lock();
-	void unlock(bool skipAnim);
-protected:
-	Scene *_parentScene;
-	int _boltIndex;
-	int _countdown;
-	bool _soundToggle;
-	bool _unlocked;
-	bool _locked;
-	void update();
-	uint32 hmAnimation(int messageNum, const MessageParam &param, Entity *sender);
-	void stIdle();
-	void stIdleMessage();
-	void stDisabled();
-	void stDisabledMessage();
-};
+class SsScene3010DeadBoltButton;
+class AsScene3010DeadBolt;
 
 class Scene3010 : public Scene {
 public:
@@ -208,31 +92,7 @@ protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
-// Scene3011
-
-class SsScene3011Button : public StaticSprite {
-public:
-	SsScene3011Button(NeverhoodEngine *vm, Scene *parentScene, bool flag);
-protected:
-	Scene *_parentScene;
-	int _countdown;
-	void update();
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-};
-
-class AsScene3011Symbol : public AnimatedSprite {
-public:
-	AsScene3011Symbol(NeverhoodEngine *vm, int symbolIndex, bool largeSymbol);
-	void show(bool isNoisy);
-	void hide();
-	void stopSymbolSound();
-	void change(int symbolIndex, bool isNoisy);
-	int getSymbolIndex() { return _largeSymbol ? _symbolIndex : _symbolIndex - 12; }
-protected:
-	bool _largeSymbol;
-	bool _isNoisy;
-	int _symbolIndex;
-};
+class AsScene3011Symbol;
 
 class Scene3011 : public Scene {
 public:

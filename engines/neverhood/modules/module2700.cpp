@@ -21,6 +21,7 @@
  */
 
 #include "neverhood/modules/module2700.h"
+#include "neverhood/modules/module2700_sprites.h"
 #include "neverhood/gamemodule.h"
 #include "neverhood/modules/module1000.h"
 
@@ -534,83 +535,6 @@ void Module2700::createScene2703(int which, uint32 trackInfoId) {
 
 void Module2700::createScene2704(int which, uint32 trackInfoId, int16 value, const uint32 *staticSprites, const NRect *clipRect) {
 	_childObject = new Scene2704(_vm, this, which, trackInfoId, value, staticSprites, clipRect);
-}
-
-static const NPoint kCarShadowOffsets[] = {
-	{-63,  3}, {-48, 40}, {-33, 58},
-	{  0, 65}, { 40, 53}, { 56, 27},
-	{ 63,  0}, {-30, 26}, {  0, 30},
-	{ 26, 25}
-};
-
-SsCommonTrackShadowBackground::SsCommonTrackShadowBackground(NeverhoodEngine *vm, uint32 fileHash)
-	: StaticSprite(vm, 0) {
-
-	loadSprite(fileHash, kSLFDefDrawOffset | kSLFDefPosition, 0);
-}
-
-AsCommonCarShadow::AsCommonCarShadow(NeverhoodEngine *vm, AnimatedSprite *asCar, BaseSurface *shadowSurface, uint index)
-	: AnimatedSprite(vm, 1100), _asCar(asCar), _index(index), _animFileHash(0) {
-
-	SetUpdateHandler(&AsCommonCarShadow::update);
-	createShadowSurface(shadowSurface, 211, 147, 100);
-	updateShadow();
-}
-
-void AsCommonCarShadow::update() {
-	updateShadow();
-	AnimatedSprite::update();
-}
-
-void AsCommonCarShadow::updateShadow() {
-	if (_asCar->getFrameIndex() != _currFrameIndex || _asCar->getCurrAnimFileHash() != _animFileHash) {
-		uint32 fileHash = _asCar->getCurrAnimFileHash();
-		if (fileHash == 0x35698F78 || fileHash == 0x192ADD30 || fileHash == 0x9C220DA4 ||
-			fileHash == 0x9966B138 || fileHash == 0xB579A77C || fileHash == 0xA86A9538 ||
-			fileHash == 0xD4220027 || fileHash == 0xD00A1364 || fileHash == 0xD4AA03A4 ||
-			fileHash == 0xF46A0324) {
-			startAnimation(fileHash, _asCar->getFrameIndex(), -1);
-			_newStickFrameIndex = _asCar->getFrameIndex();
-		}
-		_animFileHash = fileHash;
-	}
-	_x = _asCar->getX() + kCarShadowOffsets[_index].x;
-	_y = _asCar->getY() + kCarShadowOffsets[_index].y;
-	if (!_asCar->getVisible()) {
-		startAnimation(0x1209E09F, 0, -1);
-		_newStickFrameIndex = 0;
-	}
-	setDoDeltaX(_asCar->isDoDeltaX() ? 1 : 0);
-}
-
-AsCommonCarConnectorShadow::AsCommonCarConnectorShadow(NeverhoodEngine *vm, Sprite *asCar, BaseSurface *shadowSurface, uint index)
-	: AnimatedSprite(vm, 1100), _asCar(asCar), _index(index) {
-
-	SetUpdateHandler(&AsCommonCarConnectorShadow::update);
-	createShadowSurface1(shadowSurface, 0x60281C10, 150);
-	startAnimation(0x60281C10, -1, -1);
-	_newStickFrameIndex = STICK_LAST_FRAME;
-}
-
-void AsCommonCarConnectorShadow::update() {
-	_x = _asCar->getX() + kCarShadowOffsets[_index].x;
-	_y = _asCar->getY() + kCarShadowOffsets[_index].y;
-	AnimatedSprite::update();
-}
-
-AsCommonCarTrackShadow::AsCommonCarTrackShadow(NeverhoodEngine *vm, Sprite *asCar, BaseSurface *shadowSurface, int16 frameIndex)
-	: AnimatedSprite(vm, 1100), _asCar(asCar) {
-
-	SetUpdateHandler(&AsCommonCarTrackShadow::update);
-	createShadowSurface1(shadowSurface, 0x0759129C, 100);
-	startAnimation(0x0759129C, frameIndex, -1);
-	_newStickFrameIndex = frameIndex;
-}
-
-void AsCommonCarTrackShadow::update() {
-	_x = _asCar->getX();
-	_y = _asCar->getY();
-	AnimatedSprite::update();
 }
 
 Scene2701::Scene2701(NeverhoodEngine *vm, Module *parentModule, int which)

@@ -20,49 +20,49 @@
  *
  */
 
-#ifndef NEVERHOOD_MODULES_MODULE2900_H
-#define NEVERHOOD_MODULES_MODULE2900_H
+#ifndef NEVERHOOD_MODULES_MODULE2700_SPRITES_H
+#define NEVERHOOD_MODULES_MODULE2700_SPRITES_H
 
 #include "neverhood/neverhood.h"
 #include "neverhood/module.h"
 #include "neverhood/scene.h"
+#include "neverhood/modules/module1600.h"
 
 namespace Neverhood {
 
-// Module2900
-
-class Module2900 : public Module {
+class SsCommonTrackShadowBackground : public StaticSprite {
 public:
-	Module2900(NeverhoodEngine *vm, Module *parentModule, int which);
-protected:
-	int _sceneNum;
-	int _teleporterModuleResult;
-	void createScene(int sceneNum, int which);
-	void updateScene();
-	void updateMusic(bool halfVolume);
+	SsCommonTrackShadowBackground(NeverhoodEngine *vm, uint32 fileHash);
 };
 
-class SsScene2901LocationButtonLight;
-
-class Scene2901 : public Scene {
+class AsCommonCarShadow : public AnimatedSprite {
 public:
-	Scene2901(NeverhoodEngine *vm, Module *parentModule, int which);
+	AsCommonCarShadow(NeverhoodEngine *vm, AnimatedSprite *asCar, BaseSurface *shadowSurface, uint index);
 protected:
-	Sprite *_ssLocationButtons[6];
-	SsScene2901LocationButtonLight *_ssLocationButtonLights[6];
-	Sprite *_ssBigButton;
-	int _currWhirlButtonNum;
-	int _prevWhirlButtonNum;
-	int _countdown1;
-	int _currLocationButtonNum;
-	int _selectedButtonNum;
-	int _skipCountdown;
-	int _blinkOn;
-	bool _isButton2Broken;
+	uint _index;
+	AnimatedSprite *_asCar;
+	uint32 _animFileHash;
 	void update();
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+	void updateShadow();
+};
+
+class AsCommonCarConnectorShadow : public AnimatedSprite {
+public:
+	AsCommonCarConnectorShadow(NeverhoodEngine *vm, Sprite *asCar, BaseSurface *shadowSurface, uint index);
+protected:
+	uint _index;
+	Sprite *_asCar;
+	void update();
+};
+
+class AsCommonCarTrackShadow : public AnimatedSprite {
+public:
+	AsCommonCarTrackShadow(NeverhoodEngine *vm, Sprite *asCar, BaseSurface *shadowSurface, int16 frameIndex);
+protected:
+	Sprite *_asCar;
+	void update();
 };
 
 } // End of namespace Neverhood
 
-#endif /* NEVERHOOD_MODULES_MODULE2900_H */
+#endif /* NEVERHOOD_MODULES_MODULE2700_SPRITES_H */
