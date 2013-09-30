@@ -82,7 +82,9 @@ ZVision::~ZVision() {
 
 void ZVision::initialize() {
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
-	// TODO: There are 10 file clashes when we flatten the directories. From a quick look, the files are exactly the same, so it shouldn't matter. But I'm noting it here just in-case it does become a problem.
+	// TODO: There are 10 file clashes when we flatten the directories. 
+	// From a quick look, the files are exactly the same, so it shouldn't matter. 
+	// But I'm noting it here just in-case it does become a problem.
 	SearchMan.addSubDirectoryMatching(gameDataDir, "data1", 0, 4, true);
 	SearchMan.addSubDirectoryMatching(gameDataDir, "data2", 0, 4, true);
 	SearchMan.addSubDirectoryMatching(gameDataDir, "data3", 0, 4, true);
