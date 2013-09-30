@@ -47,10 +47,10 @@ StringManager::~StringManager() {
 }
 
 void StringManager::initialize(ZVisionGameId gameId) {
-	if (gameId == ZorkNemesis) {
+	if (gameId == GID_NEMESIS) {
 		// TODO: Check this hardcoded filename against all versions of Nemesis
 		parseStrFile("nemesis.str");
-	} else if (gameId == ZorkGrandInquisitor) {
+	} else if (gameId == GID_GRANDINQUISITOR) {
 		// TODO: Check this hardcoded filename against all versions of Grand Inquisitor
 		parseStrFile("inquis.str");
 	}

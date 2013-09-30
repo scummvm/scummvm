@@ -164,13 +164,13 @@ Audio::RewindableAudioStream *makeRawZorkStream(const Common::String &filePath, 
 
 	SoundParams soundParams;
 
-	if (engine->getGameId() == ZorkNemesis) {
+	if (engine->getGameId() == GID_NEMESIS) {
 		for (int i = 0; i < 6; i++) {
 			if (zNemSoundParamLookupTable[i].identifier == (fileName[6]))
 				soundParams = zNemSoundParamLookupTable[i];
 		}
 	}
-	else if (engine->getGameId() == ZorkGrandInquisitor) {
+	else if (engine->getGameId() == GID_GRANDINQUISITOR) {
 		for (int i = 0; i < 6; i++) {
 			if (zgiSoundParamLookupTable[i].identifier == (fileName[7]))
 				soundParams = zgiSoundParamLookupTable[i];

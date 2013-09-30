@@ -68,7 +68,7 @@ static const ZVisionGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NONE)
 		},
-		ZorkNemesis
+		GID_NEMESIS
 	},
 
 	{
@@ -82,12 +82,12 @@ static const ZVisionGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NONE)
 		},
-		ZorkGrandInquisitor
+		GID_GRANDINQUISITOR
 	},
 
 	{
 		AD_TABLE_END_MARKER,
-		None
+		GID_NONE
 	}
 };
 

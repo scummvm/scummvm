@@ -47,10 +47,10 @@ CursorManager::CursorManager(ZVision *engine, const Graphics::PixelFormat *pixel
 		  _pixelFormat(pixelFormat),
 		  _cursorIsPushed(false) {
 	// WARNING: The index IDLE_CURSOR_INDEX is hardcoded. If you change the order of _cursorNames/_zgiCursorFileNames/_zNemCursorFileNames, you HAVE to change the index accordingly
-	if (_engine->getGameId() == ZorkNemesis) {
+	if (_engine->getGameId() == GID_NEMESIS) {
 		Common::String name(Common::String::format("%sa.zcr", _zNemCursorFileNames[IDLE_CURSOR_INDEX]));
 		_idleCursor = ZorkCursor(name);
-	} else if (_engine->getGameId() == ZorkGrandInquisitor) {
+	} else if (_engine->getGameId() == GID_GRANDINQUISITOR) {
 		_idleCursor = ZorkCursor(_zgiCursorFileNames[IDLE_CURSOR_INDEX]);
 	}
 }
@@ -77,7 +77,7 @@ void CursorManager::changeCursor(const Common::String &cursorName, bool pushed) 
 	}
 
 	for (int i = 0; i < NUM_CURSORS; i++) {
-		if (_engine->getGameId() == ZorkNemesis) {
+		if (_engine->getGameId() == GID_NEMESIS) {
 			if (cursorName.equals(_cursorNames[i])) {
 				_currentCursor = cursorName;
 
@@ -88,7 +88,7 @@ void CursorManager::changeCursor(const Common::String &cursorName, bool pushed) 
 				changeCursor(ZorkCursor(name));
 				return;
 			}
-		} else if (_engine->getGameId() == ZorkGrandInquisitor) {
+		} else if (_engine->getGameId() == GID_GRANDINQUISITOR) {
 			if (cursorName.equals(_cursorNames[i])) {
 				_currentCursor = cursorName;
 
