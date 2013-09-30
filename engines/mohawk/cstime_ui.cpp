@@ -854,7 +854,7 @@ void CSTimeInterface::dropItemInInventory(uint16 id) {
 	clearDialogArea();
 	_inventoryDisplay->show();
 	_inventoryDisplay->draw();
-	_inventoryDisplay->setState(4);
+	_inventoryDisplay->setState(kCSTimeInterfaceDroppedInventory);
 }
 
 CSTimeHelp::CSTimeHelp(MohawkEngine_CSTime *vm) : _vm(vm) {
