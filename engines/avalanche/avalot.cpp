@@ -1243,7 +1243,6 @@ void AvalancheEngine::guideAvvy(Common::Point cursorPos) {
 
 void AvalancheEngine::checkClick() {
 	Common::Point cursorPos = getMousePos();
-	_onToolbar = kSlowComputer && ((cursorPos.y >= 169) || (cursorPos.y <= 10));
 
 	/*if (mrelease > 0)
 		after_the_scroll = false;*/
@@ -1523,7 +1522,6 @@ void AvalancheEngine::newGame() {
 	_thinkThing = true;
 	_thinks = 2;
 	refreshObjectList();
-	_onToolbar = false;
 	_seeScroll = false;
 
 	avvy->appear(300, 117, kDirRight); // Needed to initialize Avalot.

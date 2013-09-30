@@ -162,9 +162,6 @@ private:
 #endif
 
 public:
-	static const int16 kXW = 30;
-	static const int16 kYW = 36; // x width & y whatsit
-	static const int16 kMargin = 5;
 	static const MouseHotspotType kMouseHotSpots[9];
 	static const int16 kMaxSprites = 2; // Current max no. of sprites.
 
@@ -184,8 +181,6 @@ public:
 	};
 
 	// These following static constants should be included in CFG when it's written.
-
-	static const bool kSlowComputer = false; // Stops walking when mouse touches toolbar.
 	static const int16 kBorder = 1; // size of border on shadowboxes
 	static const int16 kWalk = 3;
 	static const int16 kRun = 5;
@@ -282,7 +277,7 @@ public:
 	int16 _talkX, _talkY;
 	Color _talkBackgroundColor, _talkFontColor;
 	byte _scrollBells; // no. of times to ring the bell
-	bool _onToolbar, _seeScroll; // TODO: maybe this means we're interacting with the toolbar / a scroll?
+	bool _seeScroll; // TODO: maybe this means we're interacting with the toolbar / a scroll?
 	char _objectList[10];
 	// Called .free() for them in ~Gyro().
 	int8 _scoreToDisplay[3];
