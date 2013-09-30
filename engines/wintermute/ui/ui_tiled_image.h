@@ -36,6 +36,8 @@
 namespace Wintermute {
 class BaseSubFrame;
 class UITiledImage : public BaseObject {
+	using Wintermute::BaseObject::display;
+
 public:
 	DECLARE_PERSISTENT(UITiledImage, BaseObject)
 	void correctSize(int32 *width, int32 *height);

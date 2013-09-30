@@ -35,6 +35,8 @@
 namespace Wintermute {
 
 class AdItem : public AdTalkHolder {
+	using Wintermute::AdObject::display;
+
 public:
 	bool update();
 	DECLARE_PERSISTENT(AdItem, AdTalkHolder)
