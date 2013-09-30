@@ -400,8 +400,8 @@ bool UIWindow::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_IMAGE_INACTIVE:
-			delete _imageInactive,
-			       _imageInactive = new BaseSprite(_gameRef);
+			delete _imageInactive;
+			_imageInactive = new BaseSprite(_gameRef);
 			if (!_imageInactive || DID_FAIL(_imageInactive->loadFile((char *)params))) {
 				delete _imageInactive;
 				_imageInactive = nullptr;
