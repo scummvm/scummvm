@@ -20,7 +20,6 @@ MODULE_OBJS := \
 	save_manager.o \
 	scr_file_handling.o \
 	script_manager.o \
-	scripts.o \
 	single_value_container.o \
 	string_manager.o \
 	timer_node.o \
