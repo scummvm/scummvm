@@ -60,7 +60,6 @@ BaseRenderOSystem::BaseRenderOSystem(BaseGame *inGame) : BaseRenderer(inGame) {
 
 	_borderLeft = _borderRight = _borderTop = _borderBottom = 0;
 	_ratioX = _ratioY = 1.0f;
-	_colorMod = kDefaultRgbaMod;
 	_dirtyRect = nullptr;
 	_disableDirtyRects = false;
 	_tempDisableDirtyRects = 0;
@@ -281,7 +280,6 @@ void BaseRenderOSystem::drawSurface(BaseSurfaceOSystem *owner, const Graphics::S
 
 	if (_tempDisableDirtyRects || _disableDirtyRects) {
 		RenderTicket *ticket = new RenderTicket(owner, surf, srcRect, dstRect, transform);
-		ticket->_transform._rgbaMod = _colorMod;
 		ticket->_wantsDraw = true;
 		_renderQueue.push_back(ticket);
 		_previousTicket = ticket;
@@ -314,7 +312,6 @@ void BaseRenderOSystem::drawSurface(BaseSurfaceOSystem *owner, const Graphics::S
 		for (it = _lastAddedTicket; it != endIterator; ++it) {
 			compareTicket = *it;
 			if (*(compareTicket) == compare && compareTicket->_isValid) {
-				compareTicket->_transform._rgbaMod = transform._rgbaMod; 
 				if (_disableDirtyRects) {
 					drawFromSurface(compareTicket);
 				} else {
@@ -493,9 +490,6 @@ void BaseRenderOSystem::drawTickets() {
 		}
 		return;
 	}
-	// The color-mods are stored in the RenderTickets on add, since we set that state again during
-	// draw, we need to keep track of what it was prior to draw.
-	uint32 oldColorMod = _colorMod;
 
 	// Apply the clear-color to the dirty rect.
 	_renderSurface->fillRect(*_dirtyRect, _clearColor);
@@ -516,7 +510,6 @@ void BaseRenderOSystem::drawTickets() {
 			// convert from screen-coords to surface-coords.
 			dstClip.translate(-offsetX, -offsetY);
 
-			_colorMod = ticket->_transform._rgbaMod; 
 			drawFromSurface(ticket, &pos, &dstClip);
 			_needsFlip = true;
 		}
@@ -524,9 +517,6 @@ void BaseRenderOSystem::drawTickets() {
 		ticket->_wantsDraw = false;
 	}
 	g_system->copyRectToScreen((byte *)_renderSurface->getBasePtr(_dirtyRect->left, _dirtyRect->top), _renderSurface->pitch, _dirtyRect->left, _dirtyRect->top, _dirtyRect->width(), _dirtyRect->height());
-
-	// Revert the colorMod-state.
-	_colorMod = oldColorMod;
 
 	it = _renderQueue.begin();
 	// Clean out the old tickets

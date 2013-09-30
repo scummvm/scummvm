@@ -143,7 +143,6 @@ private:
 	uint32 _batchNum;
 	float _ratioX;
 	float _ratioY;
-	uint32 _colorMod;
 	uint32 _clearColor;
 
 	bool _skipThisFrame;
