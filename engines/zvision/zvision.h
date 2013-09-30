@@ -52,14 +52,6 @@ class StringManager;
 class SaveManager;
 class RlfAnimation;
  
-// our engine debug channels
-enum {
-	kZDebugExample = 1 << 0,
-	kZDebugExample2 = 1 << 1
-	// next new channel must be 1 << 2 (4)
-	// the current limitation is 32 debug channels (1 << 31 is the last one)
-};
- 
 class ZVision : public Engine {
 public:
 	ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc);
