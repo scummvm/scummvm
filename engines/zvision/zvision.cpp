@@ -54,16 +54,6 @@ ZVision::ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc)
 		  _workingWindow((WINDOW_WIDTH - WORKING_WINDOW_WIDTH) / 2, (WINDOW_HEIGHT - WORKING_WINDOW_HEIGHT) / 2, ((WINDOW_WIDTH - WORKING_WINDOW_WIDTH) / 2) + WORKING_WINDOW_WIDTH, ((WINDOW_HEIGHT - WORKING_WINDOW_HEIGHT) / 2) + WORKING_WINDOW_HEIGHT),
 		  _pixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0), /*RGB 565*/
 		  _desiredFrameTime(33), /* ~30 fps */
-
-	// Put your engine in a sane state, but do nothing big yet;
-	// in particular, do not load data from files; rather, if you
-	// need to do such things, do them from run().
- 
-	// Do not initialize graphics here
- 
-	// Here is the right place to set up the engine specific debug channels
-	//DebugMan.addDebugChannel(kZVisionDebugExample, "example", "this is just an example for a engine specific debug channel");
-	//DebugMan.addDebugChannel(kZVisionDebugExample2, "example2", "also an example");
 		  _clock(_system),
 		  _scriptManager(nullptr),
 		  _renderManager(nullptr),
