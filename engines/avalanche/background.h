@@ -69,7 +69,6 @@ private:
 	int32 _offsets[40];
 	byte _spriteNum;
 	SpriteType _sprites[40];
-	ByteField _r;
 	Common::String _filename;
 	static const int16 kOnDisk; // Value of _sprites[fv]._x when it's not in memory.
 
