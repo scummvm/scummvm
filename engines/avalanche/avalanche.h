@@ -308,7 +308,7 @@ public:
 	bool _keyboardClick; // Is a keyboard click noise wanted?
 	People _him, _her;
 	byte _it;
-	int32 _roomTime; // Set to 0 when you enter a room, added to in every loop.
+	uint32 _roomTime; // Set to 0 when you enter a room, added to in every loop.
 
 	People _lastPerson; // Last person to have been selected using the People menu.
 	bool _doingSpriteRun; // Only set to True if we're doing a sprite_run at this moment. This stops the trippancy system from moving any of the sprites.
@@ -352,7 +352,7 @@ public:
 	void resetVariables();
 	void newGame(); // This sets up the DNA for a completely new game.
 	void slowDown();
-	bool setFlag(char x);
+	bool getFlag(char x);
 	bool decreaseMoney(uint16 amount); // Called pennycheck in the original.
 	void hangAroundForAWhile();
 	
