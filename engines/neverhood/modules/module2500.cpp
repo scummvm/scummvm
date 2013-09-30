@@ -21,6 +21,7 @@
  */
 
 #include "neverhood/modules/module2500.h"
+#include "neverhood/modules/module2500_sprites.h"
 #include "neverhood/modules/module2700_sprites.h"
 #include "neverhood/modules/module1600.h"
 
@@ -469,54 +470,6 @@ void Scene2501::updateKlaymenClipRect() {
 		_kmScene2501->setClipRect(0, 0, 640, 480);
 	else
 		_kmScene2501->setClipRect(0, 0, 640, 388);
-}
-
-SsScene2504Button::SsScene2504Button(NeverhoodEngine *vm)
-	: StaticSprite(vm, 1400), _countdown(0), _isSoundPlaying(false) {
-
-	loadSprite(0x070220D9, kSLFDefDrawOffset | kSLFDefPosition | kSLFDefCollisionBoundsOffset, 400);
-	setVisible(false);
-	loadSound(0, 0x4600204C);
-	loadSound(1, 0x408C0034);
-	loadSound(2, 0x44043000);
-	loadSound(3, 0x44045000);
-	SetMessageHandler(&SsScene2504Button::handleMessage);
-	SetUpdateHandler(&SsScene2504Button::update);
-}
-
-void SsScene2504Button::update() {
-	updatePosition();
-	if (_isSoundPlaying && !isSoundPlaying(0) && !isSoundPlaying(1)) {
-		playSound(3);
-		setVisible(false);
-		_isSoundPlaying = false;
-	}
-	if (_countdown != 0 && (--_countdown) == 0) {
-		if (getSubVar(VA_LOCKS_DISABLED, 0x01180951))
-			playSound(0);
-		else
-			playSound(1);
-		_isSoundPlaying = true;
-	}
-}
-
-uint32 SsScene2504Button::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
-	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
-	switch (messageNum) {
-	case 0x1011:
-		if (_countdown == 0 && !_isSoundPlaying) {
-			setVisible(true);
-			_countdown = 2;
-			if (getSubVar(VA_LOCKS_DISABLED, 0x01180951))
-				setSubVar(VA_LOCKS_DISABLED, 0x01180951, 0);
-			else
-				setSubVar(VA_LOCKS_DISABLED, 0x01180951, 1);
-			playSound(2);
-		}
-		messageResult = 1;
-		break;
-	}
-	return messageResult;
 }
 
 Scene2504::Scene2504(NeverhoodEngine *vm, Module *parentModule, int which)

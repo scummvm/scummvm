@@ -79,16 +79,6 @@ protected:
 	void updateKlaymenClipRect();
 };
 
-class SsScene2504Button : public StaticSprite {
-public:
-	SsScene2504Button(NeverhoodEngine *vm);
-protected:
-	int _countdown;
-	bool _isSoundPlaying;
-	void update();
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-};
-
 class Scene2504 : public Scene {
 public:
 	Scene2504(NeverhoodEngine *vm, Module *parentModule, int which);
