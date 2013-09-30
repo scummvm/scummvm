@@ -181,7 +181,6 @@ public:
 	};
 
 	// These following static constants should be included in CFG when it's written.
-	static const int16 kBorder = 1; // size of border on shadowboxes
 	static const int16 kWalk = 3;
 	static const int16 kRun = 5;
 	static const int32 kCatacombMap[8][8];
@@ -193,8 +192,6 @@ public:
 
 	static const char *kVersionNum;
 	static const char *kCopyright;
-	static const int16 kVersionCode = 130; // Same as kVersionCode, but numerically & without the ".".
-	static const int16 kGameCode = 2; // Avalot's code number
 
 	bool _holdLeftMouse;
 
@@ -208,7 +205,6 @@ public:
 	int16 _dnascore; // your score, of course
 	int32 _money; // your current amount of dosh
 	Room _room; // your current room
-	byte _roomCount[100]; // Add one to each every time you enter a room
 	bool _wonNim; // Have you *won* Nim? (That's harder.)
 	byte _wineState; // 0=good (Notts), 1=passable(Argent) ... 3=vinegar.
 	bool _cwytalotGone; // Has Cwytalot rushed off to Jerusalem yet?
@@ -221,7 +217,6 @@ public:
 	byte _givenToSpludwick; // 0 = nothing given, 1 = onion...
 	byte _brummieStairs; // Progression through the stairs trick.
 	byte _cardiffQuestionNum; // Things you get asked in Cardiff.
-	bool _passedCwytalotInHerts; // Have you passed Cwytalot in Herts?
 	bool _avvyIsAwake; // Well? Is Avvy awake? (Screen 1 only.)
 	bool _avvyInBed; // True if Avvy's in bed, but awake.
 	bool _userMovesAvvy; // If this is false, the user has no control over Avvy's movements.
@@ -235,15 +230,11 @@ public:
 	bool _bellsAreRinging; // Is Jacques ringing the bells?
 	bool _standingOnDais; // In room 71, inside Cardiff Castle.
 	bool _takenPen; // Have you taken the pen (in Cardiff?)
-	bool _arrowTriggered; // And has the arrow been triggered?
 	bool _arrowInTheDoor;  // Did the arrow hit the wall?
 	Common::String _favouriteDrink, _favouriteSong, _worstPlaceOnEarth, _spareEvening; // Personalisation str's
 	uint32 _totalTime; // Your total time playing this game, in ticks.
 	byte _jumpStatus; // Fixes how high you're jumping.
 	bool _mushroomGrowing; // Is the mushroom growing in 42?
-	bool _spludwickAtHome; // Is Spludwick at home?
-	byte _lastRoom;
-	byte _lastRoomNotMap;
 	bool _crapulusWillTell; // Will Crapulus tell you about Spludwick being away?
 	bool _enterCatacombsFromLustiesRoom;
 	bool _teetotal; // Are we touching any more drinks?
@@ -253,7 +244,6 @@ public:
 	byte _catacombX, _catacombY;   // XY coords in the catacombs.
 	bool _avvysInTheCupboard; // On screen 22.
 	bool _geidaFollows; // Is Geida following you?
-	byte _nextBell; // For the ringing.
 	bool _givenPotionToGeida; // Does Geida have the potion?
 	bool _lustieIsAsleep; // Is BDL asleep?
 	bool _beenTiedUp; // In r__Robins.
@@ -365,6 +355,12 @@ public:
 	Room getRoom(People persId);
 private:
 	static Room _whereIs[29];
+
+	bool _spludwickAtHome; // Is Spludwick at home?
+	byte _lastRoom;
+	byte _lastRoomNotMap;
+	bool _passedCwytalotInHerts; // Have you passed Cwytalot in Herts?
+	byte _roomCount[100]; // Add one to each every time you enter a room
 
 	Common::File file;
 	Common::String readAlsoStringFromFile();

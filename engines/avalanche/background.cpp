@@ -250,11 +250,11 @@ void Background::update() {
 		// They're ringing the bells.
 		switch (_vm->_roomTime % 4) {
 		case 1:
-			if (_vm->_nextBell < 5)
-				_vm->_nextBell = 12;
-			_vm->_nextBell--;
+			if (_nextBell < 5)
+				_nextBell = 12;
+			_nextBell--;
 			// CHECKME: 2 is a guess. No length in the original? 
-			_vm->_sound->playNote(_vm->kNotes[_vm->_nextBell], 2);
+			_vm->_sound->playNote(_vm->kNotes[_nextBell], 2);
 			break;
 		case 2:
 			_vm->_sound->stopSound();
@@ -367,4 +367,11 @@ void Background::drawSprite(int16 x, int16 y, SpriteType &sprite) {
 	_vm->_graphics->drawBackgroundSprite(x, y - 10, sprite);
 }
 
+void Background::resetVariables() {
+	_nextBell = 0;
+}
+
+void Background::synchronize(Common::Serializer &sz) {
+	sz.syncAsByte(_nextBell);
+}
 } // End of namespace Avalanche.

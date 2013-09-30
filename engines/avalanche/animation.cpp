@@ -720,8 +720,8 @@ void Animation::callSpecial(uint16 which) {
 	case 3: // _vm->special 3: Room 71: triggers dart.
 		_sprites[0].bounce(); // Must include that.
 
-		if (!_vm->_arrowTriggered) {
-			_vm->_arrowTriggered = true;
+		if (!_arrowTriggered) {
+			_arrowTriggered = true;
 			appearPed(1, 3); // The dart starts at ped 4, and...
 			_sprites[1].walkTo(4); // flies to ped 5 (- 1 for pascal to C conversion).
 			_sprites[1]._facingDir = kDirUp; // Only face.
@@ -1285,6 +1285,7 @@ Direction Animation::getOldDirection() {
 void Animation::resetVariables() {
 	_geidaSpin = 0;
 	_geidaTime = 0;
+	_arrowTriggered = false;
 }
 
 void Animation::synchronize(Common::Serializer &sz) {
@@ -1342,6 +1343,7 @@ void Animation::synchronize(Common::Serializer &sz) {
 			spr->appear(spr->_x, spr->_y, spr->_facingDir);
 	}
 
+	sz.syncAsByte(_arrowTriggered);
 }
 
 } // End of namespace Avalanche.

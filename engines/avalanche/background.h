@@ -62,10 +62,13 @@ public:
 	// If you give it positive values, the picture will be plotted to the desired coordinates on the screen.
 	// By that we get rid of show_one_at(), which would be almost identical and cause a lot of code duplication.
 	void draw(int16 destX, int16 destY, byte sprId);
+	void resetVariables();
+	void synchronize(Common::Serializer &sz);
 
 private:
 	AvalancheEngine *_vm;
 
+	byte _nextBell; // For the ringing.
 	int32 _offsets[40];
 	byte _spriteNum;
 	SpriteType _sprites[40];
