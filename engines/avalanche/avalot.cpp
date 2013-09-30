@@ -1455,7 +1455,6 @@ void AvalancheEngine::resetVariables() {
 	_bellsAreRinging = false;
 	_standingOnDais = false;
 	_takenPen = false;
-	_arrowTriggered = false;
 	_arrowInTheDoor = false;
 	_favouriteDrink = "";
 	_favouriteSong = "";
@@ -1477,7 +1476,6 @@ void AvalancheEngine::resetVariables() {
 	_catacombY = 0;
 	_avvysInTheCupboard = false;
 	_geidaFollows = false;
-	_nextBell = 0;
 	_givenPotionToGeida = false;
 	_lustieIsAsleep = false;
 	_beenTiedUp = false;
@@ -1491,6 +1489,7 @@ void AvalancheEngine::resetVariables() {
 	_parser->resetVariables();
 	_animation->resetVariables();
 	_sequence->resetVariables();
+	_background->resetVariables();
 }
 
 void AvalancheEngine::newGame() {

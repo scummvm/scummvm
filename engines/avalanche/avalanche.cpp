@@ -134,6 +134,7 @@ void AvalancheEngine::synchronize(Common::Serializer &sz) {
 	_animation->synchronize(sz);
 	_parser->synchronize(sz);
 	_sequence->synchronize(sz);
+	_background->synchronize(sz);
 
 	sz.syncAsByte(_carryNum);
 	for (int i = 0; i < kObjectNum; i++)
@@ -171,7 +172,6 @@ void AvalancheEngine::synchronize(Common::Serializer &sz) {
 	sz.syncAsByte(_bellsAreRinging);
 	sz.syncAsByte(_standingOnDais);
 	sz.syncAsByte(_takenPen);
-	sz.syncAsByte(_arrowTriggered);
 	sz.syncAsByte(_arrowInTheDoor);
 
 	if (sz.isSaving()) {
@@ -257,7 +257,6 @@ void AvalancheEngine::synchronize(Common::Serializer &sz) {
 	sz.syncAsByte(_catacombY);
 	sz.syncAsByte(_avvysInTheCupboard);
 	sz.syncAsByte(_geidaFollows);
-	sz.syncAsByte(_nextBell);
 	sz.syncAsByte(_givenPotionToGeida);
 	sz.syncAsByte(_lustieIsAsleep);
 	sz.syncAsByte(_beenTiedUp);
