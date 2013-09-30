@@ -110,21 +110,21 @@ void Background::update() {
 		case 199:
 			_vm->_npcFacing = 177; // Impossible value for this.
 			break;
-		}
+		default:
+			if (_vm->_roomTime % 200 <= 178) { // Normally.
+				byte direction = 0;
+				uint16 angle = _vm->bearing(1);
+				if (((angle >= 1) && (angle <= 90)) || ((angle >= 358) && (angle <= 360)))
+					direction = 3;
+				else if ((angle >= 293) && (angle <= 357))
+					direction = 2;
+				else if ((angle >= 271) && (angle <= 292))
+					direction = 4;
 
-		if ((_vm->_roomTime % 200 >= 0) && (_vm->_roomTime % 200 <= 178)) { // Normally.
-			byte direction = 0;
-			uint16 angle = _vm->bearing(1);
-			if (((angle >= 1) && (angle <= 90)) || ((angle >= 358) && (angle <= 360)))
-				direction = 3;
-			else if ((angle >= 293) && (angle <= 357))
-				direction = 2;
-			else if ((angle >= 271) && (angle <= 292))
-				direction = 4;
-
-			if (direction != _vm->_npcFacing) { // Dogfood.
-				draw(-1, -1, direction - 1);
-				_vm->_npcFacing = direction;
+				if (direction != _vm->_npcFacing) { // Dogfood.
+					draw(-1, -1, direction - 1);
+					_vm->_npcFacing = direction;
+				}
 			}
 		}
 		break;
