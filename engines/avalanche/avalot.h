@@ -87,10 +87,6 @@ struct FieldType {
 	int16 _x1, _y1, _x2, _y2;
 };
 
-struct ByteField {
-	byte _x1, _y1, _x2, _y2;
-};
-
 struct LineType : public FieldType {
 	Color _color;
 };

@@ -359,21 +359,10 @@ void Background::draw(int16 destX, int16 destY, byte sprId) {
 	}
 }
 
+/**
+ * @remarks	Originally called 'display_it'
+ */
 void Background::drawSprite(int16 x, int16 y, SpriteType &sprite) {
-	_r._x1 = x;
-	_r._y1 = y;
-	_r._y2 = y + sprite._yl;
-
-	switch (sprite._type) {
-	case kNaturalImage: // Allow fallthrough on purpose.
-	case kBgi:
-		_r._x2 = x + sprite._xl + 1;
-		break;
-	case kEga:
-		_r._x2 = x + sprite._xl;
-		break;
-	}
-
 	// These pictures are practically parts of the background. -10 is for the drop-down menu.
 	_vm->_graphics->drawBackgroundSprite(x, y - 10, sprite);
 }

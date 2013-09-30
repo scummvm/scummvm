@@ -170,16 +170,6 @@ bool AnimationType::checkCollision() {
 }
 
 void AnimationType::walk() {
-	if (_visible) {
-		ByteField r;
-		r._x1 = (_x / 8) - 1;
-		if (r._x1 == 255)
-			r._x1 = 0;
-		r._y1 = _y - 2;
-		r._x2 = ((_x + _info._xLength) / 8) + 1;
-		r._y2 = _y + _info._yLength + 2;
-	}
-
 	if (!_anim->_vm->_doingSpriteRun) {
 		_oldX[_anim->_vm->_cp] = _x;
 		_oldY[_anim->_vm->_cp] = _y;
