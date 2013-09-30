@@ -35,7 +35,8 @@ class Sound : public MemoryObject {
 
   public:
 	Sound();
-	bool load(MfcArchive &file, NGIArchive *archive);
+	virtual bool load(MfcArchive &file, NGIArchive *archive);
+	virtual bool load(MfcArchive &file) { assert(0); } // Disable base class
 	void updateVolume();
 
 	void setPanAndVolumeByStaticAni();
@@ -48,7 +49,8 @@ class SoundList : public CObject {
 
  public:
 	SoundList();
-	bool load(MfcArchive &file, char *fname);
+	virtual bool load(MfcArchive &file, char *fname);
+	virtual bool load(MfcArchive &file) { assert(0); } // Disable base class
 	bool loadFile(const char *fname, char *libname);
 
 	int getCount() { return _soundItemsCount; }

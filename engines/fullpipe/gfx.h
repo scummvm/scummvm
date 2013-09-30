@@ -157,7 +157,9 @@ class PictureObject : public GameObject {
 	PictureObject();
 	PictureObject(PictureObject *src);
 
-	bool load(MfcArchive &file, bool bigPicture);
+	virtual bool load(MfcArchive &file, bool bigPicture);
+	virtual bool load(MfcArchive &file) { assert(0); } // Disable base class
+
 	Common::Point *getDimensions(Common::Point *p);
 	void draw();
 	void drawAt(int x, int y);
