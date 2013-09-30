@@ -176,9 +176,6 @@ void Dialogs::scrollModeNormal() {
 }
 
 void Dialogs::scrollModeDialogue() {
-	warning("STUB: Scrolls::scrollModeDialogue()");
-	// It should work with keypresses too! TODO: Implement it!
-
 	_vm->_graphics->loadMouse(kCurHand);
 
 	_vm->_graphics->saveScreen();
@@ -189,13 +186,25 @@ void Dialogs::scrollModeDialogue() {
 		_vm->_graphics->refreshScreen();
 
 		_vm->getEvent(event);
+
 		Common::Point cursorPos = _vm->getMousePos();
 		cursorPos.y /= 2;
-		if (_vm->shouldQuit() || (event.type == Common::EVENT_LBUTTONUP)) {
-			if ((cursorPos.x >= _shadowBoxX - 65) && (cursorPos.y >= _shadowBoxY - 24) && (cursorPos.x <= _shadowBoxX - 5) && (cursorPos.y <= _shadowBoxY - 10)) {
+
+		char inChar = 0;
+		if (event.type == Common::EVENT_KEYDOWN) {
+			inChar = (char)event.kbd.ascii;
+			Common::String temp(inChar);
+			temp.toUppercase();
+			inChar = temp[0];
+		}
+
+		if (_vm->shouldQuit() || (event.type == Common::EVENT_LBUTTONUP) || (event.type == Common::EVENT_KEYDOWN)) {
+			if (((cursorPos.x >= _shadowBoxX - 65) && (cursorPos.y >= _shadowBoxY - 24) && (cursorPos.x <= _shadowBoxX - 5) && (cursorPos.y <= _shadowBoxY - 10))
+				|| (inChar == 'Y') || (inChar == 'J') || (inChar == 'O')) { // Yes, Ja, Oui
 				_scReturn = true;
 				break;
-			} else if ((cursorPos.x >= _shadowBoxX + 5) && (cursorPos.y >= _shadowBoxY - 24) && (cursorPos.x <= _shadowBoxX + 65) && (cursorPos.y <= _shadowBoxY - 10)) {
+			} else if (((cursorPos.x >= _shadowBoxX + 5) && (cursorPos.y >= _shadowBoxY - 24) && (cursorPos.x <= _shadowBoxX + 65) && (cursorPos.y <= _shadowBoxY - 10))
+						|| (inChar == 'N')){ // No, Non, Nein
 				_scReturn = false;
 				break;
 			}
