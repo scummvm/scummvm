@@ -657,12 +657,12 @@ int32 UIObject::getHeight() const {
 }
 
 void UIObject::setWidth(int32 width) {
-	assert (width >= 0);
+	assert(width >= 0);
 	_width = width;
 }
 
 void UIObject::setHeight(int32 height) {
-	assert (height >= 0);
+	assert(height >= 0);
 	_height = height;
 }
 
