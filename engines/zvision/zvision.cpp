@@ -61,11 +61,11 @@ ZVision::ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc)
 		  _stringManager(nullptr),
 		  _cursorManager(nullptr) {
  
-	debug("ZVision::ZVision");
+	debug(1, "ZVision::ZVision");
 }
 
 ZVision::~ZVision() {
-	debug("ZVision::~ZVision");
+	debug(1, "ZVision::~ZVision");
  
 	// Dispose of resources
 	delete _console;

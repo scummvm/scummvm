@@ -242,8 +242,7 @@ void RlfAnimation::decodeMaskedRunLengthEncoding(int8 *source, int8 *dest, uint3
 				if (sourceOffset + 1 >= sourceSize) {
 					return;
 				} else if (destOffset + 1 >= destSize) {
-					// TODO: Make this warning silent or in a high debug level. It happens for almost all frames.
-					//warning("Frame decoding overflow\n\tsourceOffset=%u\tsourceSize=%u\n\tdestOffset=%u\tdestSize=%u", sourceOffset, sourceSize, destOffset, destSize);
+					debug(2, "Frame decoding overflow\n\tsourceOffset=%u\tsourceSize=%u\n\tdestOffset=%u\tdestSize=%u", sourceOffset, sourceSize, destOffset, destSize);
 					return;
 				}
 
@@ -263,8 +262,7 @@ void RlfAnimation::decodeMaskedRunLengthEncoding(int8 *source, int8 *dest, uint3
 			if (sourceOffset + 1 >= sourceSize) {
 				return;
 			} else if (destOffset + 1 >= destSize) {
-				// TODO: Make this warning silent or in a high debug level. It happens for almost all frames.
-				//warning("Frame decoding overflow\n\tsourceOffset=%u\tsourceSize=%u\n\tdestOffset=%u\tdestSize=%u", sourceOffset, sourceSize, destOffset, destSize);
+				debug(2, "Frame decoding overflow\n\tsourceOffset=%u\tsourceSize=%u\n\tdestOffset=%u\tdestSize=%u", sourceOffset, sourceSize, destOffset, destSize);
 				return;
 			}
 
@@ -290,8 +288,7 @@ void RlfAnimation::decodeSimpleRunLengthEncoding(int8 *source, int8 *dest, uint3
 				if (sourceOffset + 1 >= sourceSize) {
 					return;
 				} else if (destOffset + 1 >= destSize) {
-					// TODO: Make this warning silent or in a high debug level. It happens for almost all frames.
-					//warning("Frame decoding overflow\n\tsourceOffset=%u\tsourceSize=%u\n\tdestOffset=%u\tdestSize=%u", sourceOffset, sourceSize, destOffset, destSize);
+					debug(2, "Frame decoding overflow\n\tsourceOffset=%u\tsourceSize=%u\n\tdestOffset=%u\tdestSize=%u", sourceOffset, sourceSize, destOffset, destSize);
 					return;
 				}
 
@@ -320,8 +317,7 @@ void RlfAnimation::decodeSimpleRunLengthEncoding(int8 *source, int8 *dest, uint3
 			numberOfSamples += 2;
 			while (numberOfSamples > 0) {
 				if (destOffset + 1 >= destSize) {
-					// TODO: Make this warning silent or in a high debug level. It happens for almost all frames.
-					//warning("Frame decoding overflow\n\tsourceOffset=%u\tsourceSize=%u\n\tdestOffset=%u\tdestSize=%u", sourceOffset, sourceSize, destOffset, destSize);
+					debug(2, "Frame decoding overflow\n\tsourceOffset=%u\tsourceSize=%u\n\tdestOffset=%u\tdestSize=%u", sourceOffset, sourceSize, destOffset, destSize);
 					return;
 				}
 

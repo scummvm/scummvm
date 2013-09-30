@@ -41,17 +41,17 @@ ZfsArchive::ZfsArchive(const Common::String &fileName) : _fileName(fileName) {
 
 	readHeaders(&zfsFile);
 
-	debug(0, "ZfsArchive::ZfsArchive(%s): Located %d files", _fileName.c_str(), _entryHeaders.size());
+	debug(1, "ZfsArchive::ZfsArchive(%s): Located %d files", _fileName.c_str(), _entryHeaders.size());
 }
 
 ZfsArchive::ZfsArchive(const Common::String &fileName, Common::SeekableReadStream *stream) : _fileName(fileName) {
 	readHeaders(stream);
 
-	debug(0, "ZfsArchive::ZfsArchive(%s): Located %d files", _fileName.c_str(), _entryHeaders.size());
+	debug(1, "ZfsArchive::ZfsArchive(%s): Located %d files", _fileName.c_str(), _entryHeaders.size());
 }
 
 ZfsArchive::~ZfsArchive() {
-	debug(0, "ZfsArchive Destructor Called");
+	debug(1, "ZfsArchive Destructor Called");
 	ZfsEntryHeaderMap::iterator it = _entryHeaders.begin();
 	for ( ; it != _entryHeaders.end(); ++it) {
 		delete it->_value;

@@ -173,7 +173,7 @@ void ScriptManager::checkPuzzleCriteria() {
 
 		// criteriaList can be empty. Aka, the puzzle should be executed immediately
 		if (puzzle->criteriaList.empty() || criteriaMet) {
-			debug("Puzzle %u criteria passed. Executing its ResultActions", puzzle->key);
+			debug(1, "Puzzle %u criteria passed. Executing its ResultActions", puzzle->key);
 
 			// Set the puzzle as completed
 			setStateValue(puzzle->key, 1);
@@ -306,7 +306,7 @@ void ScriptManager::onKeyUp(Common::KeyState keyState) {
 
 void ScriptManager::changeLocation(char world, char room, char node, char view, uint32 offset) {
 	assert(world != 0);
-	debug("Changing location to: %c %c %c %c %u", world, room, node, view, offset);
+	debug(1, "Changing location to: %c %c %c %c %u", world, room, node, view, offset);
 
 	// Auto save
 	_engine->getSaveManager()->autoSave();
