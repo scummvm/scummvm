@@ -130,7 +130,7 @@ void Background::update() {
 		break;
 	case kRoomWestHall:
 		if ((_vm->_roomTime % 3) == 0) {
-			switch ((_vm->_roomTime / int32(3)) % int32(6)) {
+			switch ((_vm->_roomTime / 3) % 6) {
 			case 4:
 				draw(-1, -1, 0);
 				break;
@@ -246,7 +246,7 @@ void Background::update() {
 		break;
 	}
 
-	if ((_vm->_bellsAreRinging) && (_vm->setFlag('B'))) {
+	if ((_vm->_bellsAreRinging) && (_vm->getFlag('B'))) {
 		// They're ringing the bells.
 		switch (_vm->_roomTime % 4) {
 		case 1:

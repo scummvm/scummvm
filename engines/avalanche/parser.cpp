@@ -1940,7 +1940,7 @@ void Parser::doThat() {
 		if (isHolding()) {
 			if (_thing == kObjectBell) {
 				_vm->_dialogs->displayText("Ding, dong, ding, dong, ding, dong, ding, dong...");
-				if ((_vm->_bellsAreRinging) & (_vm->setFlag('B')))
+				if ((_vm->_bellsAreRinging) & (_vm->getFlag('B')))
 					// \? are used to avoid that ??! is parsed as a trigraph
 					_vm->_dialogs->displayText("(Are you trying to join in, Avvy\?\?!)");
 			} else
@@ -1962,7 +1962,7 @@ void Parser::doThat() {
 		warning("STUB: Parser::doThat() - case kVerbCodeboss");
 		break;
 	case kVerbCodePee:
-		if (_vm->setFlag('P')) {
+		if (_vm->getFlag('P')) {
 			_vm->_dialogs->displayText("Hmm, I don't think anyone will notice...");
 			_vm->_timer->addTimer(4, Timer::kProcUrinate, Timer::kReasonGoToToilet);
 		} else {
@@ -2025,7 +2025,7 @@ void Parser::doThat() {
 		_sworeNum++;
 		break;
 	case kVerbCodeListen:
-		if ((_vm->_bellsAreRinging) & (_vm->setFlag('B')))
+		if ((_vm->_bellsAreRinging) & (_vm->getFlag('B')))
 			_vm->_dialogs->displayText("All other noise is drowned out by the ringing of the bells.");
 		else if (_vm->_listen.empty())
 			_vm->_dialogs->displayText("You can't hear anything much at the moment, Avvy.");

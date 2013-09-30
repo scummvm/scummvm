@@ -684,7 +684,7 @@ void AvalancheEngine::enterRoom(Room roomId, byte ped) {
 
 	loadRoom(roomId);
 
-	if ((_roomCount[roomId] == 0) && (!setFlag('S')))
+	if ((_roomCount[roomId] == 0) && (!getFlag('S')))
 		incScore(1);
 
 	_whereIs[kPeopleAvalot - 150] = _room;
@@ -1550,7 +1550,7 @@ void AvalancheEngine::slowDown() {
 	warning("STUB: slowdown()");
 }
 
-bool AvalancheEngine::setFlag(char x) {
+bool AvalancheEngine::getFlag(char x) {
 	for (uint16 i = 0; i < _flags.size(); i++) {
 		if (_flags[i] == x)
 			return true;
