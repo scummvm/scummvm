@@ -73,8 +73,8 @@ public:
 	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
 	virtual const char *scToString();
 	
-	bool getInGame();
-	TWindowMode getMode();
+	bool getInGame() const;
+	TWindowMode getMode() const;
 
 private:
 	bool _pauseMusic;

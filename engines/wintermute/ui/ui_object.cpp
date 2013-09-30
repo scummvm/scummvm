@@ -666,11 +666,11 @@ void UIObject::setHeight(int32 height) {
 	_height = height;
 }
 
-bool UIObject::isDisabled() {
+bool UIObject::isDisabled() const {
 	return _disable;
 } 
 
-bool UIObject::isVisible() {
+bool UIObject::isVisible() const {
 	return _visible;
 }
 
@@ -682,7 +682,7 @@ void UIObject::setDisabled(bool disable) {
 	_disable = disable;
 }
 
-bool UIObject::hasSharedFonts() {
+bool UIObject::hasSharedFonts() const {
 	return _sharedFonts;
 }
 
@@ -690,7 +690,7 @@ void UIObject::setSharedFonts(bool shared) {
 	_sharedFonts = shared;
 }
 
-bool UIObject::hasSharedImages() {
+bool UIObject::hasSharedImages() const {
 	return _sharedImages;
 }
 
@@ -706,7 +706,7 @@ void UIObject::setImage(BaseSprite *image) {
 	_image = image;
 }
 
-bool UIObject::canFocus() {
+bool UIObject::canFocus() const {
 	return _canFocus;
 }
 
@@ -714,7 +714,7 @@ void UIObject::setFont(BaseFont *font) {
 	_font = font;
 }
 
-BaseFont *UIObject::getFont() const {
+BaseFont *UIObject::getFont() {
 	return _font;
 }
 

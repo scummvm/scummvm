@@ -72,19 +72,19 @@ public:
 	int32 getHeight() const;
 	void setHeight(int32 height);
 	void setWidth(int32 width);
-	bool isDisabled();
+	bool isDisabled() const;
 	void setDisabled(bool disable);
-	bool isVisible();
+	bool isVisible() const;
 	void setVisible(bool visible);
-	bool hasSharedFonts();
+	bool hasSharedFonts() const;
 	void setSharedFonts(bool shared);
-	bool hasSharedImages();
+	bool hasSharedImages() const;
 	void setSharedImages(bool shared);
 	BaseSprite *getImage() const;
 	void setImage(BaseSprite *image);
 	void setFont(BaseFont *font);
-	BaseFont *getFont() const;
-	bool canFocus();
+	BaseFont *getFont();
+	bool canFocus() const;
 
 protected:
 	BaseScriptHolder *_listenerParamObject;

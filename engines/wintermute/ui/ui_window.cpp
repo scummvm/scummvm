@@ -1442,11 +1442,11 @@ bool UIWindow::getWindowObjects(BaseArray<UIObject *> &objects, bool interactive
 	return STATUS_OK;
 }
 
-bool UIWindow::getInGame() {
+bool UIWindow::getInGame() const {
 	return _inGame;
 }
 
-TWindowMode UIWindow::getMode() {
+TWindowMode UIWindow::getMode() const {
 	return _mode;
 }
 

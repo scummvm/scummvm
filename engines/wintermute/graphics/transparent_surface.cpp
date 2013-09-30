@@ -612,7 +612,7 @@ void TransparentSurface::applyColorKey(uint8 rKey, uint8 gKey, uint8 bKey, bool 
 	}
 }
 
-TransparentSurface::AlphaType TransparentSurface::getAlphaMode() {
+TransparentSurface::AlphaType TransparentSurface::getAlphaMode() const {
 	return _alphaMode;
 }
 
