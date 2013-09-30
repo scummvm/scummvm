@@ -648,4 +648,79 @@ bool UIObject::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	return STATUS_FAILED;
 }
 
+int32 UIObject::getWidth() const {
+	return _width;
+}
+
+int32 UIObject::getHeight() const {
+	return _height;
+}
+
+void UIObject::setWidth(int32 width) {
+	assert(width >= 0);
+	_width = width;
+}
+
+void UIObject::setHeight(int32 height) {
+	assert(height >= 0);
+	_height = height;
+}
+
+bool UIObject::isDisabled() const {
+	return _disable;
+}
+
+bool UIObject::isVisible() const {
+	return _visible;
+}
+
+void UIObject::setVisible(bool visible) {
+	_visible = visible;
+}
+
+void UIObject::setDisabled(bool disable) {
+	_disable = disable;
+}
+
+bool UIObject::hasSharedFonts() const {
+	return _sharedFonts;
+}
+
+void UIObject::setSharedFonts(bool shared) {
+	_sharedFonts = shared;
+}
+
+bool UIObject::hasSharedImages() const {
+	return _sharedImages;
+}
+
+void UIObject::setSharedImages(bool shared) {
+	_sharedImages = shared;
+}
+
+BaseSprite *UIObject::getImage() const {
+	return _image;
+}
+
+void UIObject::setImage(BaseSprite *image) {
+	_image = image;
+}
+
+bool UIObject::canFocus() const {
+	return _canFocus;
+}
+
+void UIObject::setFont(BaseFont *font) {
+	_font = font;
+}
+
+BaseFont *UIObject::getFont() {
+	return _font;
+}
+
+BaseScriptHolder *UIObject::getListener() const {
+	return _listenerObject;
+}
+
+
 } // End of namespace Wintermute

@@ -627,9 +627,9 @@ bool UIEdit::display(int offsetX, int offsetY) {
 		curFirst = true;
 	} else {
 		while (font->getTextWidth((byte *)_text + _scrollOffset, MAX<int32>(0, _selStart - _scrollOffset)) +
-		        sfont->getTextWidth((byte *)(_text + MAX<int32>(_scrollOffset, _selStart)), _selEnd - MAX(_scrollOffset, _selStart))
+				sfont->getTextWidth((byte *)(_text + MAX<int32>(_scrollOffset, _selStart)), _selEnd - MAX(_scrollOffset, _selStart))
 
-		        > _width - cursorWidth - 2 * _frameWidth) {
+				> _width - cursorWidth - 2 * _frameWidth) {
 			_scrollOffset++;
 			if (_scrollOffset >= (int)strlen(_text)) {
 				break;

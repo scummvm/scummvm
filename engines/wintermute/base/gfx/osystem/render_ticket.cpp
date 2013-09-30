@@ -107,9 +107,9 @@ void RenderTicket::drawToSurface(Graphics::Surface *_targetSurface) const {
 
 	if (_owner) {
 		if (_transform._alphaDisable) {
-			src._alphaMode = TransparentSurface::ALPHA_OPAQUE;
+			src.setAlphaMode(TransparentSurface::ALPHA_OPAQUE);
 		} else {
-			src._alphaMode = _owner->getAlphaType();
+			src.setAlphaMode(_owner->getAlphaType());
 		}
 	}
 	src.blit(*_targetSurface, _dstRect.left, _dstRect.top, _transform._flip, &clipRect, _transform._rgbaMod, clipRect.width(), clipRect.height());
@@ -127,9 +127,9 @@ void RenderTicket::drawToSurface(Graphics::Surface *_targetSurface, Common::Rect
 
 	if (_owner) {
 		if (_transform._alphaDisable) {
-			src._alphaMode = TransparentSurface::ALPHA_OPAQUE;
+			src.setAlphaMode(TransparentSurface::ALPHA_OPAQUE);
 		} else {
-			src._alphaMode = _owner->getAlphaType();
+			src.setAlphaMode(_owner->getAlphaType());
 		}
 	}
 	src.blit(*_targetSurface, dstRect->left, dstRect->top, _transform._flip, clipRect, _transform._rgbaMod, clipRect->width(), clipRect->height(), _transform._blendMode);
