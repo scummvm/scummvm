@@ -41,13 +41,13 @@ ZfsArchive::ZfsArchive(const Common::String &fileName) : _fileName(fileName) {
 
 	readHeaders(&zfsFile);
 
-	debug(0, "ArjArchive::ArjArchive(%s): Located %d files", _fileName.c_str(), _entryHeaders.size());
+	debug(0, "ZfsArchive::ZfsArchive(%s): Located %d files", _fileName.c_str(), _entryHeaders.size());
 }
 
 ZfsArchive::ZfsArchive(const Common::String &fileName, Common::SeekableReadStream *stream) : _fileName(fileName) {
 	readHeaders(stream);
 
-	debug(0, "ArjArchive::ArjArchive(%s): Located %d files", _fileName.c_str(), _entryHeaders.size());
+	debug(0, "ZfsArchive::ZfsArchive(%s): Located %d files", _fileName.c_str(), _entryHeaders.size());
 }
 
 ZfsArchive::~ZfsArchive() {
