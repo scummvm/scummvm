@@ -38,7 +38,7 @@
 
 namespace Graphics {
 
-PNGDecoder::PNGDecoder() : _outputSurface(0), _palette(0), _paletteColorCount(0) {
+PNGDecoder::PNGDecoder() : _outputSurface(0), _palette(0), _paletteColorCount(0), _stream(0) {
 }
 
 PNGDecoder::~PNGDecoder() {
