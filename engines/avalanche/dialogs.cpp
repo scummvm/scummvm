@@ -340,14 +340,14 @@ void Dialogs::scrollModeMusic() {
 }
 
 void Dialogs::resetScrollDriver() {
-	_vm->_scrollBells = 0;
+	_scrollBells = 0;
 	_currentFont = kFontStyleRoman;
 	_useIcon = 0;
 	_vm->_interrogation = 0; // Always reset after a scroll comes up.
 }
 
 void Dialogs::ringBell() {   // Pussy's in the well. Who put her in? Little...
-	for (int i = 0; i < _vm->_scrollBells; i++)
+	for (int i = 0; i < _scrollBells; i++)
 		_vm->errorLed(); // Ring the bell "x" times.
 }
 
@@ -533,7 +533,7 @@ void Dialogs::drawBubble(DialogFunctionType modeFunc) {
 	for (int i = 0; i <= _maxLineNum; i++) {
 		int16 x = xc + _vm->_talkX - _scroll[i].size() / 2 * 8;
 		bool offset = _scroll[i].size() % 2;
-		_vm->_graphics->drawScrollText(_scroll[i], _vm->_font, 8, x - offset * 4, (i * 10) + 12, _vm->_talkFontColor);
+		_vm->_graphics->drawScrollText(_scroll[i], _vm->_font, 8, x - offset * 4, (i * 10) + 12, _vm->_graphics->_talkFontColor);
 	}
 
 	ringBell();
@@ -559,8 +559,7 @@ void Dialogs::reset() {
 void Dialogs::setBubbleStateNatural() {
 	_vm->_talkX = 320;
 	_vm->_talkY = 200;
-	_vm->_talkBackgroundColor = kColorDarkgray;
-	_vm->_talkFontColor = kColorWhite;
+	_vm->_graphics->setDialogColor(kColorDarkgray, kColorWhite);
 }
 
 Common::String Dialogs::displayMoney() {
@@ -656,8 +655,8 @@ void Dialogs::callDialogDriver() {
 					return;
 				break;
 			case kControlBell:
-				_vm->_scrollBells++;
-				break; // #7 = "Bel"
+				_scrollBells++;
+				break;
 			case kControlSpeechBubble:
 				if ((_maxLineNum == 0) && (_scroll[0].empty()))
 					break;
@@ -682,9 +681,8 @@ void Dialogs::callDialogDriver() {
 					PedType *quasiPed = &_vm->_peds[_vm->kQuasipeds[_param - 10]._whichPed];
 					_vm->_talkX = quasiPed->_x;
 					_vm->_talkY = quasiPed->_y; // Position.
-
-					_vm->_talkFontColor = _vm->kQuasipeds[_param - 10]._foregroundColor;
-					_vm->_talkBackgroundColor = _vm->kQuasipeds[_param - 10]._backgroundColor; // Colors.
+					
+					_vm->_graphics->setDialogColor(_vm->kQuasipeds[_param - 10]._backgroundColor, _vm->kQuasipeds[_param - 10]._textColor);
 				} else {
 					_vm->errorLed(); // Not valid.
 					setBubbleStateNatural();

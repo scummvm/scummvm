@@ -58,6 +58,7 @@ public:
 class GraphicManager {
 public:
 	Graphics::Surface _surface;
+	Color _talkBackgroundColor, _talkFontColor;
 
 	GraphicManager(AvalancheEngine *vm);
 	~GraphicManager();
@@ -110,6 +111,7 @@ public:
 	void loadBackground(Common::File &file);
 	void refreshBackground();
 	void setBackgroundColor(Color x);
+	void setDialogColor(Color bg, Color text);
 
 	void zoomOut(int16 x, int16 y); // Only used when entering the map.
 
