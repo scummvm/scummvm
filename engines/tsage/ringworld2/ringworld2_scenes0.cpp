@@ -227,8 +227,6 @@ bool Scene100::Terminal::startAction(CursorType action, Event &event) {
 
 void Scene100::postInit(SceneObjectList *OwnerList) {
 	loadScene(100);
-	R2_GLOBALS._scenePalette.loadPalette(0);
-	R2_GLOBALS._scenePalette.setEntry(255, 255, 255, 255);
 	SceneExt::postInit();
 
 	if (R2_GLOBALS._sceneManager._previousScene != 125)
@@ -1531,6 +1529,9 @@ void Scene180::remove() {
 	_stripManager._field2E8 = -1;
 //	_stripManager._field2EA = -1;
 	SceneExt::remove();
+
+	R2_GLOBALS._scenePalette.loadPalette(0);
+	R2_GLOBALS._scenePalette.setEntry(255, 255, 255, 255);
 
 	R2_GLOBALS._events.setCursor(CURSOR_WALK);
 	// word_575F7 = 0;
@@ -4672,8 +4673,9 @@ bool Scene400::AttractorUnit::startAction(CursorType action, Event &event) {
 /*--------------------------------------------------------------------------*/
 
 void Scene400::postInit(SceneObjectList *OwnerList) {
-	SceneExt::postInit();
 	loadScene(400);
+	SceneExt::postInit();
+
 	_sound1.play(20);
 
 	_door.postInit();
