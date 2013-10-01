@@ -37,9 +37,6 @@
 
 namespace Avalanche {
 
-const char *AvalancheEngine::kVersionNum = "1.30";
-const char *AvalancheEngine::kCopyright = "1995";
-
 const MouseHotspotType AvalancheEngine::kMouseHotSpots[9] = {
 	{8,0}, // 0 - up-arrow
 	{0,0}, // 1 - screwdriver

@@ -41,6 +41,9 @@
 
 namespace Avalanche {
 
+const char *Parser::kCopyright = "1995";
+const char *Parser::kVersionNum = "1.30";
+
 Parser::Parser(AvalancheEngine *vm) {
 	_vm = vm;
 }
@@ -1803,8 +1806,8 @@ void Parser::doThat() {
 		toDisplay = toDisplay + "LORD AVALOT D'ARGENT" + Dialogs::kControlCenter + Dialogs::kControlNewLine
 			+ "The medi\x91val descendant of" + Dialogs::kControlNewLine
 			+ "Denarius Avaricius Sextus" + Dialogs::kControlNewLine + Dialogs::kControlNewLine
-			+ "version " + _vm->kVersionNum + Dialogs::kControlNewLine + Dialogs::kControlNewLine + "Copyright \xEF "
-			+ _vm->kCopyright + ", Mark, Mike and Thomas Thurman." + Dialogs::kControlRegister + 'Y' + Dialogs::kControlIcon;
+			+ "version " + kVersionNum + Dialogs::kControlNewLine + Dialogs::kControlNewLine + "Copyright \xEF "
+			+ kCopyright + ", Mark, Mike and Thomas Thurman." + Dialogs::kControlRegister + 'Y' + Dialogs::kControlIcon;
 		_vm->_dialogs->displayText(toDisplay);
 		_vm->_dialogs->_aboutBox = false;
 		}
