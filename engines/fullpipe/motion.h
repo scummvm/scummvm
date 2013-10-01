@@ -100,13 +100,13 @@ class MctlCompound : public MotionController {
 	void initMovGraph2();
 };
 
-class Unk2 : public CObject {
+class MGM : public CObject {
 public:
 	int _items;
 	int _count;
 
 public:
-	Unk2() : _items(0), _count(0) {}
+	MGM() : _items(0), _count(0) {}
 };
 
 class MovGraphNode : public CObject {
@@ -178,7 +178,7 @@ class MovGraph : public MotionController {
 	int _items;
 	int _itemsCount;
 	int (*_callback1)(int, int, int);
-	Unk2 _unk2;
+	MGM _mgm;
 
  public:
 	MovGraph();
