@@ -62,7 +62,7 @@ private:
 	uint _height;
 	uint32 _frameTime; // In milliseconds
 	Frame *_frames;
-	Common::List<uint> _completeFrames;
+	Common::Array<uint> _completeFrames;
 
 	int _currentFrame;
 	Graphics::Surface _currentFrameBuffer;
