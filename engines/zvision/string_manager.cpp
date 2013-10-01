@@ -241,7 +241,7 @@ Common::String StringManager::readWideLine(Common::SeekableReadStream &stream) {
 	}
 
 	if (charOverflowWarning) {
-		warning("UTF-16 is not supported. Characters greater than 255 are clamped to 255");
+		warning("UTF-16 is not supported. Characters greater than 255 are replaced with '?'");
 	}
 
 	return asciiString;
