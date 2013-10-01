@@ -381,32 +381,6 @@ void Dialogs::getIcon(int16 x, int16 y, byte which) {
 	file.close();
 }
 
-void Dialogs::drawSign(Common::String fn, int16 xl, int16 yl, int16 y) {
-	Common::File file;
-	Common::String filename = Common::String::format("%s.avd", fn.c_str());
-
-	if (!file.open(filename))
-		error("AVALANCHE: Scrolls: File not found: %s", filename.c_str());
-
-#if 0
-	uint16 st = (y - 1) * 80 + (40 - xl / 2) + ((1 - _vm->cp) * _vm->pagetop);
-	byte bit;
-	for (uint16 i = 1; i <= yl; i++)
-		for (bit = 0; bit <= 3; bit++) {
-			port[0x3c4] = 2;
-			port[0x3ce] = 4;
-			port[0x3c5] = 1 << bit;
-			port[0x3cf] = bit;
-			blockread(f, mem[0xa000 * st + (i * 80)], xl);
-		}
-	bit = getpixel(0, 0);
-#endif
-
-	warning("STUB: Scrolls::drawSign()");
-
-	file.close();
-}
-
 void Dialogs::drawScroll(DialogFunctionType modeFunc) {
 	int16 lx = 0;
 	int16 ly = (_maxLineNum + 1) * 6;
@@ -438,11 +412,11 @@ void Dialogs::drawScroll(DialogFunctionType modeFunc) {
 		iconIndent = 0;
 		break; // No icon.
 	case 34:
-		drawSign("about", 28, 76, 15);
+		_vm->_graphics->drawSign("about", 28, 76, 15);
 		iconIndent = 0;
 		break;
 	case 35:
-		drawSign("gameover", 52, 59, 71);
+		_vm->_graphics->drawSign("gameover", 52, 59, 71);
 		iconIndent = 0;
 		break;
 	}

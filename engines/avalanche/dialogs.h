@@ -126,7 +126,6 @@ private:
 	void resetScrollDriver();
 	void ringBell(); // Original: dingdongbell
 	void getIcon(int16 x, int16 y, byte which);
-	void drawSign(Common::String name, int16 xl, int16 yl, int16 y); // This is for drawing a big "about" or "gameover" picture loaded from a file into an empty scroll.
 	void loadFont();
 
 	// From Visa:
