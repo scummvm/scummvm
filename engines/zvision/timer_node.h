@@ -48,7 +48,7 @@ public:
 	inline bool needsSerialization() { return true; }
 
 private:
-	uint32 _timeLeft;
+	int32 _timeLeft;
 };
 
 } // End of namespace ZVision
