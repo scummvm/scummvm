@@ -342,8 +342,6 @@ void OSystem_Android::updateScreenRect() {
 	uint16 h = _game_texture->height();
 
 	if (w && h && !_fullscreen) {
-		if (_ar_correction && w == 320 && h == 200)
-			h = 240;
 
 		float dpi[2];
 		JNI::getDPI(dpi);
@@ -367,8 +365,6 @@ void OSystem_Android::updateScreenRect() {
 			rect.moveTo((_egl_surface_height - rect.height()) / 2, 0);
 		}
 	}
-
-	glScissor(rect.left, rect.top, rect.width(), rect.height());
 
 	_game_texture->setDrawRect(rect);
 }
