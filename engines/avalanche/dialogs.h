@@ -102,6 +102,7 @@ private:
 	byte _useIcon;
 	byte _maxLineNum;
 	bool _scReturn;
+	byte _scrollBells; // no. of times to ring the bell
 
 	// These 3 "Mode" functions are always passed as ScrollsFunctionType parameters.
 	void scrollModeNormal();

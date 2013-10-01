@@ -319,8 +319,7 @@ void AnimationType::stopWalk() {
 void AnimationType::chatter() {
 	_anim->_vm->_talkX = _x + _info._xLength / 2;
 	_anim->_vm->_talkY = _y;
-	_anim->_vm->_talkFontColor = _stat._fgBubbleCol;
-	_anim->_vm->_talkBackgroundColor = _stat._bgBubbleCol;
+	_anim->_vm->_graphics->setDialogColor(_stat._bgBubbleCol, _stat._fgBubbleCol);
 }
 
 void AnimationType::remove() {

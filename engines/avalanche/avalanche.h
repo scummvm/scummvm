@@ -259,15 +259,12 @@ public:
 	bool _dropsOk;
 	bool _cheat; // CHECKME: Currently unused
 	bool _letMeOut;
-
-
-
-
 	byte _thinks;
 	bool _thinkThing;
+
+
+
 	int16 _talkX, _talkY;
-	Color _talkBackgroundColor, _talkFontColor;
-	byte _scrollBells; // no. of times to ring the bell
 	bool _seeScroll; // TODO: maybe this means we're interacting with the toolbar / a scroll?
 	char _objectList[10];
 	// Called .free() for them in ~Gyro().

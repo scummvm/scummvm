@@ -95,7 +95,7 @@ typedef int8 TuneType[31];
 
 struct QuasipedType {
 	byte   _whichPed;
-	Color  _foregroundColor;
+	Color  _textColor;
 	Room   _room;
 	Color  _backgroundColor;
 	People _who;
