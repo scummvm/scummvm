@@ -82,13 +82,13 @@ public:
 	void invalidateTicketsFromSurface(BaseSurfaceOSystem *surf);
 	/**
 	 * Insert a new ticket into the queue, adding a dirty rect
-	 * param renderTicket the ticket to be added.
+	 * @param renderTicket the ticket to be added.
 	 */
 	void drawFromTicket(RenderTicket *renderTicket);
 	/**
 	 * Re-insert an existing ticket into the queue, adding a dirty rect
 	 * out-of-order from last draw from the ticket.
-	 * param ticket iterator pointing to the ticket to be added.
+	 * @param ticket iterator pointing to the ticket to be added.
 	 */
 	void drawFromQueuedTicket(const RenderQueueIterator &ticket);
 
