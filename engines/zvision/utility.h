@@ -61,19 +61,33 @@ void trimCommentsAndWhiteSpace(Common::String *string);
 void dumpEveryResultAction(const Common::String &destFile);
 
 /**
- * Removes all duplicate entries from container.
+ * Removes all duplicate entries from container. Relative order will be preserved.
  *
- * @param container        
- * @return                
+ * @param container    The Array to remove duplicate entries from
  */
 template<class T>
 void removeDuplicateEntries(Common::Array<T> &container) {
-	Common::sort(container.begin(), container.end());
+	// Length of modified array
+	int newLength = 1;
+	int j;
 
-	for (uint i = 0; i + 1 < container.size(); ++i) {
-		while (i + 1 < container.size() && container[i] == container[i + 1]) {
-			container.remove_at(i + 1);
+	for(int i = 1; i < container.size(); i++) {
+		for(j = 0; j < newLength; j++) {
+			if (container[i] == container[j]) {
+				break;
+			}
 		}
+
+		// If none of the values in index[0..j] of container are the same as array[i],
+		// then copy the current value to corresponding new position in array
+		if (j == newLength) {
+			container[newLength++] = container[i];
+		}
+	}
+
+	// Actually remove the unneeded space
+	while (container.size() < newLength) {
+		container.pop_back();
 	}
 }
 
