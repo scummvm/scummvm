@@ -569,32 +569,30 @@ void Dialogs::callDialogDriver() {
 	bool mouthnext = false;
 	bool callSpriteRun = true; // Only call sprite_run the FIRST time.
 
-	switch (_vm->_buffer[_vm->_bufSize - 1]) {
+	switch (_buffer[_bufSize - 1]) {
 	case kControlToBuffer:
-		_vm->_bufSize--;
+		_bufSize--;
 		break; // ^D = (D)on't include pagebreak
 	case kControlSpeechBubble:
 	case kControlQuestion:
 		break; // ^B = speech (B)ubble, ^Q = (Q)uestion in dialogue box
 	default:
-		_vm->_buffer[_vm->_bufSize] = kControlParagraph;
-		_vm->_bufSize++;
+		_buffer[_bufSize] = kControlParagraph;
+		_bufSize++;
 	}
 
-	uint16 size = _vm->_bufSize;
-
-	for (uint16 i = 0; i < size; i++) {
+	for (uint16 i = 0; i < _bufSize; i++) {
 		if (mouthnext) {
-			if (_vm->_buffer[i] == kControlRegister)
+			if (_buffer[i] == kControlRegister)
 				_param = 0;
-			else if (('0' <= _vm->_buffer[i]) && (_vm->_buffer[i] <= '9'))
-				_param = _vm->_buffer[i] - 48;
-			else if (('A' <= _vm->_buffer[i]) && (_vm->_buffer[i] <= 'Z'))
-				_param = _vm->_buffer[i] - 55;
+			else if (('0' <= _buffer[i]) && (_buffer[i] <= '9'))
+				_param = _buffer[i] - 48;
+			else if (('A' <= _buffer[i]) && (_buffer[i] <= 'Z'))
+				_param = _buffer[i] - 55;
 
 			mouthnext = false;
 		} else {
-			switch (_vm->_buffer[i]) {
+			switch (_buffer[i]) {
 			case kControlParagraph:
 				if ((_maxLineNum == 0) && (_scroll[0].empty()))
 					break;
@@ -732,7 +730,7 @@ void Dialogs::callDialogDriver() {
 					solidify(_maxLineNum);
 					_maxLineNum++;
 				}
-				_scroll[_maxLineNum] += _vm->_buffer[i];
+				_scroll[_maxLineNum] += _buffer[i];
 				break;
 			}
 		}
@@ -740,8 +738,8 @@ void Dialogs::callDialogDriver() {
 }
 
 void Dialogs::displayText(Common::String text) { // TODO: REPLACE BUFFER WITH A STRING!!!!!!!!!!
-	_vm->_bufSize = text.size();
-	memcpy(_vm->_buffer, text.c_str(), _vm->_bufSize);
+	_bufSize = text.size();
+	memcpy(_buffer, text.c_str(), _bufSize);
 	callDialogDriver();
 }
 
@@ -801,13 +799,14 @@ void Dialogs::displayMusicalScroll() {
 // From Visa:
 
 void Dialogs::unSkrimble() {
-	for (uint16  i = 0; i < _vm->_bufSize; i++)
-		_vm->_buffer[i] = (~(_vm->_buffer[i] - (i + 1))) % 256;
+	for (uint16  i = 0; i < _bufSize; i++)
+		_buffer[i] = (~(_buffer[i] - (i + 1))) % 256;
 }
 
 void Dialogs::doTheBubble() {
-	_vm->_buffer[_vm->_bufSize] = 2;
-	_vm->_bufSize++;
+	_buffer[_bufSize] = 2;
+	_bufSize++;
+	assert(_bufSize < 2000);
 }
 
 /**
@@ -848,8 +847,9 @@ void Dialogs::displayScrollChain(char block, byte point, bool report, bool bubbl
 		::error("AVALANCHE: Visa: File not found: avalot.sez");
 
 	sezfile.seek(sez_offset);
-	_vm->_bufSize = sezfile.readUint16LE();
-	sezfile.read(_vm->_buffer, _vm->_bufSize);
+	_bufSize = sezfile.readUint16LE();
+	assert(_bufSize < 2000);
+	sezfile.read(_buffer, _bufSize);
 	sezfile.close();
 	unSkrimble();
 
@@ -884,8 +884,8 @@ void Dialogs::speak(byte who, byte subject) {
 		return;
 
 	indexfile.seek(idx_offset + subject * 2);
-	uint16 sez_offset = indexfile.readUint16LE();
-	if ((sez_offset == 0) || (indexfile.err()))
+	uint16 sezOffset = indexfile.readUint16LE();
+	if ((sezOffset == 0) || (indexfile.err()))
 		return;
 	indexfile.close();
 
@@ -893,9 +893,10 @@ void Dialogs::speak(byte who, byte subject) {
 	if (!sezfile.open("avalot.sez"))
 		error("AVALANCHE: Visa: File not found: avalot.sez");
 
-	sezfile.seek(sez_offset);
-	_vm->_bufSize = sezfile.readUint16LE();
-	sezfile.read(_vm->_buffer, _vm->_bufSize);
+	sezfile.seek(sezOffset);
+	_bufSize = sezfile.readUint16LE();
+	assert(_bufSize < 2000);
+	sezfile.read(_buffer, _bufSize);
 	sezfile.close();
 
 	unSkrimble();
