@@ -180,9 +180,9 @@ bool ActionMusic::execute(ZVision *engine) {
 	Audio::RewindableAudioStream *audioStream;
 
 	if (_fileName.contains(".wav")) {
-		Common::File file;
-		if (file.open(_fileName)) {
-			audioStream = Audio::makeWAVStream(&file, DisposeAfterUse::NO);
+		Common::File *file = new Common::File();
+		if (file->open(_fileName)) {
+			audioStream = Audio::makeWAVStream(file, DisposeAfterUse::YES);
 		}
 	} else {
 		audioStream = makeRawZorkStream(_fileName, engine);
