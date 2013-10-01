@@ -117,6 +117,8 @@ Common::SeekableReadStream *openDiskFile(const Common::String &filename) {
 	if (fixedFilename.contains(':')) {
 		if (fixedFilename.hasPrefix("c:/windows/fonts/")) { // East Side Story refers to "c:\windows\fonts\framd.ttf"
 			fixedFilename = filename.c_str() + 14;
+		} else if (fixedFilename.hasPrefix("c:/carol6/svn/data/")) {	// Carol Reed 6: Black Circle refers to "c:\carol6\svn\data\sprites\system\help.png"
+			fixedFilename = fixedFilename.c_str() + 19;
 		} else {
 			error("openDiskFile::Absolute path or invalid filename used in %s", filename.c_str());
 		}
