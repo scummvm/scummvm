@@ -144,6 +144,7 @@ PredictiveDialog::PredictiveDialog() : Dialog("Predictive") {
 	_currentWord.clear();
 	_wordNumber = 0;
 	_numMatchingWords = 0;
+	memset(_predictiveResult, 0, sizeof(_predictiveResult));
 
 	_lastbutton = kNoAct;
 	_mode = kModePre;
