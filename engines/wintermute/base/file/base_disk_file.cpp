@@ -149,7 +149,8 @@ Common::SeekableReadStream *openDiskFile(const Common::String &filename) {
 		}
 
 		if (compressed) {
-			uint32 dataOffset, compSize, uncompSize;
+			uint32 dataOffset, compSize;
+			unsigned long uncompSize;
 			dataOffset = file->readUint32LE();
 			compSize = file->readUint32LE();
 			uncompSize = file->readUint32LE();
@@ -171,7 +172,7 @@ Common::SeekableReadStream *openDiskFile(const Common::String &filename) {
 			file->seek(dataOffset + prefixSize, SEEK_SET);
 			file->read(compBuffer, compSize);
 
-			if (Common::uncompress(data, (unsigned long *)&uncompSize, compBuffer, compSize) != true) {
+			if (Common::uncompress(data, &uncompSize, compBuffer, compSize) != true) {
 				error("Error uncompressing file '%s'", filename.c_str());
 				delete[] compBuffer;
 				delete file;
