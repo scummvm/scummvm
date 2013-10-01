@@ -179,9 +179,6 @@ public:
 	static const uint16 kNotes[12];
 	static const TuneType kTune;
 
-	static const char *kVersionNum;
-	static const char *kCopyright;
-
 	bool _holdLeftMouse;
 
 	// If this is greater than zero, the next line you type is stored in the DNA in a position dictated by the value.

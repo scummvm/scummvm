@@ -103,6 +103,9 @@ private:
 		Common::String _title;
 	};
 
+	static const char *kCopyright;
+	static const char *kVersionNum;
+
 	Common::String _thats;
 	byte _thing2;
 	byte _sworeNum; // number of times you've sworn
