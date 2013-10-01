@@ -421,6 +421,9 @@ void PredictiveDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 d
 	case kCancelCmd:
 		saveUserDictToFile();
 		close();
+		// When we cancel the dialog no result should be returned. Thus, we
+		// will invalidate any result here.
+		_predictiveResult[0] = 0;
 		return;
 	case kOkCmd:
 		_currBtn = kOkAct;
