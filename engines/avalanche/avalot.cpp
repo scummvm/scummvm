@@ -1526,7 +1526,7 @@ void AvalancheEngine::newGame() {
 	_her = kPeoplePardon;
 	_it = Parser::kPardon;
 	_lastPerson = kPeoplePardon; // = Pardon?
-	_passwordNum = _rnd->getRandomNumber(30) + 1; //Random(30) + 1;
+	_passwordNum = _rnd->getRandomNumber(29) + 1; //Random(30) + 1;
 	_userMovesAvvy = false;
 	_doingSpriteRun = false;
 	_avvyInBed = true;

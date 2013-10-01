@@ -34,6 +34,7 @@
 
 #include "common/textconsole.h"
 #include "common/file.h"
+#include "common/random.h"
 
 namespace Avalanche {
 
@@ -765,7 +766,17 @@ void Dialogs::displayText(Common::String text) { // TODO: REPLACE BUFFER WITH A 
 
 bool Dialogs::displayQuestion(Common::String question) {
 	displayText(question + kControlNewLine + kControlQuestion);
-	warning("STUB: Dialogs::displayQuestion()");
+	
+	if (_scReturn && (_vm->_rnd->getRandomNumber(1) == 0)) { // Half-and-half chance.
+		Common::String tmpStr = Common::String::format("...Positive about that?%cI%c%c%c", kControlRegister, kControlIcon, kControlNewLine, kControlQuestion);
+		displayText(tmpStr); // Be annoying!
+		if (_scReturn && (_vm->_rnd->getRandomNumber(3) == 3)) { // Another 25% chance
+			// \? are used to avoid that ??! is parsed as a trigraph
+			tmpStr = Common::String::format("%c100%% certain\?\?!%c%c%c%c", kControlInsertSpaces, kControlInsertSpaces, kControlIcon, kControlNewLine, kControlQuestion);
+			displayText(tmpStr); // Be very annoying!
+		}
+	}
+
 	return _scReturn;
 }
 
