@@ -105,6 +105,7 @@ private:
 	byte _scrollBells; // no. of times to ring the bell
 	byte _buffer[2000];
 	uint16 _bufSize;
+	int16 _underScroll; // Y-coord of just under the scroll text.
 
 	// These 3 "Mode" functions are always passed as ScrollsFunctionType parameters.
 	void scrollModeNormal();

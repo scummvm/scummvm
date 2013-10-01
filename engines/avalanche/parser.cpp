@@ -820,8 +820,6 @@ void Parser::parse() {
 	}
 
 	// Second parsing.
-	if (!_vm->_subject.empty())
-		_vm->_subject.clear();
 	_vm->_subjectNum = 0; // Find subject of conversation.
 
 	for (int i = 0; (i < 11) && !_realWords[i].empty(); i++) {
@@ -1380,7 +1378,6 @@ void Parser::drink() {
 		_vm->_avvyInBed = true;
 		_vm->refreshObjectList();
 		_vm->dusk();
-		_vm->hangAroundForAWhile();
 		_vm->flipRoom(kRoomYours, 1);
 		_vm->_graphics->setBackgroundColor(kColorYellow);
 		_vm->_animation->_sprites[0]._visible = false;
@@ -2284,7 +2281,6 @@ void Parser::doThat() {
 			}
 		} else { // Default doodah.
 			_vm->dusk();
-			_vm->hangAroundForAWhile();
 			_vm->dawn();
 			Common::String tmpStr = Common::String::format("A few hours later...%cnothing much has happened...", Dialogs::kControlParagraph);
 			_vm->_dialogs->displayText(tmpStr);

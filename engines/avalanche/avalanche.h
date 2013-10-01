@@ -277,46 +277,27 @@ public:
 	byte _cp, _ledStatus;
 	FontType _font;
 	bool _alive;
-	int16 _underScroll; // Y-coord of just under the scroll text.
-	Common::String _roomnName; // Name of actual room
-	Common::String _subject; // What you're talking to them about.
 	byte _subjectNum; // The same thing.
-	bool _keyboardClick; // Is a keyboard click noise wanted?
 	People _him, _her;
 	byte _it;
 	uint32 _roomTime; // Set to 0 when you enter a room, added to in every loop.
 
-	People _lastPerson; // Last person to have been selected using the People menu.
 	bool _doingSpriteRun; // Only set to True if we're doing a sprite_run at this moment. This stops the trippancy system from moving any of the sprites.
-	bool _holdTheDawn; // If this is true, calling Dawn will do nothing. It's used, for example, at the start, to stop Load from dawning.
 	bool _isLoaded; // Is it a loaded gamestate?
 	bool _soundFx;
 
-	void handleKeyDown(Common::Event &event); // To replace Basher::keyboard_link() and Basher::typein().
-	void setup();
-	void runAvalot();
-
-	void init();
 	void callVerb(VerbCode id);
 	void loadRoom(byte num);
-	void exitRoom(byte x);
-	void enterRoom(Room room, byte ped);
 	void thinkAbout(byte object, bool type); // Hey!!! Get it and put it!!!
-	void drawToolbar();
-	void drawScore();
 	void incScore(byte num); // Add on no. of points
-	void useCompass(const Common::Point &cursorPos); // Click on the compass on the toolbar to control Avvy's movement.
 	void fxToggle();
 	void refreshObjectList();
-	void checkClick();
 	void errorLed();
 	void dusk();
 	void dawn();
 	void drawDirection(); // Draws the little icon at the left end of the text input field.
 	void gameOver();
 	uint16 bearing(byte whichPed); // Returns the bearing from ped 'whichped' to Avvy, in degrees.
-	void fixFlashers();
-	void loadAlso(byte num);
 
 	// There are two kinds of redraw: Major and Minor. Minor is what happens when you load a game, etc. Major redraws EVERYTHING.
 	void minorRedraw();
@@ -326,12 +307,13 @@ public:
 
 	Common::String intToStr(int32 num);
 
-	void resetVariables();
+
+
+
+
 	void newGame(); // This sets up the DNA for a completely new game.
-	void slowDown();
 	bool getFlag(char x);
 	bool decreaseMoney(uint16 amount); // Called pennycheck in the original.
-	void hangAroundForAWhile();
 	
 	Common::String getName(People whose);
 	byte getNameChar(People whose);
@@ -348,31 +330,45 @@ public:
 private:
 	static Room _whereIs[29];
 
+	// Will be used in dusk() and dawn().
+	bool _fxHidden;
 	bool _spludwickAtHome; // Is Spludwick at home?
+	bool _passedCwytalotInHerts; // Have you passed Cwytalot in Herts?
+	bool _holdTheDawn; // If this is true, calling Dawn will do nothing. It's used, for example, at the start, to stop Load from dawning.
 	byte _lastRoom;
 	byte _lastRoomNotMap;
-	bool _passedCwytalotInHerts; // Have you passed Cwytalot in Herts?
 	byte _roomCount[100]; // Add one to each every time you enter a room
 	Common::String _mouseText;
 	Common::String _flags;
+	Common::String _roomnName; // Name of actual room
 	int8 _scoreToDisplay[3];
 
 	Common::File file;
 	Common::String readAlsoStringFromFile();
+
+	void runAvalot();
+	void init();
+	void setup();
 	void scram(Common::String &str);
 	void unScramble();
-
+	void handleKeyDown(Common::Event &event); // To replace Basher::keyboard_link() and Basher::typein().
 	void enterNewTown();
 	void findPeople(byte room);
 	void putGeidaAt(byte whichPed, byte ped);
 	void guideAvvy(Common::Point cursorPos);
-
-	// Will be used in dusk() and dawn().
-	bool _fxHidden;
-
-	int8 fades(int8 x);
 	void fadeOut(byte n);
 	void fadeIn(byte n);
+	void enterRoom(Room room, byte ped);
+	void exitRoom(byte x);
+	void drawToolbar();
+	void drawScore();
+	void useCompass(const Common::Point &cursorPos); // Click on the compass on the toolbar to control Avvy's movement.
+	void checkClick();
+	void fixFlashers();
+	void loadAlso(byte num);
+	void resetVariables();
+
+	int8 fades(int8 x);
 };
 
 } // End of namespace Avalanche

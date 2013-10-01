@@ -354,12 +354,12 @@ void Dialogs::ringBell() {   // Pussy's in the well. Who put her in? Little...
 
 void Dialogs::dodgem() {
 	_dodgeCoord = _vm->getMousePos();
-	g_system->warpMouse(_dodgeCoord.x, _vm->_underScroll); // Move the pointer off the scroll.
+	g_system->warpMouse(_dodgeCoord.x, _underScroll); // Move the pointer off the scroll.
 }
 
 void Dialogs::unDodgem() {
 	Common::Point actCoord = _vm->getMousePos();
-	if ((actCoord.x == _dodgeCoord.x) && (actCoord.y == _vm->_underScroll))
+	if ((actCoord.x == _dodgeCoord.x) && (actCoord.y == _underScroll))
 		g_system->warpMouse(_dodgeCoord.x, _dodgeCoord.y); // No change, so restore the pointer's original position.
 }
 
@@ -436,7 +436,7 @@ void Dialogs::drawScroll(DialogFunctionType modeFunc) {
 		my += 12;
 	}
 
-	_vm->_underScroll = my * 2 + 6; // Multiplying because of the doubled screen height.
+	_underScroll = (my + 3) * 2; // Multiplying because of the doubled screen height.
 	ringBell();
 	
 	_vm->_dropsOk = false;

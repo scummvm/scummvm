@@ -148,9 +148,7 @@ private:
 	void winSequence();
 	Common::String personSpeaks();
 	void heyThanks();
-
 	void wipeText();
-
 };
 
 } // End of namespace Avalanche
