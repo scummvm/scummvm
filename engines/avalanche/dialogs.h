@@ -125,7 +125,6 @@ private:
 	void say(int16 x, int16 y, Common::String text);
 	void resetScrollDriver();
 	void ringBell(); // Original: dingdongbell
-	void getIcon(int16 x, int16 y, byte which);
 	void loadFont();
 
 	// From Visa:

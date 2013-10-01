@@ -594,6 +594,22 @@ void GraphicManager::drawSign(Common::String fn, int16 xl, int16 yl, int16 y) {
 	file.close();
 }
 
+void GraphicManager::drawIcon(int16 x, int16 y, byte which) {
+	Common::File file;
+
+	if (!file.open("icons.avd"))
+		error("AVALANCHE: Scrolls: File not found: icons.avd");
+
+	which--;
+	file.seek(which * 426);
+
+	Graphics::Surface icon = loadPictureGraphic(file);
+	drawPicture(_scrolls, icon, x, y);
+
+	icon.free();
+	file.close();
+}
+
 void GraphicManager::prepareBubble(int xc, int xw, int my, Common::Point points[3]) {
 	// Backup the screen before drawing the bubble.
 	_scrolls.copyFrom(_surface);
