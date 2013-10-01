@@ -259,8 +259,10 @@ public:
 	bool _dropsOk;
 	bool _cheat; // CHECKME: Currently unused
 	bool _letMeOut;
-	Common::String _scroll[15];
-	byte _scrollNum, _whichwas;
+
+
+
+
 	byte _thinks;
 	bool _thinkThing;
 	int16 _talkX, _talkY;
