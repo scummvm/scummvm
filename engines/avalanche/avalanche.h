@@ -162,9 +162,6 @@ private:
 #endif
 
 public:
-	static const MouseHotspotType kMouseHotSpots[9];
-	static const int16 kMaxSprites = 2; // Current max no. of sprites.
-
 	// For Thinkabout:
 	static const bool kThing = true;
 	static const bool kPerson = false;
@@ -306,6 +303,7 @@ public:
 	void setRoom(People persId, Room roomId);
 	Room getRoom(People persId);
 private:
+	static const int16 kMaxSprites = 2; // Current max no. of sprites.
 	static Room _whereIs[29];
 
 	// Will be used in dusk() and dawn().
