@@ -58,7 +58,7 @@ public:
 	bool display(int x, int y, Rect32 rect, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false) override;
 	bool displayZoom(int x, int y, Rect32 rect, float zoomX, float zoomY, uint32 alpha = kDefaultRgbaMod, bool transparent = false, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false) override;
 	bool displayTransform(int x, int y, Rect32 rect, Rect32 newRect, const TransformStruct &transform) override;
-	bool repeatLastDisplayOp(int offsetX, int offsetY, int numTimesX, int numTimesY) override;
+	virtual bool displayTiled(int x, int y, Rect32 rect, int numTimesX, int numTimesY);
 	virtual bool putSurface(const Graphics::Surface &surface, bool hasAlpha = false) override;
 	/*  static unsigned DLL_CALLCONV ReadProc(void *buffer, unsigned size, unsigned count, fi_handle handle);
 	    static int DLL_CALLCONV SeekProc(fi_handle handle, long offset, int origin);

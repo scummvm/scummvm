@@ -35,6 +35,8 @@ void TransformStruct::init(Point32 zoom, uint32 angle, Point32 hotspot, bool alp
 	_flip += TransparentSurface::FLIP_H * mirrorX;
 	_flip += TransparentSurface::FLIP_V * mirrorY;
 	_offset = offset;
+	_numTimesX = 1;
+	_numTimesY = 1;
 }
 
 TransformStruct::TransformStruct(int32 zoomX, int32 zoomY, uint32 angle, int32 hotspotX, int32 hotspotY, TSpriteBlendMode blendMode, uint32 rgbaMod, bool mirrorX, bool mirrorY, int32 offsetX, int32 offsetY) {
@@ -81,6 +83,19 @@ TransformStruct::TransformStruct(int32 zoomX, int32 zoomY, uint32 angle, int32 h
 		kDefaultRgbaMod, 
 		false, false,
 		Point32(kDefaultOffsetX, kDefaultOffsetY));
+}
+
+TransformStruct::TransformStruct(int32 numTimesX, int32 numTimesY) {
+	init(Point32(kDefaultZoomX, kDefaultZoomY),
+		kDefaultAngle,
+		Point32(kDefaultHotspotX, kDefaultHotspotY),
+		false,
+		BLEND_NORMAL,
+		kDefaultRgbaMod,
+		false, false,
+		Point32(kDefaultOffsetX, kDefaultOffsetY));
+	_numTimesX = numTimesX;
+	_numTimesY = numTimesY;
 }
 
 TransformStruct::TransformStruct() {
