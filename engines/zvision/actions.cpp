@@ -367,8 +367,7 @@ bool ActionStreamVideo::execute(ZVision *engine) {
 	}
 
 	Common::Rect destRect;
-	// 0x1 flags that the destRect dimensions are different from the original video dimensions
-	if ((_flags & 0x1) == 0x1) {
+	if ((_flags & DIFFERENT_DIMENSIONS) == DIFFERENT_DIMENSIONS) {
 		destRect = Common::Rect(_x1, _y1, _x2, _y2);
 	}
 
