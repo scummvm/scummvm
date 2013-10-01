@@ -560,6 +560,40 @@ void GraphicManager::drawReadyLight(Color color) {
 	_surface.fillRect(Common::Rect(419, 195, 438, 197), color);
 }
 
+void GraphicManager::drawSign(Common::String fn, int16 xl, int16 yl, int16 y) {
+	Common::File file;
+	Common::String filename = Common::String::format("%s.avd", fn.c_str());
+
+	if (!file.open(filename))
+		error("AVALANCHE: Scrolls: File not found: %s", filename.c_str());
+
+	// I know it looks very similar to the loadPicture methods, but in truth it's the combination of the two.
+
+	uint16 width = xl * 8;
+	uint16 height = yl;
+
+	Graphics::Surface sign; // We make a Surface object for the picture itself.
+	sign.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
+
+	// Produce the picture. We read it in row-by-row, and every row has 4 planes.
+	for (int y = 0; y < height; y++) {
+		for (int8 plane = 0; plane < 4; plane++) { // The planes are in the "right" order.
+			for (uint16 x = 0; x < width; x += 8) {
+				byte pixel = file.readByte();
+				for (int bit = 0; bit < 8; bit++) {
+					byte pixelBit = (pixel >> bit) & 1;
+					if (pixelBit != 0)
+						*(byte *)sign.getBasePtr(x + 7 - bit, y) += (pixelBit << plane);
+				}
+			}
+		}
+	}
+	
+	drawPicture(_scrolls, sign, kScreenWidth / 2 - width / 2, y);
+
+	file.close();
+}
+
 void GraphicManager::prepareBubble(int xc, int xw, int my, Common::Point points[3]) {
 	// Backup the screen before drawing the bubble.
 	_scrolls.copyFrom(_surface);

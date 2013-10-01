@@ -104,6 +104,7 @@ public:
 	void drawToolbar();
 	void drawCursor(byte pos);
 	void drawReadyLight(Color color);
+	void drawSign(Common::String name, int16 xl, int16 yl, int16 y); // This is for drawing a big "about" or "gameover" picture loaded from a file into an empty scroll.
 
 	void prepareBubble(int xc, int xw, int my, Common::Point points[3]);
 
