@@ -232,7 +232,7 @@ void Timer::openDrawbridge() {
 	_vm->_background->draw(-1, -1, _vm->_drawbridgeOpen - 2);
 
 	if (_vm->_drawbridgeOpen == 4)
-		_vm->_magics[1]._operation = AvalancheEngine::kMagicNothing; // You may enter the drawbridge.
+		_vm->_magics[1]._operation = kMagicNothing; // You may enter the drawbridge.
 	else
 		addTimer(7, kProcOpenDrawbridge, kReasonDrawbridgeFalls);
 }
@@ -273,9 +273,9 @@ void Timer::stairs() {
 	_vm->_animation->_sprites[0].walkTo(3);
 	_vm->_background->draw(-1, -1, 1);
 	_vm->_brummieStairs = 2;
-	_vm->_magics[10]._operation = AvalancheEngine::kMagicSpecial;
+	_vm->_magics[10]._operation = kMagicSpecial;
 	_vm->_magics[10]._data = 2; // Reached the bottom of the stairs.
-	_vm->_magics[3]._operation = AvalancheEngine::kMagicNothing; // Stop them hitting the sides (or the game will hang.)
+	_vm->_magics[3]._operation = kMagicNothing; // Stop them hitting the sides (or the game will hang.)
 }
 
 void Timer::cardiffSurvey() {
@@ -315,7 +315,7 @@ void Timer::getTiedUp() {
 void Timer::getTiedUp2() {
 	_vm->_animation->_sprites[0].walkTo(3);
 	_vm->_animation->_sprites[1].walkTo(4);
-	_vm->_magics[3]._operation = AvalancheEngine::kMagicNothing; // No effect when you touch the boundaries.
+	_vm->_magics[3]._operation = kMagicNothing; // No effect when you touch the boundaries.
 	_vm->_friarWillTieYouUp = true;
 }
 
@@ -395,7 +395,7 @@ void Timer::jacquesWakesUp() {
 	case 2 : // Going through the door.
 		_vm->_background->draw(-1, -1, 1); // Not on the floor.
 		_vm->_background->draw(-1, -1, 2); // But going through the door.
-		_vm->_magics[5]._operation = AvalancheEngine::kMagicNothing; // You can't wake him up now.
+		_vm->_magics[5]._operation = kMagicNothing; // You can't wake him up now.
 		break;
 	case 3 :  // Gone through the door.
 		_vm->_background->draw(-1, -1, 1); // Not on the floor, either.
@@ -538,7 +538,7 @@ void Timer::greetsMonk() {
 }
 
 void Timer::fallDownOubliette() {
-	_vm->_magics[8]._operation = AvalancheEngine::kMagicNothing;
+	_vm->_magics[8]._operation = kMagicNothing;
 
 	AnimationType *avvy = &_vm->_animation->_sprites[0];
 	avvy->_moveY++; // Increments dx/dy!

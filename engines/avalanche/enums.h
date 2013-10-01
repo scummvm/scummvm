@@ -85,14 +85,25 @@ enum VerbCode {
 	kVerbCodeSmartAlec = 249, kVerbCodeExpletive = 253, kVerbCodePardon = 254
 };
 
-} // End of namespace Avalanche
-
 enum MouseCursor {
 	kCurUpArrow = 0,   kCurScrewDriver = 1, kCurRightArrow = 2, kCurFletch = 3, kCurWait = 4, kCurHand = 5, 
 	kCurCrosshair = 6, kCurIBeam = 7
 };
 
+// Magic/portal constants:
+enum Magics {
+	kMagicNothing, // Ignore it if this line is touched.
+	kMagicBounce, // Bounce off this line. Not valid for portals.
+	kMagicExclaim, // Put up a chain of scrolls.
+	kMagicTransport, // Enter new room.
+	kMagicUnfinished, // Unfinished connection.
+	kMagicSpecial, // Special function.
+	kMagicOpenDoor // Opening door.
+};
+
 static const int16 kScreenWidth = 640;
 static const int16 kScreenHeight = 200;
+
+} // End of namespace Avalanche
 
 #endif // AVALANCHE_ENUMS_H

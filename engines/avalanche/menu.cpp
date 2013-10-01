@@ -444,7 +444,7 @@ void Menu::setupMenuPeople() {
 
 	for (int i = kPeopleAvalot; i <= kPeopleWisewoman; i++) {
 		if (_vm->getRoom((People)i) == _vm->_room) {
-			_activeMenuItem.setupOption(_vm->getName((People)i), _vm->getNameChar((People)i), "", true);
+			_activeMenuItem.setupOption(_vm->getName((People)i), getNameChar((People)i), "", true);
 			people += i;
 		}
 	}
@@ -456,7 +456,7 @@ void Menu::setupMenuObjects() {
 	_activeMenuItem.reset();
 	for (int i = 0; i < kObjectNum; i++) {
 		if (_vm->_objects[i])
-			_activeMenuItem.setupOption(_vm->getThing(i + 1), _vm->getThingChar(i + 1), "", true);
+			_activeMenuItem.setupOption(getThing(i + 1), getThingChar(i + 1), "", true);
 	}
 	_activeMenuItem.display();
 }
@@ -762,6 +762,65 @@ void Menu::update() { // TODO: Optimize it ASAP!!! It really needs it...
 	}
 
 	_vm->_graphics->removeBackup();
+}
+
+char Menu::getThingChar(byte which) {
+	static const char kThingsChar[] = "WMBParCLguKeSnIohn"; // V=Vinegar
+
+	char result;
+	switch (which) {
+	case kObjectWine:
+		if (_vm->_wineState == 3)
+			result = 'V'; // Vinegar
+		else
+			result = kThingsChar[which - 1];
+		break;
+	default:
+		result = kThingsChar[which - 1];
+	}
+	return result;
+}
+
+byte Menu::getNameChar(People whose) {
+	static const char kLadChar[] = "ASCDMTRwLfgeIyPu";
+	static const char kLassChar[] = "kG\0xB1o";
+
+	if (whose < kPeopleArkata)
+		return kLadChar[whose - kPeopleAvalot];
+	else
+		return kLassChar[whose - kPeopleArkata];
+}
+
+Common::String Menu::getThing(byte which) {
+	static const Common::String kThings[kObjectNum] = {
+		"Wine", "Money-bag", "Bodkin", "Potion", "Chastity belt",
+		"Crossbow bolt", "Crossbow", "Lute", "Pilgrim's badge", "Mushroom", "Key",
+		"Bell", "Scroll", "Pen", "Ink", "Clothes", "Habit", "Onion"
+	};
+
+	Common::String result;
+	switch (which) {
+	case kObjectWine:
+		switch (_vm->_wineState) {
+	case 1:
+	case 4:
+		result = kThings[which - 1];
+		break;
+	case 3:
+		result = "Vinegar";
+		break;
+		}
+		break;
+	case kObjectOnion:
+		if (_vm->_rottenOnion)
+			result = "rotten onion";
+		else
+			result = kThings[which - 1];
+		break;
+	default:
+		result = kThings[which - 1];
+	}
+	return result;
 }
 
 bool Menu::isActive() {

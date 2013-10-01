@@ -169,17 +169,6 @@ public:
 	static const bool kThing = true;
 	static const bool kPerson = false;
 
-	// Magic/portal constants:
-	enum Magics {
-		kMagicNothing, // Ignore it if this line is touched.
-		kMagicBounce, // Bounce off this line. Not valid for portals.
-		kMagicExclaim, // Put up a chain of scrolls.
-		kMagicTransport, // Enter new room.
-		kMagicUnfinished, // Unfinished connection.
-		kMagicSpecial, // Special function.
-		kMagicOpenDoor // Opening door.
-	};
-
 	// These following static constants should be included in CFG when it's written.
 	static const int16 kWalk = 3;
 	static const int16 kRun = 5;
@@ -306,19 +295,11 @@ public:
 	void spriteRun();
 
 	Common::String intToStr(int32 num);
-
-
-
-
-
 	void newGame(); // This sets up the DNA for a completely new game.
 	bool getFlag(char x);
 	bool decreaseMoney(uint16 amount); // Called pennycheck in the original.
 	
 	Common::String getName(People whose);
-	byte getNameChar(People whose);
-	Common::String getThing(byte which);
-	char getThingChar(byte which);
 	Common::String getItem(byte which); // Called get_better in the original.
 	Common::String f5Does(); // This procedure determines what f5 does.
 
