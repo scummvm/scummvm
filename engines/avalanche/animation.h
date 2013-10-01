@@ -61,7 +61,6 @@ public:
 	Direction _facingDir;
 	byte _stepNum;
 	int16 _x, _y; // Current xy coords.
-	int16 _oldX[2], _oldY[2];  // Last xy coords.
 	int8 _moveX, _moveY; // Amount to move sprite by, each step.
 	byte _id;
 	bool _quick, _visible, _homing, _doCheck;
@@ -90,6 +89,8 @@ public:
 
 private:
 	Animation *_anim;
+
+	int16 _oldX[2], _oldY[2];  // Last xy coords.
 
 	bool checkCollision();
 	int8 getSign(int16 val);

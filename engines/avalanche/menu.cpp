@@ -265,26 +265,26 @@ void Menu::findWhatYouCanDoWithIt() {
 	case kObjectWine:
 	case kObjectPotion:
 	case kObjectInk:
-		_vm->_verbStr = Common::String(kVerbCodeExam) + kVerbCodeDrink;
+		_verbStr = Common::String(kVerbCodeExam) + kVerbCodeDrink;
 		break;
 	case kObjectBell:
-		_vm->_verbStr = Common::String(kVerbCodeExam) + kVerbCodeRing;
+		_verbStr = Common::String(kVerbCodeExam) + kVerbCodeRing;
 		break;
 	case kObjectChastity:
-		_vm->_verbStr = Common::String(kVerbCodeExam) + kVerbCodeWear;
+		_verbStr = Common::String(kVerbCodeExam) + kVerbCodeWear;
 		break;
 	case kObjectLute:
-		_vm->_verbStr = Common::String(kVerbCodeExam) + kVerbCodePlay;
+		_verbStr = Common::String(kVerbCodeExam) + kVerbCodePlay;
 		break;
 	case kObjectMushroom:
 	case kObjectOnion:
-		_vm->_verbStr = Common::String(kVerbCodeExam) + kVerbCodeEat;
+		_verbStr = Common::String(kVerbCodeExam) + kVerbCodeEat;
 		break;
 	case kObjectClothes:
-		_vm->_verbStr = Common::String(kVerbCodeExam) + kVerbCodeWear;
+		_verbStr = Common::String(kVerbCodeExam) + kVerbCodeWear;
 		break;
 	default:
-		_vm->_verbStr = kVerbCodeExam; // Anything else.
+		_verbStr = kVerbCodeExam; // Anything else.
 	}
 }
 
@@ -469,11 +469,11 @@ void Menu::setupMenuWith() {
 	if (_vm->_thinkThing) {
 		findWhatYouCanDoWithIt();
 
-		for (uint i = 0; i < _vm->_verbStr.size(); i++) {
+		for (uint i = 0; i < _verbStr.size(); i++) {
 			char vbchar;
 			Common::String verb;
 
-			_vm->_parser->verbOpt(_vm->_verbStr[i], verb, vbchar);
+			_vm->_parser->verbOpt(_verbStr[i], verb, vbchar);
 			_activeMenuItem.setupOption(verb, vbchar, "", true);
 		}
 
@@ -485,21 +485,21 @@ void Menu::setupMenuWith() {
 			_activeMenuItem.setupOption("Give to...", 'G', "", false); // Not here.
 		else {
 			_activeMenuItem.setupOption(Common::String("Give to ") + _vm->getName(_vm->_lastPerson), 'G', "", true);
-			_vm->_verbStr = _vm->_verbStr + kVerbCodeGive;
+			_verbStr = _verbStr + kVerbCodeGive;
 		}
 	} else {
 		_activeMenuItem.setupOption("Examine", 'x', "", true);
 		_activeMenuItem.setupOption(Common::String("Talk to h") + selectGender(_vm->_thinks), 'T', "", true);
-		_vm->_verbStr = Common::String(kVerbCodeExam) + kVerbCodeTalk;
+		_verbStr = Common::String(kVerbCodeExam) + kVerbCodeTalk;
 		switch (_vm->_thinks) {
 		case kPeopleGeida:
 		case kPeopleArkata:
 			_activeMenuItem.setupOption("Kiss her", 'K', "", true);
-			_vm->_verbStr = _vm->_verbStr + kVerbCodeKiss;
+			_verbStr = _verbStr + kVerbCodeKiss;
 			break;
 		case kPeopleDogfood:
 			_activeMenuItem.setupOption("Play his game", 'P', "", !_vm->_wonNim); // True if you HAVEN'T won.
-			_vm->_verbStr = _vm->_verbStr + kVerbCodePlay;
+			_verbStr = _verbStr + kVerbCodePlay;
 			break;
 		case kPeopleMalagauche: {
 			bool isSober = !_vm->_teetotal;
@@ -508,12 +508,12 @@ void Menu::setupMenuWith() {
 			_activeMenuItem.setupOption("Buy some whisky", 'h', "", isSober);
 			_activeMenuItem.setupOption("Buy some cider", 'c', "", isSober);
 			_activeMenuItem.setupOption("Buy some mead", 'm', "", isSober);
-			_vm->_verbStr = _vm->_verbStr + 101 + 100 + 102 + 103 + 104;
+			_verbStr = _verbStr + 101 + 100 + 102 + 103 + 104;
 			}
 			break;
 		case kPeopleTrader:
 			_activeMenuItem.setupOption("Buy an onion", 'o', "", !_vm->_objects[kObjectOnion - 1]);
-			_vm->_verbStr = _vm->_verbStr + 105;
+			_verbStr = _verbStr + 105;
 			break;
 		}
 	}
@@ -622,12 +622,12 @@ void Menu::runMenuWith() {
 	if (_vm->_thinkThing) {
 		_vm->_parser->_thing += 49;
 
-		if (_vm->_verbStr[_activeMenuItem._choiceNum] == kVerbCodeGive)
+		if (_verbStr[_activeMenuItem._choiceNum] == kVerbCodeGive)
 			_vm->_parser->_person = _vm->_lastPerson;
 		else
 			_vm->_parser->_person = kPeoplePardon;
 	} else {
-		switch (_vm->_verbStr[_activeMenuItem._choiceNum]) {
+		switch (_verbStr[_activeMenuItem._choiceNum]) {
 		case 100: // Beer
 			_vm->_parser->_thing = 100;
 			_vm->callVerb(kVerbCodeBuy);
@@ -658,7 +658,7 @@ void Menu::runMenuWith() {
 			_vm->_subjectNum = 0;
 		}
 	}
-	_vm->callVerb((VerbCode)_vm->_verbStr[_activeMenuItem._choiceNum]);
+	_vm->callVerb((VerbCode)_verbStr[_activeMenuItem._choiceNum]);
 }
 
 void Menu::setup() {

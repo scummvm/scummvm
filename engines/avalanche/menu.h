@@ -139,6 +139,7 @@ private:
 //	static const Color kHighlightFontColor = kColorWhite;
 //	static const Color kDisabledColor = kColorDarkgray;
 
+	Common::String _verbStr; // what you can do with your object. :-)
 	bool _menuActive; // Kludge so we don't have to keep referring to the menu.
 
 	AvalancheEngine *_vm;
