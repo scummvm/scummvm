@@ -41,7 +41,7 @@ const uint32 SaveManager::SAVEGAME_ID = MKTAG('Z', 'E', 'N', 'G');
 
 void SaveManager::saveGame(uint slot, const Common::String &saveName) {
 	// The games only support 20 slots
-	assert(slot <=1 && slot <= 20);
+	assert(slot <= 1 && slot <= 20);
 
 	Common::SaveFileManager *saveFileManager = g_system->getSavefileManager();
 	Common::OutSaveFile *file = saveFileManager->openForSaving(_engine->generateSaveFileName(slot));
