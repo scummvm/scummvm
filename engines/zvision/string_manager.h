@@ -69,8 +69,6 @@ private:
 	InGameText _inGameText[NUM_TEXT_LINES];
 	Common::HashMap<Common::String, TruetypeFont *> _fonts;
 
-	static const Graphics::PixelFormat _pixelFormat565;
-
 	TextStyle _lastStyle;
 
 public:

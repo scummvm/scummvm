@@ -27,14 +27,13 @@
 #include "common/debug.h"
 
 #include "graphics/fontman.h"
+#include "graphics/colormasks.h"
 
 #include "zvision/string_manager.h"
 #include "zvision/truetype_font.h"
 
 
 namespace ZVision {
-
-const Graphics::PixelFormat StringManager::_pixelFormat565 = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
 
 StringManager::StringManager(ZVision *engine) 
 	: _engine(engine) {
@@ -206,7 +205,7 @@ void StringManager::parseTag(const Common::String &tagString, uint lineNumber) {
 	}
 
 	fragment.style.align = align;
-	fragment.style.color = _pixelFormat565.ARGBToColor(0, red, green, blue);
+	fragment.style.color = Graphics::ARGBToColor<Graphics::ColorMasks<565>>(0, red, green, blue);
 	_inGameText[lineNumber].fragments.push_back(fragment);
 
 	_lastStyle = fragment.style;
