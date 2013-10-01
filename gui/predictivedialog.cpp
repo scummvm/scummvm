@@ -861,7 +861,6 @@ void PredictiveDialog::addWord(Dict &dict, const Common::String &word, const Com
 
 		return;
 	}
-	newDictLine[dict.dictLineCount] = '\0';
 
 	int k = 0;
 	bool inserted = false;
