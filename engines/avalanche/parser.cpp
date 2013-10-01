@@ -50,7 +50,7 @@ void Parser::init() {
 		_inputText.clear();
 	_inputTextPos = 0;
 
-	_vm->_weirdWord = false;
+	_weirdWord = false;
 
 	// Initailaze the vocabulary.
 	// Verbs: 1-49
@@ -712,7 +712,7 @@ void Parser::parse() {
 	// Are we being interrogated right now?
 	if (_vm->_interrogation > 0) {
 		storeInterrogation(_vm->_interrogation);
-		_vm->_weirdWord = true;
+		_weirdWord = true;
 		return;
 	}
 
@@ -814,7 +814,7 @@ void Parser::parse() {
 	}
 
 	if (doPronouns()) {
-		_vm->_weirdWord = true;
+		_weirdWord = true;
 		_thats = kNothing;
 		return;
 	}
@@ -869,9 +869,9 @@ void Parser::parse() {
 	if ((!unkString.empty()) && (_verb != kVerbCodeExam) && (_verb != kVerbCodeTalk) && (_verb != kVerbCodeSave) && (_verb != kVerbCodeLoad) && (_verb != kVerbCodeDir)) {
 		Common::String tmpStr = Common::String::format("Sorry, but I have no idea what \"%s\" means. Can you rephrase it?", unkString.c_str());
 		_vm->_dialogs->displayText(tmpStr);
-		_vm->_weirdWord = true;
+		_weirdWord = true;
 	} else
-		_vm->_weirdWord = false;
+		_weirdWord = false;
 
 	if (_thats.empty())
 		_thats = kNothing;
@@ -1590,7 +1590,7 @@ void Parser::doThat() {
 		return;
 	}
 
-	if (_vm->_weirdWord)
+	if (_weirdWord)
 		return;
 
 	if (_thing < 200)
@@ -2349,6 +2349,13 @@ void Parser::verbOpt(byte verb, Common::String &answer, char &ansKey) {
 		answer = "? Unknown!"; // Bug!
 		ansKey = '?';
 	}
+}
+
+void Parser::doVerb(VerbCode id) {
+	_weirdWord = false;
+	_polite = true;
+	_verb = id;
+	doThat();
 }
 
 void Parser::resetVariables() {

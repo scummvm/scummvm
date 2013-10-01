@@ -141,6 +141,7 @@ public:
 private:
 	Direction _direction; // The direction Avvy is currently facing.
 	Direction _oldDirection;
+	bool _arrowTriggered; // And has the arrow been triggered?
 
 	byte _geidaSpin, _geidaTime; // For the making "Geida dizzy" joke.
 

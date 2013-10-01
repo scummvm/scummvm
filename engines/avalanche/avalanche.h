@@ -256,9 +256,8 @@ public:
 	bool _showDebugLines;
 	byte _lineNum; // Number of lines.
 	LineType _lines[50]; // For Also.
-	bool _dropsOk, _soundFx, _cheat;
-	Common::String _mouseText;
-	bool _weirdWord;
+	bool _dropsOk;
+	bool _cheat; // CHECKME: Currently unused
 	bool _letMeOut;
 	Common::String _scroll[15];
 	byte _scrollNum, _whichwas;
@@ -299,6 +298,7 @@ public:
 	bool _doingSpriteRun; // Only set to True if we're doing a sprite_run at this moment. This stops the trippancy system from moving any of the sprites.
 	bool _holdTheDawn; // If this is true, calling Dawn will do nothing. It's used, for example, at the start, to stop Load from dawning.
 	bool _isLoaded; // Is it a loaded gamestate?
+	bool _soundFx;
 
 	void handleKeyDown(Common::Event &event); // To replace Basher::keyboard_link() and Basher::typein().
 	void setup();
@@ -361,6 +361,7 @@ private:
 	byte _lastRoomNotMap;
 	bool _passedCwytalotInHerts; // Have you passed Cwytalot in Herts?
 	byte _roomCount[100]; // Add one to each every time you enter a room
+	Common::String _mouseText;
 
 	Common::File file;
 	Common::String readAlsoStringFromFile();
