@@ -55,8 +55,14 @@ public:
 	uint16 _size; // The size of one picture.
 };
 
+struct MouseHotspotType { // mouse-void
+	int16 _horizontal, _vertical;
+};
+
 class GraphicManager {
 public:
+	static const MouseHotspotType kMouseHotSpots[9];
+
 	Graphics::Surface _surface;
 	Color _talkBackgroundColor, _talkFontColor;
 

@@ -69,10 +69,6 @@ static const int16 kCarryLimit = 12;  // carry limit
 static const int16 kNumlockCode = 32;  // Code for Num Lock
 static const int16 kMouseSize = 134;
 
-struct MouseHotspotType { // mouse-void
-	int16 _horizontal, _vertical;
-};
-
 struct PedType {
 	int16 _x, _y;
 	Direction _direction;

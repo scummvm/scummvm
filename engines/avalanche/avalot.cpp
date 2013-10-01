@@ -37,18 +37,6 @@
 
 namespace Avalanche {
 
-const MouseHotspotType AvalancheEngine::kMouseHotSpots[9] = {
-	{8,0}, // 0 - up-arrow
-	{0,0}, // 1 - screwdriver
-	{15,6}, // 2 - right-arrow
-	{0,0}, // 3 - fletch
-	{8,7}, // 4 - hourglass
-	{4,0}, // 5 - TTHand
-	{8,5}, // 6 - Mark's crosshairs
-	{8,7}, // 7 - I-beam
-	{0,0} // 8 - question mark
-};
-
 // Art gallery at 2,1; notice about this at 2,2.
 const int32 AvalancheEngine::kCatacombMap[8][8] = {
 	// Geida's room

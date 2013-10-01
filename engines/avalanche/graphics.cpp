@@ -38,6 +38,18 @@ namespace Avalanche {
 
 const byte GraphicManager::kEgaPaletteIndex[16] = {0, 1, 2, 3, 4, 5, 20, 7, 56, 57, 58, 59, 60, 61, 62, 63};
 
+const MouseHotspotType GraphicManager::kMouseHotSpots[9] = {
+	{8,0}, // 0 - up-arrow
+	{0,0}, // 1 - screwdriver
+	{15,6}, // 2 - right-arrow
+	{0,0}, // 3 - fletch
+	{8,7}, // 4 - hourglass
+	{4,0}, // 5 - TTHand
+	{8,5}, // 6 - Mark's crosshairs
+	{8,7}, // 7 - I-beam
+	{0,0} // 8 - question mark
+};
+
 GraphicManager::GraphicManager(AvalancheEngine *vm) {
 	_vm = vm;
 }
@@ -144,7 +156,7 @@ void GraphicManager::loadMouse(byte which) {
 	mask.free();
 	f.close();
 
-	CursorMan.replaceCursor(cursor.getPixels(), 16, 32, AvalancheEngine::kMouseHotSpots[which]._horizontal, AvalancheEngine::kMouseHotSpots[which]._vertical * 2, 255, false);
+	CursorMan.replaceCursor(cursor.getPixels(), 16, 32, kMouseHotSpots[which]._horizontal, kMouseHotSpots[which]._vertical * 2, 255, false);
 	cursor.free();
 }
 
