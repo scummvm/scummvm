@@ -66,8 +66,8 @@ void Closing::exitGame() {
 	_vm->_sound->stopSound();
 
 	getScreen(kScreenNagScreen);
-	byte nounId = _vm->_rnd->getRandomNumber(12);
-	byte verbId = _vm->_rnd->getRandomNumber(12);
+	byte nounId = _vm->_rnd->getRandomNumber(11);
+	byte verbId = _vm->_rnd->getRandomNumber(11);
 	Common::String result = nouns[nounId] + " will " + verbs[verbId] + " you";
 	putIn(result, 1628);
 	showScreen(); // No halt- it's already set up.

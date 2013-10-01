@@ -51,7 +51,9 @@ AvalancheEngine::AvalancheEngine(OSystem *syst, const AvalancheGameDescription *
 	_console = new AvalancheConsole(this);
 
 	_rnd = new Common::RandomSource("avalanche");
-	_rnd->setSeed(42);
+	TimeDate time;
+	_system->getTimeAndDate(time);
+	_rnd->setSeed(time.tm_sec + time.tm_min + time.tm_hour);
 
 	// Needed because of Lucerna::load_also()
 	for (int i = 0; i < 31; i++) {
