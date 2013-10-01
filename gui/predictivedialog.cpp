@@ -69,7 +69,7 @@ enum {
 PredictiveDialog::PredictiveDialog() : Dialog("Predictive") {
 	new StaticTextWidget(this, "Predictive.Headline", "Enter Text");
 
-	_btns = (ButtonWidget **)calloc(1, sizeof(ButtonWidget *) * 16);
+	_btns = (ButtonWidget **)calloc(16, sizeof(ButtonWidget *));
 
 	_btns[kCancelAct] = new ButtonWidget(this, "Predictive.Cancel",  _("Cancel")   , 0, kCancelCmd);
 	_btns[kOkAct] = 	new ButtonWidget(this, "Predictive.OK",      _("Ok")       , 0, kOkCmd);
@@ -614,7 +614,7 @@ void PredictiveDialog::handleTickle() {
 
 void PredictiveDialog::mergeDicts() {
 	_unitedDict.dictLineCount  = _predictiveDict.dictLineCount + _userDict.dictLineCount;
-	_unitedDict.dictLine = (char **)calloc(1, sizeof(char *) * _unitedDict.dictLineCount);
+	_unitedDict.dictLine = (char **)calloc(_unitedDict.dictLineCount, sizeof(char *));
 
 	if (!_unitedDict.dictLine) {
 		debug("Predictive Dialog: cannot allocate memory for united dic");
@@ -853,7 +853,7 @@ void PredictiveDialog::addWord(Dict &dict, const Common::String &word, const Com
 	}
 
 	// start from here are INSERTING new line to dictionaty ( dict )
-	char **newDictLine = (char **)calloc(1, sizeof(char *) * (dict.dictLineCount + 1));
+	char **newDictLine = (char **)calloc(dict.dictLineCount + 1, sizeof(char *));
 	if (!newDictLine) {
 		warning("Predictive Dialog: cannot allocate memory for index buffer");
 
@@ -882,7 +882,7 @@ void PredictiveDialog::addWord(Dict &dict, const Common::String &word, const Com
 
 	free(dict.dictLine);
 	dict.dictLineCount += 1;
-	dict.dictLine = (char **)calloc(1, sizeof(char *) * dict.dictLineCount);
+	dict.dictLine = (char **)calloc(dict.dictLineCount, sizeof(char *));
 	if (!dict.dictLine) {
 		warning("Predictive Dialog: cannot allocate memory for index buffer");
 		free(newDictLine);
@@ -934,7 +934,7 @@ void PredictiveDialog::loadDictionary(Common::SeekableReadStream *in, Dict &dict
 		ptr++;
 	}
 
-	dict.dictLine = (char **)calloc(1, sizeof(char *) * lines);
+	dict.dictLine = (char **)calloc(lines, sizeof(char *));
 	if (dict.dictLine == NULL) {
 		warning("Predictive Dialog: Cannot allocate memory for line index buffer");
 		return;
