@@ -324,6 +324,7 @@ void BaseRenderOSystem::invalidateTicketsFromSurface(BaseSurfaceOSystem *surf) {
 void BaseRenderOSystem::drawFromTicket(RenderTicket *renderTicket) {
 	renderTicket->_wantsDraw = true;
 
+	_drawNum++;
 	++_lastFrameIter;
 	// In-order
 	if (_renderQueue.empty() || _lastFrameIter == _renderQueue.end()) {
@@ -354,6 +355,7 @@ void BaseRenderOSystem::drawFromQueuedTicket(const RenderQueueIterator &ticket) 
 	} else {
 		--_lastFrameIter;
 		// Remove the ticket from the list
+		assert(*_lastFrameIter != renderTicket);
 		_renderQueue.erase(ticket);
 		// Is not in order, so readd it as if it was a new ticket
 		drawFromTicket(renderTicket);
