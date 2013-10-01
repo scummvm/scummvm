@@ -63,14 +63,14 @@ RlfAnimation::RlfAnimation(const Common::String &fileName, bool stream)
 		_frames = new Frame[_frameCount];
 
 		// Read in each frame
-		for (uint i = 0; i < _frameCount; i++) {
+		for (uint i = 0; i < _frameCount; ++i) {
 			_frames[i] = readNextFrame();
 		}
 	}
 }
 
 RlfAnimation::~RlfAnimation() {
-	for (uint i = 0; i < _frameCount; i++) {
+	for (uint i = 0; i < _frameCount; ++i) {
 		delete[] _frames[i].encodedData;
 	}
 	delete[] _frames;
@@ -165,7 +165,7 @@ void RlfAnimation::seekToFrame(int frameNumber) {
 
 	int closestFrame = _currentFrame;
 	int distance = (int)frameNumber - _currentFrame;
-	for (Common::List<uint>::const_iterator iter = _completeFrames.begin(); iter != _completeFrames.end(); iter++) {
+	for (Common::List<uint>::const_iterator iter = _completeFrames.begin(); iter != _completeFrames.end(); ++iter) {
 		int newDistance = (int)frameNumber - (int)(*iter);
 		if (newDistance > 0 && (closestFrame == -1 || newDistance < distance)) {
 			closestFrame = (*iter);
@@ -173,7 +173,7 @@ void RlfAnimation::seekToFrame(int frameNumber) {
 		}
 	}
 
-	for (int i = closestFrame; i <= frameNumber; i++) {
+	for (int i = closestFrame; i <= frameNumber; ++i) {
 		applyFrameToCurrent(i);
 	}
 

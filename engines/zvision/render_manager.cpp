@@ -58,7 +58,7 @@ RenderManager::~RenderManager() {
 	_currentBackground.free();
 	_backBuffer.free();
 
-	for (Common::HashMap<uint32, AlphaDataEntry>::iterator iter = _alphaDataEntries.begin(); iter != _alphaDataEntries.end(); iter++) {
+	for (Common::HashMap<uint32, AlphaDataEntry>::iterator iter = _alphaDataEntries.begin(); iter != _alphaDataEntries.end(); ++iter) {
 		iter->_value.data->free();
 		delete iter->_value.data;
 	}
@@ -118,14 +118,14 @@ void RenderManager::renderBackbufferToScreen() {
 void RenderManager::processAlphaEntries() {
 	// TODO: Add dirty rectangling support. AKA only draw an entry if the _backbufferDirtyRect intersects/contains the entry Rect
 
-	for (Common::HashMap<uint32, AlphaDataEntry>::iterator iter = _alphaDataEntries.begin(); iter != _alphaDataEntries.end(); iter++) {
+	for (Common::HashMap<uint32, AlphaDataEntry>::iterator iter = _alphaDataEntries.begin(); iter != _alphaDataEntries.end(); ++iter) {
 		uint32 destOffset = 0;
 		uint32 sourceOffset = 0;
 		uint16 *backbufferPtr = (uint16 *)_backBuffer.getBasePtr(iter->_value.destX + _workingWindow.left, iter->_value.destY + _workingWindow.top);
 		uint16 *entryPtr = (uint16 *)iter->_value.data->getPixels();
 
-		for (int32 y = 0; y < iter->_value.height; y++) {
-			for (int32 x = 0; x < iter->_value.width; x++) {
+		for (int32 y = 0; y < iter->_value.height; ++y) {
+			for (int32 x = 0; x < iter->_value.width; ++x) {
 				uint16 color = entryPtr[sourceOffset + x];
 				if (color != iter->_value.alphaColor) {
 					backbufferPtr[destOffset + x] = color;
@@ -151,7 +151,7 @@ void RenderManager::clearWorkingWindowTo555Color(uint16 color) {
 	uint16 colorIn565 = _pixelFormat.RGBToColor(r, g, b);
 	uint16 *bufferPtr = (uint16 *)_workingWindowBuffer.getPixels();
 
-	for (uint32 i = 0; i < workingWindowSize; i++) {
+	for (uint32 i = 0; i < workingWindowSize; ++i) {
 		bufferPtr[i] = colorIn565;
 	}
 }
@@ -293,10 +293,10 @@ void RenderManager::readImageToSurface(const Common::String &fileName, Graphics:
 	if (isTransposed) {
 		uint16 *dest = (uint16 *)destination.getPixels();
 
-		for (uint32 y = 0; y < imageHeight; y++) {
+		for (uint32 y = 0; y < imageHeight; ++y) {
 			uint32 columnIndex = y * imageWidth;
 
-			for (uint32 x = 0; x < imageWidth; x++) {
+			for (uint32 x = 0; x < imageWidth; ++x) {
 				dest[columnIndex + x] = buffer[x * imageHeight + y];
 			}
 		}
@@ -320,8 +320,8 @@ void RenderManager::copyRectToWorkingWindow(const uint16 *buffer, int32 destX, i
 	uint32 sourceOffset = 0;
 	uint16 *workingWindowBufferPtr = (uint16 *)_workingWindowBuffer.getBasePtr(destX, destY);
 
-	for (int32 y = 0; y < height; y++) {
-		for (int32 x = 0; x < width; x++) {
+	for (int32 y = 0; y < height; ++y) {
+		for (int32 x = 0; x < width; ++x) {
 			workingWindowBufferPtr[destOffset + x] = buffer[sourceOffset + x];
 		}
 
@@ -353,8 +353,8 @@ void RenderManager::copyRectToWorkingWindow(const uint16 *buffer, int32 destX, i
 	uint32 destOffset = 0;
 	uint16 *surfacePtr = (uint16 *)entry.data->getPixels();
 
-	for (int32 y = 0; y < height; y++) {
-		for (int32 x = 0; x < width; x++) {
+	for (int32 y = 0; y < height; ++y) {
+		for (int32 x = 0; x < width; ++x) {
 			surfacePtr[destOffset + x] = buffer[sourceOffset + x];
 		}
 
@@ -509,10 +509,10 @@ Graphics::Surface *RenderManager::tranposeSurface(const Graphics::Surface *surfa
 	const uint16 *source = (const uint16 *)surface->getPixels();
 	uint16 *dest = (uint16 *)tranposedSurface->getPixels();
 
-	for (uint32 y = 0; y < tranposedSurface->h; y++) {
+	for (uint32 y = 0; y < tranposedSurface->h; ++y) {
 		uint32 columnIndex = y * tranposedSurface->w;
 
-		for (uint32 x = 0; x < tranposedSurface->w; x++) {
+		for (uint32 x = 0; x < tranposedSurface->w; ++x) {
 			dest[columnIndex + x] = source[x * surface->w + y];
 		}
 	}

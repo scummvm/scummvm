@@ -70,7 +70,7 @@ template<class T>
 void removeDuplicateEntries(Common::Array<T> &container) {
 	Common::sort(container.begin(), container.end());
 
-	for (uint i = 0; i + 1 < container.size(); i++) {
+	for (uint i = 0; i + 1 < container.size(); ++i) {
 		while (i + 1 < container.size() && container[i] == container[i + 1]) {
 			container.remove_at(i + 1);
 		}

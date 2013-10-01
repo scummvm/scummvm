@@ -76,7 +76,7 @@ void CursorManager::changeCursor(const Common::String &cursorName, bool pushed) 
 		return;
 	}
 
-	for (int i = 0; i < NUM_CURSORS; i++) {
+	for (int i = 0; i < NUM_CURSORS; ++i) {
 		if (_engine->getGameId() == GID_NEMESIS) {
 			if (cursorName.equals(_cursorNames[i])) {
 				_currentCursor = cursorName;

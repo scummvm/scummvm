@@ -229,7 +229,7 @@ bool LeverControl::onMouseMove(const Common::Point &screenSpacePos, const Common
 			int angle = calculateVectorAngle(_lastMousePos, backgroundImageSpacePos);
 			_lastMousePos = backgroundImageSpacePos;
 
-			for (Common::List<Direction>::iterator iter = _frameInfo[_currentFrame].directions.begin(); iter != _frameInfo[_currentFrame].directions.end(); iter++) {
+			for (Common::List<Direction>::iterator iter = _frameInfo[_currentFrame].directions.begin(); iter != _frameInfo[_currentFrame].directions.end(); ++iter) {
 				if (angle >= (int)iter->angle - ANGLE_DELTA && angle <= (int)iter->angle + ANGLE_DELTA) {
 					_currentFrame = iter->toFrame;
 					renderFrame(_currentFrame);

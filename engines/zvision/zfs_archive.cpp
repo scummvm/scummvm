@@ -78,7 +78,7 @@ void ZfsArchive::readHeaders(Common::SeekableReadStream *stream) {
 		nextOffset = stream->readUint32LE();
 
 		// Read in each entry header
-		for (uint32 i = 0; i < _header.filesPerBlock; i++) {
+		for (uint32 i = 0; i < _header.filesPerBlock; ++i) {
 			ZfsEntryHeader entryHeader;
 			
 			entryHeader.name = readEntryName(stream);
@@ -149,7 +149,7 @@ Common::SeekableReadStream *ZfsArchive::createReadStreamForMember(const Common::
 }
 
 void ZfsArchive::unXor(byte *buffer, uint32 length, const byte *xorKey) const {
-	for (uint32 i = 0; i < length; i++)
+	for (uint32 i = 0; i < length; ++i)
 		buffer[i] ^= xorKey[i % 4];
 }
 

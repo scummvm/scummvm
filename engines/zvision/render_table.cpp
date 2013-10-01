@@ -103,10 +103,10 @@ uint16 mixTwoRGB(uint16 colorOne, uint16 colorTwo, float percentColorOne) {
 void RenderTable::mutateImage(uint16 *sourceBuffer, uint16* destBuffer, uint32 destWidth, const Common::Rect &subRect) {
 	uint32 destOffset = 0;
 
-	for (int16 y = subRect.top; y < subRect.bottom; y++) {
+	for (int16 y = subRect.top; y < subRect.bottom; ++y) {
 		uint32 sourceOffset = y * _numColumns;
 
-		for (int16 x = subRect.left; x < subRect.right; x++) {
+		for (int16 x = subRect.left; x < subRect.right; ++x) {
 			uint32 normalizedX = x - subRect.left;
 			uint32 index = sourceOffset + x;
 
@@ -144,7 +144,7 @@ void RenderTable::generatePanoramaLookupTable() {
 	float fovInRadians = (_panoramaOptions.fieldOfView * M_PI / 180.0f);
 	float cylinderRadius = halfHeight / tan(fovInRadians);
 
-	for (uint x = 0; x < _numColumns; x++) {
+	for (uint x = 0; x < _numColumns; ++x) {
 		// Add an offset of 0.01 to overcome zero tan/atan issue (vertical line on half of screen)
 		// Alpha represents the horizontal angle between the viewer at the center of a cylinder and x
 		float alpha = atan(((float)x - halfWidth + 0.01f) / cylinderRadius);
@@ -155,7 +155,7 @@ void RenderTable::generatePanoramaLookupTable() {
 		
 		float cosAlpha = cos(alpha);
 
-		for (uint y = 0; y < _numRows; y++) {
+		for (uint y = 0; y < _numRows; ++y) {
 			// To calculate y in cylinder coordinates, we can do similar triangles comparison, 
 			// comparing the triangle from the center to the screen and from the center to the edge of the cylinder
 			int32 yInCylinderCoords = int32(floor(halfHeight + ((float)y - halfHeight) * cosAlpha));
@@ -176,7 +176,7 @@ void RenderTable::generateTiltLookupTable() {
 	float fovInRadians = (_tiltOptions.fieldOfView * M_PI / 180.0f);
 	float cylinderRadius = halfWidth / tan(fovInRadians);
 
-	for (uint y = 0; y < _numRows; y++) {
+	for (uint y = 0; y < _numRows; ++y) {
 	
 		// Add an offset of 0.01 to overcome zero tan/atan issue (horizontal line on half of screen)
 		// Alpha represents the vertical angle between the viewer at the center of a cylinder and y
@@ -189,7 +189,7 @@ void RenderTable::generateTiltLookupTable() {
 		float cosAlpha = cos(alpha);
 		uint32 columnIndex = y * _numColumns;
 
-		for (uint x = 0; x < _numColumns; x++) {
+		for (uint x = 0; x < _numColumns; ++x) {
 			// To calculate x in cylinder coordinates, we can do similar triangles comparison, 
 			// comparing the triangle from the center to the screen and from the center to the edge of the cylinder
 			int32 xInCylinderCoords = int32(floor(halfWidth + ((float)x - halfWidth) * cosAlpha));

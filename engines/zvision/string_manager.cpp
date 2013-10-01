@@ -41,7 +41,7 @@ StringManager::StringManager(ZVision *engine)
 }
 
 StringManager::~StringManager() {
-	for (Common::HashMap<Common::String, TruetypeFont *>::iterator iter = _fonts.begin(); iter != _fonts.end(); iter++) {
+	for (Common::HashMap<Common::String, TruetypeFont *>::iterator iter = _fonts.begin(); iter != _fonts.end(); ++iter) {
 		delete iter->_value;
 	}
 }
@@ -80,7 +80,7 @@ void StringManager::parseStrFile(const Common::String &fileName) {
 		uint textStringCursor = 0;
 		bool inTag = false;
 
-		for (uint i = 0; i < asciiLine.size(); i++) {
+		for (uint i = 0; i < asciiLine.size(); ++i) {
 			switch (asciiLine[i]) {
 			case '<':
 				inTag = true;
