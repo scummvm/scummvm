@@ -1572,65 +1572,6 @@ Common::String AvalancheEngine::getName(People whose) {
 		return kLasses[whose - kPeopleArkata];
 }
 
-byte AvalancheEngine::getNameChar(People whose) {
-	static const char kLadChar[] = "ASCDMTRwLfgeIyPu";
-	static const char kLassChar[] = "kG\0xB1o";
-
-	if (whose < kPeopleArkata)
-		return kLadChar[whose - kPeopleAvalot];
-	else
-		return kLassChar[whose - kPeopleArkata];
-}
-
-Common::String AvalancheEngine::getThing(byte which) {
-	static const Common::String kThings[kObjectNum] = {
-		"Wine", "Money-bag", "Bodkin", "Potion", "Chastity belt",
-		"Crossbow bolt", "Crossbow", "Lute", "Pilgrim's badge", "Mushroom", "Key",
-		"Bell", "Scroll", "Pen", "Ink", "Clothes", "Habit", "Onion"
-	};
-
-	Common::String get_thing_result;
-	switch (which) {
-	case kObjectWine:
-		switch (_wineState) {
-		case 1:
-		case 4:
-			get_thing_result = kThings[which - 1];
-			break;
-		case 3:
-			get_thing_result = "Vinegar";
-			break;
-		}
-		break;
-	case kObjectOnion:
-		if (_rottenOnion)
-			get_thing_result = "rotten onion";
-		else
-			get_thing_result = kThings[which - 1];
-		break;
-	default:
-		get_thing_result = kThings[which - 1];
-	}
-	return get_thing_result;
-}
-
-char AvalancheEngine::getThingChar(byte which) {
-	static const char kThingsChar[] = "WMBParCLguKeSnIohn"; // V=Vinegar
-
-	char get_thingchar_result;
-	switch (which) {
-	case kObjectWine:
-		if (_wineState == 3)
-			get_thingchar_result = 'V'; // Vinegar
-		else
-			get_thingchar_result = kThingsChar[which - 1];
-		break;
-	default:
-		get_thingchar_result = kThingsChar[which - 1];
-	}
-	return get_thingchar_result;
-}
-
 Common::String AvalancheEngine::getItem(byte which) {
 	static const Common::String kItems[kObjectNum] = {
 		"some wine", "your money-bag", "your bodkin", "a potion", "a chastity belt",

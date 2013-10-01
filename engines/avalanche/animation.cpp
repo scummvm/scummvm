@@ -191,27 +191,27 @@ void AnimationType::walk() {
 		if ((magicColor != 255) & (!_anim->_vm->_doingSpriteRun)) {
 			MagicType *magic = &_anim->_vm->_magics[magicColor];
 			switch (magic->_operation) {
-			case AvalancheEngine::kMagicExclaim:
+			case kMagicExclaim:
 				bounce();
 				_anim->_mustExclaim = true;
 				_anim->_sayWhat = magic->_data;
 				break;
-			case AvalancheEngine::kMagicBounce:
+			case kMagicBounce:
 				bounce();
 				break;
-			case AvalancheEngine::kMagicTransport:
+			case kMagicTransport:
 				_anim->_vm->flipRoom((Room)(magic->_data >> 8), magic->_data & 0xff);
 				break;
-			case AvalancheEngine::kMagicUnfinished: {
+			case kMagicUnfinished: {
 				bounce();
 				Common::String tmpStr = Common::String::format("%c%cSorry.%cThis place is not available yet!", Dialogs::kControlBell, Dialogs::kControlCenter, Dialogs::kControlRoman);
 				_anim->_vm->_dialogs->displayText(tmpStr);
 				}
 				break;
-			case AvalancheEngine::kMagicSpecial:
+			case kMagicSpecial:
 				_anim->callSpecial(magic->_data);
 				break;
-			case AvalancheEngine::kMagicOpenDoor:
+			case kMagicOpenDoor:
 				_anim->_vm->openDoor((Room)(magic->_data >> 8), magic->_data & 0xff, magicColor);
 				break;
 			}
@@ -427,66 +427,66 @@ void Animation::catacombMove(byte ped) {
 
 	switch (here & 0xf) { // West.
 	case 0: // no connection (wall)
-		_vm->_magics[1]._operation = AvalancheEngine::kMagicBounce; // Sloping wall.
-		_vm->_magics[2]._operation = AvalancheEngine::kMagicNothing; // Straight wall.
-		_vm->_portals[4]._operation = AvalancheEngine::kMagicNothing; // Door.
+		_vm->_magics[1]._operation = kMagicBounce; // Sloping wall.
+		_vm->_magics[2]._operation = kMagicNothing; // Straight wall.
+		_vm->_portals[4]._operation = kMagicNothing; // Door.
 		_vm->_background->draw(-1, -1, 27);
 		break;
 	case 0x1: // no connection (wall + shield),
-		_vm->_magics[1]._operation = AvalancheEngine::kMagicBounce; // Sloping wall.
-		_vm->_magics[2]._operation = AvalancheEngine::kMagicNothing; // Straight wall.
-		_vm->_portals[4]._operation = AvalancheEngine::kMagicNothing; // Door.
+		_vm->_magics[1]._operation = kMagicBounce; // Sloping wall.
+		_vm->_magics[2]._operation = kMagicNothing; // Straight wall.
+		_vm->_portals[4]._operation = kMagicNothing; // Door.
 		_vm->_background->draw(-1, -1, 27); // Wall, plus...
 		_vm->_background->draw(-1, -1, 28); // ...shield.
 		break;
 	case 0x2: // wall with door
-		_vm->_magics[1]._operation = AvalancheEngine::kMagicBounce; // Sloping wall.
-		_vm->_magics[2]._operation = AvalancheEngine::kMagicNothing; // Straight wall.
-		_vm->_portals[4]._operation = AvalancheEngine::kMagicSpecial; // Door.
+		_vm->_magics[1]._operation = kMagicBounce; // Sloping wall.
+		_vm->_magics[2]._operation = kMagicNothing; // Straight wall.
+		_vm->_portals[4]._operation = kMagicSpecial; // Door.
 		_vm->_background->draw(-1, -1, 27); // Wall, plus...
 		_vm->_background->draw(-1, -1, 29); // ...door.
 		break;
 	case 0x3: // wall with door and shield
-		_vm->_magics[1]._operation = AvalancheEngine::kMagicBounce; // Sloping wall.
-		_vm->_magics[2]._operation = AvalancheEngine::kMagicNothing; // Straight wall.
-		_vm->_portals[4]._operation = AvalancheEngine::kMagicSpecial; // Door.
+		_vm->_magics[1]._operation = kMagicBounce; // Sloping wall.
+		_vm->_magics[2]._operation = kMagicNothing; // Straight wall.
+		_vm->_portals[4]._operation = kMagicSpecial; // Door.
 		_vm->_background->draw(-1, -1, 27); // Wall, plus...
 		_vm->_background->draw(-1, -1, 29); // ...door, and...
 		_vm->_background->draw(-1, -1, 28); // ...shield.
 		break;
 	case 0x4: // no connection (wall + window),
-		_vm->_magics[1]._operation = AvalancheEngine::kMagicBounce; // Sloping wall.
-		_vm->_magics[2]._operation = AvalancheEngine::kMagicNothing; // Straight wall.
-		_vm->_portals[4]._operation = AvalancheEngine::kMagicNothing; // Door.
+		_vm->_magics[1]._operation = kMagicBounce; // Sloping wall.
+		_vm->_magics[2]._operation = kMagicNothing; // Straight wall.
+		_vm->_portals[4]._operation = kMagicNothing; // Door.
 		_vm->_background->draw(-1, -1, 27); // Wall, plus...
 		_vm->_background->draw(-1, -1, 4);  // ...window.
 		break;
 	case 0x5: // wall with door and window
-		_vm->_magics[1]._operation = AvalancheEngine::kMagicBounce; // Sloping wall.
-		_vm->_magics[2]._operation = AvalancheEngine::kMagicNothing; // Straight wall.
-		_vm->_portals[4]._operation = AvalancheEngine::kMagicSpecial; // Door.
+		_vm->_magics[1]._operation = kMagicBounce; // Sloping wall.
+		_vm->_magics[2]._operation = kMagicNothing; // Straight wall.
+		_vm->_portals[4]._operation = kMagicSpecial; // Door.
 		_vm->_background->draw(-1, -1, 27); // Wall, plus...
 		_vm->_background->draw(-1, -1, 29); // ...door, and...
 		_vm->_background->draw(-1, -1, 4); // ...window.
 		break;
 	case 0x6: // no connection (wall + torches),
-		_vm->_magics[1]._operation = AvalancheEngine::kMagicBounce; // Sloping wall.
-		_vm->_magics[2]._operation = AvalancheEngine::kMagicNothing; // Straight wall.
-		_vm->_portals[4]._operation = AvalancheEngine::kMagicNothing; // No door.
+		_vm->_magics[1]._operation = kMagicBounce; // Sloping wall.
+		_vm->_magics[2]._operation = kMagicNothing; // Straight wall.
+		_vm->_portals[4]._operation = kMagicNothing; // No door.
 		_vm->_background->draw(-1, -1, 27); // Wall, plus...
 		_vm->_background->draw(-1, -1, 6); // ...torches.
 		break;
 	case 0x7: // wall with door and torches
-		_vm->_magics[1]._operation = AvalancheEngine::kMagicBounce; // Sloping wall.
-		_vm->_magics[2]._operation = AvalancheEngine::kMagicNothing; // Straight wall.
-		_vm->_portals[4]._operation = AvalancheEngine::kMagicSpecial; // Door.
+		_vm->_magics[1]._operation = kMagicBounce; // Sloping wall.
+		_vm->_magics[2]._operation = kMagicNothing; // Straight wall.
+		_vm->_portals[4]._operation = kMagicSpecial; // Door.
 		_vm->_background->draw(-1, -1, 27); // Wall, plus...
 		_vm->_background->draw(-1, -1, 29); // ...door, and...
 		_vm->_background->draw(-1, -1, 6); // ...torches.
 		break;
 	case 0xf: // straight-through corridor.
-		_vm->_magics[1]._operation = AvalancheEngine::kMagicNothing; // Sloping wall.
-		_vm->_magics[2]._operation = AvalancheEngine::kMagicSpecial; // Straight wall.
+		_vm->_magics[1]._operation = kMagicNothing; // Sloping wall.
+		_vm->_magics[2]._operation = kMagicSpecial; // Straight wall.
 		break;
 	}
 
@@ -494,90 +494,90 @@ void Animation::catacombMove(byte ped) {
 
 	switch ((here & 0xf0) >> 4) { // East
 	case 0: // no connection (wall)
-		_vm->_magics[4]._operation = AvalancheEngine::kMagicBounce; // Sloping wall.
-		_vm->_magics[5]._operation = AvalancheEngine::kMagicNothing; // Straight wall.
-		_vm->_portals[6]._operation = AvalancheEngine::kMagicNothing; // Door.
+		_vm->_magics[4]._operation = kMagicBounce; // Sloping wall.
+		_vm->_magics[5]._operation = kMagicNothing; // Straight wall.
+		_vm->_portals[6]._operation = kMagicNothing; // Door.
 		_vm->_background->draw(-1, -1, 18);
 		break;
 	case 0x1: // no connection (wall + window),
-		_vm->_magics[4]._operation = AvalancheEngine::kMagicBounce; // Sloping wall.
-		_vm->_magics[5]._operation = AvalancheEngine::kMagicNothing; // Straight wall.
-		_vm->_portals[6]._operation = AvalancheEngine::kMagicNothing; // Door.
+		_vm->_magics[4]._operation = kMagicBounce; // Sloping wall.
+		_vm->_magics[5]._operation = kMagicNothing; // Straight wall.
+		_vm->_portals[6]._operation = kMagicNothing; // Door.
 		_vm->_background->draw(-1, -1, 18); // Wall, plus...
 		_vm->_background->draw(-1, -1, 19); // ...window.
 		break;
 	case 0x2: // wall with door
-		_vm->_magics[4]._operation = AvalancheEngine::kMagicBounce; // Sloping wall.
-		_vm->_magics[5]._operation = AvalancheEngine::kMagicNothing; // Straight wall.
-		_vm->_portals[6]._operation = AvalancheEngine::kMagicSpecial; // Door.
+		_vm->_magics[4]._operation = kMagicBounce; // Sloping wall.
+		_vm->_magics[5]._operation = kMagicNothing; // Straight wall.
+		_vm->_portals[6]._operation = kMagicSpecial; // Door.
 		_vm->_background->draw(-1, -1, 18); // Wall, plus...
 		_vm->_background->draw(-1, -1, 20); // ...door.
 		break;
 	case 0x3: // wall with door and window
-		_vm->_magics[4]._operation = AvalancheEngine::kMagicBounce; // Sloping wall.
-		_vm->_magics[5]._operation = AvalancheEngine::kMagicNothing; // Straight wall.
-		_vm->_portals[6]._operation = AvalancheEngine::kMagicSpecial; // Door.
+		_vm->_magics[4]._operation = kMagicBounce; // Sloping wall.
+		_vm->_magics[5]._operation = kMagicNothing; // Straight wall.
+		_vm->_portals[6]._operation = kMagicSpecial; // Door.
 		_vm->_background->draw(-1, -1, 18); // Wall, plus...
 		_vm->_background->draw(-1, -1, 19); // ...door, and...
 		_vm->_background->draw(-1, -1, 20); // ...window.
 		break;
 	case 0x6: // no connection (wall + torches),
-		_vm->_magics[4]._operation = AvalancheEngine::kMagicBounce; // Sloping wall.
-		_vm->_magics[5]._operation = AvalancheEngine::kMagicNothing; // Straight wall.
-		_vm->_portals[6]._operation = AvalancheEngine::kMagicNothing; // No door.
+		_vm->_magics[4]._operation = kMagicBounce; // Sloping wall.
+		_vm->_magics[5]._operation = kMagicNothing; // Straight wall.
+		_vm->_portals[6]._operation = kMagicNothing; // No door.
 		_vm->_background->draw(-1, -1, 18); // Wall, plus...
 		_vm->_background->draw(-1, -1, 17); // ...torches.
 		break;
 	case 0x7: // wall with door and torches
-		_vm->_magics[4]._operation = AvalancheEngine::kMagicBounce; // Sloping wall.
-		_vm->_magics[5]._operation = AvalancheEngine::kMagicNothing; // Straight wall.
-		_vm->_portals[6]._operation = AvalancheEngine::kMagicSpecial; // Door.
+		_vm->_magics[4]._operation = kMagicBounce; // Sloping wall.
+		_vm->_magics[5]._operation = kMagicNothing; // Straight wall.
+		_vm->_portals[6]._operation = kMagicSpecial; // Door.
 		_vm->_background->draw(-1, -1, 18); // Wall, plus...
 		_vm->_background->draw(-1, -1, 20); // ...door, and...
 		_vm->_background->draw(-1, -1, 17); // ...torches.
 		break;
 	case 0xf: // straight-through corridor.
-		_vm->_magics[4]._operation = AvalancheEngine::kMagicNothing; // Sloping wall.
-		_vm->_magics[5]._operation = AvalancheEngine::kMagicSpecial; // Straight wall.
-		_vm->_portals[6]._operation = AvalancheEngine::kMagicNothing; // Door.
+		_vm->_magics[4]._operation = kMagicNothing; // Sloping wall.
+		_vm->_magics[5]._operation = kMagicSpecial; // Straight wall.
+		_vm->_portals[6]._operation = kMagicNothing; // Door.
 		break;
 	}
 
 	switch ((here & 0xf00) >> 8) { // South
 	case 0: // No connection.
-		_vm->_magics[6]._operation = AvalancheEngine::kMagicBounce;
-		_vm->_magics[11]._operation = AvalancheEngine::kMagicBounce;
-		_vm->_magics[12]._operation = AvalancheEngine::kMagicBounce;
+		_vm->_magics[6]._operation = kMagicBounce;
+		_vm->_magics[11]._operation = kMagicBounce;
+		_vm->_magics[12]._operation = kMagicBounce;
 		break;
 	case 0x1:
 		_vm->_background->draw(-1, -1, 21);
 
 		if ((xy_uint16 == 2051) && (_vm->_geidaFollows))
-			_vm->_magics[12]._operation = AvalancheEngine::kMagicExclaim;
+			_vm->_magics[12]._operation = kMagicExclaim;
 		else
-			_vm->_magics[12]._operation = AvalancheEngine::kMagicSpecial; // Right exit south.
+			_vm->_magics[12]._operation = kMagicSpecial; // Right exit south.
 
-		_vm->_magics[6]._operation = AvalancheEngine::kMagicBounce;
-		_vm->_magics[11]._operation = AvalancheEngine::kMagicBounce;
+		_vm->_magics[6]._operation = kMagicBounce;
+		_vm->_magics[11]._operation = kMagicBounce;
 		break;
 	case 0x2:
 		_vm->_background->draw(-1, -1, 22);
-		_vm->_magics[6]._operation = AvalancheEngine::kMagicSpecial; // Middle exit south.
-		_vm->_magics[11]._operation = AvalancheEngine::kMagicBounce;
-		_vm->_magics[12]._operation = AvalancheEngine::kMagicBounce;
+		_vm->_magics[6]._operation = kMagicSpecial; // Middle exit south.
+		_vm->_magics[11]._operation = kMagicBounce;
+		_vm->_magics[12]._operation = kMagicBounce;
 		break;
 	case 0x3:
 		_vm->_background->draw(-1, -1, 23);
-		_vm->_magics[11]._operation = AvalancheEngine::kMagicSpecial; // Left exit south.
-		_vm->_magics[6]._operation = AvalancheEngine::kMagicBounce;
-		_vm->_magics[12]._operation = AvalancheEngine::kMagicBounce;
+		_vm->_magics[11]._operation = kMagicSpecial; // Left exit south.
+		_vm->_magics[6]._operation = kMagicBounce;
+		_vm->_magics[12]._operation = kMagicBounce;
 		break;
 	}
 
 	switch ((here & 0xf000) >> 12) { // North
 	case 0: // No connection
-		_vm->_magics[0]._operation = AvalancheEngine::kMagicBounce;
-		_vm->_portals[3]._operation = AvalancheEngine::kMagicNothing; // Door.
+		_vm->_magics[0]._operation = kMagicBounce;
+		_vm->_portals[3]._operation = kMagicNothing; // Door.
 		break;
 	// LEFT handles:
 #if 0
@@ -589,8 +589,8 @@ void Animation::catacombMove(byte ped) {
 #endif
 	case 0x2:
 		_vm->_background->draw(-1, -1, 3);
-		_vm->_magics[0]._operation = AvalancheEngine::kMagicBounce; // Middle exit north.
-		_vm->_portals[3]._operation = AvalancheEngine::kMagicSpecial; // Door.
+		_vm->_magics[0]._operation = kMagicBounce; // Middle exit north.
+		_vm->_portals[3]._operation = kMagicSpecial; // Door.
 		break;
 #if 0
 	case 0x3:
@@ -607,8 +607,8 @@ void Animation::catacombMove(byte ped) {
 #endif
 	case 0x5:
 		_vm->_background->draw(-1, -1, 2);
-		_vm->_magics[0]._operation = AvalancheEngine::kMagicBounce; // Middle exit north.
-		_vm->_portals[3]._operation = AvalancheEngine::kMagicSpecial; // Door.
+		_vm->_magics[0]._operation = kMagicBounce; // Middle exit north.
+		_vm->_portals[3]._operation = kMagicSpecial; // Door.
 		break;
 #if 0
 	case 0x6:
@@ -628,25 +628,25 @@ void Animation::catacombMove(byte ped) {
 		if (((here & 0xf000) >> 12) == 0x9)
 			_vm->_background->draw(-1, -1, 31);
 
-		_vm->_magics[0]._operation = AvalancheEngine::kMagicSpecial; // Middle arch north.
-		_vm->_portals[3]._operation = AvalancheEngine::kMagicNothing; // Door.
+		_vm->_magics[0]._operation = kMagicSpecial; // Middle arch north.
+		_vm->_portals[3]._operation = kMagicNothing; // Door.
 		break;
 	// DECORATIONS:
 	case 0xd: // No connection + WINDOW
-		_vm->_magics[0]._operation = AvalancheEngine::kMagicBounce;
-		_vm->_portals[3]._operation = AvalancheEngine::kMagicNothing; // Door.
+		_vm->_magics[0]._operation = kMagicBounce;
+		_vm->_portals[3]._operation = kMagicNothing; // Door.
 		_vm->_background->draw(-1, -1, 13);
 		break;
 	case 0xe: // No connection + TORCH
-		_vm->_magics[0]._operation = AvalancheEngine::kMagicBounce;
-		_vm->_portals[3]._operation = AvalancheEngine::kMagicNothing; // Door.
+		_vm->_magics[0]._operation = kMagicBounce;
+		_vm->_portals[3]._operation = kMagicNothing; // Door.
 		_vm->_background->draw(-1, -1, 7);
 		break;
 	// Recessed door:
 	case 0xf:
-		_vm->_magics[0]._operation = AvalancheEngine::kMagicNothing; // Door to Geida's room.
+		_vm->_magics[0]._operation = kMagicNothing; // Door to Geida's room.
 		_vm->_background->draw(-1, -1, 0);
-		_vm->_portals[3]._operation = AvalancheEngine::kMagicSpecial; // Door.
+		_vm->_portals[3]._operation = kMagicSpecial; // Door.
 		break;
 	}
 
@@ -701,17 +701,17 @@ void Animation::callSpecial(uint16 which) {
 	case 1: // _vm->special 1: Room 22: top of stairs.
 		_vm->_background->draw(-1, -1, 0);
 		_vm->_brummieStairs = 1;
-		_vm->_magics[9]._operation = AvalancheEngine::kMagicNothing;
+		_vm->_magics[9]._operation = kMagicNothing;
 		_vm->_timer->addTimer(10, Timer::kProcStairs, Timer::kReasonBrummieStairs);
 		stopWalking();
 		_vm->_userMovesAvvy = false;
 		break;
 	case 2: // _vm->special 2: Room 22: bottom of stairs.
 		_vm->_brummieStairs = 3;
-		_vm->_magics[10]._operation = AvalancheEngine::kMagicNothing;
-		_vm->_magics[11]._operation = AvalancheEngine::kMagicExclaim;
+		_vm->_magics[10]._operation = kMagicNothing;
+		_vm->_magics[11]._operation = kMagicExclaim;
 		_vm->_magics[11]._data = 5;
-		_vm->_magics[3]._operation = AvalancheEngine::kMagicBounce; // Now works as planned!
+		_vm->_magics[3]._operation = kMagicBounce; // Now works as planned!
 		stopWalking();
 		_vm->_dialogs->displayScrollChain('q', 26);
 		_vm->_userMovesAvvy = true;
@@ -742,7 +742,7 @@ void Animation::callSpecial(uint16 which) {
 	case 5:
 		if (_vm->_friarWillTieYouUp) {
 			// _vm->special 5: Room 42: touched tree, and get tied up.
-			_vm->_magics[4]._operation = AvalancheEngine::kMagicBounce; // Boundary effect is now working again.
+			_vm->_magics[4]._operation = kMagicBounce; // Boundary effect is now working again.
 			_vm->_dialogs->displayScrollChain('q', 35);
 			_sprites[0].remove();
 			//tr[1].vanishifstill:=true;
@@ -766,7 +766,7 @@ void Animation::callSpecial(uint16 which) {
 		break;
 	case 7: // _vm->special 7: stop falling down oubliette.
 		_sprites[0]._visible = false;
-		_vm->_magics[9]._operation = AvalancheEngine::kMagicNothing;
+		_vm->_magics[9]._operation = kMagicNothing;
 		stopWalking();
 		_vm->_timer->loseTimer(Timer::kReasonFallingDownOubliette);
 		//_vm->mblit(12, 80, 38, 160, 3, 0);

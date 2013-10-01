@@ -151,6 +151,10 @@ private:
 	void drawMenuText(int16 x, int16 y, char trigger, Common::String text, bool valid, bool highlighted);
 	void bleep();
 
+	char getThingChar(byte which);
+	byte getNameChar(People whose);
+	Common::String getThing(byte which);
+
 	void setupMenuGame();
 	void setupMenuFile();
 	void setupMenuAction();

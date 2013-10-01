@@ -674,7 +674,7 @@ void Parser::storeInterrogation(byte interrogation) {
 		_vm->_dialogs->displayScrollChain('z', 5); // His closing statement...
 		_vm->_animation->_sprites[1].walkTo(3); // The end of the drawbridge
 		_vm->_animation->_sprites[1]._vanishIfStill = true; // Then go away!
-		_vm->_magics[1]._operation = AvalancheEngine::kMagicNothing;
+		_vm->_magics[1]._operation = kMagicNothing;
 		_vm->_cardiffQuestionNum = 5;
 		break;
 	case 99:
@@ -1193,21 +1193,21 @@ void Parser::openDoor() {
 		if (_vm->_animation->inField(i + 8)) {
 			MagicType *portal = &_vm->_portals[i];
 			switch (portal->_operation) {
-			case AvalancheEngine::kMagicExclaim:
+			case kMagicExclaim:
 				_vm->_animation->_sprites[0].bounce();
 				_vm->_dialogs->displayScrollChain('x', portal->_data);
 				break;
-			case AvalancheEngine::kMagicTransport:
+			case kMagicTransport:
 				_vm->flipRoom((Room)((portal->_data) >> 8), portal->_data & 0x0F);
 				break;
-			case AvalancheEngine::kMagicUnfinished:
+			case kMagicUnfinished:
 				_vm->_animation->_sprites[0].bounce();
 				_vm->_dialogs->displayText("Sorry. This place is not available yet!");
 				break;
-			case AvalancheEngine::kMagicSpecial:
+			case kMagicSpecial:
 				_vm->_animation->callSpecial(portal->_data);
 				break;
-			case AvalancheEngine::kMagicOpenDoor:
+			case kMagicOpenDoor:
 				_vm->openDoor((Room)(portal->_data >> 8), portal->_data & 0x0F, i + 9);
 				break;
 			}
@@ -2148,7 +2148,7 @@ void Parser::doThat() {
 				_vm->_objects[kObjectBolt - 1] = false;
 				_vm->_objects[kObjectCrossbow - 1] = false;
 				_vm->refreshObjectList();
-				_vm->_magics[11]._operation = AvalancheEngine::kMagicNothing;
+				_vm->_magics[11]._operation = kMagicNothing;
 				_vm->incScore(7);
 				_vm->_animation->_sprites[1].walkTo(1);
 				_vm->_animation->_sprites[1]._vanishIfStill = true;
