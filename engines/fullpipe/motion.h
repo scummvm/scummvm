@@ -107,6 +107,8 @@ public:
 
 public:
 	MGM() : _items(0), _count(0) {}
+	void clear();
+	void addItem(int objId);
 };
 
 class MovGraphNode : public CObject {
@@ -170,13 +172,33 @@ class MovGraphLink : public CObject {
 	virtual bool load(MfcArchive &file);
 };
 
+struct MovGraphItem {
+	StaticANIObject *ani;
+	int field_4;
+	int field_8;
+	int field_C;
+	int field_10;
+	int field_14;
+	int field_18;
+	int field_1C;
+	int field_20;
+	int field_24;
+	int items;
+	int count;
+	int field_30;
+	int field_34;
+	int field_38;
+	int field_3C;
+
+	MovGraphItem();
+};
+
 class MovGraph : public MotionController {
  public:
 	ObList _nodes;
 	ObList _links;
 	int _field_44;
-	int _items;
-	int _itemsCount;
+	Common::Array<MovGraphItem *> _items;
 	int (*_callback1)(int, int, int);
 	MGM _mgm;
 

@@ -140,6 +140,25 @@ bool MctlCompoundArray::load(MfcArchive &file) {
 	return true;
 }
 
+MovGraphItem::MovGraphItem() {
+	ani = 0;
+	field_4 = 0;
+	field_8 = 0;
+	field_C = 0;
+	field_10 = 0;
+	field_14 = 0;
+	field_18 = 0;
+	field_1C = 0;
+	field_20 = 0;
+	field_24 = 0;
+	items = 0;
+	count = 0;
+	field_30 = 0;
+	field_34 = 0;
+	field_38 = 0;
+	field_3C = 0;
+}
+
 int MovGraph_messageHandler(ExCommand *cmd);
 
 int MovGraphCallback(int a1, int a2, int a3) {
@@ -149,8 +168,6 @@ int MovGraphCallback(int a1, int a2, int a3) {
 }
 
 MovGraph::MovGraph() {
-	_itemsCount = 0;
-	_items = 0;
 	_callback1 = MovGraphCallback;
 	_field_44 = 0;
 	insertMessageHandler(MovGraph_messageHandler, getMessageHandlersCount() - 1, 129);
@@ -168,7 +185,20 @@ bool MovGraph::load(MfcArchive &file) {
 }
 
 void MovGraph::addObject(StaticANIObject *obj) {
-	warning("STUB: MovGraph::addObject()");
+	_mgm.clear();
+	_mgm.addItem(obj->_id);
+
+	for (uint i = 0; i < _items.size(); i++)
+		if (_items[i]->ani == obj)
+			return;
+
+	MovGraphItem *item = new MovGraphItem();
+
+	item->ani = obj;
+
+	_items.push_back(item);
+
+	_mgm.addItem(obj->_id); // FIXME: Is it really needed?
 }
 
 int MovGraph::removeObject(StaticANIObject *obj) {
@@ -446,6 +476,14 @@ MovGraphNode *MovGraph::calcOffset(int ox, int oy) {
 	warning("STUB: MovGraph::calcOffset()");
 
 	return 0;
+}
+
+void MGM::clear() {
+	warning("STUB: MGM:clear()");
+}
+
+void MGM::addItem(int objId) {
+	warning("STUB: MGM:addItem(%d)", objId);
 }
 
 MovGraphLink::MovGraphLink() {
