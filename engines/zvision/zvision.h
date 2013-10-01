@@ -21,8 +21,8 @@
  *
  */
 
-#ifndef ZVISION_H
-#define ZVISION_H
+#ifndef ZVISION_ZVISION_H
+#define ZVISION_ZVISION_H
 
 #include "common/random.h"
 #include "common/events.h"
