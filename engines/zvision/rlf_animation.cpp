@@ -28,13 +28,12 @@
 #include "common/debug.h"
 #include "common/endian.h"
 
+#include "graphics/colormasks.h"
+
 #include "zvision/rlf_animation.h"
 
 
 namespace ZVision {
-
-const Graphics::PixelFormat RlfAnimation::_pixelFormat555 = Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
-const Graphics::PixelFormat RlfAnimation::_pixelFormat565 = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
 
 RlfAnimation::RlfAnimation(const Common::String &fileName, bool stream) 
 		: _stream(stream),
@@ -56,7 +55,7 @@ RlfAnimation::RlfAnimation(const Common::String &fileName, bool stream)
 		return;
 	}
 
-	_currentFrameBuffer.create(_width, _height, _pixelFormat565);
+	_currentFrameBuffer.create(_width, _height, Graphics::createPixelFormat<565>());
 	_frameBufferByteSize = _width * _height * sizeof(uint16);
 
 	if (!stream) {
@@ -247,8 +246,8 @@ void RlfAnimation::decodeMaskedRunLengthEncoding(int8 *source, int8 *dest, uint3
 				}
 
 				byte r, g, b;
-				_pixelFormat555.colorToRGB(READ_LE_UINT16(source + sourceOffset), r, g, b);
-				uint16 destColor = _pixelFormat565.RGBToColor(r, g, b);
+				Graphics::colorToRGB<Graphics::ColorMasks<555>>(READ_LE_UINT16(source + sourceOffset), r, g, b);
+				uint16 destColor = Graphics::RGBToColor<Graphics::ColorMasks<565>>(r, g, b);
 				WRITE_UINT16(dest + destOffset, destColor);
 
 				sourceOffset += 2;
@@ -293,8 +292,8 @@ void RlfAnimation::decodeSimpleRunLengthEncoding(int8 *source, int8 *dest, uint3
 				}
 
 				byte r, g, b;
-				_pixelFormat555.colorToRGB(READ_LE_UINT16(source + sourceOffset), r, g, b);
-				uint16 destColor = _pixelFormat565.RGBToColor(r, g, b);
+				Graphics::colorToRGB<Graphics::ColorMasks<555>>(READ_LE_UINT16(source + sourceOffset), r, g, b);
+				uint16 destColor = Graphics::RGBToColor<Graphics::ColorMasks<565>>(r, g, b);
 				WRITE_UINT16(dest + destOffset, destColor);
 
 				sourceOffset += 2;
@@ -310,8 +309,8 @@ void RlfAnimation::decodeSimpleRunLengthEncoding(int8 *source, int8 *dest, uint3
 			}
 
 			byte r, g, b;
-			_pixelFormat555.colorToRGB(READ_LE_UINT16(source + sourceOffset), r, g, b);
-			uint16 sampleColor = _pixelFormat565.RGBToColor(r, g, b);
+			Graphics::colorToRGB<Graphics::ColorMasks<555>>(READ_LE_UINT16(source + sourceOffset), r, g, b);
+			uint16 sampleColor = Graphics::RGBToColor<Graphics::ColorMasks<565>>(r, g, b);
 			sourceOffset += 2;
 
 			numberOfSamples += 2;

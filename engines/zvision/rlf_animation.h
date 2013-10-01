@@ -52,9 +52,6 @@ private:
 		uint32 encodedSize;
 	};
 
-	const static Graphics::PixelFormat _pixelFormat555;
-	const static Graphics::PixelFormat _pixelFormat565;
-
 private:
 	Common::File _file;
 	bool _stream;
