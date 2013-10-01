@@ -128,6 +128,7 @@ public:
 	void setup(); // Standard menu bar.
 	bool isActive();
 	void init();
+	void resetVariables();
 
 private:
 	static const byte kIndent = 5;
@@ -141,6 +142,7 @@ private:
 
 	Common::String _verbStr; // what you can do with your object. :-)
 	bool _menuActive; // Kludge so we don't have to keep referring to the menu.
+	People _lastPerson; // Last person to have been selected using the People menu.
 
 	AvalancheEngine *_vm;
 

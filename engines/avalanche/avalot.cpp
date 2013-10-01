@@ -1485,6 +1485,7 @@ void AvalancheEngine::resetVariables() {
 	_animation->resetVariables();
 	_sequence->resetVariables();
 	_background->resetVariables();
+	_menu->resetVariables();
 }
 
 void AvalancheEngine::newGame() {
@@ -1524,7 +1525,6 @@ void AvalancheEngine::newGame() {
 	_him = kPeoplePardon;
 	_her = kPeoplePardon;
 	_it = Parser::kPardon;
-	_lastPerson = kPeoplePardon; // = Pardon?
 	_passwordNum = _rnd->getRandomNumber(29) + 1; //Random(30) + 1;
 	_userMovesAvvy = false;
 	_doingSpriteRun = false;
@@ -1536,10 +1536,6 @@ void AvalancheEngine::newGame() {
 	_menu->setup();
 	_clock->update();
 	spriteRun();
-}
-
-void AvalancheEngine::slowDown() {
-	warning("STUB: slowdown()");
 }
 
 bool AvalancheEngine::getFlag(char x) {
@@ -1706,11 +1702,6 @@ Common::String AvalancheEngine::f5Does() {
 	}
 
 	return Common::String::format("%c", kVerbCodePardon); // If all else fails...
-}
-
-void AvalancheEngine::hangAroundForAWhile() {
-	for (int i = 0; i < 28; i++)
-		slowDown();
 }
 
 void AvalancheEngine::flipRoom(Room room, byte ped) {

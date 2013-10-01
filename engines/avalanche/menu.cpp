@@ -478,11 +478,11 @@ void Menu::setupMenuWith() {
 		// We disable the "give" option if: (a), you haven't selected anybody, (b), the _person you've selected isn't in the room,
 		// or (c), the _person you've selected is YOU!
 
-		if ((_vm->_lastPerson == kPeopleAvalot) || (_vm->_lastPerson == _vm->_parser->kNothing)
-			|| (_vm->getRoom(_vm->_lastPerson) != _vm->_room))
+		if ((_lastPerson == kPeopleAvalot) || (_lastPerson == _vm->_parser->kNothing)
+			|| (_vm->getRoom(_lastPerson) != _vm->_room))
 			_activeMenuItem.setupOption("Give to...", 'G', "", false); // Not here.
 		else {
-			_activeMenuItem.setupOption(Common::String("Give to ") + _vm->getName(_vm->_lastPerson), 'G', "", true);
+			_activeMenuItem.setupOption(Common::String("Give to ") + _vm->getName(_lastPerson), 'G', "", true);
 			_verbStr = _verbStr + kVerbCodeGive;
 		}
 	} else {
@@ -611,7 +611,7 @@ void Menu::runMenuObjects() {
 
 void Menu::runMenuPeople() {
 	_vm->thinkAbout(people[_activeMenuItem._choiceNum], AvalancheEngine::kPerson);
-	_vm->_lastPerson = (People)people[_activeMenuItem._choiceNum];
+	_lastPerson = (People)people[_activeMenuItem._choiceNum];
 }
 
 void Menu::runMenuWith() {
@@ -621,7 +621,7 @@ void Menu::runMenuWith() {
 		_vm->_parser->_thing += 49;
 
 		if (_verbStr[_activeMenuItem._choiceNum] == kVerbCodeGive)
-			_vm->_parser->_person = _vm->_lastPerson;
+			_vm->_parser->_person = _lastPerson;
 		else
 			_vm->_parser->_person = kPeoplePardon;
 	} else {
@@ -770,5 +770,9 @@ bool Menu::isActive() {
 
 void Menu::init() {
 	_menuActive = false;
+}
+
+void Menu::resetVariables() {
+	_lastPerson = kPeoplePardon; // = Pardon?
 }
 } // End of namespace Avalanche.
