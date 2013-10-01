@@ -192,7 +192,7 @@ void Dialogs::scrollModeDialogue() {
 		cursorPos.y /= 2;
 
 		char inChar = 0;
-		if (event.type == Common::EVENT_KEYDOWN) {
+		if ((event.type == Common::EVENT_KEYDOWN) && (event.kbd.ascii <= 122) && (event.kbd.ascii >= 97)) {
 			inChar = (char)event.kbd.ascii;
 			Common::String temp(inChar);
 			temp.toUppercase();
@@ -363,25 +363,6 @@ void Dialogs::unDodgem() {
 		g_system->warpMouse(_dodgeCoord.x, _dodgeCoord.y); // No change, so restore the pointer's original position.
 }
 
-void Dialogs::getIcon(int16 x, int16 y, byte which) {
-	Common::File file;
-
-	if (!file.open("icons.avd"))
-		error("AVALANCHE: Scrolls: File not found: icons.avd");
-
-	which--;
-	file.seek(which * 426);
-
-	byte *p = new byte[426];
-	file.read(p, 426);
-
-	//putimage(x, y, p, 0);
-	warning("STUB: Scrolls::getIcon()");
-
-	delete[] p;
-	file.close();
-}
-
 void Dialogs::drawScroll(DialogFunctionType modeFunc) {
 	int16 lx = 0;
 	int16 ly = (_maxLineNum + 1) * 6;
@@ -423,7 +404,7 @@ void Dialogs::drawScroll(DialogFunctionType modeFunc) {
 	}
 
 	if ((1 <= _useIcon) && (_useIcon <= 33)) { // Standard icon.
-		getIcon(mx, my + ly / 2, _useIcon);
+		_vm->_graphics->drawIcon(mx, my + ly / 2, _useIcon);
 		iconIndent = 53;
 	}
 
