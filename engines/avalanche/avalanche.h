@@ -261,16 +261,12 @@ public:
 	bool _letMeOut;
 	byte _thinks;
 	bool _thinkThing;
-
-
-
 	int16 _talkX, _talkY;
 	bool _seeScroll; // TODO: maybe this means we're interacting with the toolbar / a scroll?
 	char _objectList[10];
 	// Called .free() for them in ~Gyro().
-	int8 _scoreToDisplay[3];
+
 	byte _currentMouse; // current mouse-void
-	Common::String _verbStr; // what you can do with your object. :-)
 	Common::String *_also[31][2];
 	PedType _peds[15];
 	MagicType _magics[15];
@@ -361,6 +357,7 @@ private:
 	bool _passedCwytalotInHerts; // Have you passed Cwytalot in Herts?
 	byte _roomCount[100]; // Add one to each every time you enter a room
 	Common::String _mouseText;
+	int8 _scoreToDisplay[3];
 
 	Common::File file;
 	Common::String readAlsoStringFromFile();
