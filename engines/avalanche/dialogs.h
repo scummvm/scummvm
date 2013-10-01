@@ -100,7 +100,7 @@ private:
 	Common::Point _dodgeCoord;
 	byte _param; // For using arguments code
 	byte _useIcon;
-	byte _scrollNum;
+	byte _maxLineNum;
 	bool _scReturn;
 
 	// These 3 "Mode" functions are always passed as ScrollsFunctionType parameters.
