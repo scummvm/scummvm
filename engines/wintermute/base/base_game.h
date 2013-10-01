@@ -157,7 +157,7 @@ public:
 
 	int32 _sequence;
 	virtual bool loadFile(const char *filename);
-	virtual bool loadBuffer(byte *buffer, bool complete = true);
+	virtual bool loadBuffer(char *buffer, bool complete = true);
 
 	int32 _viewportSP;
 

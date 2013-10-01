@@ -1245,7 +1245,7 @@ bool AdGame::showCursor() {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdGame::loadFile(const char *filename) {
-	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
+	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
 		_gameRef->LOG(0, "AdGame::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
@@ -1281,7 +1281,7 @@ TOKEN_DEF(STARTUP_SCENE)
 TOKEN_DEF(DEBUG_STARTUP_SCENE)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-bool AdGame::loadBuffer(byte *buffer, bool complete) {
+bool AdGame::loadBuffer(char *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(GAME)
 	TOKEN_TABLE(AD_GAME)
@@ -1295,14 +1295,14 @@ bool AdGame::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE(DEBUG_STARTUP_SCENE)
 	TOKEN_TABLE_END
 
-	byte *params;
-	byte *params2;
+	char *params;
+	char *params2;
 	int cmd = 1;
 	BaseParser parser;
 
 	bool itemFound = false, itemsFound = false;
 
-	while (cmd > 0 && (cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
+	while (cmd > 0 && (cmd = parser.getCommand(&buffer, commands, &params)) > 0) {
 		switch (cmd) {
 		case TOKEN_GAME:
 			if (DID_FAIL(BaseGame::loadBuffer(params, false))) {
@@ -1311,12 +1311,12 @@ bool AdGame::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_AD_GAME:
-			while (cmd > 0 && (cmd = parser.getCommand((char **)&params, commands, (char **)&params2)) > 0) {
+			while (cmd > 0 && (cmd = parser.getCommand(&params, commands, &params2)) > 0) {
 				switch (cmd) {
 				case TOKEN_RESPONSE_BOX:
 					delete _responseBox;
 					_responseBox = new AdResponseBox(_gameRef);
-					if (_responseBox && !DID_FAIL(_responseBox->loadFile((char *)params2))) {
+					if (_responseBox && !DID_FAIL(_responseBox->loadFile(params2))) {
 						registerObject(_responseBox);
 					} else {
 						delete _responseBox;
@@ -1328,7 +1328,7 @@ bool AdGame::loadBuffer(byte *buffer, bool complete) {
 				case TOKEN_INVENTORY_BOX:
 					delete _inventoryBox;
 					_inventoryBox = new AdInventoryBox(_gameRef);
-					if (_inventoryBox && !DID_FAIL(_inventoryBox->loadFile((char *)params2))) {
+					if (_inventoryBox && !DID_FAIL(_inventoryBox->loadFile(params2))) {
 						registerObject(_inventoryBox);
 					} else {
 						delete _inventoryBox;
@@ -1339,7 +1339,7 @@ bool AdGame::loadBuffer(byte *buffer, bool complete) {
 
 				case TOKEN_ITEMS:
 					itemsFound = true;
-					BaseUtils::setString(&_itemsFile, (char *)params2);
+					BaseUtils::setString(&_itemsFile, params2);
 					if (DID_FAIL(loadItemsFile(_itemsFile))) {
 						delete[] _itemsFile;
 						_itemsFile = nullptr;
@@ -1348,9 +1348,9 @@ bool AdGame::loadBuffer(byte *buffer, bool complete) {
 					break;
 
 				case TOKEN_TALK_SKIP_BUTTON:
-					if (scumm_stricmp((char *)params2, "right") == 0) {
+					if (scumm_stricmp(params2, "right") == 0) {
 						_talkSkipButton = TALK_SKIP_RIGHT;
-					} else if (scumm_stricmp((char *)params2, "both") == 0) {
+					} else if (scumm_stricmp(params2, "both") == 0) {
 						_talkSkipButton = TALK_SKIP_BOTH;
 					} else {
 						_talkSkipButton = TALK_SKIP_LEFT;
@@ -1359,7 +1359,7 @@ bool AdGame::loadBuffer(byte *buffer, bool complete) {
 
 				case TOKEN_SCENE_VIEWPORT: {
 					Rect32 rc;
-					parser.scanStr((char *)params2, "%d,%d,%d,%d", &rc.left, &rc.top, &rc.right, &rc.bottom);
+					parser.scanStr(params2, "%d,%d,%d,%d", &rc.left, &rc.top, &rc.right, &rc.bottom);
 					if (!_sceneViewport) {
 						_sceneViewport = new BaseViewport(_gameRef);
 					}
@@ -1374,11 +1374,11 @@ bool AdGame::loadBuffer(byte *buffer, bool complete) {
 					break;
 
 				case TOKEN_STARTUP_SCENE:
-					BaseUtils::setString(&_startupScene, (char *)params2);
+					BaseUtils::setString(&_startupScene, params2);
 					break;
 
 				case TOKEN_DEBUG_STARTUP_SCENE:
-					BaseUtils::setString(&_debugStartupScene, (char *)params2);
+					BaseUtils::setString(&_debugStartupScene, params2);
 					break;
 				}
 			}
@@ -1518,7 +1518,7 @@ bool AdGame::getVersion(byte *verMajor, byte *verMinor, byte *extMajor, byte *ex
 
 //////////////////////////////////////////////////////////////////////////
 bool AdGame::loadItemsFile(const char *filename, bool merge) {
-	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
+	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
 		_gameRef->LOG(0, "AdGame::LoadItemsFile failed for file '%s'", filename);
 		return STATUS_FAILED;
@@ -1541,12 +1541,12 @@ bool AdGame::loadItemsFile(const char *filename, bool merge) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool AdGame::loadItemsBuffer(byte *buffer, bool merge) {
+bool AdGame::loadItemsBuffer(char *buffer, bool merge) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(ITEM)
 	TOKEN_TABLE_END
 
-	byte *params;
+	char *params;
 	int cmd;
 	BaseParser parser;
 
@@ -1556,7 +1556,7 @@ bool AdGame::loadItemsBuffer(byte *buffer, bool merge) {
 		}
 	}
 
-	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
+	while ((cmd = parser.getCommand(&buffer, commands, &params)) > 0) {
 		switch (cmd) {
 		case TOKEN_ITEM: {
 			AdItem *item = new AdItem(_gameRef);
@@ -1637,7 +1637,7 @@ bool AdGame::windowLoadHook(UIWindow *win, char **buffer, char **params) {
 	switch (cmd) {
 	case TOKEN_ENTITY_CONTAINER: {
 		UIEntity *ent = new UIEntity(_gameRef);
-		if (!ent || DID_FAIL(ent->loadBuffer((byte *)*params, false))) {
+		if (!ent || DID_FAIL(ent->loadBuffer(*params, false))) {
 			delete ent;
 			ent = nullptr;
 			cmd = PARSERR_GENERIC;

@@ -48,7 +48,7 @@ public:
 	AdEntity(BaseGame *inGame);
 	virtual ~AdEntity();
 	bool loadFile(const char *filename);
-	bool loadBuffer(byte *buffer, bool complete = true);
+	bool loadBuffer(char *buffer, bool complete = true);
 
 	int32 getWalkToX() const;
 	int32 getWalkToY() const;

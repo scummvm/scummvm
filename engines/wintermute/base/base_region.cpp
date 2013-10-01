@@ -102,7 +102,7 @@ bool BaseRegion::pointInRegion(int x, int y) {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseRegion::loadFile(const char *filename) {
-	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
+	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
 		BaseEngine::LOG(0, "BaseRegion::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
@@ -135,7 +135,7 @@ TOKEN_DEF(EDITOR_SELECTED_POINT)
 TOKEN_DEF(PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-bool BaseRegion::loadBuffer(byte *buffer, bool complete) {
+bool BaseRegion::loadBuffer(char *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(REGION)
 	TOKEN_TABLE(TEMPLATE)
@@ -148,12 +148,12 @@ bool BaseRegion::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE(PROPERTY)
 	TOKEN_TABLE_END
 
-	byte *params;
+	char *params;
 	int cmd;
 	BaseParser parser;
 
 	if (complete) {
-		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_REGION) {
+		if (parser.getCommand(&buffer, commands, &params) != TOKEN_REGION) {
 			BaseEngine::LOG(0, "'REGION' keyword expected.");
 			return STATUS_FAILED;
 		}
@@ -165,39 +165,39 @@ bool BaseRegion::loadBuffer(byte *buffer, bool complete) {
 	}
 	_points.clear();
 
-	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
+	while ((cmd = parser.getCommand(&buffer, commands, &params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
-			if (DID_FAIL(loadFile((char *)params))) {
+			if (DID_FAIL(loadFile(params))) {
 				cmd = PARSERR_GENERIC;
 			}
 			break;
 
 		case TOKEN_NAME:
-			setName((char *)params);
+			setName(params);
 			break;
 
 		case TOKEN_CAPTION:
-			setCaption((char *)params);
+			setCaption(params);
 			break;
 
 		case TOKEN_ACTIVE:
-			parser.scanStr((char *)params, "%b", &_active);
+			parser.scanStr(params, "%b", &_active);
 			break;
 
 		case TOKEN_POINT: {
 			int x, y;
-			parser.scanStr((char *)params, "%d,%d", &x, &y);
+			parser.scanStr(params, "%d,%d", &x, &y);
 			_points.add(new BasePoint(x, y));
 		}
 		break;
 
 		case TOKEN_SCRIPT:
-			addScript((char *)params);
+			addScript(params);
 			break;
 
 		case TOKEN_EDITOR_SELECTED_POINT:
-			parser.scanStr((char *)params, "%d", &_editorSelectedPoint);
+			parser.scanStr(params, "%d", &_editorSelectedPoint);
 			break;
 
 		case TOKEN_PROPERTY:

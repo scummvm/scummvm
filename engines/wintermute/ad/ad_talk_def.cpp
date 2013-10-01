@@ -71,7 +71,7 @@ AdTalkDef::~AdTalkDef() {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdTalkDef::loadFile(const char *filename) {
-	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
+	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
 		_gameRef->LOG(0, "AdTalkDef::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
@@ -101,7 +101,7 @@ TOKEN_DEF(DEFAULT_SPRITE)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-bool AdTalkDef::loadBuffer(byte *buffer, bool complete) {
+bool AdTalkDef::loadBuffer(char *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(TALK)
 	TOKEN_TABLE(TEMPLATE)
@@ -112,22 +112,22 @@ bool AdTalkDef::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE(EDITOR_PROPERTY)
 	TOKEN_TABLE_END
 
-	byte *params;
+	char *params;
 	int cmd;
 	BaseParser parser;
 
 	if (complete) {
-		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_TALK) {
+		if (parser.getCommand(&buffer, commands, &params) != TOKEN_TALK) {
 			_gameRef->LOG(0, "'TALK' keyword expected.");
 			return STATUS_FAILED;
 		}
 		buffer = params;
 	}
 
-	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
+	while ((cmd = parser.getCommand(&buffer, commands, &params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
-			if (DID_FAIL(loadFile((char *)params))) {
+			if (DID_FAIL(loadFile(params))) {
 				cmd = PARSERR_GENERIC;
 			}
 			break;
@@ -145,11 +145,11 @@ bool AdTalkDef::loadBuffer(byte *buffer, bool complete) {
 		break;
 
 		case TOKEN_DEFAULT_SPRITE:
-			BaseUtils::setString(&_defaultSpriteFilename, (char *)params);
+			BaseUtils::setString(&_defaultSpriteFilename, params);
 			break;
 
 		case TOKEN_DEFAULT_SPRITESET_FILE:
-			BaseUtils::setString(&_defaultSpriteSetFilename, (char *)params);
+			BaseUtils::setString(&_defaultSpriteSetFilename, params);
 			break;
 
 		case TOKEN_DEFAULT_SPRITESET: {

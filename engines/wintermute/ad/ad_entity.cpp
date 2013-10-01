@@ -100,7 +100,7 @@ const char *AdEntity::getItemName() const {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdEntity::loadFile(const char *filename) {
-	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
+	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
 		_gameRef->LOG(0, "AdEntity::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
@@ -166,7 +166,7 @@ TOKEN_DEF(WALK_TO_DIR)
 TOKEN_DEF(SAVE_STATE)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-bool AdEntity::loadBuffer(byte *buffer, bool complete) {
+bool AdEntity::loadBuffer(char *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(ENTITY)
 	TOKEN_TABLE(SPRITE)
@@ -212,12 +212,12 @@ bool AdEntity::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE(SAVE_STATE)
 	TOKEN_TABLE_END
 
-	byte *params;
+	char *params;
 	int cmd;
 	BaseParser parser;
 
 	if (complete) {
-		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_ENTITY) {
+		if (parser.getCommand(&buffer, commands, &params) != TOKEN_ENTITY) {
 			_gameRef->LOG(0, "'ENTITY' keyword expected.");
 			return STATUS_FAILED;
 		}
@@ -227,27 +227,27 @@ bool AdEntity::loadBuffer(byte *buffer, bool complete) {
 	AdGame *adGame = (AdGame *)_gameRef;
 	BaseSprite *spr = nullptr;
 	int ar = 0, ag = 0, ab = 0, alpha = 0;
-	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
+	while ((cmd = parser.getCommand(&buffer, commands, &params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
-			if (DID_FAIL(loadFile((char *)params))) {
+			if (DID_FAIL(loadFile(params))) {
 				cmd = PARSERR_GENERIC;
 			}
 			break;
 
 		case TOKEN_X:
-			parser.scanStr((char *)params, "%d", &_posX);
+			parser.scanStr(params, "%d", &_posX);
 			break;
 
 		case TOKEN_Y:
-			parser.scanStr((char *)params, "%d", &_posY);
+			parser.scanStr(params, "%d", &_posY);
 			break;
 
 		case TOKEN_SPRITE: {
 			delete _sprite;
 			_sprite = nullptr;
 			spr = new BaseSprite(_gameRef, this);
-			if (!spr || DID_FAIL(spr->loadFile((char *)params))) {
+			if (!spr || DID_FAIL(spr->loadFile(params))) {
 				cmd = PARSERR_GENERIC;
 			} else {
 				_sprite = spr;
@@ -257,7 +257,7 @@ bool AdEntity::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_TALK: {
 			spr = new BaseSprite(_gameRef, this);
-			if (!spr || DID_FAIL(spr->loadFile((char *)params, adGame->_texTalkLifeTime))) {
+			if (!spr || DID_FAIL(spr->loadFile(params, adGame->_texTalkLifeTime))) {
 				cmd = PARSERR_GENERIC;
 			} else {
 				_talkSprites.add(spr);
@@ -267,7 +267,7 @@ bool AdEntity::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_TALK_SPECIAL: {
 			spr = new BaseSprite(_gameRef, this);
-			if (!spr || DID_FAIL(spr->loadFile((char *)params, adGame->_texTalkLifeTime))) {
+			if (!spr || DID_FAIL(spr->loadFile(params, adGame->_texTalkLifeTime))) {
 				cmd = PARSERR_GENERIC;
 			} else {
 				_talkSpritesEx.add(spr);
@@ -276,28 +276,28 @@ bool AdEntity::loadBuffer(byte *buffer, bool complete) {
 		break;
 
 		case TOKEN_NAME:
-			setName((char *)params);
+			setName(params);
 			break;
 
 		case TOKEN_ITEM:
-			setItem((char *)params);
+			setItem(params);
 			break;
 
 		case TOKEN_CAPTION:
-			setCaption((char *)params);
+			setCaption(params);
 			break;
 
 		case TOKEN_FONT:
-			setFont((char *)params);
+			setFont(params);
 			break;
 
 		case TOKEN_SCALABLE:
-			parser.scanStr((char *)params, "%b", &_zoomable);
+			parser.scanStr(params, "%b", &_zoomable);
 			break;
 
 		case TOKEN_SCALE: {
 			int s;
-			parser.scanStr((char *)params, "%d", &s);
+			parser.scanStr(params, "%d", &s);
 			_scale = (float)s;
 
 		}
@@ -305,7 +305,7 @@ bool AdEntity::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_RELATIVE_SCALE: {
 			int s;
-			parser.scanStr((char *)params, "%d", &s);
+			parser.scanStr(params, "%d", &s);
 			_relativeScale = (float)s;
 
 		}
@@ -313,27 +313,27 @@ bool AdEntity::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_ROTABLE:
 		case TOKEN_ROTATABLE:
-			parser.scanStr((char *)params, "%b", &_rotatable);
+			parser.scanStr(params, "%b", &_rotatable);
 			break;
 
 		case TOKEN_REGISTRABLE:
 		case TOKEN_INTERACTIVE:
-			parser.scanStr((char *)params, "%b", &_registrable);
+			parser.scanStr(params, "%b", &_registrable);
 			break;
 
 		case TOKEN_SHADOWABLE:
 		case TOKEN_COLORABLE:
-			parser.scanStr((char *)params, "%b", &_shadowable);
+			parser.scanStr(params, "%b", &_shadowable);
 			break;
 
 		case TOKEN_ACTIVE:
-			parser.scanStr((char *)params, "%b", &_active);
+			parser.scanStr(params, "%b", &_active);
 			break;
 
 		case TOKEN_CURSOR:
 			delete _cursor;
 			_cursor = new BaseSprite(_gameRef);
-			if (!_cursor || DID_FAIL(_cursor->loadFile((char *)params))) {
+			if (!_cursor || DID_FAIL(_cursor->loadFile(params))) {
 				delete _cursor;
 				_cursor = nullptr;
 				cmd = PARSERR_GENERIC;
@@ -341,7 +341,7 @@ bool AdEntity::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_EDITOR_SELECTED:
-			parser.scanStr((char *)params, "%b", &_editorSelected);
+			parser.scanStr(params, "%b", &_editorSelected);
 			break;
 
 		case TOKEN_REGION: {
@@ -402,11 +402,11 @@ bool AdEntity::loadBuffer(byte *buffer, bool complete) {
 		break;
 
 		case TOKEN_SCRIPT:
-			addScript((char *)params);
+			addScript(params);
 			break;
 
 		case TOKEN_SUBTYPE: {
-			if (scumm_stricmp((char *)params, "sound") == 0) {
+			if (scumm_stricmp(params, "sound") == 0) {
 				delete _sprite;
 				_sprite = nullptr;
 				if (_gameRef->_editorMode) {
@@ -430,23 +430,23 @@ bool AdEntity::loadBuffer(byte *buffer, bool complete) {
 		break;
 
 		case TOKEN_SOUND:
-			playSFX((char *)params, false, false);
+			playSFX(params, false, false);
 			break;
 
 		case TOKEN_SOUND_START_TIME:
-			parser.scanStr((char *)params, "%d", &_sFXStart);
+			parser.scanStr(params, "%d", &_sFXStart);
 			break;
 
 		case TOKEN_SOUND_VOLUME:
-			parser.scanStr((char *)params, "%d", &_sFXVolume);
+			parser.scanStr(params, "%d", &_sFXVolume);
 			break;
 
 		case TOKEN_SOUND_PANNING:
-			parser.scanStr((char *)params, "%b", &_autoSoundPanning);
+			parser.scanStr(params, "%b", &_autoSoundPanning);
 			break;
 
 		case TOKEN_SAVE_STATE:
-			parser.scanStr((char *)params, "%b", &_saveState);
+			parser.scanStr(params, "%b", &_saveState);
 			break;
 
 		case TOKEN_PROPERTY:
@@ -454,15 +454,15 @@ bool AdEntity::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_IGNORE_ITEMS:
-			parser.scanStr((char *)params, "%b", &_ignoreItems);
+			parser.scanStr(params, "%b", &_ignoreItems);
 			break;
 
 		case TOKEN_ALPHA_COLOR:
-			parser.scanStr((char *)params, "%d,%d,%d", &ar, &ag, &ab);
+			parser.scanStr(params, "%d,%d,%d", &ar, &ag, &ab);
 			break;
 
 		case TOKEN_ALPHA:
-			parser.scanStr((char *)params, "%d", &alpha);
+			parser.scanStr(params, "%d", &alpha);
 			break;
 
 		case TOKEN_EDITOR_PROPERTY:
@@ -470,16 +470,16 @@ bool AdEntity::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_WALK_TO_X:
-			parser.scanStr((char *)params, "%d", &_walkToX);
+			parser.scanStr(params, "%d", &_walkToX);
 			break;
 
 		case TOKEN_WALK_TO_Y:
-			parser.scanStr((char *)params, "%d", &_walkToY);
+			parser.scanStr(params, "%d", &_walkToY);
 			break;
 
 		case TOKEN_WALK_TO_DIR: {
 			int i;
-			parser.scanStr((char *)params, "%d", &i);
+			parser.scanStr(params, "%d", &i);
 			if (i < 0) {
 				i = 0;
 			}

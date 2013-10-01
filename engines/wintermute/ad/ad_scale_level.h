@@ -41,7 +41,7 @@ public:
 	virtual ~AdScaleLevel();
 	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
 	bool loadFile(const char *filename);
-	bool loadBuffer(byte *buffer, bool complete = true);
+	bool loadBuffer(char *buffer, bool complete = true);
 	float getScale() const;
 private:
 	float _scale;

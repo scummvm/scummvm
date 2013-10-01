@@ -142,7 +142,7 @@ TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF(KILL_SOUND)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////
-bool BaseFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
+bool BaseFrame::loadBuffer(char *buffer, int lifeTime, bool keepLoaded) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(DELAY)
 	TOKEN_TABLE(IMAGE)
@@ -184,7 +184,7 @@ bool BaseFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 	BasePlatform::setRectEmpty(&rect);
 	char *surface_file = nullptr;
 
-	while ((cmd = parser.getCommand((char **)&buffer, commands, &params)) > 0) {
+	while ((cmd = parser.getCommand(&buffer, commands, &params)) > 0) {
 		switch (cmd) {
 		case TOKEN_DELAY:
 			parser.scanStr(params, "%d", &_delay);
@@ -249,7 +249,7 @@ bool BaseFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 
 		case TOKEN_SUBFRAME: {
 			BaseSubFrame *subframe = new BaseSubFrame(_gameRef);
-			if (!subframe || DID_FAIL(subframe->loadBuffer((byte *)params, lifeTime, keepLoaded))) {
+			if (!subframe || DID_FAIL(subframe->loadBuffer(params, lifeTime, keepLoaded))) {
 				delete subframe;
 				cmd = PARSERR_GENERIC;
 			} else {
@@ -290,7 +290,7 @@ bool BaseFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 			break;
 
 		case TOKEN_EDITOR_PROPERTY:
-			parseEditorProperty((byte *)params, false);
+			parseEditorProperty(params, false);
 			break;
 		}
 	}

@@ -370,19 +370,19 @@ TOKEN_DEF(NAME)
 TOKEN_DEF(VALUE)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-bool BaseScriptHolder::parseProperty(byte *buffer, bool complete) {
+bool BaseScriptHolder::parseProperty(char *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(PROPERTY)
 	TOKEN_TABLE(NAME)
 	TOKEN_TABLE(VALUE)
 	TOKEN_TABLE_END
 
-	byte *params;
+	char *params;
 	int cmd;
 	BaseParser parser;
 
 	if (complete) {
-		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_PROPERTY) {
+		if (parser.getCommand(&buffer, commands, &params) != TOKEN_PROPERTY) {
 			BaseEngine::LOG(0, "'PROPERTY' keyword expected.");
 			return STATUS_FAILED;
 		}
@@ -392,13 +392,13 @@ bool BaseScriptHolder::parseProperty(byte *buffer, bool complete) {
 	char *propName = nullptr;
 	char *propValue = nullptr;
 
-	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
+	while ((cmd = parser.getCommand(&buffer, commands, &params)) > 0) {
 		switch (cmd) {
 		case TOKEN_NAME:
 			delete[] propName;
-			propName = new char[strlen((char *)params) + 1];
+			propName = new char[strlen(params) + 1];
 			if (propName) {
-				strcpy(propName, (char *)params);
+				strcpy(propName, params);
 			} else {
 				cmd = PARSERR_GENERIC;
 			}
@@ -406,9 +406,9 @@ bool BaseScriptHolder::parseProperty(byte *buffer, bool complete) {
 
 		case TOKEN_VALUE:
 			delete[] propValue;
-			propValue = new char[strlen((char *)params) + 1];
+			propValue = new char[strlen(params) + 1];
 			if (propValue) {
-				strcpy(propValue, (char *)params);
+				strcpy(propValue, params);
 			} else {
 				cmd = PARSERR_GENERIC;
 			}

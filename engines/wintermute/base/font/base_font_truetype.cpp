@@ -324,7 +324,7 @@ int BaseFontTT::getLetterHeight() {
 
 //////////////////////////////////////////////////////////////////////
 bool BaseFontTT::loadFile(const Common::String &filename) {
-	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
+	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
 		_gameRef->LOG(0, "BaseFontTT::LoadFile failed for file '%s'", filename.c_str());
 		return STATUS_FAILED;
@@ -361,7 +361,7 @@ TOKEN_DEF(OFFSET_X)
 TOKEN_DEF(OFFSET_Y)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////
-bool BaseFontTT::loadBuffer(byte *buffer) {
+bool BaseFontTT::loadBuffer(char *buffer) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(TTFONT)
 	TOKEN_TABLE(SIZE)
@@ -381,15 +381,15 @@ bool BaseFontTT::loadBuffer(byte *buffer) {
 	int cmd;
 	BaseParser parser;
 
-	if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_TTFONT) {
+	if (parser.getCommand(&buffer, commands, &params) != TOKEN_TTFONT) {
 		_gameRef->LOG(0, "'TTFONT' keyword expected.");
 		return STATUS_FAILED;
 	}
-	buffer = (byte *)params;
+	buffer = params;
 
 	uint32 baseColor = 0x00000000;
 
-	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
+	while ((cmd = parser.getCommand(&buffer, commands, &params)) > 0) {
 		switch (cmd) {
 		case TOKEN_SIZE:
 			parser.scanStr(params, "%d", &_fontHeight);
@@ -439,7 +439,7 @@ bool BaseFontTT::loadBuffer(byte *buffer) {
 
 		case TOKEN_LAYER: {
 			BaseTTFontLayer *layer = new BaseTTFontLayer;
-			if (layer && DID_SUCCEED(parseLayer(layer, (byte *)params))) {
+			if (layer && DID_SUCCEED(parseLayer(layer, params))) {
 				_layers.add(layer);
 			} else {
 				delete layer;
@@ -472,7 +472,7 @@ bool BaseFontTT::loadBuffer(byte *buffer) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseFontTT::parseLayer(BaseTTFontLayer *layer, byte *buffer) {
+bool BaseFontTT::parseLayer(BaseTTFontLayer *layer, char *buffer) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(OFFSET_X)
 	TOKEN_TABLE(OFFSET_Y)
@@ -484,7 +484,7 @@ bool BaseFontTT::parseLayer(BaseTTFontLayer *layer, byte *buffer) {
 	int cmd;
 	BaseParser parser;
 
-	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
+	while ((cmd = parser.getCommand(&buffer, commands, &params)) > 0) {
 		switch (cmd) {
 		case TOKEN_OFFSET_X:
 			parser.scanStr(params, "%d", &layer->_offsetX);

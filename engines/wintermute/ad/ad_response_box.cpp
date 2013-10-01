@@ -217,7 +217,7 @@ bool AdResponseBox::createButtons() {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdResponseBox::loadFile(const char *filename) {
-	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
+	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
 		_gameRef->LOG(0, "AdResponseBox::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
@@ -253,7 +253,7 @@ TOKEN_DEF(VERTICAL_ALIGN)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-bool AdResponseBox::loadBuffer(byte *buffer, bool complete) {
+bool AdResponseBox::loadBuffer(char *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(RESPONSE_BOX)
 	TOKEN_TABLE(TEMPLATE)
@@ -270,22 +270,22 @@ bool AdResponseBox::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_END
 
 
-	byte *params;
+	char *params;
 	int cmd;
 	BaseParser parser;
 
 	if (complete) {
-		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_RESPONSE_BOX) {
+		if (parser.getCommand(&buffer, commands, &params) != TOKEN_RESPONSE_BOX) {
 			_gameRef->LOG(0, "'RESPONSE_BOX' keyword expected.");
 			return STATUS_FAILED;
 		}
 		buffer = params;
 	}
 
-	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
+	while ((cmd = parser.getCommand(&buffer, commands, &params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
-			if (DID_FAIL(loadFile((char *)params))) {
+			if (DID_FAIL(loadFile(params))) {
 				cmd = PARSERR_GENERIC;
 			}
 			break;
@@ -306,7 +306,7 @@ bool AdResponseBox::loadBuffer(byte *buffer, bool complete) {
 			if (_font) {
 				_gameRef->_fontStorage->removeFont(_font);
 			}
-			_font = _gameRef->_fontStorage->addFont((char *)params);
+			_font = _gameRef->_fontStorage->addFont(params);
 			if (!_font) {
 				cmd = PARSERR_GENERIC;
 			}
@@ -316,24 +316,24 @@ bool AdResponseBox::loadBuffer(byte *buffer, bool complete) {
 			if (_fontHover) {
 				_gameRef->_fontStorage->removeFont(_fontHover);
 			}
-			_fontHover = _gameRef->_fontStorage->addFont((char *)params);
+			_fontHover = _gameRef->_fontStorage->addFont(params);
 			if (!_fontHover) {
 				cmd = PARSERR_GENERIC;
 			}
 			break;
 
 		case TOKEN_AREA:
-			parser.scanStr((char *)params, "%d,%d,%d,%d", &_responseArea.left, &_responseArea.top, &_responseArea.right, &_responseArea.bottom);
+			parser.scanStr(params, "%d,%d,%d,%d", &_responseArea.left, &_responseArea.top, &_responseArea.right, &_responseArea.bottom);
 			break;
 
 		case TOKEN_HORIZONTAL:
-			parser.scanStr((char *)params, "%b", &_horizontal);
+			parser.scanStr(params, "%b", &_horizontal);
 			break;
 
 		case TOKEN_TEXT_ALIGN:
-			if (scumm_stricmp((char *)params, "center") == 0) {
+			if (scumm_stricmp(params, "center") == 0) {
 				_align = TAL_CENTER;
-			} else if (scumm_stricmp((char *)params, "right") == 0) {
+			} else if (scumm_stricmp(params, "right") == 0) {
 				_align = TAL_RIGHT;
 			} else {
 				_align = TAL_LEFT;
@@ -341,9 +341,9 @@ bool AdResponseBox::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_VERTICAL_ALIGN:
-			if (scumm_stricmp((char *)params, "top") == 0) {
+			if (scumm_stricmp(params, "top") == 0) {
 				_verticalAlign = VAL_TOP;
-			} else if (scumm_stricmp((char *)params, "center") == 0) {
+			} else if (scumm_stricmp(params, "center") == 0) {
 				_verticalAlign = VAL_CENTER;
 			} else {
 				_verticalAlign = VAL_BOTTOM;
@@ -351,7 +351,7 @@ bool AdResponseBox::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_SPACING:
-			parser.scanStr((char *)params, "%d", &_spacing);
+			parser.scanStr(params, "%d", &_spacing);
 			break;
 
 		case TOKEN_EDITOR_PROPERTY:
@@ -361,7 +361,7 @@ bool AdResponseBox::loadBuffer(byte *buffer, bool complete) {
 		case TOKEN_CURSOR:
 			delete _cursor;
 			_cursor = new BaseSprite(_gameRef);
-			if (!_cursor || DID_FAIL(_cursor->loadFile((char *)params))) {
+			if (!_cursor || DID_FAIL(_cursor->loadFile(params))) {
 				delete _cursor;
 				_cursor = nullptr;
 				cmd = PARSERR_GENERIC;

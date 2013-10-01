@@ -39,7 +39,7 @@ public:
 	UIEntity(BaseGame *inGame);
 	virtual ~UIEntity();
 	bool loadFile(const char *filename);
-	bool loadBuffer(byte *buffer, bool complete);
+	bool loadBuffer(char *buffer, bool complete);
 	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
 
 	virtual bool display() override { return display(0, 0); }

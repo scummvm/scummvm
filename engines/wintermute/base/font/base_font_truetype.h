@@ -105,7 +105,7 @@ public:
 	virtual void drawText(const byte *text, int x, int y, int width, TTextAlign align = TAL_LEFT, int max_height = -1, int maxLength = -1) override;
 	virtual int getLetterHeight() override;
 
-	bool loadBuffer(byte *buffer);
+	bool loadBuffer(char *buffer);
 	bool loadFile(const Common::String &filename);
 
 	float getLineHeight() const {
@@ -116,7 +116,7 @@ public:
 	void initLoop();
 
 private:
-	bool parseLayer(BaseTTFontLayer *layer, byte *buffer);
+	bool parseLayer(BaseTTFontLayer *layer, char *buffer);
 
 	void measureText(const WideString &text, int maxWidth, int maxHeight, int &textWidth, int &textHeight);
 

@@ -66,7 +66,7 @@ void AdWaypointGroup::cleanup() {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdWaypointGroup::loadFile(const char *filename) {
-	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
+	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
 		_gameRef->LOG(0, "AdWaypointGroup::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
@@ -98,7 +98,7 @@ TOKEN_DEF(PROPERTY)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-bool AdWaypointGroup::loadBuffer(byte *buffer, bool complete) {
+bool AdWaypointGroup::loadBuffer(char *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(WAYPOINTS)
 	TOKEN_TABLE(TEMPLATE)
@@ -110,43 +110,43 @@ bool AdWaypointGroup::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE(EDITOR_PROPERTY)
 	TOKEN_TABLE_END
 
-	byte *params;
+	char *params;
 	int cmd;
 	BaseParser parser;
 
 	if (complete) {
-		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_WAYPOINTS) {
+		if (parser.getCommand(&buffer, commands, &params) != TOKEN_WAYPOINTS) {
 			_gameRef->LOG(0, "'WAYPOINTS' keyword expected.");
 			return STATUS_FAILED;
 		}
 		buffer = params;
 	}
 
-	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
+	while ((cmd = parser.getCommand(&buffer, commands, &params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
-			if (DID_FAIL(loadFile((char *)params))) {
+			if (DID_FAIL(loadFile(params))) {
 				cmd = PARSERR_GENERIC;
 			}
 			break;
 
 		case TOKEN_NAME:
-			setName((char *)params);
+			setName(params);
 			break;
 
 		case TOKEN_POINT: {
 			int x, y;
-			parser.scanStr((char *)params, "%d,%d", &x, &y);
+			parser.scanStr(params, "%d,%d", &x, &y);
 			_points.add(new BasePoint(x, y));
 		}
 		break;
 
 		case TOKEN_EDITOR_SELECTED:
-			parser.scanStr((char *)params, "%b", &_editorSelected);
+			parser.scanStr(params, "%b", &_editorSelected);
 			break;
 
 		case TOKEN_EDITOR_SELECTED_POINT:
-			parser.scanStr((char *)params, "%d", &_editorSelectedPoint);
+			parser.scanStr(params, "%d", &_editorSelectedPoint);
 			break;
 
 		case TOKEN_PROPERTY:

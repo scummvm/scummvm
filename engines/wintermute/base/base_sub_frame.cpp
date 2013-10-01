@@ -97,7 +97,7 @@ TOKEN_DEF(EDITOR_SELECTED)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////
-bool BaseSubFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
+bool BaseSubFrame::loadBuffer(char *buffer, int lifeTime, bool keepLoaded) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(IMAGE)
 	TOKEN_TABLE(TRANSPARENT)
@@ -127,7 +127,7 @@ bool BaseSubFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 	delete _surface;
 	_surface = nullptr;
 
-	while ((cmd = parser.getCommand((char **)&buffer, commands, &params)) > 0) {
+	while ((cmd = parser.getCommand(&buffer, commands, &params)) > 0) {
 		switch (cmd) {
 		case TOKEN_IMAGE:
 			surfaceFile = params;
@@ -179,7 +179,7 @@ bool BaseSubFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 			break;
 
 		case TOKEN_EDITOR_PROPERTY:
-			parseEditorProperty((byte *)params, false);
+			parseEditorProperty(params, false);
 			break;
 		}
 	}

@@ -48,7 +48,7 @@ public:
 	UIButton(BaseGame *inGame = nullptr);
 	virtual ~UIButton();
 	bool loadFile(const char *filename);
-	bool loadBuffer(byte *buffer, bool complete = true);
+	bool loadBuffer(char *buffer, bool complete = true);
 	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
 
 	// scripting interface

@@ -42,7 +42,7 @@ public:
 	DECLARE_PERSISTENT(UITiledImage, BaseObject)
 	void correctSize(int32 *width, int32 *height);
 	bool loadFile(const char *filename);
-	bool loadBuffer(byte *buffer, bool complete = true);
+	bool loadBuffer(char *buffer, bool complete = true);
 	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
 
 	bool display(int x, int y, int width, int height);

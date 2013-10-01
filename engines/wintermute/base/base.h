@@ -46,7 +46,7 @@ public:
 	bool setEditorProp(const Common::String &propName, const Common::String &propValue);
 	Common::String getEditorProp(const Common::String &propName, const Common::String &initVal = nullptr);
 	BaseClass(TDynamicConstructor, TDynamicConstructor) {}
-	bool parseEditorProperty(byte *buffer, bool complete = true);
+	bool parseEditorProperty(char *buffer, bool complete = true);
 	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent = 0);
 	BaseClass();
 	BaseClass(BaseGame *GameOwner);

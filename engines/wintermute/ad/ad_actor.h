@@ -57,7 +57,7 @@ public:
 	AdActor(BaseGame *inGame/*=nullptr*/);
 	virtual ~AdActor();
 	bool loadFile(const char *filename);
-	bool loadBuffer(byte *buffer, bool complete = true);
+	bool loadBuffer(char *buffer, bool complete = true);
 
 
 private:

@@ -62,7 +62,7 @@ AdLayer::~AdLayer() {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdLayer::loadFile(const char *filename) {
-	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
+	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
 		_gameRef->LOG(0, "AdLayer::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
@@ -100,7 +100,7 @@ TOKEN_DEF(CLOSE_UP)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-bool AdLayer::loadBuffer(byte *buffer, bool complete) {
+bool AdLayer::loadBuffer(char *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(LAYER)
 	TOKEN_TABLE(TEMPLATE)
@@ -119,52 +119,52 @@ bool AdLayer::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE(EDITOR_PROPERTY)
 	TOKEN_TABLE_END
 
-	byte *params;
+	char *params;
 	int cmd;
 	BaseParser parser;
 
 	if (complete) {
-		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_LAYER) {
+		if (parser.getCommand(&buffer, commands, &params) != TOKEN_LAYER) {
 			_gameRef->LOG(0, "'LAYER' keyword expected.");
 			return STATUS_FAILED;
 		}
 		buffer = params;
 	}
 
-	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
+	while ((cmd = parser.getCommand(&buffer, commands, &params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
-			if (DID_FAIL(loadFile((char *)params))) {
+			if (DID_FAIL(loadFile(params))) {
 				cmd = PARSERR_GENERIC;
 			}
 			break;
 
 		case TOKEN_NAME:
-			setName((char *)params);
+			setName(params);
 			break;
 
 		case TOKEN_CAPTION:
-			setCaption((char *)params);
+			setCaption(params);
 			break;
 
 		case TOKEN_MAIN:
-			parser.scanStr((char *)params, "%b", &_main);
+			parser.scanStr(params, "%b", &_main);
 			break;
 
 		case TOKEN_CLOSE_UP:
-			parser.scanStr((char *)params, "%b", &_closeUp);
+			parser.scanStr(params, "%b", &_closeUp);
 			break;
 
 		case TOKEN_WIDTH:
-			parser.scanStr((char *)params, "%d", &_width);
+			parser.scanStr(params, "%d", &_width);
 			break;
 
 		case TOKEN_HEIGHT:
-			parser.scanStr((char *)params, "%d", &_height);
+			parser.scanStr(params, "%d", &_height);
 			break;
 
 		case TOKEN_ACTIVE:
-			parser.scanStr((char *)params, "%b", &_active);
+			parser.scanStr(params, "%b", &_active);
 			break;
 
 		case TOKEN_REGION: {
@@ -203,11 +203,11 @@ bool AdLayer::loadBuffer(byte *buffer, bool complete) {
 		break;
 
 		case TOKEN_EDITOR_SELECTED:
-			parser.scanStr((char *)params, "%b", &_editorSelected);
+			parser.scanStr(params, "%b", &_editorSelected);
 			break;
 
 		case TOKEN_SCRIPT:
-			addScript((char *)params);
+			addScript(params);
 			break;
 
 		case TOKEN_PROPERTY:

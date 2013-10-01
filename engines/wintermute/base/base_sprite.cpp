@@ -168,7 +168,7 @@ bool BaseSprite::loadFile(const Common::String &filename, int lifeTime, TSpriteC
 			ret = STATUS_OK;
 		}
 	} else {
-		byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
+		char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
 		if (buffer) {
 			if (DID_FAIL(ret = loadBuffer(buffer, true, lifeTime, cacheType))) {
 				BaseEngine::LOG(0, "Error parsing SPRITE file '%s'", filename.c_str());
@@ -204,7 +204,7 @@ TOKEN_DEF(EDITOR_BG_ALPHA)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////
-bool BaseSprite::loadBuffer(byte *buffer, bool complete, int lifeTime, TSpriteCacheType cacheType) {
+bool BaseSprite::loadBuffer(char *buffer, bool complete, int lifeTime, TSpriteCacheType cacheType) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(CONTINUOUS)
 	TOKEN_TABLE(SPRITE)
@@ -223,7 +223,7 @@ bool BaseSprite::loadBuffer(byte *buffer, bool complete, int lifeTime, TSpriteCa
 	TOKEN_TABLE(EDITOR_PROPERTY)
 	TOKEN_TABLE_END
 
-	byte *params;
+	char *params;
 	int cmd;
 	BaseParser parser;
 
@@ -231,7 +231,7 @@ bool BaseSprite::loadBuffer(byte *buffer, bool complete, int lifeTime, TSpriteCa
 
 
 	if (complete) {
-		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_SPRITE) {
+		if (parser.getCommand(&buffer, commands, &params) != TOKEN_SPRITE) {
 			BaseEngine::LOG(0, "'SPRITE' keyword expected.");
 			return STATUS_FAILED;
 		}
@@ -240,30 +240,30 @@ bool BaseSprite::loadBuffer(byte *buffer, bool complete, int lifeTime, TSpriteCa
 
 	int frameCount = 1;
 	BaseFrame *frame;
-	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
+	while ((cmd = parser.getCommand(&buffer, commands, &params)) > 0) {
 		switch (cmd) {
 		case TOKEN_CONTINUOUS:
-			parser.scanStr((char *)params, "%b", &_continuous);
+			parser.scanStr(params, "%b", &_continuous);
 			break;
 
 		case TOKEN_EDITOR_MUTED:
-			parser.scanStr((char *)params, "%b", &_editorMuted);
+			parser.scanStr(params, "%b", &_editorMuted);
 			break;
 
 		case TOKEN_SCRIPT:
-			addScript((char *)params);
+			addScript(params);
 			break;
 
 		case TOKEN_LOOPING:
-			parser.scanStr((char *)params, "%b", &_looping);
+			parser.scanStr(params, "%b", &_looping);
 			break;
 
 		case TOKEN_PRECISE:
-			parser.scanStr((char *)params, "%b", &_precise);
+			parser.scanStr(params, "%b", &_precise);
 			break;
 
 		case TOKEN_STREAMED:
-			parser.scanStr((char *)params, "%b", &_streamed);
+			parser.scanStr(params, "%b", &_streamed);
 			if (_streamed && lifeTime == -1) {
 				lifeTime = 500;
 				cacheType = CACHE_ALL;
@@ -271,33 +271,33 @@ bool BaseSprite::loadBuffer(byte *buffer, bool complete, int lifeTime, TSpriteCa
 			break;
 
 		case TOKEN_STREAMED_KEEP_LOADED:
-			parser.scanStr((char *)params, "%b", &_streamedKeepLoaded);
+			parser.scanStr(params, "%b", &_streamedKeepLoaded);
 			break;
 
 		case TOKEN_NAME:
-			setName((char *)params);
+			setName(params);
 			break;
 
 		case TOKEN_EDITOR_BG_FILE:
 			if (_gameRef->_editorMode) {
 				delete[] _editorBgFile;
-				_editorBgFile = new char[strlen((char *)params) + 1];
+				_editorBgFile = new char[strlen(params) + 1];
 				if (_editorBgFile) {
-					strcpy(_editorBgFile, (char *)params);
+					strcpy(_editorBgFile, params);
 				}
 			}
 			break;
 
 		case TOKEN_EDITOR_BG_OFFSET_X:
-			parser.scanStr((char *)params, "%d", &_editorBgOffsetX);
+			parser.scanStr(params, "%d", &_editorBgOffsetX);
 			break;
 
 		case TOKEN_EDITOR_BG_OFFSET_Y:
-			parser.scanStr((char *)params, "%d", &_editorBgOffsetY);
+			parser.scanStr(params, "%d", &_editorBgOffsetY);
 			break;
 
 		case TOKEN_EDITOR_BG_ALPHA:
-			parser.scanStr((char *)params, "%d", &_editorBgAlpha);
+			parser.scanStr(params, "%d", &_editorBgAlpha);
 			_editorBgAlpha = MIN<int32>(_editorBgAlpha, 255);
 			_editorBgAlpha = MAX<int32>(_editorBgAlpha, 0);
 			break;

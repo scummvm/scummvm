@@ -84,7 +84,7 @@ AdItem::~AdItem() {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdItem::loadFile(const char *filename) {
-	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
+	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
 		_gameRef->LOG(0, "AdItem::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
@@ -134,7 +134,7 @@ TOKEN_DEF(AMOUNT_STRING)
 TOKEN_DEF(AMOUNT)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-bool AdItem::loadBuffer(byte *buffer, bool complete) {
+bool AdItem::loadBuffer(char *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(ITEM)
 	TOKEN_TABLE(TEMPLATE)
@@ -164,12 +164,12 @@ bool AdItem::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE(AMOUNT)
 	TOKEN_TABLE_END
 
-	byte *params;
+	char *params;
 	int cmd = 2;
 	BaseParser parser;
 
 	if (complete) {
-		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_ITEM) {
+		if (parser.getCommand(&buffer, commands, &params) != TOKEN_ITEM) {
 			_gameRef->LOG(0, "'ITEM' keyword expected.");
 			return STATUS_FAILED;
 		}
@@ -177,31 +177,31 @@ bool AdItem::loadBuffer(byte *buffer, bool complete) {
 	}
 
 	int ar = 0, ag = 0, ab = 0, alpha = 255;
-	while (cmd > 0 && (cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
+	while (cmd > 0 && (cmd = parser.getCommand(&buffer, commands, &params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
-			if (DID_FAIL(loadFile((char *)params))) {
+			if (DID_FAIL(loadFile(params))) {
 				cmd = PARSERR_GENERIC;
 			}
 			break;
 
 		case TOKEN_NAME:
-			setName((char *)params);
+			setName(params);
 			break;
 
 		case TOKEN_FONT:
-			setFont((char *)params);
+			setFont(params);
 			break;
 
 		case TOKEN_CAPTION:
-			setCaption((char *)params);
+			setCaption(params);
 			break;
 
 		case TOKEN_IMAGE:
 		case TOKEN_SPRITE:
 			delete _sprite;
 			_sprite = new BaseSprite(_gameRef, this);
-			if (!_sprite || DID_FAIL(_sprite->loadFile((char *)params, ((AdGame *)_gameRef)->_texItemLifeTime))) {
+			if (!_sprite || DID_FAIL(_sprite->loadFile(params, ((AdGame *)_gameRef)->_texItemLifeTime))) {
 				delete _sprite;
 				cmd = PARSERR_GENERIC;
 			}
@@ -211,32 +211,32 @@ bool AdItem::loadBuffer(byte *buffer, bool complete) {
 		case TOKEN_SPRITE_HOVER:
 			delete _spriteHover;
 			_spriteHover = new BaseSprite(_gameRef, this);
-			if (!_spriteHover || DID_FAIL(_spriteHover->loadFile((char *)params, ((AdGame *)_gameRef)->_texItemLifeTime))) {
+			if (!_spriteHover || DID_FAIL(_spriteHover->loadFile(params, ((AdGame *)_gameRef)->_texItemLifeTime))) {
 				delete _spriteHover;
 				cmd = PARSERR_GENERIC;
 			}
 			break;
 
 		case TOKEN_AMOUNT:
-			parser.scanStr((char *)params, "%d", &_amount);
+			parser.scanStr(params, "%d", &_amount);
 			break;
 
 		case TOKEN_DISPLAY_AMOUNT:
-			parser.scanStr((char *)params, "%b", &_displayAmount);
+			parser.scanStr(params, "%b", &_displayAmount);
 			break;
 
 		case TOKEN_AMOUNT_OFFSET_X:
-			parser.scanStr((char *)params, "%d", &_amountOffsetX);
+			parser.scanStr(params, "%d", &_amountOffsetX);
 			break;
 
 		case TOKEN_AMOUNT_OFFSET_Y:
-			parser.scanStr((char *)params, "%d", &_amountOffsetY);
+			parser.scanStr(params, "%d", &_amountOffsetY);
 			break;
 
 		case TOKEN_AMOUNT_ALIGN:
-			if (scumm_stricmp((char *)params, "left") == 0) {
+			if (scumm_stricmp(params, "left") == 0) {
 				_amountAlign = TAL_LEFT;
-			} else if (scumm_stricmp((char *)params, "right") == 0) {
+			} else if (scumm_stricmp(params, "right") == 0) {
 				_amountAlign = TAL_RIGHT;
 			} else {
 				_amountAlign = TAL_CENTER;
@@ -244,12 +244,12 @@ bool AdItem::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_AMOUNT_STRING:
-			BaseUtils::setString(&_amountString, (char *)params);
+			BaseUtils::setString(&_amountString, params);
 			break;
 
 		case TOKEN_TALK: {
 			BaseSprite *spr = new BaseSprite(_gameRef, this);
-			if (!spr || DID_FAIL(spr->loadFile((char *)params, ((AdGame *)_gameRef)->_texTalkLifeTime))) {
+			if (!spr || DID_FAIL(spr->loadFile(params, ((AdGame *)_gameRef)->_texTalkLifeTime))) {
 				cmd = PARSERR_GENERIC;
 			} else {
 				_talkSprites.add(spr);
@@ -259,7 +259,7 @@ bool AdItem::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_TALK_SPECIAL: {
 			BaseSprite *spr = new BaseSprite(_gameRef, this);
-			if (!spr || DID_FAIL(spr->loadFile((char *)params, ((AdGame *)_gameRef)->_texTalkLifeTime))) {
+			if (!spr || DID_FAIL(spr->loadFile(params, ((AdGame *)_gameRef)->_texTalkLifeTime))) {
 				cmd = PARSERR_GENERIC;
 			} else {
 				_talkSpritesEx.add(spr);
@@ -270,7 +270,7 @@ bool AdItem::loadBuffer(byte *buffer, bool complete) {
 		case TOKEN_CURSOR:
 			delete _cursorNormal;
 			_cursorNormal = new BaseSprite(_gameRef);
-			if (!_cursorNormal || DID_FAIL(_cursorNormal->loadFile((char *)params, ((AdGame *)_gameRef)->_texItemLifeTime))) {
+			if (!_cursorNormal || DID_FAIL(_cursorNormal->loadFile(params, ((AdGame *)_gameRef)->_texItemLifeTime))) {
 				delete _cursorNormal;
 				_cursorNormal = nullptr;
 				cmd = PARSERR_GENERIC;
@@ -280,7 +280,7 @@ bool AdItem::loadBuffer(byte *buffer, bool complete) {
 		case TOKEN_CURSOR_HOVER:
 			delete _cursorHover;
 			_cursorHover = new BaseSprite(_gameRef);
-			if (!_cursorHover || DID_FAIL(_cursorHover->loadFile((char *)params, ((AdGame *)_gameRef)->_texItemLifeTime))) {
+			if (!_cursorHover || DID_FAIL(_cursorHover->loadFile(params, ((AdGame *)_gameRef)->_texItemLifeTime))) {
 				delete _cursorHover;
 				_cursorHover = nullptr;
 				cmd = PARSERR_GENERIC;
@@ -288,11 +288,11 @@ bool AdItem::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_CURSOR_COMBINED:
-			parser.scanStr((char *)params, "%b", &_cursorCombined);
+			parser.scanStr(params, "%b", &_cursorCombined);
 			break;
 
 		case TOKEN_SCRIPT:
-			addScript((char *)params);
+			addScript(params);
 			break;
 
 		case TOKEN_PROPERTY:
@@ -300,11 +300,11 @@ bool AdItem::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_ALPHA_COLOR:
-			parser.scanStr((char *)params, "%d,%d,%d", &ar, &ag, &ab);
+			parser.scanStr(params, "%d,%d,%d", &ar, &ag, &ab);
 			break;
 
 		case TOKEN_ALPHA:
-			parser.scanStr((char *)params, "%d", &alpha);
+			parser.scanStr(params, "%d", &alpha);
 			break;
 
 		case TOKEN_EDITOR_PROPERTY:

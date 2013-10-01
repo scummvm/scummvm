@@ -272,7 +272,7 @@ void BaseFontBitmap::drawChar(byte c, int x, int y) {
 
 //////////////////////////////////////////////////////////////////////
 bool BaseFontBitmap::loadFile(const Common::String &filename) {
-	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
+	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
 		_gameRef->LOG(0, "BaseFontBitmap::LoadFile failed for file '%s'", filename.c_str());
 		return STATUS_FAILED;
@@ -311,7 +311,7 @@ TOKEN_DEF(WIDTHS_FRAME)
 TOKEN_DEF(PAINT_WHOLE_CELL)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////
-bool BaseFontBitmap::loadBuffer(byte *buffer) {
+bool BaseFontBitmap::loadBuffer(char *buffer) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(FONTEXT_FIX)
 	TOKEN_TABLE(FONT)
@@ -335,11 +335,11 @@ bool BaseFontBitmap::loadBuffer(byte *buffer) {
 	int cmd;
 	BaseParser parser;
 
-	if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_FONT) {
+	if (parser.getCommand(&buffer, commands, &params) != TOKEN_FONT) {
 		_gameRef->LOG(0, "'FONT' keyword expected.");
 		return STATUS_FAILED;
 	}
-	buffer = (byte *)params;
+	buffer = params;
 
 	int widths[300];
 	int num = 0, defaultWidth = 8;
@@ -354,15 +354,15 @@ bool BaseFontBitmap::loadBuffer(byte *buffer) {
 	int spaceWidth = 0;
 	int expandWidth = 0;
 
-	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
+	while ((cmd = parser.getCommand(&buffer, commands, &params)) > 0) {
 
 		switch (cmd) {
 		case TOKEN_IMAGE:
-			surfaceFile = (char *)params;
+			surfaceFile = params;
 			break;
 
 		case TOKEN_SPRITE:
-			spriteFile = (char *)params;
+			spriteFile = params;
 			break;
 
 		case TOKEN_TRANSPARENT:
@@ -418,7 +418,7 @@ bool BaseFontBitmap::loadBuffer(byte *buffer) {
 			break;
 
 		case TOKEN_EDITOR_PROPERTY:
-			parseEditorProperty((byte *)params, false);
+			parseEditorProperty(params, false);
 			break;
 		}
 

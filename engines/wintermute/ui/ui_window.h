@@ -62,7 +62,7 @@ public:
 	BaseArray<UIObject *> _widgets;
 
 	bool loadFile(const char *filename);
-	bool loadBuffer(byte *buffer, bool complete = true);
+	bool loadBuffer(char *buffer, bool complete = true);
 
 	virtual bool listen(BaseScriptHolder *param1, uint32 param2);
 	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;

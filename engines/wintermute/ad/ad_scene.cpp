@@ -538,7 +538,7 @@ bool AdScene::initLoop() {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdScene::loadFile(const char *filename) {
-	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
+	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
 		_gameRef->LOG(0, "AdScene::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
@@ -600,7 +600,7 @@ TOKEN_DEF(PERSISTENT_STATE)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-bool AdScene::loadBuffer(byte *buffer, bool complete) {
+bool AdScene::loadBuffer(char *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(SCENE)
 	TOKEN_TABLE(TEMPLATE)
@@ -643,12 +643,12 @@ bool AdScene::loadBuffer(byte *buffer, bool complete) {
 
 	cleanup();
 
-	byte *params;
+	char *params;
 	int cmd;
 	BaseParser parser;
 
 	if (complete) {
-		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_SCENE) {
+		if (parser.getCommand(&buffer, commands, &params) != TOKEN_SCENE) {
 			_gameRef->LOG(0, "'SCENE' keyword expected.");
 			return STATUS_FAILED;
 		}
@@ -659,20 +659,20 @@ bool AdScene::loadBuffer(byte *buffer, bool complete) {
 	char camera[MAX_PATH_LENGTH] = "";
 	/* float waypointHeight = -1.0f; */
 
-	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
+	while ((cmd = parser.getCommand(&buffer, commands, &params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
-			if (DID_FAIL(loadFile((char *)params))) {
+			if (DID_FAIL(loadFile(params))) {
 				cmd = PARSERR_GENERIC;
 			}
 			break;
 
 		case TOKEN_NAME:
-			setName((char *)params);
+			setName(params);
 			break;
 
 		case TOKEN_CAPTION:
-			setCaption((char *)params);
+			setCaption(params);
 			break;
 
 		case TOKEN_LAYER: {
@@ -747,7 +747,7 @@ bool AdScene::loadBuffer(byte *buffer, bool complete) {
 		case TOKEN_CURSOR:
 			delete _cursor;
 			_cursor = new BaseSprite(_gameRef);
-			if (!_cursor || DID_FAIL(_cursor->loadFile((char *)params))) {
+			if (!_cursor || DID_FAIL(_cursor->loadFile(params))) {
 				delete _cursor;
 				_cursor = nullptr;
 				cmd = PARSERR_GENERIC;
@@ -755,99 +755,99 @@ bool AdScene::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_CAMERA:
-			Common::strlcpy(camera, (char *)params, MAX_PATH_LENGTH);
+			Common::strlcpy(camera, params, MAX_PATH_LENGTH);
 			break;
 
 		case TOKEN_EDITOR_MARGIN_H:
-			parser.scanStr((char *)params, "%d", &_editorMarginH);
+			parser.scanStr(params, "%d", &_editorMarginH);
 			break;
 
 		case TOKEN_EDITOR_MARGIN_V:
-			parser.scanStr((char *)params, "%d", &_editorMarginV);
+			parser.scanStr(params, "%d", &_editorMarginV);
 			break;
 
 		case TOKEN_EDITOR_COLOR_FRAME:
-			parser.scanStr((char *)params, "%d,%d,%d,%d", &ar, &ag, &ab, &aa);
+			parser.scanStr(params, "%d,%d,%d,%d", &ar, &ag, &ab, &aa);
 			_editorColFrame = BYTETORGBA(ar, ag, ab, aa);
 			break;
 
 		case TOKEN_EDITOR_COLOR_ENTITY:
-			parser.scanStr((char *)params, "%d,%d,%d,%d", &ar, &ag, &ab, &aa);
+			parser.scanStr(params, "%d,%d,%d,%d", &ar, &ag, &ab, &aa);
 			_editorColEntity = BYTETORGBA(ar, ag, ab, aa);
 			break;
 
 		case TOKEN_EDITOR_COLOR_ENTITY_SEL:
-			parser.scanStr((char *)params, "%d,%d,%d,%d", &ar, &ag, &ab, &aa);
+			parser.scanStr(params, "%d,%d,%d,%d", &ar, &ag, &ab, &aa);
 			_editorColEntitySel = BYTETORGBA(ar, ag, ab, aa);
 			break;
 
 		case TOKEN_EDITOR_COLOR_REGION_SEL:
-			parser.scanStr((char *)params, "%d,%d,%d,%d", &ar, &ag, &ab, &aa);
+			parser.scanStr(params, "%d,%d,%d,%d", &ar, &ag, &ab, &aa);
 			_editorColRegionSel = BYTETORGBA(ar, ag, ab, aa);
 			break;
 
 		case TOKEN_EDITOR_COLOR_DECORATION_SEL:
-			parser.scanStr((char *)params, "%d,%d,%d,%d", &ar, &ag, &ab, &aa);
+			parser.scanStr(params, "%d,%d,%d,%d", &ar, &ag, &ab, &aa);
 			_editorColDecorSel = BYTETORGBA(ar, ag, ab, aa);
 			break;
 
 		case TOKEN_EDITOR_COLOR_BLOCKED_SEL:
-			parser.scanStr((char *)params, "%d,%d,%d,%d", &ar, &ag, &ab, &aa);
+			parser.scanStr(params, "%d,%d,%d,%d", &ar, &ag, &ab, &aa);
 			_editorColBlockedSel = BYTETORGBA(ar, ag, ab, aa);
 			break;
 
 		case TOKEN_EDITOR_COLOR_WAYPOINTS_SEL:
-			parser.scanStr((char *)params, "%d,%d,%d,%d", &ar, &ag, &ab, &aa);
+			parser.scanStr(params, "%d,%d,%d,%d", &ar, &ag, &ab, &aa);
 			_editorColWaypointsSel = BYTETORGBA(ar, ag, ab, aa);
 			break;
 
 		case TOKEN_EDITOR_COLOR_REGION:
-			parser.scanStr((char *)params, "%d,%d,%d,%d", &ar, &ag, &ab, &aa);
+			parser.scanStr(params, "%d,%d,%d,%d", &ar, &ag, &ab, &aa);
 			_editorColRegion = BYTETORGBA(ar, ag, ab, aa);
 			break;
 
 		case TOKEN_EDITOR_COLOR_DECORATION:
-			parser.scanStr((char *)params, "%d,%d,%d,%d", &ar, &ag, &ab, &aa);
+			parser.scanStr(params, "%d,%d,%d,%d", &ar, &ag, &ab, &aa);
 			_editorColDecor = BYTETORGBA(ar, ag, ab, aa);
 			break;
 
 		case TOKEN_EDITOR_COLOR_BLOCKED:
-			parser.scanStr((char *)params, "%d,%d,%d,%d", &ar, &ag, &ab, &aa);
+			parser.scanStr(params, "%d,%d,%d,%d", &ar, &ag, &ab, &aa);
 			_editorColBlocked = BYTETORGBA(ar, ag, ab, aa);
 			break;
 
 		case TOKEN_EDITOR_COLOR_WAYPOINTS:
-			parser.scanStr((char *)params, "%d,%d,%d,%d", &ar, &ag, &ab, &aa);
+			parser.scanStr(params, "%d,%d,%d,%d", &ar, &ag, &ab, &aa);
 			_editorColWaypoints = BYTETORGBA(ar, ag, ab, aa);
 			break;
 
 		case TOKEN_EDITOR_COLOR_SCALE:
-			parser.scanStr((char *)params, "%d,%d,%d,%d", &ar, &ag, &ab, &aa);
+			parser.scanStr(params, "%d,%d,%d,%d", &ar, &ag, &ab, &aa);
 			_editorColScale = BYTETORGBA(ar, ag, ab, aa);
 			break;
 
 		case TOKEN_EDITOR_SHOW_REGIONS:
-			parser.scanStr((char *)params, "%b", &_editorShowRegions);
+			parser.scanStr(params, "%b", &_editorShowRegions);
 			break;
 
 		case TOKEN_EDITOR_SHOW_BLOCKED:
-			parser.scanStr((char *)params, "%b", &_editorShowBlocked);
+			parser.scanStr(params, "%b", &_editorShowBlocked);
 			break;
 
 		case TOKEN_EDITOR_SHOW_DECORATION:
-			parser.scanStr((char *)params, "%b", &_editorShowDecor);
+			parser.scanStr(params, "%b", &_editorShowDecor);
 			break;
 
 		case TOKEN_EDITOR_SHOW_ENTITIES:
-			parser.scanStr((char *)params, "%b", &_editorShowEntities);
+			parser.scanStr(params, "%b", &_editorShowEntities);
 			break;
 
 		case TOKEN_EDITOR_SHOW_SCALE:
-			parser.scanStr((char *)params, "%b", &_editorShowScale);
+			parser.scanStr(params, "%b", &_editorShowScale);
 			break;
 
 		case TOKEN_SCRIPT:
-			addScript((char *)params);
+			addScript(params);
 			break;
 
 		case TOKEN_PROPERTY:
@@ -856,7 +856,7 @@ bool AdScene::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_VIEWPORT: {
 			Rect32 rc;
-			parser.scanStr((char *)params, "%d,%d,%d,%d", &rc.left, &rc.top, &rc.right, &rc.bottom);
+			parser.scanStr(params, "%d,%d,%d,%d", &rc.left, &rc.top, &rc.right, &rc.bottom);
 			if (!_viewport) {
 				_viewport = new BaseViewport(_gameRef);
 			}
@@ -866,11 +866,11 @@ bool AdScene::loadBuffer(byte *buffer, bool complete) {
 		}
 
 		case TOKEN_PERSISTENT_STATE:
-			parser.scanStr((char *)params, "%b", &_persistentState);
+			parser.scanStr(params, "%b", &_persistentState);
 			break;
 
 		case TOKEN_PERSISTENT_STATE_SPRITES:
-			parser.scanStr((char *)params, "%b", &_persistentStateSprites);
+			parser.scanStr(params, "%b", &_persistentStateSprites);
 			break;
 
 		case TOKEN_EDITOR_PROPERTY:

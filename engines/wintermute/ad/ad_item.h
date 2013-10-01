@@ -50,7 +50,7 @@ public:
 	AdItem(BaseGame *inGame);
 	virtual ~AdItem();
 	bool loadFile(const char *filename);
-	bool loadBuffer(byte *buffer, bool complete = true);
+	bool loadBuffer(char *buffer, bool complete = true);
 
 	// scripting interface
 	virtual ScValue *scGetProperty(const Common::String &name) override;
