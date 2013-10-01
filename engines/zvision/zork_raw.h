@@ -41,21 +41,6 @@ struct SoundParams {
 	bool packed;
 };
 
-const SoundParams zNemSoundParamLookupTable[6] = {{'6', 0x2B11, false, false},
-                                                  {'a', 0x5622, false,  true}, 
-                                                  {'b', 0x5622, true,  true},
-                                                  {'n', 0x2B11, false, true},
-                                                  {'s', 0x5622, false, true},
-                                                  {'t', 0x5622, true, true}
-};
-
-const SoundParams zgiSoundParamLookupTable[5] = {{'a',0x5622, false, false},
-                                                 {'k',0x2B11, true, true},
-                                                 {'p',0x5622, false, true},
-                                                 {'q',0x5622, true, true},
-                                                 {'u',0xAC44, true, true}
-};
-
 /**
  * This is a stream, which allows for playing raw ADPCM data from a stream.
  */
@@ -67,6 +52,8 @@ public:
 	}
 
 public:
+	static const SoundParams _zNemSoundParamLookupTable[6];
+	static const SoundParams _zgiSoundParamLookupTable[5];
 
 private:
 	const int _rate;                                           // Sample rate of stream

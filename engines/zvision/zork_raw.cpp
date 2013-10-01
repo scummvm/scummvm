@@ -52,6 +52,21 @@ const int32 RawZorkStream::_amplitudeLookupTable[89] = {0x0007, 0x0008, 0x0009, 
                                                         0x1BDC, 0x1EA5, 0x21B6, 0x2515, 0x28CA, 0x2CDF, 0x315B, 0x364B,
                                                         0x3BB9, 0x41B2, 0x4844, 0x4F7E, 0x5771, 0x602F, 0x69CE, 0x7462, 0x7FFF};
 
+const SoundParams RawZorkStream::_zNemSoundParamLookupTable[6] = {{'6', 0x2B11, false, false},
+                                                                  {'a', 0x5622, false,  true}, 
+                                                                  {'b', 0x5622, true,  true},
+                                                                  {'n', 0x2B11, false, true},
+                                                                  {'s', 0x5622, false, true},
+                                                                  {'t', 0x5622, true, true}
+};
+
+const SoundParams RawZorkStream::_zgiSoundParamLookupTable[5] = {{'a',0x5622, false, false},
+                                                                 {'k',0x2B11, true, true},
+                                                                 {'p',0x5622, false, true},
+                                                                 {'q',0x5622, true, true},
+                                                                 {'u',0xAC44, true, true}
+};
+
 RawZorkStream::RawZorkStream(uint32 rate, bool stereo, DisposeAfterUse::Flag disposeStream, Common::SeekableReadStream *stream)
 		: _rate(rate),
 		  _stereo(0),
@@ -166,14 +181,14 @@ Audio::RewindableAudioStream *makeRawZorkStream(const Common::String &filePath, 
 
 	if (engine->getGameId() == GID_NEMESIS) {
 		for (int i = 0; i < 6; ++i) {
-			if (zNemSoundParamLookupTable[i].identifier == (fileName[6]))
-				soundParams = zNemSoundParamLookupTable[i];
+			if (RawZorkStream::_zNemSoundParamLookupTable[i].identifier == (fileName[6]))
+				soundParams = RawZorkStream::_zNemSoundParamLookupTable[i];
 		}
 	}
 	else if (engine->getGameId() == GID_GRANDINQUISITOR) {
 		for (int i = 0; i < 6; ++i) {
-			if (zgiSoundParamLookupTable[i].identifier == (fileName[7]))
-				soundParams = zgiSoundParamLookupTable[i];
+			if (RawZorkStream::_zgiSoundParamLookupTable[i].identifier == (fileName[7]))
+				soundParams = RawZorkStream::_zgiSoundParamLookupTable[i];
 		}
 	}
 	
