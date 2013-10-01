@@ -409,10 +409,10 @@ void Dialogs::drawSign(Common::String fn, int16 xl, int16 yl, int16 y) {
 
 void Dialogs::drawScroll(DialogFunctionType modeFunc) {
 	int16 lx = 0;
-	int16 ly = (_vm->_scrollNum) * 6;
+	int16 ly = (_scrollNum) * 6;
 	int16 ex;
-	for (int i = 0; i < _vm->_scrollNum; i++) {
-		ex = _vm->_scroll[i].size() * 8;
+	for (int i = 0; i < _scrollNum; i++) {
+		ex = _scroll[i].size() * 8;
 		if (lx < ex)
 			lx = ex;
 	}
@@ -452,30 +452,30 @@ void Dialogs::drawScroll(DialogFunctionType modeFunc) {
 		iconIndent = 53;
 	}
 
-	for (int i = 0; i < _vm->_scrollNum; i++) {
-		if (!_vm->_scroll[i].empty())
-			switch (_vm->_scroll[i][_vm->_scroll[i].size() - 1]) {
+	for (int i = 0; i < _scrollNum; i++) {
+		if (!_scroll[i].empty())
+			switch (_scroll[i][_scroll[i].size() - 1]) {
 			case kControlCenter:
 				centre = true;
-				_vm->_scroll[i].deleteLastChar();
+				_scroll[i].deleteLastChar();
 				break;
 			case kControlLeftJustified:
 				centre = false;
-				_vm->_scroll[i].deleteLastChar();
+				_scroll[i].deleteLastChar();
 				break;
 			case kControlQuestion:
 				_shadowBoxX = mx + lx;
 				_shadowBoxY = my + ly;
-				_vm->_scroll[i].setChar(' ', 0);
+				_scroll[i].setChar(' ', 0);
 				_vm->_graphics->drawShadowBox(_shadowBoxX - 65, _shadowBoxY - 24, _shadowBoxX - 5, _shadowBoxY - 10, "Yes.");
 				_vm->_graphics->drawShadowBox(_shadowBoxX + 5, _shadowBoxY - 24, _shadowBoxX + 65, _shadowBoxY - 10, "No.");
 				break;
 			}
 
 		if (centre)
-			say(320 - _vm->_scroll[i].size() * 4 + iconIndent, my, _vm->_scroll[i]);
+			say(320 - _scroll[i].size() * 4 + iconIndent, my, _scroll[i]);
 		else
-			say(mx + iconIndent, my, _vm->_scroll[i]);
+			say(mx + iconIndent, my, _scroll[i]);
 
 		my += 12;
 	}
@@ -499,9 +499,9 @@ void Dialogs::drawBubble(DialogFunctionType modeFunc) {
 
 	CursorMan.showMouse(false);
 	int16 xl = 0;
-	int16 yl = _vm->_scrollNum * 5;
-	for (int i = 0; i < _vm->_scrollNum; i++) {
-		uint16 textWidth = _vm->_scroll[i].size() * 8;
+	int16 yl = _scrollNum * 5;
+	for (int i = 0; i < _scrollNum; i++) {
+		uint16 textWidth = _scroll[i].size() * 8;
 		if (textWidth > xl)
 			xl = textWidth;
 	}
@@ -530,10 +530,10 @@ void Dialogs::drawBubble(DialogFunctionType modeFunc) {
 	// Draw the text of the bubble. The centering of the text was improved here compared to Pascal's settextjustify().
 	// The font is not the same that outtextxy() uses in Pascal. I don't have that, so I used characters instead.
 	// It's almost the same, only notable differences are '?', '!', etc.
-	for (int i = 0; i < _vm->_scrollNum; i++) {
-		int16 x = xc + _vm->_talkX - _vm->_scroll[i].size() / 2 * 8;
-		bool offset = _vm->_scroll[i].size() % 2;
-		_vm->_graphics->drawScrollText(_vm->_scroll[i], _vm->_font, 8, x - offset * 4, (i * 10) + 12, _vm->_talkFontColor);
+	for (int i = 0; i < _scrollNum; i++) {
+		int16 x = xc + _vm->_talkX - _scroll[i].size() / 2 * 8;
+		bool offset = _scroll[i].size() % 2;
+		_vm->_graphics->drawScrollText(_scroll[i], _vm->_font, 8, x - offset * 4, (i * 10) + 12, _vm->_talkFontColor);
 	}
 
 	ringBell();
@@ -549,10 +549,10 @@ void Dialogs::drawBubble(DialogFunctionType modeFunc) {
 }
 
 void Dialogs::reset() {
-	_vm->_scrollNum = 1;
+	_scrollNum = 1;
 	for (int i = 0; i < 15; i++) {
-		if (!_vm->_scroll[i].empty())
-			_vm->_scroll[i].clear();
+		if (!_scroll[i].empty())
+			_scroll[i].clear();
 	}
 }
 
@@ -591,16 +591,16 @@ void Dialogs::stripTrailingSpaces(Common::String &str) {
 }
 
 void Dialogs::solidify(byte n) {
-	if (!_vm->_scroll[n].contains(' '))
+	if (!_scroll[n].contains(' '))
 		return; // No spaces.
 
 	// So there MUST be a space there, somewhere...
 	do {
-		_vm->_scroll[n + 1] = _vm->_scroll[n][_vm->_scroll[n].size() - 1] + _vm->_scroll[n + 1];
-		_vm->_scroll[n].deleteLastChar();
-	} while (_vm->_scroll[n][_vm->_scroll[n].size() - 1] != ' ');
+		_scroll[n + 1] = _scroll[n][_scroll[n].size() - 1] + _scroll[n + 1];
+		_scroll[n].deleteLastChar();
+	} while (_scroll[n][_scroll[n].size() - 1] != ' ');
 
-	stripTrailingSpaces(_vm->_scroll[n]);
+	stripTrailingSpaces(_scroll[n]);
 }
 
 void Dialogs::callDialogDriver() {
@@ -641,7 +641,7 @@ void Dialogs::callDialogDriver() {
 		} else {
 			switch (_vm->_buffer[i]) {
 			case kControlParagraph:
-				if ((_vm->_scrollNum == 1) && (_vm->_scroll[0].empty()))
+				if ((_scrollNum == 1) && (_scroll[0].empty()))
 					break;
 
 				if (call_spriterun)
@@ -659,7 +659,7 @@ void Dialogs::callDialogDriver() {
 				_vm->_scrollBells++;
 				break; // #7 = "Bel"
 			case kControlSpeechBubble:
-				if ((_vm->_scrollNum == 1) && (_vm->_scroll[0].empty()))
+				if ((_scrollNum == 1) && (_scroll[0].empty()))
 					break;
 
 				if (call_spriterun)
@@ -753,15 +753,15 @@ void Dialogs::callDialogDriver() {
 				_useIcon = _param;
 				break;
 			case kControlNewLine:
-				_vm->_scrollNum++;
+				_scrollNum++;
 				break;
 			case kControlQuestion:
 				if (call_spriterun)
 					_vm->spriteRun();
 				call_spriterun = false;
 
-				_vm->_scroll[_vm->_scrollNum] = kControlQuestion;
-				_vm->_scrollNum++;
+				_scroll[_scrollNum] = kControlQuestion;
+				_scrollNum++;
 
 				drawScroll(&Avalanche::Dialogs::scrollModeDialogue);
 				reset();
@@ -771,14 +771,14 @@ void Dialogs::callDialogDriver() {
 				break;
 			case kControlInsertSpaces:
 				for (int j = 0; j < 9; j++)
-					_vm->_scroll[_vm->_scrollNum - 1] += ' ';
+					_scroll[_scrollNum - 1] += ' ';
 				break;
 			default: // Add new char.
-				if (_vm->_scroll[_vm->_scrollNum - 1].size() == 50) {
-					solidify(_vm->_scrollNum - 1);
-					_vm->_scrollNum++;
+				if (_scroll[_scrollNum - 1].size() == 50) {
+					solidify(_scrollNum - 1);
+					_scrollNum++;
 				}
-				_vm->_scroll[_vm->_scrollNum - 1] += _vm->_buffer[i];
+				_scroll[_scrollNum - 1] += _vm->_buffer[i];
 				break;
 			}
 		}

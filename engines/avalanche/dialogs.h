@@ -96,9 +96,11 @@ private:
 
 	int16 _shadowBoxX, _shadowBoxY;
 	byte _currentFont; // Current font
+	Common::String _scroll[15];
 	Common::Point _dodgeCoord;
 	byte _param; // For using arguments code
 	byte _useIcon;
+	byte _scrollNum;
 	bool _scReturn;
 
 	// These 3 "Mode" functions are always passed as ScrollsFunctionType parameters.
