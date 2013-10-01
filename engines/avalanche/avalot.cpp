@@ -421,12 +421,8 @@ void AvalancheEngine::callVerb(VerbCode id) {
 			"situations. However, at the moment there is nothing assigned to it. You may press alt-A to see " \
 			"what the current setting of this key is.");
 		_dialogs->displayText(tmpStr);
-	} else {
-		_weirdWord = false;
-		_parser->_polite = true;
-		_parser->_verb = id;
-		_parser->doThat();
-	}
+	} else
+		_parser->doVerb(id);
 }
 
 /**

@@ -69,6 +69,7 @@ public:
 	byte _inputTextPos; // Original name: curpos
 	bool _quote; // 66 or 99 next?
 	bool _cursorState;
+	bool _weirdWord;
 
 	byte _wearing; // what you're wearing
 
@@ -89,6 +90,7 @@ public:
 	void cursorOff();
 	void tryDropdown(); // This asks the parsekey proc in Dropdown if it knows it.
 	int16 getPos(const Common::String &crit, const Common::String &src); // Returns the index of the first appearance of crit in src.
+	void doVerb(VerbCode id);
 
 	void resetVariables();
 	void synchronize(Common::Serializer &sz);
