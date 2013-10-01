@@ -134,7 +134,6 @@ void MenuItem::display() {
 	for (int y = 1; y < _optionNum; y++)
 		displayOption(y, false);
 
-	_dr->_vm->_defaultLed = 1;
 	_dr->_vm->_currentMouse = 177;
 
 	CursorMan.showMouse(true); // 4 = fletch
@@ -148,7 +147,6 @@ void MenuItem::wipe() {
 	_activeNow = false;
 	_dr->_menuActive = false;
 	_firstlix = false;
-	_dr->_vm->_defaultLed = 2;
 
 	CursorMan.showMouse(true);
 }

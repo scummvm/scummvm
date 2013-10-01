@@ -402,7 +402,6 @@ void AvalancheEngine::init() {
 	_cheat = false;
 	_cp = 0;
 	_ledStatus = 177;
-	_defaultLed = 2;
 	for (int i = 0; i < 3; i++)
 		_scoreToDisplay[i] = -1; // Impossible digits.
 	_holdTheDawn = false;

@@ -273,13 +273,10 @@ public:
 	MagicType _portals[7];
 	FieldType _fields[30];
 	byte _fieldNum;
-	Common::String _flags;
 	Common::String _listen;
-	byte _cp, _ledStatus, _defaultLed;
+	byte _cp, _ledStatus;
 	FontType _font;
 	bool _alive;
-	byte _buffer[2000];
-	uint16 _bufSize;
 	int16 _underScroll; // Y-coord of just under the scroll text.
 	Common::String _roomnName; // Name of actual room
 	Common::String _subject; // What you're talking to them about.
@@ -357,6 +354,7 @@ private:
 	bool _passedCwytalotInHerts; // Have you passed Cwytalot in Herts?
 	byte _roomCount[100]; // Add one to each every time you enter a room
 	Common::String _mouseText;
+	Common::String _flags;
 	int8 _scoreToDisplay[3];
 
 	Common::File file;
