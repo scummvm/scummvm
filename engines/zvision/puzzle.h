@@ -36,7 +36,7 @@ struct Puzzle {
 
 	~Puzzle() {
 		for (Common::List<ResultAction *>::iterator iter = resultActions.begin(); iter != resultActions.end(); iter++) {
-			delete (*iter);
+			delete *iter;
 		}
 	}
 

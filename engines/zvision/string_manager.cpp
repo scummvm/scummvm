@@ -42,7 +42,7 @@ StringManager::StringManager(ZVision *engine)
 
 StringManager::~StringManager() {
 	for (Common::HashMap<Common::String, TruetypeFont *>::iterator iter = _fonts.begin(); iter != _fonts.end(); iter++) {
-		delete (*iter)._value;
+		delete iter->_value;
 	}
 }
 

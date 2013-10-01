@@ -71,7 +71,7 @@ void ScriptManager::createReferenceTable() {
 
 		// Iterate through each CriteriaEntry and add a reference from the criteria key to the Puzzle
 		for (Common::List<Common::List<Puzzle::CriteriaEntry> >::iterator criteriaIter = (*activePuzzleIter)->criteriaList.begin(); criteriaIter != (*activePuzzleIter)->criteriaList.end(); criteriaIter++) {
-			for (Common::List<Puzzle::CriteriaEntry>::iterator entryIter = (*criteriaIter).begin(); entryIter != (*criteriaIter).end(); entryIter++) {
+			for (Common::List<Puzzle::CriteriaEntry>::iterator entryIter = criteriaIter->begin(); entryIter != criteriaIter->end(); entryIter++) {
 				_referenceTable[entryIter->key].push_back(puzzlePtr);
 
 				// If the argument is a key, add a reference to it as well
@@ -88,7 +88,7 @@ void ScriptManager::createReferenceTable() {
 
 		// Iterate through each CriteriaEntry and add a reference from the criteria key to the Puzzle
 		for (Common::List<Common::List<Puzzle::CriteriaEntry> >::iterator criteriaIter = (*globalPuzzleIter)->criteriaList.begin(); criteriaIter != (*globalPuzzleIter)->criteriaList.end(); criteriaIter++) {
-			for (Common::List<Puzzle::CriteriaEntry>::iterator entryIter = (*criteriaIter).begin(); entryIter != (*criteriaIter).end(); entryIter++) {
+			for (Common::List<Puzzle::CriteriaEntry>::iterator entryIter = criteriaIter->begin(); entryIter != criteriaIter->end(); entryIter++) {
 				_referenceTable[entryIter->key].push_back(puzzlePtr);
 
 				// If the argument is a key, add a reference to it as well
@@ -135,16 +135,16 @@ void ScriptManager::checkPuzzleCriteria() {
 		for (Common::List<Common::List<Puzzle::CriteriaEntry> >::iterator criteriaIter = puzzle->criteriaList.begin(); criteriaIter != puzzle->criteriaList.end(); criteriaIter++) {
 			criteriaMet = false;
 
-			for (Common::List<Puzzle::CriteriaEntry>::iterator entryIter = (*criteriaIter).begin(); entryIter != (*criteriaIter).end(); entryIter++) {
+			for (Common::List<Puzzle::CriteriaEntry>::iterator entryIter = criteriaIter->begin(); entryIter != criteriaIter->end(); entryIter++) {
 				// Get the value to compare against
 				uint argumentValue;
-				if ((*entryIter).argumentIsAKey)
+				if (entryIter->argumentIsAKey)
 					argumentValue = getStateValue(entryIter->argument);
 				else
 					argumentValue = entryIter->argument;
 
 				// Do the comparison
-				switch ((*entryIter).criteriaOperator) {
+				switch (entryIter->criteriaOperator) {
 				case Puzzle::EQUAL_TO:
 					criteriaMet = getStateValue(entryIter->key) == argumentValue;
 					break;
@@ -197,7 +197,7 @@ void ScriptManager::cleanStateTable() {
 	for (Common::HashMap<uint32, uint32>::iterator iter = _globalState.begin(); iter != _globalState.end(); iter++) {
 		// If the value is equal to zero, we can purge it since getStateValue()
 		// will return zero if _globalState doesn't contain a key
-		if ((*iter)._value == 0) {
+		if (iter->_value == 0) {
 			// Remove the node
 			_globalState.erase(iter);
 		}
@@ -384,8 +384,8 @@ void ScriptManager::serializeStateTable(Common::WriteStream *stream) {
 
 	for (Common::HashMap<uint32, uint32>::iterator iter = _globalState.begin(); iter != _globalState.end(); iter++) {
 		// Write out the key/value pair
-		stream->writeUint32LE((*iter)._key);
-		stream->writeUint32LE((*iter)._value);
+		stream->writeUint32LE(iter->_key);
+		stream->writeUint32LE(iter->_value);
 	}
 }
 

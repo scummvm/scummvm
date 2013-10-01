@@ -59,8 +59,8 @@ RenderManager::~RenderManager() {
 	_backBuffer.free();
 
 	for (Common::HashMap<uint32, AlphaDataEntry>::iterator iter = _alphaDataEntries.begin(); iter != _alphaDataEntries.end(); iter++) {
-		(*iter)._value.data->free();
-		delete (*iter)._value.data;
+		iter->_value.data->free();
+		delete iter->_value.data;
 	}
 }
 
@@ -121,25 +121,25 @@ void RenderManager::processAlphaEntries() {
 	for (Common::HashMap<uint32, AlphaDataEntry>::iterator iter = _alphaDataEntries.begin(); iter != _alphaDataEntries.end(); iter++) {
 		uint32 destOffset = 0;
 		uint32 sourceOffset = 0;
-		uint16 *backbufferPtr = (uint16 *)_backBuffer.getBasePtr((*iter)._value.destX + _workingWindow.left, (*iter)._value.destY + _workingWindow.top);
-		uint16 *entryPtr = (uint16 *)(*iter)._value.data->getPixels();
+		uint16 *backbufferPtr = (uint16 *)_backBuffer.getBasePtr(iter->_value.destX + _workingWindow.left, iter->_value.destY + _workingWindow.top);
+		uint16 *entryPtr = (uint16 *)iter->_value.data->getPixels();
 
-		for (int32 y = 0; y < (*iter)._value.height; y++) {
-			for (int32 x = 0; x < (*iter)._value.width; x++) {
+		for (int32 y = 0; y < iter->_value.height; y++) {
+			for (int32 x = 0; x < iter->_value.width; x++) {
 				uint16 color = entryPtr[sourceOffset + x];
-				if (color != (*iter)._value.alphaColor) {
+				if (color != iter->_value.alphaColor) {
 					backbufferPtr[destOffset + x] = color;
 				}
 			}
 
 			destOffset += _backBuffer.w;
-			sourceOffset += (*iter)._value.width;
+			sourceOffset += iter->_value.width;
 		}
 
 		if (_backBufferDirtyRect.isEmpty()) {
-			_backBufferDirtyRect = Common::Rect((*iter)._value.destX + _workingWindow.left, (*iter)._value.destY + _workingWindow.top, (*iter)._value.destX + _workingWindow.left + (*iter)._value.width, (*iter)._value.destY + _workingWindow.top + (*iter)._value.height);
+			_backBufferDirtyRect = Common::Rect(iter->_value.destX + _workingWindow.left, iter->_value.destY + _workingWindow.top, iter->_value.destX + _workingWindow.left + iter->_value.width, iter->_value.destY + _workingWindow.top + iter->_value.height);
 		} else {
-			_backBufferDirtyRect.extend(Common::Rect((*iter)._value.destX + _workingWindow.left, (*iter)._value.destY + _workingWindow.top, (*iter)._value.destX + _workingWindow.left + (*iter)._value.width, (*iter)._value.destY + _workingWindow.top + (*iter)._value.height));
+			_backBufferDirtyRect.extend(Common::Rect(iter->_value.destX + _workingWindow.left, iter->_value.destY + _workingWindow.top, iter->_value.destX + _workingWindow.left + iter->_value.width, iter->_value.destY + _workingWindow.top + iter->_value.height));
 		}
 	}
 }
