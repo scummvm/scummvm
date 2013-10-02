@@ -100,15 +100,28 @@ class MctlCompound : public MotionController {
 	void initMovGraph2();
 };
 
+struct MGMItem {
+	int16 objId;
+	int subItems;
+	int staticsListCount;
+	int movementListCount;
+	int statics;
+	int movements1;
+	int movements2;
+
+	MGMItem();
+};
+
+
 class MGM : public CObject {
 public:
-	int _items;
-	int _count;
+	Common::Array<MGMItem *> _items;
 
 public:
-	MGM() : _items(0), _count(0) {}
 	void clear();
 	void addItem(int objId);
+	void rebuildTables(int objId);
+	int getItemIndexById(int objId);
 };
 
 class MovGraphNode : public CObject {

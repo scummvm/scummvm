@@ -482,8 +482,34 @@ void MGM::clear() {
 	warning("STUB: MGM:clear()");
 }
 
+MGMItem::MGMItem() {
+	objId = 0;
+	subItems = 0;
+	staticsListCount = 0;
+	movementListCount = 0;
+	statics = 0;
+	movements1 = 0;
+	movements2 = 0;
+}
+
 void MGM::addItem(int objId) {
-	warning("STUB: MGM:addItem(%d)", objId);
+	if (getItemIndexById(objId) == -1) {
+		MGMItem *item = new MGMItem();
+
+		item->objId = objId;
+		_items.push_back(item);
+	}
+	rebuildTables(objId);
+}
+
+void MGM::rebuildTables(int objId) {
+	warning("STUB: MGM:rebuildTables()");
+}
+
+int MGM::getItemIndexById(int objId) {
+	warning("STUB: MGM:getItemIndexById()");
+
+	return -1;
 }
 
 MovGraphLink::MovGraphLink() {
