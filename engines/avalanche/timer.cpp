@@ -259,7 +259,7 @@ void Timer::toilet() {
 }
 
 void Timer::bang() {
-	Common::String tmpStr = Common::String::format("%c< BANG! >", Dialogs::kControlItalic);
+	Common::String tmpStr = Common::String::format("%c< BANG! >", kControlItalic);
 	_vm->_dialogs->displayText(tmpStr);
 	addTimer(30, kProcBang2, kReasonExplosion);
 }
@@ -360,8 +360,8 @@ void Timer::afterTheShootemup() {
 	_vm->refreshObjectList();
 
 	// Same as the added line above: TODO: Remove it later!!!
-	_vm->_dialogs->displayText(Common::String("P.S.: There should have been the mini-game called \"shoot em' up\", but I haven't implemented it yet: you get the crossbow automatically.")
-		+ Dialogs::kControlNewLine + Dialogs::kControlNewLine + "Peter (uruk)");
+	_vm->_dialogs->displayText(Common::String("P.S.: There should have been the mini-game called \"shoot em' up\", " \
+		"but I haven't implemented it yet: you get the crossbow automatically.") + kControlNewLine + kControlNewLine + "Peter (uruk)");
 
 #if 0
 	byte shootscore, gain;
@@ -548,7 +548,8 @@ void Timer::fallDownOubliette() {
 
 void Timer::meetAvaroid() {
 	if (_vm->_metAvaroid) {
-		Common::String tmpStr = Common::String::format("You can't expect to be %cthat%c lucky twice in a row!", Dialogs::kControlItalic, Dialogs::kControlRoman);
+		Common::String tmpStr = Common::String::format("You can't expect to be %cthat%c lucky twice in a row!",
+			kControlItalic, kControlRoman);
 		_vm->_dialogs->displayText(tmpStr);
 		_vm->gameOver();
 	} else {
@@ -633,7 +634,7 @@ void Timer::avvySitDown() {
 
 void Timer::ghostRoomPhew() {
 	Common::String tmpStr = Common::String::format("%cPHEW!%c You're glad to get out of %cthere!",
-		Dialogs::kControlItalic, Dialogs::kControlRoman, Dialogs::kControlItalic);
+		kControlItalic, kControlRoman, kControlItalic);
 	_vm->_dialogs->displayText(tmpStr);
 }
 
@@ -669,11 +670,10 @@ void Timer::avalotFalls() {
 		addTimer(3, kProcAvalotFalls, kReasonFallingOver);
 	} else {
 		Common::String toDisplay = Common::String::format("%c%c%c%c%c%c%c%c%c%c%c%c%cZ%c",
-			Dialogs::kControlNewLine, Dialogs::kControlNewLine, Dialogs::kControlNewLine,
-			Dialogs::kControlNewLine, Dialogs::kControlNewLine, Dialogs::kControlNewLine,
-			Dialogs::kControlInsertSpaces, Dialogs::kControlInsertSpaces, Dialogs::kControlInsertSpaces,
-			Dialogs::kControlInsertSpaces, Dialogs::kControlInsertSpaces, Dialogs::kControlInsertSpaces,
-			Dialogs::kControlRegister, Dialogs::kControlIcon);
+			kControlNewLine, kControlNewLine, kControlNewLine, kControlNewLine,
+			kControlNewLine, kControlNewLine, kControlInsertSpaces, kControlInsertSpaces,
+			kControlInsertSpaces, kControlInsertSpaces, kControlInsertSpaces,
+			kControlInsertSpaces, kControlRegister, kControlIcon);
 		_vm->_dialogs->displayText(toDisplay);
 	}
 }

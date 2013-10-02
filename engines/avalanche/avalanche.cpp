@@ -393,9 +393,9 @@ bool AvalancheEngine::loadGame(const int16 slot) {
 	_background->update();
 
 	Common::String tmpStr = Common::String::format("%cLoaded: %c%s.ASG%c%c%c%s%c%csaved on %s.", 
-		Dialogs::kControlItalic, Dialogs::kControlRoman, description.c_str(), Dialogs::kControlCenter, 
-		Dialogs::kControlNewLine, Dialogs::kControlNewLine, _roomnName.c_str(), Dialogs::kControlNewLine, 
-		Dialogs::kControlNewLine, expandDate(t.tm_mday, t.tm_mon, t.tm_year).c_str());
+		kControlItalic, kControlRoman, description.c_str(), kControlCenter, kControlNewLine, 
+		kControlNewLine, _roomnName.c_str(), kControlNewLine, kControlNewLine, 
+		expandDate(t.tm_mday, t.tm_mon, t.tm_year).c_str());
 	_dialogs->displayText(tmpStr);
 
 	AnimationType *avvy = &_animation->_sprites[0];

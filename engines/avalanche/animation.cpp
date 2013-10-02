@@ -224,7 +224,8 @@ void AnimationType::walk() {
 				break;
 			case kMagicUnfinished: {
 				bounce();
-				Common::String tmpStr = Common::String::format("%c%cSorry.%cThis place is not available yet!", Dialogs::kControlBell, Dialogs::kControlCenter, Dialogs::kControlRoman);
+				Common::String tmpStr = Common::String::format("%c%cSorry.%cThis place is not available yet!", 
+					kControlBell, kControlCenter, kControlRoman);
 				_anim->_vm->_dialogs->displayText(tmpStr);
 				}
 				break;
@@ -452,7 +453,7 @@ void Animation::catacombMove(byte ped) {
 		return;
 	case 1033:{ // Oubliette
 		_vm->flipRoom(kRoomOubliette, 1);
-		Common::String tmpStr = Common::String::format("Oh, NO!%c1%c", Dialogs::kControlRegister, Dialogs::kControlSpeechBubble);
+		Common::String tmpStr = Common::String::format("Oh, NO!%c1%c", kControlRegister, kControlSpeechBubble);
 		_vm->_dialogs->displayText(tmpStr);
 		}
 		return;
@@ -1198,7 +1199,7 @@ void Animation::stopWalking() {
 void Animation::hideInCupboard() {
 	if (_vm->_avvysInTheCupboard) {
 		if (_vm->_parser->_wearing == kObjectDummy) {
-			Common::String tmpStr = Common::String::format("%cAVVY!%cGet dressed first!", Dialogs::kControlItalic, Dialogs::kControlRoman);
+			Common::String tmpStr = Common::String::format("%cAVVY!%cGet dressed first!", kControlItalic, kControlRoman);
 			_vm->_dialogs->displayText(tmpStr);
 		} else {
 			_sprites[0]._visible = true;
@@ -1213,7 +1214,7 @@ void Animation::hideInCupboard() {
 		_sprites[0]._visible = false;
 		_vm->_userMovesAvvy = false;
 		Common::String tmpStr = Common::String::format("You walk into the room...%cIt seems to be an empty, " \
-			"but dusty, cupboard. Hmmmm... you leave the door slightly open to avoid suffocation.", Dialogs::kControlParagraph);
+			"but dusty, cupboard. Hmmmm... you leave the door slightly open to avoid suffocation.", kControlParagraph);
 		_vm->_dialogs->displayText(tmpStr);
 		_vm->_avvysInTheCupboard = true;
 		_vm->_background->draw(-1, -1, 7);

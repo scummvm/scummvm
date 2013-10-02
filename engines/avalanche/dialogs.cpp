@@ -836,7 +836,7 @@ void Dialogs::displayScrollChain(char block, byte point, bool report, bool bubbl
 
 	if (error) {
 		if (report) {
-			Common::String todisplay = Common::String::format("%cError accessing scroll %c%d", Dialogs::kControlBell, block, point);
+			Common::String todisplay = Common::String::format("%cError accessing scroll %c%d", kControlBell, block, point);
 			displayText(todisplay);
 		}
 		return;
@@ -928,7 +928,8 @@ void Dialogs::talkTo(byte whom) {
 				case 1: // Fallthrough is intended.
 				case 2: {
 					Common::String objStr = _vm->getItem(AvalancheEngine::kSpludwicksOrder[_vm->_givenToSpludwick]);
-					Common::String tmpStr = Common::String::format("Can you get me %s, please?%c2%c", objStr.c_str(), Dialogs::kControlRegister, Dialogs::kControlSpeechBubble);
+					Common::String tmpStr = Common::String::format("Can you get me %s, please?%c2%c", 
+						objStr.c_str(), kControlRegister, kControlSpeechBubble);
 					displayText(tmpStr);
 					}
 					return;
@@ -1002,7 +1003,7 @@ void Dialogs::talkTo(byte whom) {
 	bool noMatches = true;
 	for (int i = 0; i <= _vm->_animation->kSpriteNumbMax; i++) {
 		if (_vm->_animation->_sprites[i]._stat._acciNum == whom) {
-			Common::String tmpStr = Common::String::format("%c%c%c", Dialogs::kControlRegister, i + 49, Dialogs::kControlToBuffer);
+			Common::String tmpStr = Common::String::format("%c%c%c", kControlRegister, i + 49, kControlToBuffer);
 			displayText(tmpStr);
 			noMatches = false;
 			break;
@@ -1010,7 +1011,7 @@ void Dialogs::talkTo(byte whom) {
 	}
 
 	if (noMatches) {
-		Common::String tmpStr = Common::String::format("%c%c%c", Dialogs::kControlRegister, Dialogs::kControlRegister, Dialogs::kControlToBuffer);
+		Common::String tmpStr = Common::String::format("%c%c%c", kControlRegister, kControlRegister, kControlToBuffer);
 		displayText(tmpStr);
 	}
 
