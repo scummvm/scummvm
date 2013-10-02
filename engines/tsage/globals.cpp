@@ -541,7 +541,7 @@ void Ringworld2Globals::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_v57C2C);
 	s.syncAsSint16LE(_speechSubtitles);
 
-	byte temp;
+	byte temp = 0;
 	s.syncAsByte(temp);
 	s.syncAsByte(_s1550PlayerArea[R2_QUINN].x);
 	s.syncAsByte(_s1550PlayerArea[R2_SEEKER].x);
