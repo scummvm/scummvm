@@ -102,7 +102,6 @@ void Sprite::loadList(int resourceId, SpriteList &spriteList) {
 	bool bigHeader = _vm->getGameId() == GID_IHNM || _vm->isMacResources();
 
 	for (i = oldSpriteCount; i < spriteList.size(); i++) {
-		spriteInfo = &spriteList[i];
 		if (bigHeader)
 			offset = readS.readUint32();
 		else
@@ -117,6 +116,7 @@ void Sprite::loadList(int resourceId, SpriteList &spriteList) {
 
 		spritePointer = spriteListData.getBuffer();
 		spritePointer += offset;
+		spriteInfo = &spriteList[i];
 
 		if (bigHeader) {
 			Common::MemoryReadStreamEndian readS2(spritePointer, 8, _spriteContext->isBigEndian());
