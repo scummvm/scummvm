@@ -521,48 +521,13 @@ void MGM::rebuildTables(int objId) {
 	if (!obj)
 		return;
 
-#if 0
-	this_->items[idx].staticsListCount = obj->staticsList.m_nCount;
-	this_->items[idx].movementListCount = obj->movements.m_nCount;
-	this_->items[idx].statics = (Statics *)operator new(4 * this_->items[idx].staticsListCount);
-	this_->items[idx].movements1 = (Movement *)operator new(4 * this_->items[idx].movementListCount);
-	this_->items[idx].movements2 = (Movement *)operator new(4 * this_->items[idx].movementListCount);
-	v10 = this_->items;
-	v11 = v10[idx].movements2;
-	v12 = 4 * LOBYTE(v10[idx].movementListCount);
-	v13 = (unsigned int)(4 * v10[idx].movementListCount) >> 2;
-	memset(v11, 0, 4 * v13);
-	v14 = (char *)v11 + 4 * v13;
-	LOBYTE(v13) = v12;
-	v15 = 0;
-	memset(v14, 0, v13 & 3);
-	v16 = obj->staticsList.m_pNodeHead;
-	v17 = &this_->items[idx];
-	if (v17->staticsListCount > 0) {
-		do {
-			v18 = v16;
-			v16 = v16->pNext;
-			++v15;
-			*((_DWORD *)&v17->statics[-1].picture + v15) = v18->data;
-			v17 = &this_->items[idx];
-		} while (v15 < v17->staticsListCount);
-	}
-	v19 = obj->movements.m_pNodeHead;
-	v20 = &this_->items[idx];
-	for (i = 0; i < v20->movementListCount; v20 = &this_->items[idx]) {
-		v22 = v19;
-		v19 = v19->pNext;
-		++i;
-		*(&v20->movements1[-1].field_94 + i) = (int)v22->data;
-	}
-	this_->items[idx].staticsListCount = obj->staticsList.m_nCount;
-	this_->items[idx].subItems = (MGMSubItem *)operator new(0x18 * this_->items[idx].staticsListCount
-															* this_->items[idx].staticsListCount);
-	memset(
-		   this_->items[idx].subItems,
-		   0,
-		   24 * this_->items[idx].staticsListCount * this_->items[idx].staticsListCount);
-#endif
+	for (uint i = 0; i < obj->_staticsList.size(); i++)
+		_items[idx]->statics.push_back((Statics *)obj->_staticsList[i]);
+
+	for (uint i = 0; i < obj->_movements.size(); i++)
+		_items[idx]->movements1.push_back((Movement *)obj->_movements[i]);
+
+	_items[idx]->subItems.clear();
 }
 
 int MGM::getItemIndexById(int objId) {
