@@ -615,7 +615,7 @@ void SceneHandlerExt::process(Event &event) {
 
 void SceneHandlerExt::postLoad(int priorSceneBeforeLoad, int currentSceneBeforeLoad) {
 	if (priorSceneBeforeLoad == -1 || priorSceneBeforeLoad == 50
-			|| priorSceneBeforeLoad == 180 || priorSceneBeforeLoad == 205)
+			|| currentSceneBeforeLoad == 180 || priorSceneBeforeLoad == 205)
 		setupPaletteMaps();
 
 	if (currentSceneBeforeLoad == 2900) {
