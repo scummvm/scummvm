@@ -23,12 +23,10 @@
 #ifndef ZVISION_LEVER_CONTROL_H
 #define ZVISION_LEVER_CONTROL_H
 
-#include "common/types.h"
+#include "zvision/control.h"
 
 #include "common/list.h"
 #include "common/rect.h"
-
-#include "zvision/control.h"
 
 
 namespace ZVision {

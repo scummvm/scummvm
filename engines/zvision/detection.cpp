@@ -21,15 +21,17 @@
  *
  */
 
+#include "common/scummsys.h"
+
 #include "base/plugins.h"
+
+#include "zvision/zvision.h"
+#include "zvision/detection.h"
 
 #include "common/translation.h"
 #include "common/savefile.h"
 #include "common/str-array.h"
 #include "common/system.h"
-
-#include "zvision/zvision.h"
-#include "zvision/detection.h"
 
 
 namespace ZVision {

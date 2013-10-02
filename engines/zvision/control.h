@@ -23,8 +23,6 @@
 #ifndef ZVISION_CONTROL_H
 #define ZVISION_CONTROL_H
 
-#include "common/types.h"
-
 #include "common/keyboard.h"
 
 

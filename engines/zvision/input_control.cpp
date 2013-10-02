@@ -22,16 +22,17 @@
 
 #include "common/scummsys.h"
 
-#include "common/str.h"
-#include "common/stream.h"
-#include "common/rect.h"
-
 #include "zvision/input_control.h"
+
 #include "zvision/zvision.h"
 #include "zvision/script_manager.h"
 #include "zvision/string_manager.h"
 #include "zvision/render_manager.h"
 #include "zvision/utility.h"
+
+#include "common/str.h"
+#include "common/stream.h"
+#include "common/rect.h"
 
 
 namespace ZVision {

@@ -23,14 +23,14 @@
 #ifndef ZVISION_RENDER_MANAGER_H
 #define ZVISION_RENDER_MANAGER_H
 
-#include "common/types.h"
+#include "zvision/render_table.h"
+#include "zvision/truetype_font.h"
+
 #include "common/rect.h"
 #include "common/hashmap.h"
 
 #include "graphics/surface.h"
 
-#include "zvision/render_table.h"
-#include "zvision/truetype_font.h"
 
 class OSystem;
 

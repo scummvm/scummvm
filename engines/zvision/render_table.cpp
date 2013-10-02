@@ -22,10 +22,12 @@
 
 #include "common/scummsys.h"
 
+#include "zvision/render_table.h"
+
+#include "zvision/vector2.h"
+
 #include "graphics/colormasks.h"
 
-#include "zvision/render_table.h"
-#include "zvision/vector2.h"
 
 namespace ZVision {
 

@@ -23,6 +23,7 @@
 #include "common/scummsys.h"
 
 #include "zvision/script_manager.h"
+
 #include "zvision/utility.h"
 #include "zvision/puzzle.h"
 #include "zvision/actions.h"
@@ -32,6 +33,7 @@
 #include "common/textconsole.h"
 #include "common/file.h"
 #include "common/tokenizer.h"
+
 
 namespace ZVision {
 

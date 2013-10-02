@@ -23,9 +23,8 @@
 #ifndef ZVISION_CURSOR_H
 #define ZVISION_CURSOR_H
 
-#include "common/types.h"
-
 #include "graphics/surface.h"
+
 
 namespace Common {
 class String;

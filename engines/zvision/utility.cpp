@@ -22,12 +22,14 @@
 
 #include "common/scummsys.h"
 
+#include "zvision/utility.h"
+
+#include "zvision/zvision.h"
+#include "zvision/zork_raw.h"
+
 #include "common/tokenizer.h"
 #include "common/file.h"
 
-#include "zvision/utility.h"
-#include "zvision/zvision.h"
-#include "zvision/zork_raw.h"
 
 namespace ZVision {
 

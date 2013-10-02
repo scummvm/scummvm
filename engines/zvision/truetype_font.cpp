@@ -22,6 +22,11 @@
 
 #include "common/scummsys.h"
 
+#include "zvision/truetype_font.h"
+
+#include "zvision/zvision.h"
+#include "zvision/render_manager.h"
+
 #include "common/debug.h"
 #include "common/file.h"
 #include "common/system.h"
@@ -29,10 +34,6 @@
 #include "graphics/font.h"
 #include "graphics/fonts/ttf.h"
 #include "graphics/surface.h"
-
-#include "zvision/truetype_font.h"
-#include "zvision/zvision.h"
-#include "zvision/render_manager.h"
 
 
 namespace ZVision {

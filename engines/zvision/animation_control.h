@@ -23,13 +23,19 @@
 #ifndef ZVISION_ANIMATION_CONTROL_H
 #define ZVISION_ANIMATION_CONTROL_H
 
-#include "common/types.h"
-
 #include "zvision/control.h"
 
 
+namespace Common {
+class String;
+}
+
 namespace Video {
 class VideoDecoder;
+}
+
+namespace Graphics {
+struct Surface;
 }
 
 namespace ZVision {

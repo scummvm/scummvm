@@ -22,14 +22,8 @@
 
 #include "common/scummsys.h"
 
-#include "common/stream.h"
-#include "common/file.h"
-#include "common/tokenizer.h"
-#include "common/system.h"
-
-#include "graphics/surface.h"
-
 #include "zvision/lever_control.h"
+
 #include "zvision/zvision.h"
 #include "zvision/script_manager.h"
 #include "zvision/render_manager.h"
@@ -37,6 +31,14 @@
 #include "zvision/rlf_animation.h"
 #include "zvision/zork_avi_decoder.h"
 #include "zvision/utility.h"
+
+#include "common/stream.h"
+#include "common/file.h"
+#include "common/tokenizer.h"
+#include "common/system.h"
+
+#include "graphics/surface.h"
+
 
 namespace ZVision {
 

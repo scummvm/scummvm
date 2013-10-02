@@ -22,18 +22,20 @@
 
 #include "common/scummsys.h"
 
-#include "common/algorithm.h"
-#include "common/hashmap.h"
-#include "common/debug.h"
-#include "common/stream.h"
+#include "zvision/script_manager.h"
 
 #include "zvision/zvision.h"
-#include "zvision/script_manager.h"
 #include "zvision/render_manager.h"
 #include "zvision/cursor_manager.h"
 #include "zvision/save_manager.h"
 #include "zvision/actions.h"
 #include "zvision/utility.h"
+
+#include "common/algorithm.h"
+#include "common/hashmap.h"
+#include "common/debug.h"
+#include "common/stream.h"
+
 
 namespace ZVision {
 

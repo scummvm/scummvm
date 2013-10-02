@@ -24,15 +24,15 @@
 #ifndef ZVISION_ZVISION_H
 #define ZVISION_ZVISION_H
 
+#include "zvision/detection.h"
+#include "zvision/clock.h"
+
 #include "common/random.h"
 #include "common/events.h"
 
 #include "engines/engine.h"
 
 #include "graphics/pixelformat.h"
-
-#include "zvision/detection.h"
-#include "zvision/clock.h"
 
 #include "gui/debugger.h"
 

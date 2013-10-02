@@ -22,6 +22,17 @@
 
 #include "common/scummsys.h"
 
+#include "zvision/zvision.h"
+
+#include "zvision/console.h"
+#include "zvision/script_manager.h"
+#include "zvision/render_manager.h"
+#include "zvision/cursor_manager.h"
+#include "zvision/save_manager.h"
+#include "zvision/string_manager.h"
+#include "zvision/zfs_archive.h"
+#include "zvision/detection.h"
+
 #include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/debug-channels.h"
@@ -33,18 +44,7 @@
 #include "engines/util.h"
 
 #include "audio/mixer.h"
- 
-#include "zvision/zvision.h"
-#include "zvision/console.h"
-#include "zvision/script_manager.h"
-#include "zvision/render_manager.h"
-#include "zvision/cursor_manager.h"
-#include "zvision/save_manager.h"
-#include "zvision/string_manager.h"
-#include "zvision/zfs_archive.h"
-#include "zvision/detection.h"
 
-#include "zvision/utility.h"
 
 namespace ZVision {
  

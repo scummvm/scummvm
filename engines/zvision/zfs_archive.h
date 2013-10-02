@@ -25,6 +25,7 @@
 
 #include "common/archive.h"
 #include "common/hashmap.h"
+#include "common/hash-str.h"
 
 
 namespace Common {

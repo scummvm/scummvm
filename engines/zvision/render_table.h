@@ -23,10 +23,9 @@
 #ifndef ZVISION_RENDER_TABLE_H
 #define ZVISION_RENDER_TABLE_H
 
-#include "common/types.h"
-#include "common/rect.h"
-
 #include "zvision/vector2.h"
+
+#include "common/rect.h"
 
 namespace ZVision {
 

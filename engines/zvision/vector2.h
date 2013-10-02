@@ -25,6 +25,9 @@
 
 #include "common/scummsys.h"
 
+#include "common/util.h"
+
+
 namespace ZVision {
 
 /**

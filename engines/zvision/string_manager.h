@@ -24,8 +24,6 @@
 #ifndef ZVISION_STRING_MANAGER_H
 #define ZVISION_STRING_MANAGER_H
 
-#include "common/types.h"
-
 #include "zvision/detection.h"
 #include "zvision/truetype_font.h"
 

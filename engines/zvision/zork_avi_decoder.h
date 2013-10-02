@@ -26,6 +26,7 @@
 
 #include "video/avi_decoder.h"
  
+
 namespace ZVision {
 
 class ZorkAVIDecoder : public Video::AVIDecoder {

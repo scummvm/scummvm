@@ -22,19 +22,22 @@
 
 #include "common/scummsys.h"
 
+#include "zvision/zork_raw.h"
+
+#include "zvision/zvision.h"
+#include "zvision/detection.h"
+#include "zvision/utility.h"
+
 #include "common/file.h"
 #include "common/str.h"
 #include "common/stream.h"
 #include "common/memstream.h"
 #include "common/bufferedstream.h"
 #include "common/util.h"
+
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
 
-#include "zvision/zork_raw.h"
-#include "zvision/zvision.h"
-#include "zvision/detection.h"
-#include "zvision/utility.h"
 
 namespace ZVision {
 

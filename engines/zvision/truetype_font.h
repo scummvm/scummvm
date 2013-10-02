@@ -25,10 +25,9 @@
 #ifndef ZVISION_TRUETYPE_FONT_H
 #define ZVISION_TRUETYPE_FONT_H
 
-#include "common/types.h"
-
 #include "graphics/font.h"
 #include "graphics/pixelformat.h"
+
 
 namespace Graphics {
 struct Surface;

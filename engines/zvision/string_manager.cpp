@@ -22,15 +22,16 @@
 
 #include "common/scummsys.h"
 
+#include "zvision/string_manager.h"
+
+#include "zvision/truetype_font.h"
+
 #include "common/file.h"
 #include "common/tokenizer.h"
 #include "common/debug.h"
 
 #include "graphics/fontman.h"
 #include "graphics/colormasks.h"
-
-#include "zvision/string_manager.h"
-#include "zvision/truetype_font.h"
 
 
 namespace ZVision {

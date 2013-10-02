@@ -23,9 +23,9 @@
 #ifndef ZVISION_LZSS_STREAM_H
 #define ZVISION_LZSS_STREAM_H
 
-#include "common/types.h"
 #include "common/stream.h"
 #include "common/array.h"
+
 
 namespace Common {
 class SeekableReadStream;

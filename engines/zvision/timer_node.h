@@ -23,8 +23,6 @@
 #ifndef ZVISION_TIMER_NODE_H
 #define ZVISION_TIMER_NODE_H
 
-#include "common/types.h"
-
 #include "zvision/control.h"
 
 namespace ZVision {

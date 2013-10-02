@@ -24,6 +24,7 @@
 
 #include "zvision/lzss_read_stream.h"
 
+
 namespace ZVision {
 
 LzssReadStream::LzssReadStream(Common::SeekableReadStream *source)

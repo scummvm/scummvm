@@ -23,11 +23,9 @@
 #ifndef ZVISION_PUSH_TOGGLE_CONTROL_H
 #define ZVISION_PUSH_TOGGLE_CONTROL_H
 
-#include "common/types.h"
+#include "zvision/control.h"
 
 #include "common/rect.h"
-
-#include "zvision/control.h"
 
 
 namespace ZVision {

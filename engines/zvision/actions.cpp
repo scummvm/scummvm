@@ -22,11 +22,8 @@
 
 #include "common/scummsys.h"
 
-#include "common/file.h"
-
-#include "audio/decoders/wave.h"
-
 #include "zvision/actions.h"
+
 #include "zvision/zvision.h"
 #include "zvision/script_manager.h"
 #include "zvision/render_manager.h"
@@ -34,6 +31,11 @@
 #include "zvision/zork_avi_decoder.h"
 #include "zvision/timer_node.h"
 #include "zvision/animation_control.h"
+
+#include "common/file.h"
+
+#include "audio/decoders/wave.h"
+
 
 namespace ZVision {
 

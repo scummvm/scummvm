@@ -22,13 +22,8 @@
 
 #include "common/scummsys.h"
 
-#include "common/system.h"
-#include "gui/debugger.h"
-#include "common/file.h"
-#include "common/bufferedstream.h"
-#include "audio/mixer.h"
-
 #include "zvision/console.h"
+
 #include "zvision/zvision.h"
 #include "zvision/script_manager.h"
 #include "zvision/render_manager.h"
@@ -37,6 +32,14 @@
 #include "zvision/zork_raw.h"
 #include "zvision/utility.h"
 #include "zvision/cursor.h"
+
+#include "common/system.h"
+#include "common/file.h"
+#include "common/bufferedstream.h"
+
+#include "gui/debugger.h"
+
+#include "audio/mixer.h"
 
 
 namespace ZVision {

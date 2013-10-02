@@ -22,10 +22,10 @@
 
 #include "common/scummsys.h"
 
+#include "zvision/cursor.h"
+
 #include "common/str.h"
 #include "common/file.h"
-
-#include "zvision/cursor.h"
 
 
 namespace ZVision {

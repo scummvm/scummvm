@@ -23,9 +23,9 @@
 #ifndef ZVISION_CURSOR_MANAGER_H
 #define ZVISION_CURSOR_MANAGER_H
 
-#include "common/types.h"
-
 #include "zvision/cursor.h"
+
+#include "common/str.h"
 
 
 namespace Graphics {

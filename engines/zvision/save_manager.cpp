@@ -22,17 +22,18 @@
 
 #include "common/scummsys.h"
 
+#include "zvision/save_manager.h"
+
+#include "zvision/zvision.h"
+#include "zvision/script_manager.h"
+#include "zvision/render_manager.h"
+
 #include "common/system.h"
 
 #include "graphics/surface.h"
 #include "graphics/thumbnail.h"
 
 #include "gui/message.h"
-
-#include "zvision/save_manager.h"
-#include "zvision/zvision.h"
-#include "zvision/script_manager.h"
-#include "zvision/render_manager.h"
 
 
 namespace ZVision {

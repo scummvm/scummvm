@@ -23,13 +23,10 @@
 #ifndef ZVISION_ACTIONS_H
 #define ZVISION_ACTIONS_H
 
-#include "common/scummsys.h"
+#include "common/str.h"
 
 #include "audio/mixer.h"
 
-namespace Common {
-class String;
-}
 
 namespace ZVision {
 

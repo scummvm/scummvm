@@ -23,9 +23,8 @@
 #ifndef ZVISION_RLF_ANIMATION_H
 #define ZVISION_RLF_ANIMATION_H
 
-#include "common/types.h"
-
 #include "common/file.h"
+
 #include "graphics/surface.h"
 
 

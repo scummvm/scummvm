@@ -23,16 +23,19 @@
 #include "common/scummsys.h"
 
 #include "zvision/zvision.h"
-#include "zvision/console.h"
-#include "common/events.h"
-#include "engines/util.h"
-#include "common/system.h"
-#include "common/rational.h"
 
+#include "zvision/console.h"
 #include "zvision/cursor_manager.h"
 #include "zvision/render_manager.h"
 #include "zvision/script_manager.h"
 #include "zvision/rlf_animation.h"
+
+#include "common/events.h"
+#include "common/system.h"
+#include "common/rational.h"
+
+#include "engines/util.h"
+
 
 namespace ZVision {
 

@@ -22,12 +22,14 @@
 
 #include "common/scummsys.h"
 
-#include "common/system.h"
-#include "graphics/pixelformat.h"
-#include "graphics/cursorman.h"
+#include "zvision/cursor_manager.h"
 
 #include "zvision/zvision.h"
-#include "zvision/cursor_manager.h"
+
+#include "common/system.h"
+
+#include "graphics/pixelformat.h"
+#include "graphics/cursorman.h"
 
 
 namespace ZVision {

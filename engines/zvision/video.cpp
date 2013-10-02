@@ -22,14 +22,18 @@
 
 #include "common/scummsys.h"
 
-#include "common/system.h"
-#include "video/video_decoder.h"
-#include "engines/util.h"
-#include "graphics/surface.h"
+#include "zvision/zvision.h"
 
 #include "zvision/clock.h"
 #include "zvision/render_manager.h"
-#include "zvision/zvision.h"
+
+#include "common/system.h"
+
+#include "video/video_decoder.h"
+
+#include "engines/util.h"
+
+#include "graphics/surface.h"
 
 
 namespace ZVision {

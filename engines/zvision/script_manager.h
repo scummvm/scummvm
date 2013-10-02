@@ -23,11 +23,12 @@
 #ifndef ZVISION_SCRIPT_MANAGER_H
 #define ZVISION_SCRIPT_MANAGER_H
 
+#include "zvision/puzzle.h"
+#include "zvision/control.h"
+
 #include "common/hashmap.h"
 #include "common/queue.h"
 
-#include "zvision/puzzle.h"
-#include "zvision/control.h"
 
 namespace Common {
 class String;

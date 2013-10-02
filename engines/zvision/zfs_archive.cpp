@@ -22,12 +22,11 @@
 
 #include "common/scummsys.h"
 
-#include "common/hashmap.h"
+#include "zvision/zfs_archive.h"
+
 #include "common/memstream.h"
 #include "common/debug.h"
 #include "common/file.h"
-
-#include "zvision/zfs_archive.h"
 
 namespace ZVision {
 

@@ -22,15 +22,18 @@
 
 #include "common/scummsys.h"
 
+#include "zvision/render_manager.h"
+
+#include "zvision/lzss_read_stream.h"
+
 #include "common/file.h"
 #include "common/system.h"
 #include "common/stream.h"
 
 #include "engines/util.h"
+
 #include "graphics/decoders/tga.h"
 
-#include "zvision/render_manager.h"
-#include "zvision/lzss_read_stream.h"
 
 namespace ZVision {
 

@@ -22,6 +22,8 @@
 
 #include "common/scummsys.h"
 
+#include "zvision/rlf_animation.h"
+
 #include "common/str.h"
 #include "common/file.h"
 #include "common/textconsole.h"
@@ -29,8 +31,6 @@
 #include "common/endian.h"
 
 #include "graphics/colormasks.h"
-
-#include "zvision/rlf_animation.h"
 
 
 namespace ZVision {

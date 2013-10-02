@@ -23,12 +23,14 @@
 #ifndef ZVISION_SAVE_MANAGER_H
 #define ZVISION_SAVE_MANAGER_H
 
-#include "common/types.h"
-
 #include "common/savefile.h"
 
 namespace Common {
 class String;
+}
+
+namespace Graphics {
+struct Surface;
 }
 
 namespace ZVision {

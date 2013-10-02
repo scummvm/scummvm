@@ -23,10 +23,10 @@
 #ifndef ZVISION_INPUT_CONTROL_H
 #define ZVISION_INPUT_CONTROL_H
 
-#include "common/types.h"
-
 #include "zvision/control.h"
 #include "zvision/string_manager.h"
+
+#include "common/rect.h"
 
 
 namespace ZVision {

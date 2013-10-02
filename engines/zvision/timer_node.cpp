@@ -22,11 +22,13 @@
 
 #include "common/scummsys.h"
 
-#include "common/stream.h"
-
 #include "zvision/timer_node.h"
+
 #include "zvision/zvision.h"
 #include "zvision/script_manager.h"
+
+#include "common/stream.h"
+
 
 namespace ZVision {
 
