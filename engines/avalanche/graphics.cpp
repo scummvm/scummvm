@@ -86,7 +86,11 @@ void GraphicManager::init() {
 	_scrolls.create(kScreenWidth, kScreenHeight, Graphics::PixelFormat::createFormatCLUT8());
 }
 
-void GraphicManager::loadDigits(Common::File &file) {   // Load the scoring digits & rwlites
+/**
+ * Load the scoring digits & rwlites
+ * @remarks	Originally called 'load_digits'
+ */
+void GraphicManager::loadDigits(Common::File &file) {
 	const byte digitsize = 134;
 	const byte rwlitesize = 126;
 
@@ -512,6 +516,10 @@ void GraphicManager::setAlsoLine(int x1, int y1, int x2, int y2, Color color) {
 	_magics.drawLine(x1, y1, x2, y2, color);
 }
 
+void GraphicManager::drawScreenLine(int16 x, int16 y, int16 x2, int16 y2, Color color) {
+	_surface.drawLine(x, y, x2, y2, color);
+}
+
 byte GraphicManager::getAlsoColor(int x1, int y1, int x2, int y2) {
 	byte returnColor = 0;
 	for (int16 i = x1; i <= x2; i++) {
@@ -553,7 +561,7 @@ void GraphicManager::drawSprite(const SpriteInfo &sprite, byte picnum, int16 x, 
 	}
 }
 
-void GraphicManager::drawPicture(Graphics::Surface &target, const Graphics::Surface &picture, uint16 destX, uint16 destY) {
+void GraphicManager::drawPicture(Graphics::Surface &target, const Graphics::Surface picture, uint16 destX, uint16 destY) {
 	// Copy the picture to the given place on the screen.
 	for (uint16 y = 0; y < picture.h; y++) {
 		for (uint16 x = 0; x < picture.w; x++)
@@ -699,6 +707,16 @@ void GraphicManager::zoomOut(int16 x, int16 y) {
 
 void GraphicManager::showScroll() {
 	_surface.copyFrom(_scrolls); // TODO: Rework it using getSubArea !!!!!!!
+}
+
+void GraphicManager::getNaturalPicture(SpriteType &sprite) {
+	sprite._type = kNaturalImage; // We simply read from the screen and later, in drawSprite() we draw it right back.
+	sprite._size = sprite._xl * 8 * sprite._yl + 1;
+	sprite._picture.create(sprite._xl * 8, sprite._yl + 1, Graphics::PixelFormat::createFormatCLUT8());
+	for (uint16 y = 0; y < sprite._yl + 1; y++) {
+		for (uint16 x = 0; x < sprite._xl * 8; x++)
+			*(byte *)sprite._picture.getBasePtr(x, y) = *(byte *)_vm->_graphics->_surface.getBasePtr(sprite._x * 8 + x, sprite._y + y);
+	}
 }
 
 void GraphicManager::saveScreen() {

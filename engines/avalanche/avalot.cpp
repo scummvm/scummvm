@@ -198,7 +198,7 @@ void Clock::drawHand(const Common::Point &endPoint, Color color) {
 	if (endPoint.x == 177)
 		return;
 
-	_vm->_graphics->_surface.drawLine(kCenterX, kCenterY, endPoint.x, endPoint.y, color);
+	_vm->_graphics->drawScreenLine(kCenterX, kCenterY, endPoint.x, endPoint.y, color);
 }
 
 void Clock::plotHands() {
