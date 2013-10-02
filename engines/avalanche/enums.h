@@ -101,6 +101,26 @@ enum Magics {
 	kMagicOpenDoor // Opening door.
 };
 
+// Constants to replace the command characters from Pascal.
+// For more information, see: https://github.com/urukgit/avalot/wiki/Scrolldrivers
+enum ControlCharacter {
+	kControlSpeechBubble = 2, // ^B
+	kControlCenter = 3, // ^C
+	kControlToBuffer = 4, // ^D
+	kControlItalic = 6, // ^F
+	kControlBell = 7, // ^G
+	kControlBackspace = 8, // ^H
+	kControlInsertSpaces = 9, // ^I
+	kControlLeftJustified = 12, // ^L
+	kControlNewLine = 13, // ^M
+	kControlParagraph = 16, // ^P
+	kControlQuestion = 17, // ^Q
+	kControlRoman = 18, // ^R
+	kControlRegister = 19, // ^S
+	kControlNegative = 21, // ^U
+	kControlIcon = 22 // ^V
+};
+
 static const int16 kScreenWidth = 640;
 static const int16 kScreenHeight = 200;
 

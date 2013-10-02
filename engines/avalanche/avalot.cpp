@@ -178,7 +178,7 @@ void Clock::update() { // TODO: Move variables from Gyro to here (or at least so
 	if ((_hour == 0) && (_oldHour != 0) && (_oldHour != 17717)) {
 		Common::String tmpStr = Common::String::format("Good morning!%c%cYes, it's just past " \
 			"midnight. Are you having an all-night Avvy session? Glad you like the game that much!", 
-			Dialogs::kControlNewLine, Dialogs::kControlNewLine);
+			kControlNewLine, kControlNewLine);
 		_vm->_dialogs->displayText(tmpStr);
 	}
 	_oldHour = _hour;
@@ -1286,7 +1286,7 @@ void AvalancheEngine::checkClick() {
 			} else if ((396 <= cursorPos.x) && (cursorPos.x <= 483))
 				fxToggle();
 			else if ((535 <= cursorPos.x) && (cursorPos.x <= 640))
-				_mouseText.insertChar(Dialogs::kControlNewLine, 0);
+				_mouseText.insertChar(kControlNewLine, 0);
 		} else if (!_dropsOk)
 			_mouseText = Common::String(13) + _mouseText;
 	}

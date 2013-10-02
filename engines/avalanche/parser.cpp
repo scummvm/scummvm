@@ -867,7 +867,8 @@ void Parser::parse() {
 			_polite = true;
 	}
 
-	if ((!unkString.empty()) && (_verb != kVerbCodeExam) && (_verb != kVerbCodeTalk) && (_verb != kVerbCodeSave) && (_verb != kVerbCodeLoad) && (_verb != kVerbCodeDir)) {
+	if ((!unkString.empty()) && (_verb != kVerbCodeExam) && (_verb != kVerbCodeTalk) && 
+		(_verb != kVerbCodeSave) && (_verb != kVerbCodeLoad) && (_verb != kVerbCodeDir)) {
 		Common::String tmpStr = Common::String::format("Sorry, but I have no idea what \"%s\" means. Can you rephrase it?", unkString.c_str());
 		_vm->_dialogs->displayText(tmpStr);
 		_weirdWord = true;
@@ -1031,7 +1032,7 @@ void Parser::inventory() {
 	}
 
 	if (_wearing == kNothing)
-		tmpStr += Common::String::format("...%c%c...and you're stark naked!", Dialogs::kControlNewLine, Dialogs::kControlNewLine);
+		tmpStr += Common::String::format("...%c%c...and you're stark naked!", kControlNewLine, kControlNewLine);
 	else
 		tmpStr += '.';
 
@@ -1249,7 +1250,8 @@ void Parser::putProc() {
 				_vm->_dialogs->displayText("That's a bit like shutting the stable door after the horse has bolted!");
 			else { // Put onion into wine?
 				if (_vm->_wineState != 3) {
-					Common::String tmpStr = Common::String::format("%cOignon au vin%c is a bit too strong for your tastes!", Dialogs::kControlItalic, Dialogs::kControlRoman);
+					Common::String tmpStr = Common::String::format("%cOignon au vin%c is a bit too strong for your tastes!",
+						kControlItalic, kControlRoman);
 					_vm->_dialogs->displayText(tmpStr);
 				} else { // Put onion into vinegar! Yes!
 					_vm->_onionInVinegar = true;
@@ -1311,7 +1313,7 @@ void Parser::putProc() {
 void Parser::notInOrder() {
 	Common::String itemStr = _vm->getItem(_vm->kSpludwicksOrder[_vm->_givenToSpludwick]);
 	Common::String tmpStr = Common::String::format("Sorry, I need the ingredients in the right order for this potion. " \
-		"What I need next is %s%c2%c", itemStr.c_str(), Dialogs::kControlRegister, Dialogs::kControlSpeechBubble);
+		"What I need next is %s%c2%c", itemStr.c_str(), kControlRegister, kControlSpeechBubble);
 	_vm->_dialogs->displayText(tmpStr);
 }
 
@@ -1512,7 +1514,7 @@ void Parser::getProc(char thing) {
  */
 void Parser::giveGeidaTheLute() {
 	if (_vm->_room != kRoomLustiesRoom) {
-		Common::String tmpStr = Common::String::format("Not yet. Try later!%c2%c", Dialogs::kControlRegister, Dialogs::kControlSpeechBubble);
+		Common::String tmpStr = Common::String::format("Not yet. Try later!%c2%c", kControlRegister, kControlSpeechBubble);
 		_vm->_dialogs->displayText(tmpStr);
 		return;
 	}
@@ -1546,7 +1548,7 @@ Common::String Parser::personSpeaks() {
 	}
 
 	if (_vm->getRoom(_person) != _vm->_room) {
-		return Common::String::format("%c1", Dialogs::kControlRegister); // Avvy himself!
+		return Common::String::format("%c1", kControlRegister); // Avvy himself!
 	}
 
 	bool found = false; // The _person we're looking for's code is in _person.
@@ -1554,7 +1556,7 @@ Common::String Parser::personSpeaks() {
 
 	for (int i = 0; i < _vm->_animation->kSpriteNumbMax; i++) {
 		if (_vm->_animation->_sprites[i]._quick && ((_vm->_animation->_sprites[i]._stat._acciNum + 149) == _person)) {
-			tmpStr += Common::String::format("%c%c", Dialogs::kControlRegister, '1' + i);
+			tmpStr += Common::String::format("%c%c", kControlRegister, '1' + i);
 			found = true;
 		}
 	}
@@ -1564,7 +1566,7 @@ Common::String Parser::personSpeaks() {
 
 	for (int i = 0; i < 16; i++) {
 		if ((_vm->kQuasipeds[i]._who == _person) && (_vm->kQuasipeds[i]._room == _vm->_room))
-			tmpStr += Common::String::format("%c%c", Dialogs::kControlRegister, 'A' + i);
+			tmpStr += Common::String::format("%c%c", kControlRegister, 'A' + i);
 	}
 
 	return tmpStr;
@@ -1572,7 +1574,7 @@ Common::String Parser::personSpeaks() {
 
 void Parser::heyThanks() {
 	Common::String tmpStr = personSpeaks();
-	tmpStr += Common::String::format("Hey, thanks!%c(But now, you've lost it!)", Dialogs::kControlSpeechBubble);
+	tmpStr += Common::String::format("Hey, thanks!%c(But now, you've lost it!)", kControlSpeechBubble);
 	_vm->_dialogs->displayText(tmpStr);
 	_vm->_objects[_thing - 1] = false;
 }
@@ -1601,7 +1603,8 @@ void Parser::doThat() {
 	&& (_verb != kVerbCodeLarrypass) && (_verb != kVerbCodePhaon) && (_verb != kVerbCodeBoss) && (_verb != kVerbCodeCheat) && (_verb != kVerbCodeRestart)
 	&& (_verb != kVerbCodeDir) && (_verb != kVerbCodeScore) && (_verb != kVerbCodeHiscores) && (_verb != kVerbCodeSmartAlec)) {
 		if (!_vm->_alive) {
-			_vm->_dialogs->displayText("You're dead, so don't talk. What are you, a ghost or something? Try restarting, or restoring a saved game!");
+			_vm->_dialogs->displayText("You're dead, so don't talk. What are you, a ghost or something? " \
+				"Try restarting, or restoring a saved game!");
 			return;
 		}
 		if (!_vm->_avvyIsAwake  && (_verb != kVerbCodeDie) && (_verb != kVerbCodeExpletive) && (_verb != kVerbCodeWake)) {
@@ -1617,8 +1620,11 @@ void Parser::doThat() {
 	case kVerbCodeOpen:
 		openDoor();
 		break;
-	case kVerbCodePause: { // Note that the original game doesn't care about the "O.K." box neither, it accepts clicks from everywhere on the screen to continue. Just like my code.
-		Common::String tmpStr = Common::String::format("Game paused.%c%c%cPress Enter, Esc, or click the mouse on the `O.K.\" box to continue.", Dialogs::kControlCenter, Dialogs::kControlNewLine, Dialogs::kControlNewLine);
+	case kVerbCodePause: { 
+		// Note that the original game doesn't care about the "O.K." box neither, it accepts
+		// clicks from everywhere on the screen to continue. Just like my code.
+		Common::String tmpStr = Common::String::format("Game paused.%c%c%cPress Enter, Esc, or click the mouse on the `O.K.\" " \
+			"box to continue.", kControlCenter, kControlNewLine, kControlNewLine);
 		_vm->_dialogs->displayText(tmpStr);
 		}
 		break;
@@ -1645,7 +1651,7 @@ void Parser::doThat() {
 	case kVerbCodeTalk:
 		if (_person == kPeoplePardon) {
 			if (_vm->_subjectNum == 99) { // They typed "say password".
-				Common::String tmpStr = Common::String::format("Yes, but what %cis%c the password?", Dialogs::kControlItalic, Dialogs::kControlRoman);
+				Common::String tmpStr = Common::String::format("Yes, but what %cis%c the password?", kControlItalic, kControlRoman);
 				_vm->_dialogs->displayText(tmpStr);
 			} else if (((1 <= _vm->_subjectNum) && (_vm->_subjectNum <= 49)) || (_vm->_subjectNum == 253) || (_vm->_subjectNum == 249)) {
 				_thats.deleteChar(0);
@@ -1789,7 +1795,7 @@ void Parser::doThat() {
 		if (!_polite)
 			_vm->_dialogs->displayText("How about a `please\", Avvy?");
 		else {
-			Common::String tmpStr = Common::String::format("%cC%cDo you really want to quit?", Dialogs::kControlRegister, Dialogs::kControlIcon);
+			Common::String tmpStr = Common::String::format("%cC%cDo you really want to quit?", kControlRegister, kControlIcon);
 			if (_vm->_dialogs->displayQuestion(tmpStr))
 				_vm->_letMeOut = true;
 		}
@@ -1802,12 +1808,12 @@ void Parser::doThat() {
 
 		Common::String toDisplay;
 		for (int i = 0; i < 7; i++)
-			toDisplay += Dialogs::kControlNewLine;
-		toDisplay = toDisplay + "LORD AVALOT D'ARGENT" + Dialogs::kControlCenter + Dialogs::kControlNewLine
-			+ "The medi\x91val descendant of" + Dialogs::kControlNewLine
-			+ "Denarius Avaricius Sextus" + Dialogs::kControlNewLine + Dialogs::kControlNewLine
-			+ "version " + kVersionNum + Dialogs::kControlNewLine + Dialogs::kControlNewLine + "Copyright \xEF "
-			+ kCopyright + ", Mark, Mike and Thomas Thurman." + Dialogs::kControlRegister + 'Y' + Dialogs::kControlIcon;
+			toDisplay += kControlNewLine;
+		toDisplay = toDisplay + "LORD AVALOT D'ARGENT" + kControlCenter + kControlNewLine
+			+ "The medi\x91val descendant of" + kControlNewLine
+			+ "Denarius Avaricius Sextus" + kControlNewLine + kControlNewLine
+			+ "version " + kVersionNum + kControlNewLine + kControlNewLine + "Copyright \xEF "
+			+ kCopyright + ", Mark, Mike and Thomas Thurman." + kControlRegister + 'Y' + kControlIcon;
 		_vm->_dialogs->displayText(toDisplay);
 		_vm->_dialogs->_aboutBox = false;
 		}
@@ -1898,8 +1904,9 @@ void Parser::doThat() {
 					_vm->incScore(3); // 3 points for playing your 1st game.
 
 				// A warning to the player that there should have been a mini-game. TODO: Remove it later!!!
-				_vm->_dialogs->displayText(Common::String("P.S.: There should have been the mini-game called \"Nim\", but I haven't implemented it yet: you win and get the lute automatically.")
-					+ Dialogs::kControlNewLine + Dialogs::kControlNewLine + "Peter (uruk)");
+				_vm->_dialogs->displayText(Common::String("P.S.: There should have been the mini-game called \"Nim\", " \
+					"but I haven't implemented it yet: you win and get the lute automatically.")
+					+ kControlNewLine + kControlNewLine + "Peter (uruk)");
 				break;
 			case kRoomMusicRoom:
 				playHarp();
@@ -1966,12 +1973,12 @@ void Parser::doThat() {
 			_vm->_dialogs->displayText("Hmm, I don't think anyone will notice...");
 			_vm->_timer->addTimer(4, Timer::kProcUrinate, Timer::kReasonGoToToilet);
 		} else {
-			Common::String tmpStr = Common::String::format("It would be %cVERY%c unwise to do that here, Avvy!", Dialogs::kControlItalic, Dialogs::kControlRoman);
+			Common::String tmpStr = Common::String::format("It would be %cVERY%c unwise to do that here, Avvy!", kControlItalic, kControlRoman);
 			_vm->_dialogs->displayText(tmpStr);
 		}
 		break;
 	case kVerbCodeCheat: {
-		Common::String tmpStr = Common::String::format("%cCheat mode now enabled.", Dialogs::kControlItalic);
+		Common::String tmpStr = Common::String::format("%cCheat mode now enabled.", kControlItalic);
 		_vm->_dialogs->displayText(tmpStr);
 		_vm->_cheat = true;
 		}
@@ -2005,19 +2012,20 @@ void Parser::doThat() {
 		switch (_sworeNum) {
 		case 0: {
 			Common::String tmpStr = Common::String::format("Avvy! Do you mind? There might be kids playing!%c%c" \
-				"(I shouldn't say it again, if I were you!)", Dialogs::kControlNewLine, Dialogs::kControlNewLine);
+				"(I shouldn't say it again, if I were you!)", kControlNewLine, kControlNewLine);
 			_vm->_dialogs->displayText(tmpStr);
 			}
 			break;
 		case 1: {
 			Common::String tmpStr = Common::String::format("You hear a distant rumble of thunder. Must you always" \
-				"do things I tell you not to?%c%cDon't do it again!", Dialogs::kControlNewLine, Dialogs::kControlNewLine);
+				"do things I tell you not to?%c%cDon't do it again!", kControlNewLine, kControlNewLine);
 			_vm->_dialogs->displayText(tmpStr);
 			}
 			break;
 		default: {
 			_vm->_pingo->zonk();
-			Common::String tmpStr = Common::String::format("A crack of lightning shoots from the sky, and fries you.%c%c(`Such is the anger of the gods, Avvy!\")", Dialogs::kControlNewLine, Dialogs::kControlNewLine);
+			Common::String tmpStr = Common::String::format("A crack of lightning shoots from the sky, and fries you." \
+				"%c%c(`Such is the anger of the gods, Avvy!\")", kControlNewLine, kControlNewLine);
 			_vm->_dialogs->displayText(tmpStr);
 			_vm->gameOver();
 			}
@@ -2055,7 +2063,7 @@ void Parser::doThat() {
 						_vm->incScore(3);
 
 					_vm->_background->draw(-1, -1, 11);
-					_vm->_dialogs->displayText(booze[_thing - 51] + ", please." + Dialogs::kControlRegister + '1' + Dialogs::kControlSpeechBubble);
+					_vm->_dialogs->displayText(booze[_thing - 51] + ", please." + kControlRegister + '1' + kControlSpeechBubble);
 					_vm->_drinking = _thing;
 
 					_vm->_background->draw(-1, -1, 9);
@@ -2080,7 +2088,7 @@ void Parser::doThat() {
 						}
 
 						_vm->_background->draw(-1, -1, 11);
-						Common::String tmpStr = Common::String::format("Wine, please.%c1%c", Dialogs::kControlRegister, Dialogs::kControlSpeechBubble);
+						Common::String tmpStr = Common::String::format("Wine, please.%c1%c", kControlRegister, kControlSpeechBubble);
 						_vm->_dialogs->displayText(tmpStr);
 						if (_alcoholLevel == 0)
 							_vm->incScore(3);
@@ -2199,7 +2207,9 @@ void Parser::doThat() {
 		_vm->gameOver();
 		break;
 	case kVerbCodeScore: {
-		Common::String tmpStr = Common::String::format("Your score is %d,%c%cout of a possible 128.%c%cThis gives you a rank of %s.%c%c%s", _vm->_dnascore, Dialogs::kControlCenter, Dialogs::kControlNewLine, Dialogs::kControlNewLine, Dialogs::kControlNewLine, rank().c_str(), Dialogs::kControlNewLine, Dialogs::kControlNewLine, totalTime().c_str());
+		Common::String tmpStr = Common::String::format("Your score is %d,%c%cout of a possible 128.%c%c " \
+			"This gives you a rank of %s.%c%c%s", _vm->_dnascore, kControlCenter, kControlNewLine, kControlNewLine, 
+			kControlNewLine, rank().c_str(), kControlNewLine, kControlNewLine, totalTime().c_str());
 		_vm->_dialogs->displayText(tmpStr);
 		}
 		break;
@@ -2266,7 +2276,7 @@ void Parser::doThat() {
 				break;
 			case kPeopleJacques: {
 				Common::String tmpStr = Common::String::format("Brother Jacques, Brother Jacques, are you asleep?%c1%c" \
-					"Hmmm... that doesn't seem to do any good...", Dialogs::kControlRegister, Dialogs::kControlSpeechBubble);
+					"Hmmm... that doesn't seem to do any good...", kControlRegister, kControlSpeechBubble);
 				_vm->_dialogs->displayText(tmpStr);
 				}
 				break;
@@ -2285,7 +2295,7 @@ void Parser::doThat() {
 		} else { // Default doodah.
 			_vm->dusk();
 			_vm->dawn();
-			Common::String tmpStr = Common::String::format("A few hours later...%cnothing much has happened...", Dialogs::kControlParagraph);
+			Common::String tmpStr = Common::String::format("A few hours later...%cnothing much has happened...", kControlParagraph);
 			_vm->_dialogs->displayText(tmpStr);
 		}
 		break;
@@ -2301,18 +2311,18 @@ void Parser::doThat() {
 		break;
 	case kVerbCodeHello: {
 		Common::String tmpStr = personSpeaks();
-		tmpStr += Common::String::format("Hello.%c", Dialogs::kControlSpeechBubble);
+		tmpStr += Common::String::format("Hello.%c", kControlSpeechBubble);
 		_vm->_dialogs->displayText(tmpStr);
 		}
 		break;
 	case kVerbCodeThanks: {
 		Common::String tmpStr = personSpeaks();
-		tmpStr += Common::String::format("That's OK.%c", Dialogs::kControlSpeechBubble);
+		tmpStr += Common::String::format("That's OK.%c", kControlSpeechBubble);
 		_vm->_dialogs->displayText(tmpStr);
 		}
 		break;
 	default:
-		Common::String tmpStr = Common::String::format("%cParser bug!", Dialogs::kControlBell);
+		Common::String tmpStr = Common::String::format("%cParser bug!", kControlBell);
 		_vm->_dialogs->displayText(tmpStr);
 	}
 }
