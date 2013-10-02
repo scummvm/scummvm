@@ -23,9 +23,8 @@
 #ifndef ZVISION_RENDER_TABLE_H
 #define ZVISION_RENDER_TABLE_H
 
-#include "zvision/vector2.h"
-
 #include "common/rect.h"
+
 
 namespace ZVision {
 
@@ -43,7 +42,7 @@ public:
 
 private:
 	uint _numColumns, _numRows;
-	Vector2 *_internalBuffer;
+	Common::Point *_internalBuffer;
 	RenderState _renderState;
 
 	struct {

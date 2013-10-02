@@ -24,7 +24,7 @@
 
 #include "zvision/render_table.h"
 
-#include "zvision/vector2.h"
+#include "common/rect.h"
 
 #include "graphics/colormasks.h"
 
@@ -37,7 +37,7 @@ RenderTable::RenderTable(uint numColumns, uint numRows)
 		  _renderState(FLAT) {
 	assert(numRows != 0 && numColumns != 0);
 
-	_internalBuffer = new Vector2[numRows * numColumns];
+	_internalBuffer = new Common::Point[numRows * numColumns];
 }
 
 RenderTable::~RenderTable() {
