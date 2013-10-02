@@ -51,7 +51,6 @@ BaseRenderer *makeOSystemRenderer(BaseGame *inGame) {
 BaseRenderOSystem::BaseRenderOSystem(BaseGame *inGame) : BaseRenderer(inGame) {
 	_renderSurface = new Graphics::Surface();
 	_blankSurface = new Graphics::Surface();
-	_drawNum = 1;
 	_lastFrameIter = _renderQueue.end();
 	_needsFlip = true;
 	_skipThisFrame = false;
@@ -159,7 +158,6 @@ bool BaseRenderOSystem::flip() {
 		_needsFlip = false;
 
 		// Reset ticketing state
-		_drawNum = 1;
 		_lastFrameIter = _renderQueue.end();
 		RenderQueueIterator it;
 		for (it = _renderQueue.begin(); it != _renderQueue.end(); ++it) {
@@ -195,7 +193,6 @@ bool BaseRenderOSystem::flip() {
 		g_system->updateScreen();
 		_needsFlip = false;
 	}
-	_drawNum = 1;
 	_lastFrameIter = _renderQueue.end();
 
 	return STATUS_OK;
@@ -326,7 +323,6 @@ void BaseRenderOSystem::invalidateTicketsFromSurface(BaseSurfaceOSystem *surf) {
 void BaseRenderOSystem::drawFromTicket(RenderTicket *renderTicket) {
 	renderTicket->_wantsDraw = true;
 
-	_drawNum++;
 	++_lastFrameIter;
 	// In-order
 	if (_renderQueue.empty() || _lastFrameIter == _renderQueue.end()) {
@@ -349,10 +345,8 @@ void BaseRenderOSystem::drawFromQueuedTicket(const RenderQueueIterator &ticket) 
 	renderTicket->_wantsDraw = true;
 
 	++_lastFrameIter;
-	// Was drawn last round, still in the same order
-	if (*_lastFrameIter == renderTicket) {
-		_drawNum++;
-	} else {
+	// Not in the same order?
+	if (*_lastFrameIter != renderTicket) {
 		--_lastFrameIter;
 		// Remove the ticket from the list
 		assert(*_lastFrameIter != renderTicket);
@@ -399,11 +393,9 @@ void BaseRenderOSystem::drawTickets() {
 
 	// Apply the clear-color to the dirty rect.
 	_renderSurface->fillRect(*_dirtyRect, _clearColor);
-	_drawNum = 1;
 	_lastFrameIter = _renderQueue.end();
 	for (it = _renderQueue.begin(); it != _renderQueue.end(); ++it) {
 		RenderTicket *ticket = *it;
-		++_drawNum;
 		if (ticket->_dstRect.intersects(*_dirtyRect)) {
 			// dstClip is the area we want redrawn.
 			Common::Rect dstClip(ticket->_dstRect);
@@ -561,7 +553,6 @@ void BaseRenderOSystem::endSaveLoad() {
 	// HACK: After a save the buffer will be drawn before the scripts get to update it,
 	// so just skip this single frame.
 	_skipThisFrame = true;
-	_drawNum = 1;
 	_lastFrameIter = _renderQueue.end();
 
 	_renderSurface->fillRect(Common::Rect(0, 0, _renderSurface->h, _renderSurface->w), _renderSurface->format.ARGBToColor(255, 0, 0, 0));
