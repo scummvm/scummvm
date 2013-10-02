@@ -157,8 +157,15 @@ bool BaseRenderOSystem::flip() {
 		_dirtyRect = nullptr;
 		g_system->updateScreen();
 		_needsFlip = false;
+
+		// Reset ticketing state
 		_drawNum = 1;
 		_lastFrameIter = _renderQueue.end();
+		RenderQueueIterator it;
+		for (it = _renderQueue.begin(); it != _renderQueue.end(); ++it) {
+			(*it)->_wantsDraw = false;
+		}
+
 		addDirtyRect(_renderRect);
 		return true;
 	}
@@ -266,12 +273,6 @@ void BaseRenderOSystem::drawSurface(BaseSurfaceOSystem *owner, const Graphics::S
 		return;
 	}
 
-	// Start searching from the beginning for the first and second items (since it's empty the first time around
-	// then keep incrementing the start-position, to avoid comparing against already used tickets.
-	if (_drawNum == 0 || _drawNum == 1) {
-		_lastAddedTicket = _renderQueue.begin();
-	}
-
 	// Skip rects that are completely outside the screen:
 	if ((dstRect->left < 0 && dstRect->right < 0) || (dstRect->top < 0 && dstRect->bottom < 0)) {
 		return;
@@ -279,12 +280,13 @@ void BaseRenderOSystem::drawSurface(BaseSurfaceOSystem *owner, const Graphics::S
 
 	if (owner) { // Fade-tickets are owner-less
 		RenderTicket compare(owner, nullptr, srcRect, dstRect, transform);
-		RenderQueueIterator it;
+		RenderQueueIterator it = _lastFrameIter;
+		++it;
 		// Avoid calling end() and operator* every time, when potentially going through
 		// LOTS of tickets.
 		RenderQueueIterator endIterator = _renderQueue.end();
 		RenderTicket *compareTicket = nullptr;
-		for (it = _lastAddedTicket; it != endIterator; ++it) {
+		for (; it != endIterator; ++it) {
 			compareTicket = *it;
 			if (*(compareTicket) == compare && compareTicket->_isValid) {
 				if (_disableDirtyRects) {
@@ -332,26 +334,24 @@ void BaseRenderOSystem::drawFromTicket(RenderTicket *renderTicket) {
 		_renderQueue.push_back(renderTicket);
 		++_lastFrameIter;
 		addDirtyRect(renderTicket->_dstRect);
-		++_lastAddedTicket;
 	} else {
 		// Before something
 		RenderQueueIterator pos = _lastFrameIter;
 		_renderQueue.insert(pos, renderTicket);
 		--_lastFrameIter;
 		addDirtyRect(renderTicket->_dstRect);
-		_lastAddedTicket = pos;
 	}
 }
 
 void BaseRenderOSystem::drawFromQueuedTicket(const RenderQueueIterator &ticket) {
 	RenderTicket *renderTicket = *ticket;
+	assert(!renderTicket->_wantsDraw);
 	renderTicket->_wantsDraw = true;
 
 	++_lastFrameIter;
 	// Was drawn last round, still in the same order
 	if (*_lastFrameIter == renderTicket) {
 		_drawNum++;
-		++_lastAddedTicket;
 	} else {
 		--_lastFrameIter;
 		// Remove the ticket from the list
@@ -558,7 +558,6 @@ void BaseRenderOSystem::endSaveLoad() {
 		it = _renderQueue.erase(it);
 		delete ticket;
 	}
-	_lastAddedTicket = _renderQueue.begin();
 	// HACK: After a save the buffer will be drawn before the scripts get to update it,
 	// so just skip this single frame.
 	_skipThisFrame = true;

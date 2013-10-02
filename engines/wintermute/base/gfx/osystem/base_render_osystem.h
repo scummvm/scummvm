@@ -128,7 +128,6 @@ private:
 	void drawFromSurface(RenderTicket *ticket, Common::Rect *dstRect, Common::Rect *clipRect);
 	Common::Rect *_dirtyRect;
 	Common::List<RenderTicket *> _renderQueue;
-	RenderQueueIterator _lastAddedTicket;
 
 	bool _needsFlip;
 	uint32 _drawNum; ///< The global number of the current draw-operation.
