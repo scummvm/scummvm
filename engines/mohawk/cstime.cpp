@@ -51,6 +51,15 @@ MohawkEngine_CSTime::MohawkEngine_CSTime(OSystem *syst, const MohawkGameDescript
 	_state = kCSTStateStartup;
 
 	reset();
+
+	_console = 0;
+	_gfx = 0;
+	_cursor = 0;
+	_interface = 0;
+	_view = 0;
+	_needsUpdate = false;
+	_case = 0;
+	_nextSceneId = 1;
 }
 
 MohawkEngine_CSTime::~MohawkEngine_CSTime() {
