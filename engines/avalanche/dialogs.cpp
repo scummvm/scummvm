@@ -48,7 +48,11 @@ void Dialogs::init() {
 	resetScrollDriver();
 }
 
-void Dialogs::setReadyLight(byte state) {     // Sets "Ready" light to whatever
+/**
+ * Determine the color of the ready light and draw it
+ * @remarks	Originally called 'state'
+ */
+void Dialogs::setReadyLight(byte state) {
 	if (_vm->_ledStatus == state)
 		return; // Already like that!
 
@@ -63,7 +67,7 @@ void Dialogs::setReadyLight(byte state) {     // Sets "Ready" light to whatever
 		color = kColorGreen;
 		break; // Hit a key
 	}
-	warning("STUB: Scrolls::state()");
+	warning("STUB: Dialogs::setReadyLight()");
 
 	CursorMan.showMouse(false);
 	_vm->_graphics->drawReadyLight(color);
@@ -104,6 +108,10 @@ void Dialogs::say(int16 x, int16 y, Common::String z) {
 	}
 }
 
+/**
+ * One of the 3 "Mode" functions passed as ScrollsFunctionType parameters.
+ * @remarks	Originally called 'normscroll'
+ */
 void Dialogs::scrollModeNormal() {
 	// Original code is:
 	// egg : array[1..8] of char = ^P^L^U^G^H+'***';
@@ -124,11 +132,10 @@ void Dialogs::scrollModeNormal() {
 		_vm->_graphics->refreshScreen();
 
 		_vm->getEvent(event);
-		if (_vm->shouldQuit() || 
-			(event.type == Common::EVENT_LBUTTONUP) ||
-			((event.type == Common::EVENT_KEYDOWN) && ((event.kbd.keycode == Common::KEYCODE_ESCAPE)
-			|| (event.kbd.keycode == Common::KEYCODE_RETURN) || (event.kbd.keycode == Common::KEYCODE_HASH)
-			|| (event.kbd.keycode == Common::KEYCODE_PLUS))))
+		if ((event.type == Common::EVENT_LBUTTONUP) ||
+			((event.type == Common::EVENT_KEYDOWN) && ((event.kbd.keycode == Common::KEYCODE_ESCAPE) ||
+			(event.kbd.keycode == Common::KEYCODE_RETURN) || (event.kbd.keycode == Common::KEYCODE_HASH) ||
+			(event.kbd.keycode == Common::KEYCODE_PLUS))))
 			break;
 	}
 
@@ -176,6 +183,11 @@ void Dialogs::scrollModeNormal() {
 	warning("STUB: Scrolls::scrollModeNormal()");
 }
 
+/**
+ * One of the 3 "Mode" functions passed as ScrollsFunctionType parameters.
+ * The "asking" scroll. Used indirectly in diplayQuestion().
+ * @remarks	Originally called 'dialogue'
+ */
 void Dialogs::scrollModeDialogue() {
 	_vm->_graphics->loadMouse(kCurHand);
 
@@ -232,6 +244,11 @@ bool Dialogs::theyMatch(TuneType &played) {
 	return mistakes < 5;
 }
 
+/**
+ * One of the 3 "Mode" functions passed as ScrollsFunctionType parameters.
+ * Part of the harp mini-game.
+ * @remarks	Originally called 'music_Scroll'
+ */
 void Dialogs::scrollModeMusic() {
 	setReadyLight(3);
 	_vm->_seeScroll = true;
@@ -347,16 +364,29 @@ void Dialogs::resetScrollDriver() {
 	_vm->_interrogation = 0; // Always reset after a scroll comes up.
 }
 
-void Dialogs::ringBell() {   // Pussy's in the well. Who put her in? Little...
+/**
+ * Rings the bell x times
+ * @remarks	Originally called 'dingdongbell'
+ */
+void Dialogs::ringBell() {
 	for (int i = 0; i < _scrollBells; i++)
-		_vm->errorLed(); // Ring the bell "x" times.
+		_vm->errorLed(); // Ring the bell "_scrollBells" times.
 }
 
+/**
+ * This moves the mouse pointer off the scroll so that you can read it.
+ * @remarks	Originally called 'dodgem'
+ */
 void Dialogs::dodgem() {
 	_dodgeCoord = _vm->getMousePos();
 	g_system->warpMouse(_dodgeCoord.x, _underScroll); // Move the pointer off the scroll.
 }
 
+/**
+ * This is the opposite of Dodgem.
+ * It moves the mouse pointer back, IF you haven't moved it in the meantime.
+ * @remarks	Originally called 'undodgem'
+ */
 void Dialogs::unDodgem() {
 	Common::Point actCoord = _vm->getMousePos();
 	if ((actCoord.x == _dodgeCoord.x) && (actCoord.y == _underScroll))
@@ -512,6 +542,10 @@ void Dialogs::reset() {
 	}
 }
 
+/**
+ * Natural state of bubbles
+ * @remarks	Originally called 'natural'
+ */
 void Dialogs::setBubbleStateNatural() {
 	_vm->_talkX = 320;
 	_vm->_talkY = 200;
@@ -540,11 +574,18 @@ Common::String Dialogs::displayMoney() {
 	return result;
 }
 
+/**
+ * Strip trailing character in a string
+ * @remarks	Originally called 'strip'
+ */
 void Dialogs::stripTrailingSpaces(Common::String &str) {
-	while (str[str.size() - 1] == ' ')
+	while (str.lastChar() == ' ')
 		str.deleteLastChar();
 }
 
+/**
+ * Does the word wrapping.
+ */
 void Dialogs::solidify(byte n) {
 	if (!_scroll[n].contains(' '))
 		return; // No spaces.
@@ -558,6 +599,9 @@ void Dialogs::solidify(byte n) {
 	stripTrailingSpaces(_scroll[n]);
 }
 
+/**
+ * @remarks	Originally called 'calldriver'
+ */
 void Dialogs::callDialogDriver() {
 //	bool was_virtual; // Was the mouse cursor virtual on entry to this proc?
 	warning("STUB: Scrolls::calldrivers()");
@@ -737,6 +781,10 @@ void Dialogs::callDialogDriver() {
 	}
 }
 
+/**
+ * Display text by calling the dialog driver
+ * @remarks	Originally called 'display'
+ */
 void Dialogs::displayText(Common::String text) { // TODO: REPLACE BUFFER WITH A STRING!!!!!!!!!!
 	_bufSize = text.size();
 	memcpy(_buffer, text.c_str(), _bufSize);
@@ -784,6 +832,10 @@ void Dialogs::loadFont() {
 	file.close();
 }
 
+/**
+ * Practically this one is a mini-game which called when you play the harp in the monastery.
+ * @remarks	Originally called 'musical_scroll'
+ */
 void Dialogs::displayMusicalScroll() {
 	Common::String tmpStr = Common::String::format("To play the harp...%c%cUse these keys:%c%cQ W E R T Y U I O P [ ]%c%cOr press Enter to stop playing.%c", 
 		        kControlNewLine, kControlNewLine, kControlNewLine, kControlInsertSpaces, kControlNewLine, kControlNewLine, kControlToBuffer);
@@ -795,8 +847,6 @@ void Dialogs::displayMusicalScroll() {
 	CursorMan.showMouse(true);
 	reset();
 }
-
-// From Visa:
 
 void Dialogs::unSkrimble() {
 	for (uint16  i = 0; i < _bufSize; i++)
@@ -1035,6 +1085,10 @@ void Dialogs::talkTo(byte whom) {
 	}
 }
 
+/**
+ * This makes Avalot say the response.
+ * @remarks	Originally called 'sayit'
+ */
 void Dialogs::sayIt(Common::String str) {
 	Common::String x = str;
 	x.setChar(toupper(x[0]), 0);

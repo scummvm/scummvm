@@ -41,28 +41,21 @@ typedef void (Dialogs::*DialogFunctionType)();
 
 class Dialogs {
 public:
-	bool _aboutBox; // Is this the about box?
+	bool _aboutBox; // Is this the about box? - Used in scrollModeNormal(), not yet fully implemented
 	FontType _fonts[2];
 
 	Dialogs(AvalancheEngine *vm);
 
 	void init();
-	void setReadyLight(byte state); // Sets "Ready" light to whatever.
-	void drawScroll(DialogFunctionType modeFunc);
-	void drawBubble(DialogFunctionType modeFunc);
 	void reset();
-	void callDialogDriver();
+	void setReadyLight(byte state);
 	void displayText(Common::String text);
 	bool displayQuestion(Common::String question);
-	void setBubbleStateNatural(); // Natural state of bubbles
-	Common::String displayMoney();
-	void displayMusicalScroll(); // Practically this one is a mini-game which called when you play the harp in the monastery.
-
-	// From Visa:
+	void setBubbleStateNatural();
+	void displayMusicalScroll();
 	void displayScrollChain(char block, byte point, bool report = true, bool bubbling = false);
 	void talkTo(byte whom);
-
-	void sayIt(Common::String str);  // This makes Avalot say the response.
+	void sayIt(Common::String str);
 
 private:
 	AvalancheEngine *_vm;
@@ -72,46 +65,44 @@ private:
 		kFontStyleItalic
 	};
 
-	static const int16 kHalfIconWidth = 19; // Half the width of an icon.
+	static const int16 kHalfIconWidth = 19;
 
-	int16 _shadowBoxX, _shadowBoxY;
-	byte _currentFont; // Current font
 	Common::String _scroll[15];
 	Common::Point _dodgeCoord;
-	byte _param; // For using arguments code
-	byte _useIcon;
 	byte _maxLineNum;
 	bool _scReturn;
+	bool _noError;
+	byte _currentFont;
+	byte _param; // For using arguments code
+	byte _useIcon;
 	byte _scrollBells; // no. of times to ring the bell
 	byte _buffer[2000];
 	uint16 _bufSize;
 	int16 _underScroll; // Y-coord of just under the scroll text.
+	int16 _shadowBoxX, _shadowBoxY;
 
-	// These 3 "Mode" functions are always passed as ScrollsFunctionType parameters.
+	void callDialogDriver();
+	void drawBubble(DialogFunctionType modeFunc);
+	void drawScroll(DialogFunctionType modeFunc);
 	void scrollModeNormal();
-	// The "asking" scroll. Used indirectly in diplayQuestion().
 	void scrollModeDialogue();
-	// Part of the harp mini-game.
 	void scrollModeMusic();
 
 	// These 2 are used only in musicalScroll().
 	void store(byte what, TuneType &played);
 	bool theyMatch(TuneType &played);
+	void stripTrailingSpaces(Common::String &str);
+	void solidify(byte n);
+	void dodgem();
+	void unDodgem();
 
-	void stripTrailingSpaces(Common::String &str); // Original: strip.
-	void solidify(byte n); // Does the word wrapping.
-
-	void dodgem(); // This moves the mouse pointer off the scroll so that you can read it.
-	void unDodgem(); // This is the opposite of Dodgem. It moves the mouse pointer back, IF you haven't moved it in the meantime.
-
+	Common::String displayMoney();
 	void easterEgg();
 	void say(int16 x, int16 y, Common::String text);
 	void resetScrollDriver();
-	void ringBell(); // Original: dingdongbell
+	void ringBell();
 	void loadFont();
 
-	// From Visa:
-	bool _noError;
 	void unSkrimble();
 	void doTheBubble();
 	void speak(byte who, byte subject);
