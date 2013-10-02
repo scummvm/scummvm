@@ -103,9 +103,20 @@ class MctlCompound : public MotionController {
 	void initMovGraph2();
 };
 
+struct MGMSubItem {
+	int movement;
+	int staticsIndex;
+	int field_8;
+	int field_C;
+	int x;
+	int y;
+
+	MGMSubItem();
+};
+
 struct MGMItem {
 	int16 objId;
-	Common::Array<int> subItems;
+	Common::Array<MGMSubItem *> subItems;
 	Common::Array<Statics *> statics;
 	Common::Array<Movement *> movements1;
 	Common::Array<Movement *> movements2;
