@@ -294,16 +294,9 @@ void Background::load(byte number) {
 			_sprites[i]._yl = sprite._yl;
 			_sprites[i]._type = sprite._type;
 
-			if (natural) {
-				_sprites[i]._type = kNaturalImage; // We simply read from the screen and later, in drawSprite() we draw it right back.
-				_sprites[i]._size = _sprites[i]._xl * 8 * _sprites[i]._yl + 1;
-				_sprites[i]._picture.create(_sprites[i]._xl * 8, _sprites[i]._yl + 1, Graphics::PixelFormat::createFormatCLUT8());
-
-				for (uint16 y = 0; y < _sprites[i]._yl + 1; y++) {
-					for (uint16 x = 0; x < _sprites[i]._xl * 8; x++)
-						*(byte *)_sprites[i]._picture.getBasePtr(x, y) = *(byte *)_vm->_graphics->_surface.getBasePtr(_sprites[i]._x * 8 + x, _sprites[i]._y + y);
-				}
-			} else {
+			if (natural)
+				_vm->_graphics->getNaturalPicture(_sprites[i]);
+			else {
 				_sprites[i]._size = sprite._size;
 				_sprites[i]._picture = _vm->_graphics->loadPictureRow(f, _sprites[i]._xl * 8, _sprites[i]._yl + 1);
 			}
