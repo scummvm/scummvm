@@ -40,6 +40,9 @@
 
 namespace Avalanche {
 
+/**
+ * Loads & sets up the sprite.
+ */
 void AnimationType::init(byte spritenum, bool doCheck, Animation *anim) {
 	_anim = anim;
 
@@ -123,11 +126,19 @@ void AnimationType::init(byte spritenum, bool doCheck, Animation *anim) {
 	inf.close();
 }
 
+/**
+ * Just sets 'quick' to false.
+ * @remarks	Originally called 'original'
+ */
 void AnimationType::reset() {
 	_quick = false;
 	_id = 177;
 }
 
+/**
+ * Drops sprite onto screen.
+ * @remarks	Originally called 'andexor'
+ */
 void AnimationType::draw() {
 	if ((_vanishIfStill) && (_moveX == 0) && (_moveY == 0))
 		return;
@@ -137,6 +148,9 @@ void AnimationType::draw() {
 	_anim->_vm->_graphics->drawSprite(_info, picnum, _x, _y);
 }
 
+/**
+ * Turns character round.
+ */
 void AnimationType::turn(Direction whichway) {
 	if (whichway == 8)
 		_facingDir = kDirUp;
@@ -144,6 +158,9 @@ void AnimationType::turn(Direction whichway) {
 		_facingDir = whichway;
 }
 
+/**
+ * Switches it on.
+ */
 void AnimationType::appear(int16 wx, int16 wy, Direction wf) {
 	_x = (wx / 8) * 8;
 	_y = wy;
@@ -169,6 +186,9 @@ bool AnimationType::checkCollision() {
 	return false;
 }
 
+/**
+ * Prepares for draw(), etc.
+ */
 void AnimationType::walk() {
 	if (!_anim->_vm->_doingSpriteRun) {
 		_oldX[_anim->_vm->_cp] = _x;
@@ -229,6 +249,9 @@ void AnimationType::walk() {
 	}
 }
 
+/**
+ * Bounces off walls
+ */
 void AnimationType::bounce() {
 	_x = _oldX[_anim->_vm->_cp];
 	_y = _oldY[_anim->_vm->_cp];
@@ -248,6 +271,9 @@ int8 AnimationType::getSign(int16 val) {
 		return 0;
 }
 
+/**
+ * Home in on a point.
+ */
 void AnimationType::walkTo(byte pedNum) {
 	PedType *curPed = &_anim->_vm->_peds[pedNum];
 
@@ -261,6 +287,9 @@ void AnimationType::stopHoming() {
 	_homing = false;
 }
 
+/**
+ * Calculates ix & iy for one homing step.
+ */
 void AnimationType::homeStep() {
 	int16 temp;
 
@@ -291,6 +320,9 @@ void AnimationType::homeStep() {
 	}
 }
 
+/**
+ * Sets ix & iy, non-homing, etc.
+ */
 void AnimationType::setSpeed(int8 xx, int8 yy) {
 	_moveX = xx;
 	_moveY = yy;
@@ -310,12 +342,18 @@ void AnimationType::setSpeed(int8 xx, int8 yy) {
 	}
 }
 
+/**
+ * Stops the sprite from moving.
+ */
 void AnimationType::stopWalk() {
 	_moveX = 0;
 	_moveY = 0;
 	_homing = false;
 }
 
+/**
+ * Sets up talk vars.
+ */
 void AnimationType::chatter() {
 	_anim->_vm->_talkX = _x + _info._xLength / 2;
 	_anim->_vm->_talkY = _y;
@@ -351,6 +389,10 @@ Animation::~Animation() {
 	}
 }
 
+/**
+ * Resets Animation variables.
+ * @remarks	Originally called 'loadtrip'
+ */
 void Animation::resetAnims() {
 	setDirection(kDirStopped);
 	for (int16 i = 0; i < kSpriteNumbMax; i++)
@@ -389,6 +431,11 @@ byte Animation::geidaPed(byte ped) {
 	}
 }
 
+/**
+ * When you enter a new position in the catacombs, this procedure should be
+ * called. It changes the 'also' codes so that they may match the picture
+ * on the screen.
+ */
 void Animation::catacombMove(byte ped) {
 	int32 here;
 	uint16 xy_uint16;
@@ -691,7 +738,9 @@ void Animation::catacombMove(byte ped) {
 	}
 }
 
-// This proc gets called whenever you touch a line defined as _vm->special.
+/**
+ * This proc gets called whenever you touch a line defined as _vm->special.
+ */
 void Animation::dawnDelay() {
 	_vm->_timer->addTimer(2, Timer::kProcDawnDelay, Timer::kReasonDawndelay);
 }
@@ -893,6 +942,9 @@ void Animation::appearPed(byte sprNum, byte pedNum) {
 	setMoveSpeed(sprNum, curPed->_direction);
 }
 
+/**
+ * @remarks	Originally called 'follow_avvy_y'
+ */
 void Animation::followAvalotY(byte tripnum) {
 	if (_sprites[0]._facingDir == kDirLeft)
 		return;
@@ -1048,8 +1100,9 @@ void Animation::geidaProcs(byte tripnum) {
 		_sprites[tripnum]._moveX = 0;
 }
 
-// That's all...
-
+/**
+ * @remarks	Originally called 'call_andexors'
+ */
 void Animation::drawSprites() {
 	int8 order[5];
 	byte temp;
@@ -1167,6 +1220,9 @@ void Animation::hideInCupboard() {
 	}
 }
 
+/**
+ * Returns true if you're within field "which".
+ */
 bool Animation::inField(byte which) {
 	FieldType *curField = &_vm->_fields[which];
 	int16 yy = _sprites[0]._y + _sprites[0]._info._yLength;
@@ -1174,6 +1230,9 @@ bool Animation::inField(byte which) {
 	return (_sprites[0]._x >= curField->_x1) && (_sprites[0]._x <= curField->_x2) && (yy >= curField->_y1) && (yy <= curField->_y2);
 }
 
+/**
+ * Returns True if you're near a door.
+ */
 bool Animation::nearDoor() {
 	if (_vm->_fieldNum < 8) {
 		// there ARE no doors here!
@@ -1192,6 +1251,9 @@ bool Animation::nearDoor() {
 	return false;
 }
 
+/**
+ * @remarks	Originally called 'tripkey'
+ */
 void Animation::handleMoveKey(const Common::Event &event) {
 	if (!_vm->_userMovesAvvy)
 		return;
