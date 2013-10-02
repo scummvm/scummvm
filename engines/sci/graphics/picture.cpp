@@ -658,6 +658,7 @@ void GfxPicture::drawVectorData(byte *data, int dataSize) {
 					case 35:
 					case 381:
 					case 376:
+					//case 390:	// in the blacklisted NRS patch 1.2 (bug #3615060)
 						return;
 					default:
 						break;
