@@ -69,10 +69,10 @@ void dumpEveryResultAction(const Common::String &destFile);
 template<class T>
 void removeDuplicateEntries(Common::Array<T> &container) {
 	// Length of modified array
-	int newLength = 1;
-	int j;
+	uint newLength = 1;
+	uint j;
 
-	for(int i = 1; i < container.size(); i++) {
+	for(uint i = 1; i < container.size(); i++) {
 		for(j = 0; j < newLength; j++) {
 			if (container[i] == container[j]) {
 				break;
