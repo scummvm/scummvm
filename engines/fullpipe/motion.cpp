@@ -507,7 +507,9 @@ void MGM::rebuildTables(int objId) {
 }
 
 int MGM::getItemIndexById(int objId) {
-	warning("STUB: MGM:getItemIndexById()");
+	for (uint i = 0; i < _items.size(); i++)
+		if (_items[i]->objId == objId)
+			return i;
 
 	return -1;
 }
