@@ -25,6 +25,9 @@
 
 namespace Fullpipe {
 
+class Statics;
+class Movement;
+
 int startWalkTo(int objId, int objKey, int x, int y, int a5);
 int doSomeAnimation(int objId, int objKey, int a3);
 int doSomeAnimation2(int objId, int objKey);
@@ -102,12 +105,10 @@ class MctlCompound : public MotionController {
 
 struct MGMItem {
 	int16 objId;
-	int subItems;
-	int staticsListCount;
-	int movementListCount;
-	int statics;
-	int movements1;
-	int movements2;
+	Common::Array<int> subItems;
+	Common::Array<Statics *> statics;
+	Common::Array<Movement *> movements1;
+	Common::Array<Movement *> movements2;
 
 	MGMItem();
 };
