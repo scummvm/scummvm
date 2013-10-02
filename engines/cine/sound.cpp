@@ -281,7 +281,7 @@ void PCSoundDriver::resetChannel(int channel) {
 }
 
 AdLibSoundDriver::AdLibSoundDriver(Audio::Mixer *mixer)
-	: _mixer(mixer) {
+	: _upCb(0), _upRef(0), _mixer(mixer) {
 	_sampleRate = _mixer->getOutputRate();
 	_opl = makeAdLibOPL(_sampleRate);
 	memset(_channelsVolumeTable, 0, sizeof(_channelsVolumeTable));
