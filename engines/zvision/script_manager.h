@@ -49,6 +49,11 @@ struct Location {
 	uint32 offset;
 };
 
+typedef Common::HashMap<uint32, Common::Array<Puzzle *> > PuzzleMap;
+typedef Common::List<Puzzle *> PuzzleList;
+typedef Common::Queue<Puzzle *> PuzzleQueue;
+typedef Common::List<Control *> ControlList;
+
 class ScriptManager {
 public:
 	ScriptManager(ZVision *engine);
@@ -63,15 +68,15 @@ private:
 	 */
 	Common::HashMap<uint32, uint> _globalState;
 	/** References _globalState keys to Puzzles */
-	Common::HashMap<uint32, Common::Array<Puzzle *> > _referenceTable;
+	PuzzleMap _referenceTable;
 	/** Holds the Puzzles that should be checked this frame */
-	Common::Queue<Puzzle *> _puzzlesToCheck;
+	PuzzleQueue _puzzlesToCheck;
 	/** Holds the currently active puzzles */
-	Common::List<Puzzle *> _activePuzzles;
+	PuzzleList _activePuzzles;
 	/** Holds the global puzzles */
-	Common::List<Puzzle *>_globalPuzzles;
+	PuzzleList _globalPuzzles;
 	/** Holds the currently active controls */
-	Common::List<Control *> _activeControls;
+	ControlList _activeControls;
 
 	Location _currentLocation;
 

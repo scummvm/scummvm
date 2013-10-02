@@ -60,6 +60,8 @@ private:
 		uint16 height;
 	};
 
+	typedef Common::HashMap<uint32, AlphaDataEntry> AlphaEntryMap;
+
 private:
 	OSystem *_system;
 	const Graphics::PixelFormat _pixelFormat;
@@ -71,7 +73,7 @@ private:
 	// before actually being blitted to the screen
 	Graphics::Surface _backBuffer;
 	// A list of Alpha Entries that need to be blitted to the backbuffer
-	Common::HashMap<uint32, AlphaDataEntry> _alphaDataEntries;
+	AlphaEntryMap _alphaDataEntries;
 
 	// A rectangle representing the portion of the working window where the pixels have been changed since last frame
 	Common::Rect _workingWindowDirtyRect;

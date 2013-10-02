@@ -61,7 +61,7 @@ RenderManager::~RenderManager() {
 	_currentBackground.free();
 	_backBuffer.free();
 
-	for (Common::HashMap<uint32, AlphaDataEntry>::iterator iter = _alphaDataEntries.begin(); iter != _alphaDataEntries.end(); ++iter) {
+	for (AlphaEntryMap::iterator iter = _alphaDataEntries.begin(); iter != _alphaDataEntries.end(); ++iter) {
 		iter->_value.data->free();
 		delete iter->_value.data;
 	}
@@ -121,7 +121,7 @@ void RenderManager::renderBackbufferToScreen() {
 void RenderManager::processAlphaEntries() {
 	// TODO: Add dirty rectangling support. AKA only draw an entry if the _backbufferDirtyRect intersects/contains the entry Rect
 
-	for (Common::HashMap<uint32, AlphaDataEntry>::iterator iter = _alphaDataEntries.begin(); iter != _alphaDataEntries.end(); ++iter) {
+	for (AlphaEntryMap::iterator iter = _alphaDataEntries.begin(); iter != _alphaDataEntries.end(); ++iter) {
 		uint32 destOffset = 0;
 		uint32 sourceOffset = 0;
 		uint16 *backbufferPtr = (uint16 *)_backBuffer.getBasePtr(iter->_value.destX + _workingWindow.left, iter->_value.destY + _workingWindow.top);
