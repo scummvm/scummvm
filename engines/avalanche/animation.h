@@ -72,19 +72,19 @@ public:
 	bool _callEachStepFl; // Do we call the eachstep procedure?
 	byte _eachStepProc;
 
-	void init(byte spritenum, bool doCheck, Animation *anim); // Loads & sets up the sprite.
-	void reset(); // Just sets 'quick' to false. Original name: original().
-	void draw(); // Drops sprite onto screen. Original: andexor().
-	void turn(Direction whichway); // Turns character round.
-	void appear(int16 wx, int16 wy, Direction wf); // Switches it on.
-	void bounce(); // Bounces off walls.
-	void walk(); // Prepares for andexor, etc.
-	void walkTo(byte pednum); // Home in on a point.
-	void stopHoming(); // Self-explanatory.
-	void homeStep(); // Calculates ix & iy for one homing step.
-	void setSpeed(int8 xx, int8 yy); // Sets ix & iy, non-homing, etc.
-	void stopWalk(); // Stops the sprite from moving.
-	void chatter();  // Sets up talk vars.
+	void init(byte spritenum, bool doCheck, Animation *anim);
+	void reset();
+	void draw();
+	void turn(Direction whichway);
+	void appear(int16 wx, int16 wy, Direction wf);
+	void bounce();
+	void walk();
+	void walkTo(byte pednum);
+	void stopHoming();
+	void homeStep();
+	void setSpeed(int8 xx, int8 yy);
+	void stopWalk();
+	void chatter();
 	void remove();
 
 private:
@@ -113,23 +113,21 @@ public:
 	};
 
 	AnimationType _sprites[kSpriteNumbMax];
-	bool _mustExclaim;
-	uint16 _sayWhat;
 
 	Animation(AvalancheEngine *vm);
 	~Animation();
 
 	void animLink();
-	void resetAnims(); // Original: loadtrip().
+	void resetAnims();
 	void callSpecial(uint16 which);
-	void catacombMove(byte ped); // When you enter a new position in the catacombs, this procedure should be called. It changes the 'also' codes so that they may match the picture on the screen.
+	void catacombMove(byte ped);
 	void stopWalking();
 	void setMoveSpeed(byte t, Direction dir);
 	void appearPed(byte sprNum, byte pedNum);
-	bool inField(byte which); // Returns true if you're within field "which".
-	bool nearDoor(); // Returns True if you're near a door.
+	bool inField(byte which);
+	bool nearDoor();
 	void updateSpeed();
-	void handleMoveKey(const Common::Event &event); // To replace tripkey().
+	void handleMoveKey(const Common::Event &event);
 	void hideInCupboard();
 
 	void setDirection(Direction dir);
@@ -143,8 +141,9 @@ private:
 	Direction _direction; // The direction Avvy is currently facing.
 	Direction _oldDirection;
 	bool _arrowTriggered; // And has the arrow been triggered?
-
+	bool _mustExclaim;
 	byte _geidaSpin, _geidaTime; // For the making "Geida dizzy" joke.
+	uint16 _sayWhat;
 
 	AvalancheEngine *_vm;
 
@@ -156,7 +155,7 @@ private:
 	void arrowProcs(byte tripnum);
 
 	// Different movements for NPCs:
-	void followAvalotY(byte tripnum); // Original: follow_avvy_y().
+	void followAvalotY(byte tripnum);
 	void backAndForth(byte tripnum);
 	void faceAvvy(byte tripnum);
 	
@@ -165,7 +164,7 @@ private:
 	void takeAStep(byte &tripnum);
 	void geidaProcs(byte tripnum);
 
-	void drawSprites(); // Original: call_andexors().
+	void drawSprites();
 };
 
 } // End of namespace Avalanche.
