@@ -74,12 +74,12 @@ bool HeadType::parseAltTrigger(char key) {
 	return false;
 }
 
-void MenuItem::init(Menu *dr) {
-	_dr = dr;
+void MenuItem::init(Menu *menu) {
+	_menu = menu;
 
 	_activeNow = false;
 	_activeNum = 1;
-	_dr->_menuActive = false;
+	_menu->_menuActive = false;
 }
 
 void MenuItem::reset() {
@@ -114,8 +114,8 @@ void MenuItem::displayOption(byte y, bool highlit) {
 	else
 		backgroundColor = kColorLightgray;
 
-	_dr->_vm->_graphics->drawMenuBlock((_flx1 + 1) * 8, 3 + (y + 1) * 10, (_flx2 + 1) * 8, 13 + (y + 1) * 10, backgroundColor);
-	_dr->drawMenuText(_left, 4 + (y + 1) * 10, _options[y]._trigger, text, _options[y]._valid, highlit);
+	_menu->_vm->_graphics->drawMenuBlock((_flx1 + 1) * 8, 3 + (y + 1) * 10, (_flx2 + 1) * 8, 13 + (y + 1) * 10, backgroundColor);
+	_menu->drawMenuText(_left, 4 + (y + 1) * 10, _options[y]._trigger, text, _options[y]._valid, highlit);
 }
 
 void MenuItem::display() {
@@ -126,15 +126,15 @@ void MenuItem::display() {
 	_flx2 = _left + _width;
 	_fly = 15 + _optionNum * 10;
 	_activeNow = true;
-	_dr->_menuActive = true;
+	_menu->_menuActive = true;
 
-	_dr->_vm->_graphics->drawMenuItem((_flx1 + 1) * 8, 12, (_flx2 + 1) * 8, _fly);
+	_menu->_vm->_graphics->drawMenuItem((_flx1 + 1) * 8, 12, (_flx2 + 1) * 8, _fly);
 
 	displayOption(0, true);
 	for (int y = 1; y < _optionNum; y++)
 		displayOption(y, false);
 
-	_dr->_vm->_currentMouse = 177;
+	_menu->_vm->_currentMouse = 177;
 
 	CursorMan.showMouse(true); // 4 = fletch
 }
@@ -142,10 +142,12 @@ void MenuItem::display() {
 void MenuItem::wipe() {
 	CursorMan.showMouse(false);
 
-	_dr->drawMenuText(_dr->_menuBar._menuItems[_dr->_activeMenuItem._activeNum]._xpos, 1, _dr->_menuBar._menuItems[_dr->_activeMenuItem._activeNum]._trigger, _dr->_menuBar._menuItems[_dr->_activeMenuItem._activeNum]._title, true, false);
+	_menu->drawMenuText(_menu->_menuBar._menuItems[_menu->_activeMenuItem._activeNum]._xpos, 1, 
+		_menu->_menuBar._menuItems[_menu->_activeMenuItem._activeNum]._trigger, 
+		_menu->_menuBar._menuItems[_menu->_activeMenuItem._activeNum]._title, true, false);
 
 	_activeNow = false;
-	_dr->_menuActive = false;
+	_menu->_menuActive = false;
 	_firstlix = false;
 
 	CursorMan.showMouse(true);
@@ -165,6 +167,10 @@ void MenuItem::moveHighlight(int8 inc) {
 	CursorMan.showMouse(true);
 }
 
+/**
+ * This makes the menu highlight follow the mouse.
+ * @remarks	Originally called 'lightup'
+ */
 void MenuItem::lightUp(Common::Point cursorPos) {
 	if ((cursorPos.x < _flx1 * 8) || (cursorPos.x > _flx2 * 8) || (cursorPos.y <= 25) || (cursorPos.y > ((_fly - 3) * 2 + 1)))
 		return;
@@ -186,7 +192,7 @@ void MenuItem::select(byte which) {
 	if (_choiceNum > _optionNum)
 		_choiceNum = 0; // Off the top, I suppose.
 
-	(_dr->*_dr->_menuBar._menuItems[_activeNum]._chooseFunc)();
+	(_menu->*_menu->_menuBar._menuItems[_activeNum]._chooseFunc)();
 }
 
 void MenuItem::parseKey(char c) {
@@ -199,29 +205,29 @@ void MenuItem::parseKey(char c) {
 		}
 	}
 	if (!found)
-		_dr->_vm->_sound->blip();
+		_menu->_vm->_sound->blip();
 }
 
-void MenuBar::init(Menu *dr) {
-	_dr = dr;
+void MenuBar::init(Menu *menu) {
+	_menu = menu;
 	_menuNum = 0;
 }
 
 void MenuBar::createMenuItem(char trig, Common::String title, char altTrig, MenuFunc setupFunc, MenuFunc chooseFunc) {
-	_menuItems[_menuNum].init(trig, altTrig, title, _menuNum, setupFunc, chooseFunc, _dr);
+	_menuItems[_menuNum].init(trig, altTrig, title, _menuNum, setupFunc, chooseFunc, _menu);
 	_menuNum++;
 }
 
 void MenuBar::draw() {
-	_dr->_vm->_graphics->drawMenuBar(kMenuBackgroundColor);
+	_menu->_vm->_graphics->drawMenuBar(kMenuBackgroundColor);
 
-	byte savecp = _dr->_vm->_cp;
-	_dr->_vm->_cp = 3;
+	byte savecp = _menu->_vm->_cp;
+	_menu->_vm->_cp = 3;
 
 	for (int i = 0; i < _menuNum; i++)
 		_menuItems[i].draw();
 
-	_dr->_vm->_cp = savecp;
+	_menu->_vm->_cp = savecp;
 }
 
 void MenuBar::parseAltTrigger(char c) {
@@ -234,13 +240,13 @@ void MenuBar::parseAltTrigger(char c) {
 }
 
 void MenuBar::setupMenuItem(byte which) {
-	if (_dr->_activeMenuItem._activeNow) {
-		_dr->_activeMenuItem.wipe(); // Get rid of menu.
-		if (_dr->_activeMenuItem._activeNum == _menuItems[which]._position)
+	if (_menu->_activeMenuItem._activeNow) {
+		_menu->_activeMenuItem.wipe(); // Get rid of menu.
+		if (_menu->_activeMenuItem._activeNum == _menuItems[which]._position)
 			return; // Clicked on own highlight.
 	}
 	_menuItems[which].highlight();
-	(_dr->*_menuItems[which]._setupFunc)();
+	(_menu->*_menuItems[which]._setupFunc)();
 }
 
 void MenuBar::chooseMenuItem(int16 x) {
