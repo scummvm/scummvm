@@ -95,30 +95,26 @@ public:
 
 	// The caller has to .free() the returned Surfaces!!!
 	// Further information about these two: http://www.shikadi.net/moddingwiki/Raw_EGA_data
-	Graphics::Surface loadPictureRow(Common::File &file, uint16 width, uint16 height); // Reads Row-planar EGA data.
+	Graphics::Surface loadPictureRaw(Common::File &file, uint16 width, uint16 height);
 
 	void drawSprite(const SpriteInfo &sprite, byte picnum, int16 x, int16 y);
-	void drawPicture(Graphics::Surface &target, const Graphics::Surface picture, uint16 destX, uint16 destY); // Can't call .free() here. See showScore() for example.
-
+	void drawPicture(Graphics::Surface &target, const Graphics::Surface picture, uint16 destX, uint16 destY);
 	void drawThinkPic(Common::String filename, int id);
 	void drawToolbar();
 	void drawCursor(byte pos);
 	void drawReadyLight(Color color);
-	void drawSign(Common::String name, int16 xl, int16 yl, int16 y); // This is for drawing a big "about" or "gameover" picture loaded from a file into an empty scroll.
-	void drawIcon(int16 x, int16 y, byte which); // Draws an icon to the current scroll.
+	void drawSign(Common::String name, int16 xl, int16 yl, int16 y);
+	void drawIcon(int16 x, int16 y, byte which);
 	void drawScreenLine(int16 x, int16 y, int16 x2, int16 y2, Color color);
-
 	void prepareBubble(int xc, int xw, int my, Common::Point points[3]);
-
 	void refreshScreen();
 	void loadBackground(Common::File &file);
 	void refreshBackground();
 	void setBackgroundColor(Color x);
 	void setDialogColor(Color bg, Color text);
 
-	void zoomOut(int16 x, int16 y); // Only used when entering the map.
+	void zoomOut(int16 x, int16 y);
 	void showScroll();
-
 	void getNaturalPicture(SpriteType &sprite);
 
 	void saveScreen();
