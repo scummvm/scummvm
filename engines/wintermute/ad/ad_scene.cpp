@@ -864,6 +864,7 @@ bool AdScene::loadBuffer(char *buffer, bool complete) {
 				_viewport->setRect(rc.left, rc.top, rc.right, rc.bottom, true);
 			}
 		}
+		break;
 
 		case TOKEN_PERSISTENT_STATE:
 			parser.scanStr(params, "%b", &_persistentState);
