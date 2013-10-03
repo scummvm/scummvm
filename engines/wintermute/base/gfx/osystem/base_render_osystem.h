@@ -146,6 +146,7 @@ private:
 	uint32 _clearColor;
 
 	bool _skipThisFrame;
+	int _lastScreenChangeID; // previous value of OSystem::getScreenChangeID()
 };
 
 } // End of namespace Wintermute

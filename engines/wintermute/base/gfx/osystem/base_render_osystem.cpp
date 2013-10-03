@@ -62,6 +62,8 @@ BaseRenderOSystem::BaseRenderOSystem(BaseGame *inGame) : BaseRenderer(inGame) {
 	if (ConfMan.hasKey("dirty_rects")) {
 		_disableDirtyRects = !ConfMan.getBool("dirty_rects");
 	}
+
+	_lastScreenChangeID = g_system->getScreenChangeID();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -183,8 +185,13 @@ bool BaseRenderOSystem::flip() {
 			}
 		}
 	}
-	if (_needsFlip || _disableDirtyRects) {
-		if (_disableDirtyRects) {
+
+	int oldScreenChangeID = _lastScreenChangeID;
+	_lastScreenChangeID = g_system->getScreenChangeID();
+	bool screenChanged = _lastScreenChangeID != oldScreenChangeID;
+
+	if (_needsFlip || _disableDirtyRects || screenChanged) {
+		if (_disableDirtyRects || screenChanged) {
 			g_system->copyRectToScreen((byte *)_renderSurface->getPixels(), _renderSurface->pitch, 0, 0, _renderSurface->w, _renderSurface->h);
 		}
 		//  g_system->copyRectToScreen((byte *)_renderSurface->getPixels(), _renderSurface->pitch, _dirtyRect->left, _dirtyRect->top, _dirtyRect->width(), _dirtyRect->height());
