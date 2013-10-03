@@ -50,7 +50,7 @@ public:
 	int16 _xpos, _xright;
 	MenuFunc _setupFunc, _chooseFunc;
 
-	void init(char trig, char alTtrig, Common::String title, byte pos, MenuFunc setupFunc, MenuFunc chooseFunc, Menu *dr);
+	void init(char trig, char alTtrig, Common::String title, byte pos, MenuFunc setupFunc, MenuFunc chooseFunc, Menu *menu);
 	void draw();
 	void highlight();
 	bool parseAltTrigger(char key);
@@ -69,29 +69,33 @@ struct OptionType {
 class MenuItem {
 public:
 	OptionType _options[12];
-	byte _optionNum;
 	uint16 _width, _left;
 	bool _firstlix;
 	int16 _flx1, _flx2, _fly;
-	byte _oldY; // used by lightUp
 	bool _activeNow; // Is there an active option now?
 	byte _activeNum; // And if so, which is it?
 	byte _choiceNum; // Your choice?
-	byte _highlightNum;
 
-	void init(Menu *dr);
+	void init(Menu *menu);
 	void reset();
 	void setupOption(Common::String title, char trigger, Common::String shortcut, bool valid);
 	void display();
 	void wipe();
-	void lightUp(Common::Point cursorPos); // This makes the menu highlight follow the mouse.
-	void displayOption(byte y, bool highlit);
-	void moveHighlight(int8 inc);
-	void select(byte which); // Choose which one you want.
-	void parseKey(char c);
+	void lightUp(Common::Point cursorPos);
+	void select(byte which);
 
 private:
-	Menu *_dr;
+	byte _oldY; // used by lightUp
+	byte _optionNum;
+	byte _highlightNum;
+
+	Menu *_menu;
+
+	void displayOption(byte y, bool highlit);
+	void moveHighlight(int8 inc);
+
+	// CHECKME: Useless function?
+	void parseKey(char c);
 };
 
 class MenuBar {
@@ -99,15 +103,17 @@ public:
 	HeadType _menuItems[8];
 	byte _menuNum;
 
-	void init(Menu *dr);
+	void init(Menu *menu);
 	void createMenuItem(char trig, Common::String title, char altTrig, MenuFunc setupFunc, MenuFunc chooseFunc);
 	void draw();
-	void parseAltTrigger(char c);
-	void setupMenuItem(byte which);
 	void chooseMenuItem(int16 x);
 
 private:
-	Menu *_dr;
+	Menu *_menu;
+
+	void setupMenuItem(byte which);
+	// CHECKME: Useless function
+	void parseAltTrigger(char c);
 };
 
 class Menu {
@@ -119,11 +125,8 @@ public:
 	MenuItem _activeMenuItem;
 	MenuBar _menuBar;
 
-	Common::String people;
-
 	Menu(AvalancheEngine *vm);
 
-	void parseKey(char r, char re);
 	void update();
 	void setup(); // Standard menu bar.
 	bool isActive();
@@ -140,6 +143,7 @@ private:
 //	static const Color kHighlightFontColor = kColorWhite;
 //	static const Color kDisabledColor = kColorDarkgray;
 
+	Common::String people;
 	Common::String _verbStr; // what you can do with your object. :-)
 	bool _menuActive; // Kludge so we don't have to keep referring to the menu.
 	People _lastPerson; // Last person to have been selected using the People menu.
@@ -168,6 +172,9 @@ private:
 	void runMenuObjects();
 	void runMenuPeople();
 	void runMenuWith();
+
+	// CHECKME: Useless function?
+	void parseKey(char r, char re);
 };
 
 } // End of namespace Avalanche.
