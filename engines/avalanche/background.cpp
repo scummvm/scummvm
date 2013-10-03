@@ -298,7 +298,7 @@ void Background::load(byte number) {
 				_vm->_graphics->getNaturalPicture(_sprites[i]);
 			else {
 				_sprites[i]._size = sprite._size;
-				_sprites[i]._picture = _vm->_graphics->loadPictureRow(f, _sprites[i]._xl * 8, _sprites[i]._yl + 1);
+				_sprites[i]._picture = _vm->_graphics->loadPictureRaw(f, _sprites[i]._xl * 8, _sprites[i]._yl + 1);
 			}
 		} else
 			_sprites[i]._x = kOnDisk;
@@ -339,7 +339,7 @@ void Background::draw(int16 destX, int16 destY, byte sprId) {
 		sprite._yl = f.readSint16LE();
 		sprite._size = f.readSint32LE();
 		f.skip(2); // Natural and Memorize are used in Load()
-		sprite._picture = _vm->_graphics->loadPictureRow(f, sprite._xl * 8, sprite._yl + 1);
+		sprite._picture = _vm->_graphics->loadPictureRaw(f, sprite._xl * 8, sprite._yl + 1);
 
 		if (destX < 0) {
 			destX = sprite._x * 8;

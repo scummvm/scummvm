@@ -455,8 +455,10 @@ void GraphicManager::drawDebugLines() {
 	}
 }
 
+/**
+ * This function mimics Pascal's getimage().
+ */
 Graphics::Surface GraphicManager::loadPictureGraphic(Common::File &file) {
-	// This function mimics Pascal's getimage().
 	// The height and the width are stored in 2-2 bytes. We have to add 1 to each because Pascal stores the value of them -1.
 	uint16 width = file.readUint16LE() + 1;
 	uint16 height = file.readUint16LE() + 1;
@@ -480,11 +482,13 @@ Graphics::Surface GraphicManager::loadPictureGraphic(Common::File &file) {
 	return picture;
 }
 
-Graphics::Surface GraphicManager::loadPictureRow(Common::File &file, uint16 width, uint16 height) {
-	// This function is our own creation, very much like the one above. The main differences are that
-	// we don't read the width and the height from the file, the planes are in a different order
-	// and we read the picture plane-by-plane.
-
+/**
+ * Reads Row-planar EGA data.
+ * This function is our own creation, very much like the one above. The main differences are that
+ * we don't read the width and the height from the file, the planes are in a different order
+ * and we read the picture plane-by-plane.
+ */
+Graphics::Surface GraphicManager::loadPictureRaw(Common::File &file, uint16 width, uint16 height) {
 	Graphics::Surface picture;
 	picture.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 
@@ -580,6 +584,9 @@ void GraphicManager::drawReadyLight(Color color) {
 	_surface.fillRect(Common::Rect(419, 195, 438, 197), color);
 }
 
+/**
+ * This is for drawing a big "about" or "gameover" picture loaded from a file into an empty scroll.
+ */
 void GraphicManager::drawSign(Common::String fn, int16 xl, int16 yl, int16 y) {
 	Common::File file;
 	Common::String filename = Common::String::format("%s.avd", fn.c_str());
@@ -588,7 +595,6 @@ void GraphicManager::drawSign(Common::String fn, int16 xl, int16 yl, int16 y) {
 		error("AVALANCHE: Scrolls: File not found: %s", filename.c_str());
 
 	// I know it looks very similar to the loadPicture methods, but in truth it's the combination of the two.
-
 	uint16 width = xl * 8;
 	uint16 height = yl;
 
@@ -614,6 +620,10 @@ void GraphicManager::drawSign(Common::String fn, int16 xl, int16 yl, int16 y) {
 	file.close();
 }
 
+/**
+ * Draws an icon to the current scroll.
+ * @remarks	Originally called 'geticon'
+ */
 void GraphicManager::drawIcon(int16 x, int16 y, byte which) {
 	Common::File file;
 
@@ -638,20 +648,19 @@ void GraphicManager::prepareBubble(int xc, int xw, int my, Common::Point points[
 	_scrolls.fillRect(Common::Rect(xc + _vm->_talkX - xw + 9, 7, _vm->_talkX + xw - 8 + xc, my + 1), _talkBackgroundColor);
 	_scrolls.fillRect(Common::Rect(xc + _vm->_talkX - xw - 1, 12, _vm->_talkX + xw + xc + 2, my - 4), _talkBackgroundColor);
 
-	// Top right corner of the bubble.
+	// Top the 4 rounded corners of the bubble.
 	drawPieSlice(xc + _vm->_talkX + xw - 10, 11, 0, 90, 9, _talkBackgroundColor);
-	// Bottom right corner of the bubble.
 	drawPieSlice(xc + _vm->_talkX + xw - 10, my - 4, 270, 360, 9, _talkBackgroundColor);
-	// Top left corner of the bubble.
 	drawPieSlice(xc + _vm->_talkX - xw + 10, 11, 90, 180, 9, _talkBackgroundColor);
-	// Bottom left corner of the bubble.
 	drawPieSlice(xc + _vm->_talkX - xw + 10, my - 4, 180, 270, 9, _talkBackgroundColor);
 
 	// "Tail" of the speech bubble.
 	drawTriangle(points, _talkBackgroundColor);
 }
 
-// And set the background of the text to the desired color.
+/** 
+ * Set the background of the text to the desired color.
+ */
 void GraphicManager::wipeChar(int x, int y, Color color) {
 	for (int k = 0; k < 8; k++)
 		*(byte *)_surface.getBasePtr(x + k, y) = color;
@@ -679,13 +688,17 @@ void GraphicManager::refreshScreen() {
 }
 
 void GraphicManager::loadBackground(Common::File &file) {
-	_background = loadPictureRow(file, kBackgroundWidth, kBackgroundHeight);
+	_background = loadPictureRaw(file, kBackgroundWidth, kBackgroundHeight);
 }
 
 void GraphicManager::refreshBackground() {
 	drawPicture(_surface, _background, 0, 10);
 }
 
+/**
+ * Only used when entering the map.
+ * @remarks	Originally called 'zoomout'
+ */
 void GraphicManager::zoomOut(int16 x, int16 y) {
 	//setlinestyle(dottedln, 0, 1); TODO: Implement it with a dotted line style!!!
 
