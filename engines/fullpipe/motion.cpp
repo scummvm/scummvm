@@ -126,6 +126,68 @@ MessageQueue *MctlCompound::method4C(StaticANIObject *subj, int xpos, int ypos, 
 	warning("STUB: MctlCompound::method4C()");
 
 	return 0;
+
+#if 0
+	int match1 = -1;
+	int match2 = -1;
+
+	if (!subj)
+		return 0;
+
+	for (uint i = 0; i < _motionControllers.size(); i++) {
+		if (_motionControllers[i]->_movGraphReactObj) {
+			if (_motionControllers[i]->_movGraphReactObj->pointInRegion(subj->_ox, subj->_oy)) {
+				match1 = i;
+				break;
+			}
+		}
+	}
+
+	if (match1 == -1)
+		return 0;
+
+	for (uint i = 0; i < _motionControllers.size(); i++) {
+		if (_motionControllers[i]->_movGraphReactObj) {
+			if (_motionControllers[i]->_movGraphReactObj->pointInRegion(xpos, ypos)) {
+				match2 = i;
+				break;
+			}
+		}
+	}
+
+	if (match2 == -1)
+		return 0;
+
+	if (match1 == match2)
+		return _motionControllers[match1]->_motionControllerObj->method4C(subj, xpos, ypos, flag, staticsId);
+
+	MctlConnectionPoint *closestP = findClosestConnectionPoint(subj->_ox, subj->_oy, match1, xpos, ypos, match2, &match2);
+
+	if (!closestP)
+		return 0;
+
+	MctlConnectionPoint *nextP = _motionControllers[match1]->_motionControllerObj->method4C(subj, closestP->connectionX, closestP->connectionY, 1, closestP->field_14);
+
+	ExCommand *ex;
+
+	if (nextP) {
+		for (uint i = 0; i < closestP->_messageQueueObj->getCount(); i++) {
+			ex = new ExCommand(closestP->_messageQueueObj->getExCommandByIndex(i));
+			ex->excFlags |= 2;
+			nextP->messageQueueObj->CPtrList::AddTail(ex);
+		}
+
+		ex = new ExCommand(subj->_id, 51, 0, xpos, ypos, 0, 1, 0, 0, 0);
+
+		ex->_field_20 = flag;
+		ex->_keyCode = subj->_okeyCode;
+		ex->_excFlags |= 2;
+
+		nextP->messageQueueObj->CPtrList::AddTail(ex);
+	}
+
+	return nextP;
+#endif
 }
 
 bool MctlCompoundArray::load(MfcArchive &file) {
