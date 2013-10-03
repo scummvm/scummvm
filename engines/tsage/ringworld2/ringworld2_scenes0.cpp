@@ -1212,8 +1212,8 @@ Common::String Scene125::parseMessage(const Common::String &msg) {
  *--------------------------------------------------------------------------*/
 
 void Scene150::postInit(SceneObjectList *OwnerList) {
-	SceneExt::postInit();
 	loadScene(100);
+	SceneExt::postInit();
 
 	_door.postInit();
 	_door._state = 0;
