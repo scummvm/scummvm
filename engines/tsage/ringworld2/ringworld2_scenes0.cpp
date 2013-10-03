@@ -2612,12 +2612,12 @@ void Scene250::postInit(SceneObjectList *OwnerList) {
 	_currentFloor.setup(250, 1, 5);
 	_currentFloor.setDetails(250, 13, -1, -1, 1, (SceneItem *)NULL);
 
-	_button1.setFloor(11);
-	_button1.setup(250, 1, 3);
-	_button1.setPosition(Common::Point(400, 100));
-	_button1.setDetails(250, 14, -1, -1, 1, (SceneItem *)NULL);
-	_button1.fixPriority(190);
-	_button1.hide();
+	_destinationFloor.setFloor(11);
+	_destinationFloor.setup(250, 1, 3);
+	_destinationFloor.setPosition(Common::Point(400, 100));
+	_destinationFloor.setDetails(250, 14, -1, -1, 1, (SceneItem *)NULL);
+	_destinationFloor.fixPriority(190);
+	_destinationFloor.hide();
 
 	_floor1.setFloor(1);
 	_floor2.setFloor(2);
@@ -2629,8 +2629,8 @@ void Scene250::postInit(SceneObjectList *OwnerList) {
 	_floor8.setFloor(8);
 	_floor9.setFloor(9);
 
-	_item2.setDetails(Rect(0, 0, 73, SCREEN_HEIGHT), 250, 9, -1, 9, 1, NULL);
-	_item4.setDetails(Rect(239, 16, 283, 164), 250, 6, -1, -1, 1, NULL);
+	_door.setDetails(Rect(0, 0, 73, SCREEN_HEIGHT), 250, 9, -1, 9, 1, NULL);
+	_directionIndicator.setDetails(Rect(239, 16, 283, 164), 250, 6, -1, -1, 1, NULL);
 	_background.setDetails(Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 250, 0, 1, -1, 1, NULL);
 
 	R2_GLOBALS._events.setCursor(CURSOR_USE);
@@ -2765,8 +2765,8 @@ void Scene250::signal() {
 
 void Scene250::changeFloor(int floorNumber) {
 	_destButtonY = (floorNumber - 1) * 12 + 43;
-	_button1.setPosition(Common::Point(111, _destButtonY));
-	_button1.show();
+	_destinationFloor.setPosition(Common::Point(111, _destButtonY));
+	_destinationFloor.show();
 
 	_skippableFl = true;
 	_sceneMode = (_currButtonY >= _destButtonY) ? 6 : 1;

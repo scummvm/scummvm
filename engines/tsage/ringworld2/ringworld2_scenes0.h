@@ -319,8 +319,8 @@ class Scene250: public SceneExt {
 public:
 	int _currButtonY, _destButtonY, _elevatorSpeed;
 	bool _skippingFl, _skippableFl;
-	NamedHotspot _background, _item2, _item3, _item4;
-	Button _button1, _currentFloor;
+	NamedHotspot _background, _door, _directionIndicator;
+	Button _destinationFloor, _currentFloor;
 	Button _floor1, _floor2, _floor3, _floor4, _floor5;
 	Button _floor6, _floor7, _floor8, _floor9;
 	ASoundExt _sound1;
