@@ -63,7 +63,7 @@ public:
 	GraphicManager(AvalancheEngine *vm);
 	~GraphicManager();
 	void init();
-	void loadDigits(Common::File &file);
+	void loadDigits();
 	void loadMouse(byte which);
 
 	void fleshColors();

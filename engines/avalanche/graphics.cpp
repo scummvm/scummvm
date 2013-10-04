@@ -90,10 +90,11 @@ void GraphicManager::init() {
  * Load the scoring digits & rwlites
  * @remarks	Originally called 'load_digits'
  */
-void GraphicManager::loadDigits(Common::File &file) {
+void GraphicManager::loadDigits() {
 	const byte digitsize = 134;
 	const byte rwlitesize = 126;
 
+	Common::File file;
 	if (!file.open("digit.avd"))
 		error("AVALANCHE: File not found: digit.avd");
 

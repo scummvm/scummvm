@@ -317,9 +317,7 @@ private:
 	Common::String _roomnName; // Name of actual room
 	int8 _scoreToDisplay[3];
 
-	Common::File file;
-	Common::String readAlsoStringFromFile();
-
+	Common::String readAlsoStringFromFile(Common::File &file);
 	void runAvalot();
 	void init();
 	void setup();
