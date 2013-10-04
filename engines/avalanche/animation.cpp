@@ -434,15 +434,12 @@ byte Animation::geidaPed(byte ped) {
  * on the screen.
  */
 void Animation::catacombMove(byte ped) {
-	int32 here;
-	uint16 xy_uint16;
-
-	// XY_uint16 is cat_x+cat_y*256. Thus, every room in the
+	// XY_uint16 is _catacombX+_catacombY*256. Thus, every room in the
 	// catacombs has a different number for it.
-	xy_uint16 = _vm->_catacombX + _vm->_catacombY * 256;
+	uint16 xy = _vm->_catacombX + _vm->_catacombY * 256;
 	_geidaSpin = 0;
 
-	switch (xy_uint16) {
+	switch (xy) {
 	case 1801: // Exit catacombs
 		_vm->flipRoom(kRoomLustiesRoom, 4);
 		_vm->_dialogs->displayText("Phew! Nice to be out of there!");
@@ -467,7 +464,7 @@ void Animation::catacombMove(byte ped) {
 
 	if (!_vm->_enterCatacombsFromLustiesRoom)
 		_vm->loadRoom(29);
-	here = _vm->kCatacombMap[_vm->_catacombY - 1][_vm->_catacombX - 1];
+	int32 here = _vm->kCatacombMap[_vm->_catacombY - 1][_vm->_catacombX - 1];
 
 	switch (here & 0xf) { // West.
 	case 0: // no connection (wall)
@@ -596,7 +593,7 @@ void Animation::catacombMove(byte ped) {
 	case 0x1:
 		_vm->_background->draw(-1, -1, 21);
 
-		if ((xy_uint16 == 2051) && (_vm->_geidaFollows))
+		if ((xy == 2051) && (_vm->_geidaFollows))
 			_vm->_magics[12]._operation = kMagicExclaim;
 		else
 			_vm->_magics[12]._operation = kMagicSpecial; // Right exit south.
@@ -694,7 +691,7 @@ void Animation::catacombMove(byte ped) {
 		break;
 	}
 
-	switch (xy_uint16) {
+	switch (xy) {
 	case 514:
 		_vm->_background->draw(-1, -1, 16);
 		break;     // [2,2] : "Art Gallery" sign over door.
