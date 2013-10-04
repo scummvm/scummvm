@@ -320,7 +320,7 @@ void AvalancheEngine::setup() {
 
 	_menu->init();
 
-	int16 loadSlot = Common::ConfigManager::instance().getInt("save_slot");
+	int16 loadSlot = ConfMan.instance().getInt("save_slot");
 	if (loadSlot >= 0) {
 		_thinks = 2; // You always have money.
 		thinkAbout(kObjectMoney, kThing);
