@@ -302,7 +302,7 @@ void AvalancheEngine::setup() {
 
 	_dialogs->reset();
 	dusk();
-	_graphics->loadDigits(file);
+	_graphics->loadDigits();
 
 	_parser->_inputTextPos = 0;
 	_parser->_quote = true;
@@ -413,7 +413,7 @@ void AvalancheEngine::callVerb(VerbCode id) {
  * Check is it's possible to give something to Spludwick
  * @remarks	Originally called 'nextstring'
  */
-Common::String AvalancheEngine::readAlsoStringFromFile() {
+Common::String AvalancheEngine::readAlsoStringFromFile(Common::File &file) {
 	Common::String str;
 	byte length = file.readByte();
 	for (int i = 0; i < length; i++)
@@ -448,6 +448,7 @@ void AvalancheEngine::loadAlso(byte num) {
 	}
 	Common::String filename;
 	filename = Common::String::format("also%d.avd", num);
+	Common::File file;
 	if (!file.open(filename))
 		error("AVALANCHE: File not found: %s", filename.c_str());
 
@@ -458,7 +459,7 @@ void AvalancheEngine::loadAlso(byte num) {
 	for (int i = 0; i <= alsoNum; i++) {
 		for (int j = 0; j < 2; j++) {
 			_also[i][j] = new Common::String;
-			*_also[i][j] = readAlsoStringFromFile();
+			*_also[i][j] = readAlsoStringFromFile(file);
 		}
 		tmpStr = Common::String::format("\x9D%s\x9D", _also[i][0]->c_str());
 		*_also[i][0] = tmpStr;
@@ -541,6 +542,7 @@ void AvalancheEngine::loadRoom(byte num) {
 	_graphics->fleshColors();
 
 	Common::String filename = Common::String::format("place%d.avd", num);
+	Common::File file;
 	if (!file.open(filename))
 		error("AVALANCHE: File not found: %s", filename.c_str());
 
