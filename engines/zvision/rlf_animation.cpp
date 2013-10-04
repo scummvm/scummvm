@@ -246,8 +246,8 @@ void RlfAnimation::decodeMaskedRunLengthEncoding(int8 *source, int8 *dest, uint3
 				}
 
 				byte r, g, b;
-				Graphics::colorToRGB<Graphics::ColorMasks<555>>(READ_LE_UINT16(source + sourceOffset), r, g, b);
-				uint16 destColor = Graphics::RGBToColor<Graphics::ColorMasks<565>>(r, g, b);
+				Graphics::colorToRGB<Graphics::ColorMasks<555> >(READ_LE_UINT16(source + sourceOffset), r, g, b);
+				uint16 destColor = Graphics::RGBToColor<Graphics::ColorMasks<565> >(r, g, b);
 				WRITE_UINT16(dest + destOffset, destColor);
 
 				sourceOffset += 2;
@@ -292,8 +292,8 @@ void RlfAnimation::decodeSimpleRunLengthEncoding(int8 *source, int8 *dest, uint3
 				}
 
 				byte r, g, b;
-				Graphics::colorToRGB<Graphics::ColorMasks<555>>(READ_LE_UINT16(source + sourceOffset), r, g, b);
-				uint16 destColor = Graphics::RGBToColor<Graphics::ColorMasks<565>>(r, g, b);
+				Graphics::colorToRGB<Graphics::ColorMasks<555> >(READ_LE_UINT16(source + sourceOffset), r, g, b);
+				uint16 destColor = Graphics::RGBToColor<Graphics::ColorMasks<565> >(r, g, b);
 				WRITE_UINT16(dest + destOffset, destColor);
 
 				sourceOffset += 2;
@@ -309,8 +309,8 @@ void RlfAnimation::decodeSimpleRunLengthEncoding(int8 *source, int8 *dest, uint3
 			}
 
 			byte r, g, b;
-			Graphics::colorToRGB<Graphics::ColorMasks<555>>(READ_LE_UINT16(source + sourceOffset), r, g, b);
-			uint16 sampleColor = Graphics::RGBToColor<Graphics::ColorMasks<565>>(r, g, b);
+			Graphics::colorToRGB<Graphics::ColorMasks<555> >(READ_LE_UINT16(source + sourceOffset), r, g, b);
+			uint16 sampleColor = Graphics::RGBToColor<Graphics::ColorMasks<565> >(r, g, b);
 			sourceOffset += 2;
 
 			numberOfSamples += 2;

@@ -206,7 +206,7 @@ void StringManager::parseTag(const Common::String &tagString, uint lineNumber) {
 	}
 
 	fragment.style.align = align;
-	fragment.style.color = Graphics::ARGBToColor<Graphics::ColorMasks<565>>(0, red, green, blue);
+	fragment.style.color = Graphics::ARGBToColor<Graphics::ColorMasks<565> >(0, red, green, blue);
 	_inGameText[lineNumber].fragments.push_back(fragment);
 
 	_lastStyle = fragment.style;
