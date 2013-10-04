@@ -62,7 +62,7 @@ bool MctlCompound::load(MfcArchive &file) {
 			debug(6, "ConnectionPoint[%d]", j);
 			MctlConnectionPoint *obj1 = (MctlConnectionPoint *)file.readClass();
 
-			obj->_connectionPoints.push_back(*obj1);
+			obj->_connectionPoints.push_back(obj1);
 		}
 
 		obj->_field_20 = file.readUint32LE();
@@ -123,11 +123,6 @@ MessageQueue *MctlCompound::method34(StaticANIObject *subj, int xpos, int ypos, 
 }
 
 MessageQueue *MctlCompound::method4C(StaticANIObject *subj, int xpos, int ypos, int flag, int staticsId) {
-	warning("STUB: MctlCompound::method4C()");
-
-	return 0;
-
-#if 0
 	int match1 = -1;
 	int match2 = -1;
 
@@ -166,15 +161,15 @@ MessageQueue *MctlCompound::method4C(StaticANIObject *subj, int xpos, int ypos, 
 	if (!closestP)
 		return 0;
 
-	MctlConnectionPoint *nextP = _motionControllers[match1]->_motionControllerObj->method4C(subj, closestP->connectionX, closestP->connectionY, 1, closestP->field_14);
+	MessageQueue *mq = _motionControllers[match1]->_motionControllerObj->method4C(subj, closestP->_connectionX, closestP->_connectionY, 1, closestP->_field_14);
 
 	ExCommand *ex;
 
-	if (nextP) {
+	if (mq) {
 		for (uint i = 0; i < closestP->_messageQueueObj->getCount(); i++) {
 			ex = new ExCommand(closestP->_messageQueueObj->getExCommandByIndex(i));
-			ex->excFlags |= 2;
-			nextP->messageQueueObj->CPtrList::AddTail(ex);
+			ex->_excFlags |= 2;
+			mq->_exCommands.push_back(ex);
 		}
 
 		ex = new ExCommand(subj->_id, 51, 0, xpos, ypos, 0, 1, 0, 0, 0);
@@ -183,11 +178,16 @@ MessageQueue *MctlCompound::method4C(StaticANIObject *subj, int xpos, int ypos, 
 		ex->_keyCode = subj->_okeyCode;
 		ex->_excFlags |= 2;
 
-		nextP->messageQueueObj->CPtrList::AddTail(ex);
+		mq->_exCommands.push_back(ex);
 	}
 
-	return nextP;
-#endif
+	return mq;
+}
+
+MctlConnectionPoint *MctlCompound::findClosestConnectionPoint(int ox, int oy, int destIndex, int connectionX, int connectionY, int sourceIndex, int *minDistancePtr) {
+	warning("STUB: MctlCompound::findClosestConnectionPoint()");
+
+	return 0;
 }
 
 bool MctlCompoundArray::load(MfcArchive &file) {
@@ -697,6 +697,18 @@ void ReactParallel::createRegion() {
 	// GdiObject::Attach(_rgn, CreatePolygonRgn(_points, 4, 2);
 }
 
+void ReactParallel::method14() {
+	warning("STUB: ReactParallel::method14()");
+}
+
+bool ReactParallel::pointInRegion(int x, int y) {
+	warning("STUB: ReactParallel::pointInRegion()");
+
+	warning("%d %d, %d %d, %d %d, %d %d", _points[0]->x, _points[0]->y, _points[1]->x, _points[1]->y, _points[2]->x, _points[2]->y, _points[3]->x, _points[3]->y);
+
+	return false;
+}
+
 ReactPolygonal::ReactPolygonal() {
 	_field_C = 0;
 	_points = 0;
@@ -733,6 +745,16 @@ void ReactPolygonal::createRegion() {
 
 		// GdiObject::Attach(_rgn, CreatePolygonRgn(_points, _pointCount, 2);
 	}
+}
+
+void ReactPolygonal::method14() {
+	warning("STUB: ReactPolygonal::method14()");
+}
+
+bool ReactPolygonal::pointInRegion(int x, int y) {
+	warning("STUB: ReactPolygonal::pointInRegion()");
+
+	return false;
 }
 
 int startWalkTo(int objId, int objKey, int x, int y, int a5) {

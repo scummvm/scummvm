@@ -27,6 +27,7 @@ namespace Fullpipe {
 
 class Statics;
 class Movement;
+class MctlConnectionPoint;
 
 int startWalkTo(int objId, int objKey, int x, int y, int a5);
 int doSomeAnimation(int objId, int objKey, int a3);
@@ -61,10 +62,11 @@ public:
 };
 
 class MovGraphReact : public CObject {
-	// Empty
+public:
+	virtual void method14() {}
+	virtual void createRegion() {}
+	virtual bool pointInRegion(int x, int y) { return false; }
 };
-
-typedef Common::Array<CObject> MctlConnectionPointsArray;
 
 class MctlCompoundArrayItem : public CObject {
 	friend class MctlCompound;
@@ -72,7 +74,7 @@ class MctlCompoundArrayItem : public CObject {
   protected:
 	MotionController *_motionControllerObj;
 	MovGraphReact *_movGraphReactObj;
-	MctlConnectionPointsArray _connectionPoints;
+	Common::Array<MctlConnectionPoint *> _connectionPoints;
 	int _field_20;
 	int _field_24;
 	int _field_28;
@@ -101,6 +103,7 @@ class MctlCompound : public MotionController {
 	virtual MessageQueue *method4C(StaticANIObject *subj, int xpos, int ypos, int flag, int staticsId);
 
 	void initMovGraph2();
+	MctlConnectionPoint *findClosestConnectionPoint(int ox, int oy, int destIndex, int connectionX, int connectionY, int sourceIndex, int *minDistancePtr);
 };
 
 struct MGMSubItem {
@@ -162,7 +165,10 @@ class ReactParallel : public MovGraphReact {
   public:
 	ReactParallel();
 	virtual bool load(MfcArchive &file);
-	void createRegion();
+
+	virtual void method14();
+	virtual void createRegion();
+	virtual bool pointInRegion(int x, int y);
 };
 
 class ReactPolygonal : public MovGraphReact {
@@ -175,7 +181,10 @@ class ReactPolygonal : public MovGraphReact {
   public:
 	ReactPolygonal();
 	virtual bool load(MfcArchive &file);
-	void createRegion();
+
+	virtual void method14();
+	virtual void createRegion();
+	virtual bool pointInRegion(int x, int y);
 };
 
 class MovGraphLink : public CObject {
@@ -293,7 +302,7 @@ public:
 	int _field_10;
 	int16 _field_14;
 	int16 _field_16;
-	int _messageQueueObj;
+	MessageQueue *_messageQueueObj;
 	int _motionControllerObj;
 };
 
