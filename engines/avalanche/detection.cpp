@@ -129,10 +129,8 @@ SaveStateList AvalancheMetaEngine::listSaves(const char *target) const {
 			Common::InSaveFile *file = saveFileMan->openForLoading(*filename);
 			if (file) {
 				// Check for our signature.
-				Common::String signature;
-				for (int i = 0; i < 4; i++)
-					signature += file->readByte();
-				if (signature != "AVAL") {
+				uint32 signature = file->readUint32LE();
+				if (signature != MKTAG('A', 'V', 'A', 'L')) {
 					warning("Savegame of incompatible type!");
 					delete file;
 					continue;
@@ -177,10 +175,8 @@ SaveStateDescriptor AvalancheMetaEngine::querySaveMetaInfos(const char *target, 
 
 	if (f) {
 		// Check for our signature.
-		Common::String signature;
-		for (int i = 0; i < 4; i++)
-			signature += f->readByte();
-		if (signature != "AVAL") {
+		uint32 signature = f->readUint32LE();
+		if (signature != MKTAG('A', 'V', 'A', 'L')) {
 			warning("Savegame of incompatible type!");
 			delete f;
 			return SaveStateDescriptor();
@@ -188,8 +184,8 @@ SaveStateDescriptor AvalancheMetaEngine::querySaveMetaInfos(const char *target, 
 
 		// Check version.
 		byte saveVersion = f->readByte();
-		if (saveVersion != kSavegameVersion) {
-			warning("Savegame of incompatible version!");
+		if (saveVersion > kSavegameVersion) {
+			warning("Savegame of a too recent version!");
 			delete f;
 			return SaveStateDescriptor();
 		}
