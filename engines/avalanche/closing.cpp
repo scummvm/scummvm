@@ -53,12 +53,12 @@ void Closing::putIn(Common::String str, uint16 where) {
 }
 
 void Closing::exitGame() {
-	const Common::String nouns[12] = {
+	static const Common::String nouns[12] = {
 		"sackbut", "harpsichord", "camel", "conscience", "ice-cream", "serf",
 		"abacus", "castle", "carrots", "megaphone", "manticore", "drawbridge"
 	};
 
-	const Common::String verbs[12] = {
+	static const Common::String verbs[12] = {
 		"haunt", "daunt", "tickle", "gobble", "erase", "provoke", "surprise",
 		"ignore", "stare at", "shriek at", "frighten", "quieten"
 	};
