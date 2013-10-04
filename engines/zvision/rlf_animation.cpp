@@ -164,7 +164,7 @@ void RlfAnimation::seekToFrame(int frameNumber) {
 
 	int closestFrame = _currentFrame;
 	int distance = (int)frameNumber - _currentFrame;
-	for (int i = 0; i < _completeFrames.size(); ++i) {
+	for (uint i = 0; i < _completeFrames.size(); ++i) {
 		int newDistance = (int)frameNumber - (int)(_completeFrames[i]);
 		if (newDistance > 0 && (closestFrame == -1 || newDistance < distance)) {
 			closestFrame = _completeFrames[i];
