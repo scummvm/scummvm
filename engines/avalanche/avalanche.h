@@ -119,8 +119,6 @@ protected:
 	Common::Error run();
 
 private:
-	static AvalancheEngine *s_Engine;
-
 	AvalancheConsole *_console;
 	Common::Platform _platform;
 
