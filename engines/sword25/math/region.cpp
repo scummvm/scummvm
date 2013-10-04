@@ -311,10 +311,10 @@ bool Region::persist(OutputPersistenceBlock &writer) {
 		++It;
 	}
 
-	writer.write((uint32)_boundingBox.left);
-	writer.write((uint32)_boundingBox.top);
-	writer.write((uint32)_boundingBox.right);
-	writer.write((uint32)_boundingBox.bottom);
+	writer.write((int32)_boundingBox.left);
+	writer.write((int32)_boundingBox.top);
+	writer.write((int32)_boundingBox.right);
+	writer.write((int32)_boundingBox.bottom);
 
 	return Result;
 }
