@@ -27,8 +27,8 @@
 
 /* Original name: DROPDOWN		A customized version of Oopmenu (qv). */
 
-#ifndef AVALANCHE_DROPDOWN2_H
-#define AVALANCHE_DROPDOWN2_H
+#ifndef AVALANCHE_MENU_H
+#define AVALANCHE_MENU_H
 
 #include "common/scummsys.h"
 #include "common/str.h"
@@ -179,4 +179,4 @@ private:
 
 } // End of namespace Avalanche.
 
-#endif // AVALANCHE_DROPDOWN2_H
+#endif // AVALANCHE_MENU_H
