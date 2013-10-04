@@ -128,15 +128,18 @@ void Dialogs::scrollModeNormal() {
 	_vm->_graphics->showScroll();
 
 	Common::Event event;
-	while (!_vm->shouldQuit()) {
+	bool escape = false;
+	while (!_vm->shouldQuit() && !escape) {
 		_vm->_graphics->refreshScreen();
-
-		_vm->getEvent(event);
-		if ((event.type == Common::EVENT_LBUTTONUP) ||
-			((event.type == Common::EVENT_KEYDOWN) && ((event.kbd.keycode == Common::KEYCODE_ESCAPE) ||
-			(event.kbd.keycode == Common::KEYCODE_RETURN) || (event.kbd.keycode == Common::KEYCODE_HASH) ||
-			(event.kbd.keycode == Common::KEYCODE_PLUS))))
-			break;
+		while (_vm->getEvent(event)) {
+			if ((event.type == Common::EVENT_LBUTTONUP) ||
+				((event.type == Common::EVENT_KEYDOWN) && ((event.kbd.keycode == Common::KEYCODE_ESCAPE) ||
+				(event.kbd.keycode == Common::KEYCODE_RETURN) || (event.kbd.keycode == Common::KEYCODE_HASH) ||
+				(event.kbd.keycode == Common::KEYCODE_PLUS)))) {
+				escape = true;
+				break;
+			}
+		}
 	}
 
 	_vm->_graphics->restoreScreen();
