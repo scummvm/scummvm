@@ -1567,7 +1567,7 @@ Common::String AvalancheEngine::getItem(byte which) {
 		"an onion"
 	};
 
-	Common::String get_better_result;
+	Common::String result;
 	if (which > 150)
 		which -= 149;
 
@@ -1577,28 +1577,28 @@ Common::String AvalancheEngine::getItem(byte which) {
 		case 0:
 		case 1:
 		case 4:
-			get_better_result = items[which - 1];
+			result = items[which - 1];
 			break;
 		case 3:
-			get_better_result = "some vinegar";
+			result = "some vinegar";
 			break;
 		}
 		break;
 	case kObjectOnion:
 		if (_rottenOnion)
-			get_better_result = "a rotten onion";
+			result = "a rotten onion";
 		else if (_onionInVinegar)
-			get_better_result = "a pickled onion (in the vinegar)";
+			result = "a pickled onion (in the vinegar)";
 		else
-			get_better_result = items[which - 1];
+			result = items[which - 1];
 		break;
 	default:
 		if ((which < kObjectNum) && (which > 0))
-			get_better_result = items[which - 1];
+			result = items[which - 1];
 		else
-			get_better_result = "";
+			result = "";
 	}
-	return get_better_result;
+	return result;
 }
 
 Common::String AvalancheEngine::f5Does() {
