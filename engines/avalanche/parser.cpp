@@ -527,7 +527,7 @@ void Parser::replace(Common::String oldChars, byte newChar) {
 }
 
 Common::String Parser::rank() {
-	static const RankType kRanks[9] = {
+	static const RankType ranks[9] = {
 		{0, "Beginner"},     {10, "Novice"},
 		{20, "Improving"},   {35, "Not bad"},
 		{50, "Passable"},    {65, "Good"},
@@ -536,8 +536,8 @@ Common::String Parser::rank() {
 	};
 
 	for (int i = 0; i < 8; i++) {
-		if ((_vm->_dnascore >= kRanks[i]._score) && (_vm->_dnascore < kRanks[i + 1]._score)) {
-			return kRanks[i]._title;
+		if ((_vm->_dnascore >= ranks[i]._score) && (_vm->_dnascore < ranks[i + 1]._score)) {
+			return ranks[i]._title;
 		}
 	}
 	return "";

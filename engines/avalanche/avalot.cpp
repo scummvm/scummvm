@@ -1545,22 +1545,22 @@ bool AvalancheEngine::decreaseMoney(uint16 amount) {
 }
 
 Common::String AvalancheEngine::getName(People whose) {
-	static const Common::String kLads[17] = {
+	static const Common::String lads[17] = {
 		"Avalot", "Spludwick", "Crapulus", "Dr. Duck", "Malagauche", "Friar Tuck",
 		"Robin Hood", "Cwytalot", "du Lustie", "the Duke of Cardiff", "Dogfood",
 		"A trader", "Ibythneth", "Ayles", "Port", "Spurge", "Jacques"
 	};
 
-	static const Common::String kLasses[4] = {"Arkata", "Geida", "\0xB1", "the Wise Woman"};
+	static const Common::String lasses[4] = {"Arkata", "Geida", "\0xB1", "the Wise Woman"};
 
 	if (whose < kPeopleArkata)
-		return kLads[whose - kPeopleAvalot];
+		return lads[whose - kPeopleAvalot];
 	else
-		return kLasses[whose - kPeopleArkata];
+		return lasses[whose - kPeopleArkata];
 }
 
 Common::String AvalancheEngine::getItem(byte which) {
-	static const Common::String kItems[kObjectNum] = {
+	static const Common::String items[kObjectNum] = {
 		"some wine", "your money-bag", "your bodkin", "a potion", "a chastity belt",
 		"a crossbow bolt", "a crossbow", "a lute", "a pilgrim's badge", "a mushroom",
 		"a key", "a bell", "a scroll", "a pen", "some ink", "your clothes", "a habit",
@@ -1577,7 +1577,7 @@ Common::String AvalancheEngine::getItem(byte which) {
 		case 0:
 		case 1:
 		case 4:
-			get_better_result = kItems[which - 1];
+			get_better_result = items[which - 1];
 			break;
 		case 3:
 			get_better_result = "some vinegar";
@@ -1590,11 +1590,11 @@ Common::String AvalancheEngine::getItem(byte which) {
 		else if (_onionInVinegar)
 			get_better_result = "a pickled onion (in the vinegar)";
 		else
-			get_better_result = kItems[which - 1];
+			get_better_result = items[which - 1];
 		break;
 	default:
 		if ((which < kObjectNum) && (which > 0))
-			get_better_result = kItems[which - 1];
+			get_better_result = items[which - 1];
 		else
 			get_better_result = "";
 	}

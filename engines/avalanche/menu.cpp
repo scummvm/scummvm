@@ -771,7 +771,7 @@ void Menu::update() { // TODO: Optimize it ASAP!!! It really needs it...
 }
 
 char Menu::getThingChar(byte which) {
-	static const char kThingsChar[] = "WMBParCLguKeSnIohn"; // V=Vinegar
+	static const char thingsChar[] = "WMBParCLguKeSnIohn"; // V=Vinegar
 
 	char result;
 	switch (which) {
@@ -779,26 +779,26 @@ char Menu::getThingChar(byte which) {
 		if (_vm->_wineState == 3)
 			result = 'V'; // Vinegar
 		else
-			result = kThingsChar[which - 1];
+			result = thingsChar[which - 1];
 		break;
 	default:
-		result = kThingsChar[which - 1];
+		result = thingsChar[which - 1];
 	}
 	return result;
 }
 
 byte Menu::getNameChar(People whose) {
-	static const char kLadChar[] = "ASCDMTRwLfgeIyPu";
-	static const char kLassChar[] = "kG\0xB1o";
+	static const char ladChar[] = "ASCDMTRwLfgeIyPu";
+	static const char lassChar[] = "kG\0xB1o";
 
 	if (whose < kPeopleArkata)
-		return kLadChar[whose - kPeopleAvalot];
+		return ladChar[whose - kPeopleAvalot];
 	else
-		return kLassChar[whose - kPeopleArkata];
+		return lassChar[whose - kPeopleArkata];
 }
 
 Common::String Menu::getThing(byte which) {
-	static const Common::String kThings[kObjectNum] = {
+	static const Common::String things[kObjectNum] = {
 		"Wine", "Money-bag", "Bodkin", "Potion", "Chastity belt",
 		"Crossbow bolt", "Crossbow", "Lute", "Pilgrim's badge", "Mushroom", "Key",
 		"Bell", "Scroll", "Pen", "Ink", "Clothes", "Habit", "Onion"
@@ -810,7 +810,7 @@ Common::String Menu::getThing(byte which) {
 		switch (_vm->_wineState) {
 	case 1:
 	case 4:
-		result = kThings[which - 1];
+		result = things[which - 1];
 		break;
 	case 3:
 		result = "Vinegar";
@@ -821,10 +821,10 @@ Common::String Menu::getThing(byte which) {
 		if (_vm->_rottenOnion)
 			result = "rotten onion";
 		else
-			result = kThings[which - 1];
+			result = things[which - 1];
 		break;
 	default:
-		result = kThings[which - 1];
+		result = things[which - 1];
 	}
 	return result;
 }

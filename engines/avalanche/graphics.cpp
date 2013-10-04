@@ -166,12 +166,12 @@ void GraphicManager::loadMouse(byte which) {
 }
 
 void GraphicManager::drawThinkPic(Common::String filename, int id) {
-	static const int16 kPicSize = 966;
+	static const int16 picSize = 966;
 	Common::File file;
 	if (!file.open(filename))
 		error("drawThinkPic(): File not found: %s", filename.c_str());
 
-	file.seek(id * kPicSize + 65);
+	file.seek(id * picSize + 65);
 	Graphics::Surface picture = loadPictureGraphic(file);
 	drawPicture(_surface, picture, 205, 170);
 
