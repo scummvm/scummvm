@@ -6963,7 +6963,7 @@ void Scene825::signal() {
 		R2_GLOBALS._player._canWalk = false;
 		break;
 	case 825:
-		_object5.remove();
+		_vertLine5.remove();
 		_sceneText._color1 = 92;
 		_sceneText._color2 = 0;
 		_sceneText._width = 200;
@@ -6981,7 +6981,7 @@ void Scene825::signal() {
 		R2_GLOBALS._player._canWalk = false;
 		break;
 	case 827:
-		_object5.remove();
+		_vertLine5.remove();
 		R2_INVENTORY.setObjectScene(R2_OPTO_DISK, 825);
 		_sceneText.setPosition(Common::Point(108, 75));
 		_sceneText.setup(FOREIGN_OBJECT_EXTRACTED);
@@ -7009,19 +7009,19 @@ void Scene825::process(Event &event) {
 }
 
 void Scene825::dispatch() {
-	if (R2_GLOBALS._sceneObjects->contains(&_object4) &&
-			((_object4._frame == 1) || (_object4._frame == 3)) &&
-			(_object4._frame != _frame1)) {
+	if (R2_GLOBALS._sceneObjects->contains(&_vertLine4) &&
+			((_vertLine4._frame == 1) || (_vertLine4._frame == 3)) &&
+			(_vertLine4._frame != _frame1)) {
 		_sound2.play(25);
 	}
 
-	if (R2_GLOBALS._sceneObjects->contains(&_object1) &&
-			(_object1._frame == 3) && (_object1._frame != _frame2)) {
+	if (R2_GLOBALS._sceneObjects->contains(&_vertLine1) &&
+			(_vertLine1._frame == 3) && (_vertLine1._frame != _frame2)) {
 		_sound3.play(26);
 	}
 
-	_frame1 = _object4._frame;
-	_frame2 = _object1._frame;
+	_frame1 = _vertLine4._frame;
+	_frame2 = _vertLine1._frame;
 
 	Scene::dispatch();
 }
@@ -7038,9 +7038,9 @@ void Scene825::doButtonPress(int buttonId) {
 		switch (buttonId) {
 		case 2:
 			R2_GLOBALS._player.disableControl();
-			_object5.postInit();
+			_vertLine5.postInit();
 			_sceneMode = 825;
-			setAction(&_sequenceManager1, this, 825, &R2_GLOBALS._player, &_object5, NULL);
+			setAction(&_sequenceManager1, this, 825, &R2_GLOBALS._player, &_vertLine5, NULL);
 			break;
 		case 3:
 			R2_GLOBALS._player.disableControl();
@@ -7062,9 +7062,9 @@ void Scene825::doButtonPress(int buttonId) {
 				} else {
 					_button6._buttonId = 5;
 					_sceneMode = 827;
-					_object5.postInit();
+					_vertLine5.postInit();
 
-					setAction(&_sequenceManager1, this, 827, &_object5, NULL);
+					setAction(&_sequenceManager1, this, 827, &_vertLine5, NULL);
 				}
 			} else {
 				R2_GLOBALS.setFlag(2);
@@ -7088,44 +7088,44 @@ void Scene825::doButtonPress(int buttonId) {
 			_sound4.play(27);
 			_button6._buttonId = 5;
 
-			_object1.postInit();
-			_object1.setup(826, 7, 1);
-			_object1.setPosition(Common::Point(112, 67));
-			_object1._numFrames = 1;
-			_object1.animate(ANIM_MODE_2);
+			_vertLine1.postInit();
+			_vertLine1.setup(826, 7, 1);
+			_vertLine1.setPosition(Common::Point(112, 67));
+			_vertLine1._numFrames = 1;
+			_vertLine1.animate(ANIM_MODE_2);
 
-			_object2.postInit();
-			_object2.setup(826, 5, 1);
-			_object2.setPosition(Common::Point(158, 67));
-			_object2._numFrames = 5;
-			_object2.animate(ANIM_MODE_2);
+			_vertLine2.postInit();
+			_vertLine2.setup(826, 5, 1);
+			_vertLine2.setPosition(Common::Point(158, 67));
+			_vertLine2._numFrames = 5;
+			_vertLine2.animate(ANIM_MODE_2);
 
-			_object3.postInit();
-			_object3.setup(826, 6, 1);
-			_object3.setPosition(Common::Point(206, 67));
-			_object3._numFrames = 1;
-			_object3.animate(ANIM_MODE_2);
+			_vertLine3.postInit();
+			_vertLine3.setup(826, 6, 1);
+			_vertLine3.setPosition(Common::Point(206, 67));
+			_vertLine3._numFrames = 1;
+			_vertLine3.animate(ANIM_MODE_2);
 
-			_object4.postInit();
-			_object4.setup(826, 8, 1);
-			_object4.setPosition(Common::Point(158, 84));
-			_object4._numFrames = 1;
-			_object4.animate(ANIM_MODE_2);
+			_vertLine4.postInit();
+			_vertLine4.setup(826, 8, 1);
+			_vertLine4.setPosition(Common::Point(158, 84));
+			_vertLine4._numFrames = 1;
+			_vertLine4.animate(ANIM_MODE_2);
 
-			_object5.postInit();
-			_object5.setup(826, 4, 1);
-			_object5.setPosition(Common::Point(161, 110));
+			_vertLine5.postInit();
+			_vertLine5.setup(826, 4, 1);
+			_vertLine5.setPosition(Common::Point(161, 110));
 			break;
 		case 5:
 			R2_GLOBALS._player.disableControl();
 			if (_menuId == 4) {
 				_menuId = 0;
 
-				_object1.remove();
-				_object2.remove();
-				_object3.remove();
-				_object4.remove();
-				_object5.remove();
+				_vertLine1.remove();
+				_vertLine2.remove();
+				_vertLine3.remove();
+				_vertLine4.remove();
+				_vertLine5.remove();
 
 				_sound2.stop();
 				_sound3.stop();
@@ -7219,9 +7219,10 @@ bool Scene850::Clamp::startAction(CursorType action, Event &event) {
 		return SceneActor::startAction(action, event);
 	else {
 		R2_GLOBALS._player.disableControl();
-		scene->_object1.postInit();
+		scene->_spark.postInit();
 		scene->_sceneMode = 850;
-		scene->setAction(&scene->_sequenceManager1, scene, 850, &R2_GLOBALS._player, this, &scene->_object1, NULL);
+		scene->setAction(&scene->_sequenceManager1, scene, 850, &R2_GLOBALS._player, this, 
+			&scene->_spark, NULL);
 		return true;
 	}
 }
@@ -7234,7 +7235,8 @@ bool Scene850::Panel::startAction(CursorType action, Event &event) {
 	else {
 		R2_GLOBALS._player.disableControl();
 		scene->_sceneMode = 852;
-		scene->setAction(&scene->_sequenceManager1, scene, 852, &R2_GLOBALS._player, this, &scene->_object1, NULL);
+		scene->setAction(&scene->_sequenceManager1, scene, 852, &R2_GLOBALS._player, 
+			this, &scene->_spark, NULL);
 		return true;
 	}
 }
@@ -7320,7 +7322,7 @@ void Scene850::signal() {
 	case 850:
 		R2_INVENTORY.setObjectScene(R2_CLAMP, 1);
 		_clamp.remove();
-		_object1.remove();
+		_spark.remove();
 		R2_GLOBALS._player.enableControl();
 		break;
 	case 851:

@@ -823,7 +823,7 @@ class Scene825: public SceneExt {
 	};
 public:
 	NamedHotspot _background, _item2;
-	SceneActor _object1, _object2, _object3, _object4, _object5;
+	SceneActor _vertLine1, _vertLine2, _vertLine3, _vertLine4, _vertLine5;
 	Button _button1, _button2, _button3, _button4, _button5, _button6;
 	ASoundExt _sound1, _sound2, _sound3, _sound4;
 	SequenceManager _sequenceManager1;
@@ -870,7 +870,7 @@ public:
 	NamedHotspot _background, _eastDoor, _compartment, _sickBayIndicator;
 	NamedHotspot _liftControls;
 	Indicator _indicator;
-	SceneActor _object1, _fibre;
+	SceneActor _spark, _fibre;
 	LiftDoor _liftDoor;
 	SickBayDoor _sickBayDoor;
 	Clamp _clamp;
