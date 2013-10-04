@@ -678,10 +678,8 @@ void GraphicManager::drawChar(byte ander, int x, int y, Color color) {
 void GraphicManager::refreshScreen() {
 	// These cycles are for doubling the screen height.
 	for (uint16 y = 0; y < _screen.h / 2; y++) {
-		for (uint16 x = 0; x < _screen.w; x++) {
-			for (int j = 0; j < 2; j++)
-				*(byte *)_screen.getBasePtr(x, y * 2 + j) = *(byte *)_surface.getBasePtr(x, y);
-		}
+		memcpy(_screen.getBasePtr(0, y * 2), _surface.getBasePtr(0, y), _screen.w);
+		memcpy(_screen.getBasePtr(0, y * 2 + 1), _surface.getBasePtr(0, y), _screen.w);
 	}
 	// Now we copy the stretched picture to the screen.
 	g_system->copyRectToScreen(_screen.getPixels(), _screen.pitch, 0, 0, kScreenWidth, kScreenHeight * 2);
