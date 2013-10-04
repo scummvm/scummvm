@@ -31,7 +31,6 @@
 #include "common/savefile.h"
 
 #include "engines/advancedDetector.h"
-
 #include "graphics/thumbnail.h"
 
 namespace Avalanche {

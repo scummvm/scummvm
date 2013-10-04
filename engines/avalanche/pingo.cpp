@@ -28,13 +28,7 @@
 /* PINGO	Full-screen sub-parts of the game. */
 
 #include "avalanche/avalanche.h"
-
 #include "avalanche/pingo.h"
-#include "avalanche/animation.h"
-#include "avalanche/dialogs.h"
-
-#include "common/textconsole.h"
-#include "common/file.h"
 
 namespace Avalanche {
 

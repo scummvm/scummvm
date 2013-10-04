@@ -29,11 +29,7 @@
 
 #include "avalanche/avalanche.h"
 #include "avalanche/dialogs.h"
-#include "avalanche/animation.h"
-#include "avalanche/timer.h"
 
-#include "common/textconsole.h"
-#include "common/file.h"
 #include "common/random.h"
 
 namespace Avalanche {

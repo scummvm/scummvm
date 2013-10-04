@@ -29,12 +29,6 @@
 
 #include "avalanche/avalanche.h"
 #include "avalanche/timer.h"
-#include "avalanche/animation.h"
-#include "avalanche/dialogs.h"
-#include "avalanche/sequence.h"
-#include "avalanche/pingo.h"
-
-#include "common/textconsole.h"
 
 namespace Avalanche {
 

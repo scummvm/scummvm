@@ -28,11 +28,7 @@
 /* AVALOT		The kernel of the program. */
 
 #include "avalanche/avalanche.h"
-
-#include "common/file.h"
 #include "common/random.h"
-#include "common/str.h"
-#include "common/textconsole.h"
 #include "common/config-manager.h"
 
 namespace Avalanche {

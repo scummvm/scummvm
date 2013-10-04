@@ -29,9 +29,6 @@
 
 #include "avalanche/avalanche.h"
 #include "avalanche/menu.h"
-#include "avalanche/animation.h"
-
-#include "common/textconsole.h"
 
 namespace Avalanche {
 
