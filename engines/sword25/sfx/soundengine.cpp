@@ -339,7 +339,10 @@ bool SoundEngine::persist(OutputPersistenceBlock &writer) {
 			_handles[i].type = kFreeHandle;
 
 		writer.writeString(_handles[i].fileName);
-		writer.write(_handles[i].sndType);
+		if (_handles[i].type == kFreeHandle)
+			writer.write((int32)-1);
+		else
+			writer.write(_handles[i].sndType);
 		writer.write(_handles[i].volume);
 		writer.write(_handles[i].pan);
 		writer.write(_handles[i].loop);
@@ -381,7 +384,7 @@ bool SoundEngine::unpersist(InputPersistenceBlock &reader) {
 		reader.read(layer);
 
 		if (reader.isGood()) {
-			if (sndType != kFreeHandle)
+			if (sndType != -1)
 				playSoundEx(fileName, (SOUND_TYPES)sndType, volume, pan, loop, loopStart, loopEnd, layer, i);
 		} else
 			return false;
