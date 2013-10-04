@@ -44,6 +44,10 @@ VisualSpeaker::VisualSpeaker(): Speaker() {
 }
 
 void VisualSpeaker::remove() {
+	_numFrames = 0;
+	_delayAmount = 0;
+	R2_GLOBALS._playStream.stop();
+
 	if (_object2) {
 		if (_fieldF8) {
 			_fieldF8 = 0;
@@ -1176,7 +1180,7 @@ void SpeakerQuinn300::proc15() {
 	int v = _speakerMode;
 
 	if (!_object2) {
-		if (R2_GLOBALS._player._characterIndex == R2_MIRANDA) {
+		if (R2_GLOBALS._player._characterIndex == R2_QUINN) {
 			_object2 = &R2_GLOBALS._player;
 		} else {
 			assert(R2_GLOBALS._sceneManager._sceneNumber == 300);
@@ -1187,9 +1191,6 @@ void SpeakerQuinn300::proc15() {
 		_object2->hide();
 		_object1.postInit();
 		_object1.setPosition(_object2->_position);
-
-		if (_object2->_mover)
-			_object2->addMover(NULL);
 	}
 
 	if (v == 0) {
@@ -1205,7 +1206,7 @@ void SpeakerQuinn300::proc15() {
 		((SceneItem *)_action)->_sceneRegionId = 0;
 
 		switch (_object2->_visage) {
-		case 10:
+		case 10: 
 			_object1.setup((v - 1) / 4 + 4010, ((v - ((v - 1) / 4 * 4) - 1) % 8) * 2 + 1, 1);
 			break;
 		case 302:
@@ -1213,6 +1214,8 @@ void SpeakerQuinn300::proc15() {
 			break;
 		case 308:
 			_object1.setup(308, 5, 1);
+			break;
+		default:
 			break;
 		}
 
