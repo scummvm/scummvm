@@ -43,11 +43,8 @@
 
 namespace Avalanche {
 
-AvalancheEngine *AvalancheEngine::s_Engine = 0;
-
 AvalancheEngine::AvalancheEngine(OSystem *syst, const AvalancheGameDescription *gd) : Engine(syst), _gameDescription(gd), _fxHidden(false), _interrogation(0) {
 	_system = syst;
-	s_Engine = this;
 	_console = new AvalancheConsole(this);
 
 	_rnd = new Common::RandomSource("avalanche");
