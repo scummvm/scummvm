@@ -103,16 +103,12 @@ void AnimationType::init(byte spritenum, bool doCheck, Animation *anim) {
 	}
 	_animCount++;
 
-	CursorMan.showMouse(true);
 	_x = 0;
 	_y = 0;
 	_quick = true;
 	_visible = false;
 	_speedX = 3;
 	_speedY = 1;
-	if (spritenum == 1)
-		_anim->updateSpeed(); // Just for the lights.
-
 	_homing = false;
 	_moveX = 0;
 	_moveY = 0;
