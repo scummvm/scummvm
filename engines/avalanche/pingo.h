@@ -30,7 +30,6 @@
 #ifndef AVALANCHE_PINGO_H
 #define AVALANCHE_PINGO_H
 
-#include "common/scummsys.h"
 #include "common/str.h"
 
 namespace Avalanche {

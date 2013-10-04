@@ -32,13 +32,6 @@
 
 #include "avalanche/animation.h"
 
-#include "common/events.h"
-#include "common/system.h"
-#include "common/str.h"
-#include "common/scummsys.h"
-#include "common/file.h"
-#include "graphics/surface.h"
-
 namespace Avalanche {
 class AvalancheEngine;
 

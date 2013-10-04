@@ -30,11 +30,7 @@
 #ifndef AVALANCHE_BACKGROUND_H
 #define AVALANCHE_BACKGROUND_H
 
-#include "common/scummsys.h"
-#include "common/file.h"
 #include "common/str.h"
-
-#include "graphics/surface.h"
 
 namespace Avalanche {
 class AvalancheEngine;

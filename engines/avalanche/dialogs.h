@@ -30,8 +30,6 @@
 #ifndef AVALANCHE_DIALOGS_H
 #define AVALANCHE_DIALOGS_H
 
-#include "common/system.h"
-
 namespace Avalanche {
 class AvalancheEngine;
 

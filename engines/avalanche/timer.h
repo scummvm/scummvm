@@ -30,8 +30,6 @@
 #ifndef AVALANCHE_TIMER_H
 #define AVALANCHE_TIMER_H
 
-#include "common/scummsys.h"
-
 namespace Avalanche {
 class AvalancheEngine;
 

@@ -30,11 +30,6 @@
 #ifndef AVALANCHE_ANIMATION_H
 #define AVALANCHE_ANIMATION_H
 
-#include "avalanche/graphics.h"
-
-#include "common/scummsys.h"
-#include "common/str.h"
-
 namespace Avalanche {
 class AvalancheEngine;
 class Animation;
