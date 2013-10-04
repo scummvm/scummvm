@@ -30,7 +30,6 @@
 #ifndef AVALANCHE_CLOSING_H
 #define AVALANCHE_CLOSING_H
 
-#include "common/scummsys.h"
 #include "common/str.h"
 
 namespace Avalanche {

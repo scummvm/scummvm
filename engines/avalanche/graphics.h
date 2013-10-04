@@ -28,11 +28,11 @@
 #ifndef AVALANCHE_GRAPHICS_H
 #define AVALANCHE_GRAPHICS_H
 
+#include "avalanche/enums.h"
+
 #include "common/file.h"
 #include "common/rect.h"
-
 #include "graphics/surface.h"
-#include "avalanche/enums.h"
 
 namespace Avalanche {
 class AvalancheEngine;

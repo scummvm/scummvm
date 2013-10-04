@@ -30,7 +30,6 @@
 #ifndef AVALANCHE_MENU_H
 #define AVALANCHE_MENU_H
 
-#include "common/scummsys.h"
 #include "common/str.h"
 
 namespace Avalanche {

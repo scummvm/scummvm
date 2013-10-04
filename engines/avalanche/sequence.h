@@ -30,8 +30,6 @@
 #ifndef AVALANCHE_SEQUENCE_H
 #define AVALANCHE_SEQUENCE_H
 
-#include "common/scummsys.h"
-
 namespace Avalanche {
 class AvalancheEngine;
 

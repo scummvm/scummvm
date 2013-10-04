@@ -31,7 +31,6 @@
 #include "avalanche/enums.h"
 
 #include "common/events.h"
-#include "common/scummsys.h"
 #include "common/str.h"
 #include "common/serializer.h"
 
