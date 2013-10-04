@@ -290,8 +290,7 @@ bool AvalancheEngine::saveGame(const int16 slot, const Common::String &desc) {
 		return false;
 	}
 
-	const char *signature = "AVAL";
-	f->write(signature, 4);
+	f->writeUint32LE(MKTAG('A', 'V', 'A', 'L'));
 
 	// Write version. We can't restore from obsolete versions.
 	f->writeByte(kSavegameVersion);
@@ -334,11 +333,8 @@ bool AvalancheEngine::loadGame(const int16 slot) {
 	if (!f)
 		return false;
 
-	// Check for our signature.
-	Common::String signature;
-	for (int i = 0; i < 4; i++)
-		signature += f->readByte();
-	if (signature != "AVAL")
+	uint32 signature = f->readUint32LE();
+	if (signature != MKTAG('A', 'V', 'A', 'L'))
 		return false;
 
 	// Check version. We can't restore from obsolete versions.
