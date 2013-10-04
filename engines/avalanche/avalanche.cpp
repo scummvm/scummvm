@@ -314,9 +314,7 @@ bool AvalancheEngine::saveGame(const int16 slot, const Common::String &desc) {
 }
 
 Common::String AvalancheEngine::getSaveFileName(const int slot) {
-	Common::String upperName = _targetName;
-	upperName.toUppercase();
-	return upperName+ Common::String::format("-%02d.SAV", slot);
+	return Common::String::format("%s.%03d", _targetName, slot);
 }
 
 bool AvalancheEngine::canLoadGameStateCurrently() { // TODO: Refine these!!!
