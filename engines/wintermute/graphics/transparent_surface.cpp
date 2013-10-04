@@ -715,20 +715,28 @@ TransparentSurface *TransparentSurface::scale(uint16 newWidth, uint16 newHeight)
 
 	target->create((uint16)dstW, (uint16)dstH, this->format);
 
-
-	float projX;
-	float projY;
-	for (int y = 0; y < dstH; y++) {
-		for (int x = 0; x < dstW; x++) {
-			projX = x / (float)dstW * srcW;
-			projY = y / (float)dstH * srcH;
 #if ENABLE_BILINEAR
+	for (int y = 0; y < dstH; y++) {
+		float projY = y / (float)dstH * srcH;
+		for (int x = 0; x < dstW; x++) {
+			float projX = x / (float)dstW * srcW;
 			copyPixelBilinear(projX, projY, x, y, srcRect, dstRect, this, target);
-#else
-			copyPixelNearestNeighbor(projX, projY, x, y, srcRect, dstRect, this, target);
-#endif
 		}
 	}
+#else
+	int *scaleCacheX = new int[dstW];
+	for (int x = 0; x < dstW; x++)
+		scaleCacheX[x] = (x * srcW) / dstW;
+
+	for (int y = 0; y < dstH; y++) {
+		uint32 *destP = (uint32 *)target->getBasePtr(0, y);
+		const uint32 *srcP = (const uint32 *)getBasePtr(0, (y * srcH) / dstH);
+		for (int x = 0; x < dstW; x++)
+			*destP++ = srcP[scaleCacheX[x]];
+	}
+	delete[] scaleCacheX;
+#endif
+
 	return target;
 
 }
