@@ -27,8 +27,8 @@
 
 /* CLOSING		The closing screen and error handler. */
 
-#ifndef AVALANCHE_CLOSING2_H
-#define AVALANCHE_CLOSING2_H
+#ifndef AVALANCHE_CLOSING_H
+#define AVALANCHE_CLOSING_H
 
 #include "common/scummsys.h"
 #include "common/str.h"
@@ -60,4 +60,4 @@ private:
 
 } // End of namespace Avalanche.
 
-#endif // AVALANCHE_CLOSING2_H
+#endif // AVALANCHE_CLOSING_H
