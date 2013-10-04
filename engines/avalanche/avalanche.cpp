@@ -27,18 +27,8 @@
 
 #include "avalanche/avalanche.h"
 
-#include "common/system.h"
 #include "common/random.h"
-#include "common/error.h"
-#include "common/events.h"
-#include "common/debug-channels.h"
-#include "common/config-manager.h"
-#include "common/textconsole.h"
 #include "common/savefile.h"
-
-#include "engines/util.h"
-
-#include "gui/saveload.h"
 #include "graphics/thumbnail.h"
 
 namespace Avalanche {

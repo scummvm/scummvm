@@ -27,17 +27,6 @@
 
 #include "avalanche/avalanche.h"
 #include "avalanche/parser.h"
-#include "avalanche/dialogs.h"
-#include "avalanche/timer.h"
-#include "avalanche/animation.h"
-#include "avalanche/background.h"
-#include "avalanche/pingo.h"
-#include "avalanche/sequence.h"
-
-#include "common/textconsole.h"
-
-#include <cstring>
-#include <cmath>
 
 namespace Avalanche {
 

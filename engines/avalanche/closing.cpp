@@ -30,7 +30,6 @@
 #include "avalanche/avalanche.h"
 #include "avalanche/closing.h"
 
-#include "common/textconsole.h"
 #include "common/random.h"
 
 namespace Avalanche {

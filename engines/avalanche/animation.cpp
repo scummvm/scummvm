@@ -29,14 +29,6 @@
 
 #include "avalanche/avalanche.h"
 #include "avalanche/animation.h"
-#include "avalanche/dialogs.h"
-#include "avalanche/background.h"
-#include "avalanche/sequence.h"
-#include "avalanche/timer.h"
-
-#include "common/scummsys.h"
-#include "common/textconsole.h"
-#include "common/file.h"
 
 namespace Avalanche {
 
