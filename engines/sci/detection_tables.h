@@ -555,6 +555,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 	 	Common::ES_ESP, Common::kPlatformDOS, 0, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
+	// Eco Quest 2 - German DOS Floppy (supplied by frankenbuam in bug report #3615072)
+	{"ecoquest2", "Floppy", {
+		{"resource.map", 0, "d8b20073e64f41f6437f73143a186753", 5643},
+		{"resource.000", 0, "cc1d17e5637528dbe4a812699e1cbfc6", 4210876},
+		{"resource.msg", 0, "2f231d31af172ea72ed533fd112f971b", 133458},
+		AD_LISTEND},
+		Common::DE_DEU, Common::kPlatformDOS, 0, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
 	// Freddy Pharkas - English DOS demo (from FRG)
 	// SCI interpreter version 1.001.069
 	{"freddypharkas", "Demo", {
