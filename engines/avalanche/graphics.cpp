@@ -684,6 +684,7 @@ void GraphicManager::refreshScreen() {
 }
 
 void GraphicManager::loadBackground(Common::File &file) {
+	_background.free();
 	_background = loadPictureRaw(file, kBackgroundWidth, kBackgroundHeight);
 }
 
