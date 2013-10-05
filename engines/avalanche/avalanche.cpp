@@ -304,7 +304,7 @@ bool AvalancheEngine::saveGame(const int16 slot, const Common::String &desc) {
 }
 
 Common::String AvalancheEngine::getSaveFileName(const int slot) {
-	return Common::String::format("%s.%03d", _targetName, slot);
+	return Common::String::format("%s.%03d", _targetName.c_str(), slot);
 }
 
 bool AvalancheEngine::canLoadGameStateCurrently() { // TODO: Refine these!!!
