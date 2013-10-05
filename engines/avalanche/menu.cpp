@@ -795,7 +795,7 @@ byte Menu::getNameChar(People whose) {
 }
 
 Common::String Menu::getThing(byte which) {
-	static const Common::String things[kObjectNum] = {
+	static const char things[kObjectNum][20] = {
 		"Wine", "Money-bag", "Bodkin", "Potion", "Chastity belt",
 		"Crossbow bolt", "Crossbow", "Lute", "Pilgrim's badge", "Mushroom", "Key",
 		"Bell", "Scroll", "Pen", "Ink", "Clothes", "Habit", "Onion"
@@ -807,7 +807,7 @@ Common::String Menu::getThing(byte which) {
 		switch (_vm->_wineState) {
 	case 1:
 	case 4:
-		result = things[which - 1];
+		result = Common::String(things[which - 1]);
 		break;
 	case 3:
 		result = "Vinegar";
@@ -816,12 +816,12 @@ Common::String Menu::getThing(byte which) {
 		break;
 	case kObjectOnion:
 		if (_vm->_rottenOnion)
-			result = "rotten onion";
+			result = Common::String("rotten onion");
 		else
-			result = things[which - 1];
+			result = Common::String(things[which - 1]);
 		break;
 	default:
-		result = things[which - 1];
+		result = Common::String(things[which - 1]);
 	}
 	return result;
 }

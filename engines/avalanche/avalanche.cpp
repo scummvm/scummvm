@@ -387,11 +387,11 @@ bool AvalancheEngine::loadGame(const int16 slot) {
 }
 
 Common::String AvalancheEngine::expandDate(int d, int m, int y) {
-	static const Common::String months[12] = {
+	static const char months[12][10] = {
 		"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"
 	};
 
-	Common::String month = months[m];
+	Common::String month = Common::String(months[m]);
 	Common::String day = intToStr(d);
 
 	if (((1 <= d) && (d <= 9)) || ((21 <= d) && (d <= 31)))
