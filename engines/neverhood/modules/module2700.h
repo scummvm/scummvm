@@ -26,6 +26,7 @@
 #include "neverhood/neverhood.h"
 #include "neverhood/module.h"
 #include "neverhood/scene.h"
+#include "neverhood/modules/module1600_sprites.h"	// for Tracks
 
 namespace Neverhood {
 
@@ -49,7 +50,6 @@ protected:
 };
 
 class AsCommonCar;
-class Tracks;
 
 class Scene2701 : public Scene {
 public:
