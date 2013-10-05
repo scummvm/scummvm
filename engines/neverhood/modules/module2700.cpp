@@ -21,7 +21,6 @@
  */
 
 #include "neverhood/gamemodule.h"
-#include "neverhood/modules/module1000.h"
 #include "neverhood/modules/module1600_sprites.h"
 #include "neverhood/modules/module2700.h"
 #include "neverhood/modules/module2700_sprites.h"

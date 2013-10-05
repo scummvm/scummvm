@@ -22,7 +22,6 @@
 
 #include "neverhood/modules/module1400_sprites.h"
 #include "neverhood/modules/module1400.h"
-#include "neverhood/gamemodule.h"
 
 namespace Neverhood {
 

@@ -20,7 +20,6 @@
  *
  */
 
-#include "neverhood/gamemodule.h"
 #include "neverhood/modules/module1900.h"
 #include "neverhood/modules/module1900_sprites.h"
 

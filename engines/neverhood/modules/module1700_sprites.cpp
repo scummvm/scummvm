@@ -20,7 +20,6 @@
  *
  */
 
-#include "neverhood/gamemodule.h"
 #include "neverhood/modules/module1700_sprites.h"
 
 namespace Neverhood {

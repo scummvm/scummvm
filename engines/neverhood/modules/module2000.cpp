@@ -21,8 +21,6 @@
  */
 
 #include "neverhood/modules/module2000.h"
-#include "neverhood/gamemodule.h"
-#include "neverhood/navigationscene.h"
 
 namespace Neverhood {
 

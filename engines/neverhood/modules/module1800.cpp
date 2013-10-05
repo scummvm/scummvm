@@ -20,9 +20,10 @@
  *
  */
 
-#include "neverhood/modules/module1800.h"
-#include "neverhood/navigationscene.h"
+#include "neverhood/diskplayerscene.h"
 #include "neverhood/menumodule.h"
+#include "neverhood/navigationscene.h"
+#include "neverhood/modules/module1800.h"
 
 namespace Neverhood {
 

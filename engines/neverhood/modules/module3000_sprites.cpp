@@ -22,8 +22,6 @@
 
 #include "neverhood/modules/module3000.h"
 #include "neverhood/modules/module3000_sprites.h"
-#include "neverhood/gamemodule.h"
-#include "neverhood/navigationscene.h"
 
 namespace Neverhood {
 

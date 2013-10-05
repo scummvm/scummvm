@@ -20,17 +20,15 @@
  *
  */
 
+#include "neverhood/diskplayerscene.h"
+#include "neverhood/gamemodule.h"
+#include "neverhood/menumodule.h"
 #include "neverhood/modules/module1000_sprites.h"
 #include "neverhood/modules/module1200_sprites.h"
 #include "neverhood/modules/module1300.h"
 #include "neverhood/modules/module1300_sprites.h"
 #include "neverhood/modules/module1400_sprites.h"
 #include "neverhood/modules/module2200_sprites.h"
-#include "neverhood/gamemodule.h"
-#include "neverhood/diskplayerscene.h"
-#include "neverhood/menumodule.h"
-#include "neverhood/navigationscene.h"
-#include "neverhood/smackerscene.h"
 
 namespace Neverhood {
 

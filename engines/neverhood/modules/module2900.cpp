@@ -22,7 +22,6 @@
 
 #include "neverhood/modules/module2900.h"
 #include "neverhood/modules/module2900_sprites.h"
-#include "neverhood/gamemodule.h"
 #include "neverhood/modules/module1100.h"
 #include "neverhood/modules/module1300.h"
 #include "neverhood/modules/module1700.h"
