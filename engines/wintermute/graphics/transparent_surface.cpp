@@ -38,26 +38,26 @@ void doBlitBinaryFast(byte *ino, byte *outo, uint32 width, uint32 height, uint32
 
 class BlenderAdditive {
 public:
-	static void blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb);
-	static void blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb, byte *ca, byte *cr, byte *cg, byte *cb);
-	static void blendPixel(byte *in, byte *out);
-	static void blendPixel(byte *in, byte *out, int colorMod);
+	inline void blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb);
+	inline void blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb, byte *ca, byte *cr, byte *cg, byte *cb);
+	inline void blendPixel(byte *in, byte *out);
+	inline void blendPixel(byte *in, byte *out, int colorMod);
 };
 
 class BlenderSubtractive {
 public:
-	static void blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb);
-	static void blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb, byte *ca, byte *cr, byte *cg, byte *cb);
-	static void blendPixel(byte *in, byte *out);
-	static void blendPixel(byte *in, byte *out, int colorMod);
+	inline void blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb);
+	inline void blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb, byte *ca, byte *cr, byte *cg, byte *cb);
+	inline void blendPixel(byte *in, byte *out);
+	inline void blendPixel(byte *in, byte *out, int colorMod);
 };
 
 class BlenderNormal {
 public:
-	static void blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb);
-	static void blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb, byte *ca, byte *cr, byte *cg, byte *cb);
-	static void blendPixel(byte *in, byte *out);
-	static void blendPixel(byte *in, byte *out, int colorMod);
+	inline void blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb);
+	inline void blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb, byte *ca, byte *cr, byte *cg, byte *cb);
+	inline void blendPixel(byte *in, byte *out);
+	inline void blendPixel(byte *in, byte *out, int colorMod);
 };
 
 /**
@@ -465,7 +465,7 @@ void doBlitBinaryFast(byte *ino, byte *outo, uint32 width, uint32 height, uint32
 
 template<class Blender> 
 void doBlit(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep, uint32 color) {
-
+	Blender b;
 	byte *in;
 	byte *out;
 
@@ -481,7 +481,7 @@ void doBlit(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, in
 				byte *outg = &out[TransparentSurface::kGIndex];
 				byte *outb = &out[TransparentSurface::kBIndex];
 
-				Blender::blendPixel(in[TransparentSurface::kAIndex],
+				b.blendPixel(in[TransparentSurface::kAIndex],
 					in[TransparentSurface::kRIndex],
 					in[TransparentSurface::kGIndex],
 					in[TransparentSurface::kBIndex],
@@ -510,7 +510,7 @@ void doBlit(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, in
 				byte *outg = &out[TransparentSurface::kGIndex];
 				byte *outb = &out[TransparentSurface::kBIndex];
 
-				Blender::blendPixel(in[TransparentSurface::kAIndex],
+				b.blendPixel(in[TransparentSurface::kAIndex],
 					in[TransparentSurface::kRIndex],
 					in[TransparentSurface::kGIndex],
 					in[TransparentSurface::kBIndex],
