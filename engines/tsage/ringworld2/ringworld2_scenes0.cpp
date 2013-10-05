@@ -5197,8 +5197,9 @@ void Scene500::PanelDialog::Button::doButtonPress() {
 
 		switch (_buttonId) {
 		case 1:
+			// Rotate Left
 			if (--R2_GLOBALS._landerSuitNumber == 0)
-				R2_GLOBALS._landerSuitNumber = 3;
+				R2_GLOBALS._landerSuitNumber = R2_MIRANDA;
 
 			if (R2_GLOBALS.getFlag(35)) {
 				scene->_sceneMode = 5;
@@ -5211,8 +5212,9 @@ void Scene500::PanelDialog::Button::doButtonPress() {
 			break;
 
 		case 2:
+			// Rotate Right
 			if (++R2_GLOBALS._landerSuitNumber == 4)
-				R2_GLOBALS._flubMazeArea = 1;
+				R2_GLOBALS._landerSuitNumber = R2_QUINN;
 
 			if (R2_GLOBALS.getFlag(35)) {
 				scene->_sceneMode = 6;
