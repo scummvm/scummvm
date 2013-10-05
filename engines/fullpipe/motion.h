@@ -52,13 +52,13 @@ public:
 	virtual int method28() { return 0; }
 	virtual int method2C() { return 0; }
 	virtual int method30() { return 0; }
-	virtual MessageQueue *method34(StaticANIObject *subj, int xpos, int ypos, int flag, int staticsId) { return 0; }
+	virtual MessageQueue *method34(StaticANIObject *subj, int xpos, int ypos, int fuzzySearch, int staticsId) { return 0; }
 	virtual int changeCallback() { return 0; }
 	virtual int method3C() { return 0; }
 	virtual int method40() { return 0; }
 	virtual int method44() { return 0; }
 	virtual int method48() { return -1; }
-	virtual MessageQueue *method4C(StaticANIObject *subj, int xpos, int ypos, int flag, int staticsId) { return 0; }
+	virtual MessageQueue *method4C(StaticANIObject *subj, int xpos, int ypos, int fuzzySearch, int staticsId) { return 0; }
 };
 
 class MovGraphReact : public CObject {
@@ -106,8 +106,8 @@ class MctlCompound : public MotionController {
 	virtual void addObject(StaticANIObject *obj);
 	virtual int removeObject(StaticANIObject *obj);
 	virtual void freeItems();
-	virtual MessageQueue *method34(StaticANIObject *subj, int xpos, int ypos, int flag, int staticsId);
-	virtual MessageQueue *method4C(StaticANIObject *subj, int xpos, int ypos, int flag, int staticsId);
+	virtual MessageQueue *method34(StaticANIObject *subj, int xpos, int ypos, int fuzzySearch, int staticsId);
+	virtual MessageQueue *method4C(StaticANIObject *subj, int xpos, int ypos, int fuzzySearch, int staticsId);
 
 	void initMovGraph2();
 	MctlConnectionPoint *findClosestConnectionPoint(int ox, int oy, int destIndex, int connectionX, int connectionY, int sourceIndex, int *minDistancePtr);
@@ -247,14 +247,14 @@ class MovGraph : public MotionController {
 	virtual void freeItems();
 	virtual int method28();
 	virtual int method2C();
-	virtual MessageQueue *method34(StaticANIObject *subj, int xpos, int ypos, int flag, int staticsId);
+	virtual MessageQueue *method34(StaticANIObject *subj, int xpos, int ypos, int fuzzySearch, int staticsId);
 	virtual int changeCallback();
 	virtual int method3C();
 	virtual int method44();
-	virtual MessageQueue *method4C(StaticANIObject *subj, int xpos, int ypos, int flag, int staticsId);
+	virtual MessageQueue *method4C(StaticANIObject *subj, int xpos, int ypos, int fuzzySearch, int staticsId);
 	virtual int method50();
 
-	double calcDistance(Common::Point *point, MovGraphLink *link, int flag);
+	double calcDistance(Common::Point *point, MovGraphLink *link, int fuzzySearch);
 	MovGraphNode *calcOffset(int ox, int oy);
 };
 
@@ -289,8 +289,8 @@ public:
 	virtual void addObject(StaticANIObject *obj);
 	virtual int removeObject(StaticANIObject *obj);
 	virtual void freeItems();
-	virtual MessageQueue *method34(StaticANIObject *subj, int xpos, int ypos, int flag, int staticsId);
-	virtual MessageQueue *method4C(StaticANIObject *subj, int xpos, int ypos, int flag, int staticsId);
+	virtual MessageQueue *method34(StaticANIObject *subj, int xpos, int ypos, int fuzzySearch, int staticsId);
+	virtual MessageQueue *method4C(StaticANIObject *subj, int xpos, int ypos, int fuzzySearch, int staticsId);
 
 	int getItemIndexByGameObjectId(int objectId);
 	bool initDirections(StaticANIObject *obj, MovGraph2Item *item);

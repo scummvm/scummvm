@@ -116,13 +116,13 @@ void MctlCompound::freeItems() {
 	warning("STUB: MctlCompound::freeItems()");
 }
 
-MessageQueue *MctlCompound::method34(StaticANIObject *subj, int xpos, int ypos, int flag, int staticsId) {
+MessageQueue *MctlCompound::method34(StaticANIObject *subj, int xpos, int ypos, int fuzzySearch, int staticsId) {
 	warning("STUB: MctlCompound::method34()");
 
 	return 0;
 }
 
-MessageQueue *MctlCompound::method4C(StaticANIObject *subj, int xpos, int ypos, int flag, int staticsId) {
+MessageQueue *MctlCompound::method4C(StaticANIObject *subj, int xpos, int ypos, int fuzzySearch, int staticsId) {
 	int match1 = -1;
 	int match2 = -1;
 
@@ -154,7 +154,7 @@ MessageQueue *MctlCompound::method4C(StaticANIObject *subj, int xpos, int ypos, 
 		return 0;
 
 	if (match1 == match2)
-		return _motionControllers[match1]->_motionControllerObj->method4C(subj, xpos, ypos, flag, staticsId);
+		return _motionControllers[match1]->_motionControllerObj->method4C(subj, xpos, ypos, fuzzySearch, staticsId);
 
 	MctlConnectionPoint *closestP = findClosestConnectionPoint(subj->_ox, subj->_oy, match1, xpos, ypos, match2, &match2);
 
@@ -174,7 +174,7 @@ MessageQueue *MctlCompound::method4C(StaticANIObject *subj, int xpos, int ypos, 
 
 		ex = new ExCommand(subj->_id, 51, 0, xpos, ypos, 0, 1, 0, 0, 0);
 
-		ex->_field_20 = flag;
+		ex->_field_20 = fuzzySearch;
 		ex->_keyCode = subj->_okeyCode;
 		ex->_excFlags |= 2;
 
@@ -285,7 +285,7 @@ int MovGraph::method2C() {
 	return 0;
 }
 
-MessageQueue *MovGraph::method34(StaticANIObject *subj, int xpos, int ypos, int flag, int staticsId) {
+MessageQueue *MovGraph::method34(StaticANIObject *subj, int xpos, int ypos, int fuzzySearch, int staticsId) {
 	warning("STUB: MovGraph::method34()");
 
 	return 0;
@@ -309,7 +309,7 @@ int MovGraph::method44() {
 	return 0;
 }
 
-MessageQueue *MovGraph::method4C(StaticANIObject *subj, int xpos, int ypos, int flag, int staticsId) {
+MessageQueue *MovGraph::method4C(StaticANIObject *subj, int xpos, int ypos, int fuzzySearch, int staticsId) {
 	warning("STUB: MovGraph::method4C()");
 
 	return 0;
@@ -321,7 +321,7 @@ int MovGraph::method50() {
 	return 0;
 }
 
-double MovGraph::calcDistance(Common::Point *point, MovGraphLink *link, int flag) {
+double MovGraph::calcDistance(Common::Point *point, MovGraphLink *link, int fuzzySearch) {
 	int n1x = link->_movGraphNode1->_x;
 	int n1y = link->_movGraphNode1->_y;
 	int n2x = link->_movGraphNode2->_x;
@@ -336,7 +336,7 @@ double MovGraph::calcDistance(Common::Point *point, MovGraphLink *link, int flag
 	double res = sqrt(1.0 - dist2 * dist2) * dist1;
 
 	if (dist2 <= 0.0 || distm >= link->_distance) {
-		if (flag) {
+		if (fuzzySearch) {
 			if (dist2 > 0.0) {
 				if (distm >= link->_distance) {
 					point->x = n2x;
@@ -522,13 +522,13 @@ void MovGraph2::freeItems() {
 	warning("STUB: MovGraph2::freeItems()");
 }
 
-MessageQueue *MovGraph2::method34(StaticANIObject *subj, int xpos, int ypos, int flag, int staticsId) {
+MessageQueue *MovGraph2::method34(StaticANIObject *subj, int xpos, int ypos, int fuzzySearch, int staticsId) {
 	warning("STUB: MovGraph2::method34()");
 
 	return 0;
 }
 
-MessageQueue *MovGraph2::method4C(StaticANIObject *subj, int xpos, int ypos, int flag, int staticsId) {
+MessageQueue *MovGraph2::method4C(StaticANIObject *subj, int xpos, int ypos, int fuzzySearch, int staticsId) {
 	warning("STUB: MovGraph2::method4C()");
 
 	return 0;
