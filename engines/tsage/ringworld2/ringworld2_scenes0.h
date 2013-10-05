@@ -694,7 +694,7 @@ public:
 };
 
 class Scene700: public SceneExt {
-	class Item11 : public NamedHotspot {
+	class Loft : public NamedHotspot {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -703,15 +703,15 @@ class Scene700: public SceneExt {
 		virtual bool startAction(CursorType action, Event &event);
 	};
 
-	class Actor2 : public SceneActor {
+	class LiftDoor : public SceneActor {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Actor3 : public SceneActor {
+	class SuitRoomDoor : public SceneActor {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Actor4 : public SceneActor {
+	class ControlPanel : public SceneActor {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -719,35 +719,34 @@ class Scene700: public SceneExt {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Actor6 : public SceneActor {
+	class LoftDoor : public SceneActor {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
 public:
-	NamedHotspot _item1;
-	NamedHotspot _item2;
-	NamedHotspot _item3;
-	NamedHotspot _item4;
-	NamedHotspot _item5;
-	NamedHotspot _item6;
-	NamedHotspot _item7;
-	NamedHotspot _item8;
-	NamedHotspot _item9;
-	NamedHotspot _item10;
-	Item11 _item11;
+	NamedHotspot _background;
+	NamedHotspot _debris1;
+	NamedHotspot _debris2;
+	NamedHotspot _debris3;
+	NamedHotspot _debris4;
+	NamedHotspot _restraintCollar;
+	NamedHotspot _storage2;
+	NamedHotspot _storage1;
+	NamedHotspot _stars;
+	NamedHotspot _light;
+	Loft _loft;
 	HandGrip _handGrip;
-	SceneActor _actor1;
-	Actor2 _actor2;
-	Actor3 _actor3;
-	Actor4 _actor4;
+	SceneActor _electromagnet;
+	LiftDoor _liftDoor;
+	SuitRoomDoor _suitRoomDoor;
+	ControlPanel _controlPanel;
 	Cable _cable;
-	Actor6 _actor6;
-	Actor6 _actor7;
-	Actor6 _actor8;
-	Actor6 _actor9;
+	LoftDoor _loftDoor1;
+	LoftDoor _loftDoor2;
+	LoftDoor _loftDoor3;
+	LoftDoor _loftDoor4;
 	SequenceManager _sequenceManager;
 	PaletteRotation *_rotation;
-	int _field100E;
 
 	Scene700();
 	virtual void postInit(SceneObjectList *OwnerList = NULL);

@@ -6029,6 +6029,7 @@ void Scene600::dispatch() {
  * Scene 700 - Lander Bay 2
  *
  *--------------------------------------------------------------------------*/
+
 Scene700::Scene700() {
 	_rotation = NULL;
 }
@@ -6038,7 +6039,7 @@ void Scene700::synchronize(Serializer &s) {
 	SYNC_POINTER(_rotation);
 }
 
-bool Scene700::Item11::startAction(CursorType action, Event &event) {
+bool Scene700::Loft::startAction(CursorType action, Event &event) {
 	if ((action == CURSOR_USE) && (R2_GLOBALS._player._position.x < 100))
 		return false;
 
@@ -6076,7 +6077,7 @@ bool Scene700::HandGrip::startAction(CursorType action, Event &event) {
 	return true;
 }
 
-bool Scene700::Actor2::startAction(CursorType action, Event &event) {
+bool Scene700::LiftDoor::startAction(CursorType action, Event &event) {
 	Scene700 *scene = (Scene700 *)R2_GLOBALS._sceneManager._scene;
 
 	if (action != CURSOR_USE)
@@ -6092,7 +6093,7 @@ bool Scene700::Actor2::startAction(CursorType action, Event &event) {
 	return true;
 }
 
-bool Scene700::Actor3::startAction(CursorType action, Event &event) {
+bool Scene700::SuitRoomDoor::startAction(CursorType action, Event &event) {
 	Scene700 *scene = (Scene700 *)R2_GLOBALS._sceneManager._scene;
 
 	if (action != CURSOR_USE)
@@ -6108,7 +6109,7 @@ bool Scene700::Actor3::startAction(CursorType action, Event &event) {
 	return true;
 }
 
-bool Scene700::Actor4::startAction(CursorType action, Event &event) {
+bool Scene700::ControlPanel::startAction(CursorType action, Event &event) {
 	Scene700 *scene = (Scene700 *)R2_GLOBALS._sceneManager._scene;
 
 	if (action != CURSOR_USE)
@@ -6176,7 +6177,7 @@ bool Scene700::Cable::startAction(CursorType action, Event &event) {
 	return true;
 }
 
-bool Scene700::Actor6::startAction(CursorType action, Event &event) {
+bool Scene700::LoftDoor::startAction(CursorType action, Event &event) {
 	Scene700 *scene = (Scene700 *)R2_GLOBALS._sceneManager._scene;
 
 	if ((action != CURSOR_USE) || (R2_GLOBALS._player._position.y >= 100))
@@ -6203,43 +6204,43 @@ void Scene700::postInit(SceneObjectList *OwnerList) {
 	_rotation->setDelay(5);
 	_rotation->_countdown = 1;
 
-	_actor2.postInit();
-	_actor2.setVisage(700);
-	_actor2.setPosition(Common::Point(21, 128));
-	_actor2.fixPriority(10);
-	_actor2.setDetails(700, 3, -1, -1, 1, (SceneItem *) NULL);
+	_liftDoor.postInit();
+	_liftDoor.setVisage(700);
+	_liftDoor.setPosition(Common::Point(21, 128));
+	_liftDoor.fixPriority(10);
+	_liftDoor.setDetails(700, 3, -1, -1, 1, (SceneItem *) NULL);
 
-	_actor3.postInit();
-	_actor3.setup(700, 2, 1);
-	_actor3.setPosition(Common::Point(217, 120));
-	_actor3.fixPriority(10);
-	_actor3.setDetails(700, 15, -1, -1, 1, (SceneItem *) NULL);
+	_suitRoomDoor.postInit();
+	_suitRoomDoor.setup(700, 2, 1);
+	_suitRoomDoor.setPosition(Common::Point(217, 120));
+	_suitRoomDoor.fixPriority(10);
+	_suitRoomDoor.setDetails(700, 15, -1, -1, 1, (SceneItem *) NULL);
 
-	_actor1.postInit();
-	_actor1.setup(700, 4, 1);
-	_actor1.setPosition(Common::Point(355 - ((R2_GLOBALS._electromagnetZoom * 8) / 5), ((R2_GLOBALS._electromagnetChangeAmount + 20 ) / 5) - 12));
-	_actor1.fixPriority(10);
-	_actor1.setDetails(700, 12, -1, 14, 1, (SceneItem *) NULL);
+	_electromagnet.postInit();
+	_electromagnet.setup(700, 4, 1);
+	_electromagnet.setPosition(Common::Point(355 - ((R2_GLOBALS._electromagnetZoom * 8) / 5), ((R2_GLOBALS._electromagnetChangeAmount + 20 ) / 5) - 12));
+	_electromagnet.fixPriority(10);
+	_electromagnet.setDetails(700, 12, -1, 14, 1, (SceneItem *) NULL);
 
-	_actor6.postInit();
-	_actor6.setup(700, 8, 1);
-	_actor6.setPosition(Common::Point(85, 53));
-	_actor6.setDetails(700, 33, -1, 35, 1, (SceneItem *) NULL);
+	_loftDoor1.postInit();
+	_loftDoor1.setup(700, 8, 1);
+	_loftDoor1.setPosition(Common::Point(85, 53));
+	_loftDoor1.setDetails(700, 33, -1, 35, 1, (SceneItem *) NULL);
 
-	_actor7.postInit();
-	_actor7.setup(700, 8, 1);
-	_actor7.setPosition(Common::Point(164, 53));
-	_actor7.setDetails(700, 33, -1, 35, 1, (SceneItem *) NULL);
+	_loftDoor2.postInit();
+	_loftDoor2.setup(700, 8, 1);
+	_loftDoor2.setPosition(Common::Point(164, 53));
+	_loftDoor2.setDetails(700, 33, -1, 35, 1, (SceneItem *) NULL);
 
-	_actor8.postInit();
-	_actor8.setup(700, 8, 1);
-	_actor8.setPosition(Common::Point(243, 53));
-	_actor8.setDetails(700, 33, -1, 35, 1, (SceneItem *) NULL);
+	_loftDoor3.postInit();
+	_loftDoor3.setup(700, 8, 1);
+	_loftDoor3.setPosition(Common::Point(243, 53));
+	_loftDoor3.setDetails(700, 33, -1, 35, 1, (SceneItem *) NULL);
 
-	_actor9.postInit();
-	_actor9.setup(700, 8, 1);
-	_actor9.setPosition(Common::Point(324, 53));
-	_actor9.setDetails(700, 33, -1, 35, 1, (SceneItem *) NULL);
+	_loftDoor4.postInit();
+	_loftDoor4.setup(700, 8, 1);
+	_loftDoor4.setPosition(Common::Point(324, 53));
+	_loftDoor4.setDetails(700, 33, -1, 35, 1, (SceneItem *) NULL);
 
 	if ((R2_INVENTORY.getObjectScene(R2_CABLE_HARNESS) != 1) && (R2_INVENTORY.getObjectScene(R2_ATTRACTOR_CABLE_HARNESS) != 1)) {
 		_cable.postInit();
@@ -6278,7 +6279,7 @@ void Scene700::postInit(SceneObjectList *OwnerList) {
 					_cable.setPosition(Common::Point(356 - (R2_GLOBALS._v565EB * 8), 148 - (((R2_GLOBALS._v565E9 + 10) / 5) * 4)));
 				} else {
 					_cable.setup(701, 1, 1);
-					_cable.setPosition(Common::Point(_actor1._position.x + 1, _actor1._position.y + 120));
+					_cable.setPosition(Common::Point(_electromagnet._position.x + 1, _electromagnet._position.y + 120));
 				}
 				_cable.setDetails(700, 38, -1, -1, 1, (SceneItem *) NULL);
 				break;
@@ -6290,23 +6291,23 @@ void Scene700::postInit(SceneObjectList *OwnerList) {
 		}
 	}
 
-	_actor4.postInit();
-	_actor4.setup(700, 3, 1);
-	_actor4.setPosition(Common::Point(454, 117));
-	_actor4.setDetails(700, 27, -1, -1, 1, (SceneItem *) NULL);
+	_controlPanel.postInit();
+	_controlPanel.setup(700, 3, 1);
+	_controlPanel.setPosition(Common::Point(454, 117));
+	_controlPanel.setDetails(700, 27, -1, -1, 1, (SceneItem *) NULL);
 
 	_handGrip.setDetails(Rect(234, 90, 252, 110), 700, 39, -1, -1, 1, NULL);
-	_item6.setDetails(Rect(91, 158, 385, 167), 700, 6, -1, 8, 1, NULL);
-	_item2.setDetails(Rect(47, 115, 149, 124), 700, 40, -1, 41, 1, NULL);
-	_item3.setDetails(Rect(151, 108, 187, 124), 700, 40, -1, 41, 1, NULL);
-	_item4.setDetails(Rect(247, 108, 275, 124), 700, 40, -1, 41, 1, NULL);
-	_item5.setDetails(Rect(300, 105, 321, 124), 700, 40, -1, 41, 1, NULL);
-	_item7.setDetails(Rect(255, 74, 368, 115), 700, 9, -1, 11, 1, NULL);
-	_item8.setDetails(Rect(69, 74, 182, 115), 700, 9, -1, 11, 1, NULL);
-	_item9.setDetails(Rect(370, 58, 475, 103), 700, 18, -1, -1, 1, NULL);
-	_item10.setDetails(Rect(17, 11, 393, 31), 700, 24, -1, -1, 1, NULL);
-	_item11.setDetails(Rect(42, 32, 368, 66), 700, 30, -1, 32, 1, NULL);
-	_item1.setDetails(Rect(0, 0, 480, 200), 700, 0, -1, -1, 1, NULL);
+	_restraintCollar.setDetails(Rect(91, 158, 385, 167), 700, 6, -1, 8, 1, NULL);
+	_debris1.setDetails(Rect(47, 115, 149, 124), 700, 40, -1, 41, 1, NULL);
+	_debris2.setDetails(Rect(151, 108, 187, 124), 700, 40, -1, 41, 1, NULL);
+	_debris3.setDetails(Rect(247, 108, 275, 124), 700, 40, -1, 41, 1, NULL);
+	_debris4.setDetails(Rect(300, 105, 321, 124), 700, 40, -1, 41, 1, NULL);
+	_storage2.setDetails(Rect(255, 74, 368, 115), 700, 9, -1, 11, 1, NULL);
+	_storage1.setDetails(Rect(69, 74, 182, 115), 700, 9, -1, 11, 1, NULL);
+	_stars.setDetails(Rect(370, 58, 475, 103), 700, 18, -1, -1, 1, NULL);
+	_light.setDetails(Rect(17, 11, 393, 31), 700, 24, -1, -1, 1, NULL);
+	_loft.setDetails(Rect(42, 32, 368, 66), 700, 30, -1, 32, 1, NULL);
+	_background.setDetails(Rect(0, 0, 480, 200), 700, 0, -1, -1, 1, NULL);
 
 	R2_GLOBALS._player.postInit();
 	R2_GLOBALS._player.setVisage(11);
@@ -6320,14 +6321,14 @@ void Scene700::postInit(SceneObjectList *OwnerList) {
 
 	switch (R2_GLOBALS._sceneManager._previousScene) {
 	case 250:
-		setAction(&_sequenceManager, this, 700, &R2_GLOBALS._player, &_actor2, NULL);
+		setAction(&_sequenceManager, this, 700, &R2_GLOBALS._player, &_liftDoor, NULL);
 		break;
 	case 500:
-		setAction(&_sequenceManager, this, 703, &R2_GLOBALS._player, &_actor3, NULL);
+		setAction(&_sequenceManager, this, 703, &R2_GLOBALS._player, &_suitRoomDoor, NULL);
 		break;
 	case 600: {
 		_sceneMode = 4;
-		_actor7.setFrame(5);
+		_loftDoor2.setFrame(5);
 		R2_GLOBALS._player.setPosition(Common::Point(164, 74));
 		R2_GLOBALS._player.setStrip2(3);
 		Common::Point pt(164, 69);
@@ -6336,7 +6337,7 @@ void Scene700::postInit(SceneObjectList *OwnerList) {
 		}
 		break;
 	case 900:
-		setAction(&_sequenceManager, this, 705, &R2_GLOBALS._player, &_actor4, NULL);
+		setAction(&_sequenceManager, this, 705, &R2_GLOBALS._player, &_controlPanel, NULL);
 		break;
 	default:
 		if (R2_GLOBALS.getFlag(41))
@@ -6351,11 +6352,7 @@ void Scene700::postInit(SceneObjectList *OwnerList) {
 
 void Scene700::remove() {
 	R2_GLOBALS._sound1.play(10);
-// CHECKME: Present in the original... But it crashes badly.
-// The instruction was removed as it's not used in other scene coded the same way
-// and reversed by dreammaster. A double check is required in order to verify it doesn't hide
-// a memory leak
-//	_rotation->remove();
+
 	SceneExt::remove();
 }
 
@@ -6369,7 +6366,7 @@ void Scene700::signal() {
 			R2_GLOBALS._player.enableControl();
 		} else {
 			R2_GLOBALS._sound2.play(19);
-			_actor7.animate(ANIM_MODE_5, this);
+			_loftDoor2.animate(ANIM_MODE_5, this);
 		}
 		break;
 	case 2: {
@@ -6388,7 +6385,7 @@ void Scene700::signal() {
 		R2_GLOBALS._player.setStrip2(-1);
 		R2_GLOBALS._player.setObjectWrapper(new SceneObjectWrapper());
 		R2_GLOBALS._sound2.play(19);
-		_actor7.animate(ANIM_MODE_6, this);
+		_loftDoor2.animate(ANIM_MODE_6, this);
 		R2_GLOBALS._player.setStrip(3);
 		R2_GLOBALS.setFlag(41);
 		break;
@@ -6427,9 +6424,9 @@ void Scene700::signal() {
 		_sceneMode = 17;
 		_cable.setup(701, 1, 8);
 		_cable.setDetails(700, 38, -1, -1, 3, (SceneItem *) NULL);
-		if ((R2_GLOBALS._v565E5 != 0) && (_cable._position.x == _actor1._position.x + 1) && (_cable._position.x == 148 - (((R2_GLOBALS._electromagnetChangeAmount + 10) / 5) * 4))) {
+		if ((R2_GLOBALS._v565E5 != 0) && (_cable._position.x == _electromagnet._position.x + 1) && (_cable._position.x == 148 - (((R2_GLOBALS._electromagnetChangeAmount + 10) / 5) * 4))) {
 			_cable.animate(ANIM_MODE_6, NULL);
-			Common::Point pt(_cable._position.x, _actor1._position.y + 120);
+			Common::Point pt(_cable._position.x, _electromagnet._position.y + 120);
 			NpcMover *mover = new NpcMover();
 			_cable.addMover(mover, &pt, NULL);
 			R2_GLOBALS._v565E7 = 1;
