@@ -28,6 +28,8 @@
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
 
+#include "common/rect.h"
+
 namespace OpenGL {
 
 /**
@@ -80,7 +82,7 @@ public:
 	void draw(GLuint x, GLuint y, GLuint w, GLuint h);
 
 	void flagDirty() { _allDirty = true; }
-	bool isDirty() const { return _allDirty; }
+	bool isDirty() const { return _allDirty || !_dirtyArea.isEmpty(); }
 
 	uint getWidth() const { return _userPixelData.w; }
 	uint getHeight() const { return _userPixelData.h; }
@@ -111,6 +113,7 @@ public:
 protected:
 	virtual void updateTexture();
 
+	Common::Rect getDirtyArea() const;
 private:
 	const GLenum _glIntFormat;
 	const GLenum _glFormat;
@@ -124,7 +127,8 @@ private:
 	Graphics::Surface _userPixelData;
 
 	bool _allDirty;
-	void clearDirty() { _allDirty = false; }
+	Common::Rect _dirtyArea;
+	void clearDirty() { _allDirty = false; _dirtyArea = Common::Rect(); }
 };
 
 class TextureCLUT8 : public Texture {

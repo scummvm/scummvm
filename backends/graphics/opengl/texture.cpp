@@ -71,6 +71,10 @@ void Texture::recreateInternalTexture() {
 
 	// In case there is an actual texture setup we reinitialize it.
 	if (_textureData.getPixels()) {
+		// Allocate storage for OpenGL texture.
+		GLCALL(glTexImage2D(GL_TEXTURE_2D, 0, _glIntFormat, _textureData.w,
+		       _textureData.h, 0, _glFormat, _glType, NULL));
+
 		// Mark dirts such that it will be completely refreshed the next time.
 		flagDirty();
 	}
@@ -101,6 +105,13 @@ void Texture::allocate(uint width, uint height) {
 	if (texWidth != _textureData.w || texHeight != _textureData.h) {
 		// Create a buffer for the texture data.
 		_textureData.create(texWidth, texHeight, _format);
+
+		// Set the texture.
+		GLCALL(glBindTexture(GL_TEXTURE_2D, _glTexture));
+
+		// Allocate storage for OpenGL texture.
+		GLCALL(glTexImage2D(GL_TEXTURE_2D, 0, _glIntFormat, _textureData.w,
+		       _textureData.h, 0, _glFormat, _glType, NULL));
 	}
 
 	// Create a sub-buffer for raw access.
@@ -111,6 +122,16 @@ void Texture::copyRectToTexture(uint x, uint y, uint w, uint h, const void *srcP
 	Graphics::Surface *dstSurf = getSurface();
 	assert(x + w <= dstSurf->w);
 	assert(y + h <= dstSurf->h);
+
+	// *sigh* Common::Rect::extend behaves unexpected whenever one of the two
+	// parameters is an empty rect. Thus, we check whether the current dirty
+	// area is valid. In case it is not we simply use the parameters as new
+	// dirty area. Otherwise, we simply call extend.
+	if (_dirtyArea.isEmpty()) {
+		_dirtyArea = Common::Rect(x, y, x + w, y + h);
+	} else {
+		_dirtyArea.extend(Common::Rect(x, y, x + w, y + h));
+	}
 
 	const byte *src = (const byte *)srcPtr;
 	byte *dst = (byte *)dstSurf->getBasePtr(x, y);
@@ -126,8 +147,6 @@ void Texture::copyRectToTexture(uint x, uint y, uint w, uint h, const void *srcP
 			src += srcPitch;
 		}
 	}
-
-	flagDirty();
 }
 
 void Texture::fill(uint32 color) {
@@ -178,26 +197,34 @@ void Texture::updateTexture() {
 		return;
 	}
 
+	Common::Rect dirtyArea = getDirtyArea();
+
 	// In case we use linear filtering we might need to duplicate the last
 	// pixel row/column to avoid glitches with filtering.
 	if (_glFilter == GL_LINEAR) {
-		if (_textureData.w != _userPixelData.w) {
-			uint height = _userPixelData.h;
+		if (dirtyArea.right == _userPixelData.w && _userPixelData.w != _textureData.w) {
+			uint height = dirtyArea.height();
 
-			const byte *src = (const byte *)_textureData.getBasePtr(_userPixelData.w - 1, 0);
-			byte *dst = (byte *)_textureData.getBasePtr(_userPixelData.w, 0);
+			const byte *src = (const byte *)_textureData.getBasePtr(_userPixelData.w - 1, dirtyArea.top);
+			byte *dst = (byte *)_textureData.getBasePtr(_userPixelData.w, dirtyArea.top);
 
 			while (height-- > 0) {
 				memcpy(dst, src, _textureData.format.bytesPerPixel);
 				dst += _textureData.pitch;
 				src += _textureData.pitch;
 			}
+
+			// Extend the dirty area.
+			++dirtyArea.right;
 		}
 
-		if (_textureData.h != _userPixelData.h) {
-			const byte *src = (const byte *)_textureData.getBasePtr(0, _userPixelData.h - 1);
-			byte *dst = (byte *)_textureData.getBasePtr(0, _userPixelData.h);
-			memcpy(dst, src, _userPixelData.w * _textureData.format.bytesPerPixel);
+		if (dirtyArea.bottom == _userPixelData.h && _userPixelData.h != _textureData.h) {
+			const byte *src = (const byte *)_textureData.getBasePtr(dirtyArea.left, _userPixelData.h - 1);
+			byte *dst = (byte *)_textureData.getBasePtr(dirtyArea.left, _userPixelData.h);
+			memcpy(dst, src, dirtyArea.width() * _textureData.format.bytesPerPixel);
+
+			// Extend the dirty area.
+			++dirtyArea.bottom;
 		}
 	}
 
@@ -205,10 +232,36 @@ void Texture::updateTexture() {
 	GLCALL(glBindTexture(GL_TEXTURE_2D, _glTexture));
 
 	// Update the actual texture.
-	GLCALL(glTexImage2D(GL_TEXTURE_2D, 0, _glIntFormat, _textureData.w, _textureData.h, 0, _glFormat, _glType, _textureData.getPixels()));
+	// Although we keep track of the dirty part of the texture buffer we
+	// cannot take advantage of the left/right boundries here because it is
+	// not possible to specify a pitch to glTexSubImage2D. To be precise, with
+	// plain OpenGL we could set GL_UNPACK_ROW_LENGTH to achieve this. However,
+	// OpenGL ES 1.0 does not support GL_UNPACK_ROW_LENGTH. Thus, we are left
+	// with the following options:
+	//
+	// 1) (As we do right now) Simply always update the whole texture lines of
+	//    rect changed. This is simplest to implement. In case performance is
+	//    really an issue we can think of switching to another method.
+	//
+	// 2) Copy the dirty rect to a temporary buffer and upload that by using
+	//    glTexSubImage2D. This is what the Android backend does. It is more
+	//    complicated though.
+	//
+	// 3) Use glTexSubImage2D per line changed. This is what the old OpenGL
+	//    graphics manager did but it is much slower! Thus, we do not use it.
+	GLCALL(glTexSubImage2D(GL_TEXTURE_2D, 0, 0, dirtyArea.top, _textureData.w, dirtyArea.height(),
+	                       _glFormat, _glType, _textureData.getBasePtr(0, dirtyArea.top)));
 
 	// We should have handled everything, thus not dirty anymore.
 	clearDirty();
+}
+
+Common::Rect Texture::getDirtyArea() const {
+	if (_allDirty) {
+		return Common::Rect(_userPixelData.w, _userPixelData.h);
+	} else {
+		return _dirtyArea;
+	}
 }
 
 TextureCLUT8::TextureCLUT8(GLenum glIntFormat, GLenum glFormat, GLenum glType, const Graphics::PixelFormat &format)
@@ -288,11 +341,17 @@ void TextureCLUT8::updateTexture() {
 	// Do the palette look up
 	Graphics::Surface *outSurf = Texture::getSurface();
 
+	Common::Rect dirtyArea = getDirtyArea();
+
 	if (outSurf->format.bytesPerPixel == 2) {
-		doPaletteLookUp<uint16>((uint16 *)outSurf->getPixels(), (const byte *)_clut8Data.getPixels(), _clut8Data.w, _clut8Data.h,
+		doPaletteLookUp<uint16>((uint16 *)outSurf->getBasePtr(dirtyArea.left, dirtyArea.top),
+		                        (const byte *)_clut8Data.getBasePtr(dirtyArea.left, dirtyArea.top),
+		                        dirtyArea.width(), dirtyArea.height(),
 		                        outSurf->pitch, _clut8Data.pitch, (const uint16 *)_palette);
 	} else if (outSurf->format.bytesPerPixel == 4) {
-		doPaletteLookUp<uint32>((uint32 *)outSurf->getPixels(), (const byte *)_clut8Data.getPixels(), _clut8Data.w, _clut8Data.h,
+		doPaletteLookUp<uint32>((uint32 *)outSurf->getBasePtr(dirtyArea.left, dirtyArea.top),
+		                        (const byte *)_clut8Data.getBasePtr(dirtyArea.left, dirtyArea.top),
+		                        dirtyArea.width(), dirtyArea.height(),
 		                        outSurf->pitch, _clut8Data.pitch, (const uint32 *)_palette);
 	} else {
 		warning("TextureCLUT8::updateTexture: Unsupported pixel depth: %d", outSurf->format.bytesPerPixel);
