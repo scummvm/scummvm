@@ -636,7 +636,7 @@ class Scene600 : public SceneExt {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Item4 : public NamedHotspot {
+	class EngineCompartment : public NamedHotspot {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -664,14 +664,14 @@ class Scene600 : public SceneExt {
 		virtual bool startAction(CursorType action, Event &event);
 	};
 public:
-	int _field412;
+	int _roomState;
+	CompartmentHotspot _quantumDrive;
+	CompartmentHotspot _quantumRegulator;
+	CompartmentHotspot _powerNode;
+	EngineCompartment _engineCompartment;
 	CompartmentHotspot _background;
-	CompartmentHotspot _item2;
-	CompartmentHotspot _item3;
-	Item4 _item4;
-	CompartmentHotspot _item5;
-	BackgroundSceneObject _object1;
-	SceneActor _actor1;
+	BackgroundSceneObject _stasisArea;
+	SceneActor _laserBeam;
 	SceneActor _computer;
 	SceneActor _stasisField;
 	Smoke _smoke;
@@ -679,7 +679,7 @@ public:
 	Laser _laser;
 	Aerosol _aerosol;
 	Scanner _scanner;
-	ASoundExt _aSound1;
+	ASoundExt _sound1;
 	SequenceManager _sequenceManager1;
 	SequenceManager _sequenceManager2;
 	byte _pixelMap[256];

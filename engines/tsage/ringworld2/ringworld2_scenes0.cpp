@@ -5530,7 +5530,7 @@ bool Scene600::CompartmentHotspot::startAction(CursorType action, Event &event) 
 	return true;
 }
 
-bool Scene600::Item4::startAction(CursorType action, Event &event) {
+bool Scene600::EngineCompartment::startAction(CursorType action, Event &event) {
 	if ((action != R2_NEGATOR_GUN) || (!R2_GLOBALS.getFlag(1)))
 		return SceneHotspot::startAction(action, event);
 
@@ -5553,7 +5553,7 @@ bool Scene600::Item4::startAction(CursorType action, Event &event) {
 
 	Scene600 *scene = (Scene600 *)R2_GLOBALS._sceneManager._scene;
 
-	scene->_object1.setup2(603, 3, 1, 239, 54, 10, 0);
+	scene->_stasisArea.setup2(603, 3, 1, 239, 54, 10, 0);
 	scene->_stasisField.postInit();
 	scene->_computer.postInit();
 
@@ -5612,7 +5612,7 @@ bool Scene600::Doorway::startAction(CursorType action, Event &event) {
 		scene->_laser.setDetails(600, 11, -1, -1, 3, (SceneItem *) NULL);
 		R2_GLOBALS.setFlag(6);
 		scene->_sceneMode = 609;
-		scene->setAction(&scene->_sequenceManager1, scene, 609, &R2_GLOBALS._player, &scene->_doorway, &scene->_laser, &scene->_actor1, NULL);
+		scene->setAction(&scene->_sequenceManager1, scene, 609, &R2_GLOBALS._player, &scene->_doorway, &scene->_laser, &scene->_laserBeam, NULL);
 		return true;
 	}
 
@@ -5703,7 +5703,7 @@ bool Scene600::Laser::startAction(CursorType action, Event &event) {
 		} else {
 			R2_GLOBALS._player.disableControl();
 			scene->_sceneMode = 610;
-			scene->setAction(&scene->_sequenceManager1, scene, 610, &scene->_actor1, &R2_GLOBALS._player, NULL);
+			scene->setAction(&scene->_sequenceManager1, scene, 610, &scene->_laserBeam, &R2_GLOBALS._player, NULL);
 			return true;
 		}
 	} else
@@ -5730,14 +5730,14 @@ bool Scene600::Aerosol::startAction(CursorType action, Event &event) {
 /*--------------------------------------------------------------------------*/
 
 Scene600::Scene600() {
-	_field412 = 0;
+	_roomState = 0;
 	Common::fill(&_pixelMap[0], &_pixelMap[256], 0);
 }
 
 void Scene600::synchronize(Serializer &s) {
 	SceneExt::synchronize(s);
 
-	s.syncAsSint16LE(_field412);
+	s.syncAsSint16LE(_roomState);
 	for (int i = 0; i < 256; i++)
 		s.syncAsByte(_pixelMap[i]);
 }
@@ -5765,7 +5765,7 @@ void Scene600::postInit(SceneObjectList *OwnerList) {
 	SceneExt::postInit();
 	R2_GLOBALS.setFlag(39);
 	R2_GLOBALS._walkRegions.disableRegion(3);
-	_field412 = 0;
+	_roomState = 0;
 
 	// Initialize pixel map for the obscuring effect
 	ScenePalette &pal = R2_GLOBALS._scenePalette;
@@ -5816,14 +5816,14 @@ void Scene600::postInit(SceneObjectList *OwnerList) {
 		_laser.setup(600, 2, 1);
 		_laser.setDetails(600, 10, -1, -1, 1, (SceneItem *) NULL);
 
-		_actor1.postInit();
-		_actor1.setup(600, 3, 5);
-		_actor1.setPosition(Common::Point(223, 51));
-		_actor1.fixPriority(200);
+		_laserBeam.postInit();
+		_laserBeam.setup(600, 3, 5);
+		_laserBeam.setPosition(Common::Point(223, 51));
+		_laserBeam.fixPriority(200);
 	}
 
 	if (! R2_GLOBALS.getFlag(9))
-		_object1.setup2(603, 1, 1, 244, 50, 10, 0);
+		_stasisArea.setup2(603, 1, 1, 244, 50, 10, 0);
 
 	if (R2_GLOBALS.getFlag(5)) {
 		if (R2_INVENTORY.getObjectScene(R2_AEROSOL) == 600) {
@@ -5862,25 +5862,25 @@ void Scene600::postInit(SceneObjectList *OwnerList) {
 	R2_GLOBALS._player.animate(ANIM_MODE_1, NULL);
 	R2_GLOBALS._player.disableControl();
 
-	_item2.setDetails(12, 600, 17, -1, 19);
-	_item3.setDetails(11, 600, 14, -1, -1);
+	_quantumRegulator.setDetails(12, 600, 17, -1, 19);
+	_powerNode.setDetails(11, 600, 14, -1, -1);
 
 	if (R2_GLOBALS.getFlag(9)) {
-		_background.setDetails(Rect(159, 3, 315, 95), 600, 7, -1, -1, 1, NULL);
+		_quantumDrive.setDetails(Rect(159, 3, 315, 95), 600, 7, -1, -1, 1, NULL);
 	} else {
-		_item4.setDetails(Rect(173, 15, 315, 45), 600, 21, -1, 23, 1, NULL);
-		_background.setDetails(Rect(159, 3, 315, 95), 600, 6, -1, -1, 1, NULL);
+		_engineCompartment.setDetails(Rect(173, 15, 315, 45), 600, 21, -1, 23, 1, NULL);
+		_quantumDrive.setDetails(Rect(159, 3, 315, 95), 600, 6, -1, -1, 1, NULL);
 	}
-	_item5.setDetails(Rect(0, 0, 320, 200), 600, 0, -1, -1, 1, NULL);
+	_background.setDetails(Rect(0, 0, 320, 200), 600, 0, -1, -1, 1, NULL);
 
 	_sceneMode = 600;
 	if (R2_GLOBALS._sceneManager._previousScene == 700) {
 		if (R2_GLOBALS.getFlag(6)) {
 			setAction(&_sequenceManager1, this, 600, &R2_GLOBALS._player, &_doorway, NULL);
 		} else if (R2_GLOBALS.getFlag(5)) {
-			setAction(&_sequenceManager1, this, 603, &R2_GLOBALS._player, &_doorway, &_laser, &_actor1, NULL);
+			setAction(&_sequenceManager1, this, 603, &R2_GLOBALS._player, &_doorway, &_laser, &_laserBeam, NULL);
 		} else {
-			setAction(&_sequenceManager1, this, 602, &R2_GLOBALS._player, &_doorway, &_laser, &_actor1, NULL);
+			setAction(&_sequenceManager1, this, 602, &R2_GLOBALS._player, &_doorway, &_laser, &_laserBeam, NULL);
 		}
 	} else if (R2_GLOBALS.getFlag(5)) {
 		R2_GLOBALS._player.setPosition(Common::Point(50, 140));
@@ -5948,9 +5948,9 @@ void Scene600::signal() {
 	// Deactivate stasis field
 		R2_GLOBALS.setFlag(9);
 		_stasisField.remove();
-		R2_GLOBALS._sceneItems.remove(&_item4);
-		_computer.setDetails(600, 21, -1, 23, 4, &_item4);
-		_background.setDetails(600, 7, -1, -1, 3, (SceneItem *) NULL);
+		R2_GLOBALS._sceneItems.remove(&_engineCompartment);
+		_computer.setDetails(600, 21, -1, 23, 4, &_engineCompartment);
+		_engineCompartment.setDetails(600, 7, -1, -1, 3, (SceneItem *) NULL);
 		R2_GLOBALS._player.enableControl(CURSOR_USE);
 		break;
 	case 614:
@@ -5967,7 +5967,7 @@ void Scene600::signal() {
 		R2_GLOBALS._player.enableControl();
 		break;
 	default:
-		_field412 = 0;
+		_roomState = 0;
 		_sceneMode = 0;
 		R2_GLOBALS._player.enableControl();
 		break;
@@ -5979,11 +5979,11 @@ void Scene600::process(Event &event) {
 			&& (R2_GLOBALS._events.getCursor() == CURSOR_WALK)) {
 		if (!_doorway.contains(event.mousePos) || (_doorway._frame <= 1)) {
 			if (R2_GLOBALS.getFlag(5)) {
-				_field412 += 10;
+				_roomState += 10;
 			} else {
 				R2_GLOBALS._player.disableControl();
 				_sceneMode = 604;
-				setAction(&_sequenceManager1, this, 604, &_actor1, &R2_GLOBALS._player, NULL);
+				setAction(&_sequenceManager1, this, 604, &_laserBeam, &R2_GLOBALS._player, NULL);
 				event.handled = true;
 			}
 		} else {
@@ -5992,36 +5992,36 @@ void Scene600::process(Event &event) {
 			setAction(&_sequenceManager1, this, 613, &R2_GLOBALS._player, &_laser, NULL);
 			event.handled = true;
 		}
-	} else if ((!R2_GLOBALS.getFlag(6)) && (R2_GLOBALS._player._mover) && (_field412 < 10)){
-		_field412 += 10;
+	} else if ((!R2_GLOBALS.getFlag(6)) && (R2_GLOBALS._player._mover) && (_roomState < 10)){
+		_roomState += 10;
 	}
 
 	Scene::process(event);
 }
 
 void Scene600::dispatch() {
-	if ((_field412 != 0) && (_sceneMode != 600) && (_sceneMode != 603) && (_sceneMode != 602)) {
+	if ((_roomState != 0) && (_sceneMode != 600) && (_sceneMode != 603) && (_sceneMode != 602)) {
 		if ( ((_laser._strip == 4) && (_laser._frame > 1))
 		  ||  (_sceneMode == 601)
 		  || ((_sceneMode == 616) && (_doorway._frame > 1)) )
-		  _field412 = 0;
+		  _roomState = 0;
 		else {
-			_field412--;
-			if (_field412 % 10 == 0) {
-				_actor1.setAction(&_sequenceManager2, NULL, 611, &_actor1, NULL);
+			_roomState--;
+			if (_roomState % 10 == 0) {
+				_laserBeam.setAction(&_sequenceManager2, NULL, 611, &_laserBeam, NULL);
 			}
-			if ((_field412 == 0) && (R2_GLOBALS._player._mover))
-				_field412 = 10;
+			if ((_roomState == 0) && (R2_GLOBALS._player._mover))
+				_roomState = 10;
 		}
 	}
 
-	if (_actor1._frame == 2)
-		_aSound1.play(40);
+	if (_laserBeam._frame == 2)
+		_sound1.play(40);
 
 	Scene::dispatch();
 	if ((_smoke._strip == 3) && (_smoke._frame == 3)) {
-		_actor1.setStrip(4);
-		_actor1.setFrame(1);
+		_laserBeam.setStrip(4);
+		_laserBeam.setFrame(1);
 	}
 }
 
