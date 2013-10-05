@@ -21,6 +21,7 @@
  */
 
 #include "neverhood/modules/module1000.h"
+#include "neverhood/modules/module1000_klaymen.h"
 #include "neverhood/modules/module1000_sprites.h"
 
 namespace Neverhood {
