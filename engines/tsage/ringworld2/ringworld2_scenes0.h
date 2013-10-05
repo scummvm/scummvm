@@ -670,7 +670,7 @@ public:
 	CompartmentHotspot _powerNode;
 	EngineCompartment _engineCompartment;
 	CompartmentHotspot _background;
-	BackgroundSceneObject _stasisArea;
+	SceneActor _stasisArea;
 	SceneActor _laserBeam;
 	SceneActor _computer;
 	SceneActor _stasisField;

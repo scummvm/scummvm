@@ -5586,13 +5586,19 @@ bool Scene600::EngineCompartment::startAction(CursorType action, Event &event) {
 	R2_GLOBALS._player.disableControl();
 
 	Scene600 *scene = (Scene600 *)R2_GLOBALS._sceneManager._scene;
-
-	scene->_stasisArea.setup2(603, 3, 1, 239, 54, 10, 0);
+	
+	scene->_stasisArea.setup(603, 3, 1, 239, 54, 10);
 	scene->_stasisField.postInit();
 	scene->_computer.postInit();
 
 	scene->_sceneMode = 612;
 	scene->setAction(&scene->_sequenceManager1, scene, 612, &scene->_stasisField, &scene->_computer, &R2_GLOBALS._player, NULL);
+	
+	// WORKAROUND: For ScummVM, we use a SceneActor rather than BackgroundSceneObject
+	// for the stasis field since it doesn't work properly. We override the priority for
+	// the stasis field here so that the stasis field dissolve will show up
+	scene->_stasisField.fixPriority(12);
+	
 	return true;
 }
 
@@ -5857,7 +5863,7 @@ void Scene600::postInit(SceneObjectList *OwnerList) {
 	}
 
 	if (! R2_GLOBALS.getFlag(9))
-		_stasisArea.setup2(603, 1, 1, 244, 50, 10, 0);
+		_stasisArea.setup(603, 1, 1, 244, 50, 10);
 
 	if (R2_GLOBALS.getFlag(5)) {
 		if (R2_INVENTORY.getObjectScene(R2_AEROSOL) == 600) {
