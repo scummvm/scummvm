@@ -63,9 +63,16 @@ public:
 
 class MovGraphReact : public CObject {
 public:
+	int _pointCount;
+	Common::Point **_points;
+
+public:
+	MovGraphReact() : _pointCount(0), _points(0) {}
+	~MovGraphReact() { free(_points); }
+
 	virtual void method14() {}
 	virtual void createRegion() {}
-	virtual bool pointInRegion(int x, int y) { return false; }
+	virtual bool pointInRegion(int x, int y);
 };
 
 class MctlCompoundArrayItem : public CObject {
@@ -160,7 +167,6 @@ class ReactParallel : public MovGraphReact {
 	int _y2;
 	int _dx;
 	int _dy;
-	Common::Point **_points;
 
   public:
 	ReactParallel();
@@ -168,15 +174,12 @@ class ReactParallel : public MovGraphReact {
 
 	virtual void method14();
 	virtual void createRegion();
-	virtual bool pointInRegion(int x, int y);
 };
 
 class ReactPolygonal : public MovGraphReact {
 	//CRgn _rgn;
 	int _field_C;
 	int _field_10;
-	int _pointCount;
-	Common::Point **_points;
 
   public:
 	ReactPolygonal();
@@ -184,7 +187,6 @@ class ReactPolygonal : public MovGraphReact {
 
 	virtual void method14();
 	virtual void createRegion();
-	virtual bool pointInRegion(int x, int y);
 };
 
 class MovGraphLink : public CObject {

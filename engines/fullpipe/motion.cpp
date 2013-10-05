@@ -652,7 +652,6 @@ ReactParallel::ReactParallel() {
 	_x2 = 0;
 	_dy = 0;
 	_dx = 0;
-	_points = 0;
 	_y1 = 0;
 	_y2 = 0;
 }
@@ -688,12 +687,13 @@ void ReactParallel::createRegion() {
 	_points[1]->x = (int16)(_x2 - _dx * cs);
 	_points[1]->y = (int16)(_y2 - _dx * sn);
 
-	_points[2]->x = (int16)(_x1 + _dy * cs);
+	_points[2]->x = (int16)(_x2 + _dy * cs);
 	_points[2]->y = (int16)(_y2 + _dy * sn);
 
 	_points[3]->x = (int16)(_x1 + _dy * cs);
 	_points[3]->y = (int16)(_y1 + _dy * sn);
 
+	_pointCount = 4;
 	// GdiObject::Attach(_rgn, CreatePolygonRgn(_points, 4, 2);
 }
 
@@ -701,18 +701,8 @@ void ReactParallel::method14() {
 	warning("STUB: ReactParallel::method14()");
 }
 
-bool ReactParallel::pointInRegion(int x, int y) {
-	warning("STUB: ReactParallel::pointInRegion()");
-
-	warning("%d %d, %d %d, %d %d, %d %d", _points[0]->x, _points[0]->y, _points[1]->x, _points[1]->y, _points[2]->x, _points[2]->y, _points[3]->x, _points[3]->y);
-
-	return false;
-}
-
 ReactPolygonal::ReactPolygonal() {
 	_field_C = 0;
-	_points = 0;
-	_pointCount = 0;
 	_field_10 = 0;
 }
 
@@ -751,10 +741,45 @@ void ReactPolygonal::method14() {
 	warning("STUB: ReactPolygonal::method14()");
 }
 
-bool ReactPolygonal::pointInRegion(int x, int y) {
-	warning("STUB: ReactPolygonal::pointInRegion()");
+bool MovGraphReact::pointInRegion(int x, int y) {
+	if (_pointCount < 3) {
+		return false;
+	}
 
-	return false;
+	int counter = 0;
+	double xinters;
+	Common::Point p, p1, p2;
+
+	p.x = (double)x;
+	p.y = (double)y;
+
+	p1.x = (double)_points[0]->x;
+	p1.y = (double)_points[0]->y;
+
+	for (uint32 i = 1; i <= _pointCount; i++) {
+		p2.x = (double)_points[i % _pointCount]->x;
+		p2.y = (double)_points[i % _pointCount]->y;
+
+		if (p.y > MIN(p1.y, p2.y)) {
+			if (p.y <= MAX(p1.y, p2.y)) {
+				if (p.x <= MAX(p1.x, p2.x)) {
+					if (p1.y != p2.y) {
+						xinters = (p.y - p1.y) * (p2.x - p1.x) / (p2.y - p1.y) + p1.x;
+						if (p1.x == p2.x || p.x <= xinters) {
+							counter++;
+						}
+					}
+				}
+			}
+		}
+		p1 = p2;
+	}
+
+	if (counter % 2 == 0) {
+		return false;
+	} else {
+		return true;
+	}
 }
 
 int startWalkTo(int objId, int objKey, int x, int y, int a5) {
