@@ -580,6 +580,7 @@ Common::String Dialogs::displayMoney() {
 void Dialogs::stripTrailingSpaces(Common::String &str) {
 	while (str.lastChar() == ' ')
 		str.deleteLastChar();
+	// We don't use String::trim() here because we need the leading whitespaces.
 }
 
 /**
