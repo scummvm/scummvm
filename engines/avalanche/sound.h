@@ -50,4 +50,4 @@ private:
 
 } // End of namespace Avalanche
 
-#endif //AVALANCHE_SOUND_H
+#endif // AVALANCHE_SOUND_H
