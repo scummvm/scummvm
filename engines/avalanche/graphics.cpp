@@ -199,8 +199,7 @@ void GraphicManager::fleshColors() {
 
 Common::Point GraphicManager::drawArc(Graphics::Surface &surface, int16 x, int16 y, int16 stAngle, int16 endAngle, uint16 radius, Color color) {
 	Common::Point endPoint;
-	const double pi = 3.14;
-	const double convfac = pi / 180.0;
+	const float convfac = M_PI / 180.0;
 
 	int32 xRadius = radius;
 	int32 yRadius = radius * kScreenWidth / (8 * kScreenHeight); // Just don't ask why...
@@ -233,20 +232,20 @@ Common::Point GraphicManager::drawArc(Graphics::Surface &surface, int16 x, int16
 	uint16 numOfPixels = (uint16)floor(sqrt(3.0) * sqrt(pow(double(xRadius), 2) + pow(double(yRadius), 2)) + 0.5);
 
 	// Calculate the angle precision required.
-	double delta = 90.0 / numOfPixels;
+	float delta = 90.0 / numOfPixels;
 
 	// Always just go over the first 90 degrees. Could be optimized a
 	// bit if startAngle and endAngle lie in the same quadrant, left as an
 	// exercise for the reader. :)
-	double j = 0;
+	float j = 0;
 
 	// Calculate stop position, go 1 further than 90 because otherwise 1 pixel is sometimes not drawn.
 	uint16 deltaEnd = 91;
 
 	// Set the end point.
-	double tempTerm = endAngle * convfac;
+	float tempTerm = endAngle * convfac;
 	endPoint.x = (int16)floor(xRadius * cos(tempTerm) + 0.5) + x;
-	endPoint.y = (int16)floor(yRadius * sin(tempTerm + pi) + 0.5) + y;
+	endPoint.y = (int16)floor(yRadius * sin(tempTerm + M_PI) + 0.5) + y;
 
 	// Calculate points.
 	int16 xNext = xRadius;
@@ -258,7 +257,7 @@ Common::Point GraphicManager::drawArc(Graphics::Surface &surface, int16 x, int16
 		tempTerm = (j + delta) * convfac;
 
 		xNext = (int16)floor(xRadius * cos(tempTerm) + 0.5);
-		yNext = (int16)floor(yRadius * sin(tempTerm + pi) + 0.5);
+		yNext = (int16)floor(yRadius * sin(tempTerm + M_PI) + 0.5);
 
 		int16 xp = x + xTemp;
 		int16 xm = x - xTemp;
