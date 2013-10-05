@@ -17,6 +17,7 @@ MODULE_OBJS = \
 	modules/module1000.o \
 	modules/module1100.o \
 	modules/module1200.o \
+	modules/module1200_sprites.o \
 	modules/module1300.o \
 	modules/module1300_sprites.o \
 	modules/module1400.o \

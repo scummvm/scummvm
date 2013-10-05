@@ -21,7 +21,7 @@
  */
 
 #include "neverhood/modules/module1000.h"
-#include "neverhood/modules/module1200.h"
+#include "neverhood/modules/module1200_sprites.h"
 #include "neverhood/modules/module1300.h"
 #include "neverhood/modules/module1300_sprites.h"
 #include "neverhood/modules/module1400_sprites.h"
