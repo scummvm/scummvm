@@ -99,7 +99,7 @@ private:
 
 	struct RankType {
 		uint16 _score;
-		Common::String _title;
+		char _title[20];
 	};
 
 	static const char *kCopyright;

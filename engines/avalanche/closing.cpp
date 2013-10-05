@@ -52,14 +52,14 @@ void Closing::putIn(Common::String str, uint16 where) {
 }
 
 void Closing::exitGame() {
-	static const Common::String nouns[12] = {
-		"sackbut", "harpsichord", "camel", "conscience", "ice-cream", "serf",
-		"abacus", "castle", "carrots", "megaphone", "manticore", "drawbridge"
+	static const char nouns[12][14] = {
+		"sackbut", "harpsichord", "camel",   "conscience", "ice-cream", "serf",
+		"abacus",  "castle",      "carrots", "megaphone",  "manticore", "drawbridge"
 	};
 
-	static const Common::String verbs[12] = {
-		"haunt", "daunt", "tickle", "gobble", "erase", "provoke", "surprise",
-		"ignore", "stare at", "shriek at", "frighten", "quieten"
+	static const char verbs[12][12] = {
+		"haunt",    "daunt",  "tickle",   "gobble",    "erase",    "provoke",
+		"surprise", "ignore", "stare at", "shriek at", "frighten", "quieten"
 	};
 
 	_vm->_sound->stopSound();
@@ -67,7 +67,7 @@ void Closing::exitGame() {
 	getScreen(kScreenNagScreen);
 	byte nounId = _vm->_rnd->getRandomNumber(11);
 	byte verbId = _vm->_rnd->getRandomNumber(11);
-	Common::String result = nouns[nounId] + " will " + verbs[verbId] + " you";
+	Common::String result = Common::String::format("%s will %d you", nouns[nounId], verbs[verbId]);
 	putIn(result, 1628);
 	showScreen(); // No halt- it's already set up.
 }

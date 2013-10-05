@@ -1541,26 +1541,27 @@ bool AvalancheEngine::decreaseMoney(uint16 amount) {
 }
 
 Common::String AvalancheEngine::getName(People whose) {
-	static const Common::String lads[17] = {
-		"Avalot", "Spludwick", "Crapulus", "Dr. Duck", "Malagauche", "Friar Tuck",
-		"Robin Hood", "Cwytalot", "du Lustie", "the Duke of Cardiff", "Dogfood",
-		"A trader", "Ibythneth", "Ayles", "Port", "Spurge", "Jacques"
+	static const char lads[17][20] = {
+		"Avalot",     "Spludwick",  "Crapulus",  "Dr. Duck",  "Malagauche",
+		"Friar Tuck", "Robin Hood", "Cwytalot",  "du Lustie", "the Duke of Cardiff",
+		"Dogfood",    "A trader",   "Ibythneth", "Ayles",     "Port", 
+		"Spurge",     "Jacques"
 	};
 
-	static const Common::String lasses[4] = {"Arkata", "Geida", "\0xB1", "the Wise Woman"};
+	static const char lasses[4][15] = {"Arkata", "Geida", "\0xB1", "the Wise Woman"};
 
 	if (whose < kPeopleArkata)
-		return lads[whose - kPeopleAvalot];
+		return Common::String(lads[whose - kPeopleAvalot]);
 	else
-		return lasses[whose - kPeopleArkata];
+		return Common::String(lasses[whose - kPeopleArkata]);
 }
 
 Common::String AvalancheEngine::getItem(byte which) {
-	static const Common::String items[kObjectNum] = {
-		"some wine", "your money-bag", "your bodkin", "a potion", "a chastity belt",
-		"a crossbow bolt", "a crossbow", "a lute", "a pilgrim's badge", "a mushroom",
-		"a key", "a bell", "a scroll", "a pen", "some ink", "your clothes", "a habit",
-		"an onion"
+	static const char items[kObjectNum][18] = {
+		"some wine",       "your money-bag", "your bodkin", "a potion",          "a chastity belt",
+		"a crossbow bolt", "a crossbow",     "a lute",      "a pilgrim's badge", "a mushroom",
+		"a key",           "a bell",         "a scroll",    "a pen",             "some ink",
+		"your clothes",    "a habit",        "an onion"
 	};
 
 	Common::String result;
@@ -1573,7 +1574,7 @@ Common::String AvalancheEngine::getItem(byte which) {
 		case 0:
 		case 1:
 		case 4:
-			result = items[which - 1];
+			result = Common::String(items[which - 1]);
 			break;
 		case 3:
 			result = "some vinegar";
@@ -1586,11 +1587,11 @@ Common::String AvalancheEngine::getItem(byte which) {
 		else if (_onionInVinegar)
 			result = "a pickled onion (in the vinegar)";
 		else
-			result = items[which - 1];
+			result = Common::String(items[which - 1]);
 		break;
 	default:
 		if ((which < kObjectNum) && (which > 0))
-			result = items[which - 1];
+			result = Common::String(items[which - 1]);
 		else
 			result = "";
 	}

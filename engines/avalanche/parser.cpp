@@ -525,9 +525,8 @@ Common::String Parser::rank() {
 	};
 
 	for (int i = 0; i < 8; i++) {
-		if ((_vm->_dnascore >= ranks[i]._score) && (_vm->_dnascore < ranks[i + 1]._score)) {
-			return ranks[i]._title;
-		}
+		if ((_vm->_dnascore >= ranks[i]._score) && (_vm->_dnascore < ranks[i + 1]._score))
+			return Common::String(ranks[i]._title);
 	}
 	return "";
 }
@@ -1572,7 +1571,7 @@ void Parser::heyThanks() {
  * @remarks	Originally called 'do_that'
  */
 void Parser::doThat() {
-	static const Common::String booze[] = {"Bitter", "GIED", "Whisky", "Cider", "", "", "", "Mead"};
+	static const char booze[8][8] = {"Bitter", "GIED", "Whisky", "Cider", "", "", "", "Mead"};
 	static const char kWhat[] = "That's not possible!";
 
 	if (_thats == Common::String(kNothing))  {
@@ -2052,7 +2051,7 @@ void Parser::doThat() {
 						_vm->incScore(3);
 
 					_vm->_background->draw(-1, -1, 11);
-					_vm->_dialogs->displayText(booze[_thing - 51] + ", please." + kControlRegister + '1' + kControlSpeechBubble);
+					_vm->_dialogs->displayText(Common::String(booze[_thing - 51]) + ", please." + kControlRegister + '1' + kControlSpeechBubble);
 					_vm->_drinking = _thing;
 
 					_vm->_background->draw(-1, -1, 9);
