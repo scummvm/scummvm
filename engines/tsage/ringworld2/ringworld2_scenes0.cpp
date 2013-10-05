@@ -5004,6 +5004,39 @@ bool Scene500::AirLock::startAction(CursorType action, Event &event) {
 	}
 }
 
+void Scene500::TransparentDoor::draw() {
+	// Determine the area of the screen to be updated
+	Rect destRect = _bounds;
+	destRect.translate(-g_globals->_sceneManager._scene->_sceneBounds.left,
+		-g_globals->_sceneManager._scene->_sceneBounds.top);
+
+	// Get the frame to be drawn
+	GfxSurface frame = getFrame();
+
+	Graphics::Surface s = frame.lockSurface();
+	Graphics::Surface screen = g_globals->gfxManager().getSurface().lockSurface();
+
+	for (int yp = 0; yp < s.h; ++yp) {
+		byte *frameSrcP = (byte *)s.getBasePtr(0, yp);
+		byte *screenP = (byte *)screen.getBasePtr(destRect.left, destRect.top + yp);
+
+		for (int xp = 0; xp < s.w; ++xp, ++frameSrcP, ++screenP) {
+			if (*frameSrcP != frame._transColor && *frameSrcP < 6) {
+				*frameSrcP = R2_GLOBALS._fadePaletteMap[*frameSrcP][*screenP];
+			}
+		}
+	}
+
+	// Finished updating the frame
+	frame.unlockSurface();
+	g_globals->gfxManager().getSurface().unlockSurface();
+
+	// Draw the processed frame
+	Region *priorityRegion = g_globals->_sceneManager._scene->_priorities.find(_priority);
+	g_globals->gfxManager().copyFrom(frame, destRect, priorityRegion);
+
+}
+
 bool Scene500::Aerosol::startAction(CursorType action, Event &event) {
 	Scene500 *scene = (Scene500 *)R2_GLOBALS._sceneManager._scene;
 
@@ -5170,7 +5203,7 @@ void Scene500::PanelDialog::Button::doButtonPress() {
 			if (R2_GLOBALS.getFlag(35)) {
 				scene->_sceneMode = 5;
 				scene->setAction(&scene->_sequenceManager1, scene, 509, &scene->_object1,
-					&scene->_suit, &scene->_object8, NULL);
+					&scene->_suit, &scene->_transparentDoor, NULL);
 			} else {
 				scene->_sound1.play(127);
 				scene->_object1.animate(ANIM_MODE_6, scene);
@@ -5184,7 +5217,7 @@ void Scene500::PanelDialog::Button::doButtonPress() {
 			if (R2_GLOBALS.getFlag(35)) {
 				scene->_sceneMode = 6;
 				scene->setAction(&scene->_sequenceManager1, scene, 509, &scene->_object1,
-					&scene->_suit, &scene->_object8, NULL);
+					&scene->_suit, &scene->_transparentDoor, NULL);
 			} else {
 				scene->_sound1.play(127);
 				scene->_object1.animate(ANIM_MODE_6, scene);
@@ -5195,7 +5228,7 @@ void Scene500::PanelDialog::Button::doButtonPress() {
 			if (R2_GLOBALS.getFlag(35)) {
 				scene->_sceneMode = 509;
 				scene->setAction(&scene->_sequenceManager1, scene, 509, &scene->_object1,
-					&scene->_suit, &scene->_object8, NULL);
+					&scene->_suit, &scene->_transparentDoor, NULL);
 			} else {
 				scene->_suit.postInit();
 				scene->_suit.hide();
@@ -5205,7 +5238,7 @@ void Scene500::PanelDialog::Button::doButtonPress() {
 
 				scene->setAction(&scene->_sequenceManager1, scene, 508,
 					&R2_GLOBALS._player, &scene->_object1, &scene->_suit, 
-					&scene->_object8, NULL);
+					&scene->_transparentDoor, NULL);
 				R2_GLOBALS.setFlag(35);
 			}
 			break;
@@ -5222,7 +5255,6 @@ void Scene500::postInit(SceneObjectList *OwnerList) {
 	SceneExt::postInit();
 	loadScene(500);
 
-	Common::fill(&_buffer[0], &_buffer[2710], 0);
 	_stripManager.setColors(60, 255);
 	_stripManager.setFontNumber(50);
 	_stripManager.addSpeaker(&_seekerSpeaker);
@@ -5322,13 +5354,13 @@ void Scene500::postInit(SceneObjectList *OwnerList) {
 	_object1.setPosition(Common::Point(258, 99));
 	_object1.fixPriority(50);
 
-	_object8.postInit();
-	_object8.setPosition(Common::Point(250, 111));
+	_transparentDoor.postInit();
+	_transparentDoor.setPosition(Common::Point(250, 111));
 
 	if (!R2_GLOBALS.getFlag(35)) {
-		_object8.setup(501, 3, 1);
+		_transparentDoor.setup(501, 3, 1);
 	} else {
-		_object8.setup(500, 8, 7);
+		_transparentDoor.setup(500, 8, 7);
 
 		_suit.postInit();
 		_suit._effect = 1;
@@ -5399,7 +5431,7 @@ void Scene500::signal() {
 		break;
 	case 7:
 		_sound1.play(126);
-		_object8.animate(ANIM_MODE_6, this);
+		_transparentDoor.animate(ANIM_MODE_6, this);
 
 		R2_GLOBALS.clearFlag(35);
 		_suit.remove();

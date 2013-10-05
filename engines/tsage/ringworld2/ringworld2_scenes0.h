@@ -575,8 +575,9 @@ class Scene500: public SceneExt {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Object8: public SceneActor {
-		// This classes uses a custom draw method
+	class TransparentDoor: public SceneActor {
+	public:
+		virtual void draw();
 	};
 	class Aerosol: public SceneActor {
 	public:
@@ -596,7 +597,6 @@ class Scene500: public SceneExt {
 	};
 public:
 	int _stripNumber;
-	byte _buffer[2710];
 	SpeakerSeeker500 _seekerSpeaker;
 	SpeakerQuinn500 _quinnSpeaker;
 	SceneHotspot _background, _item2;
@@ -607,7 +607,7 @@ public:
 	Doorway _doorway;
 	OxygenTanks _tanks1, _tanks2;
 	AirLock _airLock;
-	Object8 _object8;
+	TransparentDoor _transparentDoor;
 	Aerosol _aerosol;
 	SonicStunner _sonicStunner;
 	Locker1 _locker1;
