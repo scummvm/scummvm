@@ -91,6 +91,8 @@ protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
+class SsCommonPressButton;
+
 class Scene2205 : public Scene {
 public:
 	Scene2205(NeverhoodEngine *vm, Module *parentModule, int which);

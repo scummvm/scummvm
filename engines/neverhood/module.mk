@@ -15,7 +15,9 @@ MODULE_OBJS = \
 	microtiles.o \
 	module.o \
 	modules/module1000.o \
+	modules/module1000_sprites.o \
 	modules/module1100.o \
+	modules/module1100_sprites.o \
 	modules/module1200.o \
 	modules/module1200_sprites.o \
 	modules/module1300.o \
