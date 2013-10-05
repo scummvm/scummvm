@@ -24,7 +24,6 @@
 #include "avalanche/sound.h"
 
 #include "audio/audiostream.h"
-#include "common/system.h"
 #include "common/config-manager.h"
 
 namespace Avalanche {
