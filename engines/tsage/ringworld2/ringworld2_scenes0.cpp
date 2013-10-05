@@ -5202,11 +5202,11 @@ void Scene500::PanelDialog::Button::doButtonPress() {
 
 			if (R2_GLOBALS.getFlag(35)) {
 				scene->_sceneMode = 5;
-				scene->setAction(&scene->_sequenceManager1, scene, 509, &scene->_object1,
+				scene->setAction(&scene->_sequenceManager1, scene, 509, &scene->_suits,
 					&scene->_suit, &scene->_transparentDoor, NULL);
 			} else {
 				scene->_sound1.play(127);
-				scene->_object1.animate(ANIM_MODE_6, scene);
+				scene->_suits.animate(ANIM_MODE_6, scene);
 			}
 			break;
 
@@ -5216,18 +5216,18 @@ void Scene500::PanelDialog::Button::doButtonPress() {
 
 			if (R2_GLOBALS.getFlag(35)) {
 				scene->_sceneMode = 6;
-				scene->setAction(&scene->_sequenceManager1, scene, 509, &scene->_object1,
+				scene->setAction(&scene->_sequenceManager1, scene, 509, &scene->_suits,
 					&scene->_suit, &scene->_transparentDoor, NULL);
 			} else {
 				scene->_sound1.play(127);
-				scene->_object1.animate(ANIM_MODE_6, scene);
+				scene->_suits.animate(ANIM_MODE_6, scene);
 			}
 			break;
 		
 		case 3:
 			if (R2_GLOBALS.getFlag(35)) {
 				scene->_sceneMode = 509;
-				scene->setAction(&scene->_sequenceManager1, scene, 509, &scene->_object1,
+				scene->setAction(&scene->_sequenceManager1, scene, 509, &scene->_suits,
 					&scene->_suit, &scene->_transparentDoor, NULL);
 			} else {
 				scene->_suit.postInit();
@@ -5237,7 +5237,7 @@ void Scene500::PanelDialog::Button::doButtonPress() {
 				scene->_suit.setup(502, R2_GLOBALS._landerSuitNumber + 2, 1);
 
 				scene->setAction(&scene->_sequenceManager1, scene, 508,
-					&R2_GLOBALS._player, &scene->_object1, &scene->_suit, 
+					&R2_GLOBALS._player, &scene->_suits, &scene->_suit, 
 					&scene->_transparentDoor, NULL);
 				R2_GLOBALS.setFlag(35);
 			}
@@ -5348,11 +5348,11 @@ void Scene500::postInit(SceneObjectList *OwnerList) {
 		_sonicStunner.setDetails(500, 21, 22, 23, 1, (SceneItem *)NULL);
 	}
 
-	_object1.postInit();
-	_object1._effect = 1;
-	_object1.setup(502, 1, 1);
-	_object1.setPosition(Common::Point(258, 99));
-	_object1.fixPriority(50);
+	_suits.postInit();
+	_suits._effect = 1;
+	_suits.setup(502, 1, 1);
+	_suits.setPosition(Common::Point(258, 99));
+	_suits.fixPriority(50);
 
 	_transparentDoor.postInit();
 	_transparentDoor.setPosition(Common::Point(250, 111));
@@ -5382,7 +5382,7 @@ void Scene500::postInit(SceneObjectList *OwnerList) {
 		R2_GLOBALS._player._moveDiff.x = 5;
 
 	_controlPanel.setDetails(Rect(175, 62, 191, 80), 500, 31, 32, 33, 1, (SceneItem *)NULL);
-	_item2.setDetails(Rect(13, 58, 70, 118), 500, 12, -1, -1, 1, (SceneItem *)NULL);
+	_airlockCorridor.setDetails(Rect(13, 58, 70, 118), 500, 12, -1, -1, 1, (SceneItem *)NULL);
 	_background.setDetails(Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 500, 0, -1, -1, 1, (SceneItem *)NULL);
 
 	if ((R2_GLOBALS._player._characterIndex == R2_QUINN) && (R2_GLOBALS._sceneManager._previousScene == 700)) {
@@ -5414,7 +5414,7 @@ void Scene500::signal() {
 	case 5:
 		_sceneMode = 12;
 		_sound1.play(127);
-		_object1.animate(ANIM_MODE_6, this);
+		_suits.animate(ANIM_MODE_6, this);
 
 		R2_GLOBALS.clearFlag(35);
 		_suit.remove();
@@ -5423,7 +5423,7 @@ void Scene500::signal() {
 	case 6:
 		_sceneMode = 11;
 		_sound1.play(127);
-		_object1.animate(ANIM_MODE_5, this);
+		_suits.animate(ANIM_MODE_5, this);
 
 		R2_GLOBALS.clearFlag(35);
 		_suit.remove();

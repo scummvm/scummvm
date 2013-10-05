@@ -599,9 +599,9 @@ public:
 	int _stripNumber;
 	SpeakerSeeker500 _seekerSpeaker;
 	SpeakerQuinn500 _quinnSpeaker;
-	SceneHotspot _background, _item2;
+	SceneHotspot _background, _airlockCorridor;
 	ControlPanel _controlPanel;
-	SceneActor _object1;
+	SceneActor _suits;
 	Seeker _seeker;
 	Suit _suit;
 	Doorway _doorway;
