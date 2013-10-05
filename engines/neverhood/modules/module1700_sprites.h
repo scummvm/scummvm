@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef NEVERHOOD_MODULES_MODULE1700_H
-#define NEVERHOOD_MODULES_MODULE1700_H
+#ifndef NEVERHOOD_MODULES_MODULE1700_SPRITES_H
+#define NEVERHOOD_MODULES_MODULE1700_SPRITES_H
 
 #include "neverhood/neverhood.h"
 #include "neverhood/module.h"
@@ -29,27 +29,20 @@
 
 namespace Neverhood {
 
-class Module1700 : public Module {
+class SsScene1705WallSymbol : public StaticSprite {
 public:
-	Module1700(NeverhoodEngine *vm, Module *parentModule, int which);
-	virtual ~Module1700();
-protected:
-	int _sceneNum;
-	void createScene(int sceneNum, int which);
-	void updateScene();
+	SsScene1705WallSymbol(NeverhoodEngine *vm, uint32 fileHash, int symbolIndex);
 };
 
-class Scene1705 : public Scene {
+class SsScene1705Tape : public StaticSprite {
 public:
-	Scene1705(NeverhoodEngine *vm, Module *parentModule, int which);
+	SsScene1705Tape(NeverhoodEngine *vm, Scene *parentScene, uint32 tapeIndex, int surfacePriority, int16 x, int16 y, uint32 fileHash);
 protected:
-	Sprite *_sprite;
-	Sprite *_ssTape;
-	int _paletteArea;
-	void update();
+	Scene *_parentScene;
+	uint32 _tapeIndex;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
 } // End of namespace Neverhood
 
-#endif /* NEVERHOOD_MODULES_MODULE1700_H */
+#endif /* NEVERHOOD_MODULES_MODULE1700_SPRITES_H */

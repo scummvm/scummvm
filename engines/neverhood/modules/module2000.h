@@ -26,7 +26,6 @@
 #include "neverhood/neverhood.h"
 #include "neverhood/module.h"
 #include "neverhood/scene.h"
-#include "neverhood/modules/module1200.h"
 
 namespace Neverhood {
 
@@ -40,8 +39,6 @@ protected:
 	void createScene(int sceneNum, int which);
 	void updateScene();
 };
-
-// Scene2001
 
 class Scene2001 : public Scene {
 public:
