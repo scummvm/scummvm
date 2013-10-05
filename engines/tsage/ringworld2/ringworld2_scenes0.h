@@ -891,11 +891,11 @@ class Scene900 : public SceneExt {
 		virtual bool startAction(CursorType action, Event &event);
 	};
 public:
-	int _field412;
+	int _controlsScreenNumber;
 	Common::Point _magnetChangeAmount;
-	NamedHotspot _item1;
-	SceneActor _actor1;
-	SceneActor _actor2;
+	NamedHotspot _background;
+	SceneActor _controls;
+	SceneActor _cable;
 	SceneActor _electromagnet;
 	Button _button1;
 	Button _button2;

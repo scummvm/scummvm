@@ -7360,7 +7360,7 @@ void Scene900::Button::initButton(int buttonId) {
 }
 
 Scene900::Scene900() {
-	_field412 = 0;
+	_controlsScreenNumber = 0;
 	_magnetChangeAmount.x = 0;
 	_magnetChangeAmount.y = 0;
 }
@@ -7368,7 +7368,7 @@ Scene900::Scene900() {
 void Scene900::synchronize(Serializer &s) {
 	SceneExt::synchronize(s);
 
-	s.syncAsSint16LE(_field412);
+	s.syncAsSint16LE(_controlsScreenNumber);
 	s.syncAsSint16LE(_magnetChangeAmount.x);
 	s.syncAsSint16LE(_magnetChangeAmount.y);
 }
@@ -7380,26 +7380,26 @@ bool Scene900::Button::startAction(CursorType action, Event &event) {
 		R2_GLOBALS._sound2.play(14);
 		switch (_buttonId) {
 		case 2:
-			if (scene->_field412 == 1) {
+			if (scene->_controlsScreenNumber == 1) {
 				scene->_sceneMode = 2;
 				scene->signal();
-			} else if (scene->_field412 == 2) {
+			} else if (scene->_controlsScreenNumber == 2) {
 				if (R2_GLOBALS._v565E5 == 0) {
 					scene->_aSound1.play(30);
 					setup(900, 3, 11);
 					R2_GLOBALS._v565E5 = 1;
-					if ((R2_INVENTORY.getObjectScene(R2_CABLE_HARNESS) == 0) && (R2_INVENTORY.getObjectScene(R2_ATTRACTOR_CABLE_HARNESS == 700)) && (R2_GLOBALS._electromagnetChangeAmount == 20) && (R2_GLOBALS._electromagnetZoom == 70) && (scene->_actor2._animateMode != ANIM_MODE_6)) {
-						scene->_actor2.animate(ANIM_MODE_6, NULL);
+					if ((R2_INVENTORY.getObjectScene(R2_CABLE_HARNESS) == 0) && (R2_INVENTORY.getObjectScene(R2_ATTRACTOR_CABLE_HARNESS == 700)) && (R2_GLOBALS._electromagnetChangeAmount == 20) && (R2_GLOBALS._electromagnetZoom == 70) && (scene->_cable._animateMode != ANIM_MODE_6)) {
+						scene->_cable.animate(ANIM_MODE_6, NULL);
 					} else {
-						if (((scene->_electromagnet._percent * 49) / 100) + scene->_electromagnet._position.x == scene->_actor2._position.x) {
-							if (scene->_actor2._position.x == 166 - (R2_GLOBALS._electromagnetZoom / 15)) {
+						if (((scene->_electromagnet._percent * 49) / 100) + scene->_electromagnet._position.x == scene->_cable._position.x) {
+							if (scene->_cable._position.x == 166 - (R2_GLOBALS._electromagnetZoom / 15)) {
 								R2_GLOBALS._player.disableControl();
 								scene->_sceneMode = 4;
-								scene->_actor2._moveDiff.y = (scene->_actor2._position.y - (scene->_electromagnet._position.y + ((scene->_electromagnet._percent * 3) / 10) - 2)) / 9;
+								scene->_cable._moveDiff.y = (scene->_cable._position.y - (scene->_electromagnet._position.y + ((scene->_electromagnet._percent * 3) / 10) - 2)) / 9;
 								Common::Point pt(scene->_electromagnet._position.x + ((scene->_electromagnet._percent * 49) / 100), scene->_electromagnet._position.y + ((scene->_electromagnet._percent * 3) / 10) - 2);
 								NpcMover *mover = new NpcMover();
-								scene->_actor2.addMover(mover, &pt, this);
-								scene->_actor2.animate(ANIM_MODE_6, NULL);
+								scene->_cable.addMover(mover, &pt, this);
+								scene->_cable.animate(ANIM_MODE_6, NULL);
 							}
 						}
 					}
@@ -7408,18 +7408,18 @@ bool Scene900::Button::startAction(CursorType action, Event &event) {
 					setup(900, 3, 9);
 					R2_GLOBALS._v565E5 = 0;
 
-					if ((R2_INVENTORY.getObjectScene(R2_CABLE_HARNESS) == 0) && (R2_INVENTORY.getObjectScene(R2_ATTRACTOR_CABLE_HARNESS) == 700) && (scene->_actor2._frame < 8) && (scene->_actor2._animateMode != ANIM_MODE_5)) {
-							scene->_actor2.animate(ANIM_MODE_5, NULL);
-					} else if ((R2_INVENTORY.getObjectScene(R2_CABLE_HARNESS) == 700) && (R2_INVENTORY.getObjectScene(R2_ATTRACTOR_CABLE_HARNESS) == 700) && (scene->_actor2._frame < 8)) {
+					if ((R2_INVENTORY.getObjectScene(R2_CABLE_HARNESS) == 0) && (R2_INVENTORY.getObjectScene(R2_ATTRACTOR_CABLE_HARNESS) == 700) && (scene->_cable._frame < 8) && (scene->_cable._animateMode != ANIM_MODE_5)) {
+							scene->_cable.animate(ANIM_MODE_5, NULL);
+					} else if ((R2_INVENTORY.getObjectScene(R2_CABLE_HARNESS) == 700) && (R2_INVENTORY.getObjectScene(R2_ATTRACTOR_CABLE_HARNESS) == 700) && (scene->_cable._frame < 8)) {
 						R2_GLOBALS._v565E7 = 0;
-						if (scene->_actor2._animateMode != 5) {
+						if (scene->_cable._animateMode != 5) {
 							R2_GLOBALS._player.disableControl();
 							scene->_sceneMode = 5;
-							scene->_actor2.animate(ANIM_MODE_5, NULL);
-							scene->_actor2._moveDiff.y = (166 - scene->_actor2._position.y) / 9;
-							Common::Point pt(scene->_actor2._position.x, 166 - (R2_GLOBALS._electromagnetZoom / 15));
+							scene->_cable.animate(ANIM_MODE_5, NULL);
+							scene->_cable._moveDiff.y = (166 - scene->_cable._position.y) / 9;
+							Common::Point pt(scene->_cable._position.x, 166 - (R2_GLOBALS._electromagnetZoom / 15));
 							NpcMover *mover = new NpcMover();
-							scene->_actor2.addMover(mover, &pt, this);
+							scene->_cable.addMover(mover, &pt, this);
 						}
 					}
 				}
@@ -7427,7 +7427,7 @@ bool Scene900::Button::startAction(CursorType action, Event &event) {
 			return true;
 			break;
 		case 3:
-			if (scene->_field412 == 1) {
+			if (scene->_controlsScreenNumber == 1) {
 				scene->_sceneMode = 3;
 				scene->signal();
 			}
@@ -7470,7 +7470,7 @@ bool Scene900::Button::startAction(CursorType action, Event &event) {
 			return true;
 			break;
 		default:
-			if (scene->_field412 == 1) {
+			if (scene->_controlsScreenNumber == 1) {
 				R2_GLOBALS._player.disableControl();
 				scene->_button2.remove();
 				scene->_button3.remove();
@@ -7480,8 +7480,8 @@ bool Scene900::Button::startAction(CursorType action, Event &event) {
 				scene->_button7.remove();
 				R2_GLOBALS._sound2.play(37);
 				scene->_sceneMode = 901;
-				scene->setAction(&scene->_sequenceManager1, scene, 901, &scene->_actor1, this ,NULL);
-			} else if ((scene->_field412 == 2) || (scene->_field412 == 3)) {
+				scene->setAction(&scene->_sequenceManager1, scene, 901, &scene->_controls, this ,NULL);
+			} else if ((scene->_controlsScreenNumber == 2) || (scene->_controlsScreenNumber == 3)) {
 				scene->_sceneMode = 1;
 				scene->signal();
 			}
@@ -7490,7 +7490,7 @@ bool Scene900::Button::startAction(CursorType action, Event &event) {
 			break;
 		}
 	} else if (action == CURSOR_LOOK) {
-		SceneItem::display(900, ((_buttonId == 2) && (scene->_field412 == 2)) ? 21 : _buttonId + 11,
+		SceneItem::display(900, ((_buttonId == 2) && (scene->_controlsScreenNumber == 2)) ? 21 : _buttonId + 11,
 			SET_WIDTH, 280, SET_X, 160,  SET_POS_MODE, 1, SET_Y, 20, SET_EXT_BGCOLOR, 7, -999);
 		return true;
 	} else {
@@ -7508,8 +7508,8 @@ void Scene900::postInit(SceneObjectList *OwnerList) {
 	R2_GLOBALS._player.hide();
 	R2_GLOBALS._player.disableControl();
 
-	_actor1.postInit();
-	_actor1.setDetails(900, 3, -1, -1, 1, (SceneItem *) NULL);
+	_controls.postInit();
+	_controls.setDetails(900, 3, -1, -1, 1, (SceneItem *) NULL);
 
 	_magnetChangeAmount.x = 0;
 	_magnetChangeAmount.y = 0;
@@ -7522,33 +7522,34 @@ void Scene900::postInit(SceneObjectList *OwnerList) {
 	_electromagnet.setDetails(900, 6, -1, 8, 1, (SceneItem *) NULL);
 
 	if ((R2_INVENTORY.getObjectScene(R2_CABLE_HARNESS) != 1) && (R2_INVENTORY.getObjectScene(R2_ATTRACTOR_CABLE_HARNESS) != 1)) {
-		_actor2.postInit();
-		_actor2.setPosition(Common::Point(0, 0));
-		_actor2.fixPriority(1);
+		_cable.postInit();
+		_cable.setPosition(Common::Point(0, 0));
+		_cable.fixPriority(1);
 
 		if (R2_INVENTORY.getObjectScene(R2_CABLE_HARNESS) == 0) {
 			if (R2_INVENTORY.getObjectScene(R2_ATTRACTOR_CABLE_HARNESS) != 700) {
-				_actor2.setup(901, 3, 2);
+				_cable.setup(901, 3, 2);
 			} else if ((R2_GLOBALS._v565E5 != 0) && (R2_GLOBALS._electromagnetChangeAmount == 20) && (R2_GLOBALS._electromagnetZoom == 70)) {
-				_actor2.setup(901, 2, 1);
+				_cable.setup(901, 2, 1);
 			} else {
-				_actor2.setup(901, 2, 8);
+				_cable.setup(901, 2, 8);
 			}
-			_actor2.setPosition(Common::Point(171, 145));
-			_actor2.setDetails(700, -1, -1, -1, 1, (SceneItem *) NULL);
+			_cable.setPosition(Common::Point(171, 145));
+			_cable.setDetails(700, -1, -1, -1, 1, (SceneItem *) NULL);
 		} else {
-			_actor2.setDetails(700, -1, -1, -1, 1, (SceneItem *) NULL);
+			_cable.setDetails(700, -1, -1, -1, 1, (SceneItem *) NULL);
 			if (R2_GLOBALS._v565E7 == 0) {
-				_actor2.setup(901, 1, 8);
+				_cable.setup(901, 1, 8);
 				// Original set two times the same values: skipped
-				_actor2.setPosition(Common::Point((((100  - ((R2_GLOBALS._v565EB * 350) / 100)) * 49) / 100) + ((R2_GLOBALS._v565E9 * _electromagnet._percent * 6) / 100) + 89, 166 - (R2_GLOBALS._v565EB / 3)));
-				_actor2.changeZoom(((100 - ((R2_GLOBALS._v565EB * 350) / 100) + 52) / 10) * 10);
+				_cable.setPosition(Common::Point((((100  - ((R2_GLOBALS._v565EB * 350) / 100)) * 49) / 100) + ((R2_GLOBALS._v565E9 * _electromagnet._percent * 6) / 100) + 89, 166 - (R2_GLOBALS._v565EB / 3)));
+				_cable.changeZoom(((100 - ((R2_GLOBALS._v565EB * 350) / 100) + 52) / 10) * 10);
 			}
 		}
 	}
-	_item1.setDetails(Rect(0, 0, 320, 200), 900, 0, -1, -1, 1, NULL);
+
+	_background.setDetails(Rect(0, 0, 320, 200), 900, 0, -1, -1, 1, NULL);
 	_sceneMode = 900;
-	setAction(&_sequenceManager1, this, 900, &_actor1, NULL);
+	setAction(&_sequenceManager1, this, 900, &_controls, NULL);
 }
 
 void Scene900::remove() {
@@ -7561,7 +7562,7 @@ void Scene900::remove() {
 void Scene900::signal() {
 	switch (_sceneMode) {
 	case 1:
-		_field412 = 1;
+		_controlsScreenNumber = 1;
 		R2_GLOBALS._sound2.play(37);
 
 		_button2.remove();
@@ -7580,7 +7581,7 @@ void Scene900::signal() {
 		_button3.setPosition(Common::Point(117, 166));
 		break;
 	case 2:
-		_field412 = 2;
+		_controlsScreenNumber = 2;
 
 		_button2.remove();
 		_button3.remove();
@@ -7610,7 +7611,7 @@ void Scene900::signal() {
 
 		break;
 	case 3:
-		_field412 = 3;
+		_controlsScreenNumber = 3;
 
 		_button2.remove();
 		_button3.remove();
@@ -7637,7 +7638,7 @@ void Scene900::signal() {
 		R2_GLOBALS._player.enableControl(CURSOR_USE);
 		R2_GLOBALS._player._canWalk = false;
 
-		_actor1.setup(900, 1, 1);
+		_controls.setup(900, 1, 1);
 
 		_button1.initButton(1);
 		_button1.setup(900, 1, 3);
@@ -7680,27 +7681,27 @@ void Scene900::dispatch() {
 		}
 	}
 
-	if (R2_GLOBALS._sceneObjects->contains(&_actor2)) {
+	if (R2_GLOBALS._sceneObjects->contains(&_cable)) {
 		if ((R2_GLOBALS._v565E5 != 0) && (R2_INVENTORY.getObjectScene(R2_CABLE_HARNESS) == 0) && (R2_INVENTORY.getObjectScene(R2_ATTRACTOR_CABLE_HARNESS) == 700) && (R2_GLOBALS._electromagnetChangeAmount == 20) && (R2_GLOBALS._electromagnetZoom == 70)) {
-			if ((_actor2._frame > 1) && (_actor2._animateMode != ANIM_MODE_6))
-				_actor2.animate(ANIM_MODE_6, NULL);
+			if ((_cable._frame > 1) && (_cable._animateMode != ANIM_MODE_6))
+				_cable.animate(ANIM_MODE_6, NULL);
 		} else {
-			if ((_actor2._frame < 8) && (_actor2._animateMode != ANIM_MODE_5) && (R2_GLOBALS._v565E7 == 0) && (R2_INVENTORY.getObjectScene(R2_CABLE_HARNESS) == 0) && (R2_INVENTORY.getObjectScene(R2_ATTRACTOR_CABLE_HARNESS) == 700) && (_sceneMode != 4))
-				_actor2.animate(ANIM_MODE_5, NULL);
+			if ((_cable._frame < 8) && (_cable._animateMode != ANIM_MODE_5) && (R2_GLOBALS._v565E7 == 0) && (R2_INVENTORY.getObjectScene(R2_CABLE_HARNESS) == 0) && (R2_INVENTORY.getObjectScene(R2_ATTRACTOR_CABLE_HARNESS) == 700) && (_sceneMode != 4))
+				_cable.animate(ANIM_MODE_5, NULL);
 		}
 	}
 
 	_electromagnet.changeZoom(100 - ((R2_GLOBALS._electromagnetZoom * 70) / 100));
 	_electromagnet.setPosition(Common::Point(((_electromagnet._percent * R2_GLOBALS._electromagnetChangeAmount * 6) / 100) + 89, R2_GLOBALS._electromagnetZoom));
 
-	if ((R2_GLOBALS._sceneObjects->contains(&_actor2)) && (R2_GLOBALS._v565E7 != 0) && (!_actor2._mover) && (_actor2._animateMode == ANIM_MODE_NONE)) {
-		_actor2.setPosition(Common::Point(_electromagnet._position.x + ((_electromagnet._percent * 49) / 100), _electromagnet._position.y + ((_electromagnet._percent * 3) / 10)));
+	if ((R2_GLOBALS._sceneObjects->contains(&_cable)) && (R2_GLOBALS._v565E7 != 0) && (!_cable._mover) && (_cable._animateMode == ANIM_MODE_NONE)) {
+		_cable.setPosition(Common::Point(_electromagnet._position.x + ((_electromagnet._percent * 49) / 100), _electromagnet._position.y + ((_electromagnet._percent * 3) / 10)));
 		if (R2_GLOBALS._electromagnetZoom >= 75) {
-			_actor2.setup(901, 1, 1);
-			_actor2.changeZoom(((_electromagnet._percent + 52) / 10) * 10);
+			_cable.setup(901, 1, 1);
+			_cable.changeZoom(((_electromagnet._percent + 52) / 10) * 10);
 		} else {
-			_actor2.setup(901, 5, 1);
-			_actor2.changeZoom(((_electromagnet._percent / 10) * 10) + 30);
+			_cable.setup(901, 5, 1);
+			_cable.changeZoom(((_electromagnet._percent / 10) * 10) + 30);
 		}
 	}
 	Scene::dispatch();
