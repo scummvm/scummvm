@@ -26,7 +26,9 @@ MODULE_OBJS = \
 	modules/module1900.o \
 	modules/module2000.o \
 	modules/module2100.o \
+	modules/module2100_sprites.o \
 	modules/module2200.o \
+	modules/module2200_sprites.o \
 	modules/module2300.o \
 	modules/module2400.o \
 	modules/module2400_sprites.o \

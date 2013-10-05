@@ -27,7 +27,6 @@
 #include "neverhood/module.h"
 #include "neverhood/scene.h"
 #include "neverhood/console.h"
-#include "neverhood/modules/module3000.h"
 
 namespace Neverhood {
 
@@ -161,6 +160,8 @@ protected:
 	uint32 hmCarAtHome(int messageNum, const MessageParam &param, Entity *sender);
 	void updateKlaymenCliprect();
 };
+
+class AsScene3011Symbol;
 
 class Scene1609 : public Scene {
 	friend class Console;

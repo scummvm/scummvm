@@ -25,7 +25,7 @@
 #include "neverhood/modules/module1000.h"
 #include "neverhood/modules/module1200.h"
 #include "neverhood/modules/module1700.h"
-#include "neverhood/modules/module2200.h"
+#include "neverhood/modules/module2200_sprites.h"
 #include "neverhood/modules/module2800_sprites.h"
 #include "neverhood/diskplayerscene.h"
 

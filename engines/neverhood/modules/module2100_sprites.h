@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef NEVERHOOD_MODULES_MODULE2700_SPRITES_H
-#define NEVERHOOD_MODULES_MODULE2700_SPRITES_H
+#ifndef NEVERHOOD_MODULES_MODULE2100_SPRITES_H
+#define NEVERHOOD_MODULES_MODULE2100_SPRITES_H
 
 #include "neverhood/neverhood.h"
 #include "neverhood/module.h"
@@ -29,39 +29,36 @@
 
 namespace Neverhood {
 
-class SsCommonTrackShadowBackground : public StaticSprite {
+class AsScene2101Door : public AnimatedSprite {
 public:
-	SsCommonTrackShadowBackground(NeverhoodEngine *vm, uint32 fileHash);
+	AsScene2101Door(NeverhoodEngine *vm, bool isOpen);
+protected:
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+	void stOpenDoor();
+	void stCloseDoor();
+	void stCloseDoorDone();
 };
 
-class AsCommonCarShadow : public AnimatedSprite {
+class AsScene2101HitByDoorEffect : public AnimatedSprite {
 public:
-	AsCommonCarShadow(NeverhoodEngine *vm, AnimatedSprite *asCar, BaseSurface *shadowSurface, uint index);
+	AsScene2101HitByDoorEffect(NeverhoodEngine *vm, Sprite *klaymen);
 protected:
-	uint _index;
-	AnimatedSprite *_asCar;
-	uint32 _animFileHash;
-	void update();
-	void updateShadow();
+	Sprite *_klaymen;
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
-class AsCommonCarConnectorShadow : public AnimatedSprite {
+class SsCommonFloorButton : public StaticSprite {
 public:
-	AsCommonCarConnectorShadow(NeverhoodEngine *vm, Sprite *asCar, BaseSurface *shadowSurface, uint index);
+	SsCommonFloorButton(NeverhoodEngine *vm, Scene *parentScene, uint32 fileHash1, uint32 fileHash2, int surfacePriority, uint32 soundFileHash);
 protected:
-	uint _index;
-	Sprite *_asCar;
+	Scene *_parentScene;
+	uint32 _soundFileHash;
+	uint32 _fileHash1, _fileHash2;
+	int16 _countdown;
 	void update();
-};
-
-class AsCommonCarTrackShadow : public AnimatedSprite {
-public:
-	AsCommonCarTrackShadow(NeverhoodEngine *vm, Sprite *asCar, BaseSurface *shadowSurface, int16 frameIndex);
-protected:
-	Sprite *_asCar;
-	void update();
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
 } // End of namespace Neverhood
 
-#endif /* NEVERHOOD_MODULES_MODULE2700_SPRITES_H */
+#endif /* NEVERHOOD_MODULES_MODULE2100_SPRITES_H */

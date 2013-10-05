@@ -20,10 +20,11 @@
  *
  */
 
+#include "neverhood/modules/module1600.h"
 #include "neverhood/modules/module2500.h"
 #include "neverhood/modules/module2500_sprites.h"
+#include "neverhood/modules/module2700.h"
 #include "neverhood/modules/module2700_sprites.h"
-#include "neverhood/modules/module1600.h"
 
 namespace Neverhood {
 

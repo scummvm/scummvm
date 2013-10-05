@@ -40,38 +40,6 @@ protected:
 	void updateScene();
 };
 
-// Scene1901
-
-class AsScene2101Door : public AnimatedSprite {
-public:
-	AsScene2101Door(NeverhoodEngine *vm, bool isOpen);
-protected:
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	void stOpenDoor();
-	void stCloseDoor();
-	void stCloseDoorDone();
-};
-
-class AsScene2101HitByDoorEffect : public AnimatedSprite {
-public:
-	AsScene2101HitByDoorEffect(NeverhoodEngine *vm, Sprite *klaymen);
-protected:
-	Sprite *_klaymen;
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-};
-
-class SsCommonFloorButton : public StaticSprite {
-public:
-	SsCommonFloorButton(NeverhoodEngine *vm, Scene *parentScene, uint32 fileHash1, uint32 fileHash2, int surfacePriority, uint32 soundFileHash);
-protected:
-	Scene *_parentScene;
-	uint32 _soundFileHash;
-	uint32 _fileHash1, _fileHash2;
-	int16 _countdown;
-	void update();
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-};
-
 class Scene2101 : public Scene {
 public:
 	Scene2101(NeverhoodEngine *vm, Module *parentModule, int which);
