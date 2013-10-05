@@ -401,7 +401,7 @@ bool MovGraph2::initDirections(StaticANIObject *obj, MovGraph2Item *item) {
 			return false;
 
 		for (int act = 0; act < 3; act++) {
-			int idx;
+			int idx = 0;
 
 			switch(act) {
 			case 0:
@@ -428,7 +428,7 @@ bool MovGraph2::initDirections(StaticANIObject *obj, MovGraph2Item *item) {
 		}
 
 		for (int act = 0; act < 4; act++) {
-			int idx;
+			int idx = 0;
 
 			switch(act) {
 			case 0:
@@ -458,7 +458,7 @@ bool MovGraph2::initDirections(StaticANIObject *obj, MovGraph2Item *item) {
 		}
 
 		for (int act = 0; act < 4; act++) {
-			int idx;
+			int idx = 0;
 
 			switch(act) {
 			case 0:

@@ -239,7 +239,7 @@ void BehaviorInfo::initObjectBehavior(GameVar *var, Scene *sc, StaticANIObject *
 	}
 
 	for (int i = 0; i < _itemsCount; i++) {
-		int maxDelay;
+		int maxDelay = 0;
 
 		_bheItems.push_back(new BehaviorEntry(var->getSubVarByIndex(i), sc, ani, &maxDelay));
 
@@ -275,7 +275,7 @@ BehaviorEntry::BehaviorEntry(GameVar *var, Scene *sc, StaticANIObject *ani, int 
 
 		for (int i = 0; i < _itemsCount; i++) {
 			GameVar *subvar = var->getSubVarByIndex(i);
-			int delay;
+			int delay = 0;
 
 			_items[i] = new BehaviorEntryInfo(subvar, sc, &delay);
 			totalPercent += delay;
