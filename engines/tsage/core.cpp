@@ -2482,7 +2482,8 @@ void SceneObject::postInit(SceneObjectList *OwnerList) {
 	if (!OwnerList)
 		OwnerList = g_globals->_sceneObjects;
 
-	if (!OwnerList->contains(this) || ((_flags & OBJFLAG_REMOVE) != 0)) {
+	bool isExisting = OwnerList->contains(this); 
+	if (!isExisting || ((_flags & OBJFLAG_REMOVE) != 0)) {
 		_percent = 100;
 		_priority = 255;
 		_flags = OBJFLAG_ZOOMED;
@@ -2501,7 +2502,8 @@ void SceneObject::postInit(SceneObjectList *OwnerList) {
 		_numFrames = 10;
 		_regionBitList = 0;
 
-		OwnerList->push_back(this);
+		if (!isExisting)
+			OwnerList->push_back(this);
 		_flags |= OBJFLAG_PANES;
 	}
 }
