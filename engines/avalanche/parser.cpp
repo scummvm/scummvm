@@ -533,7 +533,7 @@ Common::String Parser::rank() {
 
 Common::String Parser::totalTime() {
 	// There are 65535 clock ticks in a second, 1092.25 in a minute, and 65535 in an hour.
-	const double ticksInOneSec = (double)(65535) / 3600;
+	const float ticksInOneSec = (float)(65535) / 3600;
 	uint16 h, m, s;
 
 	h = (uint16)floor(_vm->_totalTime / ticksInOneSec); // No. of seconds.
