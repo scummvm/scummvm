@@ -95,6 +95,12 @@ class ArjDecoder {
 public:
 	ArjDecoder(const ArjHeader *hdr) {
 		_compsize = hdr->compSize;
+		_compressed = 0;
+		_outstream = 0;
+		_bitbuf = 0;
+		_bytebuf = 0;
+		_bitcount = 0;
+		_blocksize = 0;
 	}
 
 	~ArjDecoder() {
@@ -112,7 +118,6 @@ public:
 	uint16 _bitbuf;
 	uint16 _bytebuf;
 	int32 _compsize;
-	byte _subbitbuf;
 	int _bitcount;
 
 	void init_getbits();
@@ -131,9 +136,6 @@ public:
 
 private:
 	byte  _ntext[ARJ_FDICSIZ];
-
-	int16  _getlen;
-	int16  _getbuf;
 
 	uint16 _left[2 * ARJ_NC - 1];
 	uint16 _right[2 * ARJ_NC - 1];
@@ -656,7 +658,6 @@ void ArjDecoder::decode_f(int32 origsize) {
 
 	init_getbits();
 	ncount = 0;
-	_getlen = _getbuf = 0;
 	r = 0;
 
 	while (ncount < (uint32)origsize) {
