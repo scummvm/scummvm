@@ -836,6 +836,17 @@ void StripManager::signal() {
 				break;
 			}
 		}
+
+		// If no entry found, get the default response
+		if (!delayFlag) {
+			int idx = 0; 
+			while (obj44._list[idx + 1]._id)
+				++idx;
+
+			choiceList.push_back((const char *)&_script[0] + obj44._list[idx]._scriptOffset);
+			strIndex = idx;
+			delayFlag = true;
+		}
 	} else {
 		// Standard choices loading
 		for (idx = 0; idx < OBJ0A_LIST_SIZE; ++idx) {

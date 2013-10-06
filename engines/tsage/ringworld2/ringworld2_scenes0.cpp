@@ -3514,7 +3514,7 @@ void Scene300::signal() {
 				R2_GLOBALS.setFlag(40);
 			break;
 		case 5:
-			if (R2_GLOBALS._stripManager_lookupList[1] == 6)
+			if (R2_GLOBALS._stripManager_lookupList[0] == 6)
 				R2_GLOBALS.setFlag(40);
 			break;
 		case 6:
@@ -3686,6 +3686,8 @@ void Scene300::signal() {
 }
 
 void Scene300::signal309() {
+	// Sets up what conversation items will be available when to talking to the
+	// others on the Bridge, and will be set dependent on game flags
 	if (R2_GLOBALS.getFlag(2))
 		R2_GLOBALS._stripManager_lookupList[0] = (R2_INVENTORY.getObjectScene(R2_READER) == 1) ? 3 : 2;
 
