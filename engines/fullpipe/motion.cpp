@@ -756,7 +756,7 @@ bool MovGraphReact::pointInRegion(int x, int y) {
 	p1.x = (double)_points[0]->x;
 	p1.y = (double)_points[0]->y;
 
-	for (uint32 i = 1; i <= _pointCount; i++) {
+	for (int i = 1; i <= _pointCount; i++) {
 		p2.x = (double)_points[i % _pointCount]->x;
 		p2.y = (double)_points[i % _pointCount]->y;
 
