@@ -400,13 +400,6 @@ bool BaseSurfaceOSystem::drawSprite(int x, int y, Rect32 *rect, Rect32 *newRect,
 		transform._rgbaMod = renderer->_forceAlphaColor;
 	}
 
-#if 0 // These are kept for reference if BlendMode is reimplemented at some point.
-	if (alphaDisable) {
-		SDL_SetTextureBlendMode(_texture, SDL_BLENDMODE_NONE);
-	} else {
-		SDL_SetTextureBlendMode(_texture, SDL_BLENDMODE_BLEND);
-	}
-#endif
 	// TODO: This _might_ miss the intended behaviour by 1 in each direction
 	// But I think it fits the model used in Wintermute.
 	Common::Rect srcRect;
