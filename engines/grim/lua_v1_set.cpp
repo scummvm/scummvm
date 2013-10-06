@@ -78,7 +78,7 @@ void Lua_V1::GetActorSector() {
 
 	Actor *actor = getactor(actorObj);
 	Sector::SectorType sectorType = (Sector::SectorType)(int)lua_getnumber(typeObj);
-	Math::Vector3d pos = actor->getPos();
+	Math::Vector3d pos = actor->getWorldPos();
 	Sector *result = g_grim->getCurrSet()->findPointSector(pos, sectorType);
 	if (result) {
 		lua_pushnumber(result->getSectorId());
