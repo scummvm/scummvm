@@ -30,7 +30,6 @@
 #include "avalanche/avalanche.h"
 #include "common/random.h"
 #include "common/config-manager.h"
-#include <math.h>
 
 namespace Avalanche {
 
@@ -1361,16 +1360,18 @@ void AvalancheEngine::majorRedraw() {
 }
 
 uint16 AvalancheEngine::bearing(byte whichPed) {
-	const float rad2deg = 180 / M_PI;
 	AnimationType *avvy = &_animation->_sprites[0];
 	PedType *curPed = &_peds[whichPed];
 
 	if (avvy->_x == curPed->_x)
 		return 0;
-	else if (avvy->_x < curPed->_x) {
-		return (uint16)((atan(double((avvy->_y - curPed->_y)) / (avvy->_x - curPed->_x)) * rad2deg) + 90);
+	
+	int16 deltaX = avvy->_x - curPed->_x;
+	int16 deltaY = avvy->_y - curPed->_y;
+	if (deltaX < 0) {
+		return (uint16)((atan((float)(deltaY / deltaX)) * 180 / M_PI) + 90);
 	} else {
-		return (uint16)((atan(double((avvy->_y - curPed->_y)) / (avvy->_x - curPed->_x)) * rad2deg) + 270);
+		return (uint16)((atan((float)(deltaY / deltaX)) * 180 / M_PI) + 270);
 	}
 }
 
