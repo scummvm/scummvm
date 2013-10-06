@@ -543,7 +543,7 @@ Common::String Parser::totalTime() {
 	if (h > 0)
 		result += Common::String::format("%d hours, ", h);
 	if ((m > 0) || (h != 0))
-		result = Common::String::format("%d minutes and ", m);
+		result += Common::String::format("%d minutes and ", m);
 	return result + Common::String::format("%d seconds", s);
 }
 
