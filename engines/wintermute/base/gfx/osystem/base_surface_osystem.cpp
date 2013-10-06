@@ -419,13 +419,6 @@ bool BaseSurfaceOSystem::drawSprite(int x, int y, Rect32 *rect, Rect32 *newRect,
 	position.left = x + transform._offset.x;
 	position.top = y + transform._offset.y;
 
-	// Crop off-by-ones:
-	if (position.left == -1) {
-		position.left = 0; // TODO: Something is wrong
-	}
-	if (position.top == -1) {
-		position.top = 0; // TODO: Something is wrong
-	}
 	if (newRect) {
 		position.top = y;
 		position.left = x;
