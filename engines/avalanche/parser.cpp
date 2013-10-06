@@ -534,11 +534,10 @@ Common::String Parser::rank() {
 Common::String Parser::totalTime() {
 	uint16 h, m, s;
 
-	h = (uint16)((_vm->_totalTime * 3600) / 65535);
-	m = h % 3600;
-	h /= 3600;
-	s = m % 60;
-	m /= 60;
+	h = (uint16)(_vm->_totalTime / 65535);
+	s = (uint16)(_vm->_totalTime % 65535);
+	m = s / 60;
+	s = s % 60;
 
 	Common::String result = "You've been playing for ";
 	if (h > 0)
