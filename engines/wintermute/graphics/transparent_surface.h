@@ -25,9 +25,6 @@
 #include "graphics/surface.h"
 #include "engines/wintermute/graphics/transform_struct.h"
 
-#define ENABLE_BILINEAR 0
-
-
 /*
  * This code is based on Broken Sword 2.5 engine
  *
@@ -53,31 +50,6 @@ struct TransparentSurface : public Graphics::Surface {
 	void setColorKey(char r, char g, char b);
 	void disableColorKey();
 
-#if ENABLE_BILINEAR
-	/*
-	 * Pick color from a point in source and copy it to a pixel in target.
-	 * The point in the source can be a float - we have subpixel accuracy in the arguments.
-	 * We do bilinear interpolation to estimate the color of the point even if the 
-	 * point is specuified w/subpixel accuracy.
-	 *
-	 * @param projX, projY, point in the source to pick color from.
-	 * @param dstX, dstY destionation pixel
-	 * @param *src, *dst pointer to the source and dest surfaces
-	 */
-	static void copyPixelBilinear(float projX, float projY, int dstX, int dstY, const Common::Rect &srcRect, const Common::Rect &dstRect, const TransparentSurface *src, TransparentSurface *dst);
-#else
-	/*
-	 * Pick color from a point in source and copy it to a pixel in target.
-	 * The point in the source can be a float - we have subpixel accuracy in the arguments.
-	 * HOWEVER, this particular function just does nearest neighbor.
-	 * Use copyPixelBilinear if you interpolation.
-	 *
-	 * @param projX, projY, point in the source to pick color from.
-	 * @param dstX, dstY destionation pixel
-	 * @param *src, *dst pointer to the source and dest surfaces
-	 */
-	static void copyPixelNearestNeighbor(float projX, float projY, int dstX, int dstY, const Common::Rect &srcRect, const Common::Rect &dstRect, const TransparentSurface *src, TransparentSurface *dst);
-#endif
 	// Enums
 	/**
 	 @brief The possible flipping parameters for the blit methode.
