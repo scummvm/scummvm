@@ -157,9 +157,6 @@ public:
 	void stPeekWall1();
 	void stPeekWall2();
 
-	void stShrink();
-	uint32 hmShrink(int messageNum, const MessageParam &param, Entity *sender);
-
 	void stGrow();
 	uint32 hmGrow(int messageNum, const MessageParam &param, Entity *sender);
 
@@ -181,11 +178,6 @@ public:
 
 	void stLetGoOfLever();
 	void evLeverReleasedEvent();
-
-	void stWakeUp();
-
-	void stSleeping();
-	uint32 hmSleeping(int messageNum, const MessageParam &param, Entity *sender);
 
 	void stPressButton();
 	void stPressFloorButton();

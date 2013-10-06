@@ -203,9 +203,11 @@ protected:
 class KmScene1001 : public Klaymen {
 public:
 	KmScene1001(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
-
 protected:
+	void stWakeUp();
+	void stSleeping();
 	void stPullHammerLever();
+	uint32 hmSleeping(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 hmPullHammerLever(int messageNum, const MessageParam &param, Entity *sender);
 
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
@@ -214,7 +216,6 @@ protected:
 class KmScene1002 : public Klaymen {
 public:
 	KmScene1002(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
-
 protected:
 	void stJumpToRing1();
 	void stJumpToRing2();
@@ -245,7 +246,6 @@ protected:
 class KmScene1004 : public Klaymen {
 public:
 	KmScene1004(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
-
 protected:
 	void stReadNote();
 	uint32 hmReadNote(int messageNum, const MessageParam &param, Entity *sender);

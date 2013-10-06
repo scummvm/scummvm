@@ -1189,10 +1189,33 @@ uint32 KmScene2803Small::xHandleMessage(int messageNum, const MessageParam &para
 			GotoState(&Klaymen::stTurnToBackSmall);
 		break;
 	case 0x4830:
-		GotoState(&Klaymen::stShrink);
+		GotoState(&KmScene2803Small::stShrink);
 		break;
 	}
 	return 0;
+}
+
+uint32 KmScene2803Small::hmShrink(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = hmLowLevelAnimation(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x100D:
+		if (param.asInteger() == 0x80C110B5)
+			sendMessage(_parentScene, 0x482A, 0);
+		else if (param.asInteger() == 0x33288344)
+			playSound(2, 0x10688664);
+		break;
+	}
+	return messageResult;
+}
+
+void KmScene2803Small::stShrink() {
+	_busyStatus = 0;
+	_acceptInput = false;
+	playSound(0, 0x4C69EA53);
+	startAnimation(0x1AE88904, 0, -1);
+	SetUpdateHandler(&Klaymen::update);
+	SetMessageHandler(&KmScene2803Small::hmShrink);
+	SetSpriteUpdate(&AnimatedSprite::updateDeltaXY);
 }
 
 KmScene2805::KmScene2805(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)

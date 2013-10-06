@@ -617,36 +617,6 @@ void Klaymen::startWalkToX(int16 x, bool walkExt) {
 	}
 }
 
-void Klaymen::stWakeUp() {
-	_busyStatus = 1;
-	_acceptInput = false;
-	startAnimation(0x527AC970, 0, -1);
-	SetUpdateHandler(&Klaymen::update);
-	SetMessageHandler(&Klaymen::hmLowLevelAnimation);
-	SetSpriteUpdate(NULL);
-}
-
-void Klaymen::stSleeping() {
-	_busyStatus = 0;
-	_acceptInput = true;
-	startAnimation(0x5A38C110, 0, -1);
-	SetUpdateHandler(&Klaymen::update);
-	SetMessageHandler(&Klaymen::hmSleeping);
-	SetSpriteUpdate(NULL);
-}
-
-uint32 Klaymen::hmSleeping(int messageNum, const MessageParam &param, Entity *sender) {
-	uint32 messageResult = hmLowLevel(messageNum, param, sender);
-	switch (messageNum) {
-	case 0x100D:
-		if (param.asInteger() == 0x03060012) {
-			playSound(0, 0xC0238244);
-		}
-		break;
-	}
-	return messageResult;
-}
-
 bool Klaymen::stStartAction(AnimationCb callback3) {
 	if (_busyStatus == 1) {
 		_busyStatus = 2;
@@ -2214,29 +2184,6 @@ uint32 Klaymen::hmTeleporterAppearDisappear(int messageNum, const MessageParam &
 		break;
 	}
 	return messageResult;
-}
-
-uint32 Klaymen::hmShrink(int messageNum, const MessageParam &param, Entity *sender) {
-	uint32 messageResult = hmLowLevelAnimation(messageNum, param, sender);
-	switch (messageNum) {
-	case 0x100D:
-		if (param.asInteger() == 0x80C110B5)
-			sendMessage(_parentScene, 0x482A, 0);
-		else if (param.asInteger() == 0x33288344)
-			playSound(2, 0x10688664);
-		break;
-	}
-	return messageResult;
-}
-
-void Klaymen::stShrink() {
-	_busyStatus = 0;
-	_acceptInput = false;
-	playSound(0, 0x4C69EA53);
-	startAnimation(0x1AE88904, 0, -1);
-	SetUpdateHandler(&Klaymen::update);
-	SetMessageHandler(&Klaymen::hmShrink);
-	SetSpriteUpdate(&AnimatedSprite::updateDeltaXY);
 }
 
 void Klaymen::stStandWonderAbout() {

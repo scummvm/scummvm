@@ -281,6 +281,9 @@ class KmScene2803Small : public Klaymen {
 public:
 	KmScene2803Small(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
 protected:
+	void stShrink();
+	uint32 hmShrink(int messageNum, const MessageParam &param, Entity *sender);
+
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };
 

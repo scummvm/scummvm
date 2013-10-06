@@ -996,7 +996,7 @@ uint32 KmScene1001::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x4804:
 		if (param.asInteger() == 2)
-			GotoState(&Klaymen::stSleeping);
+			GotoState(&KmScene1001::stSleeping);
 		break;
 	case 0x480D:
 		GotoState(&KmScene1001::stPullHammerLever);
@@ -1041,7 +1041,7 @@ uint32 KmScene1001::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4836:
 		if (param.asInteger() == 1) {
 			sendMessage(_parentScene, 0x2002, 0);
-			GotoState(&Klaymen::stWakeUp);
+			GotoState(&KmScene1001::stWakeUp);
 		}
 		break;
 	case 0x483F:
@@ -1052,6 +1052,36 @@ uint32 KmScene1001::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	}
 	return 0;
+}
+
+void KmScene1001::stWakeUp() {
+	_busyStatus = 1;
+	_acceptInput = false;
+	startAnimation(0x527AC970, 0, -1);
+	SetUpdateHandler(&Klaymen::update);
+	SetMessageHandler(&Klaymen::hmLowLevelAnimation);
+	SetSpriteUpdate(NULL);
+}
+
+void KmScene1001::stSleeping() {
+	_busyStatus = 0;
+	_acceptInput = true;
+	startAnimation(0x5A38C110, 0, -1);
+	SetUpdateHandler(&Klaymen::update);
+	SetMessageHandler(&KmScene1001::hmSleeping);
+	SetSpriteUpdate(NULL);
+}
+
+uint32 KmScene1001::hmSleeping(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = hmLowLevel(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x100D:
+		if (param.asInteger() == 0x03060012) {
+			playSound(0, 0xC0238244);
+		}
+		break;
+	}
+	return messageResult;
 }
 
 void KmScene1001::stPullHammerLever() {
