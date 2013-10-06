@@ -528,8 +528,325 @@ MessageQueue *MovGraph2::method34(StaticANIObject *subj, int xpos, int ypos, int
 	return 0;
 }
 
-MessageQueue *MovGraph2::method4C(StaticANIObject *subj, int xpos, int ypos, int fuzzySearch, int staticsId) {
+MessageQueue *MovGraph2::method4C(StaticANIObject *obj, int xpos, int ypos, int fuzzySearch, int staticsId) {
 	warning("STUB: MovGraph2::method4C()");
+#if 0
+	LinkInfo linkInfoDest;
+	LinkInfo linkInfoSource;
+	MovInfo1 movInfo1;
+	PicAniInfo picAniInfo;
+	ObList tempLinkList;
+
+	int idx = getItemIndexByGameObjectId(obj->_id);
+	ex = idx_;
+
+	if (idx < 0)
+		return 0;
+
+	linkInfoSource.link = 0;
+	linkInfoSource.node = 0;
+
+	linkInfoDest.link = 0;
+	linkInfoDest.node = 0;
+
+	GameObject_getPicAniInfo(obj, &picAniInfo);
+
+	int idxsub;
+
+	if (obj->_movement)
+		idxsub = getItemSubIndexByMovementId(idx, obj->_movement->_id);
+	else
+		idxsub = getItemSubIndexByStaticsId(idx, obj->_statics->_staticsId);
+
+	bool subMgm = false;
+
+	if (idxsub == -1) {
+		idxsub = getItemSubIndexByMGM(idx, obj);
+		subMgm = true;
+
+		if (idxsub == -1)
+			return 0;
+	}
+
+	if (obj->_movement) {
+		if (subMgm) {
+			obj->_messageQueueId = 0;
+			obj->changeStatics2(_items[idx]->_subItems[idxsub]->_staticsId1);
+			v19 = obj->_ox;
+			v20 = obj->_oy;
+		} else {
+			v16 = obj->_movement->calcSomeXY(point, 0);
+			v63 = v16->x;
+			a3 = v16->y;
+			v17 = obj->movement;
+			v18 = v17->GameObject.ox;
+			point = v17->GameObject.oy - a3;
+			v19 = v18 - (_DWORD)v63;
+			v20 = point;
+			if (idxsub != 1 && idxsub) {
+				if (idxsub == 2 || idxsub == 3) {
+					v63 = (ExCommand *)v17->GameObject.ox;
+					v20 = v17->GameObject.oy;
+				}
+			} else {
+				v19 = v17->GameObject.ox;
+				a3 = v17->GameObject.oy;
+			}
+		}
+		v24 = obj->GameObject.CObject.vmt;
+		obj->movement = 0;
+		(*(void (__thiscall **)(GameObject *, int, int))(v24 + offsetof(GameObjectVmt, setOXY)))(&obj->GameObject, v19, v20);
+	}
+	v25 = obj->GameObject.oy;
+	point = obj->GameObject.ox;
+	v63 = (ExCommand *)point;
+	v61 = v25;
+	a3 = v25;
+	if (point == xpos && v25 == ypos) {
+		point = (int)operator new(sizeof(MessageQueue));
+		v71.state = 0;
+		if (point) {
+			v26 = GlobalMessageQueueList_compact(&g_globalMessageQueueList);
+			v62 = MessageQueue_ctor1((MessageQueue *)point, v26);
+		} else {
+			v62 = 0;
+		}
+		v71.state = -1;
+		if (staticsId && obj->statics->staticsId != staticsId) {
+			point = MovGraph2_getItem1IndexByStaticsId(this, idx, staticsId);
+			if (point == -1) {
+				GameObject_setPicAniInfo(obj, &picAniInfo);
+				return 0;
+			}
+			ex = (int)operator new(sizeof(ExCommand));
+			v71.state = 1;
+			if (ex)
+				v27 = ExCommand_ctor(
+									 (ExCommand *)ex,
+									 picAniInfo.objectId,
+									 1,
+									 *((_DWORD *)this->items.CObArray.m_pData[offsetof(MovGraph2, movGraph)]
+									   + 186 * idx
+									   + 46 * idxsub
+									   + 4 * (point + 8)),
+									 0,
+									 0,
+									 0,
+									 1,
+									 0,
+									 0,
+									 0);
+			else
+				v27 = 0;
+			v28 = picAniInfo.field_8;
+			v27->msg.field_24 = 1;
+			v27->msg.keyCode = v28;
+			v27->excFlags |= 2u;
+			v71.state = -1;
+			CPtrList::AddTail(&v62->exCommands, v27);
+		} else {
+			v29 = (ExCommand *)operator new(sizeof(ExCommand));
+			point = (int)v29;
+			v71.state = 2;
+			if (v29)
+				v30 = ExCommand_ctor(v29, picAniInfo.objectId, 22, obj->statics->staticsId, 0, 0, 0, 1, 0, 0, 0);
+			else
+				v30 = 0;
+			v31 = v62;
+			v30->msg.keyCode = picAniInfo.field_8;
+			v32 = (int)&v31->exCommands;
+			v33 = v30->excFlags | 3;
+			v71.state = -1;
+			v30->excFlags = v33;
+			CPtrList::AddTail(&v31->exCommands, v30);
+			v34 = (ExCommand *)operator new(sizeof(ExCommand));
+			point = (int)v34;
+			v71.state = 3;
+			if (v34)
+				v35 = ExCommand_ctor(v34, picAniInfo.objectId, 5, -1, obj->GameObject.ox, obj->GameObject.oy, 0, 1, 0, 0, 0);
+			else
+				v35 = 0;
+			v36 = v35->excFlags;
+			v35->msg.field_14 = -1;
+			v35->msg.keyCode = picAniInfo.field_8;
+			v71.state = -1;
+			v35->excFlags = v36 | 3;
+			CPtrList::AddTail(v32, v35);
+		}
+		GameObject_setPicAniInfo(obj, &picAniInfo);
+		return v62;
+	}
+	linkInfoSource.node = MovGraph2_findNode(this, point, v25, 0);
+	if (!linkInfoSource.node) {
+		v38 = point;
+		linkInfoSource.link = MovGraph2_findLink1(this, point, a3, idxsub, 0);
+		if (!(_DWORD)linkInfoSource.link) {
+			linkInfoSource.link = MovGraph2_findLink2(this, v38, a3);
+			if (!(_DWORD)linkInfoSource.link) {
+				GameObject_setPicAniInfo(obj, &picAniInfo);
+				return 0;
+			}
+		}
+	}
+	linkInfoDest.node = MovGraph2_findNode(this, xpos, ypos, fuzzyMatch);
+	if (!linkInfoDest.node) {
+		linkInfoDest.link = MovGraph2_findLink1(this, xpos, ypos, idxsub, fuzzyMatch);
+		if (!(_DWORD)linkInfoDest.link) {
+			GameObject_setPicAniInfo(obj, &picAniInfo);
+			return 0;
+		}
+	}
+	ObList_ctor(&tempLinkList, 10);
+	v71.state = 4;
+	MovGraph2_findLinks(this, &linkInfoSource, &linkInfoDest, (int)&tempLinkList);
+	if (v6 < 0.0 || (linkInfoSource.node != linkInfoDest.node || !linkInfoSource.node) && !tempLinkList.m_nCount) {
+		v71.state = -1;
+		ObList_dtor(&tempLinkList);
+		return 0;
+	}
+	memset(&movInfo1, 0, sizeof(movInfo1));
+	v39 = a3;
+	movInfo1.subIndex = idxsub;
+	v40 = point;
+	movInfo1.pt1.y = a3;
+	movInfo1.pt1.x = point;
+	if (linkInfoSource.node)
+		v41 = linkInfoSource.node->distance;
+	else
+		v41 = linkInfoSource.link->movGraphNode1->distance;
+	movInfo1.distance1 = v41;
+	if (linkInfoDest.node) {
+		v42 = linkInfoDest.node->x;
+		movInfo1.pt2.x = linkInfoDest.node->x;
+		v43 = linkInfoDest.node->y;
+		movInfo1.pt2.y = linkInfoDest.node->y;
+		movInfo1.distance2 = linkInfoDest.node->distance;
+	} else {
+		movInfo1.pt2.x = xpos;
+		movInfo1.pt2.y = ypos;
+		v44 = linkInfoDest.link->movGraphNode1;
+		v45 = v44->distance;
+		point = (ypos - v44->y) * (ypos - v44->y) + (xpos - v44->x) * (xpos - v44->x);
+		v46 = sqrt((double)point);
+		point = linkInfoDest.link->movGraphNode2->distance - v45;
+		movInfo1.distance2 = v45 + (unsigned __int64)(signed __int64)(v46 * (double)point / linkInfoDest.link->distance);
+		MovGraph_calcDistance((int)this, &movInfo1.pt2, linkInfoDest.link, 1);
+		v43 = movInfo1.pt2.y;
+		v42 = movInfo1.pt2.x;
+		v39 = movInfo1.pt1.y;
+		v40 = movInfo1.pt1.x;
+	}
+	if (staticsId) {
+		v47 = MovGraph2_getItem1IndexByStaticsId(this, ex, staticsId);
+	} else if (tempLinkList.m_nCount <= 1) {
+		if (tempLinkList.m_nCount == 1)
+			LOBYTE(v47) = MovGraph2_sub_456690(
+											   this,
+											   (int)&tempLinkList.m_pNodeHead->data->GameObject.CObject.vmt,
+											   v42 - v40,
+											   v43 - v39);
+		else
+			LOBYTE(v47) = MovGraph2_sub_456690(this, 0, v42 - v40, v43 - v39);
+	} else {
+		LOBYTE(v47) = MovGraph2_sub_456300(this, (int)&tempLinkList, tempLinkList.m_pNodeTail, 0, 0);
+	}
+	movInfo1.flags = fuzzyMatch != 0;
+	movInfo1.item1Index = v47;
+	if (*((_DWORD *)this->items.CObArray.m_pData[offsetof(MovGraph2, movGraph)]
+		   + 186 * movInfo1.field_0
+		   + 46 * movInfo1.subIndex
+		   + 3) != (unsigned __int16)v62) {
+		v48 = movInfo1.flags;
+		LOBYTE(v48) = LOBYTE(movInfo1.flags) | 2;
+		movInfo1.flags = v48;
+	}
+	MovGraph2_buildMovInfo1SubItems(this, (int)&movInfo1, (int)&tempLinkList, (int)&linkInfoSource, (int)&linkInfoDest);
+	v49 = MovGraph2_buildMovInfo1MessageQueue(this, (int)&movInfo1);
+	v50 = (MessageQueue *)v49;
+	v62 = (MessageQueue *)v49;
+	CObjectFree((void *)movInfo1.items);
+	v51 = MovGraph2_findNode(this, movInfo1.pt2.x, movInfo1.pt2.y, fuzzyMatch);
+	linkInfoDest.node = v51;
+	if (!v51) {
+		linkInfoDest.link = MovGraph2_findLink1(this, movInfo1.pt2.x, movInfo1.pt2.y, movInfo1.item1Index, fuzzyMatch);
+		v51 = linkInfoDest.node;
+	}
+	if (fuzzyMatch || (_DWORD)linkInfoDest.link || v51) {
+		if (v50 && MessageQueue_getCount(v50) > 0 && picAniInfo.movementId) {
+			v52 = MessageQueue_getExCommandByIndex(v50, 0);
+			point = (int)v52;
+			if (v52
+				 && ((v53 = v52->msg.messageKind, v53 == 1) || v53 == 20)
+				 && picAniInfo.movementId == LOWORD(v52->messageNum)
+				 && picAniInfo.someDynamicPhaseIndex == v52->msg.field_14) {
+				MessageQueue_deleteExCommandByIndex(v50, 0, 1);
+			} else {
+				v54 = (ExCommand *)operator new(sizeof(ExCommand));
+				v63 = v54;
+				LOBYTE(v71.state) = 5;
+				if (v54)
+					v55 = ExCommand_ctor(
+										 v54,
+										 picAniInfo.objectId,
+										 5,
+										 *(_DWORD *)(point + offsetof(ExCommand, messageNum)),
+										 obj->GameObject.ox,
+										 obj->GameObject.oy,
+										 0,
+										 1,
+										 0,
+										 0,
+										 0);
+				else
+					v55 = 0;
+				v55->msg.field_14 = -1;
+				v55->msg.keyCode = picAniInfo.field_8;
+				v56 = v55->excFlags | 2;
+				LOBYTE(v71.state) = 4;
+				v55->excFlags = v56;
+				MessageQueue_addExCommand(v50, v55);
+				v57 = (ExCommand *)operator new(sizeof(ExCommand));
+				v63 = v57;
+				LOBYTE(v71.state) = 6;
+				if (v57) {
+					v58 = ExCommand_ctor(
+										 v57,
+										 picAniInfo.objectId,
+										 22,
+										 *((_DWORD *)this->items.CObArray.m_pData[offsetof(MovGraph2, movGraph)]
+										   + 186 * ex
+										   + 46 * movInfo1.subIndex
+										   + 3),
+										 0,
+										 0,
+										 0,
+										 1,
+										 0,
+										 0,
+										 0);
+					v50 = v62;
+				}
+				else
+					{
+						v58 = 0;
+					}
+				v58->msg.keyCode = picAniInfo.field_8;
+				v59 = v58->excFlags | 3;
+				LOBYTE(v71.state) = 4;
+				v58->excFlags = v59;
+				MessageQueue_addExCommand(v50, v58);
+			}
+		}
+	} else {
+		if (v50)
+			(*(void (__thiscall **)(MessageQueue *, signed int))(v50->CObject.vmt + 4))(v50, 1);
+		v50 = 0;
+	}
+	GameObject_setPicAniInfo(obj, &picAniInfo);
+	v71.state = -1;
+	ObList_dtor(&tempLinkList);
+	return v50;
+#endif
 
 	return 0;
 }
