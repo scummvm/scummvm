@@ -168,7 +168,7 @@ void RenderTicket::drawToSurface(Graphics::Surface *_targetSurface, Common::Rect
 				subRect.left = x;
 				subRect.top = y;
 				subRect.setWidth(w);
-				subRect.setHeight(w);
+				subRect.setHeight(h);
 
 				if (subRect.intersects(*clipRect)) {
 					subRect.clip(*clipRect);
