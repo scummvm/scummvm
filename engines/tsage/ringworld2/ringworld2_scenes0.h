@@ -821,7 +821,7 @@ class Scene825: public SceneExt {
 		virtual bool startAction(CursorType action, Event &event);
 	};
 public:
-	NamedHotspot _background, _item2;
+	NamedHotspot _background, _console;
 	SceneActor _vertLine1, _vertLine2, _vertLine3, _vertLine4, _vertLine5;
 	Button _button1, _button2, _button3, _button4, _button5, _button6;
 	ASoundExt _sound1, _sound2, _sound3, _sound4;
