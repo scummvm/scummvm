@@ -54,6 +54,9 @@ RenderTicket::RenderTicket(BaseSurfaceOSystem *owner, const Graphics::Surface *s
 		// NB: The numTimesX/numTimesY properties don't yet mix well with
 		// scaling and rotation, but there is no need for that functionality at
 		// the moment.
+		// NB: Mirroring and rotation are probably done in the wrong order.
+		// (Mirroring should most likely be done before rotation. See also
+		// TransformTools.)
 		if (_transform._angle != kDefaultAngle) {
 			TransparentSurface src(*_surface, false);
 			Graphics::Surface *temp = src.rotoscale(transform);
@@ -71,14 +74,6 @@ RenderTicket::RenderTicket(BaseSurfaceOSystem *owner, const Graphics::Surface *s
 		}
 	} else {
 		_surface = nullptr;
-		
-		if (transform._angle != kDefaultAngle) { // Make sure comparison-tickets get the correct width
-			Rect32 newDstRect;
-			Point32 newHotspot;
-			newDstRect = TransformTools::newRect(_srcRect, transform, &newHotspot);
-			_dstRect.setWidth(newDstRect.right - newDstRect.left);
-			_dstRect.setHeight(newDstRect.bottom - newDstRect.top);
-		}
 	}
 }
 

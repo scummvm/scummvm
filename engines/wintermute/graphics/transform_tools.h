@@ -34,7 +34,7 @@ public:
 	/**
 	 * Basic transform (scale + rotate) for a single point
 	 */
-	static FloatPoint transformPoint(const FloatPoint &point, const float rotate, const Point32 &zoom, const bool mirrorX = false, const bool mirrorY = false);
+	static FloatPoint transformPoint(FloatPoint point, const float rotate, const Point32 &zoom, const bool mirrorX = false, const bool mirrorY = false);
 
 	/**
 	 * @param &point the point on which the transform is to be applied

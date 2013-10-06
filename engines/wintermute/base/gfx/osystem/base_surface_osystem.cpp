@@ -37,6 +37,7 @@
 #include "graphics/decoders/jpeg.h"
 #include "graphics/decoders/tga.h"
 #include "engines/wintermute/graphics/transparent_surface.h"
+#include "engines/wintermute/graphics/transform_tools.h"
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
 #include "common/stream.h"
@@ -418,8 +419,19 @@ bool BaseSurfaceOSystem::drawSprite(int x, int y, Rect32 *rect, Rect32 *newRect,
 		position.setWidth(newRect->width());
 		position.setHeight(newRect->height());
 	} else {
-		position.setWidth((int16)((float)srcRect.width() * transform._zoom.x / kDefaultZoomX) * transform._numTimesX);
-		position.setHeight((int16)((float)srcRect.height() * transform._zoom.y / kDefaultZoomY) * transform._numTimesY);
+
+		Rect32 r;
+		r.top = 0;
+		r.left = 0;
+		r.setWidth(rect->width());
+		r.setHeight(rect->height());
+
+		r = TransformTools::newRect(r, transform, 0);
+
+		position.top = r.top + y;
+		position.left = r.left + x;
+		position.setWidth(r.width() * transform._numTimesX);
+		position.setHeight(r.height() * transform._numTimesY);
 	}
 	renderer->modTargetRect(&position);
 
