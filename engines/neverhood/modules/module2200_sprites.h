@@ -213,6 +213,9 @@ class KmScene2203 : public Klaymen {
 public:
 	KmScene2203(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
 protected:
+	void stClayDoorOpen();
+	uint32 hmClayDoorOpen(int messageNum, const MessageParam &param, Entity *sender);
+
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };
 

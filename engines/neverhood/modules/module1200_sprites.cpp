@@ -681,13 +681,13 @@ uint32 KmScene1201::xHandleMessage(int messageNum, const MessageParam &param) {
 		GotoState(&Klaymen::stPickUpGeneric);
 		break;
 	case 0x4813:
-		GotoState(&Klaymen::stFetchMatch);
+		GotoState(&KmScene1201::stFetchMatch);
 		break;
 	case 0x4814:
-		GotoState(&Klaymen::stTumbleHeadless);
+		GotoState(&KmScene1201::stTumbleHeadless);
 		break;
 	case 0x4815:
-		GotoState(&Klaymen::stCloseEyes);
+		GotoState(&KmScene1201::stCloseEyes);
 		break;
 	case 0x4816:
 		if (param.asInteger() == 0)
@@ -724,6 +724,87 @@ uint32 KmScene1201::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	}
 	return 0;
+}
+
+void KmScene1201::stTumbleHeadless() {
+	if (!stStartActionFromIdle(AnimationCallback(&KmScene1201::stTumbleHeadless))) {
+		_busyStatus = 1;
+		_acceptInput = false;
+		setDoDeltaX(0);
+		startAnimation(0x2821C590, 0, -1);
+		SetUpdateHandler(&Klaymen::update);
+		SetMessageHandler(&KmScene1201::hmTumbleHeadless);
+		SetSpriteUpdate(&AnimatedSprite::updateDeltaXY);
+		NextState(&Klaymen::stTryStandIdle);
+		sendMessage(_parentScene, 0x8000, 0);
+		playSound(0, 0x62E0A356);
+	}
+}
+
+void KmScene1201::stCloseEyes() {
+	if (!stStartActionFromIdle(AnimationCallback(&KmScene1201::stCloseEyes))) {
+		_busyStatus = 1;
+		_acceptInput = false;
+		startAnimation(0x5420E254, 0, -1);
+		SetUpdateHandler(&Klaymen::update);
+		SetMessageHandler(&Klaymen::hmLowLevel);
+		SetSpriteUpdate(NULL);
+	}
+}
+
+uint32 KmScene1201::hmMatch(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Klaymen::hmLowLevelAnimation(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x100D:
+		if (param.asInteger() == 0x51281850) {
+			setGlobalVar(V_TNT_DUMMY_FUSE_LIT, 1);
+		} else if (param.asInteger() == 0x43000538) {
+			playSound(0, 0x21043059);
+		} else if (param.asInteger() == 0x02B20220) {
+			playSound(0, 0xC5408620);
+		} else if (param.asInteger() == 0x0A720138) {
+			playSound(0, 0xD4C08010);
+		} else if (param.asInteger() == 0xB613A180) {
+			playSound(0, 0x44051000);
+		}
+		break;
+	}
+	return messageResult;
+}
+
+void KmScene1201::stFetchMatch() {
+	if (!stStartAction(AnimationCallback(&KmScene1201::stFetchMatch))) {
+		_busyStatus = 0;
+		_acceptInput = false;
+		setDoDeltaX(_attachedSprite->getX() < _x ? 1 : 0);
+		startAnimation(0x9CAA0218, 0, -1);
+		SetUpdateHandler(&Klaymen::update);
+		SetMessageHandler(&KmScene1201::hmMatch);
+		SetSpriteUpdate(NULL);
+		NextState(&KmScene1201::stLightMatch);
+	}
+}
+
+void KmScene1201::stLightMatch() {
+	_busyStatus = 1;
+	_acceptInput = false;
+	setDoDeltaX(_attachedSprite->getX() < _x ? 1 : 0);
+	startAnimation(0x1222A513, 0, -1);
+	SetUpdateHandler(&Klaymen::update);
+	SetMessageHandler(&KmScene1201::hmMatch);
+	SetSpriteUpdate(NULL);
+}
+
+uint32 KmScene1201::hmTumbleHeadless(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Klaymen::hmLowLevelAnimation(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x100D:
+		if (param.asInteger() == 0x000F0082) {
+			playSound(0, 0x74E2810F);
+		}
+		break;
+	}
+	return messageResult;
 }
 
 } // End of namespace Neverhood

@@ -354,7 +354,9 @@ uint32 AsScene2402TV::hmJoke(int messageNum, const MessageParam &param, Entity *
 }
 
 KmScene2401::KmScene2401(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
-	: Klaymen(vm, parentScene, x, y) {
+	: Klaymen(vm, parentScene, x, y),
+	_canSpitPipe(false), _contSpitPipe(false), _readyToSpit(false),
+	_spitPipeIndex(0), _spitDestPipeIndex(0), _spitContDestPipeIndex(0) {
 
 	// Empty
 }
@@ -419,7 +421,7 @@ uint32 KmScene2401::xHandleMessage(int messageNum, const MessageParam &param) {
 			GotoState(&Klaymen::stWonderAbout);
 		else {
 			_spitPipeIndex = sendMessage(_parentScene, 0x2000, 0);
-			GotoState(&Klaymen::stTrySpitIntoPipe);
+			GotoState(&KmScene2401::stTrySpitIntoPipe);
 		}
 		break;
 	case 0x483F:
@@ -430,6 +432,67 @@ uint32 KmScene2401::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	}
 	return messageResult;
+}
+
+uint32 KmScene2401::hmSpit(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Klaymen::hmLowLevelAnimation(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x100D:
+		if (param.asInteger() == 0x16401CA6) {
+			_canSpitPipe = true;
+			if (_contSpitPipe)
+				spitIntoPipe();
+		} else if (param.asInteger() == 0xC11C0008) {
+			_canSpitPipe = false;
+			_acceptInput = false;
+			_readyToSpit = false;
+		} else if (param.asInteger() == 0x018A0001) {
+			sendMessage(_parentScene, 0x2001, _spitDestPipeIndex);
+		}
+		break;
+	}
+	return messageResult;
+}
+
+void KmScene2401::stTrySpitIntoPipe() {
+	if (_readyToSpit) {
+		_contSpitPipe = true;
+		_spitContDestPipeIndex = _spitPipeIndex;
+		if (_canSpitPipe)
+			spitIntoPipe();
+	} else if (!stStartAction(AnimationCallback(&KmScene2401::stTrySpitIntoPipe))) {
+		_busyStatus = 2;
+		_acceptInput = true;
+		_spitDestPipeIndex = _spitPipeIndex;
+		_readyToSpit = true;
+		_canSpitPipe = false;
+		_contSpitPipe = false;
+		startAnimation(0x1808B150, 0, -1);
+		SetUpdateHandler(&Klaymen::update);
+		SetMessageHandler(&KmScene2401::hmSpit);
+		SetSpriteUpdate(NULL);
+	}
+}
+
+void KmScene2401::spitIntoPipe() {
+	_contSpitPipe = false;
+	_spitDestPipeIndex = _spitContDestPipeIndex;
+	_canSpitPipe = false;
+	_acceptInput = false;
+	startAnimation(0x1B08B553, 0, -1);
+	SetUpdateHandler(&Klaymen::update);
+	SetMessageHandler(&KmScene2401::hmSpit);
+	SetSpriteUpdate(NULL);
+	NextState(&KmScene2401::stContSpitIntoPipe);
+}
+
+void KmScene2401::stContSpitIntoPipe() {
+	_canSpitPipe = true;
+	_acceptInput = true;
+	startAnimationByHash(0x1808B150, 0x16401CA6, 0);
+	SetUpdateHandler(&Klaymen::update);
+	SetMessageHandler(&KmScene2401::hmSpit);
+	SetSpriteUpdate(NULL);
 }
 
 KmScene2402::KmScene2402(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)

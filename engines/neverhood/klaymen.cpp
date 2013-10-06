@@ -54,7 +54,7 @@ Klaymen::Klaymen(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y, NRec
 	_isWalkingOpenDoorNotified(false), _spitOutCountdown(0), _tapesToInsert(0), _keysToInsert(0), _busyStatus(0), _acceptInput(true),
 	_attachedSprite(NULL), _isWalking(false), _actionStatus(1), _parentScene(parentScene), _isSneaking(false), _isLargeStep(false),
 	_doYHitIncr(false), _isLeverDown(false), _isSittingInTeleporter(false), _actionStatusChanged(false), _ladderStatus(0), _pathPoints(NULL), _soundFlag(false),
-	_idleTableNum(0), _otherSprite(NULL), _moveObjectCountdown(0), _readyToSpit(false), _walkResumeFrameIncr(0) {
+	_idleTableNum(0), _otherSprite(NULL), _moveObjectCountdown(0), _walkResumeFrameIncr(0) {
 
 	createSurface(1000, 320, 200);
 	_x = x;
@@ -1735,29 +1735,6 @@ uint32 Klaymen::hmTurnToBackToUse(int messageNum, const MessageParam &param, Ent
 	return messageResult;
 }
 
-void Klaymen::stClayDoorOpen() {
-	if (!stStartAction(AnimationCallback(&Klaymen::stClayDoorOpen))) {
-		_busyStatus = 2;
-		_acceptInput = false;
-		startAnimation(0x5CCCB330, 0, -1);
-		SetUpdateHandler(&Klaymen::update);
-		SetMessageHandler(&Klaymen::hmClayDoorOpen);
-		SetSpriteUpdate(&Klaymen::suUpdateDestX);
-	}
-}
-
-uint32 Klaymen::hmClayDoorOpen(int messageNum, const MessageParam &param, Entity *sender) {
-	uint32 messageResult = hmLowLevelAnimation(messageNum, param, sender);
-	switch (messageNum) {
-	case 0x100D:
-		if (param.asInteger() == 0x040D4186) {
-			sendMessage(_attachedSprite, 0x4808, 0);
-		}
-		break;
-	}
-	return messageResult;
-}
-
 void Klaymen::stTurnToUse() {
 	if (!stStartAction(AnimationCallback(&Klaymen::stTurnToUse))) {
 		_busyStatus = 2;
@@ -2619,49 +2596,6 @@ void Klaymen::upMoveObject() {
 	Klaymen::update();
 }
 
-uint32 Klaymen::hmMatch(int messageNum, const MessageParam &param, Entity *sender) {
-	uint32 messageResult = Klaymen::hmLowLevelAnimation(messageNum, param, sender);
-	switch (messageNum) {
-	case 0x100D:
-		if (param.asInteger() == 0x51281850) {
-			setGlobalVar(V_TNT_DUMMY_FUSE_LIT, 1);
-		} else if (param.asInteger() == 0x43000538) {
-			playSound(0, 0x21043059);
-		} else if (param.asInteger() == 0x02B20220) {
-			playSound(0, 0xC5408620);
-		} else if (param.asInteger() == 0x0A720138) {
-			playSound(0, 0xD4C08010);
-		} else if (param.asInteger() == 0xB613A180) {
-			playSound(0, 0x44051000);
-		}
-		break;
-	}
-	return messageResult;
-}
-
-void Klaymen::stFetchMatch() {
-	if (!stStartAction(AnimationCallback(&Klaymen::stFetchMatch))) {
-		_busyStatus = 0;
-		_acceptInput = false;
-		setDoDeltaX(_attachedSprite->getX() < _x ? 1 : 0);
-		startAnimation(0x9CAA0218, 0, -1);
-		SetUpdateHandler(&Klaymen::update);
-		SetMessageHandler(&Klaymen::hmMatch);
-		SetSpriteUpdate(NULL);
-		NextState(&Klaymen::stLightMatch);
-	}
-}
-
-void Klaymen::stLightMatch() {
-	_busyStatus = 1;
-	_acceptInput = false;
-	setDoDeltaX(_attachedSprite->getX() < _x ? 1 : 0);
-	startAnimation(0x1222A513, 0, -1);
-	SetUpdateHandler(&Klaymen::update);
-	SetMessageHandler(&Klaymen::hmMatch);
-	SetSpriteUpdate(NULL);
-}
-
 uint32 Klaymen::hmMoveObject(int messageNum, const MessageParam &param, Entity *sender) {
 	switch (messageNum) {
 	case 0x100D:
@@ -2679,18 +2613,6 @@ uint32 Klaymen::hmMoveObject(int messageNum, const MessageParam &param, Entity *
 		break;
 	}
 	return Klaymen::hmLowLevelAnimation(messageNum, param, sender);
-}
-
-uint32 Klaymen::hmTumbleHeadless(int messageNum, const MessageParam &param, Entity *sender) {
-	uint32 messageResult = Klaymen::hmLowLevelAnimation(messageNum, param, sender);
-	switch (messageNum) {
-	case 0x100D:
-		if (param.asInteger() == 0x000F0082) {
-			playSound(0, 0x74E2810F);
-		}
-		break;
-	}
-	return messageResult;
 }
 
 void Klaymen::stMoveObject() {
@@ -2712,93 +2634,6 @@ void Klaymen::stContinueMoveObject() {
 	SetUpdateHandler(&Klaymen::upMoveObject);
 	SetSpriteUpdate(&AnimatedSprite::updateDeltaXY);
 	SetMessageHandler(&Klaymen::hmMoveObject);
-}
-
-void Klaymen::stTumbleHeadless() {
-	if (!stStartActionFromIdle(AnimationCallback(&Klaymen::stTumbleHeadless))) {
-		_busyStatus = 1;
-		_acceptInput = false;
-		setDoDeltaX(0);
-		startAnimation(0x2821C590, 0, -1);
-		SetUpdateHandler(&Klaymen::update);
-		SetMessageHandler(&Klaymen::hmTumbleHeadless);
-		SetSpriteUpdate(&AnimatedSprite::updateDeltaXY);
-		NextState(&Klaymen::stTryStandIdle);
-		sendMessage(_parentScene, 0x8000, 0);
-		playSound(0, 0x62E0A356);
-	}
-}
-
-void Klaymen::stCloseEyes() {
-	if (!stStartActionFromIdle(AnimationCallback(&Klaymen::stCloseEyes))) {
-		_busyStatus = 1;
-		_acceptInput = false;
-		startAnimation(0x5420E254, 0, -1);
-		SetUpdateHandler(&Klaymen::update);
-		SetMessageHandler(&Klaymen::hmLowLevel);
-		SetSpriteUpdate(NULL);
-	}
-}
-
-uint32 Klaymen::hmSpit(int messageNum, const MessageParam &param, Entity *sender) {
-	uint32 messageResult = Klaymen::hmLowLevelAnimation(messageNum, param, sender);
-	switch (messageNum) {
-	case 0x100D:
-		if (param.asInteger() == 0x16401CA6) {
-			_canSpitPipe = true;
-			if (_contSpitPipe)
-				spitIntoPipe();
-		} else if (param.asInteger() == 0xC11C0008) {
-			_canSpitPipe = false;
-			_acceptInput = false;
-			_readyToSpit = false;
-		} else if (param.asInteger() == 0x018A0001) {
-			sendMessage(_parentScene, 0x2001, _spitDestPipeIndex);
-		}
-		break;
-	}
-	return messageResult;
-}
-
-void Klaymen::stTrySpitIntoPipe() {
-	if (_readyToSpit) {
-		_contSpitPipe = true;
-		_spitContDestPipeIndex = _spitPipeIndex;
-		if (_canSpitPipe)
-			spitIntoPipe();
-	} else if (!stStartAction(AnimationCallback(&Klaymen::stTrySpitIntoPipe))) {
-		_busyStatus = 2;
-		_acceptInput = true;
-		_spitDestPipeIndex = _spitPipeIndex;
-		_readyToSpit = true;
-		_canSpitPipe = false;
-		_contSpitPipe = false;
-		startAnimation(0x1808B150, 0, -1);
-		SetUpdateHandler(&Klaymen::update);
-		SetMessageHandler(&Klaymen::hmSpit);
-		SetSpriteUpdate(NULL);
-	}
-}
-
-void Klaymen::spitIntoPipe() {
-	_contSpitPipe = false;
-	_spitDestPipeIndex = _spitContDestPipeIndex;
-	_canSpitPipe = false;
-	_acceptInput = false;
-	startAnimation(0x1B08B553, 0, -1);
-	SetUpdateHandler(&Klaymen::update);
-	SetMessageHandler(&Klaymen::hmSpit);
-	SetSpriteUpdate(NULL);
-	NextState(&Klaymen::stContSpitIntoPipe);
-}
-
-void Klaymen::stContSpitIntoPipe() {
-	_canSpitPipe = true;
-	_acceptInput = true;
-	startAnimationByHash(0x1808B150, 0x16401CA6, 0);
-	SetUpdateHandler(&Klaymen::update);
-	SetMessageHandler(&Klaymen::hmSpit);
-	SetSpriteUpdate(NULL);
 }
 
 void Klaymen::suRidePlatform() {

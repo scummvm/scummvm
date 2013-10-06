@@ -171,6 +171,14 @@ class KmScene1201 : public Klaymen {
 public:
 	KmScene1201(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
 protected:
+	void stCloseEyes();
+	void stTumbleHeadless();
+	void stFetchMatch();
+	void stLightMatch();
+
+	uint32 hmTumbleHeadless(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmMatch(int messageNum, const MessageParam &param, Entity *sender);
+
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };
 

@@ -229,23 +229,16 @@ public:
 
 	void stSitIdleTeleporter();
 	void upSitIdleTeleporter();
-
 	void stSitIdleTeleporterBlink();
-
 	void stSitIdleTeleporterBlinkSecond();
 
 	void stTurnToUseInTeleporter();
-
 	void stReturnFromUseInTeleporter();
-
 	void stGetUpFromTeleporter();
 
 	void teleporterAppear(uint32 fileHash);
 	void teleporterDisappear(uint32 fileHash);
 	uint32 hmTeleporterAppearDisappear(int messageNum, const MessageParam &param, Entity *sender);
-
-	void stClayDoorOpen();
-	uint32 hmClayDoorOpen(int messageNum, const MessageParam &param, Entity *sender);
 
 	void stFallSkipJump();
 	void suFallSkipJump();
@@ -254,15 +247,6 @@ public:
 	void stContinueMoveObject();
 	uint32 hmMoveObject(int messageNum, const MessageParam &param, Entity *sender);
 	void upMoveObject();
-
-	void stCloseEyes();
-
-	void stTumbleHeadless();
-	uint32 hmTumbleHeadless(int messageNum, const MessageParam &param, Entity *sender);
-
-	void stFetchMatch();
-	void stLightMatch();
-	uint32 hmMatch(int messageNum, const MessageParam &param, Entity *sender);
 
 	void stHitByBoxingGlove();
 	uint32 hmHitByBoxingGlove(int messageNum, const MessageParam &param, Entity *sender);
@@ -321,11 +305,6 @@ public:
 
 	void setSoundFlag(bool value) { _soundFlag = value; }
 
-	void spitIntoPipe();
-	void stTrySpitIntoPipe();
-	void stContSpitIntoPipe();
-	uint32 hmSpit(int messageNum, const MessageParam &param, Entity *sender);
-
 	void stRidePlatform();
 	void suRidePlatform();
 	void stPullLever();
@@ -375,13 +354,6 @@ protected:
 
 	int _moveObjectCountdown;
 
-	bool _canSpitPipe;
-	bool _contSpitPipe;
-	bool _readyToSpit;
-	uint32 _spitPipeIndex;
-	uint32 _spitDestPipeIndex;
-	uint32 _spitContDestPipeIndex;
-
 	virtual void xUpdate();
 	virtual uint32 xHandleMessage(int messageNum, const MessageParam &param);
 
@@ -402,7 +374,6 @@ protected:
 
 	void enterIdleAnimation(uint idleAnimation);
 	void walkAlongPathPoints();
-
 };
 
 } // End of namespace Neverhood

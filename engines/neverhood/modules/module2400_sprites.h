@@ -98,6 +98,18 @@ class KmScene2401 : public Klaymen {
 public:
 	KmScene2401(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
 protected:
+	bool _canSpitPipe;
+	bool _contSpitPipe;
+	bool _readyToSpit;
+	uint32 _spitPipeIndex;
+	uint32 _spitDestPipeIndex;
+	uint32 _spitContDestPipeIndex;
+
+	void spitIntoPipe();
+	void stTrySpitIntoPipe();
+	void stContSpitIntoPipe();
+	uint32 hmSpit(int messageNum, const MessageParam &param, Entity *sender);
+
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };
 

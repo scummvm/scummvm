@@ -970,7 +970,7 @@ uint32 KmScene2203::xHandleMessage(int messageNum, const MessageParam &param) {
 		startWalkToX(_dataResource.getPoint(param.asInteger()).x, false);
 		break;
 	case 0x4819:
-		GotoState(&Klaymen::stClayDoorOpen);
+		GotoState(&KmScene2203::stClayDoorOpen);
 		break;
 	case 0x481A:
 		GotoState(&Klaymen::stInsertDisk);
@@ -999,6 +999,29 @@ uint32 KmScene2203::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	}
 	return 0;
+}
+
+void KmScene2203::stClayDoorOpen() {
+	if (!stStartAction(AnimationCallback(&KmScene2203::stClayDoorOpen))) {
+		_busyStatus = 2;
+		_acceptInput = false;
+		startAnimation(0x5CCCB330, 0, -1);
+		SetUpdateHandler(&Klaymen::update);
+		SetMessageHandler(&KmScene2203::hmClayDoorOpen);
+		SetSpriteUpdate(&Klaymen::suUpdateDestX);
+	}
+}
+
+uint32 KmScene2203::hmClayDoorOpen(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = hmLowLevelAnimation(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x100D:
+		if (param.asInteger() == 0x040D4186) {
+			sendMessage(_attachedSprite, 0x4808, 0);
+		}
+		break;
+	}
+	return messageResult;
 }
 
 KmScene2205::KmScene2205(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
