@@ -141,4 +141,87 @@ uint32 SsCommonFloorButton::handleMessage(int messageNum, const MessageParam &pa
 	return messageResult;
 }
 
+KmScene2101::KmScene2101(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
+	: Klaymen(vm, parentScene, x, y) {
+
+	// Empty
+}
+
+uint32 KmScene2101::xHandleMessage(int messageNum, const MessageParam &param) {
+	uint32 messageResult = 0;
+	switch (messageNum) {
+	case 0x2000:
+		_isSittingInTeleporter = param.asInteger() != 0;
+		messageResult = 1;
+		break;
+	case 0x4001:
+	case 0x4800:
+		startWalkToX(param.asPoint().x, false);
+		break;
+	case 0x4004:
+		if (_isSittingInTeleporter)
+			GotoState(&Klaymen::stSitIdleTeleporter);
+		else
+			GotoState(&Klaymen::stTryStandIdle);
+		break;
+	case 0x4811:
+		GotoState(&Klaymen::stHitByDoor);
+		break;
+	case 0x4812:
+		if (param.asInteger() == 2)
+			GotoState(&Klaymen::stPickUpNeedle);
+		else if (param.asInteger() == 1)
+			GotoState(&Klaymen::stPickUpTube);
+		else
+			GotoState(&Klaymen::stPickUpGeneric);
+		break;
+	case 0x4816:
+		if (param.asInteger() == 1)
+			GotoState(&Klaymen::stPressButton);
+		else if (param.asInteger() == 2)
+			GotoState(&Klaymen::stPressFloorButton);
+		else
+			GotoState(&Klaymen::stPressButtonSide);
+		break;
+	case 0x4817:
+		setDoDeltaX(param.asInteger());
+		gotoNextStateExt();
+		break;
+	case 0x481B:
+		if (param.asPoint().y != 0)
+			startWalkToXDistance(param.asPoint().y, param.asPoint().x);
+		else
+			startWalkToAttachedSpriteXDistance(param.asPoint().x);
+		break;
+	case 0x481D:
+		if (_isSittingInTeleporter)
+			GotoState(&Klaymen::stTurnToUseInTeleporter);
+		break;
+	case 0x481E:
+		if (_isSittingInTeleporter)
+			GotoState(&Klaymen::stReturnFromUseInTeleporter);
+		break;
+	case 0x4834:
+		GotoState(&Klaymen::stStepOver);
+		break;
+	case 0x4835:
+		sendMessage(_parentScene, 0x2000, 1);
+		_isSittingInTeleporter = true;
+		GotoState(&Klaymen::stSitInTeleporter);
+		break;
+	case 0x4836:
+		sendMessage(_parentScene, 0x2000, 0);
+		_isSittingInTeleporter = false;
+		GotoState(&Klaymen::stGetUpFromTeleporter);
+		break;
+	case 0x483D:
+		teleporterAppear(0xFF290E30);
+		break;
+	case 0x483E:
+		teleporterDisappear(0x9A28CA1C);
+		break;
+	}
+	return messageResult;
+}
+
 } // End of namespace Neverhood

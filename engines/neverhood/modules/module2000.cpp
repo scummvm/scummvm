@@ -21,6 +21,7 @@
  */
 
 #include "neverhood/modules/module2000.h"
+#include "neverhood/modules/module2000_sprites.h"
 
 namespace Neverhood {
 

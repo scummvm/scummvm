@@ -863,4 +863,523 @@ SsScene2207Symbol::SsScene2207Symbol(NeverhoodEngine *vm, uint32 fileHash, int i
 	updatePosition();
 }
 
+KmScene2201::KmScene2201(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y, NRect *clipRects, int clipRectsCount)
+	: Klaymen(vm, parentScene, x, y) {
+
+	_surface->setClipRects(clipRects, clipRectsCount);
+	_dataResource.load(0x04104242);
+}
+
+uint32 KmScene2201::xHandleMessage(int messageNum, const MessageParam &param) {
+	switch (messageNum) {
+	case 0x4001:
+	case 0x4800:
+		startWalkToX(param.asPoint().x, false);
+		break;
+	case 0x4004:
+		GotoState(&Klaymen::stTryStandIdle);
+		break;
+	case 0x4812:
+		GotoState(&Klaymen::stPickUpGeneric);
+		break;
+	case 0x4816:
+		if (param.asInteger() == 0)
+			GotoState(&Klaymen::stPressButtonSide);
+		break;
+	case 0x4817:
+		setDoDeltaX(param.asInteger() ? 1 : 0);
+		gotoNextStateExt();
+		break;
+	case 0x4818:
+		startWalkToX(_dataResource.getPoint(param.asInteger()).x, false);
+		break;
+	case 0x481B:
+		if (param.asPoint().y != 0)
+			startWalkToXDistance(param.asPoint().y, param.asPoint().x);
+		else
+			startWalkToAttachedSpriteXDistance(param.asPoint().x);
+		break;
+	case 0x481D:
+		GotoState(&Klaymen::stTurnToUse);
+		break;
+	case 0x481E:
+		GotoState(&Klaymen::stReturnFromUse);
+		break;
+	case 0x482D:
+		setDoDeltaX(_x > (int16)param.asInteger() ? 1 : 0);
+		gotoNextStateExt();
+		break;
+	case 0x482E:
+		if (param.asInteger() == 1)
+			GotoState(&Klaymen::stWalkToFrontNoStep);
+		else
+			GotoState(&Klaymen::stWalkToFront);
+		break;
+	case 0x482F:
+		if (param.asInteger() == 1)
+			GotoState(&Klaymen::stTurnToFront);
+		else
+			GotoState(&Klaymen::stTurnToBack);
+		break;
+	case 0x483F:
+		startSpecialWalkRight(param.asInteger());
+		break;
+	case 0x4840:
+		startSpecialWalkLeft(param.asInteger());
+		break;
+	}
+	return 0;
+}
+
+KmScene2203::KmScene2203(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
+	: Klaymen(vm, parentScene, x, y) {
+
+	// Empty
+}
+
+uint32 KmScene2203::xHandleMessage(int messageNum, const MessageParam &param) {
+	switch (messageNum) {
+	case 0x4001:
+	case 0x4800:
+		startWalkToX(param.asPoint().x, false);
+		break;
+	case 0x4004:
+		GotoState(&Klaymen::stTryStandIdle);
+		break;
+	case 0x4812:
+		if (param.asInteger() == 2)
+			GotoState(&Klaymen::stPickUpNeedle);
+		else if (param.asInteger() == 1)
+			GotoState(&Klaymen::stPickUpTube);
+		else
+			GotoState(&Klaymen::stPickUpGeneric);
+		break;
+	case 0x4816:
+		if (param.asInteger() == 1)
+			GotoState(&Klaymen::stPressButton);
+		else if (param.asInteger() == 2)
+			GotoState(&Klaymen::stPressFloorButton);
+		else
+			GotoState(&Klaymen::stPressButtonSide);
+		break;
+	case 0x4817:
+		setDoDeltaX(param.asInteger());
+		gotoNextStateExt();
+		break;
+	case 0x4818:
+		startWalkToX(_dataResource.getPoint(param.asInteger()).x, false);
+		break;
+	case 0x4819:
+		GotoState(&Klaymen::stClayDoorOpen);
+		break;
+	case 0x481A:
+		GotoState(&Klaymen::stInsertDisk);
+		break;
+	case 0x481B:
+		if (param.asPoint().y != 0)
+			startWalkToXDistance(param.asPoint().y, param.asPoint().x);
+		else
+			startWalkToAttachedSpriteXDistance(param.asPoint().x);
+		break;
+	case 0x481D:
+		GotoState(&Klaymen::stTurnToUse);
+		break;
+	case 0x481E:
+		GotoState(&Klaymen::stReturnFromUse);
+		break;
+	case 0x482D:
+		setDoDeltaX(_x > (int16)param.asInteger() ? 1 : 0);
+		gotoNextStateExt();
+		break;
+	case 0x483F:
+		startSpecialWalkRight(param.asInteger());
+		break;
+	case 0x4840:
+		startSpecialWalkLeft(param.asInteger());
+		break;
+	}
+	return 0;
+}
+
+KmScene2205::KmScene2205(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
+	: Klaymen(vm, parentScene, x, y) {
+
+	// Empty
+}
+
+void KmScene2205::xUpdate() {
+	setGlobalVar(V_KLAYMEN_FRAMEINDEX, _currFrameIndex);
+}
+
+uint32 KmScene2205::xHandleMessage(int messageNum, const MessageParam &param) {
+	switch (messageNum) {
+	case 0x4001:
+	case 0x4800:
+		startWalkToX(param.asPoint().x, false);
+		break;
+	case 0x4004:
+		GotoState(&Klaymen::stTryStandIdle);
+		break;
+	case 0x4804:
+		if (param.asInteger() != 0) {
+			_destX = param.asInteger();
+			GotoState(&Klaymen::stStartWalkingResume);
+		} else
+			GotoState(&Klaymen::stPeekWall);
+		break;
+	case 0x4816:
+		if (param.asInteger() == 0)
+			GotoState(&Klaymen::stPressButtonSide);
+		break;
+	case 0x4817:
+		setDoDeltaX(param.asInteger());
+		gotoNextStateExt();
+		break;
+	case 0x4818:
+		startWalkToX(_dataResource.getPoint(param.asInteger()).x, false);
+		break;
+	case 0x483F:
+		startSpecialWalkRight(param.asInteger());
+		break;
+	case 0x4840:
+		startSpecialWalkLeft(param.asInteger());
+		break;
+	}
+	return 0;
+}
+
+KmScene2206::KmScene2206(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
+	: Klaymen(vm, parentScene, x, y) {
+
+	_walkResumeFrameIncr = 1;
+	_vm->_soundMan->addSound(0x80101800, 0xD3B02847);
+}
+
+KmScene2206::~KmScene2206() {
+	_vm->_soundMan->deleteSoundGroup(0x80101800);
+}
+
+void KmScene2206::xUpdate() {
+	setGlobalVar(V_KLAYMEN_FRAMEINDEX, _currFrameIndex);
+}
+
+uint32 KmScene2206::xHandleMessage(int messageNum, const MessageParam &param) {
+	switch (messageNum) {
+	case 0x4001:
+	case 0x4800:
+		startWalkToX(param.asPoint().x, false);
+		break;
+	case 0x4004:
+		GotoState(&Klaymen::stTryStandIdle);
+		break;
+	case 0x4803:
+		GotoState(&Klaymen::stRidePlatformDown);
+		break;
+	case 0x4804:
+		if (param.asInteger() != 0) {
+			_destX = param.asInteger();
+			GotoState(&Klaymen::stStartWalkingResume);
+		} else
+			GotoState(&Klaymen::stPeekWall);
+		break;
+	case 0x4812:
+		if (param.asInteger() == 1)
+			GotoState(&Klaymen::stPickUpTube);
+		else
+			GotoState(&Klaymen::stPickUpGeneric);
+		break;
+	case 0x4816:
+		if (param.asInteger() == 1)
+			GotoState(&Klaymen::stPressButton);
+		else if (param.asInteger() == 2)
+			GotoState(&Klaymen::stPressFloorButton);
+		else
+			GotoState(&Klaymen::stPressButtonSide);
+		break;
+	case 0x4817:
+		setDoDeltaX(param.asInteger());
+		gotoNextStateExt();
+		break;
+	case 0x481B:
+		if (param.asPoint().y != 0)
+			startWalkToXDistance(param.asPoint().y, param.asPoint().x);
+		else
+			startWalkToAttachedSpriteXDistance(param.asPoint().x);
+		break;
+	case 0x481F:
+		if (param.asInteger() == 0)
+			GotoState(&Klaymen::stWonderAboutHalf);
+		else if (param.asInteger() == 1)
+			GotoState(&Klaymen::stWonderAboutAfter);
+		else if (param.asInteger() == 3)
+			GotoState(&Klaymen::stTurnToUseHalf);
+		else if (param.asInteger() == 4)
+			GotoState(&Klaymen::stTurnAwayFromUse);
+		else
+			GotoState(&Klaymen::stWonderAbout);
+		break;
+	case 0x482D:
+		setDoDeltaX(_x > (int16)param.asInteger() ? 1 : 0);
+		gotoNextStateExt();
+		break;
+	case 0x482E:
+		if (param.asInteger() == 1)
+			GotoState(&Klaymen::stWalkToFrontNoStep);
+		else
+			GotoState(&Klaymen::stWalkToFront);
+		break;
+	case 0x482F:
+		if (param.asInteger() == 1)
+			GotoState(&Klaymen::stTurnToFront);
+		else
+			GotoState(&Klaymen::stTurnToBack);
+		break;
+	case 0x4837:
+		stopWalking();
+		break;
+	case 0x483F:
+		startSpecialWalkRight(param.asInteger());
+		break;
+	case 0x4840:
+		startSpecialWalkLeft(param.asInteger());
+		break;
+	}
+	return 0;
+}
+
+KmScene2207::KmScene2207(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
+	: Klaymen(vm, parentScene, x, y) {
+
+	// Empty
+}
+
+uint32 KmScene2207::xHandleMessage(int messageNum, const MessageParam &param) {
+	switch (messageNum) {
+	case 0x2001:
+		GotoState(&Klaymen::stRidePlatform);
+		break;
+	case 0x2005:
+		suRidePlatform();
+		GotoState(&Klaymen::stTryStandIdle);
+		break;
+	case 0x4001:
+	case 0x4800:
+		startWalkToX(param.asPoint().x, false);
+		break;
+	case 0x4004:
+		GotoState(&Klaymen::stTryStandIdle);
+		break;
+	case 0x480D:
+		GotoState(&Klaymen::stInteractLever);
+		break;
+	case 0x4812:
+		GotoState(&Klaymen::stPickUpGeneric);
+		break;
+	case 0x4816:
+		if (param.asInteger() == 1)
+			GotoState(&Klaymen::stPressButton);
+		else if (param.asInteger() == 2)
+			GotoState(&Klaymen::stPressFloorButton);
+		else
+			GotoState(&Klaymen::stPressButtonSide);
+		break;
+	case 0x4817:
+		setDoDeltaX(param.asInteger());
+		gotoNextStateExt();
+		break;
+	case 0x481B:
+		if (param.asPoint().y != 0)
+			startWalkToXDistance(param.asPoint().y, param.asPoint().x);
+		else
+			startWalkToAttachedSpriteXDistance(param.asPoint().x);
+		break;
+	case 0x4827:
+		GotoState(&Klaymen::stReleaseLever);
+		break;
+	case 0x482D:
+		setDoDeltaX(_x > (int16)param.asInteger() ? 1 : 0);
+		gotoNextStateExt();
+		break;
+	case 0x483F:
+		startSpecialWalkRight(param.asInteger());
+		break;
+	case 0x4840:
+		startSpecialWalkLeft(param.asInteger());
+		break;
+	}
+	return 0;
+}
+
+KmScene2242::KmScene2242(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
+	: Klaymen(vm, parentScene, x, y) {
+
+	// Empty
+}
+
+void KmScene2242::xUpdate() {
+	setGlobalVar(V_KLAYMEN_FRAMEINDEX, _currFrameIndex);
+}
+
+uint32 KmScene2242::xHandleMessage(int messageNum, const MessageParam &param) {
+	switch (messageNum) {
+	case 0x4001:
+	case 0x4800:
+		startWalkToX(param.asPoint().x, false);
+		break;
+	case 0x4004:
+		GotoState(&Klaymen::stTryStandIdle);
+		break;
+	case 0x4804:
+		if (param.asInteger() != 0) {
+			_destX = param.asInteger();
+			GotoState(&Klaymen::stStartWalkingResume);
+		} else
+			GotoState(&Klaymen::stPeekWall);
+		break;
+	case 0x4812:
+		if (param.asInteger() == 2)
+			GotoState(&Klaymen::stPickUpNeedle);
+		else if (param.asInteger() == 1)
+			GotoState(&Klaymen::stPickUpTube);
+		else
+			GotoState(&Klaymen::stPickUpGeneric);
+		break;
+	case 0x4817:
+		setDoDeltaX(param.asInteger());
+		gotoNextStateExt();
+		break;
+	case 0x481B:
+		if (param.asPoint().y != 0)
+			startWalkToXDistance(param.asPoint().y, param.asPoint().x);
+		else
+			startWalkToAttachedSpriteXDistance(param.asPoint().x);
+		break;
+	case 0x481F:
+		if (param.asInteger() == 0)
+			GotoState(&Klaymen::stWonderAboutHalf);
+		else if (param.asInteger() == 1)
+			GotoState(&Klaymen::stWonderAboutAfter);
+		else if (param.asInteger() == 3)
+			GotoState(&Klaymen::stTurnToUseHalf);
+		else if (param.asInteger() == 4)
+			GotoState(&Klaymen::stTurnAwayFromUse);
+		else
+			GotoState(&Klaymen::stWonderAbout);
+		break;
+	case 0x482D:
+		setDoDeltaX(_x > (int16)param.asInteger() ? 1 : 0);
+		gotoNextStateExt();
+		break;
+	case 0x4837:
+		stopWalking();
+		break;
+	}
+	return 0;
+}
+
+KmHallOfRecords::KmHallOfRecords(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
+	: Klaymen(vm, parentScene, x, y) {
+	// Empty
+}
+
+void KmHallOfRecords::xUpdate() {
+	setGlobalVar(V_KLAYMEN_FRAMEINDEX, _currFrameIndex);
+}
+
+uint32 KmHallOfRecords::xHandleMessage(int messageNum, const MessageParam &param) {
+	switch (messageNum) {
+	case 0x4001:
+	case 0x4800:
+		startWalkToX(param.asPoint().x, false);
+		break;
+	case 0x4004:
+		GotoState(&Klaymen::stTryStandIdle);
+		break;
+	case 0x4804:
+		if (param.asInteger() != 0) {
+			_destX = param.asInteger();
+			GotoState(&Klaymen::stStartWalkingResume);
+		} else
+			GotoState(&Klaymen::stPeekWall);
+		break;
+	case 0x4817:
+		setDoDeltaX(param.asInteger());
+		gotoNextStateExt();
+		break;
+	case 0x481F:
+		if (param.asInteger() == 0)
+			GotoState(&Klaymen::stWonderAboutHalf);
+		else if (param.asInteger() == 1)
+			GotoState(&Klaymen::stWonderAboutAfter);
+		else if (param.asInteger() == 3)
+			GotoState(&Klaymen::stTurnToUseHalf);
+		else if (param.asInteger() == 4)
+			GotoState(&Klaymen::stTurnAwayFromUse);
+		else
+			GotoState(&Klaymen::stWonderAbout);
+		break;
+	case 0x482D:
+		setDoDeltaX(_x > (int16)param.asInteger() ? 1 : 0);
+		gotoNextStateExt();
+		break;
+	case 0x4837:
+		stopWalking();
+		break;
+	}
+	return 0;
+}
+
+KmScene2247::KmScene2247(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
+	: Klaymen(vm, parentScene, x, y) {
+
+	// Empty
+}
+
+void KmScene2247::xUpdate() {
+	setGlobalVar(V_KLAYMEN_FRAMEINDEX, _currFrameIndex);
+}
+
+uint32 KmScene2247::xHandleMessage(int messageNum, const MessageParam &param) {
+	switch (messageNum) {
+	case 0x4001:
+	case 0x4800:
+		startWalkToX(param.asPoint().x, false);
+		break;
+	case 0x4004:
+		GotoState(&Klaymen::stTryStandIdle);
+		break;
+	case 0x4804:
+		if (param.asInteger() != 0) {
+			_destX = param.asInteger();
+			GotoState(&Klaymen::stStartWalkingResume);
+		} else
+			GotoState(&Klaymen::stPeekWall);
+		break;
+	case 0x4817:
+		setDoDeltaX(param.asInteger());
+		gotoNextStateExt();
+		break;
+	case 0x481F:
+		if (param.asInteger() == 0)
+			GotoState(&Klaymen::stWonderAboutHalf);
+		else if (param.asInteger() == 1)
+			GotoState(&Klaymen::stWonderAboutAfter);
+		else if (param.asInteger() == 3)
+			GotoState(&Klaymen::stTurnToUseHalf);
+		else if (param.asInteger() == 4)
+			GotoState(&Klaymen::stTurnAwayFromUse);
+		else
+			GotoState(&Klaymen::stWonderAbout);
+		break;
+	case 0x482D:
+		setDoDeltaX(_x > (int16)param.asInteger() ? 1 : 0);
+		gotoNextStateExt();
+		break;
+	case 0x4837:
+		stopWalking();
+		break;
+	}
+	return 0;
+}
+
 } // End of namespace Neverhood

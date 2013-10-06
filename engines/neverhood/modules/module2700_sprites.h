@@ -62,6 +62,13 @@ protected:
 	void update();
 };
 
+class KmScene2732 : public Klaymen {
+public:
+	KmScene2732(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
+protected:
+	uint32 xHandleMessage(int messageNum, const MessageParam &param);
+};
+
 } // End of namespace Neverhood
 
 #endif /* NEVERHOOD_MODULES_MODULE2700_SPRITES_H */

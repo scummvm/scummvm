@@ -43,6 +43,13 @@ protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
+class KmScene1705 : public Klaymen {
+public:
+	KmScene1705(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
+protected:
+	uint32 xHandleMessage(int messageNum, const MessageParam &param);
+};
+
 } // End of namespace Neverhood
 
 #endif /* NEVERHOOD_MODULES_MODULE1700_SPRITES_H */

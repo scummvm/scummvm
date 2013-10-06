@@ -94,6 +94,34 @@ protected:
 	uint32 hmJoke(int messageNum, const MessageParam &param, Entity *sender);
 };
 
+class KmScene2401 : public Klaymen {
+public:
+	KmScene2401(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
+protected:
+	uint32 xHandleMessage(int messageNum, const MessageParam &param);
+};
+
+class KmScene2402 : public Klaymen {
+public:
+	KmScene2402(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
+protected:
+	uint32 xHandleMessage(int messageNum, const MessageParam &param);
+};
+
+class KmScene2403 : public Klaymen {
+public:
+	KmScene2403(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
+protected:
+	uint32 xHandleMessage(int messageNum, const MessageParam &param);
+};
+
+class KmScene2406 : public Klaymen {
+public:
+	KmScene2406(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y, NRect *clipRects, int clipRectsCount);
+protected:
+	uint32 xHandleMessage(int messageNum, const MessageParam &param);
+};
+
 } // End of namespace Neverhood
 
 #endif /* NEVERHOOD_MODULES_MODULE2400_SPRITES_H */

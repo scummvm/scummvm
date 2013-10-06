@@ -23,7 +23,6 @@
 #include "neverhood/gamemodule.h"
 #include "neverhood/navigationscene.h"
 #include "neverhood/modules/module1100.h"
-#include "neverhood/modules/module1100_klaymen.h"
 #include "neverhood/modules/module1100_sprites.h"
 
 namespace Neverhood {

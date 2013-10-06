@@ -202,6 +202,68 @@ public:
 	SsScene2207Symbol(NeverhoodEngine *vm, uint32 fileHash, int index);
 };
 
+class KmScene2201 : public Klaymen {
+public:
+	KmScene2201(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y, NRect *clipRects, int clipRectsCount);
+protected:
+	uint32 xHandleMessage(int messageNum, const MessageParam &param);
+};
+
+class KmScene2203 : public Klaymen {
+public:
+	KmScene2203(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
+protected:
+	uint32 xHandleMessage(int messageNum, const MessageParam &param);
+};
+
+class KmScene2205 : public Klaymen {
+public:
+	KmScene2205(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
+protected:
+	void xUpdate();
+	uint32 xHandleMessage(int messageNum, const MessageParam &param);
+};
+
+class KmScene2206 : public Klaymen {
+public:
+	KmScene2206(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
+	~KmScene2206();
+protected:
+	void xUpdate();
+	uint32 xHandleMessage(int messageNum, const MessageParam &param);
+};
+
+class KmScene2207 : public Klaymen {
+public:
+	KmScene2207(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
+protected:
+	uint32 xHandleMessage(int messageNum, const MessageParam &param);
+};
+
+class KmScene2242 : public Klaymen {
+public:
+	KmScene2242(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
+protected:
+	void xUpdate();
+	uint32 xHandleMessage(int messageNum, const MessageParam &param);
+};
+
+class KmHallOfRecords : public Klaymen {
+public:
+	KmHallOfRecords(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
+protected:
+	void xUpdate();
+	uint32 xHandleMessage(int messageNum, const MessageParam &param);
+};
+
+class KmScene2247 : public Klaymen {
+public:
+	KmScene2247(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
+protected:
+	void xUpdate();
+	uint32 xHandleMessage(int messageNum, const MessageParam &param);
+};
+
 } // End of namespace Neverhood
 
 #endif /* NEVERHOOD_MODULES_MODULE2200_SPRITES_H */

@@ -15,10 +15,8 @@ MODULE_OBJS = \
 	microtiles.o \
 	module.o \
 	modules/module1000.o \
-	modules/module1000_klaymen.o \
 	modules/module1000_sprites.o \
 	modules/module1100.o \
-	modules/module1100_klaymen.o \
 	modules/module1100_sprites.o \
 	modules/module1200.o \
 	modules/module1200_sprites.o \
@@ -35,6 +33,7 @@ MODULE_OBJS = \
 	modules/module1900.o \
 	modules/module1900_sprites.o \
 	modules/module2000.o \
+	modules/module2000_sprites.o \
 	modules/module2100.o \
 	modules/module2100_sprites.o \
 	modules/module2200.o \

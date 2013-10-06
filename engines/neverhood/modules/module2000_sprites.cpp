@@ -20,17 +20,17 @@
  *
  */
 
-#include "neverhood/modules/module1100_klaymen.h"
+#include "neverhood/modules/module2000_sprites.h"
 
 namespace Neverhood {
 
-KmScene1109::KmScene1109(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
+KmScene2001::KmScene2001(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
 	: Klaymen(vm, parentScene, x, y) {
 
 	// Empty
 }
 
-uint32 KmScene1109::xHandleMessage(int messageNum, const MessageParam &param) {
+uint32 KmScene2001::xHandleMessage(int messageNum, const MessageParam &param) {
 	uint32 messageResult = 0;
 	switch (messageNum) {
 	case 0x2000:
@@ -80,10 +80,10 @@ uint32 KmScene1109::xHandleMessage(int messageNum, const MessageParam &param) {
 		GotoState(&Klaymen::stGetUpFromTeleporter);
 		break;
 	case 0x483D:
-		teleporterAppear(0x2C2A4A1C);
+		teleporterAppear(0xBE68CC54);
 		break;
 	case 0x483E:
-		teleporterDisappear(0x3C2E4245);
+		teleporterDisappear(0x18AB4ED4);
 		break;
 	}
 	return messageResult;

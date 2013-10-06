@@ -157,4 +157,22 @@ void AsCommonCarTrackShadow::update() {
 	AnimatedSprite::update();
 }
 
+KmScene2732::KmScene2732(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
+	: Klaymen(vm, parentScene, x, y) {
+
+	// Empty
+}
+
+uint32 KmScene2732::xHandleMessage(int messageNum, const MessageParam &param) {
+	switch (messageNum) {
+	case 0x4804:
+		GotoState(&Klaymen::stPeekInside);
+		break;
+	case 0x483C:
+		GotoState(&Klaymen::stPeekInsideReturn);
+		break;
+	}
+	return 0;
+}
+
 } // End of namespace Neverhood
