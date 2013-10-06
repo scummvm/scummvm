@@ -839,7 +839,7 @@ void StripManager::signal() {
 
 		// If no entry found, get the default response
 		if (!delayFlag) {
-			int idx = 0; 
+			idx = 0;
 			while (obj44._list[idx + 1]._id)
 				++idx;
 
