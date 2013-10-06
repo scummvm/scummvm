@@ -2061,11 +2061,11 @@ void Actor::detach() {
 		return;
 
 	// FIXME: Use last known position of attached joint
-	Actor *attachedActor = Actor::getPool().getObject(_attachedActor);
-	setPos(attachedActor->_pos);
-	setRot(0, 0, 0);
+	Math::Vector3d oldPos = getWorldPos();
 	_attachedActor = 0;
 	_attachedJoint = "";
+	setPos(oldPos);
+	setRot(0, 0, 0);
 }
 
 void Actor::drawToCleanBuffer() {
