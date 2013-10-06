@@ -534,7 +534,7 @@ Common::String Parser::rank() {
 Common::String Parser::totalTime() {
 	uint16 h, m, s;
 
-	h = (uint16) _vm->_totalTime / 65535 / 3600;
+	h = (uint16)((_vm->_totalTime * 3600) / 65535);
 	m = h % 3600;
 	h /= 3600;
 	s = m % 60;
