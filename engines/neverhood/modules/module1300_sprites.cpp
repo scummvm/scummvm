@@ -715,7 +715,7 @@ uint32 KmScene1305::xHandleMessage(int messageNum, const MessageParam &param) {
 		GotoState(&Klaymen::stTryStandIdle);
 		break;
 	case 0x4804:
-		GotoState(&Klaymen::stCrashDown);
+		GotoState(&KmScene1305::stCrashDown);
 		break;
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
@@ -723,6 +723,22 @@ uint32 KmScene1305::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	}
 	return 0;
+}
+
+void KmScene1305::stCrashDown() {
+	playSound(0, 0x41648271);
+	_busyStatus = 1;
+	_acceptInput = false;
+	startAnimationByHash(0x000BAB02, 0x88003000, 0);
+	SetUpdateHandler(&Klaymen::update);
+	SetSpriteUpdate(NULL);
+	SetMessageHandler(&Klaymen::hmLowLevelAnimation);
+	NextState(&KmScene1305::stCrashDownFinished);
+}
+
+void KmScene1305::stCrashDownFinished() {
+	setDoDeltaX(2);
+	stTryStandIdle();
 }
 
 KmScene1306::KmScene1306(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)

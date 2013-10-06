@@ -999,7 +999,7 @@ uint32 KmScene1001::xHandleMessage(int messageNum, const MessageParam &param) {
 			GotoState(&Klaymen::stSleeping);
 		break;
 	case 0x480D:
-		GotoState(&Klaymen::stPullHammerLever);
+		GotoState(&KmScene1001::stPullHammerLever);
 		break;
 	case 0x4812:
 		GotoState(&Klaymen::stPickUpGeneric);
@@ -1054,10 +1054,49 @@ uint32 KmScene1001::xHandleMessage(int messageNum, const MessageParam &param) {
 	return 0;
 }
 
+void KmScene1001::stPullHammerLever() {
+	if (!stStartAction(AnimationCallback(&KmScene1001::stPullHammerLever))) {
+		_busyStatus = 2;
+		_acceptInput = false;
+		startAnimation(0x00648953, 0, -1);
+		SetUpdateHandler(&Klaymen::update);
+		SetMessageHandler(&KmScene1001::hmPullHammerLever);
+		SetSpriteUpdate(&AnimatedSprite::updateDeltaXY);
+	}
+}
+
+uint32 KmScene1001::hmPullHammerLever(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Klaymen::hmLever(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x100D:
+		if (param.asInteger() == 0x4AB28209)
+			sendMessage(_attachedSprite, 0x480F, 0);
+		break;
+	}
+	return messageResult;
+}
+
 KmScene1002::KmScene1002(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
 	: Klaymen(vm, parentScene, x, y) {
 
 	setKlaymenIdleTable1();
+}
+
+void KmScene1002::setupJumpToRing() {
+	_acceptInput = false;
+	SetUpdateHandler(&Klaymen::update);
+	SetMessageHandler(&KmScene1002::hmJumpToRing);
+	SetSpriteUpdate(&Klaymen::suUpdateDestX);
+	NextState(&KmScene1002::stHangOnRing);
+	sendMessage(_attachedSprite, 0x482B, 0);
+}
+
+void KmScene1002::stJumpToRing1() {
+	if (!stStartAction(AnimationCallback(&KmScene1002::stJumpToRing1))) {
+		_busyStatus = 0;
+		startAnimation(0xD82890BA, 0, -1);
+		setupJumpToRing();
+	}
 }
 
 void KmScene1002::xUpdate() {
@@ -1089,9 +1128,9 @@ uint32 KmScene1002::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x4803:
 		if (param.asInteger() == 1)
-			GotoState(&Klaymen::stJumpAndFall);
+			GotoState(&KmScene1002::stJumpAndFall);
 		else if (param.asInteger() == 2)
-			GotoState(&Klaymen::stDropFromRing);
+			GotoState(&KmScene1002::stDropFromRing);
 		break;
 	case 0x4804:
 		GotoState(&Klaymen::stPeekWall);
@@ -1099,24 +1138,24 @@ uint32 KmScene1002::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4805:
 		switch (param.asInteger()) {
 		case 1:
-			GotoState(&Klaymen::stJumpToRing1);
+			GotoState(&KmScene1002::stJumpToRing1);
 			break;
 		case 2:
-			GotoState(&Klaymen::stJumpToRing2);
+			GotoState(&KmScene1002::stJumpToRing2);
 			break;
 		case 3:
-			GotoState(&Klaymen::stJumpToRing3);
+			GotoState(&KmScene1002::stJumpToRing3);
 			break;
 		case 4:
-			GotoState(&Klaymen::stJumpToRing4);
+			GotoState(&KmScene1002::stJumpToRing4);
 			break;
 		}
 		break;
 	case 0x480A:
-		GotoState(&Klaymen::stMoveVenusFlyTrap);
+		GotoState(&KmScene1002::stMoveVenusFlyTrap);
 		break;
 	case 0x480D:
-		GotoState(&Klaymen::stJumpToRingVenusFlyTrap);
+		GotoState(&KmScene1002::stJumpToRingVenusFlyTrap);
 		break;
 	case 0x4816:
 		if (param.asInteger() == 0)
@@ -1192,7 +1231,7 @@ uint32 KmScene1004::xHandleMessage(int messageNum, const MessageParam &param) {
 		startWalkToX(_dataResource.getPoint(param.asInteger()).x, false);
 		break;
 	case 0x481E:
-		GotoState(&Klaymen::stReadNote);
+		GotoState(&KmScene1004::stReadNote);
 		break;
 	case 0x4820:
 		sendMessage(_parentScene, 0x2000, 0);
@@ -1233,6 +1272,266 @@ uint32 KmScene1004::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	}
 	return 0;
+}
+
+uint32 KmScene1002::hmJumpToRing(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = hmLowLevelAnimation(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x100D:
+		if (param.asInteger() == 0x168050A0) {
+			sendMessage(_attachedSprite, 0x4806, 0);
+			_acceptInput = true;
+		} else if (param.asInteger() == 0x320AC306) {
+			playSound(0, 0x5860C640);
+		} else if (param.asInteger() == 0x4AB28209) {
+			sendMessage(_attachedSprite, 0x482A, 0);
+		} else if (param.asInteger() == 0x88001184) {
+			sendMessage(_attachedSprite, 0x482B, 0);
+		}
+		break;
+	}
+	return messageResult;
+}
+
+void KmScene1002::stHangOnRing() {
+	_busyStatus = 0;
+	_acceptInput = true;
+	startAnimation(0x4829E0B8, 0, -1);
+	SetUpdateHandler(&Klaymen::update);
+	SetMessageHandler(&Klaymen::hmLowLevel);
+	SetSpriteUpdate(NULL);
+}
+
+void KmScene1002::stJumpToRing2() {
+	if (!stStartAction(AnimationCallback(&KmScene1002::stJumpToRing2))) {
+		_busyStatus = 0;
+		startAnimation(0x900980B2, 0, -1);
+		setupJumpToRing();
+	}
+}
+
+void KmScene1002::stJumpToRing3() {
+	if (!stStartAction(AnimationCallback(&KmScene1002::stJumpToRing3))) {
+		_busyStatus = 0;
+		_acceptInput = false;
+		startAnimation(0xBA1910B2, 0, -1);
+		SetUpdateHandler(&Klaymen::update);
+		SetSpriteUpdate(&Klaymen::suUpdateDestX);
+		SetMessageHandler(&KmScene1002::hmJumpToRing3);
+		NextState(&KmScene1002::stHoldRing3);
+		sendMessage(_attachedSprite, 0x482B, 0);
+	}
+}
+
+uint32 KmScene1002::hmJumpToRing3(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = hmLowLevelAnimation(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x100D:
+		if (param.asInteger() == 0x168050A0) {
+			sendMessage(_attachedSprite, 0x4806, 0);
+		} else if (param.asInteger() == 0x320AC306) {
+			playSound(0, 0x5860C640);
+		} else if (param.asInteger() == 0x4AB28209) {
+			sendMessage(_attachedSprite, 0x482A, 0);
+		} else if (param.asInteger() == 0x88001184) {
+			sendMessage(_attachedSprite, 0x482B, 0);
+		}
+		break;
+	}
+	return messageResult;
+}
+
+void KmScene1002::stHoldRing3() {
+	_busyStatus = 0;
+	_acceptInput = true;
+	startAnimation(0x4A293FB0, 0, -1);
+	SetUpdateHandler(&Klaymen::update);
+	SetMessageHandler(&KmScene1002::hmHoldRing3);
+	SetSpriteUpdate(NULL);
+}
+
+uint32 KmScene1002::hmHoldRing3(int messageNum, const MessageParam &param, Entity *sender) {
+	if (messageNum == 0x1008) {
+		stReleaseRing();
+		return 0;
+	}
+	return hmLowLevel(messageNum, param, sender);
+}
+
+void KmScene1002::stJumpToRing4() {
+	if (!stStartAction(AnimationCallback(&KmScene1002::stJumpToRing4))) {
+		_busyStatus = 0;
+		startAnimation(0xB8699832, 0, -1);
+		setupJumpToRing();
+	}
+}
+
+void KmScene1002::stJumpToRingVenusFlyTrap() {
+	if (!stStartAction(AnimationCallback(&KmScene1002::stJumpToRingVenusFlyTrap))) {
+		_busyStatus = 2;
+		_acceptInput = false;
+		startAnimation(0x584984B4, 0, -1);
+		SetUpdateHandler(&Klaymen::update);
+		SetMessageHandler(&KmScene1002::hmJumpToRingVenusFlyTrap);
+		SetSpriteUpdate(&AnimatedSprite::updateDeltaXY);
+		NextState(&KmScene1002::stLandOnFeet);
+		sendMessage(_attachedSprite, 0x482B, 0);
+	}
+}
+
+uint32 KmScene1002::hmJumpToRingVenusFlyTrap(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = hmLowLevelAnimation(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x100D:
+		if (param.asInteger() == 0x168050A0) {
+			sendMessage(_attachedSprite, 0x480F, 0);
+		} else if (param.asInteger() == 0x586B0300) {
+			sendMessage(_otherSprite, 0x480E, 1);
+		} else if (param.asInteger() == 0x4AB28209) {
+			sendMessage(_attachedSprite, 0x482A, 0);
+		} else if (param.asInteger() == 0x88001184) {
+			sendMessage(_attachedSprite, 0x482B, 0);
+		}
+		break;
+	}
+	return messageResult;
+}
+
+void KmScene1002::stJumpAndFall() {
+	if (!stStartAction(AnimationCallback(&KmScene1002::stJumpAndFall))) {
+		sendMessage(_parentScene, 0x1024, 3);
+		_busyStatus = 2;
+		_acceptInput = false;
+		startAnimation(0xB93AB151, 0, -1);
+		SetUpdateHandler(&Klaymen::update);
+		SetMessageHandler(&KmScene1002::hmJumpAndFall);
+		SetSpriteUpdate(&Klaymen::suFallDown);
+		NextState(&KmScene1002::stLandOnFeet);
+	}
+}
+
+void KmScene1002::stDropFromRing() {
+	if (_attachedSprite) {
+		_x = _attachedSprite->getX();
+		sendMessage(_attachedSprite, 0x4807, 0);
+		_attachedSprite = NULL;
+	}
+	_busyStatus = 2;
+	_acceptInput = false;
+	startAnimation(0x586984B1, 0, -1);
+	SetUpdateHandler(&Klaymen::update);
+	SetMessageHandler(&Klaymen::hmLowLevel);
+	SetSpriteUpdate(&Klaymen::suFallDown);
+	NextState(&KmScene1002::stLandOnFeet);
+}
+
+uint32 KmScene1002::hmJumpAndFall(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = hmLowLevel(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x100D:
+		if (param.asInteger() == 0x1307050A) {
+			playSound(0, 0x40428A09);
+		}
+		break;
+	}
+	return messageResult;
+}
+
+void KmScene1002::stMoveVenusFlyTrap() {
+	if (!stStartAction(AnimationCallback(&KmScene1002::stMoveVenusFlyTrap))) {
+		_busyStatus = 2;
+		_isMoveObjectRequested = false;
+		_acceptInput = true;
+		setDoDeltaX(_attachedSprite->getX() < _x ? 1 : 0);
+		startAnimation(0x5C01A870, 0, -1);
+		SetUpdateHandler(&Klaymen::update);
+		SetMessageHandler(&KmScene1002::hmMoveVenusFlyTrap);
+		SetSpriteUpdate(&AnimatedSprite::updateDeltaXY);
+		FinalizeState(&KmScene1002::evMoveVenusFlyTrapDone);
+	}
+}
+
+void KmScene1002::stContinueMovingVenusFlyTrap() {
+	_isMoveObjectRequested = false;
+	_acceptInput = true;
+	startAnimationByHash(0x5C01A870, 0x01084280, 0);
+	SetUpdateHandler(&Klaymen::update);
+	SetMessageHandler(&KmScene1002::hmMoveVenusFlyTrap);
+	SetSpriteUpdate(&AnimatedSprite::updateDeltaXY);
+	FinalizeState(&KmScene1002::evMoveVenusFlyTrapDone);
+}
+
+void KmScene1002::evMoveVenusFlyTrapDone() {
+	sendMessage(_attachedSprite, 0x482A, 0);
+}
+
+uint32 KmScene1002::hmMoveVenusFlyTrap(int messageNum, const MessageParam &param, Entity *sender) {
+	switch (messageNum) {
+	case 0x100D:
+		if (param.asInteger() == 0x01084280) {
+			sendMessage(_attachedSprite, 0x480B, (uint32)_doDeltaX);
+		} else if (param.asInteger() == 0x02421405) {
+			if (_isMoveObjectRequested) {
+				if (sendMessage(_attachedSprite, 0x480C, (uint32)_doDeltaX) != 0)
+					stContinueMovingVenusFlyTrap();
+			} else {
+				SetMessageHandler(&KmScene1002::hmFirstMoveVenusFlyTrap);
+			}
+		} else if (param.asInteger() == 0x4AB28209) {
+			sendMessage(_attachedSprite, 0x482A, 0);
+		} else if (param.asInteger() == 0x88001184) {
+			sendMessage(_attachedSprite, 0x482B, 0);
+		} else if (param.asInteger() == 0x32180101) {
+			playSound(0, 0x405002D8);
+		} else if (param.asInteger() == 0x0A2A9098) {
+			playSound(0, 0x0460E2FA);
+		}
+		break;
+	case 0x480A:
+		_isMoveObjectRequested = true;
+		return 0;
+	}
+	return hmLowLevelAnimation(messageNum, param, sender);
+}
+
+uint32 KmScene1002::hmFirstMoveVenusFlyTrap(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = hmLowLevelAnimation(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x100D:
+		if (param.asInteger() == 0x4AB28209) {
+			sendMessage(_attachedSprite, 0x482A, 0);
+		} else if (param.asInteger() == 0x88001184) {
+			sendMessage(_attachedSprite, 0x482B, 0);
+		} else if (param.asInteger() == 0x32180101) {
+			playSound(0, 0x405002D8);
+		} else if (param.asInteger() == 0x0A2A9098) {
+			playSound(0, 0x0460E2FA);
+		}
+		break;
+	}
+	return messageResult;
+}
+
+uint32 KmScene1004::hmReadNote(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = hmLowLevelAnimation(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x100D:
+		if (param.asInteger() == 0x04684052) {
+			_acceptInput = true;
+			sendMessage(_parentScene, 0x2002, 0);
+		}
+		break;
+	}
+	return messageResult;
+}
+
+void KmScene1004::stReadNote() {
+	_busyStatus = 2;
+	_acceptInput = false;
+	startAnimation(0x123E9C9F, 0, -1);
+	SetUpdateHandler(&Klaymen::update);
+	SetMessageHandler(&KmScene1004::hmReadNote);
+	SetSpriteUpdate(&AnimatedSprite::updateDeltaXY);
 }
 
 } // End of namespace Neverhood

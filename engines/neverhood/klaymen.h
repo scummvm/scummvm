@@ -33,7 +33,6 @@ namespace Neverhood {
 // TODO This code is horrible and weird and a lot of stuff needs renaming once a better name is found
 // TODO Also the methods should probably rearranged and be grouped together more consistently
 
-class Klaymen;
 class Scene;
 
 const uint32 kKlaymenSpeedUpHash = 0x004A2148;
@@ -67,28 +66,24 @@ public:
 	void startIdleAnimation(uint32 fileHash, AnimationCb callback);
 	void upIdleAnimation();
 
+	// Idle animations - start
 	void stIdlePickEar();
 	void evIdlePickEarDone();
-	uint32 hmIdlePickEar(int messageNum, const MessageParam &param, Entity *sender);
-
 	void stIdleSpinHead();
-	uint32 hmIdleSpinHead(int messageNum, const MessageParam &param, Entity *sender);
-
 	void stIdleArms();
 	void evIdleArmsDone();
-	uint32 hmIdleArms(int messageNum, const MessageParam &param, Entity *sender);
-
 	void stIdleChest();
-	uint32 hmIdleChest(int messageNum, const MessageParam &param, Entity *sender);
-
 	void stIdleHeadOff();
-	uint32 hmIdleHeadOff(int messageNum, const MessageParam &param, Entity *sender);
-
 	void stIdleWonderAbout();
-
 	void stIdleTeleporterHands();
-
 	void stIdleTeleporterHands2();
+
+	uint32 hmIdlePickEar(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmIdleSpinHead(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmIdleArms(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmIdleChest(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmIdleHeadOff(int messageNum, const MessageParam &param, Entity *sender);
+	// Idle animations - end
 
 	void stTryStandIdle();
 	void stStandAround();
@@ -150,12 +145,6 @@ public:
 	void stInsertKey();
 	uint32 hmInsertKey(int messageNum, const MessageParam &param, Entity *sender);
 
-	void stReadNote();
-	uint32 hmReadNote(int messageNum, const MessageParam &param, Entity *sender);
-
-	void stHitByDoor();
-	uint32 hmHitByDoor(int messageNum, const MessageParam &param, Entity *sender);
-
 	void stPeekWall();
 	uint32 hmPeekWall(int messageNum, const MessageParam &param, Entity *sender);
 
@@ -166,17 +155,7 @@ public:
 	void upPeekWallBlink();
 
 	void stPeekWall1();
-
 	void stPeekWall2();
-
-	void stPullHammerLever();
-	uint32 hmPullHammerLever(int messageNum, const MessageParam &param, Entity *sender);
-
-	void stRidePlatformDown();
-	void suRidePlatformDown();
-
-	void stCrashDown();
-	void stCrashDownFinished();
 
 	void stShrink();
 	uint32 hmShrink(int messageNum, const MessageParam &param, Entity *sender);
@@ -227,20 +206,6 @@ public:
 
 	void stClimbLadderHalf();
 	uint32 hmClimbLadderHalf(int messageNum, const MessageParam &param, Entity *sender);
-
-	void setupJumpToRing();
-	void stJumpToRing1();
-	void stJumpToRing2();
-	void stJumpToRing4();
-	uint32 hmJumpToRing(int messageNum, const MessageParam &param, Entity *sender);
-
-	void stHangOnRing();
-
-	void stJumpToRing3();
-	uint32 hmJumpToRing3(int messageNum, const MessageParam &param, Entity *sender);
-
-	void stHoldRing3();
-	uint32 hmHoldRing3(int messageNum, const MessageParam &param, Entity *sender);
 
 	void stReleaseRing();
 
@@ -327,11 +292,6 @@ public:
 	void stFinishGrow();
 	uint32 hmFinishGrow(int messageNum, const MessageParam &param, Entity *sender);
 
-	void stJumpToRingVenusFlyTrap();
-	uint32 hmJumpToRingVenusFlyTrap(int messageNum, const MessageParam &param, Entity *sender);
-
-	void stDropFromRing();
-
 	void stStandIdleSpecial();
 	uint32 hmStandIdleSpecial(int messageNum, const MessageParam &param, Entity *sender);
 
@@ -343,17 +303,8 @@ public:
 	void suFallDown();
 	void upSpitOutFall();
 
-	void stJumpAndFall();
-	uint32 hmJumpAndFall(int messageNum, const MessageParam &param, Entity *sender);
-
 	void stFalling();
 	void stFallTouchdown();
-
-	void stMoveVenusFlyTrap();
-	void stContinueMovingVenusFlyTrap();
-	uint32 hmMoveVenusFlyTrap(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 hmFirstMoveVenusFlyTrap(int messageNum, const MessageParam &param, Entity *sender);
-	void evMoveVenusFlyTrapDone();
 
 	void stPeekInside();
 	void stPeekInsideReturn();

@@ -175,6 +175,9 @@ class KmScene1305 : public Klaymen {
 public:
 	KmScene1305(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
 protected:
+	void stCrashDown();
+	void stCrashDownFinished();
+
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };
 

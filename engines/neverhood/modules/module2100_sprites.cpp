@@ -165,7 +165,7 @@ uint32 KmScene2101::xHandleMessage(int messageNum, const MessageParam &param) {
 			GotoState(&Klaymen::stTryStandIdle);
 		break;
 	case 0x4811:
-		GotoState(&Klaymen::stHitByDoor);
+		GotoState(&KmScene2101::stHitByDoor);
 		break;
 	case 0x4812:
 		if (param.asInteger() == 2)
@@ -222,6 +222,39 @@ uint32 KmScene2101::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	}
 	return messageResult;
+}
+
+uint32 KmScene2101::hmHitByDoor(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = hmLowLevelAnimation(messageNum, param, sender);
+	int16 speedUpFrameIndex;
+	switch (messageNum) {
+	case 0x1008:
+		speedUpFrameIndex = getFrameIndex(kKlaymenSpeedUpHash);
+		if (_currFrameIndex < speedUpFrameIndex) {
+			startAnimation(0x35AA8059, speedUpFrameIndex, -1);
+			_y = 438;
+		}
+		messageResult = 0;
+		break;
+	case 0x100D:
+		if (param.asInteger() == 0x1A1A0785) {
+			playSound(0, 0x40F0A342);
+		} else if (param.asInteger() == 0x60428026) {
+			playSound(0, 0x40608A59);
+		}
+		break;
+	}
+	return messageResult;
+}
+
+void KmScene2101::stHitByDoor() {
+	_busyStatus = 1;
+	_acceptInput = false;
+	startAnimation(0x35AA8059, 0, -1);
+	SetUpdateHandler(&Klaymen::update);
+	SetMessageHandler(&KmScene2101::hmHitByDoor);
+	SetSpriteUpdate(&AnimatedSprite::updateDeltaXY);
+	playSound(0, 0x402E82D4);
 }
 
 } // End of namespace Neverhood

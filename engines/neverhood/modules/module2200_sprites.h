@@ -229,6 +229,9 @@ public:
 	KmScene2206(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
 	~KmScene2206();
 protected:
+	void stRidePlatformDown();
+	void suRidePlatformDown();
+
 	void xUpdate();
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };

@@ -1501,110 +1501,9 @@ uint32 Klaymen::hmPeekWall(int messageNum, const MessageParam &param, Entity *se
 	return hmLowLevelAnimation(messageNum, param, sender);
 }
 
-void Klaymen::stJumpToRing1() {
-	if (!stStartAction(AnimationCallback(&Klaymen::stJumpToRing1))) {
-		_busyStatus = 0;
-		startAnimation(0xD82890BA, 0, -1);
-		setupJumpToRing();
-	}
-}
-
-void Klaymen::setupJumpToRing() {
-	_acceptInput = false;
-	SetUpdateHandler(&Klaymen::update);
-	SetMessageHandler(&Klaymen::hmJumpToRing);
-	SetSpriteUpdate(&Klaymen::suUpdateDestX);
-	NextState(&Klaymen::stHangOnRing);
-	sendMessage(_attachedSprite, 0x482B, 0);
-}
-
-uint32 Klaymen::hmJumpToRing(int messageNum, const MessageParam &param, Entity *sender) {
-	uint32 messageResult = hmLowLevelAnimation(messageNum, param, sender);
-	switch (messageNum) {
-	case 0x100D:
-		if (param.asInteger() == 0x168050A0) {
-			sendMessage(_attachedSprite, 0x4806, 0);
-			_acceptInput = true;
-		} else if (param.asInteger() == 0x320AC306) {
-			playSound(0, 0x5860C640);
-		} else if (param.asInteger() == 0x4AB28209) {
-			sendMessage(_attachedSprite, 0x482A, 0);
-		} else if (param.asInteger() == 0x88001184) {
-			sendMessage(_attachedSprite, 0x482B, 0);
-		}
-		break;
-	}
-	return messageResult;
-}
-
 void Klaymen::suUpdateDestX() {
 	AnimatedSprite::updateDeltaXY();
 	_destX = _x;
-}
-
-void Klaymen::stHangOnRing() {
-	_busyStatus = 0;
-	_acceptInput = true;
-	startAnimation(0x4829E0B8, 0, -1);
-	SetUpdateHandler(&Klaymen::update);
-	SetMessageHandler(&Klaymen::hmLowLevel);
-	SetSpriteUpdate(NULL);
-}
-
-void Klaymen::stJumpToRing2() {
-	if (!stStartAction(AnimationCallback(&Klaymen::stJumpToRing2))) {
-		_busyStatus = 0;
-		startAnimation(0x900980B2, 0, -1);
-		setupJumpToRing();
-	}
-}
-
-void Klaymen::stJumpToRing3() {
-	if (!stStartAction(AnimationCallback(&Klaymen::stJumpToRing3))) {
-		_busyStatus = 0;
-		_acceptInput = false;
-		startAnimation(0xBA1910B2, 0, -1);
-		SetUpdateHandler(&Klaymen::update);
-		SetSpriteUpdate(&Klaymen::suUpdateDestX);
-		SetMessageHandler(&Klaymen::hmJumpToRing3);
-		NextState(&Klaymen::stHoldRing3);
-		sendMessage(_attachedSprite, 0x482B, 0);
-	}
-}
-
-uint32 Klaymen::hmJumpToRing3(int messageNum, const MessageParam &param, Entity *sender) {
-	uint32 messageResult = hmLowLevelAnimation(messageNum, param, sender);
-	switch (messageNum) {
-	case 0x100D:
-		if (param.asInteger() == 0x168050A0) {
-			sendMessage(_attachedSprite, 0x4806, 0);
-		} else if (param.asInteger() == 0x320AC306) {
-			playSound(0, 0x5860C640);
-		} else if (param.asInteger() == 0x4AB28209) {
-			sendMessage(_attachedSprite, 0x482A, 0);
-		} else if (param.asInteger() == 0x88001184) {
-			sendMessage(_attachedSprite, 0x482B, 0);
-		}
-		break;
-	}
-	return messageResult;
-}
-
-void Klaymen::stHoldRing3() {
-	_busyStatus = 0;
-	_acceptInput = true;
-	startAnimation(0x4A293FB0, 0, -1);
-	SetUpdateHandler(&Klaymen::update);
-	SetMessageHandler(&Klaymen::hmHoldRing3);
-	SetSpriteUpdate(NULL);
-}
-
-uint32 Klaymen::hmHoldRing3(int messageNum, const MessageParam &param, Entity *sender) {
-	if (messageNum == 0x1008) {
-		stReleaseRing();
-		return 0;
-	}
-	return hmLowLevel(messageNum, param, sender);
 }
 
 void Klaymen::stReleaseRing() {
@@ -1616,14 +1515,6 @@ void Klaymen::stReleaseRing() {
 	SetUpdateHandler(&Klaymen::update);
 	SetMessageHandler(&Klaymen::hmLowLevelAnimation);
 	SetSpriteUpdate(NULL);
-}
-
-void Klaymen::stJumpToRing4() {
-	if (!stStartAction(AnimationCallback(&Klaymen::stJumpToRing4))) {
-		_busyStatus = 0;
-		startAnimation(0xB8699832, 0, -1);
-		setupJumpToRing();
-	}
 }
 
 void Klaymen::startWalkToAttachedSpriteXDistance(int16 distance) {
@@ -2526,61 +2417,6 @@ void Klaymen::stInsertKey() {
 	}
 }
 
-uint32 Klaymen::hmReadNote(int messageNum, const MessageParam &param, Entity *sender) {
-	uint32 messageResult = hmLowLevelAnimation(messageNum, param, sender);
-	switch (messageNum) {
-	case 0x100D:
-		if (param.asInteger() == 0x04684052) {
-			_acceptInput = true;
-			sendMessage(_parentScene, 0x2002, 0);
-		}
-		break;
-	}
-	return messageResult;
-}
-
-void Klaymen::stReadNote() {
-	_busyStatus = 2;
-	_acceptInput = false;
-	startAnimation(0x123E9C9F, 0, -1);
-	SetUpdateHandler(&Klaymen::update);
-	SetMessageHandler(&Klaymen::hmReadNote);
-	SetSpriteUpdate(&AnimatedSprite::updateDeltaXY);
-}
-
-uint32 Klaymen::hmHitByDoor(int messageNum, const MessageParam &param, Entity *sender) {
-	uint32 messageResult = hmLowLevelAnimation(messageNum, param, sender);
-	int16 speedUpFrameIndex;
-	switch (messageNum) {
-	case 0x1008:
-		speedUpFrameIndex = getFrameIndex(kKlaymenSpeedUpHash);
-		if (_currFrameIndex < speedUpFrameIndex) {
-			startAnimation(0x35AA8059, speedUpFrameIndex, -1);
-			_y = 438;
-		}
-		messageResult = 0;
-		break;
-	case 0x100D:
-		if (param.asInteger() == 0x1A1A0785) {
-			playSound(0, 0x40F0A342);
-		} else if (param.asInteger() == 0x60428026) {
-			playSound(0, 0x40608A59);
-		}
-		break;
-	}
-	return messageResult;
-}
-
-void Klaymen::stHitByDoor() {
-	_busyStatus = 1;
-	_acceptInput = false;
-	startAnimation(0x35AA8059, 0, -1);
-	SetUpdateHandler(&Klaymen::update);
-	SetMessageHandler(&Klaymen::hmHitByDoor);
-	SetSpriteUpdate(&AnimatedSprite::updateDeltaXY);
-	playSound(0, 0x402E82D4);
-}
-
 uint32 Klaymen::hmPeekWallReturn(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = hmLowLevelAnimation(messageNum, param, sender);
 	switch (messageNum) {
@@ -2646,89 +2482,12 @@ void Klaymen::stPeekWallReturn() {
 	SetSpriteUpdate(NULL);
 }
 
-void Klaymen::stPullHammerLever() {
-	if (!stStartAction(AnimationCallback(&Klaymen::stPullHammerLever))) {
-		_busyStatus = 2;
-		_acceptInput = false;
-		startAnimation(0x00648953, 0, -1);
-		SetUpdateHandler(&Klaymen::update);
-		SetMessageHandler(&Klaymen::hmPullHammerLever);
-		SetSpriteUpdate(&AnimatedSprite::updateDeltaXY);
-	}
-}
-
-uint32 Klaymen::hmPullHammerLever(int messageNum, const MessageParam &param, Entity *sender) {
-	uint32 messageResult = Klaymen::hmLever(messageNum, param, sender);
-	switch (messageNum) {
-	case 0x100D:
-		if (param.asInteger() == 0x4AB28209)
-			sendMessage(_attachedSprite, 0x480F, 0);
-		break;
-	}
-	return messageResult;
-}
-
-void Klaymen::suRidePlatformDown() {
-	_platformDeltaY++;
-	_y += _platformDeltaY;
-	if (_y > 600)
-		sendMessage(this, 0x1019, 0);
-}
-
-void Klaymen::stRidePlatformDown() {
-	if (!stStartActionFromIdle(AnimationCallback(&Klaymen::stRidePlatformDown))) {
-		_busyStatus = 1;
-		sendMessage(_parentScene, 0x4803, 0);
-		_acceptInput = false;
-		_platformDeltaY = 0;
-		startAnimation(0x5420E254, 0, -1);
-		SetUpdateHandler(&Klaymen::update);
-		SetMessageHandler(&Klaymen::hmLowLevel);
-		SetSpriteUpdate(&Klaymen::suRidePlatformDown);
-		_vm->_soundMan->playSoundLooping(0xD3B02847);
-	}
-}
-
-void Klaymen::stCrashDown() {
-	playSound(0, 0x41648271);
-	_busyStatus = 1;
-	_acceptInput = false;
-	startAnimationByHash(0x000BAB02, 0x88003000, 0);
-	SetUpdateHandler(&Klaymen::update);
-	SetSpriteUpdate(NULL);
-	SetMessageHandler(&Klaymen::hmLowLevelAnimation);
-	NextState(&Klaymen::stCrashDownFinished);
-}
-
-void Klaymen::stCrashDownFinished() {
-	setDoDeltaX(2);
-	stTryStandIdle();
-}
-
 void Klaymen::upSpitOutFall() {
 	Klaymen::update();
 	if (_spitOutCountdown != 0 && (--_spitOutCountdown == 0)) {
 		_surface->setVisible(true);
 		SetUpdateHandler(&Klaymen::update);
 	}
-}
-
-uint32 Klaymen::hmJumpToRingVenusFlyTrap(int messageNum, const MessageParam &param, Entity *sender) {
-	uint32 messageResult = hmLowLevelAnimation(messageNum, param, sender);
-	switch (messageNum) {
-	case 0x100D:
-		if (param.asInteger() == 0x168050A0) {
-			sendMessage(_attachedSprite, 0x480F, 0);
-		} else if (param.asInteger() == 0x586B0300) {
-			sendMessage(_otherSprite, 0x480E, 1);
-		} else if (param.asInteger() == 0x4AB28209) {
-			sendMessage(_attachedSprite, 0x482A, 0);
-		} else if (param.asInteger() == 0x88001184) {
-			sendMessage(_attachedSprite, 0x482B, 0);
-		}
-		break;
-	}
-	return messageResult;
 }
 
 uint32 Klaymen::hmStandIdleSpecial(int messageNum, const MessageParam &param, Entity *sender) {
@@ -2773,53 +2532,6 @@ uint32 Klaymen::hmPressDoorButton(int messageNum, const MessageParam &param, Ent
 	return messageResult;
 }
 
-uint32 Klaymen::hmMoveVenusFlyTrap(int messageNum, const MessageParam &param, Entity *sender) {
-	switch (messageNum) {
-	case 0x100D:
-		if (param.asInteger() == 0x01084280) {
-			sendMessage(_attachedSprite, 0x480B, (uint32)_doDeltaX);
-		} else if (param.asInteger() == 0x02421405) {
-			if (_isMoveObjectRequested) {
-				if (sendMessage(_attachedSprite, 0x480C, (uint32)_doDeltaX) != 0)
-					stContinueMovingVenusFlyTrap();
-			} else {
-				SetMessageHandler(&Klaymen::hmFirstMoveVenusFlyTrap);
-			}
-		} else if (param.asInteger() == 0x4AB28209) {
-			sendMessage(_attachedSprite, 0x482A, 0);
-		} else if (param.asInteger() == 0x88001184) {
-			sendMessage(_attachedSprite, 0x482B, 0);
-		} else if (param.asInteger() == 0x32180101) {
-			playSound(0, 0x405002D8);
-		} else if (param.asInteger() == 0x0A2A9098) {
-			playSound(0, 0x0460E2FA);
-		}
-		break;
-	case 0x480A:
-		_isMoveObjectRequested = true;
-		return 0;
-	}
-	return hmLowLevelAnimation(messageNum, param, sender);
-}
-
-uint32 Klaymen::hmFirstMoveVenusFlyTrap(int messageNum, const MessageParam &param, Entity *sender) {
-	uint32 messageResult = hmLowLevelAnimation(messageNum, param, sender);
-	switch (messageNum) {
-	case 0x100D:
-		if (param.asInteger() == 0x4AB28209) {
-			sendMessage(_attachedSprite, 0x482A, 0);
-		} else if (param.asInteger() == 0x88001184) {
-			sendMessage(_attachedSprite, 0x482B, 0);
-		} else if (param.asInteger() == 0x32180101) {
-			playSound(0, 0x405002D8);
-		} else if (param.asInteger() == 0x0A2A9098) {
-			playSound(0, 0x0460E2FA);
-		}
-		break;
-	}
-	return messageResult;
-}
-
 uint32 Klaymen::hmHitByBoxingGlove(int messageNum, const MessageParam &param, Entity *sender) {
 	int16 speedUpFrameIndex;
 	uint32 messageResult = hmLowLevelAnimation(messageNum, param, sender);
@@ -2843,18 +2555,6 @@ uint32 Klaymen::hmHitByBoxingGlove(int messageNum, const MessageParam &param, En
 	return messageResult;
 }
 
-uint32 Klaymen::hmJumpAndFall(int messageNum, const MessageParam &param, Entity *sender) {
-	uint32 messageResult = hmLowLevel(messageNum, param, sender);
-	switch (messageNum) {
-	case 0x100D:
-		if (param.asInteger() == 0x1307050A) {
-			playSound(0, 0x40428A09);
-		}
-		break;
-	}
-	return messageResult;
-}
-
 void Klaymen::suFallDown() {
 	AnimatedSprite::updateDeltaXY();
 	HitRect *hitRect = _parentScene->findHitRectAtPos(_x, _y + 10);
@@ -2864,19 +2564,6 @@ void Klaymen::suFallDown() {
 		sendMessage(this, 0x1019, 0);
 	}
 	_parentScene->checkCollision(this, 0xFFFF, 0x4810, 0);
-}
-
-void Klaymen::stJumpToRingVenusFlyTrap() {
-	if (!stStartAction(AnimationCallback(&Klaymen::stJumpToRingVenusFlyTrap))) {
-		_busyStatus = 2;
-		_acceptInput = false;
-		startAnimation(0x584984B4, 0, -1);
-		SetUpdateHandler(&Klaymen::update);
-		SetMessageHandler(&Klaymen::hmJumpToRingVenusFlyTrap);
-		SetSpriteUpdate(&AnimatedSprite::updateDeltaXY);
-		NextState(&Klaymen::stLandOnFeet);
-		sendMessage(_attachedSprite, 0x482B, 0);
-	}
 }
 
 void Klaymen::stStandIdleSpecial() {
@@ -2935,34 +2622,6 @@ void Klaymen::stFallTouchdown() {
 	stTryStandIdle();
 }
 
-void Klaymen::stJumpAndFall() {
-	if (!stStartAction(AnimationCallback(&Klaymen::stJumpAndFall))) {
-		sendMessage(_parentScene, 0x1024, 3);
-		_busyStatus = 2;
-		_acceptInput = false;
-		startAnimation(0xB93AB151, 0, -1);
-		SetUpdateHandler(&Klaymen::update);
-		SetMessageHandler(&Klaymen::hmJumpAndFall);
-		SetSpriteUpdate(&Klaymen::suFallDown);
-		NextState(&Klaymen::stLandOnFeet);
-	}
-}
-
-void Klaymen::stDropFromRing() {
-	if (_attachedSprite) {
-		_x = _attachedSprite->getX();
-		sendMessage(_attachedSprite, 0x4807, 0);
-		_attachedSprite = NULL;
-	}
-	_busyStatus = 2;
-	_acceptInput = false;
-	startAnimation(0x586984B1, 0, -1);
-	SetUpdateHandler(&Klaymen::update);
-	SetMessageHandler(&Klaymen::hmLowLevel);
-	SetSpriteUpdate(&Klaymen::suFallDown);
-	NextState(&Klaymen::stLandOnFeet);
-}
-
 void Klaymen::stPressDoorButton() {
 	_busyStatus = 2;
 	_acceptInput = true;
@@ -2985,34 +2644,6 @@ void Klaymen::stHitByBoxingGlove() {
 
 void Klaymen::evHitByBoxingGloveDone() {
 	sendMessage(_parentScene, 0x1024, 1);
-}
-
-void Klaymen::stMoveVenusFlyTrap() {
-	if (!stStartAction(AnimationCallback(&Klaymen::stMoveVenusFlyTrap))) {
-		_busyStatus = 2;
-		_isMoveObjectRequested = false;
-		_acceptInput = true;
-		setDoDeltaX(_attachedSprite->getX() < _x ? 1 : 0);
-		startAnimation(0x5C01A870, 0, -1);
-		SetUpdateHandler(&Klaymen::update);
-		SetMessageHandler(&Klaymen::hmMoveVenusFlyTrap);
-		SetSpriteUpdate(&AnimatedSprite::updateDeltaXY);
-		FinalizeState(&Klaymen::evMoveVenusFlyTrapDone);
-	}
-}
-
-void Klaymen::stContinueMovingVenusFlyTrap() {
-	_isMoveObjectRequested = false;
-	_acceptInput = true;
-	startAnimationByHash(0x5C01A870, 0x01084280, 0);
-	SetUpdateHandler(&Klaymen::update);
-	SetMessageHandler(&Klaymen::hmMoveVenusFlyTrap);
-	SetSpriteUpdate(&AnimatedSprite::updateDeltaXY);
-	FinalizeState(&Klaymen::evMoveVenusFlyTrapDone);
-}
-
-void Klaymen::evMoveVenusFlyTrapDone() {
-	sendMessage(_attachedSprite, 0x482A, 0);
 }
 
 void Klaymen::suFallSkipJump() {

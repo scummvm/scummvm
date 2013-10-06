@@ -62,6 +62,10 @@ protected:
 class KmScene2101 : public Klaymen {
 public:
 	KmScene2101(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
+
+	void stHitByDoor();
+	uint32 hmHitByDoor(int messageNum, const MessageParam &param, Entity *sender);
+
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };

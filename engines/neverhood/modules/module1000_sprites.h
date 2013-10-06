@@ -203,14 +203,41 @@ protected:
 class KmScene1001 : public Klaymen {
 public:
 	KmScene1001(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
+
 protected:
+	void stPullHammerLever();
+	uint32 hmPullHammerLever(int messageNum, const MessageParam &param, Entity *sender);
+
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };
 
 class KmScene1002 : public Klaymen {
 public:
 	KmScene1002(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
+
 protected:
+	void stJumpToRing1();
+	void stJumpToRing2();
+	void stJumpToRing3();
+	void stJumpToRing4();
+	void setupJumpToRing();
+	void stHangOnRing();
+	void stHoldRing3();
+	void stDropFromRing();
+	void stJumpToRingVenusFlyTrap();
+	void stJumpAndFall();
+	void stMoveVenusFlyTrap();
+	void stContinueMovingVenusFlyTrap();
+	void evMoveVenusFlyTrapDone();
+
+	uint32 hmJumpToRing(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmJumpToRing3(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmHoldRing3(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmJumpToRingVenusFlyTrap(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmJumpAndFall(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmMoveVenusFlyTrap(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmFirstMoveVenusFlyTrap(int messageNum, const MessageParam &param, Entity *sender);
+
 	void xUpdate();
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };
@@ -218,7 +245,10 @@ protected:
 class KmScene1004 : public Klaymen {
 public:
 	KmScene1004(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
+
 protected:
+	void stReadNote();
+	uint32 hmReadNote(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };
 

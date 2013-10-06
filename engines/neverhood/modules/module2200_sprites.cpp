@@ -1073,7 +1073,7 @@ uint32 KmScene2206::xHandleMessage(int messageNum, const MessageParam &param) {
 		GotoState(&Klaymen::stTryStandIdle);
 		break;
 	case 0x4803:
-		GotoState(&Klaymen::stRidePlatformDown);
+		GotoState(&KmScene2206::stRidePlatformDown);
 		break;
 	case 0x4804:
 		if (param.asInteger() != 0) {
@@ -1145,6 +1145,27 @@ uint32 KmScene2206::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	}
 	return 0;
+}
+
+void KmScene2206::suRidePlatformDown() {
+	_platformDeltaY++;
+	_y += _platformDeltaY;
+	if (_y > 600)
+		sendMessage(this, 0x1019, 0);
+}
+
+void KmScene2206::stRidePlatformDown() {
+	if (!stStartActionFromIdle(AnimationCallback(&KmScene2206::stRidePlatformDown))) {
+		_busyStatus = 1;
+		sendMessage(_parentScene, 0x4803, 0);
+		_acceptInput = false;
+		_platformDeltaY = 0;
+		startAnimation(0x5420E254, 0, -1);
+		SetUpdateHandler(&Klaymen::update);
+		SetMessageHandler(&Klaymen::hmLowLevel);
+		SetSpriteUpdate(&KmScene2206::suRidePlatformDown);
+		_vm->_soundMan->playSoundLooping(0xD3B02847);
+	}
 }
 
 KmScene2207::KmScene2207(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
