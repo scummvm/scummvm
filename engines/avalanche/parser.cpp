@@ -433,6 +433,12 @@ void Parser::handleFunctionKey(const Common::Event &event) {
 			plotText();
 		}
 		break;
+	case Common::KEYCODE_F4:
+		if (event.kbd.flags & Common::KBD_ALT)
+			_vm->callVerb(kVerbCodeQuit);
+		else
+			_vm->callVerb(kVerbCodeRestart);
+		break;
 	case Common::KEYCODE_F5: {
 		_person = kPeoplePardon;
 		_thing = kPardon;
@@ -441,8 +447,23 @@ void Parser::handleFunctionKey(const Common::Event &event) {
 		_vm->callVerb(verb);
 		}
 		break;
+	case Common::KEYCODE_F6:
+		_vm->callVerb(kVerbCodePause);
+		break;
 	case Common::KEYCODE_F7:
-		_vm->callVerb(kVerbCodeOpen);
+		if (event.kbd.flags & Common::KBD_CTRL)
+			_vm->majorRedraw();
+		else
+			_vm->callVerb(kVerbCodeOpen);
+		break;
+	case Common::KEYCODE_F8:
+		_vm->callVerb(kVerbCodeLook);
+		break;
+	case Common::KEYCODE_F9:
+		_vm->callVerb(kVerbCodeScore);
+		break;
+	case Common::KEYCODE_F10:
+		_vm->callVerb(kVerbCodeQuit);
 		break;
 	case Common::KEYCODE_F11:
 		clearWords();
