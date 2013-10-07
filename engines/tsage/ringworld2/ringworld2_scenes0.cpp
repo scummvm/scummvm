@@ -48,8 +48,8 @@ void Scene50::Action1::signal() {
 }
 
 void Scene50::postInit(SceneObjectList *OwnerList) {
-	SceneExt::postInit(OwnerList);
 	loadScene(110);
+	SceneExt::postInit(OwnerList);
 
 	R2_GLOBALS._uiElements._active = false;
 	R2_GLOBALS._scenePalette.loadPalette(0);
@@ -402,7 +402,7 @@ bool Scene125::Food::startAction(CursorType action, Event &event) {
 
 Scene125::Icon::Icon(): SceneActor()  {
 	_lookLineNum = 0;
-	_field98 = 0;
+	_iconId = 0;
 	_pressed = false;
 }
 
@@ -425,7 +425,7 @@ void Scene125::Icon::postInit(SceneObjectList *OwnerList) {
 void Scene125::Icon::synchronize(Serializer &s) {
 	SceneActor::synchronize(s);
 	s.syncAsSint16LE(_lookLineNum);
-	s.syncAsSint16LE(_field98);
+	s.syncAsSint16LE(_iconId);
 	s.syncAsSint16LE(_pressed);
 }
 
@@ -505,7 +505,7 @@ void Scene125::Icon::process(Event &event) {
 void Scene125::Icon::setIcon(int id) {
 	Scene125 *scene = (Scene125 *)R2_GLOBALS._sceneManager._scene;
 
-	_lookLineNum = _field98 = id;
+	_lookLineNum = _iconId = id;
 	SceneActor::_lookLineNum = id;
 
 	_sceneText1.remove();
@@ -612,8 +612,8 @@ Scene125::Scene125(): SceneExt() {
 }
 
 void Scene125::postInit(SceneObjectList *OwnerList) {
-	SceneExt::postInit();
 	loadScene(160);
+	SceneExt::postInit();
 	_palette.loadPalette(0);
 
 	if (R2_GLOBALS._sceneManager._previousScene != 125)
@@ -1419,8 +1419,8 @@ Scene160::Scene160(): SceneExt() {
 }
 
 void Scene160::postInit(SceneObjectList *OwnerList) {
-	SceneExt::postInit();
 	loadScene(4001);
+	SceneExt::postInit();
 
 	R2_GLOBALS._player._uiEnabled = false;
 	R2_GLOBALS._player.enableControl();
@@ -2338,8 +2338,8 @@ Scene205::Scene205(): SceneExt() {
 }
 
 void Scene205::postInit(SceneObjectList *OwnerList) {
-	SceneExt::postInit();
 	loadScene(4000);
+	SceneExt::postInit();
 	R2_GLOBALS._player._uiEnabled = false;
 
 	R2_GLOBALS._sound1.play(337);
@@ -3739,7 +3739,7 @@ const double ADJUST_FACTOR = 0.06419999999999999;
 
 Scene325::Icon::Icon(): SceneActor()  {
 	_lookLineNum = 0;
-	_field98 = 0;
+	_iconId = 0;
 	_pressed = false;
 }
 
@@ -3762,7 +3762,7 @@ void Scene325::Icon::postInit(SceneObjectList *OwnerList) {
 void Scene325::Icon::synchronize(Serializer &s) {
 	SceneActor::synchronize(s);
 	s.syncAsSint16LE(_lookLineNum);
-	s.syncAsSint16LE(_field98);
+	s.syncAsSint16LE(_iconId);
 	s.syncAsSint16LE(_pressed);
 }
 
@@ -3841,7 +3841,7 @@ void Scene325::Icon::process(Event &event) {
 void Scene325::Icon::setIcon(int id) {
 	Scene325 *scene = (Scene325 *)R2_GLOBALS._sceneManager._scene;
 
-	_lookLineNum = _field98 = id;
+	_lookLineNum = _iconId = id;
 	SceneActor::_lookLineNum = id;
 
 	_sceneText1.remove();
@@ -3929,7 +3929,7 @@ void Scene325::postInit(SceneObjectList *OwnerList) {
 	R2_GLOBALS._player.hide();
 	R2_GLOBALS._player.disableControl();
 
-	_item2.setDetails(1, 325, 3, 4, 5);
+	_terminal.setDetails(1, 325, 3, 4, 5);
 	_background.setDetails(Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 325, 0, 1, 2, 1, (SceneItem *)NULL);
 	_sceneMode = 1;
 	signal();
@@ -5258,8 +5258,8 @@ void Scene500::PanelDialog::Button::doButtonPress() {
 /*--------------------------------------------------------------------------*/
 
 void Scene500::postInit(SceneObjectList *OwnerList) {
-	SceneExt::postInit();
 	loadScene(500);
+	SceneExt::postInit();
 
 	_stripManager.setColors(60, 255);
 	_stripManager.setFontNumber(50);

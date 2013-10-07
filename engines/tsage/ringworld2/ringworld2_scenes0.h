@@ -109,7 +109,7 @@ class Scene125: public SceneExt {
 
 	class Icon: public SceneActor {
 	public:
-		int _lookLineNum, _field98;
+		int _lookLineNum, _iconId;
 		bool _pressed;
 		SceneObject _object1, _object2;
 		SceneText _sceneText1, _sceneText2;
@@ -428,7 +428,7 @@ public:
 class Scene325: public SceneExt {
 	class Icon: public SceneActor {
 	public:
-		int _lookLineNum, _field98;
+		int _lookLineNum, _iconId;
 		bool _pressed;
 		SceneObject _object1, _object2;
 		SceneText _sceneText1, _sceneText2;
@@ -456,7 +456,7 @@ public:
 	int _soundQueue[10];
 	SpeakerQuinn _quinnSpeaker;
 	ScenePalette _palette;
-	SceneHotspot _background, _item2;
+	SceneHotspot _background, _terminal;
 	SceneObject _object1, _object2, _object3, _object4, _object5;
 	SceneObject _object6, _object7, _object8, _object9, _object10;
 	SceneObject _object11, _object12, _scannerTab;
