@@ -117,15 +117,11 @@ SaveStateList AvalancheMetaEngine::listSaves(const char *target) const {
 	sort(filenames.begin(), filenames.end());   // Sort (hopefully ensuring we are sorted numerically..)
 
 	SaveStateList saveList;
-	char slot[3];
 	for (Common::StringArray::const_iterator filename = filenames.begin(); filename != filenames.end(); ++filename) {
-		slot[0] = filename->c_str()[filename->size() - 6];
-		slot[1] = filename->c_str()[filename->size() - 5];
-		slot[2] = '\0';
-		// Obtain the last 2 digits of the filename (without extension), since they correspond to the save slot
-		int slotNum = atoi(slot);
+		const Common::String &fname = *filename;
+		int slotNum = atoi(fname.c_str() + fname.size() - 3);
 		if (slotNum >= 0 && slotNum <= getMaximumSaveSlot()) {
-			Common::InSaveFile *file = saveFileMan->openForLoading(*filename);
+			Common::InSaveFile *file = saveFileMan->openForLoading(fname);
 			if (file) {
 				// Check for our signature.
 				uint32 signature = file->readUint32LE();
