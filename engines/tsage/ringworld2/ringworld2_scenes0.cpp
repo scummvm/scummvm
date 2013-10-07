@@ -3281,7 +3281,7 @@ void Scene300::postInit(SceneObjectList *OwnerList) {
 	_mirandaWorkstation1.setDetails(Rect(4, 128, 69, 167), 300, 33, 31, 35, 1, NULL);
 
 	switch (R2_GLOBALS._player._characterIndex) {
-	case 1:
+	case R2_QUINN:
 		_miranda.postInit();
 		_miranda.setup(302, 2, 1);
 		_miranda.setPosition(Common::Point(47, 128));
@@ -3303,7 +3303,7 @@ void Scene300::postInit(SceneObjectList *OwnerList) {
 		R2_GLOBALS._player.disableControl();
 		break;
 
-	case 2:
+	case R2_SEEKER:
 		_miranda.postInit();
 		_miranda.setup(302, 2, 1);
 		_miranda.setPosition(Common::Point(47, 128));
@@ -3323,9 +3323,10 @@ void Scene300::postInit(SceneObjectList *OwnerList) {
 		R2_GLOBALS._player.setPosition(Common::Point(158, 108));
 		R2_GLOBALS._player.fixPriority(130);
 		R2_GLOBALS._player.enableControl(CURSOR_USE);
+		R2_GLOBALS._player._canWalk = false;
 		break;
 
-	case 3:
+	case R2_MIRANDA:
 		if ((R2_GLOBALS._player._characterScene[R2_SEEKER] == 300) || (R2_GLOBALS._player._characterScene[R2_SEEKER] == 325)) {
 			_seeker.postInit();
 			_seeker.setVisage(302);
@@ -3347,6 +3348,7 @@ void Scene300::postInit(SceneObjectList *OwnerList) {
 		R2_GLOBALS._player.setup(302, 2, 1);
 		R2_GLOBALS._player.setPosition(Common::Point(47, 128));
 		R2_GLOBALS._player.enableControl(CURSOR_USE);
+		R2_GLOBALS._player._canWalk = false;
 		break;
 
 	default:

@@ -4259,11 +4259,11 @@ void SceneHandler::process(Event &event) {
 			g_vm->_debugger->onFrame();
 		}
 
-		if ((event.eventType == EVENT_KEYPRESS) && g_globals->_player._enabled && g_globals->_player._canWalk) {
+		if ((event.eventType == EVENT_KEYPRESS) && g_globals->_player._enabled) {
 			// Keyboard shortcuts for different actions
 			switch (event.kbd.keycode) {
 			case Common::KEYCODE_w:
-				g_globals->_events.setCursor(CURSOR_WALK);
+				g_globals->_events.setCursor(GLOBALS._player._canWalk ? CURSOR_WALK : CURSOR_USE);
 				event.handled = true;
 				break;
 			case Common::KEYCODE_l:

@@ -165,7 +165,7 @@ void RightClickDialog::execute() {
 		break;
 	case 1:
 		// Walk action
-		cursorNum = CURSOR_WALK;
+		cursorNum = R2_GLOBALS._player._canWalk ? CURSOR_WALK : CURSOR_USE;
 		break;
 	case 2:
 		// Use action
