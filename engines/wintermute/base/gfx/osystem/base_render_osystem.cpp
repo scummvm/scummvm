@@ -197,10 +197,11 @@ bool BaseRenderOSystem::flip() {
 		//  g_system->copyRectToScreen((byte *)_renderSurface->getPixels(), _renderSurface->pitch, _dirtyRect->left, _dirtyRect->top, _dirtyRect->width(), _dirtyRect->height());
 		delete _dirtyRect;
 		_dirtyRect = nullptr;
-		g_system->updateScreen();
 		_needsFlip = false;
 	}
 	_lastFrameIter = _renderQueue.end();
+
+	g_system->updateScreen();
 
 	return STATUS_OK;
 }
