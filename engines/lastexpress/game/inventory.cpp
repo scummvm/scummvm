@@ -44,7 +44,7 @@
 namespace LastExpress {
 
 Inventory::Inventory(LastExpressEngine *engine) : _engine(engine), _selectedItem(kItemNone), _highlightedItemIndex(0), _itemsShown(0),
-	_showingHourGlass(false), _blinkingDirection(1), _blinkingBrightness(0),
+	/*_showingHourGlass(false), */ _blinkingDirection(1), _blinkingBrightness(0),
 	_useMagnifier(false), _portraitHighlighted(false), _isOpened(false), _eggHightlighted(false), _itemScene(NULL) {
 
 	//_inventoryRect = Common::Rect(0, 0, 32, 32);

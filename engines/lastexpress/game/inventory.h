@@ -140,7 +140,7 @@ private:
 
 	uint32 _itemsShown;
 
-	bool _showingHourGlass;
+	//bool _showingHourGlass;
 	int16  _blinkingDirection;
 	uint16 _blinkingBrightness;
 
