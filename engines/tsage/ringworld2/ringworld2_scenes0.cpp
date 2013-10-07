@@ -3005,7 +3005,7 @@ bool Scene300::Miranda::startAction(CursorType action, Event &event) {
 				if (!R2_GLOBALS.getFlag(57)) {
 					R2_GLOBALS._events.setCursor(CURSOR_ARROW);
 					scene->_stripManager.start3(434, scene, R2_GLOBALS._stripManager_lookupList);
-				} else if (R2_GLOBALS._player._characterScene[R2_MIRANDA] != 500) {
+				} else if (R2_GLOBALS._player._characterScene[R2_SEEKER] != 500) {
 					R2_GLOBALS._events.setCursor(CURSOR_ARROW);
 					scene->_stripManager.start3(407, scene, R2_GLOBALS._stripManager_lookupList);
 				} else {
@@ -3138,17 +3138,15 @@ bool Scene300::Quinn::startAction(CursorType action, Event &event) {
 			if (R2_GLOBALS._player._characterScene[R2_MIRANDA] == 500)
 				scene->_stripId = 442;
 			else if (!R2_GLOBALS.getFlag(44))
-				scene->_stripId = 177 + R2_GLOBALS._randomSource.getRandomNumber(2);
+				scene->_stripId = 125 + R2_GLOBALS._randomSource.getRandomNumber(2);
 			else if (!R2_GLOBALS.getFlag(55))
-				scene->_stripId = 208;
+				scene->_stripId = 439;
 			else
-				scene->_stripId = 441;
-		} else if (R2_GLOBALS._player._characterScene[R2_MIRANDA] == 500) {
-			scene->_stripId = 442;
+				scene->_stripId = 210;
 		} else if (R2_GLOBALS.getFlag(44)) {
-			scene->_stripId = R2_GLOBALS.getFlag(55) ? 441 : 208;
+			scene->_stripId = R2_GLOBALS.getFlag(55) ? 439 : 210;
 		} else {
-			scene->_stripId = 125 + R2_GLOBALS._randomSource.getRandomNumber(2);
+			scene->_stripId = 177 + R2_GLOBALS._randomSource.getRandomNumber(2);
 		}
 
 		scene->_stripManager.start3(scene->_stripId, scene, R2_GLOBALS._stripManager_lookupList);
