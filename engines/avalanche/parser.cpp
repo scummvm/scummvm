@@ -415,7 +415,7 @@ void Parser::handleFunctionKey(const Common::Event &event) {
 		_person = kPeoplePardon;
 		_thing = kPardon;
 		Common::String f5does = _vm->f5Does();
-		VerbCode verb = (VerbCode)f5does[0];
+		VerbCode verb = (VerbCode)(byte)f5does[0];
 		_vm->callVerb(verb);
 		}
 		break;
