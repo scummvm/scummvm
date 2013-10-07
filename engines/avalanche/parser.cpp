@@ -28,6 +28,8 @@
 #include "avalanche/avalanche.h"
 #include "avalanche/parser.h"
 
+#include "gui/saveload.h"
+
 namespace Avalanche {
 
 const char *Parser::kCopyright = "1995";
@@ -1789,9 +1791,28 @@ void Parser::doThat() {
 			swallow();
 		break;
 
-	case kVerbCodeLoad:
+	case kVerbCodeLoad: {
+		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser("Restore game:", "Restore", false);
+		int16 savegameId = dialog->runModalWithCurrentTarget();
+		delete dialog;
+
+		if (savegameId < 0)                             // dialog aborted
+			return;
+		
+		_vm->loadGame(savegameId);
+		}
 		break;
-	case kVerbCodeSave:
+	case kVerbCodeSave: {
+		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser("Save game:", "Save", true);
+		int16 savegameId = dialog->runModalWithCurrentTarget();
+		Common::String savegameDescription = dialog->getResultString();
+		delete dialog;
+
+		if (savegameId < 0)                             // dialog aborted
+			return;
+
+		_vm->saveGame(savegameId, savegameDescription);
+		}
 		break;
 	// We don't handle these two because we use ScummVM's save/load system.
 
