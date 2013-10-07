@@ -411,6 +411,26 @@ void Parser::handleReturn() {
 
 void Parser::handleFunctionKey(const Common::Event &event) {
 	switch (event.kbd.keycode) {
+	case Common::KEYCODE_F1:
+		_vm->callVerb(kVerbCodeHelp);
+		break;
+	case Common::KEYCODE_F2:
+		if (event.kbd.flags & Common::KBD_CTRL) {
+			clearWords();
+			_vm->callVerb(kVerbCodeSave);
+		} else
+			_vm->_sound->toggleSound();
+		break;
+	case Common::KEYCODE_F3:
+		if (event.kbd.flags & Common::KBD_CTRL) {
+			clearWords();
+			_vm->callVerb(kVerbCodeLoad);
+		} else if (_inputText.size() < _inputTextBackup.size()) {
+			_inputText = _inputText + &(_inputTextBackup.c_str()[_inputText.size()]);
+			_inputTextPos = _inputText.size();
+			plotText();
+		}
+		break;
 	case Common::KEYCODE_F5: {
 		_person = kPeoplePardon;
 		_thing = kPardon;
@@ -421,6 +441,14 @@ void Parser::handleFunctionKey(const Common::Event &event) {
 		break;
 	case Common::KEYCODE_F7:
 		_vm->callVerb(kVerbCodeOpen);
+		break;
+	case Common::KEYCODE_F11:
+		clearWords();
+		_vm->callVerb(kVerbCodeSave);
+		break;
+	case Common::KEYCODE_F12:
+		clearWords();
+		_vm->callVerb(kVerbCodeLoad);
 		break;
 	default:
 		break;
