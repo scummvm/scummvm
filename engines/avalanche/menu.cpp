@@ -578,7 +578,7 @@ void Menu::runMenuAction() {
 		_vm->_parser->_person = kPeoplePardon;
 		_vm->_parser->_thing = _vm->_parser->kPardon;
 		Common::String f5Does = _vm->f5Does();
-		VerbCode verb = (VerbCode)f5Does[0];
+		VerbCode verb = (VerbCode)(byte)f5Does[0];
 		_vm->callVerb(verb);
 		}
 		break;
@@ -659,7 +659,7 @@ void Menu::runMenuWith() {
 			_vm->_subjectNum = 0;
 		}
 	}
-	_vm->callVerb((VerbCode)_verbStr[_activeMenuItem._choiceNum]);
+	_vm->callVerb((VerbCode)(byte)_verbStr[_activeMenuItem._choiceNum]);
 }
 
 void Menu::setup() {
