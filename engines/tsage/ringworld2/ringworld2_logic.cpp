@@ -320,8 +320,9 @@ bool Ringworld2Game::canLoadGameStateCurrently() {
  * Returns true if it is currently okay to save the game
  */
 bool Ringworld2Game::canSaveGameStateCurrently() {
-	// Don't allow a game to be saved if a dialog is active
-	return g_globals->_gfxManagers.size() == 1;
+	// Don't allow a game to be saved if a dialog is active or if an animation
+	// is playing
+	return g_globals->_gfxManagers.size() == 1 && R2_GLOBALS._animationCtr == 0;
 }
 
 /*--------------------------------------------------------------------------*/
@@ -1788,7 +1789,9 @@ AnimationPlayer::~AnimationPlayer() {
 
 void AnimationPlayer::synchronize(Serializer &s) {
 	EventHandler::synchronize(s);
-	warning("TODO AnimationPlayer::synchronize");
+	
+	// TODO: Implement saving for animation player state. Currently, I disable saving 
+	// when an animation is active, so saving it's state would a "nice to have". 
 }
 
 void AnimationPlayer::remove() {
