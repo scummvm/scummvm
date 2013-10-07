@@ -111,7 +111,7 @@ SaveStateList AvalancheMetaEngine::listSaves(const char *target) const {
 	Common::StringArray filenames;
 	Common::String pattern = target;
 	pattern.toUppercase();
-	pattern += "-??.SAV";
+	pattern += ".???";
 
 	filenames = saveFileMan->listSavefiles(pattern);
 	sort(filenames.begin(), filenames.end());   // Sort (hopefully ensuring we are sorted numerically..)
@@ -164,12 +164,12 @@ SaveStateList AvalancheMetaEngine::listSaves(const char *target) const {
 }
 
 void AvalancheMetaEngine::removeSaveState(const char *target, int slot) const {
-	Common::String fileName = Common::String::format("%s-%02d.SAV", target, slot);
+	Common::String fileName = Common::String::format("%s.%03d", target, slot);
 	g_system->getSavefileManager()->removeSavefile(fileName);
 }
 
 SaveStateDescriptor AvalancheMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
-	Common::String fileName = Common::String::format("%s-%02d.SAV", target, slot);
+	Common::String fileName = Common::String::format("%s.%03d", target, slot);
 	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(fileName);
 
 	if (f) {
