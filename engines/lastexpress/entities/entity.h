@@ -330,7 +330,7 @@ public:
 	};
 
 	struct EntityParametersSIII : EntityParameters {
-		char seq[12];
+		char seq[13];
 		uint param4;
 		uint param5;
 		uint param6;
@@ -338,7 +338,7 @@ public:
 		uint param8;
 
 		EntityParametersSIII() {
-			memset(&seq, 0, 12);
+			memset(&seq, 0, 13);
 			param4 = 0;
 			param5 = 0;
 			param6 = 0;
@@ -374,16 +374,16 @@ public:
 	};
 
 	struct EntityParametersSIIS : EntityParameters {
-		char seq1[12];
+		char seq1[13];
 		uint param4;
 		uint param5;
-		char seq2[12];
+		char seq2[13];
 
 		EntityParametersSIIS() {
-			memset(&seq1, 0, 12);
+			memset(&seq1, 0, 13);
 			param4 = 0;
 			param5 = 0;
-			memset(&seq2, 0, 12);
+			memset(&seq2, 0, 13);
 		}
 
 		Common::String toString() {
@@ -410,14 +410,14 @@ public:
 
 	struct EntityParametersISSI : EntityParameters {
 		uint param1;
-		char seq1[12];
-		char seq2[12];
+		char seq1[13];
+		char seq2[13];
 		uint param8;
 
 		EntityParametersISSI() {
 			param1 = 0;
-			memset(&seq1, 0, 12);
-			memset(&seq2, 0, 12);
+			memset(&seq1, 0, 13);
+			memset(&seq2, 0, 13);
 			param8 = 0;
 		}
 
@@ -445,7 +445,7 @@ public:
 
 	struct EntityParametersISII : EntityParameters {
 		uint param1;
-		char seq[12];
+		char seq[13];
 		uint param5;
 		uint param6;
 		uint param7;
@@ -453,7 +453,7 @@ public:
 
 		EntityParametersISII() {
 			param1 = 0;
-			memset(&seq, 0, 12);
+			memset(&seq, 0, 13);
 			param5 = 0;
 			param6 = 0;
 			param7 = 0;
@@ -488,14 +488,14 @@ public:
 	};
 
 	struct EntityParametersSSII : EntityParameters {
-		char seq1[12];
-		char seq2[12];
+		char seq1[13];
+		char seq2[13];
 		uint param7;
 		uint param8;
 
 		EntityParametersSSII() {
-			memset(&seq1, 0, 12);
-			memset(&seq2, 0, 12);
+			memset(&seq1, 0, 13);
+			memset(&seq2, 0, 13);
 			param7 = 0;
 			param8 = 0;
 		}
@@ -523,14 +523,14 @@ public:
 	};
 
 	struct EntityParametersSSS : EntityParameters {
-		char seq1[12];
-		char seq2[12];
-		char seq3[8];
+		char seq1[13];
+		char seq2[13];
+		char seq3[9];
 
 		EntityParametersSSS() {
-			memset(&seq1, 0, 12);
-			memset(&seq2, 0, 12);
-			memset(&seq3, 0, 8);
+			memset(&seq1, 0, 13);
+			memset(&seq2, 0, 13);
+			memset(&seq3, 0, 9);
 		}
 
 		Common::String toString() {
@@ -551,14 +551,14 @@ public:
 	struct EntityParametersIISS : EntityParameters {
 		uint param1;
 		uint param2;
-		char seq1[12];
-		char seq2[12];
+		char seq1[13];
+		char seq2[13];
 
 		EntityParametersIISS() {
 			param1 = 0;
 			param2 = 0;
-			memset(&seq1, 0, 12);
-			memset(&seq2, 0, 12);
+			memset(&seq1, 0, 13);
+			memset(&seq2, 0, 13);
 		}
 
 		Common::String toString() {
@@ -586,7 +586,7 @@ public:
 	struct EntityParametersIISI : EntityParameters {
 		uint param1;
 		uint param2;
-		char seq[12];
+		char seq[13];
 		uint param6;
 		uint param7;
 		uint param8;
@@ -594,7 +594,7 @@ public:
 		EntityParametersIISI() {
 			param1 = 0;
 			param2 = 0;
-			memset(&seq, 0, 12);
+			memset(&seq, 0, 13);
 			param6 = 0;
 			param7 = 0;
 			param8 = 0;
@@ -631,7 +631,7 @@ public:
 		uint param1;
 		uint param2;
 		uint param3;
-		char seq[12];
+		char seq[13];
 		uint param7;
 		uint param8;
 
@@ -639,7 +639,7 @@ public:
 			param1 = 0;
 			param2 = 0;
 			param3 = 0;
-			memset(&seq, 0, 12);
+			memset(&seq, 0, 13);
 			param7 = 0;
 			param8 = 0;
 		}
@@ -677,7 +677,7 @@ public:
 		uint param3;
 		uint param4;
 		uint param5;
-		char seq[12];
+		char seq[13];
 
 		EntityParametersI5S() {
 			param1 = 0;
@@ -685,7 +685,7 @@ public:
 			param3 = 0;
 			param4 = 0;
 			param5 = 0;
-			memset(&seq, 0, 12);
+			memset(&seq, 0, 13);
 		}
 
 		void saveLoadWithSerializer(Common::Serializer &s) {
