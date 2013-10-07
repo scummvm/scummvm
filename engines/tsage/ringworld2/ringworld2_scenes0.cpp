@@ -2340,6 +2340,7 @@ Scene205::Scene205(): SceneExt() {
 void Scene205::postInit(SceneObjectList *OwnerList) {
 	loadScene(4000);
 	SceneExt::postInit();
+	BF_GLOBALS._interfaceY = 200;
 	R2_GLOBALS._player._uiEnabled = false;
 
 	R2_GLOBALS._sound1.play(337);
