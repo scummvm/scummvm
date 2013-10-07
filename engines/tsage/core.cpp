@@ -3324,20 +3324,24 @@ void Player::postInit(SceneObjectList *OwnerList) {
 
 void Player::disableControl() {
 	_canWalk = false;
-	_uiEnabled = false;
 	g_globals->_events.setCursor(CURSOR_NONE);
 	_enabled = false;
 
-	if ((g_vm->getGameID() != GType_Ringworld) && T2_GLOBALS._uiElements._active)
-		T2_GLOBALS._uiElements.hide();
+	if (g_vm->getGameID() != GType_Ringworld2) {
+		_uiEnabled = false;
+
+		if ((g_vm->getGameID() != GType_Ringworld) && T2_GLOBALS._uiElements._active)
+			T2_GLOBALS._uiElements.hide();
+	}
 }
 
 void Player::enableControl() {
 	CursorType cursor;
 
 	_canWalk = true;
-	_uiEnabled = true;
 	_enabled = true;
+	if (g_vm->getGameID() != GType_Ringworld2)
+		_uiEnabled = true;
 
 	switch (g_vm->getGameID()) {
 	case GType_BlueForce:
@@ -3345,7 +3349,7 @@ void Player::enableControl() {
 		cursor = g_globals->_events.getCursor();
 		g_globals->_events.setCursor(cursor);
 
-		if (T2_GLOBALS._uiElements._active)
+		if (g_vm->getGameID() == GType_BlueForce && T2_GLOBALS._uiElements._active)
 			T2_GLOBALS._uiElements.show();
 		break;
 

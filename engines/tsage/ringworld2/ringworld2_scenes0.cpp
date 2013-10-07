@@ -2601,8 +2601,10 @@ void Scene250::synchronize(Serializer &s) {
 void Scene250::postInit(SceneObjectList *OwnerList) {
 	loadScene(250);
 	SceneExt::postInit();
+	BF_GLOBALS._interfaceY = 200;
 
 	R2_GLOBALS._player.postInit();
+	R2_GLOBALS._uiElements._active = false;
 	R2_GLOBALS._player.setVisage(10);
 	R2_GLOBALS._player.hide();
 	R2_GLOBALS._player.enableControl();
@@ -6944,16 +6946,17 @@ Scene825::Scene825(): SceneExt() {
 }
 
 void Scene825::postInit(SceneObjectList *OwnerList) {
-	SceneExt::postInit();
 	loadScene(825);
-	R2_GLOBALS._player._uiEnabled = false;
+	SceneExt::postInit();
 	BF_GLOBALS._interfaceY = 200;
 
 	R2_GLOBALS._player.postInit();
+	R2_GLOBALS._uiElements._active = false;
 	R2_GLOBALS._player._effect = 0;
 	R2_GLOBALS._player.setVisage(10);
 	R2_GLOBALS._player.hide();
 	R2_GLOBALS._player.disableControl();
+
 
 	_console.setDetails(1, 825, 3, 4, 5);
 	_background.setDetails(Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 825, 0, -1, -1, 1, NULL);
