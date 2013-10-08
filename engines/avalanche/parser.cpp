@@ -463,7 +463,10 @@ void Parser::handleFunctionKey(const Common::Event &event) {
 		_vm->callVerb(kVerbCodeScore);
 		break;
 	case Common::KEYCODE_F10:
-		_vm->callVerb(kVerbCodeQuit);
+		if (event.kbd.flags & Common::KBD_SHIFT)
+			_vm->callVerb(kVerbCodeInfo);
+		else
+			_vm->callVerb(kVerbCodeQuit);
 		break;
 	case Common::KEYCODE_F11:
 		clearWords();
