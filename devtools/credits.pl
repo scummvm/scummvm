@@ -1158,6 +1158,7 @@ begin_credits("Credits");
 			add_person("Jimmi Th&oslash;gersen", "", "For ScummRev, and much obscure code/documentation");
 			add_person("", "Tristan", "For additional work on the original MT-32 emulator");
 			add_person("James Woodcock", "", "Soundtrack enhancements");
+			add_person("Anton Yartsev", "Zidane", "For the original re-implementation of the ZVison engine");
 		end_persons();
 
 	add_paragraph(
