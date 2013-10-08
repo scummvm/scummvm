@@ -149,7 +149,7 @@ void Timer::updateTimer() {
 				crapulusSaysSpludOut();
 				break;
 			case kProcDawnDelay:
-				_vm->dawn();
+				_vm->fadeIn();
 				break;
 			case kProcBuyDrinks:
 				buyDrinks();

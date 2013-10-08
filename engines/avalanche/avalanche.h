@@ -274,8 +274,8 @@ public:
 	void fxToggle();
 	void refreshObjectList();
 	void errorLed();
-	void dusk();
-	void dawn();
+	void fadeOut();
+	void fadeIn();
 	void drawDirection(); // Draws the little icon at the left end of the text input field.
 	void gameOver();
 	uint16 bearing(byte whichPed); // Returns the bearing from ped 'whichped' to Avvy, in degrees.
@@ -306,6 +306,8 @@ private:
 
 	// Will be used in dusk() and dawn().
 	bool _fxHidden;
+	byte _fxPal[16][16][3];
+
 	bool _spludwickAtHome; // Is Spludwick at home?
 	bool _passedCwytalotInHerts; // Have you passed Cwytalot in Herts?
 	bool _holdTheDawn; // If this is true, calling Dawn will do nothing. It's used, for example, at the start, to stop Load from dawning.
@@ -328,8 +330,6 @@ private:
 	void findPeople(byte room);
 	void putGeidaAt(byte whichPed, byte ped);
 	void guideAvvy(Common::Point cursorPos);
-	void fadeOut(byte n);
-	void fadeIn(byte n);
 	void enterRoom(Room room, byte ped);
 	void exitRoom(byte x);
 	void drawToolbar();
@@ -339,8 +339,6 @@ private:
 	void fixFlashers();
 	void loadAlso(byte num);
 	void resetVariables();
-
-	int8 fades(int8 x);
 };
 
 } // End of namespace Avalanche

@@ -748,7 +748,7 @@ void GraphicManager::setDialogColor(Color bg, Color text) {
 
 // Original name background()
 void GraphicManager::setBackgroundColor(Color x) {
-	warning("STUB: setBackgroundColor(%d)", x);
+	warning("STUB: setBackgroundColor()");
 }
 
 } // End of namespace Avalanche
