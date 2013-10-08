@@ -1421,7 +1421,7 @@ void Parser::drink() {
 		_vm->_avvyIsAwake = false;
 		_vm->_avvyInBed = true;
 		_vm->refreshObjectList();
-		_vm->dusk();
+		_vm->fadeOut();
 		_vm->flipRoom(kRoomYours, 1);
 		_vm->_graphics->setBackgroundColor(kColorYellow);
 		_vm->_animation->_sprites[0]._visible = false;
@@ -2348,17 +2348,17 @@ void Parser::doThat() {
 				_vm->_timer->addTimer(1, Timer::kProcAvvySitDown, Timer::kReasonSittingDown);
 			}
 		} else { // Default doodah.
-			_vm->dusk();
-			_vm->dawn();
+			_vm->fadeOut();
+			_vm->fadeIn();
 			Common::String tmpStr = Common::String::format("A few hours later...%cnothing much has happened...", kControlParagraph);
 			_vm->_dialogs->displayText(tmpStr);
 		}
 		break;
 	case kVerbCodeRestart:
 		if (_vm->_dialogs->displayQuestion("Restart game and lose changes?"))  {
-			_vm->dusk();
+			_vm->fadeOut();
 			_vm->newGame();
-			_vm->dawn();
+			_vm->fadeIn();
 		}
 		break;
 	case kVerbCodePardon:
@@ -2383,12 +2383,12 @@ void Parser::doThat() {
 }
 
 void Parser::verbOpt(byte verb, Common::String &answer, char &ansKey) {
+	// kVerbCodegive isn't dealt with by this procedure, but by ddm__with.
 	switch (verb) {
 	case kVerbCodeExam:
 		answer = "Examine";
 		ansKey = 'x';
-		break; // The ubiquitous one.
-	// kVerbCodegive isn't dealt with by this procedure, but by ddm__with.
+		break;
 	case kVerbCodeDrink:
 		answer = "Drink";
 		ansKey = 'D';

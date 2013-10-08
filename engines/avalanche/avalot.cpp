@@ -28,8 +28,11 @@
 /* AVALOT		The kernel of the program. */
 
 #include "avalanche/avalanche.h"
+
 #include "common/random.h"
+#include "common/system.h"
 #include "common/config-manager.h"
+#include "graphics/palette.h"
 
 namespace Avalanche {
 
@@ -297,7 +300,7 @@ void AvalancheEngine::setup() {
 	init();
 
 	_dialogs->reset();
-	dusk();
+	fadeOut();
 	_graphics->loadDigits();
 
 	_parser->_inputTextPos = 0;
@@ -308,7 +311,7 @@ void AvalancheEngine::setup() {
 	drawToolbar();
 	_dialogs->setReadyLight(2);
 
-	dawn();
+	fadeIn();
 	_parser->_cursorState = false;
 	_parser->cursorOn();
 	_animation->_sprites[0]._speedX = kWalk;
@@ -376,7 +379,6 @@ void AvalancheEngine::init() {
 #endif
 
 	_letMeOut = false;
-	_holdTheDawn = true;
 	_currentMouse = 177;
 	_dropsOk = true;
 	_mouseText = "";
@@ -837,7 +839,7 @@ void AvalancheEngine::enterRoom(Room roomId, byte ped) {
 
 	case kRoomMap:
 		// You're entering the map.
-		dawn();
+		fadeIn();
 		if (ped > 0)
 			_graphics->zoomOut(_peds[ped]._x, _peds[ped]._y);
 
@@ -1294,25 +1296,72 @@ void AvalancheEngine::errorLed() {
 	warning("STUB: errorled()");
 }
 
-int8 AvalancheEngine::fades(int8 x) {
-	warning("STUB: fades()");
-	return 0;
+/**
+ * Displays a fade out, full screen.
+ * This version is different to the one in the original, which was fading in 3 steps.
+ * @remarks	Originally called 'dusk'
+ */
+void AvalancheEngine::fadeOut() {
+	byte pal[3], tmpPal[3];
+
+	_graphics->setBackgroundColor(kColorBlack);
+	if (_fxHidden)
+		return;
+	_fxHidden = true;
+
+	for (int i = 0; i < 16; i++) {
+		for (int j = 0; j < 16; j++) {
+			g_system->getPaletteManager()->grabPalette((byte *)tmpPal, j, 1);
+			_fxPal[i][j][0] = tmpPal[0];
+			_fxPal[i][j][1] = tmpPal[1];
+			_fxPal[i][j][2] = tmpPal[2];
+			if (tmpPal[0] >= 16)
+				pal[0] = tmpPal[0] - 16;
+			else
+				pal[0] = 0;
+
+			if (tmpPal[1] >= 16)
+				pal[1] = tmpPal[1] - 16;
+			else
+				pal[1] = 0;
+
+			if (tmpPal[2] >= 16)
+				pal[2] = tmpPal[2] - 16;
+			else
+				pal[2] = 0;
+
+			g_system->getPaletteManager()->setPalette(pal, j, 1);
+		}
+		_system->delayMillis(10);
+		_graphics->refreshScreen();
+	}
 }
 
-void AvalancheEngine::fadeOut(byte n) {
-	warning("STUB: fadeOut()");
-}
+/**
+ * Displays a fade in, full screen.
+ * This version is different to the one in the original, which was fading in 3 steps.
+ * @remarks	Originally called 'dawn'
+ */
+void AvalancheEngine::fadeIn() {
+	if (_holdTheDawn || !_fxHidden)
+		return;
+	
+	_fxHidden = false;
+	
+	byte pal[3];
+	for (int i = 15; i >= 0; i--) {
+		for (int j = 0; j < 16; j++) {
+			pal[0] = _fxPal[i][j][0];
+			pal[1] = _fxPal[i][j][1];
+			pal[2] = _fxPal[i][j][2];
+			g_system->getPaletteManager()->setPalette(pal, j, 1);
+		}
+		_system->delayMillis(10);
+		_graphics->refreshScreen();
+	}
 
-void AvalancheEngine::dusk() {
-	warning("STUB: dusk()");
-}
-
-void AvalancheEngine::fadeIn(byte n) {
-	warning("STUB: fadeIn()");
-}
-
-void AvalancheEngine::dawn() {
-	warning("STUB: dawn()");
+	if ((_room == kRoomYours) && _avvyInBed && _teetotal)
+		_graphics->setBackgroundColor(kColorYellow);
 }
 
 void AvalancheEngine::drawDirection() { // It's data is loaded in load_digits().
@@ -1344,7 +1393,7 @@ void AvalancheEngine::gameOver() {
 }
 
 void AvalancheEngine::minorRedraw() {
-	dusk();
+	fadeOut();
 
 	enterRoom(_room, 0); // Ped unknown or non-existant.
 
@@ -1352,7 +1401,7 @@ void AvalancheEngine::minorRedraw() {
 		_scoreToDisplay[i] = -1; // impossible digits
 	drawScore();
 
-	dawn();
+	fadeIn();
 }
 
 void AvalancheEngine::majorRedraw() {
@@ -1652,7 +1701,7 @@ void AvalancheEngine::flipRoom(Room room, byte ped) {
 	}
 
 	exitRoom(_room);
-	dusk();
+	fadeOut();
 
 	for (int16 i = 1; i < _animation->kSpriteNumbMax; i++) {
 		if (_animation->_sprites[i]._quick)
@@ -1669,7 +1718,7 @@ void AvalancheEngine::flipRoom(Room room, byte ped) {
 	_animation->setDirection(_animation->_sprites[0]._facingDir);
 	drawDirection();
 
-	dawn();
+	fadeIn();
 }
 
 /**

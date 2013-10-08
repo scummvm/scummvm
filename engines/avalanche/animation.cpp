@@ -769,7 +769,7 @@ void Animation::callSpecial(uint16 which) {
 		}
 		break;
 	case 4: // This is the ghost room link.
-		_vm->dusk();
+		_vm->fadeOut();
 		_sprites[0].turn(kDirRight); // you'll see this after we get back from bootstrap
 		_vm->_timer->addTimer(1, Timer::kProcGhostRoomPhew, Timer::kReasonGhostRoomPhew);
 		//_vm->_enid->backToBootstrap(3); TODO: Replace it with proper ScummVM-friendly function(s)!  Do not remove until then!
@@ -837,7 +837,7 @@ void Animation::callSpecial(uint16 which) {
 				return;
 			}
 		}
-		_vm->dusk();
+		_vm->fadeOut();
 		_vm->_catacombY--;
 		catacombMove(4);
 		if (_vm->_room != kRoomCatacombs)
@@ -855,7 +855,7 @@ void Animation::callSpecial(uint16 which) {
 		dawnDelay();
 		break;
 	case 11: // _vm->special 11: transfer east in catacombs.
-		_vm->dusk();
+		_vm->fadeOut();
 		_vm->_catacombX++;
 		catacombMove(1);
 		if (_vm->_room != kRoomCatacombs)
@@ -864,7 +864,7 @@ void Animation::callSpecial(uint16 which) {
 		dawnDelay();
 		break;
 	case 12: // _vm->special 12: transfer south in catacombs.
-		_vm->dusk();
+		_vm->fadeOut();
 		_vm->_catacombY++;
 		catacombMove(2);
 		if (_vm->_room != kRoomCatacombs)
@@ -873,7 +873,7 @@ void Animation::callSpecial(uint16 which) {
 		dawnDelay();
 		break;
 	case 13: // _vm->special 13: transfer west in catacombs.
-		_vm->dusk();
+		_vm->fadeOut();
 		_vm->_catacombX--;
 		catacombMove(3);
 		if (_vm->_room != kRoomCatacombs)

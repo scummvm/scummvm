@@ -50,6 +50,8 @@ AvalancheEngine::AvalancheEngine(OSystem *syst, const AvalancheGameDescription *
 
 	_totalTime = 0;
 	_showDebugLines = false;
+
+	memset(_fxPal, 0, 16 * 16 * 3);
 }
 
 AvalancheEngine::~AvalancheEngine() {
@@ -359,7 +361,7 @@ bool AvalancheEngine::loadGame(const int16 slot) {
 
 	if (_holdTheDawn) {
 		_holdTheDawn = false;
-		dawn();
+		fadeIn();
 	}
 
 	_background->release();

@@ -70,7 +70,7 @@ void Pingo::zonk() {
 
 void Pingo::winningPic() {
 	Common::File f;
-	_vm->dusk();
+	_vm->fadeOut();
 
 	if (!f.open("finale.avd"))
 		error("AVALANCHE: File not found: finale.avd");
@@ -89,7 +89,7 @@ void Pingo::winningPic() {
 
 	warning("STUB: Pingo::winningPic()");
 
-	_vm->dawn();
+	_vm->fadeIn();
 
 #if 0
 	do {
