@@ -2258,9 +2258,6 @@ void Parser::doThat() {
 				_vm->_dialogs->displayScrollChain('Q', 12);
 		}
 		break;
-	case kVerbCodeDir:
-		//_vm->_enid->dir(_realWords[1]); TODO: Replace it with proper ScummVM-friendly function(s)!
-		break;
 	case kVerbCodeDie:
 		_vm->gameOver();
 		break;
@@ -2380,7 +2377,7 @@ void Parser::doThat() {
 		}
 		break;
 	default:
-		Common::String tmpStr = Common::String::format("%cParser bug!", kControlBell);
+		Common::String tmpStr = Common::String::format("%cUnhandled verb: %d", kControlBell, _verb);
 		_vm->_dialogs->displayText(tmpStr);
 	}
 }
