@@ -754,6 +754,10 @@ begin_credits("Credits");
 			begin_section("Wintermute");
 				add_person("Einar Johan T. S&oslash;m&aring;en", "somaen", "");
 			end_section();
+            
+			begin_section("ZVision");
+				add_person("Adrian Astley", "RichieSams", "");
+			end_section();
 
 		end_section();
 
