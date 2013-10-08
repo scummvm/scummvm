@@ -428,8 +428,8 @@ bool BaseSurfaceOSystem::drawSprite(int x, int y, Rect32 *rect, Rect32 *newRect,
 
 		r = TransformTools::newRect(r, transform, 0);
 
-		position.top = r.top + y;
-		position.left = r.left + x;
+		position.top = r.top + y + transform._offset.y;
+		position.left = r.left + x + transform._offset.x;
 		position.setWidth(r.width() * transform._numTimesX);
 		position.setHeight(r.height() * transform._numTimesY);
 	}
