@@ -185,8 +185,39 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 
 			if (candidate->contains(*(existing))) {
 				// Contains an existing one.
-				// Extend the pre-existing one and discard this.
-				existing->extend(*candidate);
+			
+				Common::Rect *nSlice = new Common::Rect(*candidate);
+				_cleanMe.insert_at(_cleanMe.size(), nSlice);
+				nSlice->bottom = existing->top;
+				if (nSlice->width() != 0 && nSlice->height() != 0) {
+					queue.insert_at(queue.size(), nSlice);
+				}
+				
+				Common::Rect *sSlice = new Common::Rect(*candidate);
+				_cleanMe.insert_at(_cleanMe.size(), sSlice);
+				sSlice->top = existing->bottom;
+				if (sSlice->width() != 0 && sSlice->height() != 0) {
+					queue.insert_at(queue.size(), sSlice);
+				}
+
+				Common::Rect *eSlice = new Common::Rect(*candidate);
+				_cleanMe.insert_at(_cleanMe.size(), eSlice);
+				eSlice->bottom = existing->bottom;
+				eSlice->top = existing->top;
+				eSlice->left = existing->right;
+				if (eSlice->width() != 0 && eSlice->height() != 0) {
+					queue.insert_at(queue.size(), eSlice);
+				}
+
+				Common::Rect *wSlice = new Common::Rect(*candidate);
+				_cleanMe.insert_at(_cleanMe.size(), wSlice);
+				wSlice->bottom = existing->bottom;
+				wSlice->top = existing->top;
+				wSlice->right = existing->left;
+				if (wSlice->width() != 0 && wSlice->height() != 0) {
+					queue.insert_at(queue.size(), wSlice);
+				}
+
 				discard = true;
 				continue;
 			}
