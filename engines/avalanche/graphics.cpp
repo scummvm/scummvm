@@ -265,16 +265,16 @@ Common::Point GraphicManager::drawArc(Graphics::Surface &surface, int16 x, int16
 		int16 ym = y - yTemp;
 
 		if ((j >= stAngle) && (j <= endAngle))
-			*(byte *)_scrolls.getBasePtr(xp,yp) = color;
+			*(byte *)_scrolls.getBasePtr(xp, yp) = color;
 
-		if (((180-j) >= stAngle) && ((180-j) <= endAngle))
-			*(byte *)_scrolls.getBasePtr(xm,yp) = color;
+		if (((180 - j) >= stAngle) && ((180 - j) <= endAngle))
+			*(byte *)_scrolls.getBasePtr(xm, yp) = color;
 
-		if (((j+180) >= stAngle) && ((j+180) <= endAngle))
-			*(byte *)_scrolls.getBasePtr(xm,ym) = color;
+		if (((j + 180) >= stAngle) && ((j + 180) <= endAngle))
+			*(byte *)_scrolls.getBasePtr(xm, ym) = color;
 
-		if (((360-j) >= stAngle) && ((360-j) <= endAngle))
-			*(byte *)_scrolls.getBasePtr(xp,ym) = color;
+		if (((360 - j) >= stAngle) && ((360 - j) <= endAngle))
+			*(byte *)_scrolls.getBasePtr(xp, ym) = color;
 
 		j += delta;
 	} while (j <= deltaEnd);
