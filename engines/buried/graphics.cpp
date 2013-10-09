@@ -708,7 +708,7 @@ Common::SeekableReadStream *GraphicsManager::findMSGothicStream() const {
 	}
 #elif defined(MACOSX)
 	// Attempt to load the font from MS Gothic.ttf
-	Common::FSNode fontPath(Common::String::format("/Library/Fonts/MS Gothic.ttf"));
+	Common::FSNode fontPath(Common::String::format("/Library/Fonts/Microsoft/MS Gothic.ttf"));
 
 	if (fontPath.exists() && !fontPath.isDirectory() && fontPath.isReadable())
 		stream = fontPath.createReadStream();
