@@ -25,10 +25,13 @@ PATH_RESOURCES = $(PATH_DIST)/res
 
 PORT_DISTFILES = $(PATH_DIST)/README.Android
 
+# FIXME: OUYA specific.
+#        "values-television" not present in vanilla Android.
+# $(PATH_RESOURCES)/values-television/margins.xml \
+
 RESOURCES = \
 	$(PATH_RESOURCES)/values/strings.xml \
 	$(PATH_RESOURCES)/values/margins.xml \
-	$(PATH_RESOURCES)/values-television/margins.xml \
 	$(PATH_RESOURCES)/layout/main.xml \
 	$(PATH_RESOURCES)/layout/splash.xml \
 	$(PATH_RESOURCES)/drawable/gradient.xml \
