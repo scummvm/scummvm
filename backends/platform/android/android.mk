@@ -27,11 +27,14 @@ PORT_DISTFILES = $(PATH_DIST)/README.Android
 
 RESOURCES = \
 	$(PATH_RESOURCES)/values/strings.xml \
+	$(PATH_RESOURCES)/values/margins.xml \
+	$(PATH_RESOURCES)/values-television/margins.xml \
 	$(PATH_RESOURCES)/layout/main.xml \
 	$(PATH_RESOURCES)/layout/splash.xml \
 	$(PATH_RESOURCES)/drawable/gradient.xml \
 	$(PATH_RESOURCES)/drawable/scummvm.png \
-	$(PATH_RESOURCES)/drawable/scummvm_big.png
+	$(PATH_RESOURCES)/drawable/scummvm_big.png \
+	$(PATH_RESOURCES)/drawable-xhdpi/ouya_icon.png
 
 PLUGIN_RESOURCES = \
 	$(PATH_RESOURCES)/values/strings.xml \

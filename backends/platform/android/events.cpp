@@ -64,6 +64,10 @@ enum {
 	JE_RMB_DOWN = 11,
 	JE_RMB_UP = 12,
 	JE_MOUSE_MOVE = 13,
+	JE_GAMEPAD = 14,
+	JE_JOYSTICK = 15,
+	JE_MMB_DOWN = 16,
+	JE_MMB_UP = 17,
 	JE_QUIT = 0x1000
 };
 
@@ -107,6 +111,25 @@ enum {
 	JKEYCODE_DPAD_LEFT = 21,
 	JKEYCODE_DPAD_RIGHT = 22,
 	JKEYCODE_DPAD_CENTER = 23
+};
+
+// gamepad
+enum {
+	JKEYCODE_BUTTON_A = 96,
+	JKEYCODE_BUTTON_B = 97,
+	JKEYCODE_BUTTON_C = 98,
+	JKEYCODE_BUTTON_X = 99,
+	JKEYCODE_BUTTON_Y = 100,
+	JKEYCODE_BUTTON_Z = 101,
+	JKEYCODE_BUTTON_L1 = 102,
+	JKEYCODE_BUTTON_R1 = 103,
+	JKEYCODE_BUTTON_L2 = 104,
+	JKEYCODE_BUTTON_R2 = 105,
+	JKEYCODE_BUTTON_THUMBL = 106,
+	JKEYCODE_BUTTON_THUMBR = 107,
+	JKEYCODE_BUTTON_START = 108,
+	JKEYCODE_BUTTON_SELECT = 109,
+	JKEYCODE_BUTTON_MODE = 110,
 };
 
 // meta modifier
@@ -824,6 +847,94 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 		lockMutex(_event_queue_lock);
 		_event_queue.push(e);
 		unlockMutex(_event_queue_lock);
+
+		return;
+
+	case JE_GAMEPAD:
+		switch (arg1) {
+		case JACTION_DOWN:
+			e.type = Common::EVENT_KEYDOWN;
+			break;
+		case JACTION_UP:
+			e.type = Common::EVENT_KEYUP;
+			break;
+		default:
+			LOGE("unhandled jaction on gamepad key: %d", arg1);
+			return;
+		}
+
+		switch (arg2) {
+		case JKEYCODE_BUTTON_A:
+		case JKEYCODE_BUTTON_B:
+			switch (arg1) {
+			case JACTION_DOWN:
+				e.type = (arg2 == JKEYCODE_BUTTON_A?
+					  Common::EVENT_LBUTTONDOWN :
+					  Common::EVENT_RBUTTONDOWN);
+				break;
+			case JACTION_UP:
+				e.type = (arg2 == JKEYCODE_BUTTON_A?
+					  Common::EVENT_LBUTTONUP :
+					  Common::EVENT_RBUTTONUP);
+				break;
+			}
+
+			e.mouse = getEventManager()->getMousePos();
+
+			break;
+
+		case JKEYCODE_BUTTON_X:
+			e.kbd.keycode = Common::KEYCODE_ESCAPE;
+			e.kbd.ascii = Common::ASCII_ESCAPE;
+			break;
+
+		default:
+			LOGW("unmapped gamepad key: %d", arg2);
+			return;
+		}
+
+		lockMutex(_event_queue_lock);
+		_event_queue.push(e);
+		unlockMutex(_event_queue_lock);
+
+		break;
+
+	case JE_JOYSTICK:
+		e.mouse = getEventManager()->getMousePos();
+
+		switch (arg1) {
+		case JACTION_MULTIPLE:
+			e.type = Common::EVENT_MOUSEMOVE;
+
+			// already multiplied by 100
+			e.mouse.x += arg2 * _joystick_scale / _eventScaleX;
+			e.mouse.y += arg3 * _joystick_scale / _eventScaleY;
+
+			clipMouse(e.mouse);
+
+			break;
+		default:
+			LOGE("unhandled jaction on joystick: %d", arg1);
+			return;
+		}
+
+		lockMutex(_event_queue_lock);
+		_event_queue.push(e);
+		unlockMutex(_event_queue_lock);
+
+		return;
+
+	case JE_MMB_DOWN:
+		e.type = Common::EVENT_MAINMENU;
+
+		lockMutex(_event_queue_lock);
+		_event_queue.push(e);
+		unlockMutex(_event_queue_lock);
+
+		return;
+
+	case JE_MMB_UP:
+		// No action
 
 		return;
 
