@@ -14,6 +14,7 @@ public class MouseHelper {
 	private long _rmbGuardTime;
 	private boolean _rmbPressed;
 	private boolean _lmbPressed;
+	private boolean _mmbPressed;
 
 	/**
 	 * Class initialization fails when this throws an exception.
@@ -112,6 +113,23 @@ public class MouseHelper {
 			}
 
 			_rmbPressed = false;
+		}
+
+		boolean mmbDown = (buttonState & MotionEvent.BUTTON_TERTIARY) == MotionEvent.BUTTON_TERTIARY;
+		if (mmbDown) {
+			if (!_mmbPressed) {
+				// middle mouse button was pressed just now
+				_scummvm.pushEvent(ScummVMEvents.JE_MMB_DOWN, (int)e.getX(), (int)e.getY(), e.getButtonState(), 0, 0);
+			}
+
+			_mmbPressed = true;
+		} else {
+			if (_mmbPressed) {
+				// middle mouse button was released just now
+				_scummvm.pushEvent(ScummVMEvents.JE_MMB_UP, (int)e.getX(), (int)e.getY(), e.getButtonState(), 0, 0);
+			}
+
+			_mmbPressed = false;
 		}
 
 		return true;

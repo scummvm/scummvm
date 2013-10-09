@@ -864,6 +864,7 @@ Special configuration feature:
                                            motomagx for MotoMAGX
                                            n64 for Nintendo 64
                                            openpandora for OpenPandora
+                                           ouya for OUYA
                                            ps2 for PlayStation 2
                                            ps3 for PlayStation 3
                                            psp for PlayStation Portable
@@ -1268,7 +1269,7 @@ get_system_exe_extension $guessed_host
 NATIVEEXEEXT=$_exeext
 
 case $_host in
-android | android-v7a)
+android | android-v7a | ouya)
 	_host_os=android
 	_host_cpu=arm
 	_host_alias=arm-linux-androideabi
@@ -2050,6 +2051,12 @@ case $_host_os in
 				CXXFLAGS="$CXXFLAGS -mfpu=vfp"
 				LDFLAGS="$LDFLAGS -Wl,--fix-cortex-a8"
 				;;
+			ouya)
+				CXXFLAGS="$CXXFLAGS -march=armv7-a"
+				CXXFLAGS="$CXXFLAGS -mtune=cortex-a9"
+				CXXFLAGS="$CXXFLAGS -mfloat-abi=softfp"
+				CXXFLAGS="$CXXFLAGS -mfpu=neon"
+				;;
 		esac
 		CXXFLAGS="$CXXFLAGS --sysroot=$ANDROID_NDK/platforms/android-4/arch-arm"
 		CXXFLAGS="$CXXFLAGS -fpic"
@@ -2338,7 +2345,7 @@ if test -n "$_host"; then
 	# Cross-compiling mode - add your target here if needed
 	echo "Cross-compiling to $_host"
 	case "$_host" in
-		android | android-v7a)
+		android | android-v7a | ouya)
 			# we link a .so as default
 			LDFLAGS="$LDFLAGS -shared"
 			LDFLAGS="$LDFLAGS -Wl,-Bsymbolic,--no-undefined"
