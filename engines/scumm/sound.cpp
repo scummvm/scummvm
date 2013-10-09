@@ -470,8 +470,10 @@ static int compareMP3OffsetTable(const void *a, const void *b) {
 
 void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle *handle) {
 	int num = 0, i;
-	int size = 0;
 	int id = -1;
+#if defined(USE_FLAC) || defined(USE_VORBIS) || defined(USE_MAD)
+	int size = 0;
+#endif
 	Common::ScopedPtr<ScummFile> file;
 
 	if (_vm->_game.id == GID_CMI) {
@@ -562,10 +564,14 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 				num = result->num_tags;
 			}
 			offset = result->new_offset;
+#if defined(USE_FLAC) || defined(USE_VORBIS) || defined(USE_MAD)
 			size = result->compressed_size;
+#endif
 		} else {
 			offset += 8;
+#if defined(USE_FLAC) || defined(USE_VORBIS) || defined(USE_MAD)
 			size = -1;
+#endif
 		}
 
 		file.reset(new ScummFile());
