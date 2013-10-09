@@ -85,7 +85,7 @@ static const PlainGameDescriptor buriedGames[] = {
 namespace Buried {
 
 static const BuriedGameDescription gameDescriptions[] = {
-	// Windows 3.11 8BPP
+	// English Windows 3.11 8BPP
 	// Installed
 	// v1.01
 	{
@@ -104,7 +104,7 @@ static const BuriedGameDescription gameDescriptions[] = {
 		},
 	},
 
-	// Windows 3.11 24BPP
+	// English Windows 3.11 24BPP
 	// Installed
 	// v1.01
 	{
@@ -123,7 +123,45 @@ static const BuriedGameDescription gameDescriptions[] = {
 		},
 	},
 
-	// Windows 3.11 8BPP
+	// Japanese Windows 3.11 8BPP
+	// Installed
+	// v1.051
+	{
+		{
+			"buried",
+			"v1.051 8BPP",
+			{
+				{ "BIT816.EXE",  0, "decbf9a7d91803525137ffd980d16708", 1163264 },
+				{ "BIT8LIB.DLL", 0, "f5ccde0efccb95afe902627a35262568", 2418816 },
+				{ 0, 0, 0, 0 },
+			},
+			Common::JA_JPN,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+	},
+
+	// Japanese Windows 3.11 24BPP
+	// Installed
+	// v1.051
+	{
+		{
+			"buried",
+			"v1.051 24BPP",
+			{
+				{ "BIT2416.EXE",  0, "9435b9a40e3ac83e6fa1e83caaf57792", 1157632 },
+				{ "BIT24LIB.DLL", 0, "4d55802259d9648b9aa396461bfd53a3", 6576896 },
+				{ 0, 0, 0, 0 },
+			},
+			Common::JA_JPN,
+			Common::kPlatformWindows,
+			GF_TRUECOLOR,
+			GUIO0()
+		},
+	},
+
+	// English Windows 3.11 8BPP
 	// Not Installed
 	// v1.01
 	{
@@ -142,7 +180,7 @@ static const BuriedGameDescription gameDescriptions[] = {
 		},
 	},
 
-	// Windows 3.11 24BPP
+	// English Windows 3.11 24BPP
 	// Not Installed
 	// v1.01
 	{
@@ -161,7 +199,7 @@ static const BuriedGameDescription gameDescriptions[] = {
 		},
 	},
 
-	// Windows 95 8BPP
+	// English Windows 95 8BPP
 	// v1.1
 	{
 		{
@@ -179,7 +217,7 @@ static const BuriedGameDescription gameDescriptions[] = {
 		},
 	},
 
-	// Windows 95 24BPP
+	// English Windows 95 24BPP
 	// v1.1
 	{
 		{
@@ -197,7 +235,7 @@ static const BuriedGameDescription gameDescriptions[] = {
 		},
 	},
 
-	// Demo 8BPP
+	// English Windows Demo 8BPP
 	{
 		{
 			"buried",
@@ -210,7 +248,7 @@ static const BuriedGameDescription gameDescriptions[] = {
 		},
 	},
 
-	// Demo 24BPP
+	// English Windows Demo 24BPP
 	{
 		{
 			"buried",
@@ -226,6 +264,12 @@ static const BuriedGameDescription gameDescriptions[] = {
 	{ AD_TABLE_END_MARKER }
 };
 
+static const char *directoryGlobs[] = {
+	"win31",
+	"manual",
+	0
+};
+
 } // End of namespace Buried
 
 
@@ -234,6 +278,8 @@ public:
 	BuriedMetaEngine() : AdvancedMetaEngine(Buried::gameDescriptions, sizeof(Buried::BuriedGameDescription), buriedGames) {
 		_singleid = "buried";
 		_flags = kADFlagUseExtraAsHint;
+		_maxScanDepth = 3;
+		_directoryGlobs = Buried::directoryGlobs;
 	}
 
 	virtual const char *getName() const {
