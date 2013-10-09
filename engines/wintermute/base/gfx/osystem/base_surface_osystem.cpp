@@ -410,8 +410,6 @@ bool BaseSurfaceOSystem::drawSprite(int x, int y, Rect32 *rect, Rect32 *newRect,
 	srcRect.setHeight(rect->bottom - rect->top);
 
 	Common::Rect position;
-	position.left = x + transform._offset.x;
-	position.top = y + transform._offset.y;
 
 	if (newRect) {
 		position.top = y;
