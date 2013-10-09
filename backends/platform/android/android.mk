@@ -27,7 +27,7 @@ PORT_DISTFILES = $(PATH_DIST)/README.Android
 
 # FIXME: OUYA specific.
 #        "values-television" not present in vanilla Android.
-# $(PATH_RESOURCES)/values-television/margins.xml \
+# $(PATH_RESOURCES)/../res-ouya/values-television/margins.xml \
 
 RESOURCES = \
 	$(PATH_RESOURCES)/values/strings.xml \
