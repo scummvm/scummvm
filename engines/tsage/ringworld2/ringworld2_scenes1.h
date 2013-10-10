@@ -101,8 +101,8 @@ public:
 	NamedHotspot _bouldersBlockingCave;
 	NamedHotspot _boulders;
 	NamedHotspot _trail;
-	SceneActor _canyonDweller1;
-	SceneActor _canyonDweller2;
+	SceneActor _ship;
+	SceneActor _cloud;
 	SceneActor _shipFormation;
 	SceneActor _shipFormationShadow;
 	SceneActor _shotImpact1;

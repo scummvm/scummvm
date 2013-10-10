@@ -805,9 +805,9 @@ void Scene1100::postInit(SceneObjectList *OwnerList) {
 
 	scalePalette(65, 65, 65);
 
-	_canyonDweller2.postInit();
-	_canyonDweller2.setup(1100, 1, 1);
-	_canyonDweller2.fixPriority(10);
+	_cloud.postInit();
+	_cloud.setup(1100, 1, 1);
+	_cloud.fixPriority(10);
 
 	R2_GLOBALS._scrollFollower = NULL;
 
@@ -823,7 +823,7 @@ void Scene1100::postInit(SceneObjectList *OwnerList) {
 			R2_GLOBALS._player._characterIndex = R2_QUINN;
 		R2_GLOBALS._player._characterScene[R2_QUINN] = 1100;
 		R2_GLOBALS._player._characterScene[R2_SEEKER] = 1100;
-		_canyonDweller2.setPosition(Common::Point(150, 30));
+		_cloud.setPosition(Common::Point(150, 30));
 		R2_GLOBALS._sound1.play(93);
 		R2_GLOBALS._player.postInit();
 		R2_GLOBALS._player.hide();
@@ -852,18 +852,18 @@ void Scene1100::postInit(SceneObjectList *OwnerList) {
 		_trooper._numFrames = 5;
 		_trooper.setDetails(1100, 22, 23, 24, 1, (SceneItem *) NULL);
 
-		_canyonDweller1.postInit();
-		_canyonDweller1.setup(1512, 1, 1);
-		_canyonDweller1.setPosition(Common::Point(187, -25));
-		_canyonDweller1.fixPriority(48);
-		_canyonDweller1._moveDiff.y = 1;
-		_canyonDweller1.setDetails(1100, 37, -1, -1, 1, (SceneItem *) NULL);
+		_ship.postInit();
+		_ship.setup(1512, 1, 1);
+		_ship.setPosition(Common::Point(187, -25));
+		_ship.fixPriority(48);
+		_ship._moveDiff.y = 1;
+		_ship.setDetails(1100, 37, -1, -1, 1, (SceneItem *) NULL);
 
 		_sceneMode = 20;
 
 		setAction(&_sequenceManager1, this, 1, &R2_GLOBALS._player, NULL);
 	} else if (R2_GLOBALS._sceneManager._previousScene == 1000) {
-		_canyonDweller2.setPosition(Common::Point(50, 30));
+		_cloud.setPosition(Common::Point(50, 30));
 		_paletteRefreshStatus = 0;
 		_palette1.loadPalette(1101);
 		R2_GLOBALS._player.postInit();
@@ -903,7 +903,7 @@ void Scene1100::postInit(SceneObjectList *OwnerList) {
 
 		setAction(&_sequenceManager1, this, 1, &R2_GLOBALS._player, NULL);
 	} else {
-		_canyonDweller2.setPosition(Common::Point(180, 30));
+		_cloud.setPosition(Common::Point(180, 30));
 		if (R2_GLOBALS.getFlag(52))
 			R2_GLOBALS._sound1.play(98);
 		else
@@ -973,12 +973,12 @@ void Scene1100::postInit(SceneObjectList *OwnerList) {
 
 			_trooper.fixPriority(200);
 		}
-		_canyonDweller1.postInit();
-		_canyonDweller1.setup(1512, 1, 1);
-		_canyonDweller1.setPosition(Common::Point(187, 45));
-		_canyonDweller1.fixPriority(48);
-		_canyonDweller1._moveDiff.y = 1;
-		_canyonDweller1.setDetails(1100, 37, -1, -1, 1, (SceneItem *) NULL);
+		_ship.postInit();
+		_ship.setup(1512, 1, 1);
+		_ship.setPosition(Common::Point(187, 45));
+		_ship.fixPriority(48);
+		_ship._moveDiff.y = 1;
+		_ship.setDetails(1100, 37, -1, -1, 1, (SceneItem *) NULL);
 	}
 
 	_boulders.setDetails(Rect(123, 69, 222, 105), 1100, 13, -1, -1, 1, NULL);
@@ -1097,6 +1097,7 @@ void Scene1100::signal() {
 	// Really nothing
 		break;
 	case 13:
+		_leftImpacts.setup(1113, 2, 1);
 		_trooper.postInit();
 		R2_GLOBALS._scrollFollower = &_trooper;
 
@@ -1117,7 +1118,7 @@ void Scene1100::signal() {
 	case 20: {
 		Common::Point pt(187, -13);
 		NpcMover *mover = new NpcMover();
-		_canyonDweller1.addMover(mover, &pt, this);
+		_ship.addMover(mover, &pt, this);
 		}
 		break;
 	case 21: {
@@ -1125,7 +1126,7 @@ void Scene1100::signal() {
 		_trooper.animate(ANIM_MODE_5, NULL);
 		Common::Point pt(187, 45);
 		NpcMover *mover = new NpcMover();
-		_canyonDweller1.addMover(mover, &pt, this);
+		_ship.addMover(mover, &pt, this);
 		}
 		break;
 	case 22:
@@ -1264,7 +1265,7 @@ void Scene1100::signal() {
 		R2_GLOBALS._sound1.play(101);
 		Common::Point pt(187, -13);
 		NpcMover *mover = new NpcMover();
-		_canyonDweller1.addMover(mover, &pt, this);
+		_ship.addMover(mover, &pt, this);
 		}
 		break;
 	default:
