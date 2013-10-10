@@ -1038,6 +1038,7 @@ void Scene2000::synchronize(Serializer &s) {
  * Scene 2350 - Balloon Launch Platform
  *
  *--------------------------------------------------------------------------*/
+
 bool Scene2350::Actor2::startAction(CursorType action, Event &event) {
 	if (action != R2_SENSOR_PROBE)
 		return(SceneActor::startAction(action, event));
@@ -1215,6 +1216,7 @@ void Scene2350::process(Event &event) {
  * Scene 2400 - Spill Mountains: Large empty room
  *
  *--------------------------------------------------------------------------*/
+
 void Scene2400::Exit1::changeScene() {
 	Scene2400 *scene = (Scene2400 *)R2_GLOBALS._sceneManager._scene;
 
@@ -1905,6 +1907,7 @@ void Scene2440::signal() {
  * Scene 2445 - Spill Mountains:
  *
  *--------------------------------------------------------------------------*/
+
 void Scene2445::postInit(SceneObjectList *OwnerList) {
 	loadScene(2445);
 	SceneExt::postInit();
@@ -2980,6 +2983,7 @@ void Scene2535::signal() {
  * Scene 2600 - Spill Mountains: Exit
  *
  *--------------------------------------------------------------------------*/
+
 Scene2600::Scene2600(): SceneExt() {
 	_rotation = NULL;
 }

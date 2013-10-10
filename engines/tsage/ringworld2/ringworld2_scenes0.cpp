@@ -31,6 +31,11 @@ namespace TsAGE {
 
 namespace Ringworld2 {
 
+/*--------------------------------------------------------------------------
+ * Scene 50 - Waking up cutscene
+ *
+ *--------------------------------------------------------------------------*/
+
 void Scene50::Action1::signal() {
 	switch (_actionIndex++) {
 	case 0:
@@ -5534,6 +5539,7 @@ void Scene500::signal() {
  * Scene 525 - Cutscene - Walking in hall
  *
  *--------------------------------------------------------------------------*/
+
 void Scene525::postInit(SceneObjectList *OwnerList) {
 	loadScene(525);
 	R2_GLOBALS._uiElements._active = false;

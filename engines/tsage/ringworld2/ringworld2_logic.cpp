@@ -112,6 +112,7 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		// Cutscene - trip in space
 		return new Scene1010();
 	case 1020:
+		// Cutscene - trip in space 2
 		return new Scene1020();
 	case 1100:
 		// Canyon
@@ -171,7 +172,6 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		// Flup Tube Corridor Maze
 		return new Scene1950();
 	/* Scene group #2 */
-	//
 	case 2000:
 		// Spill Mountains
 		return new Scene2000();

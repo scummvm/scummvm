@@ -934,6 +934,7 @@ void Scene3175::signal() {
  * Scene 3200 - Cutscene : Guards - Discussion
  *
  *--------------------------------------------------------------------------*/
+
 void Scene3200::postInit(SceneObjectList *OwnerList) {
 	loadScene(3200);
 	R2_GLOBALS._uiElements._active = false;
@@ -962,6 +963,7 @@ void Scene3200::signal() {
  * Scene 3210 - Cutscene : Captain and Private - Discussion
  *
  *--------------------------------------------------------------------------*/
+
 void Scene3210::postInit(SceneObjectList *OwnerList) {
 	loadScene(3210);
 	R2_GLOBALS._uiElements._active = false;
@@ -988,6 +990,7 @@ void Scene3210::signal() {
  * Scene 3220 - Cutscene : Guards in cargo zone
  *
  *--------------------------------------------------------------------------*/
+
 void Scene3220::postInit(SceneObjectList *OwnerList) {
 	loadScene(3220);
 	R2_GLOBALS._uiElements._active = false;
@@ -1014,6 +1017,7 @@ void Scene3220::signal() {
  * Scene 3230 - Cutscene : Guards on duty
  *
  *--------------------------------------------------------------------------*/
+
 void Scene3230::postInit(SceneObjectList *OwnerList) {
 	loadScene(3230);
 	R2_GLOBALS._uiElements._active = false;

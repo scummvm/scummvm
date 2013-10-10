@@ -534,9 +534,10 @@ void Scene1010::signal() {
 }
 
 /*--------------------------------------------------------------------------
- * Scene 1020 -
+ * Scene 1020 - Cutscene - trip in space 2
  *
  *--------------------------------------------------------------------------*/
+
 void Scene1020::postInit(SceneObjectList *OwnerList) {
 	loadScene(1020);
 	SceneExt::postInit();
@@ -663,6 +664,7 @@ void Scene1020::dispatch() {
  * Scene 1100 -
  *
  *--------------------------------------------------------------------------*/
+
 Scene1100::Scene1100() {
 	_nextStripNum = 0;
 	_paletteRefreshStatus = 0;
@@ -6874,6 +6876,7 @@ void Scene1337::subD1A48(int arg1) {
  * Scene 1500 - Cutscene: Ship landing
  *
  *--------------------------------------------------------------------------*/
+
 void Scene1500::postInit(SceneObjectList *OwnerList) {
 	loadScene(1500);
 	R2_GLOBALS._uiElements._active = false;
@@ -7032,6 +7035,7 @@ void Scene1500::dispatch() {
  * Scene 1525 - Cutscene - Ship
  *
  *--------------------------------------------------------------------------*/
+
 void Scene1525::postInit(SceneObjectList *OwnerList) {
 	loadScene(1525);
 	R2_GLOBALS._uiElements._active = false;
@@ -7074,6 +7078,7 @@ void Scene1525::signal() {
  * Scene 1530 - Cutscene - Elevator
  *
  *--------------------------------------------------------------------------*/
+
 void Scene1530::postInit(SceneObjectList *OwnerList) {
 	if (R2_GLOBALS._sceneManager._previousScene == 1000)
 		loadScene(1650);
@@ -9277,6 +9282,7 @@ void Scene1550::enterArea() {
  * Scene 1575 -
  *
  *--------------------------------------------------------------------------*/
+
 Scene1575::Scene1575() {
 	_field412 = 0;
 	_field414 = 0;
@@ -9657,6 +9663,7 @@ void Scene1575::dispatch() {
  * Scene 1580 - Inside wreck
  *
  *--------------------------------------------------------------------------*/
+
 Scene1580::Scene1580() {
 	_field412 = 0;
 }
