@@ -114,6 +114,7 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 	case 1020:
 		return new Scene1020();
 	case 1100:
+		// Canyon
 		return new Scene1100();
 	case 1200:
 		// ARM Base - Air Ducts Maze

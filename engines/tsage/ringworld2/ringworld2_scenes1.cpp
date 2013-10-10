@@ -478,10 +478,11 @@ void Scene1000::dispatch() {
  *--------------------------------------------------------------------------*/
 
 void Scene1010::postInit(SceneObjectList *OwnerList) {
-	SceneExt::postInit();
 	loadScene(1010);
-
+	SceneExt::postInit();
+	R2_GLOBALS._interfaceY = 200;
 	R2_GLOBALS._uiElements._active = false;
+
 	setZoomPercents(100, 1, 160, 100);
 	R2_GLOBALS._player.postInit();
 	R2_GLOBALS._player.setObjectWrapper(NULL);
@@ -537,12 +538,13 @@ void Scene1010::signal() {
  *
  *--------------------------------------------------------------------------*/
 void Scene1020::postInit(SceneObjectList *OwnerList) {
-	SceneExt::postInit();
 	loadScene(1020);
+	SceneExt::postInit();
 
 	if (R2_GLOBALS._sceneManager._previousScene == 1010)
-		g_globals->gfxManager()._bounds.moveTo(Common::Point(160, 0));
+		_sceneBounds = Rect(160, 0, SCREEN_WIDTH + 160, 200);
 
+	R2_GLOBALS._interfaceY = 200;
 	R2_GLOBALS._v558B6.set(160, 0, 160, 161);
 	R2_GLOBALS._uiElements._active = false;
 	R2_GLOBALS._player.postInit();

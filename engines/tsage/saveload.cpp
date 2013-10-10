@@ -151,8 +151,9 @@ Common::Error Saver::save(int slot, const Common::String &saveName) {
 
 	// Save each registered SaveObject descendant object into the savegame file
 	for (SynchronizedList<SavedObject *>::iterator i = _objList.begin(); i != _objList.end(); ++i) {
-		serializer.validate((*i)->getClassName());
-		(*i)->synchronize(serializer);
+		SavedObject *so = *i;
+		serializer.validate(so->getClassName());
+		so->synchronize(serializer);
 	}
 
 	// Save file complete
