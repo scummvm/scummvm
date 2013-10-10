@@ -96,9 +96,18 @@ struct EntrySizeFix {
 static const EntrySizeFix entrySizeFixes[] = {
 	//  fileHash    offset   diskSize   size  fixedSize
 	// Fixes for the Russian "Dyadyushka Risech" version
-	// TODO
+	{ 0x41137051,   667019,     23391, 41398,     41401 },	// "Options" menu header text
+	{ 0x0f960021,   402268,      1704,  4378,      1870 },	// "Save" menu
+	{ 0x1301a7ea,  1220008,      2373,  4146,      2877 },	// "Load" menu
+	{ 0x84181e81,   201409,      1622,  5058,      1833 },	// "Delete" menu
+	{ 0x08C0AC24,  1031009,      3030,  6498,      3646 },	// Overwrite dialog
+	{ 0xc6604282, 12813649,     19623, 35894,     35895 },	// One of the fonts when reading Willie's notes
+	{ 0x80283101, 13104841,      1961,  3712,      3511 },	// The first message from Willie
+	{ 0x00918480, 17676417,       581,   916,       706 },	// The first wall in the museum
+	{ 0x00800090C,16064875,     19555, 38518,     38526 },	// The first wall in the museum
 	// Fixes for the Russian "Fargus" version
-	// TODO
+	{ 0x41137051,   758264,     29037, 49590,     49591 },	// "Options" menu header text
+	{ 0xc10b2015,   787304,      4414, 15848,     15853 },	// Text on option buttons
 	//
 	{          0,        0,         0,     0,         0 }
 };
