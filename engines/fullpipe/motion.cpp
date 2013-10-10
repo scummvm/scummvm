@@ -571,51 +571,38 @@ MessageQueue *MovGraph2::method4C(StaticANIObject *obj, int xpos, int ypos, int 
 	}
 
 	if (obj->_movement) {
+		int newx, newy;
+
 		if (subMgm) {
 			obj->_messageQueueId = 0;
 			obj->changeStatics2(_items[idx]->_subItems[idxsub]->_staticsId1);
-			v19 = obj->_ox;
-			v20 = obj->_oy;
+			newx = obj->_ox;
+			newy = obj->_oy;
 		} else {
-			v16 = obj->_movement->calcSomeXY(point, 0);
-			v63 = v16->x;
-			y = v16->y;
-			v17 = obj->movement;
-			v18 = v17->GameObject.ox;
-			point.x = v17->GameObject.oy - y;
-			v19 = v18 - (_DWORD)v63;
-			v20 = point.x;
+			obj->_movement->calcSomeXY(point, 0);
+			newx = obj->_movement->_ox - point.x;
+			newy = obj->_movement->_oy - point.y;
 			if (idxsub != 1 && idxsub) {
 				if (idxsub == 2 || idxsub == 3) {
-					v63 = (ExCommand *)v17->GameObject.ox;
-					v20 = v17->GameObject.oy;
+					newy = obj->_movement->_oy;
 				}
 			} else {
-				v19 = v17->GameObject.ox;
-				y = v17->GameObject.oy;
+				newx = obj->_movement->_ox;
 			}
 		}
-		v24 = obj->GameObject.CObject.vmt;
-		obj->movement = 0;
-		(*(void (__thiscall **)(GameObject *, int, int))(v24 + offsetof(GameObjectVmt, setOXY)))(&obj->GameObject, v19, v20);
+
+		obj->_movement = 0;
+		obj->setOXY(newx, newy);
 	}
-	v25 = obj->GameObject.oy;
-	point.x = obj->GameObject.ox;
-	v63 = (ExCommand *)point.x;
-	v61 = v25;
+
+	v25 = obj->_oy;
 	y = v25;
-	if (point.x == xpos && v25 == ypos) {
-		point.x = (int)operator new(sizeof(MessageQueue));
-		v71.state = 0;
-		if (point.x) {
-			v26 = GlobalMessageQueueList_compact(&g_globalMessageQueueList);
-			v62 = MessageQueue_ctor1((MessageQueue *)point, v26);
-		} else {
-			v62 = 0;
-		}
-		v71.state = -1;
-		if (staticsId && obj->statics->staticsId != staticsId) {
-			point.x = MovGraph2_getItem1IndexByStaticsId(this, idx, staticsId);
+
+	if (obj->_ox == xpos && obj->_oy == ypos) {
+		MessageQueue *mq = new MessageQueue(g_globalMessageQueueList->compact());
+
+		if (staticsId && obj->_statics->_staticsId != staticsId) {
+			point.x = getItem1IndexByStaticsId(idx, staticsId);
 			if (point.x == -1) {
 				GameObject_setPicAniInfo(obj, &picAniInfo);
 				return 0;
@@ -678,31 +665,37 @@ MessageQueue *MovGraph2::method4C(StaticANIObject *obj, int xpos, int ypos, int 
 		GameObject_setPicAniInfo(obj, &picAniInfo);
 		return v62;
 	}
-	linkInfoSource.node = MovGraph2_findNode(this, point.x, v25, 0);
+	linkInfoSource.node = findNode(obj->_ox, obj->_oy, 0);
+
 	if (!linkInfoSource.node) {
-		v38 = point.x;
-		linkInfoSource.link = MovGraph2_findLink1(this, point.x, y, idxsub, 0);
-		if (!(_DWORD)linkInfoSource.link) {
-			linkInfoSource.link = MovGraph2_findLink2(this, v38, y);
-			if (!(_DWORD)linkInfoSource.link) {
-				GameObject_setPicAniInfo(obj, &picAniInfo);
+		linkInfoSource.link = findLink1(obj->_ox, obj->_oy, idxsub, 0);
+
+		if (!linkInfoSource.link) {
+			linkInfoSource.link = findLink2(obj->_ox, obj->_oy);
+
+			if (!linkInfoSource.link) {
+				obj->setPicAniInfo(picAniInfo);
+
 				return 0;
 			}
 		}
 	}
-	linkInfoDest.node = MovGraph2_findNode(this, xpos, ypos, fuzzyMatch);
+
+	linkInfoDest.node = findNode(xpos, ypos, fuzzyMatch);
+
 	if (!linkInfoDest.node) {
-		linkInfoDest.link = MovGraph2_findLink1(this, xpos, ypos, idxsub, fuzzyMatch);
-		if (!(_DWORD)linkInfoDest.link) {
-			GameObject_setPicAniInfo(obj, &picAniInfo);
+		linkInfoDest.link = findLink1(xpos, ypos, idxsub, fuzzyMatch);
+		if (!linkInfoDest.link) {
+			obj->setPicAniInfo(picAniInfo);
+
 			return 0;
 		}
 	}
+
 	ObList_ctor(&tempLinkList, 10);
-	v71.state = 4;
+
 	MovGraph2_findLinks(this, &linkInfoSource, &linkInfoDest, (int)&tempLinkList);
 	if (v6 < 0.0 || (linkInfoSource.node != linkInfoDest.node || !linkInfoSource.node) && !tempLinkList.m_nCount) {
-		v71.state = -1;
 		ObList_dtor(&tempLinkList);
 		return 0;
 	}
@@ -712,11 +705,14 @@ MessageQueue *MovGraph2::method4C(StaticANIObject *obj, int xpos, int ypos, int 
 	v40 = point.x;
 	movInfo1.pt1.y = y;
 	movInfo1.pt1.x = point.x;
+
 	if (linkInfoSource.node)
 		v41 = linkInfoSource.node->distance;
 	else
 		v41 = linkInfoSource.link->movGraphNode1->distance;
+
 	movInfo1.distance1 = v41;
+
 	if (linkInfoDest.node) {
 		v42 = linkInfoDest.node->x;
 		movInfo1.pt2.x = linkInfoDest.node->x;
@@ -738,6 +734,7 @@ MessageQueue *MovGraph2::method4C(StaticANIObject *obj, int xpos, int ypos, int 
 		v39 = movInfo1.pt1.y;
 		v40 = movInfo1.pt1.x;
 	}
+
 	if (staticsId) {
 		v47 = MovGraph2_getItem1IndexByStaticsId(this, ex, staticsId);
 	} else if (tempLinkList.m_nCount <= 1) {
