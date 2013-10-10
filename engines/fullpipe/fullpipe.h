@@ -219,6 +219,7 @@ public:
 	bool sceneSwitcher(EntranceInfo *entrance);
 	Scene *accessScene(int sceneId);
 	void setSceneMusicParameters(GameVar *var);
+	int convertScene(int scene);
 
 	NGIArchive *_currArchive;
 

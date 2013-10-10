@@ -176,7 +176,7 @@ Common::Error FullpipeEngine::run() {
 
 	int scene = 0;
 	if (ConfMan.hasKey("boot_param"))
-		scene = ConfMan.getInt("boot_param");
+		scene = convertScene(ConfMan.getInt("boot_param"));
 
 	if (!loadGam("fullpipe.gam", scene))
 		return Common::kNoGameDataFoundError;
