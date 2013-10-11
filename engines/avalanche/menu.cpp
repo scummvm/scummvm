@@ -333,7 +333,7 @@ void Menu::drawMenuText(int16 x, int16 y, char trigger, Common::String text, boo
 }
 
 void Menu::bleep() {
-	warning("STUB: Menu::bleep()");
+	_vm->_sound->playNote(177, 7);
 }
 
 void Menu::parseKey(char r, char re) {

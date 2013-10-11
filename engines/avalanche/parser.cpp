@@ -2006,7 +2006,7 @@ void Parser::doThat() {
 			if (_thing == kObjectBell) {
 				_vm->_dialogs->displayText("Ding, dong, ding, dong, ding, dong, ding, dong...");
 				if ((_vm->_bellsAreRinging) & (_vm->getFlag('B')))
-					// \? are used to avoid that ??! is parsed as a trigraph
+					// '\?' are used to avoid that '??!' is parsed as a trigraph
 					_vm->_dialogs->displayText("(Are you trying to join in, Avvy\?\?!)");
 			} else
 				_vm->_dialogs->displayText(kWhat);
