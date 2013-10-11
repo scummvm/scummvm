@@ -108,8 +108,11 @@ DeathWindow::DeathWindow(BuriedEngine *vm, Window *parent, int deathSceneIndex, 
 		break;
 	}
 
-	_textFontA = _vm->_gfx->createFont(14);
-	_textFontB = _vm->_gfx->createFont(20, true);
+	_fontHeightA = (_vm->getLanguage() == Common::JA_JPN) ? 12 : 14;
+	_textFontA = _vm->_gfx->createFont(_fontHeightA);
+
+	_fontHeightB = 20;
+	_textFontB = _vm->_gfx->createFont(_fontHeightB, true);
 
 	_walkthroughMode = _globalFlags.generalWalkthroughMode != 0;
 
@@ -273,21 +276,21 @@ void DeathWindow::onPaint() {
 	uint32 textColor = _vm->_gfx->getColor(153, 102, 204);
 	Common::String firstBlock = _vm->getString(IDS_DEATH_SCENE_MESSAGE_TEXT_BASE + _deathSceneIndex * 5);
 	Common::Rect firstBlockRect(10, 54, 283, 86);
-	_vm->_gfx->renderText(_vm->_gfx->getScreen(), _textFontA, firstBlock, firstBlockRect.left, firstBlockRect.top, firstBlockRect.width(), textColor, 14);
+	_vm->_gfx->renderText(_vm->_gfx->getScreen(), _textFontA, firstBlock, firstBlockRect.left, firstBlockRect.top, firstBlockRect.width(), textColor, _fontHeightA);
 
 	Common::String secondBlock = _vm->getString(IDS_DEATH_SCENE_MESSAGE_TEXT_BASE + _deathSceneIndex * 5 + 1);
 	Common::Rect secondBlockRect(10, 120, 283, 215);
-	_vm->_gfx->renderText(_vm->_gfx->getScreen(), _textFontA, secondBlock, secondBlockRect.left, secondBlockRect.top, secondBlockRect.width(), textColor, 14);
+	_vm->_gfx->renderText(_vm->_gfx->getScreen(), _textFontA, secondBlock, secondBlockRect.left, secondBlockRect.top, secondBlockRect.width(), textColor, _fontHeightA);
 
 	Common::Rect scoringDescRect(10, 248, 283, 378);
-	_vm->_gfx->renderText(_vm->_gfx->getScreen(), _textFontA, _scoringTextDescriptions, scoringDescRect.left, scoringDescRect.top, scoringDescRect.width(), textColor, 14);
+	_vm->_gfx->renderText(_vm->_gfx->getScreen(), _textFontA, _scoringTextDescriptions, scoringDescRect.left, scoringDescRect.top, scoringDescRect.width(), textColor, _fontHeightA);
 
 	textColor = _vm->_gfx->getColor(212, 109, 0);
-	_vm->_gfx->renderText(_vm->_gfx->getScreen(), _textFontA, _scoringTextScores, scoringDescRect.left, scoringDescRect.top, scoringDescRect.width(), textColor, 14, true);
+	_vm->_gfx->renderText(_vm->_gfx->getScreen(), _textFontA, _scoringTextScores, scoringDescRect.left, scoringDescRect.top, scoringDescRect.width(), textColor, _fontHeightA, true);
 
 	// CHECKME: This does center vertical alignment, so check the y coordinates
 	Common::Rect finalTextScoreRect(122, 386, 283, 401);
-	_vm->_gfx->renderText(_vm->_gfx->getScreen(), _textFontB, _scoringTextFinalScore, finalTextScoreRect.left, finalTextScoreRect.top, finalTextScoreRect.width(), textColor, 20, true);
+	_vm->_gfx->renderText(_vm->_gfx->getScreen(), _textFontB, _scoringTextFinalScore, finalTextScoreRect.left, finalTextScoreRect.top, finalTextScoreRect.width(), textColor, _fontHeightB, true);
 }
 
 bool DeathWindow::onEraseBackground() {

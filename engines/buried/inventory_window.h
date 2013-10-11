@@ -71,6 +71,7 @@ public:
 
 private:
 	Graphics::Font *_textFont;
+	int _fontHeight;
 	Graphics::Surface *_background;
 	Common::Array<int> _itemArray;
 	int _curItem;
