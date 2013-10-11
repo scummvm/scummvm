@@ -65,8 +65,11 @@ CompletionWindow::CompletionWindow(BuriedEngine *vm, Window *parent, const Globa
 
 	_timer = setTimer(1000);
 
-	_textFontA = _vm->_gfx->createFont(14);
-	_textFontB = _vm->_gfx->createFont(20, true);
+	_fontHeightA = (_vm->getLanguage() == Common::JA_JPN) ? 12 : 14;
+	_textFontA = _vm->_gfx->createFont(_fontHeightA);
+
+	_fontHeightB = 20;
+	_textFontB = _vm->_gfx->createFont(_fontHeightB, true);
 
 	_walkthroughMode = _globalFlags.generalWalkthroughMode != 0;
 
@@ -197,24 +200,24 @@ void CompletionWindow::onPaint() {
 		uint32 textColor = _vm->_gfx->getColor(102, 204, 153);
 		Common::String firstBlockText = _vm->getString(2100);
 		Common::Rect firstBlockRect(10, 54, 283, 86);
-		_vm->_gfx->renderText(_vm->_gfx->getScreen(), _textFontA, firstBlockText, firstBlockRect.left, firstBlockRect.top, firstBlockRect.width(), textColor, 14);
+		_vm->_gfx->renderText(_vm->_gfx->getScreen(), _textFontA, firstBlockText, firstBlockRect.left, firstBlockRect.top, firstBlockRect.width(), textColor, _fontHeightA);
 
 		// Draw the cause text
 		Common::String secondBlockText = _vm->getString(2102);
 		Common::Rect secondBlockRect(10, 120, 283, 215);
-		_vm->_gfx->renderText(_vm->_gfx->getScreen(), _textFontA, secondBlockText, secondBlockRect.left, secondBlockRect.top, secondBlockRect.width(), textColor, 14);
+		_vm->_gfx->renderText(_vm->_gfx->getScreen(), _textFontA, secondBlockText, secondBlockRect.left, secondBlockRect.top, secondBlockRect.width(), textColor, _fontHeightA);
 
 		// Description text
 		Common::Rect scoringTextRect(10, 248, 283, 378);
-		_vm->_gfx->renderText(_vm->_gfx->getScreen(), _textFontA, _scoringTextDescriptions, scoringTextRect.left, scoringTextRect.top, scoringTextRect.width(), textColor, 14);
+		_vm->_gfx->renderText(_vm->_gfx->getScreen(), _textFontA, _scoringTextDescriptions, scoringTextRect.left, scoringTextRect.top, scoringTextRect.width(), textColor, _fontHeightA);
 
 		// Scores
 		textColor = _vm->_gfx->getColor(255, 255, 51);
-		_vm->_gfx->renderText(_vm->_gfx->getScreen(), _textFontA, _scoringTextScores, scoringTextRect.left, scoringTextRect.top, scoringTextRect.width(), textColor, 14, true);
+		_vm->_gfx->renderText(_vm->_gfx->getScreen(), _textFontA, _scoringTextScores, scoringTextRect.left, scoringTextRect.top, scoringTextRect.width(), textColor, _fontHeightA, true);
 
 		// Total score
 		Common::Rect finalScoreRect(122, 386, 283, 401);
-		_vm->_gfx->renderText(_vm->_gfx->getScreen(), _textFontB, _scoringTextFinalScore, finalScoreRect.left, finalScoreRect.top, finalScoreRect.width(), textColor, 20, true);
+		_vm->_gfx->renderText(_vm->_gfx->getScreen(), _textFontB, _scoringTextFinalScore, finalScoreRect.left, finalScoreRect.top, finalScoreRect.width(), textColor, _fontHeightB, true);
 	}
 }
 

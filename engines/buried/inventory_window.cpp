@@ -75,7 +75,8 @@ InventoryWindow::InventoryWindow(BuriedEngine *vm, Window *parent) : Window(vm, 
 
 	rebuildPreBuffer();
 
-	_textFont = _vm->_gfx->createFont(14);
+	_fontHeight = (_vm->getLanguage() == Common::JA_JPN) ? 10 : 14;
+	_textFont = _vm->_gfx->createFont(_fontHeight);
 
 	_rect = Common::Rect(182, 375, 450, 454);
 	_curCursor = (int)kCursorNone;
@@ -263,6 +264,13 @@ void InventoryWindow::onPaint() {
 	for (int i = -2; i < 3; i++) {
 		if ((i + _curItem) >= 0 && (i + _curItem) < (int)_itemArray.size()) {
 			Common::Rect textRect = Common::Rect(120, (i + 2) * 13 + 8, 254, (i + 3) * 13 + 8);
+
+			if (_vm->getLanguage() == Common::JA_JPN) {
+				// Japanese version is shifted by one pixel
+				textRect.top++;
+				textRect.bottom++;
+			}
+
 			textRect.translate(absoluteRect.left, absoluteRect.top);
 			Common::String text = _vm->getString(IDES_ITEM_TITLE_BASE + _itemArray[_curItem + i]);
 			_textFont->drawString(_vm->_gfx->getScreen(), text, textRect.left, textRect.top, textRect.width(), textColor);
