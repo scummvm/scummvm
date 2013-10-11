@@ -54,6 +54,8 @@ public:
 	void displayScrollChain(char block, byte point, bool report = true, bool bubbling = false);
 	void talkTo(byte whom);
 	void sayIt(Common::String str);
+	Common::String personSpeaks();
+	void heyThanks(byte thing);
 
 private:
 	AvalancheEngine *_vm;
@@ -64,6 +66,7 @@ private:
 	};
 
 	static const int16 kHalfIconWidth = 19;
+	static const QuasipedType kQuasipeds[16];
 
 	Common::String _scroll[15];
 	Common::Point _dodgeCoord;

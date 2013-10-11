@@ -135,6 +135,7 @@ public:
 private:
 	Direction _direction; // The direction Avvy is currently facing.
 	Direction _oldDirection;
+	static const int32 kCatacombMap[8][8];
 	bool _arrowTriggered; // And has the arrow been triggered?
 	bool _mustExclaim;
 	byte _geidaSpin, _geidaTime; // For the making "Geida dizzy" joke.

@@ -167,9 +167,7 @@ public:
 	// These following static constants should be included in CFG when it's written.
 	static const int16 kWalk = 3;
 	static const int16 kRun = 5;
-	static const int32 kCatacombMap[8][8];
 	static const char kSpludwicksOrder[3];
-	static const QuasipedType kQuasipeds[16];
 
 	static const uint16 kNotes[12];
 	static const TuneType kTune;

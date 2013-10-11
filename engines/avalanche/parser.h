@@ -148,8 +148,6 @@ private:
 	void giveGeidaTheLute();
 	void playHarp();
 	void winSequence();
-	Common::String personSpeaks();
-	void heyThanks();
 	void wipeText();
 };
 

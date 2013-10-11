@@ -1578,46 +1578,6 @@ void Parser::winSequence() {
 	_vm->_timer->addTimer(30, Timer::kProcWinning, Timer::kReasonWinning);
 }
 
-Common::String Parser::personSpeaks() {
-	if ((_person == kPeoplePardon) || (_person == kPeopleNone)) {
-		if ((_vm->_him == kPeoplePardon) || (_vm->getRoom(_vm->_him) != _vm->_room))
-			_person = _vm->_her;
-		else
-			_person = _vm->_him;
-	}
-
-	if (_vm->getRoom(_person) != _vm->_room) {
-		return Common::String::format("%c1", kControlRegister); // Avvy himself!
-	}
-
-	bool found = false; // The _person we're looking for's code is in _person.
-	Common::String tmpStr;
-
-	for (int i = 0; i < _vm->_animation->kSpriteNumbMax; i++) {
-		if (_vm->_animation->_sprites[i]._quick && ((_vm->_animation->_sprites[i]._stat._acciNum + 149) == _person)) {
-			tmpStr += Common::String::format("%c%c", kControlRegister, '1' + i);
-			found = true;
-		}
-	}
-
-	if (found)
-		return tmpStr;
-
-	for (int i = 0; i < 16; i++) {
-		if ((_vm->kQuasipeds[i]._who == _person) && (_vm->kQuasipeds[i]._room == _vm->_room))
-			tmpStr += Common::String::format("%c%c", kControlRegister, 'A' + i);
-	}
-
-	return tmpStr;
-}
-
-void Parser::heyThanks() {
-	Common::String tmpStr = personSpeaks();
-	tmpStr += Common::String::format("Hey, thanks!%c(But now, you've lost it!)", kControlSpeechBubble);
-	_vm->_dialogs->displayText(tmpStr);
-	_vm->_objects[_thing - 1] = false;
-}
-
 /**
  * @remarks	Originally called 'do_that'
  */
@@ -1734,17 +1694,17 @@ void Parser::doThat() {
 							_vm->_dialogs->displayText("Crapulus grabs the wine and gulps it down.");
 							_vm->_objects[kObjectWine - 1] = false;
 						} else
-							heyThanks();
+							_vm->_dialogs->heyThanks(_thing - 1);
 						break;
 					case kPeopleCwytalot:
 						if ((_thing == kObjectCrossbow) || (_thing == kObjectBolt))
 							_vm->_dialogs->displayText("You might be able to influence Cwytalot more if you used it!");
 						else
-							heyThanks();
+							_vm->_dialogs->heyThanks(_thing - 1);
 						break;
 					case kPeopleSpludwick:
 						if (giveToSpludwick())
-							heyThanks();
+							_vm->_dialogs->heyThanks(_thing - 1);
 						break;
 					case kPeopleIbythneth:
 						if (_thing == kObjectBadge) {
@@ -1756,7 +1716,7 @@ void Parser::doThat() {
 							_vm->_background->draw(-1, -1, 7);
 							_vm->_background->draw(-1, -1, 8);
 						} else
-							heyThanks();
+							_vm->_dialogs->heyThanks(_thing - 1);
 						break;
 					case kPeopleAyles:
 						if (_vm->_aylesIsAwake) {
@@ -1768,7 +1728,7 @@ void Parser::doThat() {
 								_vm->refreshObjectList();
 								_vm->incScore(2);
 							} else
-								heyThanks();
+								_vm->_dialogs->heyThanks(_thing - 1);
 						} else
 							_vm->_dialogs->displayText("But he's asleep!");
 						break;
@@ -1785,7 +1745,7 @@ void Parser::doThat() {
 							giveGeidaTheLute();
 							break;
 						default:
-							heyThanks();
+							_vm->_dialogs->heyThanks(_thing - 1);
 						}
 						break;
 					case kPeopleArkata:
@@ -1797,11 +1757,11 @@ void Parser::doThat() {
 								_vm->_dialogs->displayScrollChain('q', 77); // That Geida woman!
 							break;
 						default:
-							heyThanks();
+							_vm->_dialogs->heyThanks(_thing - 1);
 						}
 						break;
 					default:
-						heyThanks();
+						_vm->_dialogs->heyThanks(_thing - 1);
 					}
 				}
 			}
@@ -2365,13 +2325,13 @@ void Parser::doThat() {
 		_vm->_dialogs->displayText("Hey, a verb would be helpful!");
 		break;
 	case kVerbCodeHello: {
-		Common::String tmpStr = personSpeaks();
+		Common::String tmpStr = _vm->_dialogs->personSpeaks();
 		tmpStr += Common::String::format("Hello.%c", kControlSpeechBubble);
 		_vm->_dialogs->displayText(tmpStr);
 		}
 		break;
 	case kVerbCodeThanks: {
-		Common::String tmpStr = personSpeaks();
+		Common::String tmpStr = _vm->_dialogs->personSpeaks();
 		tmpStr += Common::String::format("That's OK.%c", kControlSpeechBubble);
 		_vm->_dialogs->displayText(tmpStr);
 		}
