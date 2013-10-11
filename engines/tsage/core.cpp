@@ -2814,6 +2814,12 @@ void BackgroundSceneObject::setup2(int visage, int stripFrameNum, int frameNum, 
 
 void BackgroundSceneObject::copySceneToBackground() {
 	GLOBALS._sceneManager._scene->_backSurface.copyFrom(g_globals->gfxManager().getSurface(), 0, 0);
+
+	// WORKAROUND: Since savegames don't store the active screen data, once we copy the 
+	// foreground objects to the background, we have to prevent the scene being saved.
+	// I do this the easiest way, by using the existing animationCtr global
+	if (g_vm->getGameID() == GType_Ringworld2)
+		++R2_GLOBALS._animationCtr;
 }
 
 /*--------------------------------------------------------------------------*/
