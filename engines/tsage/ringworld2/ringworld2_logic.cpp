@@ -321,9 +321,11 @@ bool Ringworld2Game::canLoadGameStateCurrently() {
  * Returns true if it is currently okay to save the game
  */
 bool Ringworld2Game::canSaveGameStateCurrently() {
-	// Don't allow a game to be saved if a dialog is active or if an animation
-	// is playing
-	return g_globals->_gfxManagers.size() == 1 && R2_GLOBALS._animationCtr == 0;
+	// Don't allow a game to be saved if a dialog is active, or if an animation
+	// is playing, or if an active scene prevents it
+	return g_globals->_gfxManagers.size() == 1 && R2_GLOBALS._animationCtr == 0 &&
+		(!R2_GLOBALS._sceneManager._scene ||
+		!((SceneExt *)R2_GLOBALS._sceneManager._scene)->_preventSaving);
 }
 
 /*--------------------------------------------------------------------------*/
@@ -338,6 +340,7 @@ SceneExt::SceneExt(): Scene() {
 	_savedPlayerEnabled = false;
 	_savedUiEnabled = false;
 	_savedCanWalk = false;
+	_preventSaving = false;
 
 	// WORKAROUND: In the original, playing animations don't reset the global _animationCtr
 	// counter as scene changes unless the playing animation explicitly finishes. For now,

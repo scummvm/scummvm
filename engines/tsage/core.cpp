@@ -2817,9 +2817,8 @@ void BackgroundSceneObject::copySceneToBackground() {
 
 	// WORKAROUND: Since savegames don't store the active screen data, once we copy the 
 	// foreground objects to the background, we have to prevent the scene being saved.
-	// I do this the easiest way, by using the existing animationCtr global
 	if (g_vm->getGameID() == GType_Ringworld2)
-		++R2_GLOBALS._animationCtr;
+		((Ringworld2::SceneExt *)GLOBALS._sceneManager._scene)->_preventSaving = true;
 }
 
 /*--------------------------------------------------------------------------*/
