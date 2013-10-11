@@ -34,6 +34,28 @@
 
 namespace Avalanche {
 
+// A quasiped defines how people who aren't sprites talk. For example, quasiped
+// "A" is Dogfood. The rooms aren't stored because I'm leaving that to context.
+const QuasipedType Dialogs::kQuasipeds[16] = {
+	//_whichPed, _foregroundColor,   _room,      _backgroundColor,     _who
+	{1, kColorLightgray,    kRoomArgentPub,    kColorBrown,    kPeopleDogfood},   // A: Dogfood (screen 19).
+	{2, kColorGreen,        kRoomArgentPub,    kColorWhite,    kPeopleIbythneth}, // B: Ibythneth (screen 19).
+	{2, kColorWhite,        kRoomYours,        kColorMagenta,  kPeopleArkata},    // C: Arkata (screen 1).
+	{2, kColorBlack,        kRoomLustiesRoom,  kColorRed,      kPeopleInvisible}, // D: Hawk (screen 23).
+	{2, kColorLightgreen,   kRoomOutsideDucks, kColorBrown,    kPeopleTrader},    // E: Trader (screen 50).
+	{5, kColorYellow,       kRoomRobins,       kColorRed,      kPeopleAvalot},    // F: Avvy, tied up (scr.42)
+	{1, kColorBlue,         kRoomAylesOffice,  kColorWhite,    kPeopleAyles},     // G: Ayles (screen 16).
+	{1, kColorBrown,        kRoomMusicRoom,    kColorWhite,    kPeopleJacques},   // H: Jacques (screen 7).
+	{1, kColorLightgreen,   kRoomNottsPub,     kColorGreen,    kPeopleSpurge},    // I: Spurge (screen 47).
+	{2, kColorYellow,       kRoomNottsPub,     kColorRed,      kPeopleAvalot},    // J: Avalot (screen 47).
+	{1, kColorLightgray,    kRoomLustiesRoom,  kColorBlack,    kPeopleDuLustie},  // K: du Lustie (screen 23).
+	{1, kColorYellow,       kRoomOubliette,    kColorRed,      kPeopleAvalot},    // L: Avalot (screen 27).
+	{2, kColorWhite,        kRoomOubliette,    kColorRed,      kPeopleInvisible}, // M: Avaroid (screen 27).
+	{3, kColorLightgray,    kRoomArgentPub,    kColorDarkgray, kPeopleMalagauche},// N: Malagauche (screen 19).
+	{4, kColorLightmagenta, kRoomNottsPub,     kColorRed,      kPeoplePort},      // O: Port (screen 47).
+	{1, kColorLightgreen,   kRoomDucks,        kColorDarkgray, kPeopleDrDuck}     // P: Duck (screen 51).
+};
+
 Dialogs::Dialogs(AvalancheEngine *vm) {
 	_vm = vm;
 	_noError = true;
@@ -676,11 +698,11 @@ void Dialogs::callDialogDriver() {
 					// Quasi-peds. (This routine performs the same
 					// thing with QPs as triptype.chatter does with the
 					// sprites.)
-					PedType *quasiPed = &_vm->_peds[_vm->kQuasipeds[_param - 10]._whichPed];
+					PedType *quasiPed = &_vm->_peds[kQuasipeds[_param - 10]._whichPed];
 					_vm->_talkX = quasiPed->_x;
 					_vm->_talkY = quasiPed->_y; // Position.
 					
-					_vm->_graphics->setDialogColor(_vm->kQuasipeds[_param - 10]._backgroundColor, _vm->kQuasipeds[_param - 10]._textColor);
+					_vm->_graphics->setDialogColor(kQuasipeds[_param - 10]._backgroundColor, kQuasipeds[_param - 10]._textColor);
 				} else {
 					_vm->errorLed(); // Not valid.
 					setBubbleStateNatural();
@@ -1095,4 +1117,45 @@ void Dialogs::sayIt(Common::String str) {
 	Common::String tmpStr = Common::String::format("%c1%s.%c%c2", kControlRegister, x.c_str(), kControlSpeechBubble, kControlRegister);
 	displayText(tmpStr);
 }
+
+Common::String Dialogs::personSpeaks() {
+	if ((_vm->_parser->_person == kPeoplePardon) || (_vm->_parser->_person == kPeopleNone)) {
+		if ((_vm->_him == kPeoplePardon) || (_vm->getRoom(_vm->_him) != _vm->_room))
+			_vm->_parser->_person = _vm->_her;
+		else
+			_vm->_parser->_person = _vm->_him;
+	}
+
+	if (_vm->getRoom(_vm->_parser->_person) != _vm->_room) {
+		return Common::String::format("%c1", kControlRegister); // Avvy himself!
+	}
+
+	bool found = false; // The _person we're looking for's code is in _person.
+	Common::String tmpStr;
+
+	for (int i = 0; i < _vm->_animation->kSpriteNumbMax; i++) {
+		if (_vm->_animation->_sprites[i]._quick && ((_vm->_animation->_sprites[i]._stat._acciNum + 149) == _vm->_parser->_person)) {
+			tmpStr += Common::String::format("%c%c", kControlRegister, '1' + i);
+			found = true;
+		}
+	}
+
+	if (found)
+		return tmpStr;
+
+	for (int i = 0; i < 16; i++) {
+		if ((kQuasipeds[i]._who == _vm->_parser->_person) && (kQuasipeds[i]._room == _vm->_room))
+			tmpStr += Common::String::format("%c%c", kControlRegister, 'A' + i);
+	}
+
+	return tmpStr;
+}
+
+void Dialogs::heyThanks(byte thing) {
+	Common::String tmpStr = personSpeaks();
+	tmpStr += Common::String::format("Hey, thanks!%c(But now, you've lost it!)", kControlSpeechBubble);
+	displayText(tmpStr);
+	_vm->_objects[thing] = false;
+}
+
 } // End of namespace Avalanche

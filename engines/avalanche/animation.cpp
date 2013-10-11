@@ -32,6 +32,20 @@
 
 namespace Avalanche {
 
+// Art gallery at 2,1; notice about this at 2,2.
+const int32 Animation::kCatacombMap[8][8] = {
+	// Geida's room
+	// 1	   2	   3	   4	   5	   6	   7	   8
+	{0x204,	 0x200,  0xd0f0, 0xf0ff, 0xff,   0xd20f, 0xd200, 0x200},
+	{0x50f1, 0x20ff, 0x2ff,  0xff,   0xe0ff, 0x20ff, 0x200f, 0x7210},
+	{0xe3f0, 0xe10f, 0x72f0, 0xff,   0xe0ff, 0xff,   0xff,   0x800f},
+	{0x2201, 0x2030, 0x800f, 0x220,  0x20f,  0x30,   0xff,   0x23f}, // >> Oubliette
+	{0x5024, 0xf3,   0xff,   0x200f, 0x22f0, 0x20f,  0x200,  0x7260},
+	{0xf0,   0x2ff,  0xe2ff, 0xff,   0x200f, 0x50f0, 0x72ff, 0x201f},
+	{0xf6,   0x220f, 0x22f0, 0x30f,  0xf0,   0x20f,  0x8200, 0x2f0}, // <<< In here
+	{0x34,   0x200f, 0x51f0, 0x201f, 0xf1,   0x50ff, 0x902f, 0x2062}
+};
+
 /**
  * Loads & sets up the sprite.
  */
@@ -456,7 +470,7 @@ void Animation::catacombMove(byte ped) {
 
 	if (!_vm->_enterCatacombsFromLustiesRoom)
 		_vm->loadRoom(29);
-	int32 here = _vm->kCatacombMap[_vm->_catacombY - 1][_vm->_catacombX - 1];
+	int32 here = kCatacombMap[_vm->_catacombY - 1][_vm->_catacombX - 1];
 
 	switch (here & 0xf) { // West.
 	case 0: // no connection (wall)
@@ -842,7 +856,7 @@ void Animation::callSpecial(uint16 which) {
 		catacombMove(4);
 		if (_vm->_room != kRoomCatacombs)
 			return;
-		switch ((_vm->kCatacombMap[_vm->_catacombY - 1][_vm->_catacombX - 1] & 0xf00) >> 8) {
+		switch ((kCatacombMap[_vm->_catacombY - 1][_vm->_catacombX - 1] & 0xf00) >> 8) {
 		case 0x1:
 			appearPed(0, 11);
 			break;
