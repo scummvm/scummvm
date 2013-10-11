@@ -70,9 +70,12 @@ void Sequence::startTimer() {
 }
 
 void Sequence::startTimerImmobilized() {
-	_vm->_userMovesAvvy = false; // They can't move.
-	_vm->_animation->stopWalking(); // And they're not moving now.
-	startTimer(); // Apart from that, it's the same thing.
+	// They can't move.
+	_vm->_userMovesAvvy = false;
+	// And they're not moving now.
+	_vm->_animation->stopWalking();
+	// Apart from that, it's the same thing.
+	startTimer();
 }
 
 void Sequence::shoveLeft() {
@@ -86,23 +89,25 @@ void Sequence::callSequencer() {
 
 	switch (curSeq) {
 	case 0:
-		return; // No more routines.
+		// No more routines.
+		return;
 		break;
-	case kNowFlip: // Flip room.
+	case kNowFlip:
+		// Flip room.
 		_vm->_userMovesAvvy = true;
 		_vm->flipRoom(_flipToWhere, _flipToPed);
-		// CHECKME: Always true?
-		if (curSeq == kNowFlip)
-			shoveLeft();
+		shoveLeft();
 		break;
 	}
 
-	if (curSeq <= 176) { // Show a frame.
+	if (curSeq <= 176) {
+		// Show a frame.
 		_vm->_background->draw(-1, -1, curSeq - 1);
 		shoveLeft();
 	}
 
-	startTimer(); // Make sure this PROC gets called again.
+	// Make sure this PROC gets called again.
+	startTimer();
 }
 
 void Sequence::startHallSeq(Room whither, byte ped) {
@@ -164,8 +169,10 @@ void Sequence::startMusicRoomSeq2(Room whither, byte ped) {
 
 void Sequence::startGeidaLuteSeq() {
 	init(5);
-	add(6); // He falls asleep...
-	startTimer(); // Not really closing, but we're using the same procedure.
+	// He falls asleep...
+	add(6);
+	// Not really closing, but we're using the same procedure.
+	startTimer();
 }
 
 void Sequence::startMusicRoomSeq() {
