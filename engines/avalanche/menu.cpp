@@ -676,7 +676,7 @@ void Menu::update() { // TODO: Optimize it ASAP!!! It really needs it...
 		_menuBar.chooseMenuItem(cursorPos.x);
 		do
 			_vm->updateEvents();
-		while (_vm->_holdLeftMouse);
+		while (_vm->_holdLeftMouse && !_vm->shouldQuit());
 
 		while (!_vm->shouldQuit()) {
 			do {
@@ -698,7 +698,7 @@ void Menu::update() { // TODO: Optimize it ASAP!!! It really needs it...
 				_activeMenuItem.lightUp(cursorPos);
 
 				_vm->_graphics->refreshScreen();
-			} while (!_vm->_holdLeftMouse);
+			} while (!_vm->_holdLeftMouse && !_vm->shouldQuit());
 
 			if (_vm->_holdLeftMouse) {
 				if (cursorPos.y > 21) {
