@@ -628,19 +628,13 @@ void Menu::runMenuWith() {
 	} else {
 		switch (_verbStr[_activeMenuItem._choiceNum]) {
 		case 100: // Beer
-			_vm->_parser->_thing = 100;
+		case 102: // Whisky
+		case 103: // Cider
+			_vm->_parser->_thing = _verbStr[_activeMenuItem._choiceNum];
 			_vm->callVerb(kVerbCodeBuy);
 			return;
 		case 101: // Wine
 			_vm->_parser->_thing = 50;
-			_vm->callVerb(kVerbCodeBuy);
-			return;
-		case 102: // Whisky
-			_vm->_parser->_thing = 102;
-			_vm->callVerb(kVerbCodeBuy);
-			return;
-		case 103: // Cider
-			_vm->_parser->_thing = 103;
 			_vm->callVerb(kVerbCodeBuy);
 			return;
 		case 104: // Mead
@@ -833,6 +827,6 @@ void Menu::init() {
 }
 
 void Menu::resetVariables() {
-	_lastPerson = kPeoplePardon; // = Pardon?
+	_lastPerson = kPeoplePardon;
 }
 } // End of namespace Avalanche.
