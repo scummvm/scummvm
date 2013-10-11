@@ -52,6 +52,7 @@ public:
 
 private:
 	Graphics::Font *_textFont;
+	int _fontHeight;
 	int _currentItemID;
 	VideoWindow *_videoWindow;
 	int32 _spinStart;

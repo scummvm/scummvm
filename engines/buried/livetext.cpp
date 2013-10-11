@@ -39,7 +39,8 @@ LiveTextWindow::LiveTextWindow(BuriedEngine *vm, Window *parent) : Window(vm, pa
 	_textTranslation = false;
 
 	// Create font
-	_font = _vm->_gfx->createFont(14);
+	_fontHeight = (_vm->getLanguage() == Common::JA_JPN) ? 12 : 14;
+	_font = _vm->_gfx->createFont(_fontHeight);
 
 	// Create window
 	_rect = Common::Rect(137, 21, 447, 87);
@@ -115,7 +116,7 @@ void LiveTextWindow::onPaint() {
 
 	// Draw the text on top of that
 	if (!_text.empty())
-		_vm->_gfx->renderText(surface, _font, _text, 30, 4, 270, _vm->_gfx->getColor(212, 109, 0), 14);
+		_vm->_gfx->renderText(surface, _font, _text, 30, 4, 270, _vm->_gfx->getColor(212, 109, 0), _fontHeight);
 
 	Common::Rect absoluteRect = getAbsoluteRect();
 	_vm->_gfx->blit(surface, absoluteRect.left, absoluteRect.top);

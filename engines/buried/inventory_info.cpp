@@ -41,7 +41,9 @@ InventoryInfoWindow::InventoryInfoWindow(BuriedEngine *vm, Window *parent, int c
 	_spinStart = 0;
 	_spinLength = 70;
 
-	_textFont = _vm->_gfx->createFont(14);
+	_fontHeight = (_vm->getLanguage() == Common::JA_JPN) ? 11 : 14;
+	_textFont = _vm->_gfx->createFont(_fontHeight);
+
 	_rect = Common::Rect(0, 0, 432, 189);
 	_videoWindow = new VideoWindow(_vm, this);
 

@@ -63,6 +63,7 @@ private:
 	bool _lightOn;
 	Graphics::Font *_textFontA;
 	Graphics::Font *_textFontB;
+	int _fontHeightA, _fontHeightB;
 	bool _walkthroughMode;
 
 	Common::String _scoringTextDescriptions;

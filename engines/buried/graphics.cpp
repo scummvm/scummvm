@@ -150,12 +150,10 @@ static const uint32 s_codePage1252[256] = {
 #undef NOT_REQUIRED
 
 Graphics::Font *GraphicsManager::createFont(int size, bool bold) const {
-	// MS Gothic for the Japanese version (please buy for clone2727)
+	// MS Gothic for the Japanese version
 	// Arial or Arial Bold for everything else
-	if (_vm->getLanguage() == Common::JA_JPN) {
-		assert(!bold);
+	if (_vm->getLanguage() == Common::JA_JPN)
 		return createMSGothicFont(size);
-	}
 
 	return createArialFont(size, bold);
 }
@@ -675,13 +673,28 @@ Graphics::Font *GraphicsManager::createMSGothicFont(int size) const {
 	if (!stream)
 		error("Failed to find MS Gothic font");
 
-	// TODO: Map the heights needed to point sizes
+	switch (size) {
+	case 10:
+		size = 7;
+		break;		
+	case 11:
+		size = 8;
+		break;
+	case 12:
+		size = 9;
+		break;
+	case 20:
+		size = 16;
+		break;
+	default:
+		error("Unknown MS Gothic font size %d", size);
+	}
 
 	// TODO: Make the monochrome mode optional
 	// Win3.1 obviously only had raster fonts, but BIT Win3.1 will render
 	// with the TrueType font on Win7/Win8 (at least)
 	// TODO: shift-jis codepage (932) and mapping
-	Graphics::Font *font = Graphics::loadTTFFont(*stream, size, 96, !_vm->isTrueColor(), s_codePage1252);
+	Graphics::Font *font = Graphics::loadTTFFont(*stream, size, 96, _vm->isTrueColor() ? Graphics::kTTFRenderModeLight : Graphics::kTTFRenderModeMonochrome, s_codePage1252);
 
 	if (!font)
 		error("Failed to load MS Gothic font");

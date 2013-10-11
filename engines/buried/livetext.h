@@ -51,6 +51,7 @@ public:
 
 private:
 	Graphics::Font *_font;
+	int _fontHeight;
 	bool _textTranslation;
 	Common::String _text;
 };
