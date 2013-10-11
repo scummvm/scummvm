@@ -553,17 +553,15 @@ void Menu::runMenuFile() {
 			_vm->_parser->_realWords[1].clear();
 		_vm->callVerb(kVerbCodeLoad);
 		break;
+	// Case 2 is 'Save', Case 3 is 'Save As'. Both triggers ScummVM save screen.
 	case 2:
+	case 3:
 		if (!_vm->_parser->_realWords[1].empty())
 			_vm->_parser->_realWords[1].clear();
 		_vm->callVerb(kVerbCodeSave);
 		break;
-	case 3:
-		//_vm->_basher->filename_edit();
-		warning("STUB: Dropdown::runMenuFile()");
-		break;
 	case 4:
-		//_vm->_enid->backToBootstrap(2); TODO: Replace it with proper ScummVM-friendly function(s)!  Do not remove until then!
+		// Command Prompt, disabled
 		break;
 	case 5:
 		_vm->callVerb(kVerbCodeQuit);
