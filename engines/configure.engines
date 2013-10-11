@@ -33,6 +33,7 @@ add_engine myst "Myst" no "" "" "16bit"
 add_engine neverhood "Neverhood" no
 add_engine parallaction "Parallaction" yes
 add_engine pegasus "The Journeyman Project: Pegasus Prime" yes "" "" "16bit"
+add_engine prince "The Prince & The Coward" no
 add_engine queen "Flight of the Amazon Queen" yes
 add_engine saga "SAGA" yes "ihnm saga2" "ITE"
 add_engine ihnm "IHNM" yes
