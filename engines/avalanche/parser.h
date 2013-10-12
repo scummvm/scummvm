@@ -136,7 +136,6 @@ private:
 	void inventory();
 	void swallow();
 	void peopleInRoom(); // This lists the other people in the room.
-	void silly();
 	void putProc();  // Called when you call kVerbCodeput.
 	void notInOrder();
 	void goToCauldron();
