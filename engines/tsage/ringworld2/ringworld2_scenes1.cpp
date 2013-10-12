@@ -1097,7 +1097,6 @@ void Scene1100::signal() {
 	// Really nothing
 		break;
 	case 13:
-		_leftImpacts.setup(1113, 2, 1);
 		_trooper.postInit();
 		R2_GLOBALS._scrollFollower = &_trooper;
 
@@ -1276,6 +1275,15 @@ void Scene1100::signal() {
 }
 
 void Scene1100::dispatch() {
+	// WORKAROUND: This fixes a problem with an overhang that gets blasted re-appearing
+	if (_animation._frame > 5 && _sceneMode == 13) {
+		_animation._endFrame = 9;
+		if (_animation._frame == 9)
+			// Use one of the scene's background scene objects to copy the scene to the background.
+			// This fixes the problem with the cliff overhang still appearing during the cutscene
+			_rightLandslide.copySceneToBackground();
+	}
+
 	if ((g_globals->_sceneObjects->contains(&_laserShot)) && (_laserShot._visage == 1102) && (_laserShot._strip == 4) && (_laserShot._frame == 1) && (_laserShot._flags & OBJFLAG_HIDING)) {
 		if (_paletteRefreshStatus == 1) {
 			_paletteRefreshStatus = 2;
