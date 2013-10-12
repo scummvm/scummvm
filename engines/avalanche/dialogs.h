@@ -55,8 +55,10 @@ public:
 	void talkTo(byte whom);
 	void sayIt(Common::String str);
 	Common::String personSpeaks();
-	void heyThanks(byte thing);
-
+	void sayThanks(byte thing);
+	void sayHello();
+	void sayOK();
+	void saySilly();
 private:
 	AvalancheEngine *_vm;
 

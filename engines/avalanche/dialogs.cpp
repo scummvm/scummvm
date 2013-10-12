@@ -1151,11 +1151,41 @@ Common::String Dialogs::personSpeaks() {
 	return tmpStr;
 }
 
-void Dialogs::heyThanks(byte thing) {
+/**
+ * Display a message when (uselessly) giving an object away
+ * @remarks	Originally called 'heythanks'
+ */
+void Dialogs::sayThanks(byte thing) {
 	Common::String tmpStr = personSpeaks();
 	tmpStr += Common::String::format("Hey, thanks!%c(But now, you've lost it!)", kControlSpeechBubble);
 	displayText(tmpStr);
 	_vm->_objects[thing] = false;
+}
+
+/**
+ * Display a 'Hello' message
+ */
+void Dialogs::sayHello() {
+	Common::String tmpStr = personSpeaks();
+	tmpStr += Common::String::format("Hello.%c", kControlSpeechBubble);
+	displayText(tmpStr);
+}
+
+/**
+ * Display a 'OK' message
+ */
+void Dialogs::sayOK() {
+	Common::String tmpStr = personSpeaks();
+	tmpStr += Common::String::format("That's OK.%c", kControlSpeechBubble);
+	displayText(tmpStr);
+}
+
+/**
+ * Display a 'Silly' message
+ * @remarks	Originally called 'silly'
+ */
+void Dialogs::saySilly() {
+	displayText("Don't be silly!");
 }
 
 } // End of namespace Avalanche
