@@ -79,8 +79,7 @@ Common::Error PrinceEngine::run() {
         return Common::kPathNotFile;
 
     Font font1 = Font();
-    if (font1.load(*font1stream))
-    {
+    if (font1.load(*font1stream)) {
         font1.getCharWidth(103);
     }
     delete font1stream;
@@ -90,8 +89,7 @@ Common::Error PrinceEngine::run() {
 	//_frontScreen = new Graphics::Surface();
 	//_frontScreen->create(640, 480, Graphics::PixelFormat::createFormatCLUT8());
 
-    if (room)
-    {
+    if (room) {
         Graphics::BitmapDecoder roomBmp;
         roomBmp.loadStream(*room);
         //_roomBackground = roomBmp.getSurface();
@@ -100,11 +98,9 @@ Common::Error PrinceEngine::run() {
         //font1.drawString(_frontScreen, "Hello World", 10, 10, 640, 1);
 
         MhwanhDecoder walizkaBmp;
-        if (walizka)
-        {
+        if (walizka) {
             debug("Loading walizka");
-            if (walizkaBmp.loadStream(*walizka))
-            {
+            if (walizkaBmp.loadStream(*walizka)) {
                 _graph->_roomBackground = walizkaBmp.getSurface();
                 _graph->setPalette(walizkaBmp.getPalette());
             }

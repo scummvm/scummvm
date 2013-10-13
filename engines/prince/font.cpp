@@ -31,36 +31,30 @@
 
 namespace Prince {
 
-Font::Font()
-{
+Font::Font() {
 }
 
-Font::~Font()
-{
+Font::~Font() {
     delete _fontData;
 }
 
-bool Font::load(Common::SeekableReadStream &stream)
-{
+bool Font::load(Common::SeekableReadStream &stream) {
     stream.seek(0);
     _fontData = new byte[stream.size()];
     stream.read(_fontData, stream.size());
     return true;
 }
 
-int Font::getFontHeight() const
-{
+int Font::getFontHeight() const {
     debug("Font::getFontHeight %d", _fontData[5]);
     return _fontData[5];
 }
 
-int Font::getMaxCharWidth() const
-{
+int Font::getMaxCharWidth() const {
     return 0;
 }
 
-Font::ChrData Font::getChrData(byte chr) const
-{
+Font::ChrData Font::getChrData(byte chr) const {
     chr -= 32;
     uint16 chrOffset = 4*chr+6;
 
@@ -72,13 +66,11 @@ Font::ChrData Font::getChrData(byte chr) const
     return chrData;
 }
 
-int Font::getCharWidth(byte chr) const
-{
+int Font::getCharWidth(byte chr) const {
     return getChrData(chr)._width;
 }
 
-void Font::drawChar(Graphics::Surface *dst, byte chr, int x, int y, uint32 color) const
-{
+void Font::drawChar(Graphics::Surface *dst, byte chr, int x, int y, uint32 color) const {
 	const ChrData chrData = getChrData(chr);
 	const byte *src = chrData._pixels;
 	byte *target = (byte *)dst->getBasePtr(x, y);
@@ -88,7 +80,6 @@ void Font::drawChar(Graphics::Surface *dst, byte chr, int x, int y, uint32 color
 		src += chrData._width;
 		target += dst->pitch;
 	}
-
 }
 
 }
