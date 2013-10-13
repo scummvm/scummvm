@@ -1274,7 +1274,7 @@ void GfxOpenGL::drawDepthBitmap(int x, int y, int w, int h, char *data) {
 void GfxOpenGL::prepareMovieFrame(Graphics::Surface *frame) {
 	int height = frame->h;
 	int width = frame->w;
-	byte *bitmap = (byte *)frame->pixels;
+	byte *bitmap = (byte *)frame->getPixels();
 
 	// remove if already exist
 	if (_smushNumTex > 0) {

@@ -62,6 +62,8 @@ void VideoDecoder::close() {
 		delete *it;
 
 	_tracks.clear();
+	_internalTracks.clear();
+	_externalTracks.clear();
 	_dirtyPalette = false;
 	_palette = 0;
 	_startTime = 0;
@@ -336,7 +338,12 @@ bool VideoDecoder::seek(const Audio::Timestamp &time) {
 	if (isPlaying())
 		stopAudio();
 
-	for (TrackList::iterator it = _tracks.begin(); it != _tracks.end(); it++)
+	// Do the actual seeking
+	if (!seekIntern(time))
+		return false;
+
+	// Seek any external track too
+	for (TrackListIterator it = _externalTracks.begin(); it != _externalTracks.end(); it++)
 		if (!(*it)->seek(time))
 			return false;
 
@@ -356,12 +363,12 @@ bool VideoDecoder::seek(const Audio::Timestamp &time) {
 }
 
 bool VideoDecoder::seekToFrame(uint frame) {
+	if (!isSeekable())
+		return false;
+
 	VideoTrack *track = 0;
 
 	for (TrackList::iterator it = _tracks.begin(); it != _tracks.end(); it++) {
-		if (!(*it)->isSeekable())
-			return false;
-
 		if ((*it)->getTrackType() == Track::kTrackTypeVideo) {
 			// We only allow seeking by frame when one video track
 			// is present
@@ -471,6 +478,14 @@ Audio::Timestamp VideoDecoder::getDuration() const {
 	return maxDuration;
 }
 
+bool VideoDecoder::seekIntern(const Audio::Timestamp &time) {
+	for (TrackList::iterator it = _internalTracks.begin(); it != _internalTracks.end(); it++)
+		if (!(*it)->seek(time))
+			return false;
+
+	return true;
+}
+
 VideoDecoder::Track::Track() {
 	_paused = false;
 }
@@ -516,10 +531,9 @@ Audio::Timestamp VideoDecoder::FixedRateVideoTrack::getFrameTime(uint frame) con
 	if (frameRate == frameRate.toInt()) // The nice case (a whole number)
 		return Audio::Timestamp(0, frame, frameRate.toInt());
 
-	// Just convert to milliseconds.
-	Common::Rational time = frame * 1000;
-	time /= frameRate;
-	return Audio::Timestamp(time.toInt(), 1000);
+	// Convert as best as possible
+	Common::Rational time = frameRate.getInverse() * frame;
+	return Audio::Timestamp(0, time.getNumerator(), time.getDenominator());
 }
 
 uint VideoDecoder::FixedRateVideoTrack::getFrameAtTime(const Audio::Timestamp &time) const {
@@ -529,8 +543,10 @@ uint VideoDecoder::FixedRateVideoTrack::getFrameAtTime(const Audio::Timestamp &t
 	if (frameRate == time.framerate())
 		return time.totalNumberOfFrames();
 
-	// Default case
-	return (time.totalNumberOfFrames() * frameRate / time.framerate()).toInt();
+	// Create the rational based on the time first to hopefully cancel out
+	// *something* when multiplying by the frameRate (which can be large in
+	// some AVI videos).
+	return (Common::Rational(time.totalNumberOfFrames(), time.framerate()) * frameRate).toInt();
 }
 
 Audio::Timestamp VideoDecoder::FixedRateVideoTrack::getDuration() const {
@@ -641,8 +657,13 @@ bool VideoDecoder::StreamFileAudioTrack::loadFromFile(const Common::String &base
 	return _stream != 0;
 }
 
-void VideoDecoder::addTrack(Track *track) {
+void VideoDecoder::addTrack(Track *track, bool isExternal) {
 	_tracks.push_back(track);
+
+	if (isExternal)
+		_externalTracks.push_back(track);
+	else
+		_internalTracks.push_back(track);
 
 	if (track->getTrackType() == Track::kTrackTypeAudio) {
 		// Update volume settings if it's an audio track
@@ -673,7 +694,7 @@ bool VideoDecoder::addStreamFileTrack(const Common::String &baseName) {
 	bool result = track->loadFromFile(baseName);
 
 	if (result)
-		addTrack(track);
+		addTrack(track, true);
 	else
 		delete track;
 
@@ -704,17 +725,17 @@ void VideoDecoder::setEndTime(const Audio::Timestamp &endTime) {
 }
 
 VideoDecoder::Track *VideoDecoder::getTrack(uint track) {
-	if (track > _tracks.size())
+	if (track > _internalTracks.size())
 		return 0;
 
-	return _tracks[track];
+	return _internalTracks[track];
 }
 
 const VideoDecoder::Track *VideoDecoder::getTrack(uint track) const {
-	if (track > _tracks.size())
+	if (track > _internalTracks.size())
 		return 0;
 
-	return _tracks[track];
+	return _internalTracks[track];
 }
 
 bool VideoDecoder::endOfVideoTracks() const {

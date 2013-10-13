@@ -148,7 +148,7 @@ MidiDriver_TIMIDITY::MidiDriver_TIMIDITY() {
 
 int MidiDriver_TIMIDITY::open() {
 	char *res;
-	char timidity_host[MAXHOSTNAMELEN];
+	char timidity_host[NI_MAXHOST];
 	int timidity_port, data_port, i;
 
 	/* count ourselves open */

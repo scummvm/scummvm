@@ -322,7 +322,7 @@ void TTFFont::drawChar(Surface *dst, byte chr, int x, int y, uint32 color) const
 	int w = glyph.image.w;
 	int h = glyph.image.h;
 
-	const uint8 *srcPos = (const uint8 *)glyph.image.getBasePtr(0, 0);
+	const uint8 *srcPos = (const uint8 *)glyph.image.getPixels();
 
 	// Make sure we are not drawing outside the screen bounds
 	if (x < 0) {
@@ -422,7 +422,7 @@ bool TTFFont::cacheGlyph(Glyph &glyph, FT_UInt &slot, uint chr) {
 		srcPitch = -srcPitch;
 	}
 
-	uint8 *dst = (uint8 *)glyph.image.getBasePtr(0, 0);
+	uint8 *dst = (uint8 *)glyph.image.getPixels();
 	memset(dst, 0, glyph.image.h * glyph.image.pitch);
 
 	switch (bitmap.pixel_mode) {

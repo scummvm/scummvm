@@ -169,7 +169,7 @@ protected:
 	PluginType _type;
 
 public:
-	Plugin() : _pluginObject(0) {}
+	Plugin() : _pluginObject(0), _type(PLUGIN_TYPE_MAX) {}
 	virtual ~Plugin() {
 		//if (isLoaded())
 			//unloadPlugin();

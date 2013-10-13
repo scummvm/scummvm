@@ -91,6 +91,9 @@ ListWidget::ListWidget(Dialog *boss, int x, int y, int w, int h, const char *too
 
 	// FIXME: This flag should come from widget definition
 	_editable = true;
+
+	_quickSelect = true;
+	_editColor = ThemeEngine::kFontColorNormal;
 }
 
 ListWidget::~ListWidget() {

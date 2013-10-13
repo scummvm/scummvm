@@ -2,7 +2,6 @@ MODULE := common
 
 MODULE_OBJS := \
 	archive.o \
-	config-file.o \
 	config-manager.o \
 	debug.o \
 	streamdebug.o \
@@ -13,6 +12,7 @@ MODULE_OBJS := \
 	fs.o \
 	gui_options.o \
 	hashmap.o \
+	ini-file.o \
 	language.o \
 	macresman.o \
 	memorypool.o \

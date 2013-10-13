@@ -111,6 +111,8 @@ ipch/
 #Ignore default Visual Studio build folders
 [Dd]ebug*/
 [Rr]elease*/
+LLVM32/
+LLVM64/
 
 #Ignore Qt Creator project files
 ResidualVM.config
@@ -120,6 +122,9 @@ ResidualVM.includes
 
 #Ignore Komodo IDE/Edit project files
 *.komodoproject
+
+#Ignore Mac DS_Store files
+.DS_Store
 
 # Emacs files
 *~

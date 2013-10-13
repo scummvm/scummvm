@@ -54,6 +54,8 @@ DefaultEventManager::DefaultEventManager(Common::EventSource *boss) :
 	_currentKeyDown.ascii = 0;
 	_currentKeyDown.flags = 0;
 
+	_keyRepeatTime = 0;
+
 #ifdef ENABLE_VKEYBD
 	_vk = new Common::VirtualKeyboard();
 #endif

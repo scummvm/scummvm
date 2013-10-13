@@ -248,7 +248,7 @@ void convertYUVA420ToRGBA(byte *dstPtr, int dstPitch, const YUVAToRGBALookup *lo
 
 void YUVAToRGBAManager::convert420(Graphics::Surface *dst, YUVAToRGBAManager::LuminanceScale scale, const byte *ySrc, const byte *uSrc, const byte *vSrc, const byte *aSrc, int yWidth, int yHeight, int yPitch, int uvPitch) {
 	// Sanity checks
-	assert(dst && dst->pixels);
+	assert(dst && dst->getPixels());
 	assert(dst->format.bytesPerPixel == 2 || dst->format.bytesPerPixel == 4);
 	assert(ySrc && uSrc && vSrc);
 	assert((yWidth & 1) == 0);
@@ -258,9 +258,9 @@ void YUVAToRGBAManager::convert420(Graphics::Surface *dst, YUVAToRGBAManager::Lu
 
 	// Use a templated function to avoid an if check on every pixel
 	if (dst->format.bytesPerPixel == 2)
-		convertYUVA420ToRGBA<uint16>((byte *)dst->pixels, dst->pitch, lookup, _colorTab, ySrc, uSrc, vSrc, aSrc, yWidth, yHeight, yPitch, uvPitch);
+		convertYUVA420ToRGBA<uint16>((byte *)dst->getPixels(), dst->pitch, lookup, _colorTab, ySrc, uSrc, vSrc, aSrc, yWidth, yHeight, yPitch, uvPitch);
 	else
-		convertYUVA420ToRGBA<uint32>((byte *)dst->pixels, dst->pitch, lookup, _colorTab, ySrc, uSrc, vSrc, aSrc, yWidth, yHeight, yPitch, uvPitch);
+		convertYUVA420ToRGBA<uint32>((byte *)dst->getPixels(), dst->pitch, lookup, _colorTab, ySrc, uSrc, vSrc, aSrc, yWidth, yHeight, yPitch, uvPitch);
 }
 
 } // End of namespace Graphics

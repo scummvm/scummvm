@@ -119,6 +119,38 @@ inline frac_t fp_sqroot(uint32 x) {
 	*(ptr4 + (y) + (px)) = color2; \
 } while (0)
 
+#define BE_DRAWCIRCLE_BCOLOR_TR_CW(ptr,x,y,px,py,a) do { \
+	this->blendPixelPtr(ptr + (y) - (px), color, a); \
+} while (0)
+
+#define BE_DRAWCIRCLE_BCOLOR_TR_CCW(ptr,x,y,px,py,a) do { \
+	this->blendPixelPtr(ptr + (x) - (py), color, a); \
+} while (0)
+
+#define BE_DRAWCIRCLE_BCOLOR_TL_CW(ptr,x,y,px,py,a) do { \
+	this->blendPixelPtr(ptr - (x) - (py), color, a); \
+} while (0)
+
+#define BE_DRAWCIRCLE_BCOLOR_TL_CCW(ptr,x,y,px,py,a) do { \
+	this->blendPixelPtr(ptr - (y) - (px), color, a); \
+} while (0)
+
+#define BE_DRAWCIRCLE_BCOLOR_BL_CW(ptr,x,y,px,py,a) do { \
+	this->blendPixelPtr(ptr - (y) + (px), color, a); \
+} while (0)
+
+#define BE_DRAWCIRCLE_BCOLOR_BL_CCW(ptr,x,y,px,py,a) do { \
+	this->blendPixelPtr(ptr - (x) + (py), color, a); \
+} while (0)
+
+#define BE_DRAWCIRCLE_BCOLOR_BR_CW(ptr,x,y,px,py,a) do { \
+	this->blendPixelPtr(ptr + (x) + (py), color, a); \
+} while (0)
+
+#define BE_DRAWCIRCLE_BCOLOR_BR_CCW(ptr,x,y,px,py,a) do { \
+	this->blendPixelPtr(ptr + (y) + (px), color, a); \
+} while (0)
+
 #define BE_DRAWCIRCLE_XCOLOR_TOP(ptr1,ptr2,x,y,px,py) do { \
 	*(ptr1 + (y) - (px)) = color1; \
 	*(ptr1 + (x) - (py)) = color2; \
@@ -222,6 +254,37 @@ inline frac_t fp_sqroot(uint32 x) {
 	this->blendPixelPtr(ptr4 + (y) + (px), color2, a); \
 } while (0)
 
+#define WU_DRAWCIRCLE_BCOLOR_TR_CW(ptr,x,y,px,py,a) do { \
+	this->blendPixelPtr(ptr + (y) - (px), color, a); \
+} while (0)
+
+#define WU_DRAWCIRCLE_BCOLOR_TR_CCW(ptr,x,y,px,py,a) do { \
+	this->blendPixelPtr(ptr + (x) - (py), color, a); \
+} while (0)
+
+#define WU_DRAWCIRCLE_BCOLOR_TL_CW(ptr,x,y,px,py,a) do { \
+	this->blendPixelPtr(ptr - (x) - (py), color, a); \
+} while (0)
+
+#define WU_DRAWCIRCLE_BCOLOR_TL_CCW(ptr,x,y,px,py,a) do { \
+	this->blendPixelPtr(ptr - (y) - (px), color, a); \
+} while (0)
+
+#define WU_DRAWCIRCLE_BCOLOR_BL_CW(ptr,x,y,px,py,a) do { \
+	this->blendPixelPtr(ptr - (y) + (px), color, a); \
+} while (0)
+
+#define WU_DRAWCIRCLE_BCOLOR_BL_CCW(ptr,x,y,px,py,a) do { \
+	this->blendPixelPtr(ptr - (x) + (py), color, a); \
+} while (0)
+
+#define WU_DRAWCIRCLE_BCOLOR_BR_CW(ptr,x,y,px,py,a) do { \
+	this->blendPixelPtr(ptr + (x) + (py), color, a); \
+} while (0)
+
+#define WU_DRAWCIRCLE_BCOLOR_BR_CCW(ptr,x,y,px,py,a) do { \
+	this->blendPixelPtr(ptr + (y) + (px), color, a); \
+} while (0)
 
 // optimized Wu's algorithm
 #define WU_ALGORITHM() do { \
@@ -277,16 +340,24 @@ void colorFill(PixelType *first, PixelType *last, PixelType color) {
 
 VectorRenderer *createRenderer(int mode) {
 #ifdef DISABLE_FANCY_THEMES
-	assert(mode == GUI::ThemeEngine::kGfxStandard16bit);
+	assert(mode == GUI::ThemeEngine::kGfxStandard);
 #endif
 
 	PixelFormat format = g_system->getOverlayFormat();
 	switch (mode) {
-	case GUI::ThemeEngine::kGfxStandard16bit:
-		return new VectorRendererSpec<OverlayColor>(format);
+	case GUI::ThemeEngine::kGfxStandard:
+		if (g_system->getOverlayFormat().bytesPerPixel == 4)
+			return new VectorRendererSpec<uint32>(format);
+		else if (g_system->getOverlayFormat().bytesPerPixel == 2)
+			return new VectorRendererSpec<uint16>(format);
+		break;
 #ifndef DISABLE_FANCY_THEMES
-	case GUI::ThemeEngine::kGfxAntialias16bit:
-		return new VectorRendererAA<OverlayColor>(format);
+	case GUI::ThemeEngine::kGfxAntialias:
+		if (g_system->getOverlayFormat().bytesPerPixel == 4)
+			return new VectorRendererAA<uint32>(format);
+		else if (g_system->getOverlayFormat().bytesPerPixel == 2)
+			return new VectorRendererAA<uint16>(format);
+		break;
 #endif
 	default:
 		break;
@@ -317,9 +388,15 @@ setGradientColors(uint8 r1, uint8 g1, uint8 b1, uint8 r2, uint8 g2, uint8 b2) {
 	_gradientEnd = _format.RGBToColor(r2, g2, b2);
 	_gradientStart = _format.RGBToColor(r1, g1, b1);
 
-	_gradientBytes[0] = (_gradientEnd & _redMask) - (_gradientStart & _redMask);
-	_gradientBytes[1] = (_gradientEnd & _greenMask) - (_gradientStart & _greenMask);
-	_gradientBytes[2] = (_gradientEnd & _blueMask) - (_gradientStart & _blueMask);
+	if (sizeof(PixelType) == 4) {
+		_gradientBytes[0] = ((_gradientEnd & _redMask) >> _format.rShift) - ((_gradientStart & _redMask) >> _format.rShift);
+		_gradientBytes[1] = ((_gradientEnd & _greenMask) >> _format.gShift) - ((_gradientStart & _greenMask) >> _format.gShift);
+		_gradientBytes[2] = ((_gradientEnd & _blueMask) >> _format.bShift) - ((_gradientStart & _blueMask) >> _format.bShift);
+	} else {
+		_gradientBytes[0] = (_gradientEnd & _redMask) - (_gradientStart & _redMask);
+		_gradientBytes[1] = (_gradientEnd & _greenMask) - (_gradientStart & _greenMask);
+		_gradientBytes[2] = (_gradientEnd & _blueMask) - (_gradientStart & _blueMask);
+	}
 }
 
 template<typename PixelType>
@@ -328,9 +405,15 @@ calcGradient(uint32 pos, uint32 max) {
 	PixelType output = 0;
 	pos = (MIN(pos * Base::_gradientFactor, max) << 12) / max;
 
-	output |= ((_gradientStart & _redMask) + ((_gradientBytes[0] * pos) >> 12)) & _redMask;
-	output |= ((_gradientStart & _greenMask) + ((_gradientBytes[1] * pos) >> 12)) & _greenMask;
-	output |= ((_gradientStart & _blueMask) + ((_gradientBytes[2] * pos) >> 12)) & _blueMask;
+	if (sizeof(PixelType) == 4) {
+		output |= ((_gradientStart & _redMask) + (((_gradientBytes[0] * pos) >> 12) << _format.rShift)) & _redMask;
+		output |= ((_gradientStart & _greenMask) + (((_gradientBytes[1] * pos) >> 12) << _format.gShift)) & _greenMask;
+		output |= ((_gradientStart & _blueMask) + (((_gradientBytes[2] * pos) >> 12) << _format.bShift)) & _blueMask;
+	} else {
+		output |= ((_gradientStart & _redMask) + ((_gradientBytes[0] * pos) >> 12)) & _redMask;
+		output |= ((_gradientStart & _greenMask) + ((_gradientBytes[1] * pos) >> 12)) & _greenMask;
+		output |= ((_gradientStart & _blueMask) + ((_gradientBytes[2] * pos) >> 12)) & _blueMask;
+	}
 	output |= _alphaMask;
 
 	return output;
@@ -397,7 +480,7 @@ gradientFill(PixelType *ptr, int width, int x, int y) {
 template<typename PixelType>
 void VectorRendererSpec<PixelType>::
 fillSurface() {
-	byte *ptr = (byte *)_activeSurface->getBasePtr(0, 0);
+	byte *ptr = (byte *)_activeSurface->getPixels();
 
 	int h = _activeSurface->h;
 	int pitch = _activeSurface->pitch;
@@ -453,7 +536,7 @@ template<typename PixelType>
 void VectorRendererSpec<PixelType>::
 blitSubSurface(const Graphics::Surface *source, const Common::Rect &r) {
 	byte *dst_ptr = (byte *)_activeSurface->getBasePtr(r.left, r.top);
-	const byte *src_ptr = (const byte *)source->getBasePtr(0, 0);
+	const byte *src_ptr = (const byte *)source->getPixels();
 
 	const int dst_pitch = _activeSurface->pitch;
 	const int src_pitch = source->pitch;
@@ -481,7 +564,7 @@ blitAlphaBitmap(const Graphics::Surface *source, const Common::Rect &r) {
 		y = y + (r.height() >> 1) - (source->h >> 1);
 
 	PixelType *dst_ptr = (PixelType *)_activeSurface->getBasePtr(x, y);
-	const PixelType *src_ptr = (const PixelType *)source->getBasePtr(0, 0);
+	const PixelType *src_ptr = (const PixelType *)source->getPixels();
 
 	int dst_pitch = _activeSurface->pitch / _activeSurface->format.bytesPerPixel;
 	int src_pitch = source->pitch / source->format.bytesPerPixel;
@@ -508,7 +591,7 @@ template<typename PixelType>
 void VectorRendererSpec<PixelType>::
 applyScreenShading(GUI::ThemeEngine::ShadingStyle shadingStyle) {
 	int pixels = _activeSurface->w * _activeSurface->h;
-	PixelType *ptr = (PixelType *)_activeSurface->getBasePtr(0, 0);
+	PixelType *ptr = (PixelType *)_activeSurface->getPixels();
 	uint8 r, g, b;
 	uint lum;
 
@@ -537,20 +620,41 @@ applyScreenShading(GUI::ThemeEngine::ShadingStyle shadingStyle) {
 template<typename PixelType>
 inline void VectorRendererSpec<PixelType>::
 blendPixelPtr(PixelType *ptr, PixelType color, uint8 alpha) {
-	int idst = *ptr;
-	int isrc = color;
+	if (sizeof(PixelType) == 4) {
+		const byte sR = (color & _redMask) >> _format.rShift;
+		const byte sG = (color & _greenMask) >> _format.gShift;
+		const byte sB = (color & _blueMask) >> _format.bShift;
 
-	*ptr = (PixelType)(
-		(_redMask & ((idst & _redMask) +
-		((int)(((int)(isrc & _redMask) -
-		(int)(idst & _redMask)) * alpha) >> 8))) |
-		(_greenMask & ((idst & _greenMask) +
-		((int)(((int)(isrc & _greenMask) -
-		(int)(idst & _greenMask)) * alpha) >> 8))) |
-		(_blueMask & ((idst & _blueMask) +
-		((int)(((int)(isrc & _blueMask) -
-		(int)(idst & _blueMask)) * alpha) >> 8))) |
-		(idst & _alphaMask));
+		byte dR = (*ptr & _redMask) >> _format.rShift;
+		byte dG = (*ptr & _greenMask) >> _format.gShift;
+		byte dB = (*ptr & _blueMask) >> _format.bShift;
+
+		dR += ((sR - dR) * alpha) >> 8;
+		dG += ((sG - dG) * alpha) >> 8;
+		dB += ((sB - dB) * alpha) >> 8;
+
+		*ptr = ((dR << _format.rShift) & _redMask)
+		     | ((dG << _format.gShift) & _greenMask)
+		     | ((dB << _format.bShift) & _blueMask)
+		     | (*ptr & _alphaMask);
+	} else if (sizeof(PixelType) == 2) {
+		int idst = *ptr;
+		int isrc = color;
+
+		*ptr = (PixelType)(
+			(_redMask & ((idst & _redMask) +
+			((int)(((int)(isrc & _redMask) -
+			(int)(idst & _redMask)) * alpha) >> 8))) |
+			(_greenMask & ((idst & _greenMask) +
+			((int)(((int)(isrc & _greenMask) -
+			(int)(idst & _greenMask)) * alpha) >> 8))) |
+			(_blueMask & ((idst & _blueMask) +
+			((int)(((int)(isrc & _blueMask) -
+			(int)(idst & _blueMask)) * alpha) >> 8))) |
+			(idst & _alphaMask));
+	} else {
+		error("Unsupported BPP format: %u", (uint)sizeof(PixelType));
+	}
 }
 
 template<typename PixelType>
@@ -607,24 +711,45 @@ darkenFill(PixelType *ptr, PixelType *end) {
 template<typename PixelType>
 void VectorRendererSpec<PixelType>::
 drawString(const Graphics::Font *font, const Common::String &text, const Common::Rect &area,
-			Graphics::TextAlign alignH, GUI::ThemeEngine::TextAlignVertical alignV, int deltax, bool ellipsis) {
+			Graphics::TextAlign alignH, GUI::ThemeEngine::TextAlignVertical alignV, int deltax, bool ellipsis, const Common::Rect &textDrawableArea) {
 
 	int offset = area.top;
 
 	if (font->getFontHeight() < area.height()) {
 		switch (alignV) {
-			case GUI::ThemeEngine::kTextAlignVCenter:
-				offset = area.top + ((area.height() - font->getFontHeight()) >> 1);
-				break;
-			case GUI::ThemeEngine::kTextAlignVBottom:
-				offset = area.bottom - font->getFontHeight();
-				break;
-			default:
-				break;
+		case GUI::ThemeEngine::kTextAlignVCenter:
+			offset = area.top + ((area.height() - font->getFontHeight()) >> 1);
+			break;
+		case GUI::ThemeEngine::kTextAlignVBottom:
+			offset = area.bottom - font->getFontHeight();
+			break;
+		default:
+			break;
 		}
 	}
 
-	font->drawString(_activeSurface, text, area.left, offset, area.width() - deltax, _fgColor, alignH, deltax, ellipsis);
+	Common::Rect drawArea;
+	if (textDrawableArea.isEmpty()) {
+		// In case no special area to draw to is given we only draw in the
+		// area specified by the user.
+		drawArea = area;
+		// warning("there is no text drawable area. Please set this area for clipping");
+	} else {
+		// The area we can draw to is the intersection between the allowed
+		// drawing area (textDrawableArea) and the area where we try to draw
+		// the text (area).
+		drawArea = textDrawableArea.findIntersectingRect(area);
+	}
+
+	// Better safe than sorry. We intersect with the actual surface boundaries
+	// to avoid any ugly clipping in _activeSurface->getSubArea which messes
+	// up the calculation of the x and y coordinates where to draw the string.
+	drawArea = drawArea.findIntersectingRect(Common::Rect(0, 0, _activeSurface->w, _activeSurface->h));
+
+	if (!drawArea.isEmpty()) {
+		Surface textAreaSurface = _activeSurface->getSubArea(drawArea);
+		font->drawString(&textAreaSurface, text, area.left - drawArea.left, offset - drawArea.top, area.width() - deltax, _fgColor, alignH, deltax, ellipsis);
+	}
 }
 
 /** LINES **/
@@ -778,7 +903,8 @@ drawRoundedSquare(int x, int y, int r, int w, int h) {
 
 	if (Base::_fillMode != kFillDisabled && Base::_shadowOffset
 		&& x + w + Base::_shadowOffset + 1 < Base::_activeSurface->w
-		&& y + h + Base::_shadowOffset + 1 < Base::_activeSurface->h) {
+		&& y + h + Base::_shadowOffset + 1 < Base::_activeSurface->h
+		&& h > (Base::_shadowOffset + 1) * 2) {
 		drawRoundedSquareShadow(x, y, r, w, h, Base::_shadowOffset);
 	}
 
@@ -809,13 +935,14 @@ drawTab(int x, int y, int r, int w, int h) {
 			// FIXME: This is broken for the AA renderer.
 			// See the rounded rect alg for how to fix it. (The border should
 			// be drawn before the interior, both inside drawTabAlg.)
-			drawTabAlg(x, y, w, h, r, (Base::_fillMode == kFillBackground) ? _bgColor : _fgColor, Base::_fillMode);
+			drawTabShadow(x, y, w - 2, h, r);
+			drawTabAlg(x, y, w - 2, h, r, _bgColor, Base::_fillMode);
 			if (Base::_strokeWidth)
 				drawTabAlg(x, y, w, h, r, _fgColor, kFillDisabled, (Base::_dynamicData >> 16), (Base::_dynamicData & 0xFFFF));
 			break;
 
 		case kFillForeground:
-			drawTabAlg(x, y, w, h, r, (Base::_fillMode == kFillBackground) ? _bgColor : _fgColor, Base::_fillMode);
+			drawTabAlg(x, y, w, h, r, _fgColor, Base::_fillMode);
 			break;
 	}
 }
@@ -996,6 +1123,67 @@ drawTabAlg(int x1, int y1, int w, int h, int r, PixelType color, VectorRenderer:
 }
 
 
+template<typename PixelType>
+void VectorRendererSpec<PixelType>::
+drawTabShadow(int x1, int y1, int w, int h, int r) {
+	int offset = 3;
+	int pitch = _activeSurface->pitch / _activeSurface->format.bytesPerPixel;
+	
+	// "Harder" shadows when having lower BPP, since we will have artifacts (greenish tint on the modern theme)
+	uint8 expFactor = 3;
+	uint16 alpha = (_activeSurface->format.bytesPerPixel > 2) ? 4 : 8;
+
+	int xstart = x1;
+	int ystart = y1;
+	int width = w;
+	int height = h + offset + 1;
+
+	for (int i = offset; i >= 0; i--) {
+		int f, ddF_x, ddF_y;
+		int x, y, px, py;
+
+		PixelType *ptr_tl = (PixelType *)Base::_activeSurface->getBasePtr(xstart + r, ystart + r);
+		PixelType *ptr_tr = (PixelType *)Base::_activeSurface->getBasePtr(xstart + width - r, ystart + r);
+		PixelType *ptr_fill = (PixelType *)Base::_activeSurface->getBasePtr(xstart, ystart);
+
+		int short_h = height - (2 * r) + 2;
+		PixelType color = _format.RGBToColor(0, 0, 0);
+
+		BE_RESET();
+
+		// HACK: As we are drawing circles exploting 8-axis symmetry,
+		// there are 4 pixels on each circle which are drawn twice.
+		// this is ok on filled circles, but when blending on surfaces,
+		// we cannot let it blend twice. awful.
+		uint32 hb = 0;
+		
+		while (x++ < y) {
+			BE_ALGORITHM();
+
+			if (((1 << x) & hb) == 0) {
+				blendFill(ptr_tl - y - px, ptr_tr + y - px, color, (uint8)alpha);
+				hb |= (1 << x);
+			}
+
+			if (((1 << y) & hb) == 0) {
+				blendFill(ptr_tl - x - py, ptr_tr + x - py, color, (uint8)alpha);
+				hb |= (1 << y);
+			}
+		}
+	
+		ptr_fill += pitch * r;
+		while (short_h--) {
+			blendFill(ptr_fill, ptr_fill + width + 1, color, (uint8)alpha);
+			ptr_fill += pitch;
+		}
+
+		// Move shadow one pixel upward each iteration
+		xstart += 1;
+		// Multiply with expfactor
+		alpha = (alpha * (expFactor << 8)) >> 9;
+	}
+}
+	
 /** BEVELED TABS FOR CLASSIC THEME **/
 template<typename PixelType>
 void VectorRendererSpec<PixelType>::
@@ -1429,118 +1617,160 @@ drawTriangleFast(int x1, int y1, int size, bool inverted, PixelType color, Vecto
 /** ROUNDED SQUARE ALGORITHM **/
 template<typename PixelType>
 void VectorRendererSpec<PixelType>::
-drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, VectorRenderer::FillMode fill_m) {
+drawBorderRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, VectorRenderer::FillMode fill_m, uint8 alpha_t, uint8 alpha_r, uint8 alpha_b, uint8 alpha_l) {
+	int f, ddF_x, ddF_y;
+	int x, y, px, py;
+	int pitch = _activeSurface->pitch / _activeSurface->format.bytesPerPixel;
+	int sw = 0, sp = 0, hp = h * pitch;
+
+	PixelType *ptr_tl = (PixelType *)Base::_activeSurface->getBasePtr(x1 + r, y1 + r);
+	PixelType *ptr_tr = (PixelType *)Base::_activeSurface->getBasePtr(x1 + w - r, y1 + r);
+	PixelType *ptr_bl = (PixelType *)Base::_activeSurface->getBasePtr(x1 + r, y1 + h - r);
+	PixelType *ptr_br = (PixelType *)Base::_activeSurface->getBasePtr(x1 + w - r, y1 + h - r);
+	PixelType *ptr_fill = (PixelType *)Base::_activeSurface->getBasePtr(x1, y1);
+
+	int real_radius = r;
+	int short_h = h - (2 * r) + 2;
+
+	PixelType color1 = color;
+	PixelType color2 = color;
+
+	while (sw++ < Base::_strokeWidth) {
+		blendFill(ptr_fill + sp + r, ptr_fill + w + 1 + sp - r, color1, alpha_t); // top
+		blendFill(ptr_fill + hp - sp + r, ptr_fill + w + hp + 1 - sp - r, color2, alpha_b); // bottom
+		sp += pitch;
+
+		BE_RESET();
+		r--;
+		
+		int alphaStep_tr = ((alpha_t - alpha_r)/(y+1));
+		int alphaStep_br = ((alpha_r - alpha_b)/(y+1));
+		int alphaStep_bl = ((alpha_b - alpha_l)/(y+1));
+		int alphaStep_tl = ((alpha_l - alpha_t)/(y+1));
+
+		// Avoid blending the last pixels twice, since we have an alpha
+		while (x++ < (y - 2)) {
+			BE_ALGORITHM();
+
+			BE_DRAWCIRCLE_BCOLOR_TR_CW(ptr_tr, x, y, px, py, (uint8)(alpha_r + (alphaStep_tr * x))); 
+			BE_DRAWCIRCLE_BCOLOR_BR_CW(ptr_br, x, y, px, py, (uint8)(alpha_b + (alphaStep_br * x)));
+			BE_DRAWCIRCLE_BCOLOR_BL_CW(ptr_bl, x, y, px, py, (uint8)(alpha_l + (alphaStep_bl * x)));
+			BE_DRAWCIRCLE_BCOLOR_TL_CW(ptr_tl, x, y, px, py, (uint8)(alpha_t + (alphaStep_tl * x)));
+			
+			BE_DRAWCIRCLE_BCOLOR_TR_CCW(ptr_tr, x, y, px, py, (uint8)(alpha_t - (alphaStep_tr * x)));
+			BE_DRAWCIRCLE_BCOLOR_BR_CCW(ptr_br, x, y, px, py, (uint8)(alpha_r - (alphaStep_br * x)));
+			BE_DRAWCIRCLE_BCOLOR_BL_CCW(ptr_bl, x, y, px, py, (uint8)(alpha_b - (alphaStep_bl * x)));
+			BE_DRAWCIRCLE_BCOLOR_TL_CCW(ptr_tl, x, y, px, py, (uint8)(alpha_l - (alphaStep_tl * x)));
+			
+			if (Base::_strokeWidth > 1) {
+				BE_DRAWCIRCLE_BCOLOR(ptr_tr, ptr_tl, ptr_bl, ptr_br, x - 1, y, px, py);
+				BE_DRAWCIRCLE_BCOLOR(ptr_tr, ptr_tl, ptr_bl, ptr_br, x, y, px - pitch, py);
+			}
+		}
+	}
+
+	ptr_fill += pitch * real_radius;
+	while (short_h--) {
+		blendFill(ptr_fill, ptr_fill + Base::_strokeWidth, color1, alpha_l); // left
+		blendFill(ptr_fill + w - Base::_strokeWidth + 1, ptr_fill + w + 1, color2, alpha_r); // right
+		ptr_fill += pitch;
+	}
+}
+
+template<typename PixelType>
+void VectorRendererSpec<PixelType>::
+drawInteriorRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, VectorRenderer::FillMode fill_m) {
 	int f, ddF_x, ddF_y;
 	int x, y, px, py;
 	int pitch = _activeSurface->pitch / _activeSurface->format.bytesPerPixel;
 
-	// TODO: Split this up into border, bevel and interior functions
+	PixelType *ptr_tl = (PixelType *)Base::_activeSurface->getBasePtr(x1 + r, y1 + r);
+	PixelType *ptr_tr = (PixelType *)Base::_activeSurface->getBasePtr(x1 + w - r, y1 + r);
+	PixelType *ptr_bl = (PixelType *)Base::_activeSurface->getBasePtr(x1 + r, y1 + h - r);
+	PixelType *ptr_br = (PixelType *)Base::_activeSurface->getBasePtr(x1 + w - r, y1 + h - r);
+	PixelType *ptr_fill = (PixelType *)Base::_activeSurface->getBasePtr(x1, y1);
 
-	if (fill_m != kFillDisabled) {
-		PixelType *ptr_tl = (PixelType *)Base::_activeSurface->getBasePtr(x1 + r, y1 + r);
-		PixelType *ptr_tr = (PixelType *)Base::_activeSurface->getBasePtr(x1 + w - r, y1 + r);
-		PixelType *ptr_bl = (PixelType *)Base::_activeSurface->getBasePtr(x1 + r, y1 + h - r);
-		PixelType *ptr_br = (PixelType *)Base::_activeSurface->getBasePtr(x1 + w - r, y1 + h - r);
-		PixelType *ptr_fill = (PixelType *)Base::_activeSurface->getBasePtr(x1, y1);
+	int real_radius = r;
+	int short_h = h - (2 * r) + 2;
+	int long_h = h;
 
-		int real_radius = r;
-		int short_h = h - (2 * r) + 2;
-		int long_h = h;
+	BE_RESET();
 
-		BE_RESET();
+	PixelType color1 = color;
 
-		PixelType color1 = color;
-		if (fill_m == kFillBackground)
-			color1 = _bgColor;
+	if (fill_m == kFillGradient) {
+		PixelType color2, color3, color4;
+		precalcGradient(long_h);
 
-		if (fill_m == kFillGradient) {
-			PixelType color2, color3, color4;
-			precalcGradient(long_h);
+		while (x++ < y) {
+			BE_ALGORITHM();
 
-			while (x++ < y) {
-				BE_ALGORITHM();
+			color1 = calcGradient(real_radius - x, long_h);
+			color2 = calcGradient(real_radius - y, long_h);
+			color3 = calcGradient(long_h - r + x, long_h);
+			color4 = calcGradient(long_h - r + y, long_h);
 
-				color1 = calcGradient(real_radius - x, long_h);
-				color2 = calcGradient(real_radius - y, long_h);
-				color3 = calcGradient(long_h - r + x, long_h);
-				color4 = calcGradient(long_h - r + y, long_h);
+			gradientFill(ptr_tl - x - py, w - 2 * r + 2 * x, x1 + r - x - y, real_radius - y);
+			gradientFill(ptr_tl - y - px, w - 2 * r + 2 * y, x1 + r - y - x, real_radius - x);
 
-				gradientFill(ptr_tl - x - py, w - 2 * r + 2 * x, x1 + r - x - y, real_radius - y);
-				gradientFill(ptr_tl - y - px, w - 2 * r + 2 * y, x1 + r - y - x, real_radius - x);
+			gradientFill(ptr_bl - x + py, w - 2 * r + 2 * x, x1 + r - x - y, long_h - r + y);
+			gradientFill(ptr_bl - y + px, w - 2 * r + 2 * y, x1 + r - y - x, long_h - r + x);
 
-				gradientFill(ptr_bl - x + py, w - 2 * r + 2 * x, x1 + r - x - y, long_h - r + y);
-				gradientFill(ptr_bl - y + px, w - 2 * r + 2 * y, x1 + r - y - x, long_h - r + x);
-
-				BE_DRAWCIRCLE_XCOLOR(ptr_tr, ptr_tl, ptr_bl, ptr_br, x, y, px, py);
-			}
-		} else {
-			while (x++ < y) {
-				BE_ALGORITHM();
-
-				colorFill<PixelType>(ptr_tl - x - py, ptr_tr + x - py, color1);
-				colorFill<PixelType>(ptr_tl - y - px, ptr_tr + y - px, color1);
-
-				colorFill<PixelType>(ptr_bl - x + py, ptr_br + x + py, color1);
-				colorFill<PixelType>(ptr_bl - y + px, ptr_br + y + px, color1);
-
-				// do not remove - messes up the drawing at lower resolutions
-				BE_DRAWCIRCLE(ptr_tr, ptr_tl, ptr_bl, ptr_br, x, y, px, py);
-			}
+			BE_DRAWCIRCLE_XCOLOR(ptr_tr, ptr_tl, ptr_bl, ptr_br, x, y, px, py);
 		}
+	} else {
+		while (x++ < y) {
+			BE_ALGORITHM();
 
-		ptr_fill += pitch * r;
-		while (short_h--) {
-			if (fill_m == kFillGradient) {
-				gradientFill(ptr_fill, w + 1, x1, real_radius++);
-			} else {
-				colorFill<PixelType>(ptr_fill, ptr_fill + w + 1, color1);
-			}
-			ptr_fill += pitch;
+			colorFill<PixelType>(ptr_tl - x - py, ptr_tr + x - py, color1);
+			colorFill<PixelType>(ptr_tl - y - px, ptr_tr + y - px, color1);
+
+			colorFill<PixelType>(ptr_bl - x + py, ptr_br + x + py, color1);
+			colorFill<PixelType>(ptr_bl - y + px, ptr_br + y + px, color1);
+
+			// do not remove - messes up the drawing at lower resolutions
+			BE_DRAWCIRCLE(ptr_tr, ptr_tl, ptr_bl, ptr_br, x, y, px, py);
 		}
 	}
 
+	ptr_fill += pitch * r;
+	while (short_h--) {
+		if (fill_m == kFillGradient) {
+			gradientFill(ptr_fill, w + 1, x1, real_radius++);
+		} else {
+			colorFill<PixelType>(ptr_fill, ptr_fill + w + 1, color1);
+		}
+		ptr_fill += pitch;
+	}
+}
+
+template<typename PixelType>
+void VectorRendererSpec<PixelType>::
+drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, VectorRenderer::FillMode fill_m) {
+	const uint8 borderAlpha_t = 0;
+	const uint8 borderAlpha_r = 127;
+	const uint8 borderAlpha_b = 255; 
+	const uint8 borderAlpha_l = 63;
+
+	const uint8 bevelAlpha_t = 255;
+	const uint8 bevelAlpha_r = 31;
+	const uint8 bevelAlpha_b = 0;
+	const uint8 bevelAlpha_l = 127;
+
+	// If only border is visible
+	if ((!(w <= 0 || h <= 0)) && (fill_m != Base::kFillDisabled)) {
+		if (fill_m == Base::kFillBackground)
+			drawInteriorRoundedSquareAlg(x1, y1, r, w, h, _bgColor, fill_m);
+		else
+			drawInteriorRoundedSquareAlg(x1, y1, r, w, h, color, fill_m);
+	}
 
 	if (Base::_strokeWidth) {
-		int sw = 0, sp = 0, hp = h * pitch;
-
-		PixelType *ptr_tl = (PixelType *)Base::_activeSurface->getBasePtr(x1 + r, y1 + r);
-		PixelType *ptr_tr = (PixelType *)Base::_activeSurface->getBasePtr(x1 + w - r, y1 + r);
-		PixelType *ptr_bl = (PixelType *)Base::_activeSurface->getBasePtr(x1 + r, y1 + h - r);
-		PixelType *ptr_br = (PixelType *)Base::_activeSurface->getBasePtr(x1 + w - r, y1 + h - r);
-		PixelType *ptr_fill = (PixelType *)Base::_activeSurface->getBasePtr(x1, y1);
-
-		int real_radius = r;
-		int short_h = h - (2 * r) + 2;
-
-		// TODO: A gradient effect on the bevel
-		PixelType color1, color2;
-		color1 = Base::_bevel ? _bevelColor : color;
-		color2 = color;
-
-		while (sw++ < Base::_strokeWidth) {
-			colorFill<PixelType>(ptr_fill + sp + r, ptr_fill + w + 1 + sp - r, color1);
-			colorFill<PixelType>(ptr_fill + hp - sp + r, ptr_fill + w + hp + 1 - sp - r, color2);
-			sp += pitch;
-
-			BE_RESET();
-			r--;
-
-			while (x++ < y) {
-				BE_ALGORITHM();
-				BE_DRAWCIRCLE_BCOLOR(ptr_tr, ptr_tl, ptr_bl, ptr_br, x, y, px, py);
-
-				if (Base::_strokeWidth > 1) {
-					BE_DRAWCIRCLE_BCOLOR(ptr_tr, ptr_tl, ptr_bl, ptr_br, x - 1, y, px, py);
-					BE_DRAWCIRCLE_BCOLOR(ptr_tr, ptr_tl, ptr_bl, ptr_br, x, y, px - pitch, py);
-				}
-			}
-		}
-
-		ptr_fill += pitch * real_radius;
-		while (short_h--) {
-			colorFill<PixelType>(ptr_fill, ptr_fill + Base::_strokeWidth, color1);
-			colorFill<PixelType>(ptr_fill + w - Base::_strokeWidth + 1, ptr_fill + w + 1, color2);
-			ptr_fill += pitch;
+		if (r != 0 && _bevel > 0) {
+			drawBorderRoundedSquareAlg(x1, y1, r, w, h, color, fill_m, borderAlpha_t, borderAlpha_r, borderAlpha_b, borderAlpha_l);
+			drawBorderRoundedSquareAlg(x1, y1, r, w, h, _bevelColor, fill_m, bevelAlpha_t, bevelAlpha_r, bevelAlpha_b, bevelAlpha_l);
+		} else {
+			drawBorderRoundedSquareAlg(x1, y1, r, w, h, color, fill_m, 255, 255, 255, 255);
 		}
 	}
 }
@@ -1599,85 +1829,112 @@ drawCircleAlg(int x1, int y1, int r, PixelType color, VectorRenderer::FillMode f
  ********************************************************************/
 template<typename PixelType>
 void VectorRendererSpec<PixelType>::
-drawSquareShadow(int x, int y, int w, int h, int blur) {
-	PixelType *ptr = (PixelType *)_activeSurface->getBasePtr(x + w - 1, y + blur);
+drawSquareShadow(int x, int y, int w, int h, int offset) {
+	PixelType *ptr = (PixelType *)_activeSurface->getBasePtr(x + w - 1, y + offset);
 	int pitch = _activeSurface->pitch / _activeSurface->format.bytesPerPixel;
 	int i, j;
 
-	i = h - blur;
+	i = h - offset;
 
 	while (i--) {
-		j = blur;
+		j = offset;
 		while (j--)
-			blendPixelPtr(ptr + j, 0, ((blur - j) << 8) / blur);
+			blendPixelPtr(ptr + j, 0, ((offset - j) << 8) / offset);
 		ptr += pitch;
 	}
 
-	ptr = (PixelType *)_activeSurface->getBasePtr(x + blur, y + h - 1);
+	ptr = (PixelType *)_activeSurface->getBasePtr(x + offset, y + h - 1);
 
-	while (i++ < blur) {
-		j = w - blur;
+	while (i++ < offset) {
+		j = w - offset;
 		while (j--)
-			blendPixelPtr(ptr + j, 0, ((blur - i) << 8) / blur);
+			blendPixelPtr(ptr + j, 0, ((offset - i) << 8) / offset);
 		ptr += pitch;
 	}
 
 	ptr = (PixelType *)_activeSurface->getBasePtr(x + w, y + h);
 
 	i = 0;
-	while (i++ < blur) {
-		j = blur - 1;
+	while (i++ < offset) {
+		j = offset - 1;
 		while (j--)
-			blendPixelPtr(ptr + j, 0, (((blur - j) * (blur - i)) << 8) / (blur * blur));
+			blendPixelPtr(ptr + j, 0, (((offset - j) * (offset - i)) << 8) / (offset * offset));
 		ptr += pitch;
 	}
 }
 
 template<typename PixelType>
 void VectorRendererSpec<PixelType>::
-drawRoundedSquareShadow(int x1, int y1, int r, int w, int h, int blur) {
-	int f, ddF_x, ddF_y;
-	int x, y, px, py;
+drawRoundedSquareShadow(int x1, int y1, int r, int w, int h, int offset) {
 	int pitch = _activeSurface->pitch / _activeSurface->format.bytesPerPixel;
-	int alpha = 102;
 
-	x1 += blur;
-	y1 += blur;
+	// "Harder" shadows when having lower BPP, since we will have artifacts (greenish tint on the modern theme)
+	uint8 expFactor = 3;
+	uint16 alpha = (_activeSurface->format.bytesPerPixel > 2) ? 4 : 8;
+	
+	// These constants ensure a border of 2px on the left and of each rounded square
+	int xstart = (x1 > 2) ? x1 - 2 : x1;
+	int ystart = y1;
+	int width = w + offset + 2;
+	int height = h + offset + 1;
 
-	PixelType *ptr_tr = (PixelType *)Base::_activeSurface->getBasePtr(x1 + w - r, y1 + r);
-	PixelType *ptr_bl = (PixelType *)Base::_activeSurface->getBasePtr(x1 + r, y1 + h - r);
-	PixelType *ptr_br = (PixelType *)Base::_activeSurface->getBasePtr(x1 + w - r, y1 + h - r);
-	PixelType *ptr_fill = (PixelType *)Base::_activeSurface->getBasePtr(x1 + w - blur, y1 + r);
+	for (int i = offset; i >= 0; i--) {
+		int f, ddF_x, ddF_y;
+		int x, y, px, py;
+		
+		PixelType *ptr_tl = (PixelType *)Base::_activeSurface->getBasePtr(xstart + r, ystart + r);
+		PixelType *ptr_tr = (PixelType *)Base::_activeSurface->getBasePtr(xstart + width - r, ystart + r);
+		PixelType *ptr_bl = (PixelType *)Base::_activeSurface->getBasePtr(xstart + r, ystart + height - r);
+		PixelType *ptr_br = (PixelType *)Base::_activeSurface->getBasePtr(xstart + width - r, ystart + height - r);
+		PixelType *ptr_fill = (PixelType *)Base::_activeSurface->getBasePtr(xstart, ystart);
 
-	int short_h = h - (2 * r) + 1;
+		int short_h = height - (2 * r) + 2;
+		PixelType color = _format.RGBToColor(0, 0, 0);
 
-	BE_RESET();
+		BE_RESET();
 
-	// HACK: As we are drawing circles exploting 8-axis symmetry,
-	// there are 4 pixels on each circle which are drawn twice.
-	// this is ok on filled circles, but when blending on surfaces,
-	// we cannot let it blend twice. awful.
-	uint32 hb = 0;
+		// HACK: As we are drawing circles exploting 8-axis symmetry,
+		// there are 4 pixels on each circle which are drawn twice.
+		// this is ok on filled circles, but when blending on surfaces,
+		// we cannot let it blend twice. awful.
+		uint32 hb = 0;
+		
+		while (x++ < y) {
+			BE_ALGORITHM();
 
-	while (x++ < y) {
-		BE_ALGORITHM();
 
-		if (((1 << x) & hb) == 0) {
-			blendFill(ptr_tr - px - r, ptr_tr + y - px, 0, alpha);
-			blendFill(ptr_bl - y + px, ptr_br + y + px, 0, alpha);
-			hb |= (1 << x);
+			if (((1 << x) & hb) == 0) {
+				blendFill(ptr_tl - y - px, ptr_tr + y - px, color, (uint8)alpha);
+				
+				// Will create a dark line of pixles if left out
+				if (hb > 0) {
+					blendFill(ptr_bl - y + px, ptr_br + y + px, color, (uint8)alpha);
+				}
+				hb |= (1 << x);
+			}
+
+			if (((1 << y) & hb) == 0) {
+				blendFill(ptr_tl - x - py, ptr_tr + x - py, color, (uint8)alpha);
+				blendFill(ptr_bl - x + py, ptr_br + x + py, color, (uint8)alpha);
+				hb |= (1 << y);
+			}
+		}
+	
+		ptr_fill += pitch * r;
+		while (short_h--) {
+			blendFill(ptr_fill, ptr_fill + width + 1, color, (uint8)alpha);
+			ptr_fill += pitch;
 		}
 
-		if (((1 << y) & hb) == 0) {
-			blendFill(ptr_tr - r - py, ptr_tr + x - py, 0, alpha);
-			blendFill(ptr_bl - x + py, ptr_br + x + py, 0, alpha);
-			hb |= (1 << y);
-		}
-	}
-
-	while (short_h--) {
-		blendFill(ptr_fill - r, ptr_fill + blur, 0, alpha);
-		ptr_fill += pitch;
+		// Make shadow smaller each iteration, and move it one pixel inward
+		xstart += 1;
+		ystart += 1;
+		width -= 2;
+		height -= 2;
+		
+		if (_shadowFillMode == kShadowExponential)
+			// Multiply with expfactor
+			alpha = (alpha * (expFactor << 8)) >> 9;
 	}
 }
 
@@ -1870,7 +2127,7 @@ drawTabAlg(int x1, int y1, int w, int h, int r, PixelType color, VectorRenderer:
 /** ROUNDED SQUARES **/
 template<typename PixelType>
 void VectorRendererAA<PixelType>::
-drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, VectorRenderer::FillMode fill_m) {
+drawBorderRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, VectorRenderer::FillMode fill_m, uint8 alpha_t, uint8 alpha_r, uint8 alpha_b, uint8 alpha_l) {
 	int x, y;
 	const int pitch = Base::_activeSurface->pitch / Base::_activeSurface->format.bytesPerPixel;
 	int px, py;
@@ -1879,65 +2136,89 @@ drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, Vecto
 	frac_t T = 0, oldT;
 	uint8 a1, a2;
 
-	// TODO: Split this up into border, bevel and interior functions
+	PixelType *ptr_tl = (PixelType *)Base::_activeSurface->getBasePtr(x1 + r, y1 + r);
+	PixelType *ptr_tr = (PixelType *)Base::_activeSurface->getBasePtr(x1 + w - r, y1 + r);
+	PixelType *ptr_bl = (PixelType *)Base::_activeSurface->getBasePtr(x1 + r, y1 + h - r);
+	PixelType *ptr_br = (PixelType *)Base::_activeSurface->getBasePtr(x1 + w - r, y1 + h - r);
+	PixelType *ptr_fill = (PixelType *)Base::_activeSurface->getBasePtr(x1, y1);
 
-	if (Base::_strokeWidth) {
-		PixelType *ptr_tl = (PixelType *)Base::_activeSurface->getBasePtr(x1 + r, y1 + r);
-		PixelType *ptr_tr = (PixelType *)Base::_activeSurface->getBasePtr(x1 + w - r, y1 + r);
-		PixelType *ptr_bl = (PixelType *)Base::_activeSurface->getBasePtr(x1 + r, y1 + h - r);
-		PixelType *ptr_br = (PixelType *)Base::_activeSurface->getBasePtr(x1 + w - r, y1 + h - r);
-		PixelType *ptr_fill = (PixelType *)Base::_activeSurface->getBasePtr(x1, y1);
+	int sw = 0, sp = 0;
+	int short_h = h - 2 * r;
+	int hp = h * pitch;
 
-		int sw = 0, sp = 0;
-		int short_h = h - 2 * r;
-		int hp = h * pitch;
+	int strokeWidth = Base::_strokeWidth;
 
-		int strokeWidth = Base::_strokeWidth;
-		// If we're going to fill the inside, draw a slightly thicker border
-		// so we can blend the inside on top of it.
-		if (fill_m != Base::kFillDisabled) strokeWidth++;
+	while (sw++ < strokeWidth) {
+		this->blendFill(ptr_fill + hp - sp + r, ptr_fill + w + hp + 1 - sp - r, color, alpha_b); // bottom
+		this->blendFill(ptr_fill + sp + r, ptr_fill + w + 1 + sp - r, color, alpha_t); // top
 
-		// TODO: A gradient effect on the bevel
-		PixelType color1, color2;
-		color1 = Base::_bevel ? Base::_bevelColor : color;
-		color2 = color;
+		sp += pitch;
 
+		x = r - (sw - 1);
+		y = 0;
+		T = 0;
+		px = pitch * x;
+		py = 0;
 
-		while (sw++ < strokeWidth) {
-			colorFill<PixelType>(ptr_fill + sp + r, ptr_fill + w + 1 + sp - r, color1);
-			colorFill<PixelType>(ptr_fill + hp - sp + r, ptr_fill + w + hp + 1 - sp - r, color2);
-			sp += pitch;
+		int alphaStep_tr = ((alpha_t - alpha_r)/(x+1));
+		int alphaStep_br = ((alpha_r - alpha_b)/(x+1));
+		int alphaStep_bl = ((alpha_b - alpha_l)/(x+1));
+		int alphaStep_tl = ((alpha_l - alpha_t)/(x+1));
 
-			x = r - (sw - 1);
-			y = 0;
-			T = 0;
-			px = pitch * x;
-			py = 0;
+		while (x > y++) {
+			WU_ALGORITHM();
 
-			while (x > y++) {
-				WU_ALGORITHM();
+			// sw == 1: outside, sw = _strokeWidth: inside
+			// We always draw the outer edge AAed, but the inner edge
+			// only when the inside isn't filled
+			if (sw != strokeWidth || fill_m != Base::kFillDisabled)
+				a2 = 255;
+			
+				// inner arc		
+				WU_DRAWCIRCLE_BCOLOR_TR_CW(ptr_tr, (x - 1), y, (px - pitch), py, (uint8)((uint32)(((alpha_t - (alphaStep_tr * y)) << 8) * a2) >> 16)); 
+				WU_DRAWCIRCLE_BCOLOR_BR_CW(ptr_br, (x - 1), y, (px - pitch), py, (uint8)((uint32)(((alpha_r - (alphaStep_br * y)) << 8) * a2) >> 16));
+				WU_DRAWCIRCLE_BCOLOR_BL_CW(ptr_bl, (x - 1), y, (px - pitch), py, (uint8)((uint32)(((alpha_b - (alphaStep_bl * y)) << 8) * a2) >> 16));
+				WU_DRAWCIRCLE_BCOLOR_TL_CW(ptr_tl, (x - 1), y, (px - pitch), py, (uint8)((uint32)(((alpha_l - (alphaStep_tl * y)) << 8) * a2) >> 16));
+				
+				WU_DRAWCIRCLE_BCOLOR_TR_CCW(ptr_tr, (x - 1), y, (px - pitch), py, (uint8)((uint32)(((alpha_r + (alphaStep_tr * y)) << 8) * a2) >> 16)); 
+				WU_DRAWCIRCLE_BCOLOR_BR_CCW(ptr_br, (x - 1), y, (px - pitch), py, (uint8)((uint32)(((alpha_b + (alphaStep_br * y)) << 8) * a2) >> 16));
+				WU_DRAWCIRCLE_BCOLOR_BL_CCW(ptr_bl, (x - 1), y, (px - pitch), py, (uint8)((uint32)(((alpha_l + (alphaStep_bl * y)) << 8) * a2) >> 16));
+				WU_DRAWCIRCLE_BCOLOR_TL_CCW(ptr_tl, (x - 1), y, (px - pitch), py, (uint8)((uint32)(((alpha_t + (alphaStep_tl * y)) << 8) * a2) >> 16));
 
-				// sw == 1: outside, sw = _strokeWidth: inside
-				// We always draw the outer edge AAed, but the inner edge
-				// only when the inside isn't filled
-				if (sw != strokeWidth || fill_m != Base::kFillDisabled)
-					a2 = 255;
-
-				// inner arc
-				WU_DRAWCIRCLE_BCOLOR(ptr_tr, ptr_tl, ptr_bl, ptr_br, (x - 1), y, (px - pitch), py, a2);
-
-				if (sw == 1) // outer arc
-					WU_DRAWCIRCLE_BCOLOR(ptr_tr, ptr_tl, ptr_bl, ptr_br, x, y, px, py, a1);
+				// outer arc
+				if (sw == 1) {
+					WU_DRAWCIRCLE_BCOLOR_TR_CW(ptr_tr, x, y, px, py, (uint8)((uint32)(((alpha_t - (alphaStep_tr * y)) << 8) * a1) >> 16));
+					WU_DRAWCIRCLE_BCOLOR_BR_CW(ptr_br, x, y, px, py, (uint8)((uint32)(((alpha_r - (alphaStep_br * y)) << 8) * a1) >> 16));
+					WU_DRAWCIRCLE_BCOLOR_BL_CW(ptr_bl, x, y, px, py, (uint8)((uint32)(((alpha_b - (alphaStep_bl * y)) << 8) * a1) >> 16));
+					WU_DRAWCIRCLE_BCOLOR_TL_CW(ptr_tl, x, y, px, py, (uint8)((uint32)(((alpha_l - (alphaStep_tl * y)) << 8) * a1) >> 16));
+					
+					WU_DRAWCIRCLE_BCOLOR_TR_CCW(ptr_tr, x, y, px, py, (uint8)((uint32)(((alpha_r + (alphaStep_tr * y)) << 8) * a1) >> 16)); 
+					WU_DRAWCIRCLE_BCOLOR_BR_CCW(ptr_br, x, y, px, py, (uint8)((uint32)(((alpha_b + (alphaStep_br * y)) << 8) * a1) >> 16));
+					WU_DRAWCIRCLE_BCOLOR_BL_CCW(ptr_bl, x, y, px, py, (uint8)((uint32)(((alpha_l + (alphaStep_bl * y)) << 8) * a1) >> 16));
+					WU_DRAWCIRCLE_BCOLOR_TL_CCW(ptr_tl, x, y, px, py, (uint8)((uint32)(((alpha_t + (alphaStep_tl * y)) << 8) * a1) >> 16));
+				}
 			}
-		}
 
 		ptr_fill += pitch * r;
-		while (short_h-- >= 0) {
-			colorFill<PixelType>(ptr_fill, ptr_fill + Base::_strokeWidth, color1);
-			colorFill<PixelType>(ptr_fill + w - Base::_strokeWidth + 1, ptr_fill + w + 1, color2);
+
+		while (short_h-- >= -2) {
+			this->blendFill(ptr_fill, ptr_fill + Base::_strokeWidth, color, alpha_l); // left
+			this->blendFill(ptr_fill + w - Base::_strokeWidth + 1, ptr_fill + w + 1, color, alpha_r); // right
 			ptr_fill += pitch;
 		}
 	}
+}
+
+template<typename PixelType>
+void VectorRendererAA<PixelType>::
+drawInteriorRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, VectorRenderer::FillMode fill_m) {
+	int x, y;
+	const int pitch = Base::_activeSurface->pitch / Base::_activeSurface->format.bytesPerPixel;
+	int px, py;
+	
+	uint32 rsq = r*r;
+	frac_t T = 0, oldT;
+	uint8 a1, a2;
 
 	r -= Base::_strokeWidth;
 	x1 += Base::_strokeWidth;
@@ -1946,92 +2227,115 @@ drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, Vecto
 	h -= 2*Base::_strokeWidth;
 	rsq = r*r;
 
-	if (w <= 0 || h <= 0)
-		return; // Only border is visible
+	PixelType *ptr_tl = (PixelType *)Base::_activeSurface->getBasePtr(x1 + r, y1 + r);
+	PixelType *ptr_tr = (PixelType *)Base::_activeSurface->getBasePtr(x1 + w - r, y1 + r);
+	PixelType *ptr_bl = (PixelType *)Base::_activeSurface->getBasePtr(x1 + r, y1 + h - r);
+	PixelType *ptr_br = (PixelType *)Base::_activeSurface->getBasePtr(x1 + w - r, y1 + h - r);
+	PixelType *ptr_fill = (PixelType *)Base::_activeSurface->getBasePtr(x1, y1);
 
-	if (fill_m != Base::kFillDisabled) {
-		if (fill_m == Base::kFillBackground)
-			color = Base::_bgColor;
+	int short_h = h - 2 * r;
+	x = r;
+	y = 0;
+	T = 0;
+	px = pitch * x;
+	py = 0;
 
-		PixelType *ptr_tl = (PixelType *)Base::_activeSurface->getBasePtr(x1 + r, y1 + r);
-		PixelType *ptr_tr = (PixelType *)Base::_activeSurface->getBasePtr(x1 + w - r, y1 + r);
-		PixelType *ptr_bl = (PixelType *)Base::_activeSurface->getBasePtr(x1 + r, y1 + h - r);
-		PixelType *ptr_br = (PixelType *)Base::_activeSurface->getBasePtr(x1 + w - r, y1 + h - r);
-		PixelType *ptr_fill = (PixelType *)Base::_activeSurface->getBasePtr(x1, y1);
+	if (fill_m == Base::kFillGradient) {
 
-		int short_h = h - 2 * r;
-		x = r;
-		y = 0;
-		T = 0;
-		px = pitch * x;
-		py = 0;
+		Base::precalcGradient(h);
 
-		if (fill_m == Base::kFillGradient) {
+		PixelType color1, color2, color3, color4;
+		while (x > y++) {
+			WU_ALGORITHM();
 
-			Base::precalcGradient(h);
+			color1 = Base::calcGradient(r - x, h);
+			color2 = Base::calcGradient(r - y, h);
+			color3 = Base::calcGradient(h - r + x, h);
+			color4 = Base::calcGradient(h - r + y, h);
 
-			PixelType color1, color2, color3, color4;
-			while (x > y++) {
-				WU_ALGORITHM();
+			Base::gradientFill(ptr_tl - x - py + 1, w - 2 * r + 2 * x - 1, x1 + r - x - y + 1, r - y);
 
-				color1 = Base::calcGradient(r - x, h);
-				color2 = Base::calcGradient(r - y, h);
-				color3 = Base::calcGradient(h - r + x, h);
-				color4 = Base::calcGradient(h - r + y, h);
+			// Only fill each horizontal line once (or we destroy
+			// the gradient effect at the edges)
+			if (T < oldT || y == 1)
+				Base::gradientFill(ptr_tl - y - px + 1, w - 2 * r + 2 * y - 1, x1 + r - y - x + 1, r - x);
 
-				Base::gradientFill(ptr_tl - x - py + 1, w - 2 * r + 2 * x - 1, x1 + r - x - y + 1, r - y);
+			Base::gradientFill(ptr_bl - x + py + 1, w - 2 * r + 2 * x - 1, x1 + r - x - y + 1, h - r + y);
 
-				// Only fill each horizontal line once (or we destroy
-				// the gradient effect at the edges)
-				if (T < oldT || y == 1)
-					Base::gradientFill(ptr_tl - y - px + 1, w - 2 * r + 2 * y - 1, x1 + r - y - x + 1, r - x);
+			// Only fill each horizontal line once (or we destroy
+			// the gradient effect at the edges)
+			if (T < oldT || y == 1)
+				Base::gradientFill(ptr_bl - y + px + 1, w - 2 * r + 2 * y - 1, x1 + r - y - x + 1, h - r + x);
 
-				Base::gradientFill(ptr_bl - x + py + 1, w - 2 * r + 2 * x - 1, x1 + r - x - y + 1, h - r + y);
-
-				// Only fill each horizontal line once (or we destroy
-				// the gradient effect at the edges)
-				if (T < oldT || y == 1)
-					Base::gradientFill(ptr_bl - y + px + 1, w - 2 * r + 2 * y - 1, x1 + r - y - x + 1, h - r + x);
-
-				// This shape is used for dialog backgrounds.
-				// If we're drawing on top of an empty overlay background,
-				// and the overlay supports alpha, we have to do AA by
-				// setting the dest alpha channel, instead of blending with
-				// dest color channels.
-				if (!g_system->hasFeature(OSystem::kFeatureOverlaySupportsAlpha))
-					WU_DRAWCIRCLE_XCOLOR(ptr_tr, ptr_tl, ptr_bl, ptr_br, x, y, px, py, a1, blendPixelPtr);
-				else
-					WU_DRAWCIRCLE_XCOLOR(ptr_tr, ptr_tl, ptr_bl, ptr_br, x, y, px, py, a1, blendPixelDestAlphaPtr);
-			}
-
-			ptr_fill += pitch * r;
-			while (short_h-- >= 0) {
-				Base::gradientFill(ptr_fill, w + 1, x1, r++);
-				ptr_fill += pitch;
-			}
-
-		} else {
-
-			while (x > 1 + y++) {
-				WU_ALGORITHM();
-
-				colorFill<PixelType>(ptr_tl - x - py + 1, ptr_tr + x - py, color);
-				if (T < oldT || y == 1)
-					colorFill<PixelType>(ptr_tl - y - px + 1, ptr_tr + y - px, color);
-
-				colorFill<PixelType>(ptr_bl - x + py + 1, ptr_br + x + py, color);
-				if (T < oldT || y == 1)
-					colorFill<PixelType>(ptr_bl - y + px + 1, ptr_br + y + px, color);
-
-				WU_DRAWCIRCLE(ptr_tr, ptr_tl, ptr_bl, ptr_br, x, y, px, py, a1);
-			}
-
-			ptr_fill += pitch * r;
-			while (short_h-- >= 0) {
-				colorFill<PixelType>(ptr_fill, ptr_fill + w + 1, color);
-				ptr_fill += pitch;
-			}
+			// This shape is used for dialog backgrounds.
+			// If we're drawing on top of an empty overlay background,
+			// and the overlay supports alpha, we have to do AA by
+			// setting the dest alpha channel, instead of blending with
+			// dest color channels.
+			if (!g_system->hasFeature(OSystem::kFeatureOverlaySupportsAlpha))
+				WU_DRAWCIRCLE_XCOLOR(ptr_tr, ptr_tl, ptr_bl, ptr_br, x, y, px, py, a1, blendPixelPtr);
+			else
+				WU_DRAWCIRCLE_XCOLOR(ptr_tr, ptr_tl, ptr_bl, ptr_br, x, y, px, py, a1, blendPixelDestAlphaPtr);
 		}
+
+		ptr_fill += pitch * r;
+		while (short_h-- >= 0) {
+			Base::gradientFill(ptr_fill, w + 1, x1, r++);
+			ptr_fill += pitch;
+		}
+
+	} else {
+
+		while (x > 1 + y++) {
+			WU_ALGORITHM();
+
+			colorFill<PixelType>(ptr_tl - x - py + 1, ptr_tr + x - py, color);
+			if (T < oldT || y == 1)
+				colorFill<PixelType>(ptr_tl - y - px + 1, ptr_tr + y - px, color);
+
+			colorFill<PixelType>(ptr_bl - x + py + 1, ptr_br + x + py, color);
+			if (T < oldT || y == 1)
+				colorFill<PixelType>(ptr_bl - y + px + 1, ptr_br + y + px, color);
+
+			WU_DRAWCIRCLE(ptr_tr, ptr_tl, ptr_bl, ptr_br, x, y, px, py, a1);
+		}
+
+		ptr_fill += pitch * r;
+		while (short_h-- >= 0) {
+			colorFill<PixelType>(ptr_fill, ptr_fill + w + 1, color);
+			ptr_fill += pitch;
+		}
+	}
+}
+
+template<typename PixelType>
+void VectorRendererAA<PixelType>::
+drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, VectorRenderer::FillMode fill_m) {
+	const uint8 borderAlpha_t = 0;
+	const uint8 borderAlpha_r = 127;
+	const uint8 borderAlpha_b = 255; 
+	const uint8 borderAlpha_l = 63;
+
+	const uint8 bevelAlpha_t = 255;
+	const uint8 bevelAlpha_r = 31;
+	const uint8 bevelAlpha_b = 0;
+	const uint8 bevelAlpha_l = 127;
+	
+	if (Base::_strokeWidth) {
+		if (r != 0 && Base::_bevel > 0) {
+			drawBorderRoundedSquareAlg(x1, y1, r, w, h, color, fill_m, borderAlpha_t, borderAlpha_r, borderAlpha_b, borderAlpha_l);
+			drawBorderRoundedSquareAlg(x1, y1, r, w, h, Base::_bevelColor, fill_m, bevelAlpha_t, bevelAlpha_r, bevelAlpha_b, bevelAlpha_l);
+		} else {
+			drawBorderRoundedSquareAlg(x1, y1, r, w, h, color, fill_m, 255, 255, 255, 255);
+		}
+	}
+	
+	// If only border is visible
+	if ((!(w <= 0 || h <= 0)) && (fill_m != Base::kFillDisabled)) {
+		if (fill_m == Base::kFillBackground)
+			drawInteriorRoundedSquareAlg(x1, y1, r, w, h, Base::_bgColor, fill_m);
+		else
+			drawInteriorRoundedSquareAlg(x1, y1, r, w, h, color, fill_m);
 	}
 }
 

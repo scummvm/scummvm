@@ -115,7 +115,7 @@ OpenGLTexture::~OpenGLTexture() {
 
 void OpenGLTexture::update(const Graphics::Surface *surface) {
 	glBindTexture(GL_TEXTURE_2D, id);
-	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, surface->w, surface->h, internalFormat, sourceFormat, surface->pixels);
+	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, surface->w, surface->h, internalFormat, sourceFormat, surface->getPixels());
 }
 
 Renderer::Renderer(OSystem *system) :
@@ -427,7 +427,7 @@ Graphics::Surface *Renderer::getScreenshot() {
 	Graphics::Surface *s = new Graphics::Surface();
 	s->create(kOriginalWidth, kOriginalHeight, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
 
-	glReadPixels(0, 0, kOriginalWidth, kOriginalHeight, GL_RGBA, GL_UNSIGNED_BYTE, s->pixels);
+	glReadPixels(0, 0, kOriginalWidth, kOriginalHeight, GL_RGBA, GL_UNSIGNED_BYTE, s->getPixels());
 
 	return s;
 }

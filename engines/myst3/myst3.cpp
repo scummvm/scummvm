@@ -1023,7 +1023,7 @@ Graphics::Surface *Myst3Engine::loadTexture(uint16 id) {
 	Graphics::Surface *s = new Graphics::Surface();
 	s->create(width, height, Graphics::PixelFormat(4, 8, 8, 8, 8, 8, 16, 24, 0));
 
-	data->read(s->pixels, height * s->pitch);
+	data->read(s->getPixels(), height * s->pitch);
 	delete data;
 
 	// ARGB => RGBA

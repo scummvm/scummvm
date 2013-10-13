@@ -23,6 +23,10 @@
 #ifndef TOOLS_CREATE_PROJECT_H
 #define TOOLS_CREATE_PROJECT_H
 
+#ifndef __has_feature         // Optional of course.
+  #define __has_feature(x) 0  // Compatibility with non-clang compilers.
+#endif
+
 #include <map>
 #include <list>
 #include <string>
@@ -301,6 +305,14 @@ void splitFilename(const std::string &fileName, std::string &name, std::string &
  * @return "true" when it will produce a file, "false" otherwise.
  */
 bool producesObjectFile(const std::string &fileName);
+
+/**
+* Convert an integer to string
+*
+* @param num the integer to convert
+* @return string representation of the number
+*/
+std::string toString(int num);
 
 /**
  * Structure representing a file tree. This contains two

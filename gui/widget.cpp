@@ -287,7 +287,7 @@ ButtonWidget::ButtonWidget(GuiObject *boss, int x, int y, int w, int h, const Co
 
 ButtonWidget::ButtonWidget(GuiObject *boss, const Common::String &name, const Common::String &label, const char *tooltip, uint32 cmd, uint8 hotkey)
 	: StaticTextWidget(boss, name, cleanupHotkey(label), tooltip), CommandSender(boss),
-	  _cmd(cmd), _lastTime(0) {
+	  _cmd(cmd), _hotkey(hotkey), _lastTime(0) {
 	if (hotkey == 0)
 		_hotkey = parseHotkey(label);
 	setFlags(WIDGET_ENABLED/* | WIDGET_BORDER*/ | WIDGET_CLEARBG);
@@ -396,7 +396,7 @@ PicButtonWidget::~PicButtonWidget() {
 void PicButtonWidget::setGfx(const Graphics::Surface *gfx) {
 	_gfx.free();
 
-	if (!gfx || !gfx->pixels)
+	if (!gfx || !gfx->getPixels())
 		return;
 
 	if (gfx->format.bytesPerPixel == 1) {
@@ -429,7 +429,7 @@ void PicButtonWidget::setGfx(int w, int h, int r, int g, int b) {
 void PicButtonWidget::drawWidget() {
 	g_gui.theme()->drawButton(Common::Rect(_x, _y, _x+_w, _y+_h), "", _state, getFlags());
 
-	if (_gfx.pixels) {
+	if (_gfx.getPixels()) {
 		// Check whether the set up surface needs to be converted to the GUI
 		// color format.
 		const Graphics::PixelFormat &requiredFormat = g_gui.theme()->getPixelFormat();
@@ -646,7 +646,7 @@ GraphicsWidget::~GraphicsWidget() {
 void GraphicsWidget::setGfx(const Graphics::Surface *gfx) {
 	_gfx.free();
 
-	if (!gfx || !gfx->pixels)
+	if (!gfx || !gfx->getPixels())
 		return;
 
 	if (gfx->format.bytesPerPixel == 1) {
@@ -676,7 +676,7 @@ void GraphicsWidget::setGfx(int w, int h, int r, int g, int b) {
 }
 
 void GraphicsWidget::drawWidget() {
-	if (_gfx.pixels) {
+	if (_gfx.getPixels()) {
 		// Check whether the set up surface needs to be converted to the GUI
 		// color format.
 		const Graphics::PixelFormat &requiredFormat = g_gui.theme()->getPixelFormat();

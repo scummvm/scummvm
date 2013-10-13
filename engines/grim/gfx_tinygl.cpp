@@ -1203,7 +1203,7 @@ void GfxTinyGL::prepareMovieFrame(Graphics::Surface *frame) {
 	_smushWidth = frame->w;
 	_smushHeight = frame->h;
 
-	Graphics::PixelBuffer srcBuf(frame->format, (byte *)frame->pixels);
+	Graphics::PixelBuffer srcBuf(frame->format, (byte *)frame->getPixels());
 	_smushBitmap.create(_pixelFormat, frame->w * frame->h, DisposeAfterUse::YES);
 	_smushBitmap.copyBuffer(0, frame->w * frame->h, srcBuf);
 }

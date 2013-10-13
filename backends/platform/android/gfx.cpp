@@ -583,7 +583,7 @@ Graphics::Surface *OSystem_Android::lockScreen() {
 	GLTHREADCHECK;
 
 	Graphics::Surface *surface = _game_texture->surface();
-	assert(surface->pixels);
+	assert(surface->getPixels());
 
 	return surface;
 }
@@ -676,7 +676,7 @@ void OSystem_Android::grabOverlay(void *buf, int pitch) {
 	assert(surface->format.bytesPerPixel == sizeof(uint16));
 
 	byte *dst = (byte *)buf;
-	const byte *src = (const byte *)surface->pixels;
+	const byte *src = (const byte *)surface->getPixels();
 	uint h = surface->h;
 
 	do {

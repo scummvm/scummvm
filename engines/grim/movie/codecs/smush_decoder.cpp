@@ -496,9 +496,9 @@ void SmushDecoder::SmushVideoTrack::convertDemoFrame() {
 	conversion.create(0, 0, _format); // Avoid issues with copyFrom, by creating an empty surface.
 	conversion.copyFrom(_surface);
 
-	uint16 *d = (uint16 *)_surface.pixels;
+	uint16 *d = (uint16 *)_surface.getPixels();
 	for (int l = 0; l < _width * _height; l++) {
-		int index = ((byte *)conversion.pixels)[l];
+		int index = ((byte *)conversion.getPixels())[l];
 		d[l] = ((_pal[(index * 3) + 0] & 0xF8) << 8) | ((_pal[(index * 3) + 1] & 0xFC) << 3) | (_pal[(index * 3) + 2] >> 3);
 	}
 	conversion.free();
@@ -513,7 +513,7 @@ void SmushDecoder::SmushVideoTrack::handleBlocky16(Common::SeekableReadStream *s
 	byte *ptr = new byte[size];
 	stream->read(ptr, size);
 
-	_blocky16->decode((byte *)_surface.pixels, ptr);
+	_blocky16->decode((byte *)_surface.getPixels(), ptr);
 	delete[] ptr;
 }
 
@@ -543,7 +543,7 @@ void SmushDecoder::SmushVideoTrack::handleFrameObject(Common::SeekableReadStream
 	size -= 14;
 	byte *ptr = new byte[size];
 	stream->read(ptr, size);
-	_blocky8->decode((byte *)_surface.pixels, ptr);
+	_blocky8->decode((byte *)_surface.getPixels(), ptr);
 	delete[] ptr;
 }
 

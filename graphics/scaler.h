@@ -90,10 +90,4 @@ inline bool createThumbnailFromScreen(Graphics::Surface *surf) { return true; }
  */
 extern bool createThumbnail(Graphics::Surface *surf, const uint8 *pixels, int w, int h, const uint8 *palette);
 
-/**
- * Downscale screenshot to thumbnale size.
- *
- */
-extern bool createThumbnail(Graphics::Surface &out, Graphics::Surface &in);
-
 #endif

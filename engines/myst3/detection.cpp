@@ -205,7 +205,7 @@ public:
 		assert(big->format.bytesPerPixel == 4
 				&& small->format.bytesPerPixel == 4);
 
-		uint32 *dst = (uint32 *)small->pixels;
+		uint32 *dst = (uint32 *)small->getPixels();
 		for (uint i = 0; i < small->h; i++) {
 			for (uint j = 0; j < small->w; j++) {
 				uint32 srcX = big->w * j / small->w;

@@ -248,7 +248,7 @@ bool BitmapData::loadTGA(Common::SeekableReadStream *data) {
 	_colorFormat = BM_RGBA;
 	_numImages = 1;
 	_data = new Graphics::PixelBuffer[1];
-	_data[0].set(pixelFormat, (unsigned char *)surf->pixels);
+	_data[0].set(pixelFormat, (unsigned char *)surf->getPixels());
 
 	g_driver->createBitmap(this);
 

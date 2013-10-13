@@ -23,11 +23,11 @@
 
 #include "gui/EventRecorder.h"
 
+#ifdef ENABLE_EVENTRECORDER
+
 namespace Common {
 DECLARE_SINGLETON(GUI::EventRecorder);
 }
-
-#ifdef ENABLE_EVENTRECORDER
 
 #include "common/debug-channels.h"
 #include "backends/timer/sdl/sdl-timer.h"
@@ -372,8 +372,8 @@ SdlMixerManager *EventRecorder::getMixerManager() {
 	}
 }
 
-void EventRecorder::getConfigFromDomain(Common::ConfigManager::Domain *domain) {
-	for (Common::ConfigManager::Domain::iterator entry = domain->begin(); entry!= domain->end(); ++entry) {
+void EventRecorder::getConfigFromDomain(const Common::ConfigManager::Domain *domain) {
+	for (Common::ConfigManager::Domain::const_iterator entry = domain->begin(); entry!= domain->end(); ++entry) {
 		_playbackFile->getHeader().settingsRecords[entry->_key] = entry->_value;
 	}
 }
@@ -386,7 +386,7 @@ void EventRecorder::getConfig() {
 
 
 void EventRecorder::applyPlaybackSettings() {
-	for (Common::StringMap::iterator i = _playbackFile->getHeader().settingsRecords.begin(); i != _playbackFile->getHeader().settingsRecords.end(); ++i) {
+	for (Common::StringMap::const_iterator i = _playbackFile->getHeader().settingsRecords.begin(); i != _playbackFile->getHeader().settingsRecords.end(); ++i) {
 		Common::String currentValue = ConfMan.get(i->_key);
 		if (currentValue != i->_value) {
 			ConfMan.set(i->_key, i->_value, ConfMan.kTransientDomain);
@@ -400,7 +400,7 @@ void EventRecorder::applyPlaybackSettings() {
 }
 
 void EventRecorder::removeDifferentEntriesInDomain(Common::ConfigManager::Domain *domain) {
-	for (Common::ConfigManager::Domain::iterator entry = domain->begin(); entry!= domain->end(); ++entry) {
+	for (Common::ConfigManager::Domain::const_iterator entry = domain->begin(); entry!= domain->end(); ++entry) {
 		if (_playbackFile->getHeader().settingsRecords.find(entry->_key) == _playbackFile->getHeader().settingsRecords.end()) {
 			debugC(1, kDebugLevelEventRec, "playback:action=\"Apply settings\" checksettings:key=%s storedvalue=%s currentvalue="" result=different", entry->_key.c_str(), entry->_value.c_str());
 			domain->erase(entry->_key);
@@ -481,6 +481,8 @@ Common::List<Common::Event> EventRecorder::mapEvent(const Common::Event &ev, Com
 	default:
 		return Common::DefaultEventMapper::mapEvent(ev, source);
 	}
+
+	return Common::DefaultEventMapper::mapEvent(ev, source);
 }
 
 void EventRecorder::setGameMd5(const ADGameDescription *gameDesc) {
@@ -522,7 +524,7 @@ bool EventRecorder::grabScreenAndComputeMD5(Graphics::Surface &screen, uint8 md5
 		warning("Can't save screenshot");
 		return false;
 	}
-	Common::MemoryReadStream bitmapStream((const byte*)screen.pixels, screen.w * screen.h * screen.format.bytesPerPixel);
+	Common::MemoryReadStream bitmapStream((const byte*)screen.getPixels(), screen.w * screen.h * screen.format.bytesPerPixel);
 	computeStreamMD5(bitmapStream, md5);
 	return true;
 }

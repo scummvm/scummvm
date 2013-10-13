@@ -112,7 +112,7 @@ void loadTGA(Common::SeekableReadStream *data, Texture *t) {
 	t->_data = new char[t->_width * t->_height * (bpp)];
 
 	// Copy the texture data, as the decoder owns the current copy.
-	memcpy(t->_data, tgaSurface->pixels, t->_width * t->_height * (bpp));
+	memcpy(t->_data, tgaSurface->getPixels(), t->_width * t->_height * (bpp));
 
 	delete tgaDecoder;
 }

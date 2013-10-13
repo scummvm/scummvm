@@ -253,6 +253,7 @@ CursorManager::Cursor::Cursor(const void *data, uint w, uint h, int hotspotX, in
 	_hotspotX = hotspotX;
 	_hotspotY = hotspotY;
 	_dontScale = dontScale;
+	_visible = false;
 }
 
 CursorManager::Cursor::~Cursor() {

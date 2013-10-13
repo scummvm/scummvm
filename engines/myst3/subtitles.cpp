@@ -197,7 +197,7 @@ void Subtitles::setFrame(int32 frame) {
 		error("No available font");
 
 	// Draw the new text
-	memset(_surface->pixels, 0, _surface->pitch * _surface->h);
+	memset(_surface->getPixels(), 0, _surface->pitch * _surface->h);
 	font->drawString(_surface, phrase->string, 0, _singleLineTop, _surface->w, 0xFFFFFFFF, Graphics::kTextAlignCenter);
 
 	// Update the texture

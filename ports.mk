@@ -150,6 +150,10 @@ ifdef USE_MPEG2
 OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libmpeg2.a
 endif
 
+ifdef USE_JPEG
+OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libjpeg.a
+endif
+
 ifdef USE_ZLIB
 OSX_ZLIB ?= $(STATICLIBPATH)/lib/libz.a
 endif

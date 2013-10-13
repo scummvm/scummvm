@@ -354,7 +354,7 @@ void GameState::StateData::syncWithSaveGame(Common::Serializer &s) {
 	}
 	assert(thumbnail && thumbnail->w == kThumbnailWidth && thumbnail->h == kThumbnailHeight);
 
-	s.syncBytes((byte *)thumbnail->pixels, kThumbnailWidth * kThumbnailHeight * 4);
+	s.syncBytes((byte *)thumbnail->getPixels(), kThumbnailWidth * kThumbnailHeight * 4);
 }
 
 void GameState::newGame() {

@@ -88,7 +88,13 @@ OSystem_SDL::~OSystem_SDL() {
 	delete _mixerManager;
 	_mixerManager = 0;
 
+#ifdef ENABLE_EVENTRECORDER
+	// HACK HACK HACK
+	// This is nasty.
 	delete g_eventRec.getTimerManager();
+#else
+	delete _timerManager;
+#endif
 
 	_timerManager = 0;
 	delete _mutexManager;
@@ -151,9 +157,15 @@ void OSystem_SDL::initBackend() {
 		// Setup and start mixer
 		_mixerManager->init();
 	}
+
+#ifdef ENABLE_EVENTRECORDER
 	g_eventRec.registerMixerManager(_mixerManager);
 
 	g_eventRec.registerTimerManager(new SdlTimerManager());
+#else
+	if (_timerManager == 0)
+		_timerManager = new SdlTimerManager();
+#endif
 
 	if (_audiocdManager == 0) {
 		// Audio CD support was removed with SDL 1.3
@@ -423,12 +435,18 @@ void OSystem_SDL::setupIcon() {
 
 uint32 OSystem_SDL::getMillis(bool skipRecord) {
 	uint32 millis = SDL_GetTicks();
+
+#ifdef ENABLE_EVENTRECORDER
 	g_eventRec.processMillis(millis, skipRecord);
+#endif
+
 	return millis;
 }
 
 void OSystem_SDL::delayMillis(uint msecs) {
+#ifdef ENABLE_EVENTRECORDER
 	if (!g_eventRec.processDelayMillis())
+#endif
 		SDL_Delay(msecs);
 }
 
@@ -451,10 +469,19 @@ Audio::Mixer *OSystem_SDL::getMixer() {
 
 SdlMixerManager *OSystem_SDL::getMixerManager() {
 	assert(_mixerManager);
+
+#ifdef ENABLE_EVENTRECORDER
 	return g_eventRec.getMixerManager();
+#else
+	return _mixerManager;
+#endif
 }
 
 Common::TimerManager *OSystem_SDL::getTimerManager() {
+#ifdef ENABLE_EVENTRECORDER
 	return g_eventRec.getTimerManager();
+#else
+	return _timerManager;
+#endif
 }
 

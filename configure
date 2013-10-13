@@ -104,7 +104,7 @@ _srcdir=`dirname $0`
 #
 #ResidualVM defaults: mpeg2=auto, faad=no, opengles=no, vorbis=no, tremor=no
 # mt32emu=no, translation=no, flac=no, seq_midi=no, snd_io=no, timidity=no, png=no
-# theoradec=no, fluidsynth=no, opengles2=no, eventrec=no
+# theoradec=no, fluidsynth=no, opengles2=no, eventrec=no, jpeg=no
 #
 # Default lib behaviour yes/no/auto
 _vorbis=no
@@ -117,10 +117,9 @@ _seq_midi=no
 _sndio=no
 _timidity=no
 _zlib=auto
-_sparkle=auto
-_png=no
 _mpeg2=auto
 _sparkle=auto
+_jpeg=no
 _png=no
 _theoradec=no
 _faad=no
@@ -174,7 +173,7 @@ _windres=windres
 _stagingpath="staging"
 _win32path="C:/residualvm"
 _aos4path="Games:ResidualVM"
-_staticlibpath=/opt/local
+_staticlibpath=
 _sdlconfig=sdl-config
 _freetypeconfig=freetype-config
 _sdlpath="$PATH"
@@ -198,6 +197,7 @@ add_feature faad "libfaad" "_faad"
 add_feature flac "FLAC" "_flac"
 add_feature freetype2 "FreeType2" "_freetype2"
 add_feature mad "MAD" "_mad"
+add_feature jpeg "JPEG" "_jpeg"
 add_feature png "PNG" "_png"
 add_feature theoradec "libtheoradec" "_theoradec"
 add_feature vorbis "Vorbis file support" "_vorbis _tremor"
@@ -919,6 +919,9 @@ Optional Libraries:
 
   --disable-opengl         disable OpenGL (ES) support [autodetect]
 
+  --with-jpeg-prefix=DIR   Prefix where libjpeg is installed (optional)
+  --disable-jpeg           disable JPEG decoder [autodetect]
+
   --with-png-prefix=DIR    Prefix where libpng is installed (optional)
   --disable-png            disable PNG decoder [autodetect]
 
@@ -998,6 +1001,8 @@ for ac_option in $@; do
 	--disable-nasm)           _nasm=no        ;;
 	--enable-mpeg2)           _mpeg2=yes      ;;
 	--disable-mpeg2)          _mpeg2=no       ;;
+	--disable-jpeg)           _jpeg=no        ;;
+	--enable-jpeg)            _jpeg=yes       ;;
 	--disable-png)            _png=no         ;;
 	--enable-png)             _png=yes        ;;
 	--disable-theoradec)      _theoradec=no   ;;
@@ -1081,6 +1086,11 @@ for ac_option in $@; do
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		MAD_CFLAGS="-I$arg/include"
 		MAD_LIBS="-L$arg/lib"
+		;;
+	--with-jpeg-prefix=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		JPEG_CFLAGS="-I$arg/include"
+		JPEG_LIBS="-L$arg/lib"
 		;;
 	--with-png-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
@@ -1243,7 +1253,7 @@ get_system_exe_extension $guessed_host
 NATIVEEXEEXT=$_exeext
 
 case $_host in
-android | android-v7a)
+android | android-v7a | ouya)
 	_host_os=android
 	_host_cpu=arm
 	_host_alias=arm-linux-androideabi
@@ -2035,6 +2045,12 @@ case $_host_os in
 				CXXFLAGS="$CXXFLAGS -mfpu=vfp"
 				LDFLAGS="$LDFLAGS -Wl,--fix-cortex-a8"
 				;;
+			ouya)
+				CXXFLAGS="$CXXFLAGS -march=armv7-a"
+				CXXFLAGS="$CXXFLAGS -mtune=cortex-a9"
+				CXXFLAGS="$CXXFLAGS -mfloat-abi=softfp"
+				CXXFLAGS="$CXXFLAGS -mfpu=neon"
+				;;
 		esac
 		# ResidualVM use newer NDK
 		CXXFLAGS="$CXXFLAGS --sysroot=$ANDROID_NDK/platforms/android-8/arch-arm"
@@ -2102,6 +2118,24 @@ case $_host_os in
 
 			LDFLAGS="-L${macport_prefix}/lib $LDFLAGS"
 			CXXFLAGS="-I${macport_prefix}/include $CXXFLAGS"
+			
+			if test -z "$_staticlibpath"; then
+				_staticlibpath=${macport_prefix}
+				echo "Set staticlib-prefix to ${_staticlibpath}"
+			fi
+		fi
+		# If _staticlibpath is not set yet try first /sw (fink) then /usr/local
+		# (the macports case is handled above).
+		if test -z "$_staticlibpath"; then
+			if test -d "/sw"; then
+				_staticlibpath=/sw
+				echo "Set staticlib-prefix to ${_staticlibpath}"
+			elif test -d "/usr/local"; then
+				_staticlibpath=/usr/local
+				echo "Set staticlib-prefix to ${_staticlibpath}"
+			else
+				echo "Could not determine prefix for static libraries"
+			fi
 		fi
 		;;
 	dreamcast)
@@ -2307,7 +2341,7 @@ if test -n "$_host"; then
 	# Cross-compiling mode - add your target here if needed
 	echo "Cross-compiling to $_host"
 	case "$_host" in
-		android | android-v7a)
+		android | android-v7a | ouya)
 			# we link a .so as default
 			LDFLAGS="$LDFLAGS -shared"
 			LDFLAGS="$LDFLAGS -Wl,-Bsymbolic,--no-undefined"
@@ -3341,6 +3375,32 @@ define_in_config_h_if_yes "$_alsa" 'USE_ALSA'
 echo "$_alsa"
 
 #
+# Check for libjpeg
+#
+echocheck "libjpeg >= v6b"
+if test "$_jpeg" = auto ; then
+	_jpeg=no
+	cat > $TMPC << EOF
+#include <stdio.h>
+#include <jpeglib.h>
+int main(void) {
+#if JPEG_LIB_VERSION >= 62
+#else
+  syntax error
+#endif
+  return 0;
+}
+EOF
+	cc_check $JPEG_CFLAGS $JPEG_LIBS -ljpeg && _jpeg=yes
+fi
+if test "$_jpeg" = yes ; then
+	LIBS="$LIBS $JPEG_LIBS -ljpeg"
+	INCLUDES="$INCLUDES $JPEG_CFLAGS"
+fi
+define_in_config_if_yes "$_jpeg" 'USE_JPEG'
+echo "$_jpeg"
+
+#
 # Check for PNG
 #
 echocheck "PNG >= 1.2.8"
@@ -3356,10 +3416,10 @@ int main(void) {
   return 0;
 }
 EOF
-	cc_check $PNG_CFLAGS $PNG_LIBS -lpng && _png=yes
+	cc_check $PNG_CFLAGS $PNG_LIBS -lpng -lz && _png=yes
 fi
 if test "$_png" = yes ; then
-	LIBS="$LIBS $PNG_LIBS -lpng"
+	LIBS="$LIBS $PNG_LIBS -lpng -lz"
 	INCLUDES="$INCLUDES $PNG_CFLAGS"
 fi
 define_in_config_if_yes "$_png" 'USE_PNG'

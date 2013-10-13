@@ -298,7 +298,7 @@ void SpotItemFace::updateData(const Graphics::Surface *surface) {
 }
 
 void SpotItemFace::clear() {
-	memset(_bitmap->pixels, 0, _bitmap->pitch * _bitmap->h);
+	memset(_bitmap->getPixels(), 0, _bitmap->pitch * _bitmap->h);
 
 	_drawn = false;
 }

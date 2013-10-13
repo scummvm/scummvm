@@ -199,7 +199,7 @@ private:
 	void setFileHeader();
 	void setGameMd5(const ADGameDescription *gameDesc);
 	void getConfig();
-	void getConfigFromDomain(Common::ConfigManager::Domain *domain);
+	void getConfigFromDomain(const Common::ConfigManager::Domain *domain);
 	void removeDifferentEntriesInDomain(Common::ConfigManager::Domain *domain);
 	void applyPlaybackSettings();
 
@@ -232,61 +232,6 @@ private:
 };
 
 } // End of namespace GUI
-
-#else
-
-#ifdef SDL_BACKEND
-#include "backends/timer/default/default-timer.h"
-#include "backends/mixer/sdl/sdl-mixer.h"
-#endif
-
-#define g_eventRec (GUI::EventRecorder::instance())
-
-namespace GUI {
-
-class EventRecorder : private Common::EventSource, public Common::Singleton<EventRecorder>, private Common::DefaultEventMapper {
-	friend class Common::Singleton<SingletonBaseType>;
-
-  public:
-	EventRecorder() {
-#ifdef SDL_BACKEND
-	  _timerManager = NULL;
-	  _realMixerManager = NULL;
-#endif
-	}
-	~EventRecorder() {}
-
-	bool pollEvent(Common::Event &ev) { return false; }
-	void RegisterEventSource() {}
-	void deinit() {}
-	void suspendRecording() {}
-	void resumeRecording() {}
-	void preDrawOverlayGui() {}
-	void postDrawOverlayGui() {}
-	void processGameDescription(const ADGameDescription *desc) {}
-	void updateSubsystems() {}
-	uint32 getRandomSeed(const Common::String &name) { return g_system->getMillis(); }
-	Common::SaveFileManager *getSaveManager(Common::SaveFileManager *realSaveManager) { return realSaveManager; }
-
-#ifdef SDL_BACKEND
-  private:
-	DefaultTimerManager *_timerManager;
-	SdlMixerManager *_realMixerManager;
-
-  public:
-	DefaultTimerManager *getTimerManager() { return _timerManager; }
-	void registerTimerManager(DefaultTimerManager *timerManager) { _timerManager = timerManager; }
-
-	SdlMixerManager *getMixerManager() { return _realMixerManager; }
-	void registerMixerManager(SdlMixerManager *mixerManager) { _realMixerManager = mixerManager; }
-
-	void processMillis(uint32 &millis, bool skipRecord) {}
-	bool processDelayMillis() { return false; }
-#endif
-
-};
-
-} // namespace GUI
 
 #endif // ENABLE_EVENTRECORDER
 

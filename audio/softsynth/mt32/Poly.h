@@ -44,13 +44,13 @@ private:
 	Poly *next;
 
 public:
-	Poly(Part *part);
+	Poly();
+	void setPart(Part *usePart);
 	void reset(unsigned int key, unsigned int velocity, bool sustain, Partial **partials);
 	bool noteOff(bool pedalHeld);
 	bool stopPedalHold();
 	bool startDecay();
 	bool startAbort();
-	void terminate();
 
 	void backupCacheToPartials(PatchCache cache[4]);
 
@@ -63,7 +63,7 @@ public:
 
 	void partialDeactivated(Partial *partial);
 
-	Poly *getNext();
+	Poly *getNext() const;
 	void setNext(Poly *poly);
 };
 
