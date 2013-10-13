@@ -65,7 +65,9 @@ private:
 
 	byte _palette[768];
 	Graphics::Surface *_frontScreen;
-	Graphics::Surface *_roomBackground;
+	const Graphics::Surface *_roomBackground;
+
+    void mainLoop();
 
 	void loadBackground(Common::SeekableReadStream *stream);
 	void setFullPalette();

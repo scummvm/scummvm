@@ -35,6 +35,7 @@
 #include "graphics/surface.h"
 #include "graphics/palette.h"
 #include "graphics/pixelformat.h"
+#include "graphics/decoders/bmp.h"
 
 #include "engines/util.h"
 #include "engines/advancedDetector.h"
@@ -42,11 +43,14 @@
 #include "audio/audiostream.h"
 
 #include "prince/prince.h"
+#include "prince/font.h"
+#include "prince/mhwanh.h"
 
 namespace Prince {
 
 PrinceEngine::PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
 	_rnd = new Common::RandomSource("prince");
+
 }
 
 PrinceEngine::~PrinceEngine() {
@@ -59,7 +63,93 @@ Common::Error PrinceEngine::run() {
 
 	initGraphics(640, 480, true);
 
+    const Common::FSNode gameDataDir(ConfMan.get("path"));
+    
+    debug("Adding all path: %s", gameDataDir.getPath().c_str());
+
+	SearchMan.addSubDirectoryMatching(gameDataDir, "all", 0, 2);
+	SearchMan.addSubDirectoryMatching(gameDataDir, "01", 0, 2);
+
+    Common::SeekableReadStream * walizka = SearchMan.createReadStreamForMember("walizka");
+
+    Common::SeekableReadStream *font1stream = SearchMan.createReadStreamForMember("font1.raw");
+    if (!font1stream) 
+        return Common::kPathNotFile;
+
+    Font font1 = Font();
+    if (font1.load(*font1stream))
+    {
+        font1.getCharWidth(103);
+    }
+
+    Common::SeekableReadStream *room = SearchMan.createReadStreamForMember("room");
+
+	_frontScreen = new Graphics::Surface();
+	_frontScreen->create(640, 480, Graphics::PixelFormat::createFormatCLUT8());
+
+    if (room)
+    {
+        Graphics::BitmapDecoder roomBmp;
+        roomBmp.loadStream(*room);
+        _roomBackground = roomBmp.getSurface();
+        _system->getPaletteManager()->setPalette(roomBmp.getPalette(), 0, 256);
+
+        font1.drawString(_frontScreen, "Hello World", 10, 10, 640, 1);
+
+        MhwanhDecoder walizkaBmp;
+        if (walizka)
+        {
+            debug("Loading walizka");
+            if (walizkaBmp.loadStream(*walizka))
+            {
+                _roomBackground = walizkaBmp.getSurface();
+                _system->getPaletteManager()->setPalette(walizkaBmp.getPalette(), 0, 256);
+            }
+        }
+
+
+        mainLoop();
+    }
+    delete room;
+
+
+
 	return Common::kNoError;
+}
+
+void PrinceEngine::mainLoop() {
+	uint32 nextFrameTime = 0;
+	while (!shouldQuit()) {
+		Common::Event event;
+		Common::EventManager *eventMan = _system->getEventManager();
+		while (eventMan->pollEvent(event)) {
+			switch (event.type) {
+			case Common::EVENT_KEYDOWN:
+				break;
+			case Common::EVENT_KEYUP:
+				break;
+			case Common::EVENT_MOUSEMOVE:
+				break;
+			case Common::EVENT_LBUTTONDOWN:
+			case Common::EVENT_RBUTTONDOWN:
+				break;
+			case Common::EVENT_LBUTTONUP:
+			case Common::EVENT_RBUTTONUP:
+				break;
+			case Common::EVENT_QUIT:
+				_system->quit();
+				break;
+			default:
+				break;
+			}
+		}
+		_system->copyRectToScreen((byte*)_roomBackground->getBasePtr(0,0), 640, 0, 0, 640, 480);
+
+		_system->updateScreen();
+
+		_system->delayMillis(40);
+
+    }
 }
 
 void PrinceEngine::setFullPalette() {

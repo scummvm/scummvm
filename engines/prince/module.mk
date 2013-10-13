@@ -1,7 +1,9 @@
 MODULE := engines/prince
 
 MODULE_OBJS = \
+	mhwanh.o \
 	detection.o \
+	font.o \
 	prince.o
 
 # This module can be built as a plugin
