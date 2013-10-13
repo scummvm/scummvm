@@ -33,8 +33,6 @@
 #include "engines/engine.h"
 #include "engines/util.h"
 
-#include "graphics/surface.h"
-
 #include "audio/mixer.h"
 
 namespace Prince {
@@ -42,6 +40,7 @@ namespace Prince {
 struct PrinceGameDescription;
 
 class PrinceEngine;
+class GraphicsMan;
 
 class PrinceEngine : public Engine {
 protected:
@@ -62,17 +61,9 @@ public:
 	
 private:
 	Common::RandomSource *_rnd;
-
-	byte _palette[768];
-	Graphics::Surface *_frontScreen;
-	const Graphics::Surface *_roomBackground;
-
-    void mainLoop();
-
-	void loadBackground(Common::SeekableReadStream *stream);
-	void setFullPalette();
+    GraphicsMan *_graph;
 	
-	void drawSprite(Graphics::Surface *sprite, int32 x, int32 y, int32 mod);
+    void mainLoop();
 
 };
 

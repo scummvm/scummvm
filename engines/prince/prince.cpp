@@ -19,6 +19,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
+
 #include "common/scummsys.h"
  
 #include "common/config-manager.h"
@@ -45,6 +46,7 @@
 #include "prince/prince.h"
 #include "prince/font.h"
 #include "prince/mhwanh.h"
+#include "prince/graphics.h"
 
 namespace Prince {
 
@@ -61,7 +63,7 @@ PrinceEngine::~PrinceEngine() {
 
 Common::Error PrinceEngine::run() {
 
-	initGraphics(640, 480, true);
+    _graph = new GraphicsMan(this);
 
     const Common::FSNode gameDataDir(ConfMan.get("path"));
     
@@ -81,20 +83,21 @@ Common::Error PrinceEngine::run() {
     {
         font1.getCharWidth(103);
     }
+    delete font1stream;
 
     Common::SeekableReadStream *room = SearchMan.createReadStreamForMember("room");
 
-	_frontScreen = new Graphics::Surface();
-	_frontScreen->create(640, 480, Graphics::PixelFormat::createFormatCLUT8());
+	//_frontScreen = new Graphics::Surface();
+	//_frontScreen->create(640, 480, Graphics::PixelFormat::createFormatCLUT8());
 
     if (room)
     {
         Graphics::BitmapDecoder roomBmp;
         roomBmp.loadStream(*room);
-        _roomBackground = roomBmp.getSurface();
+        //_roomBackground = roomBmp.getSurface();
         _system->getPaletteManager()->setPalette(roomBmp.getPalette(), 0, 256);
 
-        font1.drawString(_frontScreen, "Hello World", 10, 10, 640, 1);
+        //font1.drawString(_frontScreen, "Hello World", 10, 10, 640, 1);
 
         MhwanhDecoder walizkaBmp;
         if (walizka)
@@ -102,23 +105,23 @@ Common::Error PrinceEngine::run() {
             debug("Loading walizka");
             if (walizkaBmp.loadStream(*walizka))
             {
-                _roomBackground = walizkaBmp.getSurface();
-                _system->getPaletteManager()->setPalette(walizkaBmp.getPalette(), 0, 256);
+                _graph->_roomBackground = walizkaBmp.getSurface();
+                _graph->setPalette(walizkaBmp.getPalette());
             }
         }
+
+        _graph->change();
 
 
         mainLoop();
     }
     delete room;
 
-
-
 	return Common::kNoError;
 }
 
 void PrinceEngine::mainLoop() {
-	uint32 nextFrameTime = 0;
+	//uint32 nextFrameTime = 0;
 	while (!shouldQuit()) {
 		Common::Event event;
 		Common::EventManager *eventMan = _system->getEventManager();
@@ -137,24 +140,20 @@ void PrinceEngine::mainLoop() {
 			case Common::EVENT_RBUTTONUP:
 				break;
 			case Common::EVENT_QUIT:
-				_system->quit();
 				break;
 			default:
 				break;
 			}
 		}
-		_system->copyRectToScreen((byte*)_roomBackground->getBasePtr(0,0), 640, 0, 0, 640, 480);
 
-		_system->updateScreen();
+        if (shouldQuit())
+            return;
+
+        _graph->update();
 
 		_system->delayMillis(40);
 
     }
 }
-
-void PrinceEngine::setFullPalette() {
-	_system->getPaletteManager()->setPalette(_palette, 0, 256);
-} 
-
 
 } // End of namespace Prince
