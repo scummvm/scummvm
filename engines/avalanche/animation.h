@@ -40,19 +40,19 @@ enum Direction {
 	kDirStopped, kDirNone = 177
 };
 
-struct StatType {
+class AnimationType {
+public:
+	SpriteInfo _info;
+
+	// Former Stat structure
 	Common::String _name; // Name of character.
 	Common::String _comment; // Comment.
 	byte _frameNum; // Number of pictures.
 	byte _seq; // How many in one stride.
 	Color _fgBubbleCol, _bgBubbleCol; // Foreground & background bubble colors.
 	byte _acciNum; // The number according to Acci. (1=Avvy, etc.)
-};
+	//
 
-class AnimationType {
-public:
-	SpriteInfo _info;
-	StatType _stat; // Vital statistics.
 	Direction _facingDir;
 	byte _stepNum;
 	int16 _x, _y; // Current xy coords.

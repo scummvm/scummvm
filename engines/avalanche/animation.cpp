@@ -75,32 +75,32 @@ void AnimationType::init(byte spritenum, bool doCheck) {
 	// Replace variable named 'soa' in the original code.
 	inf.skip(2);
 
-	if (!_stat._name.empty())
-		_stat._name.clear();
+	if (!_name.empty())
+		_name.clear();
 	byte nameSize = inf.readByte();
 	for (int i = 0; i < nameSize; i++)
-		_stat._name += inf.readByte();
+		_name += inf.readByte();
 	inf.skip(12 - nameSize);
 
 	byte commentSize = inf.readByte();
 	for (int i = 0; i < commentSize; i++)
-		_stat._comment += inf.readByte();
+		_comment += inf.readByte();
 	inf.skip(16 - commentSize);
 
-	_stat._frameNum = inf.readByte();
+	_frameNum = inf.readByte();
 	_info._xLength = inf.readByte();
 	_info._yLength = inf.readByte();
-	_stat._seq = inf.readByte();
+	_seq = inf.readByte();
 	_info._size = inf.readUint16LE();
-	_stat._fgBubbleCol = (Color)inf.readByte();
-	_stat._bgBubbleCol = (Color)inf.readByte();
-	_stat._acciNum = inf.readByte();
+	_fgBubbleCol = (Color)inf.readByte();
+	_bgBubbleCol = (Color)inf.readByte();
+	_acciNum = inf.readByte();
 
 	_animCount = 0; // = 1;
 	_info._xWidth = _info._xLength / 8;
 	if ((_info._xLength % 8) > 0)
 		_info._xWidth++;
-	for (int i = 0; i < _stat._frameNum; i++) {
+	for (int i = 0; i < _frameNum; i++) {
 		_info._sil[_animCount] = new SilType[11 * (_info._yLength + 1)];
 		_info._mani[_animCount] = new ManiType[_info._size - 6];
 		for (int j = 0; j <= _info._yLength; j++)
@@ -147,7 +147,7 @@ void AnimationType::draw() {
 	if ((_vanishIfStill) && (_moveX == 0) && (_moveY == 0))
 		return;
 
-	byte picnum = _facingDir * _stat._seq + _stepNum;
+	byte picnum = _facingDir * _seq + _stepNum;
 
 	_anim->_vm->_graphics->drawSprite(_info, picnum, _x, _y);
 }
@@ -247,7 +247,7 @@ void AnimationType::walk() {
 		_count++;
 		if (((_moveX != 0) || (_moveY != 0)) && (_count > 1)) {
 			_stepNum++;
-			if (_stepNum == _stat._seq)
+			if (_stepNum == _seq)
 				_stepNum = 0;
 			_count = 0;
 		}
@@ -362,7 +362,7 @@ void AnimationType::stopWalk() {
 void AnimationType::chatter() {
 	_anim->_vm->_talkX = _x + _info._xLength / 2;
 	_anim->_vm->_talkY = _y;
-	_anim->_vm->_graphics->setDialogColor(_stat._bgBubbleCol, _stat._fgBubbleCol);
+	_anim->_vm->_graphics->setDialogColor(_bgBubbleCol, _fgBubbleCol);
 }
 
 void AnimationType::remove() {
@@ -370,7 +370,7 @@ void AnimationType::remove() {
 	_info._xWidth = _info._xLength / 8;
 	if ((_info._xLength % 8) > 0)
 		_info._xWidth++;
-	for (int i = 0; i < _stat._frameNum; i++) {
+	for (int i = 0; i < _frameNum; i++) {
 		assert(_animCount > 0);
 		_animCount--;
 		delete[] _info._mani[_animCount];
@@ -392,9 +392,11 @@ Animation::Animation(AvalancheEngine *vm) {
 
 Animation::~Animation() {
 	for (int16 i = 0; i < kSpriteNumbMax; i++) {
-		if (_sprites[i]->_quick)
-			_sprites[i]->remove();
-		delete(_sprites[i]);
+		AnimationType *curSpr = _sprites[i];
+
+		if (curSpr->_quick)
+			curSpr->remove();
+		delete(curSpr);
 	}
 }
 
@@ -736,11 +738,13 @@ void Animation::catacombMove(byte ped) {
 	}
 
 	if ((_vm->_geidaFollows) && (ped > 0)) {
-		if (!_sprites[1]->_quick)  // If we don't already have her...
-			_sprites[1]->init(5, true); // ...Load Geida.
+		AnimationType *spr1 = _sprites[1];
+
+		if (!spr1->_quick)  // If we don't already have her...
+			spr1->init(5, true); // ...Load Geida.
 		appearPed(1, geidaPed(ped));
-		_sprites[1]->_callEachStepFl = true;
-		_sprites[1]->_eachStepProc = kProcGeida;
+		spr1->_callEachStepFl = true;
+		spr1->_eachStepProc = kProcGeida;
 	}
 }
 
@@ -776,16 +780,18 @@ void Animation::callSpecial(uint16 which) {
 
 		if (!_arrowTriggered) {
 			_arrowTriggered = true;
+
+			AnimationType *spr1 = _sprites[1];
 			appearPed(1, 3); // The dart starts at ped 4, and...
-			_sprites[1]->walkTo(4); // flies to ped 5 (- 1 for pascal to C conversion).
-			_sprites[1]->_facingDir = kDirUp; // Only face.
+			spr1->walkTo(4); // flies to ped 5 (- 1 for pascal to C conversion).
+			spr1->_facingDir = kDirUp; // Only face.
 			// Should call some kind of Eachstep procedure which will deallocate
 			// the sprite when it hits the wall, and replace it with the chunk
 			// graphic of the arrow buried in the plaster. */
 
 			// OK!
-			_sprites[1]->_callEachStepFl = true;
-			_sprites[1]->_eachStepProc = kProcArrow;
+			spr1->_callEachStepFl = true;
+			spr1->_eachStepProc = kProcArrow;
 		}
 		break;
 	case 4: // This is the ghost room link.
@@ -801,23 +807,28 @@ void Animation::callSpecial(uint16 which) {
 			_vm->_dialogs->displayScrollChain('q', 35);
 			_sprites[0]->remove();
 			//tr[1].vanishifstill:=true;
+
+			AnimationType *spr1 = _sprites[1];
 			_vm->_background->draw(-1, -1, 1);
 			_vm->_dialogs->displayScrollChain('q', 36);
 			_vm->_tiedUp = true;
 			_vm->_friarWillTieYouUp = false;
-			_sprites[1]->walkTo(2);
-			_sprites[1]->_vanishIfStill = true;
-			_sprites[1]->_doCheck = true; // One of them must have Check_Me switched on.
+			spr1->walkTo(2);
+			spr1->_vanishIfStill = true;
+			spr1->_doCheck = true; // One of them must have Check_Me switched on.
 			_vm->setRoom(kPeopleFriarTuck, kRoomDummy); // Not here, then.
 			_vm->_timer->addTimer(364, Timer::kProcHangAround, Timer::kReasonHangingAround);
 		}
 		break;
-	case 6: // _vm->special 6: fall down oubliette.
+	case 6: {
+		// _vm->special 6: fall down oubliette.
+		AnimationType *avvy = _sprites[0];
 		_vm->_userMovesAvvy = false;
-		_sprites[0]->_moveX = 3;
-		_sprites[0]->_moveY = 0;
-		_sprites[0]->_facingDir = kDirRight;
+		avvy->_moveX = 3;
+		avvy->_moveY = 0;
+		avvy->_facingDir = kDirRight;
 		_vm->_timer->addTimer(1, Timer::kProcFallDownOubliette, Timer::kReasonFallingDownOubliette);
+		}
 		break;
 	case 7: // _vm->special 7: stop falling down oubliette.
 		_sprites[0]->_visible = false;
@@ -831,21 +842,25 @@ void Animation::callSpecial(uint16 which) {
 		break;
 	case 8:        // _vm->special 8: leave du Lustie's room.
 		if ((_vm->_geidaFollows) && (!_vm->_lustieIsAsleep)) {
+			AnimationType *spr1 = _sprites[1];
 			_vm->_dialogs->displayScrollChain('q', 63);
-			_sprites[1]->turn(kDirDown);
-			_sprites[1]->stopWalk();
-			_sprites[1]->_callEachStepFl = false; // Geida
+			spr1->turn(kDirDown);
+			spr1->stopWalk();
+			spr1->_callEachStepFl = false; // Geida
 			_vm->gameOver();
 		}
 		break;
-	case 9: // _vm->special 9: lose Geida to Robin Hood...
+	case 9: {
+		// _vm->special 9: lose Geida to Robin Hood...
 		if (!_vm->_geidaFollows)
 			return;   // DOESN'T COUNT: no Geida.
-		_sprites[1]->_callEachStepFl = false; // She no longer follows Avvy around.
-		_sprites[1]->walkTo(3); // She walks to somewhere...
+		AnimationType *spr1 = _sprites[1];
+		spr1->_callEachStepFl = false; // She no longer follows Avvy around.
+		spr1->walkTo(3); // She walks to somewhere...
 		_sprites[0]->remove();     // Lose Avvy.
 		_vm->_userMovesAvvy = false;
 		_vm->_timer->addTimer(40, Timer::kProcRobinHoodAndGeida, Timer::kReasonRobinHoodAndGeida);
+		}
 		break;
 	case 10: // _vm->special 10: transfer north in catacombs.
 		if ((_vm->_catacombX == 4) && (_vm->_catacombY == 1)) {
@@ -905,36 +920,38 @@ void Animation::callSpecial(uint16 which) {
 }
 
 void Animation::updateSpeed() {
+	AnimationType *avvy = _sprites[0];
 	// Given that you've just changed the speed in _speedX, this adjusts _moveX.
-	_sprites[0]->_moveX = (_sprites[0]->_moveX / 3) * _sprites[0]->_speedX;
-	_vm->_graphics->drawSpeedBar(_sprites[0]->_speedX);
+	avvy->_moveX = (avvy->_moveX / 3) * avvy->_speedX;
+	_vm->_graphics->drawSpeedBar(avvy->_speedX);
 }
 
 void Animation::setMoveSpeed(byte t, Direction dir) {
+	AnimationType *spr = _sprites[t];
 	switch (dir) {
 	case kDirUp:
-		_sprites[t]->setSpeed(0, -_sprites[t]->_speedY);
+		spr->setSpeed(0, -spr->_speedY);
 		break;
 	case kDirDown:
-		_sprites[t]->setSpeed(0, _sprites[t]->_speedY);
+		spr->setSpeed(0, spr->_speedY);
 		break;
 	case kDirLeft:
-		_sprites[t]->setSpeed(-_sprites[t]->_speedX,  0);
+		spr->setSpeed(-spr->_speedX,  0);
 		break;
 	case kDirRight:
-		_sprites[t]->setSpeed(_sprites[t]->_speedX,  0);
+		spr->setSpeed(spr->_speedX,  0);
 		break;
 	case kDirUpLeft:
-		_sprites[t]->setSpeed(-_sprites[t]->_speedX, -_sprites[t]->_speedY);
+		spr->setSpeed(-spr->_speedX, -spr->_speedY);
 		break;
 	case kDirUpRight:
-		_sprites[t]->setSpeed(_sprites[t]->_speedX, -_sprites[t]->_speedY);
+		spr->setSpeed(spr->_speedX, -spr->_speedY);
 		break;
 	case kDirDownLeft:
-		_sprites[t]->setSpeed(-_sprites[t]->_speedX, _sprites[t]->_speedY);
+		spr->setSpeed(-spr->_speedX, spr->_speedY);
 		break;
 	case kDirDownRight:
-		_sprites[t]->setSpeed(_sprites[t]->_speedX, _sprites[t]->_speedY);
+		spr->setSpeed(spr->_speedX, spr->_speedY);
 		break;
 	default:
 		break;
@@ -956,20 +973,21 @@ void Animation::followAvalotY(byte tripnum) {
 		return;
 
 	AnimationType *tripSpr = _sprites[tripnum];
+	AnimationType *spr1 = _sprites[1];
 
 	if (tripSpr->_homing)
-		tripSpr->_homingY = _sprites[1]->_y;
+		tripSpr->_homingY = spr1->_y;
 	else {
-		if (tripSpr->_y < _sprites[1]->_y)
+		if (tripSpr->_y < spr1->_y)
 			tripSpr->_y++;
-		else if (tripSpr->_y > _sprites[1]->_y)
+		else if (tripSpr->_y > spr1->_y)
 			tripSpr->_y--;
 		else
 			return;
 
 		if (tripSpr->_moveX == 0)  {
 			tripSpr->_stepNum++;
-			if (tripSpr->_stepNum == tripSpr->_stat._seq)
+			if (tripSpr->_stepNum == tripSpr->_seq)
 				tripSpr->_stepNum = 0;
 			tripSpr->_count = 0;
 		}
@@ -1050,7 +1068,7 @@ void Animation::grabAvvy(byte tripnum) {     // For Friar Tuck, in Nottingham.
 		if (tripSpr->_y < toy)
 			tripSpr->_y++;
 		tripSpr->_stepNum++;
-		if (tripSpr->_stepNum == tripSpr->_stat._seq)
+		if (tripSpr->_stepNum == tripSpr->_seq)
 			tripSpr->_stepNum = 0;
 	}
 }
@@ -1060,7 +1078,7 @@ void Animation::takeAStep(byte &tripnum) {
 
 	if (tripSpr->_moveX == 0) {
 		tripSpr->_stepNum++;
-		if (tripSpr->_stepNum == tripSpr->_stat._seq)
+		if (tripSpr->_stepNum == tripSpr->_seq)
 			tripSpr->_stepNum = 0;
 		tripSpr->_count = 0;
 	}
