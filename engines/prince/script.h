@@ -49,10 +49,12 @@ private:
     Common::RandomSource _random;
 
     byte *_code;
-    uint16 _codeSize;
+    uint32 _codeSize;
     uint32 _currentInstruction;
     uint16 _lastOpcode;
     uint32 _lastInstruction;
+    byte _result;
+    int16 _flags[2000];
 
     // Stack
     uint16 _stack[500];
@@ -60,7 +62,8 @@ private:
     uint8 _savedStacktop;
 
     // Helper functions
-    uint8 getCodeByte(uint16 address);
+    void checkPC(uint32 address);
+    uint8 getCodeByte(uint32 address);
     uint8 readScript8bits();
     uint16 readScript16bits();
     uint32 readScript32bits();
