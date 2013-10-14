@@ -144,7 +144,7 @@ void AnimationType::reset() {
  * @remarks	Originally called 'andexor'
  */
 void AnimationType::draw() {
-	if ((_vanishIfStill) && (_moveX == 0) && (_moveY == 0))
+	if (_vanishIfStill && (_moveX == 0) && (_moveY == 0))
 		return;
 
 	byte picnum = _facingDir * _seq + _stepNum;
@@ -212,7 +212,7 @@ void AnimationType::walk() {
 		byte magicColor = _anim->checkFeet(_x, _x + _info._xLength, _oldY[_anim->_vm->_cp], _y, _info._yLength) - 1;
 		// -1  is because the modified array indexes of magics[] compared to Pascal .
 
-		if ((magicColor != 255) & (!_anim->_vm->_doingSpriteRun)) {
+		if ((magicColor != 255) & !_anim->_vm->_doingSpriteRun) {
 			MagicType *magic = &_anim->_vm->_magics[magicColor];
 			switch (magic->_operation) {
 			case kMagicExclaim:
@@ -607,7 +607,7 @@ void Animation::catacombMove(byte ped) {
 	case 0x1:
 		_vm->_background->draw(-1, -1, 21);
 
-		if ((xy == 2051) && (_vm->_geidaFollows))
+		if ((xy == 2051) && _vm->_geidaFollows)
 			_vm->_magics[12]._operation = kMagicExclaim;
 		else
 			_vm->_magics[12]._operation = kMagicSpecial; // Right exit south.
@@ -737,7 +737,7 @@ void Animation::catacombMove(byte ped) {
 		break; // [1,1] : the other two.
 	}
 
-	if ((_vm->_geidaFollows) && (ped > 0)) {
+	if (_vm->_geidaFollows && (ped > 0)) {
 		AnimationType *spr1 = _sprites[1];
 
 		if (!spr1->_quick)  // If we don't already have her...
@@ -841,7 +841,7 @@ void Animation::callSpecial(uint16 which) {
 		_vm->_timer->addTimer(200, Timer::kProcMeetAvaroid, Timer::kReasonMeetingAvaroid);
 		break;
 	case 8:        // _vm->special 8: leave du Lustie's room.
-		if ((_vm->_geidaFollows) && (!_vm->_lustieIsAsleep)) {
+		if (_vm->_geidaFollows && !_vm->_lustieIsAsleep) {
 			AnimationType *spr1 = _sprites[1];
 			_vm->_dialogs->displayScrollChain('q', 63);
 			spr1->turn(kDirDown);
@@ -1026,9 +1026,9 @@ void Animation::arrowProcs(byte tripnum) {
 		// This is so if: a) the bottom of the arrow is below Avvy's head,
 		// b) the left of the arrow is left of the right of Avvy's head, and
 		// c) the right of the arrow is right of the left of Avvy's head.
-		if (((tripSpr->_y + tripSpr->_info._yLength) >= avvy->_y) // A
-				&& (tripSpr->_x <= (avvy->_x + avvy->_info._xLength)) // B
-				&& ((tripSpr->_x + tripSpr->_info._xLength) >= avvy->_x)) { // C
+		if ((tripSpr->_y + tripSpr->_info._yLength >= avvy->_y) // A
+			&& (tripSpr->_x <= avvy->_x + avvy->_info._xLength) // B
+			&& (tripSpr->_x + tripSpr->_info._xLength >= avvy->_x)) { // C
 			// OK, it's hit him... what now?
 
 			_sprites[1]->_callEachStepFl = false; // prevent recursion.
@@ -1164,8 +1164,7 @@ void Animation::drawSprites() {
 	do {
 		ok = true;
 		for (int i = 0; i < 4; i++) {
-			if (((order[i] != -1) && (order[i + 1] != -1))
-					&& (_sprites[order[i]]->_y > _sprites[order[i + 1]]->_y)) {
+			if ((order[i] != -1) && (order[i + 1] != -1) && (_sprites[order[i]]->_y > _sprites[order[i + 1]]->_y)) {
 				// Swap them!
 				temp = order[i];
 				order[i] = order[i + 1];
