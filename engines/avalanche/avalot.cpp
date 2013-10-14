@@ -501,8 +501,6 @@ void AvalancheEngine::loadAlso(byte num) {
 void AvalancheEngine::loadRoom(byte num) {
 	CursorMan.showMouse(false);
 
-	_graphics->fleshColors();
-
 	Common::String filename = Common::String::format("place%d.avd", num);
 	Common::File file;
 	if (!file.open(filename))
