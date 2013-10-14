@@ -47,10 +47,12 @@
 #include "prince/font.h"
 #include "prince/mhwanh.h"
 #include "prince/graphics.h"
+#include "prince/script.h"
 
 namespace Prince {
 
-PrinceEngine::PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
+PrinceEngine::PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc) : 
+    Engine(syst), _gameDescription(gameDesc), _graph(NULL), _script(NULL) {
 	_rnd = new Common::RandomSource("prince");
 
 }
@@ -96,22 +98,33 @@ Common::Error PrinceEngine::run() {
         _system->getPaletteManager()->setPalette(roomBmp.getPalette(), 0, 256);
 
         //font1.drawString(_frontScreen, "Hello World", 10, 10, 640, 1);
-
-        MhwanhDecoder walizkaBmp;
+        //
+        _graph->_roomBackground = roomBmp.getSurface();
+#if 1
+        MhwanhDecoder *walizkaBmp = new MhwanhDecoder();
         if (walizka) {
             debug("Loading walizka");
-            if (walizkaBmp.loadStream(*walizka)) {
-                _graph->_roomBackground = walizkaBmp.getSurface();
-                _graph->setPalette(walizkaBmp.getPalette());
+            if (walizkaBmp->loadStream(*walizka)) {
+                _graph->_roomBackground = walizkaBmp->getSurface();
+                _graph->setPalette(walizkaBmp->getPalette());
             }
         }
-
+#endif
         _graph->change();
+       
+        Common::SeekableReadStream * skryptStream = SearchMan.createReadStreamForMember("skrypt.dat"); 
+        if (!skryptStream)
+            return Common::kPathNotFile;
 
+        _script = new Script(this);
+        _script->loadFromStream(*skryptStream);
+
+        delete skryptStream;
 
         mainLoop();
+        delete room;
+        delete walizkaBmp;
     }
-    delete room;
 
 	return Common::kNoError;
 }
@@ -144,6 +157,8 @@ void PrinceEngine::mainLoop() {
 
         if (shouldQuit())
             return;
+
+        _script->step();
 
         _graph->update();
 

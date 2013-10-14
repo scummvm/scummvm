@@ -41,6 +41,7 @@ struct PrinceGameDescription;
 
 class PrinceEngine;
 class GraphicsMan;
+class Script;
 
 class PrinceEngine : public Engine {
 protected:
@@ -62,6 +63,7 @@ public:
 private:
 	Common::RandomSource *_rnd;
     GraphicsMan *_graph;
+    Script *_script;
 	
     void mainLoop();
 

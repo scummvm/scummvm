@@ -25,7 +25,7 @@
 #include "graphics/font.h"
 
 namespace Graphics {
-    class Surface;
+    struct Surface;
 }
 
 namespace Common {

@@ -29,7 +29,7 @@
 namespace Prince {
 
 MhwanhDecoder::MhwanhDecoder() 
-    : _surface(0), _palette(0), _paletteColorCount(0) {
+    : _surface(NULL), _palette(0), _paletteColorCount(0) {
 }
 
 MhwanhDecoder::~MhwanhDecoder() {
@@ -39,7 +39,7 @@ MhwanhDecoder::~MhwanhDecoder() {
 void MhwanhDecoder::destroy() {
     if (_surface) {
         _surface->free();
-        _surface = 0;
+        delete _surface; _surface = 0;
     }
 
     delete [] _palette; _palette = 0;
@@ -47,6 +47,7 @@ void MhwanhDecoder::destroy() {
 }
 
 bool MhwanhDecoder::loadStream(Common::SeekableReadStream &stream) {
+    destroy();
     _paletteColorCount = 256;
     stream.seek(0);
     stream.skip(0x20);
@@ -61,7 +62,7 @@ bool MhwanhDecoder::loadStream(Common::SeekableReadStream &stream) {
     _surface = new Graphics::Surface();
     _surface->create(640, 480, Graphics::PixelFormat::createFormatCLUT8());
     for (int h = 0; h < 480; ++h) {
-        stream.read(_surface->getBasePtr(0, h - 1), 640);
+        stream.read(_surface->getBasePtr(0, h), 640);
     }
 
     return true;

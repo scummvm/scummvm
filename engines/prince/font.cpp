@@ -35,7 +35,7 @@ Font::Font() {
 }
 
 Font::~Font() {
-    delete _fontData;
+    delete [] _fontData;
 }
 
 bool Font::load(Common::SeekableReadStream &stream) {
