@@ -563,8 +563,17 @@ void GraphicManager::drawSprite(const SpriteInfo &sprite, byte picnum, int16 x, 
 
 void GraphicManager::drawPicture(Graphics::Surface &target, const Graphics::Surface picture, uint16 destX, uint16 destY) {
 	// Copy the picture to the given place on the screen.
-	for (uint16 y = 0; y < picture.h; y++) {
-		for (uint16 x = 0; x < picture.w; x++)
+	uint16 maxX = picture.w;
+	uint16 maxY = picture.h;
+
+	if (destX + maxX > target.w)
+		maxX = target.w - destX;
+	
+	if (destY + maxY > target.h)
+		maxY = target.h - destY;
+
+	for (uint16 y = 0; y < maxY; y++) {
+		for (uint16 x = 0; x < maxX; x++)
 			*(byte *)target.getBasePtr(x + destX, y + destY) = *(const byte *)picture.getBasePtr(x, y);
 	}
 }
