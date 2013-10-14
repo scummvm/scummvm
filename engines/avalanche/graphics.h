@@ -66,8 +66,6 @@ public:
 	void loadDigits();
 	void loadMouse(byte which);
 
-	void fleshColors();
-
 	Common::Point drawScreenArc(int16 x, int16 y, int16 stAngle, int16 endAngle, uint16 radius, Color color);
 	void drawPieSlice(int16 x, int16 y, int16 stAngle, int16 endAngle, uint16 radius, Color color);
 	void drawTriangle(Common::Point *p, Color color);

@@ -77,6 +77,10 @@ void GraphicManager::init() {
 	for (int i = 0; i < 16; i++)
 		g_system->getPaletteManager()->setPalette(_egaPalette[kEgaPaletteIndex[i]], i, 1);
 
+	// Set the "flesh colors":
+	g_system->getPaletteManager()->setPalette(_egaPalette[39], 13, 1);
+	g_system->getPaletteManager()->setPalette(_egaPalette[28], 5, 1);
+
 	_surface.create(kScreenWidth, kScreenHeight, Graphics::PixelFormat::createFormatCLUT8());
 	_magics.create(kScreenWidth, kScreenHeight, Graphics::PixelFormat::createFormatCLUT8());
 	_screen.create(kScreenWidth, kScreenHeight * 2, Graphics::PixelFormat::createFormatCLUT8());
@@ -190,11 +194,6 @@ void GraphicManager::drawToolbar() {
 
 	picture.free();
 	file.close();
-}
-
-void GraphicManager::fleshColors() {
-	g_system->getPaletteManager()->setPalette(_egaPalette[39], 13, 1);
-	g_system->getPaletteManager()->setPalette(_egaPalette[28], 5, 1);
 }
 
 Common::Point GraphicManager::drawArc(Graphics::Surface &surface, int16 x, int16 y, int16 stAngle, int16 endAngle, uint16 radius, Color color) {
