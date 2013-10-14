@@ -88,24 +88,24 @@ void AnimationType::init(byte spritenum, bool doCheck) {
 	inf.skip(16 - commentSize);
 
 	_frameNum = inf.readByte();
-	_info._xLength = inf.readByte();
-	_info._yLength = inf.readByte();
+	_xLength = inf.readByte();
+	_yLength = inf.readByte();
 	_seq = inf.readByte();
-	_info._size = inf.readUint16LE();
+	_size = inf.readUint16LE();
 	_fgBubbleCol = (Color)inf.readByte();
 	_bgBubbleCol = (Color)inf.readByte();
 	_acciNum = inf.readByte();
 
 	_animCount = 0; // = 1;
-	_info._xWidth = _info._xLength / 8;
-	if ((_info._xLength % 8) > 0)
-		_info._xWidth++;
+	_xWidth = _xLength / 8;
+	if ((_xLength % 8) > 0)
+		_xWidth++;
 	for (int i = 0; i < _frameNum; i++) {
-		_info._sil[_animCount] = new SilType[11 * (_info._yLength + 1)];
-		_info._mani[_animCount] = new ManiType[_info._size - 6];
-		for (int j = 0; j <= _info._yLength; j++)
-			inf.read((*_info._sil[_animCount])[j], _info._xWidth);
-		inf.read(*_info._mani[_animCount], _info._size - 6);
+		_sil[_animCount] = new SilType[11 * (_yLength + 1)];
+		_mani[_animCount] = new ManiType[_size - 6];
+		for (int j = 0; j <= _yLength; j++)
+			inf.read((*_sil[_animCount])[j], _xWidth);
+		inf.read(*_mani[_animCount], _size - 6);
 
 		_animCount++;
 	}
@@ -149,7 +149,7 @@ void AnimationType::draw() {
 
 	byte picnum = _facingDir * _seq + _stepNum;
 
-	_anim->_vm->_graphics->drawSprite(_info, picnum, _x, _y);
+	_anim->_vm->_graphics->drawSprite(this, picnum, _x, _y);
 }
 
 /**
@@ -183,7 +183,7 @@ void AnimationType::appear(int16 wx, int16 wy, Direction wf) {
 bool AnimationType::checkCollision() {
 	for (int i = 0; i < _anim->kSpriteNumbMax; i++) {
 		AnimationType *spr = _anim->_sprites[i];
-		if (spr->_quick && (spr->_id != _id) && (_x + _info._xLength > spr->_x) && (_x < spr->_x + spr->_info._xLength) && (spr->_y == _y))
+		if (spr->_quick && (spr->_id != _id) && (_x + _xLength > spr->_x) && (_x < spr->_x + spr->_xLength) && (spr->_y == _y))
 			return true;
 	}
 
@@ -209,7 +209,7 @@ void AnimationType::walk() {
 			return;
 		}
 
-		byte magicColor = _anim->checkFeet(_x, _x + _info._xLength, _oldY[_anim->_vm->_cp], _y, _info._yLength) - 1;
+		byte magicColor = _anim->checkFeet(_x, _x + _xLength, _oldY[_anim->_vm->_cp], _y, _yLength) - 1;
 		// -1  is because the modified array indexes of magics[] compared to Pascal .
 
 		if ((magicColor != 255) & !_anim->_vm->_doingSpriteRun) {
@@ -283,8 +283,8 @@ void AnimationType::walkTo(byte pedNum) {
 	PedType *curPed = &_anim->_vm->_peds[pedNum];
 
 	setSpeed(getSign(curPed->_x - _x) * 4, getSign(curPed->_y - _y));
-	_homingX = curPed->_x - _info._xLength / 2;
-	_homingY = curPed->_y - _info._yLength;
+	_homingX = curPed->_x - _xLength / 2;
+	_homingY = curPed->_y - _yLength;
 	_homing = true;
 }
 
@@ -360,21 +360,21 @@ void AnimationType::stopWalk() {
  * Sets up talk vars.
  */
 void AnimationType::chatter() {
-	_anim->_vm->_talkX = _x + _info._xLength / 2;
+	_anim->_vm->_talkX = _x + _xLength / 2;
 	_anim->_vm->_talkY = _y;
 	_anim->_vm->_graphics->setDialogColor(_bgBubbleCol, _fgBubbleCol);
 }
 
 void AnimationType::remove() {
 	_animCount--;
-	_info._xWidth = _info._xLength / 8;
-	if ((_info._xLength % 8) > 0)
-		_info._xWidth++;
+	_xWidth = _xLength / 8;
+	if ((_xLength % 8) > 0)
+		_xWidth++;
 	for (int i = 0; i < _frameNum; i++) {
 		assert(_animCount > 0);
 		_animCount--;
-		delete[] _info._mani[_animCount];
-		delete[] _info._sil[_animCount];
+		delete[] _mani[_animCount];
+		delete[] _sil[_animCount];
 	}
 
 	_quick = false;
@@ -961,7 +961,7 @@ void Animation::setMoveSpeed(byte t, Direction dir) {
 void Animation::appearPed(byte sprNum, byte pedNum) {
 	AnimationType *curSpr = _sprites[sprNum];
 	PedType *curPed = &_vm->_peds[pedNum];
-	curSpr->appear(curPed->_x - curSpr->_info._xLength / 2, curPed->_y - curSpr->_info._yLength, curPed->_direction);
+	curSpr->appear(curPed->_x - curSpr->_xLength / 2, curPed->_y - curSpr->_yLength, curPed->_direction);
 	setMoveSpeed(sprNum, curPed->_direction);
 }
 
@@ -1026,9 +1026,9 @@ void Animation::arrowProcs(byte tripnum) {
 		// This is so if: a) the bottom of the arrow is below Avvy's head,
 		// b) the left of the arrow is left of the right of Avvy's head, and
 		// c) the right of the arrow is right of the left of Avvy's head.
-		if ((tripSpr->_y + tripSpr->_info._yLength >= avvy->_y) // A
-			&& (tripSpr->_x <= avvy->_x + avvy->_info._xLength) // B
-			&& (tripSpr->_x + tripSpr->_info._xLength >= avvy->_x)) { // C
+		if ((tripSpr->_y + tripSpr->_yLength >= avvy->_y) // A
+			&& (tripSpr->_x <= avvy->_x + avvy->_xLength) // B
+			&& (tripSpr->_x + tripSpr->_xLength >= avvy->_x)) { // C
 			// OK, it's hit him... what now?
 
 			_sprites[1]->_callEachStepFl = false; // prevent recursion.
@@ -1275,7 +1275,7 @@ bool Animation::inField(byte which) {
 	AnimationType *avvy = _sprites[0];
 
 	FieldType *curField = &_vm->_fields[which];
-	int16 yy = avvy->_y + avvy->_info._yLength;
+	int16 yy = avvy->_y + avvy->_yLength;
 
 	return (avvy->_x >= curField->_x1) && (avvy->_x <= curField->_x2) && (yy >= curField->_y1) && (yy <= curField->_y2);
 }
@@ -1291,7 +1291,7 @@ bool Animation::nearDoor() {
 	AnimationType *avvy = _sprites[0];
 
 	int16 ux = avvy->_x;
-	int16 uy = avvy->_y + avvy->_info._yLength;
+	int16 uy = avvy->_y + avvy->_yLength;
 
 	for (int i = 8; i < _vm->_fieldNum; i++) {
 		FieldType *curField = &_vm->_fields[i];
@@ -1439,7 +1439,7 @@ void Animation::synchronize(Common::Serializer &sz) {
 		sz.syncAsByte(spr->_visible);
 		sz.syncAsByte(spr->_homing);
 		sz.syncAsByte(spr->_count);
-		sz.syncAsByte(spr->_info._xWidth);
+		sz.syncAsByte(spr->_xWidth);
 		sz.syncAsByte(spr->_speedX);
 		sz.syncAsByte(spr->_speedY);
 		sz.syncAsByte(spr->_animCount);

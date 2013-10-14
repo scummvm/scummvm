@@ -42,7 +42,12 @@ enum Direction {
 
 class AnimationType {
 public:
-	SpriteInfo _info;
+	// Former SpriteInfo structure
+	byte _xWidth;
+	byte _xLength, _yLength;
+	ManiType *_mani[24];
+	SilType *_sil[24];
+	uint16 _size; // The size of one picture.
 
 	// Former Stat structure
 	Common::String _name; // Name of character.

@@ -1140,14 +1140,14 @@ void AvalancheEngine::guideAvvy(Common::Point cursorPos) {
 	AnimationType *avvy = _animation->_sprites[0];
 	if (cursorPos.x < avvy->_x)
 		what = 1;
-	else if (cursorPos.x > (avvy->_x + avvy->_info._xLength))
+	else if (cursorPos.x > (avvy->_x + avvy->_xLength))
 		what = 2;
 	else
 		what = 0; // On top
 
 	if (cursorPos.y < avvy->_y)
 		what += 3;
-	else if (cursorPos.y > (avvy->_y + avvy->_info._yLength))
+	else if (cursorPos.y > (avvy->_y + avvy->_yLength))
 		what += 6;
 
 	switch (what) {

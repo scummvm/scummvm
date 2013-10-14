@@ -536,11 +536,11 @@ byte GraphicManager::getScreenColor(Common::Point pos) {
 	return *(byte *)_surface.getBasePtr(pos.x, pos.y / 2);
 }
 
-void GraphicManager::drawSprite(const SpriteInfo &sprite, byte picnum, int16 x, int16 y) {
+void GraphicManager::drawSprite(AnimationType *sprite, byte picnum, int16 x, int16 y) {
 	// First we make the pixels of the sprite blank.
-	for (int j = 0; j < sprite._yLength; j++) {
-		for (int i = 0; i < sprite._xLength; i++) {
-			if (((*sprite._sil[picnum])[j][i / 8] >> ((7 - i % 8)) & 1) == 0)
+	for (int j = 0; j < sprite->_yLength; j++) {
+		for (int i = 0; i < sprite->_xLength; i++) {
+			if (((*sprite->_sil[picnum])[j][i / 8] >> ((7 - i % 8)) & 1) == 0)
 				*(byte *)_surface.getBasePtr(x + i, y + j) = 0;
 		}
 	}
@@ -548,10 +548,10 @@ void GraphicManager::drawSprite(const SpriteInfo &sprite, byte picnum, int16 x, 
 	// Then we draw the picture to the blank places.
 	uint16 maniPos = 0; // Because the original manitype starts at 5!!! See Graphics.h for definition.
 
-	for (int j = 0; j < sprite._yLength; j++) {
+	for (int j = 0; j < sprite->_yLength; j++) {
 		for (int8 plane = 3; plane >= 0; plane--) { // The planes are in the opposite way.
-			for (uint16 i = 0; i  < sprite._xLength; i += 8) {
-				byte pixel = (*sprite._mani[picnum])[maniPos++];
+			for (uint16 i = 0; i < sprite->_xLength; i += 8) {
+				byte pixel = (*sprite->_mani[picnum])[maniPos++];
 				for (int bit = 0; bit < 8; bit++) {
 					byte pixelBit = (pixel >> bit) & 1;
 					*(byte *)_surface.getBasePtr(x + i + 7 - bit, y + j) += (pixelBit << plane);
