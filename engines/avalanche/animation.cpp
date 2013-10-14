@@ -954,57 +954,68 @@ void Animation::appearPed(byte sprNum, byte pedNum) {
 void Animation::followAvalotY(byte tripnum) {
 	if (_sprites[0]->_facingDir == kDirLeft)
 		return;
-	if (_sprites[tripnum]->_homing)
-		_sprites[tripnum]->_homingY = _sprites[1]->_y;
+
+	AnimationType *tripSpr = _sprites[tripnum];
+
+	if (tripSpr->_homing)
+		tripSpr->_homingY = _sprites[1]->_y;
 	else {
-		if (_sprites[tripnum]->_y < _sprites[1]->_y)
-			_sprites[tripnum]->_y++;
-		else if (_sprites[tripnum]->_y > _sprites[1]->_y)
-			_sprites[tripnum]->_y--;
+		if (tripSpr->_y < _sprites[1]->_y)
+			tripSpr->_y++;
+		else if (tripSpr->_y > _sprites[1]->_y)
+			tripSpr->_y--;
 		else
 			return;
-		if (_sprites[tripnum]->_moveX == 0)  {
-			_sprites[tripnum]->_stepNum++;
-			if (_sprites[tripnum]->_stepNum == _sprites[tripnum]->_stat._seq)
-				_sprites[tripnum]->_stepNum = 0;
-			_sprites[tripnum]->_count = 0;
+
+		if (tripSpr->_moveX == 0)  {
+			tripSpr->_stepNum++;
+			if (tripSpr->_stepNum == tripSpr->_stat._seq)
+				tripSpr->_stepNum = 0;
+			tripSpr->_count = 0;
 		}
 	}
 }
 
 void Animation::backAndForth(byte tripnum) {
-	if (!_sprites[tripnum]->_homing) {
-		if (_sprites[tripnum]->_facingDir == kDirRight)
-			_sprites[tripnum]->walkTo(3);
+	AnimationType *tripSpr = _sprites[tripnum];
+
+	if (!tripSpr->_homing) {
+		if (tripSpr->_facingDir == kDirRight)
+			tripSpr->walkTo(3);
 		else
-			_sprites[tripnum]->walkTo(4);
+			tripSpr->walkTo(4);
 	}
 }
 
 void Animation::faceAvvy(byte tripnum) {
-	if (!_sprites[tripnum]->_homing) {
-		if (_sprites[0]->_x >= _sprites[tripnum]->_x)
-			_sprites[tripnum]->_facingDir = kDirRight;
+	AnimationType *tripSpr = _sprites[tripnum];
+
+	if (!tripSpr->_homing) {
+		if (_sprites[0]->_x >= tripSpr->_x)
+			tripSpr->_facingDir = kDirRight;
 		else
-			_sprites[tripnum]->_facingDir = kDirLeft;
+			tripSpr->_facingDir = kDirLeft;
 	}
 }
 
 void Animation::arrowProcs(byte tripnum) {
-	if (_sprites[tripnum]->_homing) {
+	AnimationType *tripSpr = _sprites[tripnum];
+	AnimationType *avvy = _sprites[tripnum];
+
+	if (tripSpr->_homing) {
 		// Arrow is still in flight.
 		// We must check whether or not the arrow has collided tr[tripnum] Avvy's head.
 		// This is so if: a) the bottom of the arrow is below Avvy's head,
 		// b) the left of the arrow is left of the right of Avvy's head, and
 		// c) the right of the arrow is right of the left of Avvy's head.
-		if (((_sprites[tripnum]->_y + _sprites[tripnum]->_info._yLength) >= _sprites[0]->_y) // A
-				&& (_sprites[tripnum]->_x <= (_sprites[0]->_x + _sprites[0]->_info._xLength)) // B
-				&& ((_sprites[tripnum]->_x + _sprites[tripnum]->_info._xLength) >= _sprites[0]->_x)) { // C
+		if (((tripSpr->_y + tripSpr->_info._yLength) >= avvy->_y) // A
+				&& (tripSpr->_x <= (avvy->_x + avvy->_info._xLength)) // B
+				&& ((tripSpr->_x + tripSpr->_info._xLength) >= avvy->_x)) { // C
 			// OK, it's hit him... what now?
 
 			_sprites[1]->_callEachStepFl = false; // prevent recursion.
 			_vm->_dialogs->displayScrollChain('Q', 47); // Complaint!
-			_sprites[tripnum]->remove(); // Deallocate the arrow.
+			tripSpr->remove(); // Deallocate the arrow.
 
 			_vm->gameOver();
 
@@ -1012,51 +1023,57 @@ void Animation::arrowProcs(byte tripnum) {
 			_vm->_timer->addTimer(55, Timer::kProcNaughtyDuke, Timer::kReasonNaughtyDuke);
 		}
 	} else { // Arrow has hit the wall!
-		_sprites[tripnum]->remove(); // Deallocate the arrow.
+		tripSpr->remove(); // Deallocate the arrow.
 		_vm->_background->draw(-1, -1, 2); // Show pic of arrow stuck into the door.
 		_vm->_arrowInTheDoor = true; // So that we can pick it up.
 	}
-
 }
 
 void Animation::grabAvvy(byte tripnum) {     // For Friar Tuck, in Nottingham.
-	int16 tox = _sprites[0]->_x + 17;
-	int16 toy = _sprites[0]->_y - 1;
-	if ((_sprites[tripnum]->_x == tox) && (_sprites[tripnum]->_y == toy)) {
-		_sprites[tripnum]->_callEachStepFl = false;
-		_sprites[tripnum]->_facingDir = kDirLeft;
-		_sprites[tripnum]->stopWalk();
+	AnimationType *tripSpr = _sprites[tripnum];
+	AnimationType *avvy = _sprites[tripnum];
+
+	int16 tox = avvy->_x + 17;
+	int16 toy = avvy->_y - 1;
+	if ((tripSpr->_x == tox) && (tripSpr->_y == toy)) {
+		tripSpr->_callEachStepFl = false;
+		tripSpr->_facingDir = kDirLeft;
+		tripSpr->stopWalk();
 		// ... whatever ...
 	} else {
 		// Still some way to go.
-		if (_sprites[tripnum]->_x < tox) {
-			_sprites[tripnum]->_x += 5;
-			if (_sprites[tripnum]->_x > tox)
-				_sprites[tripnum]->_x = tox;
+		if (tripSpr->_x < tox) {
+			tripSpr->_x += 5;
+			if (tripSpr->_x > tox)
+				tripSpr->_x = tox;
 		}
-		if (_sprites[tripnum]->_y < toy)
-			_sprites[tripnum]->_y++;
-		_sprites[tripnum]->_stepNum++;
-		if (_sprites[tripnum]->_stepNum == _sprites[tripnum]->_stat._seq)
-			_sprites[tripnum]->_stepNum = 0;
+		if (tripSpr->_y < toy)
+			tripSpr->_y++;
+		tripSpr->_stepNum++;
+		if (tripSpr->_stepNum == tripSpr->_stat._seq)
+			tripSpr->_stepNum = 0;
 	}
 }
 
 void Animation::takeAStep(byte &tripnum) {
-	if (_sprites[tripnum]->_moveX == 0) {
-		_sprites[tripnum]->_stepNum++;
-		if (_sprites[tripnum]->_stepNum == _sprites[tripnum]->_stat._seq)
-			_sprites[tripnum]->_stepNum = 0;
-		_sprites[tripnum]->_count = 0;
+	AnimationType *tripSpr = _sprites[tripnum];
+
+	if (tripSpr->_moveX == 0) {
+		tripSpr->_stepNum++;
+		if (tripSpr->_stepNum == tripSpr->_stat._seq)
+			tripSpr->_stepNum = 0;
+		tripSpr->_count = 0;
 	}
 }
 
 void Animation::spin(Direction dir, byte &tripnum) {
-	if (_sprites[tripnum]->_facingDir == dir)
+	AnimationType *tripSpr = _sprites[tripnum];
+
+	if (tripSpr->_facingDir == dir)
 		return;
 
-	_sprites[tripnum]->_facingDir = dir;
-	if (_sprites[tripnum]->_id == 2)
+	tripSpr->_facingDir = dir;
+	if (tripSpr->_id == 2)
 		return; // Not for Spludwick
 
 	_geidaSpin++;
@@ -1069,41 +1086,44 @@ void Animation::spin(Direction dir, byte &tripnum) {
 }
 
 void Animation::geidaProcs(byte tripnum) {
+	AnimationType *tripSpr = _sprites[tripnum];
+	AnimationType *avvy = _sprites[0];
+
 	if (_geidaTime > 0) {
 		_geidaTime--;
 		if (_geidaTime == 0)
 			_geidaSpin = 0;
 	}
 
-	if (_sprites[tripnum]->_y < (_sprites[0]->_y - 2)) {
+	if (tripSpr->_y < (avvy->_y - 2)) {
 		// Geida is further from the screen than Avvy.
 		spin(kDirDown, tripnum);
-		_sprites[tripnum]->_moveY = 1;
-		_sprites[tripnum]->_moveX = 0;
+		tripSpr->_moveY = 1;
+		tripSpr->_moveX = 0;
 		takeAStep(tripnum);
 		return;
-	} else if (_sprites[tripnum]->_y > (_sprites[0]->_y + 2)) {
+	} else if (tripSpr->_y > (avvy->_y + 2)) {
 		// Avvy is further from the screen than Geida.
 		spin(kDirUp, tripnum);
-		_sprites[tripnum]->_moveY = -1;
-		_sprites[tripnum]->_moveX = 0;
+		tripSpr->_moveY = -1;
+		tripSpr->_moveX = 0;
 		takeAStep(tripnum);
 		return;
 	}
 
-	_sprites[tripnum]->_moveY = 0;
+	tripSpr->_moveY = 0;
 	// These 12-s are not in the original, I added them to make the following method more "smooth".
 	// Now the NPC which is following Avvy won't block his way and will walk next to him properly.
-	if (_sprites[tripnum]->_x < _sprites[0]->_x - _sprites[0]->_speedX * 8 - 12) {
-		_sprites[tripnum]->_moveX = _sprites[0]->_speedX;
+	if (tripSpr->_x < avvy->_x - avvy->_speedX * 8 - 12) {
+		tripSpr->_moveX = avvy->_speedX;
 		spin(kDirRight, tripnum);
 		takeAStep(tripnum);
-	} else if (_sprites[tripnum]->_x > _sprites[0]->_x + _sprites[0]->_speedX * 8 + 12) {
-		_sprites[tripnum]->_moveX = -_sprites[0]->_speedX;
+	} else if (tripSpr->_x > avvy->_x + avvy->_speedX * 8 + 12) {
+		tripSpr->_moveX = -avvy->_speedX;
 		spin(kDirLeft, tripnum);
 		takeAStep(tripnum);
 	} else
-		_sprites[tripnum]->_moveX = 0;
+		tripSpr->_moveX = 0;
 }
 
 /**
@@ -1118,7 +1138,8 @@ void Animation::drawSprites() {
 		order[i] = -1;
 
 	for (int16 i = 0; i < kSpriteNumbMax; i++) {
-		if (_sprites[i]->_quick && _sprites[i]->_visible)
+		AnimationType *curSpr = _sprites[i];
+		if (curSpr->_quick && curSpr->_visible)
 			order[i] = i;
 	}
 
@@ -1152,15 +1173,17 @@ void Animation::animLink() {
 	if (_vm->_menu->isActive() || _vm->_seeScroll)
 		return;
 	for (int16 i = 0; i < kSpriteNumbMax; i++) {
-		if (_sprites[i]->_quick && _sprites[i]->_visible)
-			_sprites[i]->walk();
+		AnimationType *curSpr = _sprites[i];
+		if (curSpr->_quick && curSpr->_visible)
+			curSpr->walk();
 	}
 
 	drawSprites();
 
 	for (int16 i = 0; i < kSpriteNumbMax; i++) {
-		if (_sprites[i]->_quick && _sprites[i]->_callEachStepFl) {
-			switch (_sprites[i]->_eachStepProc) {
+		AnimationType *curSpr = _sprites[i];
+		if (curSpr->_quick && curSpr->_callEachStepFl) {
+			switch (curSpr->_eachStepProc) {
 			case kProcFollowAvvyY :
 				followAvalotY(i);
 				break;
@@ -1191,10 +1214,12 @@ void Animation::animLink() {
 }
 
 void Animation::stopWalking() {
-	_sprites[0]->stopWalk();
+	AnimationType *avvy = _sprites[0];
+
+	avvy->stopWalk();
 	_direction = kDirStopped;
 	if (_vm->_alive)
-		_sprites[0]->_stepNum = 1;
+		avvy->_stepNum = 1;
 }
 
 /**
@@ -1230,23 +1255,26 @@ void Animation::hideInCupboard() {
  * Returns true if you're within field "which".
  */
 bool Animation::inField(byte which) {
-	FieldType *curField = &_vm->_fields[which];
-	int16 yy = _sprites[0]->_y + _sprites[0]->_info._yLength;
+	AnimationType *avvy = _sprites[0];
 
-	return (_sprites[0]->_x >= curField->_x1) && (_sprites[0]->_x <= curField->_x2) && (yy >= curField->_y1) && (yy <= curField->_y2);
+	FieldType *curField = &_vm->_fields[which];
+	int16 yy = avvy->_y + avvy->_info._yLength;
+
+	return (avvy->_x >= curField->_x1) && (avvy->_x <= curField->_x2) && (yy >= curField->_y1) && (yy <= curField->_y2);
 }
 
 /**
  * Returns True if you're near a door.
  */
 bool Animation::nearDoor() {
-	if (_vm->_fieldNum < 8) {
+	if (_vm->_fieldNum < 8)
 		// there ARE no doors here!
 		return false;
-	}
 
-	int16 ux = _sprites[0]->_x;
-	int16 uy = _sprites[0]->_y + _sprites[0]->_info._yLength;
+	AnimationType *avvy = _sprites[0];
+
+	int16 ux = avvy->_x;
+	int16 uy = avvy->_y + avvy->_info._yLength;
 
 	for (int i = 8; i < _vm->_fieldNum; i++) {
 		FieldType *curField = &_vm->_fields[i];
