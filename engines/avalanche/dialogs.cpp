@@ -1074,7 +1074,7 @@ void Dialogs::talkTo(byte whom) {
 
 	bool noMatches = true;
 	for (int i = 0; i <= _vm->_animation->kSpriteNumbMax; i++) {
-		if (_vm->_animation->_sprites[i]->_stat._acciNum == whom) {
+		if (_vm->_animation->_sprites[i]->_acciNum == whom) {
 			Common::String tmpStr = Common::String::format("%c%c%c", kControlRegister, i + 49, kControlToBuffer);
 			displayText(tmpStr);
 			noMatches = false;
@@ -1134,7 +1134,8 @@ Common::String Dialogs::personSpeaks() {
 	Common::String tmpStr;
 
 	for (int i = 0; i < _vm->_animation->kSpriteNumbMax; i++) {
-		if (_vm->_animation->_sprites[i]->_quick && ((_vm->_animation->_sprites[i]->_stat._acciNum + 149) == _vm->_parser->_person)) {
+		AnimationType *curSpr = _vm->_animation->_sprites[i];
+		if (curSpr->_quick && (curSpr->_acciNum + 149 == _vm->_parser->_person)) {
 			tmpStr += Common::String::format("%c%c", kControlRegister, '1' + i);
 			found = true;
 		}
