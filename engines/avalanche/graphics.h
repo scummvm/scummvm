@@ -36,20 +36,12 @@
 
 namespace Avalanche {
 class AvalancheEngine;
+class AnimationType;
 struct SpriteType;
 
 typedef byte FontType[256][16];
 typedef byte ManiType[2049];
 typedef byte SilType[51][11]; // 35, 4
-
-class SpriteInfo {
-public:
-	byte _xWidth;
-	byte _xLength, _yLength;
-	ManiType *_mani[24];
-	SilType *_sil[24];
-	uint16 _size; // The size of one picture.
-};
 
 struct MouseHotspotType {
 	int16 _horizontal, _vertical;
@@ -95,7 +87,7 @@ public:
 	// Further information about these two: http://www.shikadi.net/moddingwiki/Raw_EGA_data
 	Graphics::Surface loadPictureRaw(Common::File &file, uint16 width, uint16 height);
 
-	void drawSprite(const SpriteInfo &sprite, byte picnum, int16 x, int16 y);
+	void drawSprite(AnimationType *sprite, byte picnum, int16 x, int16 y);
 	void drawPicture(Graphics::Surface &target, const Graphics::Surface picture, uint16 destX, uint16 destY);
 	void drawThinkPic(Common::String filename, int id);
 	void drawToolbar();
