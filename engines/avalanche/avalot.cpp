@@ -278,7 +278,7 @@ void AvalancheEngine::setup() {
 	fadeIn();
 	_parser->_cursorState = false;
 	_parser->cursorOn();
-	_animation->_sprites[0]._speedX = kWalk;
+	_animation->_sprites[0]->_speedX = kWalk;
 	_animation->updateSpeed();
 
 	_menu->init();
@@ -610,9 +610,9 @@ void AvalancheEngine::enterNewTown() {
 void AvalancheEngine::putGeidaAt(byte whichPed, byte ped) {
 	if (ped == 0)
 		return;
-	AnimationType *spr1 = &_animation->_sprites[1];
+	AnimationType *spr1 = _animation->_sprites[1];
 
-	spr1->init(5, false, _animation); // load Geida
+	spr1->init(5, false); // load Geida
 	_animation->appearPed(1, whichPed);
 	spr1->_callEachStepFl = true;
 	spr1->_eachStepProc = Animation::kProcGeida;
@@ -653,10 +653,10 @@ void AvalancheEngine::enterRoom(Room roomId, byte ped) {
 
 	case kRoomOutsideYours:
 		if (ped > 0) {
-			AnimationType *spr1 = &_animation->_sprites[1];
+			AnimationType *spr1 = _animation->_sprites[1];
 			if (!_talkedToCrapulus) {
 				_whereIs[kPeopleCrapulus - 150] = kRoomOutsideYours;
-				spr1->init(8, false, _animation); // load Crapulus
+				spr1->init(8, false); // load Crapulus
 
 				if (_roomCount[kRoomOutsideYours] == 1) {
 					_animation->appearPed(1, 3); // Start on the right-hand side of the screen.
@@ -673,7 +673,7 @@ void AvalancheEngine::enterRoom(Room roomId, byte ped) {
 				_whereIs[kPeopleCrapulus - 150] = kRoomNowhere;
 
 			if (_crapulusWillTell) {
-				spr1->init(8, false, _animation);
+				spr1->init(8, false);
 				_animation->appearPed(1, 1);
 				spr1->walkTo(3);
 				_timer->addTimer(20, Timer::kProcCrapulusSpludOut, Timer::kReasonCrapulusSaysSpludwickOut);
@@ -691,9 +691,9 @@ void AvalancheEngine::enterRoom(Room roomId, byte ped) {
 
 	case kRoomSpludwicks:
 		if (_spludwickAtHome) {
-			AnimationType *spr1 = &_animation->_sprites[1];
+			AnimationType *spr1 = _animation->_sprites[1];
 			if (ped > 0) {
-				spr1->init(2, false, _animation); // load Spludwick
+				spr1->init(2, false); // load Spludwick
 				_animation->appearPed(1, 1);
 				_whereIs[kPeopleSpludwick - 150] = kRoomSpludwicks;
 			}
@@ -711,8 +711,8 @@ void AvalancheEngine::enterRoom(Room roomId, byte ped) {
 			_magics[kColorLightred - 1]._operation = kMagicNothing;
 			_whereIs[kPeopleCwytalot - 150] = kRoomNowhere;
 		} else if (ped > 0) {
-			AnimationType *spr1 = &_animation->_sprites[1];
-			spr1->init(4, false, _animation); // 4 = Cwytalot
+			AnimationType *spr1 = _animation->_sprites[1];
+			spr1->init(4, false); // 4 = Cwytalot
 			spr1->_callEachStepFl = true;
 			spr1->_eachStepProc = Animation::kProcFollowAvvyY;
 			_whereIs[kPeopleCwytalot - 150] = kRoomBrummieRoad;
@@ -730,8 +730,8 @@ void AvalancheEngine::enterRoom(Room roomId, byte ped) {
 
 	case kRoomArgentRoad:
 		if ((_cwytalotGone) && (!_passedCwytalotInHerts) && (ped == 2) && (_roomCount[kRoomArgentRoad] > 3)) {
-			AnimationType *spr1 = &_animation->_sprites[1];
-			spr1->init(4, false, _animation); // 4 = Cwytalot again
+			AnimationType *spr1 = _animation->_sprites[1];
+			spr1->init(4, false); // 4 = Cwytalot again
 			_animation->appearPed(1, 0);
 			spr1->walkTo(1);
 			spr1->_vanishIfStill = true;
@@ -754,8 +754,8 @@ void AvalancheEngine::enterRoom(Room roomId, byte ped) {
 	case kRoomRobins:
 		if ((ped > 0) && (!_beenTiedUp)) {
 			// A welcome party... or maybe not...
-			AnimationType *spr1 = &_animation->_sprites[1];
-			spr1->init(6, false, _animation);
+			AnimationType *spr1 = _animation->_sprites[1];
+			spr1->init(6, false);
 			_animation->appearPed(1, 1);
 			spr1->walkTo(2);
 			_timer->addTimer(36, Timer::kProcGetTiedUp, Timer::kReasonGettingTiedUp);
@@ -776,10 +776,10 @@ void AvalancheEngine::enterRoom(Room roomId, byte ped) {
 
 	case kRoomOutsideCardiffCastle:
 		if (ped > 0) {
-			AnimationType *spr1 = &_animation->_sprites[1];
+			AnimationType *spr1 = _animation->_sprites[1];
 			switch (_cardiffQuestionNum) {
 			case 0 : // You've answered NONE of his questions.
-				spr1->init(9, false, _animation);
+				spr1->init(9, false);
 				_animation->appearPed(1, 1);
 				spr1->walkTo(2);
 				_timer->addTimer(47, Timer::kProcCardiffSurvey, Timer::kReasonCardiffsurvey);
@@ -788,7 +788,7 @@ void AvalancheEngine::enterRoom(Room roomId, byte ped) {
 				_magics[1]._operation = kMagicNothing;
 				break; // You've answered ALL his questions. => nothing happens.
 			default: // You've answered SOME of his questions.
-				spr1->init(9, false, _animation);
+				spr1->init(9, false);
 				_animation->appearPed(1, 2);
 				spr1->_facingDir = kDirRight;
 				_timer->addTimer(3, Timer::kProcCardiffReturn, Timer::kReasonCardiffsurvey);
@@ -853,7 +853,7 @@ void AvalancheEngine::enterRoom(Room roomId, byte ped) {
 
 	case kRoomLustiesRoom:
 		_npcFacing = 1; // du Lustie.
-		if (_animation->_sprites[0]._id == 0) // Avvy in his normal clothes
+		if (_animation->_sprites[0]->_id == 0) // Avvy in his normal clothes
 			_timer->addTimer(3, Timer::kProcCallsGuards, Timer::kReasonDuLustieTalks);
 		else if (!_enteredLustiesRoomAsMonk) // already
 			// Presumably, Avvy dressed as a monk.
@@ -901,8 +901,8 @@ void AvalancheEngine::enterRoom(Room roomId, byte ped) {
 		break;
 
 	case kRoomWiseWomans: {
-		AnimationType *spr1 = &_animation->_sprites[1];
-		spr1->init(11, false, _animation);
+		AnimationType *spr1 = _animation->_sprites[1];
+		spr1->init(11, false);
 		if ((_roomCount[kRoomWiseWomans] == 1) && (ped > 0)) {
 			_animation->appearPed(1, 1); // Start on the right-hand side of the screen.
 			spr1->walkTo(3); // Walks up to greet you.
@@ -918,7 +918,7 @@ void AvalancheEngine::enterRoom(Room roomId, byte ped) {
 
 	case kRoomInsideCardiffCastle:
 		if (ped > 0) {
-			_animation->_sprites[1].init(10, false, _animation); // Define the dart.
+			_animation->_sprites[1]->init(10, false); // Define the dart.
 			_background->draw(-1, -1, 0);
 			_graphics->refreshBackground();
 			_sequence->startCardiffSeq2();
@@ -1139,7 +1139,7 @@ void AvalancheEngine::guideAvvy(Common::Point cursorPos) {
 	byte what;
 
 	// _animation->tr[0] is Avalot.)
-	AnimationType *avvy = &_animation->_sprites[0];
+	AnimationType *avvy = _animation->_sprites[0];
 	if (cursorPos.x < avvy->_x)
 		what = 1;
 	else if (cursorPos.x > (avvy->_x + avvy->_info._xLength))
@@ -1242,10 +1242,10 @@ void AvalancheEngine::checkClick() {
 
 				callVerb(kVerbCodeScore);
 			} else if ((320 <= cursorPos.x) && (cursorPos.x <= 357)) { // Change speed.
-				_animation->_sprites[0]._speedX = kWalk;
+				_animation->_sprites[0]->_speedX = kWalk;
 				_animation->updateSpeed();
 			} else if ((358 <= cursorPos.x) && (cursorPos.x <= 395)) { // Change speed.
-				_animation->_sprites[0]._speedX = kRun;
+				_animation->_sprites[0]->_speedX = kRun;
 				_animation->updateSpeed();
 			} else if ((396 <= cursorPos.x) && (cursorPos.x <= 483))
 				fxToggle();
@@ -1343,12 +1343,12 @@ void AvalancheEngine::drawDirection() { // It's data is loaded in load_digits().
 void AvalancheEngine::gameOver() {
 	_userMovesAvvy = false;
 
-	AnimationType *avvy = &_animation->_sprites[0];
+	AnimationType *avvy = _animation->_sprites[0];
 	int16 sx = avvy->_x;
 	int16 sy = avvy->_y;
 
 	avvy->remove();
-	avvy->init(12, true, _animation); // 12 = Avalot falls
+	avvy->init(12, true); // 12 = Avalot falls
 	avvy->_stepNum = 0;
 	avvy->appear(sx, sy, kDirUp);
 
@@ -1373,7 +1373,7 @@ void AvalancheEngine::majorRedraw() {
 }
 
 uint16 AvalancheEngine::bearing(byte whichPed) {
-	AnimationType *avvy = &_animation->_sprites[0];
+	AnimationType *avvy = _animation->_sprites[0];
 	PedType *curPed = &_peds[whichPed];
 
 	if (avvy->_x == curPed->_x)
@@ -1488,14 +1488,14 @@ void AvalancheEngine::resetVariables() {
 
 void AvalancheEngine::newGame() {
 	for (int i = 0; i < kMaxSprites; i++) {
-		AnimationType *spr = &_animation->_sprites[i];
+		AnimationType *spr = _animation->_sprites[i];
 		if (spr->_quick)
 			spr->remove();
 	}
 	// Deallocate sprite. Sorry, beta testers!
 
-	AnimationType *avvy = &_animation->_sprites[0];
-	avvy->init(0, true, _animation);
+	AnimationType *avvy = _animation->_sprites[0];
+	avvy->init(0, true);
 
 	_alive = true;
 	resetVariables();
@@ -1648,8 +1648,8 @@ void AvalancheEngine::flipRoom(Room room, byte ped) {
 	assert((ped > 0) && (ped < 15));
 	if (!_alive) {
 		// You can't leave the room if you're dead.
-		_animation->_sprites[0]._moveX = 0;
-		_animation->_sprites[0]._moveY = 0; // Stop him from moving.
+		_animation->_sprites[0]->_moveX = 0;
+		_animation->_sprites[0]->_moveY = 0; // Stop him from moving.
 		return;
 	}
 
@@ -1660,7 +1660,7 @@ void AvalancheEngine::flipRoom(Room room, byte ped) {
 
 	if ((_jumpStatus > 0) && (_room == kRoomInsideCardiffCastle)) {
 		// You can't *jump* out of Cardiff Castle!
-		_animation->_sprites[0]._moveX = 0;
+		_animation->_sprites[0]->_moveX = 0;
 		return;
 	}
 
@@ -1668,8 +1668,8 @@ void AvalancheEngine::flipRoom(Room room, byte ped) {
 	fadeOut();
 
 	for (int16 i = 1; i < _animation->kSpriteNumbMax; i++) {
-		if (_animation->_sprites[i]._quick)
-			_animation->_sprites[i].remove();
+		if (_animation->_sprites[i]->_quick)
+			_animation->_sprites[i]->remove();
 	} // Deallocate sprite
 
 	if (_room == kRoomLustiesRoom)
@@ -1679,7 +1679,7 @@ void AvalancheEngine::flipRoom(Room room, byte ped) {
 	_animation->appearPed(0, ped - 1);
 	_enterCatacombsFromLustiesRoom = false;
 	_animation->setOldDirection(_animation->getDirection());
-	_animation->setDirection(_animation->_sprites[0]._facingDir);
+	_animation->setDirection(_animation->_sprites[0]->_facingDir);
 	drawDirection();
 
 	fadeIn();
@@ -1721,7 +1721,7 @@ void AvalancheEngine::openDoor(Room whither, byte ped, byte magicnum) {
 				return;
 			} else {
 				_animation->appearPed(0, 5);
-				_animation->_sprites[0]._facingDir = kDirRight;
+				_animation->_sprites[0]->_facingDir = kDirRight;
 				_sequence->startLustiesSeq2(whither, ped);
 			}
 			break;

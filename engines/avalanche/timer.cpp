@@ -242,7 +242,7 @@ void Timer::avariciusTalks() {
 }
 
 void Timer::urinate() {
-	_vm->_animation->_sprites[0].turn(kDirUp);
+	_vm->_animation->_sprites[0]->turn(kDirUp);
 	_vm->_animation->stopWalking();
 	_vm->drawDirection();
 	addTimer(14, kProcToilet, kReasonGoToToilet);
@@ -264,7 +264,7 @@ void Timer::bang2() {
 
 void Timer::stairs() {
 	_vm->_sound->blip();
-	_vm->_animation->_sprites[0].walkTo(3);
+	_vm->_animation->_sprites[0]->walkTo(3);
 	_vm->_background->draw(-1, -1, 1);
 	_vm->_brummieStairs = 2;
 	_vm->_magics[10]._operation = kMagicSpecial;
@@ -298,7 +298,7 @@ void Timer::getTiedUp() {
 	_vm->_beenTiedUp = true;
 	_vm->_animation->stopWalking();
 
-	AnimationType *spr = &_vm->_animation->_sprites[1];
+	AnimationType *spr = _vm->_animation->_sprites[1];
 	spr->stopWalk();
 	spr->stopHoming();
 	spr->_callEachStepFl = true;
@@ -307,17 +307,17 @@ void Timer::getTiedUp() {
 }
 
 void Timer::getTiedUp2() {
-	_vm->_animation->_sprites[0].walkTo(3);
-	_vm->_animation->_sprites[1].walkTo(4);
+	_vm->_animation->_sprites[0]->walkTo(3);
+	_vm->_animation->_sprites[1]->walkTo(4);
 	_vm->_magics[3]._operation = kMagicNothing; // No effect when you touch the boundaries.
 	_vm->_friarWillTieYouUp = true;
 }
 
 void Timer::hangAround() {
-	_vm->_animation->_sprites[1]._doCheck = false;
+	_vm->_animation->_sprites[1]->_doCheck = false;
 
-	AnimationType *avvy = &_vm->_animation->_sprites[0];
-	avvy->init(7, true, _vm->_animation); // Robin Hood
+	AnimationType *avvy = _vm->_animation->_sprites[0];
+	avvy->init(7, true); // Robin Hood
 	_vm->setRoom(kPeopleRobinHood, kRoomRobins);
 	_vm->_animation->appearPed(0, 1);
 	_vm->_dialogs->displayScrollChain('q', 39);
@@ -327,12 +327,12 @@ void Timer::hangAround() {
 
 void Timer::hangAround2() {
 	_vm->_dialogs->displayScrollChain('q', 40);
-	AnimationType *spr = &_vm->_animation->_sprites[1];
+	AnimationType *spr = _vm->_animation->_sprites[1];
 	spr->_vanishIfStill = false;
 	spr->walkTo(3);
 	_vm->setRoom(kPeopleFriarTuck, kRoomRobins);
 	_vm->_dialogs->displayScrollChain('q', 41);
-	_vm->_animation->_sprites[0].remove();
+	_vm->_animation->_sprites[0]->remove();
 	spr->remove(); // Get rid of Robin Hood and Friar Tuck.
 
 	addTimer(1, kProcAfterTheShootemup, kReasonHangingAround);
@@ -347,7 +347,7 @@ void Timer::afterTheShootemup() {
 	// Only placed this here to replace the minigame. TODO: Remove it when the shoot em' up is implemented!
 	_vm->flipRoom(_vm->_room, 1);
 
-	_vm->_animation->_sprites[0].init(0, true, _vm->_animation); // Avalot.
+	_vm->_animation->_sprites[0]->init(0, true); // Avalot.
 	_vm->_animation->appearPed(0, 1);
 	_vm->_userMovesAvvy = true;
 	_vm->_objects[kObjectCrossbow - 1] = true;
@@ -417,8 +417,8 @@ void Timer::jacquesWakesUp() {
 }
 
 void Timer::naughtyDuke() { // This is when the Duke comes in and takes your money.
-	AnimationType *spr = &_vm->_animation->_sprites[1];
-	spr->init(9, false, _vm->_animation); // Here comes the Duke.
+	AnimationType *spr = _vm->_animation->_sprites[1];
+	spr->init(9, false); // Here comes the Duke.
 	_vm->_animation->appearPed(1, 0); // He starts at the door...
 	spr->walkTo(2); // He walks over to you.
 
@@ -430,7 +430,7 @@ void Timer::naughtyDuke() { // This is when the Duke comes in and takes your mon
 }
 
 void Timer::naughtyDuke2() {
-	AnimationType *spr = &_vm->_animation->_sprites[1];
+	AnimationType *spr = _vm->_animation->_sprites[1];
 	_vm->_dialogs->displayScrollChain('q', 48); // "Ha ha, it worked again!"
 	spr->walkTo(0); // Walk to the door.
 	spr->_vanishIfStill = true; // Then go away!
@@ -444,7 +444,7 @@ void Timer::naughtyDuke3() {
 }
 
 void Timer::jump() {
-	AnimationType *avvy = &_vm->_animation->_sprites[0];
+	AnimationType *avvy = _vm->_animation->_sprites[0];
 
 	_vm->_jumpStatus++;
 	switch (_vm->_jumpStatus) {
@@ -534,7 +534,7 @@ void Timer::greetsMonk() {
 void Timer::fallDownOubliette() {
 	_vm->_magics[8]._operation = kMagicNothing;
 
-	AnimationType *avvy = &_vm->_animation->_sprites[0];
+	AnimationType *avvy = _vm->_animation->_sprites[0];
 	avvy->_moveY++; // Increments dx/dy!
 	avvy->_y += avvy->_moveY;   // Dowwwn we go...
 	addTimer(3, kProcFallDownOubliette, kReasonFallingDownOubliette);
@@ -551,7 +551,7 @@ void Timer::meetAvaroid() {
 		_vm->_metAvaroid = true;
 		addTimer(1, kProcRiseUpOubliette, kReasonRisingUpOubliette);
 
-		AnimationType *avvy = &_vm->_animation->_sprites[0];
+		AnimationType *avvy = _vm->_animation->_sprites[0];
 		avvy->_facingDir = kDirLeft;
 		avvy->_x = 151;
 		avvy->_moveX = -3;
@@ -562,7 +562,7 @@ void Timer::meetAvaroid() {
 }
 
 void Timer::riseUpOubliette() {
-	AnimationType *avvy = &_vm->_animation->_sprites[0];
+	AnimationType *avvy = _vm->_animation->_sprites[0];
 	avvy->_visible = true;
 	avvy->_moveY++; // Decrements dx/dy!
 	avvy->_y -= avvy->_moveY; // Uuuupppp we go...
@@ -573,12 +573,12 @@ void Timer::riseUpOubliette() {
 }
 
 void Timer::robinHoodAndGeida() {
-	AnimationType *avvy = &_vm->_animation->_sprites[0];
-	avvy->init(7, true, _vm->_animation);
+	AnimationType *avvy = _vm->_animation->_sprites[0];
+	avvy->init(7, true);
 	_vm->_animation->appearPed(0, 6);
 	avvy->walkTo(5);
 
-	AnimationType *spr = &_vm->_animation->_sprites[1];
+	AnimationType *spr = _vm->_animation->_sprites[1];
 	spr->stopWalk();
 	spr->_facingDir = kDirLeft;
 	addTimer(20, kProcRobinHoodAndGeidaTalk, kReasonRobinHoodAndGeida);
@@ -588,8 +588,8 @@ void Timer::robinHoodAndGeida() {
 void Timer::robinHoodAndGeidaTalk() {
 	_vm->_dialogs->displayScrollChain('q', 66);
 
-	AnimationType *avvy = &_vm->_animation->_sprites[0];
-	AnimationType *spr = &_vm->_animation->_sprites[1];
+	AnimationType *avvy = _vm->_animation->_sprites[0];
+	AnimationType *spr = _vm->_animation->_sprites[1];
 	avvy->walkTo(1);
 	spr->walkTo(1);
 	avvy->_vanishIfStill = true;
@@ -599,11 +599,11 @@ void Timer::robinHoodAndGeidaTalk() {
 }
 
 void Timer::avalotReturns() {
-	AnimationType *avvy = &_vm->_animation->_sprites[0];
-	AnimationType *spr = &_vm->_animation->_sprites[1];
+	AnimationType *avvy = _vm->_animation->_sprites[0];
+	AnimationType *spr = _vm->_animation->_sprites[1];
 	avvy->remove();
 	spr->remove();
-	avvy->init(0, true, _vm->_animation);
+	avvy->init(0, true);
 	_vm->_animation->appearPed(0, 0);
 	_vm->_dialogs->displayScrollChain('q', 67);
 	_vm->_userMovesAvvy = true;
@@ -615,7 +615,7 @@ void Timer::avalotReturns() {
  * @remarks	Originally called 'avvy_sit_down'
  */
 void Timer::avvySitDown() {
-	AnimationType *avvy = &_vm->_animation->_sprites[0];
+	AnimationType *avvy = _vm->_animation->_sprites[0];
 	if (avvy->_homing)    // Still walking.
 		addTimer(1, kProcAvvySitDown, kReasonSittingDown);
 	else {
@@ -658,7 +658,7 @@ void Timer::winning() {
 }
 
 void Timer::avalotFalls() {
-	AnimationType *avvy = &_vm->_animation->_sprites[0];
+	AnimationType *avvy = _vm->_animation->_sprites[0];
 	if (avvy->_stepNum < 5) {
 		avvy->_stepNum++;
 		addTimer(3, kProcAvalotFalls, kReasonFallingOver);
@@ -673,14 +673,14 @@ void Timer::avalotFalls() {
 }
 
 void Timer::spludwickGoesToCauldron() {
-	if (_vm->_animation->_sprites[1]._homing)
+	if (_vm->_animation->_sprites[1]->_homing)
 		addTimer(1, kProcSpludwickGoesToCauldron, kReasonSpludwickWalk);
 	else
 		addTimer(17, kProcSpludwickLeavesCauldron, kReasonSpludwickWalk);
 }
 
 void Timer::spludwickLeavesCauldron() {
-	_vm->_animation->_sprites[1]._callEachStepFl = true; // So that normal procs will continue.
+	_vm->_animation->_sprites[1]->_callEachStepFl = true; // So that normal procs will continue.
 }
 
 void Timer::giveLuteToGeida() { // Moved here from Acci.

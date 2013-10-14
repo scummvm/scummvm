@@ -688,7 +688,7 @@ void Dialogs::callDialogDriver() {
 				if (_param == 0)
 					setBubbleStateNatural();
 				else if ((1 <= _param) && (_param <= 9)) {
-					AnimationType *spr = &_vm->_animation->_sprites[_param - 1];
+					AnimationType *spr = _vm->_animation->_sprites[_param - 1];
 					if ((_param > _vm->_animation->kSpriteNumbMax) || (!spr->_quick)) { // Not valid.
 						_vm->errorLed();
 						setBubbleStateNatural();
@@ -1074,7 +1074,7 @@ void Dialogs::talkTo(byte whom) {
 
 	bool noMatches = true;
 	for (int i = 0; i <= _vm->_animation->kSpriteNumbMax; i++) {
-		if (_vm->_animation->_sprites[i]._stat._acciNum == whom) {
+		if (_vm->_animation->_sprites[i]->_stat._acciNum == whom) {
 			Common::String tmpStr = Common::String::format("%c%c%c", kControlRegister, i + 49, kControlToBuffer);
 			displayText(tmpStr);
 			noMatches = false;
@@ -1099,7 +1099,7 @@ void Dialogs::talkTo(byte whom) {
 		_vm->_talkedToCrapulus = true;
 		_vm->setRoom(kPeopleCrapulus, kRoomDummy); // Crapulus walks off.
 
-		AnimationType *spr = &_vm->_animation->_sprites[1];
+		AnimationType *spr = _vm->_animation->_sprites[1];
 		spr->_vanishIfStill = true;
 		spr->walkTo(2); // Walks away.
 
@@ -1134,7 +1134,7 @@ Common::String Dialogs::personSpeaks() {
 	Common::String tmpStr;
 
 	for (int i = 0; i < _vm->_animation->kSpriteNumbMax; i++) {
-		if (_vm->_animation->_sprites[i]._quick && ((_vm->_animation->_sprites[i]._stat._acciNum + 149) == _vm->_parser->_person)) {
+		if (_vm->_animation->_sprites[i]->_quick && ((_vm->_animation->_sprites[i]->_stat._acciNum + 149) == _vm->_parser->_person)) {
 			tmpStr += Common::String::format("%c%c", kControlRegister, '1' + i);
 			found = true;
 		}

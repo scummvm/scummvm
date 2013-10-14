@@ -46,12 +46,14 @@ const int32 Animation::kCatacombMap[8][8] = {
 	{0x34,   0x200f, 0x51f0, 0x201f, 0xf1,   0x50ff, 0x902f, 0x2062}
 };
 
+AnimationType::AnimationType(Animation *anim) {
+	_anim = anim;
+}
+
 /**
  * Loads & sets up the sprite.
  */
-void AnimationType::init(byte spritenum, bool doCheck, Animation *anim) {
-	_anim = anim;
-
+void AnimationType::init(byte spritenum, bool doCheck) {
 	const int32 idshould = -1317732048;
 
 	if (spritenum == 177)
@@ -180,7 +182,7 @@ void AnimationType::appear(int16 wx, int16 wy, Direction wf) {
  */
 bool AnimationType::checkCollision() {
 	for (int i = 0; i < _anim->kSpriteNumbMax; i++) {
-		AnimationType *spr = &_anim->_sprites[i];
+		AnimationType *spr = _anim->_sprites[i];
 		if (spr->_quick && (spr->_id != _id) && (_x + _info._xLength > spr->_x) && (_x < spr->_x + spr->_info._xLength) && (spr->_y == _y))
 			return true;
 	}
@@ -381,14 +383,18 @@ void AnimationType::remove() {
 
 Animation::Animation(AvalancheEngine *vm) {
 	_vm = vm;
-
 	_mustExclaim = false;
+
+	for (int16 i = 0; i < kSpriteNumbMax; i++) {
+		_sprites[i] = new AnimationType(this);
+	}
 }
 
 Animation::~Animation() {
 	for (int16 i = 0; i < kSpriteNumbMax; i++) {
-		if (_sprites[i]._quick)
-			_sprites[i].remove();
+		if (_sprites[i]->_quick)
+			_sprites[i]->remove();
+		delete(_sprites[i]);
 	}
 }
 
@@ -399,7 +405,7 @@ Animation::~Animation() {
 void Animation::resetAnims() {
 	setDirection(kDirStopped);
 	for (int16 i = 0; i < kSpriteNumbMax; i++)
-		_sprites[i].reset();
+		_sprites[i]->reset();
 }
 
 byte Animation::checkFeet(int16 x1, int16 x2, int16 oy, int16 y, byte yl) {
@@ -463,8 +469,8 @@ void Animation::catacombMove(byte ped) {
 		_vm->flipRoom(kRoomLusties, 5);
 		_vm->_dialogs->displayText("Oh no... here we go again...");
 		_vm->_userMovesAvvy = false;
-		_sprites[0]._moveY = 1;
-		_sprites[0]._moveX = 0;
+		_sprites[0]->_moveY = 1;
+		_sprites[0]->_moveX = 0;
 		return;
 	}
 
@@ -730,11 +736,11 @@ void Animation::catacombMove(byte ped) {
 	}
 
 	if ((_vm->_geidaFollows) && (ped > 0)) {
-		if (!_sprites[1]._quick)  // If we don't already have her...
-			_sprites[1].init(5, true, this); // ...Load Geida.
+		if (!_sprites[1]->_quick)  // If we don't already have her...
+			_sprites[1]->init(5, true); // ...Load Geida.
 		appearPed(1, geidaPed(ped));
-		_sprites[1]._callEachStepFl = true;
-		_sprites[1]._eachStepProc = kProcGeida;
+		_sprites[1]->_callEachStepFl = true;
+		_sprites[1]->_eachStepProc = kProcGeida;
 	}
 }
 
@@ -766,25 +772,25 @@ void Animation::callSpecial(uint16 which) {
 		_vm->_userMovesAvvy = true;
 		break;
 	case 3: // _vm->special 3: Room 71: triggers dart.
-		_sprites[0].bounce(); // Must include that.
+		_sprites[0]->bounce(); // Must include that.
 
 		if (!_arrowTriggered) {
 			_arrowTriggered = true;
 			appearPed(1, 3); // The dart starts at ped 4, and...
-			_sprites[1].walkTo(4); // flies to ped 5 (- 1 for pascal to C conversion).
-			_sprites[1]._facingDir = kDirUp; // Only face.
+			_sprites[1]->walkTo(4); // flies to ped 5 (- 1 for pascal to C conversion).
+			_sprites[1]->_facingDir = kDirUp; // Only face.
 			// Should call some kind of Eachstep procedure which will deallocate
 			// the sprite when it hits the wall, and replace it with the chunk
 			// graphic of the arrow buried in the plaster. */
 
 			// OK!
-			_sprites[1]._callEachStepFl = true;
-			_sprites[1]._eachStepProc = kProcArrow;
+			_sprites[1]->_callEachStepFl = true;
+			_sprites[1]->_eachStepProc = kProcArrow;
 		}
 		break;
 	case 4: // This is the ghost room link.
 		_vm->fadeOut();
-		_sprites[0].turn(kDirRight); // you'll see this after we get back from bootstrap
+		_sprites[0]->turn(kDirRight); // you'll see this after we get back from bootstrap
 		_vm->_timer->addTimer(1, Timer::kProcGhostRoomPhew, Timer::kReasonGhostRoomPhew);
 		//_vm->_enid->backToBootstrap(3); TODO: Replace it with proper ScummVM-friendly function(s)!  Do not remove until then!
 		break;
@@ -793,28 +799,28 @@ void Animation::callSpecial(uint16 which) {
 			// _vm->special 5: Room 42: touched tree, and get tied up.
 			_vm->_magics[4]._operation = kMagicBounce; // Boundary effect is now working again.
 			_vm->_dialogs->displayScrollChain('q', 35);
-			_sprites[0].remove();
+			_sprites[0]->remove();
 			//tr[1].vanishifstill:=true;
 			_vm->_background->draw(-1, -1, 1);
 			_vm->_dialogs->displayScrollChain('q', 36);
 			_vm->_tiedUp = true;
 			_vm->_friarWillTieYouUp = false;
-			_sprites[1].walkTo(2);
-			_sprites[1]._vanishIfStill = true;
-			_sprites[1]._doCheck = true; // One of them must have Check_Me switched on.
+			_sprites[1]->walkTo(2);
+			_sprites[1]->_vanishIfStill = true;
+			_sprites[1]->_doCheck = true; // One of them must have Check_Me switched on.
 			_vm->setRoom(kPeopleFriarTuck, kRoomDummy); // Not here, then.
 			_vm->_timer->addTimer(364, Timer::kProcHangAround, Timer::kReasonHangingAround);
 		}
 		break;
 	case 6: // _vm->special 6: fall down oubliette.
 		_vm->_userMovesAvvy = false;
-		_sprites[0]._moveX = 3;
-		_sprites[0]._moveY = 0;
-		_sprites[0]._facingDir = kDirRight;
+		_sprites[0]->_moveX = 3;
+		_sprites[0]->_moveY = 0;
+		_sprites[0]->_facingDir = kDirRight;
 		_vm->_timer->addTimer(1, Timer::kProcFallDownOubliette, Timer::kReasonFallingDownOubliette);
 		break;
 	case 7: // _vm->special 7: stop falling down oubliette.
-		_sprites[0]._visible = false;
+		_sprites[0]->_visible = false;
 		_vm->_magics[9]._operation = kMagicNothing;
 		stopWalking();
 		_vm->_timer->loseTimer(Timer::kReasonFallingDownOubliette);
@@ -826,18 +832,18 @@ void Animation::callSpecial(uint16 which) {
 	case 8:        // _vm->special 8: leave du Lustie's room.
 		if ((_vm->_geidaFollows) && (!_vm->_lustieIsAsleep)) {
 			_vm->_dialogs->displayScrollChain('q', 63);
-			_sprites[1].turn(kDirDown);
-			_sprites[1].stopWalk();
-			_sprites[1]._callEachStepFl = false; // Geida
+			_sprites[1]->turn(kDirDown);
+			_sprites[1]->stopWalk();
+			_sprites[1]->_callEachStepFl = false; // Geida
 			_vm->gameOver();
 		}
 		break;
 	case 9: // _vm->special 9: lose Geida to Robin Hood...
 		if (!_vm->_geidaFollows)
 			return;   // DOESN'T COUNT: no Geida.
-		_sprites[1]._callEachStepFl = false; // She no longer follows Avvy around.
-		_sprites[1].walkTo(3); // She walks to somewhere...
-		_sprites[0].remove();     // Lose Avvy.
+		_sprites[1]->_callEachStepFl = false; // She no longer follows Avvy around.
+		_sprites[1]->walkTo(3); // She walks to somewhere...
+		_sprites[0]->remove();     // Lose Avvy.
 		_vm->_userMovesAvvy = false;
 		_vm->_timer->addTimer(40, Timer::kProcRobinHoodAndGeida, Timer::kReasonRobinHoodAndGeida);
 		break;
@@ -900,35 +906,35 @@ void Animation::callSpecial(uint16 which) {
 
 void Animation::updateSpeed() {
 	// Given that you've just changed the speed in _speedX, this adjusts _moveX.
-	_sprites[0]._moveX = (_sprites[0]._moveX / 3) * _sprites[0]._speedX;
-	_vm->_graphics->drawSpeedBar(_sprites[0]._speedX);
+	_sprites[0]->_moveX = (_sprites[0]->_moveX / 3) * _sprites[0]->_speedX;
+	_vm->_graphics->drawSpeedBar(_sprites[0]->_speedX);
 }
 
 void Animation::setMoveSpeed(byte t, Direction dir) {
 	switch (dir) {
 	case kDirUp:
-		_sprites[t].setSpeed(0, -_sprites[t]._speedY);
+		_sprites[t]->setSpeed(0, -_sprites[t]->_speedY);
 		break;
 	case kDirDown:
-		_sprites[t].setSpeed(0, _sprites[t]._speedY);
+		_sprites[t]->setSpeed(0, _sprites[t]->_speedY);
 		break;
 	case kDirLeft:
-		_sprites[t].setSpeed(-_sprites[t]._speedX,  0);
+		_sprites[t]->setSpeed(-_sprites[t]->_speedX,  0);
 		break;
 	case kDirRight:
-		_sprites[t].setSpeed(_sprites[t]._speedX,  0);
+		_sprites[t]->setSpeed(_sprites[t]->_speedX,  0);
 		break;
 	case kDirUpLeft:
-		_sprites[t].setSpeed(-_sprites[t]._speedX, -_sprites[t]._speedY);
+		_sprites[t]->setSpeed(-_sprites[t]->_speedX, -_sprites[t]->_speedY);
 		break;
 	case kDirUpRight:
-		_sprites[t].setSpeed(_sprites[t]._speedX, -_sprites[t]._speedY);
+		_sprites[t]->setSpeed(_sprites[t]->_speedX, -_sprites[t]->_speedY);
 		break;
 	case kDirDownLeft:
-		_sprites[t].setSpeed(-_sprites[t]._speedX, _sprites[t]._speedY);
+		_sprites[t]->setSpeed(-_sprites[t]->_speedX, _sprites[t]->_speedY);
 		break;
 	case kDirDownRight:
-		_sprites[t].setSpeed(_sprites[t]._speedX, _sprites[t]._speedY);
+		_sprites[t]->setSpeed(_sprites[t]->_speedX, _sprites[t]->_speedY);
 		break;
 	default:
 		break;
@@ -936,7 +942,7 @@ void Animation::setMoveSpeed(byte t, Direction dir) {
 }
 
 void Animation::appearPed(byte sprNum, byte pedNum) {
-	AnimationType *curSpr = &_sprites[sprNum];
+	AnimationType *curSpr = _sprites[sprNum];
 	PedType *curPed = &_vm->_peds[pedNum];
 	curSpr->appear(curPed->_x - curSpr->_info._xLength / 2, curPed->_y - curSpr->_info._yLength, curPed->_direction);
 	setMoveSpeed(sprNum, curPed->_direction);
@@ -946,59 +952,59 @@ void Animation::appearPed(byte sprNum, byte pedNum) {
  * @remarks	Originally called 'follow_avvy_y'
  */
 void Animation::followAvalotY(byte tripnum) {
-	if (_sprites[0]._facingDir == kDirLeft)
+	if (_sprites[0]->_facingDir == kDirLeft)
 		return;
-	if (_sprites[tripnum]._homing)
-		_sprites[tripnum]._homingY = _sprites[1]._y;
+	if (_sprites[tripnum]->_homing)
+		_sprites[tripnum]->_homingY = _sprites[1]->_y;
 	else {
-		if (_sprites[tripnum]._y < _sprites[1]._y)
-			_sprites[tripnum]._y++;
-		else if (_sprites[tripnum]._y > _sprites[1]._y)
-			_sprites[tripnum]._y--;
+		if (_sprites[tripnum]->_y < _sprites[1]->_y)
+			_sprites[tripnum]->_y++;
+		else if (_sprites[tripnum]->_y > _sprites[1]->_y)
+			_sprites[tripnum]->_y--;
 		else
 			return;
-		if (_sprites[tripnum]._moveX == 0)  {
-			_sprites[tripnum]._stepNum++;
-			if (_sprites[tripnum]._stepNum == _sprites[tripnum]._stat._seq)
-				_sprites[tripnum]._stepNum = 0;
-			_sprites[tripnum]._count = 0;
+		if (_sprites[tripnum]->_moveX == 0)  {
+			_sprites[tripnum]->_stepNum++;
+			if (_sprites[tripnum]->_stepNum == _sprites[tripnum]->_stat._seq)
+				_sprites[tripnum]->_stepNum = 0;
+			_sprites[tripnum]->_count = 0;
 		}
 	}
 }
 
 void Animation::backAndForth(byte tripnum) {
-	if (!_sprites[tripnum]._homing) {
-		if (_sprites[tripnum]._facingDir == kDirRight)
-			_sprites[tripnum].walkTo(3);
+	if (!_sprites[tripnum]->_homing) {
+		if (_sprites[tripnum]->_facingDir == kDirRight)
+			_sprites[tripnum]->walkTo(3);
 		else
-			_sprites[tripnum].walkTo(4);
+			_sprites[tripnum]->walkTo(4);
 	}
 }
 
 void Animation::faceAvvy(byte tripnum) {
-	if (!_sprites[tripnum]._homing) {
-		if (_sprites[0]._x >= _sprites[tripnum]._x)
-			_sprites[tripnum]._facingDir = kDirRight;
+	if (!_sprites[tripnum]->_homing) {
+		if (_sprites[0]->_x >= _sprites[tripnum]->_x)
+			_sprites[tripnum]->_facingDir = kDirRight;
 		else
-			_sprites[tripnum]._facingDir = kDirLeft;
+			_sprites[tripnum]->_facingDir = kDirLeft;
 	}
 }
 
 void Animation::arrowProcs(byte tripnum) {
-	if (_sprites[tripnum]._homing) {
+	if (_sprites[tripnum]->_homing) {
 		// Arrow is still in flight.
 		// We must check whether or not the arrow has collided tr[tripnum] Avvy's head.
 		// This is so if: a) the bottom of the arrow is below Avvy's head,
 		// b) the left of the arrow is left of the right of Avvy's head, and
 		// c) the right of the arrow is right of the left of Avvy's head.
-		if (((_sprites[tripnum]._y + _sprites[tripnum]._info._yLength) >= _sprites[0]._y) // A
-				&& (_sprites[tripnum]._x <= (_sprites[0]._x + _sprites[0]._info._xLength)) // B
-				&& ((_sprites[tripnum]._x + _sprites[tripnum]._info._xLength) >= _sprites[0]._x)) { // C
+		if (((_sprites[tripnum]->_y + _sprites[tripnum]->_info._yLength) >= _sprites[0]->_y) // A
+				&& (_sprites[tripnum]->_x <= (_sprites[0]->_x + _sprites[0]->_info._xLength)) // B
+				&& ((_sprites[tripnum]->_x + _sprites[tripnum]->_info._xLength) >= _sprites[0]->_x)) { // C
 			// OK, it's hit him... what now?
 
-			_sprites[1]._callEachStepFl = false; // prevent recursion.
+			_sprites[1]->_callEachStepFl = false; // prevent recursion.
 			_vm->_dialogs->displayScrollChain('Q', 47); // Complaint!
-			_sprites[tripnum].remove(); // Deallocate the arrow.
+			_sprites[tripnum]->remove(); // Deallocate the arrow.
 
 			_vm->gameOver();
 
@@ -1006,7 +1012,7 @@ void Animation::arrowProcs(byte tripnum) {
 			_vm->_timer->addTimer(55, Timer::kProcNaughtyDuke, Timer::kReasonNaughtyDuke);
 		}
 	} else { // Arrow has hit the wall!
-		_sprites[tripnum].remove(); // Deallocate the arrow.
+		_sprites[tripnum]->remove(); // Deallocate the arrow.
 		_vm->_background->draw(-1, -1, 2); // Show pic of arrow stuck into the door.
 		_vm->_arrowInTheDoor = true; // So that we can pick it up.
 	}
@@ -1014,43 +1020,43 @@ void Animation::arrowProcs(byte tripnum) {
 }
 
 void Animation::grabAvvy(byte tripnum) {     // For Friar Tuck, in Nottingham.
-	int16 tox = _sprites[0]._x + 17;
-	int16 toy = _sprites[0]._y - 1;
-	if ((_sprites[tripnum]._x == tox) && (_sprites[tripnum]._y == toy)) {
-		_sprites[tripnum]._callEachStepFl = false;
-		_sprites[tripnum]._facingDir = kDirLeft;
-		_sprites[tripnum].stopWalk();
+	int16 tox = _sprites[0]->_x + 17;
+	int16 toy = _sprites[0]->_y - 1;
+	if ((_sprites[tripnum]->_x == tox) && (_sprites[tripnum]->_y == toy)) {
+		_sprites[tripnum]->_callEachStepFl = false;
+		_sprites[tripnum]->_facingDir = kDirLeft;
+		_sprites[tripnum]->stopWalk();
 		// ... whatever ...
 	} else {
 		// Still some way to go.
-		if (_sprites[tripnum]._x < tox) {
-			_sprites[tripnum]._x += 5;
-			if (_sprites[tripnum]._x > tox)
-				_sprites[tripnum]._x = tox;
+		if (_sprites[tripnum]->_x < tox) {
+			_sprites[tripnum]->_x += 5;
+			if (_sprites[tripnum]->_x > tox)
+				_sprites[tripnum]->_x = tox;
 		}
-		if (_sprites[tripnum]._y < toy)
-			_sprites[tripnum]._y++;
-		_sprites[tripnum]._stepNum++;
-		if (_sprites[tripnum]._stepNum == _sprites[tripnum]._stat._seq)
-			_sprites[tripnum]._stepNum = 0;
+		if (_sprites[tripnum]->_y < toy)
+			_sprites[tripnum]->_y++;
+		_sprites[tripnum]->_stepNum++;
+		if (_sprites[tripnum]->_stepNum == _sprites[tripnum]->_stat._seq)
+			_sprites[tripnum]->_stepNum = 0;
 	}
 }
 
 void Animation::takeAStep(byte &tripnum) {
-	if (_sprites[tripnum]._moveX == 0) {
-		_sprites[tripnum]._stepNum++;
-		if (_sprites[tripnum]._stepNum == _sprites[tripnum]._stat._seq)
-			_sprites[tripnum]._stepNum = 0;
-		_sprites[tripnum]._count = 0;
+	if (_sprites[tripnum]->_moveX == 0) {
+		_sprites[tripnum]->_stepNum++;
+		if (_sprites[tripnum]->_stepNum == _sprites[tripnum]->_stat._seq)
+			_sprites[tripnum]->_stepNum = 0;
+		_sprites[tripnum]->_count = 0;
 	}
 }
 
 void Animation::spin(Direction dir, byte &tripnum) {
-	if (_sprites[tripnum]._facingDir == dir)
+	if (_sprites[tripnum]->_facingDir == dir)
 		return;
 
-	_sprites[tripnum]._facingDir = dir;
-	if (_sprites[tripnum]._id == 2)
+	_sprites[tripnum]->_facingDir = dir;
+	if (_sprites[tripnum]->_id == 2)
 		return; // Not for Spludwick
 
 	_geidaSpin++;
@@ -1069,35 +1075,35 @@ void Animation::geidaProcs(byte tripnum) {
 			_geidaSpin = 0;
 	}
 
-	if (_sprites[tripnum]._y < (_sprites[0]._y - 2)) {
+	if (_sprites[tripnum]->_y < (_sprites[0]->_y - 2)) {
 		// Geida is further from the screen than Avvy.
 		spin(kDirDown, tripnum);
-		_sprites[tripnum]._moveY = 1;
-		_sprites[tripnum]._moveX = 0;
+		_sprites[tripnum]->_moveY = 1;
+		_sprites[tripnum]->_moveX = 0;
 		takeAStep(tripnum);
 		return;
-	} else if (_sprites[tripnum]._y > (_sprites[0]._y + 2)) {
+	} else if (_sprites[tripnum]->_y > (_sprites[0]->_y + 2)) {
 		// Avvy is further from the screen than Geida.
 		spin(kDirUp, tripnum);
-		_sprites[tripnum]._moveY = -1;
-		_sprites[tripnum]._moveX = 0;
+		_sprites[tripnum]->_moveY = -1;
+		_sprites[tripnum]->_moveX = 0;
 		takeAStep(tripnum);
 		return;
 	}
 
-	_sprites[tripnum]._moveY = 0;
+	_sprites[tripnum]->_moveY = 0;
 	// These 12-s are not in the original, I added them to make the following method more "smooth".
 	// Now the NPC which is following Avvy won't block his way and will walk next to him properly.
-	if (_sprites[tripnum]._x < _sprites[0]._x - _sprites[0]._speedX * 8 - 12) {
-		_sprites[tripnum]._moveX = _sprites[0]._speedX;
+	if (_sprites[tripnum]->_x < _sprites[0]->_x - _sprites[0]->_speedX * 8 - 12) {
+		_sprites[tripnum]->_moveX = _sprites[0]->_speedX;
 		spin(kDirRight, tripnum);
 		takeAStep(tripnum);
-	} else if (_sprites[tripnum]._x > _sprites[0]._x + _sprites[0]._speedX * 8 + 12) {
-		_sprites[tripnum]._moveX = -_sprites[0]._speedX;
+	} else if (_sprites[tripnum]->_x > _sprites[0]->_x + _sprites[0]->_speedX * 8 + 12) {
+		_sprites[tripnum]->_moveX = -_sprites[0]->_speedX;
 		spin(kDirLeft, tripnum);
 		takeAStep(tripnum);
 	} else
-		_sprites[tripnum]._moveX = 0;
+		_sprites[tripnum]->_moveX = 0;
 }
 
 /**
@@ -1112,7 +1118,7 @@ void Animation::drawSprites() {
 		order[i] = -1;
 
 	for (int16 i = 0; i < kSpriteNumbMax; i++) {
-		if (_sprites[i]._quick && _sprites[i]._visible)
+		if (_sprites[i]->_quick && _sprites[i]->_visible)
 			order[i] = i;
 	}
 
@@ -1120,7 +1126,7 @@ void Animation::drawSprites() {
 		ok = true;
 		for (int i = 0; i < 4; i++) {
 			if (((order[i] != -1) && (order[i + 1] != -1))
-					&& (_sprites[order[i]]._y > _sprites[order[i + 1]]._y)) {
+					&& (_sprites[order[i]]->_y > _sprites[order[i + 1]]->_y)) {
 				// Swap them!
 				temp = order[i];
 				order[i] = order[i + 1];
@@ -1134,7 +1140,7 @@ void Animation::drawSprites() {
 
 	for (int i = 0; i < 5; i++) {
 		if (order[i] > -1)
-			_sprites[order[i]].draw();
+			_sprites[order[i]]->draw();
 	}
 }
 
@@ -1146,15 +1152,15 @@ void Animation::animLink() {
 	if (_vm->_menu->isActive() || _vm->_seeScroll)
 		return;
 	for (int16 i = 0; i < kSpriteNumbMax; i++) {
-		if (_sprites[i]._quick && _sprites[i]._visible)
-			_sprites[i].walk();
+		if (_sprites[i]->_quick && _sprites[i]->_visible)
+			_sprites[i]->walk();
 	}
 
 	drawSprites();
 
 	for (int16 i = 0; i < kSpriteNumbMax; i++) {
-		if (_sprites[i]._quick && _sprites[i]._callEachStepFl) {
-			switch (_sprites[i]._eachStepProc) {
+		if (_sprites[i]->_quick && _sprites[i]->_callEachStepFl) {
+			switch (_sprites[i]->_eachStepProc) {
 			case kProcFollowAvvyY :
 				followAvalotY(i);
 				break;
@@ -1185,10 +1191,10 @@ void Animation::animLink() {
 }
 
 void Animation::stopWalking() {
-	_sprites[0].stopWalk();
+	_sprites[0]->stopWalk();
 	_direction = kDirStopped;
 	if (_vm->_alive)
-		_sprites[0]._stepNum = 1;
+		_sprites[0]->_stepNum = 1;
 }
 
 /**
@@ -1201,7 +1207,7 @@ void Animation::hideInCupboard() {
 			Common::String tmpStr = Common::String::format("%cAVVY!%cGet dressed first!", kControlItalic, kControlRoman);
 			_vm->_dialogs->displayText(tmpStr);
 		} else {
-			_sprites[0]._visible = true;
+			_sprites[0]->_visible = true;
 			_vm->_userMovesAvvy = true;
 			appearPed(0, 2); // Walk out of the cupboard.
 			_vm->_dialogs->displayText("You leave the cupboard. Nice to be out of there!");
@@ -1210,7 +1216,7 @@ void Animation::hideInCupboard() {
 		}
 	} else {
 		// Not hiding in the cupboard
-		_sprites[0]._visible = false;
+		_sprites[0]->_visible = false;
 		_vm->_userMovesAvvy = false;
 		Common::String tmpStr = Common::String::format("You walk into the room...%cIt seems to be an empty, " \
 			"but dusty, cupboard. Hmmmm... you leave the door slightly open to avoid suffocation.", kControlParagraph);
@@ -1225,9 +1231,9 @@ void Animation::hideInCupboard() {
  */
 bool Animation::inField(byte which) {
 	FieldType *curField = &_vm->_fields[which];
-	int16 yy = _sprites[0]._y + _sprites[0]._info._yLength;
+	int16 yy = _sprites[0]->_y + _sprites[0]->_info._yLength;
 
-	return (_sprites[0]._x >= curField->_x1) && (_sprites[0]._x <= curField->_x2) && (yy >= curField->_y1) && (yy <= curField->_y2);
+	return (_sprites[0]->_x >= curField->_x1) && (_sprites[0]->_x <= curField->_x2) && (yy >= curField->_y1) && (yy <= curField->_y2);
 }
 
 /**
@@ -1239,8 +1245,8 @@ bool Animation::nearDoor() {
 		return false;
 	}
 
-	int16 ux = _sprites[0]._x;
-	int16 uy = _sprites[0]._y + _sprites[0]._info._yLength;
+	int16 ux = _sprites[0]->_x;
+	int16 uy = _sprites[0]->_y + _sprites[0]->_info._yLength;
 
 	for (int i = 8; i < _vm->_fieldNum; i++) {
 		FieldType *curField = &_vm->_fields[i];
@@ -1357,7 +1363,7 @@ void Animation::synchronize(Common::Serializer &sz) {
 	byte spriteNum = 0;
 	if (sz.isSaving()) {
 		for (int i = 0; i < kSpriteNumbMax; i++) {
-			if (_sprites[i]._quick)
+			if (_sprites[i]->_quick)
 				spriteNum++;
 		}
 	}
@@ -1365,20 +1371,20 @@ void Animation::synchronize(Common::Serializer &sz) {
 
 	if (sz.isLoading()) {
 		for (int i = 0; i < kSpriteNumbMax; i++) { // Deallocate sprites.
-			AnimationType *spr = &_sprites[i];
+			AnimationType *spr = _sprites[i];
 			if (spr->_quick)
 				spr->remove();
 		}
 	}
 
 	for (int i = 0; i < spriteNum; i++) {
-		AnimationType *spr = &_sprites[i];
+		AnimationType *spr = _sprites[i];
 		sz.syncAsByte(spr->_id);
 		sz.syncAsByte(spr->_doCheck);
 
 		if (sz.isLoading()) {
 			spr->_quick = true;
-			spr->init(spr->_id, spr->_doCheck, this);
+			spr->init(spr->_id, spr->_doCheck);
 		}
 
 		sz.syncAsByte(spr->_moveX);

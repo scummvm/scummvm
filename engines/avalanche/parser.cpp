@@ -714,8 +714,8 @@ void Parser::storeInterrogation(byte interrogation) {
 			_vm->_spareEvening.clear();
 		_vm->_spareEvening = _inputText;
 		_vm->_dialogs->displayScrollChain('z', 5); // His closing statement...
-		_vm->_animation->_sprites[1].walkTo(3); // The end of the drawbridge
-		_vm->_animation->_sprites[1]._vanishIfStill = true; // Then go away!
+		_vm->_animation->_sprites[1]->walkTo(3); // The end of the drawbridge
+		_vm->_animation->_sprites[1]->_vanishIfStill = true; // Then go away!
 		_vm->_magics[1]._operation = kMagicNothing;
 		_vm->_cardiffQuestionNum = 5;
 		break;
@@ -1265,14 +1265,14 @@ void Parser::openDoor() {
 			MagicType *portal = &_vm->_portals[i];
 			switch (portal->_operation) {
 			case kMagicExclaim:
-				_vm->_animation->_sprites[0].bounce();
+				_vm->_animation->_sprites[0]->bounce();
 				_vm->_dialogs->displayScrollChain('x', portal->_data);
 				break;
 			case kMagicTransport:
 				_vm->flipRoom((Room)((portal->_data) >> 8), portal->_data & 0x0F);
 				break;
 			case kMagicUnfinished:
-				_vm->_animation->_sprites[0].bounce();
+				_vm->_animation->_sprites[0]->bounce();
 				_vm->_dialogs->displayText("Sorry. This place is not available yet!");
 				break;
 			case kMagicSpecial:
@@ -1393,9 +1393,9 @@ void Parser::notInOrder() {
  */
 void Parser::goToCauldron() {
 	// Stops Geida_Procs.
-	_vm->_animation->_sprites[1]._callEachStepFl = false;
+	_vm->_animation->_sprites[1]->_callEachStepFl = false;
 	_vm->_timer->addTimer(1, Timer::kProcSpludwickGoesToCauldron, Timer::kReasonSpludwickWalk);
-	_vm->_animation->_sprites[1].walkTo(1);
+	_vm->_animation->_sprites[1]->walkTo(1);
 }
 
 /**
@@ -1456,7 +1456,7 @@ void Parser::drink() {
 		_vm->fadeOut();
 		_vm->flipRoom(kRoomYours, 1);
 		_vm->_graphics->setBackgroundColor(kColorYellow);
-		_vm->_animation->_sprites[0]._visible = false;
+		_vm->_animation->_sprites[0]->_visible = false;
 	}
 }
 
@@ -1490,7 +1490,7 @@ void Parser::standUp() {
 				_vm->_graphics->setBackgroundColor(kColorBlack);
 				_vm->_dialogs->displayScrollChain('d', 14);
 			}
-			_vm->_animation->_sprites[0]._visible = true;
+			_vm->_animation->_sprites[0]->_visible = true;
 			_vm->_userMovesAvvy = true;
 			_vm->_animation->appearPed(0, 1);
 			_vm->_animation->setDirection(kDirLeft);
@@ -1512,7 +1512,7 @@ void Parser::standUp() {
 			// Not sitting down.
 			_vm->_background->draw(-1, -1, 3);
 			// But standing up.
-			_vm->_animation->_sprites[0]._visible = true;
+			_vm->_animation->_sprites[0]->_visible = true;
 			// And walking away.
 			_vm->_animation->appearPed(0, 3);
 			// Really not sitting down.
@@ -1926,12 +1926,12 @@ void Parser::doThat() {
 					i = 3;
 				else
 					i = 0;
-				Avalanche::AnimationType *spr = &_vm->_animation->_sprites[0];
+				Avalanche::AnimationType *spr = _vm->_animation->_sprites[0];
 				if (spr->_id != i) {
 					int16 x = spr->_x;
 					int16 y = spr->_y;
 					spr->remove();
-					spr->init(i, true, _vm->_animation);
+					spr->init(i, true);
 					spr->appear(x, y, kDirLeft);
 					spr->_visible = false;
 				}
@@ -2072,9 +2072,9 @@ void Parser::doThat() {
 				if (_vm->getRoom(kPeopleSpludwick) == kRoomSpludwicks)
 					_vm->_dialogs->displayScrollChain('q', 18);
 				else {
-					Avalanche::AnimationType *spr = &_vm->_animation->_sprites[1];
+					Avalanche::AnimationType *spr = _vm->_animation->_sprites[1];
 					// Avaricius
-					spr->init(1, false, _vm->_animation);
+					spr->init(1, false);
 					_vm->_animation->appearPed(1, 3);
 					spr->walkTo(4);
 					spr->_callEachStepFl = true;
@@ -2255,9 +2255,9 @@ void Parser::doThat() {
 				_vm->refreshObjectList();
 				_vm->_magics[11]._operation = kMagicNothing;
 				_vm->incScore(7);
-				_vm->_animation->_sprites[1].walkTo(1);
-				_vm->_animation->_sprites[1]._vanishIfStill = true;
-				_vm->_animation->_sprites[1]._callEachStepFl = false;
+				_vm->_animation->_sprites[1]->walkTo(1);
+				_vm->_animation->_sprites[1]->_vanishIfStill = true;
+				_vm->_animation->_sprites[1]->_callEachStepFl = false;
 				_vm->setRoom(kPeopleCwytalot, kRoomDummy);
 				break;
 			default:
@@ -2385,7 +2385,7 @@ void Parser::doThat() {
 				_vm->_dialogs->displayText("You're already sitting!");
 			else {
 				// Move Avvy to the place, and sit him down.
-				_vm->_animation->_sprites[0].walkTo(3);
+				_vm->_animation->_sprites[0]->walkTo(3);
 				_vm->_timer->addTimer(1, Timer::kProcAvvySitDown, Timer::kReasonSittingDown);
 			}
 		} else {

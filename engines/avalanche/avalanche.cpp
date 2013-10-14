@@ -381,7 +381,7 @@ bool AvalancheEngine::loadGame(const int16 slot) {
 		expandDate(t.tm_mday, t.tm_mon, t.tm_year).c_str());
 	_dialogs->displayText(tmpStr);
 
-	AnimationType *avvy = &_animation->_sprites[0];
+	AnimationType *avvy = _animation->_sprites[0];
 	if (avvy->_quick && avvy->_visible)
 		_animation->setMoveSpeed(0, _animation->getDirection()); // We push Avvy in the right direction is he was moving.
 
