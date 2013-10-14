@@ -431,7 +431,7 @@ void Menu::setupMenuAction() {
 		_activeMenuItem.setupOption("Open the door", 'O', "f7", _vm->_animation->nearDoor());
 	_activeMenuItem.setupOption("Look around", 'L', "f8", true);
 	_activeMenuItem.setupOption("Inventory", 'I', "Tab", true);
-	if (_vm->_animation->_sprites[0]._speedX == _vm->kWalk)
+	if (_vm->_animation->_sprites[0]->_speedX == _vm->kWalk)
 		_activeMenuItem.setupOption("Run fast", 'R', "^R", true);
 	else
 		_activeMenuItem.setupOption("Walk slowly", 'W', "^W", true);
@@ -595,7 +595,7 @@ void Menu::runMenuAction() {
 		_vm->callVerb(kVerbCodeInv);
 		break;
 	case 5: {
-		AnimationType *avvy = &_vm->_animation->_sprites[0];
+		AnimationType *avvy = _vm->_animation->_sprites[0];
 		if (avvy->_speedX == _vm->kWalk)
 			avvy->_speedX = _vm->kRun;
 		else

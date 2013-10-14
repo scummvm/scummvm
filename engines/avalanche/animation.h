@@ -67,7 +67,9 @@ public:
 	bool _callEachStepFl; // Do we call the eachstep procedure?
 	byte _eachStepProc;
 
-	void init(byte spritenum, bool doCheck, Animation *anim);
+	AnimationType(Animation *anim);
+
+	void init(byte spritenum, bool doCheck);
 	void reset();
 	void draw();
 	void turn(Direction whichway);
@@ -107,7 +109,7 @@ public:
 		kProcGeida // Spludwick uses it as well for homing! TODO: Unify it with kProcSpludwick.
 	};
 
-	AnimationType _sprites[kSpriteNumbMax];
+	AnimationType *_sprites[kSpriteNumbMax];
 
 	Animation(AvalancheEngine *vm);
 	~Animation();
