@@ -293,6 +293,10 @@ public:
 	virtual MessageQueue *method4C(StaticANIObject *subj, int xpos, int ypos, int fuzzySearch, int staticsId);
 
 	int getItemIndexByGameObjectId(int objectId);
+	int getItemSubIndexByStaticsId(int index, int staticsId);
+	int getItemSubIndexByMovementId(int index, int movId);
+	int getItemSubIndexByMGM(int idx, StaticANIObject *ani);
+
 	bool initDirections(StaticANIObject *obj, MovGraph2Item *item);
 };
 
@@ -306,6 +310,24 @@ public:
 	int16 _field_16;
 	MessageQueue *_messageQueueObj;
 	int _motionControllerObj;
+};
+
+struct LinkInfo {
+	int link;
+	int node;
+};
+
+struct MovInfo1 {
+	int field_0;
+	Common::Point pt1;
+	Common::Point pt2;
+	int distance1;
+	int distance2;
+	int subIndex;
+	int item1Index;
+	int items;
+	int itemsCount;
+	int flags;
 };
 
 } // End of namespace Fullpipe

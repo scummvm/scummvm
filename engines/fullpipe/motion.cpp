@@ -365,6 +365,29 @@ int MovGraph2::getItemIndexByGameObjectId(int objectId) {
 	return -1;
 }
 
+int MovGraph2::getItemSubIndexByStaticsId(int idx, int staticsId) {
+	for (int i = 0; i < 4; i++)
+		if (_items[idx]->_subItems[i]._staticsId1 == staticsId || _items[idx]->_subItems[i]._staticsId2 == staticsId)
+			return i;
+
+	return -1;
+}
+
+int MovGraph2::getItemSubIndexByMovementId(int idx, int movId) {
+	for (int i = 0; i < 4; i++)
+		if (_items[idx]->_subItems[i]._walk[0]._movementId == movId || _items[idx]->_subItems[i]._turn[0]._movementId == movId ||
+			_items[idx]->_subItems[i]._turnS[0]._movementId == movId)
+			return i;
+
+	return -1;
+}
+
+int MovGraph2::getItemSubIndexByMGM(int idx, StaticANIObject *ani) {
+	warning("STUB: MovGraph2::getItemSubIndexByMGM()");
+
+	return -1;
+}
+
 bool MovGraph2::initDirections(StaticANIObject *obj, MovGraph2Item *item) {
 	item->_obj = obj;
 	item->_objectId = obj->_id;
@@ -529,16 +552,14 @@ MessageQueue *MovGraph2::method34(StaticANIObject *subj, int xpos, int ypos, int
 }
 
 MessageQueue *MovGraph2::method4C(StaticANIObject *obj, int xpos, int ypos, int fuzzySearch, int staticsId) {
-	warning("STUB: MovGraph2::method4C()");
-#if 0
 	LinkInfo linkInfoDest;
 	LinkInfo linkInfoSource;
 	MovInfo1 movInfo1;
 	PicAniInfo picAniInfo;
 	ObList tempLinkList;
+	Common::Point point;
 
 	int idx = getItemIndexByGameObjectId(obj->_id);
-	ex = idx_;
 
 	if (idx < 0)
 		return 0;
@@ -551,7 +572,7 @@ MessageQueue *MovGraph2::method4C(StaticANIObject *obj, int xpos, int ypos, int 
 
 	point.x = 0;
 
-	GameObject_getPicAniInfo(obj, &picAniInfo);
+	obj->getPicAniInfo(&picAniInfo);
 
 	int idxsub;
 
@@ -575,7 +596,7 @@ MessageQueue *MovGraph2::method4C(StaticANIObject *obj, int xpos, int ypos, int 
 
 		if (subMgm) {
 			obj->_messageQueueId = 0;
-			obj->changeStatics2(_items[idx]->_subItems[idxsub]->_staticsId1);
+			obj->changeStatics2(_items[idx]->_subItems[idxsub]._staticsId1);
 			newx = obj->_ox;
 			newy = obj->_oy;
 		} else {
@@ -595,76 +616,52 @@ MessageQueue *MovGraph2::method4C(StaticANIObject *obj, int xpos, int ypos, int 
 		obj->setOXY(newx, newy);
 	}
 
-	v25 = obj->_oy;
-	y = v25;
+	int y = obj->_oy;
 
 	if (obj->_ox == xpos && obj->_oy == ypos) {
-		MessageQueue *mq = new MessageQueue(g_globalMessageQueueList->compact());
+		g_fullpipe->_globalMessageQueueList->compact();
+
+		MessageQueue *mq = new MessageQueue();
 
 		if (staticsId && obj->_statics->_staticsId != staticsId) {
-			point.x = getItem1IndexByStaticsId(idx, staticsId);
-			if (point.x == -1) {
-				GameObject_setPicAniInfo(obj, &picAniInfo);
+			int idxwalk = getItemSubIndexByStaticsId(idx, staticsId);
+			if (idxwalk == -1) {
+				obj->setPicAniInfo(&picAniInfo);
+
 				return 0;
 			}
-			ex = (int)operator new(sizeof(ExCommand));
-			v71.state = 1;
-			if (ex)
-				v27 = ExCommand_ctor(
-									 (ExCommand *)ex,
-									 picAniInfo.objectId,
-									 1,
-									 *((_DWORD *)this->items.CObArray.m_pData[offsetof(MovGraph2, movGraph)]
-									   + 186 * idx
-									   + 46 * idxsub
-									   + 4 * (point.x + 8)),
-									 0,
-									 0,
-									 0,
-									 1,
-									 0,
-									 0,
-									 0);
-			else
-				v27 = 0;
-			v28 = picAniInfo.field_8;
-			v27->msg.field_24 = 1;
-			v27->msg.keyCode = v28;
-			v27->excFlags |= 2u;
-			v71.state = -1;
-			CPtrList::AddTail(&v62->exCommands, v27);
+
+			ExCommand *ex = new ExCommand(picAniInfo.objectId, 1, _items[idx]->_subItems[idxsub]._walk[idxwalk]._movementId, 0, 0, 0, 1, 0, 0, 0);
+
+			ex->_field_24 = 1;
+			ex->_keyCode = picAniInfo.field_8;
+			ex->_excFlags |= 2;
+
+			mq->_exCommands.push_back(ex);
 		} else {
-			v29 = (ExCommand *)operator new(sizeof(ExCommand));
-			point.x = (int)v29;
-			v71.state = 2;
-			if (v29)
-				v30 = ExCommand_ctor(v29, picAniInfo.objectId, 22, obj->statics->staticsId, 0, 0, 0, 1, 0, 0, 0);
-			else
-				v30 = 0;
-			v31 = v62;
-			v30->msg.keyCode = picAniInfo.field_8;
-			v32 = (int)&v31->exCommands;
-			v33 = v30->excFlags | 3;
-			v71.state = -1;
-			v30->excFlags = v33;
-			CPtrList::AddTail(&v31->exCommands, v30);
-			v34 = (ExCommand *)operator new(sizeof(ExCommand));
-			point.x = (int)v34;
-			v71.state = 3;
-			if (v34)
-				v35 = ExCommand_ctor(v34, picAniInfo.objectId, 5, -1, obj->GameObject.ox, obj->GameObject.oy, 0, 1, 0, 0, 0);
-			else
-				v35 = 0;
-			v36 = v35->excFlags;
-			v35->msg.field_14 = -1;
-			v35->msg.keyCode = picAniInfo.field_8;
-			v71.state = -1;
-			v35->excFlags = v36 | 3;
-			CPtrList::AddTail(v32, v35);
+			ExCommand *ex = new ExCommand(picAniInfo.objectId, 22, obj->_statics->_staticsId, 0, 0, 0, 1, 0, 0, 0);
+
+			ex->_keyCode = picAniInfo.field_8;
+			ex->_excFlags |= 3;
+			mq->_exCommands.push_back(ex);
+
+			ex = new ExCommand(picAniInfo.objectId, 5, -1, obj->_ox, obj->_oy, 0, 1, 0, 0, 0);
+
+			ex->_field_14 = -1;
+			ex->_keyCode = picAniInfo.field_8;
+			ex->_excFlags |= 3;
+			mq->_exCommands.push_back(ex);
 		}
-		GameObject_setPicAniInfo(obj, &picAniInfo);
-		return v62;
+
+		obj->setPicAniInfo(&picAniInfo);
+
+		return mq;
 	}
+
+	warning("STUB: MovGraph2::method4C() %d", y);
+
+#if 0
+
 	linkInfoSource.node = findNode(obj->_ox, obj->_oy, 0);
 
 	if (!linkInfoSource.node) {
