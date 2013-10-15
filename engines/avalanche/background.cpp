@@ -109,7 +109,7 @@ void Background::update() {
 			break;
 		default:
 			if (_vm->_roomTime % 200 <= 178) { // Normally.
-				byte direction = 0;
+				byte direction = 1;
 				uint16 angle = _vm->bearing(1);
 				if (((angle >= 1) && (angle <= 90)) || ((angle >= 358) && (angle <= 360)))
 					direction = 3;
@@ -315,6 +315,8 @@ void Background::release() {
  * @remarks	Originally called 'show_one'
  */
 void Background::draw(int16 destX, int16 destY, byte sprId) {
+	assert(sprId < 40);
+
 	if (_sprites[sprId]._x > kOnDisk) {
 		if (destX < 0) {
 			destX = _sprites[sprId]._x * 8;

@@ -540,8 +540,10 @@ void GraphicManager::drawSprite(AnimationType *sprite, byte picnum, int16 x, int
 	// First we make the pixels of the sprite blank.
 	for (int j = 0; j < sprite->_yLength; j++) {
 		for (int i = 0; i < sprite->_xLength; i++) {
-			if (((*sprite->_sil[picnum])[j][i / 8] >> ((7 - i % 8)) & 1) == 0)
-				*(byte *)_surface.getBasePtr(x + i, y + j) = 0;
+			if ((x + i < _surface.w) && (y + j < _surface.h)) {
+				if (((*sprite->_sil[picnum])[j][i / 8] >> ((7 - i % 8)) & 1) == 0)
+					*(byte *)_surface.getBasePtr(x + i, y + j) = 0;
+			}
 		}
 	}
 
@@ -553,8 +555,10 @@ void GraphicManager::drawSprite(AnimationType *sprite, byte picnum, int16 x, int
 			for (uint16 i = 0; i < sprite->_xLength; i += 8) {
 				byte pixel = (*sprite->_mani[picnum])[maniPos++];
 				for (int bit = 0; bit < 8; bit++) {
-					byte pixelBit = (pixel >> bit) & 1;
-					*(byte *)_surface.getBasePtr(x + i + 7 - bit, y + j) += (pixelBit << plane);
+					if ((x + i + 7 < _surface.w) && (y + j < _surface.h)) {
+						byte pixelBit = (pixel >> bit) & 1;
+						*(byte *)_surface.getBasePtr(x + i + 7 - bit, y + j) += (pixelBit << plane);
+					}
 				}
 			}
 		}
