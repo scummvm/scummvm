@@ -596,6 +596,9 @@ void SceneExt::loadBlankScene() {
 
 void SceneHandlerExt::postInit(SceneObjectList *OwnerList) {
 	SceneHandler::postInit(OwnerList);
+
+	if (!R2_GLOBALS._playStream.setFile("SND4K.RES"))
+		warning("Could not find SND4K.RES voice file");
 }
 
 void SceneHandlerExt::process(Event &event) {

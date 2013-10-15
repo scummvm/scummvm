@@ -1540,6 +1540,23 @@ void Sound::play(int soundNum) {
 	_soundManager->addToPlayList(this);
 }
 
+bool Sound::playBuffers(const byte *soundData) {
+	prime(-2);
+	_soundManager->addToPlayList(this);
+	
+	debug(1, "TODO: Sound::checkCannels");
+	if (/* _soundManager.checkChannels() */ true) {
+		uint32 size = READ_UINT32(soundData + 4);
+		if (size == 0 || size > 0xffff)
+			error("Sound::playBuffers() called with illegal buffer length");
+
+		warning("TODO: Implement Sound::primeSoundData for voice playback");
+	} else {
+		stop();
+		return false;
+	}
+}
+
 void Sound::stop() {
 	g_globals->_soundManager.removeFromPlayList(this);
 	_unPrime();
@@ -2501,6 +2518,192 @@ void ASoundExt::changeSound(int soundNum) {
 	} else {
 		fadeSound(soundNum);
 	}
+}
+
+/*--------------------------------------------------------------------------*/
+
+void PlayStream::ResFileData::load(Common::SeekableReadStream &stream) {
+	// Validate that it's the correct data file
+	char header[4];
+	stream.read(&header[0], 4);
+	if (strncmp(header, "SPAM", 4))
+		error("Invalid voice resource data");
+
+	_fileChunkSize = stream.readUint32LE();
+	_field8 = stream.readUint16LE();
+	_indexSize = stream.readUint16LE();
+	_chunkSize = stream.readUint16LE();
+
+	stream.skip(20);
+}
+
+PlayStream::PlayStream(): EventHandler() {
+	_index = NULL;
+	_chunks[0] = _chunks[1] = NULL;
+	_voiceNum = 0;
+	_currentChunkIndex = 0;
+	_nextChunkIndex = 0;
+	_endAction = NULL;
+	_field2F0 = _field2FA = 0;
+}
+
+PlayStream::~PlayStream() {
+	remove();
+}
+
+bool PlayStream::setFile(const Common::String &filename) {
+	remove();
+
+	// Open the resource file for access
+	if (!_file.open(filename))
+		return false;
+
+	// Load header
+	_resData.load(_file);
+	
+	// Load the index
+	_index = new uint16[_resData._indexSize / 2];
+	for (uint i = 0; i < (_resData._indexSize / 2); ++i)
+		_index[i] = _file.readUint16LE();
+
+	// Allocate space for loading voice chunks into
+	_chunks[0] = new byte[_resData._chunkSize];
+	_chunks[1] = new byte[_resData._chunkSize];
+
+	// Initialise variables
+	_voiceNum = 0;
+	_currentChunkIndex = _nextChunkIndex = 0;
+
+	return true;
+}
+
+bool PlayStream::play(int voiceNum, EventHandler *endAction) {
+	uint32 offset = getFileOffset(_index, _resData._fileChunkSize, voiceNum);
+	if (offset) {
+		_voiceNum = 0;
+		_currentChunkIndex = _nextChunkIndex = 0;
+		if (_sound.isPlaying())
+			_sound.stop();
+
+		_file.seek(offset);
+		_file.read(_chunks[0], _resData._chunkSize); 
+		_file.read(_chunks[1], _resData._chunkSize);
+		
+		_currentChunkIndex = 0;
+		_nextChunkIndex = 1;
+		_voiceNum = voiceNum;
+		_endAction = endAction;
+
+		if (!strncmp((const char *)_chunks[_currentChunkIndex], "FEED", 4)) {
+			// Valid sound data found
+			const byte *data = _chunks[_currentChunkIndex];
+
+			_field2F0 = _field2FA = READ_UINT16(data + 10);
+			
+			//_fnP = proc2;
+			_field300 = this;
+			_soundData = data + 16;
+			_streamSize = READ_LE_UINT16(data + 4) - 16;
+
+			// Start playing the sound data
+			if (!_sound.playBuffers(_soundData)) {
+				_voiceNum = 0;
+				_currentChunkIndex = _nextChunkIndex = 0;
+			}
+
+			return true;
+		}
+	}
+	 
+	// If it reaches this point, no valid voice data found
+	return false;
+}
+
+void PlayStream::stop() {
+	_voiceNum = 0;
+	_currentChunkIndex = _nextChunkIndex = 0;
+	_endAction = NULL;
+
+	if (_sound.isPlaying())
+		_sound.stop();
+}
+
+bool PlayStream::isPlaying() const {
+	return _voiceNum != 0;
+}
+
+void PlayStream::remove() {
+	stop();
+	_file.close();
+
+	// Free data buffers
+	delete[] _index;
+	delete[] _chunks[0];
+	delete[] _chunks[1];
+	_index = NULL;
+	_chunks[0] = _chunks[1] = NULL;
+
+	_endAction = NULL;
+	_voiceNum = 0;
+	_currentChunkIndex = 0;
+	_nextChunkIndex = 0;
+}
+
+void PlayStream::dispatch() {
+	if ((_voiceNum != 0) && (_currentChunkIndex == _nextChunkIndex)) {
+		if (READ_LE_UINT16(_chunks[_currentChunkIndex] + 6) != 0) {
+			uint32 bytesRead = _file.read(_chunks[_nextChunkIndex ^ 1], _resData._chunkSize);
+			
+			if (bytesRead != _resData._chunkSize) {
+				byte *data = _chunks[_currentChunkIndex];
+				Common::fill(data, data + 128, 0);
+				
+				_voiceNum = 0;
+			}
+
+			_nextChunkIndex ^= 1;
+		} else if (!isPlaying()) {
+			// If voice has finished playing, reset fields
+			EventHandler *endAction = _endAction;
+			_endAction = NULL;
+			_voiceNum = 0;
+			_currentChunkIndex = 0;
+			_nextChunkIndex = 0;
+
+			if (endAction)
+				// Signal given end action
+				endAction->signal();
+		}
+	}
+}
+
+uint32 PlayStream::getFileOffset(const uint16 *data, int count, int voiceNum) {
+	assert(data);
+	int bitsIndex = voiceNum & 7;
+	int byteIndex = voiceNum >> 3;
+	int shiftAmount = bitsIndex * 2;
+	int bitMask = 3 << shiftAmount;
+	int v = (data[byteIndex] & bitMask) >> shiftAmount; 
+	uint32 offset = 0;
+
+	if (!v)
+		return 0;
+
+	// Loop to figure out offsets from indexes skipped over
+	for (int i = 0; i < (voiceNum >> 3); ++i) {
+		for (int bit = 0; bit < 16; bit += 2)
+			offset += ((data[i] >> bit) & 3) * count;
+	}
+
+	// Bit index loop
+	for (int i = 0; i < bitsIndex; --i)
+		offset += ((data[byteIndex] >> (i * 2)) & 3) * count;
+
+	return offset;
+}
+
+void PlayStream::stream() {
+	// TODO
 }
 
 /*--------------------------------------------------------------------------*/
