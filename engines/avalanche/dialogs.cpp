@@ -1073,7 +1073,7 @@ void Dialogs::talkTo(byte whom) {
 		whom -= 149;
 
 	bool noMatches = true;
-	for (int i = 0; i <= _vm->_animation->kSpriteNumbMax; i++) {
+	for (int i = 0; i < _vm->_animation->kSpriteNumbMax; i++) {
 		if (_vm->_animation->_sprites[i]->_acciNum == whom) {
 			Common::String tmpStr = Common::String::format("%c%c%c", kControlRegister, i + 49, kControlToBuffer);
 			displayText(tmpStr);
