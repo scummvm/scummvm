@@ -92,16 +92,20 @@ uint32 Script::readScript32bits() {
 void Script::O_WAITFOREVER() {
     debugScript("O_WAITFOREVER");
 }
+
 void Script::O_BLACKPALETTE() {
     debugScript("O_BLACKPALETTE");
 }
+
 void Script::O_SETUPPALETTE() {
     debugScript("O_SETUPPALETTE");
 }
+
 void Script::O_INITROOM() {
     uint16 roomId = readScript16bits();
     debugScript("O_INITROOM %d", roomId);
 }
+
 void Script::O_SETSAMPLE() {
     uint16 sampleId = readScript16bits();
     int32 sampleNameOffset = readScript32bits();
@@ -114,34 +118,85 @@ void Script::O_FREESAMPLE() {
     debugScript("O_FREESAMPLE %d", sample);
 }
 
-void Script::O_PLAYSAMPLE() {}
-void Script::O_PUTOBJECT() {}
-void Script::O_REMOBJECT() {}
-void Script::O_SHOWANIM() {}
-void Script::O_CHECKANIMEND() {}
+void Script::O_PLAYSAMPLE() {
+    uint16 sampleId = readScript16bits();
+    uint16 loopType = readScript16bits();
+    debugScript("O_PLAYSAMPLE sampleId %d loopType %d", sampleId, loopType);
+}
+
+void Script::O_PUTOBJECT() {
+    uint16 roomId = readScript16bits();
+    uint16 slot = readScript16bits();
+    uint16 objectId = readScript16bits();
+    debugScript("O_PUTOBJECT roomId %d, slot %d, objectId %d", roomId, slot, objectId);
+}
+
+void Script::O_REMOBJECT() {
+    uint16 roomId = readScript16bits();
+    uint16 objectId = readScript16bits();
+
+    debugScript("O_REMOBJECT roomId %d objectId %d", roomId, objectId);
+}
+
+void Script::O_SHOWANIM() {
+    uint16 slot = readScript16bits();
+    uint16 animId = readScript16bits();
+
+    debugScript("O_SHOWANIM slot %d, animId %d", slot, animId);
+}
+
+void Script::O_CHECKANIMEND() {
+    uint16 slot = readScript16bits();
+    uint16 frameId = readScript16bits();
+
+    debugScript("O_CHECKANIMEND slot %d, frameId %d", slot, frameId);
+}
 
 void Script::O_FREEANIM() {
     uint16 slot = readScript16bits();
     debugScript("O_FREEANIM slot %d", slot);
 }
 
-void Script::O_CHECKANIMFRAME() {}
+void Script::O_CHECKANIMFRAME() {
+    uint16 slot = readScript16bits();
+    uint16 frameId = readScript16bits();
+
+    debugScript("O_CHECKANIMFRAME slot %d, frameId %d", slot, frameId);
+}
+
 void Script::O_PUTBACKANIM() {
     uint16 roomId = readScript16bits();
     uint16 slot = readScript16bits();
     uint32 animId = readScript32bits();
-    debugScript("O_PUTBACKANIM %d %d %d", roomId, slot, animId);
+    debugScript("O_PUTBACKANIM roomId %d, slot %d, animId %d", roomId, slot, animId);
 }
-void Script::O_REMBACKANIM() {}
+
+void Script::O_REMBACKANIM() {
+    uint16 roomId = readScript16bits();
+    uint16 slot = readScript16bits();
+
+    debugScript("O_REMBACKANIM roomId %d, slot %d", roomId, slot);
+}
+
 void Script::O_CHECKBACKANIMFRAME() {}
+
 void Script::O_FREEALLSAMPLES() {}
+
 void Script::O_SETMUSIC() {}
+
 void Script::O_STOPMUSIC() {}
+
 void Script::O__WAIT() {}
+
 void Script::O_UPDATEOFF() {}
+
 void Script::O_UPDATEON() {}
+
 void Script::O_UPDATE () {}
+
 void Script::O_CLS() {}
+
+
 void Script::O__CALL() {
     int32 address = readScript32bits();
     _stack[_stacktop] = _currentInstruction;
@@ -219,10 +274,29 @@ void Script::O_ADDFLAG() {
         _result = 1;
     else
         _result = 0;
+
+    debugScript("O_ADDFLAG flagId %d, value %d", flagId, value);
 }
 
-void Script::O_TALKANIM() {}
-void Script::O_SUBFLAG() {}
+void Script::O_TALKANIM() {
+    uint16 animSlot = readScript16bits();
+    uint16 slot = readScript16bits();
+
+    debugScript("O_TALKANIM animSlot %d, slot %d", animSlot, slot);
+}
+
+void Script::O_SUBFLAG() {
+    uint16 flagId = readScript16bits();
+    uint16 value = readScript16bits();
+
+    _flags[flagId-0x8000] -= value;
+    if (_flags[flagId-0x8000])
+        _result = 1;
+    else
+        _result = 0;
+
+    debugScript("O_SUBFLAG flagId %d, value %d", flagId, value);
+}
 
 void Script::O_SETSTRING() {
     int32 offset = readScript32bits();
@@ -231,10 +305,15 @@ void Script::O_SETSTRING() {
 }
 
 void Script::O_ANDFLAG() {}
+
 void Script::O_GETMOBDATA() {}
+
 void Script::O_ORFLAG() {}
+
 void Script::O_SETMOBDATA() {}
+
 void Script::O_XORFLAG() {}
+
 void Script::O_GETMOBTEXT() {}
 
 void Script::O_MOVEHERO() {
@@ -370,18 +449,40 @@ void Script::O_SKIPTEXT() {
 }
 
 void Script::O_SETVOICEH() {}
+
 void Script::O_SETVOICEA() {}
+
 void Script::O_SETVOICEB() {}
+
 void Script::O_SETVOICEC() {}
+
 void Script::O_VIEWFLCLOOP() {}
+
 void Script::O_FLCSPEED() {}
-void Script::O_OPENINVENTORY() {}
-void Script::O_KRZYWA() {}
-void Script::O_GETKRZYWA() {}
+
+void Script::O_OPENINVENTORY() {
+    debugScript("O_OPENINVENTORY");
+}
+
+void Script::O_KRZYWA() {
+    debugScript("O_KRZYWA");
+}
+
+void Script::O_GETKRZYWA() {
+    debugScript("O_GETKRZYWA");
+}
+
 void Script::O_GETMOB() {}
-void Script::O_INPUTLINE() {}
+
+void Script::O_INPUTLINE() {
+    debugScript("O_INPUTLINE");
+}
+
 void Script::O_SETVOICED() {}
-void Script::O_BREAK_POINT() {}
+
+void Script::O_BREAK_POINT() {
+    debugScript("O_BREAK_POINT");
+}
 
 Script::OpcodeFunc Script::_opcodes[NUM_OPCODES] = {
     &Script::O_WAITFOREVER,
