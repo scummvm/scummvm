@@ -803,7 +803,7 @@ void AvalancheEngine::enterRoom(Room roomId, byte ped) {
 		// You're entering the map.
 		fadeIn();
 		if (ped > 0)
-			_graphics->zoomOut(_peds[ped]._x, _peds[ped]._y);
+			_graphics->zoomOut(_peds[ped - 1]._x, _peds[ped - 1]._y);
 
 		if ((_objects[kObjectWine - 1]) && (_wineState != 3)) {
 			_dialogs->displayScrollChain('q', 9); // Don't want to waste the wine!
