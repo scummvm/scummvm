@@ -1379,10 +1379,11 @@ uint16 AvalancheEngine::bearing(byte whichPed) {
 	
 	int16 deltaX = avvy->_x - curPed->_x;
 	int16 deltaY = avvy->_y - curPed->_y;
-	if (deltaX < 0) {
-		return (uint16)((atan((float)(deltaY / deltaX)) * 180 / M_PI) + 90);
+	uint16 result = (uint16)(atan((float)(deltaY / deltaX)) * 180 / M_PI);
+	if (avvy->_x < curPed->_x) {
+		return result + 90;
 	} else {
-		return (uint16)((atan((float)(deltaY / deltaX)) * 180 / M_PI) + 270);
+		return result + 270;
 	}
 }
 

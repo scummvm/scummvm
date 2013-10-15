@@ -115,7 +115,7 @@ void Background::update() {
 					direction = 3;
 				else if ((angle >= 293) && (angle <= 357))
 					direction = 2;
-				else if ((angle >= 271) && (angle <= 292))
+				else if ((angle >= 270) && (angle <= 292))
 					direction = 4;
 
 				if (direction != _vm->_npcFacing) { // Dogfood.
