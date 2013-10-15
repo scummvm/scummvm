@@ -116,13 +116,13 @@ void MctlCompound::freeItems() {
 	warning("STUB: MctlCompound::freeItems()");
 }
 
-MessageQueue *MctlCompound::method34(StaticANIObject *subj, int xpos, int ypos, int fuzzySearch, int staticsId) {
+MessageQueue *MctlCompound::method34(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId) {
 	warning("STUB: MctlCompound::method34()");
 
 	return 0;
 }
 
-MessageQueue *MctlCompound::method4C(StaticANIObject *subj, int xpos, int ypos, int fuzzySearch, int staticsId) {
+MessageQueue *MctlCompound::method4C(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId) {
 	int match1 = -1;
 	int match2 = -1;
 
@@ -154,7 +154,7 @@ MessageQueue *MctlCompound::method4C(StaticANIObject *subj, int xpos, int ypos, 
 		return 0;
 
 	if (match1 == match2)
-		return _motionControllers[match1]->_motionControllerObj->method4C(subj, xpos, ypos, fuzzySearch, staticsId);
+		return _motionControllers[match1]->_motionControllerObj->method4C(subj, xpos, ypos, fuzzyMatch, staticsId);
 
 	MctlConnectionPoint *closestP = findClosestConnectionPoint(subj->_ox, subj->_oy, match1, xpos, ypos, match2, &match2);
 
@@ -174,7 +174,7 @@ MessageQueue *MctlCompound::method4C(StaticANIObject *subj, int xpos, int ypos, 
 
 		ex = new ExCommand(subj->_id, 51, 0, xpos, ypos, 0, 1, 0, 0, 0);
 
-		ex->_field_20 = fuzzySearch;
+		ex->_field_20 = fuzzyMatch;
 		ex->_keyCode = subj->_okeyCode;
 		ex->_excFlags |= 2;
 
@@ -285,7 +285,7 @@ int MovGraph::method2C() {
 	return 0;
 }
 
-MessageQueue *MovGraph::method34(StaticANIObject *subj, int xpos, int ypos, int fuzzySearch, int staticsId) {
+MessageQueue *MovGraph::method34(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId) {
 	warning("STUB: MovGraph::method34()");
 
 	return 0;
@@ -309,7 +309,7 @@ int MovGraph::method44() {
 	return 0;
 }
 
-MessageQueue *MovGraph::method4C(StaticANIObject *subj, int xpos, int ypos, int fuzzySearch, int staticsId) {
+MessageQueue *MovGraph::method4C(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId) {
 	warning("STUB: MovGraph::method4C()");
 
 	return 0;
@@ -321,7 +321,7 @@ int MovGraph::method50() {
 	return 0;
 }
 
-double MovGraph::calcDistance(Common::Point *point, MovGraphLink *link, int fuzzySearch) {
+double MovGraph::calcDistance(Common::Point *point, MovGraphLink *link, int fuzzyMatch) {
 	int n1x = link->_movGraphNode1->_x;
 	int n1y = link->_movGraphNode1->_y;
 	int n2x = link->_movGraphNode2->_x;
@@ -336,7 +336,7 @@ double MovGraph::calcDistance(Common::Point *point, MovGraphLink *link, int fuzz
 	double res = sqrt(1.0 - dist2 * dist2) * dist1;
 
 	if (dist2 <= 0.0 || distm >= link->_distance) {
-		if (fuzzySearch) {
+		if (fuzzyMatch) {
 			if (dist2 > 0.0) {
 				if (distm >= link->_distance) {
 					point->x = n2x;
@@ -545,18 +545,17 @@ void MovGraph2::freeItems() {
 	warning("STUB: MovGraph2::freeItems()");
 }
 
-MessageQueue *MovGraph2::method34(StaticANIObject *subj, int xpos, int ypos, int fuzzySearch, int staticsId) {
+MessageQueue *MovGraph2::method34(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId) {
 	warning("STUB: MovGraph2::method34()");
 
 	return 0;
 }
 
-MessageQueue *MovGraph2::method4C(StaticANIObject *obj, int xpos, int ypos, int fuzzySearch, int staticsId) {
+MessageQueue *MovGraph2::method4C(StaticANIObject *obj, int xpos, int ypos, int fuzzyMatch, int staticsId) {
 	LinkInfo linkInfoDest;
 	LinkInfo linkInfoSource;
 	MovInfo1 movInfo1;
 	PicAniInfo picAniInfo;
-	ObList tempLinkList;
 	Common::Point point;
 
 	int idx = getItemIndexByGameObjectId(obj->_id);
@@ -616,8 +615,6 @@ MessageQueue *MovGraph2::method4C(StaticANIObject *obj, int xpos, int ypos, int 
 		obj->setOXY(newx, newy);
 	}
 
-	int y = obj->_oy;
-
 	if (obj->_ox == xpos && obj->_oy == ypos) {
 		g_fullpipe->_globalMessageQueueList->compact();
 
@@ -658,10 +655,6 @@ MessageQueue *MovGraph2::method4C(StaticANIObject *obj, int xpos, int ypos, int 
 		return mq;
 	}
 
-	warning("STUB: MovGraph2::method4C() %d", y);
-
-#if 0
-
 	linkInfoSource.node = findNode(obj->_ox, obj->_oy, 0);
 
 	if (!linkInfoSource.node) {
@@ -671,7 +664,7 @@ MessageQueue *MovGraph2::method4C(StaticANIObject *obj, int xpos, int ypos, int 
 			linkInfoSource.link = findLink2(obj->_ox, obj->_oy);
 
 			if (!linkInfoSource.link) {
-				obj->setPicAniInfo(picAniInfo);
+				obj->setPicAniInfo(&picAniInfo);
 
 				return 0;
 			}
@@ -683,54 +676,60 @@ MessageQueue *MovGraph2::method4C(StaticANIObject *obj, int xpos, int ypos, int 
 	if (!linkInfoDest.node) {
 		linkInfoDest.link = findLink1(xpos, ypos, idxsub, fuzzyMatch);
 		if (!linkInfoDest.link) {
-			obj->setPicAniInfo(picAniInfo);
+			obj->setPicAniInfo(&picAniInfo);
 
 			return 0;
 		}
 	}
 
-	ObList_ctor(&tempLinkList, 10);
+	Common::Array<MovGraphLink *> tempLinkList;
 
-	MovGraph2_findLinks(this, &linkInfoSource, &linkInfoDest, (int)&tempLinkList);
-	if (v6 < 0.0 || (linkInfoSource.node != linkInfoDest.node || !linkInfoSource.node) && !tempLinkList.m_nCount) {
-		ObList_dtor(&tempLinkList);
+	if (findMinPath(&linkInfoSource, &linkInfoDest, &tempLinkList) < 0.0 || 
+		((linkInfoSource.node != linkInfoDest.node || !linkInfoSource.node) && !tempLinkList.size()))
 		return 0;
-	}
-	memset(&movInfo1, 0, sizeof(movInfo1));
-	v39 = y;
+
 	movInfo1.subIndex = idxsub;
-	v40 = point.x;
-	movInfo1.pt1.y = y;
-	movInfo1.pt1.x = point.x;
+	movInfo1.pt1.x = obj->_ox;
+	movInfo1.pt1.y = obj->_oy;
+
+	int dx1 = obj->_ox;
+	int dy1 = obj->_oy;
+	int dx2, dy2;
 
 	if (linkInfoSource.node)
-		v41 = linkInfoSource.node->distance;
+		movInfo1.distance1 = linkInfoSource.node->_distance;
 	else
-		v41 = linkInfoSource.link->movGraphNode1->distance;
-
-	movInfo1.distance1 = v41;
+		movInfo1.distance1 = linkInfoSource.link->_movGraphNode1->_distance;
 
 	if (linkInfoDest.node) {
-		v42 = linkInfoDest.node->x;
-		movInfo1.pt2.x = linkInfoDest.node->x;
-		v43 = linkInfoDest.node->y;
-		movInfo1.pt2.y = linkInfoDest.node->y;
-		movInfo1.distance2 = linkInfoDest.node->distance;
+		dx2 = linkInfoDest.node->_x;
+		dy2 = linkInfoDest.node->_y;
+
+		movInfo1.pt2.x = linkInfoDest.node->_x;
+		movInfo1.pt2.y = linkInfoDest.node->_y;
+
+		movInfo1.distance2 = linkInfoDest.node->_distance;
 	} else {
 		movInfo1.pt2.x = xpos;
 		movInfo1.pt2.y = ypos;
-		v44 = linkInfoDest.link->movGraphNode1;
-		v45 = v44->distance;
-		point.x = (ypos - v44->y) * (ypos - v44->y) + (xpos - v44->x) * (xpos - v44->x);
-		v46 = sqrt((double)point.x);
-		point.x = linkInfoDest.link->movGraphNode2->distance - v45;
-		movInfo1.distance2 = v45 + (unsigned __int64)(signed __int64)(v46 * (double)point / linkInfoDest.link->distance);
-		MovGraph_calcDistance((int)this, &movInfo1.pt2, linkInfoDest.link, 1);
-		v43 = movInfo1.pt2.y;
-		v42 = movInfo1.pt2.x;
-		v39 = movInfo1.pt1.y;
-		v40 = movInfo1.pt1.x;
+
+		MovGraphNode *nod = linkInfoDest.link->_movGraphNode1;
+		double dst1 = sqrt((ypos - nod->_y) * (ypos - nod->_y) + (xpos - nod->_x) * (xpos - nod->_x));
+		int dst = linkInfoDest.link->_movGraphNode2->_distance - nod->_distance;
+
+		movInfo1.distance2 = nod->_distance + (dst1 * (double)dst / linkInfoDest.link->_distance);
+
+		calcDistance(&movInfo1.pt2, linkInfoDest.link, 1);
+
+		dx1 = movInfo1.pt1.x;
+		dy1 = movInfo1.pt1.y;
+		dx2 = movInfo1.pt2.x;
+		dy2 = movInfo1.pt2.y;
 	}
+
+	warning("STUB: MovGraph2::method4C()");
+
+#if 0
 
 	if (staticsId) {
 		v47 = MovGraph2_getItem1IndexByStaticsId(this, ex, staticsId);
@@ -739,10 +738,10 @@ MessageQueue *MovGraph2::method4C(StaticANIObject *obj, int xpos, int ypos, int 
 			LOBYTE(v47) = MovGraph2_sub_456690(
 											   this,
 											   (int)&tempLinkList.m_pNodeHead->data->GameObject.CObject.vmt,
-											   v42 - v40,
-											   v43 - v39);
+											   dx2 - dx1,
+											   dy2 - dy1);
 		else
-			LOBYTE(v47) = MovGraph2_sub_456690(this, 0, v42 - v40, v43 - v39);
+			LOBYTE(v47) = MovGraph2_sub_456690(this, 0, dx2 - dx1, dy2 - dy1);
 	} else {
 		LOBYTE(v47) = MovGraph2_sub_456300(this, (int)&tempLinkList, tempLinkList.m_pNodeTail, 0, 0);
 	}
@@ -845,6 +844,30 @@ MessageQueue *MovGraph2::method4C(StaticANIObject *obj, int xpos, int ypos, int 
 #endif
 
 	return 0;
+}
+
+MovGraphNode *MovGraph2::findNode(int x, int y, int fuzzyMatch) {
+	warning("STUB: MovGraphLink *MovGraph2::findNode()");
+
+	return 0;
+}
+
+MovGraphLink *MovGraph2::findLink1(int x, int y, int idx, int fuzzyMatch) {
+	warning("STUB: MovGraphLink *MovGraph2::findLink1()");
+
+	return 0;
+}
+
+MovGraphLink *MovGraph2::findLink2(int x, int y) {
+	warning("STUB: MovGraphLink *MovGraph2::findLink2()");
+
+	return 0;
+}
+
+double MovGraph2::findMinPath(LinkInfo *linkInfoSource, LinkInfo *linkInfoDest, Common::Array<MovGraphLink *> *listObj) {
+	warning("STUB: MovGraph2::findMinPath()");
+
+	return 0.0;
 }
 
 MovGraphNode *MovGraph::calcOffset(int ox, int oy) {
