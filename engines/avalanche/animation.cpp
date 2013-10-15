@@ -91,21 +91,22 @@ void AnimationType::init(byte spritenum, bool doCheck) {
 	_xLength = inf.readByte();
 	_yLength = inf.readByte();
 	_seq = inf.readByte();
-	_size = inf.readUint16LE();
+	uint16 size = inf.readUint16LE();
+	assert (size > 6);
 	_fgBubbleCol = (Color)inf.readByte();
 	_bgBubbleCol = (Color)inf.readByte();
 	_acciNum = inf.readByte();
 
 	_animCount = 0; // = 1;
-	_xWidth = _xLength / 8;
+	byte xWidth = _xLength / 8;
 	if ((_xLength % 8) > 0)
-		_xWidth++;
+		xWidth++;
 	for (int i = 0; i < _frameNum; i++) {
 		_sil[_animCount] = new SilType[11 * (_yLength + 1)];
-		_mani[_animCount] = new ManiType[_size - 6];
+		_mani[_animCount] = new ManiType[size - 6];
 		for (int j = 0; j <= _yLength; j++)
-			inf.read((*_sil[_animCount])[j], _xWidth);
-		inf.read(*_mani[_animCount], _size - 6);
+			inf.read((*_sil[_animCount])[j], xWidth);
+		inf.read(*_mani[_animCount], size - 6);
 
 		_animCount++;
 	}
@@ -367,9 +368,6 @@ void AnimationType::chatter() {
 
 void AnimationType::remove() {
 	_animCount--;
-	_xWidth = _xLength / 8;
-	if ((_xLength % 8) > 0)
-		_xWidth++;
 	for (int i = 0; i < _frameNum; i++) {
 		assert(_animCount > 0);
 		_animCount--;
@@ -1439,7 +1437,6 @@ void Animation::synchronize(Common::Serializer &sz) {
 		sz.syncAsByte(spr->_visible);
 		sz.syncAsByte(spr->_homing);
 		sz.syncAsByte(spr->_count);
-		sz.syncAsByte(spr->_xWidth);
 		sz.syncAsByte(spr->_speedX);
 		sz.syncAsByte(spr->_speedY);
 		sz.syncAsByte(spr->_animCount);
