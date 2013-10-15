@@ -120,7 +120,6 @@ void CursorManager::cursorDown(bool pushed) {
 	if (_cursorIsPushed == pushed)
 		return;
 
-	_cursorIsPushed = pushed;
 	changeCursor(_currentCursor, pushed);
 }
 
