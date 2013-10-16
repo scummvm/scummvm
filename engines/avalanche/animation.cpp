@@ -74,20 +74,12 @@ void AnimationType::init(byte spritenum, bool doCheck) {
 
 	// Replace variable named 'soa' in the original code.
 	inf.skip(2);
+	// Skip real name Size (1 byte) then fixed sized zone containing name (12 bytes)
+	inf.skip(1 + 12);
+	// Skip real comment size (1 byte) then fixed sized zone containing comment (16 bytes)
+	inf.skip(1 + 16);
 
-	if (!_name.empty())
-		_name.clear();
-	byte nameSize = inf.readByte();
-	for (int i = 0; i < nameSize; i++)
-		_name += inf.readByte();
-	inf.skip(12 - nameSize);
-
-	byte commentSize = inf.readByte();
-	for (int i = 0; i < commentSize; i++)
-		_comment += inf.readByte();
-	inf.skip(16 - commentSize);
-
-	_frameNum = inf.readByte();
+	byte frameNum = inf.readByte();
 	_xLength = inf.readByte();
 	_yLength = inf.readByte();
 	_seq = inf.readByte();
@@ -101,7 +93,7 @@ void AnimationType::init(byte spritenum, bool doCheck) {
 	byte xWidth = _xLength / 8;
 	if ((_xLength % 8) > 0)
 		xWidth++;
-	for (int i = 0; i < _frameNum; i++) {
+	for (int i = 0; i < frameNum; i++) {
 		_sil[_animCount] = new SilType[11 * (_yLength + 1)];
 		_mani[_animCount] = new ManiType[size - 6];
 		for (int j = 0; j <= _yLength; j++)
@@ -367,12 +359,9 @@ void AnimationType::chatter() {
 }
 
 void AnimationType::remove() {
-	_animCount--;
-	for (int i = 0; i < _frameNum; i++) {
-		assert(_animCount > 0);
-		_animCount--;
-		delete[] _mani[_animCount];
-		delete[] _sil[_animCount];
+	for (int i = _animCount - 2; i > 0; i--) {
+		delete[] _mani[i];
+		delete[] _sil[i];
 	}
 
 	_quick = false;
