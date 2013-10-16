@@ -732,7 +732,7 @@ MessageQueue *MovGraph2::method4C(StaticANIObject *obj, int xpos, int ypos, int 
 #if 0
 
 	if (staticsId) {
-		v47 = MovGraph2_getItem1IndexByStaticsId(this, ex, staticsId);
+		v47 = MovGraph2_getItem1IndexByStaticsId(ex, staticsId);
 	} else if (tempLinkList.m_nCount <= 1) {
 		if (tempLinkList.m_nCount == 1)
 			LOBYTE(v47) = MovGraph2_sub_456690(
@@ -776,30 +776,12 @@ MessageQueue *MovGraph2::method4C(StaticANIObject *obj, int xpos, int ypos, int 
 				 && picAniInfo.someDynamicPhaseIndex == v52->msg.field_14) {
 				MessageQueue_deleteExCommandByIndex(v50, 0, 1);
 			} else {
-				v54 = (ExCommand *)operator new(sizeof(ExCommand));
-				v63 = v54;
-				LOBYTE(v71.state) = 5;
-				if (v54)
-					v55 = ExCommand_ctor(
-										 v54,
-										 picAniInfo.objectId,
-										 5,
-										 *(_DWORD *)(point.x + offsetof(ExCommand, messageNum)),
-										 obj->GameObject.ox,
-										 obj->GameObject.oy,
-										 0,
-										 1,
-										 0,
-										 0,
-										 0);
-				else
-					v55 = 0;
-				v55->msg.field_14 = -1;
-				v55->msg.keyCode = picAniInfo.field_8;
-				v56 = v55->excFlags | 2;
-				LOBYTE(v71.state) = 4;
-				v55->excFlags = v56;
-				MessageQueue_addExCommand(v50, v55);
+				ExCommand *ex = new ExCommand(picAniInfo.objectId, 5, v52->_messageNum, obj->_ox, obj->_oy, 0, 1, 0, 0, 0);
+				ex->_field_14 = -1;
+				ex->_keyCode = picAniInfo.field_8;
+				ex->_excFlags |= 2;
+				v50->addExCommand(ex);
+
 				v57 = (ExCommand *)operator new(sizeof(ExCommand));
 				v63 = v57;
 				LOBYTE(v71.state) = 6;
