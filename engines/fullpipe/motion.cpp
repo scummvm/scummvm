@@ -796,7 +796,19 @@ MessageQueue *MovGraph2::doWalkTo(StaticANIObject *obj, int xpos, int ypos, int 
 }
 
 MovGraphNode *MovGraph2::findNode(int x, int y, int fuzzyMatch) {
-	warning("STUB: MovGraphLink *MovGraph2::findNode()");
+	for (ObList::iterator i = _nodes.begin(); i != _nodes.end(); ++i) {
+		assert(((CObject *)*i)->_objtype == kObjTypeMovGraphNode);
+
+		MovGraphNode *node = (MovGraphNode *)*i;
+
+		if (fuzzyMatch) {
+			if (abs(node->_x - x) < 15 && abs(node->_y - y) < 15)
+				return node;
+		} else {
+			if (node->_x == x && node->_y == y)
+				return node;
+		}
+	}
 
 	return 0;
 }
