@@ -724,7 +724,7 @@ MessageQueue *MovGraph2::doWalkTo(StaticANIObject *obj, int xpos, int ypos, int 
 		movInfo1.pt2.y = ypos;
 
 		MovGraphNode *nod = linkInfoDest.link->_movGraphNode1;
-		double dst1 = sqrt((ypos - nod->_y) * (ypos - nod->_y) + (xpos - nod->_x) * (xpos - nod->_x));
+		double dst1 = sqrt((double)((ypos - nod->_y) * (ypos - nod->_y) + (xpos - nod->_x) * (xpos - nod->_x)));
 		int dst = linkInfoDest.link->_movGraphNode2->_distance - nod->_distance;
 
 		movInfo1.distance2 = nod->_distance + (dst1 * (double)dst / linkInfoDest.link->_distance);
