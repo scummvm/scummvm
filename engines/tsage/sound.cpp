@@ -22,6 +22,8 @@
 
 #include "audio/decoders/raw.h"
 #include "common/config-manager.h"
+#include "audio/decoders/raw.h"
+#include "audio/audiostream.h"
 #include "tsage/core.h"
 #include "tsage/globals.h"
 #include "tsage/debugger.h"
@@ -1540,23 +1542,6 @@ void Sound::play(int soundNum) {
 	_soundManager->addToPlayList(this);
 }
 
-bool Sound::playBuffers(const byte *soundData) {
-	prime(-2);
-	_soundManager->addToPlayList(this);
-	
-	debug(1, "TODO: Sound::checkCannels");
-	if (/* _soundManager.checkChannels() */ true) {
-		uint32 size = READ_UINT32(soundData + 4);
-		if (size == 0 || size > 0xffff)
-			error("Sound::playBuffers() called with illegal buffer length");
-
-		warning("TODO: Implement Sound::primeSoundData for voice playback");
-	} else {
-		stop();
-		return false;
-	}
-}
-
 void Sound::stop() {
 	g_globals->_soundManager.removeFromPlayList(this);
 	_unPrime();
@@ -2530,7 +2515,7 @@ void PlayStream::ResFileData::load(Common::SeekableReadStream &stream) {
 		error("Invalid voice resource data");
 
 	_fileChunkSize = stream.readUint32LE();
-	_field8 = stream.readUint16LE();
+	stream.skip(2);
 	_indexSize = stream.readUint16LE();
 	_chunkSize = stream.readUint16LE();
 
@@ -2539,12 +2524,7 @@ void PlayStream::ResFileData::load(Common::SeekableReadStream &stream) {
 
 PlayStream::PlayStream(): EventHandler() {
 	_index = NULL;
-	_chunks[0] = _chunks[1] = NULL;
-	_voiceNum = 0;
-	_currentChunkIndex = 0;
-	_nextChunkIndex = 0;
 	_endAction = NULL;
-	_field2F0 = _field2FA = 0;
 }
 
 PlayStream::~PlayStream() {
@@ -2566,14 +2546,6 @@ bool PlayStream::setFile(const Common::String &filename) {
 	for (uint i = 0; i < (_resData._indexSize / 2); ++i)
 		_index[i] = _file.readUint16LE();
 
-	// Allocate space for loading voice chunks into
-	_chunks[0] = new byte[_resData._chunkSize];
-	_chunks[1] = new byte[_resData._chunkSize];
-
-	// Initialise variables
-	_voiceNum = 0;
-	_currentChunkIndex = _nextChunkIndex = 0;
-
 	return true;
 }
 
@@ -2581,38 +2553,53 @@ bool PlayStream::play(int voiceNum, EventHandler *endAction) {
 	uint32 offset = getFileOffset(_index, _resData._fileChunkSize, voiceNum);
 	if (offset) {
 		_voiceNum = 0;
-		_currentChunkIndex = _nextChunkIndex = 0;
 		if (_sound.isPlaying())
 			_sound.stop();
 
+		// Move to the offset for the start of the voice
 		_file.seek(offset);
-		_file.read(_chunks[0], _resData._chunkSize); 
-		_file.read(_chunks[1], _resData._chunkSize);
+
+		// Read in the header and validate it
+		char header[4];
+		_file.read(&header[0], 4);
+		if (strncmp(header, "FEED", 4))
+			error("Invalid stream data");
 		
-		_currentChunkIndex = 0;
-		_nextChunkIndex = 1;
-		_voiceNum = voiceNum;
-		_endAction = endAction;
+		// Get basic details of first sound chunk
+		uint chunkSize = _file.readUint16LE() - 16;
+		_file.skip(4);
+		int rate = _file.readUint16LE();
+		_file.skip(4);
 
-		if (!strncmp((const char *)_chunks[_currentChunkIndex], "FEED", 4)) {
-			// Valid sound data found
-			const byte *data = _chunks[_currentChunkIndex];
+		// Create the stream
+		Audio::QueuingAudioStream *audioStream = Audio::makeQueuingAudioStream(rate, false);
 
-			_field2F0 = _field2FA = READ_UINT16(data + 10);
-			
-			//_fnP = proc2;
-			_field300 = this;
-			_soundData = data + 16;
-			_streamSize = READ_LE_UINT16(data + 4) - 16;
+		// Load in the first chunk
+		byte *data = (byte *)malloc(chunkSize);
+		_file.read(data, chunkSize);
+		audioStream->queueBuffer(data, chunkSize, DisposeAfterUse::YES, Audio::FLAG_UNSIGNED);
+		
+		// If necessary, load further chunks of the voice in
+		while (chunkSize == (_resData._chunkSize - 16)) {
+			// Ensure the next chunk has the 'MORE' header
+			_file.read(&header[0], 4);
+			if (strncmp(header, "MORE", 4))
+				error("Invalid stream data");
 
-			// Start playing the sound data
-			if (!_sound.playBuffers(_soundData)) {
-				_voiceNum = 0;
-				_currentChunkIndex = _nextChunkIndex = 0;
-			}
+			// Get the size of the chunk
+			chunkSize  = _file.readUint16LE() - 16;
+			_file.skip(10);
 
-			return true;
+			// Read in the data for this next chunk and queue it
+			data = (byte *)malloc(chunkSize);
+			_file.read(data, chunkSize);
+			audioStream->queueBuffer(data, chunkSize, DisposeAfterUse::YES, Audio::FLAG_UNSIGNED);
 		}
+
+		g_vm->_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_soundHandle, 
+			audioStream, DisposeAfterUse::YES);
+
+		return true;		
 	}
 	 
 	// If it reaches this point, no valid voice data found
@@ -2620,60 +2607,38 @@ bool PlayStream::play(int voiceNum, EventHandler *endAction) {
 }
 
 void PlayStream::stop() {
-	_voiceNum = 0;
-	_currentChunkIndex = _nextChunkIndex = 0;
-	_endAction = NULL;
+	g_vm->_mixer->stopHandle(_soundHandle);
 
-	if (_sound.isPlaying())
-		_sound.stop();
+	_voiceNum = 0;
+	_endAction = NULL;
 }
 
 bool PlayStream::isPlaying() const {
-	return _voiceNum != 0;
+	return _voiceNum != 0 && g_vm->_mixer->isSoundHandleActive(_soundHandle);
 }
 
 void PlayStream::remove() {
 	stop();
 	_file.close();
 
-	// Free data buffers
+	// Free index
 	delete[] _index;
-	delete[] _chunks[0];
-	delete[] _chunks[1];
 	_index = NULL;
-	_chunks[0] = _chunks[1] = NULL;
 
 	_endAction = NULL;
 	_voiceNum = 0;
-	_currentChunkIndex = 0;
-	_nextChunkIndex = 0;
 }
 
 void PlayStream::dispatch() {
-	if ((_voiceNum != 0) && (_currentChunkIndex == _nextChunkIndex)) {
-		if (READ_LE_UINT16(_chunks[_currentChunkIndex] + 6) != 0) {
-			uint32 bytesRead = _file.read(_chunks[_nextChunkIndex ^ 1], _resData._chunkSize);
-			
-			if (bytesRead != _resData._chunkSize) {
-				byte *data = _chunks[_currentChunkIndex];
-				Common::fill(data, data + 128, 0);
-				
-				_voiceNum = 0;
-			}
+	if (_voiceNum != 0 && !isPlaying()) {
+		// If voice has finished playing, reset fields
+		EventHandler *endAction = _endAction;
+		_endAction = NULL;
+		_voiceNum = 0;
 
-			_nextChunkIndex ^= 1;
-		} else if (!isPlaying()) {
-			// If voice has finished playing, reset fields
-			EventHandler *endAction = _endAction;
-			_endAction = NULL;
-			_voiceNum = 0;
-			_currentChunkIndex = 0;
-			_nextChunkIndex = 0;
-
-			if (endAction)
-				// Signal given end action
-				endAction->signal();
-		}
+		if (endAction)
+			// Signal given end action
+			endAction->signal();
 	}
 }
 
@@ -2700,10 +2665,6 @@ uint32 PlayStream::getFileOffset(const uint16 *data, int count, int voiceNum) {
 		offset += ((data[byteIndex] >> (i * 2)) & 3) * count;
 
 	return offset;
-}
-
-void PlayStream::stream() {
-	// TODO
 }
 
 /*--------------------------------------------------------------------------*/

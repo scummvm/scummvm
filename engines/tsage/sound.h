@@ -316,7 +316,6 @@ public:
 	void orientAfterRestore();
 
 	void play(int soundResID);
-	bool playBuffers(const byte *soundData);
 	void stop();
 	void prime(int soundResID);
 	void unPrime();
@@ -420,30 +419,20 @@ class PlayStream: public EventHandler {
 	class ResFileData {
 	public:
 		int _fileChunkSize;
-		int _field8;
 		uint _indexSize;
 		uint _chunkSize;
 
 		void load(Common::SeekableReadStream &stream);
 	};
-	typedef void (PlayStream::*FunctionPtr)();
 private:
 	Common::File _file;
 	ResFileData _resData;
+	Audio::SoundHandle _soundHandle;
 	Sound _sound;
 	uint16 *_index;
-	byte *_chunks[2];
-	const byte *_soundData;
-	int _voiceNum;
-	int _currentChunkIndex;
-	int _nextChunkIndex;
 	EventHandler *_endAction;
-	EventHandler *_field300;
-	int _field2F0, _field2FA;
-	int _streamSize;
-	FunctionPtr _streamFn;
+	int _voiceNum;
 
-	void stream();
 	static uint32 getFileOffset(const uint16 *data, int count, int voiceNum);
 public:
 	PlayStream();
