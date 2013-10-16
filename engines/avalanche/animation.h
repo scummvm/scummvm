@@ -48,9 +48,10 @@ public:
 	SilType *_sil[24];
 
 	// Former Stat structure
+	byte _frameNum; // Number of pictures.
 	byte _seq; // How many in one stride.
 	Color _fgBubbleCol, _bgBubbleCol; // Foreground & background bubble colors.
-	byte _acciNum; // The number according to Acci. (1=Avvy, etc.)
+	byte _characterId; // The number according to Acci. (1=Avvy, etc.)
 	//
 
 	Direction _facingDir;
@@ -62,7 +63,6 @@ public:
 	int16 _homingX, _homingY; // Homing x & y coords.
 	byte _count; // Counts before changing step.
 	byte _speedX, _speedY; // x & y speed.
-	byte _animCount; // Total number of sprites.
 	bool _vanishIfStill; // Do we show this sprite if it's still?
 	bool _callEachStepFl; // Do we call the eachstep procedure?
 	byte _eachStepProc;

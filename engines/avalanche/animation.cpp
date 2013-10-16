@@ -79,7 +79,7 @@ void AnimationType::init(byte spritenum, bool doCheck) {
 	// Skip real comment size (1 byte) then fixed sized zone containing comment (16 bytes)
 	inf.skip(1 + 16);
 
-	byte frameNum = inf.readByte();
+	_frameNum = inf.readByte();
 	_xLength = inf.readByte();
 	_yLength = inf.readByte();
 	_seq = inf.readByte();
@@ -87,22 +87,18 @@ void AnimationType::init(byte spritenum, bool doCheck) {
 	assert (size > 6);
 	_fgBubbleCol = (Color)inf.readByte();
 	_bgBubbleCol = (Color)inf.readByte();
-	_acciNum = inf.readByte();
+	_characterId = inf.readByte();
 
-	_animCount = 0; // = 1;
 	byte xWidth = _xLength / 8;
 	if ((_xLength % 8) > 0)
 		xWidth++;
-	for (int i = 0; i < frameNum; i++) {
-		_sil[_animCount] = new SilType[11 * (_yLength + 1)];
-		_mani[_animCount] = new ManiType[size - 6];
+	for (int i = 0; i < _frameNum; i++) {
+		_sil[i] = new SilType[11 * (_yLength + 1)];
+		_mani[i] = new ManiType[size - 6];
 		for (int j = 0; j <= _yLength; j++)
-			inf.read((*_sil[_animCount])[j], xWidth);
-		inf.read(*_mani[_animCount], size - 6);
-
-		_animCount++;
+			inf.read((*_sil[i])[j], xWidth);
+		inf.read(*_mani[i], size - 6);
 	}
-	_animCount++;
 
 	_x = 0;
 	_y = 0;
@@ -359,7 +355,7 @@ void AnimationType::chatter() {
 }
 
 void AnimationType::remove() {
-	for (int i = _animCount - 2; i > 0; i--) {
+	for (int i = 0; i < _frameNum; i++) {
 		delete[] _mani[i];
 		delete[] _sil[i];
 	}
@@ -1428,7 +1424,7 @@ void Animation::synchronize(Common::Serializer &sz) {
 		sz.syncAsByte(spr->_count);
 		sz.syncAsByte(spr->_speedX);
 		sz.syncAsByte(spr->_speedY);
-		sz.syncAsByte(spr->_animCount);
+		sz.syncAsByte(spr->_frameNum);
 		sz.syncAsSint16LE(spr->_homingX);
 		sz.syncAsSint16LE(spr->_homingY);
 		sz.syncAsByte(spr->_callEachStepFl);
