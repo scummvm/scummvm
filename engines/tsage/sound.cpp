@@ -2534,7 +2534,7 @@ void PlayStream::ResFileData::load(Common::SeekableReadStream &stream) {
 	_indexSize = stream.readUint16LE();
 	_chunkSize = stream.readUint16LE();
 
-	stream.skip(20);
+	stream.skip(18);
 }
 
 PlayStream::PlayStream(): EventHandler() {
