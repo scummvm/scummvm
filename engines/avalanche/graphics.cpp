@@ -653,15 +653,16 @@ void GraphicManager::prepareBubble(int xc, int xw, int my, Common::Point points[
 	// Backup the screen before drawing the bubble.
 	_scrolls.copyFrom(_surface);
 
+	int16 talkX = _vm->_dialogs->getTalkPosX();
 	// The body of the bubble.
-	_scrolls.fillRect(Common::Rect(xc + _vm->_talkX - xw + 9, 7, _vm->_talkX + xw - 8 + xc, my + 1), _talkBackgroundColor);
-	_scrolls.fillRect(Common::Rect(xc + _vm->_talkX - xw - 1, 12, _vm->_talkX + xw + xc + 2, my - 4), _talkBackgroundColor);
+	_scrolls.fillRect(Common::Rect(xc + talkX - xw + 9, 7, talkX + xw - 8 + xc, my + 1), _talkBackgroundColor);
+	_scrolls.fillRect(Common::Rect(xc + talkX - xw - 1, 12, talkX + xw + xc + 2, my - 4), _talkBackgroundColor);
 
 	// Top the 4 rounded corners of the bubble.
-	drawPieSlice(xc + _vm->_talkX + xw - 10, 11, 0, 90, 9, _talkBackgroundColor);
-	drawPieSlice(xc + _vm->_talkX + xw - 10, my - 4, 270, 360, 9, _talkBackgroundColor);
-	drawPieSlice(xc + _vm->_talkX - xw + 10, 11, 90, 180, 9, _talkBackgroundColor);
-	drawPieSlice(xc + _vm->_talkX - xw + 10, my - 4, 180, 270, 9, _talkBackgroundColor);
+	drawPieSlice(xc + talkX + xw - 10, 11, 0, 90, 9, _talkBackgroundColor);
+	drawPieSlice(xc + talkX + xw - 10, my - 4, 270, 360, 9, _talkBackgroundColor);
+	drawPieSlice(xc + talkX - xw + 10, 11, 90, 180, 9, _talkBackgroundColor);
+	drawPieSlice(xc + talkX - xw + 10, my - 4, 180, 270, 9, _talkBackgroundColor);
 
 	// "Tail" of the speech bubble.
 	drawTriangle(points, _talkBackgroundColor);
