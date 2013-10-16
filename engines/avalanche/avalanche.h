@@ -240,7 +240,6 @@ public:
 	bool _letMeOut;
 	byte _thinks;
 	bool _thinkThing;
-	int16 _talkX, _talkY;
 	bool _seeScroll; // TODO: maybe this means we're interacting with the toolbar / a scroll?
 	char _objectList[10];
 	// Called .free() for them in ~Gyro().

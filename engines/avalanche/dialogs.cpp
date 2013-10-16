@@ -519,18 +519,18 @@ void Dialogs::drawBubble(DialogFunctionType modeFunc) {
 	int16 my = yw * 2 - 2;
 	int16 xc = 0;
 
-	if ((_vm->_talkX - xw) < 0)
-		xc = -(_vm->_talkX - xw);
-	if ((_vm->_talkX + xw) > 639)
-		xc = 639 - (_vm->_talkX + xw);
+	if (_talkX - xw < 0)
+		xc = -(_talkX - xw);
+	if (_talkX + xw > 639)
+		xc = 639 - (_talkX + xw);
 
 	// Compute triangle coords for the tail of the bubble
-	points[0].x = _vm->_talkX - 10;
+	points[0].x = _talkX - 10;
 	points[0].y = yw;
-	points[1].x = _vm->_talkX + 10;
+	points[1].x = _talkX + 10;
 	points[1].y = yw;
-	points[2].x = _vm->_talkX;
-	points[2].y = _vm->_talkY;
+	points[2].x = _talkX;
+	points[2].y = _talkY;
 
 	_vm->_graphics->prepareBubble(xc, xw, my, points);
 
@@ -538,7 +538,7 @@ void Dialogs::drawBubble(DialogFunctionType modeFunc) {
 	// The font is not the same that outtextxy() uses in Pascal. I don't have that, so I used characters instead.
 	// It's almost the same, only notable differences are '?', '!', etc.
 	for (int i = 0; i <= _maxLineNum; i++) {
-		int16 x = xc + _vm->_talkX - _scroll[i].size() / 2 * 8;
+		int16 x = xc + _talkX - _scroll[i].size() / 2 * 8;
 		bool offset = _scroll[i].size() % 2;
 		_vm->_graphics->drawScrollText(_scroll[i], _vm->_font, 8, x - offset * 4, (i * 10) + 12, _vm->_graphics->_talkFontColor);
 	}
@@ -568,8 +568,8 @@ void Dialogs::reset() {
  * @remarks	Originally called 'natural'
  */
 void Dialogs::setBubbleStateNatural() {
-	_vm->_talkX = 320;
-	_vm->_talkY = 200;
+	_talkX = 320;
+	_talkY = 200;
 	_vm->_graphics->setDialogColor(kColorDarkgray, kColorWhite);
 }
 
@@ -699,8 +699,8 @@ void Dialogs::callDialogDriver() {
 					// thing with QPs as triptype.chatter does with the
 					// sprites.)
 					PedType *quasiPed = &_vm->_peds[kQuasipeds[_param - 10]._whichPed];
-					_vm->_talkX = quasiPed->_x;
-					_vm->_talkY = quasiPed->_y; // Position.
+					_talkX = quasiPed->_x;
+					_talkY = quasiPed->_y; // Position.
 					
 					_vm->_graphics->setDialogColor(kQuasipeds[_param - 10]._backgroundColor, kQuasipeds[_param - 10]._textColor);
 				} else {
@@ -801,6 +801,15 @@ void Dialogs::callDialogDriver() {
 			}
 		}
 	}
+}
+
+void Dialogs::setTalkPos(int16 x, int16 y) {
+	_talkX = x;
+	_talkY = y;
+}
+
+int16 Dialogs::getTalkPosX() {
+	return _talkX;
 }
 
 /**

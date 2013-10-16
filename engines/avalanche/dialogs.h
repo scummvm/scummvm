@@ -49,6 +49,8 @@ public:
 	void setReadyLight(byte state);
 	void displayText(Common::String text);
 	bool displayQuestion(Common::String question);
+	void setTalkPos(int16 x, int16 y);
+	int16 getTalkPosX();
 	void setBubbleStateNatural();
 	void displayMusicalScroll();
 	void displayScrollChain(char block, byte point, bool report = true, bool bubbling = false);
@@ -61,6 +63,7 @@ public:
 	void saySilly();
 private:
 	AvalancheEngine *_vm;
+	int16 _talkX, _talkY;
 
 	enum FontStyle {
 		kFontStyleRoman,
