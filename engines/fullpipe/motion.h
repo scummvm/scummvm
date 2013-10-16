@@ -315,7 +315,12 @@ public:
 	int getItemSubIndexByMovementId(int index, int movId);
 	int getItemSubIndexByMGM(int idx, StaticANIObject *ani);
 
+	int getShortSide(MovGraphLink *lnk, int x, int y);
+	int findLink(Common::Array<MovGraphLink *> *linkList, MovGraphLink *lnk, Common::Rect *a3, Common::Point *a4);
+
 	bool initDirections(StaticANIObject *obj, MovGraph2Item *item);
+	void buildMovInfo1SubItems(MovInfo1 *movinfo, Common::Array<MovGraphLink *> *linkList, LinkInfo *lnkSrc, LinkInfo *lnkDst);
+	MessageQueue *buildMovInfo1MessageQueue(MovInfo1 *movInfo);
 
 	MovGraphNode *findNode(int x, int y, int fuzzyMatch);
 	MovGraphLink *findLink1(int x, int y, int idx, int fuzzyMatch);

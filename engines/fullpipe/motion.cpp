@@ -535,6 +535,16 @@ void MovGraph2::addObject(StaticANIObject *obj) {
 	}
 }
 
+void MovGraph2::buildMovInfo1SubItems(MovInfo1 *movinfo, Common::Array<MovGraphLink *> *linkList, LinkInfo *lnkSrc, LinkInfo *lnkDst) {
+	warning("STUB: MovGraph2::buildMovInfo1SubItems()");
+}
+
+MessageQueue *MovGraph2::buildMovInfo1MessageQueue(MovInfo1 *movInfo) {
+	warning("STUB: MovGraph2::buildMovInfo1MessageQueue()");
+
+	return 0;
+}
+
 int MovGraph2::removeObject(StaticANIObject *obj) {
 	warning("STUB: MovGraph2::removeObject()");
 
@@ -727,109 +737,78 @@ MessageQueue *MovGraph2::method4C(StaticANIObject *obj, int xpos, int ypos, int 
 		dy2 = movInfo1.pt2.y;
 	}
 
-	warning("STUB: MovGraph2::method4C()");
-
-#if 0
-
 	if (staticsId) {
-		v47 = MovGraph2_getItem1IndexByStaticsId(ex, staticsId);
-	} else if (tempLinkList.m_nCount <= 1) {
-		if (tempLinkList.m_nCount == 1)
-			LOBYTE(v47) = MovGraph2_sub_456690(
-											   this,
-											   (int)&tempLinkList.m_pNodeHead->data->GameObject.CObject.vmt,
-											   dx2 - dx1,
-											   dy2 - dy1);
+		movInfo1.item1Index = getItemSubIndexByStaticsId(idx, staticsId);
+	} else if (tempLinkList.size() <= 1) {
+		if (tempLinkList.size() == 1)
+			movInfo1.item1Index = getShortSide(tempLinkList[0], dx2 - dx1, dy2 - dy1);
 		else
-			LOBYTE(v47) = MovGraph2_sub_456690(this, 0, dx2 - dx1, dy2 - dy1);
+			movInfo1.item1Index = getShortSide(0, dx2 - dx1, dy2 - dy1);
 	} else {
-		LOBYTE(v47) = MovGraph2_sub_456300(this, (int)&tempLinkList, tempLinkList.m_pNodeTail, 0, 0);
+		movInfo1.item1Index = findLink(&tempLinkList, tempLinkList.back(), 0, 0);
 	}
+
 	movInfo1.flags = fuzzyMatch != 0;
-	movInfo1.item1Index = v47;
-	if (*((_DWORD *)this->items.CObArray.m_pData[offsetof(MovGraph2, movGraph)]
-		   + 186 * movInfo1.field_0
-		   + 46 * movInfo1.subIndex
-		   + 3) != (unsigned __int16)v62) {
-		v48 = movInfo1.flags;
-		LOBYTE(v48) = LOBYTE(movInfo1.flags) | 2;
-		movInfo1.flags = v48;
-	}
-	MovGraph2_buildMovInfo1SubItems(this, (int)&movInfo1, (int)&tempLinkList, (int)&linkInfoSource, (int)&linkInfoDest);
-	v49 = MovGraph2_buildMovInfo1MessageQueue(this, (int)&movInfo1);
-	v50 = (MessageQueue *)v49;
-	v62 = (MessageQueue *)v49;
-	CObjectFree((void *)movInfo1.items);
-	v51 = MovGraph2_findNode(this, movInfo1.pt2.x, movInfo1.pt2.y, fuzzyMatch);
-	linkInfoDest.node = v51;
-	if (!v51) {
-		linkInfoDest.link = MovGraph2_findLink1(this, movInfo1.pt2.x, movInfo1.pt2.y, movInfo1.item1Index, fuzzyMatch);
-		v51 = linkInfoDest.node;
-	}
-	if (fuzzyMatch || (_DWORD)linkInfoDest.link || v51) {
-		if (v50 && MessageQueue_getCount(v50) > 0 && picAniInfo.movementId) {
-			v52 = MessageQueue_getExCommandByIndex(v50, 0);
-			point.x = (int)v52;
-			if (v52
-				 && ((v53 = v52->msg.messageKind, v53 == 1) || v53 == 20)
-				 && picAniInfo.movementId == LOWORD(v52->messageNum)
-				 && picAniInfo.someDynamicPhaseIndex == v52->msg.field_14) {
-				MessageQueue_deleteExCommandByIndex(v50, 0, 1);
+
+	if (_items[idx]->_subItems[idxsub]._staticsId1 != obj->_statics->_staticsId)
+		movInfo1.flags |= 2;
+
+	buildMovInfo1SubItems(&movInfo1, &tempLinkList, &linkInfoSource, &linkInfoDest);
+
+	MessageQueue *mq = buildMovInfo1MessageQueue(&movInfo1);
+
+	linkInfoDest.node = findNode(movInfo1.pt2.x, movInfo1.pt2.y, fuzzyMatch);
+
+	if (!linkInfoDest.node)
+		linkInfoDest.link = findLink1(movInfo1.pt2.x, movInfo1.pt2.y, movInfo1.item1Index, fuzzyMatch);
+
+	if (fuzzyMatch || linkInfoDest.link || linkInfoDest.node) {
+		if (mq && mq->getCount() > 0 && picAniInfo.movementId) {
+			ExCommand *ex = mq->getExCommandByIndex(0);
+
+			if (ex && (ex->_messageKind == 1 || ex->_messageKind == 20)
+					&& picAniInfo.movementId == ex->_messageNum
+					&& picAniInfo.someDynamicPhaseIndex == ex->_field_14) {
+				mq->deleteExCommandByIndex(0, 1);
 			} else {
-				ExCommand *ex = new ExCommand(picAniInfo.objectId, 5, v52->_messageNum, obj->_ox, obj->_oy, 0, 1, 0, 0, 0);
+				ex = new ExCommand(picAniInfo.objectId, 5, ex->_messageNum, obj->_ox, obj->_oy, 0, 1, 0, 0, 0);
 				ex->_field_14 = -1;
 				ex->_keyCode = picAniInfo.field_8;
 				ex->_excFlags |= 2;
-				v50->addExCommand(ex);
+				mq->addExCommand(ex);
 
-				v57 = (ExCommand *)operator new(sizeof(ExCommand));
-				v63 = v57;
-				LOBYTE(v71.state) = 6;
-				if (v57) {
-					v58 = ExCommand_ctor(
-										 v57,
-										 picAniInfo.objectId,
-										 22,
-										 *((_DWORD *)this->items.CObArray.m_pData[offsetof(MovGraph2, movGraph)]
-										   + 186 * ex
-										   + 46 * movInfo1.subIndex
-										   + 3),
-										 0,
-										 0,
-										 0,
-										 1,
-										 0,
-										 0,
-										 0);
-					v50 = v62;
-				}
-				else
-					{
-						v58 = 0;
-					}
-				v58->msg.keyCode = picAniInfo.field_8;
-				v59 = v58->excFlags | 3;
-				LOBYTE(v71.state) = 4;
-				v58->excFlags = v59;
-				MessageQueue_addExCommand(v50, v58);
+				ex = new ExCommand(picAniInfo.objectId, 22, _items[idx]->_subItems[idxsub]._staticsId1, 0, 0, 0, 1, 0, 0, 0);
+
+				ex->_keyCode = picAniInfo.field_8;
+				ex->_excFlags |= 3;
+				mq->addExCommand(ex);
 			}
 		}
 	} else {
-		if (v50)
-			(*(void (__thiscall **)(MessageQueue *, signed int))(v50->CObject.vmt + 4))(v50, 1);
-		v50 = 0;
+		if (mq)
+			delete mq;
+		mq = 0;
 	}
-	GameObject_setPicAniInfo(obj, &picAniInfo);
-	v71.state = -1;
-	ObList_dtor(&tempLinkList);
-	return v50;
-#endif
 
-	return 0;
+	obj->setPicAniInfo(&picAniInfo);
+
+	return mq;
 }
 
 MovGraphNode *MovGraph2::findNode(int x, int y, int fuzzyMatch) {
 	warning("STUB: MovGraphLink *MovGraph2::findNode()");
+
+	return 0;
+}
+
+int MovGraph2::getShortSide(MovGraphLink *lnk, int x, int y) {
+	warning("STUB: MovGraph2::getShortSide()");
+
+	return 0;
+}
+
+int MovGraph2::findLink(Common::Array<MovGraphLink *> *linkList, MovGraphLink *lnk, Common::Rect *a3, Common::Point *a4) {
+	warning("STUB: MovGraphLink *MovGraph2::findLink()");
 
 	return 0;
 }

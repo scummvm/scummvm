@@ -119,7 +119,9 @@ class MessageQueue : public CObject {
 
 	uint getCount() { return _exCommands.size(); }
 
+	void addExCommand(ExCommand *ex);
 	ExCommand *getExCommandByIndex(uint idx);
+	void deleteExCommandByIndex(uint idx, bool doFree);
 
 	void replaceKeyCode(int key1, int key2);
 
