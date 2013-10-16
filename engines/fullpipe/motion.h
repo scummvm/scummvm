@@ -58,7 +58,7 @@ public:
 	virtual int method40() { return 0; }
 	virtual int method44() { return 0; }
 	virtual int method48() { return -1; }
-	virtual MessageQueue *method4C(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId) { return 0; }
+	virtual MessageQueue *doWalkTo(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId) { return 0; }
 };
 
 class MovGraphReact : public CObject {
@@ -107,7 +107,7 @@ class MctlCompound : public MotionController {
 	virtual int removeObject(StaticANIObject *obj);
 	virtual void freeItems();
 	virtual MessageQueue *method34(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId);
-	virtual MessageQueue *method4C(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId);
+	virtual MessageQueue *doWalkTo(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId);
 
 	void initMovGraph2();
 	MctlConnectionPoint *findClosestConnectionPoint(int ox, int oy, int destIndex, int connectionX, int connectionY, int sourceIndex, int *minDistancePtr);
@@ -251,7 +251,7 @@ class MovGraph : public MotionController {
 	virtual int changeCallback();
 	virtual int method3C();
 	virtual int method44();
-	virtual MessageQueue *method4C(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId);
+	virtual MessageQueue *doWalkTo(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId);
 	virtual int method50();
 
 	double calcDistance(Common::Point *point, MovGraphLink *link, int fuzzyMatch);
@@ -308,7 +308,7 @@ public:
 	virtual int removeObject(StaticANIObject *obj);
 	virtual void freeItems();
 	virtual MessageQueue *method34(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId);
-	virtual MessageQueue *method4C(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId);
+	virtual MessageQueue *doWalkTo(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId);
 
 	int getItemIndexByGameObjectId(int objectId);
 	int getItemSubIndexByStaticsId(int index, int staticsId);

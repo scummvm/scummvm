@@ -137,7 +137,7 @@ bool InteractionController::handleInteraction(StaticANIObject *subj, GameObject 
 			obj->setPicAniInfo(&aniInfo);
 
 			if (abs(xpos - subj->_ox) > 1 || abs(ypos - subj->_oy) > 1) {
-				mq = getSc2MctlCompoundBySceneId(g_fullpipe->_currentScene->_sceneId)->method4C(subj, xpos, ypos, 1, cinter->_staticsId2);
+				mq = getSc2MctlCompoundBySceneId(g_fullpipe->_currentScene->_sceneId)->doWalkTo(subj, xpos, ypos, 1, cinter->_staticsId2);
 				if (mq) {
 					dur = mq->calcDuration(subj);
 					delete mq;

@@ -122,7 +122,7 @@ MessageQueue *MctlCompound::method34(StaticANIObject *subj, int xpos, int ypos, 
 	return 0;
 }
 
-MessageQueue *MctlCompound::method4C(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId) {
+MessageQueue *MctlCompound::doWalkTo(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId) {
 	int match1 = -1;
 	int match2 = -1;
 
@@ -154,14 +154,14 @@ MessageQueue *MctlCompound::method4C(StaticANIObject *subj, int xpos, int ypos, 
 		return 0;
 
 	if (match1 == match2)
-		return _motionControllers[match1]->_motionControllerObj->method4C(subj, xpos, ypos, fuzzyMatch, staticsId);
+		return _motionControllers[match1]->_motionControllerObj->doWalkTo(subj, xpos, ypos, fuzzyMatch, staticsId);
 
 	MctlConnectionPoint *closestP = findClosestConnectionPoint(subj->_ox, subj->_oy, match1, xpos, ypos, match2, &match2);
 
 	if (!closestP)
 		return 0;
 
-	MessageQueue *mq = _motionControllers[match1]->_motionControllerObj->method4C(subj, closestP->_connectionX, closestP->_connectionY, 1, closestP->_field_14);
+	MessageQueue *mq = _motionControllers[match1]->_motionControllerObj->doWalkTo(subj, closestP->_connectionX, closestP->_connectionY, 1, closestP->_field_14);
 
 	ExCommand *ex;
 
@@ -309,8 +309,8 @@ int MovGraph::method44() {
 	return 0;
 }
 
-MessageQueue *MovGraph::method4C(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId) {
-	warning("STUB: MovGraph::method4C()");
+MessageQueue *MovGraph::doWalkTo(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId) {
+	warning("STUB: MovGraph::doWalkTo()");
 
 	return 0;
 }
@@ -561,7 +561,7 @@ MessageQueue *MovGraph2::method34(StaticANIObject *subj, int xpos, int ypos, int
 	return 0;
 }
 
-MessageQueue *MovGraph2::method4C(StaticANIObject *obj, int xpos, int ypos, int fuzzyMatch, int staticsId) {
+MessageQueue *MovGraph2::doWalkTo(StaticANIObject *obj, int xpos, int ypos, int fuzzyMatch, int staticsId) {
 	LinkInfo linkInfoDest;
 	LinkInfo linkInfoSource;
 	MovInfo1 movInfo1;
