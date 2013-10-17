@@ -89,6 +89,33 @@ DrasculaEngine::DrasculaEngine(OSystem *syst, const DrasculaGameDescription *gam
 	_talkSequences = 0;
 	_currentSaveSlot = 0;
 
+	bjX = 0;
+	bjY = 0;
+	trackBJ = 0;
+    framesWithoutAction = 0;
+	term_int = 0;
+	currentChapter = 0;
+	_loadedDifferentChapter = 0;
+	musicStopped = 0;
+	FrameSSN = 0;
+	globalSpeed = 0;
+	LastFrame = 0;
+	flag_tv = 0;
+	_charMapSize = 0;
+	_itemLocationsSize = 0;
+	_polXSize = 0;
+	_verbBarXSize = 0;
+	_x1dMenuSize = 0;
+	_frameXSize = 0;
+	_candleXSize = 0;
+	_pianistXSize = 0;
+	_drunkXSize = 0;
+	_roomPreUpdatesSize = 0;
+	_roomUpdatesSize = 0;
+	_roomActionsSize = 0;
+	_talkSequencesSize = 0;
+	_numLangs = 0;
+
 	_color = 0;
 	blinking = 0;
 	_mouseX = 0;
