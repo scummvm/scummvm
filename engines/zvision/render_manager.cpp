@@ -385,30 +385,34 @@ Common::Rect RenderManager::renderTextToWorkingWindow(uint32 idNumber, const Com
 }
 
 const Common::Point RenderManager::screenSpaceToImageSpace(const Common::Point &point) {
-	// Convert from screen space to working window space
-	Common::Point newPoint(point - Common::Point(_workingWindow.left, _workingWindow.top));
+	if (_workingWindow.contains(point)) {
+		// Convert from screen space to working window space
+		Common::Point newPoint(point - Common::Point(_workingWindow.left, _workingWindow.top));
 
-	RenderTable::RenderState state = _renderTable.getRenderState();
-	if (state == RenderTable::PANORAMA || state == RenderTable::TILT) {
-		newPoint = _renderTable.convertWarpedCoordToFlatCoord(newPoint);
+		RenderTable::RenderState state = _renderTable.getRenderState();
+		if (state == RenderTable::PANORAMA || state == RenderTable::TILT) {
+			newPoint = _renderTable.convertWarpedCoordToFlatCoord(newPoint);
+		}
+
+		if (state == RenderTable::PANORAMA) {
+			newPoint -= (Common::Point(_screenCenterX, 0) - _backgroundOffset);
+		} else if (state == RenderTable::TILT) {
+			newPoint -= (Common::Point(0, _screenCenterY) - _backgroundOffset);
+		}
+
+		if (newPoint.x < 0)
+			newPoint.x += _backgroundWidth;
+		else if (newPoint.x >= _backgroundWidth)
+			newPoint.x -= _backgroundWidth;
+		if (newPoint.y < 0)
+			newPoint.y += _backgroundHeight;
+		else if (newPoint.y >= _backgroundHeight)
+			newPoint.y -= _backgroundHeight;
+
+		return newPoint;
+	} else {
+		return Common::Point(0, 0);
 	}
-
-	if (state == RenderTable::PANORAMA) {
-		newPoint -= (Common::Point(_screenCenterX, 0) - _backgroundOffset);
-	} else if (state == RenderTable::TILT) {
-		newPoint -= (Common::Point(0, _screenCenterY) - _backgroundOffset);
-	}
-
-	if (newPoint.x < 0)
-		newPoint.x += _backgroundWidth;
-	else if (newPoint.x >= _backgroundWidth)
-		newPoint.x -= _backgroundWidth;
-	if (newPoint.y < 0)
-		newPoint.y += _backgroundHeight;
-	else if (newPoint.y >= _backgroundHeight)
-		newPoint.y -= _backgroundHeight;
-
-	return newPoint;
 }
 
 const Common::Point RenderManager::imageSpaceToWorkingWindowSpace(const Common::Point &point) {
