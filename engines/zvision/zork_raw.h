@@ -41,6 +41,45 @@ struct SoundParams {
 	bool packed;
 };
 
+
+/**
+ * This is a ADPCM stream-reader, this class holds context for multi-chunk reading and no buffers.
+ */
+class RawChunkStream {
+public:
+	RawChunkStream(bool stereo);
+
+	~RawChunkStream() {
+	}
+private:
+	uint _stereo;
+
+	/**
+	 * Holds the frequency and index from the last sample
+	 * 0 holds the left channel, 1 holds the right channel
+	 */
+	struct {
+		int32 sample;
+		int16 index;
+	} _lastSample[2];
+
+	static const int16 _stepAdjustmentTable[8];
+	static const int32 _amplitudeLookupTable[89];
+
+public:
+
+	struct RawChunk {
+		int16 *data;
+		uint32 size;
+	};
+
+	void init();
+	//Read next audio portion in new stream (needed for avi), return structure with buffer
+	RawChunk readNextChunk(Common::SeekableReadStream *stream);
+	//Read numSamples from stream to buffer
+	int readBuffer(int16 *buffer, Common::SeekableReadStream *stream, const int numSamples);
+};
+
 /**
  * This is a stream, which allows for playing raw ADPCM data from a stream.
  */
@@ -62,17 +101,7 @@ private:
 	bool _endOfData;                                           // Whether the stream end has been reached
 	uint _stereo;
 
-	/** 
-	 * Holds the frequency and index from the last sample
-	 * 0 holds the left channel, 1 holds the right channel
-	 */
-	struct {
-		int32 sample;
-		int16 index;
-	} _lastSample[2];
-
-	static const int16 _stepAdjustmentTable[8];
-	static const int32 _amplitudeLookupTable[89];
+	RawChunkStream _streamReader;
 
 public:
 	int readBuffer(int16 *buffer, const int numSamples);

@@ -30,6 +30,7 @@
 #include "common/stream.h"
 
 #include "audio/audiostream.h"
+#include "audio/decoders/raw.h"
 
 
 namespace ZVision {
@@ -43,9 +44,14 @@ void ZorkAVIDecoder::ZorkAVIAudioTrack::queueSound(Common::SeekableReadStream *s
 	if (_audStream) {
 		if (_wvInfo.tag == kWaveFormatZorkPCM) {
 			assert(_wvInfo.size == 8);
-			_audStream->queueAudioStream(makeRawZorkStream(stream, _wvInfo.samplesPerSec, _audStream->isStereo(), DisposeAfterUse::YES), DisposeAfterUse::YES);
+			RawChunkStream::RawChunk chunk = decoder->readNextChunk(stream);
+			delete stream;
+
+			if (chunk.data)
+				_audStream->queueBuffer((byte *)chunk.data, chunk.size, DisposeAfterUse::YES, Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN | Audio::FLAG_STEREO);
 		}
 	} else {
+		warning("Got %d wave format in AVI\n", _wvInfo.tag);
 		delete stream;
 	}
 }
