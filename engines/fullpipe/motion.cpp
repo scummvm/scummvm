@@ -685,6 +685,7 @@ MessageQueue *MovGraph2::doWalkTo(StaticANIObject *obj, int xpos, int ypos, int 
 
 	if (!linkInfoDest.node) {
 		linkInfoDest.link = findLink1(xpos, ypos, idxsub, fuzzyMatch);
+
 		if (!linkInfoDest.link) {
 			obj->setPicAniInfo(&picAniInfo);
 
@@ -826,9 +827,37 @@ int MovGraph2::findLink(Common::Array<MovGraphLink *> *linkList, MovGraphLink *l
 }
 
 MovGraphLink *MovGraph2::findLink1(int x, int y, int idx, int fuzzyMatch) {
-	warning("STUB: MovGraphLink *MovGraph2::findLink1()");
+	Common::Point point;
+	MovGraphLink *res = 0;
 
-	return 0;
+	for (ObList::iterator i = _links.begin(); i != _links.end(); ++i) {
+		assert(((CObject *)*i)->_objtype == kObjTypeMovGraphLink);
+
+		MovGraphLink *lnk = (MovGraphLink *)*i;
+
+		if (fuzzyMatch) {
+			point.x = x;
+			point.y = y;
+			double dst = calcDistance(&point, lnk, 0);
+
+			if (dst >= 0.0 && dst < 2.0)
+				return lnk;
+		} else if (!(lnk->_flags & 0x20000000)) {
+			if (lnk->_movGraphReact->pointInRegion(x, y)) {
+				if (abs(lnk->_movGraphNode1->_x - lnk->_movGraphNode2->_x) <= abs(lnk->_movGraphNode1->_y - lnk->_movGraphNode2->_y)) {
+					if (idx == 2 || idx == 3)
+						return lnk;
+					res = lnk;
+				} else {
+					if (idx == 1 || !idx)
+						return lnk;
+					res = lnk;
+				}
+			}
+		}
+	}
+
+	return res;
 }
 
 MovGraphLink *MovGraph2::findLink2(int x, int y) {
@@ -919,6 +948,8 @@ MovGraphLink::MovGraphLink() {
 	_field_38 = 0;
 	_movGraphReact = 0;
 	_name = 0;
+
+	_objtype = kObjTypeMovGraphLink;
 }
 
 bool MovGraphLink::load(MfcArchive &file) {

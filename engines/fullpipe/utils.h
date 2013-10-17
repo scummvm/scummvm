@@ -67,6 +67,7 @@ class MfcArchive : public Common::SeekableReadStream {
 enum ObjType {
 	kObjTypeDefault,
 	kObjTypeMovGraph,
+	kObjTypeMovGraphLink,
 	kObjTypeMovGraphNode,
 	kObjTypeMctlCompound,
 	kObjTypeObjstateCommand,
