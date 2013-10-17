@@ -145,19 +145,10 @@ bool OpenGLGraphicsManager::setGraphicsMode(int mode) {
 			_gameScreen->enableLinearFiltering(mode == GFX_LINEAR);
 		}
 
-		if (_overlay) {
-			_overlay->enableLinearFiltering(mode == GFX_LINEAR);
-		}
-
 		if (_cursor) {
 			_cursor->enableLinearFiltering(mode == GFX_LINEAR);
 		}
 
-#ifdef USE_OSD
-		if (_osd) {
-			_osd->enableLinearFiltering(mode == GFX_LINEAR);
-		}
-#endif
 		return true;
 
 	default:
@@ -221,7 +212,13 @@ OSystem::TransactionError OpenGLGraphicsManager::endGFXTransaction() {
 #else
 		                   Graphics::PixelFormat::createFormatCLUT8()
 #endif
-		   )) {
+		                  )
+		   // HACK: This is really nasty but we don't have any guarantees of
+		   // a context existing before, which means we don't know the maximum
+		   // supported texture size before this. Thus, we check whether the
+		   // requested game resolution is supported over here.
+		   || (   _currentState.gameWidth  > (uint)Texture::getMaximumTextureSize()
+		       || _currentState.gameHeight > (uint)Texture::getMaximumTextureSize())) {
 			if (_transactionMode == kTransactionActive) {
 				// Try to setup the old state in case its valid and is
 				// actually different from the new one.
@@ -754,12 +751,34 @@ void OpenGLGraphicsManager::setActualScreenSize(uint width, uint height) {
 	GLCALL(glMatrixMode(GL_MODELVIEW));
 	GLCALL(glLoadIdentity());
 
+	uint overlayWidth = width;
+	uint overlayHeight = height;
+
+	// WORKAROUND: We can only support surfaces up to the maximum supported
+	// texture size. Thus, in case we encounter a physical size bigger than
+	// this maximum texture size we will simply use an overlay as big as
+	// possible and then scale it to the physical display size. This sounds
+	// bad but actually all recent chips should support full HD resolution
+	// anyway. Thus, it should not be a real issue for modern hardware.
+	if (   overlayWidth  > (uint)Texture::getMaximumTextureSize()
+	    || overlayHeight > (uint)Texture::getMaximumTextureSize()) {
+		const frac_t outputAspect = intToFrac(_outputScreenWidth) / _outputScreenHeight;
+
+		if (outputAspect > (frac_t)FRAC_ONE) {
+			overlayWidth  = Texture::getMaximumTextureSize();
+			overlayHeight = intToFrac(overlayWidth) / outputAspect;
+		} else {
+			overlayHeight = Texture::getMaximumTextureSize();
+			overlayWidth  = fracToInt(overlayHeight * outputAspect);
+		}
+	}
+
 	// HACK: We limit the minimal overlay size to 256x200, which is the
 	// minimum of the dimensions of the two resolutions 256x240 (NES) and
 	// 320x200 (many DOS games use this). This hopefully assure that our
 	// GUI has working layouts.
-	const uint overlayWidth = MAX<uint>(width, 256);
-	const uint overlayHeight = MAX<uint>(height, 200);
+	overlayWidth = MAX<uint>(overlayWidth, 256);
+	overlayHeight = MAX<uint>(overlayHeight, 200);
 
 	if (!_overlay || _overlay->getFormat() != _defaultFormatAlpha) {
 		delete _overlay;
@@ -769,7 +788,10 @@ void OpenGLGraphicsManager::setActualScreenSize(uint width, uint height) {
 		const bool supported = getGLPixelFormat(_defaultFormatAlpha, glIntFormat, glFormat, glType);
 		assert(supported);
 		_overlay = new Texture(glIntFormat, glFormat, glType, _defaultFormatAlpha);
-		_overlay->enableLinearFiltering(_currentState.graphicsMode == GFX_LINEAR);
+		// We always filter the overlay with GL_LINEAR. This assures it's
+		// readable in case it needs to be scaled and does not affect it
+		// otherwise.
+		_overlay->enableLinearFiltering(true);
 	}
 	_overlay->allocate(overlayWidth, overlayHeight);
 	_overlay->fill(0);
@@ -783,9 +805,12 @@ void OpenGLGraphicsManager::setActualScreenSize(uint width, uint height) {
 		const bool supported = getGLPixelFormat(_defaultFormatAlpha, glIntFormat, glFormat, glType);
 		assert(supported);
 		_osd = new Texture(glIntFormat, glFormat, glType, _defaultFormatAlpha);
-		_osd->enableLinearFiltering(_currentState.graphicsMode == GFX_LINEAR);
+		// We always filter the osd with GL_LINEAR. This assures it's
+		// readable in case it needs to be scaled and does not affect it
+		// otherwise.
+		_osd->enableLinearFiltering(true);
 	}
-	_osd->allocate(_outputScreenWidth, _outputScreenHeight);
+	_osd->allocate(_overlay->getWidth(), _overlay->getHeight());
 	_osd->fill(0);
 #endif
 
@@ -824,6 +849,9 @@ void OpenGLGraphicsManager::notifyContextChange(const Graphics::PixelFormat &def
 
 	GLCALL(glEnable(GL_TEXTURE_2D));
 
+	// Query information needed by textures.
+	Texture::queryTextureInformation();
+
 	// Refresh the output screen dimensions if some are set up.
 	if (_outputScreenWidth != 0 && _outputScreenHeight != 0) {
 		setActualScreenSize(_outputScreenWidth, _outputScreenHeight);
@@ -860,6 +888,8 @@ void OpenGLGraphicsManager::adjustMousePosition(int16 &x, int16 &y) {
 		// here when the overlay is visible. This is because for very small
 		// resolutions we have a minimal overlay size and have to adjust
 		// for that.
+		// This can also happen when the overlay is smaller than the actual
+		// display size because of texture size limitations.
 		if (_overlay) {
 			x = (x * _overlay->getWidth())  / _outputScreenWidth;
 			y = (y * _overlay->getHeight()) / _outputScreenHeight;

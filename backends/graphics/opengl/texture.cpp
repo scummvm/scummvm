@@ -41,6 +41,13 @@ static GLuint nextHigher2(GLuint v) {
 	return ++v;
 }
 
+GLint Texture::_maxTextureSize = 0;
+
+void Texture::queryTextureInformation() {
+	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &_maxTextureSize);
+	debug(5, "OpenGL maximum texture size: %d", _maxTextureSize);
+}
+
 Texture::Texture(GLenum glIntFormat, GLenum glFormat, GLenum glType, const Graphics::PixelFormat &format)
     : _glIntFormat(glIntFormat), _glFormat(glFormat), _glType(glType), _format(format), _glFilter(GL_NEAREST),
       _glTexture(0), _textureData(), _userPixelData(), _allDirty(false) {

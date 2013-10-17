@@ -110,6 +110,16 @@ public:
 	virtual void *getPalette() { return 0; }
 	virtual const void *getPalette() const { return 0; }
 
+	/**
+	 * Query texture related OpenGL information from the context. This only
+	 * queries the maximum texture size for now.
+	 */
+	static void queryTextureInformation();
+
+	/**
+	 * @return Return the maximum texture dimensions supported.
+	 */
+	static GLint getMaximumTextureSize() { return _maxTextureSize; }
 protected:
 	virtual void updateTexture();
 
@@ -129,6 +139,8 @@ private:
 	bool _allDirty;
 	Common::Rect _dirtyArea;
 	void clearDirty() { _allDirty = false; _dirtyArea = Common::Rect(); }
+
+	static GLint _maxTextureSize;
 };
 
 class TextureCLUT8 : public Texture {
