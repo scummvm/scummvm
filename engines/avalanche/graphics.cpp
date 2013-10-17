@@ -394,7 +394,7 @@ void GraphicManager::drawMenuItem(int x1, int y1, int x2, int y2) {
 }
 
 void GraphicManager::drawSpeedBar(int speed) {
-	if (speed == _vm->kRun) {
+	if (speed == kRun) {
 		_surface.drawLine(336, 199, 338, 199, kColorLightblue);
 		_surface.drawLine(371, 199, 373, 199, kColorYellow);
 	} else {

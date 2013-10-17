@@ -1926,15 +1926,8 @@ void Parser::doThat() {
 					i = 3;
 				else
 					i = 0;
-				Avalanche::AnimationType *spr = _vm->_animation->_sprites[0];
-				if (spr->_id != i) {
-					int16 x = spr->_x;
-					int16 y = spr->_y;
-					spr->remove();
-					spr->init(i, true);
-					spr->appear(x, y, kDirLeft);
-					spr->_visible = false;
-				}
+
+				_vm->_animation->setAvvyClothes(i);
 				}
 				break;
 			default:

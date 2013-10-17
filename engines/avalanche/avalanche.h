@@ -164,9 +164,6 @@ public:
 	static const bool kThing = true;
 	static const bool kPerson = false;
 
-	// These following static constants should be included in CFG when it's written.
-	static const int16 kWalk = 3;
-	static const int16 kRun = 5;
 	static const char kSpludwicksOrder[3];
 
 	static const uint16 kNotes[12];
