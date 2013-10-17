@@ -101,6 +101,10 @@ AVIDecoder::~AVIDecoder() {
 	close();
 }
 
+AVIDecoder::AVIAudioTrack *AVIDecoder::createAudioTrack(AVIStreamHeader sHeader, PCMWaveFormat wvInfo) {
+	return new AVIAudioTrack(sHeader, wvInfo, _soundType);
+}
+
 void AVIDecoder::initCommon() {
 	_decodedHeader = false;
 	_foundMovieList = false;
@@ -293,7 +297,7 @@ void AVIDecoder::handleStreamHeader(uint32 size) {
 		if (wvInfo.channels == 2)
 			sHeader.sampleSize /= 2;
 
-		addTrack(new AVIAudioTrack(sHeader, wvInfo, _soundType));
+		addTrack(createAudioTrack(sHeader, wvInfo));
 	}
 
 	// Ensure that we're at the end of the chunk
