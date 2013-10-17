@@ -953,7 +953,7 @@ void Game::dialogueMenu(int dialogueID) {
 			"hit: %d, _lines[hit]: %d, lastblock: %d, dialogueLines: %d, dialogueExit: %d",
 			hit, _lines[hit], _lastBlock, _dialogueLinesNum, _dialogueExit);
 
-		if ((!_dialogueExit) && (hit != -1) && (_lines[hit] != -1)) {
+		if ((!_dialogueExit) && (hit >= 0) && (_lines[hit] != -1)) {
 			if ((oldLines == 1) && (_dialogueLinesNum == 1) && (_lines[hit] == _lastBlock)) {
 				break;
 			}
