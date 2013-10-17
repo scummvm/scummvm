@@ -52,6 +52,36 @@ enum {
 Game::Game(DraciEngine *vm) : _vm(vm), _walkingState(vm) {
 	uint i;
 
+	_dialogueLinesNum  = 0;
+	_blockNum = 0;
+
+	for (i = 0; i < kDialogueLines; i++)
+		_dialogueAnims[0] = 0;
+
+	_loopStatus = kStatusOrdinary;
+	_loopSubstatus = kOuterLoop;
+	_shouldQuit = 0;
+	_shouldExitLoop = 0;
+	_isReloaded = 0;
+	_speechTick = 0;
+	_speechDuration = 0;
+	_objUnderCursor = 0;
+	_animUnderCursor = 0;
+	_markedAnimationIndex = 0;
+	_scheduledPalette = 0;
+	_fadePhases = 0;
+	_fadePhase = 0;
+	_fadeTick = 0;
+	_mouseChangeTick = 0;
+	_enableQuickHero = 0;
+	_wantQuickHero = 0;
+	_enableSpeedText = 0;
+	_titleAnim = 0;
+	_inventoryAnim = 0;
+	_walkingMapOverlay = 0;
+	_walkingShortestPathOverlay = 0;
+	_walkingObliquePathOverlay = 0;
+
 	BArchive *initArchive = _vm->_initArchive;
 	const BAFile *file;
 
