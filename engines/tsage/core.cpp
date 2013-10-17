@@ -1749,7 +1749,20 @@ void SceneItem::display(int resNum, int lineNum, ...) {
 		}
 
 		g_globals->_sceneText.fixPriority(255);
+
+		// In Return to Ringworld, if in voice mode only, don't show the text
+		if ((g_vm->getGameID() == GType_Ringworld2) && (R2_GLOBALS._speechSubtitles & SPEECH_VOICE)
+				&& !(R2_GLOBALS._speechSubtitles & SPEECH_TEXT))
+			g_globals->_sceneText.hide();
+
 		g_globals->_sceneObjects->draw();
+	}
+
+	// For Return to Ringworld, play the voice overs in sequence
+	if ((g_vm->getGameID() == GType_Ringworld2) && (R2_GLOBALS._speechSubtitles & SPEECH_VOICE)
+			&& !playList.empty()) {
+		R2_GLOBALS._playStream.play(*playList.begin(), NULL);
+		playList.pop_front();
 	}
 
 	// Unless the flag is set to keep the message on-screen, show it until a mouse or keypress, then remove it
@@ -1761,13 +1774,22 @@ void SceneItem::display(int resNum, int lineNum, ...) {
 				EVENT_BUTTON_DOWN | EVENT_KEYPRESS)) {
 			GLOBALS._screenSurface.updateScreen();
 			g_system->delayMillis(10);
+
+			if ((g_vm->getGameID() == GType_Ringworld2) && (R2_GLOBALS._speechSubtitles & SPEECH_VOICE)) {
+				// Allow the play stream to do processing
+				R2_GLOBALS._playStream.dispatch();
+				if (!R2_GLOBALS._playStream.isPlaying()) {
+					// Check if there are further voice samples to play
+					if (!playList.empty()) {
+						R2_GLOBALS._playStream.play(*playList.begin(), NULL);
+						playList.pop_front();
+					}
+				}
+			}
 		}
 
-		// For Return to Ringworld, play the voice overs in sequence
-		if ((g_vm->getGameID() == GType_Ringworld2) && !playList.empty() && !R2_GLOBALS._playStream.isPlaying()) {
-			R2_GLOBALS._playStream.play(*playList.begin(), NULL);
-			playList.pop_front();
-		}
+		if (g_vm->getGameID() == GType_Ringworld2)
+			R2_GLOBALS._playStream.stop();
 
 		g_globals->_sceneText.remove();
 	}
