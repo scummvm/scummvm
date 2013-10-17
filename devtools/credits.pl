@@ -543,7 +543,7 @@ begin_credits("Credits");
 			end_section();
 			
 			begin_section("AVALANCHE");
-				add_person("Peter Bozs&oacute", "uruk", "");
+				add_person("Peter Bozs&oacute;", "uruk", "");
 				add_person("Arnaud Boutonn&eacute;", "Strangerke", "");
 			end_section();
 
