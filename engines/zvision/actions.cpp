@@ -354,12 +354,12 @@ bool ActionSetScreen::execute(ZVision *engine) {
 
 ActionStreamVideo::ActionStreamVideo(const Common::String &line) {
 	char fileName[25];
-	uint skippable;
+	uint skipline;    //skipline - render video with skip every second line, not skippable.
 
-	sscanf(line.c_str(), "%*[^(](%25s %u %u %u %u %u %u)", fileName, &_x1, &_y1, &_x2, &_y2, &_flags, &skippable);
+	sscanf(line.c_str(), "%*[^(](%25s %u %u %u %u %u %u)", fileName, &_x1, &_y1, &_x2, &_y2, &_flags, &skipline);
 
 	_fileName = Common::String(fileName);
-	_skippable = (skippable == 0) ? false : true;
+	_skippable = true;
 }
 
 bool ActionStreamVideo::execute(ZVision *engine) {
