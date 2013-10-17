@@ -42,29 +42,25 @@ enum Direction {
 
 class AnimationType {
 public:
-	// Former SpriteInfo structure
+	byte _id;
+
 	byte _xLength, _yLength;
 	ManiType *_mani[24];
 	SilType *_sil[24];
-
-	// Former Stat structure
 	byte _frameNum; // Number of pictures.
 	byte _seq; // How many in one stride.
-	Color _fgBubbleCol, _bgBubbleCol; // Foreground & background bubble colors.
 	byte _characterId; // The number according to Acci. (1=Avvy, etc.)
-	//
+	byte _count; // Counts before changing step.
 
 	Direction _facingDir;
 	byte _stepNum;
 	int16 _x, _y; // Current xy coords.
 	int8 _moveX, _moveY; // Amount to move sprite by, each step.
-	byte _id;
 	bool _quick, _visible, _homing, _doCheck;
 	int16 _homingX, _homingY; // Homing x & y coords.
-	byte _count; // Counts before changing step.
-	byte _speedX, _speedY; // x & y speed.
-	bool _vanishIfStill; // Do we show this sprite if it's still?
-	bool _callEachStepFl; // Do we call the eachstep procedure?
+	byte _speedX, _speedY;
+	bool _vanishIfStill;
+	bool _callEachStepFl;
 	byte _eachStepProc;
 
 	AnimationType(Animation *anim);
@@ -78,7 +74,6 @@ public:
 	void walk();
 	void walkTo(byte pednum);
 	void stopHoming();
-	void homeStep();
 	void setSpeed(int8 xx, int8 yy);
 	void stopWalk();
 	void chatter();
@@ -88,9 +83,11 @@ private:
 	Animation *_anim;
 
 	int16 _oldX[2], _oldY[2];  // Last xy coords.
+	Color _fgBubbleCol, _bgBubbleCol; // Foreground & background bubble colors.
 
 	bool checkCollision();
 	int8 getSign(int16 val);
+	void homeStep();
 };
 
 class Animation {
@@ -131,6 +128,9 @@ public:
 	void setOldDirection(Direction dir);
 	Direction getDirection();
 	Direction getOldDirection();
+
+	void setAvvyClothes(int id);
+	int getAvvyClothes();
 
 	void resetVariables();
 	void synchronize(Common::Serializer &sz);

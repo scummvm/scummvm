@@ -62,7 +62,9 @@ void HeadType::highlight() {
 	_menu->_activeMenuItem._activeNum = _position;
 	_menu->_menuActive = true;
 
-	_menu->_vm->_currentMouse = 177; // Force redraw of cursor.
+	// Force reload and redraw of cursor.
+	_menu->_vm->_currentMouse = 177;
+	
 }
 
 bool HeadType::parseAltTrigger(char key) {
@@ -431,7 +433,7 @@ void Menu::setupMenuAction() {
 		_activeMenuItem.setupOption("Open the door", 'O', "f7", _vm->_animation->nearDoor());
 	_activeMenuItem.setupOption("Look around", 'L', "f8", true);
 	_activeMenuItem.setupOption("Inventory", 'I', "Tab", true);
-	if (_vm->_animation->_sprites[0]->_speedX == _vm->kWalk)
+	if (_vm->_animation->_sprites[0]->_speedX == kWalk)
 		_activeMenuItem.setupOption("Run fast", 'R', "^R", true);
 	else
 		_activeMenuItem.setupOption("Walk slowly", 'W', "^W", true);
@@ -596,10 +598,10 @@ void Menu::runMenuAction() {
 		break;
 	case 5: {
 		AnimationType *avvy = _vm->_animation->_sprites[0];
-		if (avvy->_speedX == _vm->kWalk)
-			avvy->_speedX = _vm->kRun;
+		if (avvy->_speedX == kWalk)
+			avvy->_speedX = kRun;
 		else
-			avvy->_speedX = _vm->kWalk;
+			avvy->_speedX = kWalk;
 		_vm->_animation->updateSpeed();
 		}
 		break;

@@ -104,7 +104,7 @@ void AnimationType::init(byte spritenum, bool doCheck) {
 	_y = 0;
 	_quick = true;
 	_visible = false;
-	_speedX = 3;
+	_speedX = kWalk;
 	_speedY = 1;
 	_homing = false;
 	_moveX = 0;
@@ -1374,6 +1374,23 @@ Direction Animation::getDirection() {
 
 Direction Animation::getOldDirection() {
 	return _oldDirection;
+}
+
+void Animation::setAvvyClothes(int id) {
+	AnimationType *spr = _sprites[0];
+	if (spr->_id == id)
+		return;
+
+	int16 x = spr->_x;
+	int16 y = spr->_y;
+	spr->remove();
+	spr->init(id, true);
+	spr->appear(x, y, kDirLeft);
+	spr->_visible = false;
+}
+
+int Animation::getAvvyClothes() {
+	return _sprites[0]->_id;
 }
 
 void Animation::resetVariables() {

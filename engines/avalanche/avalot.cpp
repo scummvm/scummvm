@@ -851,7 +851,7 @@ void AvalancheEngine::enterRoom(Room roomId, byte ped) {
 
 	case kRoomLustiesRoom:
 		_npcFacing = 1; // du Lustie.
-		if (_animation->_sprites[0]->_id == 0) // Avvy in his normal clothes
+		if (_animation->getAvvyClothes() == 0) // Avvy in his normal clothes
 			_timer->addTimer(3, Timer::kProcCallsGuards, Timer::kReasonDuLustieTalks);
 		else if (!_enteredLustiesRoomAsMonk) // already
 			// Presumably, Avvy dressed as a monk.
