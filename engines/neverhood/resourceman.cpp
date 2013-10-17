@@ -105,6 +105,8 @@ static const EntrySizeFix entrySizeFixes[] = {
 	{ 0x80283101, 13104841,      1961,  3712,      3511 },	// The first message from Willie
 	{ 0x00918480, 17676417,       581,   916,       706 },	// The first wall in the museum
 	{ 0x00800090C,16064875,     19555, 38518,     38526 },	// The first wall in the museum
+	{ 0x058208810,46010519,    24852, 131874,     131776},  // The entry to hut with musical lock
+
 	// Fixes for the Russian "Fargus" version
 	{ 0x41137051,   758264,     29037, 49590,     49591 },	// "Options" menu header text
 	{ 0xc10b2015,   787304,      4414, 15848,     15853 },	// Text on option buttons
