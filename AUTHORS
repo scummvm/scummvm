@@ -244,6 +244,9 @@ ScummVM Team
     Wintermute:
        Einar Johan T. Somaaen
 
+    ZVision:
+       Adrian Astley
+
   Backend Teams
   -------------
     Android:
@@ -614,6 +617,8 @@ Special thanks to
    Jimmi Thogersen   - For ScummRev, and much obscure code/documentation
    Tristan           - For additional work on the original MT-32 emulator
    James Woodcock    - Soundtrack enhancements
+   Anton Yartsev     - For the original re-implementation of the ZVision
+                       engine
 
    Tony Warriner and everyone at Revolution Software Ltd. for sharing with us
    the source of some of their brilliant games, allowing us to release
