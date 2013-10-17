@@ -2654,14 +2654,14 @@ uint32 PlayStream::getFileOffset(const uint16 *data, int count, int voiceNum) {
 	if (!v)
 		return 0;
 
-	// Loop to figure out offsets from indexes skipped over
+	// Loop to figure out offsets from index words skipped over
 	for (int i = 0; i < (voiceNum >> 3); ++i) {
 		for (int bit = 0; bit < 16; bit += 2)
 			offset += ((data[i] >> bit) & 3) * count;
 	}
 
 	// Bit index loop
-	for (int i = 0; i < bitsIndex; --i)
+	for (int i = 0; i < bitsIndex; ++i)
 		offset += ((data[byteIndex] >> (i * 2)) & 3) * count;
 
 	return offset;
