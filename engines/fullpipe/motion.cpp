@@ -861,9 +861,45 @@ MovGraphLink *MovGraph2::findLink1(int x, int y, int idx, int fuzzyMatch) {
 }
 
 MovGraphLink *MovGraph2::findLink2(int x, int y) {
-	warning("STUB: MovGraphLink *MovGraph2::findLink2()");
+	double mindist = 1.0e20;
+	MovGraphLink *res;
 
-	return 0;
+	for (ObList::iterator i = _links.begin(); i != _links.end(); ++i) {
+		assert(((CObject *)*i)->_objtype == kObjTypeMovGraphLink);
+
+		MovGraphLink *lnk = (MovGraphLink *)*i;
+
+		if (!(lnk->_flags & 0x20000000)) {
+			double n1x = lnk->_movGraphNode1->_x;
+			double n1y = lnk->_movGraphNode1->_y;
+			double n2x = lnk->_movGraphNode2->_x;
+			double n2y = lnk->_movGraphNode2->_y;
+			double n1dx = n1x - x;
+			double n1dy = n1y - y;
+			double dst1 = sqrt(n1dy * n1dy + n1dx * n1dx);
+			double coeff1 = ((n1y - n2y) * n1dy + (n2x - n1x) * n1dx) / lnk->_distance / dst1;
+			double dst3 = coeff1 * dst1;
+			double dst2 = sqrt(1.0 - coeff1 * coeff1) * dst1;
+
+			if (coeff1 * dst1 < 0.0) {
+				dst3 = 0.0;
+				dst2 = sqrt(n1dy * n1dy + n1dx * n1dx);
+			}
+			if (dst3 > lnk->_distance) {
+				dst3 = lnk->_distance;
+				dst2 = sqrt((n2x - x) * (n2x - x) + (n2y - y) * (n2y - y));
+			}
+			if (dst3 >= 0.0 && dst3 <= lnk->_distance && dst2 < mindist) {
+				mindist = dst2;
+				res = lnk;
+			}
+		}
+	}
+
+	if (mindist < 1.0e20)
+		return res;
+	else
+		return 0;
 }
 
 double MovGraph2::findMinPath(LinkInfo *linkInfoSource, LinkInfo *linkInfoDest, Common::Array<MovGraphLink *> *listObj) {
