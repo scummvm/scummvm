@@ -324,7 +324,7 @@ Common::Error DrasculaEngine::run() {
 		memset(iconName, 0, sizeof(iconName));
 
 		for (i = 0; i < 6; i++)
-			strlcpy(iconName[i + 1], _textverbs[i], 13);
+			Common::strlcpy(iconName[i + 1], _textverbs[i], 13);
 
 		assignPalette(defaultPalette);
 
