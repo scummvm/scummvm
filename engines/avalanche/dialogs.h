@@ -82,12 +82,9 @@ private:
 	byte _param; // For using arguments code
 	byte _useIcon;
 	byte _scrollBells; // no. of times to ring the bell
-	byte _buffer[2000];
-	uint16 _bufSize;
 	int16 _underScroll; // Y-coord of just under the scroll text.
 	int16 _shadowBoxX, _shadowBoxY;
 
-	void callDialogDriver();
 	void drawBubble(DialogFunctionType modeFunc);
 	void drawScroll(DialogFunctionType modeFunc);
 	void scrollModeNormal();
@@ -109,8 +106,8 @@ private:
 	void ringBell();
 	void loadFont();
 
-	void unSkrimble();
-	void doTheBubble();
+	void unSkrimble(Common::String &text);
+	void doTheBubble(Common::String &text);
 	void speak(byte who, byte subject);
 };
 

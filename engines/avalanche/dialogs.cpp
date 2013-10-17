@@ -623,8 +623,10 @@ void Dialogs::solidify(byte n) {
 
 /**
  * @remarks	Originally called 'calldriver'
+ * Display text by calling the dialog driver. It unifies the function of the original 
+ * 'calldriver' and 'display' by using Common::String instead of a private buffer.
  */
-void Dialogs::callDialogDriver() {
+void Dialogs::displayText(Common::String text) {
 //	bool was_virtual; // Was the mouse cursor virtual on entry to this proc?
 	warning("STUB: Scrolls::calldrivers()");
 
@@ -635,30 +637,29 @@ void Dialogs::callDialogDriver() {
 	bool mouthnext = false;
 	bool callSpriteRun = true; // Only call sprite_run the FIRST time.
 
-	switch (_buffer[_bufSize - 1]) {
+	switch (text.lastChar()) {
 	case kControlToBuffer:
-		_bufSize--;
+		text.deleteLastChar();
 		break; // ^D = (D)on't include pagebreak
 	case kControlSpeechBubble:
 	case kControlQuestion:
 		break; // ^B = speech (B)ubble, ^Q = (Q)uestion in dialogue box
 	default:
-		_buffer[_bufSize] = kControlParagraph;
-		_bufSize++;
+		text.insertChar(kControlParagraph, text.size());
 	}
 
-	for (uint16 i = 0; i < _bufSize; i++) {
+	for (uint16 i = 0; i < text.size(); i++) {
 		if (mouthnext) {
-			if (_buffer[i] == kControlRegister)
+			if (text[i] == kControlRegister)
 				_param = 0;
-			else if (('0' <= _buffer[i]) && (_buffer[i] <= '9'))
-				_param = _buffer[i] - 48;
-			else if (('A' <= _buffer[i]) && (_buffer[i] <= 'Z'))
-				_param = _buffer[i] - 55;
+			else if (('0' <= text[i]) && (text[i] <= '9'))
+				_param = text[i] - 48;
+			else if (('A' <= text[i]) && (text[i] <= 'Z'))
+				_param = text[i] - 55;
 
 			mouthnext = false;
 		} else {
-			switch (_buffer[i]) {
+			switch (text[i]) {
 			case kControlParagraph:
 				if ((_maxLineNum == 0) && (_scroll[0].empty()))
 					break;
@@ -796,7 +797,7 @@ void Dialogs::callDialogDriver() {
 					solidify(_maxLineNum);
 					_maxLineNum++;
 				}
-				_scroll[_maxLineNum] += _buffer[i];
+				_scroll[_maxLineNum] += text[i];
 				break;
 			}
 		}
@@ -810,16 +811,6 @@ void Dialogs::setTalkPos(int16 x, int16 y) {
 
 int16 Dialogs::getTalkPosX() {
 	return _talkX;
-}
-
-/**
- * Display text by calling the dialog driver
- * @remarks	Originally called 'display'
- */
-void Dialogs::displayText(Common::String text) { // TODO: REPLACE BUFFER WITH A STRING!!!!!!!!!!
-	_bufSize = text.size();
-	memcpy(_buffer, text.c_str(), _bufSize);
-	callDialogDriver();
 }
 
 bool Dialogs::displayQuestion(Common::String question) {
@@ -879,15 +870,14 @@ void Dialogs::displayMusicalScroll() {
 	reset();
 }
 
-void Dialogs::unSkrimble() {
-	for (uint16  i = 0; i < _bufSize; i++)
-		_buffer[i] = (~(_buffer[i] - (i + 1))) % 256;
+void Dialogs::unSkrimble(Common::String &text) {
+	for (uint16  i = 0; i < text.size(); i++)
+		text.setChar((~(text[i] - (i + 1))) % 256, i);
 }
 
-void Dialogs::doTheBubble() {
-	_buffer[_bufSize] = 2;
-	_bufSize++;
-	assert(_bufSize < 2000);
+void Dialogs::doTheBubble(Common::String &text) {
+	text.insertChar(kControlSpeechBubble, text.size());
+	assert(text.size() < 2000);
 }
 
 /**
@@ -928,16 +918,18 @@ void Dialogs::displayScrollChain(char block, byte point, bool report, bool bubbl
 		::error("AVALANCHE: Visa: File not found: avalot.sez");
 
 	sezfile.seek(sez_offset);
-	_bufSize = sezfile.readUint16LE();
+	uint16 _bufSize = sezfile.readUint16LE();
 	assert(_bufSize < 2000);
+	char *_buffer = new char[_bufSize];
 	sezfile.read(_buffer, _bufSize);
 	sezfile.close();
-	unSkrimble();
+	Common::String text(_buffer, _bufSize);
+	delete[] _buffer;
 
+	unSkrimble(text);
 	if (bubbling)
-		doTheBubble();
-
-	callDialogDriver();
+		doTheBubble(text);
+	displayText(text);
 }
 
 /**
@@ -975,15 +967,18 @@ void Dialogs::speak(byte who, byte subject) {
 		error("AVALANCHE: Visa: File not found: avalot.sez");
 
 	sezfile.seek(sezOffset);
-	_bufSize = sezfile.readUint16LE();
+	uint16 _bufSize = sezfile.readUint16LE();
 	assert(_bufSize < 2000);
+	char *_buffer = new char[_bufSize];
 	sezfile.read(_buffer, _bufSize);
 	sezfile.close();
+	Common::String text(_buffer, _bufSize);
+	delete[] _buffer;
 
-	unSkrimble();
-	doTheBubble();
+	unSkrimble(text);
+	doTheBubble(text);
+	displayText(text);
 
-	callDialogDriver();
 	_noError = true;
 }
 
