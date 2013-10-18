@@ -635,6 +635,8 @@ MessageQueue *MovGraph2::doWalkTo(StaticANIObject *obj, int xpos, int ypos, int 
 			if (idxwalk == -1) {
 				obj->setPicAniInfo(&picAniInfo);
 
+				delete mq;
+
 				return 0;
 			}
 
