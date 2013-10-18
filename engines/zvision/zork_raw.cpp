@@ -127,7 +127,7 @@ int RawZorkStream::readBuffer(int16 *buffer, const int numSamples) {
 			sample = -sample;
 
 		sample += _lastSample[channel].sample;
-		sample = CLIP(sample, -32768, 32767);
+		sample = CLIP<int32>(sample, -32768, 32767);
 
 		buffer[bytesRead - 1] = (int16)sample;
 
