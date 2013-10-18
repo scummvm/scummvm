@@ -387,7 +387,7 @@ ActionTimer::ActionTimer(const Common::String &line) {
 }
 
 bool ActionTimer::execute(ZVision *engine) {
-	engine->getScriptManager()->addControl(new TimerNode(engine, _key, _time));
+	engine->getScriptManager()->addSideFX(new TimerNode(engine, _key, _time));
 	return true;
 }
 

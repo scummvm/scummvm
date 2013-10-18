@@ -32,8 +32,9 @@
 
 namespace ZVision {
 
-TimerNode::TimerNode(ZVision *engine, uint32 key, uint timeInSeconds) 
-	: Control(engine, key), _timeLeft(timeInSeconds * 1000) {
+TimerNode::TimerNode(ZVision *engine, uint32 key, uint timeInSeconds)
+	: SideFX(engine, key, SIDEFX_TIMER) {
+        _timeLeft = timeInSeconds * 1000;
 }
 
 bool TimerNode::process(uint32 deltaTimeInMillis) {

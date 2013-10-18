@@ -23,13 +23,13 @@
 #ifndef ZVISION_TIMER_NODE_H
 #define ZVISION_TIMER_NODE_H
 
-#include "zvision/control.h"
+#include "zvision/sidefx.h"
 
 namespace ZVision {
 
 class ZVision;
 
-class TimerNode : public Control {
+class TimerNode : public SideFX {
 public:
 	TimerNode(ZVision *engine, uint32 key, uint timeInSeconds);
 
