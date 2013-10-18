@@ -35,15 +35,21 @@ class ZVision;
 
 class SideFX {
 public:
-	SideFX() : _engine(0), _key(0) {}
-	SideFX(ZVision *engine, uint32 key) : _engine(engine), _key(key) {}
+
+	enum SideFXType{
+		SIDEFX_UNK   = 0
+	};
+
+	SideFX() : _engine(0), _key(0), _type(SIDEFX_UNK) {}
+	SideFX(ZVision *engine, uint32 key, SideFXType type) : _engine(engine), _key(key), _type(type) {}
 	virtual ~SideFX() {}
 
 	uint32 getKey() { return _key; }
+	SideFXType getType() { return _type; }
 
 	virtual bool process(uint32 deltaTimeInMillis) { return false; }
 	/**
-	 * Serialize a Control for save game use. This should only be used if a Control needs
+	 * Serialize a SideFX for save game use. This should only be used if a SideFX needs
 	 * to save values that would be different from initialization. AKA a TimerNode needs to
 	 * store the amount of time left on the timer. Any Controls overriding this *MUST* write
 	 * their key as the first data outputted. The default implementation is NOP.
@@ -56,7 +62,7 @@ public:
 	virtual void serialize(Common::WriteStream *stream) {}
 	/**
 	 * De-serialize data from a save game stream. This should only be implemented if the
-	 * Control also implements serialize(). The calling method assumes the size of the
+	 * SideFX also implements serialize(). The calling method assumes the size of the
 	 * data read from the stream exactly equals that written in serialize(). The default
 	 * implementation is NOP.
 	 *
@@ -67,18 +73,20 @@ public:
 	 */
 	virtual void deserialize(Common::SeekableReadStream *stream) {}
 	/**
-	 * If a Control overrides serialize() and deserialize(), this should return true
+	 * If a SideFX overrides serialize() and deserialize(), this should return true
 	 *
-	 * @return    Does the Control need save game serialization?
+	 * @return    Does the SideFX need save game serialization?
 	 */
 	virtual inline bool needsSerialization() { return false; }
 
 protected:
 	ZVision * _engine;
 	uint32 _key;
+	SideFXType _type;
 
 // Static member functions
 public:
+
 };
 
 // TODO: Implement InputControl
