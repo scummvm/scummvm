@@ -53,6 +53,7 @@ typedef Common::HashMap<uint32, Common::Array<Puzzle *> > PuzzleMap;
 typedef Common::List<Puzzle *> PuzzleList;
 typedef Common::Queue<Puzzle *> PuzzleQueue;
 typedef Common::List<Control *> ControlList;
+typedef Common::HashMap<uint32, uint32> StateMap;
 
 class ScriptManager {
 public:
@@ -66,7 +67,7 @@ private:
 	 * mutators getStateValue() and setStateValue(). This ensures that Puzzles that reference a 
 	 * particular state key are checked after the key is modified.
 	 */
-	Common::HashMap<uint32, uint> _globalState;
+	StateMap _globalState;
 	/** References _globalState keys to Puzzles */
 	PuzzleMap _referenceTable;
 	/** Holds the Puzzles that should be checked this frame */

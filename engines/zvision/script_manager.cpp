@@ -196,7 +196,7 @@ void ScriptManager::checkPuzzleCriteria() {
 }
 
 void ScriptManager::cleanStateTable() {
-	for (Common::HashMap<uint32, uint32>::iterator iter = _globalState.begin(); iter != _globalState.end(); ++iter) {
+	for (StateMap::iterator iter = _globalState.begin(); iter != _globalState.end(); ++iter) {
 		// If the value is equal to zero, we can purge it since getStateValue()
 		// will return zero if _globalState doesn't contain a key
 		if (iter->_value == 0) {
@@ -384,7 +384,7 @@ void ScriptManager::serializeStateTable(Common::WriteStream *stream) {
 	// Write the number of state value entries
 	stream->writeUint32LE(_globalState.size());
 
-	for (Common::HashMap<uint32, uint32>::iterator iter = _globalState.begin(); iter != _globalState.end(); ++iter) {
+	for (StateMap::iterator iter = _globalState.begin(); iter != _globalState.end(); ++iter) {
 		// Write out the key/value pair
 		stream->writeUint32LE(iter->_key);
 		stream->writeUint32LE(iter->_value);
