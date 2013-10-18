@@ -81,6 +81,25 @@ Game::Game(DraciEngine *vm) : _vm(vm), _walkingState(vm) {
 	_walkingMapOverlay = 0;
 	_walkingShortestPathOverlay = 0;
 	_walkingObliquePathOverlay = 0;
+	_currentItem = 0;
+	_itemUnderCursor = 0;
+	_previousItemPosition = 0;
+
+	for (i = 0; i < kInventorySlots; i++)
+		_inventory[i] = 0;
+
+	_newRoom = 0;
+	_newGate = 0;
+	_previousRoom = 0;
+	_pushedNewRoom = 0;
+	_pushedNewGate = 0;
+	_currentDialogue = 0;
+	_dialogueArchive = 0;
+	_dialogueBlocks = 0;
+	_dialogueBegin = 0;
+	_dialogueExit = 0;
+	_currentBlock = 0;
+	_lastBlock = 0;
 
 	BArchive *initArchive = _vm->_initArchive;
 	const BAFile *file;
