@@ -696,9 +696,11 @@ MessageQueue *MovGraph2::doWalkTo(StaticANIObject *obj, int xpos, int ypos, int 
 	}
 
 	Common::Array<MovGraphLink *> tempLinkList;
+	double minPath = findMinPath(&linkInfoSource, &linkInfoDest, &tempLinkList);
 
-	if (findMinPath(&linkInfoSource, &linkInfoDest, &tempLinkList) < 0.0 || 
-		((linkInfoSource.node != linkInfoDest.node || !linkInfoSource.node) && !tempLinkList.size()))
+	debug(0, "MovGraph2::doWalkTo(): path: %lf  parts: %d", minPath, tempLinkList.size());
+
+	if (minPath < 0.0 || ((linkInfoSource.node != linkInfoDest.node || !linkInfoSource.node) && !tempLinkList.size()))
 		return 0;
 
 	movInfo1.subIndex = idxsub;
@@ -905,9 +907,74 @@ MovGraphLink *MovGraph2::findLink2(int x, int y) {
 }
 
 double MovGraph2::findMinPath(LinkInfo *linkInfoSource, LinkInfo *linkInfoDest, Common::Array<MovGraphLink *> *listObj) {
-	warning("STUB: MovGraph2::findMinPath()");
+	LinkInfo linkInfoWorkSource;
 
-	return 0.0;
+	if (linkInfoSource->link != linkInfoDest->link || linkInfoSource->node != linkInfoDest->node) {
+		double minDistance = -1.0;
+
+		if (linkInfoSource->node) {
+			for (ObList::iterator i = _links.begin(); i != _links.end(); ++i) {
+				MovGraphLink *lnk = (MovGraphLink *)*i;
+
+				if ((lnk->_movGraphNode1 == linkInfoSource->node || lnk->_movGraphNode2 == linkInfoSource->node) && !(lnk->_flags & 0xA0000000)) {
+					linkInfoWorkSource.node = 0;
+					linkInfoWorkSource.link = lnk;
+
+					Common::Array<MovGraphLink *> tmpList;
+
+					lnk->_flags |= 0x80000000;
+
+					double newDistance = findMinPath(&linkInfoWorkSource, linkInfoDest, &tmpList);
+
+					if (newDistance >= 0.0 && (minDistance < 0.0 || newDistance + lnk->_distance < minDistance)) {
+						listObj->clear();
+						listObj->push_back(tmpList);
+
+						minDistance = newDistance + lnk->_distance;
+					}
+
+					lnk->_flags &= 0x7FFFFFFF;
+				}
+			}
+		} else if (linkInfoSource->link) {
+			linkInfoWorkSource.node = linkInfoSource->link->_movGraphNode1;
+			linkInfoWorkSource.link = 0;
+			
+			Common::Array<MovGraphLink *> tmpList;
+
+			double newDistance = findMinPath(&linkInfoWorkSource, linkInfoDest, &tmpList);
+
+			if (newDistance >= 0.0) {
+				listObj->clear();
+
+				listObj->push_back(linkInfoSource->link);
+				listObj->push_back(tmpList);
+
+				minDistance = newDistance;
+			}
+
+			linkInfoWorkSource.link = 0;
+			linkInfoWorkSource.node = linkInfoSource->link->_movGraphNode2;
+			
+			tmpList.clear();
+			
+			newDistance = findMinPath(&linkInfoWorkSource, linkInfoDest, &tmpList);
+
+			if (newDistance >= 0 && (minDistance < 0.0 || newDistance < minDistance)) {
+				listObj->push_back(linkInfoSource->link);
+				listObj->push_back(tmpList);
+
+				minDistance = newDistance;
+			}
+		}
+
+		return minDistance;
+	} else {
+		if (linkInfoSource->link)
+			listObj->push_back(linkInfoSource->link);
+
+		return 0.0;
+	}
 }
 
 MovGraphNode *MovGraph::calcOffset(int ox, int oy) {
