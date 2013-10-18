@@ -90,7 +90,7 @@ public:
 	BaseImage *_alphaImage;
 	Common::String _alphaFilename;
 	bool setAlphaImage(const Common::String &filename);
-	__inline byte getAlphaAt(int x, int y) const;
+	byte getAlphaAt(int x, int y) const;
 	void writeAlpha();
 
 	bool seekToTime(uint32 Time);
