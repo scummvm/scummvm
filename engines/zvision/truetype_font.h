@@ -45,7 +45,7 @@ public:
 private:
 	ZVision *_engine;
 	Graphics::Font *_font;
-	float _lineHeight;
+	int _lineHeight;
 
 	size_t _maxCharWidth;
 	size_t _maxCharHeight;

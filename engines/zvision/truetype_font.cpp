@@ -94,7 +94,7 @@ Graphics::Surface *TruetypeFont::drawTextToSurface(const Common::String &text, u
 	Common::Array<Common::String> lines;
 	_font->wordWrapText(text, maxWidth, lines);
 
-	while (maxHeight > 0 && lines.size() * _lineHeight > maxHeight) {
+	while (maxHeight > 0 && (int)lines.size() * _lineHeight > maxHeight) {
 		lines.pop_back();
 	}
 	if (lines.size() == 0) {
@@ -107,7 +107,7 @@ Graphics::Surface *TruetypeFont::drawTextToSurface(const Common::String &text, u
 	int heightOffset = 0;
 	for (Common::Array<Common::String>::iterator it = lines.begin(); it != lines.end(); it++) {
 		_font->drawString(surface, *it, 0, 0 + heightOffset, maxWidth, textColor, align);
-		heightOffset += (int)_lineHeight;
+		heightOffset += _lineHeight;
 	}
 
 	return surface;
