@@ -108,6 +108,16 @@ void ScriptManager::createReferenceTable() {
 }
 
 void ScriptManager::updateNodes(uint deltaTimeMillis) {
+    // If process() returns true, it means the node can be deleted
+	for (SideFXList::iterator iter = _activeSideFx.begin(); iter != _activeSideFx.end();) {
+		if ((*iter)->process(deltaTimeMillis)) {
+			delete (*iter);
+			// Remove the node
+			iter = _activeSideFx.erase(iter);
+		} else {
+			++iter;
+		}
+	}
 	// If process() returns true, it means the node can be deleted
 	for (ControlList::iterator iter = _activeControls.begin(); iter != _activeControls.end();) {
 		if ((*iter)->process(deltaTimeMillis)) {
@@ -262,7 +272,7 @@ void ScriptManager::disableControl(uint32 key) {
 void ScriptManager::focusControl(uint32 key) {
 	for (ControlList::iterator iter = _activeControls.begin(); iter != _activeControls.end(); ++iter) {
 		uint32 controlKey = (*iter)->getKey();
-		
+
 		if (controlKey == key) {
 			(*iter)->focus();
 		} else if (controlKey == _currentlyFocusedControl) {
@@ -271,6 +281,20 @@ void ScriptManager::focusControl(uint32 key) {
 	}
 
 	_currentlyFocusedControl = key;
+}
+
+void ScriptManager::addSideFX(SideFX *fx) {
+	_activeSideFx.push_back(fx);
+}
+
+SideFX *ScriptManager::getSideFX(uint32 key) {
+	for (SideFXList::iterator iter = _activeSideFx.begin(); iter != _activeSideFx.end(); ++iter) {
+		if ((*iter)->getKey() == key) {
+			return (*iter);
+		}
+	}
+
+	return nullptr;
 }
 
 void ScriptManager::onMouseDown(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) {

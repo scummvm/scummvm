@@ -25,6 +25,7 @@
 
 #include "zvision/puzzle.h"
 #include "zvision/control.h"
+#include "zvision/sidefx.h"
 
 #include "common/hashmap.h"
 #include "common/queue.h"
@@ -54,6 +55,7 @@ typedef Common::List<Puzzle *> PuzzleList;
 typedef Common::Queue<Puzzle *> PuzzleQueue;
 typedef Common::List<Control *> ControlList;
 typedef Common::HashMap<uint32, uint32> StateMap;
+typedef Common::List<SideFX *> SideFXList;
 
 class ScriptManager {
 public:
@@ -78,6 +80,8 @@ private:
 	PuzzleList _globalPuzzles;
 	/** Holds the currently active controls */
 	ControlList _activeControls;
+	/** Holds the currently active timers, musics, other */
+	SideFXList _activeSideFx;
 
 	Location _currentLocation;
 
@@ -98,6 +102,9 @@ public:
 	void disableControl(uint32 key);
 
 	void focusControl(uint32 key);
+
+	void addSideFX(SideFX *fx);
+	SideFX *getSideFX(uint32 key);
 
 	/**
 	 * Called when LeftMouse is pushed.
@@ -140,7 +147,7 @@ public:
 	void deserializeStateTable(Common::SeekableReadStream *stream);
 	void serializeControls(Common::WriteStream *stream);
 	void deserializeControls(Common::SeekableReadStream *stream);
-	
+
 	Location getCurrentLocation() const;
 
 private:
