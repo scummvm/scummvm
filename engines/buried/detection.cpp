@@ -199,6 +199,44 @@ static const BuriedGameDescription gameDescriptions[] = {
 		},
 	},
 
+	// German Windows 3.11 8BPP
+	// Installed
+	// v1.05
+	{
+		{
+			"buried",
+			"v1.05 8BPP",
+			{
+				{ "BIT816.EXE",  0, "a039e9f1c569acc1cf80f6b549ce1e37", 1178112 },
+				{ "BIT8LIB.DLL", 0, "6b22f0b47efb29e45e9b2a336185d924", 2420608 },
+				{ 0, 0, 0, 0 },
+			},
+			Common::DE_DEU,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+	},
+
+	// German Windows 3.11 24BPP
+	// Installed
+	// v1.05
+	{
+		{
+			"buried",
+			"v1.05 24BPP",
+			{
+				{ "BIT2416.EXE",  0, "fbfd453cced2b14069fa32e3c8dd69e2", 1172480 },
+				{ "BIT24LIB.DLL", 0, "30e56210d3150b5fa41c9bd2c90754fe", 6581376 },
+				{ 0, 0, 0, 0 },
+			},
+			Common::DE_DEU,
+			Common::kPlatformWindows,
+			GF_TRUECOLOR,
+			GUIO0()
+		},
+	},
+
 	// English Windows 95 8BPP
 	// v1.1
 	{
