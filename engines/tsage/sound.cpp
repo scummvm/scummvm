@@ -22,6 +22,8 @@
 
 #include "audio/decoders/raw.h"
 #include "common/config-manager.h"
+#include "audio/decoders/raw.h"
+#include "audio/audiostream.h"
 #include "tsage/core.h"
 #include "tsage/globals.h"
 #include "tsage/debugger.h"
@@ -2501,6 +2503,168 @@ void ASoundExt::changeSound(int soundNum) {
 	} else {
 		fadeSound(soundNum);
 	}
+}
+
+/*--------------------------------------------------------------------------*/
+
+void PlayStream::ResFileData::load(Common::SeekableReadStream &stream) {
+	// Validate that it's the correct data file
+	char header[4];
+	stream.read(&header[0], 4);
+	if (strncmp(header, "SPAM", 4))
+		error("Invalid voice resource data");
+
+	_fileChunkSize = stream.readUint32LE();
+	stream.skip(2);
+	_indexSize = stream.readUint16LE();
+	_chunkSize = stream.readUint16LE();
+
+	stream.skip(18);
+}
+
+PlayStream::PlayStream(): EventHandler() {
+	_index = NULL;
+	_endAction = NULL;
+}
+
+PlayStream::~PlayStream() {
+	remove();
+}
+
+bool PlayStream::setFile(const Common::String &filename) {
+	remove();
+
+	// Open the resource file for access
+	if (!_file.open(filename))
+		return false;
+
+	// Load header
+	_resData.load(_file);
+	
+	// Load the index
+	_index = new uint16[_resData._indexSize / 2];
+	for (uint i = 0; i < (_resData._indexSize / 2); ++i)
+		_index[i] = _file.readUint16LE();
+
+	return true;
+}
+
+bool PlayStream::play(int voiceNum, EventHandler *endAction) {
+	uint32 offset = getFileOffset(_index, _resData._fileChunkSize, voiceNum);
+	if (offset) {
+		_voiceNum = 0;
+		if (_sound.isPlaying())
+			_sound.stop();
+
+		// Move to the offset for the start of the voice
+		_file.seek(offset);
+
+		// Read in the header and validate it
+		char header[4];
+		_file.read(&header[0], 4);
+		if (strncmp(header, "FEED", 4))
+			error("Invalid stream data");
+		
+		// Get basic details of first sound chunk
+		uint chunkSize = _file.readUint16LE() - 16;
+		_file.skip(4);
+		int rate = _file.readUint16LE();
+		_file.skip(4);
+
+		// Create the stream
+		Audio::QueuingAudioStream *audioStream = Audio::makeQueuingAudioStream(rate, false);
+
+		// Load in the first chunk
+		byte *data = (byte *)malloc(chunkSize);
+		_file.read(data, chunkSize);
+		audioStream->queueBuffer(data, chunkSize, DisposeAfterUse::YES, Audio::FLAG_UNSIGNED);
+		
+		// If necessary, load further chunks of the voice in
+		while (chunkSize == (_resData._chunkSize - 16)) {
+			// Ensure the next chunk has the 'MORE' header
+			_file.read(&header[0], 4);
+			if (strncmp(header, "MORE", 4))
+				error("Invalid stream data");
+
+			// Get the size of the chunk
+			chunkSize  = _file.readUint16LE() - 16;
+			_file.skip(10);
+
+			// Read in the data for this next chunk and queue it
+			data = (byte *)malloc(chunkSize);
+			_file.read(data, chunkSize);
+			audioStream->queueBuffer(data, chunkSize, DisposeAfterUse::YES, Audio::FLAG_UNSIGNED);
+		}
+
+		g_vm->_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_soundHandle, 
+			audioStream, DisposeAfterUse::YES);
+
+		return true;		
+	}
+	 
+	// If it reaches this point, no valid voice data found
+	return false;
+}
+
+void PlayStream::stop() {
+	g_vm->_mixer->stopHandle(_soundHandle);
+
+	_voiceNum = 0;
+	_endAction = NULL;
+}
+
+bool PlayStream::isPlaying() const {
+	return _voiceNum != 0 && g_vm->_mixer->isSoundHandleActive(_soundHandle);
+}
+
+void PlayStream::remove() {
+	stop();
+	_file.close();
+
+	// Free index
+	delete[] _index;
+	_index = NULL;
+
+	_endAction = NULL;
+	_voiceNum = 0;
+}
+
+void PlayStream::dispatch() {
+	if (_voiceNum != 0 && !isPlaying()) {
+		// If voice has finished playing, reset fields
+		EventHandler *endAction = _endAction;
+		_endAction = NULL;
+		_voiceNum = 0;
+
+		if (endAction)
+			// Signal given end action
+			endAction->signal();
+	}
+}
+
+uint32 PlayStream::getFileOffset(const uint16 *data, int count, int voiceNum) {
+	assert(data);
+	int bitsIndex = voiceNum & 7;
+	int byteIndex = voiceNum >> 3;
+	int shiftAmount = bitsIndex * 2;
+	int bitMask = 3 << shiftAmount;
+	int v = (data[byteIndex] & bitMask) >> shiftAmount; 
+	uint32 offset = 0;
+
+	if (!v)
+		return 0;
+
+	// Loop to figure out offsets from index words skipped over
+	for (int i = 0; i < (voiceNum >> 3); ++i) {
+		for (int bit = 0; bit < 16; bit += 2)
+			offset += ((data[i] >> bit) & 3) * count;
+	}
+
+	// Bit index loop
+	for (int i = 0; i < bitsIndex; ++i)
+		offset += ((data[byteIndex] >> (i * 2)) & 3) * count;
+
+	return offset;
 }
 
 /*--------------------------------------------------------------------------*/

@@ -38,9 +38,9 @@ const Displacement kNoDisplacement = { 0, 0, 1.0, 1.0 };
  *         height height of the image in the buffer
  */
 static void transformToRows(byte *img, uint16 width, uint16 height) {
-	byte *buf = new byte[width * height];
+	byte *buf = new byte[(uint)(width * height)];
 	byte *tmp = buf;
-	memcpy(buf, img, width * height);
+	memcpy(buf, img, (uint)(width * height));
 
 	for (uint16 i = 0; i < width; ++i) {
 		for (uint16 j = 0; j < height; ++j) {

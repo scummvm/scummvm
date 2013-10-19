@@ -51,6 +51,28 @@ ToucheEngine::ToucheEngine(OSystem *system, Common::Language language)
 	_saveLoadCurrentSlot = 0;
 	_hideInventoryTexts = false;
 
+	_numOpcodes = 0;
+	_compressedSpeechData = 0;
+	_textData = 0;
+	_backdropBuffer = 0;
+	_menuKitData = 0;
+	_convKitData = 0;
+
+	for (int i = 0; i < NUM_SEQUENCES; i++)
+		_sequenceDataTable[i] = 0;
+
+	_programData = 0;
+	_programDataSize = 0;
+	_mouseData = 0;
+	_iconData = 0;
+	_currentBitmapWidth = 0;
+	_currentBitmapHeight = 0;
+	_currentImageWidth = 0;
+	_currentImageHeight = 0;
+	_roomWidth = 0;
+	_programTextDataPtr = 0;
+	_offscreenBuffer = 0;
+
 	_screenRect = Common::Rect(kScreenWidth, kScreenHeight);
 	_roomAreaRect = Common::Rect(kScreenWidth, kRoomHeight);
 

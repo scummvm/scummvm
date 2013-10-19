@@ -62,6 +62,10 @@ ScummVM Team
        Oliver Kiehl            - (retired)
        Ludvig Strigeus         - (retired)
 
+    AVALANCHE:
+       Peter Bozso
+       Arnaud Boutonne
+
     CGE:
        Arnaud Boutonne
        Paul Gilbert
@@ -239,6 +243,9 @@ ScummVM Team
 
     Wintermute:
        Einar Johan T. Somaaen
+
+    ZVision:
+       Adrian Astley
 
   Backend Teams
   -------------
@@ -610,6 +617,8 @@ Special thanks to
    Jimmi Thogersen   - For ScummRev, and much obscure code/documentation
    Tristan           - For additional work on the original MT-32 emulator
    James Woodcock    - Soundtrack enhancements
+   Anton Yartsev     - For the original re-implementation of the ZVision
+                       engine
 
    Tony Warriner and everyone at Revolution Software Ltd. for sharing with us
    the source of some of their brilliant games, allowing us to release

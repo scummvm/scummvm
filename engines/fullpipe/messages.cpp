@@ -309,6 +309,10 @@ void MessageQueue::messageQueueCallback1(int par) {
 	debug(3, "STUB: MessageQueue::messageQueueCallback1()");
 }
 
+void MessageQueue::addExCommand(ExCommand *ex) {
+	_exCommands.push_front(ex);
+}
+
 ExCommand *MessageQueue::getExCommandByIndex(uint idx) {
 	if (idx > _exCommands.size())
 		return 0;
@@ -321,6 +325,23 @@ ExCommand *MessageQueue::getExCommandByIndex(uint idx) {
 	}
 
 	return *it;
+}
+
+void MessageQueue::deleteExCommandByIndex(uint idx, bool doFree) {
+	if (idx > _exCommands.size())
+		return;
+
+	Common::List<ExCommand *>::iterator it = _exCommands.begin();
+
+	while (idx) {
+		++it;
+		idx--;
+	}
+
+	_exCommands.erase(it);
+
+	if (doFree)
+		delete *it;
 }
 
 void MessageQueue::sendNextCommand() {

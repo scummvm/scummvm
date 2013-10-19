@@ -836,7 +836,7 @@ void Scene125::process(Event &event) {
 
 void Scene125::dispatch() {
 	if (_soundCount)
-		R2_GLOBALS._playStream.proc1();
+		R2_GLOBALS._playStream.dispatch();
 
 	Scene::dispatch();
 }

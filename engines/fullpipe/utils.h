@@ -66,15 +66,17 @@ class MfcArchive : public Common::SeekableReadStream {
 
 enum ObjType {
 	kObjTypeDefault,
-	kObjTypeObjstateCommand,
-	kObjTypeStaticANIObject,
-	kObjTypePictureObject,
 	kObjTypeMovGraph,
-	kObjTypeMctlCompound
+	kObjTypeMovGraphLink,
+	kObjTypeMovGraphNode,
+	kObjTypeMctlCompound,
+	kObjTypeObjstateCommand,
+	kObjTypePictureObject,
+	kObjTypeStaticANIObject
 };
 
 class CObject {
- public:
+public:
 	ObjType _objtype;
 
 	CObject() : _objtype(kObjTypeDefault) {}

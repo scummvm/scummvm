@@ -85,6 +85,7 @@ public:
 	bool _savedPlayerEnabled;
 	bool _savedUiEnabled;
 	bool _savedCanWalk;
+	bool _preventSaving;
 
 	Visage _cursorVisage;
 	SynchronizedList<EventHandler *> _sceneAreas;

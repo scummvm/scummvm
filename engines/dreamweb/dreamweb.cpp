@@ -225,6 +225,13 @@ DreamWebEngine::DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gam
 	_linePointer = 0;
 	_lineDirection = 0;
 	_lineLength = 0;
+
+	_subtitles = 0;
+	_foreignRelease = 0;
+	_wonGame = 0;
+	_hasSpeech = 0;
+	_roomsSample = 0;
+	_copyProtection = 0;
 }
 
 DreamWebEngine::~DreamWebEngine() {

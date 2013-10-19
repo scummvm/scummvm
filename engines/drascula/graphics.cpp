@@ -336,7 +336,7 @@ void DrasculaEngine::centerText(const char *message, int textX, int textY) {
 	// original starts printing 4 lines above textY
 	int y = CLIP<int>(textY - (4 * CHAR_HEIGHT), 0, 320);
 
-	strcpy(msg, message);
+	Common::strlcpy(msg, message, 200);
 
 	// If the message fits on screen as-is, just print it here
 	if (textFitsCentered(msg, textX)) {
@@ -363,8 +363,8 @@ void DrasculaEngine::centerText(const char *message, int textX, int textY) {
 	while (curWord != NULL) {
 		// Check if the word and the current line fit on screen
 		if (tmpMessageLine[0] != '\0')
-			strcat(tmpMessageLine, " ");
-		strcat(tmpMessageLine, curWord);
+			Common::strlcat(tmpMessageLine, " ", 200);
+		Common::strlcat(tmpMessageLine, curWord, 200);
 		if (textFitsCentered(tmpMessageLine, textX)) {
 			// Line fits, so add the word to the current message line
 			strcpy(messageLine, tmpMessageLine);
@@ -374,8 +374,8 @@ void DrasculaEngine::centerText(const char *message, int textX, int textY) {
 			// If it goes off screen, print_abc will adjust it
 			x = CLIP<int>(textX - strlen(messageLine) * CHAR_WIDTH / 2, 60, 255);
 			print_abc(messageLine, x, y + curLine * CHAR_HEIGHT);
-			strcpy(messageLine, curWord);
-			strcpy(tmpMessageLine, curWord);
+			Common::strlcpy(messageLine, curWord, 200);
+			Common::strlcpy(tmpMessageLine, curWord, 200);
 			curLine++;
 		}
 

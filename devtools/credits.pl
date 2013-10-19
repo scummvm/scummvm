@@ -541,6 +541,11 @@ begin_credits("Credits");
 				add_person("Oliver Kiehl", "olki", "(retired)");
 				add_person("Ludvig Strigeus", "ludde", "(retired)");
 			end_section();
+			
+			begin_section("AVALANCHE");
+				add_person("Peter Bozs&oacute;", "uruk", "");
+				add_person("Arnaud Boutonn&eacute;", "Strangerke", "");
+			end_section();
 
 			begin_section("CGE");
 				add_person("Arnaud Boutonn&eacute;", "Strangerke", "");
@@ -753,6 +758,10 @@ begin_credits("Credits");
 
 			begin_section("Wintermute");
 				add_person("Einar Johan T. S&oslash;m&aring;en", "somaen", "");
+			end_section();
+            
+			begin_section("ZVision");
+				add_person("Adrian Astley", "RichieSams", "");
 			end_section();
 
 		end_section();
@@ -1155,6 +1164,7 @@ begin_credits("Credits");
 			add_person("Jimmi Th&oslash;gersen", "", "For ScummRev, and much obscure code/documentation");
 			add_person("", "Tristan", "For additional work on the original MT-32 emulator");
 			add_person("James Woodcock", "", "Soundtrack enhancements");
+			add_person("Anton Yartsev", "Zidane", "For the original re-implementation of the ZVision engine");
 		end_persons();
 
 	add_paragraph(

@@ -259,6 +259,7 @@ public:
 class Sound: public EventHandler {
 private:
 	void _prime(int soundResID, bool dontQueue);
+	void _primeBuffer(const byte *soundData);
 	void _unPrime();
 public:
 	bool _stoppedAsynchronously;
@@ -414,15 +415,36 @@ public:
 	virtual void signal();
 };
 
-class PlayStream {
-public:
-	Sound _sound;
+class PlayStream: public EventHandler {
+	class ResFileData {
+	public:
+		int _fileChunkSize;
+		uint _indexSize;
+		uint _chunkSize;
 
-	void setFile(const Common::String &filename) {}
-	bool play(int soundNum, EventHandler *endAction) { return false; }
-	void stop() {}
-	void proc1() {}
-	bool isPlaying() const { return false; }
+		void load(Common::SeekableReadStream &stream);
+	};
+private:
+	Common::File _file;
+	ResFileData _resData;
+	Audio::SoundHandle _soundHandle;
+	Sound _sound;
+	uint16 *_index;
+	EventHandler *_endAction;
+	int _voiceNum;
+
+	static uint32 getFileOffset(const uint16 *data, int count, int voiceNum);
+public:
+	PlayStream();
+	virtual ~PlayStream();
+
+	bool setFile(const Common::String &filename); 
+	bool play(int voiceNum, EventHandler *endAction);
+	void stop();
+	bool isPlaying() const;
+
+	virtual void remove();
+	virtual void dispatch();
 };
 
 #define ADLIB_CHANNEL_COUNT 9

@@ -103,7 +103,17 @@ struct GPL2Program;
 
 class WalkingState {
 public:
-	explicit WalkingState(DraciEngine *vm) : _vm(vm) { stopWalking(); }
+	explicit WalkingState(DraciEngine *vm) : _vm(vm) {
+		_dir = kDirectionLast;
+		_startingDirection = kMoveUndefined;
+		_segment = 0;
+		_lastAnimPhase = 0;
+		_turningFinished = 0;
+		_callbackOffset = 0;
+
+		stopWalking(); 
+	}
+
 	~WalkingState() {}
 
 	void stopWalking();
