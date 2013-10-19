@@ -280,6 +280,13 @@ struct LinkInfo {
 	MovGraphNode *node;
 };
 
+struct MovInfo1Sub {
+	int subIndex;
+	int x;
+	int y;
+	int distance;
+};
+
 struct MovInfo1 {
 	int field_0;
 	Common::Point pt1;
@@ -288,7 +295,7 @@ struct MovInfo1 {
 	int distance2;
 	int subIndex;
 	int item1Index;
-	int items;
+	Common::Array<MovInfo1Sub *> items;
 	int itemsCount;
 	int flags;
 };

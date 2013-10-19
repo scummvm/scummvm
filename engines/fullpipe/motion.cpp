@@ -536,7 +536,118 @@ void MovGraph2::addObject(StaticANIObject *obj) {
 }
 
 void MovGraph2::buildMovInfo1SubItems(MovInfo1 *movinfo, Common::Array<MovGraphLink *> *linkList, LinkInfo *lnkSrc, LinkInfo *lnkDst) {
-	warning("STUB: MovGraph2::buildMovInfo1SubItems()");
+	MovInfo1Sub *elem;
+	Common::Point point;
+	Common::Rect rect;
+
+	int subIndex = movinfo->subIndex;
+
+	movinfo->items.clear();
+
+	elem = new MovInfo1Sub;
+	elem->subIndex = subIndex;
+	elem->x = movinfo->pt1.x;
+	elem->y = movinfo->pt1.y;
+	elem->distance = -1;
+
+	movinfo->items.push_back(elem);
+
+	int prevSubIndex = movinfo->subIndex;
+
+	for (Common::Array<MovGraphLink *>::iterator i = linkList->begin(); i != linkList->end(); ++i) {
+		MovGraphLink *lnk = *i;
+
+		int idx1;
+
+		if (linkList->size() <= 1) {
+			if (linkList->size() == 1)
+				idx1 = getShortSide((*linkList)[0], movinfo->pt2.x - movinfo->pt1.x, movinfo->pt2.y - movinfo->pt1.y);
+			else
+				idx1 = getShortSide(0, movinfo->pt2.x - movinfo->pt1.x, movinfo->pt2.y - movinfo->pt1.y);
+
+			point.y = -1;
+			rect.bottom = -1;
+			rect.right = -1;
+			rect.top = -1;
+			rect.left = -1;
+		} else {
+			idx1 = findLink(linkList, lnk, &rect, &point);
+		}
+
+		if (idx1 != prevSubIndex) {
+			prevSubIndex = idx1;
+			subIndex = idx1;
+
+			elem = new MovInfo1Sub;
+			elem->subIndex = subIndex;
+			elem->x = rect.left;
+			elem->y = rect.top;
+			elem->distance = -1;
+
+			movinfo->items.push_back(elem);
+		}
+
+		if (i != linkList->end()) {
+			while (1) {
+				Common::Array<MovGraphLink *>::iterator j = i;
+
+				++i;
+
+				if (findLink(linkList, *i, &rect, 0) != prevSubIndex) {
+					i = j;
+					findLink(linkList, *i, &rect, &point);
+
+					break;
+				}
+
+				if (i == linkList->end())
+					break;
+			}
+			lnk = *i;
+		}
+
+		if (movinfo->items.back()->subIndex != 10) {
+			subIndex = prevSubIndex;
+
+			elem = new MovInfo1Sub;
+			elem->subIndex = 10;
+			elem->x = -1;
+			elem->y = -1;
+			elem->distance = -1;
+
+			movinfo->items.push_back(elem);
+
+			if (i == linkList->end()) {
+				elem = new MovInfo1Sub;
+				elem->subIndex = prevSubIndex;
+				elem->x = movinfo->pt2.x;
+				elem->y = movinfo->pt2.y;
+				elem->distance = movinfo->distance2;
+
+				movinfo->items.push_back(elem);
+			} else {
+				elem = new MovInfo1Sub;
+				elem->subIndex = prevSubIndex;
+				elem->x = rect.right;
+				elem->y = rect.bottom;
+				elem->distance = point.y;
+
+				movinfo->items.push_back(elem);
+			}
+		}
+	}
+
+	if (subIndex != movinfo->item1Index) {
+		elem = new MovInfo1Sub;
+		elem->subIndex = movinfo->item1Index;
+		elem->x = movinfo->pt2.x;
+		elem->y = movinfo->pt2.y;
+		elem->distance = movinfo->distance2;
+
+		movinfo->items.push_back(elem);
+	}
+
+	movinfo->itemsCount = movinfo->items.size();
 }
 
 MessageQueue *MovGraph2::buildMovInfo1MessageQueue(MovInfo1 *movInfo) {
@@ -824,7 +935,7 @@ int MovGraph2::getShortSide(MovGraphLink *lnk, int x, int y) {
 	return 0;
 }
 
-int MovGraph2::findLink(Common::Array<MovGraphLink *> *linkList, MovGraphLink *lnk, Common::Rect *a3, Common::Point *a4) {
+int MovGraph2::findLink(Common::Array<MovGraphLink *> *linkList, MovGraphLink *lnk, Common::Rect *rect, Common::Point *point) {
 	warning("STUB: MovGraphLink *MovGraph2::findLink()");
 
 	return 0;
