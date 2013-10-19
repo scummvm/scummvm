@@ -585,7 +585,7 @@ void MovGraph2::buildMovInfo1SubItems(MovInfo1 *movinfo, Common::Array<MovGraphL
 			movinfo->items.push_back(elem);
 		}
 
-		if (i != linkList->size()) {
+		if (i != linkList->size() - 1) {
 			while (1) {
 				i++;
 				if (findLink(linkList, i, &rect, 0) != prevSubIndex) {
@@ -595,7 +595,7 @@ void MovGraph2::buildMovInfo1SubItems(MovInfo1 *movinfo, Common::Array<MovGraphL
 					break;
 				}
 
-				if (i == linkList->size())
+				if (i == linkList->size() - 1)
 					break;
 			}
 		}
