@@ -355,6 +355,26 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 #endif
 				return true;
 			}
+
+			if (event.kbd.keycode == Common::KEYCODE_s) {
+				// Alt-s creates a screenshot
+				Common::String filename;
+
+				for (int n = 0;; n++) {
+					SDL_RWops *file;
+
+					filename = Common::String::format("scummvm%05d.bmp", n);
+					file = SDL_RWFromFile(filename.c_str(), "r");
+					if (!file)
+						break;
+					SDL_RWclose(file);
+				}
+
+				saveScreenshot(filename.c_str());
+				debug("Saved screenshot '%s'", filename.c_str());
+
+				return true;
+			}
 		} else if (event.kbd.hasFlags(Common::KBD_CTRL | Common::KBD_ALT)) {
 			if (   event.kbd.keycode == Common::KEYCODE_PLUS || event.kbd.keycode == Common::KEYCODE_MINUS
 			    || event.kbd.keycode == Common::KEYCODE_KP_PLUS || event.kbd.keycode == Common::KEYCODE_KP_MINUS) {
@@ -502,7 +522,8 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 bool OpenGLSdlGraphicsManager::isHotkey(const Common::Event &event) {
 	if (event.kbd.hasFlags(Common::KBD_ALT)) {
 		return    event.kbd.keycode == Common::KEYCODE_RETURN
-		       || event.kbd.keycode == (Common::KeyCode)SDLK_KP_ENTER;
+		       || event.kbd.keycode == (Common::KeyCode)SDLK_KP_ENTER
+		       || event.kbd.keycode == Common::KEYCODE_s;
 	} else if (event.kbd.hasFlags(Common::KBD_CTRL | Common::KBD_ALT)) {
 		return    event.kbd.keycode == Common::KEYCODE_PLUS || event.kbd.keycode == Common::KEYCODE_MINUS
 		       || event.kbd.keycode == Common::KEYCODE_KP_PLUS || event.kbd.keycode == Common::KEYCODE_KP_MINUS

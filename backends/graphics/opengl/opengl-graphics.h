@@ -247,6 +247,14 @@ protected:
 	 */
 	virtual bool loadVideoMode(uint requestedWidth, uint requestedHeight, const Graphics::PixelFormat &format) = 0;
 
+	/**
+	 * Save a screenshot of the full display as BMP to the given file. This
+	 * uses Common::DumpFile for writing the screenshot.
+	 *
+	 * @param filename The output filename.
+	 */
+	void saveScreenshot(const Common::String &filename) const;
+
 private:
 	//
 	// OpenGL utilities

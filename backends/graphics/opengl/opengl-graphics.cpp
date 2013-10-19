@@ -29,6 +29,7 @@
 #include "common/textconsole.h"
 #include "common/translation.h"
 #include "common/algorithm.h"
+#include "common/file.h"
 #ifdef USE_OSD
 #include "common/tokenizer.h"
 #include "common/rect.h"
@@ -849,6 +850,11 @@ void OpenGLGraphicsManager::notifyContextChange(const Graphics::PixelFormat &def
 
 	GLCALL(glEnable(GL_TEXTURE_2D));
 
+	// We use a "pack" alignment (when reading from textures) to 4 here,
+	// since the only place where we really use it is the BMP screenshot
+	// code and that requires the same alignment too.
+	GLCALL(glPixelStorei(GL_PACK_ALIGNMENT, 4));
+
 	// Query information needed by textures.
 	Texture::queryTextureInformation();
 
@@ -1081,5 +1087,62 @@ const Graphics::Font *OpenGLGraphicsManager::getFontOSD() {
 	return FontMan.getFontByUsage(Graphics::FontManager::kLocalizedFont);
 }
 #endif
+
+void OpenGLGraphicsManager::saveScreenshot(const Common::String &filename) const {
+	const uint width  = _outputScreenWidth;
+	const uint height = _outputScreenHeight;
+
+	// A line of a BMP image must have a size divisible by 4.
+	// We calculate the padding bytes needed here.
+	// Since we use a 3 byte per pixel mode, we can use width % 4 here, since
+	// it is equal to 4 - (width * 3) % 4. (4 - (width * Bpp) % 4, is the
+	// usual way of computing the padding bytes required).
+	const uint linePaddingSize = width % 4;
+	const uint lineSize        = width * 3 + linePaddingSize;
+
+	// Allocate memory for screenshot
+	uint8 *pixels = new uint8[lineSize * height];
+
+	// Get pixel data from OpenGL buffer
+	GLCALL(glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, pixels));
+
+	// BMP stores as BGR. Since we can't assume that GL_BGR is supported we
+	// will swap the components from the RGB we read to BGR on our own.
+	for (uint y = height; y-- > 0;) {
+		uint8 *line = pixels + y * lineSize;
+
+		for (uint x = width; x > 0; --x, line += 3) {
+			SWAP(line[0], line[2]);
+		}
+	}
+
+	// Open file
+	Common::DumpFile out;
+	out.open(filename);
+
+	// Write BMP header
+	out.writeByte('B');
+	out.writeByte('M');
+	out.writeUint32LE(height * lineSize + 54);
+	out.writeUint32LE(0);
+	out.writeUint32LE(54);
+	out.writeUint32LE(40);
+	out.writeUint32LE(width);
+	out.writeUint32LE(height);
+	out.writeUint16LE(1);
+	out.writeUint16LE(24);
+	out.writeUint32LE(0);
+	out.writeUint32LE(0);
+	out.writeUint32LE(0);
+	out.writeUint32LE(0);
+	out.writeUint32LE(0);
+	out.writeUint32LE(0);
+
+	// Write pixel data to BMP
+	out.write(pixels, lineSize * height);
+
+	// Free allocated memory
+	delete[] pixels;
+}
 
 } // End of namespace OpenGL
