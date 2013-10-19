@@ -44,6 +44,8 @@ public:
 	TizenGraphicsManager(TizenAppForm *appForm);
 	virtual ~TizenGraphicsManager();
 
+	result Construct();
+
 	Common::List<Graphics::PixelFormat> getSupportedFormats() const;
 	bool hasFeature(OSystem::Feature f);
 	void setFeatureState(OSystem::Feature f, bool enable);

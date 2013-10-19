@@ -37,6 +37,20 @@ TizenGraphicsManager::TizenGraphicsManager(TizenAppForm *appForm) :
 	_eglContext(EGL_NO_CONTEXT),
 	_initState(true) {
 	assert(appForm != NULL);
+}
+
+TizenGraphicsManager::~TizenGraphicsManager() {
+	logEntered();
+
+	if (_eglDisplay != EGL_NO_DISPLAY) {
+		eglMakeCurrent(_eglDisplay, NULL, NULL, NULL);
+		if (_eglContext != EGL_NO_CONTEXT) {
+			eglDestroyContext(_eglDisplay, _eglContext);
+		}
+	}
+}
+
+result TizenGraphicsManager::Construct() {
 	// Initialize our OpenGL ES context.
 	loadEgl();
 
@@ -51,17 +65,7 @@ TizenGraphicsManager::TizenGraphicsManager(TizenAppForm *appForm) :
 	_appForm->GetBounds(x, y, width, height);
 	AppLog("screen size: %dx%d", width, height);
 	setActualScreenSize(width, height);
-}
-
-TizenGraphicsManager::~TizenGraphicsManager() {
-	logEntered();
-
-	if (_eglDisplay != EGL_NO_DISPLAY) {
-		eglMakeCurrent(_eglDisplay, NULL, NULL, NULL);
-		if (_eglContext != EGL_NO_CONTEXT) {
-			eglDestroyContext(_eglDisplay, _eglContext);
-		}
-	}
+	return E_SUCCESS;
 }
 
 const Graphics::Font *TizenGraphicsManager::getFontOSD() {
@@ -188,9 +192,6 @@ bool TizenGraphicsManager::loadEgl() {
 			EGL_SUCCESS != eglGetError()) {
 		systemError("eglMakeCurrent() failed");
 		return false;
-	}
-	if (!_initState) {
-		_appForm->GetVisualElement()->SetShowState(true);
 	}
 	logLeaving();
 	return true;
