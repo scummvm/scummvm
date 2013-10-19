@@ -2552,9 +2552,8 @@ bool PlayStream::setFile(const Common::String &filename) {
 bool PlayStream::play(int voiceNum, EventHandler *endAction) {
 	uint32 offset = getFileOffset(_index, _resData._fileChunkSize, voiceNum);
 	if (offset) {
+		stop();
 		_voiceNum = 0;
-		if (_sound.isPlaying())
-			_sound.stop();
 
 		// Move to the offset for the start of the voice
 		_file.seek(offset);
@@ -2583,6 +2582,9 @@ bool PlayStream::play(int voiceNum, EventHandler *endAction) {
 		while (chunkSize == (_resData._chunkSize - 16)) {
 			// Ensure the next chunk has the 'MORE' header
 			_file.read(&header[0], 4);
+			if (!strncmp(header, "FEED", 4))
+				// Reached start of next voice sample, so stop
+				break;
 			if (strncmp(header, "MORE", 4))
 				error("Invalid stream data");
 

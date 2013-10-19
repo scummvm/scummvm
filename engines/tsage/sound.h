@@ -428,7 +428,6 @@ private:
 	Common::File _file;
 	ResFileData _resData;
 	Audio::SoundHandle _soundHandle;
-	Sound _sound;
 	uint16 *_index;
 	EventHandler *_endAction;
 	int _voiceNum;

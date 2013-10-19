@@ -36,6 +36,7 @@ namespace Ringworld2 {
 
 VisualSpeaker::VisualSpeaker(): Speaker() {
 	_delayAmount = 0;
+	_voiceDelayAmount = 0;
 	_frameNumber = R2_GLOBALS._events.getFrameNumber();
 	_color1 = 8;
 	_color2 = 0;
@@ -79,8 +80,7 @@ void VisualSpeaker::signal() {
 			_sceneText.show();
 
 		if ((R2_GLOBALS._speechSubtitles & SPEECH_VOICE) && _soundId) {
-			// TODO: Check global that is passed
-			setFrame2(/* word_55F90 */ 1);
+			setVoiceFrame(1);
 		}
 	} else if (_action && _object2) {
 		_action->setDelay(1);
@@ -108,14 +108,14 @@ void VisualSpeaker::dispatch() {
 	}
 
 	// Delay check for voice
-	if (_delayAmount2) {
-		if (frameNumber >= _frameNumber2) {
-			_delayAmount2 = _delayAmount2 - (_frameNumber2 - frameNumber);
-			_frameNumber2 = frameNumber;
+	if (_voiceDelayAmount) {
+		if (frameNumber >= _voiceFrameNumber) {
+			_voiceDelayAmount = _voiceDelayAmount - (frameNumber - _voiceFrameNumber);
+			_voiceFrameNumber = frameNumber;
 
-			if (_delayAmount2 <= 0) {
-				_delayAmount2 = 0;
-				if (R2_GLOBALS._playStream.play(0, NULL)) {
+			if (_voiceDelayAmount <= 0) {
+				_voiceDelayAmount = 0;
+				if (R2_GLOBALS._playStream.play(_soundId, NULL)) {
 					_numFrames = 2;
 					_soundId = 0;
 				} else {
@@ -149,8 +149,8 @@ void VisualSpeaker::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_numFrames);
 	s.syncAsSint16LE(_delayAmount);
 	s.syncAsUint32LE(_frameNumber);
-	s.syncAsSint16LE(_delayAmount2);
-	s.syncAsUint32LE(_frameNumber2);
+	s.syncAsSint16LE(_voiceDelayAmount);
+	s.syncAsUint32LE(_voiceFrameNumber);
 }
 
 void VisualSpeaker::setText(const Common::String &msg) {
@@ -266,9 +266,9 @@ void VisualSpeaker::setFrame(int numFrames) {
 	_frameNumber = R2_GLOBALS._events.getFrameNumber();
 }
 
-void VisualSpeaker::setFrame2(int numFrames) {
-	_delayAmount2 = numFrames;
-	_frameNumber2 = R2_GLOBALS._events.getFrameNumber();
+void VisualSpeaker::setVoiceFrame(int numFrames) {
+	_voiceDelayAmount = numFrames;
+	_voiceFrameNumber = R2_GLOBALS._events.getFrameNumber();
 }
 
 void VisualSpeaker::setDelay(int delay) {

@@ -237,6 +237,7 @@ public:
 
 	virtual void synchronize(Serializer &s);
 	virtual void remove();
+	virtual void dispatch();
 	virtual void signal();
 	virtual void process(Event &event);
 

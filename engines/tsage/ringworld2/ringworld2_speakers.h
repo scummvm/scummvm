@@ -49,11 +49,11 @@ public:
 	bool _removeObject;
 	uint32 _frameNumber;
 	int _numFrames;
-	int _delayAmount2;
-	uint32 _frameNumber2;
+	int _voiceDelayAmount;
+	uint32 _voiceFrameNumber;
 private:
 	void setFrame(int numFrames);
-	void setFrame2(int numFrames);
+	void setVoiceFrame(int numFrames);
 public:
 	VisualSpeaker();
 
