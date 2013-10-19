@@ -120,17 +120,31 @@ void SoundManager::syncSounds() {
 	bool mute = false;
 	if (ConfMan.hasKey("mute"))
 		mute = ConfMan.getBool("mute");
+	bool subtitles = ConfMan.hasKey("subtitles") ? ConfMan.getBool("subtitles") : true;
 
 	bool music_mute = mute;
+	bool voice_mute = mute;
 
 	if (!mute) {
 		music_mute = ConfMan.getBool("music_mute");
+		voice_mute = ConfMan.getBool("speech_mute");
 	}
 
 	// Get the new music volume
 	int musicVolume = music_mute ? 0 : MIN(255, ConfMan.getInt("music_volume"));
 
 	this->setMasterVol(musicVolume / 2);
+
+	// Return to Ringworld voice settings
+	if (g_vm->getGameID() == GType_Ringworld2) {
+		// If we don't have voice, then ensure that text is turned on
+		if (voice_mute)
+			subtitles = true;
+
+		R2_GLOBALS._speechSubtitles = 
+			(voice_mute ? 0 : SPEECH_VOICE) | 
+			(!subtitles ? 0 : SPEECH_TEXT);
+	}
 }
 
 void SoundManager::update() {
