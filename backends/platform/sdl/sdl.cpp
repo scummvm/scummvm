@@ -69,8 +69,7 @@ OSystem_SDL::OSystem_SDL()
 	_desktopHeight(0),
 	_graphicsModes(),
 	_graphicsMode(0),
-	_sdlModesCount(0),
-	_glModesCount(0),
+	_firstGLMode(0),
 #endif
 	_inited(false),
 	_initedSDL(false),
@@ -179,7 +178,7 @@ void OSystem_SDL::initBackend() {
 			int i = 0;
 			while (mode->name) {
 				if (scumm_stricmp(mode->name, gfxMode.c_str()) == 0) {
-					_graphicsMode = i + _sdlModesCount;
+					_graphicsMode = i + _firstGLMode;
 					use_opengl = true;
 				}
 
@@ -544,10 +543,10 @@ const OSystem::GraphicsMode *OSystem_SDL::getSupportedGraphicsModes() const {
 
 int OSystem_SDL::getDefaultGraphicsMode() const {
 	// Return the default graphics mode from the current graphics manager
-	if (_graphicsMode < _sdlModesCount)
+	if (_graphicsMode < _firstGLMode)
 		return _graphicsManager->getDefaultGraphicsMode();
 	else
-		return _graphicsManager->getDefaultGraphicsMode() + _sdlModesCount;
+		return _graphicsManager->getDefaultGraphicsMode() + _firstGLMode;
 }
 
 bool OSystem_SDL::setGraphicsMode(int mode) {
@@ -574,14 +573,14 @@ bool OSystem_SDL::setGraphicsMode(int mode) {
 
 	// If the new mode and the current mode are not from the same graphics
 	// manager, delete and create the new mode graphics manager
-	if (_graphicsMode >= _sdlModesCount && mode < _sdlModesCount) {
+	if (_graphicsMode >= _firstGLMode && mode < _firstGLMode) {
 		debug(1, "switching to plain SDL graphics");
 		_graphicsManager->deactivateManager();
 		delete _graphicsManager;
 		_graphicsManager = new SurfaceSdlGraphicsManager(_eventSource);
 
 		switchedManager = true;
-	} else if (_graphicsMode < _sdlModesCount && mode >= _sdlModesCount) {
+	} else if (_graphicsMode < _firstGLMode && mode >= _firstGLMode) {
 		debug(1, "switching to OpenGL graphics");
 		_graphicsManager->deactivateManager();
 		delete _graphicsManager;
@@ -642,19 +641,16 @@ void OSystem_SDL::setupGraphicsModes() {
 
 	const OSystem::GraphicsMode *sdlGraphicsModes = SurfaceSdlGraphicsManager::supportedGraphicsModes();
 	const OSystem::GraphicsMode *openglGraphicsModes = OpenGLSdlGraphicsManager::supportedGraphicsModes();
-	_sdlModesCount = 0;
-	_glModesCount = 0;
 
 	// Count the number of graphics modes
 	const OSystem::GraphicsMode *srcMode = sdlGraphicsModes;
 	while (srcMode->name) {
-		_sdlModesCount++;
 		_graphicsModes.push_back(*srcMode);
 		srcMode++;
 	}
+	_firstGLMode = _graphicsModes.size();
 	srcMode = openglGraphicsModes;
 	while (srcMode->name) {
-		_glModesCount++;
 		_graphicsModes.push_back(*srcMode);
 		srcMode++;
 	}
