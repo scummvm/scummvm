@@ -8,28 +8,41 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
 
-#if !defined(DEBUG)
+#include "backends/graphics/opengl/extensions.h"
+#include "backends/graphics/opengl/opengl-sys.h"
 
-// If not in debug, do nothing
-#define CHECK_GL_ERROR() do {} while (false)
+#include "common/tokenizer.h"
 
-#else
+namespace OpenGL {
 
-// If in debug, check for an error after a GL call
-#define CHECK_GL_ERROR() checkGlError(__FILE__, __LINE__)
+bool g_extNPOTSupported = false;
 
-void checkGlError(const char *file, int line);
+void initializeGLExtensions() {
+	const char *extString = (const char *)glGetString(GL_EXTENSIONS);
 
-#endif
+	// Initialize default state.
+	g_extNPOTSupported = false;
+
+	Common::StringTokenizer tokenizer(extString, " ");
+	while (!tokenizer.empty()) {
+		Common::String token = tokenizer.nextToken();
+
+		if (token == "GL_ARB_texture_non_power_of_two") {
+			g_extNPOTSupported = true;
+		}
+	}
+}
+
+} // End of namespace OpenGL

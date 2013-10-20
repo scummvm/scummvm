@@ -391,8 +391,17 @@ bool SdlEventSource::dispatchSDLEvent(SDL_Event &ev, Common::Event &event) {
 		return false;
 
 	case SDL_VIDEORESIZE:
-		if (_graphicsManager)
+		if (_graphicsManager) {
 			_graphicsManager->notifyResize(ev.resize.w, ev.resize.h);
+
+			// If the screen changed, send an Common::EVENT_SCREEN_CHANGED
+			int screenID = ((OSystem_SDL *)g_system)->getGraphicsManager()->getScreenChangeID();
+			if (screenID != _lastScreenID) {
+				_lastScreenID = screenID;
+				event.type = Common::EVENT_SCREEN_CHANGED;
+				return true;
+			}
+		}
 		return false;
 
 	case SDL_QUIT:

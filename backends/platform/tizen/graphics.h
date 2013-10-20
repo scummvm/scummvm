@@ -39,28 +39,31 @@ using namespace Tizen::Graphics;
 using namespace Tizen::Graphics::Opengl;
 using namespace Tizen::App;
 
-class TizenGraphicsManager : public OpenGLGraphicsManager {
+class TizenGraphicsManager : public OpenGL::OpenGLGraphicsManager {
 public:
 	TizenGraphicsManager(TizenAppForm *appForm);
 	virtual ~TizenGraphicsManager();
 
+	result Construct();
+
 	Common::List<Graphics::PixelFormat> getSupportedFormats() const;
 	bool hasFeature(OSystem::Feature f);
-	void updateScreen();
 	void setFeatureState(OSystem::Feature f, bool enable);
+	void updateScreen();
+
 	void setReady();
 	bool isReady() { return !_initState; }
-	const Graphics::Font *getFontOSD();
+
 	bool moveMouse(int16 &x, int16 &y);
 
-private:
-	void internUpdateScreen();
-	bool loadGFXMode();
-	void loadTextures();
-	void unloadGFXMode();
+protected:
 	void setInternalMousePosition(int x, int y) {}
-	void showSplash();
 
+	bool loadVideoMode(uint requestedWidth, uint requestedHeight, const Graphics::PixelFormat &format);
+
+	const Graphics::Font *getFontOSD();
+
+private:
 	bool loadEgl();
 	TizenAppForm *_appForm;
 	EGLDisplay _eglDisplay;

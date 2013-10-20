@@ -65,6 +65,8 @@
 OSystem_SDL::OSystem_SDL()
 	:
 #ifdef USE_OPENGL
+	_desktopWidth(0),
+	_desktopHeight(0),
 	_graphicsModes(0),
 	_graphicsMode(0),
 	_sdlModesCount(0),
@@ -161,6 +163,16 @@ void OSystem_SDL::initBackend() {
 
 	int graphicsManagerType = 0;
 
+#ifdef USE_OPENGL
+	// Query the desktop resolution. We simply hope nothing tried to change
+	// the resolution so far.
+	const SDL_VideoInfo *videoInfo = SDL_GetVideoInfo();
+	if (videoInfo && videoInfo->current_w > 0 && videoInfo->current_h > 0) {
+		_desktopWidth  = videoInfo->current_w;
+		_desktopHeight = videoInfo->current_h;
+	}
+#endif
+
 	if (_graphicsManager == 0) {
 #ifdef USE_OPENGL
 		if (ConfMan.hasKey("gfx_mode")) {
@@ -180,7 +192,7 @@ void OSystem_SDL::initBackend() {
 
 			// If the gfx_mode is from OpenGL, create the OpenGL graphics manager
 			if (use_opengl) {
-				_graphicsManager = new OpenGLSdlGraphicsManager(_eventSource);
+				_graphicsManager = new OpenGLSdlGraphicsManager(_desktopWidth, _desktopHeight, _eventSource);
 				graphicsManagerType = 1;
 			}
 		}
@@ -261,8 +273,9 @@ void OSystem_SDL::initSDL() {
 		if (ConfMan.hasKey("disable_sdl_parachute"))
 			sdlFlags |= SDL_INIT_NOPARACHUTE;
 
-#ifdef WEBOS
-		// WebOS needs this flag or otherwise the application won't start
+#if defined(WEBOS) || defined(USE_OPENGL)
+		// WebOS needs this flag or otherwise the application won't start.
+		// OpenGL SDL needs this to query the desktop resolution on startup.
 		sdlFlags |= SDL_INIT_VIDEO;
 #endif
 
@@ -591,7 +604,7 @@ bool OSystem_SDL::setGraphicsMode(int mode) {
 			} else if (_graphicsMode < _sdlModesCount && mode >= _sdlModesCount) {
 				debug(1, "switching to OpenGL graphics");
 				delete _graphicsManager;
-				_graphicsManager = new OpenGLSdlGraphicsManager(_eventSource);
+				_graphicsManager = new OpenGLSdlGraphicsManager(_desktopWidth, _desktopHeight, _eventSource);
 				((OpenGLSdlGraphicsManager *)_graphicsManager)->initEventObserver();
 				_graphicsManager->beginGFXTransaction();
 
