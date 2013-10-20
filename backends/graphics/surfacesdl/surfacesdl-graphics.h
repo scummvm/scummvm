@@ -80,7 +80,8 @@ public:
 	SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSource);
 	virtual ~SurfaceSdlGraphicsManager();
 
-	virtual void initEventObserver();
+	virtual void activateManager();
+	virtual void deactivateManager();
 
 	virtual bool hasFeature(OSystem::Feature f);
 	virtual void setFeatureState(OSystem::Feature f, bool enable);

@@ -82,15 +82,24 @@ OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(uint desktopWidth, uint deskt
 }
 
 OpenGLSdlGraphicsManager::~OpenGLSdlGraphicsManager() {
+}
+
+void OpenGLSdlGraphicsManager::activateManager() {
+	OpenGLGraphicsManager::activateManager();
+	initEventSource();
+
+	// Register the graphics manager as a event observer
+	g_system->getEventManager()->getEventDispatcher()->registerObserver(this, 10, false);
+}
+
+void OpenGLSdlGraphicsManager::deactivateManager() {
 	// Unregister the event observer
 	if (g_system->getEventManager()->getEventDispatcher()) {
 		g_system->getEventManager()->getEventDispatcher()->unregisterObserver(this);
 	}
-}
 
-void OpenGLSdlGraphicsManager::initEventObserver() {
-	// Register the graphics manager as a event observer
-	g_system->getEventManager()->getEventDispatcher()->registerObserver(this, 10, false);
+	deinitEventSource();
+	OpenGLGraphicsManager::deactivateManager();
 }
 
 bool OpenGLSdlGraphicsManager::hasFeature(OSystem::Feature f) {

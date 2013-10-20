@@ -80,6 +80,9 @@ public:
 	virtual void notifyMousePos(Common::Point mouse) = 0;
 
 protected:
+	void initEventSource();
+	void deinitEventSource();
+
 	SdlEventSource *_eventSource;
 };
 

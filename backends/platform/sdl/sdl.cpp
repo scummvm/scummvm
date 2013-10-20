@@ -89,6 +89,9 @@ OSystem_SDL::~OSystem_SDL() {
 	// Hence, we perform the destruction on our own.
 	delete _savefileManager;
 	_savefileManager = 0;
+	if (_graphicsManager) {
+		_graphicsManager->deactivateManager();
+	}
 	delete _graphicsManager;
 	_graphicsManager = 0;
 	delete _eventManager;
@@ -161,8 +164,6 @@ void OSystem_SDL::initBackend() {
 	if (_eventSource == 0)
 		_eventSource = new SdlEventSource();
 
-	int graphicsManagerType = 0;
-
 #ifdef USE_OPENGL
 	// Query the desktop resolution. We simply hope nothing tried to change
 	// the resolution so far.
@@ -193,13 +194,11 @@ void OSystem_SDL::initBackend() {
 			// If the gfx_mode is from OpenGL, create the OpenGL graphics manager
 			if (use_opengl) {
 				_graphicsManager = new OpenGLSdlGraphicsManager(_desktopWidth, _desktopHeight, _eventSource);
-				graphicsManagerType = 1;
 			}
 		}
 #endif
 		if (_graphicsManager == 0) {
 			_graphicsManager = new SurfaceSdlGraphicsManager(_eventSource);
-			graphicsManagerType = 0;
 		}
 	}
 
@@ -242,13 +241,7 @@ void OSystem_SDL::initBackend() {
 	// so the virtual keyboard can be initialized, but we have to add the
 	// graphics manager as an event observer after initializing the event
 	// manager.
-	if (graphicsManagerType == 0)
-		((SurfaceSdlGraphicsManager *)_graphicsManager)->initEventObserver();
-#ifdef USE_OPENGL
-	else if (graphicsManagerType == 1)
-		((OpenGLSdlGraphicsManager *)_graphicsManager)->initEventObserver();
-#endif
-
+	_graphicsManager->activateManager();
 }
 
 #if defined(USE_TASKBAR)
@@ -595,18 +588,16 @@ bool OSystem_SDL::setGraphicsMode(int mode) {
 			// manager, delete and create the new mode graphics manager
 			if (_graphicsMode >= _sdlModesCount && mode < _sdlModesCount) {
 				debug(1, "switching to plain SDL graphics");
+				_graphicsManager->deactivateManager();
 				delete _graphicsManager;
 				_graphicsManager = new SurfaceSdlGraphicsManager(_eventSource);
-				((SurfaceSdlGraphicsManager *)_graphicsManager)->initEventObserver();
-				_graphicsManager->beginGFXTransaction();
 
 				switchedManager = true;
 			} else if (_graphicsMode < _sdlModesCount && mode >= _sdlModesCount) {
 				debug(1, "switching to OpenGL graphics");
+				_graphicsManager->deactivateManager();
 				delete _graphicsManager;
 				_graphicsManager = new OpenGLSdlGraphicsManager(_desktopWidth, _desktopHeight, _eventSource);
-				((OpenGLSdlGraphicsManager *)_graphicsManager)->initEventObserver();
-				_graphicsManager->beginGFXTransaction();
 
 				switchedManager = true;
 			}
@@ -614,6 +605,9 @@ bool OSystem_SDL::setGraphicsMode(int mode) {
 			_graphicsMode = mode;
 
 			if (switchedManager) {
+				_graphicsManager->activateManager();
+
+				_graphicsManager->beginGFXTransaction();
 #ifdef USE_RGB_COLOR
 				_graphicsManager->initSize(screenWidth, screenHeight, &pixelFormat);
 #else
