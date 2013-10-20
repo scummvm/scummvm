@@ -2539,6 +2539,7 @@ void PlayStream::ResFileData::load(Common::SeekableReadStream &stream) {
 PlayStream::PlayStream(): EventHandler() {
 	_index = NULL;
 	_endAction = NULL;
+	_audioStream = NULL;
 }
 
 PlayStream::~PlayStream() {
@@ -2585,12 +2586,12 @@ bool PlayStream::play(int voiceNum, EventHandler *endAction) {
 		_file.skip(4);
 
 		// Create the stream
-		Audio::QueuingAudioStream *audioStream = Audio::makeQueuingAudioStream(rate, false);
+		_audioStream = Audio::makeQueuingAudioStream(rate, false);
 
 		// Load in the first chunk
 		byte *data = (byte *)malloc(chunkSize);
 		_file.read(data, chunkSize);
-		audioStream->queueBuffer(data, chunkSize, DisposeAfterUse::YES, Audio::FLAG_UNSIGNED);
+		_audioStream->queueBuffer(data, chunkSize, DisposeAfterUse::YES, Audio::FLAG_UNSIGNED);
 		
 		// If necessary, load further chunks of the voice in
 		while (chunkSize == (_resData._chunkSize - 16)) {
@@ -2609,13 +2610,13 @@ bool PlayStream::play(int voiceNum, EventHandler *endAction) {
 			// Read in the data for this next chunk and queue it
 			data = (byte *)malloc(chunkSize);
 			_file.read(data, chunkSize);
-			audioStream->queueBuffer(data, chunkSize, DisposeAfterUse::YES, Audio::FLAG_UNSIGNED);
+			_audioStream->queueBuffer(data, chunkSize, DisposeAfterUse::YES, Audio::FLAG_UNSIGNED);
 		}
-
+		
 		g_vm->_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_soundHandle, 
-			audioStream, DisposeAfterUse::YES);
+			_audioStream, DisposeAfterUse::YES);
 		_voiceNum = voiceNum;
-		return true;		
+		return true;
 	}
 	 
 	// If it reaches this point, no valid voice data found
@@ -2623,14 +2624,17 @@ bool PlayStream::play(int voiceNum, EventHandler *endAction) {
 }
 
 void PlayStream::stop() {
-	g_vm->_mixer->stopHandle(_soundHandle);
+	if (_audioStream) {
+		g_vm->_mixer->stopHandle(_soundHandle);
+	}
 
+	_audioStream = NULL;
 	_voiceNum = 0;
 	_endAction = NULL;
 }
 
 bool PlayStream::isPlaying() const {
-	return _voiceNum != 0 && g_vm->_mixer->isSoundHandleActive(_soundHandle);
+	return _audioStream != NULL && !_audioStream->endOfData();
 }
 
 void PlayStream::remove() {
