@@ -159,6 +159,173 @@ void RenderManager::clearWorkingWindowTo555Color(uint16 color) {
 	}
 }
 
+void RenderManager::copyRectToSurface(Graphics::Surface &src, Graphics::Surface &dst, const Common::Rect &_srcRect, const Common::Rect &_dstRect) {
+	if (src.format != dst.format)
+		return;
+
+	Common::Rect dstRect = _dstRect;
+	if (dstRect.isEmpty())
+		dstRect = Common::Rect(dst.w, dst.h);
+	dstRect.clip(dst.w, dst.h);
+
+	Common::Rect srcRect = _srcRect;
+	if (srcRect.isEmpty())
+		srcRect = Common::Rect(src.w, src.h);
+	srcRect.clip(src.w, src.h);
+
+	if (!srcRect.isValidRect() || !dstRect.isValidRect())
+		return;
+
+	Common::Rect rendRect = srcRect;
+	rendRect.clip(dstRect.width(), dstRect.height());
+
+	if (rendRect.isEmpty() || !rendRect.isValidRect())
+		return;
+
+	// Copy rendRect from src surface to dst surface
+	byte *src_buf = (byte *)src.getBasePtr(rendRect.left, rendRect.top);
+	byte *dst_buf = (byte *)dst.getBasePtr(dstRect.left, dstRect.top);
+
+	int32 w = rendRect.width();
+	int32 h = rendRect.height();
+
+	for (int32 y = 0; y < h; y++) {
+		memcpy(dst_buf, src_buf, w * src.format.bytesPerPixel);
+		src_buf += src.pitch;
+		dst_buf += dst.pitch;
+	}
+}
+
+void RenderManager::copyRectToSurface(Graphics::Surface &src, Graphics::Surface &dst, const Common::Rect &_srcRect, const Common::Rect &_dstRect, uint32 keycolor) {
+	if (src.format != dst.format)
+		return;
+
+	Common::Rect dstRect = _dstRect;
+	if (dstRect.isEmpty())
+		dstRect = Common::Rect(dst.w, dst.h);
+	dstRect.clip(dst.w, dst.h);
+
+	Common::Rect srcRect = _srcRect;
+	if (srcRect.isEmpty())
+		srcRect = Common::Rect(src.w, src.h);
+	srcRect.clip(src.w, src.h);
+
+	if (!srcRect.isValidRect() || !dstRect.isValidRect())
+		return;
+
+	Common::Rect rendRect = srcRect;
+	rendRect.clip(dstRect.width(), dstRect.height());
+
+	if (rendRect.isEmpty() || !rendRect.isValidRect())
+		return;
+
+	uint32 _keycolor = keycolor & ((1 << (src.format.bytesPerPixel << 3)) - 1);
+
+	// Copy rendRect from src surface to dst surface
+	byte *src_buf = (byte *)src.getBasePtr(rendRect.left, rendRect.top);
+	byte *dst_buf = (byte *)dst.getBasePtr(dstRect.left, dstRect.top);
+
+	int32 w = rendRect.width();
+	int32 h = rendRect.height();
+
+	for (int32 y = 0; y < h; y++) {
+		switch (src.format.bytesPerPixel) {
+		case 1: {
+			uint *src_tmp = (uint *)src_buf;
+			uint *dst_tmp = (uint *)dst_buf;
+			for (int32 x = 0; x < w; x++) {
+				if (*src_tmp != _keycolor)
+					*dst_tmp = *src_tmp;
+				src_tmp++;
+				dst_tmp++;
+			}
+		}
+		break;
+
+		case 2: {
+			uint16 *src_tmp = (uint16 *)src_buf;
+			uint16 *dst_tmp = (uint16 *)dst_buf;
+			for (int32 x = 0; x < w; x++) {
+				if (*src_tmp != _keycolor)
+					*dst_tmp = *src_tmp;
+				src_tmp++;
+				dst_tmp++;
+			}
+		}
+		break;
+
+		case 4: {
+			uint32 *src_tmp = (uint32 *)src_buf;
+			uint32 *dst_tmp = (uint32 *)dst_buf;
+			for (int32 x = 0; x < w; x++) {
+				if (*src_tmp != _keycolor)
+					*dst_tmp = *src_tmp;
+				src_tmp++;
+				dst_tmp++;
+			}
+		}
+		break;
+
+		default:
+			break;
+		}
+		src_buf += src.pitch;
+		dst_buf += dst.pitch;
+	}
+}
+
+void RenderManager::copyRectToSurface(Graphics::Surface &src, Graphics::Surface &dst, const Common::Rect &srcRect, const Common::Point &dstPt) {
+	if (!Common::Rect(dst.w, dst.h).contains(dstPt))
+		return;
+	Common::Rect dstRect(dstPt.x, dstPt.y, dst.w, dst.h);
+	copyRectToSurface(src, dst, srcRect, dstRect);
+}
+
+void RenderManager::copyRectToSurface(Graphics::Surface &src, Graphics::Surface &dst, const Common::Rect &srcRect, const Common::Point &dstPt, uint32 keycolor) {
+	if (!Common::Rect(dst.w, dst.h).contains(dstPt))
+		return;
+	Common::Rect dstRect(dstPt.x, dstPt.y, dst.w, dst.h);
+	copyRectToSurface(src, dst, srcRect, dstRect, keycolor);
+}
+
+void RenderManager::renderImageToBackground(const Common::String &fileName, int16 destX, int16 destY) {
+	Graphics::Surface surface;
+	readImageToSurface(fileName, surface);
+
+	Common::Rect srcRect(surface.w, surface.h);
+	Common::Point dstPt(destX, destY);
+
+	copyRectToSurface(surface, _currentBackground, srcRect, dstPt);
+	moveBackground(0);
+}
+
+void RenderManager::renderImageToBackground(Graphics::Surface &surface, int16 destX, int16 destY) {
+	Common::Rect srcRect(surface.w, surface.h);
+	Common::Point dstPt(destX, destY);
+
+	copyRectToSurface(surface, _currentBackground, srcRect, dstPt);
+	moveBackground(0);
+}
+
+void RenderManager::renderImageToBackground(const Common::String &fileName, int16 destX, int16 destY, uint32 keycolor) {
+	Graphics::Surface surface;
+	readImageToSurface(fileName, surface);
+
+	Common::Rect srcRect(surface.w, surface.h);
+	Common::Point dstPt(destX, destY);
+
+	copyRectToSurface(surface, _currentBackground, srcRect, dstPt, keycolor);
+	moveBackground(0);
+}
+
+void RenderManager::renderImageToBackground(Graphics::Surface &surface, int16 destX, int16 destY, uint32 keycolor) {
+	Common::Rect srcRect(surface.w, surface.h);
+	Common::Point dstPt(destX, destY);
+
+	copyRectToSurface(surface, _currentBackground, srcRect, dstPt, keycolor);
+	moveBackground(0);
+}
+
 void RenderManager::renderSubRectToScreen(Graphics::Surface &surface, int16 destinationX, int16 destinationY, bool wrap) {
 	int16 subRectX = 0;
 	int16 subRectY = 0;

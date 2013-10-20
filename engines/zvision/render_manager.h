@@ -218,6 +218,86 @@ public:
 	void renderImageToScreen(Graphics::Surface &surface, int16 destinationX, int16 destinationY, bool wrap = false);
 
 	/**
+	 * Copies a rectangla of source surface and copy to destination rect.
+	 *
+	 * @param src        Source surface
+	 * @param dst        Destenation surface
+	 * @param srcRect    Rect of source surface
+	 * @param dstRect    Rect for destenation surface
+	 */
+	void copyRectToSurface(Graphics::Surface &src, Graphics::Surface &dst, const Common::Rect &srcRect, const Common::Rect &dstRect);
+
+	/**
+	 * Copies a rectangla of source surface and copy to destination rect.
+	 *
+	 * @param src        Source surface
+	 * @param dst        Destenation surface
+	 * @param srcRect    Rect of source surface
+	 * @param dstRect    Rect for destenation surface
+	 * @param colorkey   Transparent color
+	 */
+	void copyRectToSurface(Graphics::Surface &src, Graphics::Surface &dst, const Common::Rect &srcRect, const Common::Rect &dstRect, uint32 colorkey);
+
+	/**
+	 * Copies a rectangla of source surface and copy to destination rect.
+	 *
+	 * @param src        Source surface
+	 * @param dst        Destenation surface
+	 * @param srcRect    Rect of source surface
+	 * @param dstPt      Point for destenation surface
+	 */
+	void copyRectToSurface(Graphics::Surface &src, Graphics::Surface &dst, const Common::Rect &srcRect, const Common::Point &dstPt);
+
+	/**
+	 * Copies a rectangla of source surface and copy to destination rect.
+	 *
+	 * @param src        Source surface
+	 * @param dst        Destenation surface
+	 * @param srcRect    Rect of source surface
+	 * @param dstPt      Point for destenation surface
+	 * @param colorkey   Transparent color
+	 */
+	void copyRectToSurface(Graphics::Surface &src, Graphics::Surface &dst, const Common::Rect &srcRect, const Common::Point &dstPt, uint32 colorkey);
+
+	/**
+	 * Blits the image or a portion of the image to the background.
+	 *
+	 * @param fileName        Name of the image file
+	 * @param destinationX    X position where the image should be put. Coords are in working window space, not screen space!
+	 * @param destinationY    Y position where the image should be put. Coords are in working window space, not screen space!
+	 */
+	void renderImageToBackground(const Common::String &fileName, int16 destinationX, int16 destinationY);
+
+	/**
+	 * Blits the image or a portion of the image to the background.
+	 *
+	 * @param surface          Surface to read the image data from
+	 * @param destinationX    X position where the image should be put. Coords are in working window space, not screen space!
+	 * @param destinationY    Y position where the image should be put. Coords are in working window space, not screen space!
+	 */
+	void renderImageToBackground(Graphics::Surface &surface, int16 destinationX, int16 destinationY);
+
+	/**
+	 * Blits the image or a portion of the image to the background.
+	 *
+	 * @param fileName        Name of the image file
+	 * @param destinationX    X position where the image should be put. Coords are in working window space, not screen space!
+	 * @param destinationY    Y position where the image should be put. Coords are in working window space, not screen space!
+	 * @param colorkey   Transparent color
+	 */
+	void renderImageToBackground(const Common::String &fileName, int16 destX, int16 destY, uint32 colorkey);
+
+	/**
+	 * Blits the image or a portion of the image to the background.
+	 *
+	 * @param surface          Surface to read the image data from
+	 * @param destinationX    X position where the image should be put. Coords are in working window space, not screen space!
+	 * @param destinationY    Y position where the image should be put. Coords are in working window space, not screen space!
+	 * @param colorkey   Transparent color
+	 */
+	void renderImageToBackground(Graphics::Surface &surface, int16 destX, int16 destY, uint32 colorkey);
+
+	/**
 	 * Sets the current background image to be used by the RenderManager and immediately
 	 * blits it to the screen. (It won't show up until the end of the frame)
 	 *
