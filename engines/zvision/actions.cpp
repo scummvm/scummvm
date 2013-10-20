@@ -321,10 +321,10 @@ ActionSetPartialScreen::ActionSetPartialScreen(const Common::String &line) {
 bool ActionSetPartialScreen::execute(ZVision *engine) {
 	RenderManager *renderManager = engine->getRenderManager();
 
-	if (_backgroundColor > 0) {
-		renderManager->clearWorkingWindowTo555Color(_backgroundColor);
-	}
-	renderManager->renderImageToScreen(_fileName, _x, _y);
+	if (_backgroundColor >= 0)
+		renderManager->renderImageToBackground(_fileName, _x, _y, _backgroundColor);
+	else
+		renderManager->renderImageToBackground(_fileName, _x, _y);
 
 	return true;
 }

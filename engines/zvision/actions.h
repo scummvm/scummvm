@@ -300,7 +300,7 @@ private:
 	uint _x;
 	uint _y;
 	Common::String _fileName;
-	uint16 _backgroundColor;
+	int32 _backgroundColor;
 };
 
 class ActionSetScreen : public ResultAction {
