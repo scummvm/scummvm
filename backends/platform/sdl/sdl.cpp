@@ -172,26 +172,18 @@ void OSystem_SDL::initBackend() {
 	if (_graphicsManager == 0) {
 #ifdef USE_OPENGL
 		if (ConfMan.hasKey("gfx_mode")) {
-			Common::String gfxMode(ConfMan.get("gfx_mode"));
-			bool use_opengl = false;
-			const OSystem::GraphicsMode *mode = OpenGLSdlGraphicsManager::supportedGraphicsModes();
-			int i = 0;
-			while (mode->name) {
-				if (scumm_stricmp(mode->name, gfxMode.c_str()) == 0) {
-					_graphicsMode = i + _firstGLMode;
-					use_opengl = true;
-				}
-
-				mode++;
-				++i;
-			}
-
 			// If the gfx_mode is from OpenGL, create the OpenGL graphics manager
-			if (use_opengl) {
-				_graphicsManager = new OpenGLSdlGraphicsManager(_desktopWidth, _desktopHeight, _eventSource);
+			Common::String gfxMode(ConfMan.get("gfx_mode"));
+			for (uint i = _firstGLMode; i < _graphicsModeIds.size(); ++i) {
+				if (!scumm_stricmp(_graphicsModes[i].name, gfxMode.c_str())) {
+					_graphicsManager = new OpenGLSdlGraphicsManager(_desktopWidth, _desktopHeight, _eventSource);
+					_graphicsMode = i;
+					break;
+				}
 			}
 		}
 #endif
+
 		if (_graphicsManager == 0) {
 			_graphicsManager = new SurfaceSdlGraphicsManager(_eventSource);
 		}
