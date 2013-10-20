@@ -119,7 +119,7 @@ protected:
 	/**
 	 * Creates the merged graphics modes list
 	 */
-	virtual void setupGraphicsModes();
+	void setupGraphicsModes();
 
 	virtual const OSystem::GraphicsMode *getSupportedGraphicsModes() const;
 	virtual int getDefaultGraphicsMode() const;
