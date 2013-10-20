@@ -432,6 +432,41 @@ void Lua_V2::OverWorldToScreen() { // TODO
 	lua_pushnumber(0);
 }
 
+void Lua_V2::WorldToScreen() {
+	lua_Object xObj = lua_getparam(1);
+	lua_Object yObj = lua_getparam(2);
+	lua_Object zObj = lua_getparam(3);
+	if (!lua_isnumber(xObj) || !lua_isnumber(yObj) || !lua_isnumber(zObj)) {
+		lua_pushnumber(0.0);
+		lua_pushnumber(0.0);
+		return;
+	}
+
+	float x = lua_getnumber(xObj);
+	float y = lua_getnumber(yObj);
+	float z = lua_getnumber(zObj);
+	Math::Vector3d pos = Math::Vector3d(x, y, z);
+
+	const Set::Setup *setup = g_emi->getCurrSet()->getCurrSetup();
+	const Math::Vector3d interest = setup->_interest;
+	const float roll = setup->_roll;
+	const Math::Quaternion quat = Math::Quaternion(interest.x(), interest.y(), interest.z(), roll);
+	Math::Matrix4 view = quat.toMatrix();
+	view.transpose();
+
+	pos -= setup->_pos;
+	pos = view.getRotation() * pos;
+	pos.z() = -pos.z();
+
+	Math::Matrix4 proj = GfxBase::makeProjMatrix(setup->_fov, setup->_nclip, setup->_fclip);
+	proj.transpose();
+	Math::Vector4d screen = proj * Math::Vector4d(pos.x(), pos.y(), pos.z(), 1.0);
+	screen /= screen.w();
+
+	lua_pushnumber((screen.x() + 1) * 320);
+	lua_pushnumber((1 - screen.y()) * 240);
+}
+
 void Lua_V2::NewLayer() {
 	lua_Object param1 = lua_getparam(1);
 	lua_Object param2 = lua_getparam(2);
