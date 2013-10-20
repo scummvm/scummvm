@@ -144,10 +144,6 @@ void OSystem_SDL::init() {
 		_taskbarManager = new Common::TaskbarManager();
 #endif
 
-#ifdef USE_OPENGL
-	// Setup a list with both SDL and OpenGL graphics modes
-	setupGraphicsModes();
-#endif
 }
 
 void OSystem_SDL::initBackend() {
@@ -171,6 +167,14 @@ void OSystem_SDL::initBackend() {
 
 	if (_graphicsManager == 0) {
 #ifdef USE_OPENGL
+		// Setup a list with both SDL and OpenGL graphics modes. We only do
+		// this whenever the subclass did not already set up an graphics
+		// manager yet. This is because we don't know the type of the graphics
+		// manager of the subclass, thus we cannot easily switch between the
+		// OpenGL one and the set up one. It also is to be expected that the
+		// subclass does not want any switching of graphics managers anyway.
+		setupGraphicsModes();
+
 		if (ConfMan.hasKey("gfx_mode")) {
 			// If the gfx_mode is from OpenGL, create the OpenGL graphics manager
 			Common::String gfxMode(ConfMan.get("gfx_mode"));
@@ -530,18 +534,30 @@ Common::TimerManager *OSystem_SDL::getTimerManager() {
 #ifdef USE_OPENGL
 
 const OSystem::GraphicsMode *OSystem_SDL::getSupportedGraphicsModes() const {
-	return _graphicsModes.begin();
+	if (_graphicsModes.empty()) {
+		return _graphicsManager->getSupportedGraphicsModes();
+	} else {
+		return _graphicsModes.begin();
+	}
 }
 
 int OSystem_SDL::getDefaultGraphicsMode() const {
-	// Return the default graphics mode from the current graphics manager
-	if (_graphicsMode < _firstGLMode)
+	if (_graphicsModes.empty()) {
 		return _graphicsManager->getDefaultGraphicsMode();
-	else
-		return _graphicsManager->getDefaultGraphicsMode() + _firstGLMode;
+	} else {
+		// Return the default graphics mode from the current graphics manager
+		if (_graphicsMode < _firstGLMode)
+			return _graphicsManager->getDefaultGraphicsMode();
+		else
+			return _graphicsManager->getDefaultGraphicsMode() + _firstGLMode;
+	}
 }
 
 bool OSystem_SDL::setGraphicsMode(int mode) {
+	if (_graphicsModes.empty()) {
+		return _graphicsManager->setGraphicsMode(mode);
+	}
+
 	// Check whether a invalid mode is requested.
 	if (mode < 0 || (uint)mode >= _graphicsModeIds.size()) {
 		return false;
@@ -624,7 +640,11 @@ bool OSystem_SDL::setGraphicsMode(int mode) {
 }
 
 int OSystem_SDL::getGraphicsMode() const {
-	return _graphicsMode;
+	if (_graphicsModes.empty()) {
+		return _graphicsManager->getGraphicsMode();
+	} else {
+		return _graphicsMode;
+	}
 }
 
 void OSystem_SDL::setupGraphicsModes() {
