@@ -369,6 +369,7 @@ namespace Ringworld2 {
 
 Ringworld2Globals::Ringworld2Globals() {
 	_scannerDialog = new ScannerDialog();
+	_speechSubtitles = SPEECH_TEXT;
 }
 
 Ringworld2Globals::~Ringworld2Globals() {
@@ -480,7 +481,6 @@ void Ringworld2Globals::reset() {
 	_s1550PlayerArea[R2_QUINN] = Common::Point(27, 4);
 	_s1550PlayerArea[R2_SEEKER] = Common::Point(27, 4);
 	Common::fill(&_scannerFrequencies[0], &_scannerFrequencies[MAX_CHARACTERS], 1);
-	_speechSubtitles = SPEECH_VOICE | SPEECH_TEXT;
 	_insetUp = 0;
 	_frameEdgeColor = 2;
 	Common::fill(&_stripManager_lookupList[0], &_stripManager_lookupList[12], 0);
@@ -539,10 +539,7 @@ void Ringworld2Globals::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_v5780E);
 	s.syncAsSint16LE(_v57810);
 	s.syncAsSint16LE(_v57C2C);
-	s.syncAsSint16LE(_speechSubtitles);
 
-	byte temp = 0;
-	s.syncAsByte(temp);
 	s.syncAsByte(_s1550PlayerArea[R2_QUINN].x);
 	s.syncAsByte(_s1550PlayerArea[R2_SEEKER].x);
 	s.syncAsByte(_s1550PlayerArea[R2_QUINN].y);

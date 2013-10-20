@@ -536,7 +536,112 @@ void MovGraph2::addObject(StaticANIObject *obj) {
 }
 
 void MovGraph2::buildMovInfo1SubItems(MovInfo1 *movinfo, Common::Array<MovGraphLink *> *linkList, LinkInfo *lnkSrc, LinkInfo *lnkDst) {
-	warning("STUB: MovGraph2::buildMovInfo1SubItems()");
+	MovInfo1Sub *elem;
+	Common::Point point;
+	Common::Rect rect;
+
+	int subIndex = movinfo->subIndex;
+
+	movinfo->items.clear();
+
+	elem = new MovInfo1Sub;
+	elem->subIndex = subIndex;
+	elem->x = movinfo->pt1.x;
+	elem->y = movinfo->pt1.y;
+	elem->distance = -1;
+
+	movinfo->items.push_back(elem);
+
+	int prevSubIndex = movinfo->subIndex;
+
+	for (uint i = 0; i < linkList->size(); i++) {
+		int idx1;
+
+		if (linkList->size() <= 1) {
+			if (linkList->size() == 1)
+				idx1 = getShortSide((*linkList)[0], movinfo->pt2.x - movinfo->pt1.x, movinfo->pt2.y - movinfo->pt1.y);
+			else
+				idx1 = getShortSide(0, movinfo->pt2.x - movinfo->pt1.x, movinfo->pt2.y - movinfo->pt1.y);
+
+			point.y = -1;
+			rect.bottom = -1;
+			rect.right = -1;
+			rect.top = -1;
+			rect.left = -1;
+		} else {
+			idx1 = findLink(linkList, i, &rect, &point);
+		}
+
+		if (idx1 != prevSubIndex) {
+			prevSubIndex = idx1;
+			subIndex = idx1;
+
+			elem = new MovInfo1Sub;
+			elem->subIndex = subIndex;
+			elem->x = rect.left;
+			elem->y = rect.top;
+			elem->distance = -1;
+
+			movinfo->items.push_back(elem);
+		}
+
+		if (i != linkList->size() - 1) {
+			while (1) {
+				i++;
+				if (findLink(linkList, i, &rect, 0) != prevSubIndex) {
+					i--;
+					findLink(linkList, i, &rect, &point);
+
+					break;
+				}
+
+				if (i == linkList->size() - 1)
+					break;
+			}
+		}
+
+		if (movinfo->items.back()->subIndex != 10) {
+			subIndex = prevSubIndex;
+
+			elem = new MovInfo1Sub;
+			elem->subIndex = 10;
+			elem->x = -1;
+			elem->y = -1;
+			elem->distance = -1;
+
+			movinfo->items.push_back(elem);
+
+			if (i == linkList->size()) {
+				elem = new MovInfo1Sub;
+				elem->subIndex = prevSubIndex;
+				elem->x = movinfo->pt2.x;
+				elem->y = movinfo->pt2.y;
+				elem->distance = movinfo->distance2;
+
+				movinfo->items.push_back(elem);
+			} else {
+				elem = new MovInfo1Sub;
+				elem->subIndex = prevSubIndex;
+				elem->x = rect.right;
+				elem->y = rect.bottom;
+				elem->distance = point.y;
+
+				movinfo->items.push_back(elem);
+			}
+		}
+	}
+
+	if (subIndex != movinfo->item1Index) {
+		elem = new MovInfo1Sub;
+		elem->subIndex = movinfo->item1Index;
+		elem->x = movinfo->pt2.x;
+		elem->y = movinfo->pt2.y;
+		elem->distance = movinfo->distance2;
+
+		movinfo->items.push_back(elem);
+	}
+
+	movinfo->itemsCount = movinfo->items.size();
 }
 
 MessageQueue *MovGraph2::buildMovInfo1MessageQueue(MovInfo1 *movInfo) {
@@ -750,7 +855,7 @@ MessageQueue *MovGraph2::doWalkTo(StaticANIObject *obj, int xpos, int ypos, int 
 		else
 			movInfo1.item1Index = getShortSide(0, dx2 - dx1, dy2 - dy1);
 	} else {
-		movInfo1.item1Index = findLink(&tempLinkList, tempLinkList.back(), 0, 0);
+		movInfo1.item1Index = findLink(&tempLinkList, tempLinkList.size() - 1, 0, 0);
 	}
 
 	movInfo1.flags = fuzzyMatch != 0;
@@ -824,10 +929,51 @@ int MovGraph2::getShortSide(MovGraphLink *lnk, int x, int y) {
 	return 0;
 }
 
-int MovGraph2::findLink(Common::Array<MovGraphLink *> *linkList, MovGraphLink *lnk, Common::Rect *a3, Common::Point *a4) {
-	warning("STUB: MovGraphLink *MovGraph2::findLink()");
+int MovGraph2::findLink(Common::Array<MovGraphLink *> *linkList, int idx, Common::Rect *rect, Common::Point *point) {
+	MovGraphNode *node1 = (*linkList)[idx]->_movGraphNode1;
+	MovGraphNode *node2 = (*linkList)[idx]->_movGraphNode2;
+	MovGraphNode *node3 = node1;
 
-	return 0;
+	if (idx != 0) {
+		MovGraphLink *lnk = (*linkList)[idx - 1];
+
+		if (lnk->_movGraphNode2 != node1) {
+			if (lnk->_movGraphNode1 != node1) {
+				if (lnk->_movGraphNode2 == node2 || lnk->_movGraphNode1 == node2) {
+					node3 = node2;
+					node2 = node1;
+				}
+				goto LABEL_7;
+			}
+		}
+		node3 = node1;
+	} else if (idx != linkList->size() - 1) {
+		MovGraphLink *lnk = (*linkList)[idx + 1];
+
+		if (lnk->_movGraphNode1 == node1 || lnk->_movGraphNode1 == node1) {
+			node3 = node2;
+			node2 = node1;
+		} else if (lnk->_movGraphNode2 == node2 || lnk->_movGraphNode1 == node2) {
+			node3 = node1;
+		}
+	}
+
+ LABEL_7:
+	if (rect) {
+		rect->left = node3->_x;
+		rect->top = node3->_y;
+		rect->right = node2->_x;
+		rect->bottom = node2->_y;
+	}
+	if (point) {
+		point->x = node3->_distance;
+		point->y = node2->_distance;
+	}
+
+	if (abs(node3->_x - node2->_x) <= abs(node3->_y - node2->_y))
+		return (node3->_y < node2->_x) + 2;
+	else
+		return node3->_x >= node2->_x;
 }
 
 MovGraphLink *MovGraph2::findLink1(int x, int y, int idx, int fuzzyMatch) {

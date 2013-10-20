@@ -120,17 +120,31 @@ void SoundManager::syncSounds() {
 	bool mute = false;
 	if (ConfMan.hasKey("mute"))
 		mute = ConfMan.getBool("mute");
+	bool subtitles = ConfMan.hasKey("subtitles") ? ConfMan.getBool("subtitles") : true;
 
 	bool music_mute = mute;
+	bool voice_mute = mute;
 
 	if (!mute) {
 		music_mute = ConfMan.getBool("music_mute");
+		voice_mute = ConfMan.getBool("speech_mute");
 	}
 
 	// Get the new music volume
 	int musicVolume = music_mute ? 0 : MIN(255, ConfMan.getInt("music_volume"));
 
 	this->setMasterVol(musicVolume / 2);
+
+	// Return to Ringworld voice settings
+	if (g_vm->getGameID() == GType_Ringworld2) {
+		// If we don't have voice, then ensure that text is turned on
+		if (voice_mute)
+			subtitles = true;
+
+		R2_GLOBALS._speechSubtitles = 
+			(voice_mute ? 0 : SPEECH_VOICE) | 
+			(!subtitles ? 0 : SPEECH_TEXT);
+	}
 }
 
 void SoundManager::update() {
@@ -2525,6 +2539,7 @@ void PlayStream::ResFileData::load(Common::SeekableReadStream &stream) {
 PlayStream::PlayStream(): EventHandler() {
 	_index = NULL;
 	_endAction = NULL;
+	_audioStream = NULL;
 }
 
 PlayStream::~PlayStream() {
@@ -2552,9 +2567,8 @@ bool PlayStream::setFile(const Common::String &filename) {
 bool PlayStream::play(int voiceNum, EventHandler *endAction) {
 	uint32 offset = getFileOffset(_index, _resData._fileChunkSize, voiceNum);
 	if (offset) {
+		stop();
 		_voiceNum = 0;
-		if (_sound.isPlaying())
-			_sound.stop();
 
 		// Move to the offset for the start of the voice
 		_file.seek(offset);
@@ -2572,17 +2586,20 @@ bool PlayStream::play(int voiceNum, EventHandler *endAction) {
 		_file.skip(4);
 
 		// Create the stream
-		Audio::QueuingAudioStream *audioStream = Audio::makeQueuingAudioStream(rate, false);
+		_audioStream = Audio::makeQueuingAudioStream(rate, false);
 
 		// Load in the first chunk
 		byte *data = (byte *)malloc(chunkSize);
 		_file.read(data, chunkSize);
-		audioStream->queueBuffer(data, chunkSize, DisposeAfterUse::YES, Audio::FLAG_UNSIGNED);
+		_audioStream->queueBuffer(data, chunkSize, DisposeAfterUse::YES, Audio::FLAG_UNSIGNED);
 		
 		// If necessary, load further chunks of the voice in
 		while (chunkSize == (_resData._chunkSize - 16)) {
 			// Ensure the next chunk has the 'MORE' header
 			_file.read(&header[0], 4);
+			if (!strncmp(header, "FEED", 4))
+				// Reached start of next voice sample, so stop
+				break;
 			if (strncmp(header, "MORE", 4))
 				error("Invalid stream data");
 
@@ -2593,13 +2610,13 @@ bool PlayStream::play(int voiceNum, EventHandler *endAction) {
 			// Read in the data for this next chunk and queue it
 			data = (byte *)malloc(chunkSize);
 			_file.read(data, chunkSize);
-			audioStream->queueBuffer(data, chunkSize, DisposeAfterUse::YES, Audio::FLAG_UNSIGNED);
+			_audioStream->queueBuffer(data, chunkSize, DisposeAfterUse::YES, Audio::FLAG_UNSIGNED);
 		}
-
+		
 		g_vm->_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_soundHandle, 
-			audioStream, DisposeAfterUse::YES);
-
-		return true;		
+			_audioStream, DisposeAfterUse::YES);
+		_voiceNum = voiceNum;
+		return true;
 	}
 	 
 	// If it reaches this point, no valid voice data found
@@ -2607,14 +2624,17 @@ bool PlayStream::play(int voiceNum, EventHandler *endAction) {
 }
 
 void PlayStream::stop() {
-	g_vm->_mixer->stopHandle(_soundHandle);
+	if (_audioStream) {
+		g_vm->_mixer->stopHandle(_soundHandle);
+	}
 
+	_audioStream = NULL;
 	_voiceNum = 0;
 	_endAction = NULL;
 }
 
 bool PlayStream::isPlaying() const {
-	return _voiceNum != 0 && g_vm->_mixer->isSoundHandleActive(_soundHandle);
+	return _audioStream != NULL && !_audioStream->endOfData();
 }
 
 void PlayStream::remove() {

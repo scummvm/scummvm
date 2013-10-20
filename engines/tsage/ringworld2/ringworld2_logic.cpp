@@ -622,9 +622,8 @@ void SceneHandlerExt::process(Event &event) {
 }
 
 void SceneHandlerExt::postLoad(int priorSceneBeforeLoad, int currentSceneBeforeLoad) {
-	if (priorSceneBeforeLoad == -1 || priorSceneBeforeLoad == 50
-			|| currentSceneBeforeLoad == 180 || priorSceneBeforeLoad == 205)
-		setupPaletteMaps();
+	// Set up the shading maps used for showing the player in shadows
+	setupPaletteMaps();
 
 	if (currentSceneBeforeLoad == 2900) {
 		R2_GLOBALS._gfxFontNumber = 50;

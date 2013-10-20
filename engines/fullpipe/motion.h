@@ -280,6 +280,13 @@ struct LinkInfo {
 	MovGraphNode *node;
 };
 
+struct MovInfo1Sub {
+	int subIndex;
+	int x;
+	int y;
+	int distance;
+};
+
 struct MovInfo1 {
 	int field_0;
 	Common::Point pt1;
@@ -288,7 +295,7 @@ struct MovInfo1 {
 	int distance2;
 	int subIndex;
 	int item1Index;
-	int items;
+	Common::Array<MovInfo1Sub *> items;
 	int itemsCount;
 	int flags;
 };
@@ -316,7 +323,7 @@ public:
 	int getItemSubIndexByMGM(int idx, StaticANIObject *ani);
 
 	int getShortSide(MovGraphLink *lnk, int x, int y);
-	int findLink(Common::Array<MovGraphLink *> *linkList, MovGraphLink *lnk, Common::Rect *a3, Common::Point *a4);
+	int findLink(Common::Array<MovGraphLink *> *linkList, int idx, Common::Rect *a3, Common::Point *a4);
 
 	bool initDirections(StaticANIObject *obj, MovGraph2Item *item);
 	void buildMovInfo1SubItems(MovInfo1 *movinfo, Common::Array<MovGraphLink *> *linkList, LinkInfo *lnkSrc, LinkInfo *lnkDst);

@@ -427,8 +427,8 @@ class PlayStream: public EventHandler {
 private:
 	Common::File _file;
 	ResFileData _resData;
+	Audio::QueuingAudioStream *_audioStream;
 	Audio::SoundHandle _soundHandle;
-	Sound _sound;
 	uint16 *_index;
 	EventHandler *_endAction;
 	int _voiceNum;

@@ -760,6 +760,15 @@ void StripManager::remove() {
 	Action::remove();
 }
 
+void StripManager::dispatch() {
+	if (g_vm->getGameID() == GType_Ringworld2) {
+		if (_activeSpeaker)
+			_activeSpeaker->dispatch();
+	}
+
+	Action::dispatch();
+}
+
 void StripManager::signal() {
 	int strIndex = 0;
 

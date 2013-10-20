@@ -1619,7 +1619,8 @@ void SceneItem::display(int resNum, int lineNum, ...) {
 	Common::String msg = (!resNum || (resNum == -1)) ? Common::String() :
 		g_resourceManager->getMessage(resNum, lineNum);
 
-	if ((g_vm->getGameID() != GType_Ringworld) && T2_GLOBALS._uiElements._active)
+	if ((g_vm->getGameID() != GType_Ringworld) && (g_vm->getGameID() != GType_Ringworld2)
+			&& T2_GLOBALS._uiElements._active)
 		T2_GLOBALS._uiElements.hide();
 
 	if (g_globals->_sceneObjects->contains(&g_globals->_sceneText)) {
@@ -1783,6 +1784,9 @@ void SceneItem::display(int resNum, int lineNum, ...) {
 					if (!playList.empty()) {
 						R2_GLOBALS._playStream.play(*playList.begin(), NULL);
 						playList.pop_front();
+					} else if (!(R2_GLOBALS._speechSubtitles & SPEECH_TEXT)) {
+						// If not showing text, don't both waiting for a click to end
+						break;
 					}
 				}
 			}
@@ -1794,7 +1798,8 @@ void SceneItem::display(int resNum, int lineNum, ...) {
 		g_globals->_sceneText.remove();
 	}
 
-	if ((g_vm->getGameID() != GType_Ringworld) && T2_GLOBALS._uiElements._active) {
+	if ((g_vm->getGameID() != GType_Ringworld) && (g_vm->getGameID() != GType_Ringworld2) 
+			&& T2_GLOBALS._uiElements._active) {
 		// Show user interface
 		T2_GLOBALS._uiElements.show();
 

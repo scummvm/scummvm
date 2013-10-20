@@ -8,25 +8,25 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
 
+#ifndef BACKENDS_GRAPHICS_OPENGL_OPENGL_H
+#define BACKENDS_GRAPHICS_OPENGL_OPENGL_H
+
+// The purpose of this header is to include the OpenGL headers in an uniform
+// fashion. A notable example for a non standard port is the Tizen port.
+
 #include "common/scummsys.h"
-
-#if defined(DEBUG) && defined(USE_OPENGL)
-
-#include "backends/graphics/opengl/glerrorcheck.h"
-#include "common/textconsole.h"
-#include "common/str.h"
 
 #ifdef WIN32
 #if defined(ARRAYSIZE) && !defined(_WINDOWS_)
@@ -37,31 +37,21 @@
 #undef ARRAYSIZE
 #endif
 
-#if defined(USE_GLES)
+// HACK: In case common/util.h has been included already we need to make sure
+// to define ARRAYSIZE again in case of Windows.
+#if !defined(ARRAYSIZE) && defined(COMMON_UTIL_H)
+#define ARRAYSIZE(x) ((int)(sizeof(x) / sizeof(x[0])))
+#endif
+
+#if defined(TIZEN)
+#include <FGraphicsOpengl.h>
+using namespace Tizen::Graphics::Opengl;
+#elif defined(USE_GLES)
 #include <GLES/gl.h>
-#elif defined(MACOSX)
-#include <OpenGL/gl.h>
+#elif defined(SDL_BACKEND)
+#include <SDL_opengl.h>
 #else
 #include <GL/gl.h>
 #endif
-
-static Common::String getGlErrStr(GLenum error) {
-	switch (error) {
-	case GL_NO_ERROR:           return "GL_NO_ERROR";
-	case GL_INVALID_ENUM:       return "GL_INVALID_ENUM";
-	case GL_INVALID_OPERATION:  return "GL_INVALID_OPERATION";
-	case GL_STACK_OVERFLOW:     return "GL_STACK_OVERFLOW";
-	case GL_STACK_UNDERFLOW:    return "GL_STACK_UNDERFLOW";
-	case GL_OUT_OF_MEMORY:      return "GL_OUT_OF_MEMORY";
-	}
-
-	return Common::String::format("(Unknown GL error code 0x%x)", error);
-}
-
-void checkGlError(const char *file, int line) {
-	GLenum error = glGetError();
-	if (error != GL_NO_ERROR)
-		warning("%s:%d: GL error: %s", file, line, getGlErrStr(error).c_str());
-}
 
 #endif

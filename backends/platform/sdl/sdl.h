@@ -106,6 +106,8 @@ protected:
 	Backends::Log::Log *_logger;
 
 #ifdef USE_OPENGL
+	int _desktopWidth, _desktopHeight;
+
 	OSystem::GraphicsMode *_graphicsModes;
 	int _graphicsMode;
 	int _sdlModesCount;
