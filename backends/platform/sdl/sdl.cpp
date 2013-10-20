@@ -70,6 +70,8 @@ OSystem_SDL::OSystem_SDL()
 	_graphicsModes(),
 	_graphicsMode(0),
 	_firstGLMode(0),
+	_defaultSDLMode(0),
+	_defaultGLMode(0),
 #endif
 	_inited(false),
 	_initedSDL(false),
@@ -547,9 +549,9 @@ int OSystem_SDL::getDefaultGraphicsMode() const {
 	} else {
 		// Return the default graphics mode from the current graphics manager
 		if (_graphicsMode < _firstGLMode)
-			return _graphicsManager->getDefaultGraphicsMode();
+			return _defaultSDLMode;
 		else
-			return _graphicsManager->getDefaultGraphicsMode() + _firstGLMode;
+			return _defaultGLMode;
 	}
 }
 
@@ -650,27 +652,39 @@ int OSystem_SDL::getGraphicsMode() const {
 void OSystem_SDL::setupGraphicsModes() {
 	_graphicsModes.clear();
 	_graphicsModeIds.clear();
+	_defaultSDLMode = _defaultGLMode = -1;
 
 	// Count the number of graphics modes
 	const OSystem::GraphicsMode *srcMode;
+	int defaultMode;
 
 	GraphicsManager *manager = new SurfaceSdlGraphicsManager(_eventSource);
 	srcMode = manager->getSupportedGraphicsModes();
+	defaultMode = manager->getDefaultGraphicsMode();
 	while (srcMode->name) {
+		if (defaultMode == srcMode->id) {
+			_defaultSDLMode = _graphicsModes.size();
+		}
 		_graphicsModes.push_back(*srcMode);
 		srcMode++;
 	}
 	delete manager;
+	assert(_defaultSDLMode != -1);
 
 	_firstGLMode = _graphicsModes.size();
 	manager = new OpenGLSdlGraphicsManager(_desktopWidth, _desktopHeight, _eventSource);
 	srcMode = manager->getSupportedGraphicsModes();
+	defaultMode = manager->getDefaultGraphicsMode();
 	while (srcMode->name) {
+		if (defaultMode == srcMode->id) {
+			_defaultGLMode = _graphicsModes.size();
+		}
 		_graphicsModes.push_back(*srcMode);
 		srcMode++;
 	}
 	delete manager;
 	manager = nullptr;
+	assert(_defaultGLMode != -1);
 
 	// Set a null mode at the end
 	GraphicsMode nullMode;

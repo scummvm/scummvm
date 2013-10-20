@@ -115,6 +115,8 @@ protected:
 	Common::Array<int> _graphicsModeIds;
 	int _graphicsMode;
 	int _firstGLMode;
+	int _defaultSDLMode;
+	int _defaultGLMode;
 
 	/**
 	 * Creates the merged graphics modes list
