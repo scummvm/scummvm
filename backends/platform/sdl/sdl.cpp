@@ -67,7 +67,7 @@ OSystem_SDL::OSystem_SDL()
 #ifdef USE_OPENGL
 	_desktopWidth(0),
 	_desktopHeight(0),
-	_graphicsModes(0),
+	_graphicsModes(),
 	_graphicsMode(0),
 	_sdlModesCount(0),
 	_glModesCount(0),
@@ -114,10 +114,6 @@ OSystem_SDL::~OSystem_SDL() {
 	_timerManager = 0;
 	delete _mutexManager;
 	_mutexManager = 0;
-
-#ifdef USE_OPENGL
-	delete[] _graphicsModes;
-#endif
 
 	delete _logger;
 	_logger = 0;
@@ -543,7 +539,7 @@ Common::TimerManager *OSystem_SDL::getTimerManager() {
 #ifdef USE_OPENGL
 
 const OSystem::GraphicsMode *OSystem_SDL::getSupportedGraphicsModes() const {
-	return _graphicsModes;
+	return _graphicsModes.begin();
 }
 
 int OSystem_SDL::getDefaultGraphicsMode() const {
@@ -658,6 +654,8 @@ int OSystem_SDL::getGraphicsMode() const {
 }
 
 void OSystem_SDL::setupGraphicsModes() {
+	_graphicsModes.clear();
+
 	const OSystem::GraphicsMode *sdlGraphicsModes = SurfaceSdlGraphicsManager::supportedGraphicsModes();
 	const OSystem::GraphicsMode *openglGraphicsModes = OpenGLSdlGraphicsManager::supportedGraphicsModes();
 	_sdlModesCount = 0;
@@ -667,29 +665,24 @@ void OSystem_SDL::setupGraphicsModes() {
 	const OSystem::GraphicsMode *srcMode = sdlGraphicsModes;
 	while (srcMode->name) {
 		_sdlModesCount++;
+		_graphicsModes.push_back(*srcMode);
 		srcMode++;
 	}
 	srcMode = openglGraphicsModes;
 	while (srcMode->name) {
 		_glModesCount++;
+		_graphicsModes.push_back(*srcMode);
 		srcMode++;
 	}
 
-	// Allocate enough space for merged array of modes
-	_graphicsModes = new OSystem::GraphicsMode[_glModesCount  + _sdlModesCount + 1];
-
-	// Copy SDL graphics modes
-	memcpy((void *)_graphicsModes, sdlGraphicsModes, _sdlModesCount * sizeof(OSystem::GraphicsMode));
-
-	// Copy OpenGL graphics modes
-	memcpy((void *)(_graphicsModes + _sdlModesCount), openglGraphicsModes, _glModesCount  * sizeof(OSystem::GraphicsMode));
-
 	// Set a null mode at the end
-	memset((void *)(_graphicsModes + _sdlModesCount + _glModesCount), 0, sizeof(OSystem::GraphicsMode));
+	GraphicsMode nullMode;
+	memset(&nullMode, 0, sizeof(nullMode));
+	_graphicsModes.push_back(nullMode);
 
 	// Set new internal ids for all modes
 	int i = 0;
-	OSystem::GraphicsMode *mode = _graphicsModes;
+	OSystem::GraphicsMode *mode = _graphicsModes.begin();
 	while (mode->name) {
 		mode->id = i++;
 		mode++;
