@@ -193,10 +193,6 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 }
 
 SurfaceSdlGraphicsManager::~SurfaceSdlGraphicsManager() {
-	// Unregister the event observer
-	if (g_system->getEventManager()->getEventDispatcher() != NULL)
-		g_system->getEventManager()->getEventDispatcher()->unregisterObserver(this);
-
 	unloadGFXMode();
 	if (_mouseSurface)
 		SDL_FreeSurface(_mouseSurface);
@@ -211,9 +207,22 @@ SurfaceSdlGraphicsManager::~SurfaceSdlGraphicsManager() {
 	free(_mouseData);
 }
 
-void SurfaceSdlGraphicsManager::initEventObserver() {
+void SurfaceSdlGraphicsManager::activateManager() {
+	GraphicsManager::activateManager();
+	initEventSource();
+
 	// Register the graphics manager as a event observer
 	g_system->getEventManager()->getEventDispatcher()->registerObserver(this, 10, false);
+}
+
+void SurfaceSdlGraphicsManager::deactivateManager() {
+	// Unregister the event observer
+	if (g_system->getEventManager()->getEventDispatcher()) {
+		g_system->getEventManager()->getEventDispatcher()->unregisterObserver(this);
+	}
+
+	deinitEventSource();
+	GraphicsManager::deactivateManager();
 }
 
 bool SurfaceSdlGraphicsManager::hasFeature(OSystem::Feature f) {
