@@ -1783,6 +1783,9 @@ void SceneItem::display(int resNum, int lineNum, ...) {
 					if (!playList.empty()) {
 						R2_GLOBALS._playStream.play(*playList.begin(), NULL);
 						playList.pop_front();
+					} else if (!(R2_GLOBALS._speechSubtitles & SPEECH_TEXT)) {
+						// If not showing text, don't both waiting for a click to end
+						break;
 					}
 				}
 			}
