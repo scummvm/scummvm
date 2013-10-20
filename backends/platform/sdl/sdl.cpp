@@ -651,21 +651,26 @@ void OSystem_SDL::setupGraphicsModes() {
 	_graphicsModes.clear();
 	_graphicsModeIds.clear();
 
-	const OSystem::GraphicsMode *sdlGraphicsModes = SurfaceSdlGraphicsManager::supportedGraphicsModes();
-	const OSystem::GraphicsMode *openglGraphicsModes = OpenGLSdlGraphicsManager::supportedGraphicsModes();
-
 	// Count the number of graphics modes
-	const OSystem::GraphicsMode *srcMode = sdlGraphicsModes;
+	const OSystem::GraphicsMode *srcMode;
+
+	GraphicsManager *manager = new SurfaceSdlGraphicsManager(_eventSource);
+	srcMode = manager->getSupportedGraphicsModes();
 	while (srcMode->name) {
 		_graphicsModes.push_back(*srcMode);
 		srcMode++;
 	}
+	delete manager;
+
 	_firstGLMode = _graphicsModes.size();
-	srcMode = openglGraphicsModes;
+	manager = new OpenGLSdlGraphicsManager(_desktopWidth, _desktopHeight, _eventSource);
+	srcMode = manager->getSupportedGraphicsModes();
 	while (srcMode->name) {
 		_graphicsModes.push_back(*srcMode);
 		srcMode++;
 	}
+	delete manager;
+	manager = nullptr;
 
 	// Set a null mode at the end
 	GraphicsMode nullMode;
