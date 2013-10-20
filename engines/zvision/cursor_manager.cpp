@@ -105,6 +105,7 @@ void CursorManager::changeCursor(const Common::String &cursorName, bool pushed) 
 					char buffer[25];
 					strcpy(buffer, _zgiCursorFileNames[i]);
 					buffer[3] += 2;
+					changeCursor(ZorkCursor(buffer));
 				}
 				return;
 			}
