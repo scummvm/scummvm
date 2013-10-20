@@ -38,13 +38,13 @@
 namespace ZVision {
 
 AnimationControl::AnimationControl(ZVision *engine, uint32 controlKey, const Common::String &fileName)
-		: Control(engine, controlKey), 
-		  _fileType(RLF),
-		  _loopCount(1),
-		  _currentLoop(0),
-		  _accumulatedTime(0),
-		  _cachedFrame(0),
-		  _cachedFrameNeedsDeletion(false) {
+	: Control(engine, controlKey),
+	  _fileType(RLF),
+	  _loopCount(1),
+	  _currentLoop(0),
+	  _accumulatedTime(0),
+	  _cachedFrame(0),
+	  _cachedFrameNeedsDeletion(false) {
 	if (fileName.hasSuffix(".rlf")) {
 		_fileType = RLF;
 		_animation.rlf = new RlfAnimation(fileName, false);

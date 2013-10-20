@@ -42,17 +42,17 @@ struct Puzzle {
 
 	/** How criteria should be decided */
 	enum CriteriaOperator {
-		EQUAL_TO,
-		NOT_EQUAL_TO,
-		GREATER_THAN,
-		LESS_THAN
+	    EQUAL_TO,
+	    NOT_EQUAL_TO,
+	    GREATER_THAN,
+	    LESS_THAN
 	};
 
 	/** Criteria for a Puzzle result to be fired */
 	struct CriteriaEntry {
 		/** The key of a global state */
 		uint32 key;
-		/**  
+		/**
 		 * What we're comparing the value of the global state against
 		 * This can either be a pure value or it can be the key of another global state
 		 */
@@ -64,9 +64,9 @@ struct Puzzle {
 	};
 
 	enum StateFlags {
-		ONCE_PER_INST = 0x01,
-		DO_ME_NOW = 0x02, // Somewhat useless flag since anything that needs to be done immediately has no criteria
-		DISABLED = 0x04
+	    ONCE_PER_INST = 0x01,
+	    DO_ME_NOW = 0x02, // Somewhat useless flag since anything that needs to be done immediately has no criteria
+	    DISABLED = 0x04
 	};
 
 	uint32 key;

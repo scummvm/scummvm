@@ -36,19 +36,25 @@ class ZVision;
 class SideFX {
 public:
 
-	enum SideFXType{
-		SIDEFX_UNK   = 0,
-		SIDEFX_TIMER = 1
+	enum SideFXType {
+	    SIDEFX_UNK   = 0,
+	    SIDEFX_TIMER = 1
 	};
 
 	SideFX() : _engine(0), _key(0), _type(SIDEFX_UNK) {}
 	SideFX(ZVision *engine, uint32 key, SideFXType type) : _engine(engine), _key(key), _type(type) {}
 	virtual ~SideFX() {}
 
-	uint32 getKey() { return _key; }
-	SideFXType getType() { return _type; }
+	uint32 getKey() {
+		return _key;
+	}
+	SideFXType getType() {
+		return _type;
+	}
 
-	virtual bool process(uint32 deltaTimeInMillis) { return false; }
+	virtual bool process(uint32 deltaTimeInMillis) {
+		return false;
+	}
 	/**
 	 * Serialize a SideFX for save game use. This should only be used if a SideFX needs
 	 * to save values that would be different from initialization. AKA a TimerNode needs to
@@ -78,10 +84,12 @@ public:
 	 *
 	 * @return    Does the SideFX need save game serialization?
 	 */
-	virtual inline bool needsSerialization() { return false; }
+	virtual inline bool needsSerialization() {
+		return false;
+	}
 
 protected:
-	ZVision * _engine;
+	ZVision *_engine;
 	uint32 _key;
 	SideFXType _type;
 

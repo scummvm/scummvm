@@ -36,7 +36,7 @@ namespace ZVision {
 class LzssReadStream : public Common::ReadStream {
 public:
 	/**
-	 * A class that decompresses LZSS data and implements ReadStream for easy access 
+	 * A class that decompresses LZSS data and implements ReadStream for easy access
 	 * to the decompiled data.
 	 *
 	 * @param source              The source data
@@ -45,7 +45,7 @@ public:
 
 private:
 	enum {
-		BLOCK_SIZE = 0x1000
+	    BLOCK_SIZE = 0x1000
 	};
 
 private:
@@ -64,7 +64,7 @@ private:
 	 *
 	 * @param numberOfBytes    How many bytes to decompress. This is a count of source bytes, not destination bytes
 	 */
-	uint32 decompressBytes(byte* destination, uint32 numberOfBytes);
+	uint32 decompressBytes(byte *destination, uint32 numberOfBytes);
 };
 
 }

@@ -48,9 +48,9 @@ public:
 
 private:
 	enum {
-		NUM_CURSORS = 18,
-		// WARNING: The index 11 is hardcoded. If you change the order of _cursorNames/_zgiCursorFileNames/_zNemCursorFileNames, you HAVE to change the index accordingly
-		IDLE_CURSOR_INDEX = 11
+	    NUM_CURSORS = 18,
+	    // WARNING: The index 11 is hardcoded. If you change the order of _cursorNames/_zgiCursorFileNames/_zNemCursorFileNames, you HAVE to change the index accordingly
+	    IDLE_CURSOR_INDEX = 11
 	};
 
 	ZVision *_engine;
@@ -77,7 +77,7 @@ public:
 	/**
 	 * Parses a cursor name into a cursor file then creates and shows that cursor.
 	 *
-	 * @param cursorName    The name of a cursor. This *HAS* to correspond to one of the entries in _cursorNames[] 
+	 * @param cursorName    The name of a cursor. This *HAS* to correspond to one of the entries in _cursorNames[]
 	 * @param pushed        Should the cursor be pushed (true) or not pushed (false) (Another way to say it: down or up)
 	 */
 	void changeCursor(const Common::String &cursorName, bool pushed);

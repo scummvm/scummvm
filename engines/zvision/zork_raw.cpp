@@ -191,9 +191,9 @@ bool RawZorkStream::rewind() {
 }
 
 Audio::RewindableAudioStream *makeRawZorkStream(Common::SeekableReadStream *stream,
-                                                int rate,
-								                bool stereo,
-                                                DisposeAfterUse::Flag disposeAfterUse) {
+        int rate,
+        bool stereo,
+        DisposeAfterUse::Flag disposeAfterUse) {
 	if (stereo)
 		assert(stream->size() % 2 == 0);
 
@@ -201,9 +201,9 @@ Audio::RewindableAudioStream *makeRawZorkStream(Common::SeekableReadStream *stre
 }
 
 Audio::RewindableAudioStream *makeRawZorkStream(const byte *buffer, uint32 size,
-                                                int rate,
-								                bool stereo,
-                                                DisposeAfterUse::Flag disposeAfterUse) {
+        int rate,
+        bool stereo,
+        DisposeAfterUse::Flag disposeAfterUse) {
 	return makeRawZorkStream(new Common::MemoryReadStream(buffer, size, disposeAfterUse), rate, stereo, DisposeAfterUse::YES);
 }
 
@@ -221,14 +221,13 @@ Audio::RewindableAudioStream *makeRawZorkStream(const Common::String &filePath, 
 			if (RawZorkStream::_zNemSoundParamLookupTable[i].identifier == (fileName[6]))
 				soundParams = RawZorkStream::_zNemSoundParamLookupTable[i];
 		}
-	}
-	else if (engine->getGameId() == GID_GRANDINQUISITOR) {
+	} else if (engine->getGameId() == GID_GRANDINQUISITOR) {
 		for (int i = 0; i < 6; ++i) {
 			if (RawZorkStream::_zgiSoundParamLookupTable[i].identifier == (fileName[7]))
 				soundParams = RawZorkStream::_zgiSoundParamLookupTable[i];
 		}
 	}
-	
+
 	if (soundParams.packed) {
 		return makeRawZorkStream(wrapBufferedSeekableReadStream(file, 2048, DisposeAfterUse::YES), soundParams.rate, soundParams.stereo, DisposeAfterUse::YES);
 	} else {

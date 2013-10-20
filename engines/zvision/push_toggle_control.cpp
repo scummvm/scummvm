@@ -35,7 +35,7 @@
 namespace ZVision {
 
 PushToggleControl::PushToggleControl(ZVision *engine, uint32 key, Common::SeekableReadStream &stream)
-		: Control(engine, key) {
+	: Control(engine, key) {
 	// Loop until we find the closing brace
 	Common::String line = stream.readLine();
 	trimCommentsAndWhiteSpace(&line);
@@ -76,7 +76,7 @@ void PushToggleControl::onMouseUp(const Common::Point &screenSpacePos, const Com
 	if (!_enabled) {
 		return;
 	}
-	
+
 	if (_hotspot.contains(backgroundImageSpacePos)) {
 		_engine->getScriptManager()->setStateValue(_key, 1);
 	}
@@ -86,7 +86,7 @@ bool PushToggleControl::onMouseMove(const Common::Point &screenSpacePos, const C
 	if (!_enabled) {
 		return false;
 	}
-	
+
 	if (_hotspot.contains(backgroundImageSpacePos)) {
 		_engine->getCursorManager()->changeCursor(_hoverCursor);
 		return true;

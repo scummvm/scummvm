@@ -53,7 +53,7 @@ struct ZfsEntryHeader {
 	uint32 unknown;
 };
 
-typedef Common::HashMap<Common::String, ZfsEntryHeader*, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> ZfsEntryHeaderMap;
+typedef Common::HashMap<Common::String, ZfsEntryHeader *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> ZfsEntryHeaderMap;
 
 class ZfsArchive : public Common::Archive {
 public:

@@ -51,7 +51,7 @@ class CursorManager;
 class StringManager;
 class SaveManager;
 class RlfAnimation;
- 
+
 class ZVision : public Engine {
 public:
 	ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc);
@@ -68,19 +68,19 @@ public:
 
 private:
 	enum {
-		WINDOW_WIDTH = 640,
-		WINDOW_HEIGHT = 480,
+	    WINDOW_WIDTH = 640,
+	    WINDOW_HEIGHT = 480,
 
-		//Zork nemesis working window sizes
-		ZNM_WORKING_WINDOW_WIDTH  = 512,
-		ZNM_WORKING_WINDOW_HEIGHT = 320,
+	    //Zork nemesis working window sizes
+	    ZNM_WORKING_WINDOW_WIDTH  = 512,
+	    ZNM_WORKING_WINDOW_HEIGHT = 320,
 
-		//ZGI(and default) working window sizes
-		WORKING_WINDOW_WIDTH  = 640,
-		WORKING_WINDOW_HEIGHT = 344,
+	    //ZGI(and default) working window sizes
+	    WORKING_WINDOW_WIDTH  = 640,
+	    WORKING_WINDOW_HEIGHT = 344,
 
-		ROTATION_SCREEN_EDGE_OFFSET = 60,
-		MAX_ROTATION_SPEED = 400 // Pixels per second
+	    ROTATION_SCREEN_EDGE_OFFSET = 60,
+	    MAX_ROTATION_SPEED = 400 // Pixels per second
 	};
 
 	Console *_console;
@@ -112,13 +112,27 @@ public:
 	Common::Error run();
 	void pauseEngineIntern(bool pause);
 
-	ScriptManager *getScriptManager() const { return _scriptManager; }
-	RenderManager *getRenderManager() const { return _renderManager; }
-	CursorManager *getCursorManager() const { return _cursorManager; }
-	SaveManager *getSaveManager() const { return _saveManager; }
-	StringManager *getStringManager() const { return _stringManager; }
-	Common::RandomSource *getRandomSource() const { return _rnd; }
-	ZVisionGameId getGameId() const { return _gameDescription->gameId; }
+	ScriptManager *getScriptManager() const {
+		return _scriptManager;
+	}
+	RenderManager *getRenderManager() const {
+		return _renderManager;
+	}
+	CursorManager *getCursorManager() const {
+		return _cursorManager;
+	}
+	SaveManager *getSaveManager() const {
+		return _saveManager;
+	}
+	StringManager *getStringManager() const {
+		return _stringManager;
+	}
+	Common::RandomSource *getRandomSource() const {
+		return _rnd;
+	}
+	ZVisionGameId getGameId() const {
+		return _gameDescription->gameId;
+	}
 
 	/**
 	 * Play a video until it is finished. This is a blocking call. It will call
@@ -149,5 +163,5 @@ private:
 };
 
 } // End of namespace ZVision
- 
+
 #endif

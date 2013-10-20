@@ -34,18 +34,18 @@ namespace ZVision {
 
 TimerNode::TimerNode(ZVision *engine, uint32 key, uint timeInSeconds)
 	: SideFX(engine, key, SIDEFX_TIMER) {
-    if (_engine->getGameId() == GID_NEMESIS)
-        _timeLeft = timeInSeconds * 1000;
-    else if (_engine->getGameId() == GID_GRANDINQUISITOR)
-        _timeLeft = timeInSeconds * 100;
-    _engine->getScriptManager()->setStateValue(_key, 1);
+	if (_engine->getGameId() == GID_NEMESIS)
+		_timeLeft = timeInSeconds * 1000;
+	else if (_engine->getGameId() == GID_GRANDINQUISITOR)
+		_timeLeft = timeInSeconds * 100;
+	_engine->getScriptManager()->setStateValue(_key, 1);
 }
 
 TimerNode::~TimerNode() {
-    if (_timeLeft <= 0)
+	if (_timeLeft <= 0)
 		_engine->getScriptManager()->setStateValue(_key, 2);
 	else
-        _engine->getScriptManager()->setStateValue(_key, _timeLeft); // If timer was stopped by stop or kill
+		_engine->getScriptManager()->setStateValue(_key, _timeLeft); // If timer was stopped by stop or kill
 }
 
 bool TimerNode::process(uint32 deltaTimeInMillis) {

@@ -72,8 +72,8 @@ void removeDuplicateEntries(Common::Array<T> &container) {
 	uint newLength = 1;
 	uint j;
 
-	for(uint i = 1; i < container.size(); i++) {
-		for(j = 0; j < newLength; j++) {
+	for (uint i = 1; i < container.size(); i++) {
+		for (j = 0; j < newLength; j++) {
 			if (container[i] == container[j]) {
 				break;
 			}
@@ -93,7 +93,7 @@ void removeDuplicateEntries(Common::Array<T> &container) {
 }
 
 /**
- * Gets the name of the file (including extension). Forward or back slashes 
+ * Gets the name of the file (including extension). Forward or back slashes
  * are interpreted as directory changes
  *
  * @param fullPath    A full or partial path to the file. Ex: folderOne/folderTwo/file.txt

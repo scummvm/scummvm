@@ -54,13 +54,13 @@ private:
 	static const uint32 SAVEGAME_ID;
 
 	enum {
-		SAVE_VERSION = 1
+	    SAVE_VERSION = 1
 	};
 
 public:
 	/**
 	 * Called every room change. Saves the state of the room just before
-	 * we switched rooms. Uses ZVision::generateAutoSaveFileName() to 
+	 * we switched rooms. Uses ZVision::generateAutoSaveFileName() to
 	 * create the save file name.
 	 */
 	void autoSave();

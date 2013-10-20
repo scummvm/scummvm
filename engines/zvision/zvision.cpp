@@ -47,28 +47,28 @@
 
 
 namespace ZVision {
- 
+
 ZVision::ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc)
-		: Engine(syst),
-		  _gameDescription(gameDesc),
-		  _workingWindow_ZGI((WINDOW_WIDTH - WORKING_WINDOW_WIDTH) / 2, (WINDOW_HEIGHT - WORKING_WINDOW_HEIGHT) / 2, ((WINDOW_WIDTH - WORKING_WINDOW_WIDTH) / 2) + WORKING_WINDOW_WIDTH, ((WINDOW_HEIGHT - WORKING_WINDOW_HEIGHT) / 2) + WORKING_WINDOW_HEIGHT),
-		  _workingWindow_ZNM((WINDOW_WIDTH - ZNM_WORKING_WINDOW_WIDTH) / 2, (WINDOW_HEIGHT - ZNM_WORKING_WINDOW_HEIGHT) / 2, ((WINDOW_WIDTH - ZNM_WORKING_WINDOW_WIDTH) / 2) + ZNM_WORKING_WINDOW_WIDTH, ((WINDOW_HEIGHT - ZNM_WORKING_WINDOW_HEIGHT) / 2) + ZNM_WORKING_WINDOW_HEIGHT),
-		  _workingWindow(gameDesc->gameId == GID_NEMESIS ? _workingWindow_ZNM : _workingWindow_ZGI),
-		  _pixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0), /*RGB 565*/
-		  _desiredFrameTime(33), /* ~30 fps */
-		  _clock(_system),
-		  _scriptManager(nullptr),
-		  _renderManager(nullptr),
-		  _saveManager(nullptr),
-		  _stringManager(nullptr),
-		  _cursorManager(nullptr) {
- 
+	: Engine(syst),
+	  _gameDescription(gameDesc),
+	  _workingWindow_ZGI((WINDOW_WIDTH - WORKING_WINDOW_WIDTH) / 2, (WINDOW_HEIGHT - WORKING_WINDOW_HEIGHT) / 2, ((WINDOW_WIDTH - WORKING_WINDOW_WIDTH) / 2) + WORKING_WINDOW_WIDTH, ((WINDOW_HEIGHT - WORKING_WINDOW_HEIGHT) / 2) + WORKING_WINDOW_HEIGHT),
+	  _workingWindow_ZNM((WINDOW_WIDTH - ZNM_WORKING_WINDOW_WIDTH) / 2, (WINDOW_HEIGHT - ZNM_WORKING_WINDOW_HEIGHT) / 2, ((WINDOW_WIDTH - ZNM_WORKING_WINDOW_WIDTH) / 2) + ZNM_WORKING_WINDOW_WIDTH, ((WINDOW_HEIGHT - ZNM_WORKING_WINDOW_HEIGHT) / 2) + ZNM_WORKING_WINDOW_HEIGHT),
+	  _workingWindow(gameDesc->gameId == GID_NEMESIS ? _workingWindow_ZNM : _workingWindow_ZGI),
+	  _pixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0), /*RGB 565*/
+	  _desiredFrameTime(33), /* ~30 fps */
+	  _clock(_system),
+	  _scriptManager(nullptr),
+	  _renderManager(nullptr),
+	  _saveManager(nullptr),
+	  _stringManager(nullptr),
+	  _cursorManager(nullptr) {
+
 	debug(1, "ZVision::ZVision");
 }
 
 ZVision::~ZVision() {
 	debug(1, "ZVision::~ZVision");
- 
+
 	// Dispose of resources
 	delete _console;
 	delete _cursorManager;
@@ -77,15 +77,15 @@ ZVision::~ZVision() {
 	delete _renderManager;
 	delete _scriptManager;
 	delete _rnd;
- 
+
 	// Remove all of our debug levels
 	DebugMan.clearAllDebugChannels();
 }
 
 void ZVision::initialize() {
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
-	// TODO: There are 10 file clashes when we flatten the directories. 
-	// From a quick look, the files are exactly the same, so it shouldn't matter. 
+	// TODO: There are 10 file clashes when we flatten the directories.
+	// From a quick look, the files are exactly the same, so it shouldn't matter.
 	// But I'm noting it here just in-case it does become a problem.
 	SearchMan.addSubDirectoryMatching(gameDataDir, "data1", 0, 4, true);
 	SearchMan.addSubDirectoryMatching(gameDataDir, "data2", 0, 4, true);
@@ -143,7 +143,7 @@ Common::Error ZVision::run() {
 
 		processEvents();
 
-		// Call _renderManager->update() first so the background renders 
+		// Call _renderManager->update() first so the background renders
 		// before anything that puzzles/controls will render
 		_renderManager->update(deltaTime);
 		_scriptManager->update(deltaTime);

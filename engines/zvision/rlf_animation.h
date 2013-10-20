@@ -41,8 +41,8 @@ public:
 
 private:
 	enum EncodingType {
-		Masked,
-		Simple
+	    Masked,
+	    Simple
 	};
 
 	struct Frame {
@@ -68,10 +68,18 @@ private:
 	uint32 _frameBufferByteSize;
 
 public:
-	uint frameCount() { return _frameCount; }
-	uint width() { return _width; }
-	uint height() { return _height; }
-	uint32 frameTime() { return _frameTime; }
+	uint frameCount() {
+		return _frameCount;
+	}
+	uint width() {
+		return _width;
+	}
+	uint height() {
+		return _height;
+	}
+	uint32 frameTime() {
+		return _frameTime;
+	}
 
 	/**
 	 * Seeks to the frameNumber and updates the internal Surface with
@@ -104,7 +112,9 @@ public:
 	/**
 	 * @return Is the currentFrame is the last frame in the animation?
 	 */
-	bool endOfAnimation() { return _currentFrame == (int)_frameCount - 1; }
+	bool endOfAnimation() {
+		return _currentFrame == (int)_frameCount - 1;
+	}
 
 private:
 	/**

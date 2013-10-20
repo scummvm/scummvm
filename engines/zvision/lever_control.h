@@ -41,8 +41,8 @@ public:
 
 private:
 	enum FileType {
-		RLF = 1,
-		AVI = 2
+	    RLF = 1,
+	    AVI = 2
 	};
 
 	struct Direction {
@@ -59,8 +59,8 @@ private:
 	};
 
 	enum {
-		ANGLE_DELTA = 30, // How far off a mouse angle can be and still be considered valid. This is in both directions, so the total buffer zone is (2 * ANGLE_DELTA)
-		ANIMATION_FRAME_TIME = 30 // In millis
+	    ANGLE_DELTA = 30, // How far off a mouse angle can be and still be considered valid. This is in both directions, so the total buffer zone is (2 * ANGLE_DELTA)
+	    ANIMATION_FRAME_TIME = 30 // In millis
 	};
 
 private:

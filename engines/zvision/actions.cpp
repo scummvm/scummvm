@@ -103,8 +103,8 @@ bool ActionChangeLocation::execute(ZVision *engine) {
 
 ActionCrossfade::ActionCrossfade(const Common::String &line) {
 	sscanf(line.c_str(),
-           "%*[^(](%u %u %u %u %u %u %u)",
-           &_keyOne, &_keyTwo, &_oneStartVolume, &_twoStartVolume, &_oneEndVolume, &_twoEndVolume, &_timeInMillis);
+	       "%*[^(](%u %u %u %u %u %u %u)",
+	       &_keyOne, &_keyTwo, &_oneStartVolume, &_twoStartVolume, &_oneEndVolume, &_twoEndVolume, &_timeInMillis);
 }
 
 bool ActionCrossfade::execute(ZVision *engine) {
@@ -123,7 +123,7 @@ ActionDisableControl::ActionDisableControl(const Common::String &line) {
 
 bool ActionDisableControl::execute(ZVision *engine) {
 	debug("Disabling control %u", _key);
-	
+
 	engine->getScriptManager()->disableControl(_key);
 
 	return true;
@@ -189,7 +189,7 @@ bool ActionMusic::execute(ZVision *engine) {
 	} else {
 		audioStream = makeRawZorkStream(_fileName, engine);
 	}
-	
+
 	if (_loop) {
 		Audio::LoopingAudioStream *loopingAudioStream = new Audio::LoopingAudioStream(audioStream, 0, DisposeAfterUse::YES);
 		engine->_mixer->playStream(_soundType, 0, loopingAudioStream, -1, _volume);
@@ -235,8 +235,8 @@ ActionPlayAnimation::ActionPlayAnimation(const Common::String &line) {
 
 	// The two %*u are always 0 and dont seem to have a use
 	sscanf(line.c_str(),
-           "%*[^:]:%*[^:]:%u(%25s %u %u %u %u %u %u %u %*u %*u %u %u)",
-           &_key, fileName, &_x, &_y, &_width, &_height, &_start, &_end, &_loopCount, &_mask, &_framerate);
+	       "%*[^:]:%*[^:]:%u(%25s %u %u %u %u %u %u %u %*u %*u %u %u)",
+	       &_key, fileName, &_x, &_y, &_width, &_height, &_start, &_end, &_loopCount, &_mask, &_framerate);
 
 	_fileName = Common::String(fileName);
 }
@@ -253,8 +253,8 @@ bool ActionPlayAnimation::execute(ZVision *engine) {
 
 ActionPlayPreloadAnimation::ActionPlayPreloadAnimation(const Common::String &line) {
 	sscanf(line.c_str(),
-		   "%*[^:]:%*[^:]:%u(%u %u %u %u %u %u %u %u)",
-		   &_animationKey, &_controlKey, &_x1, &_y1, &_x2, &_y2, &_startFrame, &_endFrame, &_loopCount);
+	       "%*[^:]:%*[^:]:%u(%u %u %u %u %u %u %u %u)",
+	       &_animationKey, &_controlKey, &_x1, &_y1, &_x2, &_y2, &_startFrame, &_endFrame, &_loopCount);
 }
 
 bool ActionPlayPreloadAnimation::execute(ZVision *engine) {
@@ -320,7 +320,7 @@ ActionSetPartialScreen::ActionSetPartialScreen(const Common::String &line) {
 
 bool ActionSetPartialScreen::execute(ZVision *engine) {
 	RenderManager *renderManager = engine->getRenderManager();
-	
+
 	if (_backgroundColor > 0) {
 		renderManager->clearWorkingWindowTo555Color(_backgroundColor);
 	}

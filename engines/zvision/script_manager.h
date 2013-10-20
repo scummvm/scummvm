@@ -64,9 +64,9 @@ public:
 
 private:
 	ZVision *_engine;
-	/** 
-	 * Holds the global state variable. Do NOT directly modify this. Use the accessors and 
-	 * mutators getStateValue() and setStateValue(). This ensures that Puzzles that reference a 
+	/**
+	 * Holds the global state variable. Do NOT directly modify this. Use the accessors and
+	 * mutators getStateValue() and setStateValue(). This ensures that Puzzles that reference a
 	 * particular state key are checked after the key is modified.
 	 */
 	StateMap _globalState;
@@ -169,7 +169,7 @@ public:
 private:
 	/**
 	 * Parses the stream into a Puzzle object
-	 * Helper method for parseScrFile. 
+	 * Helper method for parseScrFile.
 	 *
 	 * @param puzzle    The object to store what is parsed
 	 * @param stream    Scr file stream
@@ -178,7 +178,7 @@ private:
 
 	/**
 	 * Parses the stream into a Criteria object
-	 * Helper method for parsePuzzle. 
+	 * Helper method for parsePuzzle.
 	 *
 	 * @param criteria    Pointer to the Criteria object to fill
 	 * @param stream      Scr file stream
@@ -188,7 +188,7 @@ private:
 
 	/**
 	 * Parses the stream into a ResultAction objects
-	 * Helper method for parsePuzzle. 
+	 * Helper method for parsePuzzle.
 	 *
 	 * @param stream        Scr file stream
 	 * @param actionList    The list where the results will be added

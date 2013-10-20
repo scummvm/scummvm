@@ -32,7 +32,7 @@ class String;
 
 namespace ZVision {
 
-/** 
+/**
  * Utility class to parse and hold cursor data
  * Modeled off Graphics::Cursor
  */
@@ -53,12 +53,24 @@ private:
 public:
 	ZorkCursor &operator=(const ZorkCursor &other);
 
-	uint16 getWidth() const { return _width; }
-	uint16 getHeight() const { return _height; }
-	uint16 getHotspotX() const { return _hotspotX; }
-	uint16 getHotspotY() const { return _hotspotY; }
-	byte getKeyColor() const { return 0; }
-	const byte *getSurface() const { return (const byte *)_surface.getPixels(); }
+	uint16 getWidth() const {
+		return _width;
+	}
+	uint16 getHeight() const {
+		return _height;
+	}
+	uint16 getHotspotX() const {
+		return _hotspotX;
+	}
+	uint16 getHotspotY() const {
+		return _hotspotY;
+	}
+	byte getKeyColor() const {
+		return 0;
+	}
+	const byte *getSurface() const {
+		return (const byte *)_surface.getPixels();
+	}
 };
 
 } // End of namespace ZVision

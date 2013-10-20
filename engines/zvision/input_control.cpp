@@ -37,12 +37,12 @@
 
 namespace ZVision {
 
-InputControl::InputControl(ZVision *engine, uint32 key, Common::SeekableReadStream &stream) 
-		: Control(engine, key),
-		  _nextTabstop(0),
-		  _focused(false),
-		  _textChanged(false),
-		  _cursorOffset(0) {
+InputControl::InputControl(ZVision *engine, uint32 key, Common::SeekableReadStream &stream)
+	: Control(engine, key),
+	  _nextTabstop(0),
+	  _focused(false),
+	  _textChanged(false),
+	  _cursorOffset(0) {
 	// Loop until we find the closing brace
 	Common::String line = stream.readLine();
 	trimCommentsAndWhiteSpace(&line);

@@ -44,7 +44,9 @@ public:
 	bool process(uint32 deltaTimeInMillis);
 	void serialize(Common::WriteStream *stream);
 	void deserialize(Common::SeekableReadStream *stream);
-	inline bool needsSerialization() { return true; }
+	inline bool needsSerialization() {
+		return true;
+	}
 
 private:
 	int32 _timeLeft;

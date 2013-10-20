@@ -44,7 +44,7 @@ void ScriptManager::parseScrFile(const Common::String &fileName, bool isGlobal) 
 		return;
 	}
 
-	while(!file.eos()) {
+	while (!file.eos()) {
 		Common::String line = file.readLine();
 		if (file.err()) {
 			warning("Error parsing scr file: %s", fileName.c_str());
@@ -57,7 +57,7 @@ void ScriptManager::parseScrFile(const Common::String &fileName, bool isGlobal) 
 
 		if (line.matchString("puzzle:*", true)) {
 			Puzzle *puzzle = new Puzzle();
-			sscanf(line.c_str(),"puzzle:%u",&(puzzle->key));
+			sscanf(line.c_str(), "puzzle:%u", &(puzzle->key));
 
 			parsePuzzle(puzzle, file);
 			if (isGlobal) {
@@ -236,7 +236,7 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 		} else if (line.matchString("*:ttytext*", true)) {
 			// TODO: Implement ActionTTYText
 		} else if (line.matchString("*:universe_music*", true)) {
-			// TODO: Implement ActionUniverseMusic		
+			// TODO: Implement ActionUniverseMusic
 		} else if (line.matchString("*:copy_file*", true)) {
 			// Not used. Purposely left empty
 		} else {

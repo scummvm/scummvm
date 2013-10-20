@@ -38,19 +38,19 @@
 namespace ZVision {
 
 RenderManager::RenderManager(OSystem *system, uint32 windowWidth, uint32 windowHeight, const Common::Rect workingWindow, const Graphics::PixelFormat pixelFormat)
-		: _system(system),
-		  _workingWidth(workingWindow.width()),
-		  _workingHeight(workingWindow.height()),
-		  _screenCenterX(_workingWidth / 2),
-		  _screenCenterY(_workingHeight / 2),
-		  _workingWindow(workingWindow),
-		  _pixelFormat(pixelFormat),
-		  _backgroundWidth(0),
-		  _backgroundHeight(0),
-		  _backgroundInverseVelocity(0),
-		  _backgroundOffset(0, 0),
-		  _accumulatedVelocityMilliseconds(0),
-		  _renderTable(_workingWidth, _workingHeight) {
+	: _system(system),
+	  _workingWidth(workingWindow.width()),
+	  _workingHeight(workingWindow.height()),
+	  _screenCenterX(_workingWidth / 2),
+	  _screenCenterY(_workingHeight / 2),
+	  _workingWindow(workingWindow),
+	  _pixelFormat(pixelFormat),
+	  _backgroundWidth(0),
+	  _backgroundHeight(0),
+	  _backgroundInverseVelocity(0),
+	  _backgroundOffset(0, 0),
+	  _accumulatedVelocityMilliseconds(0),
+	  _renderTable(_workingWidth, _workingHeight) {
 
 	_workingWindowBuffer.create(_workingWidth, _workingHeight, _pixelFormat);
 	_backBuffer.create(windowWidth, windowHeight, pixelFormat);
@@ -159,7 +159,7 @@ void RenderManager::clearWorkingWindowTo555Color(uint16 color) {
 	}
 }
 
-void RenderManager::renderSubRectToScreen(Graphics::Surface &surface, int16 destinationX, int16 destinationY, bool wrap) {	
+void RenderManager::renderSubRectToScreen(Graphics::Surface &surface, int16 destinationX, int16 destinationY, bool wrap) {
 	int16 subRectX = 0;
 	int16 subRectY = 0;
 
@@ -184,8 +184,8 @@ void RenderManager::renderSubRectToScreen(Graphics::Surface &surface, int16 dest
 	if (wrap) {
 		_backgroundWidth = surface.w;
 		_backgroundHeight = surface.h;
-	
-		if (destinationX > 0) { 
+
+		if (destinationX > 0) {
 			// Move destinationX to 0
 			subRectX = surface.w - destinationX;
 			destinationX = 0;
@@ -373,7 +373,7 @@ Common::Rect RenderManager::renderTextToWorkingWindow(uint32 idNumber, const Com
 	entry.alphaColor = 0;
 	entry.destX = destX;
 	entry.destY = destY;
-	
+
 	// Draw the text to the working window
 	entry.data = font->drawTextToSurface(text, textColor, maxWidth, maxHeight, align, wrap);
 	entry.width = entry.data->w;

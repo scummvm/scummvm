@@ -35,16 +35,16 @@
 
 namespace ZVision {
 
-RlfAnimation::RlfAnimation(const Common::String &fileName, bool stream) 
-		: _stream(stream),
-		  _lastFrameRead(0),
-		  _frameCount(0),
-		  _width(0),
-		  _height(0),
-		  _frameTime(0),
-		  _frames(0),
-		  _currentFrame(-1),
-		  _frameBufferByteSize(0) {
+RlfAnimation::RlfAnimation(const Common::String &fileName, bool stream)
+	: _stream(stream),
+	  _lastFrameRead(0),
+	  _frameCount(0),
+	  _width(0),
+	  _height(0),
+	  _frameTime(0),
+	  _frames(0),
+	  _currentFrame(-1),
+	  _frameBufferByteSize(0) {
 	if (!_file.open(fileName)) {
 		warning("RLF animation file %s could not be opened", fileName.c_str());
 		return;
@@ -255,8 +255,8 @@ void RlfAnimation::decodeMaskedRunLengthEncoding(int8 *source, int8 *dest, uint3
 				numberOfSamples--;
 			}
 
-		// If numberOfSamples is >= 0, move destOffset forward ((numberOfSamples * 2) + 2)
-		// This function assumes the dest buffer has been memset with 0's.
+			// If numberOfSamples is >= 0, move destOffset forward ((numberOfSamples * 2) + 2)
+			// This function assumes the dest buffer has been memset with 0's.
 		} else {
 			if (sourceOffset + 1 >= sourceSize) {
 				return;
@@ -301,8 +301,8 @@ void RlfAnimation::decodeSimpleRunLengthEncoding(int8 *source, int8 *dest, uint3
 				numberOfSamples--;
 			}
 
-		// If numberOfSamples is >= 0, copy one sample from source to the 
-		// next (numberOfSamples + 2) dest spots
+			// If numberOfSamples is >= 0, copy one sample from source to the
+			// next (numberOfSamples + 2) dest spots
 		} else {
 			if (sourceOffset + 1 >= sourceSize) {
 				return;

@@ -35,9 +35,9 @@ public:
 
 public:
 	enum RenderState {
-		PANORAMA,
-		TILT,
-		FLAT
+	    PANORAMA,
+	    TILT,
+	    FLAT
 	};
 
 private:
@@ -59,12 +59,14 @@ private:
 	} _tiltOptions;
 
 public:
-	RenderState getRenderState() { return _renderState; }
+	RenderState getRenderState() {
+		return _renderState;
+	}
 	void setRenderState(RenderState newState);
 
 	const Common::Point convertWarpedCoordToFlatCoord(const Common::Point &point);
 
-	void mutateImage(uint16 *sourceBuffer, uint16* destBuffer, uint32 destWidth, const Common::Rect &subRect);
+	void mutateImage(uint16 *sourceBuffer, uint16 *destBuffer, uint32 destWidth, const Common::Rect &subRect);
 	void generateRenderTable();
 
 	void setPanoramaFoV(float fov);

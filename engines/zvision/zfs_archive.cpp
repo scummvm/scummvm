@@ -52,7 +52,7 @@ ZfsArchive::ZfsArchive(const Common::String &fileName, Common::SeekableReadStrea
 ZfsArchive::~ZfsArchive() {
 	debug(1, "ZfsArchive Destructor Called");
 	ZfsEntryHeaderMap::iterator it = _entryHeaders.begin();
-	for ( ; it != _entryHeaders.end(); ++it) {
+	for (; it != _entryHeaders.end(); ++it) {
 		delete it->_value;
 	}
 }
@@ -79,7 +79,7 @@ void ZfsArchive::readHeaders(Common::SeekableReadStream *stream) {
 		// Read in each entry header
 		for (uint32 i = 0; i < _header.filesPerBlock; ++i) {
 			ZfsEntryHeader entryHeader;
-			
+
 			entryHeader.name = readEntryName(stream);
 			entryHeader.offset = stream->readUint32LE();
 			entryHeader.id = stream->readUint32LE();
@@ -138,7 +138,7 @@ Common::SeekableReadStream *ZfsArchive::createReadStreamForMember(const Common::
 	zfsArchive.seek(entryHeader->offset);
 
 	// This *HAS* to be malloc (not new[]) because MemoryReadStream uses free() to free the memory
-	byte* buffer = (byte *)malloc(entryHeader->size);
+	byte *buffer = (byte *)malloc(entryHeader->size);
 	zfsArchive.read(buffer, entryHeader->size);
 	// Decrypt the data in place
 	if (_header.xorKey != 0)

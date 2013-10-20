@@ -46,13 +46,13 @@ ScriptManager::ScriptManager(ZVision *engine)
 
 ScriptManager::~ScriptManager() {
 	for (PuzzleList::iterator iter = _activePuzzles.begin(); iter != _activePuzzles.end(); ++iter) {
-		delete (*iter);
+		delete(*iter);
 	}
 	for (PuzzleList::iterator iter = _globalPuzzles.begin(); iter != _globalPuzzles.end(); ++iter) {
-		delete (*iter);
+		delete(*iter);
 	}
 	for (ControlList::iterator iter = _activeControls.begin(); iter != _activeControls.end(); ++iter) {
-		delete (*iter);
+		delete(*iter);
 	}
 }
 
@@ -108,10 +108,10 @@ void ScriptManager::createReferenceTable() {
 }
 
 void ScriptManager::updateNodes(uint deltaTimeMillis) {
-    // If process() returns true, it means the node can be deleted
+	// If process() returns true, it means the node can be deleted
 	for (SideFXList::iterator iter = _activeSideFx.begin(); iter != _activeSideFx.end();) {
 		if ((*iter)->process(deltaTimeMillis)) {
-			delete (*iter);
+			delete(*iter);
 			// Remove the node
 			iter = _activeSideFx.erase(iter);
 		} else {
@@ -121,7 +121,7 @@ void ScriptManager::updateNodes(uint deltaTimeMillis) {
 	// If process() returns true, it means the node can be deleted
 	for (ControlList::iterator iter = _activeControls.begin(); iter != _activeControls.end();) {
 		if ((*iter)->process(deltaTimeMillis)) {
-			delete (*iter);
+			delete(*iter);
 			// Remove the node
 			iter = _activeControls.erase(iter);
 		} else {
@@ -137,7 +137,7 @@ void ScriptManager::checkPuzzleCriteria() {
 		// Check if the puzzle is already finished
 		// Also check that the puzzle isn't disabled
 		if (getStateValue(puzzle->key) == 1 &&
-			(puzzle->flags & Puzzle::DISABLED) == 0) {
+		        (puzzle->flags & Puzzle::DISABLED) == 0) {
 			continue;
 		}
 
@@ -341,11 +341,11 @@ void ScriptManager::changeLocation(char world, char room, char node, char view, 
 	_referenceTable.clear();
 	_puzzlesToCheck.clear();
 	for (PuzzleList::iterator iter = _activePuzzles.begin(); iter != _activePuzzles.end(); ++iter) {
-		delete (*iter);
+		delete(*iter);
 	}
 	_activePuzzles.clear();
 	for (ControlList::iterator iter = _activeControls.begin(); iter != _activeControls.end(); ++iter) {
-		delete (*iter);
+		delete(*iter);
 	}
 	_activeControls.clear();
 

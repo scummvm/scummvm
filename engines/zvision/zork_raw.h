@@ -106,11 +106,19 @@ private:
 public:
 	int readBuffer(int16 *buffer, const int numSamples);
 
-	bool isStereo() const { return true; }
-	bool endOfData() const { return _endOfData; }
+	bool isStereo() const {
+		return true;
+	}
+	bool endOfData() const {
+		return _endOfData;
+	}
 
-	int getRate() const { return _rate; }
-	Audio::Timestamp getLength() const { return _playtime; }
+	int getRate() const {
+		return _rate;
+	}
+	Audio::Timestamp getLength() const {
+		return _playtime;
+	}
 
 	bool rewind();
 };
@@ -125,9 +133,9 @@ public:
  * @return           The new SeekableAudioStream (or 0 on failure).
  */
 Audio::RewindableAudioStream *makeRawZorkStream(const byte *buffer, uint32 size,
-                                                int rate,
-                                                bool stereo,
-                                                DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
+        int rate,
+        bool stereo,
+        DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
 
 /**
  * Creates an audio stream, which plays from the given stream.
@@ -138,9 +146,9 @@ Audio::RewindableAudioStream *makeRawZorkStream(const byte *buffer, uint32 size,
  * @return           The new SeekableAudioStream (or 0 on failure).
  */
 Audio::RewindableAudioStream *makeRawZorkStream(Common::SeekableReadStream *stream,
-                                                int rate,
-                                                bool stereo,
-                                                DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
+        int rate,
+        bool stereo,
+        DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
 
 Audio::RewindableAudioStream *makeRawZorkStream(const Common::String &filePath, ZVision *engine);
 

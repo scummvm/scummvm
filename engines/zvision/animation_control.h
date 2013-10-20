@@ -50,13 +50,13 @@ public:
 
 private:
 	enum FileType {
-		RLF = 1,
-		AVI = 2
+	    RLF = 1,
+	    AVI = 2
 	};
 
 private:
 	uint32 _animationKey;
-	
+
 	union {
 		RlfAnimation *rlf;
 		Video::VideoDecoder *avi;
@@ -76,10 +76,18 @@ private:
 public:
 	bool process(uint32 deltaTimeInMillis);
 
-	void setAnimationKey(uint32 animationKey) { _animationKey = animationKey; }
-	void setLoopCount(uint loopCount) { _loopCount = loopCount; }
-	void setXPos(int32 x) { _x = x; }
-	void setYPost(int32 y) { _y = y; }
+	void setAnimationKey(uint32 animationKey) {
+		_animationKey = animationKey;
+	}
+	void setLoopCount(uint loopCount) {
+		_loopCount = loopCount;
+	}
+	void setXPos(int32 x) {
+		_x = x;
+	}
+	void setYPost(int32 y) {
+		_y = y;
+	}
 };
 
 } // End of namespace ZVision

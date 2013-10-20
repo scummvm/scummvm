@@ -39,12 +39,12 @@
 namespace ZVision {
 
 TruetypeFont::TruetypeFont(ZVision *engine, int32 fontHeight)
-		: _engine(engine),
-		  _fontHeight(fontHeight),
-		  _font(0),
-		  _lineHeight(0),
-		  _maxCharWidth(0),
-		  _maxCharHeight(0) {
+	: _engine(engine),
+	  _fontHeight(fontHeight),
+	  _font(0),
+	  _lineHeight(0),
+	  _maxCharWidth(0),
+	  _maxCharHeight(0) {
 }
 
 TruetypeFont::~TruetypeFont(void) {
