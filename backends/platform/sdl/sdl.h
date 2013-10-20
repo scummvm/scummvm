@@ -30,6 +30,8 @@
 #include "backends/events/sdl/sdl-events.h"
 #include "backends/log/log.h"
 
+#include "common/array.h"
+
 /**
  * Base OSystem class for all SDL ports.
  */
@@ -108,7 +110,8 @@ protected:
 #ifdef USE_OPENGL
 	int _desktopWidth, _desktopHeight;
 
-	OSystem::GraphicsMode *_graphicsModes;
+	typedef Common::Array<GraphicsMode> GraphicsModeArray;
+	GraphicsModeArray _graphicsModes;
 	int _graphicsMode;
 	int _sdlModesCount;
 	int _glModesCount;
