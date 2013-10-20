@@ -112,6 +112,7 @@ protected:
 
 	typedef Common::Array<GraphicsMode> GraphicsModeArray;
 	GraphicsModeArray _graphicsModes;
+	Common::Array<int> _graphicsModeIds;
 	int _graphicsMode;
 	int _sdlModesCount;
 	int _glModesCount;
