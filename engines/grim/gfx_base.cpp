@@ -112,4 +112,50 @@ void SpecialtyMaterial::create(const char *data, int width, int height) {
 	g_driver->createMaterial(_texture, data, nullptr);
 }
 
+// taken from glm
+Math::Matrix4 GfxBase::makeLookMatrix(const Math::Vector3d& pos, const Math::Vector3d& interest, const Math::Vector3d& up) {
+	Math::Vector3d f = (interest - pos).getNormalized();
+	Math::Vector3d u = up.getNormalized();
+	Math::Vector3d s = Math::Vector3d::crossProduct(f, u).getNormalized();
+	u = Math::Vector3d::crossProduct(s, f);
+
+	Math::Matrix4 look;
+	look(0,0) = s.x();
+	look(1,0) = s.y();
+	look(2,0) = s.z();
+	look(0,1) = u.x();
+	look(1,1) = u.y();
+	look(2,1) = u.z();
+	look(0,2) = -f.x();
+	look(1,2) = -f.y();
+	look(2,2) = -f.z();
+	look(3,0) = -Math::Vector3d::dotProduct(s, pos);
+	look(3,1) = -Math::Vector3d::dotProduct(u, pos);
+	look(3,2) =  Math::Vector3d::dotProduct(f, pos);
+
+	look.transpose();
+
+	return look;
+}
+
+// taken from glm
+Math::Matrix4 GfxBase::makeProjMatrix(float fov, float nclip, float fclip) {
+	float right = nclip * tan(fov / 2 * (LOCAL_PI / 180));
+	float left = -right;
+	float top = right * 0.75;
+	float bottom = -right * 0.75;
+
+	Math::Matrix4 proj;
+	proj(0,0) = (2.0f * nclip) / (right - left);
+	proj(1,1) = (2.0f * nclip) / (top - bottom);
+	proj(2,0) = (right + left) / (right - left);
+	proj(2,1) = (top + bottom) / (top - bottom);
+	proj(2,2) = -(fclip + nclip) / (fclip - nclip);
+	proj(2,3) = -1.0f;
+	proj(3,2) = -(2.0f * fclip * nclip) / (fclip - nclip);
+	proj(3,3) = 0.0f;
+
+	return proj;
+}
+
 }

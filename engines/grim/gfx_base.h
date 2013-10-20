@@ -267,6 +267,9 @@ public:
 	virtual void drawBuffers() {}
 	virtual void refreshBuffers() {}
 
+	static Math::Matrix4 makeLookMatrix(const Math::Vector3d& pos, const Math::Vector3d& interest, const Math::Vector3d& up);
+	static Math::Matrix4 makeProjMatrix(float fov, float nclip, float fclip);
+
 protected:
 	static const int _gameHeight = 480;
 	static const int _gameWidth = 640;
