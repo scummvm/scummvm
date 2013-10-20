@@ -57,10 +57,6 @@ public:
 	virtual void setFeatureState(OSystem::Feature f, bool enable);
 	virtual bool getFeatureState(OSystem::Feature f);
 
-	// HACK: This is required for the SDL backend to switch between OpenGL SDL
-	// and Surface SDL.
-	static const OSystem::GraphicsMode *supportedGraphicsModes();
-
 	virtual const OSystem::GraphicsMode *getSupportedGraphicsModes() const;
 	virtual int getDefaultGraphicsMode() const;
 	virtual bool setGraphicsMode(int mode);

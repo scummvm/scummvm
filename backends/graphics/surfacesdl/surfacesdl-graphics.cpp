@@ -262,10 +262,6 @@ bool SurfaceSdlGraphicsManager::getFeatureState(OSystem::Feature f) {
 	}
 }
 
-const OSystem::GraphicsMode *SurfaceSdlGraphicsManager::supportedGraphicsModes() {
-	return s_supportedGraphicsModes;
-}
-
 const OSystem::GraphicsMode *SurfaceSdlGraphicsManager::getSupportedGraphicsModes() const {
 	return s_supportedGraphicsModes;
 }
