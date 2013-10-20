@@ -563,7 +563,7 @@ void OSystem_WINCE3::setGraphicsModeIntern() {
 void OSystem_WINCE3::initSDL() {
 	// Check if SDL has not been initialized
 	if (!_initedSDL) {
-		uint32 sdlFlags = SDL_INIT_EVENTTHREAD;
+		uint32 sdlFlags = SDL_INIT_EVENTTHREAD | SDL_INIT_VIDEO;
 		if (ConfMan.hasKey("disable_sdl_parachute"))
 			sdlFlags |= SDL_INIT_NOPARACHUTE;
 
@@ -578,6 +578,9 @@ void OSystem_WINCE3::initSDL() {
 
 		// Enable unicode support if possible
 		SDL_EnableUNICODE(1);
+
+		// Disable OS cursor
+		SDL_ShowCursor(SDL_DISABLE);
 
 		_initedSDL = true;
 	}

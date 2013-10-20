@@ -262,15 +262,14 @@ void OSystem_SDL::engineDone() {
 void OSystem_SDL::initSDL() {
 	// Check if SDL has not been initialized
 	if (!_initedSDL) {
-		uint32 sdlFlags = 0;
+		// We always initialize the video subsystem because we will need it to
+		// be initialized before the graphics managers to retrieve the desktop
+		// resolution, for example. WebOS also requires this initialization
+		// or otherwise the application won't start.
+		uint32 sdlFlags = SDL_INIT_VIDEO;
+
 		if (ConfMan.hasKey("disable_sdl_parachute"))
 			sdlFlags |= SDL_INIT_NOPARACHUTE;
-
-#if defined(WEBOS) || defined(USE_OPENGL)
-		// WebOS needs this flag or otherwise the application won't start.
-		// OpenGL SDL needs this to query the desktop resolution on startup.
-		sdlFlags |= SDL_INIT_VIDEO;
-#endif
 
 		// Initialize SDL (SDL Subsystems are initiliazed in the corresponding sdl managers)
 		if (SDL_Init(sdlFlags) == -1)
@@ -278,6 +277,9 @@ void OSystem_SDL::initSDL() {
 
 		// Enable unicode support if possible
 		SDL_EnableUNICODE(1);
+
+		// Disable OS cursor
+		SDL_ShowCursor(SDL_DISABLE);
 
 		_initedSDL = true;
 	}
