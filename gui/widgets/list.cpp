@@ -133,12 +133,14 @@ void ListWidget::setSelected(int item) {
 			abortEditMode();
 
 		_selectedItem = item;
-
 		// Notify clients that the selection changed.
 		sendCommand(kListSelectionChangedCmd, _selectedItem);
 
-		_currentPos = _selectedItem - _entriesPerPage / 2;
-		scrollToCurrent();
+		if (item != -1) {
+			_currentPos = _selectedItem - _entriesPerPage / 2;
+			scrollToCurrent();
+		}
+
 		draw();
 	}
 }
