@@ -105,6 +105,10 @@ void ScrollBarWidget::handleMouseDown(int x, int y, int button, int clickCount) 
 	checkBounds(old_pos);
 }
 
+void ScrollBarWidget::handleMouseWheel(int x, int y, int direction) {
+	handleScroll(direction * -kLineHeight, kLineHeight);
+}
+
 void ScrollBarWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 	_draggingPart = kNoPart;
 	_repeatTimer = 0;
