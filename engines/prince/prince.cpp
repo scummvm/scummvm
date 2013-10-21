@@ -36,7 +36,6 @@
 #include "graphics/surface.h"
 #include "graphics/palette.h"
 #include "graphics/pixelformat.h"
-#include "graphics/decoders/bmp.h"
 
 #include "engines/util.h"
 #include "engines/advancedDetector.h"
@@ -49,18 +48,20 @@
 #include "prince/graphics.h"
 #include "prince/script.h"
 
+#include "video/flic_decoder.h"
+
 namespace Prince {
 
 PrinceEngine::PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc) : 
     Engine(syst), _gameDescription(gameDesc), _graph(NULL), _script(NULL) {
-	_rnd = new Common::RandomSource("prince");
+    _rnd = new Common::RandomSource("prince");
 
 }
 
 PrinceEngine::~PrinceEngine() {
-	DebugMan.clearAllDebugChannels();
+    DebugMan.clearAllDebugChannels();
 
-	delete _rnd;
+    delete _rnd;
 }
 
 Common::Error PrinceEngine::run() {
@@ -71,8 +72,8 @@ Common::Error PrinceEngine::run() {
     
     debug("Adding all path: %s", gameDataDir.getPath().c_str());
 
-	SearchMan.addSubDirectoryMatching(gameDataDir, "all", 0, 2);
-	SearchMan.addSubDirectoryMatching(gameDataDir, "01", 0, 2);
+    SearchMan.addSubDirectoryMatching(gameDataDir, "all", 0, 2);
+    SearchMan.addSubDirectoryMatching(gameDataDir, "59", 0, 2);
 
     Common::SeekableReadStream * walizka = SearchMan.createReadStreamForMember("walizka");
 
@@ -80,27 +81,24 @@ Common::Error PrinceEngine::run() {
     if (!font1stream) 
         return Common::kPathNotFile;
 
-    Font font1 = Font();
-    if (font1.load(*font1stream)) {
-        font1.getCharWidth(103);
+    if (_font.load(*font1stream)) {
+        _font.getCharWidth(103);
     }
     delete font1stream;
 
     Common::SeekableReadStream *room = SearchMan.createReadStreamForMember("room");
 
-	//_frontScreen = new Graphics::Surface();
-	//_frontScreen->create(640, 480, Graphics::PixelFormat::createFormatCLUT8());
+    //_frontScreen = new Graphics::Surface();
+    //_frontScreen->create(640, 480, Graphics::PixelFormat::createFormatCLUT8());
 
     if (room) {
-        Graphics::BitmapDecoder roomBmp;
-        roomBmp.loadStream(*room);
+        _roomBmp.loadStream(*room);
         //_roomBackground = roomBmp.getSurface();
-        _system->getPaletteManager()->setPalette(roomBmp.getPalette(), 0, 256);
+        _system->getPaletteManager()->setPalette(_roomBmp.getPalette(), 0, 256);
 
         //font1.drawString(_frontScreen, "Hello World", 10, 10, 640, 1);
         //
-        _graph->_roomBackground = roomBmp.getSurface();
-#if 1
+#if 0
         MhwanhDecoder *walizkaBmp = new MhwanhDecoder();
         if (walizka) {
             debug("Loading walizka");
@@ -123,46 +121,77 @@ Common::Error PrinceEngine::run() {
 
         mainLoop();
         delete room;
-        delete walizkaBmp;
+        //delete walizkaBmp;
     }
 
-	return Common::kNoError;
+    return Common::kNoError;
+}
+
+bool PrinceEngine::PlayNextFrame()
+{
+    _graph->draw(_roomBmp.getSurface());
+
+    const Graphics::Surface *s = _flicPlayer.decodeNextFrame();
+    if (s)
+    {
+        _graph->drawTransparent(s);
+        _graph->change();
+    }
+
+    return true;
 }
 
 void PrinceEngine::mainLoop() {
-	//uint32 nextFrameTime = 0;
-	while (!shouldQuit()) {
-		Common::Event event;
-		Common::EventManager *eventMan = _system->getEventManager();
-		while (eventMan->pollEvent(event)) {
-			switch (event.type) {
-			case Common::EVENT_KEYDOWN:
-				break;
-			case Common::EVENT_KEYUP:
-				break;
-			case Common::EVENT_MOUSEMOVE:
-				break;
-			case Common::EVENT_LBUTTONDOWN:
-			case Common::EVENT_RBUTTONDOWN:
-				break;
-			case Common::EVENT_LBUTTONUP:
-			case Common::EVENT_RBUTTONUP:
-				break;
-			case Common::EVENT_QUIT:
-				break;
-			default:
-				break;
-			}
-		}
+    //uint32 nextFrameTime = 0;
+    uint32 an = 1;
+
+    while (!shouldQuit()) {
+        Common::Event event;
+        Common::EventManager *eventMan = _system->getEventManager();
+        while (eventMan->pollEvent(event)) {
+            switch (event.type) {
+            case Common::EVENT_KEYDOWN:
+                break;
+            case Common::EVENT_KEYUP:
+                break;
+            case Common::EVENT_MOUSEMOVE:
+                break;
+            case Common::EVENT_LBUTTONDOWN:
+            case Common::EVENT_RBUTTONDOWN:
+                break;
+            case Common::EVENT_LBUTTONUP:
+            case Common::EVENT_RBUTTONUP:
+                break;
+            case Common::EVENT_QUIT:
+                break;
+            default:
+                break;
+            }
+        }
 
         if (shouldQuit())
             return;
 
-        _script->step();
+        //_script->step();
+        if (_flicPlayer.endOfVideo())
+        {
+            Common::String streamName = Common::String::format("AN%02d", an++);
+            Common::SeekableReadStream * flicStream = SearchMan.createReadStreamForMember(streamName);
 
+            if (flicStream)
+            {
+                if (_flicPlayer.loadStream(flicStream))
+                {
+                    debug("%s loaded", streamName.c_str());
+                    _flicPlayer.start();
+                }
+            }
+        }
+
+        PlayNextFrame();
         _graph->update();
 
-		_system->delayMillis(40);
+        _system->delayMillis(40);
 
     }
 }

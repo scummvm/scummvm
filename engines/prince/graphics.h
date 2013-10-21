@@ -41,6 +41,10 @@ public:
 
     void setPalette(const byte *palette);
 
+    void draw(const Graphics::Surface *s);
+    void drawTransparent(const Graphics::Surface *s);
+
+    Graphics::Surface *_frontScreen;
     Graphics::Surface *_backScreen;
     const Graphics::Surface *_roomBackground;
 
@@ -50,7 +54,6 @@ private:
 
     bool _changed;
     byte _palette[3 * 256];
-    Graphics::Surface *_frontScreen;
 };
 
 }

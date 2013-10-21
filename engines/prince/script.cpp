@@ -9,7 +9,7 @@ namespace Prince {
 static const uint16 NUM_OPCODES = 144;
 
 Script::Script(PrinceEngine *vm) : 
-	_code(NULL), _stacktop(0), _vm(vm), _random("GroovieScripts") {
+	_code(NULL), _stacktop(0), _vm(vm), _random("GroovieScripts"), _opcodeNF(false) {
 }
 
 Script::~Script() {
@@ -44,24 +44,27 @@ void Script::debugScript(const char *s, ...) {
 }
 
 void Script::step() {
-    _lastInstruction = _currentInstruction;
-    // Prepare the base debug string
-    Common::String dstr = Common::String::format("@0x%04X: ", _currentInstruction);
+    while (!_opcodeNF)
+    {
+        _lastInstruction = _currentInstruction;
+        // Prepare the base debug string
+        Common::String dstr = Common::String::format("@0x%04X: ", _currentInstruction);
 
-	// Get the current opcode
-	_lastOpcode = readScript16bits();
+        // Get the current opcode
+        _lastOpcode = readScript16bits();
 
-	dstr += Common::String::format("op %02d: ", _lastOpcode);
+        dstr += Common::String::format("op %02d: ", _lastOpcode);
 
-    if (_lastOpcode > NUM_OPCODES)
-		error("Trying to execute unknown opcode %s", dstr.c_str());
+        if (_lastOpcode > NUM_OPCODES)
+            error("Trying to execute unknown opcode %s", dstr.c_str());
 
 
-    debug("%s", dstr.c_str());
+        debug("%s", dstr.c_str());
 
-	// Execute the current opcode
-	OpcodeFunc op = _opcodes[_lastOpcode];
-	(this->*op)();
+        // Execute the current opcode
+        OpcodeFunc op = _opcodes[_lastOpcode];
+        (this->*op)();
+    }
 }
 
 uint8 Script::getCodeByte(uint32 address) {
@@ -110,7 +113,7 @@ void Script::O_SETSAMPLE() {
     uint16 sampleId = readScript16bits();
     int32 sampleNameOffset = readScript32bits();
     const char * sampleName = (const char *)_code + _currentInstruction + sampleNameOffset - 4;
-    debugScript("O_SETSAMPLE %d %s", sampleName, sampleName);
+    debugScript("O_SETSAMPLE %d %s", sampleId, sampleName);
 }
 
 void Script::O_FREESAMPLE() {

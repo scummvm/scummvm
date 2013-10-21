@@ -30,10 +30,16 @@
 #include "common/textconsole.h"
 #include "common/rect.h"
 
+#include "graphics/decoders/bmp.h"
+
 #include "engines/engine.h"
 #include "engines/util.h"
 
 #include "audio/mixer.h"
+
+#include "video/flic_decoder.h"
+
+#include "prince/font.h"
 
 namespace Prince {
 
@@ -61,9 +67,15 @@ public:
 	const PrinceGameDescription *_gameDescription;
 	
 private:
+    bool PlayNextFrame();
+
 	Common::RandomSource *_rnd;
+    Video::FlicDecoder _flicPlayer;
+    Graphics::BitmapDecoder _roomBmp;
+
     GraphicsMan *_graph;
     Script *_script;
+    Font _font;
 	
     void mainLoop();
 
