@@ -31,8 +31,6 @@
 #include "gui/object.h"
 #include "gui/ThemeEngine.h"
 
-#include "common/debug.h"
-
 namespace GUI {
 
 enum {
