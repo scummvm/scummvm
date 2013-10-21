@@ -39,8 +39,6 @@ struct FingerState {
 	int deltay;
 
 	uint32 holdTime;
-
-	byte flags;
 };
 
 } // End of namespace Common
