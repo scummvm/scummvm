@@ -38,7 +38,7 @@ struct FingerState {
 	int deltax;
 	int deltay;
 
-	int holdTime;
+	uint32 holdTime;
 
 	byte flags;
 };
