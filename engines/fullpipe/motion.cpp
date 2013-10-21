@@ -924,9 +924,17 @@ MovGraphNode *MovGraph2::findNode(int x, int y, int fuzzyMatch) {
 }
 
 int MovGraph2::getShortSide(MovGraphLink *lnk, int x, int y) {
-	warning("STUB: MovGraph2::getShortSide()");
+	bool cond;
 
-	return 0;
+	if (lnk)
+		cond = abs(lnk->_movGraphNode2->_x - lnk->_movGraphNode1->_x) > abs(lnk->_movGraphNode2->_y - lnk->_movGraphNode1->_y);
+	else
+		cond = abs(x) > abs(y);
+
+	if (cond)
+		return x <= 0;
+	else
+		return ((y > 0) + 2);
 }
 
 int MovGraph2::findLink(Common::Array<MovGraphLink *> *linkList, int idx, Common::Rect *rect, Common::Point *point) {
