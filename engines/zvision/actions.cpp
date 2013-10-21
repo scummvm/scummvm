@@ -86,7 +86,7 @@ bool ActionAttenuate::execute(ZVision *engine) {
 //////////////////////////////////////////////////////////////////////////////
 
 ActionChangeLocation::ActionChangeLocation(const Common::String &line) {
-	sscanf(line.c_str(), "%*[^(](%c,%c,%c%c,%u)", &_world, &_room, &_node, &_view, &_offset);
+	sscanf(line.c_str(), "%*[^(](%c, %c, %c%c, %u)", &_world, &_room, &_node, &_view, &_offset);
 }
 
 bool ActionChangeLocation::execute(ZVision *engine) {
