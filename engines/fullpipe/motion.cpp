@@ -1132,9 +1132,22 @@ double MovGraph2::findMinPath(LinkInfo *linkInfoSource, LinkInfo *linkInfoDest, 
 }
 
 MovGraphNode *MovGraph::calcOffset(int ox, int oy) {
-	warning("STUB: MovGraph::calcOffset()");
+	MovGraphNode *res = 0;
+	double mindist = 1.0e10;
 
-	return 0;
+	for (ObList::iterator i = _nodes.begin(); i != _nodes.end(); ++i) {
+		assert(((CObject *)*i)->_objtype == kObjTypeMovGraphNode);
+
+		MovGraphNode *node = (MovGraphNode *)*i;
+
+		double dist = sqrt((double)((node->_x - oy) * (node->_x - oy) + (node->_x - ox) * (node->_x - ox)));
+		if (dist < mindist) {
+			mindist = dist;
+			res = node;
+		}
+	}
+
+	return res;
 }
 
 void MGM::clear() {
