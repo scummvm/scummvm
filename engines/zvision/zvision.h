@@ -70,8 +70,14 @@ private:
 	enum {
 		WINDOW_WIDTH = 640,
 		WINDOW_HEIGHT = 480,
-		WORKING_WINDOW_WIDTH = 512,
-		WORKING_WINDOW_HEIGHT = 320,
+		
+		//Zork nemesis working window sizes
+		ZNEM_WORKING_WINDOW_WIDTH = 512,
+		ZNEM_WORKING_WINDOW_HEIGHT = 320,
+		
+		//ZGI(and default) working window sizes
+		ZGI_WORKING_WINDOW_WIDTH = 640,
+		ZGI_WORKING_WINDOW_HEIGHT = 344,
 
 		ROTATION_SCREEN_EDGE_OFFSET = 60,
 		MAX_ROTATION_SPEED = 400 // Pixels per second
