@@ -180,12 +180,6 @@ void OSystem_GPH::initSDL() {
 		if (SDL_Init(sdlFlags) == -1)
 			error("Could not initialize SDL: %s", SDL_GetError());
 
-		// Enable unicode support if possible
-		SDL_EnableUNICODE(1);
-
-		// Disable OS cursor
-		SDL_ShowCursor(SDL_DISABLE);
-
 		_initedSDL = true;
 	}
 }

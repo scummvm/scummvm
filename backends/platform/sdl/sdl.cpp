@@ -126,6 +126,12 @@ void OSystem_SDL::init() {
 	// Initialize SDL
 	initSDL();
 
+	// Enable unicode support if possible
+	SDL_EnableUNICODE(1);
+
+	// Disable OS cursor
+	SDL_ShowCursor(SDL_DISABLE);
+
 	if (!_logger)
 		_logger = new Backends::Log::Log(this);
 
@@ -267,12 +273,6 @@ void OSystem_SDL::initSDL() {
 		// Initialize SDL (SDL Subsystems are initiliazed in the corresponding sdl managers)
 		if (SDL_Init(sdlFlags) == -1)
 			error("Could not initialize SDL: %s", SDL_GetError());
-
-		// Enable unicode support if possible
-		SDL_EnableUNICODE(1);
-
-		// Disable OS cursor
-		SDL_ShowCursor(SDL_DISABLE);
 
 		_initedSDL = true;
 	}
