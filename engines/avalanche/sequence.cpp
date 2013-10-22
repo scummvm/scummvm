@@ -34,6 +34,8 @@ namespace Avalanche {
 
 Sequence::Sequence(AvalancheEngine *vm) {
 	_vm = vm;
+
+	resetVariables();
 }
 
 void Sequence::resetVariables() {
