@@ -33,6 +33,7 @@ void GraphicsMan::draw(const Graphics::Surface *s)
 {
    for (uint y = 0; y < 480; y++)
        memcpy((byte*)_frontScreen->getBasePtr(0, y), (byte*)s->getBasePtr(0, y), 640);
+   change();
 }
 
 void GraphicsMan::drawTransparent(const Graphics::Surface *s)
@@ -48,6 +49,7 @@ void GraphicsMan::drawTransparent(const Graphics::Surface *s)
             }
         }
     }
+   change();
 }
 
 }

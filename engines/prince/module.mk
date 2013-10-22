@@ -1,6 +1,7 @@
 MODULE := engines/prince
 
 MODULE_OBJS = \
+	debugger.o \
 	script.o \
 	graphics.o \
 	mhwanh.o \

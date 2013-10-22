@@ -11,7 +11,7 @@
 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
@@ -20,34 +20,31 @@
  *
  */
 
-#ifndef PRINCE_MHWANH_H
-#define PRINCE_MHWANH_H
+#ifndef PRINCE_DEBUGGER_H
+#define PRINCE_DEBUGGER_H
 
-#include "graphics/decoders/image_decoder.h"
-#include "graphics/surface.h"
+#include "common/scummsys.h"
+#include "gui/debugger.h"
 
 namespace Prince {
 
-class MhwanhDecoder : public Graphics::ImageDecoder
-{
-public:
-    MhwanhDecoder();
-    virtual ~MhwanhDecoder();
+class PrinceEngine;
 
-    // ImageDecoder API
-    void destroy();
-    virtual bool loadStream(Common::SeekableReadStream &stream);
-    virtual Graphics::Surface *getSurface() const { return _surface; }
-    const byte *getPalette() const { return _palette; }
-    uint16 getPaletteCount() const { return _paletteColorCount; }
+class Debugger : public GUI::Debugger {
+public:
+	Debugger(PrinceEngine *vm);
+	virtual ~Debugger() {}  // we need this for __SYMBIAN32__ archaic gcc/UIQ
 
 private:
-    Graphics::Surface *_surface;
-    byte *_palette;
-    uint16 _paletteColorCount;
+	bool Cmd_SetFlag(int argc, const char **argv);
+	bool Cmd_GetFlag(int argc, const char **argv);
+	bool Cmd_ClearFlag(int argc, const char **argv);
+	bool Cmd_ViewFlc(int argc, const char **argv);
+
+    PrinceEngine *_vm;
 };
 
-}
 
+} 
 
 #endif

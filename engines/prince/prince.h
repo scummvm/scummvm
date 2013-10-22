@@ -29,8 +29,11 @@
 #include "common/debug-channels.h"
 #include "common/textconsole.h"
 #include "common/rect.h"
+#include "common/events.h"
 
 #include "graphics/decoders/bmp.h"
+
+#include "gui/debugger.h"
 
 #include "engines/engine.h"
 #include "engines/util.h"
@@ -40,6 +43,7 @@
 #include "video/flic_decoder.h"
 
 #include "prince/font.h"
+#include "prince/mhwanh.h"
 
 namespace Prince {
 
@@ -48,6 +52,7 @@ struct PrinceGameDescription;
 class PrinceEngine;
 class GraphicsMan;
 class Script;
+class Debugger;
 
 class PrinceEngine : public Engine {
 protected:
@@ -65,14 +70,23 @@ public:
 	Common::Language getLanguage() const;
 
 	const PrinceGameDescription *_gameDescription;
-	
+    Video::FlicDecoder _flicPlayer;
+
+    bool loadLocation(uint16 locationNr);
+    bool loadAnim(uint16 animNr);
+
+    virtual GUI::Debugger *getDebugger();
+
 private:
-    bool PlayNextFrame();
+    bool playNextFrame();
+    void keyHandler(Common::Event event);
 
 	Common::RandomSource *_rnd;
-    Video::FlicDecoder _flicPlayer;
     Graphics::BitmapDecoder _roomBmp;
+    uint16 _locationNr;
+    MhwanhDecoder _walizkaBmp;
 
+    Debugger *_debugger;
     GraphicsMan *_graph;
     Script *_script;
     Font _font;

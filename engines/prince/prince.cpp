@@ -44,17 +44,19 @@
 
 #include "prince/prince.h"
 #include "prince/font.h"
-#include "prince/mhwanh.h"
 #include "prince/graphics.h"
 #include "prince/script.h"
+#include "prince/debugger.h"
 
 #include "video/flic_decoder.h"
 
 namespace Prince {
 
 PrinceEngine::PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc) : 
-    Engine(syst), _gameDescription(gameDesc), _graph(NULL), _script(NULL) {
+    Engine(syst), _gameDescription(gameDesc), _graph(NULL), _script(NULL),
+    _locationNr(0), _debugger(NULL) {
     _rnd = new Common::RandomSource("prince");
+    _debugger = new Debugger(this);
 
 }
 
@@ -62,6 +64,12 @@ PrinceEngine::~PrinceEngine() {
     DebugMan.clearAllDebugChannels();
 
     delete _rnd;
+    delete _debugger;
+}
+
+GUI::Debugger *PrinceEngine::getDebugger()
+{
+    return _debugger;
 }
 
 Common::Error PrinceEngine::run() {
@@ -73,9 +81,6 @@ Common::Error PrinceEngine::run() {
     debug("Adding all path: %s", gameDataDir.getPath().c_str());
 
     SearchMan.addSubDirectoryMatching(gameDataDir, "all", 0, 2);
-    SearchMan.addSubDirectoryMatching(gameDataDir, "59", 0, 2);
-
-    Common::SeekableReadStream * walizka = SearchMan.createReadStreamForMember("walizka");
 
     Common::SeekableReadStream *font1stream = SearchMan.createReadStreamForMember("font1.raw");
     if (!font1stream) 
@@ -86,51 +91,65 @@ Common::Error PrinceEngine::run() {
     }
     delete font1stream;
 
-    Common::SeekableReadStream *room = SearchMan.createReadStreamForMember("room");
+    Common::SeekableReadStream * walizka = SearchMan.createReadStreamForMember("walizka");
+    if (!walizka)
+        return Common::kPathDoesNotExist;
 
-    //_frontScreen = new Graphics::Surface();
-    //_frontScreen->create(640, 480, Graphics::PixelFormat::createFormatCLUT8());
-
-    if (room) {
-        _roomBmp.loadStream(*room);
-        //_roomBackground = roomBmp.getSurface();
-        _system->getPaletteManager()->setPalette(_roomBmp.getPalette(), 0, 256);
-
-        //font1.drawString(_frontScreen, "Hello World", 10, 10, 640, 1);
-        //
-#if 0
-        MhwanhDecoder *walizkaBmp = new MhwanhDecoder();
-        if (walizka) {
-            debug("Loading walizka");
-            if (walizkaBmp->loadStream(*walizka)) {
-                _graph->_roomBackground = walizkaBmp->getSurface();
-                _graph->setPalette(walizkaBmp->getPalette());
-            }
-        }
-#endif
-        _graph->change();
-       
-        Common::SeekableReadStream * skryptStream = SearchMan.createReadStreamForMember("skrypt.dat"); 
-        if (!skryptStream)
-            return Common::kPathNotFile;
-
-        _script = new Script(this);
-        _script->loadFromStream(*skryptStream);
-
-        delete skryptStream;
-
-        mainLoop();
-        delete room;
-        //delete walizkaBmp;
+    debug("Loading walizka");
+    if (!_walizkaBmp.loadStream(*walizka)) {
+        return Common::kPathDoesNotExist;
     }
+       
+    Common::SeekableReadStream * skryptStream = SearchMan.createReadStreamForMember("skrypt.dat"); 
+    if (!skryptStream)
+        return Common::kPathNotFile;
+
+    debug("Loading skrypt");
+    _script = new Script(this);
+    _script->loadFromStream(*skryptStream);
+
+    delete skryptStream;
+
+    mainLoop();
 
     return Common::kNoError;
 }
 
-bool PrinceEngine::PlayNextFrame()
+bool PrinceEngine::loadLocation(uint16 locationNr)
 {
-    _graph->draw(_roomBmp.getSurface());
+    debug("PrinceEngine::loadLocation %d", locationNr);
+    const Common::FSNode gameDataDir(ConfMan.get("path"));
+    SearchMan.remove(Common::String::format("%02d", _locationNr));
+    _locationNr = locationNr;
 
+    const Common::String locationNrStr = Common::String::format("%02d", _locationNr);
+    debug("loadLocation %s", locationNrStr.c_str());
+    SearchMan.addSubDirectoryMatching(gameDataDir, locationNrStr, 0, 2);
+
+    // load location background
+    Common::SeekableReadStream *room = SearchMan.createReadStreamForMember("room");
+
+    if (!room)
+    {
+        error("Can't load room bitmap");
+        return false;
+    }
+
+    if(_roomBmp.loadStream(*room))
+    {
+        debug("Room bitmap loaded");
+        _system->getPaletteManager()->setPalette(_roomBmp.getPalette(), 0, 256);
+    }
+
+    delete room;
+
+    return true;
+}
+
+bool PrinceEngine::playNextFrame()
+{
+    if (_flicPlayer.endOfVideo())
+        _flicPlayer.rewind();
     const Graphics::Surface *s = _flicPlayer.decodeNextFrame();
     if (s)
     {
@@ -141,9 +160,40 @@ bool PrinceEngine::PlayNextFrame()
     return true;
 }
 
+bool PrinceEngine::loadAnim(uint16 animNr)
+{
+    Common::String streamName = Common::String::format("AN%02d", animNr);
+    Common::SeekableReadStream * flicStream = SearchMan.createReadStreamForMember(streamName);
+
+    if (!flicStream)
+    {
+        error("Can't open %s", streamName.c_str());
+        return false;
+    }
+
+    if (!_flicPlayer.loadStream(flicStream))
+    {
+        error("Can't load flic stream %s", streamName.c_str());
+    }
+
+    debug("%s loaded", streamName.c_str());
+    _flicPlayer.start();
+    return true;
+}
+
+void PrinceEngine::keyHandler(Common::Event event) {
+	uint16 nChar = event.kbd.keycode;
+	if (event.kbd.hasFlags(Common::KBD_CTRL)) {
+		switch (nChar) {
+		case Common::KEYCODE_d:
+			getDebugger()->attach();
+			getDebugger()->onFrame();
+			break;
+        }
+    }
+}
+
 void PrinceEngine::mainLoop() {
-    //uint32 nextFrameTime = 0;
-    uint32 an = 1;
 
     while (!shouldQuit()) {
         Common::Event event;
@@ -151,6 +201,7 @@ void PrinceEngine::mainLoop() {
         while (eventMan->pollEvent(event)) {
             switch (event.type) {
             case Common::EVENT_KEYDOWN:
+                keyHandler(event);
                 break;
             case Common::EVENT_KEYUP:
                 break;
@@ -172,23 +223,13 @@ void PrinceEngine::mainLoop() {
         if (shouldQuit())
             return;
 
-        //_script->step();
-        if (_flicPlayer.endOfVideo())
-        {
-            Common::String streamName = Common::String::format("AN%02d", an++);
-            Common::SeekableReadStream * flicStream = SearchMan.createReadStreamForMember(streamName);
+        _script->step();
 
-            if (flicStream)
-            {
-                if (_flicPlayer.loadStream(flicStream))
-                {
-                    debug("%s loaded", streamName.c_str());
-                    _flicPlayer.start();
-                }
-            }
-        }
+        if (_roomBmp.getSurface())
+            _graph->draw(_roomBmp.getSurface());
 
-        PlayNextFrame();
+        playNextFrame();
+
         _graph->update();
 
         _system->delayMillis(40);

@@ -1,4 +1,5 @@
 #include "prince/script.h"
+#include "prince/prince.h"
 
 #include "common/debug.h"
 #include "common/debug-channels.h"
@@ -44,7 +45,7 @@ void Script::debugScript(const char *s, ...) {
 }
 
 void Script::step() {
-    while (!_opcodeNF)
+    //while (!_opcodeNF)
     {
         _lastInstruction = _currentInstruction;
         // Prepare the base debug string
@@ -94,6 +95,7 @@ uint32 Script::readScript32bits() {
 
 void Script::O_WAITFOREVER() {
     debugScript("O_WAITFOREVER");
+    _currentInstruction -= 2;
 }
 
 void Script::O_BLACKPALETTE() {
@@ -107,6 +109,7 @@ void Script::O_SETUPPALETTE() {
 void Script::O_INITROOM() {
     uint16 roomId = readScript16bits();
     debugScript("O_INITROOM %d", roomId);
+    _vm->loadLocation(roomId);
 }
 
 void Script::O_SETSAMPLE() {
@@ -355,7 +358,12 @@ void Script::O_OBSOLETE_GETACTION() {}
 void Script::O_ADDWALKAREA() {}
 void Script::O_REMWALKAREA() {}
 void Script::O_RESTOREWALKAREA() {}
-void Script::O_WAITFRAME() {}
+
+void Script::O_WAITFRAME() {
+    debugScript("O_WAITFRAME");
+    _opcodeNF = true;
+}
+
 void Script::O_SETFRAME() {}
 void Script::O_RUNACTION() {}
 void Script::O_COMPAREHI() {}
@@ -434,9 +442,16 @@ void Script::O_FREECURSOR() {
 void Script::O_ADDINVQUIET() {}
 void Script::O_RUNHERO() {}
 void Script::O_SETBACKANIMDATA() {}
-void Script::O_VIEWFLC() {}
+
+void Script::O_VIEWFLC() {
+    uint16 animNr = readScript16bits();
+    debugScript("O_VIEWFLC animNr %d", animNr);
+}
+
 void Script::O_CHECKFLCFRAME() {}
+
 void Script::O_CHECKFLCEND() {}
+
 void Script::O_FREEFLC() {}
 void Script::O_TALKHEROSTOP() {}
 void Script::O_HEROCOLOR() {}
