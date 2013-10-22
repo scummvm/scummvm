@@ -357,6 +357,18 @@ double MovGraph::calcDistance(Common::Point *point, MovGraphLink *link, int fuzz
 	return res;
 }
 
+void MovGraph::calcNodeDistancesAndAngles() {
+	for (ObList::iterator i = _links.begin(); i != _links.end(); ++i) {
+		assert(((CObject *)*i)->_objtype == kObjTypeMovGraphLink);
+
+		MovGraphLink *lnk = (MovGraphLink *)*i;
+
+		lnk->_flags &= 0x7FFFFFFF;
+
+		lnk->calcNodeDistanceAndAngle();
+	}
+}
+
 int MovGraph2::getItemIndexByGameObjectId(int objectId) {
 	for (uint i = 0; i < _items.size(); i++)
 		if (_items[i]->_objectId == objectId)
@@ -1246,6 +1258,16 @@ bool MovGraphLink::load(MfcArchive &file) {
 	_name = file.readPascalString();
 
 	return true;
+}
+
+void MovGraphLink::calcNodeDistanceAndAngle() {
+	if (_movGraphNode1) {
+		double dx = _movGraphNode2->_x - _movGraphNode1->_x;
+		double dy = _movGraphNode2->_y - _movGraphNode1->_y;
+
+		_distance = sqrt(dy * dy + dx * dx);
+		_angle = atan2(dx, dy);
+	}
 }
 
 bool MovGraphNode::load(MfcArchive &file) {
