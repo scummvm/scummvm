@@ -173,9 +173,9 @@ void AvalancheEngine::synchronize(Common::Serializer &sz) {
 			sz.syncAsByte(actChr);
 		}
 
-		uint16 favourite_songSize = _favoriteSong.size();
-		sz.syncAsUint16LE(favourite_songSize);
-		for (uint16 i = 0; i < favourite_songSize; i++) {
+		uint16 favoriteSongSize = _favoriteSong.size();
+		sz.syncAsUint16LE(favoriteSongSize);
+		for (uint16 i = 0; i < favoriteSongSize; i++) {
 			char actChr = _favoriteSong[i];
 			sz.syncAsByte(actChr);
 		}
