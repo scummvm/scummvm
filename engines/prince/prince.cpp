@@ -110,6 +110,18 @@ Common::Error PrinceEngine::run() {
 
     delete skryptStream;
 
+    Common::SeekableReadStream *logoStrema = SearchMan.createReadStreamForMember("logo.raw"); 
+    if (logoStrema)
+    {
+        MhwanhDecoder logo;
+        logo.loadStream(*logoStrema);
+        _graph->setPalette(logo.getPalette());
+        _graph->draw(logo.getSurface());
+        _graph->update();
+        _system->delayMillis(700);
+    }
+    
+
     mainLoop();
 
     return Common::kNoError;
