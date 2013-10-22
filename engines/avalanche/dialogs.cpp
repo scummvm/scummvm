@@ -729,10 +729,10 @@ void Dialogs::displayText(Common::String text) {
 					}
 					break;
 				case 3:
-					displayText(_vm->_favouriteDrink + kControlToBuffer);
+					displayText(_vm->_favoriteDrink + kControlToBuffer);
 					break;
 				case 4:
-					displayText(_vm->_favouriteSong + kControlToBuffer);
+					displayText(_vm->_favoriteSong + kControlToBuffer);
 					break;
 				case 5:
 					displayText(_vm->_worstPlaceOnEarth + kControlToBuffer);

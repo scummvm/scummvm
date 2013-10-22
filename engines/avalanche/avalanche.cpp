@@ -166,17 +166,17 @@ void AvalancheEngine::synchronize(Common::Serializer &sz) {
 	sz.syncAsByte(_arrowInTheDoor);
 
 	if (sz.isSaving()) {
-		uint16 like2drinkSize = _favouriteDrink.size();
+		uint16 like2drinkSize = _favoriteDrink.size();
 		sz.syncAsUint16LE(like2drinkSize);
 		for (uint16 i = 0; i < like2drinkSize; i++) {
-			char actChr = _favouriteDrink[i];
+			char actChr = _favoriteDrink[i];
 			sz.syncAsByte(actChr);
 		}
 
-		uint16 favourite_songSize = _favouriteSong.size();
+		uint16 favourite_songSize = _favoriteSong.size();
 		sz.syncAsUint16LE(favourite_songSize);
 		for (uint16 i = 0; i < favourite_songSize; i++) {
-			char actChr = _favouriteSong[i];
+			char actChr = _favoriteSong[i];
 			sz.syncAsByte(actChr);
 		}
 
@@ -194,23 +194,23 @@ void AvalancheEngine::synchronize(Common::Serializer &sz) {
 			sz.syncAsByte(actChr);
 		}
 	} else {
-		if (!_favouriteDrink.empty())
-			_favouriteDrink.clear();
+		if (!_favoriteDrink.empty())
+			_favoriteDrink.clear();
 		uint16 like2drinkSize = 0;
 		char actChr = ' ';
 		sz.syncAsUint16LE(like2drinkSize);
 		for (uint16 i = 0; i < like2drinkSize; i++) {
 			sz.syncAsByte(actChr);
-			_favouriteDrink += actChr;
+			_favoriteDrink += actChr;
 		}
 
-		if (!_favouriteSong.empty())
-			_favouriteSong.clear();
+		if (!_favoriteSong.empty())
+			_favoriteSong.clear();
 		uint16 favourite_songSize = 0;
 		sz.syncAsUint16LE(favourite_songSize);
 		for (uint16 i = 0; i < favourite_songSize; i++) {
 			sz.syncAsByte(actChr);
-			_favouriteSong += actChr;
+			_favoriteSong += actChr;
 		}
 
 		if (!_worstPlaceOnEarth.empty())
