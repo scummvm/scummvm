@@ -206,6 +206,8 @@ class MovGraphLink : public CObject {
   public:
 	MovGraphLink();
 	virtual bool load(MfcArchive &file);
+
+	void calcNodeDistanceAndAngle();
 };
 
 struct MovGraphItem {
@@ -255,6 +257,7 @@ class MovGraph : public MotionController {
 	virtual int method50();
 
 	double calcDistance(Common::Point *point, MovGraphLink *link, int fuzzyMatch);
+	void calcNodeDistancesAndAngles();
 	MovGraphNode *calcOffset(int ox, int oy);
 };
 
