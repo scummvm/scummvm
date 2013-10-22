@@ -76,7 +76,7 @@ void VisualSpeaker::signal() {
 			_fieldF8 = 1;
 		}
 
-		if ((R2_GLOBALS._speechSubtitles & SPEECH_TEXT) || _soundId)
+		if ((R2_GLOBALS._speechSubtitles & SPEECH_TEXT) || !_soundId)
 			_sceneText.show();
 
 		if ((R2_GLOBALS._speechSubtitles & SPEECH_VOICE) && _soundId) {
@@ -132,6 +132,7 @@ void VisualSpeaker::dispatch() {
 		_object1.setFrame(1);
 
 		if (!(R2_GLOBALS._speechSubtitles & SPEECH_TEXT)) {
+			// Don't bother waiting for a mouse click to start the next speech segment
 			_action->setDelay(1);
 		}
 	}
@@ -244,8 +245,13 @@ void VisualSpeaker::setText(const Common::String &msg) {
 			_sceneText.hide();
 	} else {
 		if ((R2_GLOBALS._speechSubtitles & SPEECH_VOICE) && _soundId) {
-			if (!R2_GLOBALS._playStream.play(_soundId, NULL))
+			if (!R2_GLOBALS._playStream.play(_soundId, NULL)) {
+				// Couldn't play voice, so fall back on showing text
 				_sceneText.show();
+			} else {
+				_numFrames = 2;
+				_soundId = 0;
+			}
 		}
 	}
 }
