@@ -207,7 +207,7 @@ public:
 	bool _standingOnDais; // In room 71, inside Cardiff Castle.
 	bool _takenPen; // Have you taken the pen (in Cardiff?)
 	bool _arrowInTheDoor;  // Did the arrow hit the wall?
-	Common::String _favouriteDrink, _favouriteSong, _worstPlaceOnEarth, _spareEvening; // Personalisation str's
+	Common::String _favoriteDrink, _favoriteSong, _worstPlaceOnEarth, _spareEvening; // Personalisation str's
 	uint32 _totalTime; // Your total time playing this game, in ticks.
 	byte _jumpStatus; // Fixes how high you're jumping.
 	bool _mushroomGrowing; // Is the mushroom growing in 42?

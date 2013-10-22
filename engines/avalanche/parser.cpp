@@ -692,13 +692,13 @@ void Parser::storeInterrogation(byte interrogation) {
 	case 1:
 		_inputText.toLowercase();
 		_vm->_dialogs->sayIt(_inputText);
-		_vm->_favouriteDrink = _inputText;
+		_vm->_favoriteDrink = _inputText;
 		_vm->_cardiffQuestionNum = 2;
 		break;
 	case 2:
 		properNouns();
 		_vm->_dialogs->sayIt(_inputText);
-		_vm->_favouriteSong = _inputText;
+		_vm->_favoriteSong = _inputText;
 		_vm->_cardiffQuestionNum = 3;
 		break;
 	case 3:

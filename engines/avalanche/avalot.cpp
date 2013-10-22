@@ -1448,8 +1448,8 @@ void AvalancheEngine::resetVariables() {
 	_standingOnDais = false;
 	_takenPen = false;
 	_arrowInTheDoor = false;
-	_favouriteDrink = "";
-	_favouriteSong = "";
+	_favoriteDrink = "";
+	_favoriteSong = "";
 	_worstPlaceOnEarth = "";
 	_spareEvening = "";
 	_totalTime = 0;
@@ -1502,7 +1502,7 @@ void AvalancheEngine::newGame() {
 	_dialogs->setBubbleStateNatural();
 
 	_spareEvening = "answer a questionnaire";
-	_favouriteDrink = "beer";
+	_favoriteDrink = "beer";
 	_money = 30; // 2/6
 	_animation->setDirection(kDirStopped);
 	_parser->_wearing = kObjectClothes;
