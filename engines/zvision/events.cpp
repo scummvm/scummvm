@@ -43,15 +43,26 @@ void ZVision::processEvents() {
 	while (_eventMan->pollEvent(_event)) {
 		switch (_event.type) {
 		case Common::EVENT_LBUTTONDOWN:
+			_cursorManager->cursorDown(true);
+			_scriptManager->setStateValue(StateKey_LMouse, 1);
 			onMouseDown(_event.mouse);
 			break;
 
 		case Common::EVENT_LBUTTONUP:
+			_cursorManager->cursorDown(false);
+			_scriptManager->setStateValue(StateKey_LMouse, 0);
 			onMouseUp(_event.mouse);
 			break;
 
 		case Common::EVENT_RBUTTONDOWN:
+			_cursorManager->cursorDown(true);
+			_scriptManager->setStateValue(StateKey_RMouse, 1);
 			// TODO: Inventory logic
+			break;
+
+		case Common::EVENT_RBUTTONUP:
+			_cursorManager->cursorDown(false);
+			_scriptManager->setStateValue(StateKey_RMouse, 0);
 			break;
 
 		case Common::EVENT_MOUSEMOVE:
@@ -87,15 +98,11 @@ void ZVision::processEvents() {
 }
 
 void ZVision::onMouseDown(const Common::Point &pos) {
-	_cursorManager->cursorDown(true);
-
 	Common::Point imageCoord(_renderManager->screenSpaceToImageSpace(pos));
 	_scriptManager->onMouseDown(pos, imageCoord);
 }
 
 void ZVision::onMouseUp(const Common::Point &pos) {
-	_cursorManager->cursorDown(false);
-
 	Common::Point imageCoord(_renderManager->screenSpaceToImageSpace(pos));
 	_scriptManager->onMouseUp(pos, imageCoord);
 }
