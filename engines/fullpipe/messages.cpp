@@ -344,6 +344,13 @@ void MessageQueue::deleteExCommandByIndex(uint idx, bool doFree) {
 		delete *it;
 }
 
+void MessageQueue::transferExCommands(MessageQueue *mq) {
+	while (mq->_exCommands.size()) {
+		_exCommands.push_back(mq->_exCommands.front());
+		mq->_exCommands.pop_front();
+	}
+}
+
 void MessageQueue::sendNextCommand() {
 	if (_exCommands.size()) {
 		if (!(_flags & 4) && (_flags & 1)) {
