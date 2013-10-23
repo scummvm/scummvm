@@ -40,6 +40,19 @@ public:
 	virtual ~SdlGraphicsManager();
 
 	/**
+	 * Makes this graphics manager active. That means it should be ready to
+	 * process inputs now. However, even without being active it should be
+	 * able to query the supported modes and other bits.
+	 */
+	virtual void activateManager() {}
+
+	/**
+	 * Makes this graphics manager inactive. This should allow another
+	 * graphics manager to become active again.
+	 */
+	virtual void deactivateManager() {}
+
+	/**
 	 * Notify the graphics manager that the graphics needs to be redrawn, since
 	 * the application window was modified.
 	 *

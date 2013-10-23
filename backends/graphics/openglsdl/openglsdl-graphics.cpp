@@ -73,7 +73,7 @@ OpenGLSdlGraphicsManager::~OpenGLSdlGraphicsManager() {
 }
 
 void OpenGLSdlGraphicsManager::activateManager() {
-	OpenGLGraphicsManager::activateManager();
+	SdlGraphicsManager::activateManager();
 	initEventSource();
 
 	// Register the graphics manager as a event observer
@@ -87,7 +87,7 @@ void OpenGLSdlGraphicsManager::deactivateManager() {
 	}
 
 	deinitEventSource();
-	OpenGLGraphicsManager::deactivateManager();
+	SdlGraphicsManager::deactivateManager();
 }
 
 bool OpenGLSdlGraphicsManager::hasFeature(OSystem::Feature f) {

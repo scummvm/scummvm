@@ -198,7 +198,7 @@ SurfaceSdlGraphicsManager::~SurfaceSdlGraphicsManager() {
 }
 
 void SurfaceSdlGraphicsManager::activateManager() {
-	GraphicsManager::activateManager();
+	SdlGraphicsManager::activateManager();
 	initEventSource();
 
 	// Register the graphics manager as a event observer
@@ -212,7 +212,7 @@ void SurfaceSdlGraphicsManager::deactivateManager() {
 	}
 
 	deinitEventSource();
-	GraphicsManager::deactivateManager();
+	SdlGraphicsManager::deactivateManager();
 }
 
 bool SurfaceSdlGraphicsManager::hasFeature(OSystem::Feature f) {
