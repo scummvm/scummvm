@@ -23,6 +23,8 @@
 #ifndef BACKENDS_GRAPHICS_SDL_SDLGRAPHICS_H
 #define BACKENDS_GRAPHICS_SDL_SDLGRAPHICS_H
 
+#include "backends/graphics/graphics.h"
+
 #include "common/rect.h"
 
 class SdlEventSource;
@@ -31,11 +33,8 @@ class SdlEventSource;
  * Base class for a SDL based graphics manager.
  *
  * It features a few extra a few extra features required by SdlEventSource.
- * FIXME/HACK:
- * Note it does not inherit from GraphicsManager to avoid a diamond inheritance
- * in the current OpenGLSdlGraphicsManager.
  */
-class SdlGraphicsManager {
+class SdlGraphicsManager : virtual public GraphicsManager {
 public:
 	SdlGraphicsManager(SdlEventSource *source);
 	virtual ~SdlGraphicsManager();

@@ -47,7 +47,7 @@ enum {
 	GFX_NEAREST = 1
 };
 
-class OpenGLGraphicsManager : public GraphicsManager {
+class OpenGLGraphicsManager : virtual public GraphicsManager {
 public:
 	OpenGLGraphicsManager();
 	virtual ~OpenGLGraphicsManager();
