@@ -74,7 +74,6 @@ OpenGLSdlGraphicsManager::~OpenGLSdlGraphicsManager() {
 
 void OpenGLSdlGraphicsManager::activateManager() {
 	SdlGraphicsManager::activateManager();
-	initEventSource();
 
 	// Register the graphics manager as a event observer
 	g_system->getEventManager()->getEventDispatcher()->registerObserver(this, 10, false);
@@ -86,7 +85,6 @@ void OpenGLSdlGraphicsManager::deactivateManager() {
 		g_system->getEventManager()->getEventDispatcher()->unregisterObserver(this);
 	}
 
-	deinitEventSource();
 	SdlGraphicsManager::deactivateManager();
 }
 

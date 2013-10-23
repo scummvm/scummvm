@@ -44,13 +44,13 @@ public:
 	 * process inputs now. However, even without being active it should be
 	 * able to query the supported modes and other bits.
 	 */
-	virtual void activateManager() {}
+	virtual void activateManager();
 
 	/**
 	 * Makes this graphics manager inactive. This should allow another
 	 * graphics manager to become active again.
 	 */
-	virtual void deactivateManager() {}
+	virtual void deactivateManager();
 
 	/**
 	 * Notify the graphics manager that the graphics needs to be redrawn, since
@@ -92,9 +92,6 @@ public:
 	virtual void notifyMousePos(Common::Point mouse) = 0;
 
 protected:
-	void initEventSource();
-	void deinitEventSource();
-
 	SdlEventSource *_eventSource;
 };
 
