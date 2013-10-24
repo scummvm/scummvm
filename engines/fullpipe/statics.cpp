@@ -73,6 +73,27 @@ Common::Point *StepArray::getCurrPoint(Common::Point *point) {
 	return point;
 }
 
+Common::Point *StepArray::getPoint(Common::Point *point, int index, int offset) {
+	if (index == -1)
+		index = _currPointIndex;
+
+	if (index + offset > _maxPointIndex - 1)
+		offset = _maxPointIndex - index;
+
+	point->x = 0;
+	point->y = 0;
+
+	while (offset >= 1) {
+		point->x += _points[index]->x;
+		point->y += _points[index]->y;
+
+		index++;
+		offset--;
+	}
+
+	return point;
+}
+
 bool StepArray::gotoNextPoint() {
 	if (_currPointIndex < _maxPointIndex) {
 		_currPointIndex++;
@@ -742,6 +763,26 @@ void StaticANIObject::update(int counterdiff) {
 			}
 		}
 	}
+}
+
+void StaticANIObject::updateStepPos() {
+	Common::Point point;
+
+	int ox = _movement->_ox;
+	int oy = _movement->_oy;
+
+	_movement->calcSomeXY(point, 1);
+	int x = point.x;
+	int y = point.y;
+
+	_stepArray.getPoint(&point, -1, _stepArray.getPointsCount());
+	x += point.x;
+	y += point.y;
+
+	_statics = _movement->_staticsObj2;
+	_movement = 0;
+
+	setOXY(ox + x, oy + y);
 }
 
 void StaticANIObject::stopAnim_maybe() {
