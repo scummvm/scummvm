@@ -216,11 +216,32 @@ void ScriptManager::cleanStateTable() {
 	}
 }
 
+void ScriptManager::cleanScriptScope(script_scope &scope) {
+	scope._priv_queue_one.clear();
+	scope._priv_queue_two.clear();
+	scope.scope_queue = &scope._priv_queue_one;
+	scope.exec_queue = &scope._priv_queue_two;
+	for (PuzzleList::iterator iter = scope._puzzles.begin(); iter != scope._puzzles.end(); ++iter)
+		delete(*iter);
+
+	scope._puzzles.clear();
+
+	for (ControlList::iterator iter = scope._controls.begin(); iter != scope._controls.end(); ++iter)
+		delete(*iter);
+
+	scope._controls.clear();
+
+	scope.proc_count = 0;
+}
+
 uint ScriptManager::getStateValue(uint32 key) {
 	if (_globalState.contains(key))
 		return _globalState[key];
 	else
 		return 0;
+}
+
+void ScriptManager::queuePuzzles(uint32 key) {
 }
 
 void ScriptManager::setStateValue(uint32 key, uint value) {

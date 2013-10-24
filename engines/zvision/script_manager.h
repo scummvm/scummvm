@@ -163,6 +163,7 @@ private:
 public:
 	void initialize();
 	void update(uint deltaTimeMillis);
+	void queuePuzzles(uint32 key);
 
 	uint getStateValue(uint32 key);
 	void setStateValue(uint32 key, uint value);
@@ -228,6 +229,7 @@ private:
 	void updateNodes(uint deltaTimeMillis);
 	void checkPuzzleCriteria();
 	void cleanStateTable();
+	void cleanScriptScope(script_scope &scope);
 
 // TODO: Make this private. It was only made public so Console::cmdParseAllScrFiles() could use it
 public:
