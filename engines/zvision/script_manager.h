@@ -119,6 +119,24 @@ public:
 
 private:
 	ZVision *_engine;
+
+	struct script_scope {
+		uint32 proc_count;
+
+		PuzzleList *scope_queue; // For adding puzzles to queue
+		PuzzleList *exec_queue;  // Switch to it when execute
+		PuzzleList _priv_queue_one;
+		PuzzleList _priv_queue_two;
+
+		PuzzleList  _puzzles;
+		ControlList _controls;
+	};
+
+	struct puzzle_ref {
+		Puzzle *puz;
+		script_scope *scope;
+	};
+
 	/**
 	 * Holds the global state variable. Do NOT directly modify this. Use the accessors and
 	 * mutators getStateValue() and setStateValue(). This ensures that Puzzles that reference a
