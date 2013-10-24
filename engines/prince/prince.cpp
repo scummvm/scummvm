@@ -120,7 +120,7 @@ Common::Error PrinceEngine::run() {
         _graph->update();
         _system->delayMillis(700);
     }
-    
+    delete logoStrema;
 
     mainLoop();
 
@@ -160,8 +160,6 @@ bool PrinceEngine::loadLocation(uint16 locationNr)
 
 bool PrinceEngine::playNextFrame()
 {
-    if (_flicPlayer.endOfVideo())
-        _flicPlayer.rewind();
     const Graphics::Surface *s = _flicPlayer.decodeNextFrame();
     if (s)
     {

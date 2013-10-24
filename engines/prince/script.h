@@ -46,8 +46,6 @@ public:
 private:
     PrinceEngine *_vm;
 
-    Common::RandomSource _random;
-
     byte *_code;
     uint32 _codeSize;
     uint32 _currentInstruction;
