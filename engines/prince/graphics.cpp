@@ -38,13 +38,10 @@ void GraphicsMan::draw(const Graphics::Surface *s)
 
 void GraphicsMan::drawTransparent(const Graphics::Surface *s)
 {
-    for (uint y = 0; y < 480; ++y)
-    {
-        for (uint x = 0; x < 640; ++x)
-        {
+    for (uint y = 0; y < 480; ++y) {
+        for (uint x = 0; x < 640; ++x) {
             byte pixel = *((byte*)s->getBasePtr(x,y));
-            if (pixel != 255)
-            {
+            if (pixel != 255) {
                 *((byte*)_frontScreen->getBasePtr(x, y)) = pixel;
             }
         }
