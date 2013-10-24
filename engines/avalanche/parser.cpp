@@ -1015,10 +1015,13 @@ bool Parser::isHolding() {
 
 	if (_thing > 100)
 		_vm->_dialogs->displayText("Be reasonable!");
-	else if (!_vm->_objects[_thing - 1])
-		// Verbs that need "_thing" to be in the inventory.
-		_vm->_dialogs->displayText("You're not holding it, Avvy.");
-	else
+	else if (_thing <= kObjectNum) {
+		if (!_vm->_objects[_thing - 1])
+			// Verbs that need "_thing" to be in the inventory.
+			_vm->_dialogs->displayText("You're not holding it, Avvy.");
+		else
+			holdingResult = true;
+	} else
 		holdingResult = true;
 
 	return holdingResult;
@@ -1053,8 +1056,10 @@ void Parser::examine() {
 				examineObject();
 			else if ((50 <= _thing) && (_thing <= 100)) {
 				// Also _thing
+				int id = _thing - 50;
+				assert(id < 31);
 				openBox(true);
-				_vm->_dialogs->displayText(*_vm->_also[_thing - 50][1]);
+				_vm->_dialogs->displayText(*_vm->_also[id][1]);
 				openBox(false);
 			}
 		}

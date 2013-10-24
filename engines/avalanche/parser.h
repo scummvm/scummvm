@@ -66,7 +66,7 @@ public:
 	Common::String _inputText; // Original name: current
 	Common::String _inputTextBackup;
 	byte _inputTextPos; // Original name: curpos
-	bool _quote; // 66 or 99 next?
+	bool _quote;
 	bool _cursorState;
 	bool _weirdWord;
 
