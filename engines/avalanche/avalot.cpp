@@ -1229,7 +1229,7 @@ void AvalancheEngine::checkClick() {
 					_parser->_thing += 49;
 					_parser->_person = kPeoplePardon;
 				} else {
-					_parser->_person = (People) _thinks;
+					_parser->_person = (People)_thinks;
 					_parser->_thing = _parser->kPardon;
 				}
 				callVerb(kVerbCodeExam);
