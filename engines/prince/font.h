@@ -41,13 +41,13 @@ public:
 
     bool load(Common::SeekableReadStream &stream);
 
-	virtual int getFontHeight() const override;
+    virtual int getFontHeight() const override;
 
-	virtual int getMaxCharWidth() const override;
+    virtual int getMaxCharWidth() const override;
 
-	virtual int getCharWidth(byte chr) const override;
+    virtual int getCharWidth(byte chr) const override;
 
-	virtual void drawChar(Graphics::Surface *dst, byte chr, int x, int y, uint32 color) const override;
+    virtual void drawChar(Graphics::Surface *dst, byte chr, int x, int y, uint32 color) const override;
 
 private:
     struct ChrData {

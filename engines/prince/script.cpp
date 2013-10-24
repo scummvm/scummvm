@@ -1,3 +1,25 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
+
 #include "prince/script.h"
 #include "prince/prince.h"
 
@@ -10,37 +32,37 @@ namespace Prince {
 static const uint16 NUM_OPCODES = 144;
 
 Script::Script(PrinceEngine *vm) : 
-	_code(NULL), _stacktop(0), _vm(vm), _opcodeNF(false) {
+    _code(NULL), _stacktop(0), _vm(vm), _opcodeNF(false) {
 }
 
 Script::~Script() {
-	delete[] _code;
+    delete[] _code;
 }
 
 bool Script::loadFromStream(Common::SeekableReadStream &stream) {
-	_codeSize = stream.size();
-	_code = new byte[_codeSize];
+    _codeSize = stream.size();
+    _code = new byte[_codeSize];
 
-	if (!_code)
-		return false;
+    if (!_code)
+        return false;
 
-	stream.read(_code, _codeSize);
-	// Initialize the script
-	_currentInstruction = READ_LE_UINT32(_code + 4);
+    stream.read(_code, _codeSize);
+    // Initialize the script
+    _currentInstruction = READ_LE_UINT32(_code + 4);
 
-	return true;
+    return true;
 }
 
 void Script::debugScript(const char *s, ...) {
-	char buf[STRINGBUFLEN];
-	va_list va;
+    char buf[STRINGBUFLEN];
+    va_list va;
 
-	va_start(va, s);
-	vsnprintf(buf, STRINGBUFLEN, s, va);
-	va_end(va);
+    va_start(va, s);
+    vsnprintf(buf, STRINGBUFLEN, s, va);
+    va_end(va);
 
     Common::String str = Common::String::format("@0x%04X: ", _lastInstruction);
-	str += Common::String::format("op %02d: ", _lastOpcode);
+    str += Common::String::format("op %02d: ", _lastOpcode);
     debug("%s %s", str.c_str(), buf);
 }
 
@@ -69,28 +91,28 @@ void Script::step() {
 }
 
 uint8 Script::getCodeByte(uint32 address) {
-	if (address >= _codeSize)
-		error("Trying to read a script byte at address 0x%04X, while the "
-			"script is just 0x%04X bytes long", address, _codeSize);
-	return _code[address];
+    if (address >= _codeSize)
+        error("Trying to read a script byte at address 0x%04X, while the "
+            "script is just 0x%04X bytes long", address, _codeSize);
+    return _code[address];
 }
 
 uint8 Script::readScript8bits() {
-	uint8 data = getCodeByte(_currentInstruction);
-	_currentInstruction++;
-	return data;
+    uint8 data = getCodeByte(_currentInstruction);
+    _currentInstruction++;
+    return data;
 }
 
 uint16 Script::readScript16bits() {
-	uint8 lower = readScript8bits();
-	uint8 upper = readScript8bits();
-	return lower | (upper << 8);
+    uint8 lower = readScript8bits();
+    uint8 upper = readScript8bits();
+    return lower | (upper << 8);
 }
 
 uint32 Script::readScript32bits() {
-	uint16 lower = readScript16bits();
-	uint16 upper = readScript16bits();
-	return lower | (upper << 16);
+    uint16 lower = readScript16bits();
+    uint16 upper = readScript16bits();
+    return lower | (upper << 16);
 }
 
 void Script::O_WAITFOREVER() {
@@ -211,14 +233,14 @@ void Script::O__CALL() {
     debugScript("O__CALL 0x%04X", _currentInstruction);
 }
 void Script::O_RETURN() {
-	// Get the return address
-	if (_stacktop > 0) {
-		_stacktop--;
-		_currentInstruction = _stack[_stacktop];
+    // Get the return address
+    if (_stacktop > 0) {
+        _stacktop--;
+        _currentInstruction = _stack[_stacktop];
         debugScript("O_RETURN 0x%04X", _currentInstruction);
-	} else {
-		error("Return: Stack is empty");
-	}
+    } else {
+        error("Return: Stack is empty");
+    }
 }
 void Script::O_GO() {
     int32 opPC = readScript32bits();

@@ -1,3 +1,25 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
+
 #include "prince/graphics.h"
 
 #include "prince/prince.h"
@@ -8,7 +30,7 @@ namespace Prince {
 
 GraphicsMan::GraphicsMan(PrinceEngine *vm) 
     : _vm(vm), _changed(false) {
-	initGraphics(640, 480, true);
+    initGraphics(640, 480, true);
     _frontScreen = new Graphics::Surface();
     _frontScreen->create(640, 480, Graphics::PixelFormat::createFormatCLUT8());
 }
@@ -38,13 +60,10 @@ void GraphicsMan::draw(const Graphics::Surface *s)
 
 void GraphicsMan::drawTransparent(const Graphics::Surface *s)
 {
-    for (uint y = 0; y < 480; ++y)
-    {
-        for (uint x = 0; x < 640; ++x)
-        {
+    for (uint y = 0; y < 480; ++y) {
+        for (uint x = 0; x < 640; ++x) {
             byte pixel = *((byte*)s->getBasePtr(x,y));
-            if (pixel != 255)
-            {
+            if (pixel != 255) {
                 *((byte*)_frontScreen->getBasePtr(x, y)) = pixel;
             }
         }

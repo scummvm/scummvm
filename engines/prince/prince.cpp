@@ -67,13 +67,11 @@ PrinceEngine::~PrinceEngine() {
     delete _debugger;
 }
 
-GUI::Debugger *PrinceEngine::getDebugger()
-{
+GUI::Debugger *PrinceEngine::getDebugger() {
     return _debugger;
 }
 
 Common::Error PrinceEngine::run() {
-
     _graph = new GraphicsMan(this);
 
     const Common::FSNode gameDataDir(ConfMan.get("path"));
@@ -127,8 +125,7 @@ Common::Error PrinceEngine::run() {
     return Common::kNoError;
 }
 
-bool PrinceEngine::loadLocation(uint16 locationNr)
-{
+bool PrinceEngine::loadLocation(uint16 locationNr) {
     debug("PrinceEngine::loadLocation %d", locationNr);
     const Common::FSNode gameDataDir(ConfMan.get("path"));
     SearchMan.remove(Common::String::format("%02d", _locationNr));
@@ -141,14 +138,12 @@ bool PrinceEngine::loadLocation(uint16 locationNr)
     // load location background
     Common::SeekableReadStream *room = SearchMan.createReadStreamForMember("room");
 
-    if (!room)
-    {
+    if (!room) {
         error("Can't load room bitmap");
         return false;
     }
 
-    if(_roomBmp.loadStream(*room))
-    {
+    if(_roomBmp.loadStream(*room)) {
         debug("Room bitmap loaded");
         _system->getPaletteManager()->setPalette(_roomBmp.getPalette(), 0, 256);
     }
@@ -158,11 +153,9 @@ bool PrinceEngine::loadLocation(uint16 locationNr)
     return true;
 }
 
-bool PrinceEngine::playNextFrame()
-{
+bool PrinceEngine::playNextFrame() {
     const Graphics::Surface *s = _flicPlayer.decodeNextFrame();
-    if (s)
-    {
+    if (s) {
         _graph->drawTransparent(s);
         _graph->change();
     }
@@ -170,19 +163,16 @@ bool PrinceEngine::playNextFrame()
     return true;
 }
 
-bool PrinceEngine::loadAnim(uint16 animNr)
-{
+bool PrinceEngine::loadAnim(uint16 animNr) {
     Common::String streamName = Common::String::format("AN%02d", animNr);
     Common::SeekableReadStream * flicStream = SearchMan.createReadStreamForMember(streamName);
 
-    if (!flicStream)
-    {
+    if (!flicStream) {
         error("Can't open %s", streamName.c_str());
         return false;
     }
 
-    if (!_flicPlayer.loadStream(flicStream))
-    {
+    if (!_flicPlayer.loadStream(flicStream)) {
         error("Can't load flic stream %s", streamName.c_str());
     }
 
@@ -192,13 +182,13 @@ bool PrinceEngine::loadAnim(uint16 animNr)
 }
 
 void PrinceEngine::keyHandler(Common::Event event) {
-	uint16 nChar = event.kbd.keycode;
-	if (event.kbd.hasFlags(Common::KBD_CTRL)) {
-		switch (nChar) {
-		case Common::KEYCODE_d:
-			getDebugger()->attach();
-			getDebugger()->onFrame();
-			break;
+    uint16 nChar = event.kbd.keycode;
+    if (event.kbd.hasFlags(Common::KBD_CTRL)) {
+        switch (nChar) {
+        case Common::KEYCODE_d:
+            getDebugger()->attach();
+            getDebugger()->onFrame();
+            break;
         }
     }
 }
