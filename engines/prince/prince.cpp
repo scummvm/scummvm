@@ -182,13 +182,13 @@ bool PrinceEngine::loadAnim(uint16 animNr) {
 }
 
 void PrinceEngine::keyHandler(Common::Event event) {
-	uint16 nChar = event.kbd.keycode;
-	if (event.kbd.hasFlags(Common::KBD_CTRL)) {
-		switch (nChar) {
-		case Common::KEYCODE_d:
-			getDebugger()->attach();
-			getDebugger()->onFrame();
-			break;
+    uint16 nChar = event.kbd.keycode;
+    if (event.kbd.hasFlags(Common::KBD_CTRL)) {
+        switch (nChar) {
+        case Common::KEYCODE_d:
+            getDebugger()->attach();
+            getDebugger()->onFrame();
+            break;
         }
     }
 }

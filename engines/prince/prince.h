@@ -56,20 +56,20 @@ class Debugger;
 
 class PrinceEngine : public Engine {
 protected:
-	Common::Error run();
+    Common::Error run();
 
 public:
-	PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc);
-	virtual ~PrinceEngine();
+    PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc);
+    virtual ~PrinceEngine();
 
-	virtual bool hasFeature(EngineFeature f) const;
+    virtual bool hasFeature(EngineFeature f) const;
 
-	int getGameType() const;
-	const char *getGameId() const;
-	uint32 getFeatures() const;
-	Common::Language getLanguage() const;
+    int getGameType() const;
+    const char *getGameId() const;
+    uint32 getFeatures() const;
+    Common::Language getLanguage() const;
 
-	const PrinceGameDescription *_gameDescription;
+    const PrinceGameDescription *_gameDescription;
     Video::FlicDecoder _flicPlayer;
 
     bool loadLocation(uint16 locationNr);
@@ -81,7 +81,7 @@ private:
     bool playNextFrame();
     void keyHandler(Common::Event event);
 
-	Common::RandomSource *_rnd;
+    Common::RandomSource *_rnd;
     Graphics::BitmapDecoder _roomBmp;
     uint16 _locationNr;
     MhwanhDecoder _walizkaBmp;
@@ -90,7 +90,7 @@ private:
     GraphicsMan *_graph;
     Script *_script;
     Font _font;
-	
+    
     void mainLoop();
 
 };

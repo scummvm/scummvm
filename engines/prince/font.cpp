@@ -71,15 +71,15 @@ int Font::getCharWidth(byte chr) const {
 }
 
 void Font::drawChar(Graphics::Surface *dst, byte chr, int x, int y, uint32 color) const {
-	const ChrData chrData = getChrData(chr);
-	const byte *src = chrData._pixels;
-	byte *target = (byte *)dst->getBasePtr(x, y);
+    const ChrData chrData = getChrData(chr);
+    const byte *src = chrData._pixels;
+    byte *target = (byte *)dst->getBasePtr(x, y);
 
-	for (int i = 0; i < chrData._height; i++) {
-		memcpy(target, src, chrData._width);
-		src += chrData._width;
-		target += dst->pitch;
-	}
+    for (int i = 0; i < chrData._height; i++) {
+        memcpy(target, src, chrData._width);
+        src += chrData._width;
+        target += dst->pitch;
+    }
 }
 
 }

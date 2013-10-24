@@ -56,7 +56,8 @@ private:
     bool _opcodeNF;
 
     // Stack
-    uint16 _stack[500];
+    static const uint32 _STACK_SIZE = 500;
+    uint16 _stack[_STACK_SIZE];
     uint8 _stacktop;
     uint8 _savedStacktop;
 
