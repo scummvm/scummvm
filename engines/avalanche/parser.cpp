@@ -1013,7 +1013,7 @@ bool Parser::isHolding() {
 
 	bool holdingResult = false;
 
-	if (_thing > 100)
+	if (_thing >= 100)
 		_vm->_dialogs->displayText("Be reasonable!");
 	else if (_thing <= kObjectNum) {
 		if (!_vm->_objects[_thing - 1])

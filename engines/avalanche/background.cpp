@@ -37,6 +37,7 @@ const int16 Background::kOnDisk = -1;
 Background::Background(AvalancheEngine *vm) {
 	_vm = vm;
 	_spriteNum = 0;
+	_nextBell = 0;
 }
 
 Background::~Background() {
