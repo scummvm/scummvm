@@ -150,7 +150,7 @@ void EMIEngine::invalidateSortOrder() {
 	_sortOrderInvalidated = true;
 }
 
-bool EMIEngine::compareActor(Actor *x, Actor *y) {
+bool EMIEngine::compareActor(const Actor *x, const Actor *y) {
 	if (x->getSortOrder() == y->getSortOrder()) {
 		return x->getId() < y->getId();
 	}

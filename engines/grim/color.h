@@ -46,7 +46,7 @@ public:
 	uint32 toEncodedValue();
 
 	Color &operator =(const Color &c);
-	Color &operator =(Color *c);
+	Color &operator =(const Color *c);
 };
 
 

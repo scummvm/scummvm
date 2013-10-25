@@ -1003,7 +1003,7 @@ void Actor::turn(int dir) {
 	_currTurnDir = dir;
 }
 
-Math::Angle Actor::getYawTo(Actor *a) const {
+Math::Angle Actor::getYawTo(const Actor *a) const {
 	Math::Vector3d forwardVec = getSimplePuckVector();
 	Math::Vector3d delta = a->getPos() - _pos;
 
@@ -1728,7 +1728,7 @@ bool Actor::isInSet(const Common::String &setName) const {
 	return _setName == setName;
 }
 
-void Actor::freeCostumeChore(Costume *toFree, Chore *chore) {
+void Actor::freeCostumeChore(const Costume *toFree, Chore *chore) {
 	if (chore->_costume == toFree) {
 		*chore = Chore();
 	}

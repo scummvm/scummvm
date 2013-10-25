@@ -291,7 +291,7 @@ public:
 	 *
 	 * @param actor The actor to look at.
 	 */
-	Math::Angle  getYawTo(Actor *actor) const;
+	Math::Angle  getYawTo(const Actor *actor) const;
 	/**
 	 * Calculates and returns the angle between the direction the
 	 * actor is facing and the direction towards a point.
@@ -606,7 +606,7 @@ private:
 
 		inline bool isValid() const { return _chore > -1; }
 		bool isPlaying() const;
-		inline bool equals(Costume *cost, int chore) const {
+		inline bool equals(const Costume *cost, int chore) const {
 			return (_costume == cost && _chore == chore);
 		}
 
@@ -647,7 +647,7 @@ private:
 		return (dir > 0 ? &_leftTurnChore : &_rightTurnChore);
 	}
 
-	void freeCostumeChore(Costume *toFree, Chore *chore);
+	void freeCostumeChore(const Costume *toFree, Chore *chore);
 
 	// lookAt
 	Math::Vector3d _lookAtVector;

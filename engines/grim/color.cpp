@@ -59,7 +59,7 @@ Color &Color::operator =(const Color &c) {
 	return *this;
 }
 
-Color &Color::operator =(Color *c) {
+Color &Color::operator =(const Color *c) {
 	_vals[0] = c->_vals[0];
 	_vals[1] = c->_vals[1];
 	_vals[2] = c->_vals[2];

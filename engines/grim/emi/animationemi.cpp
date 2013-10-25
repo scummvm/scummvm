@@ -55,7 +55,7 @@ void AnimationEmi::reset() {
 	_time = 0.0f;
 }
 
-void AnimationEmi::animate(Skeleton *skel, float delta) {
+void AnimationEmi::animate(const Skeleton *skel, float delta) {
 	_time += delta;
 	if (_time > _duration) {
 		_time = _duration;

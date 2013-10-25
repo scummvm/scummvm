@@ -107,7 +107,7 @@ bool TextObject::restoreState(SaveGame *state) {
 	return true;
 }
 
-void TextObject::setDefaults(TextObjectDefaults *defaults) {
+void TextObject::setDefaults(const TextObjectDefaults *defaults) {
 	_x = defaults->getX();
 	_y = defaults->getY();
 	_font = defaults->getFont();

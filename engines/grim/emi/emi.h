@@ -47,7 +47,7 @@ public:
 private:
 	LuaBase *createLua() override;
 	void drawNormalMode() override;
-	static bool compareActor(Actor *x, Actor *y);
+	static bool compareActor(const Actor *x, const Actor *y);
 
 	Common::List<Common::List<TextObject *> *> _textstack;
 

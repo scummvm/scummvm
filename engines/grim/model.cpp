@@ -738,7 +738,7 @@ void ModelNode::addSprite(Sprite *sprite) {
 	_sprite = sprite;
 }
 
-void ModelNode::removeSprite(Sprite *sprite) {
+void ModelNode::removeSprite(const Sprite *sprite) {
 	Sprite *curr = _sprite;
 	Sprite *prev = NULL;
 	while (curr) {

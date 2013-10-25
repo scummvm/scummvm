@@ -243,7 +243,7 @@ void AnimManager::addAnimation(Animation *anim, int priority1, int priority2) {
 		_activeAnims.push_back(entry);
 }
 
-void AnimManager::removeAnimation(Animation *anim) {
+void AnimManager::removeAnimation(const Animation *anim) {
 	Common::List<AnimationEntry>::iterator i;
 	for (i = _activeAnims.begin(); i != _activeAnims.end(); ++i) {
 		if (i->_anim == anim) {

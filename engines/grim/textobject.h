@@ -41,7 +41,7 @@ public:
 	void setY(int y) { _y = y; _positioned = false; }
 	int getY() const { return _y; }
 
-	void setFont(Font *font) { _font = font; }
+	void setFont(const Font *font) { _font = font; }
 	const Font *getFont() const { return _font; }
 
 	void setFGColor(const Color &fgColor) { _fgColor = fgColor; }
@@ -84,7 +84,7 @@ public:
 
 	static int32 getStaticTag() { return MKTAG('T', 'E', 'X', 'T'); }
 
-	void setDefaults(TextObjectDefaults *defaults);
+	void setDefaults(const TextObjectDefaults *defaults);
 	void setText(const Common::String &text);
 	void reset();
 

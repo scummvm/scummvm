@@ -144,7 +144,7 @@ public:
 	void setMatrix(const Math::Matrix4 &matrix);
 	void update();
 	void addSprite(Sprite *sprite);
-	void removeSprite(Sprite *sprite);
+	void removeSprite(const Sprite *sprite);
 	void translateViewpoint() const;
 	void translateViewpointBack() const;
 
