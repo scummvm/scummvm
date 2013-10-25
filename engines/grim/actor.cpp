@@ -76,41 +76,32 @@ void Actor::restoreStaticState(SaveGame *state) {
 	_isTalkingBackground = state->readBool();
 }
 
-Actor::Actor(const Common::String &actorName) :
-		_name(actorName), _setName(""),
+Actor::Actor() :
 		_talkColor(255, 255, 255), _pos(0, 0, 0),
-		// Some actors don't set walk and turn rates, so we default the
-		// _turnRate so Doug at the cat races can turn and we set the
-		// _walkRate so Glottis at the demon beaver entrance can walk and
-		// so Chepito in su.set
-		_pitch(0), _yaw(0), _roll(0), _walkRate(0.3f), _turnRate(100.0f),
-		_reflectionAngle(80),
+		_lookingMode(false), _followBoxes(false), _running(false), 
+		_pitch(0), _yaw(0), _roll(0), _walkRate(0.3f),
+		_turnRateMultiplier(0.f), _talkAnim(0),
+		_reflectionAngle(80), _scale(1.f), _timeScale(1.f),
 		_visible(true), _lipSync(NULL), _turning(false), _walking(false),
 		_walkedLast(false), _walkedCur(false),
+		_collisionMode(CollisionOff), _collisionScale(1.f),
 		_lastTurnDir(0), _currTurnDir(0),
 		_sayLineText(0), _talkDelay(0),
 		_attachedActor(0), _attachedJoint(""),
 		_globalAlpha(1.f), _alphaMode(AlphaOff),
-		_shadowActive(false) {
-	_lookingMode = false;
-	_followBoxes = false;
-	_talkSoundName = "";
+		 _mustPlaceText(false), 
+		_shadowActive(false), _puckOrient(false), _talking(false), 
+		_inOverworld(false), _drawnToClean(false), _backgroundTalk(false),
+		_sortOrder(0), _cleanBuffer(0) {
+
+	// Some actors don't set walk and turn rates, so we default the
+	// _turnRate so Doug at the cat races can turn and we set the
+	// _walkRate so Glottis at the demon beaver entrance can walk and
+	// so Chepito in su.set
+	_turnRate = 100.0f;
+
 	_activeShadowSlot = -1;
 	_shadowArray = new Shadow[5];
-	_running = false;
-	_scale = 1.f;
-	_timeScale = 1.f;
-	_mustPlaceText = false;
-	_collisionMode = CollisionOff;
-	_collisionScale = 1.f;
-	_puckOrient = false;
-	_talking = false;
-	_inOverworld = false;
-	_sortOrder = 0;
-	_cleanBuffer = 0;
-	_drawnToClean = false;
-	_backgroundTalk = false;
-
 	for (int i = 0; i < MAX_SHADOWS; i++) {
 		_shadowArray[i].active = false;
 		_shadowArray[i].dontNegate = false;
@@ -118,38 +109,6 @@ Actor::Actor(const Common::String &actorName) :
 		_shadowArray[i].shadowMaskSize = 0;
 	}
 }
-
-Actor::Actor() {
-
-	_shadowArray = new Shadow[5];
-	_running = false;
-	_scale = 1.f;
-	_timeScale = 1.f;
-	_mustPlaceText = false;
-	_collisionMode = CollisionOff;
-	_collisionScale = 1.f;
-	_inOverworld = false;
-
-	_attachedActor = 0;
-	_attachedJoint = "";
-
-	_alphaMode = AlphaOff;
-	_globalAlpha = 1.f;
-
-	_sortOrder = 0;
-	_shadowActive = false;
-	_cleanBuffer = 0;
-	_drawnToClean = false;
-	_backgroundTalk = false;
-
-	for (int i = 0; i < MAX_SHADOWS; i++) {
-		_shadowArray[i].active = false;
-		_shadowArray[i].dontNegate = false;
-		_shadowArray[i].shadowMask = NULL;
-		_shadowArray[i].shadowMaskSize = 0;
-	}
-}
-
 
 Actor::~Actor() {
 	if (_shadowArray) {

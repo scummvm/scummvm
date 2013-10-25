@@ -42,7 +42,8 @@ void Lua_V1::LoadActor() {
 		name = "<unnamed>";
 	else
 		name = lua_getstring(nameObj);
-	Actor *a = new Actor(name);
+	Actor *a = new Actor();
+	a->setName(name);
 	lua_pushusertag(a->getId(), MKTAG('A','C','T','R'));
 }
 

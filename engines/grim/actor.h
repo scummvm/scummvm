@@ -79,12 +79,6 @@ public:
 	};
 
 	/**
-	 * Initializes an actor with the given name.
-	 *
-	 * @param name The name of the actor.
-	 */
-	Actor(const Common::String &name);
-	/**
 	 * Builds an actor setting up only the minimal variables.
 	 */
 	Actor();
@@ -113,6 +107,13 @@ public:
 	 * Returns the name of the actor.
 	 */
 	const Common::String &getName() const { return _name; }
+
+	/**
+	 * Sets the name of the actor.
+	 *
+	 * @param name The name.
+	 */
+	void setName(const Common::String &name) { _name = name; }
 
 	/**
 	 * Sets the color of the subtitles of the actor.
