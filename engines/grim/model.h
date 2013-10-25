@@ -134,7 +134,7 @@ public:
 
 class ModelNode {
 public:
-	ModelNode() : _initialized(false), _needsUpdate(true) { }
+	ModelNode();
 	~ModelNode();
 	void loadBinary(Common::SeekableReadStream *data, ModelNode *hierNodes, const Model::Geoset *g);
 	void draw() const;

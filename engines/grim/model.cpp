@@ -551,6 +551,13 @@ void Mesh::getBoundingBox(int *x1, int *y1, int *x2, int *y2) const {
 /**
  * @class ModelNode
  */
+ModelNode::ModelNode() :
+	_initialized(false), _needsUpdate(true), _mesh(nullptr), _flags(0), _type(0),
+	_depth(0), _numChildren(0), _parent(nullptr), _child(nullptr), _sprite(nullptr),
+	_sibling(nullptr), _meshVisible(false), _hierVisible(false) {
+	_name[0] = '\0';
+}
+
 ModelNode::~ModelNode() {
 	ModelNode *child = _child;
 	while (child) {
