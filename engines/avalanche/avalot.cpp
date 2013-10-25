@@ -1676,7 +1676,7 @@ void AvalancheEngine::flipRoom(Room room, byte ped) {
 	if (_room == kRoomLustiesRoom)
 		_enterCatacombsFromLustiesRoom = true;
 
-	if (_room > kRoomMap)
+	if (room > kRoomMap)
 		return;
 
 	enterRoom(room, ped);

@@ -782,10 +782,12 @@ byte Menu::getNameChar(People whose) {
 	static const char ladChar[] = "ASCDMTRwLfgeIyPu";
 	static const char lassChar[] = "kG\0xB1o";
 
-	if (whose < kPeopleArkata)
+	if (whose <= kPeopleJacques)
 		return ladChar[whose - kPeopleAvalot];
-	else
+	else if ((whose >= kPeopleArkata) && (whose <= kPeopleWisewoman))
 		return lassChar[whose - kPeopleArkata];
+	else
+		error("getName() - Unexpected character id %d", (byte) whose);
 }
 
 Common::String Menu::getThing(byte which) {

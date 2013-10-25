@@ -689,6 +689,7 @@ void Dialogs::displayText(Common::String text) {
 				if (_param == 0)
 					setBubbleStateNatural();
 				else if ((1 <= _param) && (_param <= 9)) {
+					assert(_param - 1 < _vm->_animation->kSpriteNumbMax);
 					AnimationType *spr = _vm->_animation->_sprites[_param - 1];
 					if ((_param > _vm->_animation->kSpriteNumbMax) || (!spr->_quick)) { // Not valid.
 						_vm->errorLed();
@@ -699,6 +700,7 @@ void Dialogs::displayText(Common::String text) {
 					// Quasi-peds. (This routine performs the same
 					// thing with QPs as triptype.chatter does with the
 					// sprites.)
+					assert(_param - 10 < 16);
 					PedType *quasiPed = &_vm->_peds[kQuasipeds[_param - 10]._whichPed];
 					_talkX = quasiPed->_x;
 					_talkY = quasiPed->_y; // Position.
