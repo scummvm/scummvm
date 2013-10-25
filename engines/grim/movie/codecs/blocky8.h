@@ -30,7 +30,6 @@ namespace Grim {
 class Blocky8 {
 private:
 
-	int32 _deltaSize;
 	byte *_deltaBufs[2];
 	byte *_deltaBuf;
 	byte *_curBuf;

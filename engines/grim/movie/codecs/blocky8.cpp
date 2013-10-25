@@ -567,9 +567,9 @@ void Blocky8::init(int width, int height) {
 	makeTablesInterpolation(8);
 
 	_frameSize = _width * _height;
-	_deltaSize = _frameSize * 3;
-	_deltaBuf = new byte[_deltaSize];
-	memset(_deltaBuf, 0, _deltaSize);
+	uint32 deltaSize = _frameSize * 3;
+	_deltaBuf = new byte[deltaSize];
+	memset(_deltaBuf, 0, deltaSize);
 	_deltaBufs[0] = _deltaBuf;
 	_deltaBufs[1] = _deltaBuf + _frameSize;
 	_curBuf = _deltaBuf + _frameSize * 2;
@@ -579,7 +579,6 @@ void Blocky8::deinit() {
 	_lastTableWidth = -1;
 	if (_deltaBuf) {
 		delete[] _deltaBuf;
-		_deltaSize = 0;
 		_deltaBuf = NULL;
 		_deltaBufs[0] = NULL;
 		_deltaBufs[1] = NULL;

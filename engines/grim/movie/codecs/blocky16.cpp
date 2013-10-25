@@ -630,9 +630,9 @@ void Blocky16::init(int width, int height) {
 	// of using _frameSize.
 	int size = _blocksWidth * 8 * _blocksHeight * 8 * 2;
 	_offset = size - _frameSize;
-	_deltaSize = size * 3;
-	_deltaBuf = new byte[_deltaSize];
-	memset(_deltaBuf, 0, _deltaSize);
+	uint32 deltaSize = size * 3;
+	_deltaBuf = new byte[deltaSize];
+	memset(_deltaBuf, 0, deltaSize);
 	_deltaBufs[0] = _deltaBuf;
 	_deltaBufs[1] = _deltaBuf + _frameSize;
 	_curBuf = _deltaBuf + _frameSize * 2;
@@ -650,7 +650,6 @@ void Blocky16::deinit() {
 	_lastTableWidth = -1;
 	if (_deltaBuf) {
 		delete[] _deltaBuf;
-		_deltaSize = 0;
 		_deltaBuf = NULL;
 		_deltaBufs[0] = NULL;
 		_deltaBufs[1] = NULL;
