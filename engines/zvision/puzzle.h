@@ -32,7 +32,7 @@
 namespace ZVision {
 
 struct Puzzle {
-	Puzzle() : key(0), flags(0) {}
+	Puzzle() : key(0) {}
 
 	~Puzzle() {
 		for (Common::List<ResultAction *>::iterator iter = resultActions.begin(); iter != resultActions.end(); ++iter) {
@@ -73,7 +73,6 @@ struct Puzzle {
 	Common::List<Common::List <CriteriaEntry> > criteriaList;
 	// This has to be list of pointers because ResultAction is abstract
 	Common::List<ResultAction *> resultActions;
-	uint flags;
 	bool addedBySetState;
 };
 
