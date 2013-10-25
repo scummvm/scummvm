@@ -71,9 +71,6 @@ AnimationControl::~AnimationControl() {
 }
 
 bool AnimationControl::process(uint32 deltaTimeInMillis) {
-	if (!_enabled) {
-		return false;
-	}
 
 	bool finished = false;
 
@@ -253,7 +250,6 @@ bool AnimationControl::process(uint32 deltaTimeInMillis) {
 	// Then disable the control. DON'T delete it. It can be re-used
 	if (finished) {
 		_engine->getScriptManager()->setStateValue(_animationKey, 2);
-		disable();
 		_currentLoop = 0;
 	}
 

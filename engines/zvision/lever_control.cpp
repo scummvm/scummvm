@@ -191,9 +191,8 @@ void LeverControl::parseLevFile(const Common::String &fileName) {
 }
 
 void LeverControl::onMouseDown(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) {
-	if (!_enabled) {
+	if (_engine->getScriptManager()->getStateFlag(_key) & Puzzle::DISABLED)
 		return;
-	}
 
 	if (_frameInfo[_currentFrame].hotspot.contains(backgroundImageSpacePos)) {
 		_mouseIsCaptured = true;
@@ -202,9 +201,8 @@ void LeverControl::onMouseDown(const Common::Point &screenSpacePos, const Common
 }
 
 void LeverControl::onMouseUp(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) {
-	if (!_enabled) {
+	if (_engine->getScriptManager()->getStateFlag(_key) & Puzzle::DISABLED)
 		return;
-	}
 
 	if (_mouseIsCaptured) {
 		_mouseIsCaptured = false;
@@ -217,9 +215,8 @@ void LeverControl::onMouseUp(const Common::Point &screenSpacePos, const Common::
 }
 
 bool LeverControl::onMouseMove(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) {
-	if (!_enabled) {
+	if (_engine->getScriptManager()->getStateFlag(_key) & Puzzle::DISABLED)
 		return false;
-	}
 
 	bool cursorWasChanged = false;
 
@@ -248,9 +245,8 @@ bool LeverControl::onMouseMove(const Common::Point &screenSpacePos, const Common
 }
 
 bool LeverControl::process(uint32 deltaTimeInMillis) {
-	if (!_enabled) {
+	if (_engine->getScriptManager()->getStateFlag(_key) & Puzzle::DISABLED)
 		return false;
-	}
 
 	if (_isReturning) {
 		_accumulatedTime += deltaTimeInMillis;

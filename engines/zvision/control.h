@@ -38,16 +38,14 @@ class ZVision;
 
 class Control {
 public:
-	Control() : _engine(0), _key(0), _enabled(false) {}
-	Control(ZVision *engine, uint32 key) : _engine(engine), _key(key), _enabled(false) {}
+	Control() : _engine(0), _key(0) {}
+	Control(ZVision *engine, uint32 key) : _engine(engine), _key(key) {}
 	virtual ~Control() {}
 
 	uint32 getKey() {
 		return _key;
 	}
 
-	virtual void enable();
-	virtual void disable();
 	virtual void focus() {}
 	virtual void unfocus() {}
 	/**
@@ -131,7 +129,6 @@ public:
 protected:
 	ZVision *_engine;
 	uint32 _key;
-	bool _enabled;
 
 // Static member functions
 public:

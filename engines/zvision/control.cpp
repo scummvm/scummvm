@@ -33,24 +33,6 @@
 
 namespace ZVision {
 
-void Control::enable() {
-	if (!_enabled) {
-		_enabled = true;
-		return;
-	}
-
-	debug("Control %u is already enabled", _key);
-}
-
-void Control::disable() {
-	if (_enabled) {
-		_enabled = false;
-		return;
-	}
-
-	debug("Control %u is already disabled", _key);
-}
-
 void Control::parseFlatControl(ZVision *engine) {
 	engine->getRenderManager()->getRenderTable()->setRenderState(RenderTable::FLAT);
 }
