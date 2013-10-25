@@ -94,7 +94,8 @@ public:
 	bool operator==(const Sector &other) const;
 
 private:
-	int _numVertices, _id;
+	int _numVertices;
+	int _id;
 	int _numSortplanes;
 	int *_sortplanes;
 

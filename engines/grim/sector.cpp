@@ -31,11 +31,14 @@
 
 namespace Grim {
 
- Sector::Sector() : _vertices(NULL), _origVertices(NULL), _sortplanes(NULL),
-					_invalid(false), _shrinkRadius(0.f) {
+Sector::Sector() :
+	_vertices(NULL), _origVertices(NULL), _sortplanes(NULL),_invalid(false),
+	_shrinkRadius(0.f), _numVertices(0), _id(0), _numSortplanes(0),
+	_type(NoneType), _visible(false), _height(0.f) {
  }
 
-Sector::Sector(const Sector &other) : _vertices(NULL), _origVertices(NULL), _sortplanes(NULL) {
+Sector::Sector(const Sector &other) :
+	_vertices(NULL), _origVertices(NULL), _sortplanes(NULL) {
 	*this = other;
 }
 
