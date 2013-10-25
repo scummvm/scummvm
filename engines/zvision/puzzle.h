@@ -74,6 +74,7 @@ struct Puzzle {
 	// This has to be list of pointers because ResultAction is abstract
 	Common::List<ResultAction *> resultActions;
 	uint flags;
+	bool addedBySetState;
 };
 
 } // End of namespace ZVision
