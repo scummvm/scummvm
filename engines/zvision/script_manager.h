@@ -143,6 +143,8 @@ private:
 	 * particular state key are checked after the key is modified.
 	 */
 	StateMap _globalState;
+	/** Holds execute flags */
+	StateMap _globalStateFlags;
 	/** References _globalState keys to Puzzles */
 	PuzzleMap _referenceTable;
 	/** Holds the Puzzles that should be checked this frame */
@@ -168,6 +170,10 @@ public:
 	uint getStateValue(uint32 key);
 	void setStateValue(uint32 key, uint value);
 	void addToStateValue(uint32 key, uint valueToAdd);
+
+	uint getStateFlag(uint32 key);
+	void setStateFlag(uint32 key, uint value);
+	void unsetStateFlag(uint32 key, uint value);
 
 	void addControl(Control *control);
 	Control *getControl(uint32 key);

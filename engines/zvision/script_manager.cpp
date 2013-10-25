@@ -253,6 +253,30 @@ void ScriptManager::setStateValue(uint32 key, uint value) {
 	queuePuzzles(key);
 }
 
+uint ScriptManager::getStateFlag(uint32 key) {
+	if (_globalStateFlags.contains(key))
+		return _globalStateFlags[key];
+	else
+		return 0;
+}
+
+void ScriptManager::setStateFlag(uint32 key, uint value) {
+	queuePuzzles(key);
+
+	_globalStateFlags[key] |= value;
+}
+
+void ScriptManager::unsetStateFlag(uint32 key, uint value) {
+	queuePuzzles(key);
+
+	if (_globalStateFlags.contains(key)) {
+		_globalStateFlags[key] &= ~value;
+
+		if (_globalStateFlags[key] == 0)
+			_globalStateFlags.erase(key);
+	}
+}
+
 void ScriptManager::addToStateValue(uint32 key, uint valueToAdd) {
 	_globalState[key] += valueToAdd;
 }
