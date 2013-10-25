@@ -37,16 +37,10 @@ TextObjectCommon::TextObjectCommon() :
 	_posX(0), _posY(0) {
 }
 
-TextObject::TextObject(bool blastDraw, bool isSpeech) :
-		TextObjectCommon(), _numberLines(1), _textID(""), _elapsedTime(0),
-		_maxLineWidth(0), _lines(NULL), _userData(NULL), _created(false) {
-	_blastDraw = blastDraw;
-	_isSpeech = isSpeech;
-}
-
 TextObject::TextObject() :
-	TextObjectCommon(), _maxLineWidth(0), _lines(NULL) {
-
+		TextObjectCommon(), _numberLines(1), _textID(""), _elapsedTime(0),
+		_maxLineWidth(0), _lines(NULL), _userData(NULL), _created(false),
+		_blastDraw(false), _isSpeech(false) {
 }
 
 TextObject::~TextObject() {

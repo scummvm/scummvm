@@ -79,7 +79,6 @@ class TextObjectDefaults : public TextObjectCommon {
 class TextObject : public PoolObject<TextObject>,
                    public TextObjectCommon {
 public:
-	TextObject(bool blastDraw, bool isSpeech = false);
 	TextObject();
 	~TextObject();
 
@@ -95,6 +94,9 @@ public:
 
 	int getLineX(int line) const;
 	int getLineY(int line) const;
+
+	void setIsSpeach() { _isSpeech = true; }
+	void setBlastDraw() { _blastDraw = true; }
 
 	const void *getUserData() const { return _userData; }
 	void setUserData(void *data) { _userData = data; }
