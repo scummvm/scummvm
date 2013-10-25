@@ -1661,8 +1661,8 @@ void Scene3275::signal() {
 
 void Scene3350::postInit(SceneObjectList *OwnerList) {
 	loadScene(3350);
-	SceneExt::postInit();
 	R2_GLOBALS._uiElements._active = false;
+	SceneExt::postInit();
 	R2_GLOBALS._interfaceY = SCREEN_HEIGHT;
 	R2_GLOBALS._sound2.play(310);
 
@@ -3622,7 +3622,7 @@ void Scene3500::postInit(SceneObjectList *OwnerList) {
 
 	loadScene(1050);
 	R2_GLOBALS._uiElements._active = false;
-	R2_GLOBALS._interfaceY = 200;
+	R2_GLOBALS._interfaceY = SCREEN_HEIGHT;
 
 	R2_GLOBALS._v5589E.set(0, 0, 320, 200);
 	R2_GLOBALS._sound1.play(305);
@@ -4941,8 +4941,8 @@ void Scene3600::dispatch() {
 
 void Scene3700::postInit(SceneObjectList *OwnerList) {
 	loadScene(3700);
-	SceneExt::postInit();
 	R2_GLOBALS._uiElements._active = false;
+	SceneExt::postInit();
 	R2_GLOBALS._interfaceY = SCREEN_HEIGHT;
 
 	_stripManager.setColors(60, 255);

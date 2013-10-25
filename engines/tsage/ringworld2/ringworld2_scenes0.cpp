@@ -1425,6 +1425,7 @@ Scene160::Scene160(): SceneExt() {
 
 void Scene160::postInit(SceneObjectList *OwnerList) {
 	loadScene(4001);
+	R2_GLOBALS._uiElements._active = false;
 	SceneExt::postInit();
 
 	R2_GLOBALS._player._uiEnabled = false;
@@ -2344,8 +2345,9 @@ Scene205::Scene205(): SceneExt() {
 
 void Scene205::postInit(SceneObjectList *OwnerList) {
 	loadScene(4000);
+	R2_GLOBALS._uiElements._active = false;
 	SceneExt::postInit();
-	BF_GLOBALS._interfaceY = 200;
+	BF_GLOBALS._interfaceY = SCREEN_HEIGHT;
 	R2_GLOBALS._player._uiEnabled = false;
 
 	R2_GLOBALS._sound1.play(337);
@@ -2606,11 +2608,11 @@ void Scene250::synchronize(Serializer &s) {
 
 void Scene250::postInit(SceneObjectList *OwnerList) {
 	loadScene(250);
+	R2_GLOBALS._uiElements._active = false;
 	SceneExt::postInit();
-	BF_GLOBALS._interfaceY = 200;
+	BF_GLOBALS._interfaceY = SCREEN_HEIGHT;
 
 	R2_GLOBALS._player.postInit();
-	R2_GLOBALS._uiElements._active = false;
 	R2_GLOBALS._player.setVisage(10);
 	R2_GLOBALS._player.hide();
 	R2_GLOBALS._player.enableControl();
@@ -6954,11 +6956,11 @@ Scene825::Scene825(): SceneExt() {
 
 void Scene825::postInit(SceneObjectList *OwnerList) {
 	loadScene(825);
+	R2_GLOBALS._uiElements._active = false;
 	SceneExt::postInit();
-	BF_GLOBALS._interfaceY = 200;
+	BF_GLOBALS._interfaceY = SCREEN_HEIGHT;
 
 	R2_GLOBALS._player.postInit();
-	R2_GLOBALS._uiElements._active = false;
 	R2_GLOBALS._player._effect = 0;
 	R2_GLOBALS._player.setVisage(10);
 	R2_GLOBALS._player.hide();

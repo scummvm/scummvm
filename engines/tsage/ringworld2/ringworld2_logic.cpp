@@ -342,6 +342,9 @@ SceneExt::SceneExt(): Scene() {
 	_savedCanWalk = false;
 	_preventSaving = false;
 
+	// Reset screen clipping area
+	R2_GLOBALS._screenSurface._clipRect = Rect();
+
 	// WORKAROUND: In the original, playing animations don't reset the global _animationCtr
 	// counter as scene changes unless the playing animation explicitly finishes. For now,
 	// to make inter-scene debugging easier, I'm explicitly resetting the _animationCtr

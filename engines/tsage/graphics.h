@@ -88,6 +88,7 @@ private:
 public:
 	Common::Point _centroid;
 	int _transColor;
+	Rect _clipRect;
 public:
 	GfxSurface();
 	GfxSurface(const GfxSurface &s);

@@ -479,9 +479,9 @@ void Scene1000::dispatch() {
 
 void Scene1010::postInit(SceneObjectList *OwnerList) {
 	loadScene(1010);
-	SceneExt::postInit();
-	R2_GLOBALS._interfaceY = 200;
 	R2_GLOBALS._uiElements._active = false;
+	SceneExt::postInit();
+	R2_GLOBALS._interfaceY = SCREEN_HEIGHT;
 
 	setZoomPercents(100, 1, 160, 100);
 	R2_GLOBALS._player.postInit();
@@ -540,14 +540,14 @@ void Scene1010::signal() {
 
 void Scene1020::postInit(SceneObjectList *OwnerList) {
 	loadScene(1020);
+	R2_GLOBALS._uiElements._active = false;
 	SceneExt::postInit();
 
 	if (R2_GLOBALS._sceneManager._previousScene == 1010)
 		_sceneBounds = Rect(160, 0, SCREEN_WIDTH + 160, 200);
 
-	R2_GLOBALS._interfaceY = 200;
+	R2_GLOBALS._interfaceY = SCREEN_HEIGHT;
 	R2_GLOBALS._v558B6.set(160, 0, 160, 161);
-	R2_GLOBALS._uiElements._active = false;
 	R2_GLOBALS._player.postInit();
 
 	if (R2_GLOBALS._sceneManager._previousScene == 1010) {
@@ -4307,12 +4307,12 @@ void Scene1337::postInit(SceneObjectList *OwnerList) {
 // In the original, may be found in subPostInit.
 // Without it, enableControl asserts
 	loadScene(1330);
+	R2_GLOBALS._uiElements._active = false;
 	SceneExt::postInit();
 //
 
 	// Hide the user interface
-	R2_GLOBALS._uiElements._active = false;
-	BF_GLOBALS._interfaceY = 200;
+	BF_GLOBALS._interfaceY = SCREEN_HEIGHT;
 
 	R2_GLOBALS._player.enableControl();
 	R2_GLOBALS._player._canWalk = false;
