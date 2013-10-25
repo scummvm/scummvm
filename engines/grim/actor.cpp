@@ -547,7 +547,8 @@ void Actor::walkTo(const Math::Vector3d &p) {
 		_path.clear();
 
 		if (_followBoxes) {
-			g_grim->getCurrSet()->findClosestSector(p, NULL, &_destPos);
+			Set *currSet = g_grim->getCurrSet();
+			currSet->findClosestSector(p, NULL, &_destPos);
 
 			Common::List<PathNode *> openList;
 			Common::List<PathNode *> closedList;
@@ -558,11 +559,11 @@ void Actor::walkTo(const Math::Vector3d &p) {
 			start->dist = 0.f;
 			start->cost = 0.f;
 			openList.push_back(start);
-			g_grim->getCurrSet()->findClosestSector(_pos, &start->sect, NULL);
+			currSet->findClosestSector(_pos, &start->sect, NULL);
 
 			Common::List<Sector *> sectors;
-			for (int i = 0; i < g_grim->getCurrSet()->getSectorCount(); ++i) {
-				Sector *s = g_grim->getCurrSet()->getSectorBase(i);
+			for (int i = 0; i < currSet->getSectorCount(); ++i) {
+				Sector *s = currSet->getSectorBase(i);
 				int type = s->getType();
 				if ((type == Sector::WalkType || type == Sector::HotType || type == Sector::FunnelType) && s->isVisible()) {
 					sectors.push_back(s);
@@ -570,7 +571,7 @@ void Actor::walkTo(const Math::Vector3d &p) {
 			}
 
 			Sector *endSec = NULL;
-			g_grim->getCurrSet()->findClosestSector(_destPos, &endSec, NULL);
+			currSet->findClosestSector(_destPos, &endSec, NULL);
 
 			do {
 				PathNode *node = NULL;
@@ -1060,14 +1061,17 @@ void Actor::sayLine(const char *msgId, bool background) {
 		shutUp();
 
 	_talkSoundName = soundName;
+
+	Set *currSet = g_grim->getCurrSet();
+
 	if (g_grim->getSpeechMode() != GrimEngine::TextOnly) {
 		// if there is no costume probably the character is drawn by a smush movie, so
 		// we don't want to go out of sync with it.
 		if (getCurrentCostume()) {
 			_talkDelay = 500;
 		}
-		if (g_sound->startVoice(_talkSoundName.c_str()) && g_grim->getCurrSet()) {
-			g_grim->getCurrSet()->setSoundPosition(_talkSoundName.c_str(), _pos);
+		if (g_sound->startVoice(_talkSoundName.c_str()) && currSet) {
+			currSet->setSoundPosition(_talkSoundName.c_str(), _pos);
 		}
 	}
 
@@ -1143,7 +1147,7 @@ void Actor::sayLine(const char *msgId, bool background) {
 			textObject->setY(456);
 			g_grim->setMovieSubtitle(textObject);
 		} else {
-			if (_visible && isInSet(g_grim->getCurrSet()->getName())) {
+			if (_visible && isInSet(currSet->getName())) {
 				_mustPlaceText = true;
 			} else {
 				_mustPlaceText = false;
@@ -1335,15 +1339,15 @@ void Actor::updateWalk() {
 }
 
 void Actor::update(uint frameTime) {
+	Set *set = g_grim->getCurrSet();
 	// Snap actor to walkboxes if following them.  This might be
 	// necessary for example after activating/deactivating
 	// walkboxes, etc.
 	if (_followBoxes && !_walking) {
-		g_grim->getCurrSet()->findClosestSector(_pos, NULL, &_pos);
+		set->findClosestSector(_pos, NULL, &_pos);
 	}
 
 	if (g_grim->getGameType() == GType_MONKEY4) {
-		Set *set = g_grim->getCurrSet();
 		Sector *sect = set->findPointSector(_pos, Sector::WalkType);
 		int setup = set->getSetup();
 		if (sect) {
