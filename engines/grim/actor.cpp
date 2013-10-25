@@ -773,17 +773,18 @@ void Actor::walkForward() {
 		while (currSector) {
 			prevSector = currSector;
 			Math::Vector3d forwardVec;
+			const Math::Vector3d &normal = currSector->getNormal();
 			if (g_grim->getGameType() == GType_GRIM) {
-				Math::Angle ax = Math::Vector2d(currSector->getNormal().x(), currSector->getNormal().z()).getAngle();
-				Math::Angle ay = Math::Vector2d(currSector->getNormal().y(), currSector->getNormal().z()).getAngle();
+				Math::Angle ax = Math::Vector2d(normal.x(), normal.z()).getAngle();
+				Math::Angle ay = Math::Vector2d(normal.y(), normal.z()).getAngle();
 
 				float z1 = -_moveYaw.getCosine() * (ay - _pitch).getCosine();
 				float z2 = _moveYaw.getSine() * (ax - _pitch).getCosine();
 				forwardVec = Math::Vector3d(-_moveYaw.getSine() * ax.getSine() * _pitch.getCosine(),
 											_moveYaw.getCosine() * ay.getSine() * _pitch.getCosine(), z1 + z2);
 			} else {
-				Math::Angle ax = Math::Vector2d(currSector->getNormal().x(), currSector->getNormal().y()).getAngle();
-				Math::Angle az = Math::Vector2d(currSector->getNormal().z(), currSector->getNormal().y()).getAngle();
+				Math::Angle ax = Math::Vector2d(normal.x(), normal.y()).getAngle();
+				Math::Angle az = Math::Vector2d(normal.z(), normal.y()).getAngle();
 
 				float y1 = -_moveYaw.getCosine() * (az - _pitch).getCosine();
 				float y2 = _moveYaw.getSine() * (ax - _pitch).getCosine();
