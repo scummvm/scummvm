@@ -368,15 +368,15 @@ bool Actor::restoreState(SaveGame *savedState) {
 		size = savedState->readLEUint32();
 		Set *scene = NULL;
 		for (uint32 j = 0; j < size; ++j) {
-			Common::String setName = savedState->readString();
+			Common::String actorSetName = savedState->readString();
 			Common::String secName = savedState->readString();
-			if (!scene || scene->getName() != setName) {
-				scene = g_grim->findSet(setName);
+			if (!scene || scene->getName() != actorSetName) {
+				scene = g_grim->findSet(actorSetName);
 			}
 			if (scene) {
 				addShadowPlane(secName.c_str(), scene, i);
 			} else {
-				warning("%s: No scene \"%s\" found, cannot restore shadow on sector \"%s\"", getName().c_str(), setName.c_str(), secName.c_str());
+				warning("%s: No scene \"%s\" found, cannot restore shadow on sector \"%s\"", getName().c_str(), actorSetName.c_str(), secName.c_str());
 			}
 		}
 
@@ -1711,10 +1711,10 @@ void Actor::clearShadowPlanes() {
 	}
 }
 
-void Actor::putInSet(const Common::String &setName) {
+void Actor::putInSet(const Common::String &set) {
 	// The set should change immediately, otherwise a very rapid set change
 	// for an actor will be recognized incorrectly and the actor will be lost.
-	_setName = setName;
+	_setName = set;
 
 	// clean the buffer. this is needed when an actor goes from frozen state to full model rendering
 	if (_setName != "" && _cleanBuffer) {
@@ -1724,8 +1724,8 @@ void Actor::putInSet(const Common::String &setName) {
 	g_grim->invalidateActiveActorsList();
 }
 
-bool Actor::isInSet(const Common::String &setName) const {
-	return _setName == setName;
+bool Actor::isInSet(const Common::String &set) const {
+	return _setName == set;
 }
 
 void Actor::freeCostumeChore(const Costume *toFree, Chore *chore) {
