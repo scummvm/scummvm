@@ -672,10 +672,45 @@ void MovGraph2::freeItems() {
 	warning("STUB: MovGraph2::freeItems()");
 }
 
-MessageQueue *MovGraph2::method34(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId) {
-	warning("STUB: MovGraph2::method34()");
+MessageQueue *MovGraph2::method34(StaticANIObject *ani, int xpos, int ypos, int fuzzyMatch, int staticsId) {
+	if (!ani->isIdle())
+		return 0;
 
-	return 0;
+	if (ani->_flags & 0x100)
+		return 0;
+
+	MessageQueue *mq = doWalkTo(ani, xpos, ypos, fuzzyMatch, staticsId);
+
+	if (!mq)
+		return 0;
+
+	if (ani->_movement) {
+		if (mq->getCount() <= 1 || mq->getExCommandByIndex(0)->_messageKind != 22) {
+			PicAniInfo picAniInfo;
+
+			ani->getPicAniInfo(&picAniInfo);
+			ani->updateStepPos();
+			MessageQueue *mq1 = doWalkTo(ani, xpos, ypos, fuzzyMatch, staticsId);
+
+			ani->setPicAniInfo(&picAniInfo);
+
+			if (mq1) {
+				delete mq;
+
+				mq = mq1;
+			}
+		} else {
+			ani->_movement = 0;
+		}
+	}
+
+	if (!mq->chain(ani)) {
+		delete mq;
+
+		return 0;
+	}
+
+	return mq;
 }
 
 MessageQueue *MovGraph2::doWalkTo(StaticANIObject *obj, int xpos, int ypos, int fuzzyMatch, int staticsId) {
