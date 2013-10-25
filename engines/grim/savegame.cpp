@@ -83,7 +83,9 @@ SaveGame *SaveGame::openForSaving(const Common::String &filename) {
 }
 
 SaveGame::SaveGame() :
-	_currentSection(0), _sectionBuffer(0) {
+	_currentSection(0), _sectionBuffer(nullptr), _majorVersion(0),
+	_minorVersion(0), _saving(false), _inSaveFile(nullptr), _outSaveFile(nullptr),
+	_sectionSize(0), _sectionAlloc(0), _sectionPtr(0) {
 
 }
 
