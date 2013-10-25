@@ -245,13 +245,12 @@ void ScriptManager::queuePuzzles(uint32 key) {
 }
 
 void ScriptManager::setStateValue(uint32 key, uint value) {
-	_globalState[key] = value;
-
-	if (_referenceTable.contains(key)) {
-		for (Common::Array<Puzzle *>::iterator iter = _referenceTable[key].begin(); iter != _referenceTable[key].end(); ++iter) {
-			_puzzlesToCheck.push((*iter));
-		}
-	}
+	if (value == 0)
+		_globalState.erase(key);
+	else
+		_globalState[key] = value;
+	debug("setStateValue %d %d\n", key , value);
+	queuePuzzles(key);
 }
 
 void ScriptManager::addToStateValue(uint32 key, uint valueToAdd) {
