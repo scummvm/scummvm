@@ -1164,7 +1164,9 @@ void Dialogs::sayThanks(byte thing) {
 	Common::String tmpStr = personSpeaks();
 	tmpStr += Common::String::format("Hey, thanks!%c(But now, you've lost it!)", kControlSpeechBubble);
 	displayText(tmpStr);
-	_vm->_objects[thing] = false;
+
+	if (thing < kObjectNum)
+		_vm->_objects[thing] = false;
 }
 
 /**

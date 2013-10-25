@@ -1564,10 +1564,12 @@ Common::String AvalancheEngine::getName(People whose) {
 
 	static const char lasses[4][15] = {"Arkata", "Geida", "\0xB1", "the Wise Woman"};
 
-	if (whose < kPeopleArkata)
+	if (whose <= kPeopleJacques)
 		return Common::String(lads[whose - kPeopleAvalot]);
-	else
+	else if ((whose >= kPeopleArkata) && (whose <= kPeopleWisewoman))
 		return Common::String(lasses[whose - kPeopleArkata]);
+	else
+		error("getName() - Unexpected character id %d", (byte) whose);
 }
 
 Common::String AvalancheEngine::getItem(byte which) {
