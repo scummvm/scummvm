@@ -95,7 +95,7 @@ public:
 	int getLineX(int line) const;
 	int getLineY(int line) const;
 
-	void setIsSpeach() { _isSpeech = true; }
+	void setIsSpeech() { _isSpeech = true; }
 	void setBlastDraw() { _blastDraw = true; }
 
 	const void *getUserData() const { return _userData; }

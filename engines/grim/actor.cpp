@@ -1139,7 +1139,7 @@ void Actor::sayLine(const char *msgId, bool background) {
 		TextObject *textObject = new TextObject();
 		textObject->setDefaults(&g_grim->_sayLineDefaults);
 		textObject->setFGColor(_talkColor);
-		textObject->setIsSpeach();
+		textObject->setIsSpeech();
 		if (m == GrimEngine::TextOnly || g_grim->getMode() == GrimEngine::SmushMode) {
 			textObject->setDuration(500 + msg.size() * 15 * (11 - g_grim->getTextSpeed()));
 		}
