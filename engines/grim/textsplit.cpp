@@ -80,12 +80,14 @@ static bool isNum(char c) {
 }
 
 static char *parseCharacterClass(const char *code, bool *isNegated) {
-	char *chars = new char[strlen(code)];
+	uint32 length = strlen(code);
+
+	char *chars = new char[length];
 	*isNegated = code[1] == '^';
 	uint32 j = 0;
 	uint32 k = (*isNegated ? 2 : 1);
 
-	for (; k < strlen(code) && code[k] != ']'; ++k) {
+	for (; k < length && code[k] != ']'; ++k) {
 		assert(code[k] != '[' && code[k] != '-');
 		chars[j++] = code[k];
 	}

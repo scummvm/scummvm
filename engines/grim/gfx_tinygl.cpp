@@ -1225,7 +1225,9 @@ void GfxTinyGL::loadEmergFont() {
 void GfxTinyGL::drawEmergString(int x, int y, const char *text, const Color &fgColor) {
 	uint32 color = _pixelFormat.RGBToColor(fgColor.getRed(), fgColor.getGreen(), fgColor.getBlue());
 
-	for (int l = 0; l < (int)strlen(text); l++) {
+	int length = strlen(text);
+
+	for (int l = 0; l < length; l++) {
 		int c = text[l];
 		assert(c >= 32 && c <= 127);
 		const uint8 *ptr = Font::emerFont[c - 32];
