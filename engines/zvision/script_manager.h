@@ -105,7 +105,6 @@ struct Location {
 	uint32 offset;
 };
 
-typedef Common::HashMap<uint32, Common::Array<Puzzle *> > PuzzleMap;
 typedef Common::List<Puzzle *> PuzzleList;
 typedef Common::Queue<Puzzle *> PuzzleQueue;
 typedef Common::List<Control *> ControlList;
@@ -137,6 +136,8 @@ private:
 		script_scope *scope;
 	};
 
+	typedef Common::HashMap<uint32, Common::Array<puzzle_ref> > PuzzleMap;
+
 	/**
 	 * Holds the global state variable. Do NOT directly modify this. Use the accessors and
 	 * mutators getStateValue() and setStateValue(). This ensures that Puzzles that reference a
@@ -147,18 +148,19 @@ private:
 	StateMap _globalStateFlags;
 	/** References _globalState keys to Puzzles */
 	PuzzleMap _referenceTable;
-	/** Holds the Puzzles that should be checked this frame */
-	PuzzleQueue _puzzlesToCheck;
-	/** Holds the currently active puzzles */
-	PuzzleList _activePuzzles;
-	/** Holds the global puzzles */
-	PuzzleList _globalPuzzles;
 	/** Holds the currently active controls */
-	ControlList _activeControls;
+	ControlList *_activeControls;
+
+	script_scope universe;
+	script_scope world;
+	script_scope room;
+	script_scope nodeview;
+
 	/** Holds the currently active timers, musics, other */
 	SideFXList _activeSideFx;
 
 	Location _currentLocation;
+	Location _nextLocation;
 
 	uint32 _currentlyFocusedControl;
 
@@ -221,21 +223,25 @@ public:
 	 */
 	void onKeyUp(Common::KeyState keyState);
 
+	/** Mark next location */
 	void changeLocation(char world, char room, char node, char view, uint32 offset);
 
 	void serializeStateTable(Common::WriteStream *stream);
 	void deserializeStateTable(Common::SeekableReadStream *stream);
-	void serializeControls(Common::WriteStream *stream);
-	void deserializeControls(Common::SeekableReadStream *stream);
 
 	Location getCurrentLocation() const;
 
 private:
-	void createReferenceTable();
+	void addPuzzlesToReferenceTable(script_scope &scope);
 	void updateNodes(uint deltaTimeMillis);
-	void checkPuzzleCriteria();
+	void updateControls(uint deltaTimeMillis);
+	void checkPuzzleCriteria(Puzzle *puzzle, uint counter);
 	void cleanStateTable();
 	void cleanScriptScope(script_scope &scope);
+	void execScope(script_scope &scope);
+
+	/** Perform change location */
+	void do_changeLocation();
 
 // TODO: Make this private. It was only made public so Console::cmdParseAllScrFiles() could use it
 public:
@@ -245,7 +251,7 @@ public:
 	 * @param fileName    Name of the .scr file
 	 * @param isGlobal    Are the puzzles included in the file global (true). AKA, the won't be purged during location changes
 	 */
-	void parseScrFile(const Common::String &fileName, bool isGlobal = false);
+	void parseScrFile(const Common::String &fileName, script_scope &scope);
 
 private:
 	/**
@@ -291,7 +297,7 @@ private:
 	 * @param line      The line initially read
 	 * @param stream    Scr file stream
 	 */
-	void parseControl(Common::String &line, Common::SeekableReadStream &stream);
+	Control *parseControl(Common::String &line, Common::SeekableReadStream &stream);
 };
 
 

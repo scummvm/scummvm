@@ -41,69 +41,86 @@ namespace ZVision {
 
 ScriptManager::ScriptManager(ZVision *engine)
 	: _engine(engine),
-	  _currentlyFocusedControl(0) {
+	  _currentlyFocusedControl(0),
+	  _activeControls(NULL) {
 }
 
 ScriptManager::~ScriptManager() {
-	for (PuzzleList::iterator iter = _activePuzzles.begin(); iter != _activePuzzles.end(); ++iter) {
-		delete(*iter);
-	}
-	for (PuzzleList::iterator iter = _globalPuzzles.begin(); iter != _globalPuzzles.end(); ++iter) {
-		delete(*iter);
-	}
-	for (ControlList::iterator iter = _activeControls.begin(); iter != _activeControls.end(); ++iter) {
-		delete(*iter);
-	}
+	cleanScriptScope(universe);
+	cleanScriptScope(world);
+	cleanScriptScope(room);
+	cleanScriptScope(nodeview);
 }
 
 void ScriptManager::initialize() {
-	parseScrFile("universe.scr", true);
+	cleanScriptScope(universe);
+	cleanScriptScope(world);
+	cleanScriptScope(room);
+	cleanScriptScope(nodeview);
+
+	_currentLocation.node = '0';
+	_currentLocation.world = '0';
+	_currentLocation.room = '0';
+	_currentLocation.view = '0';
+
+	parseScrFile("universe.scr", universe);
 	changeLocation('g', 'a', 'r', 'y', 0);
 }
 
 void ScriptManager::update(uint deltaTimeMillis) {
+	if (_currentLocation.node != _nextLocation.node ||
+	        _currentLocation.room != _nextLocation.room ||
+	        _currentLocation.view != _nextLocation.view ||
+	        _currentLocation.world != _nextLocation.world)
+		do_changeLocation();
+
 	updateNodes(deltaTimeMillis);
-	checkPuzzleCriteria();
+	execScope(nodeview);
+	execScope(room);
+	execScope(world);
+	execScope(universe);
+	updateControls(deltaTimeMillis);
 }
 
-void ScriptManager::createReferenceTable() {
+void ScriptManager::execScope(script_scope &scope) {
+	// Swap queues
+	PuzzleList *tmp = scope.exec_queue;
+	scope.exec_queue = scope.scope_queue;
+	scope.scope_queue = tmp;
+
+	for (PuzzleList::iterator PuzzleIter = scope._puzzles.begin(); PuzzleIter != scope._puzzles.end(); ++PuzzleIter)
+		(*PuzzleIter)->addedBySetState = 0;
+
+	if (scope.proc_count < 2 || getStateValue(76)) {
+		for (PuzzleList::iterator PuzzleIter = scope._puzzles.begin(); PuzzleIter != scope._puzzles.end(); ++PuzzleIter)
+			checkPuzzleCriteria(*PuzzleIter, scope.proc_count);
+	} else {
+		for (PuzzleList::iterator PuzzleIter = scope.exec_queue->begin(); PuzzleIter != scope.exec_queue->end(); ++PuzzleIter)
+			checkPuzzleCriteria(*PuzzleIter, scope.proc_count);
+	}
+
+	scope.exec_queue->clear();
+
+	if (scope.proc_count < 2) {
+		scope.proc_count++;
+	}
+}
+
+void ScriptManager::addPuzzlesToReferenceTable(script_scope &scope) {
 	// Iterate through each local Puzzle
-	for (PuzzleList::iterator activePuzzleIter = _activePuzzles.begin(); activePuzzleIter != _activePuzzles.end(); ++activePuzzleIter) {
-		Puzzle *puzzlePtr = (*activePuzzleIter);
+	for (PuzzleList::iterator PuzzleIter = scope._puzzles.begin(); PuzzleIter != scope._puzzles.end(); ++PuzzleIter) {
+		Puzzle *puzzlePtr = (*PuzzleIter);
+
+		puzzle_ref ref;
+		ref.scope = &scope;
+		ref.puz = puzzlePtr;
+
+		_referenceTable[puzzlePtr->key].push_back(ref);
 
 		// Iterate through each CriteriaEntry and add a reference from the criteria key to the Puzzle
-		for (Common::List<Common::List<Puzzle::CriteriaEntry> >::iterator criteriaIter = (*activePuzzleIter)->criteriaList.begin(); criteriaIter != (*activePuzzleIter)->criteriaList.end(); ++criteriaIter) {
-			for (Common::List<Puzzle::CriteriaEntry>::iterator entryIter = criteriaIter->begin(); entryIter != criteriaIter->end(); ++entryIter) {
-				_referenceTable[entryIter->key].push_back(puzzlePtr);
-
-				// If the argument is a key, add a reference to it as well
-				if (entryIter->argumentIsAKey) {
-					_referenceTable[entryIter->argument].push_back(puzzlePtr);
-				}
-			}
-		}
-	}
-
-	// Iterate through each global Puzzle
-	for (PuzzleList::iterator globalPuzzleIter = _globalPuzzles.begin(); globalPuzzleIter != _globalPuzzles.end(); ++globalPuzzleIter) {
-		Puzzle *puzzlePtr = (*globalPuzzleIter);
-
-		// Iterate through each CriteriaEntry and add a reference from the criteria key to the Puzzle
-		for (Common::List<Common::List<Puzzle::CriteriaEntry> >::iterator criteriaIter = (*globalPuzzleIter)->criteriaList.begin(); criteriaIter != (*globalPuzzleIter)->criteriaList.end(); ++criteriaIter) {
-			for (Common::List<Puzzle::CriteriaEntry>::iterator entryIter = criteriaIter->begin(); entryIter != criteriaIter->end(); ++entryIter) {
-				_referenceTable[entryIter->key].push_back(puzzlePtr);
-
-				// If the argument is a key, add a reference to it as well
-				if (entryIter->argumentIsAKey) {
-					_referenceTable[entryIter->argument].push_back(puzzlePtr);
-				}
-			}
-		}
-	}
-
-	// Remove duplicate entries
-	for (PuzzleMap::iterator referenceTableIter = _referenceTable.begin(); referenceTableIter != _referenceTable.end(); ++referenceTableIter) {
-		removeDuplicateEntries(referenceTableIter->_value);
+		for (Common::List<Common::List<Puzzle::CriteriaEntry> >::iterator criteriaIter = (*PuzzleIter)->criteriaList.begin(); criteriaIter != (*PuzzleIter)->criteriaList.end(); ++criteriaIter)
+			for (Common::List<Puzzle::CriteriaEntry>::iterator entryIter = criteriaIter->begin(); entryIter != criteriaIter->end(); ++entryIter)
+				_referenceTable[entryIter->key].push_back(ref);
 	}
 }
 
@@ -118,89 +135,84 @@ void ScriptManager::updateNodes(uint deltaTimeMillis) {
 			++iter;
 		}
 	}
-	// If process() returns true, it means the node can be deleted
-	for (ControlList::iterator iter = _activeControls.begin(); iter != _activeControls.end();) {
-		if ((*iter)->process(deltaTimeMillis)) {
-			delete(*iter);
-			// Remove the node
-			iter = _activeControls.erase(iter);
-		} else {
-			++iter;
-		}
-	}
 }
 
-void ScriptManager::checkPuzzleCriteria() {
-	while (!_puzzlesToCheck.empty()) {
-		Puzzle *puzzle = _puzzlesToCheck.pop();
+void ScriptManager::updateControls(uint deltaTimeMillis) {
+	if (!_activeControls)
+		return;
+	for (ControlList::iterator iter = _activeControls->begin(); iter != _activeControls->end(); iter++)
+		(*iter)->process(deltaTimeMillis);
+}
 
-		// Check if the puzzle is already finished
-		// Also check that the puzzle isn't disabled
-		if (getStateValue(puzzle->key) == 1 &&
-		        (puzzle->flags & Puzzle::DISABLED) == 0) {
-			continue;
-		}
+void ScriptManager::checkPuzzleCriteria(Puzzle *puzzle, uint counter) {
+	// Check if the puzzle is already finished
+	// Also check that the puzzle isn't disabled
+	if (getStateValue(puzzle->key) == 1 &&
+	        (getStateFlag(puzzle->key) & Puzzle::DISABLED) == 0) {
+		return;
+	}
 
-		// Check each Criteria
+	// Check each Criteria
+	if (counter == 0 && (getStateFlag(puzzle->key) & Puzzle::DO_ME_NOW) == 0)
+		return;
 
-		bool criteriaMet = false;
-		for (Common::List<Common::List<Puzzle::CriteriaEntry> >::iterator criteriaIter = puzzle->criteriaList.begin(); criteriaIter != puzzle->criteriaList.end(); ++criteriaIter) {
-			criteriaMet = false;
+	bool criteriaMet = false;
+	for (Common::List<Common::List<Puzzle::CriteriaEntry> >::iterator criteriaIter = puzzle->criteriaList.begin(); criteriaIter != puzzle->criteriaList.end(); ++criteriaIter) {
+		criteriaMet = false;
 
-			for (Common::List<Puzzle::CriteriaEntry>::iterator entryIter = criteriaIter->begin(); entryIter != criteriaIter->end(); ++entryIter) {
-				// Get the value to compare against
-				uint argumentValue;
-				if (entryIter->argumentIsAKey)
-					argumentValue = getStateValue(entryIter->argument);
-				else
-					argumentValue = entryIter->argument;
+		for (Common::List<Puzzle::CriteriaEntry>::iterator entryIter = criteriaIter->begin(); entryIter != criteriaIter->end(); ++entryIter) {
+			// Get the value to compare against
+			uint argumentValue;
+			if (entryIter->argumentIsAKey)
+				argumentValue = getStateValue(entryIter->argument);
+			else
+				argumentValue = entryIter->argument;
 
-				// Do the comparison
-				switch (entryIter->criteriaOperator) {
-				case Puzzle::EQUAL_TO:
-					criteriaMet = getStateValue(entryIter->key) == argumentValue;
-					break;
-				case Puzzle::NOT_EQUAL_TO:
-					criteriaMet = getStateValue(entryIter->key) != argumentValue;
-					break;
-				case Puzzle::GREATER_THAN:
-					criteriaMet = getStateValue(entryIter->key) > argumentValue;
-					break;
-				case Puzzle::LESS_THAN:
-					criteriaMet = getStateValue(entryIter->key) < argumentValue;
-					break;
-				}
-
-				// If one check returns false, don't keep checking
-				if (!criteriaMet) {
-					break;
-				}
+			// Do the comparison
+			switch (entryIter->criteriaOperator) {
+			case Puzzle::EQUAL_TO:
+				criteriaMet = getStateValue(entryIter->key) == argumentValue;
+				break;
+			case Puzzle::NOT_EQUAL_TO:
+				criteriaMet = getStateValue(entryIter->key) != argumentValue;
+				break;
+			case Puzzle::GREATER_THAN:
+				criteriaMet = getStateValue(entryIter->key) > argumentValue;
+				break;
+			case Puzzle::LESS_THAN:
+				criteriaMet = getStateValue(entryIter->key) < argumentValue;
+				break;
 			}
 
-			// If any of the Criteria are *fully* met, then execute the results
-			if (criteriaMet) {
+			// If one check returns false, don't keep checking
+			if (!criteriaMet) {
 				break;
 			}
 		}
 
-		// criteriaList can be empty. Aka, the puzzle should be executed immediately
-		if (puzzle->criteriaList.empty() || criteriaMet) {
-			debug(1, "Puzzle %u criteria passed. Executing its ResultActions", puzzle->key);
+		// If any of the Criteria are *fully* met, then execute the results
+		if (criteriaMet) {
+			break;
+		}
+	}
 
-			// Set the puzzle as completed
-			setStateValue(puzzle->key, 1);
+	// criteriaList can be empty. Aka, the puzzle should be executed immediately
+	if (puzzle->criteriaList.empty() || criteriaMet) {
+		debug(1, "Puzzle %u criteria passed. Executing its ResultActions", puzzle->key);
 
-			bool shouldContinue = true;
-			for (Common::List<ResultAction *>::iterator resultIter = puzzle->resultActions.begin(); resultIter != puzzle->resultActions.end(); ++resultIter) {
-				shouldContinue = shouldContinue && (*resultIter)->execute(_engine);
-				if (!shouldContinue) {
-					break;
-				}
-			}
+		// Set the puzzle as completed
+		setStateValue(puzzle->key, 1);
 
+		bool shouldContinue = true;
+		for (Common::List<ResultAction *>::iterator resultIter = puzzle->resultActions.begin(); resultIter != puzzle->resultActions.end(); ++resultIter) {
+			shouldContinue = shouldContinue && (*resultIter)->execute(_engine);
 			if (!shouldContinue) {
 				break;
 			}
+		}
+
+		if (!shouldContinue) {
+			return;
 		}
 	}
 }
@@ -242,6 +254,13 @@ uint ScriptManager::getStateValue(uint32 key) {
 }
 
 void ScriptManager::queuePuzzles(uint32 key) {
+	if (_referenceTable.contains(key)) {
+		for (Common::Array<puzzle_ref>::iterator iter = _referenceTable[key].begin(); iter != _referenceTable[key].end(); ++iter)
+			if (!iter->puz->addedBySetState) {
+				iter->scope->scope_queue->push_back(iter->puz);
+				iter->puz->addedBySetState = true;
+			}
+	}
 }
 
 void ScriptManager::setStateValue(uint32 key, uint value) {
@@ -281,40 +300,16 @@ void ScriptManager::addToStateValue(uint32 key, uint valueToAdd) {
 	_globalState[key] += valueToAdd;
 }
 
-void ScriptManager::addControl(Control *control) {
-	_activeControls.push_back(control);
-}
 
 Control *ScriptManager::getControl(uint32 key) {
-	for (ControlList::iterator iter = _activeControls.begin(); iter != _activeControls.end(); ++iter) {
-		if ((*iter)->getKey() == key) {
-			return (*iter);
-		}
-	}
 
 	return nullptr;
 }
 
-void ScriptManager::enableControl(uint32 key) {
-	for (ControlList::iterator iter = _activeControls.begin(); iter != _activeControls.end(); ++iter) {
-		if ((*iter)->getKey() == key) {
-			(*iter)->enable();
-			break;
-		}
-	}
-}
-
-void ScriptManager::disableControl(uint32 key) {
-	for (ControlList::iterator iter = _activeControls.begin(); iter != _activeControls.end(); ++iter) {
-		if ((*iter)->getKey() == key) {
-			(*iter)->disable();
-			break;
-		}
-	}
-}
-
 void ScriptManager::focusControl(uint32 key) {
-	for (ControlList::iterator iter = _activeControls.begin(); iter != _activeControls.end(); ++iter) {
+	if (!_activeControls)
+		return;
+	for (ControlList::iterator iter = _activeControls->begin(); iter != _activeControls->end(); ++iter) {
 		uint32 controlKey = (*iter)->getKey();
 
 		if (controlKey == key) {
@@ -342,20 +337,26 @@ SideFX *ScriptManager::getSideFX(uint32 key) {
 }
 
 void ScriptManager::onMouseDown(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) {
-	for (ControlList::iterator iter = _activeControls.begin(); iter != _activeControls.end(); ++iter) {
+	if (!_activeControls)
+		return;
+	for (ControlList::iterator iter = _activeControls->begin(); iter != _activeControls->end(); ++iter) {
 		(*iter)->onMouseDown(screenSpacePos, backgroundImageSpacePos);
 	}
 }
 
 void ScriptManager::onMouseUp(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) {
-	for (ControlList::iterator iter = _activeControls.begin(); iter != _activeControls.end(); ++iter) {
+	if (!_activeControls)
+		return;
+	for (ControlList::iterator iter = _activeControls->begin(); iter != _activeControls->end(); ++iter) {
 		(*iter)->onMouseUp(screenSpacePos, backgroundImageSpacePos);
 	}
 }
 
 bool ScriptManager::onMouseMove(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) {
+	if (!_activeControls)
+		return false;
 	bool cursorWasChanged = false;
-	for (ControlList::iterator iter = _activeControls.begin(); iter != _activeControls.end(); ++iter) {
+	for (ControlList::iterator iter = _activeControls->begin(); iter != _activeControls->end(); ++iter) {
 		cursorWasChanged = cursorWasChanged || (*iter)->onMouseMove(screenSpacePos, backgroundImageSpacePos);
 	}
 
@@ -363,35 +364,56 @@ bool ScriptManager::onMouseMove(const Common::Point &screenSpacePos, const Commo
 }
 
 void ScriptManager::onKeyDown(Common::KeyState keyState) {
-	for (ControlList::iterator iter = _activeControls.begin(); iter != _activeControls.end(); ++iter) {
+	if (!_activeControls)
+		return;
+	for (ControlList::iterator iter = _activeControls->begin(); iter != _activeControls->end(); ++iter) {
 		(*iter)->onKeyDown(keyState);
 	}
 }
 
 void ScriptManager::onKeyUp(Common::KeyState keyState) {
-	for (ControlList::iterator iter = _activeControls.begin(); iter != _activeControls.end(); ++iter) {
+	if (!_activeControls)
+		return;
+	for (ControlList::iterator iter = _activeControls->begin(); iter != _activeControls->end(); ++iter) {
 		(*iter)->onKeyUp(keyState);
 	}
 }
 
-void ScriptManager::changeLocation(char world, char room, char node, char view, uint32 offset) {
-	assert(world != 0);
-	debug(1, "Changing location to: %c %c %c %c %u", world, room, node, view, offset);
+void ScriptManager::changeLocation(char _world, char _room, char _node, char _view, uint32 offset) {
+	_nextLocation.world = _world;
+	_nextLocation.room = _room;
+	_nextLocation.node = _node;
+	_nextLocation.view = _view;
+	_nextLocation.offset = offset;
+}
+
+void ScriptManager::do_changeLocation() {
+	assert(_nextLocation.world != 0);
+	debug(1, "Changing location to: %c %c %c %c %u", _nextLocation.world, _nextLocation.room, _nextLocation.node, _nextLocation.view, _nextLocation.offset);
 
 	// Auto save
-	_engine->getSaveManager()->autoSave();
+	//_engine->getSaveManager()->autoSave();
 
 	// Clear all the containers
 	_referenceTable.clear();
-	_puzzlesToCheck.clear();
-	for (PuzzleList::iterator iter = _activePuzzles.begin(); iter != _activePuzzles.end(); ++iter) {
-		delete(*iter);
-	}
-	_activePuzzles.clear();
-	for (ControlList::iterator iter = _activeControls.begin(); iter != _activeControls.end(); ++iter) {
-		delete(*iter);
-	}
-	_activeControls.clear();
+	cleanScriptScope(nodeview);
+	cleanScriptScope(room);
+	cleanScriptScope(world);
+
+	// Parse into puzzles and controls
+	Common::String fileName = Common::String::format("%c%c%c%c.scr", _nextLocation.world, _nextLocation.room, _nextLocation.node, _nextLocation.view);
+	parseScrFile(fileName, nodeview);
+	addPuzzlesToReferenceTable(nodeview);
+
+	fileName = Common::String::format("%c%c.scr", _nextLocation.world, _nextLocation.room);
+	parseScrFile(fileName, room);
+	addPuzzlesToReferenceTable(room);
+
+	fileName = Common::String::format("%c.scr", _nextLocation.world);
+	parseScrFile(fileName, world);
+	addPuzzlesToReferenceTable(world);
+
+	_activeControls = &nodeview._controls;
 
 	// Revert to the idle cursor
 	_engine->getCursorManager()->revertToIdle();
@@ -402,50 +424,14 @@ void ScriptManager::changeLocation(char world, char room, char node, char view, 
 	// Remove any alphaEntries
 	_engine->getRenderManager()->clearAlphaEntries();
 
-	// Clean the global state table
-	cleanStateTable();
-
-	// Parse into puzzles and controls
-	Common::String fileName = Common::String::format("%c%c%c%c.scr", world, room, node, view);
-	parseScrFile(fileName);
-
 	// Change the background position
-	_engine->getRenderManager()->setBackgroundPosition(offset);
+	_engine->getRenderManager()->setBackgroundPosition(_nextLocation.offset);
 
-	// Enable all the controls
-	for (ControlList::iterator iter = _activeControls.begin(); iter != _activeControls.end(); ++iter) {
-		(*iter)->enable();
-	}
-
-	// Add all the local puzzles to the queue to be checked
-	for (PuzzleList::iterator iter = _activePuzzles.begin(); iter != _activePuzzles.end(); ++iter) {
-		// Reset any Puzzles that have the flag ONCE_PER_INST
-		if (((*iter)->flags & Puzzle::ONCE_PER_INST) == Puzzle::ONCE_PER_INST) {
-			setStateValue((*iter)->key, 0);
-		}
-
-		_puzzlesToCheck.push((*iter));
-	}
-
-	// Add all the global puzzles to the queue to be checked
-	for (PuzzleList::iterator iter = _globalPuzzles.begin(); iter != _globalPuzzles.end(); ++iter) {
-		// Reset any Puzzles that have the flag ONCE_PER_INST
-		if (((*iter)->flags & Puzzle::ONCE_PER_INST) == Puzzle::ONCE_PER_INST) {
-			setStateValue((*iter)->key, 0);
-		}
-
-		_puzzlesToCheck.push((*iter));
-	}
-
-	// Create the puzzle reference table
-	createReferenceTable();
+	execScope(room);
+	execScope(nodeview);
 
 	// Update _currentLocation
-	_currentLocation.world = world;
-	_currentLocation.room = room;
-	_currentLocation.node = node;
-	_currentLocation.view = view;
-	_currentLocation.offset = offset;
+	_currentLocation = _nextLocation;
 }
 
 void ScriptManager::serializeStateTable(Common::WriteStream *stream) {
@@ -471,36 +457,6 @@ void ScriptManager::deserializeStateTable(Common::SeekableReadStream *stream) {
 		uint32 value = stream->readUint32LE();
 		// Directly access the state table so we don't trigger Puzzle checks
 		_globalState[key] = value;
-	}
-}
-
-void ScriptManager::serializeControls(Common::WriteStream *stream) {
-	// Count how many controls need to save their data
-	// Because WriteStream isn't seekable
-	uint32 numberOfControlsNeedingSerialization = 0;
-	for (ControlList::iterator iter = _activeControls.begin(); iter != _activeControls.end(); ++iter) {
-		if ((*iter)->needsSerialization()) {
-			numberOfControlsNeedingSerialization++;
-		}
-	}
-	stream->writeUint32LE(numberOfControlsNeedingSerialization);
-
-	for (ControlList::iterator iter = _activeControls.begin(); iter != _activeControls.end(); ++iter) {
-		(*iter)->serialize(stream);
-	}
-}
-
-void ScriptManager::deserializeControls(Common::SeekableReadStream *stream) {
-	uint32 numberOfControls = stream->readUint32LE();
-
-	for (uint32 i = 0; i < numberOfControls; ++i) {
-		uint32 key = stream->readUint32LE();
-		for (ControlList::iterator iter = _activeControls.begin(); iter != _activeControls.end(); ++iter) {
-			if ((*iter)->getKey() == key) {
-				(*iter)->deserialize(stream);
-				break;
-			}
-		}
 	}
 }
 

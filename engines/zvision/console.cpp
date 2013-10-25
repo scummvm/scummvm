@@ -197,7 +197,6 @@ bool Console::cmdParseAllScrFiles(int argc, const char **argv) {
 	SearchMan.listMatchingMembers(list, "*.scr");
 
 	for (Common::ArchiveMemberList::iterator iter = list.begin(); iter != list.end(); ++iter) {
-		_engine->getScriptManager()->parseScrFile((*iter)->getName());
 	}
 
 	return true;

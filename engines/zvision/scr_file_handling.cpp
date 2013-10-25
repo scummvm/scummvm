@@ -37,7 +37,7 @@
 
 namespace ZVision {
 
-void ScriptManager::parseScrFile(const Common::String &fileName, bool isGlobal) {
+void ScriptManager::parseScrFile(const Common::String &fileName, script_scope &scope) {
 	Common::File file;
 	if (!file.open(fileName)) {
 		warning("Script file not found: %s", fileName.c_str());
@@ -58,17 +58,18 @@ void ScriptManager::parseScrFile(const Common::String &fileName, bool isGlobal) 
 		if (line.matchString("puzzle:*", true)) {
 			Puzzle *puzzle = new Puzzle();
 			sscanf(line.c_str(), "puzzle:%u", &(puzzle->key));
-
+			if (getStateFlag(puzzle->key) & Puzzle::ONCE_PER_INST)
+				setStateValue(puzzle->key, 0);
 			parsePuzzle(puzzle, file);
-			if (isGlobal) {
-				_globalPuzzles.push_back(puzzle);
-			} else {
-				_activePuzzles.push_back(puzzle);
-			}
+			scope._puzzles.push_back(puzzle);
+
 		} else if (line.matchString("control:*", true)) {
-			parseControl(line, file);
+			Control *ctrl = parseControl(line, file);
+			if (ctrl)
+				scope._controls.push_back(ctrl);
 		}
 	}
+	scope.proc_count = 0;
 }
 
 void ScriptManager::parsePuzzle(Puzzle *puzzle, Common::SeekableReadStream &stream) {
@@ -81,12 +82,14 @@ void ScriptManager::parsePuzzle(Puzzle *puzzle, Common::SeekableReadStream &stre
 		} else if (line.matchString("results {", true)) {
 			parseResults(stream, puzzle->resultActions);
 		} else if (line.matchString("flags {", true)) {
-			puzzle->flags = parseFlags(stream);
+			setStateFlag(puzzle->key, parseFlags(stream));
 		}
 
 		line = stream.readLine();
 		trimCommentsAndWhiteSpace(&line);
 	}
+
+	puzzle->addedBySetState = 0;
 }
 
 bool ScriptManager::parseCriteria(Common::SeekableReadStream &stream, Common::List<Common::List<Puzzle::CriteriaEntry> > &criteriaList) const {
@@ -273,7 +276,7 @@ uint ScriptManager::parseFlags(Common::SeekableReadStream &stream) const {
 	return flags;
 }
 
-void ScriptManager::parseControl(Common::String &line, Common::SeekableReadStream &stream) {
+Control *ScriptManager::parseControl(Common::String &line, Common::SeekableReadStream &stream) {
 	uint32 key;
 	char controlTypeBuffer[20];
 
@@ -282,21 +285,20 @@ void ScriptManager::parseControl(Common::String &line, Common::SeekableReadStrea
 	Common::String controlType(controlTypeBuffer);
 
 	if (controlType.equalsIgnoreCase("push_toggle")) {
-		_activeControls.push_back(new PushToggleControl(_engine, key, stream));
-		return;
+		return new PushToggleControl(_engine, key, stream);
 	} else if (controlType.equalsIgnoreCase("flat")) {
 		Control::parseFlatControl(_engine);
-		return;
+		return NULL;
 	} else if (controlType.equalsIgnoreCase("pana")) {
 		Control::parsePanoramaControl(_engine, stream);
-		return;
+		return NULL;
 	} else if (controlType.equalsIgnoreCase("tilt")) {
 		Control::parseTiltControl(_engine, stream);
-		return;
+		return NULL;
 	} else if (controlType.equalsIgnoreCase("lever")) {
-		_activeControls.push_back(new LeverControl(_engine, key, stream));
-		return;
+		return new LeverControl(_engine, key, stream);
 	}
+	return NULL;
 }
 
 } // End of namespace ZVision

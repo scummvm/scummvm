@@ -128,8 +128,6 @@ void SaveManager::writeSaveGameData(Common::OutSaveFile *file) {
 	// Write out the current state table values
 	scriptManager->serializeStateTable(file);
 
-	// Write out any controls needing to save state
-	scriptManager->serializeControls(file);
 }
 
 Common::Error SaveManager::loadGame(uint slot) {
@@ -159,9 +157,6 @@ Common::Error SaveManager::loadGame(uint slot) {
 
 	// Load the room
 	scriptManager->changeLocation(world, room, node, view, offset);
-
-	// Update the controls
-	scriptManager->deserializeControls(saveFile);
 
 	return Common::kNoError;
 }

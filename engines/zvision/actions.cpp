@@ -124,7 +124,6 @@ ActionDisableControl::ActionDisableControl(const Common::String &line) {
 bool ActionDisableControl::execute(ZVision *engine) {
 	debug("Disabling control %u", _key);
 
-	engine->getScriptManager()->disableControl(_key);
 
 	return true;
 }
@@ -141,7 +140,6 @@ ActionEnableControl::ActionEnableControl(const Common::String &line) {
 bool ActionEnableControl::execute(ZVision *engine) {
 	debug("Enabling control %u", _key);
 
-	engine->getScriptManager()->enableControl(_key);
 
 	return true;
 }
@@ -220,8 +218,6 @@ bool ActionPreloadAnimation::execute(ZVision *engine) {
 	// TODO: Check if the Control already exists
 
 	// Create the control, but disable it until PlayPreload is called
-	engine->getScriptManager()->addControl(new AnimationControl(engine, _key, _fileName));
-	engine->getScriptManager()->disableControl(_key);
 	return true;
 }
 
@@ -266,9 +262,6 @@ bool ActionPlayPreloadAnimation::execute(ZVision *engine) {
 	control->setLoopCount(_loopCount);
 	control->setXPos(_x1);
 	control->setYPost(_y1);
-
-	// Enable the control. ScriptManager will take care of the rest
-	control->enable();
 
 	return true;
 }
