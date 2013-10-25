@@ -1167,9 +1167,10 @@ void Lua_V1::TurnActorTo() {
 
 	if (lua_isuserdata(xObj) && lua_tag(xObj) == MKTAG('A','C','T','R')) {
 		Actor *destActor = getactor(xObj);
-		x = destActor->getPos().x();
-		y = destActor->getPos().y();
-		z = destActor->getPos().z();
+		const Math::Vector3d &pos = destActor->getPos();
+		x = pos.x();
+		y = pos.y();
+		z = pos.z();
 	} else {
 		x = lua_getnumber(xObj);
 		y = lua_getnumber(yObj);
@@ -1197,9 +1198,10 @@ void Lua_V1::PointActorAt() {
 
 	if (lua_isuserdata(xObj) && lua_tag(xObj) == MKTAG('A','C','T','R')) {
 		Actor *destActor = getactor(xObj);
-		x = destActor->getPos().x();
-		y = destActor->getPos().y();
-		z = destActor->getPos().z();
+		const Math::Vector3d &pos = destActor->getPos();
+		x = pos.x();
+		y = pos.y();
+		z = pos.z();
 	} else {
 		x = lua_getnumber(xObj);
 		y = lua_getnumber(yObj);
