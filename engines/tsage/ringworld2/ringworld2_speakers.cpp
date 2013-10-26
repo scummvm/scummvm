@@ -42,6 +42,13 @@ VisualSpeaker::VisualSpeaker(): Speaker() {
 	_color2 = 0;
 	_displayMode = 0;
 	_speakerMode = 0;
+
+	_object2 = nullptr;
+	_fieldF8 = 0;
+	_soundId = 0;
+	_removeObject = false;
+	_numFrames = 0;
+	_voiceFrameNumber = 0;
 }
 
 void VisualSpeaker::remove() {
