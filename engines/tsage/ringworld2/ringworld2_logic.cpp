@@ -1355,6 +1355,7 @@ SceneArea::SceneArea(): SceneItem() {
 	_insideArea = false;
 	_savedCursorNum = CURSOR_NONE;
 	_cursorState = 0;
+	_cursorNum = CURSOR_NONE;
 }
 
 void SceneArea::synchronize(Serializer &s) {
@@ -1407,6 +1408,8 @@ void SceneArea::setDetails(const Rect &bounds, CursorType cursor) {
 SceneExit::SceneExit(): SceneArea() {
 	_moving = false;
 	_destPos = Common::Point(-1, -1);
+
+	_sceneNumber = 0;
 }
 
 void SceneExit::synchronize(Serializer &s) {
@@ -1724,6 +1727,12 @@ void AnimationSlice::load(Common::File &f) {
 
 AnimationSlices::AnimationSlices() {
 	_pixelData = NULL;
+
+	_dataSize = 0;
+	_dataSize2 = 0;
+	_slices->_sliceOffset = 0;
+	_slices->_drawMode = 0;
+	_slices->_secondaryIndex = 0;
 }
 
 AnimationSlices::~AnimationSlices() {
@@ -1789,6 +1798,18 @@ AnimationPlayer::AnimationPlayer(): EventHandler() {
 	_sliceHeight = 1;
 	_field58 = 1;
 	_endAction = NULL;
+
+	_sliceCurrent = nullptr;
+	_sliceNext = nullptr;
+	_field38 = 0;
+	_objectMode = ANIMOBJMODE_1;
+	_dataNeeded = 0;
+	_playbackTick = 0;
+	_playbackTickPrior = 0;
+	_position = 0;
+	_nextSlicesPosition = 0;
+	_frameDelay = 0;
+	_gameFrame = 0;
 }
 
 AnimationPlayer::~AnimationPlayer() {
@@ -2028,7 +2049,7 @@ void AnimationPlayer::drawFrame(int sliceIndex) {
 	// Unlock the screen surface
 	R2_GLOBALS._screenSurface.unlockSurface();
 
-	if (_objectMode == 42) {
+	if (_objectMode == ANIMOBJMODE_42) {
 		_screenBounds.expandPanes();
 
 		// Copy the drawn frame to the back surface
@@ -2097,7 +2118,7 @@ void AnimationPlayer::close() {
 	// Close the resource file
 	_resourceFile.close();
 
-	if (_objectMode != 42) {
+	if (_objectMode != ANIMOBJMODE_42) {
 		// flip screen in original
 	}
 
