@@ -54,6 +54,7 @@ class Codec;
  *  - sci
  *  - sword1
  *  - sword2
+ *  - zvision
  */
 class AVIDecoder : public VideoDecoder {
 public:
