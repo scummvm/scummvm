@@ -1878,7 +1878,11 @@ void Scene180::signal() {
 	case 50:
 		R2_GLOBALS._scene180Mode = 0;
 		_field412 = 0;
-		R2_GLOBALS._sceneManager.changeScene(100);
+
+		// WORKAROUND: The original changed to scene 100 here, Quinn's Bedroom, 
+		// but instead we're changing to the previously unused scene 50, which shows
+		// a closeup of Quinn in the floatation bed first
+		R2_GLOBALS._sceneManager.changeScene(50);
 		break;
 	}
 }

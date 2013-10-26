@@ -87,7 +87,7 @@ void UIQuestion::showDescription(CursorType cursor) {
 			Ringworld2::SceneExt *scene = static_cast<Ringworld2::SceneExt *>
 				(R2_GLOBALS._sceneManager._scene);
 			if (!scene->_sceneAreas.contains(R2_GLOBALS._scannerDialog))
-				R2_GLOBALS._scannerDialog->proc12(4, 1, 1, 160, 125);
+				R2_GLOBALS._scannerDialog->setup2(4, 1, 1, 160, 125);
 		} else {
 			// Show object description
 			SceneItem::display2(3, (int)cursor);

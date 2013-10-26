@@ -1482,8 +1482,8 @@ void Scene1200::LaserPanel::postInit(SceneObjectList *OwnerList) {
 
 	scene->_field41A = 1;
 	R2_GLOBALS._events.setCursor(CURSOR_USE);
-	proc12(1003, 1, 1, 100, 40);
-	proc13(1200, 11, -1, -1);
+	setup2(1003, 1, 1, 100, 40);
+	setup3(1200, 11, -1, -1);
 	R2_GLOBALS._sound2.play(259);
 	_jumper1.init(1);
 	_jumper2.init(2);
@@ -13662,24 +13662,24 @@ void Scene1950::KeypadWindow::remove() {
 	}
 }
 
-void Scene1950::KeypadWindow::proc12(int visage, int stripFrameNum, int frameNum, int posX, int posY) {
+void Scene1950::KeypadWindow::setup2(int visage, int stripFrameNum, int frameNum, int posX, int posY) {
 	Scene1950 *scene = (Scene1950 *)R2_GLOBALS._sceneManager._scene;
 
 	if (R2_GLOBALS._player._mover)
 		R2_GLOBALS._player.addMover(NULL);
 	R2_GLOBALS._player._canWalk = false;
 
-	ModalWindow::proc12(visage, stripFrameNum, frameNum, posX, posY);
+	ModalWindow::setup2(visage, stripFrameNum, frameNum, posX, posY);
 
 	_object1.fixPriority(248);
 	scene->_eastExit._enabled = false;
-	proc13(1950, 27, 28, 27);
+	setup3(1950, 27, 28, 27);
 
 	for (_buttonIndex = 0; _buttonIndex < 16; _buttonIndex++)
 		_buttons[_buttonIndex].init(_buttonIndex);
 }
 
-void Scene1950::KeypadWindow::proc13(int resNum, int lookLineNum, int talkLineNum, int useLineNum) {
+void Scene1950::KeypadWindow::setup3(int resNum, int lookLineNum, int talkLineNum, int useLineNum) {
 	// Copy of Scene1200::LaserPanel::proc13()
 	_areaActor.setDetails(resNum, lookLineNum, talkLineNum, useLineNum, 2, (SceneItem *) NULL);
 }
@@ -15288,7 +15288,7 @@ void Scene1950::signal() {
 	// No break on purpose
 	case 1963:
 		R2_GLOBALS._player.enableControl();
-		_KeypadWindow.proc12(1971, 1, 1, 160, 135);
+		_KeypadWindow.setup2(1971, 1, 1, 160, 135);
 		break;
 	case 1964:
 	// No break on purpose

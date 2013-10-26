@@ -1134,8 +1134,8 @@ class Scene1950 : public SceneExt {
 		KeypadWindow();
 		virtual void synchronize(Serializer &s);
 		virtual void remove();
-		virtual void proc12(int visage, int stripFrameNum, int frameNum, int posX, int posY);
-		virtual void proc13(int resNum, int lookLineNum, int talkLineNum, int useLineNum);
+		virtual void setup2(int visage, int stripFrameNum, int frameNum, int posX, int posY);
+		virtual void setup3(int resNum, int lookLineNum, int talkLineNum, int useLineNum);
 	};
 
 	class Keypad : public NamedHotspot {

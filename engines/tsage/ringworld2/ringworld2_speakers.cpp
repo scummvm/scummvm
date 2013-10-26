@@ -99,6 +99,7 @@ void VisualSpeaker::signal() {
 
 void VisualSpeaker::dispatch() {
 	uint32 frameNumber = R2_GLOBALS._events.getFrameNumber();
+	assert(_action);
 
 	// Delay check for character animation
 	if (_delayAmount) {

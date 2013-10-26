@@ -2229,7 +2229,7 @@ void ModalWindow::process(Event &event) {
 	}
 }
 
-void ModalWindow::proc12(int visage, int stripFrameNum, int frameNum, int posX, int posY) {
+void ModalWindow::setup2(int visage, int stripFrameNum, int frameNum, int posX, int posY) {
 	Scene1200 *scene = (Scene1200 *)R2_GLOBALS._sceneManager._scene;
 
 	_object1.postInit();
@@ -2242,7 +2242,7 @@ void ModalWindow::proc12(int visage, int stripFrameNum, int frameNum, int posX, 
 	_insetCount = R2_GLOBALS._insetUp;
 }
 
-void ModalWindow::proc13(int resNum, int lookLineNum, int talkLineNum, int useLineNum) {
+void ModalWindow::setup3(int resNum, int lookLineNum, int talkLineNum, int useLineNum) {
 	_object1.setDetails(resNum, lookLineNum, talkLineNum, useLineNum, 2, (SceneItem *) NULL);
 }
 
@@ -2501,15 +2501,15 @@ void ScannerDialog::remove() {
 	ModalWindow::remove();
 }
 
-void ScannerDialog::proc12(int visage, int stripFrameNum, int frameNum, int posX, int posY) {
+void ScannerDialog::setup2(int visage, int stripFrameNum, int frameNum, int posX, int posY) {
 	// Stop player moving if currently doing so
 	if (R2_GLOBALS._player._mover)
 		R2_GLOBALS._player.addMover(NULL);
 
 	R2_GLOBALS._events.setCursor(CURSOR_USE);
-	ModalWindow::proc12(visage, stripFrameNum, frameNum, posX, posY);
+	ModalWindow::setup2(visage, stripFrameNum, frameNum, posX, posY);
 
-	proc13(100, -1, -1, -1);
+	setup3(100, -1, -1, -1);
 	_talkButton.setup(1);
 	_scanButton.setup(2);
 	_slider.setup(R2_GLOBALS._scannerFrequencies[R2_GLOBALS._player._characterIndex], 142, 124, 35, 5);
