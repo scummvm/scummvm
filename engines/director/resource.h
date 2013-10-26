@@ -20,14 +20,15 @@
  *
  */
 
+#ifndef DIRECTOR_RESOURCE_H
+#define DIRECTOR_RESOURCE_H
+
 #include "common/scummsys.h"
 #include "common/endian.h"
+#include "common/func.h"
 #include "common/hashmap.h"
 #include "common/file.h"
 #include "common/str.h"
-
-#ifndef DIRECTOR_RESOURCE_H
-#define DIRECTOR_RESOURCE_H
 
 namespace Common {
 class MacResManager;
@@ -58,6 +59,8 @@ public:
 	Common::Array<uint32> getResourceTypeList() const;
 	Common::Array<uint16> getResourceIDList(uint32 type) const;
 
+	static uint32 convertTagToUppercase(uint32 tag);
+
 protected:
 	Common::SeekableReadStream *_stream;
 
@@ -67,8 +70,20 @@ protected:
 		Common::String name;
 	};
 
+	// Have separate hash/equals functions for tags to make them
+	// case-insensitive.
+	struct HashTag : public Common::UnaryFunction<uint32, uint> { // Insert Twitter joke
+		uint operator()(uint32 val) const { return (uint)Archive::convertTagToUppercase(val); }
+	};
+
+	struct EqualsTag : public Common::BinaryFunction<uint32, uint32, uint> {
+		bool operator()(const uint32 &val1, const uint32 &val2) const {
+			return Archive::convertTagToUppercase(val1) == Archive::convertTagToUppercase(val2);
+		}
+	};
+
 	typedef Common::HashMap<uint16, Resource> ResourceMap;
-	typedef Common::HashMap<uint32, ResourceMap> TypeMap;
+	typedef Common::HashMap<uint32, ResourceMap, HashTag, EqualsTag> TypeMap;
 	TypeMap _types;
 };
 

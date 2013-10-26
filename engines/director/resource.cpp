@@ -155,6 +155,13 @@ Common::Array<uint16> Archive::getResourceIDList(uint32 type) const {
 	return idList;
 }
 
+uint32 Archive::convertTagToUppercase(uint32 tag) {
+	uint32 newTag = toupper(tag >> 24) << 24;
+	newTag |= toupper((tag >> 16) & 0xFF) << 16;
+	newTag |= toupper((tag >> 8) & 0xFF) << 8;
+	return newTag | toupper(tag & 0xFF);
+}
+
 // Mac Archive code
 
 MacArchive::MacArchive() : Archive(), _resFork(0) {
@@ -212,15 +219,15 @@ Common::SeekableReadStream *MacArchive::getResource(uint32 tag, uint16 id) {
 bool RIFFArchive::openStream(Common::SeekableReadStream *stream) {
 	close();
 
-	if (stream->readUint32BE() != MKTAG('R', 'I', 'F', 'F'))
+	if (convertTagToUppercase(stream->readUint32BE()) != MKTAG('R', 'I', 'F', 'F'))
 		return false;
 
 	stream->readUint32LE(); // size
 
-	if (stream->readUint32BE() != MKTAG('R', 'M', 'M', 'P'))
+	if (convertTagToUppercase(stream->readUint32BE()) != MKTAG('R', 'M', 'M', 'P'))
 		return false;
 
-	if (stream->readUint32BE() != MKTAG('C', 'F', 'T', 'C'))
+	if (convertTagToUppercase(stream->readUint32BE()) != MKTAG('C', 'F', 'T', 'C'))
 		return false;
 
 	uint32 cftcSize = stream->readUint32LE();
