@@ -38,6 +38,7 @@ TSageEngine::TSageEngine(OSystem *system, const tSageGameDescription *gameDesc) 
 		_gameDescription(gameDesc) {
 	g_vm = this;
 	DebugMan.addDebugChannel(kRingDebugScripts, "scripts", "Scripts debugging");
+	_debugger = nullptr;
 	if (g_vm->getFeatures() & GF_DEMO)
 		_debugger = new DemoDebugger();
 	else if (g_vm->getGameID() == GType_Ringworld)

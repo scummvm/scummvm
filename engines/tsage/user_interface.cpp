@@ -307,6 +307,10 @@ UIElements::UIElements(): UICollection() {
 	else
 		_cursorVisage.setVisage(1, 5);
 	g_saver->addLoadNotifier(&UIElements::loadNotifierProc);
+
+	_slotStart = 0;
+	_scoreValue = 0;
+	_active = false;
 }
 
 void UIElements::synchronize(Serializer &s) {
