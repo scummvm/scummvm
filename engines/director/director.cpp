@@ -22,6 +22,7 @@
 
 #include "audio/mixer.h"
 
+#include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/scummsys.h"
 #include "common/error.h"
@@ -44,6 +45,10 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 
 	_mainArchive = 0;
 	_macBinary = 0;
+
+	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	SearchMan.addSubDirectoryMatching(gameDataDir, "data");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "install");
 }
 
 DirectorEngine::~DirectorEngine() {

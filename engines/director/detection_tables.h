@@ -157,6 +157,20 @@ static const DirectorGameDescription gameDescriptions[] = {
 	{
 		{
 			"jman",
+			"",
+			AD_ENTRY1("JOURNEY.EXE", "65d06b5fef155a2473434571aff5bc29"),
+			Common::JA_JPN,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GID_GENERIC,
+		3
+	},
+
+	{
+		{
+			"jman",
 			"Turbo!",
 			AD_ENTRY1("JMP Turbo\xE2\x84\xA2", "cc3321069072b90f091f220bba16e4d4"), // Trademark symbol (UTF-8)
 			Common::EN_ANY,
