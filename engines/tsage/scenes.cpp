@@ -43,6 +43,7 @@ SceneManager::SceneManager() {
 	g_saver->addListener(this);
 	_objectCount = 0;
 	_loadMode = 0;
+	_sceneLoadCount = 0;
 }
 
 SceneManager::~SceneManager() {
@@ -273,6 +274,11 @@ Scene::Scene() : _sceneBounds(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT),
 	_activeScreenNumber = 0;
 	_oldSceneBounds = Rect(4000, 4000, 4100, 4100);
 	Common::fill(&_zoomPercents[0], &_zoomPercents[256], 0);
+
+	_field12 = 0;
+	_screenNumber = 0;
+	_fieldA = 0;
+	_fieldE = 0;
 }
 
 Scene::~Scene() {
