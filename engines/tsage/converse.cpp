@@ -934,7 +934,7 @@ void StripManager::signal() {
 				g_globals->_sceneManager._scene->loadScene(_sceneNumber);
 			}
 
-			_activeSpeaker->proc12(this);
+			_activeSpeaker->startSpeaking(this);
 		}
 
 		if (_callbackObject) {
@@ -1088,7 +1088,7 @@ void Speaker::remove() {
 		SceneObjectList::deactivate();
 }
 
-void Speaker::proc12(Action *action) {
+void Speaker::startSpeaking(Action *action) {
 	_action = action;
 	if (_newSceneNumber != -1) {
 		_oldSceneNumber = g_globals->_sceneManager._sceneNumber;

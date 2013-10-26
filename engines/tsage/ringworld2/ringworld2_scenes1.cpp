@@ -7548,8 +7548,8 @@ void Scene1550::UnkArea1550::process(Event &event) {
 	}
 }
 
-void Scene1550::UnkArea1550::proc12(int visage, int stripFrameNum, int frameNum, int posX, int posY) {
-	// UnkArea1200::proc12();
+void Scene1550::UnkArea1550::setup2(int visage, int stripFrameNum, int frameNum, int posX, int posY) {
+	// UnkArea1200::setup2();
 	Scene1550 *scene = (Scene1550 *)R2_GLOBALS._sceneManager._scene;
 
 	_areaActor.postInit();
@@ -7562,7 +7562,7 @@ void Scene1550::UnkArea1550::proc12(int visage, int stripFrameNum, int frameNum,
 	_field20 = R2_GLOBALS._insetUp;
 	//
 
-	proc13(1550, 67, -1, -1);
+	setup3(1550, 67, -1, -1);
 	_unkObj155031.postInit();
 	_unkObj155031._fieldA4 = 1;
 	if (scene->_actor4._frame == 1)
@@ -7585,7 +7585,7 @@ void Scene1550::UnkArea1550::proc12(int visage, int stripFrameNum, int frameNum,
 	_unkObj155032.setDetails(1550, 69, -1, -1, 2, (SceneItem *) NULL);
 }
 
-void Scene1550::UnkArea1550::proc13(int resNum, int lookLineNum, int talkLineNum, int useLineNum) {
+void Scene1550::UnkArea1550::setup3(int resNum, int lookLineNum, int talkLineNum, int useLineNum) {
 	// Copy of Scene1200::LaserPanel::proc13
 	_areaActor.setDetails(resNum, lookLineNum, talkLineNum, useLineNum, 2, (SceneItem *) NULL);
 }
@@ -7915,7 +7915,7 @@ void Scene1550::signal() {
 	// No break on purpose
 	case 1563:
 		R2_GLOBALS.clearFlag(20);
-		_unkArea1.proc12(1559, 1, 1, 160, 125);
+		_unkArea1.setup2(1559, 1, 1, 160, 125);
 		R2_GLOBALS._player.enableControl();
 		_sceneMode = 0;
 		break;
@@ -8116,7 +8116,7 @@ void Scene1550::signal() {
 	case 1558:
 		_actor13.fixPriority(124);
 		_field415 = 1;
-		_unkArea1.proc12(1559, 1, 1, 160, 125);
+		_unkArea1.setup2(1559, 1, 1, 160, 125);
 		R2_GLOBALS._player.enableControl();
 		break;
 	case 1559:

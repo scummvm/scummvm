@@ -91,7 +91,7 @@ public:
 	virtual Common::String getClassName() { return "Speaker"; }
 	virtual void synchronize(Serializer &s);
 	virtual void remove();
-	virtual void proc12(Action *action);
+	virtual void startSpeaking(Action *action);
 	virtual void setText(const Common::String &msg);
 	virtual void removeText();
 	virtual void proc16() {}
