@@ -59,7 +59,7 @@ private:
 		RectangleType = 1,
 		LineType      = 2,
 		PolygonType   = 3,
-		InvalidType   = 4,
+		InvalidType   = 4
 	};
 
 	Common::Point _p1, _p2, _p3, _p4;
