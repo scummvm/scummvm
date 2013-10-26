@@ -85,6 +85,8 @@ public:
 	/**
 	* The number of planes to decode, also determines the pixel packing if _packPixels is true.
 	* 8 == decode all planes, map 1 pixel in 1 byte. (default, no packing even if _packPixels is true)
+	*
+	* NOTE: this property must be reset manually, and is not reset by a call to destroy().
 	*/
 	void setNumRelevantPlanes(const uint8 numRelevantPlanes) { _numRelevantPlanes = numRelevantPlanes; }
 
@@ -94,6 +96,8 @@ public:
 	* 2 == decode first 2 planes, pack 4 pixels in 1 byte. This makes _surface->w 1/4th of _header.width
 	* 4 == decode first 4 planes, pack 2 pixels in 1 byte. This makes _surface->w half of _header.width
 	* Packed bitmaps won't have a proper surface format since there is no way to tell it to use 1, 2 or 4 bits per pixel
+	*
+	* NOTE: this property must be reset manually, and is not reset by a call to destroy().
 	*/
 	void setPixelPacking(const bool pixelPacking) { _pixelPacking = pixelPacking; }
 private:
