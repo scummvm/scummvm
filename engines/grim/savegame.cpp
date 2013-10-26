@@ -160,13 +160,6 @@ void SaveGame::endSection() {
 	_currentSection = 0;
 }
 
-uint32 SaveGame::getBufferPos() {
-	if (_saving)
-		return _sectionSize;
-	else
-		return _sectionPtr;
-}
-
 void SaveGame::read(void *data, int size) {
 	if (_saving)
 		error("SaveGame::readBlock called when storing a savegame");

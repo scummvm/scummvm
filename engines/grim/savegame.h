@@ -63,7 +63,6 @@ public:
 	uint saveMinorVersion() const;
 	uint32 beginSection(uint32 sectionTag);
 	void endSection();
-	uint32 getBufferPos();
 	void read(void *data, int size);
 	void write(const void *data, int size);
 	uint32 readLEUint32();
