@@ -44,6 +44,9 @@ public:
 
 	/**
 	 * Load an image from the specified stream
+	 * 
+	 * loadStream() should implicitly call destroy() to free the memory
+	 * of the last loadStream() call.
 	 *
 	 * @param stream the input stream
 	 * @return whether loading the file succeeded
@@ -54,6 +57,9 @@ public:
 
 	/**
 	 * Destroy this decoder's surface and palette
+	 *
+	 * This should be called by a loadStream() implementation as well
+	 * as the destructor.
 	 */
 	virtual void destroy() = 0;
 
