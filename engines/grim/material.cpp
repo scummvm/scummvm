@@ -37,7 +37,7 @@ namespace Grim {
 Common::List<MaterialData *> *MaterialData::_materials = NULL;
 
 MaterialData::MaterialData(const Common::String &filename, Common::SeekableReadStream *data, CMap *cmap) :
-	_fname(filename), _cmap(cmap), _refCount(1), _textures(NULL) {
+		_fname(filename), _cmap(cmap), _refCount(1), _textures(NULL) {
 
 	if (g_grim->getGameType() == GType_MONKEY4) {
 		initEMI(data);

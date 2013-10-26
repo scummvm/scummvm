@@ -91,7 +91,8 @@ Registry::ValueType Registry::Value::getType() const {
 	return _type;
 }
 
-Registry::Registry() : _dirty(true) {
+Registry::Registry() :
+		_dirty(true) {
 	// Default settings for GRIM
 	ConfMan.registerDefault("subtitles", true);
 	ConfMan.registerDefault("talkspeed", 179);

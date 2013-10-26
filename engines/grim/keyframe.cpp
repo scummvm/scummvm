@@ -31,7 +31,7 @@
 namespace Grim {
 
 KeyframeAnim::KeyframeAnim(const Common::String &fname, Common::SeekableReadStream *data) :
-	Object(), _fname(fname) {
+		Object(), _fname(fname) {
 
 	uint32 tag = data->readUint32BE();
 	if (tag == MKTAG('F','Y','E','K'))

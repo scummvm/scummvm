@@ -29,7 +29,7 @@ namespace Grim {
 
 // Load a colormap from the given data.
 CMap::CMap(const Common::String &fileName, Common::SeekableReadStream *data) :
-	Object(), _fname(fileName) {
+		Object(), _fname(fileName) {
 	uint32 tag = data->readUint32BE();
 	if (tag != MKTAG('C','M','P',' '))
 		error("Invalid magic loading colormap");

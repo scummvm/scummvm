@@ -95,18 +95,11 @@ static char dimFragSrc[] =
 	END\n";
 
 GfxOpenGL::GfxOpenGL() : _smushNumTex(0),
-						_smushTexIds(NULL),
-						_smushWidth(0),
-						_smushHeight(0),
-						_useDepthShader(false),
-						_fragmentProgram(0),
-						_useDimShader(0),
-						_dimFragProgram(0),
-						_maxLights(0) {
+		_smushTexIds(NULL), _smushWidth(0), _smushHeight(0),
+		_useDepthShader(false), _fragmentProgram(0), _useDimShader(0),
+		_dimFragProgram(0), _maxLights(0), _storedDisplay(NULL), 
+		_emergFont(0), _alpha(1.f) {
 	g_driver = this;
-	_storedDisplay = NULL;
-	_emergFont = 0;
-	_alpha = 1.f;
 }
 
 GfxOpenGL::~GfxOpenGL() {

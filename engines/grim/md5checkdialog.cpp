@@ -32,7 +32,7 @@
 namespace Grim {
 
 MD5CheckDialog::MD5CheckDialog() :
-	GUI::Dialog(30, 20, 260, 124) {
+		GUI::Dialog(30, 20, 260, 124) {
 
 	const int screenW = g_system->getOverlayWidth();
 	const int screenH = g_system->getOverlayHeight();

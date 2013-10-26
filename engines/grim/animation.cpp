@@ -31,14 +31,8 @@
 namespace Grim {
 
 Animation::Animation(const Common::String &keyframe, AnimManager *manager, int pr1, int pr2) :
-	_manager(manager),
-	_priority1(pr1),
-	_priority2(pr2),
-	_paused(true),
-	_active(false),
-	_time(-1),
-	_fade(1.f),
-	_fadeMode(None) {
+		_manager(manager), _priority1(pr1), _priority2(pr2), _paused(true),
+		_active(false), _time(-1), _fade(1.f), _fadeMode(None) {
 	_keyframe = g_resourceloader->getKeyframe(keyframe);
 }
 

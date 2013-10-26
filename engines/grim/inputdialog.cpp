@@ -32,7 +32,7 @@
 namespace Grim {
 
 InputDialog::InputDialog(const Common::String &message, const Common::String &string, bool hasTextField) :
-	GUI::Dialog(30, 20, 260, 124), _hasTextField(hasTextField) {
+		GUI::Dialog(30, 20, 260, 124), _hasTextField(hasTextField) {
 
 	const int screenW = g_system->getOverlayWidth();
 	const int screenH = g_system->getOverlayHeight();

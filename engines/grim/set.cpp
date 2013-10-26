@@ -50,7 +50,8 @@ Set::Set(const Common::String &sceneName, Common::SeekableReadStream *data) :
 	}
 }
 
-Set::Set() : _cmaps(NULL) {
+Set::Set() :
+		_cmaps(NULL) {
 
 }
 

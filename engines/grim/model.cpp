@@ -357,20 +357,11 @@ void MeshFace::draw(float *vertices, float *vertNormals, float *textureVerts) co
 /**
  * @class Mesh
  */
-Mesh::Mesh() :	_numFaces(0),
-				_radius(0.0f),
-				_shadow(0),
-				_geometryMode(0),
-				_lightingMode(0),
-				_textureMode(0),
-				_numVertices(0),
-				_materialid(NULL),
-				_vertices(NULL),
-				_verticesI(NULL),
-				_vertNormals(NULL),
-				_numTextureVerts(0),
-				_textureVerts(NULL),
-				_faces(NULL) {
+Mesh::Mesh() :
+		_numFaces(0), _radius(0.0f), _shadow(0), _geometryMode(0),
+		_lightingMode(0), _textureMode(0), _numVertices(0), _materialid(NULL),
+		_vertices(NULL), _verticesI(NULL), _vertNormals(NULL),
+		_numTextureVerts(0), _textureVerts(NULL), _faces(NULL) {
 	_name[0] = '\0';
 
 }
@@ -552,9 +543,9 @@ void Mesh::getBoundingBox(int *x1, int *y1, int *x2, int *y2) const {
  * @class ModelNode
  */
 ModelNode::ModelNode() :
-	_initialized(false), _needsUpdate(true), _mesh(nullptr), _flags(0), _type(0),
-	_depth(0), _numChildren(0), _parent(nullptr), _child(nullptr), _sprite(nullptr),
-	_sibling(nullptr), _meshVisible(false), _hierVisible(false) {
+		_initialized(false), _needsUpdate(true), _mesh(nullptr), _flags(0), _type(0),
+		_depth(0), _numChildren(0), _parent(nullptr), _child(nullptr), _sprite(nullptr),
+		_sibling(nullptr), _meshVisible(false), _hierVisible(false) {
 	_name[0] = '\0';
 }
 

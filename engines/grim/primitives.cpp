@@ -29,9 +29,8 @@
 
 namespace Grim {
 
-PrimitiveObject::PrimitiveObject() {
-	_filled = false;
-	_type = InvalidType;
+PrimitiveObject::PrimitiveObject() :
+		_filled(false), _type(InvalidType) {
 }
 
 PrimitiveObject::~PrimitiveObject() {

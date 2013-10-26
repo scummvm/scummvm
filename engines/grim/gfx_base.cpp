@@ -26,12 +26,8 @@
 namespace Grim {
 
 GfxBase::GfxBase() :
-	_renderBitmaps(true),
-	_renderZBitmaps(true),
-	_shadowModeActive(false),
-	_currentPos(0, 0, 0),
-	_currentQuat(0, 0, 0, 1),
-	_dimLevel(0.0f) {
+		_renderBitmaps(true), _renderZBitmaps(true), _shadowModeActive(false),
+		_currentPos(0, 0, 0), _currentQuat(0, 0, 0, 1), _dimLevel(0.0f) {
 
 }
 

@@ -30,7 +30,8 @@
 
 namespace Grim {
 
-Sprite::Sprite() : _width(0), _height(0), _visible(false), _material(NULL), _next(NULL) {
+Sprite::Sprite() :
+		_width(0), _height(0), _visible(false), _material(NULL), _next(NULL) {
 }
 
 

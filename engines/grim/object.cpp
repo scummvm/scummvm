@@ -27,7 +27,7 @@ namespace Grim {
 int32 Object::s_id = 0;
 
 Object::Object() :
-	_refCount(0) {
+		_refCount(0) {
 
 	++s_id;
 	_id = s_id;

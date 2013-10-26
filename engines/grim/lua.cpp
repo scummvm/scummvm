@@ -107,8 +107,7 @@ void LuaObjects::pushObjects() const {
 LuaBase *LuaBase::s_instance = NULL;
 
 LuaBase::LuaBase() :
-	_translationMode(0),
-	_frameTimeCollection(0) {
+		_translationMode(0), _frameTimeCollection(0) {
 	s_instance = this;
 
 	lua_iolibopen();

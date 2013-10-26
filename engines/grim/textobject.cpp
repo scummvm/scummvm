@@ -32,9 +32,9 @@
 namespace Grim {
 
 TextObjectCommon::TextObjectCommon() :
-	_x(0), _y(0), _fgColor(0), _justify(0), _width(0), _height(0),
-	_font(NULL), _duration(0), _positioned(false),
-	_posX(0), _posY(0) {
+		_x(0), _y(0), _fgColor(0), _justify(0), _width(0), _height(0),
+		_font(NULL), _duration(0), _positioned(false),
+		_posX(0), _posY(0) {
 }
 
 TextObject::TextObject() :

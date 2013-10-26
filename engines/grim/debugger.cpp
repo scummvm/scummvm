@@ -26,8 +26,8 @@
 
 namespace Grim {
 
-Debugger::Debugger()
-	: GUI::Debugger() {
+Debugger::Debugger() :
+		GUI::Debugger() {
 
 	DCmd_Register("check_gamedata", WRAP_METHOD(Debugger, cmd_checkFiles));
 	DCmd_Register("lua_do", WRAP_METHOD(Debugger, cmd_lua_do));
