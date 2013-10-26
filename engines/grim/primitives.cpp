@@ -31,14 +31,14 @@ namespace Grim {
 
 PrimitiveObject::PrimitiveObject() {
 	_filled = false;
-	_type = 0;
+	_type = InvalidType;
 }
 
 PrimitiveObject::~PrimitiveObject() {
 }
 
 void PrimitiveObject::saveState(SaveGame *savedState) const {
-	savedState->writeLESint32(_type);
+	savedState->writeLESint32((int32)_type);
 
 	savedState->writeColor(_color);
 
@@ -55,7 +55,7 @@ void PrimitiveObject::saveState(SaveGame *savedState) const {
 }
 
 bool PrimitiveObject::restoreState(SaveGame *savedState) {
-	_type = savedState->readLESint32();
+	_type = (PrimType)savedState->readLESint32();
 
 	_color = savedState->readColor();
 
@@ -74,7 +74,7 @@ bool PrimitiveObject::restoreState(SaveGame *savedState) {
 }
 
 void PrimitiveObject::createRectangle(const Common::Point &p1, const Common::Point &p2, const Color &color, bool filled) {
-	_type = RECTANGLE;
+	_type = RectangleType;
 	_p1 = p1;
 	_p2 = p2;
 	_color = color;
@@ -82,14 +82,14 @@ void PrimitiveObject::createRectangle(const Common::Point &p1, const Common::Poi
 }
 
 void PrimitiveObject::createLine(const Common::Point &p1, const Common::Point &p2, const Color &color) {
-	_type = LINE;
+	_type = LineType;
 	_p1 = p1;
 	_p2 = p2;
 	_color = color;
 }
 
 void PrimitiveObject::createPolygon(const Common::Point &p1, const Common::Point &p2, const Common::Point &p3, const Common::Point &p4, const Color &color) {
-	_type = POLYGON;
+	_type = PolygonType;
 	_p1 = p1;
 	_p2 = p2;
 	_p3 = p3;
@@ -98,23 +98,25 @@ void PrimitiveObject::createPolygon(const Common::Point &p1, const Common::Point
 }
 
 void PrimitiveObject::draw() const {
-	assert(_type);
+	assert(_type != InvalidType);
 
-	if (_type == RECTANGLE)
+	if (_type == RectangleType) {
 		g_driver->drawRectangle(this);
-	else if (_type == LINE)
+	} else if (_type == LineType) {
 		g_driver->drawLine(this);
-	else if (_type == POLYGON)
+	} else if (_type == PolygonType) {
 		g_driver->drawPolygon(this);
+	}
 }
 
 void PrimitiveObject::setPos(int x, int y) {
 	if (x != -1) {
 		int dx = x - _p1.x;
 		_p1.x += dx;
-		if (_type == RECTANGLE || _type == LINE || _type == POLYGON)
+		if (_type == RectangleType || _type == LineType || _type == PolygonType) {
 			_p2.x += dx;
-		if (_type == POLYGON) {
+		}
+		if (_type == PolygonType) {
 			_p3.x += dx;
 			_p4.x += dx;
 		}
@@ -122,9 +124,9 @@ void PrimitiveObject::setPos(int x, int y) {
 	if (y != -1) {
 		int dy = y - _p1.y;
 		_p1.y += dy;
-		if (_type == RECTANGLE || _type == LINE || _type == POLYGON)
+		if (_type == RectangleType || _type == LineType || _type == PolygonType)
 			_p2.y += dy;
-		if (_type == POLYGON) {
+		if (_type == PolygonType) {
 			_p3.y += dy;
 			_p4.y += dy;
 		}

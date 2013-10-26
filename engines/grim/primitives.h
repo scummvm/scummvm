@@ -39,12 +39,6 @@ public:
 
 	static int32 getStaticTag() { return MKTAG('P', 'R', 'I', 'M'); }
 
-	typedef enum {
-		RECTANGLE = 1,
-		LINE,
-		POLYGON
-	} PrimType;
-
 	void createRectangle(const Common::Point &p1, const Common::Point &p2, const Color &color, bool filled);
 	void createLine(const Common::Point &p1, const Common::Point &p2, const Color &color);
 	void createPolygon(const Common::Point &p1, const Common::Point &p2, const Common::Point &p3, const Common::Point &p4, const Color &color);
@@ -61,10 +55,17 @@ public:
 	bool restoreState(SaveGame *state);
 
 private:
+	enum PrimType {
+		RectangleType = 1,
+		LineType      = 2,
+		PolygonType   = 3,
+		InvalidType   = 4,
+	};
+
 	Common::Point _p1, _p2, _p3, _p4;
 	Color _color;
 	bool _filled;
-	int _type;
+	PrimType _type;
 };
 
 } // end of namespace Grim
