@@ -35,7 +35,6 @@ class SaveGame;
 
 class Font : public PoolObject<Font> {
 public:
-	Font(const Common::String &filename, Common::SeekableReadStream *data);
 	Font();
 	~Font();
 

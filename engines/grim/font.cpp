@@ -31,12 +31,6 @@
 
 namespace Grim {
 
-Font::Font(const Common::String &filename, Common::SeekableReadStream *data) :
-		_userData(NULL),
-		_fontData(NULL), _charHeaders(NULL), _charIndex(NULL) {
-	load(filename, data);
-}
-
 Font::Font() :
 		_userData(NULL),
 		_fontData(NULL), _charHeaders(NULL), _charIndex(NULL)
@@ -45,11 +39,9 @@ Font::Font() :
 }
 
 Font::~Font() {
-	if (_charIndex) {
-		delete[] _charIndex;
-		delete[] _charHeaders;
-		delete[] _fontData;
-	}
+	delete[] _charIndex;
+	delete[] _charHeaders;
+	delete[] _fontData;
 	g_driver->destroyFont(this);
 }
 

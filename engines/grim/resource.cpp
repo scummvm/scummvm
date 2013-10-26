@@ -358,7 +358,8 @@ Font *ResourceLoader::loadFont(const Common::String &filename) {
 	if (!stream)
 		error("Could not find font file %s", filename.c_str());
 
-	Font *result = new Font(filename, stream);
+	Font *result = new Font();
+	result->load(filename, stream);
 	delete stream;
 
 	return result;
