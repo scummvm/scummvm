@@ -204,6 +204,8 @@ class StaticANIObject : public GameObject {
 	Movement *getMovementByName(char *name);
 	Common::Point *getCurrDimensions(Common::Point &p);
 
+	Common::Point *getSomeXY(Common::Point &p);
+
 	void clearFlags();
 	void setFlags40(bool state);
 	bool isIdle();

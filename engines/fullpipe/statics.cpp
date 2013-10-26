@@ -649,6 +649,19 @@ Common::Point *StaticANIObject::getCurrDimensions(Common::Point &p) {
 	return &p;
 }
 
+Common::Point *StaticANIObject::getSomeXY(Common::Point &p) {
+	if (_movement) {
+		_movement->getCurrDynamicPhaseXY(p);
+
+		return &p;
+	}
+
+	if (_statics)
+		_statics->getSomeXY(p);
+
+	return &p;
+}
+
 void StaticANIObject::update(int counterdiff) {
 	int mqid;
 
