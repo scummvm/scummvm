@@ -38,8 +38,7 @@ class LabEntry : public Common::ArchiveMember {
 	Common::String _name;
 	uint32 _offset, _len;
 public:
-	LabEntry();
-	LabEntry(Common::String name, uint32 offset, uint32 len, Lab *parent);
+	LabEntry(const Common::String &name, uint32 offset, uint32 len, Lab *parent);
 	Common::String getName() const { return _name; }
 	Common::SeekableReadStream *createReadStream() const;
 	friend class Lab;

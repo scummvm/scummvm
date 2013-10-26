@@ -28,13 +28,8 @@
 
 namespace Grim {
 
-LabEntry::LabEntry()
-	: _name(Common::String()), _offset(0), _len(0), _parent(NULL) {
-}
-
-LabEntry::LabEntry(Common::String name, uint32 offset, uint32 len, Lab *parent)
-	: _offset(offset), _len(len), _parent(parent) {
-	_name = name;
+LabEntry::LabEntry(const Common::String &name, uint32 offset, uint32 len, Lab *parent) :
+		_offset(offset), _len(len), _parent(parent), _name(name) {
 	_name.toLowercase();
 }
 
