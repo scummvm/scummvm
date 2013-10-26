@@ -248,6 +248,36 @@ bool RIFFArchive::openStream(Common::SeekableReadStream *stream) {
 	return true;
 }
 
+Common::SeekableReadStream *RIFFArchive::getResource(uint32 tag, uint16 id) {
+	if (!_types.contains(tag))
+		error("Archive does not contain '%s' %04x", tag2str(tag), id);
+
+	const ResourceMap &resMap = _types[tag];
+
+	if (!resMap.contains(id))
+		error("Archive does not contain '%s' %04x", tag2str(tag), id);
+
+	const Resource &res = resMap[id];
+
+	// Adjust to skip the resource header
+	uint32 offset = res.offset + 12;
+	uint32 size = res.size - 12;
+
+	// Skip the Pascal string
+	_stream->seek(offset);
+	byte stringSize = _stream->readByte() + 1; // 1 for this byte
+	offset += stringSize;
+	size -= stringSize;
+
+	// Align to nearest word boundary
+	if (offset & 1) {
+		offset++;
+		size--;
+	}
+
+	return new Common::SeekableSubReadStream(_stream, offset, offset + size);
+}
+
 
 // RIFX Archive code
 

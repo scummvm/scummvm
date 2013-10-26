@@ -92,6 +92,7 @@ public:
 	~RIFFArchive() {}
 
 	bool openStream(Common::SeekableReadStream *stream);
+	Common::SeekableReadStream *getResource(uint32 tag, uint16 id);
 };
 
 class RIFXArchive : public Archive {
