@@ -59,7 +59,8 @@ void IFFDecoder::destroy() {
 }
 
 bool IFFDecoder::loadStream(Common::SeekableReadStream &stream) {
-	destroy();
+	// NOTE: we cannot call destroy() here, like most other decoders do, otherwise the 
+	// settings (stored in _numRelevantPlanes and _pixelPacking) will be cleared.
 
 	const uint32 form = stream.readUint32BE();
 
