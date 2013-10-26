@@ -59,6 +59,19 @@ const QuasipedType Dialogs::kQuasipeds[16] = {
 Dialogs::Dialogs(AvalancheEngine *vm) {
 	_vm = vm;
 	_noError = true;
+
+	_aboutBox = false;
+	_talkX = 0;
+	_talkY = 0;
+	_maxLineNum = 0;
+	_scReturn = false;
+	_currentFont = kFontStyleRoman;
+	_param = 0;
+	_useIcon = 0;
+	_scrollBells = 0;
+	_underScroll = 0;
+	_shadowBoxX = 0;
+	_shadowBoxY = 0;
 }
 
 void Dialogs::init() {
