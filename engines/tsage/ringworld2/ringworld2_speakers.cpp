@@ -3217,7 +3217,7 @@ void SpeakerDutyOfficer180::proc15() {
 		_object1.animate(ANIM_MODE_2, NULL);
 		break;
 	case 1:
-		_action = NULL;
+		_action->_action = NULL;
 		_object1.setup(76, 2, 1);
 		_object1.animate(ANIM_MODE_5, this);
 		break;
