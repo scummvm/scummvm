@@ -26,59 +26,49 @@
 #include "engines/grim/grim.h"
 #include "engines/grim/lipsync.h"
 #include "engines/grim/resource.h"
+#include "engines/grim/debug.h"
 
 namespace Grim {
 
 template class ObjectPtr<LipSync>;
 
-// A new define that'll be around when theres a configure script :)
-#undef DEBUG_VERBOSE
 
 LipSync::LipSync(const Common::String &filename, Common::SeekableReadStream *data) :
-	Object() {
-	_fname = filename;
-	uint16 readPhoneme;
-	int j;
+		Object(), _fname(filename) {
 
 	if (data->readUint32BE() != MKTAG('L','I','P','!')) {
 		error("Invalid file format in %s", _fname.c_str());
-	} else {
-		_numEntries = (data->size() - 8) / 4;
-
-		// There are cases where the lipsync file has no entries
-		if (_numEntries == 0) {
-			_entries = NULL;
-		} else {
-			data->readUint32LE();
-#ifdef DEBUG_VERBOSE
-			printf("Reading LipSync %s, %d entries\n", filename, _numEntries);
-#endif
-			_entries = new LipEntry[_numEntries];
-			for (int i = 0; i < _numEntries; i++) {
-				_entries[i].frame = data->readUint16LE();
-				readPhoneme = data->readUint16LE();
-
-				// Look for the animation corresponding to the phoneme
-				for (j = 0; j < _animTableSize; j++) {
-					if (readPhoneme == _animTable[j].phoneme) {
-						_entries[i].anim = _animTable[j].anim;
-						break;
-					}
-				}
-
-				if (j >= _animTableSize) {
-					warning("Unknown phoneme: 0x%X in file %s", readPhoneme, _fname.c_str());
-					_entries[i].anim = 1;
-				}
-
-			}
-#ifdef DEBUG_VERBOSE
-			for (int j = 0; j < _numEntries; j++)
-				printf("LIP %d) frame %d, anim %d\n", j, _entries[j].frame, _entries[j].anim);
-#endif
-		}
 	}
 
+	_numEntries = (data->size() - 8) / 4;
+
+	// There are cases where the lipsync file has no entries
+	if (_numEntries == 0) {
+		_entries = NULL;
+		return;
+	}
+
+	data->readUint32LE();
+	Debug::debug(Debug::Lipsync, "Reading LipSync %s, %d entries\n", filename.c_str(), _numEntries);
+	_entries = new LipEntry[_numEntries];
+	for (int i = 0; i < _numEntries; i++) {
+		_entries[i].frame = data->readUint16LE();
+		uint16 readPhoneme = data->readUint16LE();
+		int j;
+
+		// Look for the animation corresponding to the phoneme
+		for (j = 0; j < _animTableSize; j++) {
+			if (readPhoneme == _animTable[j].phoneme) {
+				_entries[i].anim = _animTable[j].anim;
+				break;
+			}
+		}
+
+		if (j >= _animTableSize) {
+			Debug::warning(Debug::Lipsync, "Unknown phoneme: 0x%X in file %s", readPhoneme, _fname.c_str());
+			_entries[i].anim = 1;
+		}
+	}
 }
 
 LipSync::~LipSync() {
@@ -97,7 +87,6 @@ int LipSync::getAnim(int pos) {
 			frame2 = (unsigned int) - 1L;
 		}
 		if ((pos >= frame1) && (pos < frame2)) {
-//          debug("frame1: %d, frame2: %d, pos: %d, i: %d, num: %d\n", frame1, frame2, pos, i, _numEntries -1);
 			return _entries[i].anim;
 		}
 	}

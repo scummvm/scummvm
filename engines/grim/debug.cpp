@@ -45,6 +45,7 @@ void Debug::registerDebugChannels() {
 	DebugMan.addDebugChannel(Sets, "sets", "");
 	DebugMan.addDebugChannel(TextObjects, "textobjects", "");
 	DebugMan.addDebugChannel(Patchr, "patchr", "");
+	DebugMan.addDebugChannel(Lipsync, "lipsync", "");
 	DebugMan.addDebugChannel(All, "all", "");
 }
 

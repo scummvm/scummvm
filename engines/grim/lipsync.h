@@ -38,23 +38,23 @@ public:
 	LipSync(const Common::String &filename, Common::SeekableReadStream *data);
 	~LipSync();
 
-	struct LipEntry {
-		uint16 frame;
-		uint16 anim;
-	};
-
 	int getAnim(int pos);
 	bool isValid() { return _numEntries > 0; }
 	const Common::String &getFilename() const { return _fname; };
 
 private:
-	LipEntry *_entries;
-	int _numEntries;
+	struct LipEntry {
+		uint16 frame;
+		uint16 anim;
+	};
 
 	struct PhonemeAnim {
 		uint16 phoneme;
 		uint16 anim;
 	};
+
+	LipEntry *_entries;
+	int _numEntries;
 
 	static const PhonemeAnim _animTable[];
 	static const int _animTableSize;
