@@ -124,7 +124,8 @@ ActionDisableControl::ActionDisableControl(const Common::String &line) {
 bool ActionDisableControl::execute(ZVision *engine) {
 	debug("Disabling control %u", _key);
 	
-	engine->getScriptManager()->disableControl(_key);
+	ScriptManager *scriptManager = engine->getScriptManager();
+	scriptManager->setStateFlags(_key, scriptManager->getStateFlags(_key) | StateFlags::DISABLED);
 
 	return true;
 }
@@ -141,7 +142,8 @@ ActionEnableControl::ActionEnableControl(const Common::String &line) {
 bool ActionEnableControl::execute(ZVision *engine) {
 	debug("Enabling control %u", _key);
 
-	engine->getScriptManager()->enableControl(_key);
+	ScriptManager *scriptManager = engine->getScriptManager();
+	scriptManager->setStateFlags(_key, scriptManager->getStateFlags(_key) & ~StateFlags::DISABLED);
 
 	return true;
 }
@@ -223,8 +225,10 @@ bool ActionPreloadAnimation::execute(ZVision *engine) {
 	// TODO: Check if the Control already exists
 
 	// Create the control, but disable it until PlayPreload is called
-	engine->getScriptManager()->addControl(new AnimationControl(engine, _key, _fileName));
-	engine->getScriptManager()->disableControl(_key);
+	ScriptManager *scriptManager = engine->getScriptManager();
+	scriptManager->addControl(new AnimationControl(engine, _key, _fileName));
+	scriptManager->setStateFlags(_key, scriptManager->getStateFlags(_key) | StateFlags::DISABLED);
+
 	return true;
 }
 

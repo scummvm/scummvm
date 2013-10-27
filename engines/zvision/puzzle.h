@@ -32,7 +32,7 @@
 namespace ZVision {
 
 struct Puzzle {
-	Puzzle() : key(0), flags(0) {}
+	Puzzle() : key(0) {}
 
 	~Puzzle() {
 		for (Common::List<ResultAction *>::iterator iter = resultActions.begin(); iter != resultActions.end(); ++iter) {
@@ -63,17 +63,10 @@ struct Puzzle {
 		bool argumentIsAKey;
 	};
 
-	enum StateFlags {
-		ONCE_PER_INST = 0x01,
-		DO_ME_NOW = 0x02, // Somewhat useless flag since anything that needs to be done immediately has no criteria
-		DISABLED = 0x04
-	};
-
 	uint32 key;
 	Common::List<Common::List <CriteriaEntry> > criteriaList;
 	// This has to be list of pointers because ResultAction is abstract
 	Common::List<ResultAction *> resultActions;
-	uint flags;
 };
 
 } // End of namespace ZVision

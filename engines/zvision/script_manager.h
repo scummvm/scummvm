@@ -49,11 +49,18 @@ struct Location {
 	uint32 offset;
 };
 
+enum StateFlags {
+	ONCE_PER_INST = 0x01,
+	DO_ME_NOW = 0x02, // Somewhat useless flag since anything that needs to be done immediately has no criteria
+	DISABLED = 0x04
+};
+
 typedef Common::HashMap<uint32, Common::Array<Puzzle *> > PuzzleMap;
 typedef Common::List<Puzzle *> PuzzleList;
 typedef Common::Queue<Puzzle *> PuzzleQueue;
 typedef Common::List<Control *> ControlList;
 typedef Common::HashMap<uint32, uint32> StateMap;
+typedef Common::HashMap<uint32, uint> StateFlagMap;
 
 class ScriptManager {
 public:
@@ -68,6 +75,11 @@ private:
 	 * particular state key are checked after the key is modified.
 	 */
 	StateMap _globalState;
+	/** 
+	 * Holds the flags for the global states. This is used to enable/disable puzzles and/or 
+	 * controls as well as which puzzles should are allowed to be re-executed 
+	 */
+	StateFlagMap _globalStateFlags;
 	/** References _globalState keys to Puzzles */
 	PuzzleMap _referenceTable;
 	/** Holds the Puzzles that should be checked this frame */
@@ -91,11 +103,11 @@ public:
 	void setStateValue(uint32 key, uint value);
 	void addToStateValue(uint32 key, uint valueToAdd);
 
+	uint getStateFlags(uint32 key);
+	void setStateFlags(uint32 key, uint flags);
+
 	void addControl(Control *control);
 	Control *getControl(uint32 key);
-
-	void enableControl(uint32 key);
-	void disableControl(uint32 key);
 
 	void focusControl(uint32 key);
 

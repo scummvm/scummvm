@@ -126,8 +126,7 @@ void ScriptManager::checkPuzzleCriteria() {
 
 		// Check if the puzzle is already finished
 		// Also check that the puzzle isn't disabled
-		if (getStateValue(puzzle->key) == 1 &&
-			(puzzle->flags & Puzzle::DISABLED) == 0) {
+		if (getStateValue(puzzle->key) == 1 && (getStateFlags(puzzle->key) & DISABLED) == 0) {
 			continue;
 		}
 
@@ -223,6 +222,23 @@ void ScriptManager::setStateValue(uint32 key, uint value) {
 	}
 }
 
+uint ScriptManager::getStateFlags(uint32 key) {
+	if (_globalStateFlags.contains(key))
+		return _globalStateFlags[key];
+	else
+		return 0;
+}
+
+void ScriptManager::setStateFlags(uint32 key, uint flags) {
+	_globalStateFlags[key] = flags;
+
+	if (_referenceTable.contains(key)) {
+		for (Common::Array<Puzzle *>::iterator iter = _referenceTable[key].begin(); iter != _referenceTable[key].end(); ++iter) {
+			_puzzlesToCheck.push((*iter));
+		}
+	}
+}
+
 void ScriptManager::addToStateValue(uint32 key, uint valueToAdd) {
 	_globalState[key] += valueToAdd;
 }
@@ -239,24 +255,6 @@ Control *ScriptManager::getControl(uint32 key) {
 	}
 
 	return nullptr;
-}
-
-void ScriptManager::enableControl(uint32 key) {
-	for (ControlList::iterator iter = _activeControls.begin(); iter != _activeControls.end(); ++iter) {
-		if ((*iter)->getKey() == key) {
-			(*iter)->enable();
-			break;
-		}
-	}
-}
-
-void ScriptManager::disableControl(uint32 key) {
-	for (ControlList::iterator iter = _activeControls.begin(); iter != _activeControls.end(); ++iter) {
-		if ((*iter)->getKey() == key) {
-			(*iter)->disable();
-			break;
-		}
-	}
 }
 
 void ScriptManager::focusControl(uint32 key) {
@@ -352,7 +350,7 @@ void ScriptManager::changeLocation(char world, char room, char node, char view, 
 	// Add all the local puzzles to the queue to be checked
 	for (PuzzleList::iterator iter = _activePuzzles.begin(); iter != _activePuzzles.end(); ++iter) {
 		// Reset any Puzzles that have the flag ONCE_PER_INST
-		if (((*iter)->flags & Puzzle::ONCE_PER_INST) == Puzzle::ONCE_PER_INST) {
+		if ((getStateFlags((*iter)->key) & ONCE_PER_INST) == ONCE_PER_INST) {
 			setStateValue((*iter)->key, 0);
 		}
 
@@ -362,7 +360,7 @@ void ScriptManager::changeLocation(char world, char room, char node, char view, 
 	// Add all the global puzzles to the queue to be checked
 	for (PuzzleList::iterator iter = _globalPuzzles.begin(); iter != _globalPuzzles.end(); ++iter) {
 		// Reset any Puzzles that have the flag ONCE_PER_INST
-		if (((*iter)->flags & Puzzle::ONCE_PER_INST) == Puzzle::ONCE_PER_INST) {
+		if ((getStateFlags((*iter)->key) & ONCE_PER_INST) == ONCE_PER_INST) {
 			setStateValue((*iter)->key, 0);
 		}
 

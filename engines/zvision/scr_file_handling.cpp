@@ -81,7 +81,7 @@ void ScriptManager::parsePuzzle(Puzzle *puzzle, Common::SeekableReadStream &stre
 		} else if (line.matchString("results {", true)) {
 			parseResults(stream, puzzle->resultActions);
 		} else if (line.matchString("flags {", true)) {
-			puzzle->flags = parseFlags(stream);
+			setStateFlags(puzzle->key, parseFlags(stream));
 		}
 
 		line = stream.readLine();
@@ -259,11 +259,11 @@ uint ScriptManager::parseFlags(Common::SeekableReadStream &stream) const {
 
 	while (!stream.eos() && !line.contains('}')) {
 		if (line.matchString("ONCE_PER_INST", true)) {
-			flags |= Puzzle::ONCE_PER_INST;
+			flags |= ONCE_PER_INST;
 		} else if (line.matchString("DO_ME_NOW", true)) {
-			flags |= Puzzle::DO_ME_NOW;
+			flags |= DO_ME_NOW;
 		} else if (line.matchString("DISABLED", true)) {
-			flags |= Puzzle::DISABLED;
+			flags |= DISABLED;
 		}
 
 		line = stream.readLine();
