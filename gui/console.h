@@ -23,6 +23,7 @@
 #define CONSOLE_DIALOG_H
 
 #include "gui/dialog.h"
+#include "common/str.h"
 
 namespace GUI {
 
@@ -69,7 +70,6 @@ protected:
 	enum {
 		kBufferSize	= 32768,
 		kCharsPerLine = 128,
-		kLineBufferSize = 256,
 
 		kHistorySize = 20
 	};
@@ -112,7 +112,7 @@ protected:
 	CompletionCallbackProc _completionCallbackProc;
 	void *_completionCallbackRefCon;
 
-	char _history[kHistorySize][kLineBufferSize];
+	Common::String _history[kHistorySize];
 	int _historySize;
 	int _historyIndex;
 	int _historyLine;
@@ -184,7 +184,7 @@ protected:
 	void killLastWord();
 
 	// History
-	void addToHistory(const char *str);
+	void addToHistory(const Common::String &str);
 	void historyScroll(int direction);
 };
 
