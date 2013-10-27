@@ -1422,8 +1422,57 @@ void sceneIntro_initScene(Scene *sc) {
 	g_fullpipe->_modalObject = new ModalIntro;
 }
 
-int sceneHandlerIntro(ExCommand *cmd) {
-	warning("STUB: sceneHandlerIntro()");
+void sceneHandlerIntro_part1() {
+	g_fullpipe->_currentScene = g_fullpipe->accessScene(SC_INTRO1);
+	chainQueue(QU_INTR_FINISH, 0);
+}
+
+void sceneHandlerIntro_part2() {
+	g_fullpipe->_currentScene = g_fullpipe->accessScene(SC_INTRO2);
+	chainQueue(QU_IN2_DO, 0);
+}
+
+int sceneHandlerIntro(ExCommand *ex) {
+	if (ex->_messageKind != 17)
+		return 0;
+
+	switch (ex->_messageNum) {
+	case MSG_INTR_ENDINTRO:
+		g_vars->sceneIntro_playing = 0;
+		return 0;
+
+	case MSG_INTR_SWITCHTO1:
+		sceneHandlerIntro_part1();
+		return 0;
+
+	case MSG_INTR_GETUPMAN:
+		g_vars->sceneIntro_needSleep = 0;
+		g_vars->sceneIntro_needGetup = 1;
+		return 0;
+
+	case MSG_INTR_SWITCHTO2:
+		sceneHandlerIntro_part2();
+		return 0;
+
+	case 33:
+		// fall trhough
+		break;
+
+	default:
+		return 0;
+	}
+
+	if (g_vars->sceneIntro_needSleep) {
+		if (!g_vars->sceneIntro_aniin1man->_movement && g_vars->sceneIntro_aniin1man->_statics->_staticsId == ST_IN1MAN_SLEEP)
+			g_vars->sceneIntro_aniin1man->startAnim(MV_IN1MAN_SLEEP, 0, -1);
+	} else if (g_vars->sceneIntro_needGetup && !g_vars->sceneIntro_aniin1man->_movement &&
+			   g_vars->sceneIntro_aniin1man->_statics->_staticsId == ST_IN1MAN_SLEEP) {
+		g_vars->sceneIntro_needGetup = 0;
+
+		chainQueue(QU_INTR_GETUPMAN, 0);
+	}
+
+	g_fullpipe->startSceneTrack();
 
 	return 0;
 }
