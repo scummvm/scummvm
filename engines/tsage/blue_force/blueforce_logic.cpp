@@ -454,9 +454,10 @@ void Timer::dispatch() {
 
 	if (_endFrame) {
 		uint32 frameNumber = BF_GLOBALS._events.getFrameNumber();
-		if (frameNumber > _endFrame)
+		if (frameNumber > _endFrame) {
 			// Timer has expired
 			signal();
+		}
 	}
 }
 
@@ -472,7 +473,8 @@ void Timer::set(uint32 delay, EventHandler *endHandler) {
 /*--------------------------------------------------------------------------*/
 
 TimerExt::TimerExt(): Timer() {
-	_action = NULL;
+	_action = nullptr;
+	_newAction = nullptr;
 }
 
 void TimerExt::set(uint32 delay, EventHandler *endHandler, Action *newAction) {
@@ -909,6 +911,7 @@ void PalettedScene::add2Faders(const byte *arrBufferRGB, int step, int paletteNu
 
 void PalettedScene::transition(const byte *arrBufferRGB, int percent, int paletteNum, Action *action, int fromColor1, int fromColor2, int toColor1, int toColor2, bool flag) {
 	byte tmpPalette[768];
+	memset(tmpPalette, 0, 768);
 
 	_palette.loadPalette(paletteNum);
 	_palette.loadPalette(2);

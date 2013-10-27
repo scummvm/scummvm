@@ -419,6 +419,8 @@ void Scene50::postInit(SceneObjectList *OwnerList) {
 		tooltip = &_location8;
 		xp = 75;
 		break;
+	default:
+		error("Unexpected tooltip value %d", selectedTooltip);
 	}
 
 	_timer.set(240, this);
