@@ -34,11 +34,10 @@ class BaseModalObject {
  	BaseModalObject() : _parentObj(0) {}
 	virtual ~BaseModalObject() {}
 
-	virtual bool handleMessage(ExCommand *message);
-	virtual bool init(int counterdiff);
-	virtual bool update();
-
-	void saveload();
+	virtual bool handleMessage(ExCommand *message) = 0;
+	virtual bool init(int counterdiff) = 0;
+	virtual bool update() = 0;
+	virtual void saveload() = 0;
 };
 
 class ModalIntro : public BaseModalObject {
@@ -52,6 +51,9 @@ class ModalIntro : public BaseModalObject {
 	ModalIntro();
 
 	virtual bool handleMessage(ExCommand *message);
+	virtual bool init(int counterdiff);
+	virtual bool update();
+	virtual void saveload();
 };
 
 } // End of namespace Fullpipe
