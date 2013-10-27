@@ -977,6 +977,11 @@ Scene315::Scene315() {
 	_doorOpened = false;
 	_invGreenCount = _bookGreenCount = 0;
 	_invGangCount = _bookGangCount = 0;
+
+	_field1390 = 0;
+	_stripNumber = 0;
+	_field1398 = 0;
+	_currentCursor = INV_NONE;
 }
 
 void Scene315::synchronize(Serializer &s) {

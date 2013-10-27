@@ -1422,6 +1422,10 @@ void Scene910::Object13::setupBreaker(int x, int y, int mode, int8 frameNumber) 
 	BF_GLOBALS._sceneItems.push_front(this);
 }
 
+Scene910::Object25::Object25() {
+	_field90 = _field92 = 0;
+}
+
 void Scene910::Object25::synchronize(Serializer &s) {
 	NamedObject::synchronize(s);
 	s.syncAsSint16LE(_field90);

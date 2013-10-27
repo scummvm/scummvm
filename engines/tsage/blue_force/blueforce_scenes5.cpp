@@ -1778,6 +1778,8 @@ void Scene570::IconManager::addItem(Icon *item) {
 
 Scene570::Icon::Icon(): NamedObject() {
 	_iconId = _folderId = 0;
+	_parentFolderId = 0;
+	_mode = 0;
 }
 
 void Scene570::Icon::synchronize(Serializer &s) {
