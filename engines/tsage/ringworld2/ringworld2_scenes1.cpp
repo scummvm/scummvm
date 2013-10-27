@@ -694,13 +694,13 @@ bool Scene1100::Seeker::startAction(CursorType action, Event &event) {
 	} else {
 		R2_GLOBALS._player.disableControl();
 		scene->_sceneMode = 55;
-		if (R2_GLOBALS._v565AE >= 3) {
+		if (R2_GLOBALS._stripModifier >= 3) {
 			if (R2_GLOBALS._player._characterIndex == R2_QUINN)
 				scene->_stripManager.start3(329, scene, R2_GLOBALS._stripManager_lookupList);
 			else
 				scene->_stripManager.start3(330, scene, R2_GLOBALS._stripManager_lookupList);
 		} else {
-			++R2_GLOBALS._v565AE;
+			++R2_GLOBALS._stripModifier;
 			R2_GLOBALS._events.setCursor(CURSOR_CROSSHAIRS);
 			if (R2_GLOBALS._player._characterIndex == R2_QUINN)
 				scene->_stripManager.start3(304, scene, R2_GLOBALS._stripManager_lookupList);
@@ -7832,7 +7832,7 @@ void Scene1550::postInit(SceneObjectList *OwnerList) {
 
 	switch (R2_GLOBALS._sceneManager._previousScene) {
 	case 1530:
-		R2_GLOBALS._v565AE = 0;
+		R2_GLOBALS._stripModifier = 0;
 	// No break on purpose
 	case 300:
 	// No break on purpose
@@ -8058,33 +8058,33 @@ void Scene1550::signal() {
 			_sceneMode = 60;
 			R2_GLOBALS._player.disableControl();
 			R2_GLOBALS._events.setCursor(CURSOR_CROSSHAIRS);
-			if (R2_GLOBALS._v565AE >= 3) {
+			if (R2_GLOBALS._stripModifier >= 3) {
 				if (R2_GLOBALS._player._characterIndex == R2_QUINN)
 					_stripManager.start(572, this);
 				else
 					_stripManager.start(573, this);
 			} else {
-				++R2_GLOBALS._v565AE;
+				++R2_GLOBALS._stripModifier;
 				if (R2_GLOBALS._player._characterIndex == R2_QUINN)
-					_stripManager.start(499 + R2_GLOBALS._v565AE, this);
+					_stripManager.start(499 + R2_GLOBALS._stripModifier, this);
 				else
-					_stripManager.start(502 + R2_GLOBALS._v565AE, this);
+					_stripManager.start(502 + R2_GLOBALS._stripModifier, this);
 			}
 		} else {
 			_sceneMode = 60;
 			R2_GLOBALS._player.disableControl();
 			R2_GLOBALS._events.setCursor(CURSOR_CROSSHAIRS);
-			if (R2_GLOBALS._v565AE >= 4) {
+			if (R2_GLOBALS._stripModifier >= 4) {
 				if (R2_GLOBALS._player._characterIndex == R2_QUINN)
 					_stripManager.start(572, this);
 				else
 					_stripManager.start(573, this);
 			} else {
-				++R2_GLOBALS._v565AE;
+				++R2_GLOBALS._stripModifier;
 				if (R2_GLOBALS._player._characterIndex == R2_QUINN)
-					_stripManager.start(563 + R2_GLOBALS._v565AE, this);
+					_stripManager.start(563 + R2_GLOBALS._stripModifier, this);
 				else
-					_stripManager.start(567 + R2_GLOBALS._v565AE, this);
+					_stripManager.start(567 + R2_GLOBALS._stripModifier, this);
 			}
 		}
 		break;

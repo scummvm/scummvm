@@ -1944,14 +1944,14 @@ bool Scene2450::CareTaker::startAction(CursorType action, Event &event) {
 
 	if (action == CURSOR_TALK) {
 		R2_GLOBALS._player.disableControl();
-		if (R2_GLOBALS._v565AE < 3) {
-			++R2_GLOBALS._v565AE;
+		if (R2_GLOBALS._stripModifier < 3) {
+			++R2_GLOBALS._stripModifier;
 			scene->_sceneMode = 20;
 			R2_GLOBALS._events.setCursor(CURSOR_CROSSHAIRS);
 			if (R2_GLOBALS._player._characterIndex == R2_QUINN)
-				scene->_stripManager.start(699 + (R2_GLOBALS._v565AE * 2), scene);
+				scene->_stripManager.start(699 + (R2_GLOBALS._stripModifier * 2), scene);
 			else
-				scene->_stripManager.start(700 + (R2_GLOBALS._v565AE * 2), scene);
+				scene->_stripManager.start(700 + (R2_GLOBALS._stripModifier * 2), scene);
 		}
 		return true;
 	} else {
@@ -2009,7 +2009,7 @@ void Scene2450::postInit(SceneObjectList *OwnerList) {
 	R2_GLOBALS._player.disableControl();
 	switch (R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex]) {
 	case 1900:
-		R2_GLOBALS._v565AE = 0;
+		R2_GLOBALS._stripModifier = 0;
 		R2_GLOBALS._player._characterScene[R2_QUINN] = 2450;
 		R2_GLOBALS._player._characterScene[R2_SEEKER] = 2450;
 		R2_GLOBALS._player._oldCharacterScene[R2_QUINN] = 2450;
@@ -2145,14 +2145,14 @@ void Scene2450::signal() {
 		g_globals->_sceneManager.changeScene(2000);
 		break;
 	case 20:
-		if (R2_GLOBALS._v565AE == 3) {
+		if (R2_GLOBALS._stripModifier == 3) {
 			R2_GLOBALS._player.disableControl();
-			R2_GLOBALS._v565AE = 4;
+			R2_GLOBALS._stripModifier = 4;
 			_sceneMode = 2454;
 			setAction(&_sequenceManager, this, 2454, &_careTaker, NULL);
 		} else {
 			R2_GLOBALS._player.enableControl(CURSOR_TALK);
-			if (R2_GLOBALS._v565AE < 4)
+			if (R2_GLOBALS._stripModifier < 4)
 				R2_GLOBALS._player._canWalk = false;
 		}
 		break;

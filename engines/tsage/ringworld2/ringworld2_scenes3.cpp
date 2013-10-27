@@ -697,7 +697,7 @@ void Scene3150::postInit(SceneObjectList *OwnerList) {
 
 			setAction(&_sequenceManager, this, 3156, &R2_GLOBALS._player, &_guard, &_doorBars, &_foodTray, NULL);
 		} else {
-			if (R2_GLOBALS._v56AA0 != 2)
+			if ((R2_GLOBALS._v56AA0 != 1) && (R2_GLOBALS._v56AA0 != 2))
 				++R2_GLOBALS._v56AA0;
 
 			R2_GLOBALS._player.setup(30, 3, 1);
@@ -5185,7 +5185,7 @@ void Scene3800::initExits() {
 	_southExit._moving = false;
 	_westExit._moving = false;
 
-	loadScene(R2_GLOBALS._v566A6);
+	loadScene(R2_GLOBALS._maze3800SceneNumb);
 
 	R2_GLOBALS._uiElements.draw();
 }
@@ -5322,30 +5322,30 @@ void Scene3800::postInit(SceneObjectList *OwnerList) {
 void Scene3800::signal() {
 	switch (_sceneMode) {
 	case 11:
-		R2_GLOBALS._v566A6 += 15;
-		if (R2_GLOBALS._v566A6 > 3815)
-			R2_GLOBALS._v566A6 -= 20;
+		R2_GLOBALS._maze3800SceneNumb += 15;
+		if (R2_GLOBALS._maze3800SceneNumb > 3815)
+			R2_GLOBALS._maze3800SceneNumb -= 20;
 		initExits();
 		enterArea();
 		break;
 	case 12:
-		R2_GLOBALS._v566A6 += 5;
-		if (R2_GLOBALS._v566A6 > 3815)
-			R2_GLOBALS._v566A6 = 3800;
+		R2_GLOBALS._maze3800SceneNumb += 5;
+		if (R2_GLOBALS._maze3800SceneNumb > 3815)
+			R2_GLOBALS._maze3800SceneNumb = 3800;
 		initExits();
 		enterArea();
 		break;
 	case 13:
-		R2_GLOBALS._v566A6 -= 15;
-		if (R2_GLOBALS._v566A6 < 3800)
-			R2_GLOBALS._v566A6 += 20;
+		R2_GLOBALS._maze3800SceneNumb -= 15;
+		if (R2_GLOBALS._maze3800SceneNumb < 3800)
+			R2_GLOBALS._maze3800SceneNumb += 20;
 		initExits();
 		enterArea();
 		break;
 	case 14:
-		R2_GLOBALS._v566A6 -= 5;
-		if (R2_GLOBALS._v566A6 < 3800)
-			R2_GLOBALS._v566A6 = 3815;
+		R2_GLOBALS._maze3800SceneNumb -= 5;
+		if (R2_GLOBALS._maze3800SceneNumb < 3800)
+			R2_GLOBALS._maze3800SceneNumb = 3815;
 		initExits();
 		enterArea();
 		break;
