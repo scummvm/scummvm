@@ -46,7 +46,7 @@ enum NEResourceType {
 	kNERCData       = 0x0A,
 	kNEMessageTable = 0x0B,
 	kNEGroupCursor  = 0x0C,
-	kNEGroupIcon    = 0x0D,
+	kNEGroupIcon    = 0x0E,
 	kNEVersion      = 0x10,
 	kNEDlgInclude   = 0x11,
 	kNEPlugPlay     = 0x13,
