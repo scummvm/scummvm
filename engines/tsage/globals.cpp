@@ -204,6 +204,11 @@ void Globals::dispatchSounds() {
 
 /*--------------------------------------------------------------------------*/
 
+TsAGE2Globals::TsAGE2Globals() {
+	_onSelectItem = NULL;
+	_interfaceY = 0;
+}
+
 void TsAGE2Globals::reset() {
 	Globals::reset();
 

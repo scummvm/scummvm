@@ -110,7 +110,7 @@ public:
 	int _interfaceY;
 	ASoundExt _inventorySound;
 
-	TsAGE2Globals() { _onSelectItem = NULL; }
+	TsAGE2Globals();
 	virtual void reset();
 	virtual void synchronize(Serializer &s);
 };

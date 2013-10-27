@@ -275,7 +275,7 @@ bool Scene666::Item1::startAction(CursorType action, Event &event) {
 void Scene666::postInit(SceneObjectList *OwnerList) {
 	BF_GLOBALS._sound1.play(27);
 	SceneExt::postInit();
-	BF_GLOBALS._interfaceY = 200;
+	BF_GLOBALS._interfaceY = SCREEN_HEIGHT;
 	loadScene(999);
 	BF_GLOBALS._screenSurface.fillRect(BF_GLOBALS._screenSurface.getBounds(), 0);
 

@@ -710,6 +710,11 @@ GfxElement::GfxElement() {
 	_owner = NULL;
 	_keycode = 0;
 	_flags = 0;
+
+	_fontNumber = 0;
+	_color1 = 0;
+	_color2 = 0;
+	_color3 = 0;
 }
 
 void GfxElement::setDefaults() {
@@ -1367,6 +1372,8 @@ GfxFont::GfxFont() {
 	_bpp = 0;
 	_fontData = NULL;
 	_fillFlag = false;
+
+	_gfxManager = nullptr;
 }
 
 GfxFont::~GfxFont() {
