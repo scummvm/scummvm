@@ -2033,6 +2033,12 @@ void Scene5300::Hotspot8::doAction(int action) {
 
 Scene5300::Scene5300() :
 		_hotspot3(0, CURSOR_LOOK, 5300, 3, CURSOR_USE, 5300, 16, LIST_END) {
+	_field1B0A = 1;
+}
+
+void Scene5300::synchronize(Serializer &s) {
+	Scene::synchronize(s);
+	s.syncAsSint16LE(_field1B0A);
 }
 
 void Scene5300::postInit(SceneObjectList *OwnerList) {
