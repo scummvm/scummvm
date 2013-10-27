@@ -1606,6 +1606,7 @@ void Scene180::signal() {
 	case 43:
 	case 47:
 		_field412 = 0;
+		R2_GLOBALS._screenSurface.fillRect(Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 0);
 		_palette.loadPalette(0);
 		_palette.loadPalette(9998);
 		R2_GLOBALS._scenePalette.addFader(_palette._palette, 256, 8, this);
