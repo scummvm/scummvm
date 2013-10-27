@@ -1360,17 +1360,17 @@ bool ThemeEngine::createCursor(const Common::String &filename, int hotspotX, int
 
 			// If there is no entry yet for this color in the palette: Add one
 			if (!colorToIndex.contains(col)) {
+				if (colorsFound >= MAX_CURS_COLORS) {
+					warning("Cursor contains too many colors (%d, but only %d are allowed)", colorsFound, MAX_CURS_COLORS);
+					return false;
+				}
+
 				const int index = colorsFound++;
 				colorToIndex[col] = index;
 
 				_cursorPal[index * 3 + 0] = r;
 				_cursorPal[index * 3 + 1] = g;
 				_cursorPal[index * 3 + 2] = b;
-
-				if (colorsFound > MAX_CURS_COLORS) {
-					warning("Cursor contains too many colors (%d, but only %d are allowed)", colorsFound, MAX_CURS_COLORS);
-					return false;
-				}
 			}
 
 			// Copy pixel from the 16 bit source surface to the 8bit target surface
