@@ -157,6 +157,7 @@ namespace Fullpipe {
 #define SC_TITLES 5166
 #define SND_CMN_031 3516
 #define SND_CMN_070 5199
+#define SND_INTR_019 5220
 #define ST_IN1MAN_SLEEP 5112
 #define ST_LBN_0N 2832
 #define ST_LBN_0P 2833

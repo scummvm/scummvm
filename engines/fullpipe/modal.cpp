@@ -180,10 +180,30 @@ bool ModalIntro::init(int counterdiff) {
 	return true;
 }
 
-bool ModalIntro::update() {
-	warning("STUB: ModalIntro::update()");
+void ModalIntro::update() {
+	if (g_fullpipe->_currentScene) {
+		if (_introFlags & 1) {
+			//sceneFade(virt, g_currentScene, 1);
+			_needRedraw = 255;
+			_introFlags &= 0xfe;
 
-	return true;
+			if (_introFlags & 0x20)
+				g_fullpipe->playSound(SND_INTR_019, 0);
+		} else if (_introFlags & 2) {
+			if (g_vars->sceneIntro_needBlackout) {
+				//vrtRectangle(*(_DWORD *)virt, 0, 0, 0, 800, 600);
+				g_vars->sceneIntro_needBlackout = 0;
+				_needRedraw = 0;
+				_introFlags &= 0xfd;
+			} else {
+				//sceneFade(virt, g_currentScene, 0);
+				_needRedraw = 0;
+				_introFlags &= 0xfd;
+			}
+		} else if (_needRedraw) {
+			g_fullpipe->_currentScene->draw();
+		}
+	}
 }
 
 void ModalIntro::idle() {
