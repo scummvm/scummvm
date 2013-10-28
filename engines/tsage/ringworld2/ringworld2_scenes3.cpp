@@ -1710,6 +1710,7 @@ void Scene3350::signal() {
 	case 3351:
 		_sceneMode = 3352;
 		setAction(&_sequenceManager, this, 3352, &_actor4, &R2_GLOBALS._player, &_actor1, &_actor2, &_actor3, NULL);
+		break;
 	case 3352:
 		R2_GLOBALS._sceneManager.changeScene(3395);
 		break;
@@ -2190,6 +2191,7 @@ void Scene3375::signal() {
 		else
 			R2_GLOBALS._player.setStrip(3);
 		R2_GLOBALS._player.enableControl(CURSOR_TALK);
+		break;
 	default:
 		_companion1.setPriority(130);
 		_companion2.setPriority(132);
@@ -5250,6 +5252,7 @@ void Scene3800::enterArea() {
 			default:
 				break;
 			}
+			break;
 		default:
 			R2_GLOBALS._player.enableControl(CURSOR_WALK);
 			break;
