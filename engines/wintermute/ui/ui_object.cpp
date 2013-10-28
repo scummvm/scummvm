@@ -652,7 +652,10 @@ int32 UIObject::getWidth() const {
 	return _width;
 }
 
-int32 UIObject::getHeight() const {
+// Has to be non-const to allow the virtual override to work,
+// as other getHeight()-functions currently have the potential
+// of having side-effects.
+int32 UIObject::getHeight() {
 	return _height;
 }
 
