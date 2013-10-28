@@ -36,7 +36,7 @@
 namespace Prince {
 
 const char * MusicPlayer::_musTable[] = {
-    "",
+	"",
 	"Battlfld.mid",
 	"Cave.mid",
 	"Cemetery.mid",
@@ -56,14 +56,14 @@ const char * MusicPlayer::_musTable[] = {
 };
 
 const uint8 MusicPlayer::_musRoomTable[] = {
-    0,
-    3,
-    9,
-    9,
-    9,
-    13,
-    9,
-    9 
+	0,
+	3,
+	9,
+	9,
+	9,
+	13,
+	9,
+	9 
 };
 
 
@@ -81,7 +81,7 @@ MusicPlayer::MusicPlayer(PrinceEngine *vm) : _vm(vm) {
 			_driver->sendGMReset();
 
 		// TODO: Load cmf.ins with the instrument table.  It seems that an
-		// interface for such an operation is supported for AdLib.  Maybe for
+		// interface for such an operation is supported for AdLib.	Maybe for
 		// this card, setting instruments is necessary.
 
 		_driver->setTimerCallback(this, &timerCallback);
@@ -100,8 +100,8 @@ void MusicPlayer::killMidi() {
 }
 
 void MusicPlayer::loadMidi(const char * name) {
-    Common::SeekableReadStream * stream = SearchMan.createReadStreamForMember(name);
-    if (!stream)
+	Common::SeekableReadStream * stream = SearchMan.createReadStreamForMember(name);
+	if (!stream)
 		return;
 
 	// Stop any currently playing MIDI file
@@ -110,7 +110,7 @@ void MusicPlayer::loadMidi(const char * name) {
 	// Read in the data for the file
 	_dataSize = stream->size();
 	_data = (byte *)malloc(_dataSize);
-    stream->read(_data, _dataSize);
+	stream->read(_data, _dataSize);
 
 	// Start playing the music
 	sndMidiStart();

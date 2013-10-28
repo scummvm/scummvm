@@ -32,18 +32,18 @@ class PrinceEngine;
 
 class Debugger : public GUI::Debugger {
 public:
-    Debugger(PrinceEngine *vm);
-    virtual ~Debugger() {}  // we need this for __SYMBIAN32__ archaic gcc/UIQ
+	Debugger(PrinceEngine *vm);
+	virtual ~Debugger() {}	// we need this for __SYMBIAN32__ archaic gcc/UIQ
 
 private:
-    bool Cmd_SetFlag(int argc, const char **argv);
-    bool Cmd_GetFlag(int argc, const char **argv);
-    bool Cmd_ClearFlag(int argc, const char **argv);
-    bool Cmd_ViewFlc(int argc, const char **argv);
-    bool Cmd_InitRoom(int argc, const char **argv);
-    bool Cmd_ChangeCursor(int argc, const char **argv);
+	bool Cmd_SetFlag(int argc, const char **argv);
+	bool Cmd_GetFlag(int argc, const char **argv);
+	bool Cmd_ClearFlag(int argc, const char **argv);
+	bool Cmd_ViewFlc(int argc, const char **argv);
+	bool Cmd_InitRoom(int argc, const char **argv);
+	bool Cmd_ChangeCursor(int argc, const char **argv);
 
-    PrinceEngine *_vm;
+	PrinceEngine *_vm;
 };
 
 

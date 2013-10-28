@@ -26,113 +26,113 @@
 namespace Prince {
 
 Debugger::Debugger(PrinceEngine *vm) : GUI::Debugger(), _vm(vm) {
-    DCmd_Register("continue",       WRAP_METHOD(Debugger, Cmd_Exit));
-    DCmd_Register("setflag",        WRAP_METHOD(Debugger, Cmd_SetFlag));
-    DCmd_Register("getflag",        WRAP_METHOD(Debugger, Cmd_GetFlag));
-    DCmd_Register("clearflag",      WRAP_METHOD(Debugger, Cmd_ClearFlag));
-    DCmd_Register("viewflc",        WRAP_METHOD(Debugger, Cmd_ViewFlc));
-    DCmd_Register("initroom",       WRAP_METHOD(Debugger, Cmd_InitRoom));
-    DCmd_Register("changecursor",   WRAP_METHOD(Debugger, Cmd_ChangeCursor));
+	DCmd_Register("continue",		WRAP_METHOD(Debugger, Cmd_Exit));
+	DCmd_Register("setflag",		WRAP_METHOD(Debugger, Cmd_SetFlag));
+	DCmd_Register("getflag",		WRAP_METHOD(Debugger, Cmd_GetFlag));
+	DCmd_Register("clearflag",		WRAP_METHOD(Debugger, Cmd_ClearFlag));
+	DCmd_Register("viewflc",		WRAP_METHOD(Debugger, Cmd_ViewFlc));
+	DCmd_Register("initroom",		WRAP_METHOD(Debugger, Cmd_InitRoom));
+	DCmd_Register("changecursor",	WRAP_METHOD(Debugger, Cmd_ChangeCursor));
 }
 
 static int strToInt(const char *s) {
-    if (!*s)
-        // No string at all
-        return 0;
-    else if (toupper(s[strlen(s) - 1]) != 'H')
-        // Standard decimal string
-        return atoi(s);
+	if (!*s)
+		// No string at all
+		return 0;
+	else if (toupper(s[strlen(s) - 1]) != 'H')
+		// Standard decimal string
+		return atoi(s);
 
-    // Hexadecimal string
-    uint tmp = 0;
-    int read = sscanf(s, "%xh", &tmp);
-    if (read < 1)
-        error("strToInt failed on string \"%s\"", s);
-    return (int)tmp;
+	// Hexadecimal string
+	uint tmp = 0;
+	int read = sscanf(s, "%xh", &tmp);
+	if (read < 1)
+		error("strToInt failed on string \"%s\"", s);
+	return (int)tmp;
 }
 
 /*
  * This command sets a flag
  */
 bool Debugger::Cmd_SetFlag(int argc, const char **argv) {
-    // Check for a flag to set
-    if (argc != 2) {
-        DebugPrintf("Usage: %s <flag number>\n", argv[0]);
-        return true;
-    }
+	// Check for a flag to set
+	if (argc != 2) {
+		DebugPrintf("Usage: %s <flag number>\n", argv[0]);
+		return true;
+	}
 
-    int flagNum = strToInt(argv[1]);
-    //g_globals->setFlag(flagNum);
-    return true;
+	int flagNum = strToInt(argv[1]);
+	//g_globals->setFlag(flagNum);
+	return true;
 }
 
 /*
  * This command gets the value of a flag
  */
 bool Debugger::Cmd_GetFlag(int argc, const char **argv) {
-    // Check for an flag to display
-    if (argc != 2) {
-        DebugPrintf("Usage: %s <flag number>\n", argv[0]);
-        return true;
-    }
+	// Check for an flag to display
+	if (argc != 2) {
+		DebugPrintf("Usage: %s <flag number>\n", argv[0]);
+		return true;
+	}
 
-    int flagNum = strToInt(argv[1]);
-    //DebugPrintf("Value: %d\n", g_globals->getFlag(flagNum));
-    return true;
+	int flagNum = strToInt(argv[1]);
+	//DebugPrintf("Value: %d\n", g_globals->getFlag(flagNum));
+	return true;
 }
 
 /*
  * This command clears a flag
  */
 bool Debugger::Cmd_ClearFlag(int argc, const char **argv) {
-    // Check for a flag to clear
-    if (argc != 2) {
-        DebugPrintf("Usage: %s <flag number>\n", argv[0]);
-        return true;
-    }
+	// Check for a flag to clear
+	if (argc != 2) {
+		DebugPrintf("Usage: %s <flag number>\n", argv[0]);
+		return true;
+	}
 
-    int flagNum = strToInt(argv[1]);
-    //g_globals->clearFlag(flagNum);
-    return true;
+	int flagNum = strToInt(argv[1]);
+	//g_globals->clearFlag(flagNum);
+	return true;
 }
 
 /*
  * This command starts new flc anim
  */
 bool Debugger::Cmd_ViewFlc(int argc, const char **argv) {
-    // Check for a flag to clear
-    if (argc != 2) {
-        DebugPrintf("Usage: %s <anim number>\n", argv[0]);
-        return true;
-    }
+	// Check for a flag to clear
+	if (argc != 2) {
+		DebugPrintf("Usage: %s <anim number>\n", argv[0]);
+		return true;
+	}
 
-    int flagNum = strToInt(argv[1]);
-    _vm->loadAnim(flagNum);
-    return true;
+	int flagNum = strToInt(argv[1]);
+	_vm->loadAnim(flagNum);
+	return true;
 }
 
 bool Debugger::Cmd_InitRoom(int argc, const char **argv) {
-    // Check for a flag to clear
-    if (argc != 2) {
-        DebugPrintf("Usage: %s <anim number>\n", argv[0]);
-        return true;
-    }
+	// Check for a flag to clear
+	if (argc != 2) {
+		DebugPrintf("Usage: %s <anim number>\n", argv[0]);
+		return true;
+	}
 
-    int flagNum = strToInt(argv[1]);
-    _vm->loadLocation(flagNum);
-    return true;
+	int flagNum = strToInt(argv[1]);
+	_vm->loadLocation(flagNum);
+	return true;
 }
 
 bool Debugger::Cmd_ChangeCursor(int argc, const char **argv) {
-    // Check for a flag to clear
-    if (argc != 2) {
-        DebugPrintf("Usage: %s <curId>\n", argv[0]);
-        return true;
-    }
+	// Check for a flag to clear
+	if (argc != 2) {
+		DebugPrintf("Usage: %s <curId>\n", argv[0]);
+		return true;
+	}
 
-    int flagNum = strToInt(argv[1]);
-    _vm->changeCursor(flagNum);
-    return true;
+	int flagNum = strToInt(argv[1]);
+	_vm->changeCursor(flagNum);
+	return true;
 }
 
 } 
