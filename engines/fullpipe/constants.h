@@ -89,6 +89,7 @@ namespace Fullpipe {
 #define PIC_CSR_ITN_RED 5329
 #define PIC_CSR_LIFT 5176
 #define PIC_CSR_MAP 5339
+#define PIC_IN1_GAMETITLE 5169
 #define PIC_IN1_PIPETITLE 5167
 #define PIC_INV_MENU 991
 #define PIC_MAP_A13 5275
@@ -101,6 +102,7 @@ namespace Fullpipe {
 #define QU_IN2_DO 5144
 #define QU_INTR_FINISH 5138
 #define QU_INTR_GETUPMAN 5136
+#define QU_INTR_STARTINTRO 5133
 #define SC_1 301
 #define SC_10 653
 #define SC_11 654
