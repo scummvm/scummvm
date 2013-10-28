@@ -1165,22 +1165,22 @@ bool PartEmitter::persist(BasePersistenceManager *persistMgr) {
 
 	persistMgr->transferFloat(TMEMBER(_velocity1));
 	persistMgr->transferFloat(TMEMBER(_velocity2));
-	persistMgr->transfer(TMEMBER(_velocityZBased));
+	persistMgr->transferBool(TMEMBER(_velocityZBased));
 
 	persistMgr->transferFloat(TMEMBER(_scale1));
 	persistMgr->transferFloat(TMEMBER(_scale2));
-	persistMgr->transfer(TMEMBER(_scaleZBased));
+	persistMgr->transferBool(TMEMBER(_scaleZBased));
 
 	persistMgr->transfer(TMEMBER(_maxParticles));
 
 	persistMgr->transfer(TMEMBER(_lifeTime1));
 	persistMgr->transfer(TMEMBER(_lifeTime2));
-	persistMgr->transfer(TMEMBER(_lifeTimeZBased));
+	persistMgr->transferBool(TMEMBER(_lifeTimeZBased));
 
 	persistMgr->transfer(TMEMBER(_genInterval));
 	persistMgr->transfer(TMEMBER(_genAmount));
 
-	persistMgr->transfer(TMEMBER(_running));
+	persistMgr->transferBool(TMEMBER(_running));
 	persistMgr->transfer(TMEMBER(_overheadTime));
 
 	persistMgr->transfer(TMEMBER(_border));
@@ -1194,7 +1194,7 @@ bool PartEmitter::persist(BasePersistenceManager *persistMgr) {
 
 	persistMgr->transfer(TMEMBER(_alpha1));
 	persistMgr->transfer(TMEMBER(_alpha2));
-	persistMgr->transfer(TMEMBER(_alphaTimeBased));
+	persistMgr->transferBool(TMEMBER(_alphaTimeBased));
 
 	persistMgr->transferFloat(TMEMBER(_angVelocity1));
 	persistMgr->transferFloat(TMEMBER(_angVelocity2));
@@ -1204,9 +1204,9 @@ bool PartEmitter::persist(BasePersistenceManager *persistMgr) {
 
 	persistMgr->transferFloat(TMEMBER(_growthRate1));
 	persistMgr->transferFloat(TMEMBER(_growthRate2));
-	persistMgr->transfer(TMEMBER(_exponentialGrowth));
+	persistMgr->transferBool(TMEMBER(_exponentialGrowth));
 
-	persistMgr->transfer(TMEMBER(_useRegion));
+	persistMgr->transferBool(TMEMBER(_useRegion));
 
 	persistMgr->transfer(TMEMBER_INT(_maxBatches));
 	persistMgr->transfer(TMEMBER_INT(_batchesGenerated));

@@ -1258,24 +1258,24 @@ bool UIWindow::persist(BasePersistenceManager *persistMgr) {
 	UIObject::persist(persistMgr);
 
 	persistMgr->transferPtr(TMEMBER_PTR(_backInactive));
-	persistMgr->transfer(TMEMBER(_clipContents));
+	persistMgr->transferBool(TMEMBER(_clipContents));
 	persistMgr->transfer(TMEMBER(_dragFrom));
-	persistMgr->transfer(TMEMBER(_dragging));
+	persistMgr->transferBool(TMEMBER(_dragging));
 	persistMgr->transfer(TMEMBER(_dragRect));
-	persistMgr->transfer(TMEMBER(_fadeBackground));
+	persistMgr->transferBool(TMEMBER(_fadeBackground));
 	persistMgr->transfer(TMEMBER(_fadeColor));
 	persistMgr->transferPtr(TMEMBER_PTR(_fontInactive));
 	persistMgr->transferPtr(TMEMBER_PTR(_imageInactive));
-	persistMgr->transfer(TMEMBER(_inGame));
-	persistMgr->transfer(TMEMBER(_isMenu));
+	persistMgr->transferBool(TMEMBER(_inGame));
+	persistMgr->transferBool(TMEMBER(_isMenu));
 	persistMgr->transfer(TMEMBER_INT(_mode));
 	persistMgr->transferPtr(TMEMBER_PTR(_shieldButton));
 	persistMgr->transferPtr(TMEMBER_PTR(_shieldWindow));
 	persistMgr->transfer(TMEMBER_INT(_titleAlign));
 	persistMgr->transfer(TMEMBER(_titleRect));
-	persistMgr->transfer(TMEMBER(_transparent));
+	persistMgr->transferBool(TMEMBER(_transparent));
 	persistMgr->transferPtr(TMEMBER_PTR(_viewport));
-	persistMgr->transfer(TMEMBER(_pauseMusic));
+	persistMgr->transferBool(TMEMBER(_pauseMusic));
 
 	_widgets.persist(persistMgr);
 

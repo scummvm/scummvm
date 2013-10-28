@@ -1030,29 +1030,29 @@ bool AdObject::reset() {
 bool AdObject::persist(BasePersistenceManager *persistMgr) {
 	BaseObject::persist(persistMgr);
 
-	persistMgr->transfer(TMEMBER(_active));
+	persistMgr->transferBool(TMEMBER(_active));
 	persistMgr->transferPtr(TMEMBER_PTR(_blockRegion));
 	persistMgr->transferPtr(TMEMBER_PTR(_currentBlockRegion));
 	persistMgr->transferPtr(TMEMBER_PTR(_currentWptGroup));
 	persistMgr->transferPtr(TMEMBER_PTR(_currentSprite));
-	persistMgr->transfer(TMEMBER(_drawn));
+	persistMgr->transferBool(TMEMBER(_drawn));
 	persistMgr->transferPtr(TMEMBER_PTR(_font));
-	persistMgr->transfer(TMEMBER(_ignoreItems));
+	persistMgr->transferBool(TMEMBER(_ignoreItems));
 	persistMgr->transfer(TMEMBER_INT(_nextState));
 	persistMgr->transferPtr(TMEMBER_PTR(_sentence));
 	persistMgr->transfer(TMEMBER_INT(_state));
 	persistMgr->transferPtr(TMEMBER_PTR(_animSprite));
-	persistMgr->transfer(TMEMBER(_sceneIndependent));
+	persistMgr->transferBool(TMEMBER(_sceneIndependent));
 	persistMgr->transfer(TMEMBER(_forcedTalkAnimName));
-	persistMgr->transfer(TMEMBER(_forcedTalkAnimUsed));
+	persistMgr->transferBool(TMEMBER(_forcedTalkAnimUsed));
 	persistMgr->transferPtr(TMEMBER_PTR(_tempSprite2));
 	persistMgr->transfer(TMEMBER_INT(_type));
 	persistMgr->transferPtr(TMEMBER_PTR(_wptGroup));
 	persistMgr->transferPtr(TMEMBER_PTR(_stickRegion));
-	persistMgr->transfer(TMEMBER(_subtitlesModRelative));
+	persistMgr->transferBool(TMEMBER(_subtitlesModRelative));
 	persistMgr->transfer(TMEMBER(_subtitlesModX));
 	persistMgr->transfer(TMEMBER(_subtitlesModY));
-	persistMgr->transfer(TMEMBER(_subtitlesModXCenter));
+	persistMgr->transferBool(TMEMBER(_subtitlesModXCenter));
 	persistMgr->transfer(TMEMBER(_subtitlesWidth));
 	persistMgr->transferPtr(TMEMBER_PTR(_inventory));
 	persistMgr->transferPtr(TMEMBER_PTR(_partEmitter));
@@ -1065,7 +1065,7 @@ bool AdObject::persist(BasePersistenceManager *persistMgr) {
 	_attachmentsPost.persist(persistMgr);
 	persistMgr->transferPtr(TMEMBER_PTR(_registerAlias));
 
-	persistMgr->transfer(TMEMBER(_partFollowParent));
+	persistMgr->transferBool(TMEMBER(_partFollowParent));
 	persistMgr->transfer(TMEMBER(_partOffsetX));
 	persistMgr->transfer(TMEMBER(_partOffsetY));
 

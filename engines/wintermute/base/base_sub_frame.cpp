@@ -386,26 +386,26 @@ bool BaseSubFrame::persist(BasePersistenceManager *persistMgr) {
 
 	BaseScriptable::persist(persistMgr);
 
-	persistMgr->transfer(TMEMBER(_2DOnly));
-	persistMgr->transfer(TMEMBER(_3DOnly));
+	persistMgr->transferBool(TMEMBER(_2DOnly));
+	persistMgr->transferBool(TMEMBER(_3DOnly));
 	persistMgr->transfer(TMEMBER(_alpha));
-	persistMgr->transfer(TMEMBER(_decoration));
-	persistMgr->transfer(TMEMBER(_editorSelected));
+	persistMgr->transferBool(TMEMBER(_decoration));
+	persistMgr->transferBool(TMEMBER(_editorSelected));
 	persistMgr->transfer(TMEMBER(_hotspotX));
 	persistMgr->transfer(TMEMBER(_hotspotY));
 	persistMgr->transfer(TMEMBER(_rect));
-	persistMgr->transfer(TMEMBER(_wantsDefaultRect));
+	persistMgr->transferBool(TMEMBER(_wantsDefaultRect));
 
 	persistMgr->transfer(TMEMBER(_surfaceFilename));
-	persistMgr->transfer(TMEMBER(_cKDefault));
+	persistMgr->transferBool(TMEMBER(_cKDefault));
 	persistMgr->transfer(TMEMBER(_cKRed));
 	persistMgr->transfer(TMEMBER(_cKGreen));
 	persistMgr->transfer(TMEMBER(_cKBlue));
 	persistMgr->transfer(TMEMBER(_lifeTime));
 
-	persistMgr->transfer(TMEMBER(_keepLoaded));
-	persistMgr->transfer(TMEMBER(_mirrorX));
-	persistMgr->transfer(TMEMBER(_mirrorY));
+	persistMgr->transferBool(TMEMBER(_keepLoaded));
+	persistMgr->transferBool(TMEMBER(_mirrorX));
+	persistMgr->transferBool(TMEMBER(_mirrorY));
 	persistMgr->transfer(TMEMBER(_transparent));
 
 	return STATUS_OK;

@@ -112,7 +112,7 @@ bool AdPath::persist(BasePersistenceManager *persistMgr) {
 
 	persistMgr->transfer(TMEMBER(_currIndex));
 	_points.persist(persistMgr);
-	persistMgr->transfer(TMEMBER(_ready));
+	persistMgr->transferBool(TMEMBER(_ready));
 
 	return STATUS_OK;
 }

@@ -3054,12 +3054,12 @@ bool BaseGame::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferPtr(TMEMBER_PTR(_activeObject));
 	persistMgr->transferPtr(TMEMBER_PTR(_capturedObject));
 	persistMgr->transferPtr(TMEMBER_PTR(_cursorNoninteractive));
-	persistMgr->transfer(TMEMBER(_editorMode));
+	persistMgr->transferBool(TMEMBER(_editorMode));
 	persistMgr->transferPtr(TMEMBER_PTR(_fader));
 	persistMgr->transfer(TMEMBER(_freezeLevel));
 	persistMgr->transferPtr(TMEMBER_PTR(_focusedWindow));
 	persistMgr->transferPtr(TMEMBER_PTR(_fontStorage));
-	persistMgr->transfer(TMEMBER(_interactive));
+	persistMgr->transferBool(TMEMBER(_interactive));
 	persistMgr->transferPtr(TMEMBER_PTR(_keyboardState));
 	persistMgr->transfer(TMEMBER(_lastTime));
 	persistMgr->transferPtr(TMEMBER_PTR(_mainObject));
@@ -3071,10 +3071,10 @@ bool BaseGame::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferFloat(TMEMBER(_offsetPercentX));
 	persistMgr->transferFloat(TMEMBER(_offsetPercentY));
 
-	persistMgr->transfer(TMEMBER(_origInteractive));
+	persistMgr->transferBool(TMEMBER(_origInteractive));
 	persistMgr->transfer(TMEMBER_INT(_origState));
-	persistMgr->transfer(TMEMBER(_personalizedSave));
-	persistMgr->transfer(TMEMBER(_quitting));
+	persistMgr->transferBool(TMEMBER(_personalizedSave));
+	persistMgr->transferBool(TMEMBER(_quitting));
 
 	_regObjects.persist(persistMgr);
 
@@ -3082,11 +3082,11 @@ bool BaseGame::persist(BasePersistenceManager *persistMgr) {
 	//persistMgr->transfer(TMEMBER(_soundMgr));
 	persistMgr->transfer(TMEMBER_INT(_state));
 	//persistMgr->transfer(TMEMBER(_surfaceStorage));
-	persistMgr->transfer(TMEMBER(_subtitles));
+	persistMgr->transferBool(TMEMBER(_subtitles));
 	persistMgr->transfer(TMEMBER(_subtitlesSpeed));
 	persistMgr->transferPtr(TMEMBER_PTR(_systemFont));
 	persistMgr->transferPtr(TMEMBER_PTR(_videoFont));
-	persistMgr->transfer(TMEMBER(_videoSubtitles));
+	persistMgr->transferBool(TMEMBER(_videoSubtitles));
 
 	_timerNormal.persist(persistMgr);
 	_timerLive.persist(persistMgr);
@@ -3094,21 +3094,21 @@ bool BaseGame::persist(BasePersistenceManager *persistMgr) {
 	_renderer->persistSaveLoadImages(persistMgr);
 
 	persistMgr->transfer(TMEMBER_INT(_textEncoding));
-	persistMgr->transfer(TMEMBER(_textRTL));
+	persistMgr->transferBool(TMEMBER(_textRTL));
 
 	persistMgr->transfer(TMEMBER(_soundBufferSizeSec));
-	persistMgr->transfer(TMEMBER(_suspendedRendering));
+	persistMgr->transferBool(TMEMBER(_suspendedRendering));
 
 	persistMgr->transfer(TMEMBER(_mouseLockRect));
 
 	_windows.persist(persistMgr);
 
-	persistMgr->transfer(TMEMBER(_suppressScriptErrors));
-	persistMgr->transfer(TMEMBER(_autorunDisabled));
+	persistMgr->transferBool(TMEMBER(_suppressScriptErrors));
+	persistMgr->transferBool(TMEMBER(_autorunDisabled));
 
-	persistMgr->transfer(TMEMBER(_autoSaveOnExit));
+	persistMgr->transferBool(TMEMBER(_autoSaveOnExit));
 	persistMgr->transfer(TMEMBER(_autoSaveSlot));
-	persistMgr->transfer(TMEMBER(_cursorHidden));
+	persistMgr->transferBool(TMEMBER(_cursorHidden));
 
 	if (!persistMgr->getIsSaving()) {
 		_quitting = false;

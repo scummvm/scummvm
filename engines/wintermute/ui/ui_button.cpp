@@ -1183,20 +1183,20 @@ bool UIButton::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferPtr(TMEMBER_PTR(_backFocus));
 	persistMgr->transferPtr(TMEMBER_PTR(_backHover));
 	persistMgr->transferPtr(TMEMBER_PTR(_backPress));
-	persistMgr->transfer(TMEMBER(_centerImage));
+	persistMgr->transferBool(TMEMBER(_centerImage));
 	persistMgr->transferPtr(TMEMBER_PTR(_fontDisable));
 	persistMgr->transferPtr(TMEMBER_PTR(_fontFocus));
 	persistMgr->transferPtr(TMEMBER_PTR(_fontHover));
 	persistMgr->transferPtr(TMEMBER_PTR(_fontPress));
-	persistMgr->transfer(TMEMBER(_hover));
+	persistMgr->transferBool(TMEMBER(_hover));
 	persistMgr->transferPtr(TMEMBER_PTR(_image));
 	persistMgr->transferPtr(TMEMBER_PTR(_imageDisable));
 	persistMgr->transferPtr(TMEMBER_PTR(_imageFocus));
 	persistMgr->transferPtr(TMEMBER_PTR(_imageHover));
 	persistMgr->transferPtr(TMEMBER_PTR(_imagePress));
-	persistMgr->transfer(TMEMBER(_pixelPerfect));
-	persistMgr->transfer(TMEMBER(_press));
-	persistMgr->transfer(TMEMBER(_stayPressed));
+	persistMgr->transferBool(TMEMBER(_pixelPerfect));
+	persistMgr->transferBool(TMEMBER(_press));
+	persistMgr->transferBool(TMEMBER(_stayPressed));
 
 	if (!persistMgr->getIsSaving()) {
 		_oneTimePress = false;

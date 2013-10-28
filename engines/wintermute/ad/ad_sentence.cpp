@@ -257,15 +257,15 @@ bool AdSentence::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferPtr(TMEMBER_PTR(_font));
 	persistMgr->transfer(TMEMBER(_pos));
 	persistMgr->transferPtr(TMEMBER_PTR(_sound));
-	persistMgr->transfer(TMEMBER(_soundStarted));
+	persistMgr->transferBool(TMEMBER(_soundStarted));
 	persistMgr->transfer(TMEMBER(_stances));
 	persistMgr->transfer(TMEMBER(_startTime));
 	persistMgr->transferPtr(TMEMBER_PTR(_talkDef));
 	persistMgr->transfer(TMEMBER(_tempStance));
 	persistMgr->transfer(TMEMBER(_text));
 	persistMgr->transfer(TMEMBER(_width));
-	persistMgr->transfer(TMEMBER(_fixedPos));
-	persistMgr->transfer(TMEMBER(_freezable));
+	persistMgr->transferBool(TMEMBER(_fixedPos));
+	persistMgr->transferBool(TMEMBER(_freezable));
 
 	return STATUS_OK;
 }

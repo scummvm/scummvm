@@ -221,12 +221,12 @@ bool BaseKeyboardState::persist(BasePersistenceManager *persistMgr) {
 	//if (!persistMgr->getIsSaving()) cleanup();
 	BaseScriptable::persist(persistMgr);
 
-	persistMgr->transfer(TMEMBER(_currentAlt));
+	persistMgr->transferBool(TMEMBER(_currentAlt));
 	persistMgr->transfer(TMEMBER(_currentCharCode));
-	persistMgr->transfer(TMEMBER(_currentControl));
+	persistMgr->transferBool(TMEMBER(_currentControl));
 	persistMgr->transfer(TMEMBER(_currentKeyData));
-	persistMgr->transfer(TMEMBER(_currentPrintable));
-	persistMgr->transfer(TMEMBER(_currentShift));
+	persistMgr->transferBool(TMEMBER(_currentPrintable));
+	persistMgr->transferBool(TMEMBER(_currentShift));
 
 	if (!persistMgr->getIsSaving()) {
 		_keyStates = new uint8[323]; // Hardcoded size for the common/keyboard.h enum

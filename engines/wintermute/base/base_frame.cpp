@@ -415,9 +415,9 @@ bool BaseFrame::persist(BasePersistenceManager *persistMgr) {
 
 	_applyEvent.persist(persistMgr);
 	persistMgr->transfer(TMEMBER(_delay));
-	persistMgr->transfer(TMEMBER(_editorExpanded));
-	persistMgr->transfer(TMEMBER(_keyframe));
-	persistMgr->transfer(TMEMBER(_killSound));
+	persistMgr->transferBool(TMEMBER(_editorExpanded));
+	persistMgr->transferBool(TMEMBER(_keyframe));
+	persistMgr->transferBool(TMEMBER(_killSound));
 	persistMgr->transfer(TMEMBER(_moveX));
 	persistMgr->transfer(TMEMBER(_moveY));
 	persistMgr->transferPtr(TMEMBER_PTR(_sound));

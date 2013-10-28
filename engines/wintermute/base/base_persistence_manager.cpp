@@ -587,7 +587,7 @@ double BasePersistenceManager::getDouble() {
 
 //////////////////////////////////////////////////////////////////////////
 // bool
-bool BasePersistenceManager::transfer(const char *name, bool *val) {
+bool BasePersistenceManager::transferBool(const char *name, bool *val) {
 	if (_saving) {
 		_saveStream->writeByte(*val);
 		if (_saveStream->err()) {

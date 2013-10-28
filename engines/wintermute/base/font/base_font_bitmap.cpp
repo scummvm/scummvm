@@ -511,8 +511,8 @@ bool BaseFontBitmap::persist(BasePersistenceManager *persistMgr) {
 	}
 
 
-	persistMgr->transfer(TMEMBER(_fontextFix));
-	persistMgr->transfer(TMEMBER(_wholeCell));
+	persistMgr->transferBool(TMEMBER(_fontextFix));
+	persistMgr->transferBool(TMEMBER(_wholeCell));
 
 
 	return STATUS_OK;

@@ -430,7 +430,7 @@ bool BaseRegion::persist(BasePersistenceManager *persistMgr) {
 
 	BaseObject::persist(persistMgr);
 
-	persistMgr->transfer(TMEMBER(_active));
+	persistMgr->transferBool(TMEMBER(_active));
 	persistMgr->transfer(TMEMBER(_editorSelectedPoint));
 	persistMgr->transferFloat(TMEMBER(_lastMimicScale));
 	persistMgr->transfer(TMEMBER(_lastMimicX));

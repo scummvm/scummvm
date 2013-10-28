@@ -521,10 +521,10 @@ bool BaseFontTT::parseLayer(BaseTTFontLayer *layer, char *buffer) {
 bool BaseFontTT::persist(BasePersistenceManager *persistMgr) {
 	BaseFont::persist(persistMgr);
 
-	persistMgr->transfer(TMEMBER(_isBold));
-	persistMgr->transfer(TMEMBER(_isItalic));
-	persistMgr->transfer(TMEMBER(_isUnderline));
-	persistMgr->transfer(TMEMBER(_isStriked));
+	persistMgr->transferBool(TMEMBER(_isBold));
+	persistMgr->transferBool(TMEMBER(_isItalic));
+	persistMgr->transferBool(TMEMBER(_isUnderline));
+	persistMgr->transferBool(TMEMBER(_isStriked));
 	persistMgr->transfer(TMEMBER(_fontHeight));
 	persistMgr->transfer(TMEMBER(_fontFile));
 

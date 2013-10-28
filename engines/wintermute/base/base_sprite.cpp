@@ -520,29 +520,29 @@ bool BaseSprite::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 bool BaseSprite::persist(BasePersistenceManager *persistMgr) {
 	BaseScriptHolder::persist(persistMgr);
 
-	persistMgr->transfer(TMEMBER(_canBreak));
-	persistMgr->transfer(TMEMBER(_changed));
-	persistMgr->transfer(TMEMBER(_paused));
-	persistMgr->transfer(TMEMBER(_continuous));
+	persistMgr->transferBool(TMEMBER(_canBreak));
+	persistMgr->transferBool(TMEMBER(_changed));
+	persistMgr->transferBool(TMEMBER(_paused));
+	persistMgr->transferBool(TMEMBER(_continuous));
 	persistMgr->transfer(TMEMBER(_currentFrame));
-	persistMgr->transfer(TMEMBER(_editorAllFrames));
+	persistMgr->transferBool(TMEMBER(_editorAllFrames));
 	persistMgr->transfer(TMEMBER(_editorBgAlpha));
 	persistMgr->transfer(TMEMBER(_editorBgFile));
 	persistMgr->transfer(TMEMBER(_editorBgOffsetX));
 	persistMgr->transfer(TMEMBER(_editorBgOffsetY));
-	persistMgr->transfer(TMEMBER(_editorMuted));
-	persistMgr->transfer(TMEMBER(_finished));
+	persistMgr->transferBool(TMEMBER(_editorMuted));
+	persistMgr->transferBool(TMEMBER(_finished));
 
 	_frames.persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_lastFrameTime));
-	persistMgr->transfer(TMEMBER(_looping));
+	persistMgr->transferBool(TMEMBER(_looping));
 	persistMgr->transfer(TMEMBER(_moveX));
 	persistMgr->transfer(TMEMBER(_moveY));
 	persistMgr->transferPtr(TMEMBER_PTR(_owner));
-	persistMgr->transfer(TMEMBER(_precise));
-	persistMgr->transfer(TMEMBER(_streamed));
-	persistMgr->transfer(TMEMBER(_streamedKeepLoaded));
+	persistMgr->transferBool(TMEMBER(_precise));
+	persistMgr->transferBool(TMEMBER(_streamed));
+	persistMgr->transferBool(TMEMBER(_streamedKeepLoaded));
 
 
 	return STATUS_OK;

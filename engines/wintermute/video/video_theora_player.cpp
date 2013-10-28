@@ -500,7 +500,7 @@ bool VideoTheoraPlayer::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER(_posY));
 	persistMgr->transferFloat(TMEMBER(_playZoom));
 	persistMgr->transfer(TMEMBER_INT(_playbackType));
-	persistMgr->transfer(TMEMBER(_looping));
+	persistMgr->transferBool(TMEMBER(_looping));
 	persistMgr->transfer(TMEMBER(_volume));
 
 	if (!persistMgr->getIsSaving() && (_savedState != THEORA_STATE_NONE)) {

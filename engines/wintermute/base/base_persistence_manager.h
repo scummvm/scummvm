@@ -78,7 +78,7 @@ public:
 	bool transfer(const char *name, uint32 *val);
 	bool transferFloat(const char *name, float *val);
 	bool transfer(const char *name, double *val);
-	bool transfer(const char *name, bool *val);
+	bool transferBool(const char *name, bool *val);
 	bool transfer(const char *name, byte *val);
 	bool transfer(const char *name, Rect32 *val);
 	bool transfer(const char *name, Point32 *val);

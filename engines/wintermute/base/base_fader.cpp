@@ -175,7 +175,7 @@ uint32 BaseFader::getCurrentColor() const {
 bool BaseFader::persist(BasePersistenceManager *persistMgr) {
 	BaseObject::persist(persistMgr);
 
-	persistMgr->transfer(TMEMBER(_active));
+	persistMgr->transferBool(TMEMBER(_active));
 	persistMgr->transfer(TMEMBER(_blue));
 	persistMgr->transfer(TMEMBER(_currentAlpha));
 	persistMgr->transfer(TMEMBER(_duration));
@@ -184,7 +184,7 @@ bool BaseFader::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER(_sourceAlpha));
 	persistMgr->transfer(TMEMBER(_startTime));
 	persistMgr->transfer(TMEMBER(_targetAlpha));
-	persistMgr->transfer(TMEMBER(_system));
+	persistMgr->transferBool(TMEMBER(_system));
 
 	if (_system && !persistMgr->getIsSaving()) {
 		_startTime = 0;

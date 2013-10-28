@@ -1273,7 +1273,7 @@ bool ScScript::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER(_currentLine));
 	persistMgr->transferPtr(TMEMBER_PTR(_engine));
 	persistMgr->transfer(TMEMBER(_filename));
-	persistMgr->transfer(TMEMBER(_freezable));
+	persistMgr->transferBool(TMEMBER(_freezable));
 	persistMgr->transferPtr(TMEMBER_PTR(_globals));
 	persistMgr->transfer(TMEMBER(_iP));
 	persistMgr->transferPtr(TMEMBER_PTR(_scopeStack));
@@ -1283,18 +1283,18 @@ bool ScScript::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER_INT(_origState));
 	persistMgr->transferPtr(TMEMBER_PTR(_owner));
 	persistMgr->transferPtr(TMEMBER_PTR(_reg1));
-	persistMgr->transfer(TMEMBER(_thread));
+	persistMgr->transferBool(TMEMBER(_thread));
 	persistMgr->transfer(TMEMBER(_threadEvent));
 	persistMgr->transferPtr(TMEMBER_PTR(_thisStack));
 	persistMgr->transfer(TMEMBER(_timeSlice));
 	persistMgr->transferPtr(TMEMBER_PTR(_waitObject));
 	persistMgr->transferPtr(TMEMBER_PTR(_waitScript));
 	persistMgr->transfer(TMEMBER(_waitTime));
-	persistMgr->transfer(TMEMBER(_waitFrozen));
+	persistMgr->transferBool(TMEMBER(_waitFrozen));
 
-	persistMgr->transfer(TMEMBER(_methodThread));
-	persistMgr->transfer(TMEMBER(_methodThread));
-	persistMgr->transfer(TMEMBER(_unbreakable));
+	persistMgr->transferBool(TMEMBER(_methodThread));
+	persistMgr->transferBool(TMEMBER(_methodThread)); // TODO-SAVE: Deduplicate.
+	persistMgr->transferBool(TMEMBER(_unbreakable));
 	persistMgr->transferPtr(TMEMBER_PTR(_parentScript));
 
 	if (!persistMgr->getIsSaving()) {

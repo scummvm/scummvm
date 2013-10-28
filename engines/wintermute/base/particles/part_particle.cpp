@@ -239,7 +239,7 @@ bool PartParticle::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferFloat(TMEMBER(_scale));
 	persistMgr->transfer(TMEMBER(_creationTime));
 	persistMgr->transfer(TMEMBER(_lifeTime));
-	persistMgr->transfer(TMEMBER(_isDead));
+	persistMgr->transferBool(TMEMBER(_isDead));
 	persistMgr->transfer(TMEMBER_INT(_state));
 	persistMgr->transfer(TMEMBER(_fadeStart));
 	persistMgr->transfer(TMEMBER(_fadeTime));
@@ -247,7 +247,7 @@ bool PartParticle::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferFloat(TMEMBER(_angVelocity));
 	persistMgr->transferFloat(TMEMBER(_rotation));
 	persistMgr->transferFloat(TMEMBER(_growthRate));
-	persistMgr->transfer(TMEMBER(_exponentialGrowth));
+	persistMgr->transferBool(TMEMBER(_exponentialGrowth));
 	persistMgr->transfer(TMEMBER(_fadeStartAlpha));
 
 	if (persistMgr->getIsSaving()) {
