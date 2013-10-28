@@ -187,7 +187,12 @@ bool ModalIntro::update() {
 }
 
 void ModalIntro::idle() {
-	warning("STUB: ModalIntro::idle()");
+	g_fullpipe->_gameLoader->unloadScene(SC_INTRO2);
+	g_fullpipe->_currentScene = g_fullpipe->accessScene(SC_INTRO1);
+	g_fullpipe->_gameLoader->preloadScene(SC_INTRO1, TrubaDown);
+
+	if (g_fullpipe->_currentScene)
+		g_fullpipe->_gameLoader->updateSystems(42);
 }
 
 void ModalVideoPlayer::play(const char *fname) {
