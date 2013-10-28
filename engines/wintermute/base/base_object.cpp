@@ -1039,7 +1039,7 @@ bool BaseObject::setActiveCursor(const char *filename) {
 
 
 //////////////////////////////////////////////////////////////////////////
-int BaseObject::getHeight() {
+int32 BaseObject::getHeight() {
 	return 0;
 }
 

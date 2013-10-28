@@ -859,7 +859,7 @@ bool AdObject::setFont(const char *filename) {
 
 
 //////////////////////////////////////////////////////////////////////////
-int AdObject::getHeight() {
+int32 AdObject::getHeight() {
 	if (!_currentSprite) {
 		return 0;
 	} else {

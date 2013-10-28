@@ -1376,7 +1376,7 @@ TDirection AdActor::angleToDirection(int angle) {
 
 
 //////////////////////////////////////////////////////////////////////////
-int AdActor::getHeight() {
+int32 AdActor::getHeight() {
 	// if no current sprite is set, set some
 	if (_currentSprite == nullptr) {
 		if (_standSprite) {
