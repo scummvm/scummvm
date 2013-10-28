@@ -23,10 +23,6 @@
 #ifndef TSAGE_CORE_H
 #define TSAGE_CORE_H
 
-#ifdef __SYMBIAN32__
-#undef remove(x)
-#endif
-
 #include "common/scummsys.h"
 #include "common/endian.h"
 #include "common/error.h"
