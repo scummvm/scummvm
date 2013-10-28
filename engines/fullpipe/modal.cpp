@@ -32,7 +32,8 @@ namespace Fullpipe {
 ModalIntro::ModalIntro() {
 	_field_8 = 0;
 	_countDown = 0;
-	_needRedraw = 0;
+	_stillRunning = 0;
+
 	if (g_vars->sceneIntro_skipIntro) {
 		_introFlags = 4;
 	} else {
@@ -42,6 +43,7 @@ ModalIntro::ModalIntro() {
 		PictureObject *pict = g_fullpipe->accessScene(SC_INTRO1)->getPictureObjectById(PIC_IN1_PIPETITLE, 0);
 		pict->setFlags(pict->_flags & 0xFFFB);
 	}
+
 	g_vars->sceneIntro_skipIntro = false;
 	_sfxVolume = g_fullpipe->_sfxVolume;
 }
@@ -56,7 +58,7 @@ bool ModalIntro::handleMessage(ExCommand *message) {
 	if (message->_keyCode != 13 && message->_keyCode != 27 && message->_keyCode != 32)
 		return false;
 
-	if (_needRedraw) {
+	if (_stillRunning) {
 		if (!(_introFlags & 0x10)) {
 			_countDown = 0;
 			g_vars->sceneIntro_needBlackout = true;
@@ -71,9 +73,9 @@ bool ModalIntro::handleMessage(ExCommand *message) {
 
 bool ModalIntro::init(int counterdiff) {
 	if (!g_vars->sceneIntro_playing) {
-		if (!_needRedraw) {
-			idle();
-			return 0;
+		if (!_stillRunning) {
+			finish();
+			return false;
 		}
 
 		if (_introFlags & 0x10)
@@ -96,9 +98,9 @@ bool ModalIntro::init(int counterdiff) {
 		if (_countDown > 0 )
 			return true;
 
-		if (_needRedraw <= 0) {
+		if (_stillRunning <= 0) {
 			_countDown = 0;
-			_needRedraw = 0;
+			_stillRunning = 0;
 			_introFlags = (_introFlags & 0xfb) | 0x40;
 
 			return true;
@@ -119,13 +121,14 @@ bool ModalIntro::init(int counterdiff) {
 		if (_countDown > 0)
 			return true;
 
-		if (_needRedraw <= 0) {
+		if (_stillRunning <= 0) {
 			_countDown = 50;
-			_needRedraw = 0;
+			_stillRunning = 0;
 			_introFlags = (_introFlags & 0xbf) | 9;
 
 			return true;
 		}
+
 		_introFlags |= 2;
 		return true;
 	}
@@ -136,7 +139,7 @@ bool ModalIntro::init(int counterdiff) {
 		if (_countDown > 0 )
 			return true;
 
-		if (_needRedraw > 0) {
+		if (_stillRunning > 0) {
 			_introFlags |= 2;
 			return true;
 		}
@@ -148,7 +151,7 @@ bool ModalIntro::init(int counterdiff) {
 
 	if (!(_introFlags & 0x20)) {
 		if (_introFlags & 0x10) {
-			if (!_needRedraw) {
+			if (!_stillRunning) {
 				_introFlags |= 1;
 
 				g_fullpipe->accessScene(SC_INTRO1)->getPictureObjectById(PIC_IN1_PIPETITLE, 0)->_flags &= 0xfffb;
@@ -164,7 +167,7 @@ bool ModalIntro::init(int counterdiff) {
 	_countDown--;
 
 	if (_countDown <= 0) {
-		if (_needRedraw > 0) {
+		if (_stillRunning > 0) {
 			_introFlags |= 2;
 
 			return true;
@@ -174,7 +177,7 @@ bool ModalIntro::init(int counterdiff) {
 
 		g_fullpipe->accessScene(SC_INTRO1)->getPictureObjectById(PIC_IN1_GAMETITLE, 0)->_flags &= 0xfffb;
 
-		_needRedraw = 0;
+		_stillRunning = 0;
 	}
 
 	return true;
@@ -184,7 +187,7 @@ void ModalIntro::update() {
 	if (g_fullpipe->_currentScene) {
 		if (_introFlags & 1) {
 			//sceneFade(virt, g_currentScene, 1);
-			_needRedraw = 255;
+			_stillRunning = 255;
 			_introFlags &= 0xfe;
 
 			if (_introFlags & 0x20)
@@ -193,20 +196,20 @@ void ModalIntro::update() {
 			if (g_vars->sceneIntro_needBlackout) {
 				//vrtRectangle(*(_DWORD *)virt, 0, 0, 0, 800, 600);
 				g_vars->sceneIntro_needBlackout = 0;
-				_needRedraw = 0;
+				_stillRunning = 0;
 				_introFlags &= 0xfd;
 			} else {
 				//sceneFade(virt, g_currentScene, 0);
-				_needRedraw = 0;
+				_stillRunning = 0;
 				_introFlags &= 0xfd;
 			}
-		} else if (_needRedraw) {
+		} else if (_stillRunning) {
 			g_fullpipe->_currentScene->draw();
 		}
 	}
 }
 
-void ModalIntro::idle() {
+void ModalIntro::finish() {
 	g_fullpipe->_gameLoader->unloadScene(SC_INTRO2);
 	g_fullpipe->_currentScene = g_fullpipe->accessScene(SC_INTRO1);
 	g_fullpipe->_gameLoader->preloadScene(SC_INTRO1, TrubaDown);

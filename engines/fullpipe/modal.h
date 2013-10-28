@@ -47,7 +47,7 @@ class ModalIntro : public BaseModalObject {
 	int _field_8;
 	int _introFlags;
 	int _countDown;
-	int _needRedraw;
+	int _stillRunning;
 	int _sfxVolume;
 
  public:
@@ -59,7 +59,7 @@ class ModalIntro : public BaseModalObject {
 	virtual void update();
 	virtual void saveload() {}
 
-	void idle();
+	void finish();
 };
 
 class ModalVideoPlayer : public BaseModalObject {
@@ -67,7 +67,7 @@ public:
 
 	virtual bool pollEvent() { return true; }
 	virtual bool handleMessage(ExCommand *message) { return true; }
-	virtual bool init(int counterdiff) { return true; }
+	virtual bool init(int counterdiff) { return false; }
 	virtual void update() {}
 	virtual void saveload() {}
 
