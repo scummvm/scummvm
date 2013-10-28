@@ -769,7 +769,7 @@ bool BasePersistenceManager::transfer(const char *name, AnsiStringArray &val) {
 
 //////////////////////////////////////////////////////////////////////////
 // BYTE
-bool BasePersistenceManager::transfer(const char *name, byte *val) {
+bool BasePersistenceManager::transferByte(const char *name, byte *val) {
 	if (_saving) {
 		_saveStream->writeByte(*val);
 		if (_saveStream->err()) {

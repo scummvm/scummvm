@@ -398,9 +398,9 @@ bool BaseSubFrame::persist(BasePersistenceManager *persistMgr) {
 
 	persistMgr->transfer(TMEMBER(_surfaceFilename));
 	persistMgr->transferBool(TMEMBER(_cKDefault));
-	persistMgr->transfer(TMEMBER(_cKRed));
-	persistMgr->transfer(TMEMBER(_cKGreen));
-	persistMgr->transfer(TMEMBER(_cKBlue));
+	persistMgr->transferByte(TMEMBER(_cKRed));
+	persistMgr->transferByte(TMEMBER(_cKGreen));
+	persistMgr->transferByte(TMEMBER(_cKBlue));
 	persistMgr->transfer(TMEMBER(_lifeTime));
 
 	persistMgr->transferBool(TMEMBER(_keepLoaded));
