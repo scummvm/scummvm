@@ -977,6 +977,11 @@ Scene315::Scene315() {
 	_doorOpened = false;
 	_invGreenCount = _bookGreenCount = 0;
 	_invGangCount = _bookGangCount = 0;
+
+	_field1390 = 0;
+	_stripNumber = 0;
+	_field1398 = 0;
+	_currentCursor = INV_NONE;
 }
 
 void Scene315::synchronize(Serializer &s) {
@@ -1399,7 +1404,7 @@ bool Scene325::Item1::startAction(CursorType action, Event &event) {
 void Scene325::postInit(SceneObjectList *OwnerList) {
 	SceneExt::postInit();
 	loadScene(325);
-	BF_GLOBALS._interfaceY = 200;
+	BF_GLOBALS._interfaceY = SCREEN_HEIGHT;
 	BF_GLOBALS.clearFlag(fCanDrawGun);
 
 	if (BF_GLOBALS._dayNumber == 0)

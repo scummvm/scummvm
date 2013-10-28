@@ -2540,6 +2540,11 @@ PlayStream::PlayStream(): EventHandler() {
 	_index = NULL;
 	_endAction = NULL;
 	_audioStream = NULL;
+
+	_resData._fileChunkSize = 0;
+	_resData._indexSize = 0;
+	_resData._chunkSize = 0;
+	_voiceNum = 0;
 }
 
 PlayStream::~PlayStream() {

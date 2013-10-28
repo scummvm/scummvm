@@ -212,7 +212,6 @@ private:
 
 	bool _macroSaveFlag;
 	bool _macroRestoreFlag;
-	int _saveSlot;
 
 	void resolveLoadPointers();
 public:

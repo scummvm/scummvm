@@ -357,6 +357,18 @@ double MovGraph::calcDistance(Common::Point *point, MovGraphLink *link, int fuzz
 	return res;
 }
 
+void MovGraph::calcNodeDistancesAndAngles() {
+	for (ObList::iterator i = _links.begin(); i != _links.end(); ++i) {
+		assert(((CObject *)*i)->_objtype == kObjTypeMovGraphLink);
+
+		MovGraphLink *lnk = (MovGraphLink *)*i;
+
+		lnk->_flags &= 0x7FFFFFFF;
+
+		lnk->calcNodeDistanceAndAngle();
+	}
+}
+
 int MovGraph2::getItemIndexByGameObjectId(int objectId) {
 	for (uint i = 0; i < _items.size(); i++)
 		if (_items[i]->_objectId == objectId)
@@ -660,10 +672,45 @@ void MovGraph2::freeItems() {
 	warning("STUB: MovGraph2::freeItems()");
 }
 
-MessageQueue *MovGraph2::method34(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId) {
-	warning("STUB: MovGraph2::method34()");
+MessageQueue *MovGraph2::method34(StaticANIObject *ani, int xpos, int ypos, int fuzzyMatch, int staticsId) {
+	if (!ani->isIdle())
+		return 0;
 
-	return 0;
+	if (ani->_flags & 0x100)
+		return 0;
+
+	MessageQueue *mq = doWalkTo(ani, xpos, ypos, fuzzyMatch, staticsId);
+
+	if (!mq)
+		return 0;
+
+	if (ani->_movement) {
+		if (mq->getCount() <= 1 || mq->getExCommandByIndex(0)->_messageKind != 22) {
+			PicAniInfo picAniInfo;
+
+			ani->getPicAniInfo(&picAniInfo);
+			ani->updateStepPos();
+			MessageQueue *mq1 = doWalkTo(ani, xpos, ypos, fuzzyMatch, staticsId);
+
+			ani->setPicAniInfo(&picAniInfo);
+
+			if (mq1) {
+				delete mq;
+
+				mq = mq1;
+			}
+		} else {
+			ani->_movement = 0;
+		}
+	}
+
+	if (!mq->chain(ani)) {
+		delete mq;
+
+		return 0;
+	}
+
+	return mq;
 }
 
 MessageQueue *MovGraph2::doWalkTo(StaticANIObject *obj, int xpos, int ypos, int fuzzyMatch, int staticsId) {
@@ -924,9 +971,17 @@ MovGraphNode *MovGraph2::findNode(int x, int y, int fuzzyMatch) {
 }
 
 int MovGraph2::getShortSide(MovGraphLink *lnk, int x, int y) {
-	warning("STUB: MovGraph2::getShortSide()");
+	bool cond;
 
-	return 0;
+	if (lnk)
+		cond = abs(lnk->_movGraphNode2->_x - lnk->_movGraphNode1->_x) > abs(lnk->_movGraphNode2->_y - lnk->_movGraphNode1->_y);
+	else
+		cond = abs(x) > abs(y);
+
+	if (cond)
+		return x <= 0;
+	else
+		return ((y > 0) + 2);
 }
 
 int MovGraph2::findLink(Common::Array<MovGraphLink *> *linkList, int idx, Common::Rect *rect, Common::Point *point) {
@@ -1124,9 +1179,22 @@ double MovGraph2::findMinPath(LinkInfo *linkInfoSource, LinkInfo *linkInfoDest, 
 }
 
 MovGraphNode *MovGraph::calcOffset(int ox, int oy) {
-	warning("STUB: MovGraph::calcOffset()");
+	MovGraphNode *res = 0;
+	double mindist = 1.0e10;
 
-	return 0;
+	for (ObList::iterator i = _nodes.begin(); i != _nodes.end(); ++i) {
+		assert(((CObject *)*i)->_objtype == kObjTypeMovGraphNode);
+
+		MovGraphNode *node = (MovGraphNode *)*i;
+
+		double dist = sqrt((double)((node->_x - oy) * (node->_x - oy) + (node->_x - ox) * (node->_x - ox)));
+		if (dist < mindist) {
+			mindist = dist;
+			res = node;
+		}
+	}
+
+	return res;
 }
 
 void MGM::clear() {
@@ -1225,6 +1293,16 @@ bool MovGraphLink::load(MfcArchive &file) {
 	_name = file.readPascalString();
 
 	return true;
+}
+
+void MovGraphLink::calcNodeDistanceAndAngle() {
+	if (_movGraphNode1) {
+		double dx = _movGraphNode2->_x - _movGraphNode1->_x;
+		double dy = _movGraphNode2->_y - _movGraphNode1->_y;
+
+		_distance = sqrt(dy * dy + dx * dx);
+		_angle = atan2(dx, dy);
+	}
 }
 
 bool MovGraphNode::load(MfcArchive &file) {

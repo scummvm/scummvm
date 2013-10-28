@@ -59,6 +59,19 @@ const QuasipedType Dialogs::kQuasipeds[16] = {
 Dialogs::Dialogs(AvalancheEngine *vm) {
 	_vm = vm;
 	_noError = true;
+
+	_aboutBox = false;
+	_talkX = 0;
+	_talkY = 0;
+	_maxLineNum = 0;
+	_scReturn = false;
+	_currentFont = kFontStyleRoman;
+	_param = 0;
+	_useIcon = 0;
+	_scrollBells = 0;
+	_underScroll = 0;
+	_shadowBoxX = 0;
+	_shadowBoxY = 0;
 }
 
 void Dialogs::init() {
@@ -689,6 +702,7 @@ void Dialogs::displayText(Common::String text) {
 				if (_param == 0)
 					setBubbleStateNatural();
 				else if ((1 <= _param) && (_param <= 9)) {
+					assert(_param - 1 < _vm->_animation->kSpriteNumbMax);
 					AnimationType *spr = _vm->_animation->_sprites[_param - 1];
 					if ((_param > _vm->_animation->kSpriteNumbMax) || (!spr->_quick)) { // Not valid.
 						_vm->errorLed();
@@ -699,6 +713,7 @@ void Dialogs::displayText(Common::String text) {
 					// Quasi-peds. (This routine performs the same
 					// thing with QPs as triptype.chatter does with the
 					// sprites.)
+					assert(_param - 10 < 16);
 					PedType *quasiPed = &_vm->_peds[kQuasipeds[_param - 10]._whichPed];
 					_talkX = quasiPed->_x;
 					_talkY = quasiPed->_y; // Position.
@@ -729,10 +744,10 @@ void Dialogs::displayText(Common::String text) {
 					}
 					break;
 				case 3:
-					displayText(_vm->_favouriteDrink + kControlToBuffer);
+					displayText(_vm->_favoriteDrink + kControlToBuffer);
 					break;
 				case 4:
-					displayText(_vm->_favouriteSong + kControlToBuffer);
+					displayText(_vm->_favoriteSong + kControlToBuffer);
 					break;
 				case 5:
 					displayText(_vm->_worstPlaceOnEarth + kControlToBuffer);
@@ -1164,7 +1179,9 @@ void Dialogs::sayThanks(byte thing) {
 	Common::String tmpStr = personSpeaks();
 	tmpStr += Common::String::format("Hey, thanks!%c(But now, you've lost it!)", kControlSpeechBubble);
 	displayText(tmpStr);
-	_vm->_objects[thing] = false;
+
+	if (thing < kObjectNum)
+		_vm->_objects[thing] = false;
 }
 
 /**

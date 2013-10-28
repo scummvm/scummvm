@@ -142,14 +142,6 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 #endif
 	_transactionMode(kTransactionNone) {
 
-	if (SDL_InitSubSystem(SDL_INIT_VIDEO) == -1) {
-		error("Could not initialize SDL: %s", SDL_GetError());
-	}
-
-	// This is also called in initSDL(), but initializing graphics
-	// may reset it.
-	SDL_EnableUNICODE(1);
-
 	// allocate palette storage
 	_currentPalette = (SDL_Color *)calloc(sizeof(SDL_Color), 256);
 	_cursorPalette = (SDL_Color *)calloc(sizeof(SDL_Color), 256);
@@ -164,8 +156,6 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 	if (ConfMan.hasKey("use_sdl_debug_focusrect"))
 		_enableFocusRectDebugCode = ConfMan.getBool("use_sdl_debug_focusrect");
 #endif
-
-	SDL_ShowCursor(SDL_DISABLE);
 
 	memset(&_oldVideoMode, 0, sizeof(_oldVideoMode));
 	memset(&_videoMode, 0, sizeof(_videoMode));
@@ -193,10 +183,6 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 }
 
 SurfaceSdlGraphicsManager::~SurfaceSdlGraphicsManager() {
-	// Unregister the event observer
-	if (g_system->getEventManager()->getEventDispatcher() != NULL)
-		g_system->getEventManager()->getEventDispatcher()->unregisterObserver(this);
-
 	unloadGFXMode();
 	if (_mouseSurface)
 		SDL_FreeSurface(_mouseSurface);
@@ -211,9 +197,22 @@ SurfaceSdlGraphicsManager::~SurfaceSdlGraphicsManager() {
 	free(_mouseData);
 }
 
-void SurfaceSdlGraphicsManager::initEventObserver() {
+void SurfaceSdlGraphicsManager::activateManager() {
+	GraphicsManager::activateManager();
+	initEventSource();
+
 	// Register the graphics manager as a event observer
 	g_system->getEventManager()->getEventDispatcher()->registerObserver(this, 10, false);
+}
+
+void SurfaceSdlGraphicsManager::deactivateManager() {
+	// Unregister the event observer
+	if (g_system->getEventManager()->getEventDispatcher()) {
+		g_system->getEventManager()->getEventDispatcher()->unregisterObserver(this);
+	}
+
+	deinitEventSource();
+	GraphicsManager::deactivateManager();
 }
 
 bool SurfaceSdlGraphicsManager::hasFeature(OSystem::Feature f) {
@@ -261,10 +260,6 @@ bool SurfaceSdlGraphicsManager::getFeatureState(OSystem::Feature f) {
 	default:
 		return false;
 	}
-}
-
-const OSystem::GraphicsMode *SurfaceSdlGraphicsManager::supportedGraphicsModes() {
-	return s_supportedGraphicsModes;
 }
 
 const OSystem::GraphicsMode *SurfaceSdlGraphicsManager::getSupportedGraphicsModes() const {

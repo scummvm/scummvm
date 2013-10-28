@@ -187,7 +187,7 @@ uint32 NEResources::getResourceTableOffset() {
 static const char *s_resTypeNames[] = {
 	"", "cursor", "bitmap", "icon", "menu", "dialog", "string",
 	"font_dir", "font", "accelerator", "rc_data", "msg_table",
-	"group_cursor", "group_icon", "", "", "version", "dlg_include",
+	"group_cursor", "", "group_icon", "", "version", "dlg_include",
 	"", "plug_play", "vxd", "ani_cursor", "ani_icon", "html",
 	"manifest"
 };

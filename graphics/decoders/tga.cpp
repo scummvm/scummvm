@@ -50,6 +50,8 @@ void TGADecoder::destroy() {
 }
 
 bool TGADecoder::loadStream(Common::SeekableReadStream &tga) {
+	destroy();
+
 	byte imageType, pixelDepth;
 	bool success;
 	success = readHeader(tga, imageType, pixelDepth);

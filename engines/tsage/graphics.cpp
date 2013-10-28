@@ -591,20 +591,24 @@ void GfxSurface::copyFrom(GfxSurface &src, Rect srcBounds, Rect destBounds, Regi
 	Graphics::Surface srcSurface = srcImage.lockSurface();
 	Graphics::Surface destSurface = lockSurface();
 
+	// Get clipping area
+	Rect clipRect = !_clipRect.isEmpty() ? _clipRect :
+		Rect(0, 0, destSurface.w, destSurface.h);
+
 	// Adjust bounds to ensure destination will be on-screen
 	int srcX = 0, srcY = 0;
-	if (destBounds.left < 0) {
-		srcX = -destBounds.left;
-		destBounds.left = 0;
+	if (destBounds.left < clipRect.left) {
+		srcX = clipRect.left - destBounds.left;
+		destBounds.left = clipRect.left;
 	}
-	if (destBounds.top < 0) {
-		srcY = -destBounds.top;
-		destBounds.top = 0;
+	if (destBounds.top < clipRect.top) {
+		srcY = clipRect.top - destBounds.top;
+		destBounds.top = clipRect.top;
 	}
-	if (destBounds.right > destSurface.w)
-		destBounds.right = destSurface.w;
-	if (destBounds.bottom > destSurface.h)
-		destBounds.bottom = destSurface.h;
+	if (destBounds.right > clipRect.right)
+		destBounds.right = clipRect.right;
+	if (destBounds.bottom > clipRect.bottom)
+		destBounds.bottom = clipRect.bottom;
 
 	if (destBounds.isValidRect() && !((destBounds.right < 0) || (destBounds.bottom < 0)
 		|| (destBounds.left >= destSurface.w) || (destBounds.top >= destSurface.h))) {
@@ -706,6 +710,11 @@ GfxElement::GfxElement() {
 	_owner = NULL;
 	_keycode = 0;
 	_flags = 0;
+
+	_fontNumber = 0;
+	_color1 = 0;
+	_color2 = 0;
+	_color3 = 0;
 }
 
 void GfxElement::setDefaults() {
@@ -1363,6 +1372,8 @@ GfxFont::GfxFont() {
 	_bpp = 0;
 	_fontData = NULL;
 	_fillFlag = false;
+
+	_gfxManager = nullptr;
 }
 
 GfxFont::~GfxFont() {

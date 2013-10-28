@@ -28,29 +28,6 @@
 
 namespace Fullpipe {
 
-bool BaseModalObject::handleMessage(ExCommand *message) {
-	warning("STUB: BaseModalObject::handleMessage()");
-
-	return true;
-}
-
-bool BaseModalObject::init(int counterdiff) {
-	warning("STUB: BaseModalObject::init(%d)", counterdiff);
-
-	return true;
-}
-
-bool BaseModalObject::update() {
-	warning("STUB: BaseModalObject::update()");
-
-	return true;
-}
-
-void BaseModalObject::saveload() {
-	warning("STUB: BaseModalObject::saveload()");
-}
-
-
 ModalIntro::ModalIntro() {
 	_field_8 = 0;
 	_countDown = 0;
@@ -89,6 +66,22 @@ bool ModalIntro::handleMessage(ExCommand *message) {
 	}
 
 	return true;
+}
+
+bool ModalIntro::init(int counterdiff) {
+	warning("STUB: ModalIntro::init(%d)", counterdiff);
+
+	return true;
+}
+
+bool ModalIntro::update() {
+	warning("STUB: ModalIntro::update()");
+
+	return true;
+}
+
+void ModalIntro::saveload() {
+	// No saveload
 }
 
 void FullpipeEngine::openMap() {

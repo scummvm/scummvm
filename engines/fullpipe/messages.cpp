@@ -344,6 +344,13 @@ void MessageQueue::deleteExCommandByIndex(uint idx, bool doFree) {
 		delete *it;
 }
 
+void MessageQueue::transferExCommands(MessageQueue *mq) {
+	while (mq->_exCommands.size()) {
+		_exCommands.push_back(mq->_exCommands.front());
+		mq->_exCommands.pop_front();
+	}
+}
+
 void MessageQueue::sendNextCommand() {
 	if (_exCommands.size()) {
 		if (!(_flags & 4) && (_flags & 1)) {
@@ -747,6 +754,25 @@ void updateGlobalMessageQueue(int id, int objid) {
 	if (m) {
 		m->update();
 	}
+}
+
+bool chainQueue(int queueId, int flags) {
+	MessageQueue *mq = g_fullpipe->_currentScene->getMessageQueueById(queueId);
+
+	if (!mq)
+		return false;
+
+	MessageQueue *nmq = new MessageQueue(mq, 0, 0);
+
+	nmq->_flags |= flags;
+
+	if (!mq->chain(0)) {
+		delete mq;
+
+		return false;
+	}
+
+	return true;
 }
 
 } // End of namespace Fullpipe

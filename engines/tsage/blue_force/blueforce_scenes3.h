@@ -210,7 +210,7 @@ public:
 	WestExit _westExit;
 	SouthWestExit _swExit;
 	Action1 _action1;
-	int _field1390;
+	int _field1390; // Useless variable
 	int _stripNumber;
 	int _field1398;
 	int _invGreenCount, _bookGreenCount, _invGangCount;

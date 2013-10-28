@@ -1422,6 +1422,10 @@ void Scene910::Object13::setupBreaker(int x, int y, int mode, int8 frameNumber) 
 	BF_GLOBALS._sceneItems.push_front(this);
 }
 
+Scene910::Object25::Object25() {
+	_field90 = _field92 = 0;
+}
+
 void Scene910::Object25::synchronize(Serializer &s) {
 	NamedObject::synchronize(s);
 	s.syncAsSint16LE(_field90);
@@ -3577,7 +3581,7 @@ void Scene935::postInit(SceneObjectList *OwnerList) {
 	PalettedScene::postInit();
 	loadScene(935);
 
-	BF_GLOBALS._interfaceY = 200;
+	BF_GLOBALS._interfaceY = SCREEN_HEIGHT;
 	BF_GLOBALS._player.disableControl();
 	_visualSpeaker._textMode = ALIGN_CENTER;
 	_visualSpeaker._hideObjects = false;
@@ -3812,7 +3816,7 @@ void Scene940::postInit(SceneObjectList *OwnerList) {
 
 	BF_GLOBALS._sound1.play(115);
 	BF_GLOBALS._dayNumber = 6;
-	BF_GLOBALS._interfaceY = 200;
+	BF_GLOBALS._interfaceY = SCREEN_HEIGHT;
 	T2_GLOBALS._uiElements._active = false;
 
 	_gameTextSpeaker2._speakerName = "SENTTEXT";

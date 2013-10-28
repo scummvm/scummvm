@@ -188,6 +188,7 @@ class Scene910: public PalettedScene {
 	class Object25: public NamedObject {
 		int _field90, _field92;
 	public:
+		Object25();
 		void setupHiddenSwitch(int x, int y, int arg8, int argA);
 		virtual void synchronize(Serializer &s);
 		virtual bool startAction(CursorType action, Event &event);

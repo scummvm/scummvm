@@ -110,7 +110,7 @@ public:
 	int _interfaceY;
 	ASoundExt _inventorySound;
 
-	TsAGE2Globals() { _onSelectItem = NULL; }
+	TsAGE2Globals();
 	virtual void reset();
 	virtual void synchronize(Serializer &s);
 };
@@ -208,19 +208,19 @@ public:
 	int _deathReason;
 	int _driveFromScene;
 	int _driveToScene;
-	int _v501F8;
-	int _v501FA;
-	int _v501FC;
-	int _v5020C;
-	int _v50696;
+	int _v501F8; // Useless variable
+	int _v501FA; // Useless variable
+	int _v501FC; // Useless variable
+	int _v5020C; // Useless variable
+	int _v50696; // Useless variable
 	uint8 _subFlagBitArr1;
 	uint8 _subFlagBitArr2;
 	int _v50CC2;
-	int _v50CC4;
-	int _v50CC6;
-	int _v50CC8;
-	int _v51C42;
-	int _v51C44;
+	int _scene410Action1Count;
+	int _scene410TalkCount;
+	int _scene410HarrisonMovedFl;
+	int _v51C42; // Useless variable
+	int _v51C44; // Useless variable
 	Bookmark _bookmark;
 	int _mapLocationId;
 	int _clip1Bullets, _clip2Bullets;
@@ -273,13 +273,13 @@ public:
 	int _foodCount;
 	int _rimLocation;
 	int _rimTransportLocation;
-	int _v5657C;
-	byte _v565AE;
+	int _v5657C; // Useless variable
+	byte _stripModifier;
 	byte _spillLocation[14];
 	VampireData _vampireData[18];
 	byte _flubMazeArea;
 	byte _flubMazeEntryDirection;
-	int _v566A6;
+	int _maze3800SceneNumb;
 	byte _landerSuitNumber;
 	byte _desertStepsRemaining;
 	byte _desertCorrectDirection;
@@ -292,17 +292,16 @@ public:
 	byte _v56AA0;
 	byte _scientistConvIndex;
 	Common::Point _ventCellPos;
-	int _v56AA4;
 	byte _v56AA6;
 	byte _v56AA7;
 	byte _v56AA8;
-	int _v56AAB;
+	int _v56AAB; // Useless variable
 	int _scene180Mode;	// _v575f7
 	int _v57709;
 	int _v5780C;
 	int _v5780E;
 	int _v57810;
-	int _v57C2C;
+	int _v57C2C; // Useless variable. Seems to be _speechSubtitles
 	int _speechSubtitles;
 	Common::Point _s1550PlayerArea[3]; // only used for Quinn and Seeker
 	byte _scannerFrequencies[4];

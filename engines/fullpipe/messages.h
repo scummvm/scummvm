@@ -123,6 +123,8 @@ class MessageQueue : public CObject {
 	ExCommand *getExCommandByIndex(uint idx);
 	void deleteExCommandByIndex(uint idx, bool doFree);
 
+	void transferExCommands(MessageQueue *mq);
+
 	void replaceKeyCode(int key1, int key2);
 
 	bool chain(StaticANIObject *ani);
@@ -170,6 +172,8 @@ void clearMessageHandlers();
 void processMessages();
 void updateGlobalMessageQueue(int id, int objid);
 void clearGlobalMessageQueueList1();
+
+bool chainQueue(int queueId, int flags);
 
 } // End of namespace Fullpipe
 

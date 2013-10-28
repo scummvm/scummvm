@@ -172,7 +172,7 @@ void OSystem_GPH::initSDL() {
 	// Check if SDL has not been initialized
 	if (!_initedSDL) {
 
-		uint32 sdlFlags = SDL_INIT_EVENTTHREAD;
+		uint32 sdlFlags = SDL_INIT_EVENTTHREAD | SDL_INIT_VIDEO;
 		if (ConfMan.hasKey("disable_sdl_parachute"))
 			sdlFlags |= SDL_INIT_NOPARACHUTE;
 

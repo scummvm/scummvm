@@ -479,9 +479,9 @@ void Scene1000::dispatch() {
 
 void Scene1010::postInit(SceneObjectList *OwnerList) {
 	loadScene(1010);
-	SceneExt::postInit();
-	R2_GLOBALS._interfaceY = 200;
 	R2_GLOBALS._uiElements._active = false;
+	SceneExt::postInit();
+	R2_GLOBALS._interfaceY = SCREEN_HEIGHT;
 
 	setZoomPercents(100, 1, 160, 100);
 	R2_GLOBALS._player.postInit();
@@ -540,14 +540,14 @@ void Scene1010::signal() {
 
 void Scene1020::postInit(SceneObjectList *OwnerList) {
 	loadScene(1020);
+	R2_GLOBALS._uiElements._active = false;
 	SceneExt::postInit();
 
 	if (R2_GLOBALS._sceneManager._previousScene == 1010)
 		_sceneBounds = Rect(160, 0, SCREEN_WIDTH + 160, 200);
 
-	R2_GLOBALS._interfaceY = 200;
+	R2_GLOBALS._interfaceY = SCREEN_HEIGHT;
 	R2_GLOBALS._v558B6.set(160, 0, 160, 161);
-	R2_GLOBALS._uiElements._active = false;
 	R2_GLOBALS._player.postInit();
 
 	if (R2_GLOBALS._sceneManager._previousScene == 1010) {
@@ -694,13 +694,13 @@ bool Scene1100::Seeker::startAction(CursorType action, Event &event) {
 	} else {
 		R2_GLOBALS._player.disableControl();
 		scene->_sceneMode = 55;
-		if (R2_GLOBALS._v565AE >= 3) {
+		if (R2_GLOBALS._stripModifier >= 3) {
 			if (R2_GLOBALS._player._characterIndex == R2_QUINN)
 				scene->_stripManager.start3(329, scene, R2_GLOBALS._stripManager_lookupList);
 			else
 				scene->_stripManager.start3(330, scene, R2_GLOBALS._stripManager_lookupList);
 		} else {
-			++R2_GLOBALS._v565AE;
+			++R2_GLOBALS._stripModifier;
 			R2_GLOBALS._events.setCursor(CURSOR_CROSSHAIRS);
 			if (R2_GLOBALS._player._characterIndex == R2_QUINN)
 				scene->_stripManager.start3(304, scene, R2_GLOBALS._stripManager_lookupList);
@@ -1482,8 +1482,8 @@ void Scene1200::LaserPanel::postInit(SceneObjectList *OwnerList) {
 
 	scene->_field41A = 1;
 	R2_GLOBALS._events.setCursor(CURSOR_USE);
-	proc12(1003, 1, 1, 100, 40);
-	proc13(1200, 11, -1, -1);
+	setup2(1003, 1, 1, 100, 40);
+	setup3(1200, 11, -1, -1);
 	R2_GLOBALS._sound2.play(259);
 	_jumper1.init(1);
 	_jumper2.init(2);
@@ -4307,12 +4307,12 @@ void Scene1337::postInit(SceneObjectList *OwnerList) {
 // In the original, may be found in subPostInit.
 // Without it, enableControl asserts
 	loadScene(1330);
+	R2_GLOBALS._uiElements._active = false;
 	SceneExt::postInit();
 //
 
 	// Hide the user interface
-	R2_GLOBALS._uiElements._active = false;
-	BF_GLOBALS._interfaceY = 200;
+	BF_GLOBALS._interfaceY = SCREEN_HEIGHT;
 
 	R2_GLOBALS._player.enableControl();
 	R2_GLOBALS._player._canWalk = false;
@@ -7548,8 +7548,8 @@ void Scene1550::UnkArea1550::process(Event &event) {
 	}
 }
 
-void Scene1550::UnkArea1550::proc12(int visage, int stripFrameNum, int frameNum, int posX, int posY) {
-	// UnkArea1200::proc12();
+void Scene1550::UnkArea1550::setup2(int visage, int stripFrameNum, int frameNum, int posX, int posY) {
+	// UnkArea1200::setup2();
 	Scene1550 *scene = (Scene1550 *)R2_GLOBALS._sceneManager._scene;
 
 	_areaActor.postInit();
@@ -7562,7 +7562,7 @@ void Scene1550::UnkArea1550::proc12(int visage, int stripFrameNum, int frameNum,
 	_field20 = R2_GLOBALS._insetUp;
 	//
 
-	proc13(1550, 67, -1, -1);
+	setup3(1550, 67, -1, -1);
 	_unkObj155031.postInit();
 	_unkObj155031._fieldA4 = 1;
 	if (scene->_actor4._frame == 1)
@@ -7585,7 +7585,7 @@ void Scene1550::UnkArea1550::proc12(int visage, int stripFrameNum, int frameNum,
 	_unkObj155032.setDetails(1550, 69, -1, -1, 2, (SceneItem *) NULL);
 }
 
-void Scene1550::UnkArea1550::proc13(int resNum, int lookLineNum, int talkLineNum, int useLineNum) {
+void Scene1550::UnkArea1550::setup3(int resNum, int lookLineNum, int talkLineNum, int useLineNum) {
 	// Copy of Scene1200::LaserPanel::proc13
 	_areaActor.setDetails(resNum, lookLineNum, talkLineNum, useLineNum, 2, (SceneItem *) NULL);
 }
@@ -7832,7 +7832,7 @@ void Scene1550::postInit(SceneObjectList *OwnerList) {
 
 	switch (R2_GLOBALS._sceneManager._previousScene) {
 	case 1530:
-		R2_GLOBALS._v565AE = 0;
+		R2_GLOBALS._stripModifier = 0;
 	// No break on purpose
 	case 300:
 	// No break on purpose
@@ -7915,7 +7915,7 @@ void Scene1550::signal() {
 	// No break on purpose
 	case 1563:
 		R2_GLOBALS.clearFlag(20);
-		_unkArea1.proc12(1559, 1, 1, 160, 125);
+		_unkArea1.setup2(1559, 1, 1, 160, 125);
 		R2_GLOBALS._player.enableControl();
 		_sceneMode = 0;
 		break;
@@ -8058,33 +8058,33 @@ void Scene1550::signal() {
 			_sceneMode = 60;
 			R2_GLOBALS._player.disableControl();
 			R2_GLOBALS._events.setCursor(CURSOR_CROSSHAIRS);
-			if (R2_GLOBALS._v565AE >= 3) {
+			if (R2_GLOBALS._stripModifier >= 3) {
 				if (R2_GLOBALS._player._characterIndex == R2_QUINN)
 					_stripManager.start(572, this);
 				else
 					_stripManager.start(573, this);
 			} else {
-				++R2_GLOBALS._v565AE;
+				++R2_GLOBALS._stripModifier;
 				if (R2_GLOBALS._player._characterIndex == R2_QUINN)
-					_stripManager.start(499 + R2_GLOBALS._v565AE, this);
+					_stripManager.start(499 + R2_GLOBALS._stripModifier, this);
 				else
-					_stripManager.start(502 + R2_GLOBALS._v565AE, this);
+					_stripManager.start(502 + R2_GLOBALS._stripModifier, this);
 			}
 		} else {
 			_sceneMode = 60;
 			R2_GLOBALS._player.disableControl();
 			R2_GLOBALS._events.setCursor(CURSOR_CROSSHAIRS);
-			if (R2_GLOBALS._v565AE >= 4) {
+			if (R2_GLOBALS._stripModifier >= 4) {
 				if (R2_GLOBALS._player._characterIndex == R2_QUINN)
 					_stripManager.start(572, this);
 				else
 					_stripManager.start(573, this);
 			} else {
-				++R2_GLOBALS._v565AE;
+				++R2_GLOBALS._stripModifier;
 				if (R2_GLOBALS._player._characterIndex == R2_QUINN)
-					_stripManager.start(563 + R2_GLOBALS._v565AE, this);
+					_stripManager.start(563 + R2_GLOBALS._stripModifier, this);
 				else
-					_stripManager.start(567 + R2_GLOBALS._v565AE, this);
+					_stripManager.start(567 + R2_GLOBALS._stripModifier, this);
 			}
 		}
 		break;
@@ -8116,7 +8116,7 @@ void Scene1550::signal() {
 	case 1558:
 		_actor13.fixPriority(124);
 		_field415 = 1;
-		_unkArea1.proc12(1559, 1, 1, 160, 125);
+		_unkArea1.setup2(1559, 1, 1, 160, 125);
 		R2_GLOBALS._player.enableControl();
 		break;
 	case 1559:
@@ -13662,24 +13662,24 @@ void Scene1950::KeypadWindow::remove() {
 	}
 }
 
-void Scene1950::KeypadWindow::proc12(int visage, int stripFrameNum, int frameNum, int posX, int posY) {
+void Scene1950::KeypadWindow::setup2(int visage, int stripFrameNum, int frameNum, int posX, int posY) {
 	Scene1950 *scene = (Scene1950 *)R2_GLOBALS._sceneManager._scene;
 
 	if (R2_GLOBALS._player._mover)
 		R2_GLOBALS._player.addMover(NULL);
 	R2_GLOBALS._player._canWalk = false;
 
-	ModalWindow::proc12(visage, stripFrameNum, frameNum, posX, posY);
+	ModalWindow::setup2(visage, stripFrameNum, frameNum, posX, posY);
 
 	_object1.fixPriority(248);
 	scene->_eastExit._enabled = false;
-	proc13(1950, 27, 28, 27);
+	setup3(1950, 27, 28, 27);
 
 	for (_buttonIndex = 0; _buttonIndex < 16; _buttonIndex++)
 		_buttons[_buttonIndex].init(_buttonIndex);
 }
 
-void Scene1950::KeypadWindow::proc13(int resNum, int lookLineNum, int talkLineNum, int useLineNum) {
+void Scene1950::KeypadWindow::setup3(int resNum, int lookLineNum, int talkLineNum, int useLineNum) {
 	// Copy of Scene1200::LaserPanel::proc13()
 	_areaActor.setDetails(resNum, lookLineNum, talkLineNum, useLineNum, 2, (SceneItem *) NULL);
 }
@@ -15288,7 +15288,7 @@ void Scene1950::signal() {
 	// No break on purpose
 	case 1963:
 		R2_GLOBALS._player.enableControl();
-		_KeypadWindow.proc12(1971, 1, 1, 160, 135);
+		_KeypadWindow.setup2(1971, 1, 1, 160, 135);
 		break;
 	case 1964:
 	// No break on purpose

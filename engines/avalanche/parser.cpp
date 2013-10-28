@@ -37,6 +37,21 @@ const char *Parser::kVersionNum = "1.30";
 
 Parser::Parser(AvalancheEngine *vm) {
 	_vm = vm;
+
+	_verb = kVerbCodePardon;
+	_thing = kPardon;
+	_person = kPeopleNone;
+	_polite = false;
+	_inputTextPos = 0;
+	_quote = false;
+	_cursorState = false;
+	_weirdWord = false;
+	_wearing = kNothing;
+	_thing2 = 0;
+	_sworeNum = 0;
+	_alcoholLevel = 0;
+	_playedNim = 0;
+	_boughtOnion = false;
 }
 
 void Parser::init() {
@@ -692,13 +707,13 @@ void Parser::storeInterrogation(byte interrogation) {
 	case 1:
 		_inputText.toLowercase();
 		_vm->_dialogs->sayIt(_inputText);
-		_vm->_favouriteDrink = _inputText;
+		_vm->_favoriteDrink = _inputText;
 		_vm->_cardiffQuestionNum = 2;
 		break;
 	case 2:
 		properNouns();
 		_vm->_dialogs->sayIt(_inputText);
-		_vm->_favouriteSong = _inputText;
+		_vm->_favoriteSong = _inputText;
 		_vm->_cardiffQuestionNum = 3;
 		break;
 	case 3:
@@ -1013,12 +1028,15 @@ bool Parser::isHolding() {
 
 	bool holdingResult = false;
 
-	if (_thing > 100)
+	if (_thing >= 100)
 		_vm->_dialogs->displayText("Be reasonable!");
-	else if (!_vm->_objects[_thing - 1])
-		// Verbs that need "_thing" to be in the inventory.
-		_vm->_dialogs->displayText("You're not holding it, Avvy.");
-	else
+	else if (_thing <= kObjectNum) {
+		if (!_vm->_objects[_thing - 1])
+			// Verbs that need "_thing" to be in the inventory.
+			_vm->_dialogs->displayText("You're not holding it, Avvy.");
+		else
+			holdingResult = true;
+	} else
 		holdingResult = true;
 
 	return holdingResult;
@@ -1053,8 +1071,10 @@ void Parser::examine() {
 				examineObject();
 			else if ((50 <= _thing) && (_thing <= 100)) {
 				// Also _thing
+				int id = _thing - 50;
+				assert(id < 31);
 				openBox(true);
-				_vm->_dialogs->displayText(*_vm->_also[_thing - 50][1]);
+				_vm->_dialogs->displayText(*_vm->_also[id][1]);
 				openBox(false);
 			}
 		}
@@ -2452,7 +2472,7 @@ void Parser::doVerb(VerbCode id) {
 }
 
 void Parser::resetVariables() {
-	_wearing = 0;
+	_wearing = kNothing;
 	_sworeNum = 0;
 	_alcoholLevel = 0;
 	_playedNim = 0;

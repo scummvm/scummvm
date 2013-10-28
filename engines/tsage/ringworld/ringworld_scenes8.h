@@ -40,7 +40,7 @@ using namespace TsAGE;
 class NamedHotspotMult : public SceneHotspot {
 public:
 	int _useLineNum, _lookLineNum;
-	NamedHotspotMult() : SceneHotspot() {}
+	NamedHotspotMult();
 
 	virtual Common::String getClassName() { return "NamedHotspotMult"; }
 	virtual void synchronize(Serializer &s);

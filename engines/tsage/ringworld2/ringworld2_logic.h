@@ -461,8 +461,8 @@ public:
 	virtual void synchronize(Serializer &s);
 	virtual Common::String getClassName() { return "ModalWindow"; }
 	virtual void process(Event &event);
-	virtual void proc12(int visage, int stripFrameNum, int frameNum, int posX, int posY);
-	virtual void proc13(int resNum, int lookLineNum, int talkLineNum, int useLineNum);
+	virtual void setup2(int visage, int stripFrameNum, int frameNum, int posX, int posY);
+	virtual void setup3(int resNum, int lookLineNum, int talkLineNum, int useLineNum);
 };
 
 class ScannerDialog: public ModalWindow {
@@ -515,7 +515,7 @@ public:
 
 	virtual Common::String getClassName() { return "ScannerDialog"; }
 	virtual void remove();
-	void proc12(int visage, int stripFrameNum, int frameNum, int posX, int posY);
+	virtual void setup2(int visage, int stripFrameNum, int frameNum, int posX, int posY);
 };
 
 } // End of namespace Ringworld2

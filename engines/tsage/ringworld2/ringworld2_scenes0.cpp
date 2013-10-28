@@ -1425,6 +1425,7 @@ Scene160::Scene160(): SceneExt() {
 
 void Scene160::postInit(SceneObjectList *OwnerList) {
 	loadScene(4001);
+	R2_GLOBALS._uiElements._active = false;
 	SceneExt::postInit();
 
 	R2_GLOBALS._player._uiEnabled = false;
@@ -1605,6 +1606,7 @@ void Scene180::signal() {
 	case 43:
 	case 47:
 		_field412 = 0;
+		R2_GLOBALS._screenSurface.fillRect(Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 0);
 		_palette.loadPalette(0);
 		_palette.loadPalette(9998);
 		R2_GLOBALS._scenePalette.addFader(_palette._palette, 256, 8, this);
@@ -1808,6 +1810,8 @@ void Scene180::signal() {
 		// TODO: Figure out why end action on sounds aren't firing. For now, I'm
 		// simply setting up a scene delay to ensure the signal() method gets
 		// called again after a brief delay
+		_backSurface.fillRect(Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 0);
+		R2_GLOBALS._screenSurface.fillRect(Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 0);
 		setSceneDelay(10);
 		R2_GLOBALS._sound2.fadeOut2(NULL);
 		R2_GLOBALS._sound1.fadeOut2(NULL /* this */);
@@ -1871,13 +1875,21 @@ void Scene180::signal() {
 	case 49:
 		R2_GLOBALS._scene180Mode = 15;
 		R2_GLOBALS._paneRefreshFlag[0] = 3;
+
+		_backSurface.fillRect(Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 0);
+		R2_GLOBALS._screenSurface.fillRect(Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 0);
+
 		setSceneDelay(1);
 		break;
 
 	case 50:
 		R2_GLOBALS._scene180Mode = 0;
 		_field412 = 0;
-		R2_GLOBALS._sceneManager.changeScene(100);
+
+		// WORKAROUND: The original changed to scene 100 here, Quinn's Bedroom, 
+		// but instead we're changing to the previously unused scene 50, which shows
+		// a closeup of Quinn in the floatation bed first
+		R2_GLOBALS._sceneManager.changeScene(50);
 		break;
 	}
 }
@@ -2344,8 +2356,9 @@ Scene205::Scene205(): SceneExt() {
 
 void Scene205::postInit(SceneObjectList *OwnerList) {
 	loadScene(4000);
+	R2_GLOBALS._uiElements._active = false;
 	SceneExt::postInit();
-	BF_GLOBALS._interfaceY = 200;
+	BF_GLOBALS._interfaceY = SCREEN_HEIGHT;
 	R2_GLOBALS._player._uiEnabled = false;
 
 	R2_GLOBALS._sound1.play(337);
@@ -2606,11 +2619,11 @@ void Scene250::synchronize(Serializer &s) {
 
 void Scene250::postInit(SceneObjectList *OwnerList) {
 	loadScene(250);
+	R2_GLOBALS._uiElements._active = false;
 	SceneExt::postInit();
-	BF_GLOBALS._interfaceY = 200;
+	BF_GLOBALS._interfaceY = SCREEN_HEIGHT;
 
 	R2_GLOBALS._player.postInit();
-	R2_GLOBALS._uiElements._active = false;
 	R2_GLOBALS._player.setVisage(10);
 	R2_GLOBALS._player.hide();
 	R2_GLOBALS._player.enableControl();
@@ -6954,11 +6967,11 @@ Scene825::Scene825(): SceneExt() {
 
 void Scene825::postInit(SceneObjectList *OwnerList) {
 	loadScene(825);
+	R2_GLOBALS._uiElements._active = false;
 	SceneExt::postInit();
-	BF_GLOBALS._interfaceY = 200;
+	BF_GLOBALS._interfaceY = SCREEN_HEIGHT;
 
 	R2_GLOBALS._player.postInit();
-	R2_GLOBALS._uiElements._active = false;
 	R2_GLOBALS._player._effect = 0;
 	R2_GLOBALS._player.setVisage(10);
 	R2_GLOBALS._player.hide();

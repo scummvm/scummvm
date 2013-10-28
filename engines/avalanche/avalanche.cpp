@@ -41,17 +41,9 @@ AvalancheEngine::AvalancheEngine(OSystem *syst, const AvalancheGameDescription *
 	TimeDate time;
 	_system->getTimeAndDate(time);
 	_rnd->setSeed(time.tm_sec + time.tm_min + time.tm_hour);
-
-	// Needed because of Lucerna::load_also()
-	for (int i = 0; i < 31; i++) {
-		for (int j = 0; j < 2; j++)
-			_also[i][j] = nullptr;
-	}
-
-	_totalTime = 0;
 	_showDebugLines = false;
-
-	memset(_fxPal, 0, 16 * 16 * 3);
+	
+	initVariables();
 }
 
 AvalancheEngine::~AvalancheEngine() {
@@ -80,6 +72,56 @@ AvalancheEngine::~AvalancheEngine() {
 			}
 		}
 	}
+}
+
+void AvalancheEngine::initVariables() {
+	// Needed because of Lucerna::load_also()
+	for (int i = 0; i < 31; i++) {
+		_also[i][0] = nullptr;
+		_also[i][1] = nullptr;
+	}
+
+	_totalTime = 0;
+
+	memset(_fxPal, 0, 16 * 16 * 3);
+
+	for (int i = 0; i < 15; i++) {
+		_peds[i]._direction = kDirNone;
+		_peds[i]._x = 0;
+		_peds[i]._y = 0;
+		_magics[i]._operation = kMagicNothing;
+		_magics[i]._data = 0;
+	}
+
+	for (int i = 0; i < 7; i++) {
+		_portals[i]._operation = kMagicNothing;
+		_portals[i]._data = 0;
+	}
+
+	for (int i = 0; i < 30; i++) {
+		_fields[i]._x1 = 0;
+		_fields[i]._y1 = 0;
+		_fields[i]._x2 = 0;
+		_fields[i]._y2 = 0;
+	}
+
+	_fieldNum = 0;
+	_cp = 0;
+	_ledStatus = 177;
+	_alive = false;
+	_subjectNum = 0;
+	_him = kPeoplePardon;
+	_her = kPeoplePardon;
+	_it = Parser::kPardon;
+	_roomTime = 0;
+	_doingSpriteRun = false;
+	_isLoaded = false;
+	_soundFx = true;
+	_spludwickAtHome = false;
+	_passedCwytalotInHerts = false;
+	_holdTheDawn = false;
+	_lastRoom = 0;
+	_lastRoomNotMap = 0;
 }
 
 Common::ErrorCode AvalancheEngine::initialize() {
@@ -166,17 +208,17 @@ void AvalancheEngine::synchronize(Common::Serializer &sz) {
 	sz.syncAsByte(_arrowInTheDoor);
 
 	if (sz.isSaving()) {
-		uint16 like2drinkSize = _favouriteDrink.size();
+		uint16 like2drinkSize = _favoriteDrink.size();
 		sz.syncAsUint16LE(like2drinkSize);
 		for (uint16 i = 0; i < like2drinkSize; i++) {
-			char actChr = _favouriteDrink[i];
+			char actChr = _favoriteDrink[i];
 			sz.syncAsByte(actChr);
 		}
 
-		uint16 favourite_songSize = _favouriteSong.size();
-		sz.syncAsUint16LE(favourite_songSize);
-		for (uint16 i = 0; i < favourite_songSize; i++) {
-			char actChr = _favouriteSong[i];
+		uint16 favoriteSongSize = _favoriteSong.size();
+		sz.syncAsUint16LE(favoriteSongSize);
+		for (uint16 i = 0; i < favoriteSongSize; i++) {
+			char actChr = _favoriteSong[i];
 			sz.syncAsByte(actChr);
 		}
 
@@ -194,23 +236,23 @@ void AvalancheEngine::synchronize(Common::Serializer &sz) {
 			sz.syncAsByte(actChr);
 		}
 	} else {
-		if (!_favouriteDrink.empty())
-			_favouriteDrink.clear();
+		if (!_favoriteDrink.empty())
+			_favoriteDrink.clear();
 		uint16 like2drinkSize = 0;
 		char actChr = ' ';
 		sz.syncAsUint16LE(like2drinkSize);
 		for (uint16 i = 0; i < like2drinkSize; i++) {
 			sz.syncAsByte(actChr);
-			_favouriteDrink += actChr;
+			_favoriteDrink += actChr;
 		}
 
-		if (!_favouriteSong.empty())
-			_favouriteSong.clear();
+		if (!_favoriteSong.empty())
+			_favoriteSong.clear();
 		uint16 favourite_songSize = 0;
 		sz.syncAsUint16LE(favourite_songSize);
 		for (uint16 i = 0; i < favourite_songSize; i++) {
 			sz.syncAsByte(actChr);
-			_favouriteSong += actChr;
+			_favoriteSong += actChr;
 		}
 
 		if (!_worstPlaceOnEarth.empty())

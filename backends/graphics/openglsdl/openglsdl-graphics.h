@@ -35,9 +35,10 @@ public:
 	OpenGLSdlGraphicsManager(uint desktopWidth, uint desktopHeight, SdlEventSource *eventSource);
 	virtual ~OpenGLSdlGraphicsManager();
 
-	void initEventObserver();
-
 	// GraphicsManager API
+	virtual void activateManager();
+	virtual void deactivateManager();
+
 	virtual bool hasFeature(OSystem::Feature f);
 	virtual void setFeatureState(OSystem::Feature f, bool enable);
 	virtual bool getFeatureState(OSystem::Feature f);

@@ -343,7 +343,7 @@ void Scene50::synchronize(Serializer &s) {
 void Scene50::postInit(SceneObjectList *OwnerList) {
 	SceneExt::postInit();
 
-	BF_GLOBALS._interfaceY = 200;
+	BF_GLOBALS._interfaceY = SCREEN_HEIGHT;
 	T2_GLOBALS._uiElements._active = false;
 	BF_GLOBALS._player.postInit();
 	BF_GLOBALS._player.setVisage(830);
@@ -419,6 +419,8 @@ void Scene50::postInit(SceneObjectList *OwnerList) {
 		tooltip = &_location8;
 		xp = 75;
 		break;
+	default:
+		error("Unexpected tooltip value %d", selectedTooltip);
 	}
 
 	_timer.set(240, this);

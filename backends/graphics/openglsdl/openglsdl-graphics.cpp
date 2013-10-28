@@ -32,24 +32,12 @@ OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(uint desktopWidth, uint deskt
     : SdlGraphicsManager(eventSource), _lastVideoModeLoad(0), _hwScreen(nullptr), _lastRequestedWidth(0), _lastRequestedHeight(0),
       _graphicsScale(2), _ignoreLoadVideoMode(false), _gotResize(false), _wantsFullScreen(false), _ignoreResizeEvents(0),
       _desiredFullscreenWidth(0), _desiredFullscreenHeight(0) {
-	// Initialize SDL video subsystem
-	if (SDL_InitSubSystem(SDL_INIT_VIDEO) == -1) {
-		error("Could not initialize SDL: %s", SDL_GetError());
-	}
-
 	// Setup OpenGL attributes for SDL
 	SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
 	SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
 	SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-
-	// This is also called in initSDL(), but initializing graphics
-	// may reset it.
-	SDL_EnableUNICODE(1);
-
-	// Disable OS cursor
-	SDL_ShowCursor(SDL_DISABLE);
 
 	// Retrieve a list of working fullscreen modes
 	const SDL_Rect *const *availableModes = SDL_ListModes(NULL, SDL_OPENGL | SDL_FULLSCREEN);
@@ -82,15 +70,24 @@ OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(uint desktopWidth, uint deskt
 }
 
 OpenGLSdlGraphicsManager::~OpenGLSdlGraphicsManager() {
+}
+
+void OpenGLSdlGraphicsManager::activateManager() {
+	OpenGLGraphicsManager::activateManager();
+	initEventSource();
+
+	// Register the graphics manager as a event observer
+	g_system->getEventManager()->getEventDispatcher()->registerObserver(this, 10, false);
+}
+
+void OpenGLSdlGraphicsManager::deactivateManager() {
 	// Unregister the event observer
 	if (g_system->getEventManager()->getEventDispatcher()) {
 		g_system->getEventManager()->getEventDispatcher()->unregisterObserver(this);
 	}
-}
 
-void OpenGLSdlGraphicsManager::initEventObserver() {
-	// Register the graphics manager as a event observer
-	g_system->getEventManager()->getEventDispatcher()->registerObserver(this, 10, false);
+	deinitEventSource();
+	OpenGLGraphicsManager::deactivateManager();
 }
 
 bool OpenGLSdlGraphicsManager::hasFeature(OSystem::Feature f) {

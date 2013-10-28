@@ -563,7 +563,7 @@ void OSystem_WINCE3::setGraphicsModeIntern() {
 void OSystem_WINCE3::initSDL() {
 	// Check if SDL has not been initialized
 	if (!_initedSDL) {
-		uint32 sdlFlags = SDL_INIT_EVENTTHREAD;
+		uint32 sdlFlags = SDL_INIT_EVENTTHREAD | SDL_INIT_VIDEO;
 		if (ConfMan.hasKey("disable_sdl_parachute"))
 			sdlFlags |= SDL_INIT_NOPARACHUTE;
 
@@ -575,9 +575,6 @@ void OSystem_WINCE3::initSDL() {
 		// Initialize SDL (SDL Subsystems are initiliazed in the corresponding sdl managers)
 		if (SDL_Init(sdlFlags) == -1)
 			error("Could not initialize SDL: %s", SDL_GetError());
-
-		// Enable unicode support if possible
-		SDL_EnableUNICODE(1);
 
 		_initedSDL = true;
 	}

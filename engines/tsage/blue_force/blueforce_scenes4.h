@@ -116,9 +116,10 @@ public:
 	SpeakerDriver _driverSpeaker;
 	SpeakerShooter _shooterSpeaker;
 	ASoundExt _sound1;
-	int _field1FB6, _talkCount, _field1FBA;
-	int _field1FBC, _field1FBE;
-	int _field1FC0, _field1FC2, _field1FC4;
+	int _action1Count, _talkCount, _field1FBA;
+	int _cuffedDriverFl, _field1FBE;
+	int _field1FC0; // Useless variable
+	int _field1FC2, _harrisonMovedFl; 
 
 	Scene410();
 	virtual void postInit(SceneObjectList *OwnerList = NULL);

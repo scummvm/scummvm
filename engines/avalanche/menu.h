@@ -102,6 +102,7 @@ public:
 	HeadType _menuItems[8];
 	byte _menuNum;
 
+	MenuBar();
 	void init(Menu *menu);
 	void createMenuItem(char trig, Common::String title, char altTrig, MenuFunc setupFunc, MenuFunc chooseFunc);
 	void draw();
