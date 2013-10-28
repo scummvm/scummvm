@@ -47,17 +47,46 @@
 #include "prince/graphics.h"
 #include "prince/script.h"
 #include "prince/debugger.h"
+#include "prince/object.h"
+#include "prince/mob.h"
+#include "prince/sound.h"
 
 #include "video/flic_decoder.h"
 
 namespace Prince {
 
+Graphics::Surface *loadCursor(const char *curName)
+{
+    Common::SeekableReadStream *curStream = SearchMan.createReadStreamForMember(curName);
+    if (!curStream) {
+        error("Can't load %s", curName);
+        return NULL;
+    }
+
+    curStream->skip(4);
+    uint16 w = curStream->readUint16LE();
+    uint16 h = curStream->readUint16LE();
+
+    debug("Loading cursor %s, w %d, h %d", curName, w, h);
+
+    Graphics::Surface *curSurface = new Graphics::Surface();
+    curSurface->create(w, h, Graphics::PixelFormat::createFormatCLUT8());
+    for (int ih = 0; ih < h; ++ih) {
+        curStream->read(curSurface->getBasePtr(0, ih), w);
+    }
+
+    delete curStream;
+    return curSurface;
+}
+
+
+
 PrinceEngine::PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc) : 
     Engine(syst), _gameDescription(gameDesc), _graph(NULL), _script(NULL),
-    _locationNr(0), _debugger(NULL) {
+    _locationNr(0), _debugger(NULL), _objectList(NULL), _mobList(NULL), _midiPlayer(NULL) {
     _rnd = new Common::RandomSource("prince");
     _debugger = new Debugger(this);
-
+    _midiPlayer = new MusicPlayer(this);
 }
 
 PrinceEngine::~PrinceEngine() {
@@ -65,6 +94,9 @@ PrinceEngine::~PrinceEngine() {
 
     delete _rnd;
     delete _debugger;
+    delete _cur1;
+    delete _cur2;
+    delete _midiPlayer;
 }
 
 GUI::Debugger *PrinceEngine::getDebugger() {
@@ -108,21 +140,57 @@ Common::Error PrinceEngine::run() {
 
     delete skryptStream;
 
-    Common::SeekableReadStream *logoStrema = SearchMan.createReadStreamForMember("logo.raw"); 
-    if (logoStrema)
+
+    _cur1 = loadCursor("mouse1.cur");
+    _cur2 = loadCursor("mouse2.cur");
+
+    Common::SeekableReadStream *logoStream = SearchMan.createReadStreamForMember("logo.raw"); 
+    if (logoStream)
     {
         MhwanhDecoder logo;
-        logo.loadStream(*logoStrema);
+        logo.loadStream(*logoStream);
         _graph->setPalette(logo.getPalette());
         _graph->draw(logo.getSurface());
         _graph->update();
         _system->delayMillis(700);
     }
-    delete logoStrema;
+    delete logoStream;
 
     mainLoop();
 
     return Common::kNoError;
+}
+
+class MobList {
+public:
+    bool loadFromStream(Common::SeekableReadStream &stream);
+
+    Common::Array<Mob> _mobList;
+};
+
+bool MobList::loadFromStream(Common::SeekableReadStream &stream)
+{
+    Mob mob;
+    while (mob.loadFromStream(stream))
+        _mobList.push_back(mob);
+
+    return true;
+}
+
+class ObjectList {
+public:
+    bool loadFromStream(Common::SeekableReadStream &stream);
+
+    Common::Array<Object> _objList;
+};
+
+bool ObjectList::loadFromStream(Common::SeekableReadStream &stream)
+{
+    Object obj;
+    while (obj.loadFromStream(stream))
+        _objList.push_back(obj);
+
+    return true;
 }
 
 bool PrinceEngine::loadLocation(uint16 locationNr) {
@@ -145,12 +213,73 @@ bool PrinceEngine::loadLocation(uint16 locationNr) {
 
     if(_roomBmp.loadStream(*room)) {
         debug("Room bitmap loaded");
-        _system->getPaletteManager()->setPalette(_roomBmp.getPalette(), 0, 256);
     }
 
     delete room;
 
+    delete _mobList;
+    _mobList = NULL;
+
+    Common::SeekableReadStream *mobListStream = SearchMan.createReadStreamForMember("mob.lst");
+    if (!mobListStream) {
+        error("Can't read mob.lst");
+        return false;
+    }
+
+    _mobList = new MobList();
+    _mobList->loadFromStream(*mobListStream);
+
+    delete mobListStream;
+
+    delete _objectList;
+    _objectList = NULL;
+
+    Common::SeekableReadStream *objListStream = SearchMan.createReadStreamForMember("obj.lst");
+    if (!objListStream) {
+        error("Can't read obj.lst");
+        return false;
+    }
+
+    _objectList = new ObjectList();
+    _objectList->loadFromStream(*objListStream);
+    delete objListStream;
+
+    const char *musName = MusicPlayer::_musTable[MusicPlayer::_musRoomTable[locationNr]];
+    _midiPlayer->loadMidi(musName);
+
     return true;
+}
+
+void PrinceEngine::changeCursor(uint16 curId)
+{
+    Graphics::Surface *curSurface = NULL;
+
+    uint16 hotspotX = 0;
+    uint16 hotspotY = 0;
+
+    switch(curId) {
+        case 0:
+            CursorMan.showMouse(false);
+            return;
+        case 1:
+            curSurface = _cur1;
+            break;
+        case 2:
+            curSurface = _cur2;
+            hotspotX = curSurface->w >> 1;
+            hotspotY = curSurface->h >> 1;
+            break;
+    }
+
+    CursorMan.replaceCursorPalette(_roomBmp.getPalette(), 0, 255);
+    CursorMan.replaceCursor(
+        curSurface->getBasePtr(0, 0), 
+        curSurface->w, curSurface->h, 
+        hotspotX, hotspotY, 
+        255, false,
+        &curSurface->format
+    );
+    CursorMan.showMouse(true);
 }
 
 bool PrinceEngine::playNextFrame() {
@@ -193,9 +322,46 @@ void PrinceEngine::keyHandler(Common::Event event) {
     }
 }
 
+void PrinceEngine::hotspot() {
+	Common::Point mousepos = _system->getEventManager()->getMousePos();
+
+    Common::Array<Mob>::iterator it = _mobList->_mobList.begin(); 
+    for (; it != _mobList->_mobList.end(); ++it) {
+        if (it->_visible)
+            continue;
+        if (it->_rect.contains(mousepos)) {
+            uint16 textW = 0;
+            for (int i = 0; i < it->_name.size(); ++i)
+                textW += _font.getCharWidth(it->_name[i]);
+
+            uint16 x = mousepos.x - textW/2;
+            if (x > _graph->_frontScreen->w)
+                x = 0;
+
+            if (x + textW > _graph->_frontScreen->w)
+                x = _graph->_frontScreen->w - textW;
+
+            _font.drawString(
+                _graph->_frontScreen, 
+                it->_name, 
+                x,
+                mousepos.y - _font.getFontHeight(),
+                _graph->_frontScreen->w,
+                216
+            );
+            break;
+        }
+    }
+}
+
 void PrinceEngine::mainLoop() {
 
+    loadLocation(1);
+    changeCursor(1);
+    CursorMan.showMouse(true);
+
     while (!shouldQuit()) {
+        _debugger->onFrame();
         Common::Event event;
         Common::EventManager *eventMan = _system->getEventManager();
         while (eventMan->pollEvent(event)) {
@@ -223,12 +389,21 @@ void PrinceEngine::mainLoop() {
         if (shouldQuit())
             return;
 
-        _script->step();
+        //_script->step();
 
-        if (_roomBmp.getSurface())
+        if (_roomBmp.getSurface()) {
+            _graph->setPalette(_roomBmp.getPalette());
             _graph->draw(_roomBmp.getSurface());
+        }
 
         playNextFrame();
+
+        //debug("Cursor visible %d", CursorMan.isVisible());
+
+        //if (_objectList)
+        //    _graph->drawTransparent(_objectList->getSurface());
+
+        hotspot();
 
         _graph->update();
 

@@ -53,6 +53,9 @@ class PrinceEngine;
 class GraphicsMan;
 class Script;
 class Debugger;
+class ObjectList;
+class MobList;
+class MusicPlayer;
 
 class PrinceEngine : public Engine {
 protected:
@@ -77,19 +80,28 @@ public:
 
     virtual GUI::Debugger *getDebugger();
 
+    void changeCursor(uint16 curId);
+
 private:
     bool playNextFrame();
     void keyHandler(Common::Event event);
+    void hotspot();
 
     Common::RandomSource *_rnd;
     Graphics::BitmapDecoder _roomBmp;
     uint16 _locationNr;
     MhwanhDecoder _walizkaBmp;
 
+    Graphics::Surface *_cur1;
+    Graphics::Surface *_cur2;
+
     Debugger *_debugger;
     GraphicsMan *_graph;
     Script *_script;
     Font _font;
+    ObjectList *_objectList;
+    MobList *_mobList;
+    MusicPlayer *_midiPlayer;
     
     void mainLoop();
 

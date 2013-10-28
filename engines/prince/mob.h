@@ -20,41 +20,29 @@
  *
  */
 
-#ifndef PRINCE_GRAPHICS_H
-#define PRINCE_GRAPHICS_H
+#include "common/scummsys.h"
+#include "common/rect.h"
+#include "common/str.h"
 
-#include "graphics/surface.h"
-
+namespace Common {
+    class SeekableReadStream;
+}
 
 namespace Prince {
 
-class PrinceEngine;
-
-class GraphicsMan
-{
+class Mob {
 public:
-    GraphicsMan(PrinceEngine *vm);
+    Mob() {}
 
-    void update();
+    bool loadFromStream(Common::SeekableReadStream &stream);
+  
 
-    void change();
-
-    void setPalette(const byte *palette);
-
-    void draw(const Graphics::Surface *s);
-    void drawTransparent(const Graphics::Surface *s);
-
-    Graphics::Surface *_frontScreen;
-    Graphics::Surface *_backScreen;
-    const Graphics::Surface *_roomBackground;
-
-private:
-
-    PrinceEngine *_vm;
-
-    bool _changed;
+    bool _visible; 
+    uint16 _type;
+    Common::Rect _rect;
+    Common::String _name;
+    Common::String _examText;
 };
 
 }
 
-#endif

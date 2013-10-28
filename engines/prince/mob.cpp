@@ -20,41 +20,44 @@
  *
  */
 
-#ifndef PRINCE_GRAPHICS_H
-#define PRINCE_GRAPHICS_H
+#include "prince/mob.h"
 
-#include "graphics/surface.h"
-
+#include "common/stream.h"
 
 namespace Prince {
 
-class PrinceEngine;
+bool Mob::loadFromStream(Common::SeekableReadStream &stream) {
+    int32 pos = stream.pos();
 
-class GraphicsMan
-{
-public:
-    GraphicsMan(PrinceEngine *vm);
+    uint16 visible = stream.readUint16LE();
 
-    void update();
+    if (visible == 0xFFFF)
+        return false;
 
-    void change();
+    _visible = visible;
+    _type = stream.readUint16LE();
+    _rect.left = stream.readUint16LE();
+    _rect.top = stream.readUint16LE();
+    _rect.right = stream.readUint16LE();
+    _rect.bottom = stream.readUint16LE();
 
-    void setPalette(const byte *palette);
+    stream.skip(6 * sizeof(uint16));
+    uint32 nameOffset = stream.readUint32LE();
+    uint32 examTextOffset = stream.readUint32LE();
 
-    void draw(const Graphics::Surface *s);
-    void drawTransparent(const Graphics::Surface *s);
+    byte c;
+    stream.seek(nameOffset);
+    _name.clear();
+    while ((c = stream.readByte()))
+        _name += c;
 
-    Graphics::Surface *_frontScreen;
-    Graphics::Surface *_backScreen;
-    const Graphics::Surface *_roomBackground;
+    stream.seek(examTextOffset);
+    _examText.clear();
+    while ((c = stream.readByte()))
+        _examText += c;
+    stream.seek(pos + 32);
 
-private:
-
-    PrinceEngine *_vm;
-
-    bool _changed;
-};
-
+    return true;
 }
 
-#endif
+}

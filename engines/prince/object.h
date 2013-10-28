@@ -20,39 +20,26 @@
  *
  */
 
-#ifndef PRINCE_GRAPHICS_H
-#define PRINCE_GRAPHICS_H
+#ifndef PRINCE_OBJECT_H
+#define PRINCE_OBJECT_H
 
+#include "graphics/decoders/image_decoder.h"
 #include "graphics/surface.h"
-
 
 namespace Prince {
 
-class PrinceEngine;
-
-class GraphicsMan
-{
+class Object {
 public:
-    GraphicsMan(PrinceEngine *vm);
+    Object();
 
-    void update();
-
-    void change();
-
-    void setPalette(const byte *palette);
-
-    void draw(const Graphics::Surface *s);
-    void drawTransparent(const Graphics::Surface *s);
-
-    Graphics::Surface *_frontScreen;
-    Graphics::Surface *_backScreen;
-    const Graphics::Surface *_roomBackground;
+    bool loadFromStream(Common::SeekableReadStream &stream);
+    Graphics::Surface *getSurface() const { return _surface; }
 
 private:
+    void loadSurface(Common::SeekableReadStream &stream);
 
-    PrinceEngine *_vm;
-
-    bool _changed;
+    Graphics::Surface *_surface; 
+    uint16 _x, _y, _z;
 };
 
 }

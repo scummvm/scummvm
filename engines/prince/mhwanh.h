@@ -28,8 +28,7 @@
 
 namespace Prince {
 
-class MhwanhDecoder : public Graphics::ImageDecoder
-{
+class MhwanhDecoder : public Graphics::ImageDecoder {
 public:
     MhwanhDecoder();
     virtual ~MhwanhDecoder();

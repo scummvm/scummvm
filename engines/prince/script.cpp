@@ -206,24 +206,48 @@ void Script::O_REMBACKANIM() {
     debugScript("O_REMBACKANIM roomId %d, slot %d", roomId, slot);
 }
 
-void Script::O_CHECKBACKANIMFRAME() {}
+void Script::O_CHECKBACKANIMFRAME() {
+    uint16 slotId = readScript16bits();
+    uint16 frameId = readScript16bits();
 
-void Script::O_FREEALLSAMPLES() {}
+    debugScript("O_CHECKBACKANIMFRAME slotId %d, frameId %d", slotId, frameId);
+}
 
-void Script::O_SETMUSIC() {}
+void Script::O_FREEALLSAMPLES() {
+    debugScript("O_FREEALLSAMPLES");
+}
 
-void Script::O_STOPMUSIC() {}
+void Script::O_SETMUSIC() {
+    uint16 musicId = readScript16bits();
 
-void Script::O__WAIT() {}
+    debugScript("O_SETMUSIC musicId %d", musicId);
+}
 
-void Script::O_UPDATEOFF() {}
+void Script::O_STOPMUSIC() {
+    debugScript("O_STOPMUSIC");
+}
 
-void Script::O_UPDATEON() {}
+void Script::O__WAIT() {
+    uint16 pause = readScript16bits();
 
-void Script::O_UPDATE () {}
+    debugScript("O__WAIT pause %d", pause);
+}
 
-void Script::O_CLS() {}
+void Script::O_UPDATEOFF() {
+    debugScript("O_UPDATEOFF");
+}
 
+void Script::O_UPDATEON() {
+    debugScript("O_UPDATEON");
+}
+
+void Script::O_UPDATE () {
+    debugScript("O_UPDATE");
+}
+
+void Script::O_CLS() {
+    debugScript("O_CLS");
+}
 
 void Script::O__CALL() {
     int32 address = readScript32bits();
@@ -247,7 +271,10 @@ void Script::O_GO() {
     debugScript("O_GO 0x%04X", opPC);
     _currentInstruction += opPC - 4;
 }
-void Script::O_BACKANIMUPDATEOFF() {}
+void Script::O_BACKANIMUPDATEOFF() {
+    uint16 slotId = readScript32bits();
+    debugScript("O_BACKANIMUPDATEOFF slotId %d", slotId);
+}
 
 void Script::O_BACKANIMUPDATEON() {
     uint16 slot = readScript16bits();
@@ -258,26 +285,39 @@ void Script::O_CHANGECURSOR() {
     uint16 cursorId = readScript16bits();
     debugScript("O_CHANGECURSOR %x", cursorId);
 }
-void Script::O_CHANGEANIMTYPE() {}
+
+void Script::O_CHANGEANIMTYPE() {
+    // NOT IMPLEMENTED
+}
+
 void Script::O__SETFLAG() {
     uint16 flagId = readScript16bits();
     uint16 value = readScript16bits();
+
+    if (value & 0x8000) {
+        value = _flags[value - 0x8000];
+    }
+
     debugScript("O__SETFLAG 0x%04X %d", flagId, value);
-    _flags[flagId-0x8000] = value;
+    _flags[flagId - 0x8000] = value;
 }
 
 void Script::O_COMPARE() {
     uint16 flagId = readScript16bits();
     uint16 value = readScript16bits();
+
+    if (value & 0x8000) {
+        value = _flags[value - 0x8000];
+    }
+
     debugScript("O_COMPARE flagId 0x%04X, value %d", flagId, value);
-    _result = (_flags[flagId-0x8000] == value);
+    _result = (_flags[flagId - 0x8000] == value);
 }
 
 void Script::O_JUMPZ() {
     int32 offset = readScript32bits();
     debugScript("O_JUMPZ offset 0x%04X", offset);
-    if (_result == 0)
-    {
+    if (! _result) {
         _currentInstruction += offset - 4;
     }
 }
@@ -285,20 +325,26 @@ void Script::O_JUMPZ() {
 void Script::O_JUMPNZ() {
     int32 offset = readScript32bits();
     debugScript("O_JUMPNZ offset 0x%04X", offset);
-    if (_result)
-    {
+    if (_result) {
         _currentInstruction += offset - 4;
     }
 }
 
-void Script::O_EXIT() {}
+void Script::O_EXIT() {
+    uint16 exitCode = readScript16bits();
+    debugScript("O_EXIT exitCode %d", exitCode);
+}
 
 void Script::O_ADDFLAG() {
     uint16 flagId = readScript16bits();
     uint16 value = readScript16bits();
 
-    _flags[flagId-0x8000] += value;
-    if (_flags[flagId-0x8000])
+    if (value & 0x8000) {
+        value = _flags[value - 0x8000];
+    }
+
+    _flags[flagId - 0x8000] += value;
+    if (_flags[flagId - 0x8000])
         _result = 1;
     else
         _result = 0;
@@ -317,8 +363,12 @@ void Script::O_SUBFLAG() {
     uint16 flagId = readScript16bits();
     uint16 value = readScript16bits();
 
-    _flags[flagId-0x8000] -= value;
-    if (_flags[flagId-0x8000])
+    if (value & 0x8000) {
+        value = _flags[value - 0x8000];
+    }
+
+    _flags[flagId - 0x8000] -= value;
+    if (_flags[flagId - 0x8000])
         _result = 1;
     else
         _result = 0;
@@ -332,17 +382,84 @@ void Script::O_SETSTRING() {
     debugScript("O_SETSTRING 0x%04X", offset);
 }
 
-void Script::O_ANDFLAG() {}
+void Script::O_ANDFLAG() {
+    uint16 flagId = readScript16bits();
+    uint16 value = readScript16bits();
 
-void Script::O_GETMOBDATA() {}
+    debugScript("O_ANDFLAG flagId %d, value %d", flagId, value);
 
-void Script::O_ORFLAG() {}
+    if (value & 0x8000) {
+        value = _flags[value - 0x8000];
+    }
 
-void Script::O_SETMOBDATA() {}
+    _flags[flagId - 0x8000] &= value;
 
-void Script::O_XORFLAG() {}
+    if (_flags[flagId - 0x8000]) {
+        _result = 1;
+    } else {
+        _result = 0;
+    }
+}
 
-void Script::O_GETMOBTEXT() {}
+void Script::O_GETMOBDATA() {
+    uint16 flagId = readScript16bits();
+    uint16 mobId = readScript16bits();
+    uint16 mobOffset = readScript16bits();
+
+    debugScript("O_GETMOBDATA flagId %d, modId %d, mobOffset %d", flagId, mobId, mobOffset);
+}
+
+void Script::O_ORFLAG() {
+    uint16 flagId = readScript16bits();
+    uint16 value = readScript16bits();
+    
+    debugScript("O_ORFLAG flagId %d, value %d", flagId, value);
+
+    if (value & 0x8000) {
+        value = _flags[value - 0x8000];
+    }
+
+    _flags[flagId - 0x8000] |= value;
+
+    if (_flags[flagId - 0x8000]) {
+        _result = 1;
+    } else {
+        _result = 0;
+    }
+}
+
+void Script::O_SETMOBDATA() {
+    uint16 mobId = readScript16bits();
+    uint16 mobOffset = readScript16bits();
+    uint16 value = readScript16bits();
+
+    debugScript("O_SETMOBDATA mobId %d, mobOffset %d, value %d", mobId, mobOffset, value);
+}
+
+void Script::O_XORFLAG() {
+    uint16 flagId = readScript16bits();
+    uint16 value = readScript16bits();
+
+    debugScript("O_XORFLAG flagId %d, value %d", flagId, value);
+
+    if (value & 0x8000) {
+        value = _flags[value - 0x8000];
+    }
+
+    _flags[flagId - 0x8000] ^= value;
+
+    if (_flags[flagId - 0x8000]) {
+        _result = 1;
+    } else {
+        _result = 0;
+    }
+}
+
+void Script::O_GETMOBTEXT() {
+    uint16 value = readScript16bits();
+
+    debugScript("O_GETMOBTEXT value %d", value);
+}
 
 void Script::O_MOVEHERO() {
     uint16 heroId = readScript16bits();

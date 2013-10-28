@@ -40,6 +40,7 @@ void GraphicsMan::update() {
         _vm->_system->copyRectToScreen((byte*)_frontScreen->getBasePtr(0,0), 640, 0, 0, 640, 480);
 
         _vm->_system->updateScreen();
+        _changed = false;
     }
 }
 
@@ -53,15 +54,19 @@ void GraphicsMan::change() {
 
 void GraphicsMan::draw(const Graphics::Surface *s)
 {
-   for (uint y = 0; y < 480; y++)
-       memcpy((byte*)_frontScreen->getBasePtr(0, y), (byte*)s->getBasePtr(0, y), 640);
-   change();
+    uint16 w = MIN(_frontScreen->w, s->w);
+    for (uint y = 0; y < s->h; y++) {
+        if (y < _frontScreen->h) {
+           memcpy((byte*)_frontScreen->getBasePtr(0, y), (byte*)s->getBasePtr(0, y), w);
+        }
+    }
+    change();
 }
 
 void GraphicsMan::drawTransparent(const Graphics::Surface *s)
 {
-    for (uint y = 0; y < 480; ++y) {
-        for (uint x = 0; x < 640; ++x) {
+    for (uint y = 0; y < s->h; ++y) {
+        for (uint x = 0; x < s->w; ++x) {
             byte pixel = *((byte*)s->getBasePtr(x,y));
             if (pixel != 255) {
                 *((byte*)_frontScreen->getBasePtr(x, y)) = pixel;

@@ -31,6 +31,8 @@ Debugger::Debugger(PrinceEngine *vm) : GUI::Debugger(), _vm(vm) {
     DCmd_Register("getflag",        WRAP_METHOD(Debugger, Cmd_GetFlag));
     DCmd_Register("clearflag",      WRAP_METHOD(Debugger, Cmd_ClearFlag));
     DCmd_Register("viewflc",        WRAP_METHOD(Debugger, Cmd_ViewFlc));
+    DCmd_Register("initroom",       WRAP_METHOD(Debugger, Cmd_InitRoom));
+    DCmd_Register("changecursor",   WRAP_METHOD(Debugger, Cmd_ChangeCursor));
 }
 
 static int strToInt(const char *s) {
@@ -108,4 +110,29 @@ bool Debugger::Cmd_ViewFlc(int argc, const char **argv) {
     _vm->loadAnim(flagNum);
     return true;
 }
+
+bool Debugger::Cmd_InitRoom(int argc, const char **argv) {
+    // Check for a flag to clear
+    if (argc != 2) {
+        DebugPrintf("Usage: %s <anim number>\n", argv[0]);
+        return true;
+    }
+
+    int flagNum = strToInt(argv[1]);
+    _vm->loadLocation(flagNum);
+    return true;
+}
+
+bool Debugger::Cmd_ChangeCursor(int argc, const char **argv) {
+    // Check for a flag to clear
+    if (argc != 2) {
+        DebugPrintf("Usage: %s <curId>\n", argv[0]);
+        return true;
+    }
+
+    int flagNum = strToInt(argv[1]);
+    _vm->changeCursor(flagNum);
+    return true;
+}
+
 } 

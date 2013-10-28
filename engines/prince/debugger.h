@@ -40,6 +40,8 @@ private:
     bool Cmd_GetFlag(int argc, const char **argv);
     bool Cmd_ClearFlag(int argc, const char **argv);
     bool Cmd_ViewFlc(int argc, const char **argv);
+    bool Cmd_InitRoom(int argc, const char **argv);
+    bool Cmd_ChangeCursor(int argc, const char **argv);
 
     PrinceEngine *_vm;
 };

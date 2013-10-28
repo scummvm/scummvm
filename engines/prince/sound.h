@@ -20,41 +20,54 @@
  *
  */
 
-#ifndef PRINCE_GRAPHICS_H
-#define PRINCE_GRAPHICS_H
+/*
+ * This code is based on original Soltys source code
+ * Copyright (c) 1994-1995 Janus B. Wisniewski and L.K. Avalon
+ */
 
-#include "graphics/surface.h"
+#ifndef PRINCE_SOUND_H
+#define PRINCE_SOUND_H
 
+#include "audio/audiostream.h"
+#include "audio/decoders/wave.h"
+#include "audio/fmopl.h"
+#include "audio/mididrv.h"
+#include "audio/midiparser.h"
+#include "audio/midiplayer.h"
+#include "audio/mixer.h"
+#include "common/memstream.h"
 
 namespace Prince {
 
 class PrinceEngine;
 
-class GraphicsMan
-{
-public:
-    GraphicsMan(PrinceEngine *vm);
-
-    void update();
-
-    void change();
-
-    void setPalette(const byte *palette);
-
-    void draw(const Graphics::Surface *s);
-    void drawTransparent(const Graphics::Surface *s);
-
-    Graphics::Surface *_frontScreen;
-    Graphics::Surface *_backScreen;
-    const Graphics::Surface *_roomBackground;
-
+class MusicPlayer: public Audio::MidiPlayer {
 private:
+	PrinceEngine *_vm;
+	byte *_data;
+	int _dataSize;
+	bool _isGM;
 
-    PrinceEngine *_vm;
+	// Start MIDI File
+	void sndMidiStart();
 
-    bool _changed;
+	// Stop MIDI File
+	void sndMidiStop();
+public:
+	MusicPlayer(PrinceEngine *vm);
+	~MusicPlayer();
+
+	void loadMidi(const char *);
+	void killMidi();
+
+	virtual void send(uint32 b);
+	virtual void sendToChannel(byte channel, uint32 b);
+
+    static const char * _musTable[];
+    static const uint8 _musRoomTable[];
 };
 
-}
+} // End of namespace Prince
 
 #endif
+
