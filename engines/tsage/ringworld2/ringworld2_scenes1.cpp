@@ -1896,6 +1896,7 @@ void Scene1200::process(Event &event) {
 						SceneItem::display(1200, 10, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
 						break;
 					}
+					break;
 				case 33:
 					R2_GLOBALS._sceneManager.changeScene(3245);
 					break;
@@ -2242,6 +2243,11 @@ Scene1337::Scene1337() {
 	_field424A = 0;
 	_field424C = 0;
 	_field424E = 0;
+
+	_unkFctPtr412 = nullptr;
+	_field3EF0 = nullptr;
+	_field3EF4 = nullptr;
+	_field3EF8 = nullptr;
 }
 
 void Scene1337::synchronize(Serializer &s) {
@@ -4947,7 +4953,7 @@ void Scene1337::subC2C2F() {
 
 		if (!found) {
 			for (int i = 0; i <= 7; i++) {
-				if ((_arrunkObj1337[3]._arr2[i]._field34 == 1) && (!subC2687(_arrunkObj1337[3]._arr3[i]._field34))) {
+				if ((_arrunkObj1337[3]._arr2[i]._field34 == 1) && (!subC2687(_arrunkObj1337[3]._arr3[0]._field34))) {
 					int tmpVal = 0;
 
 					for (int j = 0; j <= 7; j++) {
@@ -10915,6 +10921,8 @@ Scene1750::Scene1750() {
 	_field419 = 0;
 	_field41B = 0;
 	_field41D = 0;
+
+	_rotation = nullptr;
 }
 
 void Scene1750::synchronize(Serializer &s) {
