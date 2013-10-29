@@ -59,6 +59,8 @@ EMCInterpreter::EMCInterpreter(ToonEngine *vm) : _vm(vm), _scriptData(0), _filen
 	};
 	_opcodes = opcodes;
 #undef OPCODE
+
+	_parameter = 0;
 }
 
 EMCInterpreter::~EMCInterpreter() {
