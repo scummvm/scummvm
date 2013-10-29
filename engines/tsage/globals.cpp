@@ -406,7 +406,6 @@ Ringworld2Globals::Ringworld2Globals() {
 	_scannerDialog = new ScannerDialog();
 	_speechSubtitles = SPEECH_TEXT;
 
-	_v5657C = 0;
 	_stripModifier = 0;
 	_flubMazeArea = 1;
 	_flubMazeEntryDirection = 0;
@@ -429,7 +428,6 @@ Ringworld2Globals::Ringworld2Globals() {
 	_v5780C = 0;
 	_v5780E = 0;
 	_v57810 = 0;
-	_v57C2C = 0;
 }
 
 Ringworld2Globals::~Ringworld2Globals() {
@@ -462,7 +460,6 @@ void Ringworld2Globals::reset() {
 	_v558B6.set(0, 0, 0, 0);
 	_v558C2 = 0;
 	_animationCtr = 0;
-	_v5657C = 0;
 	_electromagnetChangeAmount = 0;
 	_electromagnetZoom = 0;
 	_v565E5 = 0;
@@ -536,7 +533,6 @@ void Ringworld2Globals::reset() {
 	_v5780C = 0;
 	_v5780E = 0;
 	_v57810 = 0;
-	_v57C2C = 0;
 	_s1550PlayerArea[R2_QUINN] = Common::Point(27, 4);
 	_s1550PlayerArea[R2_SEEKER] = Common::Point(27, 4);
 	Common::fill(&_scannerFrequencies[0], &_scannerFrequencies[MAX_CHARACTERS], 1);
@@ -574,7 +570,6 @@ void Ringworld2Globals::synchronize(Serializer &s) {
 
 	s.syncAsSint16LE(_v558C2);
 	s.syncAsSint16LE(_animationCtr);
-	s.syncAsSint16LE(_v5657C);
 	s.syncAsSint16LE(_electromagnetChangeAmount);
 	s.syncAsSint16LE(_electromagnetZoom);
 	s.syncAsSint16LE(_v565E5);
@@ -596,7 +591,6 @@ void Ringworld2Globals::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_v5780C);
 	s.syncAsSint16LE(_v5780E);
 	s.syncAsSint16LE(_v57810);
-	s.syncAsSint16LE(_v57C2C);
 
 	s.syncAsByte(_s1550PlayerArea[R2_QUINN].x);
 	s.syncAsByte(_s1550PlayerArea[R2_SEEKER].x);

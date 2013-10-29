@@ -273,7 +273,6 @@ public:
 	int _foodCount;
 	int _rimLocation;
 	int _rimTransportLocation;
-	int _v5657C; // Useless variable
 	byte _stripModifier;
 	byte _spillLocation[14];
 	VampireData _vampireData[18];
@@ -300,7 +299,6 @@ public:
 	int _v5780C;
 	int _v5780E;
 	int _v57810;
-	int _v57C2C; // Useless variable. Seems to be _speechSubtitles
 	int _speechSubtitles;
 	Common::Point _s1550PlayerArea[3]; // only used for Quinn and Seeker
 	byte _scannerFrequencies[4];
