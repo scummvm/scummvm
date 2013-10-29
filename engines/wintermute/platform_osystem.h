@@ -48,10 +48,6 @@ public:
 	// Win32 API bindings
 	static bool getCursorPos(Point32 *lpPoint);
 	static bool setCursorPos(int x, int y);
-	static bool showWindow(int nCmdShow);
-
-	static void setCapture();
-	static bool releaseCapture();
 
 	static bool setRectEmpty(Rect32 *lprc);
 	static bool isRectEmpty(const Rect32 *lprc);

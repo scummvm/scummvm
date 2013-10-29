@@ -2160,7 +2160,6 @@ bool AdGame::onMouseLeftDown() {
 		_gameRef->_capturedObject = _gameRef->_activeObject;
 	}
 	_mouseLeftDown = true;
-	BasePlatform::setCapture(/*_renderer->_window*/);
 
 	return STATUS_OK;
 }
@@ -2171,7 +2170,6 @@ bool AdGame::onMouseLeftUp() {
 		_activeObject->handleMouse(MOUSE_RELEASE, MOUSE_BUTTON_LEFT);
 	}
 
-	BasePlatform::releaseCapture();
 	_capturedObject = nullptr;
 	_mouseLeftDown = false;
 
