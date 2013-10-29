@@ -7910,7 +7910,6 @@ void Scene1550::signal() {
 	// No break on purpose
 	case 7:
 		_field412 = 0;
-		R2_GLOBALS._v56AAB = 0;
 		R2_GLOBALS._player.enableControl(CURSOR_WALK);
 		break;
 	case 20:
@@ -10738,7 +10737,6 @@ void Scene1700::signal() {
 			_stripManager.start(541, this);
 		break;
 	case 31:
-		R2_GLOBALS._v56AAB = 0;
 		R2_GLOBALS._player.enableControl(CURSOR_TALK);
 		break;
 	case 40:
@@ -14955,7 +14953,6 @@ void Scene1950::enterArea() {
 	case 0:
 		_sceneMode = 1950;
 		if (R2_INVENTORY.getObjectScene(R2_SCRITH_KEY) == 0) {
-			R2_GLOBALS._v56AAB = 0;
 			R2_GLOBALS._player.enableControl(CURSOR_WALK);
 		} else {
 			setAction(&_sequenceManager, this, 1950, &R2_GLOBALS._player, NULL);
@@ -14988,7 +14985,6 @@ void Scene1950::enterArea() {
 			_sceneMode = 18;
 			_eastExit._enabled = false;
 			_field418 = Common::Point(60, 152);
-			R2_GLOBALS._v56AAB = 0;
 			R2_GLOBALS._player.enableControl(CURSOR_USE);
 			R2_GLOBALS._player._canWalk = false;
 
@@ -15041,7 +15037,6 @@ void Scene1950::enterArea() {
 			_westExit._enabled = false;
 			_field418 = Common::Point(259, 152);
 
-			R2_GLOBALS._v56AAB = 0;
 			R2_GLOBALS._player.enableControl(CURSOR_USE);
 			R2_GLOBALS._player._canWalk = false;
 
@@ -15282,13 +15277,11 @@ void Scene1950::signal() {
 		break;
 	case 1958:
 		SceneItem::display(1950, 24, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
-		R2_GLOBALS._v56AAB = 0;
 		R2_GLOBALS._player.enableControl(CURSOR_WALK);
 		_doorExit._enabled = true;
 		break;
 	case 1959:
 		R2_INVENTORY.setObjectScene(R2_SOAKED_FACEMASK, 0);
-		R2_GLOBALS._v56AAB = 0;
 		R2_GLOBALS._player.enableControl(CURSOR_WALK);
 		_doorExit._enabled = true;
 		break;
@@ -15343,7 +15336,6 @@ void Scene1950::signal() {
 		R2_GLOBALS._player.animate(ANIM_MODE_1, NULL);
 		break;
 	default:
-		R2_GLOBALS._v56AAB = 0;
 		R2_GLOBALS._player.enableControl(CURSOR_WALK);
 		break;
 	}

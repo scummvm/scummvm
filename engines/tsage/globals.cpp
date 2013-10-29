@@ -424,7 +424,6 @@ Ringworld2Globals::Ringworld2Globals() {
 	_v56AA6 = 1;
 	_v56AA7 = 1;
 	_v56AA8 = 1;
-	_v56AAB = 0;
 	_scene180Mode = -1;
 	_v57709 = 0;
 	_v5780C = 0;
@@ -532,7 +531,6 @@ void Ringworld2Globals::reset() {
 	_v56AA6 = 1;
 	_v56AA7 = 1;
 	_v56AA8 = 1;
-	_v56AAB = 0;
 	_scene180Mode = -1;
 	_v57709 = 0;
 	_v5780C = 0;
@@ -593,7 +591,6 @@ void Ringworld2Globals::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_walkwaySceneNumber);
 	s.syncAsSint16LE(_ventCellPos.x);
 	s.syncAsSint16LE(_ventCellPos.y);
-	s.syncAsSint16LE(_v56AAB);
 	s.syncAsSint16LE(_scene180Mode);
 	s.syncAsSint16LE(_v57709);
 	s.syncAsSint16LE(_v5780C);

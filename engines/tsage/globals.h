@@ -295,7 +295,6 @@ public:
 	byte _v56AA6;
 	byte _v56AA7;
 	byte _v56AA8;
-	int _v56AAB; // Useless variable
 	int _scene180Mode;	// _v575f7
 	int _v57709;
 	int _v5780C;

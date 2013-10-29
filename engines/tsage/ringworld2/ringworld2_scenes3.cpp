@@ -5353,7 +5353,6 @@ void Scene3800::signal() {
 		enterArea();
 		break;
 	case 15:
-		R2_GLOBALS._v56AAB = 0;
 		R2_GLOBALS._player.enableControl();
 		break;
 	case 16:
@@ -5363,7 +5362,6 @@ void Scene3800::signal() {
 		_actor1.show();
 		_object1.remove();
 		_object2.remove();
-		R2_GLOBALS._v56AAB = 0;
 		R2_GLOBALS._player.enableControl();
 		break;
 	case 3805:
@@ -5629,7 +5627,6 @@ void Scene3900::signal() {
 	case 11:
 	// No break on purpose
 	case 12:
-		R2_GLOBALS._v56AAB = 0;
 		R2_GLOBALS._player.enableControl(CURSOR_WALK);
 		break;
 	case 13:
