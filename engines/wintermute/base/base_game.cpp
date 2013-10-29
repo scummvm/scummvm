@@ -1123,7 +1123,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 			BaseUtils::swap(&top, &bottom);
 		}
 
-		BasePlatform::setRect(&_mouseLockRect, left, top, right, bottom);
+		_mouseLockRect.setRect(left, top, right, bottom);
 
 		stack->pushNULL();
 		return STATUS_OK;
@@ -3361,10 +3361,10 @@ bool BaseGame::getCurrentViewportRect(Rect32 *rect, bool *custom) const {
 				*custom = true;
 			}
 		} else {
-			BasePlatform::setRect(rect,   _renderer->_drawOffsetX,
-			                      _renderer->_drawOffsetY,
-			                      _renderer->getWidth() + _renderer->_drawOffsetX,
-			                      _renderer->getHeight() + _renderer->_drawOffsetY);
+			rect->setRect(_renderer->_drawOffsetX,
+						  _renderer->_drawOffsetY,
+						  _renderer->getWidth() + _renderer->_drawOffsetX,
+						  _renderer->getHeight() + _renderer->_drawOffsetY);
 			if (custom) {
 				*custom = false;
 			}

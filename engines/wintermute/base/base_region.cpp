@@ -502,7 +502,7 @@ bool BaseRegion::getBoundingRect(Rect32 *rect) {
 			maxX = MAX(maxX, _points[i]->x);
 			maxY = MAX(maxY, _points[i]->y);
 		}
-		BasePlatform::setRect(rect, minX, minY, maxX, maxY);
+		rect->setRect(minX, minY, maxX, maxY);
 	}
 	return STATUS_OK;
 }

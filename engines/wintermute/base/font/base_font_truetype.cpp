@@ -34,7 +34,6 @@
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/utils/utils.h"
-#include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/wintermute.h"
 #include "graphics/fonts/ttf.h"
 #include "graphics/fontman.h"
@@ -227,7 +226,7 @@ void BaseFontTT::drawText(const byte *text, int x, int y, int width, TTextAlign 
 	// and paint it
 	if (surface) {
 		Rect32 rc;
-		BasePlatform::setRect(&rc, 0, 0, surface->getWidth(), surface->getHeight());
+		rc.setRect(0, 0, surface->getWidth(), surface->getHeight());
 		for (uint32 i = 0; i < _layers.size(); i++) {
 			uint32 color = _layers[i]->_color;
 			uint32 origForceAlpha = renderer->_forceAlphaColor;

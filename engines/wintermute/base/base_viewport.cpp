@@ -29,7 +29,6 @@
 #include "engines/wintermute/base/base_viewport.h"
 #include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/base_persistence_manager.h"
-#include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
 
 namespace Wintermute {
@@ -73,7 +72,7 @@ bool BaseViewport::setRect(int32 left, int32 top, int32 right, int32 bottom, boo
 		bottom = MIN(bottom, BaseEngine::instance().getRenderer()->getHeight());
 	}
 
-	BasePlatform::setRect(&_rect, left, top, right, bottom);
+	_rect.setRect(left, top, right, bottom);
 	_offsetX = left;
 	_offsetY = top;
 	return STATUS_OK;

@@ -374,7 +374,7 @@ bool BaseRenderer::displayIndicator() {
 	}
 	if (_saveLoadImage && !_hasDrawnSaveLoadImage) {
 		Rect32 rc;
-		BasePlatform::setRect(&rc, 0, 0, _saveLoadImage->getWidth(), _saveLoadImage->getHeight());
+		rc.setRect(0, 0, _saveLoadImage->getWidth(), _saveLoadImage->getHeight());
 		if (_loadInProgress) {
 			_saveLoadImage->displayTrans(_loadImageX, _loadImageY, rc);
 		} else {

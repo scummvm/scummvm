@@ -174,16 +174,6 @@ bool BasePlatform::ptInRect(Rect32 *lprc, Point32 p) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BasePlatform::setRect(Rect32 *lprc, int left, int top, int right, int bottom) {
-	lprc->left   = left;
-	lprc->top    = top;
-	lprc->right  = right;
-	lprc->bottom = bottom;
-
-	return true;
-}
-
-//////////////////////////////////////////////////////////////////////////
 bool BasePlatform::intersectRect(Rect32 *lprcDst, const Rect32 *lprcSrc1, const Rect32 *lprcSrc2) {
 	if (lprcSrc1->isRectEmpty() || lprcSrc2->isRectEmpty() ||
 	        lprcSrc1->left >= lprcSrc2->right || lprcSrc2->left >= lprcSrc1->right ||

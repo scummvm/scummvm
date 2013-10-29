@@ -104,6 +104,14 @@ struct Rect32 {
 		right  += dx;
 		bottom += dy;
 	}
+
+	void setRect(int32 newLeft, int32 newTop, int32 newRight, int32 newBottom) {
+		this->left   = newLeft;
+		this->top    = newTop;
+		this->right  = newRight;
+		this->bottom = newBottom;
+	}
+
 	/**
 	 * Check if the given rect is equal to this one.
 	 *

@@ -38,7 +38,6 @@
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/utils/utils.h"
-#include "engines/wintermute/platform_osystem.h"
 #include "common/str.h"
 #include "common/math.h"
 
@@ -386,7 +385,7 @@ bool PartEmitter::compareZ(const PartParticle *p1, const PartParticle *p2) {
 
 //////////////////////////////////////////////////////////////////////////
 bool PartEmitter::setBorder(int x, int y, int width, int height) {
-	BasePlatform::setRect(&_border, x, y, x + width, y + height);
+	_border.setRect(x, y, x + width, y + height);
 
 	return STATUS_OK;
 }

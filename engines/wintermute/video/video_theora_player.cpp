@@ -34,7 +34,6 @@
 #include "engines/wintermute/base/gfx/base_image.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/base/sound/base_sound_manager.h"
-#include "engines/wintermute/platform_osystem.h"
 #include "video/theora_decoder.h"
 #include "engines/wintermute/wintermute.h"
 #include "common/system.h"
@@ -396,7 +395,7 @@ bool VideoTheoraPlayer::display(uint32 alpha) {
 	bool res;
 
 	if (_texture && _videoFrameReady) {
-		BasePlatform::setRect(&rc, 0, 0, _texture->getWidth(), _texture->getHeight());
+		rc.setRect(0, 0, _texture->getWidth(), _texture->getHeight());
 		if (_playZoom == 100.0f) {
 			res = _texture->displayTrans(_posX, _posY, rc, alpha);
 		} else {

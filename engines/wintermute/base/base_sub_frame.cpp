@@ -34,7 +34,6 @@
 #include "engines/wintermute/base/base_surface_storage.h"
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_engine.h"
-#include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
@@ -219,7 +218,7 @@ bool BaseSubFrame::loadBuffer(char *buffer, int lifeTime, bool keepLoaded) {
 
 Rect32 BaseSubFrame::getRect() {
 	if (_wantsDefaultRect && _surface) {
-		BasePlatform::setRect(&_rect, 0, 0, _surface->getWidth(), _surface->getHeight());
+		_rect.setRect(0, 0, _surface->getWidth(), _surface->getHeight());
 		_wantsDefaultRect = false;
 	}
 	return _rect;
@@ -294,11 +293,10 @@ bool BaseSubFrame::getBoundingRect(Rect32 *rect, int x, int y, float scaleX, flo
 	float ratioX = scaleX / 100.0f;
 	float ratioY = scaleY / 100.0f;
 
-	BasePlatform::setRect(rect,
-	                      (int)(x - _hotspotX * ratioX),
-	                      (int)(y - _hotspotY * ratioY),
-	                      (int)(x - _hotspotX * ratioX + (getRect().right - getRect().left) * ratioX),
-	                      (int)(y - _hotspotY * ratioY + (getRect().bottom - getRect().top) * ratioY));
+	rect->setRect((int)(x - _hotspotX * ratioX),
+				  (int)(y - _hotspotY * ratioY),
+				  (int)(x - _hotspotX * ratioX + (getRect().right - getRect().left) * ratioX),
+				  (int)(y - _hotspotY * ratioY + (getRect().bottom - getRect().top) * ratioY));
 	return true;
 }
 
@@ -320,7 +318,7 @@ bool BaseSubFrame::saveAsText(BaseDynamicBuffer *buffer, int indent, bool comple
 	Rect32 rect;
 	rect.setEmpty();
 	if (_surface) {
-		BasePlatform::setRect(&rect, 0, 0, _surface->getWidth(), _surface->getHeight());
+		rect.setRect(0, 0, _surface->getWidth(), _surface->getHeight());
 	}
 	if (!(rect == getRect())) {
 		buffer->putTextIndent(indent + 2, "RECT { %d,%d,%d,%d }\n", getRect().left, getRect().top, getRect().right, getRect().bottom);
