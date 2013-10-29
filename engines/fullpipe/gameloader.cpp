@@ -481,7 +481,7 @@ bool PreloadItems::load(MfcArchive &file) {
 
 	int count = file.readCount();
 
-	resize(count);
+	clear();
 
 	for (int i = 0; i < count; i++) {
 		PreloadItem *t = new PreloadItem();
