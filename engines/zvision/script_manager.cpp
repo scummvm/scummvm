@@ -205,7 +205,7 @@ void ScriptManager::checkPuzzleCriteria(Puzzle *puzzle, uint counter) {
 
 		bool shouldContinue = true;
 		for (Common::List<ResultAction *>::iterator resultIter = puzzle->resultActions.begin(); resultIter != puzzle->resultActions.end(); ++resultIter) {
-			shouldContinue = shouldContinue && (*resultIter)->execute(_engine);
+			shouldContinue = shouldContinue && (*resultIter)->execute();
 			if (!shouldContinue) {
 				break;
 			}

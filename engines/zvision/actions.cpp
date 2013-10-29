@@ -43,12 +43,13 @@ namespace ZVision {
 // ActionAdd
 //////////////////////////////////////////////////////////////////////////////
 
-ActionAdd::ActionAdd(const Common::String &line) {
+ActionAdd::ActionAdd(ZVision *engine, const Common::String &line) :
+	ResultAction(engine) {
 	sscanf(line.c_str(), "%*[^(](%u,%u)", &_key, &_value);
 }
 
-bool ActionAdd::execute(ZVision *engine) {
-	engine->getScriptManager()->addToStateValue(_key, _value);
+bool ActionAdd::execute() {
+	_engine->getScriptManager()->addToStateValue(_key, _value);
 	return true;
 }
 
@@ -57,12 +58,13 @@ bool ActionAdd::execute(ZVision *engine) {
 // ActionAssign
 //////////////////////////////////////////////////////////////////////////////
 
-ActionAssign::ActionAssign(const Common::String &line) {
+ActionAssign::ActionAssign(ZVision *engine, const Common::String &line) :
+	ResultAction(engine) {
 	sscanf(line.c_str(), "%*[^(](%u, %u)", &_key, &_value);
 }
 
-bool ActionAssign::execute(ZVision *engine) {
-	engine->getScriptManager()->setStateValue(_key, _value);
+bool ActionAssign::execute() {
+	_engine->getScriptManager()->setStateValue(_key, _value);
 	return true;
 }
 
@@ -71,11 +73,12 @@ bool ActionAssign::execute(ZVision *engine) {
 // ActionAttenuate
 //////////////////////////////////////////////////////////////////////////////
 
-ActionAttenuate::ActionAttenuate(const Common::String &line) {
+ActionAttenuate::ActionAttenuate(ZVision *engine, const Common::String &line) :
+	ResultAction(engine) {
 	sscanf(line.c_str(), "%*[^(](%u, %d)", &_key, &_attenuation);
 }
 
-bool ActionAttenuate::execute(ZVision *engine) {
+bool ActionAttenuate::execute() {
 	// TODO: Implement
 	return true;
 }
@@ -85,13 +88,14 @@ bool ActionAttenuate::execute(ZVision *engine) {
 // ActionChangeLocation
 //////////////////////////////////////////////////////////////////////////////
 
-ActionChangeLocation::ActionChangeLocation(const Common::String &line) {
+ActionChangeLocation::ActionChangeLocation(ZVision *engine, const Common::String &line) :
+	ResultAction(engine) {
 	sscanf(line.c_str(), "%*[^(](%c, %c, %c%c, %u)", &_world, &_room, &_node, &_view, &_offset);
 }
 
-bool ActionChangeLocation::execute(ZVision *engine) {
+bool ActionChangeLocation::execute() {
 	// We can't directly call ScriptManager::ChangeLocationIntern() because doing so clears all the Puzzles, and thus would corrupt the current puzzle checking
-	engine->getScriptManager()->changeLocation(_world, _room, _node, _view, _offset);
+	_engine->getScriptManager()->changeLocation(_world, _room, _node, _view, _offset);
 	// Tell the puzzle system to stop checking any more puzzles
 	return false;
 }
@@ -101,13 +105,14 @@ bool ActionChangeLocation::execute(ZVision *engine) {
 // ActionCrossfade
 //////////////////////////////////////////////////////////////////////////////
 
-ActionCrossfade::ActionCrossfade(const Common::String &line) {
+ActionCrossfade::ActionCrossfade(ZVision *engine, const Common::String &line) :
+	ResultAction(engine) {
 	sscanf(line.c_str(),
 	       "%*[^(](%u %u %u %u %u %u %u)",
 	       &_keyOne, &_keyTwo, &_oneStartVolume, &_twoStartVolume, &_oneEndVolume, &_twoEndVolume, &_timeInMillis);
 }
 
-bool ActionCrossfade::execute(ZVision *engine) {
+bool ActionCrossfade::execute() {
 	// TODO: Implement
 	return true;
 }
@@ -117,11 +122,12 @@ bool ActionCrossfade::execute(ZVision *engine) {
 // ActionDisableControl
 //////////////////////////////////////////////////////////////////////////////
 
-ActionDisableControl::ActionDisableControl(const Common::String &line) {
+ActionDisableControl::ActionDisableControl(ZVision *engine, const Common::String &line) :
+	ResultAction(engine) {
 	sscanf(line.c_str(), "%*[^(](%u)", &_key);
 }
 
-bool ActionDisableControl::execute(ZVision *engine) {
+bool ActionDisableControl::execute() {
 	debug("Disabling control %u", _key);
 
 
@@ -133,11 +139,12 @@ bool ActionDisableControl::execute(ZVision *engine) {
 // ActionEnableControl
 //////////////////////////////////////////////////////////////////////////////
 
-ActionEnableControl::ActionEnableControl(const Common::String &line) {
+ActionEnableControl::ActionEnableControl(ZVision *engine, const Common::String &line) :
+	ResultAction(engine) {
 	sscanf(line.c_str(), "%*[^(](%u)", &_key);
 }
 
-bool ActionEnableControl::execute(ZVision *engine) {
+bool ActionEnableControl::execute() {
 	debug("Enabling control %u", _key);
 
 
@@ -149,7 +156,9 @@ bool ActionEnableControl::execute(ZVision *engine) {
 // ActionMusic
 //////////////////////////////////////////////////////////////////////////////
 
-ActionMusic::ActionMusic(const Common::String &line) : _volume(255) {
+ActionMusic::ActionMusic(ZVision *engine, const Common::String &line) :
+	ResultAction(engine),
+	_volume(255) {
 	uint type;
 	char fileNameBuffer[25];
 	uint loop;
@@ -176,7 +185,7 @@ ActionMusic::ActionMusic(const Common::String &line) : _volume(255) {
 	}
 }
 
-bool ActionMusic::execute(ZVision *engine) {
+bool ActionMusic::execute() {
 	Audio::RewindableAudioStream *audioStream;
 
 	if (_fileName.contains(".wav")) {
@@ -185,14 +194,14 @@ bool ActionMusic::execute(ZVision *engine) {
 			audioStream = Audio::makeWAVStream(file, DisposeAfterUse::YES);
 		}
 	} else {
-		audioStream = makeRawZorkStream(_fileName, engine);
+		audioStream = makeRawZorkStream(_fileName, _engine);
 	}
 
 	if (_loop) {
 		Audio::LoopingAudioStream *loopingAudioStream = new Audio::LoopingAudioStream(audioStream, 0, DisposeAfterUse::YES);
-		engine->_mixer->playStream(_soundType, 0, loopingAudioStream, -1, _volume);
+		_engine->_mixer->playStream(_soundType, 0, loopingAudioStream, -1, _volume);
 	} else {
-		engine->_mixer->playStream(_soundType, 0, audioStream, -1, _volume);
+		_engine->_mixer->playStream(_soundType, 0, audioStream, -1, _volume);
 	}
 
 	return true;
@@ -203,7 +212,8 @@ bool ActionMusic::execute(ZVision *engine) {
 // ActionPreloadAnimation
 //////////////////////////////////////////////////////////////////////////////
 
-ActionPreloadAnimation::ActionPreloadAnimation(const Common::String &line) {
+ActionPreloadAnimation::ActionPreloadAnimation(ZVision *engine, const Common::String &line) :
+	ResultAction(engine) {
 	char fileName[25];
 
 	// The two %*u are always 0 and dont seem to have a use
@@ -212,7 +222,7 @@ ActionPreloadAnimation::ActionPreloadAnimation(const Common::String &line) {
 	_fileName = Common::String(fileName);
 }
 
-bool ActionPreloadAnimation::execute(ZVision *engine) {
+bool ActionPreloadAnimation::execute() {
 	// TODO: We ignore the mask and framerate atm. Mask refers to a key color used for binary alpha. We assume the framerate is the default framerate embedded in the videos
 
 	// TODO: Check if the Control already exists
@@ -226,7 +236,8 @@ bool ActionPreloadAnimation::execute(ZVision *engine) {
 // ActionPlayAnimation
 //////////////////////////////////////////////////////////////////////////////
 
-ActionPlayAnimation::ActionPlayAnimation(const Common::String &line) {
+ActionPlayAnimation::ActionPlayAnimation(ZVision *engine, const Common::String &line) :
+	ResultAction(engine) {
 	char fileName[25];
 
 	// The two %*u are always 0 and dont seem to have a use
@@ -237,7 +248,7 @@ ActionPlayAnimation::ActionPlayAnimation(const Common::String &line) {
 	_fileName = Common::String(fileName);
 }
 
-bool ActionPlayAnimation::execute(ZVision *engine) {
+bool ActionPlayAnimation::execute() {
 	// TODO: Implement
 	return true;
 }
@@ -247,15 +258,16 @@ bool ActionPlayAnimation::execute(ZVision *engine) {
 // ActionPlayPreloadAnimation
 //////////////////////////////////////////////////////////////////////////////
 
-ActionPlayPreloadAnimation::ActionPlayPreloadAnimation(const Common::String &line) {
+ActionPlayPreloadAnimation::ActionPlayPreloadAnimation(ZVision *engine, const Common::String &line) :
+	ResultAction(engine) {
 	sscanf(line.c_str(),
 	       "%*[^:]:%*[^:]:%u(%u %u %u %u %u %u %u %u)",
 	       &_animationKey, &_controlKey, &_x1, &_y1, &_x2, &_y2, &_startFrame, &_endFrame, &_loopCount);
 }
 
-bool ActionPlayPreloadAnimation::execute(ZVision *engine) {
+bool ActionPlayPreloadAnimation::execute() {
 	// Find the control
-	AnimationControl *control = (AnimationControl *)engine->getScriptManager()->getControl(_controlKey);
+	AnimationControl *control = (AnimationControl *)_engine->getScriptManager()->getControl(_controlKey);
 
 	// Set the needed values within the control
 	control->setAnimationKey(_animationKey);
@@ -271,8 +283,8 @@ bool ActionPlayPreloadAnimation::execute(ZVision *engine) {
 // ActionQuit
 //////////////////////////////////////////////////////////////////////////////
 
-bool ActionQuit::execute(ZVision *engine) {
-	engine->quitGame();
+bool ActionQuit::execute() {
+	_engine->quitGame();
 
 	return true;
 }
@@ -282,13 +294,14 @@ bool ActionQuit::execute(ZVision *engine) {
 // ActionRandom
 //////////////////////////////////////////////////////////////////////////////
 
-ActionRandom::ActionRandom(const Common::String &line) {
+ActionRandom::ActionRandom(ZVision *engine, const Common::String &line) :
+	ResultAction(engine) {
 	sscanf(line.c_str(), "%*[^:]:%*[^:]:%u, %u)", &_key, &_max);
 }
 
-bool ActionRandom::execute(ZVision *engine) {
-	uint randNumber = engine->getRandomSource()->getRandomNumber(_max);
-	engine->getScriptManager()->setStateValue(_key, randNumber);
+bool ActionRandom::execute() {
+	uint randNumber = _engine->getRandomSource()->getRandomNumber(_max);
+	_engine->getScriptManager()->setStateValue(_key, randNumber);
 	return true;
 }
 
@@ -297,7 +310,8 @@ bool ActionRandom::execute(ZVision *engine) {
 // ActionSetPartialScreen
 //////////////////////////////////////////////////////////////////////////////
 
-ActionSetPartialScreen::ActionSetPartialScreen(const Common::String &line) {
+ActionSetPartialScreen::ActionSetPartialScreen(ZVision *engine, const Common::String &line) :
+	ResultAction(engine) {
 	char fileName[25];
 	uint color;
 
@@ -311,9 +325,8 @@ ActionSetPartialScreen::ActionSetPartialScreen(const Common::String &line) {
 	_backgroundColor = color;
 }
 
-bool ActionSetPartialScreen::execute(ZVision *engine) {
-	RenderManager *renderManager = engine->getRenderManager();
-
+bool ActionSetPartialScreen::execute() {
+	RenderManager *renderManager = _engine->getRenderManager();
 	if (_backgroundColor >= 0)
 		renderManager->renderImageToBackground(_fileName, _x, _y, _backgroundColor);
 	else
@@ -327,15 +340,16 @@ bool ActionSetPartialScreen::execute(ZVision *engine) {
 // ActionSetScreen
 //////////////////////////////////////////////////////////////////////////////
 
-ActionSetScreen::ActionSetScreen(const Common::String &line) {
+ActionSetScreen::ActionSetScreen(ZVision *engine, const Common::String &line) :
+	ResultAction(engine) {
 	char fileName[25];
 	sscanf(line.c_str(), "%*[^(](%25[^)])", fileName);
 
 	_fileName = Common::String(fileName);
 }
 
-bool ActionSetScreen::execute(ZVision *engine) {
-	engine->getRenderManager()->setBackgroundImage(_fileName);
+bool ActionSetScreen::execute() {
+	_engine->getRenderManager()->setBackgroundImage(_fileName);
 
 	return true;
 }
@@ -345,7 +359,8 @@ bool ActionSetScreen::execute(ZVision *engine) {
 // ActionStreamVideo
 //////////////////////////////////////////////////////////////////////////////
 
-ActionStreamVideo::ActionStreamVideo(const Common::String &line) {
+ActionStreamVideo::ActionStreamVideo(ZVision *engine, const Common::String &line) :
+	ResultAction(engine) {
 	char fileName[25];
 	uint skipline;    //skipline - render video with skip every second line, not skippable.
 
@@ -355,7 +370,7 @@ ActionStreamVideo::ActionStreamVideo(const Common::String &line) {
 	_skippable = true;
 }
 
-bool ActionStreamVideo::execute(ZVision *engine) {
+bool ActionStreamVideo::execute() {
 	ZorkAVIDecoder decoder;
 	if (!decoder.loadFile(_fileName)) {
 		return true;
@@ -366,7 +381,7 @@ bool ActionStreamVideo::execute(ZVision *engine) {
 		destRect = Common::Rect(_x1, _y1, _x2, _y2);
 	}
 
-	engine->playVideo(decoder, destRect, _skippable);
+	_engine->playVideo(decoder, destRect, _skippable);
 	return true;
 }
 
@@ -375,12 +390,13 @@ bool ActionStreamVideo::execute(ZVision *engine) {
 // ActionTimer
 //////////////////////////////////////////////////////////////////////////////
 
-ActionTimer::ActionTimer(const Common::String &line) {
+ActionTimer::ActionTimer(ZVision *engine, const Common::String &line) :
+	ResultAction(engine) {
 	sscanf(line.c_str(), "%*[^:]:%*[^:]:%u(%u)", &_key, &_time);
 }
 
-bool ActionTimer::execute(ZVision *engine) {
-	engine->getScriptManager()->addSideFX(new TimerNode(engine, _key, _time));
+bool ActionTimer::execute() {
+	_engine->getScriptManager()->addSideFX(new TimerNode(_engine, _key, _time));
 	return true;
 }
 

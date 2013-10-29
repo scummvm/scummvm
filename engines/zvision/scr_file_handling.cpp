@@ -163,19 +163,19 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 
 		// Parse for the action type
 		if (line.matchString("*:add*", true)) {
-			actionList.push_back(new ActionAdd(line));
+			actionList.push_back(new ActionAdd(_engine, line));
 		} else if (line.matchString("*:animplay*", true)) {
-			actionList.push_back(new ActionPlayAnimation(line));
+			actionList.push_back(new ActionPlayAnimation(_engine, line));
 		} else if (line.matchString("*:animpreload*", true)) {
-			actionList.push_back(new ActionPreloadAnimation(line));
+			actionList.push_back(new ActionPreloadAnimation(_engine, line));
 		} else if (line.matchString("*:animunload*", true)) {
-			//actionList.push_back(new ActionUnloadAnimation(line));
+			//actionList.push_back(new ActionUnloadAnimation(_engine, line));
 		} else if (line.matchString("*:attenuate*", true)) {
 			// TODO: Implement ActionAttenuate
 		} else if (line.matchString("*:assign*", true)) {
-			actionList.push_back(new ActionAssign(line));
+			actionList.push_back(new ActionAssign(_engine, line));
 		} else if (line.matchString("*:change_location*", true)) {
-			actionList.push_back(new ActionChangeLocation(line));
+			actionList.push_back(new ActionChangeLocation(_engine, line));
 		} else if (line.matchString("*:crossfade*", true)) {
 			// TODO: Implement ActionCrossfade
 		} else if (line.matchString("*:debug*", true)) {
@@ -183,7 +183,7 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 		} else if (line.matchString("*:delay_render*", true)) {
 			// TODO: Implement ActionDelayRender
 		} else if (line.matchString("*:disable_control*", true)) {
-			actionList.push_back(new ActionDisableControl(line));
+			actionList.push_back(new ActionDisableControl(_engine, line));
 		} else if (line.matchString("*:disable_venus*", true)) {
 			// TODO: Implement ActionDisableVenus
 		} else if (line.matchString("*:display_message*", true)) {
@@ -193,7 +193,7 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 		} else if (line.matchString("*:distort*", true)) {
 			// TODO: Implement ActionDistort
 		} else if (line.matchString("*:enable_control*", true)) {
-			actionList.push_back(new ActionEnableControl(line));
+			actionList.push_back(new ActionEnableControl(_engine, line));
 		} else if (line.matchString("*:flush_mouse_events*", true)) {
 			// TODO: Implement ActionFlushMouseEvents
 		} else if (line.matchString("*:inventory*", true)) {
@@ -203,17 +203,17 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 		} else if (line.matchString("*:menu_bar_enable*", true)) {
 			// TODO: Implement ActionMenuBarEnable
 		} else if (line.matchString("*:music*", true)) {
-			actionList.push_back(new ActionMusic(line));
+			actionList.push_back(new ActionMusic(_engine, line));
 		} else if (line.matchString("*:pan_track*", true)) {
 			// TODO: Implement ActionPanTrack
 		} else if (line.matchString("*:playpreload*", true)) {
-			actionList.push_back(new ActionPlayPreloadAnimation(line));
+			actionList.push_back(new ActionPlayPreloadAnimation(_engine, line));
 		} else if (line.matchString("*:preferences*", true)) {
 			// TODO: Implement ActionPreferences
 		} else if (line.matchString("*:quit*", true)) {
-			actionList.push_back(new ActionQuit());
+			actionList.push_back(new ActionQuit(_engine));
 		} else if (line.matchString("*:random*", true)) {
-			actionList.push_back(new ActionRandom(line));
+			actionList.push_back(new ActionRandom(_engine, line));
 		} else if (line.matchString("*:region*", true)) {
 			// TODO: Implement ActionRegion
 		} else if (line.matchString("*:restore_game*", true)) {
@@ -223,19 +223,19 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 		} else if (line.matchString("*:save_game*", true)) {
 			// TODO: Implement ActionSaveGame
 		} else if (line.matchString("*:set_partial_screen*", true)) {
-			actionList.push_back(new ActionSetPartialScreen(line));
+			actionList.push_back(new ActionSetPartialScreen(_engine, line));
 		} else if (line.matchString("*:set_screen*", true)) {
-			actionList.push_back(new ActionSetScreen(line));
+			actionList.push_back(new ActionSetScreen(_engine, line));
 		} else if (line.matchString("*:set_venus*", true)) {
 			// TODO: Implement ActionSetVenus
 		} else if (line.matchString("*:stop*", true)) {
 			// TODO: Implement ActionStop
 		} else if (line.matchString("*:streamvideo*", true)) {
-			actionList.push_back(new ActionStreamVideo(line));
+			actionList.push_back(new ActionStreamVideo(_engine, line));
 		} else if (line.matchString("*:syncsound*", true)) {
 			// TODO: Implement ActionSyncSound
 		} else if (line.matchString("*:timer*", true)) {
-			actionList.push_back(new ActionTimer(line));
+			actionList.push_back(new ActionTimer(_engine, line));
 		} else if (line.matchString("*:ttytext*", true)) {
 			// TODO: Implement ActionTTYText
 		} else if (line.matchString("*:universe_music*", true)) {

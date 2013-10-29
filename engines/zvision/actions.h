@@ -39,6 +39,7 @@ class ZVision;
   */
 class ResultAction {
 public:
+	ResultAction(ZVision *engine) : _engine(engine) {}
 	virtual ~ResultAction() {}
 	/**
 	 * This is called by the script system whenever a Puzzle's criteria are found to be true.
@@ -48,7 +49,9 @@ public:
 	 * @param engine    A pointer to the base engine so the ResultAction can access all the necessary methods
 	 * @return          Should the script system continue to test any remaining puzzles (true) or immediately break and go on to the next frame (false)
 	 */
-	virtual bool execute(ZVision *engine) = 0;
+	virtual bool execute() = 0;
+protected:
+	ZVision *_engine;
 };
 
 
@@ -85,8 +88,8 @@ public:
 
 class ActionAdd : public ResultAction {
 public:
-	ActionAdd(const Common::String &line);
-	bool execute(ZVision *engine);
+	ActionAdd(ZVision *engine, const Common::String &line);
+	bool execute();
 
 private:
 	uint32 _key;
@@ -95,8 +98,8 @@ private:
 
 class ActionAssign : public ResultAction {
 public:
-	ActionAssign(const Common::String &line);
-	bool execute(ZVision *engine);
+	ActionAssign(ZVision *engine, const Common::String &line);
+	bool execute();
 
 private:
 	uint32 _key;
@@ -105,8 +108,8 @@ private:
 
 class ActionAttenuate : public ResultAction {
 public:
-	ActionAttenuate(const Common::String &line);
-	bool execute(ZVision *engine);
+	ActionAttenuate(ZVision *engine, const Common::String &line);
+	bool execute();
 
 private:
 	uint32 _key;
@@ -115,8 +118,8 @@ private:
 
 class ActionChangeLocation : public ResultAction {
 public:
-	ActionChangeLocation(const Common::String &line);
-	bool execute(ZVision *engine);
+	ActionChangeLocation(ZVision *engine, const Common::String &line);
+	bool execute();
 
 private:
 	char _world;
@@ -128,8 +131,8 @@ private:
 
 class ActionCrossfade : public ResultAction {
 public:
-	ActionCrossfade(const Common::String &line);
-	bool execute(ZVision *engine);
+	ActionCrossfade(ZVision *engine, const Common::String &line);
+	bool execute();
 
 private:
 	uint32 _keyOne;
@@ -143,16 +146,16 @@ private:
 
 class ActionDebug : public ResultAction {
 public:
-	ActionDebug(const Common::String &line);
-	bool execute(ZVision *engine);
+	ActionDebug(ZVision *engine, const Common::String &line);
+	bool execute();
 
 private:
 };
 
 class ActionDelayRender : public ResultAction {
 public:
-	ActionDelayRender(const Common::String &line);
-	bool execute(ZVision *engine);
+	ActionDelayRender(ZVision *engine, const Common::String &line);
+	bool execute();
 
 private:
 	// TODO: Check if this should actually be frames or if it should be milliseconds/seconds
@@ -161,8 +164,8 @@ private:
 
 class ActionDisableControl : public ResultAction {
 public:
-	ActionDisableControl(const Common::String &line);
-	bool execute(ZVision *engine);
+	ActionDisableControl(ZVision *engine, const Common::String &line);
+	bool execute();
 
 private:
 	uint32 _key;
@@ -170,38 +173,38 @@ private:
 
 class ActionDisableVenus : public ResultAction {
 public:
-	ActionDisableVenus(const Common::String &line);
-	bool execute(ZVision *engine);
+	ActionDisableVenus(ZVision *engine, const Common::String &line);
+	bool execute();
 
 private:
 };
 
 class ActionDisplayMessage : public ResultAction {
 public:
-	ActionDisplayMessage(const Common::String &line);
-	bool execute(ZVision *engine);
+	ActionDisplayMessage(ZVision *engine, const Common::String &line);
+	bool execute();
 
 private:
 };
 
 class ActionDissolve : public ResultAction {
 public:
-	ActionDissolve();
-	bool execute(ZVision *engine);
+	ActionDissolve(ZVision *engine);
+	bool execute();
 };
 
 class ActionDistort : public ResultAction {
 public:
-	ActionDistort(const Common::String &line);
-	bool execute(ZVision *engine);
+	ActionDistort(ZVision *engine, const Common::String &line);
+	bool execute();
 
 private:
 };
 
 class ActionEnableControl : public ResultAction {
 public:
-	ActionEnableControl(const Common::String &line);
-	bool execute(ZVision *engine);
+	ActionEnableControl(ZVision *engine, const Common::String &line);
+	bool execute();
 
 private:
 	uint32 _key;
@@ -209,8 +212,8 @@ private:
 
 class ActionMusic : public ResultAction {
 public:
-	ActionMusic(const Common::String &line);
-	bool execute(ZVision *engine);
+	ActionMusic(ZVision *engine, const Common::String &line);
+	bool execute();
 
 private:
 	uint32 _key;
@@ -222,8 +225,8 @@ private:
 
 class ActionPlayAnimation : public ResultAction {
 public:
-	ActionPlayAnimation(const Common::String &line);
-	bool execute(ZVision *engine);
+	ActionPlayAnimation(ZVision *engine, const Common::String &line);
+	bool execute();
 
 private:
 	uint32 _key;
@@ -241,8 +244,8 @@ private:
 
 class ActionPlayPreloadAnimation : public ResultAction {
 public:
-	ActionPlayPreloadAnimation(const Common::String &line);
-	bool execute(ZVision *engine);
+	ActionPlayPreloadAnimation(ZVision *engine, const Common::String &line);
+	bool execute();
 
 private:
 	uint32 _animationKey;
@@ -258,8 +261,8 @@ private:
 
 class ActionPreloadAnimation : public ResultAction {
 public:
-	ActionPreloadAnimation(const Common::String &line);
-	bool execute(ZVision *engine);
+	ActionPreloadAnimation(ZVision *engine, const Common::String &line);
+	bool execute();
 
 private:
 	uint32 _key;
@@ -270,21 +273,21 @@ private:
 
 class ActionQuit : public ResultAction {
 public:
-	ActionQuit() {}
-	bool execute(ZVision *engine);
+	ActionQuit(ZVision *engine) : ResultAction(engine) {}
+	bool execute();
 };
 
 // TODO: See if this exists in ZGI. It doesn't in ZNem
 class ActionUnloadAnimation : public ResultAction {
 public:
-	ActionUnloadAnimation(const Common::String &line);
-	bool execute(ZVision *engine);
+	ActionUnloadAnimation(ZVision *engine, const Common::String &line);
+	bool execute();
 };
 
 class ActionRandom : public ResultAction {
 public:
-	ActionRandom(const Common::String &line);
-	bool execute(ZVision *engine);
+	ActionRandom(ZVision *engine, const Common::String &line);
+	bool execute();
 
 private:
 	uint32 _key;
@@ -293,8 +296,8 @@ private:
 
 class ActionSetPartialScreen : public ResultAction {
 public:
-	ActionSetPartialScreen(const Common::String &line);
-	bool execute(ZVision *engine);
+	ActionSetPartialScreen(ZVision *engine, const Common::String &line);
+	bool execute();
 
 private:
 	uint _x;
@@ -305,8 +308,8 @@ private:
 
 class ActionSetScreen : public ResultAction {
 public:
-	ActionSetScreen(const Common::String &line);
-	bool execute(ZVision *engine);
+	ActionSetScreen(ZVision *engine, const Common::String &line);
+	bool execute();
 
 private:
 	Common::String _fileName;
@@ -314,8 +317,8 @@ private:
 
 class ActionStreamVideo : public ResultAction {
 public:
-	ActionStreamVideo(const Common::String &line);
-	bool execute(ZVision *engine);
+	ActionStreamVideo(ZVision *engine, const Common::String &line);
+	bool execute();
 
 private:
 	enum {
@@ -333,8 +336,8 @@ private:
 
 class ActionTimer : public ResultAction {
 public:
-	ActionTimer(const Common::String &line);
-	bool execute(ZVision *engine);
+	ActionTimer(ZVision *engine, const Common::String &line);
+	bool execute();
 
 private:
 	uint32 _key;
