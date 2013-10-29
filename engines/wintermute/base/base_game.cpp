@@ -3099,7 +3099,7 @@ bool BaseGame::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER(_soundBufferSizeSec));
 	persistMgr->transferBool(TMEMBER(_suspendedRendering));
 
-	persistMgr->transfer(TMEMBER(_mouseLockRect));
+	persistMgr->transferRect32(TMEMBER(_mouseLockRect));
 
 	_windows.persist(persistMgr);
 

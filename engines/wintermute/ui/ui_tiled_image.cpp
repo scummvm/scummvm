@@ -369,16 +369,16 @@ void UITiledImage::correctSize(int32 *width, int32 *height) {
 bool UITiledImage::persist(BasePersistenceManager *persistMgr) {
 	BaseObject::persist(persistMgr);
 
-	persistMgr->transfer(TMEMBER(_downLeft));
-	persistMgr->transfer(TMEMBER(_downMiddle));
-	persistMgr->transfer(TMEMBER(_downRight));
+	persistMgr->transferRect32(TMEMBER(_downLeft));
+	persistMgr->transferRect32(TMEMBER(_downMiddle));
+	persistMgr->transferRect32(TMEMBER(_downRight));
 	persistMgr->transferPtr(TMEMBER_PTR(_image));
-	persistMgr->transfer(TMEMBER(_middleLeft));
-	persistMgr->transfer(TMEMBER(_middleMiddle));
-	persistMgr->transfer(TMEMBER(_middleRight));
-	persistMgr->transfer(TMEMBER(_upLeft));
-	persistMgr->transfer(TMEMBER(_upMiddle));
-	persistMgr->transfer(TMEMBER(_upRight));
+	persistMgr->transferRect32(TMEMBER(_middleLeft));
+	persistMgr->transferRect32(TMEMBER(_middleMiddle));
+	persistMgr->transferRect32(TMEMBER(_middleRight));
+	persistMgr->transferRect32(TMEMBER(_upLeft));
+	persistMgr->transferRect32(TMEMBER(_upMiddle));
+	persistMgr->transferRect32(TMEMBER(_upRight));
 
 	return STATUS_OK;
 }

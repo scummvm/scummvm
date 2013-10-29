@@ -1183,7 +1183,7 @@ bool PartEmitter::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferBool(TMEMBER(_running));
 	persistMgr->transfer(TMEMBER(_overheadTime));
 
-	persistMgr->transfer(TMEMBER(_border));
+	persistMgr->transferRect32(TMEMBER(_border));
 	persistMgr->transfer(TMEMBER(_borderThicknessLeft));
 	persistMgr->transfer(TMEMBER(_borderThicknessRight));
 	persistMgr->transfer(TMEMBER(_borderThicknessTop));

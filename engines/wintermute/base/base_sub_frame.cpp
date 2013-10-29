@@ -393,7 +393,7 @@ bool BaseSubFrame::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferBool(TMEMBER(_editorSelected));
 	persistMgr->transfer(TMEMBER(_hotspotX));
 	persistMgr->transfer(TMEMBER(_hotspotY));
-	persistMgr->transfer(TMEMBER(_rect));
+	persistMgr->transferRect32(TMEMBER(_rect));
 	persistMgr->transferBool(TMEMBER(_wantsDefaultRect));
 
 	persistMgr->transfer(TMEMBER(_surfaceFilename));

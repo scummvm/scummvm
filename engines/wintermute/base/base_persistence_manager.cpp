@@ -788,7 +788,7 @@ bool BasePersistenceManager::transferByte(const char *name, byte *val) {
 
 //////////////////////////////////////////////////////////////////////////
 // RECT
-bool BasePersistenceManager::transfer(const char *name, Rect32 *val) {
+bool BasePersistenceManager::transferRect32(const char *name, Rect32 *val) {
 	if (_saving) {
 		_saveStream->writeSint32LE(val->left);
 		_saveStream->writeSint32LE(val->top);

@@ -80,7 +80,7 @@ public:
 	bool transfer(const char *name, double *val);
 	bool transferBool(const char *name, bool *val);
 	bool transferByte(const char *name, byte *val);
-	bool transfer(const char *name, Rect32 *val);
+	bool transferRect32(const char *name, Rect32 *val);
 	bool transfer(const char *name, Point32 *val);
 	bool transfer(const char *name, const char **val);
 	bool transfer(const char *name, char **val);

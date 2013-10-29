@@ -1261,7 +1261,7 @@ bool UIWindow::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferBool(TMEMBER(_clipContents));
 	persistMgr->transfer(TMEMBER(_dragFrom));
 	persistMgr->transferBool(TMEMBER(_dragging));
-	persistMgr->transfer(TMEMBER(_dragRect));
+	persistMgr->transferRect32(TMEMBER(_dragRect));
 	persistMgr->transferBool(TMEMBER(_fadeBackground));
 	persistMgr->transfer(TMEMBER(_fadeColor));
 	persistMgr->transferPtr(TMEMBER_PTR(_fontInactive));
@@ -1272,7 +1272,7 @@ bool UIWindow::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferPtr(TMEMBER_PTR(_shieldButton));
 	persistMgr->transferPtr(TMEMBER_PTR(_shieldWindow));
 	persistMgr->transfer(TMEMBER_INT(_titleAlign));
-	persistMgr->transfer(TMEMBER(_titleRect));
+	persistMgr->transferRect32(TMEMBER(_titleRect));
 	persistMgr->transferBool(TMEMBER(_transparent));
 	persistMgr->transferPtr(TMEMBER_PTR(_viewport));
 	persistMgr->transferBool(TMEMBER(_pauseMusic));

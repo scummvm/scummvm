@@ -232,7 +232,7 @@ bool PartParticle::fadeOut(uint32 currentTime, int fadeTime) {
 bool PartParticle::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER(_alpha1));
 	persistMgr->transfer(TMEMBER(_alpha2));
-	persistMgr->transfer(TMEMBER(_border));
+	persistMgr->transferRect32(TMEMBER(_border));
 	persistMgr->transferVector2(TMEMBER(_pos));
 	persistMgr->transferFloat(TMEMBER(_posZ));
 	persistMgr->transferVector2(TMEMBER(_velocity));

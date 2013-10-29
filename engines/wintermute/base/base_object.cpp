@@ -975,7 +975,7 @@ bool BaseObject::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER(_sFXStart));
 	persistMgr->transfer(TMEMBER(_sFXVolume));
 	persistMgr->transferBool(TMEMBER(_ready));
-	persistMgr->transfer(TMEMBER(_rect));
+	persistMgr->transferRect32(TMEMBER(_rect));
 	persistMgr->transferBool(TMEMBER(_rectSet));
 	persistMgr->transferBool(TMEMBER(_registrable));
 	persistMgr->transferBool(TMEMBER(_shadowable));

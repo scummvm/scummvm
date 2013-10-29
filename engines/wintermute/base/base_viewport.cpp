@@ -58,7 +58,7 @@ bool BaseViewport::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferPtr(TMEMBER_PTR(_mainObject));
 	persistMgr->transfer(TMEMBER(_offsetX));
 	persistMgr->transfer(TMEMBER(_offsetY));
-	persistMgr->transfer(TMEMBER(_rect));
+	persistMgr->transferRect32(TMEMBER(_rect));
 
 	return STATUS_OK;
 }
