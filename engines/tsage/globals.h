@@ -194,7 +194,7 @@ public:
 	int _safeCombination;
 	int _gateStatus;
 	int _greenDay5TalkCtr;
-	int _v4CEC4;
+	int _v4CEC4; // Useless variable
 	int _v4CEC8;
 	int _v4CECA;
 	int _v4CECC;
@@ -259,17 +259,17 @@ public:
 	byte _fadePaletteMap[10][256];
 	byte _paletteMap[4096];
 	int _insetUp;
-	int _frameEdgeColor;	// _v421e
+	int _frameEdgeColor;
 	Rect _v5589E;
 	Rect _v558B6;
-	int _v558C2;
+	int _v558C2; // Unused variable. The original seems to use it only in the context of the cheat mode
 	int _animationCtr;
 	int _electromagnetChangeAmount;
 	int _electromagnetZoom;
 	int _v565E5;
 	int _v565E7;
 	int _v565E9;
-	int _v565EB;
+	int _v565EB; // CHECKME: IS it a constant?
 	int _foodCount;
 	int _rimLocation;
 	int _rimTransportLocation;

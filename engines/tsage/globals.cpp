@@ -259,6 +259,19 @@ BlueForceGlobals::BlueForceGlobals(): TsAGE2Globals() {
 	_mapLocationId = 1;
 	_clip1Bullets = 8;
 	_clip2Bullets = 8;
+
+	_dayNumber = 0;
+	_tonyDialogCtr = 0;
+	_marinaWomanCtr = 0;
+	_kateDialogCtr = 0;
+	_v4CEB6 = 0;
+	_safeCombination = 0;
+	_gateStatus = 0;
+	_greenDay5TalkCtr = 0;
+	_v4CEC4 = 0;
+	_v4CEC8 = 1;
+	_v4CECA = 0;
+	_v4CECC = 0;
 }
 
 void BlueForceGlobals::synchronize(Serializer &s) {
@@ -428,6 +441,21 @@ Ringworld2Globals::Ringworld2Globals() {
 	_v5780C = 0;
 	_v5780E = 0;
 	_v57810 = 0;
+
+	_fadePaletteFlag = false;
+	_insetUp = 0;
+	_frameEdgeColor = 2;
+	_v558C2 = 0;
+	_animationCtr = 0;
+	_electromagnetChangeAmount = 0;
+	_electromagnetZoom = 0;
+	_v565E5 = 0;
+	_v565E7 = 0;
+	_v565E9 = -5;
+	_v565EB = 26;
+	_foodCount = 0;
+	_rimLocation = 0;
+	_rimTransportLocation = 0;
 }
 
 Ringworld2Globals::~Ringworld2Globals() {
