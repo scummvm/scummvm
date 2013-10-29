@@ -45,7 +45,7 @@ PartParticle::PartParticle(BaseGame *inGame) : BaseClass(inGame) {
 	_creationTime = 0;
 	_lifeTime = 0;
 	_isDead = true;
-	BasePlatform::setRectEmpty(&_border);
+	_border.setEmpty();
 
 	_state = PARTICLE_NORMAL;
 	_fadeStart = 0;

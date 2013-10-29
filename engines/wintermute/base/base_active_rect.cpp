@@ -37,7 +37,7 @@ namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////
 BaseActiveRect::BaseActiveRect(BaseGame *inGame) : BaseClass(inGame) {
-	BasePlatform::setRectEmpty(&_rect);
+	_rect.setEmpty();
 	_owner = nullptr;
 	_frame = nullptr;
 	_region = nullptr;

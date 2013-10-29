@@ -44,15 +44,15 @@ IMPLEMENT_PERSISTENT(UITiledImage, false)
 UITiledImage::UITiledImage(BaseGame *inGame) : BaseObject(inGame) {
 	_image = nullptr;
 
-	BasePlatform::setRectEmpty(&_upLeft);
-	BasePlatform::setRectEmpty(&_upMiddle);
-	BasePlatform::setRectEmpty(&_upRight);
-	BasePlatform::setRectEmpty(&_middleLeft);
-	BasePlatform::setRectEmpty(&_middleMiddle);
-	BasePlatform::setRectEmpty(&_middleRight);
-	BasePlatform::setRectEmpty(&_downLeft);
-	BasePlatform::setRectEmpty(&_downMiddle);
-	BasePlatform::setRectEmpty(&_downRight);
+	_upLeft.setEmpty();
+	_upMiddle.setEmpty();
+	_upRight.setEmpty();
+	_middleLeft.setEmpty();
+	_middleMiddle.setEmpty();
+	_middleRight.setEmpty();
+	_downLeft.setEmpty();
+	_downMiddle.setEmpty();
+	_downRight.setEmpty();
 }
 
 

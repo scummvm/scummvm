@@ -462,7 +462,7 @@ bool BaseSprite::getBoundingRect(Rect32 *rect, int x, int y, float scaleX, float
 		return false;
 	}
 
-	BasePlatform::setRectEmpty(rect);
+	rect->setEmpty();
 	for (uint32 i = 0; i < _frames.size(); i++) {
 		Rect32 frame;
 		Rect32 temp;

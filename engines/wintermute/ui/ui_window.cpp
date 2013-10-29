@@ -54,8 +54,8 @@ IMPLEMENT_PERSISTENT(UIWindow, false)
 
 //////////////////////////////////////////////////////////////////////////
 UIWindow::UIWindow(BaseGame *inGame) : UIObject(inGame) {
-	BasePlatform::setRectEmpty(&_titleRect);
-	BasePlatform::setRectEmpty(&_dragRect);
+	_titleRect.setEmpty();
+	_dragRect.setEmpty();
 	_titleAlign = TAL_LEFT;
 	_transparent = false;
 

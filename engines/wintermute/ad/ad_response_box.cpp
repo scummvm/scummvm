@@ -58,7 +58,7 @@ AdResponseBox::AdResponseBox(BaseGame *inGame) : BaseObject(inGame) {
 	_shieldWindow = new UIWindow(_gameRef);
 
 	_horizontal = false;
-	BasePlatform::setRectEmpty(&_responseArea);
+	_responseArea.setEmpty();
 	_scrollOffset = 0;
 	_spacing = 0;
 

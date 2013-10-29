@@ -38,7 +38,7 @@ IMPLEMENT_PERSISTENT(BaseViewport, false)
 
 //////////////////////////////////////////////////////////////////////////
 BaseViewport::BaseViewport(BaseGame *inGame) : BaseClass(inGame) {
-	BasePlatform::setRectEmpty(&_rect);
+	_rect.setEmpty();
 	_mainObject = nullptr;
 	_offsetX = _offsetY = 0;
 }

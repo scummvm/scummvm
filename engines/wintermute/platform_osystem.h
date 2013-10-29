@@ -49,7 +49,6 @@ public:
 	static bool getCursorPos(Point32 *lpPoint);
 	static bool setCursorPos(int x, int y);
 
-	static bool setRectEmpty(Rect32 *lprc);
 	static bool isRectEmpty(const Rect32 *lprc);
 	static bool ptInRect(Rect32 *lprc, Point32 p);
 	static bool setRect(Rect32 *lprc, int left, int top, int right, int bottom);

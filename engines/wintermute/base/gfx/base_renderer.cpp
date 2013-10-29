@@ -65,7 +65,7 @@ BaseRenderer::BaseRenderer(BaseGame *inGame) : BaseClass(inGame) {
 	_loadImageX = _loadImageY = 0;
 
 	_width = _height = _bPP = 0;
-	BasePlatform::setRectEmpty(&_monitorRect);
+	_monitorRect.setEmpty();
 
 	_realWidth = _realHeight = 0;
 	_drawOffsetX = _drawOffsetY = 0;

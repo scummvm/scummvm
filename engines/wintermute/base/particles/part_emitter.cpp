@@ -50,7 +50,7 @@ IMPLEMENT_PERSISTENT(PartEmitter, false)
 PartEmitter::PartEmitter(BaseGame *inGame, BaseScriptHolder *owner) : BaseObject(inGame) {
 	_width = _height = 0;
 
-	BasePlatform::setRectEmpty(&_border);
+	_border.setEmpty();
 	_borderThicknessLeft = _borderThicknessRight = _borderThicknessTop = _borderThicknessBottom = 0;
 
 	_angle1 = _angle2 = 0;

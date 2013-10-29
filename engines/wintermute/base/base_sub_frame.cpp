@@ -54,7 +54,7 @@ BaseSubFrame::BaseSubFrame(BaseGame *inGame) : BaseScriptable(inGame, true) {
 	_transparent = 0xFFFF00FF;
 
 	_wantsDefaultRect = false;
-	BasePlatform::setRectEmpty(&_rect);
+	_rect.setEmpty();
 
 	_editorSelected = false;
 
@@ -121,7 +121,7 @@ bool BaseSubFrame::loadBuffer(char *buffer, int lifeTime, bool keepLoaded) {
 	int r = 255, g = 255, b = 255;
 	int ar = 255, ag = 255, ab = 255, alpha = 255;
 	bool custoTrans = false;
-	BasePlatform::setRectEmpty(&rect);
+	rect.setEmpty();
 	char *surfaceFile = nullptr;
 
 	delete _surface;
@@ -318,7 +318,7 @@ bool BaseSubFrame::saveAsText(BaseDynamicBuffer *buffer, int indent, bool comple
 	}
 
 	Rect32 rect;
-	BasePlatform::setRectEmpty(&rect);
+	rect.setEmpty();
 	if (_surface) {
 		BasePlatform::setRect(&rect, 0, 0, _surface->getWidth(), _surface->getHeight());
 	}
@@ -376,7 +376,7 @@ void BaseSubFrame::setDefaultRect() {
 		_wantsDefaultRect = true;
 	} else {
 		_wantsDefaultRect = false;
-		BasePlatform::setRectEmpty(&_rect);
+		_rect.setEmpty();
 	}
 }
 

@@ -185,7 +185,7 @@ BaseGame::BaseGame(const Common::String &targetName) : BaseObject(this), _target
 
 	_lastCursor = nullptr;
 
-	BasePlatform::setRectEmpty(&_mouseLockRect);
+	_mouseLockRect.setEmpty();
 
 	_suppressScriptErrors = false;
 	_lastMiniUpdate = 0;
