@@ -2352,6 +2352,14 @@ Scene205::Scene205(): SceneExt() {
 	GfxFont font;
 	font.setFontNumber(4);
 	_fontHeight = font.getHeight();
+	
+	for (int i = 0; i < 3; i++) {
+		_objList1[i] = nullptr;
+		_objList2[i] = nullptr;
+	}
+
+	for (int i = 0; i < 4; i++)
+		_objList3[i] = nullptr;
 }
 
 void Scene205::postInit(SceneObjectList *OwnerList) {
@@ -4253,6 +4261,7 @@ void Scene325::consoleAction(int id) {
 		_icon2.setIcon(24);
 		_icon3.setIcon(25);
 		_icon4.setIcon(26);
+		break;
 	case 2:
 	case 16:
 	case 17:
@@ -4363,6 +4372,7 @@ void Scene325::consoleAction(int id) {
 		break;
 	case 8:
 		R2_GLOBALS._sceneManager.changeScene(300);
+		break;
 	case 9:
 	case 10:
 		_iconFontNumber = (id - 1) == 9 ? 50 : 52;

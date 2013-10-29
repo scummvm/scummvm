@@ -213,7 +213,6 @@ public:
 	int _field412, _field480;
 	int _field482, _frameInc;
 	int _fontNumber, _fontHeight;
-	int _scene180Mode;
 public:
 	Scene180();
 
