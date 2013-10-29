@@ -233,9 +233,9 @@ bool PartParticle::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER(_alpha1));
 	persistMgr->transfer(TMEMBER(_alpha2));
 	persistMgr->transfer(TMEMBER(_border));
-	persistMgr->transfer(TMEMBER(_pos));
+	persistMgr->transferVector2(TMEMBER(_pos));
 	persistMgr->transferFloat(TMEMBER(_posZ));
-	persistMgr->transfer(TMEMBER(_velocity));
+	persistMgr->transferVector2(TMEMBER(_velocity));
 	persistMgr->transferFloat(TMEMBER(_scale));
 	persistMgr->transfer(TMEMBER(_creationTime));
 	persistMgr->transfer(TMEMBER(_lifeTime));

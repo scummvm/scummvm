@@ -834,7 +834,7 @@ bool BasePersistenceManager::transfer(const char *name, Point32 *val) {
 
 //////////////////////////////////////////////////////////////////////////
 // Vector2
-bool BasePersistenceManager::transfer(const char *name, Vector2 *val) {
+bool BasePersistenceManager::transferVector2(const char *name, Vector2 *val) {
 	if (_saving) {
 		putFloat(val->x);
 		putFloat(val->y);
