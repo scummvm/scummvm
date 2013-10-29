@@ -741,9 +741,77 @@ const uint16 kq6PatchDuplicateBabyCry[] = {
 	PATCH_END
 };
 
+// The inventory of King's Quest 6 (CD) is buggy. When it grows too large,
+//  it will get split into 2 pages. Switching between those pages will
+//  grow the stack, because it's calling itself per switch.
+// Which means after a while ScummVM will bomb out because the stack frame
+//  will be too large. This patch fixes the buggy script.
+// Responsible method: KqInv::showSelf
+// Fixes bug #3293954
+const byte kq6SignatureInventoryStackFix[] = {
+	46,
+	0x67, 0x30,       // pTos state
+	0x34, 0x00, 0x20, // ldi 2000
+	0x12,             // and
+	0x18,             // not
+	0x31, 0x04,       // bnt [not first refresh]
+	0x35, 0x00,       // ldi 00
+	0x65, 0x1e,       // aTop curIcon
+	0x67, 0x30,       // pTos state
+	0x34, 0xff, 0xdf, // ldi dfff
+	0x12,             // and
+	0x65, 0x30,       // aTop state
+	0x38, 0xe1, 0x00, // pushi 00e1
+	0x78,             // push1
+	0x87, 0x00,       // lap param[0]
+	0x31, 0x04,       // bnt [use global for show]
+	0x87, 0x01,       // lap param[1]
+	0x33, 0x02,       // jmp [use param for show]
+	0x81, 0x00,       // lag global[0]
+	0x36,             // push
+	0x54, 0x06,       // self 06 (KqInv::show)
+	0x31, 0x08,       // bnt [exit menu code]
+	0x39, 0x39,       // pushi 39
+	0x76,             // push0
+	0x54, 0x04,       // self 04 (KqInv::doit)
+	0x32,             // jmp [ret] (2 bytes not listed)
+	0
+};
+
+const uint16 kq6PatchInventoryStackFix[] = {
+	0x67, 0x30,       // pTos state
+	0x3c,             // dup (1 more byte, needed for patch)
+	0x3c,             // dup (1 more byte, saves 1 byte later)
+	0x34, 0x00, 0x20, // ldi 2000
+	0x12,             // and
+	0x2f, 0x02,       // bt [not first refresh] - saves 3 bytes in total
+	0x65, 0x1e,       // aTop curIcon
+	0x34, 0xff, 0xdf, // ldi dfff
+	0x12,             // and
+	0x65, 0x30,       // aTop state
+	0x38, 0xe1, 0x00, // pushi e1
+	0x78,             // push1
+	0x87, 0x00,       // lap param[0]
+	0x31, 0x04,       // bnt [call show using global 0]
+	0x8f, 0x01,       // lsp param[1], save 1 byte total with lsg global[0] combined
+	0x33, 0x02,       // jmp [call show using param 1]
+	0x89, 0x00,       // lsg global[0], save 1 byte total, see above
+	0x54, 0x06,       // self 06 (call x::show)
+	0x31, 0x0c,       // bnt [menu exit code]
+	0x34, 0x00, 0x20, // ldi 2000
+	0x12,             // and
+	0x2f, 0x05,       // bt [to return]
+	0x39, 0x39,       // pushi 39
+	0x76,             // push0
+	0x54, 0x04,       // self 04 (self::doit)
+	0x48,             // ret (saves 2 bytes)
+	PATCH_END
+};
+
 //    script, description,                                      magic DWORD,                                 adjust
 const SciScriptSignature kq6Signatures[] = {
 	{    481, "duplicate baby cry",                          1, PATCH_MAGICDWORD(0x83, 0x00, 0x31, 0x1e),     0, kq6SignatureDuplicateBabyCry, kq6PatchDuplicateBabyCry },
+	{    907, "inventory stack fix",                         1, PATCH_MAGICDWORD(0x30, 0x34, 0xff, 0xdf),   -14, kq6SignatureInventoryStackFix, kq6PatchInventoryStackFix },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
