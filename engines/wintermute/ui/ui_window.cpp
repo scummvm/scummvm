@@ -213,7 +213,7 @@ bool UIWindow::display(int offsetX, int offsetY) {
 		image->draw(_posX + offsetX, _posY + offsetY, _transparent ? nullptr : this);
 	}
 
-	if (!BasePlatform::isRectEmpty(&_titleRect) && font && _text) {
+	if (!_titleRect.isRectEmpty() && font && _text) {
 		font->drawText((byte *)_text, _posX + offsetX + _titleRect.left, _posY + offsetY + _titleRect.top, _titleRect.right - _titleRect.left, _titleAlign, _titleRect.bottom - _titleRect.top);
 	}
 
@@ -676,11 +676,11 @@ bool UIWindow::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 		error("UIWindow::SaveAsText - Unhandled enum-value NUM_TEXT_ALIGN");
 	}
 
-	if (!BasePlatform::isRectEmpty(&_titleRect)) {
+	if (!_titleRect.isRectEmpty()) {
 		buffer->putTextIndent(indent + 2, "TITLE_RECT { %d, %d, %d, %d }\n", _titleRect.left, _titleRect.top, _titleRect.right, _titleRect.bottom);
 	}
 
-	if (!BasePlatform::isRectEmpty(&_dragRect)) {
+	if (!_dragRect.isRectEmpty()) {
 		buffer->putTextIndent(indent + 2, "DRAG_RECT { %d, %d, %d, %d }\n", _dragRect.left, _dragRect.top, _dragRect.right, _dragRect.bottom);
 	}
 
@@ -1227,7 +1227,7 @@ bool UIWindow::handleMouse(TMouseEvent event, TMouseButton button) {
 	bool res = UIObject::handleMouse(event, button);
 
 	// handle window dragging
-	if (!BasePlatform::isRectEmpty(&_dragRect)) {
+	if (!_dragRect.isRectEmpty()) {
 		// start drag
 		if (event == MOUSE_CLICK && button == MOUSE_BUTTON_LEFT) {
 			Rect32 dragRect = _dragRect;

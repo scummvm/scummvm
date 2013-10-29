@@ -125,7 +125,7 @@ bool PartParticle::update(PartEmitter *emitter, uint32 currentTime, uint32 timer
 		}
 
 		// particle hit the border
-		if (!_isDead && !BasePlatform::isRectEmpty(&_border)) {
+		if (!_isDead && !_border.isRectEmpty()) {
 			Point32 p;
 			p.x = (int32)_pos.x;
 			p.y = (int32)_pos.y;

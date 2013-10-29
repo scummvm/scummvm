@@ -325,7 +325,7 @@ bool BaseFrame::loadBuffer(char *buffer, int lifeTime, bool keepLoaded) {
 		}
 	}
 
-	if (BasePlatform::isRectEmpty(&rect)) {
+	if (rect.isRectEmpty()) {
 		sub->setDefaultRect();
 	} else {
 		sub->setRect(rect);

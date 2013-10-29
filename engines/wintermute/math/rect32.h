@@ -94,6 +94,10 @@ struct Rect32 {
 		left = right = top = bottom = 0;
 	}
 
+	bool isRectEmpty() const {
+		return (left >= right) || (top >= bottom);
+	}
+
 	void offsetRect(int dx, int dy) {
 		left   += dx;
 		top    += dy;

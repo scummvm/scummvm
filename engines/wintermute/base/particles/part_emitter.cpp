@@ -198,7 +198,7 @@ bool PartEmitter::initParticle(PartParticle *particle, uint32 currentTime, uint3
 	float angVelocity = BaseUtils::randomFloat(_angVelocity1, _angVelocity2);
 	float growthRate = BaseUtils::randomFloat(_growthRate1, _growthRate2);
 
-	if (!BasePlatform::isRectEmpty(&_border)) {
+	if (!_border.isRectEmpty()) {
 		int thicknessLeft   = (int)(_borderThicknessLeft   - (float)_borderThicknessLeft   * posZ / 100.0f);
 		int thicknessRight  = (int)(_borderThicknessRight  - (float)_borderThicknessRight  * posZ / 100.0f);
 		int thicknessTop    = (int)(_borderThicknessTop    - (float)_borderThicknessTop    * posZ / 100.0f);

@@ -287,33 +287,33 @@ bool UITiledImage::loadBuffer(char *buffer, bool complete) {
 		int width = _image->_surface->getWidth() / 3;
 		int height = _image->_surface->getHeight() / 3;
 
-		if (BasePlatform::isRectEmpty(&_upLeft)) {
+		if (_upLeft.isRectEmpty()) {
 			BasePlatform::setRect(&_upLeft,   0,       0, width,   height);
 		}
-		if (BasePlatform::isRectEmpty(&_upMiddle)) {
+		if (_upMiddle.isRectEmpty()) {
 			BasePlatform::setRect(&_upMiddle, width,   0, 2 * width, height);
 		}
-		if (BasePlatform::isRectEmpty(&_upRight)) {
+		if (_upRight.isRectEmpty()) {
 			BasePlatform::setRect(&_upRight,  2 * width, 0, 3 * width, height);
 		}
 
-		if (BasePlatform::isRectEmpty(&_middleLeft)) {
+		if (_middleLeft.isRectEmpty()) {
 			BasePlatform::setRect(&_middleLeft,   0,       height, width,   2 * height);
 		}
-		if (BasePlatform::isRectEmpty(&_middleMiddle)) {
+		if (_middleMiddle.isRectEmpty()) {
 			BasePlatform::setRect(&_middleMiddle, width,   height, 2 * width, 2 * height);
 		}
-		if (BasePlatform::isRectEmpty(&_middleRight)) {
+		if (_middleRight.isRectEmpty()) {
 			BasePlatform::setRect(&_middleRight,  2 * width, height, 3 * width, 2 * height);
 		}
 
-		if (BasePlatform::isRectEmpty(&_downLeft)) {
+		if (_downLeft.isRectEmpty()) {
 			BasePlatform::setRect(&_downLeft,   0,       2 * height, width,   3 * height);
 		}
-		if (BasePlatform::isRectEmpty(&_downMiddle)) {
+		if (_downMiddle.isRectEmpty()) {
 			BasePlatform::setRect(&_downMiddle, width,   2 * height, 2 * width, 3 * height);
 		}
-		if (BasePlatform::isRectEmpty(&_downRight)) {
+		if (_downRight.isRectEmpty()) {
 			BasePlatform::setRect(&_downRight,  2 * width, 2 * height, 3 * width, 3 * height);
 		}
 	}
