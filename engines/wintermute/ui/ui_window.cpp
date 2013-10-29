@@ -1259,7 +1259,7 @@ bool UIWindow::persist(BasePersistenceManager *persistMgr) {
 
 	persistMgr->transferPtr(TMEMBER_PTR(_backInactive));
 	persistMgr->transferBool(TMEMBER(_clipContents));
-	persistMgr->transfer(TMEMBER(_dragFrom));
+	persistMgr->transferPoint32(TMEMBER(_dragFrom));
 	persistMgr->transferBool(TMEMBER(_dragging));
 	persistMgr->transferRect32(TMEMBER(_dragRect));
 	persistMgr->transferBool(TMEMBER(_fadeBackground));
