@@ -313,16 +313,23 @@ bool ActionRandom::execute() {
 ActionSetPartialScreen::ActionSetPartialScreen(ZVision *engine, const Common::String &line) :
 	ResultAction(engine) {
 	char fileName[25];
-	uint color;
+	int color;
 
-	sscanf(line.c_str(), "%*[^(](%u %u %25s %*u %u)", &_x, &_y, fileName, &color);
+	sscanf(line.c_str(), "%*[^(](%u %u %25s %*u %d)", &_x, &_y, fileName, &color);
 
 	_fileName = Common::String(fileName);
 
-	if (color > 0xFFFF) {
+	if (color >= 0) {
+		byte r, g, b;
+		Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0).colorToRGB(color, r, g, b);
+		_backgroundColor = _engine->_pixelFormat.RGBToColor(r, g, b);
+	} else {
+		_backgroundColor = color;
+	}
+
+	if (color > 65535) {
 		warning("Background color for ActionSetPartialScreen is bigger than a uint16");
 	}
-	_backgroundColor = color;
 }
 
 bool ActionSetPartialScreen::execute() {
