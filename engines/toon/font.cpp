@@ -32,6 +32,8 @@ FontRenderer::FontRenderer(ToonEngine *vm) : _vm(vm) {
 	_currentFontColor[1] = 0xc8;
 	_currentFontColor[2] = 0xcb;
 	_currentFontColor[3] = 0xce;
+
+	_currentFont = nullptr;
 }
 
 FontRenderer::~FontRenderer() {

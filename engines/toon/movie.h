@@ -55,7 +55,6 @@ public:
 protected:
 	bool playVideo(bool isFirstIntroVideo);
 	ToonEngine *_vm;
-	Audio::Mixer *_mixer;
 	ToonstruckSmackerDecoder *_decoder;
 	bool _playing;
 };
