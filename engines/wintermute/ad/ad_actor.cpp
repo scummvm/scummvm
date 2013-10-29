@@ -1322,10 +1322,10 @@ bool AdActor::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER_INT(_dir));
 	persistMgr->transferPtr(TMEMBER_PTR(_path));
 	persistMgr->transfer(TMEMBER(_pFCount));
-	persistMgr->transfer(TMEMBER(_pFStepX));
-	persistMgr->transfer(TMEMBER(_pFStepY));
-	persistMgr->transfer(TMEMBER(_pFX));
-	persistMgr->transfer(TMEMBER(_pFY));
+	persistMgr->transferDouble(TMEMBER(_pFStepX));
+	persistMgr->transferDouble(TMEMBER(_pFStepY));
+	persistMgr->transferDouble(TMEMBER(_pFX));
+	persistMgr->transferDouble(TMEMBER(_pFY));
 	persistMgr->transferPtr(TMEMBER_PTR(_standSprite));
 	_talkSprites.persist(persistMgr);
 	_talkSpritesEx.persist(persistMgr);

@@ -795,7 +795,7 @@ bool ScValue::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferBool(TMEMBER(_isConstVar));
 	persistMgr->transfer(TMEMBER_INT(_type));
 	persistMgr->transferBool(TMEMBER(_valBool));
-	persistMgr->transfer(TMEMBER(_valFloat));
+	persistMgr->transferDouble(TMEMBER(_valFloat));
 	persistMgr->transfer(TMEMBER(_valInt));
 	persistMgr->transferPtr(TMEMBER_PTR(_valNative));
 
