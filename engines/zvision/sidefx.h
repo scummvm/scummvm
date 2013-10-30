@@ -88,6 +88,11 @@ public:
 		return false;
 	}
 
+	virtual bool stop() {
+		return true;
+	}
+	virtual void kill() {}
+
 protected:
 	ZVision *_engine;
 	uint32 _key;

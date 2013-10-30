@@ -336,6 +336,52 @@ SideFX *ScriptManager::getSideFX(uint32 key) {
 	return nullptr;
 }
 
+void ScriptManager::deleteSideFx(uint32 key) {
+	for (SideFXList::iterator iter = _activeSideFx.begin(); iter != _activeSideFx.end(); ++iter) {
+		if ((*iter)->getKey() == key) {
+			delete(*iter);
+			_activeSideFx.erase(iter);
+			break;
+		}
+	}
+}
+
+void ScriptManager::stopSideFx(uint32 key) {
+	for (SideFXList::iterator iter = _activeSideFx.begin(); iter != _activeSideFx.end(); ++iter) {
+		if ((*iter)->getKey() == key) {
+			bool ret = (*iter)->stop();
+			if (ret) {
+				delete(*iter);
+				_activeSideFx.erase(iter);
+			}
+			break;
+		}
+	}
+}
+
+void ScriptManager::killSideFx(uint32 key) {
+	for (SideFXList::iterator iter = _activeSideFx.begin(); iter != _activeSideFx.end(); ++iter) {
+		if ((*iter)->getKey() == key) {
+			(*iter)->kill();
+			delete(*iter);
+			_activeSideFx.erase(iter);
+			break;
+		}
+	}
+}
+
+void ScriptManager::killSideFxType(SideFX::SideFXType type) {
+	for (SideFXList::iterator iter = _activeSideFx.begin(); iter != _activeSideFx.end();) {
+		if ((*iter)->getType() & type) {
+			(*iter)->kill();
+			delete(*iter);
+			_activeSideFx.erase(iter);
+		} else {
+			++iter;
+		}
+	}
+}
+
 void ScriptManager::onMouseDown(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) {
 	if (!_activeControls)
 		return;

@@ -187,6 +187,10 @@ public:
 
 	void addSideFX(SideFX *fx);
 	SideFX *getSideFX(uint32 key);
+	void deleteSideFx(uint32 key);
+	void stopSideFx(uint32 key);
+	void killSideFx(uint32 key);
+	void killSideFxType(SideFX::SideFXType type);
 
 	/**
 	 * Called when LeftMouse is pushed.
