@@ -399,11 +399,19 @@ bool ActionStreamVideo::execute() {
 
 ActionTimer::ActionTimer(ZVision *engine, const Common::String &line) :
 	ResultAction(engine) {
-	sscanf(line.c_str(), "%*[^:]:%*[^:]:%u(%u)", &_key, &_time);
+	char time_buf[64];
+	memset(time_buf, 0, 64);
+	sscanf(line.c_str(), "%*[^:]:%*[^:]:%u(%s)", &_key, time_buf);
+	_time = new ValueSlot(_engine->getScriptManager(), time_buf);
+}
+
+ActionTimer::~ActionTimer() {
+	if (_time)
+		delete _time;
 }
 
 bool ActionTimer::execute() {
-	_engine->getScriptManager()->addSideFX(new TimerNode(_engine, _key, _time));
+	_engine->getScriptManager()->addSideFX(new TimerNode(_engine, _key, _time->getValue()));
 	return true;
 }
 

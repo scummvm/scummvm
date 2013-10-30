@@ -32,6 +32,7 @@ namespace ZVision {
 
 // Forward declaration of ZVision. This file is included before ZVision is declared
 class ZVision;
+class ValueSlot;
 
 /**
   * The base class that represents any action that a Puzzle can take.
@@ -337,11 +338,11 @@ private:
 class ActionTimer : public ResultAction {
 public:
 	ActionTimer(ZVision *engine, const Common::String &line);
+	~ActionTimer();
 	bool execute();
-
 private:
 	uint32 _key;
-	uint _time;
+	ValueSlot *_time;
 };
 
 } // End of namespace ZVision
