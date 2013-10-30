@@ -107,7 +107,7 @@ bool Debugger::Cmd_ViewFlc(int argc, const char **argv) {
 	}
 
 	int flagNum = strToInt(argv[1]);
-	_vm->loadAnim(flagNum);
+	_vm->loadAnim(flagNum, false);
 	return true;
 }
 

@@ -30,18 +30,19 @@ namespace Prince {
 
 class Object {
 public:
-    Object();
+	Object();
 
-    bool loadFromStream(Common::SeekableReadStream &stream);
-    Graphics::Surface *getSurface() const { return _surface; }
+	bool loadFromStream(Common::SeekableReadStream &stream);
+	Graphics::Surface *getSurface() const { return _surface; }
 
 private:
-    void loadSurface(Common::SeekableReadStream &stream);
+	void loadSurface(Common::SeekableReadStream &stream);
 
-    Graphics::Surface *_surface; 
-    uint16 _x, _y, _z;
+	Graphics::Surface *_surface; 
+	uint16 _x, _y, _z;
 };
 
 }
 
 #endif
+/* vim: set tabstop=4 noexpandtab: */

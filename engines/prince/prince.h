@@ -56,57 +56,77 @@ class Debugger;
 class ObjectList;
 class MobList;
 class MusicPlayer;
+class VariaTxt;
 
 class PrinceEngine : public Engine {
 protected:
-    Common::Error run();
+	Common::Error run();
 
 public:
-    PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc);
-    virtual ~PrinceEngine();
+	PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc);
+	virtual ~PrinceEngine();
 
-    virtual bool hasFeature(EngineFeature f) const;
+	virtual bool hasFeature(EngineFeature f) const;
 
-    int getGameType() const;
-    const char *getGameId() const;
-    uint32 getFeatures() const;
-    Common::Language getLanguage() const;
+	int getGameType() const;
+	const char *getGameId() const;
+	uint32 getFeatures() const;
+	Common::Language getLanguage() const;
 
-    const PrinceGameDescription *_gameDescription;
-    Video::FlicDecoder _flicPlayer;
+	const PrinceGameDescription *_gameDescription;
+	Video::FlicDecoder _flicPlayer;
+	VariaTxt *_variaTxt;
 
-    bool loadLocation(uint16 locationNr);
-    bool loadAnim(uint16 animNr);
+	uint32 _talkTxtSize;
+	byte *_talkTxt;
 
-    virtual GUI::Debugger *getDebugger();
+	bool loadLocation(uint16 locationNr);
+	bool loadAnim(uint16 animNr, bool loop);
 
-    void changeCursor(uint16 curId);
+	virtual GUI::Debugger *getDebugger();
+
+	void changeCursor(uint16 curId);
+	void printAt(const char *s, uint16 x, uint16 y);
+
+	const char * _textSlots[1000];
 
 private:
-    bool playNextFrame();
-    void keyHandler(Common::Event event);
-    void hotspot();
+	bool playNextFrame();
+	void keyHandler(Common::Event event);
+	void hotspot();
+	void scrollCameraRight(int16 delta);
+	void scrollCameraLeft(int16 delta);
+	void drawScreen();
 
-    Common::RandomSource *_rnd;
-    Graphics::BitmapDecoder _roomBmp;
-    uint16 _locationNr;
-    MhwanhDecoder _walizkaBmp;
+	uint32 getTextWidth(const char *s);
 
-    Graphics::Surface *_cur1;
-    Graphics::Surface *_cur2;
+	Common::RandomSource *_rnd;
+	Graphics::BitmapDecoder _roomBmp;
+	uint16 _locationNr;
+	MhwanhDecoder _walizkaBmp;
 
-    Debugger *_debugger;
-    GraphicsMan *_graph;
-    Script *_script;
-    Font _font;
-    ObjectList *_objectList;
-    MobList *_mobList;
-    MusicPlayer *_midiPlayer;
-    
-    void mainLoop();
+	Graphics::Surface *_cur1;
+	Graphics::Surface *_cur2;
+
+	Debugger *_debugger;
+	GraphicsMan *_graph;
+	Script *_script;
+	Font _font;
+	ObjectList *_objectList;
+	MobList *_mobList;
+	MusicPlayer *_midiPlayer;
+	uint16 _cameraX;
+	uint16 _newCameraX;
+	uint16 _sceneWidth;
+
+	bool _flicLooped;
+	
+	void mainLoop();
 
 };
 
 } // End of namespace Prince
 
 #endif
+
+/* vim: set tabstop=4 noexpandtab: */

@@ -10,6 +10,8 @@ MODULE_OBJS = \
 	mob.o \
 	object.o \
 	sound.o \
+	flags.o \
+	variatxt.o \
 	prince.o
 
 # This module can be built as a plugin

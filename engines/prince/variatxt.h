@@ -30,13 +30,13 @@ public:
 
 	~VariaTxt();
 
-    bool loadFromStream(Common::SeekableReadStream &stream);
+	bool loadFromStream(Common::SeekableReadStream &stream);
 
-    const char * getString(uint32 stringId);
+	const char * getString(uint32 stringId);
 
 private:
-    uint32 _dataSize;
-    byte *_data;
+	uint32 _dataSize;
+	byte *_data;
 };
 
 }

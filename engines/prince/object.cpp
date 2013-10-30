@@ -36,42 +36,43 @@ Object::Object() : _surface(NULL) {
 }
 
 void Object::loadSurface(Common::SeekableReadStream &stream) {
-    stream.skip(4);
+	stream.skip(4);
 
-    _surface = new Graphics::Surface();
-    _surface->create(stream.readUint16LE(), stream.readUint16LE(), Graphics::PixelFormat::createFormatCLUT8());
-    for (int h = 0; h < _surface->h; ++h) {
-        stream.read(_surface->getBasePtr(0, h), _surface->w);
-    }
+	_surface = new Graphics::Surface();
+	_surface->create(stream.readUint16LE(), stream.readUint16LE(), Graphics::PixelFormat::createFormatCLUT8());
+	for (int h = 0; h < _surface->h; ++h) {
+		stream.read(_surface->getBasePtr(0, h), _surface->w);
+	}
 
 }
 
 bool Object::loadFromStream(Common::SeekableReadStream &stream) {
    
-    int32 pos = stream.pos();
-    uint16 x = stream.readUint16LE();
-    if (x == 0xFFFF)
-        return false;
-    _x = x;
-    _y = stream.readUint16LE();
+	int32 pos = stream.pos();
+	uint16 x = stream.readUint16LE();
+	if (x == 0xFFFF)
+		return false;
+	_x = x;
+	_y = stream.readUint16LE();
 
-    const Common::String obStreamName = Common::String::format("OB%02d", stream.readUint16LE());
-    Common::SeekableReadStream *obStream = SearchMan.createReadStreamForMember(obStreamName);
-    if (!obStream) {
-        error("Can't load %s", obStreamName.c_str());
-        return false;
-    }
+	const Common::String obStreamName = Common::String::format("OB%02d", stream.readUint16LE());
+	Common::SeekableReadStream *obStream = SearchMan.createReadStreamForMember(obStreamName);
+	if (!obStream) {
+		error("Can't load %s", obStreamName.c_str());
+		return false;
+	}
 
-    loadSurface(*obStream);
-    delete obStream;
+	loadSurface(*obStream);
+	delete obStream;
 
-    _z = stream.readUint16LE();
-    
-    stream.seek(pos + 16);
+	_z = stream.readUint16LE();
+	
+	stream.seek(pos + 16);
 
-    debug("Object x %d, y %d, z %d", _x, _y, _z);
+	debug("Object x %d, y %d, z %d", _x, _y, _z);
 
-    return true;
+	return true;
 }
 
 }
+/* vim: set tabstop=4 noexpandtab: */

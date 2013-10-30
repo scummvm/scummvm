@@ -43,28 +43,28 @@ class PrinceEngine;
 
 class MusicPlayer: public Audio::MidiPlayer {
 private:
-    PrinceEngine *_vm;
-    byte *_data;
-    int _dataSize;
-    bool _isGM;
+	PrinceEngine *_vm;
+	byte *_data;
+	int _dataSize;
+	bool _isGM;
 
-    // Start MIDI File
-    void sndMidiStart();
+	// Start MIDI File
+	void sndMidiStart();
 
-    // Stop MIDI File
-    void sndMidiStop();
+	// Stop MIDI File
+	void sndMidiStop();
 public:
-    MusicPlayer(PrinceEngine *vm);
-    ~MusicPlayer();
+	MusicPlayer(PrinceEngine *vm);
+	~MusicPlayer();
 
-    void loadMidi(const char *);
-    void killMidi();
+	void loadMidi(const char *);
+	void killMidi();
 
-    virtual void send(uint32 b);
-    virtual void sendToChannel(byte channel, uint32 b);
+	virtual void send(uint32 b);
+	virtual void sendToChannel(byte channel, uint32 b);
 
-    static const char * _musTable[];
-    static const uint8 _musRoomTable[];
+	static const char * _musTable[];
+	static const uint8 _musRoomTable[];
 };
 
 } // End of namespace Prince

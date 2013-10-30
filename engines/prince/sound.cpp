@@ -27,6 +27,8 @@
 
 #include "prince/prince.h"
 #include "prince/sound.h"
+#include "prince/musNum.h"
+
 #include "common/config-manager.h"
 #include "common/memstream.h"
 #include "common/archive.h"
@@ -57,13 +59,67 @@ const char * MusicPlayer::_musTable[] = {
 
 const uint8 MusicPlayer::_musRoomTable[] = {
 	0,
-	3,
-	9,
-	9,
-	9,
-	13,
-	9,
-	9 
+	ROOM01MUS,
+	ROOM02MUS,
+	ROOM03MUS,
+	ROOM04MUS,
+	ROOM05MUS,
+	ROOM06MUS,
+	ROOM07MUS,
+	ROOM08MUS,
+	ROOM09MUS,
+	ROOM10MUS,
+	ROOM11MUS,
+	ROOM12MUS,
+	ROOM13MUS,
+	ROOM14MUS,
+	ROOM15MUS,
+	ROOM16MUS,
+	ROOM17MUS,
+	ROOM18MUS,
+	ROOM19MUS,
+	ROOM20MUS,
+	ROOM21MUS,
+	ROOM22MUS,
+	ROOM23MUS,
+	ROOM24MUS,
+	ROOM25MUS,
+	ROOM26MUS,
+	ROOM27MUS,
+	ROOM28MUS,
+	ROOM29MUS,
+	ROOM30MUS,
+	ROOM31MUS,
+	ROOM32MUS,
+	ROOM33MUS,
+	ROOM34MUS,
+	ROOM35MUS,
+	ROOM36MUS,
+	ROOM37MUS,
+	ROOM38MUS,
+	ROOM39MUS,
+	ROOM40MUS,
+	ROOM41MUS,
+	ROOM42MUS,
+	ROOM43MUS,
+	0,
+	0,
+	ROOM46MUS,
+	ROOM47MUS,
+	ROOM48MUS,
+	ROOM49MUS,
+	ROOM50MUS,
+	ROOM51MUS,
+	ROOM52MUS,
+	ROOM53MUS,
+	ROOM54MUS,
+	ROOM55MUS,
+	ROOM56MUS,
+	ROOM57MUS,
+	ROOM58MUS,
+	ROOM59MUS,
+	ROOM60MUS,
+	ROOM61MUS
 };
 
 

@@ -29,21 +29,21 @@ VariaTxt::VariaTxt() : _dataSize(0), _data(NULL) {
 }
 
 VariaTxt::~VariaTxt() {
-    _dataSize = 0;
-    delete[] _data;
-    _dataSize = NULL;
+	_dataSize = 0;
+	delete[] _data;
+	_dataSize = NULL;
 }
 
 
 bool VariaTxt::loadFromStream(Common::SeekableReadStream &stream) {
-    _dataSize = stream.size();
-    _data = new byte [_dataSize];
-    stream.read(_data, _dataSize);
-    return true;
+	_dataSize = stream.size();
+	_data = new byte [_dataSize];
+	stream.read(_data, _dataSize);
+	return true;
 }
 
 const char * VariaTxt::getString(uint32 stringId) {
-    uint32 stringOffset = READ_LE_UINT32(_data + stringId);
+	uint32 stringOffset = READ_LE_UINT32(_data + stringId);
 
 	if (stringOffset > _dataSize) {
 		assert(false);
