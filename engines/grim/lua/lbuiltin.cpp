@@ -511,13 +511,13 @@ static struct luaL_reg int_funcs[] = {
 	{ "stop_script", stop_script },
 	{ "next_script", next_script },
 	{ "identify_script", identify_script },
-	{ "pause_script", pause_script },
 	{ "pause_scripts", pause_scripts },
-	{ "unpause_script", unpause_script },
 	{ "unpause_scripts", unpause_scripts },
 	{ "find_script", find_script },
 	{ "sleep_for", sleep_for },
-	{ "break_here", break_here }
+	{ "break_here", break_here },
+	{ "pause_script", pause_script },
+	{ "unpause_script", unpause_script }
 };
 
 void luaB_predefine() {
