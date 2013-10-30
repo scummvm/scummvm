@@ -49,7 +49,7 @@ public:
 	bool isRewindable() const { return true; }
 	bool isSeekable() const { return true; }
 	bool rewind();
-	bool seek(const Audio::Timestamp &time);
+	bool seekIntern(const Audio::Timestamp &time);
 	bool loadStream(Common::SeekableReadStream *stream);
 
 protected:

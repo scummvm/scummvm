@@ -379,7 +379,7 @@ bool SmushDecoder::rewind() {
 	return seekToFrame(0);
 }
 
-bool SmushDecoder::seek(const Audio::Timestamp &time) {
+bool SmushDecoder::seekIntern(const Audio::Timestamp &time) {
 	int32 wantedFrame = (uint32)((time.msecs() / 1000.0f) * _videoTrack->getFrameRate().toDouble());
 	if (wantedFrame != 0) {
 		Debug::debug(Debug::Movie, "Seek to time: %d, frame: %d", time.msecs(), wantedFrame);
@@ -429,12 +429,12 @@ bool SmushDecoder::seek(const Audio::Timestamp &time) {
 	int offset = (keyframe == 0 ? 0 : 72030);
 
 	// Skip decoded audio between the keyframe and the target frame
-	Audio::Timestamp delay = _videoTrack->getFrameTime(_videoTrack->getCurFrame()) - _videoTrack->getFrameTime(keyframe);
+	Audio::Timestamp delay = _videoTrack->getCurFrame() > 0 ? _videoTrack->getFrameTime(_videoTrack->getCurFrame()) - _videoTrack->getFrameTime(keyframe) : 0;
 
 	int32 sampleCount = (delay.msecs() / 1000.f) * _audioTrack->getRate() - offset;
 	_audioTrack->skipSamples(sampleCount);
 
-	VideoDecoder::seek(time);
+	VideoDecoder::seekIntern(time);
 	return true;
 }
 
