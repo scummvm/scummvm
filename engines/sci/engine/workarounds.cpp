@@ -57,6 +57,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_CNICK_KQ,       -1,   700,  0,           "gcWindow", "open",           -1,   -1, { WORKAROUND_FAKE,   0 } }, // when entering the control menu, like in hoyle 3
 	{ GID_CNICK_LAURABOW, -1,     0,  1,          "Character", "say",            -1,   -1, { WORKAROUND_FAKE,   0 } }, // Yatch, like in hoyle 3 - temps 504 and 505 - bug #3615119
 	{ GID_CNICK_LAURABOW, -1,   700,  0,                 NULL, "open",           -1,   -1, { WORKAROUND_FAKE,   0 } }, // when entering control menu - bug #3615118 (same as the gcWindow workaround for Hoyle 3)
+	{ GID_CNICK_LAURABOW,100,   100,  0,                 NULL, "<noname144>",    -1,    1, { WORKAROUND_FAKE,   0 } }, // while playing domino - bug #3615129 (same as the dominoHand2 workaround for Hoyle 3)
 	{ GID_CNICK_LAURABOW,100,   110,  0,                 NULL, "doit",           -1,   -1, { WORKAROUND_FAKE,   0 } }, // when changing the "Dominoes per hand" setting - bug #3615130
 	{ GID_CNICK_LONGBOW,   0,     0,  0,          "RH Budget", "init",           -1,    1, { WORKAROUND_FAKE,   0 } }, // when starting the game
 	{ GID_ECOQUEST,       -1,    -1,  0,                 NULL, "doVerb",         -1,    0, { WORKAROUND_FAKE,   0 } }, // almost clicking anywhere triggers this in almost all rooms
