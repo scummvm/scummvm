@@ -429,7 +429,13 @@ bool SmushDecoder::seekIntern(const Audio::Timestamp &time) {
 	int offset = (keyframe == 0 ? 0 : 72030);
 
 	// Skip decoded audio between the keyframe and the target frame
-	Audio::Timestamp delay = _videoTrack->getCurFrame() > 0 ? _videoTrack->getFrameTime(_videoTrack->getCurFrame()) - _videoTrack->getFrameTime(keyframe) : 0;
+	Audio::Timestamp delay = 0;
+	if (_videoTrack->getCurFrame() > 0) {
+		delay = _videoTrack->getFrameTime(_videoTrack->getCurFrame());
+	}
+	if (keyframe > 0) {
+		delay = delay - _videoTrack->getFrameTime(keyframe);
+	}
 
 	int32 sampleCount = (delay.msecs() / 1000.f) * _audioTrack->getRate() - offset;
 	_audioTrack->skipSamples(sampleCount);
