@@ -1111,6 +1111,11 @@ void GrimEngine::setSet(Set *scene) {
 void GrimEngine::makeCurrentSetup(int num) {
 	int prevSetup = g_grim->getCurrSet()->getSetup();
 	if (prevSetup != num) {
+		foreach (Actor *a, Actor::getPool()) {
+			a->clearCleanBuffer();
+		}
+		g_driver->refreshBuffers();
+
 		getCurrSet()->setSetup(num);
 		getCurrSet()->setSoundParameters(20, 127);
 		cameraChangeHandle(prevSetup, num);
