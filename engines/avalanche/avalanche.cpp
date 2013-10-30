@@ -75,7 +75,8 @@ AvalancheEngine::~AvalancheEngine() {
 }
 
 void AvalancheEngine::initVariables() {
-	// Needed because of Lucerna::load_also()
+	resetVariables();
+
 	for (int i = 0; i < 31; i++) {
 		_also[i][0] = nullptr;
 		_also[i][1] = nullptr;
@@ -117,11 +118,18 @@ void AvalancheEngine::initVariables() {
 	_doingSpriteRun = false;
 	_isLoaded = false;
 	_soundFx = true;
-	_spludwickAtHome = false;
-	_passedCwytalotInHerts = false;
 	_holdTheDawn = false;
-	_lastRoom = 0;
-	_lastRoomNotMap = 0;
+
+	_lineNum = 0;
+	for (int i = 0; i < 50; i++)
+		_lines[i]._color = kColorWhite;
+	_dropsOk = false;
+	_cheat = false;
+	_letMeOut = false;
+	_thinks = 2;
+	_thinkThing = true;
+	_seeScroll = false;
+	_currentMouse = 177;
 }
 
 Common::ErrorCode AvalancheEngine::initialize() {
