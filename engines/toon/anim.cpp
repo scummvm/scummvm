@@ -41,7 +41,7 @@ bool Animation::loadAnimation(const Common::String &file) {
 	if (strncmp((char *)fileData, "KevinAguilar", 12))
 		return false;
 
-	strncpy(_name, file.c_str(), 32);
+	Common::strlcpy(_name, file.c_str(), 32);
 
 	uint32 headerSize = READ_LE_UINT32(fileData + 16);
 	uint32 uncompressedBytes = READ_LE_UINT32(fileData + 20);
