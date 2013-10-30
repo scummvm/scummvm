@@ -113,7 +113,8 @@ void MctlCompound::initMovGraph2() {
 }
 
 void MctlCompound::freeItems() {
-	warning("STUB: MctlCompound::freeItems()");
+	for (uint i = 0; i < _motionControllers.size(); i++)
+		_motionControllers[i]->_motionControllerObj->freeItems();
 }
 
 MessageQueue *MctlCompound::method34(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId) {
