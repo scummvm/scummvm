@@ -446,6 +446,8 @@ void ScriptManager::do_changeLocation() {
 	cleanScriptScope(room);
 	cleanScriptScope(world);
 
+	addPuzzlesToReferenceTable(universe);
+
 	// Parse into puzzles and controls
 	Common::String fileName = Common::String::format("%c%c%c%c.scr", _nextLocation.world, _nextLocation.room, _nextLocation.node, _nextLocation.view);
 	parseScrFile(fileName, nodeview);
