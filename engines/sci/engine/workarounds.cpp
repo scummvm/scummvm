@@ -55,6 +55,8 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_CASTLEBRAIN,   280,   280,  0,         "programmer", "dispatchEvent",  -1,    0, { WORKAROUND_FAKE, 0xf } }, // pressing 'q' on the computer screen in the robot room, and closing the help dialog that pops up (bug #3039656). Moves the cursor to the view with the ID returned (in this case, the robot hand)
 	{ GID_CNICK_KQ,       -1,     0,  1,          "Character", "say",            -1,   -1, { WORKAROUND_FAKE,   0 } }, // checkers/backgammon, like in hoyle 3 - temps 504 and 505 - bug #3606025
 	{ GID_CNICK_KQ,       -1,   700,  0,           "gcWindow", "open",           -1,   -1, { WORKAROUND_FAKE,   0 } }, // when entering the control menu, like in hoyle 3
+	{ GID_CNICK_KQ,      300,   303,  0,      "theDoubleCube", "<noname520>",    -1,    5, { WORKAROUND_FAKE,   0 } }, // while playing backgammon with doubling enabled - bug #3615121 (same as the theDoubleCube::make workaround for Hoyle 3)
+	{ GID_CNICK_KQ,      300,   303,  0,      "theDoubleCube", "<noname519>",    -1,    9, { WORKAROUND_FAKE,   0 } }, // when accepting a double, while playing backgammon with doubling enabled (same as the theDoubleCube::accept workaround for Hoyle 3)
 	{ GID_CNICK_LAURABOW, -1,     0,  1,          "Character", "say",            -1,   -1, { WORKAROUND_FAKE,   0 } }, // Yatch, like in hoyle 3 - temps 504 and 505 - bug #3615119
 	{ GID_CNICK_LAURABOW, -1,   700,  0,                 NULL, "open",           -1,   -1, { WORKAROUND_FAKE,   0 } }, // when entering control menu - bug #3615118 (same as the gcWindow workaround for Hoyle 3)
 	{ GID_CNICK_LAURABOW,100,   100,  0,                 NULL, "<noname144>",    -1,    1, { WORKAROUND_FAKE,   0 } }, // while playing domino - bug #3615129 (same as the dominoHand2 workaround for Hoyle 3)
@@ -78,6 +80,8 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_HOYLE3,         -1,   700,  0,           "gcWindow", "open",           -1,   -1, { WORKAROUND_FAKE,   0 } }, // when entering control menu
 	{ GID_HOYLE3,        100,   100,  0,        "dominoHand2", "cue",            -1,    1, { WORKAROUND_FAKE,   0 } }, // while playing domino - bug #3036918
 	{ GID_HOYLE3,        100,   110,  0,           "OKButton", "doit",           -1,   -1, { WORKAROUND_FAKE,   0 } }, // when changing the "Dominoes per hand" setting - bug #3615130
+	{ GID_HOYLE3,        300,   303,  0,      "theDoubleCube", "make",           -1,    5, { WORKAROUND_FAKE,   0 } }, // while playing backgammon with doubling enabled
+	{ GID_HOYLE3,        300,   303,  0,      "theDoubleCube", "accept",         -1,    9, { WORKAROUND_FAKE,   0 } }, // when accepting a double, while playing backgammon with doubling enabled
 	{ GID_HOYLE4,         -1,     0,  0,                 NULL, "open",           -1,   -1, { WORKAROUND_FAKE,   0 } }, // when selecting "Control" from the menu (temp vars 0-3) - bug #3039294
 	{ GID_HOYLE4,        910,    18,  0,                 NULL, "init",           -1,    0, { WORKAROUND_FAKE,   0 } }, // during tutorial - bug #3042756
 	{ GID_HOYLE4,        910,   910,  0,                 NULL, "setup",          -1,    3, { WORKAROUND_FAKE,   0 } }, // when selecting "Tutorial" from the main menu - bug #3039294
