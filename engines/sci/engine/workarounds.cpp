@@ -365,6 +365,13 @@ const SciWorkaroundEntry kNewWindow_workarounds[] = {
 };
 
 //    gameID,           room,script,lvl,          object-name, method-name,    call,index,                workaround
+const SciWorkaroundEntry kReadNumber_workarounds[] = {
+	{ GID_CNICK_LAURABOW,100,   101,  0,          "dominoes.opt", "doit",        -1,    0, { WORKAROUND_STILLCALL, 0 } }, // When dominoes.opt is present, the game scripts call kReadNumber with an extra integer parameter - bug #3615120
+	{ GID_HOYLE3,        100,   101,  0,          "dominoes.opt", "doit",        -1,    0, { WORKAROUND_STILLCALL, 0 } }, // When dominoes.opt is present, the game scripts call kReadNumber with an extra integer parameter - bug #3615120
+	SCI_WORKAROUNDENTRY_TERMINATOR
+};
+
+//    gameID,           room,script,lvl,          object-name, method-name,    call,index,                workaround
 const SciWorkaroundEntry kPaletteUnsetFlag_workarounds[] = {
 	{ GID_QFG4,          100,   100,  0,            "doMovie", "changeState",    -1,    0, { WORKAROUND_IGNORE,    0 } }, // after the Sierra logo, no flags are passed, thus the call is meaningless - bug #3034506
 	SCI_WORKAROUNDENTRY_TERMINATOR
