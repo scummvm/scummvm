@@ -255,6 +255,8 @@ AudioStreamInstance::AudioStreamInstance(AudioManager *man, Audio::Mixer *mixer,
 	} else {
 		stopNow();
 	}
+
+	_soundType = Audio::Mixer::kPlainSoundType;
 }
 
 AudioStreamInstance::~AudioStreamInstance() {
