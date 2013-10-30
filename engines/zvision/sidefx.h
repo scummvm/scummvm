@@ -37,8 +37,15 @@ class SideFX {
 public:
 
 	enum SideFXType {
-	    SIDEFX_UNK   = 0,
-	    SIDEFX_TIMER = 1
+	    SIDEFX_ANIM  = 1,
+	    SIDEFX_AUDIO = 2,
+	    SIDEFX_DISTORT = 4,
+	    SIDEFX_PANTRACK = 8,
+	    SIDEFX_REGION = 16,
+	    SIDEFX_TIMER = 32,
+	    SIDEFX_TTYTXT = 64,
+	    SIDEFX_UNK = 128,
+	    SIDEFX_ALL = 255
 	};
 
 	SideFX() : _engine(0), _key(0), _type(SIDEFX_UNK) {}
