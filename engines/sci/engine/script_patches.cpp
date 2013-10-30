@@ -741,15 +741,16 @@ const uint16 kq6PatchDuplicateBabyCry[] = {
 	PATCH_END
 };
 
-// The inventory of King's Quest 6 (CD) is buggy. When it grows too large,
+// The inventory of King's Quest 6 is buggy. When it grows too large,
 //  it will get split into 2 pages. Switching between those pages will
 //  grow the stack, because it's calling itself per switch.
 // Which means after a while ScummVM will bomb out because the stack frame
 //  will be too large. This patch fixes the buggy script.
+// This patch applies to at least CD, English floppy, German floppy
 // Responsible method: KqInv::showSelf
 // Fixes bug #3293954
 const byte kq6SignatureInventoryStackFix[] = {
-	46,
+	22,
 	0x67, 0x30,       // pTos state
 	0x34, 0x00, 0x20, // ldi 2000
 	0x12,             // and
@@ -761,7 +762,8 @@ const byte kq6SignatureInventoryStackFix[] = {
 	0x34, 0xff, 0xdf, // ldi dfff
 	0x12,             // and
 	0x65, 0x30,       // aTop state
-	0x38, 0xe1, 0x00, // pushi 00e1
+	0x38,             // pushi "show"
+	+2, 22,           // skip over "show" (which may be e100h for KQ6CD, xxxxh for KQ6 floppy)
 	0x78,             // push1
 	0x87, 0x00,       // lap param[0]
 	0x31, 0x04,       // bnt [use global for show]
@@ -789,7 +791,9 @@ const uint16 kq6PatchInventoryStackFix[] = {
 	0x34, 0xff, 0xdf, // ldi dfff
 	0x12,             // and
 	0x65, 0x30,       // aTop state
-	0x38, 0xe1, 0x00, // pushi e1
+	0x38,             // pushi "show"
+	PATCH_GETORIGINALBYTE | +22,
+	PATCH_GETORIGINALBYTE | +23,
 	0x78,             // push1
 	0x87, 0x00,       // lap param[0]
 	0x31, 0x04,       // bnt [call show using global 0]
