@@ -515,4 +515,27 @@ Location ScriptManager::getCurrentLocation() const {
 	return location;
 }
 
+ValueSlot::ValueSlot(ScriptManager *sc_man, const char *slot_val):
+	_sc_man(sc_man) {
+	value = 0;
+	slot = false;
+	const char *is_slot = strstr(slot_val, "[");
+	if (is_slot) {
+		slot = true;
+		value = atoi(is_slot + 1);
+	} else {
+		slot = false;
+		value = atoi(slot_val);
+	}
+}
+int16 ValueSlot::getValue() {
+	if (slot) {
+		if (value >= 0)
+			return _sc_man->getStateValue(value);
+		else
+			return 0;
+	} else
+		return value;
+}
+
 } // End of namespace ZVision

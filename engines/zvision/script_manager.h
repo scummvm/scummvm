@@ -304,6 +304,16 @@ private:
 	Control *parseControl(Common::String &line, Common::SeekableReadStream &stream);
 };
 
+class ValueSlot {
+public:
+	ValueSlot(ScriptManager *sc_man, const char *slot_val);
+	int16 getValue();
+private:
+	int16 value;
+	bool slot;
+	ScriptManager *_sc_man;
+};
+
 
 } // End of namespace ZVision
 
