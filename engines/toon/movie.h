@@ -53,7 +53,7 @@ public:
 	bool isPlaying() { return _playing; }
 
 protected:
-	bool playVideo(bool isFirstIntroVideo);
+	void playVideo(bool isFirstIntroVideo);
 	ToonEngine *_vm;
 	ToonstruckSmackerDecoder *_decoder;
 	bool _playing;
