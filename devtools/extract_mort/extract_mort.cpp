@@ -104,9 +104,9 @@ public:
 		return ftell(f);
 	}
 	uint32 size() {
-		int position = ftell(f);
+		uint32 position = ftell(f);
 		fseek (f, 0, SEEK_END);
-		int end = ftell (f);
+		uint32 end = ftell(f);
 		fseek (f, position, SEEK_SET);
 
 		return end;
