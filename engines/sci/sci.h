@@ -251,6 +251,7 @@ public:
 	 * - King's Quest 6 CD
 	 */
 	void syncIngameAudioOptions();
+	void updateScummVMAudioOptions();
 
 	const SciGameId &getGameId() const { return _gameId; }
 	const char *getGameIdStr() const;
