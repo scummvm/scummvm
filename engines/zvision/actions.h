@@ -288,11 +288,12 @@ public:
 class ActionRandom : public ResultAction {
 public:
 	ActionRandom(ZVision *engine, const Common::String &line);
+	~ActionRandom();
 	bool execute();
 
 private:
 	uint32 _key;
-	uint _max;
+	ValueSlot *_max;
 };
 
 class ActionSetPartialScreen : public ResultAction {

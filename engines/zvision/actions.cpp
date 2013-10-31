@@ -296,11 +296,19 @@ bool ActionQuit::execute() {
 
 ActionRandom::ActionRandom(ZVision *engine, const Common::String &line) :
 	ResultAction(engine) {
-	sscanf(line.c_str(), "%*[^:]:%*[^:]:%u, %u)", &_key, &_max);
+	char max_buf[64];
+	memset(max_buf, 0, 64);
+	sscanf(line.c_str(), "%*[^:]:%*[^:]:%u(%s)", &_key, max_buf);
+	_max = new ValueSlot(_engine->getScriptManager(), max_buf);
+}
+
+ActionRandom::~ActionRandom() {
+	if (_max)
+		delete _max;
 }
 
 bool ActionRandom::execute() {
-	uint randNumber = _engine->getRandomSource()->getRandomNumber(_max);
+	uint randNumber = _engine->getRandomSource()->getRandomNumber(_max->getValue());
 	_engine->getScriptManager()->setStateValue(_key, randNumber);
 	return true;
 }
