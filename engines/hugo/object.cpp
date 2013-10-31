@@ -358,7 +358,7 @@ void ObjectHandler::showTakeables() {
  * Find a clear space around supplied object that hero can walk to
  */
 bool ObjectHandler::findObjectSpace(Object *obj, int16 *destx, int16 *desty) {
-	debugC(1, kDebugObject, "findObjectSpace(obj, %d, %d)", *destx, *desty);
+	debugC(1, kDebugObject, "findObjectSpace(...)");
 
 	Seq *curImage = obj->_currImagePtr;
 	int16 y = obj->_y + curImage->_y2 - 1;
