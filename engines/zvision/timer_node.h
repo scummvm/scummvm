@@ -32,6 +32,7 @@ class ZVision;
 class TimerNode : public Control {
 public:
 	TimerNode(ZVision *engine, uint32 key, uint timeInSeconds);
+	~TimerNode();
 
 	/**
 	 * Decrement the timer by the delta time. If the timer is finished, set the status
