@@ -9490,7 +9490,6 @@ double unk(double v1, double v2) {
 	return sqrt(v1 * v1 + v2 * v2); 
 }
 
-#define unk(x, y) (0)
 void Scene1575::postInit(SceneObjectList *OwnerList) {
 	loadScene(1575);
 	R2_GLOBALS._uiElements._active = false;
@@ -9613,7 +9612,6 @@ void Scene1575::postInit(SceneObjectList *OwnerList) {
 	_actor15.fixPriority(7);
 	_actor15.hide();
 }
-#undef unk
 
 void Scene1575::remove() {
 	SceneExt::remove();
