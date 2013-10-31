@@ -180,21 +180,29 @@ Audio::RewindableAudioStream *makeRawZorkStream(const Common::String &filePath, 
 	Common::String fileName = getFileName(filePath);
 	fileName.toLowercase();
 
-	SoundParams soundParams;
+	SoundParams soundParams = { ' ', 0, false, false };
+	bool foundParams = false;
+	char fileIdentifier = (engine->getGameId() == GID_NEMESIS) ? fileName[6] : fileName[7];
 
 	if (engine->getGameId() == GID_NEMESIS) {
 		for (int i = 0; i < 6; ++i) {
-			if (RawZorkStream::_zNemSoundParamLookupTable[i].identifier == (fileName[6]))
+			if (RawZorkStream::_zNemSoundParamLookupTable[i].identifier == fileIdentifier) {
 				soundParams = RawZorkStream::_zNemSoundParamLookupTable[i];
+				foundParams = true;
+			}
 		}
-	}
-	else if (engine->getGameId() == GID_GRANDINQUISITOR) {
+	} else if (engine->getGameId() == GID_GRANDINQUISITOR) {
 		for (int i = 0; i < 6; ++i) {
-			if (RawZorkStream::_zgiSoundParamLookupTable[i].identifier == (fileName[7]))
+			if (RawZorkStream::_zgiSoundParamLookupTable[i].identifier == fileIdentifier) {
 				soundParams = RawZorkStream::_zgiSoundParamLookupTable[i];
+				foundParams = true;
+			}
 		}
 	}
 	
+	if (!foundParams)
+		error("Unable to find sound params for file '%s'. File identifier is '%c'", filePath.c_str(), fileIdentifier);
+
 	if (soundParams.packed) {
 		return makeRawZorkStream(wrapBufferedSeekableReadStream(file, 2048, DisposeAfterUse::YES), soundParams.rate, soundParams.stereo, DisposeAfterUse::YES);
 	} else {
