@@ -185,6 +185,9 @@ bool ActionMusic::execute(ZVision *engine) {
 		Common::File *file = new Common::File();
 		if (file->open(_fileName)) {
 			audioStream = Audio::makeWAVStream(file, DisposeAfterUse::YES);
+		} else {
+			warning("Unable to open %s", _fileName.c_str());
+			return false;
 		}
 	} else {
 		audioStream = makeRawZorkStream(_fileName, engine);
