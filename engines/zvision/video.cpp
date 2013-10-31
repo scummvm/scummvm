@@ -107,7 +107,7 @@ void ZVision::playVideo(Video::VideoDecoder &videoDecoder, const Common::Rect &d
 	uint16 finalWidth = origWidth * scale;
 	uint16 finalHeight = origHeight * scale;
 
-	byte *scaledVideoFrameBuffer;
+	byte *scaledVideoFrameBuffer = 0;
 	if (scale != 1) {
 		scaledVideoFrameBuffer = new byte[finalWidth * finalHeight * bytesPerPixel];
 	}

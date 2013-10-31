@@ -377,11 +377,11 @@ void LeverControl::renderFrame(uint frameNumber) {
 		_lastRenderedFrame = frameNumber;
 	}
 
-	const uint16 *frameData;
+	const uint16 *frameData = 0;
 	int x = _animationCoords.left;
 	int y = _animationCoords.top;
-	int width;
-	int height;
+	int width = 0;
+	int height = 0;
 
 	if (_fileType == RLF) {
 		// getFrameData() will automatically optimize to getNextFrame() / getPreviousFrame() if it can
