@@ -431,14 +431,52 @@ void ScriptManager::changeLocation(char _world, char _room, char _node, char _vi
 	_nextLocation.node = _node;
 	_nextLocation.view = _view;
 	_nextLocation.offset = offset;
+	// If next location 0000 - it's indicate to go to previous location.
+	if (_nextLocation.world == '0' && _nextLocation.room == '0' && _nextLocation.node == '0' && _nextLocation.view == '0') {
+		if (getStateValue(StateKey_World) != 'g' || getStateValue(StateKey_Room) != 'j') {
+			_nextLocation.world = getStateValue(StateKey_LastWorld);
+			_nextLocation.room = getStateValue(StateKey_LastRoom);
+			_nextLocation.node = getStateValue(StateKey_LastNode);
+			_nextLocation.view = getStateValue(StateKey_LastView);
+			_nextLocation.offset = getStateValue(StateKey_LastViewPos);
+		} else {
+			_nextLocation.world = getStateValue(StateKey_Menu_LastWorld);
+			_nextLocation.room = getStateValue(StateKey_Menu_LastRoom);
+			_nextLocation.node = getStateValue(StateKey_Menu_LastNode);
+			_nextLocation.view = getStateValue(StateKey_Menu_LastView);
+			_nextLocation.offset = getStateValue(StateKey_Menu_LastViewPos);
+		}
+	}
 }
 
 void ScriptManager::do_changeLocation() {
 	assert(_nextLocation.world != 0);
 	debug(1, "Changing location to: %c %c %c %c %u", _nextLocation.world, _nextLocation.room, _nextLocation.node, _nextLocation.view, _nextLocation.offset);
 
+	if (getStateValue(StateKey_World) != 'g' || getStateValue(StateKey_Room) != 'j') {
+		if (_nextLocation.world != 'g' || _nextLocation.room != 'j') {
+			setStateValue(StateKey_LastWorld, getStateValue(StateKey_World));
+			setStateValue(StateKey_LastRoom, getStateValue(StateKey_Room));
+			setStateValue(StateKey_LastNode, getStateValue(StateKey_Node));
+			setStateValue(StateKey_LastView, getStateValue(StateKey_View));
+			setStateValue(StateKey_LastViewPos, getStateValue(StateKey_ViewPos));
+		} else {
+			setStateValue(StateKey_Menu_LastWorld, getStateValue(StateKey_World));
+			setStateValue(StateKey_Menu_LastRoom, getStateValue(StateKey_Room));
+			setStateValue(StateKey_Menu_LastNode, getStateValue(StateKey_Node));
+			setStateValue(StateKey_Menu_LastView, getStateValue(StateKey_View));
+			setStateValue(StateKey_Menu_LastViewPos, getStateValue(StateKey_ViewPos));
+		}
+	}
+
 	// Auto save
 	//_engine->getSaveManager()->autoSave();
+
+	setStateValue(StateKey_World, _nextLocation.world);
+	setStateValue(StateKey_Room, _nextLocation.room);
+	setStateValue(StateKey_Node, _nextLocation.node);
+	setStateValue(StateKey_View, _nextLocation.view);
+	setStateValue(StateKey_ViewPos, _nextLocation.offset);
 
 	// Clear all the containers
 	_referenceTable.clear();
