@@ -137,6 +137,7 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		// Spaceport
 		return new Scene1550();
 	case 1575:
+		// Spaceport - unused ship scene
 		return new Scene1575();
 	case 1580:
 		// Inside wreck

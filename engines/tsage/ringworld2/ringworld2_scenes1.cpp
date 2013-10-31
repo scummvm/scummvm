@@ -9294,13 +9294,182 @@ void Scene1550::enterArea() {
 }
 
 /*--------------------------------------------------------------------------
- * Scene 1575 -
+ * Scene 1575 - Spaceport - unused ship scene
  *
  *--------------------------------------------------------------------------*/
 
+Scene1575::Button::Button() {
+	_buttonId = 0;
+	_pressed = false;
+}
+
+void Scene1575::Button::synchronize(Serializer &s) {
+	NamedHotspot::synchronize(s);
+
+	s.syncAsSint16LE(_buttonId);
+	s.syncAsSint16LE(_pressed);
+}
+
+void Scene1575::Button::process(Event &event) {
+	Scene1575 *scene = (Scene1575 *)R2_GLOBALS._sceneManager._scene;
+	bool isInBounds = _bounds.contains(event.mousePos);
+	CursorType cursor = R2_GLOBALS._events.getCursor();
+
+	if ((event.eventType == EVENT_BUTTON_DOWN && cursor == CURSOR_USE && isInBounds) ||
+		(_pressed && _buttonId != 1 && event.eventType == EVENT_BUTTON_UP && isInBounds)) {
+		// Button pressed
+		_pressed = true;
+		Common::Point pos = scene->_actor1._position;
+		event.handled = true;
+
+		if (!R2_GLOBALS.getFlag(18) || _buttonId <= 1 || _buttonId >= 6) {
+			switch (_buttonId) {
+			case 1:
+				if (R2_GLOBALS.getFlag(18)) {
+					scene->_actor14.hide();
+					scene->_actor15.hide();
+					R2_GLOBALS.clearFlag(18);
+				} else if ((scene->_actor12._position.x == 85) && (scene->_actor12._position.y == 123)) {
+					scene->_actor14.show();
+					scene->_actor15.show();
+					R2_GLOBALS.setFlag(18);
+				} else {
+					SceneItem::display("That's probably not a good thing, ya know!");
+				}
+				break;
+			case 2:
+				if (scene->_field41A < 780) {
+					if (pos.x > 54)
+						pos.x -= 65;
+					pos.x += 2;
+					scene->_field41A += 2;
+
+					for (int i = 0; i < 17; i++)
+						scene->_arrActor[i].setPosition(Common::Point(scene->_arrActor[i]._position.x + 2, scene->_arrActor[i]._position.y));
+
+					scene->_actor13.setPosition(Common::Point(scene->_actor13._position.x + 2, scene->_actor13._position.y));
+					scene->_actor12.setPosition(Common::Point(scene->_actor12._position.x + 2, scene->_actor12._position.y));
+					scene->_actor1.setPosition(Common::Point(pos.x, pos.y));
+					scene->_actor2.setPosition(Common::Point(pos.x + 65, pos.y));
+					scene->_actor3.setPosition(Common::Point(pos.x + 130, pos.y));
+				}
+				break;
+			case 3:
+				if (scene->_field41A > 0) {
+					if (pos.x < -8)
+						pos.x += 65;
+
+					pos.x -= 2;
+					scene->_field41A -= 2;
+					for (int i = 0; i < 17; i++)
+						scene->_arrActor[i].setPosition(Common::Point(scene->_arrActor[i]._position.x - 2, scene->_arrActor[i]._position.y));
+
+					scene->_actor13.setPosition(Common::Point(scene->_actor13._position.x - 2, scene->_actor13._position.y));
+					scene->_actor12.setPosition(Common::Point(scene->_actor12._position.x - 2, scene->_actor12._position.y));
+					scene->_actor1.setPosition(Common::Point(pos.x, pos.y));
+					scene->_actor2.setPosition(Common::Point(pos.x + 65, pos.y));
+					scene->_actor3.setPosition(Common::Point(pos.x + 130, pos.y));
+				}
+				break;
+			case 4: {
+					if (pos.y < 176) {
+						++pos.y;
+						for (int i = 0; i < 17; ++i)
+							scene->_arrActor[i].setPosition(Common::Point(scene->_arrActor[i]._position.x, scene->_arrActor[i]._position.y + 1));
+
+						scene->_actor13.setPosition(Common::Point(scene->_actor13._position.x, scene->_actor13._position.y + 1));
+						scene->_actor12.setPosition(Common::Point(scene->_actor12._position.x, scene->_actor12._position.y + 1));
+						scene->_actor1.setPosition(Common::Point(pos.x, pos.y));
+						scene->_actor2.setPosition(Common::Point(pos.x + 65, pos.y));
+						scene->_actor3.setPosition(Common::Point(pos.x + 130, pos.y));
+					}
+				}
+				break;
+			case 5: {
+					if (pos.y > 145) {
+						--pos.y;
+						for (int i = 0; i < 17; ++i)
+							scene->_arrActor[i].setPosition(Common::Point(scene->_arrActor[i]._position.x, scene->_arrActor[i]._position.y - 1));
+
+						scene->_actor13.setPosition(Common::Point(scene->_actor13._position.x, scene->_actor13._position.y - 1));
+						scene->_actor12.setPosition(Common::Point(scene->_actor12._position.x, scene->_actor12._position.y - 1));
+						scene->_actor1.setPosition(Common::Point(pos.x, pos.y));
+						scene->_actor2.setPosition(Common::Point(pos.x + 65, pos.y));
+						scene->_actor3.setPosition(Common::Point(pos.x + 130, pos.y));
+					}
+				}
+				break;
+			case 6:
+				R2_GLOBALS._sceneManager.changeScene(1550);
+				break;
+			default:
+				break;
+			}
+
+			int j = 0;
+			for (int i = 0; i < 17; i++) {
+				if (scene->_arrActor[i]._bounds.contains(85, 116))
+					j = i;
+			}
+
+			if (scene->_actor13._bounds.contains(85, 116))
+				j = 18;
+
+			if (scene->_actor12._bounds.contains(85, 116))
+				j = 19;
+
+			if (j)
+				scene->_actor11.show();
+			else
+				scene->_actor11.hide();
+		} else {
+			SceneItem::display("Better not move the laser while it's firing!");
+		}
+	} else {
+		_pressed = false;
+	}
+}
+
+bool Scene1575::Button::startAction(CursorType action, Event &event) {
+	if (action == CURSOR_USE)
+		return false;
+	return SceneHotspot::startAction(action, event);
+}
+
+void Scene1575::Button::initButton(int buttonId) {
+	_buttonId = buttonId;
+	_pressed = false;
+	EventHandler::postInit();
+
+	switch (_buttonId) {
+	case 1:
+		setDetails(Rect(53, 165, 117, 190), -1, -1, -1, 2, 1, NULL);
+		break;
+	case 2:
+		setDetails(Rect(151, 142, 189, 161), -1, -1, -1, 2, 1, NULL);
+		break;
+	case 3:
+		setDetails(Rect(225, 142, 263, 161), -1, -1, -1, 2, 1, NULL);
+		break;
+	case 4:
+		setDetails(Rect(188, 122, 226, 140), -1, -1, -1, 2, 1, NULL);
+		break;
+	case 5:
+		setDetails(Rect(188, 162, 226, 180), -1, -1, -1, 2, 1, NULL);
+		break;
+	case 6:
+		setDetails(Rect(269, 169, 301, 185), -1, -1, -1, 2, 1, NULL);
+		break;
+	default:
+		break;
+	}
+}
+
+/*--------------------------------------------------------------------------*/
+
 Scene1575::Scene1575() {
 	_field412 = 0;
-	_field414 = 0;
+	_field414 = 390;
 	_field416 = 0;
 	_field418 = 0;
 	_field41A = 0;
@@ -9316,156 +9485,17 @@ void Scene1575::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_field41A);
 }
 
-Scene1575::Hotspot1::Hotspot1() {
-	_field34 = 0;
-	_field36 = 0;
+// TODO: Remove this method stub with proper sub-method call
+double unk(double v1, double v2) { 
+	return sqrt(v1 * v1 + v2 * v2); 
 }
 
-void Scene1575::Hotspot1::synchronize(Serializer &s) {
-	NamedHotspot::synchronize(s);
-
-	s.syncAsSint16LE(_field34);
-	s.syncAsSint16LE(_field36);
-}
-
-void Scene1575::Hotspot1::process(Event &event) {
-	if ((event.eventType != EVENT_BUTTON_DOWN) || (R2_GLOBALS._events.getCursor() != R2_STEPPING_DISKS) || (!_bounds.contains(event.mousePos))) {
-		if (_field36 == 0)
-			return;
-		if ((_field34 == 1)  || (event.eventType == EVENT_BUTTON_UP) || (!_bounds.contains(event.mousePos))) {
-			_field36 = 0;
-			return;
-		}
-	}
-	_field36 = 1;
-	Scene1575 *scene = (Scene1575 *)R2_GLOBALS._sceneManager._scene;
-
-	event.handled = true;
-	if (R2_GLOBALS.getFlag(18) && (_field34 > 1) && (_field34 < 6)) {
-		warning("sub1A03B(\"Better not move the laser while it\'s firing!\", 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);");
-		return;
-	}
-	int di = scene->_actor1._position.x;
-
-	switch (_field34 - 1) {
-	case 0:
-		if (R2_GLOBALS.getFlag(18)) {
-			scene->_actor14.hide();
-			scene->_actor15.hide();
-			R2_GLOBALS.clearFlag(18);
-		} else if ((scene->_actor12._position.x == 85) && (scene->_actor12._position.y == 123)) {
-			scene->_actor14.show();
-			scene->_actor15.show();
-			R2_GLOBALS.setFlag(18);
-		} else {
-			warning("sub1A03B(\"That\'s probably not a good thing, ya know!\", 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);");
-		}
-		break;
-	case 1:
-		if (scene->_field41A < 780) {
-			if (di > 54)
-				di -= 65;
-			di += 2;
-			scene->_field41A += 2;
-
-			for (int i = 0; i < 17; i++)
-				scene->_arrActor[i].setPosition(Common::Point(scene->_arrActor[i]._position.x + 2, scene->_arrActor[i]._position.y));
-
-			scene->_actor13.setPosition(Common::Point(scene->_actor13._position.x + 2, scene->_actor13._position.y));
-			scene->_actor12.setPosition(Common::Point(scene->_actor12._position.x + 2, scene->_actor12._position.y));
-			scene->_actor1.setPosition(Common::Point(di, scene->_actor1._position.y));
-			scene->_actor2.setPosition(Common::Point(di + 65, scene->_actor1._position.y));
-			scene->_actor3.setPosition(Common::Point(di + 130, scene->_actor1._position.y));
-		}
-		break;
-	case 2:
-		if (scene->_field41A > 0) {
-			if (di < -8)
-				di += 65;
-
-			di -= 2;
-			scene->_field41A -= 2;
-			for (int i = 0; i < 17; i++)
-				scene->_arrActor[i].setPosition(Common::Point(scene->_arrActor[i]._position.x - 2, scene->_arrActor[i]._position.y));
-
-			scene->_actor13.setPosition(Common::Point(scene->_actor13._position.x - 2, scene->_actor13._position.y));
-			scene->_actor12.setPosition(Common::Point(scene->_actor12._position.x - 2, scene->_actor12._position.y));
-			scene->_actor1.setPosition(Common::Point(di, scene->_actor1._position.y));
-			scene->_actor2.setPosition(Common::Point(di + 65, scene->_actor1._position.y));
-			scene->_actor3.setPosition(Common::Point(di + 130, scene->_actor1._position.y));
-		}
-		break;
-	case 3: {
-			int tmpPosY = scene->_actor1._position.y;
-			if (tmpPosY < 176) {
-				++tmpPosY;
-				for (int i = 0; i < 17; ++i)
-					scene->_arrActor[i].setPosition(Common::Point(scene->_arrActor[i]._position.x, scene->_arrActor[i]._position.y + 1));
-
-				scene->_actor13.setPosition(Common::Point(scene->_actor13._position.x, scene->_actor13._position.y + 1));
-				scene->_actor12.setPosition(Common::Point(scene->_actor12._position.x, scene->_actor12._position.y + 1));
-				scene->_actor1.setPosition(Common::Point(di, scene->_actor1._position.y));
-				scene->_actor2.setPosition(Common::Point(di + 65, scene->_actor1._position.y));
-				scene->_actor3.setPosition(Common::Point(di + 130, scene->_actor1._position.y));
-			}
-		}
-		break;
-	case 4: {
-			int tmpPosY = scene->_actor1._position.y;
-			if (tmpPosY > 145) {
-				tmpPosY--;
-				for (int i = 0; i < 17; ++i)
-					scene->_arrActor[i].setPosition(Common::Point(scene->_arrActor[i]._position.x, scene->_arrActor[i]._position.y - 1));
-
-				scene->_actor13.setPosition(Common::Point(scene->_actor13._position.x, scene->_actor13._position.y - 1));
-				scene->_actor12.setPosition(Common::Point(scene->_actor12._position.x, scene->_actor12._position.y - 1));
-				scene->_actor1.setPosition(Common::Point(di, scene->_actor1._position.y));
-				scene->_actor2.setPosition(Common::Point(di + 65, scene->_actor1._position.y));
-				scene->_actor3.setPosition(Common::Point(di + 130, scene->_actor1._position.y));
-			}
-		}
-		break;
-	case 5:
-		R2_GLOBALS._sceneManager.changeScene(1550);
-		break;
-	default:
-		break;
-	}
-
-	int j = 0;
-	for (int i = 0; i < 17; i++) {
-		if (scene->_arrActor[i]._bounds.contains(85, 116))
-			j = i;
-	}
-
-	if (scene->_actor13._bounds.contains(85, 116))
-		j = 18;
-
-	if (scene->_actor12._bounds.contains(85, 116))
-		j = 19;
-
-	if (j)
-		scene->_actor11.show();
-	else
-		scene->_actor11.hide();
-}
-
-bool Scene1575::Hotspot1::startAction(CursorType action, Event &event) {
-	if (action == CURSOR_USE)
-		return false;
-	return SceneHotspot::startAction(action, event);
-}
-
-void Scene1575::Hotspot1::subA910D(int indx) {
-	warning("STUB: Scene1575:Hotspot1::subA910D(%d)", indx);
-}
-
+#define unk(x, y) (0)
 void Scene1575::postInit(SceneObjectList *OwnerList) {
 	loadScene(1575);
 	R2_GLOBALS._uiElements._active = false;
-	R2_GLOBALS._v5589E = Rect(0, 0, 320, 200);
 	SceneExt::postInit();
-	_field414 = 390;
+	R2_GLOBALS._interfaceY = SCREEN_HEIGHT;
 
 	_actor1.postInit();
 	_actor1.setup(1575, 1, 1);
@@ -9484,8 +9514,17 @@ void Scene1575::postInit(SceneObjectList *OwnerList) {
 
 	for (int i = 0; i < 17; i++) {
 		_arrActor[i].postInit();
-		_arrActor[i].setup(1575, 2, k5A7F6[(3 * i) + 2]);
-		warning("TODO: immense pile of floating operations");
+		_arrActor[i].setup(1575, 2, k5A7F6[3 * i + 2]);
+
+		double v1 = unk(2.0, 3 - k5A7F6[3 * i]);
+		v1 += unk(2.0, 3 - k5A7F6[3 * i + 1]);
+		int yp = (int)(sqrt(v1) * 75.0 / 17.0 - 161.0);
+
+		int angle = R2_GLOBALS._gfxManagerInstance.getAngle(
+			Common::Point(3, 16), Common::Point(k5A7F6[3 * i], k5A7F6[3 * i + 1]));
+		int xp = angle * 78 / 9 - 319;
+
+		_arrActor[i].setPosition(Common::Point(xp, yp));
 		_arrActor[i].fixPriority(6);
 	}
 
@@ -9517,12 +9556,13 @@ void Scene1575::postInit(SceneObjectList *OwnerList) {
 	_actor10.setup(1575, 3, 2);
 	_actor10.setPosition(Common::Point(287, 91));
 
-	_item1.subA910D(1);
-	_item1.subA910D(2);
-	_item1.subA910D(3);
-	_item1.subA910D(4);
-	_item1.subA910D(5);
-	_item1.subA910D(6);
+	// Initialise buttons
+	_button1.initButton(1);
+	_button2.initButton(2);
+	_button3.initButton(3);
+	_button4.initButton(4);
+	_button5.initButton(5);
+	_button6.initButton(6);
 
 	_actor11.postInit();
 	_actor11.setup(1575, 4, 2);
@@ -9550,6 +9590,7 @@ void Scene1575::postInit(SceneObjectList *OwnerList) {
 	_actor13.postInit();
 	_actor13.setup(1575, 2, 4);
 
+	// TODO
 	warning("TODO: another immense pile of floating operations");
 
 	_actor12.postInit();
@@ -9572,6 +9613,7 @@ void Scene1575::postInit(SceneObjectList *OwnerList) {
 	_actor15.fixPriority(7);
 	_actor15.hide();
 }
+#undef unk
 
 void Scene1575::remove() {
 	SceneExt::remove();
