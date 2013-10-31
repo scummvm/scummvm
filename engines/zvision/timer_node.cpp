@@ -38,23 +38,32 @@ TimerNode::TimerNode(ZVision *engine, uint32 key, uint timeInSeconds)
 		_timeLeft = timeInSeconds * 1000;
 	else if (_engine->getGameId() == GID_GRANDINQUISITOR)
 		_timeLeft = timeInSeconds * 100;
-	_engine->getScriptManager()->setStateValue(_key, 1);
+
+	if (_key != StateKey_NotSet)
+		_engine->getScriptManager()->setStateValue(_key, 1);
 }
 
 TimerNode::~TimerNode() {
-	if (_timeLeft <= 0)
+	if (_key != StateKey_NotSet)
 		_engine->getScriptManager()->setStateValue(_key, 2);
-	else
-		_engine->getScriptManager()->setStateValue(_key, _timeLeft); // If timer was stopped by stop or kill
+	int32 timeLeft = _timeLeft / (_engine->getGameId() == GID_NEMESIS ? 1000 : 100);
+	if (timeLeft > 0)
+		_engine->getScriptManager()->setStateValue(_key, timeLeft); // If timer was stopped by stop or kill
 }
 
 bool TimerNode::process(uint32 deltaTimeInMillis) {
 	_timeLeft -= deltaTimeInMillis;
 
 	if (_timeLeft <= 0)
-		return true;
+		return stop();
 
 	return false;
+}
+
+bool TimerNode::stop() {
+	if (_key != StateKey_NotSet)
+		_engine->getScriptManager()->setStateValue(_key, 2);
+	return true;
 }
 
 void TimerNode::serialize(Common::WriteStream *stream) {

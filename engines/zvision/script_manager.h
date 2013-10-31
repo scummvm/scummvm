@@ -49,6 +49,7 @@ enum StateKey {
 	StateKey_KeyPress = 8,
 	StateKey_InventoryItem = 9,
 	StateKey_LMouse = 10,
+	StateKey_NotSet = 11, // This key doesn't set
 	StateKey_Rounds = 12,
 	StateKey_Venus = 13,
 	StateKey_RMouse = 18,

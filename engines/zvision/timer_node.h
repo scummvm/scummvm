@@ -48,6 +48,8 @@ public:
 		return true;
 	}
 
+	bool stop();
+
 private:
 	int32 _timeLeft;
 };

@@ -408,6 +408,7 @@ ActionTimer::ActionTimer(ZVision *engine, const Common::String &line) :
 ActionTimer::~ActionTimer() {
 	if (_time)
 		delete _time;
+	_engine->getScriptManager()->killSideFx(_key);
 }
 
 bool ActionTimer::execute() {
