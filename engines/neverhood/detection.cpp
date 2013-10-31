@@ -152,10 +152,17 @@ static const NeverhoodGameDescription gameDescriptions[] = {
 
 } // End of namespace Neverhood
 
-static const ExtraGuiOption neverhoodExtraGuiOption = {
+static const ExtraGuiOption neverhoodExtraGuiOption1 = {
 	_s("Use original save/load screens"),
 	_s("Use the original save/load screens, instead of the ScummVM ones"),
 	"originalsaveload",
+	false
+};
+
+static const ExtraGuiOption neverhoodExtraGuiOption2 = {
+	_s("Skip the Hall of Records storyboard scenes"),
+	_s("Allows the player to skip past the Hall of Records storyboard scenes"),
+	"skiphallofrecordsscenes",
 	false
 };
 
@@ -212,7 +219,8 @@ bool NeverhoodMetaEngine::createInstance(OSystem *syst, Engine **engine, const A
 
 const ExtraGuiOptions NeverhoodMetaEngine::getExtraGuiOptions(const Common::String &target) const {
 	ExtraGuiOptions options;
-	options.push_back(neverhoodExtraGuiOption);
+	options.push_back(neverhoodExtraGuiOption1);
+	options.push_back(neverhoodExtraGuiOption2);
 	return options;
 }
 

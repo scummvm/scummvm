@@ -20,6 +20,8 @@
  *
  */
 
+#include "common/config-manager.h"
+
 #include "neverhood/diskplayerscene.h"
 #include "neverhood/gamemodule.h"
 #include "neverhood/modules/module1000_sprites.h"
@@ -46,6 +48,18 @@ Module2200::~Module2200() {
 }
 
 void Module2200::createScene(int sceneNum, int which) {
+	if (sceneNum == 46 && ConfMan.getBool("skiphallofrecordsscenes")) {
+		// Skip the whole Hall of Records storyboard scenes,
+		// and teleport to the last scene
+		sceneNum = 41;
+	}
+
+	if (sceneNum == 40 && ConfMan.getBool("skiphallofrecordsscenes")) {
+		// Skip the whole Hall of Records storyboard scenes,
+		// and teleport back to the first scene
+		sceneNum = 5;
+	}
+
 	debug(1, "Module2200::createScene(%d, %d)", sceneNum, which);
 	_sceneNum = sceneNum;
 	switch (_sceneNum) {
