@@ -100,6 +100,8 @@ Screen::Screen(HugoEngine *vm) : _vm(vm) {
 		_dlRestoreList[i]._dx = 0;
 		_dlRestoreList[i]._dy = 0;
 	}
+	_fnt = 0;
+	_paletteSize = 0;
 }
 
 Screen::~Screen() {

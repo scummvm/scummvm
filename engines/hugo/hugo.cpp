@@ -93,6 +93,26 @@ HugoEngine::HugoEngine(OSystem *syst, const HugoGameDescription *gd) : Engine(sy
 	_gameType = kGameTypeNone;
 	_platform = Common::kPlatformUnknown;
 	_packedFl = false;
+
+	_numVariant = 0;
+	_gameVariant = kGameVariantNone;
+	_normalTPS = 0;
+	_screenPtr = nullptr;
+	_config._musicFl = true;
+	_config._soundFl = true;
+	_config._turboFl = false;
+	_look = 0;
+	_take = 0;
+	_drop = 0;
+	_maze._enabledFl = false;
+	_maze._size = 0;
+	_maze._x1 = _maze._y1 = _maze._x2 = _maze._y2 = _maze._x3 = _maze._x4 = 0;
+	_maze._firstScreenIndex = 0;
+	_boot._checksum = 0;
+	_boot._registered = kRegShareware;
+	_boot._exitLen = 0;
+	_file = nullptr;
+	_scheduler = nullptr;
 }
 
 HugoEngine::~HugoEngine() {

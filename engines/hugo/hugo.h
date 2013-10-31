@@ -106,7 +106,8 @@ enum GameVariant {
 	kGameVariantH3Win,
 	kGameVariantH1Dos,
 	kGameVariantH2Dos,
-	kGameVariantH3Dos
+	kGameVariantH3Dos,
+	kGameVariantNone
 };
 
 enum HugoDebugChannels {

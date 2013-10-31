@@ -519,6 +519,7 @@ void FileManager::readBootFile() {
 	ofp.read(_vm->_boot._pbswitch, sizeof(_vm->_boot._pbswitch));
 	ofp.read(_vm->_boot._distrib, sizeof(_vm->_boot._distrib));
 	_vm->_boot._exitLen = ofp.readUint16LE();
+	ofp.close();
 
 	byte *p = (byte *)&_vm->_boot;
 
@@ -527,7 +528,6 @@ void FileManager::readBootFile() {
 		checksum ^= p[i];
 		p[i] ^= s_bootCypher[i % s_bootCypherLen];
 	}
-	ofp.close();
 
 	if (checksum) {
 		Utils::notifyBox(Common::String::format("Corrupted startup file '%s'", getBootFilename()));
