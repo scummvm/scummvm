@@ -45,6 +45,17 @@ Route::Route(HugoEngine *vm) : _vm(vm) {
 	_routeIndex       = -1;                         // Hero not following a route
 	_routeType        = kRouteSpace;                // Hero walking to space
 	_routeObjId       = -1;                         // Hero not walking to anything
+
+	for (int i = 0; i < kMaxSeg; i++)
+		_segment[i]._y = _segment[i]._x1 = _segment[i]._x2 = 0;
+
+	_segmentNumb = 0;
+	_routeListIndex = 0;
+	_destX = _destY = 0;
+	_heroWidth = 0;
+	_routeFoundFl = false;
+	_fullStackFl = false;
+	_fullSegmentFl = false;
 }
 
 void Route::resetRoute() {

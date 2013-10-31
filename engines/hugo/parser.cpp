@@ -398,9 +398,9 @@ void Parser::command(const char *format, ...) {
  * Locate any member of object name list appearing in command line
  */
 bool Parser::isWordPresent(char **wordArr) const {
-	debugC(1, kDebugParser, "isWordPresent(%s)", wordArr[0]);
-
 	if (wordArr != 0) {
+		debugC(1, kDebugParser, "isWordPresent(%s)", wordArr[0]);
+
 		for (int i = 0; strlen(wordArr[i]); i++) {
 			if (strstr(_vm->_line, wordArr[i]))
 				return true;
