@@ -140,19 +140,64 @@ int RawChunkStream::readBuffer(int16 *buffer, Common::SeekableReadStream *stream
 	return bytesRead;
 }
 
-const SoundParams RawZorkStream::_zNemSoundParamLookupTable[6] = {{'6', 0x2B11, false, false},
-	{'a', 0x5622, false,  true},
-	{'b', 0x5622, true,  true},
-	{'n', 0x2B11, false, true},
-	{'s', 0x5622, false, true},
-	{'t', 0x5622, true, true}
+const SoundParams RawZorkStream::_zNemSoundParamLookupTable[32] = {{'0', 0x1F40, false, false, false},
+	{'1', 0x1F40, true, false, false},
+	{'2', 0x1F40, false, false, true},
+	{'3', 0x1F40, true, false, true},
+	{'4', 0x2B11, false, false, false},
+	{'5', 0x2B11, true, false, false},
+	{'6', 0x2B11, false, false, true},
+	{'7', 0x2B11, true, false, true},
+	{'8', 0x5622, false, false, false},
+	{'9', 0x5622, true, false, false},
+	{'a', 0x5622, false, false, true},
+	{'b', 0x5622, true, false, true},
+	{'c', 0xAC44, false, false, false},
+	{'d', 0xAC44, true, false, false},
+	{'e', 0xAC44, false, false, true},
+	{'f', 0xAC44, true, false, true},
+	{'g', 0x1F40, false, true, false},
+	{'h', 0x1F40, true, true, false},
+	{'j', 0x1F40, false, true, true},
+	{'k', 0x1F40, true, true, true},
+	{'l', 0x2B11, false, true, false},
+	{'m', 0x2B11, true, true, false},
+	{'n', 0x2B11, false, true, true},
+	{'p', 0x2B11, true, true, true},
+	{'q', 0x5622, false, true, false},
+	{'r', 0x5622, true, true, false},
+	{'s', 0x5622, false, true, true},
+	{'t', 0x5622, true, true, true},
+	{'u', 0xAC44, false, true, false},
+	{'v', 0xAC44, true, true, false},
+	{'w', 0xAC44, false, true, true},
+	{'x', 0xAC44, true, true, true}
 };
 
-const SoundParams RawZorkStream::_zgiSoundParamLookupTable[5] = {{'a', 0x5622, false, false},
-	{'k', 0x2B11, true, true},
-	{'p', 0x5622, false, true},
-	{'q', 0x5622, true, true},
-	{'u', 0xAC44, true, true}
+const SoundParams RawZorkStream::_zgiSoundParamLookupTable[24] = {{'4', 0x2B11, false, false, false},
+	{'5', 0x2B11, true, false, false},
+	{'6', 0x2B11, false, false, true},
+	{'7', 0x2B11, true, false, true},
+	{'8', 0x5622, false, false, false},
+	{'9', 0x5622, true, false, false},
+	{'a', 0x5622, false, false, true},
+	{'b', 0x5622, true, false, true},
+	{'c', 0xAC44, false, false, false},
+	{'d', 0xAC44, true, false, false},
+	{'e', 0xAC44, false, false, true},
+	{'f', 0xAC44, true, false, true},
+	{'g', 0x2B11, false, true, false},
+	{'h', 0x2B11, true, true, false},
+	{'j', 0x2B11, false, true, true},
+	{'k', 0x2B11, true, true, true},
+	{'m', 0x5622, false, true, false},
+	{'n', 0x5622, true, true, false},
+	{'p', 0x5622, false, true, true},
+	{'q', 0x5622, true, true, true},
+	{'r', 0xAC44, false, true, false},
+	{'s', 0xAC44, true, true, false},
+	{'t', 0xAC44, false, true, true},
+	{'u', 0xAC44, true, true, true}
 };
 
 RawZorkStream::RawZorkStream(uint32 rate, bool stereo, DisposeAfterUse::Flag disposeStream, Common::SeekableReadStream *stream)
@@ -217,12 +262,12 @@ Audio::RewindableAudioStream *makeRawZorkStream(const Common::String &filePath, 
 	SoundParams soundParams;
 
 	if (engine->getGameId() == GID_NEMESIS) {
-		for (int i = 0; i < 6; ++i) {
+		for (int i = 0; i < 32; ++i) {
 			if (RawZorkStream::_zNemSoundParamLookupTable[i].identifier == (fileName[6]))
 				soundParams = RawZorkStream::_zNemSoundParamLookupTable[i];
 		}
 	} else if (engine->getGameId() == GID_GRANDINQUISITOR) {
-		for (int i = 0; i < 6; ++i) {
+		for (int i = 0; i < 24; ++i) {
 			if (RawZorkStream::_zgiSoundParamLookupTable[i].identifier == (fileName[7]))
 				soundParams = RawZorkStream::_zgiSoundParamLookupTable[i];
 		}
@@ -232,6 +277,8 @@ Audio::RewindableAudioStream *makeRawZorkStream(const Common::String &filePath, 
 		return makeRawZorkStream(wrapBufferedSeekableReadStream(file, 2048, DisposeAfterUse::YES), soundParams.rate, soundParams.stereo, DisposeAfterUse::YES);
 	} else {
 		byte flags = 0;
+		if (soundParams.bits16)
+			flags |= Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN;
 		if (soundParams.stereo)
 			flags |= Audio::FLAG_STEREO;
 

@@ -39,6 +39,7 @@ struct SoundParams {
 	uint32 rate;
 	bool stereo;
 	bool packed;
+	bool bits16;
 };
 
 
@@ -91,8 +92,8 @@ public:
 	}
 
 public:
-	static const SoundParams _zNemSoundParamLookupTable[6];
-	static const SoundParams _zgiSoundParamLookupTable[5];
+	static const SoundParams _zNemSoundParamLookupTable[32];
+	static const SoundParams _zgiSoundParamLookupTable[24];
 
 private:
 	const int _rate;                                           // Sample rate of stream
