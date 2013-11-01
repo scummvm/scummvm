@@ -29,7 +29,7 @@
 #include "zvision/cursors/cursor_manager.h"
 #include "zvision/core/save_manager.h"
 #include "zvision/scripting/actions.h"
-#include "zvision./utility/utility.h"
+#include "zvision/utility/utility.h"
 
 #include "common/algorithm.h"
 #include "common/hashmap.h"
