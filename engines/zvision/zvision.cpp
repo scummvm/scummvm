@@ -61,7 +61,8 @@ ZVision::ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc)
 	  _renderManager(nullptr),
 	  _saveManager(nullptr),
 	  _stringManager(nullptr),
-	  _cursorManager(nullptr) {
+	  _cursorManager(nullptr),
+	  _aud_id(0) {
 
 	debug(1, "ZVision::ZVision");
 }
@@ -180,6 +181,13 @@ Common::String ZVision::generateSaveFileName(uint slot) {
 
 Common::String ZVision::generateAutoSaveFileName() {
 	return Common::String::format("%s.auto", _targetName.c_str());
+}
+
+int ZVision::getAudioId() {
+	_aud_id++;
+	if (_aud_id < 0)
+		_aud_id = 0;
+	return _aud_id;
 }
 
 } // End of namespace ZVision

@@ -101,6 +101,9 @@ private:
 	// Clock
 	Clock _clock;
 
+	// Audio ID
+	int _aud_id;
+
 	// To prevent allocation every time we process events
 	Common::Event _event;
 
@@ -144,6 +147,8 @@ public:
 	 * @param skippable       If true, the video can be skipped at any time using [Spacebar]
 	 */
 	void playVideo(Video::VideoDecoder &videoDecoder, const Common::Rect &destRect = Common::Rect(0, 0, 0, 0), bool skippable = true);
+
+	int getAudioId();
 
 	Common::String generateSaveFileName(uint slot);
 	Common::String generateAutoSaveFileName();
