@@ -175,7 +175,6 @@ public:
 	ASound _sound1;
 	Action1 _action1;
 	int _frameNumber, _yChange;
-	SceneObject _object1, _object2, _object3;
 	int _lineNum;
 	SynchronizedList<SceneText *> _creditsList;
 public:

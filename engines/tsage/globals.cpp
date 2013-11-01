@@ -47,6 +47,7 @@ static SavedObject *classFactoryProc(const Common::String &className) {
 	if (className == "SceneObjectWrapper") return new SceneObjectWrapper();
 	if (className == "PaletteRotation") return new PaletteRotation();
 	if (className == "PaletteFader") return new PaletteFader();
+	if (className == "SceneText") return new SceneText();
 	return NULL;
 }
 

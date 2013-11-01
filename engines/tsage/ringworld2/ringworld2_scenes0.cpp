@@ -1447,6 +1447,8 @@ void Scene160::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_frameNumber);
 	s.syncAsSint16LE(_yChange);
 	s.syncAsSint16LE(_lineNum);
+
+	_creditsList.synchronize(s);
 }
 
 void Scene160::remove() {
