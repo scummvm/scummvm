@@ -223,7 +223,8 @@ private:
 
 class ActionMusic : public ResultAction {
 public:
-	ActionMusic(ZVision *engine, const Common::String &line);
+	ActionMusic(ZVision *engine, const Common::String &line, bool global);
+	~ActionMusic();
 	bool execute();
 
 private:
@@ -232,6 +233,7 @@ private:
 	Common::String _fileName;
 	bool _loop;
 	byte _volume;
+	bool _universe;
 };
 
 class ActionPlayAnimation : public ResultAction {

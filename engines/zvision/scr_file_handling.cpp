@@ -203,7 +203,7 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 		} else if (line.matchString("*:menu_bar_enable*", true)) {
 			// TODO: Implement ActionMenuBarEnable
 		} else if (line.matchString("*:music*", true)) {
-			actionList.push_back(new ActionMusic(_engine, line));
+			actionList.push_back(new ActionMusic(_engine, line, false));
 		} else if (line.matchString("*:pan_track*", true)) {
 			// TODO: Implement ActionPanTrack
 		} else if (line.matchString("*:playpreload*", true)) {
@@ -239,7 +239,7 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 		} else if (line.matchString("*:ttytext*", true)) {
 			// TODO: Implement ActionTTYText
 		} else if (line.matchString("*:universe_music*", true)) {
-			// TODO: Implement ActionUniverseMusic
+			actionList.push_back(new ActionMusic(_engine, line, true));
 		} else if (line.matchString("*:copy_file*", true)) {
 			// Not used. Purposely left empty
 		} else {

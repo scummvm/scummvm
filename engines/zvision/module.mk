@@ -30,7 +30,8 @@ MODULE_OBJS := \
 	zfs_archive.o \
 	zork_avi_decoder.o \
 	zork_raw.o \
-	sidefx.o
+	sidefx.o \
+	music_node.o
  
 MODULE_DIRS += \
 	engines/zvision

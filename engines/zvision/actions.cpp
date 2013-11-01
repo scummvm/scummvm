@@ -30,6 +30,7 @@
 #include "zvision/zork_raw.h"
 #include "zvision/zork_avi_decoder.h"
 #include "zvision/timer_node.h"
+#include "zvision/music_node.h"
 #include "zvision/animation_control.h"
 
 #include "common/file.h"
@@ -196,9 +197,10 @@ bool ActionKill::execute() {
 // ActionMusic
 //////////////////////////////////////////////////////////////////////////////
 
-ActionMusic::ActionMusic(ZVision *engine, const Common::String &line) :
+ActionMusic::ActionMusic(ZVision *engine, const Common::String &line, bool global) :
 	ResultAction(engine),
-	_volume(255) {
+	_volume(255),
+	_universe(global) {
 	uint type;
 	char fileNameBuffer[25];
 	uint loop;
@@ -225,24 +227,35 @@ ActionMusic::ActionMusic(ZVision *engine, const Common::String &line) :
 	}
 }
 
+ActionMusic::~ActionMusic() {
+	if (!_universe)
+		_engine->getScriptManager()->killSideFx(_key);
+}
+
 bool ActionMusic::execute() {
-	Audio::RewindableAudioStream *audioStream;
-
-	if (_fileName.contains(".wav")) {
-		Common::File *file = new Common::File();
-		if (file->open(_fileName)) {
-			audioStream = Audio::makeWAVStream(file, DisposeAfterUse::YES);
+	if (_engine->getScriptManager()->getSideFX(_key))
+		return true;
+	Common::File *file = new Common::File();
+	if (!file->exists(_fileName) && _fileName.size() >= 12) {
+		_fileName.setChar('r', 9);
+		_fileName.setChar('a', 10);
+		_fileName.setChar('w', 11);
+		if (!file->exists(_fileName)) {
+			_fileName.setChar('i', 9);
+			_fileName.setChar('f', 10);
+			_fileName.setChar('p', 11);
+			if (!file->exists(_fileName)) {
+				_fileName.setChar('s', 9);
+				_fileName.setChar('r', 10);
+				_fileName.setChar('c', 11);
+				if (!file->exists(_fileName))
+					return true;
+			}
 		}
-	} else {
-		audioStream = makeRawZorkStream(_fileName, _engine);
 	}
-
-	if (_loop) {
-		Audio::LoopingAudioStream *loopingAudioStream = new Audio::LoopingAudioStream(audioStream, 0, DisposeAfterUse::YES);
-		_engine->_mixer->playStream(_soundType, 0, loopingAudioStream, -1, _volume);
-	} else {
-		_engine->_mixer->playStream(_soundType, 0, audioStream, -1, _volume);
-	}
+	if (file->exists(_fileName))
+		_engine->getScriptManager()->addSideFX(new MusicNode(_engine, _key, _fileName, _loop, _volume));
+	delete file;
 
 	return true;
 }
