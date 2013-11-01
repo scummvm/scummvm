@@ -49,7 +49,7 @@ ActionAdd::ActionAdd(ZVision *engine, const Common::String &line) :
 }
 
 bool ActionAdd::execute() {
-	_engine->getScriptManager()->addToStateValue(_key, _value);
+	_engine->getScriptManager()->setStateValue(_key, _engine->getScriptManager()->getStateValue(_key) + _value);
 	return true;
 }
 

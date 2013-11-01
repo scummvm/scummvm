@@ -172,7 +172,6 @@ public:
 
 	uint getStateValue(uint32 key);
 	void setStateValue(uint32 key, uint value);
-	void addToStateValue(uint32 key, uint valueToAdd);
 
 	uint getStateFlag(uint32 key);
 	void setStateFlag(uint32 key, uint value);

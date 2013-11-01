@@ -296,11 +296,6 @@ void ScriptManager::unsetStateFlag(uint32 key, uint value) {
 	}
 }
 
-void ScriptManager::addToStateValue(uint32 key, uint valueToAdd) {
-	_globalState[key] += valueToAdd;
-}
-
-
 Control *ScriptManager::getControl(uint32 key) {
 
 	return nullptr;
