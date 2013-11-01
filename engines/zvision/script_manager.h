@@ -109,7 +109,7 @@ struct Location {
 typedef Common::List<Puzzle *> PuzzleList;
 typedef Common::Queue<Puzzle *> PuzzleQueue;
 typedef Common::List<Control *> ControlList;
-typedef Common::HashMap<uint32, uint32> StateMap;
+typedef Common::HashMap<uint32, int32> StateMap;
 typedef Common::List<SideFX *> SideFXList;
 
 class ScriptManager {
@@ -170,8 +170,8 @@ public:
 	void update(uint deltaTimeMillis);
 	void queuePuzzles(uint32 key);
 
-	uint getStateValue(uint32 key);
-	void setStateValue(uint32 key, uint value);
+	int getStateValue(uint32 key);
+	void setStateValue(uint32 key, int value);
 
 	uint getStateFlag(uint32 key);
 	void setStateFlag(uint32 key, uint value);

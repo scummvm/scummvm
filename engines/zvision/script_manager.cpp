@@ -162,7 +162,7 @@ void ScriptManager::checkPuzzleCriteria(Puzzle *puzzle, uint counter) {
 
 		for (Common::List<Puzzle::CriteriaEntry>::iterator entryIter = criteriaIter->begin(); entryIter != criteriaIter->end(); ++entryIter) {
 			// Get the value to compare against
-			uint argumentValue;
+			int argumentValue;
 			if (entryIter->argumentIsAKey)
 				argumentValue = getStateValue(entryIter->argument);
 			else
@@ -246,7 +246,7 @@ void ScriptManager::cleanScriptScope(script_scope &scope) {
 	scope.proc_count = 0;
 }
 
-uint ScriptManager::getStateValue(uint32 key) {
+int ScriptManager::getStateValue(uint32 key) {
 	if (_globalState.contains(key))
 		return _globalState[key];
 	else
@@ -263,7 +263,7 @@ void ScriptManager::queuePuzzles(uint32 key) {
 	}
 }
 
-void ScriptManager::setStateValue(uint32 key, uint value) {
+void ScriptManager::setStateValue(uint32 key, int value) {
 	if (value == 0)
 		_globalState.erase(key);
 	else
