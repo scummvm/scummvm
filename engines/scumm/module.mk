@@ -35,23 +35,23 @@ MODULE_OBJS := \
 	midiparser_ro.o \
 	object.o \
 	palette.o \
-	player/ad.o \
-	player/apple2.o \
-	player/mac.o \
-	player/mod.o \
-	player/nes.o \
-	player/pce.o \
-	player/sid.o \
-	player/towns.o \
-	player/v1.o \
-	player/v2.o \
-	player/v2a.o \
-	player/v2base.o \
-	player/v2cms.o \
-	player/v3a.o \
-	player/v3m.o \
-	player/v4a.o \
-	player/v5m.o \
+	players/player_ad.o \
+	players/player_apple2.o \
+	players/player_mac.o \
+	players/player_mod.o \
+	players/player_nes.o \
+	players/player_pce.o \
+	players/player_sid.o \
+	players/player_towns.o \
+	players/player_v1.o \
+	players/player_v2.o \
+	players/player_v2a.o \
+	players/player_v2base.o \
+	players/player_v2cms.o \
+	players/player_v3a.o \
+	players/player_v3m.o \
+	players/player_v4a.o \
+	players/player_v5m.o \
 	resource_v2.o \
 	resource_v3.o \
 	resource_v4.o \
