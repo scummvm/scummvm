@@ -23,7 +23,7 @@
 #ifndef SCUMM_PLAYER_V2_H
 #define SCUMM_PLAYER_V2_H
 
-#include "scumm/player_v2base.h"
+#include "scumm/player/v2base.h"
 
 namespace Scumm {
 

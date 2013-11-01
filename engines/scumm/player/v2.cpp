@@ -20,7 +20,7 @@
  *
  */
 
-#include "scumm/player_v2.h"
+#include "scumm/player/v2.h"
 #include "scumm/scumm.h"
 
 namespace Scumm {

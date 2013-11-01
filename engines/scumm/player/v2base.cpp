@@ -20,7 +20,7 @@
  *
  */
 
-#include "scumm/player_v2base.h"
+#include "scumm/player/v2base.h"
 #include "scumm/scumm.h"
 
 #define FREQ_HZ 236 // Don't change!

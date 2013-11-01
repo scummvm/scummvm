@@ -23,7 +23,7 @@
 #ifndef DISABLE_SID
 
 #include "engines/engine.h"
-#include "scumm/player_sid.h"
+#include "scumm/player/sid.h"
 #include "scumm/scumm.h"
 #include "audio/mixer.h"
 

@@ -24,7 +24,7 @@
 #include "common/translation.h"
 #include "engines/engine.h"
 #include "gui/message.h"
-#include "scumm/player_mac.h"
+#include "scumm/player/mac.h"
 #include "scumm/resource.h"
 #include "scumm/scumm.h"
 #include "scumm/imuse/imuse.h"

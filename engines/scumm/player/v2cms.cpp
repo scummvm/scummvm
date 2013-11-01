@@ -20,7 +20,7 @@
  *
  */
 
-#include "scumm/player_v2cms.h"
+#include "scumm/player/v2cms.h"
 #include "scumm/scumm.h"
 #include "audio/mididrv.h"
 #include "audio/mixer.h"

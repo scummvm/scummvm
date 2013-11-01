@@ -23,7 +23,7 @@
 #ifndef DISABLE_NES_APU
 
 #include "engines/engine.h"
-#include "scumm/player_nes.h"
+#include "scumm/player/nes.h"
 #include "scumm/scumm.h"
 #include "audio/mixer.h"
 

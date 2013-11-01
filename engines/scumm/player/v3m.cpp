@@ -91,7 +91,7 @@
 #include "common/translation.h"
 #include "engines/engine.h"
 #include "gui/message.h"
-#include "scumm/player_v3m.h"
+#include "scumm/player/v3m.h"
 #include "scumm/scumm.h"
 
 namespace Scumm {

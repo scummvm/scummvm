@@ -23,7 +23,7 @@
 #ifndef SCUMM_PLAYER_V2CMS_H
 #define SCUMM_PLAYER_V2CMS_H
 
-#include "scumm/player_v2base.h"	// for channel_data
+#include "scumm/player/v2base.h"	// for channel_data
 
 class CMSEmulator;
 

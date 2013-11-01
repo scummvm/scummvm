@@ -76,7 +76,7 @@
 #include "common/translation.h"
 #include "engines/engine.h"
 #include "gui/message.h"
-#include "scumm/player_v5m.h"
+#include "scumm/player/v5m.h"
 #include "scumm/scumm.h"
 
 namespace Scumm {

@@ -25,7 +25,7 @@
 
 #include "common/scummsys.h"
 #include "scumm/music.h"
-#include "scumm/player_mod.h"
+#include "scumm/player/mod.h"
 
 class Mixer;
 

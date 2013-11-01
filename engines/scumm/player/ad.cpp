@@ -20,7 +20,7 @@
  *
  */
 
-#include "scumm/player_ad.h"
+#include "scumm/player/ad.h"
 #include "scumm/imuse/imuse.h"
 #include "scumm/scumm.h"
 #include "scumm/resource.h"

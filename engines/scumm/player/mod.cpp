@@ -21,7 +21,7 @@
  */
 
 
-#include "scumm/player_mod.h"
+#include "scumm/player/mod.h"
 #include "audio/mixer.h"
 #include "audio/rate.h"
 #include "audio/decoders/raw.h"

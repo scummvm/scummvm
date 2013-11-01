@@ -27,7 +27,7 @@
 #include "common/util.h"
 #include "common/mutex.h"
 #include "scumm/music.h"
-#include "scumm/player_mac.h"
+#include "scumm/player/mac.h"
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
 

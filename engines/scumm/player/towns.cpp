@@ -22,7 +22,7 @@
 
 
 #include "scumm/sound.h"
-#include "scumm/player_towns.h"
+#include "scumm/player/towns.h"
 
 namespace Scumm {
 

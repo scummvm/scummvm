@@ -20,52 +20,36 @@
  *
  */
 
-#ifndef SCUMM_PLAYER_V2A_H
-#define SCUMM_PLAYER_V2A_H
+#ifndef SCUMM_PLAYER_V5M_H
+#define SCUMM_PLAYER_V5M_H
 
 #include "common/scummsys.h"
+#include "common/util.h"
+#include "common/mutex.h"
 #include "scumm/music.h"
-#include "scumm/player_mod.h"
+#include "scumm/player/mac.h"
+#include "audio/audiostream.h"
+#include "audio/mixer.h"
 
 class Mixer;
 
 namespace Scumm {
 
 class ScummEngine;
-class V2A_Sound;
 
 /**
- * Scumm V2 Amiga sound/music driver.
+ * Scumm V5 Macintosh music driver.
  */
-class Player_V2A : public MusicEngine {
+class Player_V5M : public Player_Mac {
 public:
-	Player_V2A(ScummEngine *scumm, Audio::Mixer *mixer);
-	virtual ~Player_V2A();
+	Player_V5M(ScummEngine *scumm, Audio::Mixer *mixer);
 
-	virtual void setMusicVolume(int vol);
-	virtual void startSound(int sound);
-	virtual void stopSound(int sound);
-	virtual void stopAllSounds();
-	virtual int  getMusicTimer();
-	virtual int  getSoundStatus(int sound) const;
+	virtual bool checkMusicAvailable();
+	virtual bool loadMusic(const byte *ptr);
+	virtual bool getNextNote(int ch, uint32 &samples, int &pitchModifier, byte &velocity);
 
 private:
-	enum {
-		V2A_MAXSLOTS = 8
-	};
-
-	struct soundSlot {
-		int id;
-		V2A_Sound *sound;
-	};
-
-	ScummEngine *_vm;
-	Player_MOD *_mod;
-	soundSlot _slot[V2A_MAXSLOTS];
-
-	int getSoundSlot(int id = 0) const;
-	static void update_proc(void *param);
-	void updateSound();
+	uint32 _lastNoteSamples[3];
 };
 
 } // End of namespace Scumm

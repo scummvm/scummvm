@@ -22,7 +22,7 @@
 
 
 #include "engines/engine.h"
-#include "scumm/player_v1.h"
+#include "scumm/player/v1.h"
 #include "scumm/scumm.h"
 
 namespace Scumm {

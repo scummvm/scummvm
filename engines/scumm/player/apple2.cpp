@@ -21,7 +21,7 @@
  */
 
 #include "engines/engine.h"
-#include "scumm/player_apple2.h"
+#include "scumm/player/apple2.h"
 #include "scumm/scumm.h"
 
 namespace Scumm {
