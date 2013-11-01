@@ -45,7 +45,7 @@ namespace ZVision {
 
 ActionAdd::ActionAdd(ZVision *engine, const Common::String &line) :
 	ResultAction(engine) {
-	sscanf(line.c_str(), "%*[^(](%u,%u)", &_key, &_value);
+	sscanf(line.c_str(), "%*[^(](%u,%d)", &_key, &_value);
 }
 
 bool ActionAdd::execute() {

@@ -94,7 +94,7 @@ public:
 
 private:
 	uint32 _key;
-	uint _value;
+	int _value;
 };
 
 class ActionAssign : public ResultAction {
