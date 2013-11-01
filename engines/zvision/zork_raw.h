@@ -107,7 +107,7 @@ public:
 	int readBuffer(int16 *buffer, const int numSamples);
 
 	bool isStereo() const {
-		return true;
+		return _stereo;
 	}
 	bool endOfData() const {
 		return _endOfData;
