@@ -49,12 +49,6 @@ struct Location {
 	uint32 offset;
 };
 
-enum StateFlags {
-	ONCE_PER_INST = 0x01,
-	DO_ME_NOW = 0x02, // Somewhat useless flag since anything that needs to be done immediately has no criteria
-	DISABLED = 0x04
-};
-
 typedef Common::HashMap<uint32, Common::Array<Puzzle *> > PuzzleMap;
 typedef Common::List<Puzzle *> PuzzleList;
 typedef Common::Queue<Puzzle *> PuzzleQueue;
@@ -66,6 +60,13 @@ class ScriptManager {
 public:
 	ScriptManager(ZVision *engine);
 	~ScriptManager();
+
+public:
+	enum StateFlags {
+		ONCE_PER_INST = 0x01,
+		DO_ME_NOW = 0x02, // Somewhat useless flag since anything that needs to be done immediately has no criteria
+		DISABLED = 0x04
+	};
 
 private:
 	ZVision *_engine;
