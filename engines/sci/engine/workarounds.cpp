@@ -221,6 +221,7 @@ const SciWorkaroundEntry kDeviceInfo_workarounds[] = {
 	{ GID_FANMADE,        -1,   994,  1,               "Game", "save",        0xd1c,    0, { WORKAROUND_STILLCALL, 0 } }, // In fanmade games, this is called with one parameter for CurDevice (Cascade Quest)
 	{ GID_FANMADE,        -1,   994,  1,               "Game", "save",        0xe55,    0, { WORKAROUND_STILLCALL, 0 } }, // In fanmade games, this is called with one parameter for CurDevice (Demo Quest)
 	{ GID_FANMADE,        -1,   994,  1,               "Game", "save",        0xe57,    0, { WORKAROUND_STILLCALL, 0 } }, // In fanmade games, this is called with one parameter for CurDevice (I Want My C64 Back)
+	{ GID_FANMADE,        -1,   994,  0,              "Black", "save",          0xa,    0, { WORKAROUND_IGNORE,    0 } }, // In fanmade games, this is called with one parameter for CurDevice (Black Cauldron Remake)
 	{ GID_FANMADE,        -1,   994,  1,               "Game", "save",        0xe5c,    0, { WORKAROUND_STILLCALL, 0 } }, // In fanmade games, this is called with one parameter for CurDevice (Most of them)
 	{ GID_FANMADE,        -1,   994,  1,               "Game", "restore",     0xd1c,    0, { WORKAROUND_STILLCALL, 0 } }, // In fanmade games, this is called with one parameter for CurDevice (Cascade Quest)
 	{ GID_FANMADE,        -1,   994,  1,               "Game", "restore",     0xe55,    0, { WORKAROUND_STILLCALL, 0 } }, // In fanmade games, this is called with one parameter for CurDevice (Demo Quest)
