@@ -199,7 +199,7 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 		} else if (line.matchString("*:inventory*", true)) {
 			// TODO: Implement ActionInventory
 		} else if (line.matchString("*:kill*", true)) {
-			// TODO: Implement ActionKill
+			actionList.push_back(new ActionKill(_engine, line));
 		} else if (line.matchString("*:menu_bar_enable*", true)) {
 			// TODO: Implement ActionMenuBarEnable
 		} else if (line.matchString("*:music*", true)) {

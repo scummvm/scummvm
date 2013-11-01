@@ -211,6 +211,16 @@ private:
 	uint32 _key;
 };
 
+class ActionKill : public ResultAction {
+public:
+	ActionKill(ZVision *engine, const Common::String &line);
+	bool execute();
+
+private:
+	uint32 _key;
+	uint32 _type;
+};
+
 class ActionMusic : public ResultAction {
 public:
 	ActionMusic(ZVision *engine, const Common::String &line);

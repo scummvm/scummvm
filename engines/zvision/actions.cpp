@@ -153,6 +153,46 @@ bool ActionEnableControl::execute() {
 
 
 //////////////////////////////////////////////////////////////////////////////
+// ActionKill
+//////////////////////////////////////////////////////////////////////////////
+
+ActionKill::ActionKill(ZVision *engine, const Common::String &line) :
+	ResultAction(engine) {
+	_key = 0;
+	_type = 0;
+	char keytype[25];
+	sscanf(line.c_str(), "%*[^(](%25s)", keytype);
+	if (keytype[0] == '"') {
+		if (!scumm_stricmp(keytype, "\"ANIM\""))
+			_type = SideFX::SIDEFX_ANIM;
+		else if (!scumm_stricmp(keytype, "\"AUDIO\""))
+			_type = SideFX::SIDEFX_AUDIO;
+		else if (!scumm_stricmp(keytype, "\"DISTORT\""))
+			_type = SideFX::SIDEFX_DISTORT;
+		else if (!scumm_stricmp(keytype, "\"PANTRACK\""))
+			_type = SideFX::SIDEFX_PANTRACK;
+		else if (!scumm_stricmp(keytype, "\"REGION\""))
+			_type = SideFX::SIDEFX_REGION;
+		else if (!scumm_stricmp(keytype, "\"TIMER\""))
+			_type = SideFX::SIDEFX_TIMER;
+		else if (!scumm_stricmp(keytype, "\"TTYTEXT\""))
+			_type = SideFX::SIDEFX_TTYTXT;
+		else if (!scumm_stricmp(keytype, "\"ALL\""))
+			_type = SideFX::SIDEFX_ALL;
+	} else
+		_key = atoi(keytype);
+}
+
+bool ActionKill::execute() {
+	if (_type)
+		_engine->getScriptManager()->killSideFxType((SideFX::SideFXType)_type);
+	else
+		_engine->getScriptManager()->killSideFx(_key);
+	return true;
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
 // ActionMusic
 //////////////////////////////////////////////////////////////////////////////
 
