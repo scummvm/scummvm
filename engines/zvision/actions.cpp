@@ -409,6 +409,21 @@ bool ActionSetScreen::execute() {
 	return true;
 }
 
+//////////////////////////////////////////////////////////////////////////////
+// ActionStop
+//////////////////////////////////////////////////////////////////////////////
+
+ActionStop::ActionStop(ZVision *engine, const Common::String &line) :
+	ResultAction(engine) {
+	_key = 0;
+	sscanf(line.c_str(), "%*[^(](%u)", &_key);
+}
+
+bool ActionStop::execute() {
+	_engine->getScriptManager()->stopSideFx(_key);
+	return true;
+}
+
 
 //////////////////////////////////////////////////////////////////////////////
 // ActionStreamVideo

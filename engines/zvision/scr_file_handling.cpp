@@ -229,7 +229,7 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 		} else if (line.matchString("*:set_venus*", true)) {
 			// TODO: Implement ActionSetVenus
 		} else if (line.matchString("*:stop*", true)) {
-			// TODO: Implement ActionStop
+			actionList.push_back(new ActionStop(_engine, line));
 		} else if (line.matchString("*:streamvideo*", true)) {
 			actionList.push_back(new ActionStreamVideo(_engine, line));
 		} else if (line.matchString("*:syncsound*", true)) {

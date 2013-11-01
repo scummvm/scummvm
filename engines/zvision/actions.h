@@ -327,6 +327,15 @@ private:
 	Common::String _fileName;
 };
 
+class ActionStop : public ResultAction {
+public:
+	ActionStop(ZVision *engine, const Common::String &line);
+	bool execute();
+
+private:
+	uint32 _key;
+};
+
 class ActionStreamVideo : public ResultAction {
 public:
 	ActionStreamVideo(ZVision *engine, const Common::String &line);
