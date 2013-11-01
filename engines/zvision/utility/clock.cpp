@@ -23,7 +23,7 @@
 
 #include "common/scummsys.h"
 
-#include "zvision/clock.h"
+#include "zvision/utility/clock.h"
 
 #include "common/system.h"
 

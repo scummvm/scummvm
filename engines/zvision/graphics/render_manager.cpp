@@ -22,9 +22,9 @@
 
 #include "common/scummsys.h"
 
-#include "zvision/render_manager.h"
+#include "zvision/graphics/render_manager.h"
 
-#include "zvision/lzss_read_stream.h"
+#include "zvision/utility/lzss_read_stream.h"
 
 #include "common/file.h"
 #include "common/system.h"

@@ -22,12 +22,12 @@
 
 #include "common/scummsys.h"
 
-#include "zvision/push_toggle_control.h"
+#include "zvision/scripting/controls/push_toggle_control.h"
 
 #include "zvision/zvision.h"
-#include "zvision/script_manager.h"
-#include "zvision/cursor_manager.h"
-#include "zvision/utility.h"
+#include "zvision/scripting/script_manager.h"
+#include "zvision/cursors/cursor_manager.h"
+#include "zvision/utility/utility.h"
 
 #include "common/stream.h"
 

@@ -22,7 +22,7 @@
 
 #include "common/scummsys.h"
 
-#include "zvision/render_table.h"
+#include "zvision/graphics/render_table.h"
 
 #include "common/rect.h"
 

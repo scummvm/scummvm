@@ -23,8 +23,8 @@
 #ifndef ZVISION_INPUT_CONTROL_H
 #define ZVISION_INPUT_CONTROL_H
 
-#include "zvision/control.h"
-#include "zvision/string_manager.h"
+#include "zvision/scripting/control.h"
+#include "zvision/strings/string_manager.h"
 
 #include "common/rect.h"
 

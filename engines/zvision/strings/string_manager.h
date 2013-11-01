@@ -25,7 +25,7 @@
 #define ZVISION_STRING_MANAGER_H
 
 #include "zvision/detection.h"
-#include "zvision/truetype_font.h"
+#include "zvision/fonts/truetype_font.h"
 
 
 namespace Graphics {

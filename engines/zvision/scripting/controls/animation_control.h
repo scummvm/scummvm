@@ -23,7 +23,7 @@
 #ifndef ZVISION_ANIMATION_CONTROL_H
 #define ZVISION_ANIMATION_CONTROL_H
 
-#include "zvision/control.h"
+#include "zvision/scripting/control.h"
 
 
 namespace Common {

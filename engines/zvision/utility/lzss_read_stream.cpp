@@ -22,7 +22,7 @@
 
 #include "common/scummsys.h"
 
-#include "zvision/lzss_read_stream.h"
+#include "zvision/utility/lzss_read_stream.h"
 
 
 namespace ZVision {

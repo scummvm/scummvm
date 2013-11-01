@@ -22,7 +22,7 @@
 
 #include "common/scummsys.h"
 
-#include "zvision/single_value_container.h"
+#include "zvision/utility/single_value_container.h"
 
 #include "common/textconsole.h"
 #include "common/str.h"

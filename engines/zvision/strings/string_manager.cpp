@@ -22,9 +22,9 @@
 
 #include "common/scummsys.h"
 
-#include "zvision/string_manager.h"
+#include "zvision/strings/string_manager.h"
 
-#include "zvision/truetype_font.h"
+#include "zvision/fonts/truetype_font.h"
 
 #include "common/file.h"
 #include "common/tokenizer.h"

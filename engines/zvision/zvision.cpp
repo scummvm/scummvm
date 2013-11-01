@@ -24,13 +24,13 @@
 
 #include "zvision/zvision.h"
 
-#include "zvision/console.h"
-#include "zvision/script_manager.h"
-#include "zvision/render_manager.h"
-#include "zvision/cursor_manager.h"
-#include "zvision/save_manager.h"
-#include "zvision/string_manager.h"
-#include "zvision/zfs_archive.h"
+#include "zvision/core/console.h"
+#include "zvision/scripting/script_manager.h"
+#include "zvision/graphics/render_manager.h"
+#include "zvision/cursors/cursor_manager.h"
+#include "zvision/core/save_manager.h"
+#include "zvision/strings/string_manager.h"
+#include "zvision/archives/zfs_archive.h"
 #include "zvision/detection.h"
 
 #include "common/config-manager.h"

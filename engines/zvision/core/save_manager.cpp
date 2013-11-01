@@ -22,11 +22,11 @@
 
 #include "common/scummsys.h"
 
-#include "zvision/save_manager.h"
+#include "zvision/core/save_manager.h"
 
 #include "zvision/zvision.h"
-#include "zvision/script_manager.h"
-#include "zvision/render_manager.h"
+#include "zvision/scripting/script_manager.h"
+#include "zvision/graphics/render_manager.h"
 
 #include "common/system.h"
 

@@ -22,10 +22,10 @@
 
 #include "common/scummsys.h"
 
-#include "zvision/utility.h"
+#include "zvision/utility/utility.h"
 
 #include "zvision/zvision.h"
-#include "zvision/zork_raw.h"
+#include "zvision/sound/zork_raw.h"
 
 #include "common/tokenizer.h"
 #include "common/file.h"

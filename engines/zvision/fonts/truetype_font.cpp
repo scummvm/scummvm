@@ -22,10 +22,10 @@
 
 #include "common/scummsys.h"
 
-#include "zvision/truetype_font.h"
+#include "zvision/fonts/truetype_font.h"
 
 #include "zvision/zvision.h"
-#include "zvision/render_manager.h"
+#include "zvision/graphics/render_manager.h"
 
 #include "common/debug.h"
 #include "common/file.h"

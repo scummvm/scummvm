@@ -23,7 +23,7 @@
 #ifndef ZVISION_PUZZLE_H
 #define ZVISION_PUZZLE_H
 
-#include "zvision/actions.h"
+#include "zvision/scripting/actions.h"
 
 #include "common/list.h"
 #include "common/ptr.h"

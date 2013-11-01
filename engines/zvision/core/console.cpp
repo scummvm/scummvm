@@ -22,16 +22,16 @@
 
 #include "common/scummsys.h"
 
-#include "zvision/console.h"
+#include "zvision/core/console.h"
 
 #include "zvision/zvision.h"
-#include "zvision/script_manager.h"
-#include "zvision/render_manager.h"
-#include "zvision/string_manager.h"
-#include "zvision/zork_avi_decoder.h"
-#include "zvision/zork_raw.h"
-#include "zvision/utility.h"
-#include "zvision/cursor.h"
+#include "zvision/scripting/script_manager.h"
+#include "zvision/graphics/render_manager.h"
+#include "zvision/strings/string_manager.h"
+#include "zvision/video/zork_avi_decoder.h"
+#include "zvision/sound/zork_raw.h"
+#include "zvision/utility/utility.h"
+#include "zvision/cursors/cursor.h"
 
 #include "common/system.h"
 #include "common/file.h"

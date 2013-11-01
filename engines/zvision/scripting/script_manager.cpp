@@ -22,14 +22,14 @@
 
 #include "common/scummsys.h"
 
-#include "zvision/script_manager.h"
+#include "zvision/scripting/script_manager.h"
 
 #include "zvision/zvision.h"
-#include "zvision/render_manager.h"
-#include "zvision/cursor_manager.h"
-#include "zvision/save_manager.h"
-#include "zvision/actions.h"
-#include "zvision/utility.h"
+#include "zvision/graphics/render_manager.h"
+#include "zvision/cursors/cursor_manager.h"
+#include "zvision/core/save_manager.h"
+#include "zvision/scripting/actions.h"
+#include "zvision./utility/utility.h"
 
 #include "common/algorithm.h"
 #include "common/hashmap.h"

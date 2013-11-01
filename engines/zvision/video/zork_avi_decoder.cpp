@@ -23,9 +23,9 @@
 
 #include "common/scummsys.h"
 
-#include "zvision/zork_avi_decoder.h"
+#include "zvision/video/zork_avi_decoder.h"
 
-#include "zvision/zork_raw.h"
+#include "zvision/sound/zork_raw.h"
 
 #include "common/stream.h"
 
