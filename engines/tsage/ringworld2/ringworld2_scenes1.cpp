@@ -8268,9 +8268,10 @@ void Scene1550::dispatch() {
 	if ((R2_GLOBALS._s1550PlayerArea[R2_GLOBALS._player._characterIndex].x == 15) && (R2_GLOBALS._s1550PlayerArea[R2_GLOBALS._player._characterIndex].y == 16)) {
 		R2_GLOBALS._player._shade = 0;
 
-		// WORKAROUND: Original game contains a switch based on an uninitialized variable.
-		// The switch is being left in place, but with a fixed switch value of zero, in case
-		// we can ever figure out what the original programmers intended the value to come from
+		// NOTE: Original game contains a switch based on an uninitialized variable.
+		// We're leaving this code here, but ifdef'ed out, in case we can ever figure out 
+		// what the original programmers intended the value to come from
+#if 0
 		int missingVariable = 0;
 		switch (missingVariable) {
 		case 144:
@@ -8292,6 +8293,7 @@ void Scene1550::dispatch() {
 		default:
 			break;
 		}
+#endif
 	}
 
 	if (_field412 != 0)
