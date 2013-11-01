@@ -34,8 +34,10 @@
 
 namespace Hugo {
 
-TopMenu::TopMenu(HugoEngine *vm) : Dialog(0, 0, kMenuWidth, kMenuHeight), _arrayBmp(0), _arraySize(0),
-	_vm(vm) {
+TopMenu::TopMenu(HugoEngine *vm) : Dialog(0, 0, kMenuWidth, kMenuHeight), _vm(vm) {
+	_arrayBmp = nullptr;
+	_arraySize = 0;
+
 	init();
 }
 

@@ -246,13 +246,13 @@ SoundPtr FileManager::getSound(const int16 sound, uint16 *size) {
 
 	// No more to do if SILENCE (called for cleanup purposes)
 	if (sound == _vm->_soundSilence)
-		return 0;
+		return nullptr;
 
 	// Open sounds file
 	Common::File fp;                                // Handle to SOUND_FILE
 	if (!fp.open(getSoundFilename())) {
 		warning("Hugo Error: File not found %s", getSoundFilename());
-		return 0;
+		return nullptr;
 	}
 
 	if (!_hasReadHeader) {

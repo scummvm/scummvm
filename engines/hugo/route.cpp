@@ -314,7 +314,7 @@ Common::Point *Route::newNode() {
 
 	_routeListIndex++;
 	if (_routeListIndex >= kMaxNodes)               // Too many nodes
-		return 0;                                   // Incomplete route - failure
+		return nullptr;                             // Incomplete route - failure
 
 	_route[_routeListIndex] = _route[_routeListIndex - 1];  // Initialize with previous node
 	return &_route[_routeListIndex];

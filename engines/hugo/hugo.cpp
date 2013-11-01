@@ -46,11 +46,11 @@
 
 namespace Hugo {
 
-HugoEngine *HugoEngine::s_Engine = 0;
+HugoEngine *HugoEngine::s_Engine = nullptr;
 
 HugoEngine::HugoEngine(OSystem *syst, const HugoGameDescription *gd) : Engine(syst), _gameDescription(gd),
-	_hero(0), _heroImage(0), _defltTunes(0), _numScreens(0), _tunesNbr(0), _soundSilence(0), _soundTest(0),
-	_screenStates(0), _numStates(0), _score(0), _maxscore(0), _lastTime(0), _curTime(0), _episode(0)
+	_hero(nullptr), _heroImage(0), _defltTunes(nullptr), _numScreens(0), _tunesNbr(0), _soundSilence(0), _soundTest(0),
+	_screenStates(nullptr), _numStates(0), _score(0), _maxscore(0), _lastTime(0), _curTime(0), _episode(nullptr)
 {
 	_system = syst;
 	DebugMan.addDebugChannel(kDebugSchedule, "Schedule", "Script Schedule debug level");
@@ -67,16 +67,16 @@ HugoEngine::HugoEngine(OSystem *syst, const HugoGameDescription *gd) : Engine(sy
 	_console = new HugoConsole(this);
 	_rnd = 0;
 
-	_screen = NULL;
-	_mouse = NULL;
-	_inventory = NULL;
-	_parser = NULL;
-	_route = NULL;
-	_sound = NULL;
-	_intro = NULL;
-	_object = NULL;
-	_text = NULL;
-	_topMenu = NULL;
+	_screen = nullptr;
+	_mouse = nullptr;
+	_inventory = nullptr;
+	_parser = nullptr;
+	_route = nullptr;
+	_sound = nullptr;
+	_intro = nullptr;
+	_object = nullptr;
+	_text = nullptr;
+	_topMenu = nullptr;
 	_status._storyModeFl = false;
 	_status._gameOverFl = false;
 	_status._lookFl = false;

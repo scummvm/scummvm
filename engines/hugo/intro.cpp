@@ -39,9 +39,10 @@
 
 namespace Hugo {
 
-IntroHandler::IntroHandler(HugoEngine *vm) : _vm(vm), _introX(0), _introY(0) {
+IntroHandler::IntroHandler(HugoEngine *vm) : _vm(vm) {
 	_introXSize = 0;
 	_introTicks = 0;
+	_introX = _introY = nullptr;
 }
 
 IntroHandler::~IntroHandler() {
@@ -74,6 +75,7 @@ void IntroHandler::loadIntroData(Common::SeekableReadStream &in) {
 void IntroHandler::freeIntroData() {
 	free(_introX);
 	free(_introY);
+	_introX = _introY = nullptr;
 }
 
 intro_v1d::intro_v1d(HugoEngine *vm) : IntroHandler(vm) {

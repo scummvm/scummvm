@@ -47,10 +47,23 @@
 
 namespace Hugo {
 
-Scheduler::Scheduler(HugoEngine *vm) : _vm(vm), _actListArr(0), _curTick(0), _oldTime(0), _refreshTimeout(0), _points(0), _screenActs(0) {
+Scheduler::Scheduler(HugoEngine *vm) : _vm(vm) {
+	_actListArr = nullptr;
+	_curTick = 0;
+	_oldTime = 0;
+	_refreshTimeout = 0;
+	_points = nullptr;
+	_screenActs = nullptr;
+
 	memset(_events, 0, sizeof(_events));
 	_numBonuses = 0;
 	_screenActsSize = 0;
+
+	_actListArrSize = 0;
+	_alNewscrIndex = 0;
+	_freeEvent = nullptr;
+	_headEvent = nullptr;
+	_tailEvent = nullptr;
 }
 
 Scheduler::~Scheduler() {
@@ -69,14 +82,14 @@ void Scheduler::initEventQueue() {
 	// Chain nextEvent from first to last
 	for (int i = kMaxEvents; --i;)
 		_events[i - 1]._nextEvent = &_events[i];
-	_events[kMaxEvents - 1]._nextEvent = 0;
+	_events[kMaxEvents - 1]._nextEvent = nullptr;
 
 	// Chain prevEvent from last to first
 	for (int i = 1; i < kMaxEvents; i++)
 		_events[i]._prevEvent = &_events[i - 1];
-	_events[0]._prevEvent = 0;
+	_events[0]._prevEvent = nullptr;
 
-	_headEvent = _tailEvent = 0;                    // Event list is empty
+	_headEvent = _tailEvent = nullptr;              // Event list is empty
 	_freeEvent = _events;                           // Free list is full
 }
 
@@ -90,7 +103,7 @@ Event *Scheduler::getQueue() {
 		error("An error has occurred: %s", "getQueue");
 	Event *resEvent = _freeEvent;
 	_freeEvent = _freeEvent->_nextEvent;
-	resEvent->_nextEvent = 0;
+	resEvent->_nextEvent = nullptr;
 	return resEvent;
 }
 
@@ -597,7 +610,7 @@ void Scheduler::loadScreenAct(Common::SeekableReadStream &in) {
 			for (int i = 0; i < numElem; i++) {
 				uint16 numSubElem = in.readUint16BE();
 				if (numSubElem == 0) {
-					_screenActs[i] = 0;
+					_screenActs[i] = nullptr;
 				} else {
 					_screenActs[i] = (uint16 *)malloc(sizeof(uint16) * numSubElem);
 					for (int j = 0; j < numSubElem; j++)
@@ -617,11 +630,14 @@ void Scheduler::freeScheduler() {
 	debugC(6, kDebugSchedule, "freeActListArr()");
 
 	free(_points);
+	_points = nullptr;
 
 	if (_screenActs) {
 		for (int i = 0; i < _screenActsSize; i++)
 			free(_screenActs[i]);
 		free(_screenActs);
+		_screenActs = nullptr;
+		_screenActsSize = 0;
 	}
 
 	if (_actListArr) {
@@ -633,6 +649,8 @@ void Scheduler::freeScheduler() {
 			free(_actListArr[i]);
 		}
 		free(_actListArr);
+		_actListArr = nullptr;
+		_actListArrSize = 0;
 	}
 }
 
@@ -698,9 +716,9 @@ void Scheduler::saveEvents(Common::WriteStream *f) {
 
 	f->writeUint32BE(getTicks());
 
-	int16 freeIndex = (_freeEvent == 0) ? -1 : _freeEvent - _events;
-	int16 headIndex = (_headEvent == 0) ? -1 : _headEvent - _events;
-	int16 tailIndex = (_tailEvent == 0) ? -1 : _tailEvent - _events;
+	int16 freeIndex = (_freeEvent == nullptr) ? -1 : _freeEvent - _events;
+	int16 headIndex = (_headEvent == nullptr) ? -1 : _headEvent - _events;
+	int16 tailIndex = (_tailEvent == nullptr) ? -1 : _tailEvent - _events;
 
 	f->writeSint16BE(freeIndex);
 	f->writeSint16BE(headIndex);
@@ -717,8 +735,8 @@ void Scheduler::saveEvents(Common::WriteStream *f) {
 		f->writeSint16BE(subElem);
 		f->writeByte((wrkEvent->_localActionFl) ? 1 : 0);
 		f->writeUint32BE(wrkEvent->_time);
-		f->writeSint16BE((wrkEvent->_prevEvent == 0) ? -1 : (wrkEvent->_prevEvent - _events));
-		f->writeSint16BE((wrkEvent->_nextEvent == 0) ? -1 : (wrkEvent->_nextEvent - _events));
+		f->writeSint16BE((wrkEvent->_prevEvent == nullptr) ? -1 : (wrkEvent->_prevEvent - _events));
+		f->writeSint16BE((wrkEvent->_nextEvent == nullptr) ? -1 : (wrkEvent->_nextEvent - _events));
 	}
 }
 
@@ -1102,7 +1120,7 @@ void Scheduler::restoreEvents(Common::ReadStream *f) {
 
 		// fix up action pointer (to do better)
 		if ((index == -1) && (subElem == -1))
-			_events[i]._action = 0;
+			_events[i]._action = nullptr;
 		else
 			_events[i]._action = (Act *)&_actListArr[index][subElem];
 
@@ -1112,12 +1130,12 @@ void Scheduler::restoreEvents(Common::ReadStream *f) {
 		int16 prevIndex = f->readSint16BE();
 		int16 nextIndex = f->readSint16BE();
 
-		_events[i]._prevEvent = (prevIndex == -1) ? (Event *)0 : &_events[prevIndex];
-		_events[i]._nextEvent = (nextIndex == -1) ? (Event *)0 : &_events[nextIndex];
+		_events[i]._prevEvent = (prevIndex == -1) ? nullptr : &_events[prevIndex];
+		_events[i]._nextEvent = (nextIndex == -1) ? nullptr : &_events[nextIndex];
 	}
-	_freeEvent = (freeIndex == -1) ? 0 : &_events[freeIndex];
-	_headEvent = (headIndex == -1) ? 0 : &_events[headIndex];
-	_tailEvent = (tailIndex == -1) ? 0 : &_events[tailIndex];
+	_freeEvent = (freeIndex == -1) ? nullptr : &_events[freeIndex];
+	_headEvent = (headIndex == -1) ? nullptr : &_events[headIndex];
+	_tailEvent = (tailIndex == -1) ? nullptr : &_events[tailIndex];
 
 	// Adjust times to fit our time
 	uint32 curTime = getTicks();
@@ -1156,7 +1174,7 @@ void Scheduler::insertAction(Act *action) {
 	// Now find the place to insert the event
 	if (!_tailEvent) {                                // Empty queue
 		_tailEvent = _headEvent = curEvent;
-		curEvent->_nextEvent = curEvent->_prevEvent = 0;
+		curEvent->_nextEvent = curEvent->_prevEvent = nullptr;
 	} else {
 		Event *wrkEvent = _tailEvent;                   // Search from latest time back
 		bool found = false;
@@ -1178,7 +1196,7 @@ void Scheduler::insertAction(Act *action) {
 		if (!found) {                                   // Must be earliest in list
 			_headEvent->_prevEvent = curEvent;            // So insert as new head
 			curEvent->_nextEvent = _headEvent;
-			curEvent->_prevEvent = 0;
+			curEvent->_prevEvent = nullptr;
 			_headEvent = curEvent;
 		}
 	}
@@ -1424,7 +1442,7 @@ Event *Scheduler::doAction(Event *curEvent) {
 	}
 
 	if (action->_a0._actType == NEW_SCREEN) {         // New_screen() deletes entire list
-		return 0;                                       // nextEvent = 0 since list now empty
+		return nullptr;                               // nextEvent = nullptr since list now empty
 	} else {
 		wrkEvent = curEvent->_nextEvent;
 		delQueue(curEvent);                             // Return event to free list
@@ -1455,9 +1473,9 @@ void Scheduler::delQueue(Event *curEvent) {
 	}
 
 	if (_headEvent)
-		_headEvent->_prevEvent = 0;                     // Mark end of list
+		_headEvent->_prevEvent = nullptr;             // Mark end of list
 	else
-		_tailEvent = 0;                                 // Empty queue
+		_tailEvent = nullptr;                         // Empty queue
 
 	curEvent->_nextEvent = _freeEvent;                // Return p to free list
 	if (_freeEvent)                                   // Special case, if free list was empty

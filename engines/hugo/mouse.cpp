@@ -45,7 +45,8 @@
 
 namespace Hugo {
 
-MouseHandler::MouseHandler(HugoEngine *vm) : _vm(vm), _hotspots(0) {
+MouseHandler::MouseHandler(HugoEngine *vm) : _vm(vm) {
+	_hotspots = nullptr;
 	_leftButtonFl  = false;
 	_rightButtonFl = false;
 	_jumpExitFl = false;                            // Can't jump to a screen exit
@@ -83,6 +84,7 @@ void MouseHandler::setMouseY(int y) {
 
 void MouseHandler::freeHotspots() {
 	free(_hotspots);
+	_hotspots = nullptr;
 }
 
 bool MouseHandler::getJumpExitFl() const {
