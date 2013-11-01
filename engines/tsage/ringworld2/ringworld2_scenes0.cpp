@@ -2356,12 +2356,12 @@ Scene205::Scene205(): SceneExt() {
 	_fontHeight = font.getHeight();
 	
 	for (int i = 0; i < 3; i++) {
-		_objList1[i] = nullptr;
-		_objList2[i] = nullptr;
+		_starList1[i] = nullptr;
+		_starList2[i] = nullptr;
 	}
 
 	for (int i = 0; i < 4; i++)
-		_objList3[i] = nullptr;
+		_starList3[i] = nullptr;
 }
 
 void Scene205::postInit(SceneObjectList *OwnerList) {
@@ -2383,11 +2383,11 @@ void Scene205::synchronize(Serializer &s) {
 	SceneExt::synchronize(s);
 
 	for (int idx = 0; idx < 3; ++idx)
-		SYNC_POINTER(_objList1[idx]);
+		SYNC_POINTER(_starList1[idx]);
 	for (int idx = 0; idx < 3; ++idx)
-		SYNC_POINTER(_objList2[idx]);
+		SYNC_POINTER(_starList2[idx]);
 	for (int idx = 0; idx < 4; ++idx)
-		SYNC_POINTER(_objList3[idx]);
+		SYNC_POINTER(_starList3[idx]);
 
 	s.syncAsSint16LE(_textIndex);
 	s.syncAsSint16LE(_lineNum);
@@ -2409,9 +2409,9 @@ void Scene205::process(Event &event) {
 }
 
 void Scene205::dispatch() {
-	processList(_objList3, 4, Common::Rect(0, 0, 319, 200), 1, 1, 160, 100);
-	processList(_objList2, 3, Common::Rect(0, 0, 319, 200), 2, 2, 160, 100);
-	processList(_objList1, 3, Common::Rect(0, 0, 319, 200), 4, 3, 160, 100);
+	processList(_starList3, 4, Common::Rect(0, 0, 319, 200), 1, 1, 160, 100);
+	processList(_starList2, 3, Common::Rect(0, 0, 319, 200), 2, 2, 160, 100);
+	processList(_starList1, 3, Common::Rect(0, 0, 319, 200), 4, 3, 160, 100);
 
 	Scene::dispatch();
 }
@@ -2423,10 +2423,10 @@ void Scene205::setup() {
 		Common::Point(140, 149), Common::Point(91, 166), Common::Point(299, 46), Common::Point(314, 10)
 	};
 
-	// Set up the first object list
+	// Set up the first star list
 	for (int idx = 0; idx < 3; ++idx) {
-		Object *obj = new Object();
-		_objList1[idx] = obj;
+		Star *obj = new Star();
+		_starList1[idx] = obj;
 
 		obj->postInit();
 		obj->_flags |= OBJFLAG_CLONED;
@@ -2439,10 +2439,10 @@ void Scene205::setup() {
 		obj->fixPriority(12);
 	}
 
-	// Setup the second object list
+	// Setup the second star list
 	for (int idx = 0; idx < 3; ++idx) {
-		Object *obj = new Object();
-		_objList2[idx] = obj;
+		Star *obj = new Star();
+		_starList2[idx] = obj;
 
 		obj->postInit();
 		obj->_flags |= OBJFLAG_CLONED;
@@ -2455,10 +2455,10 @@ void Scene205::setup() {
 		obj->fixPriority(11);
 	}
 
-	// Setup the third object list
+	// Setup the third star list
 	for (int idx = 0; idx < 4; ++idx) {
-		Object *obj = new Object();
-		_objList3[idx] = obj;
+		Star *obj = new Star();
+		_starList3[idx] = obj;
 
 		obj->postInit();
 		obj->_flags |= OBJFLAG_CLONED;
@@ -2475,10 +2475,10 @@ void Scene205::setup() {
 /**
  * Handles moving a group of stars in the scene background
  */
-void Scene205::processList(Object **ObjList, int count, const Common::Rect &bounds,
+void Scene205::processList(Star **ObjList, int count, const Common::Rect &bounds,
 						   int xMultiply, int yMultiply, int xCenter, int yCenter) {
 	for (int idx = 0; idx < count; ++idx) {
-		Object *obj = ObjList[idx];
+		Star *obj = ObjList[idx];
 		Common::Point pt(obj->_position.x - xCenter, obj->_position.y - yCenter);
 
 		if ((obj->_position.x <= 319) && (obj->_position.x >= 0) &&

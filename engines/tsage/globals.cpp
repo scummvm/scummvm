@@ -26,6 +26,7 @@
 #include "tsage/ringworld/ringworld_demo.h"
 #include "tsage/ringworld/ringworld_logic.h"
 #include "tsage/ringworld2/ringworld2_logic.h"
+#include "tsage/ringworld2/ringworld2_scenes0.h"
 #include "tsage/staticres.h"
 
 namespace TsAGE {
@@ -48,6 +49,10 @@ static SavedObject *classFactoryProc(const Common::String &className) {
 	if (className == "PaletteRotation") return new PaletteRotation();
 	if (className == "PaletteFader") return new PaletteFader();
 	if (className == "SceneText") return new SceneText();
+
+	// Return to Ringworld specific classes
+	if (className == "Scene205_Star") return new Ringworld2::Star();
+
 	return NULL;
 }
 

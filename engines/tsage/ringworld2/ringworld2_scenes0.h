@@ -261,6 +261,13 @@ public:
 	virtual void signal();
 };
 
+class Star: public SceneObject {
+public:
+	int _x100, _y100;
+public:
+	virtual Common::String getClassName() { return "Scene205_Star"; }
+};
+
 class Scene205: public SceneExt {
 	/* Actions */
 	class Action1: public Action {
@@ -269,26 +276,18 @@ class Scene205: public SceneExt {
 	public:
 		virtual void signal();
 	};
-
-	/* Objects */
-	class Object: public SceneObject {
-	public:
-		int _x100, _y100;
-	public:
-		// TODO: Check if this derives from DataManager? and flesh out
-	};
 private:
 	void setup();
-	void processList(Object **ObjList, int count, const Common::Rect &bounds,
+	void processList(Star **ObjList, int count, const Common::Rect &bounds,
 					int xMultiply, int yMultiply, int xCenter, int yCenter);
 	void handleText();
 public:
 	AnimationPlayer _animationPlayer;
 	int _fontHeight;
 	SceneText _textList[15];
-	Object *_objList1[3];
-	Object *_objList2[3];
-	Object *_objList3[4];
+	Star *_starList1[3];
+	Star *_starList2[3];
+	Star *_starList3[4];
 	ASound _sound1;
 	Action1 _action1;
 	int _yp;
