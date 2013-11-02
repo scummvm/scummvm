@@ -1263,8 +1263,6 @@ void BlueForceInvObjectList::alterInventory(int mode) {
 	setObjectScene(INV_TICKET_BOOK, 60);
 	setObjectScene(INV_MIRANDA_CARD, 60);
 
-	BF_GLOBALS._v4CEC4 = 0;
-
 	switch (mode) {
 	case 2:
 		if (hasPrintout)

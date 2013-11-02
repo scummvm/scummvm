@@ -207,8 +207,6 @@ public:
 	int _deathReason;
 	int _driveFromScene;
 	int _driveToScene;
-	int _v501F8; // Useless variable
-	int _v501FA; // Useless variable
 	int _v501FC; // Useless variable
 	int _v5020C; // Useless variable
 	int _v50696; // Useless variable

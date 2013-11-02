@@ -1833,7 +1833,6 @@ void Scene125::Action2::signal() {
 		setDelay(20);
 		break;
 	case 2: {
-		BF_GLOBALS._v501FA = 10;
 		BF_GLOBALS._v51C44 = 1;
 		Common::Point destPos(202, 94);
 		NpcMover *mover = new NpcMover();
@@ -2338,7 +2337,6 @@ void Scene140::postInit(SceneObjectList *OwnerList) {
 	_object1.hide();
 
 	BF_GLOBALS._v5020C = 0;
-	BF_GLOBALS._v501F8 = 300;
 	BF_GLOBALS._v501FC = 90;
 	BF_GLOBALS._sound1.play(7);
 
@@ -2789,8 +2787,6 @@ void Scene180::postInit(SceneObjectList *OwnerList) {
 
 	if ((BF_GLOBALS._bookmark == bLyleStoppedBy) && (BF_GLOBALS._dayNumber == 1)) {
 		BF_GLOBALS._v501FC = 87;
-		BF_GLOBALS._v501FA = _sceneBounds.left + 10;
-		// CHECKME: BF_GLOBALS._v50206 = 18; ??
 		_sceneMessage.setup(THE_NEXT_DAY);
 		_sceneMode = 6;
 		setAction(&_sceneMessage, this);
@@ -2800,8 +2796,6 @@ void Scene180::postInit(SceneObjectList *OwnerList) {
 	} else if (((BF_GLOBALS._bookmark == bDroppedOffLyle) && (BF_GLOBALS._dayNumber == 3)) ||
 			((BF_GLOBALS._bookmark == bDoneAtLyles) && (BF_GLOBALS._dayNumber == 4))) {
 		BF_GLOBALS._v501FC = 87;
-		BF_GLOBALS._v501FA = _sceneBounds.left + 10;
-		// CHECKME: BF_GLOBALS._v50206 = 18; ??
 		_sceneMessage.setup(THE_NEXT_DAY);
 		_sceneMode = 6;
 		setAction(&_sceneMessage, this);

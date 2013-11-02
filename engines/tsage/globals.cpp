@@ -248,8 +248,6 @@ BlueForceGlobals::BlueForceGlobals(): TsAGE2Globals() {
 	_deathReason = 0;
 	_driveFromScene = 300;
 	_driveToScene = 0;
-	_v501F8 = 0;
-	_v501FA = 0;
 	_v501FC = 0;
 	_v5020C = 0;
 	_v50696 = 0;
@@ -274,7 +272,6 @@ BlueForceGlobals::BlueForceGlobals(): TsAGE2Globals() {
 	_safeCombination = 0;
 	_gateStatus = 0;
 	_greenDay5TalkCtr = 0;
-	_v4CEC4 = 0;
 	_v4CEC8 = 1;
 	_v4CECA = 0;
 	_v4CECC = 0;
@@ -282,11 +279,11 @@ BlueForceGlobals::BlueForceGlobals(): TsAGE2Globals() {
 
 void BlueForceGlobals::synchronize(Serializer &s) {
 	TsAGE2Globals::synchronize(s);
+	int16 useless = 0;
 
 	s.syncAsSint16LE(_dayNumber);
 	if (s.getVersion() < 9) {
-		int tmpVar = 0;
-		s.syncAsSint16LE(tmpVar);
+		s.syncAsSint16LE(useless);
 	}
 	s.syncAsSint16LE(_tonyDialogCtr);
 	s.syncAsSint16LE(_marinaWomanCtr);
@@ -295,7 +292,7 @@ void BlueForceGlobals::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_safeCombination);
 	s.syncAsSint16LE(_gateStatus);
 	s.syncAsSint16LE(_greenDay5TalkCtr);
-	s.syncAsSint16LE(_v4CEC4);
+	s.syncAsSint16LE(useless);
 	s.syncAsSint16LE(_v4CEC8);
 	s.syncAsSint16LE(_v4CECA);
 	s.syncAsSint16LE(_v4CECC);
@@ -310,8 +307,8 @@ void BlueForceGlobals::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_deathReason);
 	s.syncAsSint16LE(_driveFromScene);
 	s.syncAsSint16LE(_driveToScene);
-	s.syncAsSint16LE(_v501F8);
-	s.syncAsSint16LE(_v501FA);
+	s.syncAsSint16LE(useless);
+	s.syncAsSint16LE(useless);
 	s.syncAsSint16LE(_v501FC);
 	s.syncAsSint16LE(_v5020C);
 	s.syncAsSint16LE(_v50696);
@@ -352,7 +349,6 @@ void BlueForceGlobals::reset() {
 	_safeCombination = 0;
 	_gateStatus = 0;
 	_greenDay5TalkCtr = 0;
-	_v4CEC4 = 0;
 	_v4CEC8 = 1;
 	_v4CECA = 0;
 	_v4CECC = 0;
@@ -381,8 +377,6 @@ void BlueForceGlobals::reset() {
 	_v4CEE8 = 0;
 	_deziTopic = 0;
 	_deathReason = 0;
-	_v501F8 = 0;
-	_v501FA = 0;
 	_v501FC = 0;
 	_v5020C = 0;
 	_v50696 = 0;
