@@ -851,7 +851,7 @@ MessageQueue *MovGraph2::doWalkTo(StaticANIObject *obj, int xpos, int ypos, int 
 	Common::Array<MovGraphLink *> tempLinkList;
 	double minPath = findMinPath(&linkInfoSource, &linkInfoDest, &tempLinkList);
 
-	debug(0, "MovGraph2::doWalkTo(): path: %lf  parts: %d", minPath, tempLinkList.size());
+	debug(0, "MovGraph2::doWalkTo(): path: %g  parts: %d", minPath, tempLinkList.size());
 
 	if (minPath < 0.0 || ((linkInfoSource.node != linkInfoDest.node || !linkInfoSource.node) && !tempLinkList.size()))
 		return 0;
@@ -1003,7 +1003,7 @@ int MovGraph2::findLink(Common::Array<MovGraphLink *> *linkList, int idx, Common
 			}
 		}
 		node3 = node1;
-	} else if (idx != linkList->size() - 1) {
+	} else if (idx != (int)(linkList->size() - 1)) {
 		MovGraphLink *lnk = (*linkList)[idx + 1];
 
 		if (lnk->_movGraphNode1 == node1 || lnk->_movGraphNode1 == node1) {
