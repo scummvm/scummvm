@@ -950,11 +950,12 @@ void Scene3200::postInit(SceneObjectList *OwnerList) {
 	R2_GLOBALS._player.hide();
 	R2_GLOBALS._player.disableControl();
 
-	_actor1.postInit();
-	_actor3.postInit();
-	_actor2.postInit();
+	_rocko.postInit();
+	_jocko.postInit();
+	_socko.postInit();
 
-	setAction(&_sequenceManager, this, 3200 + R2_GLOBALS._randomSource.getRandomNumber(1), &_actor1, &_actor2, &_actor3, NULL);
+	setAction(&_sequenceManager, this, 3200 + R2_GLOBALS._randomSource.getRandomNumber(1),
+		&_rocko, &_jocko, &_socko, NULL);
 }
 
 void Scene3200::signal() {

@@ -185,9 +185,9 @@ public:
 	SpeakerRocko3200 _rockoSpeaker;
 	SpeakerJocko3200 _jockoSpeaker;
 	SpeakerSocko3200 _sockoSpeaker;
-	SceneActor _actor1;
-	SceneActor _actor2;
-	SceneActor _actor3;
+	SceneActor _rocko;
+	SceneActor _jocko;
+	SceneActor _socko;
 	SequenceManager _sequenceManager;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
