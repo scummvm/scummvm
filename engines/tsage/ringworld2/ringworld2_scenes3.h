@@ -198,8 +198,8 @@ class Scene3210 : public SceneExt {
 public:
 	SpeakerCaptain3210 _captainSpeaker;
 	SpeakerPrivate3210 _privateSpeaker;
-	SceneActor _actor1;
-	SceneActor _actor2;
+	SceneActor _captain;
+	SceneActor _private;
 	SequenceManager _sequenceManager;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);

@@ -322,7 +322,7 @@ void SpeakerCaptain3210::proc15() {
 	Scene3210 *scene = (Scene3210 *)R2_GLOBALS._sceneManager._scene;
 
 	if (!_object2) {
-		_object2 = &scene->_actor1;
+		_object2 = &scene->_captain;
 		_object2->hide();
 		_object1.postInit();
 		_object1.setPosition(_object2->_position);
@@ -1095,7 +1095,7 @@ void SpeakerPrivate3210::proc15() {
 	Scene3210 *scene = (Scene3210 *)R2_GLOBALS._sceneManager._scene;
 
 	if (!_object2) {
-		_object2 = &scene->_actor2;
+		_object2 = &scene->_private;
 		_object2->hide();
 		_object1.postInit();
 		_object1.setPosition(_object2->_position);
