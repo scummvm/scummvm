@@ -210,8 +210,8 @@ class Scene3220 : public SceneExt {
 public:
 	SpeakerRocko3220 _rockoSpeaker;
 	SpeakerJocko3220 _jockoSpeaker;
-	SceneActor _actor1;
-	SceneActor _actor2;
+	SceneActor _rocko;
+	SceneActor _jocko;
 	SequenceManager _sequenceManager;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
