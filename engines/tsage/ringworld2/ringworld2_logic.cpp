@@ -1208,25 +1208,25 @@ void Ringworld2Game::processEvent(Event &event) {
 		case Common::KEYCODE_F4:
 			// F4 - Restart
 			restartGame();
-			g_globals->_events.setCursorFromFlag();
+			R2_GLOBALS._events.setCursorFromFlag();
 			break;
 
 		case Common::KEYCODE_F7:
 			// F7 - Restore
 			restoreGame();
-			g_globals->_events.setCursorFromFlag();
+			R2_GLOBALS._events.setCursorFromFlag();
 			break;
 
 		case Common::KEYCODE_F8:
 			// F8 - Credits
-			warning("TODO: Show Credits");
+			R2_GLOBALS._sceneManager.changeScene(205);
 			break;
 
 		case Common::KEYCODE_F10:
 			// F10 - Pause
 			GfxDialog::setPalette();
 			MessageDialog::show(GAME_PAUSED_MSG, OK_BTN_STRING);
-			g_globals->_events.setCursorFromFlag();
+			R2_GLOBALS._events.setCursorFromFlag();
 			break;
 
 		default:
