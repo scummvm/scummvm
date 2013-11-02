@@ -976,7 +976,6 @@ Scene315::Scene315() {
 	_invGreenCount = _bookGreenCount = 0;
 	_invGangCount = _bookGangCount = 0;
 
-	_field1390 = 0;
 	_stripNumber = 0;
 	_field1398 = 0;
 	_currentCursor = INV_NONE;
@@ -985,7 +984,10 @@ Scene315::Scene315() {
 void Scene315::synchronize(Serializer &s) {
 	SceneExt::synchronize(s);
 
-	s.syncAsSint16LE(_field1390);
+	if (s.getVersion() < 11) {
+		int useless = 0;
+		s.syncAsSint16LE(useless);
+	}
 	s.syncAsSint16LE(_stripNumber);
 	s.syncAsSint16LE(_field1398);
 	s.syncAsSint16LE(_invGreenCount);
