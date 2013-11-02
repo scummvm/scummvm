@@ -1093,8 +1093,8 @@ void Scene3245::postInit(SceneObjectList *OwnerList) {
 	R2_GLOBALS._player.hide();
 	R2_GLOBALS._player.disableControl();
 
-	_actor1.postInit();
-	_actor2.postInit();
+	_ralf.postInit();
+	_tomko.postInit();
 
 	if (R2_GLOBALS._scientistConvIndex < 4)
 		++R2_GLOBALS._scientistConvIndex;
@@ -1103,7 +1103,8 @@ void Scene3245::postInit(SceneObjectList *OwnerList) {
 		SceneItem::display(1200, 7, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
 		signal();
 	} else {
-		setAction(&_sequenceManager, this, 3244 + R2_GLOBALS._scientistConvIndex, &_actor1, &_actor2, NULL);
+		setAction(&_sequenceManager, this, 3244 + R2_GLOBALS._scientistConvIndex, 
+			&_ralf, &_tomko, NULL);
 	}
 }
 

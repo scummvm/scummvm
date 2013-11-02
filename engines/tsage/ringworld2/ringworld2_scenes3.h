@@ -248,8 +248,8 @@ class Scene3245 : public SceneExt {
 public:
 	SpeakerRalf3245 _ralfSpeaker;
 	SpeakerTomko3245 _tomkoSpeaker;
-	SceneActor _actor1;
-	SceneActor _actor2;
+	SceneActor _ralf;
+	SceneActor _tomko;
 	SequenceManager _sequenceManager;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
