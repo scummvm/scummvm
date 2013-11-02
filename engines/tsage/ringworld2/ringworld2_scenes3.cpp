@@ -210,13 +210,13 @@ void Scene3100::dispatch() {
  *--------------------------------------------------------------------------*/
 
 Scene3125::Scene3125() {
-	_field412 = 0;
+	_soundPlayed = false;
 }
 
 void Scene3125::synchronize(Serializer &s) {
 	SceneExt::synchronize(s);
 
-	s.syncAsSint16LE(_field412);
+	s.syncAsSint16LE(_soundPlayed);
 }
 
 bool Scene3125::Background::startAction(CursorType action, Event &event) {
@@ -250,7 +250,7 @@ bool Scene3125::Table::startAction(CursorType action, Event &event) {
 	case CURSOR_USE:
 		R2_GLOBALS._player.disableControl();
 		scene->_sceneMode = 3125;
-		scene->setAction(&scene->_sequenceManager1, scene, 3125, &R2_GLOBALS._player, NULL);
+		scene->setAction(&scene->_sequenceManager, scene, 3125, &R2_GLOBALS._player, NULL);
 		break;
 	case CURSOR_LOOK:
 		SceneItem::display(3125, 15, 0, 280, 1, 160, 9, 1, 2, 20, 7, 154, -999);
@@ -274,7 +274,7 @@ bool Scene3125::Computer::startAction(CursorType action, Event &event) {
 		R2_GLOBALS._player.disableControl();
 		scene->_ghoul4.postInit();
 		scene->_sceneMode = 3126;
-		scene->setAction(&scene->_sequenceManager1, scene, 3126, &R2_GLOBALS._player, 
+		scene->setAction(&scene->_sequenceManager, scene, 3126, &R2_GLOBALS._player, 
 			&scene->_ghoul1, &scene->_ghoul2, &scene->_ghoul3, &scene->_door, 
 			&scene->_ghoul4, NULL);
 		break;
@@ -300,14 +300,14 @@ bool Scene3125::Door::startAction(CursorType action, Event &event) {
 
 	R2_GLOBALS._player.disableControl();
 	scene->_sceneMode = 3176;
-	scene->setAction(&scene->_sequenceManager1, scene, 3176, &R2_GLOBALS._player, &scene->_door, NULL);
+	scene->setAction(&scene->_sequenceManager, scene, 3176, &R2_GLOBALS._player, &scene->_door, NULL);
 	return true;
 }
 
 void Scene3125::postInit(SceneObjectList *OwnerList) {
 	loadScene(3125);
 	SceneExt::postInit();
-	_field412 = 0;
+	_soundPlayed = false;
 
 	_door.postInit();
 	_door.setup(3175, 1, 1);
@@ -338,7 +338,7 @@ void Scene3125::postInit(SceneObjectList *OwnerList) {
 
 	if (R2_GLOBALS._player._oldCharacterScene[R2_MIRANDA] == 3250) {
 		_sceneMode = 3175;
-		setAction(&_sequenceManager1, this, 3175, &R2_GLOBALS._player, &_door, NULL);
+		setAction(&_sequenceManager, this, 3175, &R2_GLOBALS._player, &_door, NULL);
 	} else {
 		R2_GLOBALS._player.setup(30, 5, 1);
 		R2_GLOBALS._player.animate(ANIM_MODE_1, NULL);
@@ -353,7 +353,7 @@ void Scene3125::signal() {
 	case 3125:
 		SceneItem::display(3125, 3, 0, 280, 1, 160, 9, 1, 2, 20, 7, 154, -999);
 		_sceneMode = 3127;
-		setAction(&_sequenceManager1, this, 3127, &R2_GLOBALS._player, NULL);
+		setAction(&_sequenceManager, this, 3127, &R2_GLOBALS._player, NULL);
 		break;
 	case 3126:
 		R2_GLOBALS.setFlag(79);
@@ -368,9 +368,9 @@ void Scene3125::signal() {
 }
 
 void Scene3125::dispatch() {
-	if ((_sceneMode == 3126) && (_ghoul1._frame == 2) && (_field412 == 0)) {
-		_field412 = 1;
+	if ((_sceneMode == 3126) && (_ghoul1._frame == 2) && !_soundPlayed) {
 		R2_GLOBALS._sound1.play(265);
+		_soundPlayed = true;
 	}
 	Scene::dispatch();
 }

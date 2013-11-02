@@ -84,7 +84,7 @@ class Scene3125 : public SceneExt {
 		virtual bool startAction(CursorType action, Event &event);
 	};
 public:
-	int _field412;
+	bool _soundPlayed;
 	Background _background;
 	Door _door;
 	Table _table;
@@ -93,9 +93,7 @@ public:
 	SceneActor _ghoul2;
 	SceneActor _ghoul3;
 	SceneActor _ghoul4;
-	SequenceManager _sequenceManager1;
-	// Second sequence manager... Unused?
-	SequenceManager _sequenceManager2;
+	SequenceManager _sequenceManager;
 
 	Scene3125();
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
