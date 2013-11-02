@@ -45,15 +45,15 @@ class Scene3100 : public SceneExt {
 		virtual bool startAction(CursorType action, Event &event);
 	};
 public:
-	int _field412;
+	bool _fadeSound;
 	SpeakerGuard _guardSpeaker;
-	NamedHotspot _item1;
-	NamedHotspot _item2;
-	SceneActor _actor1;
-	SceneActor _actor2;
-	SceneActor _actor3;
-	SceneActor _actor4;
-	SceneActor _actor5;
+	NamedHotspot _background;
+	NamedHotspot _hammerHead2;
+	SceneActor _hammerHead;
+	SceneActor _miranda;
+	SceneActor _ghoul;
+	SceneActor _technicians;
+	SceneActor _deadBodies;
 	Guard _guard;
 	ASoundExt _sound1;
 	SequenceManager _sequenceManager;
