@@ -273,7 +273,7 @@ public:
 	Door _leftDoor;
 	Door _topDoor;
 	Door _rightDoor;
-	Door _actor4;
+	Door _grate;
 	SceneActor _ghoul1;
 	SceneActor _ghoul2;
 	SceneActor _ghoul3;

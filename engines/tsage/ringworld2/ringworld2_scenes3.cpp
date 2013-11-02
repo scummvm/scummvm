@@ -1210,9 +1210,9 @@ void Scene3250::postInit(SceneObjectList *OwnerList) {
 	switch (R2_GLOBALS._player._oldCharacterScene[R2_MIRANDA]) {
 	case 1200:
 		_sceneMode = 3250;
-		_actor4.postInit();
+		_grate.postInit();
 		R2_GLOBALS._player._effect = 0;
-		setAction(&_sequenceManager, this, 3250, &R2_GLOBALS._player, &_actor4, NULL);
+		setAction(&_sequenceManager, this, 3250, &R2_GLOBALS._player, &_grate, NULL);
 		break;
 	case 3125:
 		if (R2_GLOBALS.getFlag(79)) {
