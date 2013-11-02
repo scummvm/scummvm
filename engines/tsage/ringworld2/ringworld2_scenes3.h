@@ -156,7 +156,7 @@ public:
 };
 
 class Scene3175 : public SceneExt {
-	class Item1 : public NamedHotspot {
+	class RoomItem : public NamedHotspot {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -168,11 +168,11 @@ class Scene3175 : public SceneExt {
 		virtual bool startAction(CursorType action, Event &event);
 	};
 public:
-	Item1 _background;
-	Item1 _item2;
-	Item1 _item3;
+	RoomItem _background;
+	RoomItem _table;
+	RoomItem _autopsies;
 	Door _door;
-	SceneActor _actor2;
+	SceneActor _computer;
 	Corpse _corpse;
 	SequenceManager _sequenceManager;
 

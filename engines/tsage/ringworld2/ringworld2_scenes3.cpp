@@ -806,7 +806,7 @@ void Scene3150::dispatch() {
  *
  *--------------------------------------------------------------------------*/
 
-bool Scene3175::Item1::startAction(CursorType action, Event &event) {
+bool Scene3175::RoomItem::startAction(CursorType action, Event &event) {
 	Scene3175 *scene = (Scene3175 *)R2_GLOBALS._sceneManager._scene;
 
 	switch (action) {
@@ -897,17 +897,17 @@ void Scene3175::postInit(SceneObjectList *OwnerList) {
 	_door.setPosition(Common::Point(35, 72));
 	_door.setDetails(3175, 9, 10, -1, 1, (SceneItem *)NULL);
 
-	_actor2.postInit();
-	_actor2.setup(3175, 2, 1);
-	_actor2.setPosition(Common::Point(87, 148));
+	_computer.postInit();
+	_computer.setup(3175, 2, 1);
+	_computer.setPosition(Common::Point(87, 148));
 
 	_corpse.postInit();
 	_corpse.setup(3175, 3, 1);
 	_corpse.setPosition(Common::Point(199, 117));
 	_corpse.setDetails(3175, 15, 16, 17, 1, (SceneItem *)NULL);
 
-	_item2.setDetails(12, 3175, 3, 1, 5);
-	_item3.setDetails(11, 3175, 6, 7, 8);
+	_table.setDetails(12, 3175, 3, 1, 5);
+	_autopsies.setDetails(11, 3175, 6, 7, 8);
 	_background.setDetails(Rect(0, 0, 320, 200), 3175, 0, 1, 2, 1, NULL);
 
 	R2_GLOBALS._player.postInit();
