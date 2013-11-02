@@ -1772,14 +1772,12 @@ void Scene570::IconManager::refreshList() {
 }
 
 void Scene570::IconManager::addItem(Icon *item) {
-	item->_mode = _mode;
 	_list.push_back(item);
 }
 
 Scene570::Icon::Icon(): NamedObject() {
 	_iconId = _folderId = 0;
 	_parentFolderId = 0;
-	_mode = 0;
 }
 
 void Scene570::Icon::synchronize(Serializer &s) {
@@ -1787,7 +1785,10 @@ void Scene570::Icon::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_iconId);
 	s.syncAsSint16LE(_folderId);
 	s.syncAsSint16LE(_parentFolderId);
-	s.syncAsSint16LE(_mode);
+	if (s.getVersion() < 11) {
+		int useless = 0;
+		s.syncAsSint16LE(useless);
+	}
 }
 
 void Scene570::Icon::remove() {

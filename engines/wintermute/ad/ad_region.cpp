@@ -402,8 +402,8 @@ bool AdRegion::persist(BasePersistenceManager *persistMgr) {
 	BaseRegion::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_alpha));
-	persistMgr->transfer(TMEMBER(_blocked));
-	persistMgr->transfer(TMEMBER(_decoration));
+	persistMgr->transferBool(TMEMBER(_blocked));
+	persistMgr->transferBool(TMEMBER(_decoration));
 	persistMgr->transferFloat(TMEMBER(_zoom));
 
 	return STATUS_OK;

@@ -79,6 +79,7 @@ Common::Error NeverhoodEngine::run() {
 
 	// Assign default values to the config manager, in case settings are missing
 	ConfMan.registerDefault("originalsaveload", "false");
+	ConfMan.registerDefault("skiphallofrecordsscenes", "false");
 
 	_staticData = new StaticData();
 	_staticData->load("neverhood.dat");

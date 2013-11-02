@@ -200,11 +200,18 @@ static void write_var(EngineState *s, int type, int index, reg_t value) {
 
 		s->variables[type][index] = value;
 
-		// If the game is trying to change its speech/subtitle settings, apply the ScummVM audio
-		// options first, if they haven't been applied yet
-		if (type == VAR_GLOBAL && index == 90 && !g_sci->getEngineState()->_syncedAudioOptions) {
-			g_sci->syncIngameAudioOptions();
-			g_sci->getEngineState()->_syncedAudioOptions = true;
+		if (type == VAR_GLOBAL && index == 90) {
+			// The game is trying to change its speech/subtitle settings
+			if (!g_sci->getEngineState()->_syncedAudioOptions || s->variables[VAR_GLOBAL][4] == TRUE_REG) {
+				// ScummVM audio options haven't been applied yet, so apply them.
+				// We also force the ScummVM audio options when loading a game from
+				// the launcher.
+				g_sci->syncIngameAudioOptions();
+				g_sci->getEngineState()->_syncedAudioOptions = true;
+			} else {
+				// Update ScummVM's audio options
+				g_sci->updateScummVMAudioOptions();
+			}
 		}
 	}
 }

@@ -95,7 +95,7 @@ void AdNodeState::setCursor(const char *filename) {
 bool AdNodeState::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferPtr(TMEMBER_PTR(_gameRef));
 
-	persistMgr->transfer(TMEMBER(_active));
+	persistMgr->transferBool(TMEMBER(_active));
 	persistMgr->transfer(TMEMBER(_name));
 	persistMgr->transfer(TMEMBER(_filename));
 	persistMgr->transfer(TMEMBER(_cursor));

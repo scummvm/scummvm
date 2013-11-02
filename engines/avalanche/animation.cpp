@@ -49,6 +49,7 @@ const int32 Animation::kCatacombMap[8][8] = {
 AnimationType::AnimationType(Animation *anim) {
 	_anim = anim;
 
+	_xLength = 0;
 	_yLength = 0;
 	for (int i = 0; i < 24; i++) {
 		_mani[i] = nullptr;
@@ -77,6 +78,7 @@ AnimationType::AnimationType(Animation *anim) {
 	_eachStepProc = Animation::kProcNone;
 	_fgBubbleCol = kColorWhite;
 	_bgBubbleCol = kColorBlack;
+	_id = 177;
 }
 
 /**

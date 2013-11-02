@@ -26,6 +26,7 @@
 #include "tsage/ringworld/ringworld_demo.h"
 #include "tsage/ringworld/ringworld_logic.h"
 #include "tsage/ringworld2/ringworld2_logic.h"
+#include "tsage/ringworld2/ringworld2_scenes0.h"
 #include "tsage/staticres.h"
 
 namespace TsAGE {
@@ -47,6 +48,11 @@ static SavedObject *classFactoryProc(const Common::String &className) {
 	if (className == "SceneObjectWrapper") return new SceneObjectWrapper();
 	if (className == "PaletteRotation") return new PaletteRotation();
 	if (className == "PaletteFader") return new PaletteFader();
+	if (className == "SceneText") return new SceneText();
+
+	// Return to Ringworld specific classes
+	if (className == "Scene205_Star") return new Ringworld2::Star();
+
 	return NULL;
 }
 
@@ -242,32 +248,37 @@ BlueForceGlobals::BlueForceGlobals(): TsAGE2Globals() {
 	_deathReason = 0;
 	_driveFromScene = 300;
 	_driveToScene = 0;
-	_v501F8 = 0;
-	_v501FA = 0;
-	_v501FC = 0;
-	_v5020C = 0;
-	_v50696 = 0;
 	_subFlagBitArr1 = 0;
 	_subFlagBitArr2 = 0;
 	_v50CC2 = 0;
 	_scene410Action1Count = 0;
 	_scene410TalkCount = 0;
 	_scene410HarrisonMovedFl = 0;
-	_v51C42 = 0;
-	_v51C44 = 1;
 	_bookmark = bNone;
 	_mapLocationId = 1;
 	_clip1Bullets = 8;
 	_clip2Bullets = 8;
+
+	_dayNumber = 0;
+	_tonyDialogCtr = 0;
+	_marinaWomanCtr = 0;
+	_kateDialogCtr = 0;
+	_v4CEB6 = 0;
+	_safeCombination = 0;
+	_gateStatus = 0;
+	_greenDay5TalkCtr = 0;
+	_v4CEC8 = 1;
+	_v4CECA = 0;
+	_v4CECC = 0;
 }
 
 void BlueForceGlobals::synchronize(Serializer &s) {
 	TsAGE2Globals::synchronize(s);
+	int16 useless = 0;
 
 	s.syncAsSint16LE(_dayNumber);
 	if (s.getVersion() < 9) {
-		int tmpVar = 0;
-		s.syncAsSint16LE(tmpVar);
+		s.syncAsSint16LE(useless);
 	}
 	s.syncAsSint16LE(_tonyDialogCtr);
 	s.syncAsSint16LE(_marinaWomanCtr);
@@ -276,7 +287,8 @@ void BlueForceGlobals::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_safeCombination);
 	s.syncAsSint16LE(_gateStatus);
 	s.syncAsSint16LE(_greenDay5TalkCtr);
-	s.syncAsSint16LE(_v4CEC4);
+	if (s.getVersion() < 11)
+		s.syncAsSint16LE(useless);
 	s.syncAsSint16LE(_v4CEC8);
 	s.syncAsSint16LE(_v4CECA);
 	s.syncAsSint16LE(_v4CECC);
@@ -291,19 +303,23 @@ void BlueForceGlobals::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_deathReason);
 	s.syncAsSint16LE(_driveFromScene);
 	s.syncAsSint16LE(_driveToScene);
-	s.syncAsSint16LE(_v501F8);
-	s.syncAsSint16LE(_v501FA);
-	s.syncAsSint16LE(_v501FC);
-	s.syncAsSint16LE(_v5020C);
-	s.syncAsSint16LE(_v50696);
+	if (s.getVersion() < 11) {
+		s.syncAsSint16LE(useless);
+		s.syncAsSint16LE(useless);
+		s.syncAsSint16LE(useless);
+		s.syncAsSint16LE(useless);
+		s.syncAsSint16LE(useless);
+	}
 	s.syncAsSint16LE(_subFlagBitArr1);
 	s.syncAsSint16LE(_subFlagBitArr2);
 	s.syncAsSint16LE(_v50CC2);
 	s.syncAsSint16LE(_scene410Action1Count);
 	s.syncAsSint16LE(_scene410TalkCount);
 	s.syncAsSint16LE(_scene410HarrisonMovedFl);
-	s.syncAsSint16LE(_v51C42);
-	s.syncAsSint16LE(_v51C44);
+	if (s.getVersion() < 11) {
+		s.syncAsSint16LE(useless);
+		s.syncAsSint16LE(useless);
+	}
 	s.syncAsSint16LE(_bookmark);
 	s.syncAsSint16LE(_mapLocationId);
 	s.syncAsSint16LE(_clip1Bullets);
@@ -333,7 +349,6 @@ void BlueForceGlobals::reset() {
 	_safeCombination = 0;
 	_gateStatus = 0;
 	_greenDay5TalkCtr = 0;
-	_v4CEC4 = 0;
 	_v4CEC8 = 1;
 	_v4CECA = 0;
 	_v4CECC = 0;
@@ -362,19 +377,12 @@ void BlueForceGlobals::reset() {
 	_v4CEE8 = 0;
 	_deziTopic = 0;
 	_deathReason = 0;
-	_v501F8 = 0;
-	_v501FA = 0;
-	_v501FC = 0;
-	_v5020C = 0;
-	_v50696 = 0;
 	_subFlagBitArr1 = 0;
 	_subFlagBitArr2 = 0;
 	_v50CC2 = 0;
 	_scene410Action1Count = 0;
 	_scene410TalkCount = 0;
 	_scene410HarrisonMovedFl = 0;
-	_v51C42 = 0;
-	_v51C44 = 1;
 	_clip1Bullets = 8;
 	_clip2Bullets = 8;
 }
@@ -406,7 +414,6 @@ Ringworld2Globals::Ringworld2Globals() {
 	_scannerDialog = new ScannerDialog();
 	_speechSubtitles = SPEECH_TEXT;
 
-	_v5657C = 0;
 	_stripModifier = 0;
 	_flubMazeArea = 1;
 	_flubMazeEntryDirection = 0;
@@ -424,13 +431,25 @@ Ringworld2Globals::Ringworld2Globals() {
 	_v56AA6 = 1;
 	_v56AA7 = 1;
 	_v56AA8 = 1;
-	_v56AAB = 0;
 	_scene180Mode = -1;
 	_v57709 = 0;
 	_v5780C = 0;
 	_v5780E = 0;
 	_v57810 = 0;
-	_v57C2C = 0;
+
+	_fadePaletteFlag = false;
+	_insetUp = 0;
+	_frameEdgeColor = 2;
+	_animationCtr = 0;
+	_electromagnetChangeAmount = 0;
+	_electromagnetZoom = 0;
+	_v565E5 = 0;
+	_v565E7 = 0;
+	_v565E9 = -5;
+	_v565EB = 26;
+	_foodCount = 0;
+	_rimLocation = 0;
+	_rimTransportLocation = 0;
 }
 
 Ringworld2Globals::~Ringworld2Globals() {
@@ -461,9 +480,7 @@ void Ringworld2Globals::reset() {
 	_fadePaletteFlag = false;
 	_v5589E.set(0, 0, 0, 0);
 	_v558B6.set(0, 0, 0, 0);
-	_v558C2 = 0;
 	_animationCtr = 0;
-	_v5657C = 0;
 	_electromagnetChangeAmount = 0;
 	_electromagnetZoom = 0;
 	_v565E5 = 0;
@@ -532,13 +549,11 @@ void Ringworld2Globals::reset() {
 	_v56AA6 = 1;
 	_v56AA7 = 1;
 	_v56AA8 = 1;
-	_v56AAB = 0;
 	_scene180Mode = -1;
 	_v57709 = 0;
 	_v5780C = 0;
 	_v5780E = 0;
 	_v57810 = 0;
-	_v57C2C = 0;
 	_s1550PlayerArea[R2_QUINN] = Common::Point(27, 4);
 	_s1550PlayerArea[R2_SEEKER] = Common::Point(27, 4);
 	Common::fill(&_scannerFrequencies[0], &_scannerFrequencies[MAX_CHARACTERS], 1);
@@ -574,9 +589,7 @@ void Ringworld2Globals::synchronize(Serializer &s) {
 	_v5589E.synchronize(s);
 	_v558B6.synchronize(s);
 
-	s.syncAsSint16LE(_v558C2);
 	s.syncAsSint16LE(_animationCtr);
-	s.syncAsSint16LE(_v5657C);
 	s.syncAsSint16LE(_electromagnetChangeAmount);
 	s.syncAsSint16LE(_electromagnetZoom);
 	s.syncAsSint16LE(_v565E5);
@@ -593,13 +606,11 @@ void Ringworld2Globals::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_walkwaySceneNumber);
 	s.syncAsSint16LE(_ventCellPos.x);
 	s.syncAsSint16LE(_ventCellPos.y);
-	s.syncAsSint16LE(_v56AAB);
 	s.syncAsSint16LE(_scene180Mode);
 	s.syncAsSint16LE(_v57709);
 	s.syncAsSint16LE(_v5780C);
 	s.syncAsSint16LE(_v5780E);
 	s.syncAsSint16LE(_v57810);
-	s.syncAsSint16LE(_v57C2C);
 
 	s.syncAsByte(_s1550PlayerArea[R2_QUINN].x);
 	s.syncAsByte(_s1550PlayerArea[R2_SEEKER].x);
@@ -638,7 +649,7 @@ void Ringworld2Globals::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_balloonPosition.x);
 	s.syncAsSint16LE(_balloonPosition.y);
 
-	// Synchronise Flub maze vampire data
+	// Synchronize Flub maze vampire data
 	for (i = 0; i < 18; ++i) {
 		s.syncAsSint16LE(_vampireData[i]._isAlive);
 		s.syncAsSint16LE(_vampireData[i]._shotsRequired);

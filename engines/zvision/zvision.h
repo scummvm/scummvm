@@ -25,7 +25,7 @@
 #define ZVISION_ZVISION_H
 
 #include "zvision/detection.h"
-#include "zvision/clock.h"
+#include "zvision/utility/clock.h"
 
 #include "common/random.h"
 #include "common/events.h"

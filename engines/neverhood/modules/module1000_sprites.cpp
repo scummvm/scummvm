@@ -1112,23 +1112,6 @@ KmScene1002::KmScene1002(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16
 	setKlaymenIdleTable1();
 }
 
-void KmScene1002::setupJumpToRing() {
-	_acceptInput = false;
-	SetUpdateHandler(&Klaymen::update);
-	SetMessageHandler(&KmScene1002::hmJumpToRing);
-	SetSpriteUpdate(&Klaymen::suUpdateDestX);
-	NextState(&KmScene1002::stHangOnRing);
-	sendMessage(_attachedSprite, 0x482B, 0);
-}
-
-void KmScene1002::stJumpToRing1() {
-	if (!stStartAction(AnimationCallback(&KmScene1002::stJumpToRing1))) {
-		_busyStatus = 0;
-		startAnimation(0xD82890BA, 0, -1);
-		setupJumpToRing();
-	}
-}
-
 void KmScene1002::xUpdate() {
 	if (_x >= 250 && _x <= 435 && _y >= 420) {
 		if (_idleTableNum == 0) {
@@ -1189,7 +1172,7 @@ uint32 KmScene1002::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x4816:
 		if (param.asInteger() == 0)
-			GotoState(&Klaymen::stPressDoorButton);
+			GotoState(&KmScene1002::stPressDoorButton);
 		break;
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
@@ -1238,70 +1221,13 @@ uint32 KmScene1002::xHandleMessage(int messageNum, const MessageParam &param) {
 	return 0;
 }
 
-KmScene1004::KmScene1004(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
-	: Klaymen(vm, parentScene, x, y) {
-
-	_dataResource.load(0x01900A04);
-}
-
-uint32 KmScene1004::xHandleMessage(int messageNum, const MessageParam &param) {
-	switch (messageNum) {
-	case 0x4001:
-	case 0x4800:
-		startWalkToX(param.asPoint().x, false);
-		break;
-	case 0x4004:
-		GotoState(&Klaymen::stTryStandIdle);
-		break;
-	case 0x4817:
-		setDoDeltaX(param.asInteger());
-		gotoNextStateExt();
-		break;
-	case 0x4818:
-		startWalkToX(_dataResource.getPoint(param.asInteger()).x, false);
-		break;
-	case 0x481E:
-		GotoState(&KmScene1004::stReadNote);
-		break;
-	case 0x4820:
-		sendMessage(_parentScene, 0x2000, 0);
-		GotoState(&Klaymen::stContinueClimbLadderUp);
-		break;
-	case 0x4821:
-		sendMessage(_parentScene, 0x2000, 0);
-		_destY = param.asInteger();
-		GotoState(&Klaymen::stStartClimbLadderDown);
-		break;
-	case 0x4822:
-		sendMessage(_parentScene, 0x2000, 0);
-		_destY = param.asInteger();
-		GotoState(&Klaymen::stStartClimbLadderUp);
-		break;
-	case 0x4823:
-		sendMessage(_parentScene, 0x2001, 0);
-		GotoState(&Klaymen::stClimbLadderHalf);
-		break;
-	case 0x4824:
-		sendMessage(_parentScene, 0x2000, 0);
-		_destY = _dataResource.getPoint(param.asInteger()).y;
-		GotoState(&Klaymen::stStartClimbLadderDown);
-		break;
-	case 0x4825:
-		sendMessage(_parentScene, 0x2000, 0);
-		_destY = _dataResource.getPoint(param.asInteger()).y;
-		GotoState(&Klaymen::stStartClimbLadderUp);
-		break;
-	case 0x4828:
-		GotoState(&Klaymen::stTurnToBackToUse);
-		break;
-	case 0x483F:
-		startSpecialWalkRight(param.asInteger());
-		break;
-	case 0x4840:
-		startSpecialWalkLeft(param.asInteger());
-		break;
-	}
-	return 0;
+void KmScene1002::setupJumpToRing() {
+	_acceptInput = false;
+	SetUpdateHandler(&Klaymen::update);
+	SetMessageHandler(&KmScene1002::hmJumpToRing);
+	SetSpriteUpdate(&Klaymen::suUpdateDestX);
+	NextState(&KmScene1002::stHangOnRing);
+	sendMessage(_attachedSprite, 0x482B, 0);
 }
 
 uint32 KmScene1002::hmJumpToRing(int messageNum, const MessageParam &param, Entity *sender) {
@@ -1330,6 +1256,14 @@ void KmScene1002::stHangOnRing() {
 	SetUpdateHandler(&Klaymen::update);
 	SetMessageHandler(&Klaymen::hmLowLevel);
 	SetSpriteUpdate(NULL);
+}
+
+void KmScene1002::stJumpToRing1() {
+	if (!stStartAction(AnimationCallback(&KmScene1002::stJumpToRing1))) {
+		_busyStatus = 0;
+		startAnimation(0xD82890BA, 0, -1);
+		setupJumpToRing();
+	}
 }
 
 void KmScene1002::stJumpToRing2() {
@@ -1540,6 +1474,137 @@ uint32 KmScene1002::hmFirstMoveVenusFlyTrap(int messageNum, const MessageParam &
 		break;
 	}
 	return messageResult;
+}
+
+void KmScene1002::stPressDoorButton() {
+	_busyStatus = 2;
+	_acceptInput = true;
+	setDoDeltaX(0);
+	startAnimation(0x1CD89029, 0, -1);
+	SetUpdateHandler(&Klaymen::update);
+	SetMessageHandler(&KmScene1002::hmPressDoorButton);
+	SetSpriteUpdate(&Klaymen::suAction);
+}
+
+void KmScene1002::stHitByBoxingGlove() {
+	_busyStatus = 1;
+	_acceptInput = false;
+	startAnimation(0x35AA8059, 0, -1);
+	SetUpdateHandler(&Klaymen::update);
+	SetMessageHandler(&KmScene1002::hmHitByBoxingGlove);
+	SetSpriteUpdate(&AnimatedSprite::updateDeltaXY);
+	FinalizeState(&KmScene1002::evHitByBoxingGloveDone);
+}
+
+void KmScene1002::evHitByBoxingGloveDone() {
+	sendMessage(_parentScene, 0x1024, 1);
+}
+
+uint32 KmScene1002::hmPressDoorButton(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = hmLowLevelAnimation(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x100D:
+		if (param.asInteger() == 0x942D2081) {
+			_acceptInput = false;
+			sendMessage(_attachedSprite, 0x2003, 0);
+		} else if (param.asInteger() == 0xDA600012) {
+			stHitByBoxingGlove();
+		} else if (param.asInteger() == 0x0D01B294) {
+			_acceptInput = false;
+			sendMessage(_attachedSprite, 0x480B, 0);
+		}
+		break;
+	}
+	return messageResult;
+}
+
+uint32 KmScene1002::hmHitByBoxingGlove(int messageNum, const MessageParam &param, Entity *sender) {
+	int16 speedUpFrameIndex;
+	uint32 messageResult = hmLowLevelAnimation(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x1008:
+		speedUpFrameIndex = getFrameIndex(kKlaymenSpeedUpHash);
+		if (_currFrameIndex < speedUpFrameIndex) {
+			startAnimation(0x35AA8059, speedUpFrameIndex, -1);
+			_y = 435;
+		}
+		messageResult = 0;
+		break;
+	case 0x100D:
+		if (param.asInteger() == 0x1A1A0785) {
+			playSound(0, 0x40F0A342);
+		} else if (param.asInteger() == 0x60428026) {
+			playSound(0, 0x40608A59);
+		}
+		break;
+	}
+	return messageResult;
+}
+
+KmScene1004::KmScene1004(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
+	: Klaymen(vm, parentScene, x, y) {
+
+	_dataResource.load(0x01900A04);
+}
+
+uint32 KmScene1004::xHandleMessage(int messageNum, const MessageParam &param) {
+	switch (messageNum) {
+	case 0x4001:
+	case 0x4800:
+		startWalkToX(param.asPoint().x, false);
+		break;
+	case 0x4004:
+		GotoState(&Klaymen::stTryStandIdle);
+		break;
+	case 0x4817:
+		setDoDeltaX(param.asInteger());
+		gotoNextStateExt();
+		break;
+	case 0x4818:
+		startWalkToX(_dataResource.getPoint(param.asInteger()).x, false);
+		break;
+	case 0x481E:
+		GotoState(&KmScene1004::stReadNote);
+		break;
+	case 0x4820:
+		sendMessage(_parentScene, 0x2000, 0);
+		GotoState(&Klaymen::stContinueClimbLadderUp);
+		break;
+	case 0x4821:
+		sendMessage(_parentScene, 0x2000, 0);
+		_destY = param.asInteger();
+		GotoState(&Klaymen::stStartClimbLadderDown);
+		break;
+	case 0x4822:
+		sendMessage(_parentScene, 0x2000, 0);
+		_destY = param.asInteger();
+		GotoState(&Klaymen::stStartClimbLadderUp);
+		break;
+	case 0x4823:
+		sendMessage(_parentScene, 0x2001, 0);
+		GotoState(&Klaymen::stClimbLadderHalf);
+		break;
+	case 0x4824:
+		sendMessage(_parentScene, 0x2000, 0);
+		_destY = _dataResource.getPoint(param.asInteger()).y;
+		GotoState(&Klaymen::stStartClimbLadderDown);
+		break;
+	case 0x4825:
+		sendMessage(_parentScene, 0x2000, 0);
+		_destY = _dataResource.getPoint(param.asInteger()).y;
+		GotoState(&Klaymen::stStartClimbLadderUp);
+		break;
+	case 0x4828:
+		GotoState(&Klaymen::stTurnToBackToUse);
+		break;
+	case 0x483F:
+		startSpecialWalkRight(param.asInteger());
+		break;
+	case 0x4840:
+		startSpecialWalkLeft(param.asInteger());
+		break;
+	}
+	return 0;
 }
 
 uint32 KmScene1004::hmReadNote(int messageNum, const MessageParam &param, Entity *sender) {

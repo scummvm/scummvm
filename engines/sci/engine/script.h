@@ -99,8 +99,8 @@ public:
 	void load(int script_nr, ResourceManager *resMan);
 
 	void matchSignatureAndPatch(uint16 scriptNr, byte *scriptData, const uint32 scriptSize);
-	int32 findSignature(const SciScriptSignature *signature, const byte *scriptData, const uint32 scriptSize);
-	void applyPatch(const uint16 *patch, byte *scriptData, const uint32 scriptSize, int32 signatureOffset);
+	int32 findSignature(const SciScriptSignature *signature, const byte *scriptData, const uint32 scriptSize, bool isMacSci11);
+	void applyPatch(const uint16 *patch, byte *scriptData, const uint32 scriptSize, int32 signatureOffset, bool isMacSci11);
 
 	virtual bool isValidOffset(uint16 offset) const;
 	virtual SegmentRef dereference(reg_t pointer);

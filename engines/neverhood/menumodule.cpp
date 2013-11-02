@@ -405,6 +405,7 @@ CreditsScene::CreditsScene(NeverhoodEngine *vm, Module *parentModule, bool canAb
 
 	_ticksTime = _vm->_system->getMillis() + 202100;
 
+	_vm->toggleSoundUpdate(true);
 	_musicResource = new MusicResource(_vm);
 	_musicResource->load(0x30812225);
 	_musicResource->play(0);
@@ -414,6 +415,7 @@ CreditsScene::CreditsScene(NeverhoodEngine *vm, Module *parentModule, bool canAb
 CreditsScene::~CreditsScene() {
 	_musicResource->unload();
 	delete _musicResource;
+	_vm->toggleSoundUpdate(false);
 }
 
 void CreditsScene::update() {

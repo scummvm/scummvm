@@ -94,12 +94,24 @@ struct Rect32 {
 		left = right = top = bottom = 0;
 	}
 
+	bool isRectEmpty() const {
+		return (left >= right) || (top >= bottom);
+	}
+
 	void offsetRect(int dx, int dy) {
 		left   += dx;
 		top    += dy;
 		right  += dx;
 		bottom += dy;
 	}
+
+	void setRect(int32 newLeft, int32 newTop, int32 newRight, int32 newBottom) {
+		this->left   = newLeft;
+		this->top    = newTop;
+		this->right  = newRight;
+		this->bottom = newBottom;
+	}
+
 	/**
 	 * Check if the given rect is equal to this one.
 	 *

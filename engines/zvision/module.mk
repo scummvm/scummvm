@@ -1,36 +1,36 @@
 MODULE := engines/zvision
  
 MODULE_OBJS := \
-	actions.o \
-	animation_control.o \
-	clock.o \
-	console.o \
-	control.o \
-	cursor.o \
-	cursor_manager.o \
+	animation/rlf_animation.o \
+	archives/zfs_archive.o \
+	core/console.o \
+	core/events.o \
+	core/save_manager.o \
+	cursors/cursor.o \
+	cursors/cursor_manager.o \
 	detection.o \
-	events.o \
-	input_control.o \
-	lever_control.o \
-	lzss_read_stream.o \
-	push_toggle_control.o \
-	render_manager.o \
-	render_table.o \
-	rlf_animation.o \
-	save_manager.o \
-	scr_file_handling.o \
-	script_manager.o \
-	single_value_container.o \
-	string_manager.o \
-	timer_node.o \
-	truetype_font.o \
-	utility.o \
-	video.o \
-	zvision.o \
-	zfs_archive.o \
-	zork_avi_decoder.o \
-	zork_raw.o
- 
+	fonts/truetype_font.o \
+	graphics/render_manager.o \
+	graphics/render_table.o \
+	scripting/actions.o \
+	scripting/control.o \
+	scripting/controls/animation_control.o \
+	scripting/controls/input_control.o \
+	scripting/controls/lever_control.o \
+	scripting/controls/push_toggle_control.o \
+	scripting/controls/timer_node.o \
+	scripting/scr_file_handling.o \
+	scripting/script_manager.o \
+	sound/zork_raw.o \
+	strings/string_manager.o \
+	utility/clock.o \
+	utility/lzss_read_stream.o \
+	utility/single_value_container.o \
+	utility/utility.o \
+	video/video.o \
+	video/zork_avi_decoder.o \
+	zvision.o
+	
 MODULE_DIRS += \
 	engines/zvision
  

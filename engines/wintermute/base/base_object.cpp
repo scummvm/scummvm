@@ -63,7 +63,7 @@ BaseObject::BaseObject(BaseGame *inGame) : BaseScriptHolder(inGame) {
 
 	_iD = _gameRef->getSequence();
 
-	BasePlatform::setRectEmpty(&_rect);
+	_rect.setEmpty();
 	_rectSet = false;
 
 	_cursor = nullptr;
@@ -957,40 +957,40 @@ bool BaseObject::persist(BasePersistenceManager *persistMgr) {
 	}
 	persistMgr->transferPtr(TMEMBER_PTR(_activeCursor));
 	persistMgr->transfer(TMEMBER(_alphaColor));
-	persistMgr->transfer(TMEMBER(_autoSoundPanning));
+	persistMgr->transferBool(TMEMBER(_autoSoundPanning));
 	persistMgr->transferPtr(TMEMBER_PTR(_cursor));
-	persistMgr->transfer(TMEMBER(_sharedCursors));
-	persistMgr->transfer(TMEMBER(_editorAlwaysRegister));
-	persistMgr->transfer(TMEMBER(_editorOnly));
-	persistMgr->transfer(TMEMBER(_editorSelected));
+	persistMgr->transferBool(TMEMBER(_sharedCursors));
+	persistMgr->transferBool(TMEMBER(_editorAlwaysRegister));
+	persistMgr->transferBool(TMEMBER(_editorOnly));
+	persistMgr->transferBool(TMEMBER(_editorSelected));
 	persistMgr->transfer(TMEMBER(_iD));
-	persistMgr->transfer(TMEMBER(_is3D));
-	persistMgr->transfer(TMEMBER(_movable));
+	persistMgr->transferBool(TMEMBER(_is3D));
+	persistMgr->transferBool(TMEMBER(_movable));
 	persistMgr->transfer(TMEMBER(_posX));
 	persistMgr->transfer(TMEMBER(_posY));
 	persistMgr->transferFloat(TMEMBER(_relativeScale));
-	persistMgr->transfer(TMEMBER(_rotatable));
+	persistMgr->transferBool(TMEMBER(_rotatable));
 	persistMgr->transferFloat(TMEMBER(_scale));
 	persistMgr->transferPtr(TMEMBER_PTR(_sFX));
 	persistMgr->transfer(TMEMBER(_sFXStart));
 	persistMgr->transfer(TMEMBER(_sFXVolume));
-	persistMgr->transfer(TMEMBER(_ready));
-	persistMgr->transfer(TMEMBER(_rect));
-	persistMgr->transfer(TMEMBER(_rectSet));
-	persistMgr->transfer(TMEMBER(_registrable));
-	persistMgr->transfer(TMEMBER(_shadowable));
+	persistMgr->transferBool(TMEMBER(_ready));
+	persistMgr->transferRect32(TMEMBER(_rect));
+	persistMgr->transferBool(TMEMBER(_rectSet));
+	persistMgr->transferBool(TMEMBER(_registrable));
+	persistMgr->transferBool(TMEMBER(_shadowable));
 	persistMgr->transfer(TMEMBER(_soundEvent));
-	persistMgr->transfer(TMEMBER(_zoomable));
+	persistMgr->transferBool(TMEMBER(_zoomable));
 
 	persistMgr->transferFloat(TMEMBER(_scaleX));
 	persistMgr->transferFloat(TMEMBER(_scaleY));
 
 	persistMgr->transferFloat(TMEMBER(_rotate));
-	persistMgr->transfer(TMEMBER(_rotateValid));
+	persistMgr->transferBool(TMEMBER(_rotateValid));
 	persistMgr->transferFloat(TMEMBER(_relativeRotate));
 
-	persistMgr->transfer(TMEMBER(_saveState));
-	persistMgr->transfer(TMEMBER(_nonIntMouseEvents));
+	persistMgr->transferBool(TMEMBER(_saveState));
+	persistMgr->transferBool(TMEMBER(_nonIntMouseEvents));
 
 	persistMgr->transfer(TMEMBER_INT(_sFXType));
 	persistMgr->transferFloat(TMEMBER(_sFXParam1));
@@ -1039,7 +1039,7 @@ bool BaseObject::setActiveCursor(const char *filename) {
 
 
 //////////////////////////////////////////////////////////////////////////
-int BaseObject::getHeight() {
+int32 BaseObject::getHeight() {
 	return 0;
 }
 

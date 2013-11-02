@@ -577,17 +577,15 @@ bool Scene810::Lyle::startAction(CursorType action, Event &event) {
 				if ((BF_GLOBALS.getFlag(shownLyleRapsheet)) || (BF_GLOBALS.getFlag(shownLyleCrate1))){
 					scene->_sceneMode = 8141;
 				} else {
-					// Doublecheck on shownLyleCrate1 removed: useless
 					scene->_sceneMode = 8144;
 				}
 			} else {
 				if ((BF_GLOBALS.getFlag(shownLyleRapsheet)) || (BF_GLOBALS.getFlag(shownLyleCrate1))) {
 					scene->_sceneMode = 8129;
-				} else { // if (BF_GLOBALS.getFlag(shownLyleCrate1)) {
+				} else {
 					scene->_sceneMode = 8132;
-				// doublecheck Present in the original, may hide a bug in the original
-				//} else
-				//	scene->_sceneMode = 8121;
+					// Double check on ShownLyleCrate1 present in the original, may hide a bug in the original
+					// The original was then setting _sceneMode 8121
 				}
 			}
 		}
@@ -1071,7 +1069,6 @@ void Scene810::postInit(SceneObjectList *OwnerList) {
 		setAction(&_sequenceManager1, this, 8107, &BF_GLOBALS._player, &_lyle, NULL);
 		break;
 	case 935:
-		BF_GLOBALS._v51C44 = 1;
 		BF_GLOBALS._scenePalette.loadPalette(2);
 		_lyle.remove();
 
@@ -1804,13 +1801,11 @@ void Scene830::signal() {
 		_sceneMode = 832;
 		BF_GLOBALS._scenePalette.clearListeners();
 		addFader((const byte *)&black, 5, this);
-		BF_GLOBALS._v51C44 = 0;
 		break;
 	case 12:
 		_sceneMode = 831;
 		BF_GLOBALS._scenePalette.clearListeners();
 		addFader((const byte *)&black, 5, this);
-		BF_GLOBALS._v51C44 = 0;
 		break;
 	case 13:
 		BF_GLOBALS._sceneManager.changeScene(850);

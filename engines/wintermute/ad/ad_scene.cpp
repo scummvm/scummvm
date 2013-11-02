@@ -2300,7 +2300,7 @@ float AdScene::getScaleAt(int Y) {
 bool AdScene::persist(BasePersistenceManager *persistMgr) {
 	BaseObject::persist(persistMgr);
 
-	persistMgr->transfer(TMEMBER(_autoScroll));
+	persistMgr->transferBool(TMEMBER(_autoScroll));
 	persistMgr->transfer(TMEMBER(_editorColBlocked));
 	persistMgr->transfer(TMEMBER(_editorColBlockedSel));
 	persistMgr->transfer(TMEMBER(_editorColDecor));
@@ -2315,14 +2315,14 @@ bool AdScene::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER(_editorColWaypointsSel));
 	persistMgr->transfer(TMEMBER(_editorMarginH));
 	persistMgr->transfer(TMEMBER(_editorMarginV));
-	persistMgr->transfer(TMEMBER(_editorShowBlocked));
-	persistMgr->transfer(TMEMBER(_editorShowDecor));
-	persistMgr->transfer(TMEMBER(_editorShowEntities));
-	persistMgr->transfer(TMEMBER(_editorShowRegions));
-	persistMgr->transfer(TMEMBER(_editorShowScale));
+	persistMgr->transferBool(TMEMBER(_editorShowBlocked));
+	persistMgr->transferBool(TMEMBER(_editorShowDecor));
+	persistMgr->transferBool(TMEMBER(_editorShowEntities));
+	persistMgr->transferBool(TMEMBER(_editorShowRegions));
+	persistMgr->transferBool(TMEMBER(_editorShowScale));
 	persistMgr->transferPtr(TMEMBER_PTR(_fader));
 	persistMgr->transfer(TMEMBER(_height));
-	persistMgr->transfer(TMEMBER(_initialized));
+	persistMgr->transferBool(TMEMBER(_initialized));
 	persistMgr->transfer(TMEMBER(_lastTimeH));
 	persistMgr->transfer(TMEMBER(_lastTimeV));
 	_layers.persist(persistMgr);
@@ -2330,13 +2330,13 @@ bool AdScene::persist(BasePersistenceManager *persistMgr) {
 	_objects.persist(persistMgr);
 	persistMgr->transfer(TMEMBER(_offsetLeft));
 	persistMgr->transfer(TMEMBER(_offsetTop));
-	persistMgr->transfer(TMEMBER(_paralaxScrolling));
-	persistMgr->transfer(TMEMBER(_persistentState));
-	persistMgr->transfer(TMEMBER(_persistentStateSprites));
+	persistMgr->transferBool(TMEMBER(_paralaxScrolling));
+	persistMgr->transferBool(TMEMBER(_persistentState));
+	persistMgr->transferBool(TMEMBER(_persistentStateSprites));
 	persistMgr->transfer(TMEMBER(_pfMaxTime));
 	_pfPath.persist(persistMgr);
 	persistMgr->transfer(TMEMBER(_pfPointsNum));
-	persistMgr->transfer(TMEMBER(_pfReady));
+	persistMgr->transferBool(TMEMBER(_pfReady));
 	persistMgr->transferPtr(TMEMBER_PTR(_pfRequester));
 	persistMgr->transferPtr(TMEMBER_PTR(_pfTarget));
 	persistMgr->transferPtr(TMEMBER_PTR(_pfTargetPath));

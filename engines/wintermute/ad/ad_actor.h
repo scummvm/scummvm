@@ -47,7 +47,7 @@ class AdActor : public AdTalkHolder {
 public:
 	TDirection angleToDirection(int angle);
 	DECLARE_PERSISTENT(AdActor, AdTalkHolder)
-	virtual int getHeight();
+	virtual int32 getHeight() override;
 	BaseSprite *getTalkStance(const char *stance);
 	virtual void goTo(int x, int y, TDirection afterWalkDir = DI_NONE);
 	BasePoint *_targetPoint;

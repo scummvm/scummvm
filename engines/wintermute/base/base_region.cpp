@@ -48,7 +48,7 @@ BaseRegion::BaseRegion(BaseGame *inGame) : BaseObject(inGame) {
 	_lastMimicScale = -1;
 	_lastMimicX = _lastMimicY = INT_MIN;
 
-	BasePlatform::setRectEmpty(&_rect);
+	_rect.setEmpty();
 }
 
 
@@ -65,7 +65,7 @@ void BaseRegion::cleanup() {
 	}
 	_points.clear();
 
-	BasePlatform::setRectEmpty(&_rect);
+	_rect.setEmpty();
 	_editorSelectedPoint = -1;
 }
 
@@ -430,7 +430,7 @@ bool BaseRegion::persist(BasePersistenceManager *persistMgr) {
 
 	BaseObject::persist(persistMgr);
 
-	persistMgr->transfer(TMEMBER(_active));
+	persistMgr->transferBool(TMEMBER(_active));
 	persistMgr->transfer(TMEMBER(_editorSelectedPoint));
 	persistMgr->transferFloat(TMEMBER(_lastMimicScale));
 	persistMgr->transfer(TMEMBER(_lastMimicX));
@@ -491,7 +491,7 @@ bool BaseRegion::ptInPolygon(int32 x, int32 y) {
 //////////////////////////////////////////////////////////////////////////
 bool BaseRegion::getBoundingRect(Rect32 *rect) {
 	if (_points.size() == 0) {
-		BasePlatform::setRectEmpty(rect);
+		rect->setEmpty();
 	} else {
 		int32 minX = INT_MAX, minY = INT_MAX, maxX = INT_MIN, maxY = INT_MIN;
 
@@ -502,7 +502,7 @@ bool BaseRegion::getBoundingRect(Rect32 *rect) {
 			maxX = MAX(maxX, _points[i]->x);
 			maxY = MAX(maxY, _points[i]->y);
 		}
-		BasePlatform::setRect(rect, minX, minY, maxX, maxY);
+		rect->setRect(minX, minY, maxX, maxY);
 	}
 	return STATUS_OK;
 }

@@ -221,12 +221,12 @@ bool BaseGameMusic::persistChannels(BasePersistenceManager *persistMgr) {
 }
 
 bool BaseGameMusic::persistCrossfadeSettings(BasePersistenceManager *persistMgr) {
-	persistMgr->transfer(TMEMBER(_musicCrossfadeRunning));
+	persistMgr->transferBool(TMEMBER(_musicCrossfadeRunning));
 	persistMgr->transfer(TMEMBER(_musicCrossfadeStartTime));
 	persistMgr->transfer(TMEMBER(_musicCrossfadeLength));
 	persistMgr->transfer(TMEMBER(_musicCrossfadeChannel1));
 	persistMgr->transfer(TMEMBER(_musicCrossfadeChannel2));
-	persistMgr->transfer(TMEMBER(_musicCrossfadeSwap));
+	persistMgr->transferBool(TMEMBER(_musicCrossfadeSwap));
 	return true;
 }
 

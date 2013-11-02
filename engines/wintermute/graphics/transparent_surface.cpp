@@ -76,7 +76,6 @@ public:
  * @param *outa, *outr, *outg, *outb pointer to the output pixel.
  * @param *outa, *outr, *outg, *outb pointer to the colormod components.
  */
-
 void BlenderAdditive::blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb, byte *ca, byte *cr, byte *cg, byte *cb) {
 	if (*ca != 255) {
 		ina = (ina) * (*ca) >> 8;
@@ -108,7 +107,6 @@ void BlenderAdditive::blendPixel(byte ina, byte inr, byte ing, byte inb, byte *o
  * @param *outa, *outr, *outg, *outb pointer to the output pixel.
  * @param *outa, *outr, *outg, *outb pointer to the colormod components.
  */
-
 void BlenderSubtractive::blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb, byte *ca, byte *cr, byte *cg, byte *cb) {
 	//if (*ca != 255) {
 	//	ina = ina * (*ca) >> 8;
@@ -234,7 +232,6 @@ void BlenderNormal::blendPixel(byte ina, byte inr, byte ing, byte inb, byte *out
  * @param ina, inr, ing, inb: the input pixel, split into its components.
  * @param *outa, *outr, *outg, *outb pointer to the output pixel.
  */
-
 void BlenderSubtractive::blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb) {
 
 	if (ina == 0) {
@@ -259,7 +256,6 @@ void BlenderSubtractive::blendPixel(byte ina, byte inr, byte ing, byte inb, byte
  * @param ina, inr, ing, inb: the input pixel, split into its components.
  * @param *outa, *outr, *outg, *outb pointer to the output pixel.
  */
-
 void BlenderAdditive::blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb) {
 
 	if (ina == 0) {
@@ -297,10 +293,11 @@ TransparentSurface::TransparentSurface(const Surface &surf, bool copyData) : Sur
 	}
 }
 
-void doBlitOpaqueFast(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep) {
 /**
  * Optimized version of doBlit to be used w/opaque blitting (no alpha).
  */
+void doBlitOpaqueFast(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep) {
+
 	byte *in;
 	byte *out;
 
@@ -320,7 +317,6 @@ void doBlitOpaqueFast(byte *ino, byte *outo, uint32 width, uint32 height, uint32
 /**
  * Optimized version of doBlit to be used w/binary blitting (blit or no-blit, no blending).
  */
-
 void doBlitBinaryFast(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep) {
 
 	byte *in;
@@ -350,8 +346,8 @@ void doBlitBinaryFast(byte *ino, byte *outo, uint32 width, uint32 height, uint32
  * What we have here is a template method that calls blendPixel() from a different
  * class - the one we call it with - thus performing a different type of blending.
  *
- * @param *ino a pointer to the input surface
- * @param *outo a pointer to the output surface
+ * @param ino a pointer to the input surface
+ * @param outo a pointer to the output surface
  * @param width width of the input surface
  * @param height height of the input surface
  * @param pitch pitch of the output surface - that is, width in bytes of every row, usually bpp * width of the TARGET surface (the area we are blitting to might be smaller, do the math)
@@ -923,9 +919,5 @@ TransparentSurface *TransparentSurface::scale(uint16 newWidth, uint16 newHeight)
 	return target;
 
 }
-
-
-
-
 
 } // End of namespace Wintermute

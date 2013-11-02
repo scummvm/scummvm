@@ -208,6 +208,8 @@ void Module2800::createScene(int sceneNum, int which) {
 		break;
 	case 1001:
 		_vm->_soundMan->stopMusic(0xD2FA4D14, 0, 0);
+		_musicResource->stop(0);
+		_currentMusicFileHash = 0;
 		createSmackerScene(0x00800801, true, true, false);
 		break;
 	}
@@ -354,7 +356,6 @@ void Module2800::updateScene() {
 }
 
 void Module2800::updateMusic(bool halfVolume) {
-
 	uint32 newMusicFileHash = _vm->_gameModule->getCurrRadioMusicFileHash();
 
 	if (!_musicResource)

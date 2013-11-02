@@ -250,10 +250,10 @@ Common::String BaseParser::getToken(char **buf) {
 		*t++ = 0;
 	} else if (*b == 0) {
 		*buf = b;
-		return nullptr;
+		return Common::String();
 	} else {
 		// Error.
-		return nullptr;
+		return Common::String();
 	}
 
 	*buf = b;

@@ -768,7 +768,7 @@ bool SXFile::persist(BasePersistenceManager *persistMgr) {
 
 	persistMgr->transfer(TMEMBER(_filename));
 	persistMgr->transfer(TMEMBER(_mode));
-	persistMgr->transfer(TMEMBER(_textMode));
+	persistMgr->transferBool(TMEMBER(_textMode));
 
 	uint32 pos = 0;
 	if (persistMgr->getIsSaving()) {

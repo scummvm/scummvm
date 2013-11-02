@@ -1067,7 +1067,7 @@ bool AdEntity::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 
 
 //////////////////////////////////////////////////////////////////////////
-int AdEntity::getHeight() {
+int32 AdEntity::getHeight() {
 	if (_region && !_sprite) {
 		return _region->_rect.bottom - _region->_rect.top;
 	} else {

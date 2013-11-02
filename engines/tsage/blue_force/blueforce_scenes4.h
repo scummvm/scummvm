@@ -118,7 +118,7 @@ public:
 	ASoundExt _sound1;
 	int _action1Count, _talkCount, _field1FBA;
 	int _cuffedDriverFl, _field1FBE;
-	int _field1FC0; // Useless variable
+	int _field1FC0;
 	int _field1FC2, _harrisonMovedFl; 
 
 	Scene410();

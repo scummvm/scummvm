@@ -841,7 +841,7 @@ void SceneExt::startStrip() {
 		scene->_savedCanWalk = BF_GLOBALS._player._canWalk;
 		BF_GLOBALS._player.disableControl();
 
-		if (!BF_GLOBALS._v50696 && T2_GLOBALS._uiElements._active)
+		if (T2_GLOBALS._uiElements._active)
 			T2_GLOBALS._uiElements.hide();
 	}
 }
@@ -855,7 +855,7 @@ void SceneExt::endStrip() {
 		BF_GLOBALS._player._uiEnabled = scene->_savedUiEnabled;
 		BF_GLOBALS._player._canWalk = scene->_savedCanWalk;
 
-		if (!BF_GLOBALS._v50696 && T2_GLOBALS._uiElements._active)
+		if (T2_GLOBALS._uiElements._active)
 			T2_GLOBALS._uiElements.show();
 	}
 }
@@ -890,7 +890,6 @@ void PalettedScene::remove() {
 
 		BF_GLOBALS._sceneObjects->draw();
 		BF_GLOBALS._scenePalette.loadPalette(2);
-		BF_GLOBALS._v51C44 = 1;
 		BF_GLOBALS._sceneManager._hasPalette = true;
 	}
 
@@ -1262,8 +1261,6 @@ void BlueForceInvObjectList::alterInventory(int mode) {
 	// Reset ticket book and miranda card back to motorcycle
 	setObjectScene(INV_TICKET_BOOK, 60);
 	setObjectScene(INV_MIRANDA_CARD, 60);
-
-	BF_GLOBALS._v4CEC4 = 0;
 
 	switch (mode) {
 	case 2:

@@ -576,14 +576,14 @@ public:
 };
 
 class Scene1575 : public SceneExt {
-	class Hotspot1 : public NamedHotspot {
+	class Button : public NamedHotspot {
 	public:
-		int _field34;
-		int _field36;
+		int _buttonId;
+		bool _pressed;
 
-		Hotspot1();
+		Button();
 		void synchronize(Serializer &s);
-		void subA910D(int indx);
+		void initButton(int buttonId);
 
 		virtual void process(Event &event);
 		virtual bool startAction(CursorType action, Event &event);
@@ -594,12 +594,12 @@ public:
 	int _field416;
 	int _field418;
 	int _field41A;
-	Hotspot1 _item1;
-	Hotspot1 _item2;
-	Hotspot1 _item3;
-	Hotspot1 _item4;
-	Hotspot1 _item5;
-	Hotspot1 _item6;
+	Button _button1;
+	Button _button2;
+	Button _button3;
+	Button _button4;
+	Button _button5;
+	Button _button6;
 	SceneActor _actor1;
 	SceneActor _actor2;
 	SceneActor _actor3;

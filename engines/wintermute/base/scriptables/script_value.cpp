@@ -791,11 +791,11 @@ void ScValue::setValue(ScValue *val) {
 bool ScValue::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferPtr(TMEMBER_PTR(_gameRef));
 
-	persistMgr->transfer(TMEMBER(_persistent));
-	persistMgr->transfer(TMEMBER(_isConstVar));
+	persistMgr->transferBool(TMEMBER(_persistent));
+	persistMgr->transferBool(TMEMBER(_isConstVar));
 	persistMgr->transfer(TMEMBER_INT(_type));
-	persistMgr->transfer(TMEMBER(_valBool));
-	persistMgr->transfer(TMEMBER(_valFloat));
+	persistMgr->transferBool(TMEMBER(_valBool));
+	persistMgr->transferDouble(TMEMBER(_valFloat));
 	persistMgr->transfer(TMEMBER(_valInt));
 	persistMgr->transferPtr(TMEMBER_PTR(_valNative));
 

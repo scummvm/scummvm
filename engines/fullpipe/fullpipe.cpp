@@ -80,7 +80,7 @@ FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc)
 
 	_gameContinue = true;
 	_needRestart = false;
-	_flgPlayIntro = false;
+	_flgPlayIntro = true;
 	_gamePaused = false;
 	_inputArFlag = false;
 	_recordEvents = false;

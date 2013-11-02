@@ -65,7 +65,7 @@ BaseRenderer::BaseRenderer(BaseGame *inGame) : BaseClass(inGame) {
 	_loadImageX = _loadImageY = 0;
 
 	_width = _height = _bPP = 0;
-	BasePlatform::setRectEmpty(&_monitorRect);
+	_monitorRect.setEmpty();
 
 	_realWidth = _realHeight = 0;
 	_drawOffsetX = _drawOffsetY = 0;
@@ -374,7 +374,7 @@ bool BaseRenderer::displayIndicator() {
 	}
 	if (_saveLoadImage && !_hasDrawnSaveLoadImage) {
 		Rect32 rc;
-		BasePlatform::setRect(&rc, 0, 0, _saveLoadImage->getWidth(), _saveLoadImage->getHeight());
+		rc.setRect(0, 0, _saveLoadImage->getWidth(), _saveLoadImage->getHeight());
 		if (_loadInProgress) {
 			_saveLoadImage->displayTrans(_loadImageX, _loadImageY, rc);
 		} else {

@@ -622,8 +622,8 @@ bool UIObject::persist(BasePersistenceManager *persistMgr) {
 	BaseObject::persist(persistMgr);
 
 	persistMgr->transferPtr(TMEMBER_PTR(_back));
-	persistMgr->transfer(TMEMBER(_canFocus));
-	persistMgr->transfer(TMEMBER(_disable));
+	persistMgr->transferBool(TMEMBER(_canFocus));
+	persistMgr->transferBool(TMEMBER(_disable));
 	persistMgr->transferPtr(TMEMBER_PTR(_focusedWidget));
 	persistMgr->transferPtr(TMEMBER_PTR(_font));
 	persistMgr->transfer(TMEMBER(_height));
@@ -632,12 +632,12 @@ bool UIObject::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferPtr(TMEMBER_PTR(_listenerParamObject));
 	persistMgr->transfer(TMEMBER(_listenerParamDWORD));
 	persistMgr->transferPtr(TMEMBER_PTR(_parent));
-	persistMgr->transfer(TMEMBER(_parentNotify));
-	persistMgr->transfer(TMEMBER(_sharedFonts));
-	persistMgr->transfer(TMEMBER(_sharedImages));
+	persistMgr->transferBool(TMEMBER(_parentNotify));
+	persistMgr->transferBool(TMEMBER(_sharedFonts));
+	persistMgr->transferBool(TMEMBER(_sharedImages));
 	persistMgr->transfer(TMEMBER(_text));
 	persistMgr->transfer(TMEMBER_INT(_type));
-	persistMgr->transfer(TMEMBER(_visible));
+	persistMgr->transferBool(TMEMBER(_visible));
 	persistMgr->transfer(TMEMBER(_width));
 
 	return STATUS_OK;
@@ -652,7 +652,10 @@ int32 UIObject::getWidth() const {
 	return _width;
 }
 
-int32 UIObject::getHeight() const {
+// Has to be non-const to allow the virtual override to work,
+// as other getHeight()-functions currently have the potential
+// of having side-effects.
+int32 UIObject::getHeight() {
 	return _height;
 }
 

@@ -551,10 +551,10 @@ bool AdLayer::persist(BasePersistenceManager *persistMgr) {
 
 	BaseObject::persist(persistMgr);
 
-	persistMgr->transfer(TMEMBER(_active));
-	persistMgr->transfer(TMEMBER(_closeUp));
+	persistMgr->transferBool(TMEMBER(_active));
+	persistMgr->transferBool(TMEMBER(_closeUp));
 	persistMgr->transfer(TMEMBER(_height));
-	persistMgr->transfer(TMEMBER(_main));
+	persistMgr->transferBool(TMEMBER(_main));
 	_nodes.persist(persistMgr);
 	persistMgr->transfer(TMEMBER(_width));
 

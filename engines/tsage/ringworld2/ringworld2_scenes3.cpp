@@ -1710,6 +1710,7 @@ void Scene3350::signal() {
 	case 3351:
 		_sceneMode = 3352;
 		setAction(&_sequenceManager, this, 3352, &_actor4, &R2_GLOBALS._player, &_actor1, &_actor2, &_actor3, NULL);
+		break;
 	case 3352:
 		R2_GLOBALS._sceneManager.changeScene(3395);
 		break;
@@ -2190,6 +2191,7 @@ void Scene3375::signal() {
 		else
 			R2_GLOBALS._player.setStrip(3);
 		R2_GLOBALS._player.enableControl(CURSOR_TALK);
+		break;
 	default:
 		_companion1.setPriority(130);
 		_companion2.setPriority(132);
@@ -4663,7 +4665,6 @@ void Scene3600::signal() {
 			_sceneMode = 3607;
 			_protector.setAction(&_sequenceManager1, this, _sceneMode, &_protector, NULL);
 
-			R2_GLOBALS._v558C2 = 1;
 			_protectorSpeaker.proc16();
 			_protectorSpeaker._displayMode = 1;
 			_quinnSpeaker._displayMode = 1;
@@ -5250,6 +5251,7 @@ void Scene3800::enterArea() {
 			default:
 				break;
 			}
+			break;
 		default:
 			R2_GLOBALS._player.enableControl(CURSOR_WALK);
 			break;
@@ -5350,7 +5352,6 @@ void Scene3800::signal() {
 		enterArea();
 		break;
 	case 15:
-		R2_GLOBALS._v56AAB = 0;
 		R2_GLOBALS._player.enableControl();
 		break;
 	case 16:
@@ -5360,7 +5361,6 @@ void Scene3800::signal() {
 		_actor1.show();
 		_object1.remove();
 		_object2.remove();
-		R2_GLOBALS._v56AAB = 0;
 		R2_GLOBALS._player.enableControl();
 		break;
 	case 3805:
@@ -5626,7 +5626,6 @@ void Scene3900::signal() {
 	case 11:
 	// No break on purpose
 	case 12:
-		R2_GLOBALS._v56AAB = 0;
 		R2_GLOBALS._player.enableControl(CURSOR_WALK);
 		break;
 	case 13:

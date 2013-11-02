@@ -40,7 +40,7 @@ public:
 	void setItem(const char *itemName);
 	DECLARE_PERSISTENT(AdEntity, AdTalkHolder)
 	void updatePosition();
-	virtual int getHeight();
+	virtual int32 getHeight() override;
 	BaseRegion *_region;
 	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
 	virtual bool update();

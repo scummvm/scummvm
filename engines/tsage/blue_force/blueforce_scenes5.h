@@ -258,7 +258,6 @@ class Scene570: public SceneExt {
 	public:
 		SceneText _sceneText;
 		int _iconId, _folderId, _parentFolderId;
-		int _mode; // Useless variable
 		Common::String _text;
 
 		Icon();

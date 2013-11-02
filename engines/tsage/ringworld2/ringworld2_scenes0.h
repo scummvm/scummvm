@@ -85,7 +85,7 @@ class Scene100: public SceneExt {
 public:
 	NamedHotspot _background, _duct, _bed, _desk;
 	Terminal _terminal;
-	SceneActor _bedLights1, _bedLights2, _object3, _object4, _object5;
+	SceneActor _bedLights1, _bedLights2, _tableLocker, _wardrobeTopAnim, _wardrobeColorAnim;
 	SceneActor _wardrobe;
 	Door _door;
 	Table _table;
@@ -111,7 +111,7 @@ class Scene125: public SceneExt {
 	public:
 		int _lookLineNum, _iconId;
 		bool _pressed;
-		SceneObject _object1, _object2;
+		SceneObject _glyph, _horizLine;
 		SceneText _sceneText1, _sceneText2;
 
 		Icon();
@@ -136,7 +136,8 @@ public:
 	ASoundExt _sound1;
 	NamedHotspot _background, _item2, _item3;
 	DiskSlot _diskSlot;
-	SceneActor _object1, _object2, _object3, _object4, _food, _foodDispenser, _infoDisk;
+	SceneActor _starchart1, _starchart2, _starchart3, _starchart4;
+	SceneActor _food, _foodDispenser, _infoDisk;
 	Icon _icon1, _icon2, _icon3, _icon4, _icon5,  _icon6;
 	SequenceManager _sequenceManager;
 	SceneText _sceneText;
@@ -175,7 +176,6 @@ public:
 	ASound _sound1;
 	Action1 _action1;
 	int _frameNumber, _yChange;
-	SceneObject _object1, _object2, _object3;
 	int _lineNum;
 	SynchronizedList<SceneText *> _creditsList;
 public:
@@ -210,10 +210,9 @@ public:
 	ASoundExt _sound1;
 
 	int _frameNumber;
-	int _field412, _field480;
-	int _field482, _frameInc;
+	int _helpDisabled;
+	int _frameInc;
 	int _fontNumber, _fontHeight;
-	int _scene180Mode;
 public:
 	Scene180();
 
@@ -263,6 +262,13 @@ public:
 	virtual void signal();
 };
 
+class Star: public SceneObject {
+public:
+	int _x100, _y100;
+public:
+	virtual Common::String getClassName() { return "Scene205_Star"; }
+};
+
 class Scene205: public SceneExt {
 	/* Actions */
 	class Action1: public Action {
@@ -271,26 +277,18 @@ class Scene205: public SceneExt {
 	public:
 		virtual void signal();
 	};
-
-	/* Objects */
-	class Object: public SceneObject {
-	public:
-		int _x100, _y100;
-	public:
-		// TODO: Check if this derives from DataManager? and flesh out
-	};
 private:
 	void setup();
-	void processList(Object **ObjList, int count, const Common::Rect &bounds,
+	void processList(Star **ObjList, int count, const Common::Rect &bounds,
 					int xMultiply, int yMultiply, int xCenter, int yCenter);
 	void handleText();
 public:
 	AnimationPlayer _animationPlayer;
 	int _fontHeight;
 	SceneText _textList[15];
-	Object *_objList1[3];
-	Object *_objList2[3];
-	Object *_objList3[4];
+	Star *_starList1[3];
+	Star *_starList2[3];
+	Star *_starList3[4];
 	ASound _sound1;
 	Action1 _action1;
 	int _yp;
@@ -430,7 +428,7 @@ class Scene325: public SceneExt {
 	public:
 		int _lookLineNum, _iconId;
 		bool _pressed;
-		SceneObject _object1, _object2;
+		SceneObject _glyph, _horizLine;
 		SceneText _sceneText1, _sceneText2;
 
 		Icon();
@@ -450,16 +448,17 @@ private:
 	void setMessage(int resNum, int lineNum);
 	Common::String parseMessage(const Common::String &msg);
 public:
-	int _field412, _iconFontNumber, _field416, _field418;
-	int _field41A, _field41C, _field41E, _scannerLocation;
+	int _consoleAction, _iconFontNumber, _databasePage, _priorConsoleAction;
+	int _moveCounter, _yChange, _yDirection, _scannerLocation;
 	int _soundCount, _soundIndex;
 	int _soundQueue[10];
 	SpeakerQuinn _quinnSpeaker;
 	ScenePalette _palette;
 	SceneHotspot _background, _terminal;
-	SceneObject _object1, _object2, _object3, _object4, _object5;
-	SceneObject _object6, _object7, _object8, _object9, _object10;
-	SceneObject _object11, _object12, _scannerTab;
+	SceneObject _starGrid1, _starGrid2, _starGrid3; // Both starchart & scan grid objects
+	SceneObject _starGrid4, _starGrid5, _starGrid6, _starGrid7;
+	SceneObject _starGrid8, _starGrid9, _starGrid10, _starGrid11;
+	SceneObject _starGrid12, _starGrid13;
 	SceneObject _objList[4];
 	Icon _icon1, _icon2, _icon3, _icon4, _icon5, _icon6;
 	ASoundExt _sound1;
@@ -628,7 +627,6 @@ public:
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void signal();
-
 };
 
 class Scene600 : public SceneExt {
