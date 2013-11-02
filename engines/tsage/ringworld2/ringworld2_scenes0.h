@@ -210,7 +210,7 @@ public:
 	ASoundExt _sound1;
 
 	int _frameNumber;
-	int _helpDisabled;
+	bool _helpEnabled;
 	int _frameInc;
 	int _fontNumber, _fontHeight;
 public:

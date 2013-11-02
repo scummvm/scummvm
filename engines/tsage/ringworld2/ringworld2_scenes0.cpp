@@ -1508,7 +1508,7 @@ void Scene180::Action1::signal() {
 /*--------------------------------------------------------------------------*/
 
 Scene180::Scene180(): SceneExt() {
-	_helpDisabled = 0;
+	_helpEnabled = false;
 	_frameInc = 0;
 	_frameNumber = R2_GLOBALS._events.getFrameNumber();
 	_fontNumber = R2_GLOBALS.gfxManager()._font._fontNumber;
@@ -1555,7 +1555,7 @@ void Scene180::synchronize(Serializer &s) {
 	SceneExt::synchronize(s);
 
 	s.syncAsSint16LE(_frameNumber);
-	s.syncAsSint16LE(_helpDisabled);
+	s.syncAsSint16LE(_helpEnabled);
 	s.syncAsSint16LE(_frameInc);
 	s.syncAsSint16LE(_fontNumber);
 	s.syncAsSint16LE(_fontHeight);
@@ -1570,7 +1570,7 @@ void Scene180::signal() {
 		break;
 
 	case 1:
-		_helpDisabled = 1;
+		_helpEnabled = true;
 		R2_GLOBALS._sceneManager._hasPalette = true;
 		_animationPlayer._paletteMode = ANIMPALMODE_NONE;
 		_animationPlayer._isActive = true;
@@ -1608,7 +1608,7 @@ void Scene180::signal() {
 	case 30:
 	case 43:
 	case 47:
-		_helpDisabled = 0;
+		_helpEnabled = false;
 		R2_GLOBALS._screenSurface.fillRect(Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 0);
 		_palette.loadPalette(0);
 		_palette.loadPalette(9998);
@@ -1622,7 +1622,7 @@ void Scene180::signal() {
 		R2_GLOBALS._scene180Mode = 2;
 		_animationPlayer.load(2);
 
-		_helpDisabled = 1;
+		_helpEnabled = true;
 		R2_GLOBALS._scenePalette.addFader(_animationPlayer._subData._palData, 256, 6, NULL);
 		R2_GLOBALS._sound1.play(2);
 		break;
@@ -1659,7 +1659,7 @@ void Scene180::signal() {
 		break;
 
 	case 11:
-		_helpDisabled = 1;
+		_helpEnabled = true;
 		_door.postInit();
 		_shipDisplay.postInit();
 		setAction(&_sequenceManager, this, 4000, &_door, &_shipDisplay, NULL);
@@ -1706,21 +1706,21 @@ void Scene180::signal() {
 		break;
 
 	case 27:
-		_helpDisabled = 0;
+		_helpEnabled = false;
 		_door.remove();
 		_shipDisplay.remove();
 		setSceneDelay(2);
 		break;
 
 	case 28:
-		_helpDisabled = 0;
+		_helpEnabled = false;
 		_palette.loadPalette(0);
 		_palette.loadPalette(9998);
 		R2_GLOBALS._scenePalette.addFader(_palette._palette, 256, 100, this);
 		break;
 
 	case 29:
-		_helpDisabled = 1;
+		_helpEnabled = true;
 		_animationPlayer._paletteMode = ANIMPALMODE_REPLACE_PALETTE;
 		_animationPlayer._isActive = true;
 		_animationPlayer._objectMode = ANIMOBJMODE_42;
@@ -1749,7 +1749,7 @@ void Scene180::signal() {
 		break;
 
 	case 32:
-		_helpDisabled = 1;
+		_helpEnabled = true;
 
 		_teal.postInit();
 		_teal.setPosition(Common::Point(161, 97));
@@ -1799,7 +1799,7 @@ void Scene180::signal() {
 		break;
 
 	case 37:
-		_helpDisabled = 0;
+		_helpEnabled = false;
 		_dutyOfficer.remove();
 		_palette.loadPalette(9998);
 		R2_GLOBALS._scenePalette.addFader(_palette._palette, 256, 8, this);
@@ -1839,7 +1839,7 @@ void Scene180::signal() {
 		break;
 
 	case 41:
-		_helpDisabled = 1;
+		_helpEnabled = true;
 		_animationPlayer._isActive = true;
 		break;
 
@@ -1859,12 +1859,12 @@ void Scene180::signal() {
 		break;
 
 	case 45:
-		_helpDisabled = 1;
+		_helpEnabled = true;
 		_stripManager.start(28, this);
 		break;
 
 	case 48:
-		_helpDisabled = 1;
+		_helpEnabled = true;
 		_animationPlayer._paletteMode = ANIMPALMODE_NONE;
 		_animationPlayer._isActive = true;
 		_animationPlayer._objectMode = ANIMOBJMODE_1;
@@ -1887,7 +1887,7 @@ void Scene180::signal() {
 
 	case 50:
 		R2_GLOBALS._scene180Mode = 0;
-		_helpDisabled = 0;
+		_helpEnabled = false;
 
 		// WORKAROUND: The original changed to scene 100 here, Quinn's Bedroom, 
 		// but instead we're changing to the previously unused scene 50, which shows
@@ -1904,8 +1904,8 @@ void Scene180::setSceneDelay(int v) {
 
 void Scene180::process(Event &event) {
 	if ((event.eventType == EVENT_KEYPRESS) && (event.kbd.keycode == Common::KEYCODE_ESCAPE)) {
-		event.handled = 1;
-		if (!_helpDisabled) {
+		event.handled = true;
+		if (_helpEnabled) {
 			if (R2_GLOBALS._scenePalette._listeners.size() == 0)
 				HelpDialog::show();
 		}
