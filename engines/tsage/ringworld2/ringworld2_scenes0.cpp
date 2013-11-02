@@ -1508,11 +1508,9 @@ void Scene180::Action1::signal() {
 /*--------------------------------------------------------------------------*/
 
 Scene180::Scene180(): SceneExt() {
-	_field412 = 0;
+	_helpDisabled = 0;
 	_frameInc = 0;
 	_frameNumber = R2_GLOBALS._events.getFrameNumber();
-	_field480 = 1;
-	_field482 = -1;
 	_fontNumber = R2_GLOBALS.gfxManager()._font._fontNumber;
 
 	GfxFont font;
@@ -1557,9 +1555,7 @@ void Scene180::synchronize(Serializer &s) {
 	SceneExt::synchronize(s);
 
 	s.syncAsSint16LE(_frameNumber);
-	s.syncAsSint16LE(_field412);
-	s.syncAsSint16LE(_field480);
-	s.syncAsSint16LE(_field482);
+	s.syncAsSint16LE(_helpDisabled);
 	s.syncAsSint16LE(_frameInc);
 	s.syncAsSint16LE(_fontNumber);
 	s.syncAsSint16LE(_fontHeight);
@@ -1574,7 +1570,7 @@ void Scene180::signal() {
 		break;
 
 	case 1:
-		_field412 = 1;
+		_helpDisabled = 1;
 		R2_GLOBALS._sceneManager._hasPalette = true;
 		_animationPlayer._paletteMode = ANIMPALMODE_NONE;
 		_animationPlayer._isActive = true;
@@ -1612,7 +1608,7 @@ void Scene180::signal() {
 	case 30:
 	case 43:
 	case 47:
-		_field412 = 0;
+		_helpDisabled = 0;
 		R2_GLOBALS._screenSurface.fillRect(Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 0);
 		_palette.loadPalette(0);
 		_palette.loadPalette(9998);
@@ -1626,7 +1622,7 @@ void Scene180::signal() {
 		R2_GLOBALS._scene180Mode = 2;
 		_animationPlayer.load(2);
 
-		_field412 = 1;
+		_helpDisabled = 1;
 		R2_GLOBALS._scenePalette.addFader(_animationPlayer._subData._palData, 256, 6, NULL);
 		R2_GLOBALS._sound1.play(2);
 		break;
@@ -1663,7 +1659,7 @@ void Scene180::signal() {
 		break;
 
 	case 11:
-		_field412 = 1;
+		_helpDisabled = 1;
 		_door.postInit();
 		_shipDisplay.postInit();
 		setAction(&_sequenceManager, this, 4000, &_door, &_shipDisplay, NULL);
@@ -1710,21 +1706,21 @@ void Scene180::signal() {
 		break;
 
 	case 27:
-		_field412 = 0;
+		_helpDisabled = 0;
 		_door.remove();
 		_shipDisplay.remove();
 		setSceneDelay(2);
 		break;
 
 	case 28:
-		_field412 = 0;
+		_helpDisabled = 0;
 		_palette.loadPalette(0);
 		_palette.loadPalette(9998);
 		R2_GLOBALS._scenePalette.addFader(_palette._palette, 256, 100, this);
 		break;
 
 	case 29:
-		_field412 = 1;
+		_helpDisabled = 1;
 		_animationPlayer._paletteMode = ANIMPALMODE_REPLACE_PALETTE;
 		_animationPlayer._isActive = true;
 		_animationPlayer._objectMode = ANIMOBJMODE_42;
@@ -1753,7 +1749,7 @@ void Scene180::signal() {
 		break;
 
 	case 32:
-		_field412 = 1;
+		_helpDisabled = 1;
 
 		_teal.postInit();
 		_teal.setPosition(Common::Point(161, 97));
@@ -1803,7 +1799,7 @@ void Scene180::signal() {
 		break;
 
 	case 37:
-		_field412 = 0;
+		_helpDisabled = 0;
 		_dutyOfficer.remove();
 		_palette.loadPalette(9998);
 		R2_GLOBALS._scenePalette.addFader(_palette._palette, 256, 8, this);
@@ -1843,7 +1839,7 @@ void Scene180::signal() {
 		break;
 
 	case 41:
-		_field412 = 1;
+		_helpDisabled = 1;
 		_animationPlayer._isActive = true;
 		break;
 
@@ -1863,12 +1859,12 @@ void Scene180::signal() {
 		break;
 
 	case 45:
-		_field412 = 1;
+		_helpDisabled = 1;
 		_stripManager.start(28, this);
 		break;
 
 	case 48:
-		_field412 = 1;
+		_helpDisabled = 1;
 		_animationPlayer._paletteMode = ANIMPALMODE_NONE;
 		_animationPlayer._isActive = true;
 		_animationPlayer._objectMode = ANIMOBJMODE_1;
@@ -1891,7 +1887,7 @@ void Scene180::signal() {
 
 	case 50:
 		R2_GLOBALS._scene180Mode = 0;
-		_field412 = 0;
+		_helpDisabled = 0;
 
 		// WORKAROUND: The original changed to scene 100 here, Quinn's Bedroom, 
 		// but instead we're changing to the previously unused scene 50, which shows
@@ -1909,10 +1905,9 @@ void Scene180::setSceneDelay(int v) {
 void Scene180::process(Event &event) {
 	if ((event.eventType == EVENT_KEYPRESS) && (event.kbd.keycode == Common::KEYCODE_ESCAPE)) {
 		event.handled = 1;
-		if (!_field412) {
-			if (R2_GLOBALS._scenePalette._listeners.size() == 0) {
+		if (!_helpDisabled) {
+			if (R2_GLOBALS._scenePalette._listeners.size() == 0)
 				HelpDialog::show();
-			}
 		}
 	}
 

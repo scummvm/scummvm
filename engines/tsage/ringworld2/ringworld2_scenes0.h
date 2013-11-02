@@ -210,8 +210,8 @@ public:
 	ASoundExt _sound1;
 
 	int _frameNumber;
-	int _field412, _field480;
-	int _field482, _frameInc;
+	int _helpDisabled;
+	int _frameInc;
 	int _fontNumber, _fontHeight;
 public:
 	Scene180();
