@@ -2032,13 +2032,15 @@ void Scene5300::Hotspot8::doAction(int action) {
 /*--------------------------------------------------------------------------*/
 
 Scene5300::Scene5300() :
-		_hotspot3(0, CURSOR_LOOK, 5300, 3, CURSOR_USE, 5300, 16, LIST_END) {
-	_field1B0A = 1;
+	_hotspot3(0, CURSOR_LOOK, 5300, 3, CURSOR_USE, 5300, 16, LIST_END) {
 }
 
 void Scene5300::synchronize(Serializer &s) {
 	Scene::synchronize(s);
-	s.syncAsSint16LE(_field1B0A);
+	if (s.getVersion() < 11) {
+		int useless = 0;
+		s.syncAsSint16LE(useless);
+	}
 }
 
 void Scene5300::postInit(SceneObjectList *OwnerList) {
@@ -2125,7 +2127,6 @@ void Scene5300::postInit(SceneObjectList *OwnerList) {
 		setAction(&_sequenceManager, this, 5306, &g_globals->_player, &_hotspot3, NULL);
 	}
 
-	_field1B0A = 1;
 	if (RING_INVENTORY._bone._sceneNumber == 5300) {
 		_hotspot5.postInit();
 		_hotspot5.setVisage(5301);

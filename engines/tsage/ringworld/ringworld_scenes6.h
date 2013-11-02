@@ -319,9 +319,6 @@ public:
 	Hotspot7 _hotspot7;
 	Hotspot8 _hotspot8;
 
-	// Useless variable, but removing it would break the savegames.
-	int _field1B0A;
-
 	Scene5300();
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void signal();
