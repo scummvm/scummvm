@@ -252,7 +252,7 @@ public:
 			break;
 		case SEEK_END:
 			// NOTE: This can be an expensive operation (see below).
-			newPos = size() - offset;
+			newPos = size() + offset;
 			break;
 		}
 
