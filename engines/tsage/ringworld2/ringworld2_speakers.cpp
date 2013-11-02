@@ -521,7 +521,7 @@ void SpeakerJocko3230::proc15() {
 	Scene3230 *scene = (Scene3230 *)R2_GLOBALS._sceneManager._scene;
 
 	if (!_object2) {
-		_object2 = &scene->_actor2;
+		_object2 = &scene->_jocko;
 		_object2->hide();
 		_object1.postInit();
 		_object1.setPosition(_object2->_position);
@@ -1975,7 +1975,7 @@ void SpeakerRocko3230::proc15() {
 	Scene3230 *scene = (Scene3230 *)R2_GLOBALS._sceneManager._scene;
 
 	if (!_object2) {
-		_object2 = &scene->_actor1;
+		_object2 = &scene->_rocko;
 		_object2->hide();
 		_object1.postInit();
 		_object1.setPosition(_object2->_position);

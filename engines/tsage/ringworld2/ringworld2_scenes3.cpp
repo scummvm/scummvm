@@ -1035,11 +1035,12 @@ void Scene3230::postInit(SceneObjectList *OwnerList) {
 	R2_GLOBALS._player.hide();
 	R2_GLOBALS._player.disableControl();
 
-	_actor1.postInit();
-	_actor2.postInit();
-	_actor3.postInit();
+	_rocko.postInit();
+	_jocko.postInit();
+	_ghoul.postInit();
 
-	setAction(&_sequenceManager, this, 3230 + R2_GLOBALS._randomSource.getRandomNumber(1), &_actor1, &_actor2, &_actor3, NULL);
+	setAction(&_sequenceManager, this, 3230 + R2_GLOBALS._randomSource.getRandomNumber(1),
+		&_rocko, &_jocko, &_ghoul, NULL);
 }
 
 void Scene3230::signal() {
