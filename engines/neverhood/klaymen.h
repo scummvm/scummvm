@@ -248,10 +248,6 @@ public:
 	uint32 hmMoveObject(int messageNum, const MessageParam &param, Entity *sender);
 	void upMoveObject();
 
-	void stHitByBoxingGlove();
-	uint32 hmHitByBoxingGlove(int messageNum, const MessageParam &param, Entity *sender);
-	void evHitByBoxingGloveDone();
-
 	void stStandIdleSmall();
 	void stWonderAboutSmall();
 	void stWonderAboutHalfSmall();
@@ -270,9 +266,6 @@ public:
 
 	void stStandIdleSpecial();
 	uint32 hmStandIdleSpecial(int messageNum, const MessageParam &param, Entity *sender);
-
-	void stPressDoorButton();
-	uint32 hmPressDoorButton(int messageNum, const MessageParam &param, Entity *sender);
 
 	void stSpitOutFall0();
 	void stSpitOutFall2();
