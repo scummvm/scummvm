@@ -4665,7 +4665,6 @@ void Scene3600::signal() {
 			_sceneMode = 3607;
 			_protector.setAction(&_sequenceManager1, this, _sceneMode, &_protector, NULL);
 
-			R2_GLOBALS._v558C2 = 1;
 			_protectorSpeaker.proc16();
 			_protectorSpeaker._displayMode = 1;
 			_quinnSpeaker._displayMode = 1;

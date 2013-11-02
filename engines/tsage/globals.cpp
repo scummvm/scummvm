@@ -451,7 +451,6 @@ Ringworld2Globals::Ringworld2Globals() {
 	_fadePaletteFlag = false;
 	_insetUp = 0;
 	_frameEdgeColor = 2;
-	_v558C2 = 0;
 	_animationCtr = 0;
 	_electromagnetChangeAmount = 0;
 	_electromagnetZoom = 0;
@@ -492,7 +491,6 @@ void Ringworld2Globals::reset() {
 	_fadePaletteFlag = false;
 	_v5589E.set(0, 0, 0, 0);
 	_v558B6.set(0, 0, 0, 0);
-	_v558C2 = 0;
 	_animationCtr = 0;
 	_electromagnetChangeAmount = 0;
 	_electromagnetZoom = 0;
@@ -602,7 +600,6 @@ void Ringworld2Globals::synchronize(Serializer &s) {
 	_v5589E.synchronize(s);
 	_v558B6.synchronize(s);
 
-	s.syncAsSint16LE(_v558C2);
 	s.syncAsSint16LE(_animationCtr);
 	s.syncAsSint16LE(_electromagnetChangeAmount);
 	s.syncAsSint16LE(_electromagnetZoom);

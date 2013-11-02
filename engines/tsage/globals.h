@@ -194,7 +194,6 @@ public:
 	int _safeCombination;
 	int _gateStatus;
 	int _greenDay5TalkCtr;
-	int _v4CEC4; // Useless variable
 	int _v4CEC8;
 	int _v4CECA;
 	int _v4CECC;
@@ -262,7 +261,6 @@ public:
 	int _frameEdgeColor;
 	Rect _v5589E;
 	Rect _v558B6;
-	int _v558C2; // Unused variable. The original seems to use it only in the context of the cheat mode
 	int _animationCtr;
 	int _electromagnetChangeAmount;
 	int _electromagnetZoom;
