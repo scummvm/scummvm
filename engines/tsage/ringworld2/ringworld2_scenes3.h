@@ -117,7 +117,7 @@ class Scene3150 : public SceneExt {
 	class FoodTray : public SceneActor {
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Actor6 : public SceneActor {
+	class ToiletFlush : public SceneActor {
 		virtual bool startAction(CursorType action, Event &event);
 	};
 	class AirVent : public SceneActor {
@@ -144,7 +144,7 @@ public:
 	SceneActor _bulbOrWire;
 	Water _water;
 	FoodTray _foodTray;
-	Actor6 _toiletFlush;
+	ToiletFlush _toiletFlush;
 	AirVent _airVent;
 	DoorExit _doorExit;
 	VentExit _ventExit;

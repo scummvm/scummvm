@@ -477,7 +477,7 @@ bool Scene3150::FoodTray::startAction(CursorType action, Event &event) {
 	return true;
 }
 
-bool Scene3150::Actor6::startAction(CursorType action, Event &event) {
+bool Scene3150::ToiletFlush::startAction(CursorType action, Event &event) {
 	Scene3150 *scene = (Scene3150 *)R2_GLOBALS._sceneManager._scene;
 
 	if (action == CURSOR_USE) {
