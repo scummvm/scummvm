@@ -86,10 +86,17 @@ PrinceEngine::PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc)
 	Engine(syst), _gameDescription(gameDesc), _graph(NULL), _script(NULL),
 	_locationNr(0), _debugger(NULL), _objectList(NULL), _mobList(NULL), _midiPlayer(NULL),
 	_cameraX(0), _newCameraX(0) {
+
+	// Debug/console setup
+	DebugMan.addDebugChannel(DebugChannel::kScript, "script", "Prince Script debug channel");
+	DebugMan.addDebugChannel(DebugChannel::kEngine, "engine", "Prince Engine debug channel");
+
+	DebugMan.enableDebugChannel("script");
+
 	_rnd = new Common::RandomSource("prince");
 	_debugger = new Debugger(this);
 	_midiPlayer = new MusicPlayer(this);
-    _textSlots[0] = "";
+
 }
 
 PrinceEngine::~PrinceEngine() {
@@ -114,6 +121,7 @@ Common::Error PrinceEngine::run() {
 	debug("Adding all path: %s", gameDataDir.getPath().c_str());
 
 	SearchMan.addSubDirectoryMatching(gameDataDir, "all", 0, 2);
+	SearchMan.addSubDirectoryMatching(gameDataDir, "data/voices/output", 0, 2);
 
 	Common::SeekableReadStream *font1stream = SearchMan.createReadStreamForMember("font1.raw");
 	if (!font1stream) 
@@ -415,19 +423,49 @@ void PrinceEngine::hotspot() {
 	}
 }
 
-void PrinceEngine::printAt(const char *s, uint16 x, uint16 y) {
-	_textSlots[0] = s;
+void PrinceEngine::printAt(uint32 slot, uint8 color, const char *s, uint16 x, uint16 y) {
+
+	debugC(1, DebugChannel::kEngine, "PrinceEngine::printAt slot %d, color %d, x %02d, y %02d, str %s", slot, color, x, y, s);
+
+	Text &text = _textSlots[slot];
+	text._str = s;
+	text._x = x;
+	text._y = y;
+	text._color = color;
 }
 
 uint32 PrinceEngine::getTextWidth(const char *s) {
     uint16 textW = 0;
-    while (*s) {
-        textW += *s;
-        ++s;
+	while (*s) {
+        textW += _font.getCharWidth(*s) + _font.getKerningOffset(0, 0);
+		++s;
     }
     return textW;
 }
 
+void PrinceEngine::showTexts() {
+	for (uint32 slot = 0; slot < MAXTEXTS; ++slot) {
+		Text& text = _textSlots[slot];
+		if (!text._str && !text._time)
+			continue;
+
+		Common::Array<Common::String> lines;
+		_font.wordWrapText(text._str, _graph->_frontScreen->w, lines);
+
+		for (int i = 0; i < lines.size(); ++i) {
+			_font.drawString(
+				_graph->_frontScreen,
+				lines[i],
+				text._x - getTextWidth(lines[i].c_str())/2,
+				text._y - (lines.size() - i) * (_font.getFontHeight()),
+				_graph->_frontScreen->w,
+				text._color
+			);
+		}
+
+		--text._time;
+	}
+}
 
 void PrinceEngine::drawScreen() {
 	const Graphics::Surface *roomSurface = _roomBmp.getSurface();	
@@ -443,15 +481,7 @@ void PrinceEngine::drawScreen() {
 	//	  _graph->drawTransparent(_objectList->getSurface());
 	hotspot();
 
-	_font.drawString(
-			_graph->_frontScreen,
-			_textSlots[0],
-			320 - getTextWidth(_textSlots[0])/2,
-			470 - _font.getFontHeight(),
-			_graph->_frontScreen->w,
-			216
-		);
-
+	showTexts();
 
 	getDebugger()->onFrame();
 

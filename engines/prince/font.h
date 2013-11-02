@@ -49,6 +49,8 @@ public:
 
     virtual void drawChar(Graphics::Surface *dst, byte chr, int x, int y, uint32 color) const override;
 
+	virtual int getKerningOffset(byte left, byte right) const { return -2; }
+
 private:
     struct ChrData {
         byte * _pixels;

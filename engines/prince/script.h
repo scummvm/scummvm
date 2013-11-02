@@ -61,6 +61,7 @@ private:
 	uint8 _savedStacktop;
 
 	const byte * _string;
+	uint32 _currentString;
 
 	// Helper functions
 	void checkPC(uint32 address);
@@ -70,6 +71,7 @@ private:
 	uint32 readScript32bits();
 	uint16 readScript8or16bits();
 	void debugScript(const char *s, ...);
+	void SetVoice(uint32 slot);
 
 	typedef void (Script::*OpcodeFunc)();
 	static OpcodeFunc _opcodes[];

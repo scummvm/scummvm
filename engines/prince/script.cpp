@@ -29,6 +29,7 @@
 #include "common/debug.h"
 #include "common/debug-channels.h"
 #include "common/stream.h"
+#include "common/archive.h"
 
 namespace Prince {
 
@@ -66,7 +67,7 @@ void Script::debugScript(const char *s, ...) {
 
 	Common::String str = Common::String::format("@0x%04X: ", _lastInstruction);
 	str += Common::String::format("op %02d: ", _lastOpcode);
-	debug("%s %s", str.c_str(), buf);
+	debugC(10, DebugChannel::kScript, "PrinceEngine::Script %s %s", str.c_str(), buf);
 }
 
 void Script::step() {
@@ -85,7 +86,7 @@ void Script::step() {
 			error("Trying to execute unknown opcode %s", dstr.c_str());
 
 
-		debug("%s", dstr.c_str());
+		debugScript("%s", dstr.c_str());
 
 		// Execute the current opcode
 		OpcodeFunc op = _opcodes[_lastOpcode];
@@ -330,7 +331,7 @@ void Script::O_COMPARE() {
 		value = val; 
 	}
 
-	debugScript("O_COMPARE flagId 0x%04X (%s), value %d", flagId, Flags::getFlagName(flagId), value);
+	debugScript("O_COMPARE flagId 0x%04X (%s), value %d ?= %d", flagId, Flags::getFlagName(flagId), value, _flags[flagId - 0x8000]);
 	_result = (_flags[flagId - 0x8000] == value);
 }
 
@@ -398,6 +399,7 @@ void Script::O_SUBFLAG() {
 
 void Script::O_SETSTRING() {
 	int32 offset = readScript32bits();
+	_currentString = offset;
 
 	if (offset >= 80000) {
 		debug("GetVaria %s", _vm->_variaTxt->getString(offset - 80000));
@@ -409,7 +411,7 @@ void Script::O_SETSTRING() {
 		debug("TalkTxt %d %s", of, txt);
 	}
 
-	debugScript("O_SETSTRING 0x%04X", offset);
+	debugScript("O_SETSTRING %04d", offset);
 }
 
 void Script::O_ANDFLAG() {
@@ -545,8 +547,15 @@ void Script::O_TALKHERO() {}
 
 void Script::O_WAITTEXT() {
 	uint16 slot = readScript16bits();
-	debugScript("O_WAITTEXT slot %d", slot);
-	_opcodeNF = 1;
+	if (slot & 0x8000) {
+		slot = _flags[slot - 0x8000];
+	}
+	//debugScript("O_WAITTEXT slot %d", slot);
+	Text &text = _vm->_textSlots[slot];
+	if (text._time) {
+		_opcodeNF = 1;
+		_currentInstruction -= 4;
+	}
 }
 
 void Script::O_SETHEROANIM() {}
@@ -568,9 +577,10 @@ void Script::O_LOADPATH() {}
 
 void Script::O_GETCHAR() {
 	uint16 flagId = readScript16bits();
-	debugScript("O_GETCHAR %04X (%s)", flagId, Flags::getFlagName(flagId));
 
 	_flags[flagId - 0x8000] = *_string;
+
+	debugScript("O_GETCHAR %04X (%s) %02x", flagId, Flags::getFlagName(flagId), _flags[flagId - 0x8000]);
 
 	_string++;
 }
@@ -585,12 +595,15 @@ void Script::O_PRINTAT() {
 
 	debugScript("O_PRINTAT slot %d, fr1 %d, fr2 %d", slot, fr1, fr2);
 
-	_vm->printAt((const char *)_string, 0, fr1);
+	uint8 color = _flags[Flags::KOLOR - 0x8000];
+
+	_vm->printAt(slot, color, (const char *)_string, fr1, fr2);
 
 	while (*_string) {
 		++_string;
 	}
 	++_string;
+	debug("O_PRINTAT %x", *_string);
 }
 
 void Script::O_ZOOMIN() {}
@@ -732,7 +745,7 @@ void Script::O_CHECKFLCFRAME() {
 
 void Script::O_CHECKFLCEND() {
 
-	debugScript("O_CHECKFLCEND");
+	//debugScript("O_CHECKFLCEND");
 
 	const Video::FlicDecoder &flicPlayer = _vm->_flicPlayer;
 
@@ -795,24 +808,60 @@ void Script::O_SKIPTEXT() {
 	debugScript("O_SKIPTEXT");
 }
 
+void Script::SetVoice(uint32 slot) {
+	const Common::String streamName = Common::String::format("%03d-01.WAV", _currentString);
+	debugScript("Loading wav %s slot %d", streamName.c_str(), slot);
+
+	Common::SeekableReadStream *voiceStream = SearchMan.createReadStreamForMember(streamName);
+	if (!voiceStream) {
+		error("Can't open %s", streamName.c_str());
+	}
+	uint32 id = voiceStream->readUint32LE();
+	if (id != 0x46464952) {
+		error("It's not RIFF file %s", streamName.c_str());
+		return;
+	}
+
+	voiceStream->skip(0x20);
+	id = voiceStream->readUint32LE();
+	if (id != 0x61746164) {
+		error("No data section in %s id %04x", streamName.c_str(), id);
+		return;
+	}
+
+	id = voiceStream->readUint32LE();
+	id <<= 3;
+	id /= 22050;
+	id += 2;
+
+	_vm->_textSlots[slot]._time = voiceStream->readUint32LE();
+
+	debugScript("SetVoice slot %d time %04x", slot, _vm->_textSlots[slot]._time); 
+	delete voiceStream;
+}
+
 void Script::O_SETVOICEH() {
 	uint16 txn = readScript16bits();
 	debugScript("O_SETVOICEH txn %d", txn);
+	SetVoice(txn);
 }
 
 void Script::O_SETVOICEA() {
 	uint16 txn = readScript16bits();
 	debugScript("O_SETVOICEA txn %d", txn);
+	SetVoice(txn);
 }
 
 void Script::O_SETVOICEB() {
 	uint16 txn = readScript16bits();
 	debugScript("O_SETVOICEB txn %d", txn);
+	SetVoice(txn);
 }
 
 void Script::O_SETVOICEC() {
 	uint16 txn = readScript16bits();
 	debugScript("O_SETVOICEC txn %d", txn);
+	SetVoice(txn);
 }
 
 void Script::O_VIEWFLCLOOP() {
@@ -858,6 +907,7 @@ void Script::O_INPUTLINE() {
 void Script::O_SETVOICED() {
 	uint16 txn = readScript16bits();
 	debugScript("O_SETVOICED txn %d", txn);
+	SetVoice(txn);
 }
 
 void Script::O_BREAK_POINT() {

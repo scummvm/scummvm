@@ -58,6 +58,25 @@ class MobList;
 class MusicPlayer;
 class VariaTxt;
 
+struct Text {
+	const char *_str;
+	uint16 _x, _y;
+	uint16 _time;
+	uint32 _color;
+
+	Text() : _str(NULL), _x(0), _y(0), _time(0), _color(255){
+	}
+};
+
+struct DebugChannel {
+
+enum Type {
+	kScript,
+	kEngine 
+};
+
+};
+
 class PrinceEngine : public Engine {
 protected:
 	Common::Error run();
@@ -86,9 +105,10 @@ public:
 	virtual GUI::Debugger *getDebugger();
 
 	void changeCursor(uint16 curId);
-	void printAt(const char *s, uint16 x, uint16 y);
+	void printAt(uint32 slot, uint8 color, const char *s, uint16 x, uint16 y);
 
-	const char * _textSlots[1000];
+	static const uint8 MAXTEXTS = 32;
+	Text _textSlots[MAXTEXTS];
 
 private:
 	bool playNextFrame();
@@ -97,6 +117,7 @@ private:
 	void scrollCameraRight(int16 delta);
 	void scrollCameraLeft(int16 delta);
 	void drawScreen();
+	void showTexts();
 
 	uint32 getTextWidth(const char *s);
 
