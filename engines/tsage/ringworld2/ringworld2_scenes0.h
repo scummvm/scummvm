@@ -427,7 +427,7 @@ class Scene325: public SceneExt {
 	public:
 		int _lookLineNum, _iconId;
 		bool _pressed;
-		SceneObject _object1, _object2;
+		SceneObject _glyph, _horizLine;
 		SceneText _sceneText1, _sceneText2;
 
 		Icon();
@@ -447,16 +447,17 @@ private:
 	void setMessage(int resNum, int lineNum);
 	Common::String parseMessage(const Common::String &msg);
 public:
-	int _field412, _iconFontNumber, _field416, _field418;
-	int _field41A, _field41C, _field41E, _scannerLocation;
+	int _consoleAction, _iconFontNumber, _databasePage, _priorConsoleAction;
+	int _moveCounter, _yChange, _yDirection, _scannerLocation;
 	int _soundCount, _soundIndex;
 	int _soundQueue[10];
 	SpeakerQuinn _quinnSpeaker;
 	ScenePalette _palette;
 	SceneHotspot _background, _terminal;
-	SceneObject _object1, _object2, _object3, _object4, _object5;
-	SceneObject _object6, _object7, _object8, _object9, _object10;
-	SceneObject _object11, _object12, _scannerTab;
+	SceneObject _starGrid1, _starGrid2, _starGrid3; // Both starchart & scan grid objects
+	SceneObject _starGrid4, _starGrid5, _starGrid6, _starGrid7;
+	SceneObject _starGrid8, _starGrid9, _starGrid10, _starGrid11;
+	SceneObject _starGrid12, _starGrid13;
 	SceneObject _objList[4];
 	Icon _icon1, _icon2, _icon3, _icon4, _icon5, _icon6;
 	ASoundExt _sound1;
@@ -625,7 +626,6 @@ public:
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void signal();
-
 };
 
 class Scene600 : public SceneExt {
