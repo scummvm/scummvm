@@ -79,7 +79,6 @@ void Scene600::Action1::signal() {
 		}
 
 		BF_GLOBALS._screenSurface.fillRect(BF_GLOBALS._screenSurface.getBounds(), 0);
-		BF_GLOBALS._v51C44 = 1;
 		scene->loadScene(999);
 		setDelay(5);
 		break;
@@ -88,7 +87,6 @@ void Scene600::Action1::signal() {
 		setDelay(5);
 		break;
 	case 7:
-		BF_GLOBALS._v51C44 = 0;
 		remove();
 		break;
 	default:

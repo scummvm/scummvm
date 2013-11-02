@@ -1966,7 +1966,6 @@ void Scene910::postInit(SceneObjectList *OwnerList) {
 	loadScene(910);
 
 	BF_GLOBALS._sound1.changeSound(99);
-	BF_GLOBALS._v51C44 = 0;
 
 	_stripManager.addSpeaker(&_gameTextSpeaker);
 	_stripManager.addSpeaker(&_jakeJacketSpeaker);
@@ -2277,7 +2276,6 @@ void Scene910::signal() {
 		break;
 	case 10:
 		BF_GLOBALS._player.disableControl();
-		BF_GLOBALS._v51C44 = 0;
 		BF_GLOBALS._sceneManager.changeScene(935);
 		break;
 	case 11:
@@ -2316,7 +2314,6 @@ void Scene910::signal() {
 		setAction(&_sequenceManager1, this, 9121, &_stuart, NULL);
 		break;
 	case 14:
-		BF_GLOBALS._v51C44 = 1;
 		BF_GLOBALS._sceneManager.changeScene(940);
 		break;
 	case 16:
@@ -2376,7 +2373,6 @@ void Scene910::signal() {
 		break;
 	case 19:
 		BF_GLOBALS._deathReason = 14;
-		BF_GLOBALS._v51C44 = 1;
 		BF_GLOBALS._sceneManager.changeScene(666);
 		break;
 	case 20:
@@ -2392,7 +2388,6 @@ void Scene910::signal() {
 			BF_GLOBALS.clearFlag(fGotPointsForSearchingDA);
 		else
 			BF_GLOBALS.setFlag(fGotPointsForSearchingDA);
-		BF_GLOBALS._v51C44 = 1;
 		BF_GLOBALS._sceneManager.changeScene(900);
 		break;
 	case 9102:
@@ -2486,7 +2481,6 @@ void Scene910::signal() {
 	// No break on purpose
 	case 9137:
 		BF_GLOBALS._deathReason = 16;
-		BF_GLOBALS._v51C44 = 1;
 		BF_GLOBALS._sceneManager.changeScene(666);
 		break;
 	case 9119:
@@ -2626,7 +2620,6 @@ void Scene910::signal() {
 	// No break on purpose
 	case 9134:
 		BF_GLOBALS._deathReason = 17;
-		BF_GLOBALS._v51C44 = 1;
 		BF_GLOBALS._sceneManager.changeScene(666);
 		break;
 	case 9130:
@@ -2639,12 +2632,10 @@ void Scene910::signal() {
 		BF_GLOBALS._player.enableControl();
 		BF_GLOBALS._v4CEE4 = 4;
 		BF_GLOBALS._deathReason = 13;
-		BF_GLOBALS._v51C44 = 1;
 		BF_GLOBALS._sceneManager.changeScene(666);
 		break;
 	case 9135:
 		BF_GLOBALS._deathReason = 15;
-		BF_GLOBALS._v51C44 = 1;
 		BF_GLOBALS._sceneManager.changeScene(666);
 		break;
 	case 9136:
@@ -2689,7 +2680,6 @@ void Scene910::signal() {
 		break;
 	case 9143:
 		if (BF_GLOBALS._nico910State == 0) {
-			BF_GLOBALS._v51C44 = 1;
 			BF_GLOBALS._sceneManager.changeScene(920);
 		} else {
 			SceneItem::display(910, 89, SET_WIDTH, 312,
@@ -2708,7 +2698,6 @@ void Scene910::signal() {
 		break;
 	case 9148:
 		BF_GLOBALS._deathReason = 23;
-		BF_GLOBALS._v51C44 = 1;
 		BF_GLOBALS._sceneManager.changeScene(666);
 		break;
 	case 9149:

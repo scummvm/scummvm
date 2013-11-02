@@ -207,17 +207,12 @@ public:
 	int _deathReason;
 	int _driveFromScene;
 	int _driveToScene;
-	int _v501FC; // Useless variable
-	int _v5020C; // Useless variable
-	int _v50696; // Useless variable
 	uint8 _subFlagBitArr1;
 	uint8 _subFlagBitArr2;
 	int _v50CC2;
 	int _scene410Action1Count;
 	int _scene410TalkCount;
 	int _scene410HarrisonMovedFl;
-	int _v51C42; // Useless variable
-	int _v51C44; // Useless variable
 	Bookmark _bookmark;
 	int _mapLocationId;
 	int _clip1Bullets, _clip2Bullets;
