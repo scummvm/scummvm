@@ -443,11 +443,13 @@ ImuseDigiSndMgr::SoundDesc *ImuseDigiSndMgr::openSound(int32 soundId, const char
 		} else if (soundName[0] == 0) {
 			if (sound->bundle->decompressSampleByIndex(soundId, 0, 0x2000, &ptr, 0, header_outside) == 0 || ptr == NULL) {
 				closeSound(sound);
+				free(ptr);
 				return NULL;
 			}
 		} else {
 			if (sound->bundle->decompressSampleByName(soundName, 0, 0x2000, &ptr, header_outside) == 0 || ptr == NULL) {
 				closeSound(sound);
+				free(ptr);
 				return NULL;
 			}
 		}
