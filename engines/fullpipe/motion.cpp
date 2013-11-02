@@ -1068,7 +1068,7 @@ MovGraphLink *MovGraph2::findLink1(int x, int y, int idx, int fuzzyMatch) {
 
 MovGraphLink *MovGraph2::findLink2(int x, int y) {
 	double mindist = 1.0e20;
-	MovGraphLink *res;
+	MovGraphLink *res = 0;
 
 	for (ObList::iterator i = _links.begin(); i != _links.end(); ++i) {
 		assert(((CObject *)*i)->_objtype == kObjTypeMovGraphLink);
