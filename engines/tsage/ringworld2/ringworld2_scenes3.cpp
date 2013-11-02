@@ -1065,10 +1065,11 @@ void Scene3240::postInit(SceneObjectList *OwnerList) {
 	R2_GLOBALS._player.hide();
 	R2_GLOBALS._player.disableControl();
 
-	_actor1.postInit();
-	_actor2.postInit();
+	_teal.postInit();
+	_webbster.postInit();
 
-	setAction(&_sequenceManager, this, 3240 + R2_GLOBALS._randomSource.getRandomNumber(1), &_actor1, &_actor2, NULL);
+	setAction(&_sequenceManager, this, 3240 + R2_GLOBALS._randomSource.getRandomNumber(1),
+		&_teal, &_webbster, NULL);
 }
 
 void Scene3240::signal() {

@@ -236,8 +236,8 @@ public:
 	SpeakerTeal3240 _tealSpeaker;
 	SpeakerWebbster3240 _webbsterSpeaker;
 	SpeakerMiranda _mirandaSpeaker;
-	SceneActor _actor1;
-	SceneActor _actor2;
+	SceneActor _teal;
+	SceneActor _webbster;
 	SequenceManager _sequenceManager;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
