@@ -288,7 +288,7 @@ class Scene3255 : public SceneExt {
 public:
 	SceneActor _teal;
 	SceneActor _guard;
-	SceneActor _actor3;
+	SceneActor _door;
 	SceneActor _quinn;
 	SceneActor _ghoul1;
 	SceneActor _ghoul2;

@@ -1303,10 +1303,10 @@ void Scene3255::postInit(SceneObjectList *OwnerList) {
 		R2_GLOBALS._sound1.play(267);
 		R2_GLOBALS._sound2.play(268);
 		_sceneMode = 3257;
-		_actor3.postInit();
+		_door.postInit();
 		_quinn.postInit();
 		_quinn._effect = 1;
-		setAction(&_sequenceManager, this, 3257, &R2_GLOBALS._player, &_quinn, &_actor3, NULL);
+		setAction(&_sequenceManager, this, 3257, &R2_GLOBALS._player, &_quinn, &_door, NULL);
 	} else {
 		_teal.postInit();
 		_teal.setup(303, 1, 1);
@@ -1328,7 +1328,7 @@ void Scene3255::signal() {
 		_ghoul2.postInit();
 		_ghoul3.postInit();
 		setAction(&_sequenceManager, this, 3258, &R2_GLOBALS._player, &_quinn, 
-			&_actor3, &_ghoul1, &_ghoul2, &_ghoul3, NULL);
+			&_door, &_ghoul1, &_ghoul2, &_ghoul3, NULL);
 		break;
 	case 3256:
 		R2_GLOBALS._sceneManager.changeScene(3250);
