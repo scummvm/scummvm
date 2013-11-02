@@ -25,6 +25,8 @@
 
 #include "common/random.h"
 
+#include "audio/mixer.h"
+
 namespace Common {
 	class SeekableReadStream;
 }
@@ -60,9 +62,11 @@ private:
 	uint8 _stacktop;
 	uint8 _savedStacktop;
 	uint32 _waitFlag;
+	Audio::SoundHandle _soundHandle;
 
 	const byte * _string;
 	uint32 _currentString;
+	Common::SeekableReadStream *_voiceStream;
 
 	// Helper functions
 	void checkPC(uint32 address);

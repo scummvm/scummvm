@@ -110,6 +110,8 @@ public:
 	static const uint8 MAXTEXTS = 32;
 	Text _textSlots[MAXTEXTS];
 
+	uint64 _frameNr;
+
 private:
 	bool playNextFrame();
 	void keyHandler(Common::Event event);

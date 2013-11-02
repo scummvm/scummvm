@@ -85,7 +85,7 @@ Graphics::Surface *loadCursor(const char *curName)
 PrinceEngine::PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc) : 
 	Engine(syst), _gameDescription(gameDesc), _graph(NULL), _script(NULL),
 	_locationNr(0), _debugger(NULL), _objectList(NULL), _mobList(NULL), _midiPlayer(NULL),
-	_cameraX(0), _newCameraX(0) {
+	_cameraX(0), _newCameraX(0), _frameNr(0) {
 
 	// Debug/console setup
 	DebugMan.addDebugChannel(DebugChannel::kScript, "script", "Prince Script debug channel");
@@ -479,6 +479,7 @@ void PrinceEngine::drawScreen() {
 
 	//if (_objectList)
 	//	  _graph->drawTransparent(_objectList->getSurface());
+
 	hotspot();
 
 	showTexts();
@@ -489,10 +490,6 @@ void PrinceEngine::drawScreen() {
 }
 
 void PrinceEngine::mainLoop() {
-
-	//loadLocation(1);
-	//changeCursor(1);
-	//CursorMan.showMouse(true);
 
 	while (!shouldQuit()) {
 		uint32 currentTime = _system->getMillis();
@@ -524,8 +521,8 @@ void PrinceEngine::mainLoop() {
 		if (shouldQuit())
 			return;
 
-		_script->step();
 		drawScreen();
+		_script->step();
 
 		// Calculate the frame delay based off a desired frame time
 		int delay = 1000/15 - int32(_system->getMillis() - currentTime);
@@ -534,6 +531,7 @@ void PrinceEngine::mainLoop() {
 		_system->delayMillis(delay);
 		
 		_cameraX = _newCameraX;
+		++_frameNr;
 	}
 }
 
