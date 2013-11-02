@@ -287,7 +287,8 @@ void BlueForceGlobals::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_safeCombination);
 	s.syncAsSint16LE(_gateStatus);
 	s.syncAsSint16LE(_greenDay5TalkCtr);
-	s.syncAsSint16LE(useless);
+	if (s.getVersion() < 11)
+		s.syncAsSint16LE(useless);
 	s.syncAsSint16LE(_v4CEC8);
 	s.syncAsSint16LE(_v4CECA);
 	s.syncAsSint16LE(_v4CECC);
@@ -302,19 +303,23 @@ void BlueForceGlobals::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_deathReason);
 	s.syncAsSint16LE(_driveFromScene);
 	s.syncAsSint16LE(_driveToScene);
-	s.syncAsSint16LE(useless);
-	s.syncAsSint16LE(useless);
-	s.syncAsSint16LE(useless);
-	s.syncAsSint16LE(useless);
-	s.syncAsSint16LE(useless);
+	if (s.getVersion() < 11) {
+		s.syncAsSint16LE(useless);
+		s.syncAsSint16LE(useless);
+		s.syncAsSint16LE(useless);
+		s.syncAsSint16LE(useless);
+		s.syncAsSint16LE(useless);
+	}
 	s.syncAsSint16LE(_subFlagBitArr1);
 	s.syncAsSint16LE(_subFlagBitArr2);
 	s.syncAsSint16LE(_v50CC2);
 	s.syncAsSint16LE(_scene410Action1Count);
 	s.syncAsSint16LE(_scene410TalkCount);
 	s.syncAsSint16LE(_scene410HarrisonMovedFl);
-	s.syncAsSint16LE(useless);
-	s.syncAsSint16LE(useless);
+	if (s.getVersion() < 11) {
+		s.syncAsSint16LE(useless);
+		s.syncAsSint16LE(useless);
+	}
 	s.syncAsSint16LE(_bookmark);
 	s.syncAsSint16LE(_mapLocationId);
 	s.syncAsSint16LE(_clip1Bullets);
@@ -644,7 +649,7 @@ void Ringworld2Globals::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_balloonPosition.x);
 	s.syncAsSint16LE(_balloonPosition.y);
 
-	// Synchronise Flub maze vampire data
+	// Synchronize Flub maze vampire data
 	for (i = 0; i < 18; ++i) {
 		s.syncAsSint16LE(_vampireData[i]._isAlive);
 		s.syncAsSint16LE(_vampireData[i]._shotsRequired);
