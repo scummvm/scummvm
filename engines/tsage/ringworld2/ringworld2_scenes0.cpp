@@ -2911,11 +2911,11 @@ void Scene300::Action4::signal() {
 	Scene300 *scene = (Scene300 *)R2_GLOBALS._sceneManager._scene;
 
 	if (!R2_GLOBALS._playStream.isPlaying()) {
-		scene->_object7.setStrip2(R2_GLOBALS._randomSource.getRandomNumber(2));
-		scene->_object7.setFrame(1);
+		scene->_mirandaScreen.setStrip2(R2_GLOBALS._randomSource.getRandomNumber(2));
+		scene->_mirandaScreen.setFrame(1);
 
-		scene->_object9.setStrip2(3);
-		scene->_object9.setFrame(1);
+		scene->_quinnScreen.setStrip2(3);
+		scene->_quinnScreen.setFrame(1);
 	}
 
 	setDelay(60 + R2_GLOBALS._randomSource.getRandomNumber(479));
@@ -3246,29 +3246,29 @@ void Scene300::postInit(SceneObjectList *OwnerList) {
 	_rotation->_countdown = 1;
 
 	if (R2_GLOBALS.getFlag(51) && !R2_GLOBALS.getFlag(25)) {
-		_object1.postInit();
-		_object1.setup(301, 7, 2);
-		_object1.setPosition(Common::Point(65, 24));
+		_atmosphereLeftWindow.postInit();
+		_atmosphereLeftWindow.setup(301, 7, 2);
+		_atmosphereLeftWindow.setPosition(Common::Point(65, 24));
 
-		_object2.postInit();
-		_object2.setup(301, 8, 2);
-		_object2.setPosition(Common::Point(254, 24));
+		_atmosphereRightWindow.postInit();
+		_atmosphereRightWindow.setup(301, 8, 2);
+		_atmosphereRightWindow.setPosition(Common::Point(254, 24));
 	}
 
 	_doorway.postInit();
 	_doorway.setVisage(300);
 	_doorway.setPosition(Common::Point(159, 79));
 
-	_object3.postInit();
-	_object3.setup(300, 4, 1);
-	_object3.setPosition(Common::Point(84, 48));
-	_object3.animate(ANIM_MODE_2, NULL);
-	_object3._numFrames = 5;
+	_leftVerticalBarsAnim.postInit();
+	_leftVerticalBarsAnim.setup(300, 4, 1);
+	_leftVerticalBarsAnim.setPosition(Common::Point(84, 48));
+	_leftVerticalBarsAnim.animate(ANIM_MODE_2, NULL);
+	_leftVerticalBarsAnim._numFrames = 5;
 
-	_object4.postInit();
-	_object4.setup(300, 5, 1);
-	_object4.setPosition(Common::Point(236, 48));
-	_object4.animate(ANIM_MODE_2, NULL);
+	_rightVerticalBarsAnim.postInit();
+	_rightVerticalBarsAnim.setup(300, 5, 1);
+	_rightVerticalBarsAnim.setPosition(Common::Point(236, 48));
+	_rightVerticalBarsAnim.animate(ANIM_MODE_2, NULL);
 
 	_protocolDisplay.postInit();
 	_protocolDisplay.setup(300, 6, 1);
@@ -3276,32 +3276,32 @@ void Scene300::postInit(SceneObjectList *OwnerList) {
 	_protocolDisplay.animate(ANIM_MODE_7, 0, NULL);
 	_protocolDisplay._numFrames = 5;
 
-	_object6.postInit();
-	_object6.setup(300, 7, 1);
-	_object6.setPosition(Common::Point(214, 37));
-	_object6.animate(ANIM_MODE_2, NULL);
-	_object6._numFrames = 3;
+	_rightTextDisplay.postInit();
+	_rightTextDisplay.setup(300, 7, 1);
+	_rightTextDisplay.setPosition(Common::Point(214, 37));
+	_rightTextDisplay.animate(ANIM_MODE_2, NULL);
+	_rightTextDisplay._numFrames = 3;
 
-	_object7.postInit();
-	_object7.setup(301, 1, 1);
-	_object7.setPosition(Common::Point(39, 97));
-	_object7.fixPriority(124);
-	_object7.animate(ANIM_MODE_2, NULL);
-	_object7._numFrames = 5;
-	_object7.setAction(&_action4);
+	_mirandaScreen.postInit();
+	_mirandaScreen.setup(301, 1, 1);
+	_mirandaScreen.setPosition(Common::Point(39, 97));
+	_mirandaScreen.fixPriority(124);
+	_mirandaScreen.animate(ANIM_MODE_2, NULL);
+	_mirandaScreen._numFrames = 5;
+	_mirandaScreen.setAction(&_action4);
 
-	_object8.postInit();
-	_object8.setup(300, 8, 1);
-	_object8.setPosition(Common::Point(105, 37));
-	_object8.animate(ANIM_MODE_2, NULL);
-	_object8._numFrames = 5;
+	_leftTextDisplay.postInit();
+	_leftTextDisplay.setup(300, 8, 1);
+	_leftTextDisplay.setPosition(Common::Point(105, 37));
+	_leftTextDisplay.animate(ANIM_MODE_2, NULL);
+	_leftTextDisplay._numFrames = 5;
 
-	_object9.postInit();
-	_object9.setup(301, 6, 1);
-	_object9.setPosition(Common::Point(274, 116));
-	_object9.fixPriority(143);
-	_object9.animate(ANIM_MODE_2, NULL);
-	_object9._numFrames = 5;
+	_quinnScreen.postInit();
+	_quinnScreen.setup(301, 6, 1);
+	_quinnScreen.setPosition(Common::Point(274, 116));
+	_quinnScreen.fixPriority(143);
+	_quinnScreen.animate(ANIM_MODE_2, NULL);
+	_quinnScreen._numFrames = 5;
 
 	_quinnWorkstation1.setDetails(Rect(243, 148, 315, 167), 300, 30, 31, 32, 1, NULL);
 	_mirandaWorkstation1.setDetails(Rect(4, 128, 69, 167), 300, 33, 31, 35, 1, NULL);

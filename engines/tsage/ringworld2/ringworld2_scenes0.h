@@ -400,8 +400,8 @@ public:
 	QuinnWorkstation _quinnWorkstation1, _quinnWorkstation2;
 	SeekerWorkstation _seekerWorkstation;
 	MirandaWorkstation _mirandaWorkstation1, _mirandaWorkstation2;
-	SceneActor _object1, _object2, _object3, _object4, _protocolDisplay;
-	SceneActor _object6, _object7, _object8, _object9;
+	SceneActor _atmosphereLeftWindow, _atmosphereRightWindow, _leftVerticalBarsAnim, _rightVerticalBarsAnim, _protocolDisplay;
+	SceneActor _rightTextDisplay, _mirandaScreen, _leftTextDisplay, _quinnScreen;
 	SceneActor _teal, _soldier, _object12;
 	Doorway _doorway;
 	Miranda _miranda;
