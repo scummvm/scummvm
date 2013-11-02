@@ -3103,7 +3103,7 @@ void SoundBlasterDriver::playSound(const byte *channelData, int dataOffset, int 
 		updateVoice(channel);
 
 	// Set the new channel data
-	_channelData = channelData + dataOffset;
+	_channelData = channelData + dataOffset + 18;
 
 	// Make a copy of the buffer
 	int dataSize = g_vm->_memoryManager.getSize(channelData);
