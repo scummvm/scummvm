@@ -111,7 +111,7 @@ class Scene125: public SceneExt {
 	public:
 		int _lookLineNum, _iconId;
 		bool _pressed;
-		SceneObject _object1, _object2;
+		SceneObject _glyph, _horizLine;
 		SceneText _sceneText1, _sceneText2;
 
 		Icon();
@@ -136,7 +136,8 @@ public:
 	ASoundExt _sound1;
 	NamedHotspot _background, _item2, _item3;
 	DiskSlot _diskSlot;
-	SceneActor _object1, _object2, _object3, _object4, _food, _foodDispenser, _infoDisk;
+	SceneActor _starchart1, _starchart2, _starchart3, _starchart4;
+	SceneActor _food, _foodDispenser, _infoDisk;
 	Icon _icon1, _icon2, _icon3, _icon4, _icon5,  _icon6;
 	SequenceManager _sequenceManager;
 	SceneText _sceneText;

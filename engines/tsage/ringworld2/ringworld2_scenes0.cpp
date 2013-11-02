@@ -416,9 +416,9 @@ Scene125::Icon::Icon(): SceneActor()  {
 void Scene125::Icon::postInit(SceneObjectList *OwnerList) {
 	SceneObject::postInit();
 
-	_object1.postInit();
-	_object1.fixPriority(255);
-	_object1.hide();
+	_glyph.postInit();
+	_glyph.fixPriority(255);
+	_glyph.hide();
 
 	_sceneText1._color1 = 92;
 	_sceneText1._color2 = 0;
@@ -461,15 +461,15 @@ void Scene125::Icon::process(Event &event) {
 					scene->_sound1.play(14);
 					setFrame(2);
 
-					switch (_object1._strip) {
+					switch (_glyph._strip) {
 					case 1:
-						_object1.setStrip(2);
+						_glyph.setStrip(2);
 						break;
 					case 3:
-						_object1.setStrip(4);
+						_glyph.setStrip(4);
 						break;
 					case 5:
-						_object1.setStrip(6);
+						_glyph.setStrip(6);
 						break;
 					default:
 						break;
@@ -488,15 +488,15 @@ void Scene125::Icon::process(Event &event) {
 		if ((event.eventType == EVENT_BUTTON_UP) && _pressed) {
 			setFrame(1);
 
-			switch (_object1._strip) {
+			switch (_glyph._strip) {
 			case 2:
-				_object1.setStrip(1);
+				_glyph.setStrip(1);
 				break;
 			case 4:
-				_object1.setStrip(3);
+				_glyph.setStrip(3);
 				break;
 			case 6:
-				_object1.setStrip(5);
+				_glyph.setStrip(5);
 				break;
 			default:
 				break;
@@ -520,8 +520,8 @@ void Scene125::Icon::setIcon(int id) {
 
 	if (_lookLineNum) {
 		showIcon();
-		_object1.setup(161, ((id - 1) / 10) * 2 + 1, ((id - 1) % 10) + 1);
-		_object1.setPosition(_position);
+		_glyph.setup(161, ((id - 1) / 10) * 2 + 1, ((id - 1) % 10) + 1);
+		_glyph.setPosition(_position);
 
 		_sceneText1._fontNumber = scene->_iconFontNumber;
 		_sceneText1.setup(CONSOLE125_MESSAGES[id]);
@@ -564,16 +564,16 @@ void Scene125::Icon::setIcon(int id) {
 void Scene125::Icon::showIcon() {
 	_sceneText1.show();
 	_sceneText2.show();
-	_object1.show();
-	_object2.show();
+	_glyph.show();
+	_horizLine.show();
 	show();
 }
 
 void Scene125::Icon::hideIcon() {
 	_sceneText1.hide();
 	_sceneText2.hide();
-	_object1.hide();
-	_object2.hide();
+	_glyph.hide();
+	_horizLine.hide();
 	hide();
 }
 
@@ -668,28 +668,28 @@ void Scene125::signal() {
 	case 2:
 		_icon1.setup(160, 1, 1);
 		_icon1.setPosition(Common::Point(65, 17));
-		_icon1._object2.postInit();
-		_icon1._object2.setup(160, 7, 1);
-		_icon1._object2.setPosition(Common::Point(106, 41));
+		_icon1._horizLine.postInit();
+		_icon1._horizLine.setup(160, 7, 1);
+		_icon1._horizLine.setPosition(Common::Point(106, 41));
 
 		_icon2.setup(160, 1, 1);
 		_icon2.setPosition(Common::Point(80, 32));
-		_icon2._object2.postInit();
-		_icon2._object2.setup(160, 7, 2);
-		_icon2._object2.setPosition(Common::Point(106, 56));
+		_icon2._horizLine.postInit();
+		_icon2._horizLine.setup(160, 7, 2);
+		_icon2._horizLine.setPosition(Common::Point(106, 56));
 
 		_icon3.setup(160, 1, 1);
 		_icon3.setPosition(Common::Point(65, 47));
-		_icon3._object2.postInit();
-		_icon3._object2.setup(160, 7, 1);
-		_icon3._object2.setPosition(Common::Point(106, 71));
+		_icon3._horizLine.postInit();
+		_icon3._horizLine.setup(160, 7, 1);
+		_icon3._horizLine.setPosition(Common::Point(106, 71));
 
 		_icon4.setup(160, 1, 1);
 		_icon4.setPosition(Common::Point(80, 62));
 		_icon4._sceneRegionId = 5;
-		_icon4._object2.postInit();
-		_icon4._object2.setup(160, 7, 2);
-		_icon4._object2.setPosition(Common::Point(106, 86));
+		_icon4._horizLine.postInit();
+		_icon4._horizLine.setup(160, 7, 2);
+		_icon4._horizLine.setPosition(Common::Point(106, 86));
 
 		_icon5.postInit();
 		_icon5.setup(160, 1, 1);
@@ -712,16 +712,19 @@ void Scene125::signal() {
 		case 12:
 			_sceneMode = 129;
 
-			_object1.postInit();
-			_object2.postInit();
-			_object3.postInit();
+			_starchart1.postInit();
+			_starchart2.postInit();
+			_starchart3.postInit();
 
 			if (R2_GLOBALS.getFlag(13)) {
-				_object4.postInit();
-				setAction(&_sequenceManager, this, 130, &R2_GLOBALS._player, &_object1, &_object2,
-					&_object3, &_object4, NULL);
+				// Show starchart with Ringworld present
+				_starchart4.postInit();
+				setAction(&_sequenceManager, this, 130, &R2_GLOBALS._player, &_starchart1, &_starchart2,
+					&_starchart3, &_starchart4, NULL);
 			} else {
-				setAction(&_sequenceManager, this, 129, &R2_GLOBALS._player, &_object1, &_object2, &_object3, NULL);
+				// Show starchart without Ringworld
+				setAction(&_sequenceManager, this, 129, &R2_GLOBALS._player, &_starchart1, &_starchart2, 
+					&_starchart3, NULL);
 			}
 			break;
 		case 13:
@@ -922,7 +925,7 @@ void Scene125::consoleAction(int id) {
 		_icon4.setPosition(Common::Point(52, 107));
 		_icon4._sceneRegionId = 9;
 		_icon4.setIcon(25);
-		_icon4._object2.hide();
+		_icon4._horizLine.hide();
 
 		_icon6.setIcon(26);
 		_sceneMode = 10;
@@ -965,7 +968,7 @@ void Scene125::consoleAction(int id) {
 			_icon4.setPosition(Common::Point(52, 107));
 			_icon4._sceneRegionId = 9;
 			_icon4.setIcon(25);
-			_icon4._object2.hide();
+			_icon4._horizLine.hide();
 
 			_icon6.setIcon(26);
 			_sceneMode = 10;
@@ -1049,7 +1052,7 @@ void Scene125::consoleAction(int id) {
 		break;
 	case 24:
 		_icon4.setIcon(25);
-		_icon4._object2.hide();
+		_icon4._horizLine.hide();
 
 		if (_consoleMode == 10) {
 			setDetails(127, --_logIndex);
@@ -1061,7 +1064,7 @@ void Scene125::consoleAction(int id) {
 		break;
 	case 25:
 		_icon4.setIcon(25);
-		_icon4._object2.hide();
+		_icon4._horizLine.hide();
 
 		if (_consoleMode == 10) {
 			setDetails(127, ++_logIndex);
@@ -1079,10 +1082,10 @@ void Scene125::consoleAction(int id) {
 		_icon4.hideIcon();
 
 		R2_GLOBALS._player.hide();
-		_object1.hide();
-		_object2.hide();
-		_object3.hide();
-		_object4.hide();
+		_starchart1.hide();
+		_starchart2.hide();
+		_starchart3.hide();
+		_starchart4.hide();
 
 		_sceneMode = 11;
 		_palette.loadPalette(160);
@@ -1105,7 +1108,7 @@ void Scene125::consoleAction(int id) {
 		_icon4.setPosition(Common::Point(52, 107));
 		_icon4._sceneRegionId = 9;
 		_icon4.setIcon(25);
-		_icon4._object2.hide();
+		_icon4._horizLine.hide();
 
 		_icon6.setIcon(26);
 		_sceneMode = 10;
