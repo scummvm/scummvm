@@ -364,7 +364,7 @@ public:
 	NamedHotspot _emptyCell2;
 	NamedHotspot _securityBeams1;
 	NamedHotspot _securityBeams2;
-	SceneActor _actor1;
+	SceneActor _doorFrame;
 	Door _door;
 	CellExit _cellExit;
 	SequenceManager _sequenceManager;

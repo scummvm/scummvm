@@ -1608,9 +1608,9 @@ void Scene3275::postInit(SceneObjectList *OwnerList) {
 	_cellExit.setDetails(Rect(398, 60, 439, 118), SHADECURSOR_UP, 3150);
 	_cellExit.setDest(Common::Point(418, 128));
 
-	_actor1.postInit();
-	_actor1.setup(3275, 1, 7);
-	_actor1.setPosition(Common::Point(419, 119));
+	_doorFrame.postInit();
+	_doorFrame.setup(3275, 1, 7);
+	_doorFrame.setPosition(Common::Point(419, 119));
 
 	_door.postInit();
 	_door.setup(3275, 2, 1);
