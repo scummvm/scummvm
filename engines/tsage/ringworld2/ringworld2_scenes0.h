@@ -85,7 +85,7 @@ class Scene100: public SceneExt {
 public:
 	NamedHotspot _background, _duct, _bed, _desk;
 	Terminal _terminal;
-	SceneActor _bedLights1, _bedLights2, _object3, _object4, _object5;
+	SceneActor _bedLights1, _bedLights2, _tableLocker, _wardrobeTopAnim, _wardrobeColorAnim;
 	SceneActor _wardrobe;
 	Door _door;
 	Table _table;

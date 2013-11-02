@@ -116,7 +116,7 @@ bool Scene100::Table::startAction(CursorType action, Event &event) {
 		R2_GLOBALS._player.disableControl();
 		if (_strip == 2) {
 			scene->_sceneMode = 108;
-			scene->_object3.postInit();
+			scene->_tableLocker.postInit();
 			scene->_stasisNegator.postInit();
 
 			if (R2_INVENTORY.getObjectScene(R2_NEGATOR_GUN) == 1) {
@@ -126,11 +126,13 @@ bool Scene100::Table::startAction(CursorType action, Event &event) {
 				scene->_stasisNegator.setDetails(100, 21, 22, 23, 2, (SceneItem *)NULL);
 			}
 
-			scene->setAction(&scene->_sequenceManager2, scene, 108, this, &scene->_object3,
+			// Open table locker
+			scene->setAction(&scene->_sequenceManager2, scene, 108, this, &scene->_tableLocker,
 				&scene->_stasisNegator, &R2_GLOBALS._player, NULL);
 		} else {
 			scene->_sceneMode = 109;
-			scene->setAction(&scene->_sequenceManager2, scene, 109, this, &scene->_object3,
+			// Close table locker
+			scene->setAction(&scene->_sequenceManager2, scene, 109, this, &scene->_tableLocker,
 				&scene->_stasisNegator, &R2_GLOBALS._player, NULL);
 		}
 		return true;
@@ -140,7 +142,7 @@ bool Scene100::Table::startAction(CursorType action, Event &event) {
 		if (_strip == 2) {
 			SceneItem::display2(100, 18);
 			scene->_sceneMode = 102;
-			scene->_object3.postInit();
+			scene->_tableLocker.postInit();
 			scene->_stasisNegator.postInit();
 
 			if (R2_INVENTORY.getObjectScene(R2_NEGATOR_GUN) == 1) {
@@ -150,12 +152,12 @@ bool Scene100::Table::startAction(CursorType action, Event &event) {
 				scene->_stasisNegator.setDetails(100, 21, 22, 23, 2, (SceneItem *)NULL);
 			}
 
-			scene->setAction(&scene->_sequenceManager2, scene, 102, this, &scene->_object3,
+			scene->setAction(&scene->_sequenceManager2, scene, 102, this, &scene->_tableLocker,
 				&scene->_stasisNegator, NULL);
 		} else {
 			SceneItem::display2(100, 19);
 			scene->_sceneMode = 103;
-			scene->setAction(&scene->_sequenceManager2, scene, 103, this, &scene->_object3,
+			scene->setAction(&scene->_sequenceManager2, scene, 103, this, &scene->_tableLocker,
 				&scene->_stasisNegator, NULL);
 		}
 		return true;
@@ -295,10 +297,10 @@ void Scene100::postInit(SceneObjectList *OwnerList) {
 	switch (R2_GLOBALS._sceneManager._previousScene) {
 	case 50:
 	case 180:
-		_object5.postInit();
-		_object4.postInit();
+		_wardrobeColorAnim.postInit();
+		_wardrobeTopAnim.postInit();
 		_sceneMode = 104;
-		setAction(&_sequenceManager1, this, 104, &R2_GLOBALS._player, &_wardrobe, &_object4, &_object5, NULL);
+		setAction(&_sequenceManager1, this, 104, &R2_GLOBALS._player, &_wardrobe, &_wardrobeTopAnim, &_wardrobeColorAnim, NULL);
 		break;
 	case 125:
 		_sceneMode = 100;
@@ -331,14 +333,14 @@ void Scene100::signal() {
 		_table.setStrip(2);
 		_table.setFrame(3);
 
-		_object3.remove();
+		_tableLocker.remove();
 		_stasisNegator.remove();
 		R2_GLOBALS._player.enableControl();
 		break;
 	case 104:
 		_sceneMode = 0;
-		_object5.remove();
-		_object4.remove();
+		_wardrobeColorAnim.remove();
+		_wardrobeTopAnim.remove();
 
 		R2_GLOBALS._player.animate(ANIM_MODE_1, NULL);
 		R2_GLOBALS._player._numFrames = 10;
@@ -387,7 +389,7 @@ void Scene100::dispatch() {
 	SceneExt::dispatch();
 
 	if ((_sceneMode == 101) && (_door._frame == 2) && (_table._strip == 5)) {
-		_table.setAction(&_sequenceManager2, NULL, 103, &_table, &_object3, &_stasisNegator, NULL);
+		_table.setAction(&_sequenceManager2, NULL, 103, &_table, &_tableLocker, &_stasisNegator, NULL);
 	}
 }
 
