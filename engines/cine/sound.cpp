@@ -309,9 +309,7 @@ void AdLibSoundDriver::setupChannel(int channel, const byte *data, int instrumen
 			volume = 0;
 		}
 		volume += volume / 4;
-		if (volume > 127) {
-			volume = 127;
-		}
+
 		_channelsVolumeTable[channel] = volume;
 		setupInstrument(data, channel);
 	}
