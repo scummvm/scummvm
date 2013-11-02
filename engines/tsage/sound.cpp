@@ -3107,6 +3107,8 @@ void SoundBlasterDriver::playSound(const byte *channelData, int dataOffset, int 
 
 	// Make a copy of the buffer
 	int dataSize = g_vm->_memoryManager.getSize(channelData);
+	dataSize -= 18;
+
 	byte *soundData = (byte *)malloc(dataSize - dataOffset);
 	Common::copy(_channelData, _channelData + (dataSize - dataOffset), soundData);
 
