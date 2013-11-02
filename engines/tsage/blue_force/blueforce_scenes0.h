@@ -174,8 +174,6 @@ public:
 	int _sceneNumber;
 	int _visage;
 	CursorType _cursorId;
-	// TODO: Check if really useless in original
-	bool _field1222;
 
 	Scene60();
 	virtual void synchronize(Serializer &s);
