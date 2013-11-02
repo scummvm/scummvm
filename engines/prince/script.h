@@ -59,6 +59,7 @@ private:
 	uint32 _stack[_STACK_SIZE];
 	uint8 _stacktop;
 	uint8 _savedStacktop;
+	uint32 _waitFlag;
 
 	const byte * _string;
 	uint32 _currentString;

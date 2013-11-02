@@ -495,6 +495,8 @@ void PrinceEngine::mainLoop() {
 	//CursorMan.showMouse(true);
 
 	while (!shouldQuit()) {
+		uint32 currentTime = _system->getMillis();
+
 		Common::Event event;
 		Common::EventManager *eventMan = _system->getEventManager();
 		while (eventMan->pollEvent(event)) {
@@ -524,9 +526,13 @@ void PrinceEngine::mainLoop() {
 
 		_script->step();
 		drawScreen();
-		
-		_system->delayMillis(10);
 
+		// Calculate the frame delay based off a desired frame time
+		int delay = 1000/15 - int32(_system->getMillis() - currentTime);
+		// Ensure non-negative
+		delay = delay < 0 ? 0 : delay;
+		_system->delayMillis(delay);
+		
 		_cameraX = _newCameraX;
 	}
 }

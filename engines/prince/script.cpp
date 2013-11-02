@@ -36,7 +36,8 @@ namespace Prince {
 static const uint16 NUM_OPCODES = 144;
 
 Script::Script(PrinceEngine *vm) : 
-	_code(NULL), _stacktop(0), _vm(vm), _opcodeNF(false) {
+	_code(NULL), _stacktop(0), _vm(vm), _opcodeNF(false),
+	_waitFlag(0) {
 }
 
 Script::~Script() {
@@ -59,15 +60,17 @@ bool Script::loadFromStream(Common::SeekableReadStream &stream) {
 
 void Script::debugScript(const char *s, ...) {
 	char buf[STRINGBUFLEN];
-	va_list va;
+	 va_list va;
 
 	va_start(va, s);
 	vsnprintf(buf, STRINGBUFLEN, s, va);
 	va_end(va);
 
 	Common::String str = Common::String::format("@0x%04X: ", _lastInstruction);
-	str += Common::String::format("op %02d: ", _lastOpcode);
-	debugC(10, DebugChannel::kScript, "PrinceEngine::Script %s %s", str.c_str(), buf);
+	str += Common::String::format("op %04d: ", _lastOpcode);
+	//debugC(10, DebugChannel::kScript, "PrinceEngine::Script %s %s", str.c_str(), buf);
+
+	debug("PrinceEngine::Script %s %s", str.c_str(), buf);
 }
 
 void Script::step() {
@@ -86,7 +89,7 @@ void Script::step() {
 			error("Trying to execute unknown opcode %s", dstr.c_str());
 
 
-		debugScript("%s", dstr.c_str());
+		debugScript("");
 
 		// Execute the current opcode
 		OpcodeFunc op = _opcodes[_lastOpcode];
@@ -246,8 +249,21 @@ void Script::O__WAIT() {
 
 	debugScript("O__WAIT pause %d", pause);
 
-	_opcodeNF = 1;
-	
+	if (_waitFlag == 0) {
+		// set new wait flag value and continue
+		_waitFlag = pause;
+		_opcodeNF = 1;
+		_currentInstruction -= 4;
+		return;
+	}
+
+	--_waitFlag;
+
+	if (_waitFlag > 0) {
+		_opcodeNF = 1;
+		_currentInstruction -= 4;
+		return;
+	}
 }
 
 void Script::O_UPDATEOFF() {
@@ -331,8 +347,8 @@ void Script::O_COMPARE() {
 		value = val; 
 	}
 
-	debugScript("O_COMPARE flagId 0x%04X (%s), value %d ?= %d", flagId, Flags::getFlagName(flagId), value, _flags[flagId - 0x8000]);
-	_result = (_flags[flagId - 0x8000] == value);
+	_result = !(_flags[flagId - 0x8000] == value);
+	debugScript("O_COMPARE flagId 0x%04X (%s), value %d == %d (%d)", flagId, Flags::getFlagName(flagId), value, _flags[flagId - 0x8000], _result);
 }
 
 void Script::O_JUMPZ() {
@@ -550,7 +566,6 @@ void Script::O_WAITTEXT() {
 	if (slot & 0x8000) {
 		slot = _flags[slot - 0x8000];
 	}
-	//debugScript("O_WAITTEXT slot %d", slot);
 	Text &text = _vm->_textSlots[slot];
 	if (text._time) {
 		_opcodeNF = 1;
@@ -582,7 +597,7 @@ void Script::O_GETCHAR() {
 
 	debugScript("O_GETCHAR %04X (%s) %02x", flagId, Flags::getFlagName(flagId), _flags[flagId - 0x8000]);
 
-	_string++;
+	++_string;
 }
 
 void Script::O_SETDFLAG() {}
@@ -603,7 +618,6 @@ void Script::O_PRINTAT() {
 		++_string;
 	}
 	++_string;
-	debug("O_PRINTAT %x", *_string);
 }
 
 void Script::O_ZOOMIN() {}
@@ -723,7 +737,7 @@ void Script::O_SETBACKANIMDATA() {
 
 void Script::O_VIEWFLC() {
 	uint16 animNr = readScript16bits();
-	debugScript("O_VIEWFLC animNr %d", animNr);
+	debug("O_VIEWFLC animNr %d", animNr);
 	_vm->loadAnim(animNr, false);
 }
 
