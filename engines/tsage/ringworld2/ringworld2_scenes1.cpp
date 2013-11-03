@@ -878,7 +878,7 @@ void Scene1100::postInit(SceneObjectList *OwnerList) {
 		R2_GLOBALS._player._moveDiff = Common::Point(16, 2);
 
 		_rightLandslide.setup2(1104, 2, 1, 175, 125, 102, 1);
-		_object2.setup2(1102, 5, 1, 216, 167, 1, 0);
+		_purplePlant.setup2(1102, 5, 1, 216, 167, 1, 0);
 
 		_leftImpacts.postInit();
 		_leftImpacts.setup(1113, 2, 1);

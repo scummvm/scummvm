@@ -117,7 +117,7 @@ public:
 	SceneActor _runningGuy2;
 	SceneActor _runningGuy3;
 	BackgroundSceneObject _rightLandslide;
-	BackgroundSceneObject _object2;
+	BackgroundSceneObject _purplePlant;
 	Seeker _seeker;
 	Trooper _trooper;
 	Chief _chief;
