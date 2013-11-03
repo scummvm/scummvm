@@ -210,7 +210,7 @@ public:
 	int _objectIdAtCursor;
 
 	void setCursor(int id);
-	void updateCursorsCommon();
+	void updateCursorCommon();
 
 	int getObjectState(const char *objname);
 	void setObjectState(const char *name, int state);
@@ -231,6 +231,7 @@ public:
 	void getAllInventory();
 
 	int lift_getButtonIdP(int objid);
+	void lift_sub5(Scene *sc, int qu1, int qu2);
 
 public:
 

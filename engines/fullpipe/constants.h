@@ -26,6 +26,8 @@
 namespace Fullpipe {
 
 #define ANI_BOOT_1 4231
+#define ANI_DOMINO_3 2732
+#define ANI_EGGEATER 334
 #define ANI_IN1MAN 5110
 #define ANI_INV_MAP 5321
 #define ANI_LIFTBUTTON 2751
@@ -98,11 +100,17 @@ namespace Fullpipe {
 #define PIC_SC1_LADDER 1091
 #define PIC_SC1_OSK 1018
 #define PIC_SC1_OSK2 2932
+#define PIC_SC3_DOMIN 5182
 #define PIC_SCD_SEL 734
+#define QU_EGTR_MD2_SHOW 4698
+#define QU_EGTR_MD1_SHOW 4697
+#define QU_EGTR_SLIMSHOW 4883
 #define QU_IN2_DO 5144
 #define QU_INTR_FINISH 5138
 #define QU_INTR_GETUPMAN 5136
 #define QU_INTR_STARTINTRO 5133
+#define QU_SC3_ENTERLIFT 2779
+#define QU_SC3_EXITLIFT 2808
 #define SC_1 301
 #define SC_10 653
 #define SC_11 654
@@ -158,6 +166,9 @@ namespace Fullpipe {
 #define SND_CMN_031 3516
 #define SND_CMN_070 5199
 #define SND_INTR_019 5220
+#define ST_EGTR_MID1 2863
+#define ST_EGTR_MID2 2869
+#define ST_EGTR_SLIM 336
 #define ST_IN1MAN_SLEEP 5112
 #define ST_LBN_0N 2832
 #define ST_LBN_0P 2833
