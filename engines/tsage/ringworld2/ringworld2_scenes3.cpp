@@ -1737,8 +1737,7 @@ void Scene3350::signal() {
 void Scene3375::synchronize(Serializer &s) {
 	SceneExt::synchronize(s);
 
-	s.syncAsSint16LE(_field1488);
-	s.syncAsSint16LE(_field1492);
+	s.syncAsSint16LE(_newSceneMode);
 	for (int i = 0; i < 4; ++i)
 		s.syncAsSint16LE(_sceneAreas[i]);
 }
@@ -1931,7 +1930,7 @@ void Scene3375::DownExit::changeScene() {
 	R2_GLOBALS._player.disableControl(CURSOR_ARROW);
 
 	scene->_sceneMode = 3377;
-	scene->_field1488 = 3381;
+	scene->_newSceneMode = 3381;
 
 	if (R2_GLOBALS._walkwaySceneNumber != 0) {
 		R2_GLOBALS._walkRegions.enableRegion(2);
@@ -1953,7 +1952,7 @@ void Scene3375::RightExit::changeScene() {
 	R2_GLOBALS._player.disableControl(CURSOR_ARROW);
 
 	scene->_sceneMode = 3378;
-	scene->_field1488 = 3380;
+	scene->_newSceneMode = 3380;
 
 	if (R2_GLOBALS._walkwaySceneNumber != 0) {
 		R2_GLOBALS._walkRegions.enableRegion(2);
@@ -1967,7 +1966,7 @@ void Scene3375::RightExit::changeScene() {
 }
 
 Scene3375::Scene3375() {
-	_field1488 = _field1492 = 0;
+	_newSceneMode = 0;
 
 	_sceneAreas[0] = 3376;
 	_sceneAreas[1] = 3377;
@@ -2181,8 +2180,9 @@ void Scene3375::signal() {
 	case 3377:
 		// No break on purpose
 	case 3378:
-		_sceneMode = _field1488;
-		_field1488 = 0;
+		_sceneMode = _newSceneMode;
+		_newSceneMode = 0;
+
 		_companion1._effect = 6;
 		_companion1._shade = 4;
 		_companion2._effect = 6;

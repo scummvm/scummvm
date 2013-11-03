@@ -437,9 +437,8 @@ public:
 	DownExit _downExit;
 	RightExit _rightExit;
 	SequenceManager _sequenceManager;
-	int _field1488;
+	int _newSceneMode;
 	int _sceneAreas[4];
-	int _field1492;
 
 	Scene3375();
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
