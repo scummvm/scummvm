@@ -260,7 +260,7 @@ public:
 };
 
 class Scene2440 : public SceneExt {
-	class Actor1 : public SceneActor {
+	class Companion : public SceneActor {
 	public:
 		bool startAction(CursorType action, Event &event);
 	};
@@ -274,14 +274,14 @@ class Scene2440 : public SceneExt {
 		virtual void changeScene();
 	};
 public:
-	NamedHotspot _item1;
-	NamedHotspot _item2;
-	NamedHotspot _item3;
-	NamedHotspot _item4;
-	NamedHotspot _item5;
-	NamedHotspot _item6;
-	NamedHotspot _item7;
-	Actor1 _actor1;
+	NamedHotspot _background;
+	NamedHotspot _garments;
+	NamedHotspot _bedspread;
+	NamedHotspot _post;
+	NamedHotspot _rug;
+	NamedHotspot _furnishings;
+	NamedHotspot _bottles;
+	Companion _companion;
 	OilLamp _oilLamp;
 	Exit1 _exit1;
 	SequenceManager _sequenceManager;

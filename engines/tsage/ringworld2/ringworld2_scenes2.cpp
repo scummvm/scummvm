@@ -1794,7 +1794,7 @@ void Scene2435::signal() {
  *
  *--------------------------------------------------------------------------*/
 
-bool Scene2440::Actor1::startAction(CursorType action, Event &event) {
+bool Scene2440::Companion::startAction(CursorType action, Event &event) {
 	return SceneActor::startAction(action, event);
 }
 
@@ -1849,24 +1849,24 @@ void Scene2440::postInit(SceneObjectList *OwnerList) {
 	}
 	R2_GLOBALS._player.setPosition(Common::Point(210, 200));
 	if (R2_GLOBALS._player._characterScene[R2_QUINN] == R2_GLOBALS._player._characterScene[R2_SEEKER]) {
-		_actor1.postInit();
+		_companion.postInit();
 		if (R2_GLOBALS._player._characterIndex == R2_QUINN) {
-			_actor1.setup(20, 5, 1);
-			_actor1.setDetails(9002, 0, 4, 3, 1, (SceneItem *)NULL);
+			_companion.setup(20, 5, 1);
+			_companion.setDetails(9002, 0, 4, 3, 1, (SceneItem *)NULL);
 		} else {
-			_actor1.setup(2008, 5, 1);
-			_actor1.setDetails(9002, 0, 5, 3, 1, (SceneItem *)NULL);
+			_companion.setup(2008, 5, 1);
+			_companion.setDetails(9002, 0, 5, 3, 1, (SceneItem *)NULL);
 		}
-		_actor1.setPosition(Common::Point(38, 119));
+		_companion.setPosition(Common::Point(38, 119));
 	}
 
-	_item2.setDetails(Rect(125, 25, 142, 73), 2430, 15, -1, 14, 1, NULL);
-	_item3.setDetails(Rect(124, 78, 237, 120), 2430, 36, -1, 38, 1, NULL);
-	_item4.setDetails(Rect(250, 3, 265, 133), 2430, 30, 31, 32, 1, NULL);
-	_item5.setDetails(Rect(91, 117, 203, 140), 2430, 9, -1, 11, 1, NULL);
-	_item6.setDetails(Rect(48, 78, 103, 112), 2430, 6, -1, -1, 1, NULL);
-	_item7.setDetails(Rect(48, 31, 73, 52), 2430, 33, -1, 18, 1, NULL);
-	_item1.setDetails(Rect(0, 0, 320, 200), 2430, 0, -1, -1, 1, NULL);
+	_garments.setDetails(Rect(125, 25, 142, 73), 2430, 15, -1, 14, 1, NULL);
+	_bedspread.setDetails(Rect(124, 78, 237, 120), 2430, 36, -1, 38, 1, NULL);
+	_post.setDetails(Rect(250, 3, 265, 133), 2430, 30, 31, 32, 1, NULL);
+	_rug.setDetails(Rect(91, 117, 203, 140), 2430, 9, -1, 11, 1, NULL);
+	_furnishings.setDetails(Rect(48, 78, 103, 112), 2430, 6, -1, -1, 1, NULL);
+	_bottles.setDetails(Rect(48, 31, 73, 52), 2430, 33, -1, 18, 1, NULL);
+	_background.setDetails(Rect(0, 0, 320, 200), 2430, 0, -1, -1, 1, NULL);
 
 	R2_GLOBALS._player.disableControl();
 
