@@ -69,9 +69,9 @@ public:
 	bool _exitingFlag;
 	int _mazePlayerMode;
 
-	NamedHotspot _item1;
-	SceneActor _object1;
-	SceneActor _objList1[11];
+	NamedHotspot _background;
+	SceneActor _companion;
+	SceneActor _persons[11];
 	WestExit _westExit;
 	EastExit _eastExit;
 	SouthExit _southExit;

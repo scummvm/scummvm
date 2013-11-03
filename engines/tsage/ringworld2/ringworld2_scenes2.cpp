@@ -132,25 +132,28 @@ void Scene2000::initPlayer() {
 	}
 	for (int i = 0; i < 11; i++) {
 		if (R2_GLOBALS._spillLocation[R2_GLOBALS._player._characterIndex] == R2_GLOBALS._spillLocation[3 + i])
-			_objList1[i].show();
+			_persons[i].show();
 	}
 
-	if ((R2_GLOBALS._player._characterScene[R2_QUINN] == R2_GLOBALS._player._characterScene[R2_SEEKER]) && (R2_GLOBALS._spillLocation[R2_QUINN] == R2_GLOBALS._spillLocation[R2_SEEKER])) {
-		_object1.postInit();
+	if ((R2_GLOBALS._player._characterScene[R2_QUINN] == R2_GLOBALS._player._characterScene[R2_SEEKER]) 
+			&& (R2_GLOBALS._spillLocation[R2_QUINN] == R2_GLOBALS._spillLocation[R2_SEEKER])) {
+		_companion.postInit();
 		if (R2_GLOBALS._player._characterIndex == R2_QUINN) {
-			_object1.setup(20, 5, 1);
-			_object1.setDetails(9002, 0, 4, 3, 1, (SceneItem *)NULL);
+			// Seeker is in room with Quinn
+			_companion.setup(20, 5, 1);
+			_companion.setDetails(9002, 0, 4, 3, 1, (SceneItem *)NULL);
 		} else {
-			_object1.setup(2008, 5, 1);
-			_object1.setDetails(9001, 0, 5, 3, 1, (SceneItem *)NULL);
+			// Quinn is in room with Seeker
+			_companion.setup(2008, 5, 1);
+			_companion.setDetails(9001, 0, 5, 3, 1, (SceneItem *)NULL);
 		}
 		if (_westExit._enabled) {
 			if (_eastExit._enabled)
-				_object1.setPosition(Common::Point(180, 128));
+				_companion.setPosition(Common::Point(180, 128));
 			else
-				_object1.setPosition(Common::Point(75, 128));
+				_companion.setPosition(Common::Point(75, 128));
 		} else
-			_object1.setPosition(Common::Point(300, 128));
+			_companion.setPosition(Common::Point(300, 128));
 	}
 }
 
@@ -174,9 +177,9 @@ void Scene2000::initExits() {
 	_doorExit._moving = false;
 
 	for (int i = 0; i < 11; i++)
-		_objList1[i].hide();
+		_persons[i].hide();
 
-	_object1.remove();
+	_companion.remove();
 
 	switch (R2_GLOBALS._spillLocation[R2_GLOBALS._player._characterIndex]) {
 	case 3:
@@ -393,11 +396,11 @@ void Scene2000::Action1::signal() {
 		_actionIndex = 1;
 		Common::Point pt(-20, 127);
 		NpcMover *mover = new NpcMover();
-		scene->_objList1[_state].addMover(mover, &pt, scene);
+		scene->_persons[_state].addMover(mover, &pt, scene);
 		break;
 		}
 	case 1:
-		scene->_objList1[_state].setPosition(Common::Point(340, 127));
+		scene->_persons[_state].setPosition(Common::Point(340, 127));
 		--R2_GLOBALS._spillLocation[4 + _state];
 		_actionIndex = 0;
 		switch (_state - 1) {
@@ -426,9 +429,9 @@ void Scene2000::Action1::signal() {
 		}
 
 		if (R2_GLOBALS._spillLocation[3 + _state] == R2_GLOBALS._spillLocation[R2_GLOBALS._player._characterIndex])
-			scene->_objList1[_state].show();
+			scene->_persons[_state].show();
 		else
-			scene->_objList1[_state].hide();
+			scene->_persons[_state].hide();
 
 		signal();
 		break;
@@ -436,11 +439,11 @@ void Scene2000::Action1::signal() {
 		_actionIndex = 6;
 		Common::Point pt(340, 127);
 		NpcMover *mover = new NpcMover();
-		scene->_objList1[_state].addMover(mover, &pt, this);
+		scene->_persons[_state].addMover(mover, &pt, this);
 		break;
 		}
 	case 6:
-		scene->_objList1[_state].setPosition(Common::Point(-20, 127));
+		scene->_persons[_state].setPosition(Common::Point(-20, 127));
 		++R2_GLOBALS._spillLocation[3 + _state];
 		_actionIndex = 5;
 		switch (_state - 1) {
@@ -469,33 +472,33 @@ void Scene2000::Action1::signal() {
 		}
 
 		if (R2_GLOBALS._spillLocation[3 + _state] == R2_GLOBALS._spillLocation[R2_GLOBALS._player._characterIndex])
-			scene->_objList1[_state].show();
+			scene->_persons[_state].show();
 		else
-			scene->_objList1[_state].hide();
+			scene->_persons[_state].hide();
 
 		signal();
 		break;
 	case 10: {
 		Common::Point pt(290, 127);
 		NpcMover *mover = new NpcMover();
-		scene->_objList1[_state].addMover(mover, &pt, this);
+		scene->_persons[_state].addMover(mover, &pt, this);
 		_actionIndex = 11;
 		break;
 		}
 	case 11:
 		if (_state == 1)
-			scene->_objList1[0].setStrip(1);
+			scene->_persons[0].setStrip(1);
 		else if (_state == 5)
-			scene->_objList1[4].setStrip(1);
+			scene->_persons[4].setStrip(1);
 		setDelay(600);
 		_actionIndex = 12;
 		break;
 	case 12:
 		if (_state == 1)
-			scene->_objList1[0].setStrip(2);
+			scene->_persons[0].setStrip(2);
 		else if (_state == 5)
-			scene->_objList1[4].setStrip(2);
-		scene->_objList1[_state].setStrip(1);
+			scene->_persons[4].setStrip(2);
+		scene->_persons[_state].setStrip(1);
 		_actionIndex = 5;
 		signal();
 		break;
@@ -503,29 +506,29 @@ void Scene2000::Action1::signal() {
 		if ((R2_GLOBALS._spillLocation[3 + _state] == 13) || (R2_GLOBALS._spillLocation[3 + _state] == 22) || (R2_GLOBALS._spillLocation[3 + _state] == 27)) {
 			Common::Point pt(30, 127);
 			NpcMover *mover = new NpcMover();
-			scene->_objList1[_state].addMover(mover, &pt, this);
+			scene->_persons[_state].addMover(mover, &pt, this);
 			_actionIndex = 16;
 		} else {
 			Common::Point pt(120, 127);
 			NpcMover *mover = new NpcMover();
-			scene->_objList1[_state].addMover(mover, &pt, this);
+			scene->_persons[_state].addMover(mover, &pt, this);
 			_actionIndex = 16;
 		}
 		break;
 	case 16:
 		if (_state == 1)
-			scene->_objList1[2].setStrip(2);
+			scene->_persons[2].setStrip(2);
 		else if (_state == 8)
-			scene->_objList1[9].setStrip(2);
+			scene->_persons[9].setStrip(2);
 		setDelay(600);
 		_actionIndex = 17;
 		break;
 	case 17:
 		if (_state == 1)
-			scene->_objList1[2].setStrip(1);
+			scene->_persons[2].setStrip(1);
 		else if (_state == 8)
-			scene->_objList1[9].setStrip(1);
-		scene->_objList1[_state].setStrip(2);
+			scene->_persons[9].setStrip(1);
+		scene->_persons[_state].setStrip(2);
 		_actionIndex = 0;
 		break;
 	case 99:
@@ -806,57 +809,57 @@ void Scene2000::postInit(SceneObjectList *OwnerList) {
 	_action5._state = 3;
 
 	for (int i = 0; i < 11; i++)
-		_objList1[i].postInit();
+		_persons[i].postInit();
 
-	_objList1[0].setVisage(2000);
-	_objList1[0].setStrip(2);
-	_objList1[0].setDetails(2001, 0, -1, -1, 1, (SceneItem *)NULL);
+	_persons[0].setVisage(2000);
+	_persons[0].setStrip(2);
+	_persons[0].setDetails(2001, 0, -1, -1, 1, (SceneItem *)NULL);
 
-	_objList1[1].setVisage(2001);
-	_objList1[1].setStrip(2);
-	_objList1[1].setDetails(2001, 0, -1, -1, 1, (SceneItem *)NULL);
+	_persons[1].setVisage(2001);
+	_persons[1].setStrip(2);
+	_persons[1].setDetails(2001, 0, -1, -1, 1, (SceneItem *)NULL);
 
-	_objList1[2].setVisage(2003);
-	_objList1[2].setStrip(1);
-	_objList1[2].setDetails(2001, 0, -1, -1, 1, (SceneItem *)NULL);
+	_persons[2].setVisage(2003);
+	_persons[2].setStrip(1);
+	_persons[2].setDetails(2001, 0, -1, -1, 1, (SceneItem *)NULL);
 
-	_objList1[3].setVisage(2007);
-	_objList1[3].setStrip(2);
-	_objList1[3].setDetails(2001, 12, -1, -1, 1, (SceneItem *)NULL);
+	_persons[3].setVisage(2007);
+	_persons[3].setStrip(2);
+	_persons[3].setDetails(2001, 12, -1, -1, 1, (SceneItem *)NULL);
 
-	_objList1[4].setVisage(2004);
-	_objList1[4].setStrip(2);
-	_objList1[4].setDetails(2001, 19, -1, -1, 1, (SceneItem *)NULL);
+	_persons[4].setVisage(2004);
+	_persons[4].setStrip(2);
+	_persons[4].setDetails(2001, 19, -1, -1, 1, (SceneItem *)NULL);
 
-	_objList1[5].setVisage(2003);
-	_objList1[5].setStrip(2);
-	_objList1[5].setDetails(2001, 0, -1, -1, 1, (SceneItem *)NULL);
+	_persons[5].setVisage(2003);
+	_persons[5].setStrip(2);
+	_persons[5].setDetails(2001, 0, -1, -1, 1, (SceneItem *)NULL);
 
-	_objList1[6].setVisage(2000);
-	_objList1[6].setStrip(1);
-	_objList1[6].setDetails(2001, 0, -1, -1, 1, (SceneItem *)NULL);
+	_persons[6].setVisage(2000);
+	_persons[6].setStrip(1);
+	_persons[6].setDetails(2001, 0, -1, -1, 1, (SceneItem *)NULL);
 
-	_objList1[7].setVisage(2000);
-	_objList1[7].setStrip(2);
-	_objList1[7].setDetails(2001, 0, -1, -1, 1, (SceneItem *)NULL);
+	_persons[7].setVisage(2000);
+	_persons[7].setStrip(2);
+	_persons[7].setDetails(2001, 0, -1, -1, 1, (SceneItem *)NULL);
 
-	_objList1[8].setVisage(2000);
-	_objList1[8].setStrip(2);
-	_objList1[8].setDetails(2001, 0, -1, -1, 1, (SceneItem *)NULL);
+	_persons[8].setVisage(2000);
+	_persons[8].setStrip(2);
+	_persons[8].setDetails(2001, 0, -1, -1, 1, (SceneItem *)NULL);
 
-	_objList1[9].setVisage(2006);
-	_objList1[9].setStrip(1);
-	_objList1[9].setDetails(2001, 6, -1, -1, 1, (SceneItem *)NULL);
+	_persons[9].setVisage(2006);
+	_persons[9].setStrip(1);
+	_persons[9].setDetails(2001, 6, -1, -1, 1, (SceneItem *)NULL);
 
-	_objList1[10].setVisage(2007);
-	_objList1[10].setStrip(1);
-	_objList1[10].setDetails(2001, 12, -1, -1, 1, (SceneItem *)NULL);
+	_persons[10].setVisage(2007);
+	_persons[10].setStrip(1);
+	_persons[10].setDetails(2001, 12, -1, -1, 1, (SceneItem *)NULL);
 
 	for (int i = 0; i < 11; i++) {
-		_objList1[i].animate(ANIM_MODE_1, NULL);
-		_objList1[i]._moveDiff.x = 3;
-		_objList1[i]._moveRate = 8;
-		_objList1[i].hide();
+		_persons[i].animate(ANIM_MODE_1, NULL);
+		_persons[i]._moveDiff.x = 3;
+		_persons[i]._moveRate = 8;
+		_persons[i].hide();
 		switch (i - 1) {
 		case 0:
 			if (R2_GLOBALS._spillLocation[3 + i]  == 1)
@@ -899,28 +902,28 @@ void Scene2000::postInit(SceneObjectList *OwnerList) {
 		case 22:
 		case 27:
 		case 30:
-			_objList1[i].setPosition(Common::Point(265, 127));
+			_persons[i].setPosition(Common::Point(265, 127));
 			break;
 		case 5:
 		case 12:
 		case 17:
 		case 21:
 		case 26:
-			_objList1[i].setPosition(Common::Point(55, 127));
+			_persons[i].setPosition(Common::Point(55, 127));
 			break;
 		default:
-			_objList1[i].setPosition(Common::Point(160, 127));
+			_persons[i].setPosition(Common::Point(160, 127));
 			break;
 		}
 	}
-	_objList1[1].setAction(&_action2);
-	_objList1[3].setAction(&_action5);
-	_objList1[5].setAction(&_action4);
-	_objList1[8].setAction(&_action1);
+	_persons[1].setAction(&_action2);
+	_persons[3].setAction(&_action5);
+	_persons[5].setAction(&_action4);
+	_persons[8].setAction(&_action1);
 
 	initPlayer();
 
-	_item1.setDetails(Rect(0, 0, 320, 200), 2000, 0, -1, 23, 1, NULL);
+	_background.setDetails(Rect(0, 0, 320, 200), 2000, 0, -1, 23, 1, NULL);
 
 	SceneExt::postInit();
 }
