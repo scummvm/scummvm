@@ -2700,13 +2700,13 @@ void Scene3395::signal() {
  *--------------------------------------------------------------------------*/
 
 Scene3400::Scene3400() {
-	_field157C = 0;
+	_soundFaded = false;
 }
 
 void Scene3400::synchronize(Serializer &s) {
 	SceneExt::synchronize(s);
 
-	s.syncAsSint16LE(_field157C);
+	s.syncAsSint16LE(_soundFaded);
 }
 
 void Scene3400::postInit(SceneObjectList *OwnerList) {
@@ -2714,7 +2714,7 @@ void Scene3400::postInit(SceneObjectList *OwnerList) {
 	_sceneBounds = Rect(160, 0, 480, 200);
 
 	loadScene(3400);
-	_field157C = 0;
+	_soundFaded = false;
 	R2_GLOBALS._v558B6.set(60, 0, 260, 200);
 	SceneExt::postInit();
 	R2_GLOBALS._sound1.play(317);
@@ -2843,9 +2843,9 @@ void Scene3400::signal() {
 	case 3307:
 	case 3404:
 	case 3408:
-		if (_field157C == 0) {
+		if (!_soundFaded) {
 			R2_GLOBALS._sound2.fadeOut2(NULL);
-			_field157C = 1;
+			_soundFaded = true;
 		} else {
 			_sceneMode = 3308;
 			_stripManager.start(3308, this);

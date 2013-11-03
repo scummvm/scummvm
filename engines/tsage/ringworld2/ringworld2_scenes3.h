@@ -553,7 +553,7 @@ public:
 	SceneActor _actor7;
 	SceneActor _actor8;
 	SequenceManager _sequenceManager;
-	int16 _field157C;
+	bool _soundFaded;
 
 	Scene3400();
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
