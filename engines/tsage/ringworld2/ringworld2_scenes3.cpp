@@ -2240,13 +2240,13 @@ void Scene3375::dispatch() {
  *--------------------------------------------------------------------------*/
 
 Scene3385::Scene3385() {
-	_field11B2 = 0;
+	_playerStrip = 0;
 }
 
 void Scene3385::synchronize(Serializer &s) {
 	SceneExt::synchronize(s);
 
-	s.syncAsSint16LE(_field11B2);
+	s.syncAsSint16LE(_playerStrip);
 }
 
 bool Scene3385::Companion1::startAction(CursorType action, Event &event) {
@@ -2351,9 +2351,9 @@ void Scene3385::postInit(SceneObjectList *OwnerList) {
 	R2_GLOBALS._player._characterScene[R2_MIRANDA] = 3385;
 
 	if (R2_GLOBALS._sceneManager._previousScene == 3375)
-		_field11B2 = 3;
+		_playerStrip = 3;
 	else
-		_field11B2 = 4;
+		_playerStrip = 4;
 
 	setZoomPercents(102, 40, 200, 160);
 	R2_GLOBALS._player.postInit();
@@ -2366,11 +2366,11 @@ void Scene3385::postInit(SceneObjectList *OwnerList) {
 	R2_GLOBALS._player.changeZoom(-1);
 
 	if (R2_GLOBALS._player._characterIndex == R2_SEEKER)
-		R2_GLOBALS._player.setup(20, _field11B2, 1);
+		R2_GLOBALS._player.setup(20, _playerStrip, 1);
 	else if (R2_GLOBALS._player._characterIndex == R2_MIRANDA)
-		R2_GLOBALS._player.setup(30, _field11B2, 1);
+		R2_GLOBALS._player.setup(30, _playerStrip, 1);
 	else
-		R2_GLOBALS._player.setup(10, _field11B2, 1);
+		R2_GLOBALS._player.setup(10, _playerStrip, 1);
 
 	R2_GLOBALS._player.animate(ANIM_MODE_1, NULL);
 	R2_GLOBALS._player.disableControl();
@@ -2386,9 +2386,9 @@ void Scene3385::postInit(SceneObjectList *OwnerList) {
 	_companion1.changeZoom(-1);
 	_companion1._effect = 1;
 	if (R2_GLOBALS._player._characterIndex == R2_SEEKER)
-		_companion1.setup(10, _field11B2, 1);
+		_companion1.setup(10, _playerStrip, 1);
 	else
-		_companion1.setup(20, _field11B2, 1);
+		_companion1.setup(20, _playerStrip, 1);
 	_companion1.animate(ANIM_MODE_1, NULL);
 	_companion1.setDetails(3385, -1, -1, -1, 1, (SceneItem *) NULL);
 
@@ -2397,9 +2397,9 @@ void Scene3385::postInit(SceneObjectList *OwnerList) {
 	_companion2.changeZoom(-1);
 	_companion2._effect = 1;
 	if (R2_GLOBALS._player._characterIndex == R2_MIRANDA)
-		_companion2.setup(10, _field11B2, 1);
+		_companion2.setup(10, _playerStrip, 1);
 	else
-		_companion2.setup(30, _field11B2, 1);
+		_companion2.setup(30, _playerStrip, 1);
 	_companion2.animate(ANIM_MODE_1, NULL);
 	_companion2.setDetails(3385, -1, -1, -1, 1, (SceneItem *) NULL);
 
@@ -2407,7 +2407,7 @@ void Scene3385::postInit(SceneObjectList *OwnerList) {
 	_webbster._moveDiff = Common::Point(3, 2);
 	_webbster.changeZoom(-1);
 	_webbster._effect = 1;
-	_webbster.setup(40, _field11B2, 1);
+	_webbster.setup(40, _playerStrip, 1);
 	_webbster.animate(ANIM_MODE_1, NULL);
 	_webbster.setDetails(3385, 15, -1, -1, 1, (SceneItem *) NULL);
 
@@ -2477,13 +2477,13 @@ void Scene3385::signal() {
  *--------------------------------------------------------------------------*/
 
 Scene3395::Scene3395() {
-	_field142E = 0;
+	_playerStrip = 0;
 }
 
 void Scene3395::synchronize(Serializer &s) {
 	SceneExt::synchronize(s);
 
-	s.syncAsSint16LE(_field142E);
+	s.syncAsSint16LE(_playerStrip);
 }
 
 bool Scene3395::Companion1::startAction(CursorType action, Event &event) {
@@ -2574,9 +2574,9 @@ void Scene3395::postInit(SceneObjectList *OwnerList) {
 	R2_GLOBALS._player._characterScene[R2_MIRANDA] = 3395;
 
 	if (R2_GLOBALS._sceneManager._previousScene == 3385)
-		_field142E = 3;
+		_playerStrip = 3;
 	else
-		_field142E = 4;
+		_playerStrip = 4;
 
 	setZoomPercents(51, 40, 200, 137);
 	R2_GLOBALS._player.postInit();
@@ -2589,11 +2589,11 @@ void Scene3395::postInit(SceneObjectList *OwnerList) {
 	R2_GLOBALS._player.changeZoom(-1);
 
 	if (R2_GLOBALS._player._characterIndex == R2_SEEKER)
-		R2_GLOBALS._player.setup(20, _field142E, 1);
+		R2_GLOBALS._player.setup(20, _playerStrip, 1);
 	else if (R2_GLOBALS._player._characterIndex == R2_MIRANDA)
-		R2_GLOBALS._player.setup(30, _field142E, 1);
+		R2_GLOBALS._player.setup(30, _playerStrip, 1);
 	else
-		R2_GLOBALS._player.setup(10, _field142E, 1);
+		R2_GLOBALS._player.setup(10, _playerStrip, 1);
 
 	R2_GLOBALS._player.animate(ANIM_MODE_1, NULL);
 	R2_GLOBALS._player.disableControl();
@@ -2609,9 +2609,9 @@ void Scene3395::postInit(SceneObjectList *OwnerList) {
 	_companion1.changeZoom(-1);
 	_companion1._effect = 1;
 	if (R2_GLOBALS._player._characterIndex == R2_SEEKER)
-		_companion1.setup(10, _field142E, 1);
+		_companion1.setup(10, _playerStrip, 1);
 	else
-		_companion1.setup(20, _field142E, 1);
+		_companion1.setup(20, _playerStrip, 1);
 	_companion1.animate(ANIM_MODE_1, NULL);
 	_companion1.setDetails(3395, -1, -1, -1, 1, (SceneItem *) NULL);
 
@@ -2620,9 +2620,9 @@ void Scene3395::postInit(SceneObjectList *OwnerList) {
 	_companion2.changeZoom(-1);
 	_companion2._effect = 1;
 	if (R2_GLOBALS._player._characterIndex == R2_MIRANDA)
-		_companion2.setup(10, _field142E, 1);
+		_companion2.setup(10, _playerStrip, 1);
 	else
-		_companion2.setup(30, _field142E, 1);
+		_companion2.setup(30, _playerStrip, 1);
 	_companion2.animate(ANIM_MODE_1, NULL);
 	_companion2.setDetails(3395, -1, -1, -1, 1, (SceneItem *) NULL);
 
@@ -2630,7 +2630,7 @@ void Scene3395::postInit(SceneObjectList *OwnerList) {
 	_webbster._moveDiff = Common::Point(3, 2);
 	_webbster.changeZoom(-1);
 	_webbster._effect = 1;
-	_webbster.setup(40, _field142E, 1);
+	_webbster.setup(40, _playerStrip, 1);
 	_webbster.animate(ANIM_MODE_1, NULL);
 	_webbster.setDetails(3395, 18, -1, -1, 1, (SceneItem *) NULL);
 

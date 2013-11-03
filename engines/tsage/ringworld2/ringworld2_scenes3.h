@@ -486,7 +486,7 @@ public:
 	Action1 _action1;
 	SequenceManager _sequenceManager;
 
-	int _field11B2;
+	int _playerStrip;
 
 	Scene3385();
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
@@ -528,7 +528,7 @@ public:
 	Action1 _action1;
 	SequenceManager _sequenceManager;
 
-	int _field142E;
+	int _playerStrip;
 
 	Scene3395();
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
