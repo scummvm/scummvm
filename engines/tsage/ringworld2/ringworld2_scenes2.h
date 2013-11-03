@@ -431,11 +431,11 @@ class Scene2530 : public SceneExt {
 	};
 public:
 	NamedHotspot _background;
-	NamedHotspot _item2;
+	NamedHotspot _crank2;
 	NamedHotspot _shelf;
 	NamedHotspot _item4;
-	NamedHotspot _item5;
-	SceneActor _actor1;
+	NamedHotspot _rope;
+	SceneActor _companion;
 	Flask _flask;
 	Crank _crank;
 	Exit1 _exit1;

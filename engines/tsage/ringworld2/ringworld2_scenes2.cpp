@@ -2741,20 +2741,20 @@ void Scene2530::postInit(SceneObjectList *OwnerList) {
 	R2_GLOBALS._player.setPosition(Common::Point(100, 200));
 
 	if (R2_GLOBALS._player._characterScene[R2_QUINN] == R2_GLOBALS._player._characterScene[R2_SEEKER]) {
-		_actor1.postInit();
+		_companion.postInit();
 		if (R2_GLOBALS._player._characterIndex == R2_QUINN) {
-			_actor1.setup(20, 5, 1);
-			_actor1.setDetails(9002, 0, 4, 3, 1, (SceneItem *)NULL);
+			_companion.setup(20, 5, 1);
+			_companion.setDetails(9002, 0, 4, 3, 1, (SceneItem *)NULL);
 		} else {
-			_actor1.setup(2008, 5, 1);
-			_actor1.setDetails(9001, 0, 5, 3, 1, (SceneItem *)NULL);
+			_companion.setup(2008, 5, 1);
+			_companion.setDetails(9001, 0, 5, 3, 1, (SceneItem *)NULL);
 		}
-		_actor1.setPosition(Common::Point(20, 130));
+		_companion.setPosition(Common::Point(20, 130));
 		R2_GLOBALS._walkRegions.disableRegion(1);
 	}
 
-	_item2.setDetails(Rect(108, 90, 135, 205), 2530, 22, -1, -1, 1, NULL);
-	_item5.setDetails(Rect(115, 112, 206, 130), 2530, 25, -1, 27, 1, NULL);
+	_crank2.setDetails(Rect(108, 90, 135, 205), 2530, 22, -1, -1, 1, NULL);
+	_rope.setDetails(Rect(115, 112, 206, 130), 2530, 25, -1, 27, 1, NULL);
 	_shelf.setDetails(Rect(256, 64, 311, 85), 2530, 31, -1, 33, 1, NULL);
 	_background.setDetails(Rect(0, 0, 320, 200), 2530, 0, 1, -1, 1, NULL);
 
