@@ -218,7 +218,7 @@ void Palette::rotate(uint first, uint last, bool forward) {
 
 
 
-void Gfx::setPalette(Palette pal) {
+void Gfx::setPalette(Palette &pal) {
 	byte sysPal[256*3];
 
 	uint n = pal.fillRGB(sysPal);
