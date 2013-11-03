@@ -28,7 +28,7 @@ namespace Fullpipe {
 class StaticANIObject;
 
 class Vars {
- public:
+public:
 	Vars();
 
 	GameVar *swallowedEgg1;
@@ -44,6 +44,9 @@ class Vars {
 
 	PictureObject *scene01_picSc01Osk;
 	PictureObject *scene01_picSc01Osk2;
+
+	StaticANIObject *scene03_eggeater;
+	StaticANIObject *scene03_domino;
 
 	PictureObject *selector;
 };

@@ -211,7 +211,7 @@ void FullpipeEngine::winArcade() {
 
 }
 
-void FullpipeEngine::updateCursorsCommon() {
+void FullpipeEngine::updateCursorCommon() {
 	GameObject *ani = _currentScene->getStaticANIObjectAtPos(_mouseVirtX, _mouseVirtY);
 
 	GameObject *pic = _currentScene->getPictureObjectAtPos(_mouseVirtX, _mouseVirtY);

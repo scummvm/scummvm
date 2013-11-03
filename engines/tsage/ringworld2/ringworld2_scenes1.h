@@ -1223,7 +1223,7 @@ public:
 	SceneActor _containmentField;
 	Gem _gem;
 	SceneActor _cube;
-	SceneActor _actor7;
+	SceneActor _pulsingLights;
 	Vampire _vampire;
 	KeypadWindow _KeypadWindow;
 	NorthExit _northExit;
@@ -1236,10 +1236,10 @@ public:
 	DoorExit _doorExit;
 	SequenceManager _sequenceManager;
 
-	int _field412;
-	int _field414;
-	int _field416;
-	Common::Point _field418;
+	bool _upExitStyle;
+	bool _removeFlag;
+	bool _vampireActive;
+	Common::Point _vampireDestPos;
 	int _vampireIndex;
 
 	Scene1950();
