@@ -152,7 +152,7 @@ class Scene2425 : public SceneExt {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Item4 : public NamedHotspot {
+	class Background : public NamedHotspot {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -174,7 +174,7 @@ public:
 	RopeDest1 _ropeDest1;
 	RopeDest2 _ropeDest2;
 	Crevasse _crevasse;
-	Item4 _item4;
+	Background _background;
 	Rope _rope;
 	Pictographs _pictographs1;
 	Pictographs _pictographs2;

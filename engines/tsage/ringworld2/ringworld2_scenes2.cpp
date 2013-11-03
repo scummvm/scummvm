@@ -1333,7 +1333,7 @@ bool Scene2425::Crevasse::startAction(CursorType action, Event &event) {
 	}
 }
 
-bool Scene2425::Item4::startAction(CursorType action, Event &event) {
+bool Scene2425::Background::startAction(CursorType action, Event &event) {
 	if (action != R2_CURSOR_ROPE)
 		return NamedHotspot::startAction(action, event);
 	else {
@@ -1436,7 +1436,7 @@ void Scene2425::postInit(SceneObjectList *OwnerList) {
 	g_globals->_sceneItems.push_back(&_pictographs2);
 
 	_crevasse.setDetails(12, 2425, 7, -1, 9);
-	_item4.setDetails(Rect(0, 0, 320, 200), 2425, 0, -1, -1, 1, NULL);
+	_background.setDetails(Rect(0, 0, 320, 200), 2425, 0, -1, -1, 1, NULL);
 
 	R2_GLOBALS._player.disableControl();
 	switch (R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex]) {
