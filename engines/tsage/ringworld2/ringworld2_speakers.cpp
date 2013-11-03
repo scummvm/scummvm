@@ -1015,7 +1015,7 @@ void SpeakerNej2750::proc15() {
 
 void SpeakerNej2800::proc15() {
 	int v = _speakerMode;
-	Scene2750 *scene = (Scene2750 *)R2_GLOBALS._sceneManager._scene;
+	Scene2800 *scene = (Scene2800 *)R2_GLOBALS._sceneManager._scene;
 
 	if (!_object2) {
 		_object2 = &scene->_actor2;

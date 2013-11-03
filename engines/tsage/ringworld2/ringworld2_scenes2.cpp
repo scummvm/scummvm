@@ -3712,15 +3712,15 @@ void Scene2700::process(Event &event) {
  *--------------------------------------------------------------------------*/
 
 Scene2750::Scene2750(): SceneExt() {
-	_field412 = _field414 = _field416 = 0;
+	_areaMode = _moveMode = _stripNumber = 0;
 }
 
 void Scene2750::synchronize(Serializer &s) {
 	SceneExt::synchronize(s);
 
-	s.syncAsSint16LE(_field412);
-	s.syncAsSint16LE(_field414);
-	s.syncAsSint16LE(_field416);
+	s.syncAsSint16LE(_areaMode);
+	s.syncAsSint16LE(_moveMode);
+	s.syncAsSint16LE(_stripNumber);
 }
 
 void Scene2750::Action1::signal() {
@@ -3730,20 +3730,20 @@ void Scene2750::Action1::signal() {
 	case 1:
 		setDelay(60 + R2_GLOBALS._randomSource.getRandomNumber(240));
 		_actionIndex = 2;
-		scene->_actor5.show();
-		scene->_actor5.animate(ANIM_MODE_8, 1, NULL);
+		scene->_bird2.show();
+		scene->_bird2.animate(ANIM_MODE_8, 1, NULL);
 		break;
 	case 2:
 		setDelay(600 + R2_GLOBALS._randomSource.getRandomNumber(600));
 		_actionIndex = 0;
-		scene->_actor5.show();
-		scene->_actor3.animate(ANIM_MODE_2, NULL);
+		scene->_bird2.show();
+		scene->_bird1.animate(ANIM_MODE_2, NULL);
 		break;
 	default:
 		setDelay(30);
 		_actionIndex = 1;
-		scene->_actor3.animate(ANIM_MODE_6, NULL);
-		scene->_actor4.animate(ANIM_MODE_8, 1, NULL);
+		scene->_bird1.animate(ANIM_MODE_6, NULL);
+		scene->_folliage1.animate(ANIM_MODE_8, 1, NULL);
 		break;
 	}
 }
@@ -3752,20 +3752,20 @@ void Scene2750::Action2::signal() {
 	Scene2750 *scene = (Scene2750 *)R2_GLOBALS._sceneManager._scene;
 
 	setDelay(600 + R2_GLOBALS._randomSource.getRandomNumber(300));
-	scene->_actor6.animate(ANIM_MODE_8, 1, NULL);
+	scene->_folliage2.animate(ANIM_MODE_8, 1, NULL);
 }
 
 void Scene2750::Action3::signal() {
 	Scene2750 *scene = (Scene2750 *)R2_GLOBALS._sceneManager._scene;
 
-	if (scene->_actor7._position.x <= 320) {
+	if (scene->_folliage3._position.x <= 320) {
 		setDelay(1800 + R2_GLOBALS._randomSource.getRandomNumber(600));
 	} else {
 		setDelay(60);
-		scene->_actor7.setPosition(Common::Point(-10, 25));
+		scene->_folliage3.setPosition(Common::Point(-10, 25));
 		Common::Point pt(330, 45);
 		NpcMover *mover = new NpcMover();
-		scene->_actor7.addMover(mover, &pt, NULL);
+		scene->_folliage3.addMover(mover, &pt, NULL);
 	}
 }
 
@@ -3773,28 +3773,28 @@ void Scene2750::Action4::signal() {
 	Scene2750 *scene = (Scene2750 *)R2_GLOBALS._sceneManager._scene;
 
 	setDelay(600 + R2_GLOBALS._randomSource.getRandomNumber(300));
-	scene->_actor8.animate(ANIM_MODE_8, 1, NULL);
+	scene->_folliage4.animate(ANIM_MODE_8, 1, NULL);
 }
 
 void Scene2750::Action5::signal() {
 	Scene2750 *scene = (Scene2750 *)R2_GLOBALS._sceneManager._scene;
 
 	setDelay(600 + R2_GLOBALS._randomSource.getRandomNumber(300));
-	scene->_actor9.animate(ANIM_MODE_8, 1, NULL);
+	scene->_folliage5.animate(ANIM_MODE_8, 1, NULL);
 }
 
 void Scene2750::Action6::signal() {
 	Scene2750 *scene = (Scene2750 *)R2_GLOBALS._sceneManager._scene;
 
 	setDelay(600 + R2_GLOBALS._randomSource.getRandomNumber(300));
-	scene->_actor10.animate(ANIM_MODE_8, 1, NULL);
+	scene->_folliage6.animate(ANIM_MODE_8, 1, NULL);
 }
 
 void Scene2750::Action7::signal() {
 	Scene2750 *scene = (Scene2750 *)R2_GLOBALS._sceneManager._scene;
 
 	setDelay(600 + R2_GLOBALS._randomSource.getRandomNumber(300));
-	scene->_actor11.animate(ANIM_MODE_8, 1, NULL);
+	scene->_folliage7.animate(ANIM_MODE_8, 1, NULL);
 }
 
 void Scene2750::Area1::process(Event &event) {
@@ -3803,8 +3803,8 @@ void Scene2750::Area1::process(Event &event) {
 		Scene2750 *scene = (Scene2750 *)R2_GLOBALS._sceneManager._scene;
 		R2_GLOBALS._player.disableControl();
 		scene->_sceneMode = 10;
-		scene->_field414 = 2752;
-		switch (scene->_field412) {
+		scene->_moveMode = 2752;
+		switch (scene->_areaMode) {
 		case 1:	{
 			scene->_sceneMode = 2752;
 			scene->setAction(&scene->_sequenceManager, scene, 2752, &R2_GLOBALS._player, NULL);
@@ -3834,8 +3834,8 @@ void Scene2750::Area2::process(Event &event) {
 		Scene2750 *scene = (Scene2750 *)R2_GLOBALS._sceneManager._scene;
 		R2_GLOBALS._player.disableControl();
 		scene->_sceneMode = 10;
-		scene->_field414 = 2753;
-		switch (scene->_field412) {
+		scene->_moveMode = 2753;
+		switch (scene->_areaMode) {
 		case 1:	{
 			Common::Point pt(140, 142);
 			NpcMover *mover = new NpcMover();
@@ -3866,73 +3866,73 @@ void Scene2750::postInit(SceneObjectList *OwnerList) {
 	_area1.setDetails(Rect(0, 90, 20, 135), EXITCURSOR_W);
 	_area2.setDetails(Rect(300, 90, 320, 135), EXITCURSOR_E);
 
-	_rect1.set(30, 127, 155, 147);
-	_rect2.set(130, 142, 210, 167);
-	_rect3.set(-1, 137, 290, 147);
+	_walkRect1.set(30, 127, 155, 147);
+	_walkRect2.set(130, 142, 210, 167);
+	_walkRect3.set(-1, 137, 290, 147);
 
 	if (R2_INVENTORY.getObjectScene(R2_FLUTE) == 0) {
 		R2_GLOBALS._sound1.changeSound(235);
-		_actor2.postInit();
-		_actor2.setup(2751, 1, 1);
-		_actor2.setPosition(Common::Point(104, 158));
-		_actor2.animate(ANIM_MODE_2, NULL);
+		_fire.postInit();
+		_fire.setup(2751, 1, 1);
+		_fire.setPosition(Common::Point(104, 158));
+		_fire.animate(ANIM_MODE_2, NULL);
 	}
 
-	_actor3.postInit();
-	_actor3.setup(2750, 1, 1);
-	_actor3.setPosition(Common::Point(188, 34));
-	_actor3.animate(ANIM_MODE_2, NULL);
-	_actor3._numFrames = 16;
+	_bird1.postInit();
+	_bird1.setup(2750, 1, 1);
+	_bird1.setPosition(Common::Point(188, 34));
+	_bird1.animate(ANIM_MODE_2, NULL);
+	_bird1._numFrames = 16;
 
-	_actor4.postInit();
-	_actor4.setup(2700, 4, 1);
-	_actor4.setPosition(Common::Point(188, 37));
-	_actor4.fixPriority(26);
+	_folliage1.postInit();
+	_folliage1.setup(2700, 4, 1);
+	_folliage1.setPosition(Common::Point(188, 37));
+	_folliage1.fixPriority(26);
 
-	_actor5.postInit();
-	_actor5.setup(2750, 2, 1);
-	_actor5.setPosition(Common::Point(188, 34));
-	_actor5.hide();
+	_bird2.postInit();
+	_bird2.setup(2750, 2, 1);
+	_bird2.setPosition(Common::Point(188, 34));
+	_bird2.hide();
 
-	_actor3.setAction(&_action1);
+	_bird1.setAction(&_action1);
 
-	_actor6.postInit();
-	_actor6.setup(2750, 3, 1);
-	_actor6.setPosition(Common::Point(9, 167));
-	_actor6.fixPriority(252);
-	_actor6.setAction(&_action2);
+	_folliage2.postInit();
+	_folliage2.setup(2750, 3, 1);
+	_folliage2.setPosition(Common::Point(9, 167));
+	_folliage2.fixPriority(252);
+	_folliage2.setAction(&_action2);
 
-	_actor7.postInit();
-	_actor7.setup(2750, 4, 1);
-	_actor7.setPosition(Common::Point(-10, 25));
-	_actor7.animate(ANIM_MODE_1, NULL);
-	_actor7.setStrip2(4);
-	_actor7._moveRate = 20;
-	_actor7.setAction(&_action3);
+	_folliage3.postInit();
+	_folliage3.setup(2750, 4, 1);
+	_folliage3.setPosition(Common::Point(-10, 25));
+	_folliage3.animate(ANIM_MODE_1, NULL);
+	_folliage3.setStrip2(4);
+	_folliage3._moveRate = 20;
+	_folliage3.setAction(&_action3);
 
-	_actor8.postInit();
-	_actor8.fixPriority(26);
-	_actor8.setup(2750, 5, 1);
-	_actor8.setPosition(Common::Point(258, 33));
-	_actor8.setAction(&_action4);
+	_folliage4.postInit();
+	_folliage4.fixPriority(26);
+	_folliage4.setup(2750, 5, 1);
+	_folliage4.setPosition(Common::Point(258, 33));
+	_folliage4.setAction(&_action4);
 
-	_actor9.postInit();
-	_actor9.fixPriority(26);
-	_actor9.setup(2750, 6, 1);
-	_actor9.setPosition(Common::Point(61, 38));
-	_actor9.setAction(&_action5);
+	_folliage5.postInit();
+	_folliage5.fixPriority(26);
+	_folliage5.setup(2750, 6, 1);
+	_folliage5.setPosition(Common::Point(61, 38));
+	_folliage5.setAction(&_action5);
 
-	_actor10.postInit();
-	_actor10.fixPriority(26);
-	_actor10.setup(2750, 7, 1);
-	_actor10.setPosition(Common::Point(69, 37));
-	_actor10.setAction(&_action6);
+	_folliage6.postInit();
+	_folliage6.fixPriority(26);
+	_folliage6.setup(2750, 7, 1);
+	_folliage6.setPosition(Common::Point(69, 37));
+	_folliage6.setAction(&_action6);
 
-	_actor11.postInit();
-	_actor11.fixPriority(26);
-	_actor11.setup(2750, 8, 1);
-	_actor11.setPosition(Common::Point(80, 35));
-	_actor11.setAction(&_action7);
+	_folliage7.postInit();
+	_folliage7.fixPriority(26);
+	_folliage7.setup(2750, 8, 1);
+	_folliage7.setPosition(Common::Point(80, 35));
+	_folliage7.setAction(&_action7);
 
 	_ghoulHome1.setDetails(Rect(29, 50, 35, 56), 2750, 3, -1, 5, 1, NULL);
 	_ghoulHome2.setDetails(Rect(47, 36, 54, 42), 2750, 3, -1, 5, 1, NULL);
@@ -3965,20 +3965,20 @@ void Scene2750::postInit(SceneObjectList *OwnerList) {
 			R2_GLOBALS._player.animate(ANIM_MODE_NONE, NULL);
 			R2_GLOBALS._player.setPosition(Common::Point(81, 165));
 			R2_GLOBALS._events.setCursor(CURSOR_WALK);
-			_field416 = 1204;
+			_stripNumber = 1204;
 			_sceneMode = 11;
-			_stripManager.start(_field416, this);
+			_stripManager.start(_stripNumber, this);
 		} else {
 			_sceneMode = 2750;
-			_field412 = 1;
+			_areaMode = 1;
 			R2_GLOBALS._player.setAction(&_sequenceManager, this, 2750, &R2_GLOBALS._player, NULL);
 		}
 	} else if (R2_GLOBALS._sceneManager._previousScene == 2800) {
 		_sceneMode = 2751;
-		_field412 = 3;
+		_areaMode = 3;
 		R2_GLOBALS._player.setAction(&_sequenceManager, this, 2751, &R2_GLOBALS._player, NULL);
 	} else {
-		_field412 = 1;
+		_areaMode = 1;
 		R2_GLOBALS._player.setPosition(Common::Point(90, 137));
 		R2_GLOBALS._player.setStrip(3);
 		R2_GLOBALS._player.enableControl();
@@ -3987,19 +3987,19 @@ void Scene2750::postInit(SceneObjectList *OwnerList) {
 void Scene2750::signal() {
 	switch (_sceneMode) {
 	case 10:
-		switch (_field414) {
+		switch (_moveMode) {
 		case 1:
-			switch (_field412) {
+			switch (_areaMode) {
 			case 2: {
-				_sceneMode = _field414;
-				_field412 = 1;
+				_sceneMode = _moveMode;
+				_areaMode = 1;
 				Common::Point pt(90, 137);
 				NpcMover *mover = new NpcMover();
 				R2_GLOBALS._player.addMover(mover, &pt, this);
 				}
 				break;
 			case 3: {
-				_field412 = 2;
+				_areaMode = 2;
 				Common::Point pt(140, 142);
 				NpcMover *mover = new NpcMover();
 				R2_GLOBALS._player.addMover(mover, &pt, this);
@@ -4010,25 +4010,25 @@ void Scene2750::signal() {
 			}
 			break;
 		case 2: {
-			_sceneMode = _field414;
-			_field412 = 2;
+			_sceneMode = _moveMode;
+			_areaMode = 2;
 			Common::Point pt(170, 162);
 			NpcMover *mover = new NpcMover();
 			R2_GLOBALS._player.addMover(mover, &pt, this);
 			}
 			break;
 		case 3:
-			switch (_field412) {
+			switch (_areaMode) {
 			case 1: {
-				_field412 = 2;
+				_areaMode = 2;
 				Common::Point pt(210, 142);
 				NpcMover *mover = new NpcMover();
 				R2_GLOBALS._player.addMover(mover, &pt, this);
 				}
 				break;
 			case 2: {
-				_sceneMode = _field414;
-				_field412 = 3;
+				_sceneMode = _moveMode;
+				_areaMode = 3;
 				Common::Point pt(270, 142);
 				NpcMover *mover = new NpcMover();
 				R2_GLOBALS._player.addMover(mover, &pt, this);
@@ -4039,20 +4039,20 @@ void Scene2750::signal() {
 			}
 			break;
 		case 2752:
-			switch (_field412) {
+			switch (_areaMode) {
 			case 1:
-				_sceneMode = _field414;
+				_sceneMode = _moveMode;
 				setAction(&_sequenceManager, this, 2752, &R2_GLOBALS._player, NULL);
 				break;
 			case 2: {
-				_field412 = 1;
+				_areaMode = 1;
 				Common::Point pt(20, 132);
 				NpcMover *mover = new NpcMover();
 				R2_GLOBALS._player.addMover(mover, &pt, this);
 				}
 				break;
 			case 3: {
-				_field412 = 2;
+				_areaMode = 2;
 				Common::Point pt(140, 142);
 				NpcMover *mover = new NpcMover();
 				R2_GLOBALS._player.addMover(mover, &pt, this);
@@ -4063,23 +4063,23 @@ void Scene2750::signal() {
 			}
 			break;
 		case 2753:
-			switch (_field412) {
+			switch (_areaMode) {
 			case 1: {
-				_field412 = 2;
+				_areaMode = 2;
 				Common::Point pt(210, 142);
 				NpcMover *mover = new NpcMover();
 				R2_GLOBALS._player.addMover(mover, &pt, this);
 				}
 				break;
 			case 2: {
-				_field412 = 3;
+				_areaMode = 3;
 				Common::Point pt(300, 132);
 				NpcMover *mover = new NpcMover();
 				R2_GLOBALS._player.addMover(mover, &pt, this);
 				}
 				break;
 			case 3:
-				_sceneMode = _field414;
+				_sceneMode = _moveMode;
 				setAction(&_sequenceManager, this, 2753, &R2_GLOBALS._player, NULL);
 				break;
 			default:
@@ -4105,24 +4105,25 @@ void Scene2750::signal() {
 }
 
 void Scene2750::process(Event &event) {
-	if ((R2_GLOBALS._player._canWalk) && (event.eventType == EVENT_BUTTON_DOWN) && (R2_GLOBALS._events.getCursor() == R2_NEGATOR_GUN)) {
-		if (_rect1.contains(event.mousePos)) {
-			if (!_rect1.contains(R2_GLOBALS._player._position)) {
+	if ((R2_GLOBALS._player._canWalk) && (event.eventType == EVENT_BUTTON_DOWN) 
+			&& (R2_GLOBALS._events.getCursor() == R2_NEGATOR_GUN)) {
+		if (_walkRect1.contains(event.mousePos)) {
+			if (!_walkRect1.contains(R2_GLOBALS._player._position)) {
 				event.handled = true;
 				_sceneMode = 10;
-				_field414 = 1;
+				_moveMode = 1;
 			}
-		} else if (_rect2.contains(event.mousePos)) {
-			if (!_rect2.contains(R2_GLOBALS._player._position)) {
+		} else if (_walkRect2.contains(event.mousePos)) {
+			if (!_walkRect2.contains(R2_GLOBALS._player._position)) {
 				event.handled = true;
 				_sceneMode = 10;
-				_field414 = 2;
+				_moveMode = 2;
 			}
-		} else if (_rect3.contains(event.mousePos)) {
-			if (!_rect3.contains(R2_GLOBALS._player._position)) {
+		} else if (_walkRect3.contains(event.mousePos)) {
+			if (!_walkRect3.contains(R2_GLOBALS._player._position)) {
 				event.handled = true;
 				_sceneMode = 10;
-				_field414 = 3;
+				_moveMode = 3;
 			}
 		} else {
 			event.handled = true;
@@ -4131,7 +4132,7 @@ void Scene2750::process(Event &event) {
 
 		if (_sceneMode == 10) {
 			R2_GLOBALS._player.disableControl();
-			switch (_field412) {
+			switch (_areaMode) {
 			case 1: {
 				Common::Point pt(140, 142);
 				NpcMover *mover = new NpcMover();
@@ -4139,7 +4140,7 @@ void Scene2750::process(Event &event) {
 				}
 				break;
 			case 2:
-				if (_field414 == 1) {
+				if (_moveMode == 1) {
 					Common::Point pt(140, 142);
 					NpcMover *mover = new NpcMover();
 					R2_GLOBALS._player.addMover(mover, &pt, this);

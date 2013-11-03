@@ -595,16 +595,16 @@ public:
 	NamedHotspot _ghoulHome3;
 	NamedHotspot _ghoulHome4;
 	SceneActor _nej;
-	SceneActor _actor2;
-	SceneActor _actor3;
-	SceneActor _actor4;
-	SceneActor _actor5;
-	SceneActor _actor6;
-	SceneActor _actor7;
-	SceneActor _actor8;
-	SceneActor _actor9;
-	SceneActor _actor10;
-	SceneActor _actor11;
+	SceneActor _fire;
+	SceneActor _bird1;
+	SceneActor _folliage1;
+	SceneActor _bird2;
+	SceneActor _folliage2;
+	SceneActor _folliage3;
+	SceneActor _folliage4;
+	SceneActor _folliage5;
+	SceneActor _folliage6;
+	SceneActor _folliage7;
 	Action1 _action1;
 	Action2 _action2;
 	Action3 _action3;
@@ -614,9 +614,9 @@ public:
 	Action7 _action7;
 	Area1 _area1;
 	Area2 _area2;
-	Rect _rect1, _rect2, _rect3;
+	Rect _walkRect1, _walkRect2, _walkRect3;
 	SequenceManager _sequenceManager;
-	int _field412, _field414, _field416;
+	int _areaMode, _moveMode, _stripNumber;
 
 	Scene2750();
 	virtual void synchronize(Serializer &s);
