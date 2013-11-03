@@ -2394,7 +2394,7 @@ void Scene2455::signal() {
 }
 
 /*--------------------------------------------------------------------------
- * Scene 2500 - Spill Mountains: Large Cave
+ * Scene 2500 - Spill Mountains: Large Ledge
  *
  *--------------------------------------------------------------------------*/
 
@@ -2440,19 +2440,19 @@ void Scene2500::postInit(SceneObjectList *OwnerList) {
 	}
 
 	if (R2_GLOBALS._player._characterScene[R2_QUINN] == R2_GLOBALS._player._characterScene[R2_SEEKER]) {
-		_actor1.postInit();
+		_companion.postInit();
 		if (R2_GLOBALS._player._characterIndex == R2_QUINN) {
-			_actor1.setup(21, 3, 1);
-			_actor1.setDetails(9002, 1, -1, -1, 1, (SceneItem *)NULL);
+			_companion.setup(21, 3, 1);
+			_companion.setDetails(9002, 1, -1, -1, 1, (SceneItem *)NULL);
 		} else {
-			_actor1.setup(2008, 3, 1);
-			_actor1.changeZoom(50);
-			_actor1.setDetails(9001, 0, -1, -1, 1, (SceneItem *)NULL);
+			_companion.setup(2008, 3, 1);
+			_companion.changeZoom(50);
+			_companion.setDetails(9001, 0, -1, -1, 1, (SceneItem *)NULL);
 		}
-		_actor1.setPosition(Common::Point(141, 94));
+		_companion.setPosition(Common::Point(141, 94));
 	}
 
-	_item1.setDetails(Rect(0, 0, 320, 200), 2430, 0, -1, -1, 1, NULL);
+	_background.setDetails(Rect(0, 0, 320, 200), 2430, 0, -1, -1, 1, NULL);
 	R2_GLOBALS._player.disableControl();
 
 	if (R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] == 2000) {
@@ -2463,9 +2463,9 @@ void Scene2500::postInit(SceneObjectList *OwnerList) {
 		R2_GLOBALS._player.addMover(mover, &pt, this);
 	} else if (R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] == 3100) {
 		_sceneMode = 2500;
-		_actor2.postInit();
-		_actor3.postInit();
-		setAction(&_sequenceManager, this, 2500, &R2_GLOBALS._player, &_actor2, &_actor3, NULL);
+		_quinn.postInit();
+		_ship.postInit();
+		setAction(&_sequenceManager, this, 2500, &R2_GLOBALS._player, &_quinn, &_ship, NULL);
 	} else {
 		R2_GLOBALS._player.setPosition(Common::Point(160, 150));
 		R2_GLOBALS._player.setStrip(3);
@@ -2482,7 +2482,7 @@ void Scene2500::signal() {
 	case 20:
 		R2_GLOBALS._player.disableControl();
 		_sceneMode = 2501;
-		setAction(&_sequenceManager, this, 2501, &R2_GLOBALS._player, &_actor2, &_actor3, NULL);
+		setAction(&_sequenceManager, this, 2501, &R2_GLOBALS._player, &_quinn, &_ship, NULL);
 		break;
 	case 2500:
 		_sceneMode = 20;

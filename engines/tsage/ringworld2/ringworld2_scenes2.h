@@ -372,10 +372,10 @@ public:
 	SpeakerSeeker _seekerSpeaker;
 	SpeakerMiranda _mirandaSpeaker;
 	SpeakerWebbster2500 _webbsterSpeaker;
-	NamedHotspot _item1;
-	SceneActor _actor1;
-	SceneActor _actor2;
-	SceneActor _actor3;
+	NamedHotspot _background;
+	SceneActor _companion;
+	SceneActor _quinn;
+	SceneActor _ship;
 	Exit1 _exit1;
 	SequenceManager _sequenceManager;
 

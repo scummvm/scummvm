@@ -204,7 +204,7 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		// Spill Mountains: Inside crevasse
 		return new Scene2455();
 	case 2500:
-		// Spill Mountains: Large Cave
+		// Spill Mountains: Large Ledge
 		return new Scene2500();
 	case 2525:
 		// Spill Mountains: Furnace room
