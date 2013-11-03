@@ -375,15 +375,15 @@ public:
 
 class Scene3350 : public SceneExt {
 public:
-	SceneActor _actor1;
-	SceneActor _actor2;
-	SceneActor _actor3;
-	SceneActor _actor4;
-	SceneActor _actor5;
-	SceneActor _actor6;
-	SceneActor _actor7;
-	SceneActor _actor8;
-	SceneActor _actor9;
+	SceneActor _miranda;
+	SceneActor _seeker;
+	SceneActor _webbster;
+	SceneActor _seatedPeople;
+	SceneActor _ship;
+	SceneActor _landedShip;
+	SceneActor _shipShadow;
+	SceneActor _canopy;
+	SceneActor _shipFront;
 	SequenceManager _sequenceManager;
 	PaletteRotation *_rotation;
 

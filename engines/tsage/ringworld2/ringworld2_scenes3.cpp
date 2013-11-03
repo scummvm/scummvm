@@ -1681,27 +1681,27 @@ void Scene3350::postInit(SceneObjectList *OwnerList) {
 	R2_GLOBALS._player.hide();
 	R2_GLOBALS._player.disableControl();
 
-	_actor1.postInit();
-	_actor1.hide();
-	_actor2.postInit();
-	_actor2.hide();
-	_actor3.postInit();
-	_actor3.hide();
-	_actor4.postInit();
-	_actor4.hide();
-	_actor9.postInit();
-	_actor9.hide();
-	_actor8.postInit();
-	_actor8.hide();
-	_actor5.postInit();
-	_actor5.hide();
-	_actor6.postInit();
-	_actor6.hide();
-	_actor7.postInit();
-	_actor7.hide();
+	_miranda.postInit();
+	_miranda.hide();
+	_seeker.postInit();
+	_seeker.hide();
+	_webbster.postInit();
+	_webbster.hide();
+	_seatedPeople.postInit();
+	_seatedPeople.hide();
+	_shipFront.postInit();
+	_shipFront.hide();
+	_canopy.postInit();
+	_canopy.hide();
+	_ship.postInit();
+	_ship.hide();
+	_landedShip.postInit();
+	_landedShip.hide();
+	_shipShadow.postInit();
+	_shipShadow.hide();
 
 	_sceneMode = 3350;
-	setAction(&_sequenceManager, this, _sceneMode, &_actor5, &_actor6, &_actor7, NULL);
+	setAction(&_sequenceManager, this, _sceneMode, &_ship, &_landedShip, &_shipShadow, NULL);
 }
 
 void Scene3350::remove() {
@@ -1713,11 +1713,12 @@ void Scene3350::signal() {
 	switch (_sceneMode) {
 	case 3350:
 		_sceneMode = 3351;
-		setAction(&_sequenceManager, this, 3351, &_actor4, &_actor9, &_actor8, NULL);
+		setAction(&_sequenceManager, this, 3351, &_seatedPeople, &_shipFront, &_canopy, NULL);
 		break;
 	case 3351:
 		_sceneMode = 3352;
-		setAction(&_sequenceManager, this, 3352, &_actor4, &R2_GLOBALS._player, &_actor1, &_actor2, &_actor3, NULL);
+		setAction(&_sequenceManager, this, 3352, &_seeker, &R2_GLOBALS._player, 
+			&_miranda, &_seeker, &_webbster, NULL);
 		break;
 	case 3352:
 		R2_GLOBALS._sceneManager.changeScene(3395);
