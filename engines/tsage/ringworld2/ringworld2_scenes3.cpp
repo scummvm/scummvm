@@ -5317,7 +5317,7 @@ void Scene3800::postInit(SceneObjectList *OwnerList) {
 	_westExit.setDetails(Rect(0, 87, 14, 168), EXITCURSOR_W, 3800);
 	_westExit.setDest(Common::Point(7, 145));
 
-	_rect1.set(0, 0, 320, 87);
+	_skylineRect.set(0, 0, 320, 87);
 	_background.setDetails(Rect(0, 0, 320, 200), 3800, 0, 1, 2, 1, (SceneItem *) NULL);
 
 	enterArea();
@@ -5386,18 +5386,19 @@ void Scene3800::signal() {
 }
 
 void Scene3800::process(Event &event) {
-	if ((R2_GLOBALS._player._uiEnabled) && (event.eventType == EVENT_BUTTON_DOWN) && (_rect1.contains(event.mousePos))) {
+	if ((R2_GLOBALS._player._uiEnabled) && (event.eventType == EVENT_BUTTON_DOWN) 
+			&& (_skylineRect.contains(event.mousePos))) {
 		event.handled = true;
 		switch (R2_GLOBALS._events.getCursor()) {
-		case R2_NEGATOR_GUN:
+		case CURSOR_WALK:
 			R2_GLOBALS._player.addMover(NULL);
 			R2_GLOBALS._player.updateAngle(event.mousePos);
 			break;
-		case R2_STEPPING_DISKS:
-			SceneItem::display(3800, 5, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
-			break;
-		case R2_ATTRACTOR_UNIT:
+		case CURSOR_LOOK:
 			SceneItem::display(3800, 3, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
+			break;
+		case CURSOR_USE:
+			SceneItem::display(3800, 5, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
 			break;
 		default:
 			event.handled = false;
@@ -5512,13 +5513,13 @@ void Scene3900::postInit(SceneObjectList *OwnerList) {
 	R2_GLOBALS._player.changeZoom(-1);
 	R2_GLOBALS._player._moveDiff = Common::Point(3, 2);
 
-	_actor1.postInit();
-	_actor1.fixPriority(10);
-	_actor1.changeZoom(-1);
-	_actor1.setVisage(1110);
-	_actor1._effect = 5;
-	_actor1._field9C = _field312;
-	R2_GLOBALS._player._linkedActor = &_actor1;
+	_linkedQuinn.postInit();
+	_linkedQuinn.fixPriority(10);
+	_linkedQuinn.changeZoom(-1);
+	_linkedQuinn.setVisage(1110);
+	_linkedQuinn._effect = 5;
+	_linkedQuinn._field9C = _field312;
+	R2_GLOBALS._player._linkedActor = &_linkedQuinn;
 
 	if ((R2_GLOBALS._desertPreviousDirection == 2) && (R2_GLOBALS._sceneManager._previousScene != 2700)) {
 //		loadScene(3825);
@@ -5534,8 +5535,8 @@ void Scene3900::postInit(SceneObjectList *OwnerList) {
 
 		_westExit._enabled = false;
 
-		_exit5.setDetails(Rect(0, 87, 29, 168), EXITCURSOR_W, 3900);
-		_exit5.setDest(Common::Point(24, 135));
+		_westEnterForest.setDetails(Rect(0, 87, 29, 168), EXITCURSOR_W, 3900);
+		_westEnterForest.setDest(Common::Point(24, 135));
 	} else {
 //		loadScene(3820);
 		R2_GLOBALS._desertCorrectDirection = 2;
@@ -5550,12 +5551,12 @@ void Scene3900::postInit(SceneObjectList *OwnerList) {
 		_westExit._insideArea = false;
 		_westExit._moving = false;
 
-		_exit5.setDetails(Rect(290, 87, 320, 168), EXITCURSOR_E, 3900);
-		_exit5.setDest(Common::Point(295, 135));
+		_westEnterForest.setDetails(Rect(290, 87, 320, 168), EXITCURSOR_E, 3900);
+		_westEnterForest.setDest(Common::Point(295, 135));
 	}
-	_exit5._enabled = true;
-	_exit5._insideArea = false;
-	_exit5._moving = false;
+	_westEnterForest._enabled = true;
+	_westEnterForest._insideArea = false;
+	_westEnterForest._moving = false;
 
 	scalePalette(65, 65, 65);
 
@@ -5571,8 +5572,8 @@ void Scene3900::postInit(SceneObjectList *OwnerList) {
 
 	R2_GLOBALS._uiElements.draw();
 
-	_rect1.set(0, 0, 320, 87);
-	_item1.setDetails(Rect(0, 0, 320, 200), 3800, 0, 1, 2, 1, (SceneItem *)NULL);
+	_skylineRect.set(0, 0, 320, 87);
+	_background.setDetails(Rect(0, 0, 320, 200), 3800, 0, 1, 2, 1, (SceneItem *)NULL);
 	if (R2_GLOBALS._sceneManager._previousScene == 3800) {
 		_sceneMode = 11;
 		switch (R2_GLOBALS._desertPreviousDirection) {
@@ -5657,17 +5658,18 @@ void Scene3900::signal() {
 }
 
 void Scene3900::process(Event &event) {
-	if ((R2_GLOBALS._player._uiEnabled) && (event.eventType == EVENT_BUTTON_DOWN) && (_rect1.contains(event.mousePos))) {
+	if ((R2_GLOBALS._player._uiEnabled) && (event.eventType == EVENT_BUTTON_DOWN)
+			&& (_skylineRect.contains(event.mousePos))) {
 		event.handled = true;
 		switch (R2_GLOBALS._events.getCursor()) {
-		case R2_NEGATOR_GUN:
+		case CURSOR_WALK:
 			R2_GLOBALS._player.addMover(NULL);
 			R2_GLOBALS._player.updateAngle(event.mousePos);
 			break;
-		case R2_STEPPING_DISKS:
+		case CURSOR_USE:
 			SceneItem::display(3800, 5, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
 			break;
-		case R2_ATTRACTOR_UNIT:
+		case CURSOR_LOOK:
 			SceneItem::display(3800, 3, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
 			break;
 		default:

@@ -792,7 +792,7 @@ public:
 	EastExit _eastExit;
 	SouthExit _southExit;
 	WestExit _westExit;
-	Rect _rect1;
+	Rect _skylineRect;
 	SequenceManager _sequenceManager1;
 
 	int _desertDirection;
@@ -833,14 +833,14 @@ class Scene3900 : public SceneExt {
 		virtual void changeScene();
 	};
 public:
-	SceneActor _actor1;
-	NamedHotspot _item1;
+	SceneActor _linkedQuinn;
+	NamedHotspot _background;
 	NorthExit _northExit;
 	EastExit _eastExit;
 	SouthExit _southExit;
 	WestExit _westExit;
-	Exit5 _exit5;
-	Rect _rect1;
+	Exit5 _westEnterForest;
+	Rect _skylineRect;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void signal();
