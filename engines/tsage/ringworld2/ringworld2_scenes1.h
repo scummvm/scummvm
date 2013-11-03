@@ -1025,30 +1025,30 @@ class Scene1925 : public SceneExt {
 	public:
 		virtual void changeScene();
 	};
-	class Exit2 : public SceneExit {
+	class ExitDown : public SceneExit {
 	public:
 		virtual void changeScene();
 	};
-	class Exit3 : public SceneExit {
+	class WestExit : public SceneExit {
 	public:
 		virtual void changeScene();
 	};
-	class Exit4 : public SceneExit {
+	class EastExit : public SceneExit {
 	public:
 		virtual void changeScene();
 	};
 public:
-	NamedHotspot _item1;
+	NamedHotspot _background;
 	Button _button;
 	Ladder _ladder;
-	SceneActor _actor1;
+	SceneActor _door;
 	ExitUp _exitUp;
-	Exit2 _exit2;
-	Exit3 _exit3;
-	Exit4 _exit4;
+	ExitDown _exitDown;
+	WestExit _westExit;
+	EastExit _eastExit;
 	SequenceManager _sequenceManager;
 
-	int _field9B8;
+	int _newSceneMode;
 	int _levelResNum[5];
 
 	Scene1925();

@@ -12985,7 +12985,7 @@ void Scene1900::signal() {
  *--------------------------------------------------------------------------*/
 
 Scene1925::Scene1925() {
-	_field9B8 = 0;
+	_newSceneMode = 0;
 	for (int i = 0; i < 5; i++)
 		_levelResNum[i] = 0;
 }
@@ -12993,7 +12993,7 @@ Scene1925::Scene1925() {
 void Scene1925::synchronize(Serializer &s) {
 	SceneExt::synchronize(s);
 
-	s.syncAsSint16LE(_field9B8);
+	s.syncAsSint16LE(_newSceneMode);
 	for (int i = 0; i < 5; i++)
 		s.syncAsSint16LE(_levelResNum[i]);
 }
@@ -13015,7 +13015,8 @@ bool Scene1925::Button::startAction(CursorType action, Event &event) {
 		scene->_sceneMode = 1930;
 
 	R2_GLOBALS._player.disableControl(CURSOR_WALK);
-	scene->setAction(&scene->_sequenceManager, scene, scene->_sceneMode, &R2_GLOBALS._player, &scene->_actor1, NULL);
+	scene->setAction(&scene->_sequenceManager, scene, scene->_sceneMode, &R2_GLOBALS._player, 
+		&scene->_door, NULL);
 	return true;
 }
 
@@ -13029,9 +13030,10 @@ bool Scene1925::Ladder::startAction(CursorType action, Event &event) {
 	scene->_sceneMode = 0;
 
 	if ((R2_GLOBALS._player._position.x == 110) && (R2_GLOBALS._player._position.y == 100)) {
-		scene->_exit3._enabled = false;
+		scene->_westExit._enabled = false;
 		scene->_sceneMode = 1925;
-		scene->setAction(&scene->_sequenceManager, scene, scene->_sceneMode, &R2_GLOBALS._player, &scene->_actor1, NULL);
+		scene->setAction(&scene->_sequenceManager, scene, scene->_sceneMode, 
+			&R2_GLOBALS._player, &scene->_door, NULL);
 		return true;
 	}
 
@@ -13066,10 +13068,11 @@ void Scene1925::ExitUp::changeScene() {
 	scene->_sceneMode = 0;
 
 	if ((R2_GLOBALS._player._position.x == 110) && (R2_GLOBALS._player._position.y == 100)) {
-		scene->_exit3._enabled = false;
-		scene->_field9B8 = 1927;
+		scene->_westExit._enabled = false;
+		scene->_newSceneMode = 1927;
 		scene->_sceneMode = 1925;
-		scene->setAction(&scene->_sequenceManager, scene, scene->_sceneMode, &R2_GLOBALS._player, &scene->_actor1, NULL);
+		scene->setAction(&scene->_sequenceManager, scene, scene->_sceneMode, 
+			&R2_GLOBALS._player, &scene->_door, NULL);
 		return;
 	}
 
@@ -13088,7 +13091,7 @@ void Scene1925::ExitUp::changeScene() {
 	}
 }
 
-void Scene1925::Exit2::changeScene() {
+void Scene1925::ExitDown::changeScene() {
 	Scene1925 *scene = (Scene1925 *)R2_GLOBALS._sceneManager._scene;
 
 	_moving = false;
@@ -13096,10 +13099,11 @@ void Scene1925::Exit2::changeScene() {
 	scene->_sceneMode = 0;
 
 	if ((R2_GLOBALS._player._position.x == 110) && (R2_GLOBALS._player._position.y == 100)) {
-		scene->_exit3._enabled = false;
-		scene->_field9B8 = 1926;
+		scene->_westExit._enabled = false;
+		scene->_newSceneMode = 1926;
 		scene->_sceneMode = 1925;
-		scene->setAction(&scene->_sequenceManager, scene, scene->_sceneMode, &R2_GLOBALS._player, &scene->_actor1, NULL);
+		scene->setAction(&scene->_sequenceManager, scene, scene->_sceneMode, 
+			&R2_GLOBALS._player, &scene->_door, NULL);
 		return;
 	}
 
@@ -13117,7 +13121,7 @@ void Scene1925::Exit2::changeScene() {
 		scene->setAction(&scene->_sequenceManager, scene, scene->_sceneMode, &R2_GLOBALS._player, NULL);
 }
 
-void Scene1925::Exit3::changeScene() {
+void Scene1925::WestExit::changeScene() {
 	Scene1925 *scene = (Scene1925 *)R2_GLOBALS._sceneManager._scene;
 
 	_moving = false;
@@ -13126,7 +13130,7 @@ void Scene1925::Exit3::changeScene() {
 	scene->setAction(&scene->_sequenceManager, scene, scene->_sceneMode, &R2_GLOBALS._player, NULL);
 }
 
-void Scene1925::Exit4::changeScene() {
+void Scene1925::EastExit::changeScene() {
 	Scene1925 *scene = (Scene1925 *)R2_GLOBALS._sceneManager._scene;
 
 	_moving = false;
@@ -13157,8 +13161,8 @@ void Scene1925::changeLevel(bool upFlag) {
 	case 3:
 		loadScene(_levelResNum[4]);
 		_button.setDetails(Rect(133, 68, 140, 77), 1925, 3, -1, 5, 2, NULL);
-		_actor1.setDetails(1925, 0, 1, 2, 2, (SceneItem *) NULL);
-		_actor1.show();
+		_door.setDetails(1925, 0, 1, 2, 2, (SceneItem *) NULL);
+		_door.show();
 		break;
 	case 512:
 		R2_GLOBALS._scene1925CurrLevel = 508;
@@ -13166,8 +13170,8 @@ void Scene1925::changeLevel(bool upFlag) {
 	default:
 		loadScene(_levelResNum[(R2_GLOBALS._scene1925CurrLevel % 4)]);
 		R2_GLOBALS._sceneItems.remove(&_button);
-		R2_GLOBALS._sceneItems.remove(&_actor1);
-		_actor1.hide();
+		R2_GLOBALS._sceneItems.remove(&_door);
+		_door.hide();
 		break;
 	}
 
@@ -13197,32 +13201,33 @@ void Scene1925::postInit(SceneObjectList *OwnerList) {
 	R2_GLOBALS._player.disableControl();
 	R2_GLOBALS._player._characterScene[R2_SEEKER] = 1925;
 	R2_GLOBALS._player._characterIndex = R2_SEEKER;
+
 	switch (R2_GLOBALS._scene1925CurrLevel) {
 	case -2:
-		_exit4.setDetails(Rect(203, 44, 247, 111), EXITCURSOR_E, 1925);
+		_eastExit.setDetails(Rect(203, 44, 247, 111), EXITCURSOR_E, 1925);
 		_ladder.setDetails(Rect(31, 3, 45, 167), 1925, 6, -1, 8, 1, NULL);
 		break;
 	case 3:
-		_actor1.setDetails(1925, 0, 1, 2, 1, (SceneItem *) NULL);
+		_door.setDetails(1925, 0, 1, 2, 1, (SceneItem *) NULL);
 		_button.setDetails(Rect(133, 68, 140, 77), 1925, 3, -1, 5, 1, NULL);
 	// No break on purpose
 	case -3:
-		_exit3.setDetails(Rect(83, 38, 128, 101), EXITCURSOR_W, 1925);
+		_westExit.setDetails(Rect(83, 38, 128, 101), EXITCURSOR_W, 1925);
 	// No break on purpose
 	default:
 		_exitUp.setDetails(Rect(128, 0, 186, 10), EXITCURSOR_N, 1925);
-		_exit2.setDetails(Rect(128, 160, 190, 167), EXITCURSOR_S, 1925);
+		_exitDown.setDetails(Rect(128, 160, 190, 167), EXITCURSOR_S, 1925);
 		_ladder.setDetails(Rect(141, 11, 167, 159),	1925, 6, -1, -1, 1, NULL);
 		break;
 	}
 
-	_actor1.postInit();
-	_actor1.setup(1925, 5, 1);
-	_actor1.setPosition(Common::Point(128, 35));
-	_actor1.hide();
+	_door.postInit();
+	_door.setup(1925, 5, 1);
+	_door.setPosition(Common::Point(128, 35));
+	_door.hide();
 
 	if (R2_GLOBALS._scene1925CurrLevel == 3)
-		_actor1.show();
+		_door.show();
 
 	R2_GLOBALS._player.enableControl(CURSOR_USE);
 	switch (R2_GLOBALS._scene1925CurrLevel) {
@@ -13232,7 +13237,7 @@ void Scene1925::postInit(SceneObjectList *OwnerList) {
 		R2_GLOBALS._player.setPosition(Common::Point(224, 109));
 		break;
 	case -3:
-		_actor1.hide();
+		_door.hide();
 		R2_GLOBALS._player.setup(20, 5, 1);
 		R2_GLOBALS._player.setPosition(Common::Point(110, 100));
 		break;
@@ -13247,9 +13252,9 @@ void Scene1925::postInit(SceneObjectList *OwnerList) {
 	}
 
 	R2_GLOBALS._player._canWalk = false;
-	_field9B8 = 0;
+	_newSceneMode = 0;
 	R2_GLOBALS._sceneManager._previousScene = 1925;
-	_item1.setDetails(Rect(27, 0, 292, 200), 1925, 9, -1, -1, 1, NULL);
+	_background.setDetails(Rect(27, 0, 292, 200), 1925, 9, -1, -1, 1, NULL);
 }
 
 void Scene1925::remove() {
@@ -13285,10 +13290,10 @@ void Scene1925::signal() {
 		changeLevel(true);
 		break;
 	case 1925:
-		_exit3._enabled = false;
-		if (_field9B8 != 0) {
-			_sceneMode = _field9B8;
-			_field9B8 = 0;
+		_westExit._enabled = false;
+		if (_newSceneMode != 0) {
+			_sceneMode = _newSceneMode;
+			_newSceneMode = 0;
 			setAction(&_sequenceManager, this, _sceneMode, &R2_GLOBALS._player, NULL);
 		}
 	// No break on purpose
