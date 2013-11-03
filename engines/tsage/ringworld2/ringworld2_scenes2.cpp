@@ -3026,7 +3026,7 @@ void Scene2600::signal() {
  *--------------------------------------------------------------------------*/
 
 Scene2700::Scene2700(): SceneExt() {
-	_field412 = _field414 = _field416 = 0;
+	_areaMode = _moveMode = _stripNumber = 0;
 
 	_walkRect1.set(70, 122, 90, 132);
 	_walkRect2.set(150, 122, 160, 132);
@@ -3039,9 +3039,9 @@ Scene2700::Scene2700(): SceneExt() {
 void Scene2700::synchronize(Serializer &s) {
 	SceneExt::synchronize(s);
 
-	s.syncAsSint16LE(_field412);
-	s.syncAsSint16LE(_field414);
-	s.syncAsSint16LE(_field416);
+	s.syncAsSint16LE(_areaMode);
+	s.syncAsSint16LE(_moveMode);
+	s.syncAsSint16LE(_stripNumber);
 }
 
 void Scene2700::Action1::signal() {
@@ -3078,8 +3078,8 @@ void Scene2700::Area1::process(Event &event) {
 		Scene2700 *scene = (Scene2700 *)R2_GLOBALS._sceneManager._scene;
 		R2_GLOBALS._player.disableControl();
 		scene->_sceneMode = 10;
-		scene->_field414 = 2703;
-		switch (scene->_field412) {
+		scene->_moveMode = 2703;
+		switch (scene->_areaMode) {
 		case 0:
 		// No break on purpose
 		case 6:
@@ -3128,8 +3128,8 @@ void Scene2700::Area2::process(Event &event) {
 		Scene2700 *scene = (Scene2700 *)R2_GLOBALS._sceneManager._scene;
 		R2_GLOBALS._player.disableControl();
 		scene->_sceneMode = 10;
-		scene->_field414 = 2704;
-		switch (scene->_field412) {
+		scene->_moveMode = 2704;
+		switch (scene->_areaMode) {
 		case 0:	{
 			Common::Point pt(140, 162);
 			NpcMover *mover = new NpcMover();
@@ -3228,10 +3228,10 @@ void Scene2700::postInit(SceneObjectList *OwnerList) {
 
 	if (R2_GLOBALS._sceneManager._previousScene == 2750) {
 		_sceneMode = 2702;
-		_field412 = 5;
+		_areaMode = 5;
 		setAction(&_sequenceManager, this, 2702, &R2_GLOBALS._player, NULL);
 	} else {
-		_field412 = 0;
+		_areaMode = 0;
 		if (R2_GLOBALS._sceneManager._previousScene == 3900) {
 			_sceneMode = 2701;
 			setAction(&_sequenceManager, this, 2701, &R2_GLOBALS._player, NULL);
@@ -3246,26 +3246,26 @@ void Scene2700::postInit(SceneObjectList *OwnerList) {
 void Scene2700::signal() {
 	switch (_sceneMode) {
 	case 10:
-		switch (_field414) {
+		switch (_moveMode) {
 		case 1:
-			switch (_field412) {
+			switch (_areaMode) {
 			case 0:
 			case 2:
 			case 4:
 			case 6:
-				_field412 = 3;
+				_areaMode = 3;
 				R2_GLOBALS._player.setAction(&_sequenceManager, this, 2705, &R2_GLOBALS._player, NULL);
 				break;
 			case 3: {
-				_sceneMode = _field414;
-				_field412 = 1;
+				_sceneMode = _moveMode;
+				_areaMode = 1;
 				Common::Point pt(80, 127);
 				NpcMover *mover = new NpcMover();
 				R2_GLOBALS._player.addMover(mover, &pt, this);
 				break;
 				}
 			case 5:
-				_field412 = 4;
+				_areaMode = 4;
 				R2_GLOBALS._player.setAction(&_sequenceManager, this, 2708, &R2_GLOBALS._player, NULL);
 				break;
 			default: // includes case 1
@@ -3273,24 +3273,24 @@ void Scene2700::signal() {
 			}
 			break;
 		case 2:
-			switch (_field412) {
+			switch (_areaMode) {
 			case 0:
 			case 1:
 			case 6:
-				_field412 = 3;
+				_areaMode = 3;
 				R2_GLOBALS._player.setAction(&_sequenceManager, this, 2706, &R2_GLOBALS._player, NULL);
 				break;
 			case 3:
 			case 4: {
-				_sceneMode = _field414;
-				_field412 = 2;
+				_sceneMode = _moveMode;
+				_areaMode = 2;
 				Common::Point pt(155, 127);
 				NpcMover *mover = new NpcMover();
 				R2_GLOBALS._player.addMover(mover, &pt, this);
 				break;
 				}
 			case 5:
-				_field412 = 4;
+				_areaMode = 4;
 				R2_GLOBALS._player.setAction(&_sequenceManager, this, 2708, &R2_GLOBALS._player, NULL);
 				break;
 			default: // includes case 2
@@ -3298,21 +3298,21 @@ void Scene2700::signal() {
 			}
 			break;
 		case 3:
-			switch (_field412) {
+			switch (_areaMode) {
 			case 0:
 			case 1:
 			case 2:
 			case 4:
 			case 6: {
-				_sceneMode = _field414;
-				_field412 = 3;
+				_sceneMode = _moveMode;
+				_areaMode = 3;
 				Common::Point pt(115, 152);
 				NpcMover *mover = new NpcMover();
 				R2_GLOBALS._player.addMover(mover, &pt, this);
 				break;
 				}
 			case 5:
-				_field412 = 4;
+				_areaMode = 4;
 				R2_GLOBALS._player.setAction(&_sequenceManager, this, 2708, &R2_GLOBALS._player, NULL);
 				break;
 			default: // includes case 3
@@ -3320,21 +3320,21 @@ void Scene2700::signal() {
 			}
 			break;
 		case 4:
-			switch (_field412) {
+			switch (_areaMode) {
 			case 0:
 			case 1:
 			case 6:
-				_field412 = 3;
+				_areaMode = 3;
 				R2_GLOBALS._player.setAction(&_sequenceManager, this, 2706, &R2_GLOBALS._player, NULL);
 				break;
 			case 2:
 			case 3:
-				_field412 = 4;
+				_areaMode = 4;
 				R2_GLOBALS._player.setAction(&_sequenceManager, this, 2709, &R2_GLOBALS._player, NULL);
 				break;
 			case 4:
 			case 5:
-				_sceneMode = _field414;
+				_sceneMode = _moveMode;
 				R2_GLOBALS._player.setAction(&_sequenceManager, this, 2704, &R2_GLOBALS._player, NULL);
 				break;
 			default:
@@ -3342,21 +3342,21 @@ void Scene2700::signal() {
 			}
 			break;
 		case 5:
-			switch (_field412) {
+			switch (_areaMode) {
 			case 0:
 			case 1:
 			case 6:
-				_field412 = 3;
+				_areaMode = 3;
 				R2_GLOBALS._player.setAction(&_sequenceManager, this, 2706, &R2_GLOBALS._player, NULL);
 				break;
 			case 2:
 			case 3:
-				_field412 = 4;
+				_areaMode = 4;
 				R2_GLOBALS._player.setAction(&_sequenceManager, this, 2709, &R2_GLOBALS._player, NULL);
 				break;
 			case 4: {
-				_sceneMode = _field414;
-				_field412 = 5;
+				_sceneMode = _moveMode;
+				_areaMode = 5;
 				Common::Point pt(285, 132);
 				NpcMover *mover = new NpcMover();
 				R2_GLOBALS._player.addMover(mover, &pt, this);
@@ -3367,11 +3367,11 @@ void Scene2700::signal() {
 			}
 			break;
 		case 6:
-			switch (_field412) {
+			switch (_areaMode) {
 			case 0:
 			case 3: {
-				_sceneMode = _field414;
-				_field412 = 6;
+				_sceneMode = _moveMode;
+				_areaMode = 6;
 				Common::Point pt(250, 162);
 				NpcMover *mover = new NpcMover();
 				R2_GLOBALS._player.addMover(mover, &pt, this);
@@ -3380,11 +3380,11 @@ void Scene2700::signal() {
 			case 1:
 			case 2:
 			case 4:
-				_field412 = 3;
+				_areaMode = 3;
 				R2_GLOBALS._player.setAction(&_sequenceManager, this, 2707, &R2_GLOBALS._player, NULL);
 				break;
 			case 5:
-				_field412 = 4;
+				_areaMode = 4;
 				R2_GLOBALS._player.setAction(&_sequenceManager, this, 2708, &R2_GLOBALS._player, NULL);
 				break;
 			default:
@@ -3392,21 +3392,21 @@ void Scene2700::signal() {
 			}
 			break;
 		case 2703:
-			switch (_field412) {
+			switch (_areaMode) {
 			case 0:
 			case 3:
 			case 6:
-				_sceneMode = _field414;
+				_sceneMode = _moveMode;
 				setAction(&_sequenceManager, this, 2703, &R2_GLOBALS._player, NULL);
 				break;
 			case 1:
 			case 2:
 			case 4:
-				_field412 = 3;
+				_areaMode = 3;
 				R2_GLOBALS._player.setAction(&_sequenceManager, this, 2707, &R2_GLOBALS._player, NULL);
 				break;
 			case 5:
-				_field412 = 4;
+				_areaMode = 4;
 				R2_GLOBALS._player.setAction(&_sequenceManager, this, 2708, &R2_GLOBALS._player, NULL);
 				break;
 			default:
@@ -3414,21 +3414,21 @@ void Scene2700::signal() {
 			}
 			break;
 		case 2704:
-			switch (_field412) {
+			switch (_areaMode) {
 			case 0:
 			case 1:
 			case 6:
-				_field412 = 3;
+				_areaMode = 3;
 				R2_GLOBALS._player.setAction(&_sequenceManager, this, 2706, &R2_GLOBALS._player, NULL);
 				break;
 			case 2:
 			case 3:
-				_field412 = 4;
+				_areaMode = 4;
 				R2_GLOBALS._player.setAction(&_sequenceManager, this, 2709, &R2_GLOBALS._player, NULL);
 				break;
 			case 4:
 			case 5:
-				_sceneMode = _field414;
+				_sceneMode = _moveMode;
 				R2_GLOBALS._player.setAction(&_sequenceManager, this, 2704, &R2_GLOBALS._player, NULL);
 				break;
 			default:
@@ -3436,23 +3436,23 @@ void Scene2700::signal() {
 			}
 			break;
 		case 2710:
-			switch (_field412) {
+			switch (_areaMode) {
 			case 0:
 			case 1:
 			case 3:
-				_field412 = 3;
+				_areaMode = 3;
 				R2_GLOBALS._player.setAction(&_sequenceManager, this, 2707, &R2_GLOBALS._player, NULL);
 				break;
 			case 2:
 			case 5: {
-				_sceneMode = _field414;
+				_sceneMode = _moveMode;
 				Common::Point pt(164, 160);
 				NpcMover *mover = new NpcMover();
 				R2_GLOBALS._player.addMover(mover, &pt, this);
 				break;
 				}
 			case 4:
-				_field412 = 4;
+				_areaMode = 4;
 				R2_GLOBALS._player.setAction(&_sequenceManager, this, 2708, &R2_GLOBALS._player, NULL);
 				break;
 			default:
@@ -3466,7 +3466,7 @@ void Scene2700::signal() {
 	case 11:
 		R2_INVENTORY.setObjectScene(R2_FLUTE, 0);
 		R2_GLOBALS._player.disableControl();
-		_field412 = 0;
+		_areaMode = 0;
 		_sceneMode = 2700;
 		setAction(&_sequenceManager, this, 2700, &_nej, NULL);
 		break;
@@ -3474,22 +3474,22 @@ void Scene2700::signal() {
 		R2_GLOBALS._sound1.play(234);
 		R2_GLOBALS._events.setCursor(CURSOR_WALK);
 		_sceneMode = 2711;
-		_stripManager.start(_field416, this);
+		_stripManager.start(_stripNumber, this);
 		break;
 	case 13:
 		R2_GLOBALS._events.setCursor(CURSOR_WALK);
 		_sceneMode = 2712;
-		_stripManager.start(_field416, this);
+		_stripManager.start(_stripNumber, this);
 		break;
 	case 14:
 		R2_GLOBALS._events.setCursor(CURSOR_WALK);
 		_sceneMode = 2713;
-		_stripManager.start(_field416, this);
+		_stripManager.start(_stripNumber, this);
 		break;
 	case 15:
 		R2_GLOBALS._events.setCursor(CURSOR_WALK);
 		_sceneMode = 11;
-		_stripManager.start(_field416, this);
+		_stripManager.start(_stripNumber, this);
 		break;
 	case 2700:
 		_nej.remove();
@@ -3503,26 +3503,26 @@ void Scene2700::signal() {
 		break;
 	case 2710:
 		// Start of Nej assault
-		_field416 = 1200;
+		_stripNumber = 1200;
 		_sceneMode = 12;
 		_nej.postInit();
 		setAction(&_sequenceManager, this, 2710, &R2_GLOBALS._player, &_nej, NULL);
 		break;
 	case 2711:
 		R2_GLOBALS._player.disableControl();
-		_field416 = 1201;
+		_stripNumber = 1201;
 		_sceneMode = 13;
 		setAction(&_sequenceManager, this, 2711, &R2_GLOBALS._player, &_nej, NULL);
 		break;
 	case 2712:
 		R2_GLOBALS._player.disableControl();
-		_field416 = 1202;
+		_stripNumber = 1202;
 		_sceneMode = 14;
 		setAction(&_sequenceManager, this, 2712, &R2_GLOBALS._player, &_nej, NULL);
 		break;
 	case 2713:
 		R2_GLOBALS._player.disableControl();
-		_field416 = 1203;
+		_stripNumber = 1203;
 		_sceneMode = 15;
 		setAction(&_sequenceManager, this, 2713, &R2_GLOBALS._player, &_nej, NULL);
 		break;
@@ -3536,11 +3536,11 @@ void Scene2700::process(Event &event) {
 		if (R2_GLOBALS._events.getCursor() == R2_FLUTE) {
 			if (R2_GLOBALS._player._bounds.contains(event.mousePos)) {
 				_sceneMode = 10;
-				_field414 = 2710;
+				_moveMode = 2710;
 				R2_GLOBALS._player.disableControl();
 				R2_GLOBALS._events.setCursor(CURSOR_WALK);
 
-				switch (_field412) {
+				switch (_areaMode) {
 				case 0: {
 					_sceneMode = 2710;
 					Common::Point pt(164, 160);
@@ -3597,37 +3597,37 @@ void Scene2700::process(Event &event) {
 				if (!_walkRect1.contains(R2_GLOBALS._player._position)) {
 					event.handled = true;
 					_sceneMode = 10;
-					_field414 = 1;
+					_moveMode = 1;
 				}
 			} else if (_walkRect2.contains(event.mousePos)) {
 				if (!_walkRect2.contains(R2_GLOBALS._player._position)) {
 					event.handled = true;
 					_sceneMode = 10;
-					_field414 = 2;
+					_moveMode = 2;
 				}
 			} else if (_walkRect3.contains(event.mousePos)) {
 				if (!_walkRect3.contains(R2_GLOBALS._player._position)) {
 					event.handled = true;
 					_sceneMode = 10;
-					_field414 = 3;
+					_moveMode = 3;
 				}
 			} else if (_walkRect4.contains(event.mousePos)) {
 				if (!_walkRect4.contains(R2_GLOBALS._player._position)) {
 					event.handled = true;
 					_sceneMode = 10;
-					_field414 = 4;
+					_moveMode = 4;
 				}
 			} else if (_walkRect5.contains(event.mousePos)) {
 				if (!_walkRect5.contains(R2_GLOBALS._player._position)) {
 					event.handled = true;
 					_sceneMode = 10;
-					_field414 = 5;
+					_moveMode = 5;
 				}
 			} else if (_walkRect6.contains(event.mousePos)) {
 				if (!_walkRect6.contains(R2_GLOBALS._player._position)) {
 					event.handled = true;
 					_sceneMode = 10;
-					_field414 = 6;
+					_moveMode = 6;
 				}
 			} else {
 				event.handled = true;
@@ -3635,9 +3635,9 @@ void Scene2700::process(Event &event) {
 			}
 			if (_sceneMode == 10) {
 				R2_GLOBALS._player.disableControl();
-				switch (_field412) {
+				switch (_areaMode) {
 				case 0:
-					if (_field414 >= 6) {
+					if (_moveMode >= 6) {
 						Common::Point pt(205, 162);
 						NpcMover *mover = new NpcMover();
 						R2_GLOBALS._player.addMover(mover, &pt, this);
@@ -3660,11 +3660,11 @@ void Scene2700::process(Event &event) {
 					break;
 					}
 				case 3:
-					if (_field414 == 1) {
+					if (_moveMode == 1) {
 						Common::Point pt(80, 137);
 						NpcMover *mover = new NpcMover();
 						R2_GLOBALS._player.addMover(mover, &pt, this);
-					} else if (_field414 == 6) {
+					} else if (_moveMode == 6) {
 						Common::Point pt(140, 162);
 						NpcMover *mover = new NpcMover();
 						R2_GLOBALS._player.addMover(mover, &pt, this);
@@ -3675,7 +3675,7 @@ void Scene2700::process(Event &event) {
 					}
 					break;
 				case 4:
-					if (_field414 == 5) {
+					if (_moveMode == 5) {
 						Common::Point pt(235, 132);
 						NpcMover *mover = new NpcMover();
 						R2_GLOBALS._player.addMover(mover, &pt, this);

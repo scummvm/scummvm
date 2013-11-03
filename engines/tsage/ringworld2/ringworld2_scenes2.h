@@ -539,7 +539,7 @@ public:
 	Rect _walkRect1, _walkRect2, _walkRect3;
 	Rect _walkRect4, _walkRect5, _walkRect6;
 	SequenceManager _sequenceManager;
-	int _field412, _field414, _field416;
+	int _areaMode, _moveMode, _stripNumber;
 
 	Scene2700();
 	virtual void synchronize(Serializer &s);
