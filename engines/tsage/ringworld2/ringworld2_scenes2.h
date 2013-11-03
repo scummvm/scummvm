@@ -709,10 +709,6 @@ class Scene2900 : public SceneExt {
 		void drawBlock(const byte *data, int xp, int yp, const Rect &r1, const Rect &r2);
 	public:
 		int _mapWidth, _mapHeight;
-		int _field4;
-		int _field6;
-		int _field8;
-		int _fieldA;
 		int _resNum;
 		int _xV, _yV;
 		Rect _bounds;
@@ -740,18 +736,18 @@ public:
 	Map _map;
 	SceneText _skipText;
 
-	int _field412;
+	bool _controlsActiveChanging;
 	bool _altitudeChanging;
-	bool _field416;
-	int _field41C;
+	bool _majorMinorFlag;
+	int _altitudeMinorChange;
 	int _altitudeMajorChange;
 	Common::Point _balloonLocation;
 	Common::Point _balloonScreenPos;
 	int _newAltitude;
-	int _field425;
-	int _field426;
-	int _field427;
-	bool _field8F8;
+	int _xAmount;
+	int _xComparison;
+	int _fadeCounter;
+	bool _paletteReloadNeeded;
 
 	Scene2900();
 	virtual void synchronize(Serializer &s);

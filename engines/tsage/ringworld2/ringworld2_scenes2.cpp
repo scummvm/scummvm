@@ -4617,8 +4617,8 @@ bool Scene2900::KnobLeft::startAction(CursorType action, Event &event) {
 
 	switch (action) {
 	case CURSOR_USE:
-		if (scene->_field416 || scene->_altitudeChanging || 
-				scene->_field425 != scene->_field426) {
+		if (scene->_majorMinorFlag || scene->_altitudeChanging || 
+				scene->_xAmount != scene->_xComparison) {
 			// Let your altitude stablize first
 			SceneItem::display2(2900, 17);
 		} else if (R2_GLOBALS._balloonAltitude / 48 == 0) {
@@ -4629,7 +4629,7 @@ bool Scene2900::KnobLeft::startAction(CursorType action, Event &event) {
 			R2_GLOBALS._sound2.fadeSound(282);
 			scene->_altitudeChanging = true;
 			scene->_altitudeMajorChange = -1;
-			scene->_field426 = 100 - ((R2_GLOBALS._balloonAltitude / 48) - 1) * 25;
+			scene->_xComparison = 100 - ((R2_GLOBALS._balloonAltitude / 48) - 1) * 25;
 		}
 		break;
 
@@ -4654,8 +4654,8 @@ bool Scene2900::KnobRight::startAction(CursorType action, Event &event) {
 
 	switch (action) {
 	case CURSOR_USE:
-		if (scene->_field416 || scene->_altitudeChanging || 
-				scene->_field425 != scene->_field426) {
+		if (scene->_majorMinorFlag || scene->_altitudeChanging || 
+				scene->_xAmount != scene->_xComparison) {
 			// Let your altitude stablize first
 			SceneItem::display2(2900, 17);
 		} else if (R2_GLOBALS._balloonAltitude / 48 >= 3) {
@@ -4666,7 +4666,7 @@ bool Scene2900::KnobRight::startAction(CursorType action, Event &event) {
 			R2_GLOBALS._sound2.fadeSound(212);
 			scene->_altitudeChanging = true;
 			scene->_altitudeMajorChange = 1;
-			scene->_field426 = 100 - ((R2_GLOBALS._balloonAltitude / 48) + 1) * 25;
+			scene->_xComparison = 100 - ((R2_GLOBALS._balloonAltitude / 48) + 1) * 25;
 		}
 		break;
 
@@ -4704,22 +4704,22 @@ void Scene2900::Action1::signal() {
 	Scene2900 *scene = (Scene2900 *)R2_GLOBALS._sceneManager._scene;
 	setDelay(3);
 
-	if (!scene->_field416 && !scene->_altitudeChanging) {
-		scene->_field427 = 2;
-		scene->_field412 = 0;
-	} else if (scene->_field416) {
+	if (!scene->_majorMinorFlag && !scene->_altitudeChanging) {
+		scene->_fadeCounter = 2;
+		scene->_controlsActiveChanging = false;
+	} else if (scene->_majorMinorFlag) {
 		R2_GLOBALS._sound2.fadeOut2(NULL);
-	} else if (scene->_field427 == 0) {
+	} else if (scene->_fadeCounter == 0) {
 		R2_GLOBALS._sound2.fadeOut2(NULL);
-	} else if (scene->_field412 == 0) {
+	} else if (!scene->_controlsActiveChanging) {
 		scene->_knobLeftContent.hide();
 		scene->_knobRightContent.hide();
-		scene->_field412 = 1;
+		scene->_controlsActiveChanging = true;
 	} else {
-		--scene->_field427;
+		--scene->_fadeCounter;
 		scene->_knobLeftContent.show();
 		scene->_knobRightContent.show();
-		scene->_field412 = 0;
+		scene->_controlsActiveChanging = false;
 	}
 }
 
@@ -4727,10 +4727,6 @@ void Scene2900::Action1::signal() {
 
 Scene2900::Map::Map() {
 	_mapWidth = _mapHeight = 0;
-	_field4 = 0;
-	_field6 = 0;
-	_field8 = 0;
-	_fieldA = 0;
 	_resNum = 0;
 	_xV = _yV = 0;
 	_bounds = Rect(40, 0, 280, 150);
@@ -4936,37 +4932,37 @@ void Scene2900::Map::moveLine(int xpSrc, int ypSrc, int xpDest, int ypDest, int 
 /*------------------------------------------------------------------------*/
 
 Scene2900::Scene2900(): SceneExt() {
-	_field412 = 0;
+	_controlsActiveChanging = false;
 	_altitudeChanging = false;
-	_field416 = false;
+	_majorMinorFlag = false;
 	_balloonLocation = Common::Point(550, 550);
-	_field41C = 0;
+	_altitudeMinorChange = 0;
 	_altitudeMajorChange = 0;
 	_balloonScreenPos = Common::Point(160, 100);
 	_newAltitude = 0;
-	_field425 = 100;
-	_field426 = 100;
-	_field427 = 0;
-	_field8F8 = false;
+	_xAmount = 100;
+	_xComparison = 100;
+	_fadeCounter = 0;
+	_paletteReloadNeeded = false;
 }
 
 void Scene2900::synchronize(Serializer &s) {
 	SceneExt::synchronize(s);
 
-	s.syncAsSint16LE(_field412);
+	s.syncAsSint16LE(_controlsActiveChanging);
 	s.syncAsSint16LE(_altitudeChanging);
-	s.syncAsSint16LE(_field416);
-	s.syncAsSint16LE(_field41C);
+	s.syncAsSint16LE(_majorMinorFlag);
+	s.syncAsSint16LE(_altitudeMinorChange);
 	s.syncAsSint16LE(_altitudeMajorChange);
 	s.syncAsSint16LE(_balloonLocation.x);
 	s.syncAsSint16LE(_balloonLocation.y);
 	s.syncAsSint16LE(_balloonScreenPos.x);
 	s.syncAsSint16LE(_balloonScreenPos.y);
 	s.syncAsSint16LE(_newAltitude);
-	s.syncAsSint16LE(_field425);
-	s.syncAsSint16LE(_field426);
-	s.syncAsSint16LE(_field427);
-	s.syncAsSint16LE(_field8F8);
+	s.syncAsSint16LE(_xAmount);
+	s.syncAsSint16LE(_xComparison);
+	s.syncAsSint16LE(_fadeCounter);
+	s.syncAsSint16LE(_paletteReloadNeeded);
 
 	_map.synchronize(s);
 }
@@ -5063,16 +5059,16 @@ void Scene2900::postInit(SceneObjectList *OwnerList) {
 		if (_balloonLocation.y <= 100)
 			_balloonScreenPos.y = _balloonLocation.y;
 
-		_field425 = _field426 = 100 - (R2_GLOBALS._balloonAltitude / 48) * 25;
+		_xAmount = _xComparison = 100 - (R2_GLOBALS._balloonAltitude / 48) * 25;
 		_map.setPosition(Common::Point(_balloonLocation.x - 120, _balloonLocation.y - 100));
 		_sceneMode = 11;
 
-		R2_GLOBALS._player.changeZoom(_field425);
+		R2_GLOBALS._player.changeZoom(_xAmount);
 		R2_GLOBALS._player.setPosition(_balloonScreenPos);
 		R2_GLOBALS._player.enableControl();
 		R2_GLOBALS._player._canWalk = false;
 
-		_altimeterContent.setPosition(Common::Point(109 - _field425, 189));
+		_altimeterContent.setPosition(Common::Point(109 - _xAmount, 189));
 	}
 
 	R2_GLOBALS._sound1.play(211);
@@ -5113,51 +5109,51 @@ void Scene2900::dispatch() {
 	if (_sceneMode == 11) {
 		_balloonLocation.x += balloonData[R2_GLOBALS._balloonAltitude].x;
 		_balloonLocation.y += balloonData[R2_GLOBALS._balloonAltitude].y;
-		_field41C = balloonData[R2_GLOBALS._balloonAltitude].v3;
+		_altitudeMinorChange = balloonData[R2_GLOBALS._balloonAltitude].v3;
 
-		if (_field41C == 0) {
-			_field416 = false;
+		if (_altitudeMinorChange == 0) {
+			_majorMinorFlag = false;
 		} else {
-			_field416 = true;
+			_majorMinorFlag = true;
 			_altitudeChanging = false;
-			_field426 = 100 - ((R2_GLOBALS._balloonAltitude / 48) + _field41C) * 25;
+			_xComparison = 100 - ((R2_GLOBALS._balloonAltitude / 48) + _altitudeMinorChange) * 25;
 		}
 
 		// Zooming/altitude balloon change
-		if (_field425 == _field426) {
-			_field416 = false;
+		if (_xAmount == _xComparison) {
+			_majorMinorFlag = false;
 		} else {
-			if (!_field416) {
-				_field425 = _field425 - _altitudeMajorChange;
+			if (!_majorMinorFlag) {
+				_xAmount = _xAmount - _altitudeMajorChange;
 			} else {
-				_field425 = _field425 - _field41C;
+				_xAmount = _xAmount - _altitudeMinorChange;
 			}
 
-			if (_field41C == -1 || _altitudeMajorChange == -1) {
+			if (_altitudeMinorChange == -1 || _altitudeMajorChange == -1) {
 				if (_altimeterContent._frame == 1) {
 					_altimeterContent.setFrame2(10);
 				} else {
 					_altimeterContent.setFrame2(_altimeterContent._frame - 1);
 				}
-			} else if (_field41C == -1 || _altitudeMajorChange == 1) {
+			} else if (_altitudeMinorChange == -1 || _altitudeMajorChange == 1) {
 				if (_altimeterContent._frame == 10)
 					_altimeterContent.setFrame2(1);
 				else
 					_altimeterContent.setFrame2(_altimeterContent._frame + 1);
 			}
 
-			_altimeterContent.setPosition(Common::Point(109 - _field425, 189));
-			R2_GLOBALS._player.changeZoom(_field425);
+			_altimeterContent.setPosition(Common::Point(109 - _xAmount, 189));
+			R2_GLOBALS._player.changeZoom(_xAmount);
 		}
 
-		if (!_field8F8) {
+		if (!_paletteReloadNeeded) {
 			R2_GLOBALS._scenePalette.loadPalette(2950);
 			R2_GLOBALS._scenePalette.refresh();
 		}
 
 		R2_GLOBALS._balloonPosition = _map.setPosition(
-			Common::Point(_balloonLocation.x - 120, _balloonLocation.y - 100), !_field8F8);
-		_field8F8 = true;
+			Common::Point(_balloonLocation.x - 120, _balloonLocation.y - 100), !_paletteReloadNeeded);
+		_paletteReloadNeeded = true;
 
 		if (_balloonLocation.x <= 120)
 			_balloonScreenPos.x = _balloonLocation.x + 40;
@@ -5169,7 +5165,7 @@ void Scene2900::dispatch() {
 
 		R2_GLOBALS._player.setPosition(_balloonScreenPos);
 
-		if ((_balloonLocation.x % 100) == 50 && (_balloonLocation.y % 100) == 50 && !_field416) {
+		if ((_balloonLocation.x % 100) == 50 && (_balloonLocation.y % 100) == 50 && !_majorMinorFlag) {
 			// At an altitude change point, so calculate new altitude
 			_newAltitude = R2_GLOBALS._balloonAltitude;
 			if (_altitudeChanging) {
