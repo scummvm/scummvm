@@ -384,7 +384,7 @@ public:
 };
 
 class Scene2525 : public SceneExt {
-	class Item5 : public NamedHotspot {
+	class StopCock : public NamedHotspot {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -399,13 +399,13 @@ class Scene2525 : public SceneExt {
 		virtual void changeScene();
 	};
 public:
-	NamedHotspot _item1;
-	NamedHotspot _item2;
-	NamedHotspot _item3;
-	NamedHotspot _item4;
-	Item5 _item5;
-	SceneActor _actor1;
-	SceneActor _actor2;
+	NamedHotspot _background;
+	NamedHotspot _machine;
+	NamedHotspot _pipes1;
+	NamedHotspot _pipes2;
+	StopCock _stopcock;
+	SceneActor _companion;
+	SceneActor _compressor;
 	GlassDome _glassDome;
 	Exit1 _exit1;
 	SequenceManager _sequenceManager;

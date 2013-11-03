@@ -2503,7 +2503,7 @@ void Scene2500::signal() {
  *
  *--------------------------------------------------------------------------*/
 
-bool Scene2525::Item5::startAction(CursorType action, Event &event) {
+bool Scene2525::StopCock::startAction(CursorType action, Event &event) {
 	Scene2525 *scene = (Scene2525 *)R2_GLOBALS._sceneManager._scene;
 
 	if ((action == R2_REBREATHER_TANK) && (!R2_GLOBALS.getFlag(74))) {
@@ -2561,12 +2561,12 @@ void Scene2525::postInit(SceneObjectList *OwnerList) {
 		_glassDome.setDetails(2525, 27, -1, -1, 1, (SceneItem *)NULL);
 	}
 
-	_actor2.postInit();
-	_actor2.setup(2525, 1, 1);
-	_actor2.setPosition(Common::Point(183, 114));
-	_actor2.setDetails(2525, 15, -1, -1, 1, (SceneItem *)NULL);
-	_actor2.animate(ANIM_MODE_2, NULL);
-	_actor2._numFrames = 3;
+	_compressor.postInit();
+	_compressor.setup(2525, 1, 1);
+	_compressor.setPosition(Common::Point(183, 114));
+	_compressor.setDetails(2525, 15, -1, -1, 1, (SceneItem *)NULL);
+	_compressor.animate(ANIM_MODE_2, NULL);
+	_compressor._numFrames = 3;
 
 	R2_GLOBALS._player.postInit();
 	R2_GLOBALS._player.animate(ANIM_MODE_1, NULL);
@@ -2579,24 +2579,24 @@ void Scene2525::postInit(SceneObjectList *OwnerList) {
 	}
 
 	if (R2_GLOBALS._player._characterScene[R2_QUINN] == R2_GLOBALS._player._characterScene[R2_SEEKER]) {
-		_actor1.postInit();
+		_companion.postInit();
 		if (R2_GLOBALS._player._characterIndex == R2_QUINN) {
-			_actor1.setup(20, 5, 1);
-			_actor1.setDetails(9002, 0, 4, 3, 1, (SceneItem *)NULL);
+			_companion.setup(20, 5, 1);
+			_companion.setDetails(9002, 0, 4, 3, 1, (SceneItem *)NULL);
 		} else {
-			_actor1.setup(2008, 5, 1);
-			_actor1.setDetails(9001, 0, 5, 3, 1, (SceneItem *)NULL);
+			_companion.setup(2008, 5, 1);
+			_companion.setDetails(9001, 0, 5, 3, 1, (SceneItem *)NULL);
 		}
-		_actor1.setPosition(Common::Point(209, 162));
+		_companion.setPosition(Common::Point(209, 162));
 
 		R2_GLOBALS._walkRegions.disableRegion(4);
 	}
 
-	_item5.setDetails(Rect(125, 73, 140, 86), 2525, 6, -1, -1, 1, NULL);
-	_item3.setDetails(Rect(137, 11, 163, 72), 2525, 12, -1, -1, 1, NULL);
-	_item4.setDetails(Rect(204, 20, 234, 78), 2525, 12, -1, -1, 1, NULL);
-	_item2.setDetails(Rect(102, 62, 230, 134), 2525, 0, -1, -1, 1, NULL);
-	_item1.setDetails(Rect(0, 0, 320, 200), 2525, 24, -1, -1, 1, NULL);
+	_stopcock.setDetails(Rect(125, 73, 140, 86), 2525, 6, -1, -1, 1, NULL);
+	_pipes1.setDetails(Rect(137, 11, 163, 72), 2525, 12, -1, -1, 1, NULL);
+	_pipes2.setDetails(Rect(204, 20, 234, 78), 2525, 12, -1, -1, 1, NULL);
+	_machine.setDetails(Rect(102, 62, 230, 134), 2525, 0, -1, -1, 1, NULL);
+	_background.setDetails(Rect(0, 0, 320, 200), 2525, 24, -1, -1, 1, NULL);
 
 	R2_GLOBALS._player.disableControl();
 
