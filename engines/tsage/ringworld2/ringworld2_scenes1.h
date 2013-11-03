@@ -386,10 +386,10 @@ public:
 
 class Scene1500 : public SceneExt {
 public:
-	SceneActor _actor1;
-	SceneActor _actor2;
-	SceneActor _actor3;
-	SceneActor _actor4;
+	SceneActor _starship;
+	SceneActor _starshipShadow;
+	SceneActor _smallShip;
+	SceneActor _smallShipShadow;
 	SequenceManager _sequenceManager;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);

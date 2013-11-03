@@ -6906,49 +6906,49 @@ void Scene1500::postInit(SceneObjectList *OwnerList) {
 	R2_GLOBALS._player.hide();
 	R2_GLOBALS._player.disableControl();
 
-	_actor2.postInit();
-	_actor2.setup(1401, 1, 1);
-	_actor2._effect = 5;
-	_actor2.fixPriority(10);
-	_actor2._field9C = _field312;
+	_starshipShadow.postInit();
+	_starshipShadow.setup(1401, 1, 1);
+	_starshipShadow._effect = 5;
+	_starshipShadow.fixPriority(10);
+	_starshipShadow._field9C = _field312;
 
-	_actor1.postInit();
-	_actor1.setup(1400, 1, 1);
-	_actor1._moveDiff = Common::Point(1, 1);
-	_actor1._linkedActor = &_actor2;
+	_starship.postInit();
+	_starship.setup(1400, 1, 1);
+	_starship._moveDiff = Common::Point(1, 1);
+	_starship._linkedActor = &_starshipShadow;
 
 	if (R2_GLOBALS._sceneManager._previousScene != 1010) {
-		_actor4.postInit();
-		_actor4.setup(1401, 2, 1);
-		_actor4._effect = 5;
-		_actor4.fixPriority(10);
-		_actor4._field9C = _field312;
+		_smallShipShadow.postInit();
+		_smallShipShadow.setup(1401, 2, 1);
+		_smallShipShadow._effect = 5;
+		_smallShipShadow.fixPriority(10);
+		_smallShipShadow._field9C = _field312;
 
-		_actor3.postInit();
-		_actor3._moveRate = 30;
-		_actor3._moveDiff = Common::Point(1, 1);
-		_actor3._linkedActor = &_actor4;
+		_smallShip.postInit();
+		_smallShip._moveRate = 30;
+		_smallShip._moveDiff = Common::Point(1, 1);
+		_smallShip._linkedActor = &_smallShipShadow;
 	}
 
 	if (R2_GLOBALS._sceneManager._previousScene == 300) {
-		_actor1.setPosition(Common::Point(189, 139), 5);
+		_starship.setPosition(Common::Point(189, 139), 5);
 
-		_actor3.setup(1400, 1, 2);
-		_actor3.setPosition(Common::Point(148, 108), 0);
+		_smallShip.setup(1400, 1, 2);
+		_smallShip.setPosition(Common::Point(148, 108), 0);
 
 		_sceneMode = 20;
 		R2_GLOBALS._sound1.play(110);
 	} else if (R2_GLOBALS._sceneManager._previousScene == 1550) {
-		_actor1.setPosition(Common::Point(189, 139), 5);
+		_starship.setPosition(Common::Point(189, 139), 5);
 
-		_actor3.setup(1400, 2, 1);
-		_actor3.changeZoom(-1);
-		_actor3.setPosition(Common::Point(298, 258), 5);
+		_smallShip.setup(1400, 2, 1);
+		_smallShip.changeZoom(-1);
+		_smallShip.setPosition(Common::Point(298, 258), 5);
 
 		_sceneMode = 10;
 		R2_GLOBALS._sound1.play(106);
 	} else {
-		_actor1.setPosition(Common::Point(289, 239), -30);
+		_starship.setPosition(Common::Point(289, 239), -30);
 		_sceneMode = 0;
 		R2_GLOBALS._sound1.play(102);
 	}
@@ -6970,8 +6970,8 @@ void Scene1500::signal() {
 		setAction(&_sequenceManager, this, 1, &R2_GLOBALS._player, NULL);
 	// No break on purpose
 	case 1:
-		if (_actor1._yDiff < 50) {
-			_actor1.setPosition(Common::Point(289, 239), _actor1._yDiff + 1);
+		if (_starship._yDiff < 50) {
+			_starship.setPosition(Common::Point(289, 239), _starship._yDiff + 1);
 			_sceneMode = 1;
 		}
 		setAction(&_sequenceManager, this, 1, &R2_GLOBALS._player, NULL);
@@ -6979,12 +6979,12 @@ void Scene1500::signal() {
 	case 2: {
 		Common::Point pt(189, 139);
 		NpcMover *mover = new NpcMover();
-		_actor1.addMover(mover, &pt, this);
+		_starship.addMover(mover, &pt, this);
 		}
 		break;
 	case 3:
-		if (_actor1._yDiff > 5) {
-			_actor1.setPosition(Common::Point(189, 139), _actor1._yDiff - 1);
+		if (_starship._yDiff > 5) {
+			_starship.setPosition(Common::Point(189, 139), _starship._yDiff - 1);
 			_sceneMode = 3;
 		}
 		setAction(&_sequenceManager, this, 1, &R2_GLOBALS._player, NULL);
@@ -7003,7 +7003,7 @@ void Scene1500::signal() {
 	case 11: {
 		Common::Point pt(148, 108);
 		NpcMover *mover = new NpcMover();
-		_actor3.addMover(mover, &pt, this);
+		_smallShip.addMover(mover, &pt, this);
 		}
 		break;
 	case 12:
@@ -7012,13 +7012,13 @@ void Scene1500::signal() {
 	case 21: {
 		Common::Point pt(-2, -42);
 		NpcMover *mover = new NpcMover();
-		_actor3.addMover(mover, &pt, NULL);
+		_smallShip.addMover(mover, &pt, NULL);
 		signal();
 		}
 		break;
 	case 22:
-		if (_actor1._yDiff < 50) {
-			_actor1.setPosition(Common::Point(189, 139), _actor1._yDiff + 1);
+		if (_starship._yDiff < 50) {
+			_starship.setPosition(Common::Point(189, 139), _starship._yDiff + 1);
 			_sceneMode = 22;
 		}
 		setAction(&_sequenceManager, this, 1, &R2_GLOBALS._player, NULL);
@@ -7026,7 +7026,7 @@ void Scene1500::signal() {
 	case 23: {
 		Common::Point pt(-13, -61);
 		NpcMover *mover = new NpcMover();
-		_actor1.addMover(mover, &pt, this);
+		_starship.addMover(mover, &pt, this);
 		}
 		break;
 	case 24:
@@ -7039,9 +7039,9 @@ void Scene1500::signal() {
 
 void Scene1500::dispatch() {
 	if (_sceneMode > 10) {
-		float yDiff = sqrt((float) (_actor3._position.x * _actor3._position.x) + (_actor3._position.y * _actor3._position.y));
+		float yDiff = sqrt((float) (_smallShip._position.x * _smallShip._position.x) + (_smallShip._position.y * _smallShip._position.y));
 		if (yDiff > 6)
-			_actor3.setPosition(_actor3._position, (int) yDiff);
+			_smallShip.setPosition(_smallShip._position, (int) yDiff);
 	}
 
 	Scene::dispatch();
