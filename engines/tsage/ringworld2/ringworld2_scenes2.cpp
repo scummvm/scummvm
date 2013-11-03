@@ -1495,7 +1495,7 @@ void Scene2425::signal() {
  *
  *--------------------------------------------------------------------------*/
 
-bool Scene2430::Actor1::startAction(CursorType action, Event &event) {
+bool Scene2430::Companion::startAction(CursorType action, Event &event) {
 	return SceneActor::startAction(action, event);
 }
 
@@ -1568,33 +1568,31 @@ void Scene2430::postInit(SceneObjectList *OwnerList) {
 	R2_GLOBALS._player.setPosition(Common::Point(100, 200));
 
 	if (R2_GLOBALS._player._characterScene[R2_QUINN] == R2_GLOBALS._player._characterScene[R2_SEEKER]) {
-		_actor1.postInit();
+		_companion.postInit();
 		if (R2_GLOBALS._player._characterIndex == R2_QUINN) {
-			_actor1.setup(20, 5, 1);
-			_actor1.setDetails(9002, 0, 4, 3, 1, (SceneItem *)NULL);
+			_companion.setup(20, 5, 1);
+			_companion.setDetails(9002, 0, 4, 3, 1, (SceneItem *)NULL);
 		} else {
-			_actor1.setup(2008, 5, 1);
-			_actor1.setDetails(9001, 0, 5, 3, 1, (SceneItem *)NULL);
+			_companion.setup(2008, 5, 1);
+			_companion.setDetails(9001, 0, 5, 3, 1, (SceneItem *)NULL);
 		}
-		_actor1.setPosition(Common::Point(189, 137));
+		_companion.setPosition(Common::Point(189, 137));
 		R2_GLOBALS._walkRegions.disableRegion(4);
 	}
 
-	_item2.setDetails(Rect(11, 30, 37, 45), 2430, 3, -1, 5, 1, NULL);
-	_item3.setDetails(Rect(9, 58, 63, 92), 2430, 6, -1, -1, 1, NULL);
-	_item4.setDetails(Rect(20, 89, 127, 107), 2430,  9, -1, 11, 1, NULL);
-	_item5.setDetails(Rect(49, 7, 60, 27), 2430, 12, 13, 14, 1, NULL);
-	_item6.setDetails(Rect(69, 10, 95, 72), 2430, 15, -1, 14, 1, NULL);
-	_item10.setDetails(Rect(198, 4, 222, 146), 2430, 30, 31, 32, 1, NULL);
-	_item7.setDetails(Rect(155, 40, 304, 120), 2430, 21, -1, 23, 1, NULL);
-	_item8.setDetails(Rect(249, 3, 261, 39), 2430, 24, 25, -1, 1, NULL);
-	_item9.setDetails(Rect(279, 13, 305, 34), 2430, 33, -1, 18, 1, NULL);
-	// CHECKME: initialized for the 2nd time??
-	_item2.setDetails(Rect(11, 30, 37, 45), 2430, 33, -1, 18, 1, NULL);
-	_item11.setDetails(Rect(116, 104, 148, 111), 2430, 39, -1, -1, 1, NULL);
-	_item12.setDetails(Rect(66, 77, 84, 83), 2430, 39, -1, -1, 1, NULL);
-	_item13.setDetails(Rect(117, 118, 201, 141), 2430, 9, -1, 11, 1, NULL);
-	_item1.setDetails(Rect(0, 0, 320, 200), 2430, 0, -1, -1, 1, NULL);
+	_furnishings.setDetails(Rect(9, 58, 63, 92), 2430, 6, -1, -1, 1, NULL);
+	_rug1.setDetails(Rect(20, 89, 127, 107), 2430,  9, -1, 11, 1, NULL);
+	_mirror.setDetails(Rect(49, 7, 60, 27), 2430, 12, 13, 14, 1, NULL);
+	_garments.setDetails(Rect(69, 10, 95, 72), 2430, 15, -1, 14, 1, NULL);
+	_post.setDetails(Rect(198, 4, 222, 146), 2430, 30, 31, 32, 1, NULL);
+	_bed.setDetails(Rect(155, 40, 304, 120), 2430, 21, -1, 23, 1, NULL);
+	_towel.setDetails(Rect(249, 3, 261, 39), 2430, 24, 25, -1, 1, NULL);
+	_bottles1.setDetails(Rect(279, 13, 305, 34), 2430, 33, -1, 18, 1, NULL);
+	_bottles2.setDetails(Rect(11, 30, 37, 45), 2430, 33, -1, 18, 1, NULL);
+	_clothesPile1.setDetails(Rect(116, 104, 148, 111), 2430, 39, -1, -1, 1, NULL);
+	_clothesPile2.setDetails(Rect(66, 77, 84, 83), 2430, 39, -1, -1, 1, NULL);
+	_rug2.setDetails(Rect(117, 118, 201, 141), 2430, 9, -1, 11, 1, NULL);
+	_background.setDetails(Rect(0, 0, 320, 200), 2430, 0, -1, -1, 1, NULL);
 
 	if (R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] == 2000) {
 		R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] = 2430;
