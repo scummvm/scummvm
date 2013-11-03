@@ -2706,13 +2706,8 @@ SoundDriver::SoundDriver() {
 
 const byte adlib_group_data[] = { 1, 1, 9, 1, 0xff };
 
-const byte v440B0[9] = { 0, 1, 2, 6, 7, 8, 12, 13, 14 };
-
-const byte v440B9[9] = { 3, 4, 5, 9, 10, 11, 15, 16, 17 };
-
-const byte v440C2[18] = {
-	0, 1, 2, 3, 4, 5, 8, 9, 10, 11, 12, 13, 16, 17, 18, 19, 20, 21
-};
+const byte adlib_operator1_offset[] = { 0, 1, 2, 8, 9, 10, 16, 17, 18 };
+const byte adlib_operator2_offset[] = { 3, 4, 5, 11, 12, 13, 19, 20, 21 };
 
 const byte v44134[64] = {
 	0, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32,
@@ -2843,10 +2838,10 @@ void AdlibSoundDriver::playSound(const byte *channelData, int dataOffset, int pr
 				_v4409E[channel] = dataP + offset - _patchData;
 
 				// Set sustain/release
-				int portNum = v440C2[v440B0[channel]] + 0x80;
+				int portNum = adlib_operator1_offset[channel] + 0x80;
 				write(portNum, (_portContents[portNum] & 0xF0) | 0xF);
 
-				portNum = v440C2[v440B9[channel]] + 0x80;
+				portNum = adlib_operator2_offset[channel] + 0x80;
 				write(portNum, (_portContents[portNum] & 0xF0) | 0xF);
 
 				if (_channelVoiced[channel])
@@ -2903,10 +2898,10 @@ void AdlibSoundDriver::updateChannelVolume(int channelNum) {
 	int level1 = !_v44082[channelNum] ? 63 - _v44070[channelNum] :
 		63 - v44134[volume * _v44070[channelNum] / 63];
 
-	int portNum = v440C2[v440B0[channelNum]] + 0x40;
+	int portNum = adlib_operator1_offset[channelNum] + 0x40;
 	write(portNum, (_portContents[portNum] & 0x80) | level1);
 
-	portNum = v440C2[v440B9[channelNum]] + 0x40;
+	portNum = adlib_operator2_offset[channelNum] + 0x40;
 	write(portNum, (_portContents[portNum] & 0x80) | level2);
 }
 
@@ -2923,7 +2918,7 @@ void AdlibSoundDriver::clearVoice(int channel) {
 
 void AdlibSoundDriver::updateChannel(int channel) {
 	const byte *dataP = _patchData + _v4409E[channel];
-	int portOffset = v440C2[v440B0[channel]];
+	int portOffset = adlib_operator1_offset[channel];
 
 	int portNum = portOffset + 0x20;
 	int portValue = 0;
@@ -2946,7 +2941,7 @@ void AdlibSoundDriver::updateChannel(int channel) {
 	write(0x80 + portOffset, *(dataP + 14) | (*(dataP + 13) << 4));
 	write(0xE0 + portOffset, (_portContents[0xE0 + portOffset] & 0xFC) | *(dataP + 15));
 
-	portOffset = v440C2[v440B9[channel]];
+	portOffset = adlib_operator2_offset[channel];
 	portNum = portOffset + 0x20;
 	portValue = 0;
 	if (*(dataP + 17))
