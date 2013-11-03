@@ -43,6 +43,7 @@ public:
 
 	void play(Common::SeekableReadStream *stream);
 	void pause(bool p);
+	virtual void pause() { assert(0); } // overridden
 	virtual void onTimer();
 
 private:
