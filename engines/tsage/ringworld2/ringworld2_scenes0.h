@@ -806,7 +806,7 @@ class Scene825: public SceneExt {
 	/* Objects */
 	class Button: public SceneObject {
 	public:
-		int _buttonId, _v2;
+		int _buttonId;
 		bool _buttonDown;
 		SceneText _sceneText;
 	public:

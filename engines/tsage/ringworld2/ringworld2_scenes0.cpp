@@ -6890,14 +6890,12 @@ void Scene800::signal() {
 
 Scene825::Button::Button(): SceneObject() {
 	_buttonId = 0;
-	_v2 = 0;
 	_buttonDown = false;
 }
 
 void Scene825::Button::synchronize(Serializer &s) {
 	SceneObject::synchronize(s);
 	s.syncAsSint16LE(_buttonId);
-	s.syncAsSint16LE(_v2);
 	s.syncAsSint16LE(_buttonDown);
 }
 
@@ -6931,7 +6929,6 @@ bool Scene825::Button::startAction(CursorType action, Event &event) {
 
 void Scene825::Button::setButton(int buttonId) {
 	SceneObject::postInit();
-	_v2 = buttonId;
 	_buttonDown = 0;
 	_sceneText._color1 = 92;
 	_sceneText._color2 = 0;
