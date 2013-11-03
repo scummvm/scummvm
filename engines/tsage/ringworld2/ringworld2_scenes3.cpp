@@ -225,15 +225,15 @@ bool Scene3125::Background::startAction(CursorType action, Event &event) {
 	switch (action) {
 	case CURSOR_USE:
 		if (_useLineNum != -1)
-			SceneItem::display(_resNum, _useLineNum, 0, 280, 1, 160, 9, 1, 2, 20, 7, 154, -999);
+			SceneItem::display(_resNum, _useLineNum, 0, 280, 1, 160, 9, 1, 2, 20, 7, 154, LIST_END);
 		break;
 	case CURSOR_LOOK:
 		if (_lookLineNum != -1)
-			SceneItem::display(_resNum, _lookLineNum, 0, 280, 1, 160, 9, 1, 2, 20, 7, 154, -999);
+			SceneItem::display(_resNum, _lookLineNum, 0, 280, 1, 160, 9, 1, 2, 20, 7, 154, LIST_END);
 		break;
 	case CURSOR_TALK:
 		if (_talkLineNum != -1)
-			SceneItem::display(_resNum, _talkLineNum, 0, 280, 1, 160, 9, 1, 2, 20, 7, 154, -999);
+			SceneItem::display(_resNum, _talkLineNum, 0, 280, 1, 160, 9, 1, 2, 20, 7, 154, LIST_END);
 		break;
 	default:
 		return scene->display(action, event);
@@ -253,10 +253,10 @@ bool Scene3125::Table::startAction(CursorType action, Event &event) {
 		scene->setAction(&scene->_sequenceManager, scene, 3125, &R2_GLOBALS._player, NULL);
 		break;
 	case CURSOR_LOOK:
-		SceneItem::display(3125, 15, 0, 280, 1, 160, 9, 1, 2, 20, 7, 154, -999);
+		SceneItem::display(3125, 15, 0, 280, 1, 160, 9, 1, 2, 20, 7, 154, LIST_END);
 		break;
 	case CURSOR_TALK:
-		SceneItem::display(3125, 13, 0, 280, 1, 160, 9, 1, 2, 20, 7, 154, -999);
+		SceneItem::display(3125, 13, 0, 280, 1, 160, 9, 1, 2, 20, 7, 154, LIST_END);
 		break;
 	default:
 		return SceneHotspot::startAction(action, event);
@@ -279,10 +279,10 @@ bool Scene3125::Computer::startAction(CursorType action, Event &event) {
 			&scene->_ghoul4, NULL);
 		break;
 	case CURSOR_LOOK:
-		SceneItem::display(3125, 9, 0, 280, 1, 160, 9, 1, 2, 20, 7, 154, -999);
+		SceneItem::display(3125, 9, 0, 280, 1, 160, 9, 1, 2, 20, 7, 154, LIST_END);
 		break;
 	case CURSOR_TALK:
-		SceneItem::display(3125, 13, 0, 280, 1, 160, 9, 1, 2, 20, 7, 154, -999);
+		SceneItem::display(3125, 13, 0, 280, 1, 160, 9, 1, 2, 20, 7, 154, LIST_END);
 		break;
 	default:
 		return SceneHotspot::startAction(action, event);
@@ -351,7 +351,7 @@ void Scene3125::postInit(SceneObjectList *OwnerList) {
 void Scene3125::signal() {
 	switch (_sceneMode) {
 	case 3125:
-		SceneItem::display(3125, 3, 0, 280, 1, 160, 9, 1, 2, 20, 7, 154, -999);
+		SceneItem::display(3125, 3, 0, 280, 1, 160, 9, 1, 2, 20, 7, 154, LIST_END);
 		_sceneMode = 3127;
 		setAction(&_sequenceManager, this, 3127, &R2_GLOBALS._player, NULL);
 		break;
@@ -401,7 +401,7 @@ bool Scene3150::LightFixture::startAction(CursorType action, Event &event) {
 			scene->_sceneMode = 3155;
 			scene->setAction(&scene->_sequenceManager, scene, 3155, &R2_GLOBALS._player, &scene->_bulbOrWire, NULL);
 		} else {
-			SceneItem::display(3150, 42, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
+			SceneItem::display(3150, 42, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, LIST_END);
 		}
 		return true;
 	default:
@@ -436,7 +436,7 @@ bool Scene3150::Toilet::startAction(CursorType action, Event &event) {
 			scene->_sceneMode = 3159;
 			scene->setAction(&scene->_sequenceManager, scene, 3159, &R2_GLOBALS._player, &scene->_foodTray, NULL);
 		} else {
-			SceneItem::display(3150, 42, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
+			SceneItem::display(3150, 42, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, LIST_END);
 		}
 		return true;
 	default:
@@ -492,7 +492,7 @@ bool Scene3150::ToiletFlush::startAction(CursorType action, Event &event) {
 					scene->setAction(&scene->_sequenceManager, scene, 3152, &R2_GLOBALS._player, &scene->_water, NULL);
 				}
 			} else {
-				SceneItem::display(3150, 42, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
+				SceneItem::display(3150, 42, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, LIST_END);
 			}
 		} else {
 			R2_GLOBALS._player.disableControl();
@@ -812,19 +812,19 @@ bool Scene3175::RoomItem::startAction(CursorType action, Event &event) {
 	switch (action) {
 	case CURSOR_USE:
 		if (_useLineNum != -1) {
-			SceneItem::display(_resNum, _useLineNum, 0, 280, 1, 160, 9, 1, 2, 20, 7, 154, -999);
+			SceneItem::display(_resNum, _useLineNum, 0, 280, 1, 160, 9, 1, 2, 20, 7, 154, LIST_END);
 			return true;
 		}
 		break;
 	case CURSOR_LOOK:
 		if (_lookLineNum != -1) {
-			SceneItem::display(_resNum, _lookLineNum, 0, 280, 1, 160, 9, 1, 2, 20, 7, 154, -999);
+			SceneItem::display(_resNum, _lookLineNum, 0, 280, 1, 160, 9, 1, 2, 20, 7, 154, LIST_END);
 			return true;
 		}
 		break;
 	case CURSOR_TALK:
 		if (_talkLineNum != -1) {
-			SceneItem::display(_resNum, _talkLineNum, 0, 280, 1, 160, 9, 1, 2, 20, 7, 154, -999);
+			SceneItem::display(_resNum, _talkLineNum, 0, 280, 1, 160, 9, 1, 2, 20, 7, 154, LIST_END);
 			return true;
 		}
 		break;
@@ -841,19 +841,19 @@ bool Scene3175::Corpse::startAction(CursorType action, Event &event) {
 	switch (action) {
 	case CURSOR_USE:
 		if (_useLineNum != -1) {
-			SceneItem::display(_resNum, _useLineNum, 0, 280, 1, 160, 9, 1, 2, 20, 7, 154, -999);
+			SceneItem::display(_resNum, _useLineNum, 0, 280, 1, 160, 9, 1, 2, 20, 7, 154, LIST_END);
 			return true;
 		}
 		break;
 	case CURSOR_LOOK:
 		if (_lookLineNum != -1) {
-			SceneItem::display(_resNum, _lookLineNum, 0, 280, 1, 160, 9, 1, 2, 20, 7, 154, -999);
+			SceneItem::display(_resNum, _lookLineNum, 0, 280, 1, 160, 9, 1, 2, 20, 7, 154, LIST_END);
 			return true;
 		}
 		break;
 	case CURSOR_TALK:
 		if (_talkLineNum != -1) {
-			SceneItem::display(_resNum, _talkLineNum, 0, 280, 1, 160, 9, 1, 2, 20, 7, 154, -999);
+			SceneItem::display(_resNum, _talkLineNum, 0, 280, 1, 160, 9, 1, 2, 20, 7, 154, LIST_END);
 			return true;
 		}
 		break;
@@ -875,11 +875,11 @@ bool Scene3175::Door::startAction(CursorType action, Event &event) {
 		return true;
 		break;
 	case CURSOR_LOOK:
-		SceneItem::display(3175, 9, 0, 280, 1, 160, 9, 1, 2, 20, 7, 154, -999);
+		SceneItem::display(3175, 9, 0, 280, 1, 160, 9, 1, 2, 20, 7, 154, LIST_END);
 		return true;
 		break;
 	case CURSOR_TALK:
-		SceneItem::display(3175, 10, 0, 280, 1, 160, 9, 1, 2, 20, 7, 154, -999);
+		SceneItem::display(3175, 10, 0, 280, 1, 160, 9, 1, 2, 20, 7, 154, LIST_END);
 		return true;
 		break;
 	default:
@@ -1100,7 +1100,7 @@ void Scene3245::postInit(SceneObjectList *OwnerList) {
 		++R2_GLOBALS._scientistConvIndex;
 
 	if (R2_GLOBALS._scientistConvIndex >= 4) {
-		SceneItem::display(1200, 7, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
+		SceneItem::display(1200, 7, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, LIST_END);
 		signal();
 	} else {
 		setAction(&_sequenceManager, this, 3244 + R2_GLOBALS._scientistConvIndex, 
@@ -1123,19 +1123,19 @@ bool Scene3250::Item::startAction(CursorType action, Event &event) {
 	switch (action) {
 	case CURSOR_USE:
 		if (_useLineNum != -1) {
-			SceneItem::display(_resNum, _useLineNum, 0, 280, 1, 160, 9, 1, 2, 20, 7, 154, -999);
+			SceneItem::display(_resNum, _useLineNum, 0, 280, 1, 160, 9, 1, 2, 20, 7, 154, LIST_END);
 			return true;
 		}
 		break;
 	case CURSOR_LOOK:
 		if (_lookLineNum != -1) {
-			SceneItem::display(_resNum, _lookLineNum, 0, 280, 1, 160, 9, 1, 2, 20, 7, 154, -999);
+			SceneItem::display(_resNum, _lookLineNum, 0, 280, 1, 160, 9, 1, 2, 20, 7, 154, LIST_END);
 			return true;
 		}
 		break;
 	case CURSOR_TALK:
 		if (_talkLineNum != -1) {
-			SceneItem::display(_resNum, _talkLineNum, 0, 280, 1, 160, 9, 1, 2, 20, 7, 154, -999);
+			SceneItem::display(_resNum, _talkLineNum, 0, 280, 1, 160, 9, 1, 2, 20, 7, 154, LIST_END);
 			return true;
 		}
 		break;
@@ -1342,7 +1342,7 @@ void Scene3255::signal() {
 		R2_GLOBALS._sceneManager.changeScene(3100);
 		break;
 	default:
-		SceneItem::display(3255, 0, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
+		SceneItem::display(3255, 0, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, LIST_END);
 		_sceneMode = 3256;
 		setAction(&_sequenceManager, this, 3256, &R2_GLOBALS._player, NULL);
 	}
@@ -1550,7 +1550,7 @@ void Scene3260::signal() {
 	case 3272:
 		_sceneMode = 3273;
 		R2_GLOBALS._events.setCursor(CURSOR_WALK);
-		SceneItem::display(3260, 15, 0, 280, 1, 160, 9, 1, 2, 20, 7, 154, -999);
+		SceneItem::display(3260, 15, 0, 280, 1, 160, 9, 1, 2, 20, 7, 154, LIST_END);
 		R2_GLOBALS._player.disableControl();
 		R2_INVENTORY.setObjectScene(R2_TOOLBOX, 3);
 		R2_INVENTORY.setObjectScene(R2_LASER_HACKSAW, 3);
@@ -4865,8 +4865,9 @@ void Scene3600::signal() {
 }
 
 void Scene3600::process(Event &event) {
-	if ((event.eventType == EVENT_BUTTON_DOWN) && (R2_GLOBALS._events.getCursor() == CURSOR_ARROW) && (event.mousePos.x > 237) && (!R2_GLOBALS.getFlag(71))) {
-		SceneItem::display(3600, 17, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7 -999);
+	if ((event.eventType == EVENT_BUTTON_DOWN) && (R2_GLOBALS._events.getCursor() == CURSOR_ARROW)
+			&& (event.mousePos.x > 237) && (!R2_GLOBALS.getFlag(71))) {
+		SceneItem::display(3600, 17, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, LIST_END);
 		event.handled = true;
 	}
 	Scene::process(event);
@@ -5395,10 +5396,10 @@ void Scene3800::process(Event &event) {
 			R2_GLOBALS._player.updateAngle(event.mousePos);
 			break;
 		case CURSOR_LOOK:
-			SceneItem::display(3800, 3, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
+			SceneItem::display(3800, 3, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, LIST_END);
 			break;
 		case CURSOR_USE:
-			SceneItem::display(3800, 5, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
+			SceneItem::display(3800, 5, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, LIST_END);
 			break;
 		default:
 			event.handled = false;
@@ -5667,10 +5668,10 @@ void Scene3900::process(Event &event) {
 			R2_GLOBALS._player.updateAngle(event.mousePos);
 			break;
 		case CURSOR_USE:
-			SceneItem::display(3800, 5, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
+			SceneItem::display(3800, 5, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, LIST_END);
 			break;
 		case CURSOR_LOOK:
-			SceneItem::display(3800, 3, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
+			SceneItem::display(3800, 3, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, LIST_END);
 			break;
 		default:
 			event.handled = false;

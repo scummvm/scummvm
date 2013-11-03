@@ -1852,10 +1852,10 @@ void Scene1200::process(Event &event) {
 						if (R2_GLOBALS._scientistConvIndex >= 4)
 							R2_GLOBALS._sceneManager.changeScene(3250);
 						else
-							SceneItem::display(1200, 6, 0, 280, 1, 160, 9, 1, 2, 20, 7, 154, -999);
+							SceneItem::display(1200, 6, 0, 280, 1, 160, 9, 1, 2, 20, 7, 154, LIST_END);
 						break;
 					default:
-						SceneItem::display(1200, 5, 0, 280, 1, 160, 9, 1, 2, 20, 7, 154, -999);
+						SceneItem::display(1200, 5, 0, 280, 1, 160, 9, 1, 2, 20, 7, 154, LIST_END);
 						break;
 					}
 					event.handled = true;
@@ -1868,7 +1868,7 @@ void Scene1200::process(Event &event) {
 				switch (cellPos.x) {
 				case 3:
 					// It was your cell.
-					SceneItem::display(1200, 8, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
+					SceneItem::display(1200, 8, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, LIST_END);
 					break;
 				case 9:
 						R2_GLOBALS._sceneManager.changeScene(3240);
@@ -1878,7 +1878,7 @@ void Scene1200::process(Event &event) {
 						R2_GLOBALS._sceneManager.changeScene(3210);
 					else
 						// A vent grill
-						SceneItem::display(1200, 10, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
+						SceneItem::display(1200, 10, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, LIST_END);
 					break;
 				case 17:
 					switch (cellPos.y) {
@@ -1893,7 +1893,7 @@ void Scene1200::process(Event &event) {
 						break;
 					default:
 						// A vent grill
-						SceneItem::display(1200, 10, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
+						SceneItem::display(1200, 10, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, LIST_END);
 						break;
 					}
 					break;
@@ -1901,14 +1901,14 @@ void Scene1200::process(Event &event) {
 					R2_GLOBALS._sceneManager.changeScene(3245);
 					break;
 				default:
-					SceneItem::display(1200, 10, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
+					SceneItem::display(1200, 10, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, LIST_END);
 					break;
 				}
 			}
 			if (cellId > 36) {
 				// "An anti-pest laser"
 				event.handled = true;
-				SceneItem::display(1200, 9, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
+				SceneItem::display(1200, 9, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, LIST_END);
 			}
 			break;
 		case CURSOR_TALK:
@@ -7227,13 +7227,13 @@ bool Scene1550::Junk::startAction(CursorType action, Event &event) {
 		if (_visage == 1561) {
 			switch (_frame) {
 			case 2:
-				SceneItem::display(1550, 23, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
+				SceneItem::display(1550, 23, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, LIST_END);
 				break;
 			case 3:
-				SceneItem::display(1550, 26, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
+				SceneItem::display(1550, 26, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, LIST_END);
 				break;
 			case 4:
-				SceneItem::display(1550, 35, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
+				SceneItem::display(1550, 35, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, LIST_END);
 				break;
 			default:
 				break;
@@ -7241,13 +7241,13 @@ bool Scene1550::Junk::startAction(CursorType action, Event &event) {
 		} else {
 			switch ((((_strip - 1) * 5) + _frame) % 3) {
 			case 0:
-				SceneItem::display(1550, 62, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
+				SceneItem::display(1550, 62, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, LIST_END);
 				break;
 			case 1:
-				SceneItem::display(1550, 53, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
+				SceneItem::display(1550, 53, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, LIST_END);
 				break;
 			case 2:
-				SceneItem::display(1550, 76, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
+				SceneItem::display(1550, 76, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, LIST_END);
 				break;
 			default:
 				break;
@@ -7291,11 +7291,11 @@ bool Scene1550::ShipComponent::startAction(CursorType action, Event &event) {
 		break;
 	case CURSOR_LOOK:
 		if (_componentId == 8)
-			SceneItem::display(1550, 75, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
+			SceneItem::display(1550, 75, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, LIST_END);
 		else if (_frame == 1)
-			SceneItem::display(1550, 70, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
+			SceneItem::display(1550, 70, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, LIST_END);
 		else
-			SceneItem::display(1550, 71, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
+			SceneItem::display(1550, 71, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, LIST_END);
 		return true;
 		break;
 	case R2_FUEL_CELL:
@@ -7661,7 +7661,7 @@ bool Scene1550::Actor9::startAction(CursorType action, Event &event) {
 		return true;
 		break;
 	case CURSOR_LOOK:
-		SceneItem::display(1550, 41, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
+		SceneItem::display(1550, 41, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, LIST_END);
 		return true;
 		break;
 	default:
@@ -7748,7 +7748,7 @@ bool Scene1550::Actor13::startAction(CursorType action, Event &event) {
 			scene->_sceneMode = 1564;
 			scene->setAction(&scene->_sequenceManager1, scene, 1564, &R2_GLOBALS._player, NULL);
 		} else
-			SceneItem::display(1550, 64, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
+			SceneItem::display(1550, 64, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, LIST_END);
 		return true;
 		break;
 	case CURSOR_LOOK:
@@ -7756,9 +7756,9 @@ bool Scene1550::Actor13::startAction(CursorType action, Event &event) {
 			return SceneActor::startAction(action, event);
 
 		if (R2_INVENTORY.getObjectScene(R2_BATTERY) == 1550) {
-			SceneItem::display(1550, 74, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
+			SceneItem::display(1550, 74, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, LIST_END);
 		} else
-			SceneItem::display(1550, 64, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
+			SceneItem::display(1550, 64, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, LIST_END);
 		return true;
 		break;
 	default:
@@ -8214,7 +8214,7 @@ void Scene1550::signal() {
 		R2_GLOBALS._player.enableControl();
 		break;
 	case 1585:
-		SceneItem::display(1550, 66, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
+		SceneItem::display(1550, 66, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, LIST_END);
 		R2_GLOBALS._player.enableControl();
 		break;
 	case 1586:
@@ -11782,9 +11782,9 @@ bool Scene1850::Robot::startAction(CursorType action, Event &event) {
 		break;
 	case CURSOR_LOOK:
 		if (R2_GLOBALS.getFlag(34))
-			SceneItem::display(1850, 2, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
+			SceneItem::display(1850, 2, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, LIST_END);
 		else
-			SceneItem::display(1850, 1, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
+			SceneItem::display(1850, 1, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, LIST_END);
 
 		return true;
 		break;
@@ -11849,7 +11849,7 @@ bool Scene1850::Actor6::startAction(CursorType action, Event &event) {
 	Scene1850 *scene = (Scene1850 *)R2_GLOBALS._sceneManager._scene;
 
 	if (R2_GLOBALS.getFlag(32)) {
-		SceneItem::display(3240, 4, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
+		SceneItem::display(3240, 4, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, LIST_END);
 		return true;
 	}
 
@@ -13917,11 +13917,11 @@ void Scene1950::Vampire::signal() {
 		scene->_field416 = 0;
 		break;
 	case 22:
-		SceneItem::display(1950, 18, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
+		SceneItem::display(1950, 18, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, LIST_END);
 		R2_GLOBALS._player.enableControl(CURSOR_WALK);
 		break;
 	case 23:
-		SceneItem::display(1950, 25, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
+		SceneItem::display(1950, 25, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, LIST_END);
 		scene->_sceneMode = R2_GLOBALS._flubMazeEntryDirection;
 		scene->setAction(&scene->_sequenceManager, scene, 1960, &R2_GLOBALS._player, NULL);
 		break;
@@ -14050,9 +14050,9 @@ void Scene1950::WestExit::changeScene() {
 			R2_GLOBALS._player.addMover(mover, &pt, scene);
 		} else {
 			if (!R2_GLOBALS.getFlag(36))
-				SceneItem::display(1950, 33, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
+				SceneItem::display(1950, 33, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, LIST_END);
 			if ((R2_INVENTORY.getObjectScene(R2_SAPPHIRE_BLUE) == 1950) || (R2_INVENTORY.getObjectScene(R2_ANCIENT_SCROLLS) == 1950))
-				SceneItem::display(1950, 34, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
+				SceneItem::display(1950, 34, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, LIST_END);
 			scene->_sceneMode = 0;
 			Common::Point pt(30, 160);
 			NpcMover *mover = new NpcMover();
@@ -14089,7 +14089,7 @@ void Scene1950::DoorExit::changeScene() {
 		scene->_sceneMode = 1975;
 		scene->setAction(&scene->_sequenceManager, scene, 1975, &R2_GLOBALS._player, NULL);
 	} else {
-		SceneItem::display(1950, 22, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
+		SceneItem::display(1950, 22, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, LIST_END);
 		R2_GLOBALS._flubMazeEntryDirection = 0;
 		scene->_sceneMode = 0;
 		Common::Point pt(250, 150);
@@ -15320,7 +15320,7 @@ void Scene1950::signal() {
 		R2_GLOBALS._sceneManager.changeScene(1945);
 		break;
 	case 1958:
-		SceneItem::display(1950, 24, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
+		SceneItem::display(1950, 24, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, LIST_END);
 		R2_GLOBALS._player.enableControl(CURSOR_WALK);
 		_doorExit._enabled = true;
 		break;
@@ -15339,7 +15339,7 @@ void Scene1950::signal() {
 	// No break on purpose
 	case 1965:
 		if (!R2_GLOBALS.getFlag(37)) {
-			SceneItem::display(1950, 26, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
+			SceneItem::display(1950, 26, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, LIST_END);
 		}
 		R2_GLOBALS._player.enableControl();
 		break;

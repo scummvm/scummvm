@@ -5724,7 +5724,7 @@ bool Scene600::Doorway::startAction(CursorType action, Event &event) {
 	}
 
 	if ((R2_GLOBALS.getFlag(9)) && (R2_INVENTORY.getObjectScene(R2_COM_SCANNER) == 600))
-		SceneItem::display(600, 31, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
+		SceneItem::display(600, 31, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, LIST_END);
 	else {
 		R2_GLOBALS._player.disableControl();
 		scene->_sceneMode = 601;
@@ -5742,7 +5742,7 @@ bool Scene600::Laser::startAction(CursorType action, Event &event) {
 			// If laser is destroyed
 			if (R2_GLOBALS.getFlag(6)) {
 				if (R2_GLOBALS.getFlag(8)) {
-					SceneItem::display(600, 29, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
+					SceneItem::display(600, 29, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, LIST_END);
 					return true;
 				} else {
 					R2_GLOBALS._player.disableControl();
@@ -5758,7 +5758,7 @@ bool Scene600::Laser::startAction(CursorType action, Event &event) {
 			break;
 		case R2_AEROSOL:
 			if (R2_GLOBALS.getFlag(5)) {
-				SceneItem::display(600, 28, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
+				SceneItem::display(600, 28, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, LIST_END);
 				return true;
 			} else {
 				R2_GLOBALS._player.disableControl();
@@ -6459,7 +6459,7 @@ void Scene700::signal() {
 		_sceneMode = 2;
 		R2_GLOBALS._player.setStrip(4);
 		if (R2_GLOBALS._player._position.x != 164) {
-			SceneItem::display(700, 36, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
+			SceneItem::display(700, 36, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, LIST_END);
 			R2_GLOBALS._player.enableControl();
 		} else {
 			R2_GLOBALS._sound2.play(19);
@@ -7557,11 +7557,11 @@ bool Scene900::Button::startAction(CursorType action, Event &event) {
 			return true;
 			break;
 		case 8:
-			SceneItem::display(5, 11, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
+			SceneItem::display(5, 11, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, LIST_END);
 			return true;
 			break;
 		case 9:
-			SceneItem::display(5, 12, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
+			SceneItem::display(5, 12, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, LIST_END);
 			return true;
 			break;
 		default:
@@ -7586,7 +7586,7 @@ bool Scene900::Button::startAction(CursorType action, Event &event) {
 		}
 	} else if (action == CURSOR_LOOK) {
 		SceneItem::display(900, ((_buttonId == 2) && (scene->_controlsScreenNumber == 2)) ? 21 : _buttonId + 11,
-			SET_WIDTH, 280, SET_X, 160,  SET_POS_MODE, 1, SET_Y, 20, SET_EXT_BGCOLOR, 7, -999);
+			SET_WIDTH, 280, SET_X, 160,  SET_POS_MODE, 1, SET_Y, 20, SET_EXT_BGCOLOR, 7, LIST_END);
 		return true;
 	} else {
 		return SceneActor::startAction(action, event);

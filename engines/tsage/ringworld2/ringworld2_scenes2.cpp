@@ -1970,7 +1970,7 @@ void Scene2450::Exit1::changeScene() {
 		R2_GLOBALS._player.addMover(mover, &pt, scene);
 	} else {
 		_moving = false;
-		SceneItem::display(2450, 3, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
+		SceneItem::display(2450, 3, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, LIST_END);
 		Common::Point pt(60, 140);
 		NpcMover *mover = new NpcMover();
 		R2_GLOBALS._player.addMover(mover, &pt, NULL);
@@ -2526,7 +2526,7 @@ bool Scene2525::GlassDome::startAction(CursorType action, Event &event) {
 		scene->_sceneMode = 2525;
 		scene->setAction(&scene->_sequenceManager, scene, 2525, &R2_GLOBALS._player, &scene->_glassDome, NULL);
 	} else {
-		SceneItem::display(2530, 33, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
+		SceneItem::display(2530, 33, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, LIST_END);
 	}
 	return true;
 }
@@ -2654,7 +2654,7 @@ bool Scene2530::Flask::startAction(CursorType action, Event &event) {
 		scene->_sceneMode = 2530;
 		scene->setAction(&scene->_sequenceManager, scene, 2530, &R2_GLOBALS._player, &scene->_flask, NULL);
 	} else {
-		SceneItem::display(2530, 33, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
+		SceneItem::display(2530, 33, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, LIST_END);
 	}
 
 	return true;
@@ -2668,7 +2668,7 @@ bool Scene2530::Crank::startAction(CursorType action, Event &event) {
 
 	if (R2_GLOBALS._player._characterIndex == R2_QUINN) {
 		if (R2_GLOBALS.getFlag(73))
-			SceneItem::display(2530, 35, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
+			SceneItem::display(2530, 35, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, LIST_END);
 		else {
 			R2_GLOBALS._player.disableControl();
 			scene->_sceneMode = 2532;
@@ -2815,7 +2815,7 @@ bool Scene2535::RebreatherTank::startAction(CursorType action, Event &event) {
 		scene->setAction(&scene->_sequenceManager, scene, scene->_sceneMode, 
 			&R2_GLOBALS._player, &scene->_rebreatherTank, NULL);
 	} else {
-		SceneItem::display(2530, 33, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
+		SceneItem::display(2530, 33, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, LIST_END);
 	}
 
 	return true;
@@ -2832,7 +2832,7 @@ bool Scene2535::TannerMask::startAction(CursorType action, Event &event) {
 		scene->_sceneMode = 2535;
 		scene->setAction(&scene->_sequenceManager, scene, 2535, &R2_GLOBALS._player, &scene->_tannerMask, NULL);
 	} else {
-		SceneItem::display(2530, 33, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
+		SceneItem::display(2530, 33, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, LIST_END);
 	}
 
 	return true;
@@ -3587,7 +3587,7 @@ void Scene2700::process(Event &event) {
 					break;
 				}
 			} else {
-				SceneItem::display(2700, 3, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
+				SceneItem::display(2700, 3, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, LIST_END);
 			}
 
 			event.handled = true;
