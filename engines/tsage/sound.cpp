@@ -969,7 +969,7 @@ void SoundManager::sfRethinkVoiceTypes() {
 					int entryIndex = -1;
 					for (uint idx = 0; idx < vtStruct->_entries.size(); ++idx) {
 						if (vtStruct->_entries[idx]._voiceNum == foundIndex) {
-							foundIndex = true;
+							foundMatch = true;
 							if (!vtStruct->_entries[idx]._type0._sound2) {
 								entryIndex = idx;
 								break;
