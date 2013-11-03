@@ -2621,6 +2621,7 @@ bool PlayStream::play(int voiceNum, EventHandler *endAction) {
 		g_vm->_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_soundHandle, 
 			_audioStream, DisposeAfterUse::YES);
 		_voiceNum = voiceNum;
+		_endAction = endAction;
 		return true;
 	}
 	 
