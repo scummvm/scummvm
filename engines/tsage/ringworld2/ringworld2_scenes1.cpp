@@ -9733,16 +9733,16 @@ void Scene1580::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_field412);
 }
 
-bool Scene1580::Hotspot1::startAction(CursorType action, Event &event) {
+bool Scene1580::JoystickPlug::startAction(CursorType action, Event &event) {
 	Scene1580 *scene = (Scene1580 *)R2_GLOBALS._sceneManager._scene;
 
 	if (action == R2_JOYSTICK) {
 		R2_INVENTORY.setObjectScene(R2_JOYSTICK, 1580);
-		R2_GLOBALS._sceneItems.remove(&scene->_item1);
-		scene->_actor2.postInit();
-		scene->_actor2.setup(1580, 1, 4);
-		scene->_actor2.setPosition(Common::Point(159, 163));
-		scene->_actor2.setDetails(1550, 78, -1, -1, 2, (SceneItem *) NULL);
+		R2_GLOBALS._sceneItems.remove(&scene->_joystickPlug);
+		scene->_joystick.postInit();
+		scene->_joystick.setup(1580, 1, 4);
+		scene->_joystick.setPosition(Common::Point(159, 163));
+		scene->_joystick.setDetails(1550, 78, -1, -1, 2, (SceneItem *) NULL);
 
 		scene->_arrActor[5].remove();
 
@@ -9752,28 +9752,28 @@ bool Scene1580::Hotspot1::startAction(CursorType action, Event &event) {
 	return SceneHotspot::startAction(action, event);
 }
 
-bool Scene1580::Hotspot2::startAction(CursorType action, Event &event) {
+bool Scene1580::ScreenSlot::startAction(CursorType action, Event &event) {
 	Scene1580 *scene = (Scene1580 *)R2_GLOBALS._sceneManager._scene;
 
 	if (action == R2_DIAGNOSTICS_DISPLAY) {
 		R2_INVENTORY.setObjectScene(R2_DIAGNOSTICS_DISPLAY, 1580);
 		R2_GLOBALS._player.disableControl();
-		R2_GLOBALS._sceneItems.remove(&scene->_item2);
+		R2_GLOBALS._sceneItems.remove(&scene->_screenSlot);
 
-		scene->_actor3.postInit();
-		scene->_actor3.setup(1580, 1, 1);
-		scene->_actor3.setPosition(Common::Point(124, 108));
-		scene->_actor3.fixPriority(10);
+		scene->_screen.postInit();
+		scene->_screen.setup(1580, 1, 1);
+		scene->_screen.setPosition(Common::Point(124, 108));
+		scene->_screen.fixPriority(10);
 
 		if (R2_INVENTORY.getObjectScene(R2_JOYSTICK) == 1580)
-			scene->_actor3.setDetails(1550, 14, -1, -1, 5, &scene->_actor2);
+			scene->_screen.setDetails(1550, 14, -1, -1, 5, &scene->_joystick);
 		else
-			scene->_actor3.setDetails(1550, 14, -1, -1, 2, (SceneItem *)NULL);
+			scene->_screen.setDetails(1550, 14, -1, -1, 2, (SceneItem *)NULL);
 
-		scene->_actor1.postInit();
-		scene->_actor1.setup(1580, 3, 1);
-		scene->_actor1.setPosition(Common::Point(124, 109));
-		scene->_actor1.fixPriority(20);
+		scene->_screenDisplay.postInit();
+		scene->_screenDisplay.setup(1580, 3, 1);
+		scene->_screenDisplay.setPosition(Common::Point(124, 109));
+		scene->_screenDisplay.fixPriority(20);
 		scene->_field412 = 1;
 		scene->_sceneMode = 10;
 		scene->setAction(&scene->_sequenceManager, scene, 1, &R2_GLOBALS._player, NULL);
@@ -9784,7 +9784,7 @@ bool Scene1580::Hotspot2::startAction(CursorType action, Event &event) {
 	return SceneHotspot::startAction(action, event);
 }
 
-bool Scene1580::Actor2::startAction(CursorType action, Event &event) {
+bool Scene1580::Joystick::startAction(CursorType action, Event &event) {
 	if ( (action == CURSOR_USE) && (R2_INVENTORY.getObjectScene(R2_DIAGNOSTICS_DISPLAY) == 1580)
 		&& (R2_INVENTORY.getObjectScene(R2_FUEL_CELL) == 0) && (R2_INVENTORY.getObjectScene(R2_GUIDANCE_MODULE) == 0)
 		&& (R2_INVENTORY.getObjectScene(R2_RADAR_MECHANISM) == 0) && (R2_INVENTORY.getObjectScene(R2_GYROSCOPE) == 0)
@@ -9804,13 +9804,13 @@ bool Scene1580::Actor2::startAction(CursorType action, Event &event) {
 	return SceneActor::startAction(action, event);
 }
 
-bool Scene1580::Actor3::startAction(CursorType action, Event &event) {
+bool Scene1580::Screen::startAction(CursorType action, Event &event) {
 	if ((action == CURSOR_USE) && (R2_INVENTORY.getObjectScene(R2_BROKEN_DISPLAY) == 1580)) {
 		Scene1580 *scene = (Scene1580 *)R2_GLOBALS._sceneManager._scene;
 
 		R2_INVENTORY.setObjectScene(R2_BROKEN_DISPLAY, R2_GLOBALS._player._characterIndex);
-		scene->_item2.setDetails(Rect(69, 29, 177, 108), 1550, 82, -1, -1, 2, NULL);
-		scene->_actor1.remove();
+		scene->_screenSlot.setDetails(Rect(69, 29, 177, 108), 1550, 82, -1, -1, 2, NULL);
+		scene->_screenDisplay.remove();
 		remove();
 		return true;
 	}
@@ -9818,21 +9818,21 @@ bool Scene1580::Actor3::startAction(CursorType action, Event &event) {
 	return SceneActor::startAction(action, event);
 }
 
-bool Scene1580::Actor4::startAction(CursorType action, Event &event) {
+bool Scene1580::StorageCompartment::startAction(CursorType action, Event &event) {
 	if (action != CURSOR_USE)
 		return SceneActor::startAction(action, event);
 
 	Scene1580 *scene = (Scene1580 *)R2_GLOBALS._sceneManager._scene;
 
 	R2_GLOBALS._player.disableControl();
-	R2_GLOBALS._sceneItems.remove(&scene->_actor4);
+	R2_GLOBALS._sceneItems.remove(&scene->_storageCompartment);
 	scene->_sceneMode = 0;
 	animate(ANIM_MODE_5, scene);
 
 	return true;
 }
 
-bool Scene1580::Actor5::startAction(CursorType action, Event &event) {
+bool Scene1580::HatchButton::startAction(CursorType action, Event &event) {
 	if (action != CURSOR_USE)
 		return SceneActor::startAction(action, event);
 
@@ -9846,7 +9846,7 @@ bool Scene1580::Actor5::startAction(CursorType action, Event &event) {
 	return true;
 }
 
-bool Scene1580::Actor6::startAction(CursorType action, Event &event) {
+bool Scene1580::ThrusterValve::startAction(CursorType action, Event &event) {
 	Scene1580 *scene = (Scene1580 *)R2_GLOBALS._sceneManager._scene;
 
 	switch (action) {
@@ -9878,7 +9878,7 @@ bool Scene1580::Actor6::startAction(CursorType action, Event &event) {
 	return SceneActor::startAction(action, event);
 }
 
-bool Scene1580::Actor7::startAction(CursorType action, Event &event) {
+bool Scene1580::Ignitor::startAction(CursorType action, Event &event) {
 	Scene1580 *scene = (Scene1580 *)R2_GLOBALS._sceneManager._scene;
 
 	switch (action) {
@@ -9925,89 +9925,90 @@ void Scene1580::postInit(SceneObjectList *OwnerList) {
 
 	R2_GLOBALS._player.disableControl();
 	if (R2_INVENTORY.getObjectScene(R2_JOYSTICK) == 1580) {
-		_actor2.postInit();
-		_actor2.setup(1580, 1, 4);
-		_actor2.setPosition(Common::Point(159, 163));
-		_actor2.setDetails(1550, 78, -1, -1, 1, (SceneItem *) NULL);
+		_joystick.postInit();
+		_joystick.setup(1580, 1, 4);
+		_joystick.setPosition(Common::Point(159, 163));
+		_joystick.setDetails(1550, 78, -1, -1, 1, (SceneItem *) NULL);
 	} else {
-		_item1.setDetails(Rect(141, 148, 179, 167), 1550, 79, -1, -1, 1, NULL);
+		_joystickPlug.setDetails(Rect(141, 148, 179, 167), 1550, 79, -1, -1, 1, NULL);
 	}
 
 	if (R2_INVENTORY.getObjectScene(R2_BROKEN_DISPLAY) == 1580) {
-		_actor3.postInit();
-		_actor3.setup(1580, 1, 1);
-		_actor3.setPosition(Common::Point(124, 108));
-		_actor3.fixPriority(10);
-		_actor3.setDetails(1550, 13, -1, -1, 1, (SceneItem *) NULL);
+		_screen.postInit();
+		_screen.setup(1580, 1, 1);
+		_screen.setPosition(Common::Point(124, 108));
+		_screen.fixPriority(10);
+		_screen.setDetails(1550, 13, -1, -1, 1, (SceneItem *) NULL);
 
-		_actor1.postInit();
-		_actor1.setup(1580, 1, 3);
-		_actor1.setPosition(Common::Point(124, 96));
-		_actor1.fixPriority(20);
+		_screenDisplay.postInit();
+		_screenDisplay.setup(1580, 1, 3);
+		_screenDisplay.setPosition(Common::Point(124, 96));
+		_screenDisplay.fixPriority(20);
 	} else if (R2_INVENTORY.getObjectScene(R2_DIAGNOSTICS_DISPLAY) == 1580) {
-		_actor3.postInit();
-		_actor3.setup(1580, 1, 1);
-		_actor3.setPosition(Common::Point(124, 108));
-		_actor3.fixPriority(10);
-		_actor3.setDetails(1550, 14, -1, -1, 1, (SceneItem *) NULL);
+		_screen.postInit();
+		_screen.setup(1580, 1, 1);
+		_screen.setPosition(Common::Point(124, 108));
+		_screen.fixPriority(10);
+		_screen.setDetails(1550, 14, -1, -1, 1, (SceneItem *) NULL);
 
-		_actor1.postInit();
-		_actor1.setup(1580, 3, 1);
-		_actor1.setPosition(Common::Point(124, 109));
-		_actor1.fixPriority(20);
+		_screenDisplay.postInit();
+		_screenDisplay.setup(1580, 3, 1);
+		_screenDisplay.setPosition(Common::Point(124, 109));
+		_screenDisplay.fixPriority(20);
+		_screenDisplay.setZoom(200);
 
 		_sceneMode = 10;
 	} else {
-		_item2.setDetails(Rect(69, 29, 177, 108), 1550, 82, -1, -1, 1, NULL);
+		_screenSlot.setDetails(Rect(69, 29, 177, 108), 1550, 82, -1, -1, 1, NULL);
 	}
 
-	_actor4.postInit();
+	_storageCompartment.postInit();
 	if (R2_GLOBALS.getFlag(58) == 0) {
-		_actor4.setup(1580, 5, 1);
-		_actor4.setDetails(1550, 80, -1, -1, 1, (SceneItem *) NULL);
+		_storageCompartment.setup(1580, 5, 1);
+		_storageCompartment.setDetails(1550, 80, -1, -1, 1, (SceneItem *) NULL);
 	} else {
-		_actor4.setup(1580, 5, 6);
+		_storageCompartment.setup(1580, 5, 6);
 	}
 
-	_actor4.setPosition(Common::Point(216, 108));
-	_actor4.fixPriority(100);
+	_storageCompartment.setPosition(Common::Point(216, 108));
+	_storageCompartment.fixPriority(100);
 
-	_actor5.postInit();
-	_actor5.setup(1580, 4, 1);
-	_actor5.setPosition(Common::Point(291, 147));
-	_actor5.fixPriority(100);
-	_actor5.setDetails(1550, 81, -1, -1, 1, (SceneItem *) NULL);
+	_hatchButton.postInit();
+	_hatchButton.setup(1580, 4, 1);
+	_hatchButton.setPosition(Common::Point(291, 147));
+	_hatchButton.fixPriority(100);
+	_hatchButton.setDetails(1550, 81, -1, -1, 1, (SceneItem *) NULL);
 		
 	if (R2_INVENTORY.getObjectScene(R2_THRUSTER_VALVE) == 1580) {
-		_actor6.postInit();
-		_actor6.setup(1580, 6, 2);
-		_actor6.setPosition(Common::Point(222, 108));
-		_actor6.fixPriority(50);
-		_actor6.setDetails(1550, 32, -1, 34, 1, (SceneItem *) NULL);
+		_thrusterValve.postInit();
+		_thrusterValve.setup(1580, 6, 2);
+		_thrusterValve.setPosition(Common::Point(222, 108));
+		_thrusterValve.fixPriority(50);
+		_thrusterValve.setDetails(1550, 32, -1, 34, 1, (SceneItem *) NULL);
 	}
 
 	if (R2_INVENTORY.getObjectScene(R2_IGNITOR) == 1580) {
-		_actor7.postInit();
-		_actor7.setup(1580, 6, 1);
-		_actor7.setPosition(Common::Point(195, 108));
-		_actor7.fixPriority(50);
-		_actor7.setDetails(1550, 38, -1, 34, 1, (SceneItem *) NULL);
+		_ignitor.postInit();
+		_ignitor.setup(1580, 6, 1);
+		_ignitor.setPosition(Common::Point(195, 108));
+		_ignitor.fixPriority(50);
+		_ignitor.setDetails(1550, 38, -1, 34, 1, (SceneItem *) NULL);
 	}
 
 	R2_GLOBALS._player.postInit();
 	R2_GLOBALS._player.hide();
 	setAction(&_sequenceManager, this, 1, &R2_GLOBALS._player, NULL);
-	_item3.setDetails(Rect(0, 0, 320, 200), 1550, 50, -1, -1, 1, NULL);
+	_background.setDetails(Rect(0, 0, 320, 200), 1550, 50, -1, -1, 1, NULL);
 }
 
 void Scene1580::signal() {
 	switch (_sceneMode++) {
 	case 10:
-		_actor1.animate(ANIM_MODE_5, this);
+		_screenDisplay.animate(ANIM_MODE_5, this);
 		break;
 	case 11:
-		_actor1.setup(1580, 1, 2);
-		_actor1.setPosition(Common::Point(124, 94));
+		_screenDisplay.setup(1580, 1, 2);
+		_screenDisplay.setPosition(Common::Point(124, 94));
 
 		if (R2_INVENTORY.getObjectScene(R2_GYROSCOPE) != 0) {
 			_arrActor[0].postInit();

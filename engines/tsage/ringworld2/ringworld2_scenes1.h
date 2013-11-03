@@ -629,54 +629,55 @@ public:
 };
 
 class Scene1580 : public SceneExt {
-	class Hotspot1 : public NamedHotspot {
+	class JoystickPlug : public NamedHotspot {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Hotspot2 : public NamedHotspot {
+	class ScreenSlot : public NamedHotspot {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
 
-	class Actor2 : public SceneActor {
+	class Joystick : public SceneActor {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Actor3 : public SceneActor {
+	class Screen : public SceneActor {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Actor4 : public SceneActor {
+	class StorageCompartment : public SceneActor {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Actor5 : public SceneActor {
+	class HatchButton : public SceneActor {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Actor6 : public SceneActor {
+	class ThrusterValve : public SceneActor {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Actor7 : public SceneActor {
+	class Ignitor : public SceneActor {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
 public:
+	//CHECKME: Useless variable?
 	int _field412;
 	SpeakerQuinn _quinnSpeaker;
 	SpeakerSeeker _seekerSpeaker;
-	Hotspot1 _item1;
-	Hotspot2 _item2;
-	NamedHotspot _item3;
-	SceneActor _actor1;
+	JoystickPlug _joystickPlug;
+	ScreenSlot _screenSlot;
+	NamedHotspot _background;
+	SceneActor _screenDisplay;
 	SceneActor _arrActor[8];
-	Actor2 _actor2;
-	Actor3 _actor3;
-	Actor4 _actor4;
-	Actor5 _actor5;
-	Actor6 _actor6;
-	Actor7 _actor7;
+	Joystick _joystick;
+	Screen _screen;
+	StorageCompartment _storageCompartment;
+	HatchButton _hatchButton;
+	ThrusterValve _thrusterValve;
+	Ignitor _ignitor;
 	SequenceManager _sequenceManager;
 
 	Scene1580();
