@@ -7128,15 +7128,15 @@ void Scene1530::postInit(SceneObjectList *OwnerList) {
 		R2_GLOBALS._player._moveRate = 30;
 		R2_GLOBALS._player._moveDiff = Common::Point(4, 1);
 
-		_actor2.postInit();
-		_actor2.setup(1516, 7, 1);
-		_actor2.setPosition(Common::Point(121, 41));
-		_actor2.animate(ANIM_MODE_2, NULL);
+		_leftReactor.postInit();
+		_leftReactor.setup(1516, 7, 1);
+		_leftReactor.setPosition(Common::Point(121, 41));
+		_leftReactor.animate(ANIM_MODE_2, NULL);
 
-		_actor3.postInit();
-		_actor3.setup(1516, 8, 1);
-		_actor3.setPosition(Common::Point(107, 116));
-		_actor3.animate(ANIM_MODE_2, NULL);
+		_rightReactor.postInit();
+		_rightReactor.setup(1516, 8, 1);
+		_rightReactor.setPosition(Common::Point(107, 116));
+		_rightReactor.animate(ANIM_MODE_2, NULL);
 
 		R2_GLOBALS._player.disableControl();
 		Common::Point pt(480, 75);
@@ -7146,14 +7146,14 @@ void Scene1530::postInit(SceneObjectList *OwnerList) {
 
 		_sceneMode = 1;
 	} else {
-		_actor1.postInit();
-		_actor1._effect = 1;
+		_seeker.postInit();
+		_seeker._effect = 1;
 
 		R2_GLOBALS._player.postInit();
 		R2_GLOBALS._player.animate(ANIM_MODE_1, NULL);
 		R2_GLOBALS._player.disableControl();
 
-		setAction(&_sequenceManager, this, 1530, &R2_GLOBALS._player, &_actor1, NULL);
+		setAction(&_sequenceManager, this, 1530, &R2_GLOBALS._player, &_seeker, NULL);
 
 		_sceneMode = 2;
 	}
@@ -7186,8 +7186,8 @@ void Scene1530::dispatch() {
 	int16 x = R2_GLOBALS._player._position.x;
 	int16 y = R2_GLOBALS._player._position.y;
 
-	_actor2.setPosition(Common::Point(x - 39, y - 85));
-	_actor3.setPosition(Common::Point(x - 53, y - 9));
+	_leftReactor.setPosition(Common::Point(x - 39, y - 85));
+	_rightReactor.setPosition(Common::Point(x - 53, y - 9));
 
 	Scene::dispatch();
 }

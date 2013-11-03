@@ -410,9 +410,9 @@ class Scene1530 : public SceneExt {
 public:
 	SpeakerQuinn _quinnSpeaker;
 	SpeakerSeeker _seekerSpeaker;
-	SceneActor _actor1;
-	SceneActor _actor2;
-	SceneActor _actor3;
+	SceneActor _seeker;
+	SceneActor _leftReactor;
+	SceneActor _rightReactor;
 
 	SequenceManager _sequenceManager;
 
