@@ -136,7 +136,7 @@ void Script::load(int script_nr, ResourceManager *resMan) {
 	memcpy(_buf, script->data, script->size);
 
 	// Check scripts for matching signatures and patch those, if found
-	matchSignatureAndPatch(_nr, _buf, script->size);
+	patcherProcessScript(_nr, _buf, script->size);
 
 	if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1) {
 		Resource *heap = resMan->findResource(ResourceId(kResourceTypeHeap, _nr), 0);
