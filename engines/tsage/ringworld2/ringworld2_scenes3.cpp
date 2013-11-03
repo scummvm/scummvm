@@ -5203,20 +5203,21 @@ void Scene3800::enterArea() {
 		R2_GLOBALS._player.setStrip(3);
 		R2_GLOBALS._player.changeZoom(-1);
 		R2_GLOBALS._player._moveDiff = Common::Point(3, 2);
-		_actor1.postInit();
-		_actor1.fixPriority(10);
-		_actor1.changeZoom(-1);
-		_actor1.setVisage(1110);
-		_actor1._effect = 5;
-		_actor1._field9C = this->_field312;
-		R2_GLOBALS._player._linkedActor = &_actor1;
+		_balloonQuinn.postInit();
+		_balloonQuinn.fixPriority(10);
+		_balloonQuinn.changeZoom(-1);
+		_balloonQuinn.setVisage(1110);
+		_balloonQuinn._effect = 5;
+		_balloonQuinn._field9C = this->_field312;
+		R2_GLOBALS._player._linkedActor = &_balloonQuinn;
 		switch (R2_GLOBALS._sceneManager._previousScene) {
 		case 2600:
-			_object1.postInit();
-			_object2.postInit();
-			_actor1.hide();
+			_balloon.postInit();
+			_harness.postInit();
+			_balloonQuinn.hide();
 			_sceneMode = 3800;
-			setAction(&_sequenceManager1, this, 3800, &R2_GLOBALS._player, &_object1, &_object2, NULL);
+			setAction(&_sequenceManager1, this, 3800, &R2_GLOBALS._player, 
+				&_balloon, &_harness, NULL);
 			break;
 		case 3900:
 			_sceneMode = 15;
@@ -5359,9 +5360,9 @@ void Scene3800::signal() {
 		g_globals->_sceneManager.changeScene(3900);
 		break;
 	case 3800:
-		_actor1.show();
-		_object1.remove();
-		_object2.remove();
+		_balloonQuinn.show();
+		_balloon.remove();
+		_harness.remove();
 		R2_GLOBALS._player.enableControl();
 		break;
 	case 3805:

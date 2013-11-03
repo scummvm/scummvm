@@ -784,9 +784,9 @@ class Scene3800 : public SceneExt {
 	};
 
 public:
-	SceneObject _object1;
-	SceneObject _object2;
-	SceneActor _actor1;
+	SceneObject _balloon;
+	SceneObject _harness;
+	SceneActor _balloonQuinn;
 	NamedHotspot _background;
 	NorthExit _northExit;
 	EastExit _eastExit;
