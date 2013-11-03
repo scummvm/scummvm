@@ -1018,7 +1018,7 @@ void SpeakerNej2800::proc15() {
 	Scene2800 *scene = (Scene2800 *)R2_GLOBALS._sceneManager._scene;
 
 	if (!_object2) {
-		_object2 = &scene->_actor2;
+		_object2 = &scene->_nej;
 		_object2->hide();
 		_object1.postInit();
 		_object1.setPosition(_object2->_position);

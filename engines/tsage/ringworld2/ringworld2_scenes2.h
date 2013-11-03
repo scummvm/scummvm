@@ -650,16 +650,16 @@ public:
 	SpeakerQuinn2800 _quinnSpeaker;
 	SpeakerNej2800 _nejSpeaker;
 	SpeakerGuard2800 _guardSpeaker;
-	NamedHotspot _item1;
+	NamedHotspot _background;
 	Outpost _outpost;
 	Guard _guard;
-	SceneActor _actor2;
-	SceneActor _actor3;
-	SceneObject _object1;
+	SceneActor _nej;
+	SceneActor _lightBar;
+	SceneObject _bird;
 	Action1 _action1;
 	Action2 _action2;
 	SequenceManager _sequenceManager;
-	int _field412;
+	int _stripNumber;
 
 	Scene2800();
 	virtual void synchronize(Serializer &s);

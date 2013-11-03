@@ -4170,13 +4170,13 @@ void Scene2750::process(Event &event) {
  *--------------------------------------------------------------------------*/
 
 Scene2800::Scene2800(): SceneExt() {
-	_field412 = 0;
+	_stripNumber = 0;
 }
 
 void Scene2800::synchronize(Serializer &s) {
 	SceneExt::synchronize(s);
 
-	s.syncAsSint16LE(_field412);
+	s.syncAsSint16LE(_stripNumber);
 }
 
 bool Scene2800::Outpost::startAction(CursorType action, Event &event) {
@@ -4198,16 +4198,16 @@ bool Scene2800::Guard::startAction(CursorType action, Event &event) {
 		R2_GLOBALS._player.disableControl();
 		R2_GLOBALS._events.setCursor(CURSOR_WALK);
 		R2_GLOBALS.setFlag(47);
-		scene->_field412 = 1205;
+		scene->_stripNumber = 1205;
 		scene->_sceneMode = 2803;
-		scene->_stripManager.start(scene->_field412, scene);
+		scene->_stripManager.start(scene->_stripNumber, scene);
 		return true;
 	} else if (action == R2_SONIC_STUNNER) {
 		R2_GLOBALS._events.setCursor(CURSOR_ARROW);
 		R2_GLOBALS._player.disableControl();
 		R2_GLOBALS.setFlag(47);
 		scene->_sceneMode = 10;
-		scene->setAction(&scene->_sequenceManager, scene, 2802, &R2_GLOBALS._player, &scene->_actor2, &scene->_guard, NULL);
+		scene->setAction(&scene->_sequenceManager, scene, 2802, &R2_GLOBALS._player, &scene->_nej, &scene->_guard, NULL);
 		return true;
 	} else
 		return SceneActor::startAction(action, event);
@@ -4220,10 +4220,10 @@ void Scene2800::Action1::signal() {
 		setDelay(120);
 		Common::Point pt(330, 25);
 		NpcMover *mover = new NpcMover();
-		scene->_object1.addMover(mover, &pt, NULL);
+		scene->_bird.addMover(mover, &pt, NULL);
 	} else {
 		setDelay(1800 + R2_GLOBALS._randomSource.getRandomNumber(600));
-		scene->_object1.setPosition(Common::Point(-10, 45));
+		scene->_bird.setPosition(Common::Point(-10, 45));
 	}
 }
 
@@ -4364,8 +4364,8 @@ void Scene2800::Action2::signal() {
 		}
 	case 13:
 		R2_GLOBALS._events.setCursor(CURSOR_WALK);
-		scene->_field412 = 1207;
-		scene->_stripManager.start(scene->_field412, this);
+		scene->_stripNumber = 1207;
+		scene->_stripManager.start(scene->_stripNumber, this);
 		break;
 	case 14: {
 		R2_GLOBALS._player.disableControl();
@@ -4431,20 +4431,20 @@ void Scene2800::postInit(SceneObjectList *OwnerList) {
 	R2_GLOBALS._sound2.stop();
 	SceneExt::postInit();
 
-	_object1.postInit();
-	_object1.setup(2750, 4, 1);
-	_object1.setPosition(Common::Point(-10, 25));
-	_object1.animate(ANIM_MODE_1, NULL);
-	_object1.setStrip2(4);
-	_object1._moveRate = 20;
-	_object1.setAction(&_action1);
+	_bird.postInit();
+	_bird.setup(2750, 4, 1);
+	_bird.setPosition(Common::Point(-10, 25));
+	_bird.animate(ANIM_MODE_1, NULL);
+	_bird.setStrip2(4);
+	_bird._moveRate = 20;
+	_bird.setAction(&_action1);
 
-	_actor3.postInit();
-	_actor3.setup(2802, 1, 1);
-	_actor3.setPosition(Common::Point(116, 80));
-	_actor3.fixPriority(111);
-	_actor3.animate(ANIM_MODE_2, NULL);
-	_actor3._numFrames = 6;
+	_lightBar.postInit();
+	_lightBar.setup(2802, 1, 1);
+	_lightBar.setPosition(Common::Point(116, 80));
+	_lightBar.fixPriority(111);
+	_lightBar.animate(ANIM_MODE_2, NULL);
+	_lightBar._numFrames = 6;
 
 	if (!R2_GLOBALS.getFlag(47)) {
 		_guard.postInit();
@@ -4458,7 +4458,7 @@ void Scene2800::postInit(SceneObjectList *OwnerList) {
 		_guard.setDetails(2800, -1, -1, -1, 1, (SceneItem *)NULL);
 	}
 
-	_item1.setDetails(Rect(0, 0, 320, 200), 2800, -1, -1, -1, 1, NULL);
+	_background.setDetails(Rect(0, 0, 320, 200), 2800, -1, -1, -1, 1, NULL);
 
 	_stripManager.setColors(60, 255);
 	_stripManager.setFontNumber(3);
@@ -4471,12 +4471,12 @@ void Scene2800::postInit(SceneObjectList *OwnerList) {
 		if (R2_GLOBALS.getFlag(47)) {
 			_outpost.setDetails(Rect(76, 45, 155, 90), 2800, 3, -1, -1, 2, NULL);
 		} else {
-			_actor2.postInit();
-			_actor2.setup(2752, 5, 1);
-			_actor2.animate(ANIM_MODE_NONE, NULL);
-			_actor2.changeZoom(100);
-			_actor2._moveDiff = Common::Point(2, 1);
-			_actor2.setPosition(Common::Point(101, 148));
+			_nej.postInit();
+			_nej.setup(2752, 5, 1);
+			_nej.animate(ANIM_MODE_NONE, NULL);
+			_nej.changeZoom(100);
+			_nej._moveDiff = Common::Point(2, 1);
+			_nej.setPosition(Common::Point(101, 148));
 		}
 	}
 
@@ -4498,7 +4498,8 @@ void Scene2800::postInit(SceneObjectList *OwnerList) {
 		R2_GLOBALS._player.enableControl();
 	} else {
 		_sceneMode = 2801;
-		R2_GLOBALS._player.setAction(&_sequenceManager, this, 2801, &R2_GLOBALS._player, &_actor2, &_guard, NULL);
+		R2_GLOBALS._player.setAction(&_sequenceManager, this, 2801, &R2_GLOBALS._player, 
+			&_nej, &_guard, NULL);
 	}
 }
 
@@ -4507,13 +4508,13 @@ void Scene2800::signal() {
 	case 10:
 		R2_GLOBALS._sound1.play(238);
 		R2_GLOBALS._events.setCursor(CURSOR_WALK);
-		_field412 = 1206;
+		_stripNumber = 1206;
 		_sceneMode = 2804;
-		_stripManager.start(_field412, this);
+		_stripManager.start(_stripNumber, this);
 		break;
 	case 11:
-		_actor2.remove();
-		_object1.setAction(NULL);
+		_nej.remove();
+		_bird.setAction(NULL);
 		R2_GLOBALS._player.enableControl(CURSOR_WALK);
 		R2_GLOBALS._player._moveDiff = Common::Point(3, 2);
 		_outpost.setDetails(Rect(76, 45, 155, 90), 2800, 3, -1, -1, 2, NULL);
@@ -4533,15 +4534,15 @@ void Scene2800::signal() {
 	case 2803:
 		R2_GLOBALS._player.disableControl();
 		_sceneMode = 10;
-		setAction(&_sequenceManager, this, 2803, &R2_GLOBALS._player, &_actor2, &_guard, NULL);
+		setAction(&_sequenceManager, this, 2803, &R2_GLOBALS._player, &_nej, &_guard, NULL);
 		break;
 	case 2804:
 		R2_GLOBALS._player.disableControl();
 		_sceneMode = 11;
-		setAction(&_sequenceManager, this, 2804, &R2_GLOBALS._player, &_actor2, NULL);
+		setAction(&_sequenceManager, this, 2804, &R2_GLOBALS._player, &_nej, NULL);
 		break;
 	case 2805:
-		_object1.remove();
+		_bird.remove();
 		setAction(&_action2);
 		break;
 	default:
