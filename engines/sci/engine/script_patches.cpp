@@ -1010,9 +1010,9 @@ const uint16 larry6PatchDeathDialog[] = {
 	PATCH_END
 };
 
-//    script, description,                                      magic DWORD adjust signature                   patch
+//    script, description,                                            signature                   patch
 SciScriptPatcherEntry larry6Signatures[] = {
-	{     82, "death dialog memory corruption",              1,          0,     0, larry6SignatureDeathDialog, larry6PatchDeathDialog },
+	{     82, "death dialog memory corruption",              1, 0, 0, larry6SignatureDeathDialog, larry6PatchDeathDialog },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -1083,7 +1083,7 @@ const uint16 mothergoose256PatchSaveLimit[] = {
 	PATCH_END
 };
 
-//    script, description,                                      magic DWORD adjust signature                         patch
+//    script, description,                                            signature                         patch
 SciScriptPatcherEntry mothergoose256Signatures[] = {
 	{      0, "replay save issue",                           1, 0, 0, mothergoose256SignatureReplay,    mothergoose256PatchReplay },
 	{      0, "save limit dialog (SCI1.1)",                  1, 0, 0, mothergoose256SignatureSaveLimit, mothergoose256PatchSaveLimit },
@@ -1345,7 +1345,7 @@ const uint16 qfg1vgaPatchFunnyRoomFix[] = {
 	PATCH_END
 };
 
-//    script, description,                                      magic DWORD adjust signature                            patch
+//    script, description,                                            signature                            patch
 SciScriptPatcherEntry qfg1vgaSignatures[] = {
 	{    215, "fight event issue",                           1, 0, 0, qfg1vgaSignatureFightEvents,         qfg1vgaPatchFightEvents },
 	{    216, "weapon master event issue",                   1, 0, 0, qfg1vgaSignatureFightEvents,         qfg1vgaPatchFightEvents },
@@ -1580,12 +1580,12 @@ const uint16 sq4CdPatchTextOptions[] = {
 	PATCH_END
 };
 
-//    script, description,                                      magic DWORD adjust signature                        patch
+//    script, description,                                            signature                        patch
 SciScriptPatcherEntry sq4Signatures[] = {
-	{    298, "Floppy: endless flight",                      1, 0, 0, sq4FloppySignatureEndlessFlight,       sq4FloppyPatchEndlessFlight },
-	{    818, "CD: Speech and subtitles option",             1, 0, 0, sq4CdSignatureTextOptions,             sq4CdPatchTextOptions },
-	{      0, "CD: Babble icon speech and subtitles fix",    1, 0, 0, sq4CdSignatureBabbleIcon,              sq4CdPatchBabbleIcon },
-	{    818, "CD: Speech and subtitles option button",      1, 0, 0, sq4CdSignatureTextOptionsButton,       sq4CdPatchTextOptionsButton },
+	{    298, "Floppy: endless flight",                      1, 0, 0, sq4FloppySignatureEndlessFlight, sq4FloppyPatchEndlessFlight },
+	{    818, "CD: Speech and subtitles option",             1, 0, 0, sq4CdSignatureTextOptions,       sq4CdPatchTextOptions },
+	{      0, "CD: Babble icon speech and subtitles fix",    1, 0, 0, sq4CdSignatureBabbleIcon,        sq4CdPatchBabbleIcon },
+	{    818, "CD: Speech and subtitles option button",      1, 0, 0, sq4CdSignatureTextOptionsButton, sq4CdPatchTextOptionsButton },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
