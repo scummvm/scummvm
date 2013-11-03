@@ -13827,7 +13827,7 @@ void Scene1950::Vampire::signal() {
 			setStrip(1);
 
 		NpcMover *mover = new NpcMover();
-		addMover(mover, &scene->_field418, scene);
+		addMover(mover, &scene->_vampireDestPos, scene);
 		}
 		break;
 	case 20: {
@@ -13914,7 +13914,7 @@ void Scene1950::Vampire::signal() {
 		else
 			scene->_westExit._enabled = true;
 
-		scene->_field416 = 0;
+		scene->_vampireActive = false;
 		break;
 	case 22:
 		SceneItem::display(1950, 18, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, LIST_END);
@@ -13978,7 +13978,7 @@ void Scene1950::UpExit::changeScene() {
 	R2_GLOBALS._flubMazeEntryDirection = 2;
 	scene->_sceneMode = 12;
 
-	if (scene->_field412 == 0) {
+	if (!scene->_upExitStyle) {
 		if (R2_GLOBALS.getFlag(36))
 			scene->setAction(&scene->_sequenceManager, scene, 1953, &R2_GLOBALS._player, NULL);
 		else
@@ -13999,7 +13999,7 @@ void Scene1950::EastExit::changeScene() {
 	R2_GLOBALS._flubMazeEntryDirection = 3;
 	scene->_sceneMode = 13;
 
-	if (scene->_field416 != 0)
+	if (scene->_vampireActive)
 		R2_GLOBALS._player.animate(ANIM_MODE_9);
 
 	Common::Point pt(340, 160);
@@ -14059,7 +14059,7 @@ void Scene1950::WestExit::changeScene() {
 			R2_GLOBALS._player.addMover(mover, &pt, scene);
 		}
 	} else {
-		if (scene->_field416 != 0)
+		if (scene->_vampireActive)
 			R2_GLOBALS._player.animate(ANIM_MODE_9);
 
 		scene->_sceneMode = 16;
@@ -14102,21 +14102,21 @@ void Scene1950::DoorExit::changeScene() {
 /*--------------------------------------------------------------------------*/
 
 Scene1950::Scene1950() {
-	_field412 = 0;
-	_field414 = 0;
-	_field416 = 0;
-	_field418 = Common::Point(0, 0);
+	_upExitStyle = false;
+	_removeFlag = false;
+	_vampireActive = false;
+	_vampireDestPos = Common::Point(0, 0);
 	_vampireIndex = 0;
 }
 
 void Scene1950::synchronize(Serializer &s) {
 	SceneExt::synchronize(s);
 
-	s.syncAsSint16LE(_field412);
-	s.syncAsSint16LE(_field414);
-	s.syncAsSint16LE(_field416);
-	s.syncAsSint16LE(_field418.x);
-	s.syncAsSint16LE(_field418.y);
+	s.syncAsSint16LE(_upExitStyle);
+	s.syncAsSint16LE(_removeFlag);
+	s.syncAsSint16LE(_vampireActive);
+	s.syncAsSint16LE(_vampireDestPos.x);
+	s.syncAsSint16LE(_vampireDestPos.y);
 	s.syncAsSint16LE(_vampireIndex);
 }
 
@@ -14145,7 +14145,7 @@ void Scene1950::initArea() {
 	_westExit._moving = false;
 	_shaftExit._moving = false;
 	_doorExit._moving = false;
-	_field412 = 0;
+	_upExitStyle = false;
 
 	switch (R2_GLOBALS._flubMazeArea - 1) {
 	case 0:
@@ -14372,7 +14372,7 @@ void Scene1950::initArea() {
 	// No break on purpose
 	case 67:
 		loadScene(1985);
-		_field412 = 1;
+		_upExitStyle = true;
 		break;
 	default:
 		break;
@@ -14819,7 +14819,7 @@ void Scene1950::enterArea() {
 	_door.remove();
 	_scrolls.remove();
 
-	_field416 = 0;
+	_vampireActive = false;
 	_vampireIndex = 0;
 
 	// Certain areas have a vampire in them
@@ -14905,7 +14905,7 @@ void Scene1950::enterArea() {
 			_vampire.setPosition(Common::Point(160, 130));
 			_vampire.animate(ANIM_MODE_2, NULL);
 			_vampire.setDetails(1950, 12, -1, 14, 2, (SceneItem *) NULL);
-			_field416 = 1;
+			_vampireActive = true;
 		}
 	}
 	if ((R2_GLOBALS._flubMazeArea == 1) && (R2_INVENTORY.getObjectScene(R2_SCRITH_KEY) != 0)) {
@@ -14935,13 +14935,13 @@ void Scene1950::enterArea() {
 		_cube.setPosition(Common::Point(193, 158));
 		_cube.setDetails(1950, 3, 4, 5, 2, (SceneItem *) NULL);
 
-		_actor7.postInit();
-		_actor7.setVisage(1970);
-		_actor7.setStrip(3);
-		_actor7.animate(ANIM_MODE_2, NULL);
-		_actor7._numFrames = 6;
-		_actor7.setPosition(Common::Point(194, 158));
-		_actor7.fixPriority(159);
+		_pulsingLights.postInit();
+		_pulsingLights.setVisage(1970);
+		_pulsingLights.setStrip(3);
+		_pulsingLights.animate(ANIM_MODE_2, NULL);
+		_pulsingLights._numFrames = 6;
+		_pulsingLights.setPosition(Common::Point(194, 158));
+		_pulsingLights.fixPriority(159);
 
 		_keypad.setDetails(Rect(188, 124, 199, 133), 1950, 27, 28, -1, 2, NULL);
 
@@ -14981,12 +14981,12 @@ void Scene1950::enterArea() {
 		else
 			_scrolls.setFrame(1);
 
-		_field414 = 1;
-	} else if (_field414 != 0) {
+		_removeFlag = true;
+	} else if (_removeFlag) {
 		_cube.remove();
 		_containmentField.remove();
 		_gem.remove();
-		_actor7.remove();
+		_pulsingLights.remove();
 		_scrolls.remove();
 
 		R2_GLOBALS._sceneItems.remove(&_background);
@@ -15019,7 +15019,7 @@ void Scene1950::enterArea() {
 		break;
 	case 3:
 		// Entering from the left
-		if (_field416 == 0) {
+		if (!_vampireActive) {
 			_sceneMode = R2_GLOBALS._flubMazeEntryDirection;
 			R2_GLOBALS._player.setPosition(Common::Point(-20, 160));
 			Common::Point pt(30, 160);
@@ -15028,13 +15028,13 @@ void Scene1950::enterArea() {
 		} else {
 			_sceneMode = 18;
 			_eastExit._enabled = false;
-			_field418 = Common::Point(60, 152);
+			_vampireDestPos = Common::Point(60, 152);
 			R2_GLOBALS._player.enableControl(CURSOR_USE);
 			R2_GLOBALS._player._canWalk = false;
 
 			_vampire.setStrip(2);
 			NpcMover *mover = new NpcMover();
-			_vampire.addMover(mover, &_field418, this);
+			_vampire.addMover(mover, &_vampireDestPos, this);
 
 			R2_GLOBALS._player.setPosition(Common::Point(-20, 160));
 			Common::Point pt2(30, 160);
@@ -15044,7 +15044,7 @@ void Scene1950::enterArea() {
 		break;
 	case 4:
 		_sceneMode = R2_GLOBALS._flubMazeEntryDirection;
-		if (_field412 == 0) {
+		if (!_upExitStyle) {
 			if (R2_GLOBALS.getFlag(36))
 				setAction(&_sequenceManager, this, 1955, &R2_GLOBALS._player, NULL);
 			else
@@ -15066,7 +15066,7 @@ void Scene1950::enterArea() {
 		break;
 	case 6:
 		// Entering from the right
-		if (_field416 == 0) {
+		if (!_vampireActive) {
 			_sceneMode = R2_GLOBALS._flubMazeEntryDirection;
 			if (R2_GLOBALS._flubMazeArea == 1) {
 				setAction(&_sequenceManager, this, 1961, &R2_GLOBALS._player, NULL);
@@ -15079,14 +15079,14 @@ void Scene1950::enterArea() {
 		} else {
 			_sceneMode = 17;
 			_westExit._enabled = false;
-			_field418 = Common::Point(259, 152);
+			_vampireDestPos = Common::Point(259, 152);
 
 			R2_GLOBALS._player.enableControl(CURSOR_USE);
 			R2_GLOBALS._player._canWalk = false;
 
 			_vampire.setStrip(1);
 			NpcMover *mover = new NpcMover();
-			_vampire.addMover(mover, &_field418, this);
+			_vampire.addMover(mover, &_vampireDestPos, this);
 
 			R2_GLOBALS._player.setPosition(Common::Point(340, 160));
 			Common::Point pt2(289, 160);
@@ -15181,9 +15181,9 @@ void Scene1950::doButtonPress(int indx) {
 }
 
 void Scene1950::postInit(SceneObjectList *OwnerList) {
-	_field412 = 0;
-	_field414 = 0;
-	_field416 = 0;
+	_upExitStyle = false;
+	_removeFlag = false;
+	_vampireActive = false;
 	_vampireIndex = 0;
 	if (R2_GLOBALS._sceneManager._previousScene == 300)
 		R2_GLOBALS._flubMazeArea = 103;
@@ -15280,7 +15280,7 @@ void Scene1950::signal() {
 	case 17: {
 		_sceneMode = 13;
 		R2_GLOBALS._flubMazeEntryDirection = 3;
-		_field416 = 0;
+		_vampireActive = false;
 		R2_GLOBALS._player.disableControl(CURSOR_WALK);
 		R2_GLOBALS._player._canWalk = true;
 		R2_GLOBALS._player.setVisage(22);
@@ -15296,7 +15296,7 @@ void Scene1950::signal() {
 	case 18: {
 		_sceneMode = 16;
 		R2_GLOBALS._flubMazeEntryDirection = 6;
-		_field416 = 0;
+		_vampireActive = false;
 		R2_GLOBALS._player.disableControl(CURSOR_WALK);
 		R2_GLOBALS._player._canWalk = true;
 		R2_GLOBALS._player.setVisage(22);
