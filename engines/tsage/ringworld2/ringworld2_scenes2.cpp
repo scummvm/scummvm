@@ -1039,20 +1039,20 @@ void Scene2000::synchronize(Serializer &s) {
  *
  *--------------------------------------------------------------------------*/
 
-bool Scene2350::Actor2::startAction(CursorType action, Event &event) {
+bool Scene2350::Companion::startAction(CursorType action, Event &event) {
 	if (action != R2_SENSOR_PROBE)
 		return(SceneActor::startAction(action, event));
 	return true;
 }
 
-bool Scene2350::Actor3::startAction(CursorType action, Event &event) {
+bool Scene2350::Balloon::startAction(CursorType action, Event &event) {
 	Scene2350 *scene = (Scene2350 *)R2_GLOBALS._sceneManager._scene;
 
 	if ((action == R2_REBREATHER_TANK) && (R2_GLOBALS.getFlag(74))) {
 		R2_GLOBALS._player.disableControl();
-		scene->_actor1.postInit();
+		scene->_person.postInit();
 		scene->_sceneMode = 2355;
-		scene->setAction(&scene->_sequenceManager, scene, 2355, &R2_GLOBALS._player, &scene->_actor1, NULL);
+		scene->setAction(&scene->_sequenceManager, scene, 2355, &R2_GLOBALS._player, &scene->_person, NULL);
 		return true;
 	}
 
@@ -1109,33 +1109,33 @@ void Scene2350::postInit(SceneObjectList *OwnerList) {
 	}
 
 	if (R2_GLOBALS._player._characterScene[R2_QUINN] == R2_GLOBALS._player._characterScene[R2_SEEKER]) {
-		_actor2.postInit();
+		_companion.postInit();
 		if (R2_GLOBALS._player._characterIndex == R2_QUINN) {
-			_actor2.setup(20, 5, 1);
-			_actor2.setDetails(9002, 0, 4, 3, 1, (SceneItem *)NULL);
+			_companion.setup(20, 5, 1);
+			_companion.setDetails(9002, 0, 4, 3, 1, (SceneItem *)NULL);
 		} else {
-			_actor2.setup(2008, 5, 1);
-			_actor2.setDetails(9001, 0, 5, 3, 1,  (SceneItem *)NULL);
+			_companion.setup(2008, 5, 1);
+			_companion.setDetails(9001, 0, 5, 3, 1,  (SceneItem *)NULL);
 		}
-		_actor2.setPosition(Common::Point(135, 128));
+		_companion.setPosition(Common::Point(135, 128));
 	}
-	_actor3.postInit();
-	_actor4.postInit();
+	_balloon.postInit();
+	_harness.postInit();
 
 	if (R2_INVENTORY.getObjectScene(R2_REBREATHER_TANK) == 2350) {
-		_actor3.hide();
-		_actor4.hide();
+		_balloon.hide();
+		_harness.hide();
 	} else {
-		_actor3.setup(2350, 0, 1);
-		_actor3.setPosition(Common::Point(197, 101));
-		_actor3.setDetails(2000, 12, -1, -1, 1, (SceneItem *)NULL);
-		_actor3.fixPriority(10);
-		_actor4.setup(2350, 1, 2);
-		_actor4.setPosition(Common::Point(199, 129));
-		_actor4.setDetails(2000, 12, -1, -1, 1, (SceneItem *)NULL);
-		_actor4.fixPriority(10);
+		_balloon.setup(2350, 0, 1);
+		_balloon.setPosition(Common::Point(197, 101));
+		_balloon.setDetails(2000, 12, -1, -1, 1, (SceneItem *)NULL);
+		_balloon.fixPriority(10);
+		_harness.setup(2350, 1, 2);
+		_harness.setPosition(Common::Point(199, 129));
+		_harness.setDetails(2000, 12, -1, -1, 1, (SceneItem *)NULL);
+		_harness.fixPriority(10);
 	}
-	_item1.setDetails(Rect(0, 0, 320, 200), 2000, 9, -1, -1, 1, NULL);
+	_background.setDetails(Rect(0, 0, 320, 200), 2000, 9, -1, -1, 1, NULL);
 	R2_GLOBALS._player.disableControl();
 
 	if (R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] == 2000) {

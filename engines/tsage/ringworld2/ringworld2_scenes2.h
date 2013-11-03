@@ -92,10 +92,10 @@ public:
 };
 
 class Scene2350 : public SceneExt {
-	class Actor2 : public SceneActor {
+	class Companion : public SceneActor {
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Actor3 : public SceneActor {
+	class Balloon : public SceneActor {
 		virtual bool startAction(CursorType action, Event &event);
 	};
 
@@ -106,14 +106,13 @@ class Scene2350 : public SceneExt {
 		virtual void changeScene();
 	};
 public:
-
 	SpeakerQuinn _quinnSpeaker;
 	SpeakerPharisha _pharishaSpeaker;
-	NamedHotspot _item1;
-	SceneActor _actor1;
-	Actor2 _actor2;
-	Actor3 _actor3;
-	Actor3 _actor4;
+	NamedHotspot _background;
+	SceneActor _person;
+	Companion _companion;
+	Balloon _balloon;
+	Balloon _harness;
 	ExitUp _exitUp;
 	ExitWest _exitWest;
 	SequenceManager _sequenceManager;
