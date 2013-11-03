@@ -13483,14 +13483,14 @@ void Scene1945::postInit(SceneObjectList *OwnerList) {
 		else
 			_gunpowder.hide();
 
-		_actor1.postInit();
-		_actor1.setup(1945, 8, 1);
-		_actor1.setPosition(Common::Point(253, 169));
-		_actor1.fixPriority(130);
+		_coveringIce.postInit();
+		_coveringIce.setup(1945, 8, 1);
+		_coveringIce.setPosition(Common::Point(253, 169));
+		_coveringIce.fixPriority(130);
 
-		_actor2.postInit();
-		_actor2.setup(1945, 3, 1);
-		_actor2.hide();
+		_alcoholLamp.postInit();
+		_alcoholLamp.setup(1945, 3, 1);
+		_alcoholLamp.hide();
 	} else {
 		_corridorExit._enabled = true;
 	}
@@ -13519,8 +13519,8 @@ void Scene1945::postInit(SceneObjectList *OwnerList) {
 	_nextSceneMode2 = 0;
 
 	_ice.setDetails(11, 1945, 3, -1, 5);
-	_item1.setDetails(Rect(238, 144, 274, 167), 1945, 0, -1, 2, 1, NULL);
-	_item2.setDetails(Rect(27, 3, 292, 167), 1945, 3, -1, -1, 1, NULL);
+	_hole.setDetails(Rect(238, 144, 274, 167), 1945, 0, -1, 2, 1, NULL);
+	_ice2.setDetails(Rect(27, 3, 292, 167), 1945, 3, -1, -1, 1, NULL);
 }
 
 void Scene1945::remove() {
@@ -13533,7 +13533,7 @@ void Scene1945::signal() {
 	case 1940:
 		if (_nextSceneMode1 == 1943) {
 			_sceneMode = _nextSceneMode1;
-			setAction(&_sequenceManager1, this, _sceneMode, &R2_GLOBALS._player, &_actor2, NULL);
+			setAction(&_sequenceManager1, this, _sceneMode, &R2_GLOBALS._player, &_alcoholLamp, NULL);
 		} else {
 			_sceneMode = 1946;
 			setAction(&_sequenceManager1, this, _sceneMode, &R2_GLOBALS._player, NULL);
@@ -13560,7 +13560,7 @@ void Scene1945::signal() {
 		R2_GLOBALS._sound1.fadeOut2(NULL);
 		R2_INVENTORY.setObjectScene(_lampUsed, 0);
 		_sceneMode = 1948;
-		setAction(&_sequenceManager1, this, _sceneMode, &_gunpowder, &_actor2, &_actor1, NULL);
+		setAction(&_sequenceManager1, this, _sceneMode, &_gunpowder, &_alcoholLamp, &_coveringIce, NULL);
 		R2_GLOBALS._player.setAction(&_sequenceManager2, NULL, 1941, &R2_GLOBALS._player, NULL);
 		return;
 	case 1944:
@@ -13580,7 +13580,7 @@ void Scene1945::signal() {
 		if (_nextSceneMode1 == 1943) {
 			_sceneMode = _nextSceneMode1;
 			_nextSceneMode1 = 1948;
-			setAction(&_sequenceManager1, this, _sceneMode, &R2_GLOBALS._player, &_actor2, NULL);
+			setAction(&_sequenceManager1, this, _sceneMode, &R2_GLOBALS._player, &_alcoholLamp, NULL);
 		} else {
 			_sceneMode = 1941;
 			setAction(&_sequenceManager1, this, _sceneMode, &R2_GLOBALS._player, NULL);
@@ -13599,7 +13599,7 @@ void Scene1945::signal() {
 		if (_nextSceneMode2 == 1943) {
 			_nextSceneMode1 = _nextSceneMode2;
 			_nextSceneMode2 = 0;
-			setAction(&_sequenceManager1, this, _sceneMode, &R2_GLOBALS._player, &_actor2, NULL);
+			setAction(&_sequenceManager1, this, _sceneMode, &R2_GLOBALS._player, &_alcoholLamp, NULL);
 		} else {
 			_nextSceneMode1 = 0;
 			setAction(&_sequenceManager1, this, _sceneMode, &R2_GLOBALS._player, NULL);

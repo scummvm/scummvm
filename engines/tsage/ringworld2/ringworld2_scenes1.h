@@ -1084,12 +1084,12 @@ class Scene1945 : public SceneExt {
 		virtual void changeScene();
 	};
 public:
-	NamedHotspot _item1;
-	NamedHotspot _item2;
+	NamedHotspot _hole;
+	NamedHotspot _ice2;
 	Ice _ice;
 	Ladder _ladder;
-	SceneActor _actor1;
-	SceneActor _actor2;
+	SceneActor _coveringIce;
+	SceneActor _alcoholLamp;
 	Gunpowder _gunpowder;
 	ExitUp _exitUp;
 	CorridorExit _corridorExit;
