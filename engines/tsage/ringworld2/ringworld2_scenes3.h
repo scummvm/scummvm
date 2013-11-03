@@ -588,11 +588,11 @@ class Scene3500 : public SceneExt {
 		virtual void signal();
 	};
 
-	class Item4 : public NamedHotspot {
+	class DirectionButton : public NamedHotspot {
 	public:
-		int _field34;
+		int _movementId;
 
-		Item4();
+		DirectionButton();
 		virtual void synchronize(Serializer &s);
 
 		virtual bool startAction(CursorType action, Event &event);
@@ -600,8 +600,7 @@ class Scene3500 : public SceneExt {
 
 	class Actor7 : public SceneActor {
 	public:
-		int _fieldA4;
-		int _fieldA6;
+		Common::Point _pos;
 		int _fieldA8;
 		int _fieldAA;
 		int _fieldAC;
@@ -610,10 +609,10 @@ class Scene3500 : public SceneExt {
 		Actor7();
 		virtual void synchronize(Serializer &s);
 
-		void sub109466(int arg1, int arg2, int arg3, int arg4, int arg5);
+		void sub109466(int xp, int yp, int arg3, int arg4, int arg5);
 		void sub1094ED();
 		void sub109663(int arg1);
-		void sub109693(Common::Point Pt);
+		void changePosition(const Common::Point &pt);
 
 		virtual void process(Event &event);
 		virtual bool startAction(CursorType action, Event &event);
@@ -637,10 +636,10 @@ public:
 	NamedHotspot _item1;
 	NamedHotspot _item2;
 	NamedHotspot _item3;
-	Item4 _item4;
-	Item4 _item5;
-	Item4 _item6;
-	Item4 _item7;
+	DirectionButton _pitchDown;
+	DirectionButton _turnLeft;
+	DirectionButton _pitchUp;
+	DirectionButton _turnRight;
 	// Glyph of vessel on top of the maze ui
 	SceneActor _actor1;
 	SceneActor _actor2;
@@ -669,10 +668,10 @@ public:
 	int _field1280;
 	int _field1282;
 	int _field1284;
-	int _field1286;
+	bool _directionChangesEnabled;
 
 	Scene3500();
-	void sub107F71(int arg1);
+	void doMovement(int id);
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void remove();
