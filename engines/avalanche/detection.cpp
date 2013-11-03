@@ -35,10 +35,6 @@
 
 namespace Avalanche {
 
-struct AvalancheGameDescription {
-	ADGameDescription desc;
-};
-
 uint32 AvalancheEngine::getFeatures() const {
 	return _gameDescription->desc.flags;
 }
