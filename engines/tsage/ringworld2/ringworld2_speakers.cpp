@@ -841,7 +841,7 @@ void SpeakerMiranda3600::proc15() {
 		if (R2_GLOBALS._player._characterIndex == R2_MIRANDA)
 			_object2 = &R2_GLOBALS._player;
 		else
-			_object2 = &scene->_actor12;
+			_object2 = &scene->_miranda;
 
 		_object2->hide();
 		_object1.postInit();
@@ -1730,7 +1730,7 @@ void SpeakerQuinn3600::proc15() {
 		if (R2_GLOBALS._player._characterIndex == R2_QUINN)
 			_object2 = &R2_GLOBALS._player;
 		else
-			_object2 = &scene->_actor10;
+			_object2 = &scene->_quinn;
 		_object2->hide();
 		_object1.postInit();
 		_object1.setPosition(_object2->_position);
@@ -2441,7 +2441,7 @@ void SpeakerSeeker3600::proc15() {
 		if (R2_GLOBALS._player._characterIndex == R2_SEEKER)
 			_object2 = &R2_GLOBALS._player;
 		else
-			_object2 = &scene->_actor11;
+			_object2 = &scene->_seeker;
 
 		_object2->hide();
 		_object1.postInit();
@@ -2824,7 +2824,7 @@ void SpeakerTeal3600::proc15() {
 	int v = _speakerMode;
 
 	if (!_object2) {
-		_object2 = &scene->_actor5;
+		_object2 = &scene->_teal;
 		_object2->hide();
 		_object1.postInit();
 		_object1.setPosition(_object2->_position);

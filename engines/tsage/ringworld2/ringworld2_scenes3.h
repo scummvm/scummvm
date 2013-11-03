@@ -695,7 +695,7 @@ class Scene3600 : public SceneExt {
 		virtual void signal();
 	};
 
-	class Item5 : public NamedHotspot {
+	class LightShaft : public NamedHotspot {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -711,23 +711,20 @@ public:
 	SpeakerMiranda3600 _mirandaSpeaker;
 	SpeakerTeal3600 _tealSpeaker;
 	SpeakerProtector3600 _protectorSpeaker;
-	NamedHotspot _item1;
-	NamedHotspot _item2;
-	NamedHotspot _item3;
-	NamedHotspot _item4;
-	Item5 _item5;
-	SceneActor _actor1;
-	SceneActor _actor2;
-	SceneActor _actor3;
-	SceneActor _actor4;
-	SceneActor _actor5;
-	SceneActor _actor6;
-	SceneActor _actor7;
-	SceneActor _actor8;
-	SceneActor _actor9;
-	SceneActor _actor10;
-	SceneActor _actor11;
-	SceneActor _actor12;
+	NamedHotspot _background;
+	NamedHotspot _console;
+	NamedHotspot _tapestry1;
+	NamedHotspot _tapestry2;
+	LightShaft _lightShaft;
+	SceneActor _protector3400;
+	SceneActor _steppingDisk;
+	SceneActor _consoleLights;
+	SceneActor _webbster;
+	SceneActor _teal;
+	SceneActor _door3400;
+	SceneActor _quinn;
+	SceneActor _seeker;
+	SceneActor _miranda;
 	Protector _protector;
 	SequenceManager _sequenceManager1;
 	SequenceManager _sequenceManager2;
@@ -735,10 +732,8 @@ public:
 	SequenceManager _sequenceManager4;
 	ScenePalette _palette1;
 
-	int _field2548;
-	int _field254A;
-	int _field254C;
-	int _field254E;
+	bool _tealDead;
+	bool _lightEntered;
 	bool _ghoulTeleported;
 
 	Scene3600();
