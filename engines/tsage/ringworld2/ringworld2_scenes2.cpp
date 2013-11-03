@@ -1781,6 +1781,7 @@ void Scene2435::signal() {
 		_sceneMode = 20;
 		R2_GLOBALS._events.setCursor(CURSOR_ARROW);
 		_stripManager.start(709, this);
+		break;
 	default:
 		R2_GLOBALS._player.enableControl();
 		break;
