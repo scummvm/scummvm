@@ -124,15 +124,15 @@ public:
 };
 
 class Scene2400 : public SceneExt {
-	class Exit1 : public SceneExit {
+	class WestExit : public SceneExit {
 		virtual void changeScene();
 	};
-	class Exit2 : public SceneExit {
+	class EastExit : public SceneExit {
 		virtual void changeScene();
 	};
 public:
-	Exit1 _exit1;
-	Exit2 _exit2;
+	WestExit _westExit;
+	EastExit _eastExit;
 	SequenceManager _sequenceManager;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);

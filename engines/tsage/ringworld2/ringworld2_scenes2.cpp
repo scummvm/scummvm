@@ -1217,7 +1217,7 @@ void Scene2350::process(Event &event) {
  *
  *--------------------------------------------------------------------------*/
 
-void Scene2400::Exit1::changeScene() {
+void Scene2400::WestExit::changeScene() {
 	Scene2400 *scene = (Scene2400 *)R2_GLOBALS._sceneManager._scene;
 
 	R2_GLOBALS._player.disableControl();
@@ -1229,7 +1229,7 @@ void Scene2400::Exit1::changeScene() {
 
 }
 
-void Scene2400::Exit2::changeScene() {
+void Scene2400::EastExit::changeScene() {
 	Scene2400 *scene = (Scene2400 *)R2_GLOBALS._sceneManager._scene;
 
 	R2_GLOBALS._player.disableControl();
@@ -1243,10 +1243,10 @@ void Scene2400::Exit2::changeScene() {
 void Scene2400::postInit(SceneObjectList *OwnerList) {
 	loadScene(2400);
 	SceneExt::postInit();
-	_exit1.setDetails(Rect(0, 125, 14, 165), EXITCURSOR_W, 2000);
-	_exit1.setDest(Common::Point(14, 150));
-	_exit2.setDetails(Rect(305, 125, 320, 165), EXITCURSOR_E, 2000);
-	_exit2.setDest(Common::Point(315, 150));
+	_westExit.setDetails(Rect(0, 125, 14, 165), EXITCURSOR_W, 2000);
+	_westExit.setDest(Common::Point(14, 150));
+	_eastExit.setDetails(Rect(305, 125, 320, 165), EXITCURSOR_E, 2000);
+	_eastExit.setDest(Common::Point(315, 150));
 	R2_GLOBALS._player.postInit();
 	R2_GLOBALS._player.disableControl();
 
