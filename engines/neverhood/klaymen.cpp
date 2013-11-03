@@ -300,7 +300,7 @@ void Klaymen::stSitIdleTeleporterBlink() {
 void Klaymen::stSitIdleTeleporterBlinkSecond() {
 	_busyStatus = 0;
 	_acceptInput = true;
-	startAnimation(0x5C24C018, 0, -1);
+	startAnimation(0x582EC138, 0, -1);
 	SetUpdateHandler(&Klaymen::upSitIdleTeleporter);
 	SetMessageHandler(&Klaymen::hmLowLevel);
 	SetSpriteUpdate(NULL);
