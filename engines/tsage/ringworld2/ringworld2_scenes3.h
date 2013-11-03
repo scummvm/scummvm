@@ -754,7 +754,7 @@ public:
 	SceneActor _seeker;
 	SceneActor _miranda;
 	SceneActor _webbster;
-	SceneActor _actor5;
+	SceneActor _teleportPad;
 	SequenceManager _sequenceManager;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);

@@ -4970,14 +4970,14 @@ void Scene3700::postInit(SceneObjectList *OwnerList) {
 	_webbster._moveDiff = Common::Point(5, 3);
 	_webbster.hide();
 
-	_actor5.postInit();
+	_teleportPad.postInit();
 
 	R2_GLOBALS._player.disableControl();
 	R2_GLOBALS._sound1.play(332);
 
 	_sceneMode = 3700;
 	setAction(&_sequenceManager, this, 3700, &_quinn, &_seeker, &_miranda, 
-		&_webbster, &_actor5, NULL);
+		&_webbster, &_teleportPad, NULL);
 }
 
 void Scene3700::remove() {
