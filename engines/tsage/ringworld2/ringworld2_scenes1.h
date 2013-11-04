@@ -998,9 +998,9 @@ public:
 	SpeakerSeeker1900 _seekerSpeaker;
 	NamedHotspot _background;
 	NamedHotspot _elevator;
-	SceneActor _actor1;
-	BackgroundSceneObject _object1;
-	BackgroundSceneObject _object2;
+	SceneActor _companion;
+	BackgroundSceneObject _leftDoorFrame;
+	BackgroundSceneObject _rightDoorFrame;
 	LiftDoor _leftDoor, _rightDoor;
 	WestExit _westExit;
 	EastExit _eastExit;

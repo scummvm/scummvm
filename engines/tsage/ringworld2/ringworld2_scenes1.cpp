@@ -12839,23 +12839,23 @@ void Scene1900::postInit(SceneObjectList *OwnerList) {
 		_rightDoor.setDetails(1900, 0, 1, -1, 1, (SceneItem *) NULL);
 
 	if (R2_GLOBALS._sceneManager._previousScene != 1875) {
-		_object1.postInit();
-		_object1.setup(1945, 6, 1);
-		_object1.setPosition(Common::Point(96, 109));
-		_object1.fixPriority(80);
+		_leftDoorFrame.postInit();
+		_leftDoorFrame.setup(1945, 6, 1);
+		_leftDoorFrame.setPosition(Common::Point(96, 109));
+		_leftDoorFrame.fixPriority(80);
 
-		_object2.postInit();
-		_object2.setup(1945, 6, 2);
-		_object2.setPosition(Common::Point(223, 109));
-		_object2.fixPriority(80);
+		_rightDoorFrame.postInit();
+		_rightDoorFrame.setup(1945, 6, 2);
+		_rightDoorFrame.setPosition(Common::Point(223, 109));
+		_rightDoorFrame.fixPriority(80);
 	}
 
 	if (R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] == 1875) {
 		R2_GLOBALS._player._characterIndex = R2_QUINN;
-		_actor1.postInit();
+		_companion.postInit();
 		_sceneMode = 20;
 		R2_GLOBALS._player.setAction(&_sequenceManager1, NULL, 1901, &R2_GLOBALS._player, &_leftDoor, NULL);
-		_actor1.setAction(&_sequenceManager2, this, 1900, &_actor1, &_rightDoor, NULL);
+		_companion.setAction(&_sequenceManager2, this, 1900, &_companion, &_rightDoor, NULL);
 	} else if (R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] == 1925) {
 		if (R2_GLOBALS.getFlag(29)) {
 			R2_GLOBALS.clearFlag(29);
@@ -12874,24 +12874,24 @@ void Scene1900::postInit(SceneObjectList *OwnerList) {
 		}
 
 		if (R2_GLOBALS._player._characterScene[R2_QUINN] == R2_GLOBALS._player._characterScene[R2_SEEKER]) {
-			_actor1.postInit();
-			_actor1.setPosition(Common::Point(30, 110));
+			_companion.postInit();
+			_companion.setPosition(Common::Point(30, 110));
 			R2_GLOBALS._walkRegions.disableRegion(1);
-			_actor1.setup(2008, 3, 1);
-			_actor1.setDetails(9001, 0, -1, -1, 1, (SceneItem *) NULL);
+			_companion.setup(2008, 3, 1);
+			_companion.setDetails(9001, 0, -1, -1, 1, (SceneItem *) NULL);
 		}
 		R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] = 1900;
 	} else {
 		if (R2_GLOBALS._player._characterScene[R2_QUINN] == R2_GLOBALS._player._characterScene[R2_SEEKER]) {
-			_actor1.postInit();
-			_actor1.setPosition(Common::Point(30, 110));
+			_companion.postInit();
+			_companion.setPosition(Common::Point(30, 110));
 			R2_GLOBALS._walkRegions.disableRegion(1);
 			if (R2_GLOBALS._player._characterIndex == R2_QUINN) {
-				_actor1.setup(20, 3, 1);
-				_actor1.setDetails(9002, 1, -1, -1, 1, (SceneItem *) NULL);
+				_companion.setup(20, 3, 1);
+				_companion.setDetails(9002, 1, -1, -1, 1, (SceneItem *) NULL);
 			} else {
-				_actor1.setup(2008, 3, 1);
-				_actor1.setDetails(9001, 0, -1, -1, 1, (SceneItem *) NULL);
+				_companion.setup(2008, 3, 1);
+				_companion.setDetails(9001, 0, -1, -1, 1, (SceneItem *) NULL);
 			}
 		}
 
@@ -12954,7 +12954,7 @@ void Scene1900::signal() {
 		break;
 	case 22:
 		_sceneMode = 1910;
-		_actor1.setAction(&_sequenceManager2, this, 1910, &_actor1, NULL);
+		_companion.setAction(&_sequenceManager2, this, 1910, &_companion, NULL);
 		break;
 	case 1904:
 		R2_GLOBALS._scene1925CurrLevel = -3;
