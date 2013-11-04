@@ -72,9 +72,10 @@ private:
 	uint32 _waitFlag;
 	Audio::SoundHandle _soundHandle;
 
-	const byte * _string;
+	const byte *_string;
 	uint32 _currentString;
 	Common::SeekableReadStream *_voiceStream;
+	const char *_mode;
 
 	// Helper functions
 	uint32 step(uint32 opcodePC);

@@ -407,7 +407,7 @@ void PrinceEngine::hotspot() {
 			continue;
 		if (it->_rect.contains(mousePosCamera)) {
 			uint16 textW = 0;
-			for (int i = 0; i < it->_name.size(); ++i)
+			for (uint16 i = 0; i < it->_name.size(); ++i)
 				textW += _font.getCharWidth(it->_name[i]);
 
 			uint16 x = mousepos.x - textW/2;
@@ -459,7 +459,7 @@ void PrinceEngine::showTexts() {
 		Common::Array<Common::String> lines;
 		_font.wordWrapText(text._str, _graph->_frontScreen->w, lines);
 
-		for (int i = 0; i < lines.size(); ++i) {
+		for (uint8 i = 0; i < lines.size(); ++i) {
 			_font.drawString(
 				_graph->_frontScreen,
 				lines[i],
