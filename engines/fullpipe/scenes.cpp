@@ -1601,7 +1601,109 @@ int scene03_updateCursor() {
 }
 
 int sceneHandler03(ExCommand *ex) {
-	warning("STUB: sceneHandler03()");
+#if 0
+	if (ex->_messageKind != 17) {
+		if (ex->_messageKind == 57)
+			sceneHandler03_giveItem(ex);
+		return 0;
+	}
+
+	switch (ex->messageNum) {
+	case MSG_LIFT_EXITLIFT:
+		lift_exitSeq(ex);
+		break;
+
+	case MSG_LIFT_CLOSEDOOR:
+		lift_closedoorSeq();
+		break;
+
+	case MSG_SC3_ONTAKECOIN:
+		sceneHandler03_eaterFat();
+		break;
+
+	case MSG_LIFT_STARTEXITQUEUE:
+		sceneHandlers_startExitQueue();
+		break;
+
+	case MSG_SC3_RELEASEEGG:
+		sceneHandler03_releaseEgg();
+		break;
+
+	case MSG_LIFT_CLICKBUTTON:
+		lift_animation3();
+		break;
+
+	case MSG_SC3_HIDEDOMINO:
+		g_vars->scene03_domino->_flags &= 0xFFFB;
+		break;
+
+	case MSG_SC3_TAKEEGG:
+		sceneHandler03_takeEgg(ex);
+		break;
+
+	case MSG_LIFT_GO:
+		lift_goAnimation();
+		break;
+
+	case MSG_SC3_UTRUBACLICK:
+		sceneHandler03_goLadder();
+		break;
+
+	case MSG_SC3_TESTFAT:
+		sceneHandler03_giveCoin(ex);
+		break;
+
+	case 64:
+		sceneHandlers_sub05(ex);
+		break;
+
+	case 93:
+		{
+			StaticANIObject *ani = Scene_getStaticANIObjectAtPos(g_currentScene, ex->msg.sceneClickX, ex->msg.sceneClickY);
+			if (ani && ani->_id == ANI_LIFTBUTTON) {
+				lift_sub1(ani);
+				ex->_messageKind = 0;
+
+				return 0;
+			}
+
+			if (g_fullpipe->_currentScene->getPictureObjectIdAtPos(ex->_sceneClickX, ex->_sceneClickY) == PIC_SC3_DOMIN) {
+				if (g_vars->scene03_domino)
+					if (g_vars->scene03_domino->_flags & 4)
+						if (g_fullpipe->_aniMan->isIdle())
+							if (!(g_fullpipe->_aniMan->_flags & 0x100) && g_fullpipe->_msgObjectId2 != g_vars->scene03_domino->_id) {
+								handleObjectInteraction(g_fullpipe->_aniMan, g_vars->scene03_domino, ex->_keyCode);
+								ex->_messageKind = 0;
+
+								return 0;
+							}
+			}
+
+			break;
+		}
+
+	case 97:
+		{
+			int res = 0;
+
+			if (g_fullpipe->_aniMan2) {
+				if (g_fullpipe->_aniMan2->_ox < g_fullpipe->_sceneRect.left + 200) {
+					g_fullpipe->_currentScene->bg.x = g_fullpipe->_aniMan2->_ox - g_fullpipe->_sceneRect.left - 300;
+					v7 = g_fullpipe->_aniMan2;
+				}
+
+				if (g_fullpipe->_aniMan2->_ox > g_fullpipe->_sceneRect.right - 200)
+					g_fullpipe->_currentScene->bg.x = g_fullpipe->_aniMan2->_ox - g_fullpipe->_sceneRect.right + 300;
+				res = 1;
+			}
+			g_fullpipe->_behaviorManager->updateBehaviors();
+
+			startSceneTrack();
+
+			return res;
+		}
+	}
+#endif
 
 	return 0;
 }
