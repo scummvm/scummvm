@@ -1012,6 +1012,35 @@ SciScriptPatcherEntry larry2Signatures[] = {
 };
 
 // ===========================================================================
+// Leisure Suit Larry 5
+// In one of the conversations near the end (to be exact - room 380 and the text
+//  about using champagne on Reverse Biaz - only used when you actually did that
+//  in the game), the German text is too large, causing the textbox to get too large.
+// Because of that the talking head of Patti is drawn over the textbox. A translation oversight.
+// Applies to at least: German floppy
+// Responsible method: none, position of talker object on screen needs to get modified
+const uint16 larry5SignatureGermanEndingPattiTalker[] = {
+	SIG_MAGICDWORD,
+	SIG_UINT16 + 0x6e, 0x00,            // object pattiTalker::x (110)
+	SIG_UINT16 + 0xb4, 0x00,            // object pattiTalker::y (180)
+	SIG_ADDTOOFFSET + 469,              // verify that it's really the German version
+	0x59, 0x6f, 0x75,                   // (object name) "You"
+	0x23, 0x47, 0x44, 0x75,             // "#GDu"
+	SIG_END
+};
+
+const uint16 larry5PatchGermanEndingPattiTalker[] = {
+	PATCH_UINT16 + 0x5a, 0x00,          // change pattiTalker::x to 90
+	PATCH_END
+};
+
+//    script, description,                                            signature                               patch
+SciScriptPatcherEntry larry5Signatures[] = {
+	{    380, "German-only: Enlarge Patti Textbox",          1, 0, 0, larry5SignatureGermanEndingPattiTalker, larry5PatchGermanEndingPattiTalker },
+	SCI_SIGNATUREENTRY_TERMINATOR
+};
+
+// ===========================================================================
 // this is called on every death dialog. Problem is at least the german
 //  version of lsl6 gets title text that is far too long for the
 //  available temp space resulting in temp space corruption
@@ -2075,6 +2104,9 @@ void Script::patcherProcessScript(uint16 scriptNr, byte *scriptData, const uint3
 		break;
 	case GID_LSL2:
 		signatureTable = larry2Signatures;
+		break;
+	case GID_LSL5:
+		signatureTable = larry5Signatures;
 		break;
 	case GID_LSL6:
 		signatureTable = larry6Signatures;
