@@ -861,7 +861,7 @@ class Scene1800 : public SceneExt {
 		virtual bool startAction(CursorType action, Event &event);
 	};
 
-	class Exit1 : public SceneExit {
+	class SouthExit : public SceneExit {
 	public:
 		virtual void changeScene();
 	};
@@ -883,7 +883,7 @@ public:
 	Doors _doors;
 	PassengerDoor _leftDoor;
 	PassengerDoor _rightDoor;
-	Exit1 _southExit;
+	SouthExit _southExit;
 	SequenceManager _sequenceManager;
 
 	Scene1800();
@@ -904,7 +904,7 @@ class Scene1850 : public SceneExt {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Actor6 : public SceneActor {
+	class Door : public SceneActor {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -914,7 +914,7 @@ class Scene1850 : public SceneExt {
 	};
 
 public:
-	int _field412;
+	int _sceneMode;
 	int _field414;
 	int _field416;
 	int _field418;
@@ -930,8 +930,8 @@ public:
 	SceneActor _actor3;
 	SceneActor _actor4;
 	Robot _robot;
-	Actor6 _leftDoor;
-	Actor6 _rightDoor;
+	Door _leftDoor;
+	Door _rightDoor;
 	DisplayScreen _displayScreen;
 	SequenceManager _sequenceManager1;
 	SequenceManager _sequenceManager2;

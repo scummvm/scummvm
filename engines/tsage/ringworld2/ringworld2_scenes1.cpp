@@ -11360,7 +11360,7 @@ bool Scene1800::PassengerDoor::startAction(CursorType action, Event &event) {
 	return true;
 }
 
-void Scene1800::Exit1::changeScene() {
+void Scene1800::SouthExit::changeScene() {
 	Scene1800 *scene = (Scene1800 *)R2_GLOBALS._sceneManager._scene;
 
 	_enabled = false;
@@ -11843,7 +11843,7 @@ bool Scene1850::Robot::startAction(CursorType action, Event &event) {
 	}
 }
 
-bool Scene1850::Actor6::startAction(CursorType action, Event &event) {
+bool Scene1850::Door::startAction(CursorType action, Event &event) {
 	if (action != CURSOR_USE)
 		return SceneHotspot::startAction(action, event);
 
@@ -11855,7 +11855,7 @@ bool Scene1850::Actor6::startAction(CursorType action, Event &event) {
 	}
 
 	R2_GLOBALS._player.disableControl();
-	if (scene->_field412 == 1851)
+	if (scene->_sceneMode == 1851)
 		R2_GLOBALS._player._effect = 1;
 
 	if (_position.x >= 160)
@@ -11909,7 +11909,7 @@ bool Scene1850::DisplayScreen::startAction(CursorType action, Event &event) {
 /*------------------------------------------------------------------------*/
 
 Scene1850::Scene1850() {
-	_field412 = 0;
+	_sceneMode = 0;
 	_field414 = 0;
 	_field416 = 0;
 	_field418 = 0;
@@ -11919,7 +11919,7 @@ Scene1850::Scene1850() {
 void Scene1850::synchronize(Serializer &s) {
 	SceneExt::synchronize(s);
 
-	s.syncAsSint16LE(_field412);
+	s.syncAsSint16LE(_sceneMode);
 	s.syncAsSint16LE(_field414);
 	s.syncAsSint16LE(_field416);
 	s.syncAsSint16LE(_field418);
@@ -11937,10 +11937,10 @@ void Scene1850::postInit(SceneObjectList *OwnerList) {
 	_palette1.loadPalette(0);
 
 	if (R2_GLOBALS.getFlag(31)) {
-		_field412 = 1850;
+		_sceneMode = 1850;
 		g_globals->_scenePalette.loadPalette(1850);
 	} else {
-		_field412 = 1851;
+		_sceneMode = 1851;
 		g_globals->_scenePalette.loadPalette(1851);
 	}
 
@@ -12268,14 +12268,14 @@ void Scene1850::signal() {
 	case 1852:
 	// No break on purpose:
 	case 1853:
-		if (_field412 == 1851) {
+		if (_sceneMode == 1851) { // At this point, SceneMode can't be equal to 1851 => dead code
 			R2_GLOBALS.setFlag(31);
 			_palette1.loadPalette(1850);
-			_field412 = 1850;
+			_sceneMode = 1850;
 		} else {
 			R2_GLOBALS.clearFlag(31);
 			_palette1.loadPalette(1851);
-			_field412 = 1851;
+			_sceneMode = 1851;
 		}
 
 		_field418 = 1;
@@ -12292,7 +12292,7 @@ void Scene1850::signal() {
 		} else if (R2_GLOBALS.getFlag(33)) {
 				R2_GLOBALS.setFlag(62);
 				R2_GLOBALS.setFlag(34);
-				R2_GLOBALS._walkRegions.disableRegion(2);
+				R2_GLOBALS._walkRegions.enableRegion(2);
 
 				_actor2.postInit();
 				_actor2.setDetails(1850, 6, -1, -1, 5, &_robot);
@@ -12309,7 +12309,7 @@ void Scene1850::signal() {
 		else
 			R2_GLOBALS._scenePalette.addFader(_palette1._palette, 256, 5, this);
 
-		if (_field412 == 1851)
+		if (_sceneMode == 1851)
 			_field416 = -20;
 		else
 			_field416 = 20;
@@ -12469,7 +12469,7 @@ void Scene1850::process(Event &event) {
 		} else {
 			setAction(&_sequenceManager1, this, 1859, &R2_GLOBALS._player, &_robot, NULL);
 		}
-		R2_GLOBALS.clearFlag(32);
+		R2_GLOBALS.clearFlag(30);
 		event.handled = true;
 	}
 
