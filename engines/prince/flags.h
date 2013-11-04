@@ -29,6 +29,8 @@ namespace Prince {
 
 struct Flags {
 
+	// TODO: Remove from release build
+	// useful just for debugging
 	static const char * getFlagName(uint16 flagId);
 
 	enum Id {
@@ -39,7 +41,7 @@ struct Flags {
 		DESTY			=	0x8008,
 		DESTD			=	0x800A,
 		DwarfDone		=	0x800C,
-		GRABARZCOUNTER		=	0x800E,
+		GRABARZCOUNTER	=	0x800E,
 		KIERUNEK		=	0x8010,
 		BACKFLAG1		=	0x8012,
 		BACKFLAG2		=	0x8014,
@@ -59,8 +61,8 @@ struct Flags {
 		U_BT_7			=	0x8030,
 		U_BT_8			=	0x8032,
 		U_BT_9			=	0x8034,
-		U_BT_COUNTER		=	0x8036,
-		ARIVALDALIVE		=	0x8038,
+		U_BT_COUNTER	=	0x8036,
+		ARIVALDALIVE	=	0x8038,
 		TALKCHAR1		=	0x803A,
 		TalkType1		=	0x803C,
 		TALKROUT1		=	0x803E,
@@ -71,15 +73,15 @@ struct Flags {
 		TALKANIM2		=	0x8050,
 		TALKCOLOR1		=	0x8052,
 		TALKCOLOR2		=	0x8054,
-		KapciuchTaken		=	0x8056,
-		CurrentBeggarA		=	0x8058,
+		KapciuchTaken	=	0x8056,
+		CurrentBeggarA	=	0x8058,
 		TempKapc		=	0x805A,
 		HomTaken		=	0x805C,
 		WizardTalk		=	0x805E,
 		SunlordTalk		=	0x8060,
 		HermitTalk		=	0x8062,
 		RunyMode		=	0x8064,
-		FatMerchantTalk		=	0x8066,
+		FatMerchantTalk	=	0x8066,
 		HotDogTalk		=	0x8068,
 		ThiefTalk		=	0x806A,
 		BeggarTalk		=	0x806C,
