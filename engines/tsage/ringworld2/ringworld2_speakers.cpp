@@ -600,7 +600,7 @@ void SpeakerMiranda1625::proc15() {
 
 	if (!_object2) {
 		Scene1625 *scene = (Scene1625 *)R2_GLOBALS._sceneManager._scene;
-		_object2 = &scene->_actor3;
+		_object2 = &scene->_mirandaMouth;
 		_object2->hide();
 		_object1.postInit();
 		_object1.setPosition(Common::Point(196, 65));

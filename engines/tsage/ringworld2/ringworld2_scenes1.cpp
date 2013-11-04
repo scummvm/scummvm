@@ -10087,8 +10087,8 @@ bool Scene1625::Wire::startAction(CursorType action, Event &event) {
 	R2_GLOBALS._player.disableControl();
 
 	scene->_sceneMode = 1631;
-	scene->_actor3.postInit();
-	scene->setAction(&scene->_sequenceManager, scene, 1631, &scene->_actor3, &scene->_wire, NULL);
+	scene->_mirandaMouth.postInit();
+	scene->setAction(&scene->_sequenceManager, scene, 1631, &scene->_mirandaMouth, &scene->_wire, NULL);
 	return true;
 }
 
@@ -10119,10 +10119,10 @@ void Scene1625::postInit(SceneObjectList *OwnerList) {
 	_wire.setPosition(Common::Point(206, 133));
 	_wire.setDetails(1625, 0, -1, -1, 1, (SceneItem *) NULL);
 
-	_actor5.postInit();
-	_actor5.setup(1625, 8, 1);
-	_actor5.setPosition(Common::Point(190, 131));
-	_actor5.setDetails(1625, 6, -1, 2, 1, (SceneItem *) NULL);
+	_wristRestraints.postInit();
+	_wristRestraints.setup(1625, 8, 1);
+	_wristRestraints.setPosition(Common::Point(190, 131));
+	_wristRestraints.setDetails(1625, 6, -1, 2, 1, (SceneItem *) NULL);
 
 	if (R2_GLOBALS._player._oldCharacterScene[R2_MIRANDA] == 1625) {
 		if (!R2_GLOBALS.getFlag(83)) {
@@ -10134,18 +10134,18 @@ void Scene1625::postInit(SceneObjectList *OwnerList) {
 		R2_GLOBALS._player.enableControl();
 		R2_GLOBALS._player._canWalk = false;
 	} else {
-		_actor1.postInit();
-		_actor1.fixPriority(10);
+		_teal.postInit();
+		_teal.fixPriority(10);
 
-		_actor6.postInit();
+		_tealRightArm.postInit();
 
 		R2_GLOBALS._player.disableControl();
 		_sceneMode = 1625;
-		setAction(&_sequenceManager, this, 1625, &_actor1, &_actor6, NULL);
+		setAction(&_sequenceManager, this, 1625, &_teal, &_tealRightArm, NULL);
 	}
 
 	R2_GLOBALS._sound1.play(245);
-	_item1.setDetails(Rect(0, 0, 320, 200), 1625, 12, -1, -1, 1, NULL);
+	_background.setDetails(Rect(0, 0, 320, 200), 1625, 12, -1, -1, 1, NULL);
 	R2_GLOBALS._player._oldCharacterScene[R2_MIRANDA] = 1625;
 	R2_GLOBALS._player._characterScene[R2_MIRANDA] = 1625;
 }
@@ -10180,11 +10180,11 @@ void Scene1625::signal() {
 		switch (_stripManager._exitMode) {
 		case 1:
 			_sceneMode = 1627;
-			setAction(&_sequenceManager, this, 1627, &_actor3, &_glass, NULL);
+			setAction(&_sequenceManager, this, 1627, &_mirandaMouth, &_glass, NULL);
 			break;
 		case 2:
 			_sceneMode = 1629;
-			setAction(&_sequenceManager, this, 1629, &_tealHead, &_actor5, NULL);
+			setAction(&_sequenceManager, this, 1629, &_tealHead, &_wristRestraints, NULL);
 			break;
 		case 4:
 			R2_GLOBALS._player._oldCharacterScene[R2_MIRANDA] = 3150;
@@ -10195,7 +10195,7 @@ void Scene1625::signal() {
 		case 5:
 			_sceneMode = 1628;
 			_tealHead.remove();
-			setAction(&_sequenceManager, this, 1628, &_actor3, &_glass, NULL);
+			setAction(&_sequenceManager, this, 1628, &_mirandaMouth, &_glass, NULL);
 			break;
 		case 6:
 			_glass.postInit();
@@ -10209,20 +10209,20 @@ void Scene1625::signal() {
 			break;
 		case 8:
 			_sceneMode = 1635;
-			setAction(&_sequenceManager, this, 1635, &_actor3, &_actor5, NULL);
+			setAction(&_sequenceManager, this, 1635, &_mirandaMouth, &_wristRestraints, NULL);
 			break;
 		case 9:
 			_glass.postInit();
 			_glass.setDetails(1625, -1, -1, -1, 2, (SceneItem *) NULL);
 			_sceneMode = 1634;
-			setAction(&_sequenceManager, this, 1634, &_actor3, &_actor5, NULL);
+			setAction(&_sequenceManager, this, 1634, &_mirandaMouth, &_wristRestraints, NULL);
 			break;
 		case 3:
 		// No break on purpose
 		default:
 			_sceneMode = 1630;
 			_tealHead.remove();
-			setAction(&_sequenceManager, this, 1630, &_actor1, &_actor6, NULL);
+			setAction(&_sequenceManager, this, 1630, &_teal, &_tealRightArm, NULL);
 			break;
 		}
 		_field412 = _stripManager._field2E8;
@@ -10241,18 +10241,18 @@ void Scene1625::signal() {
 		_tealHead.setPosition(Common::Point(68, 68));
 		_tealHead.show();
 
-		_actor3.postInit();
-		_actor3.setup(1627, 3, 1);
-		_actor3.setPosition(Common::Point(196, 65));
+		_mirandaMouth.postInit();
+		_mirandaMouth.setup(1627, 3, 1);
+		_mirandaMouth.setPosition(Common::Point(196, 65));
 
 		_sceneMode = 99;
 		R2_GLOBALS._events.setCursor(CURSOR_CROSSHAIRS);
 		_stripManager.start(832, this);
 		break;
 	case 1627:
-		_actor3.setup(1627, 3, 1);
-		_actor3.setPosition(Common::Point(196, 65));
-		_actor3.show();
+		_mirandaMouth.setup(1627, 3, 1);
+		_mirandaMouth.setPosition(Common::Point(196, 65));
+		_mirandaMouth.show();
 
 		_sceneMode = 99;
 		R2_GLOBALS._events.setCursor(CURSOR_CROSSHAIRS);
@@ -10264,9 +10264,9 @@ void Scene1625::signal() {
 		_tealHead.setup(1627, 1, 1);
 		_tealHead.setPosition(Common::Point(68, 68));
 
-		_actor3.setup(1627, 3, 1);
-		_actor3.setPosition(Common::Point(196, 65));
-		_actor3.show();
+		_mirandaMouth.setup(1627, 3, 1);
+		_mirandaMouth.setPosition(Common::Point(196, 65));
+		_mirandaMouth.show();
 
 		_sceneMode = 99;
 		R2_GLOBALS._events.setCursor(CURSOR_CROSSHAIRS);
@@ -10286,21 +10286,21 @@ void Scene1625::signal() {
 		R2_GLOBALS._player._canWalk = true;
 		break;
 	case 1631:
-		_actor3.setup(1627, 3, 1);
-		_actor3.setPosition(Common::Point(196, 65));
-		_actor3.show();
+		_mirandaMouth.setup(1627, 3, 1);
+		_mirandaMouth.setPosition(Common::Point(196, 65));
+		_mirandaMouth.show();
 
 		_wire.remove();
 
-		_actor1.postInit();
-		_actor1.fixPriority(10);
+		_teal.postInit();
+		_teal.fixPriority(10);
 
-		_actor6.postInit();
+		_tealRightArm.postInit();
 
 		R2_INVENTORY.setObjectScene(R2_SUPERCONDUCTOR_WIRE, 3);
 		_sceneMode = 14;
 
-		setAction(&_sequenceManager, this, 1625, &_actor1, &_actor6, NULL);
+		setAction(&_sequenceManager, this, 1625, &_teal, &_tealRightArm, NULL);
 		break;
 	case 1632:
 		_tealHead.setup(1627, 1, 1);
@@ -10323,9 +10323,9 @@ void Scene1625::signal() {
 		_stripManager.start(836, this);
 		break;
 	case 1635:
-		_actor3.setup(1627, 3, 1);
-		_actor3.setPosition(Common::Point(196, 65));
-		_actor3.show();
+		_mirandaMouth.setup(1627, 3, 1);
+		_mirandaMouth.setPosition(Common::Point(196, 65));
+		_mirandaMouth.show();
 
 		_sceneMode = 99;
 		R2_GLOBALS._events.setCursor(CURSOR_CROSSHAIRS);

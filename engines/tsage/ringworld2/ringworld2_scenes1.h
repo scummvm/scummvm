@@ -693,17 +693,18 @@ class Scene1625 : public SceneExt {
 		virtual bool startAction(CursorType action, Event &event);
 	};
 public:
+	//CHECKME: Useless variable
 	int _field412;
 	SpeakerMiranda1625 _mirandaSpeaker;
 	SpeakerTeal1625 _tealSpeaker;
 	SpeakerSoldier1625 _soldierSpeaker;
-	NamedHotspot _item1;
-	SceneActor _actor1;
+	NamedHotspot _background;
+	SceneActor _teal;
 	SceneActor _tealHead;
-	SceneActor _actor3;
+	SceneActor _mirandaMouth;
 	SceneActor _glass;
-	SceneActor _actor5;
-	SceneActor _actor6;
+	SceneActor _wristRestraints;
+	SceneActor _tealRightArm;
 	Wire _wire;
 	SequenceManager _sequenceManager;
 
