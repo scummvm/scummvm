@@ -300,7 +300,7 @@ void Klaymen::stSitIdleTeleporterBlink() {
 void Klaymen::stSitIdleTeleporterBlinkSecond() {
 	_busyStatus = 0;
 	_acceptInput = true;
-	startAnimation(0x5C24C018, 0, -1);
+	startAnimation(0x582EC138, 0, -1);
 	SetUpdateHandler(&Klaymen::upSitIdleTeleporter);
 	SetMessageHandler(&Klaymen::hmLowLevel);
 	SetSpriteUpdate(NULL);
@@ -2438,47 +2438,6 @@ uint32 Klaymen::hmStandIdleSpecial(int messageNum, const MessageParam &param, En
 	return 0;
 }
 
-uint32 Klaymen::hmPressDoorButton(int messageNum, const MessageParam &param, Entity *sender) {
-	uint32 messageResult = hmLowLevelAnimation(messageNum, param, sender);
-	switch (messageNum) {
-	case 0x100D:
-		if (param.asInteger() == 0x942D2081) {
-			_acceptInput = false;
-			sendMessage(_attachedSprite, 0x2003, 0);
-		} else if (param.asInteger() == 0xDA600012) {
-			stHitByBoxingGlove();
-		} else if (param.asInteger() == 0x0D01B294) {
-			_acceptInput = false;
-			sendMessage(_attachedSprite, 0x480B, 0);
-		}
-		break;
-	}
-	return messageResult;
-}
-
-uint32 Klaymen::hmHitByBoxingGlove(int messageNum, const MessageParam &param, Entity *sender) {
-	int16 speedUpFrameIndex;
-	uint32 messageResult = hmLowLevelAnimation(messageNum, param, sender);
-	switch (messageNum) {
-	case 0x1008:
-		speedUpFrameIndex = getFrameIndex(kKlaymenSpeedUpHash);
-		if (_currFrameIndex < speedUpFrameIndex) {
-			startAnimation(0x35AA8059, speedUpFrameIndex, -1);
-			_y = 435;
-		}
-		messageResult = 0;
-		break;
-	case 0x100D:
-		if (param.asInteger() == 0x1A1A0785) {
-			playSound(0, 0x40F0A342);
-		} else if (param.asInteger() == 0x60428026) {
-			playSound(0, 0x40608A59);
-		}
-		break;
-	}
-	return messageResult;
-}
-
 void Klaymen::suFallDown() {
 	AnimatedSprite::updateDeltaXY();
 	HitRect *hitRect = _parentScene->findHitRectAtPos(_x, _y + 10);
@@ -2544,30 +2503,6 @@ void Klaymen::stFalling() {
 void Klaymen::stFallTouchdown() {
 	setDoDeltaX(2);
 	stTryStandIdle();
-}
-
-void Klaymen::stPressDoorButton() {
-	_busyStatus = 2;
-	_acceptInput = true;
-	setDoDeltaX(0);
-	startAnimation(0x1CD89029, 0, -1);
-	SetUpdateHandler(&Klaymen::update);
-	SetMessageHandler(&Klaymen::hmPressDoorButton);
-	SetSpriteUpdate(&Klaymen::suAction);
-}
-
-void Klaymen::stHitByBoxingGlove() {
-	_busyStatus = 1;
-	_acceptInput = false;
-	startAnimation(0x35AA8059, 0, -1);
-	SetUpdateHandler(&Klaymen::update);
-	SetMessageHandler(&Klaymen::hmHitByBoxingGlove);
-	SetSpriteUpdate(&AnimatedSprite::updateDeltaXY);
-	FinalizeState(&Klaymen::evHitByBoxingGloveDone);
-}
-
-void Klaymen::evHitByBoxingGloveDone() {
-	sendMessage(_parentScene, 0x1024, 1);
 }
 
 void Klaymen::suFallSkipJump() {

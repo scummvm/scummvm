@@ -55,7 +55,9 @@ class RandomSource;
 
 namespace Avalanche {
 
-struct AvalancheGameDescription;
+struct AvalancheGameDescription {
+	ADGameDescription desc;
+};
 
 static const int kSavegameVersion = 1;
 
@@ -316,6 +318,7 @@ private:
 	Common::String readAlsoStringFromFile(Common::File &file);
 	void runAvalot();
 	void init();
+	void initVariables();
 	void setup();
 	void scram(Common::String &str);
 	void unScramble();

@@ -118,10 +118,13 @@ Room AvalancheEngine::_whereIs[29] = {
 
 Clock::Clock(AvalancheEngine *vm) {
 	_vm = vm;
+	// Magic value to determine if we just created the instance
 	_oldHour = _oldHourAngle = _oldMinute = 17717;
+	_hour = _minute = _second = 0;
+	_hourAngle = 0;
 }
 
-void Clock::update() { // TODO: Move variables from Gyro to here (or at least somewhere nearby), rename them.
+void Clock::update() {
 	TimeDate t;
 	_vm->_system->getTimeAndDate(t);
 	_hour = t.tm_hour;
@@ -177,7 +180,9 @@ void Clock::plotHands() {
 }
 
 void Clock::chime() {
-	if ((_oldHour == 17717) || (!_vm->_soundFx)) // Too high - must be first time around
+	// Too high - must be first time around
+	// Mute - skip the sound generation
+	if ((_oldHour == 17717) || (!_vm->_soundFx))
 		return;
 	
 	byte hour = _hour % 12;
@@ -1564,10 +1569,12 @@ Common::String AvalancheEngine::getName(People whose) {
 
 	static const char lasses[4][15] = {"Arkata", "Geida", "\0xB1", "the Wise Woman"};
 
-	if (whose < kPeopleArkata)
+	if (whose <= kPeopleJacques)
 		return Common::String(lads[whose - kPeopleAvalot]);
-	else
+	else if ((whose >= kPeopleArkata) && (whose <= kPeopleWisewoman))
 		return Common::String(lasses[whose - kPeopleArkata]);
+	else
+		error("getName() - Unexpected character id %d", (byte) whose);
 }
 
 Common::String AvalancheEngine::getItem(byte which) {
@@ -1673,6 +1680,9 @@ void AvalancheEngine::flipRoom(Room room, byte ped) {
 
 	if (_room == kRoomLustiesRoom)
 		_enterCatacombsFromLustiesRoom = true;
+
+	if (room > kRoomMap)
+		return;
 
 	enterRoom(room, ped);
 	_animation->appearPed(0, ped - 1);

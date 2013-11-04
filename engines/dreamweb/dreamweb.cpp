@@ -232,6 +232,15 @@ DreamWebEngine::DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gam
 	_hasSpeech = 0;
 	_roomsSample = 0;
 	_copyProtection = 0;
+
+	for (uint i = 0; i < 128; i++)
+		memset(&_setDat[i], 0, sizeof(SetObject));
+
+	for (uint i = 0; i < 80; i++)
+		memset(&_freeDat[i], 0, sizeof(DynObject));
+
+	for (uint i = 0; i < kNumExObjects; i++)
+		memset(&_exData[i], 0, sizeof(DynObject));
 }
 
 DreamWebEngine::~DreamWebEngine() {

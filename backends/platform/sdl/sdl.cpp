@@ -392,10 +392,15 @@ Common::String OSystem_SDL::getSystemLanguage() const {
 	}
 #else // WIN32
 	// Activating current locale settings
-	const char *locale = setlocale(LC_ALL, "");
+	const Common::String locale = setlocale(LC_ALL, "");
+ 
+	// Restore default C locale to prevent issues with
+	// portability of sscanf(), atof(), etc.
+	// See bug #3615148
+	setlocale(LC_ALL, "C");
 
 	// Detect the language from the locale
-	if (!locale) {
+	if (locale.empty()) {
 		return ModularBackend::getSystemLanguage();
 	} else {
 		int length = 0;
@@ -404,14 +409,14 @@ Common::String OSystem_SDL::getSystemLanguage() const {
 		// ".UTF-8" or the like. We do this, since
 		// our translation languages are usually
 		// specified without any charset information.
-		for (int i = 0; locale[i]; ++i, ++length) {
+		for (int size = locale.size(); length < size; ++length) {
 			// TODO: Check whether "@" should really be checked
 			// here.
-			if (locale[i] == '.' || locale[i] == ' ' || locale[i] == '@')
+			if (locale[length] == '.' || locale[length] == ' ' || locale[length] == '@')
 				break;
 		}
 
-		return Common::String(locale, length);
+		return Common::String(locale.c_str(), length);
 	}
 #endif // WIN32
 #else // USE_DETECTLANG

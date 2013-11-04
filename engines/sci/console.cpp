@@ -3840,10 +3840,15 @@ static int parse_reg_t(EngineState *s, const char *str, reg_t *dest, bool mayBeV
 			const char *tmp = Common::find(str_objname.begin(), str_objname.end(), '.');
 			if (tmp != str_objname.end()) {
 				index = strtol(tmp + 1, &endptr, 16);
-				if (*endptr)
-					return -1;
-				// Chop off the index
-				str_objname = Common::String(str_objname.c_str(), tmp);
+				if (*endptr) {
+					// The characters after the dot do not represent an index.
+					// This can happen if an object contains a dot in its name,
+					// like 'dominoes.opt' in Hoyle 3.
+					index = -1;
+				} else {
+					// Valid index found, chop it off
+					str_objname = Common::String(str_objname.c_str(), tmp);
+				}
 			}
 
 			// Replace all underscores in the name with spaces

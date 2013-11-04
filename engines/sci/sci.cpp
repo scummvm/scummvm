@@ -112,6 +112,7 @@ SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc, SciGameId gam
 	DebugMan.addDebugChannel(kDebugLevelDclInflate, "DCL", "DCL inflate debugging");
 	DebugMan.addDebugChannel(kDebugLevelVM, "VM", "VM debugging");
 	DebugMan.addDebugChannel(kDebugLevelScripts, "Scripts", "Notifies when scripts are unloaded");
+	DebugMan.addDebugChannel(kDebugLevelScriptPatcher, "ScriptPatcher", "Notifies when scripts are patched");
 	DebugMan.addDebugChannel(kDebugLevelGC, "GC", "Garbage Collector debugging");
 	DebugMan.addDebugChannel(kDebugLevelResMan, "ResMan", "Resource manager debugging");
 	DebugMan.addDebugChannel(kDebugLevelOnStartup, "OnStartup", "Enter debugger at start of game");
@@ -882,7 +883,7 @@ void SciEngine::syncSoundSettings() {
 }
 
 void SciEngine::syncIngameAudioOptions() {
-	// Now, sync the in-game speech/subtitles settings for SCI1.1 CD games
+	// Sync the in-game speech/subtitles settings for SCI1.1 CD games
 	if (isCD() && getSciVersion() == SCI_VERSION_1_1) {
 		bool subtitlesOn = ConfMan.getBool("subtitles");
 		bool speechOn = !ConfMan.getBool("speech_mute");
@@ -906,6 +907,26 @@ void SciEngine::syncIngameAudioOptions() {
 				// Game does not support speech and subtitles, set it to speech
 				_gamestate->variables[VAR_GLOBAL][90] = make_reg(0, 2);	// speech
 			}
+		}
+	}
+}
+
+void SciEngine::updateScummVMAudioOptions() {
+	// Update ScummVM's speech/subtitles settings for SCI1.1 CD games,
+	// depending on the in-game settings
+	if (isCD() && getSciVersion() == SCI_VERSION_1_1) {
+		if (_gamestate->variables[VAR_GLOBAL][90] == make_reg(0, 1)) {
+			// subtitles
+			ConfMan.setBool("subtitles", true);
+			ConfMan.setBool("speech_mute", true);
+		} else if (_gamestate->variables[VAR_GLOBAL][90] == make_reg(0, 2)) {
+			// speech
+			ConfMan.setBool("subtitles", false);
+			ConfMan.setBool("speech_mute", false);
+		} else if (_gamestate->variables[VAR_GLOBAL][90] == make_reg(0, 3)) {
+			// speech + subtitles
+			ConfMan.setBool("subtitles", true);
+			ConfMan.setBool("speech_mute", false);
 		}
 	}
 }

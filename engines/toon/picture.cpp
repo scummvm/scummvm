@@ -134,6 +134,11 @@ bool Picture::loadPicture(const Common::String &file) {
 Picture::Picture(ToonEngine *vm) : _vm(vm) {
 	_data = NULL;
 	_palette = NULL;
+
+	_width = 0;
+	_height = 0;
+	_paletteEntries = 0;
+	_useFullPalette = false;
 }
 
 Picture::~Picture() {

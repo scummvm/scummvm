@@ -95,6 +95,8 @@ public:
 };
 
 class UICollection: public EventHandler {
+private:
+	void r2rDrawFrame();
 protected:
 	void erase();
 public:

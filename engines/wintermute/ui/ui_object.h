@@ -69,7 +69,7 @@ public:
 	TUIObjectType _type;
 
 	int32 getWidth() const;
-	int32 getHeight() const;
+	int32 getHeight() override;
 	void setHeight(int32 height);
 	void setWidth(int32 width);
 	bool isDisabled() const;

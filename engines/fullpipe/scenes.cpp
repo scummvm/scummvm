@@ -53,6 +53,11 @@ void scene01_fixEntrance();
 void scene01_initScene(Scene *sc, int entrance);
 int sceneHandler01(ExCommand *cmd);
 
+void scene03_setEaterState();
+int scene03_updateCursor();
+void scene03_initScene(Scene *sc);
+int sceneHandler03(ExCommand *cmd);
+
 void sceneDbgMenu_initScene(Scene *sc);
 int sceneHandlerDbgMenu(ExCommand *cmd);
 
@@ -70,6 +75,9 @@ Vars::Vars() {
 
 	scene01_picSc01Osk = 0;
 	scene01_picSc01Osk2 = 0;
+
+	scene03_eggeater = 0;
+	scene03_domino = 0;
 
 	selector = 0;
 }
@@ -210,6 +218,7 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 		addMessageHandler(sceneHandler02, 2);
 		_updateCursorCallback = defaultUpdateCursor;
 		break;
+#endif
 
 	case SC_3:
 		sceneVar = _gameLoader->_gameVar->getSubVarByName("SC_3");
@@ -219,10 +228,11 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 		scene->initObjectCursors("SC_3");
 		setSceneMusicParameters(sceneVar);
 		addMessageHandler(sceneHandler03, 2);
-		j_Scene_sc03_sub_40F160(scene);
+		scene03_setEaterState();
 		_updateCursorCallback = scene03_updateCursor;
 		break;
 
+#if 0
 	case SC_4:
 		sceneVar = _gameLoader->_gameVar->getSubVarByName("SC_4");
 		scene->preloadMovements(sceneVar);
@@ -1384,7 +1394,7 @@ int MovGraph_messageHandler(ExCommand *cmd) {
 }
 
 int defaultUpdateCursor() {
-	g_fullpipe->updateCursorsCommon();
+	g_fullpipe->updateCursorCommon();
 
 	return g_fullpipe->_cursorId;
 }
@@ -1422,8 +1432,57 @@ void sceneIntro_initScene(Scene *sc) {
 	g_fullpipe->_modalObject = new ModalIntro;
 }
 
-int sceneHandlerIntro(ExCommand *cmd) {
-	warning("STUB: sceneHandlerIntro()");
+void sceneHandlerIntro_part1() {
+	g_fullpipe->_currentScene = g_fullpipe->accessScene(SC_INTRO1);
+	chainQueue(QU_INTR_FINISH, 0);
+}
+
+void sceneHandlerIntro_part2() {
+	g_fullpipe->_currentScene = g_fullpipe->accessScene(SC_INTRO2);
+	chainQueue(QU_IN2_DO, 0);
+}
+
+int sceneHandlerIntro(ExCommand *ex) {
+	if (ex->_messageKind != 17)
+		return 0;
+
+	switch (ex->_messageNum) {
+	case MSG_INTR_ENDINTRO:
+		g_vars->sceneIntro_playing = 0;
+		return 0;
+
+	case MSG_INTR_SWITCHTO1:
+		sceneHandlerIntro_part1();
+		return 0;
+
+	case MSG_INTR_GETUPMAN:
+		g_vars->sceneIntro_needSleep = 0;
+		g_vars->sceneIntro_needGetup = 1;
+		return 0;
+
+	case MSG_INTR_SWITCHTO2:
+		sceneHandlerIntro_part2();
+		return 0;
+
+	case 33:
+		// fall through
+		break;
+
+	default:
+		return 0;
+	}
+
+	if (g_vars->sceneIntro_needSleep) {
+		if (!g_vars->sceneIntro_aniin1man->_movement && g_vars->sceneIntro_aniin1man->_statics->_staticsId == ST_IN1MAN_SLEEP)
+			g_vars->sceneIntro_aniin1man->startAnim(MV_IN1MAN_SLEEP, 0, -1);
+	} else if (g_vars->sceneIntro_needGetup && !g_vars->sceneIntro_aniin1man->_movement &&
+			   g_vars->sceneIntro_aniin1man->_statics->_staticsId == ST_IN1MAN_SLEEP) {
+		g_vars->sceneIntro_needGetup = 0;
+
+		chainQueue(QU_INTR_GETUPMAN, 0);
+	}
+
+	g_fullpipe->startSceneTrack();
 
 	return 0;
 }
@@ -1505,6 +1564,46 @@ int sceneHandler01(ExCommand *cmd) {
 	g_fullpipe->startSceneTrack();
 
 	return res;
+}
+
+void scene03_initScene(Scene *sc) {
+	g_vars->scene03_eggeater = sc->getStaticANIObject1ById(ANI_EGGEATER, -1);
+	g_vars->scene03_domino = sc->getStaticANIObject1ById(ANI_DOMINO_3, -1);
+
+	GameVar *v = g_fullpipe->_gameLoader->_gameVar->getSubVarByName("OBJSTATES")->getSubVarByName(sO_GulpedEggs);
+
+	g_vars->swallowedEgg1 = v->getSubVarByName(sO_Egg1);
+	g_vars->swallowedEgg2 = v->getSubVarByName(sO_Egg2);
+	g_vars->swallowedEgg3 = v->getSubVarByName(sO_Egg3);
+
+	setElevatorButton(sO_Level2, ST_LBN_2N);
+
+	g_fullpipe->lift_sub5(sc, QU_SC3_ENTERLIFT, QU_SC3_EXITLIFT);
+}
+
+void scene03_setEaterState() {
+	if (g_fullpipe->getObjectState(sO_EggGulperGaveCoin) == g_fullpipe->getObjectEnumState(sO_EggGulperGaveCoin, sO_Yes)) {
+		g_fullpipe->_behaviorManager->setBehaviorEnabled(g_vars->scene03_eggeater, ST_EGTR_SLIM, QU_EGTR_SLIMSHOW, 0);
+		g_fullpipe->_behaviorManager->setBehaviorEnabled(g_vars->scene03_eggeater, ST_EGTR_MID1, QU_EGTR_MD1_SHOW, 0);
+		g_fullpipe->_behaviorManager->setBehaviorEnabled(g_vars->scene03_eggeater, ST_EGTR_MID2, QU_EGTR_MD2_SHOW, 0);
+	}
+}
+
+int scene03_updateCursor() {
+	g_fullpipe->updateCursorCommon();
+
+	if (g_fullpipe->_cursorId == PIC_CSR_DEFAULT && g_fullpipe->_objectIdAtCursor == PIC_SC3_DOMIN && g_vars->scene03_domino) {
+		if (g_vars->scene03_domino->_flags & 4)
+			g_fullpipe->_cursorId = PIC_CSR_ITN;
+	}
+
+	return g_fullpipe->_cursorId;
+}
+
+int sceneHandler03(ExCommand *ex) {
+	warning("STUB: sceneHandler03()");
+
+	return 0;
 }
 
 void sceneDbgMenu_initScene(Scene *sc) {

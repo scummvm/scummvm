@@ -27,10 +27,13 @@ namespace Prince {
 
 Debugger::Debugger(PrinceEngine *vm) : GUI::Debugger(), _vm(vm) {
     DCmd_Register("continue",       WRAP_METHOD(Debugger, Cmd_Exit));
+    DCmd_Register("level",          WRAP_METHOD(Debugger, Cmd_DebugLevel));
     DCmd_Register("setflag",        WRAP_METHOD(Debugger, Cmd_SetFlag));
     DCmd_Register("getflag",        WRAP_METHOD(Debugger, Cmd_GetFlag));
     DCmd_Register("clearflag",      WRAP_METHOD(Debugger, Cmd_ClearFlag));
     DCmd_Register("viewflc",        WRAP_METHOD(Debugger, Cmd_ViewFlc));
+    DCmd_Register("initroom",       WRAP_METHOD(Debugger, Cmd_InitRoom));
+    DCmd_Register("changecursor",   WRAP_METHOD(Debugger, Cmd_ChangeCursor));
 }
 
 static int strToInt(const char *s) {
@@ -47,6 +50,22 @@ static int strToInt(const char *s) {
     if (read < 1)
         error("strToInt failed on string \"%s\"", s);
     return (int)tmp;
+}
+
+bool Debugger::Cmd_DebugLevel(int argc, const char **argv) {
+    if (argc == 1) {
+            DebugPrintf("Debugging is currently set at level %d\n", gDebugLevel);
+    } else { // set level
+        gDebugLevel = atoi(argv[1]);
+        if (0 <= gDebugLevel && gDebugLevel < 11) {
+            DebugPrintf("Debug level set to level %d\n", gDebugLevel);
+        } else if (gDebugLevel < 0) {
+            DebugPrintf("Debugging is now disabled\n");
+        } else
+            DebugPrintf("Not a valid debug level (0 - 10)\n");
+    }
+
+    return true;
 }
 
 /*
@@ -105,7 +124,32 @@ bool Debugger::Cmd_ViewFlc(int argc, const char **argv) {
     }
 
     int flagNum = strToInt(argv[1]);
-    _vm->loadAnim(flagNum);
+    _vm->loadAnim(flagNum, false);
     return true;
 }
+
+bool Debugger::Cmd_InitRoom(int argc, const char **argv) {
+    // Check for a flag to clear
+    if (argc != 2) {
+        DebugPrintf("Usage: %s <anim number>\n", argv[0]);
+        return true;
+    }
+
+    int flagNum = strToInt(argv[1]);
+    _vm->loadLocation(flagNum);
+    return true;
+}
+
+bool Debugger::Cmd_ChangeCursor(int argc, const char **argv) {
+    // Check for a flag to clear
+    if (argc != 2) {
+        DebugPrintf("Usage: %s <curId>\n", argv[0]);
+        return true;
+    }
+
+    int flagNum = strToInt(argv[1]);
+    _vm->changeCursor(flagNum);
+    return true;
+}
+
 } 

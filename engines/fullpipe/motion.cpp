@@ -113,7 +113,8 @@ void MctlCompound::initMovGraph2() {
 }
 
 void MctlCompound::freeItems() {
-	warning("STUB: MctlCompound::freeItems()");
+	for (uint i = 0; i < _motionControllers.size(); i++)
+		_motionControllers[i]->_motionControllerObj->freeItems();
 }
 
 MessageQueue *MctlCompound::method34(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId) {
@@ -672,10 +673,45 @@ void MovGraph2::freeItems() {
 	warning("STUB: MovGraph2::freeItems()");
 }
 
-MessageQueue *MovGraph2::method34(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId) {
-	warning("STUB: MovGraph2::method34()");
+MessageQueue *MovGraph2::method34(StaticANIObject *ani, int xpos, int ypos, int fuzzyMatch, int staticsId) {
+	if (!ani->isIdle())
+		return 0;
 
-	return 0;
+	if (ani->_flags & 0x100)
+		return 0;
+
+	MessageQueue *mq = doWalkTo(ani, xpos, ypos, fuzzyMatch, staticsId);
+
+	if (!mq)
+		return 0;
+
+	if (ani->_movement) {
+		if (mq->getCount() <= 1 || mq->getExCommandByIndex(0)->_messageKind != 22) {
+			PicAniInfo picAniInfo;
+
+			ani->getPicAniInfo(&picAniInfo);
+			ani->updateStepPos();
+			MessageQueue *mq1 = doWalkTo(ani, xpos, ypos, fuzzyMatch, staticsId);
+
+			ani->setPicAniInfo(&picAniInfo);
+
+			if (mq1) {
+				delete mq;
+
+				mq = mq1;
+			}
+		} else {
+			ani->_movement = 0;
+		}
+	}
+
+	if (!mq->chain(ani)) {
+		delete mq;
+
+		return 0;
+	}
+
+	return mq;
 }
 
 MessageQueue *MovGraph2::doWalkTo(StaticANIObject *obj, int xpos, int ypos, int fuzzyMatch, int staticsId) {
@@ -815,7 +851,7 @@ MessageQueue *MovGraph2::doWalkTo(StaticANIObject *obj, int xpos, int ypos, int 
 	Common::Array<MovGraphLink *> tempLinkList;
 	double minPath = findMinPath(&linkInfoSource, &linkInfoDest, &tempLinkList);
 
-	debug(0, "MovGraph2::doWalkTo(): path: %lf  parts: %d", minPath, tempLinkList.size());
+	debug(0, "MovGraph2::doWalkTo(): path: %g  parts: %d", minPath, tempLinkList.size());
 
 	if (minPath < 0.0 || ((linkInfoSource.node != linkInfoDest.node || !linkInfoSource.node) && !tempLinkList.size()))
 		return 0;
@@ -967,7 +1003,7 @@ int MovGraph2::findLink(Common::Array<MovGraphLink *> *linkList, int idx, Common
 			}
 		}
 		node3 = node1;
-	} else if (idx != linkList->size() - 1) {
+	} else if (idx != (int)(linkList->size() - 1)) {
 		MovGraphLink *lnk = (*linkList)[idx + 1];
 
 		if (lnk->_movGraphNode1 == node1 || lnk->_movGraphNode1 == node1) {
@@ -1032,7 +1068,7 @@ MovGraphLink *MovGraph2::findLink1(int x, int y, int idx, int fuzzyMatch) {
 
 MovGraphLink *MovGraph2::findLink2(int x, int y) {
 	double mindist = 1.0e20;
-	MovGraphLink *res;
+	MovGraphLink *res = 0;
 
 	for (ObList::iterator i = _links.begin(); i != _links.end(); ++i) {
 		assert(((CObject *)*i)->_objtype == kObjTypeMovGraphLink);

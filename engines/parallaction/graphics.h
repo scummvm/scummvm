@@ -465,7 +465,7 @@ public:
 	void invertBackground(const Common::Rect& r);
 
 	// palette
-	void setPalette(Palette palette);
+	void setPalette(Palette &palette);
 	void setBlackPalette();
 	void animatePalette();
 

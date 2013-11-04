@@ -1603,7 +1603,6 @@ void Scene271::signal() {
 		}
 		break;
 	case 12:
-		BF_GLOBALS._v51C44 = 0;
 		BF_GLOBALS._sound1.changeSound(67);
 		BF_GLOBALS._sceneManager.changeScene(280);
 		break;
@@ -1617,7 +1616,6 @@ void Scene271::signal() {
 		_field2E16 = 1;
 		break;
 	case 2704:
-		BF_GLOBALS._v51C44 = 1;
 		BF_GLOBALS._sound1.fadeOut2(NULL);
 		BF_GLOBALS._sceneManager.changeScene(690);
 		break;
@@ -1649,7 +1647,6 @@ void Scene271::signal() {
 		addFader((const byte *)&black, 2, this);
 		break;
 	case 2712:
-		BF_GLOBALS._v51C44 = 1;
 		BF_GLOBALS._sound1.fadeOut2(NULL);
 		BF_GLOBALS._sceneManager.changeScene(180);
 		break;
@@ -1657,7 +1654,6 @@ void Scene271::signal() {
 		BF_GLOBALS._player.enableControl();
 		break;
 	case 2714:
-		BF_GLOBALS._v51C44 = 1;
 		BF_GLOBALS._sceneManager.changeScene(560);
 		break;
 	case 2715:

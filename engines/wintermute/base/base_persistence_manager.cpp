@@ -587,7 +587,7 @@ double BasePersistenceManager::getDouble() {
 
 //////////////////////////////////////////////////////////////////////////
 // bool
-bool BasePersistenceManager::transfer(const char *name, bool *val) {
+bool BasePersistenceManager::transferBool(const char *name, bool *val) {
 	if (_saving) {
 		_saveStream->writeByte(*val);
 		if (_saveStream->err()) {
@@ -663,7 +663,7 @@ bool BasePersistenceManager::transferFloat(const char *name, float *val) {
 
 //////////////////////////////////////////////////////////////////////////
 // double
-bool BasePersistenceManager::transfer(const char *name, double *val) {
+bool BasePersistenceManager::transferDouble(const char *name, double *val) {
 	if (_saving) {
 		putDouble(*val);
 		if (_saveStream->err()) {
@@ -769,7 +769,7 @@ bool BasePersistenceManager::transfer(const char *name, AnsiStringArray &val) {
 
 //////////////////////////////////////////////////////////////////////////
 // BYTE
-bool BasePersistenceManager::transfer(const char *name, byte *val) {
+bool BasePersistenceManager::transferByte(const char *name, byte *val) {
 	if (_saving) {
 		_saveStream->writeByte(*val);
 		if (_saveStream->err()) {
@@ -788,7 +788,7 @@ bool BasePersistenceManager::transfer(const char *name, byte *val) {
 
 //////////////////////////////////////////////////////////////////////////
 // RECT
-bool BasePersistenceManager::transfer(const char *name, Rect32 *val) {
+bool BasePersistenceManager::transferRect32(const char *name, Rect32 *val) {
 	if (_saving) {
 		_saveStream->writeSint32LE(val->left);
 		_saveStream->writeSint32LE(val->top);
@@ -813,7 +813,7 @@ bool BasePersistenceManager::transfer(const char *name, Rect32 *val) {
 
 //////////////////////////////////////////////////////////////////////////
 // POINT
-bool BasePersistenceManager::transfer(const char *name, Point32 *val) {
+bool BasePersistenceManager::transferPoint32(const char *name, Point32 *val) {
 	if (_saving) {
 		_saveStream->writeSint32LE(val->x);
 		_saveStream->writeSint32LE(val->y);
@@ -834,7 +834,7 @@ bool BasePersistenceManager::transfer(const char *name, Point32 *val) {
 
 //////////////////////////////////////////////////////////////////////////
 // Vector2
-bool BasePersistenceManager::transfer(const char *name, Vector2 *val) {
+bool BasePersistenceManager::transferVector2(const char *name, Vector2 *val) {
 	if (_saving) {
 		putFloat(val->x);
 		putFloat(val->y);

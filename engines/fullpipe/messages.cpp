@@ -756,4 +756,23 @@ void updateGlobalMessageQueue(int id, int objid) {
 	}
 }
 
+bool chainQueue(int queueId, int flags) {
+	MessageQueue *mq = g_fullpipe->_currentScene->getMessageQueueById(queueId);
+
+	if (!mq)
+		return false;
+
+	MessageQueue *nmq = new MessageQueue(mq, 0, 0);
+
+	nmq->_flags |= flags;
+
+	if (!mq->chain(0)) {
+		delete mq;
+
+		return false;
+	}
+
+	return true;
+}
+
 } // End of namespace Fullpipe

@@ -60,7 +60,7 @@ Common::String BaseClass::getEditorProp(const Common::String &propName, const Co
 	if (_editorPropsIter != _editorProps.end()) {
 		return _editorPropsIter->_value.c_str();
 	} else {
-		return initVal;
+		return initVal; // Used to be NULL
 	}
 }
 

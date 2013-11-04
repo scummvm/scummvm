@@ -110,6 +110,31 @@ ToucheEngine::ToucheEngine(OSystem *system, Common::Language language)
 	DebugMan.addDebugChannel(kDebugCharset,  "Charset",   "Charset debug level");
 
 	_console = new ToucheConsole(this);
+
+	_newEpisodeNum = 0;
+	_currentEpisodeNum = 0;
+	_currentAmountOfMoney = 0;
+	_giveItemToKeyCharNum = 0;
+	_giveItemToObjectNum = 0;
+	_giveItemToCounter = 0;
+	_currentRoomNum = 0;
+	_waitingSetKeyCharNum1 = 0;
+	_waitingSetKeyCharNum2 = 0;
+	_waitingSetKeyCharNum3 = 0;
+	_script.opcodeNum = 0;
+	_script.dataOffset = 0;
+	_script.keyCharNum = 0;
+	_script.dataPtr = 0;
+	_script.stackDataPtr = 0;
+	_script.stackDataBasePtr = 0;
+	_script.quitFlag = 0;
+	_opcodesTable = 0;
+
+	for (uint i = 0; i < NUM_SPRITES; i++)
+		memset(&_spritesTable[i], 0, sizeof(SpriteData));
+
+	for (uint i = 0; i < NUM_SEQUENCES; i++)
+		memset(&_sequenceEntryTable[i], 0, sizeof(SequenceEntry));
 }
 
 ToucheEngine::~ToucheEngine() {

@@ -49,6 +49,7 @@ const MouseHotspotType GraphicManager::kMouseHotSpots[9] = {
 
 GraphicManager::GraphicManager(AvalancheEngine *vm) {
 	_vm = vm;
+	setDialogColor(kColorBlack, kColorWhite);
 }
 
 GraphicManager::~GraphicManager() {

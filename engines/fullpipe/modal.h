@@ -34,24 +34,44 @@ class BaseModalObject {
  	BaseModalObject() : _parentObj(0) {}
 	virtual ~BaseModalObject() {}
 
-	virtual bool handleMessage(ExCommand *message);
-	virtual bool init(int counterdiff);
-	virtual bool update();
 
-	void saveload();
+	virtual bool pollEvent() = 0;
+	virtual bool handleMessage(ExCommand *message) = 0;
+	virtual bool init(int counterdiff) = 0;
+	virtual void update() = 0;
+
+	virtual void saveload() = 0;
 };
 
 class ModalIntro : public BaseModalObject {
 	int _field_8;
 	int _introFlags;
 	int _countDown;
-	int _needRedraw;
+	int _stillRunning;
 	int _sfxVolume;
 
  public:
 	ModalIntro();
 
+	virtual bool pollEvent() { return true; }
 	virtual bool handleMessage(ExCommand *message);
+	virtual bool init(int counterdiff);
+	virtual void update();
+	virtual void saveload() {}
+
+	void finish();
+};
+
+class ModalVideoPlayer : public BaseModalObject {
+public:
+
+	virtual bool pollEvent() { return true; }
+	virtual bool handleMessage(ExCommand *message) { return true; }
+	virtual bool init(int counterdiff) { return false; }
+	virtual void update() {}
+	virtual void saveload() {}
+
+	void play(const char *fname);
 };
 
 } // End of namespace Fullpipe

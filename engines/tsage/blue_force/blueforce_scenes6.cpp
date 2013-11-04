@@ -79,7 +79,6 @@ void Scene600::Action1::signal() {
 		}
 
 		BF_GLOBALS._screenSurface.fillRect(BF_GLOBALS._screenSurface.getBounds(), 0);
-		BF_GLOBALS._v51C44 = 1;
 		scene->loadScene(999);
 		setDelay(5);
 		break;
@@ -88,7 +87,6 @@ void Scene600::Action1::signal() {
 		setDelay(5);
 		break;
 	case 7:
-		BF_GLOBALS._v51C44 = 0;
 		remove();
 		break;
 	default:
@@ -275,7 +273,7 @@ bool Scene666::Item1::startAction(CursorType action, Event &event) {
 void Scene666::postInit(SceneObjectList *OwnerList) {
 	BF_GLOBALS._sound1.play(27);
 	SceneExt::postInit();
-	BF_GLOBALS._interfaceY = 200;
+	BF_GLOBALS._interfaceY = SCREEN_HEIGHT;
 	loadScene(999);
 	BF_GLOBALS._screenSurface.fillRect(BF_GLOBALS._screenSurface.getBounds(), 0);
 

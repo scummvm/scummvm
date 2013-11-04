@@ -87,7 +87,7 @@ void UIQuestion::showDescription(CursorType cursor) {
 			Ringworld2::SceneExt *scene = static_cast<Ringworld2::SceneExt *>
 				(R2_GLOBALS._sceneManager._scene);
 			if (!scene->_sceneAreas.contains(R2_GLOBALS._scannerDialog))
-				R2_GLOBALS._scannerDialog->proc12(4, 1, 1, 160, 125);
+				R2_GLOBALS._scannerDialog->setup2(4, 1, 1, 160, 125);
 		} else {
 			// Show object description
 			SceneItem::display2(3, (int)cursor);
@@ -276,9 +276,27 @@ void UICollection::draw() {
 			Rect(0, UI_INTERFACE_Y, SCREEN_WIDTH, SCREEN_HEIGHT),
 			Rect(0, UI_INTERFACE_Y, SCREEN_WIDTH, SCREEN_HEIGHT));
 
+		if (g_vm->getGameID() == GType_Ringworld2)
+			r2rDrawFrame();
+
 		_clearScreen = 1;
 		g_globals->_sceneManager._scene->_sceneBounds = savedBounds;
 	}
+}
+
+void UICollection::r2rDrawFrame() {
+	Visage visage;
+	visage.setVisage(2, 1);
+	GfxSurface vertLine = visage.getFrame(1);
+	GfxSurface horizLine = visage.getFrame(2);
+
+	GLOBALS._screenSurface.copyFrom(horizLine, 0, 0);
+	GLOBALS._screenSurface.copyFrom(vertLine, 0, 3);
+	GLOBALS._screenSurface.copyFrom(vertLine, SCREEN_WIDTH - 4, 3);
+
+	// Restrict drawing area to exclude the borders at the edge of the screen
+	R2_GLOBALS._screenSurface._clipRect = Rect(4, 4, SCREEN_WIDTH - 4, 
+		SCREEN_HEIGHT - 4);
 }
 
 /*--------------------------------------------------------------------------*/
@@ -289,6 +307,10 @@ UIElements::UIElements(): UICollection() {
 	else
 		_cursorVisage.setVisage(1, 5);
 	g_saver->addLoadNotifier(&UIElements::loadNotifierProc);
+
+	_slotStart = 0;
+	_scoreValue = 0;
+	_active = false;
 }
 
 void UIElements::synchronize(Serializer &s) {

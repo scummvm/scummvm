@@ -210,7 +210,7 @@ void writeMenuData(const char *menuData, int languageId) {
 	outputFile.writeByte(languageId);
 	// Write each 8-characters block as a byte (one bit per character)
 	// ' ' -> 0, anything else -> 1
-	byte value;
+	byte value = 0;
 	int valueCpt = 0;
 	const char* str = menuData;
 	while (*str != 0) {

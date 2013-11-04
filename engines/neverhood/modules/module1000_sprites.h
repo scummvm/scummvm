@@ -230,6 +230,9 @@ protected:
 	void stMoveVenusFlyTrap();
 	void stContinueMovingVenusFlyTrap();
 	void evMoveVenusFlyTrapDone();
+	void stPressDoorButton();
+	void stHitByBoxingGlove();
+	void evHitByBoxingGloveDone();
 
 	uint32 hmJumpToRing(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 hmJumpToRing3(int messageNum, const MessageParam &param, Entity *sender);
@@ -238,6 +241,8 @@ protected:
 	uint32 hmJumpAndFall(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 hmMoveVenusFlyTrap(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 hmFirstMoveVenusFlyTrap(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmPressDoorButton(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmHitByBoxingGlove(int messageNum, const MessageParam &param, Entity *sender);
 
 	void xUpdate();
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);

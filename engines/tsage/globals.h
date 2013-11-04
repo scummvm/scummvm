@@ -110,7 +110,7 @@ public:
 	int _interfaceY;
 	ASoundExt _inventorySound;
 
-	TsAGE2Globals() { _onSelectItem = NULL; }
+	TsAGE2Globals();
 	virtual void reset();
 	virtual void synchronize(Serializer &s);
 };
@@ -194,7 +194,6 @@ public:
 	int _safeCombination;
 	int _gateStatus;
 	int _greenDay5TalkCtr;
-	int _v4CEC4;
 	int _v4CEC8;
 	int _v4CECA;
 	int _v4CECC;
@@ -208,19 +207,12 @@ public:
 	int _deathReason;
 	int _driveFromScene;
 	int _driveToScene;
-	int _v501F8;
-	int _v501FA;
-	int _v501FC;
-	int _v5020C;
-	int _v50696;
 	uint8 _subFlagBitArr1;
 	uint8 _subFlagBitArr2;
 	int _v50CC2;
-	int _v50CC4;
-	int _v50CC6;
-	int _v50CC8;
-	int _v51C42;
-	int _v51C44;
+	int _scene410Action1Count;
+	int _scene410TalkCount;
+	int _scene410HarrisonMovedFl;
 	Bookmark _bookmark;
 	int _mapLocationId;
 	int _clip1Bullets, _clip2Bullets;
@@ -259,27 +251,25 @@ public:
 	byte _fadePaletteMap[10][256];
 	byte _paletteMap[4096];
 	int _insetUp;
-	int _frameEdgeColor;	// _v421e
+	int _frameEdgeColor;
 	Rect _v5589E;
 	Rect _v558B6;
-	int _v558C2;
 	int _animationCtr;
 	int _electromagnetChangeAmount;
 	int _electromagnetZoom;
 	int _v565E5;
 	int _v565E7;
 	int _v565E9;
-	int _v565EB;
+	int _v565EB; // CHECKME: IS it a constant?
 	int _foodCount;
 	int _rimLocation;
 	int _rimTransportLocation;
-	int _v5657C;
-	byte _v565AE;
+	byte _stripModifier;
 	byte _spillLocation[14];
 	VampireData _vampireData[18];
 	byte _flubMazeArea;
 	byte _flubMazeEntryDirection;
-	int _v566A6;
+	int _maze3800SceneNumb;
 	byte _landerSuitNumber;
 	byte _desertStepsRemaining;
 	byte _desertCorrectDirection;
@@ -292,17 +282,14 @@ public:
 	byte _v56AA0;
 	byte _scientistConvIndex;
 	Common::Point _ventCellPos;
-	int _v56AA4;
 	byte _v56AA6;
 	byte _v56AA7;
 	byte _v56AA8;
-	int _v56AAB;
 	int _scene180Mode;	// _v575f7
 	int _v57709;
 	int _v5780C;
 	int _v5780E;
 	int _v57810;
-	int _v57C2C;
 	int _speechSubtitles;
 	Common::Point _s1550PlayerArea[3]; // only used for Quinn and Seeker
 	byte _scannerFrequencies[4];

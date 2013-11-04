@@ -173,6 +173,8 @@ void processMessages();
 void updateGlobalMessageQueue(int id, int objid);
 void clearGlobalMessageQueueList1();
 
+bool chainQueue(int queueId, int flags);
+
 } // End of namespace Fullpipe
 
 #endif /* FULLPIPE_MESSAGEQUEUE_H */

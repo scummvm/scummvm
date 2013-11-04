@@ -137,6 +137,7 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		// Spaceport
 		return new Scene1550();
 	case 1575:
+		// Spaceport - unused ship scene
 		return new Scene1575();
 	case 1580:
 		// Inside wreck
@@ -179,7 +180,7 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		// Spill Mountains: Balloon Launch Platform
 		return new Scene2350();
 	case 2400:
-		// Spill Mountains: Large empty room
+		// Spill Mountains: Unused large empty room
 		return new Scene2400();
 	case 2425:
 		// Spill Mountains: The Hall of Records
@@ -203,7 +204,7 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		// Spill Mountains: Inside crevasse
 		return new Scene2455();
 	case 2500:
-		// Spill Mountains: Large Cave
+		// Spill Mountains: Large Ledge
 		return new Scene2500();
 	case 2525:
 		// Spill Mountains: Furnace room
@@ -341,6 +342,9 @@ SceneExt::SceneExt(): Scene() {
 	_savedUiEnabled = false;
 	_savedCanWalk = false;
 	_preventSaving = false;
+
+	// Reset screen clipping area
+	R2_GLOBALS._screenSurface._clipRect = Rect();
 
 	// WORKAROUND: In the original, playing animations don't reset the global _animationCtr
 	// counter as scene changes unless the playing animation explicitly finishes. For now,
@@ -1204,25 +1208,25 @@ void Ringworld2Game::processEvent(Event &event) {
 		case Common::KEYCODE_F4:
 			// F4 - Restart
 			restartGame();
-			g_globals->_events.setCursorFromFlag();
+			R2_GLOBALS._events.setCursorFromFlag();
 			break;
 
 		case Common::KEYCODE_F7:
 			// F7 - Restore
 			restoreGame();
-			g_globals->_events.setCursorFromFlag();
+			R2_GLOBALS._events.setCursorFromFlag();
 			break;
 
 		case Common::KEYCODE_F8:
 			// F8 - Credits
-			warning("TODO: Show Credits");
+			R2_GLOBALS._sceneManager.changeScene(205);
 			break;
 
 		case Common::KEYCODE_F10:
 			// F10 - Pause
 			GfxDialog::setPalette();
 			MessageDialog::show(GAME_PAUSED_MSG, OK_BTN_STRING);
-			g_globals->_events.setCursorFromFlag();
+			R2_GLOBALS._events.setCursorFromFlag();
 			break;
 
 		default:
@@ -1352,6 +1356,7 @@ SceneArea::SceneArea(): SceneItem() {
 	_insideArea = false;
 	_savedCursorNum = CURSOR_NONE;
 	_cursorState = 0;
+	_cursorNum = CURSOR_NONE;
 }
 
 void SceneArea::synchronize(Serializer &s) {
@@ -1404,6 +1409,8 @@ void SceneArea::setDetails(const Rect &bounds, CursorType cursor) {
 SceneExit::SceneExit(): SceneArea() {
 	_moving = false;
 	_destPos = Common::Point(-1, -1);
+
+	_sceneNumber = 0;
 }
 
 void SceneExit::synchronize(Serializer &s) {
@@ -1721,6 +1728,12 @@ void AnimationSlice::load(Common::File &f) {
 
 AnimationSlices::AnimationSlices() {
 	_pixelData = NULL;
+
+	_dataSize = 0;
+	_dataSize2 = 0;
+	_slices->_sliceOffset = 0;
+	_slices->_drawMode = 0;
+	_slices->_secondaryIndex = 0;
 }
 
 AnimationSlices::~AnimationSlices() {
@@ -1786,6 +1799,18 @@ AnimationPlayer::AnimationPlayer(): EventHandler() {
 	_sliceHeight = 1;
 	_field58 = 1;
 	_endAction = NULL;
+
+	_sliceCurrent = nullptr;
+	_sliceNext = nullptr;
+	_field38 = 0;
+	_objectMode = ANIMOBJMODE_1;
+	_dataNeeded = 0;
+	_playbackTick = 0;
+	_playbackTickPrior = 0;
+	_position = 0;
+	_nextSlicesPosition = 0;
+	_frameDelay = 0;
+	_gameFrame = 0;
 }
 
 AnimationPlayer::~AnimationPlayer() {
@@ -2025,7 +2050,7 @@ void AnimationPlayer::drawFrame(int sliceIndex) {
 	// Unlock the screen surface
 	R2_GLOBALS._screenSurface.unlockSurface();
 
-	if (_objectMode == 42) {
+	if (_objectMode == ANIMOBJMODE_42) {
 		_screenBounds.expandPanes();
 
 		// Copy the drawn frame to the back surface
@@ -2094,7 +2119,7 @@ void AnimationPlayer::close() {
 	// Close the resource file
 	_resourceFile.close();
 
-	if (_objectMode != 42) {
+	if (_objectMode != ANIMOBJMODE_42) {
 		// flip screen in original
 	}
 
@@ -2205,7 +2230,7 @@ void ModalWindow::process(Event &event) {
 	}
 }
 
-void ModalWindow::proc12(int visage, int stripFrameNum, int frameNum, int posX, int posY) {
+void ModalWindow::setup2(int visage, int stripFrameNum, int frameNum, int posX, int posY) {
 	Scene1200 *scene = (Scene1200 *)R2_GLOBALS._sceneManager._scene;
 
 	_object1.postInit();
@@ -2218,7 +2243,7 @@ void ModalWindow::proc12(int visage, int stripFrameNum, int frameNum, int posX, 
 	_insetCount = R2_GLOBALS._insetUp;
 }
 
-void ModalWindow::proc13(int resNum, int lookLineNum, int talkLineNum, int useLineNum) {
+void ModalWindow::setup3(int resNum, int lookLineNum, int talkLineNum, int useLineNum) {
 	_object1.setDetails(resNum, lookLineNum, talkLineNum, useLineNum, 2, (SceneItem *) NULL);
 }
 
@@ -2477,15 +2502,15 @@ void ScannerDialog::remove() {
 	ModalWindow::remove();
 }
 
-void ScannerDialog::proc12(int visage, int stripFrameNum, int frameNum, int posX, int posY) {
+void ScannerDialog::setup2(int visage, int stripFrameNum, int frameNum, int posX, int posY) {
 	// Stop player moving if currently doing so
 	if (R2_GLOBALS._player._mover)
 		R2_GLOBALS._player.addMover(NULL);
 
 	R2_GLOBALS._events.setCursor(CURSOR_USE);
-	ModalWindow::proc12(visage, stripFrameNum, frameNum, posX, posY);
+	ModalWindow::setup2(visage, stripFrameNum, frameNum, posX, posY);
 
-	proc13(100, -1, -1, -1);
+	setup3(100, -1, -1, -1);
 	_talkButton.setup(1);
 	_scanButton.setup(2);
 	_slider.setup(R2_GLOBALS._scannerFrequencies[R2_GLOBALS._player._characterIndex], 142, 124, 35, 5);

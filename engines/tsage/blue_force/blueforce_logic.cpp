@@ -454,9 +454,10 @@ void Timer::dispatch() {
 
 	if (_endFrame) {
 		uint32 frameNumber = BF_GLOBALS._events.getFrameNumber();
-		if (frameNumber > _endFrame)
+		if (frameNumber > _endFrame) {
 			// Timer has expired
 			signal();
+		}
 	}
 }
 
@@ -472,7 +473,8 @@ void Timer::set(uint32 delay, EventHandler *endHandler) {
 /*--------------------------------------------------------------------------*/
 
 TimerExt::TimerExt(): Timer() {
-	_action = NULL;
+	_action = nullptr;
+	_newAction = nullptr;
 }
 
 void TimerExt::set(uint32 delay, EventHandler *endHandler, Action *newAction) {
@@ -839,7 +841,7 @@ void SceneExt::startStrip() {
 		scene->_savedCanWalk = BF_GLOBALS._player._canWalk;
 		BF_GLOBALS._player.disableControl();
 
-		if (!BF_GLOBALS._v50696 && T2_GLOBALS._uiElements._active)
+		if (T2_GLOBALS._uiElements._active)
 			T2_GLOBALS._uiElements.hide();
 	}
 }
@@ -853,7 +855,7 @@ void SceneExt::endStrip() {
 		BF_GLOBALS._player._uiEnabled = scene->_savedUiEnabled;
 		BF_GLOBALS._player._canWalk = scene->_savedCanWalk;
 
-		if (!BF_GLOBALS._v50696 && T2_GLOBALS._uiElements._active)
+		if (T2_GLOBALS._uiElements._active)
 			T2_GLOBALS._uiElements.show();
 	}
 }
@@ -888,7 +890,6 @@ void PalettedScene::remove() {
 
 		BF_GLOBALS._sceneObjects->draw();
 		BF_GLOBALS._scenePalette.loadPalette(2);
-		BF_GLOBALS._v51C44 = 1;
 		BF_GLOBALS._sceneManager._hasPalette = true;
 	}
 
@@ -909,6 +910,7 @@ void PalettedScene::add2Faders(const byte *arrBufferRGB, int step, int paletteNu
 
 void PalettedScene::transition(const byte *arrBufferRGB, int percent, int paletteNum, Action *action, int fromColor1, int fromColor2, int toColor1, int toColor2, bool flag) {
 	byte tmpPalette[768];
+	memset(tmpPalette, 0, 768);
 
 	_palette.loadPalette(paletteNum);
 	_palette.loadPalette(2);
@@ -1259,8 +1261,6 @@ void BlueForceInvObjectList::alterInventory(int mode) {
 	// Reset ticket book and miranda card back to motorcycle
 	setObjectScene(INV_TICKET_BOOK, 60);
 	setObjectScene(INV_MIRANDA_CARD, 60);
-
-	BF_GLOBALS._v4CEC4 = 0;
 
 	switch (mode) {
 	case 2:

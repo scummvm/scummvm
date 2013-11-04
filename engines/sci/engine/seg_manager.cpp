@@ -262,8 +262,14 @@ const char *SegManager::getObjectName(reg_t pos) {
 	const char *name = 0;
 	if (nameReg.getSegment())
 		name  = derefString(nameReg);
-	if (!name)
-		return "<invalid name>";
+	if (!name) {
+		// Crazy Nick Laura Bow is missing some object names needed for the static
+		// selector vocabulary
+		if (g_sci->getGameId() == GID_CNICK_LAURABOW && pos == make_reg(1, 0x2267))
+			return "Character";
+		else
+			return "<invalid name>";
+	}
 
 	return name;
 }

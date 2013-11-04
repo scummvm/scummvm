@@ -48,6 +48,37 @@ const int32 Animation::kCatacombMap[8][8] = {
 
 AnimationType::AnimationType(Animation *anim) {
 	_anim = anim;
+
+	_xLength = 0;
+	_yLength = 0;
+	for (int i = 0; i < 24; i++) {
+		_mani[i] = nullptr;
+		_sil[i] = nullptr;
+	}
+	_frameNum = 0;
+	_seq = 0;
+	_characterId = 0;
+	_count = 0;
+	_facingDir = kDirNone;
+	_stepNum = 0;
+	_x = 0;
+	_y = 0;
+	_moveX = 0;
+	_moveY = 0;
+	_quick = false;
+	_visible = false;
+	_homing = false;
+	_doCheck = false;
+	_homingX = 0;
+	_homingY = 0;
+	_speedX = 0;
+	_speedY = 0;
+	_vanishIfStill = false;
+	_callEachStepFl = false;
+	_eachStepProc = Animation::kProcNone;
+	_fgBubbleCol = kColorWhite;
+	_bgBubbleCol = kColorBlack;
+	_id = 177;
 }
 
 /**
@@ -370,6 +401,13 @@ Animation::Animation(AvalancheEngine *vm) {
 	for (int16 i = 0; i < kSpriteNumbMax; i++) {
 		_sprites[i] = new AnimationType(this);
 	}
+
+	_direction = kDirNone;
+	_oldDirection = kDirNone;
+	_arrowTriggered = false;
+	_geidaSpin = 0;
+	_geidaTime = 0;
+	_sayWhat = 0;
 }
 
 Animation::~Animation() {
@@ -1201,6 +1239,8 @@ void Animation::animLink() {
 				break;
 			case kProcGeida :
 				geidaProcs(i);
+				break;
+			default:
 				break;
 			}
 		}

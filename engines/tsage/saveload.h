@@ -33,7 +33,7 @@ namespace TsAGE {
 
 typedef void (*SaveNotifierFn)(bool postFlag);
 
-#define TSAGE_SAVEGAME_VERSION 10
+#define TSAGE_SAVEGAME_VERSION 11
 
 class SavedObject;
 
@@ -48,7 +48,7 @@ struct tSageSavegameHeader {
 
 /*--------------------------------------------------------------------------*/
 
-// FIXME: workaround to supress spurious strict-alias warnings on older GCC
+// FIXME: workaround to suppress spurious strict-alias warnings on older GCC
 // versions. this should be resolved with the savegame rewrite
 #define SYNC_POINTER(x) do { \
 	SavedObject **y = (SavedObject **)((void *)&x); \
@@ -59,7 +59,7 @@ struct tSageSavegameHeader {
 	if (s.isLoading()) FIELD = (TYPE)v_##FIELD;
 
 /**
- * Derived serializer class with extra synchronisation types
+ * Derived serializer class with extra synchronization types
  */
 class Serializer : public Common::Serializer {
 public:
@@ -212,7 +212,6 @@ private:
 
 	bool _macroSaveFlag;
 	bool _macroRestoreFlag;
-	int _saveSlot;
 
 	void resolveLoadPointers();
 public:

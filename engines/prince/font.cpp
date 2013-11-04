@@ -35,51 +35,57 @@ Font::Font() {
 }
 
 Font::~Font() {
-    delete [] _fontData;
+	delete [] _fontData;
 }
 
 bool Font::load(Common::SeekableReadStream &stream) {
-    stream.seek(0);
-    _fontData = new byte[stream.size()];
-    stream.read(_fontData, stream.size());
-    return true;
+	stream.seek(0);
+	_fontData = new byte[stream.size()];
+	stream.read(_fontData, stream.size());
+	return true;
 }
 
 int Font::getFontHeight() const {
-    debug("Font::getFontHeight %d", _fontData[5]);
-    return _fontData[5];
+	return _fontData[5];
 }
 
 int Font::getMaxCharWidth() const {
-    return 0;
+	return 0;
 }
 
 Font::ChrData Font::getChrData(byte chr) const {
-    chr -= 32;
-    uint16 chrOffset = 4*chr+6;
+	chr -= 32;
+	uint16 chrOffset = 4*chr+6;
 
-    ChrData chrData;
-    chrData._width = _fontData[chrOffset+2];
-    chrData._height = _fontData[chrOffset+3];
-    chrData._pixels = _fontData + READ_LE_UINT16(_fontData + chrOffset);
+	ChrData chrData;
+	chrData._width = _fontData[chrOffset+2];
+	chrData._height = _fontData[chrOffset+3];
+	chrData._pixels = _fontData + READ_LE_UINT16(_fontData + chrOffset);
 
-    return chrData;
+	return chrData;
 }
 
 int Font::getCharWidth(byte chr) const {
-    return getChrData(chr)._width;
+	return getChrData(chr)._width;
 }
 
-void Font::drawChar(Graphics::Surface *dst, byte chr, int x, int y, uint32 color) const {
-    const ChrData chrData = getChrData(chr);
-    const byte *src = chrData._pixels;
-    byte *target = (byte *)dst->getBasePtr(x, y);
+void Font::drawChar(Graphics::Surface *dst, byte chr, int posX, int posY, uint32 color) const {
+	const ChrData chrData = getChrData(chr);
 
-    for (int i = 0; i < chrData._height; i++) {
-        memcpy(target, src, chrData._width);
-        src += chrData._width;
-        target += dst->pitch;
-    }
+	for (int y = 0; y < chrData._height; ++y) {
+		for (int x = 0; x < chrData._width; ++x) {
+			byte d = chrData._pixels[x + (chrData._width * y)];
+			if (d == 0) d = 255;
+			else if (d == 1) d = 0;
+			else if (d == 2) d = color;
+			else if (d == 3) d = 0;
+			if (d != 255) {
+				*(byte*)dst->getBasePtr(posX + x, posY + y) = d;
+			}
+		}
+	}
 }
 
 }
+
+/* vim: set tabstop=4 expandtab!: */

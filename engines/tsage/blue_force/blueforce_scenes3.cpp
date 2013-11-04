@@ -564,7 +564,6 @@ void Scene300::dispatch() {
 
 		if ((BF_GLOBALS._player._position.y < 59) && (BF_GLOBALS._player._position.x > 137) &&
 				(_sceneMode != 6308) && (_sceneMode != 7308)) {
-			// The original was setting a useless global variable (removed)
 			_sceneMode = 6308;
 			BF_GLOBALS._player.disableControl();
 			ADD_MOVER(BF_GLOBALS._player, BF_GLOBALS._player._position.x + 20,
@@ -967,7 +966,6 @@ void Scene315::Action1::signal() {
 /*--------------------------------------------------------------------------*/
 
 Scene315::Scene315() {
-	BF_GLOBALS._v51C44 = 1;
 	_field1B6C = _field139C = 0;
 	if (BF_GLOBALS._dayNumber == 0)
 		BF_GLOBALS._dayNumber = 1;
@@ -977,12 +975,19 @@ Scene315::Scene315() {
 	_doorOpened = false;
 	_invGreenCount = _bookGreenCount = 0;
 	_invGangCount = _bookGangCount = 0;
+
+	_stripNumber = 0;
+	_field1398 = 0;
+	_currentCursor = INV_NONE;
 }
 
 void Scene315::synchronize(Serializer &s) {
 	SceneExt::synchronize(s);
 
-	s.syncAsSint16LE(_field1390);
+	if (s.getVersion() < 11) {
+		int useless = 0;
+		s.syncAsSint16LE(useless);
+	}
 	s.syncAsSint16LE(_stripNumber);
 	s.syncAsSint16LE(_field1398);
 	s.syncAsSint16LE(_invGreenCount);
@@ -1399,7 +1404,7 @@ bool Scene325::Item1::startAction(CursorType action, Event &event) {
 void Scene325::postInit(SceneObjectList *OwnerList) {
 	SceneExt::postInit();
 	loadScene(325);
-	BF_GLOBALS._interfaceY = 200;
+	BF_GLOBALS._interfaceY = SCREEN_HEIGHT;
 	BF_GLOBALS.clearFlag(fCanDrawGun);
 
 	if (BF_GLOBALS._dayNumber == 0)
@@ -4439,7 +4444,6 @@ void Scene360::postInit(SceneObjectList *OwnerList) {
 	BF_GLOBALS._player.enableControl();
 
 	if ((BF_GLOBALS._sceneManager._previousScene == 355) || (BF_GLOBALS._sceneManager._previousScene != 370)) {
-		// The original was using there a useless variable (now removed)
 		BF_GLOBALS._player.setPosition(Common::Point(253, 135));
 		BF_GLOBALS._player.setStrip(2);
 

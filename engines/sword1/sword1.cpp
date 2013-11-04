@@ -67,6 +67,17 @@ SwordEngine::SwordEngine(OSystem *syst)
 	SearchMan.addSubDirectoryMatching(gameDataDir, "italian"); // PSX Demo
 
 	_console = new SwordConsole(this);
+
+	_mouseState = 0;
+	_resMan = 0;
+	_objectMan = 0;
+	_screen = 0;
+	_mouse = 0;
+	_logic = 0;
+	_sound = 0;
+	_menu = 0;
+	_music = 0;
+	_control = 0;
 }
 
 SwordEngine::~SwordEngine() {

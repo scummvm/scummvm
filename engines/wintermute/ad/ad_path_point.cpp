@@ -66,7 +66,7 @@ bool AdPathPoint::persist(BasePersistenceManager *persistMgr) {
 	BasePoint::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_distance));
-	persistMgr->transfer(TMEMBER(_marked));
+	persistMgr->transferBool(TMEMBER(_marked));
 	persistMgr->transferPtr(TMEMBER_PTR(_origin));
 
 	return STATUS_OK;

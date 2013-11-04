@@ -26,6 +26,7 @@
 #include "tsage/ringworld/ringworld_demo.h"
 #include "tsage/ringworld/ringworld_logic.h"
 #include "tsage/ringworld2/ringworld2_logic.h"
+#include "tsage/ringworld2/ringworld2_scenes0.h"
 #include "tsage/staticres.h"
 
 namespace TsAGE {
@@ -47,6 +48,11 @@ static SavedObject *classFactoryProc(const Common::String &className) {
 	if (className == "SceneObjectWrapper") return new SceneObjectWrapper();
 	if (className == "PaletteRotation") return new PaletteRotation();
 	if (className == "PaletteFader") return new PaletteFader();
+	if (className == "SceneText") return new SceneText();
+
+	// Return to Ringworld specific classes
+	if (className == "Scene205_Star") return new Ringworld2::Star();
+
 	return NULL;
 }
 
@@ -119,8 +125,11 @@ Globals::Globals() : _dialogCenter(160, 140), _gfxManagerInstance(_screenSurface
 	_sounds.push_back(&_soundHandler);
 	_sounds.push_back(&_sequenceManager._soundHandler);
 
-	_scrollFollower = NULL;
-	_inventory = NULL;
+	_scrollFollower = nullptr;
+
+	_inventory = nullptr;
+	_game = nullptr;
+	_sceneHandler = nullptr;
 
 	switch (g_vm->getGameID()) {
 	case GType_Ringworld:
@@ -145,6 +154,7 @@ Globals::Globals() : _dialogCenter(160, 140), _gfxManagerInstance(_screenSurface
 		_sceneHandler = new Ringworld2::SceneHandlerExt();
 		break;
 	}
+
 }
 
 Globals::~Globals() {
@@ -204,6 +214,11 @@ void Globals::dispatchSounds() {
 
 /*--------------------------------------------------------------------------*/
 
+TsAGE2Globals::TsAGE2Globals() {
+	_onSelectItem = NULL;
+	_interfaceY = 0;
+}
+
 void TsAGE2Globals::reset() {
 	Globals::reset();
 
@@ -224,15 +239,46 @@ void TsAGE2Globals::synchronize(Serializer &s) {
 namespace BlueForce {
 
 BlueForceGlobals::BlueForceGlobals(): TsAGE2Globals() {
+	_hiddenDoorStatus = 0;
+	_nico910State = 0;
+	_v4CEE4 = 0;
+	_v4CEE6 = 0;
+	_v4CEE8 = 0;
+	_deziTopic = 0;
+	_deathReason = 0;
+	_driveFromScene = 300;
+	_driveToScene = 0;
+	_subFlagBitArr1 = 0;
+	_subFlagBitArr2 = 0;
+	_v50CC2 = 0;
+	_scene410Action1Count = 0;
+	_scene410TalkCount = 0;
+	_scene410HarrisonMovedFl = 0;
+	_bookmark = bNone;
+	_mapLocationId = 1;
+	_clip1Bullets = 8;
+	_clip2Bullets = 8;
+
+	_dayNumber = 0;
+	_tonyDialogCtr = 0;
+	_marinaWomanCtr = 0;
+	_kateDialogCtr = 0;
+	_v4CEB6 = 0;
+	_safeCombination = 0;
+	_gateStatus = 0;
+	_greenDay5TalkCtr = 0;
+	_v4CEC8 = 1;
+	_v4CECA = 0;
+	_v4CECC = 0;
 }
 
 void BlueForceGlobals::synchronize(Serializer &s) {
 	TsAGE2Globals::synchronize(s);
+	int16 useless = 0;
 
 	s.syncAsSint16LE(_dayNumber);
 	if (s.getVersion() < 9) {
-		int tmpVar = 0;
-		s.syncAsSint16LE(tmpVar);
+		s.syncAsSint16LE(useless);
 	}
 	s.syncAsSint16LE(_tonyDialogCtr);
 	s.syncAsSint16LE(_marinaWomanCtr);
@@ -241,7 +287,8 @@ void BlueForceGlobals::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_safeCombination);
 	s.syncAsSint16LE(_gateStatus);
 	s.syncAsSint16LE(_greenDay5TalkCtr);
-	s.syncAsSint16LE(_v4CEC4);
+	if (s.getVersion() < 11)
+		s.syncAsSint16LE(useless);
 	s.syncAsSint16LE(_v4CEC8);
 	s.syncAsSint16LE(_v4CECA);
 	s.syncAsSint16LE(_v4CECC);
@@ -256,19 +303,23 @@ void BlueForceGlobals::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_deathReason);
 	s.syncAsSint16LE(_driveFromScene);
 	s.syncAsSint16LE(_driveToScene);
-	s.syncAsSint16LE(_v501F8);
-	s.syncAsSint16LE(_v501FA);
-	s.syncAsSint16LE(_v501FC);
-	s.syncAsSint16LE(_v5020C);
-	s.syncAsSint16LE(_v50696);
+	if (s.getVersion() < 11) {
+		s.syncAsSint16LE(useless);
+		s.syncAsSint16LE(useless);
+		s.syncAsSint16LE(useless);
+		s.syncAsSint16LE(useless);
+		s.syncAsSint16LE(useless);
+	}
 	s.syncAsSint16LE(_subFlagBitArr1);
 	s.syncAsSint16LE(_subFlagBitArr2);
 	s.syncAsSint16LE(_v50CC2);
-	s.syncAsSint16LE(_v50CC4);
-	s.syncAsSint16LE(_v50CC6);
-	s.syncAsSint16LE(_v50CC8);
-	s.syncAsSint16LE(_v51C42);
-	s.syncAsSint16LE(_v51C44);
+	s.syncAsSint16LE(_scene410Action1Count);
+	s.syncAsSint16LE(_scene410TalkCount);
+	s.syncAsSint16LE(_scene410HarrisonMovedFl);
+	if (s.getVersion() < 11) {
+		s.syncAsSint16LE(useless);
+		s.syncAsSint16LE(useless);
+	}
 	s.syncAsSint16LE(_bookmark);
 	s.syncAsSint16LE(_mapLocationId);
 	s.syncAsSint16LE(_clip1Bullets);
@@ -298,7 +349,6 @@ void BlueForceGlobals::reset() {
 	_safeCombination = 0;
 	_gateStatus = 0;
 	_greenDay5TalkCtr = 0;
-	_v4CEC4 = 0;
 	_v4CEC8 = 1;
 	_v4CECA = 0;
 	_v4CECC = 0;
@@ -327,19 +377,12 @@ void BlueForceGlobals::reset() {
 	_v4CEE8 = 0;
 	_deziTopic = 0;
 	_deathReason = 0;
-	_v501F8 = 0;
-	_v501FA = 0;
-	_v501FC = 0;
-	_v5020C = 0;
-	_v50696 = 0;
 	_subFlagBitArr1 = 0;
 	_subFlagBitArr2 = 0;
 	_v50CC2 = 0;
-	_v50CC4 = 0;
-	_v50CC6 = 0;
-	_v50CC8 = 0;
-	_v51C42 = 0;
-	_v51C44 = 1;
+	_scene410Action1Count = 0;
+	_scene410TalkCount = 0;
+	_scene410HarrisonMovedFl = 0;
 	_clip1Bullets = 8;
 	_clip2Bullets = 8;
 }
@@ -370,6 +413,43 @@ namespace Ringworld2 {
 Ringworld2Globals::Ringworld2Globals() {
 	_scannerDialog = new ScannerDialog();
 	_speechSubtitles = SPEECH_TEXT;
+
+	_stripModifier = 0;
+	_flubMazeArea = 1;
+	_flubMazeEntryDirection = 0;
+	_maze3800SceneNumb = 3800;
+	_landerSuitNumber = 2;
+	_desertStepsRemaining = 5;
+	_desertCorrectDirection = 0;
+	_desertPreviousDirection = 0;
+	_desertWrongDirCtr = -1;
+	_balloonAltitude = 5;
+	_scene1925CurrLevel = 0;
+	_walkwaySceneNumber = 0;
+	_v56AA0 = 0;
+	_scientistConvIndex = 0;
+	_v56AA6 = 1;
+	_v56AA7 = 1;
+	_v56AA8 = 1;
+	_scene180Mode = -1;
+	_v57709 = 0;
+	_v5780C = 0;
+	_v5780E = 0;
+	_v57810 = 0;
+
+	_fadePaletteFlag = false;
+	_insetUp = 0;
+	_frameEdgeColor = 2;
+	_animationCtr = 0;
+	_electromagnetChangeAmount = 0;
+	_electromagnetZoom = 0;
+	_v565E5 = 0;
+	_v565E7 = 0;
+	_v565E9 = -5;
+	_v565EB = 26;
+	_foodCount = 0;
+	_rimLocation = 0;
+	_rimTransportLocation = 0;
 }
 
 Ringworld2Globals::~Ringworld2Globals() {
@@ -400,9 +480,7 @@ void Ringworld2Globals::reset() {
 	_fadePaletteFlag = false;
 	_v5589E.set(0, 0, 0, 0);
 	_v558B6.set(0, 0, 0, 0);
-	_v558C2 = 0;
 	_animationCtr = 0;
-	_v5657C = 0;
 	_electromagnetChangeAmount = 0;
 	_electromagnetZoom = 0;
 	_v565E5 = 0;
@@ -412,7 +490,7 @@ void Ringworld2Globals::reset() {
 	_foodCount = 0;
 	_rimLocation = 0;
 	_rimTransportLocation = 0;
-	_v565AE = 0;
+	_stripModifier = 0;
 	_spillLocation[0] = 0;
 	_spillLocation[1] = 3;
 	_spillLocation[R2_SEEKER] = 5;
@@ -452,7 +530,7 @@ void Ringworld2Globals::reset() {
 	_vampireData[16]._shotsRequired = 1;
 	_vampireData[17]._shotsRequired = 1;
 
-	_v566A6 = 3800;
+	_maze3800SceneNumb = 3800;
 	_landerSuitNumber = 2;
 	_flubMazeArea = 1;
 	_flubMazeEntryDirection = 0;
@@ -471,13 +549,11 @@ void Ringworld2Globals::reset() {
 	_v56AA6 = 1;
 	_v56AA7 = 1;
 	_v56AA8 = 1;
-	_v56AAB = 0;
 	_scene180Mode = -1;
 	_v57709 = 0;
 	_v5780C = 0;
 	_v5780E = 0;
 	_v57810 = 0;
-	_v57C2C = 0;
 	_s1550PlayerArea[R2_QUINN] = Common::Point(27, 4);
 	_s1550PlayerArea[R2_SEEKER] = Common::Point(27, 4);
 	Common::fill(&_scannerFrequencies[0], &_scannerFrequencies[MAX_CHARACTERS], 1);
@@ -513,9 +589,7 @@ void Ringworld2Globals::synchronize(Serializer &s) {
 	_v5589E.synchronize(s);
 	_v558B6.synchronize(s);
 
-	s.syncAsSint16LE(_v558C2);
 	s.syncAsSint16LE(_animationCtr);
-	s.syncAsSint16LE(_v5657C);
 	s.syncAsSint16LE(_electromagnetChangeAmount);
 	s.syncAsSint16LE(_electromagnetZoom);
 	s.syncAsSint16LE(_v565E5);
@@ -526,19 +600,17 @@ void Ringworld2Globals::synchronize(Serializer &s) {
 	s.syncAsSint32LE(_rimLocation);
 	s.syncAsSint16LE(_rimTransportLocation);
 	s.syncAsSint16LE(_landerSuitNumber);
-	s.syncAsSint16LE(_v566A6);
+	s.syncAsSint16LE(_maze3800SceneNumb);
 	s.syncAsSint16LE(_desertWrongDirCtr);
 	s.syncAsSint16LE(_scene1925CurrLevel); // _v56A9C
 	s.syncAsSint16LE(_walkwaySceneNumber);
 	s.syncAsSint16LE(_ventCellPos.x);
 	s.syncAsSint16LE(_ventCellPos.y);
-	s.syncAsSint16LE(_v56AAB);
 	s.syncAsSint16LE(_scene180Mode);
 	s.syncAsSint16LE(_v57709);
 	s.syncAsSint16LE(_v5780C);
 	s.syncAsSint16LE(_v5780E);
 	s.syncAsSint16LE(_v57810);
-	s.syncAsSint16LE(_v57C2C);
 
 	s.syncAsByte(_s1550PlayerArea[R2_QUINN].x);
 	s.syncAsByte(_s1550PlayerArea[R2_SEEKER].x);
@@ -548,7 +620,7 @@ void Ringworld2Globals::synchronize(Serializer &s) {
 	for (i = 0; i < MAX_CHARACTERS; ++i)
 		s.syncAsByte(_scannerFrequencies[i]);
 
-	s.syncAsByte(_v565AE);
+	s.syncAsByte(_stripModifier);
 	s.syncAsByte(_flubMazeArea);
 	s.syncAsByte(_flubMazeEntryDirection);
 	s.syncAsByte(_desertStepsRemaining);
@@ -577,7 +649,7 @@ void Ringworld2Globals::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_balloonPosition.x);
 	s.syncAsSint16LE(_balloonPosition.y);
 
-	// Synchronise Flub maze vampire data
+	// Synchronize Flub maze vampire data
 	for (i = 0; i < 18; ++i) {
 		s.syncAsSint16LE(_vampireData[i]._isAlive);
 		s.syncAsSint16LE(_vampireData[i]._shotsRequired);

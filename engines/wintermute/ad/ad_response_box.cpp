@@ -58,7 +58,7 @@ AdResponseBox::AdResponseBox(BaseGame *inGame) : BaseObject(inGame) {
 	_shieldWindow = new UIWindow(_gameRef);
 
 	_horizontal = false;
-	BasePlatform::setRectEmpty(&_responseArea);
+	_responseArea.setEmpty();
 	_scrollOffset = 0;
 	_spacing = 0;
 
@@ -583,11 +583,11 @@ bool AdResponseBox::persist(BasePersistenceManager *persistMgr) {
 
 	persistMgr->transferPtr(TMEMBER_PTR(_font));
 	persistMgr->transferPtr(TMEMBER_PTR(_fontHover));
-	persistMgr->transfer(TMEMBER(_horizontal));
+	persistMgr->transferBool(TMEMBER(_horizontal));
 	persistMgr->transfer(TMEMBER(_lastResponseText));
 	persistMgr->transfer(TMEMBER(_lastResponseTextOrig));
 	_respButtons.persist(persistMgr);
-	persistMgr->transfer(TMEMBER(_responseArea));
+	persistMgr->transferRect32(TMEMBER(_responseArea));
 	_responses.persist(persistMgr);
 	persistMgr->transfer(TMEMBER(_scrollOffset));
 	persistMgr->transferPtr(TMEMBER_PTR(_shieldWindow));

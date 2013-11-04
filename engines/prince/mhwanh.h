@@ -28,26 +28,26 @@
 
 namespace Prince {
 
-class MhwanhDecoder : public Graphics::ImageDecoder
-{
+class MhwanhDecoder : public Graphics::ImageDecoder {
 public:
-    MhwanhDecoder();
-    virtual ~MhwanhDecoder();
+	MhwanhDecoder();
+	virtual ~MhwanhDecoder();
 
-    // ImageDecoder API
-    void destroy();
-    virtual bool loadStream(Common::SeekableReadStream &stream);
-    virtual Graphics::Surface *getSurface() const { return _surface; }
-    const byte *getPalette() const { return _palette; }
-    uint16 getPaletteCount() const { return _paletteColorCount; }
+	// ImageDecoder API
+	void destroy();
+	virtual bool loadStream(Common::SeekableReadStream &stream);
+	virtual Graphics::Surface *getSurface() const { return _surface; }
+	const byte *getPalette() const { return _palette; }
+	uint16 getPaletteCount() const { return _paletteColorCount; }
 
 private:
-    Graphics::Surface *_surface;
-    byte *_palette;
-    uint16 _paletteColorCount;
+	Graphics::Surface *_surface;
+	byte *_palette;
+	uint16 _paletteColorCount;
 };
 
 }
 
-
 #endif
+
+/* vim: set tabstop=4 noexpandtab: */

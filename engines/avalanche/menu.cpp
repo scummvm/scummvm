@@ -207,6 +207,11 @@ void MenuItem::parseKey(char c) {
 		_menu->_vm->_sound->blip();
 }
 
+MenuBar::MenuBar() {
+	_menuNum = 0;
+	_menu = nullptr;
+}
+
 void MenuBar::init(Menu *menu) {
 	_menu = menu;
 	_menuNum = 0;
@@ -261,6 +266,9 @@ Menu::Menu(AvalancheEngine *vm) {
 	_vm = vm;
 	_activeMenuItem.init(this);
 	_menuBar.init(this);
+
+	_menuActive = false;
+	_lastPerson = kPeopleNone;
 }
 
 void Menu::findWhatYouCanDoWithIt() {
@@ -782,10 +790,12 @@ byte Menu::getNameChar(People whose) {
 	static const char ladChar[] = "ASCDMTRwLfgeIyPu";
 	static const char lassChar[] = "kG\0xB1o";
 
-	if (whose < kPeopleArkata)
+	if (whose <= kPeopleJacques)
 		return ladChar[whose - kPeopleAvalot];
-	else
+	else if ((whose >= kPeopleArkata) && (whose <= kPeopleWisewoman))
 		return lassChar[whose - kPeopleArkata];
+	else
+		error("getName() - Unexpected character id %d", (byte) whose);
 }
 
 Common::String Menu::getThing(byte which) {

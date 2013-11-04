@@ -99,6 +99,7 @@ class Scene4000 : public Scene {
 	private:
 		int _ctr;
 	public:
+		Hotspot8();
 		virtual void synchronize(Serializer &s) {
 			SceneObject::synchronize(s);
 			s.syncAsUint16LE(_ctr);

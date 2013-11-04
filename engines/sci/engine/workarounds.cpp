@@ -55,6 +55,12 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_CASTLEBRAIN,   280,   280,  0,         "programmer", "dispatchEvent",  -1,    0, { WORKAROUND_FAKE, 0xf } }, // pressing 'q' on the computer screen in the robot room, and closing the help dialog that pops up (bug #3039656). Moves the cursor to the view with the ID returned (in this case, the robot hand)
 	{ GID_CNICK_KQ,       -1,     0,  1,          "Character", "say",            -1,   -1, { WORKAROUND_FAKE,   0 } }, // checkers/backgammon, like in hoyle 3 - temps 504 and 505 - bug #3606025
 	{ GID_CNICK_KQ,       -1,   700,  0,           "gcWindow", "open",           -1,   -1, { WORKAROUND_FAKE,   0 } }, // when entering the control menu, like in hoyle 3
+	{ GID_CNICK_KQ,      300,   303,  0,      "theDoubleCube", "<noname520>",    -1,    5, { WORKAROUND_FAKE,   0 } }, // while playing backgammon with doubling enabled - bug #3615121 (same as the theDoubleCube::make workaround for Hoyle 3)
+	{ GID_CNICK_KQ,      300,   303,  0,      "theDoubleCube", "<noname519>",    -1,    9, { WORKAROUND_FAKE,   0 } }, // when accepting a double, while playing backgammon with doubling enabled (same as the theDoubleCube::accept workaround for Hoyle 3)
+	{ GID_CNICK_LAURABOW, -1,     0,  1,          "Character", "say",            -1,   -1, { WORKAROUND_FAKE,   0 } }, // Yatch, like in hoyle 3 - temps 504 and 505 - bug #3615119
+	{ GID_CNICK_LAURABOW, -1,   700,  0,                 NULL, "open",           -1,   -1, { WORKAROUND_FAKE,   0 } }, // when entering control menu - bug #3615118 (same as the gcWindow workaround for Hoyle 3)
+	{ GID_CNICK_LAURABOW,100,   100,  0,                 NULL, "<noname144>",    -1,    1, { WORKAROUND_FAKE,   0 } }, // while playing domino - bug #3615129 (same as the dominoHand2 workaround for Hoyle 3)
+	{ GID_CNICK_LAURABOW,100,   110,  0,                 NULL, "doit",           -1,   -1, { WORKAROUND_FAKE,   0 } }, // when changing the "Dominoes per hand" setting - bug #3615130
 	{ GID_CNICK_LONGBOW,   0,     0,  0,          "RH Budget", "init",           -1,    1, { WORKAROUND_FAKE,   0 } }, // when starting the game
 	{ GID_ECOQUEST,       -1,    -1,  0,                 NULL, "doVerb",         -1,    0, { WORKAROUND_FAKE,   0 } }, // almost clicking anywhere triggers this in almost all rooms
 	{ GID_FANMADE,       516,   979,  0,                   "", "export 0",       -1,   20, { WORKAROUND_FAKE,   0 } }, // Happens in Grotesteing after the logos
@@ -73,6 +79,9 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_HOYLE3,         -1,     0,  1,          "Character", "say",            -1,   -1, { WORKAROUND_FAKE,   0 } }, // when starting checkers or dominoes, first time a character says something - temps 504 and 505
 	{ GID_HOYLE3,         -1,   700,  0,           "gcWindow", "open",           -1,   -1, { WORKAROUND_FAKE,   0 } }, // when entering control menu
 	{ GID_HOYLE3,        100,   100,  0,        "dominoHand2", "cue",            -1,    1, { WORKAROUND_FAKE,   0 } }, // while playing domino - bug #3036918
+	{ GID_HOYLE3,        100,   110,  0,           "OKButton", "doit",           -1,   -1, { WORKAROUND_FAKE,   0 } }, // when changing the "Dominoes per hand" setting - bug #3615130
+	{ GID_HOYLE3,        300,   303,  0,      "theDoubleCube", "make",           -1,    5, { WORKAROUND_FAKE,   0 } }, // while playing backgammon with doubling enabled
+	{ GID_HOYLE3,        300,   303,  0,      "theDoubleCube", "accept",         -1,    9, { WORKAROUND_FAKE,   0 } }, // when accepting a double, while playing backgammon with doubling enabled
 	{ GID_HOYLE4,         -1,     0,  0,                 NULL, "open",           -1,   -1, { WORKAROUND_FAKE,   0 } }, // when selecting "Control" from the menu (temp vars 0-3) - bug #3039294
 	{ GID_HOYLE4,        910,    18,  0,                 NULL, "init",           -1,    0, { WORKAROUND_FAKE,   0 } }, // during tutorial - bug #3042756
 	{ GID_HOYLE4,        910,   910,  0,                 NULL, "setup",          -1,    3, { WORKAROUND_FAKE,   0 } }, // when selecting "Tutorial" from the main menu - bug #3039294
@@ -212,6 +221,7 @@ const SciWorkaroundEntry kDeviceInfo_workarounds[] = {
 	{ GID_FANMADE,        -1,   994,  1,               "Game", "save",        0xd1c,    0, { WORKAROUND_STILLCALL, 0 } }, // In fanmade games, this is called with one parameter for CurDevice (Cascade Quest)
 	{ GID_FANMADE,        -1,   994,  1,               "Game", "save",        0xe55,    0, { WORKAROUND_STILLCALL, 0 } }, // In fanmade games, this is called with one parameter for CurDevice (Demo Quest)
 	{ GID_FANMADE,        -1,   994,  1,               "Game", "save",        0xe57,    0, { WORKAROUND_STILLCALL, 0 } }, // In fanmade games, this is called with one parameter for CurDevice (I Want My C64 Back)
+	{ GID_FANMADE,        -1,   994,  0,              "Black", "save",          0xa,    0, { WORKAROUND_IGNORE,    0 } }, // In fanmade games, this is called with one parameter for CurDevice (Black Cauldron Remake)
 	{ GID_FANMADE,        -1,   994,  1,               "Game", "save",        0xe5c,    0, { WORKAROUND_STILLCALL, 0 } }, // In fanmade games, this is called with one parameter for CurDevice (Most of them)
 	{ GID_FANMADE,        -1,   994,  1,               "Game", "restore",     0xd1c,    0, { WORKAROUND_STILLCALL, 0 } }, // In fanmade games, this is called with one parameter for CurDevice (Cascade Quest)
 	{ GID_FANMADE,        -1,   994,  1,               "Game", "restore",     0xe55,    0, { WORKAROUND_STILLCALL, 0 } }, // In fanmade games, this is called with one parameter for CurDevice (Demo Quest)
@@ -360,6 +370,13 @@ const SciWorkaroundEntry kMoveCursor_workarounds[] = {
 //    gameID,           room,script,lvl,          object-name, method-name,    call,index,                workaround
 const SciWorkaroundEntry kNewWindow_workarounds[] = {
 	{ GID_ECOQUEST,       -1,   981,  0,          "SysWindow", "open",           -1,    0, { WORKAROUND_STILLCALL, 0 } }, // EcoQuest 1 demo uses an in-between interpreter from SCI1 to SCI1.1. It's SCI1.1, but uses the SCI1 semantics for this call - bug #3035057
+	SCI_WORKAROUNDENTRY_TERMINATOR
+};
+
+//    gameID,           room,script,lvl,          object-name, method-name,    call,index,                workaround
+const SciWorkaroundEntry kReadNumber_workarounds[] = {
+	{ GID_CNICK_LAURABOW,100,   101,  0,          "dominoes.opt", "doit",        -1,    0, { WORKAROUND_STILLCALL, 0 } }, // When dominoes.opt is present, the game scripts call kReadNumber with an extra integer parameter - bug #3615120
+	{ GID_HOYLE3,        100,   101,  0,          "dominoes.opt", "doit",        -1,    0, { WORKAROUND_STILLCALL, 0 } }, // When dominoes.opt is present, the game scripts call kReadNumber with an extra integer parameter - bug #3615120
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 

@@ -37,6 +37,21 @@ const char *Parser::kVersionNum = "1.30";
 
 Parser::Parser(AvalancheEngine *vm) {
 	_vm = vm;
+
+	_verb = kVerbCodePardon;
+	_thing = kPardon;
+	_person = kPeopleNone;
+	_polite = false;
+	_inputTextPos = 0;
+	_quote = false;
+	_cursorState = false;
+	_weirdWord = false;
+	_wearing = kNothing;
+	_thing2 = 0;
+	_sworeNum = 0;
+	_alcoholLevel = 0;
+	_playedNim = 0;
+	_boughtOnion = false;
 }
 
 void Parser::init() {
@@ -1013,7 +1028,7 @@ bool Parser::isHolding() {
 
 	bool holdingResult = false;
 
-	if (_thing > 100)
+	if (_thing >= 100)
 		_vm->_dialogs->displayText("Be reasonable!");
 	else if (_thing <= kObjectNum) {
 		if (!_vm->_objects[_thing - 1])
@@ -2457,7 +2472,7 @@ void Parser::doVerb(VerbCode id) {
 }
 
 void Parser::resetVariables() {
-	_wearing = 0;
+	_wearing = kNothing;
 	_sworeNum = 0;
 	_alcoholLevel = 0;
 	_playedNim = 0;

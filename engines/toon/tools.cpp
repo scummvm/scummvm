@@ -136,6 +136,13 @@ uint32 decompressSPCN(byte *src, byte *dst, uint32 dstsize) {
 
 RncDecoder::RncDecoder() {
 	initCrc();
+
+	_bitBuffl = 0;
+	_bitBuffh = 0;
+	_bitCount = 0;
+	_srcPtr = nullptr;
+	_dstPtr = nullptr;
+	_inputByteLeft = 0;
 }
 
 RncDecoder::~RncDecoder() { }

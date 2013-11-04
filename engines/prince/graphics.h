@@ -33,27 +33,26 @@ class PrinceEngine;
 class GraphicsMan
 {
 public:
-    GraphicsMan(PrinceEngine *vm);
+	GraphicsMan(PrinceEngine *vm);
 
-    void update();
+	void update();
 
-    void change();
+	void change();
 
-    void setPalette(const byte *palette);
+	void setPalette(const byte *palette);
 
-    void draw(const Graphics::Surface *s);
-    void drawTransparent(const Graphics::Surface *s);
+	void draw(uint16 x, uint16 y, const Graphics::Surface *s);
+	void drawTransparent(const Graphics::Surface *s);
 
-    Graphics::Surface *_frontScreen;
-    Graphics::Surface *_backScreen;
-    const Graphics::Surface *_roomBackground;
+	Graphics::Surface *_frontScreen;
+	Graphics::Surface *_backScreen;
+	const Graphics::Surface *_roomBackground;
 
 private:
 
-    PrinceEngine *_vm;
+	PrinceEngine *_vm;
 
-    bool _changed;
-    byte _palette[3 * 256];
+	bool _changed;
 };
 
 }

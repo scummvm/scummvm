@@ -42,6 +42,13 @@ VisualSpeaker::VisualSpeaker(): Speaker() {
 	_color2 = 0;
 	_displayMode = 0;
 	_speakerMode = 0;
+
+	_object2 = nullptr;
+	_fieldF8 = 0;
+	_soundId = 0;
+	_removeObject = false;
+	_numFrames = 0;
+	_voiceFrameNumber = 0;
 }
 
 void VisualSpeaker::remove() {
@@ -92,6 +99,7 @@ void VisualSpeaker::signal() {
 
 void VisualSpeaker::dispatch() {
 	uint32 frameNumber = R2_GLOBALS._events.getFrameNumber();
+	assert(_action);
 
 	// Delay check for character animation
 	if (_delayAmount) {
@@ -314,7 +322,7 @@ void SpeakerCaptain3210::proc15() {
 	Scene3210 *scene = (Scene3210 *)R2_GLOBALS._sceneManager._scene;
 
 	if (!_object2) {
-		_object2 = &scene->_actor1;
+		_object2 = &scene->_captain;
 		_object2->hide();
 		_object1.postInit();
 		_object1.setPosition(_object2->_position);
@@ -467,7 +475,7 @@ void SpeakerJocko3200::proc15() {
 	Scene3200 *scene = (Scene3200 *)R2_GLOBALS._sceneManager._scene;
 
 	if (!_object2) {
-		_object2 = &scene->_actor2;
+		_object2 = &scene->_jocko;
 		_object2->hide();
 		_object1.postInit();
 		_object1.setPosition(_object2->_position);
@@ -490,7 +498,7 @@ void SpeakerJocko3220::proc15() {
 	Scene3220 *scene = (Scene3220 *)R2_GLOBALS._sceneManager._scene;
 
 	if (!_object2) {
-		_object2 = &scene->_actor2;
+		_object2 = &scene->_jocko;
 		_object2->hide();
 		_object1.postInit();
 		_object1.setPosition(_object2->_position);
@@ -513,7 +521,7 @@ void SpeakerJocko3230::proc15() {
 	Scene3230 *scene = (Scene3230 *)R2_GLOBALS._sceneManager._scene;
 
 	if (!_object2) {
-		_object2 = &scene->_actor2;
+		_object2 = &scene->_jocko;
 		_object2->hide();
 		_object1.postInit();
 		_object1.setPosition(_object2->_position);
@@ -592,7 +600,7 @@ void SpeakerMiranda1625::proc15() {
 
 	if (!_object2) {
 		Scene1625 *scene = (Scene1625 *)R2_GLOBALS._sceneManager._scene;
-		_object2 = &scene->_actor3;
+		_object2 = &scene->_mirandaMouth;
 		_object2->hide();
 		_object1.postInit();
 		_object1.setPosition(Common::Point(196, 65));
@@ -833,7 +841,7 @@ void SpeakerMiranda3600::proc15() {
 		if (R2_GLOBALS._player._characterIndex == R2_MIRANDA)
 			_object2 = &R2_GLOBALS._player;
 		else
-			_object2 = &scene->_actor12;
+			_object2 = &scene->_miranda;
 
 		_object2->hide();
 		_object1.postInit();
@@ -1007,10 +1015,10 @@ void SpeakerNej2750::proc15() {
 
 void SpeakerNej2800::proc15() {
 	int v = _speakerMode;
-	Scene2750 *scene = (Scene2750 *)R2_GLOBALS._sceneManager._scene;
+	Scene2800 *scene = (Scene2800 *)R2_GLOBALS._sceneManager._scene;
 
 	if (!_object2) {
-		_object2 = &scene->_actor2;
+		_object2 = &scene->_nej;
 		_object2->hide();
 		_object1.postInit();
 		_object1.setPosition(_object2->_position);
@@ -1087,7 +1095,7 @@ void SpeakerPrivate3210::proc15() {
 	Scene3210 *scene = (Scene3210 *)R2_GLOBALS._sceneManager._scene;
 
 	if (!_object2) {
-		_object2 = &scene->_actor2;
+		_object2 = &scene->_private;
 		_object2->hide();
 		_object1.postInit();
 		_object1.setPosition(_object2->_position);
@@ -1722,7 +1730,7 @@ void SpeakerQuinn3600::proc15() {
 		if (R2_GLOBALS._player._characterIndex == R2_QUINN)
 			_object2 = &R2_GLOBALS._player;
 		else
-			_object2 = &scene->_actor10;
+			_object2 = &scene->_quinn;
 		_object2->hide();
 		_object1.postInit();
 		_object1.setPosition(_object2->_position);
@@ -1869,7 +1877,7 @@ void SpeakerRalf3245::proc15() {
 	Scene3245 *scene = (Scene3245 *)R2_GLOBALS._sceneManager._scene;
 
 	if (!_object2) {
-		_object2 = &scene->_actor1;
+		_object2 = &scene->_ralf;
 		_object2->hide();
 		_object1.postInit();
 		_object1.setPosition(_object2->_position);
@@ -1921,7 +1929,7 @@ void SpeakerRocko3200::proc15() {
 	Scene3200 *scene = (Scene3200 *)R2_GLOBALS._sceneManager._scene;
 
 	if (!_object2) {
-		_object2 = &scene->_actor1;
+		_object2 = &scene->_rocko;
 		_object2->hide();
 		_object1.postInit();
 		_object1.setPosition(_object2->_position);
@@ -1944,7 +1952,7 @@ void SpeakerRocko3220::proc15() {
 	Scene3220 *scene = (Scene3220 *)R2_GLOBALS._sceneManager._scene;
 
 	if (!_object2) {
-		_object2 = &scene->_actor1;
+		_object2 = &scene->_rocko;
 		_object2->hide();
 		_object1.postInit();
 		_object1.setPosition(_object2->_position);
@@ -1967,7 +1975,7 @@ void SpeakerRocko3230::proc15() {
 	Scene3230 *scene = (Scene3230 *)R2_GLOBALS._sceneManager._scene;
 
 	if (!_object2) {
-		_object2 = &scene->_actor1;
+		_object2 = &scene->_rocko;
 		_object2->hide();
 		_object1.postInit();
 		_object1.setPosition(_object2->_position);
@@ -2143,7 +2151,7 @@ void SpeakerSeeker1900::proc15() {
 		} else {
 			assert(R2_GLOBALS._sceneManager._sceneNumber == 1900);
 			Scene1900 *scene = (Scene1900 *)R2_GLOBALS._sceneManager._scene;
-			_object2 = &scene->_actor1;
+			_object2 = &scene->_companion;
 		}
 
 		_object2->hide();
@@ -2433,7 +2441,7 @@ void SpeakerSeeker3600::proc15() {
 		if (R2_GLOBALS._player._characterIndex == R2_SEEKER)
 			_object2 = &R2_GLOBALS._player;
 		else
-			_object2 = &scene->_actor11;
+			_object2 = &scene->_seeker;
 
 		_object2->hide();
 		_object1.postInit();
@@ -2569,7 +2577,7 @@ void SpeakerSocko3200::proc15() {
 	Scene3200 *scene = (Scene3200 *)R2_GLOBALS._sceneManager._scene;
 
 	if (!_object2) {
-		_object2 = &scene->_actor3;
+		_object2 = &scene->_socko;
 		_object2->hide();
 		_object1.postInit();
 		_object1.setPosition(_object2->_position);
@@ -2735,7 +2743,7 @@ void SpeakerTeal3240::proc15() {
 	Scene3240 *scene = (Scene3240 *)R2_GLOBALS._sceneManager._scene;
 
 	if (!_object2) {
-		_object2 = &scene->_actor1;
+		_object2 = &scene->_teal;
 		_object2->hide();
 		_object1.postInit();
 		_object1.setPosition(_object2->_position);
@@ -2816,7 +2824,7 @@ void SpeakerTeal3600::proc15() {
 	int v = _speakerMode;
 
 	if (!_object2) {
-		_object2 = &scene->_actor5;
+		_object2 = &scene->_teal;
 		_object2->hide();
 		_object1.postInit();
 		_object1.setPosition(_object2->_position);
@@ -2887,7 +2895,7 @@ void SpeakerTomko3245::proc15() {
 	Scene3245 *scene = (Scene3245 *)R2_GLOBALS._sceneManager._scene;
 
 	if (!_object2) {
-		_object2 = &scene->_actor2;
+		_object2 = &scene->_tomko;
 		_object2->hide();
 		_object1.postInit();
 		_object1.setPosition(_object2->_position);
@@ -2980,7 +2988,7 @@ void SpeakerWebbster3240::proc15() {
 	Scene3240 *scene = (Scene3240 *)R2_GLOBALS._sceneManager._scene;
 
 	if (!_object2) {
-		_object2 = &scene->_actor2;
+		_object2 = &scene->_webbster;
 		_object2->hide();
 		_object1.postInit();
 		_object1.setPosition(_object2->_position);
@@ -3209,7 +3217,7 @@ void SpeakerDutyOfficer180::proc15() {
 		_object1.animate(ANIM_MODE_2, NULL);
 		break;
 	case 1:
-		_action = NULL;
+		_action->_action = NULL;
 		_object1.setup(76, 2, 1);
 		_object1.animate(ANIM_MODE_5, this);
 		break;

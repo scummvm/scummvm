@@ -98,7 +98,7 @@ public:
 	virtual const GroupData *getGroupData() { return NULL; }	// Method #3
 	virtual void installPatch(const byte *data, int size) {}	// Method #4
 	virtual void poll() {}										// Method #5
-	virtual void proc12() {}									// Method #6
+	virtual void method6() {}									// Method #6
 	virtual int setMasterVolume(int volume) { return 0; }		// Method #7
 	virtual void proc16() {}									// Method #8
 	virtual void proc18(int al, VoiceType voiceType) {}			// Method #9

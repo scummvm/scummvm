@@ -860,6 +860,8 @@ void PlayerMover::doStepsOfNpcMovement(const Common::Point &srcPos, const Common
 int PlayerMover::calculateRestOfRoute(int *routeList, int srcRegion, int destRegion, bool &foundRoute) {
 	// Make a copy of the provided route. The first entry is the size.
 	int tempList[REGION_LIST_SIZE + 1];
+	memset(tempList, 0, sizeof(tempList));
+
 	foundRoute = false;
 	for (int idx = 0; idx <= *routeList; ++idx)
 		tempList[idx] = routeList[idx];

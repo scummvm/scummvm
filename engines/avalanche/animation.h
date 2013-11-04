@@ -97,7 +97,8 @@ public:
 	static const byte kSpriteNumbMax = 5; // current max no. of sprites
 
 	enum Proc {
-		kProcFollowAvvyY = 1,
+		kProcNone = 0,
+		kProcFollowAvvyY,
 		kProcBackAndForth,
 		kProcFaceAvvy,
 		kProcArrow,

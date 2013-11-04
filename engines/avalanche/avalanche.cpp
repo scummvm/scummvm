@@ -41,17 +41,24 @@ AvalancheEngine::AvalancheEngine(OSystem *syst, const AvalancheGameDescription *
 	TimeDate time;
 	_system->getTimeAndDate(time);
 	_rnd->setSeed(time.tm_sec + time.tm_min + time.tm_hour);
-
-	// Needed because of Lucerna::load_also()
-	for (int i = 0; i < 31; i++) {
-		for (int j = 0; j < 2; j++)
-			_also[i][j] = nullptr;
-	}
-
-	_totalTime = 0;
 	_showDebugLines = false;
+	
+	_clock = nullptr;
+	_graphics = nullptr;
+	_parser = nullptr;
+	_pingo = nullptr;
+	_dialogs = nullptr;
+	_background = nullptr;
+	_sequence = nullptr;
+	_timer = nullptr;
+	_animation = nullptr;
+	_menu = nullptr;
+	_closing = nullptr;
+	_sound = nullptr;
 
-	memset(_fxPal, 0, 16 * 16 * 3);
+	_platform = gd->desc.platform;
+
+	initVariables();
 }
 
 AvalancheEngine::~AvalancheEngine() {
@@ -80,6 +87,65 @@ AvalancheEngine::~AvalancheEngine() {
 			}
 		}
 	}
+}
+
+void AvalancheEngine::initVariables() {
+	resetVariables();
+
+	for (int i = 0; i < 31; i++) {
+		_also[i][0] = nullptr;
+		_also[i][1] = nullptr;
+	}
+
+	_totalTime = 0;
+
+	memset(_fxPal, 0, 16 * 16 * 3);
+
+	for (int i = 0; i < 15; i++) {
+		_peds[i]._direction = kDirNone;
+		_peds[i]._x = 0;
+		_peds[i]._y = 0;
+		_magics[i]._operation = kMagicNothing;
+		_magics[i]._data = 0;
+	}
+
+	for (int i = 0; i < 7; i++) {
+		_portals[i]._operation = kMagicNothing;
+		_portals[i]._data = 0;
+	}
+
+	for (int i = 0; i < 30; i++) {
+		_fields[i]._x1 = 0;
+		_fields[i]._y1 = 0;
+		_fields[i]._x2 = 0;
+		_fields[i]._y2 = 0;
+	}
+
+	_fieldNum = 0;
+	_cp = 0;
+	_ledStatus = 177;
+	_alive = false;
+	_subjectNum = 0;
+	_him = kPeoplePardon;
+	_her = kPeoplePardon;
+	_it = Parser::kPardon;
+	_roomTime = 0;
+	_doingSpriteRun = false;
+	_isLoaded = false;
+	_soundFx = true;
+	_holdTheDawn = false;
+
+	_lineNum = 0;
+	for (int i = 0; i < 50; i++)
+		_lines[i]._color = kColorWhite;
+	_dropsOk = false;
+	_cheat = false;
+	_letMeOut = false;
+	_thinks = 2;
+	_thinkThing = true;
+	_seeScroll = false;
+	_currentMouse = 177;
+	_holdLeftMouse = false;
 }
 
 Common::ErrorCode AvalancheEngine::initialize() {
