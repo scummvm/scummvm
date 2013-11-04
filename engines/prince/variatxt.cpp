@@ -31,7 +31,7 @@ VariaTxt::VariaTxt() : _dataSize(0), _data(NULL) {
 VariaTxt::~VariaTxt() {
 	_dataSize = 0;
 	delete[] _data;
-	_dataSize = NULL;
+	_data = NULL;
 }
 
 

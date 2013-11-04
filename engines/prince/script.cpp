@@ -40,7 +40,7 @@ static const uint16 NUM_OPCODES = 144;
 
 Script::Script(PrinceEngine *vm) : 
 	_code(NULL), _stacktop(0), _vm(vm), _opcodeNF(false),
-	_waitFlag(0), _voiceStream(NULL) {
+	_waitFlag(0), _voiceStream(NULL), _result(true) {
 }
 
 Script::~Script() {
@@ -60,6 +60,7 @@ bool Script::loadFromStream(Common::SeekableReadStream &stream) {
 
 	stream.read(_code, _codeSize);
 	// Initialize the script
+	_mode = "fg";
 	_fgOpcodePC = READ_LE_UINT32(_code + 4);
 	_bgOpcodePC = 0;
 
@@ -74,18 +75,22 @@ void Script::debugScript(const char *s, ...) {
     vsnprintf(buf, STRINGBUFLEN, s, va);
     va_end(va);
 
-	Common::String str = Common::String::format("@0x%04X: ", _lastInstruction);
+	Common::String str = Common::String::format("@0x%08X: ", _lastInstruction);
 	str += Common::String::format("op %04d: ", _lastOpcode);
 	//debugC(10, DebugChannel::kScript, "PrinceEngine::Script %s %s", str.c_str(), buf);
 
-	debug("Prince::Script frame %ld %s %s", _vm->_frameNr, str.c_str(), buf);
+	debug("Prince::Script mode %s frame %ld %s %s", _mode, _vm->_frameNr, str.c_str(), buf);
 }
 
 void Script::step() {
+#if 1
 	if (_bgOpcodePC) {
+		_mode = "bg";
 		_bgOpcodePC = step(_bgOpcodePC);
 	}
+#endif
 	if (_fgOpcodePC) {
+		_mode = "fg";
 		_fgOpcodePC = step(_fgOpcodePC);
 	}
 }
@@ -108,7 +113,7 @@ uint32 Script::step(uint32 opcodePC) {
 			error("Trying to execute unknown opcode %s", dstr.c_str());
 
 
-		debugScript("");
+		//debugScript("");
 
 		// Execute the current opcode
 		OpcodeFunc op = _opcodes[_lastOpcode];
@@ -391,9 +396,10 @@ void Script::O_JUMPZ() {
 
 void Script::O_JUMPNZ() {
 	int32 offset = readScript32bits();
-	debugScript("O_JUMPNZ offset 0x%04X", offset);
+	debugScript("O_JUMPNZ offset 0x%08X", offset);
 	if (_result) {
 		_currentInstruction += offset - 4;
+		debugScript("O_JUMPNZ next 0x%08X", _currentInstruction);
 	}
 }
 
@@ -555,7 +561,14 @@ void Script::O_WALKHERO() {
 	_opcodeNF = 1;
 }
 
-void Script::O_SETHERO() {}
+void Script::O_SETHERO() {
+	uint16 hero = readScript16bits();
+	uint16 x = readScript16bits();
+	uint16 y = readScript16bits();
+	uint16 dir = readScript16bits();
+	debugScript("O_SETHERO hero %d, x %d, y %d, dir %d", hero, x, y, dir);
+}
+
 void Script::O_HEROOFF() {
 	uint16 heroId = readScript16bits();
 	debugScript("O_HEROOFF %d", heroId);
@@ -566,30 +579,115 @@ void Script::O_HEROON() {
 	debugScript("O_HEROON %d", heroId);
 }
 
-void Script::O_CLSTEXT() {}
-void Script::O_CALLTABLE() {}
-void Script::O_CHANGEMOB() {}
-void Script::O_ADDINV() {}
-void Script::O_REMINV() {}
-void Script::O_REPINV() {}
-void Script::O_OBSOLETE_GETACTION() {}
-void Script::O_ADDWALKAREA() {}
-void Script::O_REMWALKAREA() {}
-void Script::O_RESTOREWALKAREA() {}
+void Script::O_CLSTEXT() {
+	uint16 slot = readScript16bits();
+	debugScript("O_CLSTEXT slot %d", slot);
+}
+
+void Script::O_CALLTABLE() {
+	uint16 flag = readScript16bits();
+	int32 table = readScript32bits();
+
+	debugScript("O_CALLTABLE flag %d, table %d", flag, table);
+}
+
+void Script::O_CHANGEMOB() {
+	uint16 mob = readScript16bits();
+	uint16 value = readScript16bits();
+	debugScript("O_CHANGEMOB mob %d, value %d", mob, value);
+}
+
+void Script::O_ADDINV() {
+	uint16 hero = readScript16bits();
+	uint16 item = readScript16bits();
+	debugScript("O_ADDINV hero %d, item %d", hero, item);
+}
+
+void Script::O_REMINV() {
+	uint16 hero = readScript16bits();
+	uint16 item = readScript16bits();
+	debugScript("O_REMINV hero %d, item %d", hero, item);
+}
+
+void Script::O_REPINV() {
+	uint16 hero = readScript16bits();
+	uint16 item1 = readScript16bits();
+	uint16 item2 = readScript16bits();
+	debugScript("O_REPINV hero %d, item1 %d, item2 %d", hero, item1, item2);
+}
+
+void Script::O_OBSOLETE_GETACTION() {
+	debugScript("O_OBSOLETE_GETACTION");
+}
+
+void Script::O_ADDWALKAREA() {
+	uint16 x1 = readScript16bits();
+	uint16 y1 = readScript16bits();
+	uint16 x2 = readScript16bits();
+	uint16 y2 = readScript16bits();
+	debugScript("O_ADDWALKAREA x1 %d, y1 %d, x2 %d, y2 %d", x1, y1, x2, y2);
+}
+
+void Script::O_REMWALKAREA() {
+	uint16 x1 = readScript16bits();
+	uint16 y1 = readScript16bits();
+	uint16 x2 = readScript16bits();
+	uint16 y2 = readScript16bits();
+	debugScript("O_REMWALKAREA x1 %d, y1 %d, x2 %d, y2 %d", x1, y1, x2, y2);
+}
+ 
+void Script::O_RESTOREWALKAREA() {
+	debugScript("O_RESTOREWALKAREA");
+}
 
 void Script::O_WAITFRAME() {
 	debugScript("O_WAITFRAME");
 	_opcodeNF = true;
 }
 
-void Script::O_SETFRAME() {}
-void Script::O_RUNACTION() {}
-void Script::O_COMPAREHI() {}
-void Script::O_COMPARELO() {}
-void Script::O_PRELOADSET() {}
-void Script::O_FREEPRELOAD() {}
-void Script::O_CHECKINV() {}
-void Script::O_TALKHERO() {}
+void Script::O_SETFRAME() {
+	uint16 anim = readScript16bits();
+	uint16 frame = readScript16bits();
+	debugScript("O_SETFRAME anim %d, frame %d", anim, frame);
+}
+
+void Script::O_RUNACTION() {
+	debugScript("O_RUNACTION");
+}
+
+void Script::O_COMPAREHI() {
+	uint16 flag = readScript16bits();
+	uint16 value = readScript16bits();
+
+	debugScript("O_COMPAREHI flag %d, value %d", flag, value);
+}
+
+void Script::O_COMPARELO() {
+	uint16 flag = readScript16bits();
+	uint16 value = readScript16bits();
+
+	debugScript("O_COMPARELO flag %d, value %d", flag, value);
+}
+
+void Script::O_PRELOADSET() {
+	int32 offset = readScript32bits();
+	debugScript("O_PRELOADSET offset %04x", offset);
+}
+
+void Script::O_FREEPRELOAD() {
+	debugScript("O_FREEPRELOAD");
+}
+
+void Script::O_CHECKINV() {
+	uint16 hero = readScript16bits();
+	uint16 item = readScript16bits();
+	debugScript("O_CHECKINV hero %d, item %d", hero, item);
+}
+
+void Script::O_TALKHERO() {
+	uint16 hero = readScript16bits();
+	debugScript("O_TALKHERO hero %d", hero);
+}
 
 void Script::O_WAITTEXT() {
 	uint16 slot = readScript16bits();
@@ -603,23 +701,92 @@ void Script::O_WAITTEXT() {
 	}
 }
 
-void Script::O_SETHEROANIM() {}
-void Script::O_WAITHEROANIM() {}
-void Script::O_GETHERODATA() {}
-void Script::O_GETMOUSEBUTTON() {}
-void Script::O_CHANGEFRAMES() {}
-void Script::O_CHANGEBACKFRAMES() {}
-void Script::O_GETBACKANIMDATA() {}
-void Script::O_GETANIMDATA() {}
+void Script::O_SETHEROANIM() {
+	uint16 hero = readScript16bits();
+	int32 offset = readScript32bits();
+	debugScript("O_SETHEROANIM hero %d, offset %d", hero, offset);
+}
+
+void Script::O_WAITHEROANIM() {
+	uint16 hero = readScript16bits();
+
+	debugScript("O_WAITHEROANIM hero %d", hero);
+}
+
+void Script::O_GETHERODATA() {
+	uint16 flag = readScript16bits();
+	uint16 hero = readScript16bits();
+	uint16 heroOffset =readScript16bits();
+	debugScript("O_GETHERODATA flag %d, hero %d, heroOffset %d", flag, hero, heroOffset);
+}
+
+void Script::O_GETMOUSEBUTTON() {
+	debugScript("O_GETMOUSEBUTTON");
+}
+
+void Script::O_CHANGEFRAMES() {
+	uint16 anim = readScript16bits();
+	uint16 fr1 = readScript16bits();
+	uint16 fr2 = readScript16bits();
+	uint16 fr3 = readScript16bits();
+
+	debugScript("O_CHANGFRAMES anim %d, fr1 %d, fr2 %d, fr3 %d", anim, fr1, fr2, fr3);
+
+}
+
+void Script::O_CHANGEBACKFRAMES() {
+	uint16 anim = readScript16bits();
+	uint16 fr1 = readScript16bits();
+	uint16 fr2 = readScript16bits();
+	uint16 fr3 = readScript16bits();
+
+	debugScript("O_CHANGEBACKFRAMES anim %d, fr1 %d, fr2 %d, fr3 %d", anim, fr1, fr2, fr3);
+}
+
+void Script::O_GETBACKANIMDATA() {
+	uint16 flag = readScript16bits();
+	uint16 anim = readScript16bits();
+	uint16 animOffset = readScript16bits();
+	debugScript("O_GETBACKANIMDATA flag %d, anim %d, animOffset %d", flag, anim, animOffset);
+}
+
+void Script::O_GETANIMDATA() {
+	uint16 flag = readScript16bits();
+	uint16 anim = readScript16bits();
+	uint16 animOffset = readScript16bits();
+	debugScript("O_GETANIMDATA flag %d, anim %d, animOffset %d", flag, anim, animOffset);
+}
+
 void Script::O_SETBGCODE() {
 	int32 bgcode = readScript32bits();
 	debugScript("O_SETBGCODE %d", bgcode);
 	_bgOpcodePC = _currentInstruction + bgcode;
+	debugScript("O_SETBGCODE next %08X", _bgOpcodePC);
 }
-void Script::O_SETBACKFRAME() {}
-void Script::O_GETRND() {}
-void Script::O_TALKBACKANIM() {}
-void Script::O_LOADPATH() {}
+
+void Script::O_SETBACKFRAME() {
+	uint16 anim = readScript16bits();
+	uint16 frame = readScript16bits();
+
+	debugScript("O_SETBACKFRAME anim %d, frame %d", anim, frame);
+}
+
+void Script::O_GETRND() {
+	uint16 flag = readScript16bits();
+	uint16 rndSeed = readScript16bits();
+	debugScript("O_GETRND flag %d, rndSeed %d", flag, rndSeed);
+}
+
+void Script::O_TALKBACKANIM() {
+	uint16 animSlot = readScript16bits();
+	uint16 slot = readScript16bits();
+	debugScript("O_TALKBACKANIM animSlot %d, slot %d", animSlot, slot);
+}
+
+void Script::O_LOADPATH() {
+	int32 offset = readScript32bits();
+	debugScript("O_LOADPATH offset %d", offset);
+}
 
 void Script::O_GETCHAR() {
 	uint16 flagId = readScript16bits();
@@ -631,8 +798,16 @@ void Script::O_GETCHAR() {
 	++_string;
 }
 
-void Script::O_SETDFLAG() {}
-void Script::O_CALLDFLAG() {}
+void Script::O_SETDFLAG() {
+	uint16 flag = readScript16bits();
+	int32 offset = readScript32bits();
+	debugScript("O_SETDFLAG flag %d, offset %04x", flag, offset);
+}
+
+void Script::O_CALLDFLAG() {
+	uint16 flag = readScript16bits();
+	debugScript("O_CALLDFLAG flag %d", flag);
+}
 
 void Script::O_PRINTAT() {
 	uint16 slot = readScript16bits();
@@ -651,37 +826,75 @@ void Script::O_PRINTAT() {
 	++_string;
 }
 
-void Script::O_ZOOMIN() {}
-
-void Script::O_ZOOMOUT() {}
-
-void Script::O_SETSTRINGOFFSET() {
+void Script::O_ZOOMIN() {
+	uint16 slot = readScript16bits();
+	debugScript("O_ZOOMIN slot %04d", slot);
 }
 
-void Script::O_GETOBJDATA() {}
+void Script::O_ZOOMOUT() {
+	uint16 slot = readScript16bits();
+	debugScript("O_ZOOMOUT slot %d", slot);
+}
 
-void Script::O_SETOBJDATA() {}
+void Script::O_SETSTRINGOFFSET() {
+	int32 offset = readScript32bits();
+	debugScript("O_SETSTRINGOFFSET offset %04x", offset);
+}
 
-void Script::O_SWAPOBJECTS() {}
+void Script::O_GETOBJDATA() {
+	uint16 flag = readScript16bits();
+	uint16 obj = readScript16bits();
+	int16 objOffset = readScript16bits();
+	debugScript("O_GETOBJDATA flag %d, obj %d, objOffset %d", flag, obj, objOffset);
+}
+
+void Script::O_SETOBJDATA() {
+	uint16 obj = readScript16bits();
+	int16 objOffset = readScript16bits();
+	uint16 value = readScript16bits();
+	debugScript("O_SETOBJDATA obj %d, objOffset %d, value %d", obj, objOffset, value);
+}
+
+void Script::O_SWAPOBJECTS() {
+	uint16 obj1 = readScript16bits();
+	uint16 obj2 = readScript16bits();
+	debugScript("O_SWAPOBJECTS obj1 %d, obj2 %d", obj1, obj2);
+}
 
 void Script::O_CHANGEHEROSET() {
 	uint16 hero = readScript16bits();
 	uint16 heroSet = readScript16bits();
-
 	debugScript("O_CHANGEHEROSET hero %d, heroSet %d", hero, heroSet);
 }
 
-void Script::O_ADDSTRING() {}
+void Script::O_ADDSTRING() {
+	uint16 value = readScript16bits();
+	debugScript("O_ADDSTRING value %d", value);
+}
 
-void Script::O_SUBSTRING() {}
+void Script::O_SUBSTRING() {
+	uint16 value = readScript16bits();
+	debugScript("O_SUBSTRING value %d", value);
+}
 
-void Script::O_INITDIALOG() {}
+void Script::O_INITDIALOG() {
+	debugScript("O_INITDIALOG");
+}
 
-void Script::O_ENABLEDIALOGOPT() {}
+void Script::O_ENABLEDIALOGOPT() {
+	uint16 opt = readScript16bits();
+	debugScript("O_ENABLEDIALOGOPT opt %d", opt);
+}
 
-void Script::O_DISABLEDIALOGOPT() {}
+void Script::O_DISABLEDIALOGOPT() {
+	uint16 opt = readScript16bits();
+	debugScript("O_DISABLEDIALOGOPT opt %d", opt);
+}
 
-void Script::O_SHOWDIALOGBOX() {}
+void Script::O_SHOWDIALOGBOX() {
+	uint16 box = readScript16bits();
+	debugScript("O_SHOWDIALOGBOX box %d", box);
+}
 
 void Script::O_STOPSAMPLE() {
 	uint16 slot = readScript16bits();
@@ -743,6 +956,7 @@ void Script::O_SETFGCODE() {
 	debugScript("O_SETFGCODE offset %04X", offset);
 
 	_fgOpcodePC = _currentInstruction + offset;	
+	debugScript("O_SETFGCODE next %08X", _fgOpcodePC);
 }
 
 void Script::O_STOPHERO() {
