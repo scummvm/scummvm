@@ -25,44 +25,46 @@
 #include "graphics/font.h"
 
 namespace Graphics {
-    struct Surface;
+	struct Surface;
 }
 
 namespace Common {
-    class String;
+	class String;
 }
 
 namespace Prince {
 
 class Font : public Graphics::Font {
 public:
-    Font();
-    virtual ~Font();
+	Font();
+	virtual ~Font();
 
-    bool load(Common::SeekableReadStream &stream);
+	bool load(Common::SeekableReadStream &stream);
 
-    virtual int getFontHeight() const override;
+	virtual int getFontHeight() const override;
 
-    virtual int getMaxCharWidth() const override;
+	virtual int getMaxCharWidth() const override;
 
-    virtual int getCharWidth(byte chr) const override;
+	virtual int getCharWidth(byte chr) const override;
 
-    virtual void drawChar(Graphics::Surface *dst, byte chr, int x, int y, uint32 color) const override;
+	virtual void drawChar(Graphics::Surface *dst, byte chr, int x, int y, uint32 color) const override;
 
 	virtual int getKerningOffset(byte left, byte right) const { return -2; }
 
 private:
-    struct ChrData {
-        byte * _pixels;
-        byte _width;
-        byte _height;
-    };
+	struct ChrData {
+		byte *_pixels;
+		byte _width;
+		byte _height;
+	};
 
-    ChrData getChrData(byte chr) const;
+	ChrData getChrData(byte chr) const;
 
-    byte * _fontData;
+	byte *_fontData;
 };
 
 }
 
 #endif
+
+/* vim: set tabstop=4 expandtab!: */

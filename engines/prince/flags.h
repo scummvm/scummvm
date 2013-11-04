@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef PRINCE_FLAGS_H
+#define PRINCE_FLAGS_H
+
 #include "common/scummsys.h"
 
 namespace Prince {
@@ -406,4 +409,6 @@ struct Flags {
 };
 
 }
+#endif
 /* vim: set tabstop=4 noexpandtab: */
+

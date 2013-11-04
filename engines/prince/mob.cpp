@@ -27,37 +27,39 @@
 namespace Prince {
 
 bool Mob::loadFromStream(Common::SeekableReadStream &stream) {
-    int32 pos = stream.pos();
+	int32 pos = stream.pos();
 
-    uint16 visible = stream.readUint16LE();
+	uint16 visible = stream.readUint16LE();
 
-    if (visible == 0xFFFF)
-        return false;
+	if (visible == 0xFFFF)
+		return false;
 
-    _visible = visible;
-    _type = stream.readUint16LE();
-    _rect.left = stream.readUint16LE();
-    _rect.top = stream.readUint16LE();
-    _rect.right = stream.readUint16LE();
-    _rect.bottom = stream.readUint16LE();
+	_visible = visible;
+	_type = stream.readUint16LE();
+	_rect.left = stream.readUint16LE();
+	_rect.top = stream.readUint16LE();
+	_rect.right = stream.readUint16LE();
+	_rect.bottom = stream.readUint16LE();
 
-    stream.skip(6 * sizeof(uint16));
-    uint32 nameOffset = stream.readUint32LE();
-    uint32 examTextOffset = stream.readUint32LE();
+	stream.skip(6 * sizeof(uint16));
+	uint32 nameOffset = stream.readUint32LE();
+	uint32 examTextOffset = stream.readUint32LE();
 
-    byte c;
-    stream.seek(nameOffset);
-    _name.clear();
-    while ((c = stream.readByte()))
-        _name += c;
+	byte c;
+	stream.seek(nameOffset);
+	_name.clear();
+	while ((c = stream.readByte()))
+		_name += c;
 
-    stream.seek(examTextOffset);
-    _examText.clear();
-    while ((c = stream.readByte()))
-        _examText += c;
-    stream.seek(pos + 32);
+	stream.seek(examTextOffset);
+	_examText.clear();
+	while ((c = stream.readByte()))
+		_examText += c;
+	stream.seek(pos + 32);
 
-    return true;
+	return true;
 }
 
 }
+
+/* vim: set tabstop=4 noexpandtab: */

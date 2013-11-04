@@ -20,29 +20,34 @@
  *
  */
 
+#ifndef PRINCE_MOB_H
+#define PRINCE_MOB_H
+
 #include "common/scummsys.h"
 #include "common/rect.h"
 #include "common/str.h"
 
 namespace Common {
-    class SeekableReadStream;
+	class SeekableReadStream;
 }
 
 namespace Prince {
 
 class Mob {
 public:
-    Mob() {}
+	Mob() {}
 
-    bool loadFromStream(Common::SeekableReadStream &stream);
-  
+	bool loadFromStream(Common::SeekableReadStream &stream);
 
-    bool _visible; 
-    uint16 _type;
-    Common::Rect _rect;
-    Common::String _name;
-    Common::String _examText;
+	bool _visible; 
+	uint16 _type;
+	Common::Rect _rect;
+	Common::String _name;
+	Common::String _examText;
 };
 
 }
 
+#endif
+
+/* vim: set tabstop=4 noexpandtab: */

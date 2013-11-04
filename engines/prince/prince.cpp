@@ -21,7 +21,7 @@
  */
 
 #include "common/scummsys.h"
- 
+
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/debug.h"
@@ -51,6 +51,7 @@
 #include "prince/mob.h"
 #include "prince/sound.h"
 #include "prince/variatxt.h"
+#include "prince/flags.h"
 
 #include "video/flic_decoder.h"
 
@@ -92,6 +93,9 @@ PrinceEngine::PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc)
 	DebugMan.addDebugChannel(DebugChannel::kEngine, "engine", "Prince Engine debug channel");
 
 	DebugMan.enableDebugChannel("script");
+
+	gDebugLevel = 10;
+	
 
 	_rnd = new Common::RandomSource("prince");
 	_debugger = new Debugger(this);
@@ -373,18 +377,21 @@ void PrinceEngine::scrollCameraRight(int16 delta) {
 
 void PrinceEngine::keyHandler(Common::Event event) {
 	uint16 nChar = event.kbd.keycode;
-	if (event.kbd.hasFlags(Common::KBD_CTRL)) {
-		switch (nChar) {
-		case Common::KEYCODE_d:
+	switch (nChar) {
+	case Common::KEYCODE_d:
+		if (event.kbd.hasFlags(Common::KBD_CTRL)) {
 			getDebugger()->attach();
-			break;
-		case Common::KEYCODE_LEFT:
-			scrollCameraLeft(32);
-			break;
-		case Common::KEYCODE_RIGHT:
-			scrollCameraRight(32);
-			break;
 		}
+		break;
+	case Common::KEYCODE_LEFT:
+		scrollCameraLeft(32);
+		break;
+	case Common::KEYCODE_RIGHT:
+		scrollCameraRight(32);
+		break;
+	case Common::KEYCODE_ESCAPE:
+		_script->setFlag(Flags::ESCAPED2, 1);
+		break;
 	}
 }
 
@@ -464,6 +471,9 @@ void PrinceEngine::showTexts() {
 		}
 
 		--text._time;
+		if (text._time == 0) {
+			text._str = NULL;
+		}
 	}
 }
 
@@ -521,8 +531,8 @@ void PrinceEngine::mainLoop() {
 		if (shouldQuit())
 			return;
 
-		drawScreen();
 		_script->step();
+		drawScreen();
 
 		// Calculate the frame delay based off a desired frame time
 		int delay = 1000/15 - int32(_system->getMillis() - currentTime);

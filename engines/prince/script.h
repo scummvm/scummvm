@@ -27,6 +27,8 @@
 
 #include "audio/mixer.h"
 
+#include "prince/flags.h"
+
 namespace Common {
 	class SeekableReadStream;
 }
@@ -43,6 +45,7 @@ public:
 	bool loadFromStream(Common::SeekableReadStream &stream);
 
 	void step();
+	void setFlag(Flags::Id flag, uint16 value);
 
 private:
 	PrinceEngine *_vm;
@@ -50,11 +53,16 @@ private:
 	byte *_code;
 	uint32 _codeSize;
 	uint32 _currentInstruction;
+
+	uint32 _bgOpcodePC;
+	uint32 _fgOpcodePC;
+
 	uint16 _lastOpcode;
 	uint32 _lastInstruction;
 	byte _result;
 	int16 _flags[2000];
 	bool _opcodeNF;
+
 
 	// Stack
 	static const uint32 _STACK_SIZE = 500;
@@ -69,6 +77,7 @@ private:
 	Common::SeekableReadStream *_voiceStream;
 
 	// Helper functions
+	uint32 step(uint32 opcodePC);
 	void checkPC(uint32 address);
 	uint8 getCodeByte(uint32 address);
 	uint8 readScript8bits();
@@ -81,6 +90,8 @@ private:
 	typedef void (Script::*OpcodeFunc)();
 	static OpcodeFunc _opcodes[];
 
+	// Keep opcode handlers names as they are in original code 
+	// it easier to switch back and forth
 	void O_WAITFOREVER();
 	void O_BLACKPALETTE();
 	void O_SETUPPALETTE();

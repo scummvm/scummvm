@@ -25,6 +25,7 @@
 
 #include "common/archive.h"
 
+// This is here just as remainder that archive support is missing
 namespace Price {
 
 class Archive : public Common::Archive {

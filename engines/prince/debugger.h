@@ -36,6 +36,7 @@ public:
 	virtual ~Debugger() {}	// we need this for __SYMBIAN32__ archaic gcc/UIQ
 
 private:
+	bool Cmd_DebugLevel(int argc, const char **argv);
 	bool Cmd_SetFlag(int argc, const char **argv);
 	bool Cmd_GetFlag(int argc, const char **argv);
 	bool Cmd_ClearFlag(int argc, const char **argv);

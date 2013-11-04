@@ -47,6 +47,10 @@ Script::~Script() {
 	delete[] _code;
 }
 
+void Script::setFlag(Flags::Id flagId, uint16 value) {
+	_flags[flagId - 0x8000] = value;
+}
+
 bool Script::loadFromStream(Common::SeekableReadStream &stream) {
 	_codeSize = stream.size();
 	_code = new byte[_codeSize];
@@ -56,7 +60,8 @@ bool Script::loadFromStream(Common::SeekableReadStream &stream) {
 
 	stream.read(_code, _codeSize);
 	// Initialize the script
-	_currentInstruction = READ_LE_UINT32(_code + 4);
+	_fgOpcodePC = READ_LE_UINT32(_code + 4);
+	_bgOpcodePC = 0;
 
 	return true;
 }
@@ -73,10 +78,21 @@ void Script::debugScript(const char *s, ...) {
 	str += Common::String::format("op %04d: ", _lastOpcode);
 	//debugC(10, DebugChannel::kScript, "PrinceEngine::Script %s %s", str.c_str(), buf);
 
-	debug("PrinceEngine::Script frame %ld %s %s", _vm->_frameNr, str.c_str(), buf);
+	debug("Prince::Script frame %ld %s %s", _vm->_frameNr, str.c_str(), buf);
 }
 
 void Script::step() {
+	if (_bgOpcodePC) {
+		_bgOpcodePC = step(_bgOpcodePC);
+	}
+	if (_fgOpcodePC) {
+		_fgOpcodePC = step(_fgOpcodePC);
+	}
+}
+
+uint32 Script::step(uint32 opcodePC) {
+
+	_currentInstruction = opcodePC;
 	while (!_opcodeNF)
 	{
 		_lastInstruction = _currentInstruction;
@@ -103,6 +119,8 @@ void Script::step() {
 			break;
 		}
 	}
+
+	return _currentInstruction;
 }
 
 uint8 Script::getCodeByte(uint32 address) {
@@ -593,6 +611,7 @@ void Script::O_GETANIMDATA() {}
 void Script::O_SETBGCODE() {
 	int32 bgcode = readScript32bits();
 	debugScript("O_SETBGCODE %d", bgcode);
+	_bgOpcodePC = _currentInstruction + bgcode;
 }
 void Script::O_SETBACKFRAME() {}
 void Script::O_GETRND() {}
@@ -633,7 +652,8 @@ void Script::O_ZOOMIN() {}
 
 void Script::O_ZOOMOUT() {}
 
-void Script::O_SETSTRINGOFFSET() {}
+void Script::O_SETSTRINGOFFSET() {
+}
 
 void Script::O_GETOBJDATA() {}
 
@@ -641,7 +661,12 @@ void Script::O_SETOBJDATA() {}
 
 void Script::O_SWAPOBJECTS() {}
 
-void Script::O_CHANGEHEROSET() {}
+void Script::O_CHANGEHEROSET() {
+	uint16 hero = readScript16bits();
+	uint16 heroSet = readScript16bits();
+
+	debugScript("O_CHANGEHEROSET hero %d, heroSet %d", hero, heroSet);
+}
 
 void Script::O_ADDSTRING() {}
 
@@ -660,6 +685,7 @@ void Script::O_STOPSAMPLE() {
 	debugScript("O_STOPSAMPLE slot %d", slot);
 
 	_vm->_mixer->stopID(slot);
+	_voiceStream = NULL;
 }
 
 void Script::O_BACKANIMRANGE() {
@@ -712,6 +738,8 @@ void Script::O_SETFGCODE() {
 	int32 offset = readScript32bits();
 
 	debugScript("O_SETFGCODE offset %04X", offset);
+
+	_fgOpcodePC = _currentInstruction + offset;	
 }
 
 void Script::O_STOPHERO() {
@@ -846,7 +874,10 @@ void Script::O_SKIPTEXT() {
 }
 
 void Script::SetVoice(uint32 slot) {
-	const Common::String streamName = Common::String::format("%03d-01.WAV", _currentString);
+
+	const uint16 VOICE_H_LINE = _flags[Flags::VOICE_H_LINE - 0x8000];
+
+	const Common::String streamName = Common::String::format("%03d-%02d.WAV", _currentString, VOICE_H_LINE);
 	debugScript("Loading wav %s slot %d", streamName.c_str(), slot);
 
 	_voiceStream = SearchMan.createReadStreamForMember(streamName);
