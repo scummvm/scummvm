@@ -64,4 +64,8 @@ int FullpipeEngine::lift_getButtonIdP(int objid) {
 	}
 }
 
+void FullpipeEngine::lift_sub5(Scene *sc, int qu1, int qu2) {
+	warning("STUB: FullpipeEngine::lift_sub5()");
+}
+
 } // End of namespace Fullpipe

@@ -344,7 +344,7 @@ CharacterDialog::CharacterDialog() {
 /*--------------------------------------------------------------------------*/
 
 void HelpDialog::show() {
-	// Set the palette and change the cursor
+	// change the cursor
 	R2_GLOBALS._events.setCursor(CURSOR_ARROW);
 
 	// Create the dialog and draw it

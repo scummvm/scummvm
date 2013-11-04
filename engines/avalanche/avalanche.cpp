@@ -43,6 +43,21 @@ AvalancheEngine::AvalancheEngine(OSystem *syst, const AvalancheGameDescription *
 	_rnd->setSeed(time.tm_sec + time.tm_min + time.tm_hour);
 	_showDebugLines = false;
 	
+	_clock = nullptr;
+	_graphics = nullptr;
+	_parser = nullptr;
+	_pingo = nullptr;
+	_dialogs = nullptr;
+	_background = nullptr;
+	_sequence = nullptr;
+	_timer = nullptr;
+	_animation = nullptr;
+	_menu = nullptr;
+	_closing = nullptr;
+	_sound = nullptr;
+
+	_platform = gd->desc.platform;
+
 	initVariables();
 }
 
@@ -130,6 +145,7 @@ void AvalancheEngine::initVariables() {
 	_thinkThing = true;
 	_seeScroll = false;
 	_currentMouse = 177;
+	_holdLeftMouse = false;
 }
 
 Common::ErrorCode AvalancheEngine::initialize() {

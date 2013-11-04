@@ -179,6 +179,12 @@ void BehaviorManager::updateStaticAniBehavior(StaticANIObject *ani, int delay, B
 	}
 }
 
+bool BehaviorManager::setBehaviorEnabled(StaticANIObject *obj, int aniId, int quId, int flag) {
+	warning("STUB: BehaviorManager::setBehaviorEnabled()");
+
+	return true;
+}
+
 void BehaviorInfo::clear() {
 	_ani = 0;
 	_staticsId = 0;

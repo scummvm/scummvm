@@ -45,15 +45,15 @@ class Scene3100 : public SceneExt {
 		virtual bool startAction(CursorType action, Event &event);
 	};
 public:
-	int _field412;
+	bool _fadeSound;
 	SpeakerGuard _guardSpeaker;
-	NamedHotspot _item1;
-	NamedHotspot _item2;
-	SceneActor _actor1;
-	SceneActor _actor2;
-	SceneActor _actor3;
-	SceneActor _actor4;
-	SceneActor _actor5;
+	NamedHotspot _background;
+	NamedHotspot _hammerHead2;
+	SceneActor _hammerHead;
+	SceneActor _miranda;
+	SceneActor _ghoul;
+	SceneActor _technicians;
+	SceneActor _deadBodies;
 	Guard _guard;
 	ASoundExt _sound1;
 	SequenceManager _sequenceManager;
@@ -84,7 +84,7 @@ class Scene3125 : public SceneExt {
 		virtual bool startAction(CursorType action, Event &event);
 	};
 public:
-	int _field412;
+	bool _soundPlayed;
 	Background _background;
 	Door _door;
 	Table _table;
@@ -93,9 +93,7 @@ public:
 	SceneActor _ghoul2;
 	SceneActor _ghoul3;
 	SceneActor _ghoul4;
-	SequenceManager _sequenceManager1;
-	// Second sequence manager... Unused?
-	SequenceManager _sequenceManager2;
+	SequenceManager _sequenceManager;
 
 	Scene3125();
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
@@ -119,7 +117,7 @@ class Scene3150 : public SceneExt {
 	class FoodTray : public SceneActor {
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Actor6 : public SceneActor {
+	class ToiletFlush : public SceneActor {
 		virtual bool startAction(CursorType action, Event &event);
 	};
 	class AirVent : public SceneActor {
@@ -146,7 +144,7 @@ public:
 	SceneActor _bulbOrWire;
 	Water _water;
 	FoodTray _foodTray;
-	Actor6 _toiletFlush;
+	ToiletFlush _toiletFlush;
 	AirVent _airVent;
 	DoorExit _doorExit;
 	VentExit _ventExit;
@@ -158,7 +156,7 @@ public:
 };
 
 class Scene3175 : public SceneExt {
-	class Item1 : public NamedHotspot {
+	class RoomItem : public NamedHotspot {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -170,11 +168,11 @@ class Scene3175 : public SceneExt {
 		virtual bool startAction(CursorType action, Event &event);
 	};
 public:
-	Item1 _background;
-	Item1 _item2;
-	Item1 _item3;
+	RoomItem _background;
+	RoomItem _table;
+	RoomItem _autopsies;
 	Door _door;
-	SceneActor _actor2;
+	SceneActor _computer;
 	Corpse _corpse;
 	SequenceManager _sequenceManager;
 
@@ -187,9 +185,9 @@ public:
 	SpeakerRocko3200 _rockoSpeaker;
 	SpeakerJocko3200 _jockoSpeaker;
 	SpeakerSocko3200 _sockoSpeaker;
-	SceneActor _actor1;
-	SceneActor _actor2;
-	SceneActor _actor3;
+	SceneActor _rocko;
+	SceneActor _jocko;
+	SceneActor _socko;
 	SequenceManager _sequenceManager;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
@@ -200,8 +198,8 @@ class Scene3210 : public SceneExt {
 public:
 	SpeakerCaptain3210 _captainSpeaker;
 	SpeakerPrivate3210 _privateSpeaker;
-	SceneActor _actor1;
-	SceneActor _actor2;
+	SceneActor _captain;
+	SceneActor _private;
 	SequenceManager _sequenceManager;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
@@ -212,8 +210,8 @@ class Scene3220 : public SceneExt {
 public:
 	SpeakerRocko3220 _rockoSpeaker;
 	SpeakerJocko3220 _jockoSpeaker;
-	SceneActor _actor1;
-	SceneActor _actor2;
+	SceneActor _rocko;
+	SceneActor _jocko;
 	SequenceManager _sequenceManager;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
@@ -224,9 +222,9 @@ class Scene3230 : public SceneExt {
 public:
 	SpeakerRocko3230 _rockoSpeaker;
 	SpeakerJocko3230 _jockoSpeaker;
-	SceneActor _actor1;
-	SceneActor _actor2;
-	SceneActor _actor3;
+	SceneActor _rocko;
+	SceneActor _jocko;
+	SceneActor _ghoul;
 	SequenceManager _sequenceManager;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
@@ -238,8 +236,8 @@ public:
 	SpeakerTeal3240 _tealSpeaker;
 	SpeakerWebbster3240 _webbsterSpeaker;
 	SpeakerMiranda _mirandaSpeaker;
-	SceneActor _actor1;
-	SceneActor _actor2;
+	SceneActor _teal;
+	SceneActor _webbster;
 	SequenceManager _sequenceManager;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
@@ -250,8 +248,8 @@ class Scene3245 : public SceneExt {
 public:
 	SpeakerRalf3245 _ralfSpeaker;
 	SpeakerTomko3245 _tomkoSpeaker;
-	SceneActor _actor1;
-	SceneActor _actor2;
+	SceneActor _ralf;
+	SceneActor _tomko;
 	SequenceManager _sequenceManager;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
@@ -275,7 +273,7 @@ public:
 	Door _leftDoor;
 	Door _topDoor;
 	Door _rightDoor;
-	Door _actor4;
+	Door _grate;
 	SceneActor _ghoul1;
 	SceneActor _ghoul2;
 	SceneActor _ghoul3;
@@ -290,7 +288,7 @@ class Scene3255 : public SceneExt {
 public:
 	SceneActor _teal;
 	SceneActor _guard;
-	SceneActor _actor3;
+	SceneActor _door;
 	SceneActor _quinn;
 	SceneActor _ghoul1;
 	SceneActor _ghoul2;
@@ -366,7 +364,7 @@ public:
 	NamedHotspot _emptyCell2;
 	NamedHotspot _securityBeams1;
 	NamedHotspot _securityBeams2;
-	SceneActor _actor1;
+	SceneActor _doorFrame;
 	Door _door;
 	CellExit _cellExit;
 	SequenceManager _sequenceManager;
@@ -377,15 +375,15 @@ public:
 
 class Scene3350 : public SceneExt {
 public:
-	SceneActor _actor1;
-	SceneActor _actor2;
-	SceneActor _actor3;
-	SceneActor _actor4;
-	SceneActor _actor5;
-	SceneActor _actor6;
-	SceneActor _actor7;
-	SceneActor _actor8;
-	SceneActor _actor9;
+	SceneActor _miranda;
+	SceneActor _seeker;
+	SceneActor _webbster;
+	SceneActor _seatedPeople;
+	SceneActor _ship;
+	SceneActor _landedShip;
+	SceneActor _shipShadow;
+	SceneActor _canopy;
+	SceneActor _shipFront;
 	SequenceManager _sequenceManager;
 	PaletteRotation *_rotation;
 
@@ -439,9 +437,8 @@ public:
 	DownExit _downExit;
 	RightExit _rightExit;
 	SequenceManager _sequenceManager;
-	int _field1488;
+	int _newSceneMode;
 	int _sceneAreas[4];
-	int _field1492;
 
 	Scene3375();
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
@@ -489,7 +486,7 @@ public:
 	Action1 _action1;
 	SequenceManager _sequenceManager;
 
-	int _field11B2;
+	int _playerStrip;
 
 	Scene3385();
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
@@ -531,7 +528,7 @@ public:
 	Action1 _action1;
 	SequenceManager _sequenceManager;
 
-	int _field142E;
+	int _playerStrip;
 
 	Scene3395();
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
@@ -556,7 +553,7 @@ public:
 	SceneActor _actor7;
 	SceneActor _actor8;
 	SequenceManager _sequenceManager;
-	int16 _field157C;
+	bool _soundFaded;
 
 	Scene3400();
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
@@ -591,11 +588,11 @@ class Scene3500 : public SceneExt {
 		virtual void signal();
 	};
 
-	class Item4 : public NamedHotspot {
+	class DirectionButton : public NamedHotspot {
 	public:
-		int _field34;
+		int _movementId;
 
-		Item4();
+		DirectionButton();
 		virtual void synchronize(Serializer &s);
 
 		virtual bool startAction(CursorType action, Event &event);
@@ -603,8 +600,7 @@ class Scene3500 : public SceneExt {
 
 	class Actor7 : public SceneActor {
 	public:
-		int _fieldA4;
-		int _fieldA6;
+		Common::Point _pos;
 		int _fieldA8;
 		int _fieldAA;
 		int _fieldAC;
@@ -613,10 +609,10 @@ class Scene3500 : public SceneExt {
 		Actor7();
 		virtual void synchronize(Serializer &s);
 
-		void sub109466(int arg1, int arg2, int arg3, int arg4, int arg5);
+		void sub109466(int xp, int yp, int arg3, int arg4, int arg5);
 		void sub1094ED();
 		void sub109663(int arg1);
-		void sub109693(Common::Point Pt);
+		void changePosition(const Common::Point &pt);
 
 		virtual void process(Event &event);
 		virtual bool startAction(CursorType action, Event &event);
@@ -640,10 +636,10 @@ public:
 	NamedHotspot _item1;
 	NamedHotspot _item2;
 	NamedHotspot _item3;
-	Item4 _item4;
-	Item4 _item5;
-	Item4 _item6;
-	Item4 _item7;
+	DirectionButton _pitchDown;
+	DirectionButton _turnLeft;
+	DirectionButton _pitchUp;
+	DirectionButton _turnRight;
 	// Glyph of vessel on top of the maze ui
 	SceneActor _actor1;
 	SceneActor _actor2;
@@ -672,10 +668,10 @@ public:
 	int _field1280;
 	int _field1282;
 	int _field1284;
-	int _field1286;
+	bool _directionChangesEnabled;
 
 	Scene3500();
-	void sub107F71(int arg1);
+	void doMovement(int id);
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void remove();
@@ -699,7 +695,7 @@ class Scene3600 : public SceneExt {
 		virtual void signal();
 	};
 
-	class Item5 : public NamedHotspot {
+	class LightShaft : public NamedHotspot {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -715,23 +711,20 @@ public:
 	SpeakerMiranda3600 _mirandaSpeaker;
 	SpeakerTeal3600 _tealSpeaker;
 	SpeakerProtector3600 _protectorSpeaker;
-	NamedHotspot _item1;
-	NamedHotspot _item2;
-	NamedHotspot _item3;
-	NamedHotspot _item4;
-	Item5 _item5;
-	SceneActor _actor1;
-	SceneActor _actor2;
-	SceneActor _actor3;
-	SceneActor _actor4;
-	SceneActor _actor5;
-	SceneActor _actor6;
-	SceneActor _actor7;
-	SceneActor _actor8;
-	SceneActor _actor9;
-	SceneActor _actor10;
-	SceneActor _actor11;
-	SceneActor _actor12;
+	NamedHotspot _background;
+	NamedHotspot _console;
+	NamedHotspot _tapestry1;
+	NamedHotspot _tapestry2;
+	LightShaft _lightShaft;
+	SceneActor _protector3400;
+	SceneActor _steppingDisk;
+	SceneActor _consoleLights;
+	SceneActor _webbster;
+	SceneActor _teal;
+	SceneActor _door3400;
+	SceneActor _quinn;
+	SceneActor _seeker;
+	SceneActor _miranda;
 	Protector _protector;
 	SequenceManager _sequenceManager1;
 	SequenceManager _sequenceManager2;
@@ -739,10 +732,8 @@ public:
 	SequenceManager _sequenceManager4;
 	ScenePalette _palette1;
 
-	int _field2548;
-	int _field254A;
-	int _field254C;
-	int _field254E;
+	bool _tealDead;
+	bool _lightEntered;
 	bool _ghoulTeleported;
 
 	Scene3600();
@@ -763,7 +754,7 @@ public:
 	SceneActor _seeker;
 	SceneActor _miranda;
 	SceneActor _webbster;
-	SceneActor _actor5;
+	SceneActor _teleportPad;
 	SequenceManager _sequenceManager;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
@@ -793,15 +784,15 @@ class Scene3800 : public SceneExt {
 	};
 
 public:
-	SceneObject _object1;
-	SceneObject _object2;
-	SceneActor _actor1;
+	SceneObject _balloon;
+	SceneObject _harness;
+	SceneActor _balloonQuinn;
 	NamedHotspot _background;
 	NorthExit _northExit;
 	EastExit _eastExit;
 	SouthExit _southExit;
 	WestExit _westExit;
-	Rect _rect1;
+	Rect _skylineRect;
 	SequenceManager _sequenceManager1;
 
 	int _desertDirection;
@@ -842,14 +833,14 @@ class Scene3900 : public SceneExt {
 		virtual void changeScene();
 	};
 public:
-	SceneActor _actor1;
-	NamedHotspot _item1;
+	SceneActor _linkedQuinn;
+	NamedHotspot _background;
 	NorthExit _northExit;
 	EastExit _eastExit;
 	SouthExit _southExit;
 	WestExit _westExit;
-	Exit5 _exit5;
-	Rect _rect1;
+	Exit5 _westEnterForest;
+	Rect _skylineRect;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void signal();

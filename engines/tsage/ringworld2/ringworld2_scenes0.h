@@ -210,7 +210,7 @@ public:
 	ASoundExt _sound1;
 
 	int _frameNumber;
-	int _helpDisabled;
+	bool _helpEnabled;
 	int _frameInc;
 	int _fontNumber, _fontHeight;
 public:
@@ -400,8 +400,8 @@ public:
 	QuinnWorkstation _quinnWorkstation1, _quinnWorkstation2;
 	SeekerWorkstation _seekerWorkstation;
 	MirandaWorkstation _mirandaWorkstation1, _mirandaWorkstation2;
-	SceneActor _object1, _object2, _object3, _object4, _protocolDisplay;
-	SceneActor _object6, _object7, _object8, _object9;
+	SceneActor _atmosphereLeftWindow, _atmosphereRightWindow, _leftVerticalBarsAnim, _rightVerticalBarsAnim, _protocolDisplay;
+	SceneActor _rightTextDisplay, _mirandaScreen, _leftTextDisplay, _quinnScreen;
 	SceneActor _teal, _soldier, _object12;
 	Doorway _doorway;
 	Miranda _miranda;
@@ -806,7 +806,7 @@ class Scene825: public SceneExt {
 	/* Objects */
 	class Button: public SceneObject {
 	public:
-		int _buttonId, _v2;
+		int _buttonId;
 		bool _buttonDown;
 		SceneText _sceneText;
 	public:

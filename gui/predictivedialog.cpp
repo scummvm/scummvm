@@ -752,7 +752,8 @@ bool PredictiveDialog::matchWord() {
 		char tmp[kMaxLineLen];
 		strncpy(tmp, _unitedDict.dictLine[line], kMaxLineLen);
 		tmp[kMaxLineLen - 1] = 0;
-		char *tok = strtok(tmp, " ");
+		char *tok;
+		strtok(tmp, " ");
 		tok = strtok(NULL, " ");
 		_currentWord = Common::String(tok, _currentCode.size());
 		return true;

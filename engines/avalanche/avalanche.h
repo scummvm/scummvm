@@ -55,7 +55,9 @@ class RandomSource;
 
 namespace Avalanche {
 
-struct AvalancheGameDescription;
+struct AvalancheGameDescription {
+	ADGameDescription desc;
+};
 
 static const int kSavegameVersion = 1;
 
