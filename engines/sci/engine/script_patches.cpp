@@ -30,6 +30,52 @@
 
 namespace Sci {
 
+// IMPORTANT:
+// every patch entry needs the following:
+//  - script number (pretty obvious)
+//
+//  - apply count
+//     specifies the number of times a patch is supposed to get applied.
+//     Most of the time, it should be 1.
+//
+//  - magicDWORD + magicOffset
+//     please ALWAYS put 0 for those two. Both will get filled out at runtime by the patcher.
+//
+//  - signature data (is used to identify certain script code, that needs patching)
+//     every signature needs to contain SIG_MAGICDWORD once.
+//      The following 4 bytes after SIG_MAGICDWORD - which don't have to be fixed, you may for example
+//      use SIG_SELECTOR16, will get used to quickly search for a partly match before verifying that
+//      the whole signature actually matches. If it's not included, the script patcher will error() out
+//      right when loading up the game.
+//     If selector-IDs are included, please use SIG_SELECTOR16 + SIG_SELECTOR8 [1]. Simply
+//      specify the selector that way, so that the patcher will search for the specific
+//      selector instead of looking for a hardcoded value. Selectors may not be the same
+//      between game versions.
+//     For UINT16s either use SIG_UINT16 or SIG_SELECTOR16.
+//      Macintosh versions of SCI games are using BE ordering instead of LE since SCI1.1 for UINT16s in scripts
+//      By using those 2 commands, it's possible to make patches work for PC and Mac versions of the same game.
+//     You may also skip bytes by using the SIG_ADDTOOFFSET command
+//     Every signature data needs to get terminated using SIGNATURE_END
+//
+//  - patch data (is used for actually patching scripts)
+//     When a match is found, the patch data will get applied.
+//     Patch data is similar to signature data. Just use PATCH_SELECTOR16 + PATCH_SELECTOR8 [1]
+//      for patching in selectors.
+//     There are also patch specific commands.
+//     Those are PATCH_GETORIGINALBYTE, which fetches a byte from the original script
+//      and PATCH_GETORIGINALBYTEADJUST, which does the same but gets a second value
+//      from the uint16 array and uses that value to adjust the original byte.
+//     Every patch data needs to get terminated using PATCH_END
+//
+//  - and please always add a comment about why the patch was done and what's causing issues.
+//     If possible make sure, that the patch works on localized (or just different) game versions
+//      as well in case those need patching too.
+//
+// [1] - selectors need to get specified in selectorTable[] and ScriptPatcherSelectors-enum
+//        before they can get used using the SIG_SELECTORx and PATCH_SELECTORx commands.
+//        You have to use the exact same order in both the table and the enum, otherwise
+//        it won't work.
+
 #define SIG_END               0xFFFF
 #define SIG_MISMATCH          0xFFFE
 #define SIG_COMMANDMASK       0xF000
