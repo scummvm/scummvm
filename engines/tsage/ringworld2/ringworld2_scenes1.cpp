@@ -12292,7 +12292,7 @@ void Scene1850::signal() {
 		} else if (R2_GLOBALS.getFlag(33)) {
 				R2_GLOBALS.setFlag(62);
 				R2_GLOBALS.setFlag(34);
-				R2_GLOBALS._walkRegions.enableRegion(2);
+				R2_GLOBALS._walkRegions.disableRegion(2);
 
 				_actor2.postInit();
 				_actor2.setDetails(1850, 6, -1, -1, 5, &_robot);
