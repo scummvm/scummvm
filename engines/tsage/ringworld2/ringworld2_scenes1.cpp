@@ -11399,7 +11399,7 @@ void Scene1800::postInit(SceneObjectList *OwnerList) {
 		_locationMode = 0;
 
 	scalePalette(65, 65, 65);
-	_exit1.setDetails(Rect(0, 160, 319, 168), EXITCURSOR_S, 1800);
+	_southExit.setDetails(Rect(0, 160, 319, 168), EXITCURSOR_S, 1800);
 	_background.setDetails(Rect(0, 0, 320, 200), -1, -1, -1, -1, 1, NULL);
 
 	_lever.postInit();
@@ -11519,29 +11519,29 @@ void Scene1800::postInit(SceneObjectList *OwnerList) {
 		}
 	}
 
-	_actor1.postInit();
-	_actor1.fixPriority(10);
+	_playerShadow.postInit();
+	_playerShadow.fixPriority(10);
 	if (R2_GLOBALS._player._characterIndex == R2_QUINN)
-		_actor1.setVisage(1111);
+		_playerShadow.setVisage(1111);
 	else
-		_actor1.setVisage(1110);
+		_playerShadow.setVisage(1110);
 
-	_actor1._effect = 5;
-	_actor1._field9C = _field312;
+	_playerShadow._effect = 5;
+	_playerShadow._field9C = _field312;
 
-	R2_GLOBALS._player._linkedActor = &_actor1;
+	R2_GLOBALS._player._linkedActor = &_playerShadow;
 
-	_actor3.postInit();
-	_actor3.fixPriority(10);
+	_companionShadow.postInit();
+	_companionShadow.fixPriority(10);
 	if (R2_GLOBALS._player._characterIndex == R2_QUINN)
-		_actor3.setVisage(1110);
+		_companionShadow.setVisage(1110);
 	else
-		_actor3.setVisage(1111);
+		_companionShadow.setVisage(1111);
 
-	_actor3._effect = 5;
-	_actor3._field9C = _field312;
+	_companionShadow._effect = 5;
+	_companionShadow._field9C = _field312;
 
-	_companion._linkedActor = &_actor3;
+	_companion._linkedActor = &_companionShadow;
 
 	R2_GLOBALS._player._characterScene[R2_QUINN] = 1800;
 	R2_GLOBALS._player._characterScene[R2_SEEKER] = 1800;
@@ -11552,7 +11552,7 @@ void Scene1800::postInit(SceneObjectList *OwnerList) {
 	// Original was calling _item3.setDetails(Rect(1800, 11, 24, 23), 25, -1, -1, -1, 1, NULL);
 	// This is *wrong*. The following statement is a wild guess based on good common sense
 	_item3.setDetails(11, 1800, 23, 24, 25);
-	_item4.setDetails(Rect(0, 0, 320, 200), 1800, 17, -1, 19, 1, NULL);
+	_secBackground.setDetails(Rect(0, 0, 320, 200), 1800, 17, -1, 19, 1, NULL);
 
 	R2_GLOBALS._player.disableControl();
 	if (R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] == 1800) {

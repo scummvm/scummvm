@@ -872,18 +872,18 @@ public:
 	NamedHotspot _item1;
 	NamedHotspot _item2;
 	NamedHotspot _item3;
-	NamedHotspot _item4;
+	NamedHotspot _secBackground;
 	Background _background;
-	SceneActor _actor1;
+	SceneActor _playerShadow;
 	SceneActor _companion;
-	SceneActor _actor3;
+	SceneActor _companionShadow;
 	SceneActor _leftStaircase;
 	SceneActor _rightStaircase;
 	Lever _lever;
 	Doors _doors;
 	PassengerDoor _leftDoor;
 	PassengerDoor _rightDoor;
-	Exit1 _exit1;
+	Exit1 _southExit;
 	SequenceManager _sequenceManager;
 
 	Scene1800();
