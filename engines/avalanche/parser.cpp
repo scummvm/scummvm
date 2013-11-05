@@ -603,8 +603,12 @@ Common::String Parser::rank() {
 Common::String Parser::totalTime() {
 	uint16 h, m, s;
 
-	h = (uint16)(_vm->_totalTime / 65535);
-	s = (uint16)(_vm->_totalTime % 65535);
+	uint32 curTime = _vm->getTimeInSeconds() - _vm->_startTime;
+    if (_vm->_isLoaded)
+        curTime += _vm->_totalTime;
+    
+    h = (uint16)(curTime / 3600);
+    s = (uint16)(curTime  % 3600);
 	m = s / 60;
 	s = s % 60;
 

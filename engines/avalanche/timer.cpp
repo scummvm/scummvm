@@ -48,7 +48,7 @@ Timer::Timer(AvalancheEngine *vm) {
  * @remarks	Originally called 'set_up_timer'
  */
 void Timer::addTimer(int32 duration, byte action, byte reason) {
-	if ((_vm->_isLoaded == false) || (_timerLost == true)) {
+	if ((_vm->_ableToAddTimer == false) || (_timerLost == true)) {
 		byte i = 0;
 		while ((i < 7) && (_times[i]._timeLeft != 0))
 			i++;
@@ -61,7 +61,7 @@ void Timer::addTimer(int32 duration, byte action, byte reason) {
 		_times[i]._action = action;
 		_times[i]._reason = reason;
 	} else {
-		_vm->_isLoaded = false;
+		_vm->_ableToAddTimer = false;
 		return;
 	}
 }
@@ -208,8 +208,8 @@ void Timer::updateTimer() {
 			}
 		}
 	}
-	_vm->_roomTime++; // Cycles since you've been in this room.
-	_vm->_totalTime++; // Total amount of time for this game.
+    
+	_vm->_roomCycles++; // Cycles since you've been in this room.
 }
 
 void Timer::loseTimer(byte which) {

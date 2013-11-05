@@ -111,6 +111,7 @@ public:
 	Common::Error loadGameState(int slot);
 	bool loadGame(const int16 slot);
 	Common::String expandDate(int d, int m, int y);
+    uint32 getTimeInSeconds();
 
 	void updateEvents();
 	bool getEvent(Common::Event &event); // A wrapper around _eventMan->pollEvent(), so we can use it in Scrolls::normscroll() for example.
@@ -210,7 +211,8 @@ public:
 	bool _takenPen; // Have you taken the pen (in Cardiff?)
 	bool _arrowInTheDoor;  // Did the arrow hit the wall?
 	Common::String _favoriteDrink, _favoriteSong, _worstPlaceOnEarth, _spareEvening; // Personalisation str's
-	uint32 _totalTime; // Your total time playing this game, in ticks.
+    uint32 _startTime; // When did you start playing this session?
+    uint32 _totalTime; // Your total time playing this game, in seconds. Updated only at saving and loading.
 	byte _jumpStatus; // Fixes how high you're jumping.
 	bool _mushroomGrowing; // Is the mushroom growing in 42?
 	bool _crapulusWillTell; // Will Crapulus tell you about Spludwick being away?
@@ -257,12 +259,16 @@ public:
 	byte _subjectNum; // The same thing.
 	People _him, _her;
 	byte _it;
-	uint32 _roomTime; // Set to 0 when you enter a room, added to in every loop.
+	uint32 _roomCycles; // Set to 0 when you enter a room, added to in every loop. Cycles since you've been in this room.
 
 	bool _doingSpriteRun; // Only set to True if we're doing a sprite_run at this moment. This stops the trippancy system from moving any of the sprites.
-	bool _isLoaded; // Is it a loaded gamestate?
 	bool _soundFx;
 
+    // These two have very similar purpose, but it's crucial not to modify _isLoaded later than the actual loading
+    // or at the begginning of the game, and _ablteToAddTimer must be modified in addTimer().
+    bool _isLoaded; // Is it a loaded gamestate?
+    bool _ableToAddTimer;
+    
 	void callVerb(VerbCode id);
 	void loadRoom(byte num);
 	void thinkAbout(byte object, bool type); // Hey!!! Get it and put it!!!

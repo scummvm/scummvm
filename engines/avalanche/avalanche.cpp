@@ -94,8 +94,6 @@ void AvalancheEngine::initVariables() {
 		_also[i][1] = nullptr;
 	}
 
-	_totalTime = 0;
-
 	memset(_fxPal, 0, 16 * 16 * 3);
 
 	for (int i = 0; i < 15; i++) {
@@ -126,7 +124,7 @@ void AvalancheEngine::initVariables() {
 	_him = kPeoplePardon;
 	_her = kPeoplePardon;
 	_it = Parser::kPardon;
-	_roomTime = 0;
+	_roomCycles = 0;
 	_doingSpriteRun = false;
 	_isLoaded = false;
 	_soundFx = true;
@@ -359,6 +357,8 @@ bool AvalancheEngine::saveGame(const int16 slot, const Common::String &desc) {
 	f->writeSint16LE(t.tm_mday);
 	f->writeSint16LE(t.tm_mon);
 	f->writeSint16LE(t.tm_year);
+    
+    _totalTime += getTimeInSeconds() - _startTime;
 
 	Common::Serializer sz(NULL, f);
 	synchronize(sz);
@@ -422,6 +422,7 @@ bool AvalancheEngine::loadGame(const int16 slot) {
 	delete f;
 
 	_isLoaded = true;
+    _ableToAddTimer = false;
 	_seeScroll = true;  // This prevents display of the new sprites before the new picture is loaded.
 
 	if (_holdTheDawn) {
@@ -477,6 +478,12 @@ Common::String AvalancheEngine::expandDate(int d, int m, int y) {
 		}
 
 	return day + ' ' + month + ' ' + intToStr(y + 1900);
+}
+    
+uint32 AvalancheEngine::getTimeInSeconds() {
+    TimeDate time;
+    _system->getTimeAndDate(time);
+    return time.tm_hour * 3600 + time.tm_min * 60 + time.tm_sec;
 }
 
 void AvalancheEngine::updateEvents() {
