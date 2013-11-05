@@ -31,6 +31,7 @@ namespace Prince {
 class Object {
 public:
 	Object();
+	~Object();
 
 	bool loadFromStream(Common::SeekableReadStream &stream);
 	Graphics::Surface *getSurface() const { return _surface; }

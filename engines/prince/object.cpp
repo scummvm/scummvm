@@ -32,7 +32,11 @@
 
 namespace Prince {
 
-Object::Object() : _surface(NULL) {
+Object::Object() : _surface(NULL), _x(0), _y(0), _z(0) {
+}
+
+Object::~Object() {
+	delete _surface;
 }
 
 void Object::loadSurface(Common::SeekableReadStream &stream) {
@@ -43,11 +47,9 @@ void Object::loadSurface(Common::SeekableReadStream &stream) {
 	for (int h = 0; h < _surface->h; ++h) {
 		stream.read(_surface->getBasePtr(0, h), _surface->w);
 	}
-
 }
 
 bool Object::loadFromStream(Common::SeekableReadStream &stream) {
-   
 	int32 pos = stream.pos();
 	uint16 x = stream.readUint16LE();
 	if (x == 0xFFFF)
