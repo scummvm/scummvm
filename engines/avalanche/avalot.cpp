@@ -1479,7 +1479,7 @@ void AvalancheEngine::resetVariables() {
 	_takenMushroom = false;
 	_givenPenToAyles = false;
 	_askedDogfoodAboutNim = false;
-    _startTime = getTimeInSeconds();
+	_startTime = getTimeInSeconds();
 
 	_parser->resetVariables();
 	_animation->resetVariables();
@@ -1530,8 +1530,8 @@ void AvalancheEngine::newGame() {
 	_doingSpriteRun = false;
 	_avvyInBed = true;
     
-    _ableToAddTimer = true; // Set to false in _vm->loadGame().
-    _isLoaded = false;
+	_ableToAddTimer = true; // Set to false in _vm->loadGame().
+	_isLoaded = false;
 
 	enterRoom(kRoomYours, 1);
 	avvy->_visible = false;

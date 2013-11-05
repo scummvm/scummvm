@@ -358,7 +358,7 @@ bool AvalancheEngine::saveGame(const int16 slot, const Common::String &desc) {
 	f->writeSint16LE(t.tm_mon);
 	f->writeSint16LE(t.tm_year);
     
-    _totalTime += getTimeInSeconds() - _startTime;
+	_totalTime += getTimeInSeconds() - _startTime;
 
 	Common::Serializer sz(NULL, f);
 	synchronize(sz);
@@ -422,7 +422,7 @@ bool AvalancheEngine::loadGame(const int16 slot) {
 	delete f;
 
 	_isLoaded = true;
-    _ableToAddTimer = false;
+	_ableToAddTimer = false;
 	_seeScroll = true;  // This prevents display of the new sprites before the new picture is loaded.
 
 	if (_holdTheDawn) {
