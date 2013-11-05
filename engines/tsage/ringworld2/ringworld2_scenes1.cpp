@@ -1038,12 +1038,12 @@ void Scene1100::signal() {
 		break;
 	case 5:
 		_runningGuy1.postInit();
-		_runningGuy1._effect = EFFECT_6;
+		_runningGuy1._effect = EFFECT_SHADED2;
 		_runningGuy1.setup(1103, 3, 1);
 		_runningGuy1._moveRate = 30;
 
 		_runningGuy2.postInit();
-		_runningGuy2._effect = EFFECT_6;
+		_runningGuy2._effect = EFFECT_SHADED2;
 		_runningGuy2.setup(1103, 4, 1);
 		_runningGuy2._moveRate = 25;
 
@@ -7814,7 +7814,7 @@ void Scene1550::postInit(SceneObjectList *OwnerList) {
 	_stripManager.addSpeaker(&_seekerSpeaker);
 
 	R2_GLOBALS._player.postInit();
-	R2_GLOBALS._player._effect = EFFECT_6;
+	R2_GLOBALS._player._effect = EFFECT_SHADED2;
 
 	if (R2_GLOBALS._player._characterIndex == R2_QUINN)
 		R2_GLOBALS._player.setup(1500, 3, 1);
@@ -9020,7 +9020,7 @@ void Scene1550::enterArea() {
 				(R2_GLOBALS._scene1550JunkLocations[i + 2] != 0)) {
 			tmpIdx = R2_GLOBALS._scene1550JunkLocations[i + 3];
 			_junk[di].postInit();
-			_junk[di]._effect = EFFECT_6;
+			_junk[di]._effect = EFFECT_SHADED2;
 			_junk[di]._shade = 0;
 			_junk[di]._fieldA4 = tmpIdx;
 			_junk[di]._junkNumber = i;
@@ -9264,7 +9264,7 @@ void Scene1550::enterArea() {
 
 	if (R2_GLOBALS._s1550PlayerArea[R2_QUINN] == R2_GLOBALS._s1550PlayerArea[R2_SEEKER]) {
 		_companion.postInit();
-		_companion._effect = EFFECT_6;
+		_companion._effect = EFFECT_SHADED2;
 		_companion.changeZoom(-1);
 
 		assert((_field419 >= 1550) && (_field419 <= 2008));
@@ -12005,8 +12005,8 @@ void Scene1850::postInit(SceneObjectList *OwnerList) {
 	}
 
 	if (R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] == 1850) {
-		R2_GLOBALS._player._effect = EFFECT_6;
-		_companion._effect = EFFECT_6;
+		R2_GLOBALS._player._effect = EFFECT_SHADED2;
+		_companion._effect = EFFECT_SHADED2;
 		if (R2_GLOBALS.getFlag(31)) {
 			R2_GLOBALS._player._shade = 0;
 			_companion._shade = 0;
@@ -12042,7 +12042,7 @@ void Scene1850::postInit(SceneObjectList *OwnerList) {
 				_actor3.setup(1853, 3, 1);
 				_actor3.setPosition(Common::Point(122, 113));
 				_actor3.fixPriority(114);
-				_actor3._effect = EFFECT_6;
+				_actor3._effect = EFFECT_SHADED2;
 
 				// Totally useless test
 				if (R2_GLOBALS._player._characterIndex == R2_QUINN) {
@@ -12056,7 +12056,7 @@ void Scene1850::postInit(SceneObjectList *OwnerList) {
 				_actor4.setup(1853, 3, 2);
 				_actor4.setPosition(Common::Point(139, 111));
 				_actor4.fixPriority(114);
-				_actor4._effect = EFFECT_6;
+				_actor4._effect = EFFECT_SHADED2;
 
 				// Still totally useless test
 				if (R2_GLOBALS._player._characterIndex == R2_QUINN) {
@@ -12086,7 +12086,7 @@ void Scene1850::postInit(SceneObjectList *OwnerList) {
 				_actor3.setup(1853, 3, 1);
 				_actor3.setPosition(Common::Point(122, 113));
 				_actor3.fixPriority(114);
-				_actor3._effect = EFFECT_6;
+				_actor3._effect = EFFECT_SHADED2;
 
 				// Totally useless test
 				if (R2_GLOBALS._player._characterIndex == R2_QUINN) {
@@ -12100,7 +12100,7 @@ void Scene1850::postInit(SceneObjectList *OwnerList) {
 				_actor4.setup(1853, 3, 2);
 				_actor4.setPosition(Common::Point(139, 111));
 				_actor4.fixPriority(114);
-				_actor4._effect = EFFECT_6;
+				_actor4._effect = EFFECT_SHADED2;
 
 				// Again, useless test
 				if (R2_GLOBALS._player._characterIndex == R2_QUINN) {
@@ -12225,10 +12225,10 @@ void Scene1850::remove() {
 void Scene1850::signal() {
 	switch (_sceneMode) {
 	case 10:
-		R2_GLOBALS._player._effect = EFFECT_6;
+		R2_GLOBALS._player._effect = EFFECT_SHADED2;
 		R2_GLOBALS._player._shade = 6;
 
-		_companion._effect = EFFECT_6;
+		_companion._effect = EFFECT_SHADED2;
 		_companion._shade = 6;
 
 		R2_GLOBALS._walkRegions.disableRegion(5);
@@ -12407,7 +12407,7 @@ void Scene1850::signal() {
 		break;
 	case 1877:
 		_actor3.postInit();
-		_actor3._effect = EFFECT_6;
+		_actor3._effect = EFFECT_SHADED2;
 
 		if (R2_GLOBALS._player._characterIndex == R2_QUINN) {
 			_actor3.setDetails(1850, 28, -1, -1, 2, (SceneItem *)NULL);
@@ -12416,7 +12416,7 @@ void Scene1850::signal() {
 		}
 
 		_actor4.postInit();
-		_actor4._effect = EFFECT_6;
+		_actor4._effect = EFFECT_SHADED2;
 
 		if (R2_GLOBALS._player._characterIndex == R2_QUINN) {
 			_actor4.setDetails(1850, 29, -1, -1, 2, (SceneItem *)NULL);

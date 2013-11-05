@@ -417,7 +417,7 @@ bool Scene3150::Toilet::startAction(CursorType action, Event &event) {
 	case R2_PILLOW:
 		R2_GLOBALS._player.disableControl();
 		scene->_water.postInit();
-		scene->_water._effect = EFFECT_6;
+		scene->_water._effect = EFFECT_SHADED2;
 		scene->_water._shade = 3;
 		R2_GLOBALS._player.disableControl();
 		scene->_sceneMode = 3158;
@@ -428,7 +428,7 @@ bool Scene3150::Toilet::startAction(CursorType action, Event &event) {
 				(R2_INVENTORY.getObjectScene(R2_SUPERCONDUCTOR_WIRE) == 3150) 
 				&& (R2_GLOBALS.getFlag(75))) {
 			scene->_foodTray.postInit();
-			scene->_foodTray._effect = EFFECT_6;
+			scene->_foodTray._effect = EFFECT_SHADED2;
 			scene->_foodTray._shade = 3;
 			scene->_foodTray.setDetails(3150, 30, -1, -1, 2, (SceneItem *)NULL);
 
@@ -579,7 +579,7 @@ void Scene3150::postInit(SceneObjectList *OwnerList) {
 		_guard.postInit();
 		_guard.setup(3154, 1, 16);
 		_guard.setPosition(Common::Point(104, 129));
-		_guard._effect = EFFECT_6;
+		_guard._effect = EFFECT_SHADED2;
 		_guard._shade = 3;
 		_guard.setDetails(3150, 24, -1, -1, -1, (SceneItem *)NULL);
 	}
@@ -609,7 +609,7 @@ void Scene3150::postInit(SceneObjectList *OwnerList) {
 			}
 			_water.fixPriority(110);
 			_water.setPosition(Common::Point(83, 88));
-			_water._effect = EFFECT_6;
+			_water._effect = EFFECT_SHADED2;
 			_water._shade = 3;
 		} else {
 			_water.setup(3152, 7, 3);
@@ -629,7 +629,7 @@ void Scene3150::postInit(SceneObjectList *OwnerList) {
 		_bulbOrWire.setup(3152, 7, 3);
 		_bulbOrWire.setPosition(Common::Point(70, 55));
 		_bulbOrWire.fixPriority(111);
-		_bulbOrWire._effect = EFFECT_6;
+		_bulbOrWire._effect = EFFECT_SHADED2;
 		_bulbOrWire._shade = 5;
 	}
 
@@ -639,7 +639,7 @@ void Scene3150::postInit(SceneObjectList *OwnerList) {
 			_foodTray.setup(3152, 7, 8);
 			_foodTray.setPosition(Common::Point(82, 92));
 			_foodTray.fixPriority(111);
-			_foodTray._effect = EFFECT_6;
+			_foodTray._effect = EFFECT_SHADED2;
 			_foodTray._shade = 3;
 		} else {
 			_foodTray.setup(3152, 7, 7);
@@ -664,7 +664,7 @@ void Scene3150::postInit(SceneObjectList *OwnerList) {
 	case 0:
 		_sceneMode = 3150;
 		_guard.postInit();
-		_guard._effect = EFFECT_6;
+		_guard._effect = EFFECT_SHADED2;
 		_guard._shade = 5;
 		setAction(&_sequenceManager, this, 3150, &R2_GLOBALS._player, &_guard, &_doorBars, NULL);
 		break;
@@ -689,12 +689,12 @@ void Scene3150::postInit(SceneObjectList *OwnerList) {
 			++R2_GLOBALS._v56AA0;
 			_sceneMode = 3156;
 			_guard.postInit();
-			_guard._effect = EFFECT_6;
+			_guard._effect = EFFECT_SHADED2;
 			_guard._shade = 3;
 
 			_doorBars.postInit();
 			_foodTray.postInit();
-			_foodTray._effect = EFFECT_6;
+			_foodTray._effect = EFFECT_SHADED2;
 			_foodTray._shade = 3;
 
 			setAction(&_sequenceManager, this, 3156, &R2_GLOBALS._player, &_guard, &_doorBars, &_foodTray, NULL);
@@ -1274,7 +1274,7 @@ void Scene3250::signal() {
 
 void Scene3250::dispatch() {
 	if ((R2_GLOBALS._player._visage == 3250) && (R2_GLOBALS._player._strip == 3) && (R2_GLOBALS._player._effect == 0)) {
-		R2_GLOBALS._player._effect = EFFECT_6;
+		R2_GLOBALS._player._effect = EFFECT_SHADED2;
 		R2_GLOBALS._player._shade = 6;
 	}
 
@@ -1356,7 +1356,7 @@ void Scene3255::dispatch() {
 			else
 				_ghoul1._effect = EFFECT_SHADED;
 		} else {
-			_ghoul1._effect = EFFECT_6;
+			_ghoul1._effect = EFFECT_SHADED2;
 			_ghoul1._shade = 6;
 		}
 
@@ -1366,7 +1366,7 @@ void Scene3255::dispatch() {
 			else
 				_ghoul2._effect = EFFECT_SHADED;
 		} else {
-			_ghoul2._effect = EFFECT_6;
+			_ghoul2._effect = EFFECT_SHADED2;
 			_ghoul2._shade = 6;
 		}
 
@@ -1376,14 +1376,14 @@ void Scene3255::dispatch() {
 			else
 				_ghoul3._effect = EFFECT_SHADED;
 		} else {
-			_ghoul3._effect = EFFECT_6;
+			_ghoul3._effect = EFFECT_SHADED2;
 			_ghoul3._shade = 6;
 		}
 	}
 
 	if ((R2_GLOBALS._player._position.x > 250) && (R2_GLOBALS._player._shade == 1)) {
-		R2_GLOBALS._player._effect = EFFECT_6;
-		_quinn._effect = EFFECT_6;
+		R2_GLOBALS._player._effect = EFFECT_SHADED2;
+		_quinn._effect = EFFECT_SHADED2;
 	}
 	Scene::dispatch();
 }
@@ -1925,7 +1925,7 @@ void Scene3375::DownExit::changeScene() {
 	Scene3375 *scene = (Scene3375 *)R2_GLOBALS._sceneManager._scene;
 
 	_moving = false;
-	R2_GLOBALS._player._effect = EFFECT_6;
+	R2_GLOBALS._player._effect = EFFECT_SHADED2;
 	R2_GLOBALS._player._shade = 4;
 	R2_GLOBALS._player.disableControl(CURSOR_ARROW);
 
@@ -1947,7 +1947,7 @@ void Scene3375::RightExit::changeScene() {
 	Scene3375 *scene = (Scene3375 *)R2_GLOBALS._sceneManager._scene;
 
 	_moving = false;
-	R2_GLOBALS._player._effect = EFFECT_6;
+	R2_GLOBALS._player._effect = EFFECT_SHADED2;
 	R2_GLOBALS._player._shade = 4;
 	R2_GLOBALS._player.disableControl(CURSOR_ARROW);
 
@@ -2183,11 +2183,11 @@ void Scene3375::signal() {
 		_sceneMode = _newSceneMode;
 		_newSceneMode = 0;
 
-		_companion1._effect = EFFECT_6;
+		_companion1._effect = EFFECT_SHADED2;
 		_companion1._shade = 4;
-		_companion2._effect = EFFECT_6;
+		_companion2._effect = EFFECT_SHADED2;
 		_companion2._shade = 4;
-		_webbster._effect = EFFECT_6;
+		_webbster._effect = EFFECT_SHADED2;
 		_webbster._shade = 4;
 		enterArea(_sceneMode);
 		break;
@@ -2212,22 +2212,22 @@ void Scene3375::signal() {
 
 void Scene3375::dispatch() {
 	if ((R2_GLOBALS._player._position.y >= 168) && (R2_GLOBALS._player._effect == 1))
-		R2_GLOBALS._player._effect = EFFECT_6;
+		R2_GLOBALS._player._effect = EFFECT_SHADED2;
 	else if ((R2_GLOBALS._player._position.y < 168) && (R2_GLOBALS._player._effect == 6))
 		R2_GLOBALS._player._effect = EFFECT_SHADED;
 
 	if ((_companion1._position.y >= 168) && (_companion1._effect == 1))
-		_companion1._effect = EFFECT_6;
+		_companion1._effect = EFFECT_SHADED2;
 	else if ((_companion1._position.y < 168) && (_companion1._effect == 6))
 		_companion1._effect = EFFECT_SHADED;
 
 	if ((_companion2._position.y >= 168) && (_companion2._effect == 1))
-		_companion2._effect = EFFECT_6;
+		_companion2._effect = EFFECT_SHADED2;
 	else if ((_companion2._position.y < 168) && (_companion2._effect == 6))
 		_companion2._effect = EFFECT_SHADED;
 
 	if ((_webbster._position.y >= 168) && (_webbster._effect == 1))
-		_webbster._effect = EFFECT_6;
+		_webbster._effect = EFFECT_SHADED2;
 	else if ((_webbster._position.y < 168) && (_webbster._effect == 6))
 		_webbster._effect = EFFECT_SHADED;
 
