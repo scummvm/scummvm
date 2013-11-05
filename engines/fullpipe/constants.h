@@ -108,6 +108,7 @@ namespace Fullpipe {
 #define PIC_SC1_OSK 1018
 #define PIC_SC1_OSK2 2932
 #define PIC_SC3_DOMIN 5182
+#define PIC_SC3_LADDER 1102
 #define PIC_SCD_SEL 734
 #define QU_EGTR_MD2_SHOW 4698
 #define QU_EGTR_MD1_SHOW 4697

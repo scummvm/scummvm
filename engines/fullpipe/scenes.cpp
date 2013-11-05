@@ -1655,6 +1655,56 @@ void sceneHandler03_getCoin(ExCommand *ex) {
 	}
 }
 
+void sceneHandler03_goLadder() {
+	handleObjectInteraction(g_fullpipe->_aniMan, g_fullpipe->_currentScene->getPictureObjectById(PIC_SC3_LADDER, 0), 0);
+}
+
+void sceneHandler03_pushEggStack() {
+	g_vars->swallowedEgg1->_value.intValue = g_vars->swallowedEgg2->_value.intValue;
+	g_vars->swallowedEgg2->_value.intValue = g_vars->swallowedEgg3->_value.intValue;
+	g_vars->swallowedEgg3->_value.intValue = 0;
+
+	if (g_vars->swallowedEgg2->_value.intValue == ANI_INV_EGGBOOT
+		 && g_vars->swallowedEgg1->_value.intValue == ANI_INV_EGGAPL) {
+		g_vars->swallowedEgg1->_value.intValue = ANI_INV_EGGBOOT;
+		g_vars->swallowedEgg2->_value.intValue = ANI_INV_EGGAPL;
+  }
+}
+
+void sceneHandler03_releaseEgg() {
+	g_vars->scene03_eggeater->_flags &= 0xFF7F;
+
+	g_vars->scene03_eggeater->show1(-1, -1, -1, 0);
+}
+
+void sceneHandler03_takeEgg(ExCommand *ex) {
+	MessageQueue *mq = g_fullpipe->_globalMessageQueueList->getMessageQueueById(ex->_parId);
+
+	if (mq && mq->getCount() > 0) {
+		ExCommand *ex0 = mq->getExCommandByIndex(0);
+		ExCommand *ex1 = mq->getExCommandByIndex(1);
+
+		int egg1 = sceneHandler03_swallowedEgg1State();
+
+		if (egg1 && ex0) {
+			ex0->_parentId = egg1;
+			sceneHandler03_pushEggStack();
+		}
+
+		if ( g_vars->swallowedEgg1->_value.intValue == ANI_INV_EGGAPL
+			 && !g_vars->swallowedEgg2->_value.intValue
+			 && !g_vars->swallowedEgg3->_value.intValue
+			 && ex1) {
+
+			if (ex1->_objtype == kObjTypeObjstateCommand) {
+				ObjstateCommand *com = (ObjstateCommand *)ex1;
+
+				com->_value = g_fullpipe->getObjectEnumState(sO_EggGulper, sO_WantsNothing);
+			}
+		}
+	}
+}
+
 int sceneHandler03(ExCommand *ex) {
 #if 0
 	if (ex->_messageKind != 17) {
