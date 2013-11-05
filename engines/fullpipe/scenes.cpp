@@ -1631,7 +1631,7 @@ int sceneHandler03_swallowedEgg1State() {
 	return g_vars->swallowedEgg1->_value.intValue;
 }
 
-void sceneHandler03_getCoin(ExCommand *ex) {
+void sceneHandler03_giveCoin(ExCommand *ex) {
 	MessageQueue *mq = g_fullpipe->_globalMessageQueueList->getMessageQueueById(ex->_parId);
 
 	if (mq && mq->getCount() > 0) {
@@ -1706,20 +1706,19 @@ void sceneHandler03_takeEgg(ExCommand *ex) {
 }
 
 int sceneHandler03(ExCommand *ex) {
-#if 0
 	if (ex->_messageKind != 17) {
 		if (ex->_messageKind == 57)
 			sceneHandler03_giveItem(ex);
 		return 0;
 	}
 
-	switch (ex->messageNum) {
+	switch (ex->_messageNum) {
 	case MSG_LIFT_EXITLIFT:
-		lift_exitSeq(ex);
+		g_fullpipe->lift_exitSeq(ex);
 		break;
 
 	case MSG_LIFT_CLOSEDOOR:
-		lift_closedoorSeq();
+		g_fullpipe->lift_closedoorSeq();
 		break;
 
 	case MSG_SC3_ONTAKECOIN:
@@ -1727,7 +1726,7 @@ int sceneHandler03(ExCommand *ex) {
 		break;
 
 	case MSG_LIFT_STARTEXITQUEUE:
-		sceneHandlers_startExitQueue();
+		g_fullpipe->lift_startExitQueue();
 		break;
 
 	case MSG_SC3_RELEASEEGG:
@@ -1735,7 +1734,7 @@ int sceneHandler03(ExCommand *ex) {
 		break;
 
 	case MSG_LIFT_CLICKBUTTON:
-		lift_animation3();
+		g_fullpipe->lift_animation3();
 		break;
 
 	case MSG_SC3_HIDEDOMINO:
@@ -1747,7 +1746,7 @@ int sceneHandler03(ExCommand *ex) {
 		break;
 
 	case MSG_LIFT_GO:
-		lift_goAnimation();
+		g_fullpipe->lift_goAnimation();
 		break;
 
 	case MSG_SC3_UTRUBACLICK:
@@ -1759,14 +1758,14 @@ int sceneHandler03(ExCommand *ex) {
 		break;
 
 	case 64:
-		sceneHandlers_sub05(ex);
+		g_fullpipe->lift_sub05(ex);
 		break;
 
 	case 93:
 		{
-			StaticANIObject *ani = Scene_getStaticANIObjectAtPos(g_currentScene, ex->msg.sceneClickX, ex->msg.sceneClickY);
+			StaticANIObject *ani = g_fullpipe->_currentScene->getStaticANIObjectAtPos(ex->_sceneClickX, ex->_sceneClickY);
 			if (ani && ani->_id == ANI_LIFTBUTTON) {
-				lift_sub1(ani);
+				g_fullpipe->lift_sub1(ani);
 				ex->_messageKind = 0;
 
 				return 0;
@@ -1792,23 +1791,22 @@ int sceneHandler03(ExCommand *ex) {
 			int res = 0;
 
 			if (g_fullpipe->_aniMan2) {
-				if (g_fullpipe->_aniMan2->_ox < g_fullpipe->_sceneRect.left + 200) {
-					g_fullpipe->_currentScene->bg.x = g_fullpipe->_aniMan2->_ox - g_fullpipe->_sceneRect.left - 300;
-					v7 = g_fullpipe->_aniMan2;
-				}
+				if (g_fullpipe->_aniMan2->_ox < g_fullpipe->_sceneRect.left + 200)
+					g_fullpipe->_currentScene->_x = g_fullpipe->_aniMan2->_ox - g_fullpipe->_sceneRect.left - 300;
 
 				if (g_fullpipe->_aniMan2->_ox > g_fullpipe->_sceneRect.right - 200)
-					g_fullpipe->_currentScene->bg.x = g_fullpipe->_aniMan2->_ox - g_fullpipe->_sceneRect.right + 300;
+					g_fullpipe->_currentScene->_x = g_fullpipe->_aniMan2->_ox - g_fullpipe->_sceneRect.right + 300;
+
 				res = 1;
 			}
+
 			g_fullpipe->_behaviorManager->updateBehaviors();
 
-			startSceneTrack();
+			g_fullpipe->startSceneTrack();
 
 			return res;
 		}
 	}
-#endif
 
 	return 0;
 }
