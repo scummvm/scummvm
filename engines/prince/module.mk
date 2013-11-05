@@ -12,6 +12,7 @@ MODULE_OBJS = \
 	sound.o \
 	flags.o \
 	variatxt.o \
+	cursor.o \
 	prince.o
 
 # This module can be built as a plugin

@@ -8,59 +8,39 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- *
+
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
  */
 
-#ifndef PRINCE_FONT_H
-#define PRINCE_FONT_H
+#ifndef CURSOR_PRINCE_H
+#define CURSOR_PRINCE_H
 
-#include "graphics/font.h"
-
-namespace Graphics {
-	struct Surface;
-}
+#include "graphics/surface.h"
 
 namespace Common {
-	class String;
+	class SeekableReadStream;
 }
 
 namespace Prince {
 
-class Font : public Graphics::Font {
-public:
-	Font();
-	virtual ~Font();
+class Cursor {
+public: 
+	Cursor();
+	~Cursor();
 
 	bool loadFromStream(Common::SeekableReadStream &stream);
-
-    virtual int getFontHeight() const override;
-
-    virtual int getMaxCharWidth() const override;
-
-    virtual int getCharWidth(byte chr) const override;
-
-    virtual void drawChar(Graphics::Surface *dst, byte chr, int x, int y, uint32 color) const override;
-
-	virtual int getKerningOffset(byte left, byte right) const { return -2; }
+	Graphics::Surface *getSurface() const { return _surface; }
 
 private:
-	struct ChrData {
-		byte *_pixels;
-		byte _width;
-		byte _height;
-	};
-
-	ChrData getChrData(byte chr) const;
-
-	byte *_fontData;
+	Graphics::Surface *_surface;
 };
 
 }

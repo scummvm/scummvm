@@ -52,34 +52,11 @@
 #include "prince/sound.h"
 #include "prince/variatxt.h"
 #include "prince/flags.h"
-
-#include "video/flic_decoder.h"
+#include "prince/font.h"
+#include "prince/mhwanh.h"
+#include "prince/cursor.h"
 
 namespace Prince {
-
-Graphics::Surface *loadCursor(const char *curName)
-{
-	Common::SeekableReadStream *curStream = SearchMan.createReadStreamForMember(curName);
-	if (!curStream) {
-		error("Can't load %s", curName);
-		return NULL;
-	}
-
-	curStream->skip(4);
-	uint16 w = curStream->readUint16LE();
-	uint16 h = curStream->readUint16LE();
-
-	debug("Loading cursor %s, w %d, h %d", curName, w, h);
-
-	Graphics::Surface *curSurface = new Graphics::Surface();
-	curSurface->create(w, h, Graphics::PixelFormat::createFormatCLUT8());
-	for (int ih = 0; ih < h; ++ih) {
-		curStream->read(curSurface->getBasePtr(0, ih), w);
-	}
-
-	delete curStream;
-	return curSurface;
-}
 
 void PrinceEngine::debugEngine(const char *s, ...) {
 	char buf[STRINGBUFLEN];
@@ -92,11 +69,11 @@ void PrinceEngine::debugEngine(const char *s, ...) {
 	debug("Prince::Engine frame %08ld %s", _frameNr, buf);
 }
 
-
 PrinceEngine::PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc) : 
 	Engine(syst), _gameDescription(gameDesc), _graph(NULL), _script(NULL),
 	_locationNr(0), _debugger(NULL), _objectList(NULL), _mobList(NULL), _midiPlayer(NULL),
-	_cameraX(0), _newCameraX(0), _frameNr(0) {
+	_cameraX(0), _newCameraX(0), _frameNr(0), _cursor1(NULL), _cursor2(NULL), _font(NULL),
+	_walizkaBmp(NULL), _roomBmp(NULL) {
 
 	// Debug/console setup
 	DebugMan.addDebugChannel(DebugChannel::kScript, "script", "Prince Script debug channel");
@@ -105,7 +82,6 @@ PrinceEngine::PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc)
 	DebugMan.enableDebugChannel("script");
 
 	gDebugLevel = 10;
-	
 
 	_rnd = new Common::RandomSource("prince");
 	_debugger = new Debugger(this);
@@ -118,14 +94,48 @@ PrinceEngine::~PrinceEngine() {
 
 	delete _rnd;
 	delete _debugger;
-	delete _cur1;
-	delete _cur2;
+	delete _cursor1;
+	delete _cursor2;
 	delete _midiPlayer;
+	delete _script;
+	delete _font;
+	delete _roomBmp;
+	delete _walizkaBmp;
 }
 
 GUI::Debugger *PrinceEngine::getDebugger() {
 	return _debugger;
 }
+
+template <typename T>
+bool loadFromStream(T &resource, Common::SeekableReadStream &stream) {
+	return resource.loadFromStream(stream);
+}
+
+template <>
+bool loadFromStream<MhwanhDecoder>(MhwanhDecoder &image, Common::SeekableReadStream &stream) {
+	return image.loadStream(stream);
+}
+
+template <>
+bool loadFromStream<Graphics::BitmapDecoder>(Graphics::BitmapDecoder &image, Common::SeekableReadStream &stream) {
+	return image.loadStream(stream);
+}
+
+template<typename T>
+bool loadResource(T *resource, const char *resourceName) {
+	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(resourceName);
+	if (!stream) {
+		error("Can't load %s", resourceName);
+		return NULL;
+	}
+
+	bool ret = loadFromStream(*resource, *stream);
+
+	delete stream;
+
+	return ret;
+} 
 
 Common::Error PrinceEngine::run() {
 	_graph = new GraphicsMan(this);
@@ -136,45 +146,23 @@ Common::Error PrinceEngine::run() {
 
 	SearchMan.addSubDirectoryMatching(gameDataDir, "all", 0, 2);
 	SearchMan.addSubDirectoryMatching(gameDataDir, "data/voices/output", 0, 2);
+	 
+	_font = new Font();
+	loadResource(_font, "font1.raw");
+	_walizkaBmp = new MhwanhDecoder();
+	loadResource(_walizkaBmp, "walizka");
 
-	Common::SeekableReadStream *font1stream = SearchMan.createReadStreamForMember("font1.raw");
-	if (!font1stream) 
-		return Common::kPathNotFile;
-
-	if (_font.load(*font1stream)) {
-		_font.getCharWidth(103);
-	}
-	delete font1stream;
-
-	Common::SeekableReadStream * walizka = SearchMan.createReadStreamForMember("walizka");
-	if (!walizka)
-		return Common::kPathDoesNotExist;
-
-	debugEngine("Loading walizka");
-	if (!_walizkaBmp.loadStream(*walizka)) {
-		return Common::kPathDoesNotExist;
-	}
-	   
-	Common::SeekableReadStream * skryptStream = SearchMan.createReadStreamForMember("skrypt.dat"); 
-	if (!skryptStream)
-		return Common::kPathNotFile;
-
-	debugEngine("Loading skrypt");
 	_script = new Script(this);
-	_script->loadFromStream(*skryptStream);
-
-	delete skryptStream;
-
-	Common::SeekableReadStream *variaTxtStream = SearchMan.createReadStreamForMember("variatxt.dat");
-
-	if (!variaTxtStream) {
-		error("Can't load variatxt.dat");
-		return Common::kPathNotFile;
-	}
+	loadResource(_script, "skrypt.dat");
 
 	_variaTxt = new VariaTxt();
-	_variaTxt->loadFromStream(*variaTxtStream);
-	delete variaTxtStream;
+	loadResource(_variaTxt, "variatxt.dat");
+	
+	_cursor1 = new Cursor();
+	loadResource(_cursor1, "mouse1.cur");
+
+	_cursor2 = new Cursor();
+	loadResource(_cursor2, "mouse2.cur");
 
 	Common::SeekableReadStream *talkTxtStream = SearchMan.createReadStreamForMember("talktxt.dat");
 	if (!talkTxtStream) {
@@ -188,22 +176,17 @@ Common::Error PrinceEngine::run() {
 
 	delete talkTxtStream;
 
-
-	_cur1 = loadCursor("mouse1.cur");
-	_cur2 = loadCursor("mouse2.cur");
-#if 0
-	Common::SeekableReadStream *logoStream = SearchMan.createReadStreamForMember("logo.raw"); 
-	if (logoStream)
+	MhwanhDecoder *logo = new MhwanhDecoder();
+	loadResource(logo, "logo.raw");
+	if (logo)
 	{
-		MhwanhDecoder logo;
-		logo.loadStream(*logoStream);
-		_graph->setPalette(logo.getPalette());
-		_graph->draw(0, 0, logo.getSurface());
+		_graph->setPalette(logo->getPalette());
+		_graph->draw(0, 0, logo->getSurface());
 		_graph->update();
 		_system->delayMillis(700);
 	}
-	delete logoStream;
-#endif
+	delete logo;
+
 	mainLoop();
 
 	return Common::kNoError;
@@ -251,47 +234,21 @@ bool PrinceEngine::loadLocation(uint16 locationNr) {
 	debugEngine("loadLocation %s", locationNrStr.c_str());
 	SearchMan.addSubDirectoryMatching(gameDataDir, locationNrStr, 0, 2);
 
+	delete _roomBmp;
 	// load location background
-	Common::SeekableReadStream *room = SearchMan.createReadStreamForMember("room");
-
-	if (!room) {
-		error("Can't load room bitmap");
-		return false;
+	_roomBmp = new Graphics::BitmapDecoder();
+	loadResource(_roomBmp, "room");
+	if (_roomBmp->getSurface()) {
+		_sceneWidth = _roomBmp->getSurface()->w;
 	}
-
-	if(_roomBmp.loadStream(*room)) {
-		debugEngine("Room bitmap loaded");
-		_sceneWidth = _roomBmp.getSurface()->w;
-	}
-
-	delete room;
 
 	delete _mobList;
-	_mobList = NULL;
-
-	Common::SeekableReadStream *mobListStream = SearchMan.createReadStreamForMember("mob.lst");
-	if (!mobListStream) {
-		error("Can't read mob.lst");
-		return false;
-	}
-
 	_mobList = new MobList();
-	_mobList->loadFromStream(*mobListStream);
-
-	delete mobListStream;
+	loadResource(_mobList, "mob.lst");
 
 	delete _objectList;
-	_objectList = NULL;
-
-	Common::SeekableReadStream *objListStream = SearchMan.createReadStreamForMember("obj.lst");
-	if (!objListStream) {
-		error("Can't read obj.lst");
-		return false;
-	}
-
 	_objectList = new ObjectList();
-	_objectList->loadFromStream(*objListStream);
-	delete objListStream;
+	loadResource(_objectList, "obj.lst");
 
 	const char *musName = MusicPlayer::_musTable[MusicPlayer::_musRoomTable[locationNr]];
 	_midiPlayer->loadMidi(musName);
@@ -311,16 +268,16 @@ void PrinceEngine::changeCursor(uint16 curId)
 			CursorMan.showMouse(false);
 			return;
 		case 1:
-			curSurface = _cur1;
+			curSurface = _cursor1->getSurface();
 			break;
 		case 2:
-			curSurface = _cur2;
+			curSurface = _cursor2->getSurface();
 			hotspotX = curSurface->w >> 1;
 			hotspotY = curSurface->h >> 1;
 			break;
 	}
 
-	CursorMan.replaceCursorPalette(_roomBmp.getPalette(), 0, 255);
+	CursorMan.replaceCursorPalette(_roomBmp->getPalette(), 0, 255);
 	CursorMan.replaceCursor(
 		curSurface->getBasePtr(0, 0), 
 		curSurface->w, curSurface->h, 
@@ -418,7 +375,7 @@ void PrinceEngine::hotspot() {
 		if (it->_rect.contains(mousePosCamera)) {
 			uint16 textW = 0;
 			for (uint16 i = 0; i < it->_name.size(); ++i)
-				textW += _font.getCharWidth(it->_name[i]);
+				textW += _font->getCharWidth(it->_name[i]);
 
 			uint16 x = mousepos.x - textW/2;
 			if (x > _graph->_frontScreen->w)
@@ -427,11 +384,11 @@ void PrinceEngine::hotspot() {
 			if (x + textW > _graph->_frontScreen->w)
 				x = _graph->_frontScreen->w - textW;
 
-			_font.drawString(
+			_font->drawString(
 				_graph->_frontScreen, 
 				it->_name, 
 				x,
-				mousepos.y - _font.getFontHeight(),
+				mousepos.y - _font->getFontHeight(),
 				_graph->_frontScreen->w,
 				216
 			);
@@ -454,7 +411,7 @@ void PrinceEngine::printAt(uint32 slot, uint8 color, const char *s, uint16 x, ui
 uint32 PrinceEngine::getTextWidth(const char *s) {
     uint16 textW = 0;
 	while (*s) {
-        textW += _font.getCharWidth(*s) + _font.getKerningOffset(0, 0);
+        textW += _font->getCharWidth(*s) + _font->getKerningOffset(0, 0);
 		++s;
     }
     return textW;
@@ -467,14 +424,14 @@ void PrinceEngine::showTexts() {
 			continue;
 
 		Common::Array<Common::String> lines;
-		_font.wordWrapText(text._str, _graph->_frontScreen->w, lines);
+		_font->wordWrapText(text._str, _graph->_frontScreen->w, lines);
 
 		for (uint8 i = 0; i < lines.size(); ++i) {
-			_font.drawString(
+			_font->drawString(
 				_graph->_frontScreen,
 				lines[i],
 				text._x - getTextWidth(lines[i].c_str())/2,
-				text._y - (lines.size() - i) * (_font.getFontHeight()),
+				text._y - (lines.size() - i) * (_font->getFontHeight()),
 				_graph->_frontScreen->w,
 				text._color
 			);
@@ -488,9 +445,9 @@ void PrinceEngine::showTexts() {
 }
 
 void PrinceEngine::drawScreen() {
-	const Graphics::Surface *roomSurface = _roomBmp.getSurface();	
+	const Graphics::Surface *roomSurface = _roomBmp->getSurface();	
 	if (roomSurface) {
-		_graph->setPalette(_roomBmp.getPalette());
+		_graph->setPalette(_roomBmp->getPalette());
 		const Graphics::Surface visiblePart = roomSurface->getSubArea(Common::Rect(_cameraX, 0, roomSurface->w, roomSurface->h));
 		_graph->draw(0, 0, &visiblePart);
 	}

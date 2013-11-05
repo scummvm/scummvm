@@ -42,9 +42,6 @@
 
 #include "video/flic_decoder.h"
 
-#include "prince/font.h"
-#include "prince/mhwanh.h"
-
 namespace Prince {
 
 struct PrinceGameDescription;
@@ -57,6 +54,9 @@ class ObjectList;
 class MobList;
 class MusicPlayer;
 class VariaTxt;
+class Cursor;
+class MhwanhDecoder;
+class Font;
 
 struct Text {
 	const char *_str;
@@ -124,21 +124,21 @@ private:
 	uint32 getTextWidth(const char *s);
 	void debugEngine(const char *s, ...);
 
-	Common::RandomSource *_rnd;
-	Graphics::BitmapDecoder _roomBmp;
 	uint16 _locationNr;
-	MhwanhDecoder _walizkaBmp;
 
-	Graphics::Surface *_cur1;
-	Graphics::Surface *_cur2;
-
+	Common::RandomSource *_rnd;
+	Graphics::BitmapDecoder *_roomBmp;
+	Cursor *_cursor1;
+	Cursor *_cursor2;
+	MhwanhDecoder *_walizkaBmp;
 	Debugger *_debugger;
 	GraphicsMan *_graph;
 	Script *_script;
-	Font _font;
+	Font *_font;
 	ObjectList *_objectList;
 	MobList *_mobList;
 	MusicPlayer *_midiPlayer;
+
 	uint16 _cameraX;
 	uint16 _newCameraX;
 	uint16 _sceneWidth;

@@ -38,7 +38,7 @@ Font::~Font() {
 	delete [] _fontData;
 }
 
-bool Font::load(Common::SeekableReadStream &stream) {
+bool Font::loadFromStream(Common::SeekableReadStream &stream) {
 	stream.seek(0);
 	_fontData = new byte[stream.size()];
 	stream.read(_fontData, stream.size());
