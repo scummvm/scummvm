@@ -255,7 +255,7 @@ bool PartParticle::persist(BasePersistenceManager *persistMgr) {
 		persistMgr->transfer(TMEMBER(filename));
 	} else {
 		char *filename;
-		persistMgr->transfer(TMEMBER(filename));
+		persistMgr->transferCharPtr(TMEMBER(filename));
 		SystemClassRegistry::getInstance()->_disabled = true;
 		setSprite(filename);
 		SystemClassRegistry::getInstance()->_disabled = false;

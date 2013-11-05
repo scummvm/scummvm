@@ -766,7 +766,7 @@ bool SXFile::persist(BasePersistenceManager *persistMgr) {
 
 	BaseScriptable::persist(persistMgr);
 
-	persistMgr->transfer(TMEMBER(_filename));
+	persistMgr->transferCharPtr(TMEMBER(_filename));
 	persistMgr->transferSint32(TMEMBER(_mode));
 	persistMgr->transferBool(TMEMBER(_textMode));
 

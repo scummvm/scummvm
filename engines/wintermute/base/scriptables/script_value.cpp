@@ -825,7 +825,7 @@ bool ScValue::persist(BasePersistenceManager *persistMgr) {
 	}
 
 	persistMgr->transferPtr(TMEMBER_PTR(_valRef));
-	persistMgr->transfer(TMEMBER(_valString));
+	persistMgr->transferCharPtr(TMEMBER(_valString));
 
 	if (!persistMgr->getIsSaving() && !persistMgr->checkVersion(1,2,2)) {
 		// Savegames prior to 1.2.2 stored empty strings as NULL.

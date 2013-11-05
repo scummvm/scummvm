@@ -1417,8 +1417,8 @@ bool AdGame::persist(BasePersistenceManager *persistMgr) {
 
 	_objects.persist(persistMgr);
 
-	persistMgr->transfer(TMEMBER(_prevSceneName));
-	persistMgr->transfer(TMEMBER(_prevSceneFilename));
+	persistMgr->transferCharPtr(TMEMBER(_prevSceneName));
+	persistMgr->transferCharPtr(TMEMBER(_prevSceneFilename));
 
 	persistMgr->transferPtr(TMEMBER_PTR(_responseBox));
 	_responsesBranch.persist(persistMgr);
@@ -1426,7 +1426,7 @@ bool AdGame::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferPtr(TMEMBER_PTR(_scene));
 	_sceneStates.persist(persistMgr);
 	persistMgr->transferBool(TMEMBER(_scheduledFadeIn));
-	persistMgr->transfer(TMEMBER(_scheduledScene));
+	persistMgr->transferCharPtr(TMEMBER(_scheduledScene));
 	persistMgr->transferPtr(TMEMBER_PTR(_selectedItem));
 	persistMgr->transferSint32(TMEMBER_INT(_talkSkipButton));
 
@@ -1435,14 +1435,14 @@ bool AdGame::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferPtr(TMEMBER_PTR(_sceneViewport));
 	persistMgr->transferSint32(TMEMBER_INT(_stateEx));
 	persistMgr->transferBool(TMEMBER(_initialScene));
-	persistMgr->transfer(TMEMBER(_debugStartupScene));
+	persistMgr->transferCharPtr(TMEMBER(_debugStartupScene));
 
 	persistMgr->transferPtr(TMEMBER_PTR(_invObject));
 	persistMgr->transferPtr(TMEMBER_PTR(_inventoryOwner));
 	persistMgr->transferBool(TMEMBER(_tempDisableSaveState));
 	_items.persist(persistMgr);
 
-	persistMgr->transfer(TMEMBER(_itemsFile));
+	persistMgr->transferCharPtr(TMEMBER(_itemsFile));
 
 	_speechDirs.persist(persistMgr);
 	persistMgr->transferBool(TMEMBER(_smartItemCursor));
@@ -1451,7 +1451,7 @@ bool AdGame::persist(BasePersistenceManager *persistMgr) {
 		_initialScene = false;
 	}
 
-	persistMgr->transfer(TMEMBER(_startupScene));
+	persistMgr->transferCharPtr(TMEMBER(_startupScene));
 
 
 	return STATUS_OK;

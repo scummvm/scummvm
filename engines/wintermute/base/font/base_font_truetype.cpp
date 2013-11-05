@@ -525,7 +525,7 @@ bool BaseFontTT::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferBool(TMEMBER(_isUnderline));
 	persistMgr->transferBool(TMEMBER(_isStriked));
 	persistMgr->transferSint32(TMEMBER(_fontHeight));
-	persistMgr->transfer(TMEMBER(_fontFile));
+	persistMgr->transferCharPtr(TMEMBER(_fontFile));
 
 
 	// persist layers

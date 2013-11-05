@@ -793,7 +793,7 @@ bool AdItem::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferSint32(TMEMBER(_amountOffsetX));
 	persistMgr->transferSint32(TMEMBER(_amountOffsetY));
 	persistMgr->transferSint32(TMEMBER_INT(_amountAlign));
-	persistMgr->transfer(TMEMBER(_amountString));
+	persistMgr->transferCharPtr(TMEMBER(_amountString));
 
 	return STATUS_OK;
 }

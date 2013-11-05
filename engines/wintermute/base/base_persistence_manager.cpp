@@ -682,7 +682,7 @@ bool BasePersistenceManager::transferDouble(const char *name, double *val) {
 
 //////////////////////////////////////////////////////////////////////////
 // char*
-bool BasePersistenceManager::transfer(const char *name, char **val) {
+bool BasePersistenceManager::transferCharPtr(const char *name, char **val) {
 	if (_saving) {
 		putString(*val);
 		return STATUS_OK;

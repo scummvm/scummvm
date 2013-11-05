@@ -97,14 +97,14 @@ class BaseArray<char *> : public BaseArrayBase<char *> {
 			Common::Array<char *>::const_iterator it = Common::Array<char *>::begin();
 			for (; it != Common::Array<char *>::end(); ++it) {
 				char * obj = *it;
-				persistMgr->transfer("", &obj);
+				persistMgr->transferCharPtr("", &obj);
 			}
 		} else {
 			Common::Array<char *>::clear();
 			persistMgr->transferSint32("ArraySize", &j);
 			for (int i = 0; i < j; i++) {
 				char * obj = nullptr;
-				persistMgr->transfer("", &obj);
+				persistMgr->transferCharPtr("", &obj);
 				add(obj);
 			}
 		}

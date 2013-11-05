@@ -1092,7 +1092,7 @@ void AdEntity::updatePosition() {
 bool AdEntity::persist(BasePersistenceManager *persistMgr) {
 	AdTalkHolder::persist(persistMgr);
 
-	persistMgr->transfer(TMEMBER(_item));
+	persistMgr->transferCharPtr(TMEMBER(_item));
 	persistMgr->transferPtr(TMEMBER_PTR(_region));
 	//persistMgr->transfer(TMEMBER(_sprite));
 	persistMgr->transferSint32(TMEMBER_INT(_subtype));

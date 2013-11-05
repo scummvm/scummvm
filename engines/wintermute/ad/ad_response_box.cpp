@@ -584,8 +584,8 @@ bool AdResponseBox::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferPtr(TMEMBER_PTR(_font));
 	persistMgr->transferPtr(TMEMBER_PTR(_fontHover));
 	persistMgr->transferBool(TMEMBER(_horizontal));
-	persistMgr->transfer(TMEMBER(_lastResponseText));
-	persistMgr->transfer(TMEMBER(_lastResponseTextOrig));
+	persistMgr->transferCharPtr(TMEMBER(_lastResponseText));
+	persistMgr->transferCharPtr(TMEMBER(_lastResponseTextOrig));
 	_respButtons.persist(persistMgr);
 	persistMgr->transferRect32(TMEMBER(_responseArea));
 	_responses.persist(persistMgr);

@@ -953,7 +953,7 @@ bool BaseObject::persist(BasePersistenceManager *persistMgr) {
 	BaseScriptHolder::persist(persistMgr);
 
 	for (int i = 0; i < 7; i++) {
-		persistMgr->transfer(TMEMBER(_caption[i]));
+		persistMgr->transferCharPtr(TMEMBER(_caption[i]));
 	}
 	persistMgr->transferPtr(TMEMBER_PTR(_activeCursor));
 	persistMgr->transferUint32(TMEMBER(_alphaColor));
@@ -979,7 +979,7 @@ bool BaseObject::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferBool(TMEMBER(_rectSet));
 	persistMgr->transferBool(TMEMBER(_registrable));
 	persistMgr->transferBool(TMEMBER(_shadowable));
-	persistMgr->transfer(TMEMBER(_soundEvent));
+	persistMgr->transferCharPtr(TMEMBER(_soundEvent));
 	persistMgr->transferBool(TMEMBER(_zoomable));
 
 	persistMgr->transferFloat(TMEMBER(_scaleX));

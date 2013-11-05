@@ -1043,7 +1043,7 @@ bool AdObject::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferSint32(TMEMBER_INT(_state));
 	persistMgr->transferPtr(TMEMBER_PTR(_animSprite));
 	persistMgr->transferBool(TMEMBER(_sceneIndependent));
-	persistMgr->transfer(TMEMBER(_forcedTalkAnimName));
+	persistMgr->transferCharPtr(TMEMBER(_forcedTalkAnimName));
 	persistMgr->transferBool(TMEMBER(_forcedTalkAnimUsed));
 	persistMgr->transferPtr(TMEMBER_PTR(_tempSprite2));
 	persistMgr->transferSint32(TMEMBER_INT(_type));

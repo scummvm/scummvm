@@ -280,14 +280,14 @@ bool BaseScriptHolder::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 bool BaseScriptHolder::persist(BasePersistenceManager *persistMgr) {
 	BaseScriptable::persist(persistMgr);
 
-	persistMgr->transfer(TMEMBER(_filename));
+	persistMgr->transferCharPtr(TMEMBER(_filename));
 	persistMgr->transferBool(TMEMBER(_freezable));
 	if (persistMgr->getIsSaving()) {
 		const char *name = getName();
 		persistMgr->transfer(TMEMBER(name));
 	} else {
 		char *name;
-		persistMgr->transfer(TMEMBER(name));
+		persistMgr->transferCharPtr(TMEMBER(name));
 		setName(name);
 		delete[] name;
 	}

@@ -96,12 +96,12 @@ bool AdNodeState::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferPtr(TMEMBER_PTR(_gameRef));
 
 	persistMgr->transferBool(TMEMBER(_active));
-	persistMgr->transfer(TMEMBER(_name));
-	persistMgr->transfer(TMEMBER(_filename));
-	persistMgr->transfer(TMEMBER(_cursor));
+	persistMgr->transferCharPtr(TMEMBER(_name));
+	persistMgr->transferCharPtr(TMEMBER(_filename));
+	persistMgr->transferCharPtr(TMEMBER(_cursor));
 	persistMgr->transferUint32(TMEMBER(_alphaColor));
 	for (int i = 0; i < 7; i++) {
-		persistMgr->transfer(TMEMBER(_caption[i]));
+		persistMgr->transferCharPtr(TMEMBER(_caption[i]));
 	}
 
 	return STATUS_OK;

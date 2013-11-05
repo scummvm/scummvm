@@ -635,7 +635,7 @@ bool UIObject::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferBool(TMEMBER(_parentNotify));
 	persistMgr->transferBool(TMEMBER(_sharedFonts));
 	persistMgr->transferBool(TMEMBER(_sharedImages));
-	persistMgr->transfer(TMEMBER(_text));
+	persistMgr->transferCharPtr(TMEMBER(_text));
 	persistMgr->transferSint32(TMEMBER_INT(_type));
 	persistMgr->transferBool(TMEMBER(_visible));
 	persistMgr->transferSint32(TMEMBER(_width));

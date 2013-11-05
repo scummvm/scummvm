@@ -527,7 +527,7 @@ bool BaseSprite::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferSint32(TMEMBER(_currentFrame));
 	persistMgr->transferBool(TMEMBER(_editorAllFrames));
 	persistMgr->transferSint32(TMEMBER(_editorBgAlpha));
-	persistMgr->transfer(TMEMBER(_editorBgFile));
+	persistMgr->transferCharPtr(TMEMBER(_editorBgFile));
 	persistMgr->transferSint32(TMEMBER(_editorBgOffsetX));
 	persistMgr->transferSint32(TMEMBER(_editorBgOffsetY));
 	persistMgr->transferBool(TMEMBER(_editorMuted));

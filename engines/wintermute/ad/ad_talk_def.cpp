@@ -209,9 +209,9 @@ bool AdTalkDef::persist(BasePersistenceManager *persistMgr) {
 	BaseObject::persist(persistMgr);
 
 	persistMgr->transferPtr(TMEMBER_PTR(_defaultSprite));
-	persistMgr->transfer(TMEMBER(_defaultSpriteFilename));
+	persistMgr->transferCharPtr(TMEMBER(_defaultSpriteFilename));
 	persistMgr->transferPtr(TMEMBER_PTR(_defaultSpriteSet));
-	persistMgr->transfer(TMEMBER(_defaultSpriteSetFilename));
+	persistMgr->transferCharPtr(TMEMBER(_defaultSpriteSetFilename));
 
 	_nodes.persist(persistMgr);
 

@@ -1210,7 +1210,7 @@ bool PartEmitter::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferSint32(TMEMBER_INT(_maxBatches));
 	persistMgr->transferSint32(TMEMBER_INT(_batchesGenerated));
 
-	persistMgr->transfer(TMEMBER(_emitEvent));
+	persistMgr->transferCharPtr(TMEMBER(_emitEvent));
 	persistMgr->transferPtr(TMEMBER_PTR(_owner));
 
 

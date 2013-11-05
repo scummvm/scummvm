@@ -1272,7 +1272,7 @@ bool ScScript::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferPtr(TMEMBER_PTR(_callStack));
 	persistMgr->transferSint32(TMEMBER(_currentLine));
 	persistMgr->transferPtr(TMEMBER_PTR(_engine));
-	persistMgr->transfer(TMEMBER(_filename));
+	persistMgr->transferCharPtr(TMEMBER(_filename));
 	persistMgr->transferBool(TMEMBER(_freezable));
 	persistMgr->transferPtr(TMEMBER_PTR(_globals));
 	persistMgr->transferUint32(TMEMBER(_iP));
@@ -1284,7 +1284,7 @@ bool ScScript::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferPtr(TMEMBER_PTR(_owner));
 	persistMgr->transferPtr(TMEMBER_PTR(_reg1));
 	persistMgr->transferBool(TMEMBER(_thread));
-	persistMgr->transfer(TMEMBER(_threadEvent));
+	persistMgr->transferCharPtr(TMEMBER(_threadEvent));
 	persistMgr->transferPtr(TMEMBER_PTR(_thisStack));
 	persistMgr->transferUint32(TMEMBER(_timeSlice));
 	persistMgr->transferPtr(TMEMBER_PTR(_waitObject));

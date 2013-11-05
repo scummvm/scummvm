@@ -394,7 +394,7 @@ bool BaseSubFrame::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferRect32(TMEMBER(_rect));
 	persistMgr->transferBool(TMEMBER(_wantsDefaultRect));
 
-	persistMgr->transfer(TMEMBER(_surfaceFilename));
+	persistMgr->transferCharPtr(TMEMBER(_surfaceFilename));
 	persistMgr->transferBool(TMEMBER(_cKDefault));
 	persistMgr->transferByte(TMEMBER(_cKRed));
 	persistMgr->transferByte(TMEMBER(_cKGreen));
