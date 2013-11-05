@@ -1600,6 +1600,33 @@ int scene03_updateCursor() {
 	return g_fullpipe->_cursorId;
 }
 
+void sceneHandler03_eaterFat() {
+	g_vars->scene03_eggeater->_flags &= 0xFF7F;
+
+	g_vars->scene03_eggeater->startAnim(MV_EGTR_FATASK, 0, -1);
+}
+
+void sceneHandler03_swallowEgg(int item) {
+	if (!g_vars->swallowedEgg1->_value.intValue) {
+		g_vars->swallowedEgg1->_value.intValue = item;
+	} else if (!g_vars->swallowedEgg2->_value.intValue) {
+		g_vars->swallowedEgg2->_value.intValue = item;
+	} else if (!g_vars->swallowedEgg3->_value.intValue) {
+		g_vars->swallowedEgg3->_value.intValue = item;
+
+		g_fullpipe->setObjectState(sO_EggGulperGaveCoin, g_fullpipe->getObjectEnumState(sO_EggGulperGaveCoin, sO_Yes));
+
+		scene03_setEaterState();
+	}
+}
+
+void sceneHandler03_giveItem(ExCommand *ex) {
+	if (ex->_parentId == ANI_INV_EGGAPL || ex->_parentId == ANI_INV_EGGDOM ||
+		ex->_parentId == ANI_INV_EGGCOIN || ex->_parentId == ANI_INV_EGGBOOT ||
+		ex->_parentId == ANI_INV_EGGGLS)
+		sceneHandler03_swallowEgg(ex->_parentId);
+}
+
 int sceneHandler03(ExCommand *ex) {
 #if 0
 	if (ex->_messageKind != 17) {
