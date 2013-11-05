@@ -5208,7 +5208,7 @@ void Scene3800::enterArea() {
 		_balloonQuinn.fixPriority(10);
 		_balloonQuinn.changeZoom(-1);
 		_balloonQuinn.setVisage(1110);
-		_balloonQuinn._effect = EFFECT_5;
+		_balloonQuinn._effect = EFFECT_SHADOW;
 		_balloonQuinn._shadowMap = this->_shadowPaletteMap;
 		R2_GLOBALS._player._linkedActor = &_balloonQuinn;
 		switch (R2_GLOBALS._sceneManager._previousScene) {
@@ -5518,7 +5518,7 @@ void Scene3900::postInit(SceneObjectList *OwnerList) {
 	_linkedQuinn.fixPriority(10);
 	_linkedQuinn.changeZoom(-1);
 	_linkedQuinn.setVisage(1110);
-	_linkedQuinn._effect = EFFECT_5;
+	_linkedQuinn._effect = EFFECT_SHADOW;
 	_linkedQuinn._shadowMap = _shadowPaletteMap;
 	R2_GLOBALS._player._linkedActor = &_linkedQuinn;
 

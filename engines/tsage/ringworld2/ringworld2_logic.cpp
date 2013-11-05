@@ -1329,7 +1329,7 @@ GfxSurface SceneActor::getFrame() {
 	// TODO: Proper effects handling
 	switch (_effect) {
 	case EFFECT_NONE:
-	case EFFECT_5:
+	case EFFECT_SHADOW:
 		// TODO: Figure out purpose of setting image flags to 64, and getting
 		// scene priorities -1 or _shade
 		break;
