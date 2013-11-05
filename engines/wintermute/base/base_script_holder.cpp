@@ -284,7 +284,7 @@ bool BaseScriptHolder::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferBool(TMEMBER(_freezable));
 	if (persistMgr->getIsSaving()) {
 		const char *name = getName();
-		persistMgr->transfer(TMEMBER(name));
+		persistMgr->transferConstChar(TMEMBER(name));
 	} else {
 		char *name;
 		persistMgr->transferCharPtr(TMEMBER(name));

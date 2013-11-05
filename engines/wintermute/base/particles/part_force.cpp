@@ -49,10 +49,10 @@ PartForce::~PartForce(void) {
 bool PartForce::persist(BasePersistenceManager *persistMgr) {
 	if (persistMgr->getIsSaving()) {
 		const char *name = getName();
-		persistMgr->transfer(TMEMBER(name));
+		persistMgr->transferConstChar(TMEMBER(name));
 	} else {
 		const char *name;
-		persistMgr->transfer(TMEMBER(name));
+		persistMgr->transferConstChar(TMEMBER(name));
 		setName(name);
 	}
 	persistMgr->transferVector2(TMEMBER(_pos));

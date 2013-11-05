@@ -807,7 +807,7 @@ bool ScValue::persist(BasePersistenceManager *persistMgr) {
 		_valIter = _valObject.begin();
 		while (_valIter != _valObject.end()) {
 			str = _valIter->_key.c_str();
-			persistMgr->transfer("", &str);
+			persistMgr->transferConstChar("", &str);
 			persistMgr->transferPtr("", &_valIter->_value);
 
 			_valIter++;
@@ -816,7 +816,7 @@ bool ScValue::persist(BasePersistenceManager *persistMgr) {
 		ScValue *val = nullptr;
 		persistMgr->transferSint32("", &size);
 		for (int i = 0; i < size; i++) {
-			persistMgr->transfer("", &str);
+			persistMgr->transferConstChar("", &str);
 			persistMgr->transferPtr("", &val);
 
 			_valObject[str] = val;

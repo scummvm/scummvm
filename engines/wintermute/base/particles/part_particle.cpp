@@ -252,7 +252,7 @@ bool PartParticle::persist(BasePersistenceManager *persistMgr) {
 
 	if (persistMgr->getIsSaving()) {
 		const char *filename = _sprite->getFilename();
-		persistMgr->transfer(TMEMBER(filename));
+		persistMgr->transferConstChar(TMEMBER(filename));
 	} else {
 		char *filename;
 		persistMgr->transferCharPtr(TMEMBER(filename));

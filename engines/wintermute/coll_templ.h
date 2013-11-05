@@ -123,14 +123,14 @@ public:
 			Common::Array<const char *>::const_iterator it = Common::Array<const char *>::begin();
 			for (; it != Common::Array<const char *>::end(); ++it) {
 				const char * obj = *it;
-				persistMgr->transfer("", &obj);
+				persistMgr->transferConstChar("", &obj);
 			}
 		} else {
 			Common::Array<const char *>::clear();
 			persistMgr->transferSint32("ArraySize", &j);
 			for (int i = 0; i < j; i++) {
 				const char * obj = nullptr;
-				persistMgr->transfer("", &obj);
+				persistMgr->transferConstChar("", &obj);
 				add(obj);
 			}
 		}
