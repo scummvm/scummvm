@@ -47,8 +47,12 @@ Script::~Script() {
     delete[] _code;
 }
 
-void Script::setFlag(Flags::Id flagId, uint16 value) {
-	_flags[flagId - 0x8000] = value;
+void Script::setFlagValue(Flags::Id flagId, uint16 value) {
+	_flags[(uint16)flagId - FLAG_MASK] = value;
+}
+
+uint16 Script::getFlagValue(Flags::Id flagId) {
+	return _flags[(uint16)flagId - FLAG_MASK];
 }
 
 bool Script::loadFromStream(Common::SeekableReadStream &stream) {
@@ -83,12 +87,10 @@ void Script::debugScript(const char *s, ...) {
 }
 
 void Script::step() {
-#if 1
 	if (_bgOpcodePC) {
 		_mode = "bg";
 		_bgOpcodePC = step(_bgOpcodePC);
 	}
-#endif
 	if (_fgOpcodePC) {
 		_mode = "fg";
 		_fgOpcodePC = step(_fgOpcodePC);
@@ -145,6 +147,14 @@ uint16 Script::readScript16bits() {
     uint8 lower = readScript8bits();
     uint8 upper = readScript8bits();
     return lower | (upper << 8);
+}
+
+uint16 Script::readScriptValue() {
+	uint16 value = readScript16bits();
+	if (value & FLAG_MASK) {
+		value = _flags[value - FLAG_MASK];
+	}
+	return value;
 }
 
 uint32 Script::readScript32bits() {
@@ -359,31 +369,20 @@ void Script::O_CHANGEANIMTYPE() {
 }
 
 void Script::O__SETFLAG() {
-	uint16 flagId = readScript16bits();
-	uint16 value = readScript16bits();
-
-	if (value & 0x8000) {
-		value = _flags[value - 0x8000];
-	}
+	Flags::Id flagId = readScriptFlagId();
+	uint16 value = readScriptValue();
 
 	debugScript("O__SETFLAG 0x%04X (%s) = %d", flagId, Flags::getFlagName(flagId), value);
 
-	_flags[flagId - 0x8000] = value;
+	setFlagValue((Flags::Id)(flagId), value);
 }
 
 void Script::O_COMPARE() {
-	uint16 flagId = readScript16bits();
-	uint16 value = readScript16bits();
+	Flags::Id flagId = readScriptFlagId();
+	uint16 value = readScriptValue();
 
-	if (value & 0x8000) {
-		uint16 val = _flags[value - 0x8000];
-		debugScript("GetFlagValue 0x%04X (%s), value %d", value, Flags::getFlagName(value), val);
-
-		value = val; 
-	}
-
-	_result = !(_flags[flagId - 0x8000] == value);
-	debugScript("O_COMPARE flagId 0x%04X (%s), value %d == %d (%d)", flagId, Flags::getFlagName(flagId), value, _flags[flagId - 0x8000], _result);
+	_result = getFlagValue(flagId) != value;
+	debugScript("O_COMPARE flagId 0x%04X (%s), value %d == %d (%d)", flagId, Flags::getFlagName(flagId), value, getFlagValue(flagId), _result);
 }
 
 void Script::O_JUMPZ() {
@@ -410,15 +409,11 @@ void Script::O_EXIT() {
 }
 
 void Script::O_ADDFLAG() {
-	uint16 flagId = readScript16bits();
-	uint16 value = readScript16bits();
+	Flags::Id flagId = readScriptFlagId();
+	uint16 value = readScriptValue();
 
-	if (value & 0x8000) {
-		value = _flags[value - 0x8000];
-	}
-
-	_flags[flagId - 0x8000] += value;
-	if (_flags[flagId - 0x8000])
+	setFlagValue(flagId, getFlagValue(flagId) + value);
+	if (getFlagValue(flagId))
 		_result = 1;
 	else
 		_result = 0;
@@ -434,15 +429,11 @@ void Script::O_TALKANIM() {
 }
 
 void Script::O_SUBFLAG() {
-	uint16 flagId = readScript16bits();
-	uint16 value = readScript16bits();
+	Flags::Id flagId = readScriptFlagId();
+	uint16 value = readScriptValue();
 
-	if (value & 0x8000) {
-		value = _flags[value - 0x8000];
-	}
-
-	_flags[flagId - 0x8000] -= value;
-	if (_flags[flagId - 0x8000])
+	setFlagValue(flagId, getFlagValue(flagId) - value);
+	if (getFlagValue(flagId))
 		_result = 1;
 	else
 		_result = 0;
@@ -468,18 +459,14 @@ void Script::O_SETSTRING() {
 }
 
 void Script::O_ANDFLAG() {
-	uint16 flagId = readScript16bits();
-	uint16 value = readScript16bits();
+	Flags::Id flagId = readScriptFlagId();
+	uint16 value = readScriptValue();
 
 	debugScript("O_ANDFLAG flagId %d, value %d", flagId, value);
 
-	if (value & 0x8000) {
-		value = _flags[value - 0x8000];
-	}
+	setFlagValue(flagId, getFlagValue(flagId) & value);
 
-	_flags[flagId - 0x8000] &= value;
-
-	if (_flags[flagId - 0x8000]) {
+	if (getFlagValue(flagId)) {
 		_result = 1;
 	} else {
 		_result = 0;
@@ -487,7 +474,7 @@ void Script::O_ANDFLAG() {
 }
 
 void Script::O_GETMOBDATA() {
-	uint16 flagId = readScript16bits();
+	Flags::Id flagId = readScriptFlagId();
 	uint16 mobId = readScript16bits();
 	uint16 mobOffset = readScript16bits();
 
@@ -495,18 +482,14 @@ void Script::O_GETMOBDATA() {
 }
 
 void Script::O_ORFLAG() {
-	uint16 flagId = readScript16bits();
-	uint16 value = readScript16bits();
+	Flags::Id flagId = readScriptFlagId();
+	uint16 value = readScriptValue();
 	
 	debugScript("O_ORFLAG flagId %d, value %d", flagId, value);
+	
+	setFlagValue(flagId, getFlagValue(flagId) | value);
 
-	if (value & 0x8000) {
-		value = _flags[value - 0x8000];
-	}
-
-	_flags[flagId - 0x8000] |= value;
-
-	if (_flags[flagId - 0x8000]) {
+	if (getFlagValue(flagId)) {
 		_result = 1;
 	} else {
 		_result = 0;
@@ -522,18 +505,14 @@ void Script::O_SETMOBDATA() {
 }
 
 void Script::O_XORFLAG() {
-	uint16 flagId = readScript16bits();
-	uint16 value = readScript16bits();
+	Flags::Id flagId = readScriptFlagId();
+	uint16 value = readScriptValue();
 
 	debugScript("O_XORFLAG flagId %d, value %d", flagId, value);
 
-	if (value & 0x8000) {
-		value = _flags[value - 0x8000];
-	}
+	setFlagValue(flagId, getFlagValue(flagId) ^ value);
 
-	_flags[flagId - 0x8000] ^= value;
-
-	if (_flags[flagId - 0x8000]) {
+	if (getFlagValue(flagId)) {
 		_result = 1;
 	} else {
 		_result = 0;
@@ -691,10 +670,7 @@ void Script::O_TALKHERO() {
 }
 
 void Script::O_WAITTEXT() {
-	uint16 slot = readScript16bits();
-	if (slot & 0x8000) {
-		slot = _flags[slot - 0x8000];
-	}
+	uint16 slot = readScriptValue();
 	Text &text = _vm->_textSlots[slot];
 	if (text._time) {
 		_opcodeNF = 1;
@@ -789,11 +765,11 @@ void Script::O_LOADPATH() {
 }
 
 void Script::O_GETCHAR() {
-	uint16 flagId = readScript16bits();
+	Flags::Id flagId = readScriptFlagId();
 
-	_flags[flagId - 0x8000] = *_string;
+	setFlagValue(flagId, *_string);
 
-	debugScript("O_GETCHAR %04X (%s) %02x", flagId, Flags::getFlagName(flagId), _flags[flagId - 0x8000]);
+	debugScript("O_GETCHAR %04X (%s) %02x", flagId, Flags::getFlagName(flagId), getFlagValue(flagId));
 
 	++_string;
 }
@@ -816,7 +792,7 @@ void Script::O_PRINTAT() {
 
 	debugScript("O_PRINTAT slot %d, fr1 %d, fr2 %d", slot, fr1, fr2);
 
-	uint8 color = _flags[Flags::KOLOR - 0x8000];
+	uint8 color = getFlagValue(Flags::KOLOR);
 
 	_vm->printAt(slot, color, (const char *)_string, fr1, fr2);
 
@@ -923,21 +899,21 @@ void Script::O_SETPATH() {
 
 void Script::O_GETHEROX() {
 	uint16 heroId = readScript16bits();
-	uint16 flagId = readScript16bits();
+	Flags::Id flagId = readScriptFlagId();
 
 	debugScript("O_GETHEROX heroId %d, flagId %d", heroId, flagId);
 }
 
 void Script::O_GETHEROY() {
 	uint16 heroId = readScript16bits();
-	uint16 flagId = readScript16bits();
+	Flags::Id flagId = readScriptFlagId();
 
 	debugScript("O_GETHEROY heroId %d, flagId %d", heroId, flagId);
 }
 
 void Script::O_GETHEROD() {
 	uint16 heroId = readScript16bits();
-	uint16 flagId = readScript16bits();
+	Flags::Id flagId = readScriptFlagId();
 
 	debugScript("O_GETHEROD heroId %d, flagId %d", heroId, flagId);
 }
@@ -1090,7 +1066,7 @@ void Script::O_SKIPTEXT() {
 
 void Script::SetVoice(uint32 slot) {
 
-	const uint16 VOICE_H_LINE = _flags[Flags::VOICE_H_LINE - 0x8000];
+	const uint16 VOICE_H_LINE = getFlagValue(Flags::VOICE_H_LINE);
 
 	const Common::String streamName = Common::String::format("%03d-%02d.WAV", _currentString, VOICE_H_LINE);
 	debugScript("Loading wav %s slot %d", streamName.c_str(), slot);
@@ -1149,12 +1125,8 @@ void Script::O_SETVOICEC() {
 }
 
 void Script::O_VIEWFLCLOOP() {
-	uint16 value = readScript16bits();
+	uint16 value = readScriptValue();
 	debugScript("O_VIEWFLCLOOP animId %d", value);
-
-	if (value & 0x8000) {
-		value = _flags[value - 0x8000];
-	}
 
 	_vm->loadAnim(value, true);
 }
@@ -1178,7 +1150,7 @@ void Script::O_GETKRZYWA() {
 }
 
 void Script::O_GETMOB() {
-	uint16 flagId = readScript16bits();
+	Flags::Id flagId = readScriptFlagId();
 	uint16 mx = readScript16bits();
 	uint16 my = readScript16bits();
 	debugScript("O_GETMOB flagId %d, mx %d, my %d", flagId, mx, my);

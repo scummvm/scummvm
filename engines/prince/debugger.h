@@ -47,7 +47,8 @@ private:
 	PrinceEngine *_vm;
 };
 
-
 } 
 
 #endif
+
+/* vim: set tabstop=4 noexpandtab: */

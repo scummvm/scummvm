@@ -45,7 +45,9 @@ public:
 	bool loadFromStream(Common::SeekableReadStream &stream);
 
 	void step();
-	void setFlag(Flags::Id flag, uint16 value);
+
+	void setFlagValue(Flags::Id flag, uint16 value);
+	uint16 getFlagValue(Flags::Id flag);
 
 private:
 	PrinceEngine *_vm;
@@ -60,7 +62,9 @@ private:
 	uint16 _lastOpcode;
 	uint32 _lastInstruction;
 	byte _result;
-	int16 _flags[2000];
+	static const uint16 MAX_FLAGS = 2000;
+	static const uint16 FLAG_MASK = 0x8000;
+	int16 _flags[MAX_FLAGS];
 	bool _opcodeNF;
 
 
@@ -83,8 +87,13 @@ private:
 	uint8 getCodeByte(uint32 address);
 	uint8 readScript8bits();
 	uint16 readScript16bits();
+
 	uint32 readScript32bits();
 	uint16 readScript8or16bits();
+
+	uint16 readScriptValue();
+	Flags::Id readScriptFlagId() { return (Flags::Id)readScript16bits(); }
+
 	void debugScript(const char *s, ...);
 	void SetVoice(uint32 slot);
 

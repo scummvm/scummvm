@@ -357,7 +357,7 @@ void PrinceEngine::keyHandler(Common::Event event) {
 		scrollCameraRight(32);
 		break;
 	case Common::KEYCODE_ESCAPE:
-		_script->setFlag(Flags::ESCAPED2, 1);
+		_script->setFlagValue(Flags::ESCAPED2, 1);
 		break;
 	}
 }
