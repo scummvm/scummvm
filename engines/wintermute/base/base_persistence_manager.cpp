@@ -737,37 +737,6 @@ bool BasePersistenceManager::transferString(const char *name, Common::String *va
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BasePersistenceManager::transfer(const char *name, AnsiStringArray &val) {
-	size_t size;
-
-	if (_saving) {
-		size = val.size();
-		_saveStream->writeUint32LE(size);
-
-		for (AnsiStringArray::iterator it = val.begin(); it != val.end(); ++it) {
-			putString((*it).c_str());
-		}
-	} else {
-		val.clear();
-		size = _loadStream->readUint32LE();
-
-		for (size_t i = 0; i < size; i++) {
-			char *str = getString();
-			if (_loadStream->err()) {
-				delete[] str;
-				return STATUS_FAILED;
-			}
-			if (str) {
-				val.push_back(str);
-			}
-			delete[] str;
-		}
-	}
-
-	return STATUS_OK;
-}
-
-//////////////////////////////////////////////////////////////////////////
 // BYTE
 bool BasePersistenceManager::transferByte(const char *name, byte *val) {
 	if (_saving) {

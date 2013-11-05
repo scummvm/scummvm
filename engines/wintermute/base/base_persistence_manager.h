@@ -86,7 +86,6 @@ public:
 	bool transferCharPtr(const char *name, char **val);
 	bool transferString(const char *name, Common::String *val);
 	bool transferVector2(const char *name, Vector2 *val);
-	bool transfer(const char *name, AnsiStringArray &Val);
 	BasePersistenceManager(const char *savePrefix = nullptr, bool deleteSingleton = false);
 	virtual ~BasePersistenceManager();
 	bool checkVersion(byte  verMajor, byte verMinor, byte verBuild);
