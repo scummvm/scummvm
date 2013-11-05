@@ -208,7 +208,7 @@ void Timer::updateTimer() {
 			}
 		}
 	}
-    
+ 
 	_vm->_roomCycles++; // Cycles since you've been in this room.
 }
 

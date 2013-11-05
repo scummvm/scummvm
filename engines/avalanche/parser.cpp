@@ -605,8 +605,8 @@ Common::String Parser::totalTime() {
 
 	uint32 curTime = _vm->getTimeInSeconds() - _vm->_startTime;
 	if (_vm->_isLoaded)
-    	curTime += _vm->_totalTime;
-    
+		curTime += _vm->_totalTime;
+
 	h = (uint16)(curTime / 3600);
 	s = (uint16)(curTime  % 3600);
 	m = s / 60;

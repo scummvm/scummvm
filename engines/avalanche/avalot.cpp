@@ -1529,7 +1529,7 @@ void AvalancheEngine::newGame() {
 	_userMovesAvvy = false;
 	_doingSpriteRun = false;
 	_avvyInBed = true;
-    
+
 	_ableToAddTimer = true; // Set to false in _vm->loadGame().
 	_isLoaded = false;
 

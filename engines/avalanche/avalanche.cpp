@@ -57,7 +57,7 @@ AvalancheEngine::AvalancheEngine(OSystem *syst, const AvalancheGameDescription *
 	_sound = nullptr;
 
 	_platform = gd->desc.platform;
-    initVariables();
+	initVariables();
 }
 
 AvalancheEngine::~AvalancheEngine() {
@@ -357,7 +357,7 @@ bool AvalancheEngine::saveGame(const int16 slot, const Common::String &desc) {
 	f->writeSint16LE(t.tm_mday);
 	f->writeSint16LE(t.tm_mon);
 	f->writeSint16LE(t.tm_year);
-    
+
 	_totalTime += getTimeInSeconds() - _startTime;
 
 	Common::Serializer sz(NULL, f);
@@ -479,11 +479,11 @@ Common::String AvalancheEngine::expandDate(int d, int m, int y) {
 
 	return day + ' ' + month + ' ' + intToStr(y + 1900);
 }
-    
+
 uint32 AvalancheEngine::getTimeInSeconds() {
-    TimeDate time;
-    _system->getTimeAndDate(time);
-    return time.tm_hour * 3600 + time.tm_min * 60 + time.tm_sec;
+	TimeDate time;
+	_system->getTimeAndDate(time);
+	return time.tm_hour * 3600 + time.tm_min * 60 + time.tm_sec;
 }
 
 void AvalancheEngine::updateEvents() {

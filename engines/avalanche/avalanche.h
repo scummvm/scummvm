@@ -268,7 +268,7 @@ public:
 	// or at the begginning of the game, and _ablteToAddTimer must be modified in addTimer().
 	bool _isLoaded; // Is it a loaded gamestate?
 	bool _ableToAddTimer;
-    
+
 	void callVerb(VerbCode id);
 	void loadRoom(byte num);
 	void thinkAbout(byte object, bool type); // Hey!!! Get it and put it!!!
