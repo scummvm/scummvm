@@ -74,11 +74,9 @@ private:
 	uint8 _stacktop;
 	uint8 _savedStacktop;
 	uint32 _waitFlag;
-	Audio::SoundHandle _soundHandle;
 
 	const byte *_string;
 	uint32 _currentString;
-	Common::SeekableReadStream *_voiceStream;
 	const char *_mode;
 
 	// Helper functions

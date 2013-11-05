@@ -101,6 +101,10 @@ public:
 
 	bool loadLocation(uint16 locationNr);
 	bool loadAnim(uint16 animNr, bool loop);
+	bool loadVoice(uint32 slot, const Common::String &name);
+
+	void playSample(uint16 sampleId, uint16 loopType);
+	void stopSample(uint16 sampleId);
 
 	virtual GUI::Debugger *getDebugger();
 
@@ -138,6 +142,9 @@ private:
 	ObjectList *_objectList;
 	MobList *_mobList;
 	MusicPlayer *_midiPlayer;
+
+	Audio::SoundHandle _soundHandle;
+	Common::SeekableReadStream *_voiceStream;
 
 	uint16 _cameraX;
 	uint16 _newCameraX;

@@ -40,7 +40,7 @@ static const uint16 NUM_OPCODES = 144;
 
 Script::Script(PrinceEngine *vm) : 
 	_code(NULL), _stacktop(0), _vm(vm), _opcodeNF(false),
-	_waitFlag(0), _voiceStream(NULL), _result(true) {
+	_waitFlag(0), _result(true) {
 }
 
 Script::~Script() {
@@ -200,12 +200,7 @@ void Script::O_PLAYSAMPLE() {
 	uint16 sampleId = readScript16bits();
 	uint16 loopType = readScript16bits();
 	debugScript("O_PLAYSAMPLE sampleId %d loopType %d", sampleId, loopType);
-
-	if (_voiceStream) {
-
-		Audio::RewindableAudioStream *audioStream = Audio::makeWAVStream(_voiceStream, DisposeAfterUse::YES);
-		_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, audioStream, sampleId);
-	}
+	_vm->playSample(sampleId, loopType);
 }
 
 void Script::O_PUTOBJECT() {
@@ -875,9 +870,7 @@ void Script::O_SHOWDIALOGBOX() {
 void Script::O_STOPSAMPLE() {
 	uint16 slot = readScript16bits();
 	debugScript("O_STOPSAMPLE slot %d", slot);
-
-	_vm->_mixer->stopID(slot);
-	_voiceStream = NULL;
+	_vm->stopSample(slot);
 }
 
 void Script::O_BACKANIMRANGE() {
@@ -1065,39 +1058,14 @@ void Script::O_SKIPTEXT() {
 }
 
 void Script::SetVoice(uint32 slot) {
-
-	const uint16 VOICE_H_LINE = getFlagValue(Flags::VOICE_H_LINE);
-
-	const Common::String streamName = Common::String::format("%03d-%02d.WAV", _currentString, VOICE_H_LINE);
-	debugScript("Loading wav %s slot %d", streamName.c_str(), slot);
-
-	_voiceStream = SearchMan.createReadStreamForMember(streamName);
-	if (!_voiceStream) {
-		error("Can't open %s", streamName.c_str());
-	}
-	uint32 id = _voiceStream->readUint32LE();
-	if (id != 0x46464952) {
-		error("It's not RIFF file %s", streamName.c_str());
-		return;
-	}
-
-	_voiceStream->skip(0x20);
-	id = _voiceStream->readUint32LE();
-	if (id != 0x61746164) {
-		error("No data section in %s id %04x", streamName.c_str(), id);
-		return;
-	}
-
-	id = _voiceStream->readUint32LE();
-	debugScript("SetVoice slot %d time %04x", slot, id); 
-	id <<= 3;
-	id /= 22050;
-	id += 2;
-
-	_vm->_textSlots[slot]._time = id;
-
-	debugScript("SetVoice slot %d time %04x", slot, id); 
-	_voiceStream->seek(0);
+	_vm->loadVoice(
+		slot,
+		Common::String::format(
+			"%03d-%02d.WAV", 
+			_currentString, 
+			getFlagValue(Flags::VOICE_H_LINE)
+		)
+	);
 }
 
 void Script::O_SETVOICEH() {

@@ -73,7 +73,7 @@ PrinceEngine::PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc)
 	Engine(syst), _gameDescription(gameDesc), _graph(NULL), _script(NULL),
 	_locationNr(0), _debugger(NULL), _objectList(NULL), _mobList(NULL), _midiPlayer(NULL),
 	_cameraX(0), _newCameraX(0), _frameNr(0), _cursor1(NULL), _cursor2(NULL), _font(NULL),
-	_walizkaBmp(NULL), _roomBmp(NULL) {
+	_walizkaBmp(NULL), _roomBmp(NULL), _voiceStream(NULL) {
 
 	// Debug/console setup
 	DebugMan.addDebugChannel(DebugChannel::kScript, "script", "Prince Script debug channel");
@@ -300,6 +300,55 @@ bool PrinceEngine::playNextFrame() {
         _flicPlayer.rewind();
         playNextFrame();
     }
+
+	return true;
+}
+
+void PrinceEngine::playSample(uint16 sampleId, uint16 loopType) {
+	if (_voiceStream) {
+
+		Audio::RewindableAudioStream *audioStream = Audio::makeWAVStream(_voiceStream, DisposeAfterUse::YES);
+		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, audioStream, sampleId);
+	}
+}
+
+void PrinceEngine::stopSample(uint16 sampleId) {
+	_mixer->stopID(sampleId);
+	_voiceStream = NULL;
+}
+
+bool PrinceEngine::loadVoice(uint32 slot, const Common::String &streamName) {
+	debugEngine("Loading wav %s slot %d", streamName.c_str(), slot);
+
+	_voiceStream = SearchMan.createReadStreamForMember(streamName);
+	if (!_voiceStream) {
+		error("Can't open %s", streamName.c_str());
+		return false;
+	}
+
+	uint32 id = _voiceStream->readUint32LE();
+	if (id != 0x46464952) {
+		error("It's not RIFF file %s", streamName.c_str());
+		return false;
+	}
+
+	_voiceStream->skip(0x20);
+	id = _voiceStream->readUint32LE();
+	if (id != 0x61746164) {
+		error("No data section in %s id %04x", streamName.c_str(), id);
+		return false;
+	}
+
+	id = _voiceStream->readUint32LE();
+	debugEngine("SetVoice slot %d time %04x", slot, id); 
+	id <<= 3;
+	id /= 22050;
+	id += 2;
+
+	_textSlots[slot]._time = id;
+
+	debugEngine("SetVoice slot %d time %04x", slot, id); 
+	_voiceStream->seek(0);
 
 	return true;
 }
