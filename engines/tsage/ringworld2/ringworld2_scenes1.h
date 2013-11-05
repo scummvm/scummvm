@@ -1129,7 +1129,6 @@ class Scene1950 : public SceneExt {
 		SceneActor _areaActor;
 		KeypadButton _buttons[16];
 
-		byte _field20;
 		int _buttonIndex;
 
 		KeypadWindow();

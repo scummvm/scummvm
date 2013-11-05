@@ -13625,14 +13625,12 @@ void Scene1945::signal() {
  *--------------------------------------------------------------------------*/
 
 Scene1950::KeypadWindow::KeypadWindow() {
-	_field20 = 0;
 	_buttonIndex = 0;
 }
 
 void Scene1950::KeypadWindow::synchronize(Serializer &s) {
 	SceneArea::synchronize(s);
 
-	s.syncAsByte(_field20);
 	s.syncAsSint16LE(_buttonIndex);
 }
 
