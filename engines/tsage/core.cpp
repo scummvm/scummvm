@@ -2106,7 +2106,7 @@ SceneObject::SceneObject() : SceneHotspot() {
 	_endFrame = 0;
 	_field68 = 0;
 	_regionIndex = 0;
-	_field9C = NULL;
+	_shadowMap = NULL;
 }
 
 SceneObject::SceneObject(const SceneObject &so) : SceneHotspot() {

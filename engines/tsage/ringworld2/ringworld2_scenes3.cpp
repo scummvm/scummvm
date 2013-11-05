@@ -396,7 +396,7 @@ bool Scene3150::LightFixture::startAction(CursorType action, Event &event) {
 		if ((R2_INVENTORY.getObjectScene(R2_LIGHT_BULB) != 3150) && (R2_GLOBALS.getFlag(75))) {
 			R2_GLOBALS._player.disableControl();
 			scene->_bulbOrWire.postInit();
-			scene->_bulbOrWire._effect = 3;
+			scene->_bulbOrWire._effect = EFFECT_3;
 			scene->_bulbOrWire._shade = 5;
 			scene->_sceneMode = 3155;
 			scene->setAction(&scene->_sequenceManager, scene, 3155, &R2_GLOBALS._player, &scene->_bulbOrWire, NULL);
@@ -417,7 +417,7 @@ bool Scene3150::Toilet::startAction(CursorType action, Event &event) {
 	case R2_PILLOW:
 		R2_GLOBALS._player.disableControl();
 		scene->_water.postInit();
-		scene->_water._effect = 6;
+		scene->_water._effect = EFFECT_6;
 		scene->_water._shade = 3;
 		R2_GLOBALS._player.disableControl();
 		scene->_sceneMode = 3158;
@@ -428,7 +428,7 @@ bool Scene3150::Toilet::startAction(CursorType action, Event &event) {
 				(R2_INVENTORY.getObjectScene(R2_SUPERCONDUCTOR_WIRE) == 3150) 
 				&& (R2_GLOBALS.getFlag(75))) {
 			scene->_foodTray.postInit();
-			scene->_foodTray._effect = 6;
+			scene->_foodTray._effect = EFFECT_6;
 			scene->_foodTray._shade = 3;
 			scene->_foodTray.setDetails(3150, 30, -1, -1, 2, (SceneItem *)NULL);
 
@@ -579,7 +579,7 @@ void Scene3150::postInit(SceneObjectList *OwnerList) {
 		_guard.postInit();
 		_guard.setup(3154, 1, 16);
 		_guard.setPosition(Common::Point(104, 129));
-		_guard._effect = 6;
+		_guard._effect = EFFECT_6;
 		_guard._shade = 3;
 		_guard.setDetails(3150, 24, -1, -1, -1, (SceneItem *)NULL);
 	}
@@ -609,7 +609,7 @@ void Scene3150::postInit(SceneObjectList *OwnerList) {
 			}
 			_water.fixPriority(110);
 			_water.setPosition(Common::Point(83, 88));
-			_water._effect = 6;
+			_water._effect = EFFECT_6;
 			_water._shade = 3;
 		} else {
 			_water.setup(3152, 7, 3);
@@ -629,7 +629,7 @@ void Scene3150::postInit(SceneObjectList *OwnerList) {
 		_bulbOrWire.setup(3152, 7, 3);
 		_bulbOrWire.setPosition(Common::Point(70, 55));
 		_bulbOrWire.fixPriority(111);
-		_bulbOrWire._effect = 6;
+		_bulbOrWire._effect = EFFECT_6;
 		_bulbOrWire._shade = 5;
 	}
 
@@ -639,7 +639,7 @@ void Scene3150::postInit(SceneObjectList *OwnerList) {
 			_foodTray.setup(3152, 7, 8);
 			_foodTray.setPosition(Common::Point(82, 92));
 			_foodTray.fixPriority(111);
-			_foodTray._effect = 6;
+			_foodTray._effect = EFFECT_6;
 			_foodTray._shade = 3;
 		} else {
 			_foodTray.setup(3152, 7, 7);
@@ -664,7 +664,7 @@ void Scene3150::postInit(SceneObjectList *OwnerList) {
 	case 0:
 		_sceneMode = 3150;
 		_guard.postInit();
-		_guard._effect = 6;
+		_guard._effect = EFFECT_6;
 		_guard._shade = 5;
 		setAction(&_sequenceManager, this, 3150, &R2_GLOBALS._player, &_guard, &_doorBars, NULL);
 		break;
@@ -689,12 +689,12 @@ void Scene3150::postInit(SceneObjectList *OwnerList) {
 			++R2_GLOBALS._v56AA0;
 			_sceneMode = 3156;
 			_guard.postInit();
-			_guard._effect = 6;
+			_guard._effect = EFFECT_6;
 			_guard._shade = 3;
 
 			_doorBars.postInit();
 			_foodTray.postInit();
-			_foodTray._effect = 6;
+			_foodTray._effect = EFFECT_6;
 			_foodTray._shade = 3;
 
 			setAction(&_sequenceManager, this, 3156, &R2_GLOBALS._player, &_guard, &_doorBars, &_foodTray, NULL);
@@ -789,12 +789,12 @@ void Scene3150::signal() {
 
 void Scene3150::dispatch() {
 	if (_foodTray._position.x == 155) {
-		_foodTray._effect = 0;
+		_foodTray._effect = EFFECT_NONE;
 		_foodTray._shade = 0;
 	}
 
 	if (_guard._visage == 3154) {
-		_guard._effect = 0;
+		_guard._effect = EFFECT_NONE;
 		_guard._shade = 0;
 	}
 
@@ -1211,18 +1211,18 @@ void Scene3250::postInit(SceneObjectList *OwnerList) {
 	case 1200:
 		_sceneMode = 3250;
 		_grate.postInit();
-		R2_GLOBALS._player._effect = 0;
+		R2_GLOBALS._player._effect = EFFECT_NONE;
 		setAction(&_sequenceManager, this, 3250, &R2_GLOBALS._player, &_grate, NULL);
 		break;
 	case 3125:
 		if (R2_GLOBALS.getFlag(79)) {
 			_sceneMode = 3254;
 			_ghoul1.postInit();
-			_ghoul1._effect = 1;
+			_ghoul1._effect = EFFECT_SHADED;
 			_ghoul2.postInit();
-			_ghoul2._effect = 1;
+			_ghoul2._effect = EFFECT_SHADED;
 			_ghoul3.postInit();
-			_ghoul3._effect = 1;
+			_ghoul3._effect = EFFECT_SHADED;
 			setAction(&_sequenceManager, this, 3254, &R2_GLOBALS._player, &_rightDoor, 
 				&_ghoul1, &_ghoul2, &_ghoul3, &_leftDoor, NULL);
 		} else {
@@ -1252,7 +1252,7 @@ void Scene3250::postInit(SceneObjectList *OwnerList) {
 void Scene3250::signal() {
 	switch(_sceneMode) {
 	case 3250:
-		R2_GLOBALS._player._effect = 1;
+		R2_GLOBALS._player._effect = EFFECT_SHADED;
 		R2_GLOBALS._player.enableControl();
 		break;
 	case 3254:
@@ -1274,7 +1274,7 @@ void Scene3250::signal() {
 
 void Scene3250::dispatch() {
 	if ((R2_GLOBALS._player._visage == 3250) && (R2_GLOBALS._player._strip == 3) && (R2_GLOBALS._player._effect == 0)) {
-		R2_GLOBALS._player._effect = 6;
+		R2_GLOBALS._player._effect = EFFECT_6;
 		R2_GLOBALS._player._shade = 6;
 	}
 
@@ -1305,7 +1305,7 @@ void Scene3255::postInit(SceneObjectList *OwnerList) {
 		_sceneMode = 3257;
 		_door.postInit();
 		_quinn.postInit();
-		_quinn._effect = 1;
+		_quinn._effect = EFFECT_SHADED;
 		setAction(&_sequenceManager, this, 3257, &R2_GLOBALS._player, &_quinn, &_door, NULL);
 	} else {
 		_teal.postInit();
@@ -1354,9 +1354,9 @@ void Scene3255::dispatch() {
 			if (_ghoul1._position.y <= 110)
 				_ghoul1._shade = 6 - (_ghoul1._position.y - 95) / 3;
 			else
-				_ghoul1._effect = 1;
+				_ghoul1._effect = EFFECT_SHADED;
 		} else {
-			_ghoul1._effect = 6;
+			_ghoul1._effect = EFFECT_6;
 			_ghoul1._shade = 6;
 		}
 
@@ -1364,9 +1364,9 @@ void Scene3255::dispatch() {
 			if (_ghoul2._position.y <= 110)
 				_ghoul2._shade = 6 - (_ghoul2._position.y - 95) / 3;
 			else
-				_ghoul2._effect = 1;
+				_ghoul2._effect = EFFECT_SHADED;
 		} else {
-			_ghoul2._effect = 6;
+			_ghoul2._effect = EFFECT_6;
 			_ghoul2._shade = 6;
 		}
 
@@ -1374,16 +1374,16 @@ void Scene3255::dispatch() {
 			if (_ghoul3._position.y <= 110)
 				_ghoul3._shade = 6 - (_ghoul3._position.y - 95) / 3;
 			else
-				_ghoul3._effect = 1;
+				_ghoul3._effect = EFFECT_SHADED;
 		} else {
-			_ghoul3._effect = 6;
+			_ghoul3._effect = EFFECT_6;
 			_ghoul3._shade = 6;
 		}
 	}
 
 	if ((R2_GLOBALS._player._position.x > 250) && (R2_GLOBALS._player._shade == 1)) {
-		R2_GLOBALS._player._effect = 6;
-		_quinn._effect = 6;
+		R2_GLOBALS._player._effect = EFFECT_6;
+		_quinn._effect = EFFECT_6;
 	}
 	Scene::dispatch();
 }
@@ -1762,11 +1762,11 @@ void Scene3375::enterArea(int sceneMode) {
 		R2_GLOBALS._player.setPosition(Common::Point(148, 230));
 
 		_companion1.setPosition(Common::Point(191, 274));
-		_companion1._effect = 1;
+		_companion1._effect = EFFECT_SHADED;
 		_companion2.setPosition(Common::Point(124, 255));
-		_companion2._effect = 1;
+		_companion2._effect = EFFECT_SHADED;
 		_webbster.setPosition(Common::Point(155, 245));
-		_webbster._effect = 1;
+		_webbster._effect = EFFECT_SHADED;
 		break;
 	case 3381:
 		--R2_GLOBALS._walkwaySceneNumber;
@@ -1780,11 +1780,11 @@ void Scene3375::enterArea(int sceneMode) {
 		R2_GLOBALS._player.setPosition(Common::Point(201, 131));
 
 		_companion1.setPosition(Common::Point(231, 127));
-		_companion1._effect = 1;
+		_companion1._effect = EFFECT_SHADED;
 		_companion2.setPosition(Common::Point(231, 127));
-		_companion2._effect = 1;
+		_companion2._effect = EFFECT_SHADED;
 		_webbster.setPosition(Common::Point(231, 127));
-		_webbster._effect = 1;
+		_webbster._effect = EFFECT_SHADED;
 		break;
 	default:
 		R2_GLOBALS._player.setPosition(Common::Point(192, 155));
@@ -1925,7 +1925,7 @@ void Scene3375::DownExit::changeScene() {
 	Scene3375 *scene = (Scene3375 *)R2_GLOBALS._sceneManager._scene;
 
 	_moving = false;
-	R2_GLOBALS._player._effect = 6;
+	R2_GLOBALS._player._effect = EFFECT_6;
 	R2_GLOBALS._player._shade = 4;
 	R2_GLOBALS._player.disableControl(CURSOR_ARROW);
 
@@ -1947,7 +1947,7 @@ void Scene3375::RightExit::changeScene() {
 	Scene3375 *scene = (Scene3375 *)R2_GLOBALS._sceneManager._scene;
 
 	_moving = false;
-	R2_GLOBALS._player._effect = 6;
+	R2_GLOBALS._player._effect = EFFECT_6;
 	R2_GLOBALS._player._shade = 4;
 	R2_GLOBALS._player.disableControl(CURSOR_ARROW);
 
@@ -2034,7 +2034,7 @@ void Scene3375::postInit(SceneObjectList *OwnerList) {
 		_companion1._moveDiff = Common::Point(5, 3);
 	}
 	_companion1.changeZoom(-1);
-	_companion1._effect = 1;
+	_companion1._effect = EFFECT_SHADED;
 
 	int tmpStrip, tmpVisage;
 	if (R2_GLOBALS._sceneManager._previousScene == 3385)
@@ -2053,7 +2053,7 @@ void Scene3375::postInit(SceneObjectList *OwnerList) {
 	_companion2.postInit();
 	_companion2._moveDiff = Common::Point(3, 2);
 	_companion2.changeZoom(-1);
-	_companion2._effect = 1;
+	_companion2._effect = EFFECT_SHADED;
 	if (R2_GLOBALS._sceneManager._previousScene == 3385)
 		tmpStrip = 1;
 	else
@@ -2071,7 +2071,7 @@ void Scene3375::postInit(SceneObjectList *OwnerList) {
 	_webbster._moveRate = 7;
 	_webbster._moveDiff = Common::Point(5, 3);
 	_webbster.changeZoom(-1);
-	_webbster._effect = 1;
+	_webbster._effect = EFFECT_SHADED;
 	if (R2_GLOBALS._sceneManager._previousScene == 3385)
 		tmpStrip = 1;
 	else
@@ -2126,10 +2126,10 @@ void Scene3375::signalCase3379() {
 			_sceneMode = 1;
 			ADD_MOVER(R2_GLOBALS._player, 70, R2_GLOBALS._player._position.y);
 			R2_GLOBALS._sceneManager._previousScene = 3375;
-			R2_GLOBALS._player._effect = 1;
-			_companion1._effect = 1;
-			_companion2._effect = 1;
-			_webbster._effect = 1;
+			R2_GLOBALS._player._effect = EFFECT_SHADED;
+			_companion1._effect = EFFECT_SHADED;
+			_companion2._effect = EFFECT_SHADED;
+			_webbster._effect = EFFECT_SHADED;
 
 			return;
 			//R2_GLOBALS._walkRegions.disableRegion(1);
@@ -2159,10 +2159,10 @@ void Scene3375::signalCase3379() {
 		break;
 	}
 	R2_GLOBALS._sceneManager._previousScene = 3375;
-	R2_GLOBALS._player._effect = 1;
-	_companion1._effect = 1;
-	_companion2._effect = 1;
-	_webbster._effect = 1;
+	R2_GLOBALS._player._effect = EFFECT_SHADED;
+	_companion1._effect = EFFECT_SHADED;
+	_companion2._effect = EFFECT_SHADED;
+	_webbster._effect = EFFECT_SHADED;
 	R2_GLOBALS._player.enableControl(CURSOR_WALK);
 }
 
@@ -2183,11 +2183,11 @@ void Scene3375::signal() {
 		_sceneMode = _newSceneMode;
 		_newSceneMode = 0;
 
-		_companion1._effect = 6;
+		_companion1._effect = EFFECT_6;
 		_companion1._shade = 4;
-		_companion2._effect = 6;
+		_companion2._effect = EFFECT_6;
 		_companion2._shade = 4;
-		_webbster._effect = 6;
+		_webbster._effect = EFFECT_6;
 		_webbster._shade = 4;
 		enterArea(_sceneMode);
 		break;
@@ -2212,24 +2212,24 @@ void Scene3375::signal() {
 
 void Scene3375::dispatch() {
 	if ((R2_GLOBALS._player._position.y >= 168) && (R2_GLOBALS._player._effect == 1))
-		R2_GLOBALS._player._effect = 6;
+		R2_GLOBALS._player._effect = EFFECT_6;
 	else if ((R2_GLOBALS._player._position.y < 168) && (R2_GLOBALS._player._effect == 6))
-		R2_GLOBALS._player._effect = 1;
+		R2_GLOBALS._player._effect = EFFECT_SHADED;
 
 	if ((_companion1._position.y >= 168) && (_companion1._effect == 1))
-		_companion1._effect = 6;
+		_companion1._effect = EFFECT_6;
 	else if ((_companion1._position.y < 168) && (_companion1._effect == 6))
-		_companion1._effect = 1;
+		_companion1._effect = EFFECT_SHADED;
 
 	if ((_companion2._position.y >= 168) && (_companion2._effect == 1))
-		_companion2._effect = 6;
+		_companion2._effect = EFFECT_6;
 	else if ((_companion2._position.y < 168) && (_companion2._effect == 6))
-		_companion2._effect = 1;
+		_companion2._effect = EFFECT_SHADED;
 
 	if ((_webbster._position.y >= 168) && (_webbster._effect == 1))
-		_webbster._effect = 6;
+		_webbster._effect = EFFECT_6;
 	else if ((_webbster._position.y < 168) && (_webbster._effect == 6))
-		_webbster._effect = 1;
+		_webbster._effect = EFFECT_SHADED;
 
 	Scene::dispatch();
 }
@@ -2384,7 +2384,7 @@ void Scene3385::postInit(SceneObjectList *OwnerList) {
 		_companion1._moveDiff = Common::Point(5, 3);
 	}
 	_companion1.changeZoom(-1);
-	_companion1._effect = 1;
+	_companion1._effect = EFFECT_SHADED;
 	if (R2_GLOBALS._player._characterIndex == R2_SEEKER)
 		_companion1.setup(10, _playerStrip, 1);
 	else
@@ -2395,7 +2395,7 @@ void Scene3385::postInit(SceneObjectList *OwnerList) {
 	_companion2.postInit();
 	_companion2._moveDiff = Common::Point(3, 2);
 	_companion2.changeZoom(-1);
-	_companion2._effect = 1;
+	_companion2._effect = EFFECT_SHADED;
 	if (R2_GLOBALS._player._characterIndex == R2_MIRANDA)
 		_companion2.setup(10, _playerStrip, 1);
 	else
@@ -2406,7 +2406,7 @@ void Scene3385::postInit(SceneObjectList *OwnerList) {
 	_webbster.postInit();
 	_webbster._moveDiff = Common::Point(3, 2);
 	_webbster.changeZoom(-1);
-	_webbster._effect = 1;
+	_webbster._effect = EFFECT_SHADED;
 	_webbster.setup(40, _playerStrip, 1);
 	_webbster.animate(ANIM_MODE_1, NULL);
 	_webbster.setDetails(3385, 15, -1, -1, 1, (SceneItem *) NULL);
@@ -2607,7 +2607,7 @@ void Scene3395::postInit(SceneObjectList *OwnerList) {
 		_companion1._moveDiff = Common::Point(5, 3);
 	}
 	_companion1.changeZoom(-1);
-	_companion1._effect = 1;
+	_companion1._effect = EFFECT_SHADED;
 	if (R2_GLOBALS._player._characterIndex == R2_SEEKER)
 		_companion1.setup(10, _playerStrip, 1);
 	else
@@ -2618,7 +2618,7 @@ void Scene3395::postInit(SceneObjectList *OwnerList) {
 	_companion2.postInit();
 	_companion2._moveDiff = Common::Point(3, 2);
 	_companion2.changeZoom(-1);
-	_companion2._effect = 1;
+	_companion2._effect = EFFECT_SHADED;
 	if (R2_GLOBALS._player._characterIndex == R2_MIRANDA)
 		_companion2.setup(10, _playerStrip, 1);
 	else
@@ -2629,7 +2629,7 @@ void Scene3395::postInit(SceneObjectList *OwnerList) {
 	_webbster.postInit();
 	_webbster._moveDiff = Common::Point(3, 2);
 	_webbster.changeZoom(-1);
-	_webbster._effect = 1;
+	_webbster._effect = EFFECT_SHADED;
 	_webbster.setup(40, _playerStrip, 1);
 	_webbster.animate(ANIM_MODE_1, NULL);
 	_webbster.setDetails(3395, 18, -1, -1, 1, (SceneItem *) NULL);
@@ -2764,7 +2764,7 @@ void Scene3400::postInit(SceneObjectList *OwnerList) {
 		_companion1._moveDiff = Common::Point(5, 3);
 	}
 	_companion1.changeZoom(-1);
-	_companion1._effect = 1;
+	_companion1._effect = EFFECT_SHADED;
 	_companion1.setPosition(Common::Point(247, 63));
 	if (R2_GLOBALS._player._characterIndex == R2_SEEKER)
 		_companion1.setup(10, 5, 1);
@@ -2775,7 +2775,7 @@ void Scene3400::postInit(SceneObjectList *OwnerList) {
 	_companion2.postInit();
 	_companion2._moveDiff = Common::Point(3, 2);
 	_companion2.changeZoom(-1);
-	_companion2._effect = 1;
+	_companion2._effect = EFFECT_SHADED;
 	_companion2.setPosition(Common::Point(225, 63));
 	if (R2_GLOBALS._player._characterIndex == R2_MIRANDA)
 		_companion2.setup(10, 5, 1);
@@ -2787,7 +2787,7 @@ void Scene3400::postInit(SceneObjectList *OwnerList) {
 	_webbster._numFrames = 7;
 	_webbster._moveDiff = Common::Point(5, 3);
 	_webbster.changeZoom(-1);
-	_webbster._effect = 1;
+	_webbster._effect = EFFECT_SHADED;
 	_webbster.setPosition(Common::Point(235, 61));
 	_webbster.setup(40, 3, 1);
 	_webbster.animate(ANIM_MODE_1, NULL);
@@ -2899,7 +2899,7 @@ void Scene3400::signal() {
 		_teal._numFrames = 7;
 		_teal._moveDiff = Common::Point(3, 2);
 		_teal.changeZoom(-1);
-		_teal._effect = 1;
+		_teal._effect = EFFECT_SHADED;
 		_teal.setPosition(Common::Point(-15, 90));
 		_teal.setup(3402, 1, 1);
 		_teal.animate(ANIM_MODE_1, NULL);
@@ -4444,7 +4444,7 @@ void Scene3600::postInit(SceneObjectList *OwnerList) {
 	_quinn.postInit();
 	_quinn._moveDiff = Common::Point(3, 2);
 	_quinn.changeZoom(-1);
-	_quinn._effect = 1;
+	_quinn._effect = EFFECT_SHADED;
 
 	if (R2_GLOBALS._player._characterIndex != 1)
 		_quinn.setDetails(9001, 0, -1, -1, 1, (SceneItem *) NULL);
@@ -4453,7 +4453,7 @@ void Scene3600::postInit(SceneObjectList *OwnerList) {
 	_seeker._numFrames = 7;
 	_seeker._moveDiff = Common::Point(5, 3);
 	_seeker.changeZoom(-1);
-	_seeker._effect = 1;
+	_seeker._effect = EFFECT_SHADED;
 
 	if (R2_GLOBALS._player._characterIndex != 2)
 		_seeker.setDetails(9002, 1, -1, -1, 1, (SceneItem *) NULL);
@@ -4461,7 +4461,7 @@ void Scene3600::postInit(SceneObjectList *OwnerList) {
 	_miranda.postInit();
 	_miranda._moveDiff = Common::Point(3, 2);
 	_miranda.changeZoom(-1);
-	_miranda._effect = 1;
+	_miranda._effect = EFFECT_SHADED;
 
 	if (R2_GLOBALS._player._characterIndex != 3)
 		_miranda.setDetails(9003, 1, -1, -1, 1, (SceneItem *) NULL);
@@ -4475,14 +4475,14 @@ void Scene3600::postInit(SceneObjectList *OwnerList) {
 	_webbster._numFrames = 7;
 	_webbster._moveDiff = Common::Point(5, 3);
 	_webbster.changeZoom(-1);
-	_webbster._effect = 1;
+	_webbster._effect = EFFECT_SHADED;
 	_webbster.setDetails(3600, 27, -1, -1, 1, (SceneItem *) NULL);
 
 	_teal.postInit();
 	_teal._numFrames = 7;
 	_teal._moveDiff = Common::Point(3, 2);
 	_teal.changeZoom(-1);
-	_teal._effect = 1;
+	_teal._effect = EFFECT_SHADED;
 	_teal.setDetails(3600, 12, -1, -1, 1, (SceneItem *) NULL);
 
 	_palette1.loadPalette(0);
@@ -5208,8 +5208,8 @@ void Scene3800::enterArea() {
 		_balloonQuinn.fixPriority(10);
 		_balloonQuinn.changeZoom(-1);
 		_balloonQuinn.setVisage(1110);
-		_balloonQuinn._effect = 5;
-		_balloonQuinn._field9C = this->_field312;
+		_balloonQuinn._effect = EFFECT_5;
+		_balloonQuinn._shadowMap = this->_shadowPaletteMap;
 		R2_GLOBALS._player._linkedActor = &_balloonQuinn;
 		switch (R2_GLOBALS._sceneManager._previousScene) {
 		case 2600:
@@ -5518,8 +5518,8 @@ void Scene3900::postInit(SceneObjectList *OwnerList) {
 	_linkedQuinn.fixPriority(10);
 	_linkedQuinn.changeZoom(-1);
 	_linkedQuinn.setVisage(1110);
-	_linkedQuinn._effect = 5;
-	_linkedQuinn._field9C = _field312;
+	_linkedQuinn._effect = EFFECT_5;
+	_linkedQuinn._shadowMap = _shadowPaletteMap;
 	R2_GLOBALS._player._linkedActor = &_linkedQuinn;
 
 	if ((R2_GLOBALS._desertPreviousDirection == 2) && (R2_GLOBALS._sceneManager._previousScene != 2700)) {

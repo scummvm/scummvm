@@ -868,8 +868,8 @@ void Scene1100::postInit(SceneObjectList *OwnerList) {
 		_palette1.loadPalette(1101);
 		R2_GLOBALS._player.postInit();
 		R2_GLOBALS._player.disableControl();
-		R2_GLOBALS._player._effect = 5;
-		R2_GLOBALS._player._field9C = _field312;
+		R2_GLOBALS._player._effect = EFFECT_5;
+		R2_GLOBALS._player._shadowMap = _shadowPaletteMap;
 		R2_GLOBALS._player.setup(1102, 3, 2);
 		R2_GLOBALS._player.setObjectWrapper(NULL);
 		R2_GLOBALS._player.setPosition(Common::Point(111,-20));
@@ -894,8 +894,8 @@ void Scene1100::postInit(SceneObjectList *OwnerList) {
 		_shipFormationShadow.setup(1102, 6, 2);
 		_shipFormationShadow._moveRate = 30;
 		_shipFormationShadow._moveDiff.x = 2;
-		_shipFormationShadow._effect = 5;
-		_shipFormationShadow._field9C = _field312;
+		_shipFormationShadow._effect = EFFECT_5;
+		_shipFormationShadow._shadowMap = _shadowPaletteMap;
 
 		R2_GLOBALS._sound1.play(86);
 
@@ -1038,12 +1038,12 @@ void Scene1100::signal() {
 		break;
 	case 5:
 		_runningGuy1.postInit();
-		_runningGuy1._effect = 6;
+		_runningGuy1._effect = EFFECT_6;
 		_runningGuy1.setup(1103, 3, 1);
 		_runningGuy1._moveRate = 30;
 
 		_runningGuy2.postInit();
-		_runningGuy2._effect = 6;
+		_runningGuy2._effect = EFFECT_6;
 		_runningGuy2.setup(1103, 4, 1);
 		_runningGuy2._moveRate = 25;
 
@@ -1063,7 +1063,7 @@ void Scene1100::signal() {
 		setAction(&_sequenceManager1, this, 1103, &_chief, &_laserShot, NULL);
 		break;
 	case 8:
-		R2_GLOBALS._player._effect = 0;
+		R2_GLOBALS._player._effect = EFFECT_NONE;
 		_animation.postInit();
 		setAction(&_sequenceManager1, this, 1105, &R2_GLOBALS._player, &_laserShot, &_animation, &_chief, NULL);
 		break;
@@ -1084,7 +1084,7 @@ void Scene1100::signal() {
 	case 11: {
 		setAction(&_sequenceManager1, this, 1106, &_animation, &_laserShot, &_leftImpacts, NULL);
 
-		R2_GLOBALS._player._effect = 5;
+		R2_GLOBALS._player._effect = EFFECT_5;
 		R2_GLOBALS._player.setup(1102, 3, 2);
 		R2_GLOBALS._player.setPosition(Common::Point(-50, 131));
 		R2_GLOBALS._sound2.play(84);
@@ -6908,9 +6908,9 @@ void Scene1500::postInit(SceneObjectList *OwnerList) {
 
 	_starshipShadow.postInit();
 	_starshipShadow.setup(1401, 1, 1);
-	_starshipShadow._effect = 5;
+	_starshipShadow._effect = EFFECT_5;
 	_starshipShadow.fixPriority(10);
-	_starshipShadow._field9C = _field312;
+	_starshipShadow._shadowMap = _shadowPaletteMap;
 
 	_starship.postInit();
 	_starship.setup(1400, 1, 1);
@@ -6920,9 +6920,9 @@ void Scene1500::postInit(SceneObjectList *OwnerList) {
 	if (R2_GLOBALS._sceneManager._previousScene != 1010) {
 		_smallShipShadow.postInit();
 		_smallShipShadow.setup(1401, 2, 1);
-		_smallShipShadow._effect = 5;
+		_smallShipShadow._effect = EFFECT_5;
 		_smallShipShadow.fixPriority(10);
-		_smallShipShadow._field9C = _field312;
+		_smallShipShadow._shadowMap = _shadowPaletteMap;
 
 		_smallShip.postInit();
 		_smallShip._moveRate = 30;
@@ -7147,7 +7147,7 @@ void Scene1530::postInit(SceneObjectList *OwnerList) {
 		_sceneMode = 1;
 	} else {
 		_seeker.postInit();
-		_seeker._effect = 1;
+		_seeker._effect = EFFECT_SHADED;
 
 		R2_GLOBALS._player.postInit();
 		R2_GLOBALS._player.animate(ANIM_MODE_1, NULL);
@@ -7814,7 +7814,7 @@ void Scene1550::postInit(SceneObjectList *OwnerList) {
 	_stripManager.addSpeaker(&_seekerSpeaker);
 
 	R2_GLOBALS._player.postInit();
-	R2_GLOBALS._player._effect = 6;
+	R2_GLOBALS._player._effect = EFFECT_6;
 
 	if (R2_GLOBALS._player._characterIndex == R2_QUINN)
 		R2_GLOBALS._player.setup(1500, 3, 1);
@@ -9020,7 +9020,7 @@ void Scene1550::enterArea() {
 				(R2_GLOBALS._scene1550JunkLocations[i + 2] != 0)) {
 			tmpIdx = R2_GLOBALS._scene1550JunkLocations[i + 3];
 			_junk[di].postInit();
-			_junk[di]._effect = 6;
+			_junk[di]._effect = EFFECT_6;
 			_junk[di]._shade = 0;
 			_junk[di]._fieldA4 = tmpIdx;
 			_junk[di]._junkNumber = i;
@@ -9264,7 +9264,7 @@ void Scene1550::enterArea() {
 
 	if (R2_GLOBALS._s1550PlayerArea[R2_QUINN] == R2_GLOBALS._s1550PlayerArea[R2_SEEKER]) {
 		_companion.postInit();
-		_companion._effect = 7;
+		_companion._effect = EFFECT_6;
 		_companion.changeZoom(-1);
 
 		assert((_field419 >= 1550) && (_field419 <= 2008));
@@ -10577,8 +10577,8 @@ void Scene1700::postInit(SceneObjectList *OwnerList) {
 	else
 		_actor1.setVisage(1111);
 
-	_actor1._effect = 5;
-	_actor1._field9C = _field312;
+	_actor1._effect = EFFECT_5;
+	_actor1._shadowMap = _shadowPaletteMap;
 	R2_GLOBALS._player._linkedActor = &_actor1;
 
 	_actor2.postInit();
@@ -10588,8 +10588,8 @@ void Scene1700::postInit(SceneObjectList *OwnerList) {
 	else
 		_actor2.setVisage(1112);
 
-	_actor2._effect = 5;
-	_actor2._field9C = _field312;
+	_actor2._effect = EFFECT_5;
+	_actor2._shadowMap = _shadowPaletteMap;
 	_actor12._linkedActor = &_actor2;
 
 	R2_GLOBALS._sound1.play(134);
@@ -11526,8 +11526,8 @@ void Scene1800::postInit(SceneObjectList *OwnerList) {
 	else
 		_playerShadow.setVisage(1110);
 
-	_playerShadow._effect = 5;
-	_playerShadow._field9C = _field312;
+	_playerShadow._effect = EFFECT_5;
+	_playerShadow._shadowMap = _shadowPaletteMap;
 
 	R2_GLOBALS._player._linkedActor = &_playerShadow;
 
@@ -11538,8 +11538,8 @@ void Scene1800::postInit(SceneObjectList *OwnerList) {
 	else
 		_companionShadow.setVisage(1111);
 
-	_companionShadow._effect = 5;
-	_companionShadow._field9C = _field312;
+	_companionShadow._effect = EFFECT_5;
+	_companionShadow._shadowMap = _shadowPaletteMap;
 
 	_companion._linkedActor = &_companionShadow;
 
@@ -11856,7 +11856,7 @@ bool Scene1850::Door::startAction(CursorType action, Event &event) {
 
 	R2_GLOBALS._player.disableControl();
 	if (scene->_sceneMode == 1851)
-		R2_GLOBALS._player._effect = 1;
+		R2_GLOBALS._player._effect = EFFECT_SHADED;
 
 	if (_position.x >= 160)
 		R2_GLOBALS.setFlag(29);
@@ -12004,8 +12004,8 @@ void Scene1850::postInit(SceneObjectList *OwnerList) {
 	}
 
 	if (R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] == 1850) {
-		R2_GLOBALS._player._effect = 6;
-		_companion._effect = 6;
+		R2_GLOBALS._player._effect = EFFECT_6;
+		_companion._effect = EFFECT_6;
 		if (R2_GLOBALS.getFlag(31)) {
 			R2_GLOBALS._player._shade = 0;
 			_companion._shade = 0;
@@ -12041,7 +12041,7 @@ void Scene1850::postInit(SceneObjectList *OwnerList) {
 				_actor3.setup(1853, 3, 1);
 				_actor3.setPosition(Common::Point(122, 113));
 				_actor3.fixPriority(114);
-				_actor3._effect = 6;
+				_actor3._effect = EFFECT_6;
 
 				// Totally useless test
 				if (R2_GLOBALS._player._characterIndex == R2_QUINN) {
@@ -12055,7 +12055,7 @@ void Scene1850::postInit(SceneObjectList *OwnerList) {
 				_actor4.setup(1853, 3, 2);
 				_actor4.setPosition(Common::Point(139, 111));
 				_actor4.fixPriority(114);
-				_actor4._effect = 6;
+				_actor4._effect = EFFECT_6;
 
 				// Still totally useless test
 				if (R2_GLOBALS._player._characterIndex == R2_QUINN) {
@@ -12085,7 +12085,7 @@ void Scene1850::postInit(SceneObjectList *OwnerList) {
 				_actor3.setup(1853, 3, 1);
 				_actor3.setPosition(Common::Point(122, 113));
 				_actor3.fixPriority(114);
-				_actor3._effect = 6;
+				_actor3._effect = EFFECT_6;
 
 				// Totally useless test
 				if (R2_GLOBALS._player._characterIndex == R2_QUINN) {
@@ -12099,7 +12099,7 @@ void Scene1850::postInit(SceneObjectList *OwnerList) {
 				_actor4.setup(1853, 3, 2);
 				_actor4.setPosition(Common::Point(139, 111));
 				_actor4.fixPriority(114);
-				_actor4._effect = 6;
+				_actor4._effect = EFFECT_6;
 
 				// Again, useless test
 				if (R2_GLOBALS._player._characterIndex == R2_QUINN) {
@@ -12157,8 +12157,8 @@ void Scene1850::postInit(SceneObjectList *OwnerList) {
 
 		R2_GLOBALS._player.enableControl();
 	} else { // R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] != 1850
-		R2_GLOBALS._player._effect = 1;
-		_companion._effect = 1;
+		R2_GLOBALS._player._effect = EFFECT_SHADED;
+		_companion._effect = EFFECT_SHADED;
 		R2_GLOBALS._player.disableControl();
 		_sceneMode = 10;
 		if (R2_GLOBALS._player._characterIndex == R2_QUINN) {
@@ -12224,10 +12224,10 @@ void Scene1850::remove() {
 void Scene1850::signal() {
 	switch (_sceneMode) {
 	case 10:
-		R2_GLOBALS._player._effect = 6;
+		R2_GLOBALS._player._effect = EFFECT_6;
 		R2_GLOBALS._player._shade = 6;
 
-		_companion._effect = 6;
+		_companion._effect = EFFECT_6;
 		_companion._shade = 6;
 
 		R2_GLOBALS._walkRegions.disableRegion(5);
@@ -12406,7 +12406,7 @@ void Scene1850::signal() {
 		break;
 	case 1877:
 		_actor3.postInit();
-		_actor3._effect = 6;
+		_actor3._effect = EFFECT_6;
 
 		if (R2_GLOBALS._player._characterIndex == R2_QUINN) {
 			_actor3.setDetails(1850, 28, -1, -1, 2, (SceneItem *)NULL);
@@ -12415,7 +12415,7 @@ void Scene1850::signal() {
 		}
 
 		_actor4.postInit();
-		_actor4._effect = 6;
+		_actor4._effect = EFFECT_6;
 
 		if (R2_GLOBALS._player._characterIndex == R2_QUINN) {
 			_actor4.setDetails(1850, 29, -1, -1, 2, (SceneItem *)NULL);
@@ -14893,7 +14893,7 @@ void Scene1950::enterArea() {
 		_vampire._numFrames = 6;
 		_vampire._moveRate = 6;
 		_vampire._moveDiff = Common::Point(3, 2);
-		_vampire._effect = 1;
+		_vampire._effect = EFFECT_SHADED;
 
 		if (!R2_GLOBALS._vampireData[_vampireIndex - 1]._isAlive) {
 			// Show vampire ashes

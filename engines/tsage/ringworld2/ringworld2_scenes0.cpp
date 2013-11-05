@@ -3491,7 +3491,7 @@ void Scene300::postInit(SceneObjectList *OwnerList) {
 		if (R2_GLOBALS._sceneManager._previousScene == 1500) {
 			R2_GLOBALS._player._oldCharacterScene[R2_MIRANDA] = 3150;
 			R2_GLOBALS._player._characterScene[R2_MIRANDA] = 3150;
-			R2_GLOBALS._player._effect = 0;
+			R2_GLOBALS._player._effect = EFFECT_NONE;
 			R2_GLOBALS._player.setAction(NULL);
 			R2_GLOBALS._player.disableControl();
 
@@ -3676,7 +3676,7 @@ void Scene300::signal() {
 
 	case 313:
 		_sceneMode = 14;
-		R2_GLOBALS._player._effect = 0;
+		R2_GLOBALS._player._effect = EFFECT_NONE;
 		_seeker.setAction(&_sequenceManager3, this, 314, &_seeker, &_doorway, NULL);
 		R2_GLOBALS._events.setCursor(CURSOR_ARROW);
 		_stripManager.start(301, this);
@@ -3685,7 +3685,7 @@ void Scene300::signal() {
 	case 314:
 		R2_GLOBALS._player.disableControl();
 		_sceneMode = 315;
-		R2_GLOBALS._player._effect = 1;
+		R2_GLOBALS._player._effect = EFFECT_SHADED;
 		setAction(&_sequenceManager1, this, 315, &R2_GLOBALS._player, &_doorway, NULL);
 		break;
 
@@ -5290,7 +5290,7 @@ void Scene500::PanelDialog::Button::doButtonPress() {
 			} else {
 				scene->_suit.postInit();
 				scene->_suit.hide();
-				scene->_suit._effect = 1;
+				scene->_suit._effect = EFFECT_SHADED;
 				scene->_suit.setDetails(500, -1, -1, -1, 2, (SceneItem *)NULL);
 				scene->_suit.setup(502, R2_GLOBALS._landerSuitNumber + 2, 1);
 
@@ -5325,14 +5325,14 @@ void Scene500::postInit(SceneObjectList *OwnerList) {
 			R2_GLOBALS._walkRegions.enableRegion(1);
 
 			_seeker.postInit();
-			_seeker._effect = 1;
+			_seeker._effect = EFFECT_SHADED;
 			_seeker.setup(1505, 1, 1);
 			_seeker._moveDiff.x = 5;
 			_seeker.setPosition(Common::Point(42, 151));
 			_seeker.setDetails(500, 34, 35, 36, 1, (SceneItem *)NULL);
 		} else if (R2_GLOBALS._player._characterScene[R2_QUINN] == 500) {
 			_seeker.postInit();
-			_seeker._effect = 1;
+			_seeker._effect = EFFECT_SHADED;
 			_seeker.setup(R2_GLOBALS.getFlag(26) ? 1500 : 10, 1, 1);
 			_seeker.setPosition(Common::Point(42, 151));
 
@@ -5407,7 +5407,7 @@ void Scene500::postInit(SceneObjectList *OwnerList) {
 	}
 
 	_suits.postInit();
-	_suits._effect = 1;
+	_suits._effect = EFFECT_SHADED;
 	_suits.setup(502, 1, 1);
 	_suits.setPosition(Common::Point(258, 99));
 	_suits.fixPriority(50);
@@ -5421,7 +5421,7 @@ void Scene500::postInit(SceneObjectList *OwnerList) {
 		_transparentDoor.setup(500, 8, 7);
 
 		_suit.postInit();
-		_suit._effect = 1;
+		_suit._effect = EFFECT_SHADED;
 		_suit.setPosition(Common::Point(247, 52));
 		_suit.setDetails(500, -1, -1, -1, 2, (SceneItem *)NULL);
 
@@ -5594,7 +5594,7 @@ void Scene525::postInit(SceneObjectList *OwnerList) {
 	R2_GLOBALS._sound1.play(105);
 
 	_actor1.postInit();
-	_actor1._effect = 1;
+	_actor1._effect = EFFECT_SHADED;
 
 	R2_GLOBALS._player.postInit();
 	R2_GLOBALS._player.animate(ANIM_MODE_1, NULL);
@@ -5767,7 +5767,7 @@ bool Scene600::Laser::startAction(CursorType action, Event &event) {
 
 				scene->_smoke.postInit();
 				scene->_smoke.setup(601, 3, 1);
-				scene->_smoke._effect = 3;
+				scene->_smoke._effect = EFFECT_3;
 				scene->_smoke._moveDiff = Common::Point(1, 1);
 				scene->_smoke._moveRate = 2;
 				scene->_smoke._numFrames = 3;
@@ -5948,7 +5948,7 @@ void Scene600::postInit(SceneObjectList *OwnerList) {
 			_smoke._numFrames = 3;
 			_smoke.animate(ANIM_MODE_2, NULL);
 			_smoke.fixPriority(130);
-			_smoke._effect = 3;
+			_smoke._effect = EFFECT_3;
 			_smoke.setDetails(600, 24, 25, 26, 1, (SceneItem *) NULL);
 			_smoke.signal();
 		}
@@ -6019,7 +6019,7 @@ void Scene600::signal() {
 		R2_INVENTORY.setObjectScene(R2_AEROSOL, 600);
 		R2_GLOBALS.setFlag(5);
 
-		_smoke._effect = 3;
+		_smoke._effect = EFFECT_3;
 		_smoke.signal();
 		break;
 	case 606:
@@ -7002,7 +7002,7 @@ void Scene825::postInit(SceneObjectList *OwnerList) {
 	R2_GLOBALS._interfaceY = SCREEN_HEIGHT;
 
 	R2_GLOBALS._player.postInit();
-	R2_GLOBALS._player._effect = 0;
+	R2_GLOBALS._player._effect = EFFECT_NONE;
 	R2_GLOBALS._player.setVisage(10);
 	R2_GLOBALS._player.hide();
 	R2_GLOBALS._player.disableControl();
@@ -7613,7 +7613,7 @@ void Scene900::postInit(SceneObjectList *OwnerList) {
 	_electromagnet.fixPriority(1);
 	_electromagnet.setup(900, 1, 2);
 	_electromagnet.setPosition(Common::Point(89, 0));
-	_electromagnet._effect = 1;
+	_electromagnet._effect = EFFECT_SHADED;
 	_electromagnet.setDetails(900, 6, -1, 8, 1, (SceneItem *) NULL);
 
 	if ((R2_INVENTORY.getObjectScene(R2_CABLE_HARNESS) != 1) && (R2_INVENTORY.getObjectScene(R2_ATTRACTOR_CABLE_HARNESS) != 1)) {
