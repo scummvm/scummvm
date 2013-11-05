@@ -716,7 +716,7 @@ bool BasePersistenceManager::transferConstChar(const char *name, const char **va
 
 //////////////////////////////////////////////////////////////////////////
 // Common::String
-bool BasePersistenceManager::transfer(const char *name, Common::String *val) {
+bool BasePersistenceManager::transferString(const char *name, Common::String *val) {
 	if (_saving) {
 		putString(val->c_str());
 		return STATUS_OK;

@@ -84,7 +84,7 @@ public:
 	bool transferPoint32(const char *name, Point32 *val);
 	bool transferConstChar(const char *name, const char **val);
 	bool transferCharPtr(const char *name, char **val);
-	bool transfer(const char *name, Common::String *val);
+	bool transferString(const char *name, Common::String *val);
 	bool transferVector2(const char *name, Vector2 *val);
 	bool transfer(const char *name, AnsiStringArray &Val);
 	BasePersistenceManager(const char *savePrefix = nullptr, bool deleteSingleton = false);

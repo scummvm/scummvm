@@ -1337,11 +1337,11 @@ bool AdActor::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferPtr(TMEMBER_PTR(_walkSprite));
 
 	persistMgr->transferPtr(TMEMBER_PTR(_animSprite2));
-	persistMgr->transfer(TMEMBER(_talkAnimName));
-	persistMgr->transfer(TMEMBER(_idleAnimName));
-	persistMgr->transfer(TMEMBER(_walkAnimName));
-	persistMgr->transfer(TMEMBER(_turnLeftAnimName));
-	persistMgr->transfer(TMEMBER(_turnRightAnimName));
+	persistMgr->transferString(TMEMBER(_talkAnimName));
+	persistMgr->transferString(TMEMBER(_idleAnimName));
+	persistMgr->transferString(TMEMBER(_walkAnimName));
+	persistMgr->transferString(TMEMBER(_turnLeftAnimName));
+	persistMgr->transferString(TMEMBER(_turnRightAnimName));
 
 	_anims.persist(persistMgr);
 

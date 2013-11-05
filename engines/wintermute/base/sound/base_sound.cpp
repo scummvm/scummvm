@@ -166,7 +166,7 @@ bool BaseSound::persist(BasePersistenceManager *persistMgr) {
 
 	persistMgr->transferPtr(TMEMBER_PTR(_gameRef));
 
-	persistMgr->transfer(TMEMBER(_soundFilename));
+	persistMgr->transferString(TMEMBER(_soundFilename));
 	persistMgr->transferBool(TMEMBER(_soundLooping));
 	persistMgr->transferBool(TMEMBER(_soundPaused));
 	persistMgr->transferBool(TMEMBER(_soundFreezePaused));
