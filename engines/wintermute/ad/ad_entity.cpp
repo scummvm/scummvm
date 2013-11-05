@@ -1095,13 +1095,13 @@ bool AdEntity::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER(_item));
 	persistMgr->transferPtr(TMEMBER_PTR(_region));
 	//persistMgr->transfer(TMEMBER(_sprite));
-	persistMgr->transfer(TMEMBER_INT(_subtype));
+	persistMgr->transferSint32(TMEMBER_INT(_subtype));
 	_talkSprites.persist(persistMgr);
 	_talkSpritesEx.persist(persistMgr);
 
-	persistMgr->transfer(TMEMBER(_walkToX));
-	persistMgr->transfer(TMEMBER(_walkToY));
-	persistMgr->transfer(TMEMBER_INT(_walkToDir));
+	persistMgr->transferSint32(TMEMBER(_walkToX));
+	persistMgr->transferSint32(TMEMBER(_walkToY));
+	persistMgr->transferSint32(TMEMBER_INT(_walkToDir));
 
 	persistMgr->transferPtr(TMEMBER_PTR(_theora));
 

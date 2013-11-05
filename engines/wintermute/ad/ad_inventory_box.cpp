@@ -373,12 +373,12 @@ bool AdInventoryBox::persist(BasePersistenceManager *persistMgr) {
 
 	persistMgr->transferPtr(TMEMBER_PTR(_closeButton));
 	persistMgr->transferBool(TMEMBER(_hideSelected));
-	persistMgr->transfer(TMEMBER(_itemHeight));
+	persistMgr->transferSint32(TMEMBER(_itemHeight));
 	persistMgr->transferRect32(TMEMBER(_itemsArea));
-	persistMgr->transfer(TMEMBER(_itemWidth));
-	persistMgr->transfer(TMEMBER(_scrollBy));
-	persistMgr->transfer(TMEMBER(_scrollOffset));
-	persistMgr->transfer(TMEMBER(_spacing));
+	persistMgr->transferSint32(TMEMBER(_itemWidth));
+	persistMgr->transferSint32(TMEMBER(_scrollBy));
+	persistMgr->transferSint32(TMEMBER(_scrollOffset));
+	persistMgr->transferSint32(TMEMBER(_spacing));
 	persistMgr->transferBool(TMEMBER(_visible));
 	persistMgr->transferPtr(TMEMBER_PTR(_window));
 	persistMgr->transferBool(TMEMBER(_exclusive));

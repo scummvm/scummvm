@@ -492,15 +492,15 @@ bool VideoTheoraPlayer::persist(BasePersistenceManager *persistMgr) {
 
 	persistMgr->transferPtr(TMEMBER_PTR(_gameRef));
 	persistMgr->transferUint32(TMEMBER(_savedPos));
-	persistMgr->transfer(TMEMBER(_savedState));
+	persistMgr->transferSint32(TMEMBER(_savedState));
 	persistMgr->transfer(TMEMBER(_filename));
 	persistMgr->transfer(TMEMBER(_alphaFilename));
-	persistMgr->transfer(TMEMBER(_posX));
-	persistMgr->transfer(TMEMBER(_posY));
+	persistMgr->transferSint32(TMEMBER(_posX));
+	persistMgr->transferSint32(TMEMBER(_posY));
 	persistMgr->transferFloat(TMEMBER(_playZoom));
-	persistMgr->transfer(TMEMBER_INT(_playbackType));
+	persistMgr->transferSint32(TMEMBER_INT(_playbackType));
 	persistMgr->transferBool(TMEMBER(_looping));
-	persistMgr->transfer(TMEMBER(_volume));
+	persistMgr->transferSint32(TMEMBER(_volume));
 
 	if (!persistMgr->getIsSaving() && (_savedState != THEORA_STATE_NONE)) {
 		initializeSimple();

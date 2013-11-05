@@ -524,7 +524,7 @@ bool BaseFontTT::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferBool(TMEMBER(_isItalic));
 	persistMgr->transferBool(TMEMBER(_isUnderline));
 	persistMgr->transferBool(TMEMBER(_isStriked));
-	persistMgr->transfer(TMEMBER(_fontHeight));
+	persistMgr->transferSint32(TMEMBER(_fontHeight));
 	persistMgr->transfer(TMEMBER(_fontFile));
 
 
@@ -532,13 +532,13 @@ bool BaseFontTT::persist(BasePersistenceManager *persistMgr) {
 	int32 numLayers;
 	if (persistMgr->getIsSaving()) {
 		numLayers = _layers.size();
-		persistMgr->transfer(TMEMBER(numLayers));
+		persistMgr->transferSint32(TMEMBER(numLayers));
 		for (int i = 0; i < numLayers; i++) {
 			_layers[i]->persist(persistMgr);
 		}
 	} else {
 		numLayers = _layers.size();
-		persistMgr->transfer(TMEMBER(numLayers));
+		persistMgr->transferSint32(TMEMBER(numLayers));
 		for (int i = 0; i < numLayers; i++) {
 			BaseTTFontLayer *layer = new BaseTTFontLayer;
 			layer->persist(persistMgr);

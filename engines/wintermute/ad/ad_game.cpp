@@ -1428,12 +1428,12 @@ bool AdGame::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferBool(TMEMBER(_scheduledFadeIn));
 	persistMgr->transfer(TMEMBER(_scheduledScene));
 	persistMgr->transferPtr(TMEMBER_PTR(_selectedItem));
-	persistMgr->transfer(TMEMBER_INT(_talkSkipButton));
+	persistMgr->transferSint32(TMEMBER_INT(_talkSkipButton));
 
 	_sentences.persist(persistMgr);
 
 	persistMgr->transferPtr(TMEMBER_PTR(_sceneViewport));
-	persistMgr->transfer(TMEMBER_INT(_stateEx));
+	persistMgr->transferSint32(TMEMBER_INT(_stateEx));
 	persistMgr->transferBool(TMEMBER(_initialScene));
 	persistMgr->transfer(TMEMBER(_debugStartupScene));
 

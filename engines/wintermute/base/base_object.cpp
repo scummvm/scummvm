@@ -963,17 +963,17 @@ bool BaseObject::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferBool(TMEMBER(_editorAlwaysRegister));
 	persistMgr->transferBool(TMEMBER(_editorOnly));
 	persistMgr->transferBool(TMEMBER(_editorSelected));
-	persistMgr->transfer(TMEMBER(_iD));
+	persistMgr->transferSint32(TMEMBER(_iD));
 	persistMgr->transferBool(TMEMBER(_is3D));
 	persistMgr->transferBool(TMEMBER(_movable));
-	persistMgr->transfer(TMEMBER(_posX));
-	persistMgr->transfer(TMEMBER(_posY));
+	persistMgr->transferSint32(TMEMBER(_posX));
+	persistMgr->transferSint32(TMEMBER(_posY));
 	persistMgr->transferFloat(TMEMBER(_relativeScale));
 	persistMgr->transferBool(TMEMBER(_rotatable));
 	persistMgr->transferFloat(TMEMBER(_scale));
 	persistMgr->transferPtr(TMEMBER_PTR(_sFX));
 	persistMgr->transferUint32(TMEMBER(_sFXStart));
-	persistMgr->transfer(TMEMBER(_sFXVolume));
+	persistMgr->transferSint32(TMEMBER(_sFXVolume));
 	persistMgr->transferBool(TMEMBER(_ready));
 	persistMgr->transferRect32(TMEMBER(_rect));
 	persistMgr->transferBool(TMEMBER(_rectSet));
@@ -992,14 +992,14 @@ bool BaseObject::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferBool(TMEMBER(_saveState));
 	persistMgr->transferBool(TMEMBER(_nonIntMouseEvents));
 
-	persistMgr->transfer(TMEMBER_INT(_sFXType));
+	persistMgr->transferSint32(TMEMBER_INT(_sFXType));
 	persistMgr->transferFloat(TMEMBER(_sFXParam1));
 	persistMgr->transferFloat(TMEMBER(_sFXParam2));
 	persistMgr->transferFloat(TMEMBER(_sFXParam3));
 	persistMgr->transferFloat(TMEMBER(_sFXParam4));
 
 
-	persistMgr->transfer(TMEMBER_INT(_blendMode));
+	persistMgr->transferSint32(TMEMBER_INT(_blendMode));
 
 	return STATUS_OK;
 }

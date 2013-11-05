@@ -230,25 +230,25 @@ bool PartParticle::fadeOut(uint32 currentTime, int fadeTime) {
 
 //////////////////////////////////////////////////////////////////////////
 bool PartParticle::persist(BasePersistenceManager *persistMgr) {
-	persistMgr->transfer(TMEMBER(_alpha1));
-	persistMgr->transfer(TMEMBER(_alpha2));
+	persistMgr->transferSint32(TMEMBER(_alpha1));
+	persistMgr->transferSint32(TMEMBER(_alpha2));
 	persistMgr->transferRect32(TMEMBER(_border));
 	persistMgr->transferVector2(TMEMBER(_pos));
 	persistMgr->transferFloat(TMEMBER(_posZ));
 	persistMgr->transferVector2(TMEMBER(_velocity));
 	persistMgr->transferFloat(TMEMBER(_scale));
 	persistMgr->transferUint32(TMEMBER(_creationTime));
-	persistMgr->transfer(TMEMBER(_lifeTime));
+	persistMgr->transferSint32(TMEMBER(_lifeTime));
 	persistMgr->transferBool(TMEMBER(_isDead));
-	persistMgr->transfer(TMEMBER_INT(_state));
+	persistMgr->transferSint32(TMEMBER_INT(_state));
 	persistMgr->transferUint32(TMEMBER(_fadeStart));
-	persistMgr->transfer(TMEMBER(_fadeTime));
-	persistMgr->transfer(TMEMBER(_currentAlpha));
+	persistMgr->transferSint32(TMEMBER(_fadeTime));
+	persistMgr->transferSint32(TMEMBER(_currentAlpha));
 	persistMgr->transferFloat(TMEMBER(_angVelocity));
 	persistMgr->transferFloat(TMEMBER(_rotation));
 	persistMgr->transferFloat(TMEMBER(_growthRate));
 	persistMgr->transferBool(TMEMBER(_exponentialGrowth));
-	persistMgr->transfer(TMEMBER(_fadeStartAlpha));
+	persistMgr->transferSint32(TMEMBER(_fadeStartAlpha));
 
 	if (persistMgr->getIsSaving()) {
 		const char *filename = _sprite->getFilename();

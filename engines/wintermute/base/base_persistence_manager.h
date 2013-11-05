@@ -74,7 +74,7 @@ public:
 	byte *_richBuffer;
 
 	bool transferPtr(const char *name, void *val);
-	bool transfer(const char *name, int32 *val);
+	bool transferSint32(const char *name, int32 *val);
 	bool transferUint32(const char *name, uint32 *val);
 	bool transferFloat(const char *name, float *val);
 	bool transferDouble(const char *name, double *val);

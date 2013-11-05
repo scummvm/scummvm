@@ -1254,7 +1254,7 @@ bool ScScript::persist(BasePersistenceManager *persistMgr) {
 		} else {
 			// don't save idle/finished scripts
 			int32 bufferSize = 0;
-			persistMgr->transfer(TMEMBER(bufferSize));
+			persistMgr->transferSint32(TMEMBER(bufferSize));
 		}
 	} else {
 		persistMgr->transferUint32(TMEMBER(_bufferSize));
@@ -1270,7 +1270,7 @@ bool ScScript::persist(BasePersistenceManager *persistMgr) {
 	}
 
 	persistMgr->transferPtr(TMEMBER_PTR(_callStack));
-	persistMgr->transfer(TMEMBER(_currentLine));
+	persistMgr->transferSint32(TMEMBER(_currentLine));
 	persistMgr->transferPtr(TMEMBER_PTR(_engine));
 	persistMgr->transfer(TMEMBER(_filename));
 	persistMgr->transferBool(TMEMBER(_freezable));
@@ -1278,9 +1278,9 @@ bool ScScript::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferUint32(TMEMBER(_iP));
 	persistMgr->transferPtr(TMEMBER_PTR(_scopeStack));
 	persistMgr->transferPtr(TMEMBER_PTR(_stack));
-	persistMgr->transfer(TMEMBER_INT(_state));
+	persistMgr->transferSint32(TMEMBER_INT(_state));
 	persistMgr->transferPtr(TMEMBER_PTR(_operand));
-	persistMgr->transfer(TMEMBER_INT(_origState));
+	persistMgr->transferSint32(TMEMBER_INT(_origState));
 	persistMgr->transferPtr(TMEMBER_PTR(_owner));
 	persistMgr->transferPtr(TMEMBER_PTR(_reg1));
 	persistMgr->transferBool(TMEMBER(_thread));

@@ -1268,10 +1268,10 @@ bool UIWindow::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferPtr(TMEMBER_PTR(_imageInactive));
 	persistMgr->transferBool(TMEMBER(_inGame));
 	persistMgr->transferBool(TMEMBER(_isMenu));
-	persistMgr->transfer(TMEMBER_INT(_mode));
+	persistMgr->transferSint32(TMEMBER_INT(_mode));
 	persistMgr->transferPtr(TMEMBER_PTR(_shieldButton));
 	persistMgr->transferPtr(TMEMBER_PTR(_shieldWindow));
-	persistMgr->transfer(TMEMBER_INT(_titleAlign));
+	persistMgr->transferSint32(TMEMBER_INT(_titleAlign));
 	persistMgr->transferRect32(TMEMBER(_titleRect));
 	persistMgr->transferBool(TMEMBER(_transparent));
 	persistMgr->transferPtr(TMEMBER_PTR(_viewport));

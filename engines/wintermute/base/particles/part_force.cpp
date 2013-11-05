@@ -57,7 +57,7 @@ bool PartForce::persist(BasePersistenceManager *persistMgr) {
 	}
 	persistMgr->transferVector2(TMEMBER(_pos));
 	persistMgr->transferVector2(TMEMBER(_direction));
-	persistMgr->transfer(TMEMBER_INT(_type));
+	persistMgr->transferSint32(TMEMBER_INT(_type));
 
 	return STATUS_OK;
 }

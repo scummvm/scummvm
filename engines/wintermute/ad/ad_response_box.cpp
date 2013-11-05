@@ -589,14 +589,14 @@ bool AdResponseBox::persist(BasePersistenceManager *persistMgr) {
 	_respButtons.persist(persistMgr);
 	persistMgr->transferRect32(TMEMBER(_responseArea));
 	_responses.persist(persistMgr);
-	persistMgr->transfer(TMEMBER(_scrollOffset));
+	persistMgr->transferSint32(TMEMBER(_scrollOffset));
 	persistMgr->transferPtr(TMEMBER_PTR(_shieldWindow));
-	persistMgr->transfer(TMEMBER(_spacing));
+	persistMgr->transferSint32(TMEMBER(_spacing));
 	persistMgr->transferPtr(TMEMBER_PTR(_waitingScript));
 	persistMgr->transferPtr(TMEMBER_PTR(_window));
 
-	persistMgr->transfer(TMEMBER_INT(_verticalAlign));
-	persistMgr->transfer(TMEMBER_INT(_align));
+	persistMgr->transferSint32(TMEMBER_INT(_verticalAlign));
+	persistMgr->transferSint32(TMEMBER_INT(_align));
 
 	return STATUS_OK;
 }
