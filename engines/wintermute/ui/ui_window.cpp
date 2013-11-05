@@ -1263,7 +1263,7 @@ bool UIWindow::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferBool(TMEMBER(_dragging));
 	persistMgr->transferRect32(TMEMBER(_dragRect));
 	persistMgr->transferBool(TMEMBER(_fadeBackground));
-	persistMgr->transfer(TMEMBER(_fadeColor));
+	persistMgr->transferUint32(TMEMBER(_fadeColor));
 	persistMgr->transferPtr(TMEMBER_PTR(_fontInactive));
 	persistMgr->transferPtr(TMEMBER_PTR(_imageInactive));
 	persistMgr->transferBool(TMEMBER(_inGame));

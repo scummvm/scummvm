@@ -1219,12 +1219,12 @@ bool PartEmitter::persist(BasePersistenceManager *persistMgr) {
 	uint32 numForces;
 	if (persistMgr->getIsSaving()) {
 		numForces = _forces.size();
-		persistMgr->transfer(TMEMBER(numForces));
+		persistMgr->transferUint32(TMEMBER(numForces));
 		for (uint32 i = 0; i < _forces.size(); i++) {
 			_forces[i]->persist(persistMgr);
 		}
 	} else {
-		persistMgr->transfer(TMEMBER(numForces));
+		persistMgr->transferUint32(TMEMBER(numForces));
 		for (uint32 i = 0; i < numForces; i++) {
 			PartForce *force = new PartForce(_gameRef);
 			force->persist(persistMgr);
@@ -1235,12 +1235,12 @@ bool PartEmitter::persist(BasePersistenceManager *persistMgr) {
 	uint32 numParticles;
 	if (persistMgr->getIsSaving()) {
 		numParticles = _particles.size();
-		persistMgr->transfer(TMEMBER(numParticles));
+		persistMgr->transferUint32(TMEMBER(numParticles));
 		for (uint32 i = 0; i < _particles.size(); i++) {
 			_particles[i]->persist(persistMgr);
 		}
 	} else {
-		persistMgr->transfer(TMEMBER(numParticles));
+		persistMgr->transferUint32(TMEMBER(numParticles));
 		for (uint32 i = 0; i < numParticles; i++) {
 			PartParticle *particle = new PartParticle(_gameRef);
 			particle->persist(persistMgr);

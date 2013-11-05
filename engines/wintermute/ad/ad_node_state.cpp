@@ -99,7 +99,7 @@ bool AdNodeState::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER(_name));
 	persistMgr->transfer(TMEMBER(_filename));
 	persistMgr->transfer(TMEMBER(_cursor));
-	persistMgr->transfer(TMEMBER(_alphaColor));
+	persistMgr->transferUint32(TMEMBER(_alphaColor));
 	for (int i = 0; i < 7; i++) {
 		persistMgr->transfer(TMEMBER(_caption[i]));
 	}

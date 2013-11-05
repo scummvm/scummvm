@@ -192,8 +192,8 @@ bool AdTalkNode::loadBuffer(char *buffer, bool complete) {
 //////////////////////////////////////////////////////////////////////////
 bool AdTalkNode::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER(_comment));
-	persistMgr->transfer(TMEMBER(_startTime));
-	persistMgr->transfer(TMEMBER(_endTime));
+	persistMgr->transferUint32(TMEMBER(_startTime));
+	persistMgr->transferUint32(TMEMBER(_endTime));
 	persistMgr->transferBool(TMEMBER(_playToEnd));
 	persistMgr->transferPtr(TMEMBER_PTR(_sprite));
 	persistMgr->transfer(TMEMBER(_spriteFilename));

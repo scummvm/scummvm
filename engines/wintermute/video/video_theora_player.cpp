@@ -491,7 +491,7 @@ bool VideoTheoraPlayer::persist(BasePersistenceManager *persistMgr) {
 	}
 
 	persistMgr->transferPtr(TMEMBER_PTR(_gameRef));
-	persistMgr->transfer(TMEMBER(_savedPos));
+	persistMgr->transferUint32(TMEMBER(_savedPos));
 	persistMgr->transfer(TMEMBER(_savedState));
 	persistMgr->transfer(TMEMBER(_filename));
 	persistMgr->transfer(TMEMBER(_alphaFilename));

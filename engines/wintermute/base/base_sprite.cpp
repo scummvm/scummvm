@@ -535,7 +535,7 @@ bool BaseSprite::persist(BasePersistenceManager *persistMgr) {
 
 	_frames.persist(persistMgr);
 
-	persistMgr->transfer(TMEMBER(_lastFrameTime));
+	persistMgr->transferUint32(TMEMBER(_lastFrameTime));
 	persistMgr->transferBool(TMEMBER(_looping));
 	persistMgr->transfer(TMEMBER(_moveX));
 	persistMgr->transfer(TMEMBER(_moveY));

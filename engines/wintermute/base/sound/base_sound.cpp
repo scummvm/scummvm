@@ -171,11 +171,11 @@ bool BaseSound::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferBool(TMEMBER(_soundPaused));
 	persistMgr->transferBool(TMEMBER(_soundFreezePaused));
 	persistMgr->transferBool(TMEMBER(_soundPlaying));
-	persistMgr->transfer(TMEMBER(_soundPosition));
+	persistMgr->transferUint32(TMEMBER(_soundPosition));
 	persistMgr->transfer(TMEMBER(_soundPrivateVolume));
 	persistMgr->transferBool(TMEMBER(_soundStreamed));
 	persistMgr->transfer(TMEMBER_INT(_soundType));
-	persistMgr->transfer(TMEMBER(_soundLoopStart));
+	persistMgr->transferUint32(TMEMBER(_soundLoopStart));
 
 	return STATUS_OK;
 }

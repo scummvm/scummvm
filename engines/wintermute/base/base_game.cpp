@@ -3061,7 +3061,7 @@ bool BaseGame::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferPtr(TMEMBER_PTR(_fontStorage));
 	persistMgr->transferBool(TMEMBER(_interactive));
 	persistMgr->transferPtr(TMEMBER_PTR(_keyboardState));
-	persistMgr->transfer(TMEMBER(_lastTime));
+	persistMgr->transferUint32(TMEMBER(_lastTime));
 	persistMgr->transferPtr(TMEMBER_PTR(_mainObject));
 	_musicSystem->persistChannels(persistMgr);
 	_musicSystem->persistCrossfadeSettings(persistMgr);
@@ -3107,7 +3107,7 @@ bool BaseGame::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferBool(TMEMBER(_autorunDisabled));
 
 	persistMgr->transferBool(TMEMBER(_autoSaveOnExit));
-	persistMgr->transfer(TMEMBER(_autoSaveSlot));
+	persistMgr->transferUint32(TMEMBER(_autoSaveSlot));
 	persistMgr->transferBool(TMEMBER(_cursorHidden));
 
 	if (!persistMgr->getIsSaving()) {

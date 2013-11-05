@@ -773,9 +773,9 @@ bool SXFile::persist(BasePersistenceManager *persistMgr) {
 	uint32 pos = 0;
 	if (persistMgr->getIsSaving()) {
 		pos = getPos();
-		persistMgr->transfer(TMEMBER(pos));
+		persistMgr->transferUint32(TMEMBER(pos));
 	} else {
-		persistMgr->transfer(TMEMBER(pos));
+		persistMgr->transferUint32(TMEMBER(pos));
 
 		// try to re-open file if needed
 		_writeFile = nullptr;

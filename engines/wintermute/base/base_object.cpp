@@ -956,7 +956,7 @@ bool BaseObject::persist(BasePersistenceManager *persistMgr) {
 		persistMgr->transfer(TMEMBER(_caption[i]));
 	}
 	persistMgr->transferPtr(TMEMBER_PTR(_activeCursor));
-	persistMgr->transfer(TMEMBER(_alphaColor));
+	persistMgr->transferUint32(TMEMBER(_alphaColor));
 	persistMgr->transferBool(TMEMBER(_autoSoundPanning));
 	persistMgr->transferPtr(TMEMBER_PTR(_cursor));
 	persistMgr->transferBool(TMEMBER(_sharedCursors));
@@ -972,7 +972,7 @@ bool BaseObject::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferBool(TMEMBER(_rotatable));
 	persistMgr->transferFloat(TMEMBER(_scale));
 	persistMgr->transferPtr(TMEMBER_PTR(_sFX));
-	persistMgr->transfer(TMEMBER(_sFXStart));
+	persistMgr->transferUint32(TMEMBER(_sFXStart));
 	persistMgr->transfer(TMEMBER(_sFXVolume));
 	persistMgr->transferBool(TMEMBER(_ready));
 	persistMgr->transferRect32(TMEMBER(_rect));

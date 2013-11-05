@@ -222,9 +222,9 @@ bool BaseKeyboardState::persist(BasePersistenceManager *persistMgr) {
 	BaseScriptable::persist(persistMgr);
 
 	persistMgr->transferBool(TMEMBER(_currentAlt));
-	persistMgr->transfer(TMEMBER(_currentCharCode));
+	persistMgr->transferUint32(TMEMBER(_currentCharCode));
 	persistMgr->transferBool(TMEMBER(_currentControl));
-	persistMgr->transfer(TMEMBER(_currentKeyData));
+	persistMgr->transferUint32(TMEMBER(_currentKeyData));
 	persistMgr->transferBool(TMEMBER(_currentPrintable));
 	persistMgr->transferBool(TMEMBER(_currentShift));
 

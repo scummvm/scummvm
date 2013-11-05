@@ -1249,7 +1249,7 @@ bool ScScript::persist(BasePersistenceManager *persistMgr) {
 	// buffer
 	if (persistMgr->getIsSaving()) {
 		if (_state != SCRIPT_PERSISTENT && _state != SCRIPT_FINISHED && _state != SCRIPT_THREAD_FINISHED) {
-			persistMgr->transfer(TMEMBER(_bufferSize));
+			persistMgr->transferUint32(TMEMBER(_bufferSize));
 			persistMgr->putBytes(_buffer, _bufferSize);
 		} else {
 			// don't save idle/finished scripts
@@ -1257,7 +1257,7 @@ bool ScScript::persist(BasePersistenceManager *persistMgr) {
 			persistMgr->transfer(TMEMBER(bufferSize));
 		}
 	} else {
-		persistMgr->transfer(TMEMBER(_bufferSize));
+		persistMgr->transferUint32(TMEMBER(_bufferSize));
 		if (_bufferSize > 0) {
 			_buffer = new byte[_bufferSize];
 			persistMgr->getBytes(_buffer, _bufferSize);
@@ -1275,7 +1275,7 @@ bool ScScript::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER(_filename));
 	persistMgr->transferBool(TMEMBER(_freezable));
 	persistMgr->transferPtr(TMEMBER_PTR(_globals));
-	persistMgr->transfer(TMEMBER(_iP));
+	persistMgr->transferUint32(TMEMBER(_iP));
 	persistMgr->transferPtr(TMEMBER_PTR(_scopeStack));
 	persistMgr->transferPtr(TMEMBER_PTR(_stack));
 	persistMgr->transfer(TMEMBER_INT(_state));
@@ -1286,10 +1286,10 @@ bool ScScript::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferBool(TMEMBER(_thread));
 	persistMgr->transfer(TMEMBER(_threadEvent));
 	persistMgr->transferPtr(TMEMBER_PTR(_thisStack));
-	persistMgr->transfer(TMEMBER(_timeSlice));
+	persistMgr->transferUint32(TMEMBER(_timeSlice));
 	persistMgr->transferPtr(TMEMBER_PTR(_waitObject));
 	persistMgr->transferPtr(TMEMBER_PTR(_waitScript));
-	persistMgr->transfer(TMEMBER(_waitTime));
+	persistMgr->transferUint32(TMEMBER(_waitTime));
 	persistMgr->transferBool(TMEMBER(_waitFrozen));
 
 	persistMgr->transferBool(TMEMBER(_methodThread));

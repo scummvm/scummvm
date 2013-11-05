@@ -625,7 +625,7 @@ bool BasePersistenceManager::transfer(const char *name, int32 *val) {
 
 //////////////////////////////////////////////////////////////////////////
 // DWORD
-bool BasePersistenceManager::transfer(const char *name, uint32 *val) {
+bool BasePersistenceManager::transferUint32(const char *name, uint32 *val) {
 	if (_saving) {
 		_saveStream->writeUint32LE(*val);
 		if (_saveStream->err()) {

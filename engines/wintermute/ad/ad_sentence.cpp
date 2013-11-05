@@ -253,13 +253,13 @@ bool AdSentence::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER(_currentStance));
 	persistMgr->transferPtr(TMEMBER_PTR(_currentSprite));
 	persistMgr->transfer(TMEMBER(_currentSkelAnim));
-	persistMgr->transfer(TMEMBER(_duration));
+	persistMgr->transferUint32(TMEMBER(_duration));
 	persistMgr->transferPtr(TMEMBER_PTR(_font));
 	persistMgr->transferPoint32(TMEMBER(_pos));
 	persistMgr->transferPtr(TMEMBER_PTR(_sound));
 	persistMgr->transferBool(TMEMBER(_soundStarted));
 	persistMgr->transfer(TMEMBER(_stances));
-	persistMgr->transfer(TMEMBER(_startTime));
+	persistMgr->transferUint32(TMEMBER(_startTime));
 	persistMgr->transferPtr(TMEMBER_PTR(_talkDef));
 	persistMgr->transfer(TMEMBER(_tempStance));
 	persistMgr->transfer(TMEMBER(_text));
