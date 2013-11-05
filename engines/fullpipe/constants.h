@@ -29,6 +29,7 @@ namespace Fullpipe {
 #define ANI_DOMINO_3 2732
 #define ANI_EGGEATER 334
 #define ANI_IN1MAN 5110
+#define ANI_INV_COIN 875
 #define ANI_INV_EGGAPL 1564
 #define ANI_INV_EGGBOOT 1570
 #define ANI_INV_EGGCOIN 1567

@@ -1627,6 +1627,34 @@ void sceneHandler03_giveItem(ExCommand *ex) {
 		sceneHandler03_swallowEgg(ex->_parentId);
 }
 
+int sceneHandler03_swallowedEgg1State() {
+	return g_vars->swallowedEgg1->_value.intValue;
+}
+
+void sceneHandler03_getCoin(ExCommand *ex) {
+	MessageQueue *mq = g_fullpipe->_globalMessageQueueList->getMessageQueueById(ex->_parId);
+
+	if (mq && mq->getCount() > 0) {
+		ExCommand *ex0 = mq->getExCommandByIndex(0);
+		ExCommand *ex1 = mq->getExCommandByIndex(1);
+
+		if (sceneHandler03_swallowedEgg1State()) {
+			ex0->_messageKind = 1;
+			ex1->_messageKind = 1;
+
+			getGameLoaderInventory()->removeItem(ANI_INV_COIN, 1);
+		} else {
+			ex0->_messageKind = 0;
+			ex0->_excFlags |= 1;
+
+			ex1->_messageKind = 0;
+			ex1->_excFlags |= 1;
+
+			g_vars->scene03_eggeater->_flags &= 0xFF7Fu;
+		}
+	}
+}
+
 int sceneHandler03(ExCommand *ex) {
 #if 0
 	if (ex->_messageKind != 17) {
