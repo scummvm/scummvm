@@ -57,6 +57,7 @@ AvalancheEngine::AvalancheEngine(OSystem *syst, const AvalancheGameDescription *
 	_sound = nullptr;
 
 	_platform = gd->desc.platform;
+    initVariables();
 }
 
 AvalancheEngine::~AvalancheEngine() {
@@ -88,8 +89,6 @@ AvalancheEngine::~AvalancheEngine() {
 }
 
 void AvalancheEngine::initVariables() {
-	resetVariables();
-
 	for (int i = 0; i < 31; i++) {
 		_also[i][0] = nullptr;
 		_also[i][1] = nullptr;
