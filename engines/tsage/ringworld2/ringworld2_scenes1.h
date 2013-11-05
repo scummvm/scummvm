@@ -963,11 +963,10 @@ class Scene1875 : public SceneExt {
 public:
 	SpeakerQuinn _quinnSpeaker;
 	SpeakerSeeker _seekerSpeaker;
-	NamedHotspot _item1;
-	NamedHotspot _item2;
-	SceneActor _actor1;
-	SceneActor _actor2;
-	SceneActor _actor3;
+	NamedHotspot _background;
+	NamedHotspot _screen;
+	SceneActor _map;
+	SceneActor _rimPosition;
 	Button _button1;
 	Button _button2;
 	Button _button3;

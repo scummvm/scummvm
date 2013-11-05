@@ -12537,7 +12537,7 @@ void Scene1875::Button::doButtonPress() {
 	int newFrameNumber;
 	switch (_buttonId) {
 	case 3:
-		if ((scene->_actor1._frame == 1) && (scene->_button1._strip == 2)) {
+		if ((scene->_map._frame == 1) && (scene->_button1._strip == 2)) {
 			R2_GLOBALS._player.disableControl();
 			R2_GLOBALS._events.setCursor(CURSOR_CROSSHAIRS);
 			scene->_sceneMode = 10;
@@ -12545,21 +12545,21 @@ void Scene1875::Button::doButtonPress() {
 		} else {
 			R2_GLOBALS._player.disableControl();
 			scene->_sceneMode = 1890;
-			scene->_actor2.postInit();
-			scene->setAction(&scene->_sequenceManager, scene, 1890, &scene->_actor2, NULL);
+			scene->_rimPosition.postInit();
+			scene->setAction(&scene->_sequenceManager, scene, 1890, &scene->_rimPosition, NULL);
 		}
 		break;
 	case 4:
-		newFrameNumber = scene->_actor1._frame + 1;
+		newFrameNumber = scene->_map._frame + 1;
 		if (newFrameNumber > 6)
 			newFrameNumber = 1;
-		scene->_actor1.setFrame(newFrameNumber);
+		scene->_map.setFrame(newFrameNumber);
 		break;
 	case 5:
-		newFrameNumber = scene->_actor1._frame - 1;
+		newFrameNumber = scene->_map._frame - 1;
 		if (newFrameNumber < 1)
 			newFrameNumber = 6;
-		scene->_actor1.setFrame(newFrameNumber);
+		scene->_map.setFrame(newFrameNumber);
 		break;
 	default:
 		break;
@@ -12652,9 +12652,9 @@ void Scene1875::postInit(SceneObjectList *OwnerList) {
 	_button4.initButton(4);
 	_button5.initButton(5);
 
-	_actor1.postInit();
-	_actor1.setup(1855, 4, 1);
-	_actor1.setPosition(Common::Point(160, 116));
+	_map.postInit();
+	_map.setup(1855, 4, 1);
+	_map.setPosition(Common::Point(160, 116));
 
 	R2_GLOBALS._player.postInit();
 	R2_GLOBALS._player.hide();
@@ -12663,8 +12663,8 @@ void Scene1875::postInit(SceneObjectList *OwnerList) {
 		R2_GLOBALS._sound1.play(122);
 		R2_GLOBALS._player.disableControl();
 		_sceneMode = 11;
-		_actor2.postInit();
-		setAction(&_sequenceManager, this, 1892, &_actor2, NULL);
+		_rimPosition.postInit();
+		setAction(&_sequenceManager, this, 1892, &_rimPosition, NULL);
 	} else {
 		if (R2_GLOBALS._sceneManager._previousScene == 3150) {
 			R2_GLOBALS._sound1.play(116);
@@ -12674,8 +12674,8 @@ void Scene1875::postInit(SceneObjectList *OwnerList) {
 		R2_GLOBALS._player._canWalk = false;
 	}
 
-	_item2.setDetails(Rect(43, 14, 275, 122), 1875, 9, 1, -1, 1, NULL);
-	_item1.setDetails(Rect(0, 0, 320, 200), 1875, 3, -1, -1, 1, NULL);
+	_screen.setDetails(Rect(43, 14, 275, 122), 1875, 9, 1, -1, 1, NULL);
+	_background.setDetails(Rect(0, 0, 320, 200), 1875, 3, -1, -1, 1, NULL);
 
 	R2_GLOBALS._player._characterScene[R2_QUINN] = 1875;
 	R2_GLOBALS._player._characterScene[R2_SEEKER] = 1875;
@@ -12688,8 +12688,8 @@ void Scene1875::signal() {
 	case 10:
 		R2_GLOBALS._player.disableControl();
 		_sceneMode = 1891;
-		_actor2.postInit();
-		setAction(&_sequenceManager, this, 1891, &_actor2, NULL);
+		_rimPosition.postInit();
+		setAction(&_sequenceManager, this, 1891, &_rimPosition, NULL);
 		break;
 	case 11:
 		R2_GLOBALS._events.setCursor(CURSOR_CROSSHAIRS);
@@ -12697,7 +12697,7 @@ void Scene1875::signal() {
 		_stripManager.start(577, this);
 		break;
 	case 1890:
-		_actor2.remove();
+		_rimPosition.remove();
 		R2_GLOBALS._player.enableControl();
 		R2_GLOBALS._player._canWalk = false;
 		break;
