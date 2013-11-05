@@ -786,7 +786,7 @@ class Scene3800 : public SceneExt {
 public:
 	SceneObject _balloon;
 	SceneObject _harness;
-	SceneActor _balloonQuinn;
+	SceneActor _quinnShadow;
 	NamedHotspot _background;
 	NorthExit _northExit;
 	EastExit _eastExit;
@@ -833,7 +833,7 @@ class Scene3900 : public SceneExt {
 		virtual void changeScene();
 	};
 public:
-	SceneActor _linkedQuinn;
+	SceneActor _quinnShadow;
 	NamedHotspot _background;
 	NorthExit _northExit;
 	EastExit _eastExit;

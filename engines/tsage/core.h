@@ -467,7 +467,7 @@ enum AnimateMode {ANIM_MODE_NONE = 0, ANIM_MODE_1 = 1, ANIM_MODE_2 = 2, ANIM_MOD
 };
 
 enum Effect { EFFECT_NONE = 0, EFFECT_SHADED = 1, EFFECT_2 = 2, EFFECT_3 = 3,
-	EFFECT_4 = 4, EFFECT_SHADOW = 5, EFFECT_6 = 6 };
+	EFFECT_4 = 4, EFFECT_SHADOW_MAP = 5, EFFECT_6 = 6 };
 
 class SceneObject;
 

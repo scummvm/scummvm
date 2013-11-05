@@ -749,7 +749,7 @@ public:
 	SpeakerSeeker _seekerSpeaker;
 	NamedHotspot _item1;
 	Item2 _item2;
-	SceneActor _actor1;
+	SceneActor _playerShadow;
 	SceneActor _actor2;
 	SceneActor _slabWest;
 	SceneActor _slabEast;

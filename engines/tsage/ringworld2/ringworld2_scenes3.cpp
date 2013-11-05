@@ -5204,18 +5204,20 @@ void Scene3800::enterArea() {
 		R2_GLOBALS._player.setStrip(3);
 		R2_GLOBALS._player.changeZoom(-1);
 		R2_GLOBALS._player._moveDiff = Common::Point(3, 2);
-		_balloonQuinn.postInit();
-		_balloonQuinn.fixPriority(10);
-		_balloonQuinn.changeZoom(-1);
-		_balloonQuinn.setVisage(1110);
-		_balloonQuinn._effect = EFFECT_SHADOW;
-		_balloonQuinn._shadowMap = this->_shadowPaletteMap;
-		R2_GLOBALS._player._linkedActor = &_balloonQuinn;
+
+		_quinnShadow.postInit();
+		_quinnShadow.fixPriority(10);
+		_quinnShadow.changeZoom(-1);
+		_quinnShadow.setVisage(1110);
+		_quinnShadow._effect = EFFECT_SHADOW_MAP;
+		_quinnShadow._shadowMap = this->_shadowPaletteMap;
+		R2_GLOBALS._player._linkedActor = &_quinnShadow;
+
 		switch (R2_GLOBALS._sceneManager._previousScene) {
 		case 2600:
 			_balloon.postInit();
 			_harness.postInit();
-			_balloonQuinn.hide();
+			_quinnShadow.hide();
 			_sceneMode = 3800;
 			setAction(&_sequenceManager1, this, 3800, &R2_GLOBALS._player, 
 				&_balloon, &_harness, NULL);
@@ -5361,7 +5363,7 @@ void Scene3800::signal() {
 		g_globals->_sceneManager.changeScene(3900);
 		break;
 	case 3800:
-		_balloonQuinn.show();
+		_quinnShadow.show();
 		_balloon.remove();
 		_harness.remove();
 		R2_GLOBALS._player.enableControl();
@@ -5514,13 +5516,13 @@ void Scene3900::postInit(SceneObjectList *OwnerList) {
 	R2_GLOBALS._player.changeZoom(-1);
 	R2_GLOBALS._player._moveDiff = Common::Point(3, 2);
 
-	_linkedQuinn.postInit();
-	_linkedQuinn.fixPriority(10);
-	_linkedQuinn.changeZoom(-1);
-	_linkedQuinn.setVisage(1110);
-	_linkedQuinn._effect = EFFECT_SHADOW;
-	_linkedQuinn._shadowMap = _shadowPaletteMap;
-	R2_GLOBALS._player._linkedActor = &_linkedQuinn;
+	_quinnShadow.postInit();
+	_quinnShadow.fixPriority(10);
+	_quinnShadow.changeZoom(-1);
+	_quinnShadow.setVisage(1110);
+	_quinnShadow._effect = EFFECT_SHADOW_MAP;
+	_quinnShadow._shadowMap = _shadowPaletteMap;
+	R2_GLOBALS._player._linkedActor = &_quinnShadow;
 
 	if ((R2_GLOBALS._desertPreviousDirection == 2) && (R2_GLOBALS._sceneManager._previousScene != 2700)) {
 //		loadScene(3825);

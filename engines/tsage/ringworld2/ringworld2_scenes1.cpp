@@ -868,7 +868,7 @@ void Scene1100::postInit(SceneObjectList *OwnerList) {
 		_palette1.loadPalette(1101);
 		R2_GLOBALS._player.postInit();
 		R2_GLOBALS._player.disableControl();
-		R2_GLOBALS._player._effect = EFFECT_SHADOW;
+		R2_GLOBALS._player._effect = EFFECT_SHADOW_MAP;
 		R2_GLOBALS._player._shadowMap = _shadowPaletteMap;
 		R2_GLOBALS._player.setup(1102, 3, 2);
 		R2_GLOBALS._player.setObjectWrapper(NULL);
@@ -894,7 +894,7 @@ void Scene1100::postInit(SceneObjectList *OwnerList) {
 		_shipFormationShadow.setup(1102, 6, 2);
 		_shipFormationShadow._moveRate = 30;
 		_shipFormationShadow._moveDiff.x = 2;
-		_shipFormationShadow._effect = EFFECT_SHADOW;
+		_shipFormationShadow._effect = EFFECT_SHADOW_MAP;
 		_shipFormationShadow._shadowMap = _shadowPaletteMap;
 
 		R2_GLOBALS._sound1.play(86);
@@ -1084,8 +1084,7 @@ void Scene1100::signal() {
 	case 11: {
 		setAction(&_sequenceManager1, this, 1106, &_animation, &_laserShot, &_leftImpacts, NULL);
 
-		// CHECKME: Shadow effect should be set next to shadowmap
-		R2_GLOBALS._player._effect = EFFECT_SHADOW;
+		R2_GLOBALS._player._effect = EFFECT_SHADOW_MAP;
 		R2_GLOBALS._player.setup(1102, 3, 2);
 		R2_GLOBALS._player.setPosition(Common::Point(-50, 131));
 		R2_GLOBALS._sound2.play(84);
@@ -6909,7 +6908,7 @@ void Scene1500::postInit(SceneObjectList *OwnerList) {
 
 	_starshipShadow.postInit();
 	_starshipShadow.setup(1401, 1, 1);
-	_starshipShadow._effect = EFFECT_SHADOW;
+	_starshipShadow._effect = EFFECT_SHADOW_MAP;
 	_starshipShadow.fixPriority(10);
 	_starshipShadow._shadowMap = _shadowPaletteMap;
 
@@ -6921,7 +6920,7 @@ void Scene1500::postInit(SceneObjectList *OwnerList) {
 	if (R2_GLOBALS._sceneManager._previousScene != 1010) {
 		_smallShipShadow.postInit();
 		_smallShipShadow.setup(1401, 2, 1);
-		_smallShipShadow._effect = EFFECT_SHADOW;
+		_smallShipShadow._effect = EFFECT_SHADOW_MAP;
 		_smallShipShadow.fixPriority(10);
 		_smallShipShadow._shadowMap = _shadowPaletteMap;
 
@@ -10570,17 +10569,17 @@ void Scene1700::postInit(SceneObjectList *OwnerList) {
 
 	R2_GLOBALS._sound1.play(134);
 
-	_actor1.postInit();
-	_actor1.fixPriority(10);
+	_playerShadow.postInit();
+	_playerShadow.fixPriority(10);
 
 	if (R2_GLOBALS._player._characterIndex == R2_QUINN)
-		_actor1.setVisage(1112);
+		_playerShadow.setVisage(1112);
 	else
-		_actor1.setVisage(1111);
+		_playerShadow.setVisage(1111);
 
-	_actor1._effect = EFFECT_SHADOW;
-	_actor1._shadowMap = _shadowPaletteMap;
-	R2_GLOBALS._player._linkedActor = &_actor1;
+	_playerShadow._effect = EFFECT_SHADOW_MAP;
+	_playerShadow._shadowMap = _shadowPaletteMap;
+	R2_GLOBALS._player._linkedActor = &_playerShadow;
 
 	_actor2.postInit();
 	_actor2.fixPriority(10);
@@ -10589,7 +10588,7 @@ void Scene1700::postInit(SceneObjectList *OwnerList) {
 	else
 		_actor2.setVisage(1112);
 
-	_actor2._effect = EFFECT_SHADOW;
+	_actor2._effect = EFFECT_SHADOW_MAP;
 	_actor2._shadowMap = _shadowPaletteMap;
 	_actor12._linkedActor = &_actor2;
 
@@ -10611,7 +10610,7 @@ void Scene1700::postInit(SceneObjectList *OwnerList) {
 		_ledgeHopper.setPosition(Common::Point(220, 137));
 		_ledgeHopper.setDetails(1700, 6, -1, -1, 1, (SceneItem *) NULL);
 
-		_actor1.hide();
+		_playerShadow.hide();
 		_actor2.hide();
 		R2_GLOBALS._events.setCursor(CURSOR_WALK);
 		_stripManager.start(539, this);
@@ -10788,7 +10787,8 @@ void Scene1700::signal() {
 	case 40:
 		R2_GLOBALS._player.disableControl();
 		_sceneMode = 1704;
-		setAction(&_sequenceManager, this, 1704, &R2_GLOBALS._player, &_actor12, &_actor10, &_ledgeHopper, &_actor1, &_actor2, NULL);
+		setAction(&_sequenceManager, this, 1704, &R2_GLOBALS._player, &_actor12, 
+			&_actor10, &_ledgeHopper, &_playerShadow, &_actor2, NULL);
 		break;
 	case 50:
 		if (R2_GLOBALS._player._characterIndex == R2_QUINN)
@@ -11527,7 +11527,7 @@ void Scene1800::postInit(SceneObjectList *OwnerList) {
 	else
 		_playerShadow.setVisage(1110);
 
-	_playerShadow._effect = EFFECT_SHADOW;
+	_playerShadow._effect = EFFECT_SHADOW_MAP;
 	_playerShadow._shadowMap = _shadowPaletteMap;
 
 	R2_GLOBALS._player._linkedActor = &_playerShadow;
@@ -11539,7 +11539,7 @@ void Scene1800::postInit(SceneObjectList *OwnerList) {
 	else
 		_companionShadow.setVisage(1111);
 
-	_companionShadow._effect = EFFECT_SHADOW;
+	_companionShadow._effect = EFFECT_SHADOW_MAP;
 	_companionShadow._shadowMap = _shadowPaletteMap;
 
 	_companion._linkedActor = &_companionShadow;

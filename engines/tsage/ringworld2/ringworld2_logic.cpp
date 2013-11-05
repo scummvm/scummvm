@@ -1326,26 +1326,6 @@ bool SceneActor::startAction(CursorType action, Event &event) {
 GfxSurface SceneActor::getFrame() {
 	GfxSurface frame = SceneObject::getFrame();
 
-	// TODO: Proper effects handling
-	switch (_effect) {
-	case EFFECT_NONE:
-	case EFFECT_SHADOW:
-		// TODO: Figure out purpose of setting image flags to 64, and getting
-		// scene priorities -1 or _shade
-		break;
-	case EFFECT_SHADED:
-		// TODO: Transposing using R2_GLOBALS._pixelArrayMap
-		break;
-	case EFFECT_2:
-		// No effect
-		break;
-	case EFFECT_4:
-		break;
-	default:
-		// TODO: Default effect
-		break;
-	}
-
 	return frame;
 }
 
