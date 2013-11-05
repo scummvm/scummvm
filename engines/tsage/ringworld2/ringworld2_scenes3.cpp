@@ -396,7 +396,7 @@ bool Scene3150::LightFixture::startAction(CursorType action, Event &event) {
 		if ((R2_INVENTORY.getObjectScene(R2_LIGHT_BULB) != 3150) && (R2_GLOBALS.getFlag(75))) {
 			R2_GLOBALS._player.disableControl();
 			scene->_bulbOrWire.postInit();
-			scene->_bulbOrWire._effect = EFFECT_3;
+			scene->_bulbOrWire._effect = EFFECT_SHADED2;
 			scene->_bulbOrWire._shade = 5;
 			scene->_sceneMode = 3155;
 			scene->setAction(&scene->_sequenceManager, scene, 3155, &R2_GLOBALS._player, &scene->_bulbOrWire, NULL);
