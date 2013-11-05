@@ -44,7 +44,7 @@ Script::Script(PrinceEngine *vm) :
 }
 
 Script::~Script() {
-    delete[] _code;
+	delete[] _code;
 }
 
 void Script::setFlagValue(Flags::Id flagId, uint16 value) {
@@ -56,11 +56,11 @@ uint16 Script::getFlagValue(Flags::Id flagId) {
 }
 
 bool Script::loadFromStream(Common::SeekableReadStream &stream) {
-    _codeSize = stream.size();
-    _code = new byte[_codeSize];
+	_codeSize = stream.size();
+	_code = new byte[_codeSize];
 
-    if (!_code)
-        return false;
+	if (!_code)
+		return false;
 
 	stream.read(_code, _codeSize);
 	// Initialize the script
@@ -68,16 +68,16 @@ bool Script::loadFromStream(Common::SeekableReadStream &stream) {
 	_fgOpcodePC = READ_LE_UINT32(_code + 4);
 	_bgOpcodePC = 0;
 
-    return true;
+	return true;
 }
 
 void Script::debugScript(const char *s, ...) {
 	char buf[STRINGBUFLEN];
 	 va_list va;
 
-    va_start(va, s);
-    vsnprintf(buf, STRINGBUFLEN, s, va);
-    va_end(va);
+	va_start(va, s);
+	vsnprintf(buf, STRINGBUFLEN, s, va);
+	va_end(va);
 
 	Common::String str = Common::String::format("@0x%08X: ", _lastInstruction);
 	str += Common::String::format("op %04d: ", _lastOpcode);
@@ -131,22 +131,22 @@ uint32 Script::step(uint32 opcodePC) {
 }
 
 uint8 Script::getCodeByte(uint32 address) {
-    if (address >= _codeSize)
-        error("Trying to read a script byte at address 0x%04X, while the "
-            "script is just 0x%04X bytes long", address, _codeSize);
-    return _code[address];
+	if (address >= _codeSize)
+		error("Trying to read a script byte at address 0x%04X, while the "
+			"script is just 0x%04X bytes long", address, _codeSize);
+	return _code[address];
 }
 
 uint8 Script::readScript8bits() {
-    uint8 data = getCodeByte(_currentInstruction);
-    _currentInstruction++;
-    return data;
+	uint8 data = getCodeByte(_currentInstruction);
+	_currentInstruction++;
+	return data;
 }
 
 uint16 Script::readScript16bits() {
-    uint8 lower = readScript8bits();
-    uint8 upper = readScript8bits();
-    return lower | (upper << 8);
+	uint8 lower = readScript8bits();
+	uint8 upper = readScript8bits();
+	return lower | (upper << 8);
 }
 
 uint16 Script::readScriptValue() {
@@ -158,9 +158,9 @@ uint16 Script::readScriptValue() {
 }
 
 uint32 Script::readScript32bits() {
-    uint16 lower = readScript16bits();
-    uint16 upper = readScript16bits();
-    return lower | (upper << 16);
+	uint16 lower = readScript16bits();
+	uint16 upper = readScript16bits();
+	return lower | (upper << 16);
 }
 
 void Script::O_WAITFOREVER() {
