@@ -81,6 +81,16 @@ Graphics::Surface *loadCursor(const char *curName)
 	return curSurface;
 }
 
+void PrinceEngine::debugEngine(const char *s, ...) {
+	char buf[STRINGBUFLEN];
+	va_list va;
+
+    va_start(va, s);
+    vsnprintf(buf, STRINGBUFLEN, s, va);
+    va_end(va);
+
+	debug("Prince::Engine frame %08ld %s", _frameNr, buf);
+}
 
 
 PrinceEngine::PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc) : 
@@ -122,7 +132,7 @@ Common::Error PrinceEngine::run() {
 
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	
-	debug("Adding all path: %s", gameDataDir.getPath().c_str());
+	debugEngine("Adding all path: %s", gameDataDir.getPath().c_str());
 
 	SearchMan.addSubDirectoryMatching(gameDataDir, "all", 0, 2);
 	SearchMan.addSubDirectoryMatching(gameDataDir, "data/voices/output", 0, 2);
@@ -140,7 +150,7 @@ Common::Error PrinceEngine::run() {
 	if (!walizka)
 		return Common::kPathDoesNotExist;
 
-	debug("Loading walizka");
+	debugEngine("Loading walizka");
 	if (!_walizkaBmp.loadStream(*walizka)) {
 		return Common::kPathDoesNotExist;
 	}
@@ -149,7 +159,7 @@ Common::Error PrinceEngine::run() {
 	if (!skryptStream)
 		return Common::kPathNotFile;
 
-	debug("Loading skrypt");
+	debugEngine("Loading skrypt");
 	_script = new Script(this);
 	_script->loadFromStream(*skryptStream);
 
@@ -232,13 +242,13 @@ bool ObjectList::loadFromStream(Common::SeekableReadStream &stream)
 }
 
 bool PrinceEngine::loadLocation(uint16 locationNr) {
-	debug("PrinceEngine::loadLocation %d", locationNr);
+	debugEngine("PrinceEngine::loadLocation %d", locationNr);
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	SearchMan.remove(Common::String::format("%02d", _locationNr));
 	_locationNr = locationNr;
 
 	const Common::String locationNrStr = Common::String::format("%02d", _locationNr);
-	debug("loadLocation %s", locationNrStr.c_str());
+	debugEngine("loadLocation %s", locationNrStr.c_str());
 	SearchMan.addSubDirectoryMatching(gameDataDir, locationNrStr, 0, 2);
 
 	// load location background
@@ -250,7 +260,7 @@ bool PrinceEngine::loadLocation(uint16 locationNr) {
 	}
 
 	if(_roomBmp.loadStream(*room)) {
-		debug("Room bitmap loaded");
+		debugEngine("Room bitmap loaded");
 		_sceneWidth = _roomBmp.getSurface()->w;
 	}
 
@@ -350,7 +360,7 @@ bool PrinceEngine::loadAnim(uint16 animNr, bool loop) {
 		error("Can't load flic stream %s", streamName.c_str());
 	}
 
-	debug("%s loaded", streamName.c_str());
+	debugEngine("%s loaded", streamName.c_str());
     _flicLooped = loop;
 	_flicPlayer.start();
 	playNextFrame();
@@ -371,7 +381,7 @@ void PrinceEngine::scrollCameraRight(int16 delta) {
         if (_sceneWidth - 640 < delta + _newCameraX)
             delta += (_sceneWidth - 640) - (delta + _newCameraX);
         _newCameraX += delta;
-        debug(0, "PrinceEngine::scrollCameraRight() _newCameraX = %d; delta = %d", _newCameraX, delta);
+        debugEngine("PrinceEngine::scrollCameraRight() _newCameraX = %d; delta = %d", _newCameraX, delta);
     }   
 }
 

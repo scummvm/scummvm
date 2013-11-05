@@ -122,6 +122,7 @@ private:
 	void showTexts();
 
 	uint32 getTextWidth(const char *s);
+	void debugEngine(const char *s, ...);
 
 	Common::RandomSource *_rnd;
 	Graphics::BitmapDecoder _roomBmp;

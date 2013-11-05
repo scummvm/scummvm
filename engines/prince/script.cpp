@@ -79,7 +79,7 @@ void Script::debugScript(const char *s, ...) {
 	str += Common::String::format("op %04d: ", _lastOpcode);
 	//debugC(10, DebugChannel::kScript, "PrinceEngine::Script %s %s", str.c_str(), buf);
 
-	debug("Prince::Script mode %s frame %ld %s %s", _mode, _vm->_frameNr, str.c_str(), buf);
+	debug("Prince::Script frame %08ld mode %s %s %s", _vm->_frameNr, _mode, str.c_str(), buf);
 }
 
 void Script::step() {
@@ -388,19 +388,20 @@ void Script::O_COMPARE() {
 
 void Script::O_JUMPZ() {
 	int32 offset = readScript32bits();
-	debugScript("O_JUMPZ offset 0x%04X", offset);
 	if (! _result) {
 		_currentInstruction += offset - 4;
 	}
+
+	debugScript("O_JUMPZ result = %d, next %08x, offset 0x%08X", _result, _currentInstruction, offset);
 }
 
 void Script::O_JUMPNZ() {
 	int32 offset = readScript32bits();
-	debugScript("O_JUMPNZ offset 0x%08X", offset);
 	if (_result) {
 		_currentInstruction += offset - 4;
-		debugScript("O_JUMPNZ next 0x%08X", _currentInstruction);
 	}
+
+	debugScript("O_JUMPNZ result = %d, next %08x, offset 0x%08X", _result, _currentInstruction, offset);
 }
 
 void Script::O_EXIT() {
@@ -454,13 +455,13 @@ void Script::O_SETSTRING() {
 	_currentString = offset;
 
 	if (offset >= 80000) {
-		debug("GetVaria %s", _vm->_variaTxt->getString(offset - 80000));
+		debugScript("GetVaria %s", _vm->_variaTxt->getString(offset - 80000));
 	}
 	else if (offset < 2000) {
 		uint32 of = READ_LE_UINT32(_vm->_talkTxt+offset*4);
 		const char * txt = (const char *)&_vm->_talkTxt[of];
 		_string = &_vm->_talkTxt[of];
-		debug("TalkTxt %d %s", of, txt);
+		debugScript("TalkTxt %d %s", of, txt);
 	}
 
 	debugScript("O_SETSTRING %04d", offset);
@@ -758,10 +759,9 @@ void Script::O_GETANIMDATA() {
 }
 
 void Script::O_SETBGCODE() {
-	int32 bgcode = readScript32bits();
-	debugScript("O_SETBGCODE %d", bgcode);
-	_bgOpcodePC = _currentInstruction + bgcode;
-	debugScript("O_SETBGCODE next %08X", _bgOpcodePC);
+	int32 offset = readScript32bits();
+	_bgOpcodePC = _currentInstruction + offset;
+	debugScript("O_SETBGCODE next %08x, offset %08x", _bgOpcodePC, offset);
 }
 
 void Script::O_SETBACKFRAME() {
@@ -952,11 +952,9 @@ void Script::O_POPSTRING() {
 
 void Script::O_SETFGCODE() {
 	int32 offset = readScript32bits();
-
-	debugScript("O_SETFGCODE offset %04X", offset);
-
 	_fgOpcodePC = _currentInstruction + offset;	
-	debugScript("O_SETFGCODE next %08X", _fgOpcodePC);
+
+	debugScript("O_SETFGCODE next %08x, offset %08x", _fgOpcodePC, offset);
 }
 
 void Script::O_STOPHERO() {
@@ -1005,7 +1003,7 @@ void Script::O_SETBACKANIMDATA() {
 
 void Script::O_VIEWFLC() {
 	uint16 animNr = readScript16bits();
-	debug("O_VIEWFLC animNr %d", animNr);
+	debugScript("O_VIEWFLC animNr %d", animNr);
 	_vm->loadAnim(animNr, false);
 }
 
