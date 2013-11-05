@@ -57,8 +57,6 @@ AvalancheEngine::AvalancheEngine(OSystem *syst, const AvalancheGameDescription *
 	_sound = nullptr;
 
 	_platform = gd->desc.platform;
-
-	initVariables();
 }
 
 AvalancheEngine::~AvalancheEngine() {
