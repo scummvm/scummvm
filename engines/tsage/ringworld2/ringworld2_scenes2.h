@@ -425,7 +425,7 @@ class Scene2530 : public SceneExt {
 		bool startAction(CursorType action, Event &event);
 	};
 
-	class Exit1 : public SceneExit {
+	class SouthExit : public SceneExit {
 	public:
 		virtual void changeScene();
 	};
@@ -438,7 +438,7 @@ public:
 	SceneActor _companion;
 	Flask _flask;
 	Crank _crank;
-	Exit1 _exit1;
+	SouthExit _southExit;
 	SequenceManager _sequenceManager;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);

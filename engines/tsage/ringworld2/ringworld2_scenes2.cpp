@@ -2690,7 +2690,7 @@ bool Scene2530::Crank::startAction(CursorType action, Event &event) {
 	return true;
 }
 
-void Scene2530::Exit1::changeScene() {
+void Scene2530::SouthExit::changeScene() {
 	Scene2530 *scene = (Scene2530 *)R2_GLOBALS._sceneManager._scene;
 
 	_enabled = false;
@@ -2707,8 +2707,8 @@ void Scene2530::postInit(SceneObjectList *OwnerList) {
 	loadScene(2530);
 	SceneExt::postInit();
 
-	_exit1.setDetails(Rect(68, 155, 147, 168), EXITCURSOR_S, 2000);
-	_exit1.setDest(Common::Point(108, 160));
+	_southExit.setDetails(Rect(68, 155, 147, 168), EXITCURSOR_S, 2000);
+	_southExit.setDest(Common::Point(108, 160));
 
 	if (R2_INVENTORY.getObjectScene(R2_PURE_GRAIN_ALCOHOL) == 2530) {
 		_flask.postInit();
