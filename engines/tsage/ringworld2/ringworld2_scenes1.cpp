@@ -13800,11 +13800,9 @@ bool Scene1950::Gem::startAction(CursorType action, Event &event) {
 /*--------------------------------------------------------------------------*/
 
 Scene1950::Vampire::Vampire() {
-	_fieldA8 = 0;
-	_fieldAA = 0;
+	_deltaX = 0;
+	_deltaY = 0;
 	_vampireMode = 0;
-	_fieldAE = 0;
-	_fieldAF = 0;
 }
 
 void Scene1950::Vampire::synchronize(Serializer &s) {
@@ -13812,11 +13810,9 @@ void Scene1950::Vampire::synchronize(Serializer &s) {
 
 	s.syncAsSint16LE(_deadPosition.x);
 	s.syncAsSint16LE(_deadPosition.y);
-	s.syncAsSint16LE(_fieldA8);
-	s.syncAsSint16LE(_fieldAA);
+	s.syncAsSint16LE(_deltaX);
+	s.syncAsSint16LE(_deltaY);
 	s.syncAsSint16LE(_vampireMode);
-	s.syncAsByte(_fieldAE);
-	s.syncAsByte(_fieldAF);
 }
 
 void Scene1950::Vampire::signal() {
@@ -13867,7 +13863,7 @@ void Scene1950::Vampire::signal() {
 		R2_GLOBALS._player.enableControl();
 		}
 		break;
-	case 21:
+	case 21: {
 		// Fatal shot
 		R2_GLOBALS._player.setVisage(22);
 		if (R2_GLOBALS._flubMazeEntryDirection == 3)
@@ -13891,23 +13887,24 @@ void Scene1950::Vampire::signal() {
 		R2_GLOBALS._vampireData[scene->_vampireIndex - 1]._isAlive = false;
 		R2_GLOBALS._vampireData[scene->_vampireIndex - 1]._shotsRequired--;
 		R2_GLOBALS._vampireData[scene->_vampireIndex - 1]._position = _position;
-		_fieldA8 = (_position.x - R2_GLOBALS._player._position.x) / 2;
-		_fieldAA = (_position.y - R2_GLOBALS._player._position.y) / 2;
+		_deltaX = (_position.x - R2_GLOBALS._player._position.x) / 2;
+		_deltaY = (_position.y - R2_GLOBALS._player._position.y) / 2;
 
-		_fieldAE = 0;
-		for (_fieldAF = 0; _fieldAF < 18; ++_fieldAF)
-			if (!R2_GLOBALS._vampireData[_fieldAF]._isAlive)
-				++_fieldAE;
+		byte vampireCount = 0;
+		for (byte i = 0; i < 18; ++i) {
+			if (!R2_GLOBALS._vampireData[i]._isAlive)
+				++vampireCount;
+		}
 
-		if (_fieldAE == 18) {
+		if (vampireCount == 18) {
 			R2_GLOBALS.setFlag(36);
 			_vampireMode = 23;
-			Common::Point pt(R2_GLOBALS._player._position.x + _fieldA8, R2_GLOBALS._player._position.y + _fieldAA);
+			Common::Point pt(R2_GLOBALS._player._position.x + _deltaX, R2_GLOBALS._player._position.y + _deltaY);
 			NpcMover *mover = new NpcMover();
 			R2_GLOBALS._player.addMover(mover, &pt, this);
-		} else if (_fieldAE == 1) {
+		} else if (vampireCount == 1) {
 			_vampireMode = 22;
-			Common::Point pt(R2_GLOBALS._player._position.x + _fieldA8, R2_GLOBALS._player._position.y + _fieldAA);
+			Common::Point pt(R2_GLOBALS._player._position.x + _deltaX, R2_GLOBALS._player._position.y + _deltaY);
 			NpcMover *mover = new NpcMover();
 			R2_GLOBALS._player.addMover(mover, &pt, this);
 		} else {
@@ -13920,6 +13917,7 @@ void Scene1950::Vampire::signal() {
 			scene->_westExit._enabled = true;
 
 		scene->_vampireActive = false;
+		}
 		break;
 	case 22:
 		SceneItem::display(1950, 18, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, LIST_END);

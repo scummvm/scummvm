@@ -1152,10 +1152,6 @@ class Scene1950 : public SceneExt {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Actor4 : public SceneActor {
-	public:
-		virtual bool startAction(CursorType action, Event &event);
-	};
 	class Gem : public SceneActor {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
@@ -1163,11 +1159,9 @@ class Scene1950 : public SceneExt {
 	class Vampire : public SceneActor {
 	public:
 		Common::Point _deadPosition;
-		int _fieldA8;
-		int _fieldAA;
+		int _deltaX;
+		int _deltaY;
 		int _vampireMode;
-		byte _fieldAE;
-		byte _fieldAF;
 
 		Vampire();
 		void synchronize(Serializer &s);
