@@ -1478,23 +1478,23 @@ void Scene3260::postInit(SceneObjectList *OwnerList) {
 	_screen6.setDetails(3260, 3, 1, 5, 1, (SceneItem *)NULL);
 	_screen6.setAction(&_action6, &_screen6);
 
-	_actor7.postInit();
-	_actor7.setup(3260, 2, 1);
-	_actor7.setPosition(Common::Point(190, 22));
-	_actor7.setDetails(3260, 3, 1, 5, 1, (SceneItem *)NULL);
-	_actor7.setAction(&_action7, &_actor7);
+	_screen7.postInit();
+	_screen7.setup(3260, 2, 1);
+	_screen7.setPosition(Common::Point(190, 22));
+	_screen7.setDetails(3260, 3, 1, 5, 1, (SceneItem *)NULL);
+	_screen7.setAction(&_action7, &_screen7);
 
-	_actor8.postInit();
-	_actor8.setup(3260, 2, 1);
-	_actor8.setPosition(Common::Point(142, 14));
-	_actor8.setDetails(3260, 3, 1, 5, 1, (SceneItem *)NULL);
-	_actor8.setAction(&_action8, &_actor8);
+	_screen8.postInit();
+	_screen8.setup(3260, 2, 1);
+	_screen8.setPosition(Common::Point(142, 14));
+	_screen8.setDetails(3260, 3, 1, 5, 1, (SceneItem *)NULL);
+	_screen8.setAction(&_action8, &_screen8);
 
-	_actor9.postInit();
-	_actor9.setup(3260, 2, 1);
-	_actor9.setPosition(Common::Point(166, 6));
-	_actor9.setDetails(3260, 3, 1, 5, 1, (SceneItem *)NULL);
-	_actor9.setAction(&_action9, &_actor9);
+	_screen9.postInit();
+	_screen9.setup(3260, 2, 1);
+	_screen9.setPosition(Common::Point(166, 6));
+	_screen9.setDetails(3260, 3, 1, 5, 1, (SceneItem *)NULL);
+	_screen9.setAction(&_action9, &_screen9);
 
 	_securityConsole.postInit();
 	_securityConsole.setup(3260, 3, 1);
@@ -1521,7 +1521,7 @@ void Scene3260::postInit(SceneObjectList *OwnerList) {
 	_lightingConsole.setDetails(3260, 9, 1, 11, 1, (SceneItem *)NULL);
 	_lightingConsole.animate(ANIM_MODE_2, NULL);
 
-	_item1.setDetails(Rect(0, 0, 320, 200), 3260, 0, 1, 2, 1, NULL);
+	_background.setDetails(Rect(0, 0, 320, 200), 3260, 0, 1, 2, 1, NULL);
 	R2_GLOBALS._player.postInit();
 
 	if (R2_GLOBALS._player._oldCharacterScene[R2_MIRANDA] == 3275) {

@@ -315,16 +315,16 @@ class Scene3260 : public SceneExt {
 		void signal();
 	};
 public:
-	NamedHotspot _item1;
+	NamedHotspot _background;
 	SceneActor _sceeen1;
 	SceneActor _screen2;
 	SceneActor _screen3;
 	SceneActor _screen4;
 	SceneActor _screen5;
 	SceneActor _screen6;
-	SceneActor _actor7;
-	SceneActor _actor8;
-	SceneActor _actor9;
+	SceneActor _screen7;
+	SceneActor _screen8;
+	SceneActor _screen9;
 	SceneActor _securityConsole;
 	SceneActor _computerConsole;
 	SceneActor _lightingConsole;
