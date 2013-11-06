@@ -345,7 +345,7 @@ class Scene2455 : public SceneExt {
 		bool startAction(CursorType action, Event &event);
 	};
 
-	class Exit1 : public SceneExit {
+	class NorthExit : public SceneExit {
 	public:
 		virtual void changeScene();
 	};
@@ -354,7 +354,7 @@ public:
 	Lamp _lamp;
 	Pool _pool;
 	ScrithKey _scrithKey;
-	Exit1 _exit1;
+	NorthExit _northExit;
 	SequenceManager _sequenceManager;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);

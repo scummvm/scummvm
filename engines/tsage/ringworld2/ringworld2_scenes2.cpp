@@ -2286,7 +2286,7 @@ bool Scene2455::ScrithKey::startAction(CursorType action, Event &event) {
 	return SceneActor::startAction(action, event);
 }
 
-void Scene2455::Exit1::changeScene() {
+void Scene2455::NorthExit::changeScene() {
 	Scene2455 *scene = (Scene2455 *)R2_GLOBALS._sceneManager._scene;
 
 	_enabled = false;
@@ -2306,7 +2306,7 @@ void Scene2455::postInit(SceneObjectList *OwnerList) {
 	}
 
 	R2_GLOBALS._sound1.play(200);
-	_exit1.setDetails(Rect(0, 0, 320, 15), EXITCURSOR_N, 2425);
+	_northExit.setDetails(Rect(0, 0, 320, 15), EXITCURSOR_N, 2425);
 
 	if (R2_INVENTORY.getObjectScene(R2_GLASS_DOME) == 2455) {
 		_scrithKey.postInit();
