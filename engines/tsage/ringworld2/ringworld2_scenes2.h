@@ -363,7 +363,7 @@ public:
 };
 
 class Scene2500 : public SceneExt {
-	class Exit1 : public SceneExit {
+	class WestExit : public SceneExit {
 	public:
 		virtual void changeScene();
 	};
@@ -376,7 +376,7 @@ public:
 	SceneActor _companion;
 	SceneActor _quinn;
 	SceneActor _ship;
-	Exit1 _exit1;
+	WestExit _westExit;
 	SequenceManager _sequenceManager;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);

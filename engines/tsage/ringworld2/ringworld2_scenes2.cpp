@@ -2398,7 +2398,7 @@ void Scene2455::signal() {
  *
  *--------------------------------------------------------------------------*/
 
-void Scene2500::Exit1::changeScene() {
+void Scene2500::WestExit::changeScene() {
 	Scene2500 *scene = (Scene2500 *)R2_GLOBALS._sceneManager._scene;
 
 	_enabled = false;
@@ -2426,8 +2426,8 @@ void Scene2500::postInit(SceneObjectList *OwnerList) {
 	if (R2_GLOBALS._sceneManager._previousScene == -1)
 		R2_GLOBALS._sceneManager._previousScene = 2000;
 
-	_exit1.setDetails(Rect(30, 50, 85, 105), EXITCURSOR_W, 2000);
-	_exit1.setDest(Common::Point(84, 104));
+	_westExit.setDetails(Rect(30, 50, 85, 105), EXITCURSOR_W, 2000);
+	_westExit.setDest(Common::Point(84, 104));
 	R2_GLOBALS._player.postInit();
 	R2_GLOBALS._player.animate(ANIM_MODE_1, NULL);
 
