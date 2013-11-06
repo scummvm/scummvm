@@ -1367,7 +1367,7 @@ bool Scene2425::Pictographs::startAction(CursorType action, Event &event) {
 	}
 }
 
-void Scene2425::Exit1::changeScene() {
+void Scene2425::SouthEastExit::changeScene() {
 	Scene2425 *scene = (Scene2425 *)R2_GLOBALS._sceneManager._scene;
 
 	_enabled = false;
@@ -1390,7 +1390,7 @@ void Scene2425::postInit(SceneObjectList *OwnerList) {
 	}
 
 	R2_GLOBALS._sound1.play(200);
-	_exit1.setDetails(Rect(270, 136, 319, 168), EXITCURSOR_SE, 2000);
+	_southEastExit.setDetails(Rect(270, 136, 319, 168), EXITCURSOR_SE, 2000);
 	R2_GLOBALS._player.postInit();
 	R2_GLOBALS._player.animate(ANIM_MODE_1, NULL);
 
