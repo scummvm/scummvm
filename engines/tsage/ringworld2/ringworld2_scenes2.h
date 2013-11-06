@@ -269,7 +269,7 @@ class Scene2440 : public SceneExt {
 		bool startAction(CursorType action, Event &event);
 	};
 
-	class Exit1 : public SceneExit {
+	class SouthEastExit : public SceneExit {
 	public:
 		virtual void changeScene();
 	};
@@ -283,7 +283,7 @@ public:
 	NamedHotspot _bottles;
 	Companion _companion;
 	OilLamp _oilLamp;
-	Exit1 _exit1;
+	SouthEastExit _southEastExit;
 	SequenceManager _sequenceManager;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);

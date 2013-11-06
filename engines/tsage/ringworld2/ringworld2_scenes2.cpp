@@ -1811,7 +1811,7 @@ bool Scene2440::OilLamp::startAction(CursorType action, Event &event) {
 	return SceneActor::startAction(action, event);
 }
 
-void Scene2440::Exit1::changeScene() {
+void Scene2440::SouthEastExit::changeScene() {
 	Scene2440 *scene = (Scene2440 *)R2_GLOBALS._sceneManager._scene;
 
 	_enabled = false;
@@ -1827,8 +1827,8 @@ void Scene2440::postInit(SceneObjectList *OwnerList) {
 	SceneExt::postInit();
 	R2_GLOBALS._sound1.play(200);
 	// Fix exit cursor, the original was using NW
-	_exit1.setDetails(Rect(172, 155, 250, 167), EXITCURSOR_SE, 2000);
-	_exit1.setDest(Common::Point(210, 160));
+	_southEastExit.setDetails(Rect(172, 155, 250, 167), EXITCURSOR_SE, 2000);
+	_southEastExit.setDest(Common::Point(210, 160));
 	if (R2_INVENTORY.getObjectScene(R2_ALCOHOL_LAMP_2) == 2440) {
 		_oilLamp.postInit();
 		_oilLamp.setup(2435, 1, 1);
