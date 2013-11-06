@@ -548,9 +548,8 @@ public:
 	SceneActor _companion2;
 	SceneActor _webbster;
 	SceneActor _teal;
-	SceneActor _actor5;
-	SceneActor _actor6;
-	SceneActor _actor7;
+	SceneActor _door;
+	SceneActor _manholeCover;
 	SceneActor _actor8;
 	SequenceManager _sequenceManager;
 	bool _soundFaded;

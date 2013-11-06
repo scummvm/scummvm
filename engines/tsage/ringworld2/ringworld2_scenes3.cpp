@@ -2732,10 +2732,10 @@ void Scene3400::postInit(SceneObjectList *OwnerList) {
 	R2_GLOBALS._player._characterScene[R2_SEEKER] = 3400;
 	R2_GLOBALS._player._characterScene[R2_MIRANDA] = 3400;
 
-	_actor7.postInit();
-	_actor7.setup(3403, 1, 1);
-	_actor7.setPosition(Common::Point(190, 103));
-	_actor7.fixPriority(89);
+	_manholeCover.postInit();
+	_manholeCover.setup(3403, 1, 1);
+	_manholeCover.setPosition(Common::Point(190, 103));
+	_manholeCover.fixPriority(89);
 
 	R2_GLOBALS._player.postInit();
 	if (R2_GLOBALS._player._characterIndex == R2_SEEKER)
@@ -2792,11 +2792,11 @@ void Scene3400::postInit(SceneObjectList *OwnerList) {
 	_webbster.setup(40, 3, 1);
 	_webbster.animate(ANIM_MODE_1, NULL);
 
-	_actor6.postInit();
-	_actor6.setup(3400, 1, 6);
-	_actor6.setPosition(Common::Point(236, 51));
-	_actor6.fixPriority(51);
-	_actor6.animate(ANIM_MODE_6, NULL);
+	_door.postInit();
+	_door.setup(3400, 1, 6);
+	_door.setPosition(Common::Point(236, 51));
+	_door.fixPriority(51);
+	_door.animate(ANIM_MODE_6, NULL);
 
 	R2_GLOBALS.clearFlag(71);
 	_sceneMode = 3400;
@@ -2860,29 +2860,29 @@ void Scene3400::signal() {
 		_teal.setStrip(1);
 		_sceneMode = 3403;
 		if (R2_GLOBALS._player._characterIndex == R2_SEEKER)
-			setAction(&_sequenceManager, this, 3403, &R2_GLOBALS._player, &_webbster, &_actor7, NULL);
+			setAction(&_sequenceManager, this, 3403, &R2_GLOBALS._player, &_webbster, &_manholeCover, NULL);
 		else
-			setAction(&_sequenceManager, this, 3403, &_companion1, &_webbster, &_actor7, NULL);
+			setAction(&_sequenceManager, this, 3403, &_companion1, &_webbster, &_manholeCover, NULL);
 		break;
 	case 3309:
 		warning("STUB: sub_1D227()");
 		_teal.setStrip(1);
 		_sceneMode = 3405;
 		if (R2_GLOBALS._player._characterIndex == R2_MIRANDA)
-			setAction(&_sequenceManager, this, 3405, &R2_GLOBALS._player, &_actor7, NULL);
+			setAction(&_sequenceManager, this, 3405, &R2_GLOBALS._player, &_manholeCover, NULL);
 		else
-			setAction(&_sequenceManager, this, 3405, &_companion2, &_actor7, NULL);
+			setAction(&_sequenceManager, this, 3405, &_companion2, &_manholeCover, NULL);
 		break;
 	case 3310:
 		warning("STUB: sub_1D227()");
 		_teal.setStrip(1);
 		_sceneMode = 3406;
 		if (R2_GLOBALS._player._characterIndex == R2_QUINN)
-			setAction(&_sequenceManager, this, 3406, &R2_GLOBALS._player, &_actor7, NULL);
+			setAction(&_sequenceManager, this, 3406, &R2_GLOBALS._player, &_manholeCover, NULL);
 		else if (R2_GLOBALS._player._characterIndex == R2_SEEKER)
-			setAction(&_sequenceManager, this, 3406, &_companion1, &_actor7, NULL);
+			setAction(&_sequenceManager, this, 3406, &_companion1, &_manholeCover, NULL);
 		else if (R2_GLOBALS._player._characterIndex == R2_MIRANDA)
-			setAction(&_sequenceManager, this, 3406, &_companion2, &_actor7, NULL);
+			setAction(&_sequenceManager, this, 3406, &_companion2, &_manholeCover, NULL);
 		break;
 	case 3311:
 		warning("STUB: sub_1D227()");
@@ -2890,7 +2890,7 @@ void Scene3400::signal() {
 		_teal.show();
 		_teal.setStrip(1);
 		_sceneMode = 3407;
-		setAction(&_sequenceManager, this, 3407, &_teal, &_actor7, NULL);
+		setAction(&_sequenceManager, this, 3407, &_teal, &_manholeCover, NULL);
 		break;
 	case 3400: {
 		_actor8.postInit();
