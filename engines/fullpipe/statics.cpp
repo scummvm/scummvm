@@ -1201,8 +1201,86 @@ Movement::Movement(Movement *src, StaticANIObject *ani) {
 	updateCurrDynamicPhase();
 }
 
-Movement::Movement(Movement *src, int *flag1, int flag2, StaticANIObject *ani) {
-	warning("STUB: Movement(src, %p, %d, ani)", (void *)flag1, flag2);
+Movement::Movement(Movement *src, int *oldIdxs, int newSize, StaticANIObject *ani) : GameObject(src) {
+	_lastFrameSpecialFlag = 0;
+	_updateFlag1 = 1;
+	_staticsObj1 = 0;
+	_staticsObj2 = 0;
+	_mx = 0;
+	_my = 0;
+	_m2x = 0;
+	_m2y = 0;
+
+	_field_78 = 0;
+	_framePosOffsets = 0;
+	_field_84 = 0;
+	_currDynamicPhase = 0;
+	_field_8C = 0;
+	_currDynamicPhaseIndex = 0;
+	_field_94 = 0;
+
+	_field_50 = src->_field_50;
+	_flipFlag = src->_flipFlag;
+	_currMovement = 0;
+	_mx = src->_mx;
+	_my = src->_my;
+	_m2x = src->_m2x;
+	_m2y = src->_m2y;
+
+	if (newSize != -1) {
+		if (newSize >= src->_dynamicPhases.size() + 1)
+			newSize = src->_dynamicPhases.size() + 1;
+	} else {
+		newSize = src->_dynamicPhases.size();
+	}
+
+	_framePosOffsets = (Common::Point **)calloc(newSize, sizeof(Common::Point *));
+
+	for (int i = 0; i < newSize; i++)
+		_framePosOffsets[i] = new Common::Point();
+
+	if (oldIdxs) {
+		for (int i = 0; i < newSize - 1; i++, oldIdxs++) {
+			if (oldIdxs[i] == -1) {
+				_dynamicPhases.push_back(src->_staticsObj1);
+
+				_framePosOffsets[i]->x = 0;
+				_framePosOffsets[i]->y = 0;
+			} else {
+				src->setDynamicPhaseIndex(oldIdxs[i]);
+
+				_dynamicPhases.push_back(src->_currDynamicPhase);
+
+				_framePosOffsets[i]->x = src->_framePosOffsets[oldIdxs[i]]->x;
+				_framePosOffsets[i]->y = src->_framePosOffsets[oldIdxs[i]]->y;
+			}
+		}
+		_staticsObj1 = (Statics *)_dynamicPhases.front();
+		_staticsObj2 = (Statics *)_dynamicPhases.back();
+	} else {
+		for (int i = 0; i < newSize; i++) {
+			src->setDynamicPhaseIndex(i);
+
+			if (i < newSize - 1)
+				_dynamicPhases.push_back(new DynamicPhase(src->_currDynamicPhase, 0));
+
+			_framePosOffsets[i]->x = src->_framePosOffsets[i]->x;
+			_framePosOffsets[i]->y = src->_framePosOffsets[i]->y;
+		}
+
+		_staticsObj1 = ani->getStaticsById(src->_staticsObj1->_staticsId);
+		_staticsObj2 = ani->getStaticsById(src->_staticsObj2->_staticsId);
+
+		_dynamicPhases.push_back(_staticsObj2);
+
+		this->_updateFlag1 = src->_updateFlag1;
+	}
+
+	updateCurrDynamicPhase();
+	removeFirstPhase();
+
+	_counterMax = src->_counterMax;
+	_counter = src->_counter;
 }
 
 bool Movement::load(MfcArchive &file) {
