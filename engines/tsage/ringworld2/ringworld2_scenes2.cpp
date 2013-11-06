@@ -2839,7 +2839,7 @@ bool Scene2535::TannerMask::startAction(CursorType action, Event &event) {
 	return true;
 }
 
-void Scene2535::Exit1::changeScene() {
+void Scene2535::SouthExit::changeScene() {
 	Scene2535 *scene = (Scene2535 *)R2_GLOBALS._sceneManager._scene;
 
 	_enabled = false;
@@ -2858,8 +2858,8 @@ void Scene2535::postInit(SceneObjectList *OwnerList) {
 		R2_GLOBALS.setFlag(73);
 		R2_INVENTORY.setObjectScene(R2_REBREATHER_TANK, 2535);
 	}
-	_exit1.setDetails(Rect(172, 155, 250, 167), EXITCURSOR_S, 2000);
-	_exit1.setDest(Common::Point(210, 160));
+	_southExit.setDetails(Rect(172, 155, 250, 167), EXITCURSOR_S, 2000);
+	_southExit.setDest(Common::Point(210, 160));
 
 	if (R2_INVENTORY.getObjectScene(R2_TANNER_MASK) == 2535) {
 		_tannerMask.postInit();
