@@ -869,9 +869,9 @@ public:
 	int _locationMode;
 	SpeakerQuinn _quinnSpeaker;
 	SpeakerSeeker _seekerSpeaker;
-	NamedHotspot _item1;
-	NamedHotspot _item2;
-	NamedHotspot _item3;
+	NamedHotspot _elevator;
+	NamedHotspot _elevatorContents;
+	NamedHotspot _surface;
 	NamedHotspot _secBackground;
 	Background _background;
 	SceneActor _playerShadow;

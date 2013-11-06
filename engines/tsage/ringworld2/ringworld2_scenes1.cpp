@@ -11547,12 +11547,12 @@ void Scene1800::postInit(SceneObjectList *OwnerList) {
 	R2_GLOBALS._player._characterScene[R2_QUINN] = 1800;
 	R2_GLOBALS._player._characterScene[R2_SEEKER] = 1800;
 
-	_item2.setDetails(Rect(128, 95, 190, 135), 1800, 10, -1, -1, 1, NULL);
-	_item1.setDetails(Rect(95, 3, 223, 135), 1800, 0, -1, -1, 1, NULL);
+	_elevatorContents.setDetails(Rect(128, 95, 190, 135), 1800, 10, -1, -1, 1, NULL);
+	_elevator.setDetails(Rect(95, 3, 223, 135), 1800, 0, -1, -1, 1, NULL);
 
 	// Original was calling _item3.setDetails(Rect(1800, 11, 24, 23), 25, -1, -1, -1, 1, NULL);
 	// This is *wrong*. The following statement is a wild guess based on good common sense
-	_item3.setDetails(11, 1800, 23, 24, 25);
+	_surface.setDetails(11, 1800, 23, 24, 25);
 	_secBackground.setDetails(Rect(0, 0, 320, 200), 1800, 17, -1, 19, 1, NULL);
 
 	R2_GLOBALS._player.disableControl();
