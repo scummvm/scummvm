@@ -1673,7 +1673,7 @@ bool Scene2435::Astor::startAction(CursorType action, Event &event) {
 	}
 }
 
-void Scene2435::Exit1::changeScene() {
+void Scene2435::SouthExit::changeScene() {
 	Scene2435 *scene = (Scene2435 *)R2_GLOBALS._sceneManager._scene;
 
 	_enabled = false;
@@ -1693,8 +1693,8 @@ void Scene2435::postInit(SceneObjectList *OwnerList) {
 	_stripManager.addSpeaker(&_quinnSpeaker);
 	_stripManager.addSpeaker(&_seekerSpeaker);
 	_stripManager.addSpeaker(&_pharishaSpeaker);
-	_exit1.setDetails(Rect(142, 155, 207, 167), EXITCURSOR_S, 2000);
-	_exit1.setDest(Common::Point(175, 160));
+	_southExit.setDetails(Rect(142, 155, 207, 167), EXITCURSOR_S, 2000);
+	_southExit.setDest(Common::Point(175, 160));
 	_astor.postInit();
 	_astor.setup(2005, 3, 1);
 	_astor.setPosition(Common::Point(219, 106));
