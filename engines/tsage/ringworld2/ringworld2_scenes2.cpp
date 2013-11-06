@@ -3072,7 +3072,7 @@ void Scene2700::Action4::signal() {
 	scene->_ghoulHome9.animate(ANIM_MODE_8, 1, NULL);
 }
 
-void Scene2700::Area1::process(Event &event) {
+void Scene2700::SouthExit::process(Event &event) {
 	SceneArea::process(event);
 	if ((event.eventType == EVENT_BUTTON_DOWN) && (R2_GLOBALS._player._canWalk) && (_bounds.contains(event.mousePos))) {
 		Scene2700 *scene = (Scene2700 *)R2_GLOBALS._sceneManager._scene;
@@ -3122,7 +3122,7 @@ void Scene2700::Area1::process(Event &event) {
 	}
 }
 
-void Scene2700::Area2::process(Event &event) {
+void Scene2700::EastExit::process(Event &event) {
 	SceneArea::process(event);
 	if ((event.eventType == EVENT_BUTTON_DOWN) && (R2_GLOBALS._player._canWalk) && (_bounds.contains(event.mousePos))) {
 		Scene2700 *scene = (Scene2700 *)R2_GLOBALS._sceneManager._scene;
@@ -3182,8 +3182,8 @@ void Scene2700::postInit(SceneObjectList *OwnerList) {
 	R2_GLOBALS._sound1.stop();
 	R2_GLOBALS._sound2.stop();
 
-	_area1.setDetails(Rect(135, 160, 185, 168), SHADECURSOR_DOWN);
-	_area2.setDetails(Rect(300, 90, 320, 135), EXITCURSOR_E);
+	_southExit.setDetails(Rect(135, 160, 185, 168), SHADECURSOR_DOWN);
+	_eastExit.setDetails(Rect(300, 90, 320, 135), EXITCURSOR_E);
 
 	_ghoulHome6.postInit();
 	_ghoulHome6.setup(2700, 1, 1);
