@@ -915,20 +915,20 @@ class Scene1850 : public SceneExt {
 
 public:
 	int _sceneMode;
-	int _field414;
-	int _field416;
-	int _field418;
-	Common::Point _field41A;
-	int _field41E;
+	int _shadeCountdown;
+	int _shadeDirection;
+	bool _shadeChanging;
+	Common::Point _playerDest;
+	int _seqNumber;
 	ScenePalette _palette1;
 	SpeakerQuinn _quinnSpeaker;
 	SpeakerSeeker _seekerSpeaker;
 	NamedHotspot _background;
 	Button _button;
 	SceneActor _companion;
-	SceneActor _actor2;
-	SceneActor _actor3;
-	SceneActor _actor4;
+	SceneActor _airbag;
+	SceneActor _screen;
+	SceneActor _helmet;
 	Robot _robot;
 	Door _leftDoor;
 	Door _rightDoor;
@@ -1244,6 +1244,7 @@ public:
 	virtual void signal();
 	virtual void process(Event &event);
 };
+
 } // End of namespace Ringworld2
 } // End of namespace TsAGE
 
