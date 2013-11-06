@@ -394,7 +394,7 @@ class Scene2525 : public SceneExt {
 		bool startAction(CursorType action, Event &event);
 	};
 
-	class Exit1 : public SceneExit {
+	class SouthExit : public SceneExit {
 	public:
 		virtual void changeScene();
 	};
@@ -407,7 +407,7 @@ public:
 	SceneActor _companion;
 	SceneActor _compressor;
 	GlassDome _glassDome;
-	Exit1 _exit1;
+	SouthExit _southExit;
 	SequenceManager _sequenceManager;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);

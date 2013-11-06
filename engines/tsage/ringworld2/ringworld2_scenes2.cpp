@@ -2532,7 +2532,7 @@ bool Scene2525::GlassDome::startAction(CursorType action, Event &event) {
 	return true;
 }
 
-void Scene2525::Exit1::changeScene() {
+void Scene2525::SouthExit::changeScene() {
 	Scene2525 *scene = (Scene2525 *)R2_GLOBALS._sceneManager._scene;
 
 	_enabled = false;
@@ -2551,7 +2551,7 @@ void Scene2525::postInit(SceneObjectList *OwnerList) {
 	R2_GLOBALS._sound1.play(200);
 	R2_GLOBALS._sound2.play(207);
 
-	_exit1.setDetails(Rect(86, 155, 228, 168), EXITCURSOR_S, 2000);
+	_southExit.setDetails(Rect(86, 155, 228, 168), EXITCURSOR_S, 2000);
 
 	if (R2_INVENTORY.getObjectScene(R2_GLASS_DOME) == 2525) {
 		_glassDome.postInit();
