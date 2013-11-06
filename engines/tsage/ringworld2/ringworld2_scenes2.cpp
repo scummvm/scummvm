@@ -1523,7 +1523,7 @@ bool Scene2430::OilLamp::startAction(CursorType action, Event &event) {
 	return true;
 }
 
-void Scene2430::Exit1::changeScene() {
+void Scene2430::SouthExit::changeScene() {
 	Scene2430 *scene = (Scene2430 *)R2_GLOBALS._sceneManager._scene;
 
 	scene->_sceneMode = 0;
@@ -1538,8 +1538,8 @@ void Scene2430::Exit1::changeScene() {
 void Scene2430::postInit(SceneObjectList *OwnerList) {
 	loadScene(2430);
 	SceneExt::postInit();
-	_exit1.setDetails(Rect(68, 155, 147, 168), EXITCURSOR_S, 2000);
-	_exit1.setDest(Common::Point(108, 160));
+	_southExit.setDetails(Rect(68, 155, 147, 168), EXITCURSOR_S, 2000);
+	_southExit.setDest(Common::Point(108, 160));
 
 	if (R2_INVENTORY.getObjectScene(R2_GUNPOWDER) == 2430) {
 		_gunPowder.postInit();
