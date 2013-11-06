@@ -309,7 +309,7 @@ class Scene2450 : public SceneExt {
 		bool startAction(CursorType action, Event &event);
 	};
 
-	class Exit1 : public SceneExit {
+	class SouthWestExit : public SceneExit {
 	public:
 		virtual void changeScene();
 	};
@@ -323,7 +323,7 @@ public:
 	SceneActor _companion;
 	Parker _parker;
 	CareTaker _careTaker;
-	Exit1 _exit1;
+	SouthWestExit _southWestExit;
 	SequenceManager _sequenceManager;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);

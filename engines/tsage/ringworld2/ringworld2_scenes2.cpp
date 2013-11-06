@@ -1958,7 +1958,7 @@ bool Scene2450::CareTaker::startAction(CursorType action, Event &event) {
 	}
 }
 
-void Scene2450::Exit1::changeScene() {
+void Scene2450::SouthWestExit::changeScene() {
 	Scene2450 *scene = (Scene2450 *)R2_GLOBALS._sceneManager._scene;
 
 	if ((R2_GLOBALS._player._characterIndex == R2_SEEKER) || (R2_GLOBALS.getFlag(61))) {
@@ -1992,8 +1992,8 @@ void Scene2450::postInit(SceneObjectList *OwnerList) {
 	_stripManager.addSpeaker(&_caretakerSpeaker);
 
 	if (R2_GLOBALS.getFlag(72)) {
-		_exit1.setDetails(Rect(0, 143, 47, 168), EXITCURSOR_SW, 2000);
-		_exit1.setDest(Common::Point(10, 160));
+		_southWestExit.setDetails(Rect(0, 143, 47, 168), EXITCURSOR_SW, 2000);
+		_southWestExit.setDest(Common::Point(10, 160));
 	}
 
 	if (!R2_GLOBALS.getFlag(61)) {
@@ -2070,7 +2070,7 @@ void Scene2450::postInit(SceneObjectList *OwnerList) {
 				_careTaker.setPosition(Common::Point(34, 153));
 				_careTaker.setDetails(2001, 40, -1, -1, 1, (SceneItem *)NULL);
 
-				_exit1._enabled = false;
+				_southWestExit._enabled = false;
 			}
 		} else {
 			R2_GLOBALS._player.postInit();
@@ -2103,7 +2103,7 @@ void Scene2450::postInit(SceneObjectList *OwnerList) {
 				_careTaker.setPosition(Common::Point(34, 153));
 				_careTaker.setDetails(2001, 40, -1, -1, 1, (SceneItem *)NULL);
 
-				_exit1._enabled = false;
+				_southWestExit._enabled = false;
 			}
 		}
 		R2_GLOBALS._player.enableControl();
@@ -2182,7 +2182,7 @@ void Scene2450::signal() {
 		_stripManager.start(700, this);
 		break;
 	case 2454:
-		_exit1._enabled = true;
+		_southWestExit._enabled = true;
 		R2_GLOBALS.setFlag(72);
 		_careTaker.remove();
 		if (R2_GLOBALS.getFlag(61)) {
