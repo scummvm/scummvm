@@ -3797,7 +3797,7 @@ void Scene2750::Action7::signal() {
 	scene->_folliage7.animate(ANIM_MODE_8, 1, NULL);
 }
 
-void Scene2750::Area1::process(Event &event) {
+void Scene2750::WestExit::process(Event &event) {
 	SceneArea::process(event);
 	if ((event.eventType == EVENT_BUTTON_DOWN) && (R2_GLOBALS._player._canWalk) && (_bounds.contains(event.mousePos))) {
 		Scene2750 *scene = (Scene2750 *)R2_GLOBALS._sceneManager._scene;
@@ -3828,7 +3828,7 @@ void Scene2750::Area1::process(Event &event) {
 	}
 }
 
-void Scene2750::Area2::process(Event &event) {
+void Scene2750::EastExit::process(Event &event) {
 	SceneArea::process(event);
 	if ((event.eventType == EVENT_BUTTON_DOWN) && (R2_GLOBALS._player._canWalk) && (_bounds.contains(event.mousePos))) {
 		Scene2750 *scene = (Scene2750 *)R2_GLOBALS._sceneManager._scene;
@@ -3863,8 +3863,8 @@ void Scene2750::postInit(SceneObjectList *OwnerList) {
 	loadScene(2750);
 	R2_GLOBALS._sound2.stop();
 	SceneExt::postInit();
-	_area1.setDetails(Rect(0, 90, 20, 135), EXITCURSOR_W);
-	_area2.setDetails(Rect(300, 90, 320, 135), EXITCURSOR_E);
+	_westExit.setDetails(Rect(0, 90, 20, 135), EXITCURSOR_W);
+	_eastExit.setDetails(Rect(300, 90, 320, 135), EXITCURSOR_E);
 
 	_walkRect1.set(30, 127, 155, 147);
 	_walkRect2.set(130, 142, 210, 167);

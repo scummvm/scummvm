@@ -578,11 +578,11 @@ class Scene2750 : public SceneExt {
 		void signal();
 	};
 
-	class Area1: public SceneArea {
+	class WestExit: public SceneArea {
 	public:
 		void process(Event &event);
 	};
-	class Area2: public SceneArea {
+	class EastExit: public SceneArea {
 	public:
 		void process(Event &event);
 	};
@@ -612,8 +612,8 @@ public:
 	Action5 _action5;
 	Action6 _action6;
 	Action7 _action7;
-	Area1 _area1;
-	Area2 _area2;
+	WestExit _westExit;
+	EastExit _eastExit;
 	Rect _walkRect1, _walkRect2, _walkRect3;
 	SequenceManager _sequenceManager;
 	int _areaMode, _moveMode, _stripNumber;
