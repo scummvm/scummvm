@@ -462,7 +462,7 @@ class Scene3385 : public SceneExt {
 		virtual bool startAction(CursorType action, Event &event);
 	};
 
-	class Exit1 : public SceneExit {
+	class SouthExit : public SceneExit {
 	public:
 		virtual void changeScene();
 	};
@@ -482,7 +482,7 @@ public:
 	Companion2 _companion2;
 	Webbster _webbster;
 	Door _door;
-	Exit1 _exit1;
+	SouthExit _southExit;
 	Action1 _action1;
 	SequenceManager _sequenceManager;
 

@@ -2309,7 +2309,7 @@ bool Scene3385::Door::startAction(CursorType action, Event &event) {
 	return true;
 }
 
-void Scene3385::Exit1::changeScene() {
+void Scene3385::SouthExit::changeScene() {
 	Scene3385 *scene = (Scene3385 *)R2_GLOBALS._sceneManager._scene;
 
 	R2_GLOBALS._player.disableControl(CURSOR_ARROW);
@@ -2411,8 +2411,8 @@ void Scene3385::postInit(SceneObjectList *OwnerList) {
 	_webbster.animate(ANIM_MODE_1, NULL);
 	_webbster.setDetails(3385, 15, -1, -1, 1, (SceneItem *) NULL);
 
-	_exit1.setDetails(Rect(103, 152, 217, 170), SHADECURSOR_DOWN, 3395);
-	_exit1.setDest(Common::Point(158, 151));
+	_southExit.setDetails(Rect(103, 152, 217, 170), SHADECURSOR_DOWN, 3395);
+	_southExit.setDest(Common::Point(158, 151));
 
 	_door.postInit();
 	_door.setPosition(Common::Point(160, 100));
