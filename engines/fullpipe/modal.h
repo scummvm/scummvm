@@ -52,6 +52,7 @@ class ModalIntro : public BaseModalObject {
 
  public:
 	ModalIntro();
+	virtual ~ModalIntro();
 
 	virtual bool pollEvent() { return true; }
 	virtual bool handleMessage(ExCommand *message);
