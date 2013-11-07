@@ -81,7 +81,7 @@ $(EXECUTABLE): $(OBJS)
 	$(QUIET_LINK)$(LD) $(LDFLAGS) $(PRE_OBJS_FLAGS) $+ $(POST_OBJS_FLAGS) $(LIBS) -o $@
 
 distclean: clean clean-devtools
-	$(RM) config.h config.mk config.log
+	$(RM) config.h config.mk config.log engines/plugins_table.h
 
 clean:
 	$(RM_REC) $(DEPDIRS)
