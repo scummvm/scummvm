@@ -276,17 +276,21 @@ uint32 BaseKeyboardState::keyCodeToVKey(Common::Event *event) {
 }
 
 enum VKeyCodes {
-	kVkSpace = 32,
-	kVkLeft  = 37,
-	kVkUp    = 38,
-	kVkRight = 39,
-	kVkDown  = 40
+	kVkEscape = 27,
+	kVkSpace  = 32,
+	kVkLeft   = 37,
+	kVkUp     = 38,
+	kVkRight  = 39,
+	kVkDown   = 40
 };
 
 //////////////////////////////////////////////////////////////////////////
 Common::KeyCode BaseKeyboardState::vKeyToKeyCode(uint32 vkey) {
 	// todo
 	switch (vkey) {
+	case kVkEscape:
+		return Common::KEYCODE_ESCAPE;
+		break;
 	case kVkSpace:
 		return Common::KEYCODE_SPACE;
 		break;
