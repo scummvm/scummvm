@@ -597,18 +597,18 @@ class Scene3500 : public SceneExt {
 		virtual bool startAction(CursorType action, Event &event);
 	};
 
-	class Actor7 : public SceneActor {
+	class Throttle : public SceneActor {
 	public:
 		Common::Point _pos;
 		int _fieldA8;
 		int _fieldAA;
 		int _fieldAC;
-		int _fieldAE;
+		int _deltaY;
 
-		Actor7();
+		Throttle();
 		virtual void synchronize(Serializer &s);
 
-		void sub109466(int xp, int yp, int arg3, int arg4, int arg5);
+		void init(int xp, int yp, int arg3, int arg4, int arg5);
 		void sub1094ED();
 		void sub109663(int arg1);
 		void changePosition(const Common::Point &pt);
@@ -646,7 +646,7 @@ public:
 	SceneActor _actor4;
 	SceneActor _actor5;
 	SceneActor _actor6;
-	Actor7 _actor7;
+	Throttle _throttle;
 	Actor8 _actor8;
 	Actor8 _actor9;
 	ASoundExt _aSound1;

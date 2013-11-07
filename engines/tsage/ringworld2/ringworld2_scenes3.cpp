@@ -3218,7 +3218,7 @@ void Scene3500::Action1::signal() {
 		scene->_actor6.hide();
 		_field24 = 0;
 		if (_field20 == 0) {
-			scene->_actor7.sub1094ED();
+			scene->_throttle.sub1094ED();
 			if (scene->_mazeChangeAmount == scene->_field1270)
 				scene->_aSound1.play(276);
 		}
@@ -3338,7 +3338,7 @@ void Scene3500::Action2::signal() {
 			di = scene->_actor9._position.x;
 		}
 
-		scene->_actor7.sub1094ED();
+		scene->_throttle.sub1094ED();
 
 		scene->_actor8._moveDiff.y = 9 - (scene->_mazeChangeAmount / 2);
 		Common::Point pt(si, 73);
@@ -3386,14 +3386,14 @@ bool Scene3500::DirectionButton::startAction(CursorType action, Event &event) {
 
 /*--------------------------------------------------------------------------*/
 
-Scene3500::Actor7::Actor7() {
+Scene3500::Throttle::Throttle() {
 	_fieldA8 = 0;
 	_fieldAA = 0;
 	_fieldAC = 0;
-	_fieldAE = 0;
+	_deltaY = 0;
 }
 
-void Scene3500::Actor7::synchronize(Serializer &s) {
+void Scene3500::Throttle::synchronize(Serializer &s) {
 	SceneActor::synchronize(s);
 
 	s.syncAsSint16LE(_pos.x);
@@ -3401,11 +3401,11 @@ void Scene3500::Actor7::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_fieldA8);
 	s.syncAsSint16LE(_fieldAA);
 	s.syncAsSint16LE(_fieldAC);
-	s.syncAsSint16LE(_fieldAE);
+	s.syncAsSint16LE(_deltaY);
 }
 
-void Scene3500::Actor7::sub109466(int xp, int yp, int arg3, int arg4, int arg5) {
-	_fieldAE = 0;
+void Scene3500::Throttle::init(int xp, int yp, int arg3, int arg4, int arg5) {
+	_deltaY = 0;
 	_pos = Common::Point(xp, yp);
 	_fieldA8 = arg3;
 	_fieldAA = arg4;
@@ -3417,45 +3417,45 @@ void Scene3500::Actor7::sub109466(int xp, int yp, int arg3, int arg4, int arg5) 
 	sub109663(arg5);
 }
 
-void Scene3500::Actor7::sub1094ED() {
+void Scene3500::Throttle::sub1094ED() {
 	Scene3500 *scene = (Scene3500 *)R2_GLOBALS._sceneManager._scene;
 
 	scene->_field1270 = _position.x - _pos.x;
 }
 
-void Scene3500::Actor7::sub109663(int arg1){
+void Scene3500::Throttle::sub109663(int arg1){
 	changePosition(Common::Point(_pos.x + arg1, _pos.y - (_fieldAC * arg1)));
 }
 
-void Scene3500::Actor7::changePosition(const Common::Point &pt) {
+void Scene3500::Throttle::changePosition(const Common::Point &pt) {
 	setPosition(pt);
 }
 
-void Scene3500::Actor7::process(Event &event) {
+void Scene3500::Throttle::process(Event &event) {
 	Scene3500 *scene = (Scene3500 *)R2_GLOBALS._sceneManager._scene;
 
 	if (!scene->_directionChangesEnabled)
 		return;
 
 	if ((event.eventType == EVENT_BUTTON_DOWN) && (R2_GLOBALS._events.getCursor() == CURSOR_USE) && (_bounds.contains(event.mousePos))) {
-		_fieldAE = 1 + event.mousePos.y - _position.y;
+		_deltaY = 1 + event.mousePos.y - _position.y;
 		event.eventType = EVENT_NONE;
 	}
 
-	if ((event.eventType == EVENT_BUTTON_UP) && (_fieldAE != 0)) {
-		_fieldAE = 0;
+	if ((event.eventType == EVENT_BUTTON_UP) && (_deltaY != 0)) {
+		_deltaY = 0;
 		event.handled = true;
 		if (scene->_action1._field24 == 0)
 			sub1094ED();
 	}
 
-	if (_fieldAE == 0)
+	if (_deltaY == 0)
 		return;
 
 	R2_GLOBALS._sound2.play(338);
 	event.handled = true;
 
-	int cx = event.mousePos.y - _fieldAE + 1;
+	int cx = event.mousePos.y - _deltaY + 1;
 	if (_pos.y >= cx) {
 		if (_pos.y - _fieldAA <= cx)
 			changePosition(Common::Point(((_pos.y - cx) / 2) + _pos.x + ((_pos.y - cx) % 2), cx));
@@ -3466,7 +3466,7 @@ void Scene3500::Actor7::process(Event &event) {
 	}
 }
 
-bool Scene3500::Actor7::startAction(CursorType action, Event &event) {
+bool Scene3500::Throttle::startAction(CursorType action, Event &event) {
 	Scene3500 *scene = (Scene3500 *)R2_GLOBALS._sceneManager._scene;
 
 	if (!scene->_directionChangesEnabled) {
@@ -3561,7 +3561,7 @@ void Scene3500::postInit(SceneObjectList *OwnerList) {
 	R2_GLOBALS._player._characterScene[R2_SEEKER] = 3500;
 	R2_GLOBALS._player._characterScene[R2_MIRANDA] = 3500;
 	_field1284 = 0;
-	_field1282 = 0;
+	_field1282 = 0; // CHECKME: Useless variable
 	_field1278 = 0;
 	_field1272 = 1;
 	_field1270 = 4;
@@ -3588,8 +3588,8 @@ void Scene3500::postInit(SceneObjectList *OwnerList) {
 		R2_GLOBALS._scenePalette._palette[(3 * i) + 2] = tmpPal[(3 * i) + 2];
 	}
 
-	_actor7.sub109466(38, 165, 16, 32, _field1270);
-	_actor7.setDetails(3500, 6, 7, -1, 1, (SceneItem *)NULL);
+	_throttle.init(38, 165, 16, 32, _field1270);
+	_throttle.setDetails(3500, 6, 7, -1, 1, (SceneItem *)NULL);
 	R2_GLOBALS._sound1.play(276);
 
 	_pitchDown._movementId = 88;
@@ -3671,19 +3671,19 @@ void Scene3500::postInit(SceneObjectList *OwnerList) {
 void Scene3500::doMovement(int id) {
 	switch (id) {
 	case -1:
-		_actor7.sub1094ED();
+		_throttle.sub1094ED();
 		if (_field1270 != 0) {
 			_field1270--;
-			_actor7.sub109663(_field1270);
+			_throttle.sub109663(_field1270);
 		}
 		if (_action1._field24 != 0)
 			_field1270 = 0;
 		break;
 	case 1:
-		_actor7.sub1094ED();
+		_throttle.sub1094ED();
 		if (_field1270 < 16) {
 			++_field1270;
-			_actor7.sub109663(_field1270);
+			_throttle.sub109663(_field1270);
 		}
 		if (_action1._field24 != 0)
 			_field1270 = 0;
@@ -3739,7 +3739,7 @@ void Scene3500::doMovement(int id) {
 		break;
 	default:
 		_field1270 = id;
-		_actor7.sub109663(id);
+		_throttle.sub109663(id);
 		if (_action1._field24 != 0) {
 			_field1270 = 0;
 		}
@@ -3826,7 +3826,7 @@ void Scene3500::process(Event &event) {
 	}
 
 	if (!event.handled)
-		_actor7.process(event);
+		_throttle.process(event);
 
 	if (!event.handled)
 		_pitchDown.process(event);
