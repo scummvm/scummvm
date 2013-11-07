@@ -761,8 +761,7 @@ public:
 	WestExit _westExit;
 	SequenceManager _sequenceManager;
 
-	int _field77A;
-	int _field77C;
+	bool _walkFlag;
 
 	Scene1700();
 	void synchronize(Serializer &s);

@@ -10348,15 +10348,13 @@ void Scene1625::process(Event &event) {
  *--------------------------------------------------------------------------*/
 
 Scene1700::Scene1700() {
-	_field77A = 0;
-	_field77C = 0;
+	_walkFlag = 0;
 }
 
 void Scene1700::synchronize(Serializer &s) {
 	SceneExt::synchronize(s);
 
-	s.syncAsSint16LE(_field77A);
-	s.syncAsSint16LE(_field77C);
+	s.syncAsSint16LE(_walkFlag);
 }
 
 bool Scene1700::RimTransport::startAction(CursorType action, Event &event) {
@@ -10440,17 +10438,8 @@ void Scene1700::enterArea() {
 		_hatch.remove();
 	}
 
-	warning("tmpRect = _v5589E;");
-	warning("Mouse_hideIfNeeded");
-	warning("set_pane_p(_paneNumber);");
-	warning("Big loop calling gfx_draw_slice_p");
-
-	if (_field77A == 0)
-		_field77A = 1;
-	else
-		_field77A = 0;
-
-	warning("set_pane_p(_paneNumber);");
+	// The original had manual code here to redraw the background manually when
+	// changing areas within the scene. Which seems to be totally redundant.
 
 	if (_sceneMode != 40 && R2_GLOBALS._rimLocation == 0) {
 		// Crashed ledge hopper
@@ -10506,7 +10495,7 @@ void Scene1700::enterArea() {
 		// Rim transport vechile located
 		R2_GLOBALS._rimTransportLocation = R2_GLOBALS._rimLocation;
 		if (!R2_GLOBALS.getFlag(15))
-			_field77C = 1;
+			_walkFlag = true;
 
 		_rimTransport.postInit();
 		_rimTransport.setup(1700, 3, 1);
@@ -10721,11 +10710,11 @@ void Scene1700::signal() {
 		}
 		break;
 	case 3:
-		if (_field77C == 0) {
+		if (!_walkFlag) {
 			R2_GLOBALS._player.enableControl(CURSOR_WALK);
 		} else {
 			R2_GLOBALS.setFlag(15);
-			_field77C = 0;
+			_walkFlag = false;
 			_sceneMode = 31;
 			R2_GLOBALS._events.setCursor(CURSOR_WALK);
 			if (R2_GLOBALS._player._characterIndex == R2_QUINN)
