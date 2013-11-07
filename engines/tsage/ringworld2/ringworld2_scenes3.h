@@ -571,18 +571,18 @@ class Scene3500 : public SceneExt {
 
 		Action1();
 		virtual void synchronize(Serializer &s);
-		void sub108670(int arg1);
+		void handleHorzButton(int direction);
 		void sub108732(int arg1);
 		virtual void signal();
 		virtual void dispatch();
 	};
 	class Action2: public Action {
 	public:
-		int _field1E;
+		int _direction;
 
 		Action2();
 		virtual void synchronize(Serializer &s);
-		void sub10831F(int arg1);
+		void handleVertButton(int direction);
 
 		virtual void signal();
 	};

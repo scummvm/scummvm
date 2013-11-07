@@ -2964,10 +2964,11 @@ void Scene3500::Action1::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_field24);
 }
 
-void Scene3500::Action1::sub108670(int arg1) {
+void Scene3500::Action1::handleHorzButton(int direction) {
 	Scene3500 *scene = (Scene3500 *)R2_GLOBALS._sceneManager._scene;
 
-	_field1E = arg1;
+	// Direction: -1 == Left, 1 == Right
+	_field1E = direction;
 	_field20 = 1;
 	_field24 = 1;
 
@@ -3276,20 +3277,21 @@ void Scene3500::Action1::dispatch() {
 /*--------------------------------------------------------------------------*/
 
 Scene3500::Action2::Action2() {
-	_field1E = 0;
+	_direction = 0;
 }
 
 void Scene3500::Action2::synchronize(Serializer &s) {
 	Action::synchronize(s);
 
-	s.syncAsSint16LE(_field1E);
+	s.syncAsSint16LE(_direction);
 }
 
-void Scene3500::Action2::sub10831F(int arg1) {
+void Scene3500::Action2::handleVertButton(int direction) {
 	Scene3500 *scene = (Scene3500 *)R2_GLOBALS._sceneManager._scene;
 
-	_field1E = arg1;
-	if (_field1E == -1)
+	// Directions : 2 == up, -1 == down
+	_direction = direction;
+	if (_direction == -1)
 		scene->_horizontalSpeedDisplay.setFrame2(3);
 	else
 		scene->_horizontalSpeedDisplay.setFrame2(1);
@@ -3316,12 +3318,12 @@ void Scene3500::Action2::signal() {
 		}
 
 		scene->_tunnelCircle._moveDiff.y = 9 - (scene->_mazeChangeAmount / 2);
-		Common::Point pt(si, 73 - (_field1E * 12));
+		Common::Point pt(si, 73 - (_direction * 12));
 		NpcMover *mover = new NpcMover();
 		scene->_tunnelCircle.addMover(mover, &pt, NULL);
 
 		scene->_actor9._moveDiff.y = 9 - (scene->_mazeChangeAmount / 2);
-		Common::Point pt2(di, 73 - (_field1E * 12));
+		Common::Point pt2(di, 73 - (_direction * 12));
 		NpcMover *mover2 = new NpcMover();
 		scene->_actor9.addMover(mover2, &pt2, NULL);
 		scene->_mazeChangeAmount = (scene->_mazeChangeAmount / 2) + (scene->_mazeChangeAmount % 2);
@@ -3689,10 +3691,11 @@ void Scene3500::doMovement(int id) {
 			_field1270 = 0;
 		break;
 	case 88:
-		if ((_action == 0) || (_action1._field24 == 0)) {
-		// The original makes a second useless check on action, skipped
-			_action2.sub10831F(2);
-			if ((_action) && ((_action2.getActionIndex() != 0) || (_action2._field1E != 2))) {
+		// Up button has been pressed
+		// The original was doing a double check on action, only one is here.
+		if (!_action || (_action1._field24 == 0)) {
+			_action2.handleVertButton(2);
+			if (_action && ((_action2.getActionIndex() != 0) || (_action2._direction != 2))) {
 				_action2.signal();
 			} else {
 				_actor9.setAction(&_action2, &_actor9, NULL);
@@ -3700,23 +3703,25 @@ void Scene3500::doMovement(int id) {
 		}
 		break;
 	case 96:
-		if ((_action) && (_action1._field24 != 0) && (_action2._field1E != 1)) {
+		// Right button has been pressed
+		if (!_action) {
+			_action1.handleHorzButton(1);
+			setAction(&_action1, &_shuttle, NULL);
+		} else if (_action1._field24 == 0) {
+			_action1.handleHorzButton(1);
+			_action1.signal();
+		}else if (_action2._direction != 1) {
 			_field1278 = 0;
 			_action1.sub108732(0);
-		} else if ((_action) && (_field1278 == 0) && (_action1._field24 != 0)) {
+		} else if (_field1278 == 0) {
 			_field1278 = id;
-		} else if ((_action) && (_action1._field24 == 0)) {
-			_action1.sub108670(1);
-			_action1.signal();
-		} else if (_action == 0) {
-			_action1.sub108670(1);
-			setAction(&_action1, &_shuttle, NULL);
 		}
 		break;
 	case 104:
-		if ((_action == 0) || (_action1._field24 == 0)) {
-			_action2.sub10831F(-1);
-			if ((_action) && ((_action2.getActionIndex() != 0) || (_action2._field1E != -1))) {
+		// Down button has been pressed
+		if (!_action || (_action1._field24 == 0)) {
+			_action2.handleVertButton(-1);
+			if ((_action) && ((_action2.getActionIndex() != 0) || (_action2._direction != -1))) {
 				_action2.signal();
 			} else {
 				_actor9.setAction(&_action2, &_actor9, NULL);
@@ -3724,17 +3729,18 @@ void Scene3500::doMovement(int id) {
 		}
 		break;
 	case 112:
-		if ((_action) && (_action1._field24 != 0) && (_action2._field1E != -1)) {
+		// Left button has been pressed
+		if (!_action) {
+			_action1.handleHorzButton(-1);
+			setAction(&_action1, &_shuttle, NULL);
+		} else if (_action1._field24 == 0) {
+			_action1.handleHorzButton(-1);
+			_action1.signal();
+		}else if (_action2._direction != -1) {
 			_field1278 = 0;
 			_action1.sub108732(0);
-		} else if ((_action) && (_field1278 == 0) && (_action1._field24 != 0)) {
+		} else if (_field1278 == 0) {
 			_field1278 = id;
-		} else if ((_action) && (_action1._field24 == 0)) {
-			_action1.sub108670(-1);
-			_action1.signal();
-		} else if (_action == 0) {
-			_action1.sub108670(-1);
-			setAction(&_action1, &_shuttle, NULL);
 		}
 		break;
 	default:
