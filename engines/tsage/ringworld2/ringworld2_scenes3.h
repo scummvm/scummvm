@@ -632,22 +632,22 @@ class Scene3500 : public SceneExt {
 public:
 	Action1 _action1;
 	Action2 _action2;
-	NamedHotspot _item1;
-	NamedHotspot _item2;
-	NamedHotspot _item3;
+	NamedHotspot _background;
+	NamedHotspot _outsideView;
+	NamedHotspot _mapScreen;
 	DirectionButton _pitchDown;
 	DirectionButton _turnLeft;
 	DirectionButton _pitchUp;
 	DirectionButton _turnRight;
 	// Glyph of vessel on top of the maze ui
-	SceneActor _actor1;
-	SceneActor _actor2;
-	SceneActor _actor3;
-	SceneActor _actor4;
-	SceneActor _actor5;
-	SceneActor _actor6;
+	SceneActor _shuttle;
+	SceneActor _verticalSpeedDisplay;
+	SceneActor _horizontalSpeedDisplay;
+	SceneActor _symbolVertical;
+	SceneActor _symbolLeft;
+	SceneActor _symbolRight;
 	Throttle _throttle;
-	Actor8 _actor8;
+	Actor8 _tunnelCircle;
 	Actor8 _actor9;
 	ASoundExt _aSound1;
 	MazeUI3500 _mazeUI;
