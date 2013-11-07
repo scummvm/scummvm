@@ -674,6 +674,19 @@ EngineDescList parseEngineConfigure(const std::string &engineDir);
  *         the name of the second operand. "false" otherwise.
  */
 bool compareFSNode(const CreateProjectTool::FSNode &left, const CreateProjectTool::FSNode &right);
+
+#ifdef FIRST_ENGINE
+/**
+ * Compares two FSNode entries in a strict-weak fashion based on engine name
+ * order.
+ *
+ * @param left  The first operand.
+ * @param right The second operand.
+ * @return "true" when the name of the left operand is strictly smaller than
+ *         the name of the second operand. "false" otherwise.
+ */
+bool compareEngineNames(const CreateProjectTool::FSNode &left, const CreateProjectTool::FSNode &right);
+#endif
 } // End of anonymous namespace
 
 EngineDescList parseEngines(const std::string &srcDir) {
@@ -684,9 +697,15 @@ EngineDescList parseEngines(const std::string &srcDir) {
 
 	FileList engineFiles = listDirectory(srcDir + "/engines/");
 
-	// Sort file list alphabetically this allows for a nicer order in
-	// --list-engines output, for example.
+#ifdef FIRST_ENGINE
+	// In case we want to sort an engine to the front of the list we will
+	// use some manual sorting predicate which assures that.
+	engineFiles.sort(&compareEngineNames);
+#else
+	// Otherwise, we simply sort the file list alphabetically this allows
+	// for a nicer order in --list-engines output, for example.
 	engineFiles.sort(&compareFSNode);
+#endif
 
 	for (FileList::const_iterator i = engineFiles.begin(), end = engineFiles.end(); i != end; ++i) {
 		// Each engine requires its own sub directory thus we will skip all
@@ -833,6 +852,18 @@ EngineDescList parseEngineConfigure(const std::string &engineDir) {
 bool compareFSNode(const CreateProjectTool::FSNode &left, const CreateProjectTool::FSNode &right) {
 	return left.name < right.name;
 }
+
+#ifdef FIRST_ENGINE
+bool compareEngineNames(const CreateProjectTool::FSNode &left, const CreateProjectTool::FSNode &right) {
+	if (left.name == FIRST_ENGINE) {
+		return right.name != FIRST_ENGINE;
+	} else if (right.name == FIRST_ENGINE) {
+		return false;
+	} else {
+		return compareFSNode(left, right);
+	}
+}
+#endif
 } // End of anonymous namespace
 
 TokenList tokenize(const std::string &input, char separator) {
