@@ -1,0 +1,4 @@
+ifdef ENABLE_DRACI
+DEFINES += -DENABLE_DRACI=$(ENABLE_DRACI)
+MODULES += engines/draci
+endif

@@ -1,0 +1,4 @@
+ifdef ENABLE_DREAMWEB
+DEFINES += -DENABLE_DREAMWEB=$(ENABLE_DREAMWEB)
+MODULES += engines/dreamweb
+endif

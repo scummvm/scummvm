@@ -1,0 +1,4 @@
+ifdef ENABLE_TOON
+DEFINES += -DENABLE_TOON=$(ENABLE_TOON)
+MODULES += engines/toon
+endif

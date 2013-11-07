@@ -1,0 +1,4 @@
+ifdef ENABLE_HUGO
+DEFINES += -DENABLE_HUGO=$(ENABLE_HUGO)
+MODULES += engines/hugo
+endif

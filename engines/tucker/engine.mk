@@ -1,0 +1,4 @@
+ifdef ENABLE_TUCKER
+DEFINES += -DENABLE_TUCKER=$(ENABLE_TUCKER)
+MODULES += engines/tucker
+endif

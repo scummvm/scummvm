@@ -1,0 +1,4 @@
+ifdef ENABLE_DRASCULA
+DEFINES += -DENABLE_DRASCULA=$(ENABLE_DRASCULA)
+MODULES += engines/drascula
+endif

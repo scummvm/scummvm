@@ -1,0 +1,4 @@
+ifdef ENABLE_SWORD2
+DEFINES += -DENABLE_SWORD2=$(ENABLE_SWORD2)
+MODULES += engines/sword2
+endif

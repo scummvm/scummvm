@@ -1,0 +1,4 @@
+ifdef ENABLE_ZVISION
+DEFINES += -DENABLE_ZVISION=$(ENABLE_ZVISION)
+MODULES += engines/zvision
+endif

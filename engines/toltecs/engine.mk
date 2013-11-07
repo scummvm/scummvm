@@ -1,0 +1,4 @@
+ifdef ENABLE_TOLTECS
+DEFINES += -DENABLE_TOLTECS=$(ENABLE_TOLTECS)
+MODULES += engines/toltecs
+endif

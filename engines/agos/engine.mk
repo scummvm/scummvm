@@ -1,0 +1,8 @@
+ifdef ENABLE_AGOS
+DEFINES += -DENABLE_AGOS=$(ENABLE_AGOS)
+MODULES += engines/agos
+
+ifdef ENABLE_AGOS2
+DEFINES += -DENABLE_AGOS2
+endif
+endif

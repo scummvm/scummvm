@@ -1,0 +1,4 @@
+ifdef ENABLE_TONY
+DEFINES += -DENABLE_TONY=$(ENABLE_TONY)
+MODULES += engines/tony
+endif

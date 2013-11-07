@@ -1,0 +1,4 @@
+ifdef ENABLE_TESTBED
+DEFINES += -DENABLE_TESTBED=$(ENABLE_TESTBED)
+MODULES += engines/testbed
+endif

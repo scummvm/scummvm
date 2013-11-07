@@ -1,0 +1,12 @@
+ifdef ENABLE_SCUMM
+DEFINES += -DENABLE_SCUMM=$(ENABLE_SCUMM)
+MODULES += engines/scumm
+
+ifdef ENABLE_SCUMM_7_8
+DEFINES += -DENABLE_SCUMM_7_8
+endif
+
+ifdef ENABLE_HE
+DEFINES += -DENABLE_HE
+endif
+endif
