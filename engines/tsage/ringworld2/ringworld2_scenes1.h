@@ -814,9 +814,9 @@ public:
 	NamedHotspot _greenLights;
 	NamedHotspot _frontView;
 	NamedHotspot _rearView;
-	SceneActor _actor1;
-	SceneActor _actor2;
-	SceneActor _actor3;
+	SceneActor _scannerIcon1;
+	SceneActor _scannerIcon2;
+	SceneActor _radarSweep;
 	SpeedSlider _speedSlider;
 	Button _forwardButton;
 	Button _backwardButton;
@@ -825,12 +825,12 @@ public:
 	PaletteRotation *_rotation;
 
 	int _direction;
-	int _field413;
+	int _speedCurrent;
 	int _speed;
-	int _field417;
-	int _field419;
-	int _field41B;
-	int _field41D;
+	int _speedDelta;
+	int _rotationSegment;
+	int _rotationSegCurrent;
+	int _newRotation;
 
 	Scene1750();
 	virtual void synchronize(Serializer &s);

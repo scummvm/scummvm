@@ -10959,12 +10959,12 @@ bool Scene1750::SpeedSlider::startAction(CursorType action, Event &event) {
 
 Scene1750::Scene1750() {
 	_direction = 0;
-	_field413 = 0;
+	_speedCurrent = 0;
 	_speed = 0;
-	_field417 = 0;
-	_field419 = 0;
-	_field41B = 0;
-	_field41D = 0;
+	_speedDelta = 0;
+	_rotationSegment = 0;
+	_rotationSegCurrent = 0;
+	_newRotation = 0;
 
 	_rotation = nullptr;
 }
@@ -10974,12 +10974,12 @@ void Scene1750::synchronize(Serializer &s) {
 	SYNC_POINTER(_rotation);
 
 	s.syncAsSint16LE(_direction);
-	s.syncAsSint16LE(_field413);
+	s.syncAsSint16LE(_speedCurrent);
 	s.syncAsSint16LE(_speed);
-	s.syncAsSint16LE(_field417);
-	s.syncAsSint16LE(_field419);
-	s.syncAsSint16LE(_field41B);
-	s.syncAsSint16LE(_field41D);
+	s.syncAsSint16LE(_speedDelta);
+	s.syncAsSint16LE(_rotationSegment);
+	s.syncAsSint16LE(_rotationSegCurrent);
+	s.syncAsSint16LE(_newRotation);
 }
 
 void Scene1750::postInit(SceneObjectList *OwnerList) {
@@ -10987,7 +10987,9 @@ void Scene1750::postInit(SceneObjectList *OwnerList) {
 	R2_GLOBALS._sound1.play(115);
 	R2_GLOBALS._uiElements._active = false;
 	R2_GLOBALS._v5589E.set(0, 0, 320, 200);
+
 	SceneExt::postInit();
+	R2_GLOBALS._interfaceY = SCREEN_HEIGHT;
 
 	R2_GLOBALS._player._characterScene[R2_QUINN] = 1750;
 	R2_GLOBALS._player._characterScene[R2_SEEKER] = 1750;
@@ -11037,28 +11039,28 @@ void Scene1750::postInit(SceneObjectList *OwnerList) {
 	R2_GLOBALS._player.hide();
 	R2_GLOBALS._player.enableControl();
 
-	_actor3.postInit();
-	_actor3.setup(1750, 3, 1);
-	_actor3.setPosition(Common::Point(49, 185));
-	_actor3.fixPriority(7);
-	_actor3.setDetails(1750, 30, -1, -1, 1, (SceneItem *) NULL);
+	_radarSweep.postInit();
+	_radarSweep.setup(1750, 3, 1);
+	_radarSweep.setPosition(Common::Point(49, 185));
+	_radarSweep.fixPriority(7);
+	_radarSweep.setDetails(1750, 30, -1, -1, 1, (SceneItem *) NULL);
 
-	_actor1.postInit();
-	_actor1.setup(1750, 2, 1);
-	_actor1.setPosition(Common::Point(35, ((_rotation->_currIndex - 218) % 4) + ((R2_GLOBALS._rimLocation % 800) * 4) - 1440));
-	_actor1.fixPriority(8);
+	_scannerIcon1.postInit();
+	_scannerIcon1.setup(1750, 2, 1);
+	_scannerIcon1.setPosition(Common::Point(35, ((_rotation->_currIndex - 218) % 4) + ((R2_GLOBALS._rimLocation % 800) * 4) - 1440));
+	_scannerIcon1.fixPriority(8);
 
-	_actor2.postInit();
-	_actor2.setup(1750, 1, 4);
+	_scannerIcon2.postInit();
+	_scannerIcon2.setup(1750, 1, 4);
 
-	int tmpVar = abs(_actor1._position.y - 158) / 100;
+	int tmpVar = ABS(_scannerIcon1._position.y - 158) / 100;
 
 	if (tmpVar >= 8)
-		_actor2.hide();
-	else if (_actor1._position.y <= 158)
-		_actor2.setPosition(Common::Point(137, (tmpVar * 7) + 122));
+		_scannerIcon2.hide();
+	else if (_scannerIcon1._position.y <= 158)
+		_scannerIcon2.setPosition(Common::Point(137, (tmpVar * 7) + 122));
 	else
-		_actor2.setPosition(Common::Point(148, (tmpVar * 7) + 122));
+		_scannerIcon2.setPosition(Common::Point(148, (tmpVar * 7) + 122));
 
 	_speedSlider.setupSlider(1, 286, 143, 41, 15);
 	_speedSlider.setDetails(1750, 24, 1, -1, 1, (SceneItem *) NULL);
@@ -11083,10 +11085,10 @@ void Scene1750::postInit(SceneObjectList *OwnerList) {
 	_exitButton.setDetails(1750, 27, 1, -1, 1, (SceneItem *) NULL);
 
 	_direction = 1;		// Forward by default
-	_field417 = 0;
-	_field413 = 0;
+	_speedDelta = 0;
+	_speedCurrent = 0;
 	_speed = 0;
-	_field419 = ((_rotation->_currIndex - 218) / 4) % 4;
+	_rotationSegment = ((_rotation->_currIndex - 218) / 4) % 4;
 
 	_redLights.setDetails(Rect(129, 112, 155, 175), 1750, 21, -1, -1, 1, NULL);
 	_greenLights.setDetails(Rect(93, 122, 126, 172), 1750, 15, -1, -1, 1, NULL);
@@ -11123,71 +11125,71 @@ void Scene1750::process(Event &event) {
 
 void Scene1750::dispatch() {
 	if (_rotation) {
-		if (!_field417 && (_speed != _field413)) {
-			if (_field413 >= _speed)
-				--_field413;
+		if (!_speedDelta && (_speed != _speedCurrent)) {
+			if (_speedCurrent >= _speed)
+				--_speedCurrent;
 			else
-				++_field413;
+				++_speedCurrent;
 
-			_field417 = 21 - ABS(_field413);
+			_speedDelta = 21 - ABS(_speedCurrent);
 		}
 
-		if (_field417 == 1) {
-			if (_field413 == 0) {
-				_actor3.show();
+		if (_speedDelta == 1) {
+			if (_speedCurrent == 0) {
+				_radarSweep.show();
 				_rotation->_idxChange = 0;
 			} else {
 				if (_rotation->_idxChange == 0)
-					_actor3.hide();
+					_radarSweep.hide();
 
-				if (_field413 < -12) {
-					_rotation->setDelay(15 - ABS(_field413));
+				if (_speedCurrent < -12) {
+					_rotation->setDelay(15 - ABS(_speedCurrent));
 					_rotation->_idxChange = -2;
-				} else if (_field413 < 0) {
-					_rotation->setDelay(10 - ABS(_field413));
+				} else if (_speedCurrent < 0) {
+					_rotation->setDelay(10 - ABS(_speedCurrent));
 					_rotation->_idxChange = -1;
-				} else if (_field413 < 11) {
-					_rotation->setDelay(10 - _field413);
+				} else if (_speedCurrent < 11) {
+					_rotation->setDelay(10 - _speedCurrent);
 					_rotation->_idxChange = 1;
 				} else {
-					_rotation->setDelay(15 - _field413);
+					_rotation->setDelay(15 - _speedCurrent);
 					_rotation->_idxChange = 2;
 				}
 			} 
 		}
 
-		if (_field417)
-			--_field417;
+		if (_speedDelta)
+			--_speedDelta;
 
-		_field41B = _field419;
-		_field419 = ((_rotation->_currIndex - 218) / 4) / 4;
+		_rotationSegCurrent = _rotationSegment;
+		_rotationSegment = ((_rotation->_currIndex - 218) / 4) / 4;
 
-		if ((_field41B + 1) == _field419 || (_field41B - 3)  == _field419) {
+		if ((_rotationSegCurrent + 1) == _rotationSegment || (_rotationSegCurrent - 3)  == _rotationSegment) {
 			if (R2_GLOBALS._rimLocation < 2400) {
 				++R2_GLOBALS._rimLocation;
 			}
 		}
 
-		if ((_field41B - 1) == _field419 || (_field41B + 3) == _field419) {
+		if ((_rotationSegCurrent - 1) == _rotationSegment || (_rotationSegCurrent + 3) == _rotationSegment) {
 			if (R2_GLOBALS._rimLocation > -2400) {
 				--R2_GLOBALS._rimLocation;
 			}
 		}
 
-		if (_rotation->_currIndex != _field41D) {
-			_field41D = _rotation->_currIndex;
-			_actor1.setPosition(Common::Point(35, ((_rotation->_currIndex - 218) % 4) +
+		if (_rotation->_currIndex != _newRotation) {
+			_newRotation = _rotation->_currIndex;
+			_scannerIcon1.setPosition(Common::Point(35, ((_rotation->_currIndex - 218) % 4) +
 				((R2_GLOBALS._rimLocation % 800) * 4) - 1440));
 		}
 	}
 
-	int v = ABS(_actor1._position.y - 158) / 100;
+	int v = ABS(_scannerIcon1._position.y - 158) / 100;
 	if (v < 8) {
-		_actor2.show();
-		_actor2.setPosition(Common::Point((_actor1._position.y <= 158) ? 137 : 148,
+		_scannerIcon2.show();
+		_scannerIcon2.setPosition(Common::Point((_scannerIcon1._position.y <= 158) ? 137 : 148,
 			v * 7 + 122));
 	} else {
-		_actor2.hide();
+		_scannerIcon2.hide();
 	}
 }
 
