@@ -82,7 +82,8 @@ EXECUTABLE  := $(EXEPRE)scummvm$(EXEEXT)
 include $(srcdir)/Makefile.common
 
 # check if configure has been run or has been changed since last run
-config.h config.mk: $(srcdir)/configure $(srcdir)/engines/configure.engines
+ENGINE_SUBDIRS_CONFIGURE := $(wildcard $(srcdir)/engines/*/configure.engine)
+config.h config.mk: $(srcdir)/configure $(ENGINE_SUBDIRS_CONFIGURE)
 ifeq "$(findstring config.mk,$(MAKEFILE_LIST))" "config.mk"
 	@echo "Running $(srcdir)/configure with the last specified parameters"
 	@sleep 2

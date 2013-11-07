@@ -97,7 +97,9 @@ add_feature() {
 _srcdir=`dirname $0`
 
 # Read list of engines
-. $_srcdir/engines/configure.engines
+for i in $_srcdir/engines/*/configure.engine; do
+	. "$i"
+done
 
 #
 # Default settings
