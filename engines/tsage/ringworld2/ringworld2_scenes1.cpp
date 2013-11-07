@@ -9955,7 +9955,6 @@ void Scene1580::postInit(SceneObjectList *OwnerList) {
 		_screenDisplay.setup(1580, 3, 1);
 		_screenDisplay.setPosition(Common::Point(124, 109));
 		_screenDisplay.fixPriority(20);
-		_screenDisplay.setZoom(200);
 
 		_sceneMode = 10;
 	} else {
