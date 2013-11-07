@@ -718,16 +718,11 @@ public:
 };
 
 class Scene1700 : public SceneExt {
-	class Item2 : public NamedHotspot {
-	public:
-		virtual bool startAction(CursorType action, Event &event);
-	};
-
 	class RimTransport : public SceneActor {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Actor12 : public SceneActor {
+	class Companion : public SceneActor {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -747,10 +742,10 @@ class Scene1700 : public SceneExt {
 public:
 	SpeakerQuinn _quinnSpeaker;
 	SpeakerSeeker _seekerSpeaker;
-	NamedHotspot _item1;
-	Item2 _item2;
+	NamedHotspot _surface;
+	NamedHotspot _background;
 	SceneActor _playerShadow;
-	SceneActor _actor2;
+	SceneActor _companionShadow;
 	SceneActor _slabWest;
 	SceneActor _slabEast;
 	SceneActor _slabShadowWest;
@@ -758,9 +753,9 @@ public:
 	SceneActor _westPlatform;
 	SceneActor _rimTransportDoor;
 	SceneActor _ledgeHopper;
-	SceneActor _actor10;
+	SceneActor _hatch;
 	RimTransport _rimTransport;
-	Actor12 _actor12;
+	Companion _companion;
 	NorthExit _northExit;
 	SouthExit _southExit;
 	WestExit _westExit;
