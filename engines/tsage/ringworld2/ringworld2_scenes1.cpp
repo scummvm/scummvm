@@ -10092,13 +10092,10 @@ bool Scene1625::Wire::startAction(CursorType action, Event &event) {
 }
 
 Scene1625::Scene1625() {
-	_field412 = 0;
 }
 
 void Scene1625::synchronize(Serializer &s) {
 	SceneExt::synchronize(s);
-
-	s.syncAsSint16LE(_field412);
 }
 
 void Scene1625::postInit(SceneObjectList *OwnerList) {
@@ -10224,7 +10221,7 @@ void Scene1625::signal() {
 			setAction(&_sequenceManager, this, 1630, &_teal, &_tealRightArm, NULL);
 			break;
 		}
-		_field412 = _stripManager._field2E8;
+		//_field412 = _stripManager._field2E8;
 		_stripManager._field2E8 = 0;
 		break;
 	case 1625:
