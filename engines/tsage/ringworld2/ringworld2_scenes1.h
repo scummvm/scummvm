@@ -663,8 +663,6 @@ class Scene1580 : public SceneExt {
 		virtual bool startAction(CursorType action, Event &event);
 	};
 public:
-	//CHECKME: Useless variable?
-	int _field412;
 	SpeakerQuinn _quinnSpeaker;
 	SpeakerSeeker _seekerSpeaker;
 	JoystickPlug _joystickPlug;

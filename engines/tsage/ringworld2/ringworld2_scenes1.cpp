@@ -9724,13 +9724,10 @@ void Scene1575::dispatch() {
  *--------------------------------------------------------------------------*/
 
 Scene1580::Scene1580() {
-	_field412 = 0;
 }
 
 void Scene1580::synchronize(Serializer &s) {
 	SceneExt::synchronize(s);
-
-	s.syncAsSint16LE(_field412);
 }
 
 bool Scene1580::JoystickPlug::startAction(CursorType action, Event &event) {
@@ -9774,7 +9771,7 @@ bool Scene1580::ScreenSlot::startAction(CursorType action, Event &event) {
 		scene->_screenDisplay.setup(1580, 3, 1);
 		scene->_screenDisplay.setPosition(Common::Point(124, 109));
 		scene->_screenDisplay.fixPriority(20);
-		scene->_field412 = 1;
+		//scene->_field412 = 1;
 		scene->_sceneMode = 10;
 		scene->setAction(&scene->_sequenceManager, scene, 1, &R2_GLOBALS._player, NULL);
 
@@ -9914,7 +9911,6 @@ void Scene1580::postInit(SceneObjectList *OwnerList) {
 	loadScene(1580);
 	R2_GLOBALS._sceneManager._fadeMode = FADEMODE_GRADUAL;
 	SceneExt::postInit();
-	_field412 = 0;
 
 	_stripManager.setColors(60, 255);
 	_stripManager.setFontNumber(3);
