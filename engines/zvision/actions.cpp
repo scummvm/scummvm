@@ -61,11 +61,19 @@ bool ActionAdd::execute() {
 
 ActionAssign::ActionAssign(ZVision *engine, const Common::String &line) :
 	ResultAction(engine) {
-	sscanf(line.c_str(), "%*[^(](%u, %u)", &_key, &_value);
+	char buf[64];
+	memset(buf, 0, 64);
+	sscanf(line.c_str(), "%*[^(](%u, %s)", &_key, buf);
+	_value = new ValueSlot(_engine->getScriptManager(), buf);
+}
+
+ActionAssign::~ActionAssign() {
+	if (_value)
+		delete _value;
 }
 
 bool ActionAssign::execute() {
-	_engine->getScriptManager()->setStateValue(_key, _value);
+	_engine->getScriptManager()->setStateValue(_key, _value->getValue());
 	return true;
 }
 

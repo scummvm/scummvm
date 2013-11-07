@@ -100,11 +100,12 @@ private:
 class ActionAssign : public ResultAction {
 public:
 	ActionAssign(ZVision *engine, const Common::String &line);
+	~ActionAssign();
 	bool execute();
 
 private:
 	uint32 _key;
-	uint _value;
+	ValueSlot *_value;
 };
 
 class ActionAttenuate : public ResultAction {
