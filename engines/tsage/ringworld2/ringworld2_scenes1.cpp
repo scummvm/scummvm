@@ -7455,23 +7455,24 @@ void Scene1550::ShipComponent::setupShipComponent(int componentId) {
 	setDetails(1550, 70, -1, -1, 2, (SceneItem *)NULL);
 }
 
-Scene1550::UnkObj15503::UnkObj15503() {
-	_fieldA4 = 0;
+Scene1550::DishControlsWindow::DishControl::DishControl() {
+	_controlId = 0;
 }
 
-void Scene1550::UnkObj15503::synchronize(Serializer &s) {
+void Scene1550::DishControlsWindow::DishControl::synchronize(Serializer &s) {
 	SceneActor::synchronize(s);
 
-	s.syncAsSint16LE(_fieldA4);
+	s.syncAsSint16LE(_controlId);
 }
 
-bool Scene1550::UnkObj15503::startAction(CursorType action, Event &event) {
+bool Scene1550::DishControlsWindow::DishControl::startAction(CursorType action, Event &event) {
 	Scene1550 *scene = (Scene1550 *)R2_GLOBALS._sceneManager._scene;
 
 	if (action != CURSOR_USE)
 		return SceneActor::startAction(action, event);
-	switch (_fieldA4) {
+	switch (_controlId) {
 	case 1:
+		// Button control
 		if (scene->_actor13._frame == 5) {
 			R2_GLOBALS._player.disableControl();
 			scene->_sceneMode = 25;
@@ -7484,10 +7485,11 @@ bool Scene1550::UnkObj15503::startAction(CursorType action, Event &event) {
 				R2_GLOBALS.clearFlag(20);
 				setFrame(1);
 			}
-			scene->_unkArea1.remove();
+			scene->_dishControlsWindow.remove();
 		}
 		break;
 	case 2:
+		// Lever control
 		R2_GLOBALS._player.disableControl();
 		if (scene->_actor13._frame == 1) {
 			scene->_sceneMode = 23;
@@ -7506,11 +7508,11 @@ bool Scene1550::UnkObj15503::startAction(CursorType action, Event &event) {
 	return true;
 }
 
-void Scene1550::UnkArea1550::remove() {
+void Scene1550::DishControlsWindow::remove() {
 	Scene1550 *scene = (Scene1550 *)R2_GLOBALS._sceneManager._scene;
 
-	_unkObj155031.remove();
-	_unkObj155032.remove();
+	_button.remove();
+	_lever.remove();
 	// sub201EA is a common part with UnkArea1200
 	R2_GLOBALS._sceneItems.remove((SceneItem *)this);
 	_areaActor.remove();
@@ -7530,70 +7532,34 @@ void Scene1550::UnkArea1550::remove() {
 	}
 }
 
-void Scene1550::UnkArea1550::process(Event &event) {
-// This is a copy of Scene1200::LaserPanel::process
-	if (_field20 != R2_GLOBALS._insetUp)
-		return;
+void Scene1550::DishControlsWindow::setup2(int visage, int stripFrameNum, int frameNum, 
+		int posX, int posY) {
+	// Call inherited setup
+	ModalWindow::setup2(visage, stripFrameNum, frameNum, posX, posY);
 
-	CursorType cursor = R2_GLOBALS._events.getCursor();
-
-	if (_areaActor._bounds.contains(event.mousePos.x + g_globals->gfxManager()._bounds.left , event.mousePos.y)) {
-		if (cursor == _cursorNum) {
-			R2_GLOBALS._events.setCursor(_savedCursorNum);
-		}
-	} else if (event.mousePos.y < 168) {
-		if (cursor != _cursorNum) {
-			_savedCursorNum = cursor;
-			R2_GLOBALS._events.setCursor(CURSOR_INVALID);
-		}
-		if (event.eventType == EVENT_BUTTON_DOWN) {
-			event.handled = true;
-			R2_GLOBALS._events.setCursor(_savedCursorNum);
-			remove();
-		}
-	}
-}
-
-void Scene1550::UnkArea1550::setup2(int visage, int stripFrameNum, int frameNum, int posX, int posY) {
-	// UnkArea1200::setup2();
+	// Further setup
 	Scene1550 *scene = (Scene1550 *)R2_GLOBALS._sceneManager._scene;
-
-	_areaActor.postInit();
-	_areaActor.setup(visage, stripFrameNum, frameNum);
-	_areaActor.setPosition(Common::Point(posX, posY));
-	_areaActor.fixPriority(250);
-	_cursorNum = CURSOR_INVALID;
-	scene->_sceneAreas.push_front(this);
-	++R2_GLOBALS._insetUp;
-	_field20 = R2_GLOBALS._insetUp;
-	//
-
 	setup3(1550, 67, -1, -1);
-	_unkObj155031.postInit();
-	_unkObj155031._fieldA4 = 1;
+	_button.postInit();
+	_button._controlId = 1;
 	if (scene->_actor4._frame == 1)
-		_unkObj155031.setup(1559, 3, 1);
+		_button.setup(1559, 3, 1);
 	else
-		_unkObj155031.setup(1559, 3, 2);
-	_unkObj155031.setPosition(Common::Point(142, 79));
-	_unkObj155031.fixPriority(251);
-	_unkObj155031.setDetails(1550, 68, -1, -1, 2, (SceneItem *) NULL);
+		_button.setup(1559, 3, 2);
+	_button.setPosition(Common::Point(142, 79));
+	_button.fixPriority(251);
+	_button.setDetails(1550, 68, -1, -1, 2, (SceneItem *) NULL);
 
-	_unkObj155032.postInit();
-	_unkObj155032._numFrames = 5;
-	_unkObj155032._fieldA4 = 2;
+	_lever.postInit();
+	_lever._numFrames = 5;
+	_lever._controlId = 2;
 	if (scene->_actor13._frame == 1)
-		_unkObj155032.setup(1559, 2, 1);
+		_lever.setup(1559, 2, 1);
 	else
-		_unkObj155032.setup(1559, 2, 2);
-	_unkObj155032.setPosition(Common::Point(156, 103));
-	_unkObj155032.fixPriority(251);
-	_unkObj155032.setDetails(1550, 69, -1, -1, 2, (SceneItem *) NULL);
-}
-
-void Scene1550::UnkArea1550::setup3(int resNum, int lookLineNum, int talkLineNum, int useLineNum) {
-	// Copy of Scene1200::LaserPanel::proc13
-	_areaActor.setDetails(resNum, lookLineNum, talkLineNum, useLineNum, 2, (SceneItem *) NULL);
+		_lever.setup(1559, 2, 2);
+	_lever.setPosition(Common::Point(156, 103));
+	_lever.fixPriority(251);
+	_lever.setDetails(1550, 69, -1, -1, 2, (SceneItem *) NULL);
 }
 
 bool Scene1550::WorkingShip::startAction(CursorType action, Event &event) {
@@ -7919,25 +7885,26 @@ void Scene1550::signal() {
 	case 25:
 	// No break on purpose
 	case 1563:
+		// Show the communication dish controls window
 		R2_GLOBALS.clearFlag(20);
-		_unkArea1.setup2(1559, 1, 1, 160, 125);
+		_dishControlsWindow.setup2(1559, 1, 1, 160, 125);
 		R2_GLOBALS._player.enableControl();
 		_sceneMode = 0;
 		break;
 	case 22:
-		_unkArea1.remove();
+		_dishControlsWindow.remove();
 		_sceneMode = 24;
 		setAction(&_sequenceManager1, this, 1561, &_actor4, NULL);
 		R2_GLOBALS.clearFlag(20);
 		break;
 	case 23:
-		_unkArea1.remove();
+		_dishControlsWindow.remove();
 		_sceneMode = 20;
 		setAction(&_sequenceManager1, this, 1566, &_actor13, &_actor5, NULL);
 		R2_GLOBALS.setFlag(21);
 		break;
 	case 24:
-		_unkArea1.remove();
+		_dishControlsWindow.remove();
 		_sceneMode = 21;
 		setAction(&_sequenceManager1, this, 1567, &_actor13, &_actor5, NULL);
 		R2_GLOBALS.clearFlag(19);
@@ -8121,7 +8088,7 @@ void Scene1550::signal() {
 	case 1558:
 		_actor13.fixPriority(124);
 		_field415 = 1;
-		_unkArea1.setup2(1559, 1, 1, 160, 125);
+		_dishControlsWindow.setup2(1559, 1, 1, 160, 125);
 		R2_GLOBALS._player.enableControl();
 		break;
 	case 1559:

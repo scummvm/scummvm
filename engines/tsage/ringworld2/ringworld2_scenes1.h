@@ -449,27 +449,24 @@ class Scene1550 : public SceneExt {
 		void setupShipComponent(int componentId);
 	};
 
-	class UnkObj15503 : public SceneActor {
-	public:
-		int _fieldA4;
+	class DishControlsWindow : public ModalWindow {
+		class DishControl : public SceneActor {
+		public:
+			int _controlId;
 
-		UnkObj15503();
-		void synchronize(Serializer &s);
+			DishControl();
+			void synchronize(Serializer &s);
 
-		virtual bool startAction(CursorType action, Event &event);
-	};
-
-	class UnkArea1550 : public SceneArea {
+			virtual bool startAction(CursorType action, Event &event);
+		};
 	public:
 		byte _field20;
 		SceneActor _areaActor;
-		UnkObj15503 _unkObj155031;
-		UnkObj15503 _unkObj155032;
+		DishControl _button;
+		DishControl _lever;
 
 		virtual void remove();
-		virtual void process(Event &event);
 		virtual void setup2(int visage, int stripFrameNum, int frameNum, int posX, int posY);
-		virtual void setup3(int resNum, int lookLineNum, int talkLineNum, int useLineNum);
 	};
 
 	class WorkingShip : public NamedHotspot {
@@ -554,7 +551,7 @@ public:
 	Wall _eastWall;
 	Wall _southWall;
 	ShipComponent _shipComponents[8];
-	UnkArea1550 _unkArea1;
+	DishControlsWindow _dishControlsWindow;
 	SequenceManager _sequenceManager1;
 	SequenceManager _sequenceManager2;
 
