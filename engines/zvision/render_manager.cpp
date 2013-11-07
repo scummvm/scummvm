@@ -159,7 +159,7 @@ void RenderManager::clearWorkingWindowTo555Color(uint16 color) {
 	}
 }
 
-void RenderManager::copyRectToSurface(Graphics::Surface &src, Graphics::Surface &dst, const Common::Rect &_srcRect, const Common::Rect &_dstRect) {
+void RenderManager::copyRectToSurface(const Graphics::Surface &src, Graphics::Surface &dst, const Common::Rect &_srcRect, const Common::Rect &_dstRect) {
 	if (src.format != dst.format)
 		return;
 
@@ -183,7 +183,7 @@ void RenderManager::copyRectToSurface(Graphics::Surface &src, Graphics::Surface 
 		return;
 
 	// Copy rendRect from src surface to dst surface
-	byte *src_buf = (byte *)src.getBasePtr(rendRect.left, rendRect.top);
+	const byte *src_buf = (const byte *)src.getBasePtr(rendRect.left, rendRect.top);
 	byte *dst_buf = (byte *)dst.getBasePtr(dstRect.left, dstRect.top);
 
 	int32 w = rendRect.width();
@@ -196,7 +196,7 @@ void RenderManager::copyRectToSurface(Graphics::Surface &src, Graphics::Surface 
 	}
 }
 
-void RenderManager::copyRectToSurface(Graphics::Surface &src, Graphics::Surface &dst, const Common::Rect &_srcRect, const Common::Rect &_dstRect, uint32 keycolor) {
+void RenderManager::copyRectToSurface(const Graphics::Surface &src, Graphics::Surface &dst, const Common::Rect &_srcRect, const Common::Rect &_dstRect, uint32 keycolor) {
 	if (src.format != dst.format)
 		return;
 
@@ -222,7 +222,7 @@ void RenderManager::copyRectToSurface(Graphics::Surface &src, Graphics::Surface 
 	uint32 _keycolor = keycolor & ((1 << (src.format.bytesPerPixel << 3)) - 1);
 
 	// Copy rendRect from src surface to dst surface
-	byte *src_buf = (byte *)src.getBasePtr(rendRect.left, rendRect.top);
+	const byte *src_buf = (const byte *)src.getBasePtr(rendRect.left, rendRect.top);
 	byte *dst_buf = (byte *)dst.getBasePtr(dstRect.left, dstRect.top);
 
 	int32 w = rendRect.width();
@@ -231,7 +231,7 @@ void RenderManager::copyRectToSurface(Graphics::Surface &src, Graphics::Surface 
 	for (int32 y = 0; y < h; y++) {
 		switch (src.format.bytesPerPixel) {
 		case 1: {
-			uint *src_tmp = (uint *)src_buf;
+			const uint *src_tmp = (const uint *)src_buf;
 			uint *dst_tmp = (uint *)dst_buf;
 			for (int32 x = 0; x < w; x++) {
 				if (*src_tmp != _keycolor)
@@ -243,7 +243,7 @@ void RenderManager::copyRectToSurface(Graphics::Surface &src, Graphics::Surface 
 		break;
 
 		case 2: {
-			uint16 *src_tmp = (uint16 *)src_buf;
+			const uint16 *src_tmp = (const uint16 *)src_buf;
 			uint16 *dst_tmp = (uint16 *)dst_buf;
 			for (int32 x = 0; x < w; x++) {
 				if (*src_tmp != _keycolor)
@@ -255,7 +255,7 @@ void RenderManager::copyRectToSurface(Graphics::Surface &src, Graphics::Surface 
 		break;
 
 		case 4: {
-			uint32 *src_tmp = (uint32 *)src_buf;
+			const uint32 *src_tmp = (const uint32 *)src_buf;
 			uint32 *dst_tmp = (uint32 *)dst_buf;
 			for (int32 x = 0; x < w; x++) {
 				if (*src_tmp != _keycolor)
@@ -274,14 +274,14 @@ void RenderManager::copyRectToSurface(Graphics::Surface &src, Graphics::Surface 
 	}
 }
 
-void RenderManager::copyRectToSurface(Graphics::Surface &src, Graphics::Surface &dst, const Common::Rect &srcRect, const Common::Point &dstPt) {
+void RenderManager::copyRectToSurface(const Graphics::Surface &src, Graphics::Surface &dst, const Common::Rect &srcRect, const Common::Point &dstPt) {
 	if (!Common::Rect(dst.w, dst.h).contains(dstPt))
 		return;
 	Common::Rect dstRect(dstPt.x, dstPt.y, dst.w, dst.h);
 	copyRectToSurface(src, dst, srcRect, dstRect);
 }
 
-void RenderManager::copyRectToSurface(Graphics::Surface &src, Graphics::Surface &dst, const Common::Rect &srcRect, const Common::Point &dstPt, uint32 keycolor) {
+void RenderManager::copyRectToSurface(const Graphics::Surface &src, Graphics::Surface &dst, const Common::Rect &srcRect, const Common::Point &dstPt, uint32 keycolor) {
 	if (!Common::Rect(dst.w, dst.h).contains(dstPt))
 		return;
 	Common::Rect dstRect(dstPt.x, dstPt.y, dst.w, dst.h);
@@ -299,7 +299,7 @@ void RenderManager::renderImageToBackground(const Common::String &fileName, int1
 	moveBackground(0);
 }
 
-void RenderManager::renderImageToBackground(Graphics::Surface &surface, int16 destX, int16 destY) {
+void RenderManager::renderImageToBackground(const Graphics::Surface &surface, int16 destX, int16 destY) {
 	Common::Rect srcRect(surface.w, surface.h);
 	Common::Point dstPt(destX, destY);
 
@@ -318,7 +318,7 @@ void RenderManager::renderImageToBackground(const Common::String &fileName, int1
 	moveBackground(0);
 }
 
-void RenderManager::renderImageToBackground(Graphics::Surface &surface, int16 destX, int16 destY, uint32 keycolor) {
+void RenderManager::renderImageToBackground(const Graphics::Surface &surface, int16 destX, int16 destY, uint32 keycolor) {
 	Common::Rect srcRect(surface.w, surface.h);
 	Common::Point dstPt(destX, destY);
 

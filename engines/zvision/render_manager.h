@@ -225,7 +225,7 @@ public:
 	 * @param srcRect    Rect of source surface
 	 * @param dstRect    Rect for destenation surface
 	 */
-	void copyRectToSurface(Graphics::Surface &src, Graphics::Surface &dst, const Common::Rect &srcRect, const Common::Rect &dstRect);
+	void copyRectToSurface(const Graphics::Surface &src, Graphics::Surface &dst, const Common::Rect &srcRect, const Common::Rect &dstRect);
 
 	/**
 	 * Copies a rectangla of source surface and copy to destination rect.
@@ -236,7 +236,7 @@ public:
 	 * @param dstRect    Rect for destenation surface
 	 * @param colorkey   Transparent color
 	 */
-	void copyRectToSurface(Graphics::Surface &src, Graphics::Surface &dst, const Common::Rect &srcRect, const Common::Rect &dstRect, uint32 colorkey);
+	void copyRectToSurface(const Graphics::Surface &src, Graphics::Surface &dst, const Common::Rect &srcRect, const Common::Rect &dstRect, uint32 colorkey);
 
 	/**
 	 * Copies a rectangla of source surface and copy to destination rect.
@@ -246,7 +246,7 @@ public:
 	 * @param srcRect    Rect of source surface
 	 * @param dstPt      Point for destenation surface
 	 */
-	void copyRectToSurface(Graphics::Surface &src, Graphics::Surface &dst, const Common::Rect &srcRect, const Common::Point &dstPt);
+	void copyRectToSurface(const Graphics::Surface &src, Graphics::Surface &dst, const Common::Rect &srcRect, const Common::Point &dstPt);
 
 	/**
 	 * Copies a rectangla of source surface and copy to destination rect.
@@ -257,7 +257,7 @@ public:
 	 * @param dstPt      Point for destenation surface
 	 * @param colorkey   Transparent color
 	 */
-	void copyRectToSurface(Graphics::Surface &src, Graphics::Surface &dst, const Common::Rect &srcRect, const Common::Point &dstPt, uint32 colorkey);
+	void copyRectToSurface(const Graphics::Surface &src, Graphics::Surface &dst, const Common::Rect &srcRect, const Common::Point &dstPt, uint32 colorkey);
 
 	/**
 	 * Blits the image or a portion of the image to the background.
@@ -275,7 +275,7 @@ public:
 	 * @param destinationX    X position where the image should be put. Coords are in working window space, not screen space!
 	 * @param destinationY    Y position where the image should be put. Coords are in working window space, not screen space!
 	 */
-	void renderImageToBackground(Graphics::Surface &surface, int16 destinationX, int16 destinationY);
+	void renderImageToBackground(const Graphics::Surface &surface, int16 destinationX, int16 destinationY);
 
 	/**
 	 * Blits the image or a portion of the image to the background.
@@ -295,7 +295,7 @@ public:
 	 * @param destinationY    Y position where the image should be put. Coords are in working window space, not screen space!
 	 * @param colorkey   Transparent color
 	 */
-	void renderImageToBackground(Graphics::Surface &surface, int16 destX, int16 destY, uint32 colorkey);
+	void renderImageToBackground(const Graphics::Surface &surface, int16 destX, int16 destY, uint32 colorkey);
 
 	/**
 	 * Sets the current background image to be used by the RenderManager and immediately
