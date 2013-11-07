@@ -1629,6 +1629,10 @@ void ProjectProvider::createModuleList(const std::string &moduleDir, const Strin
 }
 
 void ProjectProvider::createEnginePluginsTable(const BuildSetup &setup) {
+	// First we need to create the "engines" directory.
+	createDirectory(setup.outputDir + "/engines");
+
+	// Then, we can generate the actual "plugins_table.h" file.
 	const std::string enginePluginsTableFile = setup.outputDir + "/engines/plugins_table.h";
 	std::ofstream enginePluginsTable(enginePluginsTableFile.c_str());
 	if (!enginePluginsTable) {
