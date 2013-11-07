@@ -94,7 +94,7 @@ bool AnimationControl::process(uint32 deltaTimeInMillis) {
 					return false;
 				}
 
-				const Graphics::Surface *frame = _animation.rlf->getNextFrame();
+				const Graphics::Surface *frame = _animation.rlf->decodeNextFrame();
 
 				// Animation frames for PANORAMAs are transposed, so un-transpose them
 				RenderTable::RenderState state = renderManager->getRenderTable()->getRenderState();

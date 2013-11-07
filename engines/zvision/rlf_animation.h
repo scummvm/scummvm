@@ -92,7 +92,7 @@ public:
 
 	/**
 	 * Returns the pixel data of the frame specified. It will try to use
-	 * getNextFrame() if possible. If not, it uses seekToFrame() to
+	 * decodeNextFrame() if possible. If not, it uses seekToFrame() to
 	 * update the internal Surface and then returns a pointer to it.
 	 * This function requires _stream = false
 	 *
@@ -101,19 +101,18 @@ public:
 	 */
 	const Graphics::Surface *getFrameData(uint frameNumber);
 	/**
-	 * Returns the pixel data of the next frame. It is up to the user to
-	 * check if the next frame is valid before calling this.
+	 * Returns the pixel data of current frame and go to next. It is up to the user to
+	 * check if the current frame is valid before calling this.
 	 * IE. Use endOfAnimation()
 	 *
 	 * @return    A pointer to the pixel data. Do NOT delete this.
 	 */
-	const Graphics::Surface *getNextFrame();
-
+	const Graphics::Surface *decodeNextFrame();
 	/**
 	 * @return Is the currentFrame is the last frame in the animation?
 	 */
 	bool endOfAnimation() {
-		return _currentFrame == (int)_frameCount - 1;
+		return _currentFrame == (int)_frameCount;
 	}
 
 private:

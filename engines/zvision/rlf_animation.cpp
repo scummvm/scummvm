@@ -43,7 +43,7 @@ RlfAnimation::RlfAnimation(const Common::String &fileName, bool stream)
 	  _height(0),
 	  _frameTime(0),
 	  _frames(0),
-	  _currentFrame(-1),
+	  _currentFrame(0),
 	  _frameBufferByteSize(0) {
 	if (!_file.open(fileName)) {
 		warning("RLF animation file %s could not be opened", fileName.c_str());
@@ -157,8 +157,11 @@ void RlfAnimation::seekToFrame(int frameNumber) {
 	assert(!_stream);
 	assert(frameNumber < (int)_frameCount || frameNumber >= -1);
 
-	if (frameNumber == -1) {
-		_currentFrame = -1;
+	if (_currentFrame == frameNumber)
+		return;
+
+	if (frameNumber < 0) {
+		_currentFrame = 0;
 		return;
 	}
 
@@ -166,13 +169,15 @@ void RlfAnimation::seekToFrame(int frameNumber) {
 	int distance = (int)frameNumber - _currentFrame;
 	for (uint i = 0; i < _completeFrames.size(); ++i) {
 		int newDistance = (int)frameNumber - (int)(_completeFrames[i]);
-		if (newDistance > 0 && (closestFrame == -1 || newDistance < distance)) {
+		if (newDistance < 0)
+			break;
+		if (newDistance > 0 && newDistance < distance) {
 			closestFrame = _completeFrames[i];
 			distance = newDistance;
 		}
 	}
 
-	for (int i = closestFrame; i <= frameNumber; ++i) {
+	for (int i = closestFrame; i < frameNumber; ++i) {
 		applyFrameToCurrent(i);
 	}
 
@@ -184,24 +189,24 @@ const Graphics::Surface *RlfAnimation::getFrameData(uint frameNumber) {
 	assert(frameNumber < _frameCount);
 
 	// Since this method is so expensive, first check to see if we can use
-	// getNextFrame() it's cheap.
-	if ((int)frameNumber == _currentFrame) {
+	// decodeNextFrame() it's cheap.
+	if ((int)frameNumber == _currentFrame - 1) {
 		return &_currentFrameBuffer;
-	} else if (_currentFrame + 1 == (int)frameNumber) {
-		return getNextFrame();
+	} else if (_currentFrame == (int)frameNumber) {
+		return decodeNextFrame();
 	}
 
 	seekToFrame(frameNumber);
-	return &_currentFrameBuffer;
+	return decodeNextFrame();
 }
 
-const Graphics::Surface *RlfAnimation::getNextFrame() {
-	assert(_currentFrame + 1 < (int)_frameCount);
+const Graphics::Surface *RlfAnimation::decodeNextFrame() {
+	assert(_currentFrame < (int)_frameCount);
 
 	if (_stream) {
 		applyFrameToCurrent(readNextFrame());
 	} else {
-		applyFrameToCurrent(_currentFrame + 1);
+		applyFrameToCurrent(_currentFrame);
 	}
 
 	_currentFrame++;
