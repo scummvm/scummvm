@@ -4390,6 +4390,13 @@ cat > engines/plugins_table.h << EOF
 // This file is being included by "base/plugins.cpp"
 EOF
 
-for i in $_srcdir/engines/*/engine-plugin.h; do
-	cat $i >> engines/plugins_table.h
+for i in $_srcdir/engines/*; do
+	if [ -d $i ]; then
+		j=`echo ${i#$_srcdir/engines/} | tr '[:lower:]' '[:upper:]'`
+		cat >> engines/plugins_table.h << EOF
+#if PLUGIN_ENABLED_STATIC($j)
+LINK_PLUGIN($j)
+#endif
+EOF
+	fi
 done
