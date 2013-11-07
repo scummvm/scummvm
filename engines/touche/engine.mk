@@ -1,4 +1,0 @@
-ifdef ENABLE_TOUCHE
-DEFINES += -DENABLE_TOUCHE=$(ENABLE_TOUCHE)
-MODULES += engines/touche
-endif

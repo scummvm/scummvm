@@ -1,4 +1,0 @@
-ifdef ENABLE_TSAGE
-DEFINES += -DENABLE_TSAGE=$(ENABLE_TSAGE)
-MODULES += engines/tsage
-endif

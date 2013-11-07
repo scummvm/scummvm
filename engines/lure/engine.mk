@@ -1,4 +1,0 @@
-ifdef ENABLE_LURE
-DEFINES += -DENABLE_LURE=$(ENABLE_LURE)
-MODULES += engines/lure
-endif

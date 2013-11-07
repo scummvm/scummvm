@@ -1,4 +1,0 @@
-ifdef ENABLE_COMPOSER
-DEFINES += -DENABLE_COMPOSER=$(ENABLE_COMPOSER)
-MODULES += engines/composer
-endif

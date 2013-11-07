@@ -1,4 +1,0 @@
-ifdef ENABLE_CRUISE
-DEFINES += -DENABLE_CRUISE=$(ENABLE_CRUISE)
-MODULES += engines/cruise
-endif

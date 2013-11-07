@@ -1,4 +1,0 @@
-ifdef ENABLE_TEENAGENT
-DEFINES += -DENABLE_TEENAGENT=$(ENABLE_TEENAGENT)
-MODULES += engines/teenagent
-endif

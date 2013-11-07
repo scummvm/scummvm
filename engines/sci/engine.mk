@@ -1,8 +1,0 @@
-ifdef ENABLE_SCI
-DEFINES += -DENABLE_SCI=$(ENABLE_SCI)
-MODULES += engines/sci
-
-ifdef ENABLE_SCI32
-DEFINES += -DENABLE_SCI32
-endif
-endif

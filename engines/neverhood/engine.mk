@@ -1,4 +1,0 @@
-ifdef ENABLE_NEVERHOOD
-DEFINES += -DENABLE_NEVERHOOD=$(ENABLE_NEVERHOOD)
-MODULES += engines/neverhood
-endif

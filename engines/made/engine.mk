@@ -1,4 +1,0 @@
-ifdef ENABLE_MADE
-DEFINES += -DENABLE_MADE=$(ENABLE_MADE)
-MODULES += engines/made
-endif

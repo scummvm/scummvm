@@ -1,4 +1,0 @@
-ifdef ENABLE_FULLPIPE
-DEFINES += -DENABLE_FULLPIPE=$(ENABLE_FULLPIPE)
-MODULES += engines/fullpipe
-endif

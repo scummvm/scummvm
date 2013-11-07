@@ -1,4 +1,0 @@
-ifdef ENABLE_SWORD25
-DEFINES += -DENABLE_SWORD25=$(ENABLE_SWORD25)
-MODULES += engines/sword25
-endif
