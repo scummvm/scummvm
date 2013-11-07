@@ -59,6 +59,7 @@
 #include <sys/param.h>
 #include <sys/stat.h>
 #include <dirent.h>
+#include <errno.h>
 #endif
 
 namespace {
@@ -1119,6 +1120,32 @@ FileList listDirectory(const std::string &dir) {
 	closedir(dirp);
 #endif
 	return result;
+}
+
+void createDirectory(const std::string &dir) {
+#if defined(_WIN32) || defined(WIN32)
+	if (!CreateDirectory(dir.c_str(), NULL)) {
+		if (GetLastError() != ERROR_ALREADY_EXISTS) {
+			error("Could not create folder \"" + dir + "\"");
+		}
+	}
+#else
+	if (mkdir(dir.c_str(), 0777) == -1) {
+		if (errno == EEXIST) {
+			// Try to open as a folder (might be a file / symbolic link)
+			DIR *dirp = opendir(dir.c_str());
+			if (dirp == NULL) {
+				error("Could not create folder \"" + dir + "\"");
+			} else {
+				// The folder exists, just close the stream and return
+				closedir(dirp);
+			}
+		} else {
+			error("Could not create folder \"" + dir + "\"");
+		}
+	}
+#endif
+
 }
 
 /**
