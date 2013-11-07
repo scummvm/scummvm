@@ -4199,8 +4199,18 @@ for engine in $_engines; do
 	fi
 done
 
-# Prepare the information to be shown
+# Sort engines to place our headline engine at start...
+# No technical reason, just historical convention
+headline_engine=scumm
+_sorted_engines="${headline_engine}"
 for engine in $_engines; do
+	if test "${engine}" != "${headline_engine}" ; then
+		_sorted_engines="${_sorted_engines} ${engine}"
+	fi
+done
+
+# Prepare the information to be shown
+for engine in $_sorted_engines; do
 	if test "`get_engine_sub $engine`" = "no" ; then
 		# It's a main engine
 		prepare_engine_build_strings $engine
@@ -4394,7 +4404,7 @@ cat > engines/engines.mk << EOF
 # This file is being included by "Makefile.common"
 EOF
 
-for engine in $_engines; do
+for engine in $_sorted_engines; do
 	j=`echo $engine | tr '[:lower:]' '[:upper:]'`
 	if test "`get_engine_sub $engine`" = "no" ; then
 		# main engine
@@ -4428,7 +4438,7 @@ cat > engines/plugins_table.h << EOF
 // This file is being included by "base/plugins.cpp"
 EOF
 
-for engine in $_engines; do
+for engine in $_sorted_engines; do
 	if test "`get_engine_sub $engine`" = "no" ; then
 		j=`echo $engine | tr '[:lower:]' '[:upper:]'`
 		cat >> engines/plugins_table.h << EOF
