@@ -422,14 +422,13 @@ public:
 };
 
 class Scene1550 : public SceneExt {
-	class SceneActor1550 : public SceneActor {
+	class Wall : public SceneActor {
 	public:
-		void subA4D14(int frameNumber, int strip);
+		void setupWall(int frameNumber, int strip);
 	};
 
 	class Junk : public SceneActor {
 	public:
-		int _fieldA4;
 		int _junkNumber;
 
 		Junk();
@@ -514,19 +513,14 @@ class Scene1550 : public SceneExt {
 		virtual bool startAction(CursorType action, Event &event);
 	};
 
-	class Wall : public SceneActor1550 {
-		// Nothing specific found in the original
-		// TODO: check if it's an useless class
-	};
-
 public:
 	SpeakerQuinn _quinnSpeaker;
 	SpeakerSeeker _seekerSpeaker;
 	WorkingShip _intactHull1, _intactHull2;
 	SceneHotspot _background;
-	SceneActor _landingStrut;
-	SceneActor _actor2;
-	SceneActor _actor3;
+	SceneActor _wreckage2;	// also used for Lance of Truth landing strut
+	SceneActor _wreckage3;
+	SceneActor _wreckage4;
 	SceneActor _walkway;
 	SceneActor _dishTowerShadow;
 	Wreckage _wreckage;
@@ -538,9 +532,9 @@ public:
 	DishTower _dishTower;
 	Dish _dish;
 	Junk _junk[8];
-	Wall _actor14;
+	Wall _wallCorner1;
 	Wall _northWall;	// Is also reused for landing strip
-	Wall _actor16;
+	Wall _wallCorner2;
 	Wall _westWall;		// Is also reused for left hand space
 	Wall _eastWall;
 	Wall _southWall;
@@ -550,7 +544,7 @@ public:
 	SequenceManager _sequenceManager2;
 
 	bool _dontExit;
-	byte _field414;
+	int _wallType;
 	int _dishMode;
 	int _sceneResourceId;
 	int _walkRegionsId;
