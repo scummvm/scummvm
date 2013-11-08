@@ -7473,15 +7473,15 @@ bool Scene1550::DishControlsWindow::DishControl::startAction(CursorType action, 
 	switch (_controlId) {
 	case 1:
 		// Button control
-		if (scene->_actor13._frame == 5) {
+		if (scene->_dish._frame == 5) {
 			R2_GLOBALS._player.disableControl();
 			scene->_sceneMode = 25;
-			if (scene->_actor4._frame == 1) {
-				scene->setAction(&scene->_sequenceManager1, scene, 1560, &scene->_actor4, NULL);
+			if (scene->_walkway._frame == 1) {
+				scene->setAction(&scene->_sequenceManager1, scene, 1560, &scene->_walkway, NULL);
 				R2_GLOBALS.setFlag(20);
 				setFrame(2);
 			} else {
-				scene->setAction(&scene->_sequenceManager1, scene, 1561, &scene->_actor4, NULL);
+				scene->setAction(&scene->_sequenceManager1, scene, 1561, &scene->_walkway, NULL);
 				R2_GLOBALS.clearFlag(20);
 				setFrame(1);
 			}
@@ -7491,11 +7491,11 @@ bool Scene1550::DishControlsWindow::DishControl::startAction(CursorType action, 
 	case 2:
 		// Lever control
 		R2_GLOBALS._player.disableControl();
-		if (scene->_actor13._frame == 1) {
+		if (scene->_dish._frame == 1) {
 			scene->_sceneMode = 23;
 			scene->setAction(&scene->_sequenceManager1, scene, 1560, this, NULL);
 		} else {
-			if (scene->_actor4._frame == 1)
+			if (scene->_walkway._frame == 1)
 				scene->_sceneMode = 24;
 			else
 				scene->_sceneMode = 22;
@@ -7513,17 +7513,14 @@ void Scene1550::DishControlsWindow::remove() {
 
 	_button.remove();
 	_lever.remove();
-	// sub201EA is a common part with UnkArea1200
-	R2_GLOBALS._sceneItems.remove((SceneItem *)this);
-	_areaActor.remove();
-	SceneArea::remove();
-	R2_GLOBALS._insetUp--;
-	//
+
+	ModalWindow::remove();
+
 	if ((scene->_sceneMode >= 20) && (scene->_sceneMode <= 29))
 		return;
 
 	R2_GLOBALS._player.disableControl();
-	if (scene->_actor4._frame == 1) {
+	if (scene->_walkway._frame == 1) {
 		scene->_sceneMode = 1559;
 		scene->setAction(&scene->_sequenceManager1, scene, 1559, &R2_GLOBALS._player, NULL);
 	} else {
@@ -7542,7 +7539,7 @@ void Scene1550::DishControlsWindow::setup2(int visage, int stripFrameNum, int fr
 	setup3(1550, 67, -1, -1);
 	_button.postInit();
 	_button._controlId = 1;
-	if (scene->_actor4._frame == 1)
+	if (scene->_walkway._frame == 1)
 		_button.setup(1559, 3, 1);
 	else
 		_button.setup(1559, 3, 2);
@@ -7553,7 +7550,7 @@ void Scene1550::DishControlsWindow::setup2(int visage, int stripFrameNum, int fr
 	_lever.postInit();
 	_lever._numFrames = 5;
 	_lever._controlId = 2;
-	if (scene->_actor13._frame == 1)
+	if (scene->_dish._frame == 1)
 		_lever.setup(1559, 2, 1);
 	else
 		_lever.setup(1559, 2, 2);
@@ -7666,7 +7663,7 @@ bool Scene1550::Actor11::startAction(CursorType action, Event &event) {
 	return true;
 }
 
-bool Scene1550::Actor12::startAction(CursorType action, Event &event) {
+bool Scene1550::DishTower::startAction(CursorType action, Event &event) {
 	if (action != CURSOR_USE)
 		return SceneActor::startAction(action, event);
 
@@ -7680,8 +7677,8 @@ bool Scene1550::Actor12::startAction(CursorType action, Event &event) {
 		R2_GLOBALS._player.disableControl();
 		switch(scene->_field415) {
 		case 0:
-			scene->_actor13.fixPriority(168);
-			scene->_actor4.fixPriority(125);
+			scene->_dish.fixPriority(168);
+			scene->_walkway.fixPriority(125);
 			scene->_sceneMode = 1558;
 			scene->setAction(&scene->_sequenceManager1, scene, 1558, &R2_GLOBALS._player, NULL);
 			break;
@@ -7691,7 +7688,7 @@ bool Scene1550::Actor12::startAction(CursorType action, Event &event) {
 		case 2:
 			scene->_field415 = 1;
 			scene->_sceneMode = 1563;
-			scene->setAction(&scene->_sequenceManager1, scene, 1563, &R2_GLOBALS._player, &scene->_actor4, NULL);
+			scene->setAction(&scene->_sequenceManager1, scene, 1563, &R2_GLOBALS._player, &scene->_walkway, NULL);
 			break;
 		default:
 			break;
@@ -7701,7 +7698,7 @@ bool Scene1550::Actor12::startAction(CursorType action, Event &event) {
 
 }
 
-bool Scene1550::Actor13::startAction(CursorType action, Event &event) {
+bool Scene1550::Dish::startAction(CursorType action, Event &event) {
 	Scene1550 *scene = (Scene1550 *)R2_GLOBALS._sceneManager._scene;
 
 	switch (action) {
@@ -7732,6 +7729,8 @@ bool Scene1550::Actor13::startAction(CursorType action, Event &event) {
 		break;
 	}
 }
+
+/*--------------------------------------------------------------------------*/
 
 Scene1550::Scene1550() {
 	_field412 = 0;
@@ -7894,19 +7893,19 @@ void Scene1550::signal() {
 	case 22:
 		_dishControlsWindow.remove();
 		_sceneMode = 24;
-		setAction(&_sequenceManager1, this, 1561, &_actor4, NULL);
+		setAction(&_sequenceManager1, this, 1561, &_walkway, NULL);
 		R2_GLOBALS.clearFlag(20);
 		break;
 	case 23:
 		_dishControlsWindow.remove();
 		_sceneMode = 20;
-		setAction(&_sequenceManager1, this, 1566, &_actor13, &_actor5, NULL);
+		setAction(&_sequenceManager1, this, 1566, &_dish, &_dishTowerShadow, NULL);
 		R2_GLOBALS.setFlag(21);
 		break;
 	case 24:
 		_dishControlsWindow.remove();
 		_sceneMode = 21;
-		setAction(&_sequenceManager1, this, 1567, &_actor13, &_actor5, NULL);
+		setAction(&_sequenceManager1, this, 1567, &_dish, &_dishTowerShadow, NULL);
 		R2_GLOBALS.clearFlag(19);
 		break;
 	case 30:
@@ -8086,14 +8085,14 @@ void Scene1550::signal() {
 		R2_GLOBALS._player.enableControl();
 		break;
 	case 1558:
-		_actor13.fixPriority(124);
+		_dish.fixPriority(124);
 		_field415 = 1;
 		_dishControlsWindow.setup2(1559, 1, 1, 160, 125);
 		R2_GLOBALS._player.enableControl();
 		break;
 	case 1559:
-		_actor13.fixPriority(168);
-		_actor4.fixPriority(169);
+		_dish.fixPriority(168);
+		_walkway.fixPriority(169);
 		R2_GLOBALS._player.fixPriority(-1);
 		R2_GLOBALS._player.changeZoom(-1);
 		_field415 = 0;
@@ -8244,13 +8243,13 @@ void Scene1550::dispatch() {
 		case 144:
 		// No break on purpose
 		case 146:
-			_actor13._frame = 5;
+			_dish._frame = 5;
 			R2_GLOBALS._player._shade = 3;
 			break;
 		case 148:
 		// No break on purpose
 		case 149:
-			_actor13._frame = 1;
+			_dish._frame = 1;
 		// No break on purpose
 		case 147:
 		// No break on purpose
@@ -8607,10 +8606,10 @@ void Scene1550::enterArea() {
 
 	_actor2.remove();
 	_companion.remove();
-	_actor13.remove();
-	_actor5.remove();
-	_actor12.remove();
-	_actor4.remove();
+	_dish.remove();
+	_dishTowerShadow.remove();
+	_dishTower.remove();
+	_walkway.remove();
 
 	// Set up of special walk regions for certain areas
 	switch (R2_GLOBALS._s1550PlayerArea[R2_GLOBALS._player._characterIndex].y) {
@@ -9025,12 +9024,13 @@ void Scene1550::enterArea() {
 		}
 	}
 
-	for (int i = 0; i < 15 * 3; i++) {
-		if ((R2_GLOBALS._s1550PlayerArea[R2_GLOBALS._player._characterIndex].x == k5A79B[i]) 
-				&& (R2_GLOBALS._s1550PlayerArea[R2_GLOBALS._player._characterIndex].y == k5A79B[i + 1])) {
-			tmpIdx = k5A79B[i + 2];
-			switch (tmpIdx - 1) {
-			case 0:
+	// Loop for detecting and setting up certain special areas within the map
+	for (int i = 0; i < 15 * 3; i += 3) {
+		if ((R2_GLOBALS._s1550PlayerArea[R2_GLOBALS._player._characterIndex].x == scene1550SpecialAreas[i]) 
+				&& (R2_GLOBALS._s1550PlayerArea[R2_GLOBALS._player._characterIndex].y == scene1550SpecialAreas[i + 1])) {
+			int areaType = scene1550SpecialAreas[i + 2];
+			switch (areaType) {
+			case 1:
 				if (!R2_GLOBALS.getFlag(16)) {
 					_landingStrut.postInit();
 					if (R2_GLOBALS._s1550PlayerArea[R2_GLOBALS._player._characterIndex].y == 3)
@@ -9042,45 +9042,44 @@ void Scene1550::enterArea() {
 					_landingStrut.setDetails(1550, 73, -1, -1, 2, (SceneItem *) NULL);
 				}
 				break;
-			case 1:
-				_actor13.postInit();
-				warning("_actor13._actorName = \"dish\";");
+			case 2:
+				_dish.postInit();
 				if (R2_GLOBALS.getFlag(19))
-					_actor13.setup(1556, 3, 5);
+					_dish.setup(1556, 3, 5);
 				else
-					_actor13.setup(1556, 3, 1);
-				_actor13.changeZoom(95);
-				_actor13.setPosition(Common::Point(165, 83));
-				_actor13.fixPriority(168);
-				_actor13.setDetails(1550, 17, -1, 19, 2, (SceneItem *) NULL);
+					_dish.setup(1556, 3, 1);
+				_dish.changeZoom(95);
+				_dish.setPosition(Common::Point(165, 83));
+				_dish.fixPriority(168);
+				_dish.setDetails(1550, 17, -1, 19, 2, (SceneItem *) NULL);
 
-				_actor12.postInit();
-				_actor12.setup(1556, 4, 1);
-				_actor12.setPosition(Common::Point(191, 123));
-				_actor12.changeZoom(95);
-				_actor12.setDetails(1550, 65, -1, 66, 2, (SceneItem *) NULL);
+				_dishTower.postInit();
+				_dishTower.setup(1556, 4, 1);
+				_dishTower.setPosition(Common::Point(191, 123));
+				_dishTower.changeZoom(95);
+				_dishTower.setDetails(1550, 65, -1, 66, 2, (SceneItem *) NULL);
 
-				_actor5.postInit();
-				_actor5._numFrames = 5;
+				_dishTowerShadow.postInit();
+				_dishTowerShadow._numFrames = 5;
 				if (R2_GLOBALS.getFlag(19))
-					_actor5.setup(1556, 8, 5);
+					_dishTowerShadow.setup(1556, 8, 5);
 				else
-					_actor5.setup(1556, 8, 1);
+					_dishTowerShadow.setup(1556, 8, 1);
 
-				_actor5.setPosition(Common::Point(156, 151));
-				_actor5.fixPriority(10);
+				_dishTowerShadow.setPosition(Common::Point(156, 151));
+				_dishTowerShadow.fixPriority(10);
 
-				_actor4.postInit();
+				_walkway.postInit();
 				if (R2_GLOBALS.getFlag(20))
-					_actor4.setup(1558, 3, 10);
+					_walkway.setup(1558, 3, 10);
 				else
-					_actor4.setup(1558, 3, 1);
+					_walkway.setup(1558, 3, 1);
 
-				_actor4.setPosition(Common::Point(172, 48));
-				_actor4.fixPriority(169);
+				_walkway.setPosition(Common::Point(172, 48));
+				_walkway.fixPriority(169);
 				R2_GLOBALS._walkRegions.disableRegion(scene1550JunkRegions[15]);
 				break;
-			case 2:
+			case 3:
 				_wreckage.postInit();
 				_wreckage.setup(1550, 1, 1);
 				_wreckage.setPosition(Common::Point(259, 55));
@@ -9100,7 +9099,7 @@ void Scene1550::enterArea() {
 					_actor10.setDetails(1550, 29, -1, 63, 2, (SceneItem *) NULL);
 				}
 				break;
-			case 3:
+			case 4:
 				_wreckage.postInit();
 				_wreckage.setup(1550, 1, 4);
 				_wreckage.setPosition(Common::Point(76, 131));
@@ -9128,7 +9127,7 @@ void Scene1550::enterArea() {
 					_actor8.setDetails(1550, 44, -1, 63, 2, (SceneItem *) NULL);
 				}
 				break;
-			case 4:
+			case 5:
 				_wreckage.postInit();
 				_wreckage.setup(1550, 2, 4);
 				_wreckage.setPosition(Common::Point(243, 131));
@@ -9140,7 +9139,7 @@ void Scene1550::enterArea() {
 				_landingStrut.setPosition(Common::Point(243, 64));
 				_landingStrut.setDetails(1550, 9, -1, -1, 2, (SceneItem *) NULL);
 				break;
-			case 5:
+			case 6:
 				_wreckage.postInit();
 				_wreckage.setup(1550, 2, 1);
 				_wreckage.setPosition(Common::Point(60, 55));
@@ -9153,13 +9152,13 @@ void Scene1550::enterArea() {
 				_landingStrut.fixPriority(106);
 				_landingStrut.setDetails(1550, 9, -1, -1, 2, (SceneItem *) NULL);
 				break;
-			case 6:
+			case 7:
 				_wreckage.postInit();
 				_wreckage.setup(1550, 3, 1);
 				_wreckage.setPosition(Common::Point(281, 132));
 				_wreckage.setDetails(1550, 56, -1, -1, 2, (SceneItem *) NULL);
 				break;
-			case 7:
+			case 8:
 				_wreckage.postInit();
 				_wreckage.setup(1550, 3, 2);
 				_wreckage.setPosition(Common::Point(57, 96));
@@ -9183,7 +9182,7 @@ void Scene1550::enterArea() {
 				_actor3.setPosition(Common::Point(60, 90));
 				_actor3.fixPriority(45);
 				break;
-			case 8:
+			case 9:
 				_wreckage.postInit();
 				_wreckage.setup(1550, 4, 2);
 				_wreckage.setPosition(Common::Point(262, 96));
@@ -9207,13 +9206,13 @@ void Scene1550::enterArea() {
 				_actor3.setPosition(Common::Point(259, 90));
 				_actor3.fixPriority(45);
 				break;
-			case 9:
+			case 10:
 				_wreckage.postInit();
 				_wreckage.setup(1550, 4, 1);
 				_wreckage.setPosition(Common::Point(38, 132));
 				_wreckage.setDetails(1550, 56, -1, -1, 2, (SceneItem *) NULL);
 				break;
-			case 11:
+			case 12:
 				// Intact ship
 				_shipComponents[7].setupShipComponent(8);
 				_shipComponents[0].setupShipComponent(1);
@@ -9223,6 +9222,7 @@ void Scene1550::enterArea() {
 				_shipComponents[4].setupShipComponent(5);
 				_shipComponents[5].setupShipComponent(6);
 				_shipComponents[6].setupShipComponent(7);
+				break;
 			default:
 				break;
 			}

@@ -411,7 +411,7 @@ const byte k5A76D[] = {
 	3, 3,  3, 3,  3, 3, 3,  3, 3
 };
 const byte scene1550JunkRegions[] = {0,  8,  15,  16,  12,  7,  18,  17,  13,  6,  19,  20,  14,  5,   11,  10,  9};
-const byte k5A79B[] = {
+const byte scene1550SpecialAreas[] = {
 	23, 3,  1,
 	23, 4,  1,
 	26, 3,  1,

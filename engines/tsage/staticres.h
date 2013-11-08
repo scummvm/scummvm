@@ -207,7 +207,7 @@ extern const byte k5A73F[];
 extern const byte k5A750[];
 extern const byte k5A76D[];
 extern const byte scene1550JunkRegions[];
-extern const byte k5A79B[];
+extern const byte scene1550SpecialAreas[];
 extern const byte k5A7F6[];
 
 // Scene 2900 balloon data

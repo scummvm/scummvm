@@ -509,12 +509,12 @@ class Scene1550 : public SceneExt {
 		virtual bool startAction(CursorType action, Event &event);
 	};
 
-	class Actor12 : public SceneActor {
+	class DishTower : public SceneActor {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
 
-	class Actor13 : public SceneActor {
+	class Dish : public SceneActor {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -533,16 +533,16 @@ public:
 	SceneActor _landingStrut;
 	SceneActor _actor2;
 	SceneActor _actor3;
-	SceneActor _actor4;
-	SceneActor _actor5;
+	SceneActor _walkway;
+	SceneActor _dishTowerShadow;
 	Wreckage _wreckage;
 	Companion _companion;
 	Actor8 _actor8;
 	Actor9 _actor9;
 	Actor10 _actor10;
 	Actor11 _actor11;
-	Actor12 _actor12;
-	Actor13 _actor13;
+	DishTower _dishTower;
+	Dish _dish;
 	Junk _junk[8];
 	Wall _actor14;
 	Wall _northWall;	// Is also reused for landing strip
