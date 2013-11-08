@@ -564,10 +564,10 @@ public:
 class Scene3500 : public SceneExt {
 	class Action1: public Action {
 	public:
-		int _field1E;
+		int _direction;
 		int _field20;
 		int _field22;
-		int _field24;
+		bool _field24;
 
 		Action1();
 		virtual void synchronize(Serializer &s);
