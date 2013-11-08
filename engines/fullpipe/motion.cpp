@@ -697,13 +697,13 @@ MessageQueue *MovGraph2::buildMovInfo1MessageQueue(MovInfo1 *movInfo) {
 				 || v19 == -1
 				 || v9[i + 1].y == -1) {
 
-				v28 = new ExCommand(_items[1][movInfo->field_0].objectId, 1, v15->objectId, 0, 0, 0, 1, 0, 0, 0);
+				ExCommand *ex = new ExCommand(_items[1][movInfo->field_0].objectId, 1, v15->objectId, 0, 0, 0, 1, 0, 0, 0);
 
-				v28->_excFlags |= 2u;
-				v28->_keyCode = _items[1][movInfo->field_0].obj->GameObject.okeyCode;
-				v28->_field_24 = 1;
-				v28->_field_14 = -1;
-				mq->_exCommands.push_back(v28);
+				ex->_excFlags |= 2u;
+				ex->_keyCode = _items[1][movInfo->field_0].obj->GameObject.okeyCode;
+				ex->_field_24 = 1;
+				ex->_field_14 = -1;
+				mq->_exCommands.push_back(ex);
 
 				curX += v15->subItems[0].staticsId2;
 				curY += v15->subItems[0].staticsId1;
