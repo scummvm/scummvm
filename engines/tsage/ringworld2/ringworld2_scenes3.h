@@ -657,11 +657,11 @@ public:
 	int _fieldB9E;
 	PaletteRotation *_rotation;
 	int _mazeChangeAmount;
-	int _field1270;
-	int _field1272;
+	int _speed;
+	bool _field1272;
 	int _field1274;
 	int _mazeDirection;
-	int _field1278;
+	int _nextMove;
 	Common::Point _mazePosition;
 	int _field127E;
 	int _field1280;
