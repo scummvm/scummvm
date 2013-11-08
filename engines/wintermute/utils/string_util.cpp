@@ -48,9 +48,41 @@ bool StringUtil::compareNoCase(const AnsiString &str1, const AnsiString &str2) {
     return (str1lc == str2lc);
 }*/
 
+bool StringUtil::isAscii(Common::String &str) {
+	uint strSize = str.size();
+	Common::String punctuation("!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~");
+
+	for (uint32 i = 0; i < str.size(); i++) {
+		if (!Common::isAlnum(str[i]) && str[i] != ' ' && !punctuation.contains(str[i])) {
+			// Replace some UTF-8 characters with (almost) equivalent ANSII ones
+			if ((byte)str[i] == 0xc2 && i + 1 < str.size() && (byte)str[i + 1] == 0xa9) {
+				// UTF-8 copyright character, substitute with 'c'
+				str.deleteChar(i);
+				str.setChar('c', i);
+				strSize--;
+			} else {
+				return false;
+			}
+		}
+	}
+
+	return true;
+}
+
 //////////////////////////////////////////////////////////////////////////
 WideString StringUtil::utf8ToWide(const Utf8String &Utf8Str) {
-	error("StringUtil::Utf8ToWide - WideString not supported yet");
+	// WORKAROUND: Since wide strings aren't supported yet, we make this function
+	// work at least with ASCII strings. This should cover all English versions.
+	Common::String asciiString = Utf8Str;
+	if (isAscii(asciiString)) {
+		// No special (UTF-8) characters found, just return the string
+		return asciiString;
+	} else {
+		warning("String contains special (UTF-8) characters: '%s'", Utf8Str.c_str());
+	}
+
+	error("StringUtil::Utf8ToWide - WideString not supported yet for UTF-8 characters");
+
 	/*  size_t WideSize = Utf8Str.size();
 
 	    if (sizeof(wchar_t) == 2) {
@@ -99,7 +131,18 @@ WideString StringUtil::utf8ToWide(const Utf8String &Utf8Str) {
 
 //////////////////////////////////////////////////////////////////////////
 Utf8String StringUtil::wideToUtf8(const WideString &WideStr) {
-	error("StringUtil::wideToUtf8 - Widestring not supported yet");
+	// WORKAROUND: Since UTF-8 strings aren't supported yet, we make this function
+	// work at least with ASCII strings. This should cover all English versions.
+	Common::String asciiString = WideStr;
+	if (isAscii(asciiString)) {
+		// No special (UTF-8) characters found, just return the string
+		return asciiString;
+	} else {
+		warning("String contains special (UTF-8) characters: '%s'", WideStr.c_str());
+	}
+
+	error("StringUtil::wideToUtf8 - WideString not supported yet for UTF-8 characters");
+	
 	/*  size_t WideSize = WideStr.length();
 
 	    if (sizeof(wchar_t) == 2) {

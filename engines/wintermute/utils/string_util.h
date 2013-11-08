@@ -37,6 +37,7 @@ class StringUtil {
 public:
 	static bool compareNoCase(const AnsiString &str1, const AnsiString &str2);
 	//static bool compareNoCase(const WideString &str1, const WideString &str2);
+	static bool isAscii(Common::String &str);
 	static WideString utf8ToWide(const Utf8String &Utf8Str);
 	static Utf8String wideToUtf8(const WideString &WideStr);
 	static WideString ansiToWide(const AnsiString &str);
