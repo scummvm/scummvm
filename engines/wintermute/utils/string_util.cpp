@@ -48,11 +48,14 @@ bool StringUtil::compareNoCase(const AnsiString &str1, const AnsiString &str2) {
     return (str1lc == str2lc);
 }*/
 
-bool StringUtil::isAscii(Common::String &str) {
+Common::String StringUtil::substituteUtf8Characters(Common::String &str) {
 	uint strSize = str.size();
 	Common::String punctuation("!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~");
 
-	for (uint32 i = 0; i < str.size(); i++) {
+	if (isAscii(str))
+		return str;
+
+	for (uint32 i = 0; i < strSize; i++) {
 		if (!Common::isAlnum(str[i]) && str[i] != ' ' && !punctuation.contains(str[i])) {
 			// Replace some UTF-8 characters with (almost) equivalent ANSII ones
 			if ((byte)str[i] == 0xc2 && i + 1 < str.size() && (byte)str[i + 1] == 0xa9) {
@@ -60,10 +63,19 @@ bool StringUtil::isAscii(Common::String &str) {
 				str.deleteChar(i);
 				str.setChar('c', i);
 				strSize--;
-			} else {
-				return false;
 			}
 		}
+	}
+
+	return str;
+}
+
+bool StringUtil::isAscii(const Common::String &str) {
+	Common::String punctuation("!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~");
+
+	for (uint32 i = 0; i < str.size(); i++) {
+		if (!Common::isAlnum(str[i]) && str[i] != ' ' && !punctuation.contains(str[i]))
+			return false;
 	}
 
 	return true;
@@ -74,6 +86,7 @@ WideString StringUtil::utf8ToWide(const Utf8String &Utf8Str) {
 	// WORKAROUND: Since wide strings aren't supported yet, we make this function
 	// work at least with ASCII strings. This should cover all English versions.
 	Common::String asciiString = Utf8Str;
+	asciiString = substituteUtf8Characters(asciiString);
 	if (isAscii(asciiString)) {
 		// No special (UTF-8) characters found, just return the string
 		return asciiString;
@@ -134,6 +147,7 @@ Utf8String StringUtil::wideToUtf8(const WideString &WideStr) {
 	// WORKAROUND: Since UTF-8 strings aren't supported yet, we make this function
 	// work at least with ASCII strings. This should cover all English versions.
 	Common::String asciiString = WideStr;
+	asciiString = substituteUtf8Characters(asciiString);
 	if (isAscii(asciiString)) {
 		// No special (UTF-8) characters found, just return the string
 		return asciiString;
