@@ -474,11 +474,6 @@ class Scene1550 : public SceneExt {
 		virtual bool startAction(CursorType action, Event &event);
 	};
 
-	class Hotspot3 : public NamedHotspot {
-	public:
-		virtual bool startAction(CursorType action, Event &event);
-	};
-
 	class Wreckage : public SceneActor {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
@@ -489,22 +484,22 @@ class Scene1550 : public SceneExt {
 		virtual bool startAction(CursorType action, Event &event);
 	};
 
-	class Actor8 : public SceneActor {
+	class AirBag : public SceneActor {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
 
-	class Actor9 : public SceneActor {
+	class Joystick : public SceneActor {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
 
-	class Actor10 : public SceneActor {
+	class Gyroscope : public SceneActor {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
 
-	class Actor11 : public SceneActor {
+	class DiagnosticsDisplay : public SceneActor {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -527,9 +522,8 @@ class Scene1550 : public SceneExt {
 public:
 	SpeakerQuinn _quinnSpeaker;
 	SpeakerSeeker _seekerSpeaker;
-	WorkingShip _shipHull;
-	WorkingShip _item2;
-	Hotspot3 _item3;
+	WorkingShip _intactHull1, _intactHull2;
+	SceneHotspot _background;
 	SceneActor _landingStrut;
 	SceneActor _actor2;
 	SceneActor _actor3;
@@ -537,10 +531,10 @@ public:
 	SceneActor _dishTowerShadow;
 	Wreckage _wreckage;
 	Companion _companion;
-	Actor8 _actor8;
-	Actor9 _actor9;
-	Actor10 _actor10;
-	Actor11 _actor11;
+	AirBag _airbag;
+	Joystick _joystick;
+	Gyroscope _gyroscope;
+	DiagnosticsDisplay _diagnosticsDisplay;
 	DishTower _dishTower;
 	Dish _dish;
 	Junk _junk[8];
@@ -555,11 +549,11 @@ public:
 	SequenceManager _sequenceManager1;
 	SequenceManager _sequenceManager2;
 
-	int _field412;
+	bool _dontExit;
 	byte _field414;
-	int _field415;
-	int _field417;
-	int _field419;
+	int _dishMode;
+	int _sceneResourceId;
+	int _walkRegionsId;
 
 	Scene1550();
 	void synchronize(Serializer &s);
