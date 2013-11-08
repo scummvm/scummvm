@@ -42,7 +42,25 @@
 
 #include "video/flic_decoder.h"
 
+#include "prince/mob.h"
+#include "prince/object.h"
+
+
 namespace Prince {
+
+template <typename ResourceType>
+struct ResourceList {
+	bool loadFromStream(Common::SeekableReadStream &stream) {
+		ResourceType resource;
+		while (resource.loadFromStream(stream))
+			_list.push_back(resource);
+		return true;
+	}
+	Common::Array<ResourceType> _list;
+};
+
+typedef ResourceList<Mob> MobList;
+typedef ResourceList<Object> ObjectList;
 
 struct PrinceGameDescription;
 
@@ -50,8 +68,6 @@ class PrinceEngine;
 class GraphicsMan;
 class Script;
 class Debugger;
-class ObjectList;
-class MobList;
 class MusicPlayer;
 class VariaTxt;
 class Cursor;
@@ -124,6 +140,8 @@ private:
 	void scrollCameraLeft(int16 delta);
 	void drawScreen();
 	void showTexts();
+	void init();
+	void showLogo();
 
 	uint32 getTextWidth(const char *s);
 	void debugEngine(const char *s, ...);

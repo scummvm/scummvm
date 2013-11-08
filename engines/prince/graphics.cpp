@@ -35,6 +35,11 @@ GraphicsMan::GraphicsMan(PrinceEngine *vm)
 	_frontScreen->create(640, 480, Graphics::PixelFormat::createFormatCLUT8());
 }
 
+GraphicsMan::~GraphicsMan() {
+	_frontScreen->free();
+	delete _frontScreen;
+}
+
 void GraphicsMan::update() {
 	if (_changed) {
 		_vm->_system->copyRectToScreen((byte*)_frontScreen->getBasePtr(0,0), 640, 0, 0, 640, 480);

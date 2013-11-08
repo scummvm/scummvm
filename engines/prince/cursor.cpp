@@ -31,6 +31,7 @@ Cursor::Cursor() : _surface(NULL) {
 }
 
 Cursor::~Cursor() {
+	_surface->free();
 	delete _surface;
 	_surface = NULL;
 }

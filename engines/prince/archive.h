@@ -28,7 +28,7 @@
 // This is here just as remainder that archive support is missing
 namespace Price {
 
-class Archive : public Common::Archive {
+class PtcArchive : public Common::Archive {
 };
 
 }

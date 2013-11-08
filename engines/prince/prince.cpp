@@ -83,9 +83,6 @@ PrinceEngine::PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc)
 
 	gDebugLevel = 10;
 
-	_rnd = new Common::RandomSource("prince");
-	_debugger = new Debugger(this);
-	_midiPlayer = new MusicPlayer(this);
 
 }
 
@@ -101,6 +98,13 @@ PrinceEngine::~PrinceEngine() {
 	delete _font;
 	delete _roomBmp;
 	delete _walizkaBmp;
+	delete _variaTxt;
+	delete[] _talkTxt;
+	delete _graph;
+	delete _mobList;
+	delete _objectList;
+	_midiPlayer->killMidi();
+	delete _midiPlayer;
 }
 
 GUI::Debugger *PrinceEngine::getDebugger() {
@@ -137,8 +141,13 @@ bool loadResource(T *resource, const char *resourceName) {
 	return ret;
 } 
 
-Common::Error PrinceEngine::run() {
+void PrinceEngine::init() {
+
 	_graph = new GraphicsMan(this);
+
+	_rnd = new Common::RandomSource("prince");
+	_debugger = new Debugger(this);
+	_midiPlayer = new MusicPlayer(this);
 
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	
@@ -167,7 +176,7 @@ Common::Error PrinceEngine::run() {
 	Common::SeekableReadStream *talkTxtStream = SearchMan.createReadStreamForMember("talktxt.dat");
 	if (!talkTxtStream) {
 		error("Can't load talkTxtStream");
-		return Common::kPathDoesNotExist;
+		return;
 	}
 
 	_talkTxtSize = talkTxtStream->size();
@@ -175,53 +184,27 @@ Common::Error PrinceEngine::run() {
 	talkTxtStream->read(_talkTxt, _talkTxtSize);
 
 	delete talkTxtStream;
+}
 
-	MhwanhDecoder *logo = new MhwanhDecoder();
-	loadResource(logo, "logo.raw");
-	if (logo)
-	{
-		_graph->setPalette(logo->getPalette());
-		_graph->draw(0, 0, logo->getSurface());
+void PrinceEngine::showLogo() {
+	MhwanhDecoder logo;
+	if (loadResource(&logo, "logo.raw")) {
+		_graph->setPalette(logo.getPalette());
+		_graph->draw(0, 0, logo.getSurface());
 		_graph->update();
 		_system->delayMillis(700);
 	}
-	delete logo;
+}
+
+Common::Error PrinceEngine::run() {
+
+	init();
+
+	showLogo();
 
 	mainLoop();
 
 	return Common::kNoError;
-}
-
-class MobList {
-public:
-	bool loadFromStream(Common::SeekableReadStream &stream);
-
-	Common::Array<Mob> _mobList;
-};
-
-bool MobList::loadFromStream(Common::SeekableReadStream &stream)
-{
-	Mob mob;
-	while (mob.loadFromStream(stream))
-		_mobList.push_back(mob);
-
-	return true;
-}
-
-class ObjectList {
-public:
-	bool loadFromStream(Common::SeekableReadStream &stream);
-
-	Common::Array<Object> _objList;
-};
-
-bool ObjectList::loadFromStream(Common::SeekableReadStream &stream)
-{
-	Object obj;
-	while (obj.loadFromStream(stream))
-		_objList.push_back(obj);
-
-	return true;
 }
 
 bool PrinceEngine::loadLocation(uint16 locationNr) {
@@ -417,8 +400,8 @@ void PrinceEngine::hotspot() {
 	Common::Point mousepos = _system->getEventManager()->getMousePos();
 	Common::Point mousePosCamera(mousepos.x + _cameraX, mousepos.y);
 
-	for (Common::Array<Mob>::const_iterator it = _mobList->_mobList.begin()
-		; it != _mobList->_mobList.end() ; ++it) {
+	for (Common::Array<Mob>::const_iterator it = _mobList->_list.begin()
+		; it != _mobList->_list.end() ; ++it) {
 		if (it->_visible)
 			continue;
 		if (it->_rect.contains(mousePosCamera)) {

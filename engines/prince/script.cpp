@@ -246,9 +246,9 @@ void Script::O_CHECKANIMFRAME() {
 }
 
 void Script::O_PUTBACKANIM() {
-	uint16 roomId = readScript16bits();
-	uint16 slot = readScript16bits();
-	uint32 animId = readScript32bits();
+	uint16 roomId = readScriptValue();
+	uint16 slot = readScriptValue();
+	int32 animId = readScript32bits();
 	debugScript("O_PUTBACKANIM roomId %d, slot %d, animId %d", roomId, slot, animId);
 }
 
