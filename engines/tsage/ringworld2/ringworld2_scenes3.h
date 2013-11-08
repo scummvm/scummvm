@@ -610,16 +610,11 @@ class Scene3500 : public SceneExt {
 
 		void init(int xp, int yp, int arg3, int arg4, int arg5);
 		void sub1094ED();
-		void sub109663(int arg1);
+		void setSpeed(int arg1);
 		void changePosition(const Common::Point &pt);
 
 		virtual void process(Event &event);
 		virtual bool startAction(CursorType action, Event &event);
-	};
-
-	class Actor8 : public SceneActor {
-	public:
-		// TODO: double check if nothing specific is present, then remove this class
 	};
 
 	class MazeUI3500 : public MazeUI {
@@ -647,19 +642,18 @@ public:
 	SceneActor _symbolLeft;
 	SceneActor _symbolRight;
 	Throttle _throttle;
-	Actor8 _tunnelCircle;
-	Actor8 _actor9;
+	SceneActor _tunnelVertCircle;
+	SceneActor _tunnelHorzCircle;
 	ASoundExt _aSound1;
 	MazeUI3500 _mazeUI;
 	SequenceManager _sequenceManager;
 
-	int _fieldAF8;
-	int _fieldB9E;
+	int _moverVertX;
+	int _moverHorzX;
 	PaletteRotation *_rotation;
 	int _mazeChangeAmount;
 	int _speed;
 	bool _field1272;
-	int _field1274;
 	int _mazeDirection;
 	int _nextMove;
 	Common::Point _mazePosition;

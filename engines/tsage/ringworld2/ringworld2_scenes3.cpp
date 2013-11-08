@@ -2972,8 +2972,8 @@ void Scene3500::Action1::handleHorzButton(int direction) {
 	_field20 = 1;
 	_field24 = true;
 
-	scene->_actor9.setStrip(2);
-	scene->_actor9.show();
+	scene->_tunnelHorzCircle.setStrip(2);
+	scene->_tunnelHorzCircle.show();
 
 	if (_direction == 1)
 		scene->_symbolRight.show();
@@ -3012,15 +3012,15 @@ void Scene3500::Action1::sub108732(int arg1) {
 		setDelay(0);
 		break;
 	case 5: {
-		scene->_fieldAF8 = 160;
+		scene->_moverVertX = 160;
 		Common::Point pt(160, 73);
 		NpcMover *mover = new NpcMover();
-		scene->_tunnelCircle.addMover(mover, &pt, NULL);
+		scene->_tunnelVertCircle.addMover(mover, &pt, NULL);
 
-		scene->_fieldB9E = 160 - (_direction * 2 * 160);
-		Common::Point pt2(scene->_fieldB9E, 73);
+		scene->_moverHorzX = 160 - (_direction * 2 * 160);
+		Common::Point pt2(scene->_moverHorzX, 73);
 		NpcMover *mover2 = new NpcMover();
-		scene->_actor9.addMover(mover2, &pt2, this);
+		scene->_tunnelHorzCircle.addMover(mover2, &pt2, this);
 
 		_actionIndex = 11;
 		}
@@ -3031,7 +3031,7 @@ void Scene3500::Action1::sub108732(int arg1) {
 		setDelay(1);
 	// No break on purpose
 	case 8:
-		scene->_actor9.setStrip(2);
+		scene->_tunnelHorzCircle.setStrip(2);
 		_actionIndex = 1;
 		break;
 	default:
@@ -3139,19 +3139,19 @@ void Scene3500::Action1::signal() {
 		}
 	// No break on purpose
 	case 2: {
-		scene->_tunnelCircle.setPosition(Common::Point(160, 73));
-		scene->_tunnelCircle._moveDiff.x = 160 - scene->_mazeChangeAmount;
-		scene->_fieldAF8 = 160 - ((_direction * 2) * 160);
-		Common::Point pt(scene->_fieldAF8, 73);
+		scene->_tunnelVertCircle.setPosition(Common::Point(160, 73));
+		scene->_tunnelVertCircle._moveDiff.x = 160 - scene->_mazeChangeAmount;
+		scene->_moverVertX = 160 - ((_direction * 2) * 160);
+		Common::Point pt(scene->_moverVertX, 73);
 		NpcMover *mover = new NpcMover();
-		scene->_tunnelCircle.addMover(mover, &pt, this);
+		scene->_tunnelVertCircle.addMover(mover, &pt, this);
 
-		scene->_actor9.setPosition(Common::Point(160 + ((_direction * 2) * 160), 73));
-		scene->_actor9._moveDiff.x = 160 - scene->_mazeChangeAmount;
-		scene->_fieldB9E = 160;
-		Common::Point pt2(scene->_fieldB9E, 73);
+		scene->_tunnelHorzCircle.setPosition(Common::Point(160 + ((_direction * 2) * 160), 73));
+		scene->_tunnelHorzCircle._moveDiff.x = 160 - scene->_mazeChangeAmount;
+		scene->_moverHorzX = 160;
+		Common::Point pt2(scene->_moverHorzX, 73);
 		NpcMover *mover2 = new NpcMover();
-		scene->_actor9.addMover(mover2, &pt2, NULL);
+		scene->_tunnelHorzCircle.addMover(mover2, &pt2, NULL);
 		}
 		break;
 	case 5:
@@ -3161,17 +3161,17 @@ void Scene3500::Action1::signal() {
 		setDelay(1);
 		break;
 	case 6:
-		scene->_tunnelCircle.setPosition(Common::Point(160, 73));
+		scene->_tunnelVertCircle.setPosition(Common::Point(160, 73));
 		if (_field20 == 0)
-			scene->_tunnelCircle.setStrip(1);
+			scene->_tunnelVertCircle.setStrip(1);
 		else
-			scene->_tunnelCircle.setStrip(2);
-		scene->_tunnelCircle.fixPriority(1);
+			scene->_tunnelVertCircle.setStrip(2);
+		scene->_tunnelVertCircle.fixPriority(1);
 
-		scene->_actor9.setPosition(Common::Point(-160, 73));
-		scene->_actor9.setStrip(9);
-		scene->_actor9.fixPriority(11);
-		scene->_actor9.hide();
+		scene->_tunnelHorzCircle.setPosition(Common::Point(-160, 73));
+		scene->_tunnelHorzCircle.setStrip(9);
+		scene->_tunnelHorzCircle.fixPriority(11);
+		scene->_tunnelHorzCircle.hide();
 		setDelay(1);
 		break;
 	case 7:
@@ -3226,36 +3226,36 @@ void Scene3500::Action1::signal() {
 		break;
 		}
 	case 10: {
-		scene->_fieldAF8 = 160;
+		scene->_moverVertX = 160;
 		Common::Point pt(160, 73);
 		NpcMover *mover = new NpcMover();
-		scene->_tunnelCircle.addMover(mover, &pt, NULL);
+		scene->_tunnelVertCircle.addMover(mover, &pt, NULL);
 
-		scene->_fieldB9E = 160 - (_direction * 2 * 160);
-		Common::Point pt2(scene->_fieldB9E, 73);
+		scene->_moverHorzX = 160 - (_direction * 2 * 160);
+		Common::Point pt2(scene->_moverHorzX, 73);
 		NpcMover *mover2 = new NpcMover();
-		scene->_actor9.addMover(mover2, &pt2, this);
+		scene->_tunnelHorzCircle.addMover(mover2, &pt2, this);
 		_actionIndex = 6;
 		}
 		break;
 	case 11: {
-		scene->_tunnelCircle.setStrip(2);
-		scene->_tunnelCircle.setPosition(Common::Point(160, 73));
-		scene->_fieldAF8 = 160 - (_direction * 2 * 160);
-		Common::Point pt(scene->_fieldAF8, 73);
+		scene->_tunnelVertCircle.setStrip(2);
+		scene->_tunnelVertCircle.setPosition(Common::Point(160, 73));
+		scene->_moverVertX = 160 - (_direction * 2 * 160);
+		Common::Point pt(scene->_moverVertX, 73);
 		NpcMover *mover = new NpcMover();
-		scene->_tunnelCircle.addMover(mover, &pt, NULL);
-		scene->_tunnelCircle.fixPriority(11);
+		scene->_tunnelVertCircle.addMover(mover, &pt, NULL);
+		scene->_tunnelVertCircle.fixPriority(11);
 		if (_field20 == 0)
-			scene->_actor9.setStrip(1);
+			scene->_tunnelHorzCircle.setStrip(1);
 		else
-			scene->_actor9.setStrip(2);
-		scene->_actor9.setPosition(Common::Point(160 - (_direction * 2 * 160), 73));
-		scene->_fieldB9E = 160;
-		Common::Point pt2(scene->_fieldB9E, 73);
+			scene->_tunnelHorzCircle.setStrip(2);
+		scene->_tunnelHorzCircle.setPosition(Common::Point(160 - (_direction * 2 * 160), 73));
+		scene->_moverHorzX = 160;
+		Common::Point pt2(scene->_moverHorzX, 73);
 		NpcMover *mover2 = new NpcMover();
-		scene->_actor9.addMover(mover2, &pt2, this);
-		scene->_actor9.fixPriority(1);
+		scene->_tunnelHorzCircle.addMover(mover2, &pt2, this);
+		scene->_tunnelHorzCircle.fixPriority(1);
 		_actionIndex = 5;
 		}
 		break;
@@ -3302,55 +3302,55 @@ void Scene3500::Action2::handleVertButton(int direction) {
 void Scene3500::Action2::signal() {
 	Scene3500 *scene = (Scene3500 *)R2_GLOBALS._sceneManager._scene;
 
-	int si;
-	int di;
+	int vertX;
+	int horzX;
 
 	switch (_actionIndex++) {
 	case 0: {
-		if (scene->_tunnelCircle._mover) {
-			si = scene->_fieldAF8;
-			di = scene->_fieldB9E;
+		if (scene->_tunnelVertCircle._mover) {
+			vertX = scene->_moverVertX;
+			horzX = scene->_moverHorzX;
 		} else {
-			scene->_fieldAF8 = scene->_tunnelCircle._position.x;
-			si = scene->_fieldAF8;
-			scene->_fieldB9E = scene->_actor9._position.y;
-			di = scene->_fieldB9E;
+			scene->_moverVertX = scene->_tunnelVertCircle._position.x;
+			vertX = scene->_moverVertX;
+			scene->_moverHorzX = scene->_tunnelHorzCircle._position.y;
+			horzX = scene->_moverHorzX;
 		}
 
-		scene->_tunnelCircle._moveDiff.y = 9 - (scene->_mazeChangeAmount / 2);
-		Common::Point pt(si, 73 - (_direction * 12));
+		scene->_tunnelVertCircle._moveDiff.y = 9 - (scene->_mazeChangeAmount / 2);
+		Common::Point pt(vertX, 73 - (_direction * 12));
 		NpcMover *mover = new NpcMover();
-		scene->_tunnelCircle.addMover(mover, &pt, NULL);
+		scene->_tunnelVertCircle.addMover(mover, &pt, NULL);
 
-		scene->_actor9._moveDiff.y = 9 - (scene->_mazeChangeAmount / 2);
-		Common::Point pt2(di, 73 - (_direction * 12));
+		scene->_tunnelHorzCircle._moveDiff.y = 9 - (scene->_mazeChangeAmount / 2);
+		Common::Point pt2(horzX, 73 - (_direction * 12));
 		NpcMover *mover2 = new NpcMover();
-		scene->_actor9.addMover(mover2, &pt2, NULL);
+		scene->_tunnelHorzCircle.addMover(mover2, &pt2, NULL);
 		scene->_mazeChangeAmount = (scene->_mazeChangeAmount / 2) + (scene->_mazeChangeAmount % 2);
 		setDelay(17 - scene->_mazeChangeAmount);
 		}
 		break;
 	case 1: {
 		R2_GLOBALS._sound2.play(339);
-		if (scene->_tunnelCircle._mover) {
-			si = scene->_fieldAF8;
-			di = scene->_fieldB9E;
+		if (scene->_tunnelVertCircle._mover) {
+			vertX = scene->_moverVertX;
+			horzX = scene->_moverHorzX;
 		} else {
-			si = scene->_tunnelCircle._position.x;
-			di = scene->_actor9._position.x;
+			vertX = scene->_tunnelVertCircle._position.x;
+			horzX = scene->_tunnelHorzCircle._position.x;
 		}
 
 		scene->_throttle.sub1094ED();
 
-		scene->_tunnelCircle._moveDiff.y = 9 - (scene->_mazeChangeAmount / 2);
-		Common::Point pt(si, 73);
+		scene->_tunnelVertCircle._moveDiff.y = 9 - (scene->_mazeChangeAmount / 2);
+		Common::Point pt(vertX, 73);
 		NpcMover *mover = new NpcMover();
-		scene->_tunnelCircle.addMover(mover, &pt, NULL);
+		scene->_tunnelVertCircle.addMover(mover, &pt, NULL);
 
-		scene->_actor9._moveDiff.y = 9 - (scene->_mazeChangeAmount / 2);
-		Common::Point pt2(di, 73);
+		scene->_tunnelHorzCircle._moveDiff.y = 9 - (scene->_mazeChangeAmount / 2);
+		Common::Point pt2(horzX, 73);
 		NpcMover *mover2 = new NpcMover();
-		scene->_actor9.addMover(mover2, &pt2, NULL);
+		scene->_tunnelHorzCircle.addMover(mover2, &pt2, NULL);
 
 		scene->_horizontalSpeedDisplay.setFrame2(2);
 		}
@@ -3416,7 +3416,7 @@ void Scene3500::Throttle::init(int xp, int yp, int arg3, int arg4, int arg5) {
 	postInit();
 	setup(1050, 3, 1);
 	fixPriority(255);
-	sub109663(arg5);
+	setSpeed(arg5);
 }
 
 void Scene3500::Throttle::sub1094ED() {
@@ -3425,7 +3425,7 @@ void Scene3500::Throttle::sub1094ED() {
 	scene->_speed = _position.x - _pos.x;
 }
 
-void Scene3500::Throttle::sub109663(int arg1){
+void Scene3500::Throttle::setSpeed(int arg1){
 	changePosition(Common::Point(_pos.x + arg1, _pos.y - (_fieldAC * arg1)));
 }
 
@@ -3510,13 +3510,12 @@ bool Scene3500::MazeUI3500::setMazePosition2(Common::Point &p) {
 /*--------------------------------------------------------------------------*/
 
 Scene3500::Scene3500() {
-	_fieldAF8 = 0;
-	_fieldB9E = 0;
+	_moverVertX = 0;
+	_moverHorzX = 0;
 	_rotation = NULL;
 	_mazeChangeAmount = 0;
 	_speed = 0;
 	_field1272 = false;
-	_field1274 = 0;
 	_mazeDirection = MAZEDIR_NONE;
 	_nextMove = 0;
 	_mazePosition.x = 0;
@@ -3532,12 +3531,11 @@ void Scene3500::synchronize(Serializer &s) {
 	SceneExt::synchronize(s);
 	SYNC_POINTER(_rotation);
 
-	s.syncAsSint16LE(_fieldAF8);
-	s.syncAsSint16LE(_fieldB9E);
+	s.syncAsSint16LE(_moverVertX);
+	s.syncAsSint16LE(_moverHorzX);
 	s.syncAsSint16LE(_mazeChangeAmount);
 	s.syncAsSint16LE(_speed);
 	s.syncAsSint16LE(_field1272);
-	s.syncAsSint16LE(_field1274);
 	s.syncAsSint16LE(_mazeDirection);
 	s.syncAsSint16LE(_nextMove);
 	s.syncAsSint16LE(_mazePosition.x);
@@ -3606,16 +3604,16 @@ void Scene3500::postInit(SceneObjectList *OwnerList) {
 	_turnRight._movementId = 96;
 	_turnRight.setDetails(96, 3500, 12, 10, -1);
 
-	_tunnelCircle.postInit();
-	_tunnelCircle.setup(1050, 1, 1);
-	_tunnelCircle.setPosition(Common::Point(160, 73));
-	_tunnelCircle.fixPriority(1);
+	_tunnelVertCircle.postInit();
+	_tunnelVertCircle.setup(1050, 1, 1);
+	_tunnelVertCircle.setPosition(Common::Point(160, 73));
+	_tunnelVertCircle.fixPriority(1);
 
-	_actor9.postInit();
-	_actor9.setup(1050, 2, 1);
-	_actor9.setPosition(Common::Point(-160, 73));
-	_actor9.fixPriority(11);
-	_actor9.hide();
+	_tunnelHorzCircle.postInit();
+	_tunnelHorzCircle.setup(1050, 2, 1);
+	_tunnelHorzCircle.setPosition(Common::Point(-160, 73));
+	_tunnelHorzCircle.fixPriority(11);
+	_tunnelHorzCircle.hide();
 
 	_outsideView.setDetails(27, 3500, 21, -1, -1);
 	_mapScreen.setDetails(Rect(160, 89, 299, 182), 3500, 3, -1, -1, 1, NULL);
@@ -3676,7 +3674,7 @@ void Scene3500::doMovement(int id) {
 		_throttle.sub1094ED();
 		if (_speed != 0) {
 			_speed--;
-			_throttle.sub109663(_speed);
+			_throttle.setSpeed(_speed);
 		}
 		if (_action1._field24)
 			_speed = 0;
@@ -3685,7 +3683,7 @@ void Scene3500::doMovement(int id) {
 		_throttle.sub1094ED();
 		if (_speed < 16) {
 			++_speed;
-			_throttle.sub109663(_speed);
+			_throttle.setSpeed(_speed);
 		}
 		if (_action1._field24)
 			_speed = 0;
@@ -3698,7 +3696,7 @@ void Scene3500::doMovement(int id) {
 			if (_action && ((_action2.getActionIndex() != 0) || (_action2._direction != 2))) {
 				_action2.signal();
 			} else {
-				_actor9.setAction(&_action2, &_actor9, NULL);
+				_tunnelHorzCircle.setAction(&_action2, &_tunnelHorzCircle, NULL);
 			}
 		}
 		break;
@@ -3729,7 +3727,7 @@ void Scene3500::doMovement(int id) {
 			if ((_action) && ((_action2.getActionIndex() != 0) || (_action2._direction != -1))) {
 				_action2.signal();
 			} else {
-				_actor9.setAction(&_action2, &_actor9, NULL);
+				_tunnelHorzCircle.setAction(&_action2, &_tunnelHorzCircle, NULL);
 			}
 		}
 		break;
@@ -3755,7 +3753,7 @@ void Scene3500::doMovement(int id) {
 		break;
 	default:
 		_speed = id;
-		_throttle.sub109663(id);
+		_throttle.setSpeed(id);
 		if (_action1._field24) {
 			_speed = 0;
 		}
@@ -3883,7 +3881,7 @@ void Scene3500::dispatch() {
 	int var_6 = 0;
 	int var_8 = 0;
 	int var_a = 0;
-	int dx = 0;
+	int tmpCellId = 0;
 	int cellId = 0;
 
 	if ((_mazeChangeAmount == 0) && (_field1282 == 0)) {
@@ -3899,7 +3897,7 @@ void Scene3500::dispatch() {
 		var_6 = _mazeUI.cellFromY(_mazePosition.y + 46) - 46;
 		var_8 = abs(var_4 - newMazeX);
 		var_a = abs(var_6 - newMazeY);
-		dx = 0;
+		tmpCellId = 0;
 
 		switch (_mazeDirection) {
 		case MAZEDIR_NORTH:
@@ -3912,12 +3910,12 @@ void Scene3500::dispatch() {
 				_mazeChangeAmount = 0;
 				_field1272 = false;
 				if (!_action1._field24)
-					_tunnelCircle.hide();
+					_tunnelVertCircle.hide();
 			} else {
 				var_6 = _mazeUI.cellFromY(newMazeY + 46) - 46;
 				newMazeY = _mazePosition.y - _mazeChangeAmount;
-				dx = _mazeUI.getCellFromMapXY(Common::Point(newMazeX + 70, newMazeY + 46));
-				if (((cellId == 23) || (cellId == 24) || (cellId == 4)) && (cellId != dx)) {
+				tmpCellId = _mazeUI.getCellFromMapXY(Common::Point(newMazeX + 70, newMazeY + 46));
+				if (((cellId == 23) || (cellId == 24) || (cellId == 4)) && (cellId != tmpCellId)) {
 					newMazeY = var_6;
 					R2_GLOBALS._sound2.play(339);
 					_rotation->_idxChange = 0;
@@ -3925,8 +3923,8 @@ void Scene3500::dispatch() {
 					_mazeChangeAmount = 0;
 					_field1272 = false;
 					if (!_action1._field24)
-						_tunnelCircle.hide();
-				} else if ((cellId == 11) && (cellId != dx)) {
+						_tunnelVertCircle.hide();
+				} else if ((cellId == 11) && (cellId != tmpCellId)) {
 					newMazeY = var_6 + 3;
 					R2_GLOBALS._sound2.play(339);
 					_rotation->_idxChange = 0;
@@ -3934,7 +3932,7 @@ void Scene3500::dispatch() {
 					_mazeChangeAmount = 0;
 					_field1272 = false;
 					if (!_action1._field24)
-						_tunnelCircle.hide();
+						_tunnelVertCircle.hide();
 				} else {
 					var_6 = _mazeUI.cellFromY(newMazeY + 46) - 46;
 					var_a = abs(var_6 - newMazeY);
@@ -3950,7 +3948,7 @@ void Scene3500::dispatch() {
 						_mazeChangeAmount = 0;
 						_field1272 = false;
 						if (!_action1._field24)
-							_tunnelCircle.hide();
+							_tunnelVertCircle.hide();
 					} else if ((cellId == 11) && (var_6 + 3 >= newMazeY) && (_mazePosition.y >= var_6 + 3)) {
 						R2_GLOBALS._sound2.play(339);
 						_rotation->_idxChange = 0;
@@ -3958,7 +3956,7 @@ void Scene3500::dispatch() {
 						_mazeChangeAmount = 0;
 						_field1272 = false;
 						if (!_action1._field24)
-							_tunnelCircle.hide();
+							_tunnelVertCircle.hide();
 					} else if (((cellId == 25) || (cellId == 26) || (cellId == 5) || (cellId == 14) || (cellId == 15)) && (var_8 != 0) && (var_8 <= 3)) {
 						newMazeX = var_4;
 						R2_GLOBALS._sound2.play(339);
@@ -3978,12 +3976,12 @@ void Scene3500::dispatch() {
 				_mazeChangeAmount = 0;
 				_field1272 = false;
 				if (!_action1._field24)
-					_tunnelCircle.hide();
+					_tunnelVertCircle.hide();
 			} else {
 				var_4 = _mazeUI.cellFromX(newMazeX + 70) - 70;
 				newMazeX = _mazePosition.x + _mazeChangeAmount;
-				dx = _mazeUI.getCellFromMapXY(Common::Point(newMazeX + 70, newMazeY + 46));
-				if (((cellId == 26) || (cellId == 24) || (cellId == 15)) && (cellId != dx)) {
+				tmpCellId = _mazeUI.getCellFromMapXY(Common::Point(newMazeX + 70, newMazeY + 46));
+				if (((cellId == 26) || (cellId == 24) || (cellId == 15)) && (cellId != tmpCellId)) {
 					newMazeX = var_4;
 					R2_GLOBALS._sound2.play(339);
 					_rotation->_idxChange = 0;
@@ -3991,8 +3989,8 @@ void Scene3500::dispatch() {
 					_mazeChangeAmount = 0;
 					_field1272 = false;
 					if (!_action1._field24)
-						_tunnelCircle.hide();
-				} else if ((cellId == 6) && (cellId != dx)) {
+						_tunnelVertCircle.hide();
+				} else if ((cellId == 6) && (cellId != tmpCellId)) {
 					newMazeX = var_4 - 5;
 					R2_GLOBALS._sound2.play(339);
 					_rotation->_idxChange = 0;
@@ -4000,7 +3998,7 @@ void Scene3500::dispatch() {
 					_mazeChangeAmount = 0;
 					_field1272 = false;
 					if (!_action1._field24)
-						_tunnelCircle.hide();
+						_tunnelVertCircle.hide();
 				} else {
 					var_4 = _mazeUI.cellFromX(newMazeX + 70) - 70;
 					var_8 = abs(newMazeX - var_4);
@@ -4015,7 +4013,7 @@ void Scene3500::dispatch() {
 						_mazeChangeAmount = 0;
 						_field1272 = false;
 						if (!_action1._field24)
-							_tunnelCircle.hide();
+							_tunnelVertCircle.hide();
 					} else if ((cellId == 6) && (var_4 - 5 <= newMazeX) && (_mazePosition.x <= var_4 - 5)) {
 						newMazeX = var_4 - 5;
 						R2_GLOBALS._sound2.play(339);
@@ -4024,7 +4022,7 @@ void Scene3500::dispatch() {
 						_mazeChangeAmount = 0;
 						_field1272 = false;
 						if (!_action1._field24)
-							_tunnelCircle.hide();
+							_tunnelVertCircle.hide();
 					} else if (((cellId == 25) || (cellId == 23) || (cellId == 14) || (cellId == 5) || (cellId == 4)) && (var_a != 0) && (var_a <= 3)) {
 						newMazeY = var_6;
 						R2_GLOBALS._sound2.play(339);
@@ -4044,21 +4042,21 @@ void Scene3500::dispatch() {
 				_mazeChangeAmount = 0;
 				_field1272 = false;
 				if (!_action1._field24)
-					_tunnelCircle.hide();
+					_tunnelVertCircle.hide();
 			} else {
 				var_6 = _mazeUI.cellFromY(newMazeY + 46) - 46;
 				newMazeY = _mazePosition.y + _mazeChangeAmount;
-				dx = _mazeUI.getCellFromMapXY(Common::Point(newMazeX + 70, newMazeY + 46));
+				tmpCellId = _mazeUI.getCellFromMapXY(Common::Point(newMazeX + 70, newMazeY + 46));
 
-				if (((cellId == 25) || (cellId == 26) || (cellId == 5)) && (cellId != dx)) {
+				if (((cellId == 25) || (cellId == 26) || (cellId == 5)) && (cellId != tmpCellId)) {
 					R2_GLOBALS._sound2.play(339);
 					_rotation->_idxChange = 0;
 					_speed = 0;
 					_mazeChangeAmount = 0;
 					_field1272 = false;
 					if (!_action1._field24)
-						_tunnelCircle.hide();
-				} else if ((cellId == 16) && (cellId != dx)) {
+						_tunnelVertCircle.hide();
+				} else if ((cellId == 16) && (cellId != tmpCellId)) {
 					newMazeY = var_6 - 3;
 					R2_GLOBALS._sound2.play(339);
 					_rotation->_idxChange = 0;
@@ -4066,8 +4064,8 @@ void Scene3500::dispatch() {
 					_mazeChangeAmount = 0;
 					_field1272 = false;
 					if (!_action1._field24)
-						_tunnelCircle.hide();
-				} else if ((cellId == 31) && (cellId != dx)) {
+						_tunnelVertCircle.hide();
+				} else if ((cellId == 31) && (cellId != tmpCellId)) {
 					newMazeY = var_6 + 4;
 					R2_GLOBALS._sound2.play(339);
 					_rotation->_idxChange = 0;
@@ -4075,7 +4073,7 @@ void Scene3500::dispatch() {
 					_mazeChangeAmount = 0;
 					_field1272 = false;
 					if (!_action1._field24)
-						_tunnelCircle.hide();
+						_tunnelVertCircle.hide();
 				} else {
 					var_6 = _mazeUI.cellFromY(newMazeY + 46) - 46;
 					var_a = abs(newMazeY - var_6);
@@ -4091,7 +4089,7 @@ void Scene3500::dispatch() {
 						_mazeChangeAmount = 0;
 						_field1272 = false;
 						if (!_action1._field24)
-							_tunnelCircle.hide();
+							_tunnelVertCircle.hide();
 					} else if ((cellId == 16) && (var_6 - 3 <= newMazeY) && (_mazePosition.y <= var_6 - 3)) {
 						newMazeY = var_6 - 3;
 						R2_GLOBALS._sound2.play(339);
@@ -4100,7 +4098,7 @@ void Scene3500::dispatch() {
 						_mazeChangeAmount = 0;
 						_field1272 = false;
 						if (!_action1._field24)
-							_tunnelCircle.hide();
+							_tunnelVertCircle.hide();
 					} else if ((cellId == 31) && (var_6 + 4 <= newMazeY) && (_mazePosition.y <= var_6 + 4)) {
 						newMazeY = var_6 + 4;
 						_rotation->_idxChange = 0;
@@ -4108,7 +4106,7 @@ void Scene3500::dispatch() {
 						_mazeChangeAmount = 0;
 						_field1272 = false;
 						if (!_action1._field24)
-							_tunnelCircle.hide();
+							_tunnelVertCircle.hide();
 						if ((newMazeX == 660) && (_mazeChangeAmount + 306 <= newMazeY) && (newMazeY <= 307))
 							 ++_field1284;
 						else
@@ -4132,12 +4130,12 @@ void Scene3500::dispatch() {
 				_mazeChangeAmount = 0;
 				_field1272 = false;
 				if (!_action1._field24)
-					_tunnelCircle.hide();
+					_tunnelVertCircle.hide();
 			} else {
 				var_4 = _mazeUI.cellFromX(newMazeX + 70) - 70;
 				newMazeX = _mazePosition.x - _mazeChangeAmount;
-				dx = _mazeUI.getCellFromMapXY(Common::Point(newMazeX + 70, newMazeY + 46));
-				if (((cellId == 25) || (cellId == 23) || (cellId == 14)) && (cellId != dx)) {
+				tmpCellId = _mazeUI.getCellFromMapXY(Common::Point(newMazeX + 70, newMazeY + 46));
+				if (((cellId == 25) || (cellId == 23) || (cellId == 14)) && (cellId != tmpCellId)) {
 					newMazeX = var_4;
 					R2_GLOBALS._sound2.play(339);
 					_rotation->_idxChange = 0;
@@ -4145,8 +4143,8 @@ void Scene3500::dispatch() {
 					_mazeChangeAmount = 0;
 					_field1272 = false;
 					if (!_action1._field24)
-						_tunnelCircle.hide();
-				} else if ((cellId == 1) && (cellId != dx)) {
+						_tunnelVertCircle.hide();
+				} else if ((cellId == 1) && (cellId != tmpCellId)) {
 					newMazeX = var_4 + 5;
 					R2_GLOBALS._sound2.play(339);
 					_rotation->_idxChange = 0;
@@ -4154,7 +4152,7 @@ void Scene3500::dispatch() {
 					_mazeChangeAmount = 0;
 					_field1272 = false;
 					if (!_action1._field24)
-						_tunnelCircle.hide();
+						_tunnelVertCircle.hide();
 				} else {
 					var_4 = _mazeUI.cellFromX(newMazeX + 70) - 70;
 					var_8 = abs(var_4 - newMazeX);
@@ -4169,7 +4167,7 @@ void Scene3500::dispatch() {
 						_mazeChangeAmount = 0;
 						_field1272 = false;
 						if (!_action1._field24)
-							_tunnelCircle.hide();
+							_tunnelVertCircle.hide();
 					} else if ((cellId == 1) && (newMazeX >= var_4 + 5) && (_mazePosition.x >= var_4 + 5)) {
 						newMazeX = var_4 + 5;
 						R2_GLOBALS._sound2.play(339);
@@ -4178,7 +4176,7 @@ void Scene3500::dispatch() {
 						_mazeChangeAmount = 0;
 						_field1272 = false;
 						if (!_action1._field24)
-							_tunnelCircle.hide();
+							_tunnelVertCircle.hide();
 					} else if (((cellId == 26) || (cellId == 24) || (cellId == 15) || (cellId == 5) || (cellId == 4)) && (var_a != 0) && (var_a <= 3)) {
 						newMazeY = var_6;
 						R2_GLOBALS._sound2.play(339);
@@ -4239,10 +4237,9 @@ void Scene3500::dispatch() {
 			_rotation->_idxChange = 2;
 		else
 			_rotation->_idxChange = 1;
-	}
 
-	if (_field1272)
 		_field1272 = false;
+	}
 
 	if (_mazeChangeAmount != 0) {
  		R2_GLOBALS._player._uiEnabled = false;
@@ -4252,9 +4249,6 @@ void Scene3500::dispatch() {
 		R2_GLOBALS._player._uiEnabled = true;
 		_aSound1.fadeOut2(NULL);
 	}
-
-	if (_rotation->_currIndex != _field1274)
-		_field1274 = _rotation->_currIndex;
 }
 
 /*--------------------------------------------------------------------------
