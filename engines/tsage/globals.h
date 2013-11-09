@@ -255,8 +255,8 @@ public:
 	int _animationCtr;
 	int _electromagnetChangeAmount;
 	int _electromagnetZoom;
-	int _v565E5;
-	int _v565E7;
+	bool _tractorField;
+	bool _cableAttached;
 	int _foodCount;
 	int _rimLocation;
 	int _rimTransportLocation;

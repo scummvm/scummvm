@@ -443,8 +443,8 @@ Ringworld2Globals::Ringworld2Globals() {
 	_animationCtr = 0;
 	_electromagnetChangeAmount = 0;
 	_electromagnetZoom = 0;
-	_v565E5 = 0;
-	_v565E7 = 0;
+	_tractorField = false;
+	_cableAttached = 0;
 	_foodCount = 0;
 	_rimLocation = 0;
 	_rimTransportLocation = 0;
@@ -479,8 +479,8 @@ void Ringworld2Globals::reset() {
 	_animationCtr = 0;
 	_electromagnetChangeAmount = 0;
 	_electromagnetZoom = 0;
-	_v565E5 = 0;
-	_v565E7 = 0;
+	_tractorField = false;
+	_cableAttached = 0;
 	_foodCount = 0;
 	_rimLocation = 0;
 	_rimTransportLocation = 0;
@@ -583,8 +583,8 @@ void Ringworld2Globals::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_animationCtr);
 	s.syncAsSint16LE(_electromagnetChangeAmount);
 	s.syncAsSint16LE(_electromagnetZoom);
-	s.syncAsSint16LE(_v565E5);
-	s.syncAsSint16LE(_v565E7);
+	s.syncAsSint16LE(_tractorField);
+	s.syncAsSint16LE(_cableAttached);
 	s.syncAsSint16LE(_foodCount);
 	s.syncAsSint32LE(_rimLocation);
 	s.syncAsSint16LE(_rimTransportLocation);
