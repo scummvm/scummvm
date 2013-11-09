@@ -138,7 +138,7 @@ public:
 	}
 
 	Cnv(uint16 numFrames, uint16 width, uint16 height, byte* data, bool freeData = false)
-		: _count(numFrames), _width(width), _height(height), _data(data), _freeData(freeData) {
+		: _count(numFrames), _width(width), _height(height), _data(data), _freeData(freeData), field_8(0) {
 
 	}
 
