@@ -685,8 +685,10 @@ void Scene3150::postInit(SceneObjectList *OwnerList) {
 		break;
 		}
 	default:
-		if ((R2_GLOBALS._v56AA0 == 1) && (R2_INVENTORY.getObjectScene(R2_ANCIENT_SCROLLS) == 2000) && (R2_GLOBALS._player._oldCharacterScene[R2_QUINN] == 3100)) {
-			++R2_GLOBALS._v56AA0;
+		if ((R2_GLOBALS._mirandaJailState == 1) && (R2_INVENTORY.getObjectScene(R2_ANCIENT_SCROLLS) == 2000) 
+				&& (R2_GLOBALS._player._oldCharacterScene[R2_QUINN] == 3100)) {
+			// Moving story on to Miranda getting food delivered
+			++R2_GLOBALS._mirandaJailState;
 			_sceneMode = 3156;
 			_guard.postInit();
 			_guard._effect = EFFECT_SHADED2;
@@ -699,8 +701,8 @@ void Scene3150::postInit(SceneObjectList *OwnerList) {
 
 			setAction(&_sequenceManager, this, 3156, &R2_GLOBALS._player, &_guard, &_doorBars, &_foodTray, NULL);
 		} else {
-			if ((R2_GLOBALS._v56AA0 != 1) && (R2_GLOBALS._v56AA0 != 2))
-				++R2_GLOBALS._v56AA0;
+			if ((R2_GLOBALS._mirandaJailState != 1) && (R2_GLOBALS._mirandaJailState != 2))
+				++R2_GLOBALS._mirandaJailState;
 
 			R2_GLOBALS._player.setup(30, 3, 1);
 			R2_GLOBALS._player.animate(ANIM_MODE_1, NULL);

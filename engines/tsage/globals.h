@@ -275,12 +275,12 @@ public:
 	byte _balloonAltitude;
 	int _scene1925CurrLevel; //_v56A9C
 	int _walkwaySceneNumber;
-	byte _v56AA0;
+	byte _mirandaJailState;
 	byte _scientistConvIndex;
 	Common::Point _ventCellPos;
-	byte _v56AA6;
-	byte _v56AA7;
-	byte _v56AA8;
+	byte _ductMazePanel1State;
+	byte _ductMazePanel2State;
+	byte _ductMazePanel3State;
 	int _scene180Mode;	// _v575f7
 	int _v57709;
 	int _v5780C;

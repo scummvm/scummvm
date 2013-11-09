@@ -426,11 +426,11 @@ Ringworld2Globals::Ringworld2Globals() {
 	_balloonAltitude = 5;
 	_scene1925CurrLevel = 0;
 	_walkwaySceneNumber = 0;
-	_v56AA0 = 0;
+	_mirandaJailState = 0;
 	_scientistConvIndex = 0;
-	_v56AA6 = 1;
-	_v56AA7 = 1;
-	_v56AA8 = 1;
+	_ductMazePanel1State = 1;
+	_ductMazePanel2State = 1;
+	_ductMazePanel3State = 1;
 	_scene180Mode = -1;
 	_v57709 = 0;
 	_v5780C = 0;
@@ -537,12 +537,12 @@ void Ringworld2Globals::reset() {
 	_balloonAltitude = 5;
 	_scene1925CurrLevel = 0; //_v56A9C
 	_walkwaySceneNumber = 0;
-	_v56AA0 = 0;
+	_mirandaJailState = 0;
 	_scientistConvIndex = 0;
 	_ventCellPos = Common::Point(60, 660);
-	_v56AA6 = 1;
-	_v56AA7 = 1;
-	_v56AA8 = 1;
+	_ductMazePanel1State = 1;
+	_ductMazePanel2State = 1;
+	_ductMazePanel3State = 1;
 	_scene180Mode = -1;
 	_v57709 = 0;
 	_v5780C = 0;
@@ -615,11 +615,11 @@ void Ringworld2Globals::synchronize(Serializer &s) {
 	s.syncAsByte(_desertStepsRemaining);
 	s.syncAsByte(_desertCorrectDirection);
 	s.syncAsByte(_desertPreviousDirection);
-	s.syncAsByte(_v56AA0);
+	s.syncAsByte(_mirandaJailState);
 	s.syncAsByte(_scientistConvIndex);
-	s.syncAsByte(_v56AA6);
-	s.syncAsByte(_v56AA7);
-	s.syncAsByte(_v56AA8);
+	s.syncAsByte(_ductMazePanel1State);
+	s.syncAsByte(_ductMazePanel2State);
+	s.syncAsByte(_ductMazePanel3State);
 
 	for (i = 0; i < 14; ++i)
 		s.syncAsByte(_spillLocation[i]);

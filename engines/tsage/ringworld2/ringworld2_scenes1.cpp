@@ -1351,7 +1351,7 @@ void Scene1200::LaserPanel::Jumper::init(int state) {
 
 	switch (_state) {
 	case 1:
-		switch (R2_GLOBALS._v56AA6) {
+		switch (R2_GLOBALS._ductMazePanel1State) {
 		case 1:
 			setFrame2(2);
 			setPosition(Common::Point(129, 101));
@@ -1365,7 +1365,7 @@ void Scene1200::LaserPanel::Jumper::init(int state) {
 		}
 		break;
 	case 2:
-		switch (R2_GLOBALS._v56AA7) {
+		switch (R2_GLOBALS._ductMazePanel2State) {
 		case 1:
 			setFrame2(2);
 			setPosition(Common::Point(152, 101));
@@ -1383,7 +1383,7 @@ void Scene1200::LaserPanel::Jumper::init(int state) {
 		}
 		break;
 	case 3:
-		switch (R2_GLOBALS._v56AA8) {
+		switch (R2_GLOBALS._ductMazePanel3State) {
 		case 1:
 			setFrame2(3);
 			setPosition(Common::Point(158, 95));
@@ -1410,22 +1410,22 @@ bool Scene1200::LaserPanel::Jumper::startAction(CursorType action, Event &event)
 	R2_GLOBALS._sound2.play(260);
 	switch (_state) {
 	case 1:
-		if (R2_GLOBALS._v56AA6 == 1) {
-			R2_GLOBALS._v56AA6 = 2;
+		if (R2_GLOBALS._ductMazePanel1State == 1) {
+			R2_GLOBALS._ductMazePanel1State = 2;
 			setFrame2(3);
 			setPosition(Common::Point(135, 95));
 		} else {
-			R2_GLOBALS._v56AA6 = 1;
+			R2_GLOBALS._ductMazePanel1State = 1;
 			setFrame2(2);
 			setPosition(Common::Point(129, 101));
 		}
 		break;
 	case 2:
-		++R2_GLOBALS._v56AA7;
-		if (R2_GLOBALS._v56AA7 == 4)
-			R2_GLOBALS._v56AA7 = 1;
+		++R2_GLOBALS._ductMazePanel2State;
+		if (R2_GLOBALS._ductMazePanel2State == 4)
+			R2_GLOBALS._ductMazePanel2State = 1;
 
-		switch (R2_GLOBALS._v56AA7) {
+		switch (R2_GLOBALS._ductMazePanel2State) {
 		case 1:
 			setFrame2(2);
 			setPosition(Common::Point(152, 101));
@@ -1443,12 +1443,12 @@ bool Scene1200::LaserPanel::Jumper::startAction(CursorType action, Event &event)
 		}
 		break;
 	case 3:
-		if (R2_GLOBALS._v56AA8 == 1) {
-			R2_GLOBALS._v56AA8 = 2;
+		if (R2_GLOBALS._ductMazePanel3State == 1) {
+			R2_GLOBALS._ductMazePanel3State = 2;
 			setFrame2(2);
 			setPosition(Common::Point(175, 101));
 		} else {
-			R2_GLOBALS._v56AA8 = 1;
+			R2_GLOBALS._ductMazePanel3State = 1;
 			setFrame2(3);
 			setPosition(Common::Point(158, 95));
 		}
@@ -1460,13 +1460,13 @@ bool Scene1200::LaserPanel::Jumper::startAction(CursorType action, Event &event)
 	Scene1200 *scene = (Scene1200 *)R2_GLOBALS._sceneManager._scene;
 	scene->_field418 = 0;
 
-	if ((R2_GLOBALS._v56AA6 == 1) && (R2_GLOBALS._v56AA7 == 1) && (R2_GLOBALS._v56AA8 == 1))
+	if ((R2_GLOBALS._ductMazePanel1State == 1) && (R2_GLOBALS._ductMazePanel2State == 1) && (R2_GLOBALS._ductMazePanel3State == 1))
 		scene->_field418 = 1;
-	else if ((R2_GLOBALS._v56AA6 == 2) && (R2_GLOBALS._v56AA7 == 1) && (R2_GLOBALS._v56AA8 == 1))
+	else if ((R2_GLOBALS._ductMazePanel1State == 2) && (R2_GLOBALS._ductMazePanel2State == 1) && (R2_GLOBALS._ductMazePanel3State == 1))
 		scene->_field418 = 2;
-	else if ((R2_GLOBALS._v56AA6 == 2) && (R2_GLOBALS._v56AA7 == 1) && (R2_GLOBALS._v56AA8 == 2))
+	else if ((R2_GLOBALS._ductMazePanel1State == 2) && (R2_GLOBALS._ductMazePanel2State == 1) && (R2_GLOBALS._ductMazePanel3State == 2))
 		scene->_field418 = 3;
-	else if ((R2_GLOBALS._v56AA6 == 2) && (R2_GLOBALS._v56AA7 == 3) && (R2_GLOBALS._v56AA8 == 1))
+	else if ((R2_GLOBALS._ductMazePanel1State == 2) && (R2_GLOBALS._ductMazePanel2State == 3) && (R2_GLOBALS._ductMazePanel3State == 1))
 		scene->_field418 = 4;
 
 	return true;
@@ -1515,13 +1515,13 @@ void Scene1200::postInit(SceneObjectList *OwnerList) {
 	_field418 = 0;
 	_field41A = 0;
 
-	if ((R2_GLOBALS._v56AA6 == 1) && (R2_GLOBALS._v56AA7 == 1) && (R2_GLOBALS._v56AA8 == 1))
+	if ((R2_GLOBALS._ductMazePanel1State == 1) && (R2_GLOBALS._ductMazePanel2State == 1) && (R2_GLOBALS._ductMazePanel3State == 1))
 		_field418 = 1;
-	else if ((R2_GLOBALS._v56AA6 == 2) && (R2_GLOBALS._v56AA7 == 1) && (R2_GLOBALS._v56AA8 == 1))
+	else if ((R2_GLOBALS._ductMazePanel1State == 2) && (R2_GLOBALS._ductMazePanel2State == 1) && (R2_GLOBALS._ductMazePanel3State == 1))
 		_field418 = 2;
-	else if ((R2_GLOBALS._v56AA6 == 2) && (R2_GLOBALS._v56AA7 == 1) && (R2_GLOBALS._v56AA8 == 2))
+	else if ((R2_GLOBALS._ductMazePanel1State == 2) && (R2_GLOBALS._ductMazePanel2State == 1) && (R2_GLOBALS._ductMazePanel3State == 2))
 		_field418 = 3;
-	else if ((R2_GLOBALS._v56AA6 == 2) && (R2_GLOBALS._v56AA7 == 3) && (R2_GLOBALS._v56AA8 == 1))
+	else if ((R2_GLOBALS._ductMazePanel1State == 2) && (R2_GLOBALS._ductMazePanel2State == 3) && (R2_GLOBALS._ductMazePanel3State == 1))
 		_field418 = 4;
 
 	R2_GLOBALS._player.postInit();
