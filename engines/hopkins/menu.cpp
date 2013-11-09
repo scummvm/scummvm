@@ -86,6 +86,8 @@ int MenuManager::menu() {
 			spriteData = _vm->_objectsMan->loadSprite("MENUFR.SPR");
 		else if (_vm->_globals->_language == LANG_SP)
 			spriteData = _vm->_objectsMan->loadSprite("MENUES.SPR");
+		else
+			error("Hopkins::MenuManager - Unknown version of the game.");
 
 		_vm->_events->mouseOn();
 		_vm->_events->changeMouseCursor(0);
