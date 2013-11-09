@@ -368,7 +368,7 @@ protected:
 	}
 
 public:
-	ProgramParser_ns(Parallaction_ns *vm) : _vm(vm), _parser(0), _instructionNames(0) {
+	ProgramParser_ns(Parallaction_ns *vm) : _vm(vm), _parser(0), _instructionNames(0), _script(0), _currentInstruction(0) {
 	}
 
 	virtual void init();
