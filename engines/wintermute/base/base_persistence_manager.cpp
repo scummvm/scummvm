@@ -606,7 +606,7 @@ bool BasePersistenceManager::transferBool(const char *name, bool *val) {
 
 //////////////////////////////////////////////////////////////////////////
 // int
-bool BasePersistenceManager::transfer(const char *name, int32 *val) {
+bool BasePersistenceManager::transferSint32(const char *name, int32 *val) {
 	if (_saving) {
 		_saveStream->writeSint32LE(*val);
 		if (_saveStream->err()) {
@@ -625,7 +625,7 @@ bool BasePersistenceManager::transfer(const char *name, int32 *val) {
 
 //////////////////////////////////////////////////////////////////////////
 // DWORD
-bool BasePersistenceManager::transfer(const char *name, uint32 *val) {
+bool BasePersistenceManager::transferUint32(const char *name, uint32 *val) {
 	if (_saving) {
 		_saveStream->writeUint32LE(*val);
 		if (_saveStream->err()) {
@@ -682,7 +682,7 @@ bool BasePersistenceManager::transferDouble(const char *name, double *val) {
 
 //////////////////////////////////////////////////////////////////////////
 // char*
-bool BasePersistenceManager::transfer(const char *name, char **val) {
+bool BasePersistenceManager::transferCharPtr(const char *name, char **val) {
 	if (_saving) {
 		putString(*val);
 		return STATUS_OK;
@@ -699,7 +699,7 @@ bool BasePersistenceManager::transfer(const char *name, char **val) {
 
 //////////////////////////////////////////////////////////////////////////
 // const char*
-bool BasePersistenceManager::transfer(const char *name, const char **val) {
+bool BasePersistenceManager::transferConstChar(const char *name, const char **val) {
 	if (_saving) {
 		putString(*val);
 		return STATUS_OK;
@@ -716,7 +716,7 @@ bool BasePersistenceManager::transfer(const char *name, const char **val) {
 
 //////////////////////////////////////////////////////////////////////////
 // Common::String
-bool BasePersistenceManager::transfer(const char *name, Common::String *val) {
+bool BasePersistenceManager::transferString(const char *name, Common::String *val) {
 	if (_saving) {
 		putString(val->c_str());
 		return STATUS_OK;
@@ -734,37 +734,6 @@ bool BasePersistenceManager::transfer(const char *name, Common::String *val) {
 		}
 		return STATUS_OK;
 	}
-}
-
-//////////////////////////////////////////////////////////////////////////
-bool BasePersistenceManager::transfer(const char *name, AnsiStringArray &val) {
-	size_t size;
-
-	if (_saving) {
-		size = val.size();
-		_saveStream->writeUint32LE(size);
-
-		for (AnsiStringArray::iterator it = val.begin(); it != val.end(); ++it) {
-			putString((*it).c_str());
-		}
-	} else {
-		val.clear();
-		size = _loadStream->readUint32LE();
-
-		for (size_t i = 0; i < size; i++) {
-			char *str = getString();
-			if (_loadStream->err()) {
-				delete[] str;
-				return STATUS_FAILED;
-			}
-			if (str) {
-				val.push_back(str);
-			}
-			delete[] str;
-		}
-	}
-
-	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////

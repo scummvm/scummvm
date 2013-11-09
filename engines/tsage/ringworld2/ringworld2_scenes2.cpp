@@ -1367,7 +1367,7 @@ bool Scene2425::Pictographs::startAction(CursorType action, Event &event) {
 	}
 }
 
-void Scene2425::Exit1::changeScene() {
+void Scene2425::SouthEastExit::changeScene() {
 	Scene2425 *scene = (Scene2425 *)R2_GLOBALS._sceneManager._scene;
 
 	_enabled = false;
@@ -1390,7 +1390,7 @@ void Scene2425::postInit(SceneObjectList *OwnerList) {
 	}
 
 	R2_GLOBALS._sound1.play(200);
-	_exit1.setDetails(Rect(270, 136, 319, 168), EXITCURSOR_SE, 2000);
+	_southEastExit.setDetails(Rect(270, 136, 319, 168), EXITCURSOR_SE, 2000);
 	R2_GLOBALS._player.postInit();
 	R2_GLOBALS._player.animate(ANIM_MODE_1, NULL);
 
@@ -1523,7 +1523,7 @@ bool Scene2430::OilLamp::startAction(CursorType action, Event &event) {
 	return true;
 }
 
-void Scene2430::Exit1::changeScene() {
+void Scene2430::SouthExit::changeScene() {
 	Scene2430 *scene = (Scene2430 *)R2_GLOBALS._sceneManager._scene;
 
 	scene->_sceneMode = 0;
@@ -1538,8 +1538,8 @@ void Scene2430::Exit1::changeScene() {
 void Scene2430::postInit(SceneObjectList *OwnerList) {
 	loadScene(2430);
 	SceneExt::postInit();
-	_exit1.setDetails(Rect(68, 155, 147, 168), EXITCURSOR_S, 2000);
-	_exit1.setDest(Common::Point(108, 160));
+	_southExit.setDetails(Rect(68, 155, 147, 168), EXITCURSOR_S, 2000);
+	_southExit.setDest(Common::Point(108, 160));
 
 	if (R2_INVENTORY.getObjectScene(R2_GUNPOWDER) == 2430) {
 		_gunPowder.postInit();
@@ -1673,7 +1673,7 @@ bool Scene2435::Astor::startAction(CursorType action, Event &event) {
 	}
 }
 
-void Scene2435::Exit1::changeScene() {
+void Scene2435::SouthExit::changeScene() {
 	Scene2435 *scene = (Scene2435 *)R2_GLOBALS._sceneManager._scene;
 
 	_enabled = false;
@@ -1693,8 +1693,8 @@ void Scene2435::postInit(SceneObjectList *OwnerList) {
 	_stripManager.addSpeaker(&_quinnSpeaker);
 	_stripManager.addSpeaker(&_seekerSpeaker);
 	_stripManager.addSpeaker(&_pharishaSpeaker);
-	_exit1.setDetails(Rect(142, 155, 207, 167), EXITCURSOR_S, 2000);
-	_exit1.setDest(Common::Point(175, 160));
+	_southExit.setDetails(Rect(142, 155, 207, 167), EXITCURSOR_S, 2000);
+	_southExit.setDest(Common::Point(175, 160));
 	_astor.postInit();
 	_astor.setup(2005, 3, 1);
 	_astor.setPosition(Common::Point(219, 106));
@@ -1811,7 +1811,7 @@ bool Scene2440::OilLamp::startAction(CursorType action, Event &event) {
 	return SceneActor::startAction(action, event);
 }
 
-void Scene2440::Exit1::changeScene() {
+void Scene2440::SouthEastExit::changeScene() {
 	Scene2440 *scene = (Scene2440 *)R2_GLOBALS._sceneManager._scene;
 
 	_enabled = false;
@@ -1827,8 +1827,8 @@ void Scene2440::postInit(SceneObjectList *OwnerList) {
 	SceneExt::postInit();
 	R2_GLOBALS._sound1.play(200);
 	// Fix exit cursor, the original was using NW
-	_exit1.setDetails(Rect(172, 155, 250, 167), EXITCURSOR_SE, 2000);
-	_exit1.setDest(Common::Point(210, 160));
+	_southEastExit.setDetails(Rect(172, 155, 250, 167), EXITCURSOR_SE, 2000);
+	_southEastExit.setDest(Common::Point(210, 160));
 	if (R2_INVENTORY.getObjectScene(R2_ALCOHOL_LAMP_2) == 2440) {
 		_oilLamp.postInit();
 		_oilLamp.setup(2435, 1, 1);
@@ -1958,7 +1958,7 @@ bool Scene2450::CareTaker::startAction(CursorType action, Event &event) {
 	}
 }
 
-void Scene2450::Exit1::changeScene() {
+void Scene2450::SouthWestExit::changeScene() {
 	Scene2450 *scene = (Scene2450 *)R2_GLOBALS._sceneManager._scene;
 
 	if ((R2_GLOBALS._player._characterIndex == R2_SEEKER) || (R2_GLOBALS.getFlag(61))) {
@@ -1992,8 +1992,8 @@ void Scene2450::postInit(SceneObjectList *OwnerList) {
 	_stripManager.addSpeaker(&_caretakerSpeaker);
 
 	if (R2_GLOBALS.getFlag(72)) {
-		_exit1.setDetails(Rect(0, 143, 47, 168), EXITCURSOR_SW, 2000);
-		_exit1.setDest(Common::Point(10, 160));
+		_southWestExit.setDetails(Rect(0, 143, 47, 168), EXITCURSOR_SW, 2000);
+		_southWestExit.setDest(Common::Point(10, 160));
 	}
 
 	if (!R2_GLOBALS.getFlag(61)) {
@@ -2070,7 +2070,7 @@ void Scene2450::postInit(SceneObjectList *OwnerList) {
 				_careTaker.setPosition(Common::Point(34, 153));
 				_careTaker.setDetails(2001, 40, -1, -1, 1, (SceneItem *)NULL);
 
-				_exit1._enabled = false;
+				_southWestExit._enabled = false;
 			}
 		} else {
 			R2_GLOBALS._player.postInit();
@@ -2103,7 +2103,7 @@ void Scene2450::postInit(SceneObjectList *OwnerList) {
 				_careTaker.setPosition(Common::Point(34, 153));
 				_careTaker.setDetails(2001, 40, -1, -1, 1, (SceneItem *)NULL);
 
-				_exit1._enabled = false;
+				_southWestExit._enabled = false;
 			}
 		}
 		R2_GLOBALS._player.enableControl();
@@ -2182,7 +2182,7 @@ void Scene2450::signal() {
 		_stripManager.start(700, this);
 		break;
 	case 2454:
-		_exit1._enabled = true;
+		_southWestExit._enabled = true;
 		R2_GLOBALS.setFlag(72);
 		_careTaker.remove();
 		if (R2_GLOBALS.getFlag(61)) {
@@ -2286,7 +2286,7 @@ bool Scene2455::ScrithKey::startAction(CursorType action, Event &event) {
 	return SceneActor::startAction(action, event);
 }
 
-void Scene2455::Exit1::changeScene() {
+void Scene2455::NorthExit::changeScene() {
 	Scene2455 *scene = (Scene2455 *)R2_GLOBALS._sceneManager._scene;
 
 	_enabled = false;
@@ -2306,7 +2306,7 @@ void Scene2455::postInit(SceneObjectList *OwnerList) {
 	}
 
 	R2_GLOBALS._sound1.play(200);
-	_exit1.setDetails(Rect(0, 0, 320, 15), EXITCURSOR_N, 2425);
+	_northExit.setDetails(Rect(0, 0, 320, 15), EXITCURSOR_N, 2425);
 
 	if (R2_INVENTORY.getObjectScene(R2_GLASS_DOME) == 2455) {
 		_scrithKey.postInit();
@@ -2398,7 +2398,7 @@ void Scene2455::signal() {
  *
  *--------------------------------------------------------------------------*/
 
-void Scene2500::Exit1::changeScene() {
+void Scene2500::WestExit::changeScene() {
 	Scene2500 *scene = (Scene2500 *)R2_GLOBALS._sceneManager._scene;
 
 	_enabled = false;
@@ -2426,8 +2426,8 @@ void Scene2500::postInit(SceneObjectList *OwnerList) {
 	if (R2_GLOBALS._sceneManager._previousScene == -1)
 		R2_GLOBALS._sceneManager._previousScene = 2000;
 
-	_exit1.setDetails(Rect(30, 50, 85, 105), EXITCURSOR_W, 2000);
-	_exit1.setDest(Common::Point(84, 104));
+	_westExit.setDetails(Rect(30, 50, 85, 105), EXITCURSOR_W, 2000);
+	_westExit.setDest(Common::Point(84, 104));
 	R2_GLOBALS._player.postInit();
 	R2_GLOBALS._player.animate(ANIM_MODE_1, NULL);
 
@@ -2532,7 +2532,7 @@ bool Scene2525::GlassDome::startAction(CursorType action, Event &event) {
 	return true;
 }
 
-void Scene2525::Exit1::changeScene() {
+void Scene2525::SouthExit::changeScene() {
 	Scene2525 *scene = (Scene2525 *)R2_GLOBALS._sceneManager._scene;
 
 	_enabled = false;
@@ -2551,7 +2551,7 @@ void Scene2525::postInit(SceneObjectList *OwnerList) {
 	R2_GLOBALS._sound1.play(200);
 	R2_GLOBALS._sound2.play(207);
 
-	_exit1.setDetails(Rect(86, 155, 228, 168), EXITCURSOR_S, 2000);
+	_southExit.setDetails(Rect(86, 155, 228, 168), EXITCURSOR_S, 2000);
 
 	if (R2_INVENTORY.getObjectScene(R2_GLASS_DOME) == 2525) {
 		_glassDome.postInit();
@@ -2690,7 +2690,7 @@ bool Scene2530::Crank::startAction(CursorType action, Event &event) {
 	return true;
 }
 
-void Scene2530::Exit1::changeScene() {
+void Scene2530::SouthExit::changeScene() {
 	Scene2530 *scene = (Scene2530 *)R2_GLOBALS._sceneManager._scene;
 
 	_enabled = false;
@@ -2707,8 +2707,8 @@ void Scene2530::postInit(SceneObjectList *OwnerList) {
 	loadScene(2530);
 	SceneExt::postInit();
 
-	_exit1.setDetails(Rect(68, 155, 147, 168), EXITCURSOR_S, 2000);
-	_exit1.setDest(Common::Point(108, 160));
+	_southExit.setDetails(Rect(68, 155, 147, 168), EXITCURSOR_S, 2000);
+	_southExit.setDest(Common::Point(108, 160));
 
 	if (R2_INVENTORY.getObjectScene(R2_PURE_GRAIN_ALCOHOL) == 2530) {
 		_flask.postInit();
@@ -2839,7 +2839,7 @@ bool Scene2535::TannerMask::startAction(CursorType action, Event &event) {
 	return true;
 }
 
-void Scene2535::Exit1::changeScene() {
+void Scene2535::SouthExit::changeScene() {
 	Scene2535 *scene = (Scene2535 *)R2_GLOBALS._sceneManager._scene;
 
 	_enabled = false;
@@ -2858,8 +2858,8 @@ void Scene2535::postInit(SceneObjectList *OwnerList) {
 		R2_GLOBALS.setFlag(73);
 		R2_INVENTORY.setObjectScene(R2_REBREATHER_TANK, 2535);
 	}
-	_exit1.setDetails(Rect(172, 155, 250, 167), EXITCURSOR_S, 2000);
-	_exit1.setDest(Common::Point(210, 160));
+	_southExit.setDetails(Rect(172, 155, 250, 167), EXITCURSOR_S, 2000);
+	_southExit.setDest(Common::Point(210, 160));
 
 	if (R2_INVENTORY.getObjectScene(R2_TANNER_MASK) == 2535) {
 		_tannerMask.postInit();
@@ -3072,7 +3072,7 @@ void Scene2700::Action4::signal() {
 	scene->_ghoulHome9.animate(ANIM_MODE_8, 1, NULL);
 }
 
-void Scene2700::Area1::process(Event &event) {
+void Scene2700::SouthExit::process(Event &event) {
 	SceneArea::process(event);
 	if ((event.eventType == EVENT_BUTTON_DOWN) && (R2_GLOBALS._player._canWalk) && (_bounds.contains(event.mousePos))) {
 		Scene2700 *scene = (Scene2700 *)R2_GLOBALS._sceneManager._scene;
@@ -3122,7 +3122,7 @@ void Scene2700::Area1::process(Event &event) {
 	}
 }
 
-void Scene2700::Area2::process(Event &event) {
+void Scene2700::EastExit::process(Event &event) {
 	SceneArea::process(event);
 	if ((event.eventType == EVENT_BUTTON_DOWN) && (R2_GLOBALS._player._canWalk) && (_bounds.contains(event.mousePos))) {
 		Scene2700 *scene = (Scene2700 *)R2_GLOBALS._sceneManager._scene;
@@ -3182,8 +3182,8 @@ void Scene2700::postInit(SceneObjectList *OwnerList) {
 	R2_GLOBALS._sound1.stop();
 	R2_GLOBALS._sound2.stop();
 
-	_area1.setDetails(Rect(135, 160, 185, 168), SHADECURSOR_DOWN);
-	_area2.setDetails(Rect(300, 90, 320, 135), EXITCURSOR_E);
+	_southExit.setDetails(Rect(135, 160, 185, 168), SHADECURSOR_DOWN);
+	_eastExit.setDetails(Rect(300, 90, 320, 135), EXITCURSOR_E);
 
 	_ghoulHome6.postInit();
 	_ghoulHome6.setup(2700, 1, 1);
@@ -3797,7 +3797,7 @@ void Scene2750::Action7::signal() {
 	scene->_folliage7.animate(ANIM_MODE_8, 1, NULL);
 }
 
-void Scene2750::Area1::process(Event &event) {
+void Scene2750::WestExit::process(Event &event) {
 	SceneArea::process(event);
 	if ((event.eventType == EVENT_BUTTON_DOWN) && (R2_GLOBALS._player._canWalk) && (_bounds.contains(event.mousePos))) {
 		Scene2750 *scene = (Scene2750 *)R2_GLOBALS._sceneManager._scene;
@@ -3828,7 +3828,7 @@ void Scene2750::Area1::process(Event &event) {
 	}
 }
 
-void Scene2750::Area2::process(Event &event) {
+void Scene2750::EastExit::process(Event &event) {
 	SceneArea::process(event);
 	if ((event.eventType == EVENT_BUTTON_DOWN) && (R2_GLOBALS._player._canWalk) && (_bounds.contains(event.mousePos))) {
 		Scene2750 *scene = (Scene2750 *)R2_GLOBALS._sceneManager._scene;
@@ -3863,8 +3863,8 @@ void Scene2750::postInit(SceneObjectList *OwnerList) {
 	loadScene(2750);
 	R2_GLOBALS._sound2.stop();
 	SceneExt::postInit();
-	_area1.setDetails(Rect(0, 90, 20, 135), EXITCURSOR_W);
-	_area2.setDetails(Rect(300, 90, 320, 135), EXITCURSOR_E);
+	_westExit.setDetails(Rect(0, 90, 20, 135), EXITCURSOR_W);
+	_eastExit.setDetails(Rect(300, 90, 320, 135), EXITCURSOR_E);
 
 	_walkRect1.set(30, 127, 155, 147);
 	_walkRect2.set(130, 142, 210, 167);

@@ -135,6 +135,38 @@ ToucheEngine::ToucheEngine(OSystem *system, Common::Language language)
 
 	for (uint i = 0; i < NUM_SEQUENCES; i++)
 		memset(&_sequenceEntryTable[i], 0, sizeof(SequenceEntry));
+
+	_talkListEnd = 0;
+	_talkListCurrent = 0;
+	_talkTextRectDefined = 0;
+	_talkTextDisplayed = 0;
+	_talkTextInitialized = 0;
+	_skipTalkText = 0;
+	_talkTextSpeed = 0;
+	_keyCharTalkCounter = 0;
+	_talkTableLastTalkingKeyChar = 0;
+	_talkTableLastOtherKeyChar = 0;
+	_talkTableLastStringNum = 0;
+
+	for (uint i = 0; i < NUM_TALK_ENTRIES; i++)
+		memset(&_talkTable[i], 0, sizeof(TalkEntry));
+
+	_conversationChoicesUpdated = 0;
+	_conversationReplyNum = 0;
+	_conversationEnded = 0;
+	_conversationNum = 0;
+	_scrollConversationChoiceOffset = 0;
+	_currentConversation = 0;
+	_disableConversationScript = 0;
+	_conversationAreaCleared = 0;
+
+	for (uint i = 0; i < NUM_CONVERSATION_CHOICES; i++)
+		memset(&_conversationChoicesTable[i], 0, sizeof(ConversationChoice));
+
+	for (uint i = 0; i < NUM_KEYCHARS; i++)
+		_sortedKeyCharsTable[i] = 0;
+
+	_currentKeyCharNum = 0;
 }
 
 ToucheEngine::~ToucheEngine() {

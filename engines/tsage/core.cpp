@@ -2106,7 +2106,7 @@ SceneObject::SceneObject() : SceneHotspot() {
 	_endFrame = 0;
 	_field68 = 0;
 	_regionIndex = 0;
-	_field9C = NULL;
+	_shadowMap = NULL;
 }
 
 SceneObject::SceneObject(const SceneObject &so) : SceneHotspot() {
@@ -2735,9 +2735,24 @@ void SceneObject::draw() {
 	Rect destRect = _bounds;
 	destRect.translate(-g_globals->_sceneManager._scene->_sceneBounds.left,
 		-g_globals->_sceneManager._scene->_sceneBounds.top);
-	Region *priorityRegion = g_globals->_sceneManager._scene->_priorities.find(_priority);
 	GfxSurface frame = getFrame();
-	g_globals->gfxManager().copyFrom(frame, destRect, priorityRegion);
+	Region *priorityRegion = g_globals->_sceneManager._scene->_priorities.find(_priority);
+
+	if (g_vm->getGameID() == GType_Ringworld2) {
+		switch (_effect) {
+		case EFFECT_SHADOW_MAP: {
+			assert(_shadowMap);
+			
+			GLOBALS.gfxManager().getSurface().copyFrom(frame, frame.getBounds(), 
+				destRect, priorityRegion,  _shadowMap);
+			return;
+		}
+		default:
+			break;
+		}
+	}
+
+	GLOBALS.gfxManager().copyFrom(frame, destRect, priorityRegion);
 }
 
 /**

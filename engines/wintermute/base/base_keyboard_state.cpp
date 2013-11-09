@@ -222,9 +222,9 @@ bool BaseKeyboardState::persist(BasePersistenceManager *persistMgr) {
 	BaseScriptable::persist(persistMgr);
 
 	persistMgr->transferBool(TMEMBER(_currentAlt));
-	persistMgr->transfer(TMEMBER(_currentCharCode));
+	persistMgr->transferUint32(TMEMBER(_currentCharCode));
 	persistMgr->transferBool(TMEMBER(_currentControl));
-	persistMgr->transfer(TMEMBER(_currentKeyData));
+	persistMgr->transferUint32(TMEMBER(_currentKeyData));
 	persistMgr->transferBool(TMEMBER(_currentPrintable));
 	persistMgr->transferBool(TMEMBER(_currentShift));
 
@@ -276,17 +276,21 @@ uint32 BaseKeyboardState::keyCodeToVKey(Common::Event *event) {
 }
 
 enum VKeyCodes {
-	kVkSpace = 32,
-	kVkLeft  = 37,
-	kVkUp    = 38,
-	kVkRight = 39,
-	kVkDown  = 40
+	kVkEscape = 27,
+	kVkSpace  = 32,
+	kVkLeft   = 37,
+	kVkUp     = 38,
+	kVkRight  = 39,
+	kVkDown   = 40
 };
 
 //////////////////////////////////////////////////////////////////////////
 Common::KeyCode BaseKeyboardState::vKeyToKeyCode(uint32 vkey) {
 	// todo
 	switch (vkey) {
+	case kVkEscape:
+		return Common::KEYCODE_ESCAPE;
+		break;
 	case kVkSpace:
 		return Common::KEYCODE_SPACE;
 		break;

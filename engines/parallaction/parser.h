@@ -207,6 +207,11 @@ protected:
 public:
 	LocationParser_ns(Parallaction_ns *vm) : _vm(vm), _commandsNames(0), _locationStmt(0),
 		_locationZoneStmt(0), _locationAnimStmt(0) {
+		_script = 0;
+		_parser = 0;
+		_zoneTypeNames = 0;
+		_zoneFlagNames = 0;
+		_zoneProg = 0;
 	}
 
 	virtual void init();
@@ -299,7 +304,7 @@ protected:
 
 public:
 	LocationParser_br(Parallaction_br *vm) : LocationParser_ns((Parallaction_ns*)vm), _vm(vm),
-		_audioCommandsNames(0) {
+		_audioCommandsNames(0), _out(0) {
 	}
 
 	virtual void init();
@@ -363,7 +368,7 @@ protected:
 	}
 
 public:
-	ProgramParser_ns(Parallaction_ns *vm) : _vm(vm), _parser(0), _instructionNames(0) {
+	ProgramParser_ns(Parallaction_ns *vm) : _vm(vm), _parser(0), _instructionNames(0), _script(0), _currentInstruction(0) {
 	}
 
 	virtual void init();

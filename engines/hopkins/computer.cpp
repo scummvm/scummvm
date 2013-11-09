@@ -349,15 +349,21 @@ void ComputerManager::loadMenu() {
 	char *ptr;
 	if (_vm->_fileIO->fileExists("COMPUTAN.TXT")) {
 		ptr = (char *)_vm->_fileIO->loadFile("COMPUTAN.TXT");
-	} else if (_vm->_globals->_language == LANG_FR) {
-		ptr = (char *)_vm->_globals->allocMemory(sizeof(_frenchText));
-		strcpy(ptr, _frenchText);
-	} else if (_vm->_globals->_language == LANG_SP) {
-		ptr = (char *)_vm->_globals->allocMemory(sizeof(_spanishText));
-		strcpy(ptr, _spanishText);
 	} else {
-		ptr = (char *)_vm->_globals->allocMemory(sizeof(_englishText));
-		strcpy(ptr, _englishText);
+		switch (_vm->_globals->_language) {
+		case LANG_FR:
+			ptr = (char *)_vm->_globals->allocMemory(sizeof(_frenchText));
+			strcpy(ptr, _frenchText);
+			break;
+		case LANG_SP:
+			ptr = (char *)_vm->_globals->allocMemory(sizeof(_spanishText));
+			strcpy(ptr, _spanishText);
+			break;
+		default:
+			ptr = (char *)_vm->_globals->allocMemory(sizeof(_englishText));
+			strcpy(ptr, _englishText);
+			break;
+		}
 	}
 
 	char *tmpPtr = ptr;
@@ -479,12 +485,17 @@ void ComputerManager::readText(int idx) {
 	_vm->_events->_escKeyFl = false;
 
 	Common::String filename;
-	if (_vm->_globals->_language == LANG_EN)
+	switch (_vm->_globals->_language) {
+	case LANG_EN:
 		filename = "THOPKAN.TXT";
-	else if (_vm->_globals->_language == LANG_FR)
+		break;
+	case LANG_FR:
 		filename = "THOPK.TXT";
-	else if (_vm->_globals->_language == LANG_SP)
+		break;
+	case LANG_SP:
 		filename = "THOPKES.TXT";
+		break;
+	}
 
 	byte *ptr = _vm->_fileIO->loadFile(filename);
 	uint16 fileSize = _vm->_fileIO->fileSize(filename);

@@ -43,16 +43,19 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"escapemansion",   "Escape from the Mansion"},
 	{"ghostsheet",      "Ghost in the Sheet"},
 	{"hamlet",          "Hamlet or the last game without MMORPS features, shaders and product placement"},
+	{"helga",           "Helga Deep In Trouble"},
 	{"jamesperis",      "James Peris: No License Nor Control"},
 	{"looky",           "Looky"},
 	{"julia",           "J.U.L.I.A."},
 	{"mirage",          "Mirage"},
+	{"paintaria",       "Paintaria"},
 	{"pigeons",         "Pigeons in the Park"},
 	{"reversion1",      "Reversion: The Escape"},
 	{"reversion2",      "Reversion: The Meeting"},
 	{"rosemary",        "Rosemary"},
 	{"shaban",          "Shaban"},
 	{"shinestar",       "The Shine of a Star"},
+	{"spaceinvaders",   "Space Invaders"},
 	{"spacemadness",    "Space Madness"},
 	{"thebox",          "The Box"},
 	{"tib",             "Fairy Tales About Toshechka and Boshechka"},
@@ -329,6 +332,21 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO0()
 	},
+	// Helga Deep In Trouble (Demo) (English)
+	{
+		"helga",
+		"Demo",
+		{
+			{"english.dcp", 0, "b3a93e678f0ef97200f691cd1724643f", 135864},
+			{"data.dcp", 0, "45134ed93bc391edf148b79cdcbf2a09", 154266028},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE |
+		ADGF_DEMO,
+		GUIO0()
+	},
 	// James Peris: No License Nor Control (English)
 	{
 		"jamesperis",
@@ -414,7 +432,8 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		ADGF_UNSTABLE,
+		ADGF_UNSTABLE |
+		ADGF_DEMO,
 		GUIO0()
 	},
 	// Looky Demo (German)
@@ -428,7 +447,8 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::DE_DEU,
 		Common::kPlatformWindows,
-		ADGF_UNSTABLE,
+		ADGF_UNSTABLE |
+		ADGF_DEMO,
 		GUIO0()
 	},
 	// Looky (German)
@@ -450,6 +470,16 @@ static const ADGameDescription gameDescriptions[] = {
 		"mirage",
 		"",
 		AD_ENTRY1s("data.dcp", "d230b0b99c0aa77b9ecd094d8ee5573b", 17844056),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	// Paintaria
+	{
+		"paintaria",
+		"",
+		AD_ENTRY1s("data.dcp", "354c08440c98150ff0d4008dd2865880", 48326040),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
@@ -709,6 +739,17 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	// Space Invaders (Demo)
+	{
+		"spaceinvaders",
+		"Demo",
+		AD_ENTRY1s("data.dcp", "3f27adefdf72f2c1601cf555c80a509f", 1308361),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE |
+		ADGF_DEMO,
 		GUIO0()
 	},
 	// Space Madness

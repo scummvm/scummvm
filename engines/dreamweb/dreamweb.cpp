@@ -241,6 +241,33 @@ DreamWebEngine::DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gam
 
 	for (uint i = 0; i < kNumExObjects; i++)
 		memset(&_exData[i], 0, sizeof(DynObject));
+
+	memset(&_vars, 0, sizeof(GameVars));
+
+	for (uint i = 0; i < 96; i++)
+		memset(&_backdropFlags[i], 0, sizeof(BackdropMapFlag));
+
+	for (uint i = 0; i < kNumReelRoutines+1; i++)
+		memset(&_reelRoutines[i], 0, sizeof(ReelRoutine));
+
+	_personData = 0;
+
+	for (uint i = 0; i < 16; i++)
+		memset(&_openInvList[i], 0, sizeof(ObjectRef));
+
+	for (uint i = 0; i < 30; i++)
+		memset(&_ryanInvList[i], 0, sizeof(ObjectRef));
+
+	for (uint i = 0; i < 11*10; i++)
+		memset(&_mapFlags[i], 0, sizeof(MapFlag));
+
+	for (uint i = 0; i < kNumChanges; i++)
+		memset(&_listOfChanges[i], 0, sizeof(Change));
+
+	_currentCharset = 0;
+
+	for (uint i = 0; i < 36; i++)
+		memset(&_pathData[i], 0, sizeof(RoomPaths));
 }
 
 DreamWebEngine::~DreamWebEngine() {

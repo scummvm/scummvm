@@ -81,7 +81,7 @@ private:
 	static void startStrip();
 	static void endStrip();
 public:
-	byte _field312[256];
+	byte _shadowPaletteMap[256];
 	bool _savedPlayerEnabled;
 	bool _savedUiEnabled;
 	bool _savedCanWalk;

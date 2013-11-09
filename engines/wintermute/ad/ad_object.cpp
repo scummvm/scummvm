@@ -1038,22 +1038,22 @@ bool AdObject::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferBool(TMEMBER(_drawn));
 	persistMgr->transferPtr(TMEMBER_PTR(_font));
 	persistMgr->transferBool(TMEMBER(_ignoreItems));
-	persistMgr->transfer(TMEMBER_INT(_nextState));
+	persistMgr->transferSint32(TMEMBER_INT(_nextState));
 	persistMgr->transferPtr(TMEMBER_PTR(_sentence));
-	persistMgr->transfer(TMEMBER_INT(_state));
+	persistMgr->transferSint32(TMEMBER_INT(_state));
 	persistMgr->transferPtr(TMEMBER_PTR(_animSprite));
 	persistMgr->transferBool(TMEMBER(_sceneIndependent));
-	persistMgr->transfer(TMEMBER(_forcedTalkAnimName));
+	persistMgr->transferCharPtr(TMEMBER(_forcedTalkAnimName));
 	persistMgr->transferBool(TMEMBER(_forcedTalkAnimUsed));
 	persistMgr->transferPtr(TMEMBER_PTR(_tempSprite2));
-	persistMgr->transfer(TMEMBER_INT(_type));
+	persistMgr->transferSint32(TMEMBER_INT(_type));
 	persistMgr->transferPtr(TMEMBER_PTR(_wptGroup));
 	persistMgr->transferPtr(TMEMBER_PTR(_stickRegion));
 	persistMgr->transferBool(TMEMBER(_subtitlesModRelative));
-	persistMgr->transfer(TMEMBER(_subtitlesModX));
-	persistMgr->transfer(TMEMBER(_subtitlesModY));
+	persistMgr->transferSint32(TMEMBER(_subtitlesModX));
+	persistMgr->transferSint32(TMEMBER(_subtitlesModY));
 	persistMgr->transferBool(TMEMBER(_subtitlesModXCenter));
-	persistMgr->transfer(TMEMBER(_subtitlesWidth));
+	persistMgr->transferSint32(TMEMBER(_subtitlesWidth));
 	persistMgr->transferPtr(TMEMBER_PTR(_inventory));
 	persistMgr->transferPtr(TMEMBER_PTR(_partEmitter));
 
@@ -1066,8 +1066,8 @@ bool AdObject::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferPtr(TMEMBER_PTR(_registerAlias));
 
 	persistMgr->transferBool(TMEMBER(_partFollowParent));
-	persistMgr->transfer(TMEMBER(_partOffsetX));
-	persistMgr->transfer(TMEMBER(_partOffsetY));
+	persistMgr->transferSint32(TMEMBER(_partOffsetX));
+	persistMgr->transferSint32(TMEMBER(_partOffsetY));
 
 	return STATUS_OK;
 }

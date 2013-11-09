@@ -498,7 +498,7 @@ bool SXMemBuffer::persist(BasePersistenceManager *persistMgr) {
 
 	BaseScriptable::persist(persistMgr);
 
-	persistMgr->transfer(TMEMBER(_size));
+	persistMgr->transferSint32(TMEMBER(_size));
 
 	if (persistMgr->getIsSaving()) {
 		if (_size > 0) {

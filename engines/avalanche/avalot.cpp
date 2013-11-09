@@ -295,7 +295,6 @@ void AvalancheEngine::setup() {
 
 		loadGame(loadSlot);
 	} else {
-		_isLoaded = false; // Set to true in _vm->loadGame().
 		newGame();
 
 		_soundFx = !_soundFx;
@@ -639,8 +638,7 @@ void AvalancheEngine::enterRoom(Room roomId, byte ped) {
 	if (_geidaFollows)
 		_whereIs[kPeopleGeida - 150] = roomId;
 
-	_roomTime = 0;
-
+	_roomCycles = 0;
 
 	if ((_lastRoom == kRoomMap) && (_lastRoomNotMap != _room))
 		enterNewTown();
@@ -1006,7 +1004,6 @@ void AvalancheEngine::enterRoom(Room roomId, byte ped) {
 	}
 
 	_seeScroll = false; // Now it can work again!
-	_isLoaded = false;
 }
 
 void AvalancheEngine::thinkAbout(byte object, bool type) {
@@ -1461,8 +1458,8 @@ void AvalancheEngine::resetVariables() {
 	_jumpStatus = 0;
 	_mushroomGrowing = false;
 	_spludwickAtHome = false;
-	_lastRoom = 0;
-	_lastRoomNotMap = 0;
+	_lastRoom = kRoomDummy;
+	_lastRoomNotMap = kRoomDummy;
 	_crapulusWillTell = false;
 	_enterCatacombsFromLustiesRoom = false;
 	_teetotal = false;
@@ -1482,6 +1479,7 @@ void AvalancheEngine::resetVariables() {
 	_takenMushroom = false;
 	_givenPenToAyles = false;
 	_askedDogfoodAboutNim = false;
+	_startTime = getTimeInSeconds();
 
 	_parser->resetVariables();
 	_animation->resetVariables();
@@ -1531,6 +1529,9 @@ void AvalancheEngine::newGame() {
 	_userMovesAvvy = false;
 	_doingSpriteRun = false;
 	_avvyInBed = true;
+
+	_ableToAddTimer = true; // Set to false in _vm->loadGame().
+	_isLoaded = false;
 
 	enterRoom(kRoomYours, 1);
 	avvy->_visible = false;

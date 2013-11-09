@@ -1156,11 +1156,11 @@ const char *PartEmitter::scToString() {
 bool PartEmitter::persist(BasePersistenceManager *persistMgr) {
 	BaseObject::persist(persistMgr);
 
-	persistMgr->transfer(TMEMBER(_width));
-	persistMgr->transfer(TMEMBER(_height));
+	persistMgr->transferSint32(TMEMBER(_width));
+	persistMgr->transferSint32(TMEMBER(_height));
 
-	persistMgr->transfer(TMEMBER(_angle1));
-	persistMgr->transfer(TMEMBER(_angle2));
+	persistMgr->transferSint32(TMEMBER(_angle1));
+	persistMgr->transferSint32(TMEMBER(_angle2));
 
 	persistMgr->transferFloat(TMEMBER(_velocity1));
 	persistMgr->transferFloat(TMEMBER(_velocity2));
@@ -1170,29 +1170,29 @@ bool PartEmitter::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferFloat(TMEMBER(_scale2));
 	persistMgr->transferBool(TMEMBER(_scaleZBased));
 
-	persistMgr->transfer(TMEMBER(_maxParticles));
+	persistMgr->transferSint32(TMEMBER(_maxParticles));
 
-	persistMgr->transfer(TMEMBER(_lifeTime1));
-	persistMgr->transfer(TMEMBER(_lifeTime2));
+	persistMgr->transferSint32(TMEMBER(_lifeTime1));
+	persistMgr->transferSint32(TMEMBER(_lifeTime2));
 	persistMgr->transferBool(TMEMBER(_lifeTimeZBased));
 
-	persistMgr->transfer(TMEMBER(_genInterval));
-	persistMgr->transfer(TMEMBER(_genAmount));
+	persistMgr->transferSint32(TMEMBER(_genInterval));
+	persistMgr->transferSint32(TMEMBER(_genAmount));
 
 	persistMgr->transferBool(TMEMBER(_running));
-	persistMgr->transfer(TMEMBER(_overheadTime));
+	persistMgr->transferSint32(TMEMBER(_overheadTime));
 
 	persistMgr->transferRect32(TMEMBER(_border));
-	persistMgr->transfer(TMEMBER(_borderThicknessLeft));
-	persistMgr->transfer(TMEMBER(_borderThicknessRight));
-	persistMgr->transfer(TMEMBER(_borderThicknessTop));
-	persistMgr->transfer(TMEMBER(_borderThicknessBottom));
+	persistMgr->transferSint32(TMEMBER(_borderThicknessLeft));
+	persistMgr->transferSint32(TMEMBER(_borderThicknessRight));
+	persistMgr->transferSint32(TMEMBER(_borderThicknessTop));
+	persistMgr->transferSint32(TMEMBER(_borderThicknessBottom));
 
-	persistMgr->transfer(TMEMBER(_fadeInTime));
-	persistMgr->transfer(TMEMBER(_fadeOutTime));
+	persistMgr->transferSint32(TMEMBER(_fadeInTime));
+	persistMgr->transferSint32(TMEMBER(_fadeOutTime));
 
-	persistMgr->transfer(TMEMBER(_alpha1));
-	persistMgr->transfer(TMEMBER(_alpha2));
+	persistMgr->transferSint32(TMEMBER(_alpha1));
+	persistMgr->transferSint32(TMEMBER(_alpha2));
 	persistMgr->transferBool(TMEMBER(_alphaTimeBased));
 
 	persistMgr->transferFloat(TMEMBER(_angVelocity1));
@@ -1207,10 +1207,10 @@ bool PartEmitter::persist(BasePersistenceManager *persistMgr) {
 
 	persistMgr->transferBool(TMEMBER(_useRegion));
 
-	persistMgr->transfer(TMEMBER_INT(_maxBatches));
-	persistMgr->transfer(TMEMBER_INT(_batchesGenerated));
+	persistMgr->transferSint32(TMEMBER_INT(_maxBatches));
+	persistMgr->transferSint32(TMEMBER_INT(_batchesGenerated));
 
-	persistMgr->transfer(TMEMBER(_emitEvent));
+	persistMgr->transferCharPtr(TMEMBER(_emitEvent));
 	persistMgr->transferPtr(TMEMBER_PTR(_owner));
 
 
@@ -1219,12 +1219,12 @@ bool PartEmitter::persist(BasePersistenceManager *persistMgr) {
 	uint32 numForces;
 	if (persistMgr->getIsSaving()) {
 		numForces = _forces.size();
-		persistMgr->transfer(TMEMBER(numForces));
+		persistMgr->transferUint32(TMEMBER(numForces));
 		for (uint32 i = 0; i < _forces.size(); i++) {
 			_forces[i]->persist(persistMgr);
 		}
 	} else {
-		persistMgr->transfer(TMEMBER(numForces));
+		persistMgr->transferUint32(TMEMBER(numForces));
 		for (uint32 i = 0; i < numForces; i++) {
 			PartForce *force = new PartForce(_gameRef);
 			force->persist(persistMgr);
@@ -1235,12 +1235,12 @@ bool PartEmitter::persist(BasePersistenceManager *persistMgr) {
 	uint32 numParticles;
 	if (persistMgr->getIsSaving()) {
 		numParticles = _particles.size();
-		persistMgr->transfer(TMEMBER(numParticles));
+		persistMgr->transferUint32(TMEMBER(numParticles));
 		for (uint32 i = 0; i < _particles.size(); i++) {
 			_particles[i]->persist(persistMgr);
 		}
 	} else {
-		persistMgr->transfer(TMEMBER(numParticles));
+		persistMgr->transferUint32(TMEMBER(numParticles));
 		for (uint32 i = 0; i < numParticles; i++) {
 			PartParticle *particle = new PartParticle(_gameRef);
 			particle->persist(persistMgr);

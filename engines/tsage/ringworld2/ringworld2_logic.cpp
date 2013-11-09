@@ -336,7 +336,7 @@ SceneExt::SceneExt(): Scene() {
 	_stripManager._onEnd = SceneExt::endStrip;
 
 	for (int i = 0; i < 256; i++)
-		_field312[i] = 0;
+		_shadowPaletteMap[i] = 0;
 
 	_savedPlayerEnabled = false;
 	_savedUiEnabled = false;
@@ -356,7 +356,7 @@ SceneExt::SceneExt(): Scene() {
 void SceneExt::synchronize(Serializer &s) {
 	Scene::synchronize(s);
 
-	s.syncBytes(&_field312[0], 256);
+	s.syncBytes(&_shadowPaletteMap[0], 256);
 	_sceneAreas.synchronize(s);
 }
 
@@ -585,7 +585,7 @@ void SceneExt::scalePalette(int RFactor, int GFactor, int BFactor) {
 			varC = tmp;
 			varD = j;
 		}
-		this->_field312[i] = varD;
+		this->_shadowPaletteMap[i] = varD;
 	}
 }
 
@@ -1285,7 +1285,7 @@ void SceneActor::postInit(SceneObjectList *OwnerList) {
 
 void SceneActor::remove() {
 	R2_GLOBALS._sceneItems.remove(this);
-	_field9C = NULL;
+	_shadowMap = NULL;
 	_linkedActor = NULL;
 
 	SceneObject::remove();
@@ -1325,26 +1325,6 @@ bool SceneActor::startAction(CursorType action, Event &event) {
 
 GfxSurface SceneActor::getFrame() {
 	GfxSurface frame = SceneObject::getFrame();
-
-	// TODO: Proper effects handling
-	switch (_effect) {
-	case EFFECT_NONE:
-	case EFFECT_5:
-		// TODO: Figure out purpose of setting image flags to 64, and getting
-		// scene priorities -1 or _shade
-		break;
-	case EFFECT_SHADED:
-		// TODO: Transposing using R2_GLOBALS._pixelArrayMap
-		break;
-	case EFFECT_2:
-		// No effect
-		break;
-	case EFFECT_4:
-		break;
-	default:
-		// TODO: Default effect
-		break;
-	}
 
 	return frame;
 }

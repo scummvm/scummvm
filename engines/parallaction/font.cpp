@@ -518,6 +518,9 @@ AmigaFont::AmigaFont(Common::SeekableReadStream &stream) {
 	_charSpace = 0;
 	_charKern = 0;
 
+	_cp = 0;
+	_pitch = 0;
+
 	if (_font->_charSpace != 0)
 		_charSpace = (uint16 *)(_data + FROM_BE_32(_font->_charSpace));
 	if (_font->_charKern != 0)

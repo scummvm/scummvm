@@ -559,9 +559,11 @@ static GfxSurface ResizeSurface(GfxSurface &src, int xSize, int ySize, int trans
 }
 
 /**
- * Copys an area from one GfxSurface to another
+ * Copys an area from one GfxSurface to another.
+ * 
  */
-void GfxSurface::copyFrom(GfxSurface &src, Rect srcBounds, Rect destBounds, Region *priorityRegion) {
+void GfxSurface::copyFrom(GfxSurface &src, Rect srcBounds, Rect destBounds, 
+		Region *priorityRegion, const byte *shadowMap) {
 	GfxSurface srcImage;
 	if (srcBounds.isEmpty())
 		return;
@@ -631,8 +633,15 @@ void GfxSurface::copyFrom(GfxSurface &src, Rect srcBounds, Rect destBounds, Regi
 					if (!priorityRegion || !priorityRegion->contains(Common::Point(
 							xp + g_globals->_sceneManager._scene->_sceneBounds.left,
 							destBounds.top + y + g_globals->_sceneManager._scene->_sceneBounds.top))) {
-						if (*tempSrc != src._transColor)
-							*tempDest = *tempSrc;
+						if (*tempSrc != src._transColor) {
+							if (shadowMap) {
+								// Using a shadow map, so translate the dest pixel using the mapping array
+								*tempDest = shadowMap[*tempDest];
+							} else {
+								// Otherwise, it's a standard pixel copy
+								*tempDest = *tempSrc;
+							}
+						}
 					}
 					++tempSrc;
 					++tempDest;

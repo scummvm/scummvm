@@ -173,12 +173,12 @@ void BaseRenderer::endSaveLoad() {
 }
 
 void BaseRenderer::persistSaveLoadImages(BasePersistenceManager *persistMgr) {
-	persistMgr->transfer(TMEMBER(_loadImageName));
-	persistMgr->transfer(TMEMBER(_saveImageName));
-	persistMgr->transfer(TMEMBER(_saveImageX));
-	persistMgr->transfer(TMEMBER(_saveImageY));
-	persistMgr->transfer(TMEMBER(_loadImageX));
-	persistMgr->transfer(TMEMBER(_loadImageY));
+	persistMgr->transferString(TMEMBER(_loadImageName));
+	persistMgr->transferString(TMEMBER(_saveImageName));
+	persistMgr->transferSint32(TMEMBER(_saveImageX));
+	persistMgr->transferSint32(TMEMBER(_saveImageY));
+	persistMgr->transferSint32(TMEMBER(_loadImageX));
+	persistMgr->transferSint32(TMEMBER(_loadImageY));
 }
 
 //////////////////////////////////////////////////////////////////////

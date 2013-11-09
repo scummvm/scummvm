@@ -232,6 +232,13 @@ public:
 
 	int lift_getButtonIdP(int objid);
 	void lift_sub5(Scene *sc, int qu1, int qu2);
+	void lift_exitSeq(ExCommand *ex);
+	void lift_closedoorSeq();
+	void lift_animation3();
+	void lift_goAnimation();
+	void lift_sub1(StaticANIObject *ani);
+	void lift_startExitQueue();
+	void lift_sub05(ExCommand *ex);
 
 public:
 

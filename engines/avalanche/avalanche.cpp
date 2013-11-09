@@ -57,7 +57,6 @@ AvalancheEngine::AvalancheEngine(OSystem *syst, const AvalancheGameDescription *
 	_sound = nullptr;
 
 	_platform = gd->desc.platform;
-
 	initVariables();
 }
 
@@ -90,14 +89,10 @@ AvalancheEngine::~AvalancheEngine() {
 }
 
 void AvalancheEngine::initVariables() {
-	resetVariables();
-
 	for (int i = 0; i < 31; i++) {
 		_also[i][0] = nullptr;
 		_also[i][1] = nullptr;
 	}
-
-	_totalTime = 0;
 
 	memset(_fxPal, 0, 16 * 16 * 3);
 
@@ -129,7 +124,7 @@ void AvalancheEngine::initVariables() {
 	_him = kPeoplePardon;
 	_her = kPeoplePardon;
 	_it = Parser::kPardon;
-	_roomTime = 0;
+	_roomCycles = 0;
 	_doingSpriteRun = false;
 	_isLoaded = false;
 	_soundFx = true;
@@ -146,6 +141,32 @@ void AvalancheEngine::initVariables() {
 	_seeScroll = false;
 	_currentMouse = 177;
 	_holdLeftMouse = false;
+
+	_jumpStatus = 0;
+	_mushroomGrowing = false;
+	_crapulusWillTell = false;
+	_enterCatacombsFromLustiesRoom = false;
+	_teetotal = false;
+	_malagauche = 0;
+	_drinking = '\0';
+	_enteredLustiesRoomAsMonk = false;
+	_catacombX = 0;
+	_catacombY = 0;
+	_avvysInTheCupboard = false;
+	_geidaFollows = false;
+	_givenPotionToGeida = false;
+	_lustieIsAsleep = false;
+	_beenTiedUp = false;
+	_sittingInPub = false;
+	_spurgeTalkCount = 0;
+	_metAvaroid = false;
+	_takenMushroom = false;
+	_givenPenToAyles = false;
+	_askedDogfoodAboutNim = false;
+	_ableToAddTimer = false;
+	_spludwickAtHome = false;
+	_passedCwytalotInHerts = false;
+	_lastRoom = _lastRoomNotMap = kRoomDummy;
 }
 
 Common::ErrorCode AvalancheEngine::initialize() {
@@ -363,6 +384,8 @@ bool AvalancheEngine::saveGame(const int16 slot, const Common::String &desc) {
 	f->writeSint16LE(t.tm_mon);
 	f->writeSint16LE(t.tm_year);
 
+	_totalTime += getTimeInSeconds() - _startTime;
+
 	Common::Serializer sz(NULL, f);
 	synchronize(sz);
 	f->finalize();
@@ -425,6 +448,7 @@ bool AvalancheEngine::loadGame(const int16 slot) {
 	delete f;
 
 	_isLoaded = true;
+	_ableToAddTimer = false;
 	_seeScroll = true;  // This prevents display of the new sprites before the new picture is loaded.
 
 	if (_holdTheDawn) {
@@ -480,6 +504,12 @@ Common::String AvalancheEngine::expandDate(int d, int m, int y) {
 		}
 
 	return day + ' ' + month + ' ' + intToStr(y + 1900);
+}
+
+uint32 AvalancheEngine::getTimeInSeconds() {
+	TimeDate time;
+	_system->getTimeAndDate(time);
+	return time.tm_hour * 3600 + time.tm_min * 60 + time.tm_sec;
 }
 
 void AvalancheEngine::updateEvents() {

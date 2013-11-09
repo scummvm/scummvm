@@ -84,9 +84,9 @@ public:
 		}
 
 		bool persist(BasePersistenceManager *persistMgr) {
-			persistMgr->transfer(TMEMBER(_offsetX));
-			persistMgr->transfer(TMEMBER(_offsetY));
-			persistMgr->transfer(TMEMBER(_color));
+			persistMgr->transferSint32(TMEMBER(_offsetX));
+			persistMgr->transferSint32(TMEMBER(_offsetY));
+			persistMgr->transferUint32(TMEMBER(_color));
 			return STATUS_OK;
 		}
 

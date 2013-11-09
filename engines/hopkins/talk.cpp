@@ -68,12 +68,17 @@ void TalkManager::startAnimatedCharacterDialogue(const Common::String &filename)
 	getStringFromBuffer(40, spriteFilename, (const char *)_characterBuffer);
 	getStringFromBuffer(0, _questionsFilename, (const char *)_characterBuffer);
 	getStringFromBuffer(20, _answersFilename, (const char *)_characterBuffer);
-	if (_vm->_globals->_language == LANG_FR) {
+	
+	switch (_vm->_globals->_language) {
+	case LANG_FR:
 		_answersFilename = _questionsFilename = "RUE.TXT";
-	} else if (_vm->_globals->_language == LANG_EN) {
+		break;
+	case LANG_EN:
 		_answersFilename = _questionsFilename = "RUEAN.TXT";
-	} else if (_vm->_globals->_language == LANG_SP) {
+		break;
+	case LANG_SP:
 		_answersFilename = _questionsFilename = "RUEES.TXT";
+		break;
 	}
 	_dialogueMesgId1 = READ_LE_INT16((uint16 *)_characterBuffer + 40);
 	_paletteBufferIdx = 20 * READ_LE_INT16((uint16 *)_characterBuffer + 42) + 110;

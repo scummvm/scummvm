@@ -658,6 +658,146 @@ void MovGraph2::buildMovInfo1SubItems(MovInfo1 *movinfo, Common::Array<MovGraphL
 }
 
 MessageQueue *MovGraph2::buildMovInfo1MessageQueue(MovInfo1 *movInfo) {
+#if 0
+	MovInfo1 movinfo;
+
+	memcpy(movinfo, movInfo, sizeof(movinfo));
+
+	curX = movInfo->pt1.x;
+	curY = movInfo->pt1.y;
+	curDistance = movInfo->distance1;
+
+	mq = new MessageQueue(g_fullpipe->globalMessageQueueList->compact());
+
+	for (int i = 0; i < movInfo->_itemsCount - 1; i++) {
+		v9 = (MovInfo1Sub *)movInfo->items;
+		v10 = v9[i + 1].subIndex;
+
+		if (v10 != 10) {
+			if (v40 >= movInfo->_itemsCount - 2 || v9[i + 2].subIndex != 10) {
+				v16 = v9[i].subIndex;
+				v17 = (char *)this->items[1] + 16 * (v10 + 8);
+				subidx = 93 * movInfo->field_0;
+				movinfo.flags = 0;
+				v14 = 8 * subidx;
+				v15 = (MovGraph2Item *)(&v17[184 * v16] + v14);
+			} else {
+				v11 = v9[i].subIndex;
+				v12 = (char *)this->items[1] + 16 * (v10 + 4);
+				v13 = 93 * movInfo->field_0;
+				movinfo.flags = 2;
+				v14 = 8 * v13;
+				v15 = (MovGraph2Item *)(&v12[184 * v11] + v14);
+			}
+			if (v40 < movInfo->_itemsCount - 2
+				 || (v19 = v9[i + 1].x, v20 = (char *)&v9[i].x, v47 = (int *)v20, v21 = *(_DWORD *)v20, v21 == v19)
+				 && v9[i].y == v9[i + 1].y
+				 || v21 == -1
+				 || v9[i].y == -1
+				 || v19 == -1
+				 || v9[i + 1].y == -1) {
+
+				ExCommand *ex = new ExCommand(_items[1][movInfo->field_0].objectId, 1, v15->objectId, 0, 0, 0, 1, 0, 0, 0);
+
+				ex->_excFlags |= 2u;
+				ex->_keyCode = _items[1][movInfo->field_0].obj->GameObject.okeyCode;
+				ex->_field_24 = 1;
+				ex->_field_14 = -1;
+				mq->_exCommands.push_back(ex);
+
+				curX += v15->subItems[0].staticsId2;
+				curY += v15->subItems[0].staticsId1;
+			} else {
+				memset(mgminfo, 0, sizeof(mgminfo));
+
+				HIWORD(v22) = 0a;
+				v23 = v15->obj;
+				mgminfo.ani = *(StaticANIObject **)((char *)&this->items[1]->obj + v14);
+				LOWORD(v22) = *(_WORD *)(v23->callback1 + 132);
+				mgminfo.staticsId2 = v22;
+				mgminfo.x1 = v9[i + 1].x;
+				mgminfo.y1 = v9[i + 1].y;
+				mgminfo.field_1C = v9[i + 1].field_C;
+				mgminfo.staticsId1 = *(_WORD *)(v23->initialCounter + 132);
+				mgminfo.x2 = *v47;
+				v24 = v15->objectId;
+				mgminfo.y2 = v9[i].y;
+				mgminfo.field_10 = 1;
+				mgminfo.flags = 127;
+				mgminfo.movementId = v24;
+
+				v25 = (MessageQueue *)MGM_sub_445330((MGM *)&this->movGraph.mgm, &mgminfo);
+				MessageQueue_transferExCommands(mq, v25);
+
+				if (v25)
+					(*(void (__thiscall **)(MessageQueue *, signed int))(v25->CObject.vmt + 4))(v25, 1);
+
+				v26 = (MovInfo1Sub *)movInfo->items;
+				curX = v26[i + 1].x;
+				curY = v26[i + 1].y;
+			}
+		} else {
+			movinfo.item1Index = v9[i].subIndex;
+			movinfo.subIndex = movinfo.item1Index;
+			movinfo.pt1.y = curY;
+			movinfo.pt1.x = curX;
+			movinfo.distance1 = curDistance;
+			v29 = v9[i + 2].x;
+			movinfo.pt2.x = v9[i + 2].x;
+			movinfo.pt2.y = v9[i + 2].y;
+			movinfo.distance2 = v9[i + 2].field_C;
+
+			if (v40 >= movInfo->_itemsCount - 4
+				 || (v30 = v9[i + 2].subIndex, v30 == 10)
+				 || (v31 = v9[i + 3].subIndex, v31 == 10)
+				 || v30 == v31
+				 || v9[i + 4].subIndex != 10) {
+				if (v40 >= movInfo->itemsCount - 3
+					 || (v33 = v9[i + 2].subIndex, v33 == 10)
+					 || (v34 = v9[i + 3].subIndex, v34 == 10)
+					 || v33 == v34) {
+					movinfo.flags = movinfo.flags & 2 | movInfo->flags & 1;
+				} else {
+					v35 = (MovInfo1 *)((char *)&this->items[1][movInfo->field_0] + 184 * v33 + 16 * (v34 + 8));
+					movinfo.pt2.x = v29 - v35->pt1.y;
+					movinfo.pt2.y -= v35->pt2.x;
+					movinfo.flags = movinfo.flags & 2 | movInfo->flags & 1;
+				}
+			} else {
+				v32 = (MovInfo1 *)((char *)&this->items[1][movInfo->field_0] + 184 * v30 + 16 * (v31 + 4));
+
+				if (movinfo.item1Index && movinfo.item1Index != 1) {
+					movinfo.pt2.y -= v32->pt2.x;
+					movinfo.flags = movinfo.flags & 2 | 1;
+				} else {
+					movinfo.pt2.x = v29 - v32->pt1.y;
+					movinfo.flags = movinfo.flags & 2 | 1;
+				}
+			}
+			i++;
+
+			v36 = MovGraph2_sub_454CD0(this, &movinfo);
+
+			if (!v36) {
+				delete mq;
+				return 0;
+			}
+			MessageQueue_transferExCommands(mq, v36);
+
+			delete v36;
+
+			curX = movinfo.pt2.x;
+			curY = movinfo.pt2.y;
+			curDistance = movinfo.distance2;
+		}
+	}
+
+	movInfo->pt2.x = movinfo.pt2.x;
+	movInfo->pt2.y = movinfo.pt2.y;
+
+	return mq;
+
+#endif
 	warning("STUB: MovGraph2::buildMovInfo1MessageQueue()");
 
 	return 0;

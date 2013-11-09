@@ -466,8 +466,9 @@ enum AnimateMode {ANIM_MODE_NONE = 0, ANIM_MODE_1 = 1, ANIM_MODE_2 = 2, ANIM_MOD
 		ANIM_MODE_9 = 9
 };
 
-enum Effect { EFFECT_NONE = 0, EFFECT_SHADED = 1, EFFECT_2 = 2, EFFECT_3 = 3,
-	EFFECT_4 = 4, EFFECT_5 = 5 };
+// Actor effect enumeration used in Return to Ringworld 2
+enum Effect { EFFECT_NONE = 0, EFFECT_SHADED = 1, EFFECT_3 = 3,
+	EFFECT_SHADOW_MAP = 5, EFFECT_SHADED2 = 6 };
 
 class SceneObject;
 
@@ -552,7 +553,7 @@ public:
 	uint32 _regionBitList;
 
 	// Ringworld 2 specific fields
-	byte *_field9C;
+	byte *_shadowMap;
 	int _shade, _oldShade;
 	int _effect;
 	SceneObject *_linkedActor;

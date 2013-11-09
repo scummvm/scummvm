@@ -654,7 +654,7 @@ void SpeakerMiranda3375::proc15() {
 		_object1.postInit();
 		_object1.setPosition(_object2->_position);
 		_object1._numFrames = 7;
-		_object1._effect = 1;
+		_object1._effect = EFFECT_SHADED;
 		_object1.changeZoom(-1);
 
 		if (scene->_companion1._position.y != 163)
@@ -704,7 +704,7 @@ void SpeakerMiranda3385::proc15() {
 		_object1.postInit();
 		_object1.setPosition(_object2->_position);
 		_object1._numFrames = 7;
-		_object1._effect = 1;
+		_object1._effect = EFFECT_SHADED;
 		_object1.changeZoom(-1);
 
 		if (R2_GLOBALS._sceneManager._previousScene == 3375)
@@ -753,7 +753,7 @@ void SpeakerMiranda3395::proc15() {
 		_object1.postInit();
 		_object1.setPosition(_object2->_position);
 		_object1._numFrames = 7;
-		_object1._effect = 1;
+		_object1._effect = EFFECT_SHADED;
 		_object1.changeZoom(-1);
 
 		if (R2_GLOBALS._sceneManager._previousScene == 3385)
@@ -803,7 +803,7 @@ void SpeakerMiranda3400::proc15() {
 		_object1.postInit();
 		_object1.setPosition(_object2->_position);
 		_object1._numFrames = 7;
-		_object1._effect = 1;
+		_object1._effect = EFFECT_SHADED;
 		_object1.changeZoom(-1);
 		R2_GLOBALS._player.disableControl();
 		R2_GLOBALS._events.setCursor(CURSOR_CROSSHAIRS);
@@ -847,7 +847,7 @@ void SpeakerMiranda3600::proc15() {
 		_object1.postInit();
 		_object1.setPosition(_object2->_position);
 		_object1._numFrames = 7;
-		_object1._effect = 1;
+		_object1._effect = EFFECT_SHADED;
 		_object1.changeZoom(-1);
 		R2_GLOBALS._player.disableControl();
 		R2_GLOBALS._events.setCursor(CURSOR_CROSSHAIRS);
@@ -1139,7 +1139,7 @@ void SpeakerProtector3600::proc15() {
 		_object1.postInit();
 		_object1.setPosition(_object2->_position);
 		_object1._numFrames = 7;
-		_object1._effect = 1;
+		_object1._effect = EFFECT_SHADED;
 		_object1.changeZoom(-1);
 
 		R2_GLOBALS._player.disableControl();
@@ -1528,7 +1528,7 @@ void SpeakerQuinn3375::proc15() {
 		_object1.postInit();
 		_object1.setPosition(_object2->_position);
 		_object1._numFrames = 7;
-		_object1._effect = 1;
+		_object1._effect = EFFECT_SHADED;
 		_object1.changeZoom(-1);
 
 		if (scene->_companion1._position.y != 163)
@@ -1579,7 +1579,7 @@ void SpeakerQuinn3385::proc15() {
 		_object1.postInit();
 		_object1.setPosition(_object2->_position);
 		_object1._numFrames = 7;
-		_object1._effect = 1;
+		_object1._effect = EFFECT_SHADED;
 		_object1.changeZoom(-1);
 
 		if (R2_GLOBALS._sceneManager._previousScene == 3375)
@@ -1634,7 +1634,7 @@ void SpeakerQuinn3395::proc15() {
 		_object1.postInit();
 		_object1.setPosition(_object2->_position);
 		_object1._numFrames = 7;
-		_object1._effect = 1;
+		_object1._effect = EFFECT_SHADED;
 		_object1.changeZoom(-1);
 
 		if (R2_GLOBALS._sceneManager._previousScene == 3385)
@@ -1689,7 +1689,7 @@ void SpeakerQuinn3400::proc15() {
 		_object1.postInit();
 		_object1.setPosition(_object2->_position);
 		_object1._numFrames = 7;
-		_object1._effect = 1;
+		_object1._effect = EFFECT_SHADED;
 		_object1.changeZoom(-1);
 		R2_GLOBALS._player.disableControl();
 		if (_object2->_mover)
@@ -1735,7 +1735,7 @@ void SpeakerQuinn3600::proc15() {
 		_object1.postInit();
 		_object1.setPosition(_object2->_position);
 		_object1._numFrames = 7;
-		_object1._effect = 1;
+		_object1._effect = EFFECT_SHADED;
 		_object1.changeZoom(-1);
 		R2_GLOBALS._player.disableControl();
 		R2_GLOBALS._events.setCursor(CURSOR_CROSSHAIRS);
@@ -2241,7 +2241,7 @@ void SpeakerSeeker3375::proc15() {
 		_object1.postInit();
 		_object1.setPosition(_object2->_position);
 		_object1._numFrames = 7;
-		_object1._effect = 1;
+		_object1._effect = EFFECT_SHADED;
 		_object1.changeZoom(-1);
 
 		if (scene->_companion1._position.y != 163)
@@ -2290,7 +2290,7 @@ void SpeakerSeeker3385::proc15() {
 		_object1.postInit();
 		_object1.setPosition(_object2->_position);
 		_object1._numFrames = 7;
-		_object1._effect = 1;
+		_object1._effect = EFFECT_SHADED;
 		_object1.changeZoom(-1);
 
 		if (R2_GLOBALS._sceneManager._previousScene == 3375)
@@ -2339,7 +2339,7 @@ void SpeakerSeeker3395::proc15() {
 		_object1.postInit();
 		_object1.setPosition(_object2->_position);
 		_object1._numFrames = 7;
-		_object1._effect = 1;
+		_object1._effect = EFFECT_SHADED;
 		_object1.changeZoom(-1);
 
 		if (R2_GLOBALS._sceneManager._previousScene == 3385)
@@ -2388,7 +2388,7 @@ void SpeakerSeeker3400::proc15() {
 		_object1.postInit();
 		_object1.setPosition(_object2->_position);
 		_object1._numFrames = 7;
-		_object1._effect = 1;
+		_object1._effect = EFFECT_SHADED;
 		_object1.changeZoom(-1);
 		R2_GLOBALS._player.disableControl();
 		R2_GLOBALS._events.setCursor(CURSOR_CROSSHAIRS);
@@ -2447,7 +2447,7 @@ void SpeakerSeeker3600::proc15() {
 		_object1.postInit();
 		_object1.setPosition(_object2->_position);
 		_object1._numFrames = 7;
-		_object1._effect = 1;
+		_object1._effect = EFFECT_SHADED;
 		_object1.changeZoom(-1);
 		R2_GLOBALS._player.disableControl();
 		R2_GLOBALS._events.setCursor(CURSOR_CROSSHAIRS);
@@ -2771,7 +2771,7 @@ void SpeakerTeal3400::proc15() {
 		_object2->hide();
 		_object1.postInit();
 		_object1._numFrames = 7;
-		_object1._effect = 1;
+		_object1._effect = EFFECT_SHADED;
 		_object1.changeZoom(-1);
 		R2_GLOBALS._player.disableControl();
 		R2_GLOBALS._events.setCursor(CURSOR_CROSSHAIRS);
@@ -2829,7 +2829,7 @@ void SpeakerTeal3600::proc15() {
 		_object1.postInit();
 		_object1.setPosition(_object2->_position);
 		_object1._numFrames = 7;
-		_object1._effect = 1;
+		_object1._effect = EFFECT_SHADED;
 		_object1.changeZoom(-1);
 		R2_GLOBALS._player.disableControl();
 		R2_GLOBALS._events.setCursor(CURSOR_CROSSHAIRS);
@@ -3017,7 +3017,7 @@ void SpeakerWebbster3375::proc15() {
 		_object1.postInit();
 		_object1.setPosition(_object2->_position);
 		_object1._numFrames = 7;
-		_object1._effect = 1;
+		_object1._effect = EFFECT_SHADED;
 		_object1.changeZoom(-1);
 
 		if (scene->_companion1._position.y != 163)
@@ -3061,7 +3061,7 @@ void SpeakerWebbster3385::proc15() {
 		_object1.postInit();
 		_object1.setPosition(_object2->_position);
 		_object1._numFrames = 7;
-		_object1._effect = 1;
+		_object1._effect = EFFECT_SHADED;
 		_object1.changeZoom(-1);
 
 		if (R2_GLOBALS._sceneManager._previousScene == 3375)
@@ -3105,7 +3105,7 @@ void SpeakerWebbster3395::proc15() {
 		_object1.postInit();
 		_object1.setPosition(_object2->_position);
 		_object1._numFrames = 7;
-		_object1._effect = 1;
+		_object1._effect = EFFECT_SHADED;
 		_object1.changeZoom(-1);
 
 		if (R2_GLOBALS._sceneManager._previousScene == 3385)
@@ -3149,7 +3149,7 @@ void SpeakerWebbster3400::proc15() {
 		_object1.postInit();
 		_object1.setPosition(_object2->_position);
 		_object1._numFrames = 7;
-		_object1._effect = 1;
+		_object1._effect = EFFECT_SHADED;
 		_object1.changeZoom(-1);
 		R2_GLOBALS._player.disableControl();
 		R2_GLOBALS._events.setCursor(CURSOR_CROSSHAIRS);

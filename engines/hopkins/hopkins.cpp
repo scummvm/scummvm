@@ -210,12 +210,17 @@ bool HopkinsEngine::runWin95Demo() {
 				if (getPlatform() == Common::kPlatformOS2 || getPlatform() == Common::kPlatformBeOS)
 					_graphicsMan->loadImage("fond");
 				else {
-					if (_globals->_language == LANG_FR)
+					switch (_globals->_language) {
+					case LANG_FR:
 						_graphicsMan->loadImage("fondfr");
-					else if (_globals->_language == LANG_EN)
+						break;
+					case LANG_EN:
 						_graphicsMan->loadImage("fondan");
-					else if (_globals->_language == LANG_SP)
+						break;
+					case LANG_SP:
 						_graphicsMan->loadImage("fondes");
+						break;
+					}
 				}
 				_graphicsMan->fadeInLong();
 				_events->delay(500);
@@ -521,12 +526,17 @@ bool HopkinsEngine::runLinuxDemo() {
 				if (getPlatform() == Common::kPlatformOS2 || getPlatform() == Common::kPlatformBeOS)
 					_graphicsMan->loadImage("fond");
 				else {
-					if (_globals->_language == LANG_FR)
+					switch (_globals->_language) {
+					case LANG_FR:
 						_graphicsMan->loadImage("fondfr");
-					else if (_globals->_language == LANG_EN)
+						break;
+					case LANG_EN:
 						_graphicsMan->loadImage("fondan");
-					else if (_globals->_language == LANG_SP)
+						break;
+					case LANG_SP:
 						_graphicsMan->loadImage("fondes");
+						break;
+					}
 				}
 				_graphicsMan->fadeInLong();
 				_events->delay(500);
@@ -867,12 +877,17 @@ bool HopkinsEngine::runFull() {
 				if (getPlatform() == Common::kPlatformOS2 || getPlatform() == Common::kPlatformBeOS)
 					_graphicsMan->loadImage("fond");
 				else {
-					if (_globals->_language == LANG_FR)
+					switch (_globals->_language) {
+					case LANG_FR:
 						_graphicsMan->loadImage("fondfr");
-					else if (_globals->_language == LANG_EN)
+						break;
+					case LANG_EN:
 						_graphicsMan->loadImage("fondan");
-					else if (_globals->_language == LANG_SP)
+						break;
+					case LANG_SP:
 						_graphicsMan->loadImage("fondes");
+						break;
+					}
 				}
 				_graphicsMan->fadeInLong();
 				_events->delay(500);

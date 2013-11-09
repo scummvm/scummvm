@@ -66,9 +66,9 @@ uint32 Timer::getTimeLast() const {
 }
 
 void Timer::persist(BasePersistenceManager *persistMgr) {
-	persistMgr->transfer(TMEMBER(_timer));
-	persistMgr->transfer(TMEMBER(_timerDelta));
-	persistMgr->transfer(TMEMBER(_timerLast));
+	persistMgr->transferUint32(TMEMBER(_timer));
+	persistMgr->transferUint32(TMEMBER(_timerDelta));
+	persistMgr->transferUint32(TMEMBER(_timerLast));
 }
 
 } // End of namespace Wintermute

@@ -932,14 +932,14 @@ bool UIEdit::persist(BasePersistenceManager *persistMgr) {
 
 	UIObject::persist(persistMgr);
 
-	persistMgr->transfer(TMEMBER(_cursorBlinkRate));
-	persistMgr->transfer(TMEMBER(_cursorChar));
+	persistMgr->transferUint32(TMEMBER(_cursorBlinkRate));
+	persistMgr->transferCharPtr(TMEMBER(_cursorChar));
 	persistMgr->transferPtr(TMEMBER_PTR(_fontSelected));
-	persistMgr->transfer(TMEMBER(_frameWidth));
-	persistMgr->transfer(TMEMBER(_maxLength));
-	persistMgr->transfer(TMEMBER(_scrollOffset));
-	persistMgr->transfer(TMEMBER(_selEnd));
-	persistMgr->transfer(TMEMBER(_selStart));
+	persistMgr->transferSint32(TMEMBER(_frameWidth));
+	persistMgr->transferSint32(TMEMBER(_maxLength));
+	persistMgr->transferSint32(TMEMBER(_scrollOffset));
+	persistMgr->transferSint32(TMEMBER(_selEnd));
+	persistMgr->transferSint32(TMEMBER(_selStart));
 
 	if (!persistMgr->getIsSaving()) {
 		_cursorVisible = false;

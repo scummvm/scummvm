@@ -406,7 +406,7 @@ bool SXString::persist(BasePersistenceManager *persistMgr) {
 
 	BaseScriptable::persist(persistMgr);
 
-	persistMgr->transfer(TMEMBER(_capacity));
+	persistMgr->transferSint32(TMEMBER(_capacity));
 
 	if (persistMgr->getIsSaving()) {
 		if (_capacity > 0) {

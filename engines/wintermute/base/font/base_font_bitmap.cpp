@@ -495,13 +495,13 @@ bool BaseFontBitmap::loadBuffer(char *buffer) {
 bool BaseFontBitmap::persist(BasePersistenceManager *persistMgr) {
 
 	BaseFont::persist(persistMgr);
-	persistMgr->transfer(TMEMBER(_numColumns));
+	persistMgr->transferSint32(TMEMBER(_numColumns));
 
 	persistMgr->transferPtr(TMEMBER_PTR(_subframe));
-	persistMgr->transfer(TMEMBER(_tileHeight));
-	persistMgr->transfer(TMEMBER(_tileWidth));
+	persistMgr->transferSint32(TMEMBER(_tileHeight));
+	persistMgr->transferSint32(TMEMBER(_tileWidth));
 	persistMgr->transferPtr(TMEMBER_PTR(_sprite));
-	persistMgr->transfer(TMEMBER(_widthsFrame));
+	persistMgr->transferSint32(TMEMBER(_widthsFrame));
 
 	if (persistMgr->getIsSaving()) {
 		persistMgr->putBytes(_widths, sizeof(_widths));

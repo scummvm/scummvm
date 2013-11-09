@@ -68,4 +68,32 @@ void FullpipeEngine::lift_sub5(Scene *sc, int qu1, int qu2) {
 	warning("STUB: FullpipeEngine::lift_sub5()");
 }
 
+void FullpipeEngine::lift_exitSeq(ExCommand *ex) {
+	warning("STUB: FullpipeEngine::lift_exitSeq()");
+}
+
+void FullpipeEngine::lift_closedoorSeq() {
+	warning("STUB: FullpipeEngine::lift_closedoorSeq()");
+}
+
+void FullpipeEngine::lift_animation3() {
+	warning("STUB: FullpipeEngine::lift_animation3()");
+}
+
+void FullpipeEngine::lift_goAnimation() {
+	warning("STUB: FullpipeEngine::lift_goAnimation()");
+}
+
+void FullpipeEngine::lift_sub1(StaticANIObject *ani) {
+	warning("STUB: FullpipeEngine::lift_sub1()");
+}
+
+void FullpipeEngine::lift_startExitQueue() {
+	warning("STUB: FullpipeEngine::lift_startExitQueue()");
+}
+
+void FullpipeEngine::lift_sub05(ExCommand *ex) {
+	warning("STUB: FullpipeEngine::lift_sub05()");
+}
+
 } // End of namespace Fullpipe

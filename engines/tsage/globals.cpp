@@ -426,11 +426,11 @@ Ringworld2Globals::Ringworld2Globals() {
 	_balloonAltitude = 5;
 	_scene1925CurrLevel = 0;
 	_walkwaySceneNumber = 0;
-	_v56AA0 = 0;
+	_mirandaJailState = 0;
 	_scientistConvIndex = 0;
-	_v56AA6 = 1;
-	_v56AA7 = 1;
-	_v56AA8 = 1;
+	_ductMazePanel1State = 1;
+	_ductMazePanel2State = 1;
+	_ductMazePanel3State = 1;
 	_scene180Mode = -1;
 	_v57709 = 0;
 	_v5780C = 0;
@@ -443,10 +443,8 @@ Ringworld2Globals::Ringworld2Globals() {
 	_animationCtr = 0;
 	_electromagnetChangeAmount = 0;
 	_electromagnetZoom = 0;
-	_v565E5 = 0;
-	_v565E7 = 0;
-	_v565E9 = -5;
-	_v565EB = 26;
+	_tractorField = false;
+	_cableAttached = 0;
 	_foodCount = 0;
 	_rimLocation = 0;
 	_rimTransportLocation = 0;
@@ -478,15 +476,11 @@ void Ringworld2Globals::reset() {
 	Common::fill(&_paletteMap[0], &_paletteMap[4096], 0);
 
 	_fadePaletteFlag = false;
-	_v5589E.set(0, 0, 0, 0);
-	_v558B6.set(0, 0, 0, 0);
 	_animationCtr = 0;
 	_electromagnetChangeAmount = 0;
 	_electromagnetZoom = 0;
-	_v565E5 = 0;
-	_v565E7 = 0;
-	_v565E9 = -5;
-	_v565EB = 26;
+	_tractorField = false;
+	_cableAttached = 0;
 	_foodCount = 0;
 	_rimLocation = 0;
 	_rimTransportLocation = 0;
@@ -543,12 +537,12 @@ void Ringworld2Globals::reset() {
 	_balloonAltitude = 5;
 	_scene1925CurrLevel = 0; //_v56A9C
 	_walkwaySceneNumber = 0;
-	_v56AA0 = 0;
+	_mirandaJailState = 0;
 	_scientistConvIndex = 0;
 	_ventCellPos = Common::Point(60, 660);
-	_v56AA6 = 1;
-	_v56AA7 = 1;
-	_v56AA8 = 1;
+	_ductMazePanel1State = 1;
+	_ductMazePanel2State = 1;
+	_ductMazePanel3State = 1;
 	_scene180Mode = -1;
 	_v57709 = 0;
 	_v5780C = 0;
@@ -586,16 +580,11 @@ void Ringworld2Globals::synchronize(Serializer &s) {
 	TsAGE2Globals::synchronize(s);
 	int i;
 
-	_v5589E.synchronize(s);
-	_v558B6.synchronize(s);
-
 	s.syncAsSint16LE(_animationCtr);
 	s.syncAsSint16LE(_electromagnetChangeAmount);
 	s.syncAsSint16LE(_electromagnetZoom);
-	s.syncAsSint16LE(_v565E5);
-	s.syncAsSint16LE(_v565E7);
-	s.syncAsSint16LE(_v565E9);
-	s.syncAsSint16LE(_v565EB);
+	s.syncAsSint16LE(_tractorField);
+	s.syncAsSint16LE(_cableAttached);
 	s.syncAsSint16LE(_foodCount);
 	s.syncAsSint32LE(_rimLocation);
 	s.syncAsSint16LE(_rimTransportLocation);
@@ -626,11 +615,11 @@ void Ringworld2Globals::synchronize(Serializer &s) {
 	s.syncAsByte(_desertStepsRemaining);
 	s.syncAsByte(_desertCorrectDirection);
 	s.syncAsByte(_desertPreviousDirection);
-	s.syncAsByte(_v56AA0);
+	s.syncAsByte(_mirandaJailState);
 	s.syncAsByte(_scientistConvIndex);
-	s.syncAsByte(_v56AA6);
-	s.syncAsByte(_v56AA7);
-	s.syncAsByte(_v56AA8);
+	s.syncAsByte(_ductMazePanel1State);
+	s.syncAsByte(_ductMazePanel2State);
+	s.syncAsByte(_ductMazePanel3State);
 
 	for (i = 0; i < 14; ++i)
 		s.syncAsByte(_spillLocation[i]);

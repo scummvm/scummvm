@@ -789,11 +789,11 @@ bool AdItem::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferPtr(TMEMBER_PTR(_spriteHover));
 	persistMgr->transferBool(TMEMBER(_inInventory));
 	persistMgr->transferBool(TMEMBER(_displayAmount));
-	persistMgr->transfer(TMEMBER(_amount));
-	persistMgr->transfer(TMEMBER(_amountOffsetX));
-	persistMgr->transfer(TMEMBER(_amountOffsetY));
-	persistMgr->transfer(TMEMBER_INT(_amountAlign));
-	persistMgr->transfer(TMEMBER(_amountString));
+	persistMgr->transferSint32(TMEMBER(_amount));
+	persistMgr->transferSint32(TMEMBER(_amountOffsetX));
+	persistMgr->transferSint32(TMEMBER(_amountOffsetY));
+	persistMgr->transferSint32(TMEMBER_INT(_amountAlign));
+	persistMgr->transferCharPtr(TMEMBER(_amountString));
 
 	return STATUS_OK;
 }

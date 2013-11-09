@@ -386,25 +386,25 @@ bool BaseSubFrame::persist(BasePersistenceManager *persistMgr) {
 
 	persistMgr->transferBool(TMEMBER(_2DOnly));
 	persistMgr->transferBool(TMEMBER(_3DOnly));
-	persistMgr->transfer(TMEMBER(_alpha));
+	persistMgr->transferUint32(TMEMBER(_alpha));
 	persistMgr->transferBool(TMEMBER(_decoration));
 	persistMgr->transferBool(TMEMBER(_editorSelected));
-	persistMgr->transfer(TMEMBER(_hotspotX));
-	persistMgr->transfer(TMEMBER(_hotspotY));
+	persistMgr->transferSint32(TMEMBER(_hotspotX));
+	persistMgr->transferSint32(TMEMBER(_hotspotY));
 	persistMgr->transferRect32(TMEMBER(_rect));
 	persistMgr->transferBool(TMEMBER(_wantsDefaultRect));
 
-	persistMgr->transfer(TMEMBER(_surfaceFilename));
+	persistMgr->transferCharPtr(TMEMBER(_surfaceFilename));
 	persistMgr->transferBool(TMEMBER(_cKDefault));
 	persistMgr->transferByte(TMEMBER(_cKRed));
 	persistMgr->transferByte(TMEMBER(_cKGreen));
 	persistMgr->transferByte(TMEMBER(_cKBlue));
-	persistMgr->transfer(TMEMBER(_lifeTime));
+	persistMgr->transferSint32(TMEMBER(_lifeTime));
 
 	persistMgr->transferBool(TMEMBER(_keepLoaded));
 	persistMgr->transferBool(TMEMBER(_mirrorX));
 	persistMgr->transferBool(TMEMBER(_mirrorY));
-	persistMgr->transfer(TMEMBER(_transparent));
+	persistMgr->transferUint32(TMEMBER(_transparent));
 
 	return STATUS_OK;
 }

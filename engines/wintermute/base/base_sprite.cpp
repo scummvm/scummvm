@@ -524,21 +524,21 @@ bool BaseSprite::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferBool(TMEMBER(_changed));
 	persistMgr->transferBool(TMEMBER(_paused));
 	persistMgr->transferBool(TMEMBER(_continuous));
-	persistMgr->transfer(TMEMBER(_currentFrame));
+	persistMgr->transferSint32(TMEMBER(_currentFrame));
 	persistMgr->transferBool(TMEMBER(_editorAllFrames));
-	persistMgr->transfer(TMEMBER(_editorBgAlpha));
-	persistMgr->transfer(TMEMBER(_editorBgFile));
-	persistMgr->transfer(TMEMBER(_editorBgOffsetX));
-	persistMgr->transfer(TMEMBER(_editorBgOffsetY));
+	persistMgr->transferSint32(TMEMBER(_editorBgAlpha));
+	persistMgr->transferCharPtr(TMEMBER(_editorBgFile));
+	persistMgr->transferSint32(TMEMBER(_editorBgOffsetX));
+	persistMgr->transferSint32(TMEMBER(_editorBgOffsetY));
 	persistMgr->transferBool(TMEMBER(_editorMuted));
 	persistMgr->transferBool(TMEMBER(_finished));
 
 	_frames.persist(persistMgr);
 
-	persistMgr->transfer(TMEMBER(_lastFrameTime));
+	persistMgr->transferUint32(TMEMBER(_lastFrameTime));
 	persistMgr->transferBool(TMEMBER(_looping));
-	persistMgr->transfer(TMEMBER(_moveX));
-	persistMgr->transfer(TMEMBER(_moveY));
+	persistMgr->transferSint32(TMEMBER(_moveX));
+	persistMgr->transferSint32(TMEMBER(_moveY));
 	persistMgr->transferPtr(TMEMBER_PTR(_owner));
 	persistMgr->transferBool(TMEMBER(_precise));
 	persistMgr->transferBool(TMEMBER(_streamed));

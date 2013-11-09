@@ -252,15 +252,11 @@ public:
 	byte _paletteMap[4096];
 	int _insetUp;
 	int _frameEdgeColor;
-	Rect _v5589E;
-	Rect _v558B6;
 	int _animationCtr;
 	int _electromagnetChangeAmount;
 	int _electromagnetZoom;
-	int _v565E5;
-	int _v565E7;
-	int _v565E9;
-	int _v565EB; // CHECKME: IS it a constant?
+	bool _tractorField;
+	bool _cableAttached;
 	int _foodCount;
 	int _rimLocation;
 	int _rimTransportLocation;
@@ -279,12 +275,12 @@ public:
 	byte _balloonAltitude;
 	int _scene1925CurrLevel; //_v56A9C
 	int _walkwaySceneNumber;
-	byte _v56AA0;
+	byte _mirandaJailState;
 	byte _scientistConvIndex;
 	Common::Point _ventCellPos;
-	byte _v56AA6;
-	byte _v56AA7;
-	byte _v56AA8;
+	byte _ductMazePanel1State;
+	byte _ductMazePanel2State;
+	byte _ductMazePanel3State;
 	int _scene180Mode;	// _v575f7
 	int _v57709;
 	int _v5780C;

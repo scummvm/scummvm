@@ -1178,7 +1178,7 @@ bool UIButton::persist(BasePersistenceManager *persistMgr) {
 
 	UIObject::persist(persistMgr);
 
-	persistMgr->transfer(TMEMBER_INT(_align));
+	persistMgr->transferSint32(TMEMBER_INT(_align));
 	persistMgr->transferPtr(TMEMBER_PTR(_backDisable));
 	persistMgr->transferPtr(TMEMBER_PTR(_backFocus));
 	persistMgr->transferPtr(TMEMBER_PTR(_backHover));

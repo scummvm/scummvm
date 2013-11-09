@@ -3491,7 +3491,7 @@ void Scene300::postInit(SceneObjectList *OwnerList) {
 		if (R2_GLOBALS._sceneManager._previousScene == 1500) {
 			R2_GLOBALS._player._oldCharacterScene[R2_MIRANDA] = 3150;
 			R2_GLOBALS._player._characterScene[R2_MIRANDA] = 3150;
-			R2_GLOBALS._player._effect = 0;
+			R2_GLOBALS._player._effect = EFFECT_NONE;
 			R2_GLOBALS._player.setAction(NULL);
 			R2_GLOBALS._player.disableControl();
 
@@ -3676,7 +3676,7 @@ void Scene300::signal() {
 
 	case 313:
 		_sceneMode = 14;
-		R2_GLOBALS._player._effect = 0;
+		R2_GLOBALS._player._effect = EFFECT_NONE;
 		_seeker.setAction(&_sequenceManager3, this, 314, &_seeker, &_doorway, NULL);
 		R2_GLOBALS._events.setCursor(CURSOR_ARROW);
 		_stripManager.start(301, this);
@@ -3685,7 +3685,7 @@ void Scene300::signal() {
 	case 314:
 		R2_GLOBALS._player.disableControl();
 		_sceneMode = 315;
-		R2_GLOBALS._player._effect = 1;
+		R2_GLOBALS._player._effect = EFFECT_SHADED;
 		setAction(&_sequenceManager1, this, 315, &R2_GLOBALS._player, &_doorway, NULL);
 		break;
 
@@ -5290,7 +5290,7 @@ void Scene500::PanelDialog::Button::doButtonPress() {
 			} else {
 				scene->_suit.postInit();
 				scene->_suit.hide();
-				scene->_suit._effect = 1;
+				scene->_suit._effect = EFFECT_SHADED;
 				scene->_suit.setDetails(500, -1, -1, -1, 2, (SceneItem *)NULL);
 				scene->_suit.setup(502, R2_GLOBALS._landerSuitNumber + 2, 1);
 
@@ -5325,14 +5325,14 @@ void Scene500::postInit(SceneObjectList *OwnerList) {
 			R2_GLOBALS._walkRegions.enableRegion(1);
 
 			_seeker.postInit();
-			_seeker._effect = 1;
+			_seeker._effect = EFFECT_SHADED;
 			_seeker.setup(1505, 1, 1);
 			_seeker._moveDiff.x = 5;
 			_seeker.setPosition(Common::Point(42, 151));
 			_seeker.setDetails(500, 34, 35, 36, 1, (SceneItem *)NULL);
 		} else if (R2_GLOBALS._player._characterScene[R2_QUINN] == 500) {
 			_seeker.postInit();
-			_seeker._effect = 1;
+			_seeker._effect = EFFECT_SHADED;
 			_seeker.setup(R2_GLOBALS.getFlag(26) ? 1500 : 10, 1, 1);
 			_seeker.setPosition(Common::Point(42, 151));
 
@@ -5407,7 +5407,7 @@ void Scene500::postInit(SceneObjectList *OwnerList) {
 	}
 
 	_suits.postInit();
-	_suits._effect = 1;
+	_suits._effect = EFFECT_SHADED;
 	_suits.setup(502, 1, 1);
 	_suits.setPosition(Common::Point(258, 99));
 	_suits.fixPriority(50);
@@ -5421,7 +5421,7 @@ void Scene500::postInit(SceneObjectList *OwnerList) {
 		_transparentDoor.setup(500, 8, 7);
 
 		_suit.postInit();
-		_suit._effect = 1;
+		_suit._effect = EFFECT_SHADED;
 		_suit.setPosition(Common::Point(247, 52));
 		_suit.setDetails(500, -1, -1, -1, 2, (SceneItem *)NULL);
 
@@ -5594,7 +5594,7 @@ void Scene525::postInit(SceneObjectList *OwnerList) {
 	R2_GLOBALS._sound1.play(105);
 
 	_actor1.postInit();
-	_actor1._effect = 1;
+	_actor1._effect = EFFECT_SHADED;
 
 	R2_GLOBALS._player.postInit();
 	R2_GLOBALS._player.animate(ANIM_MODE_1, NULL);
@@ -5767,7 +5767,7 @@ bool Scene600::Laser::startAction(CursorType action, Event &event) {
 
 				scene->_smoke.postInit();
 				scene->_smoke.setup(601, 3, 1);
-				scene->_smoke._effect = 3;
+				scene->_smoke._effect = EFFECT_3;
 				scene->_smoke._moveDiff = Common::Point(1, 1);
 				scene->_smoke._moveRate = 2;
 				scene->_smoke._numFrames = 3;
@@ -5948,7 +5948,7 @@ void Scene600::postInit(SceneObjectList *OwnerList) {
 			_smoke._numFrames = 3;
 			_smoke.animate(ANIM_MODE_2, NULL);
 			_smoke.fixPriority(130);
-			_smoke._effect = 3;
+			_smoke._effect = EFFECT_3;
 			_smoke.setDetails(600, 24, 25, 26, 1, (SceneItem *) NULL);
 			_smoke.signal();
 		}
@@ -6019,7 +6019,7 @@ void Scene600::signal() {
 		R2_INVENTORY.setObjectScene(R2_AEROSOL, 600);
 		R2_GLOBALS.setFlag(5);
 
-		_smoke._effect = 3;
+		_smoke._effect = EFFECT_3;
 		_smoke.signal();
 		break;
 	case 606:
@@ -6126,6 +6126,9 @@ void Scene600::dispatch() {
  * Scene 700 - Lander Bay 2
  *
  *--------------------------------------------------------------------------*/
+
+#define CABLE700_X 26
+#define CABLE700_Y -5 
 
 Scene700::Scene700() {
 	_rotation = NULL;
@@ -6293,8 +6296,6 @@ void Scene700::postInit(SceneObjectList *OwnerList) {
 	loadScene(700);
 	if (R2_GLOBALS._sceneManager._previousScene == 900)
 		_sceneBounds = Rect(160, 0, 480, 200);
-
-	R2_GLOBALS._v558B6.set(60, 0, 260, 200);
 	SceneExt::postInit();
 
 	_rotation = R2_GLOBALS._scenePalette.addRotation(237, 246, -1);
@@ -6352,7 +6353,7 @@ void Scene700::postInit(SceneObjectList *OwnerList) {
 				break;
 			case 700:
 				_cable.setup(701, 3, 1);
-				_cable.setPosition(Common::Point(356 - (R2_GLOBALS._v565EB * 8), 148 - (((R2_GLOBALS._v565E9 + 10) / 5) * 4)));
+				_cable.setPosition(Common::Point(356 - (CABLE700_X * 8), 148 - (((CABLE700_Y + 10) / 5) * 4)));
 				_cable.setDetails(700, 37, -1, -1, 1, (SceneItem *) NULL);
 				break;
 			default:
@@ -6362,7 +6363,7 @@ void Scene700::postInit(SceneObjectList *OwnerList) {
 		case 700:
 			switch (R2_INVENTORY.getObjectScene(R2_CABLE_HARNESS)) {
 			case 0:
-				if ((R2_GLOBALS._v565E5 != 0) && (R2_GLOBALS._electromagnetChangeAmount == 20) && (R2_GLOBALS._electromagnetZoom == 70))
+				if (R2_GLOBALS._tractorField && (R2_GLOBALS._electromagnetChangeAmount == 20) && (R2_GLOBALS._electromagnetZoom == 70))
 					_cable.setup(701, 2, 1);
 				else
 					_cable.setup(701, 2, 8);
@@ -6372,8 +6373,8 @@ void Scene700::postInit(SceneObjectList *OwnerList) {
 				break;
 			case 700:
 				_cable.setup(701, 1, 8);
-				if (R2_GLOBALS._v565E7 == 0) {
-					_cable.setPosition(Common::Point(356 - (R2_GLOBALS._v565EB * 8), 148 - (((R2_GLOBALS._v565E9 + 10) / 5) * 4)));
+				if (!R2_GLOBALS._cableAttached) {
+					_cable.setPosition(Common::Point(356 - (CABLE700_X * 8), 148 - (((CABLE700_Y + 10) / 5) * 4)));
 				} else {
 					_cable.setup(701, 1, 1);
 					_cable.setPosition(Common::Point(_electromagnet._position.x + 1, _electromagnet._position.y + 120));
@@ -6521,12 +6522,12 @@ void Scene700::signal() {
 		_sceneMode = 17;
 		_cable.setup(701, 1, 8);
 		_cable.setDetails(700, 38, -1, -1, 3, (SceneItem *) NULL);
-		if ((R2_GLOBALS._v565E5 != 0) && (_cable._position.x == _electromagnet._position.x + 1) && (_cable._position.x == 148 - (((R2_GLOBALS._electromagnetChangeAmount + 10) / 5) * 4))) {
+		if (R2_GLOBALS._tractorField && (_cable._position.x == _electromagnet._position.x + 1) && (_cable._position.x == 148 - (((R2_GLOBALS._electromagnetChangeAmount + 10) / 5) * 4))) {
 			_cable.animate(ANIM_MODE_6, NULL);
 			Common::Point pt(_cable._position.x, _electromagnet._position.y + 120);
 			NpcMover *mover = new NpcMover();
 			_cable.addMover(mover, &pt, NULL);
-			R2_GLOBALS._v565E7 = 1;
+			R2_GLOBALS._cableAttached = true;
 		}
 		R2_GLOBALS._player.animate(ANIM_MODE_6, this);
 		break;
@@ -6546,7 +6547,7 @@ void Scene700::signal() {
 		break;
 	case 21:
 		_cable.fixPriority(77);
-		if ((R2_GLOBALS._v565E5 != 0) && (R2_GLOBALS._electromagnetChangeAmount == 20) && (R2_GLOBALS._electromagnetZoom == 70))
+		if (R2_GLOBALS._tractorField && (R2_GLOBALS._electromagnetChangeAmount == 20) && (R2_GLOBALS._electromagnetZoom == 70))
 			_cable.animate(ANIM_MODE_6, NULL);
 
 		R2_INVENTORY.setObjectScene(R2_ATTRACTOR_CABLE_HARNESS, 700);
@@ -6564,7 +6565,7 @@ void Scene700::signal() {
 	case 706:
 		_cable.setDetails(700, 38, -1, -1, 3, (SceneItem *) NULL);
 		_cable.fixPriority(77);
-		if ((R2_GLOBALS._v565E5 != 0) && (R2_GLOBALS._electromagnetChangeAmount == 20) && (R2_GLOBALS._electromagnetZoom == 70))
+		if (R2_GLOBALS._tractorField && (R2_GLOBALS._electromagnetChangeAmount == 20) && (R2_GLOBALS._electromagnetZoom == 70))
 			_cable.animate(ANIM_MODE_6, NULL);
 		R2_INVENTORY.setObjectScene(R2_ATTRACTOR_UNIT, 0);
 		R2_INVENTORY.setObjectScene(R2_ATTRACTOR_CABLE_HARNESS, 700);
@@ -7002,7 +7003,7 @@ void Scene825::postInit(SceneObjectList *OwnerList) {
 	R2_GLOBALS._interfaceY = SCREEN_HEIGHT;
 
 	R2_GLOBALS._player.postInit();
-	R2_GLOBALS._player._effect = 0;
+	R2_GLOBALS._player._effect = EFFECT_NONE;
 	R2_GLOBALS._player.setVisage(10);
 	R2_GLOBALS._player.hide();
 	R2_GLOBALS._player.disableControl();
@@ -7479,10 +7480,10 @@ bool Scene900::Button::startAction(CursorType action, Event &event) {
 				scene->_sceneMode = 2;
 				scene->signal();
 			} else if (scene->_controlsScreenNumber == 2) {
-				if (R2_GLOBALS._v565E5 == 0) {
+				if (!R2_GLOBALS._tractorField) {
 					scene->_aSound1.play(30);
 					setup(900, 3, 11);
-					R2_GLOBALS._v565E5 = 1;
+					R2_GLOBALS._tractorField = true;
 					if ((R2_INVENTORY.getObjectScene(R2_CABLE_HARNESS) == 0) && (R2_INVENTORY.getObjectScene(R2_ATTRACTOR_CABLE_HARNESS == 700)) && (R2_GLOBALS._electromagnetChangeAmount == 20) && (R2_GLOBALS._electromagnetZoom == 70) && (scene->_cable._animateMode != ANIM_MODE_6)) {
 						scene->_cable.animate(ANIM_MODE_6, NULL);
 					} else {
@@ -7501,12 +7502,12 @@ bool Scene900::Button::startAction(CursorType action, Event &event) {
 				} else {
 					scene->_aSound1.play(53);
 					setup(900, 3, 9);
-					R2_GLOBALS._v565E5 = 0;
+					R2_GLOBALS._tractorField = false;
 
 					if ((R2_INVENTORY.getObjectScene(R2_CABLE_HARNESS) == 0) && (R2_INVENTORY.getObjectScene(R2_ATTRACTOR_CABLE_HARNESS) == 700) && (scene->_cable._frame < 8) && (scene->_cable._animateMode != ANIM_MODE_5)) {
 							scene->_cable.animate(ANIM_MODE_5, NULL);
 					} else if ((R2_INVENTORY.getObjectScene(R2_CABLE_HARNESS) == 700) && (R2_INVENTORY.getObjectScene(R2_ATTRACTOR_CABLE_HARNESS) == 700) && (scene->_cable._frame < 8)) {
-						R2_GLOBALS._v565E7 = 0;
+						R2_GLOBALS._cableAttached = false;
 						if (scene->_cable._animateMode != 5) {
 							R2_GLOBALS._player.disableControl();
 							scene->_sceneMode = 5;
@@ -7613,7 +7614,7 @@ void Scene900::postInit(SceneObjectList *OwnerList) {
 	_electromagnet.fixPriority(1);
 	_electromagnet.setup(900, 1, 2);
 	_electromagnet.setPosition(Common::Point(89, 0));
-	_electromagnet._effect = 1;
+	_electromagnet._effect = EFFECT_SHADED;
 	_electromagnet.setDetails(900, 6, -1, 8, 1, (SceneItem *) NULL);
 
 	if ((R2_INVENTORY.getObjectScene(R2_CABLE_HARNESS) != 1) && (R2_INVENTORY.getObjectScene(R2_ATTRACTOR_CABLE_HARNESS) != 1)) {
@@ -7624,7 +7625,7 @@ void Scene900::postInit(SceneObjectList *OwnerList) {
 		if (R2_INVENTORY.getObjectScene(R2_CABLE_HARNESS) == 0) {
 			if (R2_INVENTORY.getObjectScene(R2_ATTRACTOR_CABLE_HARNESS) != 700) {
 				_cable.setup(901, 3, 2);
-			} else if ((R2_GLOBALS._v565E5 != 0) && (R2_GLOBALS._electromagnetChangeAmount == 20) && (R2_GLOBALS._electromagnetZoom == 70)) {
+			} else if (R2_GLOBALS._tractorField && (R2_GLOBALS._electromagnetChangeAmount == 20) && (R2_GLOBALS._electromagnetZoom == 70)) {
 				_cable.setup(901, 2, 1);
 			} else {
 				_cable.setup(901, 2, 8);
@@ -7633,11 +7634,11 @@ void Scene900::postInit(SceneObjectList *OwnerList) {
 			_cable.setDetails(700, -1, -1, -1, 1, (SceneItem *) NULL);
 		} else {
 			_cable.setDetails(700, -1, -1, -1, 1, (SceneItem *) NULL);
-			if (R2_GLOBALS._v565E7 == 0) {
+			if (!R2_GLOBALS._cableAttached) {
 				_cable.setup(901, 1, 8);
 				// Original set two times the same values: skipped
-				_cable.setPosition(Common::Point((((100  - ((R2_GLOBALS._v565EB * 350) / 100)) * 49) / 100) + ((R2_GLOBALS._v565E9 * _electromagnet._percent * 6) / 100) + 89, 166 - (R2_GLOBALS._v565EB / 3)));
-				_cable.changeZoom(((100 - ((R2_GLOBALS._v565EB * 350) / 100) + 52) / 10) * 10);
+				_cable.setPosition(Common::Point((((100  - ((CABLE700_X * 350) / 100)) * 49) / 100) + ((CABLE700_Y * _electromagnet._percent * 6) / 100) + 89, 166 - (CABLE700_X / 3)));
+				_cable.changeZoom(((100 - ((CABLE700_X * 350) / 100) + 52) / 10) * 10);
 			}
 		}
 	}
@@ -7682,7 +7683,7 @@ void Scene900::signal() {
 		_button3.remove();
 
 		_button2.initButton(2);
-		if (R2_GLOBALS._v565E5 == 0)
+		if (!R2_GLOBALS._tractorField)
 			_button2.setup(900, 3, 9);
 		else
 			_button2.setup(900, 3, 11);
@@ -7727,7 +7728,7 @@ void Scene900::signal() {
 		_sceneMode = 0;
 		R2_GLOBALS._player.enableControl();
 		R2_GLOBALS._player._canWalk = false;
-		R2_GLOBALS._v565E7 = 1;
+		R2_GLOBALS._cableAttached = true;
 		break;
 	case 900:
 		R2_GLOBALS._player.enableControl(CURSOR_USE);
@@ -7777,11 +7778,11 @@ void Scene900::dispatch() {
 	}
 
 	if (R2_GLOBALS._sceneObjects->contains(&_cable)) {
-		if ((R2_GLOBALS._v565E5 != 0) && (R2_INVENTORY.getObjectScene(R2_CABLE_HARNESS) == 0) && (R2_INVENTORY.getObjectScene(R2_ATTRACTOR_CABLE_HARNESS) == 700) && (R2_GLOBALS._electromagnetChangeAmount == 20) && (R2_GLOBALS._electromagnetZoom == 70)) {
+		if (R2_GLOBALS._tractorField && (R2_INVENTORY.getObjectScene(R2_CABLE_HARNESS) == 0) && (R2_INVENTORY.getObjectScene(R2_ATTRACTOR_CABLE_HARNESS) == 700) && (R2_GLOBALS._electromagnetChangeAmount == 20) && (R2_GLOBALS._electromagnetZoom == 70)) {
 			if ((_cable._frame > 1) && (_cable._animateMode != ANIM_MODE_6))
 				_cable.animate(ANIM_MODE_6, NULL);
 		} else {
-			if ((_cable._frame < 8) && (_cable._animateMode != ANIM_MODE_5) && (R2_GLOBALS._v565E7 == 0) && (R2_INVENTORY.getObjectScene(R2_CABLE_HARNESS) == 0) && (R2_INVENTORY.getObjectScene(R2_ATTRACTOR_CABLE_HARNESS) == 700) && (_sceneMode != 4))
+			if ((_cable._frame < 8) && (_cable._animateMode != ANIM_MODE_5) && !R2_GLOBALS._cableAttached && (R2_INVENTORY.getObjectScene(R2_CABLE_HARNESS) == 0) && (R2_INVENTORY.getObjectScene(R2_ATTRACTOR_CABLE_HARNESS) == 700) && (_sceneMode != 4))
 				_cable.animate(ANIM_MODE_5, NULL);
 		}
 	}
@@ -7789,7 +7790,7 @@ void Scene900::dispatch() {
 	_electromagnet.changeZoom(100 - ((R2_GLOBALS._electromagnetZoom * 70) / 100));
 	_electromagnet.setPosition(Common::Point(((_electromagnet._percent * R2_GLOBALS._electromagnetChangeAmount * 6) / 100) + 89, R2_GLOBALS._electromagnetZoom));
 
-	if ((R2_GLOBALS._sceneObjects->contains(&_cable)) && (R2_GLOBALS._v565E7 != 0) && (!_cable._mover) && (_cable._animateMode == ANIM_MODE_NONE)) {
+	if ((R2_GLOBALS._sceneObjects->contains(&_cable)) && R2_GLOBALS._cableAttached && (!_cable._mover) && (_cable._animateMode == ANIM_MODE_NONE)) {
 		_cable.setPosition(Common::Point(_electromagnet._position.x + ((_electromagnet._percent * 49) / 100), _electromagnet._position.y + ((_electromagnet._percent * 3) / 10)));
 		if (R2_GLOBALS._electromagnetZoom >= 75) {
 			_cable.setup(901, 1, 1);

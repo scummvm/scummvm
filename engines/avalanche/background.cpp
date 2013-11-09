@@ -53,23 +53,23 @@ void Background::update() {
 
 	switch (_vm->_room) {
 	case kRoomOutsideArgentPub:
-		if ((_vm->_roomTime % 12) == 0)
-			draw(-1, -1, (_vm->_roomTime / 12) % 4);
+		if ((_vm->_roomCycles % 12) == 0)
+			draw(-1, -1, (_vm->_roomCycles / 12) % 4);
 		break;
 	case kRoomBrummieRoad:
-		if ((_vm->_roomTime % 2) == 0)
-			draw(-1, -1, (_vm->_roomTime / 2) % 4);
+		if ((_vm->_roomCycles % 2) == 0)
+			draw(-1, -1, (_vm->_roomCycles / 2) % 4);
 		break;
 	case kRoomBridge:
-		if ((_vm->_roomTime % 2) == 0)
-			draw(-1, -1, 3 + (_vm->_roomTime / 2) % 4);
+		if ((_vm->_roomCycles % 2) == 0)
+			draw(-1, -1, 3 + (_vm->_roomCycles / 2) % 4);
 		break;
 	case kRoomYours:
-		if ((!_vm->_avvyIsAwake) && ((_vm->_roomTime % 4) == 0))
-			draw(-1, -1, (_vm->_roomTime / 12) % 2);
+		if ((!_vm->_avvyIsAwake) && ((_vm->_roomCycles % 4) == 0))
+			draw(-1, -1, (_vm->_roomCycles / 12) % 2);
 		break;
 	case kRoomArgentPub:
-		if (((_vm->_roomTime % 7) == 1) && (_vm->_malagauche != 177)) {
+		if (((_vm->_roomCycles % 7) == 1) && (_vm->_malagauche != 177)) {
 			// Malagauche cycle.
 			_vm->_malagauche++;
 			switch (_vm->_malagauche) {
@@ -93,7 +93,7 @@ void Background::update() {
 			}
 		}
 
-		switch (_vm->_roomTime % 200) {
+		switch (_vm->_roomCycles % 200) {
 		case 179:
 		case 197:
 			draw(-1, -1, 4); // Dogfood's drinking cycle.
@@ -109,7 +109,7 @@ void Background::update() {
 			_vm->_npcFacing = 177; // Impossible value for this.
 			break;
 		default:
-			if (_vm->_roomTime % 200 <= 178) { // Normally.
+			if (_vm->_roomCycles % 200 <= 178) { // Normally.
 				byte direction = 1;
 				uint16 angle = _vm->bearing(1);
 				if (((angle >= 1) && (angle <= 90)) || ((angle >= 358) && (angle <= 360)))
@@ -127,8 +127,8 @@ void Background::update() {
 		}
 		break;
 	case kRoomWestHall:
-		if ((_vm->_roomTime % 3) == 0) {
-			switch ((_vm->_roomTime / 3) % 6) {
+		if ((_vm->_roomCycles % 3) == 0) {
+			switch ((_vm->_roomCycles / 3) % 6) {
 			case 4:
 				draw(-1, -1, 0);
 				break;
@@ -148,7 +148,7 @@ void Background::update() {
 		if (!(_vm->_lustieIsAsleep)) {
 			byte direction = 0;
 			uint16 angle = _vm->bearing(1);
-			if ((_vm->_roomTime % 45) > 42)
+			if ((_vm->_roomCycles % 45) > 42)
 				direction = 4; // du Lustie blinks.
 			// Bearing of Avvy from du Lustie.
 			else if ((angle <= 45) || ((angle >= 315) && (angle <= 360)))
@@ -165,8 +165,8 @@ void Background::update() {
 		}
 		break;
 	case kRoomAylesOffice:
-		if ((!_vm->_aylesIsAwake) && (_vm->_roomTime % 14 == 0)) {
-			switch ((_vm->_roomTime / 14) % 2) {
+		if ((!_vm->_aylesIsAwake) && (_vm->_roomCycles % 14 == 0)) {
+			switch ((_vm->_roomCycles / 14) % 2) {
 			case 0:
 				draw(-1, -1, 0);  // Frame 2: EGA.
 				break;
@@ -178,7 +178,7 @@ void Background::update() {
 		break;
 	case kRoomRobins:
 		if (_vm->_tiedUp) {
-			switch (_vm->_roomTime % 54) {
+			switch (_vm->_roomCycles % 54) {
 			case 20:
 				draw(-1, -1, 3); // Frame 4: Avalot blinks.
 				break;
@@ -199,7 +199,7 @@ void Background::update() {
 		else if ((angle >= 181) && (angle <= 314))
 			direction = 8; // Right.
 
-		if ((_vm->_roomTime % 60) > 57)
+		if ((_vm->_roomCycles % 60) > 57)
 			direction--; // Blinks.
 
 		if (direction != _vm->_npcFacing) { // Port.
@@ -207,7 +207,7 @@ void Background::update() {
 			_vm->_npcFacing = direction;
 		}
 
-		switch (_vm->_roomTime % 50) {
+		switch (_vm->_roomCycles % 50) {
 		case 45 :
 			draw(-1, -1, 8); // Spurge blinks.
 			break;
@@ -218,8 +218,8 @@ void Background::update() {
 		break;
 	  }
 	case kRoomDucks: {
-		if ((_vm->_roomTime % 3) == 0) // The fire flickers.
-			draw(-1, -1, (_vm->_roomTime / 3) % 3);
+		if ((_vm->_roomCycles % 3) == 0) // The fire flickers.
+			draw(-1, -1, (_vm->_roomCycles / 3) % 3);
 
 		// Bearing of Avvy from Duck.
 		byte direction = 0;
@@ -231,7 +231,7 @@ void Background::update() {
 		else if ((angle >= 181) && (angle <= 314))
 			direction = 8; // Right.
 
-		if ((_vm->_roomTime % 45) > 42)
+		if ((_vm->_roomCycles % 45) > 42)
 			direction++; // Duck blinks.
 
 		if (direction != _vm->_npcFacing) { // Duck.
@@ -246,7 +246,7 @@ void Background::update() {
 
 	if ((_vm->_bellsAreRinging) && (_vm->getFlag('B'))) {
 		// They're ringing the bells.
-		switch (_vm->_roomTime % 4) {
+		switch (_vm->_roomCycles % 4) {
 		case 1:
 			if (_nextBell < 5)
 				_nextBell = 12;

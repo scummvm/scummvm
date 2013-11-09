@@ -503,8 +503,8 @@ const char *UIText::scToString() {
 bool UIText::persist(BasePersistenceManager *persistMgr) {
 
 	UIObject::persist(persistMgr);
-	persistMgr->transfer(TMEMBER_INT(_textAlign));
-	persistMgr->transfer(TMEMBER_INT(_verticalAlign));
+	persistMgr->transferSint32(TMEMBER_INT(_textAlign));
+	persistMgr->transferSint32(TMEMBER_INT(_verticalAlign));
 
 	return STATUS_OK;
 }

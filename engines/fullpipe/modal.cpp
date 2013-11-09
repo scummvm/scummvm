@@ -48,6 +48,11 @@ ModalIntro::ModalIntro() {
 	_sfxVolume = g_fullpipe->_sfxVolume;
 }
 
+ModalIntro::~ModalIntro() {
+	g_fullpipe->stopAllSounds();
+	g_fullpipe->_sfxVolume = _sfxVolume;
+}
+
 bool ModalIntro::handleMessage(ExCommand *message) {
 	if (message->_messageKind != 17)
 		return false;

@@ -2933,7 +2933,9 @@ void MortevielleEngine::testKey(bool d) {
 
 	do {
 		_mouse.getMousePosition(x, y, click);
-		keyPressed();
+		quest = keyPressed();
+		if (quest && shouldQuit())
+			return;
 	} while (click);
 
 	// Event loop

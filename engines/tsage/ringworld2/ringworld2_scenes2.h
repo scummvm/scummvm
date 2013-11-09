@@ -166,7 +166,7 @@ class Scene2425 : public SceneExt {
 		bool startAction(CursorType action, Event &event);
 	};
 
-	class Exit1 : public SceneExit {
+	class SouthEastExit : public SceneExit {
 	public:
 		virtual void changeScene();
 	};
@@ -178,7 +178,7 @@ public:
 	Rope _rope;
 	Pictographs _pictographs1;
 	Pictographs _pictographs2;
-	Exit1 _exit1;
+	SouthEastExit _southEastExit;
 	SequenceManager _sequenceManager;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
@@ -200,7 +200,7 @@ class Scene2430 : public SceneExt {
 		bool startAction(CursorType action, Event &event);
 	};
 
-	class Exit1 : public SceneExit {
+	class SouthExit : public SceneExit {
 	public:
 		virtual void changeScene();
 	};
@@ -221,7 +221,7 @@ public:
 	Companion _companion;
 	GunPowder _gunPowder;
 	OilLamp _oilLamp;
-	Exit1 _exit1;
+	SouthExit _southExit;
 	SequenceManager _sequenceManager;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
@@ -238,7 +238,7 @@ class Scene2435 : public SceneExt {
 		bool startAction(CursorType action, Event &event);
 	};
 
-	class Exit1 : public SceneExit {
+	class SouthExit : public SceneExit {
 	public:
 		virtual void changeScene();
 	};
@@ -251,7 +251,7 @@ public:
 	NamedHotspot _rightWindow;
 	Companion _companion;
 	Astor _astor;
-	Exit1 _exit1;
+	SouthExit _southExit;
 	SequenceManager _sequenceManager;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
@@ -269,7 +269,7 @@ class Scene2440 : public SceneExt {
 		bool startAction(CursorType action, Event &event);
 	};
 
-	class Exit1 : public SceneExit {
+	class SouthEastExit : public SceneExit {
 	public:
 		virtual void changeScene();
 	};
@@ -283,7 +283,7 @@ public:
 	NamedHotspot _bottles;
 	Companion _companion;
 	OilLamp _oilLamp;
-	Exit1 _exit1;
+	SouthEastExit _southEastExit;
 	SequenceManager _sequenceManager;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
@@ -309,7 +309,7 @@ class Scene2450 : public SceneExt {
 		bool startAction(CursorType action, Event &event);
 	};
 
-	class Exit1 : public SceneExit {
+	class SouthWestExit : public SceneExit {
 	public:
 		virtual void changeScene();
 	};
@@ -323,7 +323,7 @@ public:
 	SceneActor _companion;
 	Parker _parker;
 	CareTaker _careTaker;
-	Exit1 _exit1;
+	SouthWestExit _southWestExit;
 	SequenceManager _sequenceManager;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
@@ -345,7 +345,7 @@ class Scene2455 : public SceneExt {
 		bool startAction(CursorType action, Event &event);
 	};
 
-	class Exit1 : public SceneExit {
+	class NorthExit : public SceneExit {
 	public:
 		virtual void changeScene();
 	};
@@ -354,7 +354,7 @@ public:
 	Lamp _lamp;
 	Pool _pool;
 	ScrithKey _scrithKey;
-	Exit1 _exit1;
+	NorthExit _northExit;
 	SequenceManager _sequenceManager;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
@@ -363,7 +363,7 @@ public:
 };
 
 class Scene2500 : public SceneExt {
-	class Exit1 : public SceneExit {
+	class WestExit : public SceneExit {
 	public:
 		virtual void changeScene();
 	};
@@ -376,7 +376,7 @@ public:
 	SceneActor _companion;
 	SceneActor _quinn;
 	SceneActor _ship;
-	Exit1 _exit1;
+	WestExit _westExit;
 	SequenceManager _sequenceManager;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
@@ -394,7 +394,7 @@ class Scene2525 : public SceneExt {
 		bool startAction(CursorType action, Event &event);
 	};
 
-	class Exit1 : public SceneExit {
+	class SouthExit : public SceneExit {
 	public:
 		virtual void changeScene();
 	};
@@ -407,7 +407,7 @@ public:
 	SceneActor _companion;
 	SceneActor _compressor;
 	GlassDome _glassDome;
-	Exit1 _exit1;
+	SouthExit _southExit;
 	SequenceManager _sequenceManager;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
@@ -425,7 +425,7 @@ class Scene2530 : public SceneExt {
 		bool startAction(CursorType action, Event &event);
 	};
 
-	class Exit1 : public SceneExit {
+	class SouthExit : public SceneExit {
 	public:
 		virtual void changeScene();
 	};
@@ -438,7 +438,7 @@ public:
 	SceneActor _companion;
 	Flask _flask;
 	Crank _crank;
-	Exit1 _exit1;
+	SouthExit _southExit;
 	SequenceManager _sequenceManager;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
@@ -455,7 +455,7 @@ class Scene2535 : public SceneExt {
 		bool startAction(CursorType action, Event &event);
 	};
 
-	class Exit1 : public SceneExit {
+	class SouthExit : public SceneExit {
 	public:
 		virtual void changeScene();
 	};
@@ -471,7 +471,7 @@ public:
 	SceneActor _rope;
 	RebreatherTank _rebreatherTank;
 	TannerMask _tannerMask;
-	Exit1 _exit1;
+	SouthExit _southExit;
 	SequenceManager _sequenceManager;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
@@ -508,11 +508,11 @@ class Scene2700 : public SceneExt {
 		void signal();
 	};
 
-	class Area1: public SceneArea {
+	class SouthExit: public SceneArea {
 	public:
 		void process(Event &event);
 	};
-	class Area2: public SceneArea {
+	class EastExit: public SceneArea {
 	public:
 		void process(Event &event);
 	};
@@ -534,8 +534,8 @@ public:
 	Action2 _action2;
 	Action3 _action3;
 	Action4 _action4;
-	Area1 _area1;
-	Area2 _area2;
+	SouthExit _southExit;
+	EastExit _eastExit;
 	Rect _walkRect1, _walkRect2, _walkRect3;
 	Rect _walkRect4, _walkRect5, _walkRect6;
 	SequenceManager _sequenceManager;
@@ -578,11 +578,11 @@ class Scene2750 : public SceneExt {
 		void signal();
 	};
 
-	class Area1: public SceneArea {
+	class WestExit: public SceneArea {
 	public:
 		void process(Event &event);
 	};
-	class Area2: public SceneArea {
+	class EastExit: public SceneArea {
 	public:
 		void process(Event &event);
 	};
@@ -612,8 +612,8 @@ public:
 	Action5 _action5;
 	Action6 _action6;
 	Action7 _action7;
-	Area1 _area1;
-	Area2 _area2;
+	WestExit _westExit;
+	EastExit _eastExit;
 	Rect _walkRect1, _walkRect2, _walkRect3;
 	SequenceManager _sequenceManager;
 	int _areaMode, _moveMode, _stripNumber;

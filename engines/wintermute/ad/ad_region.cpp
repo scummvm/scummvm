@@ -401,7 +401,7 @@ bool AdRegion::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 bool AdRegion::persist(BasePersistenceManager *persistMgr) {
 	BaseRegion::persist(persistMgr);
 
-	persistMgr->transfer(TMEMBER(_alpha));
+	persistMgr->transferUint32(TMEMBER(_alpha));
 	persistMgr->transferBool(TMEMBER(_blocked));
 	persistMgr->transferBool(TMEMBER(_decoration));
 	persistMgr->transferFloat(TMEMBER(_zoom));

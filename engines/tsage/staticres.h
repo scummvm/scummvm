@@ -202,12 +202,12 @@ extern char const *const WRONG_ANSWER_MSG;
 // Scene 1550 arrays of constants
 extern const byte scene1550JunkLocationsDefault[];
 extern const byte scene1550AreaMap[];
-extern const byte k5A72E[];
-extern const byte k5A73F[];
+extern const byte scene1550JunkX[];
+extern const byte scene1550JunkY[];
 extern const byte k5A750[];
 extern const byte k5A76D[];
 extern const byte scene1550JunkRegions[];
-extern const byte k5A79B[];
+extern const byte scene1550SpecialAreas[];
 extern const byte k5A7F6[];
 
 // Scene 2900 balloon data

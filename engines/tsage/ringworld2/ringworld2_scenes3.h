@@ -315,16 +315,16 @@ class Scene3260 : public SceneExt {
 		void signal();
 	};
 public:
-	NamedHotspot _item1;
+	NamedHotspot _background;
 	SceneActor _sceeen1;
 	SceneActor _screen2;
 	SceneActor _screen3;
 	SceneActor _screen4;
 	SceneActor _screen5;
 	SceneActor _screen6;
-	SceneActor _actor7;
-	SceneActor _actor8;
-	SceneActor _actor9;
+	SceneActor _screen7;
+	SceneActor _screen8;
+	SceneActor _screen9;
 	SceneActor _securityConsole;
 	SceneActor _computerConsole;
 	SceneActor _lightingConsole;
@@ -462,7 +462,7 @@ class Scene3385 : public SceneExt {
 		virtual bool startAction(CursorType action, Event &event);
 	};
 
-	class Exit1 : public SceneExit {
+	class SouthExit : public SceneExit {
 	public:
 		virtual void changeScene();
 	};
@@ -482,7 +482,7 @@ public:
 	Companion2 _companion2;
 	Webbster _webbster;
 	Door _door;
-	Exit1 _exit1;
+	SouthExit _southExit;
 	Action1 _action1;
 	SequenceManager _sequenceManager;
 
@@ -548,9 +548,8 @@ public:
 	SceneActor _companion2;
 	SceneActor _webbster;
 	SceneActor _teal;
-	SceneActor _actor5;
-	SceneActor _actor6;
-	SceneActor _actor7;
+	SceneActor _door;
+	SceneActor _manholeCover;
 	SceneActor _actor8;
 	SequenceManager _sequenceManager;
 	bool _soundFaded;
@@ -565,25 +564,25 @@ public:
 class Scene3500 : public SceneExt {
 	class Action1: public Action {
 	public:
-		int _field1E;
-		int _field20;
+		int _direction;
+		bool _field20;
 		int _field22;
-		int _field24;
+		bool _field24;
 
 		Action1();
 		virtual void synchronize(Serializer &s);
-		void sub108670(int arg1);
-		void sub108732(int arg1);
+		void handleHorzButton(int direction);
+		void turnShuttle(bool arg1);
 		virtual void signal();
 		virtual void dispatch();
 	};
 	class Action2: public Action {
 	public:
-		int _field1E;
+		int _direction;
 
 		Action2();
 		virtual void synchronize(Serializer &s);
-		void sub10831F(int arg1);
+		void handleVertButton(int direction);
 
 		virtual void signal();
 	};
@@ -598,29 +597,24 @@ class Scene3500 : public SceneExt {
 		virtual bool startAction(CursorType action, Event &event);
 	};
 
-	class Actor7 : public SceneActor {
+	class Throttle : public SceneActor {
 	public:
 		Common::Point _pos;
-		int _fieldA8;
-		int _fieldAA;
-		int _fieldAC;
-		int _fieldAE;
+		int _deltaX;
+		int _deltaY;
+		int _slideDeltaY;
+		int _deltaMouseY;
 
-		Actor7();
+		Throttle();
 		virtual void synchronize(Serializer &s);
 
-		void sub109466(int xp, int yp, int arg3, int arg4, int arg5);
-		void sub1094ED();
-		void sub109663(int arg1);
+		void init(int xp, int yp, int dx, int dy, int speed);
+		void updateSpeed();
+		void setSpeed(int arg1);
 		void changePosition(const Common::Point &pt);
 
 		virtual void process(Event &event);
 		virtual bool startAction(CursorType action, Event &event);
-	};
-
-	class Actor8 : public SceneActor {
-	public:
-		// TODO: double check if nothing specific is present, then remove this class
 	};
 
 	class MazeUI3500 : public MazeUI {
@@ -633,40 +627,37 @@ class Scene3500 : public SceneExt {
 public:
 	Action1 _action1;
 	Action2 _action2;
-	NamedHotspot _item1;
-	NamedHotspot _item2;
-	NamedHotspot _item3;
+	NamedHotspot _background;
+	NamedHotspot _outsideView;
+	NamedHotspot _mapScreen;
 	DirectionButton _pitchDown;
 	DirectionButton _turnLeft;
 	DirectionButton _pitchUp;
 	DirectionButton _turnRight;
 	// Glyph of vessel on top of the maze ui
-	SceneActor _actor1;
-	SceneActor _actor2;
-	SceneActor _actor3;
-	SceneActor _actor4;
-	SceneActor _actor5;
-	SceneActor _actor6;
-	Actor7 _actor7;
-	Actor8 _actor8;
-	Actor8 _actor9;
+	SceneActor _shuttle;
+	SceneActor _verticalSpeedDisplay;
+	SceneActor _horizontalSpeedDisplay;
+	SceneActor _symbolVertical;
+	SceneActor _symbolLeft;
+	SceneActor _symbolRight;
+	Throttle _throttle;
+	SceneActor _tunnelVertCircle;
+	SceneActor _tunnelHorzCircle;
 	ASoundExt _aSound1;
 	MazeUI3500 _mazeUI;
 	SequenceManager _sequenceManager;
 
-	int _fieldAF8;
-	int _fieldB9E;
+	int _moverVertX;
+	int _moverHorzX;
 	PaletteRotation *_rotation;
 	int _mazeChangeAmount;
-	int _field1270;
-	int _field1272;
-	int _field1274;
+	int _speed;
+	bool _field1272;
 	int _mazeDirection;
-	int _field1278;
+	int _nextMove;
 	Common::Point _mazePosition;
-	int _field127E;
-	int _field1280;
-	int _field1282;
+	int _field1282; // TODO: Set to true in Fixup()
 	int _field1284;
 	bool _directionChangesEnabled;
 
@@ -684,7 +675,8 @@ public:
 class Scene3600 : public SceneExt {
 	class Action3600: public ActionExt {
 	public:
-		int _field1E, _field20;
+		bool _field1E;
+		int _fadePct;
 
 		Action3600();
 		virtual void synchronize(Serializer &s);
@@ -786,7 +778,7 @@ class Scene3800 : public SceneExt {
 public:
 	SceneObject _balloon;
 	SceneObject _harness;
-	SceneActor _balloonQuinn;
+	SceneActor _quinnShadow;
 	NamedHotspot _background;
 	NorthExit _northExit;
 	EastExit _eastExit;
@@ -833,7 +825,7 @@ class Scene3900 : public SceneExt {
 		virtual void changeScene();
 	};
 public:
-	SceneActor _linkedQuinn;
+	SceneActor _quinnShadow;
 	NamedHotspot _background;
 	NorthExit _northExit;
 	EastExit _eastExit;
