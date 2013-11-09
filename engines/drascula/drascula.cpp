@@ -176,6 +176,20 @@ DrasculaEngine::DrasculaEngine(OSystem *syst, const DrasculaGameDescription *gam
 	_rightMouseButton = 0;
 	*textName = 0;
 
+	crosshairCursor = 0;
+	mouseCursor = 0;
+	bgSurface = 0;
+	backSurface = 0;
+	cursorSurface = 0;
+	drawSurface3 = 0;
+	drawSurface2 = 0;
+	tableSurface = 0;
+	extraSurface = 0;
+	screenSurface = 0;
+	frontSurface = 0;
+	previousMusic = 0;
+	roomMusic = 0;
+
 	_rnd = new Common::RandomSource("drascula");
 
 	_console = 0;
