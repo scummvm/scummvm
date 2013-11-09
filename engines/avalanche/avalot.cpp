@@ -1458,8 +1458,8 @@ void AvalancheEngine::resetVariables() {
 	_jumpStatus = 0;
 	_mushroomGrowing = false;
 	_spludwickAtHome = false;
-	_lastRoom = 0;
-	_lastRoomNotMap = 0;
+	_lastRoom = kRoomDummy;
+	_lastRoomNotMap = kRoomDummy;
 	_crapulusWillTell = false;
 	_enterCatacombsFromLustiesRoom = false;
 	_teetotal = false;
