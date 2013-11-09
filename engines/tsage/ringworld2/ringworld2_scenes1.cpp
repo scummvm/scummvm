@@ -9004,7 +9004,7 @@ void Scene1550::enterArea() {
 					_junk[di].changeZoom(-1);
 					_junk[di].setup(1552, ((R2_GLOBALS._scene1550JunkLocations[i + 2] - 1) / 5) + 1, ((R2_GLOBALS._scene1550JunkLocations[i + 2] - 1) % 5) + 1);
 				}
-				_junk[di].setPosition(Common::Point(k5A72E[tmpIdx], k5A73F[tmpIdx]));
+				_junk[di].setPosition(Common::Point(scene1550JunkX[tmpIdx], scene1550JunkY[tmpIdx]));
 				if (scene1550JunkRegions[tmpIdx] != 0)
 					R2_GLOBALS._walkRegions.disableRegion(scene1550JunkRegions[tmpIdx]);
 				di++;
@@ -9224,7 +9224,7 @@ void Scene1550::enterArea() {
 
 		assert((_walkRegionsId >= 1550) && (_walkRegionsId <= 2008));
 		R2_GLOBALS._walkRegions.disableRegion(k5A750[_walkRegionsId - 1550]);
-		_companion.setPosition(Common::Point(k5A72E[k5A76D[_walkRegionsId - 1550]], k5A73F[k5A76D[_walkRegionsId - 1550]] + 8));
+		_companion.setPosition(Common::Point(scene1550JunkX[k5A76D[_walkRegionsId - 1550]], scene1550JunkY[k5A76D[_walkRegionsId - 1550]] + 8));
 		if (R2_GLOBALS._player._characterIndex == R2_QUINN) {
 			if (R2_GLOBALS._player._characterScene[R2_SEEKER] == 1580) {
 				_companion.setup(1516, 3, 17);
