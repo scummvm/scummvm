@@ -168,6 +168,8 @@ void MusicPlayer::loadMidi(const char * name) {
 	_data = (byte *)malloc(_dataSize);
 	stream->read(_data, _dataSize);
 
+    delete stream;
+
 	// Start playing the music
 	sndMidiStart();
 }

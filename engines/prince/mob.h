@@ -35,7 +35,8 @@ namespace Prince {
 
 class Mob {
 public:
-	Mob() {}
+
+	Mob() : _name(""), _examText("") {}
 
 	bool loadFromStream(Common::SeekableReadStream &stream);
 

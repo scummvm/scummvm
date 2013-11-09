@@ -25,7 +25,7 @@
 
 namespace Prince {
 
-Debugger::Debugger(PrinceEngine *vm) : GUI::Debugger(), _vm(vm) {
+Debugger::Debugger(PrinceEngine *vm) : GUI::Debugger(), _vm(vm), _locationNr(0) {
 	DCmd_Register("continue",		WRAP_METHOD(Debugger, Cmd_Exit));
 	DCmd_Register("level",			WRAP_METHOD(Debugger, Cmd_DebugLevel));
 	DCmd_Register("setflag",		WRAP_METHOD(Debugger, Cmd_SetFlag));
@@ -135,8 +135,7 @@ bool Debugger::Cmd_InitRoom(int argc, const char **argv) {
 		return true;
 	}
 
-	int flagNum = strToInt(argv[1]);
-	_vm->loadLocation(flagNum);
+	_locationNr = strToInt(argv[1]);
 	return true;
 }
 

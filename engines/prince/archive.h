@@ -24,13 +24,40 @@
 #define PRINCE_ARCHIVE_H
 
 #include "common/archive.h"
+#include "common/hashmap.h"
+#include "common/hash-str.h"
 
-// This is here just as remainder that archive support is missing
-namespace Price {
+namespace Prince {
 
 class PtcArchive : public Common::Archive {
+public:
+	PtcArchive();
+	~PtcArchive();
+
+	bool open(const Common::String &filename);
+	void close();
+	bool isOpen() const { return _stream != 0; }
+
+	// Common::Archive API implementation
+	bool hasFile(const Common::String &name) const;
+	int listMembers(Common::ArchiveMemberList &list) const;
+	const Common::ArchiveMemberPtr getMember(const Common::String &name) const;
+	Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const;
+
+private:
+	struct FileEntry {
+		uint32 _offset;
+		uint32 _size;
+	};
+
+	Common::SeekableReadStream *_stream;
+
+	typedef Common::HashMap<Common::String, FileEntry, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> FileMap;
+	FileMap _items;
 };
 
-}
+} // End of namespace Prince
 
 #endif
+
+/* vim: set tabstop=4 noexpandtab: */

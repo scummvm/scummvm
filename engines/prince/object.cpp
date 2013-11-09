@@ -36,7 +36,9 @@ Object::Object() : _surface(NULL), _x(0), _y(0), _z(0) {
 }
 
 Object::~Object() {
+	_surface->free();
 	delete _surface;
+	_surface = NULL;
 }
 
 void Object::loadSurface(Common::SeekableReadStream &stream) {

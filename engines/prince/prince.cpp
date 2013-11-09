@@ -55,6 +55,7 @@
 #include "prince/font.h"
 #include "prince/mhwanh.h"
 #include "prince/cursor.h"
+#include "prince/archive.h"
 
 namespace Prince {
 
@@ -71,7 +72,7 @@ void PrinceEngine::debugEngine(const char *s, ...) {
 
 PrinceEngine::PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc) : 
 	Engine(syst), _gameDescription(gameDesc), _graph(NULL), _script(NULL),
-	_locationNr(0), _debugger(NULL), _objectList(NULL), _mobList(NULL), _midiPlayer(NULL),
+	_locationNr(0), _debugger(NULL), _midiPlayer(NULL),
 	_cameraX(0), _newCameraX(0), _frameNr(0), _cursor1(NULL), _cursor2(NULL), _font(NULL),
 	_walizkaBmp(NULL), _roomBmp(NULL), _voiceStream(NULL) {
 
@@ -82,8 +83,6 @@ PrinceEngine::PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc)
 	DebugMan.enableDebugChannel("script");
 
 	gDebugLevel = 10;
-
-
 }
 
 PrinceEngine::~PrinceEngine() {
@@ -101,10 +100,6 @@ PrinceEngine::~PrinceEngine() {
 	delete _variaTxt;
 	delete[] _talkTxt;
 	delete _graph;
-	delete _mobList;
-	delete _objectList;
-	_midiPlayer->killMidi();
-	delete _midiPlayer;
 }
 
 GUI::Debugger *PrinceEngine::getDebugger() {
@@ -127,11 +122,12 @@ bool loadFromStream<Graphics::BitmapDecoder>(Graphics::BitmapDecoder &image, Com
 }
 
 template<typename T>
-bool loadResource(T *resource, const char *resourceName) {
+bool loadResource(T *resource, const char *resourceName, bool required = true) {
 	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(resourceName);
 	if (!stream) {
-		error("Can't load %s", resourceName);
-		return NULL;
+		if (required) 
+			error("Can't load %s", resourceName);
+		return false;
 	}
 
 	bool ret = loadFromStream(*resource, *stream);
@@ -141,44 +137,73 @@ bool loadResource(T *resource, const char *resourceName) {
 	return ret;
 } 
 
+template <typename T>
+bool loadResource(Common::Array<T> &array, const char *resourceName, bool required = true) {
+	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(resourceName);
+	if (!stream) {
+		if (required) {
+			error("Can't load %s", resourceName);
+			return false;
+		}
+	}
+
+	typename Common::Array<T>::value_type t;
+	while (t.loadFromStream(*stream))
+		array.push_back(t);
+
+	delete stream;
+	return true;
+}
+
 void PrinceEngine::init() {
-
-	_graph = new GraphicsMan(this);
-
-	_rnd = new Common::RandomSource("prince");
-	_debugger = new Debugger(this);
-	_midiPlayer = new MusicPlayer(this);
 
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	
 	debugEngine("Adding all path: %s", gameDataDir.getPath().c_str());
 
+	PtcArchive *all = new PtcArchive();
+	if (!all->open("all/databank.ptc")) 
+		error("Can't open all/databank.ptc");
+
+	PtcArchive *voices = new PtcArchive();
+	if (!voices->open("data/voices/databank.ptc"))
+		error("Can't open data/voices/databank.ptc");
+
+	SearchMan.add("all", all);
+	SearchMan.add("data/voices", voices);
+
+	_graph = new GraphicsMan(this);
+
+	_rnd = new Common::RandomSource("prince");
+	_debugger = new Debugger(this);
+
 	SearchMan.addSubDirectoryMatching(gameDataDir, "all", 0, 2);
-	SearchMan.addSubDirectoryMatching(gameDataDir, "data/voices/output", 0, 2);
+	SearchMan.addSubDirectoryMatching(gameDataDir, "data/voices", 0, 2);
+
+	_midiPlayer = new MusicPlayer(this);
 	 
 	_font = new Font();
-	loadResource(_font, "font1.raw");
+	loadResource(_font, "all/font1.raw");
 	_walizkaBmp = new MhwanhDecoder();
-	loadResource(_walizkaBmp, "walizka");
+	loadResource(_walizkaBmp, "all/walizka");
 
 	_script = new Script(this);
-	loadResource(_script, "skrypt.dat");
+	loadResource(_script, "all/skrypt.dat");
 
 	_variaTxt = new VariaTxt();
-	loadResource(_variaTxt, "variatxt.dat");
+	loadResource(_variaTxt, "all/variatxt.dat");
 	
 	_cursor1 = new Cursor();
-	loadResource(_cursor1, "mouse1.cur");
+	loadResource(_cursor1, "all/mouse1.cur");
 
 	_cursor2 = new Cursor();
-	loadResource(_cursor2, "mouse2.cur");
+	loadResource(_cursor2, "all/mouse2.cur");
 
-	Common::SeekableReadStream *talkTxtStream = SearchMan.createReadStreamForMember("talktxt.dat");
+	Common::SeekableReadStream *talkTxtStream = SearchMan.createReadStreamForMember("all/talktxt.dat");
 	if (!talkTxtStream) {
 		error("Can't load talkTxtStream");
 		return;
 	}
-
 	_talkTxtSize = talkTxtStream->size();
 	_talkTxt = new byte[_talkTxtSize];
 	talkTxtStream->read(_talkTxt, _talkTxtSize);
@@ -202,12 +227,15 @@ Common::Error PrinceEngine::run() {
 
 	showLogo();
 
+//	return Common::kNoError;
+
 	mainLoop();
 
 	return Common::kNoError;
 }
 
 bool PrinceEngine::loadLocation(uint16 locationNr) {
+	_debugger->_locationNr = locationNr;
 	debugEngine("PrinceEngine::loadLocation %d", locationNr);
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	SearchMan.remove(Common::String::format("%02d", _locationNr));
@@ -215,7 +243,12 @@ bool PrinceEngine::loadLocation(uint16 locationNr) {
 
 	const Common::String locationNrStr = Common::String::format("%02d", _locationNr);
 	debugEngine("loadLocation %s", locationNrStr.c_str());
-	SearchMan.addSubDirectoryMatching(gameDataDir, locationNrStr, 0, 2);
+
+	PtcArchive *locationArchive = new PtcArchive();
+	if (!locationArchive->open(locationNrStr + "/databank.ptc"))
+		error("Can't open location %s", locationNrStr.c_str());
+
+	SearchMan.add(locationNrStr, locationArchive);
 
 	delete _roomBmp;
 	// load location background
@@ -225,13 +258,8 @@ bool PrinceEngine::loadLocation(uint16 locationNr) {
 		_sceneWidth = _roomBmp->getSurface()->w;
 	}
 
-	delete _mobList;
-	_mobList = new MobList();
+	_mobList.clear();
 	loadResource(_mobList, "mob.lst");
-
-	delete _objectList;
-	_objectList = new ObjectList();
-	loadResource(_objectList, "obj.lst");
 
 	const char *musName = MusicPlayer::_musTable[MusicPlayer::_musRoomTable[locationNr]];
 	_midiPlayer->loadMidi(musName);
@@ -395,19 +423,18 @@ void PrinceEngine::keyHandler(Common::Event event) {
 }
 
 void PrinceEngine::hotspot() {
-	if (!_mobList)
-		return;
 	Common::Point mousepos = _system->getEventManager()->getMousePos();
 	Common::Point mousePosCamera(mousepos.x + _cameraX, mousepos.y);
 
-	for (Common::Array<Mob>::const_iterator it = _mobList->_list.begin()
-		; it != _mobList->_list.end() ; ++it) {
-		if (it->_visible)
+	for (Common::Array<Mob>::const_iterator it = _mobList.begin()
+		; it != _mobList.end() ; ++it) {
+		const Mob& mob = *it;
+		if (mob._visible)
 			continue;
-		if (it->_rect.contains(mousePosCamera)) {
+		if (mob._rect.contains(mousePosCamera)) {
 			uint16 textW = 0;
-			for (uint16 i = 0; i < it->_name.size(); ++i)
-				textW += _font->getCharWidth(it->_name[i]);
+			for (uint16 i = 0; i < mob._name.size(); ++i)
+				textW += _font->getCharWidth(mob._name[i]);
 
 			uint16 x = mousepos.x - textW/2;
 			if (x > _graph->_frontScreen->w)
@@ -418,7 +445,7 @@ void PrinceEngine::hotspot() {
 
 			_font->drawString(
 				_graph->_frontScreen, 
-				it->_name, 
+				mob._name, 
 				x,
 				mousepos.y - _font->getFontHeight(),
 				_graph->_frontScreen->w,
@@ -500,6 +527,9 @@ void PrinceEngine::drawScreen() {
 
 void PrinceEngine::mainLoop() {
 
+	loadLocation(2);
+	changeCursor(1);
+
 	while (!shouldQuit()) {
 		uint32 currentTime = _system->getMillis();
 
@@ -530,7 +560,7 @@ void PrinceEngine::mainLoop() {
 		if (shouldQuit())
 			return;
 
-		_script->step();
+		//_script->step();
 		drawScreen();
 
 		// Calculate the frame delay based off a desired frame time
@@ -541,6 +571,10 @@ void PrinceEngine::mainLoop() {
 		
 		_cameraX = _newCameraX;
 		++_frameNr;
+
+		if (_debugger->_locationNr != _locationNr) {
+			loadLocation(_debugger->_locationNr);
+		}
 	}
 }
 

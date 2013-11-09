@@ -12,8 +12,10 @@ MODULE_OBJS = \
 	sound.o \
 	flags.o \
 	variatxt.o \
-	cursor.o \
-	prince.o
+	prince.o \
+	archive.o \
+	decompress.o \
+	cursor.o 
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_PRINCE), DYNAMIC_PLUGIN)

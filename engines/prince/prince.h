@@ -47,21 +47,14 @@
 
 
 namespace Prince {
-
-template <typename ResourceType>
-struct ResourceList {
+#if 0
 	bool loadFromStream(Common::SeekableReadStream &stream) {
-		ResourceType resource;
-		while (resource.loadFromStream(stream))
+		ResourceType *resource = new ResourceType();
+		while (resource->loadFromStream(stream))
 			_list.push_back(resource);
 		return true;
 	}
-	Common::Array<ResourceType> _list;
-};
-
-typedef ResourceList<Mob> MobList;
-typedef ResourceList<Object> ObjectList;
-
+#endif
 struct PrinceGameDescription;
 
 class PrinceEngine;
@@ -157,12 +150,12 @@ private:
 	GraphicsMan *_graph;
 	Script *_script;
 	Font *_font;
-	ObjectList *_objectList;
-	MobList *_mobList;
 	MusicPlayer *_midiPlayer;
 
 	Audio::SoundHandle _soundHandle;
 	Common::SeekableReadStream *_voiceStream;
+	Common::Array<Mob> _mobList;
+	Common::Array<Object *> _objectList;
 
 	uint16 _cameraX;
 	uint16 _newCameraX;
