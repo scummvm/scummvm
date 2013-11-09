@@ -45,6 +45,18 @@ const char *Parallaction_br::_partNames[] = {
 
 Parallaction_br::Parallaction_br(OSystem* syst, const PARALLACTIONGameDescription *gameDesc) : Parallaction(syst, gameDesc),
 	_locationParser(0), _programParser(0), _soundManI(0) {
+	_audioCommandsNamesRes = 0;
+	_part = 0;
+	_nextPart = 0;
+	_subtitleY = 0;
+	_subtitle[0] = 0;
+	_subtitle[1] = 0;
+	_charInventories[0] = 0;
+	_charInventories[1] = 0;
+	_charInventories[2] = 0;
+	_countersNames = 0;
+	_callables = 0;
+	_walker = 0;
 }
 
 Common::Error Parallaction_br::init() {
