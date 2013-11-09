@@ -547,7 +547,6 @@ void Scene1020::postInit(SceneObjectList *OwnerList) {
 		_sceneBounds = Rect(160, 0, SCREEN_WIDTH + 160, 200);
 
 	R2_GLOBALS._interfaceY = SCREEN_HEIGHT;
-	R2_GLOBALS._v558B6.set(160, 0, 160, 161);
 	R2_GLOBALS._player.postInit();
 
 	if (R2_GLOBALS._sceneManager._previousScene == 1010) {
@@ -779,8 +778,6 @@ void Scene1100::postInit(SceneObjectList *OwnerList) {
 
 	if ((R2_GLOBALS._sceneManager._previousScene == 1000) && (!R2_GLOBALS.getFlag(44))) {
 		R2_GLOBALS._uiElements._active = false;
-		R2_GLOBALS._v5589E.left = 0;
-		R2_GLOBALS._v5589E.right = 200;
 	}
 
 	if (R2_GLOBALS._player._characterScene[R2_QUINN] == 1100)
@@ -788,8 +785,6 @@ void Scene1100::postInit(SceneObjectList *OwnerList) {
 
 	if (R2_GLOBALS._sceneManager._previousScene == -1) {
 		R2_GLOBALS._uiElements._active = false;
-		R2_GLOBALS._v5589E.left = 0;
-		R2_GLOBALS._v5589E.right = 200;
 	}
 
 	SceneExt::postInit();
@@ -6896,8 +6891,6 @@ void Scene1337::subD1A48(int arg1) {
 void Scene1500::postInit(SceneObjectList *OwnerList) {
 	loadScene(1500);
 	R2_GLOBALS._uiElements._active = false;
-	R2_GLOBALS._v5589E.top = 0;
-	R2_GLOBALS._v5589E.bottom = 200;
 	setZoomPercents(170, 13, 240, 100);
 	SceneExt::postInit();
 	scalePalette(65, 65, 65);
@@ -6956,8 +6949,6 @@ void Scene1500::postInit(SceneObjectList *OwnerList) {
 }
 
 void Scene1500::remove() {
-	R2_GLOBALS._v5589E.top = 3;
-	R2_GLOBALS._v5589E.bottom = 168;
 	R2_GLOBALS._uiElements._active = true;
 
 	SceneExt::remove();
@@ -8562,11 +8553,8 @@ void Scene1550::Wall::setupWall(int frameNumber, int strip) {
 }
 
 void Scene1550::enterArea() {
-	Rect tmpRect;
 	_walkRegionsId = 0;
 	_dishMode = 0;
-
-	tmpRect = R2_GLOBALS._v5589E;
 
 	_wallCorner1.remove();
 	_westWall.remove();
@@ -9574,8 +9562,6 @@ void Scene1575::postInit(SceneObjectList *OwnerList) {
 
 void Scene1575::remove() {
 	SceneExt::remove();
-	R2_GLOBALS._v5589E.top = 3;
-	R2_GLOBALS._v5589E.bottom = 168;
 	R2_GLOBALS._uiElements._active = true;
 }
 
@@ -10312,7 +10298,6 @@ bool Scene1700::RimTransport::startAction(CursorType action, Event &event) {
 	Scene1700 *scene = (Scene1700 *)R2_GLOBALS._sceneManager._scene;
 
 	R2_GLOBALS._player.disableControl();
-	R2_GLOBALS._v558B6.set(80, 0, 240, 200);
 	scene->_sceneMode = 4;
 
 	Common::Point pt(271, 90);
@@ -10593,7 +10578,6 @@ void Scene1700::postInit(SceneObjectList *OwnerList) {
 	R2_GLOBALS._player._oldCharacterScene[R2_QUINN] = 1700;
 	R2_GLOBALS._player._oldCharacterScene[R2_SEEKER] = 1700;
 
-	R2_GLOBALS._v558B6.set(20, 0, 320, 200);
 	enterArea();
 
 	_surface.setDetails(1, 1700, 3, -1, -1);
@@ -10916,7 +10900,6 @@ void Scene1750::postInit(SceneObjectList *OwnerList) {
 	loadScene(1750);
 	R2_GLOBALS._sound1.play(115);
 	R2_GLOBALS._uiElements._active = false;
-	R2_GLOBALS._v5589E.set(0, 0, 320, 200);
 
 	SceneExt::postInit();
 	R2_GLOBALS._interfaceY = SCREEN_HEIGHT;
@@ -11038,8 +11021,6 @@ void Scene1750::remove() {
 
 	SceneExt::remove();
 	R2_GLOBALS._sound1.fadeOut2(NULL);
-	R2_GLOBALS._v5589E.top = 3;
-	R2_GLOBALS._v5589E.bottom = 168;
 	R2_GLOBALS._uiElements._active = true;
 }
 

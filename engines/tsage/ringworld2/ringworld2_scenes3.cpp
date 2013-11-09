@@ -2715,7 +2715,6 @@ void Scene3400::postInit(SceneObjectList *OwnerList) {
 
 	loadScene(3400);
 	_soundFaded = false;
-	R2_GLOBALS._v558B6.set(60, 0, 260, 200);
 	SceneExt::postInit();
 	R2_GLOBALS._sound1.play(317);
 
@@ -3550,7 +3549,6 @@ void Scene3500::postInit(SceneObjectList *OwnerList) {
 	R2_GLOBALS._uiElements._active = false;
 	R2_GLOBALS._interfaceY = SCREEN_HEIGHT;
 
-	R2_GLOBALS._v5589E.set(0, 0, 320, 200);
 	R2_GLOBALS._sound1.play(305);
 	R2_GLOBALS._player._characterIndex = R2_QUINN;
 	R2_GLOBALS._player._characterScene[R2_QUINN] = 3500;
@@ -4420,11 +4418,9 @@ bool Scene3600::Protector::startAction(CursorType action, Event &event) {
 void Scene3600::postInit(SceneObjectList *OwnerList) {
 	if (R2_GLOBALS._sceneManager._previousScene == 3600) {
 		R2_GLOBALS._scrollFollower = &R2_GLOBALS._player;
-		R2_GLOBALS._v558B6.set(60, 0, 260, 200);
 	} else {
 		R2_GLOBALS._scrollFollower = &_steppingDisk;
 		_sceneBounds = Rect(160, 0, 480, 200);
-		R2_GLOBALS._v558B6.set(25, 0, 260, 200);
 	}
 
 	loadScene(3600);
@@ -4778,7 +4774,6 @@ void Scene3600::signal() {
 	case 3603:
 		R2_GLOBALS._walkRegions.disableRegion(2);
 		R2_GLOBALS._walkRegions.disableRegion(7);
-		R2_GLOBALS._v558B6.set(60, 0, 260, 200);
 		_tealSpeaker._displayMode = 1;
 		_sceneMode = 3321;
 		_stripManager.start(3321, this);
