@@ -6127,6 +6127,9 @@ void Scene600::dispatch() {
  *
  *--------------------------------------------------------------------------*/
 
+#define CABLE700_X 26
+#define CABLE700_Y -5 
+
 Scene700::Scene700() {
 	_rotation = NULL;
 }
@@ -6350,7 +6353,7 @@ void Scene700::postInit(SceneObjectList *OwnerList) {
 				break;
 			case 700:
 				_cable.setup(701, 3, 1);
-				_cable.setPosition(Common::Point(356 - (R2_GLOBALS._v565EB * 8), 148 - (((R2_GLOBALS._v565E9 + 10) / 5) * 4)));
+				_cable.setPosition(Common::Point(356 - (CABLE700_X * 8), 148 - (((CABLE700_Y + 10) / 5) * 4)));
 				_cable.setDetails(700, 37, -1, -1, 1, (SceneItem *) NULL);
 				break;
 			default:
@@ -6371,7 +6374,7 @@ void Scene700::postInit(SceneObjectList *OwnerList) {
 			case 700:
 				_cable.setup(701, 1, 8);
 				if (R2_GLOBALS._v565E7 == 0) {
-					_cable.setPosition(Common::Point(356 - (R2_GLOBALS._v565EB * 8), 148 - (((R2_GLOBALS._v565E9 + 10) / 5) * 4)));
+					_cable.setPosition(Common::Point(356 - (CABLE700_X * 8), 148 - (((CABLE700_Y + 10) / 5) * 4)));
 				} else {
 					_cable.setup(701, 1, 1);
 					_cable.setPosition(Common::Point(_electromagnet._position.x + 1, _electromagnet._position.y + 120));
@@ -7634,8 +7637,8 @@ void Scene900::postInit(SceneObjectList *OwnerList) {
 			if (R2_GLOBALS._v565E7 == 0) {
 				_cable.setup(901, 1, 8);
 				// Original set two times the same values: skipped
-				_cable.setPosition(Common::Point((((100  - ((R2_GLOBALS._v565EB * 350) / 100)) * 49) / 100) + ((R2_GLOBALS._v565E9 * _electromagnet._percent * 6) / 100) + 89, 166 - (R2_GLOBALS._v565EB / 3)));
-				_cable.changeZoom(((100 - ((R2_GLOBALS._v565EB * 350) / 100) + 52) / 10) * 10);
+				_cable.setPosition(Common::Point((((100  - ((CABLE700_X * 350) / 100)) * 49) / 100) + ((CABLE700_Y * _electromagnet._percent * 6) / 100) + 89, 166 - (CABLE700_X / 3)));
+				_cable.changeZoom(((100 - ((CABLE700_X * 350) / 100) + 52) / 10) * 10);
 			}
 		}
 	}

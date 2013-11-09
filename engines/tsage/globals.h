@@ -257,8 +257,6 @@ public:
 	int _electromagnetZoom;
 	int _v565E5;
 	int _v565E7;
-	int _v565E9;
-	int _v565EB; // CHECKME: IS it a constant?
 	int _foodCount;
 	int _rimLocation;
 	int _rimTransportLocation;
