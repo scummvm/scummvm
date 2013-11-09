@@ -552,7 +552,7 @@ Common::Array<BreakpointInfo> DebuggerAdapter::getBreakpoints() {
 		bp_info._line = SCENGINE->_breakpoints[i]._line;
 		bp_info._hits = SCENGINE->_breakpoints[i]._hits;
 		bp_info._enabled = SCENGINE->_breakpoints[i]._enabled;
-		breakpoints[breakpoints.size()] = bp_info;
+		breakpoints.push_back(bp_info);
 	}
 	return breakpoints;
 }
