@@ -1008,7 +1008,7 @@ void SoundManager::sfRethinkVoiceTypes() {
 
 						if (vtStruct->_entries[idx]._type0._priority2 > maxPriority) {
 							maxPriority = vtStruct->_entries[idx]._type0._priority2;
-							entryIndex = -1;
+							entryIndex = idx;
 						}
 					}
 
