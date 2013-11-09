@@ -6018,7 +6018,7 @@ void Scene1337::subCF31D() {
 					count = rndVal;
 					break;
 				}
-
+				// CHECKME: inside the check on rndVal?
 				rndVal--;
 				if (rndVal < 0)
 					rndVal = 3;
@@ -6042,9 +6042,10 @@ void Scene1337::subCF31D() {
 			int rndVal = R2_GLOBALS._randomSource.getRandomNumber(3);
 
 			for (int j = 0; j <= 3; j++) {
+				//CHECKME: tmpVal or rndVal?
 				if (tmpVal != 1) {
 					for (int k = 0; k <= 7; k++) {
-						// 'k' is not used in that loop.
+						// CHECKME: 'k' is not used in that loop.
 						// It looks suspicious.
 						if ((_arrunkObj1337[tmpVal]._arr3[0]._field34 == 0) && (subC32B1(tmpVal, _arrunkObj1337[1]._arr1[i]._field34))) {
 							count = tmpVal;
@@ -6068,12 +6069,9 @@ void Scene1337::subCF31D() {
 		}
 	}
 
-	if (found) {
-		if (count == -1)
-			return;
-
+	if (found)
 		subC3456(&_arrunkObj1337[1]._arr1[i], &_arrunkObj1337[count]._arr3[0]);
-	} else {
+	else {
 		int j;
 		for (j = 0; j <= 3; j++) {
 			if (subC27F9(_arrunkObj1337[1]._arr1[j]._field34) != -1) {
@@ -6103,14 +6101,10 @@ void Scene1337::subCF31D() {
 			}
 		}
 
-		if (found) {
-			if (count == -1)
-				return;
-
+		if (found)
 			subC3456(&_arrunkObj1337[1]._arr1[j], &_arrunkObj1337[count]._arr3[0]);
-		} else {
+		else
 			subC2835(1);
-		}
 	}
 
 }
