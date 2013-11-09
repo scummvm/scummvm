@@ -377,8 +377,10 @@ void Console::debugWarning(const Common::String &command, int warning_level, con
 	switch (warning_level) {
 	case NOTICE:
 		level = Common::String("NOTICE");
+		break;
 	case WARNING:
 		level = Common::String("WARNING");
+		break;
 	default:
 		level = Common::String("ERROR");
 	}
