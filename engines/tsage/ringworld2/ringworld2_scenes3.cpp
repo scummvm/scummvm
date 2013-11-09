@@ -2988,7 +2988,7 @@ void Scene3500::Action1::handleHorzButton(int direction) {
 	setActionIndex(0);
 }
 
-void Scene3500::Action1::sub108732(bool arg1) {
+void Scene3500::Action1::turnShuttle(bool arg1) {
 	Scene3500 *scene = (Scene3500 *)R2_GLOBALS._sceneManager._scene;
 
 	_field20 = arg1;
@@ -3219,7 +3219,7 @@ void Scene3500::Action1::signal() {
 		scene->_symbolRight.hide();
 		_field24 = false;
 		if (!_field20) {
-			scene->_throttle.sub1094ED();
+			scene->_throttle.updateSpeed();
 			if (scene->_mazeChangeAmount == scene->_speed)
 				scene->_aSound1.play(276);
 		}
@@ -3340,7 +3340,7 @@ void Scene3500::Action2::signal() {
 			horzX = scene->_tunnelHorzCircle._position.x;
 		}
 
-		scene->_throttle.sub1094ED();
+		scene->_throttle.updateSpeed();
 
 		scene->_tunnelVertCircle._moveDiff.y = 9 - (scene->_mazeChangeAmount / 2);
 		Common::Point pt(vertX, 73);
@@ -3389,10 +3389,10 @@ bool Scene3500::DirectionButton::startAction(CursorType action, Event &event) {
 /*--------------------------------------------------------------------------*/
 
 Scene3500::Throttle::Throttle() {
-	_fieldA8 = 0;
-	_fieldAA = 0;
-	_fieldAC = 0;
+	_deltaX = 1;
 	_deltaY = 0;
+	_slideDeltaY = 0;
+	_deltaMouseY = 0;
 }
 
 void Scene3500::Throttle::synchronize(Serializer &s) {
@@ -3400,33 +3400,33 @@ void Scene3500::Throttle::synchronize(Serializer &s) {
 
 	s.syncAsSint16LE(_pos.x);
 	s.syncAsSint16LE(_pos.y);
-	s.syncAsSint16LE(_fieldA8);
-	s.syncAsSint16LE(_fieldAA);
-	s.syncAsSint16LE(_fieldAC);
+	s.syncAsSint16LE(_deltaX);
 	s.syncAsSint16LE(_deltaY);
+	s.syncAsSint16LE(_slideDeltaY);
+	s.syncAsSint16LE(_deltaMouseY);
 }
 
-void Scene3500::Throttle::init(int xp, int yp, int arg3, int arg4, int arg5) {
-	_deltaY = 0;
+void Scene3500::Throttle::init(int xp, int yp, int dx, int dy, int speed) {
+	_deltaMouseY = 0;
 	_pos = Common::Point(xp, yp);
-	_fieldA8 = arg3;
-	_fieldAA = arg4;
-	_fieldAC = _fieldAA / _fieldA8;
+	_deltaX = dx;
+	_deltaY = dy;
+	_slideDeltaY = _deltaY / _deltaX;
 
 	postInit();
 	setup(1050, 3, 1);
 	fixPriority(255);
-	setSpeed(arg5);
+	setSpeed(speed);
 }
 
-void Scene3500::Throttle::sub1094ED() {
+void Scene3500::Throttle::updateSpeed() {
 	Scene3500 *scene = (Scene3500 *)R2_GLOBALS._sceneManager._scene;
 
 	scene->_speed = _position.x - _pos.x;
 }
 
 void Scene3500::Throttle::setSpeed(int arg1){
-	changePosition(Common::Point(_pos.x + arg1, _pos.y - (_fieldAC * arg1)));
+	changePosition(Common::Point(_pos.x + arg1, _pos.y - (_slideDeltaY * arg1)));
 }
 
 void Scene3500::Throttle::changePosition(const Common::Point &pt) {
@@ -3440,29 +3440,29 @@ void Scene3500::Throttle::process(Event &event) {
 		return;
 
 	if ((event.eventType == EVENT_BUTTON_DOWN) && (R2_GLOBALS._events.getCursor() == CURSOR_USE) && (_bounds.contains(event.mousePos))) {
-		_deltaY = 1 + event.mousePos.y - _position.y;
+		_deltaMouseY = 1 + event.mousePos.y - _position.y;
 		event.eventType = EVENT_NONE;
 	}
 
-	if ((event.eventType == EVENT_BUTTON_UP) && (_deltaY != 0)) {
-		_deltaY = 0;
+	if ((event.eventType == EVENT_BUTTON_UP) && (_deltaMouseY != 0)) {
+		_deltaMouseY = 0;
 		event.handled = true;
 		if (!scene->_action1._field24)
-			sub1094ED();
+			updateSpeed();
 	}
 
-	if (_deltaY == 0)
+	if (_deltaMouseY == 0)
 		return;
 
 	R2_GLOBALS._sound2.play(338);
 	event.handled = true;
 
-	int cx = event.mousePos.y - _deltaY + 1;
+	int cx = event.mousePos.y - _deltaMouseY + 1;
 	if (_pos.y >= cx) {
-		if (_pos.y - _fieldAA <= cx)
+		if (_pos.y - _deltaY <= cx)
 			changePosition(Common::Point(((_pos.y - cx) / 2) + _pos.x + ((_pos.y - cx) % 2), cx));
 		else
-			changePosition(Common::Point(_pos.x + _fieldA8, _pos.y - _fieldAA));
+			changePosition(Common::Point(_pos.x + _deltaX, _pos.y - _deltaY));
 	} else {
 		changePosition(Common::Point(_pos.x, _pos.y));
 	}
@@ -3667,7 +3667,7 @@ void Scene3500::postInit(SceneObjectList *OwnerList) {
 void Scene3500::doMovement(int id) {
 	switch (id) {
 	case -1:
-		_throttle.sub1094ED();
+		_throttle.updateSpeed();
 		if (_speed != 0) {
 			_speed--;
 			_throttle.setSpeed(_speed);
@@ -3676,7 +3676,7 @@ void Scene3500::doMovement(int id) {
 			_speed = 0;
 		break;
 	case 1:
-		_throttle.sub1094ED();
+		_throttle.updateSpeed();
 		if (_speed < 16) {
 			++_speed;
 			_throttle.setSpeed(_speed);
@@ -3713,7 +3713,7 @@ void Scene3500::doMovement(int id) {
 			if (_nextMove != 0)
 				_nextMove = 0;
 
-			_action1.sub108732(false);
+			_action1.turnShuttle(false);
 		}
 		break;
 	case 104:
@@ -3744,7 +3744,7 @@ void Scene3500::doMovement(int id) {
 			if (_nextMove != 0)
 				_nextMove = 0;
 
-			_action1.sub108732(false);
+			_action1.turnShuttle(false);
 		}
 		break;
 	default:

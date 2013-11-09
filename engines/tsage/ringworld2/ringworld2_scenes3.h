@@ -572,7 +572,7 @@ class Scene3500 : public SceneExt {
 		Action1();
 		virtual void synchronize(Serializer &s);
 		void handleHorzButton(int direction);
-		void sub108732(bool arg1);
+		void turnShuttle(bool arg1);
 		virtual void signal();
 		virtual void dispatch();
 	};
@@ -600,16 +600,16 @@ class Scene3500 : public SceneExt {
 	class Throttle : public SceneActor {
 	public:
 		Common::Point _pos;
-		int _fieldA8;
-		int _fieldAA;
-		int _fieldAC;
+		int _deltaX;
 		int _deltaY;
+		int _slideDeltaY;
+		int _deltaMouseY;
 
 		Throttle();
 		virtual void synchronize(Serializer &s);
 
-		void init(int xp, int yp, int arg3, int arg4, int arg5);
-		void sub1094ED();
+		void init(int xp, int yp, int dx, int dy, int speed);
+		void updateSpeed();
 		void setSpeed(int arg1);
 		void changePosition(const Common::Point &pt);
 
