@@ -565,14 +565,14 @@ class Scene3500 : public SceneExt {
 	class Action1: public Action {
 	public:
 		int _direction;
-		int _field20;
+		bool _field20;
 		int _field22;
 		bool _field24;
 
 		Action1();
 		virtual void synchronize(Serializer &s);
 		void handleHorzButton(int direction);
-		void sub108732(int arg1);
+		void sub108732(bool arg1);
 		virtual void signal();
 		virtual void dispatch();
 	};
@@ -657,9 +657,7 @@ public:
 	int _mazeDirection;
 	int _nextMove;
 	Common::Point _mazePosition;
-	int _field127E;
-	int _field1280;
-	int _field1282;
+	int _field1282; // TODO: Set to true in Fixup()
 	int _field1284;
 	bool _directionChangesEnabled;
 
