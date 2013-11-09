@@ -207,6 +207,11 @@ protected:
 public:
 	LocationParser_ns(Parallaction_ns *vm) : _vm(vm), _commandsNames(0), _locationStmt(0),
 		_locationZoneStmt(0), _locationAnimStmt(0) {
+		_script = 0;
+		_parser = 0;
+		_zoneTypeNames = 0;
+		_zoneFlagNames = 0;
+		_zoneProg = 0;
 	}
 
 	virtual void init();
