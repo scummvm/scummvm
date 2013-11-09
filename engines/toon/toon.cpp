@@ -952,6 +952,18 @@ ToonEngine::ToonEngine(OSystem *syst, const ADGameDescription *gameDescription)
 	_lastRenderTime = 0;
 	_firstFrame = false;
 	_needPaletteFlush = true;
+
+	_numVariant = 0;
+	_currentCutaway = nullptr;
+	for (int i = 0; i < 4; i++) {
+		_scriptState[i].ip = nullptr;
+		_scriptState[i].dataPtr = nullptr;
+		_scriptState[i].retValue = 0;
+		_scriptState[i].bp = 0;
+		_scriptState[i].sp = 0;
+		_scriptState[i].running = false;
+	}
+	_currentScriptRegion = 0;
 }
 
 ToonEngine::~ToonEngine() {
