@@ -304,7 +304,7 @@ protected:
 
 public:
 	LocationParser_br(Parallaction_br *vm) : LocationParser_ns((Parallaction_ns*)vm), _vm(vm),
-		_audioCommandsNames(0) {
+		_audioCommandsNames(0), _out(0) {
 	}
 
 	virtual void init();
