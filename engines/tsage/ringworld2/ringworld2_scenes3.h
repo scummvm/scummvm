@@ -675,7 +675,8 @@ public:
 class Scene3600 : public SceneExt {
 	class Action3600: public ActionExt {
 	public:
-		int _field1E, _field20;
+		bool _field1E;
+		int _fadePct;
 
 		Action3600();
 		virtual void synchronize(Serializer &s);
