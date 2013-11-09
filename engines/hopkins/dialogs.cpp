@@ -84,12 +84,17 @@ void DialogsManager::showOptionsDialog() {
 	if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
 		filename = "OPTION.SPR";
 	else {
-		if (_vm->_globals->_language == LANG_FR)
+		switch (_vm->_globals->_language) {
+		case LANG_FR:
 			filename = "OPTIFR.SPR";
-		else if (_vm->_globals->_language == LANG_EN)
+			break;
+		case LANG_EN:
 			filename = "OPTIAN.SPR";
-		else if (_vm->_globals->_language == LANG_SP)
+			break;
+		case LANG_SP:
 			filename = "OPTIES.SPR";
+			break;
+		}
 	}
 
 	_vm->_globals->_optionDialogSpr = _vm->_fileIO->loadFile(filename);
