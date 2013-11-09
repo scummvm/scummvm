@@ -882,6 +882,9 @@ void CharacterName::dummify() {
 
 CharacterName::CharacterName() {
 	dummify();
+
+	_suffix = 0;
+	_prefix = 0;
 }
 
 CharacterName::CharacterName(const char *name) {
