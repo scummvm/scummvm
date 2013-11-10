@@ -7949,7 +7949,7 @@ void Scene1550::signal() {
 		R2_GLOBALS._player.enableControl();
 		break;
 	case 50:
-		warning("STUB: sub_1D227()");
+		// Removed (useless ?) call to sub_1D227
 		++_sceneMode;
 		setAction(&_sequenceManager1, this, 1591, &R2_GLOBALS._player, NULL);
 		if (g_globals->_sceneObjects->contains(&_companion))
