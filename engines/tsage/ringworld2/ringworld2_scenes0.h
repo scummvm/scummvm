@@ -201,7 +201,7 @@ public:
 	SpeakerDutyOfficer180 _dutyOfficerSpeaker;
 	SpeakerTeal180 _tealSpeaker;
 	SpeakerGameText _gameTextSpeaker;
-	SceneActor _dutyOfficer, _teal, _webbser, _door, _shipDisplay;
+	SceneActor _dutyOfficer, _teal, _webbster, _door, _shipDisplay;
 	ScenePalette _palette;
 	SceneText _textList[20];
 	AnimationPlayerExt _animationPlayer;

@@ -1755,17 +1755,17 @@ void Scene180::signal() {
 		_teal.setPosition(Common::Point(161, 97));
 		_teal.hide();
 
-		_webbser.postInit();
-		_webbser.setPosition(Common::Point(60, 96));
-		_webbser.hide();
+		_webbster.postInit();
+		_webbster.setPosition(Common::Point(60, 96));
+		_webbster.hide();
 		_stripManager.start(11, this);
 		break;
 
 	case 33:
 		_teal.hide();
 
-		_webbser.setup(76, 4, 1);
-		_webbser.setFrame(_webbser.getFrameCount());
+		_webbster.setup(76, 4, 1);
+		_webbster.setFrame(_webbster.getFrameCount());
 
 		_shipDisplay.postInit();
 		_shipDisplay.setup(75, 1, 1);
@@ -1777,7 +1777,7 @@ void Scene180::signal() {
 
 	case 34:
 		_teal.hide();
-		_webbser.hide();
+		_webbster.hide();
 
 		_dutyOfficer.postInit();
 		_dutyOfficer.setup(76, 2, 1);

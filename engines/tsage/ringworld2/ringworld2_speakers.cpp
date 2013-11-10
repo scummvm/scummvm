@@ -2943,7 +2943,7 @@ SpeakerWebbster::SpeakerWebbster(int color) {
 }
 
 void SpeakerWebbster180::proc15() {
-	Scene3375 *scene = (Scene3375 *)R2_GLOBALS._sceneManager._scene;
+	Scene180 *scene = (Scene180 *)R2_GLOBALS._sceneManager._scene;
 
 	int v = _speakerMode;
 
@@ -2974,7 +2974,7 @@ void SpeakerWebbster180::proc15() {
 		break;
 	case 3:
 		((SceneItem *)_action)->_sceneRegionId = 0;
-		_object1.setup(75, 6, 1);
+		_object1.setup(76, 6, 1);
 		_object1.animate(ANIM_MODE_5, this);
 		break;
 	default:
