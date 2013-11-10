@@ -141,8 +141,8 @@ void SoundManager::syncSounds() {
 		if (voice_mute)
 			subtitles = true;
 
-		R2_GLOBALS._speechSubtitles = 
-			(voice_mute ? 0 : SPEECH_VOICE) | 
+		R2_GLOBALS._speechSubtitles =
+			(voice_mute ? 0 : SPEECH_VOICE) |
 			(!subtitles ? 0 : SPEECH_TEXT);
 	}
 }
@@ -2560,7 +2560,7 @@ bool PlayStream::setFile(const Common::String &filename) {
 
 	// Load header
 	_resData.load(_file);
-	
+
 	// Load the index
 	_index = new uint16[_resData._indexSize / 2];
 	for (uint i = 0; i < (_resData._indexSize / 2); ++i)
@@ -2583,7 +2583,7 @@ bool PlayStream::play(int voiceNum, EventHandler *endAction) {
 		_file.read(&header[0], 4);
 		if (strncmp(header, "FEED", 4))
 			error("Invalid stream data");
-		
+
 		// Get basic details of first sound chunk
 		uint chunkSize = _file.readUint16LE() - 16;
 		_file.skip(4);
@@ -2597,7 +2597,7 @@ bool PlayStream::play(int voiceNum, EventHandler *endAction) {
 		byte *data = (byte *)malloc(chunkSize);
 		_file.read(data, chunkSize);
 		_audioStream->queueBuffer(data, chunkSize, DisposeAfterUse::YES, Audio::FLAG_UNSIGNED);
-		
+
 		// If necessary, load further chunks of the voice in
 		while (chunkSize == (_resData._chunkSize - 16)) {
 			// Ensure the next chunk has the 'MORE' header
@@ -2617,14 +2617,14 @@ bool PlayStream::play(int voiceNum, EventHandler *endAction) {
 			_file.read(data, chunkSize);
 			_audioStream->queueBuffer(data, chunkSize, DisposeAfterUse::YES, Audio::FLAG_UNSIGNED);
 		}
-		
-		g_vm->_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_soundHandle, 
+
+		g_vm->_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_soundHandle,
 			_audioStream, DisposeAfterUse::YES);
 		_voiceNum = voiceNum;
 		_endAction = endAction;
 		return true;
 	}
-	 
+
 	// If it reaches this point, no valid voice data found
 	return false;
 }
@@ -2674,7 +2674,7 @@ uint32 PlayStream::getFileOffset(const uint16 *data, int count, int voiceNum) {
 	int byteIndex = voiceNum >> 3;
 	int shiftAmount = bitsIndex * 2;
 	int bitMask = 3 << shiftAmount;
-	int v = (data[byteIndex] & bitMask) >> shiftAmount; 
+	int v = (data[byteIndex] & bitMask) >> shiftAmount;
 	uint32 offset = 0;
 
 	if (!v)

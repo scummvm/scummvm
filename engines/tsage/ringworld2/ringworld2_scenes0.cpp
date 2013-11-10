@@ -723,7 +723,7 @@ void Scene125::signal() {
 					&_starchart3, &_starchart4, NULL);
 			} else {
 				// Show starchart without Ringworld
-				setAction(&_sequenceManager, this, 129, &R2_GLOBALS._player, &_starchart1, &_starchart2, 
+				setAction(&_sequenceManager, this, 129, &R2_GLOBALS._player, &_starchart1, &_starchart2,
 					&_starchart3, NULL);
 			}
 			break;
@@ -1885,7 +1885,7 @@ void Scene180::signal() {
 		R2_GLOBALS._scene180Mode = 0;
 		_helpEnabled = false;
 
-		// WORKAROUND: The original changed to scene 100 here, Quinn's Bedroom, 
+		// WORKAROUND: The original changed to scene 100 here, Quinn's Bedroom,
 		// but instead we're changing to the previously unused scene 50, which shows
 		// a closeup of Quinn in the floatation bed first
 		R2_GLOBALS._sceneManager.changeScene(50);
@@ -2350,7 +2350,7 @@ Scene205::Scene205(): SceneExt() {
 	GfxFont font;
 	font.setFontNumber(4);
 	_fontHeight = font.getHeight();
-	
+
 	for (int i = 0; i < 3; i++) {
 		_starList1[i] = nullptr;
 		_starList2[i] = nullptr;
@@ -2702,7 +2702,7 @@ void Scene250::signal() {
 	case 2:
 		if (_destButtonY - 12 == _currButtonY)
 			_sceneMode = 4;
-		else 
+		else
 			_sceneMode = 3;
 
 		signal();
@@ -5153,7 +5153,7 @@ bool Scene500::Locker2::startAction(CursorType action, Event &event) {
 
 /*--------------------------------------------------------------------------*/
 
-void Scene500::PanelDialog::setDetails(int visage, int strip, int frameNumber, 
+void Scene500::PanelDialog::setDetails(int visage, int strip, int frameNumber,
 		const Common::Point &pt) {
 	SceneAreaObject::setDetails(visage, strip, frameNumber, pt);
 	SceneAreaObject::setDetails(500, 43, 32, 45);
@@ -5221,7 +5221,7 @@ void Scene500::PanelDialog::Button::synchronize(Serializer &s) {
 }
 
 void Scene500::PanelDialog::Button::process(Event &event) {
-	if ((event.eventType == EVENT_BUTTON_DOWN) && 
+	if ((event.eventType == EVENT_BUTTON_DOWN) &&
 			(R2_GLOBALS._events.getCursor() == CURSOR_USE) &&
 			_bounds.contains(event.mousePos) && !_buttonDown) {
 		_buttonDown = true;
@@ -5277,7 +5277,7 @@ void Scene500::PanelDialog::Button::doButtonPress() {
 				scene->_suits.animate(ANIM_MODE_6, scene);
 			}
 			break;
-		
+
 		case 3:
 			if (R2_GLOBALS.getFlag(35)) {
 				scene->_sceneMode = 509;
@@ -5291,7 +5291,7 @@ void Scene500::PanelDialog::Button::doButtonPress() {
 				scene->_suit.setup(502, R2_GLOBALS._landerSuitNumber + 2, 1);
 
 				scene->setAction(&scene->_sequenceManager1, scene, 508,
-					&R2_GLOBALS._player, &scene->_suits, &scene->_suit, 
+					&R2_GLOBALS._player, &scene->_suits, &scene->_suit,
 					&scene->_transparentDoor, NULL);
 				R2_GLOBALS.setFlag(35);
 			}
@@ -5612,7 +5612,7 @@ bool Scene600::CompartmentHotspot::startAction(CursorType action, Event &event) 
 	if ((action != R2_NEGATOR_GUN) || (!R2_GLOBALS.getFlag(5)) || (R2_GLOBALS.getFlag(8)))
 		return SceneHotspot::startAction(action, event);
 
-	SceneItem::display(600, 32, SET_WIDTH, 280, SET_X, 160, SET_POS_MODE, ALIGN_CENTER, 
+	SceneItem::display(600, 32, SET_WIDTH, 280, SET_X, 160, SET_POS_MODE, ALIGN_CENTER,
 		SET_Y, 20, SET_EXT_BGCOLOR, 7, LIST_END);
 	return true;
 }
@@ -5622,13 +5622,13 @@ bool Scene600::EngineCompartment::startAction(CursorType action, Event &event) {
 		return SceneHotspot::startAction(action, event);
 
 	if ((R2_GLOBALS.getFlag(5)) && (!R2_GLOBALS.getFlag(8))) {
-		SceneItem::display(600, 32, SET_WIDTH, 280, SET_X, 160, SET_POS_MODE, ALIGN_CENTER, 
+		SceneItem::display(600, 32, SET_WIDTH, 280, SET_X, 160, SET_POS_MODE, ALIGN_CENTER,
 			SET_Y, 20, SET_EXT_BGCOLOR, 7, LIST_END);
 		return true;
 	}
 
 	if (!R2_GLOBALS.getFlag(5)) {
-		SceneItem::display(600, 30, SET_WIDTH, 280, SET_X, 160, SET_POS_MODE, ALIGN_CENTER, 
+		SceneItem::display(600, 30, SET_WIDTH, 280, SET_X, 160, SET_POS_MODE, ALIGN_CENTER,
 			SET_Y, 20, SET_EXT_BGCOLOR, 7, LIST_END);
 		return true;
 	}
@@ -5639,19 +5639,19 @@ bool Scene600::EngineCompartment::startAction(CursorType action, Event &event) {
 	R2_GLOBALS._player.disableControl();
 
 	Scene600 *scene = (Scene600 *)R2_GLOBALS._sceneManager._scene;
-	
+
 	scene->_stasisArea.setup(603, 3, 1, 239, 54, 10);
 	scene->_stasisField.postInit();
 	scene->_computer.postInit();
 
 	scene->_sceneMode = 612;
 	scene->setAction(&scene->_sequenceManager1, scene, 612, &scene->_stasisField, &scene->_computer, &R2_GLOBALS._player, NULL);
-	
+
 	// WORKAROUND: For ScummVM, we use a SceneActor rather than BackgroundSceneObject
 	// for the stasis field since it doesn't work properly. We override the priority for
 	// the stasis field here so that the stasis field dissolve will show up
 	scene->_stasisField.fixPriority(12);
-	
+
 	return true;
 }
 
@@ -6068,7 +6068,7 @@ void Scene600::signal() {
 }
 
 void Scene600::process(Event &event) {
-	if (R2_GLOBALS._player._canWalk && (!R2_GLOBALS.getFlag(6)) && (event.eventType == EVENT_BUTTON_DOWN) 
+	if (R2_GLOBALS._player._canWalk && (!R2_GLOBALS.getFlag(6)) && (event.eventType == EVENT_BUTTON_DOWN)
 			&& (R2_GLOBALS._events.getCursor() == CURSOR_WALK)) {
 		if (!_doorway.contains(event.mousePos) || (_doorway._frame <= 1)) {
 			if (R2_GLOBALS.getFlag(5)) {
@@ -6124,7 +6124,7 @@ void Scene600::dispatch() {
  *--------------------------------------------------------------------------*/
 
 #define CABLE700_X 26
-#define CABLE700_Y -5 
+#define CABLE700_Y -5
 
 Scene700::Scene700() {
 	_rotation = NULL;
@@ -6643,10 +6643,10 @@ bool Scene800::DeviceSlot::startAction(CursorType action, Event &event) {
 		scene->_sceneMode = 804;
 
 		if (R2_INVENTORY.getObjectScene(R2_OPTICAL_FIBRE) == 800) {
-			scene->setAction(&scene->_sequenceManager1, scene, 814, &R2_GLOBALS._player, 
+			scene->setAction(&scene->_sequenceManager1, scene, 814, &R2_GLOBALS._player,
 				&scene->_reader, &scene->_opticalFibre, NULL);
 		} else {
-			scene->setAction(&scene->_sequenceManager1, scene, 804, &R2_GLOBALS._player, 
+			scene->setAction(&scene->_sequenceManager1, scene, 804, &R2_GLOBALS._player,
 				&scene->_reader, NULL);
 		}
 		return true;
@@ -7310,7 +7310,7 @@ bool Scene850::Clamp::startAction(CursorType action, Event &event) {
 		R2_GLOBALS._player.disableControl();
 		scene->_spark.postInit();
 		scene->_sceneMode = 850;
-		scene->setAction(&scene->_sequenceManager1, scene, 850, &R2_GLOBALS._player, this, 
+		scene->setAction(&scene->_sequenceManager1, scene, 850, &R2_GLOBALS._player, this,
 			&scene->_spark, NULL);
 		return true;
 	}
@@ -7324,7 +7324,7 @@ bool Scene850::Panel::startAction(CursorType action, Event &event) {
 	else {
 		R2_GLOBALS._player.disableControl();
 		scene->_sceneMode = 852;
-		scene->setAction(&scene->_sequenceManager1, scene, 852, &R2_GLOBALS._player, 
+		scene->setAction(&scene->_sequenceManager1, scene, 852, &R2_GLOBALS._player,
 			this, &scene->_spark, NULL);
 		return true;
 	}

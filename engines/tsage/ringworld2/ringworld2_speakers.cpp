@@ -221,7 +221,7 @@ void VisualSpeaker::setText(const Common::String &msg) {
 	_sceneText.fixPriority(256);
 
 	// If subtitles are turned off, don't show the text
-	if ((R2_GLOBALS._speechSubtitles & SPEECH_VOICE) &&  
+	if ((R2_GLOBALS._speechSubtitles & SPEECH_VOICE) &&
 			!(R2_GLOBALS._speechSubtitles & SPEECH_TEXT)) {
 		_sceneText.hide();
 	}
@@ -1220,7 +1220,7 @@ void SpeakerQuinn300::animateSpeaker() {
 		((SceneItem *)_action)->_sceneRegionId = 0;
 
 		switch (_object2->_visage) {
-		case 10: 
+		case 10:
 			_object1.setup((v - 1) / 4 + 4010, ((v - ((v - 1) / 4 * 4) - 1) % 8) * 2 + 1, 1);
 			break;
 		case 302:

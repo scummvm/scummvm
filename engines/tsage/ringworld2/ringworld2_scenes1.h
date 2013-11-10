@@ -111,7 +111,7 @@ public:
 	SceneActor _shotImpact4;
 	SceneActor _shotImpact5;
 	SceneActor _laserShot;
-	SceneActor _animation;	// Used for cliff collapse and ship theft	
+	SceneActor _animation;	// Used for cliff collapse and ship theft
 	SceneActor _leftImpacts;
 	SceneActor _runningGuy1;
 	SceneActor _runningGuy2;

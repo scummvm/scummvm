@@ -389,7 +389,7 @@ void SceneExt::remove() {
 	Scene::remove();
 	R2_GLOBALS._uiElements._active = true;
 
-	if (R2_GLOBALS._events.getCursor() >= EXITCURSOR_N && 
+	if (R2_GLOBALS._events.getCursor() >= EXITCURSOR_N &&
 			R2_GLOBALS._events.getCursor() <= SHADECURSOR_DOWN)
 		R2_GLOBALS._events.setCursor(CURSOR_WALK);
 }
@@ -437,9 +437,9 @@ bool SceneExt::display(CursorType action, Event &event) {
 			SceneItem::display2(5, 0);
 		break;
 	case R2_SONIC_STUNNER:
-		if ((R2_GLOBALS._scannerFrequencies[R2_QUINN] == 2) 
+		if ((R2_GLOBALS._scannerFrequencies[R2_QUINN] == 2)
 			|| ((R2_GLOBALS._scannerFrequencies[R2_QUINN] == 1) &&
-				(R2_GLOBALS._scannerFrequencies[R2_SEEKER] == 2) && 
+				(R2_GLOBALS._scannerFrequencies[R2_SEEKER] == 2) &&
 				(R2_GLOBALS._sceneManager._previousScene == 300))) {
 			R2_GLOBALS._sound4.stop();
 			R2_GLOBALS._sound3.play(46);
@@ -1099,7 +1099,7 @@ void Ringworld2InvObjectList::selectDefault(int objectNumber) {
 	Common::String line = Common::String::format("%.5s%.5s%.5s%.5s%s %s %s %s.",
 		msg1.c_str(), msg2.c_str(), msg3.c_str(), msg4.c_str(),
 		msg1.c_str() + 5, msg2.c_str() + 5, msg3.c_str() + 5, msg4.c_str() + 5);
-		
+
 	SceneItem::display(-1, -1, line.c_str(),
 		SET_WIDTH, 280,
 		SET_X, 160,
@@ -1465,7 +1465,7 @@ void SceneAreaObject::process(Event &event) {
 				_savedCursorNum = R2_GLOBALS._events.getCursor();
 				R2_GLOBALS._events.setCursor(CURSOR_INVALID);
 			}
-				
+
 			if (event.eventType == EVENT_BUTTON_DOWN) {
 				event.handled = true;
 				R2_GLOBALS._events.setCursor(_savedCursorNum);
@@ -1800,9 +1800,9 @@ AnimationPlayer::~AnimationPlayer() {
 
 void AnimationPlayer::synchronize(Serializer &s) {
 	EventHandler::synchronize(s);
-	
-	// TODO: Implement saving for animation player state. Currently, I disable saving 
-	// when an animation is active, so saving it's state would a "nice to have". 
+
+	// TODO: Implement saving for animation player state. Currently, I disable saving
+	// when an animation is active, so saving it's state would a "nice to have".
 }
 
 void AnimationPlayer::remove() {
@@ -2267,7 +2267,7 @@ void ScannerDialog::Button::process(Event &event) {
 		setFrame(2);
 		_buttonDown = false;
 		event.handled = true;
-		
+
 		reset();
 	}
 }

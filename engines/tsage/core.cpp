@@ -1800,7 +1800,7 @@ void SceneItem::display(int resNum, int lineNum, ...) {
 		g_globals->_sceneText.remove();
 	}
 
-	if ((g_vm->getGameID() != GType_Ringworld) && (g_vm->getGameID() != GType_Ringworld2) 
+	if ((g_vm->getGameID() != GType_Ringworld) && (g_vm->getGameID() != GType_Ringworld2)
 			&& T2_GLOBALS._uiElements._active) {
 		// Show user interface
 		T2_GLOBALS._uiElements.show();
@@ -2511,7 +2511,7 @@ void SceneObject::postInit(SceneObjectList *OwnerList) {
 	if (!OwnerList)
 		OwnerList = g_globals->_sceneObjects;
 
-	bool isExisting = OwnerList->contains(this); 
+	bool isExisting = OwnerList->contains(this);
 	if (!isExisting || ((_flags & OBJFLAG_REMOVE) != 0)) {
 		_percent = 100;
 		_priority = 255;
@@ -2708,7 +2708,7 @@ GfxSurface SceneObject::getFrame() {
 		Graphics::Surface s = frame.lockSurface();
 		byte *p = (byte *)s.getPixels();
 		byte *endP = p + s.w * s.h;
-		
+
 		while (p < endP) {
 			if (*p != frame._transColor)
 				*p = R2_GLOBALS._fadePaletteMap[_shade - 1][*p];
@@ -2742,8 +2742,8 @@ void SceneObject::draw() {
 		switch (_effect) {
 		case EFFECT_SHADOW_MAP: {
 			assert(_shadowMap);
-			
-			GLOBALS.gfxManager().getSurface().copyFrom(frame, frame.getBounds(), 
+
+			GLOBALS.gfxManager().getSurface().copyFrom(frame, frame.getBounds(),
 				destRect, priorityRegion,  _shadowMap);
 			return;
 		}
@@ -2859,7 +2859,7 @@ void BackgroundSceneObject::setup2(int visage, int stripFrameNum, int frameNum, 
 void BackgroundSceneObject::copySceneToBackground() {
 	GLOBALS._sceneManager._scene->_backSurface.copyFrom(g_globals->gfxManager().getSurface(), 0, 0);
 
-	// WORKAROUND: Since savegames don't store the active screen data, once we copy the 
+	// WORKAROUND: Since savegames don't store the active screen data, once we copy the
 	// foreground objects to the background, we have to prevent the scene being saved.
 	if (g_vm->getGameID() == GType_Ringworld2)
 		((Ringworld2::SceneExt *)GLOBALS._sceneManager._scene)->_preventSaving = true;
@@ -4346,7 +4346,7 @@ void SceneHandler::process(Event &event) {
 			// Scan the item list to find one the mouse is within
 			SynchronizedList<SceneItem *>::iterator i;
 			for (i = g_globals->_sceneItems.begin(); i != g_globals->_sceneItems.end(); ++i) {
-				SceneItem *item = *i;				
+				SceneItem *item = *i;
 				if (item->contains(event.mousePos)) {
 					// Pass the action to the item
 					bool handled = item->startAction(g_globals->_events.getCursor(), event);

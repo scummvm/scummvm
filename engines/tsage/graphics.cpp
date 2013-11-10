@@ -560,9 +560,9 @@ static GfxSurface ResizeSurface(GfxSurface &src, int xSize, int ySize, int trans
 
 /**
  * Copys an area from one GfxSurface to another.
- * 
+ *
  */
-void GfxSurface::copyFrom(GfxSurface &src, Rect srcBounds, Rect destBounds, 
+void GfxSurface::copyFrom(GfxSurface &src, Rect srcBounds, Rect destBounds,
 		Region *priorityRegion, const byte *shadowMap) {
 	GfxSurface srcImage;
 	if (srcBounds.isEmpty())
@@ -814,8 +814,8 @@ void GfxElement::drawFrame() {
 
 		// Draw the edge frame
 		// Outer frame border
-		surface.hLine(tempRect.left + 2, tempRect.top, tempRect.right - 2, 0); 
-		surface.hLine(tempRect.left + 2, tempRect.bottom, tempRect.right - 2, 0); 
+		surface.hLine(tempRect.left + 2, tempRect.top, tempRect.right - 2, 0);
+		surface.hLine(tempRect.left + 2, tempRect.bottom, tempRect.right - 2, 0);
 		surface.vLine(tempRect.left, tempRect.top + 2, tempRect.bottom - 2, 0);
 		surface.vLine(tempRect.right, tempRect.top + 2, tempRect.bottom - 2, 0);
 		*((byte *)surface.getBasePtr(tempRect.left + 1, tempRect.top + 1)) = 0;
@@ -824,8 +824,8 @@ void GfxElement::drawFrame() {
 		*((byte *)surface.getBasePtr(tempRect.right - 1, tempRect.bottom - 1)) = 0;
 
 		// Inner frame border
-		surface.hLine(tempRect.left + 2, tempRect.top + 1, tempRect.right - 2, R2_GLOBALS._frameEdgeColor); 
-		surface.hLine(tempRect.left + 2, tempRect.bottom - 1, tempRect.right - 2, R2_GLOBALS._frameEdgeColor); 
+		surface.hLine(tempRect.left + 2, tempRect.top + 1, tempRect.right - 2, R2_GLOBALS._frameEdgeColor);
+		surface.hLine(tempRect.left + 2, tempRect.bottom - 1, tempRect.right - 2, R2_GLOBALS._frameEdgeColor);
 		surface.vLine(tempRect.left + 1, tempRect.top + 2, tempRect.bottom - 2, R2_GLOBALS._frameEdgeColor);
 		surface.vLine(tempRect.right - 1, tempRect.top + 2, tempRect.bottom - 2, R2_GLOBALS._frameEdgeColor);
 		*((byte *)surface.getBasePtr(tempRect.left + 2, tempRect.top + 2)) = R2_GLOBALS._frameEdgeColor;

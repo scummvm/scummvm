@@ -529,7 +529,7 @@ class Scene500: public SceneExt {
 			int _buttonId;
 			bool _buttonDown;
 
-			void doButtonPress();		
+			void doButtonPress();
 		public:
 			Button();
 			virtual Common::String getClassName() { return "Scene500_Button"; }

@@ -295,7 +295,7 @@ void UICollection::r2rDrawFrame() {
 	GLOBALS._screenSurface.copyFrom(vertLine, SCREEN_WIDTH - 4, 3);
 
 	// Restrict drawing area to exclude the borders at the edge of the screen
-	R2_GLOBALS._screenSurface._clipRect = Rect(4, 4, SCREEN_WIDTH - 4, 
+	R2_GLOBALS._screenSurface._clipRect = Rect(4, 4, SCREEN_WIDTH - 4,
 		SCREEN_HEIGHT - 4);
 }
 
