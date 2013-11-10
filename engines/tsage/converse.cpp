@@ -730,7 +730,7 @@ void StripManager::remove() {
 	if (g_vm->getGameID() == GType_Ringworld2) { 
 		for (uint i = 0; i < _speakerList.size(); ++i) {
 			if (_activeSpeaker != _speakerList[i])
-				_speakerList[i]->proc16();
+				_speakerList[i]->stopSpeaking();
 		}
 	}
 
@@ -952,7 +952,7 @@ void StripManager::signal() {
 			if (speaker) {
 				speaker->_speakerMode = obj44._speakerMode;
 				if (!choiceList[strIndex].empty())
-					speaker->proc15();
+					speaker->animateSpeaker();
 			}
 
 			if (!choiceList[strIndex].empty()) {
@@ -962,7 +962,7 @@ void StripManager::signal() {
 				_delayFrames = 1;
 			} else {
 				_delayFrames = 0;
-				speaker->proc15();
+				speaker->animateSpeaker();
 			}
 		} else {
 			_textShown = true;

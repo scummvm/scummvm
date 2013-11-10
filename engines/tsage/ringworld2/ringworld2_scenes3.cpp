@@ -4641,7 +4641,7 @@ void Scene3600::signal() {
 	case 3321:
 		// Removed (useless ?) call to sub_1D227
 		R2_GLOBALS._scrollFollower = &R2_GLOBALS._player;
-		_tealSpeaker.proc16();
+		_tealSpeaker.stopSpeaking();
 		_teal.show();
 		_teal.setStrip(1);
 		_consoleLights.postInit();
@@ -4651,9 +4651,9 @@ void Scene3600::signal() {
 		break;
 	case 3322:
 		// Removed (useless ?) call to sub_1D227
-		_quinnSpeaker.proc16();
+		_quinnSpeaker.stopSpeaking();
 		_quinnSpeaker._displayMode = 1;
-		_tealSpeaker.proc16();
+		_tealSpeaker.stopSpeaking();
 		_tealSpeaker._displayMode = 7;
 		R2_GLOBALS._scrollFollower = &_teal;
 		_sceneMode = 3605;
@@ -4664,14 +4664,14 @@ void Scene3600::signal() {
 			_tealDead = true;
 		else {
 			// Removed (useless ?) call to sub_1D227
-			_protectorSpeaker.proc16();
+			_protectorSpeaker.stopSpeaking();
 			_protector.show();
 			_protector.setup(3258, 6, 1);
 
 			_sceneMode = 3607;
 			_protector.setAction(&_sequenceManager1, this, _sceneMode, &_protector, NULL);
 
-			_protectorSpeaker.proc16();
+			_protectorSpeaker.stopSpeaking();
 			_protectorSpeaker._displayMode = 1;
 			_quinnSpeaker._displayMode = 1;
 			_protector.show();
