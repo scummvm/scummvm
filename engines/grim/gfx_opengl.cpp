@@ -1121,7 +1121,8 @@ void GfxOpenGL::drawTextObject(const TextObject *text) {
 	const FontUserData *userData = (const FontUserData *)font->getUserData();
 	if (!userData)
 		error("Could not get font userdata");
-	float size = userData->size * _scaleW;
+	float sizeW = userData->size * _scaleW;
+	float sizeH = userData->size * _scaleH;
 	GLuint texture = userData->texture;
 	const Common::String *lines = text->getLines();
 	int numLines = text->getNumLines();
@@ -1145,11 +1146,11 @@ void GfxOpenGL::drawTextObject(const TextObject *text) {
 			glTexCoord2f(cx, cy);
 			glVertex2f(z, w);
 			glTexCoord2f(cx + width, cy);
-			glVertex2f(z + size, w);
+			glVertex2f(z + sizeW, w);
 			glTexCoord2f(cx + width, cy + width);
-			glVertex2f(z + size, w + size);
+			glVertex2f(z + sizeW, w + sizeH);
 			glTexCoord2f(cx, cy + width);
-			glVertex2f(z, w + size);
+			glVertex2f(z, w + sizeH);
 			glEnd();
 			x += font->getCharWidth(character);
 		}
