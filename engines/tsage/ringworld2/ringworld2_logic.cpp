@@ -1775,14 +1775,13 @@ AnimationPlayer::AnimationPlayer(): EventHandler() {
 	_screenBounds = R2_GLOBALS._gfxManagerInstance._bounds;
 	_rect1 = R2_GLOBALS._gfxManagerInstance._bounds;
 	_paletteMode = ANIMPALMODE_REPLACE_PALETTE;
-	_field3A = 1;
+	_field3A = true;
 	_sliceHeight = 1;
-	_field58 = 1;
 	_endAction = NULL;
 
 	_sliceCurrent = nullptr;
 	_sliceNext = nullptr;
-	_field38 = 0;
+	_field38 = false;
 	_objectMode = ANIMOBJMODE_1;
 	_dataNeeded = 0;
 	_playbackTick = 0;
@@ -1813,8 +1812,7 @@ void AnimationPlayer::remove() {
 }
 
 void AnimationPlayer::process(Event &event) {
-	if ((event.eventType == EVENT_KEYPRESS) && (event.kbd.keycode == Common::KEYCODE_ESCAPE) &&
-			(_field3A)) {
+	if ((event.eventType == EVENT_KEYPRESS) && (event.kbd.keycode == Common::KEYCODE_ESCAPE) && _field3A) {
 		// Move the current position to the end
 		_position = _subData._duration;
 	}
@@ -1933,7 +1931,7 @@ bool AnimationPlayer::load(int animId, Action *endAction) {
 	}
 
 	++R2_GLOBALS._animationCtr;
-	_field38 = 1;
+	_field38 = true;
 	return true;
 }
 
@@ -2109,7 +2107,7 @@ void AnimationPlayer::close() {
 	_animData1 = NULL;
 	_animData2 = NULL;
 
-	_field38 = 0;
+	_field38 = false;
 	if (g_globals != NULL)
 		R2_GLOBALS._animationCtr = MAX(R2_GLOBALS._animationCtr - 1, 0);
 }
@@ -2158,7 +2156,7 @@ void AnimationPlayer::getSlices() {
 
 AnimationPlayerExt::AnimationPlayerExt(): AnimationPlayer() {
 	_isActive = false;
-	_field3A = 0;
+	_field3A = false;
 }
 
 void AnimationPlayerExt::synchronize(Serializer &s) {

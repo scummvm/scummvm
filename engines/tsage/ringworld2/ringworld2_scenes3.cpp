@@ -3078,15 +3078,15 @@ void Scene3500::Action1::signal() {
 		}
 
 		// Get the new direction starting on
-		int var8 = (scene->_action1._direction * 2 + scene->_mazeDirection);
-		if (var8 > MAZEDIR_NORTHWEST)
-			var8 = MAZEDIR_NORTH;
-		else if (var8 < MAZEDIR_NORTH)
-			var8 = MAZEDIR_WEST;
+		int direction = (scene->_action1._direction * 2 + scene->_mazeDirection);
+		if (direction > MAZEDIR_NORTHWEST)
+			direction = MAZEDIR_NORTH;
+		else if (direction < MAZEDIR_NORTH)
+			direction = MAZEDIR_WEST;
 
 		// Check whether movement is allowed in that direction. If so, then
 		// movement is started again
-		switch (var8) {
+		switch (direction) {
 		case MAZEDIR_NORTH:
 			if ( ((cellId != 2)  && (cellId != 3)  && (cellId != 6) && (cellId != 1) && (cellId != 23) && (cellId != 24) && (cellId != 4) && (cellId != 11))
 				|| (var6 != 0)) {

@@ -407,11 +407,11 @@ public:
 	AnimationData *_sliceNext;
 	Common::File _resourceFile;
 	Rect _rect1, _screenBounds;
-	int _field38;
-	int _field3A;
+	bool _field38;
+	bool _field3A;
 	AnimationPaletteMode _paletteMode;
 	AnimationObjectMode _objectMode;
-	int _field58, _sliceHeight;
+	int _sliceHeight;
 	byte _palIndexes[256];
 	ScenePalette _palette;
 	AnimationPlayerSubData _subData;
