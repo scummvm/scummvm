@@ -87,7 +87,7 @@ class MctlCompoundArrayItem : public CObject {
 	int _field_28;
 
  public:
-	MctlCompoundArrayItem() : _movGraphReactObj(0) {}
+	MctlCompoundArrayItem() : _movGraphReactObj(0), _motionControllerObj(0), _field_20(0), _field_24(0), _field_28(0) {}
 };
 
 class MctlCompoundArray : public Common::Array<MctlCompoundArrayItem *>, public CObject {
