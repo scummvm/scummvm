@@ -20,6 +20,8 @@
  *
  */
 
+// John_Doe's implementation
+
 #ifndef PRINCE_DECOMPRESS_H
 #define PRINCE_DECOMPRESS_H
 

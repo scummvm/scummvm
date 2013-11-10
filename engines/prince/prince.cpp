@@ -143,8 +143,8 @@ bool loadResource(Common::Array<T> &array, const char *resourceName, bool requir
 	if (!stream) {
 		if (required) {
 			error("Can't load %s", resourceName);
-			return false;
 		}
+		return false;
 	}
 
 	typename Common::Array<T>::value_type t;
@@ -235,6 +235,8 @@ Common::Error PrinceEngine::run() {
 }
 
 bool PrinceEngine::loadLocation(uint16 locationNr) {
+	_cameraX = 0;
+	_newCameraX = 0;
 	_debugger->_locationNr = locationNr;
 	debugEngine("PrinceEngine::loadLocation %d", locationNr);
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
@@ -259,7 +261,7 @@ bool PrinceEngine::loadLocation(uint16 locationNr) {
 	}
 
 	_mobList.clear();
-	loadResource(_mobList, "mob.lst");
+	loadResource(_mobList, "mob.lst", false);
 
 	const char *musName = MusicPlayer::_musTable[MusicPlayer::_musRoomTable[locationNr]];
 	_midiPlayer->loadMidi(musName);
@@ -330,6 +332,11 @@ void PrinceEngine::stopSample(uint16 sampleId) {
 
 bool PrinceEngine::loadVoice(uint32 slot, const Common::String &streamName) {
 	debugEngine("Loading wav %s slot %d", streamName.c_str(), slot);
+
+	if (slot > MAXTEXTS) {
+		error("Text slot bigger than MAXTEXTS %d", MAXTEXTS);
+		return false;
+	}
 
 	_voiceStream = SearchMan.createReadStreamForMember(streamName);
 	if (!_voiceStream) {
@@ -443,11 +450,15 @@ void PrinceEngine::hotspot() {
 			if (x + textW > _graph->_frontScreen->w)
 				x = _graph->_frontScreen->w - textW;
 
+			uint16 y = mousepos.y - _font->getFontHeight();
+			if (y > _graph->_frontScreen->h)
+				y = _font->getFontHeight() - 2;
+
 			_font->drawString(
 				_graph->_frontScreen, 
 				mob._name, 
 				x,
-				mousepos.y - _font->getFontHeight(),
+				y,
 				_graph->_frontScreen->w,
 				216
 			);

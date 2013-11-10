@@ -37,13 +37,13 @@ PtcArchive::~PtcArchive() {
 }
 
 static void decrypt(byte *buffer, uint32 size) {
-    uint32 key = 0xDEADF00D;
-    while (size--) {
-        *buffer++ += key & 0xFF;
-        key ^= 0x2E84299A;
-        key += 0x424C4148;
-        key = ((key & 1) << 31) | (key >> 1);
-    }
+	uint32 key = 0xDEADF00D;
+	while (size--) {
+		*buffer++ += key & 0xFF;
+		key ^= 0x2E84299A;
+		key += 0x424C4148;
+		key = ((key & 1) << 31) | (key >> 1);
+	}
 }
 
 bool PtcArchive::open(const Common::String &filename) {
@@ -55,26 +55,26 @@ bool PtcArchive::open(const Common::String &filename) {
 	uint32 fileTableOffset = _stream->readUint32LE() ^ 0x4D4F4B2D; // MOK-
 	uint32 fileTableSize = _stream->readUint32LE() ^ 0x534F4654; // SOFT
 
-    debug("fileTableOffset : %08X", fileTableOffset);
-    debug("fileTableSize: %08X", fileTableSize);
+	debug("fileTableOffset : %08X", fileTableOffset);
+	debug("fileTableSize: %08X", fileTableSize);
 
 	_stream->seek(fileTableOffset);
 
-    byte *fileTable = new byte[fileTableSize];
-    byte *fileTableEnd = fileTable + fileTableSize;
-    _stream->read(fileTable, fileTableSize);
-    decrypt(fileTable, fileTableSize);
-    
-    for (byte *fileItem = fileTable; fileItem < fileTableEnd; fileItem += 32) {
-    	FileEntry item;
+	byte *fileTable = new byte[fileTableSize];
+	byte *fileTableEnd = fileTable + fileTableSize;
+	_stream->read(fileTable, fileTableSize);
+	decrypt(fileTable, fileTableSize);
+	
+	for (byte *fileItem = fileTable; fileItem < fileTableEnd; fileItem += 32) {
+		FileEntry item;
 		Common::String name = (const char*)fileItem;
-        item._offset = READ_LE_UINT32(fileItem + 24);
-        item._size = READ_LE_UINT32(fileItem + 28);
-        debug("%12s %8X %d", name.c_str(), item._offset, item._size);
+		item._offset = READ_LE_UINT32(fileItem + 24);
+		item._size = READ_LE_UINT32(fileItem + 28);
+		debug("%12s %8X %d", name.c_str(), item._offset, item._size);
 		_items[name] = item;
 	}
-    
-    delete[] fileTable;
+	
+	delete[] fileTable;
 
 	return true;
 }

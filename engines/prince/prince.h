@@ -47,14 +47,7 @@
 
 
 namespace Prince {
-#if 0
-	bool loadFromStream(Common::SeekableReadStream &stream) {
-		ResourceType *resource = new ResourceType();
-		while (resource->loadFromStream(stream))
-			_list.push_back(resource);
-		return true;
-	}
-#endif
+
 struct PrinceGameDescription;
 
 class PrinceEngine;

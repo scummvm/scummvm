@@ -20,6 +20,8 @@
  *
  */
 
+// John_Doe's implementation
+
 #include "prince/decompress.h"
 
 namespace Prince {
