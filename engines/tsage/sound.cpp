@@ -1736,7 +1736,7 @@ uint32 Sound::getTimeIndex() const {
 }
 
 int Sound::getCueValue() const {
-	return _cueValue;
+	return _cueValue == 0xff ? -1 : _cueValue;
 }
 
 void Sound::setCueValue(int cueValue) {
@@ -2438,23 +2438,23 @@ void ASound::dispatch() {
 		_cueValue = cueValue;
 		_sound.setCueValue(-1);
 
-		if (_action)
-			_action->signal();
+		if (_endAction)
+			_endAction->signal();
 	}
 
 	if (_cueValue != -1) {
 		if (!_sound.isPrimed()) {
 			_cueValue = -1;
-			if (_action) {
-				_action->signal();
-				_action = NULL;
+			if (_endAction) {
+				_endAction->signal();
+				_endAction = NULL;
 			}
 		}
 	}
 }
 
-void ASound::play(int soundNum, EventHandler *action, int volume) {
-	_action = action;
+void ASound::play(int soundNum, EventHandler *endAction, int volume) {
+	_endAction = endAction;
 	_cueValue = 0;
 
 	setVol(volume);
@@ -2477,9 +2477,9 @@ void ASound::unPrime() {
 	_action = NULL;
 }
 
-void ASound::fade(int fadeDest, int fadeSteps, int fadeTicks, bool stopAfterFadeFlag, EventHandler *action) {
-	if (action)
-		_action = action;
+void ASound::fade(int fadeDest, int fadeSteps, int fadeTicks, bool stopAfterFadeFlag, EventHandler *endAction) {
+	if (endAction)
+		_endAction = endAction;
 
 	_sound.fade(fadeDest, fadeSteps, fadeTicks, stopAfterFadeFlag);
 }
@@ -2506,8 +2506,8 @@ void ASoundExt::signal() {
 	}
 }
 
-void ASoundExt::fadeOut2(EventHandler *action) {
-	fade(0, 10, 10, true, action);
+void ASoundExt::fadeOut2(EventHandler *endAction) {
+	fade(0, 10, 10, true, endAction);
 }
 
 void ASoundExt::changeSound(int soundNum) {

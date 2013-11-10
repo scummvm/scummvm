@@ -1810,14 +1810,10 @@ void Scene180::signal() {
 		_shipDisplay.setAction(NULL);
 		_shipDisplay.remove();
 
-		// TODO: Figure out why end action on sounds aren't firing. For now, I'm
-		// simply setting up a scene delay to ensure the signal() method gets
-		// called again after a brief delay
 		_backSurface.fillRect(Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 0);
 		R2_GLOBALS._screenSurface.fillRect(Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 0);
-		setSceneDelay(10);
 		R2_GLOBALS._sound2.fadeOut2(NULL);
-		R2_GLOBALS._sound1.fadeOut2(NULL /* this */);
+		R2_GLOBALS._sound1.fadeOut2(this);
 		break;
 
 	case 39:

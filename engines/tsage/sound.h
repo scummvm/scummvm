@@ -366,7 +366,7 @@ public:
 class ASound: public EventHandler {
 public:
 	Sound _sound;
-	EventHandler *_action;
+	EventHandler *_endAction;
 	int _cueValue;
 
 	ASound();
@@ -374,7 +374,7 @@ public:
 	virtual void synchronize(Serializer &s);
 	virtual void dispatch();
 
-	void play(int soundNum, EventHandler *action = NULL, int volume = 127);
+	void play(int soundNum, EventHandler *endAction = NULL, int volume = 127);
 	void stop();
 	void prime(int soundNum, Action *action = NULL);
 	void unPrime();
@@ -386,7 +386,7 @@ public:
 	bool isMuted() const { return _sound.isMuted(); }
 	void pause(bool flag) { _sound.pause(flag); }
 	void mute(bool flag) { _sound.mute(flag); }
-	void fade(int fadeDest, int fadeSteps, int fadeTicks, bool stopAfterFadeFlag, EventHandler *action);
+	void fade(int fadeDest, int fadeSteps, int fadeTicks, bool stopAfterFadeFlag, EventHandler *endAction);
 	void fadeIn() { fade(127, 5, 10, false, NULL); }
 	void fadeOut(Action *action) { fade(0, 5, 10, true, action); }
 	void setTimeIndex(uint32 timeIndex) { _sound.setTimeIndex(timeIndex); }
@@ -407,7 +407,7 @@ public:
 	int _soundNum;
 
 	ASoundExt();
-	void fadeOut2(EventHandler *action);
+	void fadeOut2(EventHandler *endAction);
 	void changeSound(int soundNum);
 
 	virtual Common::String getClassName() { return "ASoundExt"; }

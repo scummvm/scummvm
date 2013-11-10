@@ -414,6 +414,15 @@ Ringworld2Globals::Ringworld2Globals() {
 	_scannerDialog = new ScannerDialog();
 	_speechSubtitles = SPEECH_TEXT;
 
+	// Register the inner sound objects for each of the global ASoundExt fields.
+	// Normally the ASound constructor would do this, but because they're fields
+	// of the globals, the g_globals reference isn't ready for them to use
+	_sounds.push_back(&_sound1);
+	_sounds.push_back(&_sound2);
+	_sounds.push_back(&_sound3);
+	_sounds.push_back(&_sound4);
+
+	// Initialise fields
 	_stripModifier = 0;
 	_flubMazeArea = 1;
 	_flubMazeEntryDirection = 0;
