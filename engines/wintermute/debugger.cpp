@@ -211,7 +211,10 @@ bool Console::Cmd_Finish(int argc, const char **argv) {
 }
 
 bool Console::Cmd_List(int argc, const char **argv) {
-	printSource();
+	int error = printSource();
+	if (error) {
+		printError(error, Common::String(argv[0]));
+	}
 	return true;
 }
 
@@ -359,17 +362,25 @@ void Console::notifyWatch(const char *filename, const char *symbol, const char *
 	onFrame();
 }
 
-void Console::printSource(int n) {
+int Console::printSource(int n) {
 	int error = 0;
 	int *perror = &error;
-	Common::Array<Common::String> strings = ADAPTER->_lastSource->getSurroundingLines(ADAPTER->getLastLine(), n, perror);
-	if (error != 0) {
-		DebugPrintf("Error retrieving source file\n");
+
+	if (!ADAPTER->_lastSource) {
+		error = DebuggerAdapter::NOT_ALLOWED;
+	} else {
+		assert(ADAPTER->_lastSource);
+		Common::Array<Common::String> strings = ADAPTER->_lastSource->getSurroundingLines(ADAPTER->getLastLine(), n, perror);
+		if (error != 0) {
+			DebugPrintf("Error retrieving source file\n");
+		}
+		for (uint i = 0; i < strings.size(); i++) {
+			DebugPrintf(strings[i].c_str());
+			DebugPrintf("\n");
+		}
 	}
-	for (uint i = 0; i < strings.size(); i++) {
-		DebugPrintf(strings[i].c_str());
-		DebugPrintf("\n");
-	}
+
+	return error;
 }
 
 void Console::debugWarning(const Common::String &command, int warning_level, const Common::String &message) {
