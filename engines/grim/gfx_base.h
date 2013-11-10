@@ -134,8 +134,9 @@ public:
 	virtual void translateViewpointFinish() = 0;
 
 	virtual void drawEMIModelFace(const EMIModel *model, const EMIMeshFace *face) = 0;
-	virtual void drawModelFace(const MeshFace *face, float *vertices, float *vertNormals, float *textureVerts) = 0;
+	virtual void drawModelFace(const Mesh *mesh, const MeshFace *face) = 0;
 	virtual void drawSprite(const Sprite *sprite) = 0;
+	virtual void drawMesh(const Mesh *mesh);
 
 	virtual void enableLights() = 0;
 	virtual void disableLights() = 0;
@@ -250,6 +251,10 @@ public:
 
 	virtual void createSpecialtyTextures() = 0;
 	virtual Material *getSpecialtyTexture(int n) { return &_specialty[n]; }
+
+	virtual void createModel(Mesh *mesh) {}
+	virtual void createEMIModel(EMIModel *model) {}
+	virtual void updateEMIModel(const EMIModel *model) {}
 
 	virtual int genBuffer() { return 0; }
 	virtual void delBuffer(int buffer) {}

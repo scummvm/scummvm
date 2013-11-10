@@ -79,7 +79,7 @@ public:
 	void translateViewpointFinish();
 
 	void drawEMIModelFace(const EMIModel *model, const EMIMeshFace *face);
-	void drawModelFace(const MeshFace *face, float *vertices, float *vertNormals, float *textureVerts);
+	void drawModelFace(const Mesh *mesh, const MeshFace *face);
 	void drawSprite(const Sprite *sprite);
 
 	void enableLights();

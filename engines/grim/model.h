@@ -91,7 +91,7 @@ public:
 class MeshFace {
 public:
 	int loadBinary(Common::SeekableReadStream *data, Material *materials[]);
-	void draw(float *vertices, float *vertNormals, float *textureVerts) const;
+	void draw(const Mesh *mesh) const;
 	void changeMaterial(Material *material);
 	~MeshFace();
 
@@ -130,6 +130,9 @@ public:
 	int _numFaces;
 	MeshFace *_faces;
 	Math::Matrix4 _matrix;
+
+private:
+	void sortFaces();
 };
 
 class ModelNode {

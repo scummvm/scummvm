@@ -23,6 +23,8 @@
 #include "engines/grim/gfx_base.h"
 #include "engines/grim/savegame.h"
 
+#include "engines/grim/model.h"
+
 namespace Grim {
 
 GfxBase::GfxBase() :
@@ -77,6 +79,11 @@ void GfxBase::renderBitmaps(bool render) {
 
 void GfxBase::renderZBitmaps(bool render) {
 	_renderZBitmaps = render;
+}
+
+void GfxBase::drawMesh(const Mesh *mesh) {
+	for (int i = 0; i < mesh->_numFaces; i++)
+		mesh->_faces[i].draw(mesh);
 }
 
 #ifndef USE_OPENGL
