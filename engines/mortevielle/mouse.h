@@ -36,8 +36,6 @@ class MortevielleEngine;
 class MouseHandler {
 private:
 	MortevielleEngine *_vm;
-
-	int _counter;
 public:
 	Common::Point _pos;
 
