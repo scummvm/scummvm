@@ -228,13 +228,13 @@ void Scene15::Action1::signal() {
 	case 2: {
 		SceneItem::display(15, 1, SET_Y, 20, SET_FONT, 2, SET_BG_COLOR, -1, SET_EXT_BGCOLOR, 7,
 				SET_WIDTH, 320, SET_KEEP_ONSCREEN, 1, LIST_END);
-		scene->_object1.postInit();
-		scene->_object1.setVisage(15);
-		scene->_object1.setPosition(Common::Point(160, -10));
-		scene->_object1.animate(ANIM_MODE_2, NULL);
+		scene->_ship.postInit();
+		scene->_ship.setVisage(15);
+		scene->_ship.setPosition(Common::Point(160, -10));
+		scene->_ship.animate(ANIM_MODE_2, NULL);
 		Common::Point pt(160, 100);
 		NpcMover *mover = new NpcMover();
-		scene->_object1.addMover(mover, &pt, this);
+		scene->_ship.addMover(mover, &pt, this);
 		scene->_soundHandler.play(7);
 		break;
 	}
@@ -248,8 +248,8 @@ void Scene15::Action1::signal() {
 void Scene15::Action1::dispatch() {
 	Scene15 *scene = (Scene15 *)g_globals->_sceneManager._scene;
 
-	if (scene->_object1._position.y < 100)
-		scene->_object1.changeZoom(100 - scene->_object1._position.y);
+	if (scene->_ship._position.y < 100)
+		scene->_ship.changeZoom(100 - scene->_ship._position.y);
 	Action::dispatch();
 }
 

@@ -74,7 +74,7 @@ class Scene15 : public Scene {
 	};
 public:
 	Action1 _action1;
-	SceneObject _object1;
+	SceneObject _ship;
 	ASound _soundHandler;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
