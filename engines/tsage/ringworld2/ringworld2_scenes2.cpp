@@ -1426,8 +1426,6 @@ void Scene2425::postInit(SceneObjectList *OwnerList) {
 	_ropeDest1.setDetails(Rect(225, 52, 248, 65), 2425, -1, -1, -1, 1, NULL);
 	_ropeDest2.setDetails(Rect(292, 81, 316, 94), 2425, -1, -1, -1, 1, NULL);
 
-//  CHECKME: SceneActor using a SceneItem function??
-//	_pictographs2.setDetails(11, 2425, 3, -1, 6);
 	_pictographs2._sceneRegionId = 11;
 	_pictographs2._resNum = 2425;
 	_pictographs2._lookLineNum = 3;
