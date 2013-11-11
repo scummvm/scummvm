@@ -116,7 +116,7 @@ static GLES8888Texture *loadBuiltinTexture(const char *filename) {
 	Common::SeekableReadStream *str = member->createReadStream();
 	Graphics::TGADecoder dec;
 	dec.loadStream(*str);
-	void *pixels = dec.getSurface()->pixels;
+	const void *pixels = dec.getSurface()->getPixels();
 
 	GLES8888Texture *ret = new GLES8888Texture();
 	uint16 w = dec.getSurface()->w;
