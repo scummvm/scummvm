@@ -2488,11 +2488,11 @@ void Scene90::Action1::signal() {
 	case 3: {
 		Common::Point pt(278, 191);
 		NpcMover *mover = new NpcMover();
-		scene->_object2.addMover(mover, &pt, this);
+		scene->_guard.addMover(mover, &pt, this);
 		break;
 	}
 	case 4:
-		scene->_object2.setStrip(3);
+		scene->_guard.setStrip(3);
 		setDelay(2);
 		break;
 	case 5:
@@ -2506,36 +2506,36 @@ void Scene90::Action1::signal() {
 		}
 		break;
 	case 6:
-		scene->_object2.animate(ANIM_MODE_NONE);
+		scene->_guard.animate(ANIM_MODE_NONE);
 		g_globals->_player._uiEnabled = true;
 		break;
 	case 7:
-		scene->_object2.animate(ANIM_MODE_NONE);
+		scene->_guard.animate(ANIM_MODE_NONE);
 		g_globals->_soundHandler.play(56);
-		scene->_object3.animate(ANIM_MODE_5, this);
+		scene->_headGate.animate(ANIM_MODE_5, this);
 		break;
 	case 8: {
 		Common::Point pt(215, 127);
 		PlayerMover *mover = new PlayerMover();
-		scene->_object5.addMover(mover, &pt, this);
+		scene->_quinnShip.addMover(mover, &pt, this);
 		break;
 	}
 	case 9: {
 		Common::Point pt1(215, 127);
 		PlayerMover *mover1 = new PlayerMover();
-		scene->_object1.addMover(mover1, &pt1, this);
+		scene->_seekerShip.addMover(mover1, &pt1, this);
 		Common::Point pt2(86, 62);
 		PlayerMover *mover2 = new PlayerMover();
-		scene->_object5.addMover(mover2, &pt2, this);
+		scene->_quinnShip.addMover(mover2, &pt2, this);
 		break;
 	}
 	case 10: {
 		PlayerMover2 *mover = new PlayerMover2();
-		scene->_object1.addMover(mover, 10, 15, &scene->_object5);
+		scene->_seekerShip.addMover(mover, 10, 15, &scene->_quinnShip);
 
 		if (!g_globals->getFlag(104)) {
 			mover = new PlayerMover2();
-			scene->_object4.addMover(mover, 10, 15, &scene->_object1);
+			scene->_emptyShip.addMover(mover, 10, 15, &scene->_seekerShip);
 		}
 		setDelay(60);
 		break;
@@ -2543,7 +2543,7 @@ void Scene90::Action1::signal() {
 	case 11:
 		g_globals->_soundHandler.play(57);
 		g_globals->_soundHandler.play(68);
-		scene->_object3.animate(ANIM_MODE_6, NULL);
+		scene->_headGate.animate(ANIM_MODE_6, NULL);
 
 		SceneItem::display(90, g_globals->getFlag(104) ? 15 : 14,
 			SET_EXT_BGCOLOR, 13, SET_KEEP_ONSCREEN, -1, SET_X, 120, SET_Y, 20, LIST_END);
@@ -2558,7 +2558,7 @@ void Scene90::Action1::signal() {
 
 /*--------------------------------------------------------------------------*/
 
-void Scene90::Object1::doAction(int action) {
+void Scene90::SeekerShip::doAction(int action) {
 	Scene90 *scene = (Scene90 *)g_globals->_sceneManager._scene;
 
 	switch (action) {
@@ -2576,23 +2576,23 @@ void Scene90::Object1::doAction(int action) {
 	}
 }
 
-void Scene90::Object2::doAction(int action) {
+void Scene90::Guard::doAction(int action) {
 	Scene90 *scene = (Scene90 *)g_globals->_sceneManager._scene;
 
 	switch (action) {
 	case OBJECT_STUNNER:
 	case CURSOR_USE:
 		g_globals->_player.disableControl();
-		scene->_object6.postInit();
-		scene->_object6.setVisage(90);
-		scene->_object6.setStrip(6);
-		scene->_object6.setPosition(Common::Point(184, 210));
-		scene->_object6.hide();
+		scene->_bubble.postInit();
+		scene->_bubble.setVisage(90);
+		scene->_bubble.setStrip(6);
+		scene->_bubble.setPosition(Common::Point(184, 210));
+		scene->_bubble.hide();
 
 		scene->_sceneMode = 91;
 		scene->_soundHandler1.play(59);
 		scene->_soundHandler1.holdAt(true);
-		scene->setAction(&scene->_sequenceManager, scene, 91, this, &scene->_object6, NULL);
+		scene->setAction(&scene->_sequenceManager, scene, 91, this, &scene->_bubble, NULL);
 		break;
 	case CURSOR_LOOK:
 		SceneItem::display2(90, 8);
@@ -2610,21 +2610,21 @@ void Scene90::Object2::doAction(int action) {
 /*--------------------------------------------------------------------------*/
 
 Scene90::Scene90() :
-		_item1(0, CURSOR_LOOK, 90, 9, LIST_END),
-		_item2(0, CURSOR_LOOK, 90, 10, LIST_END),
-		_item3(0, CURSOR_LOOK, 90, 11, LIST_END),
-		_object3(OBJECT_STUNNER, 90, 13, CURSOR_LOOK, 90, 12, CURSOR_USE, 90, 16, LIST_END),
-		_object4(CURSOR_LOOK, 90, 17, LIST_END),
-		_object5(CURSOR_LOOK, 90, 18, CURSOR_USE, 90, 19, LIST_END) {
+		_guardShack(0, CURSOR_LOOK, 90, 9, LIST_END),
+		_shed(0, CURSOR_LOOK, 90, 10, LIST_END),
+		_background(0, CURSOR_LOOK, 90, 11, LIST_END),
+		_headGate(OBJECT_STUNNER, 90, 13, CURSOR_LOOK, 90, 12, CURSOR_USE, 90, 16, LIST_END),
+		_emptyShip(CURSOR_LOOK, 90, 17, LIST_END),
+		_quinnShip(CURSOR_LOOK, 90, 18, CURSOR_USE, 90, 19, LIST_END) {
 }
 
 void Scene90::stripCallback(int v) {
 	Scene90 *scene = (Scene90 *)g_globals->_sceneManager._scene;
 
 	if (v == 1)
-		scene->_object2.animate(ANIM_MODE_7, 0, NULL);
+		scene->_guard.animate(ANIM_MODE_7, 0, NULL);
 	else if (v == 2)
-		scene->_object2.animate(ANIM_MODE_NONE);
+		scene->_guard.animate(ANIM_MODE_NONE);
 }
 
 void Scene90::postInit(SceneObjectList *OwnerList) {
@@ -2638,53 +2638,53 @@ void Scene90::postInit(SceneObjectList *OwnerList) {
 	_stripManager.addSpeaker(&_speakerQL);
 	_stripManager.addSpeaker(&_speakerSR);
 
-	_speakerMText._npc = &_object2;
+	_speakerMText._npc = &_guard;
 	_speakerQText._textWidth = 160;
-	_speakerQText._npc = &_object5;
-	_speakerSText._npc = &_object1;
+	_speakerQText._npc = &_quinnShip;
+	_speakerSText._npc = &_seekerShip;
 
-	_object5.postInit();
-	_object5.setVisage(2333);
-	_object5.setObjectWrapper(new SceneObjectWrapper());
-	_object5._strip = 7;
-	_object5._moveDiff = Common::Point(22, 22);
-	_object5.setPosition(Common::Point(151, 177));
-	_object5.changeZoom(-1);
-	g_globals->_sceneItems.push_back(&_object5);
+	_quinnShip.postInit();
+	_quinnShip.setVisage(2333);
+	_quinnShip.setObjectWrapper(new SceneObjectWrapper());
+	_quinnShip._strip = 7;
+	_quinnShip._moveDiff = Common::Point(22, 22);
+	_quinnShip.setPosition(Common::Point(151, 177));
+	_quinnShip.changeZoom(-1);
+	g_globals->_sceneItems.push_back(&_quinnShip);
 
-	_object1.postInit();
-	_object1.setVisage(2337);
-	_object1.setObjectWrapper(new SceneObjectWrapper());
-	_object1._strip = 4;
-	_object1._moveDiff = Common::Point(20, 20);
-	_object1.setPosition(Common::Point(212, 183));
-	_object1.changeZoom(-1);
-	g_globals->_sceneItems.push_back(&_object1);
+	_seekerShip.postInit();
+	_seekerShip.setVisage(2337);
+	_seekerShip.setObjectWrapper(new SceneObjectWrapper());
+	_seekerShip._strip = 4;
+	_seekerShip._moveDiff = Common::Point(20, 20);
+	_seekerShip.setPosition(Common::Point(212, 183));
+	_seekerShip.changeZoom(-1);
+	g_globals->_sceneItems.push_back(&_seekerShip);
 
 	if (!g_globals->getFlag(104)) {
-		_object4.postInit();
-		_object4.setVisage(2331);
-		_object4.setObjectWrapper(new SceneObjectWrapper());
-		_object4._strip = 4;
-		_object4._moveDiff = Common::Point(20, 20);
-		_object4.setPosition(Common::Point(251, 207));
-		_object4.changeZoom(-1);
-		g_globals->_sceneItems.push_back(&_object4);
+		_emptyShip.postInit();
+		_emptyShip.setVisage(2331);
+		_emptyShip.setObjectWrapper(new SceneObjectWrapper());
+		_emptyShip._strip = 4;
+		_emptyShip._moveDiff = Common::Point(20, 20);
+		_emptyShip.setPosition(Common::Point(251, 207));
+		_emptyShip.changeZoom(-1);
+		g_globals->_sceneItems.push_back(&_emptyShip);
 	}
 
-	_object2.postInit();
-	_object2.setVisage(90);
-	_object2.animate(ANIM_MODE_1, NULL);
-	_object2.setPosition(Common::Point(315, 185));
-	_object2._strip = 2;
-	g_globals->_sceneItems.push_back(&_object2);
+	_guard.postInit();
+	_guard.setVisage(90);
+	_guard.animate(ANIM_MODE_1, NULL);
+	_guard.setPosition(Common::Point(315, 185));
+	_guard._strip = 2;
+	g_globals->_sceneItems.push_back(&_guard);
 
-	_object3.postInit();
-	_object3.setVisage(90);
-	_object3.animate(ANIM_MODE_1, NULL);
-	_object3.setPosition(Common::Point(196, 181));
-	_object3.fixPriority(175);
-	g_globals->_sceneItems.push_back(&_object3);
+	_headGate.postInit();
+	_headGate.setVisage(90);
+	_headGate.animate(ANIM_MODE_1, NULL);
+	_headGate.setPosition(Common::Point(196, 181));
+	_headGate.fixPriority(175);
+	g_globals->_sceneItems.push_back(&_headGate);
 
 	g_globals->_player.disableControl();
 	g_globals->_soundHandler.play(55);
@@ -2693,11 +2693,11 @@ void Scene90::postInit(SceneObjectList *OwnerList) {
 
 	setAction(&_action1);
 
-	_item3.setBounds(Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
-	_item1.setBounds(Rect(271, 65, 271, 186));
-	_item2.setBounds(Rect(0, 17, 124, 77));
+	_background.setBounds(Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
+	_guardShack.setBounds(Rect(271, 65, 271, 186));
+	_shed.setBounds(Rect(0, 17, 124, 77));
 
-	g_globals->_sceneItems.addItems(&_item1, &_item2, &_item3, NULL);
+	g_globals->_sceneItems.addItems(&_guardShack, &_shed, &_background, NULL);
 }
 
 void Scene90::signal() {

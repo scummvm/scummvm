@@ -434,11 +434,11 @@ class Scene90 : public Scene {
 	public:
 		virtual void signal();
 	};
-	class Object1 : public SceneObject {
+	class SeekerShip : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class Object2 : public SceneObject {
+	class Guard : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
@@ -450,11 +450,15 @@ public:
 	SpeakerSR _speakerSR;
 	SpeakerMText _speakerMText;
 	Action1 _action1;
-	Object1 _object1;
-	Object2 _object2;
-	DisplayObject _object3, _object4, _object5;
-	SceneObject _object6;
-	DisplayHotspot _item1, _item2, _item3;
+	SeekerShip _seekerShip;
+	Guard _guard;
+	DisplayObject _headGate;
+	DisplayObject _emptyShip;
+	DisplayObject _quinnShip;
+	SceneObject _bubble;
+	DisplayHotspot _guardShack;
+	DisplayHotspot _shed;
+	DisplayHotspot _background;
 	ASound _soundHandler1, _soundHandler2;
 
 	Scene90();
