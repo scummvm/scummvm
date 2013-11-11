@@ -106,7 +106,10 @@ public:
 	Action2 _action2;
 	Action3 _action3;
 	Action4 _action4;
-	SceneObject _sceneObject1, _SceneObjectExt, _sceneObject3, _sceneObject4, _sceneObject5;
+	SceneObject _assassinShip1;
+	SceneObject _assassinShip2;
+	SceneObject _laserShot1;
+	SceneObject _laserShot2;
 	ASound _sound;
 public:
 	Scene20();
