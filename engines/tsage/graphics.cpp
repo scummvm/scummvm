@@ -1079,16 +1079,9 @@ bool GfxButton::process(Event &event) {
 GfxDialog::GfxDialog() {
 	_savedArea = NULL;
 	_defaultButton = NULL;
-
-	// For Return to Ringworld 2, backup palette when showing a dialog
-	if (g_vm->getGameID() == GType_Ringworld2)
-		g_system->getPaletteManager()->grabPalette(&_savedPalette[0], 0, 256);
 }
 
 GfxDialog::~GfxDialog() {
-	if (g_vm->getGameID() == GType_Ringworld2)
-		g_system->getPaletteManager()->setPalette(&_savedPalette[0], 0, 256);
-
 	remove();
 }
 

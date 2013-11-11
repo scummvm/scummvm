@@ -321,7 +321,6 @@ public:
 	GfxElementList _elements;
 	GfxButton *_defaultButton;
 	GfxSurface *_savedArea;
-	byte _savedPalette[256 * 3];
 public:
 	GfxDialog();
 	virtual ~GfxDialog();
