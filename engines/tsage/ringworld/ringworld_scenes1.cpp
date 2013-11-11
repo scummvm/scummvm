@@ -1943,8 +1943,8 @@ void Scene60::Action1::signal() {
 		scene->_controlButton.remove();
 		scene->_slaveButton.remove();
 		scene->_masterButton.remove();
-		scene->_item1.remove();
-		scene->_item2.remove();
+		scene->_diskDrive.remove();
+		scene->_dashboard.remove();
 
 		scene->_nextButton.postInit();
 		scene->_nextButton.setVisage(65);
@@ -2126,11 +2126,11 @@ void Scene60::ExitObject::doAction(int action) {
 		if (scene->_masterButton._state)
 			scene->_masterButton.setFrame(2);
 
-		g_globals->_sceneItems.push_front(&scene->_item1);
+		g_globals->_sceneItems.push_front(&scene->_diskDrive);
 		g_globals->_sceneItems.push_front(&scene->_controlButton);
 		g_globals->_sceneItems.push_front(&scene->_slaveButton);
 		g_globals->_sceneItems.push_front(&scene->_masterButton);
-		g_globals->_sceneItems.push_back(&scene->_item2);
+		g_globals->_sceneItems.push_back(&scene->_dashboard);
 
 		g_globals->gfxManager()._font.setFontNumber(2);
 		g_globals->_sceneText._fontNumber = 2;
@@ -2315,11 +2315,11 @@ void Scene60::Item::doAction(int action) {
 /*--------------------------------------------------------------------------*/
 
 Scene60::Scene60() :
-		_item2(0, 12, 12),
-		_item3(8, 22, 23),
-		_item4(9, 24, 25),
-		_item5(10, 26, 27),
-		_item6(11, 28, 29) {
+		_dashboard(0, 12, 12),
+		_intercomm(8, 22, 23),
+		_viewScreen(9, 24, 25),
+		_speedControl(10, 26, 27),
+		_speaker(11, 28, 29) {
 }
 
 void Scene60::postInit(SceneObjectList *OwnerList) {
@@ -2360,8 +2360,8 @@ void Scene60::postInit(SceneObjectList *OwnerList) {
 		setAction(&_sequenceManager, this, 61, NULL);
 	}
 
-	_item1.setBounds(Rect(130, 55, 174, 70));
-	_item2.setBounds(Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
+	_diskDrive.setBounds(Rect(130, 55, 174, 70));
+	_dashboard.setBounds(Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
 
 	if (g_globals->_stripNum == 0) {
 		if (g_globals->getFlag(117)) {
@@ -2434,8 +2434,7 @@ void Scene60::postInit(SceneObjectList *OwnerList) {
 		}
 	}
 
-	g_globals->_sceneItems.addItems(&_item3, &_item4, &_item5, &_item6,
-		&_item1, &_item2, NULL);
+	g_globals->_sceneItems.addItems(&_intercomm, &_viewScreen, &_speedControl, &_speaker, &_diskDrive, &_dashboard, NULL);
 }
 
 void Scene60::signal() {

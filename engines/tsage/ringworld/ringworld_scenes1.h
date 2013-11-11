@@ -413,8 +413,12 @@ public:
 	MasterObject _masterButton;
 	FloppyDrive _floppyDrive;
 	SceneObject _redLights;
-	Item1 _item1;
-	Item _item2, _item3, _item4, _item5, _item6;
+	Item1 _diskDrive;
+	Item _dashboard;
+	Item _intercomm;
+	Item _viewScreen;
+	Item _speedControl;
+	Item _speaker;
 	ASound _soundHandler1;
 	ASound _soundHandler2;
 	ASound _soundHandler3;
