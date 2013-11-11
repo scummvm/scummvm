@@ -297,15 +297,15 @@ class Scene50 : public Scene {
 	public:
 		virtual void doAction(int action);
 	};
-	class Object2 : public SceneObject {
+	class LeftFlyCycle : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class Object3 : public SceneObject {
+	class CenterFlyCycle : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class Object4 : public SceneObject {
+	class RightFlyCycle : public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
@@ -315,15 +315,23 @@ public:
 	Action1 _action1;
 	Action2 _action2;
 	Action3 _action3;
+	// CHECKME: Object1 looks useless
 	Object1 _object1;
-	Object2 _object2;
-	Object3 _object3;
-	Object4 _object4;
+	LeftFlyCycle _leftFlyCycle;
+	CenterFlyCycle _centerFlyCycle;
+	RightFlyCycle _rightFlyCycle;
 	Rect _doorwayRect;
 	SpeakerSText _speakerSText;
 	SpeakerQText _speakerQText;
-	DisplayHotspot _item0, _item1, _item2;
-	DisplayHotspot _item3, _item4, _item5;
+	DisplayHotspot _background;
+	
+	//CHECKME: Useless Hotspot, never initialized
+	DisplayHotspot _item1;
+	//CHECKME: Useless Hotspot, never initialized
+	DisplayHotspot _entrance;
+	DisplayHotspot _bulwark;
+	DisplayHotspot _tree;
+	DisplayHotspot _flagstones;
 
 	Scene50();
 	virtual void postInit(SceneObjectList *OwnerList = NULL);

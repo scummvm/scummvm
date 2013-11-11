@@ -627,26 +627,37 @@ void Scene20::signal() {
  *--------------------------------------------------------------------------*/
 
 void Scene30::BeamObject::doAction(int action) {
-	if (action == OBJECT_SCANNER)
+	switch (action) {
+	case OBJECT_SCANNER:
 		display2(30, 14);
-	else if (action == CURSOR_LOOK)
+		break;
+	case CURSOR_LOOK:
 		display2(30, 2);
-	else if (action == CURSOR_USE) {
+		break;
+	case CURSOR_USE: {
 		Scene30 *parent = (Scene30 *)g_globals->_sceneManager._scene;
 		parent->setAction(&parent->_beamAction);
-	} else
+		}
+		break;
+	default:
 		SceneObject::doAction(action);
+	}
 }
 
 void Scene30::DoorObject::doAction(int action) {
-	if (action == OBJECT_SCANNER)
+	switch (action) {
+	case OBJECT_SCANNER:
 		display2(30, 13);
-	else if (action == CURSOR_LOOK)
+		break;
+	case CURSOR_LOOK:
 		display2(30, 1);
-	else if (action == CURSOR_USE)
+		break;
+	case CURSOR_USE:
 		display2(30, 7);
-	else
+		break;
+	default:
 		SceneObject::doAction(action);
+	}
 }
 
 void Scene30::BeamAction::signal() {
@@ -1694,7 +1705,7 @@ void Scene50::Object1::doAction(int action) {
 	}
 }
 
-void Scene50::Object2::doAction(int action) {
+void Scene50::LeftFlyCycle::doAction(int action) {
 	Scene50 *scene = (Scene50 *)g_globals->_sceneManager._scene;
 
 	switch (action) {
@@ -1718,7 +1729,7 @@ void Scene50::Object2::doAction(int action) {
 	}
 }
 
-void Scene50::Object3::doAction(int action) {
+void Scene50::CenterFlyCycle::doAction(int action) {
 	Scene50 *scene = (Scene50 *)g_globals->_sceneManager._scene;
 
 	switch (action) {
@@ -1746,7 +1757,7 @@ void Scene50::Object3::doAction(int action) {
 	}
 }
 
-void Scene50::Object4::doAction(int action) {
+void Scene50::RightFlyCycle::doAction(int action) {
 	Scene50 *scene = (Scene50 *)g_globals->_sceneManager._scene;
 
 	switch (action) {
@@ -1775,12 +1786,13 @@ void Scene50::Object4::doAction(int action) {
 /*--------------------------------------------------------------------------*/
 
 Scene50::Scene50() :
-		_item0(0, CURSOR_LOOK, 50, 3, LIST_END),
+		_background(0, CURSOR_LOOK, 50, 3, LIST_END),
 		_item1(0, OBJECT_SCANNER, 50, 15, CURSOR_USE, 50, 16, CURSOR_LOOK, 50, 3, LIST_END),
-		_item2(0, CURSOR_LOOK, 50, 7, LIST_END),
-		_item3(8, OBJECT_STUNNER, 50, 14, OBJECT_SCANNER, 50, 13, CURSOR_LOOK, 50, 3, LIST_END),
-		_item4(9, OBJECT_SCANNER, 40, 39, OBJECT_STUNNER, 40, 40, CURSOR_USE, 40, 41, CURSOR_LOOK, 50, 5, LIST_END),
-		_item5(10, OBJECT_SCANNER, 50, 17, OBJECT_STUNNER, 50, 18, CURSOR_LOOK, 50, 6, CURSOR_USE, 30, 8, LIST_END) {
+		_entrance(0, CURSOR_LOOK, 50, 7, LIST_END),
+		// The original was using dialog 50/3 for CURSOR_LOOK, which is too generic. 
+		_bulwark(8, OBJECT_STUNNER, 50, 14, OBJECT_SCANNER, 50, 13, CURSOR_LOOK, 30, 0, LIST_END),
+		_tree(9, OBJECT_SCANNER, 40, 39, OBJECT_STUNNER, 40, 40, CURSOR_USE, 40, 41, CURSOR_LOOK, 50, 5, LIST_END),
+		_flagstones(10, OBJECT_SCANNER, 50, 17, OBJECT_STUNNER, 50, 18, CURSOR_LOOK, 50, 6, CURSOR_USE, 30, 8, LIST_END) {
 
 	_doorwayRect = Rect(80, 108, 160, 112);
 }
@@ -1809,25 +1821,25 @@ void Scene50::postInit(SceneObjectList *OwnerList) {
 		g_globals->_player.setPosition(Common::Point(270, 143));
 	}
 
-	_object2.postInit();
-	_object2.setVisage(2331);
-	_object2.setStrip(6);
-	_object2.setPosition(Common::Point(136, 192));
-	_object2.fixPriority(200);
+	_leftFlyCycle.postInit();
+	_leftFlyCycle.setVisage(2331);
+	_leftFlyCycle.setStrip(6);
+	_leftFlyCycle.setPosition(Common::Point(136, 192));
+	_leftFlyCycle.fixPriority(200);
 
-	_object3.postInit();
-	_object3.setVisage(2337);
-	_object3.setStrip(6);
-	_object3.setPosition(Common::Point(260, 180));
-	_object3.fixPriority(200);
+	_centerFlyCycle.postInit();
+	_centerFlyCycle.setVisage(2337);
+	_centerFlyCycle.setStrip(6);
+	_centerFlyCycle.setPosition(Common::Point(260, 180));
+	_centerFlyCycle.fixPriority(200);
 
-	_object4.postInit();
-	_object4.setVisage(2331);
-	_object4.setStrip(6);
-	_object4.setPosition(Common::Point(295, 144));
-	_object4.fixPriority(178);
+	_rightFlyCycle.postInit();
+	_rightFlyCycle.setVisage(2331);
+	_rightFlyCycle.setStrip(6);
+	_rightFlyCycle.setPosition(Common::Point(295, 144));
+	_rightFlyCycle.fixPriority(178);
 
-	g_globals->_sceneItems.addItems(&_object2, &_object3, &_object4, NULL);
+	g_globals->_sceneItems.addItems(&_leftFlyCycle, &_centerFlyCycle, &_rightFlyCycle, NULL);
 
 	if (!g_globals->getFlag(101)) {
 		g_globals->_player.disableControl();
@@ -1843,8 +1855,8 @@ void Scene50::postInit(SceneObjectList *OwnerList) {
 		}
 	}
 
-	_item0.setBounds(Rect(200, 0, 320, 200));
-	g_globals->_sceneItems.addItems(&_item3, &_item4, &_item5, &_item0, NULL);
+	_background.setBounds(Rect(0, 0, 320, 200));
+	g_globals->_sceneItems.addItems(&_bulwark, &_tree, &_flagstones, &_background, NULL);
 }
 
 void Scene50::signal() {
@@ -2033,11 +2045,11 @@ void Scene60::Action2::signal() {
 /*--------------------------------------------------------------------------*/
 
 void Scene60::PrevObject::doAction(int action) {
-	Scene60 *scene = (Scene60 *)g_globals->_sceneManager._scene;
-
 	if (action == CURSOR_LOOK) {
 		SceneItem::display2(60, 16);
 	} else if (action == CURSOR_USE) {
+		Scene60 *scene = (Scene60 *)g_globals->_sceneManager._scene;
+
 		animate(ANIM_MODE_8, 1, NULL);
 
 		if (scene->_action1.getActionIndex() > 5) {
@@ -2051,11 +2063,11 @@ void Scene60::PrevObject::doAction(int action) {
 }
 
 void Scene60::NextObject::doAction(int action) {
-	Scene60 *scene = (Scene60 *)g_globals->_sceneManager._scene;
-
 	if (action == CURSOR_LOOK) {
 		SceneItem::display2(60, 17);
 	} else if (action == CURSOR_USE) {
+		Scene60 *scene = (Scene60 *)g_globals->_sceneManager._scene;
+
 		animate(ANIM_MODE_8, 1, NULL);
 
 		if (scene->_action1.getActionIndex() < 8) {
@@ -2068,11 +2080,11 @@ void Scene60::NextObject::doAction(int action) {
 }
 
 void Scene60::ExitObject::doAction(int action) {
-	Scene60 *scene = (Scene60 *)g_globals->_sceneManager._scene;
-
 	if (action == CURSOR_LOOK) {
 		SceneItem::display2(60, 18);
 	} else if (action == CURSOR_USE) {
+		Scene60 *scene = (Scene60 *)g_globals->_sceneManager._scene;
+
 		scene->_soundHandler3.play(36);
 		animate(ANIM_MODE_8, 1, NULL);
 		scene->_nextButton.remove();
@@ -2133,11 +2145,11 @@ void Scene60::ExitObject::doAction(int action) {
 }
 
 void Scene60::MessageObject::doAction(int action) {
-	Scene60 *scene = (Scene60 *)g_globals->_sceneManager._scene;
-
 	if (action == CURSOR_LOOK) {
 		SceneItem::display2(60, 9);
 	} else if (action == CURSOR_USE) {
+		Scene60 *scene = (Scene60 *)g_globals->_sceneManager._scene;
+
 		scene->_action1.setDelay(1);
 		g_globals->setFlag(83);
 	} else {
@@ -2146,11 +2158,11 @@ void Scene60::MessageObject::doAction(int action) {
 }
 
 void Scene60::ControlObject::doAction(int action) {
-	Scene60 *scene = (Scene60 *)g_globals->_sceneManager._scene;
-
 	if (action == CURSOR_LOOK) {
 		SceneItem::display2(60, 11);
 	} else if (action == CURSOR_USE) {
+		Scene60 *scene = (Scene60 *)g_globals->_sceneManager._scene;
+
 		if (_animateMode == ANIM_MODE_NONE)
 			SceneItem::display2(60, 14);
 		else if (!scene->_slaveButton._state) {
@@ -2167,11 +2179,11 @@ void Scene60::ControlObject::doAction(int action) {
 }
 
 void Scene60::SlaveObject::doAction(int action) {
-	Scene60 *scene = (Scene60 *)g_globals->_sceneManager._scene;
-
 	if (action == CURSOR_LOOK) {
 		SceneItem::display2(60, 8);
 	} else if (action == CURSOR_USE) {
+		Scene60 *scene = (Scene60 *)g_globals->_sceneManager._scene;
+
 		if (scene->_masterButton._state)
 			scene->_sceneMode = 19;
 		else if (_state) {
@@ -2197,11 +2209,11 @@ void Scene60::SlaveObject::doAction(int action) {
 }
 
 void Scene60::MasterObject::doAction(int action) {
-	Scene60 *scene = (Scene60 *)g_globals->_sceneManager._scene;
-
 	if (action == CURSOR_LOOK) {
 		SceneItem::display2(60, 7);
 	} else if (action == CURSOR_USE) {
+		Scene60 *scene = (Scene60 *)g_globals->_sceneManager._scene;
+
 		if (!scene->_controlButton._animateMode)
 			scene->_sceneMode = 14;
 		else if (scene->_slaveButton._state)
@@ -2229,11 +2241,11 @@ void Scene60::MasterObject::doAction(int action) {
 }
 
 void Scene60::FloppyDrive::doAction(int action) {
-	Scene60 *scene = (Scene60 *)g_globals->_sceneManager._scene;
-
 	if (action == CURSOR_LOOK) {
 		SceneItem::display2(60, 13);
 	} else if (action == CURSOR_USE) {
+		Scene60 *scene = (Scene60 *)g_globals->_sceneManager._scene;
+
 		g_globals->setFlag(!g_globals->_stripNum ? 118 : 121);
 		scene->setAction(&scene->_action1);
 	} else {
