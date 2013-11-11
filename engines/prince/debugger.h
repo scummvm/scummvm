@@ -35,7 +35,8 @@ public:
 	Debugger(PrinceEngine *vm);
 	virtual ~Debugger() {}	// we need this for __SYMBIAN32__ archaic gcc/UIQ
 
-	uint32 _locationNr;
+	uint8 _locationNr;
+	uint8 _cursorNr;
 
 private:
 	bool Cmd_DebugLevel(int argc, const char **argv);

@@ -146,8 +146,8 @@ bool Debugger::Cmd_ChangeCursor(int argc, const char **argv) {
 		return true;
 	}
 
-	int flagNum = strToInt(argv[1]);
-	_vm->changeCursor(flagNum);
+	_cursorNr = strToInt(argv[1]);
+
 	return true;
 }
 

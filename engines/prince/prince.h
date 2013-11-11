@@ -133,6 +133,7 @@ private:
 	void debugEngine(const char *s, ...);
 
 	uint16 _locationNr;
+	uint8 _cursorNr;
 
 	Common::RandomSource *_rnd;
 	Graphics::BitmapDecoder *_roomBmp;

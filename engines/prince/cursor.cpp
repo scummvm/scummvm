@@ -44,9 +44,8 @@ bool Cursor::loadFromStream(Common::SeekableReadStream &stream) {
 	_surface = new Graphics::Surface();
 	_surface->create(w, h, Graphics::PixelFormat::createFormatCLUT8());
 
-	for (int ih = 0; ih < h; ++ih) {
+	for (int ih = 0; ih < h; ++ih)
 		stream.read(_surface->getBasePtr(0, ih), w);
-	}
 	return true;
 }
 

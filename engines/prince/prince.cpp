@@ -269,8 +269,9 @@ bool PrinceEngine::loadLocation(uint16 locationNr) {
 	return true;
 }
 
-void PrinceEngine::changeCursor(uint16 curId)
-{
+void PrinceEngine::changeCursor(uint16 curId) {
+	_debugger->_cursorNr = curId;
+
 	Graphics::Surface *curSurface = NULL;
 
 	uint16 hotspotX = 0;
@@ -583,9 +584,10 @@ void PrinceEngine::mainLoop() {
 		_cameraX = _newCameraX;
 		++_frameNr;
 
-		if (_debugger->_locationNr != _locationNr) {
+		if (_debugger->_locationNr != _locationNr)
 			loadLocation(_debugger->_locationNr);
-		}
+		if (_debugger->_cursorNr != _cursorNr)
+			changeCursor(_debugger->_cursorNr);
 	}
 }
 
