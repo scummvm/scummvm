@@ -71,7 +71,8 @@ void VisualSpeaker::remove() {
 }
 
 void VisualSpeaker::signal() {
-	// TODO: _action->_field18 = 1;
+	// TODO: Handle _field18 if used in Action. It looks only used in the original in remove()
+	// _action->_field18 = 1;
 	if (_speakerMode == 0xff)
 		stopSpeaking();
 

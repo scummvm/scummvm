@@ -3521,7 +3521,7 @@ Scene3500::Scene3500() {
 	_nextMove = 0;
 	_mazePosition.x = 0;
 	_mazePosition.y = 0;
-	_field1282 = 0;
+	_field1282 = true; // Set to true in fixup()
 	_field1284 = 0;
 	_directionChangesEnabled = false;
 }
@@ -3557,7 +3557,7 @@ void Scene3500::postInit(SceneObjectList *OwnerList) {
 	R2_GLOBALS._player._characterScene[R2_SEEKER] = 3500;
 	R2_GLOBALS._player._characterScene[R2_MIRANDA] = 3500;
 	_field1284 = 0;
-	_field1282 = 0;
+	_field1282 = false;
 	_nextMove = 0;
 	_field1272 = true;
 	_speed = 4;
@@ -3880,11 +3880,11 @@ void Scene3500::dispatch() {
 	int tmpCellId = 0;
 	int cellId = 0;
 
-	if ((_mazeChangeAmount == 0) && (_field1282 == 0)) {
+	if ((_mazeChangeAmount == 0) && !_field1282) {
 		if (_field1284 == 2)
 			R2_GLOBALS._sceneManager.changeScene(1000);
 	} else {
-		_field1282 = 0;
+		_field1282 = false;
 		tmpRect.set(160, 89, 299, 182);
 
 		newMazeX = _mazePosition.x;

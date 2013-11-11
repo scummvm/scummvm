@@ -103,7 +103,7 @@ void Scene1000::signal() {
 
 	switch (_sceneMode++) {
 	case 0:
-		// TODO: Sort out values
+		// TODO: Determine correct colors
 		R2_GLOBALS._gfxColors.foreground = 191;
 		R2_GLOBALS._gfxColors.background = 144;
 		R2_GLOBALS._fontColors.background = 224;
@@ -128,7 +128,7 @@ void Scene1000::signal() {
 	case 1:
 		R2_GLOBALS._sound1.fadeOut2(NULL);
 
-		// TODO: Sort out values
+		// TODO: Determine correct colors
 		R2_GLOBALS._gfxColors.foreground = 191;
 		R2_GLOBALS._gfxColors.background = 144;
 		R2_GLOBALS._fontColors.background = 224;
@@ -157,7 +157,7 @@ void Scene1000::signal() {
 		break;
 
 	case 3:
-		// TODO: Sort out values
+		// TODO: Determine correct colors
 		R2_GLOBALS._gfxColors.foreground = 191;
 		R2_GLOBALS._gfxColors.background = 144;
 		R2_GLOBALS._fontColors.background = 224;
@@ -184,7 +184,7 @@ void Scene1000::signal() {
 		break;
 
 	case 4:
-		// TODO: Sort out values
+		// TODO: Determine correct colors
 		R2_GLOBALS._gfxColors.foreground = 191;
 		R2_GLOBALS._gfxColors.background = 144;
 		R2_GLOBALS._fontColors.background = 224;
@@ -9426,8 +9426,7 @@ void Scene1575::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_field41A);
 }
 
-// TODO: Remove this method stub with proper sub-method call
-double unk(double v1, double v2) {
+double hypotenuse(double v1, double v2) {
 	return sqrt(v1 * v1 + v2 * v2);
 }
 
@@ -9456,8 +9455,8 @@ void Scene1575::postInit(SceneObjectList *OwnerList) {
 		_arrActor[i].postInit();
 		_arrActor[i].setup(1575, 2, k5A7F6[3 * i + 2]);
 
-		double v1 = unk(2.0, 3 - k5A7F6[3 * i]);
-		v1 += unk(2.0, 3 - k5A7F6[3 * i + 1]);
+		double v1 = hypotenuse(2.0, 3 - k5A7F6[3 * i]);
+		v1 += hypotenuse(2.0, 3 - k5A7F6[3 * i + 1]);
 		int yp = (int)(sqrt(v1) * 75.0 / 17.0 - 161.0);
 
 		int angle = R2_GLOBALS._gfxManagerInstance.getAngle(
@@ -9496,7 +9495,7 @@ void Scene1575::postInit(SceneObjectList *OwnerList) {
 	_actor10.setup(1575, 3, 2);
 	_actor10.setPosition(Common::Point(287, 91));
 
-	// Initialise buttons
+	// Initialize buttons
 	_button1.initButton(1);
 	_button2.initButton(2);
 	_button3.initButton(3);

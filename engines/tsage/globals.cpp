@@ -422,7 +422,7 @@ Ringworld2Globals::Ringworld2Globals() {
 	_sounds.push_back(&_sound3);
 	_sounds.push_back(&_sound4);
 
-	// Initialise fields
+	// Initialize fields
 	_stripModifier = 0;
 	_flubMazeArea = 1;
 	_flubMazeEntryDirection = 0;
@@ -509,7 +509,7 @@ void Ringworld2Globals::reset() {
 	_spillLocation[12] = 27;
 	_spillLocation[13] = 31;
 
-	// Initialise the vampire data within the Flub maze
+	// Initialize the vampire data within the Flub maze
 	for (int i = 0; i < 18; i++) {
 		_vampireData[i]._isAlive = true;
 		_vampireData[i]._position = Common::Point();

@@ -657,7 +657,7 @@ public:
 	int _mazeDirection;
 	int _nextMove;
 	Common::Point _mazePosition;
-	int _field1282; // TODO: Set to true in Fixup()
+	bool _field1282;
 	int _field1284;
 	bool _directionChangesEnabled;
 

@@ -4969,7 +4969,7 @@ void Scene2900::synchronize(Serializer &s) {
 
 void Scene2900::postInit(SceneObjectList *OwnerList) {
 	R2_GLOBALS._uiElements._active = false;
-	// TODO: Determine correct colours
+	// TODO: Determine correct colors
 	R2_GLOBALS._gfxColors.foreground = 228;
 	R2_GLOBALS._fontColors.background = 12;
 	R2_GLOBALS._fontColors.foreground = 22;
@@ -5075,7 +5075,7 @@ void Scene2900::postInit(SceneObjectList *OwnerList) {
 }
 
 void Scene2900::remove() {
-	// TODO: Figure out correct colours
+	// TODO: Figure out correct colors
 	R2_GLOBALS._gfxColors.foreground = 59;
 	R2_GLOBALS._fontColors.background = 4;
 	R2_GLOBALS._fontColors.foreground = 15;
