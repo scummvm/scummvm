@@ -255,15 +255,21 @@ public:
 	Action6 _action6;
 	Action7 _action7;
 	Action8 _action8;
-	SceneObject _object1, _object2, _object3;
+	SceneObject _seeker;
+	SceneObject _seekerTail;
+	SceneObject _seekerHand;
 	DyingKzin _dyingKzin;
 	Assassin _assassin;
-	SceneObject _doorway, _object7, _object8;
-	DisplayHotspot _item1;
-	Item2 _item2;
-	DisplayHotspot _item3, _item4, _item5;
-	Item6 _item6;
-	DisplayHotspot _item7, _item8;
+	SceneObject _doorway;
+	SceneObject _leftEntrance;
+	DisplayHotspot _ball;
+	Item2 _statue;
+	DisplayHotspot _window;
+	DisplayHotspot _entrance;
+	DisplayHotspot _background;
+	Item6 _pedestal;
+	DisplayHotspot _emerald;
+	DisplayHotspot _tree;
 
 	Scene40();
 	virtual void postInit(SceneObjectList *OwnerList = NULL);

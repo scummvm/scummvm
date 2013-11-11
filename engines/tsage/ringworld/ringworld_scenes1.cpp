@@ -964,16 +964,16 @@ void Scene40::Action1::signal() {
 		scene->_doorway.hide();
 		scene->_dyingKzin.setPosition(Common::Point(296, 62));
 		g_globals->_player.animate(ANIM_MODE_5, NULL);
-		scene->_object1.setVisage(43);
-		scene->_object1.setStrip(3);
-		scene->_object1.animate(ANIM_MODE_5, NULL);
-		scene->_object2.hide();
-		scene->_object3.hide();
+		scene->_seeker.setVisage(43);
+		scene->_seeker.setStrip(3);
+		scene->_seeker.animate(ANIM_MODE_5, NULL);
+		scene->_seekerTail.hide();
+		scene->_seekerHand.hide();
 		scene->_stripManager.start(45, this);
 		break;
 	case 4:
-		scene->_object2.remove();
-		scene->_object3.remove();
+		scene->_seekerTail.remove();
+		scene->_seekerHand.remove();
 		scene->_assassin.setVisage(42);
 		scene->_assassin.setStrip(2);
 		scene->_assassin.setFrame(1);
@@ -1050,10 +1050,10 @@ void Scene40::Action1::signal() {
 		break;
 	case 15:
 		g_globals->_player.disableControl();
-		scene->_object1.setVisage(40);
-		scene->_object1.setStrip(4);
-		scene->_object1.setFrame(1);
-		scene->_object1.animate(ANIM_MODE_5, NULL);
+		scene->_seeker.setVisage(40);
+		scene->_seeker.setStrip(4);
+		scene->_seeker.setFrame(1);
+		scene->_seeker.animate(ANIM_MODE_5, NULL);
 		g_globals->_player.setVisage(40);
 		g_globals->_player.setStrip(2);
 		g_globals->_player.setFrame(1);
@@ -1123,13 +1123,13 @@ void Scene40::Action2::signal() {
 	}
 	case 6: {
 		g_globals->_player.setStrip(7);
-		scene->_object1.setVisage(2806);
-		scene->_object1.animate(ANIM_MODE_1, NULL);
+		scene->_seeker.setVisage(2806);
+		scene->_seeker.animate(ANIM_MODE_1, NULL);
 		SceneObjectWrapper *wrapper = new SceneObjectWrapper();
-		scene->_object1.setObjectWrapper(wrapper);
+		scene->_seeker.setObjectWrapper(wrapper);
 		Common::Point pt(200, 190);
 		NpcMover *mover = new NpcMover();
-		scene->_object1.addMover(mover, &pt, this);
+		scene->_seeker.addMover(mover, &pt, this);
 		break;
 	}
 	case 7:
@@ -1138,12 +1138,12 @@ void Scene40::Action2::signal() {
 	case 8: {
 		Common::Point pt(170, 260);
 		NpcMover *mover = new NpcMover();
-		scene->_object1.addMover(mover, &pt, this);
+		scene->_seeker.addMover(mover, &pt, this);
 		break;
 	}
 	case 9:
 		scene->_dyingKzin.setAction(&scene->_action7);
-		scene->_object1.remove();
+		scene->_seeker.remove();
 		g_globals->_stripNum = 88;
 		g_globals->_events.setCursor(CURSOR_WALK);
 		g_globals->_player.enableControl();
@@ -1203,6 +1203,7 @@ void Scene40::Action4::signal() {
 	}
 }
 
+// Animate the tail of Seeker, with random pauses
 void Scene40::Action5::signal() {
 	Scene40 *scene = (Scene40 *)g_globals->_sceneManager._scene;
 
@@ -1211,7 +1212,7 @@ void Scene40::Action5::signal() {
 		setDelay(g_globals->_randomSource.getRandomNumber(119) + 120);
 		break;
 	case 1:
-		scene->_object2.animate(ANIM_MODE_8, 1, this);
+		scene->_seekerTail.animate(ANIM_MODE_8, 1, this);
 		_actionIndex = 0;
 	}
 }
@@ -1221,17 +1222,17 @@ void Scene40::Action6::signal() {
 
 	switch (_actionIndex++) {
 	case 0: {
-		scene->_object1.postInit();
-		scene->_object1.setVisage(16);
-		scene->_object1.setStrip2(6);
-		scene->_object1._moveDiff = Common::Point(40, 40);
-		scene->_object1.setPosition(Common::Point(313, 53));
-		scene->_object1._moveRate = 60;
+		scene->_seeker.postInit();
+		scene->_seeker.setVisage(16);
+		scene->_seeker.setStrip2(6);
+		scene->_seeker._moveDiff = Common::Point(40, 40);
+		scene->_seeker.setPosition(Common::Point(313, 53));
+		scene->_seeker._moveRate = 60;
 
 		Common::Point pt(141, 194);
 		NpcMover *mover = new NpcMover();
-		scene->_object1.addMover(mover, &pt, NULL);
-		scene->_object1.animate(ANIM_MODE_5, NULL);
+		scene->_seeker.addMover(mover, &pt, NULL);
+		scene->_seeker.animate(ANIM_MODE_5, NULL);
 
 		scene->_doorway.postInit();
 		scene->_doorway.setVisage(46);
@@ -1261,21 +1262,21 @@ void Scene40::Action7::signal() {
 		setDelay(g_globals->_randomSource.getRandomNumber(499) + 500);
 		break;
 	case 1:
-		scene->_object7.postInit();
-		scene->_object7.setVisage(46);
+		scene->_leftEntrance.postInit();
+		scene->_leftEntrance.setVisage(46);
 
 		if (g_globals->_randomSource.getRandomNumber(32767) >= 16384) {
-			scene->_object7.setStrip(3);
-			scene->_object7.setPosition(Common::Point(15, 185));
+			scene->_leftEntrance.setStrip(3);
+			scene->_leftEntrance.setPosition(Common::Point(15, 185));
 		} else {
-			scene->_object7.setPosition(Common::Point(305, 61));
-			scene->_object7.setFrame(15);
+			scene->_leftEntrance.setPosition(Common::Point(305, 61));
+			scene->_leftEntrance.setFrame(15);
 		}
-		scene->_object7.animate(ANIM_MODE_5, this);
+		scene->_leftEntrance.animate(ANIM_MODE_5, this);
 		scene->_soundHandler.play(25);
 		break;
 	case 2:
-		scene->_object7.remove();
+		scene->_leftEntrance.remove();
 		_actionIndex = 0;
 		setDelay(60);
 		break;
@@ -1466,12 +1467,12 @@ void Scene40::Item6::doAction(int action) {
 /*--------------------------------------------------------------------------*/
 
 Scene40::Scene40() :
-	_item1(2, OBJECT_SCANNER, 40, 24, OBJECT_STUNNER, 40, 25, CURSOR_LOOK, 40, 7, CURSOR_USE, 40, 16, LIST_END),
-	_item3(5, OBJECT_SCANNER, 40, 28, OBJECT_STUNNER, 40, 27, CURSOR_LOOK, 40, 2, CURSOR_USE, 40, 30, LIST_END),
-	_item4(6, OBJECT_SCANNER, 40, 31, OBJECT_STUNNER, 40, 32, CURSOR_LOOK, 40, 5, CURSOR_USE, 40, 33, LIST_END),
-	_item5(0, CURSOR_LOOK, 40, 11, LIST_END),
-	_item7(4, OBJECT_SCANNER, 40, 26, OBJECT_STUNNER, 40, 27, CURSOR_LOOK, 40, 9, CURSOR_USE, 40, 17, LIST_END),
-	_item8(8, OBJECT_SCANNER, 40, 39, OBJECT_STUNNER, 40, 40, CURSOR_LOOK, 40, 3, CURSOR_USE, 40, 41, LIST_END) {
+	_ball(2, OBJECT_SCANNER, 40, 24, OBJECT_STUNNER, 40, 25, CURSOR_LOOK, 40, 7, CURSOR_USE, 40, 16, LIST_END),
+	_window(5, OBJECT_SCANNER, 40, 28, OBJECT_STUNNER, 40, 27, CURSOR_LOOK, 40, 2, CURSOR_USE, 40, 30, LIST_END),
+	_entrance(6, OBJECT_SCANNER, 40, 31, OBJECT_STUNNER, 40, 32, CURSOR_LOOK, 40, 5, CURSOR_USE, 40, 33, LIST_END),
+	_background(0, CURSOR_LOOK, 40, 11, LIST_END),
+	_emerald(4, OBJECT_SCANNER, 40, 26, OBJECT_STUNNER, 40, 27, CURSOR_LOOK, 40, 9, CURSOR_USE, 40, 17, LIST_END),
+	_tree(8, OBJECT_SCANNER, 40, 39, OBJECT_STUNNER, 40, 40, CURSOR_LOOK, 40, 3, CURSOR_USE, 40, 41, LIST_END) {
 }
 
 void Scene40::postInit(SceneObjectList *OwnerList) {
@@ -1490,7 +1491,7 @@ void Scene40::postInit(SceneObjectList *OwnerList) {
 	_speakerGameText._color1 = 9;
 	_speakerGameText.setTextPos(Common::Point(160, 30));
 	_speakerQText._npc = &g_globals->_player;
-	_speakerSText._npc = &_object1;
+	_speakerSText._npc = &_seeker;
 
 	g_globals->_player.postInit();
 	g_globals->_player.setVisage(0);
@@ -1503,23 +1504,24 @@ void Scene40::postInit(SceneObjectList *OwnerList) {
 		g_globals->_soundHandler.play(24);
 		g_globals->_player.setVisage(43);
 
-		_object1.postInit();
-		_object1.setVisage(41);
-		_object1.setPosition(Common::Point(105, 220));
-		_object2.postInit();
-		_object2.setVisage(41);
-		_object2.setStrip(6);
-		_object2.fixPriority(200);
-		_object2.setPosition(Common::Point(94, 189));
-		_object2.setAction(&_action5);
+		_seeker.postInit();
+		_seeker.setVisage(41);
+		_seeker.setPosition(Common::Point(105, 220));
 
-		_object3.postInit();
-		_object3.setVisage(41);
-		_object3.setStrip(5);
-		_object3.fixPriority(205);
-		_object3.setPosition(Common::Point(110, 186));
-		_object3._numFrames = 2;
-		_object3.animate(ANIM_MODE_8, NULL, NULL);
+		_seekerTail.postInit();
+		_seekerTail.setVisage(41);
+		_seekerTail.setStrip(6);
+		_seekerTail.fixPriority(200);
+		_seekerTail.setPosition(Common::Point(94, 189));
+		_seekerTail.setAction(&_action5);
+
+		_seekerHand.postInit();
+		_seekerHand.setVisage(41);
+		_seekerHand.setStrip(5);
+		_seekerHand.fixPriority(205);
+		_seekerHand.setPosition(Common::Point(110, 186));
+		_seekerHand._numFrames = 2;
+		_seekerHand.animate(ANIM_MODE_8, NULL, NULL);
 
 		_assassin.postInit();
 		_assassin.setPosition(Common::Point(-40, 191));
@@ -1564,12 +1566,12 @@ void Scene40::postInit(SceneObjectList *OwnerList) {
 		setAction(&_action4);
 	}
 
-	_item5.setBounds(Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
-	_item6._sceneRegionId = 3;
-	_item2._sceneRegionId = 7;
+	_background.setBounds(Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
+	_pedestal._sceneRegionId = 3;
+	_statue._sceneRegionId = 7;
 
-	g_globals->_sceneItems.addItems(&_dyingKzin, &_item8, &_item1, &_item2, &_item3, &_item4,
-			&_item6, &_item7, &_item5, NULL);
+	g_globals->_sceneItems.addItems(&_dyingKzin, &_tree, &_ball, &_statue, &_window, &_entrance,
+			&_pedestal, &_emerald, &_background, NULL);
 }
 
 void Scene40::signal() {
