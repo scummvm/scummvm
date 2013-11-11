@@ -1781,7 +1781,7 @@ void Scene180::signal() {
 
 	case 34:
 		_teal.hide();
-		_webbster.hide();
+		_webbster.remove();
 
 		_dutyOfficer.postInit();
 		_dutyOfficer.setup(76, 2, 1);
