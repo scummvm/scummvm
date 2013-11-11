@@ -54,8 +54,12 @@ public:
 	Speaker _speakerQText;
 	Action1 _action1;
 	Action2 _action2;
-	SceneObject _object1, _object2, _object3;
-	SceneObject _object4, _object5, _object6;
+	SceneObject _veeshkaBody;
+	SceneObject _veeshkaHead;
+	SceneObject _veeshkaRightArm;
+	SceneObject _centurion;
+	SceneObject _leftSmoke;
+	SceneObject _rightSmoke;
 
 	virtual void stripCallback(int v);
 	virtual void postInit(SceneObjectList *OwnerList = NULL);

@@ -52,52 +52,52 @@ void Scene10::Action1::signal() {
 		scene->_stripManager.start(11, this, scene);
 		break;
 	case 3:
-		scene->_object2.hide();
-		scene->_object3.hide();
-		scene->_object3.setAction(NULL);
-		scene->_object4.animate(ANIM_MODE_5, this);
+		scene->_veeshkaHead.hide();
+		scene->_veeshkaRightArm.hide();
+		scene->_veeshkaRightArm.setAction(NULL);
+		scene->_centurion.animate(ANIM_MODE_5, this);
 		break;
 	case 4:
 	case 9:
-		scene->_object1.animate(ANIM_MODE_5, this);
+		scene->_veeshkaBody.animate(ANIM_MODE_5, this);
 		break;
 	case 5:
-		scene->_object2.setStrip(3);
-		scene->_object2.setFrame(1);
-		scene->_object2.setPosition(Common::Point(240, 51));
-		scene->_object2.show();
+		scene->_veeshkaHead.setStrip(3);
+		scene->_veeshkaHead.setFrame(1);
+		scene->_veeshkaHead.setPosition(Common::Point(240, 51));
+		scene->_veeshkaHead.show();
 
-		scene->_object3.setStrip(6);
-		scene->_object3.setFrame(1);
-		scene->_object3.setPosition(Common::Point(200, 76));
-		scene->_object3._numFrames = 20;
-		scene->_object3.show();
+		scene->_veeshkaRightArm.setStrip(6);
+		scene->_veeshkaRightArm.setFrame(1);
+		scene->_veeshkaRightArm.setPosition(Common::Point(200, 76));
+		scene->_veeshkaRightArm._numFrames = 20;
+		scene->_veeshkaRightArm.show();
 
 		scene->_stripManager.start(12, this, scene);
 		break;
 	case 6:
-		scene->_object2.hide();
-		scene->_object3.hide();
-		scene->_object1.animate(ANIM_MODE_6, this);
+		scene->_veeshkaHead.hide();
+		scene->_veeshkaRightArm.hide();
+		scene->_veeshkaBody.animate(ANIM_MODE_6, this);
 		break;
 	case 7:
-		scene->_object3.show();
-		scene->_object3.setStrip2(5);
-		scene->_object3._numFrames = 10;
-		scene->_object3.setPosition(Common::Point(180, 87));
-		scene->_object3.setAction(&scene->_action2);
+		scene->_veeshkaRightArm.show();
+		scene->_veeshkaRightArm.setStrip2(5);
+		scene->_veeshkaRightArm._numFrames = 10;
+		scene->_veeshkaRightArm.setPosition(Common::Point(180, 87));
+		scene->_veeshkaRightArm.setAction(&scene->_action2);
 
-		scene->_object2.setStrip(4);
-		scene->_object2.setFrame(1);
-		scene->_object2.setPosition(Common::Point(204, 59));
-		scene->_object2.show();
+		scene->_veeshkaHead.setStrip(4);
+		scene->_veeshkaHead.setFrame(1);
+		scene->_veeshkaHead.setPosition(Common::Point(204, 59));
+		scene->_veeshkaHead.show();
 
 		scene->_stripManager.start(13, this, scene);
 		break;
 	case 8:
-		scene->_object2.hide();
-		scene->_object3.hide();
-		scene->_object4.animate(ANIM_MODE_6, this);
+		scene->_veeshkaHead.hide();
+		scene->_veeshkaRightArm.hide();
+		scene->_centurion.animate(ANIM_MODE_6, this);
 		break;
 	case 10:
 		g_globals->_soundHandler.fadeOut(this);
@@ -109,6 +109,7 @@ void Scene10::Action1::signal() {
 	}
 }
 
+// Move Veeshka's fingers
 void Scene10::Action2::signal() {
 	Scene10 *scene = (Scene10 *)g_globals->_sceneManager._scene;
 
@@ -117,8 +118,8 @@ void Scene10::Action2::signal() {
 		setDelay(g_globals->_randomSource.getRandomNumber(179));
 		break;
 	case 1:
-		scene->_object3.setFrame(1);
-		scene->_object3.animate(ANIM_MODE_5, this);
+		scene->_veeshkaRightArm.setFrame(1);
+		scene->_veeshkaRightArm.animate(ANIM_MODE_5, this);
 		_actionIndex = 0;
 		break;
 	}
@@ -145,43 +146,43 @@ void Scene10::postInit(SceneObjectList *OwnerList) {
 
 	_stripManager.setCallback(this);
 
-	_object1.postInit();
-	_object1.setVisage(10);
-	_object1.setPosition(Common::Point(232, 90));
-	_object1.fixPriority(1);
+	_veeshkaBody.postInit();
+	_veeshkaBody.setVisage(10);
+	_veeshkaBody.setPosition(Common::Point(232, 90));
+	_veeshkaBody.fixPriority(1);
 
-	_object2.postInit();
-	_object2.setVisage(10);
-	_object2.setStrip(4);
-	_object2.setFrame(1);
-	_object2.setPosition(Common::Point(204, 59));
-	_object2.fixPriority(198);
+	_veeshkaHead.postInit();
+	_veeshkaHead.setVisage(10);
+	_veeshkaHead.setStrip(4);
+	_veeshkaHead.setFrame(1);
+	_veeshkaHead.setPosition(Common::Point(204, 59));
+	_veeshkaHead.fixPriority(198);
 
-	_object3.postInit();
-	_object3.setVisage(10);
-	_object3.setStrip2(5);
-	_object3.setPosition(Common::Point(180, 87));
-	_object3.fixPriority(196);
-	_object3.setAction(&_action2);
+	_veeshkaRightArm.postInit();
+	_veeshkaRightArm.setVisage(10);
+	_veeshkaRightArm.setStrip2(5);
+	_veeshkaRightArm.setPosition(Common::Point(180, 87));
+	_veeshkaRightArm.fixPriority(196);
+	_veeshkaRightArm.setAction(&_action2);
 
-	_object4.postInit();
-	_object4.setVisage(10);
-	_object4.setStrip(2);
-	_object4.setPosition(Common::Point(0, 209));
-	_object4.animate(ANIM_MODE_1, NULL);
+	_centurion.postInit();
+	_centurion.setVisage(10);
+	_centurion.setStrip(2);
+	_centurion.setPosition(Common::Point(0, 209));
+	_centurion.animate(ANIM_MODE_1, NULL);
 
-	_object5.postInit();
-	_object5.setVisage(11);
-	_object5.setPosition(Common::Point(107, 146));
-	_object5.animate(ANIM_MODE_2, NULL);
-	_object5._numFrames = 5;
+	_leftSmoke.postInit();
+	_leftSmoke.setVisage(11);
+	_leftSmoke.setPosition(Common::Point(107, 146));
+	_leftSmoke.animate(ANIM_MODE_2, NULL);
+	_leftSmoke._numFrames = 5;
 
-	_object6.postInit();
-	_object6.setVisage(11);
-	_object6.setStrip(2);
-	_object6.setPosition(Common::Point(287, 149));
-	_object6.animate(ANIM_MODE_2, NULL);
-	_object6._numFrames = 5;
+	_rightSmoke.postInit();
+	_rightSmoke.setVisage(11);
+	_rightSmoke.setStrip(2);
+	_rightSmoke.setPosition(Common::Point(287, 149));
+	_rightSmoke.animate(ANIM_MODE_2, NULL);
+	_rightSmoke._numFrames = 5;
 
 	g_globals->_sceneManager._scene->_sceneBounds.contain(g_globals->_sceneManager._scene->_backgroundBounds);
 	g_globals->_sceneOffset.x = (g_globals->_sceneManager._scene->_sceneBounds.left / 160) * 160;
@@ -193,14 +194,14 @@ void Scene10::postInit(SceneObjectList *OwnerList) {
 void Scene10::stripCallback(int v) {
 	switch (v) {
 	case 1:
-		_object2.animate(ANIM_MODE_7, -1, NULL);
+		_veeshkaHead.animate(ANIM_MODE_7, -1, NULL);
 		break;
 	case 2:
-		_object2.animate(ANIM_MODE_NONE);
+		_veeshkaHead.animate(ANIM_MODE_NONE);
 		break;
 	case 3:
-		_object2.animate(ANIM_MODE_7, -1, NULL);
-		_object3.animate(ANIM_MODE_5, NULL);
+		_veeshkaHead.animate(ANIM_MODE_7, -1, NULL);
+		_veeshkaRightArm.animate(ANIM_MODE_5, NULL);
 		break;
 	default:
 		break;
