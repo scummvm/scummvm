@@ -1219,6 +1219,9 @@ Movement::Movement(Movement *src, int *oldIdxs, int newSize, StaticANIObject *an
 	_currDynamicPhaseIndex = 0;
 	_field_94 = 0;
 
+	_field_24 = 0;
+	_field_28 = 0;
+
 	_field_50 = src->_field_50;
 	_flipFlag = src->_flipFlag;
 	_currMovement = 0;

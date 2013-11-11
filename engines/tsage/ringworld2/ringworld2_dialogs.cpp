@@ -234,7 +234,7 @@ void CharacterDialog::show() {
 		SceneExt *scene = (SceneExt *)R2_GLOBALS._sceneManager._scene;
 		scene->saveCharacter(oldCharacter);
 
-		// Play the correctfrequency, if any, of the character being switched to's scanner device 
+		// Play the correctfrequency, if any, of the character being switched to's scanner device
 		if (R2_GLOBALS._player._characterScene[R2_NONE] != 300) {
 			switch (R2_GLOBALS._scannerFrequencies[R2_GLOBALS._player._characterIndex] - 1) {
 			case 0:

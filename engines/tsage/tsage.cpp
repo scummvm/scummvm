@@ -125,7 +125,7 @@ void TSageEngine::deinitialize() {
 }
 
 Common::Error TSageEngine::run() {
-	// Basic initialisation
+	// Basic initialization
 	initialize();
 
 	g_globals->_sceneHandler->registerHandler();

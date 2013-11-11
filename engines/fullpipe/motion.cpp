@@ -1146,7 +1146,7 @@ int MovGraph2::findLink(Common::Array<MovGraphLink *> *linkList, int idx, Common
 	} else if (idx != (int)(linkList->size() - 1)) {
 		MovGraphLink *lnk = (*linkList)[idx + 1];
 
-		if (lnk->_movGraphNode1 == node1 || lnk->_movGraphNode1 == node1) {
+		if (lnk->_movGraphNode2 == node1 || lnk->_movGraphNode1 == node1) {
 			node3 = node2;
 			node2 = node1;
 		} else if (lnk->_movGraphNode2 == node2 || lnk->_movGraphNode1 == node2) {

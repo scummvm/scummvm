@@ -389,7 +389,7 @@ void SceneExt::remove() {
 	Scene::remove();
 	R2_GLOBALS._uiElements._active = true;
 
-	if (R2_GLOBALS._events.getCursor() >= EXITCURSOR_N && 
+	if (R2_GLOBALS._events.getCursor() >= EXITCURSOR_N &&
 			R2_GLOBALS._events.getCursor() <= SHADECURSOR_DOWN)
 		R2_GLOBALS._events.setCursor(CURSOR_WALK);
 }
@@ -437,9 +437,9 @@ bool SceneExt::display(CursorType action, Event &event) {
 			SceneItem::display2(5, 0);
 		break;
 	case R2_SONIC_STUNNER:
-		if ((R2_GLOBALS._scannerFrequencies[R2_QUINN] == 2) 
+		if ((R2_GLOBALS._scannerFrequencies[R2_QUINN] == 2)
 			|| ((R2_GLOBALS._scannerFrequencies[R2_QUINN] == 1) &&
-				(R2_GLOBALS._scannerFrequencies[R2_SEEKER] == 2) && 
+				(R2_GLOBALS._scannerFrequencies[R2_SEEKER] == 2) &&
 				(R2_GLOBALS._sceneManager._previousScene == 300))) {
 			R2_GLOBALS._sound4.stop();
 			R2_GLOBALS._sound3.play(46);
@@ -1099,7 +1099,7 @@ void Ringworld2InvObjectList::selectDefault(int objectNumber) {
 	Common::String line = Common::String::format("%.5s%.5s%.5s%.5s%s %s %s %s.",
 		msg1.c_str(), msg2.c_str(), msg3.c_str(), msg4.c_str(),
 		msg1.c_str() + 5, msg2.c_str() + 5, msg3.c_str() + 5, msg4.c_str() + 5);
-		
+
 	SceneItem::display(-1, -1, line.c_str(),
 		SET_WIDTH, 280,
 		SET_X, 160,
@@ -1465,7 +1465,7 @@ void SceneAreaObject::process(Event &event) {
 				_savedCursorNum = R2_GLOBALS._events.getCursor();
 				R2_GLOBALS._events.setCursor(CURSOR_INVALID);
 			}
-				
+
 			if (event.eventType == EVENT_BUTTON_DOWN) {
 				event.handled = true;
 				R2_GLOBALS._events.setCursor(_savedCursorNum);
@@ -1775,14 +1775,13 @@ AnimationPlayer::AnimationPlayer(): EventHandler() {
 	_screenBounds = R2_GLOBALS._gfxManagerInstance._bounds;
 	_rect1 = R2_GLOBALS._gfxManagerInstance._bounds;
 	_paletteMode = ANIMPALMODE_REPLACE_PALETTE;
-	_field3A = 1;
+	_field3A = true;
 	_sliceHeight = 1;
-	_field58 = 1;
 	_endAction = NULL;
 
 	_sliceCurrent = nullptr;
 	_sliceNext = nullptr;
-	_field38 = 0;
+	_field38 = false;
 	_objectMode = ANIMOBJMODE_1;
 	_dataNeeded = 0;
 	_playbackTick = 0;
@@ -1800,9 +1799,9 @@ AnimationPlayer::~AnimationPlayer() {
 
 void AnimationPlayer::synchronize(Serializer &s) {
 	EventHandler::synchronize(s);
-	
-	// TODO: Implement saving for animation player state. Currently, I disable saving 
-	// when an animation is active, so saving it's state would a "nice to have". 
+
+	// TODO: Implement saving for animation player state. Currently, I disable saving
+	// when an animation is active, so saving it's state would a "nice to have".
 }
 
 void AnimationPlayer::remove() {
@@ -1813,8 +1812,7 @@ void AnimationPlayer::remove() {
 }
 
 void AnimationPlayer::process(Event &event) {
-	if ((event.eventType == EVENT_KEYPRESS) && (event.kbd.keycode == Common::KEYCODE_ESCAPE) &&
-			(_field3A)) {
+	if ((event.eventType == EVENT_KEYPRESS) && (event.kbd.keycode == Common::KEYCODE_ESCAPE) && _field3A) {
 		// Move the current position to the end
 		_position = _subData._duration;
 	}
@@ -1933,7 +1931,7 @@ bool AnimationPlayer::load(int animId, Action *endAction) {
 	}
 
 	++R2_GLOBALS._animationCtr;
-	_field38 = 1;
+	_field38 = true;
 	return true;
 }
 
@@ -2109,7 +2107,7 @@ void AnimationPlayer::close() {
 	_animData1 = NULL;
 	_animData2 = NULL;
 
-	_field38 = 0;
+	_field38 = false;
 	if (g_globals != NULL)
 		R2_GLOBALS._animationCtr = MAX(R2_GLOBALS._animationCtr - 1, 0);
 }
@@ -2158,7 +2156,7 @@ void AnimationPlayer::getSlices() {
 
 AnimationPlayerExt::AnimationPlayerExt(): AnimationPlayer() {
 	_isActive = false;
-	_field3A = 0;
+	_field3A = false;
 }
 
 void AnimationPlayerExt::synchronize(Serializer &s) {
@@ -2267,7 +2265,7 @@ void ScannerDialog::Button::process(Event &event) {
 		setFrame(2);
 		_buttonDown = false;
 		event.handled = true;
-		
+
 		reset();
 	}
 }

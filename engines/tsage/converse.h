@@ -94,7 +94,7 @@ public:
 	virtual void startSpeaking(Action *action);
 	virtual void setText(const Common::String &msg);
 	virtual void removeText();
-	virtual void proc16() {}
+	virtual void stopSpeaking() {}
 
 	void setTextPos(const Common::Point &pt) { _textPos = pt; }
 };

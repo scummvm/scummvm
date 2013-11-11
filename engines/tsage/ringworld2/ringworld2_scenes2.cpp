@@ -135,7 +135,7 @@ void Scene2000::initPlayer() {
 			_persons[i].show();
 	}
 
-	if ((R2_GLOBALS._player._characterScene[R2_QUINN] == R2_GLOBALS._player._characterScene[R2_SEEKER]) 
+	if ((R2_GLOBALS._player._characterScene[R2_QUINN] == R2_GLOBALS._player._characterScene[R2_SEEKER])
 			&& (R2_GLOBALS._spillLocation[R2_QUINN] == R2_GLOBALS._spillLocation[R2_SEEKER])) {
 		_companion.postInit();
 		if (R2_GLOBALS._player._characterIndex == R2_QUINN) {
@@ -1426,8 +1426,6 @@ void Scene2425::postInit(SceneObjectList *OwnerList) {
 	_ropeDest1.setDetails(Rect(225, 52, 248, 65), 2425, -1, -1, -1, 1, NULL);
 	_ropeDest2.setDetails(Rect(292, 81, 316, 94), 2425, -1, -1, -1, 1, NULL);
 
-//  CHECKME: SceneActor using a SceneItem function??
-//	_pictographs2.setDetails(11, 2425, 3, -1, 6);
 	_pictographs2._sceneRegionId = 11;
 	_pictographs2._resNum = 2425;
 	_pictographs2._lookLineNum = 3;
@@ -2313,7 +2311,7 @@ void Scene2455::postInit(SceneObjectList *OwnerList) {
 		_scrithKey.setup(2456, 3, 1);
 		_scrithKey.setPosition(Common::Point(176, 165));
 		_scrithKey.setDetails(2455, 16, 1, -1, 1, (SceneItem *)NULL);
-	} else if ((R2_INVENTORY.getObjectScene(R2_ALCOHOL_LAMP_3) == 2455) || 
+	} else if ((R2_INVENTORY.getObjectScene(R2_ALCOHOL_LAMP_3) == 2455) ||
 			(R2_INVENTORY.getObjectScene(R2_ALCOHOL_LAMP_2) == 2455)) {
 		_lamp.postInit();
 		_lamp.setup(2456, 3, 3);
@@ -2811,9 +2809,9 @@ bool Scene2535::RebreatherTank::startAction(CursorType action, Event &event) {
 
 	if (R2_GLOBALS._player._characterIndex == R2_QUINN) {
 		R2_GLOBALS._player.disableControl();
-		
+
 		scene->_sceneMode = (R2_INVENTORY.getObjectScene(R2_REBREATHER_TANK) == 2535) ? 2536 : 2537;
-		scene->setAction(&scene->_sequenceManager, scene, scene->_sceneMode, 
+		scene->setAction(&scene->_sequenceManager, scene, scene->_sceneMode,
 			&R2_GLOBALS._player, &scene->_rebreatherTank, NULL);
 	} else {
 		SceneItem::display(2530, 33, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, LIST_END);
@@ -4105,7 +4103,7 @@ void Scene2750::signal() {
 }
 
 void Scene2750::process(Event &event) {
-	if ((R2_GLOBALS._player._canWalk) && (event.eventType == EVENT_BUTTON_DOWN) 
+	if ((R2_GLOBALS._player._canWalk) && (event.eventType == EVENT_BUTTON_DOWN)
 			&& (R2_GLOBALS._events.getCursor() == R2_NEGATOR_GUN)) {
 		if (_walkRect1.contains(event.mousePos)) {
 			if (!_walkRect1.contains(R2_GLOBALS._player._position)) {
@@ -4498,7 +4496,7 @@ void Scene2800::postInit(SceneObjectList *OwnerList) {
 		R2_GLOBALS._player.enableControl();
 	} else {
 		_sceneMode = 2801;
-		R2_GLOBALS._player.setAction(&_sequenceManager, this, 2801, &R2_GLOBALS._player, 
+		R2_GLOBALS._player.setAction(&_sequenceManager, this, 2801, &R2_GLOBALS._player,
 			&_nej, &_guard, NULL);
 	}
 }
@@ -4617,7 +4615,7 @@ bool Scene2900::KnobLeft::startAction(CursorType action, Event &event) {
 
 	switch (action) {
 	case CURSOR_USE:
-		if (scene->_majorMinorFlag || scene->_altitudeChanging || 
+		if (scene->_majorMinorFlag || scene->_altitudeChanging ||
 				scene->_xAmount != scene->_xComparison) {
 			// Let your altitude stablize first
 			SceneItem::display2(2900, 17);
@@ -4654,7 +4652,7 @@ bool Scene2900::KnobRight::startAction(CursorType action, Event &event) {
 
 	switch (action) {
 	case CURSOR_USE:
-		if (scene->_majorMinorFlag || scene->_altitudeChanging || 
+		if (scene->_majorMinorFlag || scene->_altitudeChanging ||
 				scene->_xAmount != scene->_xComparison) {
 			// Let your altitude stablize first
 			SceneItem::display2(2900, 17);
@@ -4848,7 +4846,7 @@ int Scene2900::Map::adjustRect(Common::Rect &r1, const Common::Rect &r2) {
 	return -1;
 }
 
-void Scene2900::Map::drawBlock(const byte *data, int xp, int yp, 
+void Scene2900::Map::drawBlock(const byte *data, int xp, int yp,
 		const Rect &bounds, const Rect &updateRect) {
 	Rect blockRect(xp, yp, xp + 160, yp + 100);
 	const byte *src = data;
@@ -4969,11 +4967,11 @@ void Scene2900::synchronize(Serializer &s) {
 
 void Scene2900::postInit(SceneObjectList *OwnerList) {
 	R2_GLOBALS._uiElements._active = false;
-	// TODO: Determine correct colours
+	// TODO: Determine correct colors
 	R2_GLOBALS._gfxColors.foreground = 228;
 	R2_GLOBALS._fontColors.background = 12;
 	R2_GLOBALS._fontColors.foreground = 22;
-	
+
 	_map.load(2950);
 
 	loadScene(2900);
@@ -4983,7 +4981,7 @@ void Scene2900::postInit(SceneObjectList *OwnerList) {
 	_leftEdge.setup(2900, 6, 1, 22, 0, 25);
 	_rightEdge.setup(2900, 6, 1, 280, 0, 25);
 	_knob.setup(2900, 1, 3, 228, 199, 25);
-	
+
 	_altimeterContent.postInit();
 	_altimeterContent.setVisage(2900);
 	_altimeterContent.setStrip(2);
@@ -4996,7 +4994,7 @@ void Scene2900::postInit(SceneObjectList *OwnerList) {
 	_knobLeftContent.setFrame(1);
 	_knobLeftContent.setPosition(Common::Point(209, 199));
 	_knobLeftContent.fixPriority(200);
-	
+
 	_knobRightContent.postInit();
 	_knobRightContent.setVisage(2900);
 	_knobRightContent.setStrip(1);
@@ -5029,7 +5027,7 @@ void Scene2900::postInit(SceneObjectList *OwnerList) {
 	R2_GLOBALS._player._moveDiff = Common::Point(2, 2);
 	R2_GLOBALS._player.disableControl();
 
-	if (R2_GLOBALS._sceneManager._previousScene == 2350 && 
+	if (R2_GLOBALS._sceneManager._previousScene == 2350 &&
 			R2_GLOBALS._balloonPosition.x == 0 && R2_GLOBALS._balloonPosition.y == 0) {
 		R2_GLOBALS._balloonAltitude = 5;
 		_map.setPosition(Common::Point(_balloonLocation.x - 120, _balloonLocation.y - 100));
@@ -5048,7 +5046,7 @@ void Scene2900::postInit(SceneObjectList *OwnerList) {
 			_balloonLocation.x -= 70;
 		else if ((R2_GLOBALS._balloonAltitude % 8) == 7)
 			_balloonLocation.x += 70;
-		
+
 		if (_balloonLocation.x <= 120)
 			_balloonScreenPos.x = _balloonLocation.x + 40;
 		else if (_balloonLocation.x >= 680)
@@ -5075,7 +5073,7 @@ void Scene2900::postInit(SceneObjectList *OwnerList) {
 }
 
 void Scene2900::remove() {
-	// TODO: Figure out correct colours
+	// TODO: Figure out correct colors
 	R2_GLOBALS._gfxColors.foreground = 59;
 	R2_GLOBALS._fontColors.background = 4;
 	R2_GLOBALS._fontColors.foreground = 15;
@@ -5085,7 +5083,7 @@ void Scene2900::remove() {
 
 	R2_GLOBALS._sound1.fadeOut2(NULL);
 	R2_GLOBALS._sound2.stop();
-	
+
 	R2_GLOBALS._interfaceY = UI_INTERFACE_Y;
 	SceneExt::remove();
 }

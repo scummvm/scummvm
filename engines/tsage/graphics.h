@@ -105,7 +105,7 @@ public:
 	void setBounds(const Rect &bounds) { _bounds = bounds; }
 	const Rect &getBounds() const { return _bounds; }
 
-	void copyFrom(GfxSurface &src, Rect srcBounds, Rect destBounds, 
+	void copyFrom(GfxSurface &src, Rect srcBounds, Rect destBounds,
 		Region *priorityRegion = NULL, const byte *shadowMap = NULL);
 	void copyFrom(GfxSurface &src, Rect destBounds, Region *priorityRegion = NULL) {
 		copyFrom(src, src.getBounds(), destBounds, priorityRegion);
@@ -321,7 +321,6 @@ public:
 	GfxElementList _elements;
 	GfxButton *_defaultButton;
 	GfxSurface *_savedArea;
-	byte _savedPalette[256 * 3];
 public:
 	GfxDialog();
 	virtual ~GfxDialog();

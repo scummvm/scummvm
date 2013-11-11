@@ -119,7 +119,7 @@ public:
 	int _action1Count, _talkCount, _field1FBA;
 	int _cuffedDriverFl, _field1FBE;
 	int _field1FC0;
-	int _field1FC2, _harrisonMovedFl; 
+	int _field1FC2, _harrisonMovedFl;
 
 	Scene410();
 	virtual void postInit(SceneObjectList *OwnerList = NULL);

@@ -97,7 +97,7 @@ void Scene3100::postInit(SceneObjectList *OwnerList) {
 			_deadBodies.postInit();
 			R2_GLOBALS._sound1.play(274);
 			_sound1.fadeSound(130);
-			setAction(&_sequenceManager, this, 3102, &_hammerHead, &R2_GLOBALS._player, 
+			setAction(&_sequenceManager, this, 3102, &_hammerHead, &R2_GLOBALS._player,
 				&_ghoul, &_technicians, &_deadBodies, NULL);
 		} else {
 			_guard.postInit();
@@ -126,7 +126,7 @@ void Scene3100::postInit(SceneObjectList *OwnerList) {
 		_ghoul.postInit();
 		_fadeSound = true;
 
-		setAction(&_sequenceManager, this, 3101, &R2_GLOBALS._player, &_hammerHead, 
+		setAction(&_sequenceManager, this, 3101, &R2_GLOBALS._player, &_hammerHead,
 			&_miranda, &_ghoul, NULL);
 	} else {
 		_guard.postInit();
@@ -274,8 +274,8 @@ bool Scene3125::Computer::startAction(CursorType action, Event &event) {
 		R2_GLOBALS._player.disableControl();
 		scene->_ghoul4.postInit();
 		scene->_sceneMode = 3126;
-		scene->setAction(&scene->_sequenceManager, scene, 3126, &R2_GLOBALS._player, 
-			&scene->_ghoul1, &scene->_ghoul2, &scene->_ghoul3, &scene->_door, 
+		scene->setAction(&scene->_sequenceManager, scene, 3126, &R2_GLOBALS._player,
+			&scene->_ghoul1, &scene->_ghoul2, &scene->_ghoul3, &scene->_door,
 			&scene->_ghoul4, NULL);
 		break;
 	case CURSOR_LOOK:
@@ -424,8 +424,8 @@ bool Scene3150::Toilet::startAction(CursorType action, Event &event) {
 		scene->setAction(&scene->_sequenceManager, scene, 3158, &R2_GLOBALS._player, &scene->_water, NULL);
 		return true;
 	case R2_FOOD_TRAY:
-		if ((R2_INVENTORY.getObjectScene(R2_LIGHT_BULB) != 3150) && 
-				(R2_INVENTORY.getObjectScene(R2_SUPERCONDUCTOR_WIRE) == 3150) 
+		if ((R2_INVENTORY.getObjectScene(R2_LIGHT_BULB) != 3150) &&
+				(R2_INVENTORY.getObjectScene(R2_SUPERCONDUCTOR_WIRE) == 3150)
 				&& (R2_GLOBALS.getFlag(75))) {
 			scene->_foodTray.postInit();
 			scene->_foodTray._effect = EFFECT_SHADED2;
@@ -685,7 +685,7 @@ void Scene3150::postInit(SceneObjectList *OwnerList) {
 		break;
 		}
 	default:
-		if ((R2_GLOBALS._mirandaJailState == 1) && (R2_INVENTORY.getObjectScene(R2_ANCIENT_SCROLLS) == 2000) 
+		if ((R2_GLOBALS._mirandaJailState == 1) && (R2_INVENTORY.getObjectScene(R2_ANCIENT_SCROLLS) == 2000)
 				&& (R2_GLOBALS._player._oldCharacterScene[R2_QUINN] == 3100)) {
 			// Moving story on to Miranda getting food delivered
 			++R2_GLOBALS._mirandaJailState;
@@ -1105,7 +1105,7 @@ void Scene3245::postInit(SceneObjectList *OwnerList) {
 		SceneItem::display(1200, 7, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, LIST_END);
 		signal();
 	} else {
-		setAction(&_sequenceManager, this, 3244 + R2_GLOBALS._scientistConvIndex, 
+		setAction(&_sequenceManager, this, 3244 + R2_GLOBALS._scientistConvIndex,
 			&_ralf, &_tomko, NULL);
 	}
 }
@@ -1225,7 +1225,7 @@ void Scene3250::postInit(SceneObjectList *OwnerList) {
 			_ghoul2._effect = EFFECT_SHADED;
 			_ghoul3.postInit();
 			_ghoul3._effect = EFFECT_SHADED;
-			setAction(&_sequenceManager, this, 3254, &R2_GLOBALS._player, &_rightDoor, 
+			setAction(&_sequenceManager, this, 3254, &R2_GLOBALS._player, &_rightDoor,
 				&_ghoul1, &_ghoul2, &_ghoul3, &_leftDoor, NULL);
 		} else {
 			_sceneMode = 3252;
@@ -1329,7 +1329,7 @@ void Scene3255::signal() {
 		_ghoul1.postInit();
 		_ghoul2.postInit();
 		_ghoul3.postInit();
-		setAction(&_sequenceManager, this, 3258, &R2_GLOBALS._player, &_quinn, 
+		setAction(&_sequenceManager, this, 3258, &R2_GLOBALS._player, &_quinn,
 			&_door, &_ghoul1, &_ghoul2, &_ghoul3, NULL);
 		break;
 	case 3256:
@@ -1719,7 +1719,7 @@ void Scene3350::signal() {
 		break;
 	case 3351:
 		_sceneMode = 3352;
-		setAction(&_sequenceManager, this, 3352, &_seeker, &R2_GLOBALS._player, 
+		setAction(&_sequenceManager, this, 3352, &_seeker, &R2_GLOBALS._player,
 			&_miranda, &_seeker, &_webbster, NULL);
 		break;
 	case 3352:
@@ -1884,7 +1884,7 @@ bool Scene3375::Door::startAction(CursorType action, Event &event) {
 	R2_GLOBALS._player.disableControl(CURSOR_ARROW);
 
 	scene->_sceneMode = 3375;
-	scene->setAction(&scene->_sequenceManager, scene, 3375, &R2_GLOBALS._player, 
+	scene->setAction(&scene->_sequenceManager, scene, 3375, &R2_GLOBALS._player,
 		&scene->_companion1, &scene->_companion2, &scene->_webbster, &scene->_door, NULL);
 
 	return true;
@@ -2304,8 +2304,8 @@ bool Scene3385::Door::startAction(CursorType action, Event &event) {
 		R2_GLOBALS._sound2.play(314);
 
 	scene->_sceneMode = 3386;
-	scene->setAction(&scene->_sequenceManager, scene, 3386, &R2_GLOBALS._player, 
-		&scene->_companion1, &scene->_companion2, &scene->_webbster, &scene->_door, 
+	scene->setAction(&scene->_sequenceManager, scene, 3386, &R2_GLOBALS._player,
+		&scene->_companion1, &scene->_companion2, &scene->_webbster, &scene->_door,
 		NULL);
 
 	return true;
@@ -2318,8 +2318,8 @@ void Scene3385::SouthExit::changeScene() {
 	scene->_sceneMode = 3387;
 
 	if (R2_GLOBALS._sceneManager._previousScene == 3375)
-		scene->setAction(&scene->_sequenceManager, scene, scene->_sceneMode, 
-		&R2_GLOBALS._player, &scene->_companion1, &scene->_companion2, 
+		scene->setAction(&scene->_sequenceManager, scene, scene->_sceneMode,
+		&R2_GLOBALS._player, &scene->_companion1, &scene->_companion2,
 		&scene->_webbster, NULL);
 	else
 		scene->signal();
@@ -2541,8 +2541,8 @@ bool Scene3395::Door::startAction(CursorType action, Event &event) {
 		R2_GLOBALS._sound2.play(314);
 
 	scene->_sceneMode = 3396;
-	scene->setAction(&scene->_sequenceManager, scene, 3396, &R2_GLOBALS._player, 
-		&scene->_companion1, &scene->_companion2, &scene->_webbster, &scene->_door, 
+	scene->setAction(&scene->_sequenceManager, scene, 3396, &R2_GLOBALS._player,
+		&scene->_companion1, &scene->_companion2, &scene->_webbster, &scene->_door,
 		NULL);
 
 	return true;
@@ -2813,7 +2813,7 @@ void Scene3400::remove() {
 void Scene3400::signal() {
 	switch (_sceneMode) {
 	case 3305: {
-		warning("STUB: sub_1D227()");
+		// Removed (useless ?) call to sub_1D227
 		_tealSpeaker._object1.hide();
 		_teal.show();
 		_teal.setStrip(1);
@@ -2853,7 +2853,7 @@ void Scene3400::signal() {
 		}
 		break;
 	case 3308:
-		warning("STUB: sub_1D227()");
+		// Removed (useless ?) call to sub_1D227
 		_companion1.setStrip(2);
 		R2_GLOBALS._player.setStrip(6);
 		_companion2.setStrip(6);
@@ -2866,7 +2866,7 @@ void Scene3400::signal() {
 			setAction(&_sequenceManager, this, 3403, &_companion1, &_webbster, &_manholeCover, NULL);
 		break;
 	case 3309:
-		warning("STUB: sub_1D227()");
+		// Removed (useless ?) call to sub_1D227
 		_teal.setStrip(1);
 		_sceneMode = 3405;
 		if (R2_GLOBALS._player._characterIndex == R2_MIRANDA)
@@ -2875,7 +2875,7 @@ void Scene3400::signal() {
 			setAction(&_sequenceManager, this, 3405, &_companion2, &_manholeCover, NULL);
 		break;
 	case 3310:
-		warning("STUB: sub_1D227()");
+		// Removed (useless ?) call to sub_1D227
 		_teal.setStrip(1);
 		_sceneMode = 3406;
 		if (R2_GLOBALS._player._characterIndex == R2_QUINN)
@@ -2886,7 +2886,7 @@ void Scene3400::signal() {
 			setAction(&_sequenceManager, this, 3406, &_companion2, &_manholeCover, NULL);
 		break;
 	case 3311:
-		warning("STUB: sub_1D227()");
+		// Removed (useless ?) call to sub_1D227
 		_tealSpeaker._object1.hide();
 		_teal.show();
 		_teal.setStrip(1);
@@ -3078,15 +3078,15 @@ void Scene3500::Action1::signal() {
 		}
 
 		// Get the new direction starting on
-		int var8 = (scene->_action1._direction * 2 + scene->_mazeDirection);
-		if (var8 > MAZEDIR_NORTHWEST)
-			var8 = MAZEDIR_NORTH;
-		else if (var8 < MAZEDIR_NORTH)
-			var8 = MAZEDIR_WEST;
+		int direction = (scene->_action1._direction * 2 + scene->_mazeDirection);
+		if (direction > MAZEDIR_NORTHWEST)
+			direction = MAZEDIR_NORTH;
+		else if (direction < MAZEDIR_NORTH)
+			direction = MAZEDIR_WEST;
 
 		// Check whether movement is allowed in that direction. If so, then
 		// movement is started again
-		switch (var8) {
+		switch (direction) {
 		case MAZEDIR_NORTH:
 			if ( ((cellId != 2)  && (cellId != 3)  && (cellId != 6) && (cellId != 1) && (cellId != 23) && (cellId != 24) && (cellId != 4) && (cellId != 11))
 				|| (var6 != 0)) {
@@ -3521,7 +3521,7 @@ Scene3500::Scene3500() {
 	_nextMove = 0;
 	_mazePosition.x = 0;
 	_mazePosition.y = 0;
-	_field1282 = 0;
+	_field1282 = true; // Set to true in fixup()
 	_field1284 = 0;
 	_directionChangesEnabled = false;
 }
@@ -3557,7 +3557,7 @@ void Scene3500::postInit(SceneObjectList *OwnerList) {
 	R2_GLOBALS._player._characterScene[R2_SEEKER] = 3500;
 	R2_GLOBALS._player._characterScene[R2_MIRANDA] = 3500;
 	_field1284 = 0;
-	_field1282 = 0;
+	_field1282 = false;
 	_nextMove = 0;
 	_field1272 = true;
 	_speed = 4;
@@ -3880,11 +3880,11 @@ void Scene3500::dispatch() {
 	int tmpCellId = 0;
 	int cellId = 0;
 
-	if ((_mazeChangeAmount == 0) && (_field1282 == 0)) {
+	if ((_mazeChangeAmount == 0) && !_field1282) {
 		if (_field1284 == 2)
 			R2_GLOBALS._sceneManager.changeScene(1000);
 	} else {
-		_field1282 = 0;
+		_field1282 = false;
 		tmpRect.set(160, 89, 299, 182);
 
 		newMazeX = _mazePosition.x;
@@ -4623,7 +4623,7 @@ void Scene3600::remove() {
 void Scene3600::signal() {
 	switch (_sceneMode) {
 	case 3320:
-		// TODO: warning("STUB: sub_1D227()");
+		// Removed (useless ?) call to sub_1D227
 		R2_GLOBALS._walkRegions.disableRegion(14);
 		R2_GLOBALS._scrollFollower = &_seeker;
 		_tealSpeaker._object1.hide();
@@ -4635,25 +4635,25 @@ void Scene3600::signal() {
 			_sceneMode = 3603;
 		else
 			_sceneMode = 3601;
-		setAction(&_sequenceManager1, this, _sceneMode, &_seeker, &_quinn, 
+		setAction(&_sequenceManager1, this, _sceneMode, &_seeker, &_quinn,
 			&_miranda, &_webbster, &_teal, NULL);
 		break;
 	case 3321:
-		warning("STUB: sub_1D227()");
+		// Removed (useless ?) call to sub_1D227
 		R2_GLOBALS._scrollFollower = &R2_GLOBALS._player;
-		_tealSpeaker.proc16();
+		_tealSpeaker.stopSpeaking();
 		_teal.show();
 		_teal.setStrip(1);
 		_consoleLights.postInit();
 		_sceneMode = 3604;
-		setAction(&_sequenceManager1, this, _sceneMode, &_teal, &_consoleLights, 
+		setAction(&_sequenceManager1, this, _sceneMode, &_teal, &_consoleLights,
 			&_quinn, &_seeker, &_miranda, &_webbster, NULL);
 		break;
 	case 3322:
-		warning("STUB: sub_1D227()");
-		_quinnSpeaker.proc16();
+		// Removed (useless ?) call to sub_1D227
+		_quinnSpeaker.stopSpeaking();
 		_quinnSpeaker._displayMode = 1;
-		_tealSpeaker.proc16();
+		_tealSpeaker.stopSpeaking();
 		_tealSpeaker._displayMode = 7;
 		R2_GLOBALS._scrollFollower = &_teal;
 		_sceneMode = 3605;
@@ -4663,15 +4663,15 @@ void Scene3600::signal() {
 		if (!_tealDead)
 			_tealDead = true;
 		else {
-			warning("STUB: sub_1D227()");
-			_protectorSpeaker.proc16();
+			// Removed (useless ?) call to sub_1D227
+			_protectorSpeaker.stopSpeaking();
 			_protector.show();
 			_protector.setup(3258, 6, 1);
 
 			_sceneMode = 3607;
 			_protector.setAction(&_sequenceManager1, this, _sceneMode, &_protector, NULL);
 
-			_protectorSpeaker.proc16();
+			_protectorSpeaker.stopSpeaking();
 			_protectorSpeaker._displayMode = 1;
 			_quinnSpeaker._displayMode = 1;
 			_protector.show();
@@ -4828,7 +4828,7 @@ void Scene3600::signal() {
 	case 3620:
 	// No break on purpose
 	case 3623:
-		if ((_protector._position.x == 226) && (_protector._position.y == 152) 
+		if ((_protector._position.x == 226) && (_protector._position.y == 152)
 				&& _action1._field1E && (_protector._visage == 3127) && (!R2_GLOBALS.getFlag(71))) {
 			R2_GLOBALS._sound2.stop();
 			R2_GLOBALS._sound2.play(331);
@@ -4979,7 +4979,7 @@ void Scene3700::postInit(SceneObjectList *OwnerList) {
 	R2_GLOBALS._sound1.play(332);
 
 	_sceneMode = 3700;
-	setAction(&_sequenceManager, this, 3700, &_quinn, &_seeker, &_miranda, 
+	setAction(&_sequenceManager, this, 3700, &_quinn, &_seeker, &_miranda,
 		&_webbster, &_teleportPad, NULL);
 }
 
@@ -4993,7 +4993,7 @@ void Scene3700::signal() {
 	case 3328:
 	// No break on purpose
 	case 3329:
-		warning("STUB: sub_1D227()");
+		// Removed (useless ?) call to sub_1D227
 		_sceneMode = 3701;
 		setAction(&_sequenceManager, this, 3701, &_seeker, &_miranda, &_webbster, NULL);
 		break;
@@ -5221,7 +5221,7 @@ void Scene3800::enterArea() {
 			_harness.postInit();
 			_quinnShadow.hide();
 			_sceneMode = 3800;
-			setAction(&_sequenceManager1, this, 3800, &R2_GLOBALS._player, 
+			setAction(&_sequenceManager1, this, 3800, &R2_GLOBALS._player,
 				&_balloon, &_harness, NULL);
 			break;
 		case 3900:
@@ -5391,7 +5391,7 @@ void Scene3800::signal() {
 }
 
 void Scene3800::process(Event &event) {
-	if ((R2_GLOBALS._player._uiEnabled) && (event.eventType == EVENT_BUTTON_DOWN) 
+	if ((R2_GLOBALS._player._uiEnabled) && (event.eventType == EVENT_BUTTON_DOWN)
 			&& (_skylineRect.contains(event.mousePos))) {
 		event.handled = true;
 		switch (R2_GLOBALS._events.getCursor()) {
@@ -5500,7 +5500,7 @@ void Scene3900::Exit5::changeScene() {
 }
 
 void Scene3900::postInit(SceneObjectList *OwnerList) {
-	if ((R2_GLOBALS._desertPreviousDirection == 2) 
+	if ((R2_GLOBALS._desertPreviousDirection == 2)
 			&& (R2_GLOBALS._sceneManager._previousScene != 2700))
 		loadScene(3825);
 	else

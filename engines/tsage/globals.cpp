@@ -3,7 +3,7 @@
  * ScummVM is the legal property of its developers, whose names
  * are too numerous to list here. Please refer to the COPYRIGHT
  * file distributed with this source distribution.
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -414,6 +414,15 @@ Ringworld2Globals::Ringworld2Globals() {
 	_scannerDialog = new ScannerDialog();
 	_speechSubtitles = SPEECH_TEXT;
 
+	// Register the inner sound objects for each of the global ASoundExt fields.
+	// Normally the ASound constructor would do this, but because they're fields
+	// of the globals, the g_globals reference isn't ready for them to use
+	_sounds.push_back(&_sound1);
+	_sounds.push_back(&_sound2);
+	_sounds.push_back(&_sound3);
+	_sounds.push_back(&_sound4);
+
+	// Initialize fields
 	_stripModifier = 0;
 	_flubMazeArea = 1;
 	_flubMazeEntryDirection = 0;
@@ -500,7 +509,7 @@ void Ringworld2Globals::reset() {
 	_spillLocation[12] = 27;
 	_spillLocation[13] = 31;
 
-	// Initialise the vampire data within the Flub maze
+	// Initialize the vampire data within the Flub maze
 	for (int i = 0; i < 18; i++) {
 		_vampireData[i]._isAlive = true;
 		_vampireData[i]._position = Common::Point();

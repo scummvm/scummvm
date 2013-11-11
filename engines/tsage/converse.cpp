@@ -727,10 +727,10 @@ void StripManager::synchronize(Serializer &s) {
 }
 
 void StripManager::remove() {
-	if (g_vm->getGameID() == GType_Ringworld2) { 
+	if (g_vm->getGameID() == GType_Ringworld2) {
 		for (uint i = 0; i < _speakerList.size(); ++i) {
 			if (_activeSpeaker != _speakerList[i])
-				_speakerList[i]->proc16();
+				_speakerList[i]->stopSpeaking();
 		}
 	}
 
@@ -741,7 +741,7 @@ void StripManager::remove() {
 	}
 
 	if (_activeSpeaker) {
-		if (g_vm->getGameID() == GType_Ringworld2) 
+		if (g_vm->getGameID() == GType_Ringworld2)
 			static_cast<Ringworld2::VisualSpeaker *>(_activeSpeaker)->_speakerMode = 0xff;
 		_activeSpeaker->remove();
 	}
@@ -822,7 +822,7 @@ void StripManager::signal() {
 			break;
 		}
 	}
-	
+
 	_field2E8 = obj44._id;
 	Common::StringArray choiceList;
 
@@ -836,7 +836,7 @@ void StripManager::signal() {
 			int f16Index = _lookupList[obj44._field16[0] - 1];
 			int entryId = obj44._field16[f16Index];
 
-			Obj0A &entry = obj44._list[idx]; 
+			Obj0A &entry = obj44._list[idx];
 			if (entry._id == entryId) {
 				// Get the next one
 				choiceList.push_back((const char *)&_script[0] + entry._scriptOffset);
@@ -864,7 +864,7 @@ void StripManager::signal() {
 
 			// Get the next one
 			const char *choiceStr = (const char *)&_script[0] + obj44._list[idx]._scriptOffset;
-			
+
 			if (!*choiceStr) {
 				// Choice is empty
 				assert(g_vm->getGameID() == GType_Ringworld2);
@@ -872,7 +872,7 @@ void StripManager::signal() {
 				if (obj44._list[1]._id) {
 					// it's a reference to another list slot
 					int listId = obj44._list[idx]._id;
-					
+
 					int obj44Idx = 0;
 					while (_obj44List[obj44Idx]._id != listId)
 						++obj44Idx;
@@ -882,7 +882,7 @@ void StripManager::signal() {
 						// seems to be set to the R2_GLOBALS._stripManager_lookupList, so manually set it
 						if (!_lookupList)
 							_lookupList = R2_GLOBALS._stripManager_lookupList;
-						
+
 						int f16Index = _lookupList[_obj44List[obj44Idx]._field16[0] - 1];
 						listId = _obj44List[obj44Idx]._field16[f16Index];
 
@@ -948,11 +948,11 @@ void StripManager::signal() {
 
 		if (g_vm->getGameID() == GType_Ringworld2) {
 			Ringworld2::VisualSpeaker *speaker = static_cast<Ringworld2::VisualSpeaker *>(_activeSpeaker);
-			
+
 			if (speaker) {
 				speaker->_speakerMode = obj44._speakerMode;
 				if (!choiceList[strIndex].empty())
-					speaker->proc15();
+					speaker->animateSpeaker();
 			}
 
 			if (!choiceList[strIndex].empty()) {
@@ -962,7 +962,7 @@ void StripManager::signal() {
 				_delayFrames = 1;
 			} else {
 				_delayFrames = 0;
-				speaker->proc15();
+				speaker->animateSpeaker();
 			}
 		} else {
 			_textShown = true;

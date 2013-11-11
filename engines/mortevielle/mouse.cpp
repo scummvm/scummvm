@@ -38,9 +38,7 @@ namespace Mortevielle {
  * @remarks	Originally called 'init_mouse'
  */
 void MouseHandler::initMouse() {
-	_counter = 0;
 	_pos = Common::Point(0, 0);
-
 	_vm->setMouseClick(false);
 }
 
