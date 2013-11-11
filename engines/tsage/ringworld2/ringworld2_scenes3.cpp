@@ -220,8 +220,6 @@ void Scene3125::synchronize(Serializer &s) {
 }
 
 bool Scene3125::Background::startAction(CursorType action, Event &event) {
-	Scene3125 *scene = (Scene3125 *)R2_GLOBALS._sceneManager._scene;
-
 	switch (action) {
 	case CURSOR_USE:
 		if (_useLineNum != -1)
@@ -235,8 +233,10 @@ bool Scene3125::Background::startAction(CursorType action, Event &event) {
 		if (_talkLineNum != -1)
 			SceneItem::display(_resNum, _talkLineNum, 0, 280, 1, 160, 9, 1, 2, 20, 7, 154, LIST_END);
 		break;
-	default:
+	default: {
+		Scene3125 *scene = (Scene3125 *)R2_GLOBALS._sceneManager._scene;
 		return scene->display(action, event);
+		}
 		break;
 	}
 
@@ -244,13 +244,14 @@ bool Scene3125::Background::startAction(CursorType action, Event &event) {
 }
 
 bool Scene3125::Table::startAction(CursorType action, Event &event) {
-	Scene3125 *scene = (Scene3125 *)R2_GLOBALS._sceneManager._scene;
-
 	switch (action) {
-	case CURSOR_USE:
+	case CURSOR_USE: {
+		Scene3125 *scene = (Scene3125 *)R2_GLOBALS._sceneManager._scene;
+
 		R2_GLOBALS._player.disableControl();
 		scene->_sceneMode = 3125;
 		scene->setAction(&scene->_sequenceManager, scene, 3125, &R2_GLOBALS._player, NULL);
+		}
 		break;
 	case CURSOR_LOOK:
 		SceneItem::display(3125, 15, 0, 280, 1, 160, 9, 1, 2, 20, 7, 154, LIST_END);
@@ -267,16 +268,17 @@ bool Scene3125::Table::startAction(CursorType action, Event &event) {
 }
 
 bool Scene3125::Computer::startAction(CursorType action, Event &event) {
-	Scene3125 *scene = (Scene3125 *)R2_GLOBALS._sceneManager._scene;
-
 	switch (action) {
-	case CURSOR_USE:
+	case CURSOR_USE: {
+		Scene3125 *scene = (Scene3125 *)R2_GLOBALS._sceneManager._scene;
+
 		R2_GLOBALS._player.disableControl();
 		scene->_ghoul4.postInit();
 		scene->_sceneMode = 3126;
 		scene->setAction(&scene->_sequenceManager, scene, 3126, &R2_GLOBALS._player,
 			&scene->_ghoul1, &scene->_ghoul2, &scene->_ghoul3, &scene->_door,
 			&scene->_ghoul4, NULL);
+		}
 		break;
 	case CURSOR_LOOK:
 		SceneItem::display(3125, 9, 0, 280, 1, 160, 9, 1, 2, 20, 7, 154, LIST_END);
@@ -293,10 +295,10 @@ bool Scene3125::Computer::startAction(CursorType action, Event &event) {
 }
 
 bool Scene3125::Door::startAction(CursorType action, Event &event) {
-	Scene3125 *scene = (Scene3125 *)R2_GLOBALS._sceneManager._scene;
-
 	if (action != CURSOR_USE)
 		return SceneActor::startAction(action, event);
+
+	Scene3125 *scene = (Scene3125 *)R2_GLOBALS._sceneManager._scene;
 
 	R2_GLOBALS._player.disableControl();
 	scene->_sceneMode = 3176;
@@ -446,17 +448,18 @@ bool Scene3150::Toilet::startAction(CursorType action, Event &event) {
 }
 
 bool Scene3150::Water::startAction(CursorType action, Event &event) {
-	Scene3150 *scene = (Scene3150 *)R2_GLOBALS._sceneManager._scene;
-
 	switch (action) {
-	case CURSOR_USE:
+	case CURSOR_USE: {
 		if (R2_GLOBALS.getFlag(75))
 			return SceneActor::startAction(action, event);
+
+		Scene3150 *scene = (Scene3150 *)R2_GLOBALS._sceneManager._scene;
 
 		R2_GLOBALS._player.disableControl();
 		scene->_sceneMode = 3151;
 		scene->setAction(&scene->_sequenceManager, scene, 3151, &R2_GLOBALS._player, &scene->_water, NULL);
 		return true;
+		}
 	case R2_FOOD_TRAY:
 		return false;
 	default:
@@ -466,10 +469,10 @@ bool Scene3150::Water::startAction(CursorType action, Event &event) {
 }
 
 bool Scene3150::FoodTray::startAction(CursorType action, Event &event) {
-	Scene3150 *scene = (Scene3150 *)R2_GLOBALS._sceneManager._scene;
-
 	if ((action != CURSOR_USE) || (R2_GLOBALS.getFlag(77)))
 		return SceneActor::startAction(action, event);
+
+	Scene3150 *scene = (Scene3150 *)R2_GLOBALS._sceneManager._scene;
 
 	R2_GLOBALS._player.disableControl();
 	scene->_sceneMode = 3157;
@@ -478,9 +481,9 @@ bool Scene3150::FoodTray::startAction(CursorType action, Event &event) {
 }
 
 bool Scene3150::ToiletFlush::startAction(CursorType action, Event &event) {
-	Scene3150 *scene = (Scene3150 *)R2_GLOBALS._sceneManager._scene;
-
 	if (action == CURSOR_USE) {
+		Scene3150 *scene = (Scene3150 *)R2_GLOBALS._sceneManager._scene;
+
 		if (R2_GLOBALS.getFlag(75)) {
 			if (R2_GLOBALS.getFlag(77)) {
 				R2_GLOBALS._player.disableControl();
@@ -506,9 +509,9 @@ bool Scene3150::ToiletFlush::startAction(CursorType action, Event &event) {
 }
 
 bool Scene3150::AirVent::startAction(CursorType action, Event &event) {
-	Scene3150 *scene = (Scene3150 *)R2_GLOBALS._sceneManager._scene;
-
 	if ((action == R2_LASER_HACKSAW) && (!R2_GLOBALS.getFlag(80))) {
+		Scene3150 *scene = (Scene3150 *)R2_GLOBALS._sceneManager._scene;
+
 		R2_GLOBALS._player.disableControl();
 		scene->_sceneMode = 3160;
 		scene->setAction(&scene->_sequenceManager, scene, 3160, &R2_GLOBALS._player, &scene->_airVent, NULL);
@@ -809,8 +812,6 @@ void Scene3150::dispatch() {
  *--------------------------------------------------------------------------*/
 
 bool Scene3175::RoomItem::startAction(CursorType action, Event &event) {
-	Scene3175 *scene = (Scene3175 *)R2_GLOBALS._sceneManager._scene;
-
 	switch (action) {
 	case CURSOR_USE:
 		if (_useLineNum != -1) {
@@ -834,12 +835,11 @@ bool Scene3175::RoomItem::startAction(CursorType action, Event &event) {
 		break;
 	}
 
+	Scene3175 *scene = (Scene3175 *)R2_GLOBALS._sceneManager._scene;
 	return scene->display(action, event);
 }
 
 bool Scene3175::Corpse::startAction(CursorType action, Event &event) {
-	Scene3175 *scene = (Scene3175 *)R2_GLOBALS._sceneManager._scene;
-
 	switch (action) {
 	case CURSOR_USE:
 		if (_useLineNum != -1) {
@@ -863,18 +863,20 @@ bool Scene3175::Corpse::startAction(CursorType action, Event &event) {
 		break;
 	}
 
+	Scene3175 *scene = (Scene3175 *)R2_GLOBALS._sceneManager._scene;
 	return scene->display(action, event);
 }
 
 bool Scene3175::Door::startAction(CursorType action, Event &event) {
-	Scene3175 *scene = (Scene3175 *)R2_GLOBALS._sceneManager._scene;
-
 	switch (action) {
-	case CURSOR_USE:
+	case CURSOR_USE: {
+		Scene3175 *scene = (Scene3175 *)R2_GLOBALS._sceneManager._scene;
+
 		R2_GLOBALS._player.disableControl();
 		scene->_sceneMode = 3176;
 		scene->setAction(&scene->_sequenceManager, scene, 3176, &R2_GLOBALS._player, &scene->_door, NULL);
 		return true;
+		}
 		break;
 	case CURSOR_LOOK:
 		SceneItem::display(3175, 9, 0, 280, 1, 160, 9, 1, 2, 20, 7, 154, LIST_END);
@@ -1120,8 +1122,6 @@ void Scene3245::signal() {
  *--------------------------------------------------------------------------*/
 
 bool Scene3250::Item::startAction(CursorType action, Event &event) {
-	Scene3250 *scene = (Scene3250 *)R2_GLOBALS._sceneManager._scene;
-
 	switch (action) {
 	case CURSOR_USE:
 		if (_useLineNum != -1) {
@@ -1145,15 +1145,15 @@ bool Scene3250::Item::startAction(CursorType action, Event &event) {
 		break;
 	}
 
+	Scene3250 *scene = (Scene3250 *)R2_GLOBALS._sceneManager._scene;
 	return scene->display(action, event);
 }
 
 bool Scene3250::Door::startAction(CursorType action, Event &event) {
-	Scene3250 *scene = (Scene3250 *)R2_GLOBALS._sceneManager._scene;
-
 	if (action != CURSOR_USE)
 		return SceneActor::startAction(action, event);
 
+	Scene3250 *scene = (Scene3250 *)R2_GLOBALS._sceneManager._scene;
 	R2_GLOBALS._player.disableControl();
 
 	switch(_position.x) {
@@ -1396,10 +1396,10 @@ void Scene3255::dispatch() {
  *--------------------------------------------------------------------------*/
 
 bool Scene3260::Door::startAction(CursorType action, Event &event) {
-	Scene3260 *scene = (Scene3260 *)R2_GLOBALS._sceneManager._scene;
-
 	if (action != CURSOR_USE)
 		return SceneActor::startAction(action, event);
+
+	Scene3260 *scene = (Scene3260 *)R2_GLOBALS._sceneManager._scene;
 
 	R2_GLOBALS._player.disableControl();
 	scene->_sceneMode = 3271;
@@ -1408,10 +1408,10 @@ bool Scene3260::Door::startAction(CursorType action, Event &event) {
 }
 
 bool Scene3260::Toolbox::startAction(CursorType action, Event &event) {
-	Scene3260 *scene = (Scene3260 *)R2_GLOBALS._sceneManager._scene;
-
 	if (action != CURSOR_USE)
 		return SceneActor::startAction(action, event);
+
+	Scene3260 *scene = (Scene3260 *)R2_GLOBALS._sceneManager._scene;
 
 	R2_GLOBALS._player.disableControl();
 	scene->_sceneMode = 3272;
@@ -1574,10 +1574,10 @@ void Scene3260::signal() {
  *--------------------------------------------------------------------------*/
 
 bool Scene3275::Door::startAction(CursorType action, Event &event) {
-	Scene3275 *scene = (Scene3275 *)R2_GLOBALS._sceneManager._scene;
-
 	if (action != CURSOR_USE)
 		return SceneActor::startAction(action, event);
+
+	Scene3275 *scene = (Scene3275 *)R2_GLOBALS._sceneManager._scene;
 
 	R2_GLOBALS._player.disableControl();
 	scene->_sceneMode = 3275;
@@ -1822,10 +1822,10 @@ void Scene3375::enterArea(int sceneMode) {
 }
 
 bool Scene3375::Companion2::startAction(CursorType action, Event &event) {
-	Scene3375 *scene = (Scene3375 *)R2_GLOBALS._sceneManager._scene;
-
 	if (action != CURSOR_TALK)
 		return SceneActor::startAction(action, event);
+
+	Scene3375 *scene = (Scene3375 *)R2_GLOBALS._sceneManager._scene;
 
 	scene->_sceneMode = 9999;
 	if (R2_GLOBALS._player._characterIndex == R2_SEEKER)
@@ -1837,10 +1837,10 @@ bool Scene3375::Companion2::startAction(CursorType action, Event &event) {
 }
 
 bool Scene3375::Companion1::startAction(CursorType action, Event &event) {
-	Scene3375 *scene = (Scene3375 *)R2_GLOBALS._sceneManager._scene;
-
 	if (action != CURSOR_TALK)
 		return SceneActor::startAction(action, event);
+
+	Scene3375 *scene = (Scene3375 *)R2_GLOBALS._sceneManager._scene;
 
 	scene->_sceneMode = 9999;
 	if (R2_GLOBALS._player._characterIndex == R2_MIRANDA)
@@ -1852,10 +1852,10 @@ bool Scene3375::Companion1::startAction(CursorType action, Event &event) {
 }
 
 bool Scene3375::Webbster::startAction(CursorType action, Event &event) {
-	Scene3375 *scene = (Scene3375 *)R2_GLOBALS._sceneManager._scene;
-
 	if (action != CURSOR_TALK)
 		return SceneActor::startAction(action, event);
+
+	Scene3375 *scene = (Scene3375 *)R2_GLOBALS._sceneManager._scene;
 
 	scene->_sceneMode = 9999;
 	scene->_stripManager.start(3303, scene);
@@ -1864,8 +1864,6 @@ bool Scene3375::Webbster::startAction(CursorType action, Event &event) {
 }
 
 bool Scene3375::Door::startAction(CursorType action, Event &event) {
-	Scene3375 *scene = (Scene3375 *)R2_GLOBALS._sceneManager._scene;
-
 	if (action != CURSOR_USE)
 		return SceneActor::startAction(action, event);
 
@@ -1882,6 +1880,8 @@ bool Scene3375::Door::startAction(CursorType action, Event &event) {
 	R2_GLOBALS._walkRegions.enableRegion(8);
 
 	R2_GLOBALS._player.disableControl(CURSOR_ARROW);
+
+	Scene3375 *scene = (Scene3375 *)R2_GLOBALS._sceneManager._scene;
 
 	scene->_sceneMode = 3375;
 	scene->setAction(&scene->_sequenceManager, scene, 3375, &R2_GLOBALS._player,
@@ -2252,10 +2252,10 @@ void Scene3385::synchronize(Serializer &s) {
 }
 
 bool Scene3385::Companion1::startAction(CursorType action, Event &event) {
-	Scene3385 *scene = (Scene3385 *)R2_GLOBALS._sceneManager._scene;
-
 	if (action != CURSOR_TALK)
 		return SceneActor::startAction(action, event);
+
+	Scene3385 *scene = (Scene3385 *)R2_GLOBALS._sceneManager._scene;
 
 	scene->_sceneMode = 9999;
 	if (R2_GLOBALS._player._characterIndex == R2_SEEKER)
@@ -2267,10 +2267,10 @@ bool Scene3385::Companion1::startAction(CursorType action, Event &event) {
 }
 
 bool Scene3385::Companion2::startAction(CursorType action, Event &event) {
-	Scene3385 *scene = (Scene3385 *)R2_GLOBALS._sceneManager._scene;
-
 	if (action != CURSOR_TALK)
 		return SceneActor::startAction(action, event);
+
+	Scene3385 *scene = (Scene3385 *)R2_GLOBALS._sceneManager._scene;
 
 	scene->_sceneMode = 9999;
 	if (R2_GLOBALS._player._characterIndex == R2_MIRANDA)
@@ -2282,10 +2282,10 @@ bool Scene3385::Companion2::startAction(CursorType action, Event &event) {
 }
 
 bool Scene3385::Webbster::startAction(CursorType action, Event &event) {
-	Scene3385 *scene = (Scene3385 *)R2_GLOBALS._sceneManager._scene;
-
 	if (action != CURSOR_TALK)
 		return SceneActor::startAction(action, event);
+
+	Scene3385 *scene = (Scene3385 *)R2_GLOBALS._sceneManager._scene;
 
 	scene->_sceneMode = 9999;
 	scene->_stripManager.start(3303, scene);
@@ -2294,14 +2294,14 @@ bool Scene3385::Webbster::startAction(CursorType action, Event &event) {
 }
 
 bool Scene3385::Door::startAction(CursorType action, Event &event) {
-	Scene3385 *scene = (Scene3385 *)R2_GLOBALS._sceneManager._scene;
-
 	if (action != CURSOR_USE)
 		return SceneActor::startAction(action, event);
 
 	R2_GLOBALS._player.disableControl(CURSOR_ARROW);
 	if (R2_GLOBALS._sceneManager._previousScene == 3375)
 		R2_GLOBALS._sound2.play(314);
+
+	Scene3385 *scene = (Scene3385 *)R2_GLOBALS._sceneManager._scene;
 
 	scene->_sceneMode = 3386;
 	scene->setAction(&scene->_sequenceManager, scene, 3386, &R2_GLOBALS._player,
@@ -2489,10 +2489,10 @@ void Scene3395::synchronize(Serializer &s) {
 }
 
 bool Scene3395::Companion1::startAction(CursorType action, Event &event) {
-	Scene3395 *scene = (Scene3395 *)R2_GLOBALS._sceneManager._scene;
-
 	if (action != CURSOR_TALK)
 		return SceneActor::startAction(action, event);
+
+	Scene3395 *scene = (Scene3395 *)R2_GLOBALS._sceneManager._scene;
 
 	scene->_sceneMode = 9999;
 	if (R2_GLOBALS._player._characterIndex == R2_SEEKER)
@@ -2504,10 +2504,10 @@ bool Scene3395::Companion1::startAction(CursorType action, Event &event) {
 }
 
 bool Scene3395::Companion2::startAction(CursorType action, Event &event) {
-	Scene3395 *scene = (Scene3395 *)R2_GLOBALS._sceneManager._scene;
-
 	if (action != CURSOR_TALK)
 		return SceneActor::startAction(action, event);
+
+	Scene3395 *scene = (Scene3395 *)R2_GLOBALS._sceneManager._scene;
 
 	scene->_sceneMode = 9999;
 	if (R2_GLOBALS._player._characterIndex == R2_MIRANDA)
@@ -2519,10 +2519,10 @@ bool Scene3395::Companion2::startAction(CursorType action, Event &event) {
 }
 
 bool Scene3395::Webbster::startAction(CursorType action, Event &event) {
-	Scene3395 *scene = (Scene3395 *)R2_GLOBALS._sceneManager._scene;
-
 	if (action != CURSOR_TALK)
 		return SceneActor::startAction(action, event);
+
+	Scene3395 *scene = (Scene3395 *)R2_GLOBALS._sceneManager._scene;
 
 	scene->_sceneMode = 9999;
 	scene->_stripManager.start(3303, scene);
@@ -2531,14 +2531,14 @@ bool Scene3395::Webbster::startAction(CursorType action, Event &event) {
 }
 
 bool Scene3395::Door::startAction(CursorType action, Event &event) {
-	Scene3395 *scene = (Scene3395 *)R2_GLOBALS._sceneManager._scene;
-
 	if (action != CURSOR_USE)
 		return SceneActor::startAction(action, event);
 
 	R2_GLOBALS._player.disableControl(CURSOR_ARROW);
 	if (R2_GLOBALS._sceneManager._previousScene == 3385)
 		R2_GLOBALS._sound2.play(314);
+
+	Scene3395 *scene = (Scene3395 *)R2_GLOBALS._sceneManager._scene;
 
 	scene->_sceneMode = 3396;
 	scene->setAction(&scene->_sequenceManager, scene, 3396, &R2_GLOBALS._player,
