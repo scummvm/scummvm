@@ -785,7 +785,7 @@ void Scene125::signal() {
 	case 12:
 		if (_soundCount > 0)
 			--_soundCount;
-		if (!_soundCount || (R2_GLOBALS._speechSubtitles & SPEECH_VOICE)) {
+		if (!_soundCount || !(R2_GLOBALS._speechSubtitles & SPEECH_VOICE)) {
 			_soundIndex = 0;
 			R2_GLOBALS._playStream.stop();
 		} else {
@@ -1172,7 +1172,7 @@ void Scene125::setDetails(int resNum, int lineNum) {
 
 		if ((_soundCount > 0) && (R2_GLOBALS._speechSubtitles & SPEECH_VOICE)) {
 			_sceneMode = 12;
-			R2_GLOBALS._playStream.play(_soundIndexes[_soundIndex], this);
+			R2_GLOBALS._playStream.play(_soundIndexes[_soundIndex++], this);
 		}
 	} else {
 		// Passed the start or end of the message set, so return to the menu
