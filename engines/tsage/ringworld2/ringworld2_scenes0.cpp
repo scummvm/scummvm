@@ -6049,6 +6049,7 @@ void Scene600::signal() {
 		R2_GLOBALS._sceneItems.remove(&_engineCompartment);
 		_computer.setDetails(600, 21, -1, 23, 4, &_engineCompartment);
 		_engineCompartment.setDetails(600, 7, -1, -1, 3, (SceneItem *) NULL);
+		_quantumDrive._lookLineNum = 7;
 		R2_GLOBALS._player.enableControl(CURSOR_USE);
 		break;
 	case 614:
