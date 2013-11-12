@@ -676,14 +676,14 @@ MessageQueue *MovGraph2::buildMovInfo1MessageQueue(MovInfo1 *movInfo) {
 		if (v10 != 10) {
 			if (i >= movInfo->_itemsCount - 2 || v9[i + 2].subIndex != 10) {
 				v16 = v9[i].subIndex;
-				v17 = (char *)this->items[1] + 16 * (v10 + 8);
+				v17 = (char *)_items[1] + 16 * (v10 + 8);
 				subidx = 93 * movInfo->field_0;
 				movinfo.flags = 0;
 				v14 = 8 * subidx;
 				v15 = (MovGraph2Item *)(&v17[184 * v16] + v14);
 			} else {
 				v11 = v9[i].subIndex;
-				v12 = (char *)this->items[1] + 16 * (v10 + 4);
+				v12 = (char *)_items[1] + 16 * (v10 + 4);
 				v13 = 93 * movInfo->field_0;
 				movinfo.flags = 2;
 				v14 = 8 * v13;
@@ -757,20 +757,20 @@ MessageQueue *MovGraph2::buildMovInfo1MessageQueue(MovInfo1 *movInfo) {
 					 || v9[i + 2].subIndex == v9[i + 3].subIndex) {
 					movinfo.flags &= 3;
 				} else {
-					v35 = (MovInfo1 *)((char *)&this->items[1][movInfo->field_0] + 184 * v9[i + 2].subIndex + 16 * (v9[i + 3].subIndex + 8));
+					v35 = (MovInfo1 *)((char *)&_items[1][movInfo->field_0] + 184 * v9[i + 2].subIndex + 16 * (v9[i + 3].subIndex + 8));
 					movinfo.pt2.x -= v35->pt1.y;
 					movinfo.pt2.y -= v35->pt2.x;
 					movinfo.flags &= 3;
 				}
 			} else {
-				v32 = (MovInfo1 *)((char *)&this->items[1][movInfo->field_0] + 184 * v9[i + 2].subIndex + 16 * (v9[i + 3].subIndex + 4));
+				v32 = (MovInfo1 *)((char *)&_items[1][movInfo->field_0] + 184 * v9[i + 2].subIndex + 16 * (v9[i + 3].subIndex + 4));
 
 				if (movinfo.item1Index && movinfo.item1Index != 1) {
 					movinfo.pt2.y -= v32->pt2.x;
-					movinfo.flags = movinfo.flags & 2 | 1;
+					movinfo.flags = (movinfo.flags & 2) | 1;
 				} else {
 					movinfo.pt2.x -= v32->pt1.y;
-					movinfo.flags = movinfo.flags & 2 | 1;
+					movinfo.flags = (movinfo.flags & 2) | 1;
 				}
 			}
 			i++; // intentional
@@ -781,7 +781,8 @@ MessageQueue *MovGraph2::buildMovInfo1MessageQueue(MovInfo1 *movInfo) {
 				delete mq;
 				return 0;
 			}
-			MessageQueue_transferExCommands(mq, v36);
+
+			mq->transferExCommands(v36);
 
 			delete v36;
 
