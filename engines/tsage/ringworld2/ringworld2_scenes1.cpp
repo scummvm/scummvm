@@ -9567,7 +9567,6 @@ void Scene1575::process(Event &event) {
 	Scene::process(event);
 
 	g_globals->_sceneObjects->recurse(SceneHandler::dispatchObject);
-	warning("TODO: check Scene1575::process");
 }
 
 void Scene1575::dispatch() {
