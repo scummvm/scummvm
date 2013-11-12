@@ -2411,7 +2411,7 @@ int Sound::soFindSound(VoiceTypeStruct *vtStruct, int channelNum) {
 /*--------------------------------------------------------------------------*/
 
 ASound::ASound(): EventHandler() {
-	_action = NULL;
+	_endAction = NULL;
 	_cueValue = -1;
 	if (g_globals)
 		g_globals->_sounds.push_back(this);
