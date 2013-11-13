@@ -8662,6 +8662,8 @@ void Scene1550::enterArea() {
 
 	int varA = 0;
 
+	// This section handles checks if the ARM spacecraft have not yet seized 
+	// control of Lance of Truth.
 	if (!R2_GLOBALS.getFlag(16)) {
 		switch (R2_GLOBALS._s1550PlayerArea[R2_GLOBALS._player._characterIndex].y - 2) {
 		case 0:
@@ -8754,7 +8756,11 @@ void Scene1550::enterArea() {
 		default:
 			break;
 		}
-		if ((R2_GLOBALS._s1550PlayerArea[R2_GLOBALS._player._characterIndex].y > 0) && (R2_GLOBALS._s1550PlayerArea[R2_GLOBALS._player._characterIndex].x <= 29) && (R2_GLOBALS._s1550PlayerArea[R2_GLOBALS._player._characterIndex].x >= 20) && (R2_GLOBALS._s1550PlayerArea[R2_GLOBALS._player._characterIndex].y > 7)) {
+		if ((R2_GLOBALS._s1550PlayerArea[R2_GLOBALS._player._characterIndex].y > 0) && 
+				(R2_GLOBALS._s1550PlayerArea[R2_GLOBALS._player._characterIndex].x <= 29) && 
+				((R2_GLOBALS._s1550PlayerArea[R2_GLOBALS._player._characterIndex].x < 20) || 
+				(R2_GLOBALS._s1550PlayerArea[R2_GLOBALS._player._characterIndex].y > 7))) {
+			// In an area where the cutscene can be triggered, so start it
 			R2_GLOBALS.setFlag(16);
 			R2_GLOBALS._sceneManager.changeScene(1500);
 		}
