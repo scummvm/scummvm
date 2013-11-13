@@ -3697,7 +3697,7 @@ void Scene300::signal() {
 	case 316:
 		R2_GLOBALS._player._characterScene[R2_SEEKER] = 500;
 		_seeker.remove();
-		R2_GLOBALS._player.enableControl(CURSOR_CROSSHAIRS);
+		R2_GLOBALS._player.enableControl(CURSOR_WALK);
 		break;
 
 	case 317:
