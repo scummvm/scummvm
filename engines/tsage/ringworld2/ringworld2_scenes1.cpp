@@ -6887,6 +6887,8 @@ void Scene1500::postInit(SceneObjectList *OwnerList) {
 	R2_GLOBALS._uiElements._active = false;
 	setZoomPercents(170, 13, 240, 100);
 	SceneExt::postInit();
+	R2_GLOBALS._interfaceY = SCREEN_HEIGHT;
+
 	scalePalette(65, 65, 65);
 
 	R2_GLOBALS._player.postInit();
