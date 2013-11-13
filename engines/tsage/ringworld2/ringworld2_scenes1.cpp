@@ -6946,6 +6946,7 @@ void Scene1500::postInit(SceneObjectList *OwnerList) {
 
 void Scene1500::remove() {
 	R2_GLOBALS._uiElements._active = true;
+	R2_GLOBALS._uiElements._visible = true;
 
 	SceneExt::remove();
 }
