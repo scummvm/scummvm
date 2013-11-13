@@ -2737,15 +2737,16 @@ void SceneObject::reposition() {
  */
 void SceneObject::draw() {
 	Rect destRect = _bounds;
-	destRect.translate(-g_globals->_sceneManager._scene->_sceneBounds.left,
-		-g_globals->_sceneManager._scene->_sceneBounds.top);
+	Scene *scene = g_globals->_sceneManager._scene;
+	destRect.translate(-scene->_sceneBounds.left, -scene->_sceneBounds.top);
 	GfxSurface frame = getFrame();
-	Region *priorityRegion = g_globals->_sceneManager._scene->_priorities.find(_priority);
+	Region *priorityRegion = scene->_priorities.find(_priority);
 
 	if (g_vm->getGameID() == GType_Ringworld2) {
 		switch (_effect) {
 		case EFFECT_SHADOW_MAP: {
-			assert(_shadowMap);
+			if (!_shadowMap)
+				_shadowMap = static_cast<Ringworld2::SceneExt *>(scene)->_shadowPaletteMap;
 
 			GLOBALS.gfxManager().getSurface().copyFrom(frame, frame.getBounds(),
 				destRect, priorityRegion,  _shadowMap);
