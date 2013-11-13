@@ -137,9 +137,7 @@ ActionDisableControl::ActionDisableControl(ZVision *engine, const Common::String
 }
 
 bool ActionDisableControl::execute() {
-	debug("Disabling control %u", _key);
-
-
+	_engine->getScriptManager()->setStateFlag(_key, Puzzle::DISABLED);
 	return true;
 }
 
@@ -154,9 +152,7 @@ ActionEnableControl::ActionEnableControl(ZVision *engine, const Common::String &
 }
 
 bool ActionEnableControl::execute() {
-	debug("Enabling control %u", _key);
-
-
+	_engine->getScriptManager()->unsetStateFlag(_key, Puzzle::DISABLED);
 	return true;
 }
 
