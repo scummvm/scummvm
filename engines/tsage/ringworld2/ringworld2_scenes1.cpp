@@ -8164,7 +8164,7 @@ void Scene1550::signal() {
 	// No break on purpose
 	case 1587:
 		R2_INVENTORY.setObjectScene(R2_DIAGNOSTICS_DISPLAY, R2_GLOBALS._player._characterIndex);
-		_wreckage2.remove();
+		_diagnosticsDisplay.remove();
 		_dontExit = false;
 		R2_GLOBALS._player.enableControl();
 		break;
