@@ -4436,7 +4436,9 @@ void Scene325::consoleAction(int id) {
 		return;
 	case 14:
 		if (R2_GLOBALS.getFlag(55)) {
-			SceneItem::display2(329, 17);
+			consoleAction(4);
+			// Empty message crashing the game. It should be a warning message forbidding to switch to active scan
+			// SceneItem::display2(329, 17);
 		} else {
 			R2_GLOBALS.setFlag(50);
 			consoleAction(4);
