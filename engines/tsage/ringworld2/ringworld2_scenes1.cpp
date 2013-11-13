@@ -8795,6 +8795,7 @@ void Scene1550::enterArea() {
 		}
 
 		if (R2_GLOBALS._sceneManager._sceneNumber == 1550){
+#if 0
 			warning("Mouse_hideIfNeeded()");
 			warning("gfx_set_pane_p");
 			for (int i = 3; i != 168; ++i) {
@@ -8804,6 +8805,7 @@ void Scene1550::enterArea() {
 			}
 			warning("Missing sub2957D()");
 			warning("gfx_set_pane_p()");
+#endif
 			R2_GLOBALS._sceneManager._fadeMode = FADEMODE_IMMEDIATE;
 
 			if (varA == 0) {
@@ -8819,7 +8821,7 @@ void Scene1550::enterArea() {
 			if (R2_GLOBALS._sceneManager._hasPalette)
 				_sceneResourceId = varA;
 
-			warning("sub_2C429()");
+//			warning("sub_2C429()");
 		}
 	}
 
