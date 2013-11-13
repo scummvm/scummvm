@@ -1732,9 +1732,13 @@ void SceneItem::display(int resNum, int lineNum, ...) {
 		font.setFontNumber(g_globals->_sceneText._fontNumber);
 		font.getStringBounds(msg.c_str(), textRect, maxWidth);
 
+		Rect screenBounds = g_globals->gfxManager()._bounds;
+		if (g_vm->getGameID() == GType_Ringworld2)
+			screenBounds.collapse(20, 15);
+
 		// Center the text at the specified position, and then constrain it to be-
 		textRect.center(pos.x, pos.y);
-		textRect.contain(g_globals->gfxManager()._bounds);
+		textRect.contain(screenBounds);
 
 		if (centerText) {
 			g_globals->_sceneText._color1 = g_globals->_sceneText._color2;
