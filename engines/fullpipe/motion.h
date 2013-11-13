@@ -306,7 +306,7 @@ struct MovInfo1 {
 struct MovGraph2Item {
 	int _objectId;
 	StaticANIObject *_obj;
-	MovGraph2ItemSub _subItems[4];
+	MovGraph2ItemSub _subItems[4];  // 184
 };
 
 class MovGraph2 : public MovGraph {
