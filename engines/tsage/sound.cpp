@@ -2606,7 +2606,8 @@ bool PlayStream::play(int voiceNum, EventHandler *endAction) {
 				// Reached start of next voice sample, so stop
 				break;
 			if (strncmp(header, "MORE", 4))
-				error("Invalid stream data");
+				// Not more remaining, so break
+				break;
 
 			// Get the size of the chunk
 			chunkSize  = _file.readUint16LE() - 16;
