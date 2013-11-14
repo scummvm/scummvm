@@ -7079,7 +7079,7 @@ void Scene1525::signal() {
 }
 
 /*--------------------------------------------------------------------------
- * Scene 1530 - Cutscene - Elevator
+ * Scene 1530 - Cutscene - Crashing on Rimwall
  *
  *--------------------------------------------------------------------------*/
 
@@ -7093,6 +7093,7 @@ void Scene1530::postInit(SceneObjectList *OwnerList) {
 
 	R2_GLOBALS._uiElements._active = false;
 	SceneExt::postInit();
+	R2_GLOBALS._interfaceY = SCREEN_HEIGHT;
 
 	_stripManager.addSpeaker(&_quinnSpeaker);
 	_stripManager.addSpeaker(&_seekerSpeaker);

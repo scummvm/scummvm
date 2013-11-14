@@ -131,7 +131,7 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		// Cutscene - Ship
 		return new Scene1525();
 	case 1530:
-		// Cutscene - Elevator
+		// Cutscene - Crashing on Rimwall
 		return new Scene1530();
 	case 1550:
 		// Spaceport
