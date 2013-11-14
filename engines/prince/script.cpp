@@ -492,9 +492,9 @@ void Script::O_ORFLAG() {
 }
 
 void Script::O_SETMOBDATA() {
-	uint16 mobId = readScript16bits();
-	uint16 mobOffset = readScript16bits();
-	uint16 value = readScript16bits();
+	uint16 mobId = readScriptValue();
+	uint16 mobOffset = readScriptValue();
+	uint16 value = readScriptValue();
 
 	debugScript("O_SETMOBDATA mobId %d, mobOffset %d, value %d", mobId, mobOffset, value);
 }
@@ -537,10 +537,10 @@ void Script::O_WALKHERO() {
 }
 
 void Script::O_SETHERO() {
-	uint16 hero = readScript16bits();
-	uint16 x = readScript16bits();
-	uint16 y = readScript16bits();
-	uint16 dir = readScript16bits();
+	uint16 hero = readScriptValue();
+	uint16 x = readScriptValue();
+	uint16 y = readScriptValue();
+	uint16 dir = readScriptValue();
 	debugScript("O_SETHERO hero %d, x %d, y %d, dir %d", hero, x, y, dir);
 }
 

@@ -74,7 +74,7 @@ PrinceEngine::PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc)
 	Engine(syst), _gameDescription(gameDesc), _graph(NULL), _script(NULL),
 	_locationNr(0), _debugger(NULL), _midiPlayer(NULL),
 	_cameraX(0), _newCameraX(0), _frameNr(0), _cursor1(NULL), _cursor2(NULL), _font(NULL),
-	_walizkaBmp(NULL), _roomBmp(NULL), _voiceStream(NULL) {
+	_walizkaBmp(NULL), _roomBmp(NULL), _voiceStream(NULL), _cursorNr(0) {
 
 	// Debug/console setup
 	DebugMan.addDebugChannel(DebugChannel::kScript, "script", "Prince Script debug channel");
@@ -141,19 +141,36 @@ template <typename T>
 bool loadResource(Common::Array<T> &array, const char *resourceName, bool required = true) {
 	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(resourceName);
 	if (!stream) {
-		if (required) {
+		if (required)
 			error("Can't load %s", resourceName);
-		}
 		return false;
 	}
 
-	typename Common::Array<T>::value_type t;
+	T t;
 	while (t.loadFromStream(*stream))
 		array.push_back(t);
 
 	delete stream;
 	return true;
 }
+#if 0
+template <typename T>
+bool loadResource(T * array[], const char *resourceName, bool required = true) {
+	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(resourceName);
+	if (!stream) {
+		if (required)
+			error("Can't load %s", resourceName);
+		return false;
+	}
+
+	T* t = new T();
+	while (t->loadFromStream(*stream))
+		array.push_back(t);
+
+	delete stream;
+	return true;
+}
+#endif
 
 void PrinceEngine::init() {
 
@@ -539,8 +556,8 @@ void PrinceEngine::drawScreen() {
 
 void PrinceEngine::mainLoop() {
 
-	loadLocation(2);
-	changeCursor(1);
+	loadLocation(4);
+	changeCursor(0);
 
 	while (!shouldQuit()) {
 		uint32 currentTime = _system->getMillis();
@@ -571,6 +588,8 @@ void PrinceEngine::mainLoop() {
 
 		if (shouldQuit())
 			return;
+
+		// TODO: Update all structures, animations, naks, heros etc.
 
 		//_script->step();
 		drawScreen();

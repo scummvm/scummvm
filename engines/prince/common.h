@@ -20,63 +20,24 @@
  *
  */
 
-#ifndef PRINCE_MOB_H
-#define PRINCE_MOB_H
-
-#include "common/scummsys.h"
-#include "common/rect.h"
-#include "common/str.h"
-
-#include "prince/common.h"
-
-namespace Common {
-	class SeekableReadStream;
-}
+#ifndef PRINCE_COMMON_H
+#define PRINCE_COMMON_H
 
 namespace Prince {
 
-class Mob {
-public:
-
-	Mob() : _name(""), _examText("") {}
-
-	bool loadFromStream(Common::SeekableReadStream &stream);
-
-	// Used instead of offset in setData and getData
-	enum AttrId {
-		Visible = 0,
-		Type = 2,
-		X1 = 4,
-		Y1 = 6,
-		X2 = 8,
-		Y2 = 10,
-		Mask = 12,
-		ExamX = 14,
-		ExamY = 16,
-		ExamDir = 18,
-		UseX = 20,
-		UseY = 21,
-		UseDir = 22,
-		Name = 24,
-		ExamText = 28 
-	};
-
-	void setData(AttrId dataId, uint16 value);
-	uint16 getData(AttrId dataId);
-
-	bool _visible; 
-	uint16 _type;
-	uint16 _mask;
-	Common::Rect _rect;
-
-	Common::Point _examPosition;
-	Direction _examDirection;
-
-	Common::Point _usePosition;
-	Direction _useDirection;
-
-	Common::String _name;
-	Common::String _examText;
+enum Direction {
+	LD = 0,
+	L  = 1,
+	LG = 2,
+	PD = 3,
+	P  = 4,
+	PG = 5,
+	GL = 6,
+	G  = 7,
+	GP = 8,
+	DL = 9,
+	D  = 10,
+	DP = 11
 };
 
 }

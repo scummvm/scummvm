@@ -149,7 +149,7 @@ private:
 	Audio::SoundHandle _soundHandle;
 	Common::SeekableReadStream *_voiceStream;
 	Common::Array<Mob> _mobList;
-	Common::Array<Object *> _objectList;
+	Common::Array<Object *> _objList;
 
 	uint16 _cameraX;
 	uint16 _newCameraX;
