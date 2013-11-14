@@ -826,7 +826,6 @@ void Animation::callSpecial(uint16 which) {
 			_vm->_magics[4]._operation = kMagicBounce; // Boundary effect is now working again.
 			_vm->_dialogs->displayScrollChain('q', 35);
 			_sprites[0]->remove();
-			//tr[1].vanishifstill:=true;
 
 			AnimationType *spr1 = _sprites[1];
 			_vm->_background->draw(-1, -1, 1);
@@ -1069,7 +1068,7 @@ void Animation::arrowProcs(byte tripnum) {
 
 void Animation::grabAvvy(byte tripnum) {     // For Friar Tuck, in Nottingham.
 	AnimationType *tripSpr = _sprites[tripnum];
-	AnimationType *avvy = _sprites[tripnum];
+	AnimationType *avvy = _sprites[0];
 
 	int16 tox = avvy->_x + 17;
 	int16 toy = avvy->_y - 1;
