@@ -8782,7 +8782,7 @@ void Scene1550::enterArea() {
 		}
 	}
 
-	if (R2_GLOBALS._sceneManager._sceneNumber == 1234)
+	if (_screenNumber == 1234)
 		_walkRegionsId = 1576;
 
 	if (_wallType == 0) {
