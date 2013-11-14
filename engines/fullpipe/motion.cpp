@@ -670,31 +670,29 @@ MessageQueue *MovGraph2::buildMovInfo1MessageQueue(MovInfo1 *movInfo) {
 	mq = new MessageQueue(g_fullpipe->globalMessageQueueList->compact());
 
 	for (int i = 0; i < movInfo->_itemsCount - 1; i++) {
-		v10 = movInfo->items[i + 1].subIndex;
-
-		if (v10 != 10) {
+		if (movInfo->items[i + 1].subIndex != 10) {
 			if (i >= movInfo->itemsCount - 2 || movInfo->items[i + 2].subIndex != 10) {
-				v17 = (char *)_items[1] + 16 * (v10 + 8);
+				v17 = (char *)_items[1] + 16 * (movInfo->items[i + 1].subIndex + 8);
 				movinfo.flags = 0;
 				subidx = 8 * 93 * movInfo->field_0;
 				v15 = (MovGraph2Item *)(&v17[184 * movInfo->items[i].subIndex] + subidx);
 			} else {
-				v12 = (char *)_items[1] + 16 * (v10 + 4);
+				v12 = (char *)_items[1] + 16 * (movInfo->items[i + 1].subIndex + 4);
 				movinfo.flags = 2;
 				subidx = 8 * 93 * movInfo->field_0;
 				v15 = (MovGraph2Item *)(&v12[184 * movInfo->items[i].subIndex] + subidx);
 			}
 			if (i < movInfo->itemsCount - 2
-				 || (v19 = movInfo->items[i + 1].x, v20 = (char *)&movInfo->items[i].x, v47 = (int *)v20, v21 = *(_DWORD *)v20, v21 == v19)
-				 && movInfo->items[i].y == movInfo->items[i + 1].y
-				 || v21 == -1
+				|| (movInfo->items[i].x == movInfo->items[i + 1].x
+					&& movInfo->items[i].y == movInfo->items[i + 1].y)
+				 || movInfo->items[i].x == -1
 				 || movInfo->items[i].y == -1
-				 || v19 == -1
+				 || movInfo->items[i + 1].x == -1
 				 || movInfo->items[i + 1].y == -1) {
 
 				ExCommand *ex = new ExCommand(_items[1][movInfo->field_0].objectId, 1, v15->_objectId, 0, 0, 0, 1, 0, 0, 0);
 
-				ex->_excFlags |= 2u;
+				ex->_excFlags |= 2;
 				ex->_keyCode = _items[1][movInfo->field_0].obj->GameObject.okeyCode;
 				ex->_field_24 = 1;
 				ex->_field_14 = -1;
@@ -705,17 +703,14 @@ MessageQueue *MovGraph2::buildMovInfo1MessageQueue(MovInfo1 *movInfo) {
 			} else {
 				memset(mgminfo, 0, sizeof(mgminfo));
 
-				HIWORD(v22) = 0;
-				v23 = (Movement *)v15->obj;
-				mgminfo.ani = *(StaticANIObject **)((char *)&this->items[1]->obj + v14);
-				LOWORD(v22) = v23->staticsObj2->staticsId;
-				mgminfo.staticsId2 = v22;
+				mgminfo.ani = *(StaticANIObject **)((char *)&this->items[1]->obj + subidx);
+				mgminfo.staticsId2 = v15->obj->staticsObj2->staticsId;
 				mgminfo.x1 = movInfo->items[i + 1].x;
 				mgminfo.y1 = movInfo->items[i + 1].y;
 				mgminfo.field_1C = movInfo->items[i + 1].field_C;
-				mgminfo.staticsId1 = v23->staticsObj1->staticsId;
+				mgminfo.staticsId1 = v15->obj->staticsObj1->staticsId;
 
-				mgminfo.x2 = *v47;
+				mgminfo.x2 = movInfo->items[i].x;
 				mgminfo.y2 = movInfo->items[i].y;
 				mgminfo.field_10 = 1;
 				mgminfo.flags = 0x7f;
@@ -724,12 +719,10 @@ MessageQueue *MovGraph2::buildMovInfo1MessageQueue(MovInfo1 *movInfo) {
 				v25 = (MessageQueue *)MGM_sub_445330((MGM *)&this->movGraph.mgm, &mgminfo);
 				mq->transferExCommands(v25);
 
-				if (v25)
-					(*(void (__thiscall **)(MessageQueue *, signed int))(v25->CObject.vmt + 4))(v25, 1);
+				delete v25;
 
-				v26 = (MovInfo1Sub *)movInfo->items;
-				curX = v26[i + 1].x;
-				curY = v26[i + 1].y;
+				curX = movInfo->items[i + 1].x;
+				curY = movInfo->items[i + 1].y;
 			}
 		} else {
 			movinfo.item1Index = movInfo->items[i].subIndex;
