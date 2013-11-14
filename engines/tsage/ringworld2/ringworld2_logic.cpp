@@ -131,7 +131,7 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		// Cutscene - Ship
 		return new Scene1525();
 	case 1530:
-		// Cutscene - Elevator
+		// Cutscene - Crashing on Rimwall
 		return new Scene1530();
 	case 1550:
 		// Spaceport
@@ -1775,13 +1775,13 @@ AnimationPlayer::AnimationPlayer(): EventHandler() {
 	_screenBounds = R2_GLOBALS._gfxManagerInstance._bounds;
 	_rect1 = R2_GLOBALS._gfxManagerInstance._bounds;
 	_paletteMode = ANIMPALMODE_REPLACE_PALETTE;
-	_field3A = true;
+	_canSkip = true;
 	_sliceHeight = 1;
 	_endAction = NULL;
 
 	_sliceCurrent = nullptr;
 	_sliceNext = nullptr;
-	_field38 = false;
+	_animLoaded = false;
 	_objectMode = ANIMOBJMODE_1;
 	_dataNeeded = 0;
 	_playbackTick = 0;
@@ -1812,7 +1812,7 @@ void AnimationPlayer::remove() {
 }
 
 void AnimationPlayer::process(Event &event) {
-	if ((event.eventType == EVENT_KEYPRESS) && (event.kbd.keycode == Common::KEYCODE_ESCAPE) && _field3A) {
+	if ((event.eventType == EVENT_KEYPRESS) && (event.kbd.keycode == Common::KEYCODE_ESCAPE) && _canSkip) {
 		// Move the current position to the end
 		_position = _subData._duration;
 	}
@@ -1858,9 +1858,7 @@ bool AnimationPlayer::load(int animId, Action *endAction) {
 	_playbackTickPrior = -1;
 	_playbackTick = 0;
 
-	// The final multiplication is used to deliberately slow down playback, since the original
-	// was slowed down by the amount of time spent to decode and display the frames
-	_frameDelay = (60 / _subData._frameRate) * 8;
+	_frameDelay = (60 / _subData._frameRate);
 	_gameFrame = R2_GLOBALS._events.getFrameNumber();
 
 	if (_subData._totalSize) {
@@ -1931,7 +1929,7 @@ bool AnimationPlayer::load(int animId, Action *endAction) {
 	}
 
 	++R2_GLOBALS._animationCtr;
-	_field38 = true;
+	_animLoaded = true;
 	return true;
 }
 
@@ -2078,7 +2076,7 @@ bool AnimationPlayer::isCompleted() {
 }
 
 void AnimationPlayer::close() {
-	if (_field38) {
+	if (_animLoaded) {
 		switch (_paletteMode) {
 		case 0:
 			R2_GLOBALS._scenePalette.replace(&_palette);
@@ -2107,7 +2105,7 @@ void AnimationPlayer::close() {
 	_animData1 = NULL;
 	_animData2 = NULL;
 
-	_field38 = false;
+	_animLoaded = false;
 	if (g_globals != NULL)
 		R2_GLOBALS._animationCtr = MAX(R2_GLOBALS._animationCtr - 1, 0);
 }
@@ -2156,7 +2154,7 @@ void AnimationPlayer::getSlices() {
 
 AnimationPlayerExt::AnimationPlayerExt(): AnimationPlayer() {
 	_isActive = false;
-	_field3A = false;
+	_canSkip = false;
 }
 
 void AnimationPlayerExt::synchronize(Serializer &s) {

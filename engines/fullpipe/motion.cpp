@@ -670,34 +670,29 @@ MessageQueue *MovGraph2::buildMovInfo1MessageQueue(MovInfo1 *movInfo) {
 	mq = new MessageQueue(g_fullpipe->globalMessageQueueList->compact());
 
 	for (int i = 0; i < movInfo->_itemsCount - 1; i++) {
-		v9 = (MovInfo1Sub *)movInfo->items;
-		v10 = v9[i + 1].subIndex;
+		v10 = movInfo->items[i + 1].subIndex;
 
 		if (v10 != 10) {
-			if (v40 >= movInfo->_itemsCount - 2 || v9[i + 2].subIndex != 10) {
-				v16 = v9[i].subIndex;
-				v17 = (char *)this->items[1] + 16 * (v10 + 8);
-				subidx = 93 * movInfo->field_0;
+			if (i >= movInfo->itemsCount - 2 || movInfo->items[i + 2].subIndex != 10) {
+				v17 = (char *)_items[1] + 16 * (v10 + 8);
 				movinfo.flags = 0;
-				v14 = 8 * subidx;
-				v15 = (MovGraph2Item *)(&v17[184 * v16] + v14);
+				subidx = 8 * 93 * movInfo->field_0;
+				v15 = (MovGraph2Item *)(&v17[184 * movInfo->items[i].subIndex] + subidx);
 			} else {
-				v11 = v9[i].subIndex;
-				v12 = (char *)this->items[1] + 16 * (v10 + 4);
-				v13 = 93 * movInfo->field_0;
+				v12 = (char *)_items[1] + 16 * (v10 + 4);
 				movinfo.flags = 2;
-				v14 = 8 * v13;
-				v15 = (MovGraph2Item *)(&v12[184 * v11] + v14);
+				subidx = 8 * 93 * movInfo->field_0;
+				v15 = (MovGraph2Item *)(&v12[184 * movInfo->items[i].subIndex] + subidx);
 			}
-			if (v40 < movInfo->_itemsCount - 2
-				 || (v19 = v9[i + 1].x, v20 = (char *)&v9[i].x, v47 = (int *)v20, v21 = *(_DWORD *)v20, v21 == v19)
-				 && v9[i].y == v9[i + 1].y
+			if (i < movInfo->itemsCount - 2
+				 || (v19 = movInfo->items[i + 1].x, v20 = (char *)&movInfo->items[i].x, v47 = (int *)v20, v21 = *(_DWORD *)v20, v21 == v19)
+				 && movInfo->items[i].y == movInfo->items[i + 1].y
 				 || v21 == -1
-				 || v9[i].y == -1
+				 || movInfo->items[i].y == -1
 				 || v19 == -1
-				 || v9[i + 1].y == -1) {
+				 || movInfo->items[i + 1].y == -1) {
 
-				ExCommand *ex = new ExCommand(_items[1][movInfo->field_0].objectId, 1, v15->objectId, 0, 0, 0, 1, 0, 0, 0);
+				ExCommand *ex = new ExCommand(_items[1][movInfo->field_0].objectId, 1, v15->_objectId, 0, 0, 0, 1, 0, 0, 0);
 
 				ex->_excFlags |= 2u;
 				ex->_keyCode = _items[1][movInfo->field_0].obj->GameObject.okeyCode;
@@ -705,29 +700,29 @@ MessageQueue *MovGraph2::buildMovInfo1MessageQueue(MovInfo1 *movInfo) {
 				ex->_field_14 = -1;
 				mq->_exCommands.push_back(ex);
 
-				curX += v15->subItems[0].staticsId2;
-				curY += v15->subItems[0].staticsId1;
+				curX += v15->_subItems[0].staticsId2;
+				curY += v15->_subItems[0].staticsId1;
 			} else {
 				memset(mgminfo, 0, sizeof(mgminfo));
 
-				HIWORD(v22) = 0a;
-				v23 = v15->obj;
+				HIWORD(v22) = 0;
+				v23 = (Movement *)v15->obj;
 				mgminfo.ani = *(StaticANIObject **)((char *)&this->items[1]->obj + v14);
-				LOWORD(v22) = *(_WORD *)(v23->callback1 + 132);
+				LOWORD(v22) = v23->staticsObj2->staticsId;
 				mgminfo.staticsId2 = v22;
-				mgminfo.x1 = v9[i + 1].x;
-				mgminfo.y1 = v9[i + 1].y;
-				mgminfo.field_1C = v9[i + 1].field_C;
-				mgminfo.staticsId1 = *(_WORD *)(v23->initialCounter + 132);
+				mgminfo.x1 = movInfo->items[i + 1].x;
+				mgminfo.y1 = movInfo->items[i + 1].y;
+				mgminfo.field_1C = movInfo->items[i + 1].field_C;
+				mgminfo.staticsId1 = v23->staticsObj1->staticsId;
+
 				mgminfo.x2 = *v47;
-				v24 = v15->objectId;
-				mgminfo.y2 = v9[i].y;
+				mgminfo.y2 = movInfo->items[i].y;
 				mgminfo.field_10 = 1;
-				mgminfo.flags = 127;
-				mgminfo.movementId = v24;
+				mgminfo.flags = 0x7f;
+				mgminfo.movementId = v15->_objectId;
 
 				v25 = (MessageQueue *)MGM_sub_445330((MGM *)&this->movGraph.mgm, &mgminfo);
-				MessageQueue_transferExCommands(mq, v25);
+				mq->transferExCommands(v25);
 
 				if (v25)
 					(*(void (__thiscall **)(MessageQueue *, signed int))(v25->CObject.vmt + 4))(v25, 1);
@@ -737,52 +732,53 @@ MessageQueue *MovGraph2::buildMovInfo1MessageQueue(MovInfo1 *movInfo) {
 				curY = v26[i + 1].y;
 			}
 		} else {
-			movinfo.item1Index = v9[i].subIndex;
+			movinfo.item1Index = movInfo->items[i].subIndex;
 			movinfo.subIndex = movinfo.item1Index;
 			movinfo.pt1.y = curY;
 			movinfo.pt1.x = curX;
-			movinfo.distance1 = curDistance;
-			v29 = v9[i + 2].x;
-			movinfo.pt2.x = v9[i + 2].x;
-			movinfo.pt2.y = v9[i + 2].y;
-			movinfo.distance2 = v9[i + 2].field_C;
 
-			if (v40 >= movInfo->_itemsCount - 4
-				 || (v30 = v9[i + 2].subIndex, v30 == 10)
-				 || (v31 = v9[i + 3].subIndex, v31 == 10)
-				 || v30 == v31
-				 || v9[i + 4].subIndex != 10) {
-				if (v40 >= movInfo->itemsCount - 3
-					 || (v33 = v9[i + 2].subIndex, v33 == 10)
-					 || (v34 = v9[i + 3].subIndex, v34 == 10)
-					 || v33 == v34) {
-					movinfo.flags = movinfo.flags & 2 | movInfo->flags & 1;
+			movinfo.distance1 = curDistance;
+			movinfo.pt2.x = movInfo->items[i + 2].x;
+			movinfo.pt2.y = movInfo->items[i + 2].y;
+			movinfo.distance2 = movInfo->items[i + 2].field_C;
+
+			if (i >= movInfo->itemsCount - 4
+				 || movInfo->items[i + 2].subIndex == 10
+				 || movInfo->items[i + 3].subIndex == 10
+				 || movInfo->items[i + 2].subIndex == movInfo->items[i + 3].subIndex
+				 || movInfo->items[i + 4].subIndex != 10) {
+				if (i >= movInfo->itemsCount - 3
+					 || movInfo->items[i + 2].subIndex == 10
+					 || movInfo->items[i + 3].subIndex == 10
+					 || movInfo->items[i + 2].subIndex == movInfo->items[i + 3].subIndex) {
+					movinfo.flags &= 3;
 				} else {
-					v35 = (MovInfo1 *)((char *)&this->items[1][movInfo->field_0] + 184 * v33 + 16 * (v34 + 8));
-					movinfo.pt2.x = v29 - v35->pt1.y;
+					v35 = (MovInfo1 *)((char *)&_items[1][movInfo->field_0] + 184 * movInfo->items[i + 2].subIndex + 16 * (movInfo->items[i + 3].subIndex + 8));
+					movinfo.pt2.x -= v35->pt1.y;
 					movinfo.pt2.y -= v35->pt2.x;
-					movinfo.flags = movinfo.flags & 2 | movInfo->flags & 1;
+					movinfo.flags &= 3;
 				}
 			} else {
-				v32 = (MovInfo1 *)((char *)&this->items[1][movInfo->field_0] + 184 * v30 + 16 * (v31 + 4));
+				v32 = (MovInfo1 *)((char *)&_items[1][movInfo->field_0] + 184 * movInfo->items[i + 2].subIndex + 16 * (movInfo->items[i + 3].subIndex + 4));
 
 				if (movinfo.item1Index && movinfo.item1Index != 1) {
 					movinfo.pt2.y -= v32->pt2.x;
-					movinfo.flags = movinfo.flags & 2 | 1;
+					movinfo.flags = (movinfo.flags & 2) | 1;
 				} else {
-					movinfo.pt2.x = v29 - v32->pt1.y;
-					movinfo.flags = movinfo.flags & 2 | 1;
+					movinfo.pt2.x -= v32->pt1.y;
+					movinfo.flags = (movinfo.flags & 2) | 1;
 				}
 			}
-			i++;
+			i++; // intentional
 
-			v36 = MovGraph2_sub_454CD0(this, &movinfo);
+			v36 = sub1(&movinfo);
 
 			if (!v36) {
 				delete mq;
 				return 0;
 			}
-			MessageQueue_transferExCommands(mq, v36);
+
+			mq->transferExCommands(v36);
 
 			delete v36;
 

@@ -1732,9 +1732,13 @@ void SceneItem::display(int resNum, int lineNum, ...) {
 		font.setFontNumber(g_globals->_sceneText._fontNumber);
 		font.getStringBounds(msg.c_str(), textRect, maxWidth);
 
+		Rect screenBounds = g_globals->gfxManager()._bounds;
+		if (g_vm->getGameID() == GType_Ringworld2)
+			screenBounds.collapse(20, 15);
+
 		// Center the text at the specified position, and then constrain it to be-
 		textRect.center(pos.x, pos.y);
-		textRect.contain(g_globals->gfxManager()._bounds);
+		textRect.contain(screenBounds);
 
 		if (centerText) {
 			g_globals->_sceneText._color1 = g_globals->_sceneText._color2;
@@ -2733,15 +2737,16 @@ void SceneObject::reposition() {
  */
 void SceneObject::draw() {
 	Rect destRect = _bounds;
-	destRect.translate(-g_globals->_sceneManager._scene->_sceneBounds.left,
-		-g_globals->_sceneManager._scene->_sceneBounds.top);
+	Scene *scene = g_globals->_sceneManager._scene;
+	destRect.translate(-scene->_sceneBounds.left, -scene->_sceneBounds.top);
 	GfxSurface frame = getFrame();
-	Region *priorityRegion = g_globals->_sceneManager._scene->_priorities.find(_priority);
+	Region *priorityRegion = scene->_priorities.find(_priority);
 
 	if (g_vm->getGameID() == GType_Ringworld2) {
 		switch (_effect) {
 		case EFFECT_SHADOW_MAP: {
-			assert(_shadowMap);
+			if (!_shadowMap)
+				_shadowMap = static_cast<Ringworld2::SceneExt *>(scene)->_shadowPaletteMap;
 
 			GLOBALS.gfxManager().getSurface().copyFrom(frame, frame.getBounds(),
 				destRect, priorityRegion,  _shadowMap);

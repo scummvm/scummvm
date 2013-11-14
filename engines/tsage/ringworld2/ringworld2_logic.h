@@ -407,8 +407,8 @@ public:
 	AnimationData *_sliceNext;
 	Common::File _resourceFile;
 	Rect _rect1, _screenBounds;
-	bool _field38;
-	bool _field3A;
+	bool _animLoaded;
+	bool _canSkip;
 	AnimationPaletteMode _paletteMode;
 	AnimationObjectMode _objectMode;
 	int _sliceHeight;

@@ -369,7 +369,7 @@ public:
 
 // Classes related to QuinnL
 
-class SpeakerQuinnL : public VisualSpeaker {
+class SpeakerQuinnL : public SpeakerQuinn {
 public:
 	SpeakerQuinnL();
 
@@ -495,7 +495,7 @@ public:
 
 // Classes related to SeekerL
 
-class SpeakerSeekerL : public VisualSpeaker {
+class SpeakerSeekerL : public SpeakerSeeker {
 public:
 	SpeakerSeekerL();
 

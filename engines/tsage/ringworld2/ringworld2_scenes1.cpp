@@ -677,10 +677,10 @@ void Scene1100::synchronize(Serializer &s) {
 }
 
 bool Scene1100::Seeker::startAction(CursorType action, Event &event) {
-	Scene1100 *scene = (Scene1100 *)R2_GLOBALS._sceneManager._scene;
-
 	if (action != CURSOR_TALK)
 		return SceneActor::startAction(action, event);
+
+	Scene1100 *scene = (Scene1100 *)R2_GLOBALS._sceneManager._scene;
 
 	if (R2_GLOBALS.getFlag(52)) {
 		R2_GLOBALS._player.disableControl();
@@ -757,9 +757,9 @@ bool Scene1100::Trooper::startAction(CursorType action, Event &event) {
 }
 
 bool Scene1100::Chief::startAction(CursorType action, Event &event) {
-	Scene1100 *scene = (Scene1100 *)R2_GLOBALS._sceneManager._scene;
-
 	if ((action == CURSOR_TALK) && (!R2_GLOBALS.getFlag(54)) && (R2_GLOBALS.getFlag(52))) {
+		Scene1100 *scene = (Scene1100 *)R2_GLOBALS._sceneManager._scene;
+
 		scene->_nextStripNum = 0;
 		R2_GLOBALS._player.disableControl();
 		scene->_sceneMode = 53;
@@ -6887,6 +6887,8 @@ void Scene1500::postInit(SceneObjectList *OwnerList) {
 	R2_GLOBALS._uiElements._active = false;
 	setZoomPercents(170, 13, 240, 100);
 	SceneExt::postInit();
+	R2_GLOBALS._interfaceY = SCREEN_HEIGHT;
+
 	scalePalette(65, 65, 65);
 
 	R2_GLOBALS._player.postInit();
@@ -6944,6 +6946,7 @@ void Scene1500::postInit(SceneObjectList *OwnerList) {
 
 void Scene1500::remove() {
 	R2_GLOBALS._uiElements._active = true;
+	R2_GLOBALS._uiElements._visible = true;
 
 	SceneExt::remove();
 }
@@ -7076,7 +7079,7 @@ void Scene1525::signal() {
 }
 
 /*--------------------------------------------------------------------------
- * Scene 1530 - Cutscene - Elevator
+ * Scene 1530 - Cutscene - Crashing on Rimwall
  *
  *--------------------------------------------------------------------------*/
 
@@ -7090,6 +7093,7 @@ void Scene1530::postInit(SceneObjectList *OwnerList) {
 
 	R2_GLOBALS._uiElements._active = false;
 	SceneExt::postInit();
+	R2_GLOBALS._interfaceY = SCREEN_HEIGHT;
 
 	_stripManager.addSpeaker(&_quinnSpeaker);
 	_stripManager.addSpeaker(&_seekerSpeaker);
@@ -7450,10 +7454,11 @@ void Scene1550::DishControlsWindow::DishControl::synchronize(Serializer &s) {
 }
 
 bool Scene1550::DishControlsWindow::DishControl::startAction(CursorType action, Event &event) {
-	Scene1550 *scene = (Scene1550 *)R2_GLOBALS._sceneManager._scene;
-
 	if (action != CURSOR_USE)
 		return SceneActor::startAction(action, event);
+
+	Scene1550 *scene = (Scene1550 *)R2_GLOBALS._sceneManager._scene;
+
 	switch (_controlId) {
 	case 1:
 		// Button control
@@ -8160,7 +8165,7 @@ void Scene1550::signal() {
 	// No break on purpose
 	case 1587:
 		R2_INVENTORY.setObjectScene(R2_DIAGNOSTICS_DISPLAY, R2_GLOBALS._player._characterIndex);
-		_wreckage2.remove();
+		_diagnosticsDisplay.remove();
 		_dontExit = false;
 		R2_GLOBALS._player.enableControl();
 		break;
@@ -8172,7 +8177,7 @@ void Scene1550::signal() {
 		} else {
 			R2_GLOBALS._s1550PlayerArea[R2_QUINN] = R2_GLOBALS._s1550PlayerArea[R2_SEEKER];
 		}
-		R2_GLOBALS._player.enableControl();
+		R2_GLOBALS._player.enableControl(CURSOR_WALK);
 		break;
 	default:
 		_sceneMode = 62;
@@ -8658,6 +8663,8 @@ void Scene1550::enterArea() {
 
 	int varA = 0;
 
+	// This section handles checks if the ARM spacecraft have not yet seized 
+	// control of Lance of Truth.
 	if (!R2_GLOBALS.getFlag(16)) {
 		switch (R2_GLOBALS._s1550PlayerArea[R2_GLOBALS._player._characterIndex].y - 2) {
 		case 0:
@@ -8750,7 +8757,11 @@ void Scene1550::enterArea() {
 		default:
 			break;
 		}
-		if ((R2_GLOBALS._s1550PlayerArea[R2_GLOBALS._player._characterIndex].y > 0) && (R2_GLOBALS._s1550PlayerArea[R2_GLOBALS._player._characterIndex].x <= 29) && (R2_GLOBALS._s1550PlayerArea[R2_GLOBALS._player._characterIndex].x >= 20) && (R2_GLOBALS._s1550PlayerArea[R2_GLOBALS._player._characterIndex].y > 7)) {
+		if ((R2_GLOBALS._s1550PlayerArea[R2_GLOBALS._player._characterIndex].y > 0) && 
+				(R2_GLOBALS._s1550PlayerArea[R2_GLOBALS._player._characterIndex].x <= 29) && 
+				((R2_GLOBALS._s1550PlayerArea[R2_GLOBALS._player._characterIndex].x < 20) || 
+				(R2_GLOBALS._s1550PlayerArea[R2_GLOBALS._player._characterIndex].y > 7))) {
+			// In an area where the cutscene can be triggered, so start it
 			R2_GLOBALS.setFlag(16);
 			R2_GLOBALS._sceneManager.changeScene(1500);
 		}
@@ -8772,7 +8783,7 @@ void Scene1550::enterArea() {
 		}
 	}
 
-	if (R2_GLOBALS._sceneManager._sceneNumber == 1234)
+	if (_screenNumber == 1234)
 		_walkRegionsId = 1576;
 
 	if (_wallType == 0) {
@@ -8785,6 +8796,7 @@ void Scene1550::enterArea() {
 		}
 
 		if (R2_GLOBALS._sceneManager._sceneNumber == 1550){
+#if 0
 			warning("Mouse_hideIfNeeded()");
 			warning("gfx_set_pane_p");
 			for (int i = 3; i != 168; ++i) {
@@ -8794,6 +8806,7 @@ void Scene1550::enterArea() {
 			}
 			warning("Missing sub2957D()");
 			warning("gfx_set_pane_p()");
+#endif
 			R2_GLOBALS._sceneManager._fadeMode = FADEMODE_IMMEDIATE;
 
 			if (varA == 0) {
@@ -8809,7 +8822,7 @@ void Scene1550::enterArea() {
 			if (R2_GLOBALS._sceneManager._hasPalette)
 				_sceneResourceId = varA;
 
-			warning("sub_2C429()");
+//			warning("sub_2C429()");
 		}
 	}
 
@@ -9566,7 +9579,6 @@ void Scene1575::process(Event &event) {
 	Scene::process(event);
 
 	g_globals->_sceneObjects->recurse(SceneHandler::dispatchObject);
-	warning("TODO: check Scene1575::process");
 }
 
 void Scene1575::dispatch() {
@@ -9665,9 +9677,9 @@ void Scene1580::synchronize(Serializer &s) {
 }
 
 bool Scene1580::JoystickPlug::startAction(CursorType action, Event &event) {
-	Scene1580 *scene = (Scene1580 *)R2_GLOBALS._sceneManager._scene;
-
 	if (action == R2_JOYSTICK) {
+		Scene1580 *scene = (Scene1580 *)R2_GLOBALS._sceneManager._scene;
+
 		R2_INVENTORY.setObjectScene(R2_JOYSTICK, 1580);
 		R2_GLOBALS._sceneItems.remove(&scene->_joystickPlug);
 		scene->_joystick.postInit();
@@ -9684,9 +9696,9 @@ bool Scene1580::JoystickPlug::startAction(CursorType action, Event &event) {
 }
 
 bool Scene1580::ScreenSlot::startAction(CursorType action, Event &event) {
-	Scene1580 *scene = (Scene1580 *)R2_GLOBALS._sceneManager._scene;
-
 	if (action == R2_DIAGNOSTICS_DISPLAY) {
+		Scene1580 *scene = (Scene1580 *)R2_GLOBALS._sceneManager._scene;
+
 		R2_INVENTORY.setObjectScene(R2_DIAGNOSTICS_DISPLAY, 1580);
 		R2_GLOBALS._player.disableControl();
 		R2_GLOBALS._sceneItems.remove(&scene->_screenSlot);
@@ -11757,12 +11769,12 @@ bool Scene1850::Door::startAction(CursorType action, Event &event) {
 	if (action != CURSOR_USE)
 		return SceneHotspot::startAction(action, event);
 
-	Scene1850 *scene = (Scene1850 *)R2_GLOBALS._sceneManager._scene;
-
 	if (R2_GLOBALS.getFlag(32)) {
 		SceneItem::display(3240, 4, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, LIST_END);
 		return true;
 	}
+
+	Scene1850 *scene = (Scene1850 *)R2_GLOBALS._sceneManager._scene;
 
 	R2_GLOBALS._player.disableControl();
 	if (scene->_sceneMode == 1851)
@@ -12644,8 +12656,6 @@ void Scene1875::process(Event &event) {
  *--------------------------------------------------------------------------*/
 
 bool Scene1900::LiftDoor::startAction(CursorType action, Event &event) {
-	Scene1900 *scene = (Scene1900 *)R2_GLOBALS._sceneManager._scene;
-
 	if (action != CURSOR_USE)
 		return SceneActor::startAction(action, event);
 
@@ -12655,6 +12665,8 @@ bool Scene1900::LiftDoor::startAction(CursorType action, Event &event) {
 		else
 			return true;
 	}
+
+	Scene1900 *scene = (Scene1900 *)R2_GLOBALS._sceneManager._scene;
 
 	R2_GLOBALS._player.enableControl(CURSOR_USE);
 
@@ -12912,13 +12924,13 @@ void Scene1925::synchronize(Serializer &s) {
 }
 
 bool Scene1925::Button::startAction(CursorType action, Event &event) {
-	Scene1925 *scene = (Scene1925 *)R2_GLOBALS._sceneManager._scene;
-
 	if (action != CURSOR_USE)
 		return SceneHotspot::startAction(action, event);
 
 	if ((R2_GLOBALS._player._position.x == 110) && (R2_GLOBALS._player._position.y == 100))
 		return SceneHotspot::startAction(action, event);
+
+	Scene1925 *scene = (Scene1925 *)R2_GLOBALS._sceneManager._scene;
 
 	if ((R2_GLOBALS._player._position.x == 154) && (R2_GLOBALS._player._position.y == 20))
 		scene->_sceneMode = 1928;
@@ -13278,10 +13290,10 @@ bool Scene1945::Ice::startAction(CursorType action, Event &event) {
 }
 
 bool Scene1945::Ladder::startAction(CursorType action, Event &event) {
-	Scene1945 *scene = (Scene1945 *)R2_GLOBALS._sceneManager._scene;
-
 	if (action != CURSOR_USE)
 		return SceneHotspot::startAction(action, event);
+
+	Scene1945 *scene = (Scene1945 *)R2_GLOBALS._sceneManager._scene;
 
 	R2_GLOBALS._player.disableControl(CURSOR_USE);
 	scene->_sceneMode = 0;

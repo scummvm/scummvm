@@ -1844,17 +1844,8 @@ void SpeakerQuinn3700::animateSpeaker() {
 // Classes related to QUINNL
 //----------------------------------------------------------------------------
 
-SpeakerQuinnL::SpeakerQuinnL(): VisualSpeaker() {
+SpeakerQuinnL::SpeakerQuinnL(): SpeakerQuinn() {
 	_speakerName = "QUINNL";
-	_color1 = 35;
-	_color2 = 0;
-	_speakerMode = 0;
-	_textWidth = 300;
-	_hideObjects = false;
-	_object2 = NULL;
-	_displayMode = 1;
-	_numFrames = 0;
-	_fontNumber = 10;
 }
 
 //----------------------------------------------------------------------------
@@ -2544,17 +2535,8 @@ void SpeakerSeeker3700::animateSpeaker() {
 // Classes related to SEEKERL
 //----------------------------------------------------------------------------
 
-SpeakerSeekerL::SpeakerSeekerL(): VisualSpeaker() {
+SpeakerSeekerL::SpeakerSeekerL(): SpeakerSeeker() {
 	_speakerName = "SEEKERL";
-	_color1 = 35;
-	_color2 = 0;
-	_speakerMode = 0;
-	_textWidth = 300;
-	_hideObjects = false;
-	_object2 = NULL;
-	_displayMode = 1;
-	_numFrames = 0;
-	_fontNumber = 10;
 }
 
 //----------------------------------------------------------------------------
