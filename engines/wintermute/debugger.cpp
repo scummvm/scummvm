@@ -45,6 +45,8 @@ Console::Console(WintermuteEngine *vm) : GUI::Debugger() {
 	DCmd_Register("list", WRAP_METHOD(Console, Cmd_List));
 	DCmd_Register("disable", WRAP_METHOD(Console, Cmd_DisableBreakpoint));
 	DCmd_Register("enable", WRAP_METHOD(Console, Cmd_EnableBreakpoint));
+	DCmd_Register("disablew", WRAP_METHOD(Console, Cmd_DisableWatchpoint));
+	DCmd_Register("enablew", WRAP_METHOD(Console, Cmd_EnableWatchpoint));
 	DCmd_Register("print", WRAP_METHOD(Console, Cmd_Print));
 	DCmd_Register("set", WRAP_METHOD(Console, Cmd_Set));
 	DCmd_Register("set-type", WRAP_METHOD(Console, Cmd_SetType));
@@ -131,10 +133,54 @@ bool Console::Cmd_DisableBreakpoint(int argc, const char **argv) {
 	return true;
 }
 
+bool Console::Cmd_EnableWatchpoint(int argc, const char **argv) {
+	if (argc == 2) {
+		int error = ADAPTER->enableWatchpoint(atoi(argv[1]));
+		if (!error) {
+			DebugPrintf("%s: OK\n", argv[0]);
+		} else if (error == DebuggerAdapter::NO_SUCH_BREAKPOINT) {
+			Common::String msg = Common::String::format("no such watchpoint %d\n", atoi(argv[1]));
+			debugWarning(argv[0], ERROR, msg);
+		}
+	} else {
+		DebugPrintf("Usage: %s <id> to enable\n", argv[0]);
+	}
+	return true;
+}
+
+bool Console::Cmd_DisableWatchpoint(int argc, const char **argv) {
+	if (argc == 2) {
+		int error = ADAPTER->disableWatchpoint(atoi(argv[1]));
+		if (!error) {
+			DebugPrintf("%s: OK\n", argv[0]);
+		} else if (error == DebuggerAdapter::NO_SUCH_BREAKPOINT) {
+			Common::String msg = Common::String::format("no such watchpoint %d\n", atoi(argv[1]));
+			debugWarning(argv[0], ERROR, msg);
+		}
+	} else {
+		DebugPrintf("Usage: %s <id> to disable\n", argv[0]);
+	}
+	return true;
+}
+
 bool Console::Cmd_Watch(int argc, const char **argv) {
 	/**
-	 * Add a watch
+	 * Add a watch.
+	 *
+	 * The big, fat disclaimer: this works in a slightly 
+	 * different fashion than your usual gdb-style debugger.
+	 * 
+	 * It monitors the value of some variable x against its 
+	 * last known state the last time the execution unit
+	 * went over this specific script (NOT instance - ANY
+	 * instance of the script will do) and it breaks if it
+	 * has changed since.
+	 *
+	 * It is admittedly not awesome and can lead to false
+	 * positives, but it's better than nothing.
+	 * 
 	 */
+
 	if (argc == 3) {
 		int error = ADAPTER->addWatch(argv[1], argv[2]);
 		if (!error) {

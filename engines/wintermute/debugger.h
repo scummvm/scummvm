@@ -69,6 +69,8 @@ public:
 	bool Cmd_RemoveBreakpoint(int argc, const char **argv);
 	bool Cmd_EnableBreakpoint(int argc, const char **argv);
 	bool Cmd_DisableBreakpoint(int argc, const char **argv);
+	bool Cmd_EnableWatchpoint(int argc, const char **argv);
+	bool Cmd_DisableWatchpoint(int argc, const char **argv);
 	/*
 	 * List watch-breakpoints gdb-style
 	 */

@@ -121,6 +121,8 @@ public:
 	bool removeBreakpoint(uint id);
 	bool enableBreakpoint(uint id);
 	bool disableBreakpoint(uint id);
+	bool enableWatchpoint(uint id);
+	bool disableWatchpoint(uint id);
 	int incrementBreakpoint(uint id);
 	int resetBreakpoint(uint id);
 	bool refreshBreakpoints();

@@ -135,6 +135,8 @@ public:
 	int removeBreakpoint(int id);
 	int disableBreakpoint(int id);
 	int enableBreakpoint(int id);
+	int disableWatchpoint(int id);
+	int enableWatchpoint(int id);
 	Common::Array<BreakpointInfo> getBreakpoints();
 	Common::Array<WatchInfo> getWatchlist();
 	/** 

@@ -229,6 +229,26 @@ int DebuggerAdapter::enableBreakpoint(int id) {
 	}
 }
 
+
+int DebuggerAdapter::disableWatchpoint(int id) {
+	assert(SCENGINE);
+
+	if (SCENGINE->disableWatchpoint(id)) {
+		return OK;
+	} else {
+		return NO_SUCH_BREAKPOINT;
+	}
+}
+
+int DebuggerAdapter::enableWatchpoint(int id) {
+	assert(SCENGINE);
+	if (SCENGINE->enableWatchpoint(id)) {
+		return OK;
+	} else {
+		return NO_SUCH_BREAKPOINT;
+	}
+}
+
 int DebuggerAdapter::addWatch(const char *filename, const char *symbol) {
 	assert(SCENGINE);
 	if (!compiledExists(filename)) {

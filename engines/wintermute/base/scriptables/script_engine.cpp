@@ -237,6 +237,22 @@ bool ScEngine::disableBreakpoint(uint id) {
 	return true;
 }
 
+bool ScEngine::enableWatchpoint(uint id) {
+	if (id >= _watchlist.size()) {
+		return false;
+	}
+	_watchlist[id]._enabled = true;
+	return true;
+}
+
+bool ScEngine::disableWatchpoint(uint id) {
+	if (id >= _watchlist.size()) {
+		return false;
+	}
+	_watchlist[id]._enabled = false;
+	return true;
+}
+
 int ScEngine::incrementWatch(uint id) {
 	if (id >= _watchlist.size()) {
 		return 0;
