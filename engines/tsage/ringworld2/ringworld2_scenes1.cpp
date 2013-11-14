@@ -8176,7 +8176,7 @@ void Scene1550::signal() {
 		} else {
 			R2_GLOBALS._s1550PlayerArea[R2_QUINN] = R2_GLOBALS._s1550PlayerArea[R2_SEEKER];
 		}
-		R2_GLOBALS._player.enableControl();
+		R2_GLOBALS._player.enableControl(CURSOR_WALK);
 		break;
 	default:
 		_sceneMode = 62;
