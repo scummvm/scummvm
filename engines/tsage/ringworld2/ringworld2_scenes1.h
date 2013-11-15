@@ -790,7 +790,7 @@ public:
 	NamedHotspot _frontView;
 	NamedHotspot _rearView;
 	SceneActor _scannerIcon1;
-	SceneActor _scannerIcon2;
+	SceneActor _redLights2;
 	SceneActor _radarSweep;
 	SpeedSlider _speedSlider;
 	Button _forwardButton;

@@ -10968,17 +10968,17 @@ void Scene1750::postInit(SceneObjectList *OwnerList) {
 	_scannerIcon1.setPosition(Common::Point(35, ((_rotation->_currIndex - 218) % 4) + ((R2_GLOBALS._rimLocation % 800) * 4) - 1440));
 	_scannerIcon1.fixPriority(8);
 
-	_scannerIcon2.postInit();
-	_scannerIcon2.setup(1750, 1, 4);
+	_redLights2.postInit();
+	_redLights2.setup(1750, 1, 4);
 
 	int tmpVar = ABS(_scannerIcon1._position.y - 158) / 100;
 
 	if (tmpVar >= 8)
-		_scannerIcon2.hide();
+		_redLights2.hide();
 	else if (_scannerIcon1._position.y <= 158)
-		_scannerIcon2.setPosition(Common::Point(137, (tmpVar * 7) + 122));
+		_redLights2.setPosition(Common::Point(137, (tmpVar * 7) + 122));
 	else
-		_scannerIcon2.setPosition(Common::Point(148, (tmpVar * 7) + 122));
+		_redLights2.setPosition(Common::Point(148, (tmpVar * 7) + 122));
 
 	_speedSlider.setupSlider(1, 286, 143, 41, 15);
 	_speedSlider.setDetails(1750, 24, 1, -1, 1, (SceneItem *) NULL);
@@ -11078,7 +11078,7 @@ void Scene1750::dispatch() {
 			--_speedDelta;
 
 		_rotationSegCurrent = _rotationSegment;
-		_rotationSegment = ((_rotation->_currIndex - 218) / 4) / 4;
+		_rotationSegment = ((_rotation->_currIndex - 218) / 4) % 4;
 
 		if ((_rotationSegCurrent + 1) == _rotationSegment || (_rotationSegCurrent - 3)  == _rotationSegment) {
 			if (R2_GLOBALS._rimLocation < 2400) {
@@ -11093,6 +11093,7 @@ void Scene1750::dispatch() {
 		}
 
 		if (_rotation->_currIndex != _newRotation) {
+			// Handle setting the position of the lift icon in the scanner display
 			_newRotation = _rotation->_currIndex;
 			_scannerIcon1.setPosition(Common::Point(35, ((_rotation->_currIndex - 218) % 4) +
 				((R2_GLOBALS._rimLocation % 800) * 4) - 1440));
@@ -11101,11 +11102,12 @@ void Scene1750::dispatch() {
 
 	int v = ABS(_scannerIcon1._position.y - 158) / 100;
 	if (v < 8) {
-		_scannerIcon2.show();
-		_scannerIcon2.setPosition(Common::Point((_scannerIcon1._position.y <= 158) ? 137 : 148,
+		// Show how close the user is to the lift on the second column of lights
+		_redLights2.show();
+		_redLights2.setPosition(Common::Point((_scannerIcon1._position.y <= 158) ? 137 : 148,
 			v * 7 + 122));
 	} else {
-		_scannerIcon2.hide();
+		_redLights2.hide();
 	}
 }
 
