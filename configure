@@ -1789,7 +1789,9 @@ fi;
 #
 echo_n "Building with options for swapless build... "
 if test "$_swapless_build" = "yes" ; then
-	CXXFLAGS="$CXXFLAGS -Wl,--no-keep-memory"
+	if test "$have_gcc" = yes; then
+		CXXFLAGS="$CXXFLAGS -Wl,--no-keep-memory"
+	fi
 fi
 echo $_swapless_build
 
