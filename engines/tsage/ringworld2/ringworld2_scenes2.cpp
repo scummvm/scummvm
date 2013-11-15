@@ -2995,6 +2995,8 @@ void Scene2600::postInit(SceneObjectList *OwnerList) {
 	loadScene(2600);
 	R2_GLOBALS._uiElements._active = false;
 	SceneExt::postInit();
+	R2_GLOBALS._interfaceY = SCREEN_HEIGHT;
+
 	R2_GLOBALS._sound1.fadeSound(214);
 	R2_GLOBALS._sound2.play(215);
 	_rotation = R2_GLOBALS._scenePalette.addRotation(176, 191, 1);
@@ -3009,6 +3011,7 @@ void Scene2600::postInit(SceneObjectList *OwnerList) {
 void Scene2600::remove() {
 	R2_GLOBALS._sound1.fadeOut2(NULL);
 	R2_GLOBALS._sound2.fadeOut2(NULL);
+	R2_GLOBALS._uiElements._visible = true;
 //	_rotation->remove();
 	SceneExt::remove();
 }
