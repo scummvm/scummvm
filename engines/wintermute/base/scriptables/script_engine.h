@@ -121,19 +121,16 @@ public:
 	bool removeBreakpoint(uint id);
 	bool enableBreakpoint(uint id);
 	bool disableBreakpoint(uint id);
-	bool removeWatchpoint(uint id);
-	bool enableWatchpoint(uint id);
-	bool disableWatchpoint(uint id);
 	int incrementBreakpoint(uint id);
 	int resetBreakpoint(uint id);
 	bool refreshBreakpoints();
 
-	bool addWatch(const char *filename, const char *name);
-	bool removeWatch(uint id);
-	bool enableWatch(uint id);
-	bool disableWatch(uint id);
-	int incrementWatch(uint id);
-	int resetWatch(uint id);
+	bool addWatchpoint(const char *filename, const char *name);
+	bool removeWatchpoint(uint id);
+	bool enableWatchpoint(uint id);
+	bool disableWatchpoint(uint id);
+	int incrementWatchpoint(uint id);
+	int resetWatchpoint(uint id);
 	bool refreshWatchlist();
 
 	virtual ~ScEngine();

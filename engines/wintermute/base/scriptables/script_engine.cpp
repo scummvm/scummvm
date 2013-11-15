@@ -173,23 +173,13 @@ ScScript *ScEngine::runScript(const char *filename, BaseScriptHolder *owner) {
 	}
 }
 
-bool ScEngine::addWatch(const char *filename, const char *name) {
+bool ScEngine::addWatchpoint(const char *filename, const char *name) {
 	ScWatch *watch = new ScWatch(filename);
 	watch->_symbol = name;
 	watch->_lastValue = new ScValue(_gameRef);
 	_watchlist.insert_at(_watchlist.size(), *watch);
 	refreshWatchlist();
 	return false;
-}
-
-bool ScEngine::removeWatch(uint id) {
-	if (id >= _watchlist.size()) {
-		return false;
-	}
-	delete _watchlist[id]._lastValue;
-	_watchlist.remove_at(id);
-	refreshWatchlist();
-	return true;
 }
 
 bool ScEngine::refreshWatchlist() {
@@ -228,6 +218,7 @@ bool ScEngine::removeWatchpoint(uint id) {
 	}
 	delete _watchlist[id]._lastValue;
 	_watchlist.remove_at(id);
+	refreshWatchlist();
 	return true;
 }
 
@@ -263,7 +254,7 @@ bool ScEngine::disableWatchpoint(uint id) {
 	return true;
 }
 
-int ScEngine::incrementWatch(uint id) {
+int ScEngine::incrementWatchpoint(uint id) {
 	if (id >= _watchlist.size()) {
 		return 0;
 	}
@@ -279,7 +270,7 @@ int ScEngine::incrementBreakpoint(uint id) {
 	return 0;
 }
 
-int ScEngine::resetWatch(uint id) {
+int ScEngine::resetWatchpoint(uint id) {
 	if (id >= _watchlist.size()) { 
 		return 0;
 	}

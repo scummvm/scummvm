@@ -275,7 +275,7 @@ int DebuggerAdapter::addWatch(const char *filename, const char *symbol) {
 	 * watching is awkward, unless we parse the whole source.
 	 */
 
-	SCENGINE->addWatch(filename, symbol);
+	SCENGINE->addWatchpoint(filename, symbol);
 	return OK;
 }
 
