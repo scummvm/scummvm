@@ -31,7 +31,7 @@
 #include "zvision/zork_avi_decoder.h"
 #include "zvision/timer_node.h"
 #include "zvision/music_node.h"
-#include "zvision/animation_control.h"
+#include "zvision/animation_node.h"
 
 #include "common/file.h"
 

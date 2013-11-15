@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ZVISION_ANIMATION_CONTROL_H
-#define ZVISION_ANIMATION_CONTROL_H
+#ifndef ZVISION_ANIMATION_NODE_H
+#define ZVISION_ANIMATION_NODE_H
 
 #include "zvision/sidefx.h"
 #include "common/rect.h"
