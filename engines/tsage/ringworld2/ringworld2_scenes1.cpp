@@ -11203,8 +11203,11 @@ bool Scene1800::Doors::startAction(CursorType action, Event &event) {
 				R2_GLOBALS.setFlag(14);
 			}
 		} else {
+			// Seeker failing to force open doors
 			scene->_sceneMode = 1813;
-			scene->setAction(&scene->_sequenceManager, scene, 1813, &R2_GLOBALS._player, NULL);
+			// Original was using 1813 in setAction too, but it somewhat broken. 
+			// Seeker goes 2 pixels to high, hiding behind the door
+			scene->setAction(&scene->_sequenceManager, scene, 1808, &R2_GLOBALS._player, &scene->_doors, NULL);
 		}
 	} else if (R2_GLOBALS.getFlag(14)) {
 		return SceneActor::startAction(action, event);
@@ -11569,6 +11572,29 @@ void Scene1800::signal() {
 		R2_GLOBALS._player.animate(ANIM_MODE_1, NULL);
 		R2_GLOBALS._player.enableControl(CURSOR_USE);
 		break;
+	// Cases 23 and 24 have been added to fix missing hardcoded logic in the original,
+	// when Seeker tries to open the door
+	case 23:
+		_sceneMode = 24;
+		R2_GLOBALS._events.setCursor(CURSOR_CROSSHAIRS);
+		R2_GLOBALS._player.setup(1801, 5, 1);
+		R2_GLOBALS._player.animate(ANIM_MODE_8, NULL);
+		_stripManager.start(550, this);
+		break;
+	case 24:
+		R2_GLOBALS._player.disableControl();
+		R2_GLOBALS._player.setup(1507, 4, 1);
+		R2_GLOBALS._player.animate(ANIM_MODE_1, NULL);
+		R2_GLOBALS._player.enableControl(CURSOR_USE);
+
+		_doors.setup(1801, 3, 1);
+		_doors.setPosition(Common::Point(160, 139));
+		_doors.setDetails(1800, 6, -1, -1, 1, (SceneItem *) NULL);
+		_doors.show();
+
+		R2_GLOBALS._player._position.y += 2;
+		R2_GLOBALS._player.show();
+		break;
 	case 1800:
 		R2_GLOBALS._walkRegions.disableRegion(8);
 		if (R2_GLOBALS.getFlag(63))
@@ -11615,6 +11641,11 @@ void Scene1800::signal() {
 		break;
 	case 1812:
 		_sceneMode = 13;
+		R2_GLOBALS._player.animate(ANIM_MODE_5, this);
+		break;
+	// Case 1813 has been added to fix Seeker missing animation in the original game
+	case 1813:
+		_sceneMode = 23;
 		R2_GLOBALS._player.animate(ANIM_MODE_5, this);
 		break;
 	case 1814:
