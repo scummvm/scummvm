@@ -672,10 +672,10 @@ MessageQueue *MovGraph2::buildMovInfo1MessageQueue(MovInfo1 *movInfo) {
 	for (int i = 0; i < movInfo->_itemsCount - 1; i++) {
 		if (movInfo->items[i + 1].subIndex != 10) {
 			if (i >= movInfo->itemsCount - 2 || movInfo->items[i + 2].subIndex != 10) {
-				v17 = (char *)_items[1] + 16 * (movInfo->items[i + 1].subIndex + 8);
+				v12 = (char *)_items[1] + 16 * (movInfo->items[i + 1].subIndex + 8);
 				movinfo.flags = 0;
 				subidx = 8 * 93 * movInfo->field_0;
-				v15 = (MovGraph2Item *)(&v17[184 * movInfo->items[i].subIndex] + subidx);
+				v15 = (MovGraph2Item *)(&v12[184 * movInfo->items[i].subIndex] + subidx);
 			} else {
 				v12 = (char *)_items[1] + 16 * (movInfo->items[i + 1].subIndex + 4);
 				movinfo.flags = 2;
@@ -716,10 +716,10 @@ MessageQueue *MovGraph2::buildMovInfo1MessageQueue(MovInfo1 *movInfo) {
 				mgminfo.flags = 0x7f;
 				mgminfo.movementId = v15->_objectId;
 
-				v25 = (MessageQueue *)MGM_sub_445330((MGM *)&this->movGraph.mgm, &mgminfo);
-				mq->transferExCommands(v25);
+				MessageQueue *mq2 = (MessageQueue *)MGM_sub_445330((MGM *)&this->movGraph.mgm, &mgminfo);
+				mq->transferExCommands(mq2);
 
-				delete v25;
+				delete mq2;
 
 				curX = movInfo->items[i + 1].x;
 				curY = movInfo->items[i + 1].y;
@@ -764,16 +764,16 @@ MessageQueue *MovGraph2::buildMovInfo1MessageQueue(MovInfo1 *movInfo) {
 			}
 			i++; // intentional
 
-			v36 = sub1(&movinfo);
+			MessageQueue *mq2 = sub1(&movinfo);
 
-			if (!v36) {
+			if (mq2) {
 				delete mq;
 				return 0;
 			}
 
-			mq->transferExCommands(v36);
+			mq->transferExCommands(mq2);
 
-			delete v36;
+			delete mq2;
 
 			curX = movinfo.pt2.x;
 			curY = movinfo.pt2.y;
