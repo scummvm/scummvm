@@ -3965,7 +3965,8 @@ void Scene2750::postInit(SceneObjectList *OwnerList) {
 			R2_GLOBALS._player.setStrip(6);
 			R2_GLOBALS._player.animate(ANIM_MODE_NONE, NULL);
 			R2_GLOBALS._player.setPosition(Common::Point(81, 165));
-			R2_GLOBALS._events.setCursor(CURSOR_WALK);
+
+			R2_GLOBALS._events.setCursor(CURSOR_ARROW);
 			_stripNumber = 1204;
 			_sceneMode = 11;
 			_stripManager.start(_stripNumber, this);
@@ -3985,6 +3986,7 @@ void Scene2750::postInit(SceneObjectList *OwnerList) {
 		R2_GLOBALS._player.enableControl();
 	}
 }
+
 void Scene2750::signal() {
 	switch (_sceneMode) {
 	case 10:
