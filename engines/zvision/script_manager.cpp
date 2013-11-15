@@ -523,11 +523,11 @@ void ScriptManager::do_changeLocation() {
 	// Change the background position
 	_engine->getRenderManager()->setBackgroundPosition(_nextLocation.offset);
 
-	execScope(room);
-	execScope(nodeview);
-
 	// Update _currentLocation
 	_currentLocation = _nextLocation;
+
+	execScope(room);
+	execScope(nodeview);
 }
 
 void ScriptManager::serializeStateTable(Common::WriteStream *stream) {
