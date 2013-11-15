@@ -135,7 +135,7 @@ private:
 	size_t _maxCharWidth;
 	size_t _maxCharHeight;
 
-public:
+private:
 	bool _isBold;
 	bool _isItalic;
 	bool _isUnderline;

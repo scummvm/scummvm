@@ -568,13 +568,22 @@ bool BaseFontTT::initFont() {
 		return STATUS_FAILED;
 	}
 #ifdef USE_FREETYPE2
+	Common::String fallbackFilename;
+	// Handle Bold atleast for the fallback-case.
+	// TODO: Handle italic. (Needs a test-case)
+	if (_isBold) {
+		fallbackFilename = "FreeSansBold.ttf";
+	} else {
+		fallbackFilename = "FreeSans.ttf";
+	}
+
 	Common::SeekableReadStream *file = BaseFileManager::getEngineInstance()->openFile(_fontFile);
 	if (!file) {
 		if (Common::String(_fontFile) != "arial.ttf") {
 			warning("%s has no replacement font yet, using FreeSans for now (if available)", _fontFile);
 		}
 		// Fallback1: Try to find FreeSans.ttf
-		file = SearchMan.createReadStreamForMember("FreeSans.ttf");
+		file = SearchMan.createReadStreamForMember(fallbackFilename);
 	}
 
 	if (file) {
@@ -601,9 +610,9 @@ bool BaseFontTT::initFont() {
 		}
 		if (themeFile) {
 			Common::Archive *themeArchive = Common::makeZipArchive(themeFile);
-			if (themeArchive->hasFile("FreeSans.ttf")) {
+			if (themeArchive->hasFile(fallbackFilename)) {
 				file = nullptr;
-				file = themeArchive->createReadStreamForMember("FreeSans.ttf");
+				file = themeArchive->createReadStreamForMember(fallbackFilename);
 				_deletableFont = Graphics::loadTTFFont(*file, 96, _fontHeight); // Use the same dpi as WME (96 vs 72).
 				_font = _deletableFont;
 			}
@@ -618,7 +627,7 @@ bool BaseFontTT::initFont() {
 	// Fallback3: Try to ask FontMan for the FreeSans.ttf ScummModern.zip uses:
 	if (!_font) {
 		// Really not desireable, as we will get a font with dpi-72 then
-		Common::String fontName = Common::String::format("%s-%s@%d", "FreeSans.ttf", "ASCII", _fontHeight);
+		Common::String fontName = Common::String::format("%s-%s@%d", fallbackFilename.c_str(), "ASCII", _fontHeight);
 		warning("Looking for %s", fontName.c_str());
 		_font = FontMan.getFontByName(fontName);
 	}
