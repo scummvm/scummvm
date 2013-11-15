@@ -583,8 +583,8 @@ Common::Array<WatchInfo> DebuggerAdapter::getWatchlist() {
 		WatchInfo watch_info;
 		watch_info._filename = SCENGINE->_watchlist[i]._filename;
 		watch_info._symbol = SCENGINE->_watchlist[i]._symbol;
-		watch_info._hits = SCENGINE->_breakpoints[i]._hits;
-		watchlist[watchlist.size()] = watch_info;
+		watch_info._hits = SCENGINE->_watchlist[i]._hits;
+		watchlist.push_back(watch_info);
 	}
 	return watchlist;
 }
