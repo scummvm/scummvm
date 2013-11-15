@@ -577,12 +577,12 @@ Common::Array<BreakpointInfo> DebuggerAdapter::getBreakpoints() {
 	assert(SCENGINE);
 	Common::Array<BreakpointInfo> breakpoints;
 	for (uint i = 0; i < SCENGINE->_breakpoints.size(); i++) {
-		BreakpointInfo bp_info;
-		bp_info._filename = SCENGINE->_breakpoints[i]._filename;
-		bp_info._line = SCENGINE->_breakpoints[i]._line;
-		bp_info._hits = SCENGINE->_breakpoints[i]._hits;
-		bp_info._enabled = SCENGINE->_breakpoints[i]._enabled;
-		breakpoints.push_back(bp_info);
+		BreakpointInfo bpInfo;
+		bpInfo._filename = SCENGINE->_breakpoints[i]._filename;
+		bpInfo._line = SCENGINE->_breakpoints[i]._line;
+		bpInfo._hits = SCENGINE->_breakpoints[i]._hits;
+		bpInfo._enabled = SCENGINE->_breakpoints[i]._enabled;
+		breakpoints.push_back(bpInfo);
 	}
 	return breakpoints;
 }
@@ -590,11 +590,11 @@ Common::Array<BreakpointInfo> DebuggerAdapter::getBreakpoints() {
 Common::Array<WatchInfo> DebuggerAdapter::getWatchlist() {
 	Common::Array<WatchInfo> watchlist;
 	for (uint i = 0; i < SCENGINE->_watchlist.size(); i++) {
-		WatchInfo watch_info;
-		watch_info._filename = SCENGINE->_watchlist[i]._filename;
-		watch_info._symbol = SCENGINE->_watchlist[i]._symbol;
-		watch_info._hits = SCENGINE->_watchlist[i]._hits;
-		watchlist.push_back(watch_info);
+		WatchInfo watchInfo;
+		watchInfo._filename = SCENGINE->_watchlist[i]._filename;
+		watchInfo._symbol = SCENGINE->_watchlist[i]._symbol;
+		watchInfo._hits = SCENGINE->_watchlist[i]._hits;
+		watchlist.push_back(watchInfo);
 	}
 	return watchlist;
 }
