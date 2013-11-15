@@ -240,6 +240,7 @@ private:
 class ActionPlayAnimation : public ResultAction {
 public:
 	ActionPlayAnimation(ZVision *engine, const Common::String &line);
+	~ActionPlayAnimation();
 	bool execute();
 
 private:
@@ -251,9 +252,9 @@ private:
 	uint32 _height;
 	uint32 _start;
 	uint32 _end;
-	uint _mask;
-	uint _framerate;
-	uint _loopCount;
+	int32 _mask;
+	int32 _framerate;
+	int32 _loopCount;
 };
 
 class ActionPlayPreloadAnimation : public ResultAction {
@@ -276,13 +277,14 @@ private:
 class ActionPreloadAnimation : public ResultAction {
 public:
 	ActionPreloadAnimation(ZVision *engine, const Common::String &line);
+	~ActionPreloadAnimation();
 	bool execute();
 
 private:
 	uint32 _key;
 	Common::String _fileName;
-	uint _mask;
-	uint _framerate;
+	int32 _mask;
+	int32 _framerate;
 };
 
 class ActionQuit : public ResultAction {

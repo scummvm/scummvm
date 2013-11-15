@@ -37,222 +37,140 @@
 
 namespace ZVision {
 
-AnimationControl::AnimationControl(ZVision *engine, uint32 controlKey, const Common::String &fileName)
-	: Control(engine, controlKey),
+AnimationNode::AnimationNode(ZVision *engine, uint32 controlKey, const Common::String &fileName, int32 mask, int32 frate, bool DisposeAfterUse)
+	: SideFX(engine, controlKey, SIDEFX_ANIM),
 	  _fileType(RLF),
-	  _loopCount(1),
-	  _currentLoop(0),
-	  _accumulatedTime(0),
-	  _cachedFrame(0),
-	  _cachedFrameNeedsDeletion(false) {
+	  _DisposeAfterUse(DisposeAfterUse),
+	  _mask(mask) {
 	if (fileName.hasSuffix(".rlf")) {
 		_fileType = RLF;
 		_animation.rlf = new RlfAnimation(fileName, false);
+		_frmDelay = _animation.rlf->frameTime();
 	} else if (fileName.hasSuffix(".avi")) {
 		_fileType = AVI;
 		_animation.avi = new ZorkAVIDecoder();
 		_animation.avi->loadFile(fileName);
+		_frmDelay = 1000.0 / _animation.avi->getDuration().framerate();
 	} else {
 		warning("Unrecognized animation file type: %s", fileName.c_str());
 	}
 
-	_cachedFrame = new Graphics::Surface();
+	if (frate > 0)
+		_frmDelay = 1000.0 / frate;
 }
 
-AnimationControl::~AnimationControl() {
+AnimationNode::~AnimationNode() {
 	if (_fileType == RLF) {
 		delete _animation.rlf;
 	} else if (_fileType == AVI) {
 		delete _animation.avi;
 	}
 
-	_cachedFrame->free();
-	delete _cachedFrame;
+	_engine->getScriptManager()->setStateValue(_key, 2);
+
+	PlayNodes::iterator it = _playList.begin();
+	if (it != _playList.end())
+		_engine->getScriptManager()->setStateValue((*it).slot, 2);
+
+	_playList.clear();
 }
 
-bool AnimationControl::process(uint32 deltaTimeInMillis) {
+bool AnimationNode::process(uint32 deltaTimeInMillis) {
+	PlayNodes::iterator it = _playList.begin();
+	if (it != _playList.end()) {
+		playnode *nod = &(*it);
 
-	bool finished = false;
+		nod->_delay -= deltaTimeInMillis;
+		if (nod->_delay <= 0) {
+			nod->_delay += _frmDelay;
 
-	if (_fileType == RLF) {
-		_accumulatedTime += deltaTimeInMillis;
+			const Graphics::Surface *frame = NULL;
 
-		uint32 frameTime = _animation.rlf->frameTime();
-		if (_accumulatedTime >= frameTime) {
-			while (_accumulatedTime >= frameTime) {
-				_accumulatedTime -= frameTime;
-
-				// Make sure the frame is inside the working window
-				// If it's not, then just return
-
-				RenderManager *renderManager = _engine->getRenderManager();
-				Common::Point workingWindowPoint = renderManager->imageSpaceToWorkingWindowSpace(Common::Point(_x, _y));
-				Common::Rect subRect(workingWindowPoint.x, workingWindowPoint.y, workingWindowPoint.x + _animation.rlf->width(), workingWindowPoint.y + _animation.rlf->height());
-
-				// If the clip returns false, it means the animation is outside the working window
-				if (!renderManager->clipRectToWorkingWindow(subRect)) {
-					return false;
+			if (nod->_cur_frm == -1) { // Start of new playlist node
+				nod->_cur_frm = nod->start;
+				if (_fileType == RLF) {
+					_animation.rlf->seekToFrame(nod->_cur_frm);
+					frame = _animation.rlf->decodeNextFrame();
+				} else if (_fileType == AVI) {
+					_animation.avi->seekToFrame(nod->_cur_frm);
+					frame = _animation.avi->decodeNextFrame();
 				}
 
-				const Graphics::Surface *frame = _animation.rlf->decodeNextFrame();
+				nod->_delay = _frmDelay;
+				if (nod->slot)
+					_engine->getScriptManager()->setStateValue(nod->slot, 1);
+			} else {
+				nod->_cur_frm++;
 
-				// Animation frames for PANORAMAs are transposed, so un-transpose them
-				RenderTable::RenderState state = renderManager->getRenderTable()->getRenderState();
-				if (state == RenderTable::PANORAMA) {
-					Graphics::Surface *tranposedFrame = RenderManager::tranposeSurface(frame);
+				if (nod->_cur_frm > nod->stop) {
+					nod->loop--;
 
-					renderManager->copyRectToWorkingWindow((uint16 *)tranposedFrame->getBasePtr(tranposedFrame->w - subRect.width(), tranposedFrame->h - subRect.height()), subRect.left, subRect.top, _animation.rlf->width(), subRect.width(), subRect.height());
+					if (nod->loop == 0) {
+						if (nod->slot >= 0)
+							_engine->getScriptManager()->setStateValue(nod->slot, 2);
+						_playList.erase(it);
+						return _DisposeAfterUse;
+					}
 
-					// If the background can move, we need to cache the last frame so it can be rendered during background movement
-					if (state == RenderTable::PANORAMA || state == RenderTable::TILT) {
-						if (_cachedFrameNeedsDeletion) {
-							_cachedFrame->free();
-							delete _cachedFrame;
-							_cachedFrameNeedsDeletion = false;
-						}
-						_cachedFrame = tranposedFrame;
-						_cachedFrameNeedsDeletion = true;
-					} else {
-						// Cleanup
-						tranposedFrame->free();
-						delete tranposedFrame;
+					nod->_cur_frm = nod->start;
+					if (_fileType == RLF) {
+						_animation.rlf->seekToFrame(nod->_cur_frm);
+						frame = _animation.rlf->decodeNextFrame();
+					} else if (_fileType == AVI) {
+						_animation.avi->seekToFrame(nod->_cur_frm);
+						frame = _animation.avi->decodeNextFrame();
 					}
 				} else {
-					renderManager->copyRectToWorkingWindow((const uint16 *)frame->getBasePtr(frame->w - subRect.width(), frame->h - subRect.height()), subRect.left, subRect.top, _animation.rlf->width(), subRect.width(), subRect.height());
-
-					// If the background can move, we need to cache the last frame so it can be rendered during background movement
-					if (state == RenderTable::PANORAMA || state == RenderTable::TILT) {
-						if (_cachedFrameNeedsDeletion) {
-							_cachedFrame->free();
-							delete _cachedFrame;
-							_cachedFrameNeedsDeletion = false;
-						}
-						_cachedFrame->copyFrom(*frame);
-					}
-				}
-
-				// Check if we should continue looping
-				if (_animation.rlf->endOfAnimation()) {
-					_animation.rlf->seekToFrame(-1);
-					if (_loopCount > 0) {
-						_currentLoop++;
-						if (_currentLoop >= _loopCount) {
-							finished = true;
-						}
-					}
+					if (_fileType == RLF)
+						frame = _animation.rlf->decodeNextFrame();
+					else if (_fileType == AVI)
+						frame = _animation.avi->decodeNextFrame();
 				}
 			}
-		} else {
-			// If the background can move, we have to keep rendering animation frames, otherwise the animation flickers during background movement
-			RenderManager *renderManager = _engine->getRenderManager();
-			RenderTable::RenderState state = renderManager->getRenderTable()->getRenderState();
-
-			if (state == RenderTable::PANORAMA || state == RenderTable::TILT) {
-				Common::Point workingWindowPoint = renderManager->imageSpaceToWorkingWindowSpace(Common::Point(_x, _y));
-				Common::Rect subRect(workingWindowPoint.x, workingWindowPoint.y, workingWindowPoint.x + _cachedFrame->w, workingWindowPoint.y + _cachedFrame->h);
-
-				// If the clip returns false, it means the animation is outside the working window
-				if (!renderManager->clipRectToWorkingWindow(subRect)) {
-					return false;
-				}
-
-				renderManager->copyRectToWorkingWindow((uint16 *)_cachedFrame->getBasePtr(_cachedFrame->w - subRect.width(), _cachedFrame->h - subRect.height()), subRect.left, subRect.top, _cachedFrame->w, subRect.width(), subRect.height());
-			}
-		}
-	} else if (_fileType == AVI) {
-		if (!_animation.avi->isPlaying()) {
-			_animation.avi->start();
-		}
-
-		if (_animation.avi->needsUpdate()) {
-			const Graphics::Surface *frame = _animation.avi->decodeNextFrame();
 
 			if (frame) {
-				// Make sure the frame is inside the working window
-				// If it's not, then just return
-
-				RenderManager *renderManager = _engine->getRenderManager();
-				Common::Point workingWindowPoint = renderManager->imageSpaceToWorkingWindowSpace(Common::Point(_x, _y));
-				Common::Rect subRect(workingWindowPoint.x, workingWindowPoint.y, workingWindowPoint.x + frame->w, workingWindowPoint.y + frame->h);
-
-				// If the clip returns false, it means the animation is outside the working window
-				if (!renderManager->clipRectToWorkingWindow(subRect)) {
-					return false;
-				}
-
-				// Animation frames for PANORAMAs are transposed, so un-transpose them
-				RenderTable::RenderState state = renderManager->getRenderTable()->getRenderState();
-				if (state == RenderTable::PANORAMA) {
-					Graphics::Surface *tranposedFrame = RenderManager::tranposeSurface(frame);
-
-					renderManager->copyRectToWorkingWindow((uint16 *)tranposedFrame->getBasePtr(tranposedFrame->w - subRect.width(), tranposedFrame->h - subRect.height()), subRect.left, subRect.top, frame->w, subRect.width(), subRect.height());
-
-					// If the background can move, we need to cache the last frame so it can be rendered during background movement
-					if (state == RenderTable::PANORAMA || state == RenderTable::TILT) {
-						if (_cachedFrameNeedsDeletion) {
-							_cachedFrame->free();
-							delete _cachedFrame;
-							_cachedFrameNeedsDeletion = false;
-						}
-						_cachedFrame = tranposedFrame;
-						_cachedFrameNeedsDeletion = true;
-					} else {
-						// Cleanup
-						tranposedFrame->free();
-						delete tranposedFrame;
-					}
+				if (_engine->getRenderManager()->getRenderTable()->getRenderState() == RenderTable::PANORAMA) {
+					Graphics::Surface *transposed = RenderManager::tranposeSurface(frame);
+					if (_mask > 0)
+						_engine->getRenderManager()->renderImageToBackground(*transposed, nod->pos.left, nod->pos.top, _mask);
+					else
+						_engine->getRenderManager()->renderImageToBackground(*transposed, nod->pos.left, nod->pos.top);
+					delete transposed;
 				} else {
-					renderManager->copyRectToWorkingWindow((const uint16 *)frame->getBasePtr(frame->w - subRect.width(), frame->h - subRect.height()), subRect.left, subRect.top, frame->w, subRect.width(), subRect.height());
-
-					// If the background can move, we need to cache the last frame so it can be rendered during background movement
-					if (state == RenderTable::PANORAMA || state == RenderTable::TILT) {
-						if (_cachedFrameNeedsDeletion) {
-							_cachedFrame->free();
-							delete _cachedFrame;
-							_cachedFrameNeedsDeletion = false;
-						}
-						_cachedFrame->copyFrom(*frame);
-					}
-				}
-			} else {
-				// If the background can move, we have to keep rendering animation frames, otherwise the animation flickers during background movement
-				RenderManager *renderManager = _engine->getRenderManager();
-				RenderTable::RenderState state = renderManager->getRenderTable()->getRenderState();
-
-				if (state == RenderTable::PANORAMA || state == RenderTable::TILT) {
-					Common::Point workingWindowPoint = renderManager->imageSpaceToWorkingWindowSpace(Common::Point(_x, _y));
-					Common::Rect subRect(workingWindowPoint.x, workingWindowPoint.y, workingWindowPoint.x + _cachedFrame->w, workingWindowPoint.y + _cachedFrame->h);
-
-					// If the clip returns false, it means the animation is outside the working window
-					if (!renderManager->clipRectToWorkingWindow(subRect)) {
-						return false;
-					}
-
-					renderManager->copyRectToWorkingWindow((uint16 *)_cachedFrame->getBasePtr(_cachedFrame->w - subRect.width(), _cachedFrame->h - subRect.height()), subRect.left, subRect.top, _cachedFrame->w, subRect.width(), subRect.height());
-				}
-			}
-		}
-
-		// Check if we should continue looping
-		if (_animation.avi->endOfVideo()) {
-			_animation.avi->rewind();
-			if (_loopCount > 0) {
-				_currentLoop++;
-				if (_currentLoop >= _loopCount) {
-					_animation.avi->stop();
-					finished = true;
+					if (_mask > 0)
+						_engine->getRenderManager()->renderImageToBackground(*frame, nod->pos.left, nod->pos.top, _mask);
+					else
+						_engine->getRenderManager()->renderImageToBackground(*frame, nod->pos.left, nod->pos.top);
 				}
 			}
 		}
 	}
 
-	// If we're done, set _animation key = 2 (Why 2? I don't know. It's just the value that they used)
-	// Then disable the control. DON'T delete it. It can be re-used
-	if (finished) {
-		_engine->getScriptManager()->setStateValue(_animationKey, 2);
-		_currentLoop = 0;
-	}
+	return false;
+}
 
+
+
+void AnimationNode::addPlayNode(int32 slot, int x, int y, int w, int h, int start_frame, int end_frame, int loops) {
+	playnode nod;
+	nod.loop = loops;
+	nod.pos = Common::Rect(x, y, x + w - 1, y + h - 1);
+	nod.start = start_frame;
+	nod.stop = end_frame;
+	nod.slot = slot;
+	nod._cur_frm = -1;
+	nod._delay = 0;
+	_playList.push_back(nod);
+}
+
+bool AnimationNode::stop() {
+	PlayNodes::iterator it = _playList.begin();
+	if (it != _playList.end())
+		_engine->getScriptManager()->setStateValue((*it).slot, 2);
+
+	_playList.clear();
+
+	// We don't need to delete, it's may be reused
 	return false;
 }
 

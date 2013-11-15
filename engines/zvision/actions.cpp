@@ -274,17 +274,29 @@ ActionPreloadAnimation::ActionPreloadAnimation(ZVision *engine, const Common::St
 	char fileName[25];
 
 	// The two %*u are always 0 and dont seem to have a use
-	sscanf(line.c_str(), "%*[^:]:%*[^:]:%u(%25s %*u %*u %u %u)", &_key, fileName, &_mask, &_framerate);
+	sscanf(line.c_str(), "%*[^:]:%*[^:]:%u(%25s %*u %*u %d %d)", &_key, fileName, &_mask, &_framerate);
+
+	if (_mask > 0) {
+		byte r, g, b;
+		Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0).colorToRGB(_mask, r, g, b);
+		_mask = _engine->_pixelFormat.RGBToColor(r, g, b);
+	}
 
 	_fileName = Common::String(fileName);
 }
 
+ActionPreloadAnimation::~ActionPreloadAnimation() {
+	_engine->getScriptManager()->deleteSideFx(_key);
+}
+
 bool ActionPreloadAnimation::execute() {
-	// TODO: We ignore the mask and framerate atm. Mask refers to a key color used for binary alpha. We assume the framerate is the default framerate embedded in the videos
+	AnimationNode *nod = (AnimationNode *)_engine->getScriptManager()->getSideFX(_key);
 
-	// TODO: Check if the Control already exists
-
-	// Create the control, but disable it until PlayPreload is called
+	if (!nod) {
+		nod = new AnimationNode(_engine, _key, _fileName, _mask, _framerate, false);
+		_engine->getScriptManager()->addSideFX(nod);
+	} else
+		nod->stop();
 	return true;
 }
 
@@ -299,14 +311,34 @@ ActionPlayAnimation::ActionPlayAnimation(ZVision *engine, const Common::String &
 
 	// The two %*u are always 0 and dont seem to have a use
 	sscanf(line.c_str(),
-	       "%*[^:]:%*[^:]:%u(%25s %u %u %u %u %u %u %u %*u %*u %u %u)",
+	       "%*[^:]:%*[^:]:%u(%25s %u %u %u %u %u %u %d %*u %*u %d %d)",
 	       &_key, fileName, &_x, &_y, &_width, &_height, &_start, &_end, &_loopCount, &_mask, &_framerate);
+
+	if (_mask > 0) {
+		byte r, g, b;
+		Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0).colorToRGB(_mask, r, g, b);
+		_mask = _engine->_pixelFormat.RGBToColor(r, g, b);
+	}
 
 	_fileName = Common::String(fileName);
 }
 
+ActionPlayAnimation::~ActionPlayAnimation() {
+	_engine->getScriptManager()->deleteSideFx(_key);
+}
+
 bool ActionPlayAnimation::execute() {
-	// TODO: Implement
+	AnimationNode *nod = (AnimationNode *)_engine->getScriptManager()->getSideFX(_key);
+
+	if (!nod) {
+		nod = new AnimationNode(_engine, _key, _fileName, _mask, _framerate);
+		_engine->getScriptManager()->addSideFX(nod);
+	} else
+		nod->stop();
+
+	if (nod)
+		nod->addPlayNode(_key, _x, _y, _width, _height, _start, _end, _loopCount);
+
 	return true;
 }
 
@@ -323,14 +355,10 @@ ActionPlayPreloadAnimation::ActionPlayPreloadAnimation(ZVision *engine, const Co
 }
 
 bool ActionPlayPreloadAnimation::execute() {
-	// Find the control
-	AnimationControl *control = (AnimationControl *)_engine->getScriptManager()->getControl(_controlKey);
+	AnimationNode *nod = (AnimationNode *)_engine->getScriptManager()->getSideFX(_animationKey);
 
-	// Set the needed values within the control
-	control->setAnimationKey(_animationKey);
-	control->setLoopCount(_loopCount);
-	control->setXPos(_x1);
-	control->setYPost(_y1);
+	if (nod)
+		nod->addPlayNode(_controlKey, _x1, _y1, _x2, _y2, _startFrame, _endFrame, _loopCount);
 
 	return true;
 }

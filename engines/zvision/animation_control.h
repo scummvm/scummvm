@@ -23,7 +23,9 @@
 #ifndef ZVISION_ANIMATION_CONTROL_H
 #define ZVISION_ANIMATION_CONTROL_H
 
-#include "zvision/control.h"
+#include "zvision/sidefx.h"
+#include "common/rect.h"
+#include "common/list.h"
 
 
 namespace Common {
@@ -43,10 +45,20 @@ namespace ZVision {
 class ZVision;
 class RlfAnimation;
 
-class AnimationControl : public Control {
+class AnimationNode : public SideFX {
 public:
-	AnimationControl(ZVision *engine, uint32 controlKey, const Common::String &fileName);
-	~AnimationControl();
+	AnimationNode(ZVision *engine, uint32 controlKey, const Common::String &fileName, int32 mask, int32 frate, bool DisposeAfterUse = true);
+	~AnimationNode();
+
+	struct playnode {
+		Common::Rect pos;
+		int32 slot;
+		int32 start;
+		int32 stop;
+		int32 loop;
+		int32 _cur_frm;
+		int32 _delay;
+	};
 
 private:
 	enum FileType {
@@ -55,7 +67,9 @@ private:
 	};
 
 private:
-	uint32 _animationKey;
+	typedef Common::List<playnode> PlayNodes;
+
+	PlayNodes _playList;
 
 	union {
 		RlfAnimation *rlf;
@@ -63,31 +77,16 @@ private:
 	} _animation;
 
 	FileType _fileType;
-	uint _loopCount;
-	int32 _x;
-	int32 _y;
-
-	uint _accumulatedTime;
-	uint _currentLoop;
-
-	Graphics::Surface *_cachedFrame;
-	bool _cachedFrameNeedsDeletion;
+	int32 _frmDelay;
+	int32 _mask;
+	bool _DisposeAfterUse;
 
 public:
 	bool process(uint32 deltaTimeInMillis);
 
-	void setAnimationKey(uint32 animationKey) {
-		_animationKey = animationKey;
-	}
-	void setLoopCount(uint loopCount) {
-		_loopCount = loopCount;
-	}
-	void setXPos(int32 x) {
-		_x = x;
-	}
-	void setYPost(int32 y) {
-		_y = y;
-	}
+	void addPlayNode(int32 slot, int x, int y, int w, int h, int start_frame, int end_frame, int loops = 1);
+
+	bool stop();
 };
 
 } // End of namespace ZVision
