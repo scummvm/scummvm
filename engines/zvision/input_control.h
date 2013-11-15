@@ -54,7 +54,7 @@ public:
 	void unfocus() {
 		_focused = false;
 	}
-	void onMouseUp(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos);
+	bool onMouseUp(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos);
 	void onKeyDown(Common::KeyState keyState);
 	bool process(uint32 deltaTimeInMillis);
 };

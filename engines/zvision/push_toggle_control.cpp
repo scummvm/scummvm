@@ -72,13 +72,15 @@ PushToggleControl::~PushToggleControl() {
 	_engine->getScriptManager()->setStateValue(_key, 0);
 }
 
-void PushToggleControl::onMouseUp(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) {
+bool PushToggleControl::onMouseUp(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) {
 	if (_engine->getScriptManager()->getStateFlag(_key) & Puzzle::DISABLED)
-		return;
+		return false;
 
 	if (_hotspot.contains(backgroundImageSpacePos)) {
 		_engine->getScriptManager()->setStateValue(_key, 1);
+		return true;
 	}
+	return false;
 }
 
 bool PushToggleControl::onMouseMove(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) {

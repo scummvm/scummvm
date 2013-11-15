@@ -41,7 +41,7 @@ public:
 	 * @param screenSpacePos             The position of the mouse in screen space
 	 * @param backgroundImageSpacePos    The position of the mouse in background image space
 	 */
-	void onMouseUp(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos);
+	bool onMouseUp(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos);
 	/**
 	 * Called on every MouseMove. Tests if the mouse is inside _hotspot, and if so, sets the cursor.
 	 *

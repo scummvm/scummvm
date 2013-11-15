@@ -54,14 +54,18 @@ public:
 	 * @param screenSpacePos             The position of the mouse in screen space
 	 * @param backgroundImageSpacePos    The position of the mouse in background image space
 	 */
-	virtual void onMouseDown(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) {}
+	virtual bool onMouseDown(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) {
+		return false;
+	}
 	/**
 	 * Called when LeftMouse is lifted. Default is NOP.
 	 *
 	 * @param screenSpacePos             The position of the mouse in screen space
 	 * @param backgroundImageSpacePos    The position of the mouse in background image space
 	 */
-	virtual void onMouseUp(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) {}
+	virtual bool onMouseUp(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) {
+		return false;
+	}
 	/**
 	 * Called on every MouseMove. Default is NOP.
 	 *

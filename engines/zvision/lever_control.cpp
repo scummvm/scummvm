@@ -190,19 +190,20 @@ void LeverControl::parseLevFile(const Common::String &fileName) {
 	}
 }
 
-void LeverControl::onMouseDown(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) {
+bool LeverControl::onMouseDown(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) {
 	if (_engine->getScriptManager()->getStateFlag(_key) & Puzzle::DISABLED)
-		return;
+		return false;
 
 	if (_frameInfo[_currentFrame].hotspot.contains(backgroundImageSpacePos)) {
 		_mouseIsCaptured = true;
 		_lastMousePos = backgroundImageSpacePos;
 	}
+	return false;
 }
 
-void LeverControl::onMouseUp(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) {
+bool LeverControl::onMouseUp(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) {
 	if (_engine->getScriptManager()->getStateFlag(_key) & Puzzle::DISABLED)
-		return;
+		return false;
 
 	if (_mouseIsCaptured) {
 		_mouseIsCaptured = false;
@@ -212,6 +213,7 @@ void LeverControl::onMouseUp(const Common::Point &screenSpacePos, const Common::
 		_returnRoutesCurrentProgress = _frameInfo[_currentFrame].returnRoute.begin();
 		_returnRoutesCurrentFrame = _currentFrame;
 	}
+	return false;
 }
 
 bool LeverControl::onMouseMove(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) {

@@ -93,8 +93,9 @@ InputControl::InputControl(ZVision *engine, uint32 key, Common::SeekableReadStre
 	}
 }
 
-void InputControl::onMouseUp(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) {
+bool InputControl::onMouseUp(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) {
 	_engine->getScriptManager()->focusControl(_key);
+	return false;
 }
 
 void InputControl::onKeyDown(Common::KeyState keyState) {

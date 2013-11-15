@@ -88,8 +88,8 @@ private:
 	uint32 _accumulatedTime;
 
 public:
-	void onMouseDown(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos);
-	void onMouseUp(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos);
+	bool onMouseDown(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos);
+	bool onMouseUp(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos);
 	bool onMouseMove(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos);
 	bool process(uint32 deltaTimeInMillis);
 
