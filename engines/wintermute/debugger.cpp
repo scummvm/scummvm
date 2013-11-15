@@ -440,7 +440,7 @@ int Console::printSource(int n) {
 			DebugPrintf("Error retrieving source file\n");
 		}
 		for (uint i = 0; i < strings.size(); i++) {
-			DebugPrintf(strings[i].c_str());
+			DebugPrintf("%s", strings[i].c_str());
 			DebugPrintf("\n");
 		}
 	}
