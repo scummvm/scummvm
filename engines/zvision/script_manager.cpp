@@ -106,6 +106,17 @@ void ScriptManager::execScope(script_scope &scope) {
 	}
 }
 
+void ScriptManager::referenceTableAddPuzzle(uint32 key, puzzle_ref ref) {
+	if (_referenceTable.contains(key)) {
+		Common::Array<puzzle_ref> *arr = &_referenceTable[key];
+		for (uint32 i = 0; i < arr->size(); i++)
+			if ((*arr)[i].puz == ref.puz)
+				return;
+	}
+
+	_referenceTable[key].push_back(ref);
+}
+
 void ScriptManager::addPuzzlesToReferenceTable(script_scope &scope) {
 	// Iterate through each local Puzzle
 	for (PuzzleList::iterator PuzzleIter = scope._puzzles.begin(); PuzzleIter != scope._puzzles.end(); ++PuzzleIter) {
@@ -115,12 +126,12 @@ void ScriptManager::addPuzzlesToReferenceTable(script_scope &scope) {
 		ref.scope = &scope;
 		ref.puz = puzzlePtr;
 
-		_referenceTable[puzzlePtr->key].push_back(ref);
+		referenceTableAddPuzzle(puzzlePtr->key, ref);
 
 		// Iterate through each CriteriaEntry and add a reference from the criteria key to the Puzzle
 		for (Common::List<Common::List<Puzzle::CriteriaEntry> >::iterator criteriaIter = (*PuzzleIter)->criteriaList.begin(); criteriaIter != (*PuzzleIter)->criteriaList.end(); ++criteriaIter)
 			for (Common::List<Puzzle::CriteriaEntry>::iterator entryIter = criteriaIter->begin(); entryIter != criteriaIter->end(); ++entryIter)
-				_referenceTable[entryIter->key].push_back(ref);
+				referenceTableAddPuzzle(entryIter->key, ref);
 	}
 }
 

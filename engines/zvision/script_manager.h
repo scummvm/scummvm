@@ -236,6 +236,7 @@ public:
 	Location getCurrentLocation() const;
 
 private:
+	void referenceTableAddPuzzle(uint32 key, puzzle_ref ref);
 	void addPuzzlesToReferenceTable(script_scope &scope);
 	void updateNodes(uint deltaTimeMillis);
 	void updateControls(uint deltaTimeMillis);
