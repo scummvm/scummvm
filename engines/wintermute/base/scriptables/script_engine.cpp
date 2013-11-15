@@ -221,6 +221,15 @@ bool ScEngine::removeBreakpoint(uint id) {
 	return true;
 }
 
+bool ScEngine::removeWatchpoint(uint id) {
+	if (id >= _watchlist.size()) {
+		return false;
+	}
+	delete _watchlist[id]._lastValue;
+	_watchlist.remove_at(id);
+	return true;
+}
+
 bool ScEngine::enableBreakpoint(uint id) {
 	if (id >= _breakpoints.size()) {
 		return false;
