@@ -128,6 +128,7 @@ _taskbar=yes
 _updates=no
 _libunity=auto
 # Default option behavior yes/no
+_swapless_build=no
 _debug_build=auto
 _release_build=auto
 _optimizations=auto
@@ -1169,7 +1170,7 @@ for ac_option in $@; do
 		CXXFLAGS="$CXXFLAGS -Werror"
 		;;
 	--enable-swapless-build)
-		CXXFLAGS="$CXXFLAGS -Wl,--no-keep-memory"
+		_swapless_build=yes
 		;;
 	--enable-release-mode)
 		_release_build=yes
@@ -1782,6 +1783,15 @@ if test "$have_gcc" = yes ; then
 elif test "$have_icc" = yes ; then
 	add_line_to_config_mk 'CXX_UPDATE_DEP_FLAG = -MMD -MF "$(*D)/$(DEPDIR)/$(*F).d" -MQ "$@" -MP'
 fi;
+
+#
+# Update status about swapless build mode
+#
+echo_n "Building with options for swapless build... "
+if test "$_swapless_build" = "yes" ; then
+	CXXFLAGS="$CXXFLAGS -Wl,--no-keep-memory"
+fi
+echo $_swapless_build
 
 #
 # Update status about C++11 mode
