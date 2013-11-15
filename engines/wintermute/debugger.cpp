@@ -228,7 +228,9 @@ bool Console::Cmd_Info(int argc, const char **argv) {
 		return 1;
 	} else {
 		DebugPrintf("Usage: %s [watch|breakpoints]\n", argv[0]);
+		return 1;
 	}
+	assert(false);
 	return 0;
 }
 
