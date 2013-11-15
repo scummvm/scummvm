@@ -1785,6 +1785,35 @@ elif test "$have_icc" = yes ; then
 fi;
 
 #
+# Check for sufficient compile time memory
+#
+echo_n "Checking compile time memory... "
+if test -n "$_host"; then
+	# can't execute while cross compiling so use alternate test
+	# /proc/meminfo returns a result in kB so the awk term converts to Mb discarding the decimal fraction.
+	_compile_free_memory=`grep -i MemTotal /proc/meminfo | awk '{ print ($2-$2%1024)/1024 }'`
+else
+	cat > tmp_memory_check.cpp << EOF
+#include <unistd.h>
+#include <stdio.h>
+size_t getTotalSystemMemory() { long pages = sysconf(_SC_PHYS_PAGES); long page_size = sysconf(_SC_PAGE_SIZE); return pages * page_size; }
+int main(void) { printf("%lu\n", getTotalSystemMemory()/1024/1024); return 0; }
+EOF
+	$CXX $CXXFLAGS -o $TMPO tmp_memory_check.cpp
+	_compile_free_memory=`$TMPO`
+fi
+cc_check_clean tmp_memory_check.cpp
+echo_n $_compile_free_memory;
+echo_n " MB... "
+# We need at least 256MB for a static build with all engines...
+if test "$_compile_free_memory" -lt "256" ; then
+	echo insufficient
+	exit 1
+else
+	echo ok
+fi
+
+#
 # Update status about swapless build mode
 #
 echo_n "Building with options for swapless build... "
