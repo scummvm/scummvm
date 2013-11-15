@@ -266,10 +266,11 @@ int ScriptManager::getStateValue(uint32 key) {
 
 void ScriptManager::queuePuzzles(uint32 key) {
 	if (_referenceTable.contains(key)) {
-		for (Common::Array<puzzle_ref>::iterator iter = _referenceTable[key].begin(); iter != _referenceTable[key].end(); ++iter)
-			if (!iter->puz->addedBySetState) {
-				iter->scope->scope_queue->push_back(iter->puz);
-				iter->puz->addedBySetState = true;
+		Common::Array<puzzle_ref> *arr = &_referenceTable[key];
+		for (int32 i = arr->size() - 1; i >= 0; i--)
+			if (!(*arr)[i].puz->addedBySetState) {
+				(*arr)[i].scope->scope_queue->push_back((*arr)[i].puz);
+				(*arr)[i].puz->addedBySetState = true;
 			}
 	}
 }
