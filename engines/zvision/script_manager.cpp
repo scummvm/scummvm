@@ -392,28 +392,31 @@ void ScriptManager::killSideFxType(SideFX::SideFXType type) {
 void ScriptManager::onMouseDown(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) {
 	if (!_activeControls)
 		return;
-	for (ControlList::iterator iter = _activeControls->begin(); iter != _activeControls->end(); ++iter) {
-		(*iter)->onMouseDown(screenSpacePos, backgroundImageSpacePos);
+	for (ControlList::iterator iter = _activeControls->reverse_begin(); iter != _activeControls->end(); iter--) {
+		if ((*iter)->onMouseDown(screenSpacePos, backgroundImageSpacePos))
+			return;
 	}
 }
 
 void ScriptManager::onMouseUp(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) {
 	if (!_activeControls)
 		return;
-	for (ControlList::iterator iter = _activeControls->begin(); iter != _activeControls->end(); ++iter) {
-		(*iter)->onMouseUp(screenSpacePos, backgroundImageSpacePos);
+	for (ControlList::iterator iter = _activeControls->reverse_begin(); iter != _activeControls->end(); iter--) {
+		if ((*iter)->onMouseUp(screenSpacePos, backgroundImageSpacePos))
+			return;
 	}
 }
 
 bool ScriptManager::onMouseMove(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) {
 	if (!_activeControls)
 		return false;
-	bool cursorWasChanged = false;
-	for (ControlList::iterator iter = _activeControls->begin(); iter != _activeControls->end(); ++iter) {
-		cursorWasChanged = cursorWasChanged || (*iter)->onMouseMove(screenSpacePos, backgroundImageSpacePos);
+
+	for (ControlList::iterator iter = _activeControls->reverse_begin(); iter != _activeControls->end(); iter--) {
+		if ((*iter)->onMouseMove(screenSpacePos, backgroundImageSpacePos))
+			return true;
 	}
 
-	return cursorWasChanged;
+	return false;
 }
 
 void ScriptManager::onKeyDown(Common::KeyState keyState) {
