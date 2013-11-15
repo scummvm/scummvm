@@ -35,7 +35,6 @@ Console::Console(WintermuteEngine *vm) : GUI::Debugger() {
 
 	DCmd_Register("show_fps", WRAP_METHOD(Console, Cmd_ShowFps));
 	DCmd_Register("dump_file", WRAP_METHOD(Console, Cmd_DumpFile));
-	DCmd_Register("del", WRAP_METHOD(Console, Cmd_RemoveBreakpoint));
 	DCmd_Register("next", WRAP_METHOD(Console, Cmd_StepOver));
 	DCmd_Register("step", WRAP_METHOD(Console, Cmd_StepInto));
 	DCmd_Register("continue", WRAP_METHOD(Console, Cmd_Continue));
@@ -43,8 +42,10 @@ Console::Console(WintermuteEngine *vm) : GUI::Debugger() {
 	DCmd_Register("watch", WRAP_METHOD(Console, Cmd_Watch));
 	DCmd_Register("break", WRAP_METHOD(Console, Cmd_AddBreakpoint));
 	DCmd_Register("list", WRAP_METHOD(Console, Cmd_List));
+	DCmd_Register("del", WRAP_METHOD(Console, Cmd_RemoveBreakpoint));
 	DCmd_Register("disable", WRAP_METHOD(Console, Cmd_DisableBreakpoint));
 	DCmd_Register("enable", WRAP_METHOD(Console, Cmd_EnableBreakpoint));
+	DCmd_Register("delw", WRAP_METHOD(Console, Cmd_RemoveWatchpoint));	
 	DCmd_Register("disablew", WRAP_METHOD(Console, Cmd_DisableWatchpoint));
 	DCmd_Register("enablew", WRAP_METHOD(Console, Cmd_EnableWatchpoint));
 	DCmd_Register("print", WRAP_METHOD(Console, Cmd_Print));
@@ -130,6 +131,22 @@ bool Console::Cmd_DisableBreakpoint(int argc, const char **argv) {
 	} else {
 		DebugPrintf("Usage: %s <id> to disable\n", argv[0]);
 	}
+	return true;
+}
+
+bool Console::Cmd_RemoveWatchpoint(int argc, const char **argv) {
+	if (argc == 2) {
+		int error = ADAPTER->removeWatchpoint(atoi(argv[1]));
+		if (!error) {
+			DebugPrintf("%s: OK\n", argv[0]);
+		} else if (error == DebuggerAdapter::NO_SUCH_BREAKPOINT) {
+			Common::String msg = Common::String::format("no such breakpoint %d\n", atoi(argv[1]));
+			debugWarning(argv[0], ERROR, msg);
+		}
+	} else {
+		DebugPrintf("Usage: %s <file path> <line> to break at line <line> of file <file path>\n", argv[0]);
+	}
+
 	return true;
 }
 

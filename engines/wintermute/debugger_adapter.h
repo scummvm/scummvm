@@ -131,7 +131,7 @@ public:
 	int addWatch(const char *filename, const char *symbol);
 	int addBreakpoint(const char *filename, int line);
 	int isBreakpointLegal(const char *filename, int line);
-	int removeWatch(int id);
+	int removeWatchpoint(int id);
 	int removeBreakpoint(int id);
 	int disableBreakpoint(int id);
 	int enableBreakpoint(int id);

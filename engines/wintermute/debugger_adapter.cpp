@@ -229,6 +229,16 @@ int DebuggerAdapter::enableBreakpoint(int id) {
 	}
 }
 
+int DebuggerAdapter::removeWatchpoint(int id) {
+	assert(SCENGINE);
+
+	if (SCENGINE->removeWatchpoint(id)) {
+		return OK;
+	} else {
+		return NO_SUCH_BREAKPOINT;
+	}
+}
+
 
 int DebuggerAdapter::disableWatchpoint(int id) {
 	assert(SCENGINE);
