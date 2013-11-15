@@ -91,7 +91,8 @@ ScEngine::~ScEngine() {
 
 
 ScEngine::ScWatch::~ScWatch() {
-	delete _lastValue;
+	// be careful to delete _lastValue manually
+	// to prevent leaks 
 }
 
 
