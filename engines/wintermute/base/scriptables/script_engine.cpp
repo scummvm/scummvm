@@ -173,10 +173,10 @@ ScScript *ScEngine::runScript(const char *filename, BaseScriptHolder *owner) {
 }
 
 bool ScEngine::addWatch(const char *filename, const char *name) {
-	ScWatch watch = ScWatch(filename);
-	watch._symbol = name;
-	watch._lastValue = new ScValue(_gameRef);
-	_watchlist.insert_at(_watchlist.size(), watch);
+	ScWatch *watch = new ScWatch(filename);
+	watch->_symbol = name;
+	watch->_lastValue = new ScValue(_gameRef);
+	_watchlist.insert_at(_watchlist.size(), *watch);
 	refreshWatchlist();
 	return false;
 }
