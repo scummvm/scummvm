@@ -280,7 +280,7 @@ void ScriptManager::setStateValue(uint32 key, int value) {
 		_globalState.erase(key);
 	else
 		_globalState[key] = value;
-	debug("setStateValue %d %d\n", key , value);
+
 	queuePuzzles(key);
 }
 
