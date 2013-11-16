@@ -1061,8 +1061,9 @@ bool Scene2350::Balloon::startAction(CursorType action, Event &event) {
 
 void Scene2350::ExitUp::changeScene() {
 	Scene2350 *scene = (Scene2350 *)R2_GLOBALS._sceneManager._scene;
+	_enabled = false;
 
-	R2_GLOBALS._player.disableControl(CURSOR_CROSSHAIRS);
+	R2_GLOBALS._player.disableControl(CURSOR_WALK);
 	scene->_sceneMode = 12;
 	if (R2_GLOBALS._player._characterIndex == R2_QUINN)
 		scene->setAction(&scene->_sequenceManager, scene, 2350, &R2_GLOBALS._player, NULL);
@@ -1139,7 +1140,7 @@ void Scene2350::postInit(SceneObjectList *OwnerList) {
 	R2_GLOBALS._player.disableControl();
 
 	if (R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] == 2000) {
-		if (R2_GLOBALS._spillLocation[R2_GLOBALS._player._characterIndex] == 34) {
+		if (R2_GLOBALS._spillLocation[R2_GLOBALS._player._characterIndex] != 34) {
 			if (R2_GLOBALS._player._characterIndex == R2_QUINN)
 				_sceneMode = 2351;
 			else
@@ -1199,17 +1200,6 @@ void Scene2350::signal() {
 		R2_GLOBALS._player.enableControl();
 		break;
 	}
-}
-
-void Scene2350::process(Event &event) {
-	if ((R2_GLOBALS._player._canWalk) && (event.eventType != EVENT_BUTTON_DOWN) &&
-			(R2_GLOBALS._events.getCursor() == CURSOR_CROSSHAIRS)){
-		Common::Point pt(event.mousePos.x, 129);
-		PlayerMover *mover = new PlayerMover();
-		R2_GLOBALS._player.addMover(mover, &pt);
-		event.handled = true;
-	}
-	Scene::process(event);
 }
 
 /*--------------------------------------------------------------------------

@@ -120,7 +120,6 @@ public:
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void remove();
 	virtual void signal();
-	virtual void process(Event &event);
 };
 
 class Scene2400 : public SceneExt {
