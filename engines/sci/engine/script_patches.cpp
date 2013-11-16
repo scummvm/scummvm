@@ -121,23 +121,23 @@ struct SciScriptPatcherSelector {
 };
 
 SciScriptPatcherSelector selectorTable[] = {
-	"cycles",            -1, // system selector
-	"seconds",           -1, // system selector
-	"init",              -1, // system selector
-	"dispose",           -1, // system selector
-	"new",               -1, // system selector
-	"curEvent",          -1, // system selector
-	"disable",           -1, // system selector
-	"show",              -1, // system selector
-	"x",                 -1, // system selector
-	"cel",               -1, // system selector
-	"setMotion",         -1, // system selector
-	"deskSarg",          -1, // Gabriel Knight
-	"localize",          -1, // Freddy Pharkas
-	"put",               -1, // Police Quest 1 VGA
-	"solvePuzzle",       -1, // Quest For Glory 3
-	"timesShownID",      -1, // Space Quest 1 VGA
-	NULL,                -1
+	{ "cycles",            -1, }, // system selector
+	{ "seconds",           -1, }, // system selector
+	{ "init",              -1, }, // system selector
+	{ "dispose",           -1, }, // system selector
+	{ "new",               -1, }, // system selector
+	{ "curEvent",          -1, }, // system selector
+	{ "disable",           -1, }, // system selector
+	{ "show",              -1, }, // system selector
+	{ "x",                 -1, }, // system selector
+	{ "cel",               -1, }, // system selector
+	{ "setMotion",         -1, }, // system selector
+	{ "deskSarg",          -1, }, // Gabriel Knight
+	{ "localize",          -1, }, // Freddy Pharkas
+	{ "put",               -1, }, // Police Quest 1 VGA
+	{ "solvePuzzle",       -1, }, // Quest For Glory 3
+	{ "timesShownID",      -1, }, // Space Quest 1 VGA
+	{ NULL,                -1 }
 };
 
 enum ScriptPatcherSelectors {
