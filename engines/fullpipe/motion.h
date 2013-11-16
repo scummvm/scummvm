@@ -303,7 +303,7 @@ struct MovInfo1 {
 	int flags;
 };
 
-struct MovGraph2Item {
+ struct MovGraph2Item { // 744
 	int _objectId;
 	StaticANIObject *_obj;
 	MovGraph2ItemSub _subItems[4];  // 184

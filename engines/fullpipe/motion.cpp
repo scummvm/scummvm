@@ -674,12 +674,14 @@ MessageQueue *MovGraph2::buildMovInfo1MessageQueue(MovInfo1 *movInfo) {
 			if (i >= movInfo->itemsCount - 2 || movInfo->items[i + 2].subIndex != 10) {
 				v12 = (char *)_items[1] + 16 * (movInfo->items[i + 1].subIndex + 8);
 				movinfo.flags = 0;
-				subidx = 8 * 93 * movInfo->field_0;
-				v15 = (MovGraph2Item *)(&v12[184 * movInfo->items[i].subIndex] + subidx);
+				subidx = 744 * movInfo->field_0;
+				v15 = (MG2I *)(&v12[184 * movInfo->items[i].subIndex] + subidx);
+
+				v15 = &_items[movInfo->field_0]->_subItems[movInfo->items[i].subIndex]
 			} else {
 				v12 = (char *)_items[1] + 16 * (movInfo->items[i + 1].subIndex + 4);
 				movinfo.flags = 2;
-				subidx = 8 * 93 * movInfo->field_0;
+				subidx = 744 * movInfo->field_0;
 				v15 = (MovGraph2Item *)(&v12[184 * movInfo->items[i].subIndex] + subidx);
 			}
 			if (i < movInfo->itemsCount - 2
@@ -690,7 +692,7 @@ MessageQueue *MovGraph2::buildMovInfo1MessageQueue(MovInfo1 *movInfo) {
 				 || movInfo->items[i + 1].x == -1
 				 || movInfo->items[i + 1].y == -1) {
 
-				ExCommand *ex = new ExCommand(_items[1][movInfo->field_0].objectId, 1, v15->_objectId, 0, 0, 0, 1, 0, 0, 0);
+				ExCommand *ex = new ExCommand(_items[1][movInfo->field_0].objectId, 1, v15->_movementId, 0, 0, 0, 1, 0, 0, 0);
 
 				ex->_excFlags |= 2;
 				ex->_keyCode = _items[1][movInfo->field_0].obj->GameObject.okeyCode;
@@ -698,13 +700,13 @@ MessageQueue *MovGraph2::buildMovInfo1MessageQueue(MovInfo1 *movInfo) {
 				ex->_field_14 = -1;
 				mq->_exCommands.push_back(ex);
 
-				curX += v15->_subItems[0].staticsId2;
-				curY += v15->_subItems[0].staticsId1;
+				curX += v15->_mx;
+				curY += v15->_my;
 			} else {
 				memset(mgminfo, 0, sizeof(mgminfo));
 
 				mgminfo.ani = *(StaticANIObject **)((char *)&this->items[1]->obj + subidx);
-				mgminfo.staticsId2 = v15->obj->staticsObj2->staticsId;
+				mgminfo.staticsId2 = v15->_mov->staticsObj2->staticsId;
 				mgminfo.x1 = movInfo->items[i + 1].x;
 				mgminfo.y1 = movInfo->items[i + 1].y;
 				mgminfo.field_1C = movInfo->items[i + 1].field_C;
@@ -714,7 +716,7 @@ MessageQueue *MovGraph2::buildMovInfo1MessageQueue(MovInfo1 *movInfo) {
 				mgminfo.y2 = movInfo->items[i].y;
 				mgminfo.field_10 = 1;
 				mgminfo.flags = 0x7f;
-				mgminfo.movementId = v15->_objectId;
+				mgminfo.movementId = v15->_movementId;
 
 				MessageQueue *mq2 = (MessageQueue *)MGM_sub_445330((MGM *)&this->movGraph.mgm, &mgminfo);
 				mq->transferExCommands(mq2);
