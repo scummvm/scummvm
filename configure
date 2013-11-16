@@ -128,6 +128,7 @@ _taskbar=yes
 _updates=no
 _libunity=auto
 # Default option behavior yes/no
+_ramcheck=yes
 _swapless_build=no
 _debug_build=auto
 _release_build=auto
@@ -889,6 +890,7 @@ Optional Features:
   --enable-c++11           build as C++11 if the compiler allows that
   --disable-debug          disable building with debugging symbols
   --enable-Werror          treat warnings as errors
+  --disable-ramcheck       bypass check for sufficient RAM to compile
   --enable-swapless-build  enable options to help avoid out of memory errors
                            when building on swapless RAM-constrained platforms
   --enable-release         enable building in release mode (this activates
@@ -1168,6 +1170,9 @@ for ac_option in $@; do
 		;;
 	--enable-Werror)
 		CXXFLAGS="$CXXFLAGS -Werror"
+		;;
+	--disable-ramcheck)
+		_ramcheck=no
 		;;
 	--enable-swapless-build)
 		_swapless_build=yes
@@ -1788,29 +1793,33 @@ fi;
 # Check for sufficient compile time memory
 #
 echo_n "Checking compile time memory... "
-if test -n "$_host"; then
-	# can't execute while cross compiling so use alternate test
-	# /proc/meminfo returns a result in kB so the awk term converts to Mb discarding the decimal fraction.
-	_compile_free_memory=`grep -i MemTotal /proc/meminfo | awk '{ print ($2-$2%1024)/1024 }'`
-else
-	cat > tmp_memory_check.cpp << EOF
+if test "$_ramcheck" = yes ; then
+	if test -n "$_host"; then
+		# can't execute while cross compiling so use alternate test
+		# /proc/meminfo returns a result in kB so the awk term converts to Mb discarding the decimal fraction.
+		_compile_free_memory=`grep -i MemTotal /proc/meminfo | awk '{ print ($2-$2%1024)/1024 }'`
+	else
+		cat > tmp_memory_check.cpp << EOF
 #include <unistd.h>
 #include <stdio.h>
 size_t getTotalSystemMemory() { long pages = sysconf(_SC_PHYS_PAGES); long page_size = sysconf(_SC_PAGE_SIZE); return pages * page_size; }
 int main(void) { printf("%lu\n", getTotalSystemMemory()/1024/1024); return 0; }
 EOF
-	$CXX $CXXFLAGS -o $TMPO tmp_memory_check.cpp
-	_compile_free_memory=`$TMPO`
-fi
-cc_check_clean tmp_memory_check.cpp
-echo_n $_compile_free_memory;
-echo_n " MB... "
-# We need at least 256MB for a static build with all engines...
-if test "$_compile_free_memory" -lt "256" ; then
-	echo insufficient
-	exit 1
+		$CXX $CXXFLAGS -o $TMPO tmp_memory_check.cpp
+		_compile_free_memory=`$TMPO`
+	fi
+	cc_check_clean tmp_memory_check.cpp
+	echo_n $_compile_free_memory;
+	echo_n " MB... "
+	# We need at least 256MB for a static build with all engines...
+	if test "$_compile_free_memory" -lt "256" ; then
+		echo insufficient
+		exit 1
+	else
+		echo ok
+	fi
 else
-	echo ok
+	echo skipped
 fi
 
 #
