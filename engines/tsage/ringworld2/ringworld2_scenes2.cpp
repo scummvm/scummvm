@@ -4337,7 +4337,7 @@ void Scene2800::Action2::signal() {
 		R2_GLOBALS._player.animate(ANIM_MODE_1, NULL);
 		R2_GLOBALS._player.setObjectWrapper(new SceneObjectWrapper());
 
-		Common::Point pt(100, 64);
+		Common::Point pt(64, 100);
 		NpcMover *mover = new NpcMover();
 		R2_GLOBALS._player.addMover(mover, &pt, this);
 		break;
