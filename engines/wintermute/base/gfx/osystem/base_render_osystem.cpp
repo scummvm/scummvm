@@ -431,7 +431,7 @@ void BaseRenderOSystem::drawFromTicket(RenderTicket *renderTicket) {
 }
 
 void BaseRenderOSystem::addDirtyRect(const Common::Rect &rect) {
-	_dirtyRects->addDirtyRect(rect, &_renderRect);
+	_dirtyRects->addDirtyRect(rect, _renderRect);
 }
 
 void BaseRenderOSystem::drawTickets() {

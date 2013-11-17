@@ -41,16 +41,15 @@ DirtyRectContainer::~DirtyRectContainer() {
 	delete _clipRect;
 }
 
-void DirtyRectContainer::addDirtyRect(const Common::Rect &rect, const Common::Rect *clipRect) {
+void DirtyRectContainer::addDirtyRect(const Common::Rect &rect, const Common::Rect &clipRect) {
 	// TODO: Ignore 0-size rects?
 	// TODO: Maybe check if really big (like == viewport)
 	// and avoid the whole dance altogether.
 
-	assert(clipRect != nullptr);
 	if (_clipRect == nullptr) {
-		_clipRect = new Common::Rect(*clipRect);
+		_clipRect = new Common::Rect(clipRect);
 	} else {
-		assert(clipRect->equals(*_clipRect));
+		assert(clipRect.equals(*_clipRect));
 	}
 
 
@@ -65,7 +64,7 @@ void DirtyRectContainer::addDirtyRect(const Common::Rect &rect, const Common::Re
 		Common::Rect *tmp = new Common::Rect(rect);
 		_disableDirtyRects = false;
 		_rectArray.insert_at(target, tmp);
-		_rectArray[target]->clip(*clipRect);
+		_rectArray[target]->clip(clipRect);
 	}
 
 }

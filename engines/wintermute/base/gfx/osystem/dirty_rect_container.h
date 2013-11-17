@@ -46,7 +46,7 @@ public:
 	 * ignoring the rect altoegether (e.g. if a subset of an existing one)
 	 * or disabling dirtyrects altogether.
 	 */
-	void addDirtyRect(const Common::Rect &rect, const Common::Rect *clipRect);
+	void addDirtyRect(const Common::Rect &rect, const Common::Rect &clipRect);
 	/** 
 	 * resets the DirtyRectContainer
 	 */
