@@ -311,7 +311,7 @@ struct MovInfo1 {
 
 class MovGraph2 : public MovGraph {
 public:
-	Common::Array<MovGraph2Item *> _items;
+	Common::Array<MovGraph2Item *> _items2;
 
 public:
 	virtual void addObject(StaticANIObject *obj);

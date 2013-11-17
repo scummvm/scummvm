@@ -371,8 +371,8 @@ void MovGraph::calcNodeDistancesAndAngles() {
 }
 
 int MovGraph2::getItemIndexByGameObjectId(int objectId) {
-	for (uint i = 0; i < _items.size(); i++)
-		if (_items[i]->_objectId == objectId)
+	for (uint i = 0; i < _items2.size(); i++)
+		if (_items2[i]->_objectId == objectId)
 			return i;
 
 	return -1;
@@ -380,7 +380,7 @@ int MovGraph2::getItemIndexByGameObjectId(int objectId) {
 
 int MovGraph2::getItemSubIndexByStaticsId(int idx, int staticsId) {
 	for (int i = 0; i < 4; i++)
-		if (_items[idx]->_subItems[i]._staticsId1 == staticsId || _items[idx]->_subItems[i]._staticsId2 == staticsId)
+		if (_items2[idx]->_subItems[i]._staticsId1 == staticsId || _items2[idx]->_subItems[i]._staticsId2 == staticsId)
 			return i;
 
 	return -1;
@@ -388,8 +388,8 @@ int MovGraph2::getItemSubIndexByStaticsId(int idx, int staticsId) {
 
 int MovGraph2::getItemSubIndexByMovementId(int idx, int movId) {
 	for (int i = 0; i < 4; i++)
-		if (_items[idx]->_subItems[i]._walk[0]._movementId == movId || _items[idx]->_subItems[i]._turn[0]._movementId == movId ||
-			_items[idx]->_subItems[i]._turnS[0]._movementId == movId)
+		if (_items2[idx]->_subItems[i]._walk[0]._movementId == movId || _items2[idx]->_subItems[i]._turn[0]._movementId == movId ||
+			_items2[idx]->_subItems[i]._turnS[0]._movementId == movId)
 			return i;
 
 	return -1;
@@ -536,12 +536,12 @@ void MovGraph2::addObject(StaticANIObject *obj) {
 	int id = getItemIndexByGameObjectId(obj->_id);
 
 	if (id >= 0) {
-		_items[id]->_obj = obj;
+		_items2[id]->_obj = obj;
 	} else {
 		MovGraph2Item *item = new MovGraph2Item;
 
 		if (initDirections(obj, item)) {
-			_items.push_back(item);
+			_items2.push_back(item);
 		} else {
 			delete item;
 		}
@@ -672,14 +672,14 @@ MessageQueue *MovGraph2::buildMovInfo1MessageQueue(MovInfo1 *movInfo) {
 	for (int i = 0; i < movInfo->_itemsCount - 1; i++) {
 		if (movInfo->items[i + 1].subIndex != 10) {
 			if (i >= movInfo->itemsCount - 2 || movInfo->items[i + 2].subIndex != 10) {
-				v12 = (char *)_items[1] + 16 * (movInfo->items[i + 1].subIndex + 8);
+				v12 = (char *)_items[0] + 16 * (movInfo->items[i + 1].subIndex + 8);
 				movinfo.flags = 0;
 				subidx = 744 * movInfo->field_0;
 				v15 = (MG2I *)(&v12[184 * movInfo->items[i].subIndex] + subidx);
 
 				v15 = &_items[movInfo->field_0]->_subItems[movInfo->items[i].subIndex]
 			} else {
-				v12 = (char *)_items[1] + 16 * (movInfo->items[i + 1].subIndex + 4);
+				v12 = (char *)_items[0] + 16 * (movInfo->items[i + 1].subIndex + 4);
 				movinfo.flags = 2;
 				subidx = 744 * movInfo->field_0;
 				v15 = (MovGraph2Item *)(&v12[184 * movInfo->items[i].subIndex] + subidx);
@@ -889,7 +889,7 @@ MessageQueue *MovGraph2::doWalkTo(StaticANIObject *obj, int xpos, int ypos, int 
 
 		if (subMgm) {
 			obj->_messageQueueId = 0;
-			obj->changeStatics2(_items[idx]->_subItems[idxsub]._staticsId1);
+			obj->changeStatics2(_items2[idx]->_subItems[idxsub]._staticsId1);
 			newx = obj->_ox;
 			newy = obj->_oy;
 		} else {
@@ -924,7 +924,7 @@ MessageQueue *MovGraph2::doWalkTo(StaticANIObject *obj, int xpos, int ypos, int 
 				return 0;
 			}
 
-			ExCommand *ex = new ExCommand(picAniInfo.objectId, 1, _items[idx]->_subItems[idxsub]._walk[idxwalk]._movementId, 0, 0, 0, 1, 0, 0, 0);
+			ExCommand *ex = new ExCommand(picAniInfo.objectId, 1, _items2[idx]->_subItems[idxsub]._walk[idxwalk]._movementId, 0, 0, 0, 1, 0, 0, 0);
 
 			ex->_field_24 = 1;
 			ex->_keyCode = picAniInfo.field_8;
@@ -1039,7 +1039,7 @@ MessageQueue *MovGraph2::doWalkTo(StaticANIObject *obj, int xpos, int ypos, int 
 
 	movInfo1.flags = fuzzyMatch != 0;
 
-	if (_items[idx]->_subItems[idxsub]._staticsId1 != obj->_statics->_staticsId)
+	if (_items2[idx]->_subItems[idxsub]._staticsId1 != obj->_statics->_staticsId)
 		movInfo1.flags |= 2;
 
 	buildMovInfo1SubItems(&movInfo1, &tempLinkList, &linkInfoSource, &linkInfoDest);
@@ -1066,7 +1066,7 @@ MessageQueue *MovGraph2::doWalkTo(StaticANIObject *obj, int xpos, int ypos, int 
 				ex->_excFlags |= 2;
 				mq->addExCommand(ex);
 
-				ex = new ExCommand(picAniInfo.objectId, 22, _items[idx]->_subItems[idxsub]._staticsId1, 0, 0, 0, 1, 0, 0, 0);
+				ex = new ExCommand(picAniInfo.objectId, 22, _items2[idx]->_subItems[idxsub]._staticsId1, 0, 0, 0, 1, 0, 0, 0);
 
 				ex->_keyCode = picAniInfo.field_8;
 				ex->_excFlags |= 3;
