@@ -78,7 +78,7 @@ public:
 class MctlCompoundArrayItem : public CObject {
 	friend class MctlCompound;
 
-  protected:
+protected:
 	MotionController *_motionControllerObj;
 	MovGraphReact *_movGraphReactObj;
 	Common::Array<MctlConnectionPoint *> _connectionPoints;
@@ -86,7 +86,7 @@ class MctlCompoundArrayItem : public CObject {
 	int _field_24;
 	int _field_28;
 
- public:
+public:
 	MctlCompoundArrayItem() : _movGraphReactObj(0), _motionControllerObj(0), _field_20(0), _field_24(0), _field_28(0) {}
 };
 
@@ -134,6 +134,19 @@ struct MGMItem {
 	MGMItem();
 };
 
+struct MGMInfo {
+	StaticANIObject *ani;
+	int staticsId1;
+	int staticsId2;
+	int movementId;
+	int field_10;
+	int x1;
+	int y1;
+	int field_1C;
+	int x2;
+	int y2;
+	int flags;
+};
 
 class MGM : public CObject {
 public:
@@ -144,6 +157,8 @@ public:
 	void addItem(int objId);
 	void rebuildTables(int objId);
 	int getItemIndexById(int objId);
+
+	MessageQueue *genMovement(MGMInfo *mgminfo);
 };
 
 class MovGraphNode : public CObject {
@@ -232,7 +247,7 @@ struct MovGraphItem {
 };
 
 class MovGraph : public MotionController {
- public:
+public:
 	ObList _nodes;
 	ObList _links;
 	int _field_44;
@@ -240,7 +255,7 @@ class MovGraph : public MotionController {
 	int (*_callback1)(int, int, int);
 	MGM _mgm;
 
- public:
+public:
 	MovGraph();
 	virtual bool load(MfcArchive &file);
 
@@ -303,7 +318,7 @@ struct MovInfo1 {
 	int flags;
 };
 
- struct MovGraph2Item { // 744
+struct MovGraph2Item { // 744
 	int _objectId;
 	StaticANIObject *_obj;
 	MovGraph2ItemSub _subItems[4];  // 184
@@ -336,6 +351,8 @@ public:
 	MovGraphLink *findLink1(int x, int y, int idx, int fuzzyMatch);
 	MovGraphLink *findLink2(int x, int y);
 	double findMinPath(LinkInfo *linkInfoSource, LinkInfo *linkInfoDest, Common::Array<MovGraphLink *> *listObj);
+
+	MessageQueue *genMovement(MovInfo1 *movinfo);
 };
 
 class MctlConnectionPoint : public CObject {

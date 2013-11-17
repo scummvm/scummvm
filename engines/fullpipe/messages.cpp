@@ -201,6 +201,19 @@ MessageQueue::MessageQueue() {
 	_flag1 = 0;
 }
 
+MessageQueue::MessageQueue(int dataId) {
+	_field_14 = 0;
+	_parId = 0;
+	_dataId = dataId;
+	_id = g_fullpipe->_globalMessageQueueList->compact();
+	_isFinished = 0;
+	_flags = 0;
+	_queueName = 0;
+	_counter = 0;
+	_field_38 = 0;
+	_flag1 = 0;
+}
+
 MessageQueue::MessageQueue(MessageQueue *src, int parId, int field_38) {
 	_counter = 0;
 	_field_38 = (field_38 == 0);
