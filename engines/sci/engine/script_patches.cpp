@@ -1738,6 +1738,65 @@ SciScriptPatcherEntry sq1vgaSignatures[] = {
 	{     58, "Sarien armory droid zapping ego first time",  1, 0, 0, sq1vgaSignatureEgoShowsCard,                sq1vgaPatchEgoShowsCard },
 	SCI_SIGNATUREENTRY_TERMINATOR};
 
+// ===========================================================================
+// The toolbox in sq5 is buggy. When you click on the upper part of the "put
+//  in inventory"-button (some items only - for example the hole puncher - at the
+//  upper left), points will get awarded correctly and the item will get put into
+//  the player's inventory, but you will then get a "not here" message and the
+//  item will also remain to be the current mouse cursor.
+// The bug report also says that items may get lost. I wasn't able to reproduce
+//  that part.
+// This is caused by the mouse-click event getting reprocessed (which wouldn't
+//  be a problem by itself) and during this reprocessing coordinates are not
+//  processed the same as during the first click (script 226 includes a local
+//  subroutine, which checks coordinates in a hardcoded way w/o port-adjustment).
+// Because of this, the hotspot for the button is lower than it should be, which
+//  then results in the game thinking that the user didn't click on the button
+//  and also results in the previously mentioned message.
+// This happened in Sierra SCI as well (of course).
+// We fix it by combining state 0 + 1 of takeTool::changeState and so stopping
+//  the event to get reprocessed. This was the only way possible, because everything
+//  else is done in SCI system scripts and I don't want to touch those.
+// Applies to at least: English/German/French PC floppy
+// Responsible method: takeTool::changeState
+// Fixes bug #6457
+const uint16 sq5SignatureToolboxFix[] = {
+	0x31, 0x13,                    // bnt [check for state 1]
+	SIG_MAGICDWORD,
+	0x38, SIG_UINT16 + 0xaa, 0x00, // pushi 00aa
+	0x39, 0x05,                    // pushi 05
+	0x39, 0x16,                    // pushi 16
+	0x76,                          // push0
+	0x39, 0x03,                    // pushi 03
+	0x76,                          // push0
+	0x7c,                          // pushSelf
+	0x81, 0x5b,                    // lag 5b
+	0x4a, 0x0e,                    // send 0e
+	0x32, SIG_UINT16 + 0x88, 0x00, // jmp [end-of-method]
+	0x3c,                          // dup
+	0x35, 0x01,                    // ldi 01
+	0x1a,                          // eq?
+	0x31, 0x28,                    // bnt [check for state 2]
+	SIG_END
+};
+
+const uint16 sq5PatchToolboxFix[] = {
+	0x31, 0x41,                    // bnt [check for state 2]
+	PATCH_ADDTOOFFSET +16,         // skip to jmp offset
+	0x35, 0x01,                    // ldi 01
+	0x65, 0x14,                    // aTop [state]
+	0x36, 0x00, 0x00,              // ldi 0000 (waste 3 bytes)
+	0x35, 0x00,                    // ldi 00 (waste 2 bytes)
+	PATCH_END
+};
+
+//    script, description,                                            signature                        patch
+SciScriptPatcherEntry sq5Signatures[] = {
+	{    226, "toolbox fix",                                 1, 0, 0, sq5SignatureToolboxFix,          sq5PatchToolboxFix },
+	SCI_SIGNATUREENTRY_TERMINATOR
+};
+
+
 // will actually patch previously found signature area
 void Script::patcherApplyPatch(const SciScriptPatcherEntry *patchEntry, byte *scriptData, const uint32 scriptSize, int32 signatureOffset, const bool isMacSci11) {
 	const uint16 *patchData = patchEntry->patchData;
@@ -2131,6 +2190,9 @@ void Script::patcherProcessScript(uint16 scriptNr, byte *scriptData, const uint3
 		break;
 	case GID_SQ4:
 		signatureTable = sq4Signatures;
+		break;
+	case GID_SQ5:
+		signatureTable = sq5Signatures;
 		break;
 	default:
 		break;
