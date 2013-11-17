@@ -683,6 +683,7 @@ bool Scene1100::Seeker::startAction(CursorType action, Event &event) {
 	Scene1100 *scene = (Scene1100 *)R2_GLOBALS._sceneManager._scene;
 
 	if (R2_GLOBALS.getFlag(52)) {
+		// The trouper is dead
 		R2_GLOBALS._player.disableControl();
 		if (R2_GLOBALS._player._characterIndex == R2_QUINN)
 			scene->_nextStripNum = 327;
@@ -691,6 +692,7 @@ bool Scene1100::Seeker::startAction(CursorType action, Event &event) {
 		scene->_sceneMode = 53;
 		scene->setAction(&scene->_sequenceManager1, scene, 1122, &R2_GLOBALS._player, NULL);
 	} else {
+		// The trouper is not dead
 		R2_GLOBALS._player.disableControl();
 		scene->_sceneMode = 55;
 		if (R2_GLOBALS._stripModifier >= 3) {
@@ -716,6 +718,7 @@ bool Scene1100::Trooper::startAction(CursorType action, Event &event) {
 	switch (action) {
 	case R2_NEGATOR_GUN:
 		if (_visage == 1105) {
+			// Trooper wears the stasis shield
 			R2_GLOBALS._player.disableControl();
 			scene->_sceneMode = 1114;
 			scene->setAction(&scene->_sequenceManager1, scene, 1114, &R2_GLOBALS._player, &scene->_trooper, NULL);
@@ -728,6 +731,7 @@ bool Scene1100::Trooper::startAction(CursorType action, Event &event) {
 	// No break on purpose
 	case R2_PHOTON_STUNNER:
 		if (_visage == 1105) {
+			// If trooper wears the stasis shield
 			R2_GLOBALS._player.disableControl();
 			if (R2_GLOBALS._player._characterIndex == R2_QUINN) {
 				scene->_sceneMode = 1112;
@@ -738,6 +742,7 @@ bool Scene1100::Trooper::startAction(CursorType action, Event &event) {
 			}
 			return true;
 		} else if (_strip == 2) {
+			// Trooper wears his black uniform
 			R2_GLOBALS._player.disableControl();
 			scene->_sceneMode = 1113;
 			if (R2_GLOBALS._player._characterIndex == R2_QUINN) {
@@ -757,7 +762,9 @@ bool Scene1100::Trooper::startAction(CursorType action, Event &event) {
 }
 
 bool Scene1100::Chief::startAction(CursorType action, Event &event) {
+	// CHECKME: Flag 54 is never set. Guess: the flag means "Chief is dead"
 	if ((action == CURSOR_TALK) && (!R2_GLOBALS.getFlag(54)) && (R2_GLOBALS.getFlag(52))) {
+		// Talk to chief after the trooper dies
 		Scene1100 *scene = (Scene1100 *)R2_GLOBALS._sceneManager._scene;
 
 		scene->_nextStripNum = 0;
@@ -842,6 +849,7 @@ void Scene1100::postInit(SceneObjectList *OwnerList) {
 			_chief.setDetails(1100, 3, -1, -1, 1, (SceneItem *) NULL);
 
 		_trooper.postInit();
+		// Trooper wears his stasis shield
 		_trooper.setup(1105, 3, 1);
 		_trooper.setPosition(Common::Point(312, 165));
 		_trooper._numFrames = 5;
@@ -900,8 +908,10 @@ void Scene1100::postInit(SceneObjectList *OwnerList) {
 	} else {
 		_cloud.setPosition(Common::Point(180, 30));
 		if (R2_GLOBALS.getFlag(52))
+			// Trooper is dead
 			R2_GLOBALS._sound1.play(98);
 		else
+			// Trooper is alive
 			R2_GLOBALS._sound1.play(95);
 
 		R2_GLOBALS._player.postInit();
@@ -910,6 +920,7 @@ void Scene1100::postInit(SceneObjectList *OwnerList) {
 		_seeker.postInit();
 
 		if (R2_GLOBALS.getFlag(52)) {
+			// Trooper is dead
 			if (R2_GLOBALS._player._characterIndex == R2_QUINN) {
 				R2_GLOBALS._player.setup(19, 7, 1);
 				_seeker.setup(29, 6, 1);
@@ -921,6 +932,7 @@ void Scene1100::postInit(SceneObjectList *OwnerList) {
 			_seeker.setPosition(Common::Point(237, 134));
 			R2_GLOBALS._player.enableControl();
 		} else {
+			// Trooper is alive
 			if (R2_GLOBALS._player._characterIndex == R2_QUINN) {
 				R2_GLOBALS._player.setup(1107, 2, 1);
 				_seeker.setup(1107, 4, 1);
@@ -952,16 +964,20 @@ void Scene1100::postInit(SceneObjectList *OwnerList) {
 			_chief.setDetails(1100, 3, -1, -1, 1, (SceneItem *) NULL);
 
 		if (!R2_GLOBALS.getFlag(52)) {
+			// If trooper is alive, initialize him
 			_trooper.postInit();
 			if (R2_GLOBALS.getFlag(53))
+				// Trooper wears his black uniform
 				_trooper.setup(1106, 2, 4);
 			else
+				// Trooper wears a stasis shield
 				_trooper.setup(1105, 4, 4);
 
 			_trooper.setPosition(Common::Point(17, 54));
 			_trooper._numFrames = 5;
 
 			if (R2_GLOBALS.getFlag(53))
+				// Trooper isn't wearing the stasis shield
 				_trooper.setDetails(1100, 28, -1, -1, 1, (SceneItem *) NULL);
 			else
 				_trooper.setDetails(1100, 22, 23, 24, 1, (SceneItem *) NULL);
@@ -1164,6 +1180,7 @@ void Scene1100::signal() {
 		R2_GLOBALS._player._canWalk = false;
 		break;
 	case 51:
+		// Trooper no longer wears a statis shield
 		R2_GLOBALS.setFlag(53);
 		_trooper.setDetails(1100, 28, -1, -1, 3, (SceneItem *) NULL);
 
@@ -1171,6 +1188,7 @@ void Scene1100::signal() {
 		R2_GLOBALS._player._canWalk = false;
 		break;
 	case 52:
+		// Trooper is shot to death
 		R2_GLOBALS._sound1.play(98);
 		R2_GLOBALS.setFlag(52);
 		R2_GLOBALS._player.disableControl();
