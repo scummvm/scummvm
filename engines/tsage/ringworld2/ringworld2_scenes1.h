@@ -784,12 +784,12 @@ class Scene1750 : public SceneExt {
 
 public:
 	NamedHotspot _background;
-	NamedHotspot _redLights;
+	NamedHotspot _redLightsDescr;
 	NamedHotspot _greenLights;
 	NamedHotspot _frontView;
 	NamedHotspot _rearView;
-	SceneActor _scannerIcon1;
-	SceneActor _redLights2;
+	SceneActor _scannerIcon;
+	SceneActor _redLights;
 	SceneActor _radarSweep;
 	SpeedSlider _speedSlider;
 	Button _forwardButton;

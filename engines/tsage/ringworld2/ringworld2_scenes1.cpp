@@ -10976,22 +10976,22 @@ void Scene1750::postInit(SceneObjectList *OwnerList) {
 	_radarSweep.fixPriority(7);
 	_radarSweep.setDetails(1750, 30, -1, -1, 1, (SceneItem *) NULL);
 
-	_scannerIcon1.postInit();
-	_scannerIcon1.setup(1750, 2, 1);
-	_scannerIcon1.setPosition(Common::Point(35, ((_rotation->_currIndex - 218) % 4) + ((R2_GLOBALS._rimLocation % 800) * 4) - 1440));
-	_scannerIcon1.fixPriority(8);
+	_scannerIcon.postInit();
+	_scannerIcon.setup(1750, 2, 1);
+	_scannerIcon.setPosition(Common::Point(35, ((_rotation->_currIndex - 218) % 4) + ((R2_GLOBALS._rimLocation % 800) * 4) - 1440));
+	_scannerIcon.fixPriority(8);
 
-	_redLights2.postInit();
-	_redLights2.setup(1750, 1, 4);
+	_redLights.postInit();
+	_redLights.setup(1750, 1, 4);
 
-	int tmpVar = ABS(_scannerIcon1._position.y - 158) / 100;
+	int tmpVar = ABS(_scannerIcon._position.y - 158) / 100;
 
 	if (tmpVar >= 8)
-		_redLights2.hide();
-	else if (_scannerIcon1._position.y <= 158)
-		_redLights2.setPosition(Common::Point(137, (tmpVar * 7) + 122));
+		_redLights.hide();
+	else if (_scannerIcon._position.y <= 158)
+		_redLights.setPosition(Common::Point(137, (tmpVar * 7) + 122));
 	else
-		_redLights2.setPosition(Common::Point(148, (tmpVar * 7) + 122));
+		_redLights.setPosition(Common::Point(148, (tmpVar * 7) + 122));
 
 	_speedSlider.setupSlider(1, 286, 143, 41, 15);
 	_speedSlider.setDetails(1750, 24, 1, -1, 1, (SceneItem *) NULL);
@@ -11021,7 +11021,7 @@ void Scene1750::postInit(SceneObjectList *OwnerList) {
 	_speed = 0;
 	_rotationSegment = ((_rotation->_currIndex - 218) / 4) % 4;
 
-	_redLights.setDetails(Rect(129, 112, 155, 175), 1750, 21, -1, -1, 1, NULL);
+	_redLightsDescr.setDetails(Rect(129, 112, 155, 175), 1750, 21, -1, -1, 1, NULL);
 	_greenLights.setDetails(Rect(93, 122, 126, 172), 1750, 15, -1, -1, 1, NULL);
 	_frontView.setDetails(Rect(3, 3, 157, 99), 1750, 9, -1, -1, 1, NULL);
 	_rearView.setDetails(Rect(162, 3, 316, 99), 1750, 12, -1, -1, 1, NULL);
@@ -11108,19 +11108,19 @@ void Scene1750::dispatch() {
 		if (_rotation->_currIndex != _newRotation) {
 			// Handle setting the position of the lift icon in the scanner display
 			_newRotation = _rotation->_currIndex;
-			_scannerIcon1.setPosition(Common::Point(35, ((_rotation->_currIndex - 218) % 4) +
+			_scannerIcon.setPosition(Common::Point(35, ((_rotation->_currIndex - 218) % 4) +
 				((R2_GLOBALS._rimLocation % 800) * 4) - 1440));
 		}
 	}
 
-	int v = ABS(_scannerIcon1._position.y - 158) / 100;
+	int v = ABS(_scannerIcon._position.y - 158) / 100;
 	if (v < 8) {
 		// Show how close the user is to the lift on the second column of lights
-		_redLights2.show();
-		_redLights2.setPosition(Common::Point((_scannerIcon1._position.y <= 158) ? 137 : 148,
+		_redLights.show();
+		_redLights.setPosition(Common::Point((_scannerIcon._position.y <= 158) ? 137 : 148,
 			v * 7 + 122));
 	} else {
-		_redLights2.hide();
+		_redLights.hide();
 	}
 }
 
