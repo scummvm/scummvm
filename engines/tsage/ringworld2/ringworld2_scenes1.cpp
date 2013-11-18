@@ -10853,11 +10853,6 @@ void Scene1750::SpeedSlider::calculateSlider() {
 	scene->_speed = scene->_direction * tmpVar2;
 }
 
-void Scene1750::SpeedSlider::remove() {
-	// Function kept to match IDA. Could be removed.
-	SceneActor::remove();
-}
-
 void Scene1750::SpeedSlider::process(Event &event) {
 	if ((event.eventType == EVENT_BUTTON_DOWN) && (R2_GLOBALS._events.getCursor() == CURSOR_USE) &&
 			(_bounds.contains(event.mousePos))) {

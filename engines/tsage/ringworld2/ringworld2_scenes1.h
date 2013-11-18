@@ -768,7 +768,6 @@ class Scene1750 : public SceneExt {
 		void setupSlider(int incrAmount, int xp, int ys, int height, int thumbHeight);
 		void calculateSlider();
 
-		virtual void remove();
 		virtual void process(Event &event);
 		virtual bool startAction(CursorType action, Event &event);
 	};
