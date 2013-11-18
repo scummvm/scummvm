@@ -45,6 +45,10 @@ public:
 	PictureObject *scene01_picSc01Osk;
 	PictureObject *scene01_picSc01Osk2;
 
+	StaticANIObject *scene02_guvTheDrawer;
+	int scene02_var1;
+	bool scene02_boxOpen;
+
 	StaticANIObject *scene03_eggeater;
 	StaticANIObject *scene03_domino;
 

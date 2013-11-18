@@ -27,6 +27,7 @@ namespace Fullpipe {
 
 #define ANI_BOOT_1 4231
 #define ANI_DOMINO_3 2732
+#define ANI_DADAYASHIK 306
 #define ANI_EGGEATER 334
 #define ANI_IN1MAN 5110
 #define ANI_INV_COIN 875
@@ -38,6 +39,7 @@ namespace Fullpipe {
 #define ANI_INV_MAP 5321
 #define ANI_LIFTBUTTON 2751
 #define ANI_MAN 322
+#define ANI_SC2_BOX 1020
 #define MSG_CMN_WINARCADE 4778
 #define MSG_DISABLESAVES 5201
 #define MSG_ENABLESAVES 5202
@@ -185,6 +187,7 @@ namespace Fullpipe {
 #define SND_CMN_031 3516
 #define SND_CMN_070 5199
 #define SND_INTR_019 5220
+#define ST_DYAS_LIES 318
 #define ST_EGTR_MID1 2863
 #define ST_EGTR_MID2 2869
 #define ST_EGTR_SLIM 336

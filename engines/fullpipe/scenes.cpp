@@ -53,6 +53,9 @@ void scene01_fixEntrance();
 void scene01_initScene(Scene *sc, int entrance);
 int sceneHandler01(ExCommand *cmd);
 
+void scene02_initScene(Scene *sc);
+int sceneHandler02(ExCommand *ex);
+
 void scene03_setEaterState();
 int scene03_updateCursor();
 void scene03_initScene(Scene *sc);
@@ -75,6 +78,10 @@ Vars::Vars() {
 
 	scene01_picSc01Osk = 0;
 	scene01_picSc01Osk2 = 0;
+
+	scene02_guvTheDrawer = 0;
+	scene02_var1 = 0;
+	scene02_boxOpen = false;
 
 	scene03_eggeater = 0;
 	scene03_domino = 0;
@@ -207,7 +214,6 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 		_updateCursorCallback = defaultUpdateCursor;
 		break;
 
-#if 0
 	case SC_2:
 		sceneVar = _gameLoader->_gameVar->getSubVarByName("SC_2");
 		scene->preloadMovements(sceneVar);
@@ -218,7 +224,6 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 		addMessageHandler(sceneHandler02, 2);
 		_updateCursorCallback = defaultUpdateCursor;
 		break;
-#endif
 
 	case SC_3:
 		sceneVar = _gameLoader->_gameVar->getSubVarByName("SC_3");
@@ -1564,6 +1569,39 @@ int sceneHandler01(ExCommand *cmd) {
 	g_fullpipe->startSceneTrack();
 
 	return res;
+}
+
+void scene02_initScene(Scene *sc) {
+	g_vars->scene02_guvTheDrawer = sc->getStaticANIObject1ById(ANI_DADAYASHIK, -1);
+
+	if (g_fullpipe->getObjectState(sO_GuvTheDrawer) == g_fullpipe->getObjectEnumState(sO_GuvTheDrawer, sO_Sleeping)) {
+		Scene *s = g_fullpipe->_currentScene;
+
+		g_fullpipe->_currentScene = sc;
+		g_vars->scene02_guvTheDrawer->changeStatics2(ST_DYAS_LIES);
+		g_fullpipe->_currentScene = s;
+	}
+
+	g_vars->scene02_var1 = 0;
+
+	StaticANIObject *box = sc->getStaticANIObject1ById(ANI_SC2_BOX, -1);
+
+	if (box && box->_flags & 4) {
+		g_vars->scene02_boxOpen = false;
+	} else {
+		g_vars->scene02_boxOpen = true;
+		g_vars->scene02_var1 = 100 * g_fullpipe->_rnd->getRandomNumber(32767) / 0x7FFF + 150;
+	}
+
+	//Unk1_sub1(&unk1, g_fullpipe->_gameLoader->_gameVar->getSubVarByName("SC_2"));
+
+	warning("STUB: scene02_initScene()");
+}
+
+int sceneHandler02(ExCommand *ex) {
+	warning("STUB: sceneHandler02()");
+
+	return 0;
 }
 
 void scene03_initScene(Scene *sc) {
