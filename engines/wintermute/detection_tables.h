@@ -209,6 +209,22 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_TESTING,
 		GUIO0()
 	},
+	// Dead City (Czech)
+	{
+		"deadcity",
+		"",
+		{
+			// The Czech data are in data.dcp, so in this case we'll have to
+			// just detect the english version twice, to give the user a choice.
+			{"english.dcp", 0, "c591046d6de7e381d76f70e0787b2b1f", 415935},
+			{"data.dcp", 0, "7ebfd50d1a22370ed7b079bcaa631d62", 9070205},
+			AD_LISTEND
+		},
+		Common::CZ_CZE,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
 	// Dead City (English)
 	{
 		"deadcity",
