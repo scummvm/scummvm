@@ -100,6 +100,11 @@ PrinceEngine::~PrinceEngine() {
 	delete _variaTxt;
 	delete[] _talkTxt;
 	delete _graph;
+
+	for (uint32 i = 0; i < _objList.size(); ++i) {
+		delete _objList[i];
+	}
+	_objList.clear();
 }
 
 GUI::Debugger *PrinceEngine::getDebugger() {
@@ -153,9 +158,9 @@ bool loadResource(Common::Array<T> &array, const char *resourceName, bool requir
 	delete stream;
 	return true;
 }
-#if 0
+
 template <typename T>
-bool loadResource(T * array[], const char *resourceName, bool required = true) {
+bool loadResource(Common::Array<T *> &array, const char *resourceName, bool required = true) {
 	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(resourceName);
 	if (!stream) {
 		if (required)
@@ -163,14 +168,19 @@ bool loadResource(T * array[], const char *resourceName, bool required = true) {
 		return false;
 	}
 
-	T* t = new T();
-	while (t->loadFromStream(*stream))
+	// FIXME: This is stupid. Maybe loadFromStream should be helper method that returns initiailzed object
+	while (true) {	
+		T* t = new T();
+		if (!t->loadFromStream(*stream)) {
+			delete t;
+			break;
+		}
 		array.push_back(t);
+	}
 
 	delete stream;
 	return true;
 }
-#endif
 
 void PrinceEngine::init() {
 
@@ -201,6 +211,7 @@ void PrinceEngine::init() {
 	 
 	_font = new Font();
 	loadResource(_font, "all/font1.raw");
+
 	_walizkaBmp = new MhwanhDecoder();
 	loadResource(_walizkaBmp, "all/walizka");
 
@@ -226,6 +237,8 @@ void PrinceEngine::init() {
 	talkTxtStream->read(_talkTxt, _talkTxtSize);
 
 	delete talkTxtStream;
+
+	_roomBmp = new Graphics::BitmapDecoder();
 }
 
 void PrinceEngine::showLogo() {
@@ -244,21 +257,25 @@ Common::Error PrinceEngine::run() {
 
 	showLogo();
 
-//	return Common::kNoError;
-
 	mainLoop();
 
 	return Common::kNoError;
 }
 
 bool PrinceEngine::loadLocation(uint16 locationNr) {
-	_cameraX = 0;
-	_newCameraX = 0;
-	_debugger->_locationNr = locationNr;
 	debugEngine("PrinceEngine::loadLocation %d", locationNr);
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	SearchMan.remove(Common::String::format("%02d", _locationNr));
+
 	_locationNr = locationNr;
+	_debugger->_locationNr = locationNr;
+	_cameraX = 0;
+	_newCameraX = 0;
+	
+	_script->setFlagValue(Flags::CURRROOM, _locationNr);
+	_script->stopBg();
+
+	changeCursor(0);
 
 	const Common::String locationNrStr = Common::String::format("%02d", _locationNr);
 	debugEngine("loadLocation %s", locationNrStr.c_str());
@@ -269,9 +286,10 @@ bool PrinceEngine::loadLocation(uint16 locationNr) {
 
 	SearchMan.add(locationNrStr, locationArchive);
 
-	delete _roomBmp;
-	// load location background
-	_roomBmp = new Graphics::BitmapDecoder();
+	const char *musName = MusicPlayer::_musTable[MusicPlayer::_musRoomTable[locationNr]];
+	_midiPlayer->loadMidi(musName);
+
+	// load location background, replace old one
 	loadResource(_roomBmp, "room");
 	if (_roomBmp->getSurface()) {
 		_sceneWidth = _roomBmp->getSurface()->w;
@@ -280,8 +298,11 @@ bool PrinceEngine::loadLocation(uint16 locationNr) {
 	_mobList.clear();
 	loadResource(_mobList, "mob.lst", false);
 
-	const char *musName = MusicPlayer::_musTable[MusicPlayer::_musRoomTable[locationNr]];
-	_midiPlayer->loadMidi(musName);
+	for (uint32 i = 0; i < _objList.size(); ++i) {
+		delete _objList[i];
+	}
+	_objList.clear();
+	loadResource(_objList, "obj.lst", false);
 
 	return true;
 }
@@ -289,7 +310,7 @@ bool PrinceEngine::loadLocation(uint16 locationNr) {
 void PrinceEngine::changeCursor(uint16 curId) {
 	_debugger->_cursorNr = curId;
 
-	Graphics::Surface *curSurface = NULL;
+	const Graphics::Surface *curSurface = NULL;
 
 	uint16 hotspotX = 0;
 	uint16 hotspotY = 0;
@@ -591,7 +612,7 @@ void PrinceEngine::mainLoop() {
 
 		// TODO: Update all structures, animations, naks, heros etc.
 
-		//_script->step();
+		_script->step();
 		drawScreen();
 
 		// Calculate the frame delay based off a desired frame time

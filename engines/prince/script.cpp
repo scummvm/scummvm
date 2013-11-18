@@ -98,30 +98,24 @@ void Script::step() {
 }
 
 uint32 Script::step(uint32 opcodePC) {
-
 	_currentInstruction = opcodePC;
-	while (!_opcodeNF)
-	{
+
+	while (!_opcodeNF) {
 		_lastInstruction = _currentInstruction;
-		// Prepare the base debug string
-		Common::String dstr = Common::String::format("@0x%04X: ", _currentInstruction);
 
 		// Get the current opcode
 		_lastOpcode = readScript16bits();
 
-		dstr += Common::String::format("op %02d: ", _lastOpcode);
-
-		if (_lastOpcode > NUM_OPCODES)
-			error("Trying to execute unknown opcode %s", dstr.c_str());
-
-
-		//debugScript("");
+		if (_lastOpcode > NUM_OPCODES) 
+			error(
+				"Trying to execute unknown opcode @0x%04X: %02d", 
+				_currentInstruction, 
+				_lastOpcode);
 
 		// Execute the current opcode
 		OpcodeFunc op = _opcodes[_lastOpcode];
 		(this->*op)();
 		if (_opcodeNF) {
-
 			_opcodeNF = 0;
 			break;
 		}
@@ -178,68 +172,68 @@ void Script::O_SETUPPALETTE() {
 }
 
 void Script::O_INITROOM() {
-	uint16 roomId = readScript16bits();
+	uint16 roomId = readScriptValue();
 	debugScript("O_INITROOM %d", roomId);
 	_vm->loadLocation(roomId);
 	_opcodeNF = 1;
 }
 
 void Script::O_SETSAMPLE() {
-	uint16 sampleId = readScript16bits();
+	uint16 sampleId = readScriptValue();
 	int32 sampleNameOffset = readScript32bits();
-	const char * sampleName = (const char *)_code + _currentInstruction + sampleNameOffset - 4;
+	const char * sampleName = (const char *)&_code[_currentInstruction + sampleNameOffset - 4];
 	debugScript("O_SETSAMPLE %d %s", sampleId, sampleName);
 }
 
 void Script::O_FREESAMPLE() {
-	uint16 sample = readScript16bits();
+	uint16 sample = readScriptValue();
 	debugScript("O_FREESAMPLE %d", sample);
 }
 
 void Script::O_PLAYSAMPLE() {
-	uint16 sampleId = readScript16bits();
+	uint16 sampleId = readScriptValue();
 	uint16 loopType = readScript16bits();
 	debugScript("O_PLAYSAMPLE sampleId %d loopType %d", sampleId, loopType);
 	_vm->playSample(sampleId, loopType);
 }
 
 void Script::O_PUTOBJECT() {
-	uint16 roomId = readScript16bits();
-	uint16 slot = readScript16bits();
-	uint16 objectId = readScript16bits();
+	uint16 roomId = readScriptValue();
+	uint16 slot = readScriptValue();
+	uint16 objectId = readScriptValue();
 	debugScript("O_PUTOBJECT roomId %d, slot %d, objectId %d", roomId, slot, objectId);
 }
 
 void Script::O_REMOBJECT() {
-	uint16 roomId = readScript16bits();
-	uint16 objectId = readScript16bits();
+	uint16 roomId = readScriptValue();
+	uint16 objectId = readScriptValue();
 
 	debugScript("O_REMOBJECT roomId %d objectId %d", roomId, objectId);
 }
 
 void Script::O_SHOWANIM() {
-	uint16 slot = readScript16bits();
-	uint16 animId = readScript16bits();
+	uint16 slot = readScriptValue();
+	uint16 animId = readScriptValue();
 
 	debugScript("O_SHOWANIM slot %d, animId %d", slot, animId);
 }
 
 void Script::O_CHECKANIMEND() {
-	uint16 slot = readScript16bits();
-	uint16 frameId = readScript16bits();
+	uint16 slot = readScriptValue();
+	uint16 frameId = readScriptValue();
 
 	debugScript("O_CHECKANIMEND slot %d, frameId %d", slot, frameId);
 	_opcodeNF = 1;
 }
 
 void Script::O_FREEANIM() {
-	uint16 slot = readScript16bits();
+	uint16 slot = readScriptValue();
 	debugScript("O_FREEANIM slot %d", slot);
 }
 
 void Script::O_CHECKANIMFRAME() {
-	uint16 slot = readScript16bits();
-	uint16 frameId = readScript16bits();
+	uint16 slot = readScriptValue();
+	uint16 frameId = readScriptValue();
 
 	debugScript("O_CHECKANIMFRAME slot %d, frameId %d", slot, frameId);
 	_opcodeNF = 1;
@@ -253,15 +247,15 @@ void Script::O_PUTBACKANIM() {
 }
 
 void Script::O_REMBACKANIM() {
-	uint16 roomId = readScript16bits();
-	uint16 slot = readScript16bits();
+	uint16 roomId = readScriptValue();
+	uint16 slot = readScriptValue();
 
 	debugScript("O_REMBACKANIM roomId %d, slot %d", roomId, slot);
 }
 
 void Script::O_CHECKBACKANIMFRAME() {
-	uint16 slotId = readScript16bits();
-	uint16 frameId = readScript16bits();
+	uint16 slotId = readScriptValue();
+	uint16 frameId = readScriptValue();
 
 	debugScript("O_CHECKBACKANIMFRAME slotId %d, frameId %d", slotId, frameId);
 	_opcodeNF = 1;
@@ -282,7 +276,7 @@ void Script::O_STOPMUSIC() {
 }
 
 void Script::O__WAIT() {
-	uint16 pause = readScript16bits();
+	uint16 pause = readScriptValue();
 
 	debugScript("O__WAIT pause %d", pause);
 
@@ -305,18 +299,22 @@ void Script::O__WAIT() {
 
 void Script::O_UPDATEOFF() {
 	debugScript("O_UPDATEOFF");
+	//_updateEnable = false;
 }
 
 void Script::O_UPDATEON() {
 	debugScript("O_UPDATEON");
+	//_updateEnable = true;
 }
 
 void Script::O_UPDATE () {
 	debugScript("O_UPDATE");
+	// Refresh screen
 }
 
 void Script::O_CLS() {
 	debugScript("O_CLS");
+	// do nothing
 }
 
 void Script::O__CALL() {
@@ -345,17 +343,17 @@ void Script::O_GO() {
 }
 
 void Script::O_BACKANIMUPDATEOFF() {
-	uint16 slotId = readScript32bits();
+	uint16 slotId = readScriptValue();
 	debugScript("O_BACKANIMUPDATEOFF slotId %d", slotId);
 }
 
 void Script::O_BACKANIMUPDATEON() {
-	uint16 slot = readScript16bits();
+	uint16 slot = readScriptValue();
 	debugScript("O_BACKANIMUPDATEON %d", slot);
 }
 
 void Script::O_CHANGECURSOR() {
-	uint16 cursorId = readScript16bits();
+	uint16 cursorId = readScriptValue();
 	debugScript("O_CHANGECURSOR %x", cursorId);
 }
 
@@ -399,8 +397,10 @@ void Script::O_JUMPNZ() {
 }
 
 void Script::O_EXIT() {
-	uint16 exitCode = readScript16bits();
+	uint16 exitCode = readScriptValue();
 	debugScript("O_EXIT exitCode %d", exitCode);
+	// Set exit code and shows credits 
+	// if exit code == 0x02EAD
 }
 
 void Script::O_ADDFLAG() {
@@ -417,8 +417,8 @@ void Script::O_ADDFLAG() {
 }
 
 void Script::O_TALKANIM() {
-	uint16 animSlot = readScript16bits();
-	uint16 slot = readScript16bits();
+	uint16 animSlot = readScriptValue();
+	uint16 slot = readScriptValue();
 
 	debugScript("O_TALKANIM animSlot %d, slot %d", animSlot, slot);
 }
@@ -440,6 +440,7 @@ void Script::O_SETSTRING() {
 	int32 offset = readScript32bits();
 	_currentString = offset;
 
+	// FIXME: Make it better ;)
 	if (offset >= 80000) {
 		debugScript("GetVaria %s", _vm->_variaTxt->getString(offset - 80000));
 	}
@@ -515,22 +516,23 @@ void Script::O_XORFLAG() {
 }
 
 void Script::O_GETMOBTEXT() {
-	uint16 value = readScript16bits();
+	uint16 value = readScriptValue();
 
 	debugScript("O_GETMOBTEXT value %d", value);
+	// Use Mob::ExamText as current string 
 }
 
 void Script::O_MOVEHERO() {
-	uint16 heroId = readScript16bits();
-	uint16 x = readScript16bits();
-	uint16 y = readScript16bits();
-	uint16 dir = readScript16bits();
+	uint16 heroId = readScriptValue();
+	uint16 x = readScriptValue();
+	uint16 y = readScriptValue();
+	uint16 dir = readScriptValue();
 	
 	debugScript("O_MOVEHERO heroId %d, x %d, y %d, dir %d", heroId, x, y, dir);
 }
 
 void Script::O_WALKHERO() {
-	uint16 heroId = readScript16bits();
+	uint16 heroId = readScriptValue();
 
 	debugScript("O_WALKHERO %d", heroId);
 	_opcodeNF = 1;
@@ -545,18 +547,22 @@ void Script::O_SETHERO() {
 }
 
 void Script::O_HEROOFF() {
-	uint16 heroId = readScript16bits();
+	uint16 heroId = readScriptValue();
 	debugScript("O_HEROOFF %d", heroId);
+	// sets hero visible flag to false
 }
 
 void Script::O_HEROON() {
-	uint16 heroId = readScript16bits();
+	uint16 heroId = readScriptValue();
 	debugScript("O_HEROON %d", heroId);
+	// sets hero visible flag to true
 }
 
 void Script::O_CLSTEXT() {
-	uint16 slot = readScript16bits();
+	uint16 slot = readScriptValue();
 	debugScript("O_CLSTEXT slot %d", slot);
+	// Sets text line to null
+	// Sets text timeout to zero
 }
 
 void Script::O_CALLTABLE() {
@@ -564,23 +570,27 @@ void Script::O_CALLTABLE() {
 	int32 table = readScript32bits();
 
 	debugScript("O_CALLTABLE flag %d, table %d", flag, table);
+	// makes a call from script function table
+	// must read table pointer from _code and
+	// use table entry as next opcode
 }
 
 void Script::O_CHANGEMOB() {
-	uint16 mob = readScript16bits();
-	uint16 value = readScript16bits();
+	uint16 mob = readScriptValue();
+	uint16 value = readScriptValue();
 	debugScript("O_CHANGEMOB mob %d, value %d", mob, value);
+	// Probably sets mobs visible flag to value
 }
 
 void Script::O_ADDINV() {
-	uint16 hero = readScript16bits();
-	uint16 item = readScript16bits();
+	uint16 hero = readScriptValue();
+	uint16 item = readScriptValue();
 	debugScript("O_ADDINV hero %d, item %d", hero, item);
 }
 
 void Script::O_REMINV() {
-	uint16 hero = readScript16bits();
-	uint16 item = readScript16bits();
+	uint16 hero = readScriptValue();
+	uint16 item = readScriptValue();
 	debugScript("O_REMINV hero %d, item %d", hero, item);
 }
 
@@ -588,11 +598,13 @@ void Script::O_REPINV() {
 	uint16 hero = readScript16bits();
 	uint16 item1 = readScript16bits();
 	uint16 item2 = readScript16bits();
-	debugScript("O_REPINV hero %d, item1 %d, item2 %d", hero, item1, item2);
+	// shouldn't be uses
+	error("O_REPINV hero %d, item1 %d, item2 %d", hero, item1, item2);
 }
 
 void Script::O_OBSOLETE_GETACTION() {
-	debugScript("O_OBSOLETE_GETACTION");
+	// shouldn't be uses
+	error("O_OBSOLETE_GETACTION");
 }
 
 void Script::O_ADDWALKAREA() {
@@ -600,7 +612,8 @@ void Script::O_ADDWALKAREA() {
 	uint16 y1 = readScript16bits();
 	uint16 x2 = readScript16bits();
 	uint16 y2 = readScript16bits();
-	debugScript("O_ADDWALKAREA x1 %d, y1 %d, x2 %d, y2 %d", x1, y1, x2, y2);
+	// shouldn't be uses
+	error("O_ADDWALKAREA x1 %d, y1 %d, x2 %d, y2 %d", x1, y1, x2, y2);
 }
 
 void Script::O_REMWALKAREA() {
@@ -608,7 +621,9 @@ void Script::O_REMWALKAREA() {
 	uint16 y1 = readScript16bits();
 	uint16 x2 = readScript16bits();
 	uint16 y2 = readScript16bits();
-	debugScript("O_REMWALKAREA x1 %d, y1 %d, x2 %d, y2 %d", x1, y1, x2, y2);
+
+	// shouldn't be uses
+	error("O_REMWALKAREA x1 %d, y1 %d, x2 %d, y2 %d", x1, y1, x2, y2);
 }
  
 void Script::O_RESTOREWALKAREA() {
@@ -621,46 +636,53 @@ void Script::O_WAITFRAME() {
 }
 
 void Script::O_SETFRAME() {
-	uint16 anim = readScript16bits();
-	uint16 frame = readScript16bits();
+	uint16 anim = readScriptValue();
+	uint16 frame = readScriptValue();
 	debugScript("O_SETFRAME anim %d, frame %d", anim, frame);
 }
 
 void Script::O_RUNACTION() {
-	debugScript("O_RUNACTION");
+	// It's empty in original and never used in script
+	// it's better to report error
+	error("O_RUNACTION");
 }
 
 void Script::O_COMPAREHI() {
-	uint16 flag = readScript16bits();
-	uint16 value = readScript16bits();
+	Flags::Id flag = readScriptFlagId();
+	uint16 value = readScriptValue();
 
 	debugScript("O_COMPAREHI flag %d, value %d", flag, value);
+	_result = value < getFlagValue(flag);
 }
 
 void Script::O_COMPARELO() {
-	uint16 flag = readScript16bits();
-	uint16 value = readScript16bits();
+	Flags::Id flag = readScriptFlagId();
+	uint16 value = readScriptValue();
 
 	debugScript("O_COMPARELO flag %d, value %d", flag, value);
+	_result = value > getFlagValue(flag);
 }
 
 void Script::O_PRELOADSET() {
+	// not used in script
 	int32 offset = readScript32bits();
 	debugScript("O_PRELOADSET offset %04x", offset);
 }
 
 void Script::O_FREEPRELOAD() {
+	// not used in script
 	debugScript("O_FREEPRELOAD");
 }
 
 void Script::O_CHECKINV() {
-	uint16 hero = readScript16bits();
-	uint16 item = readScript16bits();
+	uint16 hero = readScriptValue();
+	uint16 item = readScriptValue();
 	debugScript("O_CHECKINV hero %d, item %d", hero, item);
+	// checks if item is in heros inventory	
 }
 
 void Script::O_TALKHERO() {
-	uint16 hero = readScript16bits();
+	uint16 hero = readScriptValue();
 	debugScript("O_TALKHERO hero %d", hero);
 }
 
@@ -674,21 +696,21 @@ void Script::O_WAITTEXT() {
 }
 
 void Script::O_SETHEROANIM() {
-	uint16 hero = readScript16bits();
+	uint16 hero = readScriptValue();
 	int32 offset = readScript32bits();
 	debugScript("O_SETHEROANIM hero %d, offset %d", hero, offset);
 }
 
 void Script::O_WAITHEROANIM() {
-	uint16 hero = readScript16bits();
+	uint16 hero = readScriptValue();
 
 	debugScript("O_WAITHEROANIM hero %d", hero);
 }
 
 void Script::O_GETHERODATA() {
 	uint16 flag = readScript16bits();
-	uint16 hero = readScript16bits();
-	uint16 heroOffset =readScript16bits();
+	uint16 hero = readScriptValue();
+	uint16 heroOffset = readScriptValue();
 	debugScript("O_GETHERODATA flag %d, hero %d, heroOffset %d", flag, hero, heroOffset);
 }
 
@@ -697,22 +719,32 @@ void Script::O_GETMOUSEBUTTON() {
 }
 
 void Script::O_CHANGEFRAMES() {
-	uint16 anim = readScript16bits();
-	uint16 fr1 = readScript16bits();
-	uint16 fr2 = readScript16bits();
-	uint16 fr3 = readScript16bits();
+	uint16 anim = readScriptValue();
+	uint16 frame = readScriptValue();
+	uint16 lastFrame = readScriptValue();
+	uint16 loopFrame = readScriptValue();
 
-	debugScript("O_CHANGFRAMES anim %d, fr1 %d, fr2 %d, fr3 %d", anim, fr1, fr2, fr3);
+	debugScript(
+		"O_CHANGFRAMES anim %d, fr1 %d, fr2 %d, fr3 %d", 
+		anim, 
+		frame, 
+		lastFrame, 
+		loopFrame);
 
 }
 
 void Script::O_CHANGEBACKFRAMES() {
-	uint16 anim = readScript16bits();
-	uint16 fr1 = readScript16bits();
-	uint16 fr2 = readScript16bits();
-	uint16 fr3 = readScript16bits();
+	uint16 anim = readScriptValue();
+	uint16 frame = readScriptValue();
+	uint16 lastFrame = readScriptValue();
+	uint16 loopFrame = readScriptValue();
 
-	debugScript("O_CHANGEBACKFRAMES anim %d, fr1 %d, fr2 %d, fr3 %d", anim, fr1, fr2, fr3);
+	debugScript(
+		"O_CHANGEBACKFRAMES anim %d, fr1 %d, fr2 %d, fr3 %d", 
+		anim, 
+		frame, 
+		lastFrame, 
+		loopFrame);
 }
 
 void Script::O_GETBACKANIMDATA() {
@@ -724,9 +756,11 @@ void Script::O_GETBACKANIMDATA() {
 
 void Script::O_GETANIMDATA() {
 	uint16 flag = readScript16bits();
-	uint16 anim = readScript16bits();
-	uint16 animOffset = readScript16bits();
+	uint16 anim = readScriptValue();
+	uint16 animOffset = readScriptValue();
 	debugScript("O_GETANIMDATA flag %d, anim %d, animOffset %d", flag, anim, animOffset);
+	// Gets value of anim data 
+	// use anim offset as attribute id not an offset
 }
 
 void Script::O_SETBGCODE() {
@@ -736,27 +770,33 @@ void Script::O_SETBGCODE() {
 }
 
 void Script::O_SETBACKFRAME() {
-	uint16 anim = readScript16bits();
-	uint16 frame = readScript16bits();
+	uint16 anim = readScriptValue();
+	uint16 frame = readScriptValue();
 
 	debugScript("O_SETBACKFRAME anim %d, frame %d", anim, frame);
 }
 
 void Script::O_GETRND() {
-	uint16 flag = readScript16bits();
+	Flags::Id flag = readScriptFlagId();
 	uint16 rndSeed = readScript16bits();
 	debugScript("O_GETRND flag %d, rndSeed %d", flag, rndSeed);
+	// puts and random value as flag value
+	// fairly random value ;)
+	// setFlagValue(flag, 4);
 }
 
 void Script::O_TALKBACKANIM() {
-	uint16 animSlot = readScript16bits();
-	uint16 slot = readScript16bits();
+	uint16 animSlot = readScriptValue();
+	uint16 slot = readScriptValue();
 	debugScript("O_TALKBACKANIM animSlot %d, slot %d", animSlot, slot);
 }
 
 void Script::O_LOADPATH() {
 	int32 offset = readScript32bits();
 	debugScript("O_LOADPATH offset %d", offset);
+	// _currentInstruction + offset path file name ptr
+	// free path bitmap
+	// load packet path bitmap and puts in Sala
 }
 
 void Script::O_GETCHAR() {
@@ -764,7 +804,11 @@ void Script::O_GETCHAR() {
 
 	setFlagValue(flagId, *_string);
 
-	debugScript("O_GETCHAR %04X (%s) %02x", flagId, Flags::getFlagName(flagId), getFlagValue(flagId));
+	debugScript(
+		"O_GETCHAR %04X (%s) %02x", 
+		flagId, 
+		Flags::getFlagName(flagId), 
+		getFlagValue(flagId));
 
 	++_string;
 }
@@ -773,17 +817,20 @@ void Script::O_SETDFLAG() {
 	uint16 flag = readScript16bits();
 	int32 offset = readScript32bits();
 	debugScript("O_SETDFLAG flag %d, offset %04x", flag, offset);
+	// run this through debugger looks strange
+	// it looks like this one store two 16 bit value in one go
 }
 
 void Script::O_CALLDFLAG() {
 	uint16 flag = readScript16bits();
 	debugScript("O_CALLDFLAG flag %d", flag);
+	// it seems that some flags are 32 bit long
 }
 
 void Script::O_PRINTAT() {
-	uint16 slot = readScript16bits();
-	uint16 fr1 = readScript16bits();
-	uint16 fr2 = readScript16bits();
+	uint16 slot = readScriptValue();
+	uint16 fr1 = readScriptValue();
+	uint16 fr2 = readScriptValue();
 
 	debugScript("O_PRINTAT slot %d, fr1 %d, fr2 %d", slot, fr1, fr2);
 
@@ -798,31 +845,33 @@ void Script::O_PRINTAT() {
 }
 
 void Script::O_ZOOMIN() {
-	uint16 slot = readScript16bits();
+	uint16 slot = readScriptValue();
 	debugScript("O_ZOOMIN slot %04d", slot);
 }
 
 void Script::O_ZOOMOUT() {
-	uint16 slot = readScript16bits();
+	uint16 slot = readScriptValue();
 	debugScript("O_ZOOMOUT slot %d", slot);
 }
 
 void Script::O_SETSTRINGOFFSET() {
 	int32 offset = readScript32bits();
 	debugScript("O_SETSTRINGOFFSET offset %04x", offset);
+	// _currentString = ""
+	// _string = (const char *)_currentInstruction + offset 
 }
 
 void Script::O_GETOBJDATA() {
-	uint16 flag = readScript16bits();
-	uint16 obj = readScript16bits();
-	int16 objOffset = readScript16bits();
+	Flags::Id flag = readScriptFlagId();
+	uint16 obj = readScriptValue();
+	int16 objOffset = readScriptValue();
 	debugScript("O_GETOBJDATA flag %d, obj %d, objOffset %d", flag, obj, objOffset);
 }
 
 void Script::O_SETOBJDATA() {
-	uint16 obj = readScript16bits();
-	int16 objOffset = readScript16bits();
-	uint16 value = readScript16bits();
+	uint16 obj = readScriptValue();
+	int16 objOffset = readScriptValue();
+	uint16 value = readScriptValue();
 	debugScript("O_SETOBJDATA obj %d, objOffset %d, value %d", obj, objOffset, value);
 }
 
@@ -833,19 +882,21 @@ void Script::O_SWAPOBJECTS() {
 }
 
 void Script::O_CHANGEHEROSET() {
-	uint16 hero = readScript16bits();
-	uint16 heroSet = readScript16bits();
+	uint16 hero = readScriptValue();
+	uint16 heroSet = readScriptValue();
 	debugScript("O_CHANGEHEROSET hero %d, heroSet %d", hero, heroSet);
 }
 
 void Script::O_ADDSTRING() {
-	uint16 value = readScript16bits();
+	uint16 value = readScriptValue();
 	debugScript("O_ADDSTRING value %d", value);
+	// _string += value
 }
 
 void Script::O_SUBSTRING() {
-	uint16 value = readScript16bits();
+	uint16 value = readScriptValue();
 	debugScript("O_SUBSTRING value %d", value);
+	// _string -= value
 }
 
 void Script::O_INITDIALOG() {
@@ -853,45 +904,47 @@ void Script::O_INITDIALOG() {
 }
 
 void Script::O_ENABLEDIALOGOPT() {
-	uint16 opt = readScript16bits();
+	uint16 opt = readScriptValue();
 	debugScript("O_ENABLEDIALOGOPT opt %d", opt);
 }
 
 void Script::O_DISABLEDIALOGOPT() {
-	uint16 opt = readScript16bits();
+	uint16 opt = readScriptValue();
 	debugScript("O_DISABLEDIALOGOPT opt %d", opt);
 }
 
 void Script::O_SHOWDIALOGBOX() {
-	uint16 box = readScript16bits();
+	uint16 box = readScriptValue();
 	debugScript("O_SHOWDIALOGBOX box %d", box);
 }
 
 void Script::O_STOPSAMPLE() {
-	uint16 slot = readScript16bits();
+	uint16 slot = readScriptValue();
 	debugScript("O_STOPSAMPLE slot %d", slot);
 	_vm->stopSample(slot);
 }
 
 void Script::O_BACKANIMRANGE() {
-	uint16 slotId = readScript16bits();
-	uint16 animId = readScript16bits();
-	uint16 low = readScript16bits();
-	uint16 high = readScript16bits();
+	uint16 slotId = readScriptValue();
+	uint16 animId = readScriptValue();
+	uint16 low = readScriptValue();
+	uint16 high = readScriptValue();
 
 	debugScript("O_BACKANIMRANGE slotId %d, animId %d, low %d, high %d", slotId, animId, low, high);
 }
 
 void Script::O_CLEARPATH() {
 	debugScript("O_CLEARPATH");
+	// Fill Sala with 255
 }
 
 void Script::O_SETPATH() {
 	debugScript("O_SETPATH");
+	// CopyPath
 }
 
 void Script::O_GETHEROX() {
-	uint16 heroId = readScript16bits();
+	uint16 heroId = readScriptValue();
 	Flags::Id flagId = readScriptFlagId();
 
 	debugScript("O_GETHEROX heroId %d, flagId %d", heroId, flagId);
@@ -905,7 +958,7 @@ void Script::O_GETHEROY() {
 }
 
 void Script::O_GETHEROD() {
-	uint16 heroId = readScript16bits();
+	uint16 heroId = readScriptValue();
 	Flags::Id flagId = readScriptFlagId();
 
 	debugScript("O_GETHEROD heroId %d, flagId %d", heroId, flagId);
@@ -913,10 +966,18 @@ void Script::O_GETHEROD() {
 
 void Script::O_PUSHSTRING() {
 	debugScript("O_PUSHSTRING");
+	// push on the stack
+	// _currentString
+	// _dialogData
+	// _string
 }
 
 void Script::O_POPSTRING() {
 	debugScript("O_POPSTRING");
+	// pop from the stack
+	// _currentString
+	// _dialogData
+	// _string
 }
 
 void Script::O_SETFGCODE() {
@@ -927,9 +988,11 @@ void Script::O_SETFGCODE() {
 }
 
 void Script::O_STOPHERO() {
-	uint16 heroId = readScript16bits();
+	uint16 heroId = readScriptValue();
 
 	debugScript("O_STOPHERO heroId %d", heroId);
+
+	// clear move steps for hero
 }
 
 void Script::O_ANIMUPDATEOFF() {
@@ -938,53 +1001,54 @@ void Script::O_ANIMUPDATEOFF() {
 }
 
 void Script::O_ANIMUPDATEON() {
-	uint16 slotId = readScript16bits();
+	uint16 slotId = readScriptValue();
 	debugScript("O_ANIMUPDATEON slotId %d", slotId);
 }
 
 void Script::O_FREECURSOR() {
 	debugScript("O_FREECURSOR");
+	// Change cursor to 0
+	// free inv cursor 1
 }
 
 void Script::O_ADDINVQUIET() {
-	uint16 heroId = readScript16bits();
-	uint16 itemId = readScript16bits();
+	uint16 heroId = readScriptValue();
+	uint16 itemId = readScriptValue();
 
 	debugScript("O_ADDINVQUIET heorId %d, itemId %d", heroId, itemId);
 }
 
 void Script::O_RUNHERO() {
-	uint16 heroId = readScript16bits();
-	uint16 x = readScript16bits();
-	uint16 y = readScript16bits();
-	uint16 dir = readScript16bits();
+	uint16 heroId = readScriptValue();
+	uint16 x = readScriptValue();
+	uint16 y = readScriptValue();
+	uint16 dir = readScriptValue();
 
 	debugScript("O_RUNHERO heroId %d, x %d, y %d, dir %d", heroId, x, y, dir);
 }
 
 void Script::O_SETBACKANIMDATA() {
-	uint16 animId = readScript16bits();
-	uint16 animOffset = readScript16bits();
-	uint16 wart = readScript16bits();
+	uint16 animId = readScriptValue();
+	uint16 animOffset = readScriptValue();
+	uint16 wart = readScriptValue();
 
 	debugScript("O_SETBACKANIMDATA animId %d, animOffset %d, wart %d", animId, animOffset, wart);
 }
 
 void Script::O_VIEWFLC() {
-	uint16 animNr = readScript16bits();
+	uint16 animNr = readScriptValue();
 	debugScript("O_VIEWFLC animNr %d", animNr);
 	_vm->loadAnim(animNr, false);
 }
 
 void Script::O_CHECKFLCFRAME() {
-	uint16 frameNr = readScript16bits();
+	uint16 frameNr = readScriptValue();
 
 	debugScript("O_CHECKFLCFRAME frame number %d", frameNr);
 
 	const Video::FlicDecoder &flicPlayer = _vm->_flicPlayer;
 
-	if (flicPlayer.getCurFrame() != frameNr)
-	{
+	if (flicPlayer.getCurFrame() != frameNr) {
 		// Move instruction pointer before current instruciton
 		// must do this check once again till it's false 
 		_currentInstruction -= 2;
@@ -1000,8 +1064,7 @@ void Script::O_CHECKFLCEND() {
 
 	//debug("frameCount %d, currentFrame %d", flicPlayer.getFrameCount(), flicPlayer.getCurFrame());
 
-	if (flicPlayer.getFrameCount() - flicPlayer.getCurFrame() > 1)
-	{
+	if (flicPlayer.getFrameCount() - flicPlayer.getCurFrame() > 1) {
 		// Move instruction pointer before current instruciton
 		// must do this check once again till it's false 
 		_currentInstruction -= 2;
@@ -1014,13 +1077,13 @@ void Script::O_FREEFLC() {
 }
 
 void Script::O_TALKHEROSTOP() {
-	uint16 heroId = readScript16bits();
+	uint16 heroId = readScriptValue();
 	debugScript("O_TALKHEROSTOP %d", heroId);
 }
 
 void Script::O_HEROCOLOR() {
-	uint16 heroId = readScript16bits();
-	uint16 kolorr = readScript16bits();
+	uint16 heroId = readScriptValue();
+	uint16 kolorr = readScriptValue();
 	debugScript("O_HEROCOLOR heroId %d, kolorr %d", heroId, kolorr);
 }
 
@@ -1029,27 +1092,27 @@ void Script::O_GRABMAPA() {
 }
 
 void Script::O_ENABLENAK() {
-	uint16 nakId = readScript16bits();
+	uint16 nakId = readScriptValue();
 	debugScript("O_ENABLENAK nakId %d", nakId);
 }
 
 void Script::O_DISABLENAK() {
-	uint16 nakId = readScript16bits();
+	uint16 nakId = readScriptValue();
 	debugScript("O_DISABLENAK nakId %d", nakId);
 }
 
 void Script::O_GETMOBNAME() {
-	uint16 war = readScript16bits();
+	uint16 war = readScriptValue();
 	debugScript("O_GETMOBNAME war %d", war);
 }
 
 void Script::O_SWAPINVENTORY() {
-	uint16 heroId = readScript16bits();
+	uint16 heroId = readScriptValue();
 	debugScript("O_SWAPINVENTORY heroId %d", heroId);
 }
 
 void Script::O_CLEARINVENTORY() {
-	uint16 heroId = readScript16bits();
+	uint16 heroId = readScriptValue();
 	debugScript("O_CLEARINVENTORY heroId %d", heroId);
 }
 
@@ -1057,7 +1120,9 @@ void Script::O_SKIPTEXT() {
 	debugScript("O_SKIPTEXT");
 }
 
-void Script::SetVoice(uint32 slot) {
+void Script::SetVoice(uint32 sampleSlot) {
+	// TODO: use sample slot
+	uint16 slot = readScriptValue();
 	_vm->loadVoice(
 		slot,
 		Common::String::format(
@@ -1069,27 +1134,28 @@ void Script::SetVoice(uint32 slot) {
 }
 
 void Script::O_SETVOICEH() {
-	uint16 txn = readScript16bits();
-	debugScript("O_SETVOICEH txn %d", txn);
-	SetVoice(txn);
+	static const uint32 VOICE_H_SLOT = 28;
+	SetVoice(VOICE_H_SLOT);
 }
 
 void Script::O_SETVOICEA() {
-	uint16 txn = readScript16bits();
-	debugScript("O_SETVOICEA txn %d", txn);
-	SetVoice(txn);
+	static const uint32 VOICE_A_SLOT = 29;
+	SetVoice(VOICE_A_SLOT);
 }
 
 void Script::O_SETVOICEB() {
-	uint16 txn = readScript16bits();
-	debugScript("O_SETVOICEB txn %d", txn);
-	SetVoice(txn);
+	static const uint32 VOICE_B_SLOT = 30;
+	SetVoice(VOICE_B_SLOT);
 }
 
 void Script::O_SETVOICEC() {
-	uint16 txn = readScript16bits();
-	debugScript("O_SETVOICEC txn %d", txn);
-	SetVoice(txn);
+	static const uint32 VOICE_C_SLOT = 31;
+	SetVoice(VOICE_C_SLOT);
+}
+
+void Script::O_SETVOICED() {
+	static const uint32 VOICE_D_SLOT = 32;
+	SetVoice(VOICE_D_SLOT);
 }
 
 void Script::O_VIEWFLCLOOP() {
@@ -1100,13 +1166,14 @@ void Script::O_VIEWFLCLOOP() {
 }
 
 void Script::O_FLCSPEED() {
-	uint16 speed = readScript16bits();
+	uint16 speed = readScriptValue();
 	debugScript("O_FLCSPEED speed %d", speed);
 }
 
 void Script::O_OPENINVENTORY() {
 	debugScript("O_OPENINVENTORY");
 	_opcodeNF = 1;
+	// _showInventoryFlag = true
 }
 
 void Script::O_KRZYWA() {
@@ -1115,24 +1182,23 @@ void Script::O_KRZYWA() {
 
 void Script::O_GETKRZYWA() {
 	debugScript("O_GETKRZYWA");
+	// setFlagValue(Flags::TORX1, krzywa[_krzywaIndex++])
+	// setFlagValue(Flags::TORY1, krzywa[_krzywaIndex++])
+	// Check _krzywaIndex 
 }
 
 void Script::O_GETMOB() {
 	Flags::Id flagId = readScriptFlagId();
-	uint16 mx = readScript16bits();
-	uint16 my = readScript16bits();
+	uint16 mx = readScriptValue();
+	uint16 my = readScriptValue();
 	debugScript("O_GETMOB flagId %d, mx %d, my %d", flagId, mx, my);
+	// check if current mob pos = (mx, my)
 }
 
 void Script::O_INPUTLINE() {
 	debugScript("O_INPUTLINE");
 }
 
-void Script::O_SETVOICED() {
-	uint16 txn = readScript16bits();
-	debugScript("O_SETVOICED txn %d", txn);
-	SetVoice(txn);
-}
 
 void Script::O_BREAK_POINT() {
 	debugScript("O_BREAK_POINT");

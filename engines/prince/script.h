@@ -49,6 +49,8 @@ public:
 	void setFlagValue(Flags::Id flag, uint16 value);
 	uint16 getFlagValue(Flags::Id flag);
 
+	void stopBg() { _bgOpcodePC = 0; }
+
 private:
 	PrinceEngine *_vm;
 

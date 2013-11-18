@@ -37,7 +37,7 @@ public:
 	~Cursor();
 
 	bool loadFromStream(Common::SeekableReadStream &stream);
-	Graphics::Surface *getSurface() const { return _surface; }
+	const Graphics::Surface *getSurface() const { return _surface; }
 
 private:
 	Graphics::Surface *_surface;
