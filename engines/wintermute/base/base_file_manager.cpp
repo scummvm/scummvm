@@ -168,6 +168,11 @@ bool BaseFileManager::initPaths() {
 	if (languageSubFolder.exists()) {
 		addPath(PATH_PACKAGE, languageSubFolder);
 	}
+	// Also add languages/ for Reversion1.
+	languageSubFolder = gameData.getChild("languages");
+	if (languageSubFolder.exists()) {
+		addPath(PATH_PACKAGE, languageSubFolder);
+	}
 	return STATUS_OK;
 }
 
@@ -187,6 +192,9 @@ bool BaseFileManager::registerPackages(const Common::FSList &fslist) {
 bool BaseFileManager::registerPackages() {
 	debugC(kWintermuteDebugFileAccess | kWintermuteDebugLog, "Scanning packages");
 
+	// We need the target name as a Common::String to perform some game-specific hacks.
+	Common::String targetName = BaseEngine::instance().getGameTargetName();
+
 	// Register without using SearchMan, as otherwise the FSNode-based lookup in openPackage will fail
 	// and that has to be like that to support the detection-scheme.
 	Common::FSList files;
@@ -199,20 +207,43 @@ bool BaseFileManager::registerPackages() {
 			if (!fileIt->getName().hasSuffix(".dcp")) {
 				continue;
 			}
+			// HACK: for Reversion1, avoid loading xlanguage_pt.dcp from the main folder:
+			if (_language != Common::PT_BRA && targetName.hasPrefix("reversion1")) {
+				if (fileIt->getName() == "xlanguage_pt.dcp") {
+					continue;
+				}
+			}
 			// Avoid registering all the language files
 			// TODO: Select based on the gameDesc.
-			if (_language != Common::UNK_LANG && fileIt->getParent().getName() == "language") {
+			if (_language != Common::UNK_LANG && (fileIt->getParent().getName() == "language" || fileIt->getParent().getName() == "languages")) {
 				Common::String parentName = fileIt->getParent().getName();
 				Common::String dcpName = fileIt->getName();
-				if (_language == Common::EN_ANY && fileIt->getName() != "english.dcp") {
+				// English
+				if (_language == Common::EN_ANY && (fileIt->getName() != "english.dcp" && fileIt->getName() != "xlanguage_en.dcp")) {
 					continue;
-				} else if (_language == Common::CZ_CZE && fileIt->getName() != "czech.dcp") {
+				// Chinese
+				} else if (_language == Common::ZH_CNA && (fileIt->getName() != "chinese.dcp" && fileIt->getName() != "xlanguage_nz.dcp")) {
 					continue;
-				} else if (_language == Common::IT_ITA && fileIt->getName() != "italian.dcp") {
+				// Czech
+				} else if (_language == Common::CZ_CZE && (fileIt->getName() != "czech.dcp" && fileIt->getName() != "xlanguage_cz.dcp")) {
 					continue;
-				} else if (_language == Common::PL_POL && fileIt->getName() != "polish.dcp") {
+				// French
+				} else if (_language == Common::FR_FRA && (fileIt->getName() != "french.dcp" && fileIt->getName() != "xlanguage_fr.dcp")) {
 					continue;
-				} else if (_language == Common::RU_RUS && fileIt->getName() != "russian.dcp") {
+				// German
+				} else if (_language == Common::DE_DEU && (fileIt->getName() != "german.dcp" && fileIt->getName() != "xlanguage_de.dcp")) {
+					continue;
+				// Italian
+				} else if (_language == Common::IT_ITA && (fileIt->getName() != "italian.dcp" && fileIt->getName() != "xlanguage_it.dcp")) {
+					continue;
+				// Polish
+				} else if (_language == Common::PL_POL && (fileIt->getName() != "polish.dcp" && fileIt->getName() != "xlanguage_po.dcp")) {
+					continue;
+				// Portuguese
+				} else if (_language == Common::PT_BRA && (fileIt->getName() != "portuguese.dcp" && fileIt->getName() != "xlanguage_pt.dcp")) {
+					continue;
+				// Russian
+				} else if (_language == Common::RU_RUS && (fileIt->getName() != "russian.dcp" && fileIt->getName() != "xlanguage_ru.dcp")) {
 					continue;
 				}
 			}
