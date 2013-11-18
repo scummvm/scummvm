@@ -2670,7 +2670,9 @@ void PlayStream::dispatch() {
 }
 
 uint32 PlayStream::getFileOffset(const uint16 *data, int count, int voiceNum) {
-	assert(data);
+	if (!data)
+		return 0;	// no valid voice data found
+
 	int bitsIndex = voiceNum & 7;
 	int byteIndex = voiceNum >> 3;
 	int shiftAmount = bitsIndex * 2;
