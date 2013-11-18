@@ -119,10 +119,10 @@ public:
 	};
 
 	TimerType _times[7];
-	bool _timerLost; // Is the timer "lost"? (Because of using loseTimer())
 
 	Timer(AvalancheEngine *vm);
 
+	void resetVariables();
 	void addTimer(int32 duration, byte action, byte reason);
 	void updateTimer();
 	void loseTimer(byte which);

@@ -109,6 +109,7 @@ class MessageQueue : public CObject {
 
  public:
 	MessageQueue();
+	MessageQueue(int dataId);
 	MessageQueue(MessageQueue *src, int parId, int field_38);
 	virtual ~MessageQueue();
 

@@ -1061,8 +1061,9 @@ bool Scene2350::Balloon::startAction(CursorType action, Event &event) {
 
 void Scene2350::ExitUp::changeScene() {
 	Scene2350 *scene = (Scene2350 *)R2_GLOBALS._sceneManager._scene;
+	_enabled = false;
 
-	R2_GLOBALS._player.disableControl(CURSOR_CROSSHAIRS);
+	R2_GLOBALS._player.disableControl(CURSOR_WALK);
 	scene->_sceneMode = 12;
 	if (R2_GLOBALS._player._characterIndex == R2_QUINN)
 		scene->setAction(&scene->_sequenceManager, scene, 2350, &R2_GLOBALS._player, NULL);
@@ -1139,7 +1140,7 @@ void Scene2350::postInit(SceneObjectList *OwnerList) {
 	R2_GLOBALS._player.disableControl();
 
 	if (R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] == 2000) {
-		if (R2_GLOBALS._spillLocation[R2_GLOBALS._player._characterIndex] == 34) {
+		if (R2_GLOBALS._spillLocation[R2_GLOBALS._player._characterIndex] != 34) {
 			if (R2_GLOBALS._player._characterIndex == R2_QUINN)
 				_sceneMode = 2351;
 			else
@@ -1199,17 +1200,6 @@ void Scene2350::signal() {
 		R2_GLOBALS._player.enableControl();
 		break;
 	}
-}
-
-void Scene2350::process(Event &event) {
-	if ((R2_GLOBALS._player._canWalk) && (event.eventType != EVENT_BUTTON_DOWN) &&
-			(R2_GLOBALS._events.getCursor() == CURSOR_CROSSHAIRS)){
-		Common::Point pt(event.mousePos.x, 129);
-		PlayerMover *mover = new PlayerMover();
-		R2_GLOBALS._player.addMover(mover, &pt);
-		event.handled = true;
-	}
-	Scene::process(event);
 }
 
 /*--------------------------------------------------------------------------
@@ -2995,6 +2985,8 @@ void Scene2600::postInit(SceneObjectList *OwnerList) {
 	loadScene(2600);
 	R2_GLOBALS._uiElements._active = false;
 	SceneExt::postInit();
+	R2_GLOBALS._interfaceY = SCREEN_HEIGHT;
+
 	R2_GLOBALS._sound1.fadeSound(214);
 	R2_GLOBALS._sound2.play(215);
 	_rotation = R2_GLOBALS._scenePalette.addRotation(176, 191, 1);
@@ -3009,6 +3001,7 @@ void Scene2600::postInit(SceneObjectList *OwnerList) {
 void Scene2600::remove() {
 	R2_GLOBALS._sound1.fadeOut2(NULL);
 	R2_GLOBALS._sound2.fadeOut2(NULL);
+	R2_GLOBALS._uiElements._visible = true;
 //	_rotation->remove();
 	SceneExt::remove();
 }
@@ -3962,7 +3955,8 @@ void Scene2750::postInit(SceneObjectList *OwnerList) {
 			R2_GLOBALS._player.setStrip(6);
 			R2_GLOBALS._player.animate(ANIM_MODE_NONE, NULL);
 			R2_GLOBALS._player.setPosition(Common::Point(81, 165));
-			R2_GLOBALS._events.setCursor(CURSOR_WALK);
+
+			R2_GLOBALS._events.setCursor(CURSOR_ARROW);
 			_stripNumber = 1204;
 			_sceneMode = 11;
 			_stripManager.start(_stripNumber, this);
@@ -3982,6 +3976,7 @@ void Scene2750::postInit(SceneObjectList *OwnerList) {
 		R2_GLOBALS._player.enableControl();
 	}
 }
+
 void Scene2750::signal() {
 	switch (_sceneMode) {
 	case 10:
@@ -4332,7 +4327,7 @@ void Scene2800::Action2::signal() {
 		R2_GLOBALS._player.animate(ANIM_MODE_1, NULL);
 		R2_GLOBALS._player.setObjectWrapper(new SceneObjectWrapper());
 
-		Common::Point pt(100, 64);
+		Common::Point pt(64, 100);
 		NpcMover *mover = new NpcMover();
 		R2_GLOBALS._player.addMover(mover, &pt, this);
 		break;

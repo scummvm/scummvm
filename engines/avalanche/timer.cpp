@@ -35,12 +35,7 @@ namespace Avalanche {
 Timer::Timer(AvalancheEngine *vm) {
 	_vm = vm;
 
-	for (int i = 0; i < 7; i++) {
-		_times[i]._timeLeft = 0;
-		_times[i]._action = 0;
-		_times[i]._reason = 0;
-	}
-	_timerLost = false;
+	resetVariables();
 }
 
 /**
@@ -48,7 +43,7 @@ Timer::Timer(AvalancheEngine *vm) {
  * @remarks	Originally called 'set_up_timer'
  */
 void Timer::addTimer(int32 duration, byte action, byte reason) {
-	if ((_vm->_ableToAddTimer == false) || (_timerLost == true)) {
+	if (_vm->_ableToAddTimer) {
 		byte i = 0;
 		while ((i < 7) && (_times[i]._timeLeft != 0))
 			i++;
@@ -61,7 +56,7 @@ void Timer::addTimer(int32 duration, byte action, byte reason) {
 		_times[i]._action = action;
 		_times[i]._reason = reason;
 	} else {
-		_vm->_ableToAddTimer = false;
+		_vm->_ableToAddTimer = true;
 		return;
 	}
 }
@@ -218,7 +213,6 @@ void Timer::loseTimer(byte which) {
 			_times[i]._timeLeft = 0; // Cancel this one!
 	}
 
-	_timerLost = true;
 }
 
 void Timer::openDrawbridge() {
@@ -688,6 +682,14 @@ void Timer::giveLuteToGeida() { // Moved here from Acci.
 	_vm->incScore(4);
 	_vm->_lustieIsAsleep = true;
 	_vm->_sequence->startGeidaLuteSeq();
+}
+
+void Timer::resetVariables() {
+	for (int i = 0; i < 7; i++) {
+		_times[i]._timeLeft = 0;
+		_times[i]._action = 0;
+		_times[i]._reason = 0;
+	}
 }
 
 } // End of namespace Avalanche.

@@ -1486,6 +1486,7 @@ void AvalancheEngine::resetVariables() {
 	_sequence->resetVariables();
 	_background->resetVariables();
 	_menu->resetVariables();
+	_timer->resetVariables();
 }
 
 void AvalancheEngine::newGame() {

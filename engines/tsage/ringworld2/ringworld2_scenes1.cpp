@@ -683,6 +683,7 @@ bool Scene1100::Seeker::startAction(CursorType action, Event &event) {
 	Scene1100 *scene = (Scene1100 *)R2_GLOBALS._sceneManager._scene;
 
 	if (R2_GLOBALS.getFlag(52)) {
+		// The trouper is dead
 		R2_GLOBALS._player.disableControl();
 		if (R2_GLOBALS._player._characterIndex == R2_QUINN)
 			scene->_nextStripNum = 327;
@@ -691,6 +692,7 @@ bool Scene1100::Seeker::startAction(CursorType action, Event &event) {
 		scene->_sceneMode = 53;
 		scene->setAction(&scene->_sequenceManager1, scene, 1122, &R2_GLOBALS._player, NULL);
 	} else {
+		// The trouper is not dead
 		R2_GLOBALS._player.disableControl();
 		scene->_sceneMode = 55;
 		if (R2_GLOBALS._stripModifier >= 3) {
@@ -716,6 +718,7 @@ bool Scene1100::Trooper::startAction(CursorType action, Event &event) {
 	switch (action) {
 	case R2_NEGATOR_GUN:
 		if (_visage == 1105) {
+			// Trooper wears the stasis shield
 			R2_GLOBALS._player.disableControl();
 			scene->_sceneMode = 1114;
 			scene->setAction(&scene->_sequenceManager1, scene, 1114, &R2_GLOBALS._player, &scene->_trooper, NULL);
@@ -728,6 +731,7 @@ bool Scene1100::Trooper::startAction(CursorType action, Event &event) {
 	// No break on purpose
 	case R2_PHOTON_STUNNER:
 		if (_visage == 1105) {
+			// If trooper wears the stasis shield
 			R2_GLOBALS._player.disableControl();
 			if (R2_GLOBALS._player._characterIndex == R2_QUINN) {
 				scene->_sceneMode = 1112;
@@ -738,6 +742,7 @@ bool Scene1100::Trooper::startAction(CursorType action, Event &event) {
 			}
 			return true;
 		} else if (_strip == 2) {
+			// Trooper wears his black uniform
 			R2_GLOBALS._player.disableControl();
 			scene->_sceneMode = 1113;
 			if (R2_GLOBALS._player._characterIndex == R2_QUINN) {
@@ -757,7 +762,9 @@ bool Scene1100::Trooper::startAction(CursorType action, Event &event) {
 }
 
 bool Scene1100::Chief::startAction(CursorType action, Event &event) {
+	// CHECKME: Flag 54 is never set. Guess: the flag means "Chief is dead"
 	if ((action == CURSOR_TALK) && (!R2_GLOBALS.getFlag(54)) && (R2_GLOBALS.getFlag(52))) {
+		// Talk to chief after the trooper dies
 		Scene1100 *scene = (Scene1100 *)R2_GLOBALS._sceneManager._scene;
 
 		scene->_nextStripNum = 0;
@@ -842,6 +849,7 @@ void Scene1100::postInit(SceneObjectList *OwnerList) {
 			_chief.setDetails(1100, 3, -1, -1, 1, (SceneItem *) NULL);
 
 		_trooper.postInit();
+		// Trooper wears his stasis shield
 		_trooper.setup(1105, 3, 1);
 		_trooper.setPosition(Common::Point(312, 165));
 		_trooper._numFrames = 5;
@@ -900,8 +908,10 @@ void Scene1100::postInit(SceneObjectList *OwnerList) {
 	} else {
 		_cloud.setPosition(Common::Point(180, 30));
 		if (R2_GLOBALS.getFlag(52))
+			// Trooper is dead
 			R2_GLOBALS._sound1.play(98);
 		else
+			// Trooper is alive
 			R2_GLOBALS._sound1.play(95);
 
 		R2_GLOBALS._player.postInit();
@@ -910,6 +920,7 @@ void Scene1100::postInit(SceneObjectList *OwnerList) {
 		_seeker.postInit();
 
 		if (R2_GLOBALS.getFlag(52)) {
+			// Trooper is dead
 			if (R2_GLOBALS._player._characterIndex == R2_QUINN) {
 				R2_GLOBALS._player.setup(19, 7, 1);
 				_seeker.setup(29, 6, 1);
@@ -921,6 +932,7 @@ void Scene1100::postInit(SceneObjectList *OwnerList) {
 			_seeker.setPosition(Common::Point(237, 134));
 			R2_GLOBALS._player.enableControl();
 		} else {
+			// Trooper is alive
 			if (R2_GLOBALS._player._characterIndex == R2_QUINN) {
 				R2_GLOBALS._player.setup(1107, 2, 1);
 				_seeker.setup(1107, 4, 1);
@@ -952,16 +964,20 @@ void Scene1100::postInit(SceneObjectList *OwnerList) {
 			_chief.setDetails(1100, 3, -1, -1, 1, (SceneItem *) NULL);
 
 		if (!R2_GLOBALS.getFlag(52)) {
+			// If trooper is alive, initialize him
 			_trooper.postInit();
 			if (R2_GLOBALS.getFlag(53))
+				// Trooper wears his black uniform
 				_trooper.setup(1106, 2, 4);
 			else
+				// Trooper wears a stasis shield
 				_trooper.setup(1105, 4, 4);
 
 			_trooper.setPosition(Common::Point(17, 54));
 			_trooper._numFrames = 5;
 
 			if (R2_GLOBALS.getFlag(53))
+				// Trooper isn't wearing the stasis shield
 				_trooper.setDetails(1100, 28, -1, -1, 1, (SceneItem *) NULL);
 			else
 				_trooper.setDetails(1100, 22, 23, 24, 1, (SceneItem *) NULL);
@@ -1164,6 +1180,7 @@ void Scene1100::signal() {
 		R2_GLOBALS._player._canWalk = false;
 		break;
 	case 51:
+		// Trooper no longer wears a statis shield
 		R2_GLOBALS.setFlag(53);
 		_trooper.setDetails(1100, 28, -1, -1, 3, (SceneItem *) NULL);
 
@@ -1171,6 +1188,7 @@ void Scene1100::signal() {
 		R2_GLOBALS._player._canWalk = false;
 		break;
 	case 52:
+		// Trooper is shot to death
 		R2_GLOBALS._sound1.play(98);
 		R2_GLOBALS.setFlag(52);
 		R2_GLOBALS._player.disableControl();
@@ -10835,11 +10853,6 @@ void Scene1750::SpeedSlider::calculateSlider() {
 	scene->_speed = scene->_direction * tmpVar2;
 }
 
-void Scene1750::SpeedSlider::remove() {
-	// Function kept to match IDA. Could be removed.
-	SceneActor::remove();
-}
-
 void Scene1750::SpeedSlider::process(Event &event) {
 	if ((event.eventType == EVENT_BUTTON_DOWN) && (R2_GLOBALS._events.getCursor() == CURSOR_USE) &&
 			(_bounds.contains(event.mousePos))) {
@@ -10963,22 +10976,22 @@ void Scene1750::postInit(SceneObjectList *OwnerList) {
 	_radarSweep.fixPriority(7);
 	_radarSweep.setDetails(1750, 30, -1, -1, 1, (SceneItem *) NULL);
 
-	_scannerIcon1.postInit();
-	_scannerIcon1.setup(1750, 2, 1);
-	_scannerIcon1.setPosition(Common::Point(35, ((_rotation->_currIndex - 218) % 4) + ((R2_GLOBALS._rimLocation % 800) * 4) - 1440));
-	_scannerIcon1.fixPriority(8);
+	_scannerIcon.postInit();
+	_scannerIcon.setup(1750, 2, 1);
+	_scannerIcon.setPosition(Common::Point(35, ((_rotation->_currIndex - 218) % 4) + ((R2_GLOBALS._rimLocation % 800) * 4) - 1440));
+	_scannerIcon.fixPriority(8);
 
-	_scannerIcon2.postInit();
-	_scannerIcon2.setup(1750, 1, 4);
+	_redLights.postInit();
+	_redLights.setup(1750, 1, 4);
 
-	int tmpVar = ABS(_scannerIcon1._position.y - 158) / 100;
+	int tmpVar = ABS(_scannerIcon._position.y - 158) / 100;
 
 	if (tmpVar >= 8)
-		_scannerIcon2.hide();
-	else if (_scannerIcon1._position.y <= 158)
-		_scannerIcon2.setPosition(Common::Point(137, (tmpVar * 7) + 122));
+		_redLights.hide();
+	else if (_scannerIcon._position.y <= 158)
+		_redLights.setPosition(Common::Point(137, (tmpVar * 7) + 122));
 	else
-		_scannerIcon2.setPosition(Common::Point(148, (tmpVar * 7) + 122));
+		_redLights.setPosition(Common::Point(148, (tmpVar * 7) + 122));
 
 	_speedSlider.setupSlider(1, 286, 143, 41, 15);
 	_speedSlider.setDetails(1750, 24, 1, -1, 1, (SceneItem *) NULL);
@@ -11008,7 +11021,7 @@ void Scene1750::postInit(SceneObjectList *OwnerList) {
 	_speed = 0;
 	_rotationSegment = ((_rotation->_currIndex - 218) / 4) % 4;
 
-	_redLights.setDetails(Rect(129, 112, 155, 175), 1750, 21, -1, -1, 1, NULL);
+	_redLightsDescr.setDetails(Rect(129, 112, 155, 175), 1750, 21, -1, -1, 1, NULL);
 	_greenLights.setDetails(Rect(93, 122, 126, 172), 1750, 15, -1, -1, 1, NULL);
 	_frontView.setDetails(Rect(3, 3, 157, 99), 1750, 9, -1, -1, 1, NULL);
 	_rearView.setDetails(Rect(162, 3, 316, 99), 1750, 12, -1, -1, 1, NULL);
@@ -11078,7 +11091,7 @@ void Scene1750::dispatch() {
 			--_speedDelta;
 
 		_rotationSegCurrent = _rotationSegment;
-		_rotationSegment = ((_rotation->_currIndex - 218) / 4) / 4;
+		_rotationSegment = ((_rotation->_currIndex - 218) / 4) % 4;
 
 		if ((_rotationSegCurrent + 1) == _rotationSegment || (_rotationSegCurrent - 3)  == _rotationSegment) {
 			if (R2_GLOBALS._rimLocation < 2400) {
@@ -11093,19 +11106,21 @@ void Scene1750::dispatch() {
 		}
 
 		if (_rotation->_currIndex != _newRotation) {
+			// Handle setting the position of the lift icon in the scanner display
 			_newRotation = _rotation->_currIndex;
-			_scannerIcon1.setPosition(Common::Point(35, ((_rotation->_currIndex - 218) % 4) +
+			_scannerIcon.setPosition(Common::Point(35, ((_rotation->_currIndex - 218) % 4) +
 				((R2_GLOBALS._rimLocation % 800) * 4) - 1440));
 		}
 	}
 
-	int v = ABS(_scannerIcon1._position.y - 158) / 100;
+	int v = ABS(_scannerIcon._position.y - 158) / 100;
 	if (v < 8) {
-		_scannerIcon2.show();
-		_scannerIcon2.setPosition(Common::Point((_scannerIcon1._position.y <= 158) ? 137 : 148,
+		// Show how close the user is to the lift on the second column of lights
+		_redLights.show();
+		_redLights.setPosition(Common::Point((_scannerIcon._position.y <= 158) ? 137 : 148,
 			v * 7 + 122));
 	} else {
-		_scannerIcon2.hide();
+		_redLights.hide();
 	}
 }
 
@@ -11201,8 +11216,11 @@ bool Scene1800::Doors::startAction(CursorType action, Event &event) {
 				R2_GLOBALS.setFlag(14);
 			}
 		} else {
+			// Seeker failing to force open doors
 			scene->_sceneMode = 1813;
-			scene->setAction(&scene->_sequenceManager, scene, 1813, &R2_GLOBALS._player, NULL);
+			// Original was using 1813 in setAction too, but it somewhat broken. 
+			// Seeker goes 2 pixels to high, hiding behind the door
+			scene->setAction(&scene->_sequenceManager, scene, 1808, &R2_GLOBALS._player, &scene->_doors, NULL);
 		}
 	} else if (R2_GLOBALS.getFlag(14)) {
 		return SceneActor::startAction(action, event);
@@ -11567,6 +11585,29 @@ void Scene1800::signal() {
 		R2_GLOBALS._player.animate(ANIM_MODE_1, NULL);
 		R2_GLOBALS._player.enableControl(CURSOR_USE);
 		break;
+	// Cases 23 and 24 have been added to fix missing hardcoded logic in the original,
+	// when Seeker tries to open the door
+	case 23:
+		_sceneMode = 24;
+		R2_GLOBALS._events.setCursor(CURSOR_CROSSHAIRS);
+		R2_GLOBALS._player.setup(1801, 5, 1);
+		R2_GLOBALS._player.animate(ANIM_MODE_8, NULL);
+		_stripManager.start(550, this);
+		break;
+	case 24:
+		R2_GLOBALS._player.disableControl();
+		R2_GLOBALS._player.setup(1507, 4, 1);
+		R2_GLOBALS._player.animate(ANIM_MODE_1, NULL);
+		R2_GLOBALS._player.enableControl(CURSOR_USE);
+
+		_doors.setup(1801, 3, 1);
+		_doors.setPosition(Common::Point(160, 139));
+		_doors.setDetails(1800, 6, -1, -1, 1, (SceneItem *) NULL);
+		_doors.show();
+
+		R2_GLOBALS._player._position.y += 2;
+		R2_GLOBALS._player.show();
+		break;
 	case 1800:
 		R2_GLOBALS._walkRegions.disableRegion(8);
 		if (R2_GLOBALS.getFlag(63))
@@ -11613,6 +11654,11 @@ void Scene1800::signal() {
 		break;
 	case 1812:
 		_sceneMode = 13;
+		R2_GLOBALS._player.animate(ANIM_MODE_5, this);
+		break;
+	// Case 1813 has been added to fix Seeker missing animation in the original game
+	case 1813:
+		_sceneMode = 23;
 		R2_GLOBALS._player.animate(ANIM_MODE_5, this);
 		break;
 	case 1814:

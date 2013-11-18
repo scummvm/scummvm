@@ -608,13 +608,10 @@ void OpenGLGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, int 
 		Graphics::Surface *dst = _cursor->getSurface();
 		const uint srcPitch = w * inputFormat.bytesPerPixel;
 
-		// In case the actual cursor format differs from the requested format
-		// we will need to convert the format. This might be the case because
-		// the cursor format does not have any alpha bits.
-		if (dst->format != inputFormat) {
-			Graphics::crossBlit((byte *)dst->getPixels(), (const byte *)buf, dst->pitch, srcPitch,
-			                    w, h, dst->format, inputFormat);
-		}
+		// Copy the cursor data to the actual texture surface. This will make
+		// sure that the data is also converted to the expected format.
+		Graphics::crossBlit((byte *)dst->getPixels(), (const byte *)buf, dst->pitch, srcPitch,
+		                    w, h, dst->format, inputFormat);
 
 		// We apply the color key by setting the alpha bits of the pixels to
 		// fully transparent.

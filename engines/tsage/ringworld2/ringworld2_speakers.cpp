@@ -1441,7 +1441,7 @@ void SpeakerQuinn2750::animateSpeaker() {
 			_object1.setup(4022, 5, 1);
 			break;
 		case 2752:
-			_object1.setup(2752, 1, 1);
+			_object1.setup(2752, 3, 1);
 			break;
 		default:
 			break;

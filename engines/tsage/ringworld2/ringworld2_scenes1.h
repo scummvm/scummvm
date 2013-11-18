@@ -768,7 +768,6 @@ class Scene1750 : public SceneExt {
 		void setupSlider(int incrAmount, int xp, int ys, int height, int thumbHeight);
 		void calculateSlider();
 
-		virtual void remove();
 		virtual void process(Event &event);
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -785,12 +784,12 @@ class Scene1750 : public SceneExt {
 
 public:
 	NamedHotspot _background;
-	NamedHotspot _redLights;
+	NamedHotspot _redLightsDescr;
 	NamedHotspot _greenLights;
 	NamedHotspot _frontView;
 	NamedHotspot _rearView;
-	SceneActor _scannerIcon1;
-	SceneActor _scannerIcon2;
+	SceneActor _scannerIcon;
+	SceneActor _redLights;
 	SceneActor _radarSweep;
 	SpeedSlider _speedSlider;
 	Button _forwardButton;
