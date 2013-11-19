@@ -13350,7 +13350,8 @@ bool Scene1945::Ladder::startAction(CursorType action, Event &event) {
 	} else if (  ((R2_GLOBALS._player._position.x == 197) && (R2_GLOBALS._player._position.y == 158))
 		      || ((R2_GLOBALS._player._position.x == 191) && (R2_GLOBALS._player._position.y == 142)) ) {
 		scene->_sceneMode = 1947;
-	} else if ((R2_GLOBALS._player._position.x == 221) && (R2_GLOBALS._player._position.y == 142) && (event.mousePos.y >= 30)) {
+	} else if ((R2_GLOBALS._player._position.x == 154) && (R2_GLOBALS._player._position.y == 50) 
+			&& (event.mousePos.y >= 30)) {
 		scene->_sceneMode = 1940;
 	} else {
 		R2_GLOBALS._player.enableControl(CURSOR_USE);
@@ -13551,6 +13552,7 @@ void Scene1945::signal() {
 			setAction(&_sequenceManager1, this, _sceneMode, &R2_GLOBALS._player, &_gunpowder, NULL);
 			return;
 		}
+		_sceneMode = 0;
 		break;
 	case 1947:
 		if (_nextSceneMode1 == 1943) {
