@@ -643,6 +643,8 @@ void AvalancheEngine::enterRoom(Room roomId, byte ped) {
 	if ((_lastRoom == kRoomMap) && (_lastRoomNotMap != _room))
 		enterNewTown();
 
+	_animation->updateSpeed();
+
 	switch (roomId) {
 	case kRoomYours:
 		if (_avvyInBed) {
