@@ -561,7 +561,6 @@ void GfxOpenGLS::drawModelFace(const Mesh *mesh, const MeshFace *face) {
 }
 
 void GfxOpenGLS::drawSprite(const Sprite *sprite) {
-	return;
 	glDisable(GL_DEPTH_TEST);
 
 	_spriteProgram->use();
@@ -674,10 +673,10 @@ void GfxOpenGLS::createMaterial(Texture *material, const char *data, const CMap 
 	} else {	// The only other colorFormat we load right now is BGR
 #ifdef USE_GLES2
 		format = GL_RGB;
-		internalFormat = GL_RGB;
+		internalFormat = GL_RGBA;
 #else
 		format = GL_BGR;
-		internalFormat = GL_RGB;
+		internalFormat = GL_RGBA;
 #endif
 	}
 
