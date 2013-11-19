@@ -1092,35 +1092,89 @@ SciScriptPatcherEntry larry6Signatures[] = {
 };
 
 // ===========================================================================
-// rm560::doit was supposed to close the painting, when Heimlich enters the
-//  room. The code is buggy. It actually closes the painting, when heimlich
-//  is not in the room. We fix that.
-// Applies to at least: English floppy
+// Laura Bow 2
+// 
+// Moving away the painting in the room with the hidden safe is problematic
+//  for the CD version of the game. safePic::doVerb gets triggered by the mouse-click.
+// This method sets local 0 as signal, which is only meant to get handled, when
+//  the player clicks again to move the painting back. This signal is processed by
+//  the room doit-script.
+// That doit-script checks safePic::cel to be not equal 0 and would then skip over
+//  the "close painting" trigger code. On very fast computers this script may
+//  get called too early (which is the case when running under ScummVM and when
+//  running the game using Sierra SCI in DOS-Box with cycles 15000) and thinks
+//  that it's supposed to move the painting back. Which then results in the painting
+//  getting moved to its original position immediately (which means it won't be possible
+//  to access the safe behind it).
+//
+// We patch the script, so that we check for cel to be not equal 4 (the final cel) and
+//  we also reset the safePic-signal immediately as well.
+//
+// In the floppy version Laura's coordinates are checked directly in rm560::doit
+//  and as soon as she moves, the painting will automatically move to its original position.
+//  This is not the case for the CD version of the game. The painting will only "move" back,
+//  when the player actually exits the room and re-enters.
+
+// Applies to at least: English PC-CD
 // Responsible method: rm560::doit
-const uint16 laurabow2SignaturePaintingClosing[] = {
-	0x4a, 0x04,                         // send 04 - read aHeimlich::room
+// Fixes bug: #6460 (actually only part of)
+const uint16 laurabow2CDSignaturePaintingClosing[] = {
+	0x39, 0x04,                         // pushi 04 (cel)
+	0x76,                               // push0
 	SIG_MAGICDWORD,
+	0x7a,                               // push2
+	0x38, SIG_UINT16 + 0x31, 0x02,      // pushi 0231h (561)
+	0x76,                               // push0
+	0x43, 0x02, 0x04,                   // kScriptID (get export 0 of script 561)
+	0x4a, 0x04,                         // send 04 (gets safePicture::cel)
+	0x18,                               // not
+	0x31, 0x21,                         // bnt [exit]
+	0x38, SIG_UINT16 + 0x83, 0x02,      // pushi 0283h
+	0x76,                               // push0
+	0x7a,                               // push2
+	0x39, 0x20,                         // pushi 20
+	0x76,                               // push0
+	0x43, 0x02, 0x04,                   // kScriptID (get export 0 of script 32)
+	0x4a, 0x04,                         // send 04 (get sHeimlich::room)
 	0x36,                               // push
-	0x81, 0x0b,                         // lag global[11d] -> current room
+	0x81, 0x0b,                         // lag global[b] (current room)
 	0x1c,                               // ne?
-	0x31, 0x0e,                         // bnt [don't close]
+	0x31, 0x0e,                         // bnt [exit]
 	0x35, 0x00,                         // ldi 00
-	0xa3, 0x00,                         // sal local[0]
-	0x38, SIG_UINT16 + 0x92, 0x00,      // pushi 0092
-	0x78,                               // push1
-	0x72,                               // lofsa sDumpSafe
+	0xa3, 0x00,                         // sal local[0] -> reset safePic signal
 	SIG_END
 };
 
-const uint16 laurabow2PatchPaintingClosing[] = {
-	PATCH_ADDTOOFFSET +6,
-	0x2f, 0x0e,       // bt [don't close]
+const uint16 laurabow2CDPatchPaintingClosing[] = {
+	PATCH_ADDTOOFFSET +2,
+	0x3c,                               // dup (1 additional byte)
+	0x76,                               // push0
+	0x3c,                               // dup (1 additional byte)
+	0xab, 0x00,                         // ssl local[0] -> reset safePic signal
+	0x7a,                               // push2
+	0x38, PATCH_UINT16 + 0x31, 0x02,    // pushi 0231h (561)
+	0x76,                               // push0
+	0x43, 0x02, 0x04,                   // kScriptID (get export 0 of script 561)
+	0x4a, 0x04,                         // send 04 (gets safePicture::cel)
+	0x1a,                               // eq?
+	0x31, 0x1d,                         // bnt [exit]
+	0x38, PATCH_UINT16 + 0x83, 0x02,    // pushi 0283h
+	0x76,                               // push0
+	0x7a,                               // push2
+	0x39, 0x20,                         // pushi 20
+	0x76,                               // push0
+	0x43, 0x02, 0x04,                   // kScriptID (get export 0 of script 32)
+	0x4a, 0x04,                         // send 04 (get sHeimlich::room)
+	0x36,                               // push
+	0x81, 0x0b,                         // lag global[b] (current room)
+	0x1a,                               // eq? (2 opcodes changed, to save 2 bytes)
+	0x2f, 0x0a,                         // bt [exit]
 	PATCH_END
 };
 
 //    script, description,                                            signature                          patch
 SciScriptPatcherEntry laurabow2Signatures[] = {
-	{    560, "painting closing immediately",                1, 0, 0, laurabow2SignaturePaintingClosing, laurabow2PatchPaintingClosing },
+	{    560, "CD: painting closing immediately",            1, 0, 0, laurabow2CDSignaturePaintingClosing, laurabow2CDPatchPaintingClosing },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
