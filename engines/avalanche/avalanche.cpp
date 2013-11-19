@@ -163,7 +163,6 @@ void AvalancheEngine::initVariables() {
 	_takenMushroom = false;
 	_givenPenToAyles = false;
 	_askedDogfoodAboutNim = false;
-	_ableToAddTimer = false;
 	_spludwickAtHome = false;
 	_passedCwytalotInHerts = false;
 	_lastRoom = _lastRoomNotMap = kRoomDummy;
@@ -448,7 +447,7 @@ bool AvalancheEngine::loadGame(const int16 slot) {
 	delete f;
 
 	_isLoaded = true;
-	_ableToAddTimer = false;
+
 	_seeScroll = true;  // This prevents display of the new sprites before the new picture is loaded.
 
 	if (_holdTheDawn) {

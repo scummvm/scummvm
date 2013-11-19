@@ -43,22 +43,20 @@ Timer::Timer(AvalancheEngine *vm) {
  * @remarks	Originally called 'set_up_timer'
  */
 void Timer::addTimer(int32 duration, byte action, byte reason) {
-	if (_vm->_ableToAddTimer) {
-		byte i = 0;
-		while ((i < 7) && (_times[i]._timeLeft != 0))
-			i++;
-
-		if (i == 7)
-			return; // Oh dear... No timer left
-
-		// Everything's OK here!
-		_times[i]._timeLeft = duration;
-		_times[i]._action = action;
-		_times[i]._reason = reason;
-	} else {
-		_vm->_ableToAddTimer = true;
-		return;
+	byte i = 0;
+	while ((i < 7) && (_times[i]._timeLeft != 0)) {
+		if (_times[i]._reason == reason) // We only add a timer if it's not already in the array.
+			return;
+		i++;
 	}
+
+	if (i == 7)
+		return; // Oh dear... No timer left
+
+	// Everything's OK here!
+	_times[i]._timeLeft = duration;
+	_times[i]._action = action;
+	_times[i]._reason = reason;
 }
 
 /**

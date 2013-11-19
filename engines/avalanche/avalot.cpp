@@ -1531,7 +1531,6 @@ void AvalancheEngine::newGame() {
 	_doingSpriteRun = false;
 	_avvyInBed = true;
 
-	_ableToAddTimer = true; // Set to false in _vm->loadGame().
 	_isLoaded = false;
 
 	enterRoom(kRoomYours, 1);

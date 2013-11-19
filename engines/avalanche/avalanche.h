@@ -264,10 +264,7 @@ public:
 	bool _doingSpriteRun; // Only set to True if we're doing a sprite_run at this moment. This stops the trippancy system from moving any of the sprites.
 	bool _soundFx;
 
-	// These two have very similar purpose, but it's crucial not to modify _isLoaded later than the actual loading
-	// or at the begginning of the game, and _ablteToAddTimer must be modified in addTimer().
 	bool _isLoaded; // Is it a loaded gamestate?
-	bool _ableToAddTimer;
 
 	void callVerb(VerbCode id);
 	void loadRoom(byte num);
