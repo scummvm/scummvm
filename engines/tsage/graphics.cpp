@@ -68,11 +68,21 @@ GfxSurface surfaceFromRes(const byte *imgData) {
 	Rect r(0, 0, READ_LE_UINT16(imgData), READ_LE_UINT16(imgData + 2));
 	GfxSurface s;
 	s.create(r.width(), r.height());
-	s._centroid.x = READ_LE_UINT16(imgData + 4);
-	s._centroid.y = READ_LE_UINT16(imgData + 6);
 	s._transColor = *(imgData + 8);
 
-	bool rleEncoded = (imgData[9] & 2) != 0;
+	byte flags = imgData[9];
+	bool rleEncoded = (flags & 2) != 0;
+
+	// Figure out the centroid
+	s._centroid.x = READ_LE_UINT16(imgData + 4);
+	s._centroid.y = READ_LE_UINT16(imgData + 6);
+
+	if (g_vm->getGameID() != GType_Ringworld) {
+		if (flags & 4)
+			s._centroid.x = r.width() - (s._centroid.x + 1);
+		if (flags & 8)
+			s._centroid.y = r.height() - (s._centroid.y + 1);
+	}
 
 	const byte *srcP = imgData + 10;
 	Graphics::Surface destSurface = s.lockSurface();
