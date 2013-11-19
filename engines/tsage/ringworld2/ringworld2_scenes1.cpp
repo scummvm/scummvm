@@ -146,9 +146,9 @@ void Scene1000::signal() {
 		break;
 
 	case 2:
-		if (R2_GLOBALS._speechSubtitles & SPEECH_TEXT) {
+		if (R2_GLOBALS._speechSubtitles & SPEECH_TEXT)
 			setAction(&_sequenceManager1, this, 1, &R2_GLOBALS._player, NULL);
-		} else {
+		else {
 			if (++_animCounter < 3)
 				_sceneMode = 2;
 
@@ -463,9 +463,8 @@ void Scene1000::dispatch() {
 
 			if (_sceneMode == 52)
 				_animationPlayer._endAction = this;
-		} else {
+		} else
 			_animationPlayer.dispatch();
-		}
 	}
 
 	Scene::dispatch();
@@ -723,9 +722,8 @@ bool Scene1100::Trooper::startAction(CursorType action, Event &event) {
 			scene->_sceneMode = 1114;
 			scene->setAction(&scene->_sequenceManager1, scene, 1114, &R2_GLOBALS._player, &scene->_trooper, NULL);
 			return true;
-		} else {
+		} else
 			return SceneActor::startAction(action, event);
-		}
 		break;
 	case R2_SONIC_STUNNER:
 	// No break on purpose
@@ -745,15 +743,13 @@ bool Scene1100::Trooper::startAction(CursorType action, Event &event) {
 			// Trooper wears his black uniform
 			R2_GLOBALS._player.disableControl();
 			scene->_sceneMode = 1113;
-			if (R2_GLOBALS._player._characterIndex == R2_QUINN) {
+			if (R2_GLOBALS._player._characterIndex == R2_QUINN)
 				scene->setAction(&scene->_sequenceManager1, scene, 1113, &R2_GLOBALS._player, &scene->_trooper, NULL);
-			} else {
+			else
 				scene->setAction(&scene->_sequenceManager1, scene, 1118, &R2_GLOBALS._player, &scene->_trooper, NULL);
-			}
 			return true;
-		} else {
+		} else
 			return SceneActor::startAction(action, event);
-		}
 		break;
 	default:
 		return SceneActor::startAction(action, event);
@@ -783,16 +779,14 @@ void Scene1100::postInit(SceneObjectList *OwnerList) {
 	else
 		loadScene(1100);
 
-	if ((R2_GLOBALS._sceneManager._previousScene == 1000) && (!R2_GLOBALS.getFlag(44))) {
+	if ((R2_GLOBALS._sceneManager._previousScene == 1000) && (!R2_GLOBALS.getFlag(44)))
 		R2_GLOBALS._uiElements._active = false;
-	}
 
 	if (R2_GLOBALS._player._characterScene[R2_QUINN] == 1100)
 		R2_GLOBALS._sceneManager._previousScene = 1100;
 
-	if (R2_GLOBALS._sceneManager._previousScene == -1) {
+	if (R2_GLOBALS._sceneManager._previousScene == -1)
 		R2_GLOBALS._uiElements._active = false;
-	}
 
 	SceneExt::postInit();
 
@@ -1218,9 +1212,9 @@ void Scene1100::signal() {
 				else
 					_stripManager.start(322, this);
 			}
-		} else {
+		} else
 			_stripManager.start3(_nextStripNum, this, _stripManager._lookupList);
-		}
+
 		break;
 	case 54:
 		if (_stripManager._exitMode == 1) {
@@ -1958,9 +1952,8 @@ void Scene1200::process(Event &event) {
 			return;
 			break;
 		}
-	} else {
+	} else
 		return;
-	}
 }
 
 void Scene1200::dispatch() {
@@ -15313,9 +15306,9 @@ void Scene1950::signal() {
 	case 1964:
 	// No break on purpose
 	case 1965:
-		if (!R2_GLOBALS.getFlag(37)) {
+		if (!R2_GLOBALS.getFlag(37))
 			SceneItem::display(1950, 26, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, LIST_END);
-		}
+
 		R2_GLOBALS._player.enableControl();
 		break;
 	case 1966:
@@ -15339,7 +15332,9 @@ void Scene1950::signal() {
 			R2_GLOBALS._player.setVisage(22);
 
 		R2_GLOBALS._player.animate(ANIM_MODE_1, NULL);
-		Common::Point pt(218, 165);
+		warning("%d %d", R2_GLOBALS._player._position.x, R2_GLOBALS._player._position.y);
+		// This is a hack to work around a pathfinding issue. original destination is (218, 165)
+		Common::Point pt(128, 165);
 		NpcMover *mover = new NpcMover();
 		R2_GLOBALS._player.addMover(mover, &pt, this);
 		}
