@@ -80,7 +80,7 @@ Vars::Vars() {
 	scene01_picSc01Osk2 = 0;
 
 	scene02_guvTheDrawer = 0;
-	scene02_var1 = 0;
+	scene02_boxDelay = 0;
 	scene02_boxOpen = false;
 
 	scene03_eggeater = 0;
@@ -1582,7 +1582,7 @@ void scene02_initScene(Scene *sc) {
 		g_fullpipe->_currentScene = s;
 	}
 
-	g_vars->scene02_var1 = 0;
+	g_vars->scene02_boxDelay = 0;
 
 	StaticANIObject *box = sc->getStaticANIObject1ById(ANI_SC2_BOX, -1);
 
@@ -1590,10 +1590,10 @@ void scene02_initScene(Scene *sc) {
 		g_vars->scene02_boxOpen = false;
 	} else {
 		g_vars->scene02_boxOpen = true;
-		g_vars->scene02_var1 = 100 * g_fullpipe->_rnd->getRandomNumber(32767) / 0x7FFF + 150;
+		g_vars->scene02_boxDelay = 100 * g_fullpipe->_rnd->getRandomNumber(32767) / 0x7FFF + 150;
 	}
 
-	//Unk1_sub1(&unk1, g_fullpipe->_gameLoader->_gameVar->getSubVarByName("SC_2"));
+	//g_fullpipe->_floaters->init(g_fullpipe->_gameLoader->_gameVar->getSubVarByName("SC_2"));
 
 	warning("STUB: scene02_initScene()");
 }
