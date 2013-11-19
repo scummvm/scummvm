@@ -63,7 +63,11 @@ static GLuint createCompatShader(const char *shaderSource, GLenum shaderType, co
 	const GLchar *compatSource =
 			shaderType == GL_VERTEX_SHADER ? Graphics::BuiltinShaders::compatVertex : Graphics::BuiltinShaders::compatFragment;
 	const GLchar *shaderSources[] = {
+#ifdef USE_GLES2
 		"#version 100\n",
+#else
+		"#version 130\n",
+#endif
 		compatSource,
 		shaderSource
 	};
