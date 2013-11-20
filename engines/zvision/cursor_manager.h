@@ -81,6 +81,8 @@ public:
 	 * @param pushed        Should the cursor be pushed (true) or not pushed (false) (Another way to say it: down or up)
 	 */
 	void changeCursor(const Common::String &cursorName, bool pushed);
+
+	void changeCursor(int id, bool active, bool pushed);
 	/**
 	 * Change the cursor to a certain push state. If the cursor is already in the specified push state, nothing will happen.
 	 *

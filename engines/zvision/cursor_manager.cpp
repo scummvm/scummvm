@@ -116,6 +116,23 @@ void CursorManager::changeCursor(const Common::String &cursorName, bool pushed) 
 	warning("No cursor found for identifier %s", cursorName.c_str());
 }
 
+void CursorManager::changeCursor(int id, bool active, bool pushed) {
+	Common::String file;
+	if (_engine->getGameId() == GID_NEMESIS) {
+		file = Common::String::format("%2.2d%s%c.zcr", id, active ? "act" : "idle", pushed ? 'b' : 'a');
+	} else if (_engine->getGameId() == GID_GRANDINQUISITOR) {
+		file = Common::String::format("g0b%cc%2.2x1.zcr", active ? (pushed ? 'd' : 'c') : (pushed ? 'b' : 'a')  , id);
+	} else
+		return;
+
+	if (_currentCursor.equals(file))
+		return;
+
+	_currentCursor = file;
+
+	changeCursor(ZorkCursor(file));
+}
+
 void CursorManager::changeCursor(const ZorkCursor &cursor) {
 	CursorMan.replaceCursor(cursor.getSurface(), cursor.getWidth(), cursor.getHeight(), cursor.getHotspotX(), cursor.getHotspotY(), cursor.getKeyColor(), false, _pixelFormat);
 }
