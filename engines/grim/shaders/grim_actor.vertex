@@ -38,6 +38,7 @@ void main()
 		Texcoord = vec2(0.0, 0.0);
 	}
 
+/*
 	if (lightsEnabled) {
 		vec3 normal_eye = normalize((mvpMatrix * extraMatrix * vec4(normal, 0.0))).xyz;
 		vec3 light = vec3(0.0, 0.0, 0.0);
@@ -64,7 +65,7 @@ void main()
 			}
 		}
 		Color = color * vec4(light, 1.0);
-	} else {
+	} else */ {
 		Color = color;
 	}
 }
