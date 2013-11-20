@@ -252,6 +252,23 @@ void GfxOpenGLS::setupTexturedCenteredQuad() {
 	_spriteProgram->disableVertexAttribute("color", Math::Vector4d(1.0f, 1.0f, 1.0f, 1.0f));
 }
 
+void GfxOpenGLS::setupPrimitives() {
+	uint32 numVBOs = ARRAYSIZE(_primitiveVBOs);
+	glGenBuffers(numVBOs, _primitiveVBOs);
+	_currentPrimitive = 0;
+	for (int i = 0; i < numVBOs; ++i) {
+		glBindBuffer(GL_ARRAY_BUFFER, _primitiveVBOs[i]);
+		glBufferData(GL_ARRAY_BUFFER, 8 * sizeof(float), NULL, GL_DYNAMIC_DRAW);
+	}
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
+GLuint GfxOpenGLS::nextPrimitive() {
+	GLuint ret = _primitiveVBOs[_currentPrimitive];
+	_currentPrimitive = (_currentPrimitive + 1) % ARRAYSIZE(_primitiveVBOs);
+	return ret;
+}
+
 void GfxOpenGLS::setupShaders() {
 	bool isEMI = g_grim->getGameType() == GType_MONKEY4;
 
@@ -265,10 +282,14 @@ void GfxOpenGLS::setupShaders() {
 	_actorProgram = Graphics::Shader::fromFiles(isEMI ? "emi_actor" : "grim_actor", actorAttributes);
 	_spriteProgram = _actorProgram->clone();
 
+	static const char* primAttributes[] = {"position", NULL};
+	_primitiveProgram = Graphics::Shader::fromFiles("grim_primitive", primAttributes);
+
 	setupBigEBO();
 	setupQuadEBO();
 	setupTexturedQuad();
 	setupTexturedCenteredQuad();
+	setupPrimitives();
 }
 
 byte *GfxOpenGLS::setupScreen(int screenW, int screenH, bool fullscreen) {
@@ -1200,19 +1221,83 @@ void GfxOpenGLS::loadEmergFont() {
 	delete[] atlas;
 }
 
+void GfxOpenGLS::drawGenericPrimitive(const float *vertices, uint32 numVertices, const PrimitiveObject *primitive) {
+	const Color color(primitive->getColor());
+	const Math::Vector3d colorV =
+	  Math::Vector3d(color.getRed(), color.getGreen(), color.getBlue()) / 255.f;
+
+	GLuint prim = nextPrimitive();
+	glBindBuffer(GL_ARRAY_BUFFER, prim);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, numVertices * sizeof(float), vertices);
+
+	glDisable(GL_DEPTH_TEST);
+	glDepthMask(GL_FALSE);
+
+	_primitiveProgram->enableVertexAttribute("position", prim, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), 0);
+	_primitiveProgram->use(true);
+	_primitiveProgram->setUniform("color", colorV);
+	_primitiveProgram->setUniform("scaleWH", Math::Vector2d(1.f / _gameWidth, 1.f / _gameHeight));
+
+	switch (primitive->getType()) {
+		case PrimitiveObject::RectangleType:
+			if (primitive->isFilled()) {
+				glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+			} else {
+				glDrawArrays(GL_LINE_LOOP, 0, 4);
+			}
+			break;
+		case PrimitiveObject::LineType:
+			glDrawArrays(GL_LINES, 0, 2);
+			break;
+		case PrimitiveObject::PolygonType:
+			glDrawArrays(GL_LINES, 0, 4);
+			break;
+		default:
+			/* Impossible */
+			break;
+	}
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glDepthMask(GL_TRUE);
+	glEnable(GL_DEPTH_TEST);
+}
 
 void GfxOpenGLS::drawRectangle(const PrimitiveObject *primitive) {
+	float x1 = primitive->getP1().x * _scaleW;
+	float y1 = primitive->getP1().y * _scaleH;
+	float x2 = primitive->getP2().x * _scaleW;
+	float y2 = primitive->getP2().y * _scaleH;
 
+	float data[] = { x1, y1, x2, y1, x2, y2, x1, y2 };
+
+	drawGenericPrimitive(data, 8, primitive);
 }
 
 void GfxOpenGLS::drawLine(const PrimitiveObject *primitive) {
+	float x1 = primitive->getP1().x * _scaleW;
+	float y1 = primitive->getP1().y * _scaleH;
+	float x2 = primitive->getP2().x * _scaleW;
+	float y2 = primitive->getP2().y * _scaleH;
 
+	float data[] = { x1, y1, x2, y2 };
+
+	drawGenericPrimitive(data, 4, primitive);
 }
 
 void GfxOpenGLS::drawPolygon(const PrimitiveObject *primitive) {
+	float x1 = primitive->getP1().x * _scaleW;
+	float y1 = primitive->getP1().y * _scaleH;
+	float x2 = primitive->getP2().x * _scaleW;
+	float y2 = primitive->getP2().y * _scaleH;
+	float x3 = primitive->getP3().x * _scaleW;
+	float y3 = primitive->getP3().y * _scaleH;
+	float x4 = primitive->getP4().x * _scaleW;
+	float y4 = primitive->getP4().y * _scaleH;
 
+	const float data[] = { x1, y1, x2, y2, x3, y3, x4, y4 };
+
+	drawGenericPrimitive(data, 8, primitive);
 }
-
 
 void GfxOpenGLS::prepareMovieFrame(Graphics::Surface* frame) {
 	int width = frame->w;
