@@ -23,7 +23,8 @@ MODULE_OBJS = \
 	stateloader.o \
 	statics.o \
 	utils.o \
-	scenes/sceneIntro.o
+	scenes/sceneIntro.o \
+	scenes/scene01.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_FULLPIPE), DYNAMIC_PLUGIN)
