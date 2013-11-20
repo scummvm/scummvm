@@ -34,6 +34,7 @@
 #include "fullpipe/modal.h"
 #include "fullpipe/input.h"
 #include "fullpipe/scenes.h"
+#include "fullpipe/floaters.h"
 
 namespace Fullpipe {
 
@@ -96,6 +97,7 @@ FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_currentScene = 0;
 	_scene2 = 0;
 	_movTable = 0;
+	_floaters = 0;
 
 	_globalMessageQueueList = 0;
 	_messageHandlers = 0;
@@ -161,6 +163,8 @@ void FullpipeEngine::initialize() {
 	_sceneRect.top = 0;
 	_sceneRect.right = 799;
 	_sceneRect.bottom = 599;
+
+	_floaters = new Floaters;
 }
 
 Common::Error FullpipeEngine::run() {

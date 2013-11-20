@@ -124,6 +124,8 @@ namespace Fullpipe {
 #define PIC_SC1_LADDER 1091
 #define PIC_SC1_OSK 1018
 #define PIC_SC1_OSK2 2932
+#define PIC_SC2_DTRUBA 841
+#define PIC_SC2_LADDER 412
 #define PIC_SC3_DOMIN 5182
 #define PIC_SC3_LADDER 1102
 #define PIC_SCD_SEL 734

@@ -1598,15 +1598,16 @@ void scene02_initScene(Scene *sc) {
 }
 
 void sceneHandler02_ladderClick() {
-	warning("STUB: sceneHandler02_ladderClick()");
+	handleObjectInteraction(g_fullpipe->_aniMan2, g_fullpipe->_currentScene->getPictureObjectById(PIC_SC2_DTRUBA, 0), 0);
 }
 
 void sceneHandler02_showLadder() {
-	warning("STUB: sceneHandler02_showLadder()");
+	g_fullpipe->_currentScene->getPictureObjectById(PIC_SC2_LADDER, 0)->_flags |= 4;
 }
 
 void sceneHandler02_hideLadder() {
-	warning("STUB: sceneHandler02_hideLadder()");
+	g_fullpipe->_currentScene->getPictureObjectById(PIC_SC2_LADDER, 0)->_flags &= 0xfffb;
+	g_fullpipe->_aniMan2->_priority = 25;
 }
 
 int sceneHandler02(ExCommand *ex) {
