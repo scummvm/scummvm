@@ -12,6 +12,7 @@ MODULE_OBJS = \
 	interaction.o \
 	inventory.o \
 	lift.o \
+	messagehandlers.o \
 	messages.o \
 	modal.o \
 	motion.o \
