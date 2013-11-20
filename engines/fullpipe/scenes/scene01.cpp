@@ -22,7 +22,6 @@
 
 #include "fullpipe/fullpipe.h"
 
-//#include "fullpipe/objects.h"
 #include "fullpipe/objectnames.h"
 #include "fullpipe/constants.h"
 

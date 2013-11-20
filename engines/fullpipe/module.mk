@@ -24,7 +24,8 @@ MODULE_OBJS = \
 	statics.o \
 	utils.o \
 	scenes/sceneIntro.o \
-	scenes/scene01.o
+	scenes/scene01.o \
+	scenes/scene02.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_FULLPIPE), DYNAMIC_PLUGIN)
