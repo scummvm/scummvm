@@ -882,6 +882,16 @@ void SciEngine::syncSoundSettings() {
 	}
 }
 
+// used by Script Patcher. Used to find out, if Laura Bow 2 needs patching for Speech+Subtitles - or not
+bool SciEngine::speechAndSubtitlesEnabled() {
+	bool subtitlesOn = ConfMan.getBool("subtitles");
+	bool speechOn = !ConfMan.getBool("speech_mute");
+	
+	if (subtitlesOn && speechOn)
+		return true;
+	return false;
+}
+
 void SciEngine::syncIngameAudioOptions() {
 	// Sync the in-game speech/subtitles settings for SCI1.1 CD games
 	if (isCD() && getSciVersion() == SCI_VERSION_1_1) {
@@ -894,16 +904,19 @@ void SciEngine::syncIngameAudioOptions() {
 			_gamestate->variables[VAR_GLOBAL][90] = make_reg(0, 2);	// speech
 		} else if (subtitlesOn && speechOn) {
 			// Is it a game that supports simultaneous speech and subtitles?
-			if (getGameId() == GID_SQ4
-				|| getGameId() == GID_FREDDYPHARKAS
-				|| getGameId() == GID_ECOQUEST
-				|| getGameId() == GID_LSL6
+			switch (_gameId) {
+			case GID_SQ4:
+			case GID_FREDDYPHARKAS:
+			case GID_ECOQUEST:
+			case GID_LSL6:
 				// TODO: The following need script patches for simultaneous speech and subtitles
-				//|| getGameId() == GID_KQ6
-				//|| getGameId() == GID_LAURABOW2
-				) {
+				//  GID_KQ6
 				_gamestate->variables[VAR_GLOBAL][90] = make_reg(0, 3);	// speech + subtitles
-			} else {
+				break;
+			case GID_LAURABOW2:
+				// Laura Bow 2 gets patched when speech and subtitles are enabled
+				//  It then does both, when the user has "speech" selected. That's why we select speech here
+			default:
 				// Game does not support speech and subtitles, set it to speech
 				_gamestate->variables[VAR_GLOBAL][90] = make_reg(0, 2);	// speech
 			}
@@ -915,18 +928,36 @@ void SciEngine::updateScummVMAudioOptions() {
 	// Update ScummVM's speech/subtitles settings for SCI1.1 CD games,
 	// depending on the in-game settings
 	if (isCD() && getSciVersion() == SCI_VERSION_1_1) {
-		if (_gamestate->variables[VAR_GLOBAL][90] == make_reg(0, 1)) {
+		uint16 ingameSetting = _gamestate->variables[VAR_GLOBAL][90].getOffset();
+		bool subtitlesOn = ConfMan.getBool("subtitles");
+		bool speechOn = !ConfMan.getBool("speech_mute");
+		
+		switch (ingameSetting) {
+		case 1:
 			// subtitles
 			ConfMan.setBool("subtitles", true);
 			ConfMan.setBool("speech_mute", true);
-		} else if (_gamestate->variables[VAR_GLOBAL][90] == make_reg(0, 2)) {
+			break;
+		case 2:
 			// speech
+			switch (_gameId) {
+			case GID_LAURABOW2:
+				// We don't sync "speech" for Laura Bow 2 in case the user choose "both" in the setting
+				//  Because "speech" (2) within SCI means "speech + subtitles" for Laura Bow 2
+				if (subtitlesOn && speechOn)
+					return;
+				break;
+			}
 			ConfMan.setBool("subtitles", false);
 			ConfMan.setBool("speech_mute", false);
-		} else if (_gamestate->variables[VAR_GLOBAL][90] == make_reg(0, 3)) {
+			break;
+		case 3:
 			// speech + subtitles
 			ConfMan.setBool("subtitles", true);
 			ConfMan.setBool("speech_mute", false);
+			break;
+		default:
+			break;
 		}
 	}
 }

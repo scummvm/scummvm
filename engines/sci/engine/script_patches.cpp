@@ -104,6 +104,7 @@ namespace Sci {
 #define PATCH_VALUELIMIT      4096
 
 struct SciScriptPatcherEntry {
+	bool active;
 	uint16 scriptNr;
 	const char *description;
 	int16 applyCount;
@@ -202,9 +203,9 @@ const uint16 camelotPatchPeepingTom[] = {
 	PATCH_END
 };
 
-//    script, description,                                            signature                   patch
+//         script, description,                                            signature                   patch
 SciScriptPatcherEntry camelotSignatures[] = {
-	{    62, "fix peepingTom Sierra bug",                    1, 0, 0, camelotSignaturePeepingTom, camelotPatchPeepingTom },
+	{  true,   62, "fix peepingTom Sierra bug",                    1, 0, 0, camelotSignaturePeepingTom, camelotPatchPeepingTom },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -271,9 +272,9 @@ const uint16 ecoquest1PatchStayAndHelp[] = {
 	PATCH_END
 };
 
-//    script, description,                                            signature                      patch
+//          script, description,                                            signature                      patch
 SciScriptPatcherEntry ecoquest1Signatures[] = {
-	{    660, "CD: bad messagebox and freeze",               1, 0, 0, ecoquest1SignatureStayAndHelp, ecoquest1PatchStayAndHelp },
+	{  true,   660, "CD: bad messagebox and freeze",               1, 0, 0, ecoquest1SignatureStayAndHelp, ecoquest1PatchStayAndHelp },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -394,10 +395,10 @@ const uint16 ecoquest2PatchEcorderTutorial[] = {
 	PATCH_END
 };
 
-//    script, description,                                            signature                          patch
+//          script, description,                                            signature                          patch
 SciScriptPatcherEntry ecoquest2Signatures[] = {
-	{     50, "initial text not removed on ecorder",         1, 0, 0, ecoquest2SignatureEcorder,         ecoquest2PatchEcorder },
-	{    333, "initial text not removed on ecorder tutorial",1, 0, 0, ecoquest2SignatureEcorderTutorial, ecoquest2PatchEcorderTutorial },
+	{  true,    50, "initial text not removed on ecorder",         1, 0, 0, ecoquest2SignatureEcorder,         ecoquest2PatchEcorder },
+	{  true,   333, "initial text not removed on ecorder tutorial",1, 0, 0, ecoquest2SignatureEcorderTutorial, ecoquest2PatchEcorderTutorial },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -424,9 +425,9 @@ const uint16 fanmadePatchInfiniteLoop[] = {
 	PATCH_END
 };
 
-//    script, description,                                            signature                     patch
+//          script, description,                                            signature                     patch
 SciScriptPatcherEntry fanmadeSignatures[] = {
-	{    999, "infinite loop on typo",                       1, 0, 0, fanmadeSignatureInfiniteLoop, fanmadePatchInfiniteLoop },
+	{  true,   999, "infinite loop on typo",                       1, 0, 0, fanmadeSignatureInfiniteLoop, fanmadePatchInfiniteLoop },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -545,12 +546,12 @@ const uint16 freddypharkasPatchMacInventory[] = {
 	PATCH_END
 };
 
-//    script, description,                                            signature                            patch
+//          script, description,                                            signature                            patch
 SciScriptPatcherEntry freddypharkasSignatures[] = {
-	{      0, "CD: score early disposal",                    1, 0, 0, freddypharkasSignatureScoreDisposal, freddypharkasPatchScoreDisposal },
-	{     15, "Mac: broken inventory",                       1, 0, 0, freddypharkasSignatureMacInventory,  freddypharkasPatchMacInventory },
-	{    235, "CD: canister pickup hang",                    3, 0, 0, freddypharkasSignatureCanisterHang,  freddypharkasPatchCanisterHang },
-	{    320, "ladder event issue",                          2, 0, 0, freddypharkasSignatureLadderEvent,   freddypharkasPatchLadderEvent },
+	{  true,     0, "CD: score early disposal",                    1, 0, 0, freddypharkasSignatureScoreDisposal, freddypharkasPatchScoreDisposal },
+	{  true,    15, "Mac: broken inventory",                       1, 0, 0, freddypharkasSignatureMacInventory,  freddypharkasPatchMacInventory },
+	{  true,   235, "CD: canister pickup hang",                    3, 0, 0, freddypharkasSignatureCanisterHang,  freddypharkasPatchCanisterHang },
+	{  true,   320, "ladder event issue",                          2, 0, 0, freddypharkasSignatureLadderEvent,   freddypharkasPatchLadderEvent },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -686,12 +687,12 @@ const uint16 gk1PatchInterrogationBug[] = {
 	PATCH_END
 };
 
-//    script, description,                                            signature                     patch
+//          script, description,                                            signature                     patch
 SciScriptPatcherEntry gk1Signatures[] = {
-	{     51, "interrogation bug",                           1, 0, 0, gk1SignatureInterrogationBug, gk1PatchInterrogationBug },
-	{    212, "day 5 phone freeze",                          1, 0, 0, gk1SignatureDay5PhoneFreeze, gk1PatchDay5PhoneFreeze },
-	{    230, "day 6 police beignet timer issue",            1, 0, 0, gk1SignatureDay6PoliceBeignet, gk1PatchDay6PoliceBeignet },
-	{    230, "day 6 police sleep timer issue",              1, 0, 0, gk1SignatureDay6PoliceSleep, gk1PatchDay6PoliceSleep },
+	{  true,    51, "interrogation bug",                           1, 0, 0, gk1SignatureInterrogationBug, gk1PatchInterrogationBug },
+	{  true,   212, "day 5 phone freeze",                          1, 0, 0, gk1SignatureDay5PhoneFreeze, gk1PatchDay5PhoneFreeze },
+	{  true,   230, "day 6 police beignet timer issue",            1, 0, 0, gk1SignatureDay6PoliceBeignet, gk1PatchDay6PoliceBeignet },
+	{  true,   230, "day 6 police sleep timer issue",              1, 0, 0, gk1SignatureDay6PoliceSleep, gk1PatchDay6PoliceSleep },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -808,17 +809,11 @@ const uint16 kq5PatchWinGMSignals[] = {
 	PATCH_END
 };
 
-//    script, description,                                            signature                  patch
+//          script, description,                                            signature                  patch
 SciScriptPatcherEntry kq5Signatures[] = {
-	{      0, "CD: harpy volume change",                     1, 0, 0, kq5SignatureCdHarpyVolume, kq5PatchCdHarpyVolume },
-	{    200, "CD: witch cage init",                         1, 0, 0, kq5SignatureWitchCageInit, kq5PatchWitchCageInit },
-	SCI_SIGNATUREENTRY_TERMINATOR
-};
-
-SciScriptPatcherEntry kq5WinGMSignatures[] = {
-	{      0, "CD: harpy volume change",                     1, 0, 0, kq5SignatureCdHarpyVolume, kq5PatchCdHarpyVolume },
-	{    200, "CD: witch cage init",                         1, 0, 0, kq5SignatureWitchCageInit, kq5PatchWitchCageInit },
-	{    124, "Win: GM Music signal checks",                 4, 0, 0, kq5SignatureWinGMSignals, kq5PatchWinGMSignals },
+	{  true,     0, "CD: harpy volume change",                     1, 0, 0, kq5SignatureCdHarpyVolume, kq5PatchCdHarpyVolume },
+	{  true,   200, "CD: witch cage init",                         1, 0, 0, kq5SignatureWitchCageInit, kq5PatchWitchCageInit },
+	{ false,   124, "Win: GM Music signal checks",                 4, 0, 0, kq5SignatureWinGMSignals, kq5PatchWinGMSignals },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -916,10 +911,10 @@ const uint16 kq6PatchInventoryStackFix[] = {
 	PATCH_END
 };
 
-//    script, description,                                            signature                     patch
+//          script, description,                                            signature                     patch
 SciScriptPatcherEntry kq6Signatures[] = {
-	{    481, "duplicate baby cry",                          1, 0, 0, kq6SignatureDuplicateBabyCry, kq6PatchDuplicateBabyCry },
-	{    907, "inventory stack fix",                         1, 0, 0, kq6SignatureInventoryStackFix, kq6PatchInventoryStackFix },
+	{  true,   481, "duplicate baby cry",                          1, 0, 0, kq6SignatureDuplicateBabyCry, kq6PatchDuplicateBabyCry },
+	{  true,   907, "inventory stack fix",                         1, 0, 0, kq6SignatureInventoryStackFix, kq6PatchInventoryStackFix },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -963,9 +958,9 @@ const uint16 longbowPatchShowHandCode[] = {
 	PATCH_END
 };
 
-//    script, description,                                            signature                     patch
+//          script, description,                                            signature                     patch
 SciScriptPatcherEntry longbowSignatures[] = {
-	{    210, "hand code crash",                             5, 0, 0, longbowSignatureShowHandCode, longbowPatchShowHandCode },
+	{  true,   210, "hand code crash",                             5, 0, 0, longbowSignatureShowHandCode, longbowPatchShowHandCode },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -1005,9 +1000,9 @@ const uint16 larry2PatchWearParachutePoints[] = {
 	PATCH_END
 };
 
-//    script, description,                                            signature                           patch
+//          script, description,                                            signature                           patch
 SciScriptPatcherEntry larry2Signatures[] = {
-	{     63, "plane: no points for wearing plane",          1, 0, 0, larry2SignatureWearParachutePoints, larry2PatchWearParachutePoints },
+	{  true,    63, "plane: no points for wearing plane",          1, 0, 0, larry2SignatureWearParachutePoints, larry2PatchWearParachutePoints },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -1034,9 +1029,9 @@ const uint16 larry5PatchGermanEndingPattiTalker[] = {
 	PATCH_END
 };
 
-//    script, description,                                            signature                               patch
+//          script, description,                                            signature                               patch
 SciScriptPatcherEntry larry5Signatures[] = {
-	{    380, "German-only: Enlarge Patti Textbox",          1, 0, 0, larry5SignatureGermanEndingPattiTalker, larry5PatchGermanEndingPattiTalker },
+	{  true,   380, "German-only: Enlarge Patti Textbox",          1, 0, 0, larry5SignatureGermanEndingPattiTalker, larry5PatchGermanEndingPattiTalker },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -1085,9 +1080,9 @@ const uint16 larry6PatchDeathDialog[] = {
 	PATCH_END
 };
 
-//    script, description,                                            signature                   patch
+//          script, description,                                            signature                   patch
 SciScriptPatcherEntry larry6Signatures[] = {
-	{     82, "death dialog memory corruption",              1, 0, 0, larry6SignatureDeathDialog, larry6PatchDeathDialog },
+	{  true,    82, "death dialog memory corruption",              1, 0, 0, larry6SignatureDeathDialog, larry6PatchDeathDialog },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -1172,9 +1167,111 @@ const uint16 laurabow2CDPatchPaintingClosing[] = {
 	PATCH_END
 };
 
-//    script, description,                                            signature                          patch
+// Audio + subtitles support
+//  this patch gets enabled, when the user selects "both" in the ScummVM "Speech + Subtitles" menu
+//  We currently use global 98d to hold a kMemory pointer.
+// Patched method: Messager::sayNext / lb2Messager::sayNext (always use text branch)
+const uint16 laurabow2CDSignatureAudioTextSupport1[] = {
+	0x89, 0x5a,                         // lsg global[5a]
+	0x35, 0x02,                         // ldi 02
+	0x12,                               // and
+	SIG_MAGICDWORD,
+	0x31, 0x13,                         // bnt [audio call]
+	0x38, 0xde, 0x00,                   // pushi 00de
+	SIG_END
+};
+
+const uint16 laurabow2CDPatchAudioTextSupport1[] = {
+	PATCH_ADDTOOFFSET +5,
+	0x33, 0x13,                         // jmp [audio call]
+	PATCH_END
+};
+
+// Patched method: Messager::sayNext / lb2Messager::sayNext (allocate audio memory)
+const uint16 laurabow2CDSignatureAudioTextSupport2[] = {
+	0x7a,                               // push2
+	0x78,                               // push1
+	0x39, 0x0c,                         // pushi 0c
+	0x43, SIG_MAGICDWORD, 0x72, 0x04,   // kMemory
+	0xa5, 0xc9,                         // sat global[c9]
+	SIG_END
+};
+
+const uint16 laurabow2CDPatchAudioTextSupport2[] = {
+	PATCH_ADDTOOFFSET +7,
+	0xa1, 98,                           // sag global[98d]
+	PATCH_END
+};
+
+// Patched method: Messager::sayNext / lb2Messager::sayNext (release audio memory)
+const uint16 laurabow2CDSignatureAudioTextSupport3[] = {
+	0x7a,                               // push2
+	0x39, 0x03,                         // pushi 03
+	SIG_MAGICDWORD,
+	0x8d, 0xc9,                         // lst temp[c9]
+	0x43, 0x72, 0x04,                   // kMemory
+	SIG_END
+};
+
+const uint16 laurabow2CDPatchAudioTextSupport3[] = {
+	PATCH_ADDTOOFFSET +3,
+	0x89, 98,                           // lsg global[98d]
+	PATCH_END
+};
+
+// Patched method: Narrator::say (use audio memory)
+const uint16 laurabow2CDSignatureAudioTextSupport4[] = {
+	0x89, 0x5a,                         // lsg global[5a]
+	0x35, 0x01,                         // ldi 01
+	0x12,                               // and
+	0x31, 0x08,                         // bnt [skip code]
+	0x38, 0x31, 0x02,                   // pushi 0231 (startText)
+	0x78,                               // push1
+	0x8f, 0x01,                         // lsp param[1]
+	0x54, 0x06,                         // self 06
+	0x89, 0x5a,                         // lsg global[5a]
+	0x35, 0x02,                         // ldi 02
+	0x12,                               // and
+	0x31, 0x08,                         // bnt [skip code]
+	SIG_MAGICDWORD,
+	0x38, 0x33, 0x02,                   // pushi 0233 (startAudio)
+	0x78,                               // push1
+	0x8f, 0x01,                         // lsp param[1]
+	0x54, 0x06,                         // self 06
+	SIG_END
+};
+
+const uint16 laurabow2CDPatchAudioTextSupport4[] = {
+	PATCH_ADDTOOFFSET +5,
+	0x18,                               // not (never jump here)
+	0x18,                               // not (never jump here)
+	PATCH_ADDTOOFFSET +19,
+	0x89, 98,                           // lsp global[98d]
+	PATCH_END
+};
+
+// Patched method: Talker::display/Narrator::say (remove reset saved mouse cursor code)
+//  code would screw over mouse cursor
+const uint16 laurabow2CDSignatureAudioTextSupport5[] = {
+	SIG_MAGICDWORD,
+	0x35, 0x00,                         // ldi 00
+	0x65, 0x82,                         // aTop saveCursor
+	SIG_END
+};
+
+const uint16 laurabow2CDPatchAudioTextSupport5[] = {
+	0x18, 0x18, 0x18, 0x18,             // waste bytes, do nothing
+	PATCH_END
+};
+
+//          script, description,                                            signature                              patch
 SciScriptPatcherEntry laurabow2Signatures[] = {
-	{    560, "CD: painting closing immediately",            1, 0, 0, laurabow2CDSignaturePaintingClosing, laurabow2CDPatchPaintingClosing },
+	{  true,   560, "CD: painting closing immediately",            1, 0, 0, laurabow2CDSignaturePaintingClosing,   laurabow2CDPatchPaintingClosing },
+	{ false,   924, "CD: audio + text support 1",                  1, 0, 0, laurabow2CDSignatureAudioTextSupport1, laurabow2CDPatchAudioTextSupport1 },
+	{ false,   924, "CD: audio + text support 2",                  1, 0, 0, laurabow2CDSignatureAudioTextSupport2, laurabow2CDPatchAudioTextSupport2 },
+	{ false,   924, "CD: audio + text support 3",                  1, 0, 0, laurabow2CDSignatureAudioTextSupport3, laurabow2CDPatchAudioTextSupport3 },
+	{ false,   928, "CD: audio + text support 4",                  1, 0, 0, laurabow2CDSignatureAudioTextSupport4, laurabow2CDPatchAudioTextSupport4 },
+	{ false,   928, "CD: audio + text support 5",                  2, 0, 0, laurabow2CDSignatureAudioTextSupport5, laurabow2CDPatchAudioTextSupport5 },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -1212,11 +1309,11 @@ const uint16 mothergoose256PatchSaveLimit[] = {
 	PATCH_END
 };
 
-//    script, description,                                            signature                         patch
+//          script, description,                                            signature                         patch
 SciScriptPatcherEntry mothergoose256Signatures[] = {
-	{      0, "replay save issue",                           1, 0, 0, mothergoose256SignatureReplay,    mothergoose256PatchReplay },
-	{      0, "save limit dialog (SCI1.1)",                  1, 0, 0, mothergoose256SignatureSaveLimit, mothergoose256PatchSaveLimit },
-	{    994, "save limit dialog (SCI1)",                    1, 0, 0, mothergoose256SignatureSaveLimit, mothergoose256PatchSaveLimit },
+	{  true,     0, "replay save issue",                           1, 0, 0, mothergoose256SignatureReplay,    mothergoose256PatchReplay },
+	{  true,     0, "save limit dialog (SCI1.1)",                  1, 0, 0, mothergoose256SignatureSaveLimit, mothergoose256PatchSaveLimit },
+	{  true,   994, "save limit dialog (SCI1)",                    1, 0, 0, mothergoose256SignatureSaveLimit, mothergoose256PatchSaveLimit },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -1277,9 +1374,9 @@ const uint16 pq1vgaPatchPutGunInLockerBug[] = {
 	PATCH_END
 };
 
-//    script, description,                                            signature                         patch
+//          script, description,                                            signature                         patch
 SciScriptPatcherEntry pq1vgaSignatures[] = {
-	{    341, "put gun in locker bug",                       1, 0, 0, pq1vgaSignaturePutGunInLockerBug, pq1vgaPatchPutGunInLockerBug },
+	{  true,   341, "put gun in locker bug",                       1, 0, 0, pq1vgaSignaturePutGunInLockerBug, pq1vgaPatchPutGunInLockerBug },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -1474,16 +1571,16 @@ const uint16 qfg1vgaPatchFunnyRoomFix[] = {
 	PATCH_END
 };
 
-//    script, description,                                            signature                            patch
+//          script, description,                                            signature                            patch
 SciScriptPatcherEntry qfg1vgaSignatures[] = {
-	{    215, "fight event issue",                           1, 0, 0, qfg1vgaSignatureFightEvents,         qfg1vgaPatchFightEvents },
-	{    216, "weapon master event issue",                   1, 0, 0, qfg1vgaSignatureFightEvents,         qfg1vgaPatchFightEvents },
-	{    814, "window text temp space",                      1, 0, 0, qfg1vgaSignatureTempSpace,           qfg1vgaPatchTempSpace },
-	{    814, "dialog header offset",                        3, 0, 0, qfg1vgaSignatureDialogHeader,        qfg1vgaPatchDialogHeader },
-	{    331, "moving to crusher",                           1, 0, 0, qfg1vgaSignatureMoveToCrusher,       qfg1vgaPatchMoveToCrusher },
-	{     41, "moving to castle gate",                       1, 0, 0, qfg1vgaSignatureMoveToCastleGate,    qfg1vgaPatchMoveToCastleGate },
-	{    210, "cheetaur description fixed",                  1, 0, 0, qfg1vgaSignatureCheetaurDescription, qfg1vgaPatchCheetaurDescription },
-	{     96, "funny room script bug fixed",                 1, 0, 0, qfg1vgaSignatureFunnyRoomFix,        qfg1vgaPatchFunnyRoomFix },
+	{  true,   215, "fight event issue",                           1, 0, 0, qfg1vgaSignatureFightEvents,         qfg1vgaPatchFightEvents },
+	{  true,   216, "weapon master event issue",                   1, 0, 0, qfg1vgaSignatureFightEvents,         qfg1vgaPatchFightEvents },
+	{  true,   814, "window text temp space",                      1, 0, 0, qfg1vgaSignatureTempSpace,           qfg1vgaPatchTempSpace },
+	{  true,   814, "dialog header offset",                        3, 0, 0, qfg1vgaSignatureDialogHeader,        qfg1vgaPatchDialogHeader },
+	{  true,   331, "moving to crusher",                           1, 0, 0, qfg1vgaSignatureMoveToCrusher,       qfg1vgaPatchMoveToCrusher },
+	{  true,    41, "moving to castle gate",                       1, 0, 0, qfg1vgaSignatureMoveToCastleGate,    qfg1vgaPatchMoveToCastleGate },
+	{  true,   210, "cheetaur description fixed",                  1, 0, 0, qfg1vgaSignatureCheetaurDescription, qfg1vgaPatchCheetaurDescription },
+	{  true,    96, "funny room script bug fixed",                 1, 0, 0, qfg1vgaSignatureFunnyRoomFix,        qfg1vgaPatchFunnyRoomFix },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -1519,9 +1616,9 @@ const uint16 qfg2PatchImportDialog[] = {
 	PATCH_END
 };
 
-//    script, description,                                            signature                  patch
+//          script, description,                                            signature                  patch
 SciScriptPatcherEntry qfg2Signatures[] = {
-	{    944, "import dialog continuous calls",              1, 0, 0, qfg2SignatureImportDialog, qfg2PatchImportDialog },
+	{  true,   944, "import dialog continuous calls",              1, 0, 0, qfg2SignatureImportDialog, qfg2PatchImportDialog },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -1589,10 +1686,10 @@ const uint16 qfg3PatchWooDialog[] = {
 	PATCH_END
 };
 
-//    script, description,                                            signature                  patch
+//          script, description,                                            signature                  patch
 SciScriptPatcherEntry qfg3Signatures[] = {
-	{    944, "import dialog continuous calls",              1, 0, 0, qfg3SignatureImportDialog, qfg3PatchImportDialog },
-	{    440, "dialog crash when asking about Woo",          1, 0, 0, qfg3SignatureWooDialog,    qfg3PatchWooDialog },
+	{  true,   944, "import dialog continuous calls",              1, 0, 0, qfg3SignatureImportDialog, qfg3PatchImportDialog },
+	{  true,   440, "dialog crash when asking about Woo",          1, 0, 0, qfg3SignatureWooDialog,    qfg3PatchWooDialog },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -1709,12 +1806,12 @@ const uint16 sq4CdPatchTextOptions[] = {
 	PATCH_END
 };
 
-//    script, description,                                            signature                        patch
+//          script, description,                                            signature                        patch
 SciScriptPatcherEntry sq4Signatures[] = {
-	{    298, "Floppy: endless flight",                      1, 0, 0, sq4FloppySignatureEndlessFlight, sq4FloppyPatchEndlessFlight },
-	{    818, "CD: Speech and subtitles option",             1, 0, 0, sq4CdSignatureTextOptions,       sq4CdPatchTextOptions },
-	{      0, "CD: Babble icon speech and subtitles fix",    1, 0, 0, sq4CdSignatureBabbleIcon,        sq4CdPatchBabbleIcon },
-	{    818, "CD: Speech and subtitles option button",      1, 0, 0, sq4CdSignatureTextOptionsButton, sq4CdPatchTextOptionsButton },
+	{  true,   298, "Floppy: endless flight",                      1, 0, 0, sq4FloppySignatureEndlessFlight, sq4FloppyPatchEndlessFlight },
+	{  true,   818, "CD: Speech and subtitles option",             1, 0, 0, sq4CdSignatureTextOptions,       sq4CdPatchTextOptions },
+	{  true,     0, "CD: Babble icon speech and subtitles fix",    1, 0, 0, sq4CdSignatureBabbleIcon,        sq4CdPatchBabbleIcon },
+	{  true,   818, "CD: Speech and subtitles option button",      1, 0, 0, sq4CdSignatureTextOptionsButton, sq4CdPatchTextOptionsButton },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -1786,10 +1883,10 @@ const uint16 sq1vgaPatchEgoShowsCard[] = {
 };
 
 
-//    script, description,                                            signature                                   patch
+//          script, description,                                            signature                                   patch
 SciScriptPatcherEntry sq1vgaSignatures[] = {
-	{     45, "Ulence Flats: timepod graphic glitch",        1, 0, 0, sq1vgaSignatureUlenceFlatsTimepodGfxGlitch, sq1vgaPatchUlenceFlatsTimepodGfxGlitch },
-	{     58, "Sarien armory droid zapping ego first time",  1, 0, 0, sq1vgaSignatureEgoShowsCard,                sq1vgaPatchEgoShowsCard },
+	{  true,    45, "Ulence Flats: timepod graphic glitch",        1, 0, 0, sq1vgaSignatureUlenceFlatsTimepodGfxGlitch, sq1vgaPatchUlenceFlatsTimepodGfxGlitch },
+	{  true,    58, "Sarien armory droid zapping ego first time",  1, 0, 0, sq1vgaSignatureEgoShowsCard,                sq1vgaPatchEgoShowsCard },
 	SCI_SIGNATUREENTRY_TERMINATOR};
 
 // ===========================================================================
@@ -1844,9 +1941,9 @@ const uint16 sq5PatchToolboxFix[] = {
 	PATCH_END
 };
 
-//    script, description,                                            signature                        patch
+//          script, description,                                            signature                        patch
 SciScriptPatcherEntry sq5Signatures[] = {
-	{    226, "toolbox fix",                                 1, 0, 0, sq5SignatureToolboxFix,          sq5PatchToolboxFix },
+	{  true,   226, "toolbox fix",                                 1, 0, 0, sq5SignatureToolboxFix,          sq5PatchToolboxFix },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -2177,10 +2274,31 @@ void Script::patcherInitSignature(SciScriptPatcherEntry *patchTable, bool isMacS
     }
 }
 
+// This method enables certain patches
+//  It's used for patches, which are not meant to get applied all the time
+void Script::patcherEnablePatch(SciScriptPatcherEntry *patchTable, const char *searchDescription) {
+	SciScriptPatcherEntry *curEntry = patchTable;
+	int searchDescriptionLen = strlen( searchDescription );
+	int matchCount = 0;
+	
+    while (curEntry->signatureData) {
+		if (strncmp(curEntry->description, searchDescription, searchDescriptionLen) == 0) {
+			// match found, enable patch
+			curEntry->active = true;
+			matchCount++;
+		}
+		curEntry++;
+    }
+    
+    if (!matchCount)
+		error("Script-Patcher: no patch found to enable");
+}
+
 void Script::patcherProcessScript(uint16 scriptNr, byte *scriptData, const uint32 scriptSize) {
 	SciScriptPatcherEntry *signatureTable = NULL;
+	const Sci::SciGameId gameId = g_sci->getGameId();
 
-	switch (g_sci->getGameId()) {
+	switch (gameId) {
 	case GID_CAMELOT:
 		signatureTable = camelotSignatures;
 		break;
@@ -2201,9 +2319,9 @@ void Script::patcherProcessScript(uint16 scriptNr, byte *scriptData, const uint3
 		break;
 	case GID_KQ5:
 		// See the explanation in the kq5SignatureWinGMSignals comment
-		if (g_sci->_features->useAltWinGMSound())
-			signatureTable = kq5WinGMSignatures;
-		else
+//		if (g_sci->_features->useAltWinGMSound())
+//			signatureTable = kq5WinGMSignatures;
+//		else
 			signatureTable = kq5Signatures;
 		break;
 	case GID_KQ6:
@@ -2258,10 +2376,28 @@ void Script::patcherProcessScript(uint16 scriptNr, byte *scriptData, const uint3
 		if (!signatureTable->magicDWord) {
 			// signature table needs to get initialized (Magic DWORD set, selector table set)
 			patcherInitSignature(signatureTable, isMacSci11);
+			
+			// Do additional game-specific initialization
+			switch (gameId) {
+			case GID_KQ5:
+				if (g_sci->_features->useAltWinGMSound()) {
+					// See the explanation in the kq5SignatureWinGMSignals comment
+					patcherEnablePatch(signatureTable, "Win: GM Music signal checks");
+				}
+				break;
+			case GID_LAURABOW2:
+				if (g_sci->speechAndSubtitlesEnabled()) {
+					// Enables Audio + subtitles patches for Laura Bow 2, when "Text and Speech: Both" is selected
+					patcherEnablePatch(signatureTable, "CD: audio + text support");
+				}
+				break;
+			default:
+				break;
+			}
 		}
 	
 		while (signatureTable->signatureData) {
-			if (scriptNr == signatureTable->scriptNr) {
+			if ( (scriptNr == signatureTable->scriptNr) && (signatureTable->active) ) {
 				int32 foundOffset = 0;
 				int16 applyCount = signatureTable->applyCount;
 				do {
