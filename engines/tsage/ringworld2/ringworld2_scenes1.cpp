@@ -14967,11 +14967,12 @@ void Scene1950::enterArea() {
 	switch (R2_GLOBALS._flubMazeEntryDirection) {
 	case 0:
 		_sceneMode = 1950;
-		if (R2_INVENTORY.getObjectScene(R2_SCRITH_KEY) == 0) {
+		if (R2_INVENTORY.getObjectScene(R2_SCRITH_KEY) == 0)
+			// The original uses CURSOR_ARROW. CURSOR_WALK is much more coherent
 			R2_GLOBALS._player.enableControl(CURSOR_WALK);
-		} else {
+		else
 			setAction(&_sequenceManager, this, 1950, &R2_GLOBALS._player, NULL);
-		}
+
 		break;
 	case 1: {
 		_sceneMode = R2_GLOBALS._flubMazeEntryDirection;
