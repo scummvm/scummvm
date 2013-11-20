@@ -90,7 +90,7 @@ enum StateKey {
 	StateKey_EF9_G = 92,
 	StateKey_EF9_R = 93,
 	StateKey_EF9_Speed = 94,
-	StateKey_Inv_0_Slot = 100,
+	StateKey_Inv_Cnt_Slot = 100,
 	StateKey_Inv_1_Slot = 101,
 	StateKey_Inv_49_Slot = 149,
 	StateKey_Inv_TotalSlots = 150
@@ -248,8 +248,18 @@ private:
 	/** Perform change location */
 	void do_changeLocation();
 
-// TODO: Make this private. It was only made public so Console::cmdParseAllScrFiles() could use it
+	int8 invertory_getCount();
+	void invertory_setCount(int8 cnt);
+	int16 invertory_getItem(int8 id);
+	void invertory_setItem(int8 id, int16 item);
+
+
 public:
+	void invertory_add(int16 item);
+	void invertory_drop(int16 item);
+	void invertory_cycle();
+
+	// TODO: Make this private. It was only made public so Console::cmdParseAllScrFiles() could use it
 	/**
 	 * Parses a script file into triggers and events
 	 *

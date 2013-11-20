@@ -156,6 +156,55 @@ bool ActionEnableControl::execute() {
 	return true;
 }
 
+//////////////////////////////////////////////////////////////////////////////
+// ActionInventory
+//////////////////////////////////////////////////////////////////////////////
+
+ActionInventory::ActionInventory(ZVision *engine, const Common::String &line) :
+	ResultAction(engine) {
+	char buf[25];
+	sscanf(line.c_str(), "%*[^(](%25s %d)", buf, &_key);
+
+	if (strcmp(buf, "add") == 0) {
+		_type = 0;
+	} else if (strcmp(buf, "addi") == 0) {
+		_type = 1;
+	} else if (strcmp(buf, "drop") == 0) {
+		_type = 2;
+	} else if (strcmp(buf, "dropi") == 0) {
+		_type = 3;
+	} else if (strcmp(buf, "cycle") == 0) {
+		_type = 4;
+	}
+
+}
+
+bool ActionInventory::execute() {
+	switch (_type) {
+	case 0: // add
+		_engine->getScriptManager()->invertory_add(_key);
+		break;
+	case 1: // addi
+		_engine->getScriptManager()->invertory_add(_engine->getScriptManager()->getStateValue(_key));
+		break;
+	case 2: // drop
+		if (_key >= 0)
+			_engine->getScriptManager()->invertory_drop(_key);
+		else
+			_engine->getScriptManager()->invertory_drop(_engine->getScriptManager()->getStateValue(StateKey_InventoryItem));
+		break;
+	case 3: // dropi
+		_engine->getScriptManager()->invertory_drop(_engine->getScriptManager()->getStateValue(_key));
+		break;
+	case 4: // cycle
+		_engine->getScriptManager()->invertory_cycle();
+		break;
+	default:
+		break;
+	}
+	return true;
+}
+
 
 //////////////////////////////////////////////////////////////////////////////
 // ActionKill

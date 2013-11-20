@@ -197,7 +197,7 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 		} else if (line.matchString("*:flush_mouse_events*", true)) {
 			// TODO: Implement ActionFlushMouseEvents
 		} else if (line.matchString("*:inventory*", true)) {
-			// TODO: Implement ActionInventory
+			actionList.push_back(new ActionInventory(_engine, line));
 		} else if (line.matchString("*:kill*", true)) {
 			actionList.push_back(new ActionKill(_engine, line));
 		} else if (line.matchString("*:menu_bar_enable*", true)) {

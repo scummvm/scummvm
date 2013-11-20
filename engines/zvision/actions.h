@@ -212,6 +212,15 @@ private:
 	uint32 _key;
 };
 
+class ActionInventory : public ResultAction {
+public:
+	ActionInventory(ZVision *engine, const Common::String &line);
+	bool execute();
+private:
+	uint8 _type;
+	int32 _key;
+};
+
 class ActionKill : public ResultAction {
 public:
 	ActionKill(ZVision *engine, const Common::String &line);

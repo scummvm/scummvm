@@ -31,7 +31,8 @@ MODULE_OBJS := \
 	zork_avi_decoder.o \
 	zork_raw.o \
 	sidefx.o \
-	music_node.o
+	music_node.o \
+	inventory_manager.o
  
 MODULE_DIRS += \
 	engines/zvision
