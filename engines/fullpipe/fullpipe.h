@@ -52,6 +52,7 @@ class Inventory2;
 struct CursorInfo;
 struct EntranceInfo;
 class ExCommand;
+class Floaters;
 class GameProject;
 class GameObject;
 class GlobalMessageQueueList;
@@ -162,6 +163,8 @@ public:
 	BehaviorManager *_behaviorManager;
 
 	MovTable *_movTable;
+
+	Floaters *_floaters;
 
 	void initMap();
 	void updateMapPiece(int mapId, int update);

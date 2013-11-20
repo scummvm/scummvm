@@ -3,6 +3,7 @@ MODULE := engines/fullpipe
 MODULE_OBJS = \
 	behavior.o \
 	detection.o \
+	floaters.o \
 	fullpipe.o \
 	gameloader.o \
 	gfx.o \

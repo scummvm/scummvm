@@ -39,6 +39,7 @@
 #include "fullpipe/scenes.h"
 #include "fullpipe/modal.h"
 #include "fullpipe/interaction.h"
+#include "fullpipe/floaters.h"
 
 namespace Fullpipe {
 
@@ -1593,19 +1594,28 @@ void scene02_initScene(Scene *sc) {
 		g_vars->scene02_boxDelay = 100 * g_fullpipe->_rnd->getRandomNumber(32767) + 150;
 	}
 
-	//g_fullpipe->_floaters->init(g_fullpipe->_gameLoader->_gameVar->getSubVarByName("SC_2"));
+	g_fullpipe->_floaters->init(g_fullpipe->_gameLoader->_gameVar->getSubVarByName("SC_2"));
+}
 
-	warning("STUB: scene02_initScene()");
+void sceneHandler02_ladderClick() {
+	warning("STUB: sceneHandler02_ladderClick()");
+}
+
+void sceneHandler02_showLadder() {
+	warning("STUB: sceneHandler02_showLadder()");
+}
+
+void sceneHandler02_hideLadder() {
+	warning("STUB: sceneHandler02_hideLadder()");
 }
 
 int sceneHandler02(ExCommand *ex) {
 	int res = 0;
 
-#if 0
-	if (cmd->_messageKind != 17)
+	if (ex->_messageKind != 17)
 		return 0;
 
-	switch(cmd->_messageNum) {
+	switch(ex->_messageNum) {
 	case MSG_SC2_LADDERCLICK:
 		sceneHandler02_ladderClick();
 		return 0;
@@ -1615,7 +1625,7 @@ int sceneHandler02(ExCommand *ex) {
 		return 0;
 
 	case MSG_SC2_PUTMANUP:
-		g_aniMan2->_priority = 0;
+		g_fullpipe->_aniMan2->_priority = 0;
 		return 0;
 
 	case MSG_SC2_HIDELADDER:
@@ -1624,11 +1634,11 @@ int sceneHandler02(ExCommand *ex) {
 
 	case 33:
 		if (g_fullpipe->_aniMan2) {
-			if (g_fullpipe->_aniMan2->_ox < g_fullpipe->_sceneRect.left + 200) {
+			if (g_fullpipe->_aniMan2->_ox < g_fullpipe->_sceneRect.left + 200)
 				g_fullpipe->_currentScene->_x = g_fullpipe->_aniMan2->_ox - g_fullpipe->_sceneRect.left - 300;
 
-			if (g_fullpipe->_aniMan2->_ox > g_fullpipe->_sceneRect.right - 200 )
-				g_currentScene->bg.x = g_fullpipe->_aniMan2->_ox - g_fullpipe->_sceneRect.right + 300;
+			if (g_fullpipe->_aniMan2->_ox > g_fullpipe->_sceneRect.right - 200)
+				g_fullpipe->_currentScene->_x = g_fullpipe->_aniMan2->_ox - g_fullpipe->_sceneRect.right + 300;
 
 			res = 1;
 		}
@@ -1636,28 +1646,25 @@ int sceneHandler02(ExCommand *ex) {
 		if (g_vars->scene02_boxOpen) {
 			if (g_vars->scene02_boxDelay >= 1) {
 				--g_vars->scene02_boxDelay;
-			} else if (g_fullpipe->_floaters.size() >= 1) {
-				if (g_fullpipe->_floaters->array2[0]->val5 == -50) {
+			} else if (g_fullpipe->_floaters->_array2.size() >= 1) {
+				if (g_fullpipe->_floaters->_array2[0]->val5 == -50) {
 					g_fullpipe->_floaters->stopAll();
 					g_vars->scene02_boxOpen = false;
 					g_vars->scene02_boxDelay = 100 * g_fullpipe->_rnd->getRandomNumber(32767) + 150;
 				} else {
-					g_floaters.array2[0]->val3 = -50;
+					g_fullpipe->_floaters->_array2[0]->val3 = -50;
 				}
 			} else {
 				g_fullpipe->_floaters->genFlies(g_fullpipe->_currentScene, g_fullpipe->_rnd->getRandomNumber(700) + 100, -50, 0, 0);
-				g_vars_scene02_boxDelay = 500 * g_fullpipe->_rnd->getRandomNumber(32767) + 1000;
+				g_vars->scene02_boxDelay = 500 * g_fullpipe->_rnd->getRandomNumber(32767) + 1000;
 			}
 		}
 
 		g_fullpipe->_floaters->update();
 		g_fullpipe->_behaviorManager->updateBehaviors();
 
-		startSceneTrack();
+		g_fullpipe->startSceneTrack();
 	}
-
-#endif
-	warning("STUB: sceneHandler02()");
 
 	return res;
 }
