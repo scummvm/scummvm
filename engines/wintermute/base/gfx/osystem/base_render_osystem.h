@@ -34,6 +34,7 @@
 #include "graphics/surface.h"
 #include "common/list.h"
 #include "engines/wintermute/graphics/transform_struct.h"
+#define DEBUG_RECTS
 
 namespace Wintermute {
 class BaseSurfaceOSystem;
@@ -148,6 +149,13 @@ private:
 	uint32 _clearColor;
 
 	bool _skipThisFrame;
+
+#ifdef DEBUG_RECTS
+	int _debugColor; 
+	Common::Array<Common::Rect> _oldOptimized;
+#endif
+
+
 };
 
 } // End of namespace Wintermute

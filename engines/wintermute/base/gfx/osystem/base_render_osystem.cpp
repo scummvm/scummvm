@@ -65,6 +65,11 @@ BaseRenderOSystem::BaseRenderOSystem(BaseGame *inGame) : BaseRenderer(inGame) {
 	if (ConfMan.hasKey("dirty_rects")) {
 		_disableDirtyRects = !ConfMan.getBool("dirty_rects");
 	}
+
+#ifdef DEBUG_RECTS
+	_debugColor = 0xFF00FF00;
+#endif
+
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -488,6 +493,29 @@ void BaseRenderOSystem::drawTickets() {
 		} // end inner for
 		g_system->copyRectToScreen((byte *)_renderSurface->getBasePtr(_dirtyRect->left, _dirtyRect->top), _renderSurface->pitch, _dirtyRect->left, _dirtyRect->top, _dirtyRect->width(), _dirtyRect->height());
 	} // endfor
+
+#ifdef DEBUG_RECTS
+	
+	for (uint i = 0; i < _oldOptimized.size(); i++) {
+		Common::Rect *_dirtyRect = &_oldOptimized[i];
+		_renderSurface->fillRect(_oldOptimized[i], 0x00000000);
+		g_system->copyRectToScreen((byte *)_renderSurface->getBasePtr(_dirtyRect->left, _dirtyRect->top), _renderSurface->pitch, _dirtyRect->left, _dirtyRect->top, _dirtyRect->width(), _dirtyRect->height());
+	}
+
+	for (uint i = 0; i < optimized.size(); i++) {
+		Common::Rect *_dirtyRect = (optimized[i]);
+		_renderSurface->fillRect(*(optimized[i]), _debugColor);
+		g_system->copyRectToScreen((byte *)_renderSurface->getBasePtr(_dirtyRect->left, _dirtyRect->top), _renderSurface->pitch, _dirtyRect->left, _dirtyRect->top, _dirtyRect->width(), _dirtyRect->height());
+	}
+
+	_oldOptimized.clear();
+
+	for (uint i = 0; i < optimized.size(); i++) {
+		_oldOptimized.push_back(*(optimized[i]));
+	}
+
+
+#endif
 
 	
 	it = _renderQueue.begin();
