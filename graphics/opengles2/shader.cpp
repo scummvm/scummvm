@@ -130,9 +130,9 @@ Shader *Shader::fromFiles(const char *vertex, const char *fragment, const char *
 	return new Shader(name, vertexShader, fragmentShader, attributes);
 }
 
-void Shader::use() {
+void Shader::use(bool forceReload) {
 	static Shader *previousShader = NULL;
-	if (this == previousShader)
+	if (this == previousShader && !forceReload)
 		return;
 	previousShader = this;
 
