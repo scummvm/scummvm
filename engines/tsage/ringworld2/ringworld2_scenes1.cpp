@@ -13765,6 +13765,7 @@ bool Scene1950::Gem::startAction(CursorType action, Event &event) {
 /*--------------------------------------------------------------------------*/
 
 Scene1950::Vampire::Vampire() {
+	_deadPosition = Common::Point(0, 0);
 	_deltaX = 0;
 	_deltaY = 0;
 	_vampireMode = 0;
