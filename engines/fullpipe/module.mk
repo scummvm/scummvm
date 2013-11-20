@@ -22,7 +22,8 @@ MODULE_OBJS = \
 	sound.o \
 	stateloader.o \
 	statics.o \
-	utils.o
+	utils.o \
+	scenes/sceneIntro.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_FULLPIPE), DYNAMIC_PLUGIN)

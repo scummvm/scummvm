@@ -43,27 +43,6 @@
 
 namespace Fullpipe {
 
-int defaultUpdateCursor();
-
-int sceneIntro_updateCursor();
-void sceneIntro_initScene(Scene *sc);
-int sceneHandlerIntro(ExCommand *cmd);
-
-void scene01_fixEntrance();
-void scene01_initScene(Scene *sc, int entrance);
-int sceneHandler01(ExCommand *cmd);
-
-void scene02_initScene(Scene *sc);
-int sceneHandler02(ExCommand *ex);
-
-void scene03_setEaterState();
-int scene03_updateCursor();
-void scene03_initScene(Scene *sc);
-int sceneHandler03(ExCommand *cmd);
-
-void sceneDbgMenu_initScene(Scene *sc);
-int sceneHandlerDbgMenu(ExCommand *cmd);
-
 Vars::Vars() {
 	sceneIntro_aniin1man = 0;
 	sceneIntro_needSleep = true;
@@ -690,12 +669,6 @@ int defaultUpdateCursor() {
 	return g_fullpipe->_cursorId;
 }
 
-int sceneIntro_updateCursor() {
-	g_fullpipe->_cursorId = 0;
-
-	return 0;
-}
-
 void FullpipeEngine::setSwallowedEggsState() {
 	GameVar *v = _gameLoader->_gameVar->getSubVarByName("OBJSTATES")->getSubVarByName(sO_GulpedEggs);
 
@@ -706,76 +679,6 @@ void FullpipeEngine::setSwallowedEggsState() {
 	g_vars->swallowedEgg1->_value.intValue = 0;
 	g_vars->swallowedEgg2->_value.intValue = 0;
 	g_vars->swallowedEgg3->_value.intValue = 0;
-}
-
-void sceneIntro_initScene(Scene *sc) {
-	g_fullpipe->_gameLoader->loadScene(SC_INTRO2);
-
-	g_vars->sceneIntro_aniin1man = sc->getStaticANIObject1ById(ANI_IN1MAN, -1);
-	g_vars->sceneIntro_needSleep = true;
-	g_vars->sceneIntro_needGetup = false;
-	g_vars->sceneIntro_playing = true;
-	g_vars->sceneIntro_needBlackout = false;
-
-	if (g_fullpipe->_recordEvents || g_fullpipe->_inputArFlag)
-		g_vars->sceneIntro_skipIntro = false;
-
-	g_fullpipe->_modalObject = new ModalIntro;
-}
-
-void sceneHandlerIntro_part1() {
-	g_fullpipe->_currentScene = g_fullpipe->accessScene(SC_INTRO1);
-	chainQueue(QU_INTR_FINISH, 0);
-}
-
-void sceneHandlerIntro_part2() {
-	g_fullpipe->_currentScene = g_fullpipe->accessScene(SC_INTRO2);
-	chainQueue(QU_IN2_DO, 0);
-}
-
-int sceneHandlerIntro(ExCommand *ex) {
-	if (ex->_messageKind != 17)
-		return 0;
-
-	switch (ex->_messageNum) {
-	case MSG_INTR_ENDINTRO:
-		g_vars->sceneIntro_playing = 0;
-		return 0;
-
-	case MSG_INTR_SWITCHTO1:
-		sceneHandlerIntro_part1();
-		return 0;
-
-	case MSG_INTR_GETUPMAN:
-		g_vars->sceneIntro_needSleep = 0;
-		g_vars->sceneIntro_needGetup = 1;
-		return 0;
-
-	case MSG_INTR_SWITCHTO2:
-		sceneHandlerIntro_part2();
-		return 0;
-
-	case 33:
-		// fall through
-		break;
-
-	default:
-		return 0;
-	}
-
-	if (g_vars->sceneIntro_needSleep) {
-		if (!g_vars->sceneIntro_aniin1man->_movement && g_vars->sceneIntro_aniin1man->_statics->_staticsId == ST_IN1MAN_SLEEP)
-			g_vars->sceneIntro_aniin1man->startAnim(MV_IN1MAN_SLEEP, 0, -1);
-	} else if (g_vars->sceneIntro_needGetup && !g_vars->sceneIntro_aniin1man->_movement &&
-			   g_vars->sceneIntro_aniin1man->_statics->_staticsId == ST_IN1MAN_SLEEP) {
-		g_vars->sceneIntro_needGetup = 0;
-
-		chainQueue(QU_INTR_GETUPMAN, 0);
-	}
-
-	g_fullpipe->startSceneTrack();
-
-	return 0;
 }
 
 void scene01_fixEntrance() {

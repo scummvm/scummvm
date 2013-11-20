@@ -27,6 +27,27 @@ namespace Fullpipe {
 
 class StaticANIObject;
 
+int defaultUpdateCursor();
+
+int sceneIntro_updateCursor();
+void sceneIntro_initScene(Scene *sc);
+int sceneHandlerIntro(ExCommand *cmd);
+
+void scene01_fixEntrance();
+void scene01_initScene(Scene *sc, int entrance);
+int sceneHandler01(ExCommand *cmd);
+
+void scene02_initScene(Scene *sc);
+int sceneHandler02(ExCommand *ex);
+
+void scene03_setEaterState();
+int scene03_updateCursor();
+void scene03_initScene(Scene *sc);
+int sceneHandler03(ExCommand *cmd);
+
+void sceneDbgMenu_initScene(Scene *sc);
+int sceneHandlerDbgMenu(ExCommand *cmd);
+
 class Vars {
 public:
 	Vars();
