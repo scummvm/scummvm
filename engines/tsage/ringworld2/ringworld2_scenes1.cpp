@@ -14959,6 +14959,8 @@ void Scene1950::enterArea() {
 
 		R2_GLOBALS._sceneItems.remove(&_background);
 		_background.setDetails(Rect(0, 0, 320, 200), 1950, 0, 1, 2, 2, NULL);
+
+		_removeFlag = false;
 	}
 
 	switch (R2_GLOBALS._flubMazeEntryDirection) {
