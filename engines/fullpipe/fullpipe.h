@@ -234,6 +234,7 @@ public:
 	void getAllInventory();
 
 	int lift_getButtonIdP(int objid);
+	void lift_setButton(const char *name, int state);
 	void lift_sub5(Scene *sc, int qu1, int qu2);
 	void lift_exitSeq(ExCommand *ex);
 	void lift_closedoorSeq();

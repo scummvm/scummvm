@@ -44,7 +44,6 @@
 namespace Fullpipe {
 
 int defaultUpdateCursor();
-void setElevatorButton(const char *name, int state);
 
 int sceneIntro_updateCursor();
 void sceneIntro_initScene(Scene *sc);
@@ -683,13 +682,6 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 	}
 
 	return true;
-}
-
-void setElevatorButton(const char *name, int state) {
-	GameVar *var = g_fullpipe->getGameLoaderGameVar()->getSubVarByName("OBJSTATES")->getSubVarByName(sO_LiftButtons);
-
-	if (var)
-		var->setSubVarAsInt(name, state);
 }
 
 void global_messageHandler_KickStucco() {
@@ -1518,7 +1510,7 @@ void scene01_initScene(Scene *sc, int entrance) {
 			bootAnim->_flags &= ~0x04;
 	}
 
-	setElevatorButton(sO_Level2, ST_LBN_2N);
+	g_fullpipe->lift_setButton(sO_Level2, ST_LBN_2N);
 }
 
 int sceneHandler01(ExCommand *cmd) {
@@ -1680,7 +1672,7 @@ void scene03_initScene(Scene *sc) {
 	g_vars->swallowedEgg2 = v->getSubVarByName(sO_Egg2);
 	g_vars->swallowedEgg3 = v->getSubVarByName(sO_Egg3);
 
-	setElevatorButton(sO_Level2, ST_LBN_2N);
+	g_fullpipe->lift_setButton(sO_Level2, ST_LBN_2N);
 
 	g_fullpipe->lift_sub5(sc, QU_SC3_ENTERLIFT, QU_SC3_EXITLIFT);
 }
