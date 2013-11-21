@@ -250,7 +250,7 @@ void GfxOpenGLS::setupPrimitives() {
 	uint32 numVBOs = ARRAYSIZE(_primitiveVBOs);
 	glGenBuffers(numVBOs, _primitiveVBOs);
 	_currentPrimitive = 0;
-	for (int i = 0; i < numVBOs; ++i) {
+	for (uint32 i = 0; i < numVBOs; ++i) {
 		glBindBuffer(GL_ARRAY_BUFFER, _primitiveVBOs[i]);
 		glBufferData(GL_ARRAY_BUFFER, 8 * sizeof(float), NULL, GL_DYNAMIC_DRAW);
 	}
@@ -432,7 +432,7 @@ void GfxOpenGLS::startActorDraw(const Actor *actor) {
 
 		_actorProgram->setUniform("lightsEnabled", _lightsEnabled);
 		if (_lightsEnabled) {
-			for (uint32 i = 0; i < _maxLights; ++i) {
+			for (int i = 0; i < _maxLights; ++i) {
 				const Light &l = _lights[i];
 				Common::String uniform;
 				uniform = Common::String::format("lights[%u]._position", i);
@@ -612,7 +612,7 @@ void GfxOpenGLS::setupLight(Grim::Light *light, int lightId) {
 
 	// Disable previous lights.
 	if (lightId == 0) {
-		for (uint32 id = 0; id < _maxLights; ++id)
+		for (int id = 0; id < _maxLights; ++id)
 			_lights[id]._color.w() = 0.0;
 	}
 
