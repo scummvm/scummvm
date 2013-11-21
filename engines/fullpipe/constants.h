@@ -26,9 +26,11 @@
 namespace Fullpipe {
 
 #define ANI_BOOT_1 4231
+#define ANI_CLOCK 588
 #define ANI_DOMINO_3 2732
 #define ANI_DADAYASHIK 306
 #define ANI_EGGEATER 334
+#define ANI_HAND 601
 #define ANI_IN1MAN 5110
 #define ANI_INV_COIN 875
 #define ANI_INV_EGGAPL 1564
@@ -37,9 +39,15 @@ namespace Fullpipe {
 #define ANI_INV_EGGDOM 1561
 #define ANI_INV_EGGGLS 1573
 #define ANI_INV_MAP 5321
+#define ANI_KOZAWKA 495
 #define ANI_LIFTBUTTON 2751
+#define ANI_MAMASHA_4 660
 #define ANI_MAN 322
+#define ANI_PLANK 501
 #define ANI_SC2_BOX 1020
+#define ANI_SC4_BOOT 1035
+#define ANI_SPEAKER_4 3275
+#define ANI_SPRING 542
 #define MSG_CMN_WINARCADE 4778
 #define MSG_DISABLESAVES 5201
 #define MSG_ENABLESAVES 5202
@@ -72,6 +80,8 @@ namespace Fullpipe {
 #define MSG_SC3_UTRUBACLICK 1103
 #define MV_EGTR_FATASK 5332
 #define MV_IN1MAN_SLEEP 5111
+#define MV_KZW_JUMP 558
+#define MV_KZW_JUMPROTATE 561
 #define MV_MAN_GOLADDER 451
 #define MV_MAN_GOLADDER2 2844
 #define MV_MAN_LOOKUP 4773
@@ -82,6 +92,7 @@ namespace Fullpipe {
 #define MV_MAN_TOLADDER 448
 #define MV_MAN_TOLADDER2 2841
 #define MV_MAN_TURN_LU 486
+#define MV_SPK4_PLAY 3276
 #define PIC_CMN_EVAL 3468
 #define PIC_CSR_DEFAULT 4891
 #define PIC_CSR_DEFAULT_INV 4892
@@ -128,6 +139,9 @@ namespace Fullpipe {
 #define PIC_SC2_LADDER 412
 #define PIC_SC3_DOMIN 5182
 #define PIC_SC3_LADDER 1102
+#define PIC_SC4_BOTTLE 568
+#define PIC_SC4_BOTTLE2 2936
+#define PIC_SC4_MASK 585
 #define PIC_SCD_SEL 734
 #define QU_EGTR_MD2_SHOW 4698
 #define QU_EGTR_MD1_SHOW 4697
@@ -198,6 +212,7 @@ namespace Fullpipe {
 #define ST_EGTR_MID2 2869
 #define ST_EGTR_SLIM 336
 #define ST_IN1MAN_SLEEP 5112
+#define ST_KZW_EMPTY 498
 #define ST_LBN_0N 2832
 #define ST_LBN_0P 2833
 #define ST_LBN_1N 2753

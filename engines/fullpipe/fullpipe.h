@@ -230,6 +230,7 @@ public:
 	void openHelp();
 	void openMainMenu();
 
+	void initArcadeKeys(const char *varname);
 	void winArcade();
 	void getAllInventory();
 

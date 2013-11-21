@@ -22,20 +22,29 @@
 
 #include "fullpipe/fullpipe.h"
 
-#include "fullpipe/objects.h"
 #include "fullpipe/objectnames.h"
 #include "fullpipe/constants.h"
+#include "fullpipe/utils.h"
+#include "fullpipe/gfx.h"
+#include "fullpipe/scenes.h"
+#include "fullpipe/messages.h"
+#include "fullpipe/statics.h"
+#include "fullpipe/scene.h"
+#include "fullpipe/interaction.h"
+#include "fullpipe/gameloader.h"
 
 namespace Fullpipe {
 
+void scene04_callback(int *param) {
+	warning("STUB: scene04_callback");
+}
+
 void scene04_initScene(Scene *sc) {
-#if 0
 	g_vars->scene04_var01 = 0;
 	g_vars->scene04_bottle = sc->getPictureObjectById(PIC_SC4_BOTTLE, 0);
 	g_vars->scene04_hand = sc->getStaticANIObject1ById(ANI_HAND, -1);
 	g_vars->scene04_plank = sc->getStaticANIObject1ById(ANI_PLANK, -1);
 	g_vars->scene04_clock = sc->getStaticANIObject1ById(ANI_CLOCK, -1);
-	g_vars->scene04_hand = sc->getStaticANIObject1ById(ANI_HAND, -1);
 	g_vars->scene04_spring = sc->getStaticANIObject1ById(ANI_SPRING, -1);
 	g_vars->scene04_mamasha = sc->getStaticANIObject1ById(ANI_MAMASHA_4, -1);
 	g_vars->scene04_boot = sc->getStaticANIObject1ById(ANI_SC4_BOOT, -1);
@@ -48,15 +57,15 @@ void scene04_initScene(Scene *sc) {
 		if (kozmov) {
 			uint kozsize = kozmov->_currMovement ? kozmov->_currMovement->_dynamicPhases.size() : kozmov->_dynamicPhases.size();
 
-			for (i = 0; i < kozsize; i++) {
+			for (uint i = 0; i < kozsize; i++) {
 				kozmov->setDynamicPhaseIndex(i);
 
 				if (kozmov->_framePosOffsets) {
-					g_vars->scene04_jumpingKozyawki[i] = kozmov->_framePosOffsets[kozmov->_currDynamicPhaseIndex];
+					g_vars->scene04_jumpingKozyawki[i] = *kozmov->_framePosOffsets[kozmov->_currDynamicPhaseIndex];
 				} else {
 					kozmov->_somePoint.x = 0;
 					kozmov->_somePoint.y = 0;
-					g_vars->scene04_jumpingKozyawki[i] = kozMov->_somePoint;
+					g_vars->scene04_jumpingKozyawki[i] = kozmov->_somePoint;
 				}
 			}
 		}
@@ -65,15 +74,15 @@ void scene04_initScene(Scene *sc) {
 		if (kozmov) {
 			uint kozsize = kozmov->_currMovement ? kozmov->_currMovement->_dynamicPhases.size() : kozmov->_dynamicPhases.size();
 
-			for (i = 0; i < kozsize; i++) {
+			for (uint i = 0; i < kozsize; i++) {
 				kozmov->setDynamicPhaseIndex(i);
 
 				if (kozmov->_framePosOffsets) {
-					g_vars->scene04_jumpRotateKozyawki[i] = kozmov->_framePosOffsets[kozmov->_currDynamicPhaseIndex];
+					g_vars->scene04_jumpRotateKozyawki[i] = *kozmov->_framePosOffsets[kozmov->_currDynamicPhaseIndex];
 				} else {
 					kozmov->_somePoint.x = 0;
 					kozmov->_somePoint.y = 0;
-					g_vars->scene04_jumpRotateKozyawki[i] = kozMov->_somePoint;
+					g_vars->scene04_jumpRotateKozyawki[i] = kozmov->_somePoint;
 				}
 			}
 		}
@@ -83,20 +92,21 @@ void scene04_initScene(Scene *sc) {
 	if (plank)
 		plank->_flags |= 8;
 
-	if (getObjectState(sO_Jar_4) == getObjectEnumState(sO_Jar_4, sO_UpsideDown)) {
+	if (g_fullpipe->getObjectState(sO_Jar_4) == g_fullpipe->getObjectEnumState(sO_Jar_4, sO_UpsideDown)) {
 		g_vars->scene04_bottleObjList.clear();
 		g_vars->scene04_kozyawkiObjList.clear();
 
 		sc->getPictureObjectById(PIC_SC4_BOTTLE, 0)->_flags &= 0xfffb;
 		sc->getPictureObjectById(PIC_SC4_MASK, 0)->_flags &= 0xfffb;
-		sc->getStaticANIObjectById(ANI_SPRING, 0)->_flags &= 0xfffb;
+		sc->getStaticANIObject1ById(ANI_SPRING, 0)->_flags &= 0xfffb;
 
 		g_vars->scene04_var18 = 0;
 		g_vars->scene04_var19 = 0;
 	} else {
 		StaticANIObject *spring = sc->getStaticANIObject1ById(ANI_SPRING, -1);
-		if (sprint)
-			spring->callback2 = 0;
+
+		if (spring)
+			spring->_callback2 = 0;
 
 		g_vars->scene04_bottleObjList.clear();
 		g_vars->scene04_bottleObjList.push_back(sc->getPictureObjectById(PIC_SC4_BOTTLE, 0));
@@ -107,7 +117,7 @@ void scene04_initScene(Scene *sc) {
 		if (koz) {
 			koz->loadMovementsPixelData();
 
-			koz->statics = koz->getStaticsById(ST_KZW_EMPTY);
+			koz->_statics = koz->getStaticsById(ST_KZW_EMPTY);
 			koz->setOXY(0, 0);
 			koz->hide();
 
@@ -117,29 +127,28 @@ void scene04_initScene(Scene *sc) {
 				StaticANIObject *koz1 = new StaticANIObject(koz);
 
 				sc->addStaticANIObject(koz1, 1);
-				v26 = koz->getStaticsById(ST_KZW_EMPTY);
-				v27 = v3->GameObject.CObject.vmt;
-				v3->statics = v26;
-				(*(void (__thiscall **)(StaticANIObject *, _DWORD, _DWORD))(v27 + offsetof(GameObjectVmt, setOXY)))(v3, 0, 0);
-				StaticANIObject_hide(v3);
-				CObList::AddTail(&g_vars->scene04_kozyawkiObjList, v3);
-				--v24;
-			} while (v24);
+				koz1->_statics = koz->getStaticsById(ST_KZW_EMPTY);
+				koz1->setOXY(0, 0);
+				koz1->hide();
+				g_vars->scene04_kozyawkiObjList.push_back(koz1);
+			}
 		}
-		v28 = Scene_getPictureObjectById(sc, PIC_SC4_BOTTLE2, 0);
-		GameObject_setFlags(&v28->GameObject, v28->GameObject.flags & 0xFFFB);
+		sc->getPictureObjectById(PIC_SC4_BOTTLE2, 0)->_flags &= 0xfffb;
+
 		g_vars->scene04_var18 = 1;
 		g_vars->scene04_var19 = 1;
 	}
+
 	g_vars->scene04_var02 = 0;
 	g_vars->scene04_soundPlaying = 0;
 	g_vars->scene04_var04 = 0;
 	g_vars->scene04_var05 = 0;
 	g_vars->scene04_var06 = 2;
-	g_sc04_dynamicPhaseIndex = 0;
-	CObList::RemoveAll(&g_vars->scene04_kozyawkiAni);
+	g_vars->scene04_dynamicPhaseIndex = 0;
 
-	setObjectState(sO_LowerPipe, getObjectEnumState(sO_LowerPipe, sO_IsClosed));
+	g_vars->scene04_kozyawkiAni.clear();
+
+	g_fullpipe->setObjectState(sO_LowerPipe, g_fullpipe->getObjectEnumState(sO_LowerPipe, sO_IsClosed));
 
 	g_vars->scene04_var07 = 0;
 	g_vars->scene04_var08 = 0;
@@ -152,16 +161,17 @@ void scene04_initScene(Scene *sc) {
 	g_vars->scene04_var14 = 0;
 	g_vars->scene04_var15 = 1;
 
-	if (getObjectState(sO_BigMumsy) != getObjectEnumState(sO_BigMumsy, sO_Gone))
-		StaticANIObject_hide(g_vars->scene04_mamasha);
+	if (g_fullpipe->getObjectState(sO_BigMumsy) != g_fullpipe->getObjectEnumState(sO_BigMumsy, sO_Gone))
+		g_vars->scene04_mamasha->hide();
 
-	g_vars->scene04_speaker = Scene_getStaticANIObject1ById(sc, ANI_SPEAKER_4, -1);
-	g_vars->scene04_speaker->callback2 = (void (__thiscall *)(int *))scene04_callback;
-	StaticANIObject_startAnim(g_vars->scene04_speaker, MV_SPK4_PLAY, 0, -1);
+	g_vars->scene04_speaker = sc->getStaticANIObject1ById(ANI_SPEAKER_4, -1);
+	g_vars->scene04_speaker->_callback2 = scene04_callback;
+	g_vars->scene04_speaker->startAnim(MV_SPK4_PLAY, 0, -1);
+
 	g_vars->scene04_var16 = 0;
 	g_vars->scene04_var17 = 0;
-	initArcade("SC_4");
-#endif
+
+	g_fullpipe->initArcadeKeys("SC_4");
 }
 
 } // End of namespace Fullpipe

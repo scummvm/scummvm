@@ -58,6 +58,40 @@ Vars::Vars() {
 	scene03_eggeater = 0;
 	scene03_domino = 0;
 
+	scene04_bottle = 0;
+	scene04_hand = 0;
+	scene04_plank = 0;
+	scene04_clock = 0;
+	scene04_hand = 0;
+	scene04_spring = 0;
+	scene04_mamasha = 0;
+	scene04_boot = 0;
+	scene04_speaker = 0;
+
+	scene04_ladder = 0;
+	scene04_coinPut = false;
+	scene04_soundPlaying = false;
+	scene04_dynamicPhaseIndex = 0;
+
+	scene04_var01 = 0;
+	scene04_var02 = 0;
+	scene04_var04 = 0;
+	scene04_var05 = 0;
+	scene04_var06 = 0;
+	scene04_var07 = 0;
+	scene04_var08 = 0;
+	scene04_var09 = 0;
+	scene04_var10 = 0;
+	scene04_var11 = 0;
+	scene04_var12 = 0;
+	scene04_var13 = 0;
+	scene04_var14 = 0;
+	scene04_var15 = 0;
+	scene04_var16 = 0;
+	scene04_var17 = 0;
+	scene04_var18 = 0;
+	scene04_var19 = 0;
+
 	selector = 0;
 }
 
@@ -660,6 +694,10 @@ int defaultUpdateCursor() {
 	g_fullpipe->updateCursorCommon();
 
 	return g_fullpipe->_cursorId;
+}
+
+void FullpipeEngine::initArcadeKeys(const char *varname) {
+	warning("STUB: FullpipeEngine::initArcadeKeys(\"%s\")", varname);
 }
 
 } // End of namespace Fullpipe

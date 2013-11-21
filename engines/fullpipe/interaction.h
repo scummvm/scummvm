@@ -79,6 +79,8 @@ class InteractionController : public CObject {
 	void sortInteractions(int sceneId);
 
 	bool handleInteraction(StaticANIObject *subj, GameObject *obj, int invId);
+
+	Interaction *getInteractionByObjectIds(int obId, int obId2, int obId3);
 };
 
 struct EntranceInfo {

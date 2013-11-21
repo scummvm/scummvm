@@ -73,6 +73,46 @@ public:
 	StaticANIObject *scene03_eggeater;
 	StaticANIObject *scene03_domino;
 
+	PictureObject *scene04_bottle;
+	StaticANIObject *scene04_hand;
+	StaticANIObject *scene04_plank;
+	StaticANIObject *scene04_clock;
+	StaticANIObject *scene04_spring;
+	StaticANIObject *scene04_mamasha;
+	StaticANIObject *scene04_boot;
+	StaticANIObject *scene04_speaker;
+
+	Common::Point scene04_jumpingKozyawki[20];
+	Common::Point scene04_jumpRotateKozyawki[20];
+
+	Common::Array<StaticANIObject *> scene04_kozyawkiObjList;
+	Common::Array<PictureObject *> scene04_bottleObjList;
+	Common::Array<StaticANIObject *> scene04_kozyawkiAni;
+
+	int scene04_ladder;
+	bool scene04_coinPut;
+	bool scene04_soundPlaying;
+	int scene04_dynamicPhaseIndex;
+
+	int scene04_var01;
+	int scene04_var02;
+	int scene04_var04;
+	int scene04_var05;
+	int scene04_var06;
+	int scene04_var07;
+	int scene04_var08;
+	int scene04_var09;
+	int scene04_var10;
+	int scene04_var11;
+	int scene04_var12;
+	int scene04_var13;
+	int scene04_var14;
+	int scene04_var15;
+	int scene04_var16;
+	int scene04_var17;
+	int scene04_var18;
+	int scene04_var19;
+
 	PictureObject *selector;
 };
 
