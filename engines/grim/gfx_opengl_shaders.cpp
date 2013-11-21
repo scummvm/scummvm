@@ -254,6 +254,13 @@ void GfxOpenGLS::setupPrimitives() {
 		glBindBuffer(GL_ARRAY_BUFFER, _primitiveVBOs[i]);
 		glBufferData(GL_ARRAY_BUFFER, 8 * sizeof(float), NULL, GL_DYNAMIC_DRAW);
 	}
+
+	glGenBuffers(1, &_irisVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, _irisVBO);
+	glBufferData(GL_ARRAY_BUFFER, 20 * sizeof(float), NULL, GL_DYNAMIC_DRAW);
+
+	_irisProgram->enableVertexAttribute("position", _irisVBO, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), 0);
+
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
@@ -278,6 +285,7 @@ void GfxOpenGLS::setupShaders() {
 
 	static const char* primAttributes[] = {"position", NULL};
 	_primitiveProgram = Graphics::Shader::fromFiles("grim_primitive", primAttributes);
+	_irisProgram = _primitiveProgram->clone();
 
 	setupQuadEBO();
 	setupTexturedQuad();
@@ -1155,7 +1163,39 @@ void GfxOpenGLS::dimRegion(int x, int y, int w, int h, float level) {
 
 
 void GfxOpenGLS::irisAroundRegion(int x1, int y1, int x2, int y2) {
+	_irisProgram->use();
+	_irisProgram->setUniform("color", Math::Vector3d(0.0f, 0.0f, 0.0f));
+	_irisProgram->setUniform("scaleWH", Math::Vector2d(1.f / _gameWidth, 1.f / _gameHeight));
 
+	float fx1 = x1;
+	float fx2 = x2;
+	float fy1 = y1;
+	float fy2 = y2;
+	float width = _screenWidth;
+	float height = _screenHeight;
+	float points[20] = {
+		0.0f, 0.0f,
+		0.0f, fy1,
+		width, 0.0f,
+		fx2, fy1,
+		width, height,
+		fx2, fy2,
+		0.0f, height,
+		fx1, fy2,
+		0.0f, fy1,
+		fx1, fy1
+	};
+
+	glBindBuffer(GL_ARRAY_BUFFER, _irisVBO);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, 20 * sizeof(float), points);
+
+	glDisable(GL_DEPTH_TEST);
+	glDepthMask(GL_FALSE);
+
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 10);
+
+	glEnable(GL_DEPTH_TEST);
+	glDepthMask(GL_TRUE);
 }
 
 
