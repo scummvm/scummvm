@@ -138,6 +138,8 @@ SciScriptPatcherSelector selectorTable[] = {
 	{ "put",               -1, }, // Police Quest 1 VGA
 	{ "solvePuzzle",       -1, }, // Quest For Glory 3
 	{ "timesShownID",      -1, }, // Space Quest 1 VGA
+	{ "startText",         -1, }, // King's Quest 6 CD / Laura Bow 2 CD
+	{ "startAudio",        -1, }, // King's Quest 6 CD / Laura Bow 2 CD
 	{ NULL,                -1 }
 };
 
@@ -157,7 +159,9 @@ enum ScriptPatcherSelectors {
 	SELECTOR_localize,
 	SELECTOR_put,
 	SELECTOR_solvePuzzle,
-	SELECTOR_timesShownID
+	SELECTOR_timesShownID,
+	SELECTOR_startText,
+	SELECTOR_startAudio
 };
 
 // ===========================================================================
@@ -911,10 +915,116 @@ const uint16 kq6PatchInventoryStackFix[] = {
 	PATCH_END
 };
 
+// Audio + subtitles support - SHARED! - used for King's Quest 6 and Laura Bow 2
+//  this patch gets enabled, when the user selects "both" in the ScummVM "Speech + Subtitles" menu
+//  We currently use global 98d to hold a kMemory pointer.
+// Patched method: Messager::sayNext / lb2Messager::sayNext (always use text branch)
+const uint16 kq6laurabow2CDSignatureAudioTextSupport1[] = {
+	SIG_MAGICDWORD,
+	0x89, 0x5a,                         // lsg global[5a]
+	0x35, 0x02,                         // ldi 02
+	0x12,                               // and
+	0x31, 0x13,                         // bnt [audio call]
+	0x38, SIG_ADDTOOFFSET +1, 0x00,     // pushi 00de (lb2) / pushi 00df (kq6)
+	SIG_END
+};
+
+const uint16 kq6laurabow2CDPatchAudioTextSupport1[] = {
+	PATCH_ADDTOOFFSET +5,
+	0x33, 0x13,                         // jmp [audio call]
+	PATCH_END
+};
+
+// Patched method: Messager::sayNext / lb2Messager::sayNext (allocate audio memory)
+const uint16 kq6laurabow2CDSignatureAudioTextSupport2[] = {
+	0x7a,                               // push2
+	0x78,                               // push1
+	0x39, 0x0c,                         // pushi 0c
+	0x43, SIG_MAGICDWORD, 0x72, 0x04,   // kMemory
+	0xa5, 0xc9,                         // sat global[c9]
+	SIG_END
+};
+
+const uint16 kq6laurabow2CDPatchAudioTextSupport2[] = {
+	PATCH_ADDTOOFFSET +7,
+	0xa1, 98,                           // sag global[98d]
+	PATCH_END
+};
+
+// Patched method: Messager::sayNext / lb2Messager::sayNext (release audio memory)
+const uint16 kq6laurabow2CDSignatureAudioTextSupport3[] = {
+	0x7a,                               // push2
+	0x39, 0x03,                         // pushi 03
+	SIG_MAGICDWORD,
+	0x8d, 0xc9,                         // lst temp[c9]
+	0x43, 0x72, 0x04,                   // kMemory
+	SIG_END
+};
+
+const uint16 kq6laurabow2CDPatchAudioTextSupport3[] = {
+	PATCH_ADDTOOFFSET +3,
+	0x89, 98,                           // lsg global[98d]
+	PATCH_END
+};
+
+// Patched method: Narrator::say (use audio memory)
+const uint16 kq6laurabow2CDSignatureAudioTextSupport4[] = {
+	0x89, 0x5a,                         // lsg global[5a]
+	0x35, 0x01,                         // ldi 01
+	0x12,                               // and
+	0x31, 0x08,                         // bnt [skip code]
+	0x38, SIG_SELECTOR16 + SELECTOR_startText, // pushi startText
+	0x78,                               // push1
+	0x8f, 0x01,                         // lsp param[1]
+	0x54, 0x06,                         // self 06
+	0x89, 0x5a,                         // lsg global[5a]
+	0x35, 0x02,                         // ldi 02
+	0x12,                               // and
+	0x31, 0x08,                         // bnt [skip code]
+	SIG_MAGICDWORD,
+	0x38, SIG_SELECTOR16 + SELECTOR_startAudio, // pushi startAudio
+	0x78,                               // push1
+	0x8f, 0x01,                         // lsp param[1]
+	0x54, 0x06,                         // self 06
+	SIG_END
+};
+
+const uint16 kq6laurabow2CDPatchAudioTextSupport4[] = {
+	PATCH_ADDTOOFFSET +5,
+	0x18,                               // not (never jump here)
+	0x18,                               // not (never jump here)
+	PATCH_ADDTOOFFSET +19,
+	0x89, 98,                           // lsp global[98d]
+	PATCH_END
+};
+
+// Patched method: Talker::display/Narrator::say (remove reset saved mouse cursor code)
+//  code would screw over mouse cursor
+const uint16 kq6laurabow2CDSignatureAudioTextSupport5[] = {
+	SIG_MAGICDWORD,
+	0x35, 0x00,                         // ldi 00
+	0x65, 0x82,                         // aTop saveCursor
+	SIG_END
+};
+
+const uint16 kq6laurabow2CDPatchAudioTextSupport5[] = {
+	0x18, 0x18, 0x18, 0x18,             // waste bytes, do nothing
+	PATCH_END
+};
+
 //          script, description,                                            signature                     patch
 SciScriptPatcherEntry kq6Signatures[] = {
 	{  true,   481, "duplicate baby cry",                          1, 0, 0, kq6SignatureDuplicateBabyCry, kq6PatchDuplicateBabyCry },
 	{  true,   907, "inventory stack fix",                         1, 0, 0, kq6SignatureInventoryStackFix, kq6PatchInventoryStackFix },
+	// King's Quest 6 and Laura Bow 2 share basic patches for audio + text support
+	// *** King's Quest 6 audio + text support - CURRENTLY DISABLED ***
+	//  TODO: fix window placement (currently part of the text windows go off-screen)
+	//  TODO: fix hi-res portraits mode graphic glitches
+	{ false,   924, "CD: audio + text support 1",                  1, 0, 0, kq6laurabow2CDSignatureAudioTextSupport1, kq6laurabow2CDPatchAudioTextSupport1 },
+	{ false,   924, "CD: audio + text support 2",                  1, 0, 0, kq6laurabow2CDSignatureAudioTextSupport2, kq6laurabow2CDPatchAudioTextSupport2 },
+	{ false,   924, "CD: audio + text support 3",                  1, 0, 0, kq6laurabow2CDSignatureAudioTextSupport3, kq6laurabow2CDPatchAudioTextSupport3 },
+	{ false,   928, "CD: audio + text support 4",                  1, 0, 0, kq6laurabow2CDSignatureAudioTextSupport4, kq6laurabow2CDPatchAudioTextSupport4 },
+	{ false,   928, "CD: audio + text support 5",                  2, 0, 0, kq6laurabow2CDSignatureAudioTextSupport5, kq6laurabow2CDPatchAudioTextSupport5 },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -1167,111 +1277,15 @@ const uint16 laurabow2CDPatchPaintingClosing[] = {
 	PATCH_END
 };
 
-// Audio + subtitles support
-//  this patch gets enabled, when the user selects "both" in the ScummVM "Speech + Subtitles" menu
-//  We currently use global 98d to hold a kMemory pointer.
-// Patched method: Messager::sayNext / lb2Messager::sayNext (always use text branch)
-const uint16 laurabow2CDSignatureAudioTextSupport1[] = {
-	0x89, 0x5a,                         // lsg global[5a]
-	0x35, 0x02,                         // ldi 02
-	0x12,                               // and
-	SIG_MAGICDWORD,
-	0x31, 0x13,                         // bnt [audio call]
-	0x38, 0xde, 0x00,                   // pushi 00de
-	SIG_END
-};
-
-const uint16 laurabow2CDPatchAudioTextSupport1[] = {
-	PATCH_ADDTOOFFSET +5,
-	0x33, 0x13,                         // jmp [audio call]
-	PATCH_END
-};
-
-// Patched method: Messager::sayNext / lb2Messager::sayNext (allocate audio memory)
-const uint16 laurabow2CDSignatureAudioTextSupport2[] = {
-	0x7a,                               // push2
-	0x78,                               // push1
-	0x39, 0x0c,                         // pushi 0c
-	0x43, SIG_MAGICDWORD, 0x72, 0x04,   // kMemory
-	0xa5, 0xc9,                         // sat global[c9]
-	SIG_END
-};
-
-const uint16 laurabow2CDPatchAudioTextSupport2[] = {
-	PATCH_ADDTOOFFSET +7,
-	0xa1, 98,                           // sag global[98d]
-	PATCH_END
-};
-
-// Patched method: Messager::sayNext / lb2Messager::sayNext (release audio memory)
-const uint16 laurabow2CDSignatureAudioTextSupport3[] = {
-	0x7a,                               // push2
-	0x39, 0x03,                         // pushi 03
-	SIG_MAGICDWORD,
-	0x8d, 0xc9,                         // lst temp[c9]
-	0x43, 0x72, 0x04,                   // kMemory
-	SIG_END
-};
-
-const uint16 laurabow2CDPatchAudioTextSupport3[] = {
-	PATCH_ADDTOOFFSET +3,
-	0x89, 98,                           // lsg global[98d]
-	PATCH_END
-};
-
-// Patched method: Narrator::say (use audio memory)
-const uint16 laurabow2CDSignatureAudioTextSupport4[] = {
-	0x89, 0x5a,                         // lsg global[5a]
-	0x35, 0x01,                         // ldi 01
-	0x12,                               // and
-	0x31, 0x08,                         // bnt [skip code]
-	0x38, 0x31, 0x02,                   // pushi 0231 (startText)
-	0x78,                               // push1
-	0x8f, 0x01,                         // lsp param[1]
-	0x54, 0x06,                         // self 06
-	0x89, 0x5a,                         // lsg global[5a]
-	0x35, 0x02,                         // ldi 02
-	0x12,                               // and
-	0x31, 0x08,                         // bnt [skip code]
-	SIG_MAGICDWORD,
-	0x38, 0x33, 0x02,                   // pushi 0233 (startAudio)
-	0x78,                               // push1
-	0x8f, 0x01,                         // lsp param[1]
-	0x54, 0x06,                         // self 06
-	SIG_END
-};
-
-const uint16 laurabow2CDPatchAudioTextSupport4[] = {
-	PATCH_ADDTOOFFSET +5,
-	0x18,                               // not (never jump here)
-	0x18,                               // not (never jump here)
-	PATCH_ADDTOOFFSET +19,
-	0x89, 98,                           // lsp global[98d]
-	PATCH_END
-};
-
-// Patched method: Talker::display/Narrator::say (remove reset saved mouse cursor code)
-//  code would screw over mouse cursor
-const uint16 laurabow2CDSignatureAudioTextSupport5[] = {
-	SIG_MAGICDWORD,
-	0x35, 0x00,                         // ldi 00
-	0x65, 0x82,                         // aTop saveCursor
-	SIG_END
-};
-
-const uint16 laurabow2CDPatchAudioTextSupport5[] = {
-	0x18, 0x18, 0x18, 0x18,             // waste bytes, do nothing
-	PATCH_END
-};
-
-//          script, description,                                            signature                              patch
+//          script, description,                                            signature                                 patch
 SciScriptPatcherEntry laurabow2Signatures[] = {
-	{  true,   560, "CD: painting closing immediately",            1, 0, 0, laurabow2CDSignaturePaintingClosing,   laurabow2CDPatchPaintingClosing },
-	{ false,   924, "CD: audio + text support 1",                  1, 0, 0, laurabow2CDSignatureAudioTextSupport1, laurabow2CDPatchAudioTextSupport1 },
-	{ false,   924, "CD: audio + text support 2",                  1, 0, 0, laurabow2CDSignatureAudioTextSupport2, laurabow2CDPatchAudioTextSupport2 },
-	{ false,   924, "CD: audio + text support 3",                  1, 0, 0, laurabow2CDSignatureAudioTextSupport3, laurabow2CDPatchAudioTextSupport3 },
-	{ false,   928, "CD: audio + text support 4",                  1, 0, 0, laurabow2CDSignatureAudioTextSupport4, laurabow2CDPatchAudioTextSupport4 },
-	{ false,   928, "CD: audio + text support 5",                  2, 0, 0, laurabow2CDSignatureAudioTextSupport5, laurabow2CDPatchAudioTextSupport5 },
+	{  true,   560, "CD: painting closing immediately",            1, 0, 0, laurabow2CDSignaturePaintingClosing,      laurabow2CDPatchPaintingClosing },
+	// King's Quest 6 and Laura Bow 2 share basic patches for audio + text support
+	{ false,   924, "CD: audio + text support 1",                  1, 0, 0, kq6laurabow2CDSignatureAudioTextSupport1, kq6laurabow2CDPatchAudioTextSupport1 },
+	{ false,   924, "CD: audio + text support 2",                  1, 0, 0, kq6laurabow2CDSignatureAudioTextSupport2, kq6laurabow2CDPatchAudioTextSupport2 },
+	{ false,   924, "CD: audio + text support 3",                  1, 0, 0, kq6laurabow2CDSignatureAudioTextSupport3, kq6laurabow2CDPatchAudioTextSupport3 },
+	{ false,   928, "CD: audio + text support 4",                  1, 0, 0, kq6laurabow2CDSignatureAudioTextSupport4, kq6laurabow2CDPatchAudioTextSupport4 },
+	{ false,   928, "CD: audio + text support 5",                  2, 0, 0, kq6laurabow2CDSignatureAudioTextSupport5, kq6laurabow2CDPatchAudioTextSupport5 },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
