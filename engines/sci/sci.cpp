@@ -225,6 +225,7 @@ Common::Error SciEngine::run() {
 	_gfxScreen->enableUndithering(ConfMan.getBool("disable_dithering"));
 
 	_kernel = new Kernel(_resMan, segMan);
+	_kernel->init();
 
 	_features = new GameFeatures(segMan, _kernel);
 	// Only SCI0, SCI01 and SCI1 EGA games used a parser

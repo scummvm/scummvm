@@ -2390,6 +2390,10 @@ void Script::patcherProcessScript(uint16 scriptNr, byte *scriptData, const uint3
 		bool isMacSci11 = (g_sci->getPlatform() == Common::kPlatformMacintosh && getSciVersion() >= SCI_VERSION_1_1);
 
 		if (!signatureTable->magicDWord) {
+			// Abort, in case selectors are not yet initialized (happens for games w/o selector-dictionary)
+			if (!g_sci->getKernel()->selectorNamesAvailable())
+				return;
+		
 			// signature table needs to get initialized (Magic DWORD set, selector table set)
 			patcherInitSignature(signatureTable, isMacSci11);
 			
