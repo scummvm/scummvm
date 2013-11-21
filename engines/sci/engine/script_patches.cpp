@@ -114,7 +114,7 @@ struct SciScriptPatcherEntry {
 	const uint16 *patchData;
 };
 
-#define SCI_SIGNATUREENTRY_TERMINATOR { 0, NULL, 0, 0, 0, NULL, NULL }
+#define SCI_SIGNATUREENTRY_TERMINATOR { false, 0, NULL, 0, 0, 0, NULL, NULL }
 
 struct SciScriptPatcherSelector {
 	const char *name;
