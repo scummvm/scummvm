@@ -492,7 +492,7 @@ bool Scene3150::ToiletFlush::startAction(CursorType action, Event &event) {
 					scene->setAction(&scene->_sequenceManager, scene, 3152, &R2_GLOBALS._player, NULL);
 				} else {
 					scene->_sceneMode = 3153;
-					scene->setAction(&scene->_sequenceManager, scene, 3152, &R2_GLOBALS._player, &scene->_water, NULL);
+					scene->setAction(&scene->_sequenceManager, scene, 3153, &R2_GLOBALS._player, &scene->_water, NULL);
 				}
 			} else {
 				SceneItem::display(3150, 42, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, LIST_END);
