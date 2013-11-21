@@ -185,7 +185,7 @@ enum ScriptPatcherSelectors {
 //
 // We fix the script by patching in a jump to the proper code inside fawaz::doit.
 // Responsible method: fawaz::handleEvent
-// Fixes bug #3614969
+// Fixes bug: #6402
 const uint16 camelotSignaturePeepingTom[] = {
 	0x72, SIG_MAGICDWORD, SIG_UINT16 + 0x7e, 0x07, // lofsa fawaz <-- start of proper initializion code
 	0xa1, 0xb9,                      // sag b9h
@@ -223,7 +223,7 @@ SciScriptPatcherEntry camelotSignatures[] = {
 //  This also happens in sierra sci
 // Applies to at least: PC-CD
 // Responsible method: stayAndHelp::changeState
-// Fixes bug: #3038387
+// Fixes bug: #5107
 const uint16 ecoquest1SignatureStayAndHelp[] = {
 	0x3f, 0x01,                      // link 01
 	0x87, 0x01,                      // lap param[1]
@@ -289,7 +289,8 @@ SciScriptPatcherEntry ecoquest1Signatures[] = {
 //  ecorder. This is done by reusing temp-space, that was filled on state 1.
 //  this worked in sierra sci just by accident. In our sci, the temp space
 //  is resetted every time, which means the previous text isn't available
-//  anymore. We have to patch the code because of that - bug #3035386
+//  anymore. We have to patch the code because of that.
+// Fixes bug: #4993
 const uint16 ecoquest2SignatureEcorder[] = {
 	0x31, 0x22,                      // bnt [next state]
 	0x39, 0x0a,                      // pushi 0a
@@ -341,10 +342,11 @@ const uint16 ecoquest2PatchEcorder[] = {
 };
 
 // ===========================================================================
-// Same patch as above for the ecorder introduction. Fixes bug #3092115.
+// Same patch as above for the ecorder introduction.
 // Two workarounds are needed for this patch in workarounds.cpp (when calling
 // kGraphFillBoxAny and kGraphUpdateBox), as there isn't enough space to patch
 // the function otherwise.
+// Fixes bug: #6467
 const uint16 ecoquest2SignatureEcorderTutorial[] = {
 	0x30, SIG_UINT16 + 0x23, 0x00,   // bnt [next state]
 	0x39, 0x0a,                      // pushi 0a
@@ -413,7 +415,7 @@ SciScriptPatcherEntry ecoquest2Signatures[] = {
 // wrong address when an incorrect word is typed, therefore leading to an
 // infinite loop. This script bug was not apparent in SSCI, probably because
 // event handling was slightly different there, so it was never discovered.
-// Fixes bug #3038870.
+// Fixes bug: #5120
 const uint16 fanmadeSignatureInfiniteLoop[] = {
 	0x38, SIG_UINT16 + 0x4c, 0x00,   // pushi 004c
 	0x39, 0x00,                      // pushi 00
@@ -760,12 +762,14 @@ const uint16 kq5PatchCdHarpyVolume[] = {
 // Additionally its top,left,bottom,right properties are set to 0 rather
 // than the right values. We fix the object by setting the right values.
 // If they are all zero, this causes an impossible position check in
-// witch::cantBeHere and an infinite loop when entering room 22 (bug #3034714).
+// witch::cantBeHere and an infinite loop when entering room 22.
 //
 // This bug is accidentally not triggered in SSCI because the invalid number
 // of variables effectively hides witchCage::doit, causing this position check
 // to be bypassed entirely.
 // See also the warning+comment in Object::initBaseObject
+//
+// Fixes bug: #4964
 const uint16 kq5SignatureWitchCageInit[] = {
 	SIG_UINT16 + 0x00, 0x00,	// top
 	SIG_UINT16 + 0x00, 0x00,	// left
@@ -831,7 +835,8 @@ SciScriptPatcherEntry kq5Signatures[] = {
 // sound is played twice, squelching all other sounds. We just rip the
 // unnecessary cryMusic::check method out, thereby stopping the sound from
 // constantly restarting (since it's being looped anyway), thus the normal
-// game speech can work while the baby cry sound is heard. Fixes bug #3034579.
+// game speech can work while the baby cry sound is heard.
+// Fixes bug: #4955
 const uint16 kq6SignatureDuplicateBabyCry[] = {
 	SIG_MAGICDWORD,
 	0x83, 0x00,                      // lal 00
@@ -854,7 +859,7 @@ const uint16 kq6PatchDuplicateBabyCry[] = {
 //  will be too large. This patch fixes the buggy script.
 // Applies to at least: PC-CD, English PC floppy, German PC floppy, English Mac
 // Responsible method: KqInv::showSelf
-// Fixes bug: #3293954
+// Fixes bug: #5681
 const uint16 kq6SignatureInventoryStackFix[] = {
 	0x67, 0x30,                         // pTos state
 	0x34, SIG_UINT16 + 0x00, 0x20,      // ldi 2000
@@ -1042,7 +1047,7 @@ SciScriptPatcherEntry kq6Signatures[] = {
 // the same as the English version.
 // Applies to at least: German floppy
 // Responsible method: unknown
-// Fixes bug: #3048054
+// Fixes bug: #5264
 const uint16 longbowSignatureShowHandCode[] = {
 	0x78,                            // push1
 	0x78,                            // push1
@@ -1092,7 +1097,7 @@ SciScriptPatcherEntry longbowSignatures[] = {
 // We patch the script to use global 90, which seems to be unused in the whole game.
 // Applies to at least: English floppy
 // Responsible method: rm63Script::handleEvent
-// Fixes bug: #3614419
+// Fixes bug: #6346
 const uint16 larry2SignatureWearParachutePoints[] = {
 	0x35, 0x01,                      // ldi 01
 	0xa1, SIG_MAGICDWORD, 0x8e,      // sag 8e
@@ -1383,7 +1388,7 @@ SciScriptPatcherEntry mothergoose256Signatures[] = {
 //  when the 2 seconds have passed and the locker got closed.
 // Applies to at least: English floppy
 // Responsible method: putGun::changeState (script 341)
-// Fixes bug: #3036933 / #3303802
+// Fixes bug: #5705 / #6400
 const uint16 pq1vgaSignaturePutGunInLockerBug[] = {
 	0x35, 0x00,                      // ldi 00
 	0x1a,                            // eq?
@@ -1492,7 +1497,7 @@ const uint16 qfg1vgaPatchFightEvents[] = {
 // window text, which erases the window header text because of its length. To
 // fix that, we allocate more temp space and move the pointer used for the
 // window header a little bit, wherever it's used in script 814.
-// Fixes bug #3568431.
+// Fixes bug: #6139.
 
 // Patch 1: Increase temp space
 const uint16 qfg1vgaSignatureTempSpace[] = {
@@ -1528,7 +1533,7 @@ const uint16 qfg1vgaPatchDialogHeader[] = {
 // edge case that can occur when Ego is set to sneak. Normally, when clicking on
 // the crusher, ego is supposed to move close to position 79, 165. We change it
 // to 85, 165, which is not an edge case thus the freeze is avoided.
-// Fixes bug #3585189.
+// Fixes bug: #6180
 const uint16 qfg1vgaSignatureMoveToCrusher[] = {
 	SIG_MAGICDWORD,
 	0x51, 0x1f,                         // class Motion
@@ -1547,7 +1552,8 @@ const uint16 qfg1vgaPatchMoveToCrusher[] = {
 
 // Same pathfinding bug as above, where Ego is set to move to an impossible
 // spot when sneaking. In GuardsTrumpet::changeState, we change the final
-// location where Ego is moved from 111, 111 to 114, 114. Fixes bug #3604939.
+// location where Ego is moved from 111, 111 to 114, 114.
+// Fixes bug: #6248
 const uint16 qfg1vgaSignatureMoveToCastleGate[] = {
 	SIG_MAGICDWORD,
 	0x51, 0x1f,                         // class MoveTo
@@ -1569,7 +1575,7 @@ const uint16 qfg1vgaPatchMoveToCastleGate[] = {
 // The code treats both monster types the same.
 // Applies to at least: English floppy
 // Responsible method: smallMonster::doVerb
-// Fixes bug #3604943.
+// Fixes bug #6249
 const uint16 qfg1vgaSignatureCheetaurDescription[] = {
 	SIG_MAGICDWORD,
 	0x34, SIG_UINT16 + 0xb8, 0x01,      // ldi 01b8
@@ -1601,7 +1607,7 @@ const uint16 qfg1vgaPatchCheetaurDescription[] = {
 //  calling goTo6::init, so the whole issue is stopped from happening.
 // Applies to at least: English floppy
 // Responsible method: happyFace::changeState, door11::doit
-// Fixes bug #3585793
+// Fixes bug #6181
 const uint16 qfg1vgaSignatureFunnyRoomFix[] = {
 	0x65, 0x14,                         // aTop 14 (state)
 	0x36,                               // push
@@ -1650,8 +1656,8 @@ SciScriptPatcherEntry qfg1vgaSignatures[] = {
 // deleted entries. We don't allow the user to change the directory, thus the
 // contents of the file list are constant, so we can avoid the constant file
 // and text entry refreshes whenever a button is pressed, and prevent possible
-// crashes because of these constant quick object reallocations. Fixes bug
-// #3037996.
+// crashes because of these constant quick object reallocations.
+// Fixes bug: #5096
 const uint16 qfg2SignatureImportDialog[] = {
 	0x63, SIG_MAGICDWORD, 0x20,         // pToa text
 	0x30, SIG_UINT16 + 0x0b, 0x00,      // bnt [next state]
@@ -1699,7 +1705,7 @@ const uint16 qfg3PatchImportDialog[] = {
 
 
 // ===========================================================================
-// Patch for the Woo dialog option in Uhura's conversation. Bug #3040722
+// Patch for the Woo dialog option in Uhura's conversation.
 // Problem: The Woo dialog option (0xffb5) is negative, and therefore
 // treated as an option opening a submenu. This leads to uhuraTell::doChild
 // being called, which calls hero::solvePuzzle and then proceeds with
@@ -1713,6 +1719,7 @@ const uint16 qfg3PatchImportDialog[] = {
 // behaviour.
 // Applies to at least: English, German, Italian, French, Spanish Floppy
 // Responsible method: unknown
+// Fixes bug: #5172
 const uint16 qfg3SignatureWooDialog[] = {
 	SIG_MAGICDWORD,
 	0x67, 0x12,                         // pTos 12 (query)
@@ -1753,7 +1760,8 @@ SciScriptPatcherEntry qfg3Signatures[] = {
 //   adds it to nest::x. The problem is that the script also checks if x exceeds
 //   we never reach that of course, so the pterodactyl-flight will go endlessly
 //   we could either calculate property count differently somehow fixing this
-//   but I think just patching it out is cleaner (bug #3037938)
+//   but I think just patching it out is cleaner.
+// Fixes bug: #5093
 const uint16 sq4FloppySignatureEndlessFlight[] = {
 	0x39, 0x04,                         // pushi 04 (selector x)
 	SIG_MAGICDWORD,
@@ -1795,7 +1803,7 @@ const uint16 sq4CdPatchTextOptionsButton[] = {
 
 // Patch 2: Adjust a check in babbleIcon::init, which handles the babble icon
 // (e.g. the two guys from Andromeda) shown when dying/quitting.
-// Fixes bug #3538418.
+// Fixes bug: #6068
 const uint16 sq4CdSignatureBabbleIcon[] = {
 	SIG_MAGICDWORD,
 	0x89, 0x5a,                         // lsg 5a
@@ -1964,7 +1972,7 @@ SciScriptPatcherEntry sq1vgaSignatures[] = {
 //  else is done in SCI system scripts and I don't want to touch those.
 // Applies to at least: English/German/French PC floppy
 // Responsible method: takeTool::changeState
-// Fixes bug #6457
+// Fixes bug: #6457
 const uint16 sq5SignatureToolboxFix[] = {
 	0x31, 0x13,                    // bnt [check for state 1]
 	SIG_MAGICDWORD,
@@ -2372,11 +2380,7 @@ void Script::patcherProcessScript(uint16 scriptNr, byte *scriptData, const uint3
 		signatureTable = gk1Signatures;
 		break;
 	case GID_KQ5:
-		// See the explanation in the kq5SignatureWinGMSignals comment
-//		if (g_sci->_features->useAltWinGMSound())
-//			signatureTable = kq5WinGMSignatures;
-//		else
-			signatureTable = kq5Signatures;
+		signatureTable = kq5Signatures;
 		break;
 	case GID_KQ6:
 		signatureTable = kq6Signatures;
