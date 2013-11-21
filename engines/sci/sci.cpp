@@ -947,6 +947,8 @@ void SciEngine::updateScummVMAudioOptions() {
 				if (subtitlesOn && speechOn)
 					return;
 				break;
+			default:
+				break;
 			}
 			ConfMan.setBool("subtitles", false);
 			ConfMan.setBool("speech_mute", false);
