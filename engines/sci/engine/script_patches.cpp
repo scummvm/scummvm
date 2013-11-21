@@ -1221,10 +1221,10 @@ SciScriptPatcherEntry larry6Signatures[] = {
 //  and as soon as she moves, the painting will automatically move to its original position.
 //  This is not the case for the CD version of the game. The painting will only "move" back,
 //  when the player actually exits the room and re-enters.
-
+//
 // Applies to at least: English PC-CD
 // Responsible method: rm560::doit
-// Fixes bug: #6460 (actually only part of)
+// Fixes bug: #6460
 const uint16 laurabow2CDSignaturePaintingClosing[] = {
 	0x39, 0x04,                         // pushi 04 (cel)
 	0x76,                               // push0
@@ -1279,15 +1279,53 @@ const uint16 laurabow2CDPatchPaintingClosing[] = {
 	PATCH_END
 };
 
-//          script, description,                                            signature                                 patch
+// In the CD version the system menu is disabled for certain rooms. LB2::handsOff is called,
+//  when leaving the room (and in other cases as well). This method remembers the disabled
+//  icons of the icon bar. In the new room LB2::handsOn will get called, which then enables
+//  all icons, but also disabled the ones, that were disabled before.
+//
+// Because of this behaviour certain rooms, that should have the system menu enabled, have
+//  it disabled, when entering those rooms from rooms, where the menu is supposed to be
+//  disabled.
+//
+// We patch this by injecting code into LB2::newRoom (which is called right after a room change)
+//  and reset the global variable there, that normally holds the disabled buttons.
+//
+// This patch may cause side-effects and it's difficult to test, because it affects every room
+//  in the game. At least for the intro, the speakeasy and plenty of rooms in the beginning it
+//  seems to work correctly.
+//
+// Applies to at least: English PC-CD
+// Responsible method: LB2::newRoom, LB2::handsOff, LB2::handsOn
+// Fixes bug: #6440
+const uint16 laurabow2CDSignatureFixProblematicIconBar[] = {
+	SIG_MAGICDWORD,
+	0x38, SIG_UINT16 + 0xf1, 0x00,      // pushi 00f1 (disable) - hardcoded, we only want to patch the CD version
+	0x76,                               // push0
+	0x81, 0x45,                         // lag global[45]
+	0x4a, 0x04,                         // send 04
+	SIG_END
+};
+
+const uint16 laurabow2CDPatchFixProblematicIconBar[] = {
+	0x35, 0x00,                      // ldi 00
+	0xa1, 0x74,                      // sag 74h
+	0x35, 0x00,                      // ldi 00 (waste bytes)
+	0x35, 0x00,                      // ldi 00
+	PATCH_END
+};
+
+
+//          script, description,                                            signature                                  patch
 SciScriptPatcherEntry laurabow2Signatures[] = {
-	{  true,   560, "CD: painting closing immediately",            1, 0, 0, laurabow2CDSignaturePaintingClosing,      laurabow2CDPatchPaintingClosing },
+	{  true,   560, "CD: painting closing immediately",            1, 0, 0, laurabow2CDSignaturePaintingClosing,       laurabow2CDPatchPaintingClosing },
+	{  true,     0, "CD: fix problematic icon bar",                1, 0, 0, laurabow2CDSignatureFixProblematicIconBar, laurabow2CDPatchFixProblematicIconBar },
 	// King's Quest 6 and Laura Bow 2 share basic patches for audio + text support
-	{ false,   924, "CD: audio + text support 1",                  1, 0, 0, kq6laurabow2CDSignatureAudioTextSupport1, kq6laurabow2CDPatchAudioTextSupport1 },
-	{ false,   924, "CD: audio + text support 2",                  1, 0, 0, kq6laurabow2CDSignatureAudioTextSupport2, kq6laurabow2CDPatchAudioTextSupport2 },
-	{ false,   924, "CD: audio + text support 3",                  1, 0, 0, kq6laurabow2CDSignatureAudioTextSupport3, kq6laurabow2CDPatchAudioTextSupport3 },
-	{ false,   928, "CD: audio + text support 4",                  1, 0, 0, kq6laurabow2CDSignatureAudioTextSupport4, kq6laurabow2CDPatchAudioTextSupport4 },
-	{ false,   928, "CD: audio + text support 5",                  2, 0, 0, kq6laurabow2CDSignatureAudioTextSupport5, kq6laurabow2CDPatchAudioTextSupport5 },
+	{ false,   924, "CD: audio + text support 1",                  1, 0, 0, kq6laurabow2CDSignatureAudioTextSupport1,  kq6laurabow2CDPatchAudioTextSupport1 },
+	{ false,   924, "CD: audio + text support 2",                  1, 0, 0, kq6laurabow2CDSignatureAudioTextSupport2,  kq6laurabow2CDPatchAudioTextSupport2 },
+	{ false,   924, "CD: audio + text support 3",                  1, 0, 0, kq6laurabow2CDSignatureAudioTextSupport3,  kq6laurabow2CDPatchAudioTextSupport3 },
+	{ false,   928, "CD: audio + text support 4",                  1, 0, 0, kq6laurabow2CDSignatureAudioTextSupport4,  kq6laurabow2CDPatchAudioTextSupport4 },
+	{ false,   928, "CD: audio + text support 5",                  2, 0, 0, kq6laurabow2CDSignatureAudioTextSupport5,  kq6laurabow2CDPatchAudioTextSupport5 },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
