@@ -174,4 +174,41 @@ void scene04_initScene(Scene *sc) {
 	g_fullpipe->initArcadeKeys("SC_4");
 }
 
+bool sceneHandler04_friesAreWalking() {
+	warning("STUB: sceneHandler04_friesAreWalking()");
+
+	return false;
+}
+
+int scene04_updateCursor() {
+	g_fullpipe->updateCursorCommon();
+
+	if (g_fullpipe->_objectIdAtCursor == PIC_SC4_LRTRUBA) {
+		if (!g_vars->scene04_var19) {
+			g_fullpipe->_cursorId = PIC_CSR_DEFAULT;
+
+			return g_fullpipe->_cursorId;
+		}
+	} else if (g_fullpipe->_objectIdAtCursor == ANI_PLANK || g_fullpipe->_objectIdAtCursor == PIC_SC4_PLANK) {
+		if (g_fullpipe->_objectIdAtCursor == ANI_PLANK && g_fullpipe->_cursorId != PIC_CSR_ITN)
+			return g_fullpipe->_cursorId;
+
+		if (g_fullpipe->_objectIdAtCursor == ANI_PLANK || (g_fullpipe->_objectIdAtCursor == PIC_SC4_PLANK && g_fullpipe->_cursorId == PIC_CSR_DEFAULT)) {
+			if (sceneHandler04_friesAreWalking()) {
+				g_fullpipe->_cursorId = PIC_CSR_ARCADE1;
+				return g_fullpipe->_cursorId;
+			}
+			if (g_vars->scene04_soundPlaying) {
+				g_fullpipe->_cursorId = PIC_CSR_DEFAULT;
+				return g_fullpipe->_cursorId;
+			}
+		}
+	}
+
+	if (g_fullpipe->_objectIdAtCursor == PIC_CSR_ITN && g_fullpipe->_objectIdAtCursor == PIC_SC4_DOWNTRUBA)
+		g_fullpipe->_cursorId = PIC_CSR_GOD;
+
+	return g_fullpipe->_cursorId;
+}
+
 } // End of namespace Fullpipe
