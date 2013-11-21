@@ -138,8 +138,9 @@ SciScriptPatcherSelector selectorTable[] = {
 	{ "put",               -1, }, // Police Quest 1 VGA
 	{ "solvePuzzle",       -1, }, // Quest For Glory 3
 	{ "timesShownID",      -1, }, // Space Quest 1 VGA
-	{ "startText",         -1, }, // King's Quest 6 CD / Laura Bow 2 CD
-	{ "startAudio",        -1, }, // King's Quest 6 CD / Laura Bow 2 CD
+	{ "startText",         -1, }, // King's Quest 6 CD / Laura Bow 2 CD for audio+text support
+	{ "startAudio",        -1, }, // King's Quest 6 CD / Laura Bow 2 CD for audio+text support
+	{ "modNum",            -1, }, // King's Quest 6 CD / Laura Bow 2 CD for audio+text support
 	{ NULL,                -1 }
 };
 
@@ -161,7 +162,8 @@ enum ScriptPatcherSelectors {
 	SELECTOR_solvePuzzle,
 	SELECTOR_timesShownID,
 	SELECTOR_startText,
-	SELECTOR_startAudio
+	SELECTOR_startAudio,
+	SELECTOR_modNum
 };
 
 // ===========================================================================
@@ -920,12 +922,12 @@ const uint16 kq6PatchInventoryStackFix[] = {
 //  We currently use global 98d to hold a kMemory pointer.
 // Patched method: Messager::sayNext / lb2Messager::sayNext (always use text branch)
 const uint16 kq6laurabow2CDSignatureAudioTextSupport1[] = {
-	SIG_MAGICDWORD,
 	0x89, 0x5a,                         // lsg global[5a]
 	0x35, 0x02,                         // ldi 02
 	0x12,                               // and
+	SIG_MAGICDWORD,
 	0x31, 0x13,                         // bnt [audio call]
-	0x38, SIG_ADDTOOFFSET +1, 0x00,     // pushi 00de (lb2) / pushi 00df (kq6)
+	0x38, SIG_SELECTOR16 + SELECTOR_modNum, // pushi modNum
 	SIG_END
 };
 
