@@ -211,4 +211,10 @@ int scene04_updateCursor() {
 	return g_fullpipe->_cursorId;
 }
 
+int sceneHandler04(ExCommand *ex) {
+	warning("STUB: sceneHandler04()");
+
+	return 0;
+}
+
 } // End of namespace Fullpipe
