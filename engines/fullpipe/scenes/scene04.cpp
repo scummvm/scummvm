@@ -212,6 +212,264 @@ int scene04_updateCursor() {
 }
 
 int sceneHandler04(ExCommand *ex) {
+#if 0
+	v2 = 0;
+	if (ex->msg.messageKind != 17)
+		return v2;
+	v3 = ex->messageNum;
+	if (v3 <= (signed int)MSG_UPDATEBOTTLE) {
+		if (v3 == MSG_UPDATEBOTTLE) {
+			sceneHandler04_msgUpdateBottle();
+			return v2;
+		}
+		if (v3 > (signed int)MSG_CLICKPLANK) {
+			switch (v3) {
+			case MSG_CLICKBOTTLE:
+				sceneHandler04_clickBottle();
+				break;
+			case MSG_SHOOTKOZAW:
+				sceneHandler04_chootKozyawka();
+				break;
+			case MSG_SHAKEBOTTLE:
+				if (!g_vars_scene04_var02)
+					++g_vars_scene04_var20;
+				break;
+			case MSG_STARTHAND:
+				g_vars_scene04_var09 = 1;
+				g_vars_scene04_coinPut = 0;
+				if (g_vars_scene04_var10)
+					sceneHandler04_sub1(0);
+				sceneHandler04_sub15();
+				sceneHandler04_stopSound();
+				break;
+			case MSG_TAKEKOZAW:
+				sceneHandler04_takeKozyawka();
+				break;
+			case MSG_CLICKBUTTON:
+				sceneHandler04_clickButton();
+				break;
+			default:
+				return v2;
+			}
+		} else {
+			if (v3 == MSG_CLICKPLANK) {
+				sceneHandler04_clickPlank();
+				return v2;
+			}
+			if (v3 > (signed int)MSG_LOWERPLANK) {
+				v17 = v3 - MSG_KOZAWRESTART;
+				if (v17) {
+					if (v17 == 1)
+						sceneHandler04_raisePlank();
+				} else {
+					if (g_vars_scene04_var05) {
+						CObList::AddTail(&g_vars_scene04_kozyawkiObjList, g_vars_scene04_var05);
+						StaticANIObject_hide((StaticANIObject *)g_vars_scene04_var05);
+						g_vars_scene04_var05 = 0;
+					}
+					if (g_vars_scene04_soundPlaying)
+						sceneHandler04_sub3();
+				}
+			} else {
+				if (v3 == MSG_LOWERPLANK) {
+					sceneHandler04_lowerPlank();
+					return v2;
+				}
+				if (v3 != 29) {
+					if (v3 != 33) {
+						if (v3 == MSG_TESTPLANK)
+							sceneHandler04_testPlank((int)ex);
+						return v2;
+					}
+					v4 = g_aniMan;
+					v5 = g_aniMan->GameObject.ox;
+					g_vars_scene04_dudePosX = g_aniMan->GameObject.ox;
+					g_vars_scene04_dudePosY = g_aniMan->GameObject.oy;
+					if (!g_aniMan2)
+						goto LABEL_130;
+					v6 = g_sceneRect.left;
+					if (v5 < g_sceneRect.left + 200) {
+						g_currentScene->bg.x = v5 - g_sceneRect.left - 300;
+						v5 = g_vars_scene04_dudePosX;
+						v4 = g_aniMan;
+						v6 = g_sceneRect.left;
+					}
+					if (v5 > g_sceneRect.right - 200) {
+						g_currentScene->bg.x = v5 - g_sceneRect.right + 300;
+						v4 = g_aniMan;
+						v6 = g_sceneRect.left;
+					}
+					v2 = 1;
+					if (g_aniMan2) {
+						if (g_vars_scene04_soundPlaying) {
+							v8 = v4->movement;
+							if (v8) {
+								if (v8->GameObject.id == MV_MAN_TOLADDER) {
+									g_aniMan2 = 0;
+									if (v6 > 380)
+										g_currentScene->bg.x = 380 - v6;
+								}
+							}
+						}
+					} else {
+					LABEL_130:
+						v7 = v4->movement;
+						if (v7 && v7->GameObject.id == MV_MAN_GOD)
+							g_aniMan2 = v4;
+					}
+					sceneHandler04_sub4();
+					if (g_vars_scene04_var07 && !g_vars_scene04_var09)
+						sceneHandler04_sub5();
+					if (g_vars_scene04_var12)
+						sceneHandler04_sub6();
+					if (g_vars_scene04_var08)
+						sceneHandler04_clickLadder();
+					if (g_vars_scene04_var10 && g_vars_scene04_hand->movement)
+						sceneHandler04_sub1(0);
+					if (g_vars_scene04_coinPut && g_vars_scene04_var18 && !g_vars_scene04_var09 && !g_vars_scene04_soundPlaying)
+						sceneHandler04_sub7();
+					if (g_vars_scene04_var01) {
+						if (!g_vars_scene04_soundPlaying)
+							goto LABEL_46;
+						v11 = __OFSUB__(g_vars_scene04_var14 + 1, 600);
+						v9 = g_vars_scene04_var14 == 599;
+						v10 = g_vars_scene04_var14++ - 599 < 0;
+						if (!((unsigned __int8)(v10 ^ v11) | v9))
+							sceneHandler04_sub17();
+					}
+					if (g_vars_scene04_soundPlaying) {
+					LABEL_47:
+						BehaviorManager_updateBehaviors(&g_behaviorManager);
+						return v2;
+					}
+				LABEL_46:
+					startSceneTrack();
+					goto LABEL_47;
+				}
+				v12 = Scene_getPictureObjectIdAtPos(g_currentScene, ex->msg.sceneClickX, ex->msg.sceneClickY);
+				LOWORD(sceneHandler_pic) = v12;
+				if (g_vars_scene04_var10) {
+					sceneHandler04_sub1(ex);
+					return v2;
+				}
+				if (v12 == PIC_SC4_LADDER) {
+					if (!g_vars_scene04_var04) {
+						dword_476CB8 = ex->msg.sceneClickX;
+						dword_476CBC = ex->msg.sceneClickY;
+						sceneHandler04_clickLadder();
+						ex->msg.messageKind = 0;
+						return v2;
+					}
+					goto LABEL_52;
+				}
+				v13 = Scene_getStaticANIObjectAtPos(g_currentScene, ex->msg.sceneClickX, ex->msg.sceneClickY);
+				v14 = (GameObject *)v13;
+				if (v13 && v13->GameObject.id == ANI_PLANK
+					|| Scene_getPictureObjectIdAtPos(g_currentScene, ex->msg.sceneClickX, ex->msg.sceneClickY) == PIC_SC4_PLANK) {
+					sceneHandler04_clickPlank();
+					ex->msg.messageKind = 0;
+				} else if (g_vars_scene04_var01) {
+					sceneHandler04_sub8(ex);
+				} else if (!v14 || !canInteractAny(&g_aniMan->GameObject, v14, LOWORD(ex->msg.keyCode))) {
+					v15 = (GameObject *)Scene_getPictureObjectById(g_currentScene, sceneHandler_pic, 0);
+					if (!v15 || !canInteractAny(&g_aniMan->GameObject, v15, LOWORD(ex->msg.keyCode))) {
+						if ((v16 = ex->msg.sceneClickX, g_sceneRect.right - v16 < 47) && g_sceneRect.right < g_sceneWidth - 1
+							|| v16 - g_sceneRect.left < 47 && g_sceneRect.left > 0)
+							sceneHandlers_sub01(ex);
+					}
+				}
+			}
+		}
+		return v2;
+	}
+	if (v3 > (signed int)MSG_SC4_MANFROMBOTTLE) {
+		if (v3 > (signed int)MSG_SC4_HANDOVER) {
+			if (v3 == MSG_SC4_HIDEBOOT) {
+				GameObject_setFlags(&g_vars_scene04_boot->GameObject, g_vars_scene04_boot->GameObject.flags & 0xFFFB);
+			} else if (v3 == MSG_CMN_WINARCADE) {
+				sceneHandler04_winArcade();
+			}
+			return v2;
+		}
+		if (v3 == MSG_SC4_HANDOVER) {
+			g_vars_scene04_var09 = 0;
+			g_vars_scene04_var19 = 1;
+			return v2;
+		}
+		v20 = v3 - MSG_SC4_KOZAWFALL;
+		if (v20) {
+			v21 = v20 - 37;
+			if (v21) {
+				if (v21 == 1)                         // MSG_SC4_DROPBOTTLE
+					sceneHandler04_dropBottle();
+			} else {                                      // MSG_SC4_COINOUT
+				StaticANIObject_changeStatics2(g_vars_scene04_clock, ST_CLK_CLOSED);
+				g_vars_scene04_coinPut = 0;
+				sceneHandler04_stopSound();
+				if (g_vars_scene04_kozyawkiAni.m_nCount && !g_vars_scene04_var02) {
+					g_vars_scene04_var09 = 1;
+					if (g_vars_scene04_var10)
+						sceneHandler04_sub1(0);
+					sceneHandler04_sub15();
+				}
+			}
+			return v2;
+		}
+		if (g_vars_scene04_var11) {
+			sceneHandler04_sub9((void *)dword_476E54);
+			g_vars_scene04_var11 = 0;
+			v22 = (ExCommand *)operator new(sizeof(ExCommand));
+			if (v22) {
+				v23 = ExCommand_ctor(v22, 0, 35, SND_4_010, 0, 0, 0, 1, 0, 0, 0);
+			LABEL_119:
+				v24 = v23->excFlags | 2;
+				v23->msg.field_14 = 5;
+				v23->excFlags = v24;
+				ExCommand_postMessage(v23);
+				return v2;
+			}
+		} else {
+			v25 = (ExCommand *)operator new(sizeof(ExCommand));
+			if (v25) {
+				v23 = ExCommand_ctor(v25, 0, 35, SND_4_012, 0, 0, 0, 1, 0, 0, 0);
+				goto LABEL_119;
+			}
+		}
+		v23 = 0;
+		goto LABEL_119;
+	}
+	if (v3 == MSG_SC4_MANFROMBOTTLE) {
+		sceneHandler04_manFromBottle();
+		return v2;
+	}
+	if (v3 > (signed int)MSG_SHOWCOIN) {
+		if (v3 == MSG_SC4_CLICKLADDER) {
+			sceneHandler04_clickLadder();
+		} else if (v3 == MSG_SC4_MANTOBOTTLE) {
+			sceneHandler04_manToBottle();
+		}
+	} else {
+		if (v3 == MSG_SHOWCOIN) {
+			sceneHandler04_showCoin();
+			return v2;
+		}
+		v18 = v3 - MSG_TAKEBOTTLE;
+		if (!v18) {
+			sceneHandler04_takeBottle();
+			return v2;
+		}
+		v19 = v18 - 4;
+		if (!v19) {                                 // MSG_GOTOLADDER
+		LABEL_52:
+			sceneHandler04_gotoLadder(0);
+			return v2;
+		}
+		if (v19 == 414)                           // MSG_SC4_COINPUT
+			g_vars_scene04_coinPut = 1;
+	}
+	return v2;
+
+#endif
 	warning("STUB: sceneHandler04()");
 
 	return 0;
