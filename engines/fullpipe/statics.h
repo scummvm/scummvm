@@ -107,8 +107,7 @@ class StaticANIObject;
 
 class Movement : public GameObject {
   public:
-	int _field_24;
-	int _field_28;
+	Common::Point _somePoint;
 	int _lastFrameSpecialFlag;
 	int _flipFlag;
 	int _updateFlag1;
