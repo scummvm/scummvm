@@ -213,8 +213,6 @@ int scene04_updateCursor() {
 
 int sceneHandler04(ExCommand *ex) {
 #if 0
-	v2 = 0;
-
 	if (ex->_messageKind != 17)
 		return 0;
 
@@ -239,8 +237,10 @@ int sceneHandler04(ExCommand *ex) {
 	case MSG_STARTHAND:
 		g_vars->scene04_var09 = 1;
 		g_vars->scene04_coinPut = 0;
+
 		if (g_vars->scene04_var10)
 			sceneHandler04_sub1(0);
+
 		sceneHandler04_sub15();
 		sceneHandler04_stopSound();
 		break;
@@ -263,8 +263,8 @@ int sceneHandler04(ExCommand *ex) {
 
 	case MSG_KOZAWRESTART:
 		if (g_vars->scene04_var05) {
-			CObList::AddTail(&g_vars->scene04_kozyawkiObjList, g_vars->scene04_var05);
-			StaticANIObject_hide((StaticANIObject *)g_vars->scene04_var05);
+			g_vars->scene04_kozyawkiObjList.push_back(g_vars->scene04_var05);
+			g_vars->scene04_var05->hide();
 			g_vars->scene04_var05 = 0;
 		}
 		if (g_vars->scene04_soundPlaying)
@@ -281,61 +281,62 @@ int sceneHandler04(ExCommand *ex) {
 		break;
 
 	case 33:
-		v4 = g_aniMan;
-		v5 = g_aniMan->GameObject.ox;
-		g_vars->scene04_dudePosX = g_aniMan->GameObject.ox;
-		g_vars->scene04_dudePosY = g_aniMan->GameObject.oy;
+		g_vars->scene04_dudePosX = g_fullpipe->_aniMan->_ox;
+		g_vars->scene04_dudePosY = g_fullpipe->_aniMan->_oy;
 
 		int res = 0;
-		if (g_aniMan2) {
-			v6 = g_sceneRect.left;
-			if (v5 < g_sceneRect.left + 200) {
-				g_currentScene->bg.x = v5 - g_sceneRect.left - 300;
-				v5 = g_vars->scene04_dudePosX;
-				v4 = g_aniMan;
-				v6 = g_sceneRect.left;
+
+		if (g_fullpipe->_aniMan2) {
+			if (g_fullpipe->_aniMan->_ox < g_fullpipe->_sceneRect.left + 200) {
+				g_currentScene->_x = g_fullpipe->_aniMan->_ox - g_fullpipe->_sceneRect.left - 300;
+				g_fullpipe->_aniMan->_ox = g_vars->scene04_dudePosX;
 			}
-			if (v5 > g_sceneRect.right - 200) {
-				g_currentScene->bg.x = v5 - g_sceneRect.right + 300;
-				v4 = g_aniMan;
-				v6 = g_sceneRect.left;
+			if (g_fullpipe->_aniMan->_ox > g_fullpipe->_sceneRect.right - 200) {
+				g_currentScene->_x = g_fullpipe->_aniMan->_ox - g_fullpipe->_sceneRect.right + 300;
 			}
+
 			res = 1;
 
 			if (g_vars->scene04_soundPlaying) {
-				v8 = v4->movement;
-				if (v8) {
-					if (v8->GameObject.id == MV_MAN_TOLADDER) {
-						g_aniMan2 = 0;
-						if (v6 > 380)
-							g_currentScene->bg.x = 380 - v6;
+				if (g_fullpipe->_aniMan->_movement) {
+					if (g_fullpipe->_aniMan->_movement->_id == MV_MAN_TOLADDER) {
+						g_fullpipe->_aniMan2 = 0;
+						if (g_fullpipe->_sceneRect.left > 380)
+							g_currentScene->bg.x = 380 - g_fullpipe->_sceneRect.left;
 					}
 				}
 			}
 		} else {
-			v7 = v4->movement;
-			if (v7 && v7->GameObject.id == MV_MAN_GOD)
-				g_aniMan2 = v4;
+			v7 = ;
+			if (g_fullpipe->_aniMan->_movement && g_fullpipe->_aniMan->_movement->_id == MV_MAN_GOD)
+				g_fullpipe->_aniMan2 = g_fullpipe->_aniMan;
 		}
 
 		sceneHandler04_sub4();
+
 		if (g_vars->scene04_var07 && !g_vars->scene04_var09)
 			sceneHandler04_sub5();
+
 		if (g_vars->scene04_var12)
 			sceneHandler04_sub6();
+
 		if (g_vars->scene04_var08)
 			sceneHandler04_clickLadder();
-		if (g_vars->scene04_var10 && g_vars->scene04_hand->movement)
+
+		if (g_vars->scene04_var10 && g_vars->scene04_hand->_movement)
 			sceneHandler04_sub1(0);
+
 		if (g_vars->scene04_coinPut && g_vars->scene04_var18 && !g_vars->scene04_var09 && !g_vars->scene04_soundPlaying)
 			sceneHandler04_sub7();
+
 		if (g_vars->scene04_var01) {
 			if (!g_vars->scene04_soundPlaying) {
 				startSceneTrack();
 
-				BehaviorManager_updateBehaviors(&g_behaviorManager);
+				g_fullpipe->_behaviorManager->updateBehaviors();
 				return res;
 			}
+
 			v11 = __OFSUB__(g_vars->scene04_var14 + 1, 600);
 			v9 = g_vars->scene04_var14 == 599;
 			v10 = g_vars->scene04_var14++ - 599 < 0;
@@ -344,13 +345,15 @@ int sceneHandler04(ExCommand *ex) {
 		}
 
 		if (g_vars->scene04_soundPlaying) {
-			BehaviorManager_updateBehaviors(&g_behaviorManager);
+			g_fullpipe->_behaviorManager->updateBehaviors();
+
 			return res;
 		}
 
 		startSceneTrack();
 
-		BehaviorManager_updateBehaviors(&g_behaviorManager);
+		g_fullpipe->_behaviorManager->updateBehaviors();
+
 		return res;
 
 	case 29:
@@ -382,11 +385,11 @@ int sceneHandler04(ExCommand *ex) {
 			ex->msg.messageKind = 0;
 		} else if (g_vars->scene04_var01) {
 			sceneHandler04_sub8(ex);
-		} else if (!v14 || !canInteractAny(&g_aniMan->GameObject, v14, LOWORD(ex->msg.keyCode))) {
+		} else if (!v14 || !canInteractAny(&g_fullpipe->_aniMan->GameObject, v14, LOWORD(ex->msg.keyCode))) {
 			v15 = (GameObject *)Scene_getPictureObjectById(g_currentScene, sceneHandler_pic, 0);
-			if (!v15 || !canInteractAny(&g_aniMan->GameObject, v15, LOWORD(ex->msg.keyCode))) {
-				if ((v16 = ex->msg.sceneClickX, g_sceneRect.right - v16 < 47) && g_sceneRect.right < g_sceneWidth - 1
-					|| v16 - g_sceneRect.left < 47 && g_sceneRect.left > 0)
+			if (!v15 || !canInteractAny(&g_fullpipe->_aniMan->GameObject, v15, LOWORD(ex->msg.keyCode))) {
+				if ((v16 = ex->msg.sceneClickX, g_fullpipe->_sceneRect.right - v16 < 47) && g_fullpipe->_sceneRect.right < g_sceneWidth - 1
+					|| v16 - g_fullpipe->_sceneRect.left < 47 && g_fullpipe->_sceneRect.left > 0)
 					sceneHandlers_sub01(ex);
 			}
 		}
