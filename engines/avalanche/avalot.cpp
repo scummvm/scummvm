@@ -199,7 +199,6 @@ void Clock::chime() {
 	}
 }
 
-
 void AvalancheEngine::handleKeyDown(Common::Event &event) {
 	_sound->click();
 
@@ -575,7 +574,6 @@ void AvalancheEngine::exitRoom(byte x) {
 	if (_room != kRoomMap)
 		_lastRoomNotMap = _room;
 }
-
 
 /**
  * Only when entering a NEW town! Not returning to the last one,
@@ -1340,7 +1338,6 @@ void AvalancheEngine::drawDirection() { // It's data is loaded in load_digits().
 	_graphics->drawDirection(_animation->getDirection(), 0, 161);
 	CursorMan.showMouse(true);
 }
-
 
 void AvalancheEngine::gameOver() {
 	_userMovesAvvy = false;

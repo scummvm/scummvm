@@ -127,7 +127,6 @@ static const int16 kScreenHeight = 200;
 static const int16 kWalk = 3;
 static const int16 kRun = 5;
 
-
 } // End of namespace Avalanche
 
 #endif // AVALANCHE_ENUMS_H

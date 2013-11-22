@@ -749,8 +749,6 @@ void Parser::storeInterrogation(byte interrogation) {
 		_vm->_timer->cardiffSurvey();
 }
 
-
-
 void Parser::parse() {
 	// First parsing - word identification
 	if (!_thats.empty())
@@ -762,7 +760,6 @@ void Parser::parse() {
 	_thing2 = kPardon;
 	_person = kPeoplePardon;
 	clearWords();
-
 
 	// A cheat mode attempt.
 	if (_inputText[0] == '.') {
@@ -1668,7 +1665,6 @@ void Parser::doThat() {
 	if (_thing < 200)
 		// "Slip" object
 		_thing -= 49;
-
 
 	if ((_verb != kVerbCodeLoad) && (_verb != kVerbCodeSave) && (_verb != kVerbCodeQuit) && (_verb != kVerbCodeInfo) && (_verb != kVerbCodeHelp)
 	&& (_verb != kVerbCodeLarrypass) && (_verb != kVerbCodePhaon) && (_verb != kVerbCodeBoss) && (_verb != kVerbCodeCheat) && (_verb != kVerbCodeRestart)

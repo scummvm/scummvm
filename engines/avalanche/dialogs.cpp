@@ -190,7 +190,6 @@ void Dialogs::scrollModeNormal() {
 				break;
 		} while (!((mrelease > 0) || (buttona1()) || (buttonb1())));
 
-
 		if (mrelease == 0) {
 			inkey();
 			if (aboutscroll) {
