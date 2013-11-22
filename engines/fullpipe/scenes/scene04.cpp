@@ -340,8 +340,25 @@ void sceneHandler04_testPlank(ExCommand *ex) {
 	warning("sceneHandler04_testPlank()");
 }
 
+void sceneHandler04_bottleUpdateObjects(int off) {
+	warning("sceneHandler04_bottleUpdateObjects()");
+}
+
 void sceneHandler04_updateBottle() {
-	warning("sceneHandler04_updateBottle()");
+	Common::Point point;
+
+	int yoff;
+
+	if (g_vars->scene04_hand->_movement)
+		yoff = g_vars->scene04_hand->_movement->_oy;
+	else
+		yoff = g_vars->scene04_hand->_oy;
+
+	int newy = g_vars->scene04_hand->getSomeXY(point)->y + yoff + 140;
+
+	sceneHandler04_bottleUpdateObjects(newy - g_vars->scene04_spring->_oy);
+
+	g_vars->scene04_spring->setOXY(g_vars->scene04_spring->_ox, newy);
 }
 
 void sceneHandler04_winArcade() {
