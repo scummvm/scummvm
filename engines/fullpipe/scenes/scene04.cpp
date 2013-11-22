@@ -217,7 +217,8 @@ void sceneHandlers_sub01(ExCommand *ex) {
 }
 
 void sceneHandler04_clickBottle() {
-	warning("sceneHandler04_clickBottle()");
+	if (!g_vars->scene04_var02)
+		g_vars->scene04_var20 += 5;
 }
 
 void sceneHandler04_clickButton() {
@@ -228,8 +229,17 @@ void sceneHandler04_clickLadder() {
 	warning("sceneHandler04_clickLadder()");
 }
 
+void sceneHandler04_sub13() {
+	warning("sceneHandler04_sub13()");
+}
+
 void sceneHandler04_clickPlank() {
-	warning("sceneHandler04_clickPlank()");
+	if (sceneHandler04_friesAreWalking())
+		sceneHandler04_sub13();
+	else if (g_vars->scene04_var01)
+		g_fullpipe->playSound(SND_4_033, 0);
+	else if (!g_vars->scene04_soundPlaying)
+		chainQueue(QU_PNK_CLICK, 0);
 }
 
 void sceneHandler04_dropBottle() {

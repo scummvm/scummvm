@@ -118,6 +118,7 @@ namespace Fullpipe {
 #define MV_MAN_TOLADDER 448
 #define MV_MAN_TOLADDER2 2841
 #define MV_MAN_TURN_LU 486
+#define MV_PNK_WEIGHTRIGHT 502
 #define MV_SPK4_PLAY 3276
 #define PIC_CMN_EVAL 3468
 #define PIC_CSR_DEFAULT 4891
@@ -180,6 +181,7 @@ namespace Fullpipe {
 #define QU_INTR_FINISH 5138
 #define QU_INTR_GETUPMAN 5136
 #define QU_INTR_STARTINTRO 5133
+#define QU_PNK_CLICK 550
 #define QU_SC3_ENTERLIFT 2779
 #define QU_SC3_EXITLIFT 2808
 #define SC_1 301
@@ -236,6 +238,7 @@ namespace Fullpipe {
 #define SC_TITLES 5166
 #define SND_4_010 3125
 #define SND_4_012 3127
+#define SND_4_033 4990
 #define SND_CMN_031 3516
 #define SND_CMN_070 5199
 #define SND_INTR_019 5220
