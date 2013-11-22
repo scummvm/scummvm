@@ -81,12 +81,12 @@ enum VerbCode {
 	kVerbCodeRestart = 31, kVerbCodeEat = 32,    kVerbCodeListen = 33, kVerbCodeBuy = 34,      kVerbCodeAttack = 35,
 	kVerbCodePasswd = 36,  kVerbCodeDir = 37,    kVerbCodeDie = 38,    kVerbCodeScore = 39,    kVerbCodePut = 40,
 	kVerbCodeKiss = 41,    kVerbCodeClimb = 42,  kVerbCodeJump = 43,   kVerbCodeHiscores = 44, kVerbCodeWake = 45,
-	kVerbCodeHello = 46,   kVerbCodeThanks = 47, 
+	kVerbCodeHello = 46,   kVerbCodeThanks = 47,
 	kVerbCodeSmartAlec = 249, kVerbCodeExpletive = 253, kVerbCodePardon = 254
 };
 
 enum MouseCursor {
-	kCurUpArrow = 0,   kCurScrewDriver = 1, kCurRightArrow = 2, kCurFletch = 3, kCurWait = 4, kCurHand = 5, 
+	kCurUpArrow = 0,   kCurScrewDriver = 1, kCurRightArrow = 2, kCurFletch = 3, kCurWait = 4, kCurHand = 5,
 	kCurCrosshair = 6, kCurIBeam = 7
 };
 

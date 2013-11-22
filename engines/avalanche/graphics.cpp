@@ -573,7 +573,7 @@ void GraphicManager::drawPicture(Graphics::Surface &target, const Graphics::Surf
 
 	if (destX + maxX > target.w)
 		maxX = target.w - destX;
-	
+
 	if (destY + maxY > target.h)
 		maxY = target.h - destY;
 
@@ -624,7 +624,7 @@ void GraphicManager::drawSign(Common::String fn, int16 xl, int16 yl, int16 y) {
 			}
 		}
 	}
-	
+
 	drawPicture(_scrolls, sign, kScreenWidth / 2 - width / 2, y);
 
 	file.close();
@@ -669,7 +669,7 @@ void GraphicManager::prepareBubble(int xc, int xw, int my, Common::Point points[
 	drawTriangle(points, _talkBackgroundColor);
 }
 
-/** 
+/**
  * Set the background of the text to the desired color.
  */
 void GraphicManager::wipeChar(int x, int y, Color color) {

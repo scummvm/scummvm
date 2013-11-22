@@ -926,7 +926,7 @@ void Parser::parse() {
 			_polite = true;
 	}
 
-	if ((!unkString.empty()) && (_verb != kVerbCodeExam) && (_verb != kVerbCodeTalk) && 
+	if ((!unkString.empty()) && (_verb != kVerbCodeExam) && (_verb != kVerbCodeTalk) &&
 		(_verb != kVerbCodeSave) && (_verb != kVerbCodeLoad) && (_verb != kVerbCodeDir)) {
 		Common::String tmpStr = Common::String::format("Sorry, but I have no idea what \"%s\" means. Can you rephrase it?", unkString.c_str());
 		_vm->_dialogs->displayText(tmpStr);
@@ -1691,7 +1691,7 @@ void Parser::doThat() {
 	case kVerbCodeOpen:
 		openDoor();
 		break;
-	case kVerbCodePause: { 
+	case kVerbCodePause: {
 		// Note that the original game doesn't care about the "O.K." box neither, it accepts
 		// clicks from everywhere on the screen to continue. Just like my code.
 		Common::String tmpStr = Common::String::format("Game paused.%c%c%cPress Enter, Esc, or click the mouse on the `O.K.\" " \
@@ -1861,7 +1861,7 @@ void Parser::doThat() {
 		if (savegameId < 0)
 			// dialog aborted, nothing to load
 			return;
-		
+
 		_vm->loadGame(savegameId);
 		}
 		break;
@@ -2317,7 +2317,7 @@ void Parser::doThat() {
 		break;
 	case kVerbCodeScore: {
 		Common::String tmpStr = Common::String::format("Your score is %d,%c%cout of a possible 128.%c%c " \
-			"This gives you a rank of %s.%c%c%s", _vm->_dnascore, kControlCenter, kControlNewLine, kControlNewLine, 
+			"This gives you a rank of %s.%c%c%s", _vm->_dnascore, kControlCenter, kControlNewLine, kControlNewLine,
 			kControlNewLine, rank().c_str(), kControlNewLine, kControlNewLine, totalTime().c_str());
 		_vm->_dialogs->displayText(tmpStr);
 		}

@@ -248,7 +248,7 @@ void AnimationType::walk() {
 				break;
 			case kMagicUnfinished: {
 				bounce();
-				Common::String tmpStr = Common::String::format("%c%cSorry.%cThis place is not available yet!", 
+				Common::String tmpStr = Common::String::format("%c%cSorry.%cThis place is not available yet!",
 					kControlBell, kControlCenter, kControlRoman);
 				_anim->_vm->_dialogs->displayText(tmpStr);
 				}

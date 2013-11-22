@@ -291,7 +291,7 @@ public:
 	void newGame(); // This sets up the DNA for a completely new game.
 	bool getFlag(char x);
 	bool decreaseMoney(uint16 amount); // Called pennycheck in the original.
-	
+
 	Common::String getName(People whose);
 	Common::String getItem(byte which); // Called get_better in the original.
 	Common::String f5Does(); // This procedure determines what f5 does.

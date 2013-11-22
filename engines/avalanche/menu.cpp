@@ -64,7 +64,7 @@ void HeadType::highlight() {
 
 	// Force reload and redraw of cursor.
 	_menu->_vm->_currentMouse = 177;
-	
+
 }
 
 bool HeadType::parseAltTrigger(char key) {
@@ -141,8 +141,8 @@ void MenuItem::display() {
 void MenuItem::wipe() {
 	CursorMan.showMouse(false);
 
-	_menu->drawMenuText(_menu->_menuBar._menuItems[_menu->_activeMenuItem._activeNum]._xpos, 1, 
-		_menu->_menuBar._menuItems[_menu->_activeMenuItem._activeNum]._trigger, 
+	_menu->drawMenuText(_menu->_menuBar._menuItems[_menu->_activeMenuItem._activeNum]._xpos, 1,
+		_menu->_menuBar._menuItems[_menu->_activeMenuItem._activeNum]._trigger,
 		_menu->_menuBar._menuItems[_menu->_activeMenuItem._activeNum]._title, true, false);
 
 	_activeNow = false;
