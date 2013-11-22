@@ -629,7 +629,7 @@ void Scene3150::postInit(SceneObjectList *OwnerList) {
 
 	if (R2_INVENTORY.getObjectScene(R2_SUPERCONDUCTOR_WIRE) == 3150) {
 		_bulbOrWire.postInit();
-		_bulbOrWire.setup(3152, 7, 3);
+		_bulbOrWire.setup(3152, 7, 2);
 		_bulbOrWire.setPosition(Common::Point(70, 55));
 		_bulbOrWire.fixPriority(111);
 		_bulbOrWire._effect = EFFECT_SHADED2;
