@@ -30,69 +30,71 @@
 
 namespace Avalanche {
 
-	Nim::Nim(AvalancheEngine *vm) {
-		_vm = vm;
-	}
+const char * const Nim::names[2] = {"Avalot", "Dogfood"};
 
-	void Nim::playNim() {
-		warning("STUB: Nim::playNim()");
-	}
+Nim::Nim(AvalancheEngine *vm) {
+	_vm = vm;
+}
 
-	void Nim::chalk(int x,int y, Common::String z) {
-		warning("STUB: Nim::chalk()");
-	}
+void Nim::playNim() {
+	warning("STUB: Nim::playNim()");
+}
 
-	void Nim::setup() {
-		warning("STUB: Nim::setup()");
-	}
+void Nim::chalk(int x,int y, Common::String z) {
+	warning("STUB: Nim::chalk()");
+}
 
-	void Nim::plotStone(byte x,byte y) {
-		warning("STUB: Nim::plotStone()");
-	}
+void Nim::setup() {
+	warning("STUB: Nim::setup()");
+}
 
-	void Nim::board() {
-		warning("STUB: Nim::board()");
-	}
+void Nim::plotStone(byte x,byte y) {
+	warning("STUB: Nim::plotStone()");
+}
 
-	void Nim::startMove() {
-		warning("STUB: Nim::startMove()");
-	}
+void Nim::board() {
+	warning("STUB: Nim::board()");
+}
 
-	void Nim::showChanges() {
-		warning("STUB: Nim::showChanges()");
-	}
+void Nim::startMove() {
+	warning("STUB: Nim::startMove()");
+}
 
-	void Nim::blip() {
-		warning("STUB: Nim::blip()");
-	}
+void Nim::showChanges() {
+	warning("STUB: Nim::showChanges()");
+}
 
-	void Nim::checkMouse() {
-		warning("STUB: Nim::checkMouse()");
-	}
+void Nim::blip() {
+	warning("STUB: Nim::blip()");
+}
 
-	void Nim::less() {
-		warning("STUB: Nim::less()");
-	}
+void Nim::checkMouse() {
+	warning("STUB: Nim::checkMouse()");
+}
 
-	void Nim::takeSome() {
-		warning("STUB: Nim::takeSome()");
-	}
+void Nim::less() {
+	warning("STUB: Nim::less()");
+}
 
-	void Nim::endOfGame() {
-		warning("STUB: Nim::endOfGame()");
-	}
+void Nim::takeSome() {
+	warning("STUB: Nim::takeSome()");
+}
 
-	void Nim::dogFood() {
-		warning("STUB: Nim::dogFood()");
-	}
+void Nim::endOfGame() {
+	warning("STUB: Nim::endOfGame()");
+}
 
-	bool Nim::find(byte x) {
-		warning("STUB: Nim::find()");
-		return true;
-	}
+void Nim::dogFood() {
+	warning("STUB: Nim::dogFood()");
+}
 
-	void Nim::findAp(byte start,byte stepsize) {
-		warning("STUB: Nim::findAp()");
-	}
+bool Nim::find(byte x) {
+	warning("STUB: Nim::find()");
+	return true;
+}
+
+void Nim::findAp(byte start,byte stepsize) {
+	warning("STUB: Nim::findAp()");
+}
 
 } // End of namespace Avalanche

@@ -38,7 +38,7 @@ public:
 private:
 	AvalancheEngine *_vm;
 
-	const Common::String names[2] = {"Avalot", "Dogfood"};
+	static const char * const names[2];
 	byte old[3];
 	byte stones[3];
 	byte stonePic[4][23][7]; // Picture of Nimstone.
