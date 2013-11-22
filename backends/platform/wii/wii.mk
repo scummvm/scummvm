@@ -17,10 +17,10 @@ geckoupload: $(WII_EXE_STRIPPED)
 	$(DEVKITPPC)/bin/geckoupload $<
 
 wiigdb:
-	$(DEVKITPPC)/bin/powerpc-gekko-gdb -n $(EXECUTABLE)
+	$(DEVKITPPC)/bin/powerpc-eabi-gdb -n $(EXECUTABLE)
 
 wiidebug:
-	$(DEVKITPPC)/bin/powerpc-gekko-gdb -n $(EXECUTABLE) -x $(srcdir)/backends/platform/wii/gdb.txt
+	$(DEVKITPPC)/bin/powerpc-eabi-gdb -n $(EXECUTABLE) -x $(srcdir)/backends/platform/wii/gdb.txt
 
 # target to create a Wii snapshot
 wiidist: all
