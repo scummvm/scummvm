@@ -46,6 +46,7 @@ namespace Fullpipe {
 #define ANI_PLANK 501
 #define ANI_SC2_BOX 1020
 #define ANI_SC4_BOOT 1035
+#define ANI_SC4_COIN 690
 #define ANI_SPEAKER_4 3275
 #define ANI_SPRING 542
 #define MSG_CLICKBOTTLE 569
@@ -107,9 +108,11 @@ namespace Fullpipe {
 #define MV_IN1MAN_SLEEP 5111
 #define MV_KZW_JUMP 558
 #define MV_KZW_JUMPROTATE 561
+#define MV_BDG_OPEN 1379
 #define MV_MAN_GOD 481
 #define MV_MAN_GOLADDER 451
 #define MV_MAN_GOLADDER2 2844
+#define MV_MAN_GOU 460
 #define MV_MAN_LOOKUP 4773
 #define MV_MAN_STARTLADDER 452
 #define MV_MAN_STARTLADDER2 2842
@@ -118,7 +121,9 @@ namespace Fullpipe {
 #define MV_MAN_TOLADDER 448
 #define MV_MAN_TOLADDER2 2841
 #define MV_MAN_TURN_LU 486
+#define MV_PNK_WEIGHTLEFT 541
 #define MV_PNK_WEIGHTRIGHT 502
+#define MV_SC4_COIN_default 1029
 #define MV_SPK4_PLAY 3276
 #define PIC_CMN_EVAL 3468
 #define PIC_CSR_DEFAULT 4891

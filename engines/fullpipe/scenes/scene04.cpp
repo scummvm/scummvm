@@ -251,7 +251,7 @@ void sceneHandler04_gotoLadder(int par) {
 }
 
 void sceneHandler04_lowerPlank() {
-	warning("sceneHandler04_lowerPlank()");
+	g_vars->scene04_plank->startAnim(MV_PNK_WEIGHTRIGHT, 0, -1);
 }
 
 void sceneHandler04_manFromBottle() {
@@ -259,11 +259,15 @@ void sceneHandler04_manFromBottle() {
 }
 
 void sceneHandler04_manToBottle() {
-	warning("sceneHandler04_manToBottle()");
+	g_vars->scene04_bottleObjList.push_back(g_fullpipe->_aniMan);
+	g_vars->scene04_var20 = 5;
+	g_vars->scene04_var06 += 9;
+	g_fullpipe->_aniMan2 = g_fullpipe->_aniMan;
+	g_vars->scene04_var10 = 1;
 }
 
 void sceneHandler04_raisePlank() {
-	warning("sceneHandler04_raisePlank()");
+	g_vars->scene04_plank->startAnim(MV_PNK_WEIGHTLEFT, 0, -1);
 }
 
 void sceneHandler04_shootKozyawka() {
@@ -271,7 +275,13 @@ void sceneHandler04_shootKozyawka() {
 }
 
 void sceneHandler04_showCoin() {
-	warning("sceneHandler04_showCoin()");
+	StaticANIObject *ani = g_fullpipe->_currentScene->getStaticANIObject1ById(ANI_SC4_COIN, -1);
+
+	if (ani) {
+		ani->show1(MV_BDG_OPEN, MV_MAN_GOU, MV_SC4_COIN_default, 0);
+
+		ani->_priority = 40;
+	}
 }
 
 void sceneHandler04_stopSound() {
