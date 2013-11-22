@@ -41,6 +41,7 @@
 #include "avalanche/menu.h"
 #include "avalanche/closing.h"
 #include "avalanche/sound.h"
+#include "avalanche/nim.h"
 
 #include "common/serializer.h"
 
@@ -84,6 +85,7 @@ public:
 	Menu *_menu;
 	Closing *_closing;
 	SoundHandler *_sound;
+	Nim *_nim;
 
 	OSystem *_system;
 

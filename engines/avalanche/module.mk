@@ -15,7 +15,8 @@ MODULE_OBJS = \
 	dialogs.o \
 	sequence.o \
 	sound.o \
-	timer.o
+	timer.o \
+	nim.o
 	
 # This module can be built as a plugin
 ifeq ($(ENABLE_AVALANCHE), DYNAMIC_PLUGIN)

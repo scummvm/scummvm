@@ -27,6 +27,7 @@
 
 #include "avalanche/avalanche.h"
 #include "avalanche/parser.h"
+#include "avalanche/nim.h"
 
 #include "gui/saveload.h"
 
@@ -1965,11 +1966,10 @@ void Parser::doThat() {
 			switch (_vm->_room) {
 			case kRoomArgentPub:
 				// ...in the pub, => play Nim.
-				warning("STUB: Parser::doThat() - case kVerbCodeplay - play_nim()");
-				// play_nim();
+				_vm->_nim->playNim();
 
-				// The following parts are copied from play_nim().
-				// The player automatically wins the game everytime he wins, until I implement the mini-game.
+				// The following parts are copied from the original play_nim() and a little plus.
+				// The player automatically wins the game everytime he plays, until I implement the mini-game.
 				if (_vm->_wonNim) { // Already won the game.
 					_vm->_dialogs->displayScrollChain('Q', 6);
 					return;

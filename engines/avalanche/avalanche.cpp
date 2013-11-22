@@ -55,6 +55,7 @@ AvalancheEngine::AvalancheEngine(OSystem *syst, const AvalancheGameDescription *
 	_menu = nullptr;
 	_closing = nullptr;
 	_sound = nullptr;
+	_nim = nullptr;
 
 	_platform = gd->desc.platform;
 	initVariables();
@@ -77,6 +78,7 @@ AvalancheEngine::~AvalancheEngine() {
 	delete _menu;
 	delete _closing;
 	delete _sound;
+	delete _nim;
 
 	for (int i = 0; i < 31; i++) {
 		for (int j = 0; j < 2; j++) {
@@ -182,6 +184,7 @@ Common::ErrorCode AvalancheEngine::initialize() {
 	_menu = new Menu(this);
 	_closing = new Closing(this);
 	_sound = new SoundHandler(this);
+	_nim = new Nim(this);
 
 	_graphics->init();
 	_dialogs->init();
