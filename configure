@@ -1412,7 +1412,7 @@ webos)
 wii)
 	_host_os=wii
 	_host_cpu=ppc
-	_host_alias=powerpc-gekko
+	_host_alias=powerpc-eabi
 	;;
 wince)
 	_host_os=wince
@@ -2707,6 +2707,7 @@ if test -n "$_host"; then
 			_backend="wii"
 			_build_scalers=no
 			_vkeybd=yes
+			_taskbar=no
 			_port_mk="backends/platform/wii/wii.mk"
 			add_line_to_config_mk 'GAMECUBE = 0'
 			add_line_to_config_h '#define AUDIO_REVERSE_STEREO'

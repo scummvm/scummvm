@@ -51,7 +51,7 @@ public:
 	 *
 	 * @param path Common::String with the path the new node should point to.
 	 */
-	WiiFilesystemNode(const Common::String &path);
+	WiiFilesystemNode(const Common::String &p);
 	WiiFilesystemNode(const Common::String &p, const struct stat *st);
 
 	virtual bool exists() const;

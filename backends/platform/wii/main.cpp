@@ -225,7 +225,8 @@ int main(int argc, char *argv[]) {
 	printf("shutdown\n");
 
 	SYS_UnregisterResetFunc(&resetinfo);
-	fatUnmountDefault();
+	fatUnmount("usb:/");
+	fatUnmount("sd:/");
 
 	if (res)
 		show_console(res);
