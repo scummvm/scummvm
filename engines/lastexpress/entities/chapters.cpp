@@ -1440,7 +1440,7 @@ label_callback_4:
 
 		case 10:
 			getAction()->playAnimation(kEventDefuseBomb);
-			RESET_ENTITY_STATE(kEntityAbbot, Abbot, setup_function48);
+			RESET_ENTITY_STATE(kEntityAbbot, Abbot, setup_afterBomb);
 			getSavePoints()->push(kEntityChapters, kEntityAnna, kAction191001984);
 			getSavePoints()->push(kEntityChapters, kEntityCoudert, kAction191001984);
 			getScenes()->loadSceneFromItemPosition(kItem2);

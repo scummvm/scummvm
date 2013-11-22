@@ -726,7 +726,7 @@ IMPLEMENT_ACTION(pickItem)
 		break;
 
 	case kItemBomb:
-		RESET_ENTITY_STATE(kEntityAbbot, Abbot, setup_pickBomb);
+		RESET_ENTITY_STATE(kEntityAbbot, Abbot, setup_catchCath);
 		break;
 
 	case kItemBriefcase:
