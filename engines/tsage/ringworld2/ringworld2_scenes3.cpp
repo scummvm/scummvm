@@ -1996,11 +1996,11 @@ void Scene3375::postInit(SceneObjectList *OwnerList) {
 	setZoomPercents(126, 55, 200, 167);
 	R2_GLOBALS._player.postInit();
 
-	if (R2_GLOBALS._player._characterIndex == R2_SEEKER) {
+	if (R2_GLOBALS._player._characterIndex == R2_SEEKER)
 		R2_GLOBALS._player._moveDiff = Common::Point(5, 3);
-	} else {
+	else
 		R2_GLOBALS._player._moveDiff = Common::Point(3, 2);
-	}
+
 	R2_GLOBALS._player.changeZoom(-1);
 
 	switch (R2_GLOBALS._player._characterIndex) {
@@ -2191,6 +2191,14 @@ void Scene3375::signal() {
 		_companion2._shade = 4;
 		_webbster._effect = EFFECT_SHADED2;
 		_webbster._shade = 4;
+
+		// HACK: Reset zooms in order to avoid giant characters on the upper right of the screen
+		R2_GLOBALS._player.setZoom(-1);
+		_companion1.setZoom(-1);
+		_companion2.setZoom(-1);
+		_webbster.setZoom(-1);
+		//
+
 		enterArea(_sceneMode);
 		break;
 	case 3379:
