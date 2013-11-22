@@ -1719,7 +1719,7 @@ void Scene3350::signal() {
 		break;
 	case 3351:
 		_sceneMode = 3352;
-		setAction(&_sequenceManager, this, 3352, &_seeker, &R2_GLOBALS._player,
+		setAction(&_sequenceManager, this, 3352, &_seatedPeople, &R2_GLOBALS._player,
 			&_miranda, &_seeker, &_webbster, NULL);
 		break;
 	case 3352:
