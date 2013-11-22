@@ -73,6 +73,9 @@ Vars::Vars() {
 	scene04_soundPlaying = false;
 	scene04_dynamicPhaseIndex = 0;
 
+	scene04_sceneClickX = 0;
+	scene04_sceneClickY = 0;
+
 	scene04_var01 = 0;
 	scene04_var02 = 0;
 	scene04_var04 = 0;
@@ -91,6 +94,8 @@ Vars::Vars() {
 	scene04_var17 = 0;
 	scene04_var18 = 0;
 	scene04_var19 = 0;
+	scene04_var20 = 0;
+	scene04_var24 = 0;
 
 	selector = 0;
 }

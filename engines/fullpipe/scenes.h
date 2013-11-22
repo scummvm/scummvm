@@ -97,6 +97,10 @@ public:
 	bool scene04_coinPut;
 	bool scene04_soundPlaying;
 	int scene04_dynamicPhaseIndex;
+	int scene04_sceneClickX;
+	int scene04_sceneClickY;
+	int scene04_dudePosX;
+	int scene04_dudePosY;
 
 	int scene04_var01;
 	int scene04_var02;
@@ -116,6 +120,8 @@ public:
 	int scene04_var17;
 	int scene04_var18;
 	int scene04_var19;
+	int scene04_var20;
+	StaticANIObject *scene04_var24;
 
 	PictureObject *selector;
 };

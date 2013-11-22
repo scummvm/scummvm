@@ -32,6 +32,7 @@
 #include "fullpipe/scene.h"
 #include "fullpipe/interaction.h"
 #include "fullpipe/gameloader.h"
+#include "fullpipe/behavior.h"
 
 namespace Fullpipe {
 
@@ -211,14 +212,129 @@ int scene04_updateCursor() {
 	return g_fullpipe->_cursorId;
 }
 
+void sceneHandlers_sub01(ExCommand *ex) {
+	warning("sceneHandlers_sub01()");
+}
+
+void sceneHandler04_clickBottle() {
+	warning("sceneHandler04_clickBottle()");
+}
+
+void sceneHandler04_clickButton() {
+	warning("sceneHandler04_clickButton()");
+}
+
+void sceneHandler04_clickLadder() {
+	warning("sceneHandler04_clickLadder()");
+}
+
+void sceneHandler04_clickPlank() {
+	warning("sceneHandler04_clickPlank()");
+}
+
+void sceneHandler04_dropBottle() {
+	warning("sceneHandler04_dropBottle()");
+}
+
+void sceneHandler04_gotoLadder(int par) {
+	warning("sceneHandler04_gotoLadder()");
+}
+
+void sceneHandler04_lowerPlank() {
+	warning("sceneHandler04_lowerPlank()");
+}
+
+void sceneHandler04_manFromBottle() {
+	warning("sceneHandler04_manFromBottle()");
+}
+
+void sceneHandler04_manToBottle() {
+	warning("sceneHandler04_manToBottle()");
+}
+
+void sceneHandler04_raisePlank() {
+	warning("sceneHandler04_raisePlank()");
+}
+
+void sceneHandler04_shootKozyawka() {
+	warning("sceneHandler04_shootKozyawka()");
+}
+
+void sceneHandler04_showCoin() {
+	warning("sceneHandler04_showCoin()");
+}
+
+void sceneHandler04_stopSound() {
+	warning("sceneHandler04_stopSound()");
+}
+
+void sceneHandler04_sub1(ExCommand *ex) {
+	warning("sceneHandler04_sub1()");
+}
+
+void sceneHandler04_sub3() {
+	warning("sceneHandler04_sub3()");
+}
+
+void sceneHandler04_sub4() {
+	warning("sceneHandler04_sub4()");
+}
+
+void sceneHandler04_sub5() {
+	warning("sceneHandler04_sub5()");
+}
+
+void sceneHandler04_sub6() {
+	warning("sceneHandler04_sub6()");
+}
+
+void sceneHandler04_sub7() {
+	warning("sceneHandler04_sub7()");
+}
+
+void sceneHandler04_sub8(ExCommand *ex) {
+	warning("sceneHandler04_sub8()");
+}
+
+void sceneHandler04_sub9(StaticANIObject *ani) {
+	warning("sceneHandler04_sub9()");
+}
+
+void sceneHandler04_sub15() {
+	warning("sceneHandler04_sub15()");
+}
+
+void sceneHandler04_sub17() {
+	warning("sceneHandler04_sub17()");
+}
+
+void sceneHandler04_takeBottle() {
+	warning("sceneHandler04_takeBottle()");
+}
+
+void sceneHandler04_takeKozyawka() {
+	warning("sceneHandler04_takeKozyawka()");
+}
+
+void sceneHandler04_testPlank(ExCommand *ex) {
+	warning("sceneHandler04_testPlank()");
+}
+
+void sceneHandler04_updateBottle() {
+	warning("sceneHandler04_updateBottle()");
+}
+
+void sceneHandler04_winArcade() {
+	warning("sceneHandler04_winArcade()");
+}
+
 int sceneHandler04(ExCommand *ex) {
-#if 0
 	if (ex->_messageKind != 17)
 		return 0;
 
 	switch (ex->_messageNum) {
 	case MSG_UPDATEBOTTLE:
-		sceneHandler04_msgUpdateBottle();
+		sceneHandler04_updateBottle();
 		break;
 		
 	case MSG_CLICKBOTTLE:
@@ -226,7 +342,7 @@ int sceneHandler04(ExCommand *ex) {
 		break;
 
 	case MSG_SHOOTKOZAW:
-		sceneHandler04_chootKozyawka();
+		sceneHandler04_shootKozyawka();
 		break;
 
 	case MSG_SHAKEBOTTLE:
@@ -277,120 +393,129 @@ int sceneHandler04(ExCommand *ex) {
 		break;
 
 	case MSG_TESTPLANK:
-		sceneHandler04_testPlank((int)ex);
+		sceneHandler04_testPlank(ex);
 		break;
 
 	case 33:
-		g_vars->scene04_dudePosX = g_fullpipe->_aniMan->_ox;
-		g_vars->scene04_dudePosY = g_fullpipe->_aniMan->_oy;
+		{
+			g_vars->scene04_dudePosX = g_fullpipe->_aniMan->_ox;
+			g_vars->scene04_dudePosY = g_fullpipe->_aniMan->_oy;
 
-		int res = 0;
+			int res = 0;
 
-		if (g_fullpipe->_aniMan2) {
-			if (g_fullpipe->_aniMan->_ox < g_fullpipe->_sceneRect.left + 200) {
-				g_currentScene->_x = g_fullpipe->_aniMan->_ox - g_fullpipe->_sceneRect.left - 300;
-				g_fullpipe->_aniMan->_ox = g_vars->scene04_dudePosX;
-			}
-			if (g_fullpipe->_aniMan->_ox > g_fullpipe->_sceneRect.right - 200) {
-				g_currentScene->_x = g_fullpipe->_aniMan->_ox - g_fullpipe->_sceneRect.right + 300;
-			}
+			if (g_fullpipe->_aniMan2) {
+				if (g_fullpipe->_aniMan->_ox < g_fullpipe->_sceneRect.left + 200) {
+					g_fullpipe->_currentScene->_x = g_fullpipe->_aniMan->_ox - g_fullpipe->_sceneRect.left - 300;
+					g_fullpipe->_aniMan->_ox = g_vars->scene04_dudePosX;
+				}
+				if (g_fullpipe->_aniMan->_ox > g_fullpipe->_sceneRect.right - 200) {
+					g_fullpipe->_currentScene->_x = g_fullpipe->_aniMan->_ox - g_fullpipe->_sceneRect.right + 300;
+				}
 
-			res = 1;
+				res = 1;
 
-			if (g_vars->scene04_soundPlaying) {
-				if (g_fullpipe->_aniMan->_movement) {
-					if (g_fullpipe->_aniMan->_movement->_id == MV_MAN_TOLADDER) {
-						g_fullpipe->_aniMan2 = 0;
-						if (g_fullpipe->_sceneRect.left > 380)
-							g_currentScene->bg.x = 380 - g_fullpipe->_sceneRect.left;
+				if (g_vars->scene04_soundPlaying) {
+					if (g_fullpipe->_aniMan->_movement) {
+						if (g_fullpipe->_aniMan->_movement->_id == MV_MAN_TOLADDER) {
+							g_fullpipe->_aniMan2 = 0;
+
+							if (g_fullpipe->_sceneRect.left > 380)
+								g_fullpipe->_currentScene->_x = 380 - g_fullpipe->_sceneRect.left;
+						}
 					}
 				}
+			} else {
+				if (g_fullpipe->_aniMan->_movement && g_fullpipe->_aniMan->_movement->_id == MV_MAN_GOD)
+					g_fullpipe->_aniMan2 = g_fullpipe->_aniMan;
 			}
-		} else {
-			v7 = ;
-			if (g_fullpipe->_aniMan->_movement && g_fullpipe->_aniMan->_movement->_id == MV_MAN_GOD)
-				g_fullpipe->_aniMan2 = g_fullpipe->_aniMan;
-		}
 
-		sceneHandler04_sub4();
+			sceneHandler04_sub4();
 
-		if (g_vars->scene04_var07 && !g_vars->scene04_var09)
-			sceneHandler04_sub5();
+			if (g_vars->scene04_var07 && !g_vars->scene04_var09)
+				sceneHandler04_sub5();
 
-		if (g_vars->scene04_var12)
-			sceneHandler04_sub6();
+			if (g_vars->scene04_var12)
+				sceneHandler04_sub6();
 
-		if (g_vars->scene04_var08)
-			sceneHandler04_clickLadder();
+			if (g_vars->scene04_var08)
+				sceneHandler04_clickLadder();
 
-		if (g_vars->scene04_var10 && g_vars->scene04_hand->_movement)
-			sceneHandler04_sub1(0);
+			if (g_vars->scene04_var10 && g_vars->scene04_hand->_movement)
+				sceneHandler04_sub1(0);
 
-		if (g_vars->scene04_coinPut && g_vars->scene04_var18 && !g_vars->scene04_var09 && !g_vars->scene04_soundPlaying)
-			sceneHandler04_sub7();
+			if (g_vars->scene04_coinPut && g_vars->scene04_var18 && !g_vars->scene04_var09 && !g_vars->scene04_soundPlaying)
+				sceneHandler04_sub7();
 
-		if (g_vars->scene04_var01) {
-			if (!g_vars->scene04_soundPlaying) {
-				startSceneTrack();
+			if (g_vars->scene04_var01) {
+				if (!g_vars->scene04_soundPlaying) {
+					g_fullpipe->startSceneTrack();
 
+					g_fullpipe->_behaviorManager->updateBehaviors();
+					return res;
+				}
+
+				g_vars->scene04_var14++;
+
+				if (g_vars->scene04_var14 > 600)
+					sceneHandler04_sub17();
+			}
+
+			if (g_vars->scene04_soundPlaying) {
 				g_fullpipe->_behaviorManager->updateBehaviors();
+
 				return res;
 			}
 
-			v11 = __OFSUB__(g_vars->scene04_var14 + 1, 600);
-			v9 = g_vars->scene04_var14 == 599;
-			v10 = g_vars->scene04_var14++ - 599 < 0;
-			if (!((unsigned __int8)(v10 ^ v11) | v9))
-				sceneHandler04_sub17();
-		}
+			g_fullpipe->startSceneTrack();
 
-		if (g_vars->scene04_soundPlaying) {
 			g_fullpipe->_behaviorManager->updateBehaviors();
 
 			return res;
 		}
 
-		startSceneTrack();
-
-		g_fullpipe->_behaviorManager->updateBehaviors();
-
-		return res;
-
 	case 29:
-		v12 = Scene_getPictureObjectIdAtPos(g_currentScene, ex->msg.sceneClickX, ex->msg.sceneClickY);
-		LOWORD(sceneHandler_pic) = v12;
-		if (g_vars->scene04_var10) {
-			sceneHandler04_sub1(ex);
-			break;
-		}
+		{
+			int picid = g_fullpipe->_currentScene->getPictureObjectIdAtPos(ex->_sceneClickX, ex->_sceneClickY);
 
-		if (v12 == PIC_SC4_LADDER) {
-			if (!g_vars->scene04_var04) {
-				dword_476CB8 = ex->msg.sceneClickX;
-				dword_476CBC = ex->msg.sceneClickY;
-				sceneHandler04_clickLadder();
-				ex->msg.messageKind = 0;
+			if (g_vars->scene04_var10) {
+				sceneHandler04_sub1(ex);
 
 				break;
 			}
-			sceneHandler04_gotoLadder(0);
 
-			break;
-		}
-		v13 = Scene_getStaticANIObjectAtPos(g_currentScene, ex->msg.sceneClickX, ex->msg.sceneClickY);
-		v14 = (GameObject *)v13;
-		if (v13 && v13->GameObject.id == ANI_PLANK
-			|| Scene_getPictureObjectIdAtPos(g_currentScene, ex->msg.sceneClickX, ex->msg.sceneClickY) == PIC_SC4_PLANK) {
-			sceneHandler04_clickPlank();
-			ex->msg.messageKind = 0;
-		} else if (g_vars->scene04_var01) {
-			sceneHandler04_sub8(ex);
-		} else if (!v14 || !canInteractAny(&g_fullpipe->_aniMan->GameObject, v14, LOWORD(ex->msg.keyCode))) {
-			v15 = (GameObject *)Scene_getPictureObjectById(g_currentScene, sceneHandler_pic, 0);
-			if (!v15 || !canInteractAny(&g_fullpipe->_aniMan->GameObject, v15, LOWORD(ex->msg.keyCode))) {
-				if ((v16 = ex->msg.sceneClickX, g_fullpipe->_sceneRect.right - v16 < 47) && g_fullpipe->_sceneRect.right < g_sceneWidth - 1
-					|| v16 - g_fullpipe->_sceneRect.left < 47 && g_fullpipe->_sceneRect.left > 0)
-					sceneHandlers_sub01(ex);
+			if (picid == PIC_SC4_LADDER) {
+				if (!g_vars->scene04_var04) {
+					g_vars->scene04_sceneClickX = ex->_sceneClickX;
+					g_vars->scene04_sceneClickY = ex->_sceneClickY;
+
+					sceneHandler04_clickLadder();
+
+					ex->_messageKind = 0;
+
+					break;
+				}
+
+				sceneHandler04_gotoLadder(0);
+
+				break;
+			}
+
+			StaticANIObject *ani = g_fullpipe->_currentScene->getStaticANIObjectAtPos(ex->_sceneClickX, ex->_sceneClickY);
+
+			if ((ani && ani->_id == ANI_PLANK) || picid == PIC_SC4_PLANK) {
+				sceneHandler04_clickPlank();
+
+				ex->_messageKind = 0;
+			} else if (g_vars->scene04_var01) {
+				sceneHandler04_sub8(ex);
+			} else if (!ani || !canInteractAny(g_fullpipe->_aniMan, ani, ex->_keyCode)) {
+				PictureObject *pic = g_fullpipe->_currentScene->getPictureObjectById(picid, 0);
+
+				if (!pic || !canInteractAny(g_fullpipe->_aniMan, pic,ex->_keyCode)) {
+					if ((g_fullpipe->_sceneRect.right - ex->_sceneClickX < 47 && g_fullpipe->_sceneRect.right < g_fullpipe->_sceneWidth - 1)
+						|| (ex->_sceneClickX - g_fullpipe->_sceneRect.left < 47 && g_fullpipe->_sceneRect.left > 0))
+						sceneHandlers_sub01(ex);
+				}
 			}
 		}
 
@@ -414,7 +539,7 @@ int sceneHandler04(ExCommand *ex) {
 		break;
 		
 	case MSG_SC4_COINOUT:
-		StaticANIObject_changeStatics2(g_vars->scene04_clock, ST_CLK_CLOSED);
+		g_vars->scene04_clock->changeStatics2(ST_CLK_CLOSED);
 		g_vars->scene04_coinPut = 0;
 		sceneHandler04_stopSound();
 
@@ -451,7 +576,7 @@ int sceneHandler04(ExCommand *ex) {
 
 	case MSG_SC4_MANFROMBOTTLE:
 		sceneHandler04_manFromBottle();
-		return v2;
+		break;
 
 	case MSG_SC4_CLICKLADDER:
 		sceneHandler04_clickLadder();
@@ -463,11 +588,11 @@ int sceneHandler04(ExCommand *ex) {
 
 	case MSG_SHOWCOIN:
 		sceneHandler04_showCoin();
-		return v2;
+		break;
 
 	case MSG_TAKEBOTTLE:
 		sceneHandler04_takeBottle();
-		return v2;
+		break;
 
 	case MSG_GOTOLADDER:
 		sceneHandler04_gotoLadder(0);
@@ -477,11 +602,6 @@ int sceneHandler04(ExCommand *ex) {
 		g_vars->scene04_coinPut = 1;
 		break;
 	}
-
-	return 0;
-
-#endif
-	warning("STUB: sceneHandler04()");
 
 	return 0;
 }
