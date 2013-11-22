@@ -48,21 +48,21 @@ private:
 	bool clicked;
 	byte row;
 	byte number;
-   	bool squeak;
+	bool squeak;
 	int8 mNum, mRow;
 
 	void chalk(int x,int y, Common::String z);
 	void setup();
-   	void plotStone(byte x,byte y);
+	void plotStone(byte x,byte y);
 	void board();
 	void startMove();
- 	void showChanges();
-   	void blip();
+	void showChanges();
+	void blip();
 	void checkMouse();
-  	void less();
+	void less();
 	void takeSome();
-   	void endOfGame();
-   	void dogFood();
+	void endOfGame();
+	void dogFood();
 	bool find(byte x);
 	void findAp(byte start,byte stepsize);
 };
