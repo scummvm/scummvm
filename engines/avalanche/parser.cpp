@@ -522,10 +522,17 @@ void Parser::cursorOff() {
 	_cursorState = false;
 }
 
+/**
+ * Asks the parsekey proc in Dropdown if it knows it.
+ */
 void Parser::tryDropdown() {
-	warning("STUB: Parser::tryDropdown()"); // TODO: Implement at the same time with Dropdown's keyboard handling.
+    // TODO: Implement at the same time with Dropdown's keyboard handling.
+	warning("STUB: Parser::tryDropdown()");
 }
 
+/**
+ * Returns the index of the first appearance of crit in src.
+ */
 int16 Parser::getPos(const Common::String &crit, const Common::String &src) {
 	if (src.contains(crit))
 		return strstr(src.c_str(),crit.c_str()) - src.c_str();
@@ -625,6 +632,9 @@ void Parser::cheatParse(Common::String codes) {
 	warning("STUB: Parser::cheatParse()");
 }
 
+/**
+ * Strips punctuation from word.
+ */
 void Parser::stripPunctuation(Common::String &word) {
 	const char punct[] = "~`!@#$%^&*()_+-={}[]:\"|;'\\,./<>?";
 
@@ -945,6 +955,9 @@ void Parser::parse() {
 	}
 }
 
+/**
+ * Examine a standard object-thing
+ */
 void Parser::examineObject() {
 	if (_thing != _vm->_thinks)
 		_vm->thinkAbout(_thing, AvalancheEngine::kThing);
@@ -1175,6 +1188,9 @@ void Parser::swallow() {
 	}
 }
 
+/**
+ * this lists the other people in the room.
+ */
 void Parser::peopleInRoom() {
 	// First compute the number of people in the room.
 	byte numPeople = 0;
@@ -1212,6 +1228,9 @@ void Parser::peopleInRoom() {
 	_vm->_dialogs->displayText(tmpStr + " here.");
 }
 
+/**
+ * This is called when you say "look".
+ */
 void Parser::lookAround() {
 	_vm->_dialogs->displayText(*_vm->_also[0][1]);
 	switch (_vm->_room) {
@@ -1316,6 +1335,9 @@ void Parser::openDoor() {
 		_vm->_dialogs->displayText("Door? What door?");
 }
 
+/**
+ * Called when you call kVerbCodeput.
+ */
 void Parser::putProc() {
 	if (!isHolding())
 		return;
@@ -1422,6 +1444,7 @@ void Parser::goToCauldron() {
 
 /**
  * Check is it's possible to give something to Spludwick
+ * The result of this function is whether or not he says "Hey, thanks!".
  * @remarks	Originally called 'give2spludwick'
  */
 bool Parser::giveToSpludwick() {
@@ -1501,6 +1524,9 @@ void Parser::already() {
 	_vm->_dialogs->displayText("You're already standing!");
 }
 
+/**
+ * Called when you ask Avvy to stand.
+ */
 void Parser::standUp() {
 	switch (_vm->_room) {
 	case kRoomYours:
