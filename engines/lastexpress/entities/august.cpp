@@ -3249,7 +3249,7 @@ IMPLEMENT_FUNCTION(63, August, function63)
 
 	case kAction1:
 		if (getEntities()->isInSalon(kEntityAlexei)) {
-			RESET_ENTITY_STATE(kEntityAlexei, Alexei, setup_function44);
+			RESET_ENTITY_STATE(kEntityAlexei, Alexei, setup_goToPlatform);
 		}
 
 		getData()->inventoryItem = kItemNone;

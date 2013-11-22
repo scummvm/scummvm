@@ -835,7 +835,7 @@ IMPLEMENT_FUNCTION(27, Tatiana, function27)
 			break;
 
 		case 1:
-			RESET_ENTITY_STATE(kEntityAlexei, Alexei, setup_function30);
+			RESET_ENTITY_STATE(kEntityAlexei, Alexei, setup_atBreakfast);
 			getAction()->playAnimation(kEventTatianaBreakfastAlexei);
 			getInventory()->addItem(kItemParchemin);
 			getInventory()->setLocationAndProcess(kItem11, kObjectLocation1);
@@ -843,7 +843,7 @@ IMPLEMENT_FUNCTION(27, Tatiana, function27)
 			break;
 
 		case 2:
-			RESET_ENTITY_STATE(kEntityAlexei, Alexei, setup_function30);
+			RESET_ENTITY_STATE(kEntityAlexei, Alexei, setup_atBreakfast);
 			getAction()->playAnimation(kEventTatianaBreakfast);
 			if (getInventory()->hasItem(kItemParchemin)) {
 				getAction()->playAnimation(kEventTatianaBreakfastGivePoem);
