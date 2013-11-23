@@ -98,7 +98,7 @@ bool BioChipRightWindow::showBioChipMainView() {
 }
 
 bool BioChipRightWindow::destroyBioChipViewWindow() {
-	if (_bioChipViewWindow)
+	if (!_bioChipViewWindow)
 		return false;
 
 	_vm->_sound->timerCallback();
