@@ -230,8 +230,10 @@ protected:
 		Audio::QueuingAudioStream *createAudioStream();
 	};
 
-	Common::Array<OldIndex> _indexEntries;
 	AVIHeader _header;
+
+	void readOldIndex(uint32 size);
+	Common::Array<OldIndex> _indexEntries;
 
 	Common::SeekableReadStream *_fileStream;
 	bool _decodedHeader;

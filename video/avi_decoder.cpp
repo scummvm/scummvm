@@ -158,16 +158,7 @@ bool AVIDecoder::parseNextChunk() {
 		skipChunk(size);
 		break;
 	case ID_IDX1:
-		debug(0, "%d Indices", size / 16);
-		for (uint32 i = 0; i < size / 16; i++) {
-			OldIndex indexEntry;
-			indexEntry.id = _fileStream->readUint32BE();
-			indexEntry.flags = _fileStream->readUint32LE();
-			indexEntry.offset = _fileStream->readUint32LE() + _movieListStart - 4; // Adjust to absolute
-			indexEntry.size = _fileStream->readUint32LE();
-			_indexEntries.push_back(indexEntry);
-			debug(0, "Index %d == Tag \'%s\', Offset = %d, Size = %d (Flags = %d)", i, tag2str(indexEntry.id), indexEntry.offset, indexEntry.size, indexEntry.flags);
-		}
+		readOldIndex(size);		
 		break;
 	default:
 		error("Unknown tag \'%s\' found", tag2str(tag));
@@ -619,6 +610,46 @@ byte AVIDecoder::getStreamIndex(uint32 tag) const {
 	WRITE_BE_UINT16(string, tag >> 16);
 	string[2] = 0;
 	return strtol(string, 0, 16);
+}
+
+void AVIDecoder::readOldIndex(uint32 size) {
+	uint32 entryCount = size / 16;
+
+	debug(0, "Old Index: %d entries", entryCount);
+
+	if (entryCount == 0)
+		return;
+
+	// Read the first index separately
+	OldIndex firstEntry;
+	firstEntry.id = _fileStream->readUint32BE();
+	firstEntry.flags = _fileStream->readUint32LE();
+	firstEntry.offset = _fileStream->readUint32LE(); 
+	firstEntry.size = _fileStream->readUint32LE();
+
+	// Check if the offset is already absolute
+	// If it's absolute, the offset will equal the start of the movie list
+	bool isAbsolute = firstEntry.offset == _movieListStart;
+
+	debug(1, "Old index is %s", isAbsolute ? "absolute" : "relative");
+
+	if (!isAbsolute)
+		firstEntry.offset += _movieListStart - 4;
+
+	for (uint32 i = 1; i < entryCount; i++) {
+		OldIndex indexEntry;
+		indexEntry.id = _fileStream->readUint32BE();
+		indexEntry.flags = _fileStream->readUint32LE();
+		indexEntry.offset = _fileStream->readUint32LE();
+		indexEntry.size = _fileStream->readUint32LE();
+
+		// Adjust to absolute, if necessary
+		if (!isAbsolute)
+			indexEntry.offset += _movieListStart - 4;
+
+		_indexEntries.push_back(indexEntry);
+		debug(0, "Index %d: Tag '%s', Offset = %d, Size = %d (Flags = %d)", i, tag2str(indexEntry.id), indexEntry.offset, indexEntry.size, indexEntry.flags);
+	}
 }
 
 AVIDecoder::AVIVideoTrack::AVIVideoTrack(int frameCount, const AVIStreamHeader &streamHeader, const BitmapInfoHeader &bitmapInfoHeader, byte *initialPalette)
