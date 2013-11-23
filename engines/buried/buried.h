@@ -69,6 +69,7 @@ public:
 	// Resources
 	Common::String getString(uint32 stringID);
 	Common::String getFilePath(uint32 stringID);
+	Common::String getFilePath(int timeZone, int environment, int fileOffset);
 	Common::SeekableReadStream *getBitmapStream(uint32 bitmapID);
 	Common::SeekableReadStream *getNavData(uint32 resourceID);
 	Common::SeekableReadStream *getSndData(uint32 resourceID);
@@ -79,6 +80,9 @@ public:
 	Common::SeekableReadStream *getFileBCData(uint32 resourceID);
 	Common::SeekableReadStream *getINNData(uint32 resourceID);
 	uint32 getVersion();
+	uint32 computeNavDBResourceID(int timeZone, int environment);
+	uint32 computeAnimDBResourceID(int timeZone, int environment);
+	uint32 computeAIDBResourceID(int timeZone, int environment);
 
 	GraphicsManager *_gfx;
 	Database *_mainEXE;

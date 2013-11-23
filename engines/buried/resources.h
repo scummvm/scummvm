@@ -354,6 +354,10 @@ namespace Buried {
 #define IDS_COMPL_FINAL_SCORE_TEMPL     9035
 #define IDS_DEATH_FINAL_SCORE_TEMPL     9035
 
+// 1.04+:
+#define IDS_PLAY_MODE_WALKTHROUGH_TEXT  9085
+#define IDS_PLAY_MODE_NORMAL_TEXT       9086
+
 #define IDES_FILENAME_BASE              17408
 #define IDES_STRING_BASE                21504
 

@@ -33,6 +33,7 @@
 #include "buried/message.h"
 #include "buried/navarrow.h"
 #include "buried/resources.h"
+#include "buried/scene_view.h"
 #include "buried/sound.h"
 #include "buried/video_window.h"
 
@@ -50,10 +51,9 @@ GameUIWindow::GameUIWindow(BuriedEngine *vm, Window *parent) : Window(vm, parent
 
 	_navArrowWindow = new NavArrowWindow(_vm, this);
 	_liveTextWindow = new LiveTextWindow(_vm, this);
+	_sceneViewWindow = new SceneViewWindow(_vm, this);
 	_inventoryWindow = new InventoryWindow(_vm, this);
 	_bioChipRightWindow = new BioChipRightWindow(_vm, this);
-
-	// TODO: Other windows
 }
 
 GameUIWindow::~GameUIWindow() {
@@ -61,8 +61,7 @@ GameUIWindow::~GameUIWindow() {
 	delete _liveTextWindow;
 	delete _inventoryWindow;
 	delete _bioChipRightWindow;
-
-	// TODO: Other windows
+	delete _sceneViewWindow;
 }
 
 bool GameUIWindow::startNewGame(bool walkthrough) {
@@ -73,8 +72,8 @@ bool GameUIWindow::startNewGame(bool walkthrough) {
 	_liveTextWindow->showWindow(kWindowShow);
 	_inventoryWindow->showWindow(kWindowShow);
 	_bioChipRightWindow->showWindow(kWindowShow);
-
-	// TODO: Other windows
+	_sceneViewWindow->showWindow(kWindowShow);
+	_sceneViewWindow->startNewGame(walkthrough);
 
 	return true;
 }
@@ -110,21 +109,38 @@ bool GameUIWindow::startNewGameIntro(bool walkthrough) {
 	_liveTextWindow->showWindow(kWindowShow);
 	_inventoryWindow->showWindow(kWindowShow);
 	_bioChipRightWindow->showWindow(kWindowShow);
+	_sceneViewWindow->showWindow(kWindowShow);
+	_sceneViewWindow->startNewGameIntro(walkthrough);
 
-	// TODO: Other windows
+	return true;
+}
+
+bool GameUIWindow::startNewGame(const Location &startingLocation) {
+	_doNotDraw = false;
+
+	showWindow(kWindowShow);
+	_navArrowWindow->showWindow(kWindowShow);
+	_liveTextWindow->showWindow(kWindowShow);
+	_sceneViewWindow->showWindow(kWindowShow);
+	_inventoryWindow->showWindow(kWindowShow);
+	_bioChipRightWindow->showWindow(kWindowShow);
+	_sceneViewWindow->startNewGame(startingLocation);
+	invalidateWindow(false);
+
 	return true;
 }
 
 bool GameUIWindow::startNewGame(const Common::String &fileName) {
 	_doNotDraw = false;
+	showWindow(kWindowShow);
 	invalidateWindow(false);
 
 	_navArrowWindow->showWindow(kWindowShow);
 	_liveTextWindow->showWindow(kWindowShow);
+	_sceneViewWindow->showWindow(kWindowShow);
 	_inventoryWindow->showWindow(kWindowShow);
 	_bioChipRightWindow->showWindow(kWindowShow);
-
-	// TODO: Other windows
+	_sceneViewWindow->startNewGame(fileName);
 
 	return true;
 }
@@ -296,8 +312,8 @@ void GameUIWindow::onEnable(bool enable) {
 	_inventoryWindow->enableWindow(enable);
 	_navArrowWindow->enableWindow(enable);
 	_liveTextWindow->enableWindow(enable);
+	_sceneViewWindow->enableWindow(enable);
 	_bioChipRightWindow->enableWindow(enable);
-	// TODO: Other windows
 
 	// If we're re-enabling, clear out the message queue of any mouse messages
 	if (enable)
@@ -319,8 +335,7 @@ void GameUIWindow::onKeyUp(const Common::KeyState &key, uint flags) {
 			_navArrowWindow->sendMessage(new KeyUpMessage(key, flags));
 		break;
 	case Common::KEYCODE_s:
-		if (key.flags & Common::KBD_CTRL) {
-			// TODO: Check for cloaking enabled
+		if ((key.flags & Common::KBD_CTRL) && _sceneViewWindow->getGlobalFlags().bcCloakingEnabled != 1) {
 			_bioChipRightWindow->changeCurrentBioChip(kItemBioChipInterface);
 			_bioChipRightWindow->invalidateWindow(false);
 			_bioChipRightWindow->sendMessage(new LButtonUpMessage(Common::Point(50, 130), 0));
@@ -330,8 +345,7 @@ void GameUIWindow::onKeyUp(const Common::KeyState &key, uint flags) {
 		// Fall through
 	case Common::KEYCODE_o:
 	case Common::KEYCODE_l:
-		if (key.flags & Common::KBD_CTRL) {
-			// TODO: Check for cloaking enabled
+		if ((key.flags & Common::KBD_CTRL) && _sceneViewWindow->getGlobalFlags().bcCloakingEnabled != 1) {
 			_bioChipRightWindow->changeCurrentBioChip(kItemBioChipInterface);
 			_bioChipRightWindow->invalidateWindow(false);
 			_bioChipRightWindow->sendMessage(new LButtonUpMessage(Common::Point(50, 130), 0));
@@ -340,7 +354,8 @@ void GameUIWindow::onKeyUp(const Common::KeyState &key, uint flags) {
 		}
 		// Fall through
 	default:
-		// TODO: Send to the scene view window
+		if (_sceneViewWindow)
+			_sceneViewWindow->sendMessage(new KeyUpMessage(key, flags));
 		break;
 	}
 }
