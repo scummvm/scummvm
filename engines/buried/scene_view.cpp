@@ -640,7 +640,7 @@ bool SceneViewWindow::timeSuitJump(int destination) {
 
 	// Play the movie
 	VideoWindow *jumpMovie = new VideoWindow(_vm, ((GameUIWindow *)_parent)->_bioChipRightWindow);
-	if (!jumpMovie->openVideo(_vm->getString(IDS_BC_JUMP_MOVIE_FILENAME)))
+	if (!jumpMovie->openVideo(_vm->getFilePath(IDS_BC_JUMP_MOVIE_FILENAME)))
 		error("Failed to play small jump movie");
 
 	// Reposition
@@ -655,7 +655,7 @@ bool SceneViewWindow::timeSuitJump(int destination) {
 
 	// Start fading down the current ambient and start the jump audio file
 	_vm->_sound->setAmbientSound();
-	_vm->_sound->playInterfaceSound(_vm->getString(IDS_BC_JUMP_AUDIO_FILENAME));
+	_vm->_sound->playInterfaceSound(_vm->getFilePath(IDS_BC_JUMP_AUDIO_FILENAME));
 
 	// Play the movie
 	jumpMovie->playToFrame(24);
@@ -678,19 +678,19 @@ bool SceneViewWindow::timeSuitJump(int destination) {
 	Common::String fileName;
 	switch (destination) {
 	case 0:
-		fileName = _vm->getString(IDS_MAYAN_JUMP_MOVIE_FILENAME);
+		fileName = _vm->getFilePath(IDS_MAYAN_JUMP_MOVIE_FILENAME);
 		break;
 	case 1:
-		fileName = _vm->getString(IDS_CASTLE_JUMP_MOVIE_FILENAME);
+		fileName = _vm->getFilePath(IDS_CASTLE_JUMP_MOVIE_FILENAME);
 		break;
 	case 2:
-		fileName = _vm->getString(IDS_DAVINCI_JUMP_MOVIE_FILENAME);
+		fileName = _vm->getFilePath(IDS_DAVINCI_JUMP_MOVIE_FILENAME);
 		break;
 	case 3:
-		fileName = _vm->getString(IDS_AILAB_JUMP_MOVIE_FILENAME);
+		fileName = _vm->getFilePath(IDS_AILAB_JUMP_MOVIE_FILENAME);
 		break;
 	case 4:
-		fileName = _vm->getString(IDS_FUTAPT_JUMP_MOVIE_FILENAME);
+		fileName = _vm->getFilePath(IDS_FUTAPT_JUMP_MOVIE_FILENAME);
 		break;
 	}
 
@@ -743,6 +743,9 @@ bool SceneViewWindow::timeSuitJump(int destination) {
 		delete _currentScene;
 	}
 
+	if (!newScene)
+		error("Failed to create scene object for time zone %d", destination);
+
 	// Set the new scene
 	_currentScene = newScene;
 
@@ -765,7 +768,7 @@ bool SceneViewWindow::timeSuitJump(int destination) {
 	// Time to show and play the right-hand small movie to the mid point, with proper sound
 	jumpMovie = new VideoWindow(_vm, ((GameUIWindow *)_parent)->_bioChipRightWindow);
 
-	if (!jumpMovie->openVideo(_vm->getString(IDS_BC_JUMP_MOVIE_FILENAME)))
+	if (!jumpMovie->openVideo(_vm->getFilePath(IDS_BC_JUMP_MOVIE_FILENAME)))
 		error("Failed to play small jump movie");
 
 	jumpMovie->setWindowPos(0, 0, 28, 0, 0, kWindowPosNoSize | kWindowPosNoZOrder | kWindowPosHideWindow);
@@ -778,7 +781,7 @@ bool SceneViewWindow::timeSuitJump(int destination) {
 
 	// Start the ambient fading back up, and play the jump sound
 	startEnvironmentAmbient(oldLocation.timeZone, oldLocation.environment, newLocation.timeZone, newLocation.environment);
-	_vm->_sound->playInterfaceSound(_vm->getString(IDS_BC_JUMP_AUDIO_FILENAME));
+	_vm->_sound->playInterfaceSound(_vm->getFilePath(IDS_BC_JUMP_AUDIO_FILENAME));
 
 	// Play the movie
 	jumpMovie->seekToFrame(24);
