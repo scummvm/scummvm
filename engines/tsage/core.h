@@ -490,6 +490,7 @@ public:
 
 	void setVisage(int resNum, int rlbNum = 9999);
 	GfxSurface getFrame(int frameNum);
+	byte &getFrameFlags(int frameNum);
 	int getFrameCount() const;
 	Visage &operator=(const Visage &gfxSurface);
 };

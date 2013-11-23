@@ -2707,6 +2707,9 @@ GfxSurface SceneObject::getFrame() {
 	_visageImages.setVisage(_visage, _strip);
 	GfxSurface frame = _visageImages.getFrame(_frame);
 
+	// Reset any centroid adjustment flags
+	_visageImages.getFrameFlags(_frame) &= ~(FRAME_FLIP_CENTROID_X | FRAME_FLIP_CENTROID_Y);
+
 	// If shading is needed, post apply the shadiing onto the frame
 	if ((g_vm->getGameID() == GType_Ringworld2) && (_shade >= 1)) {
 		Graphics::Surface s = frame.lockSurface();
@@ -2727,6 +2730,7 @@ GfxSurface SceneObject::getFrame() {
 
 void SceneObject::reposition() {
 	GfxSurface frame = getFrame();
+
 	_bounds.resize(frame, _position.x, _position.y - _yDiff, _percent);
 	_xs = _bounds.left;
 	_xe = _bounds.right;
@@ -3295,6 +3299,20 @@ GfxSurface Visage::getFrame(int frameNum) {
 
 	return result;
 }
+
+byte &Visage::getFrameFlags(int frameNum) {
+	int numFrames = READ_LE_UINT16(_data);
+	if (frameNum > numFrames)
+		frameNum = numFrames;
+	if (frameNum > 0)
+		--frameNum;
+
+	int offset = READ_LE_UINT32(_data + 2 + frameNum * 4);
+	byte *frameData = _data + offset;
+
+	return *(frameData + 9);
+}
+
 
 int Visage::getFrameCount() const {
 	return READ_LE_UINT16(_data);
