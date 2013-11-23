@@ -38,6 +38,7 @@ class SeekableReadStream;
 
 namespace Buried {
 
+class BuriedConsole;
 struct BuriedGameDescription;
 class Database;
 class GraphicsManager;
@@ -65,6 +66,7 @@ public:
 	Common::Language getLanguage() const;
 
 	bool hasFeature(EngineFeature f) const;
+	GUI::Debugger *getDebugger();
 
 	// Resources
 	Common::String getString(uint32 stringID);
@@ -91,6 +93,7 @@ public:
 	Window *_mainWindow; // Only one main window is supported.
 	Window *_focusedWindow;
 	Window *_captureWindow;
+	BuriedConsole *_console;
 
 	// Timers
 	uint createTimer(Window *window, uint period);
