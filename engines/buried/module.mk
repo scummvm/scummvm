@@ -29,6 +29,7 @@ MODULE_OBJS = \
 	demo/features.o \
 	demo/movie_scene.o \
 	environ/castle.o \
+	environ/future_apartment.o \
 	environ/scene_base.o \
 	environ/scene_common.o \
 	environ/scene_factory.o
