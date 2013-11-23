@@ -2707,8 +2707,16 @@ GfxSurface SceneObject::getFrame() {
 	_visageImages.setVisage(_visage, _strip);
 	GfxSurface frame = _visageImages.getFrame(_frame);
 
-	// Reset any centroid adjustment flags
-	_visageImages.getFrameFlags(_frame) &= ~(FRAME_FLIP_CENTROID_X | FRAME_FLIP_CENTROID_Y);
+	// Reset any centroid adjustment flags, in 
+	frame._flags &= ~(FRAME_FLIP_CENTROID_X | FRAME_FLIP_CENTROID_Y);
+
+	// For later games, check whether the appropriate object flags are set for flipping
+	if (g_vm->getGameID() != GType_Ringworld) {
+		if ((_flags & OBJFLAG_FLIP_CENTROID_X) || _visageImages._flipHoriz)
+			frame._flags |= FRAME_FLIP_CENTROID_X;
+		if ((_flags & OBJFLAG_FLIP_CENTROID_Y) || _visageImages._flipVert)
+			frame._flags |= FRAME_FLIP_CENTROID_Y;
+	}
 
 	// If shading is needed, post apply the shadiing onto the frame
 	if ((g_vm->getGameID() == GType_Ringworld2) && (_shade >= 1)) {
@@ -3299,20 +3307,6 @@ GfxSurface Visage::getFrame(int frameNum) {
 
 	return result;
 }
-
-byte &Visage::getFrameFlags(int frameNum) {
-	int numFrames = READ_LE_UINT16(_data);
-	if (frameNum > numFrames)
-		frameNum = numFrames;
-	if (frameNum > 0)
-		--frameNum;
-
-	int offset = READ_LE_UINT32(_data + 2 + frameNum * 4);
-	byte *frameData = _data + offset;
-
-	return *(frameData + 9);
-}
-
 
 int Visage::getFrameCount() const {
 	return READ_LE_UINT16(_data);

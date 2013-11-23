@@ -490,7 +490,6 @@ public:
 
 	void setVisage(int resNum, int rlbNum = 9999);
 	GfxSurface getFrame(int frameNum);
-	byte &getFrameFlags(int frameNum);
 	int getFrameCount() const;
 	Visage &operator=(const Visage &gfxSurface);
 };
@@ -516,7 +515,8 @@ public:
 enum ObjectFlags {OBJFLAG_FIXED_PRIORITY = 1, OBJFLAG_NO_UPDATES = 2, OBJFLAG_ZOOMED = 4,
 	OBJFLAG_SUPPRESS_DISPATCH = 8, OBJFLAG_HIDE = 0x100, OBJFLAG_HIDING = 0x200, OBJFLAG_REMOVE = 0x400,
 	OBJFLAG_CLONED = 0x800, OBJFLAG_CHECK_REGION = 0x1000, OBJFLAG_PANE_0 = 0x4000, OBJFLAG_PANE_1 = 0x8000,
-	OBJFLAG_PANES = OBJFLAG_PANE_0 | OBJFLAG_PANE_1
+	OBJFLAG_PANES = OBJFLAG_PANE_0 | OBJFLAG_PANE_1,
+	OBJFLAG_FLIP_CENTROID_X = 0x10000, OBJFLAG_FLIP_CENTROID_Y = 0x20000
 };
 
 class SceneObject : public SceneHotspot {
