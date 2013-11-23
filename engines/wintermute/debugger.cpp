@@ -53,6 +53,7 @@ Console::Console(WintermuteEngine *vm) : GUI::Debugger() {
 	DCmd_Register("set-type", WRAP_METHOD(Console, Cmd_SetType));
 	DCmd_Register("info", WRAP_METHOD(Console, Cmd_Info));
 	DCmd_Register("dumpres", WRAP_METHOD(Console, Cmd_DumpRes));
+	DCmd_Register("sourcepath", WRAP_METHOD(Console, Cmd_SourcePath));
 }
 
 Console::~Console(void) {
@@ -405,6 +406,28 @@ bool Console::Cmd_DumpFile(int argc, const char **argv) {
 	DebugPrintf("Resource file '%s' dumped to file '%s'\n", argv[1], argv[2]);
 	return true;
 }
+
+
+bool Console::Cmd_SourcePath(int argc, const char **argv) {
+	/*
+	 * Set source path for debugging
+	 */
+
+	if (argc != 2) {
+		DebugPrintf("Usage: %s <source path>\n", argv[0]);
+		return true;
+	} else {
+		if (ADAPTER->setSourcePath(Common::String(argv[1])) == DebuggerAdapter::OK) {
+	   		DebugPrintf("Source path set to '%s'\n", ADAPTER->getSourcePath().c_str());
+		} else {
+			DebugPrintf("Error setting source path");
+		}
+		return true;
+	}
+}
+
+
+
 
 void Console::notifyBreakpoint(const char *filename, int line) {
 	DebugPrintf("Breakpoint hit %s: %d\n", filename, line);

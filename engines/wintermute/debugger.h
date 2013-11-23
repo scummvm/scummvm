@@ -81,7 +81,10 @@ public:
 	 */
 	bool Cmd_List(int argc, const char **argv);
 	bool Cmd_DumpRes(int argc, const char **argv);
-
+	/**
+	 * Set source path in the Adapter
+	 */
+	bool Cmd_SourcePath(int argc, const char **argv);
 
 	int printSource(int n = DEFAULT_SOURCE_PADDING);
 	void debugWarning(const Common::String &command, int warning_level, const Common::String &message);

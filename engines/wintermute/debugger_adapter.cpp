@@ -599,8 +599,18 @@ Common::Array<WatchInfo> DebuggerAdapter::getWatchlist() {
 	return watchlist;
 }
 
-
 int32 DebuggerAdapter::getLastLine() {
 	return _lastLine;
 }
+
+int DebuggerAdapter::setSourcePath(Common::String sourcePath) {
+	// TODO: check if path is legal
+	_sourcePath = sourcePath;
+	return OK;
+}
+
+Common::String DebuggerAdapter::getSourcePath() {
+	return _sourcePath;
+}
+
 } // end of namespace Wintermute

@@ -174,6 +174,8 @@ public:
 	Common::String readRes(const Common::String &name, int *error);
 	void showFps(bool show);
 	SourceFile *_lastSource;
+	int setSourcePath(Common::String sourcePath);
+	Common::String getSourcePath();
 private:
 	/** 
 	 * @brief see if we have compiled bytecode for a given script
@@ -184,6 +186,7 @@ private:
 	ScScript *_lastScript;
 	int32 _lastLine;
 	void reset();
+	Common::String _sourcePath;
 };
 }
 
