@@ -263,13 +263,13 @@ void EditableWidget::drawCaret(bool erase) {
 
 	x += getCaretOffset();
 
-	if (y < 0 || y + editRect.height() - 2 > _h)
+	if (y < 0 || y + editRect.height() > _h)
 		return;
 
 	x += getAbsX();
 	y += getAbsY();
 
-	g_gui.theme()->drawCaret(Common::Rect(x, y, x + 1, y + editRect.height() - 2), erase);
+	g_gui.theme()->drawCaret(Common::Rect(x, y, x + 1, y + editRect.height()), erase);
 
 	if (erase) {
 		if ((uint)_caretPos < _editString.size()) {
