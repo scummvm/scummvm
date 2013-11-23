@@ -83,6 +83,7 @@ public:
 	uint32 computeNavDBResourceID(int timeZone, int environment);
 	uint32 computeAnimDBResourceID(int timeZone, int environment);
 	uint32 computeAIDBResourceID(int timeZone, int environment);
+	uint32 computeFileNameResourceID(int timeZone, int environment, int fileOffset);
 
 	GraphicsManager *_gfx;
 	Database *_mainEXE;

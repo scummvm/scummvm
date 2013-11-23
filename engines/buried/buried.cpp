@@ -385,7 +385,7 @@ uint32 BuriedEngine::getVersion() {
 }
 
 Common::String BuriedEngine::getFilePath(int timeZone, int environment, int fileOffset) {
-	return getFilePath(RESID_FILENAMES_BASE + RESOFFSET_FILENAME_TIMEZONE * timeZone + RESOFFSET_FILENAME_ENVIRON * environment + fileOffset);
+	return getFilePath(computeFileNameResourceID(timeZone, environment, fileOffset));
 }
 
 uint32 BuriedEngine::computeNavDBResourceID(int timeZone, int environment) {
@@ -398,6 +398,10 @@ uint32 BuriedEngine::computeAnimDBResourceID(int timeZone, int environment) {
 
 uint32 BuriedEngine::computeAIDBResourceID(int timeZone, int environment) {
 	return RESID_AI_DB_BASE + RESOFFSET_AI_DB_TIMEZONE * timeZone + environment;
+}
+
+uint32 BuriedEngine::computeFileNameResourceID(int timeZone, int environment, int fileOffset) {
+	return RESID_FILENAMES_BASE + RESOFFSET_FILENAME_TIMEZONE * timeZone + RESOFFSET_FILENAME_ENVIRON * environment + fileOffset;
 }
 
 } // End of namespace Buried

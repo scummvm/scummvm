@@ -2466,24 +2466,4 @@ Common::Array<AIComment> SceneViewWindow::getAICommentDatabase(int timeZone, int
 	return comments;
 }
 
-bool SceneViewWindow::checkCustomAICommentDependencies(const Location &commentLocation, const AIComment &commentData) {
-	// TODO
-	return false;
-}
-
-bool SceneViewWindow::startEnvironmentAmbient(int oldTimeZone, int oldEnvironment, int timeZone, int environment, bool fade) {
-	// TODO
-	return false;
-}
-
-SceneBase *SceneViewWindow::constructSceneObject(Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) {
-	// TODO
-	return 0;
-}
-
-bool SceneViewWindow::initializeTimeZoneAndEnvironment(Window *viewWindow, int timeZone, int environment) {
-	// TODO
-	return false;
-}
-
 } // End of namespace Buried
