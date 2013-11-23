@@ -97,6 +97,7 @@ void AVIFrames::close() {
 	if (_tempFrame) {
 		_tempFrame->free();
 		delete _tempFrame;
+		_tempFrame = 0;
 	}
 }
 
