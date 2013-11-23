@@ -4531,7 +4531,7 @@ void Scene360::signal() {
 		BF_GLOBALS._player.enableControl();
 		break;
 	case 3608:
- 		BF_GLOBALS._sceneManager.changeScene(355);
+		BF_GLOBALS._sceneManager.changeScene(355);
 		break;
 	case 3610:
 		BF_GLOBALS._sceneManager.changeScene(666);
