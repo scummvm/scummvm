@@ -291,18 +291,20 @@ void GameUIWindow::onPaint() {
 		bottomBitmap->free();
 		delete bottomBitmap;
 
-		if (_currentDateDisplay >= 0) {
-			Graphics::Surface *dateBitmap = _vm->_gfx->getBitmap(IDB_UI_DATE_BASE + _currentDateDisplay);
-			_vm->_gfx->blit(dateBitmap, 62, 332);
-			dateBitmap->free();
-			delete dateBitmap;
-		}
+		if (!_vm->isDemo()) {
+			if (_currentDateDisplay >= 0) {
+				Graphics::Surface *dateBitmap = _vm->_gfx->getBitmap(IDB_UI_DATE_BASE + _currentDateDisplay);
+				_vm->_gfx->blit(dateBitmap, 62, 332);
+				dateBitmap->free();
+				delete dateBitmap;
+			}
 
-		if (_warningLightDisplayed) {
-			Graphics::Surface *warningLight = _vm->_gfx->getBitmap(IDB_UI_WARNING_LIGHT);
-			_vm->_gfx->blit(warningLight, 189, 321);
-			warningLight->free();
-			delete warningLight;
+			if (_warningLightDisplayed) {
+				Graphics::Surface *warningLight = _vm->_gfx->getBitmap(IDB_UI_WARNING_LIGHT);
+				_vm->_gfx->blit(warningLight, 189, 321);
+				warningLight->free();
+				delete warningLight;
+			}
 		}
 	}
 }
