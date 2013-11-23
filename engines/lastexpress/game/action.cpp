@@ -351,42 +351,42 @@ Action::Action(LastExpressEngine *engine) : _engine(engine) {
 	ADD_ACTION(savePoint);
 	ADD_ACTION(playSound);
 	ADD_ACTION(playMusic);
-	ADD_ACTION(knock);
+	ADD_ACTION(knock);                    // 5
 	ADD_ACTION(compartment);
 	ADD_ACTION(playSounds);
 	ADD_ACTION(playAnimation);
 	ADD_ACTION(openCloseObject);
-	ADD_ACTION(updateObjetLocation2);
-	ADD_ACTION(setItemLocation);
-	ADD_ACTION(knockNoSound);
+	ADD_ACTION(setModel);                 // 10
+	ADD_ACTION(setItem);
+	ADD_ACTION(knockInside);
 	ADD_ACTION(pickItem);
 	ADD_ACTION(dropItem);
-	ADD_ACTION(dummy);
+	ADD_ACTION(dummy);                    // 15
 	ADD_ACTION(enterCompartment);
 	ADD_ACTION(dummy);
-	ADD_ACTION(getOutsideTrain);
-	ADD_ACTION(slip);
-	ADD_ACTION(getInsideTrain);
-	ADD_ACTION(climbUpTrain);
+	ADD_ACTION(leanOutWindow);
+	ADD_ACTION(almostFall);
+	ADD_ACTION(climbInWindow);           // 20
+	ADD_ACTION(climbLadder);
 	ADD_ACTION(climbDownTrain);
-	ADD_ACTION(jumpUpDownTrain);
-	ADD_ACTION(unbound);
-	ADD_ACTION(25);
-	ADD_ACTION(26);
+	ADD_ACTION(kronosSanctum);
+	ADD_ACTION(escapeBaggage);
+	ADD_ACTION(enterBaggage);            // 25
+	ADD_ACTION(bombPuzzle);
 	ADD_ACTION(27);
-	ADD_ACTION(concertSitCough);
+	ADD_ACTION(kronosConcert);
 	ADD_ACTION(29);
-	ADD_ACTION(catchBeetle);
+	ADD_ACTION(catchBeetle);              // 30
 	ADD_ACTION(exitCompartment);
-	ADD_ACTION(32);
-	ADD_ACTION(useWhistle);
+	ADD_ACTION(outsideTrain);
+	ADD_ACTION(firebirdPuzzle);
 	ADD_ACTION(openMatchBox);
-	ADD_ACTION(openBed);
+	ADD_ACTION(openBed);                 // 35
 	ADD_ACTION(dummy);
 	ADD_ACTION(dialog);
 	ADD_ACTION(eggBox);
 	ADD_ACTION(39);
-	ADD_ACTION(bed);
+	ADD_ACTION(bed);                     // 40
 	ADD_ACTION(playMusicChapter);
 	ADD_ACTION(playMusicChapterSetupTrain);
 	ADD_ACTION(switchChapter);
@@ -625,7 +625,7 @@ IMPLEMENT_ACTION(openCloseObject)
 
 //////////////////////////////////////////////////////////////////////////
 // Action 10
-IMPLEMENT_ACTION(updateObjetLocation2)
+IMPLEMENT_ACTION(setModel)
 	ObjectIndex object = (ObjectIndex)hotspot.param1;
 	ObjectLocation location = (ObjectLocation)hotspot.param2;
 
@@ -646,7 +646,7 @@ IMPLEMENT_ACTION(updateObjetLocation2)
 
 //////////////////////////////////////////////////////////////////////////
 // Action 11
-IMPLEMENT_ACTION(setItemLocation)
+IMPLEMENT_ACTION(setItem)
 	InventoryItem item = (InventoryItem)hotspot.param1;
 	if (item >= kPortraitOriginal)
 		return kSceneInvalid;
@@ -667,7 +667,7 @@ IMPLEMENT_ACTION(setItemLocation)
 
 //////////////////////////////////////////////////////////////////////////
 // Action 12
-IMPLEMENT_ACTION(knockNoSound)
+IMPLEMENT_ACTION(knockInside)
 	ObjectIndex object = (ObjectIndex)hotspot.param1;
 	if (object >= kObjectMax)
 		return kSceneInvalid;
@@ -842,7 +842,7 @@ IMPLEMENT_ACTION(enterCompartment)
 
 //////////////////////////////////////////////////////////////////////////
 // Action 18
-IMPLEMENT_ACTION(getOutsideTrain)
+IMPLEMENT_ACTION(leanOutWindow)
 	ObjectIndex object = (ObjectIndex)hotspot.param1;
 
 	if ((getEvent(kEventCathLookOutsideWindowDay) || getEvent(kEventCathLookOutsideWindowNight) || getObjects()->get(kObjectCompartment1).location2 == kObjectLocation1)
@@ -887,7 +887,7 @@ IMPLEMENT_ACTION(getOutsideTrain)
 
 //////////////////////////////////////////////////////////////////////////
 // Action 19
-IMPLEMENT_ACTION(slip)
+IMPLEMENT_ACTION(almostFall)
 	switch((ObjectIndex)hotspot.param1) {
 	default:
 		return kSceneInvalid;
@@ -911,7 +911,7 @@ IMPLEMENT_ACTION(slip)
 
 //////////////////////////////////////////////////////////////////////////
 // Action 20
-IMPLEMENT_ACTION(getInsideTrain)
+IMPLEMENT_ACTION(climbInWindow)
 	switch ((ObjectIndex)hotspot.param1) {
 	default:
 		return kSceneInvalid;
@@ -937,7 +937,7 @@ IMPLEMENT_ACTION(getInsideTrain)
 
 //////////////////////////////////////////////////////////////////////////
 // Action 21
-IMPLEMENT_ACTION(climbUpTrain)
+IMPLEMENT_ACTION(climbLadder)
 	byte action = hotspot.param1;
 
 	if (action != 1 && action != 2)
@@ -999,7 +999,7 @@ IMPLEMENT_ACTION(climbDownTrain)
 
 //////////////////////////////////////////////////////////////////////////
 // Action 23
-IMPLEMENT_ACTION(jumpUpDownTrain)
+IMPLEMENT_ACTION(kronosSanctum)
 	switch (hotspot.param1) {
 	default:
 		break;
@@ -1038,7 +1038,7 @@ IMPLEMENT_ACTION(jumpUpDownTrain)
 
 //////////////////////////////////////////////////////////////////////////
 // Action 24
-IMPLEMENT_ACTION(unbound)
+IMPLEMENT_ACTION(escapeBaggage)
 	byte action = hotspot.param1;
 
 	switch (action) {
@@ -1086,7 +1086,7 @@ IMPLEMENT_ACTION(unbound)
 
 //////////////////////////////////////////////////////////////////////////
 // Action 25
-IMPLEMENT_ACTION(25)
+IMPLEMENT_ACTION(enterBaggage)
 	switch(hotspot.param1) {
 	default:
 		break;
@@ -1114,7 +1114,7 @@ IMPLEMENT_ACTION(25)
 
 //////////////////////////////////////////////////////////////////////////
 // Action 26
-IMPLEMENT_ACTION(26)
+IMPLEMENT_ACTION(bombPuzzle)
 	switch(hotspot.param1) {
 	default:
 		return kSceneInvalid;
@@ -1168,7 +1168,7 @@ IMPLEMENT_ACTION(27)
 
 //////////////////////////////////////////////////////////////////////////
 // Action 28
-IMPLEMENT_ACTION(concertSitCough)
+IMPLEMENT_ACTION(kronosConcert)
 	switch(hotspot.param1) {
 	default:
 		return kSceneInvalid;
@@ -1232,7 +1232,7 @@ IMPLEMENT_ACTION(exitCompartment)
 
 //////////////////////////////////////////////////////////////////////////
 // Action 32
-IMPLEMENT_ACTION(32)
+IMPLEMENT_ACTION(outsideTrain)
 	switch(hotspot.param1) {
 	default:
 		break;
@@ -1273,7 +1273,7 @@ IMPLEMENT_ACTION(32)
 
 //////////////////////////////////////////////////////////////////////////
 // Action 33
-IMPLEMENT_ACTION(useWhistle)
+IMPLEMENT_ACTION(firebirdPuzzle)
 	EventIndex evt = kEventNone;
 	SceneIndex sceneIndex = kSceneInvalid;
 
@@ -1392,7 +1392,7 @@ IMPLEMENT_ACTION(39)
 IMPLEMENT_ACTION(bed)
 	getSound()->playSoundEvent(kEntityPlayer, 85);
 	// falls to case knockNoSound
-	return action_knockNoSound(hotspot);
+	return action_knockInside(hotspot);
 }
 
 //////////////////////////////////////////////////////////////////////////
