@@ -1568,7 +1568,7 @@ void Scene1200::signal() {
 	// No break on purpose
 	case 1203:
 		R2_GLOBALS._player.enableControl();
-		warning("_eventManager.waitEvent()");
+		// CHECKME: The original is calling _eventManager.waitEvent();
 		_sceneMode = 2;
 		break;
 	case 10:
@@ -1790,7 +1790,7 @@ void Scene1200::signal() {
 		R2_GLOBALS._player.animate(ANIM_MODE_6, this);
 		break;
 	default:
-		warning("_eventManager.waitEvent()");
+		// CHECKME: The original is walling _eventManager.waitEvent();
 		_sceneMode = 2;
 		break;
 	}
@@ -15336,7 +15336,6 @@ void Scene1950::signal() {
 			R2_GLOBALS._player.setVisage(22);
 
 		R2_GLOBALS._player.animate(ANIM_MODE_1, NULL);
-		warning("%d %d", R2_GLOBALS._player._position.x, R2_GLOBALS._player._position.y);
 		// This is a hack to work around a pathfinding issue. original destination is (218, 165)
 		Common::Point pt(128, 165);
 		NpcMover *mover = new NpcMover();

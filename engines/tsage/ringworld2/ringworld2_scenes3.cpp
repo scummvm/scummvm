@@ -3199,10 +3199,9 @@ void Scene3500::Action1::signal() {
 			scene->_shuttle._frameChange = _direction;
 			scene->_shuttle.setFrame(scene->_shuttle.changeFrame());
 		}
-		// All the var_8 initialization was missing in the original
+		// CHECKME: All the var_8 initialization was missing in the original
 		// but it's clearly a cut and paste error from case 4.
 		// The following code allows the switch to work properly.
-		warning("Checkme: fix for dead code");
 		int var_8 = (_direction * 2 + scene->_mazeDirection);
 		if (var_8 > 7)
 			var_8 = 1;
