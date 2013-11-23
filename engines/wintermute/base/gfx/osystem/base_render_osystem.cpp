@@ -292,7 +292,7 @@ void BaseRenderOSystem::drawSurface(BaseSurfaceOSystem *owner, const Graphics::S
 		for (it = _lastAddedTicket; it != endIterator; ++it) {
 			compareTicket = *it;
 			if (*(compareTicket) == compare && compareTicket->_isValid) {
-				compareTicket->_transform._rgbaMod = transform._rgbaMod; 
+				compareTicket->_transform._rgbaMod = transform._rgbaMod;
 				if (_disableDirtyRects) {
 					drawFromSurface(compareTicket);
 				} else {
@@ -454,8 +454,6 @@ void BaseRenderOSystem::drawTickets() {
 		}
 	}
 
-
-
 	Common::Array<Common::Rect *> optimized = _dirtyRects->getOptimized();
 
 	for (uint i = 0; i < optimized.size(); i++) {
@@ -478,18 +476,20 @@ void BaseRenderOSystem::drawTickets() {
 				int16 offsetY = ticket->_dstRect.top;
 				// convert from screen-coords to surface-coords.
 				dstClip.translate(-offsetX, -offsetY);
-
-				_colorMod = ticket->_transform._rgbaMod; 
+				_colorMod = ticket->_transform._rgbaMod;
 				drawFromSurface(ticket, &pos, &dstClip);
 				_needsFlip = true;
-			} // endif
-			// Some tickets want redraw but don't actually clip the dirty area (typically the ones that shouldnt become clear-color)
-			ticket->_wantsDraw = false;
+			} // endif	
 		} // end inner for
 		g_system->copyRectToScreen((byte *)_renderSurface->getBasePtr(_dirtyRect->left, _dirtyRect->top), _renderSurface->pitch, _dirtyRect->left, _dirtyRect->top, _dirtyRect->width(), _dirtyRect->height());
 	} // endfor
 
-	
+	for (it = _renderQueue.begin(); it != _renderQueue.end(); ++it) {
+		RenderTicket *ticket = *it;
+		// Some tickets want redraw but don't actually clip the dirty area (typically the ones that shouldnt become clear-color)
+		ticket->_wantsDraw = false;
+	}
+
 	it = _renderQueue.begin();
 	// Clean out the old tickets
 	decrement = 0;
