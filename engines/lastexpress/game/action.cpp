@@ -1103,7 +1103,7 @@ IMPLEMENT_ACTION(25)
 	case 3:
 		getSound()->playSoundEvent(kEntityPlayer, 43);
 		if (!getInventory()->hasItem(kItemKey) && !getEvent(kEventAnnaBaggageArgument)) {
-			RESET_ENTITY_STATE(kEntityAnna, Anna, setup_baggage);
+			RESET_ENTITY_STATE(kEntityAnna, Anna, setup_baggageFight);
 			return kSceneNone;
 		}
 		break;

@@ -221,7 +221,7 @@ IMPLEMENT_FUNCTION(6, Chapters, chapter1End)
 
 		RESET_ENTITY_STATE(kEntityKronos, Kronos, setup_function10);
 		RESET_ENTITY_STATE(kEntityKahina, Kahina, setup_function13);
-		RESET_ENTITY_STATE(kEntityAnna, Anna, setup_function34);
+		RESET_ENTITY_STATE(kEntityAnna, Anna, setup_asleep);
 		RESET_ENTITY_STATE(kEntityAugust, August, setup_function34);
 		RESET_ENTITY_STATE(kEntityTatiana, Tatiana, setup_function24);
 		RESET_ENTITY_STATE(kEntityVassili, Vassili, setup_function7);
@@ -1514,7 +1514,7 @@ label_callback_4:
 
 		if (getInventory()->hasItem(kItemBomb)) {
 			RESET_ENTITY_STATE(kEntityAlexei, Alexei, setup_function47);
-			RESET_ENTITY_STATE(kEntityAnna, Anna, setup_function68);
+			RESET_ENTITY_STATE(kEntityAnna, Anna, setup_sulking);
 			RESET_ENTITY_STATE(kEntityAugust, August, setup_function65);
 			RESET_ENTITY_STATE(kEntityMertens, Mertens, setup_function48);
 			RESET_ENTITY_STATE(kEntityCoudert, Coudert, setup_function53);

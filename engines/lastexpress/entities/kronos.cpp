@@ -462,7 +462,7 @@ IMPLEMENT_FUNCTION(19, Kronos, function19)
 			RESET_ENTITY_STATE(kEntityRebecca, Rebecca, setup_function39);
 			RESET_ENTITY_STATE(kEntitySophie, Sophie, setup_chaptersHandler);
 			RESET_ENTITY_STATE(kEntityAugust, August,  setup_function50);
-			RESET_ENTITY_STATE(kEntityAnna, Anna, setup_function56);
+			RESET_ENTITY_STATE(kEntityAnna, Anna, setup_concert);
 			RESET_ENTITY_STATE(kEntityTatiana, Tatiana, setup_function35);
 
 			setup_function20();
