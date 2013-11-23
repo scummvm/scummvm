@@ -178,10 +178,10 @@ bool BaseFileManager::initPaths() {
 
 bool BaseFileManager::registerPackages(const Common::FSList &fslist) {
 	for (Common::FSList::const_iterator it = fslist.begin(); it != fslist.end(); ++it) {
-		debugC(kWintermuteDebugFileAccess, "Adding %s", (*it).getName().c_str());
-		if ((*it).getName().contains(".dcp")) {
-			if (registerPackage((*it))) {
-				addPath(PATH_PACKAGE, (*it));
+		debugC(kWintermuteDebugFileAccess, "Adding %s", it->getName().c_str());
+		if (it->getName().contains(".dcp")) {
+			if (registerPackage(*it)) {
+				addPath(PATH_PACKAGE, *it);
 			}
 		}
 	}
@@ -199,9 +199,9 @@ bool BaseFileManager::registerPackages() {
 	// and that has to be like that to support the detection-scheme.
 	Common::FSList files;
 	for (Common::FSList::iterator it = _packagePaths.begin(); it != _packagePaths.end(); ++it) {
-		debugC(kWintermuteDebugFileAccess, "Should register folder: %s %s", (*it).getPath().c_str(), (*it).getName().c_str());
-		if (!(*it).getChildren(files, Common::FSNode::kListFilesOnly)) {
-			warning("getChildren() failed for path: %s", (*it).getDisplayName().c_str());
+		debugC(kWintermuteDebugFileAccess, "Should register folder: %s %s", it->getPath().c_str(), it->getName().c_str());
+		if (!it->getChildren(files, Common::FSNode::kListFilesOnly)) {
+			warning("getChildren() failed for path: %s", it->getDisplayName().c_str());
 		}
 		for (Common::FSList::iterator fileIt = files.begin(); fileIt != files.end(); ++fileIt) {
 			// To prevent any case sensitivity issues we make the filename
@@ -257,7 +257,7 @@ bool BaseFileManager::registerPackages() {
 					continue;
 				}
 			}
-			debugC(kWintermuteDebugFileAccess, "Registering %s %s", (*fileIt).getPath().c_str(), (*fileIt).getName().c_str());
+			debugC(kWintermuteDebugFileAccess, "Registering %s %s", fileIt->getPath().c_str(), fileIt->getName().c_str());
 			registerPackage((*fileIt));
 		}
 	}
