@@ -1022,7 +1022,7 @@ void Parser::exampers() {
 			// He's asleep.
 			_vm->_dialogs->displayScrollChain('Q', 65);
 		else
-			_vm->_dialogs->displayScrollChain('p', newPerson);
+			_vm->_dialogs->displayScrollChain('P', newPerson);
 
 		if ((_person == kPeopleAyles) && !_vm->_aylesIsAwake)
 			_vm->_dialogs->displayScrollChain('Q', 13);

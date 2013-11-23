@@ -952,7 +952,7 @@ void Dialogs::displayScrollChain(char block, byte point, bool report, bool bubbl
  */
 void Dialogs::speak(byte who, byte subject) {
 	if (subject == 0) { // No subject.
-		displayScrollChain('s', who, false, true);
+		displayScrollChain('S', who, false, true);
 		return;
 	}
 
