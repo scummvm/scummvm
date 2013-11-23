@@ -96,6 +96,17 @@ SceneBase *SceneViewWindow::constructSceneObject(Window *viewWindow, const Locat
 		return new SceneBase(_vm, viewWindow, sceneStaticData, priorLocation);
 
 	switch (sceneStaticData.location.timeZone) {
+	case 0: // Miscellaneous scenes
+	case 2: // Mayan
+	case 3: // Agent 3's Lair
+	case 4: // Future Apartment
+	case 5: // Da Vinci
+	case 6: // AI Lab
+	case 7: // Alien
+		warning("Could not create scene object for time zone %d", sceneStaticData.location.timeZone);
+		break;
+	case 1: // Castle
+		return constructCastleSceneObject(viewWindow, sceneStaticData, priorLocation);
 	case 10: // Old Apartment
 		return new OldApartmentSuitCap(_vm, viewWindow, sceneStaticData, priorLocation);
 	}
@@ -105,6 +116,11 @@ SceneBase *SceneViewWindow::constructSceneObject(Window *viewWindow, const Locat
 
 bool SceneViewWindow::initializeTimeZoneAndEnvironment(Window *viewWindow, int timeZone, int environment) {
 	// TODO
+	switch (timeZone) {
+	case 1:
+		return initializeCastleTimeZoneAndEnvironment(viewWindow, environment);
+	}
+
 	return false;
 }
 
