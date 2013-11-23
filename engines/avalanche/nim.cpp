@@ -51,16 +51,16 @@ void Nim::synchronize(Common::Serializer &sz) {
 
 void Nim::playNim() {
 	if (_vm->_wonNim) { // Already won the game.
-		_vm->_dialogs->displayScrollChain('Q',6);
+		_vm->_dialogs->displayScrollChain('Q', 6);
 		return;
 	}
 
 	if (!_vm->_askedDogfoodAboutNim) {
-		_vm->_dialogs->displayScrollChain('q',84);
+		_vm->_dialogs->displayScrollChain('q', 84);
 		return;
 	}
 
-	_vm->_dialogs->displayScrollChain('Q',3);
+	_vm->_dialogs->displayScrollChain('Q', 3);
 	_playedNim++;
 	_vm->fadeOut();
 
@@ -92,24 +92,29 @@ void Nim::playNim() {
 	CursorMan.showMouse(true);
 	_vm->fadeIn();
 
-	if (_dogfoodsTurn) { // Dogfood won - as usual.
-		if (_playedNim == 1) // Your first game.
-			_vm->_dialogs->displayScrollChain('Q',4); // Goody! Play me again?
+	if (_dogfoodsTurn) {
+		// Dogfood won - as usual.
+		if (_playedNim == 1)   // Your first game.
+			_vm->_dialogs->displayScrollChain('Q', 4); // Goody! Play me again?
 		else
-			_vm->_dialogs->displayScrollChain('Q',5); // Oh, look at that! I've won again!
+			_vm->_dialogs->displayScrollChain('Q', 5); // Oh, look at that! I've won again!
 		_vm->decreaseMoney(4); // And you've just lost 4d!
-	}
-	else { // You won - strange!
+	} else {
+		// You won - strange!
 		_vm->_dialogs->displayScrollChain('Q', 7);
 		_vm->_objects[kObjectLute - 1] = true;
 		_vm->refreshObjectList();
 		_vm->_wonNim = true;
 		_vm->_background->draw(-1, -1, 0); // Show the settle with no lute on it.
-		_vm->incScore(7); // 7 points for winning!
+		
+		// 7 points for winning!
+		_vm->incScore(7);
 	}
 
-	if (_playedNim == 1)
-		_vm->incScore(3); // 3 points for playing your 1st game.
+	if (_playedNim == 1) {
+		// 3 points for playing your 1st game.
+		_vm->incScore(3);
+	}
 }
 
 void Nim::chalk(int x,int y, Common::String z) {
