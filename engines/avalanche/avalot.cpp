@@ -300,7 +300,7 @@ void AvalancheEngine::setup() {
 		fxToggle();
 		thinkAbout(kObjectMoney, kThing);
 
-		_dialogs->displayScrollChain('q', 83); // Info on the game, etc.
+		_dialogs->displayScrollChain('Q', 83); // Info on the game, etc.
 	}
 }
 
@@ -809,12 +809,12 @@ void AvalancheEngine::enterRoom(Room roomId, byte ped) {
 			_graphics->zoomOut(_peds[ped - 1]._x, _peds[ped - 1]._y);
 
 		if ((_objects[kObjectWine - 1]) && (_wineState != 3)) {
-			_dialogs->displayScrollChain('q', 9); // Don't want to waste the wine!
+			_dialogs->displayScrollChain('Q', 9); // Don't want to waste the wine!
 			_objects[kObjectWine - 1] = false;
 			refreshObjectList();
 		}
 
-		_dialogs->displayScrollChain('q', 69);
+		_dialogs->displayScrollChain('Q', 69);
 		break;
 
 	case kRoomCatacombs:

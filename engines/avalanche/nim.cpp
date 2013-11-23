@@ -56,7 +56,7 @@ void Nim::playNim() {
 	}
 
 	if (!_vm->_askedDogfoodAboutNim) {
-		_vm->_dialogs->displayScrollChain('q', 84);
+		_vm->_dialogs->displayScrollChain('Q', 84);
 		return;
 	}
 
