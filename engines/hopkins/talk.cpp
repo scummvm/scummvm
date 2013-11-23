@@ -266,7 +266,7 @@ int TalkManager::dialogQuestion(bool animatedFl) {
 
 	int retVal = -1;
 	bool loopCond = false;
-  	do {
+	do {
 		int mousePosY = _vm->_events->getMouseY();
 		if (sentence1PosY < mousePosY && mousePosY < (sentence2PosY - 1)) {
 			_vm->_fontMan->setOptimalColor(6, 7, 8, 5);
