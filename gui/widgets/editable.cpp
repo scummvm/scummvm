@@ -261,7 +261,8 @@ void EditableWidget::drawCaret(bool erase) {
 	int x = editRect.left;
 	int y = editRect.top;
 
-	x += getCaretOffset();
+	const int caretOffset = getCaretOffset();
+	x += caretOffset;
 
 	if (y < 0 || y + editRect.height() > _h)
 		return;
@@ -290,7 +291,16 @@ void EditableWidget::drawCaret(bool erase) {
 			character = " ";
 		}
 
-		g_gui.theme()->drawText(Common::Rect(x, y, x + width, y + editRect.height()), character, _state, Graphics::kTextAlignLeft, _inversion, 0, false, _font, ThemeEngine::kFontColorNormal, true, _textDrawableArea);
+		// TODO: Right now we manually prevent text from being drawn outside
+		// the edit area here. We might want to consider to use
+		// setTextDrawableArea for this. However, it seems that only
+		// EditTextWidget uses that but not ListWidget. Thus, one should check
+		// whether we can unify the drawing in the text area first to avoid
+		// possible glitches due to different methods used.
+		width = MIN(editRect.width() - caretOffset, width);
+		if (width > 0) {
+			g_gui.theme()->drawText(Common::Rect(x, y, x + width, y + editRect.height()), character, _state, Graphics::kTextAlignLeft, _inversion, 0, false, _font, ThemeEngine::kFontColorNormal, true, _textDrawableArea);
+		}
 	}
 
 	_caretVisible = !erase;
