@@ -123,9 +123,9 @@ InterfaceBioChipViewWindow::InterfaceBioChipViewWindow(BuriedEngine *vm, Window 
 
 	_rect = Common::Rect(0, 0, 432, 189);
 
-	_background = _vm->_gfx->getBitmap(IDB_BCV_INTERFACE_MAIN);
-	_cycleCheck = _vm->_gfx->getBitmap(IDB_BCV_INTERFACE_CHECK);
-	_caret = _vm->_gfx->getBitmap(IDB_BCV_INTERFACE_HANDLE);
+	_background = _vm->_gfx->getBitmap(_vm->isDemo() ? IDB_BCM_INTERFACE_NORMAL : IDB_BCV_INTERFACE_MAIN);
+	_cycleCheck = _vm->_gfx->getBitmap(_vm->isDemo() ? IDB_BCM_INTERFACE_SELECTED : IDB_BCV_INTERFACE_CHECK);
+	_caret = _vm->_gfx->getBitmap(_vm->isDemo() ? IDB_BCM_INTERFACE_SLIDER : IDB_BCV_INTERFACE_HANDLE);
 }
 
 InterfaceBioChipViewWindow::~InterfaceBioChipViewWindow() {
