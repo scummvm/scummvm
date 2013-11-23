@@ -513,6 +513,9 @@ bool SceneViewWindow::moveToDestination(const DestinationScene &destinationData)
 	// Create the new scene object
 	SceneBase *newScene = constructSceneObject(this, newSceneStaticData, oldLocation);
 
+	if (!newScene)
+		error("Failed to create new scene");
+
 	// Switch on the type of transition
 	if (destinationData.transitionType == TRANSITION_VIDEO) {
 		// Play transition
