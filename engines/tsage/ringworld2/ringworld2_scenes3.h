@@ -566,7 +566,7 @@ class Scene3500 : public SceneExt {
 	public:
 		int _direction;
 		bool _field20;
-		int _field22;
+		int _field22; // CHECKME: Useless field
 		bool _field24;
 
 		Action1();

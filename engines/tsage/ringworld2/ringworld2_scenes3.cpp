@@ -4246,7 +4246,7 @@ void Scene3500::dispatch() {
 	}
 
 	if (_mazeChangeAmount != 0) {
- 		R2_GLOBALS._player._uiEnabled = false;
+		R2_GLOBALS._player._uiEnabled = false;
 		if (_mazeChangeAmount != _speed)
 			_aSound1.play(276);
 	} else {
