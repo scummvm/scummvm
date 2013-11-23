@@ -216,8 +216,6 @@ bool BaseFileManager::registerPackages() {
 			// Avoid registering all the language files
 			// TODO: Select based on the gameDesc.
 			if (_language != Common::UNK_LANG && (fileIt->getParent().getName() == "language" || fileIt->getParent().getName() == "languages")) {
-				Common::String parentName = fileIt->getParent().getName();
-				Common::String dcpName = fileIt->getName();
 				// English
 				if (_language == Common::EN_ANY && (fileIt->getName() != "english.dcp" && fileIt->getName() != "xlanguage_en.dcp")) {
 					continue;
