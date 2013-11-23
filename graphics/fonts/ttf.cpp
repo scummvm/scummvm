@@ -129,9 +129,11 @@ private:
 		FT_UInt slot;
 	};
 
-	bool cacheGlyph(Glyph &glyph, uint chr);
+	bool cacheGlyph(Glyph &glyph, uint32 chr) const;
 	typedef Common::HashMap<uint32, Glyph> GlyphCache;
-	GlyphCache _glyphs;
+	mutable GlyphCache _glyphs;
+	bool _allowLateCaching;
+	void assureCached(uint32 chr) const;
 
 	bool _monochrome;
 	bool _hasKerning;
@@ -211,6 +213,9 @@ bool TTFFont::load(Common::SeekableReadStream &stream, int size, uint dpi, bool 
 	_height = _ascent - _descent + 1;
 
 	if (!mapping) {
+		// Allow loading of all unicode characters.
+		_allowLateCaching = true;
+
 		// Load all ISO-8859-1 characters.
 		for (uint i = 0; i < 256; ++i) {
 			if (!cacheGlyph(_glyphs[i], i)) {
@@ -218,6 +223,9 @@ bool TTFFont::load(Common::SeekableReadStream &stream, int size, uint dpi, bool 
 			}
 		}
 	} else {
+		// We have a fixed map of characters do not load more later.
+		_allowLateCaching = false;
+
 		for (uint i = 0; i < 256; ++i) {
 			const uint32 unicode = mapping[i] & 0x7FFFFFFF;
 			const bool isRequired = (mapping[i] & 0x80000000) != 0;
@@ -244,6 +252,7 @@ int TTFFont::getMaxCharWidth() const {
 }
 
 int TTFFont::getCharWidth(uint32 chr) const {
+	assureCached(chr);
 	GlyphCache::const_iterator glyphEntry = _glyphs.find(chr);
 	if (glyphEntry == _glyphs.end())
 		return 0;
@@ -254,6 +263,9 @@ int TTFFont::getCharWidth(uint32 chr) const {
 int TTFFont::getKerningOffset(uint32 left, uint32 right) const {
 	if (!_hasKerning)
 		return 0;
+
+	assureCached(left);
+	assureCached(right);
 
 	FT_UInt leftGlyph, rightGlyph;
 	GlyphCache::const_iterator glyphEntry;
@@ -319,6 +331,7 @@ void renderGlyph(uint8 *dstPos, const int dstPitch, const uint8 *srcPos, const i
 } // End of anonymous namespace
 
 void TTFFont::drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color) const {
+	assureCached(chr);
 	GlyphCache::const_iterator glyphEntry = _glyphs.find(chr);
 	if (glyphEntry == _glyphs.end())
 		return;
@@ -390,7 +403,7 @@ void TTFFont::drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color) con
 	}
 }
 
-bool TTFFont::cacheGlyph(Glyph &glyph, uint chr) {
+bool TTFFont::cacheGlyph(Glyph &glyph, uint32 chr) const {
 	FT_UInt slot = FT_Get_Char_Index(_face, chr);
 	if (!slot)
 		return false;
@@ -477,6 +490,17 @@ bool TTFFont::cacheGlyph(Glyph &glyph, uint chr) {
 	}
 
 	return true;
+}
+
+void TTFFont::assureCached(uint32 chr) const {
+	if (!chr || !_allowLateCaching || _glyphs.contains(chr)) {
+		return;
+	}
+
+	Glyph newGlyph;
+	if (cacheGlyph(newGlyph, chr)) {
+		_glyphs[chr] = newGlyph;
+	}
 }
 
 Font *loadTTFFont(Common::SeekableReadStream &stream, int size, uint dpi, bool monochrome, const uint32 *mapping) {
