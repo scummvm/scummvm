@@ -26,7 +26,7 @@
 
 namespace Graphics {
 
-int Font::getKerningOffset(byte left, byte right) const {
+int Font::getKerningOffset(uint32 left, uint32 right) const {
 	return 0;
 }
 

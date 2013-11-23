@@ -70,7 +70,7 @@ public:
 	 * @param chr The character to query the width of.
 	 * @return The character's width.
 	 */
-	virtual int getCharWidth(byte chr) const = 0;
+	virtual int getCharWidth(uint32 chr) const = 0;
 
 	/**
 	 * Query the kerning offset between two characters.
@@ -79,7 +79,7 @@ public:
 	 * @param right The right character. May be 0.
 	 * @return The horizontal displacement.
 	 */
-	virtual int getKerningOffset(byte left, byte right) const;
+	virtual int getKerningOffset(uint32 left, uint32 right) const;
 
 	/**
 	 * Draw a character at a specific point on a surface.
@@ -96,7 +96,7 @@ public:
 	 * @param y   The y coordinate where to draw the character.
 	 * @param color The color of the character.
 	 */
-	virtual void drawChar(Surface *dst, byte chr, int x, int y, uint32 color) const = 0;
+	virtual void drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color) const = 0;
 
 	// TODO: Add doxygen comments to this
 	void drawString(Surface *dst, const Common::String &str, int x, int y, int w, uint32 color, TextAlign align = kTextAlignLeft, int deltax = 0, bool useEllipsis = true) const;

@@ -107,11 +107,11 @@ public:
 
 	virtual int getMaxCharWidth() const;
 
-	virtual int getCharWidth(byte chr) const;
+	virtual int getCharWidth(uint32 chr) const;
 
-	virtual int getKerningOffset(byte left, byte right) const;
+	virtual int getKerningOffset(uint32 left, uint32 right) const;
 
-	virtual void drawChar(Surface *dst, byte chr, int x, int y, uint32 color) const;
+	virtual void drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color) const;
 private:
 	bool _initialized;
 	FT_Face _face;
@@ -129,7 +129,7 @@ private:
 	};
 
 	bool cacheGlyph(Glyph &glyph, FT_UInt &slot, uint chr);
-	typedef Common::HashMap<byte, Glyph> GlyphCache;
+	typedef Common::HashMap<uint32, Glyph> GlyphCache;
 	GlyphCache _glyphs;
 
 	FT_UInt _glyphSlots[256];
@@ -243,7 +243,7 @@ int TTFFont::getMaxCharWidth() const {
 	return _width;
 }
 
-int TTFFont::getCharWidth(byte chr) const {
+int TTFFont::getCharWidth(uint32 chr) const {
 	GlyphCache::const_iterator glyphEntry = _glyphs.find(chr);
 	if (glyphEntry == _glyphs.end())
 		return 0;
@@ -251,9 +251,13 @@ int TTFFont::getCharWidth(byte chr) const {
 		return glyphEntry->_value.advance;
 }
 
-int TTFFont::getKerningOffset(byte left, byte right) const {
+int TTFFont::getKerningOffset(uint32 left, uint32 right) const {
 	if (!_hasKerning)
 		return 0;
+
+	if (left > 255 || right > 255) {
+		return 0;
+	}
 
 	FT_UInt leftGlyph = _glyphSlots[left];
 	FT_UInt rightGlyph = _glyphSlots[right];
@@ -304,7 +308,7 @@ void renderGlyph(uint8 *dstPos, const int dstPitch, const uint8 *srcPos, const i
 
 } // End of anonymous namespace
 
-void TTFFont::drawChar(Surface *dst, byte chr, int x, int y, uint32 color) const {
+void TTFFont::drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color) const {
 	GlyphCache::const_iterator glyphEntry = _glyphs.find(chr);
 	if (glyphEntry == _glyphs.end())
 		return;
