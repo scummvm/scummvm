@@ -197,6 +197,10 @@ private:
 
 	Common::Array<AnimEvent> getAnimationDatabase(int timeZone, int environment);
 	Common::Array<AIComment> getAICommentDatabase(int timeZone, int environment);
+
+	// Castle
+	bool initializeCastleTimeZoneAndEnvironment(Window *viewWindow, int environment);
+	SceneBase *constructCastleSceneObject(Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
 };
 
 } // End of namespace Buried
