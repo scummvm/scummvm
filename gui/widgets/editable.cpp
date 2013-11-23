@@ -272,13 +272,25 @@ void EditableWidget::drawCaret(bool erase) {
 	g_gui.theme()->drawCaret(Common::Rect(x, y, x + 1, y + editRect.height()), erase);
 
 	if (erase) {
+		GUI::EditableWidget::String character;
+		int width;
+
 		if ((uint)_caretPos < _editString.size()) {
-			GUI::EditableWidget::String chr(_editString[_caretPos]);
-			int chrWidth = g_gui.getCharWidth(_editString[_caretPos], _font);
+			const byte chr = _editString[_caretPos];
+			width = g_gui.getCharWidth(chr, _font);
+			character = chr;
+
 			const uint last = (_caretPos > 0) ? _editString[_caretPos - 1] : 0;
-			x += g_gui.getKerningOffset(last, _editString[_caretPos], _font);
-			g_gui.theme()->drawText(Common::Rect(x, y, x + chrWidth, y + editRect.height()), chr, _state, Graphics::kTextAlignLeft, _inversion, 0, false, _font, ThemeEngine::kFontColorNormal, true, _textDrawableArea);
+			x += g_gui.getKerningOffset(last, chr, _font);
+		} else {
+			// We draw a fake space here to assure that removing the caret
+			// does not result in color glitches in case the edit rect is
+			// drawn with an inversion.
+			width = g_gui.getCharWidth(' ', _font);
+			character = " ";
 		}
+
+		g_gui.theme()->drawText(Common::Rect(x, y, x + width, y + editRect.height()), character, _state, Graphics::kTextAlignLeft, _inversion, 0, false, _font, ThemeEngine::kFontColorNormal, true, _textDrawableArea);
 	}
 
 	_caretVisible = !erase;
