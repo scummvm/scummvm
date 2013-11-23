@@ -2309,7 +2309,7 @@ void SceneViewWindow::onPaint() {
 		_vm->_gfx->opaqueTransparentBlit(_preBuffer, _currentSprite.xPos, _currentSprite.yPos, _currentSprite.width, _currentSprite.height, _currentSprite.image, 0, 0, 0, _currentSprite.redTrans, _currentSprite.greenTrans, _currentSprite.blueTrans);
 
 		// Update the screen
-		_vm->_gfx->blit(_preBuffer, 0, 0);
+		_vm->_gfx->blit(_preBuffer, _rect.left, _rect.top);
 
 		if (_useScenePaint)
 			_currentScene->gdiPaint(this);
