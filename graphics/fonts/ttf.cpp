@@ -126,13 +126,12 @@ private:
 		Surface image;
 		int xOffset, yOffset;
 		int advance;
+		FT_UInt slot;
 	};
 
-	bool cacheGlyph(Glyph &glyph, FT_UInt &slot, uint chr);
+	bool cacheGlyph(Glyph &glyph, uint chr);
 	typedef Common::HashMap<uint32, Glyph> GlyphCache;
 	GlyphCache _glyphs;
-
-	FT_UInt _glyphSlots[256];
 
 	bool _monochrome;
 	bool _hasKerning;
@@ -140,7 +139,7 @@ private:
 
 TTFFont::TTFFont()
     : _initialized(false), _face(), _ttfFile(0), _size(0), _width(0), _height(0), _ascent(0),
-      _descent(0), _glyphs(), _glyphSlots(), _monochrome(false), _hasKerning(false) {
+      _descent(0), _glyphs(), _monochrome(false), _hasKerning(false) {
 }
 
 TTFFont::~TTFFont() {
@@ -214,8 +213,9 @@ bool TTFFont::load(Common::SeekableReadStream &stream, int size, uint dpi, bool 
 	if (!mapping) {
 		// Load all ISO-8859-1 characters.
 		for (uint i = 0; i < 256; ++i) {
-			if (!cacheGlyph(_glyphs[i], _glyphSlots[i], i))
-				_glyphSlots[i] = 0;
+			if (!cacheGlyph(_glyphs[i], i)) {
+				_glyphs.erase(i);
+			}
 		}
 	} else {
 		for (uint i = 0; i < 256; ++i) {
@@ -223,8 +223,8 @@ bool TTFFont::load(Common::SeekableReadStream &stream, int size, uint dpi, bool 
 			const bool isRequired = (mapping[i] & 0x80000000) != 0;
 			// Check whether loading an important glyph fails and error out if
 			// that is the case.
-			if (!cacheGlyph(_glyphs[i], _glyphSlots[i], unicode)) {
-				_glyphSlots[i] = 0;
+			if (!cacheGlyph(_glyphs[i], unicode)) {
+				_glyphs.erase(i);
 				if (isRequired)
 					return false;
 			}
@@ -255,12 +255,22 @@ int TTFFont::getKerningOffset(uint32 left, uint32 right) const {
 	if (!_hasKerning)
 		return 0;
 
-	if (left > 255 || right > 255) {
+	FT_UInt leftGlyph, rightGlyph;
+	GlyphCache::const_iterator glyphEntry;
+
+	glyphEntry = _glyphs.find(left);
+	if (glyphEntry != _glyphs.end()) {
+		leftGlyph = glyphEntry->_value.slot;
+	} else {
 		return 0;
 	}
 
-	FT_UInt leftGlyph = _glyphSlots[left];
-	FT_UInt rightGlyph = _glyphSlots[right];
+	glyphEntry = _glyphs.find(right);
+	if (glyphEntry != _glyphs.end()) {
+		rightGlyph = glyphEntry->_value.slot;
+	} else {
+		return 0;
+	}
 
 	if (!leftGlyph || !rightGlyph)
 		return 0;
@@ -380,10 +390,12 @@ void TTFFont::drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color) con
 	}
 }
 
-bool TTFFont::cacheGlyph(Glyph &glyph, FT_UInt &slot, uint chr) {
-	slot = FT_Get_Char_Index(_face, chr);
+bool TTFFont::cacheGlyph(Glyph &glyph, uint chr) {
+	FT_UInt slot = FT_Get_Char_Index(_face, chr);
 	if (!slot)
 		return false;
+
+	glyph.slot = slot;
 
 	// We use the light target and render mode to improve the looks of the
 	// glyphs. It is most noticable in FreeSansBold.ttf, where otherwise the
@@ -460,6 +472,7 @@ bool TTFFont::cacheGlyph(Glyph &glyph, FT_UInt &slot, uint chr) {
 
 	default:
 		warning("TTFFont::cacheGlyph: Unsupported pixel mode %d", bitmap.pixel_mode);
+		glyph.image.free();
 		return false;
 	}
 
