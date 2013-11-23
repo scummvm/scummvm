@@ -222,7 +222,7 @@ bool Window::isWindowEnabled() const {
 	if (_parent && !_parent->isWindowEnabled())
 		return false;
 
-	return _enabled;
+	return _enabled && _visible;
 }
 
 uint Window::setTimer(uint elapse) {
