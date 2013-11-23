@@ -30,6 +30,8 @@
 #include "buried/sprtdata.h"
 #include "buried/window.h"
 
+#include "common/array.h"
+
 namespace Graphics {
 class Font;
 }
