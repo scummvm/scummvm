@@ -55,6 +55,7 @@ BasicDoor::BasicDoor(BuriedEngine *vm, Window *viewWindow, const LocationStaticD
 
 	_openingSoundID = openingSoundID;
 
+	// FIXME: Why is this here?
 	if (viewWindow) {
 		((SceneViewWindow *)viewWindow)->changeStillFrameMovie(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, SF_STILLS));
 
@@ -85,12 +86,51 @@ int BasicDoor::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
 }
 
 int BasicDoor::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
-	//debug("(%d, %d) in (%d, %d, %d, %d)", pointLocation.x, pointLocation.y, _clickable.left, _clickable.top, _clickable.right, _clickable.bottom);
-
 	if (_clickable.contains(pointLocation))
 		return kCursorFinger;
 
 	return kCursorArrow;
+}
+
+PlayStingers::PlayStingers(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+		int stingerVolume, int lastStingerFlagOffset, int effectIDFlagOffset, int firstStingerFileID, int lastStingerFileID) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_stingerVolume = stingerVolume;
+	_lastStingerFlagOffset = lastStingerFlagOffset;
+	_effectIDFlagOffset = effectIDFlagOffset;
+	_firstStingerFileID = firstStingerFileID;
+	_lastStingerFileID = lastStingerFileID;
+
+	// FIXME: Why is this here?
+	if (viewWindow) {
+		((SceneViewWindow *)viewWindow)->changeStillFrameMovie(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, SF_STILLS));
+
+		if (_staticData.cycleStartFrame >= 0)
+			((SceneViewWindow *)viewWindow)->changeCycleFrameMovie(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, SF_CYCLES));
+	}
+}
+
+int PlayStingers::postEnterRoom(Window *viewWindow, const Location &priorLocation) {
+	if (_effectIDFlagOffset >= 0) {
+		// More evil.
+		byte effectID = ((SceneViewWindow *)viewWindow)->getGlobalFlagByte(_effectIDFlagOffset);
+
+		if (!_vm->_sound->isSoundEffectPlaying(effectID - 1)) {
+			byte lastStinger = ((SceneViewWindow *)viewWindow)->getGlobalFlagByte(_lastStingerFlagOffset);
+			lastStinger++;
+
+			uint32 fileNameIndex = _vm->computeFileNameResourceID(_staticData.location.timeZone, _staticData.location.environment, _firstStingerFileID + lastStinger - 1);
+			byte newStingerID = _vm->_sound->playSoundEffect(_vm->getFilePath(fileNameIndex), _stingerVolume, false, true) + 1;
+
+			if (lastStinger > _lastStingerFileID - _firstStingerFileID)
+				lastStinger = 0;
+
+			((SceneViewWindow *)viewWindow)->setGlobalFlagByte(_effectIDFlagOffset, newStingerID);
+			((SceneViewWindow *)viewWindow)->setGlobalFlagByte(_lastStingerFlagOffset, lastStinger);
+		}
+	}
+
+	return SC_TRUE;
 }
 
 } // End of namespace Buried
