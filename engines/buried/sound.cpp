@@ -42,6 +42,10 @@ namespace Buried {
 
 #define SOUND_FLAG_DESTROY_AFTER_COMPLETION 0x01
 
+static inline int clipVolume(int volume) {
+	return CLIP<int>(volume, 0, Audio::Mixer::kMaxChannelVolume);
+}
+
 SoundManager::SoundManager(BuriedEngine *vm) : _vm(vm) {
 	_fileIDFootsteps = -1;
 	_lastAmbient = 1;
@@ -97,7 +101,7 @@ bool SoundManager::setAmbientSound(const Common::String &fileName, bool fade, by
 				_soundData[kAmbientIndexBase + _lastAmbient]->_timedEffectRemaining = 2000;
 
 				// Reset parameters for current ambient
-				g_system->getMixer()->setChannelVolume(*_soundData[kAmbientIndexBase + _lastAmbient]->_handle, _soundData[kAmbientIndexBase + _lastAmbient]->_volume << 1);
+				g_system->getMixer()->setChannelVolume(*_soundData[kAmbientIndexBase + _lastAmbient]->_handle, clipVolume(_soundData[kAmbientIndexBase + _lastAmbient]->_volume << 1));
 				// clone2727: The original resets the loop count, but I don't think that's necessary
 			}
 		} else {
@@ -121,7 +125,7 @@ bool SoundManager::setAmbientSound(const Common::String &fileName, bool fade, by
 	
 			// Reset parameters for the current ambient
 			g_system->getMixer()->setChannelVolume(*_soundData[kAmbientIndexBase + _lastAmbient]->_handle,
-					_soundData[kAmbientIndexBase + _lastAmbient]->_volume << 1);
+					clipVolume(_soundData[kAmbientIndexBase + _lastAmbient]->_volume << 1));
 		}
 
 		// Load the new ambient
@@ -200,7 +204,7 @@ bool SoundManager::adjustAmbientSoundVolume(byte newVolumeLevel, bool fade, byte
 		// and reset the volume for the sample
 		_soundData[kAmbientIndexBase + _lastAmbient]->_volume = newVolumeLevel;
 		g_system->getMixer()->setChannelVolume(*_soundData[kAmbientIndexBase + _lastAmbient]->_handle,
-				newVolumeLevel << 1);
+				clipVolume(newVolumeLevel << 1));
 	}
 
 	// Return success
@@ -287,7 +291,7 @@ bool SoundManager::adjustSecondaryAmbientSoundVolume(byte newVolumeLevel, bool f
 		// and reset the volume for the sample
 		_soundData[kAmbientIndexBase + ambientTrack]->_volume = newVolumeLevel;
 		g_system->getMixer()->setChannelVolume(*_soundData[kAmbientIndexBase + ambientTrack]->_handle,
-				newVolumeLevel << 1);
+				clipVolume(newVolumeLevel << 1));
 	}
 
 	// Return success
@@ -507,7 +511,7 @@ bool SoundManager::adjustSoundEffectSoundVolume(int effectID, byte newVolumeLeve
 		// and reset the volume for the sample
 		_soundData[kEffectsIndexBase + effectID]->_volume = newVolumeLevel;
 		g_system->getMixer()->setChannelVolume(*_soundData[kEffectsIndexBase + effectID]->_handle,
-				newVolumeLevel << 1);
+				clipVolume(newVolumeLevel << 1));
 	}
 
 	// Return success
@@ -642,7 +646,7 @@ void SoundManager::timerCallback() {
 					// Change the specified member and notify the mixer of the change
 					if (_soundData[i]->_timedEffectIndex == TIMED_EFFECT_VOLUME) {
 						_soundData[i]->_volume += _soundData[i]->_timedEffectDelta;
-						g_system->getMixer()->setChannelVolume(*_soundData[i]->_handle, _soundData[i]->_volume << 1);
+						g_system->getMixer()->setChannelVolume(*_soundData[i]->_handle, clipVolume(_soundData[i]->_volume << 1));
 					}
 
 					// Update the start time, step counter, and remaining time
@@ -733,7 +737,7 @@ bool SoundManager::Sound::start() {
 	}
 
 	g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, _handle, audioStream,
-			-1, _volume << 1, 0, disposeAfterUse);
+			-1, clipVolume(_volume << 1), 0, disposeAfterUse);
 
 	return true;
 }
