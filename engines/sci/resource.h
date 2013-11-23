@@ -498,7 +498,7 @@ protected:
 	void readWaveAudioPatches();
 	void processWavePatch(ResourceId resourceId, Common::String name);
 
- 	/**
+	/**
 	 * Applies to all versions before 0.000.395 (i.e. KQ4 old, XMAS 1988 and LSL2).
 	 * Old SCI versions used two word header for script blocks (first word equal
 	 * to 0x82, meaning of the second one unknown). New SCI versions used one
