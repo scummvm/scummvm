@@ -6,6 +6,7 @@ MODULE_OBJS = \
 	biochip_view.o \
 	buried.o \
 	complete.o \
+	console.o \
 	credits.o \
 	database.o \
 	death.o \

@@ -33,6 +33,7 @@
 #include "engines/util.h"
 
 #include "buried/buried.h"
+#include "buried/console.h"
 #include "buried/database.h"
 #include "buried/frame_window.h"
 #include "buried/graphics.h"
@@ -53,6 +54,7 @@ BuriedEngine::BuriedEngine(OSystem *syst, const BuriedGameDescription *gameDesc)
 	_mainWindow = 0;
 	_focusedWindow = 0;
 	_captureWindow = 0;
+	_console = 0;
 
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "WIN31/MANUAL", 0, 2);
@@ -64,11 +66,14 @@ BuriedEngine::~BuriedEngine() {
 	delete _mainEXE;
 	delete _library;
 	delete _sound;
+	delete _console;
 
 	// The queue should be empty since all windows destroy their messages
 }
 
 Common::Error BuriedEngine::run() {
+	_console = new BuriedConsole(this);
+
 	if (isTrueColor()) {
 #ifndef USE_RGB_COLOR
 		// Can't play 24bpp version without support
@@ -128,6 +133,10 @@ Common::Error BuriedEngine::run() {
 	}
 
 	return Common::kNoError;
+}
+
+GUI::Debugger *BuriedEngine::getDebugger() {
+	return _console;
 }
 
 Common::String BuriedEngine::getString(uint32 stringID) {
