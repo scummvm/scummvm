@@ -73,6 +73,8 @@ SceneViewWindow::SceneViewWindow(BuriedEngine *vm, Window *parent) : Window(vm, 
 	_curCursor = kCursorArrow;
 	_stillFrames = new AVIFrames();
 	_cycleFrames = new AVIFrames();
+
+	memset(&_globalFlags, 0, sizeof(_globalFlags));
 }
 
 SceneViewWindow::~SceneViewWindow() {
@@ -2309,7 +2311,8 @@ void SceneViewWindow::onPaint() {
 		}
 
 		// If we have a sprite, update the prebuffer with it now
-		_vm->_gfx->opaqueTransparentBlit(_preBuffer, _currentSprite.xPos, _currentSprite.yPos, _currentSprite.width, _currentSprite.height, _currentSprite.image, 0, 0, 0, _currentSprite.redTrans, _currentSprite.greenTrans, _currentSprite.blueTrans);
+		if (_currentSprite.image && _useSprite)
+			_vm->_gfx->opaqueTransparentBlit(_preBuffer, _currentSprite.xPos, _currentSprite.yPos, _currentSprite.width, _currentSprite.height, _currentSprite.image, 0, 0, 0, _currentSprite.redTrans, _currentSprite.greenTrans, _currentSprite.blueTrans);
 
 		// Update the screen
 		_vm->_gfx->blit(_preBuffer, _rect.left, _rect.top);
