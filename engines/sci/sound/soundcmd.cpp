@@ -511,10 +511,12 @@ void SoundCommandParser::processUpdateCues(reg_t obj) {
 		// TODO: More thorougly check the different SCI version:
 		// * SCI1late sets signal to 0xFE here. (With signal 0xFF
 		//       duplicate music plays in LauraBow2CD - bug #6462)
+		//   SCI1middle LSL1 1.000.510 does not have the 0xFE;
+		//   SCI1late CastleDrBrain demo 1.000.005 does have the 0xFE.
 		// * Other SCI1 games seem to rely on processStopSound to set the signal
 		// * Need to check SCI0 behaviour.
 		uint16 sig;
-		if (_soundVersion >= SCI_VERSION_1_LATE)
+		if (getSciVersion() >= SCI_VERSION_1_LATE)
 			sig = 0xFFFE;
 		else
 			sig = SIGNAL_OFFSET;
