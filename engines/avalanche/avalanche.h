@@ -60,7 +60,7 @@ struct AvalancheGameDescription {
 	ADGameDescription desc;
 };
 
-static const int kSavegameVersion = 1;
+static const int kSavegameVersion = 2;
 
 enum Pitch {
 	kPitchInvalid,

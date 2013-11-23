@@ -2471,6 +2471,10 @@ void Parser::synchronize(Common::Serializer &sz) {
 	sz.syncAsByte(_wearing);
 	sz.syncAsByte(_sworeNum);
 	sz.syncAsByte(_alcoholLevel);
+	if (sz.isLoading() && sz.getVersion() < 2) {
+		int dummy;	
+		sz.syncAsByte(dummy);
+	}
 	sz.syncAsByte(_boughtOnion);
 }
 
