@@ -30,6 +30,7 @@
 #include "buried/graphics.h"
 #include "buried/invdata.h"
 #include "buried/resources.h"
+#include "buried/scene_view.h"
 
 #include "common/stream.h"
 #include "graphics/surface.h"
@@ -142,8 +143,7 @@ void InterfaceBioChipViewWindow::onPaint() {
 	Common::Rect absoluteRect = getAbsoluteRect();
 	_vm->_gfx->blit(_background, absoluteRect.left, absoluteRect.top);
 
-	// TODO
-	if (true)
+	if (((SceneViewWindow *)_parent)->getCyclingStatus())
 		_vm->_gfx->blit(_cycleCheck, absoluteRect.left + 13, absoluteRect.top + 144);
 
 	if (_caret)
@@ -180,7 +180,15 @@ void InterfaceBioChipViewWindow::onLButtonUp(const Common::Point &point, uint fl
 		// TODO
 		break;
 	case REGION_FLICKER:
-		// TODO
+		if (_flicker.contains(point)) {
+			if (((SceneViewWindow *)(_parent->getParent()))->getCyclingStatus()) {
+				((SceneViewWindow *)(_parent->getParent()))->enableCycling(false);
+				invalidateRect(_flicker, false);
+			} else {
+				((SceneViewWindow *)(_parent->getParent()))->enableCycling(true);
+				invalidateRect(_flicker, false);
+			}
+		}
 		break;
 	case REGION_TRANSITION_SPEED:
 		_transLocation = CLIP<int>(point.x - 14, 0, 150);
@@ -289,7 +297,12 @@ void FilesBioChipViewWindow::onLButtonUp(const Common::Point &point, uint flags)
 		_curPage = page.nextButtonPageIndex;
 		invalidateWindow(false);
 
-		// TODO: Score check
+		if (_curPage == 6)
+			((SceneViewWindow *)(_parent->getParent()))->getGlobalFlags().scoreResearchBCJumpsuit = 1;
+		else if (_curPage == 21)
+			((SceneViewWindow *)(_parent->getParent()))->getGlobalFlags().scoreResearchMichelle = 1;
+		else if (_curPage == 31)
+			((SceneViewWindow *)(_parent->getParent()))->getGlobalFlags().scoreResearchMichelleBkg = 1;
 
 		return;
 	}

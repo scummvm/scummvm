@@ -19,13 +19,15 @@ MODULE_OBJS = \
 	main_menu.o \
 	navarrow.o \
 	overview.o \
+	scene_view.o \
 	sound.o \
 	title_sequence.o \
 	video_window.o \
 	window.o \
 	demo/demo_menu.o \
 	demo/features.o \
-	demo/movie_scene.o
+	demo/movie_scene.o \
+	environ/scene_base.o
 
 
 # This module can be built as a plugin

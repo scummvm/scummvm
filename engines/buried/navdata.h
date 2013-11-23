@@ -31,6 +31,9 @@
 namespace Buried {
 
 struct Location {
+	Location() : timeZone(-1), environment(-1), node(-1), facing(-1), orientation(-1), depth(-1) {}
+	Location(int16 tz, int16 e, int16 n, int16 f, int16 o, int16 d) : timeZone(tz), environment(e), node(n), facing(f), orientation(o), depth(d) {}
+
 	int16 timeZone;
 	int16 environment;
 	int16 node;

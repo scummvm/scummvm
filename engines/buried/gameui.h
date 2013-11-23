@@ -26,6 +26,7 @@
 #ifndef BURIED_GAMEUI_H
 #define BURIED_GAMEUI_H
 
+#include "buried/navdata.h"
 #include "buried/window.h"
 
 namespace Graphics {
@@ -38,6 +39,7 @@ class BioChipRightWindow;
 class InventoryWindow;
 class LiveTextWindow;
 class NavArrowWindow;
+class SceneViewWindow;
 
 class GameUIWindow : public Window {
 public:
@@ -46,7 +48,7 @@ public:
 
 	bool startNewGame(bool walkthrough = false);
 	bool startNewGameIntro(bool walkthrough = false);
-	// startNewGame(location struct)
+	bool startNewGame(const Location &startingLocation);
 	bool startNewGame(const Common::String &fileName);
 	// startNewGame(continue data, location struct);
 	bool loadGame();
@@ -62,7 +64,7 @@ public:
 
 	NavArrowWindow *_navArrowWindow;
 	LiveTextWindow *_liveTextWindow;
-	// TODO: SceneViewWindow
+	SceneViewWindow *_sceneViewWindow;
 	InventoryWindow *_inventoryWindow;
 	BioChipRightWindow *_bioChipRightWindow;
 

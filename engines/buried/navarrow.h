@@ -50,7 +50,6 @@ public:
 	void onLButtonDown(const Common::Point &point, uint flags);
 	void onKeyUp(const Common::KeyState &key, uint flags);
 
-private:
 	enum {
 		BUTTON_DISABLED = 0,
 		BUTTON_ENABLED = 1,
@@ -65,6 +64,7 @@ private:
 		NAV_BUTTON_FORWARD = 4
 	};
 
+private:
 	static const int NUM_ARROWS = 5;
 	static const int NUM_ARROW_BITMAPS = 3;
 

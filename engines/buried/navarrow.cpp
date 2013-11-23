@@ -24,10 +24,13 @@
  */
 
 #include "buried/buried.h"
+#include "buried/gameui.h"
 #include "buried/graphics.h"
+#include "buried/inventory_window.h"
 #include "buried/navarrow.h"
 #include "buried/navdata.h"
 #include "buried/resources.h"
+#include "buried/scene_view.h"
 
 #include "common/keyboard.h"
 #include "graphics/surface.h"
@@ -135,8 +138,8 @@ void NavArrowWindow::onLButtonDown(const Common::Point &point, uint flags) {
 	Common::Rect downButton(42, 71, 78, 124);
 	Common::Rect forwardButton(39, 49, 101, 91);
 
-	// TODO: Destroy info window
-	// TODO: Destroy burned letter window
+	((GameUIWindow *)_parent)->_inventoryWindow->destroyInfoWindow();
+	((GameUIWindow *)_parent)->_inventoryWindow->destroyBurnedLetterWindow();
 
 	// clone2727: This logic was broken in the original. retVal wasn't initialized.
 	bool retVal = false;
@@ -145,16 +148,16 @@ void NavArrowWindow::onLButtonDown(const Common::Point &point, uint flags) {
 	if (forwardButton.contains(point)) {
 		// If we only clicked on the forward arrow, then take care of it here
 		if (!rightButton.contains(point) && !downButton.contains(point)) {
-			// TODO
+			if (_arrowStatus[4] == BUTTON_ENABLED)
+				((GameUIWindow *)_parent)->_sceneViewWindow->moveInDirection(4);
 		} else {
 			if (rightButton.contains(point)) {
 				Graphics::Surface *centerArrow = _vm->_gfx->getBitmap(_arrowBitmaps[4][_arrowStatus[4]]);
 
-				if (_vm->_gfx->checkPointAgainstMaskedBitmap(centerArrow, 39, 49, point, 255, 255, 255)) {
-					// TODO
-				} else {
-					// TODO
-				}
+				if (_vm->_gfx->checkPointAgainstMaskedBitmap(centerArrow, 39, 49, point, 255, 255, 255))
+					((GameUIWindow *)_parent)->_sceneViewWindow->moveInDirection(4);
+				else
+					((GameUIWindow *)_parent)->_sceneViewWindow->moveInDirection(2);
 
 				centerArrow->free();
 				delete centerArrow;
@@ -163,32 +166,27 @@ void NavArrowWindow::onLButtonDown(const Common::Point &point, uint flags) {
 			if (downButton.contains(point)) {
 				Graphics::Surface *centerArrow = _vm->_gfx->getBitmap(_arrowBitmaps[4][_arrowStatus[4]]);
 
-				if (_vm->_gfx->checkPointAgainstMaskedBitmap(centerArrow, 39, 49, point, 255, 255, 255)) {
-					// TODO
-				} else {
-					// TODO
-				}
+				if (_vm->_gfx->checkPointAgainstMaskedBitmap(centerArrow, 39, 49, point, 255, 255, 255))
+					((GameUIWindow *)_parent)->_sceneViewWindow->moveInDirection(4);
+				else
+					((GameUIWindow *)_parent)->_sceneViewWindow->moveInDirection(3);
 
 				centerArrow->free();
 				delete centerArrow;
 			}
 		}
 	} else {
-		if (upButton.contains(point)) {
-			// TODO
-		}
+		if (upButton.contains(point) && _arrowStatus[0] == BUTTON_ENABLED)
+			((GameUIWindow *)_parent)->_sceneViewWindow->moveInDirection(0);
 
-		if (leftButton.contains(point)) {
-			// TODO
-		}
+		if (leftButton.contains(point) && _arrowStatus[1] == BUTTON_ENABLED)
+			((GameUIWindow *)_parent)->_sceneViewWindow->moveInDirection(1);
 
-		if (rightButton.contains(point)) {
-			// TODO
-		}
+		if (rightButton.contains(point) && _arrowStatus[2] == BUTTON_ENABLED)
+			((GameUIWindow *)_parent)->_sceneViewWindow->moveInDirection(2);
 
-		if (downButton.contains(point)) {
-			// TODO
-		}
+		if (downButton.contains(point) && _arrowStatus[3] == BUTTON_ENABLED)
+			((GameUIWindow *)_parent)->_sceneViewWindow->moveInDirection(3);
 	}
 
 	if (retVal) {
@@ -201,22 +199,27 @@ void NavArrowWindow::onKeyUp(const Common::KeyState &key, uint flags) {
 	switch (key.keycode) {
 	case Common::KEYCODE_KP4:
 	case Common::KEYCODE_LEFT:
-		// TODO
+		if (_arrowStatus[1] == BUTTON_ENABLED)
+			((GameUIWindow *)_parent)->_sceneViewWindow->moveInDirection(1);
 		break;
 	case Common::KEYCODE_KP6:
 	case Common::KEYCODE_RIGHT:
-		// TODO
+		if (_arrowStatus[2] == BUTTON_ENABLED)
+			((GameUIWindow *)_parent)->_sceneViewWindow->moveInDirection(2);
 		break;
 	case Common::KEYCODE_KP2:
 	case Common::KEYCODE_DOWN:
-		// TODO
+		if (_arrowStatus[3] == BUTTON_ENABLED)
+			((GameUIWindow *)_parent)->_sceneViewWindow->moveInDirection(3);
 		break;
 	case Common::KEYCODE_KP8:
 	case Common::KEYCODE_UP:
-		// TODO
+		if (_arrowStatus[0] == BUTTON_ENABLED)
+			((GameUIWindow *)_parent)->_sceneViewWindow->moveInDirection(0);
 		break;
 	case Common::KEYCODE_KP5:
-		// TODO
+		if (_arrowStatus[4] == BUTTON_ENABLED)
+			((GameUIWindow *)_parent)->_sceneViewWindow->moveInDirection(4);
 		break;
 	default:
 		break;

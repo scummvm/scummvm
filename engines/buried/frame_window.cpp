@@ -39,6 +39,7 @@
 #include "buried/message.h"
 #include "buried/overview.h"
 #include "buried/resources.h"
+#include "buried/scene_view.h"
 #include "buried/sound.h"
 #include "buried/title_sequence.h"
 #include "buried/video_window.h"
@@ -57,6 +58,7 @@ FrameWindow::FrameWindow(BuriedEngine *vm) : Window(vm, 0) {
 	_transitionSpeed = 2;
 	_gameInProgress = false;
 	_atMainMenu = true;
+	_reviewerMode = false;
 
 	// Retrieve the transition speed from the INI file
 	Common::String transitionConfigName = _vm->isDemo() ? "TransitionSpeed" : _vm->getString(IDS_INI_KEY_TRANS_SPEED);
@@ -341,7 +343,7 @@ bool FrameWindow::showOverview() {
 
 bool FrameWindow::setTimerPause(bool pause) {
 	if (_gameInProgress) {
-		// TODO
+		((GameUIWindow *)_mainChildWindow)->_sceneViewWindow->_paused = pause;
 		return true;
 	}
 
