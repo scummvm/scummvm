@@ -33,23 +33,27 @@ namespace Avalanche {
 class Nim {
 public:
 	Nim(AvalancheEngine *vm);
+	void resetVariables();
+	void synchronize(Common::Serializer &sz);
 	void playNim();
 
 private:
 	AvalancheEngine *_vm;
 
-	static const char * const names[2];
-	byte old[3];
-	byte stones[3];
-	byte stonePic[4][23][7]; // Picture of Nimstone.
-	byte turns;
-	bool dogfoodsTurn;
-	byte stonesLeft;
-	bool clicked;
-	byte row;
-	byte number;
-	bool squeak;
-	int8 mNum, mRow;
+	static const char * const kNames[2];
+
+	byte _old[3];
+	byte _stones[3];
+	byte _stonePic[4][23][7]; // Picture of Nimstone.
+	byte _turns;
+	bool _dogfoodsTurn;
+	byte _stonesLeft;
+	bool _clicked;
+	byte _row;
+	byte _number;
+	bool _squeak;
+	int8 _mNum, _mRow;
+	byte _playedNim; // How many times you've played Nim.
 
 	void chalk(int x,int y, Common::String z);
 	void setup();

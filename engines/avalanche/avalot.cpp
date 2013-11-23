@@ -1481,6 +1481,7 @@ void AvalancheEngine::resetVariables() {
 	_startTime = getTimeInSeconds();
 
 	_parser->resetVariables();
+	_nim->resetVariables();
 	_animation->resetVariables();
 	_sequence->resetVariables();
 	_background->resetVariables();

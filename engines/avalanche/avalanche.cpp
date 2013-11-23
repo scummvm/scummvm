@@ -213,6 +213,7 @@ const char *AvalancheEngine::getCopyrightString() const {
 void AvalancheEngine::synchronize(Common::Serializer &sz) {
 	_animation->synchronize(sz);
 	_parser->synchronize(sz);
+	_nim->synchronize(sz);
 	_sequence->synchronize(sz);
 	_background->synchronize(sz);
 

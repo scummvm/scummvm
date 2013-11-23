@@ -30,14 +30,83 @@
 
 namespace Avalanche {
 
-const char * const Nim::names[2] = {"Avalot", "Dogfood"};
+const char * const Nim::kNames[2] = {"Avalot", "Dogfood"};
 
 Nim::Nim(AvalancheEngine *vm) {
 	_vm = vm;
+
+	_playedNim = 0;
+}
+
+void Nim::resetVariables() {
+	_playedNim = 0;
+}
+
+void Nim::synchronize(Common::Serializer &sz) {
+	sz.syncAsByte(_playedNim);
 }
 
 void Nim::playNim() {
-	warning("STUB: Nim::playNim()");
+	if (_vm->_wonNim) { // Already won the game.
+		_vm->_dialogs->displayScrollChain('Q',6);
+		return;
+	}
+
+	if (!_vm->_askedDogfoodAboutNim) {
+		_vm->_dialogs->displayScrollChain('q',84);
+		return;
+	}
+
+	_vm->_dialogs->displayScrollChain('Q',3);
+	_playedNim++;
+	_vm->fadeOut();
+
+	_vm->_graphics->saveScreen();
+
+	CursorMan.showMouse(false);
+	setup();
+	board();
+	CursorMan.showMouse(true);
+
+	do {
+		startMove();
+		if (_dogfoodsTurn)
+			dogFood();
+		else
+			takeSome();
+		_stones[_row] -= _number;
+		showChanges();
+	} while (_stonesLeft != 0);
+
+	endOfGame(); // Winning sequence is A1, B3, B1, C1, C1, btw.
+
+	_vm->fadeOut();
+	CursorMan.showMouse(false);
+
+	_vm->_graphics->restoreScreen();
+	_vm->_graphics->removeBackup();
+
+	CursorMan.showMouse(true);
+	_vm->fadeIn();
+
+	if (_dogfoodsTurn) { // Dogfood won - as usual.
+		if (_playedNim == 1) // Your first game.
+			_vm->_dialogs->displayScrollChain('Q',4); // Goody! Play me again?
+		else
+			_vm->_dialogs->displayScrollChain('Q',5); // Oh, look at that! I've won again!
+		_vm->decreaseMoney(4); // And you've just lost 4d!
+	}
+	else { // You won - strange!
+		_vm->_dialogs->displayScrollChain('Q', 7);
+		_vm->_objects[kObjectLute - 1] = true;
+		_vm->refreshObjectList();
+		_vm->_wonNim = true;
+		_vm->_background->draw(-1, -1, 0); // Show the settle with no lute on it.
+		_vm->incScore(7); // 7 points for winning!
+	}
+
+	if (_playedNim == 1)
+		_vm->incScore(3); // 3 points for playing your 1st game.
 }
 
 void Nim::chalk(int x,int y, Common::String z) {

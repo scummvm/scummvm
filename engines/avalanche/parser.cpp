@@ -51,7 +51,7 @@ Parser::Parser(AvalancheEngine *vm) {
 	_thing2 = 0;
 	_sworeNum = 0;
 	_alcoholLevel = 0;
-	_playedNim = 0;
+
 	_boughtOnion = false;
 }
 
@@ -1987,44 +1987,7 @@ void Parser::doThat() {
 			// They just typed "play"...
 			switch (_vm->_room) {
 			case kRoomArgentPub:
-				// ...in the pub, => play Nim.
-				_vm->_nim->playNim();
-
-				// The following parts are copied from the original play_nim() and a little plus.
-				// The player automatically wins the game everytime he plays, until I implement the mini-game.
-				if (_vm->_wonNim) { // Already won the game.
-					_vm->_dialogs->displayScrollChain('Q', 6);
-					return;
-				}
-
-				if (!_vm->_askedDogfoodAboutNim) {
-					_vm->_dialogs->displayScrollChain('q', 84);
-					return;
-				}
-
-				_vm->_dialogs->displayScrollChain('Q', 3);
-				_playedNim++;
-
-				// You won - strange!
-
-				// You won! Give us a lute!
-				_vm->_dialogs->displayScrollChain('Q', 7);
-				_vm->_objects[kObjectLute - 1] = true;
-				_vm->refreshObjectList();
-				_vm->_wonNim = true;
-				// Show the settle with no lute on it.
-				_vm->_background->draw(-1, -1, 0);
-				// 7 points for winning!
-				_vm->incScore(7);
-
-				if (_playedNim == 1)
-					// 3 points for playing your 1st game.
-					_vm->incScore(3);
-
-				// A warning to the player that there should have been a mini-game. TODO: Remove it later!!!
-				_vm->_dialogs->displayText(Common::String("P.S.: There should have been the mini-game called \"Nim\", " \
-					"but I haven't implemented it yet: you win and get the lute automatically.")
-					+ kControlNewLine + kControlNewLine + "Peter (uruk)");
+				_vm->_nim->playNim(); // ...in the pub, => play Nim.
 				break;
 			case kRoomMusicRoom:
 				playHarp();
@@ -2501,7 +2464,6 @@ void Parser::resetVariables() {
 	_wearing = kNothing;
 	_sworeNum = 0;
 	_alcoholLevel = 0;
-	_playedNim = 0;
 	_boughtOnion = false;
 }
 
@@ -2509,7 +2471,6 @@ void Parser::synchronize(Common::Serializer &sz) {
 	sz.syncAsByte(_wearing);
 	sz.syncAsByte(_sworeNum);
 	sz.syncAsByte(_alcoholLevel);
-	sz.syncAsByte(_playedNim);
 	sz.syncAsByte(_boughtOnion);
 }
 
