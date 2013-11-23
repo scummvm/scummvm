@@ -26,6 +26,18 @@
 
 namespace Common {
 
+/**
+ * Very simple string class for UTF-32 strings in ScummVM. The main intention
+ * behind this class is to feature a simple way of displaying UTF-32 strings
+ * through the Graphics::Font API.
+ *
+ * Please note that operations like equals, deleteCharacter, toUppercase, etc.
+ * are only very simplified convenience operations. They might not fully work
+ * as you would expect for a proper UTF-32 string class.
+ *
+ * The presence of \0 characters in the string will cause undefined
+ * behavior in some operations.
+ */
 class U32String {
 public:
 	static const uint32 npos = 0xFFFFFFFF;
@@ -72,14 +84,19 @@ private:
 	}
 
 public:
+	/** Construct a new empty string. */
 	U32String() : _size(0), _str(_storage) { _storage[0] = 0; }
 
+	/** Construct a new string from the given NULL-terminated C string. */
 	explicit U32String(const value_type *str);
 
+	/** Construct a new string containing exactly len characters read from address str. */
 	U32String(const value_type *str, uint32 len);
 
+	/** Construct a new string containing the characters between beginP (including) and endP (excluding). */
 	U32String(const value_type *beginP, const value_type *endP);
 
+	/** Construct a copy of the given string. */
 	U32String(const U32String &str);
 
 	~U32String();
@@ -88,8 +105,16 @@ public:
 	U32String &operator+=(const U32String &str);
 	U32String &operator+=(value_type c);
 
+	/**
+	 * Equivalence comparison operator.
+	 * @see equals
+	 */
 	bool operator==(const U32String &x) const { return equals(x); }
 
+	/**
+	 * Compares whether two U32String are the same based on memory comparison.
+	 * This does *not* do comparison based on canonical equivalence.
+	 */
 	bool equals(const U32String &x) const;
 
 	bool contains(value_type x) const;
@@ -104,16 +129,30 @@ public:
 		return _str[idx];
 	}
 
-	/** Remove the character at position p from the string. */
+	/**
+	 * Removes the value at position p from the string.
+	 * Using this on decomposed characters will not remove the whole
+	 * character!
+	 */
 	void deleteChar(uint32 p);
 
 	/** Clears the string, making it empty. */
 	void clear();
 
-	/** Convert all characters in the string to lowercase. */
+	/**
+	 * Convert all characters in the string to lowercase.
+	 *
+	 * Be aware that this only affects the case of ASCII characters. All
+	 * other characters will not be touched at all.
+	 */
 	void toLowercase();
 
-	/** Convert all characters in the string to uppercase. */
+	/**
+	 * Convert all characters in the string to uppercase.
+	 *
+	 * Be aware that this only affects the case of ASCII characters. All
+	 * other characters will not be touched at all.
+	 */
 	void toUppercase();
 
 	uint32 find(const U32String &str, uint32 pos = 0) const;
