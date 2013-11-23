@@ -636,6 +636,8 @@ void AVIDecoder::readOldIndex(uint32 size) {
 	if (!isAbsolute)
 		firstEntry.offset += _movieListStart - 4;
 
+	_indexEntries.push_back(firstEntry);
+
 	for (uint32 i = 1; i < entryCount; i++) {
 		OldIndex indexEntry;
 		indexEntry.id = _fileStream->readUint32BE();
