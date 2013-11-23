@@ -23,6 +23,7 @@
 #define GRAPHICS_FONT_H
 
 #include "common/str.h"
+#include "common/ustr.h"
 
 namespace Common {
 template<class T> class Array;
@@ -100,11 +101,13 @@ public:
 
 	// TODO: Add doxygen comments to this
 	void drawString(Surface *dst, const Common::String &str, int x, int y, int w, uint32 color, TextAlign align = kTextAlignLeft, int deltax = 0, bool useEllipsis = true) const;
+	void drawString(Surface *dst, const Common::U32String &str, int x, int y, int w, uint32 color, TextAlign align = kTextAlignLeft) const;
 
 	/**
 	 * Compute and return the width the string str has when rendered using this font.
 	 */
 	int getStringWidth(const Common::String &str) const;
+	int getStringWidth(const Common::U32String &str) const;
 
 	/**
 	 * Take a text (which may contain newline characters) and word wrap it so that
@@ -120,6 +123,7 @@ public:
 	 * @return the maximal width of any of the lines added to lines
 	 */
 	int wordWrapText(const Common::String &str, int maxWidth, Common::Array<Common::String> &lines) const;
+	int wordWrapText(const Common::U32String &str, int maxWidth, Common::Array<Common::U32String> &lines) const;
 };
 
 } // End of namespace Graphics
