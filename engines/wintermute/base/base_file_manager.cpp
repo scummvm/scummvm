@@ -204,44 +204,56 @@ bool BaseFileManager::registerPackages() {
 			warning("getChildren() failed for path: %s", (*it).getDisplayName().c_str());
 		}
 		for (Common::FSList::iterator fileIt = files.begin(); fileIt != files.end(); ++fileIt) {
-			if (!fileIt->getName().hasSuffix(".dcp")) {
+			// To prevent any case sensitivity issues we make the filename
+			// all lowercase here. This makes the code slightly prettier
+			// than the equivalent of using equalsIgnoreCase.
+			Common::String fileName = fileIt->getName();
+			fileName.toLowercase();
+
+			if (!fileName.hasSuffix(".dcp")) {
 				continue;
 			}
 			// HACK: for Reversion1, avoid loading xlanguage_pt.dcp from the main folder:
 			if (_language != Common::PT_BRA && targetName.hasPrefix("reversion1")) {
-				if (fileIt->getName() == "xlanguage_pt.dcp") {
+				if (fileName == "xlanguage_pt.dcp") {
 					continue;
 				}
 			}
+
+			// Again, make the parent's name all lowercase to avoid any case
+			// issues.
+			Common::String parentName = fileIt->getParent().getName();
+			parentName.toLowercase();
+
 			// Avoid registering all the language files
 			// TODO: Select based on the gameDesc.
-			if (_language != Common::UNK_LANG && (fileIt->getParent().getName() == "language" || fileIt->getParent().getName() == "languages")) {
+			if (_language != Common::UNK_LANG && (parentName == "language" || parentName == "languages")) {
 				// English
-				if (_language == Common::EN_ANY && (fileIt->getName() != "english.dcp" && fileIt->getName() != "xlanguage_en.dcp")) {
+				if (_language == Common::EN_ANY && (fileName != "english.dcp" && fileName != "xlanguage_en.dcp")) {
 					continue;
 				// Chinese
-				} else if (_language == Common::ZH_CNA && (fileIt->getName() != "chinese.dcp" && fileIt->getName() != "xlanguage_nz.dcp")) {
+				} else if (_language == Common::ZH_CNA && (fileName != "chinese.dcp" && fileName != "xlanguage_nz.dcp")) {
 					continue;
 				// Czech
-				} else if (_language == Common::CZ_CZE && (fileIt->getName() != "czech.dcp" && fileIt->getName() != "xlanguage_cz.dcp")) {
+				} else if (_language == Common::CZ_CZE && (fileName != "czech.dcp" && fileName != "xlanguage_cz.dcp")) {
 					continue;
 				// French
-				} else if (_language == Common::FR_FRA && (fileIt->getName() != "french.dcp" && fileIt->getName() != "xlanguage_fr.dcp")) {
+				} else if (_language == Common::FR_FRA && (fileName != "french.dcp" && fileName != "xlanguage_fr.dcp")) {
 					continue;
 				// German
-				} else if (_language == Common::DE_DEU && (fileIt->getName() != "german.dcp" && fileIt->getName() != "xlanguage_de.dcp")) {
+				} else if (_language == Common::DE_DEU && (fileName != "german.dcp" && fileName != "xlanguage_de.dcp")) {
 					continue;
 				// Italian
-				} else if (_language == Common::IT_ITA && (fileIt->getName() != "italian.dcp" && fileIt->getName() != "xlanguage_it.dcp")) {
+				} else if (_language == Common::IT_ITA && (fileName != "italian.dcp" && fileName != "xlanguage_it.dcp")) {
 					continue;
 				// Polish
-				} else if (_language == Common::PL_POL && (fileIt->getName() != "polish.dcp" && fileIt->getName() != "xlanguage_po.dcp")) {
+				} else if (_language == Common::PL_POL && (fileName != "polish.dcp" && fileName != "xlanguage_po.dcp")) {
 					continue;
 				// Portuguese
-				} else if (_language == Common::PT_BRA && (fileIt->getName() != "portuguese.dcp" && fileIt->getName() != "xlanguage_pt.dcp")) {
+				} else if (_language == Common::PT_BRA && (fileName != "portuguese.dcp" && fileName != "xlanguage_pt.dcp")) {
 					continue;
 				// Russian
-				} else if (_language == Common::RU_RUS && (fileIt->getName() != "russian.dcp" && fileIt->getName() != "xlanguage_ru.dcp")) {
+				} else if (_language == Common::RU_RUS && (fileName != "russian.dcp" && fileName != "xlanguage_ru.dcp")) {
 					continue;
 				}
 			}
