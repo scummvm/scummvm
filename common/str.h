@@ -235,6 +235,11 @@ public:
 
 public:
 	typedef char          value_type;
+	/**
+	 * Unsigned version of the underlying type. This can be used to cast
+	 * individual string characters to bigger integer types without sign
+	 * extension happening.
+	 */
 	typedef unsigned char unsigned_type;
 	typedef char *        iterator;
 	typedef const char *  const_iterator;
