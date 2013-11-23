@@ -47,6 +47,20 @@ public:
 	int _openingSoundID;
 };
 
+class PlayStingers : public SceneBase {
+public:
+	PlayStingers(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+			int stingerVolume = 127, int lastStingerFlagOffset = -1, int effectIDFlagOffset = -1, int firstStingerFileID = -1, int lastStingerFileID = -1);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
+
+private:
+	int _stingerVolume;
+	int _lastStingerFlagOffset;
+	int _effectIDFlagOffset;
+	int _firstStingerFileID;
+	int _lastStingerFileID;
+};
+
 } // End of namespace Buried
 
 #endif

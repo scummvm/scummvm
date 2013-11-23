@@ -92,8 +92,8 @@ struct GlobalFlags {
 	byte faERTakenRemoteControl;        // 52
 	byte myMCStingerID;                 // 53
 	byte myMCStingerChannelID;          // 54
-	byte myFAStingerID;                 // 55
-	byte myFAStingerChannelID;          // 56
+	byte faStingerID;                   // 55
+	byte faStingerChannelID;            // 56
 	byte unused0[3];                    // 57-59
 	uint32 cgMWCatapultData;            // 60-63
 	uint32 cgMWCatapultOffset;          // 64-67
