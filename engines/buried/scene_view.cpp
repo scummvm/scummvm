@@ -1026,6 +1026,7 @@ bool SceneViewWindow::walkTransition(const Location &location, const Destination
 	// Start the footsteps
 	_vm->_sound->startFootsteps(destinationData.transitionData);
 
+	_walkMovie->playToFrame(destinationData.transitionStartFrame + destinationData.transitionLength - 1);
 	while (!_vm->shouldQuit() && _walkMovie->getMode() != VideoWindow::kModeStopped) {
 		_vm->yield();
 		_vm->_sound->timerCallback();
