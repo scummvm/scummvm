@@ -263,7 +263,7 @@ void EditableWidget::drawCaret(bool erase) {
 
 	x += getCaretOffset();
 
-	if (y < 0 || y + editRect.height() - 2 >= _h)
+	if (y < 0 || y + editRect.height() - 2 > _h)
 		return;
 
 	x += getAbsX();
