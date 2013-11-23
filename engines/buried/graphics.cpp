@@ -461,9 +461,9 @@ bool GraphicsManager::checkPointAgainstMaskedBitmap(const Graphics::Surface *bit
 		uint32 color;
 
 		if (bitmap->format.bytesPerPixel == 2)
-			color = *((uint16 *)bitmap->getBasePtr(point.x + x, point.y + y));
+			color = *((uint16 *)bitmap->getBasePtr(point.x - x, point.y - y));
 		else
-			color = *((uint32 *)bitmap->getBasePtr(point.x + x, point.y + y));
+			color = *((uint32 *)bitmap->getBasePtr(point.x - x, point.y - y));
 
 		return transColor != color;
 	} else {
@@ -478,7 +478,7 @@ bool GraphicsManager::checkPointAgainstMaskedBitmap(const Graphics::Surface *bit
 
 		assert(paletteIndex >= 0);
 
-		return *((const byte *)bitmap->getBasePtr(point.x + x, point.y + y)) != paletteIndex;
+		return *((const byte *)bitmap->getBasePtr(point.x - x, point.y - y)) != paletteIndex;
 	}
 }
 
