@@ -357,6 +357,8 @@ namespace Buried {
 // 1.04+:
 #define IDS_PLAY_MODE_WALKTHROUGH_TEXT  9085
 #define IDS_PLAY_MODE_NORMAL_TEXT       9086
+#define IDS_OLD_APT_RECALL_MESSAGE      9088
+
 
 #define IDES_FILENAME_BASE              17408
 #define IDES_STRING_BASE                21504
