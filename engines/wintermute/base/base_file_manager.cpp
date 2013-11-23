@@ -291,8 +291,6 @@ Common::SeekableReadStream *BaseFileManager::openPkgFile(const Common::String &f
 	Common::String upcName = filename;
 	upcName.toUppercase();
 	Common::SeekableReadStream *file = nullptr;
-	char fileName[MAX_PATH_LENGTH];
-	Common::strlcpy(fileName, upcName.c_str(), MAX_PATH_LENGTH);
 
 	// correct slashes
 	for (uint32 i = 0; i < upcName.size(); i++) {
