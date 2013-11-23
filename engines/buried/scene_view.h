@@ -201,6 +201,10 @@ private:
 	// Castle
 	bool initializeCastleTimeZoneAndEnvironment(Window *viewWindow, int environment);
 	SceneBase *constructCastleSceneObject(Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+
+	// Future Apartment
+	bool startFutureApartmentAmbient(int oldTimeZone, int oldEnvironment, int environment, bool fade);
+	SceneBase *constructFutureApartmentSceneObject(Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
 };
 
 } // End of namespace Buried
