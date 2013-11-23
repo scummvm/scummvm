@@ -290,7 +290,7 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		// Confrontation
 		return new Scene3400();
 	case 3500:
-		// Maze action sequencec
+		// Flub tube maze 
 		return new Scene3500();
 	case 3600:
 		// Cutscene - walking at gunpoint
