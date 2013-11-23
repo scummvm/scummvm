@@ -37,6 +37,7 @@
 #include "buried/frame_window.h"
 #include "buried/graphics.h"
 #include "buried/message.h"
+#include "buried/resources.h"
 #include "buried/sound.h"
 #include "buried/video_window.h"
 #include "buried/window.h"
@@ -381,6 +382,22 @@ void BuriedEngine::setTransitionSpeed(int newSpeed) {
 
 uint32 BuriedEngine::getVersion() {
 	return _mainEXE->getVersion();
+}
+
+Common::String BuriedEngine::getFilePath(int timeZone, int environment, int fileOffset) {
+	return getFilePath(RESID_FILENAMES_BASE + RESOFFSET_FILENAME_TIMEZONE * timeZone + RESOFFSET_FILENAME_ENVIRON * environment + fileOffset);
+}
+
+uint32 BuriedEngine::computeNavDBResourceID(int timeZone, int environment) {
+	return RESID_NAVDB_BASE + RESOFFSET_NAVDB_TIMEZONE * timeZone + environment;
+}
+
+uint32 BuriedEngine::computeAnimDBResourceID(int timeZone, int environment) {
+	return RESID_ANIMDB_BASE + RESOFFSET_ANIMDB_TIMEZONE * timeZone + environment; 
+}
+
+uint32 BuriedEngine::computeAIDBResourceID(int timeZone, int environment) {
+	return RESID_AI_DB_BASE + RESOFFSET_AI_DB_TIMEZONE * timeZone + environment;
 }
 
 } // End of namespace Buried

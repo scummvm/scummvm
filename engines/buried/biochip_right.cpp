@@ -25,12 +25,15 @@
 
 #include "buried/buried.h"
 #include "buried/biochip_right.h"
+#include "buried/biochip_view.h"
 #include "buried/gameui.h"
 #include "buried/graphics.h"
 #include "buried/invdata.h"
+#include "buried/inventory_window.h"
 #include "buried/livetext.h"
 #include "buried/navarrow.h"
 #include "buried/resources.h"
+#include "buried/scene_view.h"
 #include "buried/sound.h"
 #include "buried/video_window.h"
 
@@ -61,9 +64,8 @@ bool BioChipRightWindow::changeCurrentBioChip(int bioChipID) {
 	if (bioChipID != kItemBioChipTranslate)
 		((GameUIWindow *)_parent)->_liveTextWindow->translateBiochipClosing();
 
-	// TODO
-	//if (bioChipID != kItemBioChipEvidence)
-	//	;
+	if (bioChipID != kItemBioChipEvidence)
+		((GameUIWindow *)_parent)->_sceneViewWindow->getGlobalFlags().bcLocateEnabled = 0;
 
 	if (_bioChipViewWindow)
 		destroyBioChipViewWindow();
@@ -71,7 +73,7 @@ bool BioChipRightWindow::changeCurrentBioChip(int bioChipID) {
 	_curBioChip = bioChipID;
 	_status = 0;
 
-	// TODO: Set the translate enabled flag to false
+	((GameUIWindow *)_parent)->_sceneViewWindow->getGlobalFlags().bcTranslateEnabled = 0;
 
 	invalidateWindow(false);
 	return true;
@@ -81,14 +83,15 @@ bool BioChipRightWindow::showBioChipMainView() {
 	if (_bioChipViewWindow)
 		return false;
 
-	// TODO: Notify the view of the change
+	((GameUIWindow *)_parent)->_sceneViewWindow->bioChipWindowDisplayed(true);
 	_vm->_sound->timerCallback();
 
-	// TODO: Destroy info window
-	// TODO: Destroy burned letter window
+	((GameUIWindow *)_parent)->_inventoryWindow->destroyInfoWindow();
+	((GameUIWindow *)_parent)->_inventoryWindow->destroyBurnedLetterWindow();
 	_vm->_sound->timerCallback();
 
-	// TODO: BioChip main view window (child to scene view)
+	_bioChipViewWindow = new BioChipMainViewWindow(_vm, ((GameUIWindow *)_parent)->_sceneViewWindow, _curBioChip);
+	_bioChipViewWindow->showWindow(kWindowShow);
 	_vm->_sound->timerCallback();
 
 	return true;
@@ -103,7 +106,7 @@ bool BioChipRightWindow::destroyBioChipViewWindow() {
 	_bioChipViewWindow = 0;
 	_vm->_sound->timerCallback();
 
-	// TODO: Signal the change to the scene view window
+	((GameUIWindow *)_parent)->_sceneViewWindow->bioChipWindowDisplayed(false);
 
 	if (_status == 1) {
 		_status = 0;
@@ -121,7 +124,7 @@ void BioChipRightWindow::sceneChanged() {
 void BioChipRightWindow::disableEvidenceCapture() {
 	if (_curBioChip == kItemBioChipEvidence) {
 		_status = 0;
-		// TODO: Disable locate flag
+		((GameUIWindow *)_parent)->_sceneViewWindow->getGlobalFlags().bcLocateEnabled = 0;
 		invalidateWindow(false);
 	}
 }
@@ -145,9 +148,8 @@ void BioChipRightWindow::onPaint() {
 
 	switch (_curBioChip) {
 	case kItemBioChipAI: {
-		// TODO: Check scene view for help/information comment
-		bool helpComment = _forceHelp || false;
-		bool information = _forceComment || false;
+		bool helpComment = _forceHelp || ((GameUIWindow *)_parent)->_sceneViewWindow->checkForAIComment(AI_COMMENT_TYPE_HELP);
+		bool information = _forceComment || ((GameUIWindow *)_parent)->_sceneViewWindow->checkForAIComment(AI_COMMENT_TYPE_INFORMATION);
 
 		if (helpComment) {
 			if (information)
@@ -190,10 +192,19 @@ void BioChipRightWindow::onPaint() {
 		else
 			bitmapResID = (_status == 0) ? 12 : 13;
 		break;
-	case kItemBioChipJump:
-		// TODO
+	case kItemBioChipJump: {
+		Location currentLocation;
 		bitmapResID = 14;
+
+		if (_status != 0)
+			bitmapResID += 2;
+
+		if (((GameUIWindow *)_parent)->_sceneViewWindow->getCurrentSceneLocation(currentLocation))
+			if (currentLocation.timeZone == 4)
+				bitmapResID++;
+
 		break;
+	}
 	case kItemBioChipTranslate:
 		bitmapResID = (_status == 0) ? 18 : 19;
 		break;
@@ -222,7 +233,11 @@ void BioChipRightWindow::onLButtonUp(const Common::Point &point, uint flags) {
 
 	switch (_curBioChip) {
 	case kItemBioChipAI:
-		// TODO
+		if (upperButton.contains(point) && ((GameUIWindow *)_parent)->_sceneViewWindow->playAIComment(AI_COMMENT_TYPE_HELP))
+			invalidateWindow(false);
+
+		if (lowerButton.contains(point) && ((GameUIWindow *)_parent)->_sceneViewWindow->playAIComment(AI_COMMENT_TYPE_INFORMATION))
+			invalidateWindow(false);
 		break;
 	case kItemBioChipCloak:
 		if (upperButton.contains(point)) {
@@ -251,10 +266,18 @@ void BioChipRightWindow::onLButtonUp(const Common::Point &point, uint flags) {
 
 				invalidateWindow(false);
 
-				// TODO: Set cloaking flag
-				// TODO: Disable some controls
+				((GameUIWindow *)_parent)->_sceneViewWindow->getGlobalFlags().bcCloakingEnabled = 1;
+				((GameUIWindow *)_parent)->_inventoryWindow->enableWindow(false);
+				((GameUIWindow *)_parent)->_sceneViewWindow->enableWindow(false);
 				((GameUIWindow *)_parent)->_navArrowWindow->enableWindow(false);
-				// TODO: Change live text
+
+				Location currentLocation;
+				((GameUIWindow *)_parent)->_sceneViewWindow->getCurrentSceneLocation(currentLocation);
+
+				if (currentLocation.timeZone == 10)
+					((GameUIWindow *)_parent)->_sceneViewWindow->displayLiveText(_vm->getString(IDS_CLOAK_BIOCHIP_AUTO_ACTIVATE));
+				else
+					((GameUIWindow *)_parent)->_sceneViewWindow->displayLiveText(_vm->getString(IDS_CLOAK_BIOCHIP_ACTIVATE));
 			} else {
 				_status = 0;
 
@@ -278,11 +301,11 @@ void BioChipRightWindow::onLButtonUp(const Common::Point &point, uint flags) {
 
 				invalidateWindow(false);
 
-				// TODO: Set cloaking flag
-				// TODO: Enable navigation
-				// TODO: Enable inventory controls
+				((GameUIWindow *)_parent)->_sceneViewWindow->getGlobalFlags().bcCloakingEnabled = 0;
+				((GameUIWindow *)_parent)->_inventoryWindow->enableWindow(true);
+				((GameUIWindow *)_parent)->_sceneViewWindow->enableWindow(true);
 				((GameUIWindow *)_parent)->_navArrowWindow->enableWindow(true);
-				// TODO: Change live text
+				((GameUIWindow *)_parent)->_sceneViewWindow->displayLiveText(_vm->getString(IDS_CLOAK_BIOCHIP_DEACTIVATE));
 			}
 		}
 		break;
@@ -290,12 +313,12 @@ void BioChipRightWindow::onLButtonUp(const Common::Point &point, uint flags) {
 		if (upperButton.contains(point)) {
 			if (_status == 1) {
 				_status = 0;
-				// TODO
+				((GameUIWindow *)_parent)->_sceneViewWindow->getGlobalFlags().bcLocateEnabled = 0;
 				invalidateWindow(false);
 			} else {
 				destroyBioChipViewWindow();
 				_status = 1;
-				// TODO
+				((GameUIWindow *)_parent)->_sceneViewWindow->getGlobalFlags().bcLocateEnabled = 1;
 				invalidateWindow(false);
 			}
 		} else if (lowerButton.contains(point)) {
@@ -306,7 +329,7 @@ void BioChipRightWindow::onLButtonUp(const Common::Point &point, uint flags) {
 			} else {
 				showBioChipMainView();
 				_status = 2;
-				// TODO
+				((GameUIWindow *)_parent)->_sceneViewWindow->getGlobalFlags().bcLocateEnabled = 0;
 				invalidateWindow(false);
 			}
 		}
@@ -349,7 +372,17 @@ void BioChipRightWindow::onLButtonUp(const Common::Point &point, uint flags) {
 				invalidateWindow(false);
 			}
 		} else if (lowerButton.contains(point)) {
-			// TODO
+			Location currentLocation;
+			if (((GameUIWindow *)_parent)->_sceneViewWindow->getCurrentSceneLocation(currentLocation)) {
+				if (currentLocation.timeZone != 4) {
+					_status = 0;
+					destroyBioChipViewWindow();
+					((GameUIWindow *)_parent)->_inventoryWindow->destroyInfoWindow();
+					((GameUIWindow *)_parent)->_inventoryWindow->destroyBurnedLetterWindow();
+					invalidateWindow(false);
+					((GameUIWindow *)_parent)->_sceneViewWindow->timeSuitJump(4);
+				}
+			}
 		}
 		break;
 	case kItemBioChipTranslate:
@@ -358,13 +391,15 @@ void BioChipRightWindow::onLButtonUp(const Common::Point &point, uint flags) {
 				_status = 1;
 				invalidateWindow(false);
 
-				// TODO: Reset global flag
-				// TODO: Redraw the scene window
+				((GameUIWindow *)_parent)->_sceneViewWindow->getGlobalFlags().bcTranslateEnabled = 1;
+				((GameUIWindow *)_parent)->_sceneViewWindow->invalidateWindow(false);
 			} else {
 				_status = 0;
+				invalidateWindow(false);
 
-				// TODO: Reset global flag
-				// TODO: Redraw the scene window
+				((GameUIWindow *)_parent)->_sceneViewWindow->getGlobalFlags().bcTranslateEnabled = 0;
+				((GameUIWindow *)_parent)->_liveTextWindow->translateBiochipClosing();
+				((GameUIWindow *)_parent)->_sceneViewWindow->invalidateWindow(false);
 			}
 		}
 		break;

@@ -63,6 +63,10 @@ public:
 
 	int getTransitionSpeed() const { return _transitionSpeed; }
 	void setTransitionSpeed(int newSpeed);
+	bool isFrameCyclingDefault() const { return _cycleDefault; }
+	bool isFrameCachingAllowed() const { return _cacheFrames; }
+
+	bool _reviewerMode;
 
 private:
 	Window *_mainChildWindow;

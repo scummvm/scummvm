@@ -25,10 +25,13 @@
 
 #include "buried/avi_frames.h"
 #include "buried/buried.h"
+#include "buried/gameui.h"
 #include "buried/graphics.h"
 #include "buried/invdata.h"
 #include "buried/inventory_info.h"
+#include "buried/inventory_window.h"
 #include "buried/resources.h"
+#include "buried/scene_view.h"
 #include "buried/video_window.h"
 
 #include "graphics/font.h"
@@ -75,9 +78,8 @@ bool InventoryInfoWindow::changeCurrentItem(int newItemID) {
 
 	_videoWindow->playToFrame(_spinStart + _spinLength);
 
-	if (_currentItemID == kItemLensFilter) {
-		// TODO: Set scoring flag
-	}
+	if (_currentItemID == kItemLensFilter)
+		((GameUIWindow *)(_parent->getParent()))->_sceneViewWindow->getGlobalFlags().scoreResearchLensFilter = 1;
 
 	return true;
 }
@@ -111,7 +113,7 @@ bool InventoryInfoWindow::onEraseBackground() {
 }
 
 void InventoryInfoWindow::onLButtonUp(const Common::Point &point, uint flags) {
-	// TODO: Destroy window
+	((GameUIWindow *)(_parent->getParent()))->_inventoryWindow->destroyInfoWindow();
 }
 
 void InventoryInfoWindow::onTimer(uint timer) {
@@ -145,7 +147,7 @@ BurnedLetterViewWindow::BurnedLetterViewWindow(BuriedEngine *vm, Window *parent,
 
 	_rebuildPage = true;
 
-	// TODO: Scoring for reading the letter
+	((GameUIWindow *)(_parent->getParent()))->_sceneViewWindow->getGlobalFlags().readBurnedLetter = 1;
 }
 
 BurnedLetterViewWindow::~BurnedLetterViewWindow() {
@@ -172,7 +174,7 @@ void BurnedLetterViewWindow::onPaint() {
 	byte transValue = _vm->isDemo() ? 2 : 0;
 	_vm->_gfx->opaqueTransparentBlit(_vm->_gfx->getScreen(), absoluteRect.left, absoluteRect.top, absoluteRect.width(), absoluteRect.height(), _preBuffer, 0, 0, 0, transValue, transValue, transValue);
 
-	if (_curLineIndex >= 0 && false) { // TODO: Translation
+	if (_curLineIndex >= 0 && ((SceneViewWindow *)_parent)->getGlobalFlags().bcTranslateEnabled == 1) {
 		int numLines = _viewLineCount[_curView];
 		uint32 boxColor = _vm->_gfx->getColor(255, 0, 0);
 		Common::Rect box(1, (187 / numLines) * _curLineIndex, 430, (187 / numLines) * (_curLineIndex + 1) - 1);
@@ -231,15 +233,32 @@ void BurnedLetterViewWindow::onLButtonUp(const Common::Point &point, uint flags)
 		_vm->_gfx->setCursor(oldCursor);
 	}
 
-	if (_putDown.contains(point)) {
-		// TODO: Destroy the window
-	}
+	if (_putDown.contains(point))
+		((GameUIWindow *)(_parent->getParent()))->_inventoryWindow->destroyBurnedLetterWindow();
 }
 
 void BurnedLetterViewWindow::onMouseMove(const Common::Point &point, uint flags) {
 	_curMousePos = point;
 
-	// TODO: Translation
+	if (((SceneViewWindow *)_parent)->getGlobalFlags().bcTranslateEnabled == 1) {
+		int lineCount = _viewLineCount[_curView];
+		int textLineNumber = 0;
+		for (int i = 0; i < _curView; i++)
+			textLineNumber += _viewLineCount[i];
+
+		int lineIndex = ((point.y - 2) / (187 / lineCount));
+		if (lineIndex > (lineCount - 1))
+			lineIndex = lineCount - 1;
+
+		if (_curLineIndex != lineIndex) {
+			_curLineIndex = lineIndex;
+			invalidateWindow(false);
+
+			Common::String translatedText = _vm->getString(_translatedTextResourceID + textLineNumber + _curLineIndex);
+			((SceneViewWindow *)_parent)->displayTranslationText(translatedText);
+			return;
+		}
+	}
 
 	// Since translation was not enabled, check the current line flag
 	if (_curLineIndex != -1) {

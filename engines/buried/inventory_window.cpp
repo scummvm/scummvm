@@ -32,6 +32,7 @@
 #include "buried/inventory_window.h"
 #include "buried/message.h"
 #include "buried/resources.h"
+#include "buried/scene_view.h"
 
 #include "common/algorithm.h"
 #include "graphics/font.h"
@@ -164,7 +165,40 @@ bool InventoryWindow::addItem(int itemID) {
 	rebuildPreBuffer();
 	invalidateWindow(false);
 
-	// TODO: Scoring flags
+	// Update scoring flags
+	GlobalFlags &globalFlags = ((GameUIWindow *)_parent)->_sceneViewWindow->getGlobalFlags();
+
+	switch (itemID) {
+	case kItemBioChipTranslate:
+		globalFlags.scoreGotTranslateBioChip = 1;
+		break;
+	case kItemBioChipAI:
+		globalFlags.scoreDownloadedArthur = 1;
+		break;
+	case kItemCopperKey:
+		globalFlags.scoreGotKeyFromSmithy = 1;
+		break;
+	case kItemSiegeCycle:
+		globalFlags.scoreMadeSiegeCycle = 1;
+		globalFlags.genHadSiegeCycle = 1;
+		break;
+	case kItemJadeBlock:
+		globalFlags.scoreGotWealthGodPiece = 1;
+		break;
+	case kItemLimestoneBlock:
+		globalFlags.scoreGotRainGodPiece = 1;
+		break;
+	case kItemObsidianBlock:
+		globalFlags.scoreGotWarGodPiece = 1;
+		break;
+	case kItemDriveAssembly:
+		globalFlags.genHadDriveAssembly = 1;
+		break;
+	case kItemWheelAssembly:
+		globalFlags.genHadWheelAssembly = 1;
+		break;
+	}
+
 	return true;
 }
 
@@ -237,7 +271,14 @@ bool InventoryWindow::displayBurnedLetterWindow() {
 	if (_letterViewWindow)
 		return true;
 
-	// TODO
+	Location currentLocation;
+	LocationStaticData currentSceneStaticData;
+	((GameUIWindow *)_parent)->_sceneViewWindow->getCurrentSceneLocation(currentLocation);
+	((GameUIWindow *)_parent)->_sceneViewWindow->getSceneStaticData(currentLocation, currentSceneStaticData);
+
+	_letterViewWindow = new BurnedLetterViewWindow(_vm, ((GameUIWindow *)_parent)->_sceneViewWindow, currentSceneStaticData);
+	((GameUIWindow *)_parent)->_sceneViewWindow->burnedLetterWindowDisplayed(true);
+	_letterViewWindow->setWindowPos(kWindowPosTop, 0, 0, 0, 0, kWindowPosShowWindow | kWindowPosNoMove | kWindowPosNoSize);
 
 	return true;
 }
@@ -249,7 +290,7 @@ bool InventoryWindow::destroyBurnedLetterWindow() {
 	delete _letterViewWindow;
 	_letterViewWindow = 0;
 
-	// TODO: Notify the scene view window
+	((GameUIWindow *)_parent)->_sceneViewWindow->burnedLetterWindowDisplayed(false);
 
 	return true;
 }
@@ -336,14 +377,35 @@ void InventoryWindow::onLButtonDown(const Common::Point &point, uint flags) {
 			return;
 		}
 
-		if (true) { // TODO: Check for auxilary window
+		if (!((GameUIWindow *)_parent)->_sceneViewWindow->isAuxWindowDisplayed()) {
 			if (itemID == kItemBurnedLetter) {
 				displayBurnedLetterWindow();
 				return;
 			}
 
 			if (itemID == kItemLensFilter) {
-				// TODO
+				if (((GameUIWindow *)_parent)->_sceneViewWindow->getGlobalFlags().generalWalkthroughMode == 1) {
+					((GameUIWindow *)_parent)->_sceneViewWindow->displayLiveText(_vm->getString(IDS_LENS_FILTER_ATTACHED));
+					((GameUIWindow *)_parent)->_sceneViewWindow->getGlobalFlags().lensFilterActivated = 1;
+					return;
+				}
+	
+				if (((GameUIWindow *)_parent)->_sceneViewWindow->getGlobalFlags().lensFilterActivated == 0) {
+					((GameUIWindow *)_parent)->_sceneViewWindow->getGlobalFlags().lensFilterActivated = 1;
+					((GameUIWindow *)_parent)->_sceneViewWindow->displayLiveText(_vm->getString(IDS_LENS_FILTER_ATTACHED));
+				} else {
+					// Deny removing the filter in the alien space ship
+					Location currentLocation;
+					((GameUIWindow *)_parent)->_sceneViewWindow->getCurrentSceneLocation(currentLocation);
+			
+					if (currentLocation.timeZone == 7) {
+						((GameUIWindow *)_parent)->_sceneViewWindow->displayLiveText(_vm->getString(IDS_LENS_FILTER_DENY_REMOVAL));
+					} else {
+						((GameUIWindow *)_parent)->_sceneViewWindow->getGlobalFlags().lensFilterActivated = 0;
+						((GameUIWindow *)_parent)->_sceneViewWindow->displayLiveText(_vm->getString(IDS_LENS_FILTER_REMOVED));
+					}
+				}
+
 				return;
 			}
 
@@ -391,7 +453,7 @@ void InventoryWindow::onLButtonDown(const Common::Point &point, uint flags) {
 			// TODO: SetCapture();
 
 			onSetCursor(kMessageTypeLButtonDown);
-			// TODO: Change sprite status
+			((GameUIWindow *)_parent)->_sceneViewWindow->changeSpriteStatus(true);
 			onMouseMove(point, 0);
 		}
 	}
@@ -449,7 +511,9 @@ void InventoryWindow::onLButtonUp(const Common::Point &point, uint flags) {
 		if (_infoWindow) {
 			destroyInfoWindow();
 		} else {
-			// TODO: Create window
+			_infoWindow = new InventoryInfoWindow(_vm, ((GameUIWindow *)_parent)->_sceneViewWindow, _itemArray[_curItem]);
+			((GameUIWindow *)_parent)->_sceneViewWindow->infoWindowDisplayed(true);
+			_infoWindow->setWindowPos(kWindowPosTop, 0, 0, 0, 0, kWindowPosShowWindow | kWindowPosNoMove | kWindowPosNoSize);
 			_magSelected = true;
 			redraw = true;
 		}
@@ -564,7 +628,7 @@ bool InventoryWindow::destroyInfoWindow() {
 	delete _infoWindow;
 	_infoWindow = 0;
 
-	// TODO: Notify the scene view
+	((GameUIWindow *)_parent)->_sceneViewWindow->infoWindowDisplayed(false);
 
 	_magSelected = false;
 	rebuildPreBuffer();

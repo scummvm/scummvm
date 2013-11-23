@@ -30,6 +30,10 @@
 #include "buried/sprtdata.h"
 #include "buried/window.h"
 
+namespace Graphics {
+class Font;
+}
+
 namespace Buried {
 
 class AVIFrames;
