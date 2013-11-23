@@ -28,6 +28,7 @@
 #include "buried/scene_view.h"
 #include "buried/sound.h"
 #include "buried/environ/scene_base.h"
+#include "buried/environ/scene_common.h"
 
 namespace Buried {
 
@@ -38,6 +39,11 @@ bool SceneViewWindow::startFutureApartmentAmbient(int oldTimeZone, int oldEnviro
 
 SceneBase *SceneViewWindow::constructFutureApartmentSceneObject(Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) {
 	// TODO
+
+	switch (sceneStaticData.classID) {
+	case 30:
+		return new PlayStingers(_vm, viewWindow, sceneStaticData, priorLocation, 128, offsetof(GlobalFlags, faStingerID), offsetof(GlobalFlags, faStingerChannelID), 10, 14); 
+	}
 
 	warning("TODO: Future apartment scene object %d", sceneStaticData.classID);
 
