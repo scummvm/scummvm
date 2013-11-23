@@ -32,16 +32,20 @@
 #include "common/tokenizer.h"
 #define SCENGINE _engine->getGame()->_scEngine
 #define DEBUGGER _engine->getConsole()
-#define DBG_PATH "dbg"
 
 namespace Wintermute {
 
-SourceFile::SourceFile(const Common::String &filename) {
+SourceFile::SourceFile(const Common::String &filename, const Common::String &sourcePath) {
 
 	_err = 0;
 
 	Common::String dst;
-	dst = Common::String(DBG_PATH) + Common::String("\\") + filename;
+	
+	if (sourcePath == Common::String("")) {
+		_err = 1;
+	};
+	// TODO: Make sure source path is correctly set or bail out.
+	dst = sourcePath + Common::String("\\") + filename;
 
 	Common::SeekableReadStream *file = BaseFileManager::getEngineInstance()->openFile(dst);
 
@@ -152,24 +156,33 @@ int DebuggerAdapter::isBreakpointLegal(const char *filename, int line) {
 		return NO_SUCH_SCRIPT;
 	}
 
-	SourceFile sf(filename);
 	int error = OK;
-	sf.getLine(line, &error);
-
-	if (!error) {
-		if (sf.isBlank(line)) {
-			return IS_BLANK;
-		} else {
-			return OK;
-		}
-	} else if (error == SourceFile::NO_SUCH_SOURCE || error == SourceFile::COULD_NOT_OPEN) {
-		// Okay, this does not tell us much, except that we don't have the SOURCE file.
-		// TODO: Check if the bytecode is there, at least
-		return NO_SUCH_SOURCE;
-	} else if (error == NO_SUCH_LINE) {
-		return NO_SUCH_LINE; // There is apparently no such line in the SOURCE file.
-	} else {
+	if (_sourcePath == Common::String("")) {
+		// So... source path not set. 
+		error = SOURCE_PATH_NOT_SET;
 		return error;
+	} else {
+		SourceFile sf(filename, _sourcePath);
+		sf.getLine(line, &error);
+
+
+		if (!error) {
+			if (sf.isBlank(line)) {
+				return IS_BLANK;
+			} else {
+				return OK;
+			}
+		} else if (error == SOURCE_PATH_NOT_SET) {
+			return SOURCE_PATH_NOT_SET;
+		} else if (error == SourceFile::NO_SUCH_SOURCE || error == SourceFile::COULD_NOT_OPEN) {
+			// Okay, this does not tell us much, except that we don't have the SOURCE file.
+			// TODO: Check if the bytecode is there, at least
+			return NO_SUCH_SOURCE;
+		} else if (error == NO_SUCH_LINE) {
+			return NO_SUCH_LINE; // There is apparently no such line in the SOURCE file.
+		} else {
+			return error;
+		}
 	}
 }
 
@@ -284,7 +297,7 @@ bool DebuggerAdapter::triggerBreakpoint(ScScript *script) {
 	_lastScript = script;
 	_lastLine = script->_currentLine;
 	delete _lastSource;
-	_lastSource = new SourceFile(script->_filename);
+	_lastSource = new SourceFile(script->_filename, _sourcePath);
 	DEBUGGER->notifyBreakpoint(script->dbgGetFilename(), script->_currentLine);
 	return 1;
 }
@@ -294,7 +307,7 @@ bool DebuggerAdapter::triggerStep(ScScript *script) {
 	_lastScript = script; // If script has changed do we still care?
 	_lastLine = script->_currentLine;
 	delete _lastSource;
-	_lastSource = new SourceFile(script->_filename);
+	_lastSource = new SourceFile(script->_filename, _sourcePath);
 	DEBUGGER->notifyStep(script->dbgGetFilename(), script->_currentLine);
 	return 1;
 }
@@ -304,7 +317,7 @@ bool DebuggerAdapter::triggerWatch(ScScript *script, const char *symbol) {
 	_lastScript = script; // If script has changed do we still care?
 	_lastLine = script->_currentLine;
 	delete _lastSource;
-	_lastSource = new SourceFile(script->_filename);
+	_lastSource = new SourceFile(script->_filename, _sourcePath);
 	DEBUGGER->notifyWatch(script->dbgGetFilename(), symbol, script->resolveName(symbol)->getString());
 	return 1;
 }
@@ -604,6 +617,9 @@ int32 DebuggerAdapter::getLastLine() {
 }
 
 int DebuggerAdapter::setSourcePath(Common::String sourcePath) {
+	if (sourcePath == Common::String("")) {
+		return NOT_ALLOWED;
+	}
 	// TODO: check if path is legal
 	_sourcePath = sourcePath;
 	return OK;

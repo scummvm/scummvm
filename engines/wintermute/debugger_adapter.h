@@ -35,7 +35,9 @@ class ScValue;
 class SourceFile {
 private:
 	Common::Array<Common::String> _strings;
+	Common::String _sourcePath;
 	bool _err;
+
 public:
 	enum ErrorCode {
 		OK,
@@ -44,9 +46,10 @@ public:
 		NO_SUCH_LINE,
 		NOT_ALLOWED,
 		IS_BLANK, // Is blank or comment-only, actually
-		NO_SUCH_SCRIPT
+		NO_SUCH_SCRIPT,
+		SOURCE_PATH_NOT_SET // Or "" which is illegal
 	};
-	SourceFile(const Common::String &filename);
+	SourceFile(const Common::String &filename, const Common::String &sourcePath);
 
 	/**
 	 * @brief (attempt to) load a source file.
@@ -109,7 +112,8 @@ public:
 		NO_SUCH_BREAKPOINT,
 		WRONG_TYPE,
 		PARSE_ERROR,
-		NOT_YET_IMPLEMENTED
+		NOT_YET_IMPLEMENTED,
+		SOURCE_PATH_NOT_SET // Or "" which is illegal
 	};
 
 	DebuggerAdapter(WintermuteEngine *vm);

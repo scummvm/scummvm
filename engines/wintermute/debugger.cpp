@@ -420,7 +420,7 @@ bool Console::Cmd_SourcePath(int argc, const char **argv) {
 		if (ADAPTER->setSourcePath(Common::String(argv[1])) == DebuggerAdapter::OK) {
 	   		DebugPrintf("Source path set to '%s'\n", ADAPTER->getSourcePath().c_str());
 		} else {
-			DebugPrintf("Error setting source path");
+			DebugPrintf("Error setting source path. Note that \"\" is illegal.");
 		}
 		return true;
 	}
