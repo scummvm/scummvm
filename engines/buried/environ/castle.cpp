@@ -28,6 +28,7 @@
 #include "buried/inventory_window.h"
 #include "buried/scene_view.h"
 #include "buried/environ/scene_base.h"
+#include "buried/environ/scene_common.h"
 
 namespace Buried {
 
@@ -69,6 +70,13 @@ bool SceneViewWindow::initializeCastleTimeZoneAndEnvironment(Window *viewWindow,
 
 SceneBase *SceneViewWindow::constructCastleSceneObject(Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) {
 	// TODO
+
+	switch (sceneStaticData.classID) {
+	case 9:
+		return new BasicDoor(_vm, viewWindow, sceneStaticData, priorLocation, 81, 25, 360, 189, 1, 4, 2, 1, 1, 1, 2, 11, 413, 25);
+	}
+
+	warning("TODO: Castle scene object %d", sceneStaticData.classID);
 
 	return new SceneBase(_vm, viewWindow, sceneStaticData, priorLocation);
 }
