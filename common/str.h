@@ -234,6 +234,8 @@ public:
 	static String vformat(const char *fmt, va_list args);
 
 public:
+	typedef char          value_type;
+	typedef unsigned char unsigned_type;
 	typedef char *        iterator;
 	typedef const char *  const_iterator;
 
