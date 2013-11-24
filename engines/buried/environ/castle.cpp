@@ -23,9 +23,11 @@
  *
  */
 
+#include "buried/buried.h"
 #include "buried/gameui.h"
 #include "buried/invdata.h"
 #include "buried/inventory_window.h"
+#include "buried/resources.h"
 #include "buried/scene_view.h"
 #include "buried/environ/scene_base.h"
 #include "buried/environ/scene_common.h"
@@ -74,6 +76,10 @@ SceneBase *SceneViewWindow::constructCastleSceneObject(Window *viewWindow, const
 	switch (sceneStaticData.classID) {
 	case 9:
 		return new BasicDoor(_vm, viewWindow, sceneStaticData, priorLocation, 81, 25, 360, 189, 1, 4, 2, 1, 1, 1, 2, 11, 413, 25);
+	case 32:
+		return new OneShotEntryVideoWarning(_vm, viewWindow, sceneStaticData, priorLocation, 0, offsetof(GlobalFlags, cgSmithyGuard), IDS_HUMAN_PRESENCE_10METERS);
+	case 33:
+		return new OneShotEntryVideoWarning(_vm, viewWindow, sceneStaticData, priorLocation, _vm->isDemo() ? 2 : 6, offsetof(GlobalFlags, cgBaileyOneWayGuard), IDS_HUMAN_PRESENCE_10METERS);
 	}
 
 	warning("TODO: Castle scene object %d", sceneStaticData.classID);

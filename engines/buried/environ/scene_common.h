@@ -61,6 +61,18 @@ private:
 	int _lastStingerFileID;
 };
 
+class OneShotEntryVideoWarning : public SceneBase {
+public:
+	OneShotEntryVideoWarning(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+			int animID = 0, int flagOffset = 0, int warningMessageID = -1);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
+
+private:
+	int _animID;
+	int _flagOffset;
+	int _warningMessageID;
+};
+
 } // End of namespace Buried
 
 #endif
