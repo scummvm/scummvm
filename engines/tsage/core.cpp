@@ -1153,6 +1153,13 @@ void PaletteRotation::signal() {
 			if (flag)
 				_currIndex = _start;
 		}
+
+		// Added in Return to Ringworld
+		if (_currIndex < _start) {
+			flag = decDuration();
+			if (flag)
+				_currIndex = _end;
+		}
 		break;
 	case 2:
 		_currIndex += _idxChange;
