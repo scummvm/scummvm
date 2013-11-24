@@ -23,8 +23,11 @@
  *
  */
 
+#include "buried/biochip_right.h"
 #include "buried/buried.h"
+#include "buried/gameui.h"
 #include "buried/graphics.h"
+#include "buried/inventory_window.h"
 #include "buried/resources.h"
 #include "buried/sound.h"
 #include "buried/scene_view.h"
@@ -103,6 +106,74 @@ TurnDepthPreChange::TurnDepthPreChange(BuriedEngine *vm, Window *viewWindow, con
 		if (forwardDepth >= 0)
 			_staticData.destUp.destinationScene.depth = forwardDepth;
 	}
+}
+
+GenericItemAcquire::GenericItemAcquire(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+		int left, int top, int right, int bottom, int itemID, int clearStillFrame, int itemFlagOffset) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_itemPresent = true;
+	_itemID = itemID;
+	_acquireRegion = Common::Rect(left, top, right, bottom);
+	_fullFrameIndex = sceneStaticData.navFrameIndex;
+	_clearFrameIndex = clearStillFrame;
+	_itemFlagOffset = itemFlagOffset;
+
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlagByte(_itemFlagOffset) != 0) {
+		_itemPresent = false;
+		_staticData.navFrameIndex = _clearFrameIndex;
+	}
+}
+
+int GenericItemAcquire::mouseDown(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_acquireRegion.contains(pointLocation) && _itemPresent) {
+		_itemPresent = false;
+		_staticData.navFrameIndex = _clearFrameIndex;
+
+		if (_itemFlagOffset >= 0)
+			((SceneViewWindow *)viewWindow)->setGlobalFlagByte(_itemFlagOffset, 1);
+
+		// Call inventory drag start function
+		Common::Point ptInventoryWindow = viewWindow->convertPointToGlobal(pointLocation);
+		ptInventoryWindow = ((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->convertPointToLocal(ptInventoryWindow);
+		((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->startDraggingNewItem(_itemID, ptInventoryWindow);
+
+		// Update the biochips
+		((GameUIWindow *)viewWindow->getParent())->_bioChipRightWindow->sceneChanged();
+
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int GenericItemAcquire::droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) {
+	if (pointLocation.x == -1 && pointLocation.y == -1)
+		return 0;
+
+	if (itemID == _itemID && !_itemPresent) {
+		// Redraw the background
+		_itemPresent = true;
+		_staticData.navFrameIndex = _fullFrameIndex;
+
+		if (_itemFlagOffset >= 0)
+			((SceneViewWindow *)viewWindow)->setGlobalFlagByte(_itemFlagOffset, 0);
+
+		viewWindow->invalidateWindow();
+
+		// Update the biochips
+		((GameUIWindow *)viewWindow->getParent())->_bioChipRightWindow->sceneChanged();
+
+		return SIC_ACCEPT;
+	}
+
+	return SIC_REJECT;
+}
+
+int GenericItemAcquire::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_acquireRegion.contains(pointLocation) && _itemPresent)
+		return kCursorOpenHand;
+
+	return kCursorArrow;
 }
 
 PlayStingers::PlayStingers(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,

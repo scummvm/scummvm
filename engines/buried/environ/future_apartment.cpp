@@ -263,6 +263,14 @@ SceneBase *SceneViewWindow::constructFutureApartmentSceneObject(Window *viewWind
 	// TODO
 
 	switch (sceneStaticData.classID) {
+	case 11:
+		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 200, 83, 230, 116, kItemBioChipTranslate, 61, offsetof(GlobalFlags, faKITakenPostboxItem));
+	case 12:
+		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 202, 80, 227, 155, kItemCheeseGirl, 59, offsetof(GlobalFlags, faKITakenPostboxItem));
+	case 13:
+		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 203, 111, 225, 129, kItemGenoSingleCart, 63, offsetof(GlobalFlags, faKITakenPostboxItem));
+	case 23:
+		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 81, 146, 134, 189, kItemRemoteControl, 45, offsetof(GlobalFlags, faERTakenRemoteControl));
 	case 30:
 		return new PlayStingers(_vm, viewWindow, sceneStaticData, priorLocation, 128, offsetof(GlobalFlags, faStingerID), offsetof(GlobalFlags, faStingerChannelID), 10, 14);
 	case 37:
