@@ -284,8 +284,8 @@ bool Window::handleSetCursorMessage(uint message) {
 }
 
 Window *Window::setCapture() {
-	Window *oldCapturedWindow = _vm->_focusedWindow;
-	_vm->_focusedWindow = this;
+	Window *oldCapturedWindow = _vm->_captureWindow;
+	_vm->_captureWindow = this;
 	return oldCapturedWindow;
 }
 
