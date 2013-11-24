@@ -1238,8 +1238,13 @@ void Ringworld2Game::processEvent(Event &event) {
 
 void Ringworld2Game::rightClick() {
 	RightClickDialog *dlg = new RightClickDialog();
-	dlg->execute();
+	int option = dlg->execute();
 	delete dlg;
+
+	if (option == 0)
+		CharacterDialog::show();
+	else if (option == 1)
+		HelpDialog::show();
 }
 
 /*--------------------------------------------------------------------------*/
