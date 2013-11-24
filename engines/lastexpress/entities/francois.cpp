@@ -202,7 +202,7 @@ IMPLEMENT_FUNCTION(9, Francois, function9)
 		break;
 
 	case kActionDefault:
-		if (getObjects()->get(kObjectCompartmentD).location == kObjectLocation2) {
+		if (getObjects()->get(kObjectCompartmentD).status == kObjectLocation2) {
 			getObjects()->update(kObjectCompartmentD, kEntityPlayer, kObjectLocationNone, kCursorKeepValue, kCursorKeepValue);
 			getSavePoints()->push(kEntityFrancois, kEntityMmeBoutarel, kAction134289824);
 			setCallback(1);
@@ -238,7 +238,7 @@ IMPLEMENT_FUNCTION(10, Francois, function10)
 		break;
 
 	case kActionDefault:
-		if (getObjects()->get(kObjectCompartmentD).location == kObjectLocation2) {
+		if (getObjects()->get(kObjectCompartmentD).status == kObjectLocation2) {
 			getObjects()->update(kObjectCompartmentD, kEntityPlayer, kObjectLocationNone, kCursorKeepValue, kCursorKeepValue);
 			setCallback(1);
 			setup_enterExitCompartment2("605Bd", kObjectCompartmentD);

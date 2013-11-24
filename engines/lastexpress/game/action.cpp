@@ -521,7 +521,7 @@ IMPLEMENT_ACTION(compartment)
 		return kSceneNone;
 	}
 
-	ObjectLocation location = getObjects()->get(compartment).location;
+	ObjectLocation location = getObjects()->get(compartment).status;
 	if (location == kObjectLocation1 || location == kObjectLocation3 || getEntities()->checkFields2(compartment)) {
 
 		if (location != kObjectLocation1 || getEntities()->checkFields2(compartment)
@@ -627,12 +627,12 @@ IMPLEMENT_ACTION(openCloseObject)
 // Action 10
 IMPLEMENT_ACTION(setModel)
 	ObjectIndex object = (ObjectIndex)hotspot.param1;
-	ObjectLocation location = (ObjectLocation)hotspot.param2;
+	ObjectModel model = (ObjectModel)hotspot.param2;
 
 	if (object >= kObjectMax)
 		return kSceneInvalid;
 
-	getObjects()->updateLocation2(object, location);
+	getObjects()->updateModel(object, model);
 
 	if (object != kObject112 || getSoundQueue()->isBuffered("LIB096")) {
 		if (object == 1)
@@ -808,7 +808,7 @@ IMPLEMENT_ACTION(dropItem)
 //////////////////////////////////////////////////////////////////////////
 // Action 16
 IMPLEMENT_ACTION(enterCompartment)
-	if (getObjects()->get(kObjectCompartment1).location == kObjectLocation1 || getObjects()->get(kObjectCompartment1).location == kObjectLocation3 || getInventory()->getSelectedItem() == kItemKey)
+	if (getObjects()->get(kObjectCompartment1).status == kObjectLocation1 || getObjects()->get(kObjectCompartment1).status == kObjectLocation3 || getInventory()->getSelectedItem() == kItemKey)
 		return action_compartment(hotspot);
 
 	if (getProgress().eventCorpseFound) {
@@ -845,9 +845,9 @@ IMPLEMENT_ACTION(enterCompartment)
 IMPLEMENT_ACTION(leanOutWindow)
 	ObjectIndex object = (ObjectIndex)hotspot.param1;
 
-	if ((getEvent(kEventCathLookOutsideWindowDay) || getEvent(kEventCathLookOutsideWindowNight) || getObjects()->get(kObjectCompartment1).location2 == kObjectLocation1)
+	if ((getEvent(kEventCathLookOutsideWindowDay) || getEvent(kEventCathLookOutsideWindowNight) || getObjects()->get(kObjectCompartment1).model == kObjectModel1)
 	  && getProgress().isTrainRunning
-	  && (object != kObjectOutsideAnnaCompartment || (!getEntities()->isInsideCompartment(kEntityRebecca, kCarRedSleeping, kPosition_4840) && getObjects()->get(kObjectOutsideBetweenCompartments).location == kObjectLocation2))
+	  && (object != kObjectOutsideAnnaCompartment || (!getEntities()->isInsideCompartment(kEntityRebecca, kCarRedSleeping, kPosition_4840) && getObjects()->get(kObjectOutsideBetweenCompartments).status == kObjectLocation2))
 	  && getInventory()->getSelectedItem() != kItemFirebird
 	  && getInventory()->getSelectedItem() != kItemBriefcase) {
 
@@ -1224,7 +1224,7 @@ IMPLEMENT_ACTION(exitCompartment)
 		getProgress().field_30 = 1;
 	}
 
-	getObjects()->updateLocation2(kObjectCompartment1, (ObjectLocation)hotspot.param2);
+	getObjects()->updateModel(kObjectCompartment1, (ObjectModel)hotspot.param2);
 
 	// fall to case enterCompartment action
 	return action_enterCompartment(hotspot);
@@ -1724,7 +1724,7 @@ bool Action::handleOtherCompartment(ObjectIndex object, bool doPlaySound, bool d
 }
 
 void Action::playCompartmentSoundEvents(ObjectIndex object) const {
-	if (getObjects()->get(object).location == kObjectLocation1 || getObjects()->get(object).location == kObjectLocation3 || getEntities()->checkFields2(object)) {
+	if (getObjects()->get(object).status == kObjectLocation1 || getObjects()->get(object).status == kObjectLocation3 || getEntities()->checkFields2(object)) {
 		getSound()->playSoundEvent(kEntityPlayer, 13);
 	} else {
 		getSound()->playSoundEvent(kEntityPlayer, 14);
@@ -1757,7 +1757,7 @@ CursorStyle Action::getCursor(const SceneHotspot &hotspot) const {
 		if (object >= kObjectMax)
 			return kCursorNormal;
 		else
-			return (CursorStyle)getObjects()->get(object).cursor;
+			return (CursorStyle)getObjects()->get(object).windowCursor;
 
 	case SceneHotspot::kAction12:
 		debugC(2, kLastExpressDebugScenes, "================================= OBJECT %03d =================================", object);
@@ -1765,7 +1765,7 @@ CursorStyle Action::getCursor(const SceneHotspot &hotspot) const {
 			return kCursorNormal;
 
 		if (getObjects()->get(object).entity)
-			return (CursorStyle)getObjects()->get(object).cursor;
+			return (CursorStyle)getObjects()->get(object).windowCursor;
 		else
 			return kCursorNormal;
 
@@ -1806,8 +1806,8 @@ CursorStyle Action::getCursor(const SceneHotspot &hotspot) const {
 		return kCursorNormal;
 
 	case SceneHotspot::kActionEnterCompartment:
-		if ((getInventory()->getSelectedItem() != kItemKey || getObjects()->get(kObjectCompartment1).location)
-		&& (getObjects()->get(kObjectCompartment1).location != 1 || !getInventory()->hasItem(kItemKey)
+		if ((getInventory()->getSelectedItem() != kItemKey || getObjects()->get(kObjectCompartment1).status)
+		&& (getObjects()->get(kObjectCompartment1).status != 1 || !getInventory()->hasItem(kItemKey)
 		 ||	(getInventory()->getSelectedItem() != kItemFirebird && getInventory()->getSelectedItem() != kItemBriefcase)))
 			goto LABEL_KEY;
 
@@ -1817,13 +1817,13 @@ CursorStyle Action::getCursor(const SceneHotspot &hotspot) const {
 		if (getProgress().jacket != kJacketGreen)
 			return kCursorNormal;
 
-		if ((getEvent(kEventCathLookOutsideWindowDay) || getEvent(kEventCathLookOutsideWindowNight) || getObjects()->get(kObjectCompartment1).location2 == kObjectLocation1)
+		if ((getEvent(kEventCathLookOutsideWindowDay) || getEvent(kEventCathLookOutsideWindowNight) || getObjects()->get(kObjectCompartment1).model == kObjectModel1)
 			&& getProgress().isTrainRunning
-			&& (object != kObjectOutsideAnnaCompartment || (getEntities()->isInsideCompartment(kEntityRebecca, kCarRedSleeping, kPosition_4840) && getObjects()->get(kObjectOutsideBetweenCompartments).location == 2))
+			&& (object != kObjectOutsideAnnaCompartment || (getEntities()->isInsideCompartment(kEntityRebecca, kCarRedSleeping, kPosition_4840) && getObjects()->get(kObjectOutsideBetweenCompartments).status == 2))
 			&& getInventory()->getSelectedItem() != kItemBriefcase && getInventory()->getSelectedItem() != kItemFirebird)
 			return kCursorForward;
 
-		return (getObjects()->get(kObjectCompartment1).location2 < kObjectLocation2) ? kCursorNormal : kCursorMagnifier;
+		return (getObjects()->get(kObjectCompartment1).model < kObjectModel2) ? kCursorNormal : kCursorMagnifier;
 
 	case SceneHotspot::kActionSlip:
 		return (getProgress().field_C8 < 1) ? kCursorNormal : kCursorLeft;
@@ -1841,7 +1841,7 @@ CursorStyle Action::getCursor(const SceneHotspot &hotspot) const {
 		if (object != kObjectCompartment1)
 			return kCursorNormal;
 
-		return (getObjects()->get(kObjectCeiling).location < kObjectLocation1) ? kCursorHand : kCursorNormal;
+		return (getObjects()->get(kObjectCeiling).status < kObjectLocation1) ? kCursorHand : kCursorNormal;
 
 	case SceneHotspot::kActionUnbound:
 		if (hotspot.param2 != 2)
@@ -1904,11 +1904,11 @@ LABEL_KEY:
 
 		if (getInventory()->getSelectedItem() != kItemKey
 		|| getObjects()->get(object).entity
-		|| getObjects()->get(object).location != 1
-		|| !getObjects()->get(object).cursor2
+		|| getObjects()->get(object).status != 1
+		|| !getObjects()->get(object).handleCursor
 		|| getEntities()->isInsideCompartments(kEntityPlayer)
 		|| getEntities()->checkFields2(object))
-			return (CursorStyle)getObjects()->get(object).cursor2;
+			return (CursorStyle)getObjects()->get(object).handleCursor;
 		else
 			return (CursorStyle)getInventory()->get(kItemKey)->cursor;
 	}

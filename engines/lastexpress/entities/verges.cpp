@@ -1816,7 +1816,7 @@ IMPLEMENT_FUNCTION(41, Verges, askPassengersToStayInCompartments)
 		break;
 
 	case kActionDefault:
-		getObjects()->updateLocation2(kObjectRestaurantCar, kObjectLocation3);
+		getObjects()->updateModel(kObjectRestaurantCar, kObjectModel3);
 		getData()->car = kCarRedSleeping;
 		getData()->entityPosition = kPosition_9460;
 		getData()->location = kLocationInsideCompartment;

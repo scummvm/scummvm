@@ -1400,7 +1400,7 @@ IMPLEMENT_FUNCTION(33, Anna, readyForBed)
 
 	case kActionCallback:
 		if (getCallback() == 1) {
-			getObjects()->updateLocation2(kObjectCompartmentF, kObjectLocation1);
+			getObjects()->updateModel(kObjectCompartmentF, kObjectModel1);
 			setup_asleep();
 		}
 		break;

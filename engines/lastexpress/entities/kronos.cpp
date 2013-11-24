@@ -399,7 +399,7 @@ IMPLEMENT_FUNCTION(18, Kronos, function18)
 
 	case kActionNone:
 		if (getState()->time > kTime2079000 && !params->param2) {
-			getObjects()->updateLocation2(kObjectCompartmentKronos, kObjectLocation3);
+			getObjects()->updateModel(kObjectCompartmentKronos, kObjectModel3);
 			getObjects()->update(kObjectCompartmentKronos, kEntityPlayer, kObjectLocation3, kCursorHandKnock, kCursorHand);
 			params->param1 = 1;
 			params->param2 = 1;
