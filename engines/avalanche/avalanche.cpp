@@ -421,7 +421,7 @@ bool AvalancheEngine::loadGame(const int16 slot) {
 
 	// Check version. We can't restore from obsolete versions.
 	byte saveVersion = f->readByte();
-	if (saveVersion != kSavegameVersion) {
+	if (saveVersion > kSavegameVersion) {
 		warning("Savegame of incompatible version!");
 		delete f;
 		return false;

@@ -129,7 +129,7 @@ SaveStateList AvalancheMetaEngine::listSaves(const char *target) const {
 
 				// Check version.
 				byte saveVersion = file->readByte();
-				if (saveVersion != kSavegameVersion) {
+				if (saveVersion > kSavegameVersion) {
 					warning("Savegame of incompatible version!");
 					delete file;
 					continue;
