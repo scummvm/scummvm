@@ -1031,10 +1031,15 @@ Math::Angle Actor::getYawTo(const Math::Vector3d &p) const {
 void Actor::sayLine(const char *msgId, bool background) {
 	assert(msgId);
 
+	if (msgId[0] == 0) {
+		warning("Actor::sayLine: Empty message");
+		return;
+	}
+
 	char id[50];
 	Common::String msg = LuaBase::instance()->parseMsgText(msgId, id);
 
-	if (msgId[0] == 0) {
+	if (id[0] == 0) {
 		error("Actor::sayLine: No message ID for text");
 		return;
 	}

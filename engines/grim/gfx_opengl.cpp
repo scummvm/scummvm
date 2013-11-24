@@ -592,22 +592,20 @@ void GfxOpenGL::drawSprite(const Sprite *sprite) {
 	glPushMatrix();
 	glTranslatef(sprite->_pos.x(), sprite->_pos.y(), sprite->_pos.z());
 
-	if (g_grim->getGameType() == GType_GRIM) {
-		GLdouble modelview[16];
-		glGetDoublev(GL_MODELVIEW_MATRIX, modelview);
+	GLdouble modelview[16];
+	glGetDoublev(GL_MODELVIEW_MATRIX, modelview);
 
-		// We want screen-aligned sprites so reset the rotation part of the matrix.
-		for (int i = 0; i < 3; i++) {
-			for (int j = 0; j < 3; j++) {
-				if (i == j) {
-					modelview[i * 4 + j] = 1.0f;
-				} else {
-					modelview[i * 4 + j] = 0.0f;
-				}
+	// We want screen-aligned sprites so reset the rotation part of the matrix.
+	for (int i = 0; i < 3; i++) {
+		for (int j = 0; j < 3; j++) {
+			if (i == j) {
+				modelview[i * 4 + j] = 1.0f;
+			} else {
+				modelview[i * 4 + j] = 0.0f;
 			}
 		}
-		glLoadMatrixd(modelview);
 	}
+	glLoadMatrixd(modelview);
 
 	glAlphaFunc(GL_GREATER, 0.5);
 	glEnable(GL_ALPHA_TEST);

@@ -1007,13 +1007,16 @@ void Lua_V1::boot() {
 
 void Lua_V1::postRestoreHandle() {
 	lua_beginblock();
-	// Set the developerMode, since the save contains the value of
-	// the installation it was made with.
-	lua_pushobject(lua_getglobal("developerMode"));
-	bool devMode = g_registry->getBool("good_times");
-	pushbool(devMode);
-	lua_setglobal("developerMode");
-	lua_endblock();
+
+	if (g_grim->getGameType() == GType_GRIM) {
+		// Set the developerMode, since the save contains the value of
+		// the installation it was made with.
+		lua_pushobject(lua_getglobal("developerMode"));
+		bool devMode = g_registry->getBool("good_times");
+		pushbool(devMode);
+		lua_setglobal("developerMode");
+		lua_endblock();
+	}
 
 	// Starting a movie calls the function 'music_state.pause()', which saves the current sfx volume to a temp
 	// variable and sets it to 0. When the movie finishes 'music_state.unpause()' will be called, which reads
