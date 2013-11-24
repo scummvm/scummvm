@@ -367,6 +367,8 @@ public:
 	 */
 	static Graphics::Surface *tranposeSurface(const Graphics::Surface *surface);
 
+	void scaleBuffer(const void *src, void *dst, uint32 srcWidth, uint32 srcHeight, byte bytesPerPixel, uint32 dstWidth, uint32 dstHeight);
+
 private:
 	/**
 	 * Renders a subRectangle of an image to the backbuffer. The destinationRect and SubRect

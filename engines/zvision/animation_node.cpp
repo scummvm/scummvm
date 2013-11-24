@@ -69,8 +69,12 @@ AnimationNode::~AnimationNode() {
 	_engine->getScriptManager()->setStateValue(_key, 2);
 
 	PlayNodes::iterator it = _playList.begin();
-	if (it != _playList.end())
+	if (it != _playList.end()) {
 		_engine->getScriptManager()->setStateValue((*it).slot, 2);
+
+		if ((*it)._scaled)
+			delete(*it)._scaled;
+	}
 
 	_playList.clear();
 }
@@ -108,6 +112,8 @@ bool AnimationNode::process(uint32 deltaTimeInMillis) {
 					if (nod->loop == 0) {
 						if (nod->slot >= 0)
 							_engine->getScriptManager()->setStateValue(nod->slot, 2);
+						if (nod->_scaled)
+							delete nod->_scaled;
 						_playList.erase(it);
 						return _DisposeAfterUse;
 					}
@@ -129,6 +135,33 @@ bool AnimationNode::process(uint32 deltaTimeInMillis) {
 			}
 
 			if (frame) {
+
+				uint32 dstw;
+				uint32 dsth;
+				if (_engine->getRenderManager()->getRenderTable()->getRenderState() == RenderTable::PANORAMA) {
+					dstw = nod->pos.height();
+					dsth = nod->pos.width();
+				} else {
+					dstw = nod->pos.width();
+					dsth = nod->pos.height();
+				}
+
+				if (frame->w != dstw || frame->h != dsth) {
+					if (nod->_scaled)
+						if (nod->_scaled->w != dstw || nod->_scaled->h != dsth) {
+							delete nod->_scaled;
+							nod->_scaled = NULL;
+						}
+
+					if (!nod->_scaled) {
+						nod->_scaled = new Graphics::Surface;
+						nod->_scaled->create(dstw, dsth, frame->format);
+					}
+
+					_engine->getRenderManager()->scaleBuffer(frame->getPixels(), nod->_scaled->getPixels(), frame->w, frame->h, frame->format.bytesPerPixel, dstw, dsth);
+					frame = nod->_scaled;
+				}
+
 				if (_engine->getRenderManager()->getRenderTable()->getRenderState() == RenderTable::PANORAMA) {
 					Graphics::Surface *transposed = RenderManager::tranposeSurface(frame);
 					if (_mask > 0)
@@ -151,22 +184,26 @@ bool AnimationNode::process(uint32 deltaTimeInMillis) {
 
 
 
-void AnimationNode::addPlayNode(int32 slot, int x, int y, int w, int h, int start_frame, int end_frame, int loops) {
+void AnimationNode::addPlayNode(int32 slot, int x, int y, int x2, int y2, int start_frame, int end_frame, int loops) {
 	playnode nod;
 	nod.loop = loops;
-	nod.pos = Common::Rect(x, y, x + w - 1, y + h - 1);
+	nod.pos = Common::Rect(x, y, x2 + 1, y2 + 1);
 	nod.start = start_frame;
 	nod.stop = end_frame;
 	nod.slot = slot;
 	nod._cur_frm = -1;
 	nod._delay = 0;
+	nod._scaled = NULL;
 	_playList.push_back(nod);
 }
 
 bool AnimationNode::stop() {
 	PlayNodes::iterator it = _playList.begin();
-	if (it != _playList.end())
+	if (it != _playList.end()) {
 		_engine->getScriptManager()->setStateValue((*it).slot, 2);
+		if ((*it)._scaled)
+			delete(*it)._scaled;
+	}
 
 	_playList.clear();
 

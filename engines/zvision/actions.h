@@ -257,8 +257,8 @@ private:
 	Common::String _fileName;
 	uint32 _x;
 	uint32 _y;
-	uint32 _width;
-	uint32 _height;
+	uint32 _x2;
+	uint32 _y2;
 	uint32 _start;
 	uint32 _end;
 	int32 _mask;

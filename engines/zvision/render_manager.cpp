@@ -694,4 +694,31 @@ Graphics::Surface *RenderManager::tranposeSurface(const Graphics::Surface *surfa
 	return tranposedSurface;
 }
 
+void RenderManager::scaleBuffer(const void *src, void *dst, uint32 srcWidth, uint32 srcHeight, byte bytesPerPixel, uint32 dstWidth, uint32 dstHeight) {
+	assert(bytesPerPixel == 1 || bytesPerPixel == 2);
+
+	const float  xscale = (float)srcWidth / (float)dstWidth;
+	const float  yscale = (float)srcHeight / (float)dstHeight;
+
+	if (bytesPerPixel == 1) {
+		const byte *srcPtr = (const byte *)src;
+		byte *dstPtr = (byte *)dst;
+		for (uint32 y = 0; y < dstHeight; ++y) {
+			for (uint32 x = 0; x < dstWidth; ++x) {
+				*dstPtr = srcPtr[(int)(x * xscale) + (int)(y * yscale) * srcWidth];
+				dstPtr++;
+			}
+		}
+	} else if (bytesPerPixel == 2) {
+		const uint16 *srcPtr = (const uint16 *)src;
+		uint16 *dstPtr = (uint16 *)dst;
+		for (uint32 y = 0; y < dstHeight; ++y) {
+			for (uint32 x = 0; x < dstWidth; ++x) {
+				*dstPtr = srcPtr[(int)(x * xscale) + (int)(y * yscale) * srcWidth];
+				dstPtr++;
+			}
+		}
+	}
+}
+
 } // End of namespace ZVision

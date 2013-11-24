@@ -361,7 +361,7 @@ ActionPlayAnimation::ActionPlayAnimation(ZVision *engine, const Common::String &
 	// The two %*u are always 0 and dont seem to have a use
 	sscanf(line.c_str(),
 	       "%*[^:]:%*[^:]:%u(%25s %u %u %u %u %u %u %d %*u %*u %d %d)",
-	       &_key, fileName, &_x, &_y, &_width, &_height, &_start, &_end, &_loopCount, &_mask, &_framerate);
+	       &_key, fileName, &_x, &_y, &_x2, &_y2, &_start, &_end, &_loopCount, &_mask, &_framerate);
 
 	if (_mask > 0) {
 		byte r, g, b;
@@ -386,7 +386,7 @@ bool ActionPlayAnimation::execute() {
 		nod->stop();
 
 	if (nod)
-		nod->addPlayNode(_key, _x, _y, _width, _height, _start, _end, _loopCount);
+		nod->addPlayNode(_key, _x, _y, _x2, _y2, _start, _end, _loopCount);
 
 	return true;
 }

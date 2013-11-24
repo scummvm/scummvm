@@ -58,6 +58,7 @@ public:
 		int32 loop;
 		int32 _cur_frm;
 		int32 _delay;
+		Graphics::Surface *_scaled;
 	};
 
 private:
@@ -84,7 +85,7 @@ private:
 public:
 	bool process(uint32 deltaTimeInMillis);
 
-	void addPlayNode(int32 slot, int x, int y, int w, int h, int start_frame, int end_frame, int loops = 1);
+	void addPlayNode(int32 slot, int x, int y, int x2, int y2, int start_frame, int end_frame, int loops = 1);
 
 	bool stop();
 };
