@@ -1502,7 +1502,7 @@ MazeUI::MazeUI() {
 	_cellSize.x = _cellSize.y = 0;
 	_mapOffset.x = _mapOffset.y = 0;
 	_resNum = _cellsResNum = 0;
-	_frameCount = _resCount = _mapImagePitch = _unused = 0;
+	_frameCount = _resCount = _mapImagePitch = 0;
 }
 
 MazeUI::~MazeUI() {
@@ -1518,7 +1518,9 @@ void MazeUI::synchronize(Serializer &s) {
 
 	s.syncAsSint16LE(_mapOffset.x);
 	s.syncAsSint16LE(_mapOffset.y);
-	s.syncAsSint16LE(_unused);
+
+	int dummy = 0;
+	s.syncAsSint16LE(dummy);
 }
 
 void MazeUI::load(int resNum) {
