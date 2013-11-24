@@ -24,6 +24,7 @@
  */
 
 #include "buried/buried.h"
+#include "buried/frame_window.h"
 #include "buried/gameui.h"
 #include "buried/graphics.h"
 #include "buried/invdata.h"
@@ -33,7 +34,104 @@
 #include "buried/environ/scene_base.h"
 #include "buried/environ/scene_common.h"
 
+#include "common/system.h"
+
 namespace Buried {
+
+class KeepInitialWallClimb : public SceneBase {
+public:
+	KeepInitialWallClimb(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
+	int draggingItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
+
+private:
+	Common::Rect _windowRect;
+};
+
+KeepInitialWallClimb::KeepInitialWallClimb(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_windowRect = Common::Rect(176, 40, 256, 80);
+}
+
+int KeepInitialWallClimb::droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) {
+	if (pointLocation.x == -1 && pointLocation.y == -1)
+		return 0;
+
+	if (_windowRect.contains(pointLocation) && itemID == kItemGrapplingHook) {
+		((SceneViewWindow *)viewWindow)->playSynchronousAnimation(_vm->isDemo() ? 3 : 1);
+
+		DestinationScene newDest;
+		newDest.destinationScene = _staticData.location;
+		newDest.destinationScene.depth = 1;
+		newDest.transitionType = TRANSITION_VIDEO;
+		newDest.transitionData = _vm->isDemo() ? 7 : 4;
+		newDest.transitionStartFrame = -1;
+		newDest.transitionLength = -1;
+		((SceneViewWindow *)viewWindow)->moveToDestination(newDest);
+
+		return SIC_ACCEPT;
+	}
+
+	return SIC_REJECT;
+}
+
+int KeepInitialWallClimb::draggingItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) {
+	if (_windowRect.contains(pointLocation) && itemID == kItemGrapplingHook)
+		return 1;
+
+	return 0;
+}
+
+class KeepFinalWallClimb : public SceneBase {
+public:
+	KeepFinalWallClimb(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
+	int preExitRoom(Window *viewWindow, const Location &priorLocation);
+	int timerCallback(Window *viewWindow);
+
+private:
+	bool _exitStarted;
+	uint32 _startTime;
+};
+
+KeepFinalWallClimb::KeepFinalWallClimb(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_exitStarted = false;
+	_startTime = 0;
+}
+
+int KeepFinalWallClimb::postEnterRoom(Window *viewWindow, const Location &priorLocation) {
+	_startTime = g_system->getMillis();
+
+	// Change the message for the demo
+	if (_vm->isDemo())
+		((SceneViewWindow *)viewWindow)->displayLiveText("What happens next?\n\nCall 1-800-943-3664 to order Buried in Time.");
+
+	return SC_TRUE;
+}
+
+int KeepFinalWallClimb::preExitRoom(Window *viewWindow, const Location &priorLocation) {
+	_exitStarted = true;
+	return SC_TRUE;
+}
+
+int KeepFinalWallClimb::timerCallback(Window *viewWindow) {
+	if (_exitStarted)
+		return SC_TRUE;
+
+	if (g_system->getMillis() > _startTime + (_vm->isDemo() ? 10000 : 8000)) {
+		if (_vm->isDemo()) {
+			// Return to the main menu
+			((FrameWindow *)viewWindow->getParent()->getParent())->returnToMainMenu();
+		} else {
+			((SceneViewWindow *)viewWindow)->playSynchronousAnimation(2);
+			((SceneViewWindow *)viewWindow)->showDeathScene(3);
+			return SC_DEATH;
+		}
+	}
+
+	return SC_TRUE;
+}
 
 bool SceneViewWindow::initializeCastleTimeZoneAndEnvironment(Window *viewWindow, int environment) {
 	// If we passed -1, initialize time zone, otherwise the environment
@@ -87,6 +185,10 @@ SceneBase *SceneViewWindow::constructCastleSceneObject(Window *viewWindow, const
 		return new BasicDoor(_vm, viewWindow, sceneStaticData, priorLocation, 81, 25, 360, 189, 1, 4, 2, 1, 1, 1, 2, 11, 413, 25);
 	case 10:
 		return new BasicDoor(_vm, viewWindow, sceneStaticData, priorLocation, 24, 5, 415, 189, 1, 5, 0, 2, 1, 1, 2, 11, 72, 22);
+	case 14:
+		return new KeepInitialWallClimb(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 15:
+		return new KeepFinalWallClimb(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 16:
 		return new BasicDoor(_vm, viewWindow, sceneStaticData, priorLocation, 131, 18, 322, 189, 1, 8, 10, 1, 1, 1, 2, 11, 307, 7);
 	case 17:
