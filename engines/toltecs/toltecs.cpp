@@ -235,7 +235,7 @@ void ToltecsEngine::loadScene(uint resIndex) {
 	byte *source = scene + 392;
 	byte *destp = _screen->_backScreen;
 	byte *destEnd = destp + _sceneWidth * _sceneHeight;
- 	while (destp < destEnd) {
+	while (destp < destEnd) {
 		int count = 1;
 		byte pixel = *source++;
 		if (pixel & 0x80) {
@@ -250,7 +250,7 @@ void ToltecsEngine::loadScene(uint resIndex) {
 	debug(0, "_sceneWidth = %d; _sceneHeight = %d", _sceneWidth, _sceneHeight);
 
 	// Load scene segmap
- 	_segmap->load(scene + imageSize + 4);
+	_segmap->load(scene + imageSize + 4);
 
 	_screen->_fullRefresh = true;
 	_screen->_renderQueue->clear();
@@ -574,9 +574,9 @@ void ToltecsEngine::walk(byte *walkData) {
 	if (ydelta > ABS(walkInfo.x1 - walkInfo.x2) * _walkSpeedX) {
 		v10 = 100 - walkInfo.scaling;
 		v11 = v8;
-  	} else {
+	} else {
 		v10 = v8;
-  		v11 = 100 - walkInfo.scaling;
+		v11 = 100 - walkInfo.scaling;
 	}
 
 	walkInfo.yerror += walkInfo.mulValue * v10;
