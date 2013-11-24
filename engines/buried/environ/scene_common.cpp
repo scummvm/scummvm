@@ -159,4 +159,29 @@ int CycleEntryVideoWarning::postEnterRoom(Window *viewWindow, const Location &pr
 	return SC_TRUE;
 }
 
+ClickPlayVideo::ClickPlayVideo(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+		int animID, int cursorID, int left, int top, int right, int bottom)
+		: SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	
+	_cursorID = cursorID;
+	_animID = animID;
+	_clickRegion = Common::Rect(left, top, right, bottom);
+}
+
+int ClickPlayVideo::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_clickRegion.contains(pointLocation)) {
+		((SceneViewWindow *)viewWindow)->playSynchronousAnimation(_animID);
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int ClickPlayVideo::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_clickRegion.contains(pointLocation))
+		return _cursorID;
+
+	return kCursorArrow;
+}
+
 } // End of namespace Buried
