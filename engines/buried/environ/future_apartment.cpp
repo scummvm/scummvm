@@ -24,7 +24,9 @@
  */
 
 #include "buried/buried.h"
+#include "buried/gameui.h"
 #include "buried/graphics.h"
+#include "buried/inventory_window.h"
 #include "buried/resources.h"
 #include "buried/scene_view.h"
 #include "buried/sound.h"
@@ -81,6 +83,63 @@ int ClickZoomToyShelf::specifyCursor(Window *viewWindow, const Common::Point &po
 	return kCursorArrow;
 }
 
+class ToyClick : public SceneBase {
+public:
+	ToyClick(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+			int left = -1, int top = -1, int right = -1, int bottom = -1, int returnDepth = -1, int clickAnimation = -1, int returnAnimation = -1); 
+
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	Common::Rect _clickRect;
+	int _returnDepth;
+	int _clickAnimation;
+	int _returnAnimation;
+};
+
+ToyClick::ToyClick(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+		int left, int top, int right, int bottom, int returnDepth, int clickAnimation, int returnAnimation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_clickRect = Common::Rect(left, top, right, bottom);
+	_returnDepth = returnDepth;
+	_clickAnimation = clickAnimation;
+	_returnAnimation = returnAnimation;
+}
+
+int ToyClick::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_clickRect.contains(pointLocation)) {
+		((SceneViewWindow *)viewWindow)->playSynchronousAnimation(_clickAnimation);
+
+		if (_clickAnimation == 17) {
+			((SceneViewWindow *)viewWindow)->getGlobalFlags().faHeardAgentFigure = 1;
+
+			if (((SceneViewWindow *)viewWindow)->getGlobalFlags().generalWalkthroughMode == 1 && !((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->isItemInInventory(kItemBioChipAI))
+				((SceneViewWindow *)viewWindow)->displayLiveText(_vm->getString(IDS_WM_AI_LAB_TEXT));
+		}
+
+		return SC_TRUE;
+	}
+
+	DestinationScene newScene;
+	newScene.destinationScene = _staticData.location;
+	newScene.destinationScene.depth = _returnDepth;
+	newScene.transitionType = TRANSITION_VIDEO;
+	newScene.transitionData = _returnAnimation;
+	newScene.transitionStartFrame = -1;
+	newScene.transitionLength = -1;
+	((SceneViewWindow *)viewWindow)->moveToDestination(newScene);
+
+	return SC_TRUE;
+}
+
+int ToyClick::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_clickRect.contains(pointLocation))
+		return kCursorFinger;
+
+	return kCursorPutDown;
+}
+
 bool SceneViewWindow::startFutureApartmentAmbient(int oldTimeZone, int oldEnvironment, int environment, bool fade) {
 	_vm->_sound->setAmbientSound(_vm->getFilePath(4, environment, SF_AMBIENT));
 	return true;
@@ -94,6 +153,14 @@ SceneBase *SceneViewWindow::constructFutureApartmentSceneObject(Window *viewWind
 		return new PlayStingers(_vm, viewWindow, sceneStaticData, priorLocation, 128, offsetof(GlobalFlags, faStingerID), offsetof(GlobalFlags, faStingerChannelID), 10, 14);
 	case 37:
 		return new ClickZoomToyShelf(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 38:
+		return new ToyClick(_vm, viewWindow, sceneStaticData, priorLocation, 82, 0, 358, 189, 0, 14, 15);
+	case 39:
+		return new ToyClick(_vm, viewWindow, sceneStaticData, priorLocation, 104, 0, 320, 189, 0, 17, 18);
+	case 40:
+		return new ToyClick(_vm, viewWindow, sceneStaticData, priorLocation, 104, 10, 270, 189, 0, 20, 21);
+	case 41:
+		return new ToyClick(_vm, viewWindow, sceneStaticData, priorLocation, 128, 0, 332, 189, 0, 23, 24);
 	}
 
 	warning("TODO: Future apartment scene object %d", sceneStaticData.classID);
