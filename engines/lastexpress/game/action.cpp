@@ -652,7 +652,7 @@ IMPLEMENT_ACTION(setItem)
 		return kSceneInvalid;
 
 	Inventory::InventoryEntry *entry = getInventory()->get(item);
-	if (entry->isPresent)
+	if (entry->inPocket)
 		return kSceneInvalid;
 
 	entry->location = (ObjectLocation)hotspot.param2;
@@ -1335,7 +1335,7 @@ IMPLEMENT_ACTION(firebirdPuzzle)
 IMPLEMENT_ACTION(openMatchBox)
 	// If the match is already in the inventory, do nothing
 	if (!getInventory()->get(kItemMatch)->location
-	 || getInventory()->get(kItemMatch)->isPresent)
+	 || getInventory()->get(kItemMatch)->inPocket)
 		return kSceneInvalid;
 
 	getInventory()->addItem(kItemMatch);
@@ -1774,7 +1774,7 @@ CursorStyle Action::getCursor(const SceneHotspot &hotspot) const {
 		if (object >= kObjectCompartmentA)
 			return kCursorNormal;
 
-		if ((!getInventory()->getSelectedItem() || getInventory()->getSelectedEntry()->manualSelect)
+		if ((!getInventory()->getSelectedItem() || getInventory()->getSelectedEntry()->floating)
 		 && (object != kObject21 || getProgress().eventCorpseMovedFromFloor))
 			return kCursorHand;
 		else
