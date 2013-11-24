@@ -2821,7 +2821,6 @@ void Scene3400::remove() {
 void Scene3400::signal() {
 	switch (_sceneMode) {
 	case 3305: {
-		// Removed (useless ?) call to sub_1D227
 		_tealSpeaker._object1.hide();
 		_teal.show();
 		_teal.setStrip(1);
@@ -2861,7 +2860,6 @@ void Scene3400::signal() {
 		}
 		break;
 	case 3308:
-		// Removed (useless ?) call to sub_1D227
 		_companion1.setStrip(2);
 		R2_GLOBALS._player.setStrip(6);
 		_companion2.setStrip(6);
@@ -2874,7 +2872,6 @@ void Scene3400::signal() {
 			setAction(&_sequenceManager, this, 3403, &_companion1, &_webbster, &_manholeCover, NULL);
 		break;
 	case 3309:
-		// Removed (useless ?) call to sub_1D227
 		_teal.setStrip(1);
 		_sceneMode = 3405;
 		if (R2_GLOBALS._player._characterIndex == R2_MIRANDA)
@@ -2883,7 +2880,6 @@ void Scene3400::signal() {
 			setAction(&_sequenceManager, this, 3405, &_companion2, &_manholeCover, NULL);
 		break;
 	case 3310:
-		// Removed (useless ?) call to sub_1D227
 		_teal.setStrip(1);
 		_sceneMode = 3406;
 		if (R2_GLOBALS._player._characterIndex == R2_QUINN)
@@ -2894,7 +2890,6 @@ void Scene3400::signal() {
 			setAction(&_sequenceManager, this, 3406, &_companion2, &_manholeCover, NULL);
 		break;
 	case 3311:
-		// Removed (useless ?) call to sub_1D227
 		_tealSpeaker._object1.hide();
 		_teal.show();
 		_teal.setStrip(1);
@@ -4631,8 +4626,6 @@ void Scene3600::signal() {
 	switch (_sceneMode) {
 	case 3320:
 		// Move to the console
-
-		// Removed (useless ?) call to sub_1D227
 		R2_GLOBALS._walkRegions.disableRegion(14);
 		R2_GLOBALS._scrollFollower = &_seeker;
 		_tealSpeaker._object1.hide();
@@ -4649,8 +4642,6 @@ void Scene3600::signal() {
 		break;
 	case 3321:
 		// Teal activates console
-
-		// Removed (useless ?) call to sub_1D227
 		R2_GLOBALS._scrollFollower = &R2_GLOBALS._player;
 		_tealSpeaker.stopSpeaking();
 		_teal.show();
@@ -4662,8 +4653,6 @@ void Scene3600::signal() {
 		break;
 	case 3322:
 		// Teal walks toward the teleport pod, the goule protector appears
-
-		// Removed (useless ?) call to sub_1D227
 		_quinnSpeaker.stopSpeaking();
 		_quinnSpeaker._displayMode = 1;
 		_tealSpeaker.stopSpeaking();
@@ -4678,7 +4667,6 @@ void Scene3600::signal() {
 		if (!_tealDead)
 			_tealDead = true;
 		else {
-			// Removed (useless ?) call to sub_1D227
 			_protectorSpeaker.stopSpeaking();
 			_protector.show();
 			_protector.setup(3258, 6, 1);
@@ -5014,7 +5002,6 @@ void Scene3700::signal() {
 	case 3328:
 	// No break on purpose
 	case 3329:
-		// Removed (useless ?) call to sub_1D227
 		_sceneMode = 3701;
 		setAction(&_sequenceManager, this, 3701, &_seeker, &_miranda, &_webbster, NULL);
 		break;
