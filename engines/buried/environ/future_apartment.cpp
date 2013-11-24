@@ -140,6 +140,120 @@ int ToyClick::specifyCursor(Window *viewWindow, const Common::Point &pointLocati
 	return kCursorPutDown;
 }
 
+class MainEnvironDoorDown : public SceneBase {
+public:
+	MainEnvironDoorDown(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	bool _doorOpen;
+	Common::Rect _doorRect;
+};
+
+MainEnvironDoorDown::MainEnvironDoorDown(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_doorOpen = false;
+
+	if (priorLocation.timeZone == _staticData.location.timeZone &&
+			priorLocation.environment == _staticData.location.environment &&
+			priorLocation.node == _staticData.location.node &&
+			priorLocation.facing == _staticData.location.facing &&
+			priorLocation.orientation == 1) {
+		if (((SceneViewWindow *)viewWindow)->getGlobalFlags().faMNEnvironDoor == 1) {
+			_doorOpen = true;
+			_staticData.navFrameIndex = 220;
+		}
+	} else {
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().faMNEnvironDoor = 0;
+	}
+
+	_doorRect = Common::Rect(0, 0, 432, 189);
+}
+
+int MainEnvironDoorDown::postEnterRoom(Window *viewWindow, const Location &priorLocation) {
+	// Play the door open movie
+	DestinationScene newScene;
+	newScene.destinationScene = _staticData.location;
+	newScene.destinationScene.depth = 1;
+	newScene.transitionType = TRANSITION_VIDEO;
+	newScene.transitionData = 0;
+	newScene.transitionStartFrame = -1;
+	newScene.transitionLength = -1;
+	((SceneViewWindow *)viewWindow)->moveToDestination(newScene);
+	return SC_FALSE;
+}
+
+int MainEnvironDoorDown::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_doorRect.contains(pointLocation)) {
+		_staticData.navFrameIndex = 220;
+		_doorOpen = true;
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().faMNEnvironDoor = 1;
+
+		// Play the door open movie
+		DestinationScene newScene;
+		newScene.destinationScene = _staticData.location;
+		newScene.destinationScene.depth = 1;
+		newScene.transitionType = TRANSITION_VIDEO;
+		newScene.transitionData = 0;
+		newScene.transitionStartFrame = -1;
+		newScene.transitionLength = -1;
+		((SceneViewWindow *)viewWindow)->moveToDestination(newScene);
+
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int MainEnvironDoorDown::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_doorRect.contains(pointLocation))
+		return kCursorFinger;
+
+	return kCursorPutDown;
+}
+
+class MainEnvironDoorExit : public SceneBase {
+public:
+	MainEnvironDoorExit(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
+};
+
+MainEnvironDoorExit::MainEnvironDoorExit(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+}
+
+int MainEnvironDoorExit::postEnterRoom(Window *viewWindow, const Location &priorLocation) {
+	// Play the door open movie
+	DestinationScene newScene;
+	newScene.destinationScene = _staticData.location;
+	newScene.destinationScene.depth = 1;
+	newScene.transitionType = TRANSITION_VIDEO;
+	newScene.transitionData = 14;
+	newScene.transitionStartFrame = -1;
+	newScene.transitionLength = -1;
+	((SceneViewWindow *)viewWindow)->moveToDestination(newScene);
+	return SC_FALSE;
+}
+
+class EnvironDoorExitSound : public SceneBase {
+public:
+	EnvironDoorExitSound(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int postExitRoom(Window *viewWindow, const Location &newLocation);
+};
+
+EnvironDoorExitSound::EnvironDoorExitSound(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+}
+
+int EnvironDoorExitSound::postExitRoom(Window *viewWindow, const Location &newLocation) {
+	if (_staticData.location.timeZone == newLocation.timeZone)
+		_vm->_sound->playSoundEffect(_vm->getFilePath(IDS_FUTAPT_ENVIRON_DOOR_CLOSE));
+
+	return SC_TRUE;
+}
+
 bool SceneViewWindow::startFutureApartmentAmbient(int oldTimeZone, int oldEnvironment, int environment, bool fade) {
 	_vm->_sound->setAmbientSound(_vm->getFilePath(4, environment, SF_AMBIENT));
 	return true;
@@ -163,6 +277,12 @@ SceneBase *SceneViewWindow::constructFutureApartmentSceneObject(Window *viewWind
 		return new ToyClick(_vm, viewWindow, sceneStaticData, priorLocation, 128, 0, 332, 189, 0, 23, 24);
 	case 54:
 		return new ClickPlayVideo(_vm, viewWindow, sceneStaticData, priorLocation, 36, kCursorFinger, 0, 0, 432, 189);
+	case 56:
+		return new MainEnvironDoorDown(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 57:
+		return new MainEnvironDoorExit(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 59:
+		return new EnvironDoorExitSound(_vm, viewWindow, sceneStaticData, priorLocation);
 	}
 
 	warning("TODO: Future apartment scene object %d", sceneStaticData.classID);
