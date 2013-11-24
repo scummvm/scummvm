@@ -73,6 +73,19 @@ private:
 	int _warningMessageID;
 };
 
+class CycleEntryVideoWarning : public SceneBase {
+public:
+	CycleEntryVideoWarning(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+			int animIDA = 0, int animIDB = 0, int flagOffset = 0, int warningMessageID = -1);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
+
+private:
+	int _animIDA;
+	int _animIDB;
+	int _flagOffset;
+	int _warningMessageID;
+};
+
 } // End of namespace Buried
 
 #endif
