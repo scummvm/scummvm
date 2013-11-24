@@ -4954,6 +4954,7 @@ void Scene3600::dispatch() {
 void Scene3700::postInit(SceneObjectList *OwnerList) {
 	loadScene(3700);
 	R2_GLOBALS._uiElements._active = false;
+	R2_GLOBALS._uiElements._visible = false;
 	SceneExt::postInit();
 	R2_GLOBALS._interfaceY = SCREEN_HEIGHT;
 
