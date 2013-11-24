@@ -1863,6 +1863,10 @@ bool AnimationPlayer::load(int animId, Action *endAction) {
 	_frameDelay = (60 / _subData._frameRate);
 	_gameFrame = R2_GLOBALS._events.getFrameNumber();
 
+	// WORKAROUND: Slow down the title sequences to better match the original
+	if (animId <= 4 || animId == 15)
+		_frameDelay *= 8;
+
 	if (_subData._totalSize) {
 		_dataNeeded = _subData._totalSize;
 	} else {
