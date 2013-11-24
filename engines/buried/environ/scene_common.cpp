@@ -136,4 +136,27 @@ int OneShotEntryVideoWarning::postEnterRoom(Window *viewWindow, const Location &
 	return SC_TRUE;
 }
 
+CycleEntryVideoWarning::CycleEntryVideoWarning(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+		int animIDA, int animIDB, int flagOffset, int warningMessageID) : SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_animIDA = animIDA;
+	_animIDB = animIDB;
+	_flagOffset = flagOffset;
+	_warningMessageID = warningMessageID;
+}
+
+int CycleEntryVideoWarning::postEnterRoom(Window *viewWindow, const Location &priorLocation) {
+	if (_warningMessageID >= 0)
+		((SceneViewWindow *)viewWindow)->displayLiveText(_vm->getString(_warningMessageID));
+
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlagByte(_flagOffset) == 0) {
+		((SceneViewWindow *)viewWindow)->playSynchronousAnimation(_animIDA);
+		((SceneViewWindow *)viewWindow)->setGlobalFlagByte(_flagOffset, 1);
+	} else {
+		((SceneViewWindow *)viewWindow)->playSynchronousAnimation(_animIDB);
+		((SceneViewWindow *)viewWindow)->setGlobalFlagByte(_flagOffset, 0);
+	}
+
+	return SC_TRUE;
+}
+
 } // End of namespace Buried
