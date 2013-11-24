@@ -64,14 +64,15 @@ MP3Track::~MP3Track() {
 }
 
 bool MP3Track::openSound(const Common::String &soundName, Common::SeekableReadStream *file) {
-#ifndef USE_MAD
-	return false;
-#else
 	if (!file) {
 		warning("Stream for %s not open", soundName.c_str());
 		return false;
 	}
 	_soundName = soundName;
+#ifndef USE_MAD
+	warning("Cannot open %s, MP3 support not enabled", soundName.c_str());
+	return true;
+#else
 	parseRIFFHeader(file);
 	_stream = Audio::makeLoopingAudioStream(Audio::makeMP3Stream(file, DisposeAfterUse::YES), 0);
 	_handle = new Audio::SoundHandle();
