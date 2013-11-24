@@ -84,6 +84,27 @@ int BasicDoor::specifyCursor(Window *viewWindow, const Common::Point &pointLocat
 	return kCursorArrow;
 }
 
+TurnDepthPreChange::TurnDepthPreChange(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+		int flagOffset, int upDepth, int leftDepth, int rightDepth, int downDepth, int forwardDepth) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlagByte(flagOffset)) {
+		if (upDepth >= 0)
+			_staticData.destUp.destinationScene.depth = upDepth;
+
+		if (leftDepth >= 0)
+			_staticData.destUp.destinationScene.depth = leftDepth;
+
+		if (rightDepth >= 0)
+			_staticData.destUp.destinationScene.depth = rightDepth;
+
+		if (downDepth >= 0)
+			_staticData.destUp.destinationScene.depth = downDepth;
+
+		if (forwardDepth >= 0)
+			_staticData.destUp.destinationScene.depth = forwardDepth;
+	}
+}
+
 PlayStingers::PlayStingers(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
 		int stingerVolume, int lastStingerFlagOffset, int effectIDFlagOffset, int firstStingerFileID, int lastStingerFileID) :
 		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
