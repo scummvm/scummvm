@@ -1089,15 +1089,15 @@ bool AGOSEngine_PN::ifObjectInInv(uint16 a) {
 }
 
 bool AGOSEngine_PN::testContainer(uint16 a) {
-	return 	bitextract(_quickptr[1] + a * _quickshort[1], 0) != 0;
+	return bitextract(_quickptr[1] + a * _quickshort[1], 0) != 0;
 }
 
 bool AGOSEngine_PN::testObvious(uint16 a) {
-	return 	bitextract(_quickptr[1] + a * _quickshort[1], 4) != 0;
+	return bitextract(_quickptr[1] + a * _quickshort[1], 4) != 0;
 }
 
 bool AGOSEngine_PN::testSeen(uint16 a) {
-	return 	bitextract(_quickptr[1] + a * _quickshort[1], 3) != 0;
+	return bitextract(_quickptr[1] + a * _quickshort[1], 3) != 0;
 }
 
 void AGOSEngine_PN::printIcon(HitArea *ha, uint8 i, uint8 r) {
