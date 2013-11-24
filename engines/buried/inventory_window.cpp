@@ -33,8 +33,10 @@
 #include "buried/message.h"
 #include "buried/resources.h"
 #include "buried/scene_view.h"
+#include "buried/environ/scene_base.h"
 
 #include "common/algorithm.h"
+#include "common/stream.h"
 #include "graphics/font.h"
 #include "graphics/surface.h"
 
@@ -233,7 +235,11 @@ bool InventoryWindow::startDraggingNewItem(int itemID, const Common::Point &poin
 	_draggingIconIndex = 0;
 
 	InventoryElement staticItemData = getItemStaticData(_draggingItemID);
-	_draggingItemSpriteData.image = _vm->_gfx->getBitmap(IDB_DRAG_BITMAP_BASE + staticItemData.firstDragID - 1);
+
+	if (_vm->isDemo())
+		_draggingItemSpriteData.image = _dragFrames->getFrameCopy(staticItemData.firstDragID + _draggingIconIndex);
+	else
+		_draggingItemSpriteData.image = _vm->_gfx->getBitmap(IDB_DRAG_BITMAP_BASE + staticItemData.firstDragID - 1);
 	_draggingItemSpriteData.xPos = 0;
 	_draggingItemSpriteData.yPos = 0;
 	_draggingItemSpriteData.width = _draggingItemSpriteData.image->w;
@@ -244,9 +250,10 @@ bool InventoryWindow::startDraggingNewItem(int itemID, const Common::Point &poin
 		_draggingItemSpriteData.greenTrans = 255;
 		_draggingItemSpriteData.blueTrans = 255;
 	} else {
-		_draggingItemSpriteData.redTrans = _vm->_gfx->getDefaultPalette()[0];
-		_draggingItemSpriteData.greenTrans = _vm->_gfx->getDefaultPalette()[1];
-		_draggingItemSpriteData.blueTrans = _vm->_gfx->getDefaultPalette()[2];
+		byte firstPixel = *((byte *)_draggingItemSpriteData.image->getBasePtr(0, 0));
+		_draggingItemSpriteData.redTrans = _vm->_gfx->getDefaultPalette()[firstPixel * 3];
+		_draggingItemSpriteData.greenTrans = _vm->_gfx->getDefaultPalette()[firstPixel * 3 + 1];
+		_draggingItemSpriteData.blueTrans = _vm->_gfx->getDefaultPalette()[firstPixel * 3 + 2];
 
 		if (!_vm->isDemo()) {
 			for (int y = 0; y < _draggingItemSpriteData.height; y++) {
@@ -260,7 +267,7 @@ bool InventoryWindow::startDraggingNewItem(int itemID, const Common::Point &poin
 		}
 	}
 
-	// TODO: Set capture
+	setCapture();
 	onSetCursor(kMessageTypeLButtonDown);
 	onMouseMove(pointStart, 0);
 
@@ -409,15 +416,15 @@ void InventoryWindow::onLButtonDown(const Common::Point &point, uint flags) {
 				return;
 			}
 
-			// TODO: Support dragging
-			return;
-
-			InventoryElement staticItemData = getItemStaticData(_draggingItemID);
+			InventoryElement staticItemData = getItemStaticData(_itemArray[_curItem]);
 
 			if (staticItemData.firstDragID < 0)
 				return;
 
-			_draggingItemSpriteData.image = _vm->_gfx->getBitmap(IDB_DRAG_BITMAP_BASE + staticItemData.firstDragID - 1);
+			if (_vm->isDemo())
+				_draggingItemSpriteData.image = _dragFrames->getFrameCopy(staticItemData.firstDragID);
+			else
+				_draggingItemSpriteData.image = _vm->_gfx->getBitmap(IDB_DRAG_BITMAP_BASE + staticItemData.firstDragID - 1);
 			_draggingItemInInventory = true;
 			_itemComesFromInventory = true;
 			_draggingObject = true;
@@ -434,9 +441,10 @@ void InventoryWindow::onLButtonDown(const Common::Point &point, uint flags) {
 				_draggingItemSpriteData.greenTrans = 255;
 				_draggingItemSpriteData.blueTrans = 255;
 			} else {
-				_draggingItemSpriteData.redTrans = _vm->_gfx->getDefaultPalette()[0];
-				_draggingItemSpriteData.greenTrans = _vm->_gfx->getDefaultPalette()[1];
-				_draggingItemSpriteData.blueTrans = _vm->_gfx->getDefaultPalette()[2];
+				byte firstPixel = *((byte *)_draggingItemSpriteData.image->getBasePtr(0, 0));
+				_draggingItemSpriteData.redTrans = _vm->_gfx->getDefaultPalette()[firstPixel * 3];
+				_draggingItemSpriteData.greenTrans = _vm->_gfx->getDefaultPalette()[firstPixel * 3 + 1];
+				_draggingItemSpriteData.blueTrans = _vm->_gfx->getDefaultPalette()[firstPixel * 3 + 2];
 
 				if (!_vm->isDemo()) {
 					for (int y = 0; y < _draggingItemSpriteData.height; y++) {
@@ -450,7 +458,7 @@ void InventoryWindow::onLButtonDown(const Common::Point &point, uint flags) {
 				}
 			}
 
-			// TODO: SetCapture();
+			setCapture();
 
 			onSetCursor(kMessageTypeLButtonDown);
 			((GameUIWindow *)_parent)->_sceneViewWindow->changeSpriteStatus(true);
@@ -538,7 +546,75 @@ void InventoryWindow::onLButtonUp(const Common::Point &point, uint flags) {
 	if (_draggingObject) {
 		_draggingObject = false;
 
-		// TODO: Lots missing
+		_vm->releaseCapture();
+
+		// Reset the cursor
+		((GameUIWindow *)getParent())->_sceneViewWindow->resetCursor();
+
+		// Did we drop on the scene or on the inventory window?
+		Common::Point ptScene = convertPointToWindow(point, ((GameUIWindow *)getParent())->_sceneViewWindow);
+		Common::Point ptGameUI = convertPointToWindow(point, getParent());
+		Window *droppedChild = getParent()->childWindowAtPoint(ptGameUI);
+		((GameUIWindow *)getParent())->_sceneViewWindow->changeSpriteStatus(false);
+
+		bool returnToInventory = true;
+		if (droppedChild == ((GameUIWindow *)getParent())->_sceneViewWindow) {
+			if (((GameUIWindow *)getParent())->_sceneViewWindow->droppedItem(_draggingItemID, ptScene, 0) == SIC_ACCEPT)
+				returnToInventory = false;
+
+			if (_draggingItemInInventory)
+				removeItem(_draggingItemID);
+		}
+
+		((GameUIWindow *)getParent())->_sceneViewWindow->changeSpriteStatus(true);
+
+		if (droppedChild == this) {
+			returnToInventory = false;
+
+			if (!_draggingItemInInventory) {
+				if (_draggingItemID == kItemCheeseGirl || _draggingItemID == kItemBioChipTranslate || _draggingItemID == kItemGenoSingleCart) {
+					if (!isItemInInventory(_draggingItemID))
+						addItem(_draggingItemID);
+				} else {
+					addItem(_draggingItemID);
+				}
+			}
+		}
+
+		if (!_itemComesFromInventory)
+			((GameUIWindow *)getParent())->_sceneViewWindow->droppedItem(_draggingItemID, Common::Point(-1, -1), 0);
+
+		if (returnToInventory) {
+			// If we dropped within the scene, then perform a graduated fall to the inventory window
+			if (ptScene.y < 190) {
+				// Loop and move the object into the inventory
+				int xDelta = 180 - ptScene.x;
+				int yDelta = 210 - ptScene.y;
+
+				for (int i = 0; i < 8; i++) {
+					xDelta /= 2;
+					yDelta /= 2;
+
+					ptScene.x += xDelta;
+					ptScene.y += yDelta;
+					_draggingItemSpriteData.xPos = ptScene.x - _draggingItemSpriteData.width / 2;
+					_draggingItemSpriteData.yPos = ptScene.y - _draggingItemSpriteData.height / 2;
+
+					((GameUIWindow *)getParent())->_sceneViewWindow->updatePrebufferWithSprite(_draggingItemSpriteData);
+
+					// TODO: Update screen? This seems to be missing *something*
+				}
+			}
+
+			if (!_draggingItemInInventory)
+				addItem(_draggingItemID);
+		}
+
+		_draggingItemSpriteData.image = 0;
+		((GameUIWindow *)getParent())->_sceneViewWindow->updatePrebufferWithSprite(_draggingItemSpriteData);
+		_itemComesFromInventory = false;
+
+		((GameUIWindow *)getParent())->_bioChipRightWindow->sceneChanged();
 	}
 
 	if (redraw) {
@@ -551,7 +627,89 @@ void InventoryWindow::onMouseMove(const Common::Point &point, uint flags) {
 	_curMousePos = point;
 
 	if (_draggingObject) {
-		// TODO
+		Common::Point ptScene = convertPointToWindow(point, ((GameUIWindow *)getParent())->_sceneViewWindow);
+		Common::Point ptView(ptScene);
+
+		if (ptScene.y > 189) {
+			if (!_draggingItemInInventory) {
+				if (_draggingItemID == kItemCheeseGirl || _draggingItemID == kItemBioChipTranslate || _draggingItemID == kItemGenoSingleCart) {
+					if (!isItemInInventory(_draggingItemID))
+						addItem(_draggingItemID);
+				} else {
+					addItem(_draggingItemID);
+				}
+
+				_draggingItemInInventory = true;
+				rebuildPreBuffer();
+				invalidateWindow();
+			}
+		} else {
+			if (_draggingItemInInventory) {
+				if (_draggingItemID == kItemCheeseGirl || _draggingItemID == kItemBioChipTranslate || _draggingItemID == kItemGenoSingleCart) {
+					if (isItemInInventory(_draggingItemID))
+						removeItem(_draggingItemID);
+				} else {
+					removeItem(_draggingItemID);
+				}
+
+				_draggingItemInInventory = false;
+				rebuildPreBuffer();
+				invalidateWindow();
+			}
+		}
+
+		ptScene.x = CLIP<int>(ptScene.x, 0, 431) - _draggingItemSpriteData.width / 2;
+		ptScene.y = MAX<int>(ptScene.y, 0) - _draggingItemSpriteData.height / 2;
+
+		int newIcon = ((GameUIWindow *)getParent())->_sceneViewWindow->draggingItem(_draggingItemID, ptView, 0);
+
+		if (_draggingIconIndex != newIcon) {
+			InventoryElement staticItemData = getItemStaticData(_draggingItemID);
+
+			if (newIcon > staticItemData.dragIDCount - 1)
+				newIcon = staticItemData.dragIDCount - 1;
+
+			if (_draggingIconIndex != newIcon) {
+				if (_draggingItemSpriteData.image) {
+					_draggingItemSpriteData.image->free();
+					delete _draggingItemSpriteData.image;
+				}
+
+				if (_vm->isDemo())
+					_draggingItemSpriteData.image = _dragFrames->getFrameCopy(staticItemData.firstDragID);
+				else
+					_draggingItemSpriteData.image = _vm->_gfx->getBitmap(IDB_DRAG_BITMAP_BASE + staticItemData.firstDragID - 1);
+				_draggingItemSpriteData.xPos = 0;
+				_draggingItemSpriteData.yPos = 0;
+				_draggingItemSpriteData.width = _draggingItemSpriteData.image->w;
+				_draggingItemSpriteData.height = _draggingItemSpriteData.image->h;
+
+				if (_vm->isTrueColor()) {
+					_draggingItemSpriteData.redTrans = 255;
+					_draggingItemSpriteData.greenTrans = 255;
+					_draggingItemSpriteData.blueTrans = 255;
+				} else {
+					_draggingItemSpriteData.redTrans = _vm->_gfx->getDefaultPalette()[0];
+					_draggingItemSpriteData.greenTrans = _vm->_gfx->getDefaultPalette()[1];
+					_draggingItemSpriteData.blueTrans = _vm->_gfx->getDefaultPalette()[2];
+
+					if (!_vm->isDemo()) {
+						for (int y = 0; y < _draggingItemSpriteData.height; y++) {
+							for (int x = 0; x < _draggingItemSpriteData.width; x++) {
+								byte color = *((byte *)_draggingItemSpriteData.image->getBasePtr(x, y));
+
+								if (color != 0)
+									*((byte *)_draggingItemSpriteData.image->getBasePtr(x, y)) = color + 10;
+							}
+						}
+					}
+				}
+			}
+		}
+
+		_draggingItemSpriteData.xPos = ptScene.x;
+		_draggingItemSpriteData.yPos = ptScene.y;
+		((GameUIWindow *)getParent())->_sceneViewWindow->updatePrebufferWithSprite(_draggingItemSpriteData);
 	} else {
 		Common::Rect up(95, 8, 114, 29);
 		Common::Rect down(95, 54, 114, 75);
@@ -617,8 +775,17 @@ bool InventoryWindow::isItemInInventory(int itemID) {
 }
 
 InventoryElement InventoryWindow::getItemStaticData(int itemID) {
-	// TODO
-	return InventoryElement();
+	Common::SeekableReadStream *resource = _vm->getItemData(IDER_ITEM_DB);
+	resource->seek(itemID * (2 + 4 + 4) + 2);
+
+	InventoryElement element;
+	element.itemID = resource->readSint16LE();
+	element.firstDragID = resource->readSint32LE();
+	element.dragIDCount = resource->readSint32LE();
+
+	delete resource;
+
+	return element;
 }
 
 bool InventoryWindow::destroyInfoWindow() {
