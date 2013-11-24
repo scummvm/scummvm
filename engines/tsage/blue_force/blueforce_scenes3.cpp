@@ -1978,12 +1978,7 @@ void Scene340::Action8::signal() {
 
 		setDelay(6);
 		break;
-	case 4:
-		remove();
-		break;
 	default:
-		// This is present in the original game
-		warning("Bugs");
 		remove();
 		break;
 	}
