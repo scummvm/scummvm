@@ -54,14 +54,6 @@ BasicDoor::BasicDoor(BuriedEngine *vm, Window *viewWindow, const LocationStaticD
 	_destData.transitionLength = transitionLength;
 
 	_openingSoundID = openingSoundID;
-
-	// FIXME: Why is this here?
-	if (viewWindow) {
-		((SceneViewWindow *)viewWindow)->changeStillFrameMovie(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, SF_STILLS));
-
-		if (_staticData.cycleStartFrame >= 0)
-			((SceneViewWindow *)viewWindow)->changeCycleFrameMovie(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, SF_CYCLES));
-	}
 }
 
 int BasicDoor::mouseDown(Window *viewWindow, const Common::Point &pointLocation) {
@@ -100,14 +92,6 @@ PlayStingers::PlayStingers(BuriedEngine *vm, Window *viewWindow, const LocationS
 	_effectIDFlagOffset = effectIDFlagOffset;
 	_firstStingerFileID = firstStingerFileID;
 	_lastStingerFileID = lastStingerFileID;
-
-	// FIXME: Why is this here?
-	if (viewWindow) {
-		((SceneViewWindow *)viewWindow)->changeStillFrameMovie(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, SF_STILLS));
-
-		if (_staticData.cycleStartFrame >= 0)
-			((SceneViewWindow *)viewWindow)->changeCycleFrameMovie(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, SF_CYCLES));
-	}
 }
 
 int PlayStingers::postEnterRoom(Window *viewWindow, const Location &priorLocation) {
@@ -128,6 +112,25 @@ int PlayStingers::postEnterRoom(Window *viewWindow, const Location &priorLocatio
 			((SceneViewWindow *)viewWindow)->setGlobalFlagByte(_effectIDFlagOffset, newStingerID);
 			((SceneViewWindow *)viewWindow)->setGlobalFlagByte(_lastStingerFlagOffset, lastStinger);
 		}
+	}
+
+	return SC_TRUE;
+}
+
+OneShotEntryVideoWarning::OneShotEntryVideoWarning(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+		int animID, int flagOffset, int warningMessageID) : SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_animID = animID;
+	_flagOffset = flagOffset;
+	_warningMessageID = warningMessageID;
+}
+
+int OneShotEntryVideoWarning::postEnterRoom(Window *viewWindow, const Location &priorLocation) {
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlagByte(_flagOffset) == 0) {
+		if (_warningMessageID >= 0)
+			((SceneViewWindow *)viewWindow)->displayLiveText(_vm->getString(_warningMessageID));
+
+		((SceneViewWindow *)viewWindow)->playSynchronousAnimation(_animID);
+		((SceneViewWindow *)viewWindow)->setGlobalFlagByte(_flagOffset, 1);
 	}
 
 	return SC_TRUE;
