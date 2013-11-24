@@ -69,8 +69,14 @@ InventoryInfoWindow::~InventoryInfoWindow() {
 bool InventoryInfoWindow::changeCurrentItem(int newItemID) {
 	_currentItemID = newItemID;
 
-	_spinStart = newItemID * 71;
-	_spinLength = 70;
+	if (_vm->isDemo()) {
+		_spinStart = newItemID * 72;
+		_spinLength = 71;
+	} else {
+		_spinStart = newItemID * 71;
+		_spinLength = 70;
+	}
+
 	_videoWindow->stopVideo();
 
 	_videoWindow->seekToFrame(_spinStart);
