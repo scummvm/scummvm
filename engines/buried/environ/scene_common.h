@@ -47,6 +47,12 @@ public:
 	int _openingSoundID;
 };
 
+class TurnDepthPreChange : public SceneBase {
+public:
+	TurnDepthPreChange(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+			int flagOffset = -1, int upDepth = -1, int leftDepth = -1, int rightDepth = -1, int downDepth = -1, int forwardDepth = -1);
+};
+
 class PlayStingers : public SceneBase {
 public:
 	PlayStingers(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
