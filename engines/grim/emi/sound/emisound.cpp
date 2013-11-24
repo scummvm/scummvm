@@ -363,15 +363,18 @@ void EMISound::restoreState(SaveGame *savedState) {
 	// Stack:
 	uint32 stackSize = savedState->readLEUint32();
 	for (uint32 i = 0; i < stackSize; i++) {
+		SoundTrack *track = NULL;
 		Common::String soundName = savedState->readString();
-		SoundTrack *track = createEmptyMusicTrack();
-		if (initTrack(soundName, track)) {
-			track->play();
-			track->pause();
-			_stateStack.push(track);
-		} else {
-			error("Couldn't reopen %s", soundName.c_str());
+		if (!soundName.empty()) {
+			track = createEmptyMusicTrack();
+			if (initTrack(soundName, track)) {
+				track->play();
+				track->pause();
+			} else {
+				error("Couldn't reopen %s", soundName.c_str());
+			}
 		}
+		_stateStack.push(track);
 	}
 	// Currently playing music:
 	uint32 hasActiveTrack = savedState->readLEUint32();
@@ -412,7 +415,11 @@ void EMISound::saveState(SaveGame *savedState) {
 	// TODO: Save actual state, instead of just the file needed.
 	// We'll need repeatable state first though.
 	for (uint32 i = 0; i < stackSize; i++) {
-		savedState->writeString(_stateStack[i]->getSoundName());
+		if (_stateStack[i]) {
+		    savedState->writeString(_stateStack[i]->getSoundName());
+		} else {
+		    savedState->writeString("");
+		}
 	}
 	// Currently playing music:
 	if (_music) {
