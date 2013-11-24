@@ -4661,6 +4661,8 @@ void Scene3600::signal() {
 			&_quinn, &_seeker, &_miranda, &_webbster, NULL);
 		break;
 	case 3322:
+		// Teal walks toward the teleport pod, the goule protector appears
+
 		// Removed (useless ?) call to sub_1D227
 		_quinnSpeaker.stopSpeaking();
 		_quinnSpeaker._displayMode = 1;
@@ -4671,6 +4673,8 @@ void Scene3600::signal() {
 		setAction(&_sequenceManager1, this, _sceneMode, &_teal, &_protector, &_steppingDisk, NULL);
 		break;
 	case 3323:
+		// Goule protector eats Teal guts then moves
+
 		if (!_tealDead)
 			_tealDead = true;
 		else {
@@ -4713,6 +4717,7 @@ void Scene3600::signal() {
 		_sceneMode = 3623;
 		break;
 	case 3450:
+		// Speech of Teal and Quinn
 		R2_GLOBALS._sound1.stop();
 		_protector3400.hide();
 		_door3400.hide();
@@ -4832,6 +4837,7 @@ void Scene3600::signal() {
 		setAction(&_sequenceManager1, this, 3450, &_protector3400, &_door3400, NULL);
 		break;
 	case 3605:
+		// Goule protector jumps on Teal
 		_protector.setup(3258, 4, 1);
 		_protector.setAction(&_sequenceManager1, this, 3606, &_teal, &_protector,
 			&_steppingDisk, NULL);
