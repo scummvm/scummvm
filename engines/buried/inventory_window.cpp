@@ -99,6 +99,9 @@ InventoryWindow::InventoryWindow(BuriedEngine *vm, Window *parent) : Window(vm, 
 }
 
 InventoryWindow::~InventoryWindow() {
+	destroyInfoWindow();
+	destroyBurnedLetterWindow();
+
 	if (_background) {
 		_background->free();
 		delete _background;
@@ -110,10 +113,7 @@ InventoryWindow::~InventoryWindow() {
 	}
 
 	if (_scrollTimer != 0)
-		killTimer(_scrollTimer);
-
-	destroyInfoWindow();
-	destroyBurnedLetterWindow();
+		killTimer(_scrollTimer);	
 
 	delete _textFont;
 	delete _dragFrames;
