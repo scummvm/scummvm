@@ -1245,7 +1245,7 @@ GfxButton *GfxDialog::execute(GfxButton *defaultButton) {
 }
 
 void GfxDialog::setPalette() {
-	if (g_vm->getGameID() == GType_BlueForce) {
+	if (g_vm->getGameID() != GType_Ringworld) {
 		g_globals->_scenePalette.loadPalette(2);
 		g_globals->_scenePalette.setPalette(0, 1);
 		g_globals->_scenePalette.setPalette(g_globals->_gfxColors.background, 1);
