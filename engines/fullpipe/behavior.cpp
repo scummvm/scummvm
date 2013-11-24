@@ -185,6 +185,19 @@ bool BehaviorManager::setBehaviorEnabled(StaticANIObject *obj, int aniId, int qu
 	return true;
 }
 
+void BehaviorManager::setFlagByStaticAniObject(StaticANIObject *ani, int flag) {
+	for (uint i = 0; i < _behaviors.size(); i++) {
+		BehaviorInfo *beh = _behaviors[i];
+
+		if (ani == beh->_ani) {
+			if (flag)
+				beh->_flags &= 0xfe;
+			else
+				beh->_flags |= 1;
+		}
+	}
+}
+
 void BehaviorInfo::clear() {
 	_ani = 0;
 	_staticsId = 0;

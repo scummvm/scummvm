@@ -289,7 +289,21 @@ void sceneHandler04_stopSound() {
 }
 
 void sceneHandler04_sub1(ExCommand *ex) {
-	warning("sceneHandler04_sub1()");
+	g_fullpipe->_aniMan->changeStatics2(ST_MAN_SIT);
+
+	MessageQueue *mq = new MessageQueue(g_fullpipe->_currentScene->getMessageQueueById(QU_SC4_MANFROMBOTTLE), 0, 0);
+
+	if (ex) {
+		ExCommand *newex = new ExCommand(ex);
+
+		mq->_exCommands.push_back(newex);
+	  }
+
+	mq->_flags |= 1;
+	mq->chain(0);
+
+	g_vars->scene04_var10 = 0;
+	g_fullpipe->_behaviorManager->setFlagByStaticAniObject(g_fullpipe->_aniMan, 1);
 }
 
 void sceneHandler04_sub3() {

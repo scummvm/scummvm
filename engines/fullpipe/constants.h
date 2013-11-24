@@ -189,6 +189,7 @@ namespace Fullpipe {
 #define QU_PNK_CLICK 550
 #define QU_SC3_ENTERLIFT 2779
 #define QU_SC3_EXITLIFT 2808
+#define QU_SC4_MANFROMBOTTLE 2851
 #define SC_1 301
 #define SC_10 653
 #define SC_11 654
@@ -276,6 +277,7 @@ namespace Fullpipe {
 #define ST_LBN_9P 2778
 #define ST_MAN_EMPTY 476
 #define ST_MAN_RIGHT 325
+#define ST_MAN_SIT 1164
 #define TrubaDown 697
 #define TrubaLeft 474
 #define TrubaRight 696
