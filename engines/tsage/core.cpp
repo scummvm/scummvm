@@ -2110,7 +2110,7 @@ SceneObject::SceneObject() : SceneHotspot() {
 	_shade = _oldShade = 0;
 	_linkedActor = NULL;
 
-	_field8A = Common::Point(0, 0);
+	_actorDestPos = Common::Point(0, 0);
 	_angle = 0;
 	_xs = 0;
 	_xe = 0;
@@ -2504,8 +2504,8 @@ void SceneObject::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_moveDiff.x); s.syncAsSint16LE(_moveDiff.y);
 	s.syncAsSint32LE(_moveRate);
 	if (g_vm->getGameID() == GType_Ringworld2) {
-		s.syncAsSint16LE(_field8A.x);
-		s.syncAsSint16LE(_field8A.y);
+		s.syncAsSint16LE(_actorDestPos.x);
+		s.syncAsSint16LE(_actorDestPos.y);
 	}
 	SYNC_POINTER(_endAction);
 	s.syncAsUint32LE(_regionBitList);

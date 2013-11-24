@@ -4335,7 +4335,7 @@ void Scene3600::Action2::signal() {
 		scene->_protector.setup(3127, 2, 1);
 		scene->_protector.animate(ANIM_MODE_1, NULL);
 		NpcMover *mover = new NpcMover();
-		scene->_protector.addMover(mover, &scene->_protector._field8A, scene);
+		scene->_protector.addMover(mover, &scene->_protector._actorDestPos, scene);
 		}
 		break;
 	default:
@@ -4554,7 +4554,7 @@ void Scene3600::postInit(SceneObjectList *OwnerList) {
 		if (!R2_GLOBALS.getFlag(71)) {
 			_protector.postInit();
 			_protector._state = 0;
-			_protector._field8A = Common::Point(226, 152);
+			_protector._actorDestPos = Common::Point(226, 152);
 			_protector._moveDiff = Common::Point(3, 2);
 			_protector.setPosition(Common::Point(284, 152));
 			_protector.setup(3127, 2, 1);
@@ -4630,6 +4630,8 @@ void Scene3600::remove() {
 void Scene3600::signal() {
 	switch (_sceneMode) {
 	case 3320:
+		// Move to the console
+
 		// Removed (useless ?) call to sub_1D227
 		R2_GLOBALS._walkRegions.disableRegion(14);
 		R2_GLOBALS._scrollFollower = &_seeker;
@@ -4646,6 +4648,8 @@ void Scene3600::signal() {
 			&_miranda, &_webbster, &_teal, NULL);
 		break;
 	case 3321:
+		// Teal activates console
+
 		// Removed (useless ?) call to sub_1D227
 		R2_GLOBALS._scrollFollower = &R2_GLOBALS._player;
 		_tealSpeaker.stopSpeaking();
@@ -4731,7 +4735,7 @@ void Scene3600::signal() {
 
 		_protector.postInit();
 		_protector._state = 0;
-		_protector._field8A = Common::Point(226, 152);
+		_protector._actorDestPos = Common::Point(226, 152);
 		_protector._moveDiff = Common::Point(5, 3);
 		_protector.setup(3403, 7, 1);
 		_protector.setPosition(Common::Point(405, 155));
@@ -4773,6 +4777,7 @@ void Scene3600::signal() {
 		R2_GLOBALS._sound2.play(329);
 		break;
 	case 3600:
+		// First speech by Teal
 		_sceneMode = 3320;
 		_stripManager.start(3320, this);
 		break;
@@ -4781,6 +4786,7 @@ void Scene3600::signal() {
 	case 3602:
 	// No break on purpose
 	case 3603:
+		// Teal speech near the console
 		R2_GLOBALS._walkRegions.disableRegion(2);
 		R2_GLOBALS._walkRegions.disableRegion(7);
 		_tealSpeaker._displayMode = 1;
@@ -4788,6 +4794,7 @@ void Scene3600::signal() {
 		_stripManager.start(3321, this);
 		break;
 	case 3604:
+		// Goule Protector forces the door
 		R2_GLOBALS._sound2.fadeOut2(NULL);
 		R2_GLOBALS._sound1.stop();
 		R2_GLOBALS._walkRegions.enableRegion(2);

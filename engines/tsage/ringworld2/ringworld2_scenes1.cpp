@@ -6435,7 +6435,7 @@ void Scene1337::subD02CA() {
 				_item6._object1._mover = _arrunkObj1337[2]._arr1[di]._object1._mover;
 				_item6._object1._moveDiff = _arrunkObj1337[2]._arr1[di]._object1._moveDiff;
 				_item6._object1._moveRate = _arrunkObj1337[2]._arr1[di]._object1._moveRate;
-				_item6._object1._field8A = _arrunkObj1337[2]._arr1[di]._object1._field8A;
+				_item6._object1._actorDestPos = _arrunkObj1337[2]._arr1[di]._object1._actorDestPos;
 				_item6._object1._endAction = _arrunkObj1337[2]._arr1[di]._object1._endAction;
 				_item6._object1._regionBitList = _arrunkObj1337[2]._arr1[di]._object1._regionBitList;
 				// _item6._object1._actorName = _arrunkObj1337[2]._arr1[di]._object1._actorName;
