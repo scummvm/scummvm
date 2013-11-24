@@ -670,11 +670,6 @@ void InventoryWindow::onMouseMove(const Common::Point &point, uint flags) {
 				newIcon = staticItemData.dragIDCount - 1;
 
 			if (_draggingIconIndex != newIcon) {
-				if (_draggingItemSpriteData.image) {
-					_draggingItemSpriteData.image->free();
-					delete _draggingItemSpriteData.image;
-				}
-
 				if (_vm->isDemo())
 					_draggingItemSpriteData.image = _dragFrames->getFrameCopy(staticItemData.firstDragID);
 				else
