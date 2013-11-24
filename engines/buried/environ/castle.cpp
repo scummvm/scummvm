@@ -25,6 +25,7 @@
 
 #include "buried/buried.h"
 #include "buried/gameui.h"
+#include "buried/graphics.h"
 #include "buried/invdata.h"
 #include "buried/inventory_window.h"
 #include "buried/resources.h"
@@ -88,12 +89,16 @@ SceneBase *SceneViewWindow::constructCastleSceneObject(Window *viewWindow, const
 		return new BasicDoor(_vm, viewWindow, sceneStaticData, priorLocation, 42, 0, 357, 189, 1, 8, 11, 3, 1, 1, 2, 11, 314, 7);
 	case 18:
 		return new BasicDoor(_vm, viewWindow, sceneStaticData, priorLocation, 26, 0, 432, 189, 1, 8, 6, 3, 1, 1, 2, 11, 288, 8);
+	case 31:
+		return new ClickPlayVideo(_vm, viewWindow, sceneStaticData, priorLocation, 1, kCursorFinger, 51, 25, 149, 149);
 	case 32:
 		return new OneShotEntryVideoWarning(_vm, viewWindow, sceneStaticData, priorLocation, 0, offsetof(GlobalFlags, cgSmithyGuard), IDS_HUMAN_PRESENCE_10METERS);
 	case 33:
 		return new OneShotEntryVideoWarning(_vm, viewWindow, sceneStaticData, priorLocation, _vm->isDemo() ? 2 : 6, offsetof(GlobalFlags, cgBaileyOneWayGuard), IDS_HUMAN_PRESENCE_10METERS);
 	case 34:
 		return new CycleEntryVideoWarning(_vm, viewWindow, sceneStaticData, priorLocation, _vm->isDemo() ? 5 : 7, _vm->isDemo() ? 6 : 8, offsetof(GlobalFlags, cgBaileyTwoWayGuards), IDS_HUMAN_PRESENCE_10METERS);
+	case 47:
+		return new ClickPlayVideo(_vm, viewWindow, sceneStaticData, priorLocation, 2, kCursorFinger, 0, 75, 258, 123);
 	}
 
 	warning("TODO: Castle scene object %d", sceneStaticData.classID);

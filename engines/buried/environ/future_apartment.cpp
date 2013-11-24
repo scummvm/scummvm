@@ -161,6 +161,8 @@ SceneBase *SceneViewWindow::constructFutureApartmentSceneObject(Window *viewWind
 		return new ToyClick(_vm, viewWindow, sceneStaticData, priorLocation, 104, 10, 270, 189, 0, 20, 21);
 	case 41:
 		return new ToyClick(_vm, viewWindow, sceneStaticData, priorLocation, 128, 0, 332, 189, 0, 23, 24);
+	case 54:
+		return new ClickPlayVideo(_vm, viewWindow, sceneStaticData, priorLocation, 36, kCursorFinger, 0, 0, 432, 189);
 	}
 
 	warning("TODO: Future apartment scene object %d", sceneStaticData.classID);
