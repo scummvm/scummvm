@@ -110,7 +110,7 @@ public:
 	 * Query if 'entity' is inside a compartment
 	 *
 	 * @param entity   The entity.
-	 * @param car 	   The car.
+	 * @param car      The car.
 	 * @param position The position.
 	 *
 	 * @return true if inside the compartment, false if not.
@@ -247,7 +247,7 @@ public:
 	/**
 	 * Query if nobody is in a compartment at that position.
 	 *
-	 * @param car 	   The car.
+	 * @param car      The car.
 	 * @param position The position.
 	 *
 	 * @return true if nobody is in a compartment, false if not.
@@ -334,8 +334,8 @@ private:
 	static const int _compartmentsCount = 16;
 	static const int _positionsCount = 100 * 10;  // 100 positions per train car
 
-	LastExpressEngine	    *_engine;
-	EntityData 			    *_header;
+	LastExpressEngine       *_engine;
+	EntityData              *_header;
 	Common::Array<Entity *>  _entities;
 
 	// Compartments & positions

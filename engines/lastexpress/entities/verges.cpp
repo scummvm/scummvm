@@ -105,7 +105,7 @@ IMPLEMENT_FUNCTION(3, Verges, callbackActionOnDirection)
 
 	case kActionExitCompartment:
 		callbackAction();
- 		break;
+		break;
 
 	case kActionExcuseMeCath:
 		if (!params->param1) {

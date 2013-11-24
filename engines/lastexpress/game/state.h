@@ -657,12 +657,12 @@ private:
 	// Timer
 	int _timer;
 
-	Flags *_flags;				///< Flags
-	Inventory *_inventory;  	///< Inventory
-	Objects *_objects;			///< Objects
-	SavePoints *_savepoints;	///< SavePoints
-	GameState *_state;			///< State
-	Common::Point _coords;		///< Current coordinates
+	Flags *_flags;           ///< Flags
+	Inventory *_inventory;   ///< Inventory
+	Objects *_objects;       ///< Objects
+	SavePoints *_savepoints; ///< SavePoints
+	GameState *_state;       ///< State
+	Common::Point _coords;   ///< Current coordinates
 };
 
 } // End of namespace LastExpress
