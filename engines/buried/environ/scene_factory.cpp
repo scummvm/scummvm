@@ -113,7 +113,7 @@ SceneBase *SceneViewWindow::constructSceneObject(Window *viewWindow, const Locat
 		return new OldApartmentSuitCap(_vm, viewWindow, sceneStaticData, priorLocation);
 	}
 
-	return 0;
+	return new SceneBase(_vm, viewWindow, sceneStaticData, priorLocation);
 }
 
 bool SceneViewWindow::initializeTimeZoneAndEnvironment(Window *viewWindow, int timeZone, int environment) {

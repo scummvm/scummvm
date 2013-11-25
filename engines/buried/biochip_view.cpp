@@ -24,11 +24,14 @@
  */
 
 #include "buried/avi_frames.h"
+#include "buried/biochip_right.h"
 #include "buried/biochip_view.h"
 #include "buried/buried.h"
 #include "buried/fbcdata.h"
+#include "buried/gameui.h"
 #include "buried/graphics.h"
 #include "buried/invdata.h"
+#include "buried/livetext.h"
 #include "buried/resources.h"
 #include "buried/scene_view.h"
 
@@ -72,6 +75,288 @@ bool BioChipMainViewWindow::changeCurrentBioChip(int newBioChipID) {
 enum {
 	REGION_NONE = 0
 };
+
+enum {
+	REGION_BRIEFING = 1,
+	REGION_JUMP = 2,
+	REGION_MAYAN = 3,
+	REGION_CASTLE = 4,
+	REGION_DAVINCI = 5,
+	REGION_SPACE_STATION = 6
+};
+
+class JumpBiochipViewWindow : public Window {
+public:
+	JumpBiochipViewWindow(BuriedEngine *vm, Window *parent);
+
+	void onPaint();
+	void onLButtonDown(const Common::Point &point, uint flags);
+	void onLButtonUp(const Common::Point &point, uint flags);
+	void onMouseMove(const Common::Point &point, uint flags);
+
+private:
+	Common::Rect _missionBriefing;
+	Common::Rect _jumpButton;
+	Common::Rect _mayanZone;
+	Common::Rect _castle;
+	Common::Rect _daVinci;
+	Common::Rect _spaceStation;
+	AVIFrames _stillFrames;
+	int _curSelection;
+
+	int _curState;
+
+	static const byte _briefingNavData[4][2];
+	int _curRegion;
+	int _curBriefingPage;
+
+	bool _currentMissionReviewed;
+};
+
+const byte JumpBiochipViewWindow::_briefingNavData[4][2] = {
+	{ 2, 2 },
+	{ 4, 3 },
+	{ 7, 2 },
+	{ 9, 4 }
+};
+
+JumpBiochipViewWindow::JumpBiochipViewWindow(BuriedEngine *vm, Window *parent) : Window(vm, parent) {
+	_missionBriefing = Common::Rect(306, 24, 422, 74);
+	_jumpButton = Common::Rect(306, 84, 422, 134);
+	_mayanZone = Common::Rect(9, 48, 272, 74);
+	_castle = Common::Rect(9, 78, 296, 104);
+	_daVinci = Common::Rect(9, 108, 284, 134);
+	_spaceStation = Common::Rect(9, 138, 284, 164);
+	_curRegion = REGION_NONE;
+	_curSelection = -1;
+	_curState = 0;
+	_curBriefingPage = 0;
+	_currentMissionReviewed = false;
+
+	_rect = Common::Rect(0, 0, 432, 189);
+
+	if (!_stillFrames.open(_vm->getFilePath(IDS_BC_JUMP_VIEW_FILENAME)))
+		error("Failed to open jump view video");
+}
+
+void JumpBiochipViewWindow::onPaint() {
+	Common::Rect absoluteRect = getAbsoluteRect();
+
+	if (_curState == 0) {
+		const Graphics::Surface *frame = _stillFrames.getFrame(0);
+		_vm->_gfx->blit(frame, absoluteRect.left, absoluteRect.top);
+
+		if (_curSelection >= 0) {	
+			frame = _stillFrames.getFrame(1);
+
+			Common::Rect highlightRect(11, _curSelection * 30 + 50, 11 + 23, _curSelection * 30 + 50 + 23);
+			_vm->_gfx->blit(frame, highlightRect, makeAbsoluteRect(highlightRect));
+			_vm->_gfx->blit(frame, Common::Rect(306, 24, 306 + 116, 24 + 50), makeAbsoluteRect(Common::Rect(306, 24, 306 + 116, 24 + 50)));
+
+			if (_currentMissionReviewed)
+				_vm->_gfx->blit(frame, Common::Rect(306, 84, 306 + 116, 84 + 50), makeAbsoluteRect(Common::Rect(306, 84, 306 + 116, 84 + 50)));
+		}
+	} else {
+		const Graphics::Surface *frame = _stillFrames.getFrame(_briefingNavData[_curSelection][0] + _curBriefingPage);
+		_vm->_gfx->blit(frame, absoluteRect.left, absoluteRect.top);
+	}
+}
+
+void JumpBiochipViewWindow::onLButtonDown(const Common::Point &point, uint flags) {
+	if (_curState == 0) {
+		if (_jumpButton.contains(point) && _curSelection >= 0) {
+			if (_currentMissionReviewed) {
+				if (((SceneViewWindow *)getParent()->getParent())->getGlobalFlags().faHeardAgentFigure == 1)
+					_curRegion = REGION_JUMP;
+				else
+					((GameUIWindow *)getParent()->getParent()->getParent())->_liveTextWindow->updateLiveText(_vm->getString(IDS_MBT_JUMP_LOCKOUT_TEXT));
+			} else {
+				((GameUIWindow *)getParent()->getParent()->getParent())->_liveTextWindow->updateLiveText(_vm->getString(IDS_JUMP_BC_REVIEW_MISSION_TEXT_A + _curSelection));
+				return;
+			}
+		} else if (_missionBriefing.contains(point) && _curSelection >= 0) {
+			_curRegion = REGION_BRIEFING;
+		} else if (_mayanZone.contains(point)) {
+			_curRegion = REGION_MAYAN;
+			_curSelection = 0;
+		} else if (_castle.contains(point)) {
+			_curRegion = REGION_CASTLE;
+			_curSelection = 1;
+		} else if (_daVinci.contains(point)) {
+			_curRegion = REGION_DAVINCI;
+			_curSelection = 2;
+		} else if (_spaceStation.contains(point)) {
+			_curRegion = REGION_SPACE_STATION;
+			_curSelection = 3;
+		}
+
+		invalidateWindow(false);
+	}
+}
+
+void JumpBiochipViewWindow::onLButtonUp(const Common::Point &point, uint flags) {
+	if (_curState == 0) {
+		switch (_curRegion) {
+		case REGION_BRIEFING:
+			if (_missionBriefing.contains(point)) {
+				_currentMissionReviewed = true;
+				_curState = 1;
+				_curBriefingPage = 0;
+				invalidateWindow(false);
+
+				switch (_curSelection) {
+				case 0:
+					((SceneViewWindow *)getParent()->getParent())->getGlobalFlags().genJumpMayanBriefing = 1;
+					break;
+				case 1:
+					((SceneViewWindow *)getParent()->getParent())->getGlobalFlags().genJumpCastleBriefing = 1;
+					break;
+				case 2:
+					((SceneViewWindow *)getParent()->getParent())->getGlobalFlags().genJumpDaVinciBriefing = 1;
+					break;
+				case 3:
+					((SceneViewWindow *)getParent()->getParent())->getGlobalFlags().genJumpStationBriefing = 1;
+					break;
+				}
+			}
+			break;
+		case REGION_JUMP:
+			if (_jumpButton.contains(point)) {
+				Cursor oldCursor = _vm->_gfx->setCursor(kCursorWait);
+
+				SceneViewWindow *sceneViewWindow = (SceneViewWindow *)getParent()->getParent();
+				int curSelection = _curSelection;
+				GraphicsManager *gfx = _vm->_gfx;
+
+				((GameUIWindow *)getParent()->getParent()->getParent())->_bioChipRightWindow->destroyBioChipViewWindow();
+				sceneViewWindow->timeSuitJump(curSelection);
+				gfx->setCursor(oldCursor);
+				return;
+			}
+			break;
+		case REGION_MAYAN:
+			if (_mayanZone.contains(point)) {
+				if (((SceneViewWindow *)getParent()->getParent())->getGlobalFlags().genJumpMayanBriefing == 1) {
+					_currentMissionReviewed = true;
+					((GameUIWindow *)getParent()->getParent()->getParent())->_liveTextWindow->updateLiveText("");
+				} else {
+					_currentMissionReviewed = false;
+					((GameUIWindow *)getParent()->getParent()->getParent())->_liveTextWindow->updateLiveText(_vm->getString(IDS_JUMP_BC_REVIEW_MISSION_TEXT_A));
+				}
+	
+				_curSelection = 0;
+				invalidateWindow(false);
+			}
+			break;
+		case REGION_CASTLE:
+			if (_castle.contains(point)) {
+				if (((SceneViewWindow *)getParent()->getParent())->getGlobalFlags().genJumpCastleBriefing == 1) {
+					_currentMissionReviewed = true;
+					((GameUIWindow *)getParent()->getParent()->getParent())->_liveTextWindow->updateLiveText("");
+				} else {
+					_currentMissionReviewed = false;
+					((GameUIWindow *)getParent()->getParent()->getParent())->_liveTextWindow->updateLiveText(_vm->getString(IDS_JUMP_BC_REVIEW_MISSION_TEXT_B));
+				}
+	
+				_curSelection = 1;
+				invalidateWindow(false);
+			}
+			break;
+		case REGION_DAVINCI:
+			if (_daVinci.contains(point)) {
+				if (((SceneViewWindow *)getParent()->getParent())->getGlobalFlags().genJumpDaVinciBriefing == 1) {
+					_currentMissionReviewed = true;
+					((GameUIWindow *)getParent()->getParent()->getParent())->_liveTextWindow->updateLiveText("");
+				} else {
+					_currentMissionReviewed = false;
+					((GameUIWindow *)getParent()->getParent()->getParent())->_liveTextWindow->updateLiveText(_vm->getString(IDS_JUMP_BC_REVIEW_MISSION_TEXT_C));
+				}
+	
+				_curSelection = 2;
+				invalidateWindow(false);
+			}
+			break;
+		case REGION_SPACE_STATION:
+			if (_spaceStation.contains(point)) {
+				if (((SceneViewWindow *)getParent()->getParent())->getGlobalFlags().genJumpStationBriefing == 1) {
+					_currentMissionReviewed = true;
+					((GameUIWindow *)getParent()->getParent()->getParent())->_liveTextWindow->updateLiveText("");
+				} else {
+					_currentMissionReviewed = false;
+					((GameUIWindow *)getParent()->getParent()->getParent())->_liveTextWindow->updateLiveText(_vm->getString(IDS_JUMP_BC_REVIEW_MISSION_TEXT_D));
+				}
+	
+				_curSelection = 3;
+				invalidateWindow(false);
+			}
+			break;
+		}
+
+		_curRegion = REGION_NONE;
+		invalidateWindow(false);
+	} else {
+		// Browsing the mission review pages
+		Common::Rect returnRect(343, 157, 427, 185);
+		Common::Rect nextPage(230, 25, 270, 43);
+		Common::Rect prevPage(182, 25, 222, 43);
+
+		if (returnRect.contains(point)) {
+			_curState = 0;
+			invalidateWindow(false);
+		} else if (prevPage.contains(point)) {
+			if (_curBriefingPage > 0) {
+				_curBriefingPage--;
+				invalidateWindow(false);
+			}
+		} else if (nextPage.contains(point)) {
+			if (_curBriefingPage < _briefingNavData[_curSelection][1] - 1) {
+				_curBriefingPage++;
+				invalidateWindow(false);
+			}
+		}
+	}
+}
+
+void JumpBiochipViewWindow::onMouseMove(const Common::Point &point, uint flags) {
+	if (_curState == 0 && _curRegion > 0) {
+		switch (_curRegion) {
+		case REGION_BRIEFING:
+			if (!_missionBriefing.contains(point))
+				_curRegion = REGION_NONE;
+			break;
+		case REGION_JUMP:
+			if (!_jumpButton.contains(point))
+				_curRegion = REGION_NONE;
+			break;
+		case REGION_MAYAN:
+		case REGION_CASTLE:
+		case REGION_DAVINCI:
+		case REGION_SPACE_STATION: {
+			int newRegion = REGION_NONE;
+
+			if (_mayanZone.contains(point)) {
+				newRegion = REGION_MAYAN;
+				_curSelection = 0;
+			} else if (_castle.contains(point)) {
+				newRegion = REGION_CASTLE;
+				_curSelection = 1;
+			} else if (_daVinci.contains(point)) {
+				newRegion = REGION_DAVINCI;
+				_curSelection = 2;
+			} else if (_spaceStation.contains(point)) {
+				newRegion = REGION_SPACE_STATION;
+				_curSelection = 3;
+			}
+
+			if (newRegion != REGION_NONE && _curRegion != newRegion) {
+				_curRegion = newRegion;
+				invalidateWindow(false);
+			}
+			break;
+		}
+		}
+	}
+}
 
 enum {
 	REGION_SAVE = 1,
@@ -331,8 +616,7 @@ Window *BioChipMainViewWindow::createBioChipSpecificViewWindow(int bioChipID) {
 	case kItemBioChipInterface:
 		return new InterfaceBioChipViewWindow(_vm, this);
 	case kItemBioChipJump:
-		// TODO
-		break;
+		return new JumpBiochipViewWindow(_vm, this);
 	case kItemBioChipEvidence:
 		// TODO
 		break;
