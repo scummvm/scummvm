@@ -323,6 +323,15 @@ struct GlobalFlags {
 
 #include "common/pack-end.h"
 
+enum {
+	kAIHWStartingValue = 100,
+	kAIICStartingValue = 100,
+	kAIOTWalkDecrement = 2,
+	kAIOTTurnDecrement = 1,
+	kAIOTWaitDecrement = 1,
+	kAIOTWaitTimePeriod = 10000
+};
+
 } // End of namespace Buried
 
 #endif
