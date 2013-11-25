@@ -205,6 +205,7 @@ private:
 
 	// Castle
 	bool initializeCastleTimeZoneAndEnvironment(Window *viewWindow, int environment);
+	bool startCastleAmbient(int oldTimeZone, int oldEnvironment, int environment, bool fade);
 	SceneBase *constructCastleSceneObject(Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
 
 	// Future Apartment

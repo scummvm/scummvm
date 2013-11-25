@@ -81,6 +81,8 @@ bool SceneViewWindow::startEnvironmentAmbient(int oldTimeZone, int oldEnvironmen
 	// TODO
 
 	switch (timeZone) {
+	case 1:
+		return startCastleAmbient(oldTimeZone, oldEnvironment, environment, fade);
 	case 4:
 		return startFutureApartmentAmbient(oldTimeZone, oldEnvironment, environment, fade);
 	case 6:
