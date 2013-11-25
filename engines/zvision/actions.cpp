@@ -346,6 +346,7 @@ bool ActionPreloadAnimation::execute() {
 		_engine->getScriptManager()->addSideFX(nod);
 	} else
 		nod->stop();
+	_engine->getScriptManager()->setStateValue(_slotkey, 2);
 	return true;
 }
 
