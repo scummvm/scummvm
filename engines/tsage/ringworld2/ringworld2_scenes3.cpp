@@ -2821,6 +2821,7 @@ void Scene3400::remove() {
 void Scene3400::signal() {
 	switch (_sceneMode) {
 	case 3305: {
+		// First part of discussion
 		_tealSpeaker._object1.hide();
 		_teal.show();
 		_teal.setStrip(1);
@@ -2832,6 +2833,7 @@ void Scene3400::signal() {
 		}
 		break;
 	case 3306:
+		// Teal picks up the sapphire
 		R2_GLOBALS._sound2.play(318);
 		_companion1.setStrip(2);
 		R2_GLOBALS._player.setStrip(6);
@@ -2842,15 +2844,16 @@ void Scene3400::signal() {
 		_stripManager.start(3307, this);
 		if (R2_GLOBALS._player._characterIndex == R2_SEEKER) {
 			_sceneMode = 3400;
-			R2_GLOBALS._player.setAction(&_sequenceManager, this, 3400, &R2_GLOBALS._player, &_teal, &_actor8, NULL);
+			R2_GLOBALS._player.setAction(&_sequenceManager, this, 3400, &R2_GLOBALS._player, &_teal, &_sapphire, NULL);
 		} else {
 			_sceneMode = 3408;
-			_companion1.setAction(&_sequenceManager, this, 3408, &_companion1, &_teal, &_actor8, NULL);
+			_companion1.setAction(&_sequenceManager, this, 3408, &_companion1, &_teal, &_sapphire, NULL);
 		}
 		break;
 	case 3307:
 	case 3404:
 	case 3408:
+		// A tasp!
 		if (!_soundFaded) {
 			R2_GLOBALS._sound2.fadeOut2(NULL);
 			_soundFaded = true;
@@ -2860,6 +2863,7 @@ void Scene3400::signal() {
 		}
 		break;
 	case 3308:
+		// Characters teleport one after the other
 		_companion1.setStrip(2);
 		R2_GLOBALS._player.setStrip(6);
 		_companion2.setStrip(6);
@@ -2872,6 +2876,7 @@ void Scene3400::signal() {
 			setAction(&_sequenceManager, this, 3403, &_companion1, &_webbster, &_manholeCover, NULL);
 		break;
 	case 3309:
+		// Miranda teleports away
 		_teal.setStrip(1);
 		_sceneMode = 3405;
 		if (R2_GLOBALS._player._characterIndex == R2_MIRANDA)
@@ -2880,6 +2885,7 @@ void Scene3400::signal() {
 			setAction(&_sequenceManager, this, 3405, &_companion2, &_manholeCover, NULL);
 		break;
 	case 3310:
+		// Quinn teleports away
 		_teal.setStrip(1);
 		_sceneMode = 3406;
 		if (R2_GLOBALS._player._characterIndex == R2_QUINN)
@@ -2890,6 +2896,7 @@ void Scene3400::signal() {
 			setAction(&_sequenceManager, this, 3406, &_companion2, &_manholeCover, NULL);
 		break;
 	case 3311:
+		// Teal teleports away
 		_tealSpeaker._object1.hide();
 		_teal.show();
 		_teal.setStrip(1);
@@ -2897,8 +2904,9 @@ void Scene3400::signal() {
 		setAction(&_sequenceManager, this, 3407, &_teal, &_manholeCover, NULL);
 		break;
 	case 3400: {
-		_actor8.postInit();
-		_actor8.hide();
+		// Teal enters the room
+		_sapphire.postInit();
+		_sapphire.hide();
 		_teal.postInit();
 		_teal._numFrames = 7;
 		_teal._moveDiff = Common::Point(3, 2);
@@ -2918,30 +2926,37 @@ void Scene3400::signal() {
 		}
 		break;
 	case 3401:
+		// Teal first speech
 		_sceneMode = 3305;
 		_stripManager.start(3305, this);
 		break;
 	case 3402:
+		// Betrayal of Webbster
 		_sceneMode = 3306;
 		_stripManager.start(3306, this);
 		break;
 	case 3403:
+		// Teal: "Miranda..."
 		R2_GLOBALS._scrollFollower = &R2_GLOBALS._player;
 		_sceneMode = 3309;
 		_stripManager.start(3309, this);
 		break;
 	case 3405:
+		// Teal: "And Quinn..."
 		_sceneMode = 3310;
 		_stripManager.start(3310, this);
 		break;
 	case 3406:
+		// Teal final sentence before teleporting
 		_sceneMode = 3311;
 		_stripManager.start(3311, this);
 		break;
 	case 3407:
+		// End of scene
 		R2_GLOBALS._sceneManager.changeScene(3600);
 		break;
 	default:
+		// Unexpected scene mode
 		R2_GLOBALS._player.enableControl();
 		break;
 	}

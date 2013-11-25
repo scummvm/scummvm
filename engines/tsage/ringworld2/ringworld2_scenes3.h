@@ -550,7 +550,7 @@ public:
 	SceneActor _teal;
 	SceneActor _door;
 	SceneActor _manholeCover;
-	SceneActor _actor8;
+	SceneActor _sapphire;
 	SequenceManager _sequenceManager;
 	bool _soundFaded;
 
