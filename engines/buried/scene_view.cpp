@@ -2376,6 +2376,16 @@ void SceneViewWindow::onEnable(bool enable) {
 	_vm->removeMouseMessages(this);
 }
 
+bool SceneViewWindow::resetNavigationArrows() {
+	if (!_currentScene)
+		return false;
+
+	if (_globalFlags.bcCloakingEnabled != 1)
+		((GameUIWindow *)_parent)->_navArrowWindow->updateAllArrows(_currentScene->_staticData);
+
+	return true;
+}
+
 int SceneViewWindow::draggingItem(int itemID, const Common::Point &location, int itemFlags) {
 	if (!_currentScene)
 		return 0;

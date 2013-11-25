@@ -302,6 +302,7 @@ void BioChipRightWindow::onLButtonUp(const Common::Point &point, uint flags) {
 				invalidateWindow(false);
 
 				((GameUIWindow *)_parent)->_sceneViewWindow->getGlobalFlags().bcCloakingEnabled = 0;
+				((GameUIWindow *)_parent)->_sceneViewWindow->resetNavigationArrows();
 				((GameUIWindow *)_parent)->_inventoryWindow->enableWindow(true);
 				((GameUIWindow *)_parent)->_sceneViewWindow->enableWindow(true);
 				((GameUIWindow *)_parent)->_navArrowWindow->enableWindow(true);
