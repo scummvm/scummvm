@@ -34,7 +34,15 @@ namespace Grim {
 TextObjectCommon::TextObjectCommon() :
 		_x(0), _y(0), _fgColor(0), _justify(0), _width(0), _height(0),
 		_font(NULL), _duration(0), _positioned(false),
-		_posX(0), _posY(0) {
+		_posX(0), _posY(0), _layer(0) {
+	if (g_grim)
+		g_grim->invalidateTextObjectsSortOrder();
+}
+
+void TextObjectCommon::setLayer(int layer) {
+	_layer = layer;
+	if (g_grim)
+		g_grim->invalidateTextObjectsSortOrder();
 }
 
 TextObject::TextObject() :
@@ -48,6 +56,8 @@ TextObject::~TextObject() {
 	if (_created) {
 		g_driver->destroyTextObject(this);
 	}
+	if (g_grim)
+		g_grim->invalidateTextObjectsSortOrder();
 }
 
 void TextObject::setText(const Common::String &text) {
@@ -79,6 +89,10 @@ void TextObject::saveState(SaveGame *state) const {
 	state->writeLESint32(_font->getId());
 
 	state->writeString(_textID);
+
+	if (g_grim->getGameType() == GType_MONKEY4) {
+		state->writeLESint32(_layer);
+	}
 }
 
 bool TextObject::restoreState(SaveGame *state) {
@@ -99,6 +113,11 @@ bool TextObject::restoreState(SaveGame *state) {
 	_font = Font::getPool().getObject(state->readLESint32());
 
 	_textID = state->readString();
+
+	if (g_grim->getGameType() == GType_MONKEY4) {
+		_layer = state->readLESint32();
+		g_grim->invalidateTextObjectsSortOrder();
+	}
 
 	setupText();
 	_created = false;

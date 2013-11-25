@@ -36,7 +36,8 @@ namespace Grim {
 EMIEngine *g_emi = NULL;
 
 EMIEngine::EMIEngine(OSystem *syst, uint32 gameFlags, GrimGameType gameType, Common::Platform platform, Common::Language language) :
-		GrimEngine(syst, gameFlags, gameType, platform, language), _sortOrderInvalidated(false) {
+		GrimEngine(syst, gameFlags, gameType, platform, language), _sortOrderInvalidated(false), _textObjectsSortOrderInvalidated(true) {
+
 	g_emi = this;
 	g_emiregistry = new EmiRegistry();
 }
@@ -141,6 +142,10 @@ void EMIEngine::drawNormalMode() {
 
 }
 
+void EMIEngine::invalidateTextObjectsSortOrder() {
+	_textObjectsSortOrderInvalidated = true;
+}
+
 void EMIEngine::invalidateActiveActorsList() {
 	GrimEngine::invalidateActiveActorsList();
 	invalidateSortOrder();
@@ -148,6 +153,31 @@ void EMIEngine::invalidateActiveActorsList() {
 
 void EMIEngine::invalidateSortOrder() {
 	_sortOrderInvalidated = true;
+}
+
+bool EMIEngine::compareTextLayer(const TextObject *x, const TextObject *y) {
+	return x->getLayer() < y->getLayer();
+}
+
+void EMIEngine::drawTextObjects() {
+	sortTextObjects();
+	foreach (TextObject *t, _textObjects) {
+		t->draw();
+	}
+}
+
+void EMIEngine::sortTextObjects() {
+	if (!_textObjectsSortOrderInvalidated)
+		return;
+
+	_textObjectsSortOrderInvalidated = false;
+
+	_textObjects.clear();
+	foreach (TextObject *t, TextObject::getPool()) {
+		_textObjects.push_back(t);
+	}
+
+	Common::sort(_textObjects.begin(), _textObjects.end(), compareTextLayer);
 }
 
 bool EMIEngine::compareActor(const Actor *x, const Actor *y) {

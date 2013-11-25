@@ -230,6 +230,8 @@ void LuaBase::registerLua() {
 	refTextObjectPan = lua_ref(true);
 	lua_pushstring("background");
 	refTextObjectBackground = lua_ref(true);
+	lua_pushstring("layer");
+	refTextObjectLayer = lua_ref(true);
 }
 
 struct luaL_reg baseOpcodes[] = {
@@ -606,6 +608,20 @@ void LuaBase::setTextObjectParams(TextObjectCommon *textObject, lua_Object table
 			textObject->setDuration((int)lua_getnumber(keyObj));
 		}
 	}
+
+	// FIXME: remove check once the major save version is updated
+	// currently it is needed for backward compatibility of old savegames
+	if (lua_getref(refTextObjectLayer) == LUA_NOOBJECT)
+		return;
+	lua_pushobject(tableObj);
+	lua_pushobject(lua_getref(refTextObjectLayer));
+	keyObj = lua_gettable();
+	if (keyObj) {
+		if (lua_isnumber(keyObj)) {
+			textObject->setLayer(lua_getnumber(keyObj));
+		}
+	}
+
 }
 
 void LuaBase::typeOverride() {

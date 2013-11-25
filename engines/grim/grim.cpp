@@ -420,6 +420,12 @@ void GrimEngine::handleDebugLoadResource() {
 		warning("Requested resouce (%s) not found", buf);
 }
 
+void GrimEngine::drawTextObjects() {
+	foreach (TextObject *t, TextObject::getPool()) {
+		t->draw();
+	}
+}
+
 void GrimEngine::drawPrimitives() {
 	_iris->draw();
 
@@ -429,9 +435,7 @@ void GrimEngine::drawPrimitives() {
 			_movieSubtitle->draw();
 		}
 	} else {
-		foreach (TextObject *t, TextObject::getPool()) {
-			t->draw();
-		}
+		drawTextObjects();
 	}
 }
 

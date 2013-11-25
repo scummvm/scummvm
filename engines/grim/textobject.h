@@ -59,6 +59,9 @@ public:
 	void setDuration(int duration) { _duration = duration; }
 	int getDuration() const { return _duration; }
 
+	void setLayer(int layer);
+	int getLayer() const { return _layer; }
+
 protected:
 	TextObjectCommon();
 
@@ -68,6 +71,7 @@ protected:
 	int _width, _height;
 	int _justify;
 	int _duration;
+	int _layer;
 	Color _fgColor;
 	bool _positioned;
 };

@@ -115,6 +115,7 @@ public:
 	void setFlipEnable(bool state) { _flipEnable = state; }
 	bool getFlipEnable() { return _flipEnable; }
 	void refreshDrawMode() { _refreshDrawNeeded = true; }
+	virtual void drawTextObjects();
 	void drawPrimitives();
 	void playIrisAnimation(Iris::Direction dir, int x, int y, int time);
 
@@ -155,6 +156,7 @@ public:
 	 * and so that it should rebuild the list of active ones.
 	 */
 	virtual void invalidateActiveActorsList();
+	virtual void invalidateTextObjectsSortOrder() {};
 	/**
 	 * Return a list of the currently active actors, i. e. the actors in the current set.
 	 */
