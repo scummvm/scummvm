@@ -208,6 +208,11 @@ private:
 	bool startCastleAmbient(int oldTimeZone, int oldEnvironment, int environment, bool fade);
 	SceneBase *constructCastleSceneObject(Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
 
+	// Da Vinci's Studio
+	bool initializeDaVinciTimeZoneAndEnvironment(Window *viewWindow, int environment);
+	bool startDaVinciAmbient(int oldTimeZone, int oldEnvironment, int environment, bool fade);
+	SceneBase *constructDaVinciSceneObject(Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+
 	// Future Apartment
 	bool startFutureApartmentAmbient(int oldTimeZone, int oldEnvironment, int environment, bool fade);
 	SceneBase *constructFutureApartmentSceneObject(Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
