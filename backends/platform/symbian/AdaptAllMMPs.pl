@@ -44,6 +44,12 @@ chdir("../../../");
 	"mmp/scummvm_toltecs.mmp",
 	"mmp/scummvm_pegasus.mmp",
 	"mmp/scummvm_wintermute.mmp",
+	"mmp/scummvm_avalanche.mmp",
+	"mmp/scummvm_dreamweb.mmp",
+	"mmp/scummvm_fullpipe.mmp",
+	"mmp/scummvm_mortevielle.mmp",
+	"mmp/scummvm_neverhood.mmp",
+	"mmp/scummvm_zvision.mmp",
 	# Target Platform Project Files
 	"S60/ScummVM_S60.mmp",
 	"S60v3/ScummVM_S60v3.mmp",
@@ -83,6 +89,7 @@ my @sections_scumm = ("", "ENABLE_SCUMM_7_8", "ENABLE_HE"); # special sections f
 my @sections_saga = ("", "ENABLE_IHNM", "ENABLE_SAGA2"); # special sections for engine SAGA
 my @sections_kyra = ("", "ENABLE_LOL","ENABLE_EOB"); # special sections for engine KYRA
 my @sections_agos = ("", "ENABLE_AGOS2"); # special sections for engine AGOS
+my @sections_mohawk = ("", "ENABLE_MYST", "ENABLE_RIVEN", "ENABLE_CSTIME"); # special sections for engine MOHAWK
 
 # files excluded from build, case insensitive, will be matched in filename string only
 my @excludes_snd = (
@@ -161,7 +168,7 @@ ParseModule("_tucker",	"tucker",	\@section_empty);
 ParseModule("_sci",	"sci",		\@section_empty);
 ParseModule("_draci",	"draci",	\@section_empty);
 ParseModule("_teenagent","teenagent",	\@section_empty);
-ParseModule("_mohawk"   ,"mohawk",	\@section_empty);
+ParseModule("_mohawk"   ,"mohawk",	\@sections_mohawk);
 ParseModule("_hugo"     ,"hugo",	\@section_empty);
 ParseModule("_toon"     ,"toon",	\@section_empty);
 ParseModule("_lastexpress","lastexpress",	\@section_empty);
@@ -171,6 +178,12 @@ ParseModule("_toltecs","toltecs",	\@section_empty);
 ParseModule("_hopkins","hopkins",	\@section_empty);
 ParseModule("_pegasus","pegasus",	\@section_empty);
 ParseModule("_wintermute","wintermute",	\@section_empty);
+ParseModule("_avalanche","avalanche",	\@section_empty);
+ParseModule("_dreamweb","dreamweb",	\@section_empty);
+ParseModule("_fullpipe","fullpipe",	\@section_empty);
+ParseModule("_mortevielle","mortevielle",	\@section_empty);
+ParseModule("_neverhood","neverhood",	\@section_empty);
+ParseModule("_zvision","zvision",	\@section_empty);
 print "
 =======================================================================================
 Done. Enjoy :P

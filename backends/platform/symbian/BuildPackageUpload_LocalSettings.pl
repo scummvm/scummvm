@@ -4,21 +4,22 @@
 	@WorkingEngines = qw(
 		scumm agos sky queen gob groovie saga drascula
 		kyra lure agi touche parallaction cine
-		cruise made tinsel tucker sword1 sword2 draci sci teenagent mohawk hugo toon lastexpress tsage cge
-		composer toltecs tony wintermute pegasus
+		cruise made tinsel tucker sword1 sword2 draci sci teenagent mohawk hugo toon tsage cge
+		composer toltecs tony wintermute pegasus hopkins avalanche dreamweb fullpipe mortevielle neverhood zvision
 	);
 
 	@WorkingEngines_1st = qw(
-		scumm queen groovie saga drascula
-		touche parallaction cine
-?		cruise made tucker lastexpress composer wintermute
+		scumm queen groovie saga 
+		drascula touche parallaction cine 
+		cruise made tucker 
+		composer toltecs tony pegasus
 	);
 
 	@WorkingEngines_2nd = qw(
-		agos sky gob kyra lure 
-		agi tinsel sword1 sword2 
-		draci sci teenagent hugo toon
-		tsage cge toltecs tony pegasus
+		agos sky gob kyra 
+		lure agi tinsel sword1 
+		sword2 draci sci teenagent 
+		hugo toon tsage cge hopkins 		
 	);
 
 	@TestingEngines = qw(
@@ -34,6 +35,9 @@
 		lol
 		agos2
 		eob
+		myst
+		riven
+		cstime
 	);
 
 	#disabled subengines lol saga2 personal nightmare
@@ -223,7 +227,7 @@
 		# now you can add $VariationSets only built on this PC below this line :)
 
 	}
-	elsif ($ENV{'COMPUTERNAME'} eq "EMBEDDEV_VAIO1") #################################################################
+	elsif ($ENV{'COMPUTERNAME'} eq "EMBEDDEV-VAIO2") #################################################################
 	{
 		$Producer = "AnotherGuest";
 		$RedirectSTDERR = 1;
