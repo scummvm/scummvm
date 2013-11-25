@@ -222,7 +222,18 @@ void sceneHandler04_clickBottle() {
 }
 
 void sceneHandler04_clickButton() {
-	warning("sceneHandler04_clickButton()");
+	StaticANIObject *but = g_fullpipe->_currentScene->getStaticANIObject1ById(ANI_BUTTON, -1);
+
+	if (but) {
+		if (!g_vars->scene04_clock->_movement || 
+			(g_vars->scene04_clock->_movement->_id == MV_CLK_GO && g_vars->scene04_clock->_movement->_currDynamicPhaseIndex > 3 && 
+			 g_vars->scene04_clock->_movement->_currDynamicPhaseIndex < 105)) {
+			if (!g_vars->scene04_hand->_movement && !g_vars->scene04_var02) {
+				but->startAnim(MV_BTN_CLICK, 0, -1);
+				g_vars->scene04_hand->startAnim(MV_HND_POINT, 0, -1);
+			}
+		}
+	}
 }
 
 void sceneHandler04_clickLadder() {

@@ -26,6 +26,7 @@
 namespace Fullpipe {
 
 #define ANI_BOOT_1 4231
+#define ANI_BUTTON 598
 #define ANI_CLOCK 588
 #define ANI_DOMINO_3 2732
 #define ANI_DADAYASHIK 306
@@ -109,6 +110,9 @@ namespace Fullpipe {
 #define MV_KZW_JUMP 558
 #define MV_KZW_JUMPROTATE 561
 #define MV_BDG_OPEN 1379
+#define MV_BTN_CLICK 599
+#define MV_CLK_GO 589
+#define MV_HND_POINT 602
 #define MV_MAN_GOD 481
 #define MV_MAN_GOLADDER 451
 #define MV_MAN_GOLADDER2 2844
