@@ -87,6 +87,7 @@ void ScriptManager::execScope(script_scope &scope) {
 	PuzzleList *tmp = scope.exec_queue;
 	scope.exec_queue = scope.scope_queue;
 	scope.scope_queue = tmp;
+	scope.scope_queue->clear();
 
 	for (PuzzleList::iterator PuzzleIter = scope._puzzles.begin(); PuzzleIter != scope._puzzles.end(); ++PuzzleIter)
 		(*PuzzleIter)->addedBySetState = 0;
@@ -98,8 +99,6 @@ void ScriptManager::execScope(script_scope &scope) {
 		for (PuzzleList::iterator PuzzleIter = scope.exec_queue->begin(); PuzzleIter != scope.exec_queue->end(); ++PuzzleIter)
 			checkPuzzleCriteria(*PuzzleIter, scope.proc_count);
 	}
-
-	scope.exec_queue->clear();
 
 	if (scope.proc_count < 2) {
 		scope.proc_count++;
