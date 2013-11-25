@@ -31,6 +31,7 @@ MODULE_OBJS = \
 	environ/ai_lab.o \
 	environ/castle.o \
 	environ/future_apartment.o \
+	environ/mayan.o \
 	environ/scene_base.o \
 	environ/scene_common.o \
 	environ/scene_factory.o
