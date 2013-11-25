@@ -83,6 +83,8 @@ bool SceneViewWindow::startEnvironmentAmbient(int oldTimeZone, int oldEnvironmen
 	switch (timeZone) {
 	case 1:
 		return startCastleAmbient(oldTimeZone, oldEnvironment, environment, fade);
+	case 2:
+		return startMayanAmbient(oldTimeZone, oldEnvironment, environment, fade);
 	case 4:
 		return startFutureApartmentAmbient(oldTimeZone, oldEnvironment, environment, fade);
 	case 6:
@@ -101,7 +103,6 @@ SceneBase *SceneViewWindow::constructSceneObject(Window *viewWindow, const Locat
 
 	switch (sceneStaticData.location.timeZone) {
 	case 0: // Miscellaneous scenes
-	case 2: // Mayan
 	case 3: // Agent 3's Lair
 	case 5: // Da Vinci
 	case 7: // Alien
@@ -110,6 +111,8 @@ SceneBase *SceneViewWindow::constructSceneObject(Window *viewWindow, const Locat
 		break;
 	case 1: // Castle
 		return constructCastleSceneObject(viewWindow, sceneStaticData, priorLocation);
+	case 2: // Mayan
+		return constructMayanSceneObject(viewWindow, sceneStaticData, priorLocation);
 	case 4: // Future Apartment
 		return constructFutureApartmentSceneObject(viewWindow, sceneStaticData, priorLocation);
 	case 6: // AI Lab
@@ -126,11 +129,13 @@ bool SceneViewWindow::initializeTimeZoneAndEnvironment(Window *viewWindow, int t
 	switch (timeZone) {
 	case 1:
 		return initializeCastleTimeZoneAndEnvironment(viewWindow, environment);
-	case 6:
-		return initializeAILabTimeZoneAndEnvironment(viewWindow, environment);
+	case 2:
+		return initializeMayanTimeZoneAndEnvironment(viewWindow, environment);
 	case 4:
 		// Nothing to do
 		return true;
+	case 6:
+		return initializeAILabTimeZoneAndEnvironment(viewWindow, environment);
 	}
 
 	return false;

@@ -211,6 +211,11 @@ private:
 	// Future Apartment
 	bool startFutureApartmentAmbient(int oldTimeZone, int oldEnvironment, int environment, bool fade);
 	SceneBase *constructFutureApartmentSceneObject(Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+
+	// Mayan
+	bool initializeMayanTimeZoneAndEnvironment(Window *viewWindow, int environment);
+	bool startMayanAmbient(int oldTimeZone, int oldEnvironment, int environment, bool fade);
+	SceneBase *constructMayanSceneObject(Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
 };
 
 } // End of namespace Buried

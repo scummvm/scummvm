@@ -62,7 +62,7 @@ struct GlobalFlags {
 	byte myMCPickedUpSkull;             // 19
 	byte myMCDeathGodOfferings;         // 20
 	byte myWGPlacedRope;                // 21
-	byte myWGRetrivedJadeBlock;         // 22
+	byte myWGRetrievedJadeBlock;        // 22
 	byte myWTRetrievedLimestoneBlock;   // 23
 	byte myWTCurrentBridgeStatus;       // 24
 	byte myAGRetrievedEntrySkull;       // 25
