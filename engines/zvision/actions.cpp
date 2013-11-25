@@ -44,9 +44,9 @@ namespace ZVision {
 // ActionAdd
 //////////////////////////////////////////////////////////////////////////////
 
-ActionAdd::ActionAdd(ZVision *engine, const Common::String &line) :
-	ResultAction(engine) {
-	sscanf(line.c_str(), "%*[^(](%u,%d)", &_key, &_value);
+ActionAdd::ActionAdd(ZVision *engine, int32 slotkey, const Common::String &line) :
+	ResultAction(engine, slotkey) {
+	sscanf(line.c_str(), "%u,%d", &_key, &_value);
 }
 
 bool ActionAdd::execute() {
@@ -59,11 +59,11 @@ bool ActionAdd::execute() {
 // ActionAssign
 //////////////////////////////////////////////////////////////////////////////
 
-ActionAssign::ActionAssign(ZVision *engine, const Common::String &line) :
-	ResultAction(engine) {
+ActionAssign::ActionAssign(ZVision *engine, int32 slotkey, const Common::String &line) :
+	ResultAction(engine, slotkey) {
 	char buf[64];
 	memset(buf, 0, 64);
-	sscanf(line.c_str(), "%*[^(](%u, %s)", &_key, buf);
+	sscanf(line.c_str(), "%u, %s", &_key, buf);
 	_value = new ValueSlot(_engine->getScriptManager(), buf);
 }
 
@@ -82,9 +82,9 @@ bool ActionAssign::execute() {
 // ActionAttenuate
 //////////////////////////////////////////////////////////////////////////////
 
-ActionAttenuate::ActionAttenuate(ZVision *engine, const Common::String &line) :
-	ResultAction(engine) {
-	sscanf(line.c_str(), "%*[^(](%u, %d)", &_key, &_attenuation);
+ActionAttenuate::ActionAttenuate(ZVision *engine, int32 slotkey, const Common::String &line) :
+	ResultAction(engine, slotkey) {
+	sscanf(line.c_str(), "%u, %d", &_key, &_attenuation);
 }
 
 bool ActionAttenuate::execute() {
@@ -97,9 +97,9 @@ bool ActionAttenuate::execute() {
 // ActionChangeLocation
 //////////////////////////////////////////////////////////////////////////////
 
-ActionChangeLocation::ActionChangeLocation(ZVision *engine, const Common::String &line) :
-	ResultAction(engine) {
-	sscanf(line.c_str(), "%*[^(](%c, %c, %c%c, %u)", &_world, &_room, &_node, &_view, &_offset);
+ActionChangeLocation::ActionChangeLocation(ZVision *engine, int32 slotkey, const Common::String &line) :
+	ResultAction(engine, slotkey) {
+	sscanf(line.c_str(), "%c, %c, %c%c, %u", &_world, &_room, &_node, &_view, &_offset);
 }
 
 bool ActionChangeLocation::execute() {
@@ -114,10 +114,10 @@ bool ActionChangeLocation::execute() {
 // ActionCrossfade
 //////////////////////////////////////////////////////////////////////////////
 
-ActionCrossfade::ActionCrossfade(ZVision *engine, const Common::String &line) :
-	ResultAction(engine) {
+ActionCrossfade::ActionCrossfade(ZVision *engine, int32 slotkey, const Common::String &line) :
+	ResultAction(engine, slotkey) {
 	sscanf(line.c_str(),
-	       "%*[^(](%u %u %u %u %u %u %u)",
+	       "%u %u %u %u %u %u %u",
 	       &_keyOne, &_keyTwo, &_oneStartVolume, &_twoStartVolume, &_oneEndVolume, &_twoEndVolume, &_timeInMillis);
 }
 
@@ -131,9 +131,9 @@ bool ActionCrossfade::execute() {
 // ActionDisableControl
 //////////////////////////////////////////////////////////////////////////////
 
-ActionDisableControl::ActionDisableControl(ZVision *engine, const Common::String &line) :
-	ResultAction(engine) {
-	sscanf(line.c_str(), "%*[^(](%u)", &_key);
+ActionDisableControl::ActionDisableControl(ZVision *engine, int32 slotkey, const Common::String &line) :
+	ResultAction(engine, slotkey) {
+	sscanf(line.c_str(), "%u", &_key);
 }
 
 bool ActionDisableControl::execute() {
@@ -146,9 +146,9 @@ bool ActionDisableControl::execute() {
 // ActionEnableControl
 //////////////////////////////////////////////////////////////////////////////
 
-ActionEnableControl::ActionEnableControl(ZVision *engine, const Common::String &line) :
-	ResultAction(engine) {
-	sscanf(line.c_str(), "%*[^(](%u)", &_key);
+ActionEnableControl::ActionEnableControl(ZVision *engine, int32 slotkey, const Common::String &line) :
+	ResultAction(engine, slotkey) {
+	sscanf(line.c_str(), "%u", &_key);
 }
 
 bool ActionEnableControl::execute() {
@@ -160,10 +160,10 @@ bool ActionEnableControl::execute() {
 // ActionInventory
 //////////////////////////////////////////////////////////////////////////////
 
-ActionInventory::ActionInventory(ZVision *engine, const Common::String &line) :
-	ResultAction(engine) {
+ActionInventory::ActionInventory(ZVision *engine, int32 slotkey, const Common::String &line) :
+	ResultAction(engine, slotkey) {
 	char buf[25];
-	sscanf(line.c_str(), "%*[^(](%25s %d)", buf, &_key);
+	sscanf(line.c_str(), "%25s %d", buf, &_key);
 
 	if (strcmp(buf, "add") == 0) {
 		_type = 0;
@@ -210,12 +210,12 @@ bool ActionInventory::execute() {
 // ActionKill
 //////////////////////////////////////////////////////////////////////////////
 
-ActionKill::ActionKill(ZVision *engine, const Common::String &line) :
-	ResultAction(engine) {
+ActionKill::ActionKill(ZVision *engine, int32 slotkey, const Common::String &line) :
+	ResultAction(engine, slotkey) {
 	_key = 0;
 	_type = 0;
 	char keytype[25];
-	sscanf(line.c_str(), "%*[^(](%25s)", keytype);
+	sscanf(line.c_str(), "%25s", keytype);
 	if (keytype[0] == '"') {
 		if (!scumm_stricmp(keytype, "\"ANIM\""))
 			_type = SideFX::SIDEFX_ANIM;
@@ -250,8 +250,8 @@ bool ActionKill::execute() {
 // ActionMusic
 //////////////////////////////////////////////////////////////////////////////
 
-ActionMusic::ActionMusic(ZVision *engine, const Common::String &line, bool global) :
-	ResultAction(engine),
+ActionMusic::ActionMusic(ZVision *engine, int32 slotkey, const Common::String &line, bool global) :
+	ResultAction(engine, slotkey),
 	_volume(255),
 	_universe(global) {
 	uint type;
@@ -259,7 +259,7 @@ ActionMusic::ActionMusic(ZVision *engine, const Common::String &line, bool globa
 	uint loop;
 	uint volume = 255;
 
-	sscanf(line.c_str(), "%*[^:]:%*[^:]:%u(%u %25s %u %u)", &_key, &type, fileNameBuffer, &loop, &volume);
+	sscanf(line.c_str(), "%u %25s %u %u", &type, fileNameBuffer, &loop, &volume);
 
 	// type 4 are midi sound effect files
 	if (type == 4) {
@@ -282,11 +282,11 @@ ActionMusic::ActionMusic(ZVision *engine, const Common::String &line, bool globa
 
 ActionMusic::~ActionMusic() {
 	if (!_universe)
-		_engine->getScriptManager()->killSideFx(_key);
+		_engine->getScriptManager()->killSideFx(_slotkey);
 }
 
 bool ActionMusic::execute() {
-	if (_engine->getScriptManager()->getSideFX(_key))
+	if (_engine->getScriptManager()->getSideFX(_slotkey))
 		return true;
 	Common::File *file = new Common::File();
 	if (!file->exists(_fileName) && _fileName.size() >= 12) {
@@ -307,7 +307,7 @@ bool ActionMusic::execute() {
 		}
 	}
 	if (file->exists(_fileName))
-		_engine->getScriptManager()->addSideFX(new MusicNode(_engine, _key, _fileName, _loop, _volume));
+		_engine->getScriptManager()->addSideFX(new MusicNode(_engine, _slotkey, _fileName, _loop, _volume));
 	delete file;
 
 	return true;
@@ -318,12 +318,12 @@ bool ActionMusic::execute() {
 // ActionPreloadAnimation
 //////////////////////////////////////////////////////////////////////////////
 
-ActionPreloadAnimation::ActionPreloadAnimation(ZVision *engine, const Common::String &line) :
-	ResultAction(engine) {
+ActionPreloadAnimation::ActionPreloadAnimation(ZVision *engine, int32 slotkey, const Common::String &line) :
+	ResultAction(engine, slotkey) {
 	char fileName[25];
 
 	// The two %*u are always 0 and dont seem to have a use
-	sscanf(line.c_str(), "%*[^:]:%*[^:]:%u(%25s %*u %*u %d %d)", &_key, fileName, &_mask, &_framerate);
+	sscanf(line.c_str(), "%25s %*u %*u %d %d", fileName, &_mask, &_framerate);
 
 	if (_mask > 0) {
 		byte r, g, b;
@@ -335,14 +335,14 @@ ActionPreloadAnimation::ActionPreloadAnimation(ZVision *engine, const Common::St
 }
 
 ActionPreloadAnimation::~ActionPreloadAnimation() {
-	_engine->getScriptManager()->deleteSideFx(_key);
+	_engine->getScriptManager()->deleteSideFx(_slotkey);
 }
 
 bool ActionPreloadAnimation::execute() {
-	AnimationNode *nod = (AnimationNode *)_engine->getScriptManager()->getSideFX(_key);
+	AnimationNode *nod = (AnimationNode *)_engine->getScriptManager()->getSideFX(_slotkey);
 
 	if (!nod) {
-		nod = new AnimationNode(_engine, _key, _fileName, _mask, _framerate, false);
+		nod = new AnimationNode(_engine, _slotkey, _fileName, _mask, _framerate, false);
 		_engine->getScriptManager()->addSideFX(nod);
 	} else
 		nod->stop();
@@ -354,14 +354,14 @@ bool ActionPreloadAnimation::execute() {
 // ActionPlayAnimation
 //////////////////////////////////////////////////////////////////////////////
 
-ActionPlayAnimation::ActionPlayAnimation(ZVision *engine, const Common::String &line) :
-	ResultAction(engine) {
+ActionPlayAnimation::ActionPlayAnimation(ZVision *engine, int32 slotkey, const Common::String &line) :
+	ResultAction(engine, slotkey) {
 	char fileName[25];
 
 	// The two %*u are always 0 and dont seem to have a use
 	sscanf(line.c_str(),
-	       "%*[^:]:%*[^:]:%u(%25s %u %u %u %u %u %u %d %*u %*u %d %d)",
-	       &_key, fileName, &_x, &_y, &_x2, &_y2, &_start, &_end, &_loopCount, &_mask, &_framerate);
+	       "%25s %u %u %u %u %u %u %d %*u %*u %d %d",
+	       fileName, &_x, &_y, &_x2, &_y2, &_start, &_end, &_loopCount, &_mask, &_framerate);
 
 	if (_mask > 0) {
 		byte r, g, b;
@@ -373,20 +373,20 @@ ActionPlayAnimation::ActionPlayAnimation(ZVision *engine, const Common::String &
 }
 
 ActionPlayAnimation::~ActionPlayAnimation() {
-	_engine->getScriptManager()->deleteSideFx(_key);
+	_engine->getScriptManager()->deleteSideFx(_slotkey);
 }
 
 bool ActionPlayAnimation::execute() {
-	AnimationNode *nod = (AnimationNode *)_engine->getScriptManager()->getSideFX(_key);
+	AnimationNode *nod = (AnimationNode *)_engine->getScriptManager()->getSideFX(_slotkey);
 
 	if (!nod) {
-		nod = new AnimationNode(_engine, _key, _fileName, _mask, _framerate);
+		nod = new AnimationNode(_engine, _slotkey, _fileName, _mask, _framerate);
 		_engine->getScriptManager()->addSideFX(nod);
 	} else
 		nod->stop();
 
 	if (nod)
-		nod->addPlayNode(_key, _x, _y, _x2, _y2, _start, _end, _loopCount);
+		nod->addPlayNode(_slotkey, _x, _y, _x2, _y2, _start, _end, _loopCount);
 
 	return true;
 }
@@ -396,18 +396,18 @@ bool ActionPlayAnimation::execute() {
 // ActionPlayPreloadAnimation
 //////////////////////////////////////////////////////////////////////////////
 
-ActionPlayPreloadAnimation::ActionPlayPreloadAnimation(ZVision *engine, const Common::String &line) :
-	ResultAction(engine) {
+ActionPlayPreloadAnimation::ActionPlayPreloadAnimation(ZVision *engine, int32 slotkey, const Common::String &line) :
+	ResultAction(engine, slotkey) {
 	sscanf(line.c_str(),
-	       "%*[^:]:%*[^:]:%u(%u %u %u %u %u %u %u %u)",
-	       &_animationKey, &_controlKey, &_x1, &_y1, &_x2, &_y2, &_startFrame, &_endFrame, &_loopCount);
+	       "%u %u %u %u %u %u %u %u",
+	       &_controlKey, &_x1, &_y1, &_x2, &_y2, &_startFrame, &_endFrame, &_loopCount);
 }
 
 bool ActionPlayPreloadAnimation::execute() {
-	AnimationNode *nod = (AnimationNode *)_engine->getScriptManager()->getSideFX(_animationKey);
+	AnimationNode *nod = (AnimationNode *)_engine->getScriptManager()->getSideFX(_controlKey);
 
 	if (nod)
-		nod->addPlayNode(_controlKey, _x1, _y1, _x2, _y2, _startFrame, _endFrame, _loopCount);
+		nod->addPlayNode(_slotkey, _x1, _y1, _x2, _y2, _startFrame, _endFrame, _loopCount);
 
 	return true;
 }
@@ -428,11 +428,11 @@ bool ActionQuit::execute() {
 // ActionRandom
 //////////////////////////////////////////////////////////////////////////////
 
-ActionRandom::ActionRandom(ZVision *engine, const Common::String &line) :
-	ResultAction(engine) {
+ActionRandom::ActionRandom(ZVision *engine, int32 slotkey, const Common::String &line) :
+	ResultAction(engine, slotkey) {
 	char max_buf[64];
 	memset(max_buf, 0, 64);
-	sscanf(line.c_str(), "%*[^:]:%*[^:]:%u(%s)", &_key, max_buf);
+	sscanf(line.c_str(), "%s", max_buf);
 	_max = new ValueSlot(_engine->getScriptManager(), max_buf);
 }
 
@@ -443,7 +443,7 @@ ActionRandom::~ActionRandom() {
 
 bool ActionRandom::execute() {
 	uint randNumber = _engine->getRandomSource()->getRandomNumber(_max->getValue());
-	_engine->getScriptManager()->setStateValue(_key, randNumber);
+	_engine->getScriptManager()->setStateValue(_slotkey, randNumber);
 	return true;
 }
 
@@ -452,12 +452,12 @@ bool ActionRandom::execute() {
 // ActionSetPartialScreen
 //////////////////////////////////////////////////////////////////////////////
 
-ActionSetPartialScreen::ActionSetPartialScreen(ZVision *engine, const Common::String &line) :
-	ResultAction(engine) {
+ActionSetPartialScreen::ActionSetPartialScreen(ZVision *engine, int32 slotkey, const Common::String &line) :
+	ResultAction(engine, slotkey) {
 	char fileName[25];
 	int color;
 
-	sscanf(line.c_str(), "%*[^(](%u %u %25s %*u %d)", &_x, &_y, fileName, &color);
+	sscanf(line.c_str(), "%u %u %25s %*u %d", &_x, &_y, fileName, &color);
 
 	_fileName = Common::String(fileName);
 
@@ -489,10 +489,10 @@ bool ActionSetPartialScreen::execute() {
 // ActionSetScreen
 //////////////////////////////////////////////////////////////////////////////
 
-ActionSetScreen::ActionSetScreen(ZVision *engine, const Common::String &line) :
-	ResultAction(engine) {
+ActionSetScreen::ActionSetScreen(ZVision *engine, int32 slotkey, const Common::String &line) :
+	ResultAction(engine, slotkey) {
 	char fileName[25];
-	sscanf(line.c_str(), "%*[^(](%25[^)])", fileName);
+	sscanf(line.c_str(), "%25s", fileName);
 
 	_fileName = Common::String(fileName);
 }
@@ -507,10 +507,10 @@ bool ActionSetScreen::execute() {
 // ActionStop
 //////////////////////////////////////////////////////////////////////////////
 
-ActionStop::ActionStop(ZVision *engine, const Common::String &line) :
-	ResultAction(engine) {
+ActionStop::ActionStop(ZVision *engine, int32 slotkey, const Common::String &line) :
+	ResultAction(engine, slotkey) {
 	_key = 0;
-	sscanf(line.c_str(), "%*[^(](%u)", &_key);
+	sscanf(line.c_str(), "%u", &_key);
 }
 
 bool ActionStop::execute() {
@@ -523,12 +523,12 @@ bool ActionStop::execute() {
 // ActionStreamVideo
 //////////////////////////////////////////////////////////////////////////////
 
-ActionStreamVideo::ActionStreamVideo(ZVision *engine, const Common::String &line) :
-	ResultAction(engine) {
+ActionStreamVideo::ActionStreamVideo(ZVision *engine, int32 slotkey, const Common::String &line) :
+	ResultAction(engine, slotkey) {
 	char fileName[25];
 	uint skipline;    //skipline - render video with skip every second line, not skippable.
 
-	sscanf(line.c_str(), "%*[^(](%25s %u %u %u %u %u %u)", fileName, &_x1, &_y1, &_x2, &_y2, &_flags, &skipline);
+	sscanf(line.c_str(), "%25s %u %u %u %u %u %u", fileName, &_x1, &_y1, &_x2, &_y2, &_flags, &skipline);
 
 	_fileName = Common::String(fileName);
 	_skippable = true;
@@ -554,22 +554,22 @@ bool ActionStreamVideo::execute() {
 // ActionTimer
 //////////////////////////////////////////////////////////////////////////////
 
-ActionTimer::ActionTimer(ZVision *engine, const Common::String &line) :
-	ResultAction(engine) {
+ActionTimer::ActionTimer(ZVision *engine, int32 slotkey, const Common::String &line) :
+	ResultAction(engine, slotkey) {
 	char time_buf[64];
 	memset(time_buf, 0, 64);
-	sscanf(line.c_str(), "%*[^:]:%*[^:]:%u(%s)", &_key, time_buf);
+	sscanf(line.c_str(), "%s", time_buf);
 	_time = new ValueSlot(_engine->getScriptManager(), time_buf);
 }
 
 ActionTimer::~ActionTimer() {
 	if (_time)
 		delete _time;
-	_engine->getScriptManager()->killSideFx(_key);
+	_engine->getScriptManager()->killSideFx(_slotkey);
 }
 
 bool ActionTimer::execute() {
-	_engine->getScriptManager()->addSideFX(new TimerNode(_engine, _key, _time->getValue()));
+	_engine->getScriptManager()->addSideFX(new TimerNode(_engine, _slotkey, _time->getValue()));
 	return true;
 }
 
