@@ -198,6 +198,11 @@ private:
 	Common::Array<AnimEvent> getAnimationDatabase(int timeZone, int environment);
 	Common::Array<AIComment> getAICommentDatabase(int timeZone, int environment);
 
+	// AI Lab
+	bool initializeAILabTimeZoneAndEnvironment(Window *viewWindow, int environment);
+	bool startAILabAmbient(int oldTimeZone, int oldEnvironment, int environment, bool fade);
+	SceneBase *constructAILabSceneObject(Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+
 	// Castle
 	bool initializeCastleTimeZoneAndEnvironment(Window *viewWindow, int environment);
 	SceneBase *constructCastleSceneObject(Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
