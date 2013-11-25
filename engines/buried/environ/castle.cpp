@@ -31,6 +31,7 @@
 #include "buried/inventory_window.h"
 #include "buried/resources.h"
 #include "buried/scene_view.h"
+#include "buried/sound.h"
 #include "buried/environ/scene_base.h"
 #include "buried/environ/scene_common.h"
 
@@ -166,6 +167,15 @@ bool SceneViewWindow::initializeCastleTimeZoneAndEnvironment(Window *viewWindow,
 		((SceneViewWindow *)viewWindow)->getGlobalFlags().cgTRVisited = 1;
 	}
 
+	return true;
+}
+
+bool SceneViewWindow::startCastleAmbient(int oldTimeZone, int oldEnvironment, int environment, bool fade) {
+	if (_vm->isDemo())
+		return false;
+
+	// TODO: Fix sound fading
+	_vm->_sound->setAmbientSound(_vm->getFilePath(1, environment, SF_AMBIENT), false /* fade */, 64);
 	return true;
 }
 
