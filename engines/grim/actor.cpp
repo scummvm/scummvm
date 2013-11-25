@@ -92,7 +92,8 @@ Actor::Actor() :
 		 _mustPlaceText(false), 
 		_shadowActive(false), _puckOrient(false), _talking(false), 
 		_inOverworld(false), _drawnToClean(false), _backgroundTalk(false),
-		_sortOrder(0), _cleanBuffer(0) {
+		_sortOrder(0), _haveSectorSortOrder(false), _sectorSortOrder(0),
+		_cleanBuffer(0) {
 
 	// Some actors don't set walk and turn rates, so we default the
 	// _turnRate so Doug at the cat races can turn and we set the
@@ -413,6 +414,10 @@ bool Actor::restoreState(SaveGame *savedState) {
 
 		_attachedActor = savedState->readLESint32();
 		_attachedJoint = savedState->readString();
+
+		// will be recalculated in next update()
+		_haveSectorSortOrder = false;
+		_sectorSortOrder = 0;
 	}
 
 	if (_cleanBuffer) {
@@ -1354,18 +1359,20 @@ void Actor::update(uint frameTime) {
 	}
 
 	if (g_grim->getGameType() == GType_MONKEY4) {
+		// Check for sort order information in the current sector
+		int oldSortOrder = getEffectiveSortOrder();
+
 		Sector *sect = set->findPointSector(_pos, Sector::WalkType);
 		int setup = set->getSetup();
-		if (sect) {
-			int sortorder = 0;
-			if (setup < sect->getNumSortplanes()) {
-				sortorder = sect->getSortplane(setup);
-			}
-			if (getSortOrder() != sortorder) {
-				setSortOrder(sortorder);
-				g_emi->invalidateSortOrder();
-			}
+		if (sect && setup < sect->getNumSortplanes()) {
+			_haveSectorSortOrder = true;
+			_sectorSortOrder = sect->getSortplane(setup);
+		} else {
+			_haveSectorSortOrder = false;
 		}
+
+		if (oldSortOrder != getEffectiveSortOrder())
+			g_emi->invalidateSortOrder();
 	}
 
 	if (_turning) {
