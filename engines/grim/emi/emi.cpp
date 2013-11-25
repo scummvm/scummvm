@@ -117,7 +117,7 @@ void EMIEngine::drawNormalMode() {
 	uint32 numLayers = background->_data->_numLayers;
 	int32 currentLayer = numLayers - 1;
 	foreach (Actor *a, _activeActors) {
-		int sortorder = a->getSortOrder();
+		int sortorder = a->getEffectiveSortOrder();
 		if (sortorder < 0)
 			break;
 
@@ -151,10 +151,10 @@ void EMIEngine::invalidateSortOrder() {
 }
 
 bool EMIEngine::compareActor(const Actor *x, const Actor *y) {
-	if (x->getSortOrder() == y->getSortOrder()) {
+	if (x->getEffectiveSortOrder() == y->getEffectiveSortOrder()) {
 		return x->getId() < y->getId();
 	}
-	return x->getSortOrder() > y->getSortOrder();
+	return x->getEffectiveSortOrder() > y->getEffectiveSortOrder();
 }
 
 void EMIEngine::sortActiveActorsList() {

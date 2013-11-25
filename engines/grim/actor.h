@@ -523,6 +523,7 @@ public:
 
 	int getSortOrder() const { return _sortOrder; }
 	void setSortOrder(const int order) { _sortOrder = order; }
+	int getEffectiveSortOrder() const { return _haveSectorSortOrder ? _sectorSortOrder : _sortOrder; }
 
 	void activateShadow(bool active) { _shadowActive = active; }
 
@@ -677,6 +678,8 @@ private:
 	bool _inOverworld;
 
 	int _sortOrder;
+	bool _haveSectorSortOrder;
+	int _sectorSortOrder;
 
 	bool _shadowActive;
 	int _cleanBuffer;
