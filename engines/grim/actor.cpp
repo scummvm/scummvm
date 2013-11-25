@@ -242,7 +242,7 @@ void Actor::saveState(SaveGame *savedState) const {
 	}
 
 	if (g_grim->getGameType() == GType_MONKEY4) {
-		savedState->writeByte(_alphaMode);
+		savedState->writeLEUint32(_alphaMode);
 		savedState->writeFloat(_globalAlpha);
 
 		savedState->writeBool(_inOverworld);
@@ -405,7 +405,7 @@ bool Actor::restoreState(SaveGame *savedState) {
 	}
 
 	if (g_grim->getGameType() == GType_MONKEY4) {
-		_alphaMode = (AlphaMode) savedState->readByte();
+		_alphaMode = (AlphaMode) savedState->readLEUint32();
 		_globalAlpha = savedState->readFloat();
 
 		_inOverworld  = savedState->readBool();
