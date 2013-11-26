@@ -1,6 +1,7 @@
 
 use Cwd;
 use Switch;
+#use feature "switch";
 
 system("cls");
 require "BuildPackageUpload_LocalSettings.pl";
@@ -59,9 +60,13 @@ $ftp_url = "FTP://$FTP_User\@$FTP_Host/$FTP_Dir/";
 
 # these macros are always defined:
 $ExtraMacros =  "MACRO		NONSTANDARD_PORT\n";
-$ExtraMacros .=  "MACRO		ENABLE_VKEYBD\n";
+$ExtraMacros .= "MACRO		ENABLE_VKEYBD\n";
 $ExtraMacros .= "MACRO		DISABLE_FANCY_THEMES\n";
 $ExtraMacros .= "MACRO		USE_TRANSLATION\n";
+$ExtraMacros .= "MACRO		USE_BINK\n";
+$ExtraMacros .= "MACRO		USE_MPEG2\n";
+# $ExtraMacros .= "MACRO		\n";
+# candidates are : , USE_TIMIDITY,
 
 # prep nice list of SDKs
 #while( ($SDK, $RootDir) = each(%SDK_RootDirs) )
