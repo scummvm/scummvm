@@ -23,6 +23,7 @@
 #include "audio/mixer.h"
 #include "audio/audiostream.h"
 #include "common/system.h"
+#include "engines/grim/set.h"
 
 #include "engines/grim/emi/sound/aifftrack.h"
 #include "engines/grim/emi/sound/scxtrack.h"
@@ -258,34 +259,100 @@ void Lua_V2::FreeSound() {
 
 void Lua_V2::PlayLoadedSound() {
 	lua_Object idObj = lua_getparam(1);
-	lua_Object bool1Obj = lua_getparam(2);
-	/*lua_Object volumeObj =*/ lua_getparam(3);
+	lua_Object loopingObj = lua_getparam(2);
+	lua_Object volumeObj = lua_getparam(3);
+	/* FIXME: unknown parameter */
 	/*lua_Object bool2Obj =*/ lua_getparam(4);
 
-
-	if (!lua_isuserdata(idObj) || lua_tag(idObj) != MKTAG('A', 'I', 'F', 'F'))
+	if (!lua_isnumber(volumeObj)) {
+		error("Lua_V2::PlayLoadedSound - ERROR: Unknown parameters");
 		return;
+	}
 
-	bool looping = !lua_isnil(bool1Obj);
+	int volume = (int)lua_getnumber(volumeObj);
+
+	if (!lua_isuserdata(idObj) || lua_tag(idObj) != MKTAG('A', 'I', 'F', 'F')) {
+		error("Lua_V2::PlayLoadedSound - ERROR: Unknown parameters");
+		return;
+	}
+
+	bool looping = !lua_isnil(loopingObj);
 
 	PoolSound *sound = PoolSound::getPool().getObject(lua_getuserdata(idObj));
-	if (sound)
-		sound->play(looping);
+	if (!sound) {
+		warning("Lua_V2::PlayLoadedSound: can't find requested sound object");
+		return;
+	}
+	sound->setVolume(volume);
+	sound->play(looping);
 }
 
 void Lua_V2::PlayLoadedSoundFrom() {
-	warning("Lua_V2::PlayLoadedSoundFrom: implement opcode");
+	lua_Object idObj = lua_getparam(1);
+	lua_Object xObj = lua_getparam(2);
+	lua_Object yObj = lua_getparam(3);
+	lua_Object zObj = lua_getparam(4);
+	lua_Object volumeOrLoopingObj = lua_getparam(5);
+	lua_Object volumeObj = lua_getparam(6);
+
+	if (!lua_isuserdata(idObj) || lua_tag(idObj) != MKTAG('A', 'I', 'F', 'F')) {
+		error("Lua_V2::PlayLoadedSoundFrom - ERROR: Unknown parameters");
+		return;
+	}
+
+	if (!lua_isnumber(xObj) || !lua_isnumber(yObj) || !lua_isnumber(zObj) ||
+	    !lua_isnumber(volumeObj)) {
+		error("Lua_V2::PlayLoadedSoundFrom - ERROR: Unknown parameters");
+		return;
+	}
+
+	float x = lua_getnumber(xObj);
+	float y = lua_getnumber(yObj);
+	float z = lua_getnumber(zObj);
+
+	int volume = 100;
+	bool looping = false;
+
+	if (lua_isnumber(volumeOrLoopingObj)) {
+		volume = (int)lua_getnumber(volumeOrLoopingObj);
+		/* special handling if 5th parameter is a boolean */
+		if (volume <= 1) {
+			looping = volume;
+			volume = (int)lua_getnumber(volumeObj);
+		}
+	} else {
+		volume = (int)lua_getnumber(volumeObj);
+		looping = !lua_isnil(volumeOrLoopingObj);
+	}
+
+	PoolSound *sound = PoolSound::getPool().getObject(lua_getuserdata(idObj));
+	if (!sound) {
+		warning("Lua_V2::PlayLoadedSoundFrom: can't find requested sound object");
+		return;
+	}
+	int newvolume = volume;
+	int newbalance = 64;
+	Math::Vector3d pos(x, y, z);
+	g_grim->getCurrSet()->calculateSoundPosition(pos, 30, volume, newvolume, newbalance);
+	sound->setBalance(newbalance * 2 - 127);
+	sound->setVolume(newvolume);
+	sound->play(looping);
 }
 
 void Lua_V2::StopSound() {
 	lua_Object idObj = lua_getparam(1);
 
-	if (!lua_isuserdata(idObj) || lua_tag(idObj) != MKTAG('A', 'I', 'F', 'F'))
+	if (!lua_isuserdata(idObj) || lua_tag(idObj) != MKTAG('A', 'I', 'F', 'F')) {
+		warning("Lua_V2::StopSound - ERROR: Unknown parameters");
 		return;
+	}
 
 	PoolSound *sound = PoolSound::getPool().getObject(lua_getuserdata(idObj));
-	if (sound)
-		sound->stop();
+	if (!sound) {
+		warning("Lua_V2::StopSound: can't find requested sound object");
+		return;
+	}
+	sound->stop();
 }
 
 void Lua_V2::IsSoundPlaying() {
@@ -312,11 +379,18 @@ void Lua_V2::IsSoundPlaying() {
 
 void Lua_V2::PlaySound() {
 	lua_Object strObj = lua_getparam(1);
-	//FIXME: get the second param
-	lua_getparam(2);
+	lua_Object volumeObj = lua_getparam(2);
 
-	if (!lua_isstring(strObj))
+	if (!lua_isstring(strObj)) {
+		error("Lua_V2::PlaySound - ERROR: Unknown parameters");
 		return;
+	}
+
+	if (!lua_isnumber(volumeObj)) {
+		error("Lua_V2::PlaySound - ERROR: Unknown parameters");
+		return;
+	}
+	int volume = (int)lua_getnumber(volumeObj);
 
 	const char *str = lua_getstring(strObj);
 	Common::String filename = addSoundSuffix(str);
@@ -336,39 +410,109 @@ void Lua_V2::PlaySound() {
 	}
 
 	track->openSound(filename, stream);
+	track->setVolume(volume);
 	track->play();
 }
 
-// FIXME: implement sound positioning
 void Lua_V2::PlaySoundFrom() {
-//  lua_Object strObj = lua_getparam(1);
-//  lua_Object volObj = lua_getparam(2);
-//  lua_Object posxObj = lua_getparam(3);
-//  lua_Object posyObj = lua_getparam(4);
-//  lua_Object posZObj = lua_getparam(5);
+	lua_Object strObj = lua_getparam(1);
+	lua_Object xObj = lua_getparam(2);
+	lua_Object yObj = lua_getparam(3);
+	lua_Object zObj = lua_getparam(4);
+	/* FIXME: unknown parameter */
+	lua_Object volumeOrUnknownObj = lua_getparam(5);
+	lua_Object volumeObj = lua_getparam(6);
 
-	return PlaySound();
+	int volume = 100;
+
+	if (!lua_isstring(strObj)) {
+		error("Lua_V2::PlaySoundFrom - ERROR: Unknown parameters");
+		return;
+	}
+
+	if (!lua_isnumber(xObj) || !lua_isnumber(yObj) || !lua_isnumber(zObj)) {
+		error("Lua_V2::PlayLoadedSoundFrom - ERROR: Unknown parameters");
+		return;
+	}
+	float x = lua_getnumber(xObj);
+	float y = lua_getnumber(yObj);
+	float z = lua_getnumber(zObj);
+
+	// arg5 is optional and if present, it is FALSE
+	if (lua_isnumber(volumeObj)) {
+		volume = (int)lua_getnumber(volumeObj);
+	} else if (lua_isnumber(volumeOrUnknownObj)) {
+		volume = (int)lua_getnumber(volumeOrUnknownObj);
+	} else {
+		error("Lua_V2::PlaySoundFrom - ERROR: Unknown parameters");
+		return;
+	}
+
+	const char *str = lua_getstring(strObj);
+	Common::String filename = addSoundSuffix(str);
+
+	SoundTrack *track;
+
+	Common::SeekableReadStream *stream = g_resourceloader->openNewStreamFile(filename, true);
+	if (!stream) {
+		warning("Lua_V2::PlaySoundFrom: Could not find sound '%s'", filename.c_str());
+		return;
+	}
+
+	if (g_grim->getGamePlatform() != Common::kPlatformPS2) {
+		track = new AIFFTrack(Audio::Mixer::kSFXSoundType);
+	} else {
+		track = new SCXTrack(Audio::Mixer::kSFXSoundType);
+	}
+
+	track->openSound(filename, stream);
+
+	int newvolume = volume;
+	int newbalance = 64;
+	Math::Vector3d pos(x, y, z);
+	g_grim->getCurrSet()->calculateSoundPosition(pos, 30, volume, newvolume, newbalance);
+	track->setBalance(newbalance * 2 - 127);
+	track->setVolume(newvolume);
+	track->play();
 }
 
-// TODO: Implement, verify, and rename parameters
 void Lua_V2::GetSoundVolume() {
-	error("Lua_V2::GetSoundVolume - TODO: Implement opcode");
+	lua_Object idObj = lua_getparam(1);
+	if (!lua_isuserdata(idObj) || lua_tag(idObj) != MKTAG('A', 'I', 'F', 'F')) {
+		error("Lua_V2::GetSoundVolume: Unknown Parameters");
+		return;
+	}
+	PoolSound *sound = PoolSound::getPool().getObject(lua_getuserdata(idObj));
+	if (sound && sound->_track) {
+		lua_pushnumber(sound->_track->getVolume());
+	} else {
+		warning("Lua_V2::GetSoundVolume: can't find sound track");
+		lua_pushnumber(Audio::Mixer::kMaxMixerVolume);
+	}
 }
 
-// TODO: Implement, verify, and rename parameters
 void Lua_V2::SetSoundVolume() {
-	lua_Object param1 = lua_getparam(1);
-	lua_Object param2 = lua_getparam(2);
-
-	if (!lua_isuserdata(param1) || !lua_isnumber(param2))
+	lua_Object idObj = lua_getparam(1);
+	lua_Object volumeObj = lua_getparam(2);
+	if (!lua_isuserdata(idObj) || lua_tag(idObj) != MKTAG('A', 'I', 'F', 'F')) {
+		error("Lua_V2::SetSoundVolume: no valid sound id");
+		return;
+	}
+	if (!lua_isnumber(volumeObj)) {
 		error("Lua_V2::SetSoundVolume - ERROR: Unknown parameters");
+		return;
+	}
 
-	int volume = (int)lua_getnumber(param2);
+	int volume = (int)lua_getnumber(volumeObj);
+	PoolSound *sound = PoolSound::getPool().getObject(lua_getuserdata(idObj));
 
-	error("Lua_V2::SetSoundVolume(???, %d) - TODO: Implement opcode", volume);
+	if (sound) {
+		sound->setVolume(volume);
+	} else {
+		warning("Lua_V2:SetSoundVolume: can't find sound track");
+	}
 }
 
-// TODO: Implement, verify, and rename parameters
 void Lua_V2::UpdateSoundPosition() {
 	lua_Object idObj = lua_getparam(1);
 	lua_Object param2 = lua_getparam(2);
@@ -387,9 +531,13 @@ void Lua_V2::UpdateSoundPosition() {
 	PoolSound *sound = PoolSound::getPool().getObject(lua_getuserdata(idObj));
 	if (!sound)
 		return;
-
-//	FIXME: Disable for now, *way* too spammy.
-//	warning("Lua_V2::UpdateSoundPosition(%s, %f, %f, %f): Implement opcode", sound->_filename.c_str(), x, y, z);
+	/* FIXME: store the original maximum volume in the PoolSound object */
+	int newvolume = 100;
+	int newbalance = 64;
+	Math::Vector3d pos(x, y, z);
+	g_grim->getCurrSet()->calculateSoundPosition(pos, 30, 100, newvolume, newbalance);
+	sound->setBalance(newbalance * 2 - 127);
+	sound->setVolume(newvolume);
 }
 
 void Lua_V2::ImSetMusicVol() {
