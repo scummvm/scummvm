@@ -245,12 +245,13 @@ public:
 	 * and we add this functionality in ScummVM:
 	 * - Space Quest 4 CD
 	 * - Freddy Pharkas CD
+	 * - Laura Bow 2 CD
 	 * SCI1.1 games which don't support simultaneous speech and subtitles,
 	 * and we haven't added any extra functionality in ScummVM because extra
 	 * script patches are needed:
-	 * - Laura Bow 2 CD
 	 * - King's Quest 6 CD
 	 */
+	bool speechAndSubtitlesEnabled();
 	void syncIngameAudioOptions();
 	void updateScummVMAudioOptions();
 

@@ -3,6 +3,7 @@ MODULE := engines/fullpipe
 MODULE_OBJS = \
 	behavior.o \
 	detection.o \
+	floaters.o \
 	fullpipe.o \
 	gameloader.o \
 	gfx.o \
@@ -11,6 +12,7 @@ MODULE_OBJS = \
 	interaction.o \
 	inventory.o \
 	lift.o \
+	messagehandlers.o \
 	messages.o \
 	modal.o \
 	motion.o \
@@ -20,7 +22,13 @@ MODULE_OBJS = \
 	sound.o \
 	stateloader.o \
 	statics.o \
-	utils.o
+	utils.o \
+	scenes/scene01.o \
+	scenes/scene02.o \
+	scenes/scene03.o \
+	scenes/scene04.o \
+	scenes/sceneDbg.o \
+	scenes/sceneIntro.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_FULLPIPE), DYNAMIC_PLUGIN)

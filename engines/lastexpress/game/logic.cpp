@@ -413,8 +413,8 @@ void Logic::resetState() {
 /**
  * Handle game over
  *
- * @param type 		 The savegame type.
- * @param value 	 The value (event, time, index, ...)
+ * @param type       The savegame type.
+ * @param value      The value (event, time, index, ...)
  * @param sceneIndex Index of the scene to show.
  * @param showScene  true to show a scene, false to return to menu directly
  */

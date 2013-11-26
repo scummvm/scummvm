@@ -315,8 +315,6 @@ public:
 	Action1 _action1;
 	Action2 _action2;
 	Action3 _action3;
-	// CHECKME: Object1 looks useless
-	Object1 _object1;
 	LeftFlyCycle _leftFlyCycle;
 	CenterFlyCycle _centerFlyCycle;
 	RightFlyCycle _rightFlyCycle;
@@ -324,10 +322,7 @@ public:
 	SpeakerSText _speakerSText;
 	SpeakerQText _speakerQText;
 	DisplayHotspot _background;
-	
-	//CHECKME: Useless Hotspot, never initialized
 	DisplayHotspot _item1;
-	//CHECKME: Useless Hotspot, never initialized
 	DisplayHotspot _entrance;
 	DisplayHotspot _bulwark;
 	DisplayHotspot _tree;

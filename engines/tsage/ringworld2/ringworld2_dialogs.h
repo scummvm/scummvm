@@ -50,13 +50,14 @@ private:
 
 	int _highlightedAction;
 	int _selectedAction;
+	CursorType _previousCursor;
 public:
 	RightClickDialog();
 	~RightClickDialog();
 
 	virtual void draw();
 	virtual bool process(Event &event);
-	void execute();
+	int execute();
 };
 
 class CharacterDialog: public GfxDialog {

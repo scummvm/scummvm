@@ -251,7 +251,7 @@ void Background::update() {
 			if (_nextBell < 5)
 				_nextBell = 12;
 			_nextBell--;
-			// CHECKME: 2 is a guess. No length in the original? 
+			// CHECKME: 2 is a guess. No length in the original?
 			_vm->_sound->playNote(_vm->kNotes[_nextBell], 2);
 			break;
 		case 2:

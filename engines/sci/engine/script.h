@@ -100,6 +100,7 @@ public:
 
 	void patcherProcessScript(uint16 scriptNr, byte *scriptData, const uint32 scriptSize);
 	void patcherInitSignature(SciScriptPatcherEntry *patchTable, bool isMacSci11);
+	void patcherEnablePatch(SciScriptPatcherEntry *patchTable, const char *searchDescription);
 	int32 patcherFindSignature(const SciScriptPatcherEntry *patchEntry, const byte *scriptData, const uint32 scriptSize, bool isMacSci11);
 	void patcherApplyPatch(const SciScriptPatcherEntry *patchEntry, byte *scriptData, const uint32 scriptSize, int32 signatureOffset, bool isMacSci11);
 

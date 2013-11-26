@@ -71,7 +71,7 @@ bool EventsClass::pollEvent() {
 		break;
 
 	default:
- 		break;
+		break;
 	}
 
 	return true;

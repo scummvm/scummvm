@@ -41,6 +41,7 @@
 #include "avalanche/menu.h"
 #include "avalanche/closing.h"
 #include "avalanche/sound.h"
+#include "avalanche/nim.h"
 
 #include "common/serializer.h"
 
@@ -59,7 +60,7 @@ struct AvalancheGameDescription {
 	ADGameDescription desc;
 };
 
-static const int kSavegameVersion = 1;
+static const int kSavegameVersion = 2;
 
 enum Pitch {
 	kPitchInvalid,
@@ -84,6 +85,7 @@ public:
 	Menu *_menu;
 	Closing *_closing;
 	SoundHandler *_sound;
+	Nim *_nim;
 
 	OSystem *_system;
 
@@ -264,10 +266,7 @@ public:
 	bool _doingSpriteRun; // Only set to True if we're doing a sprite_run at this moment. This stops the trippancy system from moving any of the sprites.
 	bool _soundFx;
 
-	// These two have very similar purpose, but it's crucial not to modify _isLoaded later than the actual loading
-	// or at the begginning of the game, and _ablteToAddTimer must be modified in addTimer().
 	bool _isLoaded; // Is it a loaded gamestate?
-	bool _ableToAddTimer;
 
 	void callVerb(VerbCode id);
 	void loadRoom(byte num);
@@ -292,7 +291,7 @@ public:
 	void newGame(); // This sets up the DNA for a completely new game.
 	bool getFlag(char x);
 	bool decreaseMoney(uint16 amount); // Called pennycheck in the original.
-	
+
 	Common::String getName(People whose);
 	Common::String getItem(byte which); // Called get_better in the original.
 	Common::String f5Does(); // This procedure determines what f5 does.

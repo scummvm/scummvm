@@ -287,7 +287,7 @@ void TextureCLUT8::allocate(uint width, uint height) {
 
 	// We only need to reinitialize our CLUT8 surface when the output size
 	// changed.
-	if (width == _clut8Data.w && width == _clut8Data.h) {
+	if (width == _clut8Data.w && height == _clut8Data.h) {
 		return;
 	}
 

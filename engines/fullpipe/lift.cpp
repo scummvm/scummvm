@@ -22,6 +22,8 @@
 
 #include "fullpipe/fullpipe.h"
 
+#include "fullpipe/objects.h"
+#include "fullpipe/objectnames.h"
 #include "fullpipe/constants.h"
 
 namespace Fullpipe {
@@ -62,6 +64,13 @@ int FullpipeEngine::lift_getButtonIdP(int objid) {
 		return 0;
 		break;
 	}
+}
+
+void FullpipeEngine::lift_setButton(const char *name, int state) {
+	GameVar *var = g_fullpipe->getGameLoaderGameVar()->getSubVarByName("OBJSTATES")->getSubVarByName(sO_LiftButtons);
+
+	if (var)
+		var->setSubVarAsInt(name, state);
 }
 
 void FullpipeEngine::lift_sub5(Scene *sc, int qu1, int qu2) {

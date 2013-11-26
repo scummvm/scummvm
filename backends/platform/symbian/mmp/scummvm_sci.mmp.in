@@ -53,6 +53,14 @@ SOURCEPATH ..\..\..\..\engines\sci
 
 //STOP_AUTO_OBJECTS_SCI_//
 
+
+//START_AUTO_OBJECTS_SCI_ENABLE_SCI32//
+
+	// empty base file, will be updated by Perl build scripts
+
+//STOP_AUTO_OBJECTS_SCI_ENABLE_SCI32//
+
+
 // *** Include paths
 
 USERINCLUDE     ..\..\..\..\engines

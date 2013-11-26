@@ -2670,7 +2670,9 @@ void PlayStream::dispatch() {
 }
 
 uint32 PlayStream::getFileOffset(const uint16 *data, int count, int voiceNum) {
-	assert(data);
+	if (!data)
+		return 0;	// no valid voice data found
+
 	int bitsIndex = voiceNum & 7;
 	int byteIndex = voiceNum >> 3;
 	int shiftAmount = bitsIndex * 2;
@@ -2732,8 +2734,6 @@ AdlibSoundDriver::AdlibSoundDriver(): SoundDriver() {
 	_masterVolume = 0;
 
 	_groupData._groupMask = 9;
-	_groupData._v1 = 0x46;
-	_groupData._v2 = 0;
 	_groupData._pData = &adlib_group_data[0];
 
 	_mixer = g_vm->_mixer;
@@ -3051,8 +3051,6 @@ SoundBlasterDriver::SoundBlasterDriver(): SoundDriver() {
 	_masterVolume = 0;
 
 	_groupData._groupMask = 1;
-	_groupData._v1 = 0x3E;
-	_groupData._v2 = 0;
 	static byte const group_data[] = { 3, 1, 1, 0, 0xff };
 	_groupData._pData = group_data;
 

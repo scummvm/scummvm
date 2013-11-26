@@ -110,6 +110,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_KQ6,           520,   520,  0,              "rm520", "init",           -1,    0, { WORKAROUND_FAKE,   0 } }, // going to boiling water trap on beast isle
 	{ GID_KQ6,            -1,   903,  0,         "controlWin", "open",           -1,    4, { WORKAROUND_FAKE,   0 } }, // when opening the controls window (save, load etc)
 	{ GID_KQ6,            -1,   907,  0,             "tomato", "doVerb",         -1,    2, { WORKAROUND_FAKE,   0 } }, // when looking at the rotten tomato in the inventory - bug #3059544
+	{ GID_KQ6,            -1,   928,  0,                 NULL, "startText",      -1,    0, { WORKAROUND_FAKE,   0 } }, // gets caused by Text+Audio support (see script patcher)
 	{ GID_KQ7,            -1, 64996,  0,               "User", "handleEvent",    -1,    1, { WORKAROUND_FAKE,   0 } }, // called when pushing a keyboard key
 	{ GID_LAURABOW,       37,     0,  0,                "CB1", "doit",           -1,    1, { WORKAROUND_FAKE,   0 } }, // when going up the stairs (bug #3037694)
 	{ GID_LAURABOW,       -1,   967,  0,             "myIcon", "cycle",          -1,    1, { WORKAROUND_FAKE,   0 } }, // having any portrait conversation coming up (initial bug #3034985)
@@ -117,6 +118,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_LAURABOW2,      -1,    21,  0,      "dropCluesCode", "doit",           -1,    1, { WORKAROUND_FAKE, 0x7fff } }, // when asking some questions (e.g. the reporter about the burglary, or the policeman about Ziggy). Must be big, as the game scripts perform lt on it and start deleting journal entries - bugs #3035068, #3036274
 	{ GID_LAURABOW2,      -1,    90,  1,        "MuseumActor", "init",           -1,    6, { WORKAROUND_FAKE,   0 } }, // Random actors in museum (bug #3041257)
 	{ GID_LAURABOW2,     240,   240,  0,     "sSteveAnimates", "changeState",    -1,    0, { WORKAROUND_FAKE,   0 } }, // Steve Dorian's idle animation at the docks - bug #3036291
+	{ GID_LAURABOW2,      -1,   928,  0,                 NULL, "startText",      -1,    0, { WORKAROUND_FAKE,   0 } }, // gets caused by Text+Audio support (see script patcher)
 	{ GID_LONGBOW,        -1,     0,  0,            "Longbow", "restart",        -1,    0, { WORKAROUND_FAKE,   0 } }, // When canceling a restart game - bug #3046200
 	{ GID_LONGBOW,        -1,   213,  0,              "clear", "handleEvent",    -1,    0, { WORKAROUND_FAKE,   0 } }, // When giving an answer using the druid hand sign code in any room
 	{ GID_LONGBOW,        -1,   213,  0,             "letter", "handleEvent",  0xa8,    1, { WORKAROUND_FAKE,   0 } }, // When using the druid hand sign code in any room - bug #3036601

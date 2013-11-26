@@ -165,7 +165,7 @@ void ScreenEffects::flash(int flashCount, byte *palette, int colorCount) {
 		_screen->setRGBPalette(_fxPalette, 0, colorCount);
 		_screen->updateScreenAndWait(20);
 		_screen->setRGBPalette(palette, 0, colorCount);
- 		_screen->updateScreenAndWait(20);
+		_screen->updateScreenAndWait(20);
 	}
 }
 

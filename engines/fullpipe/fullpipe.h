@@ -52,6 +52,7 @@ class Inventory2;
 struct CursorInfo;
 struct EntranceInfo;
 class ExCommand;
+class Floaters;
 class GameProject;
 class GameObject;
 class GlobalMessageQueueList;
@@ -163,6 +164,8 @@ public:
 
 	MovTable *_movTable;
 
+	Floaters *_floaters;
+
 	void initMap();
 	void updateMapPiece(int mapId, int update);
 	void updateScreen();
@@ -227,10 +230,12 @@ public:
 	void openHelp();
 	void openMainMenu();
 
+	void initArcadeKeys(const char *varname);
 	void winArcade();
 	void getAllInventory();
 
 	int lift_getButtonIdP(int objid);
+	void lift_setButton(const char *name, int state);
 	void lift_sub5(Scene *sc, int qu1, int qu2);
 	void lift_exitSeq(ExCommand *ex);
 	void lift_closedoorSeq();

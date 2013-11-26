@@ -166,6 +166,7 @@ protected:
 		~AVIVideoTrack();
 
 		void decodeFrame(Common::SeekableReadStream *stream);
+		void forceTrackEnd();
 
 		uint16 getWidth() const { return _bmInfo.width; }
 		uint16 getHeight() const { return _bmInfo.height; }
@@ -230,13 +231,15 @@ protected:
 		Audio::QueuingAudioStream *createAudioStream();
 	};
 
-	Common::Array<OldIndex> _indexEntries;
 	AVIHeader _header;
+
+	void readOldIndex(uint32 size);
+	Common::Array<OldIndex> _indexEntries;
 
 	Common::SeekableReadStream *_fileStream;
 	bool _decodedHeader;
 	bool _foundMovieList;
-	uint32 _movieListStart;
+	uint32 _movieListStart, _movieListEnd;
 
 	Audio::Mixer::SoundType _soundType;
 	Common::Rational _frameRateOverride;
@@ -248,6 +251,7 @@ protected:
 	void handleStreamHeader(uint32 size);
 	uint16 getStreamType(uint32 tag) const { return tag & 0xFFFF; }
 	byte getStreamIndex(uint32 tag) const;
+	void forceVideoEnd();
 
 public:
 	virtual AVIAudioTrack *createAudioTrack(AVIStreamHeader sHeader, PCMWaveFormat wvInfo);

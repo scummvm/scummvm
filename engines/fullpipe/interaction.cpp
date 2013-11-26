@@ -394,6 +394,17 @@ LABEL_38:
 	return true;
 }
 
+Interaction *InteractionController::getInteractionByObjectIds(int obId, int obId2, int obId3) {
+	for (ObList::iterator i = _interactions.begin(); i != _interactions.end(); ++i) {
+		Interaction *intr = (Interaction *)*i;
+
+		if (intr->_objectId1 == obId && intr->_objectId2 == obId2 && intr->_objectId3 == obId3)
+			return intr;
+	}
+
+	return 0;
+}
+
 Interaction::Interaction() {
 	_objectId1 = 0;
 	_objectId2 = 0;

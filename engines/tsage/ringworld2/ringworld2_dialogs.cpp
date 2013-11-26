@@ -50,6 +50,7 @@ RightClickDialog::RightClickDialog() : GfxDialog() {
 	_btnList[5] = Common::Point(83, 47);
 
 	// Set the palette and change the cursor
+	_previousCursor = R2_GLOBALS._events.getCursor();
 	R2_GLOBALS._events.setCursor(CURSOR_ARROW);
 
 	setPalette();
@@ -136,7 +137,7 @@ bool RightClickDialog::process(Event &event) {
 	return false;
 }
 
-void RightClickDialog::execute() {
+int RightClickDialog::execute() {
 	// Draw the dialog
 	draw();
 
@@ -157,7 +158,8 @@ void RightClickDialog::execute() {
 	}
 
 	// Execute the specified action
-	CursorType cursorNum = CURSOR_NONE;
+	CursorType cursorNum = _previousCursor;
+	int result = -1;
 	switch (_selectedAction) {
 	case 0:
 		// Look action
@@ -177,17 +179,18 @@ void RightClickDialog::execute() {
 		break;
 	case 4:
 		// Change player
-		CharacterDialog::show();
+		result = 0;
 		break;
 	case 5:
 		// Options dialog
+		result = 1;
 		break;
 	}
 
-	if (cursorNum != CURSOR_NONE)
-		R2_GLOBALS._events.setCursor(cursorNum);
-
+	R2_GLOBALS._events.setCursor(cursorNum);
 	_gfxManager.deactivate();
+
+	return result;
 }
 
 /*--------------------------------------------------------------------------*/

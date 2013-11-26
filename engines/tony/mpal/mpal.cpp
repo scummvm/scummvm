@@ -1935,7 +1935,7 @@ bool mpalExecuteScript(int nScript) {
 
 	// !!! New process management
 	if (CoroScheduler.createProcess(ScriptThread, &s, sizeof(LpMpalScript)) == CORO_INVALID_PID_VALUE)
- 		return false;
+		return false;
 
 	return true;
 }

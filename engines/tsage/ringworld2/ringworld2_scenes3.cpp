@@ -492,7 +492,7 @@ bool Scene3150::ToiletFlush::startAction(CursorType action, Event &event) {
 					scene->setAction(&scene->_sequenceManager, scene, 3152, &R2_GLOBALS._player, NULL);
 				} else {
 					scene->_sceneMode = 3153;
-					scene->setAction(&scene->_sequenceManager, scene, 3152, &R2_GLOBALS._player, &scene->_water, NULL);
+					scene->setAction(&scene->_sequenceManager, scene, 3153, &R2_GLOBALS._player, &scene->_water, NULL);
 				}
 			} else {
 				SceneItem::display(3150, 42, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, LIST_END);
@@ -629,7 +629,7 @@ void Scene3150::postInit(SceneObjectList *OwnerList) {
 
 	if (R2_INVENTORY.getObjectScene(R2_SUPERCONDUCTOR_WIRE) == 3150) {
 		_bulbOrWire.postInit();
-		_bulbOrWire.setup(3152, 7, 3);
+		_bulbOrWire.setup(3152, 7, 2);
 		_bulbOrWire.setPosition(Common::Point(70, 55));
 		_bulbOrWire.fixPriority(111);
 		_bulbOrWire._effect = EFFECT_SHADED2;
@@ -1719,7 +1719,7 @@ void Scene3350::signal() {
 		break;
 	case 3351:
 		_sceneMode = 3352;
-		setAction(&_sequenceManager, this, 3352, &_seeker, &R2_GLOBALS._player,
+		setAction(&_sequenceManager, this, 3352, &_seatedPeople, &R2_GLOBALS._player,
 			&_miranda, &_seeker, &_webbster, NULL);
 		break;
 	case 3352:
@@ -1996,11 +1996,11 @@ void Scene3375::postInit(SceneObjectList *OwnerList) {
 	setZoomPercents(126, 55, 200, 167);
 	R2_GLOBALS._player.postInit();
 
-	if (R2_GLOBALS._player._characterIndex == R2_SEEKER) {
+	if (R2_GLOBALS._player._characterIndex == R2_SEEKER)
 		R2_GLOBALS._player._moveDiff = Common::Point(5, 3);
-	} else {
+	else
 		R2_GLOBALS._player._moveDiff = Common::Point(3, 2);
-	}
+
 	R2_GLOBALS._player.changeZoom(-1);
 
 	switch (R2_GLOBALS._player._characterIndex) {
@@ -2191,6 +2191,14 @@ void Scene3375::signal() {
 		_companion2._shade = 4;
 		_webbster._effect = EFFECT_SHADED2;
 		_webbster._shade = 4;
+
+		// HACK: Reset zooms in order to avoid giant characters on the upper right of the screen
+		R2_GLOBALS._player.setZoom(-1);
+		_companion1.setZoom(-1);
+		_companion2.setZoom(-1);
+		_webbster.setZoom(-1);
+		//
+
 		enterArea(_sceneMode);
 		break;
 	case 3379:
@@ -2813,7 +2821,7 @@ void Scene3400::remove() {
 void Scene3400::signal() {
 	switch (_sceneMode) {
 	case 3305: {
-		// Removed (useless ?) call to sub_1D227
+		// First part of discussion
 		_tealSpeaker._object1.hide();
 		_teal.show();
 		_teal.setStrip(1);
@@ -2825,6 +2833,7 @@ void Scene3400::signal() {
 		}
 		break;
 	case 3306:
+		// Teal picks up the sapphire
 		R2_GLOBALS._sound2.play(318);
 		_companion1.setStrip(2);
 		R2_GLOBALS._player.setStrip(6);
@@ -2835,15 +2844,16 @@ void Scene3400::signal() {
 		_stripManager.start(3307, this);
 		if (R2_GLOBALS._player._characterIndex == R2_SEEKER) {
 			_sceneMode = 3400;
-			R2_GLOBALS._player.setAction(&_sequenceManager, this, 3400, &R2_GLOBALS._player, &_teal, &_actor8, NULL);
+			R2_GLOBALS._player.setAction(&_sequenceManager, this, 3400, &R2_GLOBALS._player, &_teal, &_sapphire, NULL);
 		} else {
 			_sceneMode = 3408;
-			_companion1.setAction(&_sequenceManager, this, 3408, &_companion1, &_teal, &_actor8, NULL);
+			_companion1.setAction(&_sequenceManager, this, 3408, &_companion1, &_teal, &_sapphire, NULL);
 		}
 		break;
 	case 3307:
 	case 3404:
 	case 3408:
+		// A tasp!
 		if (!_soundFaded) {
 			R2_GLOBALS._sound2.fadeOut2(NULL);
 			_soundFaded = true;
@@ -2853,7 +2863,7 @@ void Scene3400::signal() {
 		}
 		break;
 	case 3308:
-		// Removed (useless ?) call to sub_1D227
+		// Characters teleport one after the other
 		_companion1.setStrip(2);
 		R2_GLOBALS._player.setStrip(6);
 		_companion2.setStrip(6);
@@ -2866,7 +2876,7 @@ void Scene3400::signal() {
 			setAction(&_sequenceManager, this, 3403, &_companion1, &_webbster, &_manholeCover, NULL);
 		break;
 	case 3309:
-		// Removed (useless ?) call to sub_1D227
+		// Miranda teleports away
 		_teal.setStrip(1);
 		_sceneMode = 3405;
 		if (R2_GLOBALS._player._characterIndex == R2_MIRANDA)
@@ -2875,7 +2885,7 @@ void Scene3400::signal() {
 			setAction(&_sequenceManager, this, 3405, &_companion2, &_manholeCover, NULL);
 		break;
 	case 3310:
-		// Removed (useless ?) call to sub_1D227
+		// Quinn teleports away
 		_teal.setStrip(1);
 		_sceneMode = 3406;
 		if (R2_GLOBALS._player._characterIndex == R2_QUINN)
@@ -2886,7 +2896,7 @@ void Scene3400::signal() {
 			setAction(&_sequenceManager, this, 3406, &_companion2, &_manholeCover, NULL);
 		break;
 	case 3311:
-		// Removed (useless ?) call to sub_1D227
+		// Teal teleports away
 		_tealSpeaker._object1.hide();
 		_teal.show();
 		_teal.setStrip(1);
@@ -2894,8 +2904,9 @@ void Scene3400::signal() {
 		setAction(&_sequenceManager, this, 3407, &_teal, &_manholeCover, NULL);
 		break;
 	case 3400: {
-		_actor8.postInit();
-		_actor8.hide();
+		// Teal enters the room
+		_sapphire.postInit();
+		_sapphire.hide();
 		_teal.postInit();
 		_teal._numFrames = 7;
 		_teal._moveDiff = Common::Point(3, 2);
@@ -2915,37 +2926,44 @@ void Scene3400::signal() {
 		}
 		break;
 	case 3401:
+		// Teal first speech
 		_sceneMode = 3305;
 		_stripManager.start(3305, this);
 		break;
 	case 3402:
+		// Betrayal of Webbster
 		_sceneMode = 3306;
 		_stripManager.start(3306, this);
 		break;
 	case 3403:
+		// Teal: "Miranda..."
 		R2_GLOBALS._scrollFollower = &R2_GLOBALS._player;
 		_sceneMode = 3309;
 		_stripManager.start(3309, this);
 		break;
 	case 3405:
+		// Teal: "And Quinn..."
 		_sceneMode = 3310;
 		_stripManager.start(3310, this);
 		break;
 	case 3406:
+		// Teal final sentence before teleporting
 		_sceneMode = 3311;
 		_stripManager.start(3311, this);
 		break;
 	case 3407:
+		// End of scene
 		R2_GLOBALS._sceneManager.changeScene(3600);
 		break;
 	default:
+		// Unexpected scene mode
 		R2_GLOBALS._player.enableControl();
 		break;
 	}
 }
 
 /*--------------------------------------------------------------------------
- * Scene 3500 - Cavern Maze
+ * Scene 3500 - Flub tube maze
  *
  *--------------------------------------------------------------------------*/
 
@@ -3191,10 +3209,9 @@ void Scene3500::Action1::signal() {
 			scene->_shuttle._frameChange = _direction;
 			scene->_shuttle.setFrame(scene->_shuttle.changeFrame());
 		}
-		// All the var_8 initialization was missing in the original
+		// CHECKME: All the var_8 initialization was missing in the original
 		// but it's clearly a cut and paste error from case 4.
 		// The following code allows the switch to work properly.
-		warning("Checkme: fix for dead code");
 		int var_8 = (_direction * 2 + scene->_mazeDirection);
 		if (var_8 > 7)
 			var_8 = 1;
@@ -4238,7 +4255,7 @@ void Scene3500::dispatch() {
 	}
 
 	if (_mazeChangeAmount != 0) {
- 		R2_GLOBALS._player._uiEnabled = false;
+		R2_GLOBALS._player._uiEnabled = false;
 		if (_mazeChangeAmount != _speed)
 			_aSound1.play(276);
 	} else {
@@ -4328,7 +4345,7 @@ void Scene3600::Action2::signal() {
 		scene->_protector.setup(3127, 2, 1);
 		scene->_protector.animate(ANIM_MODE_1, NULL);
 		NpcMover *mover = new NpcMover();
-		scene->_protector.addMover(mover, &scene->_protector._field8A, scene);
+		scene->_protector.addMover(mover, &scene->_protector._actorDestPos, scene);
 		}
 		break;
 	default:
@@ -4547,7 +4564,7 @@ void Scene3600::postInit(SceneObjectList *OwnerList) {
 		if (!R2_GLOBALS.getFlag(71)) {
 			_protector.postInit();
 			_protector._state = 0;
-			_protector._field8A = Common::Point(226, 152);
+			_protector._actorDestPos = Common::Point(226, 152);
 			_protector._moveDiff = Common::Point(3, 2);
 			_protector.setPosition(Common::Point(284, 152));
 			_protector.setup(3127, 2, 1);
@@ -4623,7 +4640,7 @@ void Scene3600::remove() {
 void Scene3600::signal() {
 	switch (_sceneMode) {
 	case 3320:
-		// Removed (useless ?) call to sub_1D227
+		// Move to the console
 		R2_GLOBALS._walkRegions.disableRegion(14);
 		R2_GLOBALS._scrollFollower = &_seeker;
 		_tealSpeaker._object1.hide();
@@ -4639,7 +4656,7 @@ void Scene3600::signal() {
 			&_miranda, &_webbster, &_teal, NULL);
 		break;
 	case 3321:
-		// Removed (useless ?) call to sub_1D227
+		// Teal activates console
 		R2_GLOBALS._scrollFollower = &R2_GLOBALS._player;
 		_tealSpeaker.stopSpeaking();
 		_teal.show();
@@ -4650,7 +4667,7 @@ void Scene3600::signal() {
 			&_quinn, &_seeker, &_miranda, &_webbster, NULL);
 		break;
 	case 3322:
-		// Removed (useless ?) call to sub_1D227
+		// Teal walks toward the teleport pod, the goule protector appears
 		_quinnSpeaker.stopSpeaking();
 		_quinnSpeaker._displayMode = 1;
 		_tealSpeaker.stopSpeaking();
@@ -4660,10 +4677,11 @@ void Scene3600::signal() {
 		setAction(&_sequenceManager1, this, _sceneMode, &_teal, &_protector, &_steppingDisk, NULL);
 		break;
 	case 3323:
+		// Goule protector eats Teal guts then moves
+
 		if (!_tealDead)
 			_tealDead = true;
 		else {
-			// Removed (useless ?) call to sub_1D227
 			_protectorSpeaker.stopSpeaking();
 			_protector.show();
 			_protector.setup(3258, 6, 1);
@@ -4702,6 +4720,7 @@ void Scene3600::signal() {
 		_sceneMode = 3623;
 		break;
 	case 3450:
+		// Speech of Teal and Quinn
 		R2_GLOBALS._sound1.stop();
 		_protector3400.hide();
 		_door3400.hide();
@@ -4724,7 +4743,7 @@ void Scene3600::signal() {
 
 		_protector.postInit();
 		_protector._state = 0;
-		_protector._field8A = Common::Point(226, 152);
+		_protector._actorDestPos = Common::Point(226, 152);
 		_protector._moveDiff = Common::Point(5, 3);
 		_protector.setup(3403, 7, 1);
 		_protector.setPosition(Common::Point(405, 155));
@@ -4766,6 +4785,7 @@ void Scene3600::signal() {
 		R2_GLOBALS._sound2.play(329);
 		break;
 	case 3600:
+		// First speech by Teal
 		_sceneMode = 3320;
 		_stripManager.start(3320, this);
 		break;
@@ -4774,6 +4794,7 @@ void Scene3600::signal() {
 	case 3602:
 	// No break on purpose
 	case 3603:
+		// Teal speech near the console
 		R2_GLOBALS._walkRegions.disableRegion(2);
 		R2_GLOBALS._walkRegions.disableRegion(7);
 		_tealSpeaker._displayMode = 1;
@@ -4781,6 +4802,7 @@ void Scene3600::signal() {
 		_stripManager.start(3321, this);
 		break;
 	case 3604:
+		// Goule Protector forces the door
 		R2_GLOBALS._sound2.fadeOut2(NULL);
 		R2_GLOBALS._sound1.stop();
 		R2_GLOBALS._walkRegions.enableRegion(2);
@@ -4818,6 +4840,7 @@ void Scene3600::signal() {
 		setAction(&_sequenceManager1, this, 3450, &_protector3400, &_door3400, NULL);
 		break;
 	case 3605:
+		// Goule protector jumps on Teal
 		_protector.setup(3258, 4, 1);
 		_protector.setAction(&_sequenceManager1, this, 3606, &_teal, &_protector,
 			&_steppingDisk, NULL);
@@ -4947,6 +4970,7 @@ void Scene3600::dispatch() {
 void Scene3700::postInit(SceneObjectList *OwnerList) {
 	loadScene(3700);
 	R2_GLOBALS._uiElements._active = false;
+	R2_GLOBALS._uiElements._visible = false;
 	SceneExt::postInit();
 	R2_GLOBALS._interfaceY = SCREEN_HEIGHT;
 
@@ -4993,7 +5017,6 @@ void Scene3700::signal() {
 	case 3328:
 	// No break on purpose
 	case 3329:
-		// Removed (useless ?) call to sub_1D227
 		_sceneMode = 3701;
 		setAction(&_sequenceManager, this, 3701, &_seeker, &_miranda, &_webbster, NULL);
 		break;

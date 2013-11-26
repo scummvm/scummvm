@@ -232,7 +232,7 @@ void VisualStudioProvider::outputGlobalPropFile(const BuildSetup &setup, std::of
 	              "\t\tName=\"VCCLCompilerTool\"\n"
 	              "\t\tDisableLanguageExtensions=\"" << (setup.devTools ? "false" : "true") << "\"\n"
 	              "\t\tDisableSpecificWarnings=\"" << warnings << "\"\n"
-	              "\t\tAdditionalIncludeDirectories=\"" << prefix << ";" << prefix << "\\engines;$(" << LIBS_DEFINE << ")\\include;" << (setup.tests ? prefix + "\\test\\cxxtest;" : "") << "$(TargetDir)\"\n"
+	              "\t\tAdditionalIncludeDirectories=\".\\;" << prefix << ";" << prefix << "\\engines;$(" << LIBS_DEFINE << ")\\include;" << (setup.tests ? prefix + "\\test\\cxxtest;" : "") << "$(TargetDir)\"\n"
 	              "\t\tPreprocessorDefinitions=\"" << definesList << "\"\n"
 	              "\t\tExceptionHandling=\"" << ((setup.devTools || setup.tests) ? "1" : "0") << "\"\n";
 

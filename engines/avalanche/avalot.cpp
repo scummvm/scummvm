@@ -143,7 +143,7 @@ void Clock::update() {
 
 	if ((_hour == 0) && (_oldHour != 0) && (_oldHour != 17717)) {
 		Common::String tmpStr = Common::String::format("Good morning!%c%cYes, it's just past " \
-			"midnight. Are you having an all-night Avvy session? Glad you like the game that much!", 
+			"midnight. Are you having an all-night Avvy session? Glad you like the game that much!",
 			kControlNewLine, kControlNewLine);
 		_vm->_dialogs->displayText(tmpStr);
 	}
@@ -184,7 +184,7 @@ void Clock::chime() {
 	// Mute - skip the sound generation
 	if ((_oldHour == 17717) || (!_vm->_soundFx))
 		return;
-	
+
 	byte hour = _hour % 12;
 	if (hour == 0)
 		hour = 12;
@@ -194,11 +194,10 @@ void Clock::chime() {
 	for (int i = 1; i <= hour; i++) {
 		for (int j = 1; j <= 3; j++)
 			_vm->_sound->playNote((i % 3) * 64 + 140 - j * 30, 50 - j * 12);
-		if (i != hour) 
+		if (i != hour)
 			_vm->_system->delayMillis(100);
 	}
 }
-
 
 void AvalancheEngine::handleKeyDown(Common::Event &event) {
 	_sound->click();
@@ -301,7 +300,7 @@ void AvalancheEngine::setup() {
 		fxToggle();
 		thinkAbout(kObjectMoney, kThing);
 
-		_dialogs->displayScrollChain('q', 83); // Info on the game, etc.
+		_dialogs->displayScrollChain('Q', 83); // Info on the game, etc.
 	}
 }
 
@@ -576,7 +575,6 @@ void AvalancheEngine::exitRoom(byte x) {
 		_lastRoomNotMap = _room;
 }
 
-
 /**
  * Only when entering a NEW town! Not returning to the last one,
  * but choosing another from the map.
@@ -642,6 +640,8 @@ void AvalancheEngine::enterRoom(Room roomId, byte ped) {
 
 	if ((_lastRoom == kRoomMap) && (_lastRoomNotMap != _room))
 		enterNewTown();
+
+	_animation->updateSpeed();
 
 	switch (roomId) {
 	case kRoomYours:
@@ -809,12 +809,12 @@ void AvalancheEngine::enterRoom(Room roomId, byte ped) {
 			_graphics->zoomOut(_peds[ped - 1]._x, _peds[ped - 1]._y);
 
 		if ((_objects[kObjectWine - 1]) && (_wineState != 3)) {
-			_dialogs->displayScrollChain('q', 9); // Don't want to waste the wine!
+			_dialogs->displayScrollChain('Q', 9); // Don't want to waste the wine!
 			_objects[kObjectWine - 1] = false;
 			refreshObjectList();
 		}
 
-		_dialogs->displayScrollChain('q', 69);
+		_dialogs->displayScrollChain('Q', 69);
 		break;
 
 	case kRoomCatacombs:
@@ -997,7 +997,7 @@ void AvalancheEngine::enterRoom(Room roomId, byte ped) {
 
 	case kRoomDucks:
 		_npcFacing = 1; // Duck.
-		break; 
+		break;
 
 	default:
 		break;
@@ -1062,7 +1062,7 @@ void AvalancheEngine::drawScore() {
 		_scoreToDisplay[i] = numbers[i];
 }
 
-void AvalancheEngine::incScore(byte num) {    
+void AvalancheEngine::incScore(byte num) {
 	for (int i = 1; i <= num; i++) {
 		_dnascore++;
 
@@ -1309,9 +1309,9 @@ void AvalancheEngine::fadeOut() {
 void AvalancheEngine::fadeIn() {
 	if (_holdTheDawn || !_fxHidden)
 		return;
-	
+
 	_fxHidden = false;
-	
+
 	byte pal[3];
 	for (int i = 15; i >= 0; i--) {
 		for (int j = 0; j < 16; j++) {
@@ -1338,7 +1338,6 @@ void AvalancheEngine::drawDirection() { // It's data is loaded in load_digits().
 	_graphics->drawDirection(_animation->getDirection(), 0, 161);
 	CursorMan.showMouse(true);
 }
-
 
 void AvalancheEngine::gameOver() {
 	_userMovesAvvy = false;
@@ -1378,7 +1377,7 @@ uint16 AvalancheEngine::bearing(byte whichPed) {
 
 	if (avvy->_x == curPed->_x)
 		return 0;
-	
+
 	int16 deltaX = avvy->_x - curPed->_x;
 	int16 deltaY = avvy->_y - curPed->_y;
 	uint16 result = (uint16)(atan((float)(deltaY / deltaX)) * 180 / M_PI);
@@ -1389,7 +1388,7 @@ uint16 AvalancheEngine::bearing(byte whichPed) {
 	}
 }
 
-/** 
+/**
  * @remarks	Originally called 'sprite_run'
  */
 void AvalancheEngine::spriteRun() {
@@ -1482,6 +1481,7 @@ void AvalancheEngine::resetVariables() {
 	_startTime = getTimeInSeconds();
 
 	_parser->resetVariables();
+	_nim->resetVariables();
 	_animation->resetVariables();
 	_sequence->resetVariables();
 	_background->resetVariables();
@@ -1531,7 +1531,6 @@ void AvalancheEngine::newGame() {
 	_doingSpriteRun = false;
 	_avvyInBed = true;
 
-	_ableToAddTimer = true; // Set to false in _vm->loadGame().
 	_isLoaded = false;
 
 	enterRoom(kRoomYours, 1);
@@ -1565,7 +1564,7 @@ Common::String AvalancheEngine::getName(People whose) {
 	static const char lads[17][20] = {
 		"Avalot",     "Spludwick",  "Crapulus",  "Dr. Duck",  "Malagauche",
 		"Friar Tuck", "Robin Hood", "Cwytalot",  "du Lustie", "the Duke of Cardiff",
-		"Dogfood",    "A trader",   "Ibythneth", "Ayles",     "Port", 
+		"Dogfood",    "A trader",   "Ibythneth", "Ayles",     "Port",
 		"Spurge",     "Jacques"
 	};
 
@@ -1747,10 +1746,10 @@ void AvalancheEngine::openDoor(Room whither, byte ped, byte magicnum) {
 }
 
 void AvalancheEngine::setRoom(People persId, Room roomId) {
-	_whereIs[persId - kPeopleAvalot] = roomId;	
+	_whereIs[persId - kPeopleAvalot] = roomId;
 }
 
 Room AvalancheEngine::getRoom(People persId) {
-	return _whereIs[persId - kPeopleAvalot];	
+	return _whereIs[persId - kPeopleAvalot];
 }
 } // End of namespace Avalanche

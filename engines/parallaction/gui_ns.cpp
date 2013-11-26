@@ -415,7 +415,7 @@ class SelectCharacterInputState_NS : public MenuInputState {
 	#define CHAR_DONNA	1
 	#define CHAR_DOUGH	2
 
- 	Common::Rect _codeSelectBlocks[9];
+	Common::Rect _codeSelectBlocks[9];
 	Common::Rect _codeTrueBlocks[9];
 
 	Parallaction_ns *_vm;

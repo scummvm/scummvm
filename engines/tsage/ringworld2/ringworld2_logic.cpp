@@ -290,7 +290,7 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		// Confrontation
 		return new Scene3400();
 	case 3500:
-		// Maze action sequencec
+		// Flub tube maze 
 		return new Scene3500();
 	case 3600:
 		// Cutscene - walking at gunpoint
@@ -371,12 +371,13 @@ void SceneExt::postInit(SceneObjectList *OwnerList) {
 	_field12 = 0;
 	_sceneMode = 0;
 
+	static_cast<SceneHandlerExt *>(R2_GLOBALS._sceneHandler)->setupPaletteMaps();
+
 	int prevScene = R2_GLOBALS._sceneManager._previousScene;
 	int sceneNumber = R2_GLOBALS._sceneManager._sceneNumber;
 	if (((prevScene == -1) && (sceneNumber != 180) && (sceneNumber != 205) && (sceneNumber != 50))
 			|| (sceneNumber == 50)
 			|| ((sceneNumber == 100) && (prevScene == 0 || prevScene == 180 || prevScene == 205))) {
-		static_cast<SceneHandlerExt *>(R2_GLOBALS._sceneHandler)->setupPaletteMaps();
 		R2_GLOBALS._uiElements._active = true;
 		R2_GLOBALS._uiElements.show();
 	} else {
@@ -400,19 +401,6 @@ void SceneExt::process(Event &event) {
 }
 
 void SceneExt::dispatch() {
-/*
-	_timerList.dispatch();
-
-	if (_field37A) {
-		if ((--_field37A == 0) && R2_GLOBALS._dayNumber) {
-			if (R2_GLOBALS._uiElements._active && R2_GLOBALS._player._enabled) {
-				R2_GLOBALS._uiElements.show();
-			}
-
-			_field37A = 0;
-		}
-	}
-*/
 	Scene::dispatch();
 }
 
@@ -1237,8 +1225,13 @@ void Ringworld2Game::processEvent(Event &event) {
 
 void Ringworld2Game::rightClick() {
 	RightClickDialog *dlg = new RightClickDialog();
-	dlg->execute();
+	int option = dlg->execute();
 	delete dlg;
+
+	if (option == 0)
+		CharacterDialog::show();
+	else if (option == 1)
+		HelpDialog::show();
 }
 
 /*--------------------------------------------------------------------------*/
@@ -1502,7 +1495,7 @@ MazeUI::MazeUI() {
 	_cellSize.x = _cellSize.y = 0;
 	_mapOffset.x = _mapOffset.y = 0;
 	_resNum = _cellsResNum = 0;
-	_frameCount = _resCount = _mapImagePitch = _unused = 0;
+	_frameCount = _resCount = _mapImagePitch = 0;
 }
 
 MazeUI::~MazeUI() {
@@ -1518,7 +1511,9 @@ void MazeUI::synchronize(Serializer &s) {
 
 	s.syncAsSint16LE(_mapOffset.x);
 	s.syncAsSint16LE(_mapOffset.y);
-	s.syncAsSint16LE(_unused);
+
+	int dummy = 0;
+	s.syncAsSint16LE(dummy);
 }
 
 void MazeUI::load(int resNum) {
@@ -1860,6 +1855,10 @@ bool AnimationPlayer::load(int animId, Action *endAction) {
 
 	_frameDelay = (60 / _subData._frameRate);
 	_gameFrame = R2_GLOBALS._events.getFrameNumber();
+
+	// WORKAROUND: Slow down the title sequences to better match the original
+	if (animId <= 4 || animId == 15)
+		_frameDelay *= 8;
 
 	if (_subData._totalSize) {
 		_dataNeeded = _subData._totalSize;

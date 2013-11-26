@@ -1162,8 +1162,8 @@ Movement::Movement() {
 	_counter = 0;
 	_counterMax = 83;
 
-	_field_24 = 0;
-	_field_28 = 0;
+	_somePoint.x = 0;
+	_somePoint.y = 0;
 }
 
 Movement::Movement(Movement *src, StaticANIObject *ani) {
@@ -1185,8 +1185,8 @@ Movement::Movement(Movement *src, StaticANIObject *ani) {
 	_currDynamicPhaseIndex = src->_currDynamicPhaseIndex;
 	_field_94 = 0;
 
-	_field_24 = 0;
-	_field_28 = 0;
+	_somePoint.x = 0;
+	_somePoint.y = 0;
 
 	_currMovement = src;
 	_ox = src->_ox;
@@ -1219,8 +1219,8 @@ Movement::Movement(Movement *src, int *oldIdxs, int newSize, StaticANIObject *an
 	_currDynamicPhaseIndex = 0;
 	_field_94 = 0;
 
-	_field_24 = 0;
-	_field_28 = 0;
+	_somePoint.x = 0;
+	_somePoint.y = 0;
 
 	_field_50 = src->_field_50;
 	_flipFlag = src->_flipFlag;

@@ -1153,6 +1153,13 @@ void PaletteRotation::signal() {
 			if (flag)
 				_currIndex = _start;
 		}
+
+		// Added in Return to Ringworld
+		if (_currIndex < _start) {
+			flag = decDuration();
+			if (flag)
+				_currIndex = _end;
+		}
 		break;
 	case 2:
 		_currIndex += _idxChange;
@@ -1538,7 +1545,11 @@ void ScenePalette::synchronize(Serializer &s) {
 	s.syncAsSint32LE(_colors.foreground);
 	s.syncAsSint32LE(_colors.background);
 
-	s.syncAsSint32LE(_field412);
+	if (s.getVersion() < 12) {
+		int useless = 0;
+		s.syncAsSint16LE(useless);
+	}
+
 	s.syncAsByte(_redColor);
 	s.syncAsByte(_greenColor);
 	s.syncAsByte(_blueColor);
@@ -2103,7 +2114,7 @@ SceneObject::SceneObject() : SceneHotspot() {
 	_shade = _oldShade = 0;
 	_linkedActor = NULL;
 
-	_field8A = Common::Point(0, 0);
+	_actorDestPos = Common::Point(0, 0);
 	_angle = 0;
 	_xs = 0;
 	_xe = 0;
@@ -2497,8 +2508,8 @@ void SceneObject::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_moveDiff.x); s.syncAsSint16LE(_moveDiff.y);
 	s.syncAsSint32LE(_moveRate);
 	if (g_vm->getGameID() == GType_Ringworld2) {
-		s.syncAsSint16LE(_field8A.x);
-		s.syncAsSint16LE(_field8A.y);
+		s.syncAsSint16LE(_actorDestPos.x);
+		s.syncAsSint16LE(_actorDestPos.y);
 	}
 	SYNC_POINTER(_endAction);
 	s.syncAsUint32LE(_regionBitList);
@@ -2707,6 +2718,17 @@ GfxSurface SceneObject::getFrame() {
 	_visageImages.setVisage(_visage, _strip);
 	GfxSurface frame = _visageImages.getFrame(_frame);
 
+	// Reset any centroid adjustment flags, in 
+	frame._flags &= ~(FRAME_FLIP_CENTROID_X | FRAME_FLIP_CENTROID_Y);
+
+	// For later games, check whether the appropriate object flags are set for flipping
+	if (g_vm->getGameID() != GType_Ringworld) {
+		if ((_flags & OBJFLAG_FLIP_CENTROID_X) || _visageImages._flipHoriz)
+			frame._flags |= FRAME_FLIP_CENTROID_X;
+		if ((_flags & OBJFLAG_FLIP_CENTROID_Y) || _visageImages._flipVert)
+			frame._flags |= FRAME_FLIP_CENTROID_Y;
+	}
+
 	// If shading is needed, post apply the shadiing onto the frame
 	if ((g_vm->getGameID() == GType_Ringworld2) && (_shade >= 1)) {
 		Graphics::Surface s = frame.lockSurface();
@@ -2727,6 +2749,7 @@ GfxSurface SceneObject::getFrame() {
 
 void SceneObject::reposition() {
 	GfxSurface frame = getFrame();
+
 	_bounds.resize(frame, _position.x, _position.y - _yDiff, _percent);
 	_xs = _bounds.left;
 	_xe = _bounds.right;

@@ -78,6 +78,11 @@ protected:
 	virtual void startEditMode() = 0;
 	virtual void endEditMode() = 0;
 	virtual void abortEditMode() = 0;
+	/**
+	 * The area where text input is being made. This should exactly match the
+	 * rect with which the actual edit string is drawn otherwise nasty
+	 * graphics glitches when redrawing the caret can occur.
+	 */
 	virtual Common::Rect getEditRect() const = 0;
 	virtual int getCaretOffset() const;
 	void drawCaret(bool erase);

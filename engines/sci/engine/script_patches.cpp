@@ -104,6 +104,7 @@ namespace Sci {
 #define PATCH_VALUELIMIT      4096
 
 struct SciScriptPatcherEntry {
+	bool active;
 	uint16 scriptNr;
 	const char *description;
 	int16 applyCount;
@@ -113,7 +114,7 @@ struct SciScriptPatcherEntry {
 	const uint16 *patchData;
 };
 
-#define SCI_SIGNATUREENTRY_TERMINATOR { 0, NULL, 0, 0, 0, NULL, NULL }
+#define SCI_SIGNATUREENTRY_TERMINATOR { false, 0, NULL, 0, 0, 0, NULL, NULL }
 
 struct SciScriptPatcherSelector {
 	const char *name;
@@ -137,6 +138,9 @@ SciScriptPatcherSelector selectorTable[] = {
 	{ "put",               -1, }, // Police Quest 1 VGA
 	{ "solvePuzzle",       -1, }, // Quest For Glory 3
 	{ "timesShownID",      -1, }, // Space Quest 1 VGA
+	{ "startText",         -1, }, // King's Quest 6 CD / Laura Bow 2 CD for audio+text support
+	{ "startAudio",        -1, }, // King's Quest 6 CD / Laura Bow 2 CD for audio+text support
+	{ "modNum",            -1, }, // King's Quest 6 CD / Laura Bow 2 CD for audio+text support
 	{ NULL,                -1 }
 };
 
@@ -156,7 +160,10 @@ enum ScriptPatcherSelectors {
 	SELECTOR_localize,
 	SELECTOR_put,
 	SELECTOR_solvePuzzle,
-	SELECTOR_timesShownID
+	SELECTOR_timesShownID,
+	SELECTOR_startText,
+	SELECTOR_startAudio,
+	SELECTOR_modNum
 };
 
 // ===========================================================================
@@ -178,7 +185,7 @@ enum ScriptPatcherSelectors {
 //
 // We fix the script by patching in a jump to the proper code inside fawaz::doit.
 // Responsible method: fawaz::handleEvent
-// Fixes bug #3614969
+// Fixes bug: #6402
 const uint16 camelotSignaturePeepingTom[] = {
 	0x72, SIG_MAGICDWORD, SIG_UINT16 + 0x7e, 0x07, // lofsa fawaz <-- start of proper initializion code
 	0xa1, 0xb9,                      // sag b9h
@@ -202,9 +209,9 @@ const uint16 camelotPatchPeepingTom[] = {
 	PATCH_END
 };
 
-//    script, description,                                            signature                   patch
+//         script, description,                                            signature                   patch
 SciScriptPatcherEntry camelotSignatures[] = {
-	{    62, "fix peepingTom Sierra bug",                    1, 0, 0, camelotSignaturePeepingTom, camelotPatchPeepingTom },
+	{  true,   62, "fix peepingTom Sierra bug",                    1, 0, 0, camelotSignaturePeepingTom, camelotPatchPeepingTom },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -216,7 +223,7 @@ SciScriptPatcherEntry camelotSignatures[] = {
 //  This also happens in sierra sci
 // Applies to at least: PC-CD
 // Responsible method: stayAndHelp::changeState
-// Fixes bug: #3038387
+// Fixes bug: #5107
 const uint16 ecoquest1SignatureStayAndHelp[] = {
 	0x3f, 0x01,                      // link 01
 	0x87, 0x01,                      // lap param[1]
@@ -271,9 +278,9 @@ const uint16 ecoquest1PatchStayAndHelp[] = {
 	PATCH_END
 };
 
-//    script, description,                                            signature                      patch
+//          script, description,                                            signature                      patch
 SciScriptPatcherEntry ecoquest1Signatures[] = {
-	{    660, "CD: bad messagebox and freeze",               1, 0, 0, ecoquest1SignatureStayAndHelp, ecoquest1PatchStayAndHelp },
+	{  true,   660, "CD: bad messagebox and freeze",               1, 0, 0, ecoquest1SignatureStayAndHelp, ecoquest1PatchStayAndHelp },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -282,7 +289,8 @@ SciScriptPatcherEntry ecoquest1Signatures[] = {
 //  ecorder. This is done by reusing temp-space, that was filled on state 1.
 //  this worked in sierra sci just by accident. In our sci, the temp space
 //  is resetted every time, which means the previous text isn't available
-//  anymore. We have to patch the code because of that - bug #3035386
+//  anymore. We have to patch the code because of that.
+// Fixes bug: #4993
 const uint16 ecoquest2SignatureEcorder[] = {
 	0x31, 0x22,                      // bnt [next state]
 	0x39, 0x0a,                      // pushi 0a
@@ -334,10 +342,11 @@ const uint16 ecoquest2PatchEcorder[] = {
 };
 
 // ===========================================================================
-// Same patch as above for the ecorder introduction. Fixes bug #3092115.
+// Same patch as above for the ecorder introduction.
 // Two workarounds are needed for this patch in workarounds.cpp (when calling
 // kGraphFillBoxAny and kGraphUpdateBox), as there isn't enough space to patch
 // the function otherwise.
+// Fixes bug: #6467
 const uint16 ecoquest2SignatureEcorderTutorial[] = {
 	0x30, SIG_UINT16 + 0x23, 0x00,   // bnt [next state]
 	0x39, 0x0a,                      // pushi 0a
@@ -394,10 +403,10 @@ const uint16 ecoquest2PatchEcorderTutorial[] = {
 	PATCH_END
 };
 
-//    script, description,                                            signature                          patch
+//          script, description,                                            signature                          patch
 SciScriptPatcherEntry ecoquest2Signatures[] = {
-	{     50, "initial text not removed on ecorder",         1, 0, 0, ecoquest2SignatureEcorder,         ecoquest2PatchEcorder },
-	{    333, "initial text not removed on ecorder tutorial",1, 0, 0, ecoquest2SignatureEcorderTutorial, ecoquest2PatchEcorderTutorial },
+	{  true,    50, "initial text not removed on ecorder",         1, 0, 0, ecoquest2SignatureEcorder,         ecoquest2PatchEcorder },
+	{  true,   333, "initial text not removed on ecorder tutorial",1, 0, 0, ecoquest2SignatureEcorderTutorial, ecoquest2PatchEcorderTutorial },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -406,7 +415,7 @@ SciScriptPatcherEntry ecoquest2Signatures[] = {
 // wrong address when an incorrect word is typed, therefore leading to an
 // infinite loop. This script bug was not apparent in SSCI, probably because
 // event handling was slightly different there, so it was never discovered.
-// Fixes bug #3038870.
+// Fixes bug: #5120
 const uint16 fanmadeSignatureInfiniteLoop[] = {
 	0x38, SIG_UINT16 + 0x4c, 0x00,   // pushi 004c
 	0x39, 0x00,                      // pushi 00
@@ -424,9 +433,9 @@ const uint16 fanmadePatchInfiniteLoop[] = {
 	PATCH_END
 };
 
-//    script, description,                                            signature                     patch
+//          script, description,                                            signature                     patch
 SciScriptPatcherEntry fanmadeSignatures[] = {
-	{    999, "infinite loop on typo",                       1, 0, 0, fanmadeSignatureInfiniteLoop, fanmadePatchInfiniteLoop },
+	{  true,   999, "infinite loop on typo",                       1, 0, 0, fanmadeSignatureInfiniteLoop, fanmadePatchInfiniteLoop },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -545,12 +554,12 @@ const uint16 freddypharkasPatchMacInventory[] = {
 	PATCH_END
 };
 
-//    script, description,                                            signature                            patch
+//          script, description,                                            signature                            patch
 SciScriptPatcherEntry freddypharkasSignatures[] = {
-	{      0, "CD: score early disposal",                    1, 0, 0, freddypharkasSignatureScoreDisposal, freddypharkasPatchScoreDisposal },
-	{     15, "Mac: broken inventory",                       1, 0, 0, freddypharkasSignatureMacInventory,  freddypharkasPatchMacInventory },
-	{    235, "CD: canister pickup hang",                    3, 0, 0, freddypharkasSignatureCanisterHang,  freddypharkasPatchCanisterHang },
-	{    320, "ladder event issue",                          2, 0, 0, freddypharkasSignatureLadderEvent,   freddypharkasPatchLadderEvent },
+	{  true,     0, "CD: score early disposal",                    1, 0, 0, freddypharkasSignatureScoreDisposal, freddypharkasPatchScoreDisposal },
+	{  true,    15, "Mac: broken inventory",                       1, 0, 0, freddypharkasSignatureMacInventory,  freddypharkasPatchMacInventory },
+	{  true,   235, "CD: canister pickup hang",                    3, 0, 0, freddypharkasSignatureCanisterHang,  freddypharkasPatchCanisterHang },
+	{  true,   320, "ladder event issue",                          2, 0, 0, freddypharkasSignatureLadderEvent,   freddypharkasPatchLadderEvent },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -686,12 +695,12 @@ const uint16 gk1PatchInterrogationBug[] = {
 	PATCH_END
 };
 
-//    script, description,                                            signature                     patch
+//          script, description,                                            signature                     patch
 SciScriptPatcherEntry gk1Signatures[] = {
-	{     51, "interrogation bug",                           1, 0, 0, gk1SignatureInterrogationBug, gk1PatchInterrogationBug },
-	{    212, "day 5 phone freeze",                          1, 0, 0, gk1SignatureDay5PhoneFreeze, gk1PatchDay5PhoneFreeze },
-	{    230, "day 6 police beignet timer issue",            1, 0, 0, gk1SignatureDay6PoliceBeignet, gk1PatchDay6PoliceBeignet },
-	{    230, "day 6 police sleep timer issue",              1, 0, 0, gk1SignatureDay6PoliceSleep, gk1PatchDay6PoliceSleep },
+	{  true,    51, "interrogation bug",                           1, 0, 0, gk1SignatureInterrogationBug, gk1PatchInterrogationBug },
+	{  true,   212, "day 5 phone freeze",                          1, 0, 0, gk1SignatureDay5PhoneFreeze, gk1PatchDay5PhoneFreeze },
+	{  true,   230, "day 6 police beignet timer issue",            1, 0, 0, gk1SignatureDay6PoliceBeignet, gk1PatchDay6PoliceBeignet },
+	{  true,   230, "day 6 police sleep timer issue",              1, 0, 0, gk1SignatureDay6PoliceSleep, gk1PatchDay6PoliceSleep },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -753,12 +762,14 @@ const uint16 kq5PatchCdHarpyVolume[] = {
 // Additionally its top,left,bottom,right properties are set to 0 rather
 // than the right values. We fix the object by setting the right values.
 // If they are all zero, this causes an impossible position check in
-// witch::cantBeHere and an infinite loop when entering room 22 (bug #3034714).
+// witch::cantBeHere and an infinite loop when entering room 22.
 //
 // This bug is accidentally not triggered in SSCI because the invalid number
 // of variables effectively hides witchCage::doit, causing this position check
 // to be bypassed entirely.
 // See also the warning+comment in Object::initBaseObject
+//
+// Fixes bug: #4964
 const uint16 kq5SignatureWitchCageInit[] = {
 	SIG_UINT16 + 0x00, 0x00,	// top
 	SIG_UINT16 + 0x00, 0x00,	// left
@@ -808,17 +819,11 @@ const uint16 kq5PatchWinGMSignals[] = {
 	PATCH_END
 };
 
-//    script, description,                                            signature                  patch
+//          script, description,                                            signature                  patch
 SciScriptPatcherEntry kq5Signatures[] = {
-	{      0, "CD: harpy volume change",                     1, 0, 0, kq5SignatureCdHarpyVolume, kq5PatchCdHarpyVolume },
-	{    200, "CD: witch cage init",                         1, 0, 0, kq5SignatureWitchCageInit, kq5PatchWitchCageInit },
-	SCI_SIGNATUREENTRY_TERMINATOR
-};
-
-SciScriptPatcherEntry kq5WinGMSignatures[] = {
-	{      0, "CD: harpy volume change",                     1, 0, 0, kq5SignatureCdHarpyVolume, kq5PatchCdHarpyVolume },
-	{    200, "CD: witch cage init",                         1, 0, 0, kq5SignatureWitchCageInit, kq5PatchWitchCageInit },
-	{    124, "Win: GM Music signal checks",                 4, 0, 0, kq5SignatureWinGMSignals, kq5PatchWinGMSignals },
+	{  true,     0, "CD: harpy volume change",                     1, 0, 0, kq5SignatureCdHarpyVolume, kq5PatchCdHarpyVolume },
+	{  true,   200, "CD: witch cage init",                         1, 0, 0, kq5SignatureWitchCageInit, kq5PatchWitchCageInit },
+	{ false,   124, "Win: GM Music signal checks",                 4, 0, 0, kq5SignatureWinGMSignals, kq5PatchWinGMSignals },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -830,7 +835,8 @@ SciScriptPatcherEntry kq5WinGMSignatures[] = {
 // sound is played twice, squelching all other sounds. We just rip the
 // unnecessary cryMusic::check method out, thereby stopping the sound from
 // constantly restarting (since it's being looped anyway), thus the normal
-// game speech can work while the baby cry sound is heard. Fixes bug #3034579.
+// game speech can work while the baby cry sound is heard.
+// Fixes bug: #4955
 const uint16 kq6SignatureDuplicateBabyCry[] = {
 	SIG_MAGICDWORD,
 	0x83, 0x00,                      // lal 00
@@ -853,7 +859,7 @@ const uint16 kq6PatchDuplicateBabyCry[] = {
 //  will be too large. This patch fixes the buggy script.
 // Applies to at least: PC-CD, English PC floppy, German PC floppy, English Mac
 // Responsible method: KqInv::showSelf
-// Fixes bug: #3293954
+// Fixes bug: #5681
 const uint16 kq6SignatureInventoryStackFix[] = {
 	0x67, 0x30,                         // pTos state
 	0x34, SIG_UINT16 + 0x00, 0x20,      // ldi 2000
@@ -916,10 +922,116 @@ const uint16 kq6PatchInventoryStackFix[] = {
 	PATCH_END
 };
 
-//    script, description,                                            signature                     patch
+// Audio + subtitles support - SHARED! - used for King's Quest 6 and Laura Bow 2
+//  this patch gets enabled, when the user selects "both" in the ScummVM "Speech + Subtitles" menu
+//  We currently use global 98d to hold a kMemory pointer.
+// Patched method: Messager::sayNext / lb2Messager::sayNext (always use text branch)
+const uint16 kq6laurabow2CDSignatureAudioTextSupport1[] = {
+	0x89, 0x5a,                         // lsg global[5a]
+	0x35, 0x02,                         // ldi 02
+	0x12,                               // and
+	SIG_MAGICDWORD,
+	0x31, 0x13,                         // bnt [audio call]
+	0x38, SIG_SELECTOR16 + SELECTOR_modNum, // pushi modNum
+	SIG_END
+};
+
+const uint16 kq6laurabow2CDPatchAudioTextSupport1[] = {
+	PATCH_ADDTOOFFSET +5,
+	0x33, 0x13,                         // jmp [audio call]
+	PATCH_END
+};
+
+// Patched method: Messager::sayNext / lb2Messager::sayNext (allocate audio memory)
+const uint16 kq6laurabow2CDSignatureAudioTextSupport2[] = {
+	0x7a,                               // push2
+	0x78,                               // push1
+	0x39, 0x0c,                         // pushi 0c
+	0x43, SIG_MAGICDWORD, 0x72, 0x04,   // kMemory
+	0xa5, 0xc9,                         // sat global[c9]
+	SIG_END
+};
+
+const uint16 kq6laurabow2CDPatchAudioTextSupport2[] = {
+	PATCH_ADDTOOFFSET +7,
+	0xa1, 98,                           // sag global[98d]
+	PATCH_END
+};
+
+// Patched method: Messager::sayNext / lb2Messager::sayNext (release audio memory)
+const uint16 kq6laurabow2CDSignatureAudioTextSupport3[] = {
+	0x7a,                               // push2
+	0x39, 0x03,                         // pushi 03
+	SIG_MAGICDWORD,
+	0x8d, 0xc9,                         // lst temp[c9]
+	0x43, 0x72, 0x04,                   // kMemory
+	SIG_END
+};
+
+const uint16 kq6laurabow2CDPatchAudioTextSupport3[] = {
+	PATCH_ADDTOOFFSET +3,
+	0x89, 98,                           // lsg global[98d]
+	PATCH_END
+};
+
+// Patched method: Narrator::say (use audio memory)
+const uint16 kq6laurabow2CDSignatureAudioTextSupport4[] = {
+	0x89, 0x5a,                         // lsg global[5a]
+	0x35, 0x01,                         // ldi 01
+	0x12,                               // and
+	0x31, 0x08,                         // bnt [skip code]
+	0x38, SIG_SELECTOR16 + SELECTOR_startText, // pushi startText
+	0x78,                               // push1
+	0x8f, 0x01,                         // lsp param[1]
+	0x54, 0x06,                         // self 06
+	0x89, 0x5a,                         // lsg global[5a]
+	0x35, 0x02,                         // ldi 02
+	0x12,                               // and
+	0x31, 0x08,                         // bnt [skip code]
+	SIG_MAGICDWORD,
+	0x38, SIG_SELECTOR16 + SELECTOR_startAudio, // pushi startAudio
+	0x78,                               // push1
+	0x8f, 0x01,                         // lsp param[1]
+	0x54, 0x06,                         // self 06
+	SIG_END
+};
+
+const uint16 kq6laurabow2CDPatchAudioTextSupport4[] = {
+	PATCH_ADDTOOFFSET +5,
+	0x18,                               // not (never jump here)
+	0x18,                               // not (never jump here)
+	PATCH_ADDTOOFFSET +19,
+	0x89, 98,                           // lsp global[98d]
+	PATCH_END
+};
+
+// Patched method: Talker::display/Narrator::say (remove reset saved mouse cursor code)
+//  code would screw over mouse cursor
+const uint16 kq6laurabow2CDSignatureAudioTextSupport5[] = {
+	SIG_MAGICDWORD,
+	0x35, 0x00,                         // ldi 00
+	0x65, 0x82,                         // aTop saveCursor
+	SIG_END
+};
+
+const uint16 kq6laurabow2CDPatchAudioTextSupport5[] = {
+	0x18, 0x18, 0x18, 0x18,             // waste bytes, do nothing
+	PATCH_END
+};
+
+//          script, description,                                            signature                     patch
 SciScriptPatcherEntry kq6Signatures[] = {
-	{    481, "duplicate baby cry",                          1, 0, 0, kq6SignatureDuplicateBabyCry, kq6PatchDuplicateBabyCry },
-	{    907, "inventory stack fix",                         1, 0, 0, kq6SignatureInventoryStackFix, kq6PatchInventoryStackFix },
+	{  true,   481, "duplicate baby cry",                          1, 0, 0, kq6SignatureDuplicateBabyCry, kq6PatchDuplicateBabyCry },
+	{  true,   907, "inventory stack fix",                         1, 0, 0, kq6SignatureInventoryStackFix, kq6PatchInventoryStackFix },
+	// King's Quest 6 and Laura Bow 2 share basic patches for audio + text support
+	// *** King's Quest 6 audio + text support - CURRENTLY DISABLED ***
+	//  TODO: fix window placement (currently part of the text windows go off-screen)
+	//  TODO: fix hi-res portraits mode graphic glitches
+	{ false,   924, "CD: audio + text support 1",                  1, 0, 0, kq6laurabow2CDSignatureAudioTextSupport1, kq6laurabow2CDPatchAudioTextSupport1 },
+	{ false,   924, "CD: audio + text support 2",                  1, 0, 0, kq6laurabow2CDSignatureAudioTextSupport2, kq6laurabow2CDPatchAudioTextSupport2 },
+	{ false,   924, "CD: audio + text support 3",                  1, 0, 0, kq6laurabow2CDSignatureAudioTextSupport3, kq6laurabow2CDPatchAudioTextSupport3 },
+	{ false,   928, "CD: audio + text support 4",                  1, 0, 0, kq6laurabow2CDSignatureAudioTextSupport4, kq6laurabow2CDPatchAudioTextSupport4 },
+	{ false,   928, "CD: audio + text support 5",                  2, 0, 0, kq6laurabow2CDSignatureAudioTextSupport5, kq6laurabow2CDPatchAudioTextSupport5 },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -935,7 +1047,7 @@ SciScriptPatcherEntry kq6Signatures[] = {
 // the same as the English version.
 // Applies to at least: German floppy
 // Responsible method: unknown
-// Fixes bug: #3048054
+// Fixes bug: #5264
 const uint16 longbowSignatureShowHandCode[] = {
 	0x78,                            // push1
 	0x78,                            // push1
@@ -963,9 +1075,9 @@ const uint16 longbowPatchShowHandCode[] = {
 	PATCH_END
 };
 
-//    script, description,                                            signature                     patch
+//          script, description,                                            signature                     patch
 SciScriptPatcherEntry longbowSignatures[] = {
-	{    210, "hand code crash",                             5, 0, 0, longbowSignatureShowHandCode, longbowPatchShowHandCode },
+	{  true,   210, "hand code crash",                             5, 0, 0, longbowSignatureShowHandCode, longbowPatchShowHandCode },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -985,7 +1097,7 @@ SciScriptPatcherEntry longbowSignatures[] = {
 // We patch the script to use global 90, which seems to be unused in the whole game.
 // Applies to at least: English floppy
 // Responsible method: rm63Script::handleEvent
-// Fixes bug: #3614419
+// Fixes bug: #6346
 const uint16 larry2SignatureWearParachutePoints[] = {
 	0x35, 0x01,                      // ldi 01
 	0xa1, SIG_MAGICDWORD, 0x8e,      // sag 8e
@@ -1005,9 +1117,9 @@ const uint16 larry2PatchWearParachutePoints[] = {
 	PATCH_END
 };
 
-//    script, description,                                            signature                           patch
+//          script, description,                                            signature                           patch
 SciScriptPatcherEntry larry2Signatures[] = {
-	{     63, "plane: no points for wearing plane",          1, 0, 0, larry2SignatureWearParachutePoints, larry2PatchWearParachutePoints },
+	{  true,    63, "plane: no points for wearing plane",          1, 0, 0, larry2SignatureWearParachutePoints, larry2PatchWearParachutePoints },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -1034,9 +1146,9 @@ const uint16 larry5PatchGermanEndingPattiTalker[] = {
 	PATCH_END
 };
 
-//    script, description,                                            signature                               patch
+//          script, description,                                            signature                               patch
 SciScriptPatcherEntry larry5Signatures[] = {
-	{    380, "German-only: Enlarge Patti Textbox",          1, 0, 0, larry5SignatureGermanEndingPattiTalker, larry5PatchGermanEndingPattiTalker },
+	{  true,   380, "German-only: Enlarge Patti Textbox",          1, 0, 0, larry5SignatureGermanEndingPattiTalker, larry5PatchGermanEndingPattiTalker },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -1085,42 +1197,140 @@ const uint16 larry6PatchDeathDialog[] = {
 	PATCH_END
 };
 
-//    script, description,                                            signature                   patch
+//          script, description,                                            signature                   patch
 SciScriptPatcherEntry larry6Signatures[] = {
-	{     82, "death dialog memory corruption",              1, 0, 0, larry6SignatureDeathDialog, larry6PatchDeathDialog },
+	{  true,    82, "death dialog memory corruption",              1, 0, 0, larry6SignatureDeathDialog, larry6PatchDeathDialog },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
 // ===========================================================================
-// rm560::doit was supposed to close the painting, when Heimlich enters the
-//  room. The code is buggy. It actually closes the painting, when heimlich
-//  is not in the room. We fix that.
-// Applies to at least: English floppy
+// Laura Bow 2
+// 
+// Moving away the painting in the room with the hidden safe is problematic
+//  for the CD version of the game. safePic::doVerb gets triggered by the mouse-click.
+// This method sets local 0 as signal, which is only meant to get handled, when
+//  the player clicks again to move the painting back. This signal is processed by
+//  the room doit-script.
+// That doit-script checks safePic::cel to be not equal 0 and would then skip over
+//  the "close painting" trigger code. On very fast computers this script may
+//  get called too early (which is the case when running under ScummVM and when
+//  running the game using Sierra SCI in DOS-Box with cycles 15000) and thinks
+//  that it's supposed to move the painting back. Which then results in the painting
+//  getting moved to its original position immediately (which means it won't be possible
+//  to access the safe behind it).
+//
+// We patch the script, so that we check for cel to be not equal 4 (the final cel) and
+//  we also reset the safePic-signal immediately as well.
+//
+// In the floppy version Laura's coordinates are checked directly in rm560::doit
+//  and as soon as she moves, the painting will automatically move to its original position.
+//  This is not the case for the CD version of the game. The painting will only "move" back,
+//  when the player actually exits the room and re-enters.
+//
+// Applies to at least: English PC-CD
 // Responsible method: rm560::doit
-const uint16 laurabow2SignaturePaintingClosing[] = {
-	0x4a, 0x04,                         // send 04 - read aHeimlich::room
+// Fixes bug: #6460
+const uint16 laurabow2CDSignaturePaintingClosing[] = {
+	0x39, 0x04,                         // pushi 04 (cel)
+	0x76,                               // push0
 	SIG_MAGICDWORD,
+	0x7a,                               // push2
+	0x38, SIG_UINT16 + 0x31, 0x02,      // pushi 0231h (561)
+	0x76,                               // push0
+	0x43, 0x02, 0x04,                   // kScriptID (get export 0 of script 561)
+	0x4a, 0x04,                         // send 04 (gets safePicture::cel)
+	0x18,                               // not
+	0x31, 0x21,                         // bnt [exit]
+	0x38, SIG_UINT16 + 0x83, 0x02,      // pushi 0283h
+	0x76,                               // push0
+	0x7a,                               // push2
+	0x39, 0x20,                         // pushi 20
+	0x76,                               // push0
+	0x43, 0x02, 0x04,                   // kScriptID (get export 0 of script 32)
+	0x4a, 0x04,                         // send 04 (get sHeimlich::room)
 	0x36,                               // push
-	0x81, 0x0b,                         // lag global[11d] -> current room
+	0x81, 0x0b,                         // lag global[b] (current room)
 	0x1c,                               // ne?
-	0x31, 0x0e,                         // bnt [don't close]
+	0x31, 0x0e,                         // bnt [exit]
 	0x35, 0x00,                         // ldi 00
-	0xa3, 0x00,                         // sal local[0]
-	0x38, SIG_UINT16 + 0x92, 0x00,      // pushi 0092
-	0x78,                               // push1
-	0x72,                               // lofsa sDumpSafe
+	0xa3, 0x00,                         // sal local[0] -> reset safePic signal
 	SIG_END
 };
 
-const uint16 laurabow2PatchPaintingClosing[] = {
-	PATCH_ADDTOOFFSET +6,
-	0x2f, 0x0e,       // bt [don't close]
+const uint16 laurabow2CDPatchPaintingClosing[] = {
+	PATCH_ADDTOOFFSET +2,
+	0x3c,                               // dup (1 additional byte)
+	0x76,                               // push0
+	0x3c,                               // dup (1 additional byte)
+	0xab, 0x00,                         // ssl local[0] -> reset safePic signal
+	0x7a,                               // push2
+	0x38, PATCH_UINT16 + 0x31, 0x02,    // pushi 0231h (561)
+	0x76,                               // push0
+	0x43, 0x02, 0x04,                   // kScriptID (get export 0 of script 561)
+	0x4a, 0x04,                         // send 04 (gets safePicture::cel)
+	0x1a,                               // eq?
+	0x31, 0x1d,                         // bnt [exit]
+	0x38, PATCH_UINT16 + 0x83, 0x02,    // pushi 0283h
+	0x76,                               // push0
+	0x7a,                               // push2
+	0x39, 0x20,                         // pushi 20
+	0x76,                               // push0
+	0x43, 0x02, 0x04,                   // kScriptID (get export 0 of script 32)
+	0x4a, 0x04,                         // send 04 (get sHeimlich::room)
+	0x36,                               // push
+	0x81, 0x0b,                         // lag global[b] (current room)
+	0x1a,                               // eq? (2 opcodes changed, to save 2 bytes)
+	0x2f, 0x0a,                         // bt [exit]
 	PATCH_END
 };
 
-//    script, description,                                            signature                          patch
+// In the CD version the system menu is disabled for certain rooms. LB2::handsOff is called,
+//  when leaving the room (and in other cases as well). This method remembers the disabled
+//  icons of the icon bar. In the new room LB2::handsOn will get called, which then enables
+//  all icons, but also disabled the ones, that were disabled before.
+//
+// Because of this behaviour certain rooms, that should have the system menu enabled, have
+//  it disabled, when entering those rooms from rooms, where the menu is supposed to be
+//  disabled.
+//
+// We patch this by injecting code into LB2::newRoom (which is called right after a room change)
+//  and reset the global variable there, that normally holds the disabled buttons.
+//
+// This patch may cause side-effects and it's difficult to test, because it affects every room
+//  in the game. At least for the intro, the speakeasy and plenty of rooms in the beginning it
+//  seems to work correctly.
+//
+// Applies to at least: English PC-CD
+// Responsible method: LB2::newRoom, LB2::handsOff, LB2::handsOn
+// Fixes bug: #6440
+const uint16 laurabow2CDSignatureFixProblematicIconBar[] = {
+	SIG_MAGICDWORD,
+	0x38, SIG_UINT16 + 0xf1, 0x00,      // pushi 00f1 (disable) - hardcoded, we only want to patch the CD version
+	0x76,                               // push0
+	0x81, 0x45,                         // lag global[45]
+	0x4a, 0x04,                         // send 04
+	SIG_END
+};
+
+const uint16 laurabow2CDPatchFixProblematicIconBar[] = {
+	0x35, 0x00,                      // ldi 00
+	0xa1, 0x74,                      // sag 74h
+	0x35, 0x00,                      // ldi 00 (waste bytes)
+	0x35, 0x00,                      // ldi 00
+	PATCH_END
+};
+
+
+//          script, description,                                            signature                                  patch
 SciScriptPatcherEntry laurabow2Signatures[] = {
-	{    560, "painting closing immediately",                1, 0, 0, laurabow2SignaturePaintingClosing, laurabow2PatchPaintingClosing },
+	{  true,   560, "CD: painting closing immediately",            1, 0, 0, laurabow2CDSignaturePaintingClosing,       laurabow2CDPatchPaintingClosing },
+	{  true,     0, "CD: fix problematic icon bar",                1, 0, 0, laurabow2CDSignatureFixProblematicIconBar, laurabow2CDPatchFixProblematicIconBar },
+	// King's Quest 6 and Laura Bow 2 share basic patches for audio + text support
+	{ false,   924, "CD: audio + text support 1",                  1, 0, 0, kq6laurabow2CDSignatureAudioTextSupport1,  kq6laurabow2CDPatchAudioTextSupport1 },
+	{ false,   924, "CD: audio + text support 2",                  1, 0, 0, kq6laurabow2CDSignatureAudioTextSupport2,  kq6laurabow2CDPatchAudioTextSupport2 },
+	{ false,   924, "CD: audio + text support 3",                  1, 0, 0, kq6laurabow2CDSignatureAudioTextSupport3,  kq6laurabow2CDPatchAudioTextSupport3 },
+	{ false,   928, "CD: audio + text support 4",                  1, 0, 0, kq6laurabow2CDSignatureAudioTextSupport4,  kq6laurabow2CDPatchAudioTextSupport4 },
+	{ false,   928, "CD: audio + text support 5",                  2, 0, 0, kq6laurabow2CDSignatureAudioTextSupport5,  kq6laurabow2CDPatchAudioTextSupport5 },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -1158,11 +1368,11 @@ const uint16 mothergoose256PatchSaveLimit[] = {
 	PATCH_END
 };
 
-//    script, description,                                            signature                         patch
+//          script, description,                                            signature                         patch
 SciScriptPatcherEntry mothergoose256Signatures[] = {
-	{      0, "replay save issue",                           1, 0, 0, mothergoose256SignatureReplay,    mothergoose256PatchReplay },
-	{      0, "save limit dialog (SCI1.1)",                  1, 0, 0, mothergoose256SignatureSaveLimit, mothergoose256PatchSaveLimit },
-	{    994, "save limit dialog (SCI1)",                    1, 0, 0, mothergoose256SignatureSaveLimit, mothergoose256PatchSaveLimit },
+	{  true,     0, "replay save issue",                           1, 0, 0, mothergoose256SignatureReplay,    mothergoose256PatchReplay },
+	{  true,     0, "save limit dialog (SCI1.1)",                  1, 0, 0, mothergoose256SignatureSaveLimit, mothergoose256PatchSaveLimit },
+	{  true,   994, "save limit dialog (SCI1)",                    1, 0, 0, mothergoose256SignatureSaveLimit, mothergoose256PatchSaveLimit },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -1178,7 +1388,7 @@ SciScriptPatcherEntry mothergoose256Signatures[] = {
 //  when the 2 seconds have passed and the locker got closed.
 // Applies to at least: English floppy
 // Responsible method: putGun::changeState (script 341)
-// Fixes bug: #3036933 / #3303802
+// Fixes bug: #5705 / #6400
 const uint16 pq1vgaSignaturePutGunInLockerBug[] = {
 	0x35, 0x00,                      // ldi 00
 	0x1a,                            // eq?
@@ -1223,9 +1433,9 @@ const uint16 pq1vgaPatchPutGunInLockerBug[] = {
 	PATCH_END
 };
 
-//    script, description,                                            signature                         patch
+//          script, description,                                            signature                         patch
 SciScriptPatcherEntry pq1vgaSignatures[] = {
-	{    341, "put gun in locker bug",                       1, 0, 0, pq1vgaSignaturePutGunInLockerBug, pq1vgaPatchPutGunInLockerBug },
+	{  true,   341, "put gun in locker bug",                       1, 0, 0, pq1vgaSignaturePutGunInLockerBug, pq1vgaPatchPutGunInLockerBug },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -1287,7 +1497,7 @@ const uint16 qfg1vgaPatchFightEvents[] = {
 // window text, which erases the window header text because of its length. To
 // fix that, we allocate more temp space and move the pointer used for the
 // window header a little bit, wherever it's used in script 814.
-// Fixes bug #3568431.
+// Fixes bug: #6139.
 
 // Patch 1: Increase temp space
 const uint16 qfg1vgaSignatureTempSpace[] = {
@@ -1323,7 +1533,7 @@ const uint16 qfg1vgaPatchDialogHeader[] = {
 // edge case that can occur when Ego is set to sneak. Normally, when clicking on
 // the crusher, ego is supposed to move close to position 79, 165. We change it
 // to 85, 165, which is not an edge case thus the freeze is avoided.
-// Fixes bug #3585189.
+// Fixes bug: #6180
 const uint16 qfg1vgaSignatureMoveToCrusher[] = {
 	SIG_MAGICDWORD,
 	0x51, 0x1f,                         // class Motion
@@ -1342,7 +1552,8 @@ const uint16 qfg1vgaPatchMoveToCrusher[] = {
 
 // Same pathfinding bug as above, where Ego is set to move to an impossible
 // spot when sneaking. In GuardsTrumpet::changeState, we change the final
-// location where Ego is moved from 111, 111 to 114, 114. Fixes bug #3604939.
+// location where Ego is moved from 111, 111 to 114, 114.
+// Fixes bug: #6248
 const uint16 qfg1vgaSignatureMoveToCastleGate[] = {
 	SIG_MAGICDWORD,
 	0x51, 0x1f,                         // class MoveTo
@@ -1364,7 +1575,7 @@ const uint16 qfg1vgaPatchMoveToCastleGate[] = {
 // The code treats both monster types the same.
 // Applies to at least: English floppy
 // Responsible method: smallMonster::doVerb
-// Fixes bug #3604943.
+// Fixes bug #6249
 const uint16 qfg1vgaSignatureCheetaurDescription[] = {
 	SIG_MAGICDWORD,
 	0x34, SIG_UINT16 + 0xb8, 0x01,      // ldi 01b8
@@ -1396,7 +1607,7 @@ const uint16 qfg1vgaPatchCheetaurDescription[] = {
 //  calling goTo6::init, so the whole issue is stopped from happening.
 // Applies to at least: English floppy
 // Responsible method: happyFace::changeState, door11::doit
-// Fixes bug #3585793
+// Fixes bug #6181
 const uint16 qfg1vgaSignatureFunnyRoomFix[] = {
 	0x65, 0x14,                         // aTop 14 (state)
 	0x36,                               // push
@@ -1420,16 +1631,16 @@ const uint16 qfg1vgaPatchFunnyRoomFix[] = {
 	PATCH_END
 };
 
-//    script, description,                                            signature                            patch
+//          script, description,                                            signature                            patch
 SciScriptPatcherEntry qfg1vgaSignatures[] = {
-	{    215, "fight event issue",                           1, 0, 0, qfg1vgaSignatureFightEvents,         qfg1vgaPatchFightEvents },
-	{    216, "weapon master event issue",                   1, 0, 0, qfg1vgaSignatureFightEvents,         qfg1vgaPatchFightEvents },
-	{    814, "window text temp space",                      1, 0, 0, qfg1vgaSignatureTempSpace,           qfg1vgaPatchTempSpace },
-	{    814, "dialog header offset",                        3, 0, 0, qfg1vgaSignatureDialogHeader,        qfg1vgaPatchDialogHeader },
-	{    331, "moving to crusher",                           1, 0, 0, qfg1vgaSignatureMoveToCrusher,       qfg1vgaPatchMoveToCrusher },
-	{     41, "moving to castle gate",                       1, 0, 0, qfg1vgaSignatureMoveToCastleGate,    qfg1vgaPatchMoveToCastleGate },
-	{    210, "cheetaur description fixed",                  1, 0, 0, qfg1vgaSignatureCheetaurDescription, qfg1vgaPatchCheetaurDescription },
-	{     96, "funny room script bug fixed",                 1, 0, 0, qfg1vgaSignatureFunnyRoomFix,        qfg1vgaPatchFunnyRoomFix },
+	{  true,   215, "fight event issue",                           1, 0, 0, qfg1vgaSignatureFightEvents,         qfg1vgaPatchFightEvents },
+	{  true,   216, "weapon master event issue",                   1, 0, 0, qfg1vgaSignatureFightEvents,         qfg1vgaPatchFightEvents },
+	{  true,   814, "window text temp space",                      1, 0, 0, qfg1vgaSignatureTempSpace,           qfg1vgaPatchTempSpace },
+	{  true,   814, "dialog header offset",                        3, 0, 0, qfg1vgaSignatureDialogHeader,        qfg1vgaPatchDialogHeader },
+	{  true,   331, "moving to crusher",                           1, 0, 0, qfg1vgaSignatureMoveToCrusher,       qfg1vgaPatchMoveToCrusher },
+	{  true,    41, "moving to castle gate",                       1, 0, 0, qfg1vgaSignatureMoveToCastleGate,    qfg1vgaPatchMoveToCastleGate },
+	{  true,   210, "cheetaur description fixed",                  1, 0, 0, qfg1vgaSignatureCheetaurDescription, qfg1vgaPatchCheetaurDescription },
+	{  true,    96, "funny room script bug fixed",                 1, 0, 0, qfg1vgaSignatureFunnyRoomFix,        qfg1vgaPatchFunnyRoomFix },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -1445,8 +1656,8 @@ SciScriptPatcherEntry qfg1vgaSignatures[] = {
 // deleted entries. We don't allow the user to change the directory, thus the
 // contents of the file list are constant, so we can avoid the constant file
 // and text entry refreshes whenever a button is pressed, and prevent possible
-// crashes because of these constant quick object reallocations. Fixes bug
-// #3037996.
+// crashes because of these constant quick object reallocations.
+// Fixes bug: #5096
 const uint16 qfg2SignatureImportDialog[] = {
 	0x63, SIG_MAGICDWORD, 0x20,         // pToa text
 	0x30, SIG_UINT16 + 0x0b, 0x00,      // bnt [next state]
@@ -1465,9 +1676,9 @@ const uint16 qfg2PatchImportDialog[] = {
 	PATCH_END
 };
 
-//    script, description,                                            signature                  patch
+//          script, description,                                            signature                  patch
 SciScriptPatcherEntry qfg2Signatures[] = {
-	{    944, "import dialog continuous calls",              1, 0, 0, qfg2SignatureImportDialog, qfg2PatchImportDialog },
+	{  true,   944, "import dialog continuous calls",              1, 0, 0, qfg2SignatureImportDialog, qfg2PatchImportDialog },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -1494,7 +1705,7 @@ const uint16 qfg3PatchImportDialog[] = {
 
 
 // ===========================================================================
-// Patch for the Woo dialog option in Uhura's conversation. Bug #3040722
+// Patch for the Woo dialog option in Uhura's conversation.
 // Problem: The Woo dialog option (0xffb5) is negative, and therefore
 // treated as an option opening a submenu. This leads to uhuraTell::doChild
 // being called, which calls hero::solvePuzzle and then proceeds with
@@ -1508,6 +1719,7 @@ const uint16 qfg3PatchImportDialog[] = {
 // behaviour.
 // Applies to at least: English, German, Italian, French, Spanish Floppy
 // Responsible method: unknown
+// Fixes bug: #5172
 const uint16 qfg3SignatureWooDialog[] = {
 	SIG_MAGICDWORD,
 	0x67, 0x12,                         // pTos 12 (query)
@@ -1535,10 +1747,10 @@ const uint16 qfg3PatchWooDialog[] = {
 	PATCH_END
 };
 
-//    script, description,                                            signature                  patch
+//          script, description,                                            signature                  patch
 SciScriptPatcherEntry qfg3Signatures[] = {
-	{    944, "import dialog continuous calls",              1, 0, 0, qfg3SignatureImportDialog, qfg3PatchImportDialog },
-	{    440, "dialog crash when asking about Woo",          1, 0, 0, qfg3SignatureWooDialog,    qfg3PatchWooDialog },
+	{  true,   944, "import dialog continuous calls",              1, 0, 0, qfg3SignatureImportDialog, qfg3PatchImportDialog },
+	{  true,   440, "dialog crash when asking about Woo",          1, 0, 0, qfg3SignatureWooDialog,    qfg3PatchWooDialog },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -1548,7 +1760,8 @@ SciScriptPatcherEntry qfg3Signatures[] = {
 //   adds it to nest::x. The problem is that the script also checks if x exceeds
 //   we never reach that of course, so the pterodactyl-flight will go endlessly
 //   we could either calculate property count differently somehow fixing this
-//   but I think just patching it out is cleaner (bug #3037938)
+//   but I think just patching it out is cleaner.
+// Fixes bug: #5093
 const uint16 sq4FloppySignatureEndlessFlight[] = {
 	0x39, 0x04,                         // pushi 04 (selector x)
 	SIG_MAGICDWORD,
@@ -1590,7 +1803,7 @@ const uint16 sq4CdPatchTextOptionsButton[] = {
 
 // Patch 2: Adjust a check in babbleIcon::init, which handles the babble icon
 // (e.g. the two guys from Andromeda) shown when dying/quitting.
-// Fixes bug #3538418.
+// Fixes bug: #6068
 const uint16 sq4CdSignatureBabbleIcon[] = {
 	SIG_MAGICDWORD,
 	0x89, 0x5a,                         // lsg 5a
@@ -1655,12 +1868,12 @@ const uint16 sq4CdPatchTextOptions[] = {
 	PATCH_END
 };
 
-//    script, description,                                            signature                        patch
+//          script, description,                                            signature                        patch
 SciScriptPatcherEntry sq4Signatures[] = {
-	{    298, "Floppy: endless flight",                      1, 0, 0, sq4FloppySignatureEndlessFlight, sq4FloppyPatchEndlessFlight },
-	{    818, "CD: Speech and subtitles option",             1, 0, 0, sq4CdSignatureTextOptions,       sq4CdPatchTextOptions },
-	{      0, "CD: Babble icon speech and subtitles fix",    1, 0, 0, sq4CdSignatureBabbleIcon,        sq4CdPatchBabbleIcon },
-	{    818, "CD: Speech and subtitles option button",      1, 0, 0, sq4CdSignatureTextOptionsButton, sq4CdPatchTextOptionsButton },
+	{  true,   298, "Floppy: endless flight",                      1, 0, 0, sq4FloppySignatureEndlessFlight, sq4FloppyPatchEndlessFlight },
+	{  true,   818, "CD: Speech and subtitles option",             1, 0, 0, sq4CdSignatureTextOptions,       sq4CdPatchTextOptions },
+	{  true,     0, "CD: Babble icon speech and subtitles fix",    1, 0, 0, sq4CdSignatureBabbleIcon,        sq4CdPatchBabbleIcon },
+	{  true,   818, "CD: Speech and subtitles option button",      1, 0, 0, sq4CdSignatureTextOptionsButton, sq4CdPatchTextOptionsButton },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -1732,10 +1945,10 @@ const uint16 sq1vgaPatchEgoShowsCard[] = {
 };
 
 
-//    script, description,                                            signature                                   patch
+//          script, description,                                            signature                                   patch
 SciScriptPatcherEntry sq1vgaSignatures[] = {
-	{     45, "Ulence Flats: timepod graphic glitch",        1, 0, 0, sq1vgaSignatureUlenceFlatsTimepodGfxGlitch, sq1vgaPatchUlenceFlatsTimepodGfxGlitch },
-	{     58, "Sarien armory droid zapping ego first time",  1, 0, 0, sq1vgaSignatureEgoShowsCard,                sq1vgaPatchEgoShowsCard },
+	{  true,    45, "Ulence Flats: timepod graphic glitch",        1, 0, 0, sq1vgaSignatureUlenceFlatsTimepodGfxGlitch, sq1vgaPatchUlenceFlatsTimepodGfxGlitch },
+	{  true,    58, "Sarien armory droid zapping ego first time",  1, 0, 0, sq1vgaSignatureEgoShowsCard,                sq1vgaPatchEgoShowsCard },
 	SCI_SIGNATUREENTRY_TERMINATOR};
 
 // ===========================================================================
@@ -1759,7 +1972,7 @@ SciScriptPatcherEntry sq1vgaSignatures[] = {
 //  else is done in SCI system scripts and I don't want to touch those.
 // Applies to at least: English/German/French PC floppy
 // Responsible method: takeTool::changeState
-// Fixes bug #6457
+// Fixes bug: #6457
 const uint16 sq5SignatureToolboxFix[] = {
 	0x31, 0x13,                    // bnt [check for state 1]
 	SIG_MAGICDWORD,
@@ -1790,9 +2003,9 @@ const uint16 sq5PatchToolboxFix[] = {
 	PATCH_END
 };
 
-//    script, description,                                            signature                        patch
+//          script, description,                                            signature                        patch
 SciScriptPatcherEntry sq5Signatures[] = {
-	{    226, "toolbox fix",                                 1, 0, 0, sq5SignatureToolboxFix,          sq5PatchToolboxFix },
+	{  true,   226, "toolbox fix",                                 1, 0, 0, sq5SignatureToolboxFix,          sq5PatchToolboxFix },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -2123,10 +2336,31 @@ void Script::patcherInitSignature(SciScriptPatcherEntry *patchTable, bool isMacS
     }
 }
 
+// This method enables certain patches
+//  It's used for patches, which are not meant to get applied all the time
+void Script::patcherEnablePatch(SciScriptPatcherEntry *patchTable, const char *searchDescription) {
+	SciScriptPatcherEntry *curEntry = patchTable;
+	int searchDescriptionLen = strlen( searchDescription );
+	int matchCount = 0;
+	
+    while (curEntry->signatureData) {
+		if (strncmp(curEntry->description, searchDescription, searchDescriptionLen) == 0) {
+			// match found, enable patch
+			curEntry->active = true;
+			matchCount++;
+		}
+		curEntry++;
+    }
+    
+    if (!matchCount)
+		error("Script-Patcher: no patch found to enable");
+}
+
 void Script::patcherProcessScript(uint16 scriptNr, byte *scriptData, const uint32 scriptSize) {
 	SciScriptPatcherEntry *signatureTable = NULL;
+	const Sci::SciGameId gameId = g_sci->getGameId();
 
-	switch (g_sci->getGameId()) {
+	switch (gameId) {
 	case GID_CAMELOT:
 		signatureTable = camelotSignatures;
 		break;
@@ -2146,11 +2380,7 @@ void Script::patcherProcessScript(uint16 scriptNr, byte *scriptData, const uint3
 		signatureTable = gk1Signatures;
 		break;
 	case GID_KQ5:
-		// See the explanation in the kq5SignatureWinGMSignals comment
-		if (g_sci->_features->useAltWinGMSound())
-			signatureTable = kq5WinGMSignatures;
-		else
-			signatureTable = kq5Signatures;
+		signatureTable = kq5Signatures;
 		break;
 	case GID_KQ6:
 		signatureTable = kq6Signatures;
@@ -2202,12 +2432,34 @@ void Script::patcherProcessScript(uint16 scriptNr, byte *scriptData, const uint3
 		bool isMacSci11 = (g_sci->getPlatform() == Common::kPlatformMacintosh && getSciVersion() >= SCI_VERSION_1_1);
 
 		if (!signatureTable->magicDWord) {
+			// Abort, in case selectors are not yet initialized (happens for games w/o selector-dictionary)
+			if (!g_sci->getKernel()->selectorNamesAvailable())
+				return;
+		
 			// signature table needs to get initialized (Magic DWORD set, selector table set)
 			patcherInitSignature(signatureTable, isMacSci11);
+			
+			// Do additional game-specific initialization
+			switch (gameId) {
+			case GID_KQ5:
+				if (g_sci->_features->useAltWinGMSound()) {
+					// See the explanation in the kq5SignatureWinGMSignals comment
+					patcherEnablePatch(signatureTable, "Win: GM Music signal checks");
+				}
+				break;
+			case GID_LAURABOW2:
+				if (g_sci->speechAndSubtitlesEnabled()) {
+					// Enables Audio + subtitles patches for Laura Bow 2, when "Text and Speech: Both" is selected
+					patcherEnablePatch(signatureTable, "CD: audio + text support");
+				}
+				break;
+			default:
+				break;
+			}
 		}
 	
 		while (signatureTable->signatureData) {
-			if (scriptNr == signatureTable->scriptNr) {
+			if ( (scriptNr == signatureTable->scriptNr) && (signatureTable->active) ) {
 				int32 foundOffset = 0;
 				int16 applyCount = signatureTable->applyCount;
 				do {

@@ -36,15 +36,15 @@ namespace Avalanche {
 const byte GraphicManager::kEgaPaletteIndex[16] = {0, 1, 2, 3, 4, 5, 20, 7, 56, 57, 58, 59, 60, 61, 62, 63};
 
 const MouseHotspotType GraphicManager::kMouseHotSpots[9] = {
-	{8,0}, // 0 - up-arrow
-	{0,0}, // 1 - screwdriver
+	{8,0},  // 0 - up-arrow
+	{0,0},  // 1 - screwdriver
 	{15,6}, // 2 - right-arrow
-	{0,0}, // 3 - fletch
-	{8,7}, // 4 - hourglass
-	{4,0}, // 5 - TTHand
-	{8,5}, // 6 - Mark's crosshairs
-	{8,7}, // 7 - I-beam
-	{0,0} // 8 - question mark
+	{0,0},  // 3 - fletch
+	{8,7},  // 4 - hourglass
+	{4,0},  // 5 - TTHand
+	{8,5},  // 6 - Mark's crosshairs
+	{8,7},  // 7 - I-beam
+	{0,0}   // 8 - question mark
 };
 
 GraphicManager::GraphicManager(AvalancheEngine *vm) {
@@ -126,7 +126,6 @@ void GraphicManager::loadMouse(byte which) {
 	Graphics::Surface cursor;
 	cursor.create(16, 32, Graphics::PixelFormat::createFormatCLUT8());
 	cursor.fillRect(Common::Rect(0, 0, 16, 32), 255);
-
 
 	// The AND mask.
 	f.seek(kMouseSize * 2 * which + 134);
@@ -573,7 +572,7 @@ void GraphicManager::drawPicture(Graphics::Surface &target, const Graphics::Surf
 
 	if (destX + maxX > target.w)
 		maxX = target.w - destX;
-	
+
 	if (destY + maxY > target.h)
 		maxY = target.h - destY;
 
@@ -624,7 +623,7 @@ void GraphicManager::drawSign(Common::String fn, int16 xl, int16 yl, int16 y) {
 			}
 		}
 	}
-	
+
 	drawPicture(_scrolls, sign, kScreenWidth / 2 - width / 2, y);
 
 	file.close();
@@ -669,7 +668,7 @@ void GraphicManager::prepareBubble(int xc, int xw, int my, Common::Point points[
 	drawTriangle(points, _talkBackgroundColor);
 }
 
-/** 
+/**
  * Set the background of the text to the desired color.
  */
 void GraphicManager::wipeChar(int x, int y, Color color) {
