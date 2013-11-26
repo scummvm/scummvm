@@ -199,7 +199,7 @@ bool GameUIWindow::flashWarningLight() {
 	if (_warningLightDisplayed) {
 		_warningLightDisplayed = false;
 		invalidateRect(redrawRect, false);
-		_vm->_gfx->updateScreen(false);
+		_vm->_gfx->updateScreen();
 	}
 
 	uint32 startTime = g_system->getMillis();
@@ -213,7 +213,7 @@ bool GameUIWindow::flashWarningLight() {
 
 	_warningLightDisplayed = true;
 	invalidateRect(redrawRect, false);
-	_vm->_gfx->updateScreen(false);
+	_vm->_gfx->updateScreen();
 
 	_vm->_sound->playInterfaceSound("BITDATA/COMMON/MSGBEEP.BTA");
 
@@ -228,7 +228,7 @@ bool GameUIWindow::flashWarningLight() {
 
 	_warningLightDisplayed = false;
 	invalidateRect(redrawRect, false);
-	_vm->_gfx->updateScreen(false);
+	_vm->_gfx->updateScreen();
 
 	startTime = g_system->getMillis();
 	while (!_vm->shouldQuit() && (startTime + 250) > g_system->getMillis()) {
@@ -239,9 +239,9 @@ bool GameUIWindow::flashWarningLight() {
 	if (_vm->shouldQuit())
 		return false;
 
-	_warningLightDisplayed = false;
+	_warningLightDisplayed = true;
 	invalidateRect(redrawRect, false);
-	_vm->_gfx->updateScreen(false);
+	_vm->_gfx->updateScreen();
 
 	_vm->_sound->playInterfaceSound("BITDATA/COMMON/MSGBEEP.BTA");
 	return true;
