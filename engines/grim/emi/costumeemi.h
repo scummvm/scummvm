@@ -45,9 +45,6 @@ public:
 	int update(uint frameTime);
 	void draw();
 
-	void saveState(SaveGame *state) const;
-	bool restoreState(SaveGame *state);
-
 	Material *findSharedMaterial(const Common::String &name);
 public:
 	EMISkelComponent *_emiSkel;

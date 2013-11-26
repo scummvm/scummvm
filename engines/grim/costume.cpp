@@ -246,7 +246,7 @@ ModelComponent *Costume::getMainModelComponent() const {
 	for (int i = 0; i < _numComponents; i++) {
 		// Needs to handle Main Models (pigeons) and normal Models
 		// (when Manny climbs the rope)
-		if (_components[i]->isComponentType('M','M','D','L'))
+		if (_components[i] && _components[i]->isComponentType('M','M','D','L'))
 			return static_cast<ModelComponent *>(_components[i]);
 	}
 	return NULL;
@@ -360,7 +360,8 @@ void Costume::setColormap(const Common::String &map) {
 		return;
 	_cmap = g_resourceloader->getColormap(map);
 	for (int i = 0; i < _numComponents; i++)
-		_components[i]->setColormap(NULL);
+		if (_components[i])
+			_components[i]->setColormap(NULL);
 }
 
 void Costume::stopChores() {
