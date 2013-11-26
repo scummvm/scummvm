@@ -81,8 +81,7 @@ bool SceneViewWindow::initializeDaVinciTimeZoneAndEnvironment(Window *viewWindow
 }
 
 bool SceneViewWindow::startDaVinciAmbient(int oldTimeZone, int oldEnvironment, int environment, bool fade) {
-	// TODO: Fix sound fading
-	_vm->_sound->setAmbientSound(_vm->getFilePath(5, environment, SF_AMBIENT), false /* fade */, 64);
+	_vm->_sound->setAmbientSound(_vm->getFilePath(5, environment, SF_AMBIENT), fade, 64);
 	return true;
 }
 
