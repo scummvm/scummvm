@@ -37,8 +37,8 @@ public:
 
 	int getFontHeight() const { return _maxHeight; }
 	int getMaxCharWidth() const { return _maxWidth; }
-	int getCharWidth(byte chr) const { return getGlyph(chr)->width; }
-	void drawChar(Graphics::Surface *dst, byte chr, int x, int y, uint32 color) const;
+	int getCharWidth(uint32 chr) const { return getGlyph(chr)->width; }
+	void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const;
 
 private:
 	int _maxHeight, _maxWidth;
@@ -55,7 +55,7 @@ private:
 
 	byte _mapChar2Glyph[128];
 	Glyph *_glyphs;
-	const Glyph *getGlyph(byte chr) const;
+	const Glyph *getGlyph(uint32 chr) const;
 };
 
 } // End of Groovie namespace

@@ -121,7 +121,7 @@ int BaseFontTT::getTextWidth(const byte *text, int maxLength) {
 	}
 
 	if (maxLength >= 0 && textStr.size() > (uint32)maxLength) {
-		textStr = Common::String(textStr.c_str(), (uint32)maxLength);
+		textStr = WideString(textStr.c_str(), (uint32)maxLength);
 	}
 	//text = text.substr(0, MaxLength); // TODO: Remove
 
@@ -155,19 +155,19 @@ void BaseFontTT::drawText(const byte *text, int x, int y, int width, TTextAlign 
 		return;
 	}
 
-	WideString textStr = (const char *)text;
+	WideString textStr;
 
 	// TODO: Why do we still insist on Widestrings everywhere?
-	/*  if (_gameRef->_textEncoding == TEXT_UTF8) text = StringUtil::Utf8ToWide((char *)Text);
-	        else text = StringUtil::AnsiToWide((char *)Text);*/
 	// HACK: J.U.L.I.A. uses CP1252, we need to fix that,
 	// And we still don't have any UTF8-support.
-	if (_gameRef->_textEncoding != TEXT_UTF8) {
+	if (_gameRef->_textEncoding == TEXT_UTF8) {
+		textStr = StringUtil::utf8ToWide((const char *)text);
+	} else {
 		textStr = StringUtil::ansiToWide((const char *)text);
 	}
 
 	if (maxLength >= 0 && textStr.size() > (uint32)maxLength) {
-		textStr = Common::String(textStr.c_str(), (uint32)maxLength);
+		textStr = WideString(textStr.c_str(), (uint32)maxLength);
 	}
 	//text = text.substr(0, MaxLength); // TODO: Remove
 
@@ -248,7 +248,7 @@ BaseSurface *BaseFontTT::renderTextToTexture(const WideString &text, int width, 
 	//TextLineList lines;
 	// TODO: Use WideString-conversion here.
 	//WrapText(text, width, maxHeight, lines);
-	Common::Array<Common::String> lines;
+	Common::Array<WideString> lines;
 	_font->wordWrapText(text, width, lines);
 
 	while (maxHeight > 0 && lines.size() * _lineHeight > maxHeight) {
@@ -267,7 +267,8 @@ BaseSurface *BaseFontTT::renderTextToTexture(const WideString &text, int width, 
 		alignment = Graphics::kTextAlignRight;
 	}
 
-	debugC(kWintermuteDebugFont, "%s %d %d %d %d", text.c_str(), RGBCOLGetR(_layers[0]->_color), RGBCOLGetG(_layers[0]->_color), RGBCOLGetB(_layers[0]->_color), RGBCOLGetA(_layers[0]->_color));
+	// TODO: This debug call does not work with WideString because text.c_str() returns an uint32 array.
+	//debugC(kWintermuteDebugFont, "%s %d %d %d %d", text.c_str(), RGBCOLGetR(_layers[0]->_color), RGBCOLGetG(_layers[0]->_color), RGBCOLGetB(_layers[0]->_color), RGBCOLGetA(_layers[0]->_color));
 //	void drawString(Surface *dst, const Common::String &str, int x, int y, int w, uint32 color, TextAlign align = kTextAlignLeft, int deltax = 0, bool useEllipsis = true) const;
 	Graphics::Surface *surface = new Graphics::Surface();
 	if (_deletableFont) { // We actually have a TTF
@@ -276,7 +277,7 @@ BaseSurface *BaseFontTT::renderTextToTexture(const WideString &text, int width, 
 		surface->create((uint16)width, (uint16)(_lineHeight * lines.size()), Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0));
 	}
 	uint32 useColor = 0xffffffff;
-	Common::Array<Common::String>::iterator it;
+	Common::Array<WideString>::iterator it;
 	int heightOffset = 0;
 	for (it = lines.begin(); it != lines.end(); ++it) {
 		_font->drawString(surface, *it, 0, heightOffset, width, useColor, alignment);
@@ -647,9 +648,9 @@ void BaseFontTT::measureText(const WideString &text, int maxWidth, int maxHeight
 	//TextLineList lines;
 
 	if (maxWidth >= 0) {
-		Common::Array<Common::String> lines;
+		Common::Array<WideString> lines;
 		_font->wordWrapText(text, maxWidth, lines);
-		Common::Array<Common::String>::iterator it;
+		Common::Array<WideString>::iterator it;
 		textWidth = 0;
 		for (it = lines.begin(); it != lines.end(); ++it) {
 			textWidth = MAX(textWidth, _font->getStringWidth(*it));
