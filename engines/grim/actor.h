@@ -321,6 +321,7 @@ public:
 	 * @param scale The scale of the actor.
 	 */
 	void setScale(float scale) { _scale = scale; }
+	float getScale() const { return _scale; }
 
 	/**
 	 * Sets the time scale of the actor, used to calculate the
@@ -507,8 +508,11 @@ public:
 	Math::Quaternion getRotationQuat() const;
 
 	void setInOverworld(bool inOverworld) { _inOverworld = inOverworld; }
-	bool isInOverworld() { return _inOverworld; }
+	bool isInOverworld() const { return _inOverworld; }
 
+	float getGlobalAlpha() const { return _globalAlpha; }
+	AlphaMode getAlphaMode() const { return _alphaMode; }
+	float getEffectiveAlpha() const { return _alphaMode != AlphaOff ? _globalAlpha : 1.f; }
 	void setGlobalAlpha(float alpha) { _globalAlpha = alpha; }
 	void setAlphaMode(AlphaMode mode) { _alphaMode = mode; }
 
