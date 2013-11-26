@@ -493,9 +493,10 @@ class Scene355: public PalettedScene {
 	/* Objects */
 	class Doorway: public NamedObject {
 	public:
-		int _v1, _v2, _v3;
+		int _mode1356Count, _talkCount;
+		bool _onDuty;
 
-		Doorway() { _v1 = _v2 = _v3 = 0; }
+		Doorway() { _mode1356Count = _talkCount = 0; _onDuty = false; }
 		virtual Common::String getClassName() { return "Scene355_Doorway"; }
 		virtual void synchronize(Serializer &s);
 		virtual bool startAction(CursorType action, Event &event);

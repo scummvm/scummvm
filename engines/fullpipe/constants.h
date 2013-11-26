@@ -25,6 +25,7 @@
 
 namespace Fullpipe {
 
+#define ANI_BIGBALL 4923
 #define ANI_BOOT_1 4231
 #define ANI_BUTTON 598
 #define ANI_CLOCK 588

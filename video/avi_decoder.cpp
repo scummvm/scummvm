@@ -69,6 +69,7 @@ namespace Video {
 #define ID_ISFT MKTAG('I','S','F','T')
 #define ID_DISP MKTAG('D','I','S','P')
 #define ID_PRMI MKTAG('P','R','M','I')
+#define ID_STRN MKTAG('s','t','r','n')
 
 // Codec tags
 #define ID_RLE  MKTAG('R','L','E',' ')
@@ -109,6 +110,7 @@ void AVIDecoder::initCommon() {
 	_decodedHeader = false;
 	_foundMovieList = false;
 	_movieListStart = 0;
+	_movieListEnd = 0;
 	_fileStream = 0;
 	memset(&_header, 0, sizeof(_header));
 }
@@ -155,6 +157,7 @@ bool AVIDecoder::parseNextChunk() {
 	case ID_JUNK: // Alignment bytes, should be ignored
 	case ID_ISFT: // Metadata, safe to ignore
 	case ID_DISP: // Metadata, should be safe to ignore
+	case ID_STRN: // Metadata, safe to ignore
 		skipChunk(size);
 		break;
 	case ID_IDX1:
@@ -184,6 +187,7 @@ void AVIDecoder::handleList(uint32 listSize) {
 		// We found the movie block
 		_foundMovieList = true;
 		_movieListStart = curPos;
+		_movieListEnd = _movieListStart + listSize + (listSize & 1);
 		_fileStream->skip(listSize);
 		return;
 	case ID_HDRL: // Header List
@@ -344,17 +348,27 @@ void AVIDecoder::close() {
 	_decodedHeader = false;
 	_foundMovieList = false;
 	_movieListStart = 0;
+	_movieListEnd = 0;
 
 	_indexEntries.clear();
 	memset(&_header, 0, sizeof(_header));
 }
 
 void AVIDecoder::readNextPacket() {
+	if ((uint32)_fileStream->pos() >= _movieListEnd) {
+		// Ugh, reached the end premature.
+		forceVideoEnd();
+		return;
+	}
+
 	uint32 nextTag = _fileStream->readUint32BE();
 	uint32 size = _fileStream->readUint32LE();
 
-	if (_fileStream->eos())
+	if (_fileStream->eos()) {
+		// Also premature end.
+		forceVideoEnd();
 		return;
+	}
 
 	if (nextTag == ID_LIST) {
 		// A list of audio/video chunks
@@ -636,6 +650,7 @@ void AVIDecoder::readOldIndex(uint32 size) {
 	if (!isAbsolute)
 		firstEntry.offset += _movieListStart - 4;
 
+	debug(0, "Index 0: Tag '%s', Offset = %d, Size = %d (Flags = %d)", tag2str(firstEntry.id), firstEntry.offset, firstEntry.size, firstEntry.flags);
 	_indexEntries.push_back(firstEntry);
 
 	for (uint32 i = 1; i < entryCount; i++) {
@@ -652,6 +667,16 @@ void AVIDecoder::readOldIndex(uint32 size) {
 		_indexEntries.push_back(indexEntry);
 		debug(0, "Index %d: Tag '%s', Offset = %d, Size = %d (Flags = %d)", i, tag2str(indexEntry.id), indexEntry.offset, indexEntry.size, indexEntry.flags);
 	}
+}
+
+void AVIDecoder::forceVideoEnd() {
+	// Horrible AVI video has a premature end
+	// Force the frame to be the last frame
+	debug(0, "Forcing end of AVI video");
+
+	for (TrackListIterator it = getTrackListBegin(); it != getTrackListEnd(); it++)
+		if ((*it)->getTrackType() == Track::kTrackTypeVideo)
+			((AVIVideoTrack *)*it)->forceTrackEnd();
 }
 
 AVIDecoder::AVIVideoTrack::AVIVideoTrack(int frameCount, const AVIStreamHeader &streamHeader, const BitmapInfoHeader &bitmapInfoHeader, byte *initialPalette)
@@ -754,6 +779,10 @@ Codec *AVIDecoder::AVIVideoTrack::createCodec() {
 	}
 
 	return 0;
+}
+
+void AVIDecoder::AVIVideoTrack::forceTrackEnd() {
+	_curFrame = _frameCount - 1;
 }
 
 AVIDecoder::AVIAudioTrack::AVIAudioTrack(const AVIStreamHeader &streamHeader, const PCMWaveFormat &waveFormat, Audio::Mixer::SoundType soundType)

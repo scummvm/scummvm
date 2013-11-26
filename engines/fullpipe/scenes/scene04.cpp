@@ -216,6 +216,16 @@ void sceneHandlers_sub01(ExCommand *ex) {
 	warning("sceneHandlers_sub01()");
 }
 
+void sceneHandler04_checkBigBallClick() {
+	StaticANIObject *ball = g_fullpipe->_currentScene->getStaticANIObject1ById(ANI_BIGBALL, -1);
+
+	if (ball)
+		for (uint i = 0; i < ball->_movements.size(); i++)
+			((Movement *)ball->_movements[i])->_counterMax = 73;
+
+	g_vars->scene04_var13 = 1;
+}
+
 void sceneHandler04_clickBottle() {
 	if (!g_vars->scene04_var02)
 		g_vars->scene04_var20 += 5;

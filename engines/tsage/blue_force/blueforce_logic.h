@@ -139,14 +139,17 @@ public:
 
 class NamedObject2: public NamedObject {
 public:
-	int _v1, _v2;
+	int _talkCount;
 
-	NamedObject2() { _v1 = _v2 = 0; }
+	NamedObject2() { _talkCount = 0; }
 	virtual Common::String getClassName() { return "NamedObject2"; }
 	virtual void synchronize(Serializer &s) {
 		NamedObject::synchronize(s);
-		s.syncAsSint16LE(_v1);
-		s.syncAsSint16LE(_v2);
+		if (s.getVersion() < 11) {
+			int useless = 0;
+			s.syncAsSint16LE(useless);
+		}
+		s.syncAsSint16LE(_talkCount);
 	}
 };
 
@@ -177,7 +180,6 @@ public:
 
 class FocusObject: public NamedObject {
 public:
-	int _v90, _v92;
 	GfxSurface _img;
 
 	FocusObject();
@@ -196,16 +198,12 @@ private:
 	static void endStrip();
 public:
 	AObjectArray _timerList, _objArray2;
-	int _field372;
 	bool _savedPlayerEnabled;
 	bool _savedUiEnabled;
 	bool _savedCanWalk;
-	int _field37A;
 
 	EventHandler *_focusObject;
 	Visage _cursorVisage;
-
-	Rect _v51C34;
 public:
 	SceneExt();
 
@@ -228,7 +226,7 @@ public:
 class PalettedScene: public SceneExt {
 public:
 	ScenePalette _palette;
-	int _field794;
+	bool _hasFader;
 public:
 	PalettedScene();
 

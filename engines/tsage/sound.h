@@ -63,8 +63,6 @@ public:
 
 struct GroupData {
 	uint32 _groupMask;
-	byte _v1;
-	byte _v2;
 	const byte *_pData;
 };
 
