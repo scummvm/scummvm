@@ -123,6 +123,17 @@ private:
 	Common::Rect _clickRegion;
 };
 
+class VideoDeath : public SceneBase {
+public:
+	VideoDeath(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation, int deathID = 0, int messageTextID = -1);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
+	int postExitRoom(Window *viewWindow, const Location &newLocation);
+
+private:
+	int _deathID;
+	int _messageTextID;
+};
+
 } // End of namespace Buried
 
 #endif

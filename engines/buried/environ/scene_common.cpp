@@ -276,4 +276,30 @@ int ClickPlayVideo::specifyCursor(Window *viewWindow, const Common::Point &point
 	return kCursorArrow;
 }
 
+VideoDeath::VideoDeath(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation, int deathID, int messageTextID) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation), _deathID(deathID), _messageTextID(messageTextID) {
+}
+
+int VideoDeath::postEnterRoom(Window *viewWindow, const Location &priorLocation) {
+	if (_messageTextID >= -1)
+		((SceneViewWindow *)viewWindow)->displayLiveText(_vm->getString(_messageTextID));
+
+	return SC_TRUE;
+}
+
+int VideoDeath::postExitRoom(Window *viewWindow, const Location &newLocation) {
+	if (newLocation.timeZone == _staticData.location.timeZone &&
+			newLocation.environment == _staticData.location.environment &&
+			newLocation.node == _staticData.location.node &&
+			newLocation.facing == _staticData.location.facing &&
+			newLocation.orientation == _staticData.location.orientation &&
+			newLocation.depth == _staticData.location.depth) {
+		// Notify the player of his gruesome death
+		((SceneViewWindow *)viewWindow)->showDeathScene(_deathID);
+		return SC_DEATH;
+	}
+
+	return SC_TRUE;
+}
+
 } // End of namespace Buried
