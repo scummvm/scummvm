@@ -196,11 +196,9 @@ private:
 	static void endStrip();
 public:
 	AObjectArray _timerList, _objArray2;
-	int _field372;
 	bool _savedPlayerEnabled;
 	bool _savedUiEnabled;
 	bool _savedCanWalk;
-	int _field37A;
 
 	EventHandler *_focusObject;
 	Visage _cursorVisage;

@@ -705,7 +705,6 @@ SceneExt::SceneExt(): Scene() {
 	_stripManager._onBegin = SceneExt::startStrip;
 	_stripManager._onEnd = SceneExt::endStrip;
 
-	_field372 = _field37A = 0;
 	_savedPlayerEnabled = false;
 	_savedUiEnabled = false;
 	_savedCanWalk = false;
@@ -748,6 +747,7 @@ void SceneExt::process(Event &event) {
 void SceneExt::dispatch() {
 	_timerList.dispatch();
 
+	/*
 	if (_field37A) {
 		if ((--_field37A == 0) && BF_GLOBALS._dayNumber) {
 			if (T2_GLOBALS._uiElements._active && BF_GLOBALS._player._enabled) {
@@ -757,6 +757,7 @@ void SceneExt::dispatch() {
 			_field37A = 0;
 		}
 	}
+	*/
 
 	Scene::dispatch();
 }
@@ -833,7 +834,6 @@ void SceneExt::gunDisplay() {
 
 void SceneExt::startStrip() {
 	SceneExt *scene = (SceneExt *)BF_GLOBALS._sceneManager._scene;
-	scene->_field372 = 1;
 	scene->_savedPlayerEnabled = BF_GLOBALS._player._enabled;
 
 	if (scene->_savedPlayerEnabled) {
@@ -848,7 +848,6 @@ void SceneExt::startStrip() {
 
 void SceneExt::endStrip() {
 	SceneExt *scene = (SceneExt *)BF_GLOBALS._sceneManager._scene;
-	scene->_field372 = 0;
 
 	if (scene->_savedPlayerEnabled) {
 		BF_GLOBALS._player.enableControl();
