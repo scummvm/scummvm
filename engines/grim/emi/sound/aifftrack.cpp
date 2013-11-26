@@ -74,4 +74,11 @@ bool AIFFTrack::play() {
 	return false;
 }
 
+bool AIFFTrack::isPlaying() {
+	if (!_handle)
+		return false;
+
+	return g_system->getMixer()->isSoundHandleActive(*_handle);
+}
+
 } // end of namespace Grim

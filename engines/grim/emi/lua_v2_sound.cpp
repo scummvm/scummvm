@@ -288,6 +288,28 @@ void Lua_V2::StopSound() {
 		sound->stop();
 }
 
+void Lua_V2::IsSoundPlaying() {
+	lua_Object idObj = lua_getparam(1);
+
+	if (!lua_isuserdata(idObj) || lua_tag(idObj) != MKTAG('A', 'I', 'F', 'F')) {
+		// can't use error since it actually may happen during normal operation
+		warning("Lua_V2::IsSoundPlaying - ERROR: Unknown parameters");
+		pushbool(false);
+		return;
+	}
+
+	PoolSound *sound = PoolSound::getPool().getObject(lua_getuserdata(idObj));
+	if (sound && sound->_track) {
+		if (sound->_track->isPlaying()) {
+			pushbool(true);
+			return;
+		}
+	} else {
+		warning("Lua_V2::IsSoundPlaying: no sound track associated");
+	}
+	pushbool(false);
+}
+
 void Lua_V2::PlaySound() {
 	lua_Object strObj = lua_getparam(1);
 	//FIXME: get the second param
