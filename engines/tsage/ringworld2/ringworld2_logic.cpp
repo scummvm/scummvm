@@ -401,19 +401,6 @@ void SceneExt::process(Event &event) {
 }
 
 void SceneExt::dispatch() {
-/*
-	_timerList.dispatch();
-
-	if (_field37A) {
-		if ((--_field37A == 0) && R2_GLOBALS._dayNumber) {
-			if (R2_GLOBALS._uiElements._active && R2_GLOBALS._player._enabled) {
-				R2_GLOBALS._uiElements.show();
-			}
-
-			_field37A = 0;
-		}
-	}
-*/
 	Scene::dispatch();
 }
 
