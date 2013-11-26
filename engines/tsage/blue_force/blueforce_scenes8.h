@@ -350,6 +350,7 @@ class Scene840: public PalettedScene {
 		WaveKeys _waveKeys;
 		bool _usedRentalKeys,_usedWaveKeys;
 
+		virtual void synchronize(Serializer &s);
 		virtual void postInit(SceneObjectList *OwnerList = NULL);
 		virtual void remove();
 		virtual void process(Event &event);

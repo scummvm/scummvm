@@ -2096,6 +2096,15 @@ bool Scene840::BoatKeysInset::WaveKeys::startAction(CursorType action, Event &ev
 	}
 }
 
+void Scene840::BoatKeysInset::synchronize(Serializer &s) {
+	FocusObject::synchronize(s);
+
+	if (s.getVersion() >= 12) {
+		s.syncAsSint16LE(_usedWaveKeys);
+		s.syncAsSint16LE(_usedRentalKeys);
+	}
+}
+
 bool Scene840::BoatKeys::startAction(CursorType action, Event &event) {
 	Scene840 *scene = (Scene840 *)BF_GLOBALS._sceneManager._scene;
 
