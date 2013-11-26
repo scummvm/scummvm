@@ -466,47 +466,37 @@ void Actor::setPos(const Math::Vector3d &position) {
 	}
 }
 
-Math::Vector3d Actor::actorForward() const {
-	if (g_grim->getGameType() == GType_GRIM) {
-		return Math::Vector3d(0.f, 1.f, 0.f);
-	}
-	return Math::Vector3d(0.f, 0.f, 1.f);
-}
-
-Math::Vector3d Actor::actorUp() const {
-	if (g_grim->getGameType() == GType_GRIM) {
-		return Math::Vector3d(0.f, 0.f, 1.f);
-	}
-	return Math::Vector3d(0.f, 1.f, 0.f);
-}
-
 void Actor::calculateOrientation(const Math::Vector3d &pos, Math::Angle *pitch, Math::Angle *yaw, Math::Angle *roll) {
+	Math::Vector3d actorForward(0.f, 1.f, 0.f);
+	Math::Vector3d actorUp(0.f, 0.f, 1.f);
 	Math::Vector3d lookVector = pos - _pos;
 	lookVector.normalize();
 
-	if (g_grim->getGameType() == GType_GRIM) {
-		Math::Vector3d up = actorUp();
-		if (_puckOrient) {
-			Sector *s = NULL;
-			g_grim->getCurrSet()->findClosestSector(_pos, &s, NULL);
-			if (s) {
-				up = s->getNormal();
-			}
-		}
+	// EMI: Y is up-down, actors use an X-Z plane for movement
+	if (g_grim->getGameType() == GType_MONKEY4) {
+		float temp = lookVector.z();
+		lookVector.x() = -lookVector.x();
+		lookVector.z() = lookVector.y();
+		lookVector.y() = temp;
+	}
 
-		Math::Matrix3 m;
-		m.buildFromTargetDir(actorForward(), lookVector, actorUp(), up);
-
-		if (_puckOrient) {
-			m.getPitchYawRoll(pitch, yaw, roll);
-		} else {
-			*pitch = _movePitch;
-			*yaw = m.getYaw();
-			*roll = _moveRoll;
+	Math::Vector3d up = actorUp;
+	if (_puckOrient) {
+		Sector *s = NULL;
+		g_grim->getCurrSet()->findClosestSector(_pos, &s, NULL);
+		if (s) {
+			up = s->getNormal();
 		}
+	}
+
+	Math::Matrix3 m;
+	m.buildFromTargetDir(actorForward, lookVector, actorUp, up);
+
+	if (_puckOrient) {
+		m.getPitchYawRoll(pitch, yaw, roll);
 	} else {
 		*pitch = _movePitch;
-		*yaw = Math::Vector3d::angle(lookVector, Math::Vector3d(0,0,1));
+		*yaw = m.getYaw();
 		*roll = _moveRoll;
 	}
 }
@@ -730,9 +720,10 @@ void Actor::walkForward() {
 		Math::Vector3d forwardVec(-_moveYaw.getSine() * _pitch.getCosine(),
 								  _moveYaw.getCosine() * _pitch.getCosine(), _pitch.getSine());
 
-		// EMI: Y is up-down, sectors use an X-Z plane for movement
+		// EMI: Y is up-down, actors use an X-Z plane for movement
 		if (g_grim->getGameType() == GType_MONKEY4) {
 			float temp = forwardVec.z();
+			forwardVec.x() = -forwardVec.x();
 			forwardVec.z() = forwardVec.y();
 			forwardVec.y() = temp;
 		}
@@ -758,9 +749,10 @@ void Actor::walkForward() {
 			Math::Vector3d forwardVec(-_moveYaw.getSine() * _pitch.getCosine(),
 									  _moveYaw.getCosine() * _pitch.getCosine(), _pitch.getSine());
 
-			// EMI: Y is up-down, sectors use an X-Z plane for movement
+			// EMI: Y is up-down, actors use an X-Z plane for movement
 			if (g_grim->getGameType() == GType_MONKEY4) {
 				float temp = forwardVec.z();
+				forwardVec.x() = -forwardVec.x();
 				forwardVec.z() = forwardVec.y();
 				forwardVec.y() = temp;
 			}
@@ -792,8 +784,8 @@ void Actor::walkForward() {
 				Math::Angle az = Math::Vector2d(normal.z(), normal.y()).getAngle();
 
 				float y1 = -_moveYaw.getCosine() * (az - _pitch).getCosine();
-				float y2 = _moveYaw.getSine() * (ax - _pitch).getCosine();
-				forwardVec = Math::Vector3d(_moveYaw.getSine() * ax.getSine() * _pitch.getCosine(), y1 + y2,
+				float y2 = -_moveYaw.getSine() * (ax - _pitch).getCosine();
+				forwardVec = Math::Vector3d(-_moveYaw.getSine() * ax.getSine() * _pitch.getCosine(), y1 + y2,
 											-_moveYaw.getCosine() * az.getSine() * _pitch.getCosine());
 			}
 
@@ -839,6 +831,10 @@ void Actor::walkForward() {
 			return;
 
 		ei.angleWithEdge += (float)1.0f;
+
+		if (g_grim->getGameType() == GType_MONKEY4) {
+			ei.angleWithEdge = -ei.angleWithEdge;
+		}
 		turnTo(0, _moveYaw + ei.angleWithEdge * turnDir, 0, true);
 
 		if (oldDist <= dist + 0.001f) {
@@ -853,7 +849,7 @@ void Actor::walkForward() {
 
 Math::Vector3d Actor::getSimplePuckVector() const {
 	if (g_grim->getGameType() == GType_MONKEY4) {
-		return Math::Vector3d(-_yaw.getSine(), 0, _yaw.getCosine());
+		return Math::Vector3d(_yaw.getSine(), 0, _yaw.getCosine());
 	} else {
 		return Math::Vector3d(-_yaw.getSine(), _yaw.getCosine(), 0);
 	}
@@ -1002,6 +998,9 @@ void Actor::setLastWearChore(int chore, Costume *cost) {
 void Actor::turn(int dir) {
 	_walking = false;
 	float delta = g_grim->getPerSecond(_turnRate) * dir;
+	if (g_grim->getGameType() == GType_MONKEY4) {
+		delta = -delta;
+	}
 	_moveYaw = _moveYaw + delta;
 	_turning = true;
 	_turnRateMultiplier = 5.f;
@@ -2020,7 +2019,7 @@ Math::Vector3d Actor::getWorldPos() const {
 
 Math::Quaternion Actor::getRotationQuat() const {
 	if (g_grim->getGameType() == GType_MONKEY4) {
-		Math::Quaternion ret = Math::Quaternion::fromEuler(_yaw, _pitch, _roll);
+		Math::Quaternion ret = Math::Quaternion::fromEuler(-_yaw, _pitch, _roll);
 		if (_inOverworld)
 			ret = Math::Quaternion::fromEuler(-_roll, -_pitch, -_yaw);
 
