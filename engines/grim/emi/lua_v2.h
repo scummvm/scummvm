@@ -44,6 +44,7 @@ protected:
 	DECLARE_LUA_OPCODE(UnloadActor);
 	DECLARE_LUA_OPCODE(SetActorWalkRate);
 	DECLARE_LUA_OPCODE(GetActorWalkRate);
+	DECLARE_LUA_OPCODE(SetActorTurnRate);
 	DECLARE_LUA_OPCODE(SetReverb);
 	DECLARE_LUA_OPCODE(LockBackground);
 	DECLARE_LUA_OPCODE(UnLockBackground);
