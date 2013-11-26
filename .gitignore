@@ -105,6 +105,9 @@ project.xcworkspace
 
 /plugins
 
+/engines/plugins_table.h
+/engines/engines.mk
+
 /test/runner
 /test/runner.cpp
 /test/*.dSYM
