@@ -55,7 +55,6 @@ USERINCLUDE		\epoc32\include\mpeg2dec //\epoc32\include\theora
 SYSTEMINCLUDE	\epoc32\include\freetype
 SYSTEMINCLUDE	\epoc32\include\mpeg2dec
 SYSTEMINCLUDE	\epoc32\include\ESDL
-SYSTEMINCLUDE	\epoc32\include\FLAC
 SYSTEMINCLUDE	\epoc32\include\ZLIB // before \epoc32\include because symbian already has older version
 SYSTEMINCLUDE   \epoc32\include\libc
 SYSTEMINCLUDE   \epoc32\include\tremor
