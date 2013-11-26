@@ -45,11 +45,11 @@ public:
 
     virtual int getMaxCharWidth() const override;
 
-    virtual int getCharWidth(byte chr) const override;
+    virtual int getCharWidth(uint32 chr) const override;
 
-    virtual void drawChar(Graphics::Surface *dst, byte chr, int x, int y, uint32 color) const override;
+    virtual void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const override;
 
-	virtual int getKerningOffset(byte left, byte right) const { return -2; }
+	virtual int getKerningOffset(uint32 left, uint32 right) const override { return -2; }
 
 private:
 	struct ChrData {

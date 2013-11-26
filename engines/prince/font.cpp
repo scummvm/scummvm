@@ -65,11 +65,11 @@ Font::ChrData Font::getChrData(byte chr) const {
 	return chrData;
 }
 
-int Font::getCharWidth(byte chr) const {
+int Font::getCharWidth(uint32 chr) const {
 	return getChrData(chr)._width;
 }
 
-void Font::drawChar(Graphics::Surface *dst, byte chr, int posX, int posY, uint32 color) const {
+void Font::drawChar(Graphics::Surface *dst, uint32 chr, int posX, int posY, uint32 color) const {
 	const ChrData chrData = getChrData(chr);
 
 	for (int y = 0; y < chrData._height; ++y) {
