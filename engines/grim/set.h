@@ -65,6 +65,7 @@ public:
 
 	void setSoundPosition(const char *soundName, const Math::Vector3d &pos);
 	void setSoundPosition(const char *soundName, const Math::Vector3d &pos, int minVol, int maxVol);
+	void calculateSoundPosition(const Math::Vector3d &pos, int minVol, int maxVol, int &volume, int &balance);
 	void setSoundParameters(int minVolume, int maxVolume);
 	void getSoundParameters(int *minVolume, int *maxVolume);
 
