@@ -936,7 +936,7 @@ void GfxTinyGL::blit(const Graphics::PixelFormat &format, BlitImage *image, byte
 			while (l && l->y < srcY)
 				l = l->next;
 
-			while (l && l->y <= maxY) {
+			while (l && l->y < maxY) {
 				if (l->x < maxX && l->x + l->length > srcX) {
 					int length = l->length;
 					int skipStart = l->x < srcX ? srcX - l->x : 0;
