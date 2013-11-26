@@ -226,7 +226,7 @@ public:
 class PalettedScene: public SceneExt {
 public:
 	ScenePalette _palette;
-	int _field794;
+	bool _hasFader;
 public:
 	PalettedScene();
 

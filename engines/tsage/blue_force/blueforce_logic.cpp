@@ -866,23 +866,23 @@ void SceneExt::clearScreen() {
 /*--------------------------------------------------------------------------*/
 
 PalettedScene::PalettedScene(): SceneExt() {
-	_field794 = 0;
+	_hasFader = false;
 }
 
 void PalettedScene::synchronize(Serializer &s) {
 	SceneExt::synchronize(s);
-	s.syncAsSint16LE(_field794);
+	s.syncAsSint16LE(_hasFader);
 }
 
 void PalettedScene::postInit(SceneObjectList *OwnerList) {
-	_field794 = 0;
+	_hasFader = false;
 	_palette._field412 = 1;
 	SceneExt::postInit(OwnerList);
 }
 
 void PalettedScene::remove() {
 	SceneExt::remove();
-	if (_field794 == 1) {
+	if (_hasFader) {
 		for (SynchronizedList<SceneObject *>::iterator i = BF_GLOBALS._sceneObjects->begin();
 				i != BF_GLOBALS._sceneObjects->end(); ++i)
 			(*i)->remove();
@@ -896,7 +896,7 @@ void PalettedScene::remove() {
 }
 
 PaletteFader *PalettedScene::addFader(const byte *arrBufferRGB, int step, Action *action) {
-	_field794 = 1;
+	_hasFader = true;
 	return BF_GLOBALS._scenePalette.addFader(arrBufferRGB, 1, step, action);
 }
 
