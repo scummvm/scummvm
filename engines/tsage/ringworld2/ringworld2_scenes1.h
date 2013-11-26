@@ -214,7 +214,7 @@ class Scene1337 : public SceneExt {
 	class Action1337: public Action {
 	public:
 		void subD18B5(int resNum, int stripNum, int frameNum);
-		void skipFrames(int32 skipCount);
+		void waitFrames(int32 skipCount);
 	};
 
 	class Action1: public Action1337 {
@@ -358,7 +358,7 @@ public:
 	void subC51A0(unkObj1337sub1 *subObj1, unkObj1337sub1 *subObj2);
 	void displayDialog(int dialogNumb);
 	void subPostInit();
-	void subCB59B();
+	void displayInstructions();
 	void suggestInstructions();
 	void shuffleCards();
 	void subCCF26();
@@ -370,7 +370,7 @@ public:
 	void subD0281();
 	void subD02CA();
 	void subD183F(int arg1, int arg2);
-	void subD18B5(int resNum, int rlbNum, int arg3);
+	void subD18B5(int resNum, int rlbNum, int frameNum);
 	int  subD18F5();
 	int  subD1917();
 	int  subD1940(bool flag);

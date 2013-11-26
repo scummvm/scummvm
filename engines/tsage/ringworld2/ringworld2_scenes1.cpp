@@ -2264,13 +2264,15 @@ void Scene1337::Action1337::subD18B5(int resNum, int stripNum, int frameNum) {
 	warning("STUBBED: Action1337::subD18B5()");
 }
 
-void Scene1337::Action1337::skipFrames(int32 skipCount) {
+void Scene1337::Action1337::waitFrames(int32 skipCount) {
+	warning("STUBBED: waitFrames()");
+/*
 	uint32 firstFrameNumber = g_globals->_events.getFrameNumber();
 	uint32 tmpFrameNumber = firstFrameNumber;
 
 	while (tmpFrameNumber < firstFrameNumber + skipCount)
 		tmpFrameNumber = g_globals->_events.getFrameNumber();
-
+*/
 	warning("_eventManager.waitEvent(-1)");
 }
 
@@ -2358,7 +2360,7 @@ void Scene1337::Action1::signal() {
 
 		R2_GLOBALS._sceneObjects->draw();
 
-		skipFrames(60);
+		waitFrames(60);
 		scene->actionDisplay(1331, 9, 159, 10, 1, 200, 0, 7, 0, 154, 154);
 
 		scene->_arrunkObj1337[2]._arr2[1]._field34 = 2;
@@ -2428,7 +2430,7 @@ void Scene1337::Action1::signal() {
 
 		R2_GLOBALS._sceneObjects->draw();
 
-		skipFrames(120);
+		waitFrames(120);
 		scene->_arrunkObj1337[2]._arr2[0]._object1.remove();
 		scene->_arrunkObj1337[2]._arr2[1]._object1.remove();
 		scene->_arrunkObj1337[2]._arr2[2]._object1.remove();
@@ -2566,7 +2568,7 @@ void Scene1337::Action1::signal() {
 
 		R2_GLOBALS._sceneObjects->draw();
 
-		skipFrames(60);
+		waitFrames(60);
 		scene->actionDisplay(1331, 11, 159, 10, 1, 200, 0, 7, 0, 154, 154);
 		scene->actionDisplay(1331, 12, 159, 10, 1, 200, 0, 7, 0, 154, 154);
 
@@ -2597,7 +2599,7 @@ void Scene1337::Action1::signal() {
 
 		R2_GLOBALS._sceneObjects->draw();
 
-		skipFrames(60);
+		waitFrames(60);
 		scene->actionDisplay(1331, 13, 159, 10, 1, 200, 0, 7, 0, 154, 154);
 
 		scene->_arrunkObj1337[2]._arr2[1]._field34 = scene->_arrunkObj1337[2]._arr1[3]._field34;
@@ -2644,7 +2646,7 @@ void Scene1337::Action1::signal() {
 
 		R2_GLOBALS._sceneObjects->draw();
 
-		skipFrames(60);
+		waitFrames(60);
 		scene->actionDisplay(1331, 14, 159, 10, 1, 200, 0, 7, 0, 154, 154);
 
 		scene->_arrunkObj1337[2]._arr3[0]._object1.postInit();
@@ -2670,7 +2672,7 @@ void Scene1337::Action1::signal() {
 
 		R2_GLOBALS._sceneObjects->draw();
 
-		skipFrames(60);
+		waitFrames(60);
 		scene->actionDisplay(1331, 15, 159, 10, 1, 200, 0, 7, 0, 154, 154);
 
 		int tmpVal = 15;
@@ -2704,7 +2706,7 @@ void Scene1337::Action1::signal() {
 
 		R2_GLOBALS._sceneObjects->draw();
 
-		skipFrames(240);
+		waitFrames(240);
 
 		scene->_arrObject1[0].remove();
 		scene->_arrObject1[1].remove();
@@ -2793,7 +2795,7 @@ void Scene1337::Action1::signal() {
 
 		R2_GLOBALS._sceneObjects->draw();
 
-		skipFrames(240);
+		waitFrames(240);
 		scene->actionDisplay(1331, 17, 159, 10, 1, 200, 0, 7, 0, 154, 154);
 
 		tmpVal = 72;
@@ -2821,7 +2823,7 @@ void Scene1337::Action1::signal() {
 
 		R2_GLOBALS._sceneObjects->draw();
 
-		skipFrames(240);
+		waitFrames(240);
 
 		scene->_arrObject1[0].remove();
 		scene->_arrObject1[1].remove();
@@ -2937,7 +2939,7 @@ void Scene1337::Action1::signal() {
 
 		R2_GLOBALS._sceneObjects->draw();
 
-		skipFrames(240);
+		waitFrames(240);
 
 		scene->_arrObject1[0].remove();
 		scene->_arrObject1[1].remove();
@@ -5537,11 +5539,11 @@ void Scene1337::suggestInstructions() {
 	} else {
 		if (R2_GLOBALS._v57709 == 0)
 			subD18F5();
-		subCB59B();
+		displayInstructions();
 	}
 }
 
-void Scene1337::subCB59B() {
+void Scene1337::displayInstructions() {
 	_item1.setAction(&_action1);
 }
 
@@ -5600,6 +5602,7 @@ void Scene1337::subCCF26() {
 	_item1.setAction(&_action3);
 }
 void Scene1337::subCD193() {
+	// Display menu with "Auto Play", "New Game", "Quit" and "Continue"
 	warning("STUBBED: subCD193()");
 }
 
@@ -6825,7 +6828,8 @@ void Scene1337::subD183F(int arg1, int arg2) {
 	}
 }
 
-void Scene1337::subD18B5(int resNum, int rlbNum, int arg3) {
+void Scene1337::subD18B5(int resNum, int rlbNum, int frameNum) {
+	// Change the mouse cursor and set it to the desired frame (if different than 0)
 	warning("STUBBED lvl3 Scene1337::subD18B5()");
 }
 
