@@ -39,6 +39,80 @@
 
 namespace Buried {
 
+enum {
+	CATAPULT_TIMEOUT_VALUE = 6000
+};
+
+class ExplodingWallSafeDistance : public SceneBase {
+public:
+	ExplodingWallSafeDistance(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int timerCallback(Window *viewWindow);
+
+private:
+	bool _timerStarted;
+	uint32 _startTime;
+	bool _walkthrough;
+};
+
+ExplodingWallSafeDistance::ExplodingWallSafeDistance(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_timerStarted = false;
+
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().cgMWCatapultData == 0) {
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().cgMWCatapultData = g_system->getMillis();
+		_vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 13), 127, false, true);
+	}
+
+	_walkthrough = ((SceneViewWindow *)viewWindow)->getGlobalFlags().generalWalkthroughMode == 1;
+}
+
+int ExplodingWallSafeDistance::timerCallback(Window *viewWindow) {
+	uint32 timer = ((SceneViewWindow *)viewWindow)->getGlobalFlags().cgMWCatapultData;
+	if (_walkthrough || (timer + CATAPULT_TIMEOUT_VALUE < g_system->getMillis())) {
+		// Play the explosion movie
+		((SceneViewWindow *)viewWindow)->playSynchronousAnimation(2);
+
+		// Change the background bitmap
+		_staticData.navFrameIndex = 139;
+		viewWindow->invalidateWindow(false);
+
+		// Reset the safety flag
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().cgWallExploded = 1;
+
+		// Move to our depth 1 counterpart
+		Location newLocation = _staticData.location;
+		newLocation.depth = 1;
+		((SceneViewWindow *)viewWindow)->jumpToScene(newLocation);
+	}
+
+	return SC_TRUE;
+}
+
+class ExplodingWallDeath : public SceneBase {
+public:
+	ExplodingWallDeath(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int timerCallback(Window *viewWindow);
+};
+
+ExplodingWallDeath::ExplodingWallDeath(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+}
+
+int ExplodingWallDeath::timerCallback(Window *viewWindow) {
+	// clone2727 asks why this is a timer callback
+
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().cgWallExploded == 0) {
+		// Play the explosion movie
+		((SceneViewWindow *)viewWindow)->playSynchronousAnimation(3);
+
+		// Notify the player of his gruesome death
+		((SceneViewWindow *)viewWindow)->showDeathScene(2);
+		return SC_DEATH;
+	}
+
+	return SC_TRUE;
+}
+
 class KeepInitialWallClimb : public SceneBase {
 public:
 	KeepInitialWallClimb(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
@@ -195,6 +269,10 @@ SceneBase *SceneViewWindow::constructCastleSceneObject(Window *viewWindow, const
 		return new BasicDoor(_vm, viewWindow, sceneStaticData, priorLocation, 81, 25, 360, 189, 1, 4, 2, 1, 1, 1, 2, 11, 413, 25);
 	case 10:
 		return new BasicDoor(_vm, viewWindow, sceneStaticData, priorLocation, 24, 5, 415, 189, 1, 5, 0, 2, 1, 1, 2, 11, 72, 22);
+	case 12:
+		return new ExplodingWallSafeDistance(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 13:
+		return new ExplodingWallDeath(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 14:
 		return new KeepInitialWallClimb(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 15:
