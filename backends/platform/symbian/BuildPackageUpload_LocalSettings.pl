@@ -61,6 +61,7 @@
 		'flac'		=> 'libflacdec.lib',
 		'freetype2'		=> 'freetype.lib',
 		'faad'		=> 'libFAAD2.lib',
+		'mpeg2'	=>  'libmpeg2.lib'
 	);
 		# 'mpeg2'	=>  'libmpeg2.lib'
 
