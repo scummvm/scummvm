@@ -723,10 +723,21 @@ void GfxTinyGL::drawSprite(const Sprite *sprite) {
 	tglPushMatrix();
 	tglTranslatef(sprite->_pos.x(), sprite->_pos.y(), sprite->_pos.z());
 
-	if (g_grim->getGameType() == GType_GRIM) {
-		TGLfloat modelview[16];
-		tglGetFloatv(TGL_MODELVIEW_MATRIX, modelview);
+	TGLfloat modelview[16];
+	tglGetFloatv(TGL_MODELVIEW_MATRIX, modelview);
 
+	if (g_grim->getGameType() == GType_MONKEY4) {
+		const Math::Quaternion quat =
+			_currentActor->isInOverworld()
+			? Math::Quaternion::fromEuler(0, 0, _currentActor->getYaw())
+			: Math::Quaternion::fromEuler(0, 0, _currentActor->getRoll());
+		Math::Matrix4 act = quat.toMatrix();
+		act.transpose();
+		act(3,0) = modelview[12];
+		act(3,1) = modelview[13];
+		act(3,2) = modelview[14];
+		tglLoadMatrixf(act.getData());
+	} else {
 		// We want screen-aligned sprites so reset the rotation part of the matrix.
 		for (int i = 0; i < 3; i++) {
 			for (int j = 0; j < 3; j++) {
@@ -737,7 +748,7 @@ void GfxTinyGL::drawSprite(const Sprite *sprite) {
 				}
 			}
 		}
-	tglLoadMatrixf(modelview);
+		tglLoadMatrixf(modelview);
 	}
 
 	tglDisable(TGL_LIGHTING);
