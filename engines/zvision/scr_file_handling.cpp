@@ -151,13 +151,14 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 	// Loop until we find the closing brace
 	Common::String line = stream.readLine();
 	trimCommentsAndWhiteSpace(&line);
+	line.toLowercase();
 
 	// TODO: Re-order the if-then statements in order of highest occurrence
 	while (!stream.eos() && !line.contains('}')) {
 		if (line.empty()) {
 			line = stream.readLine();
 			trimCommentsAndWhiteSpace(&line);
-
+			line.toLowercase();
 			continue;
 		}
 
@@ -291,6 +292,7 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 
 		line = stream.readLine();
 		trimCommentsAndWhiteSpace(&line);
+		line.toLowercase();
 	}
 
 	return;
