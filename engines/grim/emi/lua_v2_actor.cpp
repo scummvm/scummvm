@@ -140,6 +140,22 @@ void Lua_V2::GetActorWalkRate() {
 	lua_pushnumber(actor->getWalkRate() * 0.3048780560493469);
 }
 
+void Lua_V2::SetActorTurnRate() {
+	lua_Object actorObj = lua_getparam(1);
+	lua_Object rateObj = lua_getparam(2);
+
+	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R'))
+		return;
+	if (!lua_isnumber(rateObj))
+		return;
+
+	Actor *actor = getactor(actorObj);
+	float rate = lua_getnumber(rateObj); // FIXME verify negate values of rate
+
+	// special handling of value 1 only used for voodoo chair
+	actor->setTurnRate((rate == 1) ? 100 : rate);
+}
+
 void Lua_V2::LockChoreSet() {
 	lua_Object choreObj = lua_getparam(1);
 
