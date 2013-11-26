@@ -129,7 +129,7 @@ bool SoundManager::setAmbientSound(const Common::String &fileName, bool fade, by
 		}
 
 		// Load the new ambient
-		if (_soundData[kAmbientIndexBase + _lastAmbient]->load(fileName)) {
+		if (_soundData[kAmbientIndexBase + newAmbientTrack]->load(fileName)) {
 			// Set the parameters of the new ambient
 			_soundData[kAmbientIndexBase + newAmbientTrack]->_volume = 0;
 			_soundData[kAmbientIndexBase + newAmbientTrack]->_loop = true;

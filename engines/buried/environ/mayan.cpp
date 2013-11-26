@@ -96,9 +96,7 @@ bool SceneViewWindow::initializeMayanTimeZoneAndEnvironment(Window *viewWindow, 
 }
 
 bool SceneViewWindow::startMayanAmbient(int oldTimeZone, int oldEnvironment, int environment, bool fade) {
-	// TODO: Fix sound fading
-	fade = false;
-	bool checkFade = false;
+	bool checkFade = true;
 
 	if (environment == 3) {
 		if (oldEnvironment == 2)

@@ -69,8 +69,7 @@ bool SceneViewWindow::initializeAILabTimeZoneAndEnvironment(Window *viewWindow, 
 }
 
 bool SceneViewWindow::startAILabAmbient(int oldTimeZone, int oldEnvironment, int environment, bool fade) {
-	// TODO: Fix sound fading
-	_vm->_sound->setAmbientSound(_vm->getFilePath(6, environment, SF_AMBIENT), false /* fade */, 64);
+	_vm->_sound->setAmbientSound(_vm->getFilePath(6, environment, SF_AMBIENT), fade, 64);
 	return true;
 }
 

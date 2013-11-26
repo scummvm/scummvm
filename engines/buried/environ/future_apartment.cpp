@@ -255,7 +255,7 @@ int EnvironDoorExitSound::postExitRoom(Window *viewWindow, const Location &newLo
 }
 
 bool SceneViewWindow::startFutureApartmentAmbient(int oldTimeZone, int oldEnvironment, int environment, bool fade) {
-	_vm->_sound->setAmbientSound(_vm->getFilePath(4, environment, SF_AMBIENT));
+	_vm->_sound->setAmbientSound(_vm->getFilePath(4, environment, SF_AMBIENT), fade, 64);
 	return true;
 }
 

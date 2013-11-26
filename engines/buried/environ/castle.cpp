@@ -298,8 +298,7 @@ bool SceneViewWindow::startCastleAmbient(int oldTimeZone, int oldEnvironment, in
 	if (_vm->isDemo())
 		return false;
 
-	// TODO: Fix sound fading
-	_vm->_sound->setAmbientSound(_vm->getFilePath(1, environment, SF_AMBIENT), false /* fade */, 64);
+	_vm->_sound->setAmbientSound(_vm->getFilePath(1, environment, SF_AMBIENT), fade, 64);
 	return true;
 }
 
