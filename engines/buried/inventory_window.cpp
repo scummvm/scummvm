@@ -673,11 +673,12 @@ void InventoryWindow::onMouseMove(const Common::Point &point, uint flags) {
 				if (_vm->isDemo())
 					_draggingItemSpriteData.image = _dragFrames->getFrameCopy(staticItemData.firstDragID);
 				else
-					_draggingItemSpriteData.image = _vm->_gfx->getBitmap(IDB_DRAG_BITMAP_BASE + staticItemData.firstDragID - 1);
+					_draggingItemSpriteData.image = _vm->_gfx->getBitmap(IDB_DRAG_BITMAP_BASE + staticItemData.firstDragID + newIcon - 1);
 				_draggingItemSpriteData.xPos = 0;
 				_draggingItemSpriteData.yPos = 0;
 				_draggingItemSpriteData.width = _draggingItemSpriteData.image->w;
 				_draggingItemSpriteData.height = _draggingItemSpriteData.image->h;
+				_draggingIconIndex = newIcon;
 
 				if (_vm->isTrueColor()) {
 					_draggingItemSpriteData.redTrans = 255;
