@@ -69,6 +69,7 @@ namespace Video {
 #define ID_ISFT MKTAG('I','S','F','T')
 #define ID_DISP MKTAG('D','I','S','P')
 #define ID_PRMI MKTAG('P','R','M','I')
+#define ID_STRN MKTAG('s','t','r','n')
 
 // Codec tags
 #define ID_RLE  MKTAG('R','L','E',' ')
@@ -155,6 +156,7 @@ bool AVIDecoder::parseNextChunk() {
 	case ID_JUNK: // Alignment bytes, should be ignored
 	case ID_ISFT: // Metadata, safe to ignore
 	case ID_DISP: // Metadata, should be safe to ignore
+	case ID_STRN: // Metadata, safe to ignore
 		skipChunk(size);
 		break;
 	case ID_IDX1:
