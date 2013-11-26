@@ -141,9 +141,6 @@ void EMICostume::load(Common::SeekableReadStream *data) {
 	_components = new Component *[_numComponents];
 	for (int i = 0; i < _numComponents; ++i) {
 		_components[i] = components[i];
-		if (!_components[i])
-			continue;
-
 	}
 }
 
@@ -238,17 +235,6 @@ Material *EMICostume::findSharedMaterial(const Common::String &name) {
 	Material *mat = g_resourceloader->loadMaterial(name.c_str(), NULL);
 	_materials.push_back(mat);
 	return mat;
-}
-
-
-void EMICostume::saveState(SaveGame *state) const {
-	// TODO
-	return;
-}
-
-bool EMICostume::restoreState(SaveGame *state) {
-	// TODO
-	return true;
 }
 
 } // end of namespace Grim
