@@ -110,6 +110,7 @@ void AVIDecoder::initCommon() {
 	_decodedHeader = false;
 	_foundMovieList = false;
 	_movieListStart = 0;
+	_movieListEnd = 0;
 	_fileStream = 0;
 	memset(&_header, 0, sizeof(_header));
 }
@@ -186,6 +187,7 @@ void AVIDecoder::handleList(uint32 listSize) {
 		// We found the movie block
 		_foundMovieList = true;
 		_movieListStart = curPos;
+		_movieListEnd = _movieListStart + listSize + (listSize & 1);
 		_fileStream->skip(listSize);
 		return;
 	case ID_HDRL: // Header List
@@ -346,17 +348,27 @@ void AVIDecoder::close() {
 	_decodedHeader = false;
 	_foundMovieList = false;
 	_movieListStart = 0;
+	_movieListEnd = 0;
 
 	_indexEntries.clear();
 	memset(&_header, 0, sizeof(_header));
 }
 
 void AVIDecoder::readNextPacket() {
+	if ((uint32)_fileStream->pos() >= _movieListEnd) {
+		// Ugh, reached the end premature.
+		forceVideoEnd();
+		return;
+	}
+
 	uint32 nextTag = _fileStream->readUint32BE();
 	uint32 size = _fileStream->readUint32LE();
 
-	if (_fileStream->eos())
+	if (_fileStream->eos()) {
+		// Also premature end.
+		forceVideoEnd();
 		return;
+	}
 
 	if (nextTag == ID_LIST) {
 		// A list of audio/video chunks
@@ -656,6 +668,16 @@ void AVIDecoder::readOldIndex(uint32 size) {
 	}
 }
 
+void AVIDecoder::forceVideoEnd() {
+	// Horrible AVI video has a premature end
+	// Force the frame to be the last frame
+	debug(0, "Forcing end of AVI video");
+
+	for (TrackListIterator it = getTrackListBegin(); it != getTrackListEnd(); it++)
+		if ((*it)->getTrackType() == Track::kTrackTypeVideo)
+			((AVIVideoTrack *)*it)->forceTrackEnd();
+}
+
 AVIDecoder::AVIVideoTrack::AVIVideoTrack(int frameCount, const AVIStreamHeader &streamHeader, const BitmapInfoHeader &bitmapInfoHeader, byte *initialPalette)
 		: _frameCount(frameCount), _vidsHeader(streamHeader), _bmInfo(bitmapInfoHeader), _initialPalette(initialPalette) {
 	_videoCodec = createCodec();
@@ -756,6 +778,10 @@ Codec *AVIDecoder::AVIVideoTrack::createCodec() {
 	}
 
 	return 0;
+}
+
+void AVIDecoder::AVIVideoTrack::forceTrackEnd() {
+	_curFrame = _frameCount - 1;
 }
 
 AVIDecoder::AVIAudioTrack::AVIAudioTrack(const AVIStreamHeader &streamHeader, const PCMWaveFormat &waveFormat, Audio::Mixer::SoundType soundType)
