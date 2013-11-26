@@ -54,7 +54,7 @@ FrameWindow::FrameWindow(BuriedEngine *vm) : Window(vm, 0) {
 	_mainChildWindow = 0;
 	_controlDown = false;
 	_cacheFrames = false;
-	_cycleDefault = false;
+	_cycleDefault = true;
 	_transitionSpeed = 2;
 	_gameInProgress = false;
 	_atMainMenu = true;

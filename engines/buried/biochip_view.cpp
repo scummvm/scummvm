@@ -428,7 +428,7 @@ void InterfaceBioChipViewWindow::onPaint() {
 	Common::Rect absoluteRect = getAbsoluteRect();
 	_vm->_gfx->blit(_background, absoluteRect.left, absoluteRect.top);
 
-	if (((SceneViewWindow *)_parent)->getCyclingStatus())
+	if (((SceneViewWindow *)getParent()->getParent())->getCyclingStatus())
 		_vm->_gfx->blit(_cycleCheck, absoluteRect.left + 13, absoluteRect.top + 144);
 
 	if (_caret) {
