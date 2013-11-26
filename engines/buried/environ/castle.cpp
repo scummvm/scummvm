@@ -208,6 +208,56 @@ int KeepFinalWallClimb::timerCallback(Window *viewWindow) {
 	return SC_TRUE;
 }
 
+class KingsChamberGuardEncounter : public SceneBase {
+public:
+	KingsChamberGuardEncounter(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
+	int timerCallback(Window *viewWindow);
+
+private:
+	uint32 _startingTime;
+	bool _finished;
+};
+
+KingsChamberGuardEncounter::KingsChamberGuardEncounter(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_startingTime = 0;
+}
+
+int KingsChamberGuardEncounter::postEnterRoom(Window *viewWindow, const Location &priorLocation) {
+	// Start the audio cue playing and store the starting time
+	_vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 14), 127, false, true);
+	_startingTime = g_system->getMillis();
+	return SC_TRUE;
+}
+
+int KingsChamberGuardEncounter::timerCallback(Window *viewWindow) {
+	SceneBase::timerCallback(viewWindow);
+
+	if (_startingTime + 16000 < g_system->getMillis()) {
+		// Check the cloak biochip status
+		if (((SceneViewWindow *)viewWindow)->getGlobalFlags().bcCloakingEnabled == 1) {
+			((SceneViewWindow *)viewWindow)->playSynchronousAnimation(1);
+
+			// Jump to next scene depth
+			DestinationScene newDest;
+			newDest.destinationScene = _staticData.location;
+			newDest.destinationScene.depth = 0;
+			newDest.transitionType = TRANSITION_NONE;
+			newDest.transitionData = -1;
+			newDest.transitionStartFrame = -1;
+			newDest.transitionLength = -1;
+			((SceneViewWindow *)viewWindow)->jumpToScene(newDest.destinationScene);
+		} else {
+			((SceneViewWindow *)viewWindow)->playSynchronousAnimation(0);
+			((SceneViewWindow *)viewWindow)->showDeathScene(4);
+			return SC_DEATH;
+		}
+	}
+
+	return SC_TRUE;
+}
+
 bool SceneViewWindow::initializeCastleTimeZoneAndEnvironment(Window *viewWindow, int environment) {
 	// If we passed -1, initialize time zone, otherwise the environment
 	if (environment == -1) {
@@ -323,6 +373,8 @@ SceneBase *SceneViewWindow::constructCastleSceneObject(Window *viewWindow, const
 		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 175, 64, 237, 126, kItemBurnedLetter, 84, offsetof(GlobalFlags, cgBurnedLetterPresent));
 	case 47:
 		return new ClickPlayVideo(_vm, viewWindow, sceneStaticData, priorLocation, 2, kCursorFinger, 0, 75, 258, 123);
+	case 48:
+		return new KingsChamberGuardEncounter(_vm, viewWindow, sceneStaticData, priorLocation);
 	default:
 		warning("TODO: Castle scene object %d", sceneStaticData.classID);
 		break;
