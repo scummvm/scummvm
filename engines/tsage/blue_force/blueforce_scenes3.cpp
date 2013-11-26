@@ -4651,10 +4651,10 @@ bool Scene370::Green::startAction(CursorType action, Event &event) {
 
 	switch (action) {
 	case CURSOR_LOOK:
-		SceneItem::display2(370, (_v2 < 3) ? 10 : 0);
+		SceneItem::display2(370, (_talkCount < 3) ? 10 : 0);
 		return true;
 	case CURSOR_USE:
-		if (_v2 != 3)
+		if (_talkCount != 3)
 			SceneItem::display2(370, 1);
 		else if (BF_INVENTORY.getObjectScene(INV_HANDCUFFS) == 1)
 			SceneItem::display2(370, 26);
@@ -4670,14 +4670,14 @@ bool Scene370::Green::startAction(CursorType action, Event &event) {
 		return true;
 	case CURSOR_TALK:
 		BF_GLOBALS._player.disableControl();
-		switch (_v2) {
+		switch (_talkCount) {
 		case 0:
-			++_v2;
+			++_talkCount;
 			scene->_sceneMode = 3706;
 			scene->setAction(&scene->_sequenceManager, scene, 3706, NULL);
 			break;
 		case 1:
-			++_v2;
+			++_talkCount;
 			scene->_sceneMode = 3707;
 
 			scene->_object5.postInit();
@@ -4689,7 +4689,7 @@ bool Scene370::Green::startAction(CursorType action, Event &event) {
 			scene->setAction(&scene->_sequenceManager, scene, 3707, &scene->_harrison, &scene->_object5, NULL);
 			break;
 		case 2:
-			++_v2;
+			++_talkCount;
 			scene->_sceneMode = 3708;
 			scene->setAction(&scene->_sequenceManager, scene, 3708, this, &scene->_laura, &scene->_harrison,
 				&scene->_object5, &scene->_greensGun, NULL);
@@ -4715,7 +4715,7 @@ bool Scene370::Green::startAction(CursorType action, Event &event) {
 		}
 		return true;
 	case INV_HANDCUFFS:
-		if (_v2 != 3)
+		if (_talkCount != 3)
 			SceneItem::display2(370, 2);
 		else {
 			T2_GLOBALS._uiElements.addScore(50);
@@ -4752,7 +4752,7 @@ bool Scene370::Harrison::startAction(CursorType action, Event &event) {
 		SceneItem::display2(370, 8);
 		return true;
 	case CURSOR_TALK:
-		if (scene->_green._v2 != 3) {
+		if (scene->_green._talkCount != 3) {
 			scene->_sceneMode = 3;
 			scene->_stripManager.start(3714, scene);
 		} else if ((BF_INVENTORY.getObjectScene(INV_GREENS_KNIFE) == 1) ||

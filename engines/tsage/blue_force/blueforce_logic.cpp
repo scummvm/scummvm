@@ -648,8 +648,6 @@ void FocusObject::postInit(SceneObjectList *OwnerList) {
 	_lookLineNum = 43;
 	_talkLineNum = 44;
 	_useLineNum = -1;
-	_v90 = 0;
-	_v92 = 1;
 
 	SceneExt *scene = (SceneExt *)BF_GLOBALS._sceneManager._scene;
 	scene->_focusObject = this;
@@ -658,8 +656,11 @@ void FocusObject::postInit(SceneObjectList *OwnerList) {
 
 void FocusObject::synchronize(Serializer &s) {
 	NamedObject::synchronize(s);
-	s.syncAsSint16LE(_v90);
-	s.syncAsSint16LE(_v92);
+	if (s.getVersion() < 12) {
+		int useless = 0;
+		s.syncAsSint16LE(useless);
+		s.syncAsSint16LE(useless);
+	}
 }
 
 void FocusObject::remove() {
@@ -765,8 +766,6 @@ void SceneExt::dispatch() {
 void SceneExt::loadScene(int sceneNum) {
 	Scene::loadScene(sceneNum);
 
-	_v51C34.top = 0;
-	_v51C34.bottom = 300;
 	BF_GLOBALS._sceneHandler->_delayTicks = 1;
 }
 

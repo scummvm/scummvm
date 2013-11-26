@@ -148,7 +148,7 @@ void Scene710::postInit(SceneObjectList *OwnerList) {
 
 	BF_GLOBALS._sound1.fadeSound(14);
 	_soundExt1.fadeSound(48);
-	_v51C34.set(40, 0, 280, 240);
+
 	BF_GLOBALS._player.postInit();
 	BF_GLOBALS._player.hide();
 	BF_GLOBALS._player._moveDiff = Common::Point(4, 2);

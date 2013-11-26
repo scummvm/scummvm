@@ -1545,7 +1545,11 @@ void ScenePalette::synchronize(Serializer &s) {
 	s.syncAsSint32LE(_colors.foreground);
 	s.syncAsSint32LE(_colors.background);
 
-	s.syncAsSint32LE(_field412);
+	if (s.getVersion() < 12) {
+		int useless = 0;
+		s.syncAsSint16LE(useless);
+	}
+
 	s.syncAsByte(_redColor);
 	s.syncAsByte(_greenColor);
 	s.syncAsByte(_blueColor);
