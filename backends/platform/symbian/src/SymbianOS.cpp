@@ -178,31 +178,6 @@ RFs& OSystem_SDL_Symbian::FsSession() {
 	return *_RFs;
 }
 
-void OSystem_SDL_Symbian::initSize(uint w, uint h, const Graphics::PixelFormat *format ) {
-	if(w != 640 && w != 320) {
-		if(w > 320) {
-			w = 640;
-		}
-		else {
-			w = 320;
-		}			
-	}
-
-	if(h != 480 && h != 400 && h != 240 && h != 200) {
-		if(h > 400) {
-			h = 480;
-		} else if(h > 240){
-			h = 400;
-		} else if(h > 200) {
-			h = 240;
-		} else {
-			h = 200;
-		}
-	}
-
-	ModularBackend::initSize(w, h, format);
-}
-
 // Symbian bsearch implementation is flawed
 void* scumm_bsearch(const void *key, const void *base, size_t nmemb, size_t size, int (*compar)(const void *, const void *)) {
 	// Perform binary search

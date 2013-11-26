@@ -5,7 +5,7 @@
 		scumm agos sky queen gob groovie saga drascula
 		kyra lure agi touche parallaction cine
 		cruise made tinsel tucker sword1 sword2 draci sci teenagent mohawk hugo toon tsage cge
-		composer toltecs tony wintermute pegasus hopkins avalanche dreamweb fullpipe mortevielle neverhood zvision
+		composer toltecs tony wintermute pegasus hopkins avalanche dreamweb fullpipe mortevielle neverhood zvision lastexpress
 	);
 
 	@WorkingEngines_1st = qw(
@@ -13,13 +13,17 @@
 		drascula touche parallaction cine 
 		cruise made tucker 
 		composer toltecs tony pegasus
+		avalanche fullpipe
+		neverhood lastexpress
 	);
 
 	@WorkingEngines_2nd = qw(
 		agos sky gob kyra 
 		lure agi tinsel sword1 
 		sword2 draci sci teenagent 
-		hugo toon tsage cge hopkins 		
+		hugo toon tsage cge hopkins 
+		dreamweb mortevielle
+		zvision
 	);
 
 	@TestingEngines = qw(

@@ -39,7 +39,7 @@ public:
 	virtual bool setGraphicsMode(const char *name);
 	virtual Common::String getDefaultConfigFileName();
 	virtual void setupIcon();
-	virtual void initSize(uint w, uint h, const Graphics::PixelFormat *format );
+
 	/**
 	 * Returns reference to File session
 	 */
