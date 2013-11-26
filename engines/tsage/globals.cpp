@@ -241,19 +241,19 @@ namespace BlueForce {
 BlueForceGlobals::BlueForceGlobals(): TsAGE2Globals() {
 	_hiddenDoorStatus = 0;
 	_nico910State = 0;
-	_v4CEE4 = 0;
-	_v4CEE6 = 0;
-	_v4CEE8 = 0;
+	_stuart910State = 0;
+	_nico910Talk = 0;
+	_stuart910Talk = 0;
 	_deziTopic = 0;
 	_deathReason = 0;
 	_driveFromScene = 300;
 	_driveToScene = 0;
 	_subFlagBitArr1 = 0;
 	_subFlagBitArr2 = 0;
-	_v50CC2 = 0;
+	_scene410HarrisonTalkFl = false;
 	_scene410Action1Count = 0;
 	_scene410TalkCount = 0;
-	_scene410HarrisonMovedFl = 0;
+	_scene410HarrisonMovedFl = false;
 	_bookmark = bNone;
 	_mapLocationId = 1;
 	_clip1Bullets = 8;
@@ -296,9 +296,9 @@ void BlueForceGlobals::synchronize(Serializer &s) {
 		s.syncAsByte(_breakerBoxStatusArr[i]);
 	s.syncAsSint16LE(_hiddenDoorStatus);
 	s.syncAsSint16LE(_nico910State);
-	s.syncAsSint16LE(_v4CEE4);
-	s.syncAsSint16LE(_v4CEE6);
-	s.syncAsSint16LE(_v4CEE8);
+	s.syncAsSint16LE(_stuart910State);
+	s.syncAsSint16LE(_nico910Talk);
+	s.syncAsSint16LE(_stuart910Talk);
 	s.syncAsSint16LE(_deziTopic);
 	s.syncAsSint16LE(_deathReason);
 	s.syncAsSint16LE(_driveFromScene);
@@ -312,7 +312,7 @@ void BlueForceGlobals::synchronize(Serializer &s) {
 	}
 	s.syncAsSint16LE(_subFlagBitArr1);
 	s.syncAsSint16LE(_subFlagBitArr2);
-	s.syncAsSint16LE(_v50CC2);
+	s.syncAsSint16LE(_scene410HarrisonTalkFl);
 	s.syncAsSint16LE(_scene410Action1Count);
 	s.syncAsSint16LE(_scene410TalkCount);
 	s.syncAsSint16LE(_scene410HarrisonMovedFl);
@@ -372,17 +372,17 @@ void BlueForceGlobals::reset() {
 	_breakerBoxStatusArr[17] = 0;
 	_hiddenDoorStatus = 0;
 	_nico910State = 0;
-	_v4CEE4 = 0;
-	_v4CEE6 = 0;
-	_v4CEE8 = 0;
+	_stuart910State = 0;
+	_nico910Talk = 0;
+	_stuart910Talk = 0;
 	_deziTopic = 0;
 	_deathReason = 0;
 	_subFlagBitArr1 = 0;
 	_subFlagBitArr2 = 0;
-	_v50CC2 = 0;
+	_scene410HarrisonTalkFl = false;
 	_scene410Action1Count = 0;
 	_scene410TalkCount = 0;
-	_scene410HarrisonMovedFl = 0;
+	_scene410HarrisonMovedFl = false;
 	_clip1Bullets = 8;
 	_clip2Bullets = 8;
 }
