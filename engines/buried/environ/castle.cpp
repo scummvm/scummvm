@@ -39,6 +39,84 @@
 
 namespace Buried {
 
+class TopOfTowerGuardEncounter : public SceneBase {
+public:
+	TopOfTowerGuardEncounter(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
+	int paint(Window *viewWindow, Graphics::Surface *preBuffer);
+
+private:
+	bool _showGuard;
+};
+
+TopOfTowerGuardEncounter::TopOfTowerGuardEncounter(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_showGuard = _staticData.location.timeZone != priorLocation.timeZone || _staticData.location.environment != priorLocation.environment;
+
+	if (((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->isItemInInventory(kItemBloodyArrow))
+		_staticData.destForward.destinationScene.depth = 1;		
+}
+
+int TopOfTowerGuardEncounter::postEnterRoom(Window *viewWindow, const Location &priorLocation) {
+	if (_showGuard) {
+		((SceneViewWindow *)viewWindow)->playSynchronousAnimation(0);
+		_showGuard = false;
+		viewWindow->invalidateWindow(false);
+	}
+
+	return SC_TRUE;
+}
+
+int TopOfTowerGuardEncounter::paint(Window *viewWindow, Graphics::Surface *preBuffer) {
+	if (!_showGuard)
+		return SceneBase::paint(viewWindow, preBuffer);
+
+	const Graphics::Surface *newFrame = ((SceneViewWindow *)viewWindow)->getStillFrame(_staticData.miscFrameIndex);
+
+	if (newFrame) {
+		Common::Rect absoluteRect = viewWindow->getAbsoluteRect();
+		_vm->_gfx->crossBlit(preBuffer, 0, 0, 432, 189, newFrame, 0, 0);
+	}
+
+	return SC_REPAINT;
+}
+
+class TowerStairsGuardEncounter : public SceneBase {
+public:
+	TowerStairsGuardEncounter(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int timerCallback(Window *viewWindow);
+
+private:
+	bool _busy;
+};
+
+TowerStairsGuardEncounter::TowerStairsGuardEncounter(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_busy = false;
+}
+
+int TowerStairsGuardEncounter::timerCallback(Window *viewWindow) {
+	if (_frameCycleCount < 0 || _busy)
+		return SC_FALSE;
+
+	if (_frameCycleCount < _staticData.cycleStartFrame + _staticData.cycleFrameCount - 1) {
+		_frameCycleCount++;
+		viewWindow->invalidateWindow(false);
+	} else {
+		if (((SceneViewWindow *)viewWindow)->getGlobalFlags().bcCloakingEnabled == 0) {
+			((SceneViewWindow *)viewWindow)->playSynchronousAnimation(0);
+			_busy = true;
+			((SceneViewWindow *)viewWindow)->showDeathScene(0);
+			return SC_DEATH;
+		} else {
+			_frameCycleCount = _staticData.cycleStartFrame;
+			_busy = false;
+		}
+	}
+
+	return SC_TRUE;
+}
+
 enum {
 	CATAPULT_TIMEOUT_VALUE = 6000
 };
@@ -306,6 +384,10 @@ SceneBase *SceneViewWindow::constructCastleSceneObject(Window *viewWindow, const
 	// TODO
 
 	switch (sceneStaticData.classID) {
+	case 1:
+		return new TopOfTowerGuardEncounter(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 3:
+		return new TowerStairsGuardEncounter(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 4:
 		return new BasicDoor(_vm, viewWindow, sceneStaticData, priorLocation, 114, 0, 324, 189, 1, 2, 5, 3, 1, 1, 2, 11, 395, 9);
 	case 5:
