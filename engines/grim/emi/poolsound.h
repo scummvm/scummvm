@@ -36,6 +36,8 @@ public:
 
 	void openFile(const Common::String &filename);
 	void play(bool looping);
+	void setVolume(int volume);
+	void setBalance(int balance);
 	void stop();
 	void saveState(SaveGame *state);
 	void restoreState(SaveGame *state);

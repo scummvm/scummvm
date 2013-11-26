@@ -47,6 +47,8 @@ protected:
 	Audio::Mixer::SoundType _soundType;
 	DisposeAfterUse::Flag _disposeAfterPlaying;
 	bool _paused;
+	int _balance;
+	int _volume;
 public:
 	SoundTrack();
 	virtual ~SoundTrack();
@@ -55,6 +57,9 @@ public:
 	virtual bool play();
 	virtual void pause();
 	virtual void stop();
+	void setBalance(int balance);
+	void setVolume(int volume);
+	virtual int getVolume() { return _volume; };
 	Audio::SoundHandle *getHandle() { return _handle; }
 	Common::String getSoundName();
 	void setSoundName(const Common::String &name);
