@@ -1223,8 +1223,8 @@ const char *ScummMetaEngine::getOriginalCopyright() const {
 }
 
 namespace Scumm {
-	extern bool getSavegameName(Common::InSaveFile *in, Common::String &desc, int heversion);
-}
+bool getSavegameName(Common::InSaveFile *in, Common::String &desc, int heversion);
+} // End of namespace Scumm
 
 int ScummMetaEngine::getMaximumSaveSlot() const { return 99; }
 
