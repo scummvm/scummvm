@@ -23,6 +23,7 @@
  *
  */
 
+#include "buried/biochip_right.h"
 #include "buried/buried.h"
 #include "buried/frame_window.h"
 #include "buried/gameui.h"
@@ -286,6 +287,89 @@ int KeepFinalWallClimb::timerCallback(Window *viewWindow) {
 	return SC_TRUE;
 }
 
+class StorageRoomDoor : public SceneBase {
+public:
+	StorageRoomDoor(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+			int left = -1, int top = -1, int right = -1, int bottom = -1, int timeZone = -1, int environment = -1, int node = -1,
+			int facing = -1, int orientation = -1, int depth = -1, int flagOffset = 0, int data = -1, int startFrame = -1,
+			int length = -1, int animDB = -1);
+	int mouseDown(Window *viewWindow, const Common::Point &pointLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	bool _clicked;
+	Common::Rect _clickable;
+	int _flagOffset;
+	DestinationScene _destData;
+	int _agent3VideoID;
+};
+
+StorageRoomDoor::StorageRoomDoor(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+		int left, int top, int right, int bottom, int timeZone, int environment, int node,
+		int facing, int orientation, int depth, int flagOffset, int data, int startFrame,
+		int length, int animDB) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_agent3VideoID = animDB;
+	_clicked = false;
+	_flagOffset = flagOffset;
+	_clickable = Common::Rect(left, top, right, bottom);
+
+	_destData.destinationScene.timeZone = timeZone;
+	_destData.destinationScene.environment = environment;
+	_destData.destinationScene.node = node;
+	_destData.destinationScene.facing = facing;
+	_destData.destinationScene.orientation = orientation;
+	_destData.destinationScene.depth = depth;
+
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlagByte(flagOffset) != 0) {
+		_destData.transitionType = 2; // constant?
+		_destData.transitionData = data;
+		_destData.transitionStartFrame = startFrame;
+		_destData.transitionLength = length;
+	} else {
+		_destData.transitionType = TRANSITION_VIDEO;
+		_destData.transitionData = _agent3VideoID;
+		_destData.transitionStartFrame = -1;
+		_destData.transitionLength = -1;
+	}
+}
+
+int StorageRoomDoor::mouseDown(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_clickable.contains(pointLocation))
+		_clicked = true;
+
+	return SC_TRUE;
+}
+
+int StorageRoomDoor::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_clicked) {
+		if (_clickable.contains(pointLocation)) {
+			((SceneViewWindow *)viewWindow)->moveToDestination(_destData);
+		} else {
+			_clicked = false;
+		}
+
+		if (((SceneViewWindow *)viewWindow)->getGlobalFlagByte(_flagOffset) == 0) {
+			if (((SceneViewWindow *)viewWindow)->addNumberToGlobalFlagTable(offsetof(GlobalFlags, evcapBaseID), offsetof(GlobalFlags, evcapNumCaptured), 12, CASTLE_EVIDENCE_AGENT3))
+				((SceneViewWindow *)viewWindow)->displayLiveText(_vm->getString(IDS_MBT_EVIDENCE_ACQUIRED));
+			else
+				((SceneViewWindow *)viewWindow)->displayLiveText(_vm->getString(IDS_MBT_EVIDENCE_ALREADY_ACQUIRED));
+
+			((SceneViewWindow *)viewWindow)->setGlobalFlagByte(_flagOffset, 1);
+		}
+	}
+
+	return SC_TRUE;
+}
+
+int StorageRoomDoor::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_clickable.contains(pointLocation))
+		return kCursorFinger;
+
+	return kCursorArrow;
+}
+
 class KingsChamberGuardEncounter : public SceneBase {
 public:
 	KingsChamberGuardEncounter(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
@@ -452,6 +536,8 @@ SceneBase *SceneViewWindow::constructCastleSceneObject(Window *viewWindow, const
 		return new CycleEntryVideoWarning(_vm, viewWindow, sceneStaticData, priorLocation, _vm->isDemo() ? 5 : 7, _vm->isDemo() ? 6 : 8, offsetof(GlobalFlags, cgBaileyTwoWayGuards), IDS_HUMAN_PRESENCE_10METERS);
 	case 37:
 		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 175, 64, 237, 126, kItemBurnedLetter, 84, offsetof(GlobalFlags, cgBurnedLetterPresent));
+	case 39:
+		return new StorageRoomDoor(_vm, viewWindow, sceneStaticData, priorLocation, 38, 0, 386, 189, 1, 9, 5, 2, 1, 1, offsetof(GlobalFlags, cgStorageRoomVisit), 11, 130, 12, 0);
 	case 47:
 		return new ClickPlayVideo(_vm, viewWindow, sceneStaticData, priorLocation, 2, kCursorFinger, 0, 75, 258, 123);
 	case 48:
