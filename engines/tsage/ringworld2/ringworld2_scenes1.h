@@ -214,7 +214,7 @@ class Scene1337 : public SceneExt {
 	class Action1337: public Action {
 	public:
 		void subD18B5(int resNum, int stripNum, int frameNum);
-		void waitFrames(int32 skipCount);
+		void waitFrames(int32 frameCount);
 	};
 
 	class Action1: public Action1337 {

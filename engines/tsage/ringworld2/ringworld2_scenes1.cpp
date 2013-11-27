@@ -2264,16 +2264,18 @@ void Scene1337::Action1337::subD18B5(int resNum, int stripNum, int frameNum) {
 	warning("STUBBED: Action1337::subD18B5()");
 }
 
-void Scene1337::Action1337::waitFrames(int32 skipCount) {
-	warning("STUBBED: waitFrames()");
-/*
+void Scene1337::Action1337::waitFrames(int32 frameCount) {
 	uint32 firstFrameNumber = g_globals->_events.getFrameNumber();
-	uint32 tmpFrameNumber = firstFrameNumber;
+	uint32 curFrame = firstFrameNumber;
+	uint32 destFrame = firstFrameNumber + frameCount;
 
-	while (tmpFrameNumber < firstFrameNumber + skipCount)
-		tmpFrameNumber = g_globals->_events.getFrameNumber();
-*/
-	warning("_eventManager.waitEvent(-1)");
+	while (curFrame < destFrame) {
+		TsAGE::Event event;
+		g_globals->_events.getEvent(event);
+		curFrame = g_globals->_events.getFrameNumber();
+	}
+	
+	// CHECKME: The original is calling _eventManager.waitEvent();
 }
 
 void Scene1337::Action1::signal() {
