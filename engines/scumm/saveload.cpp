@@ -678,72 +678,39 @@ bool getSavegameName(Common::InSaveFile *in, Common::String &desc, int heversion
 	return true;
 }
 
-Graphics::Surface *ScummEngine::loadThumbnailFromSlot(const char *target, int slot) {
-	Common::SeekableReadStream *in;
+bool ScummEngine::querySaveMetaInfos(const char *target, int slot, int heversion, Common::String &desc, Graphics::Surface *&thumbnail, SaveStateMetaInfos *&timeInfos) {
+	if (slot < 0) {
+		return false;
+	}
+
 	SaveGameHeader hdr;
+	const Common::String filename = ScummEngine::makeSavegameName(target, slot, false);
+	Common::ScopedPtr<Common::SeekableReadStream> in(g_system->getSavefileManager()->openForLoading(filename));
 
-	if (slot < 0)
-		return 0;
-
-	Common::String filename = ScummEngine::makeSavegameName(target, slot, false);
-	if (!(in = g_system->getSavefileManager()->openForLoading(filename))) {
-		return 0;
-	}
-
-	// FIXME: HE version?
-	if (!loadAndCheckSaveGameHeader(in, 0, hdr)) {
-		delete in;
-		return 0;
-	}
-
-	if (hdr.ver < VER(52)) {
-		delete in;
-		return 0;
-	}
-
-	Graphics::Surface *thumb = 0;
-	if (Graphics::checkThumbnailHeader(*in)) {
-		thumb = Graphics::loadThumbnail(*in);
-	}
-
-	delete in;
-	return thumb;
-}
-
-bool ScummEngine::loadInfosFromSlot(const char *target, int slot, SaveStateMetaInfos *stuff) {
-	Common::SeekableReadStream *in;
-	SaveGameHeader hdr;
-
-	if (slot < 0)
-		return 0;
-
-	Common::String filename = makeSavegameName(target, slot, false);
-	if (!(in = g_system->getSavefileManager()->openForLoading(filename))) {
+	if (!in) {
 		return false;
 	}
 
-	// FIXME: HE version?
-	if (!loadAndCheckSaveGameHeader(in, 0, hdr)) {
-		delete in;
+	if (!loadAndCheckSaveGameHeader(in.get(), heversion, hdr)) {
 		return false;
 	}
 
-	if (hdr.ver < VER(56)) {
-		delete in;
-		return false;
+	desc = hdr.name;
+
+	if (hdr.ver > VER(52)) {
+		if (Graphics::checkThumbnailHeader(*in)) {
+			thumbnail = Graphics::loadThumbnail(*in);
+		}
+
+		if (hdr.ver > VER(57)) {
+			if (!loadInfos(in.get(), timeInfos)) {
+				return false;
+			}
+		} else {
+			timeInfos = nullptr;
+		}
 	}
 
-	if (!Graphics::skipThumbnail(*in)) {
-		delete in;
-		return false;
-	}
-
-	if (!loadInfos(in, stuff)) {
-		delete in;
-		return false;
-	}
-
-	delete in;
 	return true;
 }
 

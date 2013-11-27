@@ -620,9 +620,7 @@ public:
 
 // thumbnail + info stuff
 public:
-	static Graphics::Surface *loadThumbnailFromSlot(const char *target, int slot);
-
-	static bool loadInfosFromSlot(const char *target, int slot, SaveStateMetaInfos *stuff);
+	static bool querySaveMetaInfos(const char *target, int slot, int heversion, Common::String &desc, Graphics::Surface *&thumbnail, SaveStateMetaInfos *&timeInfos);
 
 protected:
 	void saveInfos(Common::WriteStream* file);
