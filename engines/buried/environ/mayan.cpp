@@ -176,7 +176,7 @@ bool SceneViewWindow::startMayanAmbient(int oldTimeZone, int oldEnvironment, int
 		return _vm->_sound->setSecondaryAmbientSound(_vm->getFilePath(2, environment, 12), checkFade, 128);
 	}
 
-	_vm->_sound->setAmbientSound(_vm->getFilePath(2, environment, SF_AMBIENT), false /* fade */, 64);
+	_vm->_sound->setAmbientSound(_vm->getFilePath(2, environment, SF_AMBIENT), fade, 64);
 	return true;
 }
 
