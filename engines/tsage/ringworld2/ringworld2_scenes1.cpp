@@ -20,6 +20,8 @@
  *
  */
 
+#include "graphics/cursorman.h"
+
 #include "tsage/scenes.h"
 #include "tsage/tsage.h"
 #include "tsage/staticres.h"
@@ -2260,10 +2262,6 @@ void Scene1337::synchronize(Serializer &s) {
 	warning("STUBBED: Scene1337::synchronize()");
 }
 
-void Scene1337::Action1337::subD18B5(int resNum, int stripNum, int frameNum) {
-	warning("STUBBED: Action1337::subD18B5()");
-}
-
 void Scene1337::Action1337::waitFrames(int32 frameCount) {
 	uint32 firstFrameNumber = g_globals->_events.getFrameNumber();
 	uint32 curFrame = firstFrameNumber;
@@ -3542,7 +3540,7 @@ void Scene1337::Action5::signal() {
 		scene->_field3EF0->_object1.remove();
 
 		if (scene->_field3EF0 == &scene->_item6) {
-			subD18B5(5, 1, 4);
+			scene->setCursorData(5, 1, 4);
 			scene->subC4CEC();
 		}
 		scene->_item2._object1.setPosition(scene->_field3EF0->_field36, 0);
@@ -3590,7 +3588,7 @@ void Scene1337::Action6::signal() {
 		scene->setAnimationInfo(scene->_field3EF4);
 		scene->_aSound1.play(59);
 		if (scene->_field3EF0 == &scene->_item6) {
-			subD18B5(5, 1, 4);
+			scene->setCursorData(5, 1, 4);
 			scene->subC4CEC();
 		}
 		scene->subC20F9();
@@ -3618,7 +3616,7 @@ void Scene1337::Action7::signal() {
 		break;
 	case 1:
 		if (scene->_field3EF0 == &scene->_item6) {
-			subD18B5(5, 1, 4);
+			scene->setCursorData(5, 1, 4);
 			scene->subC4CEC();
 		}
 		scene->setAnimationInfo(scene->_field3EF4);
@@ -3659,7 +3657,7 @@ void Scene1337::Action8::signal() {
 		scene->_item2._object1.hide();
 
 		if (scene->_field3EF0 == &scene->_item6) {
-			subD18B5(5, 1, 4);
+			scene->setCursorData(5, 1, 4);
 			scene->subC4CEC();
 		}
 		scene->setAnimationInfo(scene->_field3EF4);
@@ -3699,7 +3697,7 @@ void Scene1337::Action9::signal() {
 		scene->_aSound1.play(57);
 
 		if (scene->_field3EF0 == &scene->_item6) {
-			subD18B5(5, 1, 4);
+			scene->setCursorData(5, 1, 4);
 			scene->subC4CEC();
 		}
 
@@ -3726,7 +3724,7 @@ void Scene1337::Action10::signal() {
 		scene->_field3EF0->_object1.remove();
 
 		if (scene->_field3EF0 == &scene->_item6) {
-			subD18B5(5, 1, 4);
+			scene->setCursorData(5, 1, 4);
 			scene->subC4CEC();
 		}
 
@@ -3894,7 +3892,7 @@ void Scene1337::Action11::signal() {
 
 		if (scene->_field4240 == 2) {
 			scene->_item2._object1.setPosition(scene->_field3EF4->_field36, 0);
-			subD18B5(5, 1, 4);
+			scene->setCursorData(5, 1, 4);
 		} else {
 			scene->_field3EF0->_field34 = 0;
 			scene->_field3EF0->_object1.remove();
@@ -6469,7 +6467,7 @@ void Scene1337::subD02CA() {
 	}
 
 	// That continues the block when R2_GLOBALS._v57810 == 200 and di != 4
-	subD18B5(1332, _item6._object1._strip, _item6._object1._frame);
+	setCursorData(1332, _item6._object1._strip, _item6._object1._frame);
 	R2_GLOBALS._sceneObjects->draw();
 	Event event;
 	bool found = false;
@@ -6490,7 +6488,7 @@ void Scene1337::subD02CA() {
 						_arrunkObj1337[2]._arr1[i]._object1.setPosition(_arrunkObj1337[2]._arr1[i]._field36, 0);
 						_arrunkObj1337[2]._arr1[i]._object1.fixPriority(170);
 						setAnimationInfo(&_arrunkObj1337[2]._arr1[i]);
-						subD18B5(5, 1, 4);
+						setCursorData(5, 1, 4);
 						found = true;
 						_field423E--;
 						_field4244 = 0;
@@ -6830,9 +6828,20 @@ void Scene1337::subD183F(int arg1, int arg2) {
 	}
 }
 
-void Scene1337::subD18B5(int resNum, int rlbNum, int frameNum) {
+void Scene1337::setCursorData(int resNum, int rlbNum, int frameNum) {
 	// Change the mouse cursor and set it to the desired frame (if different than 0)
-	warning("STUBBED lvl3 Scene1337::subD18B5()");
+	if (!frameNum)
+		return;
+
+	uint size;
+	byte *cursor = g_resourceManager->getSubResource(resNum, rlbNum, frameNum, &size);
+	// Decode the cursor
+	GfxSurface s = surfaceFromRes(cursor);
+
+	Graphics::Surface surface = s.lockSurface();
+	const byte *cursorData = (const byte *)surface.getPixels();
+	CursorMan.replaceCursor(cursorData, surface.w, surface.h, s._centroid.x, s._centroid.y, s._transColor);
+	s.unlockSurface();
 }
 
 int Scene1337::subD18F5() {
@@ -6866,7 +6875,7 @@ int Scene1337::subD1940(bool flag) {
 }
 
 void Scene1337::subD195F(int arg1, int arg2) {
-	subD18B5(5, arg1, arg2);
+	setCursorData(5, arg1, arg2);
 }
 
 void Scene1337::subD1975(int arg1, int arg2) {

@@ -213,7 +213,6 @@ class Scene1337 : public SceneExt {
 
 	class Action1337: public Action {
 	public:
-		void subD18B5(int resNum, int stripNum, int frameNum);
 		void waitFrames(int32 frameCount);
 	};
 
@@ -370,7 +369,7 @@ public:
 	void subD0281();
 	void subD02CA();
 	void subD183F(int arg1, int arg2);
-	void subD18B5(int resNum, int rlbNum, int frameNum);
+	void setCursorData(int resNum, int rlbNum, int frameNum);
 	int  subD18F5();
 	int  subD1917();
 	int  subD1940(bool flag);
