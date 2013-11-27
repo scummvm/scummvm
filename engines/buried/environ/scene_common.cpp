@@ -176,6 +176,32 @@ int GenericItemAcquire::specifyCursor(Window *viewWindow, const Common::Point &p
 	return kCursorArrow;
 }
 
+PlaySoundExitingFromScene::PlaySoundExitingFromScene(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+		int soundFileNameID) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_soundFileNameID = soundFileNameID;
+}
+
+int PlaySoundExitingFromScene::postExitRoom(Window *viewWindow, const Location &newLocation) {
+	if (_soundFileNameID >= 0 && _staticData.location.depth != newLocation.depth && _staticData.location.timeZone == newLocation.timeZone)
+		_vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, _soundFileNameID), 128, false, true);
+
+	return SC_TRUE;
+}
+
+PlaySoundExitingFromSceneDeux::PlaySoundExitingFromSceneDeux(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+		int soundFileNameID) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_soundFileNameID = soundFileNameID;
+}
+
+int PlaySoundExitingFromSceneDeux::postExitRoom(Window *viewWindow, const Location &newLocation) {
+	if (_soundFileNameID >= 0 && _staticData.location.node == newLocation.node && _staticData.location.timeZone == newLocation.timeZone)
+		_vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, _soundFileNameID), 128, false, true);
+
+	return SC_TRUE;
+}
+
 PlayStingers::PlayStingers(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
 		int stingerVolume, int lastStingerFlagOffset, int effectIDFlagOffset, int firstStingerFileID, int lastStingerFileID) :
 		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
