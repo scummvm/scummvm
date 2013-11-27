@@ -634,28 +634,46 @@ bool ScummEngine::getSavegameName(int slot, Common::String &desc) {
 	return result;
 }
 
-bool getSavegameName(Common::InSaveFile *in, Common::String &desc, int heversion) {
-	SaveGameHeader hdr;
-
+namespace {
+bool loadAndCheckSaveGameHeader(Common::InSaveFile *in, int heversion, SaveGameHeader &hdr, Common::String *error = nullptr) {
 	if (!loadSaveGameHeader(in, hdr)) {
-		desc = "Invalid savegame";
+		if (error) {
+			*error = "Invalid savegame";
+		}
 		return false;
 	}
 
-	if (hdr.ver > CURRENT_VER)
+	if (hdr.ver > CURRENT_VER) {
 		hdr.ver = TO_LE_32(hdr.ver);
+	}
+
 	if (hdr.ver < VER(7) || hdr.ver > CURRENT_VER) {
-		desc = "Invalid version";
+		if (error) {
+			*error = "Invalid version";
+		}
 		return false;
 	}
 
 	// We (deliberately) broke HE savegame compatibility at some point.
 	if (hdr.ver < VER(57) && heversion >= 60) {
-		desc = "Unsupported version";
+		if (error) {
+			*error = "Unsupported version";
+		}
 		return false;
 	}
 
 	hdr.name[sizeof(hdr.name) - 1] = 0;
+	return true;
+}
+} // End of anonymous namespace
+
+bool getSavegameName(Common::InSaveFile *in, Common::String &desc, int heversion) {
+	SaveGameHeader hdr;
+
+	if (!loadAndCheckSaveGameHeader(in, heversion, hdr, &desc)) {
+		return false;
+	}
+
 	desc = hdr.name;
 	return true;
 }
@@ -672,13 +690,12 @@ Graphics::Surface *ScummEngine::loadThumbnailFromSlot(const char *target, int sl
 		return 0;
 	}
 
-	if (!loadSaveGameHeader(in, hdr)) {
+	// FIXME: HE version?
+	if (!loadAndCheckSaveGameHeader(in, 0, hdr)) {
 		delete in;
 		return 0;
 	}
 
-	if (hdr.ver > CURRENT_VER)
-		hdr.ver = TO_LE_32(hdr.ver);
 	if (hdr.ver < VER(52)) {
 		delete in;
 		return 0;
@@ -705,13 +722,12 @@ bool ScummEngine::loadInfosFromSlot(const char *target, int slot, SaveStateMetaI
 		return false;
 	}
 
-	if (!loadSaveGameHeader(in, hdr)) {
+	// FIXME: HE version?
+	if (!loadAndCheckSaveGameHeader(in, 0, hdr)) {
 		delete in;
 		return false;
 	}
 
-	if (hdr.ver > CURRENT_VER)
-		hdr.ver = TO_LE_32(hdr.ver);
 	if (hdr.ver < VER(56)) {
 		delete in;
 		return false;
