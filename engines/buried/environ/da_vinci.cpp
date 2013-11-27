@@ -276,6 +276,8 @@ SceneBase *SceneViewWindow::constructDaVinciSceneObject(Window *viewWindow, cons
 	switch (sceneStaticData.classID) {
 	case 4:
 		return new PaintingTowerRetrieveKey(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 10:
+		return new PlaySoundExitingFromScene(_vm, viewWindow, sceneStaticData, priorLocation, 14);
 	case 11:
 		return new PaintingTowerOutsideDoor(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 12:
@@ -284,6 +286,8 @@ SceneBase *SceneViewWindow::constructDaVinciSceneObject(Window *viewWindow, cons
 		return new BasicDoor(_vm, viewWindow, sceneStaticData, priorLocation, 196, 0, 262, 189, 5, 3, 10, 1, 1, 1, TRANSITION_WALK, 11, 881, 20);
 	case 14:
 		return new BasicDoor(_vm, viewWindow, sceneStaticData, priorLocation, 208, 0, 306, 189, 5, 3, 0, 2, 1, 1, TRANSITION_WALK, 11, 740, 23);
+	case 16:
+		return new PlaySoundExitingFromScene(_vm, viewWindow, sceneStaticData, priorLocation, 14);
 	case 18:
 		return new BasicDoor(_vm, viewWindow, sceneStaticData, priorLocation, 216, 0, 324, 189, 5, 3, 2, 0, 1, 1, TRANSITION_WALK, 11, 833, 26);
 	case 19:
@@ -318,6 +322,8 @@ SceneBase *SceneViewWindow::constructDaVinciSceneObject(Window *viewWindow, cons
 		return new BasicDoor(_vm, viewWindow, sceneStaticData, priorLocation, 170, 0, 432, 189, 5, 4, 0, 0, 1, 1, TRANSITION_WALK, 11, 1220, 12);
 	case 70:
 		return new PaintingTowerCapAgent(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 72:
+		return new PlaySoundExitingFromScene(_vm, viewWindow, sceneStaticData, priorLocation, 13);
 	}
 
 	warning("TODO: Da Vinci scene object %d", sceneStaticData.classID);

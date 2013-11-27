@@ -210,12 +210,20 @@ SceneBase *SceneViewWindow::constructMayanSceneObject(Window *viewWindow, const 
 		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 201, 4, 235, 22, kItemCopperMedallion, 45, offsetof(GlobalFlags, myAGRetrievedCopperMedal));
 	case 54:
 		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 206, 110, 280, 142, kItemObsidianBlock, 72, offsetof(GlobalFlags, myAGRetrievedObsidianBlock));
+	case 60:
+		return new PlaySoundExitingFromScene(_vm, viewWindow, sceneStaticData, priorLocation, 11);
 	case 65:
 		return new BasicDoor(_vm, viewWindow, sceneStaticData, priorLocation, 90, 15, 346, 189, 2, 6, 0, 0, 1, 1, TRANSITION_WALK, -1, 33, 12, 13);
 	case 68:
 		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 206, 76, 246, 116, kItemEnvironCart, 53, offsetof(GlobalFlags, takenEnvironCart));
+	case 69:
+		return new PlaySoundExitingFromScene(_vm, viewWindow, sceneStaticData, priorLocation, 10);
 	case 70:
 		return new PlayStingers(_vm, viewWindow, sceneStaticData, priorLocation, 128, offsetof(GlobalFlags, myMCStingerID), offsetof(GlobalFlags, myMCStingerChannelID), 11, 14);
+	case 120:
+		return new PlaySoundExitingFromScene(_vm, viewWindow, sceneStaticData, priorLocation, 10);
+	case 121:
+		return new PlaySoundExitingFromScene(_vm, viewWindow, sceneStaticData, priorLocation, 14);
 	case 125:
 		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 226, 90, 256, 104, kItemCopperMedallion, 15, offsetof(GlobalFlags, myAGRetrievedCopperMedal));
 	}

@@ -70,6 +70,26 @@ private:
 	int _itemFlagOffset;
 };
 
+class PlaySoundExitingFromScene : public SceneBase {
+public:
+	PlaySoundExitingFromScene(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+			int soundFileNameID = -1);
+	int postExitRoom(Window *viewWindow, const Location &newLocation);
+
+private:
+	int _soundFileNameID;
+};
+
+class PlaySoundExitingFromSceneDeux : public SceneBase {
+public:
+	PlaySoundExitingFromSceneDeux(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+			int soundFileNameID = -1);
+	int postExitRoom(Window *viewWindow, const Location &newLocation);
+
+private:
+	int _soundFileNameID;
+};
+
 class PlayStingers : public SceneBase {
 public:
 	PlayStingers(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
