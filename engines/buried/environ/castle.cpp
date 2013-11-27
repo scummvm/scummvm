@@ -312,6 +312,41 @@ int KeepFinalWallClimb::timerCallback(Window *viewWindow) {
 	return SC_TRUE;
 }
 
+class MainWallCatapultService : public SceneBase {
+public:
+	MainWallCatapultService(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int timerCallback(Window *viewWindow);
+};
+
+MainWallCatapultService::MainWallCatapultService(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+}
+
+int MainWallCatapultService::timerCallback(Window *viewWindow) {
+	SceneBase::timerCallback(viewWindow);
+
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().cgMWCatapultData > 0) {
+		uint32 timer = ((SceneViewWindow *)viewWindow)->getGlobalFlags().cgMWCatapultData;
+
+		if (timer + CATAPULT_TIMEOUT_VALUE < g_system->getMillis()) {
+			// Play the catapult sound
+			_vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 14), 127, false, true);
+
+			// Reset the timer flags
+			((SceneViewWindow *)viewWindow)->getGlobalFlags().cgMWCatapultData = 0;
+
+			// Determine an interval to wait until the next launch
+			((SceneViewWindow *)viewWindow)->getGlobalFlags().cgMWCatapultOffset = g_system->getMillis();
+		}
+	} else if ((((SceneViewWindow *)viewWindow)->getGlobalFlags().cgMWCatapultOffset + 20000) < g_system->getMillis()) {
+		// No boulder going, but it's time for another launch
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().cgMWCatapultData = g_system->getMillis();
+		_vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 13), 127, false, true);
+	}
+
+	return SC_TRUE;
+}
+
 class StorageRoomDoor : public SceneBase {
 public:
 	StorageRoomDoor(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
@@ -579,6 +614,8 @@ SceneBase *SceneViewWindow::constructCastleSceneObject(Window *viewWindow, const
 		return new PlaySoundExitingFromScene(_vm, viewWindow, sceneStaticData, priorLocation, 14);
 	case 58:
 		return new PlaySoundExitingFromScene(_vm, viewWindow, sceneStaticData, priorLocation, 14);
+	case 60:
+		return new MainWallCatapultService(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 70:
 		return new PlaySoundExitingFromScene(_vm, viewWindow, sceneStaticData, priorLocation, 12);
 	case 71:
