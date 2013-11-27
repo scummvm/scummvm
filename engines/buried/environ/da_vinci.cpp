@@ -23,6 +23,7 @@
  *
  */
 
+#include "buried/biochip_right.h"
 #include "buried/buried.h"
 #include "buried/gameui.h"
 #include "buried/graphics.h"
@@ -192,6 +193,41 @@ enum {
 	DS_SC_COMPLETED = 8
 };
 
+class PaintingTowerCapAgent : public SceneBase {
+public:
+	PaintingTowerCapAgent(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
+};
+
+PaintingTowerCapAgent::PaintingTowerCapAgent(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+}
+
+int PaintingTowerCapAgent::postEnterRoom(Window *viewWindow, const Location &priorLocation) {
+	((SceneViewWindow *)viewWindow)->getGlobalFlags().dsPTBeenOnBalcony = 1;
+
+	if (!((SceneViewWindow *)viewWindow)->isNumberInGlobalFlagTable(offsetof(GlobalFlags, evcapBaseID), offsetof(GlobalFlags, evcapNumCaptured), DAVINCI_EVIDENCE_AGENT3)) {
+		// Play animation of capturing the evidence
+		((SceneViewWindow *)viewWindow)->playSynchronousAnimation(11);
+
+		// Attempt to add the evidence to the biochip
+		((SceneViewWindow *)viewWindow)->addNumberToGlobalFlagTable(offsetof(GlobalFlags, evcapBaseID), offsetof(GlobalFlags, evcapNumCaptured), 12, DAVINCI_EVIDENCE_AGENT3);
+		((SceneViewWindow *)viewWindow)->displayLiveText(_vm->getString(IDS_MBT_EVIDENCE_ACQUIRED));
+
+		// Turn off evidence capture
+		((GameUIWindow *)viewWindow->getParent())->_bioChipRightWindow->disableEvidenceCapture();
+
+		// Set flag for scoring
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().scoreResearchAgent3DaVinci = 1;
+	} else {
+		if (false) { // TODO: If control down
+			((SceneViewWindow *)viewWindow)->playSynchronousAnimation(12);
+		}
+	}
+
+	return SC_TRUE;
+}
+
 bool SceneViewWindow::initializeDaVinciTimeZoneAndEnvironment(Window *viewWindow, int environment) {
 	if (environment == -1) {
 		GlobalFlags &flags = ((SceneViewWindow *)viewWindow)->getGlobalFlags();
@@ -280,6 +316,8 @@ SceneBase *SceneViewWindow::constructDaVinciSceneObject(Window *viewWindow, cons
 		return new BasicDoor(_vm, viewWindow, sceneStaticData, priorLocation, 122, 8, 326, 189, 5, 5, 0, 2, 1, 1, TRANSITION_WALK, 11, 738, 18);
 	case 66:
 		return new BasicDoor(_vm, viewWindow, sceneStaticData, priorLocation, 170, 0, 432, 189, 5, 4, 0, 0, 1, 1, TRANSITION_WALK, 11, 1220, 12);
+	case 70:
+		return new PaintingTowerCapAgent(_vm, viewWindow, sceneStaticData, priorLocation);
 	}
 
 	warning("TODO: Da Vinci scene object %d", sceneStaticData.classID);
