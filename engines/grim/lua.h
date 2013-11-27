@@ -181,6 +181,7 @@ private:
 	int refTextObjectVolume;
 	int refTextObjectBackground;
 	int refTextObjectPan;
+	int refTextObjectLayer;
 
 	static LuaBase *s_instance;
 

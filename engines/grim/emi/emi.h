@@ -41,16 +41,22 @@ public:
 	Common::List<TextObject *> *popText();
 
 	void invalidateActiveActorsList() override;
+	void invalidateTextObjectsSortOrder() override;
 	void invalidateSortOrder();
 	void sortActiveActorsList();
 
 private:
 	LuaBase *createLua() override;
 	void drawNormalMode() override;
+	static bool compareTextLayer(const TextObject *x, const TextObject *y);
+	void drawTextObjects() override;
 	static bool compareActor(const Actor *x, const Actor *y);
+	void sortTextObjects();
 
 	Common::List<Common::List<TextObject *> *> _textstack;
+	Common::List<TextObject *> _textObjects;
 
+	bool _textObjectsSortOrderInvalidated;
 	bool _sortOrderInvalidated;
 };
 
