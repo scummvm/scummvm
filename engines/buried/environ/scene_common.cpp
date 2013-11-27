@@ -235,6 +235,39 @@ int PlayStingers::postEnterRoom(Window *viewWindow, const Location &priorLocatio
 	return SC_TRUE;
 }
 
+ClickPlaySound::ClickPlaySound(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+		int flagOffset, int soundID, int cursorID, int left, int top, int right, int bottom) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_cursorID = cursorID;
+	_soundID = soundID;
+	_clickRegion = Common::Rect(left, top, right, bottom);
+	_flagOffset = flagOffset;
+}
+
+int ClickPlaySound::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_clickRegion.contains(pointLocation)) {
+		_vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, _soundID), 127, false, true);
+
+		if (_flagOffset >= 0)
+			((SceneViewWindow *)viewWindow)->setGlobalFlagByte(_flagOffset, 1);
+
+		if (((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->isItemInInventory(kItemBioChipAI))
+			((SceneViewWindow *)viewWindow)->playAIComment(_staticData.location, AI_COMMENT_TYPE_SPONTANEOUS);
+
+		((GameUIWindow *)viewWindow->getParent())->_bioChipRightWindow->sceneChanged();
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int ClickPlaySound::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_clickRegion.contains(pointLocation))
+		return _cursorID;
+
+	return kCursorArrow;
+}
+
 OneShotEntryVideoWarning::OneShotEntryVideoWarning(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
 		int animID, int flagOffset, int warningMessageID) : SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
 	_animID = animID;
@@ -326,6 +359,39 @@ int VideoDeath::postExitRoom(Window *viewWindow, const Location &newLocation) {
 	}
 
 	return SC_TRUE;
+}
+
+ClickPlaySoundSynchronous::ClickPlaySoundSynchronous(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+		int flagOffset, int soundID, int cursorID, int left, int top, int right, int bottom) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_cursorID = cursorID;
+	_soundID = soundID;
+	_clickRegion = Common::Rect(left, top, right, bottom);
+	_flagOffset = flagOffset;
+}
+
+int ClickPlaySoundSynchronous::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_clickRegion.contains(pointLocation)) {
+		_vm->_sound->playSynchronousSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, _soundID), 127);
+
+		if (_flagOffset >= 0)
+			((SceneViewWindow *)viewWindow)->setGlobalFlagByte(_flagOffset, 1);
+
+		if (((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->isItemInInventory(kItemBioChipAI))
+			((SceneViewWindow *)viewWindow)->playAIComment(_staticData.location, AI_COMMENT_TYPE_SPONTANEOUS);
+
+		((GameUIWindow *)viewWindow->getParent())->_bioChipRightWindow->sceneChanged();
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int ClickPlaySoundSynchronous::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_clickRegion.contains(pointLocation))
+		return _cursorID;
+
+	return kCursorArrow;
 }
 
 } // End of namespace Buried
