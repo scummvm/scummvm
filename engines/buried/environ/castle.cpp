@@ -118,6 +118,31 @@ int TowerStairsGuardEncounter::timerCallback(Window *viewWindow) {
 	return SC_TRUE;
 }
 
+class WallSlideDeath : public SceneBase {
+public:
+	WallSlideDeath(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int postExitRoom(Window *viewWindow, const Location &newLocation);	
+};
+
+WallSlideDeath::WallSlideDeath(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+}
+
+int WallSlideDeath::postExitRoom(Window *viewWindow, const Location &newLocation) {
+	if (newLocation.timeZone == _staticData.location.timeZone &&
+			newLocation.environment == _staticData.location.environment &&
+			newLocation.node == _staticData.location.node &&
+			newLocation.facing == _staticData.location.facing &&
+			newLocation.orientation == _staticData.location.orientation &&
+			newLocation.depth == _staticData.location.depth) {
+		// Notify the player of his gruesome death
+		((SceneViewWindow *)viewWindow)->showDeathScene(1);
+		return SC_DEATH;
+	}
+
+	return SC_TRUE;
+}
+
 enum {
 	CATAPULT_TIMEOUT_VALUE = 6000
 };
@@ -476,6 +501,8 @@ SceneBase *SceneViewWindow::constructCastleSceneObject(Window *viewWindow, const
 		return new BasicDoor(_vm, viewWindow, sceneStaticData, priorLocation, 114, 0, 324, 189, 1, 2, 5, 3, 1, 1, 2, 11, 395, 9);
 	case 5:
 		return new BasicDoor(_vm, viewWindow, sceneStaticData, priorLocation, 103, 0, 355, 189, 1, 3, 5, 1, 1, 1, 2, 11, 641, 8);
+	case 6:
+		return new WallSlideDeath(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 7:
 		return new TurnDepthPreChange(_vm, viewWindow, sceneStaticData, priorLocation, offsetof(GlobalFlags, cgWallExploded), 0, 0, 1, 0, 0);
 	case 8:
