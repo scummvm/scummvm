@@ -334,7 +334,9 @@ public:
  */
 struct SharedPtrSurfaceDeleter {
 	void operator()(Surface *ptr) {
-		ptr->free();
+		if (ptr) {
+			ptr->free();
+		}
 		delete ptr;
 	}
 };
