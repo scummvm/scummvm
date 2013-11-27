@@ -1341,7 +1341,7 @@ bool SceneViewWindow::setGlobalFlagDWord(int offset, uint32 value) {
 bool SceneViewWindow::addNumberToGlobalFlagTable(int tableOffset, int curItemCountOffset, int maxItems, byte numberToAdd) {
 	// TODO: Rewrite this
 	byte *data = (byte *)&_globalFlags;
-	int16 *itemCountPtr = (int16 *)(data + curItemCountOffset);
+	byte *itemCountPtr = data + curItemCountOffset;
 	int itemCount = *itemCountPtr;
 
 	if (itemCount >= maxItems)
@@ -1364,7 +1364,7 @@ byte SceneViewWindow::getNumberFromGlobalFlagTable(int tableOffset, int tableInd
 
 bool SceneViewWindow::isNumberInGlobalFlagTable(int tableOffset, int curItemCountOffset, byte numberToCheck) {
 	const byte *data = (const byte *)&_globalFlags;
-	int itemCount = *((const int16 *)(data + curItemCountOffset));
+	int itemCount = *(data + curItemCountOffset);
 
 	const byte *tableEntries = data + tableOffset;
 
