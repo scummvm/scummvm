@@ -620,9 +620,6 @@ public:
 
 // thumbnail + info stuff
 public:
-	Graphics::Surface *loadThumbnailFromSlot(int slot) {
-		return loadThumbnailFromSlot(_targetName.c_str(), slot);
-	}
 	static Graphics::Surface *loadThumbnailFromSlot(const char *target, int slot);
 
 	static bool loadInfosFromSlot(const char *target, int slot, SaveStateMetaInfos *stuff);
