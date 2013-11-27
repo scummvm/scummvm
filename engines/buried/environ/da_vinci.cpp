@@ -36,6 +36,155 @@
 
 namespace Buried {
 
+class PaintingTowerRetrieveKey : public SceneBase {
+public:
+	PaintingTowerRetrieveKey(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	Common::Rect _key;
+};
+
+PaintingTowerRetrieveKey::PaintingTowerRetrieveKey(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().dsPTDoorLocked >= 1) {
+		int curStillFrame = _staticData.navFrameIndex;
+		_staticData.navFrameIndex = _staticData.miscFrameIndex;
+		_staticData.miscFrameIndex = curStillFrame;
+	}
+
+	_key = Common::Rect(268, 50, 298, 88);
+}
+
+int PaintingTowerRetrieveKey::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_key.contains(pointLocation) && ((SceneViewWindow *)viewWindow)->getGlobalFlags().dsPTDoorLocked == 0) {
+		// Play the unlocking movie
+		((SceneViewWindow *)viewWindow)->playSynchronousAnimation(2);
+
+		// Swap the still frame
+		int curStillFrame = _staticData.navFrameIndex;
+		_staticData.navFrameIndex = _staticData.miscFrameIndex;
+		_staticData.miscFrameIndex = curStillFrame;
+
+		// Add the key to the inventory
+		((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->addItem(kItemBalconyKey);
+
+		// Change the locked door flag
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().dsPTDoorLocked = 1;
+	}
+
+	return SC_TRUE;
+}
+
+int PaintingTowerRetrieveKey::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_key.contains(pointLocation) && ((SceneViewWindow *)viewWindow)->getGlobalFlags().dsPTDoorLocked == 0)
+		return kCursorFinger;
+
+	return kCursorArrow;
+}
+
+class PaintingTowerOutsideDoor : public SceneBase {
+public:
+	PaintingTowerOutsideDoor(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	Common::Rect _clickableArea;
+};
+
+PaintingTowerOutsideDoor::PaintingTowerOutsideDoor(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_clickableArea = Common::Rect(0, 0, 236, 189);
+}
+
+int PaintingTowerOutsideDoor::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_clickableArea.contains(pointLocation)) {
+		if (((SceneViewWindow *)viewWindow)->getGlobalFlags().dsPTElevatorPresent >= 1) {
+			DestinationScene destData;
+			destData.destinationScene.timeZone = 5;
+			destData.destinationScene.environment = 1;
+			destData.destinationScene.node = 7;
+			destData.destinationScene.facing = 3;
+			destData.destinationScene.orientation = 1;
+			destData.destinationScene.depth = 2;
+			destData.transitionType = TRANSITION_WALK;
+			destData.transitionData = 11;
+			destData.transitionStartFrame = 28;
+			destData.transitionLength = 12;
+			((SceneViewWindow *)viewWindow)->moveToDestination(destData);
+		} else {
+			DestinationScene destData;
+			destData.destinationScene.timeZone = 5;
+			destData.destinationScene.environment = 1;
+			destData.destinationScene.node = 7;
+			destData.destinationScene.facing = 3;
+			destData.destinationScene.orientation = 1;
+			destData.destinationScene.depth = 1;
+			destData.transitionType = TRANSITION_WALK;
+			destData.transitionData = 11;
+			destData.transitionStartFrame = 0;
+			destData.transitionLength = 12;
+			((SceneViewWindow *)viewWindow)->moveToDestination(destData);
+		}
+	}
+
+	return SC_FALSE;
+}
+
+int PaintingTowerOutsideDoor::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_clickableArea.contains(pointLocation))
+		return kCursorFinger;
+
+	return kCursorArrow;
+}
+
+class PaintingTowerInsideDoor : public SceneBase {
+public:
+	PaintingTowerInsideDoor(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	Common::Rect _clickableArea;
+};
+
+PaintingTowerInsideDoor::PaintingTowerInsideDoor(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_clickableArea = Common::Rect(290, 0, 432, 189);
+}
+
+int PaintingTowerInsideDoor::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_clickableArea.contains(pointLocation)) {
+		if (((SceneViewWindow *)viewWindow)->getGlobalFlags().dsPTDoorLocked >= 1) {
+			DestinationScene destData;
+			destData.destinationScene.timeZone = 5;
+			destData.destinationScene.environment = 1;
+			destData.destinationScene.node = 2;
+			destData.destinationScene.facing = 2;
+			destData.destinationScene.orientation = 1;
+			destData.destinationScene.depth = 1;
+			destData.transitionType = TRANSITION_WALK;
+			destData.transitionData = 11;
+			destData.transitionStartFrame = 338;
+			destData.transitionLength = 22;
+			((SceneViewWindow *)viewWindow)->moveToDestination(destData);
+		} else {
+			_vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 13), 127, false, true);
+		}
+	}
+
+	return SC_FALSE;
+}
+
+int PaintingTowerInsideDoor::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_clickableArea.contains(pointLocation))
+		return kCursorFinger;
+
+	return kCursorArrow;
+}
+
 enum {
 	DS_SC_DRIVE_ASSEMBLY = 1,
 	DS_SC_WHEEL_ASSEMBLY = 2,
@@ -89,6 +238,12 @@ SceneBase *SceneViewWindow::constructDaVinciSceneObject(Window *viewWindow, cons
 	// TODO
 
 	switch (sceneStaticData.classID) {
+	case 4:
+		return new PaintingTowerRetrieveKey(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 11:
+		return new PaintingTowerOutsideDoor(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 12:
+		return new PaintingTowerInsideDoor(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 13:
 		return new BasicDoor(_vm, viewWindow, sceneStaticData, priorLocation, 196, 0, 262, 189, 5, 3, 10, 1, 1, 1, TRANSITION_WALK, 11, 881, 20);
 	case 14:
