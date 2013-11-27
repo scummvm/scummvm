@@ -543,6 +543,8 @@ SceneBase *SceneViewWindow::constructCastleSceneObject(Window *viewWindow, const
 		return new ClickPlayVideo(_vm, viewWindow, sceneStaticData, priorLocation, 2, kCursorFinger, 0, 75, 258, 123);
 	case 48:
 		return new KingsChamberGuardEncounter(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 50:
+		return new ClickPlaySoundSynchronous(_vm, viewWindow, sceneStaticData, priorLocation, offsetof(GlobalFlags, cgTSTriedDoorA), 14, kCursorFinger, 72, 0, 372, 189);
 	case 55:
 		// Valid, but not implemented.
 		break;
@@ -554,8 +556,14 @@ SceneBase *SceneViewWindow::constructCastleSceneObject(Window *viewWindow, const
 		return new PlaySoundExitingFromScene(_vm, viewWindow, sceneStaticData, priorLocation, 12);
 	case 71:
 		return new PlaySoundExitingFromScene(_vm, viewWindow, sceneStaticData, priorLocation, 14);
+	case 72:
+		return new ClickPlaySound(_vm, viewWindow, sceneStaticData, priorLocation, -1, 12, kCursorFinger, 28, 34, 336, 189);
+	case 73:
+		return new ClickPlaySound(_vm, viewWindow, sceneStaticData, priorLocation, -1, 13, kCursorFinger, 0, 0, 270, 189);
 	case 74:
 		return new PlaySoundExitingFromSceneDeux(_vm, viewWindow, sceneStaticData, priorLocation, 14);
+	case 77:
+		return new ClickPlaySound(_vm, viewWindow, sceneStaticData, priorLocation, offsetof(GlobalFlags, cgTSTriedDoorB), 14, kCursorFinger, 72, 0, 372, 189);
 	default:
 		warning("TODO: Castle scene object %d", sceneStaticData.classID);
 		break;

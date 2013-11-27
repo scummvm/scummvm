@@ -104,6 +104,20 @@ private:
 	int _lastStingerFileID;
 };
 
+class ClickPlaySound : public SceneBase {
+public:
+	ClickPlaySound(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+			int flagOffset = -1, int soundID = 0, int cursorID = 0, int left = 0, int top = 0, int right = 0, int bottom = 0);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	int _cursorID;
+	int _soundID;
+	Common::Rect _clickRegion;
+	int _flagOffset;
+};
+
 class OneShotEntryVideoWarning : public SceneBase {
 public:
 	OneShotEntryVideoWarning(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
@@ -152,6 +166,20 @@ public:
 private:
 	int _deathID;
 	int _messageTextID;
+};
+
+class ClickPlaySoundSynchronous : public SceneBase {
+public:
+	ClickPlaySoundSynchronous(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+			int flagOffset = -1, int soundID = 0, int cursorID = 0, int left = 0, int top = 0, int right = 0, int bottom = 0);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	int _cursorID;
+	int _soundID;
+	Common::Rect _clickRegion;
+	int _flagOffset;
 };
 
 } // End of namespace Buried
