@@ -764,7 +764,7 @@ bool ScummEngine::loadInfos(Common::SeekableReadStream *file, SaveStateMetaInfos
 	return true;
 }
 
-void ScummEngine::saveInfos(Common::WriteStream* file) {
+void ScummEngine::saveInfos(Common::WriteStream *file) {
 	SaveInfoSection section;
 	section.type = MKTAG('I','N','F','O');
 	section.version = INFOSECTION_VERSION;
