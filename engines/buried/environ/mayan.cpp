@@ -35,6 +35,66 @@
 
 namespace Buried {
 
+class PlaceCeramicBowl : public SceneBase {
+public:
+	PlaceCeramicBowl(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
+	int timerCallback(Window *viewWindow);
+
+private:
+	bool _dropped;
+};
+
+PlaceCeramicBowl::PlaceCeramicBowl(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_dropped = false;
+}
+
+int PlaceCeramicBowl::droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) {
+	if (pointLocation.x == -1 && pointLocation.y == -1)
+		return 0;
+	
+	if (itemID != kItemCeramicBowl)
+		return SIC_REJECT;
+
+	_staticData.navFrameIndex = 112;
+	viewWindow->invalidateWindow(false);
+	_dropped = true;
+	return SIC_ACCEPT;
+}
+
+int PlaceCeramicBowl::timerCallback(Window *viewWindow) {
+	if (_dropped) {
+		if (((SceneViewWindow *)viewWindow)->getGlobalFlags().myTPCodeWheelStatus == 0) {
+			// Play slide death animation
+			((SceneViewWindow *)viewWindow)->playSynchronousAnimation(4);
+
+			// Notify the player of his gruesome death
+			((SceneViewWindow *)viewWindow)->showDeathScene(11);
+			return SC_DEATH;
+		} else {
+			// Kill the ambient
+			_vm->_sound->setAmbientSound();
+
+			// Jump to the start of the main cavern
+			DestinationScene newDest;
+			newDest.destinationScene.timeZone = 2;
+			newDest.destinationScene.environment = 2;
+			newDest.destinationScene.node = 0;
+			newDest.destinationScene.facing = 1;
+			newDest.destinationScene.orientation = 1;
+			newDest.destinationScene.depth = 0;
+			newDest.transitionType = TRANSITION_VIDEO;
+			newDest.transitionData = 3;
+			newDest.transitionStartFrame = -1;
+			newDest.transitionLength = -1;
+			((SceneViewWindow *)viewWindow)->moveToDestination(newDest);
+		}
+	}
+
+	return SC_TRUE;
+}
+
 bool SceneViewWindow::initializeMayanTimeZoneAndEnvironment(Window *viewWindow, int environment) {
 	if (environment == -1) {
 		GlobalFlags &flags = ((SceneViewWindow *)viewWindow)->getGlobalFlags();
@@ -128,6 +188,8 @@ SceneBase *SceneViewWindow::constructMayanSceneObject(Window *viewWindow, const 
 		return new VideoDeath(_vm, viewWindow, sceneStaticData, priorLocation, 10, IDS_HUMAN_PRESENCE_500METERS);
 	case 2:
 		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 60, 134, 118, 180, kItemCeramicBowl, 96, offsetof(GlobalFlags, myPickedUpCeramicBowl));
+	case 3:
+		return new PlaceCeramicBowl(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 13:
 		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 140, 124, 174, 158, kItemCavernSkull, 3, offsetof(GlobalFlags, myMCPickedUpSkull));
 	case 31:
