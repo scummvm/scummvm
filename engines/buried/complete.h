@@ -40,7 +40,7 @@ class VideoWindow;
 
 class CompletionWindow : public Window {
 public:
-	CompletionWindow(BuriedEngine *vm, Window *parent, const GlobalFlags &globalFlags);
+	CompletionWindow(BuriedEngine *vm, Window *parent, GlobalFlags globalFlags);
 	~CompletionWindow();
 
 	void onPaint();
