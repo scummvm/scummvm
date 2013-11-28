@@ -338,13 +338,7 @@ bool SoundManager::playSynchronousAIComment(const Common::String &fileName) {
 
 	while (retVal && !_vm->shouldQuit() && _soundData[kAIVoiceIndex]->isPlaying()) {
 		timerCallback();
-
-		Common::Event event;
-		while (g_system->getEventManager()->pollEvent(event))
-			if (event.type == Common::EVENT_MOUSEMOVE)
-				g_system->updateScreen();
-
-		g_system->delayMillis(10);
+		_vm->yield();
 	}
 
 	// Now that is has been played, kill it here and now
@@ -431,13 +425,7 @@ bool SoundManager::playSynchronousSoundEffect(const Common::String &fileName, in
 	// the sound finishes playing
 	do {
 		timerCallback();
-
-		Common::Event event;
-		while (g_system->getEventManager()->pollEvent(event))
-			if (event.type == Common::EVENT_MOUSEMOVE)
-				g_system->updateScreen();
-
-		g_system->delayMillis(10);
+		_vm->yield();
 	} while (!_vm->shouldQuit() && isSoundEffectPlaying(soundChannel));
 
 	// One last callback check
