@@ -37,6 +37,69 @@
 
 namespace Buried {
 
+class SwapStillOnFlag : public SceneBase {
+public:
+	SwapStillOnFlag(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+			int flagOffset = -1, int flagValue = -1);
+};
+
+SwapStillOnFlag::SwapStillOnFlag(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+		int flagOffset, int flagValue) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlagByte(flagOffset) >= flagValue) {
+		int curStillFrame = _staticData.navFrameIndex;
+		_staticData.navFrameIndex = _staticData.miscFrameIndex;
+		_staticData.miscFrameIndex = curStillFrame;
+	}
+}
+
+class PaintingTowerWalkOntoElevator : public SceneBase {
+public:
+	PaintingTowerWalkOntoElevator(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int postExitRoom(Window *viewWindow, const Location &newLocation);
+};
+
+PaintingTowerWalkOntoElevator::PaintingTowerWalkOntoElevator(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().dsPTElevatorPresent >= 1) {
+		// If the elevator is present, don't die
+		int curStillFrame = _staticData.navFrameIndex;
+		_staticData.navFrameIndex = _staticData.miscFrameIndex;
+		_staticData.miscFrameIndex = curStillFrame;
+
+		_staticData.destForward.destinationScene.timeZone = 5;
+		_staticData.destForward.destinationScene.environment = 1;
+		_staticData.destForward.destinationScene.node = 8;
+		_staticData.destForward.destinationScene.facing = 0;
+		_staticData.destForward.destinationScene.orientation = 1;
+		_staticData.destForward.destinationScene.depth = 0;
+		_staticData.destForward.transitionType = TRANSITION_WALK;
+		_staticData.destForward.transitionData = 6;
+		_staticData.destForward.transitionStartFrame = 56;
+		_staticData.destForward.transitionLength = 16;
+	}
+}
+
+int PaintingTowerWalkOntoElevator::postExitRoom(Window *viewWindow, const Location &newLocation) {
+	if (newLocation.timeZone == _staticData.location.timeZone &&
+			newLocation.environment == _staticData.location.environment &&
+			newLocation.node == _staticData.location.node &&
+			newLocation.facing == _staticData.location.facing &&
+			newLocation.orientation == _staticData.location.orientation &&
+			newLocation.depth == _staticData.location.depth) {
+		// Notify the player of his gruesome death
+		((SceneViewWindow *)viewWindow)->showDeathScene(30);
+		return SC_DEATH;
+	}
+
+	// Reset the elevator since we walked down (clone2727 asks if this is possible)
+	if (newLocation.timeZone == _staticData.location.timeZone && newLocation.environment == 3)
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().dsPTElevatorPresent = 0;
+
+	return SC_TRUE;
+}
+
 class PaintingTowerRetrieveKey : public SceneBase {
 public:
 	PaintingTowerRetrieveKey(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
@@ -274,8 +337,12 @@ SceneBase *SceneViewWindow::constructDaVinciSceneObject(Window *viewWindow, cons
 	// TODO
 
 	switch (sceneStaticData.classID) {
+	case 1:
+		return new SwapStillOnFlag(_vm, viewWindow, sceneStaticData, priorLocation, offsetof(GlobalFlags, dsPTElevatorPresent), 1);
 	case 4:
 		return new PaintingTowerRetrieveKey(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 8:
+		return new PaintingTowerWalkOntoElevator(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 10:
 		return new PlaySoundExitingFromScene(_vm, viewWindow, sceneStaticData, priorLocation, 14);
 	case 11:
