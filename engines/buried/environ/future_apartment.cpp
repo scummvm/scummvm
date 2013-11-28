@@ -33,7 +33,738 @@
 #include "buried/environ/scene_base.h"
 #include "buried/environ/scene_common.h"
 
+#include "graphics/font.h"
+
 namespace Buried {
+
+class KitchenUnitTurnOn : public SceneBase {
+public:
+	KitchenUnitTurnOn(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	Common::Rect _powerButton;
+};
+
+KitchenUnitTurnOn::KitchenUnitTurnOn(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_powerButton = Common::Rect(49, 125, 121, 147);
+}
+
+int KitchenUnitTurnOn::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_powerButton.contains(pointLocation)) {
+		_vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 8));
+
+		Location newLocation = _staticData.location;
+		newLocation.depth = 1;
+		((SceneViewWindow *)viewWindow)->jumpToScene(newLocation);
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int KitchenUnitTurnOn::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_powerButton.contains(pointLocation))
+		return kCursorFinger;
+
+	return kCursorArrow;
+}
+
+class KitchenUnitTitleScreen : public SceneBase {
+public:
+	KitchenUnitTitleScreen(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	Common::Rect _menuButton;
+	Common::Rect _powerButton;
+};
+
+KitchenUnitTitleScreen::KitchenUnitTitleScreen(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_menuButton = Common::Rect(49, 96, 121, 118);
+	_powerButton = Common::Rect(49, 125, 121, 147);
+}
+
+int KitchenUnitTitleScreen::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_menuButton.contains(pointLocation)) {
+		_vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 8));
+
+		Location newLocation = _staticData.location;
+		newLocation.depth = 2;
+		((SceneViewWindow *)viewWindow)->jumpToScene(newLocation);
+		return SC_TRUE;
+	} else if (_powerButton.contains(pointLocation)) {
+		_vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 8));
+
+		Location newLocation = _staticData.location;
+		newLocation.depth = 0;
+		((SceneViewWindow *)viewWindow)->jumpToScene(newLocation);
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int KitchenUnitTitleScreen::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_powerButton.contains(pointLocation) || _menuButton.contains(pointLocation))
+		return kCursorFinger;
+
+	return kCursorArrow;
+}
+
+class KitchenUnitMainMenu : public SceneBase {
+public:
+	KitchenUnitMainMenu(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	Common::Rect _menuButton;
+	Common::Rect _powerButton;
+	Common::Rect _autoChef;
+	Common::Rect _shopNet;
+	Common::Rect _postBox;
+};
+
+KitchenUnitMainMenu::KitchenUnitMainMenu(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_menuButton = Common::Rect(49, 96, 121, 118);
+	_powerButton = Common::Rect(49, 125, 121, 147);
+	_autoChef = Common::Rect(159, 65, 251, 82);
+	_shopNet = Common::Rect(159, 94, 239, 111);
+	_postBox = Common::Rect(159, 123, 243, 140);
+}
+
+int KitchenUnitMainMenu::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_powerButton.contains(pointLocation)) {
+		_vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 8));
+
+		Location newLocation = _staticData.location;
+		newLocation.depth = 0;
+		((SceneViewWindow *)viewWindow)->jumpToScene(newLocation);
+		return SC_TRUE;
+	} else if (_autoChef.contains(pointLocation)) {
+		_vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 8));
+
+		Location newLocation = _staticData.location;
+		newLocation.depth = 5;
+		((SceneViewWindow *)viewWindow)->jumpToScene(newLocation);
+		return SC_TRUE;
+	} else if (_shopNet.contains(pointLocation)) {
+		_vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 8));
+
+		Location newLocation = _staticData.location;
+		newLocation.depth = 4;
+		((SceneViewWindow *)viewWindow)->jumpToScene(newLocation);
+		return SC_TRUE;
+	} else if (_postBox.contains(pointLocation)) {
+		_vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 8));
+
+		Location newLocation = _staticData.location;
+		newLocation.depth = 3;
+		((SceneViewWindow *)viewWindow)->jumpToScene(newLocation);
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int KitchenUnitMainMenu::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_powerButton.contains(pointLocation) || _menuButton.contains(pointLocation)
+			|| _autoChef.contains(pointLocation) || _shopNet.contains(pointLocation) || _postBox.contains(pointLocation))
+		return kCursorFinger;
+
+	return kCursorArrow;
+}
+
+class KitchenUnitAutoChef : public SceneBase {
+public:
+	KitchenUnitAutoChef(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	~KitchenUnitAutoChef();
+	void preDestructor();
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int gdiPaint(Window *viewWindow);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	Common::Rect _menuButton;
+	Common::Rect _powerButton;
+	Common::Rect _autoChefButtons;
+	int _status;
+	Graphics::Font *_textFont;
+	int _lineHeight;
+};
+
+KitchenUnitAutoChef::KitchenUnitAutoChef(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_menuButton = Common::Rect(49, 96, 121, 118);
+	_powerButton = Common::Rect(49, 125, 121, 147);
+	_autoChefButtons = Common::Rect(135, 54, 273, 137);
+	_status = 0;
+	_lineHeight = (_vm->getLanguage() == Common::JA_JPN) ? 11 : 14;
+	_textFont = _vm->_gfx->createFont(_lineHeight);
+}
+
+KitchenUnitAutoChef::~KitchenUnitAutoChef() {
+	preDestructor();
+}
+
+void KitchenUnitAutoChef::preDestructor() {
+	delete _textFont;
+	_textFont = 0;
+}
+
+int KitchenUnitAutoChef::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_menuButton.contains(pointLocation)) {
+		_vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 8));
+
+		Location newLocation = _staticData.location;
+		newLocation.depth = 2;
+		((SceneViewWindow *)viewWindow)->jumpToScene(newLocation);
+		return SC_TRUE;
+	} else if (_powerButton.contains(pointLocation)) {
+		_vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 8));
+
+		Location newLocation = _staticData.location;
+		newLocation.depth = 0;
+		((SceneViewWindow *)viewWindow)->jumpToScene(newLocation);
+		return SC_TRUE;
+	} else if (_autoChefButtons.contains(pointLocation)) {
+		_vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 8));
+
+		_status = 1;
+		_staticData.navFrameIndex = 58;
+		viewWindow->invalidateWindow(false);
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int KitchenUnitAutoChef::gdiPaint(Window *viewWindow) {
+	if (_status == 1) {
+		// TODO: Vertically center align
+		uint32 textColor = _vm->_gfx->getColor(144, 200, 248);
+		Common::String text = _vm->getString(IDFAKI_AC_ORDER_FOOD_TEXT);
+		Common::Rect rect = Common::Rect(80, 26, 294, 92);
+		rect.translate(64, 128);
+		_vm->_gfx->renderText(_vm->_gfx->getScreen(), _textFont, text, rect.left, rect.top, rect.width(), textColor, _lineHeight);
+	}
+
+	return SC_FALSE;
+}
+
+int KitchenUnitAutoChef::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_powerButton.contains(pointLocation) || _menuButton.contains(pointLocation) || _autoChefButtons.contains(pointLocation))
+		return kCursorFinger;
+
+	return kCursorArrow;
+}
+
+class KitchenUnitShopNet : public SceneBase {
+public:
+	KitchenUnitShopNet(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	~KitchenUnitShopNet();
+	void preDestructor();
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int onCharacter(Window *viewWindow, const Common::KeyState &character);
+	int gdiPaint(Window *viewWindow);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int preExitRoom(Window *viewWindow, const Location &priorLocation);
+
+private:
+	int _status;
+	Common::String _shopNetCode;
+	Common::Rect _menuButton;
+	Common::Rect _powerButton;
+	Common::Rect _transmitButton;
+	Common::Rect _acceptButton;
+	Graphics::Font *_textFont;
+	Common::Rect _numberButtons[10];
+	int _lineHeight;
+};
+
+KitchenUnitShopNet::KitchenUnitShopNet(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_status = 0;
+	_menuButton = Common::Rect(49, 96, 121, 118);
+	_powerButton = Common::Rect(49, 125, 121, 147);
+	_transmitButton = Common::Rect(176, 121, 259, 138);
+	_acceptButton = Common::Rect(140, 128, 293, 145);
+	_numberButtons[0] = Common::Rect(324, 105, 342, 122);
+	_numberButtons[1] = Common::Rect(0, 0, 0, 0); // Number 1 is obscured
+	_numberButtons[2] = Common::Rect(323, 4, 341, 21);
+	_numberButtons[3] = Common::Rect(303, 13, 321, 30);
+	_numberButtons[4] = Common::Rect(324, 29, 342, 46);
+	_numberButtons[5] = Common::Rect(303, 39, 321, 56);
+	_numberButtons[6] = Common::Rect(324, 54, 342, 71);
+	_numberButtons[7] = Common::Rect(303, 64, 321, 81);
+	_numberButtons[8] = Common::Rect(324, 79, 342, 96);
+	_numberButtons[9] = Common::Rect(303, 91, 321, 108);
+	_lineHeight = (_vm->getLanguage() == Common::JA_JPN) ? 10 : 14;
+	_textFont = _vm->_gfx->createFont(_lineHeight);
+}
+
+KitchenUnitShopNet::~KitchenUnitShopNet() {
+	preDestructor();
+}
+
+void KitchenUnitShopNet::preDestructor() {
+	delete _textFont;
+	_textFont = 0;
+}
+
+int KitchenUnitShopNet::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_menuButton.contains(pointLocation)) {
+		_vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 8));
+
+		Location newLocation = _staticData.location;
+		newLocation.depth = 2;
+		((SceneViewWindow *)viewWindow)->jumpToScene(newLocation);
+		return SC_TRUE;
+	} else if (_powerButton.contains(pointLocation)) {
+		_vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 8));
+
+		Location newLocation = _staticData.location;
+		newLocation.depth = 0;
+		((SceneViewWindow *)viewWindow)->jumpToScene(newLocation);
+		return SC_TRUE;
+	} else if (_transmitButton.contains(pointLocation) && _status == 1) {
+		_vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 8));
+
+		if (_shopNetCode == _vm->getString(IDFAKI_SN_CHEESE_GIRL_CODE_TEXT)) {
+			_status = 3;
+			_staticData.navFrameIndex = 54;
+		} else if (_shopNetCode == _vm->getString(IDFAKI_SN_TRANSLATE_CHIP_CODE_TEXT)) {
+			_status = 2;
+			_staticData.navFrameIndex = 54;
+		} else if (_shopNetCode == _vm->getString(IDFAKI_SN_GENO_SINGLE_CODE_TEXT)) {
+			_status = 4;
+			_staticData.navFrameIndex = 54;
+		}
+
+		viewWindow->invalidateWindow();
+
+		switch (_status) {
+		case 2:
+			((SceneViewWindow *)viewWindow)->startPlacedAsynchronousAnimation(206, 30, 84, 84, 6, true);
+			break;
+		case 3:
+			((SceneViewWindow *)viewWindow)->startPlacedAsynchronousAnimation(206, 30, 84, 84, 7, true);
+			break;
+		case 4:
+			((SceneViewWindow *)viewWindow)->startPlacedAsynchronousAnimation(206, 30, 84, 84, 8, true);
+			break;
+		}
+
+		return SC_TRUE;
+	} else if (_acceptButton.contains(pointLocation) && (_status >= 2 && _status <= 4)) {
+		_vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 8));
+
+		((SceneViewWindow *)viewWindow)->stopAsynchronousAnimation();
+
+		GlobalFlags &flags = ((SceneViewWindow *)viewWindow)->getGlobalFlags();
+
+		if (flags.faKIPostBoxSlotA == _status || flags.faKIPostBoxSlotB == _status || flags.faKIPostBoxSlotC == _status) {
+			// Already in the post box
+			_status = 6;
+			_staticData.navFrameIndex = 55;
+		} else {
+			// Add this item to the end of the post box list
+			if (flags.faKIPostBoxSlotA == 0)
+				flags.faKIPostBoxSlotA = _status;
+			else if (flags.faKIPostBoxSlotB == 0)
+				flags.faKIPostBoxSlotB = _status;
+			else if (flags.faKIPostBoxSlotC == 0)
+				flags.faKIPostBoxSlotC = _status;
+
+			_status = 5;
+			_staticData.navFrameIndex = 55;
+		}
+
+		viewWindow->invalidateWindow(false);
+		return SC_TRUE;
+	}
+
+	for (int i = 0; i < 10; i++) {
+		if (_numberButtons[i].contains(pointLocation)) {
+			// Generate a key state
+			Common::KeyState state;
+			state.keycode = (Common::KeyCode)(Common::KEYCODE_0 + i);
+			state.ascii = '0' + i;
+			state.flags = 0;
+			onCharacter(viewWindow, state);
+			return SC_TRUE;
+		}
+	}
+
+	return SC_FALSE;
+}
+
+int KitchenUnitShopNet::onCharacter(Window *viewWindow, const Common::KeyState &character) {
+	if (_status == 0 && ((character.keycode >= Common::KEYCODE_0 && character.keycode <= Common::KEYCODE_9)
+			|| character.keycode == Common::KEYCODE_BACKSPACE || character.keycode == Common::KEYCODE_DELETE)) {
+		_vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 9));
+
+		if (character.keycode == Common::KEYCODE_BACKSPACE || character.keycode == Common::KEYCODE_DELETE) {
+			if (_shopNetCode.empty()) {
+				// clone2727 asks why the sound effect is being played again
+				_vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 9));
+
+				if (_shopNetCode.size() == 6 || _shopNetCode.size() == 11) {
+					_shopNetCode.deleteLastChar();
+					_shopNetCode.deleteLastChar();
+					_shopNetCode.deleteLastChar();
+					_shopNetCode.deleteLastChar();
+				} else {
+					_shopNetCode.deleteLastChar();
+				}
+
+				viewWindow->invalidateWindow(false);
+
+				// NOTE: Original returned here instead, but that resulted in a bad character
+				// being printed if the string was empty.
+			}
+
+			return SC_TRUE;
+		}
+
+		// Add the character to the code string
+		static const char *dashString = " - ";
+
+		switch (_shopNetCode.size()) {
+		case 0:
+		case 1:
+		case 6:
+		case 11:
+		case 12:
+			_shopNetCode += (char)(character.keycode - Common::KEYCODE_0 + '0');
+			break;
+		case 2:
+		case 7:
+			_shopNetCode += (char)(character.keycode - Common::KEYCODE_0 + '0');
+			_shopNetCode += dashString;
+			break;
+		case 13:
+			_shopNetCode += (char)(character.keycode - Common::KEYCODE_0 + '0');
+
+			if (_shopNetCode == _vm->getString(IDFAKI_SN_CHEESE_GIRL_CODE_TEXT)
+					|| _shopNetCode == _vm->getString(IDFAKI_SN_TRANSLATE_CHIP_CODE_TEXT)
+					|| _shopNetCode == _vm->getString(IDFAKI_SN_GENO_SINGLE_CODE_TEXT)) {
+				_status = 1;
+				_staticData.navFrameIndex = 53;
+			} else {
+				_shopNetCode.clear();
+			}
+			break;
+		}
+
+		viewWindow->invalidateWindow(false);
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int KitchenUnitShopNet::gdiPaint(Window *viewWindow) {
+	uint32 textColor = _vm->_gfx->getColor(104, 40, 168);
+	Common::String text;
+	Common::Rect rect;
+	bool vtCenter = false;
+
+	switch (_status) {
+	case 0: // Entering code
+	case 1: // Valid code
+		text = _shopNetCode;
+		rect = Common::Rect(117, 71, 244, 88);
+		vtCenter = true;
+		break;
+	case 2: // Translate BioChip
+		text = _vm->getString(IDFAKI_SN_TRANSLATE_CHIP_ORDER_TEXT);
+		rect = Common::Rect(87, 33, 179, 87);
+		break;
+	case 3: // Cheese Girl
+		text = _vm->getString(IDFAKI_SN_CHEESE_GIRL_ORDER_TEXT);
+		rect = Common::Rect(87, 33, 179, 87);
+		break;
+	case 4: // Geno Environ Cartridge
+		text = _vm->getString(IDFAKI_SN_GENO_SINGLE_ORDER_TEXT);
+		rect = Common::Rect(87, 33, 179, 87);
+		break;
+	case 5: // Ordered the item successfully
+		text = _vm->getString(IDFAKI_SN_SUCCESSFUL_ORDER_TEXT);
+		rect = Common::Rect(80, 26, 294, 92);
+		break;
+	case 6: // Ordered the item unsuccessfully
+		text = _vm->getString(IDFAKI_SN_UNSUCCESSFUL_ORDER_TEXT);
+		rect = Common::Rect(80, 26, 294, 92);
+		break;
+	}
+
+	if (!text.empty()) {
+		// TODO: Vertically center align
+		rect.translate(64, 128);
+		_vm->_gfx->renderText(_vm->_gfx->getScreen(), _textFont, text, rect.left, rect.top, rect.width(), textColor, _lineHeight);
+	}
+
+	return SC_FALSE;
+}
+
+int KitchenUnitShopNet::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_powerButton.contains(pointLocation) || _menuButton.contains(pointLocation))
+		return kCursorFinger;
+
+	if (_transmitButton.contains(pointLocation) && _status == 1)
+		return kCursorFinger;
+
+	if (_acceptButton.contains(pointLocation) && (_status >= 2 && _status <= 4))
+		return kCursorFinger;
+
+	for (int i = 0; i < 10; i++)
+		if (_numberButtons[i].contains(pointLocation))
+			return kCursorFinger;
+
+	return kCursorArrow;
+}
+
+int KitchenUnitShopNet::preExitRoom(Window *viewWindow, const Location &priorLocation) {
+	((SceneViewWindow *)viewWindow)->stopAsynchronousAnimation();
+	return SC_TRUE;
+}
+
+class KitchenUnitPostBox : public SceneBase {
+public:
+	KitchenUnitPostBox(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	~KitchenUnitPostBox();
+	void preDestructor();
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int gdiPaint(Window *viewWindow);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	int _packageCount;
+	int _selectedPackage;
+	Common::Rect _menuButton;
+	Common::Rect _powerButton;
+	Common::Rect _items[3];
+	Common::Rect _replicateButton;
+	Graphics::Font *_textFont;
+	int _lineHeight;
+
+	void changeBackgroundBitmap();
+};
+
+KitchenUnitPostBox::KitchenUnitPostBox(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_packageCount = 0;
+	_selectedPackage = -1;
+	_menuButton = Common::Rect(49, 96, 121, 118);
+	_powerButton = Common::Rect(49, 125, 121, 147);
+	_items[0] = Common::Rect(137, 62, 285, 79);
+	_items[1] = Common::Rect(137, 91, 285, 108);
+	_items[2] = Common::Rect(137, 120, 285, 137);
+	_replicateButton = Common::Rect(200, 150, 283, 167);
+
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().faKIPostBoxSlotA != 0)
+		_packageCount++;
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().faKIPostBoxSlotB != 0)
+		_packageCount++;
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().faKIPostBoxSlotC != 0)
+		_packageCount++;
+
+	changeBackgroundBitmap();
+
+	_lineHeight = (_vm->getLanguage() == Common::JA_JPN) ? 10 : 14;
+	_textFont = _vm->_gfx->createFont(_lineHeight);
+}
+
+KitchenUnitPostBox::~KitchenUnitPostBox() {
+	preDestructor();
+}
+
+void KitchenUnitPostBox::preDestructor() {
+	delete _textFont;
+	_textFont = 0;
+}
+
+int KitchenUnitPostBox::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_menuButton.contains(pointLocation)) {
+		_vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 8));
+
+		Location newLocation = _staticData.location;
+		newLocation.depth = 2;
+		((SceneViewWindow *)viewWindow)->jumpToScene(newLocation);
+		return SC_TRUE;
+	} else if (_powerButton.contains(pointLocation)) {
+		_vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 8));
+
+		Location newLocation = _staticData.location;
+		newLocation.depth = 0;
+		((SceneViewWindow *)viewWindow)->jumpToScene(newLocation);
+		return SC_TRUE;
+	} else if (_replicateButton.contains(pointLocation) && _selectedPackage >= 0) {
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().faKITakenPostboxItem = 0;
+		_vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 8));
+
+		DestinationScene newScene;
+		newScene.destinationScene = _staticData.location;
+		newScene.transitionType = TRANSITION_VIDEO;
+		newScene.transitionStartFrame = -1;
+		newScene.transitionLength = -1;
+
+		int item;
+		switch (_selectedPackage) {
+		case 0:
+			item = ((SceneViewWindow *)viewWindow)->getGlobalFlags().faKIPostBoxSlotA;
+			break;
+		case 1:
+			item = ((SceneViewWindow *)viewWindow)->getGlobalFlags().faKIPostBoxSlotB;
+			break;
+		case 2:
+			item = ((SceneViewWindow *)viewWindow)->getGlobalFlags().faKIPostBoxSlotC;
+			break;
+		}
+
+		switch (((SceneViewWindow *)viewWindow)->getGlobalFlagByte(offsetof(GlobalFlags, faKIPostBoxSlotA) + _selectedPackage)) {
+		case 2:
+			newScene.destinationScene.depth = 6;
+			newScene.transitionData = 9;
+			break;
+		case 3:
+			newScene.destinationScene.depth = 7;
+			newScene.transitionData = 10;
+			break;
+		case 4:
+			newScene.destinationScene.depth = 8;
+			newScene.transitionData = 11;
+			break;
+		}
+
+		// Remove the item from the post box
+		for (int i = _selectedPackage; i < _packageCount - 1; i++) {
+			byte nextPackage = ((SceneViewWindow *)viewWindow)->getGlobalFlagByte(offsetof(GlobalFlags, faKIPostBoxSlotA) + i + 1);
+			((SceneViewWindow *)viewWindow)->setGlobalFlagByte(offsetof(GlobalFlags, faKIPostBoxSlotA) + i, nextPackage);
+		}
+
+		// Reset the last entry to 0
+		((SceneViewWindow *)viewWindow)->setGlobalFlagByte(offsetof(GlobalFlags, faKIPostBoxSlotA) + _packageCount - 1, 0);
+
+		// Move to the destination scene
+		((SceneViewWindow *)viewWindow)->moveToDestination(newScene);
+
+		return SC_TRUE;
+	}
+
+	for (int i = 0; i < _packageCount; i++) {
+		if (_items[i].contains(pointLocation)) {
+			_vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 8));
+			_selectedPackage = i;
+			changeBackgroundBitmap();
+			viewWindow->invalidateWindow(false);
+			return SC_TRUE;
+		}
+	}
+
+	return SC_FALSE;
+}
+
+int KitchenUnitPostBox::gdiPaint(Window *viewWindow) {
+	uint32 textColor = _vm->_gfx->getColor(144, 200, 248);
+
+	for (int i = 0; i < _packageCount; i++) {
+		Common::String text;
+
+		switch (((SceneViewWindow *)viewWindow)->getGlobalFlagByte(offsetof(GlobalFlags, faKIPostBoxSlotA) + i)) {
+		case 2:
+			text = _vm->getString(IDFAKI_SN_TRANSLATE_CHIP_CODE_TITLE);
+			break;
+		case 3:
+			text = _vm->getString(IDFAKI_SN_CHEESE_GIRL_CODE_TITLE);
+			break;
+		case 4:
+			text = _vm->getString(IDFAKI_SN_GENO_SINGLE_CODE_TITLE);
+			break;
+		}
+
+		Common::Rect rect(_items[i]);
+		rect.translate(64, 128);
+		rect.translate(0, (rect.height() - _lineHeight) / 2); // HACK: Vertically center (should be implemented better)
+
+		_vm->_gfx->renderText(_vm->_gfx->getScreen(), _textFont, text, rect.left, rect.top, rect.width(), textColor, _lineHeight, kTextAlignCenter);
+	}
+
+	return SC_FALSE;
+}
+
+int KitchenUnitPostBox::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_powerButton.contains(pointLocation) || _menuButton.contains(pointLocation))
+		return kCursorFinger;
+
+	if (_items[0].contains(pointLocation) && _packageCount >= 0)
+		return kCursorFinger;
+
+	if (_items[1].contains(pointLocation) && _packageCount >= 1)
+		return kCursorFinger;
+
+	if (_items[2].contains(pointLocation) && _packageCount >= 2)
+		return kCursorFinger;
+
+	if (_replicateButton.contains(pointLocation) && _selectedPackage >= 0)
+		return kCursorFinger;
+
+	return kCursorArrow;
+}
+
+void KitchenUnitPostBox::changeBackgroundBitmap() {
+	switch (_packageCount) {
+	case 0:
+		_staticData.navFrameIndex = 41;
+		break;
+	case 1:
+		switch (_selectedPackage) {
+		case -1:
+			_staticData.navFrameIndex = 42;
+			break;
+		case 0:
+			_staticData.navFrameIndex = 45;
+			break;
+		}
+		break;
+	case 2:
+		switch (_selectedPackage) {
+		case -1:
+			_staticData.navFrameIndex = 43;
+			break;
+		case 0:
+			_staticData.navFrameIndex = 46;
+			break;
+		case 1:
+			_staticData.navFrameIndex = 48;
+			break;
+		}
+		break;
+	case 3:
+		switch (_selectedPackage) {
+		case -1:
+			_staticData.navFrameIndex = 44;
+			break;
+		case 0:
+			_staticData.navFrameIndex = 47;
+			break;
+		case 1:
+			_staticData.navFrameIndex = 49;
+			break;
+		case 2:
+			_staticData.navFrameIndex = 50;
+			break;
+		}
+		break;
+	}
+}
 
 class ClickZoomToyShelf : public SceneBase {
 public:
@@ -263,6 +994,18 @@ SceneBase *SceneViewWindow::constructFutureApartmentSceneObject(Window *viewWind
 	// TODO
 
 	switch (sceneStaticData.classID) {
+	case 5:
+		return new KitchenUnitTurnOn(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 6:
+		return new KitchenUnitTitleScreen(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 7:
+		return new KitchenUnitMainMenu(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 8:
+		return new KitchenUnitPostBox(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 9:
+		return new KitchenUnitShopNet(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 10:
+		return new KitchenUnitAutoChef(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 11:
 		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 200, 83, 230, 116, kItemBioChipTranslate, 61, offsetof(GlobalFlags, faKITakenPostboxItem));
 	case 12:
