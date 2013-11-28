@@ -148,6 +148,10 @@ bool MemoryObject::load(MfcArchive &file) {
 
 void MemoryObject::loadFile(char *filename) {
 	debug(5, "MemoryObject::loadFile(<%s>)", filename);
+
+	if (!*filename)
+		return;
+
 	if (!_data) {
 		NGIArchive *arr = g_fullpipe->_currArchive;
 
