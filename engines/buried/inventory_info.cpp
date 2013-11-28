@@ -98,13 +98,13 @@ void InventoryInfoWindow::onPaint() {
 	Common::Rect titleRect(10, 56, 263, 71);
 	Common::String title = _vm->getString(IDES_ITEM_TITLE_BASE + _currentItemID);
 	assert(!title.empty());
-	_vm->_gfx->renderText(background, _textFont, title, titleRect.left, titleRect.top, titleRect.width(), textColor, 14);
+	_vm->_gfx->renderText(background, _textFont, title, titleRect.left, titleRect.top, titleRect.width(), titleRect.height(), textColor, _fontHeight);
 
 	// Draw the description
 	Common::Rect descRect(10, 89, 263, 186);
 	Common::String desc = _vm->getString(IDES_ITEM_DESC_BASE + _currentItemID * 5);
 	assert(!desc.empty());
-	_vm->_gfx->renderText(background, _textFont, desc, descRect.left, descRect.top, descRect.width(), textColor, 14);
+	_vm->_gfx->renderText(background, _textFont, desc, descRect.left, descRect.top, descRect.width(), descRect.height(), textColor, _fontHeight);
 
 	Common::Rect absoluteRect = getAbsoluteRect();
 	_vm->_gfx->blit(background, absoluteRect.left, absoluteRect.top);

@@ -276,21 +276,21 @@ void DeathWindow::onPaint() {
 	uint32 textColor = _vm->_gfx->getColor(153, 102, 204);
 	Common::String firstBlock = _vm->getString(IDS_DEATH_SCENE_MESSAGE_TEXT_BASE + _deathSceneIndex * 5);
 	Common::Rect firstBlockRect(10, 54, 283, 86);
-	_vm->_gfx->renderText(_vm->_gfx->getScreen(), _textFontA, firstBlock, firstBlockRect.left, firstBlockRect.top, firstBlockRect.width(), textColor, _fontHeightA);
+	_vm->_gfx->renderText(_vm->_gfx->getScreen(), _textFontA, firstBlock, firstBlockRect.left, firstBlockRect.top, firstBlockRect.width(), firstBlockRect.height(), textColor, _fontHeightA);
 
 	Common::String secondBlock = _vm->getString(IDS_DEATH_SCENE_MESSAGE_TEXT_BASE + _deathSceneIndex * 5 + 1);
 	Common::Rect secondBlockRect(10, 120, 283, 215);
-	_vm->_gfx->renderText(_vm->_gfx->getScreen(), _textFontA, secondBlock, secondBlockRect.left, secondBlockRect.top, secondBlockRect.width(), textColor, _fontHeightA);
+	_vm->_gfx->renderText(_vm->_gfx->getScreen(), _textFontA, secondBlock, secondBlockRect.left, secondBlockRect.top, secondBlockRect.width(), secondBlockRect.height(), textColor, _fontHeightA);
 
 	Common::Rect scoringDescRect(10, 248, 283, 378);
-	_vm->_gfx->renderText(_vm->_gfx->getScreen(), _textFontA, _scoringTextDescriptions, scoringDescRect.left, scoringDescRect.top, scoringDescRect.width(), textColor, _fontHeightA);
+	_vm->_gfx->renderText(_vm->_gfx->getScreen(), _textFontA, _scoringTextDescriptions, scoringDescRect.left, scoringDescRect.top, scoringDescRect.width(), scoringDescRect.height(), textColor, _fontHeightA);
 
 	textColor = _vm->_gfx->getColor(212, 109, 0);
-	_vm->_gfx->renderText(_vm->_gfx->getScreen(), _textFontA, _scoringTextScores, scoringDescRect.left, scoringDescRect.top, scoringDescRect.width(), textColor, _fontHeightA, kTextAlignRight);
+	_vm->_gfx->renderText(_vm->_gfx->getScreen(), _textFontA, _scoringTextScores, scoringDescRect.left, scoringDescRect.top, scoringDescRect.width(), scoringDescRect.height(), textColor, _fontHeightA, kTextAlignRight);
 
 	// CHECKME: This does center vertical alignment, so check the y coordinates
 	Common::Rect finalTextScoreRect(122, 386, 283, 401);
-	_vm->_gfx->renderText(_vm->_gfx->getScreen(), _textFontB, _scoringTextFinalScore, finalTextScoreRect.left, finalTextScoreRect.top, finalTextScoreRect.width(), textColor, _fontHeightB, kTextAlignRight);
+	_vm->_gfx->renderText(_vm->_gfx->getScreen(), _textFontB, _scoringTextFinalScore, finalTextScoreRect.left, finalTextScoreRect.top, finalTextScoreRect.width(), finalTextScoreRect.height(), textColor, _fontHeightB, kTextAlignRight);
 }
 
 bool DeathWindow::onEraseBackground() {

@@ -200,24 +200,24 @@ void CompletionWindow::onPaint() {
 		uint32 textColor = _vm->_gfx->getColor(102, 204, 153);
 		Common::String firstBlockText = _vm->getString(2100);
 		Common::Rect firstBlockRect(10, 54, 283, 86);
-		_vm->_gfx->renderText(_vm->_gfx->getScreen(), _textFontA, firstBlockText, firstBlockRect.left, firstBlockRect.top, firstBlockRect.width(), textColor, _fontHeightA);
+		_vm->_gfx->renderText(_vm->_gfx->getScreen(), _textFontA, firstBlockText, firstBlockRect.left, firstBlockRect.top, firstBlockRect.width(), firstBlockRect.height(), textColor, _fontHeightA);
 
 		// Draw the cause text
 		Common::String secondBlockText = _vm->getString(2102);
 		Common::Rect secondBlockRect(10, 120, 283, 215);
-		_vm->_gfx->renderText(_vm->_gfx->getScreen(), _textFontA, secondBlockText, secondBlockRect.left, secondBlockRect.top, secondBlockRect.width(), textColor, _fontHeightA);
+		_vm->_gfx->renderText(_vm->_gfx->getScreen(), _textFontA, secondBlockText, secondBlockRect.left, secondBlockRect.top, secondBlockRect.width(), secondBlockRect.height(), textColor, _fontHeightA);
 
 		// Description text
 		Common::Rect scoringTextRect(10, 248, 283, 378);
-		_vm->_gfx->renderText(_vm->_gfx->getScreen(), _textFontA, _scoringTextDescriptions, scoringTextRect.left, scoringTextRect.top, scoringTextRect.width(), textColor, _fontHeightA);
+		_vm->_gfx->renderText(_vm->_gfx->getScreen(), _textFontA, _scoringTextDescriptions, scoringTextRect.left, scoringTextRect.top, scoringTextRect.width(), scoringTextRect.height(), textColor, _fontHeightA);
 
 		// Scores
 		textColor = _vm->_gfx->getColor(255, 255, 51);
-		_vm->_gfx->renderText(_vm->_gfx->getScreen(), _textFontA, _scoringTextScores, scoringTextRect.left, scoringTextRect.top, scoringTextRect.width(), textColor, _fontHeightA, kTextAlignRight);
+		_vm->_gfx->renderText(_vm->_gfx->getScreen(), _textFontA, _scoringTextScores, scoringTextRect.left, scoringTextRect.top, scoringTextRect.width(), scoringTextRect.height(), textColor, _fontHeightA, kTextAlignRight);
 
 		// Total score
 		Common::Rect finalScoreRect(122, 386, 283, 401);
-		_vm->_gfx->renderText(_vm->_gfx->getScreen(), _textFontB, _scoringTextFinalScore, finalScoreRect.left, finalScoreRect.top, finalScoreRect.width(), textColor, _fontHeightB, kTextAlignRight);
+		_vm->_gfx->renderText(_vm->_gfx->getScreen(), _textFontB, _scoringTextFinalScore, finalScoreRect.left, finalScoreRect.top, finalScoreRect.width(), finalScoreRect.height(), textColor, _fontHeightB, kTextAlignRight);
 	}
 }
 

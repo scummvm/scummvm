@@ -112,7 +112,7 @@ void LiveTextWindow::onPaint() {
 
 	// Draw the text on top of that
 	if (!_text.empty())
-		_vm->_gfx->renderText(surface, _font, _text, 30, 4, 270, _vm->_gfx->getColor(212, 109, 0), _fontHeight);
+		_vm->_gfx->renderText(surface, _font, _text, 30, 4, 270, 50, _vm->_gfx->getColor(212, 109, 0), _fontHeight);
 
 	Common::Rect absoluteRect = getAbsoluteRect();
 	_vm->_gfx->blit(surface, absoluteRect.left, absoluteRect.top);
