@@ -478,7 +478,7 @@ IMPLEMENT_FUNCTION(14, Milos, function14)
 					}
 				} else {
 					if (getProgress().eventCorpseMovedFromFloor && getProgress().jacket != kJacketBlood) {
-						params->param6 = (getObjects()->get(kObjectCompartment1).model == kObjectLocation1) ? kEventMilosTylerCompartmentBedVisit : kEventMilosTylerCompartmentVisit;
+						params->param6 = (getObjects()->get(kObjectCompartment1).model == kObjectModel1) ? kEventMilosTylerCompartmentBedVisit : kEventMilosTylerCompartmentVisit;
 
 						setCallback(3);
 						setup_savegame(kSavegameTypeEvent, kEventMilosTylerCompartmentVisit);
@@ -549,9 +549,9 @@ label_callback_12:
 		if (getProgress().eventCorpseMovedFromFloor && getProgress().jacket != kJacketBlood) {
 			if (params->param2) {
 				getEntityData(kEntityPlayer)->location = kLocationInsideCompartment;
-				params->param6 = (getObjects()->get(kObjectCompartment1).model == kObjectLocation1) ? kEventMilosTylerCompartmentBed : kEventMilosTylerCompartment;
+				params->param6 = (getObjects()->get(kObjectCompartment1).model == kObjectModel1) ? kEventMilosTylerCompartmentBed : kEventMilosTylerCompartment;
 			} else {
-				params->param6 = (getObjects()->get(kObjectCompartment1).model == kObjectLocation1) ? kEventMilosTylerCompartmentBedVisit : kEventMilosTylerCompartmentVisit;
+				params->param6 = (getObjects()->get(kObjectCompartment1).model == kObjectModel1) ? kEventMilosTylerCompartmentBedVisit : kEventMilosTylerCompartmentVisit;
 			}
 
 			setCallback(17);

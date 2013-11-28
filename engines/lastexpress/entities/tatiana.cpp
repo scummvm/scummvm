@@ -1917,7 +1917,7 @@ IMPLEMENT_FUNCTION(47, Tatiana, function47)
 
 		case 3:
 		case 4:
-			if (ENTITY_PARAM(0, 1) && getObjects()->get(kObjectCompartment1).model == kObjectLocation1) {
+			if (ENTITY_PARAM(0, 1) && getObjects()->get(kObjectCompartment1).model == kObjectModel1) {
 				setup_function48();
 			} else {
 				setCallback(4);

@@ -1265,7 +1265,7 @@ label_exitPozsony:
 			break;
 
 label_enterGalanta:
-		if (getObjects()->get(kObjectCompartment1).model == kObjectLocation1) {
+		if (getObjects()->get(kObjectCompartment1).model == kObjectModel1) {
 			if (getState()->time > kTime2403000 && !CURRENT_PARAM(1, 2)) {
 				CURRENT_PARAM(1, 2) = 1;
 				getProgress().field_18 = 2;

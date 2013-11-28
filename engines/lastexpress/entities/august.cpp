@@ -640,7 +640,7 @@ label_continue:
 			break;
 
 		case 6:
-			getAction()->playAnimation(getObjects()->get(kObjectCompartment3).model == kObjectLocation1 ? kEventMeetAugustHisCompartmentBed : kEventMeetAugustHisCompartment);
+			getAction()->playAnimation(getObjects()->get(kObjectCompartment3).model == kObjectModel1 ? kEventMeetAugustHisCompartmentBed : kEventMeetAugustHisCompartment);
 			getProgress().eventMetAugust = true;
 			getObjects()->update(kObjectCompartment3, kEntityAugust, kObjectLocation1, kCursorNormal, kCursorNormal);
 
@@ -879,7 +879,7 @@ label_callback_9:
 		} else {
 
 			if (getProgress().eventCorpseMovedFromFloor && getProgress().jacket != kJacketBlood) {
-				params->param7 = (getObjects()->get(kObjectCompartment1).model == kObjectLocation1) ? 8 : 7;
+				params->param7 = (getObjects()->get(kObjectCompartment1).model == kObjectModel1) ? 8 : 7;
 				getObjects()->update(kObjectOutsideTylerCompartment, kEntityPlayer, kObjectLocationNone, kCursorKeepValue, kCursorKeepValue);
 
 				setCallback(4);
@@ -912,9 +912,9 @@ label_callback_9:
 			if (params->param3) {
 				getData()->location = kLocationInsideCompartment;
 
-				params->param7 = (getObjects()->get(kObjectCompartment1).model == kObjectLocation1) ? kEventMeetAugustHisCompartmentBed : kEventMeetAugustHisCompartment;
+				params->param7 = (getObjects()->get(kObjectCompartment1).model == kObjectModel1) ? kEventMeetAugustHisCompartmentBed : kEventMeetAugustHisCompartment;
 			} else {
-				params->param7 = (getObjects()->get(kObjectCompartment1).model == kObjectLocation1) ? kEventMeetAugustTylerCompartmentBed : kEventMeetAugustTylerCompartment;
+				params->param7 = (getObjects()->get(kObjectCompartment1).model == kObjectModel1) ? kEventMeetAugustTylerCompartmentBed : kEventMeetAugustTylerCompartment;
 			}
 
 			setCallback(14);

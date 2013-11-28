@@ -1791,7 +1791,7 @@ IMPLEMENT_FUNCTION(49, Abbot, catchCath)
 			break;
 
 		case 1:
-			getAction()->playAnimation(getObjects()->get(kObjectCompartment2).model < kObjectLocation2 ? kEventAbbotWrongCompartmentBed : kEventAbbotWrongCompartment);
+			getAction()->playAnimation(getObjects()->get(kObjectCompartment2).model < kObjectModel2 ? kEventAbbotWrongCompartmentBed : kEventAbbotWrongCompartment);
 			getEntities()->updateEntity(kEntityAbbot, kCarRedSleeping, kPosition_6470);
 			getSound()->playSound(kEntityPlayer, "LIB015");
 			getScenes()->loadSceneFromObject(kObjectCompartment2, true);
