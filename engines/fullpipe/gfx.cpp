@@ -464,6 +464,8 @@ Picture::~Picture() {
 }
 
 void Picture::freePicture() {
+	debug(5, "Picture::freePicture(): file: %s", _memfilename);
+
 	if (_bitmap) {
 		if (testFlags() && !_field_54) {
 			freeData();
@@ -519,7 +521,7 @@ bool Picture::load(MfcArchive &file) {
 
 	getData();
 
-	debug(5, "Picture::load: <%s>", _memfilename);
+	debug(5, "Picture::load: loaded <%s>", _memfilename);
 
 	return true;
 }
@@ -539,6 +541,10 @@ void Picture::setAOIDs() {
 }
 
 void Picture::init() {
+	debug(5, "Picture::init(), %s", _memfilename);
+
+	MemoryObject::getData();
+
 	_bitmap = new Bitmap();
 
 	getDibInfo();
@@ -565,6 +571,12 @@ void Picture::getDibInfo() {
 
 	if (_dataSize != off) {
 		warning("Uneven data size: 0x%x", _dataSize);
+	}
+
+	if (!_data) {
+		warning("Picture::getDibInfo: data is empty <%s>", _memfilename);
+
+		MemoryObject::load();
 	}
 
 	Common::MemoryReadStream *s = new Common::MemoryReadStream(_data + off - 32, 32);
