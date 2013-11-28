@@ -268,6 +268,27 @@ int ClickPlaySound::specifyCursor(Window *viewWindow, const Common::Point &point
 	return kCursorArrow;
 }
 
+DisplayMessageWithEvidenceWhenEnteringNode::DisplayMessageWithEvidenceWhenEnteringNode(BuriedEngine *vm, Window *viewWindow,
+			const LocationStaticData &sceneStaticData, const Location &priorLocation, int evidenceID, int messageBoxTextID) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_evidenceID = evidenceID;
+	_messageBoxTextID = messageBoxTextID;
+}
+
+int DisplayMessageWithEvidenceWhenEnteringNode::postEnterRoom(Window *viewWindow, const Location &priorLocation) {
+	if ((_staticData.location.timeZone != priorLocation.timeZone ||
+			_staticData.location.environment != priorLocation.environment ||
+			_staticData.location.node != priorLocation.node ||
+			_staticData.location.facing != priorLocation.facing ||
+			_staticData.location.orientation != priorLocation.orientation ||
+			_staticData.location.depth != priorLocation.depth) &&
+			!((SceneViewWindow *)viewWindow)->isNumberInGlobalFlagTable(offsetof(GlobalFlags, evcapBaseID), offsetof(GlobalFlags, evcapNumCaptured), _evidenceID)) {
+		((SceneViewWindow *)viewWindow)->displayLiveText(_vm->getString(_messageBoxTextID));
+	}
+
+	return SC_TRUE;
+}
+
 OneShotEntryVideoWarning::OneShotEntryVideoWarning(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
 		int animID, int flagOffset, int warningMessageID) : SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
 	_animID = animID;
