@@ -36,6 +36,7 @@
 #include "buried/scene_view.h"
 
 #include "common/stream.h"
+#include "common/system.h"
 #include "graphics/surface.h"
 
 namespace Buried {
@@ -358,6 +359,132 @@ void JumpBiochipViewWindow::onMouseMove(const Common::Point &point, uint flags) 
 	}
 }
 
+class EvidenceBioChipViewWindow : public Window {
+public:
+	EvidenceBioChipViewWindow(BuriedEngine *vm, Window *parent);
+	~EvidenceBioChipViewWindow();
+
+	void onPaint();
+	void onLButtonUp(const Common::Point &point, uint flags);
+
+private:
+	Common::Rect _evidence[6];
+	Common::Rect _pageButton;
+	AVIFrames _stillFrames;
+	AVIFrames _evidenceFrames;
+	int _status;
+	int _pageIndex;
+	Graphics::Surface _preBuffer;
+
+	bool rebuildMainPrebuffer();
+};
+
+EvidenceBioChipViewWindow::EvidenceBioChipViewWindow(BuriedEngine *vm, Window *parent) : Window(vm, parent) {
+	_evidence[0] = Common::Rect(14, 49, 96, 83);
+	_evidence[1] = Common::Rect(14, 91, 96, 125);
+	_evidence[2] = Common::Rect(14, 133, 96, 167);
+	_evidence[3] = Common::Rect(225, 20, 307, 54);
+	_evidence[4] = Common::Rect(225, 61, 307, 95);
+	_evidence[5] = Common::Rect(225, 103, 307, 137);
+	_pageButton = Common::Rect(336, 156, 420, 185);
+	_status = 0;
+	_pageIndex = 0;
+
+	_rect = Common::Rect(0, 0, 432, 189);
+
+	_preBuffer.create(432, 189, g_system->getScreenFormat());
+
+	if (!_stillFrames.open(_vm->getFilePath(IDS_BC_EVIDENCE_VIEW_FILENAME)))
+		error("Failed to open evidence still frames video");
+
+	if (!_evidenceFrames.open(_vm->getFilePath(IDS_BC_EVIDENCE_ITEMS_FILENAME)))
+		error("Failed to open evidence frames video");
+
+	// Build the initial page
+	rebuildMainPrebuffer();
+
+	// Display some live text if no evidence is present
+	if (((SceneViewWindow *)getParent()->getParent())->getGlobalFlags().evcapNumCaptured == 0)
+		((GameUIWindow *)getParent()->getParent()->getParent())->_liveTextWindow->updateLiveText(_vm->getString(IDS_MBT_EVIDENCE_NONE_ACQUIRED));
+}
+
+EvidenceBioChipViewWindow::~EvidenceBioChipViewWindow() {
+	_preBuffer.free();
+}
+
+void EvidenceBioChipViewWindow::onPaint() {
+	Common::Rect absoluteRect = getAbsoluteRect();
+
+	if (_status == 0) {
+		_vm->_gfx->blit(&_preBuffer, absoluteRect.left, absoluteRect.top);
+	} else {
+		const Graphics::Surface *frame = _stillFrames.getFrame(_status + 2);
+		_vm->_gfx->blit(frame, absoluteRect.left, absoluteRect.top);
+	}
+}
+
+void EvidenceBioChipViewWindow::onLButtonUp(const Common::Point &point, uint flags) {
+	if (_status == 0) {
+		// Get the number of items urrently captured
+		int itemCount = ((SceneViewWindow *)getParent()->getParent())->getGlobalFlags().evcapNumCaptured;
+
+		// Loop through the evidence piece regions, determining if we have another page to go to
+		for (int i = 0; i < 6; i++) {
+			if (_evidence[i].contains(point) && (_pageIndex * 6 + i) < itemCount) {
+				_status = ((SceneViewWindow *)getParent()->getParent())->getNumberFromGlobalFlagTable(offsetof(GlobalFlags, evcapBaseID), _pageIndex * 6 + i);
+				invalidateWindow(false);
+				((GameUIWindow *)getParent()->getParent()->getParent())->_liveTextWindow->updateLiveText(_vm->getString(IDS_EC_DESC_TEXT_A + _status - 1), false);
+
+				// Give scores for research
+				if (_status + 2 == 3)
+					((SceneViewWindow *)getParent()->getParent())->getGlobalFlags().scoreResearchCastleFootprint = 1;
+				else if (_status + 2 == 10)
+					((SceneViewWindow *)getParent()->getParent())->getGlobalFlags().scoreResearchDaVinciFootprint = 1;
+			}
+		}
+
+		// Did we click on the next page button and is it valid?
+		if (_pageButton.contains(point)) {
+			if (itemCount > 6) {
+				if (_pageIndex * 6 < itemCount - 6) {
+					_pageIndex++;
+				} else {
+					_pageIndex = 0;
+				}
+
+				rebuildMainPrebuffer();
+				invalidateWindow(false);
+			}
+		}
+	} else {
+		// Return to the last evidence page displayed
+		_status = 0;
+		invalidateWindow(false);
+		((GameUIWindow *)getParent()->getParent()->getParent())->_liveTextWindow->updateLiveText("");
+	}
+}
+
+bool EvidenceBioChipViewWindow::rebuildMainPrebuffer() {
+	int itemCount = ((SceneViewWindow *)getParent()->getParent())->getGlobalFlags().evcapNumCaptured;
+	int frameIndex = (itemCount > 6) ? 1 : 0;
+	const Graphics::Surface *frame = _stillFrames.getFrame(frameIndex);
+	_vm->_gfx->crossBlit(&_preBuffer, 0, 0, 432, 189, frame, 0, 0);
+
+	for (int i = 0; i < 6; i++) {
+		if ((_pageIndex * 6 + i) < itemCount) {
+			frameIndex = ((SceneViewWindow *)getParent()->getParent())->getNumberFromGlobalFlagTable(offsetof(GlobalFlags, evcapBaseID), _pageIndex * 6 + i) - 1;
+			frame = _evidenceFrames.getFrame(frameIndex);
+
+			if (frame) {
+				byte transparentColor = _vm->isTrueColor() ? 255 : 248;
+				_vm->_gfx->opaqueTransparentBlit(&_preBuffer, _evidence[i].left, _evidence[i].top, 203, 34, frame, 2, 2, 0, transparentColor, transparentColor, transparentColor);
+			}
+		}
+	}
+
+	return true;
+}
+
 enum {
 	REGION_SAVE = 1,
 	REGION_RESTORE = 2,
@@ -618,8 +745,7 @@ Window *BioChipMainViewWindow::createBioChipSpecificViewWindow(int bioChipID) {
 	case kItemBioChipJump:
 		return new JumpBiochipViewWindow(_vm, this);
 	case kItemBioChipEvidence:
-		// TODO
-		break;
+		return new EvidenceBioChipViewWindow(_vm, this);
 	case kItemBioChipFiles:
 		return new FilesBioChipViewWindow(_vm, this);
 	}
