@@ -53,6 +53,62 @@ SwapStillOnFlag::SwapStillOnFlag(BuriedEngine *vm, Window *viewWindow, const Loc
 	}
 }
 
+class CapturePaintingTowerFootprint : public SceneBase {
+public:
+	CapturePaintingTowerFootprint(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int locateAttempted(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	Common::Rect _footprint;
+};
+
+CapturePaintingTowerFootprint::CapturePaintingTowerFootprint(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().dsPTElevatorPresent >= 1) {
+		int curStillFrame = _staticData.navFrameIndex;
+		_staticData.navFrameIndex = _staticData.miscFrameIndex;
+		_staticData.miscFrameIndex = curStillFrame;
+	}
+
+	_footprint = Common::Rect(218, 112, 244, 132);
+}
+
+int CapturePaintingTowerFootprint::locateAttempted(Window *viewWindow, const Common::Point &pointLocation) {
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().bcLocateEnabled == 1 && _footprint.contains(pointLocation)) {
+		// Play the capture animation
+		if (((SceneViewWindow *)viewWindow)->getGlobalFlags().dsPTElevatorPresent >= 1)
+			((SceneViewWindow *)viewWindow)->playSynchronousAnimation(1);
+		else
+			((SceneViewWindow *)viewWindow)->playSynchronousAnimation(0);
+
+		// Attempt to add it to the biochip
+		if (((SceneViewWindow *)viewWindow)->addNumberToGlobalFlagTable(offsetof(GlobalFlags, evcapBaseID), offsetof(GlobalFlags, evcapNumCaptured), 12, DAVINCI_EVIDENCE_FOOTPRINT))
+			((SceneViewWindow *)viewWindow)->displayLiveText(_vm->getString(IDS_MBT_EVIDENCE_ACQUIRED));
+		else
+			((SceneViewWindow *)viewWindow)->displayLiveText(_vm->getString(IDS_MBT_EVIDENCE_ALREADY_ACQUIRED));
+
+		// Disable capture
+		((GameUIWindow *)viewWindow->getParent())->_bioChipRightWindow->disableEvidenceCapture();
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int CapturePaintingTowerFootprint::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().bcLocateEnabled == 1) {
+		if (_footprint.contains(pointLocation)) // Cursor change
+			return -2;
+
+		// Use locate A
+		return -1;
+	}
+
+	return kCursorArrow;
+}
+
 class PaintingTowerWalkOntoElevator : public SceneBase {
 public:
 	PaintingTowerWalkOntoElevator(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
@@ -339,6 +395,10 @@ SceneBase *SceneViewWindow::constructDaVinciSceneObject(Window *viewWindow, cons
 	switch (sceneStaticData.classID) {
 	case 1:
 		return new SwapStillOnFlag(_vm, viewWindow, sceneStaticData, priorLocation, offsetof(GlobalFlags, dsPTElevatorPresent), 1);
+	case 2:
+		return new DisplayMessageWithEvidenceWhenEnteringNode(_vm, viewWindow, sceneStaticData, priorLocation, DAVINCI_EVIDENCE_FOOTPRINT, IDS_MBT_EVIDENCE_PRESENT);
+	case 3:
+		return new CapturePaintingTowerFootprint(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 4:
 		return new PaintingTowerRetrieveKey(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 8:

@@ -118,6 +118,17 @@ private:
 	int _flagOffset;
 };
 
+class DisplayMessageWithEvidenceWhenEnteringNode : public SceneBase {
+public:
+	DisplayMessageWithEvidenceWhenEnteringNode(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+			int evidenceID = -1, int messageBoxTextID = -1);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
+
+private:
+	int _messageBoxTextID;
+	byte _evidenceID;
+};
+
 class OneShotEntryVideoWarning : public SceneBase {
 public:
 	OneShotEntryVideoWarning(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
