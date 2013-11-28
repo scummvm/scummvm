@@ -2355,10 +2355,10 @@ bool SceneViewWindow::onSetCursor(uint message) {
 
 	// If the locate button is enabled, follow different logic
 	if (_globalFlags.bcLocateEnabled == 1) {
-		if (_curCursor >= 0 || (newCursor > 65530 && newCursor != _curCursor)) {
+		if (_curCursor >= 0 || (newCursor < 0 && newCursor != _curCursor)) {
 			// If the new cursor is less than zero, use it, otherwise use the default locate cursor
-			if (newCursor > 65533) {
-				if (newCursor == 65534)
+			if (newCursor < 0) {
+				if (newCursor == -2)
 					_curCursor = (int)kCursorLocateB;
 				else
 					_curCursor = (int)kCursorLocateA;
