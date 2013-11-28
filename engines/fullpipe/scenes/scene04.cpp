@@ -328,7 +328,14 @@ void sceneHandler04_sub1(ExCommand *ex) {
 }
 
 void sceneHandler04_sub3() {
-	warning("sceneHandler04_sub3()");
+	if (g_vars->scene04_kozyawkiObjList.size()) {
+		g_vars->scene04_var05 = g_vars->scene04_kozyawkiObjList.front();
+		g_vars->scene04_kozyawkiObjList.pop_front();
+
+		MessageQueue *mq = new MessageQueue(g_fullpipe->_currentScene->getMessageQueueById(QU_KOZAW_WALK), 0, 1);
+		mq->replaceKeyCode(-1, g_vars->scene04_var05->_okeyCode);
+		mq->chain(0);
+	}
 }
 
 void sceneHandler04_sub4() {

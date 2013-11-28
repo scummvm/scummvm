@@ -89,7 +89,7 @@ public:
 	Common::Point scene04_jumpingKozyawki[20];
 	Common::Point scene04_jumpRotateKozyawki[20];
 
-	Common::Array<StaticANIObject *> scene04_kozyawkiObjList;
+	Common::List<StaticANIObject *> scene04_kozyawkiObjList;
 	Common::Array<GameObject *> scene04_bottleObjList;
 	Common::Array<StaticANIObject *> scene04_kozyawkiAni;
 
