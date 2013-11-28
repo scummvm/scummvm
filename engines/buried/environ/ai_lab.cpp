@@ -358,6 +358,72 @@ int UseCheeseGirlPropellant::droppedItem(Window *viewWindow, int itemID, const C
 	return SIC_REJECT;
 }
 
+class PlayArthurOffsetTimed : public BaseOxygenTimer {
+public:
+	PlayArthurOffsetTimed(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+			int stingerVolume = 127, int lastStingerFlagOffset = -1, int effectIDFlagOffset = -1, int firstStingerFileID = -1,
+			int lastStingerFileID = -1, int stingerDelay = 1);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
+
+private:
+	int _stingerVolume;
+	int _lastStingerFlagOffset;
+	int _effectIDFlagOffset;
+	int _firstStingerFileID;
+	int _lastStingerFileID;
+	int _stingerDelay;
+	int _timerFlagOffset;
+};
+
+PlayArthurOffsetTimed::PlayArthurOffsetTimed(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+		int stingerVolume, int lastStingerFlagOffset, int effectIDFlagOffset, int firstStingerFileID,
+		int lastStingerFileID, int stingerDelay) :
+		BaseOxygenTimer(vm, viewWindow, sceneStaticData, priorLocation) {
+	_stingerVolume = stingerVolume;
+	_lastStingerFlagOffset = lastStingerFlagOffset;
+	_effectIDFlagOffset = effectIDFlagOffset;
+	_firstStingerFileID = firstStingerFileID;
+	_lastStingerFileID = lastStingerFileID;
+	_stingerDelay = stingerDelay;
+}
+
+int PlayArthurOffsetTimed::postEnterRoom(Window *viewWindow, const Location &priorLocation) {
+	if (_effectIDFlagOffset >= 0 && (priorLocation.node != _staticData.location.node || priorLocation.environment != _staticData.location.environment)) {
+		byte effectID = ((SceneViewWindow *)viewWindow)->getGlobalFlagByte(_effectIDFlagOffset);
+
+		if (!_vm->_sound->isSoundEffectPlaying(effectID - 1)) {
+			int lastStinger = ((SceneViewWindow *)viewWindow)->getGlobalFlagByte(_lastStingerFlagOffset) + 1;
+
+			if ((lastStinger % _stingerDelay) == 0) {
+				if (lastStinger <= (_lastStingerFileID - _firstStingerFileID) * _stingerDelay) {
+					int fileNameIndex = _vm->computeFileNameResourceID(_staticData.location.timeZone, _staticData.location.environment, _firstStingerFileID + lastStinger / _stingerDelay - 1);
+					byte newStingerID = 0;
+
+					if (((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->isItemInInventory(kItemBioChipAI)) {
+						newStingerID = _vm->_sound->playSoundEffect(_vm->getFilePath(fileNameIndex), _stingerVolume / 2, false, true) + 1;
+						byte &lastArthurComment = ((SceneViewWindow *)viewWindow)->getGlobalFlags().aiHWLastCommentPlayed;
+
+						if ((lastStinger / 2) != 0 && lastArthurComment < 4) {
+							lastArthurComment++;
+							_vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, 10, lastArthurComment + 5), 128, false, true);
+						}
+					} else {
+						newStingerID = _vm->_sound->playSoundEffect(_vm->getFilePath(fileNameIndex), _stingerVolume, false, true) + 1;
+					}
+
+					((SceneViewWindow *)viewWindow)->setGlobalFlagByte(_effectIDFlagOffset, newStingerID);
+					((SceneViewWindow *)viewWindow)->setGlobalFlagByte(_lastStingerFlagOffset, lastStinger);
+				}
+			} else {
+				((SceneViewWindow *)viewWindow)->setGlobalFlagByte(_effectIDFlagOffset, 0xFF);
+				((SceneViewWindow *)viewWindow)->setGlobalFlagByte(_lastStingerFlagOffset, lastStinger);
+			}
+		}
+	}
+
+	return SC_TRUE;
+}
+
 class HabitatWingLockedDoor : public BaseOxygenTimer {
 public:
 	HabitatWingLockedDoor(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
@@ -466,6 +532,8 @@ SceneBase *SceneViewWindow::constructAILabSceneObject(Window *viewWindow, const 
 		return new UseCheeseGirlPropellant(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 3:
 		return new SpaceDoorTimer(_vm, viewWindow, sceneStaticData, priorLocation, 172, 46, 262, 136, 87, -1, 1, TRANSITION_VIDEO, 2, -1, -1, -1, -1);
+	case 4:
+		return new PlayArthurOffsetTimed(_vm, viewWindow, sceneStaticData, priorLocation, 127, offsetof(GlobalFlags, aiHWStingerID), offsetof(GlobalFlags, aiHWStingerChannelID), 4, 10, 1); // 1.01 uses a delay of 2, clone2727 likes that better
 	case 5:
 		return new SpaceDoorTimer(_vm, viewWindow, sceneStaticData, priorLocation, 144, 30, 268, 152, 88, -1, 1, TRANSITION_VIDEO, 4, -1, -1, -1, -1);
 	case 6:
