@@ -53,7 +53,7 @@ namespace Buried {
 	if (_globalFlags.evcapBaseID[i] == flag) \
 		supportingEvidence++
 
-CompletionWindow::CompletionWindow(BuriedEngine *vm, Window *parent, const GlobalFlags &globalFlags) : Window(vm, parent), _globalFlags(globalFlags) {
+CompletionWindow::CompletionWindow(BuriedEngine *vm, Window *parent, GlobalFlags globalFlags) : Window(vm, parent), _globalFlags(globalFlags) {
 	_vm->_sound->setAmbientSound();
 
 	_status = 0;

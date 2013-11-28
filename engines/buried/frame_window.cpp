@@ -276,7 +276,7 @@ bool FrameWindow::startNewGame(const Common::String &fileName) {
 	return true;
 }
 
-bool FrameWindow::showDeathScene(int deathSceneIndex, const GlobalFlags &globalFlags) {
+bool FrameWindow::showDeathScene(int deathSceneIndex, GlobalFlags globalFlags) {
 	_gameInProgress = false;
 	_atMainMenu = false;
 
@@ -290,7 +290,7 @@ bool FrameWindow::showDeathScene(int deathSceneIndex, const GlobalFlags &globalF
 	return true;
 }
 
-bool FrameWindow::showCompletionScene(const GlobalFlags &globalFlags) {
+bool FrameWindow::showCompletionScene(GlobalFlags globalFlags) {
 	_gameInProgress = false;
 	_atMainMenu = false;
 
