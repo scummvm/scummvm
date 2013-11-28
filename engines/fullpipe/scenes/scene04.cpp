@@ -143,7 +143,7 @@ void scene04_initScene(Scene *sc) {
 	g_vars->scene04_var02 = 0;
 	g_vars->scene04_soundPlaying = 0;
 	g_vars->scene04_var04 = 0;
-	g_vars->scene04_var05 = 0;
+	g_vars->scene04_walkingKozyawka = 0;
 	g_vars->scene04_var06 = 2;
 	g_vars->scene04_dynamicPhaseIndex = 0;
 
@@ -327,13 +327,13 @@ void sceneHandler04_sub1(ExCommand *ex) {
 	g_fullpipe->_behaviorManager->setFlagByStaticAniObject(g_fullpipe->_aniMan, 1);
 }
 
-void sceneHandler04_sub3() {
+void sceneHandler04_walkKozyawka() {
 	if (g_vars->scene04_kozyawkiObjList.size()) {
-		g_vars->scene04_var05 = g_vars->scene04_kozyawkiObjList.front();
+		g_vars->scene04_walkingKozyawka = g_vars->scene04_kozyawkiObjList.front();
 		g_vars->scene04_kozyawkiObjList.pop_front();
 
 		MessageQueue *mq = new MessageQueue(g_fullpipe->_currentScene->getMessageQueueById(QU_KOZAW_WALK), 0, 1);
-		mq->replaceKeyCode(-1, g_vars->scene04_var05->_okeyCode);
+		mq->replaceKeyCode(-1, g_vars->scene04_walkingKozyawka->_okeyCode);
 		mq->chain(0);
 	}
 }
@@ -457,13 +457,14 @@ int sceneHandler04(ExCommand *ex) {
 		break;
 
 	case MSG_KOZAWRESTART:
-		if (g_vars->scene04_var05) {
-			g_vars->scene04_kozyawkiObjList.push_back(g_vars->scene04_var05);
-			g_vars->scene04_var05->hide();
-			g_vars->scene04_var05 = 0;
+		if (g_vars->scene04_walkingKozyawka) {
+			g_vars->scene04_kozyawkiObjList.push_back(g_vars->scene04_walkingKozyawka);
+			g_vars->scene04_walkingKozyawka->hide();
+			g_vars->scene04_walkingKozyawka = 0;
 		}
+
 		if (g_vars->scene04_soundPlaying)
-			sceneHandler04_sub3();
+			sceneHandler04_walkKozyawka();
 
 		break;
 

@@ -105,7 +105,7 @@ public:
 	int scene04_var01;
 	int scene04_var02;
 	int scene04_var04;
-	StaticANIObject *scene04_var05;
+	StaticANIObject *scene04_walkingKozyawka;
 	int scene04_var06;
 	int scene04_var07;
 	int scene04_var08;

@@ -79,7 +79,7 @@ Vars::Vars() {
 	scene04_var01 = 0;
 	scene04_var02 = 0;
 	scene04_var04 = 0;
-	scene04_var05 = 0;
+	scene04_walkingKozyawka = 0;
 	scene04_var06 = 0;
 	scene04_var07 = 0;
 	scene04_var08 = 0;
