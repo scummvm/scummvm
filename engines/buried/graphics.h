@@ -68,6 +68,12 @@ enum Cursor {
 	kCursorArrowRight      =   115
 };
 
+enum TextAlign {
+	kTextAlignLeft,
+	kTextAlignCenter,
+	kTextAlignRight
+};
+
 class GraphicsManager {
 public:
 	GraphicsManager(BuriedEngine *vm);
@@ -94,7 +100,7 @@ public:
 	void opaqueTransparentBlit(Graphics::Surface *dst, int xDst, int yDst, int w, int h, const Graphics::Surface *src, int xSrc, int ySrc, int opacityValue, byte r, byte g, byte b);
 	bool checkPointAgainstMaskedBitmap(const Graphics::Surface *bitmap, int x, int y, const Common::Point &point, byte rTrans, byte gTrans, byte bTrans);
 	void crossBlit(Graphics::Surface *dst, int xDst, int yDst, int w, int h, const Graphics::Surface *src, int xSrc, int ySrc);
-	void renderText(Graphics::Surface *dst, Graphics::Font *font, const Common::String &text, int x, int y, int w, uint32 color, int lineHeight, bool rightAligned = false);
+	void renderText(Graphics::Surface *dst, Graphics::Font *font, const Common::String &text, int x, int y, int w, uint32 color, int lineHeight, TextAlign textAlign = kTextAlignLeft);
 
 	Graphics::Surface *remapPalettedFrame(const Graphics::Surface *frame, const byte *palette);
 
