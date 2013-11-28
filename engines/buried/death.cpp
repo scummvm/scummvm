@@ -59,7 +59,7 @@ enum {
 	if (_globalFlags.evcapBaseID[i] == flag) \
 		supportingEvidence++
 
-DeathWindow::DeathWindow(BuriedEngine *vm, Window *parent, int deathSceneIndex, const GlobalFlags &globalFlags) : Window(vm, parent), _deathSceneIndex(deathSceneIndex), _globalFlags(globalFlags) {
+DeathWindow::DeathWindow(BuriedEngine *vm, Window *parent, int deathSceneIndex, GlobalFlags globalFlags) : Window(vm, parent), _deathSceneIndex(deathSceneIndex), _globalFlags(globalFlags) {
 	_curButton = 0;
 	_deathFrameIndex = -1;
 	_lightOn = false;

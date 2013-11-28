@@ -47,8 +47,8 @@ public:
 	bool startNewGame(bool walkthrough = false, bool introMovie = false);
 	bool startNewGame(const Common::String &fileName);
 	// TODO: startNewGame with continue data
-	bool showDeathScene(int deathSceneIndex, const GlobalFlags &globalFlags);
-	bool showCompletionScene(const GlobalFlags &globalFlags);
+	bool showDeathScene(int deathSceneIndex, GlobalFlags globalFlags);
+	bool showCompletionScene(GlobalFlags globalFlags);
 	bool showCredits();
 	bool showOverview();
 	bool notifyUserOfFrameCycling();
