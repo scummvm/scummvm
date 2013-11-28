@@ -247,12 +247,11 @@ int KitchenUnitAutoChef::mouseUp(Window *viewWindow, const Common::Point &pointL
 
 int KitchenUnitAutoChef::gdiPaint(Window *viewWindow) {
 	if (_status == 1) {
-		// TODO: Vertically center align
 		uint32 textColor = _vm->_gfx->getColor(144, 200, 248);
 		Common::String text = _vm->getString(IDFAKI_AC_ORDER_FOOD_TEXT);
 		Common::Rect rect = Common::Rect(80, 26, 294, 92);
 		rect.translate(64, 128);
-		_vm->_gfx->renderText(_vm->_gfx->getScreen(), _textFont, text, rect.left, rect.top, rect.width(), textColor, _lineHeight);
+		_vm->_gfx->renderText(_vm->_gfx->getScreen(), _textFont, text, rect.left, rect.top, rect.width(), rect.height(), textColor, _lineHeight, kTextAlignLeft, true);
 	}
 
 	return SC_FALSE;
@@ -506,9 +505,8 @@ int KitchenUnitShopNet::gdiPaint(Window *viewWindow) {
 	}
 
 	if (!text.empty()) {
-		// TODO: Vertically center align
 		rect.translate(64, 128);
-		_vm->_gfx->renderText(_vm->_gfx->getScreen(), _textFont, text, rect.left, rect.top, rect.width(), textColor, _lineHeight);
+		_vm->_gfx->renderText(_vm->_gfx->getScreen(), _textFont, text, rect.left, rect.top, rect.width(), rect.height(), textColor, _lineHeight, kTextAlignLeft, true);
 	}
 
 	return SC_FALSE;
@@ -692,9 +690,7 @@ int KitchenUnitPostBox::gdiPaint(Window *viewWindow) {
 
 		Common::Rect rect(_items[i]);
 		rect.translate(64, 128);
-		rect.translate(0, (rect.height() - _lineHeight) / 2); // HACK: Vertically center (should be implemented better)
-
-		_vm->_gfx->renderText(_vm->_gfx->getScreen(), _textFont, text, rect.left, rect.top, rect.width(), textColor, _lineHeight, kTextAlignCenter);
+		_vm->_gfx->renderText(_vm->_gfx->getScreen(), _textFont, text, rect.left, rect.top, rect.width(), rect.height(), textColor, _lineHeight, kTextAlignCenter, true);
 	}
 
 	return SC_FALSE;

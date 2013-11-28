@@ -766,7 +766,7 @@ Common::SeekableReadStream *GraphicsManager::getThemeFontStream(const Common::St
 	return stream;
 }
 
-void GraphicsManager::renderText(Graphics::Surface *dst, Graphics::Font *font, const Common::String &text, int x, int y, int w, uint32 color, int lineHeight, TextAlign textAlign) {
+void GraphicsManager::renderText(Graphics::Surface *dst, Graphics::Font *font, const Common::String &text, int x, int y, int w, int h, uint32 color, int lineHeight, TextAlign textAlign, bool centerVertically) {
 	if (text.empty())
 		return;
 
@@ -785,6 +785,12 @@ void GraphicsManager::renderText(Graphics::Surface *dst, Graphics::Font *font, c
 		align = Graphics::kTextAlignRight;
 		break;
 	}
+
+	if (centerVertically)
+		y += (h - (lines.size() * lineHeight)) / 2;
+
+	// Why is this needed? Dunno, but I guess Windows adds one row of space on the top
+	y++;
 
 	for (uint32 i = 0; i < lines.size(); i++) {
 		font->drawString(dst, lines[i], x, y, w, color, align);
