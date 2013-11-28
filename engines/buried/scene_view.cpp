@@ -2306,7 +2306,8 @@ void SceneViewWindow::onKeyUp(const Common::KeyState &key, uint flags) {
 
 void SceneViewWindow::onPaint() {
 	// TODO: I think this should draw when the burned letter is displayed, since I modified that code
-	if (_currentScene && !_infoWindowDisplayed && !_bioChipWindowDisplayed && !_burnedLetterDisplayed && !_asyncMovie) {
+	// Original didn't draw if the async movie was playing, but that doesn't seem right.
+	if (_currentScene && !_infoWindowDisplayed && !_bioChipWindowDisplayed && !_burnedLetterDisplayed) {
 		if (_currentScene->_staticData.navFrameIndex >= -1) {
 			if (_useScenePaint)
 				_currentScene->paint(this, _preBuffer);
