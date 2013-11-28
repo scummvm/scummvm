@@ -25,6 +25,7 @@
 
 #include "buried/buried.h"
 #include "buried/gameui.h"
+#include "buried/graphics.h"
 #include "buried/invdata.h"
 #include "buried/inventory_window.h"
 #include "buried/resources.h"
@@ -172,6 +173,125 @@ int BaseOxygenTimer::timerCallback(Window *viewWindow) {
 	return SC_TRUE;
 }
 
+class SpaceDoorTimer : public BaseOxygenTimer {
+public:
+	SpaceDoorTimer(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+			int left = -1, int top = -1, int right = -1, int bottom = -1, int openFrame = -1, int closedFrame = -1, int depth = -1,
+			int transitionType = -1, int transitionData = -1, int transitionStartFrame = -1, int transitionLength = -1,
+			int doorFlag = -1, int doorFlagValue = 0);
+	int mouseDown(Window *viewWindow, const Common::Point &pointLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	bool _clicked;
+	Common::Rect _clickable;
+	DestinationScene _destData;
+	int _openFrame;
+	int _closedFrame;
+	int _doorFlag;
+	int _doorFlagValue;
+};
+
+SpaceDoorTimer::SpaceDoorTimer(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+		int left, int top, int right, int bottom, int openFrame, int closedFrame, int depth,
+		int transitionType, int transitionData, int transitionStartFrame, int transitionLength,
+		int doorFlag, int doorFlagValue) :
+		BaseOxygenTimer(vm, viewWindow, sceneStaticData, priorLocation) {
+	_clicked = false;
+	_openFrame = openFrame;
+	_closedFrame = closedFrame;
+	_doorFlag = doorFlag;
+	_doorFlagValue = doorFlagValue;
+	_clickable = Common::Rect(left, top, right, bottom);
+	_destData.destinationScene = _staticData.location;
+	_destData.destinationScene.depth = depth;
+	_destData.transitionType = transitionType;
+	_destData.transitionData = transitionData;
+	_destData.transitionStartFrame = transitionStartFrame;
+	_destData.transitionLength = transitionLength;
+}
+
+int SpaceDoorTimer::mouseDown(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_clickable.contains(pointLocation)) {
+		_clicked = true;
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int SpaceDoorTimer::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_clicked) {
+		// If we are facing the habitat wing death door in walkthrough mode,
+		// keep it locked.
+		if (((SceneViewWindow *)viewWindow)->getGlobalFlags().generalWalkthroughMode == 1 &&
+				_staticData.location.timeZone == 6 && _staticData.location.environment == 1 &&
+				_staticData.location.node == 3 && _staticData.location.facing == 1 &&
+				_staticData.location.orientation == 2 && _staticData.location.depth == 0) {
+			_vm->_sound->playSynchronousSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 12));
+			_vm->_sound->playSynchronousSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 13));
+			_clicked = false;
+			return SC_TRUE;
+		}
+
+		// If we are facing the scanning room door and we have Arthur, automatically recall
+		// to the future apartment
+		if (_staticData.location.timeZone == 6 && _staticData.location.environment == 3 &&
+				_staticData.location.node == 9 && _staticData.location.facing == 0 &&
+				_staticData.location.orientation == 0 && _staticData.location.depth == 0 &&
+				((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->isItemInInventory(kItemBioChipAI)) {
+			((SceneViewWindow *)viewWindow)->timeSuitJump(4);
+			return SC_TRUE;
+		}
+
+		if (_doorFlag < 0 || ((SceneViewWindow *)viewWindow)->getGlobalFlagByte(_doorFlag) == _doorFlagValue) {
+			// Change the still frame to the new one
+			if (_openFrame >= 0) {
+				_staticData.navFrameIndex = _openFrame;
+				viewWindow->invalidateWindow(false);
+				_vm->_sound->playSynchronousSoundEffect("BITDATA/AILAB/AI_LOCK.BTA"); // Broken in 1.01
+			}
+
+			((SceneViewWindow *)viewWindow)->moveToDestination(_destData);
+		} else {
+			// Display the closed frame
+			if (_closedFrame >= 0) {
+				int oldFrame = _staticData.navFrameIndex;
+				_staticData.navFrameIndex = _closedFrame;
+				viewWindow->invalidateWindow(false);
+
+				_vm->_sound->playSynchronousSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 12));
+				_vm->_sound->playSynchronousSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 13));
+
+				_staticData.navFrameIndex = oldFrame;
+				viewWindow->invalidateWindow(false);
+			}
+		}
+
+		_clicked = false;
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int SpaceDoorTimer::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	// If we are in walkthrough mode and are at the death door in the habitat wing,
+	// don't allow you to open the door.
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().generalWalkthroughMode == 1 &&
+			_staticData.location.timeZone == 6 && _staticData.location.environment == 1 &&
+			_staticData.location.node == 3 && _staticData.location.facing == 1 &&
+			_staticData.location.orientation == 2 && _staticData.location.depth == 0) {
+		return kCursorArrow;
+	}
+
+	if (_clickable.contains(pointLocation))
+		return kCursorFinger;
+
+	return kCursorArrow;
+}
+
 class UseCheeseGirlPropellant : public BaseOxygenTimer {
 public:
 	UseCheeseGirlPropellant(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
@@ -293,6 +413,10 @@ SceneBase *SceneViewWindow::constructAILabSceneObject(Window *viewWindow, const 
 	switch (sceneStaticData.classID) {
 	case 1:
 		return new UseCheeseGirlPropellant(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 3:
+		return new SpaceDoorTimer(_vm, viewWindow, sceneStaticData, priorLocation, 172, 46, 262, 136, 87, -1, 1, TRANSITION_VIDEO, 2, -1, -1, -1, -1);
+	case 5:
+		return new SpaceDoorTimer(_vm, viewWindow, sceneStaticData, priorLocation, 144, 30, 268, 152, 88, -1, 1, TRANSITION_VIDEO, 4, -1, -1, -1, -1);
 	case 6:
 		return new PlaySoundExitingFromScene(_vm, viewWindow, sceneStaticData, priorLocation, 14);
 	case 11:
@@ -303,12 +427,22 @@ SceneBase *SceneViewWindow::constructAILabSceneObject(Window *viewWindow, const 
 		return new PlaySoundExitingFromScene(_vm, viewWindow, sceneStaticData, priorLocation, 14);
 	case 32:
 		return new PlaySoundExitingFromScene(_vm, viewWindow, sceneStaticData, priorLocation, 14);
+	case 52:
+		return new SpaceDoorTimer(_vm, viewWindow, sceneStaticData, priorLocation, 164, 40, 276, 140, -1, -1, 1, TRANSITION_VIDEO, 0, -1, -1, -1, -1);
+	case 53:
+		return new SpaceDoorTimer(_vm, viewWindow, sceneStaticData, priorLocation, 164, 40, 276, 140, -1, -1, 1, TRANSITION_VIDEO, 2, -1, -1, -1, -1);
 	case 54:
 		return new PlaySoundExitingFromSceneDeux(_vm, viewWindow, sceneStaticData, priorLocation, 14);
 	case 60:
 		return new BaseOxygenTimer(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 65:
+		return new SpaceDoorTimer(_vm, viewWindow, sceneStaticData, priorLocation, 164, 26, 268, 124, -1, -1, 1, TRANSITION_VIDEO, 13, -1, -1, -1, -1);
+	case 66:
+		return new SpaceDoorTimer(_vm, viewWindow, sceneStaticData, priorLocation, 164, 26, 268, 124, -1, -1, 1, TRANSITION_VIDEO, 16, -1, -1, -1, -1);
 	case 68:
 		return new PlaySoundExitingFromSceneDeux(_vm, viewWindow, sceneStaticData, priorLocation, 14);
+	case 70:
+		return new SpaceDoorTimer(_vm, viewWindow, sceneStaticData, priorLocation, 92, 92, 212, 189, 48, -1, 1, TRANSITION_VIDEO, 0, -1, -1, -1, -1);
 	case 93:
 		return new BaseOxygenTimer(_vm, viewWindow, sceneStaticData, priorLocation);
 	}
