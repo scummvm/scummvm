@@ -145,7 +145,7 @@ public:
 	virtual Common::String getClassName() { return "NamedObject2"; }
 	virtual void synchronize(Serializer &s) {
 		NamedObject::synchronize(s);
-		if (s.getVersion() < 11) {
+		if (s.getVersion() < 12) {
 			int useless = 0;
 			s.syncAsSint16LE(useless);
 		}
