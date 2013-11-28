@@ -2366,6 +2366,8 @@ bool SceneViewWindow::onSetCursor(uint message) {
 				_curCursor = (int)kCursorLocateA;
 			}
 		}
+	} else {
+		_curCursor = newCursor;
 	}
 
 	_vm->_gfx->setCursor((Cursor)_curCursor);
