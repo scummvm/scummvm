@@ -1602,8 +1602,9 @@ void MazeUI::draw() {
 		int cellY = _mapOffset.y / _cellSize.y + yCtr;
 
 		// Loop to iterate through the horizontal visible cells to build up
-		// an entire cell high horizontal slice of the map
-		for (int xCtr = 0; xCtr < _cellsVisible.x; ++xCtr) {
+		// an entire cell high horizontal slice of the map, plus one extra cell
+		// to allow for partial cell scrolling on-screen on the left/right sides
+		for (int xCtr = 0; xCtr <= _cellsVisible.x; ++xCtr) {
 			int cellX = _mapOffset.x / _cellSize.x + xCtr;
 
 			// Get the type of content to display in the cell
