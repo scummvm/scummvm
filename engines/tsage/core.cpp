@@ -2748,6 +2748,12 @@ GfxSurface SceneObject::getFrame() {
 }
 
 void SceneObject::reposition() {
+	if (g_vm->getGameID() == GType_Ringworld2) {
+		if (!(_flags & OBJFLAG_ZOOMED)) {
+			setZoom(g_globals->_sceneManager._scene->_zoomPercents[MIN(_position.y, (int16)255)]);
+		}
+	}
+
 	GfxSurface frame = getFrame();
 
 	_bounds.resize(frame, _position.x, _position.y - _yDiff, _percent);
