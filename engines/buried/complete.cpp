@@ -213,11 +213,11 @@ void CompletionWindow::onPaint() {
 
 		// Scores
 		textColor = _vm->_gfx->getColor(255, 255, 51);
-		_vm->_gfx->renderText(_vm->_gfx->getScreen(), _textFontA, _scoringTextScores, scoringTextRect.left, scoringTextRect.top, scoringTextRect.width(), textColor, _fontHeightA, true);
+		_vm->_gfx->renderText(_vm->_gfx->getScreen(), _textFontA, _scoringTextScores, scoringTextRect.left, scoringTextRect.top, scoringTextRect.width(), textColor, _fontHeightA, kTextAlignRight);
 
 		// Total score
 		Common::Rect finalScoreRect(122, 386, 283, 401);
-		_vm->_gfx->renderText(_vm->_gfx->getScreen(), _textFontB, _scoringTextFinalScore, finalScoreRect.left, finalScoreRect.top, finalScoreRect.width(), textColor, _fontHeightB, true);
+		_vm->_gfx->renderText(_vm->_gfx->getScreen(), _textFontB, _scoringTextFinalScore, finalScoreRect.left, finalScoreRect.top, finalScoreRect.width(), textColor, _fontHeightB, kTextAlignRight);
 	}
 }
 
