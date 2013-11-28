@@ -358,6 +358,57 @@ int UseCheeseGirlPropellant::droppedItem(Window *viewWindow, int itemID, const C
 	return SIC_REJECT;
 }
 
+class HabitatWingLockedDoor : public BaseOxygenTimer {
+public:
+	HabitatWingLockedDoor(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+			int newFrameID = -1, int beepSoundID = -1, int voSoundID = -1, int left = 0, int top = 0, int right = 0, int bottom = 0);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	int _newFrameID;
+	Common::Rect _clickRegion;
+	int _beepSoundID;
+	int _voSoundID;
+};
+
+HabitatWingLockedDoor::HabitatWingLockedDoor(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+		int newFrameID, int beepSoundID, int voSoundID, int left, int top, int right, int bottom) :
+		BaseOxygenTimer(vm, viewWindow, sceneStaticData, priorLocation) {
+	_clickRegion = Common::Rect(left, top, right, bottom);
+	_newFrameID = newFrameID;
+	_beepSoundID = beepSoundID;
+	_voSoundID = voSoundID;
+}
+
+int HabitatWingLockedDoor::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_clickRegion.contains(pointLocation)) {
+		int oldFrame = _staticData.navFrameIndex;
+		_staticData.navFrameIndex = _newFrameID;
+		viewWindow->invalidateWindow(false);
+
+		if (_beepSoundID != -1)
+			_vm->_sound->playSynchronousSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, _beepSoundID));
+
+		if (_voSoundID != -1)
+			_vm->_sound->playSynchronousSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, _voSoundID));
+
+		_staticData.navFrameIndex = oldFrame;
+		viewWindow->invalidateWindow(false);
+
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int HabitatWingLockedDoor::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_clickRegion.contains(pointLocation))
+		return kCursorFinger;
+
+	return kCursorArrow;
+}
+
 class BaseOxygenTimerInSpace : public BaseOxygenTimer {
 public:
 	BaseOxygenTimerInSpace(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
@@ -419,6 +470,10 @@ SceneBase *SceneViewWindow::constructAILabSceneObject(Window *viewWindow, const 
 		return new SpaceDoorTimer(_vm, viewWindow, sceneStaticData, priorLocation, 144, 30, 268, 152, 88, -1, 1, TRANSITION_VIDEO, 4, -1, -1, -1, -1);
 	case 6:
 		return new PlaySoundExitingFromScene(_vm, viewWindow, sceneStaticData, priorLocation, 14);
+	case 7:
+		return new HabitatWingLockedDoor(_vm, viewWindow, sceneStaticData, priorLocation, 99, 12, 13, 166, 32, 286, 182);
+	case 8:
+		return new HabitatWingLockedDoor(_vm, viewWindow, sceneStaticData, priorLocation, 100, 12, 13, 130, 48, 290, 189);
 	case 11:
 		return new BaseOxygenTimer(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 12:
@@ -443,6 +498,8 @@ SceneBase *SceneViewWindow::constructAILabSceneObject(Window *viewWindow, const 
 		return new PlaySoundExitingFromSceneDeux(_vm, viewWindow, sceneStaticData, priorLocation, 14);
 	case 70:
 		return new SpaceDoorTimer(_vm, viewWindow, sceneStaticData, priorLocation, 92, 92, 212, 189, 48, -1, 1, TRANSITION_VIDEO, 0, -1, -1, -1, -1);
+	case 75:
+		return new HabitatWingLockedDoor(_vm, viewWindow, sceneStaticData, priorLocation, 51, 4, 5, 146, 0, 396, 84);
 	case 93:
 		return new BaseOxygenTimer(_vm, viewWindow, sceneStaticData, priorLocation);
 	}
