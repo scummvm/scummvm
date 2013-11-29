@@ -25,6 +25,7 @@
 
 #include "buried/buried.h"
 #include "buried/gameui.h"
+#include "buried/graphics.h"
 #include "buried/invdata.h"
 #include "buried/inventory_window.h"
 #include "buried/resources.h"
@@ -32,6 +33,8 @@
 #include "buried/sound.h"
 #include "buried/environ/scene_base.h"
 #include "buried/environ/scene_common.h"
+
+#include "graphics/surface.h"
 
 namespace Buried {
 
@@ -93,6 +96,157 @@ int PlaceCeramicBowl::timerCallback(Window *viewWindow) {
 	}
 
 	return SC_TRUE;
+}
+
+class DateCombinationRead : public SceneBase {
+public:
+	DateCombinationRead(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int gdiPaint(Window *viewWindow);
+	int mouseMove(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	int _currentRegion;
+};
+
+DateCombinationRead::DateCombinationRead(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_currentRegion = -1;
+}
+
+int DateCombinationRead::gdiPaint(Window *viewWindow) {
+	if (_currentRegion >= 0 && ((SceneViewWindow *)viewWindow)->getGlobalFlags().bcTranslateEnabled == 1) {
+		Common::Rect absoluteRect = viewWindow->getAbsoluteRect();
+		int left = _currentRegion * 43 + 20 + absoluteRect.left;
+		Common::Rect rect(left, absoluteRect.top + 18, left + 43, absoluteRect.top + 110);
+		_vm->_gfx->getScreen()->frameRect(rect, _vm->_gfx->getColor(255, 0, 0));
+	}
+
+	return SC_REPAINT;
+}
+
+int DateCombinationRead::mouseMove(Window *viewWindow, const Common::Point &pointLocation) {
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().bcTranslateEnabled == 1) {
+		Common::Rect symbols(20, 18, 407, 110);
+
+		if (symbols.contains(pointLocation)) {
+			int translatedSymbolIndex = (pointLocation.x - 20) / 43;
+
+			if (_currentRegion != translatedSymbolIndex) {
+				// Update flags
+				((SceneViewWindow *)viewWindow)->getGlobalFlags().myTPCalendarListTranslated = 1;
+				((SceneViewWindow *)viewWindow)->getGlobalFlags().myTPTextTranslated = 1;
+
+				// Display the text
+				((SceneViewWindow *)viewWindow)->displayTranslationText(_vm->getString(IDMYTP_WALLS_COMBO_TRANS_TEXT_BASE + translatedSymbolIndex));
+
+				// Reset the current region and redraw
+				_currentRegion = translatedSymbolIndex;
+				viewWindow->invalidateWindow(false);
+			}
+		} else {
+			if (_currentRegion >= 0) {
+				_currentRegion = -1;
+				viewWindow->invalidateWindow(false);
+			}
+		}
+
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+class ViewSingleTranslation : public SceneBase {
+public:
+	ViewSingleTranslation(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+			int translatedTextID = -1, int left = -1, int top = -1, int right = -1, int bottom = -1,
+			int flagAOffset = -1, int flagBOffset = -1, int visitedFlagOffset = -1);
+	int gdiPaint(Window *viewWindow);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int mouseMove(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	bool _textTranslated;
+	int _textID;
+	Common::Rect _clickableRegion;
+	int _flagAOffset;
+	int _flagBOffset;
+	int _visitedFlagOffset;
+};
+
+ViewSingleTranslation::ViewSingleTranslation(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+		int translatedTextID, int left, int top, int right, int bottom,
+		int flagAOffset, int flagBOffset, int visitedFlagOffset) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_textTranslated = false;
+	_textID = translatedTextID;
+	_clickableRegion = Common::Rect(left, top, right, bottom);
+	_flagAOffset = flagAOffset;
+	_flagBOffset = flagBOffset;
+	_visitedFlagOffset = visitedFlagOffset;
+
+	if (_visitedFlagOffset >= 0)
+		((SceneViewWindow *)viewWindow)->setGlobalFlagByte(_visitedFlagOffset, 1);
+}
+
+int ViewSingleTranslation::gdiPaint(Window *viewWindow) {
+	// Draw the translated box, if applicable
+	if (_textTranslated && ((SceneViewWindow *)viewWindow)->getGlobalFlags().bcTranslateEnabled == 1) {
+		Common::Rect absoluteRect = viewWindow->getAbsoluteRect();
+		Common::Rect rect(_clickableRegion);
+		rect.translate(absoluteRect.left, absoluteRect.top);
+		_vm->_gfx->getScreen()->frameRect(rect, _vm->_gfx->getColor(255, 0, 0));
+	}
+
+	return SC_REPAINT;
+}
+
+int ViewSingleTranslation::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_staticData.location.depth != 0) {
+		// If we're not at depth zero, move to depth zero
+		Location newLocation = _staticData.location;
+		newLocation.depth = 0;
+		((SceneViewWindow *)viewWindow)->jumpToScene(newLocation);
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int ViewSingleTranslation::mouseMove(Window *viewWindow, const Common::Point &pointLocation) {
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().bcTranslateEnabled == 1) {
+		if (_clickableRegion.contains(pointLocation)) {
+			// Make sure we didn't already render the text
+			if (!_textTranslated) {
+				if (_flagAOffset >= 0)
+					((SceneViewWindow *)viewWindow)->setGlobalFlagByte(_flagAOffset, 1);
+				if (_flagBOffset >= 0)
+					((SceneViewWindow *)viewWindow)->setGlobalFlagByte(_flagBOffset, 1);
+
+				// Load and display the text
+				((SceneViewWindow *)viewWindow)->displayTranslationText(_vm->getString(_textID));
+				_textTranslated = true;
+				viewWindow->invalidateWindow(false);
+			}
+		} else {
+			if (_textTranslated) {
+				_textTranslated = false;
+				viewWindow->invalidateWindow(false);
+			}
+		}
+
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int ViewSingleTranslation::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_staticData.location.depth != 0)
+		return kCursorPutDown;
+
+	return kCursorArrow;
 }
 
 bool SceneViewWindow::initializeMayanTimeZoneAndEnvironment(Window *viewWindow, int environment) {
@@ -190,8 +344,38 @@ SceneBase *SceneViewWindow::constructMayanSceneObject(Window *viewWindow, const 
 		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 60, 134, 118, 180, kItemCeramicBowl, 96, offsetof(GlobalFlags, myPickedUpCeramicBowl));
 	case 3:
 		return new PlaceCeramicBowl(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 6:
+		return new DateCombinationRead(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 7:
+		return new ViewSingleTranslation(_vm, viewWindow, sceneStaticData, priorLocation, IDMYTP_INNER_DOOR_TRANS_TEXT, 16, 6, 402, 110, offsetof(GlobalFlags, myTPTextTranslated), offsetof(GlobalFlags, myTPTransBreathOfItzamna));
+	case 8:
+		return new ViewSingleTranslation(_vm, viewWindow, sceneStaticData, priorLocation, IDMYTP_INNER_LEFT_TRANS_TEXT, 1, 6, 431, 98, offsetof(GlobalFlags, myTPTextTranslated));
+	case 9:
+		return new ViewSingleTranslation(_vm, viewWindow, sceneStaticData, priorLocation, IDMYTP_INNER_MIDDLE_TRANS_TEXT, 16, 8, 430, 114, offsetof(GlobalFlags, myTPTextTranslated), offsetof(GlobalFlags, myTPCalendarTopTranslated));
+	case 10:
+		return new ViewSingleTranslation(_vm, viewWindow, sceneStaticData, priorLocation, IDMYTP_OUTER_SOUTHLEFT_TRANS_TEXT, 4, 55, 426, 95, offsetof(GlobalFlags, myTPTextTranslated));
+	case 11:
+		return new ViewSingleTranslation(_vm, viewWindow, sceneStaticData, priorLocation, IDMYTP_OUTER_WEST_TRANS_TEXT, 4, 72, 420, 108, offsetof(GlobalFlags, myTPTextTranslated));
+	case 12:
+		return new ViewSingleTranslation(_vm, viewWindow, sceneStaticData, priorLocation, IDMYTP_OUTER_NORTH_TRANS_TEXT, 6, 38, 428, 76, offsetof(GlobalFlags, myTPTextTranslated));
 	case 13:
 		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 140, 124, 174, 158, kItemCavernSkull, 3, offsetof(GlobalFlags, myMCPickedUpSkull));
+	case 15:
+		return new ViewSingleTranslation(_vm, viewWindow, sceneStaticData, priorLocation, IDMYMC_WG_DOOR_TOP_TRANS_TEXT, 12, 128, 426, 156, offsetof(GlobalFlags, myMCTransDoor), offsetof(GlobalFlags, myWGTransDoorTop));
+	case 16:
+		return new ViewSingleTranslation(_vm, viewWindow, sceneStaticData, priorLocation, IDMYMC_WG_DOOR_RIGHT_TRANS_TEXT, 46, 1, 315, 188, offsetof(GlobalFlags, myMCTransDoor), offsetof(GlobalFlags, myMCTransWGOffering));
+	case 19:
+		return new ViewSingleTranslation(_vm, viewWindow, sceneStaticData, priorLocation, IDMYMC_WATERGOD_DOOR_TOP_TRANS_TEXT, 12, 128, 426, 156, offsetof(GlobalFlags, myMCTransDoor));
+	case 20:
+		return new ViewSingleTranslation(_vm, viewWindow, sceneStaticData, priorLocation, IDMYMC_WATERGOD_DOOR_RIGHT_TRANS_TEXT, 46, 1, 315, 188, offsetof(GlobalFlags, myMCTransDoor), offsetof(GlobalFlags, myMCTransWTOffering));
+	case 23:
+		return new ViewSingleTranslation(_vm, viewWindow, sceneStaticData, priorLocation, IDMYMC_AG_DOOR_TOP_TRANS_TEXT, 12, 128, 426, 156, offsetof(GlobalFlags, myMCTransDoor));
+	case 24:
+		return new ViewSingleTranslation(_vm, viewWindow, sceneStaticData, priorLocation, IDMYMC_AG_DOOR_RIGHT_TRANS_TEXT, 46, 1, 315, 188, offsetof(GlobalFlags, myMCTransDoor), offsetof(GlobalFlags, myMCTransAGOffering));
+	case 27:
+		return new ViewSingleTranslation(_vm, viewWindow, sceneStaticData, priorLocation, IDMYMC_DEATHGOD_DOOR_TOP_TRANS_TEXT, 12, 128, 426, 156, offsetof(GlobalFlags, myMCTransDoor));
+	case 28:
+		return new ViewSingleTranslation(_vm, viewWindow, sceneStaticData, priorLocation, IDMYMC_DEATHGOD_DOOR_RIGHT_TRANS_TEXT, 46, 1, 315, 188, offsetof(GlobalFlags, myMCTransDoor), offsetof(GlobalFlags, myMCTransDGOffering));
 	case 31:
 		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 194, 106, 278, 126, kItemJadeBlock, 105, offsetof(GlobalFlags, myWGRetrievedJadeBlock));
 	case 32:
@@ -226,6 +410,12 @@ SceneBase *SceneViewWindow::constructMayanSceneObject(Window *viewWindow, const 
 		return new PlaySoundExitingFromScene(_vm, viewWindow, sceneStaticData, priorLocation, 14);
 	case 125:
 		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 226, 90, 256, 104, kItemCopperMedallion, 15, offsetof(GlobalFlags, myAGRetrievedCopperMedal));
+	case 126:
+		return new ViewSingleTranslation(_vm, viewWindow, sceneStaticData, priorLocation, IDS_MY_AG_ALTAR_TEXT, 120, 44, 330, 72, -1, -1, offsetof(GlobalFlags, myAGVisitedAltar));
+	case 127:
+		return new ViewSingleTranslation(_vm, viewWindow, sceneStaticData, priorLocation, IDS_MY_WG_ALTAR_TEXT, 118, 14, 338, 44);
+	case 128:
+		return new ViewSingleTranslation(_vm, viewWindow, sceneStaticData, priorLocation, IDS_MY_WT_ALTAR_TEXT, 106, 128, 344, 162);
 	}
 
 	warning("TODO: Mayan scene object %d", sceneStaticData.classID);
