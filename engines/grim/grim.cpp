@@ -727,7 +727,11 @@ void GrimEngine::mainLoop() {
 				// if the button is not kept pressed the KEYUP will arrive just after the KEYDOWN
 				// and it will break the lua scripts that checks for the state of the button
 				// with GetControlState()
-				luaUpdate();
+
+				// We do not want the scripts to update while a movie is playing in the PS2-version.
+				if (!(getGamePlatform() == Common::kPlatformPS2 && _mode == SmushMode)) {
+					luaUpdate();
+				}
 			}
 			if (type == Common::EVENT_SCREEN_CHANGED)
 				_refreshDrawNeeded = true;
@@ -743,7 +747,10 @@ void GrimEngine::mainLoop() {
 			updateDisplayScene();
 		}
 
-		luaUpdate();
+		// We do not want the scripts to update while a movie is playing in the PS2-version.
+		if (!(getGamePlatform() == Common::kPlatformPS2 && _mode == SmushMode)) {
+			luaUpdate();
+		}
 
 		if (_mode != PauseMode) {
 			doFlip();
