@@ -2042,6 +2042,27 @@ Math::Quaternion Actor::getRotationQuat() const {
 	}
 }
 
+int Actor::getSortOrder() const {
+	if (_attachedActor != 0) {
+		Actor *attachedActor = Actor::getPool().getObject(_attachedActor);
+
+		// FIXME: The + 1 here and in getEffectiveSortOrder is just a guess.
+		// Without it it makes some attachments render on top of their owner.
+		// Theoritically it could cause an issue if the actor is close to the
+		// edge of a sort order boundry.
+		return attachedActor->getSortOrder() + 1;
+	}
+	return _sortOrder;
+}
+
+int Actor::getEffectiveSortOrder() const {
+	if (_attachedActor != 0) {
+		Actor *attachedActor = Actor::getPool().getObject(_attachedActor);
+		return attachedActor->getEffectiveSortOrder() + 1;
+	}
+	return _haveSectorSortOrder ? _sectorSortOrder : getSortOrder();
+}
+
 void Actor::attachToActor(Actor *other, const char *joint) {
 	assert(other != NULL);
 	if (other->getId() == _attachedActor)

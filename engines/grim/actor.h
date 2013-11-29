@@ -512,9 +512,9 @@ public:
 	void setGlobalAlpha(float alpha) { _globalAlpha = alpha; }
 	void setAlphaMode(AlphaMode mode) { _alphaMode = mode; }
 
-	int getSortOrder() const { return _sortOrder; }
+	int getSortOrder() const;
 	void setSortOrder(const int order) { _sortOrder = order; }
-	int getEffectiveSortOrder() const { return _haveSectorSortOrder ? _sectorSortOrder : _sortOrder; }
+	int getEffectiveSortOrder() const;
 
 	void activateShadow(bool active) { _shadowActive = active; }
 
