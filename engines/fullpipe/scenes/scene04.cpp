@@ -36,8 +36,27 @@
 
 namespace Fullpipe {
 
-void scene04_callback(int *param) {
-	warning("STUB: scene04_callback");
+static const int scene04_speakerPhases[] = {
+	0, 1,  2,  3, -1, -1,
+	0, 2,  3, -1, -1, -1,
+	0, 2, -1, -1, -1, -1
+};
+
+void scene04_speakerCallback(int *phase) {
+	if (g_vars->scene04_soundPlaying) {
+		if (g_vars->scene04_var17 >= 0) {
+			*phase = scene04_speakerPhases[g_vars->scene04_var17 + 6 * g_vars->scene04_var16];
+
+			g_vars->scene04_var17++;
+
+			if (scene04_speakerPhases[g_vars->scene04_var17 + 6 * g_vars->scene04_var16] < 0) {
+				g_vars->scene04_var17 = 0;
+				g_vars->scene04_var16 = g_fullpipe->_rnd->getRandomNumber(2);
+			}
+		} else {
+			++g_vars->scene04_var17;
+		}
+	}
 }
 
 void scene04_initScene(Scene *sc) {
@@ -166,7 +185,7 @@ void scene04_initScene(Scene *sc) {
 		g_vars->scene04_mamasha->hide();
 
 	g_vars->scene04_speaker = sc->getStaticANIObject1ById(ANI_SPEAKER_4, -1);
-	g_vars->scene04_speaker->_callback2 = scene04_callback;
+	g_vars->scene04_speaker->_callback2 = scene04_speakerCallback;
 	g_vars->scene04_speaker->startAnim(MV_SPK4_PLAY, 0, -1);
 
 	g_vars->scene04_var16 = 0;
