@@ -179,6 +179,19 @@ private:
 	int _messageTextID;
 };
 
+class ClickChangeDepth : public SceneBase {
+public:
+	ClickChangeDepth(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+			int newDepth = 0, int cursorID = 0, int left = -1, int top = -1, int right = -1, int bottom = -1);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	int _newDepth;
+	int _cursorID;
+	Common::Rect _clickableRegion;
+};
+
 class ClickPlaySoundSynchronous : public SceneBase {
 public:
 	ClickPlaySoundSynchronous(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
