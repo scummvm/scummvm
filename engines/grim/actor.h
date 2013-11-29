@@ -506,15 +506,6 @@ public:
 	void detach();
 	Math::Quaternion getRotationQuat() const;
 
-	/**
-	 * Returns the forward direction in the local space of the actor.
-	 */
-	Math::Vector3d actorForward() const;
-	/**
-	 * Returns the up direction in the local space of the actor.
-	 */
-	Math::Vector3d actorUp() const;
-
 	void setInOverworld(bool inOverworld) { _inOverworld = inOverworld; }
 	bool isInOverworld() { return _inOverworld; }
 
