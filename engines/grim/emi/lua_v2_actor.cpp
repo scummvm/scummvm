@@ -200,6 +200,45 @@ void Lua_V2::UnlockChore() {
 	// FIXME: implement missing rest part of code
 }
 
+void Lua_V2::IsActorChoring() {
+	lua_Object actorObj = lua_getparam(1);
+	bool excludeLoop = getbool(2);
+
+	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R'))
+		return;
+
+	Actor *actor = getactor(actorObj);
+	Costume *costume = actor->getCurrentCostume();
+
+	if (!costume) {
+		lua_pushnil();
+		return;
+	}
+
+	for (int i = 0; i < costume->getNumChores(); i++) {
+		int chore = costume->isChoring(i, excludeLoop);
+		if (chore != -1) {
+			// Ignore talk chores.
+			bool isTalk = false;
+			for (int j = 0; j < 10; j++) {
+				if (costume == actor->getTalkCostume(j) && actor->getTalkChore(j) == chore) {
+					isTalk = true;
+					break;
+				}
+			}
+			if (isTalk)
+				continue;
+
+			lua_pushnumber(chore);
+			
+			pushbool(true);
+			return;
+		}
+	}
+
+	lua_pushnil();
+}
+
 void Lua_V2::IsChoreValid() {
 	lua_Object choreObj = lua_getparam(1);
 
