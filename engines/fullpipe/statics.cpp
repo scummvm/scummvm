@@ -1235,7 +1235,7 @@ Movement::Movement(Movement *src, int *oldIdxs, int newSize, StaticANIObject *an
 	_m2y = src->_m2y;
 
 	if (newSize != -1) {
-		if (newSize >= src->_dynamicPhases.size() + 1)
+		if (newSize >= (int)src->_dynamicPhases.size() + 1)
 			newSize = src->_dynamicPhases.size() + 1;
 	} else {
 		newSize = src->_dynamicPhases.size();
