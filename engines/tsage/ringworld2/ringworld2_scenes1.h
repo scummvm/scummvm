@@ -185,9 +185,9 @@ public:
 class Scene1337 : public SceneExt {
 	class unkObj1337sub1: public SceneHotspot {
 	public:
-		SceneObject _object1;
+		SceneObject _card;
 
-		int _field34;
+		int _cardId;
 		Common::Point _field36;
 
 		unkObj1337sub1();
@@ -197,7 +197,7 @@ class Scene1337 : public SceneExt {
 	class unkObj1337_1: public SceneHotspot {
 	public:
 		unkObj1337sub1 _arr1[4];
-		unkObj1337sub1 _arr2[8];
+		unkObj1337sub1 _outpostStation[8];
 		unkObj1337sub1 _arr3[1];
 		unkObj1337sub1 _arr4[1];
 
