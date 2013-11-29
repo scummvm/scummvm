@@ -259,6 +259,7 @@ namespace Fullpipe {
 #define ST_EGTR_MID1 2863
 #define ST_EGTR_MID2 2869
 #define ST_EGTR_SLIM 336
+#define ST_HND_EMPTY 603
 #define ST_IN1MAN_SLEEP 5112
 #define ST_KZW_EMPTY 498
 #define ST_LBN_0N 2832

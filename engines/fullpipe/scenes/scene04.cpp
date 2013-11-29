@@ -160,7 +160,7 @@ void scene04_initScene(Scene *sc) {
 	}
 
 	g_vars->scene04_var02 = 0;
-	g_vars->scene04_soundPlaying = 0;
+	g_vars->scene04_soundPlaying = false;
 	g_vars->scene04_var04 = 0;
 	g_vars->scene04_walkingKozyawka = 0;
 	g_vars->scene04_var06 = 2;
@@ -283,7 +283,30 @@ void sceneHandler04_clickPlank() {
 }
 
 void sceneHandler04_dropBottle() {
-	warning("sceneHandler04_dropBottle()");
+	g_vars->scene04_var12 = 1;
+	g_vars->scene04_var26 = 10;
+	g_vars->scene04_var06 = 0;
+
+	while (g_vars->scene04_kozyawkiAni.size()) {
+		StaticANIObject *koz = g_vars->scene04_kozyawkiAni.front();
+		g_vars->scene04_kozyawkiAni.pop_front();
+
+		for (Common::List<GameObject *>::iterator it = g_vars->scene04_bottleObjList.begin(); it != g_vars->scene04_bottleObjList.end(); ++it)
+			if (*it == koz) {
+				g_vars->scene04_bottleObjList.erase(it);
+				break;
+			}
+
+		koz->queueMessageQueue(0);
+		koz->hide();
+
+		g_vars->scene04_kozyawkiObjList.push_back(koz);
+	}
+
+	g_vars->scene04_hand->changeStatics2(ST_HND_EMPTY);
+
+	g_vars->scene04_hand->setOXY(429, 21);
+	g_vars->scene04_hand->_priority = 15;
 }
 
 void sceneHandler04_gotoLadder(int par) {
