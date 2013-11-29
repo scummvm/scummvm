@@ -116,8 +116,8 @@ public:
 	int scene04_var13;
 	int scene04_var14;
 	int scene04_var15;
-	int scene04_var16;
-	int scene04_var17;
+	int scene04_speakerVariant;
+	int scene04_speakerPhase;
 	int scene04_var18;
 	int scene04_var19;
 	int scene04_var20;

@@ -90,8 +90,8 @@ Vars::Vars() {
 	scene04_var13 = 0;
 	scene04_var14 = 0;
 	scene04_var15 = 0;
-	scene04_var16 = 0;
-	scene04_var17 = 0;
+	scene04_speakerVariant = 0;
+	scene04_speakerPhase = 0;
 	scene04_var18 = 0;
 	scene04_var19 = 0;
 	scene04_var20 = 0;

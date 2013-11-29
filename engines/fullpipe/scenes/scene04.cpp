@@ -44,17 +44,17 @@ static const int scene04_speakerPhases[] = {
 
 void scene04_speakerCallback(int *phase) {
 	if (g_vars->scene04_soundPlaying) {
-		if (g_vars->scene04_var17 >= 0) {
-			*phase = scene04_speakerPhases[g_vars->scene04_var17 + 6 * g_vars->scene04_var16];
+		if (g_vars->scene04_speakerPhase >= 0) {
+			*phase = scene04_speakerPhases[g_vars->scene04_speakerPhase + 6 * g_vars->scene04_speakerVariant];
 
-			g_vars->scene04_var17++;
+			g_vars->scene04_speakerPhase++;
 
-			if (scene04_speakerPhases[g_vars->scene04_var17 + 6 * g_vars->scene04_var16] < 0) {
-				g_vars->scene04_var17 = 0;
-				g_vars->scene04_var16 = g_fullpipe->_rnd->getRandomNumber(2);
+			if (scene04_speakerPhases[g_vars->scene04_speakerPhase + 6 * g_vars->scene04_speakerVariant] < 0) {
+				g_vars->scene04_speakerPhase = 0;
+				g_vars->scene04_speakerVariant = g_fullpipe->_rnd->getRandomNumber(2);
 			}
 		} else {
-			++g_vars->scene04_var17;
+			++g_vars->scene04_speakerPhase;
 		}
 	}
 }
@@ -188,8 +188,8 @@ void scene04_initScene(Scene *sc) {
 	g_vars->scene04_speaker->_callback2 = scene04_speakerCallback;
 	g_vars->scene04_speaker->startAnim(MV_SPK4_PLAY, 0, -1);
 
-	g_vars->scene04_var16 = 0;
-	g_vars->scene04_var17 = 0;
+	g_vars->scene04_speakerVariant = 0;
+	g_vars->scene04_speakerPhase = 0;
 
 	g_fullpipe->initArcadeKeys("SC_4");
 }
