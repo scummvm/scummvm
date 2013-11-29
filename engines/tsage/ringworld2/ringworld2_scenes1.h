@@ -188,7 +188,7 @@ class Scene1337 : public SceneExt {
 		SceneObject _card;
 
 		int _cardId;
-		Common::Point _field36;
+		Common::Point _stationPos;
 
 		unkObj1337sub1();
 		void synchronize(Serializer &s);
@@ -276,7 +276,7 @@ public:
 	ASound _aSound2;
 	BackgroundSceneObject _background1;
 	bool _autoplay;
-	unkObj1337_1 _arrunkObj1337[4];
+	unkObj1337_1 _gameBoardSide[4];
 	SceneItem _item1;
 	SceneObject _object1;
 	Action1 _action1;
