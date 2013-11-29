@@ -23,6 +23,7 @@
  *
  */
 
+#include "buried/avi_frames.h"
 #include "buried/buried.h"
 #include "buried/gameui.h"
 #include "buried/graphics.h"
@@ -96,6 +97,232 @@ int PlaceCeramicBowl::timerCallback(Window *viewWindow) {
 	}
 
 	return SC_TRUE;
+}
+
+class AdjustWheels : public SceneBase {
+public:
+	AdjustWheels(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	void preDestructor();
+	int paint(Window *viewWindow, Graphics::Surface *preBuffer);
+	int gdiPaint(Window *viewWindow);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int mouseMove(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	AVIFrames _leftWheelFrames;
+	int _curLeftFrame;
+	AVIFrames _rightWheelFrames;
+	int _curRightFrame;
+	Common::Rect _leftUpRegion;
+	Common::Rect _leftDownRegion;
+	Common::Rect _rightUpRegion;
+	Common::Rect _rightDownRegion;
+	bool _translateText;
+};
+
+AdjustWheels::AdjustWheels(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_curLeftFrame = ((SceneViewWindow *)viewWindow)->getGlobalFlags().myTPCodeWheelLeftIndex;
+	_curRightFrame = ((SceneViewWindow *)viewWindow)->getGlobalFlags().myTPCodeWheelRightIndex;
+	_leftUpRegion = Common::Rect(46, 0, 200, 70);
+	_leftDownRegion = Common::Rect(46, 106, 200, 189);
+	_rightUpRegion = Common::Rect(212, 0, 432, 66);
+	_rightDownRegion = Common::Rect(212, 109, 432, 189);
+	_translateText = false;
+
+	if (!_leftWheelFrames.open(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 9)))
+		error("Failed to open left wheel frames video");
+
+	if (!_rightWheelFrames.open(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 10)))
+		error("Failed to open right wheel frames video");
+}
+
+void AdjustWheels::preDestructor() {
+	_leftWheelFrames.close();
+	_rightWheelFrames.close();
+}
+
+int AdjustWheels::paint(Window *viewWindow, Graphics::Surface *preBuffer) {
+	if (_staticData.navFrameIndex >= 0) {
+		const Graphics::Surface *leftFrame = _leftWheelFrames.getFrame(_curLeftFrame);
+		if (leftFrame)
+			_vm->_gfx->crossBlit(preBuffer, 0, 0, 208, 189, leftFrame, 0, 0);
+
+		const Graphics::Surface *rightFrame = _rightWheelFrames.getFrame(_curRightFrame);
+		if (rightFrame)
+			_vm->_gfx->crossBlit(preBuffer, 208, 0, 224, 189, rightFrame, 0, 0);
+	}
+
+	return SC_REPAINT;
+}
+
+int AdjustWheels::gdiPaint(Window *viewWindow) {
+	if (_translateText && ((SceneViewWindow *)viewWindow)->getGlobalFlags().bcTranslateEnabled == 1) {
+		Common::Rect absoluteRect = viewWindow->getAbsoluteRect();
+		Common::Rect rect(168, 70, 262, 108);
+		rect.translate(absoluteRect.left, absoluteRect.top);
+		_vm->_gfx->getScreen()->frameRect(rect, _vm->_gfx->getColor(255, 0, 0));
+	}
+
+	return SC_REPAINT;
+}
+
+int AdjustWheels::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	// TODO: Wait between frames after figuring out timing
+
+	if (_leftUpRegion.contains(pointLocation) || _leftDownRegion.contains(pointLocation) ||
+			_rightUpRegion.contains(pointLocation) || _rightDownRegion.contains(pointLocation)) {
+		if (_leftDownRegion.contains(pointLocation)) {
+			// Move the wheel one frame and redraw
+			_curLeftFrame++;
+
+			if (_curLeftFrame > _leftWheelFrames.getFrameCount() - 1)
+				_curLeftFrame = 0;
+
+			viewWindow->invalidateWindow(false);
+
+			// And again for the final frame
+			_curLeftFrame++;
+
+			if (_curLeftFrame > _leftWheelFrames.getFrameCount() - 1)
+				_curLeftFrame = 0;
+
+			viewWindow->invalidateWindow(false);
+		} else if (_leftUpRegion.contains(pointLocation)) {
+			// Move the wheel one frame and redraw
+			_curLeftFrame--;
+
+			if (_curLeftFrame < 0)
+				_curLeftFrame = _leftWheelFrames.getFrameCount() - 1;
+
+			viewWindow->invalidateWindow(false);
+
+			// And again for the final frame
+			_curLeftFrame--;
+
+			if (_curLeftFrame < 0)
+				_curLeftFrame = _leftWheelFrames.getFrameCount() - 1;
+
+			viewWindow->invalidateWindow(false);
+		} else if (_rightDownRegion.contains(pointLocation)) {
+			// Move the wheel one frame and redraw
+			_curRightFrame++;
+
+			if (_curRightFrame > _rightWheelFrames.getFrameCount() - 1)
+				_curRightFrame = 0;
+
+			viewWindow->invalidateWindow(false);
+
+			// And again for the final frame
+			_curRightFrame++;
+
+			if (_curRightFrame > _rightWheelFrames.getFrameCount() - 1)
+				_curRightFrame = 0;
+
+			viewWindow->invalidateWindow(false);
+		} else if (_rightUpRegion.contains(pointLocation)) {
+			// Move the wheel one frame and redraw
+			_curRightFrame--;
+
+			if (_curRightFrame < 0)
+				_curRightFrame = _rightWheelFrames.getFrameCount() - 1;
+
+			viewWindow->invalidateWindow(false);
+
+			// And again for the final frame
+			_curRightFrame--;
+
+			if (_curRightFrame < 0)
+				_curRightFrame = _rightWheelFrames.getFrameCount() - 1;
+
+			viewWindow->invalidateWindow(false);
+		}
+
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().myTPCodeWheelLeftIndex = _curLeftFrame;
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().myTPCodeWheelRightIndex = _curRightFrame;
+
+		byte status = 0;
+		if (_curLeftFrame == 8 && _curRightFrame == 12)
+			status = 1;
+		else if (_curLeftFrame == 16 && _curRightFrame == 22)
+			status = 1;
+		else if (_curLeftFrame == 20 && _curRightFrame == 4)
+			status = 1;
+		else if (_curLeftFrame == 0 && _curRightFrame == 24)
+			status = 1;
+		else if (_curLeftFrame == 14 && _curRightFrame == 8)
+			status = 1;
+		else if (_curLeftFrame == 6 && _curRightFrame == 6)
+			status = 1;
+		else if (_curLeftFrame == 6 && _curRightFrame == 30)
+			status = 1;
+		else if (_curLeftFrame == 24 && _curRightFrame == 0)
+			status = 1;
+		else if (_curLeftFrame == 10 && _curRightFrame == 28)
+			status = 1;
+
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().myTPCodeWheelStatus = status;
+
+		return SC_TRUE;
+	}
+
+	// Did not click on the wheels, pop back to depth 0
+	DestinationScene newDest;
+	newDest.destinationScene = _staticData.location;
+	newDest.destinationScene.depth = 0;
+	newDest.transitionType = TRANSITION_NONE;
+	newDest.transitionData = -1;
+	newDest.transitionStartFrame = -1;
+	newDest.transitionLength = -1;
+	((SceneViewWindow *)viewWindow)->moveToDestination(newDest);
+	return SC_TRUE;
+}
+
+int AdjustWheels::mouseMove(Window *viewWindow, const Common::Point &pointLocation) {
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().bcTranslateEnabled == 1) {
+		Common::Rect translateTextRegion(168, 72, 260, 106);
+
+		if (translateTextRegion.contains(pointLocation)) {
+			if (!_translateText) {
+				Common::String leftText = _vm->getString(IDMYTP_WHEELS_LEFT_TRANS_TEXT_BASE + _curLeftFrame / 2);
+				Common::String rightText = _vm->getString(IDMYTP_WHEELS_RIGHT_TRANS_TEXT_BASE + _curRightFrame / 2);
+				Common::String finalString = leftText + rightText;
+
+				if (((SceneViewWindow *)viewWindow)->getGlobalFlags().generalWalkthroughMode == 1 &&
+						((SceneViewWindow *)viewWindow)->getGlobalFlags().myTPCodeWheelStatus == 1) {
+
+					if (_vm->getVersion() >= MAKEVERSION(1, 0, 4, 0))
+						finalString += _vm->getString(IDS_MYTP_WALKTHROUGH_HINT_TEXT);
+					else
+						finalString += " (Mayan Sacred Day)";
+				}
+
+				((SceneViewWindow *)viewWindow)->displayTranslationText(finalString);
+				_translateText = true;
+				viewWindow->invalidateWindow(false);
+			}
+		} else {
+			if (_translateText) {
+				_translateText = false;
+				viewWindow->invalidateWindow(false);
+			}
+		}
+
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int AdjustWheels::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_leftUpRegion.contains(pointLocation) || _rightUpRegion.contains(pointLocation))
+		return kCursorArrowUp;
+
+	if (_leftDownRegion.contains(pointLocation) || _rightDownRegion.contains(pointLocation))
+		return kCursorArrowDown;
+
+	return kCursorPutDown;
 }
 
 class DateCombinationRead : public SceneBase {
@@ -344,6 +571,10 @@ SceneBase *SceneViewWindow::constructMayanSceneObject(Window *viewWindow, const 
 		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 60, 134, 118, 180, kItemCeramicBowl, 96, offsetof(GlobalFlags, myPickedUpCeramicBowl));
 	case 3:
 		return new PlaceCeramicBowl(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 4:
+		return new ClickChangeDepth(_vm, viewWindow, sceneStaticData, priorLocation, 1, kCursorMagnifyingGlass, 0, 0, 432, 189);
+	case 5:
+		return new AdjustWheels(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 6:
 		return new DateCombinationRead(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 7:

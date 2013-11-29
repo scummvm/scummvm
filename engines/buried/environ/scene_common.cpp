@@ -382,6 +382,36 @@ int VideoDeath::postExitRoom(Window *viewWindow, const Location &newLocation) {
 	return SC_TRUE;
 }
 
+ClickChangeDepth::ClickChangeDepth(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+		int newDepth, int cursorID, int left, int top, int right, int bottom) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_newDepth = newDepth;
+	_cursorID = cursorID;
+	_clickableRegion = Common::Rect(left, top, right, bottom);
+}
+
+int ClickChangeDepth::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_clickableRegion.contains(pointLocation)) {
+		DestinationScene clickDestination;
+		clickDestination.destinationScene = _staticData.location;
+		clickDestination.destinationScene.depth = _newDepth;
+		clickDestination.transitionType = TRANSITION_FADE;
+		clickDestination.transitionData = -1;
+		clickDestination.transitionStartFrame = -1;
+		clickDestination.transitionLength = -1;
+		((SceneViewWindow *)viewWindow)->moveToDestination(clickDestination);
+	}
+
+	return SC_TRUE;
+}
+
+int ClickChangeDepth::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_clickableRegion.contains(pointLocation))
+		return _cursorID;
+
+	return kCursorArrow;
+}
+
 ClickPlaySoundSynchronous::ClickPlaySoundSynchronous(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
 		int flagOffset, int soundID, int cursorID, int left, int top, int right, int bottom) :
 		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
