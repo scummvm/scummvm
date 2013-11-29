@@ -80,7 +80,7 @@ static TaggedString *newone(const char *buff, int32 tag, uint32 h) {
 		nblocks += gcsizestring(l);
 	} else {
 		ts = (TaggedString *)luaM_malloc(sizeof(TaggedString));
-		ts->globalval.value.ts = (TaggedString *)buff;
+		ts->globalval.value.ts = (TaggedString *)const_cast<char *>(buff);
 		ts->globalval.ttype = (lua_Type)(tag == LUA_ANYTAG ? 0 : tag);
 		ts->constindex = -1;  /* tag -> this is a userdata */
 		nblocks++;
