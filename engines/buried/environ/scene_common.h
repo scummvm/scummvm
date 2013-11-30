@@ -26,6 +26,7 @@
 #ifndef BURIED_SCENE_COMMON_H
 #define BURIED_SCENE_COMMON_H
 
+#include "buried/bookdata.h"
 #include "buried/environ/scene_base.h"
 
 namespace Buried {
@@ -234,6 +235,29 @@ private:
 	int _newDepth;
 	int _cursorID;
 	Common::Rect _clickableRegion;
+};
+
+class BrowseBook : public SceneBase {
+public:
+	BrowseBook(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+			int bookResID = 0, int textStartResID = -1, int startingPageID = 0, int timeZone = -1, int environment = -1,
+			int node = -1, int facing = -1, int orientation = -1, int depth = -1, int transitionType = -1, int transitionData = -1,
+			int transitionStartFrame = -1, int transitionLength = -1);
+	int gdiPaint(Window *viewWindow);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int mouseMove(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	int pageChanged(Window *viewWindow);
+	int textTranslated(Window *viewWindow);
+
+	Common::Array<BookPage> _bookDatabase;
+	int _curPage;
+	Common::Rect _top, _bottom, _left, _right, _putDown;
+	DestinationScene _putDownDestination;
+	int _translatedTextResourceID;
+	int _curLineIndex;
 };
 
 class ClickPlaySoundSynchronous : public SceneBase {

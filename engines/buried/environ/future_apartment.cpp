@@ -1040,6 +1040,8 @@ SceneBase *SceneViewWindow::constructFutureApartmentSceneObject(Window *viewWind
 		return new ClickChangeScene(_vm, viewWindow, sceneStaticData, priorLocation, 44, 26, 254, 144, kCursorMagnifyingGlass, 4, 3, 0, 2, 0, 1, TRANSITION_VIDEO, 30, -1, -1);
 	case 50:
 		return new ClickChangeScene(_vm, viewWindow, sceneStaticData, priorLocation, 82, 38, 346, 138, kCursorMagnifyingGlass, 4, 3, 9, 2, 0, 1, TRANSITION_VIDEO, 38, -1, -1);
+	case 52:
+		return new BrowseBook(_vm, viewWindow, sceneStaticData, priorLocation, IDBD_LETTERS_BOOK_DATA, -1, 0, 4, 3, 9, 2, 0, 1, TRANSITION_VIDEO, 41, -1, -1);
 	case 54:
 		return new ClickPlayVideo(_vm, viewWindow, sceneStaticData, priorLocation, 36, kCursorFinger, 0, 0, 432, 189);
 	case 56:
