@@ -314,8 +314,8 @@ public:
 	int _field4246;
 	int _field4248;
 	int _field424A;
-	int _field424C;
-	int _field424E;
+	int _instructionsDisplayedFl;
+	int _instructionsWaitCount;
 
 	SceneObject _upperDisplayCard[8];
 	SceneObject _lowerDisplayCard[8];

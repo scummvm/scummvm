@@ -2267,7 +2267,7 @@ void Scene1337::Action1337::waitFrames(int32 frameCount) {
 	uint32 curFrame = firstFrameNumber;
 	uint32 destFrame = firstFrameNumber + frameCount;
 
-	while (curFrame < destFrame) {
+	while ((curFrame < destFrame) && !g_vm->shouldQuit()) {
 		TsAGE::Event event;
 		g_globals->_events.getEvent(event);
 		curFrame = g_globals->_events.getFrameNumber();
