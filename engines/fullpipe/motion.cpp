@@ -765,7 +765,7 @@ MessageQueue *MovGraph2::buildMovInfo1MessageQueue(MovInfo1 *movInfo) {
 
 			MessageQueue *mq2 = genMovement(&movinfo);
 
-			if (mq2) {
+			if (!mq2) {
 				delete mq;
 				return 0;
 			}
