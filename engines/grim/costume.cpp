@@ -315,6 +315,9 @@ Chore *Costume::getChore(const char *name) {
 }
 
 int Costume::getChoreId(const char *name) {
+	if (name == NULL) {
+		return -1;
+	}
 	for (int i = 0; i < _numChores; ++i) {
 		if (strcmp(_chores[i]->getName(), name) == 0) {
 			return i;
