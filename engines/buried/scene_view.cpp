@@ -410,7 +410,79 @@ bool SceneViewWindow::jumpToScene(const Location &newLocation) {
 }
 
 bool SceneViewWindow::jumpToSceneRestore(const Location &newLocation) {
-	// TODO
+	Location oldLocation(-2, -2, -2, -2, -2, -2);
+	Location passedLocation(-2, -2, -2, -2, -2, -2);
+
+	if (_infoWindowDisplayed)
+		((GameUIWindow *)getParent())->_inventoryWindow->destroyInfoWindow();
+	if (_bioChipWindowDisplayed)
+		((GameUIWindow *)getParent())->_bioChipRightWindow->destroyBioChipViewWindow();
+	if (_burnedLetterDisplayed)
+		((GameUIWindow *)getParent())->_inventoryWindow->destroyBurnedLetterWindow();
+
+	// Get the static scene data for this new location
+	LocationStaticData newSceneStaticData;
+	if (!getSceneStaticData(newLocation, newSceneStaticData))
+		return false;
+	if (_currentScene)
+		oldLocation = _currentScene->_staticData.location;
+
+	// Clear the live text window
+	if (newLocation.timeZone != oldLocation.timeZone || newLocation.environment != oldLocation.environment)
+		((GameUIWindow *)getParent())->_liveTextWindow->updateLiveText("");
+
+	// If we have a scene, call the pre-transition function
+	if (_currentScene)
+		_currentScene->preExitRoom(this, passedLocation);
+
+	if (newLocation.timeZone != oldLocation.timeZone && newLocation.timeZone != -2)
+		initializeTimeZoneAndEnvironment(this, newLocation.timeZone, -1);
+	if (newLocation.timeZone != oldLocation.timeZone && newLocation.environment != -2)
+		initializeTimeZoneAndEnvironment(this, newLocation.timeZone, newLocation.environment);
+
+	// Create the new scene object
+	SceneBase *newScene = constructSceneObject(this, newSceneStaticData, passedLocation);
+
+	// Call the post-transition function
+	if (_currentScene && _currentScene->postExitRoom(this, passedLocation) == SC_DEATH)
+		return false;
+
+	if (_currentScene) {
+		_currentScene->preDestructor();
+		delete _currentScene;
+		_currentScene = 0;
+	}
+
+	// Change the ambient music
+	if (newLocation.timeZone != oldLocation.timeZone || newLocation.environment != oldLocation.environment || oldLocation.timeZone < 0)
+		startEnvironmentAmbient(passedLocation.timeZone, passedLocation.environment, newLocation.timeZone, newLocation.environment);
+
+	_currentScene = newScene;
+
+	if (_cycleEnabled && newSceneStaticData.cycleStartFrame == -1)
+		flushCycleFrameCache();
+
+	if (_currentScene->preEnterRoom(this, passedLocation) == SC_END_PROCESSING)
+		return true;
+
+	if (_globalFlags.bcCloakingEnabled != 1)
+		((GameUIWindow *)getParent())->_navArrowWindow->updateAllArrows(newScene->_staticData);
+
+	if (newLocation.timeZone != oldLocation.timeZone)
+		((GameUIWindow *)getParent())->changeCurrentDate(newLocation.timeZone);
+
+	invalidateWindow(false);
+
+	_currentScene->postEnterRoom(this, passedLocation);
+	getParent()->invalidateWindow(false);
+
+	// Check AI database for a spontaneous comment
+	if (((GameUIWindow *)getParent())->_inventoryWindow->isItemInInventory(kItemBioChipAI))
+		playAIComment(newSceneStaticData.location, AI_COMMENT_TYPE_SPONTANEOUS);
+
+	// Notify biochip right window of change
+	((GameUIWindow *)getParent())->_bioChipRightWindow->sceneChanged();
+
 	return true;
 }
 
