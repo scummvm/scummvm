@@ -202,6 +202,50 @@ int PlaySoundExitingFromSceneDeux::postExitRoom(Window *viewWindow, const Locati
 	return SC_TRUE;
 }
 
+ClickChangeScene::ClickChangeScene(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+		int left, int top, int right, int bottom, int cursorID,
+		int timeZone, int environment, int node, int facing, int orientation, int depth,
+		int transitionType, int transitionData, int transitionStartFrame, int transitionLength) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_clickRegion = Common::Rect(left, top, right, bottom);
+	_cursorID = cursorID;
+
+	_clickDestination.destinationScene.timeZone = timeZone;
+	_clickDestination.destinationScene.environment = environment;
+	_clickDestination.destinationScene.node = node;
+	_clickDestination.destinationScene.facing = facing;
+	_clickDestination.destinationScene.orientation = orientation;
+	_clickDestination.destinationScene.depth = depth;
+	_clickDestination.transitionType = transitionType;
+	_clickDestination.transitionData = transitionData;
+	_clickDestination.transitionStartFrame = transitionStartFrame;
+	_clickDestination.transitionLength = transitionLength;
+}
+
+int ClickChangeScene::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_clickRegion.contains(pointLocation))
+		((SceneViewWindow *)viewWindow)->moveToDestination(_clickDestination);
+
+	return SC_FALSE;
+}
+
+int ClickChangeScene::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_clickRegion.contains(pointLocation))
+		return _cursorID;
+
+	return kCursorArrow;
+}
+
+ClickChangeSceneSetFlag::ClickChangeSceneSetFlag(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+		int left, int top, int right, int bottom, int cursorID,
+		int timeZone, int environment, int node, int facing, int orientation, int depth,
+		int transitionType, int transitionData, int transitionStartFrame, int transitionLength, int flagIndex) :
+		ClickChangeScene(vm, viewWindow, sceneStaticData, priorLocation, left, top, right, bottom, cursorID, timeZone, environment, node, facing, orientation, depth,
+			transitionType, transitionData, transitionStartFrame, transitionLength) {
+	if (flagIndex >= 0)
+		((SceneViewWindow *)viewWindow)->setGlobalFlagByte(flagIndex, 1);
+}
+
 PlayStingers::PlayStingers(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
 		int stingerVolume, int lastStingerFlagOffset, int effectIDFlagOffset, int firstStingerFileID, int lastStingerFileID) :
 		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {

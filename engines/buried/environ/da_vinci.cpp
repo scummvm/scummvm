@@ -403,6 +403,8 @@ SceneBase *SceneViewWindow::constructDaVinciSceneObject(Window *viewWindow, cons
 		return new PaintingTowerRetrieveKey(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 8:
 		return new PaintingTowerWalkOntoElevator(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 9:
+		return new ClickChangeScene(_vm, viewWindow, sceneStaticData, priorLocation, 170, 80, 428, 184, kCursorFinger, 5, 1, 8, 3, 0, 0, TRANSITION_VIDEO, 0, -1, -1);
 	case 10:
 		return new PlaySoundExitingFromScene(_vm, viewWindow, sceneStaticData, priorLocation, 14);
 	case 11:
@@ -431,6 +433,20 @@ SceneBase *SceneViewWindow::constructDaVinciSceneObject(Window *viewWindow, cons
 		return new ClickPlayVideo(_vm, viewWindow, sceneStaticData, priorLocation, 2, kCursorFinger, 110, 138, 170, 189);
 	case 23:
 		return new ClickPlayVideo(_vm, viewWindow, sceneStaticData, priorLocation, 4, kCursorFinger, 180, 122, 290, 189);
+	case 24:
+		return new ClickChangeScene(_vm, viewWindow, sceneStaticData, priorLocation, 186, 28, 292, 158, kCursorMagnifyingGlass, 5, 4, 4, 2, 1, 1, TRANSITION_VIDEO, 5, -1, -1);
+	case 26:
+		return new ClickChangeScene(_vm, viewWindow, sceneStaticData, priorLocation, 0, 44, 232, 189, kCursorMagnifyingGlass, 5, 4, 4, 3, 0, 1, TRANSITION_VIDEO, 7, -1, -1);
+	case 27:
+		return new ClickChangeSceneSetFlag(_vm, viewWindow, sceneStaticData, priorLocation, 0, 0, 432, 189, kCursorPutDown, 5, 4, 4, 3, 0, 0, TRANSITION_VIDEO, 8, -1, -1, offsetof(GlobalFlags, dsWSSeenBallistaSketch));
+	case 28:
+		return new ClickChangeScene(_vm, viewWindow, sceneStaticData, priorLocation, 112, 52, 380, 189, kCursorMagnifyingGlass, 5, 4, 4, 2, 0, 1, TRANSITION_VIDEO, 9, -1, -1);
+	case 29:
+		return new ClickChangeSceneSetFlag(_vm, viewWindow, sceneStaticData, priorLocation, 0, 0, 432, 189, kCursorPutDown, 5, 4, 4, 2, 0, 0, TRANSITION_VIDEO, 10, -1, -1, offsetof(GlobalFlags, dsWSSeenBallistaSketch));
+	case 30:
+		return new ClickChangeScene(_vm, viewWindow, sceneStaticData, priorLocation, 96, 130, 222, 164, kCursorMagnifyingGlass, 5, 4, 7, 3, 1, 1, TRANSITION_VIDEO, 11, -1, -1 );
+	case 31:
+		return new ClickChangeScene(_vm, viewWindow, sceneStaticData, priorLocation, 0, 0, 432, 189, kCursorPutDown, 5, 4, 7, 3, 1, 0, TRANSITION_VIDEO, 12, -1, -1);
 	case 32:
 		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 158, 90, 328, 162, kItemDriveAssembly, 145, offsetof(GlobalFlags, dsWSPickedUpGearAssembly));
 	case 33:
@@ -441,6 +457,16 @@ SceneBase *SceneViewWindow::constructDaVinciSceneObject(Window *viewWindow, cons
 		return new BasicDoor(_vm, viewWindow, sceneStaticData, priorLocation, 116, 0, 326, 189, 5, 2, 2, 1, 1, 1, TRANSITION_WALK, 11, 225, 15);
 	case 46:
 		return new ClickPlayVideo(_vm, viewWindow, sceneStaticData, priorLocation, 8, kCursorFinger, 102, 124, 164, 189);
+	case 51:
+		return new ClickChangeScene(_vm, viewWindow, sceneStaticData, priorLocation, 0, 36, 240, 189, kCursorMagnifyingGlass, 5, 2, 4, 0, 0, 1, TRANSITION_VIDEO, 11, -1, -1);
+	case 52:
+		return new ClickChangeScene(_vm, viewWindow, sceneStaticData, priorLocation, 0, 0, 432, 189, kCursorPutDown, 5, 2, 4, 0, 0, 0, TRANSITION_VIDEO, 12, -1, -1);
+	case 53:
+		return new ClickChangeScene(_vm, viewWindow, sceneStaticData, priorLocation, 284, 46, 350, 182, kCursorMagnifyingGlass, 5, 2, 0, 2, 1, 1, TRANSITION_VIDEO, 13, -1, -1);
+	case 54:
+		return new ClickChangeScene(_vm, viewWindow, sceneStaticData, priorLocation, 0, 0, 432, 189, kCursorPutDown, 5, 2, 0, 2, 1, 0, TRANSITION_VIDEO, 14, -1, -1);
+	case 55:
+		return new ClickChangeScene(_vm, viewWindow, sceneStaticData, priorLocation, 210, 0, 330, 110, kCursorMagnifyingGlass, 5, 2, 3, 4, 1, 1, TRANSITION_VIDEO, 15, -1, -1);
 	case 59:
 		return new ClickPlayVideo(_vm, viewWindow, sceneStaticData, priorLocation, 2, kCursorFinger, 70, 136, 190, 189);
 	case 60:
