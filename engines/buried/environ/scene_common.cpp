@@ -526,6 +526,85 @@ int ClickChangeDepth::specifyCursor(Window *viewWindow, const Common::Point &poi
 	return kCursorArrow;
 }
 
+OpenFirstItemAcquire::OpenFirstItemAcquire(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+		int openLeft, int openTop, int openRight, int openBottom, int getLeft, int getTop, int getRight,
+		int getBottom, int animOpenWith, int animOpenWithout, int itemID, int fullStillFrame, int clearStillFrame,
+		int itemFlagOffset):
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_open = false;
+	_itemPresent = ((SceneViewWindow *)viewWindow)->getGlobalFlagByte(itemFlagOffset) == 0;
+	_openClickRegion = Common::Rect(openLeft, openTop, openRight, openBottom);
+	_acquireRegion = Common::Rect(getLeft, getTop, getRight, getBottom);
+	_fullFrameIndex = fullStillFrame;
+	_clearFrameIndex = clearStillFrame;
+	_itemID = itemID;
+	_itemFlagOffset = itemFlagOffset;
+	_animOpenWith = animOpenWith;
+	_animOpenWithout = animOpenWithout;
+}
+
+int OpenFirstItemAcquire::mouseDown(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_acquireRegion.contains(pointLocation) && _itemPresent && _open) {
+		_itemPresent = false;
+		_staticData.navFrameIndex = _clearFrameIndex;
+
+		if (_itemFlagOffset >= 0)
+			((SceneViewWindow *)viewWindow)->setGlobalFlagByte(_itemFlagOffset, 1);
+
+		// Call inventory drag start function
+		Common::Point ptInventoryWindow = viewWindow->convertPointToGlobal(pointLocation);
+		ptInventoryWindow = ((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->convertPointToLocal(ptInventoryWindow);
+		((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->startDraggingNewItem(_itemID, ptInventoryWindow);
+
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int OpenFirstItemAcquire::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_openClickRegion.contains(pointLocation) && !_open) {
+		_open = true;
+
+		if (_itemPresent) {
+			((SceneViewWindow *)viewWindow)->playSynchronousAnimation(_animOpenWith);
+			_staticData.navFrameIndex = _fullFrameIndex;
+		} else {
+			((SceneViewWindow *)viewWindow)->playSynchronousAnimation(_animOpenWithout);
+			_staticData.navFrameIndex = _clearFrameIndex;
+		}
+
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int OpenFirstItemAcquire::droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) {
+	if (_itemID == itemID && !_itemPresent && _open && pointLocation.x != -1 && pointLocation.y != -1) {
+		_itemPresent = true;
+		_staticData.navFrameIndex = _fullFrameIndex;
+
+		if (_itemFlagOffset >= 0)
+			((SceneViewWindow *)viewWindow)->setGlobalFlagByte(_itemFlagOffset, 0);
+
+		viewWindow->invalidateWindow(false);
+		return SIC_ACCEPT;
+	}
+
+	return SIC_REJECT;
+}
+
+int OpenFirstItemAcquire::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_openClickRegion.contains(pointLocation) && !_open)
+		return kCursorFinger;
+
+	if (_acquireRegion.contains(pointLocation) && _itemPresent && _open)
+		return kCursorOpenHand;
+
+	return kCursorArrow;
+}
+
 BrowseBook::BrowseBook(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
 		int bookResID, int textStartResID, int startingPageID, int timeZone, int environment,
 		int node, int facing, int orientation, int depth, int transitionType, int transitionData,
