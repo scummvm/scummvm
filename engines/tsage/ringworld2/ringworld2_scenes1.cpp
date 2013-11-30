@@ -2246,7 +2246,7 @@ Scene1337::Scene1337() {
 	_field4240 = 0;
 	_field4242 = 0;
 	_field4244 = false;
-	_field4246 = 0;
+	_field4246 = false;
 	_field4248 = 0;
 	_field424A = 0;
 	_instructionsDisplayedFl = 0;
@@ -4056,7 +4056,7 @@ void Scene1337::Action11::signal() {
 						}
 					}
 				} // while
-				scene->_field4246 = 1;
+				scene->_field4246 = true;
 				scene->subC4CEC();
 			} else {
 				if (scene->_field4242 != 2) {
@@ -4601,9 +4601,9 @@ void Scene1337::subC2586() {
 	switch (_currentPlayerNumb) {
 	case 2:
 		subC4CD2();
-		if (_field4246 == 1)
+		if (_field4246)
 			actionDisplay(1330, 114, 159, 10, 1, 200, 0, 7, 0, 154, 154);
-		_field4246 = 0;
+		_field4246 = false;
 	// No break on purpose
 	case 0:
 	// No break on purpose
@@ -5266,7 +5266,7 @@ void Scene1337::subC4CEC() {
 		return;
 
 	subD18F5();
-	subD1940(1);
+	subD1940(true);
 }
 
 void Scene1337::subC51A0(unkObj1337sub1 *subObj1, unkObj1337sub1 *subObj2) {
@@ -5519,7 +5519,7 @@ void Scene1337::subPostInit() {
 	_currentPlayerArrow.hide();
 
 	_field4244 = true;
-	_field4246 = 0;
+	_field4246 = false;
 	_field4248 = 0;
 	_field424A = -1;
 
@@ -6841,34 +6841,28 @@ void Scene1337::setCursorData(int resNum, int rlbNum, int frameNum) {
 	s.unlockSurface();
 }
 
-int Scene1337::subD18F5() {
+void Scene1337::subD18F5() {
 	if (R2_GLOBALS._v57709 == 0)
 		// The cursor looks... very dummy
 		// To be checked
 		warning("TODO: CursorManager.setData(R2_GLOBALS.off_57705)");
 
 	++R2_GLOBALS._v57709;
-
-	return R2_GLOBALS._v57709;
 }
 
-int Scene1337::subD1917() {
+void Scene1337::subD1917() {
 	if (R2_GLOBALS._v57709 != 0) {
 		R2_GLOBALS._v57709--;
 		if (R2_GLOBALS._v57709 != 0)
 			warning("FIXME: subD195F(_width, _data);");
 	}
-
-	return R2_GLOBALS._v57709;
 }
 
-int Scene1337::subD1940(bool flag) {
+void Scene1337::subD1940(bool flag) {
 	if (flag)
 		++R2_GLOBALS._v5780C;
 	else if (R2_GLOBALS._v5780C != 0)
 		--R2_GLOBALS._v5780C;
-
-	return R2_GLOBALS._v5780C;
 }
 
 void Scene1337::subD195F(int arg1, int arg2) {

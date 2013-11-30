@@ -311,7 +311,7 @@ public:
 	int _field4240;
 	int _field4242;
 	bool _field4244;
-	int _field4246;
+	bool _field4246;
 	int _field4248;
 	int _field424A;
 	int _instructionsDisplayedFl;
@@ -370,9 +370,9 @@ public:
 	void subD02CA();
 	void subD183F(int arg1, int arg2);
 	void setCursorData(int resNum, int rlbNum, int frameNum);
-	int  subD18F5();
-	int  subD1917();
-	int  subD1940(bool flag);
+	void subD18F5();
+	void subD1917();
+	void subD1940(bool flag);
 	void subD195F(int arg1, int arg2);
 	void subD1975(int arg1, int arg2);
 	void subD1A48(int arg1);
