@@ -958,6 +958,10 @@ SceneBase *SceneViewWindow::constructCastleSceneObject(Window *viewWindow, const
 		return new SmithyBench(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 43:
 		return new ClickChangeScene(_vm, viewWindow, sceneStaticData, priorLocation, 10, 0, 376, 189, kCursorFinger, 1, 6, 5, 1, 0, 1, TRANSITION_VIDEO, 2, -1, -1);
+	case 44:
+		return new BrowseBook(_vm, viewWindow, sceneStaticData, priorLocation, IDBD_DIARY1, IDBD_DIARY1_TRANS_TEXT_BASE, 0, 1, 8, 5, 2, 0, 0, TRANSITION_VIDEO, 4, -1, -1);
+	case 45:
+		return new BrowseBook(_vm, viewWindow, sceneStaticData, priorLocation, IDBD_DIARY2, IDBD_DIARY2_TRANS_TEXT_BASE, 1, 1, 8, 5, 2, 0, 0, TRANSITION_VIDEO, 2, -1, -1);
 	case 46:
 		return new PickupKingsStudyBooksA(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 47:
