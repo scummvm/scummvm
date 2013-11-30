@@ -863,6 +863,23 @@ int StorageRoomCheckUnlock::specifyCursor(Window *viewWindow, const Common::Poin
 	return kCursorArrow;
 }
 
+class DeliverLightMessage : public SceneBase {
+public:
+	DeliverLightMessage(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
+};
+
+DeliverLightMessage::DeliverLightMessage(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+}
+
+int DeliverLightMessage::postEnterRoom(Window *viewWindow, const Location &priorLocation) {
+	if (_staticData.location.timeZone != priorLocation.timeZone || _staticData.location.environment != priorLocation.environment)
+		((SceneViewWindow *)viewWindow)->displayLiveText(_vm->getString(IDS_JUMPSUIT_LIGHT_TURN_ON_MESSAGE));
+
+	return SC_TRUE;
+}
+
 class KingsChamberGuardEncounter : public SceneBase {
 public:
 	KingsChamberGuardEncounter(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
@@ -1042,6 +1059,8 @@ SceneBase *SceneViewWindow::constructCastleSceneObject(Window *viewWindow, const
 		return new StorageRoomCheckUnlock(_vm, viewWindow, sceneStaticData, priorLocation, offsetof(GlobalFlags, cgTapestryFlag), kItemCopperKey, 51, 1, 2, 1, 258, 100, 320, 185);
 	case 39:
 		return new StorageRoomDoor(_vm, viewWindow, sceneStaticData, priorLocation, 38, 0, 386, 189, 1, 9, 5, 2, 1, 1, offsetof(GlobalFlags, cgStorageRoomVisit), 11, 130, 12, 0);
+	case 41:
+		return new OpenFirstItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 138, 32, 288, 107, 175, 65, 226, 90, 2, 1, kItemGoldCoins, 34, 35, offsetof(GlobalFlags, cgGoldCoinsPresent));
 	case 42:
 		return new SmithyBench(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 43:
@@ -1092,6 +1111,8 @@ SceneBase *SceneViewWindow::constructCastleSceneObject(Window *viewWindow, const
 		return new ClickPlaySound(_vm, viewWindow, sceneStaticData, priorLocation, -1, 13, kCursorFinger, 0, 0, 270, 189);
 	case 74:
 		return new PlaySoundExitingFromSceneDeux(_vm, viewWindow, sceneStaticData, priorLocation, 14);
+	case 75:
+		return new DeliverLightMessage(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 76:
 		return new SetFlagOnEntry(_vm, viewWindow, sceneStaticData, priorLocation, offsetof(GlobalFlags, cgSROpenedChest), 1);
 	case 77:

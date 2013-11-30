@@ -248,6 +248,30 @@ private:
 	Common::Rect _clickableRegion;
 };
 
+class OpenFirstItemAcquire : public SceneBase {
+public:
+	OpenFirstItemAcquire(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+			int openLeft = 0, int openTop = 0, int openRight = 0, int openBottom = 0, int getLeft = 0, int getTop = 0, int getRight = 0,
+			int getBottom = 0, int animOpenWith = 0, int animOpenWithout = 0, int itemID = 0, int fullStillFrame = 0, int clearStillFrame = 0,
+			int itemFlagOffset = 0);
+	int mouseDown(Window *viewWindow, const Common::Point &pointLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	bool _itemPresent;
+	bool _open;
+	Common::Rect _openClickRegion;
+	Common::Rect _acquireRegion;
+	int _fullFrameIndex;
+	int _clearFrameIndex;
+	int _itemID;
+	int _itemFlagOffset;
+	int _animOpenWith;
+	int _animOpenWithout;
+};
+
 class BrowseBook : public SceneBase {
 public:
 	BrowseBook(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
