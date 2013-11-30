@@ -382,6 +382,41 @@ int CycleEntryVideoWarning::postEnterRoom(Window *viewWindow, const Location &pr
 	return SC_TRUE;
 }
 
+ClickPlayVideoSwitch::ClickPlayVideoSwitch(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+		int animID, int cursorID, int flagOffset, int left, int top, int right, int bottom) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_cursorID = cursorID;
+	_animID = animID;
+	_clickRegion = Common::Rect(left, top, right, bottom);
+	_flagOffset = flagOffset;
+}
+
+int ClickPlayVideoSwitch::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_clickRegion.contains(pointLocation)) {
+		((SceneViewWindow *)viewWindow)->playSynchronousAnimation(_animID);
+
+		if (_flagOffset >= 0) {
+			((SceneViewWindow *)viewWindow)->setGlobalFlagByte(_flagOffset, 1);
+
+			if (((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->isItemInInventory(kItemBioChipAI))
+				((SceneViewWindow *)viewWindow)->playAIComment(_staticData.location, AI_COMMENT_TYPE_SPONTANEOUS);
+
+			((GameUIWindow *)viewWindow->getParent())->_bioChipRightWindow->sceneChanged();
+		}
+
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int ClickPlayVideoSwitch::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_clickRegion.contains(pointLocation))
+		return _cursorID;
+
+	return kCursorArrow;
+}
+
 ClickPlayVideo::ClickPlayVideo(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
 		int animID, int cursorID, int left, int top, int right, int bottom)
 		: SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
