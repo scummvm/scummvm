@@ -307,10 +307,10 @@ public:
 	unkObj1337sub1 _discardPile;
 	unkObj1337sub1 _item8;
 	bool _shuffleEndedFl;
-	int _field423E;
+	int _currentPlayerNumb;
 	int _field4240;
 	int _field4242;
-	int _field4244;
+	bool _field4244;
 	int _field4246;
 	int _field4248;
 	int _field424A;

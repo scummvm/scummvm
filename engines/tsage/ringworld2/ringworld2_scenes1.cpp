@@ -2242,10 +2242,10 @@ Scene1337::Scene1337() {
 		_availableCardsPile[i] = 0;
 
 	_shuffleEndedFl = false;
-	_field423E = 0;
+	_currentPlayerNumb = 0;
 	_field4240 = 0;
 	_field4242 = 0;
-	_field4244 = 0;
+	_field4244 = false;
 	_field4246 = 0;
 	_field4248 = 0;
 	_field424A = 0;
@@ -3346,7 +3346,7 @@ void Scene1337::Action3::signal() {
 	}
 
 	if (_actionIndex > 12) {
-		scene->_field423E = 0;
+		scene->_currentPlayerNumb = 0;
 		R2_GLOBALS._sceneObjects->draw();
 		scene->actionDisplay(1330, 0, 159, 10, 1, 200, 0, 7, 0, 154, 154);
 		scene->subC20F9();
@@ -3361,17 +3361,17 @@ void Scene1337::Action4::signal() {
 
 	switch (_actionIndex++) {
 	case 0:
-		if ((scene->_gameBoardSide[scene->_field423E]._handCard[0]._cardId == 0) && (scene->subC264B(scene->_gameBoardSide[scene->_field423E]._delayPile[0]._cardId))) {
+		if ((scene->_gameBoardSide[scene->_currentPlayerNumb]._handCard[0]._cardId == 0) && (scene->subC264B(scene->_gameBoardSide[scene->_currentPlayerNumb]._delayPile[0]._cardId))) {
 			if (scene->_cardsAvailableNumb < 0)
-				scene->subC264B(scene->_gameBoardSide[scene->_field423E]._delayPile[0]._cardId);
+				scene->subC264B(scene->_gameBoardSide[scene->_currentPlayerNumb]._delayPile[0]._cardId);
 			scene->_animatedCard._card.setPosition(Common::Point(162, 95), 0);
 			scene->_animatedCard._card.show();
 			scene->_aSound2.play(61);
 
 			NpcMover *mover = new NpcMover();
-			scene->_animatedCard._card.addMover(mover, &scene->_gameBoardSide[scene->_field423E]._fieldB94, this);
+			scene->_animatedCard._card.addMover(mover, &scene->_gameBoardSide[scene->_currentPlayerNumb]._fieldB94, this);
 
-			scene->_gameBoardSide[scene->_field423E]._handCard[0]._cardId = scene->_availableCardsPile[scene->_cardsAvailableNumb];
+			scene->_gameBoardSide[scene->_currentPlayerNumb]._handCard[0]._cardId = scene->_availableCardsPile[scene->_cardsAvailableNumb];
 			scene->_availableCardsPile[scene->_cardsAvailableNumb] = 0;
 			scene->_cardsAvailableNumb--;
 
@@ -3383,22 +3383,22 @@ void Scene1337::Action4::signal() {
 		}
 		break;
 	case 1:
-		if ( ( scene->_animatedCard._card._position.x == scene->_gameBoardSide[scene->_field423E]._fieldB94.x)
-			&& ( scene->_animatedCard._card._position.y == scene->_gameBoardSide[scene->_field423E]._fieldB94.y) ) {
-			scene->_gameBoardSide[scene->_field423E]._handCard[0]._card.postInit();
-			scene->_gameBoardSide[scene->_field423E]._handCard[0]._card._moveDiff = Common::Point(30, 30);
-			scene->_gameBoardSide[scene->_field423E]._handCard[0]._card.setVisage(1332);
-			scene->_gameBoardSide[scene->_field423E]._handCard[0]._card.setPosition(scene->_gameBoardSide[scene->_field423E]._handCard[0]._stationPos, 0);
-			scene->_gameBoardSide[scene->_field423E]._handCard[0]._card.setStrip(1);
-			scene->_gameBoardSide[scene->_field423E]._handCard[0]._card.setFrame(scene->_gameBoardSide[scene->_field423E]._fieldBA4);
-			scene->_gameBoardSide[scene->_field423E]._handCard[0]._card.fixPriority(170);
+		if ( ( scene->_animatedCard._card._position.x == scene->_gameBoardSide[scene->_currentPlayerNumb]._fieldB94.x)
+			&& ( scene->_animatedCard._card._position.y == scene->_gameBoardSide[scene->_currentPlayerNumb]._fieldB94.y) ) {
+			scene->_gameBoardSide[scene->_currentPlayerNumb]._handCard[0]._card.postInit();
+			scene->_gameBoardSide[scene->_currentPlayerNumb]._handCard[0]._card._moveDiff = Common::Point(30, 30);
+			scene->_gameBoardSide[scene->_currentPlayerNumb]._handCard[0]._card.setVisage(1332);
+			scene->_gameBoardSide[scene->_currentPlayerNumb]._handCard[0]._card.setPosition(scene->_gameBoardSide[scene->_currentPlayerNumb]._handCard[0]._stationPos, 0);
+			scene->_gameBoardSide[scene->_currentPlayerNumb]._handCard[0]._card.setStrip(1);
+			scene->_gameBoardSide[scene->_currentPlayerNumb]._handCard[0]._card.setFrame(scene->_gameBoardSide[scene->_currentPlayerNumb]._fieldBA4);
+			scene->_gameBoardSide[scene->_currentPlayerNumb]._handCard[0]._card.fixPriority(170);
 		}
 
-		if ((scene->_field4248 == 1) || (scene->_field423E == 2))
-			scene->setAnimationInfo(&scene->_gameBoardSide[scene->_field423E]._handCard[0]);
+		if ((scene->_field4248 == 1) || (scene->_currentPlayerNumb == 2))
+			scene->setAnimationInfo(&scene->_gameBoardSide[scene->_currentPlayerNumb]._handCard[0]);
 
 		scene->_animatedCard._card.hide();
-		if ((scene->_gameBoardSide[scene->_field423E]._handCard[0]._cardId == 0) && (scene->subC264B(scene->_gameBoardSide[scene->_field423E]._delayPile[0]._cardId == 0))) {
+		if ((scene->_gameBoardSide[scene->_currentPlayerNumb]._handCard[0]._cardId == 0) && (scene->subC264B(scene->_gameBoardSide[scene->_currentPlayerNumb]._delayPile[0]._cardId == 0))) {
 			if (scene->_cardsAvailableNumb < 0)
 				scene->shuffleCards();
 			scene->_animatedCard._card.setPosition(Common::Point(162, 95));
@@ -3407,9 +3407,9 @@ void Scene1337::Action4::signal() {
 			scene->_aSound2.play(61);
 
 			NpcMover *mover = new NpcMover();
-			scene->_animatedCard._card.addMover(mover, &scene->_gameBoardSide[scene->_field423E]._fieldB98, this);
+			scene->_animatedCard._card.addMover(mover, &scene->_gameBoardSide[scene->_currentPlayerNumb]._fieldB98, this);
 
-			scene->_gameBoardSide[scene->_field423E]._handCard[1]._cardId = scene->_availableCardsPile[scene->_cardsAvailableNumb];
+			scene->_gameBoardSide[scene->_currentPlayerNumb]._handCard[1]._cardId = scene->_availableCardsPile[scene->_cardsAvailableNumb];
 			scene->_availableCardsPile[scene->_cardsAvailableNumb] = 0;
 			scene->_cardsAvailableNumb--;
 			if (scene->_cardsAvailableNumb < 0)
@@ -3418,22 +3418,22 @@ void Scene1337::Action4::signal() {
 			signal();
 		break;
 	case 2:
-		if ( ( scene->_animatedCard._card._position.x == scene->_gameBoardSide[scene->_field423E]._fieldB98.x)
-			&& ( scene->_animatedCard._card._position.y == scene->_gameBoardSide[scene->_field423E]._fieldB98.y) ) {
-			scene->_gameBoardSide[scene->_field423E]._handCard[1]._card.postInit();
-			scene->_gameBoardSide[scene->_field423E]._handCard[1]._card._moveDiff = Common::Point(30, 30);
-			scene->_gameBoardSide[scene->_field423E]._handCard[1]._card.setVisage(1332);
-			scene->_gameBoardSide[scene->_field423E]._handCard[1]._card.setPosition(scene->_gameBoardSide[scene->_field423E]._handCard[1]._stationPos, 0);
-			scene->_gameBoardSide[scene->_field423E]._handCard[1]._card.setStrip(1);
-			scene->_gameBoardSide[scene->_field423E]._handCard[1]._card.setFrame(scene->_gameBoardSide[scene->_field423E]._fieldBA4);
-			scene->_gameBoardSide[scene->_field423E]._handCard[1]._card.fixPriority(170);
+		if ( ( scene->_animatedCard._card._position.x == scene->_gameBoardSide[scene->_currentPlayerNumb]._fieldB98.x)
+			&& ( scene->_animatedCard._card._position.y == scene->_gameBoardSide[scene->_currentPlayerNumb]._fieldB98.y) ) {
+			scene->_gameBoardSide[scene->_currentPlayerNumb]._handCard[1]._card.postInit();
+			scene->_gameBoardSide[scene->_currentPlayerNumb]._handCard[1]._card._moveDiff = Common::Point(30, 30);
+			scene->_gameBoardSide[scene->_currentPlayerNumb]._handCard[1]._card.setVisage(1332);
+			scene->_gameBoardSide[scene->_currentPlayerNumb]._handCard[1]._card.setPosition(scene->_gameBoardSide[scene->_currentPlayerNumb]._handCard[1]._stationPos, 0);
+			scene->_gameBoardSide[scene->_currentPlayerNumb]._handCard[1]._card.setStrip(1);
+			scene->_gameBoardSide[scene->_currentPlayerNumb]._handCard[1]._card.setFrame(scene->_gameBoardSide[scene->_currentPlayerNumb]._fieldBA4);
+			scene->_gameBoardSide[scene->_currentPlayerNumb]._handCard[1]._card.fixPriority(170);
 		}
 
-		if ((scene->_field4248 == 1) || (scene->_field423E == 2))
-			scene->setAnimationInfo(&scene->_gameBoardSide[scene->_field423E]._handCard[1]);
+		if ((scene->_field4248 == 1) || (scene->_currentPlayerNumb == 2))
+			scene->setAnimationInfo(&scene->_gameBoardSide[scene->_currentPlayerNumb]._handCard[1]);
 
 		scene->_animatedCard._card.hide();
-		if ((scene->_gameBoardSide[scene->_field423E]._handCard[2]._cardId == 0) && (scene->subC264B(scene->_gameBoardSide[scene->_field423E]._delayPile[0]._cardId == 0))) {
+		if ((scene->_gameBoardSide[scene->_currentPlayerNumb]._handCard[2]._cardId == 0) && (scene->subC264B(scene->_gameBoardSide[scene->_currentPlayerNumb]._delayPile[0]._cardId == 0))) {
 			if (scene->_cardsAvailableNumb < 0)
 				scene->shuffleCards();
 			scene->_animatedCard._card.setPosition(Common::Point(162, 95));
@@ -3442,9 +3442,9 @@ void Scene1337::Action4::signal() {
 			scene->_aSound2.play(61);
 
 			NpcMover *mover = new NpcMover();
-			scene->_animatedCard._card.addMover(mover, &scene->_gameBoardSide[scene->_field423E]._fieldB9C, this);
+			scene->_animatedCard._card.addMover(mover, &scene->_gameBoardSide[scene->_currentPlayerNumb]._fieldB9C, this);
 
-			scene->_gameBoardSide[scene->_field423E]._handCard[2]._cardId = scene->_availableCardsPile[scene->_cardsAvailableNumb];
+			scene->_gameBoardSide[scene->_currentPlayerNumb]._handCard[2]._cardId = scene->_availableCardsPile[scene->_cardsAvailableNumb];
 			scene->_availableCardsPile[scene->_cardsAvailableNumb] = 0;
 			scene->_cardsAvailableNumb--;
 			if (scene->_cardsAvailableNumb < 0)
@@ -3453,22 +3453,22 @@ void Scene1337::Action4::signal() {
 			signal();
 		break;
 	case 3:
-		if ( ( scene->_animatedCard._card._position.x == scene->_gameBoardSide[scene->_field423E]._fieldB9C.x)
-			&& ( scene->_animatedCard._card._position.y == scene->_gameBoardSide[scene->_field423E]._fieldB9C.y) ) {
-			scene->_gameBoardSide[scene->_field423E]._handCard[2]._card.postInit();
-			scene->_gameBoardSide[scene->_field423E]._handCard[2]._card._moveDiff = Common::Point(30, 30);
-			scene->_gameBoardSide[scene->_field423E]._handCard[2]._card.setVisage(1332);
-			scene->_gameBoardSide[scene->_field423E]._handCard[2]._card.setPosition(scene->_gameBoardSide[scene->_field423E]._handCard[2]._stationPos, 0);
-			scene->_gameBoardSide[scene->_field423E]._handCard[2]._card.setStrip(1);
-			scene->_gameBoardSide[scene->_field423E]._handCard[2]._card.setFrame(scene->_gameBoardSide[scene->_field423E]._fieldBA4);
-			scene->_gameBoardSide[scene->_field423E]._handCard[2]._card.fixPriority(170);
+		if ( ( scene->_animatedCard._card._position.x == scene->_gameBoardSide[scene->_currentPlayerNumb]._fieldB9C.x)
+			&& ( scene->_animatedCard._card._position.y == scene->_gameBoardSide[scene->_currentPlayerNumb]._fieldB9C.y) ) {
+			scene->_gameBoardSide[scene->_currentPlayerNumb]._handCard[2]._card.postInit();
+			scene->_gameBoardSide[scene->_currentPlayerNumb]._handCard[2]._card._moveDiff = Common::Point(30, 30);
+			scene->_gameBoardSide[scene->_currentPlayerNumb]._handCard[2]._card.setVisage(1332);
+			scene->_gameBoardSide[scene->_currentPlayerNumb]._handCard[2]._card.setPosition(scene->_gameBoardSide[scene->_currentPlayerNumb]._handCard[2]._stationPos, 0);
+			scene->_gameBoardSide[scene->_currentPlayerNumb]._handCard[2]._card.setStrip(1);
+			scene->_gameBoardSide[scene->_currentPlayerNumb]._handCard[2]._card.setFrame(scene->_gameBoardSide[scene->_currentPlayerNumb]._fieldBA4);
+			scene->_gameBoardSide[scene->_currentPlayerNumb]._handCard[2]._card.fixPriority(170);
 		}
 
-		if ((scene->_field4248 == 1) || (scene->_field423E == 2))
-			scene->setAnimationInfo(&scene->_gameBoardSide[scene->_field423E]._handCard[2]);
+		if ((scene->_field4248 == 1) || (scene->_currentPlayerNumb == 2))
+			scene->setAnimationInfo(&scene->_gameBoardSide[scene->_currentPlayerNumb]._handCard[2]);
 
 		scene->_animatedCard._card.hide();
-		if ((scene->_gameBoardSide[scene->_field423E]._handCard[3]._cardId == 0) && (scene->subC264B(scene->_gameBoardSide[scene->_field423E]._delayPile[0]._cardId == 0))) {
+		if ((scene->_gameBoardSide[scene->_currentPlayerNumb]._handCard[3]._cardId == 0) && (scene->subC264B(scene->_gameBoardSide[scene->_currentPlayerNumb]._delayPile[0]._cardId == 0))) {
 			if (scene->_cardsAvailableNumb < 0)
 				scene->shuffleCards();
 			scene->_animatedCard._card.setPosition(Common::Point(162, 95));
@@ -3477,9 +3477,9 @@ void Scene1337::Action4::signal() {
 			scene->_aSound2.play(61);
 
 			NpcMover *mover = new NpcMover();
-			scene->_animatedCard._card.addMover(mover, &scene->_gameBoardSide[scene->_field423E]._fieldBA0, this);
+			scene->_animatedCard._card.addMover(mover, &scene->_gameBoardSide[scene->_currentPlayerNumb]._fieldBA0, this);
 
-			scene->_gameBoardSide[scene->_field423E]._handCard[3]._cardId = scene->_availableCardsPile[scene->_cardsAvailableNumb];
+			scene->_gameBoardSide[scene->_currentPlayerNumb]._handCard[3]._cardId = scene->_availableCardsPile[scene->_cardsAvailableNumb];
 			scene->_availableCardsPile[scene->_cardsAvailableNumb] = 0;
 			scene->_cardsAvailableNumb--;
 			if (scene->_cardsAvailableNumb < 0)
@@ -3488,22 +3488,22 @@ void Scene1337::Action4::signal() {
 			signal();
 		break;
 	case 4:
-		if ( ( scene->_animatedCard._card._position.x == scene->_gameBoardSide[scene->_field423E]._fieldBA0.x)
-			&& ( scene->_animatedCard._card._position.y == scene->_gameBoardSide[scene->_field423E]._fieldBA0.y) ) {
-			scene->_gameBoardSide[scene->_field423E]._handCard[3]._card.postInit();
-			scene->_gameBoardSide[scene->_field423E]._handCard[3]._card._moveDiff = Common::Point(30, 30);
-			scene->_gameBoardSide[scene->_field423E]._handCard[3]._card.setVisage(1332);
-			scene->_gameBoardSide[scene->_field423E]._handCard[3]._card.setPosition(scene->_gameBoardSide[scene->_field423E]._handCard[3]._stationPos, 0);
-			scene->_gameBoardSide[scene->_field423E]._handCard[3]._card.setStrip(1);
-			scene->_gameBoardSide[scene->_field423E]._handCard[3]._card.setFrame(scene->_gameBoardSide[scene->_field423E]._fieldBA4);
-			scene->_gameBoardSide[scene->_field423E]._handCard[3]._card.fixPriority(170);
+		if ( ( scene->_animatedCard._card._position.x == scene->_gameBoardSide[scene->_currentPlayerNumb]._fieldBA0.x)
+			&& ( scene->_animatedCard._card._position.y == scene->_gameBoardSide[scene->_currentPlayerNumb]._fieldBA0.y) ) {
+			scene->_gameBoardSide[scene->_currentPlayerNumb]._handCard[3]._card.postInit();
+			scene->_gameBoardSide[scene->_currentPlayerNumb]._handCard[3]._card._moveDiff = Common::Point(30, 30);
+			scene->_gameBoardSide[scene->_currentPlayerNumb]._handCard[3]._card.setVisage(1332);
+			scene->_gameBoardSide[scene->_currentPlayerNumb]._handCard[3]._card.setPosition(scene->_gameBoardSide[scene->_currentPlayerNumb]._handCard[3]._stationPos, 0);
+			scene->_gameBoardSide[scene->_currentPlayerNumb]._handCard[3]._card.setStrip(1);
+			scene->_gameBoardSide[scene->_currentPlayerNumb]._handCard[3]._card.setFrame(scene->_gameBoardSide[scene->_currentPlayerNumb]._fieldBA4);
+			scene->_gameBoardSide[scene->_currentPlayerNumb]._handCard[3]._card.fixPriority(170);
 		}
 
-		if ((scene->_field4248 == 1) || (scene->_field423E == 2))
-			scene->setAnimationInfo(&scene->_gameBoardSide[scene->_field423E]._handCard[3]);
+		if ((scene->_field4248 == 1) || (scene->_currentPlayerNumb == 2))
+			scene->setAnimationInfo(&scene->_gameBoardSide[scene->_currentPlayerNumb]._handCard[3]);
 
 		scene->_animatedCard._card.hide();
-		switch (scene->_field423E) {
+		switch (scene->_currentPlayerNumb) {
 		case 0:
 			scene->subCF979();
 			break;
@@ -4090,20 +4090,20 @@ void Scene1337::Action11::signal() {
 		case 0:
 			scene->_field3EF0->_card.setFrame(2);
 			scene->_field3EF0->_card.show();
-			scene->_field423E--;
-			scene->_field4244 = 0;
+			scene->_currentPlayerNumb--;
+			scene->_field4244 = false;
 			break;
 		case 1:
 			scene->_field3EF0->_card.setFrame(4);
 			scene->_field3EF0->_card.show();
-			scene->_field423E--;
-			scene->_field4244 = 0;
+			scene->_currentPlayerNumb--;
+			scene->_field4244 = false;
 			break;
 		case 3:
 			scene->_field3EF0->_card.setFrame(3);
 			scene->_field3EF0->_card.show();
-			scene->_field423E--;
-			scene->_field4244 = 0;
+			scene->_currentPlayerNumb--;
+			scene->_field4244 = false;
 			break;
 		default:
 			scene->setAnimationInfo(scene->_field3EF0);
@@ -4524,13 +4524,13 @@ void Scene1337::subC20E5() {
 void Scene1337::subC20F9() {
 	switch (_field424A) {
 	case -1:
-		++_field423E;
-		if (_field423E == 3)
-			_field423E = 0;
+		++_currentPlayerNumb;
+		if (_currentPlayerNumb == 3)
+			_currentPlayerNumb = 0;
 
-		if (_field4244 == 1) {
+		if (_field4244) {
 			_currentPlayerArrow.show();
-			switch (_field423E) {
+			switch (_currentPlayerNumb) {
 			case 0:
 				_currentPlayerArrow.setStrip(3);
 				break;
@@ -4599,10 +4599,10 @@ void Scene1337::subC20F9() {
 }
 
 void Scene1337::subC2586() {
-	if (_field4244 != 0)
+	if (_field4244)
 		_currentPlayerArrow.hide();
 
-	switch (_field423E) {
+	switch (_currentPlayerNumb) {
 	case 2:
 		subC4CD2();
 		if (_field4246 == 1)
@@ -4619,7 +4619,7 @@ void Scene1337::subC2586() {
 		break;
 	}
 
-	_field4244 = 1;
+	_field4244 = true;
 
 }
 
@@ -5522,7 +5522,7 @@ void Scene1337::subPostInit() {
 	_currentPlayerArrow.animate(ANIM_MODE_2, NULL);
 	_currentPlayerArrow.hide();
 
-	_field4244 = 1;
+	_field4244 = true;
 	_field4246 = 0;
 	_field4248 = 0;
 	_field424A = -1;
@@ -6491,8 +6491,8 @@ void Scene1337::subD02CA() {
 						setAnimationInfo(&_gameBoardSide[2]._handCard[i]);
 						setCursorData(5, 1, 4);
 						found = true;
-						_field423E--;
-						_field4244 = 0;
+						_currentPlayerNumb--;
+						_field4244 = false;
 						subC20F9();
 					} else {
 						actionDisplay(1330, 127, 159, 10, 1, 200, 0, 7, 0, 154, 154);
