@@ -33,6 +33,9 @@
 #include "buried/scene_view.h"
 #include "buried/environ/scene_common.h"
 
+#include "common/stream.h"
+#include "graphics/surface.h"
+
 namespace Buried {
 
 BasicDoor::BasicDoor(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
@@ -496,6 +499,200 @@ int ClickChangeDepth::specifyCursor(Window *viewWindow, const Common::Point &poi
 		return _cursorID;
 
 	return kCursorArrow;
+}
+
+BrowseBook::BrowseBook(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+		int bookResID, int textStartResID, int startingPageID, int timeZone, int environment,
+		int node, int facing, int orientation, int depth, int transitionType, int transitionData,
+		int transitionStartFrame, int transitionLength) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_putDownDestination.destinationScene.timeZone = timeZone;
+	_putDownDestination.destinationScene.environment = environment;
+	_putDownDestination.destinationScene.node = node;
+	_putDownDestination.destinationScene.facing = facing;
+	_putDownDestination.destinationScene.orientation = orientation;
+	_putDownDestination.destinationScene.depth = depth;
+	_putDownDestination.transitionType = transitionType;
+	_putDownDestination.transitionData = transitionData;
+	_putDownDestination.transitionStartFrame = transitionStartFrame;
+	_putDownDestination.transitionLength = transitionLength;
+
+	Common::SeekableReadStream *pageData = _vm->getBookData(bookResID);
+	if (!pageData)
+		error("Failed to find book resource %d", bookResID);
+
+	uint16 pageCount = pageData->readUint16LE();
+
+	for (uint16 i = 0; i < pageCount; i++) {
+		BookPage page;
+		page.pageID = pageData->readSint16LE();
+		page.pageFrameIndex = pageData->readSint32LE();
+		page.numLines = pageData->readSint16LE();
+		page.up.typeOfTrans = pageData->readSint16LE();
+		page.up.destPage = pageData->readSint16LE();
+		page.left.typeOfTrans = pageData->readSint16LE();
+		page.left.destPage = pageData->readSint16LE();
+		page.right.typeOfTrans = pageData->readSint16LE();
+		page.right.destPage = pageData->readSint16LE();
+		page.down.typeOfTrans = pageData->readSint16LE();
+		page.down.destPage = pageData->readSint16LE();
+		_bookDatabase.push_back(page);
+	}
+
+	delete pageData;
+
+	_curPage = _bookDatabase[startingPageID].pageID;
+	_staticData.navFrameIndex = _bookDatabase[startingPageID].pageFrameIndex;
+	_curLineIndex = -1;
+	_translatedTextResourceID = textStartResID;
+
+	_top = Common::Rect(150, 0, 282, 70);
+	_bottom = Common::Rect(150, 119, 282, 189);
+	_left = Common::Rect(0, 0, 150, 189);
+	_right = Common::Rect(282, 0, 432, 189);
+	_putDown = Common::Rect(150, 70, 282, 119);
+
+	// Mark that we read the journals in the King's Study
+	if (_staticData.location.timeZone == 1 && _staticData.location.environment == 8)
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().cgKSReadJournal = 1;
+}
+
+int BrowseBook::gdiPaint(Window *viewWindow) {
+	if (_curLineIndex >= 0 && ((SceneViewWindow *)viewWindow)->getGlobalFlags().bcTranslateEnabled == 1) {
+		int lineCount = _bookDatabase[_curPage].numLines;
+		Common::Rect absoluteRect = viewWindow->getAbsoluteRect();
+		Common::Rect rect(1, (187 / lineCount) * _curLineIndex, 430, (187 / lineCount) * (_curLineIndex + 1) - 1);
+		rect.translate(absoluteRect.left, absoluteRect.top);
+		_vm->_gfx->getScreen()->frameRect(rect, _vm->_gfx->getColor(255, 0, 0));
+	}
+
+	return SC_REPAINT;
+}
+
+int BrowseBook::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	const BookPage &pageData = _bookDatabase[_curPage];
+
+	if (_top.contains(pointLocation) && pageData.up.destPage >= 0) {
+		// Change the still
+		_curPage = pageData.up.destPage;
+		_staticData.navFrameIndex = _bookDatabase[_curPage].pageFrameIndex;
+
+		// Perform the transition
+		Graphics::Surface *newBackground = ((SceneViewWindow *)viewWindow)->getStillFrameCopy(_staticData.navFrameIndex);
+		((SceneViewWindow *)viewWindow)->pushNewTransition(newBackground, 0, _vm->_gfx->computeVPushOffset(_vm->getTransitionSpeed()), 0);
+		_curLineIndex = -1;
+		viewWindow->invalidateWindow(false);
+		pageChanged(viewWindow);
+		return SC_TRUE;
+	} else if (_bottom.contains(pointLocation) && pageData.down.destPage >= 0) {
+		// Change the still
+		_curPage = pageData.down.destPage;
+		_staticData.navFrameIndex = _bookDatabase[_curPage].pageFrameIndex;
+
+		// Perform the transition
+		Graphics::Surface *newBackground = ((SceneViewWindow *)viewWindow)->getStillFrameCopy(_staticData.navFrameIndex);
+		((SceneViewWindow *)viewWindow)->pushNewTransition(newBackground, 3, _vm->_gfx->computeVPushOffset(_vm->getTransitionSpeed()), 0);
+		_curLineIndex = -1;
+		viewWindow->invalidateWindow(false);
+		pageChanged(viewWindow);
+		return SC_TRUE;
+	} else if (_left.contains(pointLocation) && pageData.left.destPage >= 0) {
+		// Change the still
+		_curPage = pageData.left.destPage;
+		_staticData.navFrameIndex = _bookDatabase[_curPage].pageFrameIndex;
+
+		// Perform the transition
+		Graphics::Surface *newBackground = ((SceneViewWindow *)viewWindow)->getStillFrameCopy(_staticData.navFrameIndex);
+		((SceneViewWindow *)viewWindow)->pushNewTransition(newBackground, 1, _vm->_gfx->computeHPushOffset(_vm->getTransitionSpeed()), 0);
+		_curLineIndex = -1;
+		viewWindow->invalidateWindow(false);
+		pageChanged(viewWindow);
+		return SC_TRUE;
+	} else if (_right.contains(pointLocation) && pageData.right.destPage >= 0) {
+		// Change the still
+		_curPage = pageData.right.destPage;
+		_staticData.navFrameIndex = _bookDatabase[_curPage].pageFrameIndex;
+
+		// Perform the transition
+		Graphics::Surface *newBackground = ((SceneViewWindow *)viewWindow)->getStillFrameCopy(_staticData.navFrameIndex);
+		((SceneViewWindow *)viewWindow)->pushNewTransition(newBackground, 1, _vm->_gfx->computeHPushOffset(_vm->getTransitionSpeed()), 0);
+		_curLineIndex = -1;
+		viewWindow->invalidateWindow(false);
+		pageChanged(viewWindow);
+		return SC_TRUE;
+	} else if (_putDown.contains(pointLocation) && _putDownDestination.destinationScene.timeZone >= 0) {
+		// Move to the new destination
+		((SceneViewWindow *)viewWindow)->moveToDestination(_putDownDestination);
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int BrowseBook::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	const BookPage &pageData = _bookDatabase[_curPage];
+
+	if (_top.contains(pointLocation) && pageData.up.destPage >= 0)
+		return kCursorMoveUp;
+	else if (_bottom.contains(pointLocation) && pageData.down.destPage >= 0)
+		return kCursorMoveDown;
+	else if (_left.contains(pointLocation) && pageData.left.destPage >= 0)
+		return kCursorPrevPage;
+	else if (_right.contains(pointLocation) && pageData.right.destPage >= 0)
+		return kCursorNextPage;
+	else if (_putDown.contains(pointLocation) && _putDownDestination.destinationScene.timeZone >= 0)
+		return kCursorPutDown;
+
+	return kCursorArrow;
+}
+
+int BrowseBook::mouseMove(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_translatedTextResourceID >= 0) {
+		if (((SceneViewWindow *)viewWindow)->getGlobalFlags().bcTranslateEnabled == 1) {
+			int lineCount = _bookDatabase[_curPage].numLines;
+
+			int textLineNumber = 0;
+			for (int i = 0; i < _curPage; i++)
+				textLineNumber += _bookDatabase[i].numLines;
+
+			// Determine the line index of the cursor
+			int lineIndex = (pointLocation.y - 2) / (187 / lineCount);
+			if (lineIndex > lineCount - 1)
+				lineIndex = lineCount - 1;
+
+			if (_curLineIndex != lineIndex) {
+				_curLineIndex = lineIndex;
+				viewWindow->invalidateWindow(false);
+
+				Common::String translatedText = _vm->getString(_translatedTextResourceID + textLineNumber + _curLineIndex);
+				((SceneViewWindow *)viewWindow)->displayTranslationText(translatedText);
+				textTranslated(viewWindow);
+			}
+
+			return SC_TRUE;
+		}
+
+		if (_curLineIndex != -1) {
+			_curLineIndex = -1;
+			viewWindow->invalidateWindow(false);
+		}
+	}
+
+	return SC_FALSE;
+}
+
+int BrowseBook::pageChanged(Window *viewWindow) {
+	if (_translatedTextResourceID == IDBD_DIARY2_TRANS_TEXT_BASE && _curPage >= 7 && _curPage <= 10)
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().cgKSSmithyEntryRead = 1;
+
+	return SC_TRUE;
+}
+
+int BrowseBook::textTranslated(Window *viewWindow) {
+	if (_translatedTextResourceID == IDBD_DIARY2_TRANS_TEXT_BASE && _curPage >= 7 && _curPage <= 10)
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().cgKSSmithyEntryTranslated = 1;
+
+	return SC_TRUE;
 }
 
 ClickPlaySoundSynchronous::ClickPlaySoundSynchronous(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
