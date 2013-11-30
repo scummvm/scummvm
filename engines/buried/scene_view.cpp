@@ -435,10 +435,13 @@ bool SceneViewWindow::jumpToSceneRestore(const Location &newLocation) {
 	if (_currentScene)
 		_currentScene->preExitRoom(this, passedLocation);
 
-	if (newLocation.timeZone != oldLocation.timeZone && newLocation.timeZone != -2)
-		initializeTimeZoneAndEnvironment(this, newLocation.timeZone, -1);
-	if (newLocation.timeZone != oldLocation.timeZone && newLocation.environment != -2)
-		initializeTimeZoneAndEnvironment(this, newLocation.timeZone, newLocation.environment);
+	// The original resets the environment upon loading, which is clearly not correct.
+	// We won't.
+
+	//if (newLocation.timeZone != oldLocation.timeZone && newLocation.timeZone != -2)
+	//	initializeTimeZoneAndEnvironment(this, newLocation.timeZone, -1);
+	//if (newLocation.timeZone != oldLocation.timeZone && newLocation.environment != -2)
+	//	initializeTimeZoneAndEnvironment(this, newLocation.timeZone, newLocation.environment);
 
 	// Create the new scene object
 	SceneBase *newScene = constructSceneObject(this, newSceneStaticData, passedLocation);
