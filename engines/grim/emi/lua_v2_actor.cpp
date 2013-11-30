@@ -863,6 +863,8 @@ void Lua_V2::AttachActor() {
 
 	attached->attachToActor(actor, joint);
 	warning("Lua_V2::AttachActor: attaching %s to %s (on %s)", attached->getName().c_str(), actor->getName().c_str(), joint ? joint : "(none)");
+
+	g_emi->invalidateSortOrder();
 }
 
 void Lua_V2::DetachActor() {
