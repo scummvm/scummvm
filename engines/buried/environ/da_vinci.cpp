@@ -467,6 +467,8 @@ SceneBase *SceneViewWindow::constructDaVinciSceneObject(Window *viewWindow, cons
 		return new ClickChangeScene(_vm, viewWindow, sceneStaticData, priorLocation, 0, 0, 432, 189, kCursorPutDown, 5, 2, 0, 2, 1, 0, TRANSITION_VIDEO, 14, -1, -1);
 	case 55:
 		return new ClickChangeScene(_vm, viewWindow, sceneStaticData, priorLocation, 210, 0, 330, 110, kCursorMagnifyingGlass, 5, 2, 3, 4, 1, 1, TRANSITION_VIDEO, 15, -1, -1);
+	case 58:
+		return new ClickPlayVideoSwitch(_vm, viewWindow, sceneStaticData, priorLocation, 1, kCursorFinger, offsetof(GlobalFlags, dsCYWeeblieClicked), 200, 88, 270, 189);
 	case 59:
 		return new ClickPlayVideo(_vm, viewWindow, sceneStaticData, priorLocation, 2, kCursorFinger, 70, 136, 190, 189);
 	case 60:
