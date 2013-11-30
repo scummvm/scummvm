@@ -4090,26 +4090,22 @@ void Scene1337::Action11::signal() {
 		case 0:
 			scene->_field3EF0->_card.setFrame(2);
 			scene->_field3EF0->_card.show();
-			scene->_currentPlayerNumb--;
-			scene->_field4244 = false;
 			break;
 		case 1:
 			scene->_field3EF0->_card.setFrame(4);
 			scene->_field3EF0->_card.show();
-			scene->_currentPlayerNumb--;
-			scene->_field4244 = false;
 			break;
 		case 3:
 			scene->_field3EF0->_card.setFrame(3);
 			scene->_field3EF0->_card.show();
-			scene->_currentPlayerNumb--;
-			scene->_field4244 = false;
 			break;
 		default:
 			scene->setAnimationInfo(scene->_field3EF0);
 			break;
 		}
 
+		scene->_currentPlayerNumb--;
+		scene->_field4244 = false;
 		scene->subC4A39(scene->_field3EF4);
 		break;
 	default:
