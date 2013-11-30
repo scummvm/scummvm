@@ -694,6 +694,67 @@ int MiddleBaileyFootprintCapture::specifyCursor(Window *viewWindow, const Common
 	return kCursorArrow;
 }
 
+class TreasureRoomSwordCapture : public SceneBase {
+public:
+	TreasureRoomSwordCapture(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int locateAttempted(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	Common::Rect _footprint;
+};
+
+TreasureRoomSwordCapture::TreasureRoomSwordCapture(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_footprint = Common::Rect(118, 28, 190, 108);
+}
+
+int TreasureRoomSwordCapture::locateAttempted(Window *viewWindow, const Common::Point &pointLocation) {
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().bcLocateEnabled == 1) {
+		if (_footprint.contains(pointLocation)) {
+			// Play the animation
+			((SceneViewWindow *)viewWindow)->playSynchronousAnimation(0);
+
+			// Play Arthur's comment
+			if (((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->isItemInInventory(kItemBioChipAI))
+				_vm->_sound->playSynchronousSoundEffect("BITDATA/CASTLE/CGTR_C01.BTA");
+
+			// Set the located flag
+			((SceneViewWindow *)viewWindow)->getGlobalFlags().cgTRFoundSword = 1;
+
+			// Attempt to add it to the biochip
+			if (((SceneViewWindow *)viewWindow)->addNumberToGlobalFlagTable(offsetof(GlobalFlags, evcapBaseID), offsetof(GlobalFlags, evcapNumCaptured), 12, CASTLE_EVIDENCE_SWORD))
+				((SceneViewWindow *)viewWindow)->displayLiveText(_vm->getString(IDS_MBT_EVIDENCE_RIPPLE_DOCUMENTED));
+			else
+				((SceneViewWindow *)viewWindow)->displayLiveText(_vm->getString(IDS_MBT_EVIDENCE_ALREADY_ACQUIRED));
+
+			// Turn off evidence capture
+			((GameUIWindow *)viewWindow->getParent())->_bioChipRightWindow->disableEvidenceCapture();
+
+			// Reset the AI biochip display
+			((GameUIWindow *)viewWindow->getParent())->_bioChipRightWindow->sceneChanged();
+
+			// Set the scoring flag
+			((SceneViewWindow *)viewWindow)->getGlobalFlags().scoreFoundSwordDiamond = 1;
+		}
+
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int TreasureRoomSwordCapture::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().bcLocateEnabled == 1) {
+		if (_footprint.contains(pointLocation))
+			return -2; // Over the item, return the capture cursor
+
+		return -1;
+	}
+
+	return kCursorArrow;
+}
+
 class StorageRoomDoor : public SceneBase {
 public:
 	StorageRoomDoor(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
@@ -1102,6 +1163,8 @@ SceneBase *SceneViewWindow::constructCastleSceneObject(Window *viewWindow, const
 		return new DisplayMessageWithEvidenceWhenEnteringNode(_vm, viewWindow, sceneStaticData, priorLocation, CASTLE_EVIDENCE_FOOTPRINT, IDS_MBT_EVIDENCE_PRESENT);
 	case 64:
 		return new DisplayMessageWithEvidenceWhenEnteringNode(_vm, viewWindow, sceneStaticData, priorLocation, CASTLE_EVIDENCE_SWORD, IDS_MBT_EVIDENCE_PRESENT);
+	case 65:
+		return new TreasureRoomSwordCapture(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 66:
 		// Original incremented the flag each time, but it's expected that the code will never go above 1
 		return new SetFlagOnEntry(_vm, viewWindow, sceneStaticData, priorLocation, offsetof(GlobalFlags, cgViewedKeepPlans), 1);
