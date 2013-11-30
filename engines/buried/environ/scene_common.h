@@ -183,6 +183,21 @@ private:
 	int _warningMessageID;
 };
 
+class ClickPlayVideoSwitch : public SceneBase {
+public:
+	ClickPlayVideoSwitch(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+			int animID = 0, int cursorID = -1, int flagOffset = 0, int left = 0, int top = 0, int right = 0, int bottom = 0); 
+
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	int _cursorID;
+	int _animID;
+	Common::Rect _clickRegion;
+	int _flagOffset;
+};
+
 class ClickPlayVideo : public SceneBase {
 public:
 	ClickPlayVideo(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
