@@ -113,7 +113,7 @@ void AnimationEmi::animate(const Skeleton *skel, float delta) {
 			} else if (keyfIdx == curBone._count - 1) {
 				vec = curBone._translations[keyfIdx - 1]._vec;
 			} else {
-				float timeDelta = curBone._translations[keyfIdx - 1]._time - curBone._translations[keyfIdx]._time;
+				float timeDelta = curBone._translations[keyfIdx]._time - curBone._translations[keyfIdx - 1]._time;
 				float interpVal = (_time - curBone._translations[keyfIdx]._time) / timeDelta;
 
 				vec.x() = curBone._translations[keyfIdx - 1]._vec.x() +
