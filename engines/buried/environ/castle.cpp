@@ -553,6 +553,65 @@ void SmithyBench::resetBackgroundBitmap() {
 	}
 }
 
+class PickupKingsStudyBooksA : public SceneBase {
+public:
+	PickupKingsStudyBooksA(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	Common::Rect _diaryA, _diaryB;
+};
+
+PickupKingsStudyBooksA::PickupKingsStudyBooksA(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_diaryA = Common::Rect(148, 46, 344, 168);
+	_diaryB = Common::Rect(216, 0, 306, 48);
+}
+
+int PickupKingsStudyBooksA::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_diaryA.contains(pointLocation)) {
+		// Move to the first diary
+		DestinationScene pickUpDestination;
+		pickUpDestination.destinationScene.timeZone = 1;
+		pickUpDestination.destinationScene.environment = 8;
+		pickUpDestination.destinationScene.node = 5;
+		pickUpDestination.destinationScene.facing = 2;
+		pickUpDestination.destinationScene.orientation = 0;
+		pickUpDestination.destinationScene.depth = 2;
+		pickUpDestination.transitionType = TRANSITION_VIDEO;
+		pickUpDestination.transitionData = 1;
+		pickUpDestination.transitionStartFrame = -1;
+		pickUpDestination.transitionLength = -1;
+		((SceneViewWindow *)viewWindow)->moveToDestination(pickUpDestination);
+		return SC_TRUE;
+	} else if (_diaryB.contains(pointLocation)) {
+		// Move to the second diary
+		DestinationScene pickUpDestination;
+		pickUpDestination.destinationScene.timeZone = 1;
+		pickUpDestination.destinationScene.environment = 8;
+		pickUpDestination.destinationScene.node = 5;
+		pickUpDestination.destinationScene.facing = 2;
+		pickUpDestination.destinationScene.orientation = 0;
+		pickUpDestination.destinationScene.depth = 1;
+		pickUpDestination.transitionType = TRANSITION_VIDEO;
+		pickUpDestination.transitionData = 3;
+		pickUpDestination.transitionStartFrame = -1;
+		pickUpDestination.transitionLength = -1;
+		((SceneViewWindow *)viewWindow)->moveToDestination(pickUpDestination);
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int PickupKingsStudyBooksA::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_diaryA.contains(pointLocation) || _diaryB.contains(pointLocation))
+		return kCursorMagnifyingGlass;
+
+	return kCursorArrow;
+}
+
 class MainWallCatapultService : public SceneBase {
 public:
 	MainWallCatapultService(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
@@ -899,6 +958,8 @@ SceneBase *SceneViewWindow::constructCastleSceneObject(Window *viewWindow, const
 		return new SmithyBench(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 43:
 		return new ClickChangeScene(_vm, viewWindow, sceneStaticData, priorLocation, 10, 0, 376, 189, kCursorFinger, 1, 6, 5, 1, 0, 1, TRANSITION_VIDEO, 2, -1, -1);
+	case 46:
+		return new PickupKingsStudyBooksA(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 47:
 		return new ClickPlayVideo(_vm, viewWindow, sceneStaticData, priorLocation, 2, kCursorFinger, 0, 75, 258, 123);
 	case 48:
@@ -922,6 +983,9 @@ SceneBase *SceneViewWindow::constructCastleSceneObject(Window *viewWindow, const
 		return new DisplayMessageWithEvidenceWhenEnteringNode(_vm, viewWindow, sceneStaticData, priorLocation, CASTLE_EVIDENCE_FOOTPRINT, IDS_MBT_EVIDENCE_PRESENT);
 	case 64:
 		return new DisplayMessageWithEvidenceWhenEnteringNode(_vm, viewWindow, sceneStaticData, priorLocation, CASTLE_EVIDENCE_SWORD, IDS_MBT_EVIDENCE_PRESENT);
+	case 66:
+		// Original incremented the flag each time, but it's expected that the code will never go above 1
+		return new SetFlagOnEntry(_vm, viewWindow, sceneStaticData, priorLocation, offsetof(GlobalFlags, cgViewedKeepPlans), 1);
 	case 67:
 		return new ClickChangeSceneSetFlag(_vm, viewWindow, sceneStaticData, priorLocation, 10, 0, 376, 189, kCursorPutDown, 1, 6, 5, 1, 0, 0, TRANSITION_VIDEO, 5, -1, -1, offsetof(GlobalFlags, cgFoundChestPanel));
 	case 70:
