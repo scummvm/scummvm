@@ -1377,6 +1377,9 @@ void Actor::update(uint frameTime) {
 	if (_turning) {
 		float turnAmt = g_grim->getPerSecond(_turnRate) * _turnRateMultiplier;
 		_currTurnDir = animTurn(turnAmt, _moveYaw, &_yaw);
+		if (g_grim->getGameType() == GType_MONKEY4) {
+			_currTurnDir = -_currTurnDir;
+		}
 		int p = animTurn(turnAmt, _movePitch, &_pitch);
 		int r = animTurn(turnAmt, _moveRoll, &_roll);
 		if (_currTurnDir == 0 && p == 0 && r == 0) {
