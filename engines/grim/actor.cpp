@@ -929,6 +929,7 @@ void Actor::setTurnChores(int left_chore, int right_chore, Costume *cost) {
 
 	_leftTurnChore.stop(true);
 	_rightTurnChore.stop(true);
+	_lastTurnDir = 0;
 
 	_leftTurnChore = Chore(cost, left_chore);
 	_rightTurnChore = Chore(cost, right_chore);
@@ -1377,6 +1378,9 @@ void Actor::update(uint frameTime) {
 	if (_turning) {
 		float turnAmt = g_grim->getPerSecond(_turnRate) * _turnRateMultiplier;
 		_currTurnDir = animTurn(turnAmt, _moveYaw, &_yaw);
+		if (g_grim->getGameType() == GType_MONKEY4) {
+			_currTurnDir = -_currTurnDir;
+		}
 		int p = animTurn(turnAmt, _movePitch, &_pitch);
 		int r = animTurn(turnAmt, _moveRoll, &_roll);
 		if (_currTurnDir == 0 && p == 0 && r == 0) {

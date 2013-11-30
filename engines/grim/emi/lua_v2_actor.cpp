@@ -547,8 +547,11 @@ void Lua_V2::SetActorTurnChores() {
 	lua_Object costumeObj = lua_getparam(4);
 	Costume *costume;
 
-	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R') ||
-			(!lua_isstring(leftChoreObj) && !lua_isstring(rightChoreObj))) {
+	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R')) {
+		return;
+	} else if (!lua_isnil(leftChoreObj) && !lua_isstring(leftChoreObj)) {
+		return;
+	} else if (!lua_isnil(rightChoreObj) && !lua_isstring(rightChoreObj)) {
 		return;
 	}
 
