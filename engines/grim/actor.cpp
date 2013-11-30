@@ -929,6 +929,7 @@ void Actor::setTurnChores(int left_chore, int right_chore, Costume *cost) {
 
 	_leftTurnChore.stop(true);
 	_rightTurnChore.stop(true);
+	_lastTurnDir = 0;
 
 	_leftTurnChore = Chore(cost, left_chore);
 	_rightTurnChore = Chore(cost, right_chore);
