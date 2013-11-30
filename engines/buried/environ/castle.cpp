@@ -777,6 +777,89 @@ int StorageRoomDoor::specifyCursor(Window *viewWindow, const Common::Point &poin
 	return kCursorArrow;
 }
 
+class StorageRoomCheckUnlock : public SceneBase {
+public:
+	StorageRoomCheckUnlock(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+			int flagOffset = 0, int itemID = 0, int filledFrameIndex = 0, int animID = 0, int depthA = 0, int depthB = 0,
+			int left = 0, int top = 0, int right = 0, int bottom = 0);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int draggingItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
+	int droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	int _flagOffset;
+	int _itemID;
+	int _filledFrameIndex;
+	int _animID;
+	int _depthA;
+	int _depthB;
+	Common::Rect _dropRegion;
+	Common::Rect _chest;
+};
+
+StorageRoomCheckUnlock::StorageRoomCheckUnlock(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+		int flagOffset, int itemID, int filledFrameIndex, int animID, int depthA, int depthB,
+		int left, int top, int right, int bottom) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_flagOffset = flagOffset;
+	_itemID = itemID;
+	_filledFrameIndex = filledFrameIndex;
+	_depthA = depthA;
+	_depthB = depthB;
+	_animID = animID;
+	_dropRegion = Common::Rect(left, top, right, bottom);
+	_chest = Common::Rect(55, 35, 432, 189);
+}
+
+int StorageRoomCheckUnlock::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	// If we clicked on the chest, play the locked key sound we are so familiar with
+	if (_chest.contains(pointLocation)) {
+		_vm->_sound->playSynchronousSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 13));
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().cgSRClickedOnLockedChest = 1;
+
+		if (((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->isItemInInventory(kItemBioChipAI))
+			((SceneViewWindow *)viewWindow)->playAIComment(_staticData.location, AI_COMMENT_TYPE_SPONTANEOUS);
+
+		((GameUIWindow *)viewWindow->getParent())->_bioChipRightWindow->sceneChanged();
+	}
+
+	return SC_FALSE;
+}
+
+int StorageRoomCheckUnlock::draggingItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) {
+	if (_dropRegion.contains(pointLocation) && _itemID == itemID)
+		return 1;
+
+	return 0;
+}
+
+int StorageRoomCheckUnlock::droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) {
+	if (_dropRegion.contains(pointLocation) && _itemID == itemID) {
+		((SceneViewWindow *)viewWindow)->playSynchronousAnimation(_animID);
+		_staticData.navFrameIndex = _filledFrameIndex;
+
+		Location newDest = _staticData.location;
+
+		if (((SceneViewWindow *)viewWindow)->getGlobalFlagByte(_flagOffset) != 0)
+			newDest.depth = _depthB;
+		else
+			newDest.depth = _depthA;
+
+		((SceneViewWindow *)viewWindow)->jumpToScene(newDest);
+	}
+
+	// Key remains in inventory
+	return SIC_REJECT;
+}
+
+int StorageRoomCheckUnlock::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_chest.contains(pointLocation))
+		return kCursorFinger;
+
+	return kCursorArrow;
+}
+
 class KingsChamberGuardEncounter : public SceneBase {
 public:
 	KingsChamberGuardEncounter(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
@@ -952,6 +1035,8 @@ SceneBase *SceneViewWindow::constructCastleSceneObject(Window *viewWindow, const
 		return new ClickPlayVideoSwitch(_vm, viewWindow, sceneStaticData, priorLocation, 4, kCursorFinger, offsetof(GlobalFlags, cgTapestryFlag), 0, 0, 330, 189);
 	case 37:
 		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 175, 64, 237, 126, kItemBurnedLetter, 84, offsetof(GlobalFlags, cgBurnedLetterPresent));
+	case 38:
+		return new StorageRoomCheckUnlock(_vm, viewWindow, sceneStaticData, priorLocation, offsetof(GlobalFlags, cgTapestryFlag), kItemCopperKey, 51, 1, 2, 1, 258, 100, 320, 185);
 	case 39:
 		return new StorageRoomDoor(_vm, viewWindow, sceneStaticData, priorLocation, 38, 0, 386, 189, 1, 9, 5, 2, 1, 1, offsetof(GlobalFlags, cgStorageRoomVisit), 11, 130, 12, 0);
 	case 42:
