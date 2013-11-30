@@ -751,19 +751,22 @@ int StorageRoomDoor::mouseDown(Window *viewWindow, const Common::Point &pointLoc
 
 int StorageRoomDoor::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
 	if (_clicked) {
+		BuriedEngine *vm = _vm;
+		int flagOffset = _flagOffset;
+
 		if (_clickable.contains(pointLocation)) {
 			((SceneViewWindow *)viewWindow)->moveToDestination(_destData);
 		} else {
 			_clicked = false;
 		}
 
-		if (((SceneViewWindow *)viewWindow)->getGlobalFlagByte(_flagOffset) == 0) {
+		if (((SceneViewWindow *)viewWindow)->getGlobalFlagByte(flagOffset) == 0) {
 			if (((SceneViewWindow *)viewWindow)->addNumberToGlobalFlagTable(offsetof(GlobalFlags, evcapBaseID), offsetof(GlobalFlags, evcapNumCaptured), 12, CASTLE_EVIDENCE_AGENT3))
-				((SceneViewWindow *)viewWindow)->displayLiveText(_vm->getString(IDS_MBT_EVIDENCE_ACQUIRED));
+				((SceneViewWindow *)viewWindow)->displayLiveText(vm->getString(IDS_MBT_EVIDENCE_ACQUIRED));
 			else
-				((SceneViewWindow *)viewWindow)->displayLiveText(_vm->getString(IDS_MBT_EVIDENCE_ALREADY_ACQUIRED));
+				((SceneViewWindow *)viewWindow)->displayLiveText(vm->getString(IDS_MBT_EVIDENCE_ALREADY_ACQUIRED));
 
-			((SceneViewWindow *)viewWindow)->setGlobalFlagByte(_flagOffset, 1);
+			((SceneViewWindow *)viewWindow)->setGlobalFlagByte(flagOffset, 1);
 		}
 	}
 
