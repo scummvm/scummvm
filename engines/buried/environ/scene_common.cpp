@@ -268,6 +268,13 @@ int ClickPlaySound::specifyCursor(Window *viewWindow, const Common::Point &point
 	return kCursorArrow;
 }
 
+SetFlagOnEntry::SetFlagOnEntry(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+		int flagOffset, byte flagNewValue) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	if (flagOffset >= 0)
+		((SceneViewWindow *)viewWindow)->setGlobalFlagByte(flagOffset, flagNewValue);
+}
+
 DisplayMessageWithEvidenceWhenEnteringNode::DisplayMessageWithEvidenceWhenEnteringNode(BuriedEngine *vm, Window *viewWindow,
 			const LocationStaticData &sceneStaticData, const Location &priorLocation, int evidenceID, int messageBoxTextID) :
 		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
