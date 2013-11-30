@@ -28,6 +28,7 @@
 #include "buried/gameui.h"
 #include "buried/graphics.h"
 #include "buried/inventory_window.h"
+#include "buried/navarrow.h"
 #include "buried/resources.h"
 #include "buried/sound.h"
 #include "buried/scene_view.h"
@@ -309,6 +310,54 @@ int ClickPlaySound::mouseUp(Window *viewWindow, const Common::Point &pointLocati
 }
 
 int ClickPlaySound::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_clickRegion.contains(pointLocation))
+		return _cursorID;
+
+	return kCursorArrow;
+}
+
+ClickZoom::ClickZoom(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+		int animInID, int stillInID, int animOutID, int stillOutID,
+		int cursorID, int left, int top, int right, int bottom) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_cursorID = cursorID;
+	_animInID = animInID;
+	_stillInID = stillInID;
+	_animOutID = animOutID;
+	_stillOutID = stillOutID;
+	_zoomedIn = false;
+	_clickRegion = Common::Rect(left, top, right, bottom);
+	_savedNavData = _staticData;
+}
+
+int ClickZoom::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_zoomedIn) {
+		_staticData.navFrameIndex = _stillOutID;
+		((SceneViewWindow *)viewWindow)->playSynchronousAnimation(_animOutID);
+		_zoomedIn = false;
+		_staticData = _savedNavData;
+		((GameUIWindow *)viewWindow->getParent())->_navArrowWindow->updateAllArrows(_staticData);
+		return SC_TRUE;
+	} else if (_clickRegion.contains(pointLocation)) {
+		_staticData.navFrameIndex = _stillInID;
+		((SceneViewWindow *)viewWindow)->playSynchronousAnimation(_animInID);
+		_zoomedIn = true;
+		_staticData.destUp.destinationScene = Location(-1, -1, -1, -1, -1, -1);
+		_staticData.destLeft.destinationScene = Location(-1, -1, -1, -1, -1, -1);
+		_staticData.destRight.destinationScene = Location(-1, -1, -1, -1, -1, -1);
+		_staticData.destDown.destinationScene = Location(-1, -1, -1, -1, -1, -1);
+		_staticData.destForward.destinationScene = Location(-1, -1, -1, -1, -1, -1);
+		((GameUIWindow *)viewWindow->getParent())->_navArrowWindow->updateAllArrows(_staticData);
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int ClickZoom::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_zoomedIn)
+		return kCursorPutDown;
+
 	if (_clickRegion.contains(pointLocation))
 		return _cursorID;
 
