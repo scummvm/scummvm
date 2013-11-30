@@ -142,6 +142,25 @@ private:
 	int _flagOffset;
 };
 
+class ClickZoom : public SceneBase {
+public:
+	ClickZoom(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+			int animInID = -1, int stillInID = -1, int animOutID = -1, int stillOutID = -1,
+			int cursorID = 0, int left = 0, int top = 0, int right = 0, int bottom = 0);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	int _cursorID;
+	Common::Rect _clickRegion;
+	int _animInID;
+	int _stillInID;
+	int _animOutID;
+	int _stillOutID;
+	bool _zoomedIn;
+	LocationStaticData _savedNavData;
+};
+
 class PlaySoundEnteringFromScene : public SceneBase {
 public:
 	PlaySoundEnteringFromScene(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
