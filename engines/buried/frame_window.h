@@ -68,6 +68,10 @@ public:
 
 	bool _reviewerMode;
 
+	bool isGameInProgress() const { return _gameInProgress; }
+	Window *getMainChildWindow() const { return _mainChildWindow; }
+	void loadFromState(const Location &location, const GlobalFlags &flags, const Common::Array<int> &inventoryItems);
+
 private:
 	Window *_mainChildWindow;
 	bool _controlDown;

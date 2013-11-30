@@ -58,8 +58,8 @@ public:
 	InventoryElement getItemStaticData(int itemID);
 	int getItemCount() { return _itemArray.size(); }
 	int getItemID(int itemIndex) { return _itemArray[itemIndex]; }
-	// getItemArray
-	// setItemArray
+	void setItemArray(const Common::Array<int> &array) { _itemArray = array; }
+	Common::Array<int> &getItemArray() { return _itemArray; }
 
 	bool destroyInfoWindow();
 	InventoryInfoWindow *getInfoWindow() { return _infoWindow; }

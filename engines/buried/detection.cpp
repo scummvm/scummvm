@@ -26,6 +26,7 @@
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "common/savefile.h"
+#include "common/system.h"
 
 #include "buried/buried.h"
 
@@ -43,7 +44,9 @@ enum {
 
 bool BuriedEngine::hasFeature(EngineFeature f) const {
 	return
-		(f == kSupportsRTL);
+		(f == kSupportsRTL)
+		|| (f == kSupportsLoadingDuringRuntime)
+		|| (f == kSupportsSavingDuringRuntime);
 }
 
 bool BuriedEngine::isDemo() const {
@@ -282,7 +285,7 @@ static const BuriedGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_DEMO,
-			GUIO0()
+			GUIO1(GUIO_NOLAUNCHLOAD)
 		},
 	},
 
@@ -295,7 +298,7 @@ static const BuriedGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_DEMO | GF_TRUECOLOR,
-			GUIO0()
+			GUIO1(GUIO_NOLAUNCHLOAD)
 		},
 	},
 
@@ -328,8 +331,44 @@ public:
 		return "The Journeyman Project 2: Buried in Time (C) Presto Studios";
 	}
 
+	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
+	virtual SaveStateList listSaves(const char *target) const;
+	virtual int getMaximumSaveSlot() const { return 999; }
+	virtual void removeSaveState(const char *target, int slot) const;
 };
+
+bool BuriedMetaEngine::hasFeature(MetaEngineFeature f) const {
+	return
+		(f == kSupportsListSaves)
+		|| (f == kSupportsLoadingDuringStartup)
+		|| (f == kSupportsDeleteSave);
+}
+
+SaveStateList BuriedMetaEngine::listSaves(const char *target) const {
+	// The original had no pattern, so the user must rename theirs
+	// Note that we ignore the target because saves are compatible between
+	// all versions
+	Common::StringArray fileNames = Buried::BuriedEngine::listSaveFiles();
+
+	SaveStateList saveList;
+	for (uint32 i = 0; i < fileNames.size(); i++) {
+		// Isolate the description from the file name
+		Common::String desc = fileNames[i].c_str() + 7;
+		for (int j = 0; j < 4; j++)
+			desc.deleteLastChar();
+
+		saveList.push_back(SaveStateDescriptor(i, desc));
+	}
+
+	return saveList;
+}
+
+void BuriedMetaEngine::removeSaveState(const char *target, int slot) const {
+	// See listSaves() for info on the pattern
+	Common::StringArray fileNames = Buried::BuriedEngine::listSaveFiles();
+	g_system->getSavefileManager()->removeSavefile(fileNames[slot].c_str());
+}
 
 bool BuriedMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const Buried::BuriedGameDescription *gd = (const Buried::BuriedGameDescription *)desc;

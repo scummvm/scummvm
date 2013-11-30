@@ -20,6 +20,7 @@ MODULE_OBJS = \
 	main_menu.o \
 	navarrow.o \
 	overview.o \
+	saveload.o \
 	scene_view.o \
 	sound.o \
 	title_sequence.o \

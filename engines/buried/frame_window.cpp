@@ -35,6 +35,7 @@
 #include "buried/frame_window.h"
 #include "buried/gameui.h"
 #include "buried/graphics.h"
+#include "buried/inventory_window.h"
 #include "buried/main_menu.h"
 #include "buried/message.h"
 #include "buried/overview.h"
@@ -387,6 +388,29 @@ void FrameWindow::onKillFocus(Window *newWindow) {
 void FrameWindow::setTransitionSpeed(int newSpeed) {
 	_transitionSpeed = newSpeed;
 	ConfMan.setInt(_vm->isDemo() ? "TransitionSpeed" : _vm->getString(IDS_INI_KEY_TRANS_SPEED), newSpeed);
+}
+
+void FrameWindow::loadFromState(const Location &location, const GlobalFlags &flags, const Common::Array<int> &inventoryItems) {
+	if (!_gameInProgress) {
+		// Make the game in progress
+		_atMainMenu = false;
+		_gameInProgress = true;
+		delete _mainChildWindow;
+		_mainChildWindow = new GameUIWindow(_vm, this);
+		_mainChildWindow->showWindow(kWindowShow);
+	}
+
+	GameUIWindow *gameUI = (GameUIWindow *)_mainChildWindow;
+
+	// Set the flags
+	gameUI->_sceneViewWindow->getGlobalFlags() = flags;
+
+	// Set the inventory array
+	gameUI->_inventoryWindow->setItemArray(inventoryItems);
+	gameUI->_inventoryWindow->rebuildPreBuffer();
+	gameUI->_inventoryWindow->invalidateWindow(false);
+
+	gameUI->startNewGame(location);
 }
 
 } // End of namespace Buried
