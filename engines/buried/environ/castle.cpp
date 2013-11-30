@@ -818,6 +818,12 @@ SceneBase *SceneViewWindow::constructCastleSceneObject(Window *viewWindow, const
 		return new PlaySoundExitingFromScene(_vm, viewWindow, sceneStaticData, priorLocation, 14);
 	case 60:
 		return new MainWallCatapultService(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 61:
+		return new SetFlagOnEntry(_vm, viewWindow, sceneStaticData, priorLocation, offsetof(GlobalFlags, cgMBCrossedMoat), 1);
+	case 63:
+		return new DisplayMessageWithEvidenceWhenEnteringNode(_vm, viewWindow, sceneStaticData, priorLocation, CASTLE_EVIDENCE_FOOTPRINT, IDS_MBT_EVIDENCE_PRESENT);
+	case 64:
+		return new DisplayMessageWithEvidenceWhenEnteringNode(_vm, viewWindow, sceneStaticData, priorLocation, CASTLE_EVIDENCE_SWORD, IDS_MBT_EVIDENCE_PRESENT);
 	case 70:
 		return new PlaySoundExitingFromScene(_vm, viewWindow, sceneStaticData, priorLocation, 12);
 	case 71:
@@ -828,6 +834,8 @@ SceneBase *SceneViewWindow::constructCastleSceneObject(Window *viewWindow, const
 		return new ClickPlaySound(_vm, viewWindow, sceneStaticData, priorLocation, -1, 13, kCursorFinger, 0, 0, 270, 189);
 	case 74:
 		return new PlaySoundExitingFromSceneDeux(_vm, viewWindow, sceneStaticData, priorLocation, 14);
+	case 76:
+		return new SetFlagOnEntry(_vm, viewWindow, sceneStaticData, priorLocation, offsetof(GlobalFlags, cgSROpenedChest), 1);
 	case 77:
 		return new ClickPlaySound(_vm, viewWindow, sceneStaticData, priorLocation, offsetof(GlobalFlags, cgTSTriedDoorB), 14, kCursorFinger, 72, 0, 372, 189);
 	default:

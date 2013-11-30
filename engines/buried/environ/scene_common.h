@@ -118,6 +118,12 @@ private:
 	int _flagOffset;
 };
 
+class SetFlagOnEntry : public SceneBase {
+public:
+	SetFlagOnEntry(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+			int flagOffset = -1, byte flagNewValue = 1);
+};
+
 class DisplayMessageWithEvidenceWhenEnteringNode : public SceneBase {
 public:
 	DisplayMessageWithEvidenceWhenEnteringNode(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
