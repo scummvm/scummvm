@@ -293,7 +293,7 @@ public:
 	Action12 _action12;
 	Action13 _action13;
 	unkObj1337sub1 _animatedCard;
-	unkObj1337sub1 _item3;
+	unkObj1337sub1 _shuffleAnimation;
 	unkObj1337sub1 _item4;
 	BackgroundSceneObject _background2;
 	int _cardsAvailableNumb;
@@ -306,7 +306,7 @@ public:
 	unkObj1337sub1 _item6;
 	unkObj1337sub1 _discardPile;
 	unkObj1337sub1 _item8;
-	int _field423C;
+	bool _shuffleEndedFl;
 	int _field423E;
 	int _field4240;
 	int _field4242;

@@ -2241,7 +2241,7 @@ Scene1337::Scene1337() {
 	for (int i = 0; i < 100; i++)
 		_availableCardsPile[i] = 0;
 
-	_field423C = 0;
+	_shuffleEndedFl = false;
 	_field423E = 0;
 	_field4240 = 0;
 	_field4242 = 0;
@@ -3045,40 +3045,43 @@ void Scene1337::Action1::signal() {
 	}
 }
 
+/**
+ * Shuffle cards animation
+ */
 void Scene1337::Action2::signal() {
 	Scene1337 *scene = (Scene1337 *)R2_GLOBALS._sceneManager._scene;
 
 	switch (_actionIndex++) {
 	case 0:
-		scene->_item3._card.postInit();
-		scene->_item3._card.setVisage(1332);
-		scene->_item3._card.setStrip(8);
-		scene->_item3._card.setFrame(1);
-		scene->_item3._card.fixPriority(300);
-		scene->_item3._card.setPosition(Common::Point(156, 108));
+		scene->_shuffleAnimation._card.postInit();
+		scene->_shuffleAnimation._card.setVisage(1332);
+		scene->_shuffleAnimation._card.setStrip(8);
+		scene->_shuffleAnimation._card.setFrame(1);
+		scene->_shuffleAnimation._card.fixPriority(300);
+		scene->_shuffleAnimation._card.setPosition(Common::Point(156, 108));
 
 		scene->_discardPile._card.remove();
 		scene->_discardPile._cardId = 0;
 
 		scene->_aSound1.play(60);
-		scene->_item3._card.animate(ANIM_MODE_5, this);
+		scene->_shuffleAnimation._card.animate(ANIM_MODE_5, this);
 		break;
 	case 1:
-		scene->_item3._card.setFrame(1);
+		scene->_shuffleAnimation._card.setFrame(1);
 
 		scene->_aSound1.play(60);
-		scene->_item3._card.animate(ANIM_MODE_5, this);
+		scene->_shuffleAnimation._card.animate(ANIM_MODE_5, this);
 		break;
 	case 2: {
 		Common::Point pt(156, 108);
 		NpcMover *mover = new NpcMover();
-		scene->_item3._card.addMover(mover, &pt, this);
+		scene->_shuffleAnimation._card.addMover(mover, &pt, this);
 		}
 		break;
 	case 3:
-		scene->_item3._card.remove();
+		scene->_shuffleAnimation._card.remove();
 		scene->_background2.setup2(1332, 5, 1, 162, 95, 110, 1);
-		scene->_field423C = 1;
+		scene->_shuffleEndedFl = true;
 		break;
 	default:
 		break;
@@ -5583,18 +5586,14 @@ void Scene1337::shuffleCards() {
 		_availableCardsPile[randIndx] = swap;
 	}
 
-	_field423C = 0;
+	_shuffleEndedFl = false;
 	_animatedCard._card.setAction(&_action2);
 
-	while(_field423C == 0) {
+	while(!_shuffleEndedFl && !g_vm->shouldQuit()) {
+		g_globals->_sceneObjects->recurse(SceneHandler::dispatchObject);
 		g_globals->_scenePalette.signalListeners();
 		R2_GLOBALS._sceneObjects->draw();
-		warning("TODO: recurse on draw() and on signalListeners()?");
 		g_globals->_events.delay(g_globals->_sceneHandler->_delayTicks);
-
-		// Hack to avoid eternal loop
-		// To be removed when the recurse is working properly
-		_field423C = 1;
 	}
 }
 
