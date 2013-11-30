@@ -278,7 +278,7 @@ public:
 	bool _autoplay;
 	unkObj1337_1 _gameBoardSide[4];
 	SceneItem _item1;
-	SceneObject _object1;
+	SceneObject _currentPlayerArrow;
 	Action1 _action1;
 	Action2 _action2;
 	Action3 _action3;

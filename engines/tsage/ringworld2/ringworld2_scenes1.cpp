@@ -2249,8 +2249,8 @@ Scene1337::Scene1337() {
 	_field4246 = 0;
 	_field4248 = 0;
 	_field424A = 0;
-	_field424C = 0;
-	_field424E = 0;
+	_instructionsDisplayedFl = 0;
+	_instructionsWaitCount = 0;
 
 	_unkFctPtr412 = nullptr;
 	_field3EF0 = nullptr;
@@ -2953,15 +2953,15 @@ void Scene1337::Action1::signal() {
 		scene->_lowerDisplayCard[2].remove();
 		scene->_lowerDisplayCard[3].remove();
 
-		scene->_object1.setFrame(1);
-		scene->_object1.show();
-		scene->_object1.animate(ANIM_MODE_2, NULL);
+		scene->_currentPlayerArrow.setFrame(1);
+		scene->_currentPlayerArrow.show();
+		scene->_currentPlayerArrow.animate(ANIM_MODE_2, NULL);
 
 		R2_GLOBALS._sceneObjects->draw();
 
 		scene->actionDisplay(1331, 19, 159, 10, 1, 220, 0, 7, 0, 154, 154);
 
-		scene->_object1.hide();
+		scene->_currentPlayerArrow.hide();
 
 		scene->actionDisplay(1331, 20, 159, 10, 1, 220, 0, 7, 0, 154, 154);
 		scene->actionDisplay(1331, 21, 159, 10, 1, 220, 0, 7, 0, 154, 154);
@@ -4479,10 +4479,10 @@ void Scene1337::process(Event &event) {
 }
 
 void Scene1337::dispatch() {
-	if (_field424C == 0) {
-		++_field424E;
-		if (_field424E == 4) {
-			_field424C = 1;
+	if (_instructionsDisplayedFl == 0) {
+		++_instructionsWaitCount;
+		if (_instructionsWaitCount == 4) {
+			_instructionsDisplayedFl = 1;
 			suggestInstructions();
 		}
 	}
@@ -4529,21 +4529,21 @@ void Scene1337::subC20F9() {
 			_field423E = 0;
 
 		if (_field4244 == 1) {
-			_object1.show();
+			_currentPlayerArrow.show();
 			switch (_field423E) {
 			case 0:
-				_object1.setStrip(3);
+				_currentPlayerArrow.setStrip(3);
 				break;
 			case 1:
-				_object1.setStrip(4);
+				_currentPlayerArrow.setStrip(4);
 				break;
 			case 2:
 				subD1975(174, 107);
-				_object1.setStrip(1);
+				_currentPlayerArrow.setStrip(1);
 				break;
 			case 3:
 				subC4CEC();
-				_object1.setStrip(2);
+				_currentPlayerArrow.setStrip(2);
 				break;
 			default:
 				break;
@@ -4600,7 +4600,7 @@ void Scene1337::subC20F9() {
 
 void Scene1337::subC2586() {
 	if (_field4244 != 0)
-		_object1.hide();
+		_currentPlayerArrow.hide();
 
 	switch (_field423E) {
 	case 2:
@@ -5512,15 +5512,15 @@ void Scene1337::subPostInit() {
 	_animatedCard._card.animate(ANIM_MODE_2, NULL);
 	_animatedCard._card.hide();
 
-	_object1.postInit();
-	_object1.setVisage(1334);
-	_object1.setStrip(1);
-	_object1.setFrame(1);
-	_object1._numFrames = 12;
-	_object1.fixPriority(500);
-	_object1.setPosition(Common::Point(174, 107), 0);
-	_object1.animate(ANIM_MODE_2, NULL);
-	_object1.hide();
+	_currentPlayerArrow.postInit();
+	_currentPlayerArrow.setVisage(1334);
+	_currentPlayerArrow.setStrip(1);
+	_currentPlayerArrow.setFrame(1);
+	_currentPlayerArrow._numFrames = 12;
+	_currentPlayerArrow.fixPriority(500);
+	_currentPlayerArrow.setPosition(Common::Point(174, 107), 0);
+	_currentPlayerArrow.animate(ANIM_MODE_2, NULL);
+	_currentPlayerArrow.hide();
 
 	_field4244 = 1;
 	_field4246 = 0;
@@ -5530,8 +5530,8 @@ void Scene1337::subPostInit() {
 	_background1.setup2(9531, 1, 1, 249, 168, 155, 0);
 
 	_autoplay = false;
-	_field424C = 0;
-	_field424E = 0;
+	_instructionsDisplayedFl = 0;
+	_instructionsWaitCount = 0;
 }
 
 void Scene1337::suggestInstructions() {
