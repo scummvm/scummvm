@@ -142,6 +142,17 @@ private:
 	int _flagOffset;
 };
 
+class PlaySoundEnteringFromScene : public SceneBase {
+public:
+	PlaySoundEnteringFromScene(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+			int soundFileNameID = -1, int timeZone = -1, int environment = -1, int node = -1, int facing = -1, int orientation = -1, int depth = -1);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
+
+private:
+	Location _soundLocation;
+	int _soundFileNameID;
+};
+
 class SetFlagOnEntry : public SceneBase {
 public:
 	SetFlagOnEntry(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
