@@ -312,6 +312,47 @@ int KeepFinalWallClimb::timerCallback(Window *viewWindow) {
 	return SC_TRUE;
 }
 
+class KingsStudyGuard : public SceneBase {
+public:
+	KingsStudyGuard(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int postExitRoom(Window *viewWindow, const Location &priorLocation);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
+	int timerCallback(Window *viewWindow);
+};
+
+KingsStudyGuard::KingsStudyGuard(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+}
+
+int KingsStudyGuard::postExitRoom(Window *viewWindow, const Location &newLocation) {
+	if (_staticData.location.timeZone == newLocation.timeZone)
+		_vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 14));
+	return SC_TRUE;
+}
+
+int KingsStudyGuard::postEnterRoom(Window *viewWindow, const Location &priorLocation) {
+	// Display warning
+	((SceneViewWindow *)viewWindow)->displayLiveText(_vm->getString(IDS_HUMAN_PRESENCE_3METERS));
+	return SC_TRUE;
+}
+
+int KingsStudyGuard::timerCallback(Window *viewWindow) {
+	if (_frameCycleCount < _staticData.cycleStartFrame + _staticData.cycleFrameCount - 1) {
+		_frameCycleCount++;
+		viewWindow->invalidateWindow(false);
+	} else {
+		if (((SceneViewWindow *)viewWindow)->getGlobalFlags().bcCloakingEnabled == 0) {
+			((SceneViewWindow *)viewWindow)->playSynchronousAnimation(0);
+			((SceneViewWindow *)viewWindow)->showDeathScene(5);
+			return SC_DEATH;
+		} else {
+			_frameCycleCount = _staticData.cycleStartFrame;
+		}
+	}
+
+	return SC_TRUE;
+}
+
 class SmithyBench : public SceneBase {
 public:
 	SmithyBench(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
@@ -807,6 +848,8 @@ SceneBase *SceneViewWindow::constructCastleSceneObject(Window *viewWindow, const
 		return new BasicDoor(_vm, viewWindow, sceneStaticData, priorLocation, 42, 0, 357, 189, 1, 8, 11, 3, 1, 1, 2, 11, 314, 7);
 	case 18:
 		return new BasicDoor(_vm, viewWindow, sceneStaticData, priorLocation, 26, 0, 432, 189, 1, 8, 6, 3, 1, 1, 2, 11, 288, 8);
+	case 19:
+		return new KingsStudyGuard(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 20:
 		return new TurnDepthPreChange(_vm, viewWindow, sceneStaticData, priorLocation, offsetof(GlobalFlags, cgHookPresent), 0, 0, 1, 0, 0);
 	case 21:
