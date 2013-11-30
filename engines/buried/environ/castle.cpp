@@ -1061,6 +1061,8 @@ SceneBase *SceneViewWindow::constructCastleSceneObject(Window *viewWindow, const
 	case 55:
 		// Valid, but not implemented.
 		break;
+	case 56:
+		return new PlaySoundEnteringFromScene(_vm, viewWindow, sceneStaticData, priorLocation, 14, 1, 9, 0, 3, 1, 0);
 	case 57:
 		return new PlaySoundExitingFromScene(_vm, viewWindow, sceneStaticData, priorLocation, 14);
 	case 58:

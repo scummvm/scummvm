@@ -315,6 +315,31 @@ int ClickPlaySound::specifyCursor(Window *viewWindow, const Common::Point &point
 	return kCursorArrow;
 }
 
+PlaySoundEnteringFromScene::PlaySoundEnteringFromScene(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+		int soundFileNameID, int timeZone, int environment, int node, int facing, int orientation, int depth) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_soundFileNameID = soundFileNameID;
+	_soundLocation.timeZone = timeZone;
+	_soundLocation.environment = environment;
+	_soundLocation.node = node;
+	_soundLocation.facing = facing;
+	_soundLocation.orientation = orientation;
+	_soundLocation.depth = depth;
+}
+
+int PlaySoundEnteringFromScene::postEnterRoom(Window *viewWindow, const Location &priorLocation) {
+	if (_soundLocation.timeZone == priorLocation.timeZone &&
+			_soundLocation.environment == priorLocation.environment &&
+			_soundLocation.node == priorLocation.node &&
+			_soundLocation.facing == priorLocation.facing &&
+			_soundLocation.orientation == priorLocation.orientation &&
+			_soundLocation.depth == priorLocation.depth) {
+		_vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, _soundFileNameID), 127, false, true);
+	}
+
+	return SC_TRUE;
+}
+
 SetFlagOnEntry::SetFlagOnEntry(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
 		int flagOffset, byte flagNewValue) :
 		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
