@@ -28,8 +28,10 @@
 #include "common/error.h"
 #include "common/events.h"
 #include "common/fs.h"
+#include "common/savefile.h"
 #include "common/system.h"
 #include "common/textconsole.h"
+#include "common/translation.h"
 #include "engines/util.h"
 
 #include "buried/buried.h"
@@ -117,7 +119,16 @@ Common::Error BuriedEngine::run() {
 		((FrameWindow *)_mainWindow)->showTitleSequence();
 		((FrameWindow *)_mainWindow)->showMainMenu();
 	} else {
-		((FrameWindow *)_mainWindow)->showClosingScreen();
+		bool doIntro = true;
+
+		if (ConfMan.hasKey("save_slot")) {
+			uint32 gameToLoad = ConfMan.getInt("save_slot");
+			doIntro = (loadGameState(gameToLoad).getCode() != Common::kNoError);
+		}
+
+		// Play the intro only if we're starting from scratch
+		if (doIntro)
+			((FrameWindow *)_mainWindow)->showClosingScreen();
 	}
 
 	while (!shouldQuit()) {

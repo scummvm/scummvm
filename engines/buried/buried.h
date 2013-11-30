@@ -27,6 +27,7 @@
 #include "common/array.h"
 #include "common/list.h"
 #include "common/hashmap.h"
+#include "common/str-array.h"
 
 #include "engines/engine.h"
 
@@ -34,6 +35,8 @@ class OSystem;
 
 namespace Common {
 class SeekableReadStream;
+class Serializer;
+class WriteStream;
 }
 
 namespace Buried {
@@ -41,7 +44,9 @@ namespace Buried {
 class BuriedConsole;
 struct BuriedGameDescription;
 class Database;
+struct GlobalFlags;
 class GraphicsManager;
+struct Location;
 class Message;
 class SoundManager;
 class Window;
@@ -120,6 +125,15 @@ public:
 	void setTransitionSpeed(int newSpeed);
 	void releaseCapture() { _captureWindow = 0; }
 
+	// Save/Load
+	bool canLoadGameStateCurrently();
+	bool canSaveGameStateCurrently();
+	Common::Error loadGameState(int slot);
+	Common::Error saveGameState(int slot, const Common::String &desc);
+	static Common::StringArray listSaveFiles();
+	bool loadState(Common::SeekableReadStream *saveFile, Location &location, GlobalFlags &flags, Common::Array<int> &inventoryItems);
+	bool saveState(Common::WriteStream *saveFile, Location &location, GlobalFlags &flags, Common::Array<int> &inventoryItems);
+
 private:
 	Database *_library;
 
@@ -145,6 +159,10 @@ private:
 	typedef Common::List<MessageInfo> MessageQueue;
 	MessageQueue _messageQueue;
 	void pollForEvents();
+
+	// Saves
+	bool syncLocation(Common::Serializer &s, Location &location);
+	bool syncGlobalFlags(Common::Serializer &s, GlobalFlags &flags);
 };
 
 // Macro for creating a version field
