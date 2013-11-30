@@ -2235,11 +2235,11 @@ void Scene1337::unkObj1337_1::synchronize(Serializer &s) {
 
 Scene1337::Scene1337() {
 	_autoplay = false;
-	_field3E24 = 0;
+	_cardsAvailableNumb = 0;
 	_field3E26 = 0;
 
 	for (int i = 0; i < 100; i++)
-		_field3E28[i] = 0;
+		_availableCardsPile[i] = 0;
 
 	_field423C = 0;
 	_field423E = 0;
@@ -3105,7 +3105,7 @@ void Scene1337::Action3::signal() {
 		scene->_animatedCard._card.addMover(mover, &pt, this);
 
 		scene->_animatedCard._card.show();
-		scene->_gameBoardSide[1]._handCard[0]._cardId = scene->_field3E28[scene->_field3E24];
+		scene->_gameBoardSide[1]._handCard[0]._cardId = scene->_availableCardsPile[scene->_cardsAvailableNumb];
 		}
 		break;
 	case 1: {
@@ -3122,7 +3122,7 @@ void Scene1337::Action3::signal() {
 		NpcMover *mover = new NpcMover();
 		scene->_animatedCard._card.addMover(mover, &pt, this);
 
-		scene->_gameBoardSide[2]._handCard[0]._cardId = scene->_field3E28[scene->_field3E24];
+		scene->_gameBoardSide[2]._handCard[0]._cardId = scene->_availableCardsPile[scene->_cardsAvailableNumb];
 		}
 		break;
 	case 2: {
@@ -3149,7 +3149,7 @@ void Scene1337::Action3::signal() {
 		NpcMover *mover = new NpcMover();
 		scene->_animatedCard._card.addMover(mover, &pt, this);
 
-		scene->_gameBoardSide[3]._handCard[0]._cardId = scene->_field3E28[scene->_field3E24];
+		scene->_gameBoardSide[3]._handCard[0]._cardId = scene->_availableCardsPile[scene->_cardsAvailableNumb];
 		}
 		break;
 	case 3: {
@@ -3166,7 +3166,7 @@ void Scene1337::Action3::signal() {
 		NpcMover *mover = new NpcMover();
 		scene->_animatedCard._card.addMover(mover, &pt, this);
 
-		scene->_gameBoardSide[0]._handCard[0]._cardId = scene->_field3E28[scene->_field3E24];
+		scene->_gameBoardSide[0]._handCard[0]._cardId = scene->_availableCardsPile[scene->_cardsAvailableNumb];
 		}
 		break;
 	case 4: {
@@ -3183,7 +3183,7 @@ void Scene1337::Action3::signal() {
 		NpcMover *mover = new NpcMover();
 		scene->_animatedCard._card.addMover(mover, &pt, this);
 
-		scene->_gameBoardSide[1]._handCard[1]._cardId = scene->_field3E28[scene->_field3E24];
+		scene->_gameBoardSide[1]._handCard[1]._cardId = scene->_availableCardsPile[scene->_cardsAvailableNumb];
 		}
 		break;
 	case 5: {
@@ -3200,7 +3200,7 @@ void Scene1337::Action3::signal() {
 		NpcMover *mover = new NpcMover();
 		scene->_animatedCard._card.addMover(mover, &pt, this);
 
-		scene->_gameBoardSide[2]._handCard[1]._cardId = scene->_field3E28[scene->_field3E24];
+		scene->_gameBoardSide[2]._handCard[1]._cardId = scene->_availableCardsPile[scene->_cardsAvailableNumb];
 		}
 		break;
 	case 6: {
@@ -3229,7 +3229,7 @@ void Scene1337::Action3::signal() {
 		NpcMover *mover = new NpcMover();
 		scene->_animatedCard._card.addMover(mover, &pt, this);
 
-		scene->_gameBoardSide[3]._handCard[1]._cardId = scene->_field3E28[scene->_field3E24];
+		scene->_gameBoardSide[3]._handCard[1]._cardId = scene->_availableCardsPile[scene->_cardsAvailableNumb];
 		}
 		break;
 	case 7: {
@@ -3246,7 +3246,7 @@ void Scene1337::Action3::signal() {
 		NpcMover *mover = new NpcMover();
 		scene->_animatedCard._card.addMover(mover, &pt, this);
 
-		scene->_gameBoardSide[0]._handCard[1]._cardId = scene->_field3E28[scene->_field3E24];
+		scene->_gameBoardSide[0]._handCard[1]._cardId = scene->_availableCardsPile[scene->_cardsAvailableNumb];
 		}
 		break;
 	case 8: {
@@ -3263,7 +3263,7 @@ void Scene1337::Action3::signal() {
 		NpcMover *mover = new NpcMover();
 		scene->_animatedCard._card.addMover(mover, &pt, this);
 
-		scene->_gameBoardSide[1]._handCard[2]._cardId = scene->_field3E28[scene->_field3E24];
+		scene->_gameBoardSide[1]._handCard[2]._cardId = scene->_availableCardsPile[scene->_cardsAvailableNumb];
 		}
 		break;
 	case 9: {
@@ -3280,7 +3280,7 @@ void Scene1337::Action3::signal() {
 		NpcMover *mover = new NpcMover();
 		scene->_animatedCard._card.addMover(mover, &pt, this);
 
-		scene->_gameBoardSide[2]._handCard[2]._cardId = scene->_field3E28[scene->_field3E24];
+		scene->_gameBoardSide[2]._handCard[2]._cardId = scene->_availableCardsPile[scene->_cardsAvailableNumb];
 		}
 		break;
 	case 10: {
@@ -3309,7 +3309,7 @@ void Scene1337::Action3::signal() {
 		NpcMover *mover = new NpcMover();
 		scene->_animatedCard._card.addMover(mover, &pt, this);
 
-		scene->_gameBoardSide[3]._handCard[2]._cardId = scene->_field3E28[scene->_field3E24];
+		scene->_gameBoardSide[3]._handCard[2]._cardId = scene->_availableCardsPile[scene->_cardsAvailableNumb];
 		}
 		break;
 	case 11: {
@@ -3326,7 +3326,7 @@ void Scene1337::Action3::signal() {
 		NpcMover *mover = new NpcMover();
 		scene->_animatedCard._card.addMover(mover, &pt, this);
 
-		scene->_gameBoardSide[0]._handCard[2]._cardId = scene->_field3E28[scene->_field3E24];
+		scene->_gameBoardSide[0]._handCard[2]._cardId = scene->_availableCardsPile[scene->_cardsAvailableNumb];
 		}
 		break;
 	case 12:
@@ -3348,8 +3348,8 @@ void Scene1337::Action3::signal() {
 		scene->actionDisplay(1330, 0, 159, 10, 1, 200, 0, 7, 0, 154, 154);
 		scene->subC20F9();
 	} else if (_actionIndex >= 1) {
-		scene->_field3E28[scene->_field3E24] = 0;
-		scene->_field3E24--;
+		scene->_availableCardsPile[scene->_cardsAvailableNumb] = 0;
+		scene->_cardsAvailableNumb--;
 	}
 }
 
@@ -3359,7 +3359,7 @@ void Scene1337::Action4::signal() {
 	switch (_actionIndex++) {
 	case 0:
 		if ((scene->_gameBoardSide[scene->_field423E]._handCard[0]._cardId == 0) && (scene->subC264B(scene->_gameBoardSide[scene->_field423E]._delayPile[0]._cardId))) {
-			if (scene->_field3E24 < 0)
+			if (scene->_cardsAvailableNumb < 0)
 				scene->subC264B(scene->_gameBoardSide[scene->_field423E]._delayPile[0]._cardId);
 			scene->_animatedCard._card.setPosition(Common::Point(162, 95), 0);
 			scene->_animatedCard._card.show();
@@ -3368,11 +3368,11 @@ void Scene1337::Action4::signal() {
 			NpcMover *mover = new NpcMover();
 			scene->_animatedCard._card.addMover(mover, &scene->_gameBoardSide[scene->_field423E]._fieldB94, this);
 
-			scene->_gameBoardSide[scene->_field423E]._handCard[0]._cardId = scene->_field3E28[scene->_field3E24];
-			scene->_field3E28[scene->_field3E24] = 0;
-			scene->_field3E24--;
+			scene->_gameBoardSide[scene->_field423E]._handCard[0]._cardId = scene->_availableCardsPile[scene->_cardsAvailableNumb];
+			scene->_availableCardsPile[scene->_cardsAvailableNumb] = 0;
+			scene->_cardsAvailableNumb--;
 
-			if (scene->_field3E24 < 0)
+			if (scene->_cardsAvailableNumb < 0)
 				scene->_background2.remove();
 		} else {
 			// Self call, forcing next actionIndex
@@ -3396,7 +3396,7 @@ void Scene1337::Action4::signal() {
 
 		scene->_animatedCard._card.hide();
 		if ((scene->_gameBoardSide[scene->_field423E]._handCard[0]._cardId == 0) && (scene->subC264B(scene->_gameBoardSide[scene->_field423E]._delayPile[0]._cardId == 0))) {
-			if (scene->_field3E24 < 0)
+			if (scene->_cardsAvailableNumb < 0)
 				scene->shuffleCards();
 			scene->_animatedCard._card.setPosition(Common::Point(162, 95));
 			scene->_animatedCard._card.show();
@@ -3406,10 +3406,10 @@ void Scene1337::Action4::signal() {
 			NpcMover *mover = new NpcMover();
 			scene->_animatedCard._card.addMover(mover, &scene->_gameBoardSide[scene->_field423E]._fieldB98, this);
 
-			scene->_gameBoardSide[scene->_field423E]._handCard[1]._cardId = scene->_field3E28[scene->_field3E24];
-			scene->_field3E28[scene->_field3E24] = 0;
-			scene->_field3E24--;
-			if (scene->_field3E24 < 0)
+			scene->_gameBoardSide[scene->_field423E]._handCard[1]._cardId = scene->_availableCardsPile[scene->_cardsAvailableNumb];
+			scene->_availableCardsPile[scene->_cardsAvailableNumb] = 0;
+			scene->_cardsAvailableNumb--;
+			if (scene->_cardsAvailableNumb < 0)
 				scene->_background2.remove();
 		} else
 			signal();
@@ -3431,7 +3431,7 @@ void Scene1337::Action4::signal() {
 
 		scene->_animatedCard._card.hide();
 		if ((scene->_gameBoardSide[scene->_field423E]._handCard[2]._cardId == 0) && (scene->subC264B(scene->_gameBoardSide[scene->_field423E]._delayPile[0]._cardId == 0))) {
-			if (scene->_field3E24 < 0)
+			if (scene->_cardsAvailableNumb < 0)
 				scene->shuffleCards();
 			scene->_animatedCard._card.setPosition(Common::Point(162, 95));
 			scene->_animatedCard._card.show();
@@ -3441,10 +3441,10 @@ void Scene1337::Action4::signal() {
 			NpcMover *mover = new NpcMover();
 			scene->_animatedCard._card.addMover(mover, &scene->_gameBoardSide[scene->_field423E]._fieldB9C, this);
 
-			scene->_gameBoardSide[scene->_field423E]._handCard[2]._cardId = scene->_field3E28[scene->_field3E24];
-			scene->_field3E28[scene->_field3E24] = 0;
-			scene->_field3E24--;
-			if (scene->_field3E24 < 0)
+			scene->_gameBoardSide[scene->_field423E]._handCard[2]._cardId = scene->_availableCardsPile[scene->_cardsAvailableNumb];
+			scene->_availableCardsPile[scene->_cardsAvailableNumb] = 0;
+			scene->_cardsAvailableNumb--;
+			if (scene->_cardsAvailableNumb < 0)
 				scene->_background2.remove();
 		} else
 			signal();
@@ -3466,7 +3466,7 @@ void Scene1337::Action4::signal() {
 
 		scene->_animatedCard._card.hide();
 		if ((scene->_gameBoardSide[scene->_field423E]._handCard[3]._cardId == 0) && (scene->subC264B(scene->_gameBoardSide[scene->_field423E]._delayPile[0]._cardId == 0))) {
-			if (scene->_field3E24 < 0)
+			if (scene->_cardsAvailableNumb < 0)
 				scene->shuffleCards();
 			scene->_animatedCard._card.setPosition(Common::Point(162, 95));
 			scene->_animatedCard._card.show();
@@ -3476,10 +3476,10 @@ void Scene1337::Action4::signal() {
 			NpcMover *mover = new NpcMover();
 			scene->_animatedCard._card.addMover(mover, &scene->_gameBoardSide[scene->_field423E]._fieldBA0, this);
 
-			scene->_gameBoardSide[scene->_field423E]._handCard[3]._cardId = scene->_field3E28[scene->_field3E24];
-			scene->_field3E28[scene->_field3E24] = 0;
-			scene->_field3E24--;
-			if (scene->_field3E24 < 0)
+			scene->_gameBoardSide[scene->_field423E]._handCard[3]._cardId = scene->_availableCardsPile[scene->_cardsAvailableNumb];
+			scene->_availableCardsPile[scene->_cardsAvailableNumb] = 0;
+			scene->_cardsAvailableNumb--;
+			if (scene->_cardsAvailableNumb < 0)
 				scene->_background2.remove();
 		} else
 			signal();
@@ -3527,7 +3527,7 @@ void Scene1337::Action5::signal() {
 
 	switch (_actionIndex++) {
 	case 0: {
-		scene->_field3E28[scene->_field3E26] = scene->_field3EF0->_cardId;
+		scene->_availableCardsPile[scene->_field3E26] = scene->_field3EF0->_cardId;
 		scene->_field3E26--;
 		if (!g_globals->_sceneObjects->contains(&scene->_discardPile._card)) {
 			scene->_discardPile._card.postInit();
@@ -3642,7 +3642,7 @@ void Scene1337::Action8::signal() {
 
 	switch (_actionIndex++) {
 	case 0: {
-		scene->_field3E28[scene->_field3E26] = scene->_field3EF4->_cardId;
+		scene->_availableCardsPile[scene->_field3E26] = scene->_field3EF4->_cardId;
 		scene->_field3E26--;
 
 		scene->_field3EF4->_cardId = scene->_field3EF0->_cardId;
@@ -3857,7 +3857,7 @@ void Scene1337::Action10::signal() {
 			}
 		}
 
-		scene->_field3E28[scene->_field3E26] = scene->_field3EF4->_cardId;
+		scene->_availableCardsPile[scene->_field3E26] = scene->_field3EF4->_cardId;
 		scene->_field3E26--;
 		scene->_field3EF4->_cardId = 0;
 		scene->_field3EF4->_card.remove();
@@ -4122,7 +4122,7 @@ void Scene1337::Action12::signal() {
 		signal();
 		break;
 	case 1: {
-		scene->_field3E28[scene->_field3E26] = scene->_field3EF4->_cardId;
+		scene->_availableCardsPile[scene->_field3E26] = scene->_field3EF4->_cardId;
 		scene->_field3EF4->_cardId = scene->_field3EF0->_cardId;
 		scene->_field3EF0->_cardId = 0;
 		scene->_field3EF0->_card.remove();
@@ -4290,7 +4290,7 @@ void Scene1337::Action13::signal() {
 
 	switch (_actionIndex++) {
 	case 0: {
-		scene->_field3E28[scene->_field3E26] = scene->_field3EF4->_cardId;
+		scene->_availableCardsPile[scene->_field3E26] = scene->_field3EF4->_cardId;
 		scene->_field3E26--;
 
 		scene->_field3EF4->_cardId = scene->_field3EF0->_cardId;
@@ -5387,108 +5387,108 @@ void Scene1337::subPostInit() {
 
 	R2_GLOBALS._scenePalette.addRotation(224, 235, 1);
 
-	_field3E28[0] = 1;
-	_field3E28[1] = 1;
-	_field3E28[2] = 1;
-	_field3E28[3] = 1;
-	_field3E28[4] = 1;
-	_field3E28[5] = 1;
-	_field3E28[6] = 1;
-	_field3E28[7] = 1;
-	_field3E28[8] = 26;
-	_field3E28[9] = 2;
-	_field3E28[10] = 2;
-	_field3E28[11] = 2;
-	_field3E28[12] = 2;
-	_field3E28[13] = 2;
-	_field3E28[14] = 26;
-	_field3E28[15] = 3;
-	_field3E28[16] = 3;
-	_field3E28[17] = 3;
-	_field3E28[18] = 3;
-	_field3E28[19] = 3;
-	_field3E28[20] = 28;
-	_field3E28[21] = 4;
-	_field3E28[22] = 4;
-	_field3E28[23] = 4;
-	_field3E28[24] = 4;
-	_field3E28[25] = 4;
-	_field3E28[26] = 28;
-	_field3E28[27] = 5;
-	_field3E28[28] = 5;
-	_field3E28[29] = 5;
-	_field3E28[30] = 5;
-	_field3E28[31] = 5;
-	_field3E28[32] = 30;
-	_field3E28[33] = 6;
-	_field3E28[34] = 6;
-	_field3E28[35] = 6;
-	_field3E28[36] = 6;
-	_field3E28[37] = 6;
-	_field3E28[38] = 30;
-	_field3E28[39] = 7;
-	_field3E28[40] = 7;
-	_field3E28[41] = 7;
-	_field3E28[42] = 7;
-	_field3E28[43] = 7;
-	_field3E28[44] = 32;
-	_field3E28[45] = 8;
-	_field3E28[46] = 8;
-	_field3E28[47] = 8;
-	_field3E28[48] = 8;
-	_field3E28[49] = 8;
-	_field3E28[50] = 32;
-	_field3E28[51] = 9;
-	_field3E28[52] = 9;
-	_field3E28[53] = 9;
-	_field3E28[54] = 9;
-	_field3E28[55] = 9;
-	_field3E28[56] = 10;
-	_field3E28[57] = 11;
-	_field3E28[58] = 12;
-	_field3E28[59] = 13;
-	_field3E28[60] = 13;
-	_field3E28[61] = 14;
-	_field3E28[62] = 15;
-	_field3E28[63] = 16;
-	_field3E28[64] = 17;
-	_field3E28[65] = 18;
-	_field3E28[66] = 19;
-	_field3E28[67] = 20;
-	_field3E28[68] = 21;
-	_field3E28[69] = 26;
-	_field3E28[70] = 28;
-	_field3E28[71] = 24;
-	_field3E28[72] = 25;
-	_field3E28[73] = 25;
-	_field3E28[74] = 25;
-	_field3E28[75] = 25;
-	_field3E28[76] = 26;
-	_field3E28[77] = 26;
-	_field3E28[78] = 26;
-	_field3E28[79] = 27;
-	_field3E28[80] = 27;
-	_field3E28[81] = 28;
-	_field3E28[82] = 28;
-	_field3E28[83] = 28;
-	_field3E28[84] = 29;
-	_field3E28[85] = 29;
-	_field3E28[86] = 29;
-	_field3E28[87] = 30;
-	_field3E28[88] = 30;
-	_field3E28[89] = 30;
-	_field3E28[90] = 30;
-	_field3E28[91] = 32;
-	_field3E28[92] = 1;
-	_field3E28[93] = 32;
-	_field3E28[94] = 32;
-	_field3E28[95] = 32;
-	_field3E28[96] = 1;
-	_field3E28[97] = 1;
-	_field3E28[98] = 1;
-	_field3E28[99] = 0;
+	_availableCardsPile[0] = 1;
+	_availableCardsPile[1] = 1;
+	_availableCardsPile[2] = 1;
+	_availableCardsPile[3] = 1;
+	_availableCardsPile[4] = 1;
+	_availableCardsPile[5] = 1;
+	_availableCardsPile[6] = 1;
+	_availableCardsPile[7] = 1;
+	_availableCardsPile[8] = 26;
+	_availableCardsPile[9] = 2;
+	_availableCardsPile[10] = 2;
+	_availableCardsPile[11] = 2;
+	_availableCardsPile[12] = 2;
+	_availableCardsPile[13] = 2;
+	_availableCardsPile[14] = 26;
+	_availableCardsPile[15] = 3;
+	_availableCardsPile[16] = 3;
+	_availableCardsPile[17] = 3;
+	_availableCardsPile[18] = 3;
+	_availableCardsPile[19] = 3;
+	_availableCardsPile[20] = 28;
+	_availableCardsPile[21] = 4;
+	_availableCardsPile[22] = 4;
+	_availableCardsPile[23] = 4;
+	_availableCardsPile[24] = 4;
+	_availableCardsPile[25] = 4;
+	_availableCardsPile[26] = 28;
+	_availableCardsPile[27] = 5;
+	_availableCardsPile[28] = 5;
+	_availableCardsPile[29] = 5;
+	_availableCardsPile[30] = 5;
+	_availableCardsPile[31] = 5;
+	_availableCardsPile[32] = 30;
+	_availableCardsPile[33] = 6;
+	_availableCardsPile[34] = 6;
+	_availableCardsPile[35] = 6;
+	_availableCardsPile[36] = 6;
+	_availableCardsPile[37] = 6;
+	_availableCardsPile[38] = 30;
+	_availableCardsPile[39] = 7;
+	_availableCardsPile[40] = 7;
+	_availableCardsPile[41] = 7;
+	_availableCardsPile[42] = 7;
+	_availableCardsPile[43] = 7;
+	_availableCardsPile[44] = 32;
+	_availableCardsPile[45] = 8;
+	_availableCardsPile[46] = 8;
+	_availableCardsPile[47] = 8;
+	_availableCardsPile[48] = 8;
+	_availableCardsPile[49] = 8;
+	_availableCardsPile[50] = 32;
+	_availableCardsPile[51] = 9;
+	_availableCardsPile[52] = 9;
+	_availableCardsPile[53] = 9;
+	_availableCardsPile[54] = 9;
+	_availableCardsPile[55] = 9;
+	_availableCardsPile[56] = 10;
+	_availableCardsPile[57] = 11;
+	_availableCardsPile[58] = 12;
+	_availableCardsPile[59] = 13;
+	_availableCardsPile[60] = 13;
+	_availableCardsPile[61] = 14;
+	_availableCardsPile[62] = 15;
+	_availableCardsPile[63] = 16;
+	_availableCardsPile[64] = 17;
+	_availableCardsPile[65] = 18;
+	_availableCardsPile[66] = 19;
+	_availableCardsPile[67] = 20;
+	_availableCardsPile[68] = 21;
+	_availableCardsPile[69] = 26;
+	_availableCardsPile[70] = 28;
+	_availableCardsPile[71] = 24;
+	_availableCardsPile[72] = 25;
+	_availableCardsPile[73] = 25;
+	_availableCardsPile[74] = 25;
+	_availableCardsPile[75] = 25;
+	_availableCardsPile[76] = 26;
+	_availableCardsPile[77] = 26;
+	_availableCardsPile[78] = 26;
+	_availableCardsPile[79] = 27;
+	_availableCardsPile[80] = 27;
+	_availableCardsPile[81] = 28;
+	_availableCardsPile[82] = 28;
+	_availableCardsPile[83] = 28;
+	_availableCardsPile[84] = 29;
+	_availableCardsPile[85] = 29;
+	_availableCardsPile[86] = 29;
+	_availableCardsPile[87] = 30;
+	_availableCardsPile[88] = 30;
+	_availableCardsPile[89] = 30;
+	_availableCardsPile[90] = 30;
+	_availableCardsPile[91] = 32;
+	_availableCardsPile[92] = 1;
+	_availableCardsPile[93] = 32;
+	_availableCardsPile[94] = 32;
+	_availableCardsPile[95] = 32;
+	_availableCardsPile[96] = 1;
+	_availableCardsPile[97] = 1;
+	_availableCardsPile[98] = 1;
+	_availableCardsPile[99] = 0;
 
-	_field3E24 = 98;
+	_cardsAvailableNumb = 98;
 	_field3E26 = 98;
 
 	_discardPile._cardId = 0;
@@ -5537,7 +5537,7 @@ void Scene1337::suggestInstructions() {
 	if (MessageDialog::show(NEED_INSTRUCTIONS, NO_MSG, YES_MSG) == 0) {
 		if (R2_GLOBALS._v57709 == 0)
 			subD18F5();
-		subCCF26();
+		firstShuffle();
 	} else {
 		if (R2_GLOBALS._v57709 == 0)
 			subD18F5();
@@ -5552,35 +5552,35 @@ void Scene1337::displayInstructions() {
 void Scene1337::shuffleCards() {
 	R2_GLOBALS._sceneObjects->draw();
 
+	// Remove holes in card pile
 	for (int i = 0; i <= 98; i++) {
-		if (_field3E28[i] == 0) {
+		if (_availableCardsPile[i] == 0) {
 			for (int j = i + 1; j <= 98; j ++) {
-				if (_field3E28[j] != 0) {
-					_field3E28[i] = _field3E28[j];
-					_field3E28[j] = 0;
+				if (_availableCardsPile[j] != 0) {
+					_availableCardsPile[i] = _availableCardsPile[j];
+					_availableCardsPile[j] = 0;
 					break;
 				}
 			}
 		}
 	}
 
+	// Compute the number of available cards
 	for (int i = 0; i <= 99; i ++) {
-		if (_field3E28[i] == 0) {
-			_field3E24 = i - 1;
+		if (_availableCardsPile[i] == 0) {
+			// CHECKME: This will fail if i == 0, which shouldn't happen
+			// as we don't shuffle cards when no card is available.
+			_cardsAvailableNumb = i - 1;
 			_field3E26 = 98;
 			break;
 		}
 	}
 
-	// tmpVal is never modified in the original. It looks weird but it works: at the end, the cards are suffled!
-	int tmpVal = 0;
-	int randIndx;
-	int swap;
 	for (int i = 0; i < 2000; i ++) {
-		randIndx = R2_GLOBALS._randomSource.getRandomNumber(_field3E24);
-		swap = _field3E28[tmpVal];
-		_field3E28[tmpVal] = _field3E28[randIndx];
-		_field3E28[randIndx] = swap;
+		int randIndx = R2_GLOBALS._randomSource.getRandomNumber(_cardsAvailableNumb);
+		int swap = _availableCardsPile[0];
+		_availableCardsPile[0] = _availableCardsPile[randIndx];
+		_availableCardsPile[randIndx] = swap;
 	}
 
 	_field423C = 0;
@@ -5598,7 +5598,7 @@ void Scene1337::shuffleCards() {
 	}
 }
 
-void Scene1337::subCCF26() {
+void Scene1337::firstShuffle() {
 	_animatedCard._card._moveDiff = Common::Point(30, 30);
 	shuffleCards();
 	_item1.setAction(&_action3);

@@ -296,9 +296,9 @@ public:
 	unkObj1337sub1 _item3;
 	unkObj1337sub1 _item4;
 	BackgroundSceneObject _background2;
-	int _field3E24;
+	int _cardsAvailableNumb;
 	int _field3E26;
-	int _field3E28[100];
+	int _availableCardsPile[100];
 	unkObj1337sub1 *_field3EF0;
 	unkObj1337sub1 *_field3EF4;
 	unkObj1337sub1 *_field3EF8;
@@ -360,7 +360,7 @@ public:
 	void displayInstructions();
 	void suggestInstructions();
 	void shuffleCards();
-	void subCCF26();
+	void firstShuffle();
 	void subCD193();
 	void subCDB90(int arg1, Common::Point pt);
 	void subCF31D();
