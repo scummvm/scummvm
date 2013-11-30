@@ -76,6 +76,9 @@ Vars::Vars() {
 	scene04_sceneClickX = 0;
 	scene04_sceneClickY = 0;
 
+	scene04_dudePosX = 0;
+	scene04_dudePosY = 0;
+
 	scene04_var01 = 0;
 	scene04_var02 = 0;
 	scene04_var04 = 0;
