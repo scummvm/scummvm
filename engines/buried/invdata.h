@@ -47,8 +47,8 @@ enum {
 	kItemCheeseGirl = 13,
 	kItemClassicGamesCart = 14, // Unused!
 	kItemCodexAtlanticus = 15,
-	kItemCoilOfRope = 15,
-	kItemCopperKey = 16,
+	kItemCoilOfRope = 16,
+	kItemCopperKey = 17,
 	kItemCopperMedallion = 18,
 	kItemCreditChip = 19, // Unused!
 	kItemEnvironCart = 20,

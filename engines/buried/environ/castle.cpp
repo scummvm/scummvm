@@ -312,6 +312,206 @@ int KeepFinalWallClimb::timerCallback(Window *viewWindow) {
 	return SC_TRUE;
 }
 
+class SmithyBench : public SceneBase {
+public:
+	SmithyBench(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int mouseDown(Window *viewWindow, const Common::Point &pointLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int draggingItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
+	int droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	byte _status;
+	Common::Rect _pan;
+	Common::Rect _mold;
+	Common::Rect _bellows;
+
+	void resetBackgroundBitmap();
+};
+
+SmithyBench::SmithyBench(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_status = ((SceneViewWindow *)viewWindow)->getGlobalFlags().cgSmithyStatus;
+	resetBackgroundBitmap();
+
+	_pan = Common::Rect(0, 73, 227, 123);
+	_mold = Common::Rect(333, 57, 423, 105);
+	_bellows = Common::Rect(0, 0, 302, 34);
+}
+
+int SmithyBench::mouseDown(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_pan.contains(pointLocation) && (_status == 2 || _status == 3)) {
+		_status %= 2;
+		resetBackgroundBitmap();
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().cgSmithyStatus = _status;
+
+		Common::Point ptInventoryWindow = viewWindow->convertPointToWindow(pointLocation, ((GameUIWindow *)viewWindow->getParent())->_inventoryWindow);
+		((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->startDraggingNewItem(kItemCopperMedallion, ptInventoryWindow);
+		return SC_TRUE;
+	} else if (_mold.contains(pointLocation) && _status == 6) {
+		_status = 1;
+		resetBackgroundBitmap();
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().cgSmithyStatus = _status;
+
+		Common::Point ptInventoryWindow = viewWindow->convertPointToWindow(pointLocation, ((GameUIWindow *)viewWindow->getParent())->_inventoryWindow);
+		((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->startDraggingNewItem(kItemCopperKey, ptInventoryWindow);
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int SmithyBench::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_mold.contains(pointLocation) && _status < 6 && (!_vm->isDemo() || ((FrameWindow *)_vm->_mainWindow)->_reviewerMode)) {
+		if ((_status % 2) == 1) {
+			// Brick has been removed, so play the returning movie
+			_status--;
+			((SceneViewWindow *)viewWindow)->playSynchronousAnimation(_status + 8);
+			resetBackgroundBitmap();
+			((SceneViewWindow *)viewWindow)->getGlobalFlags().cgSmithyStatus = _status;
+			((SceneViewWindow *)viewWindow)->getGlobalFlags().cgBSFoundMold = 1;
+		} else {
+			// The brick is still covering the mold, so remove it
+			_status++;
+			((SceneViewWindow *)viewWindow)->playSynchronousAnimation(_status + 6);
+			resetBackgroundBitmap();
+			((SceneViewWindow *)viewWindow)->getGlobalFlags().cgSmithyStatus = _status;
+		}
+
+		if (((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->isItemInInventory(kItemBioChipAI))
+			((SceneViewWindow *)viewWindow)->playAIComment(_staticData.location, AI_COMMENT_TYPE_SPONTANEOUS);
+
+		((GameUIWindow *)viewWindow->getParent())->_bioChipRightWindow->sceneChanged();
+		return SC_TRUE;
+	} else if (_pan.contains(pointLocation) && _status == 5) {
+		_status = 6;
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().cgSmithyStatus = _status;
+		((SceneViewWindow *)viewWindow)->playSynchronousAnimation(13);
+		resetBackgroundBitmap();
+
+		if (((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->isItemInInventory(kItemBioChipAI))
+			((SceneViewWindow *)viewWindow)->playAIComment(_staticData.location, AI_COMMENT_TYPE_SPONTANEOUS);
+
+		((GameUIWindow *)viewWindow->getParent())->_bioChipRightWindow->sceneChanged();
+		return SC_TRUE;
+	} else if (_bellows.contains(pointLocation) && _status < 4) {
+		switch (_status) {
+		case 0:
+			((SceneViewWindow *)viewWindow)->playSynchronousAnimation(3);
+			break;
+		case 1:
+			((SceneViewWindow *)viewWindow)->playSynchronousAnimation(4);
+			break;
+		case 2:
+			_status = 4;
+			((SceneViewWindow *)viewWindow)->getGlobalFlags().cgSmithyStatus = _status;
+			((SceneViewWindow *)viewWindow)->playSynchronousAnimation(5);
+			resetBackgroundBitmap();
+			break;
+		case 3:
+			_status = 5;
+			((SceneViewWindow *)viewWindow)->getGlobalFlags().cgSmithyStatus = _status;
+			((SceneViewWindow *)viewWindow)->playSynchronousAnimation(6);
+			resetBackgroundBitmap();
+			break;
+		}
+
+		if (((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->isItemInInventory(kItemBioChipAI))
+			((SceneViewWindow *)viewWindow)->playAIComment(_staticData.location, AI_COMMENT_TYPE_SPONTANEOUS);
+
+		((GameUIWindow *)viewWindow->getParent())->_bioChipRightWindow->sceneChanged();
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int SmithyBench::draggingItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) {
+	if (itemID == kItemCopperKey)
+		return 2; // Third dragging bitmap
+
+	return 0;
+}
+
+int SmithyBench::droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) {
+	if (pointLocation.x == -1 && pointLocation.y == -1)
+		return 0;
+
+	if (_pan.contains(pointLocation) && itemID == kItemCopperMedallion && _status < 2) {
+		// Did we drop the medallion in the pan?
+		_status += 2;
+		resetBackgroundBitmap();
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().cgSmithyStatus = _status;
+		viewWindow->invalidateWindow();
+
+		if (((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->isItemInInventory(kItemBioChipAI))
+			((SceneViewWindow *)viewWindow)->playAIComment(_staticData.location, AI_COMMENT_TYPE_SPONTANEOUS);
+
+		((GameUIWindow *)viewWindow->getParent())->_bioChipRightWindow->sceneChanged();
+		return SIC_ACCEPT;
+	} else if (_mold.contains(pointLocation) && itemID == kItemCopperKey && _status == 1) {
+		// Did we drop the key?
+		_status = 6;
+		resetBackgroundBitmap();
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().cgSmithyStatus = _status;
+		viewWindow->invalidateWindow();
+
+		if (((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->isItemInInventory(kItemBioChipAI))
+			((SceneViewWindow *)viewWindow)->playAIComment(_staticData.location, AI_COMMENT_TYPE_SPONTANEOUS);
+
+		((GameUIWindow *)viewWindow->getParent())->_bioChipRightWindow->sceneChanged();
+		return SIC_ACCEPT;
+	}
+
+	return SIC_REJECT;
+}
+
+int SmithyBench::specifyCursor(Window *viewWindow, const Common::Point &pointLocation){
+	if (_bellows.contains(pointLocation) && _status < 4)
+		return kCursorFinger;
+
+	if (_mold.contains(pointLocation) && _status < 6 && (!_vm->isDemo() || ((FrameWindow *)_vm->_mainWindow)->_reviewerMode))
+		return kCursorFinger;
+
+	if (_pan.contains(pointLocation) && (_status == 2 || _status == 3))
+		return kCursorOpenHand;
+
+	if (_mold.contains(pointLocation) && _status == 6)
+		return kCursorOpenHand;
+
+	if (_pan.contains(pointLocation) && _status == 5)
+		return kCursorFinger;
+
+	return kCursorArrow;
+}
+
+void SmithyBench::resetBackgroundBitmap() {
+	switch (_status) {
+	case 0: // Nothing in with brick in place
+		_staticData.navFrameIndex = 52;
+		break;
+	case 1: // Nothing in with brick removed
+		_staticData.navFrameIndex = 53;
+		break;
+	case 2: // Unmelted medallion, brick -inplace
+		_staticData.navFrameIndex = 55;
+		break;
+	case 3: // Unmelted medallion, brick moved
+		_staticData.navFrameIndex = 57;
+		break;
+	case 4: // Melted medallion in with brick in place
+		_staticData.navFrameIndex = 56;
+		break;
+	case 5: // Melted medallion in with brick removed
+		_staticData.navFrameIndex = 58;
+		break;
+	case 6: // Poured key with brick removed
+		_staticData.navFrameIndex = 59;
+		break;
+	}
+}
+
 class MainWallCatapultService : public SceneBase {
 public:
 	MainWallCatapultService(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
@@ -601,6 +801,8 @@ SceneBase *SceneViewWindow::constructCastleSceneObject(Window *viewWindow, const
 		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 175, 64, 237, 126, kItemBurnedLetter, 84, offsetof(GlobalFlags, cgBurnedLetterPresent));
 	case 39:
 		return new StorageRoomDoor(_vm, viewWindow, sceneStaticData, priorLocation, 38, 0, 386, 189, 1, 9, 5, 2, 1, 1, offsetof(GlobalFlags, cgStorageRoomVisit), 11, 130, 12, 0);
+	case 42:
+		return new SmithyBench(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 47:
 		return new ClickPlayVideo(_vm, viewWindow, sceneStaticData, priorLocation, 2, kCursorFinger, 0, 75, 258, 123);
 	case 48:
