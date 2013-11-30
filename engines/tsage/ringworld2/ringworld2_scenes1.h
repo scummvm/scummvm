@@ -198,7 +198,7 @@ class Scene1337 : public SceneExt {
 	public:
 		unkObj1337sub1 _handCard[4];
 		unkObj1337sub1 _outpostStation[8];
-		unkObj1337sub1 _arr3[1];
+		unkObj1337sub1 _delayPile[1];
 		unkObj1337sub1 _arr4[1];
 
 		Common::Point _fieldB94;
@@ -292,7 +292,7 @@ public:
 	Action11 _action11;
 	Action12 _action12;
 	Action13 _action13;
-	unkObj1337sub1 _item2;
+	unkObj1337sub1 _animatedCard;
 	unkObj1337sub1 _item3;
 	unkObj1337sub1 _item4;
 	BackgroundSceneObject _background2;
@@ -304,7 +304,7 @@ public:
 	unkObj1337sub1 *_field3EF8;
 	unkObj1337sub1 _item5;
 	unkObj1337sub1 _item6;
-	unkObj1337sub1 _item7;
+	unkObj1337sub1 _discardPile;
 	unkObj1337sub1 _item8;
 	int _field423C;
 	int _field423E;
@@ -317,8 +317,8 @@ public:
 	int _field424C;
 	int _field424E;
 
-	SceneObject _arrObject1[8];
-	SceneObject _arrObject2[8];
+	SceneObject _upperDisplayCard[8];
+	SceneObject _lowerDisplayCard[8];
 
 	Scene1337();
 	virtual void synchronize(Serializer &s);
