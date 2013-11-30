@@ -1077,6 +1077,12 @@ SceneBase *SceneViewWindow::constructCastleSceneObject(Window *viewWindow, const
 		return new KingsChamberGuardEncounter(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 50:
 		return new ClickPlaySoundSynchronous(_vm, viewWindow, sceneStaticData, priorLocation, offsetof(GlobalFlags, cgTSTriedDoorA), 14, kCursorFinger, 72, 0, 372, 189);
+	case 51:
+		return new ClickZoom(_vm, viewWindow, sceneStaticData, priorLocation, 5, 36, 6, 12, kCursorMagnifyingGlass, 0, 0, 432, 189);
+	case 52:
+		return new ClickZoom(_vm, viewWindow, sceneStaticData, priorLocation, 7, 37, 8, 18, kCursorMagnifyingGlass, 0, 90, 140, 189);
+	case 53:
+		return new ClickZoom(_vm, viewWindow, sceneStaticData, priorLocation, 9, 38, 10, 24, kCursorMagnifyingGlass, 130, 120, 432, 189);
 	case 55:
 		// Valid, but not implemented.
 		break;
