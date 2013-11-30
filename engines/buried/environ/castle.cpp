@@ -547,6 +547,53 @@ int MainWallCatapultService::timerCallback(Window *viewWindow) {
 	return SC_TRUE;
 }
 
+class MiddleBaileyFootprintCapture : public SceneBase {
+public:
+	MiddleBaileyFootprintCapture(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int locateAttempted(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	Common::Rect _footprint;
+};
+
+MiddleBaileyFootprintCapture::MiddleBaileyFootprintCapture(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_footprint = Common::Rect(307, 134, 361, 160);
+}
+
+int MiddleBaileyFootprintCapture::locateAttempted(Window *viewWindow, const Common::Point &pointLocation) {
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().bcLocateEnabled == 1) {
+		if (_footprint.contains(pointLocation)) {
+			((SceneViewWindow *)viewWindow)->playSynchronousAnimation(9);
+
+			// Add it to the list
+			if (((SceneViewWindow *)viewWindow)->addNumberToGlobalFlagTable(offsetof(GlobalFlags, evcapBaseID), offsetof(GlobalFlags, evcapNumCaptured), 12, CASTLE_EVIDENCE_FOOTPRINT))
+				((SceneViewWindow *)viewWindow)->displayLiveText(_vm->getString(IDS_MBT_EVIDENCE_ACQUIRED));
+			else
+				((SceneViewWindow *)viewWindow)->displayLiveText(_vm->getString(IDS_MBT_EVIDENCE_ALREADY_ACQUIRED));
+
+			// Turn off capture
+			((GameUIWindow *)viewWindow->getParent())->_bioChipRightWindow->disableEvidenceCapture();
+		}
+
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int MiddleBaileyFootprintCapture::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().bcLocateEnabled == 1) {
+		if (_footprint.contains(pointLocation))
+			return -2;
+
+		return -1;
+	}
+
+	return kCursorArrow;
+}
+
 class StorageRoomDoor : public SceneBase {
 public:
 	StorageRoomDoor(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
@@ -803,6 +850,8 @@ SceneBase *SceneViewWindow::constructCastleSceneObject(Window *viewWindow, const
 		return new StorageRoomDoor(_vm, viewWindow, sceneStaticData, priorLocation, 38, 0, 386, 189, 1, 9, 5, 2, 1, 1, offsetof(GlobalFlags, cgStorageRoomVisit), 11, 130, 12, 0);
 	case 42:
 		return new SmithyBench(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 43:
+		return new ClickChangeScene(_vm, viewWindow, sceneStaticData, priorLocation, 10, 0, 376, 189, kCursorFinger, 1, 6, 5, 1, 0, 1, TRANSITION_VIDEO, 2, -1, -1);
 	case 47:
 		return new ClickPlayVideo(_vm, viewWindow, sceneStaticData, priorLocation, 2, kCursorFinger, 0, 75, 258, 123);
 	case 48:
@@ -820,10 +869,14 @@ SceneBase *SceneViewWindow::constructCastleSceneObject(Window *viewWindow, const
 		return new MainWallCatapultService(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 61:
 		return new SetFlagOnEntry(_vm, viewWindow, sceneStaticData, priorLocation, offsetof(GlobalFlags, cgMBCrossedMoat), 1);
+	case 62:
+		return new MiddleBaileyFootprintCapture(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 63:
 		return new DisplayMessageWithEvidenceWhenEnteringNode(_vm, viewWindow, sceneStaticData, priorLocation, CASTLE_EVIDENCE_FOOTPRINT, IDS_MBT_EVIDENCE_PRESENT);
 	case 64:
 		return new DisplayMessageWithEvidenceWhenEnteringNode(_vm, viewWindow, sceneStaticData, priorLocation, CASTLE_EVIDENCE_SWORD, IDS_MBT_EVIDENCE_PRESENT);
+	case 67:
+		return new ClickChangeSceneSetFlag(_vm, viewWindow, sceneStaticData, priorLocation, 10, 0, 376, 189, kCursorPutDown, 1, 6, 5, 1, 0, 0, TRANSITION_VIDEO, 5, -1, -1, offsetof(GlobalFlags, cgFoundChestPanel));
 	case 70:
 		return new PlaySoundExitingFromScene(_vm, viewWindow, sceneStaticData, priorLocation, 12);
 	case 71:
