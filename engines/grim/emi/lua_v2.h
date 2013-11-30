@@ -49,6 +49,7 @@ protected:
 	DECLARE_LUA_OPCODE(LockBackground);
 	DECLARE_LUA_OPCODE(UnLockBackground);
 	DECLARE_LUA_OPCODE(LockChore);
+	DECLARE_LUA_OPCODE(IsActorChoring);
 	DECLARE_LUA_OPCODE(IsChoreValid);
 	DECLARE_LUA_OPCODE(IsChorePlaying);
 	DECLARE_LUA_OPCODE(StopChore);
