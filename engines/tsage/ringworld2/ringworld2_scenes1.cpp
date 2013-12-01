@@ -5267,14 +5267,14 @@ void Scene1337::subC4A39(unkObj1337sub1 *subObj) {
 void Scene1337::subC4CD2() {
 	if (R2_GLOBALS._v57709 > 0) {
 		subD1917();
-		subD1940(false);
+		subD1940(false); // _v5780C--
 	}
 }
 
 void Scene1337::subC4CEC() {
 	if (R2_GLOBALS._v57709 == 0) {
 		subD18F5();
-		subD1940(true);
+		subD1940(true); // _v5780C++
 	}
 }
 
@@ -5387,7 +5387,7 @@ void Scene1337::subPostInit() {
 	R2_GLOBALS._v57709 = 0;
 	R2_GLOBALS._v5780C = 0;
 	subD183F(1, 0);
-	subD1940(true);
+	subD1940(true); // _v5780C++
 	subD18F5();
 
 //	loadScene(1330);
@@ -6838,15 +6838,13 @@ void Scene1337::subD183F(int arg1, int arg2) {
 }
 
 void Scene1337::setCursorData(int resNum, int rlbNum, int frameNum) {
-	// Change the mouse cursor and set it to the desired frame (if different than 0)
-	if (!frameNum)
-		return;
-
 	_cursorCurRes = resNum;
 	_cursorCurStrip = rlbNum;
 	_cursorCurFrame = frameNum;
 
 	if (!frameNum) {
+		// Should be a hardcoded cursor displaying only a dot. 
+		// FIXME: Use another cursor when possible
 		R2_GLOBALS._events.setCursor(CURSOR_CROSSHAIRS);
 	} else {
 		uint size;
