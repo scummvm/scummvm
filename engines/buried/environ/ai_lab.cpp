@@ -23,6 +23,7 @@
  *
  */
 
+#include "buried/biochip_right.h"
 #include "buried/buried.h"
 #include "buried/gameui.h"
 #include "buried/graphics.h"
@@ -485,6 +486,346 @@ BaseOxygenTimerInSpace::BaseOxygenTimerInSpace(BuriedEngine *vm, Window *viewWin
 	_deathID = 40;
 }
 
+class BaseOxygenTimerCapacitance : public SceneBase {
+public:
+	BaseOxygenTimerCapacitance(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	virtual int postEnterRoom(Window *viewWindow, const Location &priorLocation);
+	virtual int preExitRoom(Window *viewWindow, const Location &priorLocation);
+	virtual int timerCallback(Window *viewWindow);
+
+protected:
+	uint32 _entryStartTime;
+	bool _jumped;
+};
+
+BaseOxygenTimerCapacitance::BaseOxygenTimerCapacitance(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_jumped = false;
+}
+
+int BaseOxygenTimerCapacitance::postEnterRoom(Window *viewWindow, const Location &priorLocation) {
+	_entryStartTime = g_system->getMillis();
+	return SC_TRUE;
+}
+
+int BaseOxygenTimerCapacitance::preExitRoom(Window *viewWindow, const Location &newLocation) {
+	// This does the 25% warning, unlike BaseOxygenTimer
+
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().generalWalkthroughMode == 0 && ((SceneViewWindow *)viewWindow)->getGlobalFlags().aiCRPressurized == 0) {
+		if (newLocation.timeZone == -2) {
+			_jumped = true;
+			return SC_TRUE;
+		}
+
+		int currentValue = ((SceneViewWindow *)viewWindow)->getGlobalFlags().aiOxygenTimer;
+
+		if (_staticData.location.node != newLocation.node) {
+			if (currentValue <= GC_AI_OT_WALK_DECREMENT) {
+				if (newLocation.timeZone != -2)
+					((SceneViewWindow *)viewWindow)->showDeathScene(41);
+				return SC_DEATH;
+			} else {
+				currentValue -= GC_AI_OT_WALK_DECREMENT;
+				((SceneViewWindow *)viewWindow)->getGlobalFlags().aiOxygenTimer = currentValue;
+
+				if (currentValue < GC_AIHW_STARTING_VALUE / 4 || (currentValue % (GC_AIHW_STARTING_VALUE / 10)) == 0) {
+					if (currentValue < GC_AIHW_STARTING_VALUE / 4) {
+						Common::String oxygenMessage = _vm->getString(IDS_AI_OXY_LEVEL_TEXT_TEMPLATE_LOW);
+						assert(!oxygenMessage.empty());
+						oxygenMessage = Common::String::format(oxygenMessage.c_str(), currentValue * 100 / GC_AIHW_STARTING_VALUE);
+						((SceneViewWindow *)viewWindow)->displayLiveText(oxygenMessage);
+					} else {
+						Common::String oxygenMessage = _vm->getString(IDS_AI_OXY_LEVEL_TEXT_TEMPLATE_NORM);
+						assert(!oxygenMessage.empty());
+						oxygenMessage = Common::String::format(oxygenMessage.c_str(), currentValue * 100 / GC_AIHW_STARTING_VALUE);
+						((SceneViewWindow *)viewWindow)->displayLiveText(oxygenMessage);
+					}
+				}
+			}
+		} else {
+			if (currentValue <= GC_AI_OT_TURN_DECREMENT) {
+				if (newLocation.timeZone != -2)
+					((SceneViewWindow *)viewWindow)->showDeathScene(41);
+				return SC_DEATH;
+			} else {
+				currentValue -= GC_AI_OT_TURN_DECREMENT;
+				((SceneViewWindow *)viewWindow)->getGlobalFlags().aiOxygenTimer = currentValue;
+
+				if (currentValue < GC_AIHW_STARTING_VALUE / 4 || (currentValue % (GC_AIHW_STARTING_VALUE / 10)) == 0) {
+					if (currentValue < GC_AIHW_STARTING_VALUE / 4) {
+						Common::String oxygenMessage = _vm->getString(IDS_AI_OXY_LEVEL_TEXT_TEMPLATE_LOW);
+						assert(!oxygenMessage.empty());
+						oxygenMessage = Common::String::format(oxygenMessage.c_str(), currentValue * 100 / GC_AIHW_STARTING_VALUE);
+						((SceneViewWindow *)viewWindow)->displayLiveText(oxygenMessage);
+					} else {
+						Common::String oxygenMessage = _vm->getString(IDS_AI_OXY_LEVEL_TEXT_TEMPLATE_NORM);
+						assert(!oxygenMessage.empty());
+						oxygenMessage = Common::String::format(oxygenMessage.c_str(), currentValue * 100 / GC_AIHW_STARTING_VALUE);
+						((SceneViewWindow *)viewWindow)->displayLiveText(oxygenMessage);
+					}
+				}
+			}
+		}
+	}
+
+	return SC_TRUE;
+}
+
+int BaseOxygenTimerCapacitance::timerCallback(Window *viewWindow) {
+	// This does the 25% warning, unlike BaseOxygenTimer
+
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().generalWalkthroughMode == 0 && ((SceneViewWindow *)viewWindow)->getGlobalFlags().aiCRPressurized == 0) {
+		if (_jumped)
+			return SC_TRUE;
+
+		if ((g_system->getMillis() - _entryStartTime) >= GC_AI_OT_WAIT_TIME_PERIOD) {
+			int currentValue = ((SceneViewWindow *)viewWindow)->getGlobalFlags().aiOxygenTimer;
+
+			if (currentValue <= GC_AI_OT_WAIT_DECREMENT) {
+				((SceneViewWindow *)viewWindow)->showDeathScene(41);
+				return SC_DEATH;
+			} else {
+				currentValue -= GC_AI_OT_WAIT_DECREMENT;
+				((SceneViewWindow *)viewWindow)->getGlobalFlags().aiOxygenTimer = currentValue;
+
+				if (currentValue < GC_AIHW_STARTING_VALUE / 4 || (currentValue % (GC_AIHW_STARTING_VALUE / 10)) == 0) {
+					if (currentValue < GC_AIHW_STARTING_VALUE / 4) {
+						Common::String oxygenMessage = _vm->getString(IDS_AI_OXY_LEVEL_TEXT_TEMPLATE_LOW);
+						assert(!oxygenMessage.empty());
+						oxygenMessage = Common::String::format(oxygenMessage.c_str(), currentValue * 100 / GC_AIHW_STARTING_VALUE);
+						((SceneViewWindow *)viewWindow)->displayLiveText(oxygenMessage);
+					} else {
+						Common::String oxygenMessage = _vm->getString(IDS_AI_OXY_LEVEL_TEXT_TEMPLATE_NORM);
+						assert(!oxygenMessage.empty());
+						oxygenMessage = Common::String::format(oxygenMessage.c_str(), currentValue * 100 / GC_AIHW_STARTING_VALUE);
+						((SceneViewWindow *)viewWindow)->displayLiveText(oxygenMessage);
+					}
+				}
+			}
+
+			_entryStartTime = g_system->getMillis();
+		}
+	}
+
+	return SC_TRUE;
+}
+
+class CapacitanceToHabitatDoorClosed : public BaseOxygenTimerCapacitance {
+public:
+	CapacitanceToHabitatDoorClosed(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int mouseDown(Window *viewWindow, const Common::Point &pointLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int draggingItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
+	int droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
+
+private:
+	Common::Rect _metalBar;
+	Common::Rect _door;
+};
+
+CapacitanceToHabitatDoorClosed::CapacitanceToHabitatDoorClosed(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		BaseOxygenTimerCapacitance(vm, viewWindow, sceneStaticData, priorLocation) {
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().aiCRGrabbedMetalBar == 1)
+		_staticData.navFrameIndex = 7;
+	else
+		_staticData.navFrameIndex = 55;
+
+	_metalBar = Common::Rect(184, 146, 264, 184);
+	_door = Common::Rect(132, 14, 312, 180);
+}
+
+int CapacitanceToHabitatDoorClosed::mouseDown(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_metalBar.contains(pointLocation) && ((SceneViewWindow *)viewWindow)->getGlobalFlags().aiCRGrabbedMetalBar == 0) {
+		_staticData.navFrameIndex = 7;
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().aiCRGrabbedMetalBar = 1;
+
+		Common::Point ptInventoryWindow = viewWindow->convertPointToWindow(pointLocation, ((GameUIWindow *)viewWindow->getParent())->_inventoryWindow);
+		((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->startDraggingNewItem(kItemMetalBar, ptInventoryWindow);
+
+		((GameUIWindow *)viewWindow->getParent())->_bioChipRightWindow->sceneChanged();
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int CapacitanceToHabitatDoorClosed::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_door.contains(pointLocation)) {
+		if (((SceneViewWindow *)viewWindow)->getGlobalFlags().aiCRGrabbedMetalBar == 0) {
+			_staticData.navFrameIndex = 96;
+			viewWindow->invalidateWindow(false);
+
+			// Wait for a second (why?)
+			uint32 startTime = g_system->getMillis();
+
+			while (!_vm->shouldQuit() && g_system->getMillis() < startTime + 1000) {
+				_vm->yield();
+				_vm->_sound->timerCallback();
+			}
+
+			DestinationScene destData;
+			destData.destinationScene = _staticData.location;
+			destData.destinationScene.depth = 1;
+			destData.transitionType = TRANSITION_VIDEO;
+			destData.transitionData = 1;
+			destData.transitionStartFrame = -1;
+			destData.transitionLength = -1;
+
+			// Move to the final destination
+			((SceneViewWindow *)viewWindow)->moveToDestination(destData);
+			return SC_TRUE;
+		} else {
+			if (((SceneViewWindow *)viewWindow)->getGlobalFlags().aiCRPressurized == 0) {
+				_staticData.navFrameIndex = 97;
+				viewWindow->invalidateWindow(false);
+
+				// Wait for a second (why?)
+				uint32 startTime = g_system->getMillis();
+
+				while (!_vm->shouldQuit() && g_system->getMillis() < startTime + 1000) {
+					_vm->yield();
+					_vm->_sound->timerCallback();
+				}
+
+				DestinationScene destData;
+				destData.destinationScene = _staticData.location;
+				destData.destinationScene.depth = 1;
+				destData.transitionType = TRANSITION_VIDEO;
+				destData.transitionData = 2;
+				destData.transitionStartFrame = -1;
+				destData.transitionLength = -1;
+
+				// Move to the final destination
+				((SceneViewWindow *)viewWindow)->moveToDestination(destData);
+				return SC_TRUE;
+			} else {
+				int oldFrame = _staticData.navFrameIndex;
+				_staticData.navFrameIndex = 121;
+				viewWindow->invalidateWindow(false);
+
+				_vm->_sound->playSynchronousSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment - 1, 12));
+				_vm->_sound->playSynchronousSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment - 1, 13));
+
+				_staticData.navFrameIndex = oldFrame;
+				viewWindow->invalidateWindow(false);
+				return SC_TRUE;
+			}
+		}
+	}
+
+	return SC_FALSE;
+}
+
+int CapacitanceToHabitatDoorClosed::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_metalBar.contains(pointLocation) && ((SceneViewWindow *)viewWindow)->getGlobalFlags().aiCRGrabbedMetalBar == 0)
+		return kCursorOpenHand;
+
+	if (_door.contains(pointLocation))
+		return kCursorFinger;
+
+	return kCursorArrow;
+}
+
+int CapacitanceToHabitatDoorClosed::draggingItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) {
+	if (itemID == kItemMetalBar && ((SceneViewWindow *)viewWindow)->getGlobalFlags().aiCRGrabbedMetalBar == 1)
+		return 1;
+
+	return 0;
+}
+
+int CapacitanceToHabitatDoorClosed::droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) {
+	if (pointLocation.x == -1 && pointLocation.y == -1)
+		return 0; // ???
+
+	return SIC_REJECT;
+}
+
+class CapacitanceToHabitatDoorOpen : public BaseOxygenTimerCapacitance {
+public:
+	CapacitanceToHabitatDoorOpen(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int postExitRoom(Window *viewWindow, const Location &newLocation);
+	int mouseDown(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int draggingItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
+	int droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
+
+private:
+	Common::Rect _metalBar;
+};
+
+CapacitanceToHabitatDoorOpen::CapacitanceToHabitatDoorOpen(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		BaseOxygenTimerCapacitance(vm, viewWindow, sceneStaticData, priorLocation) {
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().aiCRGrabbedMetalBar == 1) {
+		_staticData.navFrameIndex = 101;
+		_staticData.destForward.transitionStartFrame = 0;
+		_staticData.destForward.transitionLength = 28;
+	} else {
+		_staticData.navFrameIndex = 100;
+		_staticData.destForward.transitionStartFrame = 53;
+		_staticData.destForward.transitionLength = 28;
+	}
+
+	_metalBar = Common::Rect(184, 146, 264, 184);
+}
+
+int CapacitanceToHabitatDoorOpen::postExitRoom(Window *viewWindow, const Location &newLocation) {
+	// Play the door closing sound
+	if (_staticData.location.timeZone == newLocation.timeZone)
+		_vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 14), 128, false, true);
+
+	return SC_TRUE;
+}
+
+int CapacitanceToHabitatDoorOpen::mouseDown(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_metalBar.contains(pointLocation) && ((SceneViewWindow *)viewWindow)->getGlobalFlags().aiCRGrabbedMetalBar == 0) {
+		_staticData.navFrameIndex = 101;
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().aiCRGrabbedMetalBar = 1;
+		_staticData.destForward.transitionStartFrame = 0;
+		_staticData.destForward.transitionLength = 28;
+
+		Common::Point ptInventoryWindow = viewWindow->convertPointToWindow(pointLocation, ((GameUIWindow *)viewWindow->getParent())->_inventoryWindow);
+		((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->startDraggingNewItem(kItemMetalBar, ptInventoryWindow);
+
+		((GameUIWindow *)viewWindow->getParent())->_bioChipRightWindow->sceneChanged();
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int CapacitanceToHabitatDoorOpen::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_metalBar.contains(pointLocation) && ((SceneViewWindow *)viewWindow)->getGlobalFlags().aiCRGrabbedMetalBar == 0)
+		return kCursorOpenHand;
+
+	return kCursorArrow;
+}
+
+int CapacitanceToHabitatDoorOpen::draggingItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) {
+	if (itemID == kItemMetalBar && ((SceneViewWindow *)viewWindow)->getGlobalFlags().aiCRGrabbedMetalBar == 1)
+		return 1;
+
+	return 0;
+}
+
+int CapacitanceToHabitatDoorOpen::droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) {
+	if (pointLocation.x == -1 && pointLocation.y == -1)
+		return 0; // ???
+
+	if (itemID == kItemMetalBar && ((SceneViewWindow *)viewWindow)->getGlobalFlags().aiCRGrabbedMetalBar == 1) {
+		_staticData.navFrameIndex = 100;
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().aiCRGrabbedMetalBar = 0;
+		viewWindow->invalidateWindow(false);
+		_staticData.destForward.transitionStartFrame = 53;
+		_staticData.destForward.transitionLength = 28;
+
+		((GameUIWindow *)viewWindow->getParent())->_bioChipRightWindow->sceneChanged();
+		return SIC_ACCEPT;
+	}
+
+	return SIC_REJECT;
+}
+
 bool SceneViewWindow::initializeAILabTimeZoneAndEnvironment(Window *viewWindow, int environment) {
 	if (environment == -1) {
 		GlobalFlags &flags = ((SceneViewWindow *)viewWindow)->getGlobalFlags();
@@ -546,6 +887,10 @@ SceneBase *SceneViewWindow::constructAILabSceneObject(Window *viewWindow, const 
 		return new BaseOxygenTimer(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 12:
 		return new BaseOxygenTimerInSpace(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 21:
+		return new CapacitanceToHabitatDoorClosed(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 22:
+		return new CapacitanceToHabitatDoorOpen(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 26:
 		return new PlaySoundExitingFromScene(_vm, viewWindow, sceneStaticData, priorLocation, 14);
 	case 32:
