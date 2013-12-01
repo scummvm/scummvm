@@ -54,8 +54,9 @@ int EMIAnimComponent::update(uint time) {
 }
 
 void EMIAnimComponent::setKey(int f) {
-	if (f == 1)
-		reset();
+	// Not sure what to do here. We had it so that if f == 1 it would reset the
+	// animation, but that caused issues with idle animations resetting too early.
+	// It seems that f is either 1 or 3, but neither seem to be relivant right now
 }
 
 void EMIAnimComponent::reset() {
