@@ -206,6 +206,22 @@ int PlaySoundExitingFromSceneDeux::postExitRoom(Window *viewWindow, const Locati
 	return SC_TRUE;
 }
 
+PlaySoundEnteringScene::PlaySoundEnteringScene(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+		int soundFileNameID, int flagOffset) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_soundFileNameID = soundFileNameID;
+	_flagOffset = flagOffset;
+}
+
+int PlaySoundEnteringScene::postEnterRoom(Window *viewWindow, const Location &priorLocation) {
+	if (_flagOffset >= 0 && ((SceneViewWindow *)viewWindow)->getGlobalFlagByte(_flagOffset) == 0) {
+		_vm->_sound->playSynchronousSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, _soundFileNameID));
+		((SceneViewWindow *)viewWindow)->setGlobalFlagByte(_flagOffset, 1);
+	}
+
+	return SC_TRUE;
+}
+
 ClickChangeScene::ClickChangeScene(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
 		int left, int top, int right, int bottom, int cursorID,
 		int timeZone, int environment, int node, int facing, int orientation, int depth,
@@ -434,6 +450,13 @@ int OneShotEntryVideoWarning::postEnterRoom(Window *viewWindow, const Location &
 	}
 
 	return SC_TRUE;
+}
+
+DisableForwardMovement::DisableForwardMovement(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+		int flagOffset, int flagValue) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	if (flagOffset >= 0 && ((SceneViewWindow *)viewWindow)->getGlobalFlagByte(flagOffset) == flagValue)
+		_staticData.destForward.destinationScene = Location(-1, -1, -1, -1, -1, -1);
 }
 
 CycleEntryVideoWarning::CycleEntryVideoWarning(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,

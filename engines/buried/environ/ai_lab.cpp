@@ -1305,6 +1305,127 @@ int CapacitanceDockingBayDoor::specifyCursor(Window *viewWindow, const Common::P
 	return kCursorArrow;
 }
 
+class SpaceDoor : public SceneBase {
+public:
+	SpaceDoor(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+			int left = -1, int top = -1, int right = -1, int bottom = -1, int openFrame = -1, int closedFrame = -1, int depth = -1,
+			int transitionType = -1, int transitionData = -1, int transitionStartFrame = -1, int transitionLength = -1,
+			int doorFlag = -1, int doorFlagValue = 0);
+	int mouseDown(Window *viewWindow, const Common::Point &pointLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	bool _clicked;
+	Common::Rect _clickable;
+	DestinationScene _destData;
+	int _openFrame;
+	int _closedFrame;
+	int _doorFlag;
+	int _doorFlagValue;
+};
+
+SpaceDoor::SpaceDoor(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+		int left, int top, int right, int bottom, int openFrame, int closedFrame, int depth,
+		int transitionType, int transitionData, int transitionStartFrame, int transitionLength,
+		int doorFlag, int doorFlagValue) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_clicked = false;
+	_openFrame = openFrame;
+	_closedFrame = closedFrame;
+	_doorFlag = doorFlag;
+	_doorFlagValue = doorFlagValue;
+	_clickable = Common::Rect(left, top, right, bottom);
+	_destData.destinationScene = _staticData.location;
+	_destData.destinationScene.depth = depth;
+	_destData.transitionType = transitionType;
+	_destData.transitionData = transitionData;
+	_destData.transitionStartFrame = transitionStartFrame;
+	_destData.transitionLength = transitionLength;
+}
+
+int SpaceDoor::mouseDown(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_clickable.contains(pointLocation)) {
+		_clicked = true;
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int SpaceDoor::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_clicked) {
+		// If we are facing the scanning room door and we have Arthur, automatically recall
+		// to the future apartment
+		if (_staticData.location.timeZone == 6 && _staticData.location.environment == 3 &&
+				_staticData.location.node == 9 && _staticData.location.facing == 0 &&
+				_staticData.location.orientation == 0 && _staticData.location.depth == 0 &&
+				((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->isItemInInventory(kItemBioChipAI)) {
+			((SceneViewWindow *)viewWindow)->timeSuitJump(4);
+			return SC_TRUE;
+		}
+
+		if (_doorFlag < 0 || ((SceneViewWindow *)viewWindow)->getGlobalFlagByte(_doorFlag) == _doorFlagValue) {
+			// Change the still frame to the new one
+			if (_openFrame >= 0) {
+				_staticData.navFrameIndex = _openFrame;
+				viewWindow->invalidateWindow(false);
+				_vm->_sound->playSynchronousSoundEffect("BITDATA/AILAB/AI_LOCK.BTA");
+			}
+
+			((SceneViewWindow *)viewWindow)->moveToDestination(_destData);
+		} else {
+			// Display the closed frame
+			if (_closedFrame >= 0) {
+				_staticData.navFrameIndex = _closedFrame;
+				viewWindow->invalidateWindow(false);
+			}
+		}
+
+		_clicked = false;
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int SpaceDoor::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_clickable.contains(pointLocation))
+		return kCursorFinger;
+
+	return kCursorArrow;
+}
+
+class DockingBayPlaySoundEntering : public SceneBase {
+public:
+	DockingBayPlaySoundEntering(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+			int soundFileNameID = -1, int flagOffset = -1);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
+
+private:
+	int _soundFileNameID;
+	int _flagOffset;
+};
+
+DockingBayPlaySoundEntering::DockingBayPlaySoundEntering(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+		int soundFileNameID, int flagOffset) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_soundFileNameID = soundFileNameID;
+	_flagOffset = flagOffset;
+
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().generalWalkthroughMode == 1)
+		_staticData.destForward.destinationScene = Location(-1, -1, -1, -1, -1, -1);
+}
+
+int DockingBayPlaySoundEntering::postEnterRoom(Window *viewWindow, const Location &priorLocation) {
+	if (_flagOffset >= 0 && ((SceneViewWindow *)viewWindow)->getGlobalFlagByte(_flagOffset) == 0) {
+		_vm->_sound->playSynchronousSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, _soundFileNameID));
+		((SceneViewWindow *)viewWindow)->setGlobalFlagByte(_flagOffset, 1);
+	}
+
+	return SC_TRUE;
+}
+
 bool SceneViewWindow::initializeAILabTimeZoneAndEnvironment(Window *viewWindow, int environment) {
 	if (environment == -1) {
 		GlobalFlags &flags = ((SceneViewWindow *)viewWindow)->getGlobalFlags();
@@ -1384,8 +1505,24 @@ SceneBase *SceneViewWindow::constructAILabSceneObject(Window *viewWindow, const 
 		return new PlayArthurOffsetCapacitance(_vm, viewWindow, sceneStaticData, priorLocation, 127, offsetof(GlobalFlags, aiCRStingerID), offsetof(GlobalFlags, aiCRStingerChannelID), 4, 11, 1, offsetof(GlobalFlags, aiCRGrabbedMetalBar), 73, 320, 40);
 	case 28:
 		return new PlayArthurOffsetCapacitance(_vm, viewWindow, sceneStaticData, priorLocation, 127, offsetof(GlobalFlags, aiCRStingerID), offsetof(GlobalFlags, aiCRStingerChannelID), 4, 11, 1, offsetof(GlobalFlags, aiCRGrabbedMetalBar), 66, 241, 25);
+	case 30:
+		return new PlaySoundEnteringScene(_vm, viewWindow, sceneStaticData, priorLocation, 5, offsetof(GlobalFlags, aiDBPlayedFirstArthur));
+	case 31:
+		return new SpaceDoor(_vm, viewWindow, sceneStaticData, priorLocation, 174, 70, 256, 152, 166, -1, 1, TRANSITION_VIDEO, 0, -1, -1, -1, 0);
 	case 32:
 		return new PlaySoundExitingFromScene(_vm, viewWindow, sceneStaticData, priorLocation, 14);
+	case 33:
+		return new SpaceDoor(_vm, viewWindow, sceneStaticData, priorLocation, 185, 42, 253, 110, 167, -1, 1, TRANSITION_VIDEO, 1, -1, -1, -1, 0);
+	case 35:
+		return new DockingBayPlaySoundEntering(_vm, viewWindow, sceneStaticData, priorLocation, 4, offsetof(GlobalFlags, aiDBPlayedMomComment));
+	case 36:
+		return new PlaySoundEnteringScene(_vm, viewWindow, sceneStaticData, priorLocation, 6, offsetof(GlobalFlags, aiDBPlayedSecondArthur));
+	case 37:
+		return new PlaySoundEnteringScene(_vm, viewWindow, sceneStaticData, priorLocation, 7, offsetof(GlobalFlags, aiDBPlayedThirdArthur));
+	case 38:
+		return new PlaySoundEnteringScene(_vm, viewWindow, sceneStaticData, priorLocation, 8, offsetof(GlobalFlags, aiDBPlayedFourthArthur));
+	case 39:
+		return new DisableForwardMovement(_vm, viewWindow, sceneStaticData, priorLocation, offsetof(GlobalFlags, generalWalkthroughMode), 1);
 	case 52:
 		return new SpaceDoorTimer(_vm, viewWindow, sceneStaticData, priorLocation, 164, 40, 276, 140, -1, -1, 1, TRANSITION_VIDEO, 0, -1, -1, -1, -1);
 	case 53:
