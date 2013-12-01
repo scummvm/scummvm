@@ -36,6 +36,7 @@
 #include "buried/environ/scene_common.h"
 
 #include "common/system.h"
+#include "graphics/font.h"
 
 namespace Buried {
 
@@ -826,6 +827,484 @@ int CapacitanceToHabitatDoorOpen::droppedItem(Window *viewWindow, int itemID, co
 	return SIC_REJECT;
 }
 
+class CapacitancePanelInterface : public BaseOxygenTimerCapacitance {
+public:
+	CapacitancePanelInterface(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	~CapacitancePanelInterface();
+	void preDestructor();
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int gdiPaint(Window *viewWindow);
+
+private:
+	Common::Rect _stationRegions[15];
+	int _currentSelection;
+	int _currentTextIndex;
+	int _lineHeight;
+	Graphics::Font *_textFont;
+	Common::Rect _leftTextRegion;
+	Common::Rect _rightTextRegion;
+};
+
+CapacitancePanelInterface::CapacitancePanelInterface(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		BaseOxygenTimerCapacitance(vm, viewWindow, sceneStaticData, priorLocation) {
+	_currentSelection = -1;
+	_currentTextIndex = -1;
+	_stationRegions[0] = Common::Rect(265, 110, 286, 135);
+	_stationRegions[1] = Common::Rect(102, 45, 180, 134);
+	_stationRegions[2] = Common::Rect(195, 106, 216, 133);
+	_stationRegions[3] = Common::Rect(268, 72, 283, 87);
+	_stationRegions[4] = Common::Rect(221, 46, 236, 74);
+	_stationRegions[5] = Common::Rect(290, 72, 317, 108);
+	_stationRegions[6] = Common::Rect(264, 55, 288, 67);
+	_stationRegions[7] = Common::Rect(194, 74, 266, 84);
+	_stationRegions[8] = Common::Rect(198, 62, 214, 74);
+	_stationRegions[9] = Common::Rect(221, 106, 236, 134);
+	_stationRegions[10] = Common::Rect(245, 46, 260, 74);
+	_stationRegions[11] = Common::Rect(245, 106, 260, 134);
+	_stationRegions[12] = Common::Rect(266, 92, 290, 109);
+	_stationRegions[13] = Common::Rect(194, 96, 264, 106);
+	_stationRegions[14] = Common::Rect(180, 85, 194, 94);
+	_leftTextRegion = Common::Rect(83, 144, 211, 170);
+	_rightTextRegion = Common::Rect(228, 144, 356, 170);
+	_lineHeight = _vm->getLanguage() == Common::JA_JPN ? 10 : 13;
+	_textFont = _vm->_gfx->createFont(_lineHeight);
+}
+
+CapacitancePanelInterface::~CapacitancePanelInterface() {
+	preDestructor();
+}
+
+void CapacitancePanelInterface::preDestructor() {
+	delete _textFont;
+	_textFont = 0;
+}
+
+int CapacitancePanelInterface::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	byte &oxygenReserves = ((SceneViewWindow *)viewWindow)->getGlobalFlags().aiOxygenReserves;
+
+	if (_currentSelection == 2) {
+		if (((SceneViewWindow *)viewWindow)->getGlobalFlags().aiMRPressurized == 0 && (_stationRegions[_currentSelection].contains(pointLocation) || _rightTextRegion.contains(pointLocation))) {
+			if (oxygenReserves > 0) {
+				// Decrement reserves flag
+				oxygenReserves--;
+
+				// Set the machine room to pressurized
+				((SceneViewWindow *)viewWindow)->getGlobalFlags().aiMRPressurized = 1;
+
+				// Display pressurizing message
+				viewWindow->invalidateWindow(false);
+				_currentTextIndex = IDS_AI_PRES_PANEL_PRES_ENV_TEXT;
+
+				// Play sound file
+				_vm->_sound->playSynchronousSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 13), 128);
+
+				// Display pressurized text
+				viewWindow->invalidateWindow(false);
+				_currentTextIndex = IDS_AI_PRES_PANEL_ENV_PRES_TEXT;
+				return SC_TRUE;
+			} else {
+				// Not enough oxygen reserves
+				viewWindow->invalidateWindow(false);
+				_currentTextIndex = IDS_AI_PRES_PANEL_INSUF_OXYGEN;
+				return SC_TRUE;
+			}
+		}
+	} else if (_currentSelection == 3) {
+		if (((SceneViewWindow *)viewWindow)->getGlobalFlags().aiCRPressurized == 0 && (_stationRegions[_currentSelection].contains(pointLocation) || _rightTextRegion.contains(pointLocation))) {
+			if (oxygenReserves > 0) {
+				if (((SceneViewWindow *)viewWindow)->getGlobalFlags().aiCRGrabbedMetalBar == 0) {
+					if (((SceneViewWindow *)viewWindow)->getGlobalFlags().aiCRPressurizedAttempted == 0) {
+						// Display pressurizing message
+						viewWindow->invalidateWindow(false);
+						_currentTextIndex = IDS_AI_PRES_PANEL_PRES_ENV_TEXT;
+
+						// Play sound file
+						_vm->_sound->playSynchronousSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 13), 128);
+
+						// Display bulkhead message
+						viewWindow->invalidateWindow(false);
+						_currentTextIndex = IDS_AI_PRES_PANEL_ENV_DEPRES_BREACH;
+
+						// Play Mom audio
+						// (Is this an Alien reference?)
+						_vm->_sound->playSynchronousSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 11));
+
+						// Update attempt flag
+						((SceneViewWindow *)viewWindow)->getGlobalFlags().aiCRPressurizedAttempted = 1;
+					}
+				} else {
+					// Decrement reserves flag
+					oxygenReserves--;
+
+					// Set the capacitance array to pressurized
+					((SceneViewWindow *)viewWindow)->getGlobalFlags().aiCRPressurized = 1;
+
+					// Display pressurizing message
+					viewWindow->invalidateWindow(false);
+					_currentTextIndex = IDS_AI_PRES_PANEL_PRES_ENV_TEXT;
+
+					// Play sound file
+					_vm->_sound->playSynchronousSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 13), 128);
+
+					// Display pressurized text
+					viewWindow->invalidateWindow(false);
+					_currentTextIndex = IDS_AI_PRES_PANEL_ENV_PRES_TEXT;
+
+					// Display oxygen text in the message window
+					((SceneViewWindow *)viewWindow)->displayLiveText(_vm->getString(IDS_AI_ENTERING_PRES_ENV_TEXT));
+					((SceneViewWindow *)viewWindow)->getGlobalFlags().aiOxygenTimer = GC_AIHW_STARTING_VALUE;
+				}
+
+				return SC_TRUE;
+			} else {
+				// Not enough oxygen reserves
+				viewWindow->invalidateWindow(false);
+				_currentTextIndex = IDS_AI_PRES_PANEL_INSUF_OXYGEN;
+				return SC_TRUE;
+			}
+		}
+	}
+
+	// Check against the hotspots
+	for (int i = 0; i < 15; i++) {
+		if (_stationRegions[i].contains(pointLocation) && _currentSelection != i) {
+			switch (i) {
+			case 0:
+				_staticData.navFrameIndex = 107;
+				viewWindow->invalidateWindow(false);
+				_currentSelection = i;
+				_currentTextIndex = IDS_AI_PRES_PANEL_ENV_PRES_TEXT;
+				return SC_TRUE;
+			case 1:
+				_staticData.navFrameIndex = 108;
+				viewWindow->invalidateWindow(false);
+				_currentSelection = i;
+				_currentTextIndex = IDS_AI_PRES_PANEL_ZERO_PRES_ENV;
+				return SC_TRUE;
+			case 2:
+				_staticData.navFrameIndex = 109;
+				viewWindow->invalidateWindow(false);
+				_currentSelection = i;
+
+				if (((SceneViewWindow *)viewWindow)->getGlobalFlags().aiMRPressurized == 1)
+					_currentTextIndex = IDS_AI_PRES_PANEL_ENV_PRES_TEXT;
+				else
+					_currentTextIndex = IDS_AI_PRES_PANEL_ENV_DEPRES;
+				return SC_TRUE;
+			case 3:
+				_staticData.navFrameIndex = 110;
+				viewWindow->invalidateWindow(false);
+				_currentSelection = i;
+
+				if (((SceneViewWindow *)viewWindow)->getGlobalFlags().aiCRPressurized == 1)
+					_currentTextIndex = IDS_AI_PRES_PANEL_ENV_PRES_TEXT;
+				else
+					_currentTextIndex = IDS_AI_PRES_PANEL_ENV_DEPRES;
+				return SC_TRUE;
+			case 4:
+				_staticData.navFrameIndex = 111;
+				viewWindow->invalidateWindow(false);
+				_currentSelection = i;
+				_currentTextIndex = IDS_AI_PRES_PANEL_ENV_DEPRES_BREACH;
+				return SC_TRUE;
+			case 5:
+				_staticData.navFrameIndex = 112;
+				viewWindow->invalidateWindow(false);
+				_currentSelection = i;
+				_currentTextIndex = IDS_AI_PRES_PANEL_ENV_PRES_TEXT;
+				return SC_TRUE;
+			case 6:
+				_staticData.navFrameIndex = 113;
+				viewWindow->invalidateWindow(false);
+				_currentSelection = i;
+				_currentTextIndex = IDS_AI_PRES_PANEL_ENV_DEPRES_BREACH;
+				return SC_TRUE;
+			case 7:
+				_staticData.navFrameIndex = 114;
+				viewWindow->invalidateWindow(false);
+				_currentSelection = i;
+				_currentTextIndex = IDS_AI_PRES_PANEL_ENV_DEPRES_BREACH;
+				return SC_TRUE;
+			case 8:
+				_staticData.navFrameIndex = 115;
+				viewWindow->invalidateWindow(false);
+				_currentSelection = i;
+				_currentTextIndex = IDS_AI_PRES_PANEL_ENV_DEPRES_BREACH;
+				return SC_TRUE;
+			case 9:
+				_staticData.navFrameIndex = 116;
+				viewWindow->invalidateWindow(false);
+				_currentSelection = i;
+				_currentTextIndex = IDS_AI_PRES_PANEL_ENV_DEPRES_BREACH;
+				return SC_TRUE;
+			case 10:
+				_staticData.navFrameIndex = 117;
+				viewWindow->invalidateWindow(false);
+				_currentSelection = i;
+				_currentTextIndex = IDS_AI_PRES_PANEL_ENV_DEPRES_BREACH;
+				return SC_TRUE;
+			case 11:
+				_staticData.navFrameIndex = 118;
+				viewWindow->invalidateWindow(false);
+				_currentSelection = i;
+				_currentTextIndex = IDS_AI_PRES_PANEL_ENV_DEPRES_BREACH;
+				return SC_TRUE;
+			case 12:
+				_staticData.navFrameIndex = 119;
+				viewWindow->invalidateWindow(false);
+				_currentSelection = i;
+				_currentTextIndex = IDS_AI_PRES_PANEL_ENV_PRES_TEXT;
+				return SC_TRUE;
+			case 13:
+			case 14:
+				_staticData.navFrameIndex = 120;
+				viewWindow->invalidateWindow(false);
+				_currentSelection = i;
+				_currentTextIndex = IDS_AI_PRES_PANEL_ENV_DEPRES_BREACH;
+				return SC_TRUE;
+			}
+		}
+	}
+
+	// By default, return to depth zero (zoomed out)
+	DestinationScene destData;
+	destData.destinationScene = _staticData.location;
+	destData.destinationScene.depth = 0;
+	destData.transitionType = TRANSITION_NONE;
+	destData.transitionData = -1;
+	destData.transitionStartFrame = -1;
+	destData.transitionLength = -1;
+	((SceneViewWindow *)viewWindow)->moveToDestination(destData);
+	return SC_TRUE;
+}
+
+int CapacitancePanelInterface::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	for (int i = 0; i < 15; i++)
+		if (_stationRegions[i].contains(pointLocation))
+			return kCursorFinger;
+
+	return kCursorPutDown;
+}
+
+int CapacitancePanelInterface::gdiPaint(Window *viewWindow) {
+	if (_currentSelection >= 0) {
+		uint32 color = _vm->_gfx->getColor(208, 144, 24);
+
+		Common::String location = _vm->getString(IDS_AI_PRES_PANEL_DESC_BASE + _currentSelection);
+		if (_currentSelection == 3)
+			location += _vm->getString(IDS_AI_PRES_PANEL_DESC_BASE + 19);
+
+		Common::Rect absoluteRect = viewWindow->getAbsoluteRect();
+		Common::Rect rect(_leftTextRegion);
+		rect.translate(absoluteRect.left, absoluteRect.top);
+		_vm->_gfx->renderText(_vm->_gfx->getScreen(), _textFont, location, rect.left, rect.top, rect.width(), rect.height(), color, _lineHeight, kTextAlignCenter, true);
+
+		if (_currentTextIndex >= 0) {
+			rect = _rightTextRegion;
+			rect.translate(absoluteRect.left, absoluteRect.top);
+			_vm->_gfx->renderText(_vm->_gfx->getScreen(), _textFont, _vm->getString(_currentTextIndex), rect.left, rect.top, rect.width(), rect.height(), color, _lineHeight, kTextAlignCenter, true);
+		}
+	}
+
+	return SC_FALSE;
+}
+
+class PlayArthurOffsetCapacitance : public BaseOxygenTimerCapacitance {
+public:
+	PlayArthurOffsetCapacitance(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+			int stingerVolume = 127, int lastStingerFlagOffset = -1, int effectIDFlagOffset = -1, int firstStingerFileID = -1,
+			int lastStingerFileID = -1, int stingerDelay = 1, int flagOffset = -1, int newStill = -1, int newNavStart = -1, int newNavLength = -1);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
+
+private:
+	int _stingerVolume;
+	int _lastStingerFlagOffset;
+	int _effectIDFlagOffset;
+	int _firstStingerFileID;
+	int _lastStingerFileID;
+	int _stingerDelay;
+};
+
+PlayArthurOffsetCapacitance::PlayArthurOffsetCapacitance(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+		int stingerVolume, int lastStingerFlagOffset, int effectIDFlagOffset, int firstStingerFileID,
+		int lastStingerFileID, int stingerDelay, int flagOffset, int newStill, int newNavStart, int newNavLength) :
+		BaseOxygenTimerCapacitance(vm, viewWindow, sceneStaticData, priorLocation) {
+	_stingerVolume = stingerVolume;
+	_lastStingerFlagOffset = lastStingerFlagOffset;
+	_effectIDFlagOffset = effectIDFlagOffset;
+	_firstStingerFileID = firstStingerFileID;
+	_lastStingerFileID = lastStingerFileID;
+	_stingerDelay = stingerDelay;
+
+	if (flagOffset >= 0 && ((SceneViewWindow *)viewWindow)->getGlobalFlagByte(flagOffset) == 0) {
+		// This is completely wrong.
+		//if (newStill >= 0)
+		//	_staticData.navFrameIndex;
+		if (newNavStart >= 0)
+			_staticData.destForward.transitionStartFrame = newNavStart;
+		if (newNavLength >= 0)
+			_staticData.destForward.transitionLength = newNavLength;
+	}
+}
+
+int PlayArthurOffsetCapacitance::postEnterRoom(Window *viewWindow, const Location &priorLocation) {
+	BaseOxygenTimerCapacitance::postEnterRoom(viewWindow, priorLocation);
+
+	if (_effectIDFlagOffset >= 0) {
+		byte effectID = ((SceneViewWindow *)viewWindow)->getGlobalFlagByte(_effectIDFlagOffset);
+
+		if (!_vm->_sound->isSoundEffectPlaying(effectID - 1)) {
+			byte lastStinger = ((SceneViewWindow *)viewWindow)->getGlobalFlagByte(_lastStingerFlagOffset) + 1;
+
+			if ((lastStinger % _stingerDelay) == 0) {
+				if (lastStinger < (_lastStingerFileID - _firstStingerFileID) * _stingerDelay) {
+					int fileNameIndex = _vm->computeFileNameResourceID(_staticData.location.timeZone, _staticData.location.environment, _firstStingerFileID + (lastStinger / _stingerDelay) - 1);
+
+					if (((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->isItemInInventory(kItemBioChipAI) && (lastStinger / _stingerDelay) < 3) {
+						_vm->_sound->playSynchronousSoundEffect(_vm->getFilePath(fileNameIndex));
+
+						// Play an Arthur comment if we have the chip
+						switch (lastStinger / _stingerDelay) {
+						case 0:
+							_vm->_sound->playSynchronousSoundEffect("BITDATA/AILAB/AICR_C01.BTA", 127);
+							break;
+						case 1:
+							_vm->_sound->playSynchronousSoundEffect("BITDATA/AILAB/AICR_C02.BTA", 127);
+							break;
+						case 2:
+							_vm->_sound->playSynchronousSoundEffect("BITDATA/AILAB/AICR_C03.BTA", 127);
+							break;
+						}
+
+						// Update the global flags
+						((SceneViewWindow *)viewWindow)->setGlobalFlagByte(_lastStingerFlagOffset, lastStinger);
+					} else {
+						byte newStingerID = _vm->_sound->playSoundEffect(_vm->getFilePath(fileNameIndex), _stingerVolume, false, true) + 1;
+
+						// Update the global flags
+						((SceneViewWindow *)viewWindow)->setGlobalFlagByte(_effectIDFlagOffset, newStingerID);
+						((SceneViewWindow *)viewWindow)->setGlobalFlagByte(_lastStingerFlagOffset, lastStinger);
+					}
+				}
+			} else {
+				((SceneViewWindow *)viewWindow)->setGlobalFlagByte(_effectIDFlagOffset, 0xFF);
+				((SceneViewWindow *)viewWindow)->setGlobalFlagByte(_lastStingerFlagOffset, lastStinger);
+			}
+		}
+	}
+
+	return SC_TRUE;
+}
+
+class ClickChangeSceneCapacitance : public BaseOxygenTimerCapacitance {
+public:
+	ClickChangeSceneCapacitance(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+			int left = -1, int top = -1, int right = -1, int bottom = -1, int cursorID = 0,
+			int timeZone = -1, int environment = -1, int node = -1, int facing = -1, int orientation = -1, int depth = -1,
+			int transitionType = -1, int transitionData = -1, int transitionStartFrame = -1, int transitionLength = -1);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	int _cursorID;
+	Common::Rect _clickRegion;
+	DestinationScene _clickDestination;
+};
+
+ClickChangeSceneCapacitance::ClickChangeSceneCapacitance(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+		int left, int top, int right, int bottom, int cursorID,
+		int timeZone, int environment, int node, int facing, int orientation, int depth,
+		int transitionType, int transitionData, int transitionStartFrame, int transitionLength) :
+		BaseOxygenTimerCapacitance(vm, viewWindow, sceneStaticData, priorLocation) {
+	_clickRegion = Common::Rect(left, top, right, bottom);
+	_cursorID = cursorID;
+	_clickDestination.destinationScene = Location(timeZone, environment, node, facing, orientation, depth);
+	_clickDestination.transitionType = transitionType;
+	_clickDestination.transitionData = transitionData;
+	_clickDestination.transitionStartFrame = transitionStartFrame;
+	_clickDestination.transitionLength = transitionLength;
+}
+
+int ClickChangeSceneCapacitance::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_clickRegion.contains(pointLocation))
+		((SceneViewWindow *)viewWindow)->moveToDestination(_clickDestination);
+
+	return SC_FALSE;
+}
+
+int ClickChangeSceneCapacitance::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_clickRegion.contains(pointLocation))
+		return _cursorID;
+
+	return kCursorArrow;
+}
+
+class CapacitanceDockingBayDoor : public BaseOxygenTimerCapacitance {
+public:
+	CapacitanceDockingBayDoor(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	Common::Rect _door;
+};
+
+CapacitanceDockingBayDoor::CapacitanceDockingBayDoor(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		BaseOxygenTimerCapacitance(vm, viewWindow, sceneStaticData, priorLocation) {
+	_door = Common::Rect(160, 54, 276, 168);
+}
+
+int CapacitanceDockingBayDoor::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_door.contains(pointLocation)) {
+		if (((SceneViewWindow *)viewWindow)->getGlobalFlags().aiCRPressurized == 1) {
+			_staticData.navFrameIndex = 98;
+			viewWindow->invalidateWindow(false);
+
+			_vm->_sound->playSynchronousSoundEffect("BITDATA/AILAB/AI_LOCK.BTA");
+
+			// Wait a second?
+			uint32 startTime = g_system->getMillis();
+			while (!_vm->shouldQuit() && g_system->getMillis() < startTime + 1000) {
+				_vm->yield();
+				_vm->_sound->timerCallback();
+			}
+
+			DestinationScene destData;
+			destData.destinationScene = _staticData.location;
+			destData.destinationScene.depth = 1;
+			destData.transitionType = TRANSITION_VIDEO;
+			destData.transitionData = 0;
+			destData.transitionStartFrame = -1;
+			destData.transitionLength = -1;
+
+			// Move to the final destination
+			((SceneViewWindow *)viewWindow)->moveToDestination(destData);
+			return SC_TRUE;
+		} else {
+			int oldFrame = _staticData.navFrameIndex;
+			_staticData.navFrameIndex = 99;
+			viewWindow->invalidateWindow(false);
+
+			_vm->_sound->playSynchronousSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment - 1, 12));
+			_vm->_sound->playSynchronousSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment - 1, 13));
+
+			_staticData.navFrameIndex = oldFrame;
+			viewWindow->invalidateWindow(false);
+			return SC_TRUE;
+		}
+	}
+
+	return SC_FALSE;
+}
+
+int CapacitanceDockingBayDoor::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_door.contains(pointLocation))
+		return kCursorFinger;
+
+	return kCursorArrow;
+}
+
 bool SceneViewWindow::initializeAILabTimeZoneAndEnvironment(Window *viewWindow, int environment) {
 	if (environment == -1) {
 		GlobalFlags &flags = ((SceneViewWindow *)viewWindow)->getGlobalFlags();
@@ -887,12 +1366,24 @@ SceneBase *SceneViewWindow::constructAILabSceneObject(Window *viewWindow, const 
 		return new BaseOxygenTimer(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 12:
 		return new BaseOxygenTimerInSpace(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 20:
+		return new PlayArthurOffsetCapacitance(_vm, viewWindow, sceneStaticData, priorLocation, 127, offsetof(GlobalFlags, aiCRStingerID), offsetof(GlobalFlags, aiCRStingerChannelID), 4, 11, 1);
 	case 21:
 		return new CapacitanceToHabitatDoorClosed(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 22:
 		return new CapacitanceToHabitatDoorOpen(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 23:
+		return new ClickChangeSceneCapacitance(_vm, viewWindow, sceneStaticData, priorLocation, 122, 32, 310, 140, kCursorMagnifyingGlass, 6, 2, 3, 0, 1, 1, TRANSITION_VIDEO, 3, -1, -1);
+	case 24:
+		return new CapacitancePanelInterface(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 25:
+		return new CapacitanceDockingBayDoor(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 26:
 		return new PlaySoundExitingFromScene(_vm, viewWindow, sceneStaticData, priorLocation, 14);
+	case 27:
+		return new PlayArthurOffsetCapacitance(_vm, viewWindow, sceneStaticData, priorLocation, 127, offsetof(GlobalFlags, aiCRStingerID), offsetof(GlobalFlags, aiCRStingerChannelID), 4, 11, 1, offsetof(GlobalFlags, aiCRGrabbedMetalBar), 73, 320, 40);
+	case 28:
+		return new PlayArthurOffsetCapacitance(_vm, viewWindow, sceneStaticData, priorLocation, 127, offsetof(GlobalFlags, aiCRStingerID), offsetof(GlobalFlags, aiCRStingerChannelID), 4, 11, 1, offsetof(GlobalFlags, aiCRGrabbedMetalBar), 66, 241, 25);
 	case 32:
 		return new PlaySoundExitingFromScene(_vm, viewWindow, sceneStaticData, priorLocation, 14);
 	case 52:
