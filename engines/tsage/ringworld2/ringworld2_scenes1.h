@@ -316,6 +316,9 @@ public:
 	int _field424A;
 	int _instructionsDisplayedFl;
 	int _instructionsWaitCount;
+	int _cursorCurRes;
+	int _cursorCurStrip;
+	int _cursorCurFrame;
 
 	SceneObject _upperDisplayCard[8];
 	SceneObject _lowerDisplayCard[8];

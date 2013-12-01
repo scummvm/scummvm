@@ -2256,6 +2256,10 @@ Scene1337::Scene1337() {
 	_field3EF0 = nullptr;
 	_field3EF4 = nullptr;
 	_field3EF8 = nullptr;
+
+	_cursorCurRes = 0;
+	_cursorCurStrip = 0;
+	_cursorCurFrame = 0;
 }
 
 void Scene1337::synchronize(Serializer &s) {
@@ -4482,6 +4486,12 @@ void Scene1337::dispatch() {
 			suggestInstructions();
 		}
 	}
+
+	// The following code is in the original in sceneHandler::process(),
+	// which is terrible as it's checked in every scene of the game.
+	setCursorData(5, _cursorCurStrip, _cursorCurFrame);
+	//
+
 	Scene::dispatch();
 }
 
@@ -5262,11 +5272,10 @@ void Scene1337::subC4CD2() {
 }
 
 void Scene1337::subC4CEC() {
-	if (R2_GLOBALS._v57709 != 0)
-		return;
-
-	subD18F5();
-	subD1940(true);
+	if (R2_GLOBALS._v57709 == 0) {
+		subD18F5();
+		subD1940(true);
+	}
 }
 
 void Scene1337::subC51A0(unkObj1337sub1 *subObj1, unkObj1337sub1 *subObj2) {
@@ -6830,22 +6839,28 @@ void Scene1337::setCursorData(int resNum, int rlbNum, int frameNum) {
 	if (!frameNum)
 		return;
 
-	uint size;
-	byte *cursor = g_resourceManager->getSubResource(resNum, rlbNum, frameNum, &size);
-	// Decode the cursor
-	GfxSurface s = surfaceFromRes(cursor);
+	_cursorCurRes = resNum;
+	_cursorCurStrip = rlbNum;
+	_cursorCurFrame = frameNum;
 
-	Graphics::Surface surface = s.lockSurface();
-	const byte *cursorData = (const byte *)surface.getPixels();
-	CursorMan.replaceCursor(cursorData, surface.w, surface.h, s._centroid.x, s._centroid.y, s._transColor);
-	s.unlockSurface();
+	if (!frameNum) {
+		R2_GLOBALS._events.setCursor(CURSOR_CROSSHAIRS);
+	} else {
+		uint size;
+		byte *cursor = g_resourceManager->getSubResource(resNum, rlbNum, frameNum, &size);
+		// Decode the cursor
+		GfxSurface s = surfaceFromRes(cursor);
+
+		Graphics::Surface surface = s.lockSurface();
+		const byte *cursorData = (const byte *)surface.getPixels();
+		CursorMan.replaceCursor(cursorData, surface.w, surface.h, s._centroid.x, s._centroid.y, s._transColor);
+		s.unlockSurface();
+	}
 }
 
 void Scene1337::subD18F5() {
 	if (R2_GLOBALS._v57709 == 0)
-		// The cursor looks... very dummy
-		// To be checked
-		warning("TODO: CursorManager.setData(R2_GLOBALS.off_57705)");
+		R2_GLOBALS._events.setCursor(CURSOR_CROSSHAIRS);
 
 	++R2_GLOBALS._v57709;
 }
@@ -6854,7 +6869,7 @@ void Scene1337::subD1917() {
 	if (R2_GLOBALS._v57709 != 0) {
 		R2_GLOBALS._v57709--;
 		if (R2_GLOBALS._v57709 != 0)
-			warning("FIXME: subD195F(_width, _data);");
+			subD195F(_cursorCurStrip, _cursorCurFrame);
 	}
 }
 
