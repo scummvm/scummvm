@@ -257,6 +257,7 @@ protected:
 	Common::Platform _gamePlatform;
 	Common::Language _gameLanguage;
 	Debugger *_debugger;
+	uint32 _pauseStartTime;
 };
 
 extern GrimEngine *g_grim;

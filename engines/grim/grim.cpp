@@ -75,7 +75,7 @@ GfxBase *g_driver = NULL;
 int g_imuseState = -1;
 
 GrimEngine::GrimEngine(OSystem *syst, uint32 gameFlags, GrimGameType gameType, Common::Platform platform, Common::Language language) :
-		Engine(syst), _currSet(NULL), _selectedActor(NULL) {
+		Engine(syst), _currSet(NULL), _selectedActor(NULL), _pauseStartTime(0) {
 	g_grim = this;
 
 	_debugger = new Debugger();
@@ -1247,6 +1247,12 @@ void GrimEngine::openMainMenuDialog() {
 void GrimEngine::pauseEngineIntern(bool pause) {
 	g_imuse->pause(pause);
 	g_movie->pause(pause);
+
+	if (pause) {
+		_pauseStartTime = _system->getMillis();
+	} else {
+		_frameStart += _system->getMillis() - _pauseStartTime;
+	}
 }
 
 void GrimEngine::debugLua(const Common::String &str) {
