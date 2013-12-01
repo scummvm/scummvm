@@ -35,6 +35,8 @@
 #include "buried/environ/scene_base.h"
 #include "buried/environ/scene_common.h"
 
+#include "graphics/surface.h"
+
 namespace Buried {
 
 class SwapStillOnFlag : public SceneBase {
@@ -204,6 +206,168 @@ int PaintingTowerRetrieveKey::specifyCursor(Window *viewWindow, const Common::Po
 	return kCursorArrow;
 }
 
+class PaintingTowerElevatorControls : public SceneBase {
+public:
+	PaintingTowerElevatorControls(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int gdiPaint(Window *viewWindow);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int mouseMove(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	Common::Rect _lockHandle[2];
+	Common::Rect _directionHandle[2];
+	Common::Rect _transText[4];
+	int _textTranslated;
+};
+
+PaintingTowerElevatorControls::PaintingTowerElevatorControls(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_lockHandle[0] = Common::Rect(152, 72, 186, 109);
+	_lockHandle[1] = Common::Rect(152, 108, 186, 146);
+	_directionHandle[0] = Common::Rect(252, 72, 312, 108);
+	_directionHandle[1] = Common::Rect(252, 109, 312, 144);
+	_transText[0] = Common::Rect(134, 50, 202, 70);
+	_transText[1] = Common::Rect(136, 150, 198, 168);
+	_transText[2] = Common::Rect(226, 52, 278, 70);
+	_transText[3] = Common::Rect(224, 148, 288, 166);
+	_textTranslated = -1;
+}
+
+int PaintingTowerElevatorControls::gdiPaint(Window *viewWindow) {
+	if (_textTranslated >= 0 && ((SceneViewWindow *)viewWindow)->getGlobalFlags().bcTranslateEnabled == 1) {
+		Common::Rect absoluteRect = viewWindow->getAbsoluteRect();
+		Common::Rect rect(_transText[_textTranslated]);
+		rect.translate(absoluteRect.left, absoluteRect.top);
+		_vm->_gfx->getScreen()->frameRect(rect, _vm->_gfx->getColor(255, 0, 0));
+	}
+
+	return SC_REPAINT;
+}
+
+int PaintingTowerElevatorControls::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_lockHandle[0].contains(pointLocation)) {
+		((SceneViewWindow *)viewWindow)->playSynchronousAnimation(4);
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().dsPTElevatorLeverA = 0;
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().dsPTUseElevatorControls = 1;
+		return SC_TRUE;
+	} else if (_lockHandle[1].contains(pointLocation)) {
+		((SceneViewWindow *)viewWindow)->playSynchronousAnimation(3);
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().dsPTElevatorLeverA = 1;
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().dsPTUseElevatorControls = 1;
+		return SC_TRUE;
+	} else if (_directionHandle[0].contains(pointLocation)) {
+		((SceneViewWindow *)viewWindow)->playSynchronousAnimation(6);
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().dsPTElevatorLeverB = 1;
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().dsPTUseElevatorControls = 1;
+		return SC_TRUE;
+	} else if (_directionHandle[1].contains(pointLocation)) {
+		((SceneViewWindow *)viewWindow)->playSynchronousAnimation(5);
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().dsPTElevatorLeverB = 0;
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().dsPTUseElevatorControls = 1;
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int PaintingTowerElevatorControls::mouseMove(Window *viewWindow, const Common::Point &pointLocation) {
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().bcTranslateEnabled == 1) {
+		int newTextTrans = -1;
+
+		for (int i = 0; i < 4; i++) {
+			if (_transText[i].contains(pointLocation)) {
+				((SceneViewWindow *)viewWindow)->getGlobalFlags().dsPTTransElevatorControls = 1;
+				newTextTrans = i;
+
+				if (newTextTrans != _textTranslated) {
+					// Load and display the new text
+					((SceneViewWindow *)viewWindow)->displayTranslationText(_vm->getString(IDDS_ELEVATOR_CONTROLS_TEXT_A + newTextTrans));
+					_textTranslated = newTextTrans;
+					viewWindow->invalidateWindow(false);
+					break;
+				}
+			}
+		}
+	} else {
+		if (_textTranslated != -1) {
+			_textTranslated = -1;
+			viewWindow->invalidateWindow(false);
+		}
+	}
+
+	return SC_FALSE;
+}
+
+int PaintingTowerElevatorControls::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_lockHandle[0].contains(pointLocation))
+		return kCursorArrowUp;
+	else if (_lockHandle[1].contains(pointLocation))
+		return kCursorArrowDown;
+	else if (_directionHandle[0].contains(pointLocation))
+		return kCursorArrowUp;
+	else if (_directionHandle[1].contains(pointLocation))
+		return kCursorArrowDown;
+
+	return kCursorArrow;
+}
+
+class PaintingTowerElevatorWheel : public SceneBase {
+public:
+	PaintingTowerElevatorWheel(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	Common::Rect _wheel;
+};
+
+PaintingTowerElevatorWheel::PaintingTowerElevatorWheel(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_wheel = Common::Rect(94, 0, 380, 189);
+}
+
+int PaintingTowerElevatorWheel::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_wheel.contains(pointLocation)) {
+		byte lockStatus = ((SceneViewWindow *)viewWindow)->getGlobalFlags().dsPTElevatorLeverA;
+		byte direction = ((SceneViewWindow *)viewWindow)->getGlobalFlags().dsPTElevatorLeverB;
+		byte elevatorPosition = ((SceneViewWindow *)viewWindow)->getGlobalFlags().dsPTElevatorPresent;
+
+		if (lockStatus == 1) {
+			if (direction == 0 && elevatorPosition == 1) {
+				((SceneViewWindow *)viewWindow)->playSynchronousAnimation(7);
+				((SceneViewWindow *)viewWindow)->getGlobalFlags().dsPTElevatorPresent = 0;
+				((SceneViewWindow *)viewWindow)->getGlobalFlags().dsPTRaisedPlatform = 0;
+				return SC_TRUE;
+			} else if (direction == 1 && elevatorPosition == 0) {
+				((SceneViewWindow *)viewWindow)->playSynchronousAnimation(8);
+				((SceneViewWindow *)viewWindow)->getGlobalFlags().dsPTElevatorPresent = 1;
+				((SceneViewWindow *)viewWindow)->getGlobalFlags().dsPTRaisedPlatform = 1;
+				return SC_TRUE;
+			}
+		}
+	}
+
+	return SC_FALSE;
+}
+
+int PaintingTowerElevatorWheel::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_wheel.contains(pointLocation)) {
+		byte lockStatus = ((SceneViewWindow *)viewWindow)->getGlobalFlags().dsPTElevatorLeverA;
+		byte direction = ((SceneViewWindow *)viewWindow)->getGlobalFlags().dsPTElevatorLeverB;
+		byte elevatorPosition = ((SceneViewWindow *)viewWindow)->getGlobalFlags().dsPTElevatorPresent;
+
+		if (lockStatus == 1) {
+			if (direction == 1 && elevatorPosition == 0)
+				return kCursorArrowLeft;
+			else if (direction == 0 && elevatorPosition == 1)
+				return kCursorArrowRight;
+		}
+	}
+
+	return kCursorArrow;
+}
+
 class PaintingTowerOutsideDoor : public SceneBase {
 public:
 	PaintingTowerOutsideDoor(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
@@ -347,6 +511,49 @@ int PaintingTowerCapAgent::postEnterRoom(Window *viewWindow, const Location &pri
 	return SC_TRUE;
 }
 
+class WalkDownPaintingTowerElevator : public SceneBase {
+public:
+	WalkDownPaintingTowerElevator(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	int _cursorID;
+	Common::Rect _clickRegion;
+	DestinationScene _clickDestination;
+};
+
+WalkDownPaintingTowerElevator::WalkDownPaintingTowerElevator(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_clickRegion = Common::Rect(48, 136, 306, 184);
+	_cursorID = kCursorFinger;
+	_clickDestination.destinationScene = Location(5, 3, 10, 0, 0, 0);
+	_clickDestination.transitionType = TRANSITION_VIDEO;
+	_clickDestination.transitionData = 9;
+	_clickDestination.transitionStartFrame = -1;
+	_clickDestination.transitionLength = -1;
+}
+
+int WalkDownPaintingTowerElevator::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_clickRegion.contains(pointLocation)) {
+		if (((SceneViewWindow *)viewWindow)->getGlobalFlags().dsPTElevatorLeverA == 1) {
+			((SceneViewWindow *)viewWindow)->moveToDestination(_clickDestination);
+			((SceneViewWindow *)viewWindow)->getGlobalFlags().dsPTWalkedDownElevator = 1;
+		} else {
+			_vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 13), 127, false, true);
+		}
+	}
+
+	return SC_FALSE;
+}
+
+int WalkDownPaintingTowerElevator::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_clickRegion.contains(pointLocation))
+		return _cursorID;
+
+	return kCursorArrow;
+}
+
 bool SceneViewWindow::initializeDaVinciTimeZoneAndEnvironment(Window *viewWindow, int environment) {
 	if (environment == -1) {
 		GlobalFlags &flags = ((SceneViewWindow *)viewWindow)->getGlobalFlags();
@@ -401,6 +608,12 @@ SceneBase *SceneViewWindow::constructDaVinciSceneObject(Window *viewWindow, cons
 		return new CapturePaintingTowerFootprint(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 4:
 		return new PaintingTowerRetrieveKey(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 5:
+		return new PaintingTowerElevatorControls(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 6:
+		return new PaintingTowerElevatorWheel(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 7:
+		return new WalkDownPaintingTowerElevator(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 8:
 		return new PaintingTowerWalkOntoElevator(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 9:
