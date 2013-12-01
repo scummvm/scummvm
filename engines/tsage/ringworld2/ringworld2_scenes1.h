@@ -376,7 +376,6 @@ public:
 	void subD18F5();
 	void subD1917();
 	void subD1940(bool flag);
-	void subD195F(int arg1, int arg2);
 	void subD1975(int arg1, int arg2);
 	void subD1A48(int arg1);
 

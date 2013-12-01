@@ -5542,6 +5542,7 @@ void Scene1337::subPostInit() {
 void Scene1337::suggestInstructions() {
 	if (R2_GLOBALS._v57709 > 0)
 		subD1917();
+
 	if (MessageDialog::show(NEED_INSTRUCTIONS, NO_MSG, YES_MSG) == 0) {
 		if (R2_GLOBALS._v57709 == 0)
 			subD18F5();
@@ -6822,15 +6823,17 @@ void Scene1337::subD183F(int arg1, int arg2) {
 			R2_GLOBALS._v5780E = 1;
 	}
 
+	// The original was using an intermediate function to call setCursorData.
+	// It has been removed to improve readability
 	if (R2_GLOBALS._v5780E == 1) {
 		R2_GLOBALS._v57810 = 200;
-		subD195F(1, 4);
+		setCursorData(5, 1, 4);
 	} else if (R2_GLOBALS._v5780E == 2) {
 		R2_GLOBALS._v57810 = 300;
-		subD195F(1, 5);
+		setCursorData(5, 1, 5);
 	} else {
 		R2_GLOBALS._v57810 = 0;
-		subD195F(0, 0);
+		setCursorData(5, 0, 0);
 	}
 }
 
@@ -6868,8 +6871,11 @@ void Scene1337::subD18F5() {
 void Scene1337::subD1917() {
 	if (R2_GLOBALS._v57709 != 0) {
 		R2_GLOBALS._v57709--;
-		if (R2_GLOBALS._v57709 != 0)
-			subD195F(_cursorCurStrip, _cursorCurFrame);
+		if (R2_GLOBALS._v57709 != 0) {
+			// The original was using an intermediate function to call setCursorData.
+			// It has been removed to improve readability
+			setCursorData(5, _cursorCurStrip, _cursorCurFrame);
+		}
 	}
 }
 
@@ -6878,10 +6884,6 @@ void Scene1337::subD1940(bool flag) {
 		++R2_GLOBALS._v5780C;
 	else if (R2_GLOBALS._v5780C != 0)
 		--R2_GLOBALS._v5780C;
-}
-
-void Scene1337::subD195F(int arg1, int arg2) {
-	setCursorData(5, arg1, arg2);
 }
 
 void Scene1337::subD1975(int arg1, int arg2) {
