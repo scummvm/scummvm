@@ -122,7 +122,7 @@ public:
 	int scene04_var19;
 	int scene04_var20;
 	StaticANIObject *scene04_var24;
-	int scene04_var26;
+	int scene04_bottleY;
 
 	PictureObject *selector;
 };

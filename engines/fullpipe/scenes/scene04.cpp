@@ -285,7 +285,7 @@ void sceneHandler04_clickPlank() {
 
 void sceneHandler04_dropBottle() {
 	g_vars->scene04_var12 = 1;
-	g_vars->scene04_var26 = 10;
+	g_vars->scene04_bottleY = 10;
 	g_vars->scene04_var06 = 0;
 
 	while (g_vars->scene04_kozyawkiAni.size()) {
@@ -389,8 +389,36 @@ void sceneHandler04_sub5() {
 	warning("sceneHandler04_sub5()");
 }
 
-void sceneHandler04_sub6() {
-	warning("sceneHandler04_sub6()");
+void sceneHandler04_bottleUpdateObjects(int off) {
+	for (Common::List<GameObject *>::iterator it = g_vars->scene04_bottleObjList.begin(); it != g_vars->scene04_bottleObjList.end(); ++it) {
+		GameObject *obj = *it;
+
+		obj->setOXY(obj->_field_8 + 20, off + obj->_field_8 + 24);
+	}
+}
+
+void sceneHandler04_liftBottle() {
+	int newy = g_vars->scene04_bottleY + g_vars->scene04_spring->_oy;
+
+	g_vars->scene04_bottleY += 5;
+
+	sceneHandler04_bottleUpdateObjects(newy - g_vars->scene04_spring->_oy);
+
+	g_vars->scene04_spring->setOXY(g_vars->scene04_spring->_ox, newy);
+
+	if (g_vars->scene04_bottle->_oy >= 226) {
+		sceneHandler04_bottleUpdateObjects(226 - g_vars->scene04_bottle->_oy);
+
+		g_vars->scene04_spring->setOXY(g_vars->scene04_spring->_ox, 437);
+		g_vars->scene04_var12 = 0;
+		g_vars->scene04_var09 = 0;
+		g_vars->scene04_var19 = 1;
+		g_vars->scene04_var06 = 2;
+		g_vars->scene04_var20 = 10;
+		g_vars->scene04_var02 = 0;
+
+		g_fullpipe->setObjectState(sO_LowerPipe, g_fullpipe->getObjectEnumState(sO_LowerPipe, sO_IsClosed));
+	}
 }
 
 void sceneHandler04_sub7() {
@@ -423,10 +451,6 @@ void sceneHandler04_takeKozyawka() {
 
 void sceneHandler04_testPlank(ExCommand *ex) {
 	warning("sceneHandler04_testPlank()");
-}
-
-void sceneHandler04_bottleUpdateObjects(int off) {
-	warning("sceneHandler04_bottleUpdateObjects()");
 }
 
 void sceneHandler04_updateBottle() {
@@ -581,7 +605,7 @@ int sceneHandler04(ExCommand *ex) {
 				sceneHandler04_sub5();
 
 			if (g_vars->scene04_var12)
-				sceneHandler04_sub6();
+				sceneHandler04_liftBottle();
 
 			if (g_vars->scene04_var08)
 				sceneHandler04_clickLadder();
