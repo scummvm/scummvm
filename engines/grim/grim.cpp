@@ -127,7 +127,6 @@ GrimEngine::GrimEngine(OSystem *syst, uint32 gameFlags, GrimGameType gameType, C
 	else
 		_speedLimitMs = 1000 / speed;
 	ConfMan.setInt("engine_speed", 1000 / _speedLimitMs);
-	_refreshDrawNeeded = true;
 	_listFilesIter = NULL;
 	_savedState = NULL;
 	_fps[0] = 0;
@@ -733,8 +732,6 @@ void GrimEngine::mainLoop() {
 					luaUpdate();
 				}
 			}
-			if (type == Common::EVENT_SCREEN_CHANGED)
-				_refreshDrawNeeded = true;
 		}
 
 		if (_mode != PauseMode) {

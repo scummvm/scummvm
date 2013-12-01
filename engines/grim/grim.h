@@ -114,7 +114,6 @@ public:
 	void doFlip();
 	void setFlipEnable(bool state) { _flipEnable = state; }
 	bool getFlipEnable() { return _flipEnable; }
-	void refreshDrawMode() { _refreshDrawNeeded = true; }
 	virtual void drawTextObjects();
 	void drawPrimitives();
 	void playIrisAnimation(Iris::Direction dir, int x, int y, int time);
@@ -223,7 +222,6 @@ protected:
 	SpeechMode _speechMode;
 	int _textSpeed;
 	bool _flipEnable;
-	bool _refreshDrawNeeded;
 	char _fps[8];
 	bool _doFlip;
 	bool _refreshShadowMask;

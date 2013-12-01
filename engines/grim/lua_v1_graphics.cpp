@@ -494,8 +494,6 @@ void Lua_V1::EngineDisplay() {
 }
 
 void Lua_V1::ForceRefresh() {
-	g_grim->refreshDrawMode();
-
 	// refreshBuffers() must clean the backing buffer but NOT the actors' buffers.
 	// In set at Glottis and Albinizod are frozen not at the same time, so this is called every time
 	// one of the two is frozen.
@@ -512,7 +510,6 @@ void Lua_V1::RenderModeUser() {
 		g_grim->setMode(GrimEngine::DrawMode);
 	} else if (lua_isnil(param1) && g_grim->getMode() == GrimEngine::DrawMode) {
 		g_movie->pause(false);
-		g_grim->refreshDrawMode();
 		g_grim->setMode(g_grim->getPreviousMode());
 	}
 }
