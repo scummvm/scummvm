@@ -1497,7 +1497,9 @@ bool SceneViewWindow::playSynchronousAnimation(int animationID) {
 	_vm->removeMouseMessages(this);
 	_vm->removeKeyboardMessages(this);
 
-	// TODO: Stop background sound if the video has sound (ugh!)
+	// Stop background sound if the video has sound
+	if (animDatabase[i].audioStreamCount > 0)
+		_vm->_sound->stop();
 
 	animationMovie->playToFrame(animDatabase[i].startFrame + animDatabase[i].frameCount - 1);
 
@@ -1514,7 +1516,9 @@ bool SceneViewWindow::playSynchronousAnimation(int animationID) {
 	_vm->removeMouseMessages(this);
 	_vm->removeKeyboardMessages(this);
 
-	// TODO: Restart background sound if the video had sound (ugh!)
+	// Restart background sound if the video had sound
+	if (animDatabase[i].audioStreamCount > 0)
+		_vm->_sound->restart();
 
 	if (_currentScene && _currentScene->movieCallback(this, animationMovie, animationID, MOVIE_STOPPED) == SC_FALSE)
 		return false;
@@ -1612,7 +1616,9 @@ bool SceneViewWindow::playPlacedSynchronousAnimation(int animationID, int left, 
 	_vm->removeMouseMessages(this);
 	_vm->removeKeyboardMessages(this);
 
-	// TODO: Stop background sound if the video has sound (ugh!)
+	// Stop background sound if the video has sound
+	if (animDatabase[i].audioStreamCount > 0)
+		_vm->_sound->stop();
 
 	animationMovie->playToFrame(animDatabase[i].startFrame + animDatabase[i].frameCount - 1);
 
@@ -1629,7 +1635,9 @@ bool SceneViewWindow::playPlacedSynchronousAnimation(int animationID, int left, 
 	_vm->removeMouseMessages(this);
 	_vm->removeKeyboardMessages(this);
 
-	// TODO: Restart background sound if the video had sound (ugh!)
+	// Restart background sound if the video had sound
+	if (animDatabase[i].audioStreamCount > 0)
+		_vm->_sound->restart();
 
 	if (_currentScene && _currentScene->movieCallback(this, animationMovie, animationID, MOVIE_STOPPED) == SC_FALSE)
 		return false;
