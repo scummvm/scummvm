@@ -78,7 +78,7 @@ void Sprite::loadBinary(Common::SeekableReadStream *stream, EMICostume *costume)
 	_height = height;
 	_next = NULL;
 	_visible = true;
-	_pos.set(-offX, offY, 0);
+	_pos.set(offX, offY, 0);
 
 	delete[] texname;
 }
