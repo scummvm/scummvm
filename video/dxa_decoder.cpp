@@ -521,17 +521,17 @@ const Graphics::Surface *DXADecoder::DXAVideoTrack::decodeNextFrame() {
 			memcpy(&_scaledBuffer[2 * cy * _width], &_frameBuffer1[cy * _width], _width);
 			memset(&_scaledBuffer[((2 * cy) + 1) * _width], 0, _width);
 		}
-		_surface->pixels = _scaledBuffer;
+		_surface->setPixels(_scaledBuffer);
 		break;
 	case S_DOUBLE:
 		for (int cy = 0; cy < _curHeight; cy++) {
 			memcpy(&_scaledBuffer[2 * cy * _width], &_frameBuffer1[cy * _width], _width);
 			memcpy(&_scaledBuffer[((2 * cy) + 1) * _width], &_frameBuffer1[cy * _width], _width);
 		}
-		_surface->pixels = _scaledBuffer;
+		_surface->setPixels(_scaledBuffer);
 		break;
 	case S_NONE:
-		_surface->pixels = _frameBuffer1;
+		_surface->setPixels(_frameBuffer1);
 		break;
 	}
 

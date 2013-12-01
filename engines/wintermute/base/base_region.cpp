@@ -48,7 +48,7 @@ BaseRegion::BaseRegion(BaseGame *inGame) : BaseObject(inGame) {
 	_lastMimicScale = -1;
 	_lastMimicX = _lastMimicY = INT_MIN;
 
-	BasePlatform::setRectEmpty(&_rect);
+	_rect.setEmpty();
 }
 
 
@@ -65,7 +65,7 @@ void BaseRegion::cleanup() {
 	}
 	_points.clear();
 
-	BasePlatform::setRectEmpty(&_rect);
+	_rect.setEmpty();
 	_editorSelectedPoint = -1;
 }
 
@@ -102,7 +102,7 @@ bool BaseRegion::pointInRegion(int x, int y) {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseRegion::loadFile(const char *filename) {
-	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
+	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
 		BaseEngine::LOG(0, "BaseRegion::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
@@ -135,7 +135,7 @@ TOKEN_DEF(EDITOR_SELECTED_POINT)
 TOKEN_DEF(PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-bool BaseRegion::loadBuffer(byte *buffer, bool complete) {
+bool BaseRegion::loadBuffer(char *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(REGION)
 	TOKEN_TABLE(TEMPLATE)
@@ -148,12 +148,12 @@ bool BaseRegion::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE(PROPERTY)
 	TOKEN_TABLE_END
 
-	byte *params;
+	char *params;
 	int cmd;
 	BaseParser parser;
 
 	if (complete) {
-		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_REGION) {
+		if (parser.getCommand(&buffer, commands, &params) != TOKEN_REGION) {
 			BaseEngine::LOG(0, "'REGION' keyword expected.");
 			return STATUS_FAILED;
 		}
@@ -165,39 +165,39 @@ bool BaseRegion::loadBuffer(byte *buffer, bool complete) {
 	}
 	_points.clear();
 
-	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
+	while ((cmd = parser.getCommand(&buffer, commands, &params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
-			if (DID_FAIL(loadFile((char *)params))) {
+			if (DID_FAIL(loadFile(params))) {
 				cmd = PARSERR_GENERIC;
 			}
 			break;
 
 		case TOKEN_NAME:
-			setName((char *)params);
+			setName(params);
 			break;
 
 		case TOKEN_CAPTION:
-			setCaption((char *)params);
+			setCaption(params);
 			break;
 
 		case TOKEN_ACTIVE:
-			parser.scanStr((char *)params, "%b", &_active);
+			parser.scanStr(params, "%b", &_active);
 			break;
 
 		case TOKEN_POINT: {
 			int x, y;
-			parser.scanStr((char *)params, "%d,%d", &x, &y);
+			parser.scanStr(params, "%d,%d", &x, &y);
 			_points.add(new BasePoint(x, y));
 		}
 		break;
 
 		case TOKEN_SCRIPT:
-			addScript((char *)params);
+			addScript(params);
 			break;
 
 		case TOKEN_EDITOR_SELECTED_POINT:
-			parser.scanStr((char *)params, "%d", &_editorSelectedPoint);
+			parser.scanStr(params, "%d", &_editorSelectedPoint);
 			break;
 
 		case TOKEN_PROPERTY:
@@ -430,11 +430,11 @@ bool BaseRegion::persist(BasePersistenceManager *persistMgr) {
 
 	BaseObject::persist(persistMgr);
 
-	persistMgr->transfer(TMEMBER(_active));
-	persistMgr->transfer(TMEMBER(_editorSelectedPoint));
-	persistMgr->transfer(TMEMBER(_lastMimicScale));
-	persistMgr->transfer(TMEMBER(_lastMimicX));
-	persistMgr->transfer(TMEMBER(_lastMimicY));
+	persistMgr->transferBool(TMEMBER(_active));
+	persistMgr->transferSint32(TMEMBER(_editorSelectedPoint));
+	persistMgr->transferFloat(TMEMBER(_lastMimicScale));
+	persistMgr->transferSint32(TMEMBER(_lastMimicX));
+	persistMgr->transferSint32(TMEMBER(_lastMimicY));
 	_points.persist(persistMgr);
 
 	return STATUS_OK;
@@ -491,7 +491,7 @@ bool BaseRegion::ptInPolygon(int32 x, int32 y) {
 //////////////////////////////////////////////////////////////////////////
 bool BaseRegion::getBoundingRect(Rect32 *rect) {
 	if (_points.size() == 0) {
-		BasePlatform::setRectEmpty(rect);
+		rect->setEmpty();
 	} else {
 		int32 minX = INT_MAX, minY = INT_MAX, maxX = INT_MIN, maxY = INT_MIN;
 
@@ -502,7 +502,7 @@ bool BaseRegion::getBoundingRect(Rect32 *rect) {
 			maxX = MAX(maxX, _points[i]->x);
 			maxY = MAX(maxY, _points[i]->y);
 		}
-		BasePlatform::setRect(rect, minX, minY, maxX, maxY);
+		rect->setRect(minX, minY, maxX, maxY);
 	}
 	return STATUS_OK;
 }
@@ -532,4 +532,4 @@ bool BaseRegion::mimic(BaseRegion *region, float scale, int x, int y) {
 	return createRegion() ? STATUS_OK : STATUS_FAILED;
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

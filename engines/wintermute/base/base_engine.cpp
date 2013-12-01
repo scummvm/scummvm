@@ -44,10 +44,11 @@ BaseEngine::BaseEngine() {
 	_classReg = nullptr;
 	_rnd = nullptr;
 	_gameId = "";
+	_language = Common::UNK_LANG;
 }
 
-void BaseEngine::init(Common::Language lang) {
-	_fileManager = new BaseFileManager(lang);
+void BaseEngine::init() {
+	_fileManager = new BaseFileManager(_language);
 	// Don't forget to register your random source
 	_rnd = new Common::RandomSource("Wintermute");
 	_classReg = new SystemClassRegistry();
@@ -60,9 +61,11 @@ BaseEngine::~BaseEngine() {
 	delete _classReg;
 }
 
-void BaseEngine::createInstance(const Common::String &gameid, Common::Language lang) {
-	instance()._gameId = gameid;
-	instance().init(lang);
+void BaseEngine::createInstance(const Common::String &targetName, const Common::String &gameId, Common::Language lang) {
+	instance()._targetName = targetName;
+	instance()._gameId = gameId;
+	instance()._language = lang;
+	instance().init();
 }
 
 void BaseEngine::LOG(bool res, const char *fmt, ...) {
@@ -122,4 +125,4 @@ const Timer *BaseEngine::getLiveTimer() {
 	}
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

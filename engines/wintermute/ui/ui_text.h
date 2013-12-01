@@ -37,15 +37,15 @@ namespace Wintermute {
 class UIText : public UIObject {
 private:
 	bool sizeToFit();
+	TTextAlign _textAlign;
+	TVerticalAlign _verticalAlign;
 public:
 	virtual bool display(int offsetX, int offsetY);
 	DECLARE_PERSISTENT(UIText, UIObject)
 	UIText(BaseGame *inGame = nullptr);
 	virtual ~UIText();
-	TTextAlign _textAlign;
-	TVerticalAlign _verticalAlign;
 	bool loadFile(const char *filename);
-	bool loadBuffer(byte *buffer, bool complete = true);
+	bool loadBuffer(char *buffer, bool complete = true);
 	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
 
 	// scripting interface
@@ -55,6 +55,6 @@ public:
 	virtual const char *scToString() override;
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

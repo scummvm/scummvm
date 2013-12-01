@@ -128,7 +128,7 @@ public:
 	 * @param name			name of the keymap to push
 	 * @param transparent	if true keymapper will iterate down the
 	 *						stack if it cannot find a key in the new map
-	 * @return				true if succesful
+	 * @return				true if successful
 	 */
 	bool pushKeymap(const String& name, bool transparent = false);
 

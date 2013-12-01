@@ -337,7 +337,6 @@ void TinyTSA::receiveNotification(Notification *notification, const Notification
 				GameState.setWSCRemovedDart(false);
 				GameState.setWSCAnalyzerOn(false);
 				GameState.setWSCAnalyzedDart(false);
-				GameState.setWSCPickedUpAntidote(false);
 				GameState.setWSCSawMorph(false);
 				GameState.setWSCDesignedAntidote(false);
 				GameState.setWSCOfficeMessagesOpen(false);

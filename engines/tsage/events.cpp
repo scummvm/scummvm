@@ -71,7 +71,7 @@ bool EventsClass::pollEvent() {
 		break;
 
 	default:
- 		break;
+		break;
 	}
 
 	return true;
@@ -113,7 +113,7 @@ bool EventsClass::getEvent(Event &evt, int eventMask) {
 		case Common::EVENT_RBUTTONUP:
 		case Common::EVENT_MBUTTONUP:
 			evt.eventType = EVENT_BUTTON_UP;
-			evt.btnState = 0;
+			evt.btnState = BTNSHIFT_LEFT;
 			break;
 		case Common::EVENT_KEYDOWN:
 			evt.eventType = EVENT_KEYPRESS;
@@ -271,13 +271,18 @@ void EventsClass::setCursor(CursorType cursorType) {
 		_currentCursor = cursorType;
 		cursor = g_resourceManager->getSubResource(5, 1, cursorType - R2CURSORS_START, &size);
 		break;
+
+	case R2_CURSOR_ROPE:
+		_currentCursor = cursorType;
+		cursor = g_resourceManager->getSubResource(5, 4, 1, &size);
+		break;
 	}
 
 	// Decode the cursor
 	GfxSurface s = surfaceFromRes(cursor);
 
 	Graphics::Surface surface = s.lockSurface();
-	const byte *cursorData = (const byte *)surface.getBasePtr(0, 0);
+	const byte *cursorData = (const byte *)surface.getPixels();
 	CursorMan.replaceCursor(cursorData, surface.w, surface.h, s._centroid.x, s._centroid.y, s._transColor);
 	s.unlockSurface();
 
@@ -333,7 +338,7 @@ void EventsClass::pushCursor(CursorType cursorType) {
 	GfxSurface s = surfaceFromRes(cursor);
 
 	Graphics::Surface surface = s.lockSurface();
-	const byte *cursorData = (const byte *)surface.getBasePtr(0, 0);
+	const byte *cursorData = (const byte *)surface.getPixels();
 	CursorMan.pushCursor(cursorData, surface.w, surface.h, s._centroid.x, s._centroid.y, s._transColor);
 	s.unlockSurface();
 
@@ -346,7 +351,7 @@ void EventsClass::popCursor() {
 }
 
 void EventsClass::setCursor(Graphics::Surface &cursor, int transColor, const Common::Point &hotspot, CursorType cursorId) {
-	const byte *cursorData = (const byte *)cursor.getBasePtr(0, 0);
+	const byte *cursorData = (const byte *)cursor.getPixels();
 	CursorMan.replaceCursor(cursorData, cursor.w, cursor.h, hotspot.x, hotspot.y, transColor);
 
 	_currentCursor = cursorId;
@@ -355,7 +360,7 @@ void EventsClass::setCursor(Graphics::Surface &cursor, int transColor, const Com
 void EventsClass::setCursor(GfxSurface &cursor) {
 	Graphics::Surface s = cursor.lockSurface();
 
-	const byte *cursorData = (const byte *)s.getBasePtr(0, 0);
+	const byte *cursorData = (const byte *)s.getPixels();
 	CursorMan.replaceCursor(cursorData, cursor.getBounds().width(), cursor.getBounds().height(),
 		cursor._centroid.x, cursor._centroid.y, cursor._transColor);
 

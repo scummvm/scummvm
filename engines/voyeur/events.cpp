@@ -108,7 +108,7 @@ void EventsManager::checkForNextFrameCounter() {
 		voyeurTimer();
 
 		// Display the frame
-		g_system->copyRectToScreen((byte *)_vm->_graphicsManager._screenSurface.pixels, 
+		g_system->copyRectToScreen((byte *)_vm->_graphicsManager._screenSurface.getPixels(), 
 			SCREEN_WIDTH, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 		g_system->updateScreen();
 

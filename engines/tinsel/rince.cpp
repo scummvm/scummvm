@@ -808,7 +808,8 @@ void T2MoverProcess(CORO_PARAM, const void *param) {
 	PokeInPalette(pmi);
 
 	pMover->actorObj = MultiInitObject(pmi);
-	pMover->actorID = pMover->actorID;
+	// FIXME: This is what the original did. A bug, perhaps?
+	// pMover->actorID = pMover->actorID;
 	pMover->bActive = true;
 
 	// add it to display list

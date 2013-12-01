@@ -41,35 +41,23 @@ class UIObject : public BaseObject {
 public:
 
 	bool getTotalOffset(int *offsetX, int *offsetY);
-	bool _canFocus;
 	bool focus();
 	virtual bool handleMouse(TMouseEvent event, TMouseButton button);
 	bool isFocused();
-	bool _parentNotify;
+
 	DECLARE_PERSISTENT(UIObject, BaseObject)
 	UIObject *_parent;
 	virtual bool display() override { return display(0, 0); }
 	virtual bool display(int offsetX) { return display(offsetX, 0); }
 	virtual bool display(int offsetX, int offsetY);
 	virtual void correctSize();
-	bool _sharedFonts;
-	bool _sharedImages;
 	void setText(const char *text);
-	char *_text;
-	BaseFont *_font;
-	bool _visible;
-	UITiledImage *_back;
-	bool _disable;
+
 	UIObject(BaseGame *inGame = nullptr);
 	virtual ~UIObject();
-	int32 _width;
-	int32 _height;
-	TUIObjectType _type;
-	BaseSprite *_image;
 	void setListener(BaseScriptHolder *object, BaseScriptHolder *listenerObject, uint32 listenerParam);
-	BaseScriptHolder *_listenerParamObject;
-	uint32 _listenerParamDWORD;
-	BaseScriptHolder *_listenerObject;
+	BaseScriptHolder *getListener() const;
+
 	UIObject *_focusedWidget;
 	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
 
@@ -78,8 +66,44 @@ public:
 	virtual bool scSetProperty(const char *name, ScValue *value) override;
 	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
 	virtual const char *scToString() override;
+	TUIObjectType _type;
+
+	int32 getWidth() const;
+	int32 getHeight() override;
+	void setHeight(int32 height);
+	void setWidth(int32 width);
+	bool isDisabled() const;
+	void setDisabled(bool disable);
+	bool isVisible() const;
+	void setVisible(bool visible);
+	bool hasSharedFonts() const;
+	void setSharedFonts(bool shared);
+	bool hasSharedImages() const;
+	void setSharedImages(bool shared);
+	BaseSprite *getImage() const;
+	void setImage(BaseSprite *image);
+	void setFont(BaseFont *font);
+	BaseFont *getFont();
+	bool canFocus() const;
+
+protected:
+	BaseScriptHolder *_listenerParamObject;
+	uint32 _listenerParamDWORD;
+	BaseScriptHolder *_listenerObject;
+	BaseSprite *_image;
+	BaseFont *_font;
+	bool _sharedFonts;
+	bool _sharedImages;
+	char *_text;
+	bool _visible;
+	bool _disable;
+	int32 _width;
+	int32 _height;
+	bool _canFocus;
+	bool _parentNotify;
+	UITiledImage *_back;
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

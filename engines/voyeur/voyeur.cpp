@@ -502,8 +502,8 @@ void VoyeurEngine::doOpening() {
 		if (decoder.needsUpdate()) {
 			const Graphics::Surface *frame = decoder.decodeNextFrame();
 
-			Common::copy((byte *)frame->pixels, (byte *)frame->pixels + 320 * 200,
-				(byte *)_graphicsManager._screenSurface.pixels);
+			Common::copy((byte *)frame->getPixels(), (byte *)frame->getPixels() + 320 * 200,
+				(byte *)_graphicsManager._screenSurface.getPixels());
 		}
 
 		_eventsManager.pollEvents();
@@ -526,8 +526,8 @@ void VoyeurEngine::playRL2Video(const Common::String &filename) {
 		if (decoder.needsUpdate()) {
 			const Graphics::Surface *frame = decoder.decodeNextFrame();
 
-			Common::copy((byte *)frame->pixels, (byte *)frame->pixels + 320 * 200,
-				(byte *)_graphicsManager._screenSurface.pixels);
+			Common::copy((byte *)frame->getPixels(), (byte *)frame->getPixels() + 320 * 200,
+				(byte *)_graphicsManager._screenSurface.getPixels());
 		}
 
 		_eventsManager.pollEvents();

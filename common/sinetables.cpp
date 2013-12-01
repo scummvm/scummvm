@@ -34,15 +34,15 @@ SineTable::SineTable(int bitPrecision) {
 
 	int m = 1 << _bitPrecision;
 	double freq = 2 * M_PI / m;
-	_table = new float[m];
+	_table = new float[m / 2];
 
-	// Table contains sin(2*pi*x/n) for 0<=x<=n/4,
-	// followed by its reverse
-	for (int i = 0; i <= m / 4; i++)
+	// Table contains sin(2*pi*i/m) for 0<=i<m/4,
+	// followed by m/2<=i<3m/4
+	for (int i = 0; i < m / 4; i++)
 		_table[i] = sin(i * freq);
 
-	for (int i = 1; i < m / 4; i++)
-		_table[m / 2 - i] = _table[i];
+	for (int i = 0; i < m / 4; i++)
+		_table[m / 4 + i] = -_table[i];
 }
 
 SineTable::~SineTable() {

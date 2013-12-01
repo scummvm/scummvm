@@ -15,7 +15,9 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if MT32EMU_ACCURATE_WG == 0
+#if MT32EMU_USE_FLOAT_SAMPLES
+#include "LA32FloatWaveGenerator.h"
+#else
 
 #ifndef MT32EMU_LA32_WAVE_GENERATOR_H
 #define MT32EMU_LA32_WAVE_GENERATOR_H
@@ -207,7 +209,7 @@ class LA32PartialPair {
 	bool ringModulated;
 	bool mixed;
 
-	static Bit16s unlogAndMixWGOutput(const LA32WaveGenerator &wg, const LogSample * const ringModulatingLogSample);
+	static Bit16s unlogAndMixWGOutput(const LA32WaveGenerator &wg);
 
 public:
 	enum PairType {
@@ -243,4 +245,4 @@ public:
 
 #endif // #ifndef MT32EMU_LA32_WAVE_GENERATOR_H
 
-#endif // #if MT32EMU_ACCURATE_WG == 0
+#endif // #if MT32EMU_USE_FLOAT_SAMPLES

@@ -360,7 +360,7 @@ public:
 	uint32		getLocationFlags();
 	bool		checkSpecialZoneBox(ZonePtr z, uint32 type, uint x, uint y);
 	bool		checkZoneBox(ZonePtr z, uint32 type, uint x, uint y);
-	bool 		checkZoneType(ZonePtr z, uint32 type);
+	bool		checkZoneType(ZonePtr z, uint32 type);
 	bool		checkLinkedAnimBox(ZonePtr z, uint32 type, uint x, uint y);
 	ZonePtr		hitZone(uint32 type, uint16 x, uint16 y);
 	void		runZone(ZonePtr z);
@@ -579,7 +579,7 @@ private:
 	void	freeLocation(bool removeAll);
 	void	loadProgram(AnimationPtr a, const char *filename);
 	void	startGui(bool showSplash);
-	void 	startIngameMenu();
+	void	startIngameMenu();
 	void	freeCharacter();
 
 	typedef void (Parallaction_br::*Callable)(void *);

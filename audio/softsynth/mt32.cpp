@@ -62,7 +62,8 @@ protected:
 
 	// Callback for debug messages, in vprintf() format
 	void printDebug(const char *fmt, va_list list) {
-		debug(4, fmt, list);
+		Common::String out = Common::String::vformat(fmt, list);
+		debug(4, "%s", out.c_str());
 	}
 
 	// Callbacks for reporting various errors and information
@@ -459,9 +460,6 @@ bool MT32EmuMusicPlugin::checkDevice(MidiDriver::DeviceHandle) const {
 }
 
 Common::Error MT32EmuMusicPlugin::createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle) const {
-	if (ConfMan.hasKey("extrapath"))
-		SearchMan.addDirectory("extrapath", ConfMan.get("extrapath"));
-
 	*mididriver = new MidiDriver_MT32(g_system->getMixer());
 
 	return Common::kNoError;

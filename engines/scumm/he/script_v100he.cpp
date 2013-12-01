@@ -2148,7 +2148,7 @@ void ScummEngine_v100he::o100_systemOps() {
 		break;
 	case 132:
 		// Confirm shutdown
-		quitGame();
+		confirmExitDialog();
 		break;
 	case 133:
 		quitGame();

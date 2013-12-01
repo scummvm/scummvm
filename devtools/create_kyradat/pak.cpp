@@ -142,6 +142,7 @@ bool PAKFile::outputAllFiles() {
 			printf("OK\n");
 		} else {
 			printf("FAILED\n");
+			fclose(file);
 			return false;
 		}
 		fclose(file);
@@ -168,6 +169,7 @@ bool PAKFile::outputFileAs(const char *f, const char *fn) {
 		printf("OK\n");
 	} else {
 		printf("FAILED\n");
+		fclose(file);
 		return false;
 	}
 	fclose(file);

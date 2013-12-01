@@ -40,14 +40,6 @@ MODULE_OBJS += \
 	keymapper/remap-dialog.o
 endif
 
-ifdef USE_OPENGL
-MODULE_OBJS += \
-	graphics/opengl/glerrorcheck.o \
-	graphics/opengl/gltexture.o \
-	graphics/opengl/opengl-graphics.o \
-	graphics/openglsdl/openglsdl-graphics.o
-endif
-
 ifdef ENABLE_VKEYBD
 MODULE_OBJS += \
 	vkeybd/image-map.o \
@@ -55,6 +47,15 @@ MODULE_OBJS += \
 	vkeybd/virtual-keyboard.o \
 	vkeybd/virtual-keyboard-gui.o \
 	vkeybd/virtual-keyboard-parser.o
+endif
+
+# OpenGL specific source files.
+ifdef USE_OPENGL
+MODULE_OBJS += \
+	graphics/opengl/debug.o \
+	graphics/opengl/extensions.o \
+	graphics/opengl/opengl-graphics.o \
+	graphics/opengl/texture.o
 endif
 
 # SDL specific source files.
@@ -70,11 +71,16 @@ MODULE_OBJS += \
 	mutex/sdl/sdl-mutex.o \
 	plugins/sdl/sdl-provider.o \
 	timer/sdl/sdl-timer.o
-	
+
 # SDL 1.3 removed audio CD support
 ifndef USE_SDL13
 MODULE_OBJS += \
 	audiocd/sdl/sdl-audiocd.o
+endif
+
+ifdef USE_OPENGL
+MODULE_OBJS += \
+	graphics/openglsdl/openglsdl-graphics.o
 endif
 endif
 
@@ -120,9 +126,9 @@ MODULE_OBJS += \
 	mixer/sdl13/sdl13-mixer.o
 endif
 
-ifeq ($(BACKEND),bada)
+ifeq ($(BACKEND),tizen)
 MODULE_OBJS += \
-	timer/bada/timer.o
+	timer/tizen/timer.o
 endif
 
 ifeq ($(BACKEND),ds)
@@ -212,6 +218,12 @@ MODULE_OBJS += \
 	fs/wii/wii-fs.o \
 	fs/wii/wii-fs-factory.o \
 	plugins/wii/wii-provider.o
+endif
+
+ifdef ENABLE_EVENTRECORDER
+MODULE_OBJS += \
+	mixer/nullmixer/nullsdl-mixer.o \
+	saves/recorder/recorder-saves.o
 endif
 
 # Include common rules

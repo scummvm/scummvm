@@ -80,6 +80,12 @@ class Talk;
 
 #define kSayTheEnd  41
 
+enum GameType {
+	kGameTypeNone = 0,
+	kGameTypeSoltys,
+	kGameTypeSfinx
+};
+
 // our engine debug channels
 enum {
 	kCGEDebugBitmap = 1 << 0,

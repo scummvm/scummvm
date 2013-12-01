@@ -95,13 +95,13 @@ void AdNodeState::setCursor(const char *filename) {
 bool AdNodeState::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferPtr(TMEMBER_PTR(_gameRef));
 
-	persistMgr->transfer(TMEMBER(_active));
-	persistMgr->transfer(TMEMBER(_name));
-	persistMgr->transfer(TMEMBER(_filename));
-	persistMgr->transfer(TMEMBER(_cursor));
-	persistMgr->transfer(TMEMBER(_alphaColor));
+	persistMgr->transferBool(TMEMBER(_active));
+	persistMgr->transferCharPtr(TMEMBER(_name));
+	persistMgr->transferCharPtr(TMEMBER(_filename));
+	persistMgr->transferCharPtr(TMEMBER(_cursor));
+	persistMgr->transferUint32(TMEMBER(_alphaColor));
 	for (int i = 0; i < 7; i++) {
-		persistMgr->transfer(TMEMBER(_caption[i]));
+		persistMgr->transferCharPtr(TMEMBER(_caption[i]));
 	}
 
 	return STATUS_OK;
@@ -192,4 +192,4 @@ bool AdNodeState::transferEntity(AdEntity *entity, bool includingSprites, bool s
 	return STATUS_OK;
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

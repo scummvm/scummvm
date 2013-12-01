@@ -79,8 +79,10 @@ private:
 	int16 _destY;
 	int16 _heroWidth;                               // Hero width
 	bool  _routeFoundFl;                            // TRUE when path found
-	bool  _fullStackFl;                             // TRUE if stack exhausted
 	bool  _fullSegmentFl;                           // Segments exhausted
+
+	// CHECKME: Never set to true, could be removed
+	bool  _fullStackFl;                             // TRUE if stack exhausted
 
 	void segment(int16 x, int16 y);
 	bool findRoute(const int16 cx, const int16 cy);

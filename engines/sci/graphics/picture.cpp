@@ -236,7 +236,9 @@ void GfxPicture::drawCelData(byte *inbuffer, int size, int headerPos, int rlePos
 	byte *ptr = NULL;
 	byte *headerPtr = inbuffer + headerPos;
 	byte *rlePtr = inbuffer + rlePos;
-	int16 displaceX, displaceY;
+	// displaceX, displaceY fields are ignored, and may contain garbage
+	// (e.g. pic 261 in Dr. Brain 1 Spanish - bug #3614914)
+	//int16 displaceX, displaceY;
 	byte priority = _addToFlag ? _priority : 0;
 	byte clearColor;
 	bool compression = true;
@@ -251,8 +253,8 @@ void GfxPicture::drawCelData(byte *inbuffer, int size, int headerPos, int rlePos
 		// Width/height here are always LE, even in Mac versions
 		width = READ_LE_UINT16(headerPtr + 0);
 		height = READ_LE_UINT16(headerPtr + 2);
-		displaceX = (signed char)headerPtr[4];
-		displaceY = (unsigned char)headerPtr[5];
+		//displaceX = (signed char)headerPtr[4];
+		//displaceY = (unsigned char)headerPtr[5];
 		if (_resourceType == SCI_PICTURE_TYPE_SCI11)
 			// SCI1.1 uses hardcoded clearcolor for pictures, even if cel header specifies otherwise
 			clearColor = _screen->getColorWhite();
@@ -262,16 +264,16 @@ void GfxPicture::drawCelData(byte *inbuffer, int size, int headerPos, int rlePos
 	} else {
 		width = READ_SCI11ENDIAN_UINT16(headerPtr + 0);
 		height = READ_SCI11ENDIAN_UINT16(headerPtr + 2);
-		displaceX = READ_SCI11ENDIAN_UINT16(headerPtr + 4); // probably signed?!?
-		displaceY = READ_SCI11ENDIAN_UINT16(headerPtr + 6); // probably signed?!?
+		//displaceX = READ_SCI11ENDIAN_UINT16(headerPtr + 4); // probably signed?!?
+		//displaceY = READ_SCI11ENDIAN_UINT16(headerPtr + 6); // probably signed?!?
 		clearColor = headerPtr[8];
 		if (headerPtr[9] == 0)
 			compression = false;
 	}
 #endif
 
-	if (displaceX || displaceY)
-		error("unsupported embedded cel-data in picture");
+	//if (displaceX || displaceY)
+	//	error("unsupported embedded cel-data in picture");
 
 	// We will unpack cel-data into a temporary buffer and then plot it to screen
 	//  That needs to be done cause a mirrored picture may be requested
@@ -656,6 +658,7 @@ void GfxPicture::drawVectorData(byte *data, int dataSize) {
 					case 35:
 					case 381:
 					case 376:
+					//case 390:	// in the blacklisted NRS patch 1.2 (bug #3615060)
 						return;
 					default:
 						break;

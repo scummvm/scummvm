@@ -43,10 +43,6 @@
  */
 namespace Cruise {
 
-enum CruiseGameType {
-	GType_CRUISE = 1
-};
-
 #define GAME_FRAME_DELAY_1 50
 #define GAME_FRAME_DELAY_2 100
 

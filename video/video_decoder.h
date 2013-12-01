@@ -168,14 +168,15 @@ public:
 	/**
 	 * Seek to a given time in the video.
 	 *
-	 * If the video is playing, it will continue to play. The default
-	 * implementation will seek each track and must still be called
-	 * from any other implementation.
+	 * If the video is playing, it will continue to play. This calls
+	 * seekIntern(), which can be overriden. By default, seekIntern()
+	 * will call Track::seek() on all tracks with the time passed to
+	 * this function.
 	 *
 	 * @param time The time to seek to
 	 * @return true on success, false otherwise
 	 */
-	virtual bool seek(const Audio::Timestamp &time);
+	bool seek(const Audio::Timestamp &time);
 
 	/**
 	 * Seek to a given frame.
@@ -593,17 +594,17 @@ protected:
 		virtual Audio::Timestamp getDuration() const;
 		Audio::Timestamp getFrameTime(uint frame) const;
 
-	protected:
-		/**
-		 * Get the rate at which this track is played.
-		 */
-		virtual Common::Rational getFrameRate() const = 0;
-
 		/**
 		 * Get the frame that should be displaying at the given time. This is
 		 * helpful for someone implementing seek().
 		 */
 		uint getFrameAtTime(const Audio::Timestamp &time) const;
+
+	protected:
+		/**
+		 * Get the rate at which this track is played.
+		 */
+		virtual Common::Rational getFrameRate() const = 0;
 	};
 
 	/**
@@ -760,8 +761,11 @@ protected:
 	 * Define a track to be used by this class.
 	 *
 	 * The pointer is then owned by this base class.
+	 *
+	 * @param track The track to add
+	 * @param isExternal Is this an external track not found by loadStream()?
 	 */
-	void addTrack(Track *track);
+	void addTrack(Track *track, bool isExternal = false);
 
 	/**
 	 * Whether or not getTime() will sync with a playing audio track.
@@ -813,16 +817,27 @@ protected:
 	/**
 	 * Get the begin iterator of the tracks
 	 */
-	TrackListIterator getTrackListBegin() { return _tracks.begin(); }
+	TrackListIterator getTrackListBegin() { return _internalTracks.begin(); }
 
 	/**
 	 * Get the end iterator of the tracks
 	 */
-	TrackListIterator getTrackListEnd() { return _tracks.end(); }
+	TrackListIterator getTrackListEnd() { return _internalTracks.end(); }
+
+	/**
+	 * The internal seek function that does the actual seeking.
+	 *
+	 * @see seek()
+	 *
+	 * @return true on success, false otherwise
+	 */
+	virtual bool seekIntern(const Audio::Timestamp &time);
 
 private:
 	// Tracks owned by this VideoDecoder
 	TrackList _tracks;
+	TrackList _internalTracks;
+	TrackList _externalTracks;
 
 	// Current playback status
 	bool _needsUpdate;

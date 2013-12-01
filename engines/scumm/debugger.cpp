@@ -641,7 +641,7 @@ static void hlineColor(ScummEngine *scumm, int x1, int x2, int y, byte color) {
 		x2 = right - 1;
 
 
-	ptr = (byte *)vs->pixels + x1 + y * vs->pitch;
+	ptr = (byte *)vs->getBasePtr(x1, y);
 
 	while (x1++ <= x2) {
 		*ptr++ = color;

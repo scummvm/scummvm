@@ -29,6 +29,7 @@
 #include "common/hashmap.h"
 #include "common/list.h"
 #include "common/str.h"
+#include "common/rect.h"
 
 #include "graphics/surface.h"
 #include "graphics/font.h"
@@ -38,10 +39,6 @@
 #define SCUMMVM_THEME_VERSION_STR "SCUMMVM_STX0.8.20"
 
 class OSystem;
-
-namespace Common {
-struct Rect;
-}
 
 namespace Graphics {
 struct DrawStep;
@@ -234,6 +231,14 @@ public:
 	static const char *const kImageDelbtn; ///< Delete characters in the predictive dialog
 	static const char *const kImageList;      ///< List image used in save/load chooser selection
 	static const char *const kImageGrid;      ///< Grid image used in save/load chooser selection
+	static const char *const kImageStopbtn; ///< Stop recording button in recorder onscreen dialog
+	static const char *const kImageEditbtn; ///< Edit recording metadata in recorder onscreen dialog
+	static const char *const kImageSwitchModebtn; ///< Switch mode button in recorder onscreen dialog
+	static const char *const kImageFastReplaybtn; ///< Fast playback mode button in recorder onscreen dialog
+	static const char *const kImageStopSmallbtn; ///< Stop recording button in recorder onscreen dialog (for 320xY)
+	static const char *const kImageEditSmallbtn; ///< Edit recording metadata in recorder onscreen dialog (for 320xY)
+	static const char *const kImageSwitchModeSmallbtn; ///< Switch mode button in recorder onscreen dialog (for 320xY)
+	static const char *const kImageFastReplaySmallbtn; ///< Fast playback mode button in recorder onscreen dialog (for 320xY)
 
 	/**
 	 * Graphics mode enumeration.
@@ -242,8 +247,8 @@ public:
 	 */
 	enum GraphicsMode {
 		kGfxDisabled = 0,   ///< No GFX
-		kGfxStandard16bit,  ///< 2BPP with the standard (aliased) renderer.
-		kGfxAntialias16bit  ///< 2BPP with the optimized AA renderer.
+		kGfxStandard,  ///< Standard (aliased) renderer.
+		kGfxAntialias  ///< Optimized AA renderer.
 	};
 
 	/** Constant value to expand dirty rectangles, to make sure they are fully copied */
@@ -275,7 +280,12 @@ public:
 
 	void refresh();
 	void enable();
+
+	void showCursor();
+	void hideCursor();
+
 	void disable();
+
 
 	/**
 	 * Query the set up pixel format.
@@ -363,7 +373,7 @@ public:
 
 	void drawDialogBackground(const Common::Rect &r, DialogBackground type, WidgetStateInfo state = kStateEnabled);
 
-	void drawText(const Common::Rect &r, const Common::String &str, WidgetStateInfo state = kStateEnabled, Graphics::TextAlign align = Graphics::kTextAlignCenter, TextInversionState inverted = kTextInversionNone, int deltax = 0, bool useEllipsis = true, FontStyle font = kFontStyleBold, FontColor color = kFontColorNormal, bool restore = true);
+	void drawText(const Common::Rect &r, const Common::String &str, WidgetStateInfo state = kStateEnabled, Graphics::TextAlign align = Graphics::kTextAlignCenter, TextInversionState inverted = kTextInversionNone, int deltax = 0, bool useEllipsis = true, FontStyle font = kFontStyleBold, FontColor color = kFontColorNormal, bool restore = true, const Common::Rect &drawableTextArea = Common::Rect(0, 0, 0, 0));
 
 	void drawChar(const Common::Rect &r, byte ch, const Graphics::Font *font, WidgetStateInfo state = kStateEnabled, FontColor color = kFontColorNormal);
 
@@ -575,7 +585,7 @@ protected:
 	 */
 	void queueDD(DrawData type,  const Common::Rect &r, uint32 dynamic = 0, bool restore = false);
 	void queueDDText(TextData type, TextColor color, const Common::Rect &r, const Common::String &text, bool restoreBg,
-	                 bool elipsis, Graphics::TextAlign alignH = Graphics::kTextAlignLeft, TextAlignVertical alignV = kTextAlignVTop, int deltax = 0);
+	                 bool elipsis, Graphics::TextAlign alignH = Graphics::kTextAlignLeft, TextAlignVertical alignV = kTextAlignVTop, int deltax = 0, const Common::Rect &drawableTextArea = Common::Rect(0, 0, 0, 0));
 	void queueBitmap(const Graphics::Surface *bitmap, const Common::Rect &r, bool alpha);
 
 	/**

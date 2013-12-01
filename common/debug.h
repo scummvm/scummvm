@@ -117,5 +117,9 @@ void debugCN(uint32 debugChannels, const char *s, ...) GCC_PRINTF(2, 3);
  */
 extern int gDebugLevel;
 
+//Global constant for EventRecorder debug channel
+enum GlobalDebugLevels {
+	kDebugLevelEventRec = 1 << 30
+};
 
 #endif

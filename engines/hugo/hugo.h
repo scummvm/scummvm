@@ -106,7 +106,8 @@ enum GameVariant {
 	kGameVariantH3Win,
 	kGameVariantH1Dos,
 	kGameVariantH2Dos,
-	kGameVariantH3Dos
+	kGameVariantH3Dos,
+	kGameVariantNone
 };
 
 enum HugoDebugChannels {
@@ -259,7 +260,7 @@ public:
 
 	// Used by the qsort function
 	static HugoEngine &get() {
-		assert(s_Engine != 0);
+		assert(s_Engine != nullptr);
 		return *s_Engine;
 	}
 

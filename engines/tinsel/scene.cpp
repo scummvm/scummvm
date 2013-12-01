@@ -130,15 +130,15 @@ const SCENE_STRUC *GetSceneStruc(const byte *pStruc) {
 	const byte *p = pStruc;
 	memset(&g_tempStruc, 0, sizeof(SCENE_STRUC));
 
-	g_tempStruc.numEntrance    = FROM_LE_32(READ_32(p)); p += sizeof(uint32);
-	g_tempStruc.numPoly        = FROM_LE_32(READ_32(p)); p += sizeof(uint32);
-	g_tempStruc.numTaggedActor = FROM_LE_32(READ_32(p)); p += sizeof(uint32);
-	g_tempStruc.defRefer       = FROM_LE_32(READ_32(p)); p += sizeof(uint32);
-	g_tempStruc.hSceneScript   = FROM_LE_32(READ_32(p)); p += sizeof(uint32);
-	g_tempStruc.hEntrance      = FROM_LE_32(READ_32(p)); p += sizeof(uint32);
-	g_tempStruc.hPoly          = FROM_LE_32(READ_32(p)); p += sizeof(uint32);
-	g_tempStruc.hTaggedActor   = FROM_LE_32(READ_32(p)); p += sizeof(uint32);
-	
+	g_tempStruc.numEntrance    = READ_32(p); p += sizeof(uint32);
+	g_tempStruc.numPoly        = READ_32(p); p += sizeof(uint32);
+	g_tempStruc.numTaggedActor = READ_32(p); p += sizeof(uint32);
+	g_tempStruc.defRefer       = READ_32(p); p += sizeof(uint32);
+	g_tempStruc.hSceneScript   = READ_32(p); p += sizeof(uint32);
+	g_tempStruc.hEntrance      = READ_32(p); p += sizeof(uint32);
+	g_tempStruc.hPoly          = READ_32(p); p += sizeof(uint32);
+	g_tempStruc.hTaggedActor   = READ_32(p); p += sizeof(uint32);
+
 	return &g_tempStruc;
 }
 
@@ -186,7 +186,7 @@ static void SceneTinselProcess(CORO_PARAM, const void *param) {
 void SendSceneTinselProcess(TINSEL_EVENT event) {
 	SCENE_STRUC	*ss;
 
-	if (g_SceneHandle != (SCNHANDLE)NULL) {
+	if (g_SceneHandle != 0) {
 		ss = (SCENE_STRUC *) FindChunk(g_SceneHandle, CHUNK_SCENE);
 
 		if (ss->hSceneScript) {

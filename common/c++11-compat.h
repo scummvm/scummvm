@@ -31,7 +31,9 @@
 // Custom nullptr replacement. This is not type safe as the real C++11 nullptr
 // though.
 //
+#if !defined(nullptr)  // XCode 5.0.1 has __cplusplus=199711 but defines this
 #define nullptr 0
+#endif
 
 //
 // Replacement for the override keyword. This allows compilation of code

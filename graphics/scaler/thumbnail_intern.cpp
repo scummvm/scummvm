@@ -42,8 +42,10 @@ uint16 quadBlockInterpolate(const uint8 *src, uint32 srcPitch) {
 
 template<int bitFormat>
 void createThumbnail_2(const uint8 *src, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
-	assert(width % 2 == 0);
-	assert(height % 2 == 0);
+	// Make sure the width and height is a multiple of 2.
+	width &= ~1;
+	height &= ~1;
+
 	for (int y = 0; y < height; y += 2) {
 		for (int x = 0; x < width; x += 2, dstPtr += 2) {
 			*((uint16 *)dstPtr) = quadBlockInterpolate<bitFormat>(src + 2 * x, srcPitch);
@@ -55,8 +57,10 @@ void createThumbnail_2(const uint8 *src, uint32 srcPitch, uint8 *dstPtr, uint32 
 
 template<int bitFormat>
 void createThumbnail_4(const uint8 *src, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
-	assert(width % 4 == 0);
-	assert(height % 4 == 0);
+	// Make sure the width and height is a multiple of 4
+	width &= ~3;
+	height &= ~3;
+
 	for (int y = 0; y < height; y += 4) {
 		for (int x = 0; x < width; x += 4, dstPtr += 2) {
 			uint16 upleft = quadBlockInterpolate<bitFormat>(src + 2 * x, srcPitch);
@@ -71,17 +75,87 @@ void createThumbnail_4(const uint8 *src, uint32 srcPitch, uint8 *dstPtr, uint32 
 	}
 }
 
-static void createThumbnail(const uint8 *src, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
-	// only 1/2 and 1/4 downscale supported
-	if (width != 320 && width != 640)
-		return;
+static void scaleThumbnail(Graphics::Surface &in, Graphics::Surface &out) {
+	while (in.w / out.w >= 4 || in.h / out.h >= 4) {
+		createThumbnail_4<565>((const uint8 *)in.getPixels(), in.pitch, (uint8 *)in.getPixels(), in.pitch, in.w, in.h);
+		in.w /= 4;
+		in.h /= 4;
+	}
 
-	int downScaleMode = (width == 320) ? 2 : 4;
+	while (in.w / out.w >= 2 || in.h / out.h >= 2) {
+		createThumbnail_2<565>((const uint8 *)in.getPixels(), in.pitch, (uint8 *)in.getPixels(), in.pitch, in.w, in.h);
+		in.w /= 2;
+		in.h /= 2;
+	}
 
-	if (downScaleMode == 2) {
-		createThumbnail_2<565>(src, srcPitch, dstPtr, dstPitch, width, height);
-	} else if (downScaleMode == 4) {
-		createThumbnail_4<565>(src, srcPitch, dstPtr, dstPitch, width, height);
+	if ((in.w == out.w && in.h < out.h) || (in.w < out.w && in.h == out.h)) {
+		// In this case we simply center the input surface in the output
+		uint8 *dst = (uint8 *)out.getBasePtr((out.w - in.w) / 2, (out.h - in.h) / 2);
+		const uint8 *src = (const uint8 *)in.getPixels();
+
+		for (int y = 0; y < in.h; ++y) {
+			memcpy(dst, src, in.w * in.format.bytesPerPixel);
+			src += in.pitch;
+			dst += out.pitch;
+		}
+	} else {
+		// Assure the aspect of the scaled image still matches the original.
+		int targetWidth = out.w, targetHeight = out.h;
+
+		const float inputAspect = (float)in.w / in.h;
+		const float outputAspect = (float)out.w / out.h;
+
+		if (inputAspect > outputAspect) {
+			targetHeight = int(targetWidth / inputAspect);
+		} else if (inputAspect < outputAspect) {
+			targetWidth = int(targetHeight * inputAspect);
+		}
+
+		// Make sure we are still in the bounds of the output
+		assert(targetWidth <= out.w);
+		assert(targetHeight <= out.h);
+
+		// Center the image on the output surface
+		byte *dst = (byte *)out.getBasePtr((out.w - targetWidth) / 2, (out.h - targetHeight) / 2);
+		const uint dstLineIncrease = out.pitch - targetWidth * out.format.bytesPerPixel;
+
+		const float scaleFactorX = (float)targetWidth / in.w;
+		const float scaleFactorY = (float)targetHeight / in.h;
+
+		for (int y = 0; y < targetHeight; ++y) {
+			const float yFrac = (y / scaleFactorY);
+			const int y1 = (int)yFrac;
+			const int y2 = (y1 + 1 < in.h) ? (y1 + 1) : (in.h - 1);
+
+			for (int x = 0; x < targetWidth; ++x) {
+				const float xFrac = (x / scaleFactorX);
+				const int x1 = (int)xFrac;
+				const int x2 = (x1 + 1 < in.w) ? (x1 + 1) : (in.w - 1);
+
+				// Look up colors at the points
+				uint8 p1R, p1G, p1B;
+				Graphics::colorToRGB<Graphics::ColorMasks<565> >(READ_UINT16(in.getBasePtr(x1, y1)), p1R, p1G, p1B);
+				uint8 p2R, p2G, p2B;
+				Graphics::colorToRGB<Graphics::ColorMasks<565> >(READ_UINT16(in.getBasePtr(x2, y1)), p2R, p2G, p2B);
+				uint8 p3R, p3G, p3B;
+				Graphics::colorToRGB<Graphics::ColorMasks<565> >(READ_UINT16(in.getBasePtr(x1, y2)), p3R, p3G, p3B);
+				uint8 p4R, p4G, p4B;
+				Graphics::colorToRGB<Graphics::ColorMasks<565> >(READ_UINT16(in.getBasePtr(x2, y2)), p4R, p4G, p4B);
+
+				const float xDiff = xFrac - x1;
+				const float yDiff = yFrac - y1;
+
+				uint8 pR = (uint8)((1 - yDiff) * ((1 - xDiff) * p1R + xDiff * p2R) + yDiff * ((1 - xDiff) * p3R + xDiff * p4R));
+				uint8 pG = (uint8)((1 - yDiff) * ((1 - xDiff) * p1G + xDiff * p2G) + yDiff * ((1 - xDiff) * p3G + xDiff * p4G));
+				uint8 pB = (uint8)((1 - yDiff) * ((1 - xDiff) * p1B + xDiff * p2B) + yDiff * ((1 - xDiff) * p3B + xDiff * p4B));
+
+				WRITE_UINT16(dst, Graphics::RGBToColor<Graphics::ColorMasks<565> >(pR, pG, pB));
+				dst += 2;
+			}
+
+			// Move to the next line
+			dst = (byte *)dst + dstLineIncrease;
+		}
 	}
 }
 
@@ -90,7 +164,7 @@ static void createThumbnail(const uint8 *src, uint32 srcPitch, uint8 *dstPtr, ui
  * Copies the current screen contents to a new surface, using RGB565 format.
  * WARNING: surf->free() must be called by the user to avoid leaking.
  *
- * @param surf		the surface to store the data in it
+ * @param surf      the surface to store the data in it
  */
 static bool grabScreen565(Graphics::Surface *surf) {
 	Graphics::Surface *screen = g_system->lockScreen();
@@ -98,7 +172,7 @@ static bool grabScreen565(Graphics::Surface *surf) {
 		return false;
 
 	assert(screen->format.bytesPerPixel == 1 || screen->format.bytesPerPixel == 2);
-	assert(screen->pixels != 0);
+	assert(screen->getPixels() != 0);
 
 	Graphics::PixelFormat screenFormat = g_system->getScreenFormat();
 
@@ -116,15 +190,16 @@ static bool grabScreen565(Graphics::Surface *surf) {
 			byte r = 0, g = 0, b = 0;
 
 			if (screenFormat.bytesPerPixel == 1) {
-				r = palette[((uint8 *)screen->pixels)[y * screen->pitch + x] * 3];
-				g = palette[((uint8 *)screen->pixels)[y * screen->pitch + x] * 3 + 1];
-				b = palette[((uint8 *)screen->pixels)[y * screen->pitch + x] * 3 + 2];
+				uint8 pixel = *(uint8 *)screen->getBasePtr(x, y);
+				r = palette[pixel * 3 + 0];
+				g = palette[pixel * 3 + 1];
+				b = palette[pixel * 3 + 2];
 			} else if (screenFormat.bytesPerPixel == 2) {
 				uint16 col = READ_UINT16(screen->getBasePtr(x, y));
 				screenFormat.colorToRGB(col, r, g, b);
 			}
 
-			((uint16 *)surf->pixels)[y * surf->w + x] = Graphics::RGBToColor<Graphics::ColorMasks<565> >(r, g, b);
+			*((uint16 *)surf->getBasePtr(x, y)) = Graphics::RGBToColor<Graphics::ColorMasks<565> >(r, g, b);
 		}
 	}
 
@@ -135,78 +210,20 @@ static bool grabScreen565(Graphics::Surface *surf) {
 }
 
 static bool createThumbnail(Graphics::Surface &out, Graphics::Surface &in) {
-	uint16 width = in.w;
-	uint16 inHeight = in.h;
-
-	if (width < 320) {
-		// Special case to handle MM NES (uses a screen width of 256)
-		width = 320;
-
-		// center MM NES screen
-		Graphics::Surface newscreen;
-		newscreen.create(width, in.h, in.format);
-
-		uint8 *dst = (uint8 *)newscreen.getBasePtr((320 - in.w) / 2, 0);
-		const uint8 *src = (const uint8 *)in.getBasePtr(0, 0);
-		uint16 height = in.h;
-
-		while (height--) {
-			memcpy(dst, src, in.pitch);
-			dst += newscreen.pitch;
-			src += in.pitch;
-		}
-
-		in.free();
-		in = newscreen;
-	} else if (width == 720) {
-		// Special case to handle Hercules mode
-		//
-		// NOTE: This code is pretty SCUMM specific.
-		// For other games this code might cut off
-		// not only the menu, but also other graphics.
-		width = 640;
-		inHeight = 400;
-
-		// cut off menu and so on..
-		Graphics::Surface newscreen;
-		newscreen.create(width, 400, in.format);
-
-		uint8 *dst = (uint8 *)newscreen.getBasePtr(0, (400 - 240) / 2);
-		const uint8 *src = (const uint8 *)in.getBasePtr(41, 28);
-
-		for (int y = 0; y < 240; ++y) {
-			memcpy(dst, src, 640 * in.format.bytesPerPixel);
-			dst += newscreen.pitch;
-			src += in.pitch;
-		}
-
-		in.free();
-		in = newscreen;
-	} else if (width == 640 && inHeight == 440) {
-		// Special case to handle KQ6 Windows: resize the screen to 640x480,
-		// adding a black band in the bottom.
-		inHeight = 480;
-
-		Graphics::Surface newscreen;
-		newscreen.create(width, 480, in.format);
-
-		memcpy(newscreen.getBasePtr(0, 0), in.getBasePtr(0, 0), width * 440 * in.format.bytesPerPixel);
-
-		in.free();
-		in = newscreen;
+	int height;
+	if ((in.w == 320 && in.h == 200) || (in.w == 640 && in.h == 400)) {
+		height = kThumbnailHeight1;
+	} else {
+		height = kThumbnailHeight2;
 	}
 
-	uint16 newHeight = !(inHeight % 240) ? kThumbnailHeight2 : kThumbnailHeight1;
-
-	out.create(kThumbnailWidth, newHeight, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
-	createThumbnail((const uint8 *)in.pixels, width * sizeof(uint16), (uint8 *)out.pixels, out.pitch, width, inHeight);
-
+	out.create(kThumbnailWidth, height, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
+	scaleThumbnail(in, out);
 	in.free();
-
 	return true;
 }
 
-bool createThumbnailFromScreen(Graphics::Surface* surf) {
+bool createThumbnailFromScreen(Graphics::Surface *surf) {
 	assert(surf);
 
 	Graphics::Surface screen;
@@ -230,9 +247,37 @@ bool createThumbnail(Graphics::Surface *surf, const uint8 *pixels, int w, int h,
 			g = palette[pixels[y * w + x] * 3 + 1];
 			b = palette[pixels[y * w + x] * 3 + 2];
 
-			((uint16 *)screen.pixels)[y * screen.w + x] = Graphics::RGBToColor<Graphics::ColorMasks<565> >(r, g, b);
+			*((uint16 *)screen.getBasePtr(x, y)) = Graphics::RGBToColor<Graphics::ColorMasks<565> >(r, g, b);
 		}
 	}
 
 	return createThumbnail(*surf, screen);
 }
+
+// this is somewhat awkward, but createScreenShot should logically be in graphics,
+// but moving other functions in this file into that namespace breaks several engines
+namespace Graphics {
+bool createScreenShot(Graphics::Surface &surf) {
+	Graphics::PixelFormat screenFormat = g_system->getScreenFormat();
+	//convert surface to 2 bytes pixel format to avoid problems with palette saving and loading
+	if ((screenFormat.bytesPerPixel == 1) || (screenFormat.bytesPerPixel == 2)) {
+		return grabScreen565(&surf);
+	} else {
+		Graphics::Surface *screen = g_system->lockScreen();
+		if (!screen) {
+			return false;
+		}
+		surf.create(screen->w, screen->h, Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
+		for (uint y = 0; y < screen->h; ++y) {
+			for (uint x = 0; x < screen->w; ++x) {
+				byte r = 0, g = 0, b = 0, a = 0;
+				uint32 col = READ_UINT32(screen->getBasePtr(x, y));
+				screenFormat.colorToARGB(col, a, r, g, b);
+				*((uint32 *)surf.getBasePtr(x, y)) = Graphics::ARGBToColor<Graphics::ColorMasks<8888> >(a, r, g, b);
+			}
+		}
+		g_system->unlockScreen();
+		return true;
+	}
+}
+} // End of namespace Graphics

@@ -243,15 +243,15 @@ bool SXDate::persist(BasePersistenceManager *persistMgr) {
 	int32 hour = _tm.tm_hour;
 	int32 min = _tm.tm_min;
 	int32 sec = _tm.tm_sec;
-	persistMgr->transfer(TMEMBER(year));
-	persistMgr->transfer(TMEMBER(mon));
-	persistMgr->transfer(TMEMBER(mday));
-	persistMgr->transfer(TMEMBER(hour));
-	persistMgr->transfer(TMEMBER(min));
-	persistMgr->transfer(TMEMBER(sec));
+	persistMgr->transferSint32(TMEMBER(year));
+	persistMgr->transferSint32(TMEMBER(mon));
+	persistMgr->transferSint32(TMEMBER(mday));
+	persistMgr->transferSint32(TMEMBER(hour));
+	persistMgr->transferSint32(TMEMBER(min));
+	persistMgr->transferSint32(TMEMBER(sec));
 	if (persistMgr->checkVersion(1, 2, 1)) {
 		int32 wday = _tm.tm_wday;
-		persistMgr->transfer(TMEMBER(wday));
+		persistMgr->transferSint32(TMEMBER(wday));
 		_tm.tm_wday = wday;
 	}
 	_tm.tm_year = year;
@@ -307,4 +307,4 @@ int SXDate::scCompare(BaseScriptable *Value) {
 	}
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

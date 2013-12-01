@@ -56,6 +56,10 @@ bool HopkinsEngine::getIsDemo() const {
 	return _gameDescription->desc.flags & ADGF_DEMO;
 }
 
+const Common::String &HopkinsEngine::getTargetName() const {
+	return _targetName;
+}
+
 } // End of namespace Hopkins
 
 static const PlainGameDescriptor hopkinsGames[] = {
@@ -67,6 +71,7 @@ static const PlainGameDescriptor hopkinsGames[] = {
 
 const static char *directoryGlobs[] = {
 	"voice",
+	"link",
 	0
 };
 

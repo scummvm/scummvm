@@ -791,32 +791,32 @@ void ScValue::setValue(ScValue *val) {
 bool ScValue::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferPtr(TMEMBER_PTR(_gameRef));
 
-	persistMgr->transfer(TMEMBER(_persistent));
-	persistMgr->transfer(TMEMBER(_isConstVar));
-	persistMgr->transfer(TMEMBER_INT(_type));
-	persistMgr->transfer(TMEMBER(_valBool));
-	persistMgr->transfer(TMEMBER(_valFloat));
-	persistMgr->transfer(TMEMBER(_valInt));
+	persistMgr->transferBool(TMEMBER(_persistent));
+	persistMgr->transferBool(TMEMBER(_isConstVar));
+	persistMgr->transferSint32(TMEMBER_INT(_type));
+	persistMgr->transferBool(TMEMBER(_valBool));
+	persistMgr->transferDouble(TMEMBER(_valFloat));
+	persistMgr->transferSint32(TMEMBER(_valInt));
 	persistMgr->transferPtr(TMEMBER_PTR(_valNative));
 
 	int32 size;
 	const char *str;
 	if (persistMgr->getIsSaving()) {
 		size = _valObject.size();
-		persistMgr->transfer("", &size);
+		persistMgr->transferSint32("", &size);
 		_valIter = _valObject.begin();
 		while (_valIter != _valObject.end()) {
 			str = _valIter->_key.c_str();
-			persistMgr->transfer("", &str);
+			persistMgr->transferConstChar("", &str);
 			persistMgr->transferPtr("", &_valIter->_value);
 
 			_valIter++;
 		}
 	} else {
 		ScValue *val = nullptr;
-		persistMgr->transfer("", &size);
+		persistMgr->transferSint32("", &size);
 		for (int i = 0; i < size; i++) {
-			persistMgr->transfer("", &str);
+			persistMgr->transferConstChar("", &str);
 			persistMgr->transferPtr("", &val);
 
 			_valObject[str] = val;
@@ -825,7 +825,18 @@ bool ScValue::persist(BasePersistenceManager *persistMgr) {
 	}
 
 	persistMgr->transferPtr(TMEMBER_PTR(_valRef));
-	persistMgr->transfer(TMEMBER(_valString));
+	persistMgr->transferCharPtr(TMEMBER(_valString));
+
+	if (!persistMgr->getIsSaving() && !persistMgr->checkVersion(1,2,2)) {
+		// Savegames prior to 1.2.2 stored empty strings as NULL.
+		// We disambiguate those by turning NULL strings into empty
+		// strings if _type is VAL_STRING instead of VAL_NULL.
+
+		if (_type == VAL_STRING && !_valString) {
+			_valString = new char[1];
+			_valString[0] = '\0';
+		}
+	}
 
 	/* // TODO: Convert to Debug-statements.
 	FILE* f = fopen("c:\\val.log", "a+");
@@ -992,4 +1003,4 @@ bool ScValue::setProperty(const char *propName) {
 	return ret;
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

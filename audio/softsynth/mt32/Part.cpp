@@ -67,17 +67,11 @@ Part::Part(Synth *useSynth, unsigned int usePartNum) {
 	pitchBend = 0;
 	activePartialCount = 0;
 	memset(patchCache, 0, sizeof(patchCache));
-	for (int i = 0; i < MT32EMU_MAX_POLY; i++) {
-		freePolys.prepend(new Poly(this));
-	}
 }
 
 Part::~Part() {
 	while (!activePolys.isEmpty()) {
 		delete activePolys.takeFirst();
-	}
-	while (!freePolys.isEmpty()) {
-		delete freePolys.takeFirst();
 	}
 }
 
@@ -175,6 +169,7 @@ void Part::refresh() {
 		patchCache[t].reverb = patchTemp->patch.reverbSwitch > 0;
 	}
 	memcpy(currentInstr, timbreTemp->common.name, 10);
+	synth->newTimbreSet(partNum, patchTemp->patch.timbreGroup, currentInstr);
 	updatePitchBenderRange();
 }
 
@@ -207,7 +202,6 @@ void RhythmPart::setTimbre(TimbreParam * /*timbre*/) {
 
 void Part::setTimbre(TimbreParam *timbre) {
 	*timbreTemp = *timbre;
-	synth->newTimbreSet(partNum, timbre->common.name);
 }
 
 unsigned int RhythmPart::getAbsTimbreNum() const {
@@ -431,23 +425,10 @@ void Part::noteOn(unsigned int midiKey, unsigned int velocity) {
 	playPoly(patchCache, NULL, midiKey, key, velocity);
 }
 
-void Part::abortPoly(Poly *poly) {
-	if (poly->startAbort()) {
-		while (poly->isActive()) {
-			if (!synth->prerender()) {
-				synth->printDebug("%s (%s): Ran out of prerender space to abort poly gracefully", name, currentInstr);
-				poly->terminate();
-				break;
-			}
-		}
-	}
-}
-
 bool Part::abortFirstPoly(unsigned int key) {
 	for (Poly *poly = activePolys.getFirst(); poly != NULL; poly = poly->getNext()) {
 		if (poly->getKey() == key) {
-			abortPoly(poly);
-			return true;
+			return poly->startAbort();
 		}
 	}
 	return false;
@@ -456,8 +437,7 @@ bool Part::abortFirstPoly(unsigned int key) {
 bool Part::abortFirstPoly(PolyState polyState) {
 	for (Poly *poly = activePolys.getFirst(); poly != NULL; poly = poly->getNext()) {
 		if (poly->getState() == polyState) {
-			abortPoly(poly);
-			return true;
+			return poly->startAbort();
 		}
 	}
 	return false;
@@ -474,8 +454,7 @@ bool Part::abortFirstPoly() {
 	if (activePolys.isEmpty()) {
 		return false;
 	}
-	abortPoly(activePolys.getFirst());
-	return true;
+	return activePolys.getFirst()->startAbort();
 }
 
 void Part::playPoly(const PatchCache cache[4], const MemParams::RhythmTemp *rhythmTemp, unsigned int midiKey, unsigned int key, unsigned int velocity) {
@@ -489,6 +468,7 @@ void Part::playPoly(const PatchCache cache[4], const MemParams::RhythmTemp *rhyt
 	if ((patchTemp->patch.assignMode & 2) == 0) {
 		// Single-assign mode
 		abortFirstPoly(key);
+		if (synth->isAbortingPoly()) return;
 	}
 
 	if (!synth->partialManager->freePartials(needPartials, partNum)) {
@@ -498,12 +478,13 @@ void Part::playPoly(const PatchCache cache[4], const MemParams::RhythmTemp *rhyt
 #endif
 		return;
 	}
+	if (synth->isAbortingPoly()) return;
 
-	if (freePolys.isEmpty()) {
+	Poly *poly = synth->partialManager->assignPolyToPart(this);
+	if (poly == NULL) {
 		synth->printDebug("%s (%s): No free poly to play key %d (velocity %d)", name, currentInstr, midiKey, velocity);
 		return;
 	}
-	Poly *poly = freePolys.takeFirst();
 	if (patchTemp->patch.assignMode & 1) {
 		// Priority to data first received
 		activePolys.prepend(poly);
@@ -533,7 +514,6 @@ void Part::playPoly(const PatchCache cache[4], const MemParams::RhythmTemp *rhyt
 #if MT32EMU_MONITOR_PARTIALS > 1
 	synth->printPartialUsage();
 #endif
-	synth->partStateChanged(partNum, true);
 	synth->polyStateChanged(partNum);
 }
 
@@ -597,6 +577,10 @@ unsigned int Part::getActivePartialCount() const {
 	return activePartialCount;
 }
 
+const Poly *Part::getFirstActivePoly() const {
+	return activePolys.getFirst();
+}
+
 unsigned int Part::getActiveNonReleasingPartialCount() const {
 	unsigned int activeNonReleasingPartialCount = 0;
 	for (Poly *poly = activePolys.getFirst(); poly != NULL; poly = poly->getNext()) {
@@ -607,15 +591,16 @@ unsigned int Part::getActiveNonReleasingPartialCount() const {
 	return activeNonReleasingPartialCount;
 }
 
+Synth *Part::getSynth() const {
+	return synth;
+}
+
 void Part::partialDeactivated(Poly *poly) {
 	activePartialCount--;
 	if (!poly->isActive()) {
 		activePolys.remove(poly);
-		freePolys.prepend(poly);
+		synth->partialManager->polyFreed(poly);
 		synth->polyStateChanged(partNum);
-	}
-	if (activePartialCount == 0) {
-		synth->partStateChanged(partNum, false);
 	}
 }
 

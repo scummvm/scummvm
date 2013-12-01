@@ -10,6 +10,8 @@ if "%~1"=="/all"    goto all
 if "%~1"=="/ALL"    goto all
 if "%~1"=="/tools"  goto tools
 if "%~1"=="/TOOLS"  goto tools
+if "%~1"=="/tests"  goto tests
+if "%~1"=="/TESTS"  goto tests
 if "%~1"=="/clean"  goto clean_check
 if "%~1"=="/CLEAN"  goto clean_check
 if "%~1"=="/help"   goto command_help
@@ -70,6 +72,13 @@ echo.
 create_project ..\.. --tools --msvc --msvc-version 8
 goto done
 
+:tests
+echo.
+echo Creating tests project files
+echo.
+create_project ..\.. --tests --msvc --msvc-version 8
+goto done
+
 :clean_check
 echo.
 set cleananswer=N
@@ -88,6 +97,7 @@ del /Q *.vsprops > NUL 2>&1
 del /Q *.sln* > NUL 2>&1
 del /Q scummvm* > NUL 2>&1
 del /Q devtools* > NUL 2>&1
+del /Q test_runner.cpp
 goto done
 
 :done

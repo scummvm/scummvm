@@ -117,7 +117,7 @@ bool PCXDecoder::loadStream(Common::SeekableReadStream &stream) {
 	if (nPlanes == 3 && bitsPerPixel == 8) {	// 24bpp
 		Graphics::PixelFormat format = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
 		_surface->create(width, height, format);
-		dst = (byte *)_surface->pixels;
+		dst = (byte *)_surface->getPixels();
 		_paletteColorCount = 0;
 
 		for (y = 0; y < height; y++) {
@@ -135,7 +135,7 @@ bool PCXDecoder::loadStream(Common::SeekableReadStream &stream) {
 		}
 	} else if (nPlanes == 1 && bitsPerPixel == 8) {	// 8bpp indexed
 		_surface->create(width, height, Graphics::PixelFormat::createFormatCLUT8());
-		dst = (byte *)_surface->pixels;
+		dst = (byte *)_surface->getPixels();
 		_paletteColorCount = 16;
 
 		for (y = 0; y < height; y++, dst += _surface->pitch) {
@@ -163,7 +163,7 @@ bool PCXDecoder::loadStream(Common::SeekableReadStream &stream) {
 		}
 	} else if ((nPlanes == 2 || nPlanes == 3 || nPlanes == 4) && bitsPerPixel == 1) {	// planar, 4, 8 or 16 colors
 		_surface->create(width, height, Graphics::PixelFormat::createFormatCLUT8());
-		dst = (byte *)_surface->pixels;
+		dst = (byte *)_surface->getPixels();
 		_paletteColorCount = 16;
 
 		for (y = 0; y < height; y++, dst += _surface->pitch) {

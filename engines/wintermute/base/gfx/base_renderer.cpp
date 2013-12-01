@@ -65,7 +65,7 @@ BaseRenderer::BaseRenderer(BaseGame *inGame) : BaseClass(inGame) {
 	_loadImageX = _loadImageY = 0;
 
 	_width = _height = _bPP = 0;
-	BasePlatform::setRectEmpty(&_monitorRect);
+	_monitorRect.setEmpty();
 
 	_realWidth = _realHeight = 0;
 	_drawOffsetX = _drawOffsetY = 0;
@@ -113,15 +113,21 @@ void BaseRenderer::setIndicatorVal(int value) {
 }
 
 void BaseRenderer::setLoadingScreen(const char *filename, int x, int y) {
-	// TODO: Handle NULL
-	_loadImageName = filename;
+	if (filename == nullptr) {
+		_saveImageName = "";
+	} else {
+		_loadImageName = filename;
+	}
 	_loadImageX = x;
 	_loadImageY = y;
 }
 
 void BaseRenderer::setSaveImage(const char *filename, int x, int y) {
-	// TODO: Handle NULL
-	_saveImageName = filename;
+	if (filename == nullptr) {
+		_saveImageName = "";
+	} else {
+		_saveImageName = filename;
+	}
 	_saveImageX = x;
 	_saveImageY = y;
 }
@@ -167,12 +173,12 @@ void BaseRenderer::endSaveLoad() {
 }
 
 void BaseRenderer::persistSaveLoadImages(BasePersistenceManager *persistMgr) {
-	persistMgr->transfer(TMEMBER(_loadImageName));
-	persistMgr->transfer(TMEMBER(_saveImageName));
-	persistMgr->transfer(TMEMBER(_saveImageX));
-	persistMgr->transfer(TMEMBER(_saveImageY));
-	persistMgr->transfer(TMEMBER(_loadImageX));
-	persistMgr->transfer(TMEMBER(_loadImageY));
+	persistMgr->transferString(TMEMBER(_loadImageName));
+	persistMgr->transferString(TMEMBER(_saveImageName));
+	persistMgr->transferSint32(TMEMBER(_saveImageX));
+	persistMgr->transferSint32(TMEMBER(_saveImageY));
+	persistMgr->transferSint32(TMEMBER(_loadImageX));
+	persistMgr->transferSint32(TMEMBER(_loadImageY));
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -368,7 +374,7 @@ bool BaseRenderer::displayIndicator() {
 	}
 	if (_saveLoadImage && !_hasDrawnSaveLoadImage) {
 		Rect32 rc;
-		BasePlatform::setRect(&rc, 0, 0, _saveLoadImage->getWidth(), _saveLoadImage->getHeight());
+		rc.setRect(0, 0, _saveLoadImage->getWidth(), _saveLoadImage->getHeight());
 		if (_loadInProgress) {
 			_saveLoadImage->displayTrans(_loadImageX, _loadImageY, rc);
 		} else {
@@ -395,4 +401,4 @@ bool BaseRenderer::displayIndicator() {
 	return STATUS_OK;
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

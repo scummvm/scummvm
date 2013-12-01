@@ -330,7 +330,7 @@ public:
 	};
 
 	struct EntityParametersSIII : EntityParameters {
-		char seq[12];
+		char seq[13];
 		uint param4;
 		uint param5;
 		uint param6;
@@ -338,7 +338,7 @@ public:
 		uint param8;
 
 		EntityParametersSIII() {
-			memset(&seq, 0, 12);
+			memset(&seq, 0, 13);
 			param4 = 0;
 			param5 = 0;
 			param6 = 0;
@@ -374,16 +374,16 @@ public:
 	};
 
 	struct EntityParametersSIIS : EntityParameters {
-		char seq1[12];
+		char seq1[13];
 		uint param4;
 		uint param5;
-		char seq2[12];
+		char seq2[13];
 
 		EntityParametersSIIS() {
-			memset(&seq1, 0, 12);
+			memset(&seq1, 0, 13);
 			param4 = 0;
 			param5 = 0;
-			memset(&seq2, 0, 12);
+			memset(&seq2, 0, 13);
 		}
 
 		Common::String toString() {
@@ -410,14 +410,14 @@ public:
 
 	struct EntityParametersISSI : EntityParameters {
 		uint param1;
-		char seq1[12];
-		char seq2[12];
+		char seq1[13];
+		char seq2[13];
 		uint param8;
 
 		EntityParametersISSI() {
 			param1 = 0;
-			memset(&seq1, 0, 12);
-			memset(&seq2, 0, 12);
+			memset(&seq1, 0, 13);
+			memset(&seq2, 0, 13);
 			param8 = 0;
 		}
 
@@ -445,7 +445,7 @@ public:
 
 	struct EntityParametersISII : EntityParameters {
 		uint param1;
-		char seq[12];
+		char seq[13];
 		uint param5;
 		uint param6;
 		uint param7;
@@ -453,7 +453,7 @@ public:
 
 		EntityParametersISII() {
 			param1 = 0;
-			memset(&seq, 0, 12);
+			memset(&seq, 0, 13);
 			param5 = 0;
 			param6 = 0;
 			param7 = 0;
@@ -488,14 +488,14 @@ public:
 	};
 
 	struct EntityParametersSSII : EntityParameters {
-		char seq1[12];
-		char seq2[12];
+		char seq1[13];
+		char seq2[13];
 		uint param7;
 		uint param8;
 
 		EntityParametersSSII() {
-			memset(&seq1, 0, 12);
-			memset(&seq2, 0, 12);
+			memset(&seq1, 0, 13);
+			memset(&seq2, 0, 13);
 			param7 = 0;
 			param8 = 0;
 		}
@@ -523,14 +523,14 @@ public:
 	};
 
 	struct EntityParametersSSS : EntityParameters {
-		char seq1[12];
-		char seq2[12];
-		char seq3[8];
+		char seq1[13];
+		char seq2[13];
+		char seq3[9];
 
 		EntityParametersSSS() {
-			memset(&seq1, 0, 12);
-			memset(&seq2, 0, 12);
-			memset(&seq3, 0, 8);
+			memset(&seq1, 0, 13);
+			memset(&seq2, 0, 13);
+			memset(&seq3, 0, 9);
 		}
 
 		Common::String toString() {
@@ -551,14 +551,14 @@ public:
 	struct EntityParametersIISS : EntityParameters {
 		uint param1;
 		uint param2;
-		char seq1[12];
-		char seq2[12];
+		char seq1[13];
+		char seq2[13];
 
 		EntityParametersIISS() {
 			param1 = 0;
 			param2 = 0;
-			memset(&seq1, 0, 12);
-			memset(&seq2, 0, 12);
+			memset(&seq1, 0, 13);
+			memset(&seq2, 0, 13);
 		}
 
 		Common::String toString() {
@@ -586,7 +586,7 @@ public:
 	struct EntityParametersIISI : EntityParameters {
 		uint param1;
 		uint param2;
-		char seq[12];
+		char seq[13];
 		uint param6;
 		uint param7;
 		uint param8;
@@ -594,7 +594,7 @@ public:
 		EntityParametersIISI() {
 			param1 = 0;
 			param2 = 0;
-			memset(&seq, 0, 12);
+			memset(&seq, 0, 13);
 			param6 = 0;
 			param7 = 0;
 			param8 = 0;
@@ -631,7 +631,7 @@ public:
 		uint param1;
 		uint param2;
 		uint param3;
-		char seq[12];
+		char seq[13];
 		uint param7;
 		uint param8;
 
@@ -639,7 +639,7 @@ public:
 			param1 = 0;
 			param2 = 0;
 			param3 = 0;
-			memset(&seq, 0, 12);
+			memset(&seq, 0, 13);
 			param7 = 0;
 			param8 = 0;
 		}
@@ -677,7 +677,7 @@ public:
 		uint param3;
 		uint param4;
 		uint param5;
-		char seq[12];
+		char seq[13];
 
 		EntityParametersI5S() {
 			param1 = 0;
@@ -685,7 +685,7 @@ public:
 			param3 = 0;
 			param4 = 0;
 			param5 = 0;
-			memset(&seq, 0, 12);
+			memset(&seq, 0, 13);
 		}
 
 		void saveLoadWithSerializer(Common::Serializer &s) {
@@ -818,9 +818,9 @@ public:
 		/**
 		 * Synchronizes a string.
 		 *
-		 * @param	s	  	The Common::Serializer to use.
-		 * @param	string	The string.
-		 * @param	length	Length of the string.
+		 * @param   s        The Common::Serializer to use.
+		 * @param   string   The string.
+		 * @param   length   Length of the string.
 		 */
 		void syncString(Common::Serializer &s, Common::String &string, uint length) const;
 
@@ -921,7 +921,7 @@ protected:
 	/**
 	 * Play sound
 	 *
-	 * @param savepoint The savepoint
+	 * @param savepoint   The savepoint
 	 *                    - Sound filename
 	 * @param resetItem true to reset item.
 	 * @param flag      sound flag
@@ -931,9 +931,9 @@ protected:
 	/**
 	 * Draws the entity
 	 *
-	 * @param savepoint 	 The savepoint
-	 *                         - Sequence
-	 *                         - ExcuseMe flag
+	 * @param savepoint   The savepoint
+	 *                    - Sequence
+	 *                    - ExcuseMe flag
 	 * @param handleExcuseMe true to handle excuseMeCath action
 	 */
 	void draw(const SavePoint &savepoint, bool handleExcuseMe = false);
@@ -941,7 +941,7 @@ protected:
 	/**
 	 * Draws the entity along with another one
 	 *
-	 * @param savepoint The savepoint.
+	 * @param savepoint   The savepoint.
 	 *                    - Sequence 1
 	 *                    - Sequence 2
 	 *                    - EntityIndex
@@ -976,23 +976,23 @@ protected:
 	/**
 	 * Process callback action when the entity direction is not kDirectionRight
 	 *
-	 * @param savepoint The savepoint.
+	 * @param savepoint    The savepoint.
 	 */
 	void callbackActionOnDirection(const SavePoint &savepoint);
 
 	/**
 	 * Process callback action when somebody is standing in the restaurant or salon.
 	 *
-	 * @param savepoint The savepoint.
+	 * @param savepoint    The savepoint.
 	 */
 	void callbackActionRestaurantOrSalon(const SavePoint &savepoint);
 
 	/**
 	 * Updates the entity
 	 *
-	 * @param savepoint 	 The savepoint.
-	 *                        - CarIndex
-	 *                        - EntityPosition
+	 * @param savepoint    The savepoint.
+	 *                     - CarIndex
+	 *                     - EntityPosition
 	 * @param handleExcuseMe true to handle the kActionExcuseMe/kActionExcuseMeCath actions.
 	 */
 	void updateEntity(const SavePoint &savepoint, bool handleExcuseMe = false);
@@ -1000,11 +1000,11 @@ protected:
 	/**
 	 * Call a specific savepoint (or draw sequence in default case)
 	 *
-	 * @param savepoint 	 The savepoint.
-	 *                         - Sequence to draw in default case
-	 *                         - EntityIndex
-	 *                         - ActionIndex
-	 *                         - Sequence for the savepoint
+	 * @param savepoint    The savepoint.
+	 *                     - Sequence to draw in default case
+	 *                     - EntityIndex
+	 *                     - ActionIndex
+	 *                     - Sequence for the savepoint
 	 * @param handleExcuseMe true to handle excuse me.
 	 */
 	void callSavepoint(const SavePoint &savepoint, bool handleExcuseMe = false);
@@ -1012,36 +1012,36 @@ protected:
 	/**
 	 * Handles entering/exiting a compartment.
 	 *
-	 * @param savepoint   The savepoint.
-	 * @param position1   The first position.
-	 * @param position2   The second position.
-	 * @param car 		  The car.
-	 * @param compartment The compartment.
-	 * @param alternate   true to use the alternate version of SceneManager::loadSceneFromObject()
+	 * @param savepoint    The savepoint.
+	 * @param position1    The first position.
+	 * @param position2    The second position.
+	 * @param car          The car.
+	 * @param compartment  The compartment.
+	 * @param alternate    true to use the alternate version of SceneManager::loadSceneFromObject()
 	 */
 	void enterExitCompartment(const SavePoint &savepoint, EntityPosition position1 = kPositionNone, EntityPosition position2 = kPositionNone, CarIndex car = kCarNone, ObjectIndex compartment = kObjectNone, bool alternate = false, bool updateLocation = false);
 
 	/**
 	 * Go to compartment.
 	 *
-	 * @param	savepoint			 	The savepoint.
-	 * @param	compartmentFrom		 	The compartment from.
-	 * @param	positionFrom		 	The position from.
-	 * @param	sequenceFrom		 	The sequence from.
-	 * @param	sequenceTo			 	The sequence to.
+	 * @param savepoint        The savepoint.
+	 * @param compartmentFrom  The compartment from.
+	 * @param positionFrom     The position from.
+	 * @param sequenceFrom     The sequence from.
+	 * @param sequenceTo       The sequence to.
 	 */
 	void goToCompartment(const SavePoint &savepoint, ObjectIndex compartmentFrom, EntityPosition positionFrom, Common::String sequenceFrom, Common::String sequenceTo);
 
 	/**
 	 * Go to compartment from compartment.
 	 *
-	 * @param	savepoint			  	The savepoint.
-	 * @param	compartmentFrom		  	The compartment from.
-	 * @param	positionFrom		  	The position from.
-	 * @param	sequenceFrom		  	The sequence from.
-	 * @param	compartmentTo		  	The compartment to.
-	 * @param	positionTo			  	The position to.
-	 * @param	sequenceTo			  	The sequence to.
+	 * @param savepoint        The savepoint.
+	 * @param compartmentFrom  The compartment from.
+	 * @param positionFrom     The position from.
+	 * @param sequenceFrom     The sequence from.
+	 * @param compartmentTo    The compartment to.
+	 * @param positionTo       The position to.
+	 * @param sequenceTo       The sequence to.
 	 */
 	void goToCompartmentFromCompartment(const SavePoint &savepoint, ObjectIndex compartmentFrom, EntityPosition positionFrom, Common::String sequenceFrom, ObjectIndex compartmentTo, EntityPosition positionTo, Common::String sequenceTo);
 

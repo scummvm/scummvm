@@ -80,13 +80,13 @@ public:
 	SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSource);
 	virtual ~SurfaceSdlGraphicsManager();
 
-	virtual void initEventObserver();
+	virtual void activateManager();
+	virtual void deactivateManager();
 
 	virtual bool hasFeature(OSystem::Feature f);
 	virtual void setFeatureState(OSystem::Feature f, bool enable);
 	virtual bool getFeatureState(OSystem::Feature f);
 
-	static const OSystem::GraphicsMode *supportedGraphicsModes();
 	virtual const OSystem::GraphicsMode *getSupportedGraphicsModes() const;
 	virtual int getDefaultGraphicsMode() const;
 	virtual bool setGraphicsMode(int mode);
@@ -231,6 +231,9 @@ protected:
 	ScalerProc *_scalerProc;
 	int _scalerType;
 	int _transactionMode;
+
+	// Indicates whether it is needed to free _hwsurface in destructor
+	bool _displayDisabled;
 
 	bool _screenIsLocked;
 	Graphics::Surface _framebuffer;

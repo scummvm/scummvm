@@ -53,6 +53,25 @@ SOURCEPATH ..\..\..\..\engines\mohawk
 
 //STOP_AUTO_OBJECTS_MOHAWK_//
 
+
+//START_AUTO_OBJECTS_MOHAWK_ENABLE_MYST//
+
+	// empty base file, will be updated by Perl build scripts
+
+//STOP_AUTO_OBJECTS_MOHAWK_ENABLE_MYST//
+
+//START_AUTO_OBJECTS_MOHAWK_ENABLE_RIVEN//
+
+	// empty base file, will be updated by Perl build scripts
+
+//STOP_AUTO_OBJECTS_MOHAWK_ENABLE_RIVEN//
+
+//START_AUTO_OBJECTS_MOHAWK_ENABLE_CSTIME//
+
+	// empty base file, will be updated by Perl build scripts
+
+//STOP_AUTO_OBJECTS_MOHAWK_ENABLE_CSTIME//
+
 // *** Include paths
 
 USERINCLUDE     ..\..\..\..\engines

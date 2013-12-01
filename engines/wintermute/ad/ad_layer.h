@@ -43,7 +43,7 @@ public:
 	virtual ~AdLayer();
 	BaseArray<AdSceneNode *> _nodes;
 	bool loadFile(const char *filename);
-	bool loadBuffer(byte *buffer, bool complete = true);
+	bool loadBuffer(char *buffer, bool complete = true);
 	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
 
 	// scripting interface
@@ -53,6 +53,6 @@ public:
 	virtual const char *scToString() override;
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

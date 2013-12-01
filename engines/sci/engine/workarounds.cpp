@@ -37,6 +37,7 @@ const SciWorkaroundEntry arithmeticWorkarounds[] = {
 	{ GID_ECOQUEST2,      100,    0,  0,               "Rain", "points",      0xce0,    0, { WORKAROUND_FAKE,   0 } }, // Same as above, for the Spanish version - bug #3313962
 	{ GID_FANMADE,        516,  983,  0,             "Wander", "setTarget",      -1,    0, { WORKAROUND_FAKE,   0 } }, // op_mul: The Legend of the Lost Jewel Demo (fan made): called with object as second parameter when attacked by insects - bug #3038913
 	{ GID_GK1,            800,64992,  0,                "Fwd", "doit",           -1,    0, { WORKAROUND_FAKE,   1 } }, // op_gt: when Mosely finds Gabriel and Grace near the end of the game, compares the Grooper object with 7
+	{ GID_HOYLE4,         700,   -1,  1,               "Code", "doit",           -1,    0, { WORKAROUND_FAKE,   1 } }, // op_add: while bidding in Bridge, an object ("Bid") is added to an object in another segment ("hand3")
 	{ GID_ICEMAN,         199,  977,  0,            "Grooper", "doit",           -1,    0, { WORKAROUND_FAKE,   0 } }, // op_add: While dancing with the girl
 	{ GID_MOTHERGOOSE256,  -1,  999,  0,              "Event", "new",            -1,    0, { WORKAROUND_FAKE,   0 } }, // op_and: constantly during the game (SCI1 version)
 	{ GID_MOTHERGOOSE256,  -1,    4,  0,              "rm004", "doit",           -1,    0, { WORKAROUND_FAKE,   0 } }, // op_or: when going north and reaching the castle (rooms 4 and 37) - bug #3038228
@@ -50,9 +51,16 @@ const SciWorkaroundEntry arithmeticWorkarounds[] = {
 
 //    gameID,           room,script,lvl,          object-name, method-name,    call,index,  workaround
 const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
+	{ GID_CAMELOT,        40,    40,  0,               "Rm40", "handleEvent",    -1,    0, { WORKAROUND_FAKE,   0 } }, // when looking at the ground at the pool of Siloam - bug #3614968
 	{ GID_CASTLEBRAIN,   280,   280,  0,         "programmer", "dispatchEvent",  -1,    0, { WORKAROUND_FAKE, 0xf } }, // pressing 'q' on the computer screen in the robot room, and closing the help dialog that pops up (bug #3039656). Moves the cursor to the view with the ID returned (in this case, the robot hand)
 	{ GID_CNICK_KQ,       -1,     0,  1,          "Character", "say",            -1,   -1, { WORKAROUND_FAKE,   0 } }, // checkers/backgammon, like in hoyle 3 - temps 504 and 505 - bug #3606025
 	{ GID_CNICK_KQ,       -1,   700,  0,           "gcWindow", "open",           -1,   -1, { WORKAROUND_FAKE,   0 } }, // when entering the control menu, like in hoyle 3
+	{ GID_CNICK_KQ,      300,   303,  0,      "theDoubleCube", "<noname520>",    -1,    5, { WORKAROUND_FAKE,   0 } }, // while playing backgammon with doubling enabled - bug #3615121 (same as the theDoubleCube::make workaround for Hoyle 3)
+	{ GID_CNICK_KQ,      300,   303,  0,      "theDoubleCube", "<noname519>",    -1,    9, { WORKAROUND_FAKE,   0 } }, // when accepting a double, while playing backgammon with doubling enabled (same as the theDoubleCube::accept workaround for Hoyle 3)
+	{ GID_CNICK_LAURABOW, -1,     0,  1,          "Character", "say",            -1,   -1, { WORKAROUND_FAKE,   0 } }, // Yatch, like in hoyle 3 - temps 504 and 505 - bug #3615119
+	{ GID_CNICK_LAURABOW, -1,   700,  0,                 NULL, "open",           -1,   -1, { WORKAROUND_FAKE,   0 } }, // when entering control menu - bug #3615118 (same as the gcWindow workaround for Hoyle 3)
+	{ GID_CNICK_LAURABOW,100,   100,  0,                 NULL, "<noname144>",    -1,    1, { WORKAROUND_FAKE,   0 } }, // while playing domino - bug #3615129 (same as the dominoHand2 workaround for Hoyle 3)
+	{ GID_CNICK_LAURABOW,100,   110,  0,                 NULL, "doit",           -1,   -1, { WORKAROUND_FAKE,   0 } }, // when changing the "Dominoes per hand" setting - bug #3615130
 	{ GID_CNICK_LONGBOW,   0,     0,  0,          "RH Budget", "init",           -1,    1, { WORKAROUND_FAKE,   0 } }, // when starting the game
 	{ GID_ECOQUEST,       -1,    -1,  0,                 NULL, "doVerb",         -1,    0, { WORKAROUND_FAKE,   0 } }, // almost clicking anywhere triggers this in almost all rooms
 	{ GID_FANMADE,       516,   979,  0,                   "", "export 0",       -1,   20, { WORKAROUND_FAKE,   0 } }, // Happens in Grotesteing after the logos
@@ -71,12 +79,17 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_HOYLE3,         -1,     0,  1,          "Character", "say",            -1,   -1, { WORKAROUND_FAKE,   0 } }, // when starting checkers or dominoes, first time a character says something - temps 504 and 505
 	{ GID_HOYLE3,         -1,   700,  0,           "gcWindow", "open",           -1,   -1, { WORKAROUND_FAKE,   0 } }, // when entering control menu
 	{ GID_HOYLE3,        100,   100,  0,        "dominoHand2", "cue",            -1,    1, { WORKAROUND_FAKE,   0 } }, // while playing domino - bug #3036918
+	{ GID_HOYLE3,        100,   110,  0,           "OKButton", "doit",           -1,   -1, { WORKAROUND_FAKE,   0 } }, // when changing the "Dominoes per hand" setting - bug #3615130
+	{ GID_HOYLE3,        300,   303,  0,      "theDoubleCube", "make",           -1,    5, { WORKAROUND_FAKE,   0 } }, // while playing backgammon with doubling enabled
+	{ GID_HOYLE3,        300,   303,  0,      "theDoubleCube", "accept",         -1,    9, { WORKAROUND_FAKE,   0 } }, // when accepting a double, while playing backgammon with doubling enabled
 	{ GID_HOYLE4,         -1,     0,  0,                 NULL, "open",           -1,   -1, { WORKAROUND_FAKE,   0 } }, // when selecting "Control" from the menu (temp vars 0-3) - bug #3039294
 	{ GID_HOYLE4,        910,    18,  0,                 NULL, "init",           -1,    0, { WORKAROUND_FAKE,   0 } }, // during tutorial - bug #3042756
 	{ GID_HOYLE4,        910,   910,  0,                 NULL, "setup",          -1,    3, { WORKAROUND_FAKE,   0 } }, // when selecting "Tutorial" from the main menu - bug #3039294
-	{ GID_HOYLE4,        700,   718,  0,       "compete_tree", "doit",           -1,   75, { WORKAROUND_FAKE,   0 } }, // when placing a bid in bridge - bug #3292332
-	{ GID_HOYLE4,        700,   716,  0,        "other1_tree", "doit",           -1,   46, { WORKAROUND_FAKE,   0 } }, // sometimes when placing a bid in bridge
-	{ GID_HOYLE4,        700,   700,  1,         "BridgeHand", "calcQTS",        -1,    3, { WORKAROUND_FAKE,   0 } }, // sometimes when placing a bid in bridge
+	{ GID_HOYLE4,        700,   700,  1,         "BridgeHand", "calcQTS",        -1,    3, { WORKAROUND_FAKE,   0 } }, // when placing a bid in bridge (always)
+	{ GID_HOYLE4,        700,   710,  1, "BridgeStrategyPlay", "checkSplitTops", -1,   10, { WORKAROUND_FAKE,   0 } }, // while playing bridge, objects LeadReturn_Trump, SecondSeat_Trump, ThirdSeat_Trump and others - bug #3361925
+	{ GID_HOYLE4,        700,    -1,  1,      "BridgeDefense", "think",          -1,   -1, { WORKAROUND_FAKE,   0 } }, // sometimes while playing bridge, temp var 3, 17 and others, objects LeadReturn_Trump, ThirdSeat_Trump and others
+	{ GID_HOYLE4,        700,   730,  1,      "BridgeDefense", "beatTheirBest",  -1,    3, { WORKAROUND_FAKE,   0 } }, // rarely while playing bridge
+	{ GID_HOYLE4,        700,    -1,  1,               "Code", "doit",           -1,   -1, { WORKAROUND_FAKE,   0 } }, // when placing a bid in bridge (always), temp var 11, 24, 27, 46, 75, objects compete_tree, compwe_tree, other1_tree, b1 - bugs #3292332 and #3361925
 	{ GID_HOYLE4,        300,   300,  0,                   "", "export 2",   0x1d4d,    0, { WORKAROUND_FAKE,   0 } }, // after passing around cards in hearts
 	{ GID_HOYLE4,        400,   400,  1,            "GinHand", "calcRuns",       -1,    4, { WORKAROUND_FAKE,   0 } }, // sometimes while playing Gin Rummy (e.g. when knocking and placing a card) - bug #3292334
 	{ GID_HOYLE4,        500,    17,  1,          "Character", "say",            -1,  504, { WORKAROUND_FAKE,   0 } }, // sometimes while playing Cribbage (e.g. when the opponent says "Last Card") - bug #3292327
@@ -97,6 +110,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_KQ6,           520,   520,  0,              "rm520", "init",           -1,    0, { WORKAROUND_FAKE,   0 } }, // going to boiling water trap on beast isle
 	{ GID_KQ6,            -1,   903,  0,         "controlWin", "open",           -1,    4, { WORKAROUND_FAKE,   0 } }, // when opening the controls window (save, load etc)
 	{ GID_KQ6,            -1,   907,  0,             "tomato", "doVerb",         -1,    2, { WORKAROUND_FAKE,   0 } }, // when looking at the rotten tomato in the inventory - bug #3059544
+	{ GID_KQ6,            -1,   928,  0,                 NULL, "startText",      -1,    0, { WORKAROUND_FAKE,   0 } }, // gets caused by Text+Audio support (see script patcher)
 	{ GID_KQ7,            -1, 64996,  0,               "User", "handleEvent",    -1,    1, { WORKAROUND_FAKE,   0 } }, // called when pushing a keyboard key
 	{ GID_LAURABOW,       37,     0,  0,                "CB1", "doit",           -1,    1, { WORKAROUND_FAKE,   0 } }, // when going up the stairs (bug #3037694)
 	{ GID_LAURABOW,       -1,   967,  0,             "myIcon", "cycle",          -1,    1, { WORKAROUND_FAKE,   0 } }, // having any portrait conversation coming up (initial bug #3034985)
@@ -104,6 +118,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_LAURABOW2,      -1,    21,  0,      "dropCluesCode", "doit",           -1,    1, { WORKAROUND_FAKE, 0x7fff } }, // when asking some questions (e.g. the reporter about the burglary, or the policeman about Ziggy). Must be big, as the game scripts perform lt on it and start deleting journal entries - bugs #3035068, #3036274
 	{ GID_LAURABOW2,      -1,    90,  1,        "MuseumActor", "init",           -1,    6, { WORKAROUND_FAKE,   0 } }, // Random actors in museum (bug #3041257)
 	{ GID_LAURABOW2,     240,   240,  0,     "sSteveAnimates", "changeState",    -1,    0, { WORKAROUND_FAKE,   0 } }, // Steve Dorian's idle animation at the docks - bug #3036291
+	{ GID_LAURABOW2,      -1,   928,  0,                 NULL, "startText",      -1,    0, { WORKAROUND_FAKE,   0 } }, // gets caused by Text+Audio support (see script patcher)
 	{ GID_LONGBOW,        -1,     0,  0,            "Longbow", "restart",        -1,    0, { WORKAROUND_FAKE,   0 } }, // When canceling a restart game - bug #3046200
 	{ GID_LONGBOW,        -1,   213,  0,              "clear", "handleEvent",    -1,    0, { WORKAROUND_FAKE,   0 } }, // When giving an answer using the druid hand sign code in any room
 	{ GID_LONGBOW,        -1,   213,  0,             "letter", "handleEvent",  0xa8,    1, { WORKAROUND_FAKE,   0 } }, // When using the druid hand sign code in any room - bug #3036601
@@ -167,6 +182,9 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_SQ1,            -1,   703,  0,         "firePulsar", "changeState", 0x18a,    0, { WORKAROUND_FAKE,   0 } }, // export 1, but called locally (when shooting at aliens)
 	{ GID_SQ4,            -1,   398,  0,            "showBox", "changeState",    -1,    0, { WORKAROUND_FAKE,   0 } }, // CD: called when rummaging in Software Excess bargain bin
 	{ GID_SQ4,            -1,   928, -1,           "Narrator", "startText",      -1, 1000, { WORKAROUND_FAKE,   1 } }, // CD: happens in the options dialog and in-game when speech and subtitles are used simultaneously
+	{ GID_SQ4,            -1,   708, -1,            "exitBut", "doVerb",         -1,    0, { WORKAROUND_FAKE,   0 } }, // Floppy: happens, when looking at the "close" button in the sq4 hintbook - bug #6447
+	{ GID_SQ4,            -1,   708, -1,            "prevBut", "doVerb",         -1,    0, { WORKAROUND_FAKE,   0 } }, // Floppy: happens, when looking at the "previous" button in the sq4 hintbook - bug #6447
+	{ GID_SQ4,            -1,   708, -1,            "nextBut", "doVerb",         -1,    0, { WORKAROUND_FAKE,   0 } }, // Floppy: happens, when looking at the "next" button in the sq4 hintbook - bug #6447
 	{ GID_SQ5,           201,   201,  0,        "buttonPanel", "doVerb",         -1,    0, { WORKAROUND_FAKE,   1 } }, // when looking at the orange or red button - bug #3038563
 	{ GID_SQ6,            -1,     0,  0,                "SQ6", "init",           -1,    2, { WORKAROUND_FAKE,   0 } }, // Demo and full version: called when the game starts (demo: room 0, full: room 100)
 	{ GID_SQ6,            -1, 64950, -1,            "Feature", "handleEvent",    -1,    0, { WORKAROUND_FAKE,   0 } }, // called when pressing "Start game" in the main menu, when entering the Orion's Belt bar (room 300), and perhaps other places
@@ -208,6 +226,7 @@ const SciWorkaroundEntry kDeviceInfo_workarounds[] = {
 	{ GID_FANMADE,        -1,   994,  1,               "Game", "save",        0xd1c,    0, { WORKAROUND_STILLCALL, 0 } }, // In fanmade games, this is called with one parameter for CurDevice (Cascade Quest)
 	{ GID_FANMADE,        -1,   994,  1,               "Game", "save",        0xe55,    0, { WORKAROUND_STILLCALL, 0 } }, // In fanmade games, this is called with one parameter for CurDevice (Demo Quest)
 	{ GID_FANMADE,        -1,   994,  1,               "Game", "save",        0xe57,    0, { WORKAROUND_STILLCALL, 0 } }, // In fanmade games, this is called with one parameter for CurDevice (I Want My C64 Back)
+	{ GID_FANMADE,        -1,   994,  0,              "Black", "save",          0xa,    0, { WORKAROUND_IGNORE,    0 } }, // In fanmade games, this is called with one parameter for CurDevice (Black Cauldron Remake)
 	{ GID_FANMADE,        -1,   994,  1,               "Game", "save",        0xe5c,    0, { WORKAROUND_STILLCALL, 0 } }, // In fanmade games, this is called with one parameter for CurDevice (Most of them)
 	{ GID_FANMADE,        -1,   994,  1,               "Game", "restore",     0xd1c,    0, { WORKAROUND_STILLCALL, 0 } }, // In fanmade games, this is called with one parameter for CurDevice (Cascade Quest)
 	{ GID_FANMADE,        -1,   994,  1,               "Game", "restore",     0xe55,    0, { WORKAROUND_STILLCALL, 0 } }, // In fanmade games, this is called with one parameter for CurDevice (Demo Quest)
@@ -249,6 +268,7 @@ const SciWorkaroundEntry kDoSoundFade_workarounds[] = {
 	{ GID_KQ6,           105,   989,  0,        "globalSound", "fade",           -1,    0, { WORKAROUND_STILLCALL, 0 } }, // floppy: during intro, parameter 4 is an object
 	{ GID_KQ6,           460,   989,  0,       "globalSound2", "fade",           -1,    0, { WORKAROUND_STILLCALL, 0 } }, // after pulling the black widow's web on the isle of wonder, parameter 4 is an object - bug #3034567
 	{ GID_QFG4,           -1, 64989,  0,           "longSong", "fade",           -1,    0, { WORKAROUND_STILLCALL, 0 } }, // CD version: many places, parameter 4 is an object (longSong)
+	{ GID_SQ5,           800,   989,  0,          "sq5Music1", "fade",           -1,    0, { WORKAROUND_STILLCALL, 0 } }, // when cutting the wrong part of Goliath with the laser - bug #3614145
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
@@ -355,6 +375,13 @@ const SciWorkaroundEntry kMoveCursor_workarounds[] = {
 //    gameID,           room,script,lvl,          object-name, method-name,    call,index,                workaround
 const SciWorkaroundEntry kNewWindow_workarounds[] = {
 	{ GID_ECOQUEST,       -1,   981,  0,          "SysWindow", "open",           -1,    0, { WORKAROUND_STILLCALL, 0 } }, // EcoQuest 1 demo uses an in-between interpreter from SCI1 to SCI1.1. It's SCI1.1, but uses the SCI1 semantics for this call - bug #3035057
+	SCI_WORKAROUNDENTRY_TERMINATOR
+};
+
+//    gameID,           room,script,lvl,          object-name, method-name,    call,index,                workaround
+const SciWorkaroundEntry kReadNumber_workarounds[] = {
+	{ GID_CNICK_LAURABOW,100,   101,  0,          "dominoes.opt", "doit",        -1,    0, { WORKAROUND_STILLCALL, 0 } }, // When dominoes.opt is present, the game scripts call kReadNumber with an extra integer parameter - bug #3615120
+	{ GID_HOYLE3,        100,   101,  0,          "dominoes.opt", "doit",        -1,    0, { WORKAROUND_STILLCALL, 0 } }, // When dominoes.opt is present, the game scripts call kReadNumber with an extra integer parameter - bug #3615120
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 

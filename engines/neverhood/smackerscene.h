@@ -36,6 +36,7 @@ public:
 	void setFileHash(uint32 fileHash);
 	void setFileHashList(const uint32 *fileHashList);
 	void nextVideo();
+	uint32 getSmackerFileHash() const { return _fileHash[0]; }
 protected:
 	bool _doubleSurface;
 	bool _canSkip;

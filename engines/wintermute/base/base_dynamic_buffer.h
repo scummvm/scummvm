@@ -60,6 +60,6 @@ private:
 	void putTextForm(const char *format, va_list argptr);
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

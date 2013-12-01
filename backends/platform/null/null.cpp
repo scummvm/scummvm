@@ -49,7 +49,7 @@ public:
 
 	virtual bool pollEvent(Common::Event &event);
 
-	virtual uint32 getMillis();
+	virtual uint32 getMillis(bool skipRecord = false);
 	virtual void delayMillis(uint msecs);
 	virtual void getTimeAndDate(TimeDate &t) const {}
 

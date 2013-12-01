@@ -202,7 +202,7 @@ int AgiLoader_v1::loadResource(int t, int n) {
 	uint8 *data = NULL;
 
 	debugC(3, kDebugLevelResources, "(t = %d, n = %d)", t, n);
-	if (n > MAX_DIRS)
+	if (n >= MAX_DIRS)
 		return errBadResource;
 
 	switch (t) {

@@ -26,7 +26,6 @@
 #include "common/debug.h"
 #include "common/debug-channels.h"
 #include "common/error.h"
-#include "common/EventRecorder.h"
 #include "common/file.h"
 #include "common/fs.h"
 #include "common/tokenizer.h"
@@ -106,7 +105,7 @@ bool WintermuteEngine::hasFeature(EngineFeature f) const {
 
 Common::Error WintermuteEngine::run() {
 	// Initialize graphics using following:
-	Graphics::PixelFormat format(4, 8, 8, 8, 8, 16, 8, 0, 24);
+	Graphics::PixelFormat format(4, 8, 8, 8, 8, 24, 16, 8, 0);
 	initGraphics(800, 600, true, &format);
 	if (g_system->getScreenFormat() != format) {
 		error("Wintermute currently REQUIRES 32bpp");
@@ -134,7 +133,7 @@ Common::Error WintermuteEngine::run() {
 }
 
 int WintermuteEngine::init() {
-	BaseEngine::createInstance(_targetName, _gameDescription->language);
+	BaseEngine::createInstance(_targetName, _gameDescription->gameid, _gameDescription->language);
 	_game = new AdGame(_targetName);
 	if (!_game) {
 		return 1;
@@ -148,7 +147,7 @@ int WintermuteEngine::init() {
 	_game->initialize1();
 
 	// set gameId, for savegame-naming:
-	_game->setGameId(_targetName);
+	_game->setGameTargetName(_targetName);
 
 	if (DID_FAIL(_game->loadSettings("startup.settings"))) {
 		_game->LOG(0, "Error loading game settings.");
@@ -250,6 +249,9 @@ int WintermuteEngine::messageLoop() {
 				_game->loadGame(_game->_scheduledLoadSlot);
 			}
 			prevTime = time;
+		}
+		if (shouldQuit()) {
+			break;
 		}
 		if (_game && _game->_quitting) {
 			break;

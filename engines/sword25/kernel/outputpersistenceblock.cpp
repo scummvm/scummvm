@@ -41,13 +41,13 @@ OutputPersistenceBlock::OutputPersistenceBlock() {
 	_data.reserve(INITIAL_BUFFER_SIZE);
 }
 
-void OutputPersistenceBlock::write(signed int value) {
+void OutputPersistenceBlock::write(int32 value) {
 	writeMarker(SINT_MARKER);
 	value = TO_LE_32(value);
 	rawWrite(&value, sizeof(value));
 }
 
-void OutputPersistenceBlock::write(uint value) {
+void OutputPersistenceBlock::write(uint32 value) {
 	writeMarker(UINT_MARKER);
 	value = TO_LE_32(value);
 	rawWrite(&value, sizeof(value));
@@ -74,14 +74,14 @@ void OutputPersistenceBlock::write(bool value) {
 void OutputPersistenceBlock::writeString(const Common::String &string) {
 	writeMarker(STRING_MARKER);
 
-	write(string.size());
+	write((uint32)string.size());
 	rawWrite(string.c_str(), string.size());
 }
 
 void OutputPersistenceBlock::writeByteArray(Common::Array<byte> &value) {
 	writeMarker(BLOCK_MARKER);
 
-	write((uint)value.size());
+	write((uint32)value.size());
 	rawWrite(&value[0], value.size());
 }
 

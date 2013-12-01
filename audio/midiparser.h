@@ -105,8 +105,8 @@ struct EventInfo {
 	               ///< will occur, and the MidiParser will have to generate one itself.
 	               ///< For all other events, this value should always be zero.
 
-	byte channel() { return event & 0x0F; } ///< Separates the MIDI channel from the event.
-	byte command() { return event >> 4; }   ///< Separates the command code from the event.
+	byte channel() const { return event & 0x0F; } ///< Separates the MIDI channel from the event.
+	byte command() const { return event >> 4; }   ///< Separates the command code from the event.
 };
 
 /**
@@ -287,12 +287,14 @@ protected:
 	                        ///< so each event is parsed only once; this permits
 	                        ///< simulated events in certain formats.
 	bool   _abortParse;    ///< If a jump or other operation interrupts parsing, flag to abort.
+	bool   _jumpingToTick; ///< True if currently inside jumpToTick
 
 protected:
 	static uint32 readVLQ(byte * &data);
 	virtual void resetTracking();
 	virtual void allNotesOff();
 	virtual void parseNextEvent(EventInfo &info) = 0;
+	virtual void processEvent(const EventInfo &info, bool fireEvents = true);
 
 	void activeNote(byte channel, byte note, bool active);
 	void hangingNote(byte channel, byte note, uint32 ticksLeft, bool recycle = true);

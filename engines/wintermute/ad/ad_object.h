@@ -61,7 +61,7 @@ public:
 	bool reset();
 	DECLARE_PERSISTENT(AdObject, BaseObject)
 	virtual void talk(const char *text, const char *sound = nullptr, uint32 duration = 0, const char *stances = nullptr, TTextAlign align = TAL_CENTER);
-	virtual int getHeight() override;
+	virtual int32 getHeight() override;
 
 	bool setFont(const char *filename);
 	virtual bool update() override;
@@ -123,6 +123,6 @@ private:
 	AdInventory *_inventory;
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

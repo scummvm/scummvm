@@ -985,6 +985,7 @@ void WinnieEngine::getMenuSel(char *szMenu, int *iSel, int fCanSel[]) {
 						}
 						break;
 					}
+					break;
 				default:
 					if (!event.kbd.flags) {	// if the control/alt/shift keys are not pressed
 						keyHelp();

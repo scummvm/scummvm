@@ -184,8 +184,8 @@ public:
 	 * to assume that this method is using anything other than a simple case insensitive compare.
 	 * Thus do not use any tokens like '*' or '?' in the "caselessName" parameter of this function!
 	 */
-	void addSubDirectoryMatching(const FSNode &directory, const String &caselessName, int priority = 0) {
-		addSubDirectoriesMatching(directory, caselessName, true, priority);
+	void addSubDirectoryMatching(const FSNode &directory, const String &caselessName, int priority = 0, int depth = 1, bool flat = false) {
+		addSubDirectoriesMatching(directory, caselessName, true, priority, depth, flat);
 	}
 
 	/**
@@ -208,7 +208,7 @@ public:
 	 *
 	 * @see Common::matchString
 	 */
-	void addSubDirectoriesMatching(const FSNode &directory, String origPattern, bool ignoreCase, int priority = 0);
+	void addSubDirectoriesMatching(const FSNode &directory, String origPattern, bool ignoreCase, int priority = 0, int depth = 1, bool flat = false);
 
 	/**
 	 * Remove an archive from the searchable set.

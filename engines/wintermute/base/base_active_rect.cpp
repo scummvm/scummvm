@@ -37,7 +37,7 @@ namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////
 BaseActiveRect::BaseActiveRect(BaseGame *inGame) : BaseClass(inGame) {
-	BasePlatform::setRectEmpty(&_rect);
+	_rect.setEmpty();
 	_owner = nullptr;
 	_frame = nullptr;
 	_region = nullptr;
@@ -52,7 +52,7 @@ BaseActiveRect::BaseActiveRect(BaseGame *inGame) : BaseClass(inGame) {
 BaseActiveRect::BaseActiveRect(BaseGame *inGame, BaseObject *owner, BaseSubFrame *frame, int x, int y, int width, int height, float zoomX, float zoomY, bool precise) : BaseClass(inGame) {
 	_owner = owner;
 	_frame = frame;
-	BasePlatform::setRect(&_rect, x, y, x + width, y + height);
+	_rect.setRect(x, y, x + width, y + height);
 	_zoomX = zoomX;
 	_zoomY = zoomY;
 	_precise = precise;
@@ -109,4 +109,4 @@ void BaseActiveRect::clipRect() {
 	BasePlatform::intersectRect(&_rect, &_rect, &rc);
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

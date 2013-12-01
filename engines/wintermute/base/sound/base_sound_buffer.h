@@ -95,6 +95,6 @@ private:
 	int32 _volume;
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

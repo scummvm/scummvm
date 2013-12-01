@@ -343,7 +343,7 @@ void Scene50::synchronize(Serializer &s) {
 void Scene50::postInit(SceneObjectList *OwnerList) {
 	SceneExt::postInit();
 
-	BF_GLOBALS._interfaceY = 200;
+	BF_GLOBALS._interfaceY = SCREEN_HEIGHT;
 	T2_GLOBALS._uiElements._active = false;
 	BF_GLOBALS._player.postInit();
 	BF_GLOBALS._player.setVisage(830);
@@ -419,6 +419,8 @@ void Scene50::postInit(SceneObjectList *OwnerList) {
 		tooltip = &_location8;
 		xp = 75;
 		break;
+	default:
+		error("Unexpected tooltip value %d", selectedTooltip);
 	}
 
 	_timer.set(240, this);
@@ -888,6 +890,7 @@ void Scene60::Action1::signal() {
 		break;
 	case 4:
 		remove();
+		break;
 	case 5:
 		setDelay(120);
 		break;
@@ -939,7 +942,6 @@ void Scene60::Action3::signal() {
 		scene->_stripManager.start(71, this);
 		break;
 	case 2:
-		scene->_field1222 = true;
 		BF_GLOBALS._player.enableControl();
 		remove();
 		break;
@@ -953,7 +955,6 @@ Scene60::Scene60(): SceneExt() {
 	_sceneNumber = 0;
 	_visage = 0;
 	_cursorId = CURSOR_NONE;
-	_field1222 = false;
 }
 
 void Scene60::synchronize(Serializer &s) {
@@ -963,7 +964,10 @@ void Scene60::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_sceneNumber);
 	s.syncAsSint16LE(_visage);
 	s.syncAsSint16LE(_cursorId);
-	s.syncAsSint16LE(_field1222);
+	if (s.getVersion() < 11) {
+		int useless = 0;
+		s.syncAsSint16LE(useless);
+	}
 }
 
 void Scene60::postInit(SceneObjectList *OwnerList) {

@@ -26,7 +26,7 @@
 #include "neverhood/neverhood.h"
 #include "neverhood/module.h"
 #include "neverhood/scene.h"
-#include "neverhood/modules/module1600.h"
+#include "neverhood/modules/module1600_sprites.h"	// for Tracks
 
 namespace Neverhood {
 
@@ -39,7 +39,7 @@ public:
 protected:
 	int _sceneNum;
 	int _soundIndex;
-	bool _raidoMusicInitialized;
+	bool _radioMusicInitialized;
 	uint32 _scene2711StaticSprites[6];
 	uint32 _musicFileHash;
 	void createScene(int sceneNum, int which);
@@ -49,38 +49,7 @@ protected:
 	void createScene2704(int which, uint32 trackInfoId, int16 value, const uint32 *staticSprites = NULL, const NRect *clipRect = NULL);
 };
 
-class SsCommonTrackShadowBackground : public StaticSprite {
-public:
-	SsCommonTrackShadowBackground(NeverhoodEngine *vm, uint32 fileHash);
-};
-
-class AsCommonCarShadow : public AnimatedSprite {
-public:
-	AsCommonCarShadow(NeverhoodEngine *vm, AnimatedSprite *asCar, BaseSurface *shadowSurface, uint index);
-protected:
-	uint _index;
-	AnimatedSprite *_asCar;
-	uint32 _animFileHash;
-	void update();
-	void updateShadow();
-};
-
-class AsCommonCarConnectorShadow : public AnimatedSprite {
-public:
-	AsCommonCarConnectorShadow(NeverhoodEngine *vm, Sprite *asCar, BaseSurface *shadowSurface, uint index);
-protected:
-	uint _index;
-	Sprite *_asCar;
-	void update();
-};
-
-class AsCommonCarTrackShadow : public AnimatedSprite {
-public:
-	AsCommonCarTrackShadow(NeverhoodEngine *vm, Sprite *asCar, BaseSurface *shadowSurface, int16 frameIndex);
-protected:
-	Sprite *_asCar;
-	void update();
-};
+class AsCommonCar;
 
 class Scene2701 : public Scene {
 public:

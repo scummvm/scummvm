@@ -41,6 +41,7 @@
 #include "sword25/gfx/renderobjectmanager.h"
 
 #include "common/system.h"
+#include "graphics/thumbnail.h"
 
 namespace Sword25 {
 
@@ -239,25 +240,13 @@ bool RenderedImage::blit(int posX, int posY, int flipping, Common::Rect *pPartRe
 	int cg = (color >> 8) & 0xff;
 	int cb = (color >> 0) & 0xff;
 
-	// Compensate for transparency. Since we're coming
-	// down to 255 alpha, we just compensate for the colors here
-	if (ca != 255) {
-		cr = cr * ca >> 8;
-		cg = cg * ca >> 8;
-		cb = cb * ca >> 8;
-	}
-
 	// Create an encapsulating surface for the data
 	Graphics::Surface srcImage;
 	// TODO: Is the data really in the screen format?
-	srcImage.format = g_system->getScreenFormat();
-	srcImage.pitch = _width * 4;
-	srcImage.w = _width;
-	srcImage.h = _height;
-	srcImage.pixels = _data;
+	srcImage.init(_width, _height, _width * 4, _data, g_system->getScreenFormat());
 
 	if (pPartRect) {
-		srcImage.pixels = &_data[pPartRect->top * srcImage.pitch + pPartRect->left * 4];
+		srcImage.setPixels(&_data[pPartRect->top * srcImage.pitch + pPartRect->left * 4]);
 		srcImage.w = pPartRect->right - pPartRect->left;
 		srcImage.h = pPartRect->bottom - pPartRect->top;
 
@@ -286,14 +275,14 @@ bool RenderedImage::blit(int posX, int posY, int flipping, Common::Rect *pPartRe
 	if ((width != srcImage.w) || (height != srcImage.h)) {
 		// Scale the image
 		img = imgScaled = scale(srcImage, width, height);
-		savedPixels = (byte *)img->pixels;
+		savedPixels = (byte *)img->getPixels();
 	} else {
 		img = &srcImage;
 	}
 
 	for (RectangleList::iterator it = updateRects->begin(); it != updateRects->end(); ++it) {
 		const Common::Rect &clipRect = *it;
-	
+
 		int skipLeft = 0, skipTop = 0;
 		int drawX = posX, drawY = posY;
 		int drawWidth = img->w;
@@ -305,7 +294,7 @@ bool RenderedImage::blit(int posX, int posY, int flipping, Common::Rect *pPartRe
 			drawWidth -= skipLeft;
 			drawX = clipRect.left;
 		}
-		
+
 		if (drawY < clipRect.top) {
 			skipTop = clipRect.top - drawY;
 			drawHeight -= skipTop;
@@ -314,13 +303,13 @@ bool RenderedImage::blit(int posX, int posY, int flipping, Common::Rect *pPartRe
 
 		if (drawX + drawWidth >= clipRect.right)
 			drawWidth = clipRect.right - drawX;
-	
+
 		if (drawY + drawHeight >= clipRect.bottom)
 			drawHeight = clipRect.bottom - drawY;
-			
+
 		if ((drawWidth > 0) && (drawHeight > 0)) {
 			int xp = 0, yp = 0;
-	
+
 			int inStep = 4;
 			int inoStep = img->pitch;
 			if (flipping & Image::FLIP_V) {
@@ -329,14 +318,14 @@ bool RenderedImage::blit(int posX, int posY, int flipping, Common::Rect *pPartRe
 			} else {
 				xp = skipLeft;
 			}
-	
+
 			if (flipping & Image::FLIP_H) {
 				inoStep = -inoStep;
 				yp = img->h - 1 - skipTop;
 			} else {
 				yp = skipTop;
 			}
-	
+
 			byte *ino = (byte *)img->getBasePtr(xp, yp);
 			byte *outo = (byte *)_backSurface->getBasePtr(drawX, drawY);
 
@@ -350,7 +339,7 @@ bool RenderedImage::blit(int posX, int posY, int flipping, Common::Rect *pPartRe
 					ino += inoStep;
 				}
 			} else
-#endif			 
+#endif
 			{
 				byte *in, *out;
 				for (int i = 0; i < drawHeight; i++) {
@@ -360,7 +349,7 @@ bool RenderedImage::blit(int posX, int posY, int flipping, Common::Rect *pPartRe
 						uint32 pix = *(uint32 *)in;
 						int a = (pix >> 24) & 0xff;
 						in += inStep;
-						
+
 						if (ca != 255) {
 							a = a * ca >> 8;
 						}
@@ -370,11 +359,11 @@ bool RenderedImage::blit(int posX, int posY, int flipping, Common::Rect *pPartRe
 							out += 4;
 							continue;
 						}
-						
+
 						int b = (pix >> 0) & 0xff;
 						int g = (pix >> 8) & 0xff;
 						int r = (pix >> 16) & 0xff;
-		
+
 						if (a == 255) {
 #if defined(SCUMM_LITTLE_ENDIAN)
 							if (cb != 255)
@@ -403,52 +392,52 @@ bool RenderedImage::blit(int posX, int posY, int flipping, Common::Rect *pPartRe
 						} else {
 #if defined(SCUMM_LITTLE_ENDIAN)
 							pix = *(uint32 *)out;
-							int outb = (pix >> 0) & 0xff;
-							int outg = (pix >> 8) & 0xff;
-							int outr = (pix >> 16) & 0xff;
+							int outb = ((pix >> 0) & 0xff) * (255 - a);
+							int outg = ((pix >> 8) & 0xff) * (255 - a);
+							int outr = ((pix >> 16) & 0xff) * (255 - a);
 							if (cb == 0)
-								outb = 0;
+								outb = outb >> 8;
 							else if (cb != 255)
-								outb += ((b - outb) * a * cb) >> 16;
+								outb = ((outb << 8) + b * a * cb) >> 16;
 							else
-								outb += ((b - outb) * a) >> 8;
+								outb = (outb + b * a) >> 8;
 							if (cg == 0)
-								outg = 0;
+								outg = outg >> 8;
 							else if (cg != 255)
-								outg += ((g - outg) * a * cg) >> 16;
+								outg = ((outg << 8) + g * a * cg) >> 16;
 							else
-								outg += ((g - outg) * a) >> 8;
+								outg = (outg + g * a) >> 8;
 							if (cr == 0)
-								outr = 0;
+								outr = outr >> 8;
 							else if (cr != 255)
-								outr += ((r - outr) * a * cr) >> 16;
+								outr = ((outr << 8) + r * a * cr) >> 16;
 							else
-								outr += ((r - outr) * a) >> 8;
+								outr = (outr + r * a) >> 8;
 							*(uint32 *)out = (255 << 24) | (outr << 16) | (outg << 8) | outb;
 							out += 4;
 #else
 							*out = 255;
 							out++;
 							if (cr == 0)
-								*out = 0;
+								*out = (*out * (255-a)) >> 8;
 							else if (cr != 255)
-								*out += ((r - *out) * a * cr) >> 16;
+								*out = (((*out * (255-a)) << 8) + r * a * cr) >> 16;
 							else
-								*out += ((r - *out) * a) >> 8;
+								*out = ((*out * (255-a)) + r * a) >> 8;
 							out++;
 							if (cg == 0)
-								*out = 0;
+								*out = (*out * (255-a)) >> 8;
 							else if (cg != 255)
-								*out += ((g - *out) * a * cg) >> 16;
+								*out = (((*out * (255-a)) << 8) + g * a * cg) >> 16;
 							else
-								*out += ((g - *out) * a) >> 8;
+								*out = ((*out * (255-a)) + g * a) >> 8;
 							out++;
 							if (cb == 0)
-								*out = 0;
+								*out = (*out * (255-a)) >> 8;
 							else if (cb != 255)
-								*out += ((b - *out) * a * cb) >> 16;
+								*out = (((*out * (255-a)) << 8) + b * a * cb) >> 16;
 							else
-								*out += ((b - *out) * a) >> 8;
+								*out = ((*out * (255-a)) + b * a) >> 8;
 							out++;
 #endif
 						}
@@ -459,11 +448,11 @@ bool RenderedImage::blit(int posX, int posY, int flipping, Common::Rect *pPartRe
 			}
 
 		}
-		
+
 	}
 
 	if (imgScaled) {
-		imgScaled->pixels = savedPixels;
+		imgScaled->setPixels(savedPixels);
 		imgScaled->free();
 		delete imgScaled;
 	}
@@ -507,62 +496,6 @@ void RenderedImage::checkForTransparency() {
 			data += 4;
 		}
 	}
-}
-
-/**
- * Scales a passed surface, creating a new surface with the result
- * @param srcImage		Source image to scale
- * @param scaleFactor	Scale amount. Must be between 0 and 1.0 (but not zero)
- * @remarks Caller is responsible for freeing the returned surface
- */
-Graphics::Surface *RenderedImage::scale(const Graphics::Surface &srcImage, int xSize, int ySize) {
-	Graphics::Surface *s = new Graphics::Surface();
-	s->create(xSize, ySize, srcImage.format);
-
-	int *horizUsage = scaleLine(xSize, srcImage.w);
-	int *vertUsage = scaleLine(ySize, srcImage.h);
-
-	// Loop to create scaled version
-	for (int yp = 0; yp < ySize; ++yp) {
-		const byte *srcP = (const byte *)srcImage.getBasePtr(0, vertUsage[yp]);
-		byte *destP = (byte *)s->getBasePtr(0, yp);
-
-		for (int xp = 0; xp < xSize; ++xp) {
-			const byte *tempSrcP = srcP + (horizUsage[xp] * srcImage.format.bytesPerPixel);
-			for (int byteCtr = 0; byteCtr < srcImage.format.bytesPerPixel; ++byteCtr) {
-				*destP++ = *tempSrcP++;
-			}
-		}
-	}
-
-	// Delete arrays and return surface
-	delete[] horizUsage;
-	delete[] vertUsage;
-	return s;
-}
-
-/**
- * Returns an array indicating which pixels of a source image horizontally or vertically get
- * included in a scaled image
- */
-int *RenderedImage::scaleLine(int size, int srcSize) {
-	int scale = 100 * size / srcSize;
-	assert(scale > 0);
-	int *v = new int[size];
-	Common::fill(v, &v[size], 0);
-
-	int distCtr = 0;
-	int *destP = v;
-	for (int distIndex = 0; distIndex < srcSize; ++distIndex) {
-		distCtr += scale;
-		while (distCtr >= 100) {
-			assert(destP < &v[size]);
-			*destP++ = distIndex;
-			distCtr -= 100;
-		}
-	}
-
-	return v;
 }
 
 } // End of namespace Sword25

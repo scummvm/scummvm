@@ -38,7 +38,7 @@
 
 namespace Graphics {
 
-PNGDecoder::PNGDecoder() : _outputSurface(0), _palette(0), _paletteColorCount(0) {
+PNGDecoder::PNGDecoder() : _outputSurface(0), _palette(0), _paletteColorCount(0), _stream(0) {
 }
 
 PNGDecoder::~PNGDecoder() {
@@ -163,15 +163,19 @@ bool PNGDecoder::loadStream(Common::SeekableReadStream &stream) {
 		_outputSurface->create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 		png_set_packing(pngPtr);
 	} else {
-		_outputSurface->create(width, height, Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
-		if (!_outputSurface->pixels) {
+		bool isAlpha = (colorType & PNG_COLOR_MASK_ALPHA);
+		if (png_get_valid(pngPtr, infoPtr, PNG_INFO_tRNS)) {
+			isAlpha = true;
+			png_set_expand(pngPtr);
+		}
+		_outputSurface->create(width, height, Graphics::PixelFormat(4,
+		                       8, 8, 8, isAlpha ? 8 : 0, 24, 16, 8, 0));
+		if (!_outputSurface->getPixels()) {
 			error("Could not allocate memory for output image.");
 		}
 		if (bitDepth == 16)
 			png_set_strip_16(pngPtr);
 		if (bitDepth < 8)
-			png_set_expand(pngPtr);
-		if (png_get_valid(pngPtr, infoPtr, PNG_INFO_tRNS))
 			png_set_expand(pngPtr);
 		if (colorType == PNG_COLOR_TYPE_GRAY ||
 			colorType == PNG_COLOR_TYPE_GRAY_ALPHA)

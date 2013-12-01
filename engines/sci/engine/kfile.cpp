@@ -718,7 +718,7 @@ reg_t kSave(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kSaveGame(EngineState *s, int argc, reg_t *argv) {
 	Common::String game_id;
- 	int16 virtualId = argv[1].toSint16();
+	int16 virtualId = argv[1].toSint16();
 	int16 savegameId = -1;
 	Common::String game_description;
 	Common::String version;

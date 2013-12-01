@@ -118,8 +118,6 @@ RectangleList *MicroTileArray::getRectangles() {
 
 	for (y = 0; y < _tilesH; ++y) {
 		for (x = 0; x < _tilesW; ++x) {
-
-			int start;
 			int finish = 0;
 			BoundingBox boundingBox = _tiles[i];
 
@@ -131,8 +129,6 @@ RectangleList *MicroTileArray::getRectangles() {
 			x0 = (x * TileSize) + TileX0(boundingBox);
 			y0 = (y * TileSize) + TileY0(boundingBox);
 			y1 = (y * TileSize) + TileY1(boundingBox);
-
-			start = i;
 
 			if (TileX1(boundingBox) == TileSize - 1 && x != _tilesW - 1) {	// check if the tile continues
 				while (!finish) {

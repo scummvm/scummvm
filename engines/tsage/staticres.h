@@ -182,6 +182,7 @@ extern char const *const RESTORE_GAME;
 extern char const *const SHOW_CREDITS;
 extern char const *const PAUSE_GAME;
 extern char const *const RESUME_PLAY;
+extern char const *const R2_RESTART_MSG;
 extern char const *const F2;
 extern char const *const F3;
 extern char const *const F4;
@@ -199,15 +200,23 @@ extern char const *const NEED_INSTRUCTIONS;
 extern char const *const WRONG_ANSWER_MSG;
 
 // Scene 1550 arrays of constants
-extern const byte k562CC[];
-extern const byte k5A4D6[];
-extern const byte k5A72E[];
-extern const byte k5A73F[];
+extern const byte scene1550JunkLocationsDefault[];
+extern const byte scene1550AreaMap[];
+extern const byte scene1550JunkX[];
+extern const byte scene1550JunkY[];
 extern const byte k5A750[];
 extern const byte k5A76D[];
-extern const byte k5A78A[];
-extern const byte k5A79B[];
+extern const byte scene1550JunkRegions[];
+extern const byte scene1550SpecialAreas[];
 extern const byte k5A7F6[];
+
+// Scene 2900 balloon data
+struct BalloonRecord {
+	int8 x;
+	int8 y;
+	int8 v3;
+};
+extern const BalloonRecord balloonData[];
 
 } // End of namespace Ringworld2
 

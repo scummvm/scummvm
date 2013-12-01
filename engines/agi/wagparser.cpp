@@ -178,7 +178,7 @@ bool WagFileParser::parse(const Common::FSNode &node) {
 	_parsedOk = false; // We haven't parsed the file yet
 
 	stream = node.createReadStream(); // Open the file
-	if (stream) { // Check that opening the file was succesful
+	if (stream) { // Check that opening the file was successful
 		if (checkWagVersion(*stream)) { // Check that WinAGI version string is valid
 			// It seems we've got a valid *.wag file so let's parse its properties from the start.
 			stream->seek(0); // Rewind the stream

@@ -308,7 +308,7 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 						// loc_2566F
 						if (srcFlags & DISPFLAG_2) {
 							// loc_256FA
-							srcP = (byte *)_screenSurface.pixels + srcOffset;
+							srcP = (byte *)_screenSurface.getPixels() + srcOffset;
 
 							for (int yp = 0; yp < height1; ++yp) {
 								for (int xp = 0; xp < width2; ++width2, ++srcP, ++destP) {
@@ -341,7 +341,7 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 							}
 						} else {
 							// loc_25829
-							destP = (byte *)_screenSurface.pixels + screenOffset;
+							destP = (byte *)_screenSurface.getPixels() + screenOffset;
 
 							for (int yp = 0; yp < height1; ++yp) {
 								Common::copy(srcP, srcP + width2, destP);
@@ -356,7 +356,7 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 						// loc_25D4A
 					} else {
 						// loc_2606D
-						destP = (byte *)_screenSurface.pixels + screenOffset;
+						destP = (byte *)_screenSurface.getPixels() + screenOffset;
 
 						for (int yp = 0; yp < height1; ++yp) {
 							Common::copy(srcP, srcP + width2, destP);
@@ -491,7 +491,7 @@ error("TODO: var22/var24/var2C not initialised before use?");
 				// loc_27477
 				if (destFlags & DISPFLAG_8) {
 					// loc_27481
-					destP = (byte *)_screenSurface.pixels + screenOffset;
+					destP = (byte *)_screenSurface.getPixels() + screenOffset;
 					for (int yp = 0; yp < height1; ++yp) {
 						Common::fill(srcP, srcP + width2, onOff);
 						destP += width2 + widthDiff2;

@@ -34,6 +34,9 @@ namespace Ringworld {
  * Scene 4000 - Village
  *
  *--------------------------------------------------------------------------*/
+Scene4000::Hotspot8::Hotspot8() : SceneObject() {
+	_ctr = 0;
+}
 
 void Scene4000::Action1::signal() {
 	// Quinn has the peg. Everybody enter the screen.

@@ -30,6 +30,10 @@ namespace Graphics {
 IFFDecoder::IFFDecoder() {
 	_surface = 0;
 	_palette = 0;
+	
+	// these 2 properties are not reset by destroy(), so the default is set here.
+	_numRelevantPlanes = 8;
+	_pixelPacking = false;
 
 	destroy();
 }
@@ -54,8 +58,6 @@ void IFFDecoder::destroy() {
 	_paletteRanges.clear();
 	_type = TYPE_UNKNOWN;
 	_paletteColorCount = 0;
-	_numRelevantPlanes = 8;
-	_pixelPacking = false;
 }
 
 bool IFFDecoder::loadStream(Common::SeekableReadStream &stream) {
@@ -170,7 +172,7 @@ void IFFDecoder::loadBitmap(Common::SeekableReadStream &stream) {
 	if (_type == TYPE_ILBM) {
 		uint32 scanlinePitch = ((_header.width + 15) >> 4) << 1;
 		byte *scanlines = new byte[scanlinePitch * _header.numPlanes];
-		byte *data = (byte *)_surface->pixels;
+		byte *data = (byte *)_surface->getPixels();
 
 		for (uint16 i = 0; i < _header.height; ++i) {
 			byte *scanline = scanlines;
@@ -194,7 +196,7 @@ void IFFDecoder::loadBitmap(Common::SeekableReadStream &stream) {
 
 		delete[] scanlines;
 	} else if (_type == TYPE_PBM) {
-		byte *data = (byte *)_surface->pixels;
+		byte *data = (byte *)_surface->getPixels();
 		uint32 outSize = _header.width * _header.height;
 
 		if (_header.compression) {

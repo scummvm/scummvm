@@ -975,7 +975,6 @@ int LinesManager::computeRouteIdx(int lineIdx, int dataIdx, int fromX, int fromY
 
 		curX = destX;
 		int lineIdxLeft = -1;
-		loopCond = false;
 		do {
 			--curX;
 			if (checkCollisionLine(curX, destY, &foundDataIdx, &foundLineIdx, startLineIdx, endLineIdx)) {

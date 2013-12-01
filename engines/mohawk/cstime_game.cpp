@@ -1094,7 +1094,7 @@ void CSTimeScene::idleAmbientAnims() {
 
 bool CSTimeScene::eventIsActive() {
 	return _vm->NISIsRunning() /* TODO || _vm->soundIsPlaying()*/ || _vm->getCurrentEventType() == kCSTimeEventWaitForClick
-		|| _activeChar->_flappingState != 0xffff || _vm->getInterface()->getState() == 4;
+		|| _activeChar->_flappingState != 0xffff || _vm->getInterface()->getState() == kCSTimeInterfaceDroppedInventory;
 }
 
 void CSTimeScene::cursorOverHotspot(uint id) {

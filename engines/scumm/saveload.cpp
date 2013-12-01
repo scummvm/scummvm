@@ -30,7 +30,7 @@
 #include "scumm/charset.h"
 #include "scumm/imuse_digi/dimuse.h"
 #include "scumm/imuse/imuse.h"
-#include "scumm/player_towns.h"
+#include "scumm/players/player_towns.h"
 #include "scumm/he/intern_he.h"
 #include "scumm/object.h"
 #include "scumm/resource.h"
@@ -634,100 +634,83 @@ bool ScummEngine::getSavegameName(int slot, Common::String &desc) {
 	return result;
 }
 
-bool getSavegameName(Common::InSaveFile *in, Common::String &desc, int heversion) {
-	SaveGameHeader hdr;
-
+namespace {
+bool loadAndCheckSaveGameHeader(Common::InSaveFile *in, int heversion, SaveGameHeader &hdr, Common::String *error = nullptr) {
 	if (!loadSaveGameHeader(in, hdr)) {
-		desc = "Invalid savegame";
+		if (error) {
+			*error = "Invalid savegame";
+		}
 		return false;
 	}
 
-	if (hdr.ver > CURRENT_VER)
+	if (hdr.ver > CURRENT_VER) {
 		hdr.ver = TO_LE_32(hdr.ver);
+	}
+
 	if (hdr.ver < VER(7) || hdr.ver > CURRENT_VER) {
-		desc = "Invalid version";
+		if (error) {
+			*error = "Invalid version";
+		}
 		return false;
 	}
 
 	// We (deliberately) broke HE savegame compatibility at some point.
 	if (hdr.ver < VER(57) && heversion >= 60) {
-		desc = "Unsupported version";
+		if (error) {
+			*error = "Unsupported version";
+		}
 		return false;
 	}
 
 	hdr.name[sizeof(hdr.name) - 1] = 0;
+	return true;
+}
+} // End of anonymous namespace
+
+bool getSavegameName(Common::InSaveFile *in, Common::String &desc, int heversion) {
+	SaveGameHeader hdr;
+
+	if (!loadAndCheckSaveGameHeader(in, heversion, hdr, &desc)) {
+		return false;
+	}
+
 	desc = hdr.name;
 	return true;
 }
 
-Graphics::Surface *ScummEngine::loadThumbnailFromSlot(const char *target, int slot) {
-	Common::SeekableReadStream *in;
+bool ScummEngine::querySaveMetaInfos(const char *target, int slot, int heversion, Common::String &desc, Graphics::Surface *&thumbnail, SaveStateMetaInfos *&timeInfos) {
+	if (slot < 0) {
+		return false;
+	}
+
 	SaveGameHeader hdr;
+	const Common::String filename = ScummEngine::makeSavegameName(target, slot, false);
+	Common::ScopedPtr<Common::SeekableReadStream> in(g_system->getSavefileManager()->openForLoading(filename));
 
-	if (slot < 0)
-		return 0;
-
-	Common::String filename = ScummEngine::makeSavegameName(target, slot, false);
-	if (!(in = g_system->getSavefileManager()->openForLoading(filename))) {
-		return 0;
-	}
-
-	if (!loadSaveGameHeader(in, hdr)) {
-		delete in;
-		return 0;
-	}
-
-	if (hdr.ver > CURRENT_VER)
-		hdr.ver = TO_LE_32(hdr.ver);
-	if (hdr.ver < VER(52)) {
-		delete in;
-		return 0;
-	}
-
-	Graphics::Surface *thumb = 0;
-	if (Graphics::checkThumbnailHeader(*in)) {
-		thumb = Graphics::loadThumbnail(*in);
-	}
-
-	delete in;
-	return thumb;
-}
-
-bool ScummEngine::loadInfosFromSlot(const char *target, int slot, SaveStateMetaInfos *stuff) {
-	Common::SeekableReadStream *in;
-	SaveGameHeader hdr;
-
-	if (slot < 0)
-		return 0;
-
-	Common::String filename = makeSavegameName(target, slot, false);
-	if (!(in = g_system->getSavefileManager()->openForLoading(filename))) {
+	if (!in) {
 		return false;
 	}
 
-	if (!loadSaveGameHeader(in, hdr)) {
-		delete in;
+	if (!loadAndCheckSaveGameHeader(in.get(), heversion, hdr)) {
 		return false;
 	}
 
-	if (hdr.ver > CURRENT_VER)
-		hdr.ver = TO_LE_32(hdr.ver);
-	if (hdr.ver < VER(56)) {
-		delete in;
-		return false;
+	desc = hdr.name;
+
+	if (hdr.ver > VER(52)) {
+		if (Graphics::checkThumbnailHeader(*in)) {
+			thumbnail = Graphics::loadThumbnail(*in);
+		}
+
+		if (hdr.ver > VER(57)) {
+			if (!loadInfos(in.get(), timeInfos)) {
+				return false;
+			}
+		} else {
+			timeInfos = nullptr;
+		}
 	}
 
-	if (!Graphics::skipThumbnail(*in)) {
-		delete in;
-		return false;
-	}
-
-	if (!loadInfos(in, stuff)) {
-		delete in;
-		return false;
-	}
-
-	delete in;
 	return true;
 }
 
@@ -781,7 +764,7 @@ bool ScummEngine::loadInfos(Common::SeekableReadStream *file, SaveStateMetaInfos
 	return true;
 }
 
-void ScummEngine::saveInfos(Common::WriteStream* file) {
+void ScummEngine::saveInfos(Common::WriteStream *file) {
 	SaveInfoSection section;
 	section.type = MKTAG('I','N','F','O');
 	section.version = INFOSECTION_VERSION;

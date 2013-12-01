@@ -67,7 +67,7 @@ bool TinselEngine::getIsADGFDemo() const {
 	return (bool)(_gameDescription->desc.flags & ADGF_DEMO);
 }
 
-bool TinselEngine::isCD() const {
+bool TinselEngine::isV1CD() const {
 	return (bool)(_gameDescription->desc.flags & ADGF_CD);
 }
 

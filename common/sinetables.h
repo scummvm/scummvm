@@ -37,6 +37,13 @@ public:
 
 	/**
 	 * Get pointer to table
+	 *
+	 * This table contains 2^bitPrecision/2 entries.
+	 * The layout of this table is as follows:
+	 * - Entries 0 up to (excluding) 2^bitPrecision/4:
+	 *           sin(0) till (excluding) sin(1/2*pi)
+	 * - Entries 2^bitPrecision/4 up to (excluding) 2^bitPrecision/2:
+	 *           sin(pi) till (excluding) sin(3/2*pi)
 	 */
 	const float *getTable() { return _table; }
 

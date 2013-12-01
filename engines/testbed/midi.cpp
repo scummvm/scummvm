@@ -103,7 +103,7 @@ TestExitStatus MidiTests::playMidiMusic() {
 		return kTestFailed;
 	}
 
-	Testsuite::logDetailedPrintf("Info! Midi: Succesfully opened the driver\n");
+	Testsuite::logDetailedPrintf("Info! Midi: Successfully opened the driver\n");
 
 	Common::MemoryWriteStreamDynamic ws(DisposeAfterUse::YES);
 	loadMusicInMemory(&ws);

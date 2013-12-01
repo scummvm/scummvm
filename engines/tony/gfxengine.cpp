@@ -530,7 +530,10 @@ void RMGfxEngine::disableMouse() {
 #define TONY_SAVEGAME_VERSION 8
 
 void RMGfxEngine::saveState(const Common::String &fn, byte *curThumb, const Common::String &name) {
-	Common::OutSaveFile *f;
+	Common::OutSaveFile *f = g_system->getSavefileManager()->openForSaving(fn);
+	if (f == NULL)
+		return;
+
 	byte *state;
 	char buf[4];
 	RMPoint tp = _tony.position();
@@ -548,10 +551,6 @@ void RMGfxEngine::saveState(const Common::String &fn, byte *curThumb, const Comm
 	buf[1] = 'M';
 	buf[2] = 'S';
 	buf[3] = TONY_SAVEGAME_VERSION;
-
-	f = g_system->getSavefileManager()->openForSaving(fn);
-	if (f == NULL)
-		return;
 
 	f->write(buf, 4);
 	f->writeUint32LE(thumbsize);

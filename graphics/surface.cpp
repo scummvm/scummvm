@@ -82,9 +82,79 @@ void Surface::free() {
 	format = PixelFormat();
 }
 
+void Surface::init(uint16 width, uint16 height, uint16 newPitch, void *newPixels, const PixelFormat &f) {
+	w = width;
+	h = height;
+	pitch = newPitch;
+	pixels = newPixels;
+	format = f;
+}
+
 void Surface::copyFrom(const Surface &surf) {
 	create(surf.w, surf.h, surf.format);
-	memcpy(pixels, surf.pixels, h * pitch);
+	if (surf.pitch == pitch) {
+		memcpy(pixels, surf.pixels, h * pitch);
+	} else {
+		const byte *src = (const byte *)surf.pixels;
+		byte *dst = (byte *)pixels;
+		for (int y = h; y > 0; --y) {
+			memcpy(dst, src, w * format.bytesPerPixel);
+			src += surf.pitch;
+			dst += pitch;
+		}
+	}
+}
+
+Surface Surface::getSubArea(const Common::Rect &area) {
+	Common::Rect effectiveArea(area);
+	effectiveArea.clip(w, h);
+
+	Surface subSurface;
+	subSurface.w = effectiveArea.width();
+	subSurface.h = effectiveArea.height();
+	subSurface.pitch = pitch;
+	subSurface.pixels = getBasePtr(area.left, area.top);
+	subSurface.format = format;
+	return subSurface;
+}
+
+const Surface Surface::getSubArea(const Common::Rect &area) const {
+	Common::Rect effectiveArea(area);
+	effectiveArea.clip(w, h);
+
+	Surface subSurface;
+	subSurface.w = effectiveArea.width();
+	subSurface.h = effectiveArea.height();
+	subSurface.pitch = pitch;
+	// We need to cast the const away here because a Surface always has a
+	// pointer to modifiable pixel data.
+	subSurface.pixels = const_cast<void *>(getBasePtr(area.left, area.top));
+	subSurface.format = format;
+	return subSurface;
+}
+
+void Surface::copyRectToSurface(const void *buffer, int srcPitch, int destX, int destY, int width, int height) {
+	assert(buffer);
+
+	assert(destX >= 0 && destX < w);
+	assert(destY >= 0 && destY < h);
+	assert(height > 0 && destY + height <= h);
+	assert(width > 0 && destX + width <= w);
+
+	// Copy buffer data to internal buffer
+	const byte *src = (const byte *)buffer;
+	byte *dst = (byte *)getBasePtr(destX, destY);
+	for (int i = 0; i < height; i++) {
+		memcpy(dst, src, width * format.bytesPerPixel);
+		src += srcPitch;
+		dst += pitch;
+	}
+}
+
+void Surface::copyRectToSurface(const Graphics::Surface &srcSurface, int destX, int destY, const Common::Rect subRect) {
+	assert(srcSurface.format == format);
+
+	copyRectToSurface(srcSurface.getBasePtr(subRect.left, subRect.top), srcSurface.pitch, destX, destY, subRect.width(), subRect.height());
 }
 
 void Surface::hLine(int x, int y, int x2, uint32 color) {

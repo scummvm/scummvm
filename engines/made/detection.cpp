@@ -211,77 +211,77 @@ static const MadeGameDescription gameDescriptions[] = {
 		3,
 	},
 
- 	{
- 		// Return to Zork - Italian CD version 1.2 3/31/95 (installed)
+	{
+		// Return to Zork - Italian CD version 1.2 3/31/95 (installed)
 		// Patch #2685032 submitted by goodoldgeorg
- 		{
- 			"rtz",
- 			"V1.2, 3/31/95, installed, CD",
- 			AD_ENTRY1s("rtzcd.dat", "5b86035aed0277f96e3d173542b5364a", 523776),
- 			Common::IT_ITA,
- 			Common::kPlatformDOS,
+		{
+			"rtz",
+			"V1.2, 3/31/95, installed, CD",
+			AD_ENTRY1s("rtzcd.dat", "5b86035aed0277f96e3d173542b5364a", 523776),
+			Common::IT_ITA,
+			Common::kPlatformDOS,
 			ADGF_CD,
 			GUIO0()
- 		},
- 		GID_RTZ,
- 		0,
- 		GF_CD,
- 		3,
- 	},
+		},
+		GID_RTZ,
+		0,
+		GF_CD,
+		3,
+	},
 
 	{
- 		// Return to Zork - Italian CD version 1.2 3/31/95
+		// Return to Zork - Italian CD version 1.2 3/31/95
 		// Patch #2685032 submitted by goodoldgeorg
- 		{
- 			"rtz",
- 			"V1.2, 3/31/95, CD",
- 			AD_ENTRY1s("rtzcd.red", "946997d8b0aa6cb4e848bad02a1fc3d2", 354971),
- 			Common::IT_ITA,
- 			Common::kPlatformDOS,
+		{
+			"rtz",
+			"V1.2, 3/31/95, CD",
+			AD_ENTRY1s("rtzcd.red", "946997d8b0aa6cb4e848bad02a1fc3d2", 354971),
+			Common::IT_ITA,
+			Common::kPlatformDOS,
 			ADGF_CD,
 			GUIO0()
- 		},
- 		GID_RTZ,
- 		0,
- 		GF_CD_COMPRESSED,
- 		3,
- 	},
+		},
+		GID_RTZ,
+		0,
+		GF_CD_COMPRESSED,
+		3,
+	},
 
- 	{
- 		// Return to Zork - French CD version 1.2 5/13/95 (installed)
+	{
+		// Return to Zork - French CD version 1.2 5/13/95 (installed)
 		// Patch #2685032 submitted by goodoldgeorg
- 		{
- 			"rtz",
- 			"V1.2, 5/13/95, installed, CD",
- 			AD_ENTRY1s("rtzcd.dat", "bde8251a8e34e87c54e3f93147d56c9e", 523776),
- 			Common::FR_FRA,
- 			Common::kPlatformDOS,
+		{
+			"rtz",
+			"V1.2, 5/13/95, installed, CD",
+			AD_ENTRY1s("rtzcd.dat", "bde8251a8e34e87c54e3f93147d56c9e", 523776),
+			Common::FR_FRA,
+			Common::kPlatformDOS,
 			ADGF_CD,
 			GUIO0()
- 		},
- 		GID_RTZ,
- 		0,
- 		GF_CD,
- 		3,
- 	},
+		},
+		GID_RTZ,
+		0,
+		GF_CD,
+		3,
+	},
 
- 	{
- 		// Return to Zork - French CD version 1.2 5/13/95
+	{
+		// Return to Zork - French CD version 1.2 5/13/95
 		// Patch #2685032 submitted by goodoldgeorg
- 		{
- 			"rtz",
- 			"V1.2, 3/31/95, CD",
- 			AD_ENTRY1s("rtzcd.red", "946997d8b0aa6cb4e848bad02a1fc3d2", 354614),
- 			Common::FR_FRA,
- 			Common::kPlatformDOS,
+		{
+			"rtz",
+			"V1.2, 3/31/95, CD",
+			AD_ENTRY1s("rtzcd.red", "946997d8b0aa6cb4e848bad02a1fc3d2", 354614),
+			Common::FR_FRA,
+			Common::kPlatformDOS,
 			ADGF_CD,
 			GUIO0()
- 		},
- 		GID_RTZ,
- 		0,
- 		GF_CD_COMPRESSED,
- 		3,
- 	},
+		},
+		GID_RTZ,
+		0,
+		GF_CD_COMPRESSED,
+		3,
+	},
 
 	{
 		// Return to Zork - English floppy version

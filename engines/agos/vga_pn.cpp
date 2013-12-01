@@ -155,7 +155,7 @@ void AGOSEngine::vc48_specialEffect() {
 	if (getPlatform() == Common::kPlatformDOS) {
 		if (num == 1) {
 			Graphics::Surface *screen = _system->lockScreen();
-			byte *dst = (byte *)screen->pixels;
+			byte *dst = (byte *)screen->getPixels();
 
 			for (uint h = 0; h < _screenHeight; h++) {
 				for (uint w = 0; w < _screenWidth; w++) {
@@ -205,7 +205,7 @@ void AGOSEngine_PN::clearVideoWindow(uint16 num, uint16 color) {
 	uint16 yoffs = vlut[1];
 
 	Graphics::Surface *screen = _system->lockScreen();
-	byte *dst = (byte *)screen->pixels + xoffs + yoffs * screen->pitch;
+	byte *dst = (byte *)screen->getBasePtr(xoffs, yoffs);
 	for (uint h = 0; h < vlut[3]; h++) {
 		memset(dst, color, vlut[2] * 16);
 		dst += screen->pitch;

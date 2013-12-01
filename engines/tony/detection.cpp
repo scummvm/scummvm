@@ -154,26 +154,16 @@ void TonyMetaEngine::removeSaveState(const char *target, int slot) const {
 SaveStateDescriptor TonyMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::String saveName;
 	byte difficulty;
-	byte thumbData[160 * 120 * 2];
 
-	if (Tony::RMOptionScreen::loadThumbnailFromSaveState(slot, thumbData, saveName, difficulty)) {
-		// Convert the 565 thumbnail data to the needed overlay format
-		Common::MemoryReadStream thumbStream(thumbData, 160 * 120 * 2);
-		Graphics::PixelFormat destFormat = g_system->getOverlayFormat();
-		Graphics::Surface *to = new Graphics::Surface();
-		to->create(160, 120, destFormat);
+	Graphics::Surface *to = new Graphics::Surface();
+	to->create(160, 120, Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0));
 
-		OverlayColor *pixels = (OverlayColor *)to->pixels;
-		for (int y = 0; y < to->h; ++y) {
-			for (int x = 0; x < to->w; ++x) {
-				uint8 r, g, b;
-				Graphics::colorToRGB<Graphics::ColorMasks<555> >(thumbStream.readUint16LE(), r, g, b);
-
-				// converting to current OSystem Color
-				*pixels++ = destFormat.RGBToColor(r, g, b);
-			}
-		}
-
+	if (Tony::RMOptionScreen::loadThumbnailFromSaveState(slot, (byte *)to->getPixels(), saveName, difficulty)) {
+#ifdef SCUMM_BIG_ENDIAN
+		uint16 *pixels = (uint16 *)to->getPixels();
+		for (int i = 0; i < to->w * to->h; ++i)
+			pixels[i] = READ_LE_UINT16(pixels + i);
+#endif
 		// Create the return descriptor
 		SaveStateDescriptor desc(slot, saveName);
 		desc.setDeletableFlag(true);
@@ -183,6 +173,7 @@ SaveStateDescriptor TonyMetaEngine::querySaveMetaInfos(const char *target, int s
 		return desc;
 	}
 
+	delete to;
 	return SaveStateDescriptor();
 }
 

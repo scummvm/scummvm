@@ -75,7 +75,7 @@ SoundManager::~SoundManager() {
 // playSample for DiscWorld 1
 bool SoundManager::playSample(int id, Audio::Mixer::SoundType type, Audio::SoundHandle *handle) {
 	// Floppy version has no sample file.
-	if (!_vm->isCD())
+	if (!_vm->isV1CD())
 		return false;
 
 	// no sample driver?
@@ -206,10 +206,6 @@ void SoundManager::playDW1MacMusic(Common::File &s, uint32 length) {
 // playSample for DiscWorld 2
 bool SoundManager::playSample(int id, int sub, bool bLooped, int x, int y, int priority,
 		Audio::Mixer::SoundType type, Audio::SoundHandle *handle) {
-
-	// Floppy version has no sample file
-	if (!_vm->isCD())
-		return false;
 
 	// no sample driver?
 	if (!_vm->_mixer->isReady())
@@ -501,8 +497,8 @@ void SoundManager::showSoundError(const char *errorMsg, const char *soundFile) {
  * Opens and inits all sound sample files.
  */
 void SoundManager::openSampleFiles() {
-	// Floppy and demo versions have no sample files, except for the Discworld 2 demo
-	if (!_vm->isCD())
+	// V1 Floppy and V0 demo versions have no sample files
+	if (TinselV0 || (TinselV1 && !_vm->isV1CD()))
 		return;
 
 	TinselFile f;

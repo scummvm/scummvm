@@ -38,6 +38,7 @@ TSageEngine::TSageEngine(OSystem *system, const tSageGameDescription *gameDesc) 
 		_gameDescription(gameDesc) {
 	g_vm = this;
 	DebugMan.addDebugChannel(kRingDebugScripts, "scripts", "Scripts debugging");
+	_debugger = nullptr;
 	if (g_vm->getFeatures() & GF_DEMO)
 		_debugger = new DemoDebugger();
 	else if (g_vm->getGameID() == GType_Ringworld)
@@ -103,7 +104,7 @@ void TSageEngine::initialize() {
 		g_globals = new Ringworld2::Ringworld2Globals();
 
 		// Setup the user interface
-		T2_GLOBALS._uiElements.setup(Common::Point(0, UI_INTERFACE_Y - 2));
+		T2_GLOBALS._uiElements.setup(Common::Point(0, UI_INTERFACE_Y));
 
 		// Reset all global variables
 		R2_GLOBALS.reset();
@@ -124,7 +125,7 @@ void TSageEngine::deinitialize() {
 }
 
 Common::Error TSageEngine::run() {
-	// Basic initialisation
+	// Basic initialization
 	initialize();
 
 	g_globals->_sceneHandler->registerHandler();

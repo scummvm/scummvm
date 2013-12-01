@@ -201,4 +201,4 @@ void BaseDynamicBuffer::putTextForm(const char *format, va_list argptr) {
 	putBytes((byte *)buff, strlen(buff));
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

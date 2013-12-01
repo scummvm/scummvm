@@ -60,14 +60,18 @@ protected:
 // TODO: Disable heavy debug stuff in release mode
 
 #define SetUpdateHandler(handler)												\
-	_updateHandlerCb = static_cast <void (Entity::*)(void)> (handler);			\
-	debug(5, "SetUpdateHandler(" #handler ")");									\
-	_updateHandlerCbName = #handler
+	do {																		\
+		_updateHandlerCb = static_cast <void (Entity::*)(void)> (handler);		\
+		debug(5, "SetUpdateHandler(" #handler ")");								\
+		_updateHandlerCbName = #handler;										\
+	} while (0)
 
 #define SetMessageHandler(handler)												\
-	_messageHandlerCb = static_cast <uint32 (Entity::*)(int messageNum, const MessageParam &param, Entity *sender)> (handler);	\
-	debug(5, "SetMessageHandler(" #handler ")");								\
-	_messageHandlerCbName = #handler
+	do {																		\
+		_messageHandlerCb = static_cast <uint32 (Entity::*)(int messageNum, const MessageParam &param, Entity *sender)> (handler);	\
+		debug(5, "SetMessageHandler(" #handler ")");							\
+		_messageHandlerCbName = #handler;										\
+	} while (0)
 
 const uint kMaxSoundResources = 16;
 
@@ -94,7 +98,7 @@ public:
 	void incGlobalVar(uint32 nameHash, int incrValue);
 	void incSubVar(uint32 nameHash, uint32 subNameHash, int incrValue);
 	int getPriority() const { return _priority; }
-	bool hasMessageHandler() const { return _messageHandlerCb != NULL; } 
+	bool hasMessageHandler() const { return _messageHandlerCb != nullptr; }
 protected:
 	void (Entity::*_updateHandlerCb)();
 	uint32 (Entity::*_messageHandlerCb)(int messageNum, const MessageParam &param, Entity *sender);

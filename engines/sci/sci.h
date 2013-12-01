@@ -82,28 +82,29 @@ class GfxFrameout;
 
 // our engine debug levels
 enum kDebugLevels {
-	kDebugLevelError      = 1 << 0,
-	kDebugLevelNodes      = 1 << 1,
-	kDebugLevelGraphics   = 1 << 2,
-	kDebugLevelStrings    = 1 << 3,
-	kDebugLevelMemory     = 1 << 4,
-	kDebugLevelFuncCheck  = 1 << 5,
-	kDebugLevelBresen     = 1 << 6,
-	kDebugLevelSound      = 1 << 7,
-	kDebugLevelBaseSetter = 1 << 8,
-	kDebugLevelParser     = 1 << 9,
-	kDebugLevelSaid       = 1 << 10,
-	kDebugLevelFile       = 1 << 11,
-	kDebugLevelTime       = 1 << 12,
-	kDebugLevelRoom       = 1 << 13,
-	kDebugLevelAvoidPath  = 1 << 14,
-	kDebugLevelDclInflate = 1 << 15,
-	kDebugLevelVM         = 1 << 16,
-	kDebugLevelScripts    = 1 << 17,
-	kDebugLevelGC         = 1 << 18,
-	kDebugLevelResMan     = 1 << 19,
-	kDebugLevelOnStartup  = 1 << 20,
-	kDebugLevelDebugMode  = 1 << 21
+	kDebugLevelError         = 1 << 0,
+	kDebugLevelNodes         = 1 << 1,
+	kDebugLevelGraphics      = 1 << 2,
+	kDebugLevelStrings       = 1 << 3,
+	kDebugLevelMemory        = 1 << 4,
+	kDebugLevelFuncCheck     = 1 << 5,
+	kDebugLevelBresen        = 1 << 6,
+	kDebugLevelSound         = 1 << 7,
+	kDebugLevelBaseSetter    = 1 << 8,
+	kDebugLevelParser        = 1 << 9,
+	kDebugLevelSaid          = 1 << 10,
+	kDebugLevelFile          = 1 << 11,
+	kDebugLevelTime          = 1 << 12,
+	kDebugLevelRoom          = 1 << 13,
+	kDebugLevelAvoidPath     = 1 << 14,
+	kDebugLevelDclInflate    = 1 << 15,
+	kDebugLevelVM            = 1 << 16,
+	kDebugLevelScripts       = 1 << 17,
+	kDebugLevelGC            = 1 << 18,
+	kDebugLevelResMan        = 1 << 19,
+	kDebugLevelOnStartup     = 1 << 20,
+	kDebugLevelDebugMode     = 1 << 21,
+	kDebugLevelScriptPatcher = 1 << 22
 };
 
 enum SciGameId {
@@ -138,6 +139,7 @@ enum SciGameId {
 	GID_KQ5,
 	GID_KQ6,
 	GID_KQ7,
+	GID_KQUESTIONS,
 	GID_LAURABOW,
 	GID_LAURABOW2,
 	GID_LIGHTHOUSE,
@@ -243,13 +245,15 @@ public:
 	 * and we add this functionality in ScummVM:
 	 * - Space Quest 4 CD
 	 * - Freddy Pharkas CD
+	 * - Laura Bow 2 CD
 	 * SCI1.1 games which don't support simultaneous speech and subtitles,
 	 * and we haven't added any extra functionality in ScummVM because extra
 	 * script patches are needed:
-	 * - Laura Bow 2 CD
 	 * - King's Quest 6 CD
 	 */
+	bool speechAndSubtitlesEnabled();
 	void syncIngameAudioOptions();
+	void updateScummVMAudioOptions();
 
 	const SciGameId &getGameId() const { return _gameId; }
 	const char *getGameIdStr() const;

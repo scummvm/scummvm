@@ -519,9 +519,10 @@ void SciMusic::soundPlay(MusicEntry *pSnd) {
 
 			if (pSnd->status == kSoundStopped)
 				pSnd->pMidiParser->jumpToTick(0);
-			else
+			else {
 				// Fast forward to the last position and perform associated events when loading
 				pSnd->pMidiParser->jumpToTick(pSnd->ticker, true, true, true);
+			}
 
 			// Restore looping and hold
 			pSnd->loop = prevLoop;

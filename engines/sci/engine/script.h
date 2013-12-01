@@ -30,7 +30,7 @@ namespace Sci {
 
 struct EngineState;
 class ResourceManager;
-struct SciScriptSignature;
+struct SciScriptPatcherEntry;
 
 enum ScriptObjectTypes {
 	SCI_OBJ_TERMINATOR,
@@ -98,9 +98,11 @@ public:
 	void freeScript();
 	void load(int script_nr, ResourceManager *resMan);
 
-	void matchSignatureAndPatch(uint16 scriptNr, byte *scriptData, const uint32 scriptSize);
-	int32 findSignature(const SciScriptSignature *signature, const byte *scriptData, const uint32 scriptSize);
-	void applyPatch(const uint16 *patch, byte *scriptData, const uint32 scriptSize, int32 signatureOffset);
+	void patcherProcessScript(uint16 scriptNr, byte *scriptData, const uint32 scriptSize);
+	void patcherInitSignature(SciScriptPatcherEntry *patchTable, bool isMacSci11);
+	void patcherEnablePatch(SciScriptPatcherEntry *patchTable, const char *searchDescription);
+	int32 patcherFindSignature(const SciScriptPatcherEntry *patchEntry, const byte *scriptData, const uint32 scriptSize, bool isMacSci11);
+	void patcherApplyPatch(const SciScriptPatcherEntry *patchEntry, byte *scriptData, const uint32 scriptSize, int32 signatureOffset, bool isMacSci11);
 
 	virtual bool isValidOffset(uint16 offset) const;
 	virtual SegmentRef dereference(reg_t pointer);

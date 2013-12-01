@@ -465,7 +465,7 @@ void Script::syncStringHeap(Common::Serializer &s) {
 				break;
 		} while (1);
 
- 	} else if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1){
+	} else if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1){
 		// Strings in SCI1.1 come after the object instances
 		byte *buf = _heapStart + 4 + READ_SCI11ENDIAN_UINT16(_heapStart + 2) * 2;
 
@@ -600,7 +600,10 @@ void MusicEntry::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsSint16LE(dataInc);
 	s.syncAsSint16LE(ticker);
 	s.syncAsSint16LE(signal, VER(17));
-	s.syncAsByte(priority);
+	if (s.getVersion() >= 31) // FE sound/music.h -> priority
+		s.syncAsSint16LE(priority);
+	else
+		s.syncAsByte(priority);
 	s.syncAsSint16LE(loop, VER(17));
 	s.syncAsByte(volume);
 	s.syncAsByte(hold, VER(17));

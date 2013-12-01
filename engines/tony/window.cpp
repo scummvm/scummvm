@@ -330,6 +330,14 @@ void RMSnapshot::grabScreenshot(byte *lpBuf, int dezoom, uint16 *lpDestBuf) {
 				src += RM_BBX * dezoom;
 		}
 	}
+
+#ifdef SCUMM_BIG_ENDIAN
+	if (lpDestBuf != NULL) {
+		for (int i = 0; i < dimx * dimy; i++) {
+			lpDestBuf[i] = SWAP_BYTES_16(lpDestBuf[i]);
+		}
+	}
+#endif
 }
 
 } // End of namespace Tony

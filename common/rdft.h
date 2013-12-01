@@ -20,7 +20,7 @@
  *
  */
 
-// Based on eos' (I)RDFT code which is in turn
+// Based on xoreos' (I)RDFT code which is in turn
 // Based upon the (I)RDFT code in FFmpeg
 // Copyright (c) 2009 Alex Converse <alex dot converse at gmail dot com>
 
@@ -44,6 +44,40 @@ namespace Common {
  *
  * Used in engines:
  *  - scumm
+ *
+ *
+ * It has four modes:
+ *
+ *   Below, n = 1 << bits
+ *
+ *   (I)DFT_R2C:
+ *     input:
+ *       n real floats
+ *     output:
+ *       n/2 complex floats (stored as real part followed by imag part).
+ *
+ *     The output represents the first half of the (I)DFT of the input.
+ *     If F is the complex (I)DFT of the input, then
+ *     output[0] = F[0] + i * F[n/2] and
+ *     output[k] = F[k] for k = 1 .. n/2-1.
+ *     Note that F[0] and F[k] are real since the input is real, and
+ *     the remaining values of F can be reconstructed from symmetry if desired.
+ *
+ *   (I)DFT_C2R:
+ *     input:
+ *       n/2 complex floats
+ *     output:
+ *       n real floats
+ *
+ *     The input encodes a complex vector x of length n that has the
+ *     required symmetry to have a real (I)DFT:
+ *     x[0] = Re(input[0])
+ *     x[k] = input[k] for k = 1 .. n/2-1
+ *     x[n/2] = Im(input[0])
+ *     x[k] = conj(input[n-k]) for k = n/2+1 .. n-1
+ *     The output is then the real (I)DFT of x, divided by 2.
+ *
+ *     TODO: Is this division by 2 intentional?
  */
 
 class RDFT {

@@ -53,7 +53,6 @@ protected:
 
 	uint32 _numFiles;
 	Common::Array<File> _files;
-	Common::File *_fileHandle;
 };
 
 class ToonEngine;

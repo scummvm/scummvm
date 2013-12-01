@@ -134,6 +134,11 @@ bool Picture::loadPicture(const Common::String &file) {
 Picture::Picture(ToonEngine *vm) : _vm(vm) {
 	_data = NULL;
 	_palette = NULL;
+
+	_width = 0;
+	_height = 0;
+	_paletteEntries = 0;
+	_useFullPalette = false;
 }
 
 Picture::~Picture() {
@@ -170,7 +175,7 @@ void Picture::drawMask(Graphics::Surface &surface, int16 x, int16 y, int16 dx, i
 	int32 destPitch = surface.pitch;
 	int32 srcPitch = _width;
 	uint8 *c = _data + _width * dy + dx;
-	uint8 *curRow = (uint8 *)surface.pixels + y * destPitch + x;
+	uint8 *curRow = (uint8 *)surface.getBasePtr(x, y);
 
 	for (int16 yy = 0; yy < ry; yy++) {
 		uint8 *curSrc = c;
@@ -205,7 +210,7 @@ void Picture::drawWithRectList(Graphics::Surface& surface, int16 x, int16 y, int
 		int16 fillRy = MIN<int32>(ry, rect.bottom - rect.top);
 
 		uint8 *c = _data + _width * (dy + rect.top) + (dx + rect.left);
-		uint8 *curRow = (uint8 *)surface.pixels + (y + rect.top) * destPitch + (x + rect.left);
+		uint8 *curRow = (uint8 *)surface.getBasePtr(x + rect.left, y + rect.top);
 
 		for (int16 yy = 0; yy < fillRy; yy++) {
 			uint8 *curSrc = c;
@@ -233,7 +238,7 @@ void Picture::draw(Graphics::Surface &surface, int16 x, int16 y, int16 dx, int16
 	int32 destPitch = surface.pitch;
 	int32 srcPitch = _width;
 	uint8 *c = _data + _width * dy + dx;
-	uint8 *curRow = (uint8 *)surface.pixels + y * destPitch + x;
+	uint8 *curRow = (uint8 *)surface.getBasePtr(x, y);
 
 	for (int16 yy = 0; yy < ry; yy++) {
 		uint8 *curSrc = c;

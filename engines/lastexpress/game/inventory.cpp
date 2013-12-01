@@ -52,6 +52,8 @@ Inventory::Inventory(LastExpressEngine *engine) : _engine(engine), _selectedItem
 	_selectedItemRect = Common::Rect(44, 0, 76, 32);
 
 	init();
+
+	debug(9, "_showingHourGlass: %d", _showingHourGlass);
 }
 
 Inventory::~Inventory() {

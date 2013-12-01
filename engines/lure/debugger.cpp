@@ -337,11 +337,11 @@ bool Debugger::cmd_hotspot(int argc, const char **argv) {
 	} else if (strcmp(argv[2], "activate") == 0) {
 		// Activate the hotspot
 		res.activateHotspot(hs->hotspotId);
-		hs->flags &= !HOTSPOTFLAG_MENU_EXCLUSION;
+		hs->flags &= ~HOTSPOTFLAG_MENU_EXCLUSION;
 		DebugPrintf("Activated\n");
 
 	} else if (strcmp(argv[2], "deactivate") == 0) {
-		// Activate the hotspot
+		// Deactivate the hotspot
 		res.deactivateHotspot(hs->hotspotId);
 		hs->flags |= HOTSPOTFLAG_MENU_EXCLUSION;
 		DebugPrintf("Deactivated\n");

@@ -94,7 +94,7 @@ BasePersistenceManager::BasePersistenceManager(const char *savePrefix, bool dele
 	if (savePrefix) {
 		_savePrefix = savePrefix;
 	} else if (_gameRef) {
-		_savePrefix = _gameRef->getGameId();
+		_savePrefix = _gameRef->getGameTargetName();
 	} else {
 		_savePrefix = "wmesav";
 	}
@@ -282,7 +282,7 @@ bool BasePersistenceManager::initSave(const char *desc) {
 				} else {
 					_saveStream->writeUint32LE(0);
 				}
-				
+
 				thumbnailOK = true;
 			}
 		}
@@ -465,44 +465,53 @@ uint32 BasePersistenceManager::getDWORD() {
 
 
 //////////////////////////////////////////////////////////////////////////
-void BasePersistenceManager::putString(const Common::String &val) {
-	if (!val.size()) {
-		putString("(null)");
-	} else {
-		_saveStream->writeUint32LE(val.size());
-		_saveStream->writeString(val);
+void BasePersistenceManager::putString(const char *val) {
+	if (!val) {
+		_saveStream->writeUint32LE(0);
+		return;
 	}
+
+	uint32 len = strlen(val);
+
+	_saveStream->writeUint32LE(len + 1);
+	_saveStream->write(val, len);
 }
 
 Common::String BasePersistenceManager::getStringObj() {
-	uint32 len = _loadStream->readUint32LE();
-	char *ret = new char[len + 1];
-	_loadStream->read(ret, len);
-	ret[len] = '\0';
-
-	Common::String retString = ret;
-	delete[] ret;
-
-	if (retString == "(null)") {
-		retString = "";
-	}
-
-	return retString;
+	return getString();
 }
 
 //////////////////////////////////////////////////////////////////////////
 char *BasePersistenceManager::getString() {
 	uint32 len = _loadStream->readUint32LE();
-	char *ret = new char[len + 1];
-	_loadStream->read(ret, len);
-	ret[len] = '\0';
 
-	if (!strcmp(ret, "(null)")) {
-		delete[] ret;
-		return nullptr;
+	if (checkVersion(1,2,2)) {
+		// Version 1.2.2 and above: len == strlen() + 1, NULL has len == 0
+
+		if (len == 0)
+			return nullptr;
+
+		char *ret = new char[len];
+		_loadStream->read(ret, len - 1);
+		ret[len - 1] = '\0';
+
+		return ret;
+
 	} else {
+
+		// Version 1.2.1 and older: NULL strings are represented as "(null)"
+		char *ret = new char[len + 1];
+		_loadStream->read(ret, len);
+		ret[len] = '\0';
+
+		if (!strcmp(ret, "(null)")) {
+			delete[] ret;
+			return nullptr;
+		}
+
 		return ret;
 	}
+
 }
 
 bool BasePersistenceManager::putTimeDate(const TimeDate &t) {
@@ -536,8 +545,7 @@ void BasePersistenceManager::putFloat(float val) {
 	int exponent = 0;
 	float significand = frexp(val, &exponent);
 	Common::String str = Common::String::format("FS%f", significand);
-	_saveStream->writeUint32LE(str.size());
-	_saveStream->writeString(str);
+	putString(str.c_str());
 	_saveStream->writeSint32LE(exponent);
 }
 
@@ -559,8 +567,7 @@ void BasePersistenceManager::putDouble(double val) {
 	int exponent = 0;
 	double significand = frexp(val, &exponent);
 	Common::String str = Common::String::format("DS%f", significand);
-	_saveStream->writeUint32LE(str.size());
-	_saveStream->writeString(str);
+	putString(str.c_str());
 	_saveStream->writeSint32LE(exponent);
 }
 
@@ -580,7 +587,7 @@ double BasePersistenceManager::getDouble() {
 
 //////////////////////////////////////////////////////////////////////////
 // bool
-bool BasePersistenceManager::transfer(const char *name, bool *val) {
+bool BasePersistenceManager::transferBool(const char *name, bool *val) {
 	if (_saving) {
 		_saveStream->writeByte(*val);
 		if (_saveStream->err()) {
@@ -599,7 +606,7 @@ bool BasePersistenceManager::transfer(const char *name, bool *val) {
 
 //////////////////////////////////////////////////////////////////////////
 // int
-bool BasePersistenceManager::transfer(const char *name, int32 *val) {
+bool BasePersistenceManager::transferSint32(const char *name, int32 *val) {
 	if (_saving) {
 		_saveStream->writeSint32LE(*val);
 		if (_saveStream->err()) {
@@ -618,7 +625,7 @@ bool BasePersistenceManager::transfer(const char *name, int32 *val) {
 
 //////////////////////////////////////////////////////////////////////////
 // DWORD
-bool BasePersistenceManager::transfer(const char *name, uint32 *val) {
+bool BasePersistenceManager::transferUint32(const char *name, uint32 *val) {
 	if (_saving) {
 		_saveStream->writeUint32LE(*val);
 		if (_saveStream->err()) {
@@ -637,7 +644,7 @@ bool BasePersistenceManager::transfer(const char *name, uint32 *val) {
 
 //////////////////////////////////////////////////////////////////////////
 // float
-bool BasePersistenceManager::transfer(const char *name, float *val) {
+bool BasePersistenceManager::transferFloat(const char *name, float *val) {
 	if (_saving) {
 		putFloat(*val);
 		if (_saveStream->err()) {
@@ -656,7 +663,7 @@ bool BasePersistenceManager::transfer(const char *name, float *val) {
 
 //////////////////////////////////////////////////////////////////////////
 // double
-bool BasePersistenceManager::transfer(const char *name, double *val) {
+bool BasePersistenceManager::transferDouble(const char *name, double *val) {
 	if (_saving) {
 		putDouble(*val);
 		if (_saveStream->err()) {
@@ -675,7 +682,7 @@ bool BasePersistenceManager::transfer(const char *name, double *val) {
 
 //////////////////////////////////////////////////////////////////////////
 // char*
-bool BasePersistenceManager::transfer(const char *name, char **val) {
+bool BasePersistenceManager::transferCharPtr(const char *name, char **val) {
 	if (_saving) {
 		putString(*val);
 		return STATUS_OK;
@@ -692,7 +699,7 @@ bool BasePersistenceManager::transfer(const char *name, char **val) {
 
 //////////////////////////////////////////////////////////////////////////
 // const char*
-bool BasePersistenceManager::transfer(const char *name, const char **val) {
+bool BasePersistenceManager::transferConstChar(const char *name, const char **val) {
 	if (_saving) {
 		putString(*val);
 		return STATUS_OK;
@@ -709,9 +716,9 @@ bool BasePersistenceManager::transfer(const char *name, const char **val) {
 
 //////////////////////////////////////////////////////////////////////////
 // Common::String
-bool BasePersistenceManager::transfer(const char *name, Common::String *val) {
+bool BasePersistenceManager::transferString(const char *name, Common::String *val) {
 	if (_saving) {
-		putString(*val);
+		putString(val->c_str());
 		return STATUS_OK;
 	} else {
 		char *str = getString();
@@ -730,39 +737,8 @@ bool BasePersistenceManager::transfer(const char *name, Common::String *val) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BasePersistenceManager::transfer(const char *name, AnsiStringArray &val) {
-	size_t size;
-
-	if (_saving) {
-		size = val.size();
-		_saveStream->writeUint32LE(size);
-
-		for (AnsiStringArray::iterator it = val.begin(); it != val.end(); ++it) {
-			putString((*it).c_str());
-		}
-	} else {
-		val.clear();
-		size = _loadStream->readUint32LE();
-
-		for (size_t i = 0; i < size; i++) {
-			char *str = getString();
-			if (_loadStream->err()) {
-				delete[] str;
-				return STATUS_FAILED;
-			}
-			if (str) {
-				val.push_back(str);
-			}
-			delete[] str;
-		}
-	}
-
-	return STATUS_OK;
-}
-
-//////////////////////////////////////////////////////////////////////////
 // BYTE
-bool BasePersistenceManager::transfer(const char *name, byte *val) {
+bool BasePersistenceManager::transferByte(const char *name, byte *val) {
 	if (_saving) {
 		_saveStream->writeByte(*val);
 		if (_saveStream->err()) {
@@ -781,7 +757,7 @@ bool BasePersistenceManager::transfer(const char *name, byte *val) {
 
 //////////////////////////////////////////////////////////////////////////
 // RECT
-bool BasePersistenceManager::transfer(const char *name, Rect32 *val) {
+bool BasePersistenceManager::transferRect32(const char *name, Rect32 *val) {
 	if (_saving) {
 		_saveStream->writeSint32LE(val->left);
 		_saveStream->writeSint32LE(val->top);
@@ -806,7 +782,7 @@ bool BasePersistenceManager::transfer(const char *name, Rect32 *val) {
 
 //////////////////////////////////////////////////////////////////////////
 // POINT
-bool BasePersistenceManager::transfer(const char *name, Point32 *val) {
+bool BasePersistenceManager::transferPoint32(const char *name, Point32 *val) {
 	if (_saving) {
 		_saveStream->writeSint32LE(val->x);
 		_saveStream->writeSint32LE(val->y);
@@ -827,7 +803,7 @@ bool BasePersistenceManager::transfer(const char *name, Point32 *val) {
 
 //////////////////////////////////////////////////////////////////////////
 // Vector2
-bool BasePersistenceManager::transfer(const char *name, Vector2 *val) {
+bool BasePersistenceManager::transferVector2(const char *name, Vector2 *val) {
 	if (_saving) {
 		putFloat(val->x);
 		putFloat(val->y);
@@ -887,4 +863,4 @@ bool BasePersistenceManager::checkVersion(byte verMajor, byte verMinor, byte ver
 	return true;
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

@@ -104,7 +104,7 @@ void DreamWebEngine::useMon() {
 	redrawMainScrn();
 	workToScreenM();
 }
-	
+
 int DreamWebEngine::findCommand(const char *const cmdList[]) {
 	// Loop over all commands in the list and see if we get a match
 	int cmd = 0;
@@ -135,7 +135,7 @@ bool DreamWebEngine::execCommand() {
 		"KEYS",
 		NULL
 	};
-	
+
 	static const char *const comlistFR[] = {
 		"SORTIR",
 		"AIDE",
@@ -145,7 +145,7 @@ bool DreamWebEngine::execCommand() {
 		"TOUCHES", // should be CLES but it is translated as TOUCHES in the game...
 		NULL
 	};
-	
+
 	static const char *const comlistDE[] = {
 		"ENDE",
 		"HILF",
@@ -155,7 +155,7 @@ bool DreamWebEngine::execCommand() {
 		"DATEN",
 		NULL
 	};
-	 
+
 	static const char *const comlistIT[] = {
 		"ESCI",
 		"AIUTO",
@@ -165,7 +165,7 @@ bool DreamWebEngine::execCommand() {
 		"CHIAVI",
 		NULL
 	};
-	
+
 	static const char *const comlistES[] = {
 		"SALIR",
 		"AYUDA",

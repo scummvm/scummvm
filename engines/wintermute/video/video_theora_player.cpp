@@ -34,7 +34,6 @@
 #include "engines/wintermute/base/gfx/base_image.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/base/sound/base_sound_manager.h"
-#include "engines/wintermute/platform_osystem.h"
 #include "video/theora_decoder.h"
 #include "engines/wintermute/wintermute.h"
 #include "common/system.h"
@@ -163,14 +162,14 @@ bool VideoTheoraPlayer::resetStream() {
 	if (!_file) {
 		return STATUS_FAILED;
 	}
-	
+
 #if defined (USE_THEORADEC)
 	_theoraDecoder = new Video::TheoraDecoder();
 #else
 	return STATUS_FAILED;
 #endif
 	_theoraDecoder->loadStream(_file);
-	
+
 	if (!_theoraDecoder->isVideoLoaded()) {
 		return STATUS_FAILED;
 	}
@@ -369,14 +368,14 @@ void VideoTheoraPlayer::writeAlpha() {
 	if (_alphaImage && _surface.w == _alphaImage->getSurface()->w && _surface.h == _alphaImage->getSurface()->h) {
 		assert(_alphaImage->getSurface()->format.bytesPerPixel == 4);
 		assert(_surface.format.bytesPerPixel == 4);
-		const byte *alphaData = (const byte *)_alphaImage->getSurface()->getBasePtr(0, 0);
+		const byte *alphaData = (const byte *)_alphaImage->getSurface()->getPixels();
 #ifdef SCUMM_LITTLE_ENDIAN
 		int alphaPlace = (_alphaImage->getSurface()->format.aShift / 8);
 #else
 		int alphaPlace = 3 - (_alphaImage->getSurface()->format.aShift / 8);
 #endif
 		alphaData += alphaPlace;
-		byte *imgData = (byte *)_surface.getBasePtr(0, 0);
+		byte *imgData = (byte *)_surface.getPixels();
 #ifdef SCUMM_LITTLE_ENDIAN
 		imgData += (_surface.format.aShift / 8);
 #else
@@ -396,7 +395,7 @@ bool VideoTheoraPlayer::display(uint32 alpha) {
 	bool res;
 
 	if (_texture && _videoFrameReady) {
-		BasePlatform::setRect(&rc, 0, 0, _texture->getWidth(), _texture->getHeight());
+		rc.setRect(0, 0, _texture->getWidth(), _texture->getHeight());
 		if (_playZoom == 100.0f) {
 			res = _texture->displayTrans(_posX, _posY, rc, alpha);
 		} else {
@@ -417,7 +416,7 @@ bool VideoTheoraPlayer::display(uint32 alpha) {
 bool VideoTheoraPlayer::setAlphaImage(const Common::String &filename) {
 	delete _alphaImage;
 	_alphaImage = new BaseImage();
-	if (!_alphaImage || DID_FAIL(_alphaImage->loadFile(filename))) {
+	if (filename == "" || !_alphaImage || DID_FAIL(_alphaImage->loadFile(filename))) {
 		delete _alphaImage;
 		_alphaImage = nullptr;
 		_alphaFilename = "";
@@ -492,16 +491,16 @@ bool VideoTheoraPlayer::persist(BasePersistenceManager *persistMgr) {
 	}
 
 	persistMgr->transferPtr(TMEMBER_PTR(_gameRef));
-	persistMgr->transfer(TMEMBER(_savedPos));
-	persistMgr->transfer(TMEMBER(_savedState));
-	persistMgr->transfer(TMEMBER(_filename));
-	persistMgr->transfer(TMEMBER(_alphaFilename));
-	persistMgr->transfer(TMEMBER(_posX));
-	persistMgr->transfer(TMEMBER(_posY));
-	persistMgr->transfer(TMEMBER(_playZoom));
-	persistMgr->transfer(TMEMBER_INT(_playbackType));
-	persistMgr->transfer(TMEMBER(_looping));
-	persistMgr->transfer(TMEMBER(_volume));
+	persistMgr->transferUint32(TMEMBER(_savedPos));
+	persistMgr->transferSint32(TMEMBER(_savedState));
+	persistMgr->transferString(TMEMBER(_filename));
+	persistMgr->transferString(TMEMBER(_alphaFilename));
+	persistMgr->transferSint32(TMEMBER(_posX));
+	persistMgr->transferSint32(TMEMBER(_posY));
+	persistMgr->transferFloat(TMEMBER(_playZoom));
+	persistMgr->transferSint32(TMEMBER_INT(_playbackType));
+	persistMgr->transferBool(TMEMBER(_looping));
+	persistMgr->transferSint32(TMEMBER(_volume));
 
 	if (!persistMgr->getIsSaving() && (_savedState != THEORA_STATE_NONE)) {
 		initializeSimple();
@@ -529,4 +528,4 @@ BaseSurface *VideoTheoraPlayer::getTexture() const {
 	return _texture;
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

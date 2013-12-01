@@ -309,7 +309,7 @@ void ScummEngine_v70he::o70_systemOps() {
 		break;
 	case 160:
 		// Confirm shutdown
-		quitGame();
+		confirmExitDialog();
 		break;
 	case 244:
 		quitGame();

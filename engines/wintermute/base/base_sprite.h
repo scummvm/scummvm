@@ -32,6 +32,7 @@
 
 #include "engines/wintermute/coll_templ.h"
 #include "engines/wintermute/base/base_script_holder.h"
+#include "engines/wintermute/graphics/transform_tools.h"
 
 namespace Wintermute {
 class BaseFrame;
@@ -44,17 +45,17 @@ public:
 	void setDefaults();
 	DECLARE_PERSISTENT(BaseSprite, BaseScriptHolder)
 
-	bool getBoundingRect(Rect32 *rect, int x, int y, float scaleX = 100, float scaleY = 100);
+	bool getBoundingRect(Rect32 *rect, int x, int y, float scaleX = kDefaultZoomX, float scaleY = kDefaultZoomY);
 	int32 _moveY;
 	int32 _moveX;
-	bool display(int x, int y, BaseObject *registerOwner = nullptr, float zoomX = 100, float zoomY = 100, uint32 alpha = 0xFFFFFFFF, float rotate = 0.0f, TSpriteBlendMode blendMode = BLEND_NORMAL);
-	bool getCurrentFrame(float zoomX = 100, float zoomY = 100);
+	bool display(int x, int y, BaseObject *registerOwner = nullptr, float zoomX = kDefaultZoomX, float zoomY = kDefaultZoomY, uint32 alpha = kDefaultRgbaMod, float rotate = kDefaultAngle, TSpriteBlendMode blendMode = BLEND_NORMAL);
+	bool getCurrentFrame(float zoomX = kDefaultZoomX, float zoomY = kDefaultZoomY);
 	void reset();
 	bool isChanged();
 	bool isFinished();
-	bool loadBuffer(byte *buffer, bool compete = true, int lifeTime = -1, TSpriteCacheType cacheType = CACHE_ALL);
+	bool loadBuffer(char *buffer, bool compete = true, int lifeTime = -1, TSpriteCacheType cacheType = CACHE_ALL);
 	bool loadFile(const Common::String &filename, int lifeTime = -1, TSpriteCacheType cacheType = CACHE_ALL);
-	bool draw(int x, int y, BaseObject *Register = nullptr, float zoomX = 100, float zoomY = 100, uint32 alpha = 0xFFFFFFFF);
+	bool draw(int x, int y, BaseObject *Register = nullptr, float zoomX = kDefaultZoomX, float zoomY = kDefaultZoomY, uint32 alpha = kDefaultRgbaMod);
 	bool _looping;
 	int32 _currentFrame;
 	bool addFrame(const char *filename, uint32 delay = 0, int hotspotX = 0, int hotspotY = 0, Rect32 *rect = nullptr);
@@ -88,6 +89,6 @@ private:
 	bool killAllSounds();
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

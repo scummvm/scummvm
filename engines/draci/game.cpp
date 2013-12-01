@@ -52,6 +52,55 @@ enum {
 Game::Game(DraciEngine *vm) : _vm(vm), _walkingState(vm) {
 	uint i;
 
+	_dialogueLinesNum  = 0;
+	_blockNum = 0;
+
+	for (i = 0; i < kDialogueLines; i++)
+		_dialogueAnims[0] = 0;
+
+	_loopStatus = kStatusOrdinary;
+	_loopSubstatus = kOuterLoop;
+	_shouldQuit = 0;
+	_shouldExitLoop = 0;
+	_isReloaded = 0;
+	_speechTick = 0;
+	_speechDuration = 0;
+	_objUnderCursor = 0;
+	_animUnderCursor = 0;
+	_markedAnimationIndex = 0;
+	_scheduledPalette = 0;
+	_fadePhases = 0;
+	_fadePhase = 0;
+	_fadeTick = 0;
+	_mouseChangeTick = 0;
+	_enableQuickHero = 0;
+	_wantQuickHero = 0;
+	_enableSpeedText = 0;
+	_titleAnim = 0;
+	_inventoryAnim = 0;
+	_walkingMapOverlay = 0;
+	_walkingShortestPathOverlay = 0;
+	_walkingObliquePathOverlay = 0;
+	_currentItem = 0;
+	_itemUnderCursor = 0;
+	_previousItemPosition = 0;
+
+	for (i = 0; i < kInventorySlots; i++)
+		_inventory[i] = 0;
+
+	_newRoom = 0;
+	_newGate = 0;
+	_previousRoom = 0;
+	_pushedNewRoom = 0;
+	_pushedNewGate = 0;
+	_currentDialogue = 0;
+	_dialogueArchive = 0;
+	_dialogueBlocks = 0;
+	_dialogueBegin = 0;
+	_dialogueExit = 0;
+	_currentBlock = 0;
+	_lastBlock = 0;
+
 	BArchive *initArchive = _vm->_initArchive;
 	const BAFile *file;
 
@@ -951,9 +1000,9 @@ void Game::dialogueMenu(int dialogueID) {
 
 		debugC(7, kDraciLogicDebugLevel,
 			"hit: %d, _lines[hit]: %d, lastblock: %d, dialogueLines: %d, dialogueExit: %d",
-			hit, _lines[hit], _lastBlock, _dialogueLinesNum, _dialogueExit);
+			   hit, (hit >= 0 ? _lines[hit] : -1), _lastBlock, _dialogueLinesNum, _dialogueExit);
 
-		if ((!_dialogueExit) && (hit != -1) && (_lines[hit] != -1)) {
+		if ((!_dialogueExit) && (hit >= 0) && (_lines[hit] != -1)) {
 			if ((oldLines == 1) && (_dialogueLinesNum == 1) && (_lines[hit] == _lastBlock)) {
 				break;
 			}
@@ -1361,7 +1410,7 @@ void Game::enterNewRoom() {
 	// for the dragon in the persons array
 	if (_newRoom == _info._mapRoom) {
 		_persons[kDragonObject]._x = 160;
-	  	_persons[kDragonObject]._y = 0;
+		_persons[kDragonObject]._y = 0;
 	}
 
 	// Set the appropriate loop status before loading the room

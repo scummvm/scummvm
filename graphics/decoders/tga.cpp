@@ -50,6 +50,8 @@ void TGADecoder::destroy() {
 }
 
 bool TGADecoder::loadStream(Common::SeekableReadStream &tga) {
+	destroy();
+
 	byte imageType, pixelDepth;
 	bool success;
 	success = readHeader(tga, imageType, pixelDepth);
@@ -272,7 +274,7 @@ bool TGADecoder::readData(Common::SeekableReadStream &tga, byte imageType, byte 
 	} else if (imageType == TYPE_BW) {
 		_surface.create(_surface.w, _surface.h, _format);
 
-		byte *data  = (byte *)_surface.pixels;
+		byte *data  = (byte *)_surface.getPixels();
 		uint32 count = _surface.w * _surface.h;
 
 		while (count-- > 0) {
@@ -318,7 +320,7 @@ bool TGADecoder::readDataRLE(Common::SeekableReadStream &tga, byte imageType, by
 	if (imageType == TYPE_RLE_TRUECOLOR || imageType == TYPE_RLE_BW || imageType == TYPE_RLE_CMAP) {
 		_surface.create(_surface.w, _surface.h, _format);
 		uint32 count = _surface.w * _surface.h;
-		byte *data = (byte *)_surface.pixels;
+		byte *data = (byte *)_surface.getPixels();
 
 		while (count > 0) {
 			uint32 header = tga.readByte();

@@ -125,9 +125,12 @@ void BasePlatform::handleEvent(Common::Event *event) {
 //			_gameRef->AutoSaveOnExit();
 //			_gameRef->_quitting = true;
 //		}
-		if (_gameRef) {
-			_gameRef->onWindowClose();
-		}
+
+// The engine CAN query for closing, but we disable it for now, as the EVENT_QUIT-event
+// can't be stopped.
+//		if (_gameRef) {
+//			_gameRef->onWindowClose();
+//		}
 		break;
 	default:
 		// TODO: Do we care about any other events?
@@ -166,52 +169,16 @@ bool BasePlatform::setCursorPos(int x, int y) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BasePlatform::showWindow(int nCmdShow) {
-	return false;
-}
-
-//////////////////////////////////////////////////////////////////////////
-void BasePlatform::setCapture() {
-	return;
-}
-
-//////////////////////////////////////////////////////////////////////////
-bool BasePlatform::releaseCapture() {
-	return false;
-}
-
-//////////////////////////////////////////////////////////////////////////
-bool BasePlatform::setRectEmpty(Rect32 *lprc) {
-	lprc->left = lprc->right = lprc->top = lprc->bottom = 0;
-	return true;
-}
-
-//////////////////////////////////////////////////////////////////////////
-bool BasePlatform::isRectEmpty(const Rect32 *lprc) {
-	return (lprc->left >= lprc->right) || (lprc->top >= lprc->bottom);
-}
-
-//////////////////////////////////////////////////////////////////////////
 bool BasePlatform::ptInRect(Rect32 *lprc, Point32 p) {
 	return (p.x >= lprc->left) && (p.x < lprc->right) && (p.y >= lprc->top) && (p.y < lprc->bottom);
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BasePlatform::setRect(Rect32 *lprc, int left, int top, int right, int bottom) {
-	lprc->left   = left;
-	lprc->top    = top;
-	lprc->right  = right;
-	lprc->bottom = bottom;
-
-	return true;
-}
-
-//////////////////////////////////////////////////////////////////////////
 bool BasePlatform::intersectRect(Rect32 *lprcDst, const Rect32 *lprcSrc1, const Rect32 *lprcSrc2) {
-	if (isRectEmpty(lprcSrc1) || isRectEmpty(lprcSrc2) ||
+	if (lprcSrc1->isRectEmpty() || lprcSrc2->isRectEmpty() ||
 	        lprcSrc1->left >= lprcSrc2->right || lprcSrc2->left >= lprcSrc1->right ||
 	        lprcSrc1->top >= lprcSrc2->bottom || lprcSrc2->top >= lprcSrc1->bottom) {
-		setRectEmpty(lprcDst);
+		lprcDst->setEmpty();
 		return false;
 	}
 	lprcDst->left   = MAX(lprcSrc1->left, lprcSrc2->left);
@@ -224,15 +191,15 @@ bool BasePlatform::intersectRect(Rect32 *lprcDst, const Rect32 *lprcSrc1, const 
 
 //////////////////////////////////////////////////////////////////////////
 bool BasePlatform::unionRect(Rect32 *lprcDst, Rect32 *lprcSrc1, Rect32 *lprcSrc2) {
-	if (isRectEmpty(lprcSrc1)) {
-		if (isRectEmpty(lprcSrc2)) {
-			setRectEmpty(lprcDst);
+	if (lprcSrc1->isRectEmpty()) {
+		if (lprcSrc2->isRectEmpty()) {
+			lprcDst->setEmpty();
 			return false;
 		} else {
 			*lprcDst = *lprcSrc2;
 		}
 	} else {
-		if (isRectEmpty(lprcSrc2)) {
+		if (lprcSrc2->isRectEmpty()) {
 			*lprcDst = *lprcSrc1;
 		} else {
 			lprcDst->left   = MIN(lprcSrc1->left, lprcSrc2->left);
@@ -272,4 +239,4 @@ char *BasePlatform::strlwr(char *string) {
 	return string;
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

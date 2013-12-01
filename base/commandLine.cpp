@@ -118,6 +118,13 @@ static const char HELP_STRING[] =
 	"  --aspect-ratio           Enable aspect ratio correction\n"
 	"  --render-mode=MODE       Enable additional render modes (cga, ega, hercGreen,\n"
 	"                           hercAmber, amiga)\n"
+#ifdef ENABLE_EVENTRECORDER
+	"  --record-mode=MODE       Specify record mode for event recorder (record, playback,\n"
+	"                           passthrough [default])\n"
+	"  --record-file-name=FILE  Specify record file name\n"
+	"  --disable-display        Disable any gfx output. Used for headless events\n"
+	"                           playback by Event Recorder\n"
+#endif
 	"\n"
 #if defined(ENABLE_SKY) || defined(ENABLE_QUEEN)
 	"  --alt-intro              Use alternative intro for CD versions of Beneath a\n"
@@ -232,10 +239,9 @@ void registerDefaults() {
 	ConfMan.registerDefault("confirm_exit", false);
 	ConfMan.registerDefault("disable_sdl_parachute", false);
 
+	ConfMan.registerDefault("disable_display", false);
 	ConfMan.registerDefault("record_mode", "none");
 	ConfMan.registerDefault("record_file_name", "record.bin");
-	ConfMan.registerDefault("record_temp_file_name", "record.tmp");
-	ConfMan.registerDefault("record_time_file_name", "record.time");
 
 	ConfMan.registerDefault("gui_saveload_chooser", "grid");
 	ConfMan.registerDefault("gui_saveload_last_pos", "0");
@@ -424,6 +430,17 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			DO_OPTION_BOOL('f', "fullscreen")
 			END_OPTION
 
+#ifdef ENABLE_EVENTRECORDER
+			DO_LONG_OPTION_INT("disable-display")
+			END_OPTION
+
+			DO_LONG_OPTION("record-mode")
+			END_OPTION
+
+			DO_LONG_OPTION("record-file-name")
+			END_OPTION
+#endif
+
 			DO_LONG_OPTION("opl-driver")
 			END_OPTION
 
@@ -568,18 +585,6 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			DO_LONG_OPTION_BOOL("alt-intro")
 			END_OPTION
 #endif
-
-			DO_LONG_OPTION("record-mode")
-			END_OPTION
-
-			DO_LONG_OPTION("record-file-name")
-			END_OPTION
-
-			DO_LONG_OPTION("record-temp-file-name")
-			END_OPTION
-
-			DO_LONG_OPTION("record-time-file-name")
-			END_OPTION
 
 #ifdef IPHONE
 			// This is automatically set when launched from the Springboard.
@@ -822,9 +827,8 @@ void upgradeTargets() {
 
 	printf("Upgrading all your existing targets\n");
 
-	Common::ConfigManager::DomainMap &domains = ConfMan.getGameDomains();
-	Common::ConfigManager::DomainMap::iterator iter = domains.begin();
-	for (iter = domains.begin(); iter != domains.end(); ++iter) {
+	Common::ConfigManager::DomainMap::iterator iter = ConfMan.beginGameDomains();
+	for (; iter != ConfMan.endGameDomains(); ++iter) {
 		Common::ConfigManager::Domain &dom = iter->_value;
 		Common::String name(iter->_key);
 		Common::String gameid(dom.getVal("gameid"));

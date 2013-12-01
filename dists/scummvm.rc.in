@@ -32,6 +32,12 @@ kyra.dat               FILE    "dists/engine-data/kyra.dat"
 #if ENABLE_LURE       == STATIC_PLUGIN
 lure.dat               FILE    "dists/engine-data/lure.dat"
 #endif
+#if ENABLE_MORTEVIELLE == STATIC_PLUGIN
+mort.dat               FILE    "dists/engine-data/mort.dat"
+#endif
+#if ENABLE_NEVERHOOD  == STATIC_PLUGIN
+neverhood.dat          FILE    "dists/engine-data/neverhood.dat"
+#endif
 #if ENABLE_QUEEN      == STATIC_PLUGIN
 queen.tbl              FILE    "dists/engine-data/queen.tbl"
 #endif
@@ -40,6 +46,9 @@ sky.cpt                FILE    "dists/engine-data/sky.cpt"
 #endif
 #if ENABLE_TEENAGENT  == STATIC_PLUGIN
 teenagent.dat          FILE    "dists/engine-data/teenagent.dat"
+#endif
+#if ENABLE_TONY       == STATIC_PLUGIN
+tony.dat               FILE    "dists/engine-data/tony.dat"
 #endif
 #if ENABLE_TOON       == STATIC_PLUGIN
 toon.dat               FILE    "dists/engine-data/toon.dat"

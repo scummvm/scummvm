@@ -68,6 +68,7 @@ static char s_fallbackGameIdBuf[256];
 
 static const char *directoryGlobs[] = {
 	"language", // To detect the various languages
+	"languages", // To detect the various languages
 	0
 };
 
@@ -181,7 +182,7 @@ public:
 	}
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #if PLUGIN_ENABLED_DYNAMIC(WINTERMUTE)
 REGISTER_PLUGIN_DYNAMIC(WINTERMUTE, PLUGIN_TYPE_ENGINE, Wintermute::WintermuteMetaEngine);

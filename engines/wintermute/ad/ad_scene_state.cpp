@@ -56,7 +56,7 @@ AdSceneState::~AdSceneState() {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdSceneState::persist(BasePersistenceManager *persistMgr) {
-	persistMgr->transfer(TMEMBER(_filename));
+	persistMgr->transferCharPtr(TMEMBER(_filename));
 	_nodeStates.persist(persistMgr);
 
 	return STATUS_OK;
@@ -95,4 +95,4 @@ AdNodeState *AdSceneState::getNodeState(const char *name, bool saving) {
 	}
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

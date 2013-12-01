@@ -118,7 +118,7 @@ void SearchSet::addDirectory(const String &name, const FSNode &dir, int priority
 	add(name, new FSDirectory(dir, depth, flat), priority);
 }
 
-void SearchSet::addSubDirectoriesMatching(const FSNode &directory, String origPattern, bool ignoreCase, int priority) {
+void SearchSet::addSubDirectoriesMatching(const FSNode &directory, String origPattern, bool ignoreCase, int priority, int depth, bool flat) {
 	FSList subDirs;
 	if (!directory.getChildren(subDirs))
 		return;
@@ -161,9 +161,9 @@ void SearchSet::addSubDirectoriesMatching(const FSNode &directory, String origPa
 			}
 
 			if (nextPattern.empty())
-				addDirectory(name, *i, priority);
+				addDirectory(name, *i, priority, depth, flat);
 			else
-				addSubDirectoriesMatching(*i, nextPattern, ignoreCase, priority);
+				addSubDirectoriesMatching(*i, nextPattern, ignoreCase, priority, depth, flat);
 		}
 	}
 }

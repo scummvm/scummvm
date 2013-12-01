@@ -2653,7 +2653,6 @@ void FullTSA::receiveNotification(Notification *notification, const Notification
 				GameState.setWSCAnalyzerOn(false);
 				GameState.setWSCDartInAnalyzer(false);
 				GameState.setWSCAnalyzedDart(false);
-				GameState.setWSCPickedUpAntidote(false);
 				GameState.setWSCSawMorph(false);
 				GameState.setWSCDesignedAntidote(false);
 				GameState.setWSCOfficeMessagesOpen(false);

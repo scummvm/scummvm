@@ -38,26 +38,20 @@ class BaseFont;
 class UIEdit : public UIObject {
 public:
 	DECLARE_PERSISTENT(UIEdit, UIObject)
-	int32 _maxLength;
+
 	int insertChars(int pos, const byte *chars, int num);
 	int deleteChars(int start, int end);
-	bool _cursorVisible;
-	uint32 _lastBlinkTime;
+
 	virtual bool display(int offsetX, int offsetY);
 	virtual bool handleKeypress(Common::Event *event, bool printable = false);
-	int32 _scrollOffset;
-	int32 _frameWidth;
-	uint32 _cursorBlinkRate;
+
 	void setCursorChar(const char *character);
-	char *_cursorChar;
-	int32 _selEnd;
-	int32 _selStart;
-	BaseFont *_fontSelected;
+
 	UIEdit(BaseGame *inGame);
 	virtual ~UIEdit();
 
 	bool loadFile(const char *filename);
-	bool loadBuffer(byte *buffer, bool complete = true);
+	bool loadBuffer(char *buffer, bool complete = true);
 	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent);
 
 	// scripting interface
@@ -65,8 +59,19 @@ public:
 	virtual bool scSetProperty(const char *name, ScValue *value) override;
 	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
 	virtual const char *scToString() override;
+private:
+	uint32 _cursorBlinkRate;
+	uint32 _lastBlinkTime;
+	int32 _selEnd;
+	int32 _selStart;
+	int32 _scrollOffset;
+	int32 _frameWidth;
+	BaseFont *_fontSelected;
+	int32 _maxLength;
+	bool _cursorVisible;
+	char *_cursorChar;
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

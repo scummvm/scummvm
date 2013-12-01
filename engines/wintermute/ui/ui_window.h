@@ -38,47 +38,32 @@ namespace Wintermute {
 class UIButton;
 class BaseViewport;
 class UIWindow : public UIObject {
-	uint32 _fadeColor;
 public:
 	bool getWindowObjects(BaseArray<UIObject *> &Objects, bool InteractiveOnly);
 
-	bool _pauseMusic;
 	void cleanup();
 	virtual void makeFreezable(bool freezable);
-	BaseViewport *_viewport;
-	bool _clipContents;
-	bool _inGame;
-	bool _isMenu;
-	bool _fadeBackground;
 
 	virtual bool handleMouseWheel(int delta);
-	UIWindow *_shieldWindow;
-	UIButton *_shieldButton;
+
 	bool close();
 	bool goSystemExclusive();
 	bool goExclusive();
-	TWindowMode _mode;
 	bool moveFocus(bool forward = true);
 	virtual bool handleMouse(TMouseEvent Event, TMouseButton Button);
-	Point32 _dragFrom;
-	bool _dragging;
 	DECLARE_PERSISTENT(UIWindow, UIObject)
-	bool _transparent;
 	bool showWidget(const char *name, bool visible = true);
 	bool enableWidget(const char *name, bool enable = true);
-	Rect32 _titleRect;
-	Rect32 _dragRect;
+
 	virtual bool display(int offsetX = 0, int offsetY = 0) override;
 	UIWindow(BaseGame *inGame);
 	virtual ~UIWindow();
 	virtual bool handleKeypress(Common::Event *event, bool printable = false) override;
 	BaseArray<UIObject *> _widgets;
-	TTextAlign _titleAlign;
+
 	bool loadFile(const char *filename);
-	bool loadBuffer(byte *buffer, bool complete = true);
-	UITiledImage *_backInactive;
-	BaseFont *_fontInactive;
-	BaseSprite *_imageInactive;
+	bool loadBuffer(char *buffer, bool complete = true);
+
 	virtual bool listen(BaseScriptHolder *param1, uint32 param2);
 	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
 
@@ -87,8 +72,32 @@ public:
 	virtual bool scSetProperty(const char *name, ScValue *value) override;
 	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
 	virtual const char *scToString();
+
+	bool getInGame() const;
+	TWindowMode getMode() const;
+
+private:
+	bool _pauseMusic;
+	BaseViewport *_viewport;
+	bool _clipContents;
+	bool _inGame;
+	bool _isMenu;
+	bool _fadeBackground;
+	TWindowMode _mode;
+	Point32 _dragFrom;
+	bool _dragging;
+	bool _transparent;
+	uint32 _fadeColor;
+	UIWindow *_shieldWindow;
+	UIButton *_shieldButton;
+	Rect32 _titleRect;
+	Rect32 _dragRect;
+	UITiledImage *_backInactive;
+	BaseFont *_fontInactive;
+	BaseSprite *_imageInactive;
+	TTextAlign _titleAlign;
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

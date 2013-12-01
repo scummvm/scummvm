@@ -54,8 +54,8 @@ IMPLEMENT_PERSISTENT(UIWindow, false)
 
 //////////////////////////////////////////////////////////////////////////
 UIWindow::UIWindow(BaseGame *inGame) : UIObject(inGame) {
-	BasePlatform::setRectEmpty(&_titleRect);
-	BasePlatform::setRectEmpty(&_dragRect);
+	_titleRect.setEmpty();
+	_dragRect.setEmpty();
 	_titleAlign = TAL_LEFT;
 	_transparent = false;
 
@@ -141,8 +141,8 @@ bool UIWindow::display(int offsetX, int offsetY) {
 		}
 		if (_shieldButton) {
 			_shieldButton->_posX = _shieldButton->_posY = 0;
-			_shieldButton->_width = _gameRef->_renderer->getWidth();
-			_shieldButton->_height = _gameRef->_renderer->getHeight();
+			_shieldButton->setWidth(_gameRef->_renderer->getWidth());
+			_shieldButton->setHeight(_gameRef->_renderer->getHeight());
 
 			_shieldButton->display();
 		}
@@ -170,7 +170,7 @@ bool UIWindow::display(int offsetX, int offsetY) {
 		_dragFrom.y = _gameRef->_mousePos.y;
 	}
 
-	if (!_focusedWidget || (!_focusedWidget->_canFocus || _focusedWidget->_disable || !_focusedWidget->_visible)) {
+	if (!_focusedWidget || (!_focusedWidget->canFocus() || _focusedWidget->isDisabled() || !_focusedWidget->isVisible())) {
 		moveFocus();
 	}
 
@@ -213,7 +213,7 @@ bool UIWindow::display(int offsetX, int offsetY) {
 		image->draw(_posX + offsetX, _posY + offsetY, _transparent ? nullptr : this);
 	}
 
-	if (!BasePlatform::isRectEmpty(&_titleRect) && font && _text) {
+	if (!_titleRect.isRectEmpty() && font && _text) {
 		font->drawText((byte *)_text, _posX + offsetX + _titleRect.left, _posY + offsetY + _titleRect.top, _titleRect.right - _titleRect.left, _titleAlign, _titleRect.bottom - _titleRect.top);
 	}
 
@@ -239,7 +239,7 @@ bool UIWindow::display(int offsetX, int offsetY) {
 
 //////////////////////////////////////////////////////////////////////////
 bool UIWindow::loadFile(const char *filename) {
-	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
+	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
 		_gameRef->LOG(0, "UIWindow::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
@@ -298,7 +298,7 @@ TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF(EDIT)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-bool UIWindow::loadBuffer(byte *buffer, bool complete) {
+bool UIWindow::loadBuffer(char *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(WINDOW)
 	TOKEN_TABLE(ALPHA_COLOR)
@@ -338,7 +338,7 @@ bool UIWindow::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE(EDIT)
 	TOKEN_TABLE_END
 
-	byte *params;
+	char *params;
 	int cmd = 2;
 	BaseParser parser;
 
@@ -346,33 +346,33 @@ bool UIWindow::loadBuffer(byte *buffer, bool complete) {
 	int ar = 0, ag = 0, ab = 0, alpha = 0;
 
 	if (complete) {
-		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_WINDOW) {
+		if (parser.getCommand(&buffer, commands, &params) != TOKEN_WINDOW) {
 			_gameRef->LOG(0, "'WINDOW' keyword expected.");
 			return STATUS_FAILED;
 		}
 		buffer = params;
 	}
 
-	while (cmd >= PARSERR_TOKENNOTFOUND && (cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) >= PARSERR_TOKENNOTFOUND) {
+	while (cmd >= PARSERR_TOKENNOTFOUND && (cmd = parser.getCommand(&buffer, commands, &params)) >= PARSERR_TOKENNOTFOUND) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
-			if (DID_FAIL(loadFile((char *)params))) {
+			if (DID_FAIL(loadFile(params))) {
 				cmd = PARSERR_GENERIC;
 			}
 			break;
 
 		case TOKEN_NAME:
-			setName((char *)params);
+			setName(params);
 			break;
 
 		case TOKEN_CAPTION:
-			setCaption((char *)params);
+			setCaption(params);
 			break;
 
 		case TOKEN_BACK:
 			delete _back;
 			_back = new UITiledImage(_gameRef);
-			if (!_back || DID_FAIL(_back->loadFile((char *)params))) {
+			if (!_back || DID_FAIL(_back->loadFile(params))) {
 				delete _back;
 				_back = nullptr;
 				cmd = PARSERR_GENERIC;
@@ -382,7 +382,7 @@ bool UIWindow::loadBuffer(byte *buffer, bool complete) {
 		case TOKEN_BACK_INACTIVE:
 			delete _backInactive;
 			_backInactive = new UITiledImage(_gameRef);
-			if (!_backInactive || DID_FAIL(_backInactive->loadFile((char *)params))) {
+			if (!_backInactive || DID_FAIL(_backInactive->loadFile(params))) {
 				delete _backInactive;
 				_backInactive = nullptr;
 				cmd = PARSERR_GENERIC;
@@ -392,7 +392,7 @@ bool UIWindow::loadBuffer(byte *buffer, bool complete) {
 		case TOKEN_IMAGE:
 			delete _image;
 			_image = new BaseSprite(_gameRef);
-			if (!_image || DID_FAIL(_image->loadFile((char *)params))) {
+			if (!_image || DID_FAIL(_image->loadFile(params))) {
 				delete _image;
 				_image = nullptr;
 				cmd = PARSERR_GENERIC;
@@ -400,9 +400,9 @@ bool UIWindow::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_IMAGE_INACTIVE:
-			delete _imageInactive,
-			       _imageInactive = new BaseSprite(_gameRef);
-			if (!_imageInactive || DID_FAIL(_imageInactive->loadFile((char *)params))) {
+			delete _imageInactive;
+			_imageInactive = new BaseSprite(_gameRef);
+			if (!_imageInactive || DID_FAIL(_imageInactive->loadFile(params))) {
 				delete _imageInactive;
 				_imageInactive = nullptr;
 				cmd = PARSERR_GENERIC;
@@ -413,7 +413,7 @@ bool UIWindow::loadBuffer(byte *buffer, bool complete) {
 			if (_font) {
 				_gameRef->_fontStorage->removeFont(_font);
 			}
-			_font = _gameRef->_fontStorage->addFont((char *)params);
+			_font = _gameRef->_fontStorage->addFont(params);
 			if (!_font) {
 				cmd = PARSERR_GENERIC;
 			}
@@ -423,21 +423,21 @@ bool UIWindow::loadBuffer(byte *buffer, bool complete) {
 			if (_fontInactive) {
 				_gameRef->_fontStorage->removeFont(_fontInactive);
 			}
-			_fontInactive = _gameRef->_fontStorage->addFont((char *)params);
+			_fontInactive = _gameRef->_fontStorage->addFont(params);
 			if (!_fontInactive) {
 				cmd = PARSERR_GENERIC;
 			}
 			break;
 
 		case TOKEN_TITLE:
-			setText((char *)params);
+			setText(params);
 			_gameRef->expandStringByStringTable(&_text);
 			break;
 
 		case TOKEN_TITLE_ALIGN:
-			if (scumm_stricmp((char *)params, "left") == 0) {
+			if (scumm_stricmp(params, "left") == 0) {
 				_titleAlign = TAL_LEFT;
-			} else if (scumm_stricmp((char *)params, "right") == 0) {
+			} else if (scumm_stricmp(params, "right") == 0) {
 				_titleAlign = TAL_RIGHT;
 			} else {
 				_titleAlign = TAL_CENTER;
@@ -445,33 +445,33 @@ bool UIWindow::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_TITLE_RECT:
-			parser.scanStr((char *)params, "%d,%d,%d,%d", &_titleRect.left, &_titleRect.top, &_titleRect.right, &_titleRect.bottom);
+			parser.scanStr(params, "%d,%d,%d,%d", &_titleRect.left, &_titleRect.top, &_titleRect.right, &_titleRect.bottom);
 			break;
 
 		case TOKEN_DRAG_RECT:
-			parser.scanStr((char *)params, "%d,%d,%d,%d", &_dragRect.left, &_dragRect.top, &_dragRect.right, &_dragRect.bottom);
+			parser.scanStr(params, "%d,%d,%d,%d", &_dragRect.left, &_dragRect.top, &_dragRect.right, &_dragRect.bottom);
 			break;
 
 		case TOKEN_X:
-			parser.scanStr((char *)params, "%d", &_posX);
+			parser.scanStr(params, "%d", &_posX);
 			break;
 
 		case TOKEN_Y:
-			parser.scanStr((char *)params, "%d", &_posY);
+			parser.scanStr(params, "%d", &_posY);
 			break;
 
 		case TOKEN_WIDTH:
-			parser.scanStr((char *)params, "%d", &_width);
+			parser.scanStr(params, "%d", &_width);
 			break;
 
 		case TOKEN_HEIGHT:
-			parser.scanStr((char *)params, "%d", &_height);
+			parser.scanStr(params, "%d", &_height);
 			break;
 
 		case TOKEN_CURSOR:
 			delete _cursor;
 			_cursor = new BaseSprite(_gameRef);
-			if (!_cursor || DID_FAIL(_cursor->loadFile((char *)params))) {
+			if (!_cursor || DID_FAIL(_cursor->loadFile(params))) {
 				delete _cursor;
 				_cursor = nullptr;
 				cmd = PARSERR_GENERIC;
@@ -532,48 +532,48 @@ bool UIWindow::loadBuffer(byte *buffer, bool complete) {
 
 
 		case TOKEN_TRANSPARENT:
-			parser.scanStr((char *)params, "%b", &_transparent);
+			parser.scanStr(params, "%b", &_transparent);
 			break;
 
 		case TOKEN_SCRIPT:
-			addScript((char *)params);
+			addScript(params);
 			break;
 
 		case TOKEN_PARENT_NOTIFY:
-			parser.scanStr((char *)params, "%b", &_parentNotify);
+			parser.scanStr(params, "%b", &_parentNotify);
 			break;
 
 		case TOKEN_PAUSE_MUSIC:
-			parser.scanStr((char *)params, "%b", &_pauseMusic);
+			parser.scanStr(params, "%b", &_pauseMusic);
 			break;
 
 		case TOKEN_DISABLED:
-			parser.scanStr((char *)params, "%b", &_disable);
+			parser.scanStr(params, "%b", &_disable);
 			break;
 
 		case TOKEN_VISIBLE:
-			parser.scanStr((char *)params, "%b", &_visible);
+			parser.scanStr(params, "%b", &_visible);
 			break;
 
 		case TOKEN_MENU:
-			parser.scanStr((char *)params, "%b", &_isMenu);
+			parser.scanStr(params, "%b", &_isMenu);
 			break;
 
 		case TOKEN_IN_GAME:
-			parser.scanStr((char *)params, "%b", &_inGame);
+			parser.scanStr(params, "%b", &_inGame);
 			break;
 
 		case TOKEN_CLIP_CONTENTS:
-			parser.scanStr((char *)params, "%b", &_clipContents);
+			parser.scanStr(params, "%b", &_clipContents);
 			break;
 
 		case TOKEN_FADE_COLOR:
-			parser.scanStr((char *)params, "%d,%d,%d", &fadeR, &fadeG, &fadeB);
+			parser.scanStr(params, "%d,%d,%d", &fadeR, &fadeG, &fadeB);
 			_fadeBackground = true;
 			break;
 
 		case TOKEN_FADE_ALPHA:
-			parser.scanStr((char *)params, "%d", &fadeA);
+			parser.scanStr(params, "%d", &fadeA);
 			_fadeBackground = true;
 			break;
 
@@ -582,16 +582,16 @@ bool UIWindow::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_ALPHA_COLOR:
-			parser.scanStr((char *)params, "%d,%d,%d", &ar, &ag, &ab);
+			parser.scanStr(params, "%d,%d,%d", &ar, &ag, &ab);
 			break;
 
 		case TOKEN_ALPHA:
-			parser.scanStr((char *)params, "%d", &alpha);
+			parser.scanStr(params, "%d", &alpha);
 			break;
 
 
 		default:
-			if (DID_FAIL(_gameRef->windowLoadHook(this, (char **)&buffer, (char **)params))) {
+			if (DID_FAIL(_gameRef->windowLoadHook(this, &buffer, &params))) {
 				cmd = PARSERR_GENERIC;
 			}
 		}
@@ -676,11 +676,11 @@ bool UIWindow::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 		error("UIWindow::SaveAsText - Unhandled enum-value NUM_TEXT_ALIGN");
 	}
 
-	if (!BasePlatform::isRectEmpty(&_titleRect)) {
+	if (!_titleRect.isRectEmpty()) {
 		buffer->putTextIndent(indent + 2, "TITLE_RECT { %d, %d, %d, %d }\n", _titleRect.left, _titleRect.top, _titleRect.right, _titleRect.bottom);
 	}
 
-	if (!BasePlatform::isRectEmpty(&_dragRect)) {
+	if (!_dragRect.isRectEmpty()) {
 		buffer->putTextIndent(indent + 2, "DRAG_RECT { %d, %d, %d, %d }\n", _dragRect.left, _dragRect.top, _dragRect.right, _dragRect.bottom);
 	}
 
@@ -737,7 +737,7 @@ bool UIWindow::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 bool UIWindow::enableWidget(const char *name, bool enable) {
 	for (uint32 i = 0; i < _widgets.size(); i++) {
 		if (scumm_stricmp(_widgets[i]->getName(), name) == 0) {
-			_widgets[i]->_disable = !enable;
+			_widgets[i]->setDisabled(!enable);
 		}
 	}
 	return STATUS_OK;
@@ -748,7 +748,7 @@ bool UIWindow::enableWidget(const char *name, bool enable) {
 bool UIWindow::showWidget(const char *name, bool visible) {
 	for (uint32 i = 0; i < _widgets.size(); i++) {
 		if (scumm_stricmp(_widgets[i]->getName(), name) == 0) {
-			_widgets[i]->_visible = visible;
+			_widgets[i]->setVisible(visible);
 		}
 	}
 	return STATUS_OK;
@@ -1227,7 +1227,7 @@ bool UIWindow::handleMouse(TMouseEvent event, TMouseButton button) {
 	bool res = UIObject::handleMouse(event, button);
 
 	// handle window dragging
-	if (!BasePlatform::isRectEmpty(&_dragRect)) {
+	if (!_dragRect.isRectEmpty()) {
 		// start drag
 		if (event == MOUSE_CLICK && button == MOUSE_BUTTON_LEFT) {
 			Rect32 dragRect = _dragRect;
@@ -1258,24 +1258,24 @@ bool UIWindow::persist(BasePersistenceManager *persistMgr) {
 	UIObject::persist(persistMgr);
 
 	persistMgr->transferPtr(TMEMBER_PTR(_backInactive));
-	persistMgr->transfer(TMEMBER(_clipContents));
-	persistMgr->transfer(TMEMBER(_dragFrom));
-	persistMgr->transfer(TMEMBER(_dragging));
-	persistMgr->transfer(TMEMBER(_dragRect));
-	persistMgr->transfer(TMEMBER(_fadeBackground));
-	persistMgr->transfer(TMEMBER(_fadeColor));
+	persistMgr->transferBool(TMEMBER(_clipContents));
+	persistMgr->transferPoint32(TMEMBER(_dragFrom));
+	persistMgr->transferBool(TMEMBER(_dragging));
+	persistMgr->transferRect32(TMEMBER(_dragRect));
+	persistMgr->transferBool(TMEMBER(_fadeBackground));
+	persistMgr->transferUint32(TMEMBER(_fadeColor));
 	persistMgr->transferPtr(TMEMBER_PTR(_fontInactive));
 	persistMgr->transferPtr(TMEMBER_PTR(_imageInactive));
-	persistMgr->transfer(TMEMBER(_inGame));
-	persistMgr->transfer(TMEMBER(_isMenu));
-	persistMgr->transfer(TMEMBER_INT(_mode));
+	persistMgr->transferBool(TMEMBER(_inGame));
+	persistMgr->transferBool(TMEMBER(_isMenu));
+	persistMgr->transferSint32(TMEMBER_INT(_mode));
 	persistMgr->transferPtr(TMEMBER_PTR(_shieldButton));
 	persistMgr->transferPtr(TMEMBER_PTR(_shieldWindow));
-	persistMgr->transfer(TMEMBER_INT(_titleAlign));
-	persistMgr->transfer(TMEMBER(_titleRect));
-	persistMgr->transfer(TMEMBER(_transparent));
+	persistMgr->transferSint32(TMEMBER_INT(_titleAlign));
+	persistMgr->transferRect32(TMEMBER(_titleRect));
+	persistMgr->transferBool(TMEMBER(_transparent));
 	persistMgr->transferPtr(TMEMBER_PTR(_viewport));
-	persistMgr->transfer(TMEMBER(_pauseMusic));
+	persistMgr->transferBool(TMEMBER(_pauseMusic));
 
 	_widgets.persist(persistMgr);
 
@@ -1309,7 +1309,7 @@ bool UIWindow::moveFocus(bool forward) {
 	bool done = false;
 
 	while (numTries <= (int32)_widgets.size()) {
-		if (_widgets[i] != _focusedWidget && _widgets[i]->_canFocus && _widgets[i]->_visible && !_widgets[i]->_disable) {
+		if (_widgets[i] != _focusedWidget && _widgets[i]->canFocus() && _widgets[i]->isVisible() && !_widgets[i]->isDisabled()) {
 			_focusedWidget = _widgets[i];
 			done = true;
 			break;
@@ -1419,7 +1419,7 @@ void UIWindow::makeFreezable(bool freezable) {
 bool UIWindow::getWindowObjects(BaseArray<UIObject *> &objects, bool interactiveOnly) {
 	for (uint32 i = 0; i < _widgets.size(); i++) {
 		UIObject *control = _widgets[i];
-		if (control->_disable && interactiveOnly) {
+		if (control->isDisabled() && interactiveOnly) {
 			continue;
 		}
 
@@ -1442,4 +1442,14 @@ bool UIWindow::getWindowObjects(BaseArray<UIObject *> &objects, bool interactive
 	return STATUS_OK;
 }
 
-} // end of namespace Wintermute
+bool UIWindow::getInGame() const {
+	return _inGame;
+}
+
+TWindowMode UIWindow::getMode() const {
+	return _mode;
+}
+
+
+
+} // End of namespace Wintermute

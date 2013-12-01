@@ -20,8 +20,12 @@
  *
  */
 
+#include "neverhood/modules/module1600.h"	// for Scene1608
+#include "neverhood/modules/module1600_sprites.h"
 #include "neverhood/modules/module2500.h"
-#include "neverhood/modules/module1600.h"
+#include "neverhood/modules/module2500_sprites.h"
+#include "neverhood/modules/module2700.h"	// for Scene2704
+#include "neverhood/modules/module2700_sprites.h"
 
 namespace Neverhood {
 
@@ -29,29 +33,29 @@ static const uint32 kScene2505StaticSprites[] = {
 	0x4000A226, 0
 };
 
-static const NRect kScene2505ClipRect = NRect(0, 0, 564, 480);
+static const NRect kScene2505ClipRect = { 0, 0, 564, 480 };
 
 static const uint32 kScene2506StaticSprites[] = {
 	0x4027AF02, 0
 };
 
-static const NRect kScene2506ClipRect = NRect(0, 0, 640, 441);
+static const NRect kScene2506ClipRect = { 0, 0, 640, 441 };
 
 static const uint32 kScene2508StaticSprites1[] = {
 	0x2F08E610, 0xD844E6A0, 0
 };
 
-static const NRect kScene2508ClipRect1 = NRect(0, 0, 594, 448);
+static const NRect kScene2508ClipRect1 = { 0, 0, 594, 448 };
 
 static const uint32 kScene2508StaticSprites2[] = {
 	0x2F08E610, 0
 };
 
-static const NRect kScene2508ClipRect2 = NRect(0, 0, 594, 448);
+static const NRect kScene2508ClipRect2 = { 0, 0, 594, 448 };
 
 Module2500::Module2500(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Module(vm, parentModule), _soundIndex(0) {
-	
+
 	_vm->_soundMan->addMusic(0x29220120, 0x05343184);
 	_vm->_soundMan->startMusic(0x05343184, 0, 0);
 	SetMessageHandler(&Module2500::handleMessage);
@@ -73,7 +77,7 @@ Module2500::~Module2500() {
 }
 
 void Module2500::createScene(int sceneNum, int which) {
-	debug("Module2500::createScene(%d, %d)", sceneNum, which);
+	debug(1, "Module2500::createScene(%d, %d)", sceneNum, which);
 	_sceneNum = sceneNum;
 	switch (_sceneNum) {
 	case 0:
@@ -212,14 +216,14 @@ uint32 Module2500::handleMessage(int messageNum, const MessageParam &param, Enti
 	}
 	return messageResult;
 }
-			
+
 void Module2500::createScene2704(int which, uint32 sceneInfoId, int16 value, const uint32 *staticSprites, const NRect *clipRect) {
 	_childObject = new Scene2704(_vm, this, which, sceneInfoId, value, staticSprites, clipRect);
 }
 
 Scene2501::Scene2501(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule) {
-	
+
 	_tracks.push_back(_vm->_staticData->getTrackInfo(0x004B2628));
 	_tracks.push_back(_vm->_staticData->getTrackInfo(0x004B264C));
 	_tracks.push_back(_vm->_staticData->getTrackInfo(0x004B2670));
@@ -282,7 +286,7 @@ Scene2501::Scene2501(NeverhoodEngine *vm, Module *parentModule, int which)
 	_asCarTrackShadow = insertSprite<AsCommonCarTrackShadow>(_asCar, _ssTrackShadowBackground->getSurface(), 4);
 	_asCarConnectorShadow = insertSprite<AsCommonCarConnectorShadow>(_asCar, _ssTrackShadowBackground->getSurface(), 4);
 	insertSprite<AsCommonCarConnector>(_asCar);
-	
+
 	_newTrackIndex = -1;
 	_dataResource.load(calcHash("Ashooded"));
 
@@ -300,9 +304,9 @@ Scene2501::Scene2501(NeverhoodEngine *vm, Module *parentModule, int which)
 		if (testPoint.x < 0 || testPoint.x >= 640 || testPoint.y < 0 || testPoint.y >= 480)
 			sendMessage(_asCar, 0x2008, 150);
 	}
-	
+
 	_carStatus = 0;
-	
+
 }
 
 Scene2501::~Scene2501() {
@@ -391,7 +395,7 @@ uint32 Scene2501::handleMessage(int messageNum, const MessageParam &param, Entit
 	}
 	return messageResult;
 }
-		
+
 uint32 Scene2501::hmRidingCar(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
@@ -434,7 +438,7 @@ uint32 Scene2501::hmCarAtHome(int messageNum, const MessageParam &param, Entity 
 	}
 	return messageResult;
 }
-	
+
 void Scene2501::moveCarToPoint(NPoint &pt) {
 	int minMatchTrackIndex, minMatchDistance;
 	_tracks.findTrackPoint(pt, minMatchTrackIndex, minMatchDistance, _dataResource);
@@ -470,59 +474,11 @@ void Scene2501::updateKlaymenClipRect() {
 		_kmScene2501->setClipRect(0, 0, 640, 388);
 }
 
-SsScene2504Button::SsScene2504Button(NeverhoodEngine *vm)
-	: StaticSprite(vm, 1400), _countdown(0), _isSoundPlaying(false) {
-	
-	loadSprite(0x070220D9, kSLFDefDrawOffset | kSLFDefPosition | kSLFDefCollisionBoundsOffset, 400);
-	setVisible(false);
-	loadSound(0, 0x4600204C);
-	loadSound(1, 0x408C0034);
-	loadSound(2, 0x44043000);
-	loadSound(3, 0x44045000);
-	SetMessageHandler(&SsScene2504Button::handleMessage);
-	SetUpdateHandler(&SsScene2504Button::update);
-}
-
-void SsScene2504Button::update() {
-	updatePosition();
-	if (_isSoundPlaying && !isSoundPlaying(0) && !isSoundPlaying(1)) {
-		playSound(3);
-		setVisible(false);
-		_isSoundPlaying = false;
-	}
-	if (_countdown != 0 && (--_countdown) == 0) {
-		if (getSubVar(VA_LOCKS_DISABLED, 0x01180951))
-			playSound(0);
-		else
-			playSound(1);
-		_isSoundPlaying = true;
-	}
-}
-
-uint32 SsScene2504Button::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
-	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
-	switch (messageNum) {
-	case 0x1011:
-		if (_countdown == 0 && !_isSoundPlaying) {
-			setVisible(true);
-			_countdown = 2;
-			if (getSubVar(VA_LOCKS_DISABLED, 0x01180951))
-				setSubVar(VA_LOCKS_DISABLED, 0x01180951, 0);
-			else
-				setSubVar(VA_LOCKS_DISABLED, 0x01180951, 1);
-			playSound(2);
-		}
-		messageResult = 1;
-		break;
-	}
-	return messageResult;
-}
-
 Scene2504::Scene2504(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule) {
-	
+
 	Sprite *ssButton;
-	
+
 	setBackground(0x90791B80);
 	setPalette(0x90791B80);
 	ssButton = insertSprite<SsScene2504Button>();

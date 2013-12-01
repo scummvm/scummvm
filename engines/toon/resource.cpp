@@ -285,6 +285,7 @@ void PakFile::close() {
 }
 
 PakFile::PakFile() {
+	_numFiles = 0;
 }
 
 PakFile::~PakFile() {

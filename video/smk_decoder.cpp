@@ -580,7 +580,7 @@ void SmackerDecoder::SmackerVideoTrack::decodeFrame(Common::BitStream &bs) {
 			while (run-- && block < blocks) {
 				clr = _MClrTree->getCode(bs);
 				map = _MMapTree->getCode(bs);
-				out = (byte *)_surface->pixels + (block / bw) * (stride * 4 * doubleY) + (block % bw) * 4;
+				out = (byte *)_surface->getPixels() + (block / bw) * (stride * 4 * doubleY) + (block % bw) * 4;
 				hi = clr >> 8;
 				lo = clr & 0xff;
 				for (i = 0; i < 4; i++) {
@@ -613,7 +613,7 @@ void SmackerDecoder::SmackerVideoTrack::decodeFrame(Common::BitStream &bs) {
 			}
 
 			while (run-- && block < blocks) {
-				out = (byte *)_surface->pixels + (block / bw) * (stride * 4 * doubleY) + (block % bw) * 4;
+				out = (byte *)_surface->getPixels() + (block / bw) * (stride * 4 * doubleY) + (block % bw) * 4;
 				switch (mode) {
 					case 0:
 						for (i = 0; i < 4; ++i) {
@@ -679,7 +679,7 @@ void SmackerDecoder::SmackerVideoTrack::decodeFrame(Common::BitStream &bs) {
 			uint32 col;
 			mode = type >> 8;
 			while (run-- && block < blocks) {
-				out = (byte *)_surface->pixels + (block / bw) * (stride * 4 * doubleY) + (block % bw) * 4;
+				out = (byte *)_surface->getPixels() + (block / bw) * (stride * 4 * doubleY) + (block % bw) * 4;
 				col = mode * 0x01010101;
 				for (i = 0; i < 4 * doubleY; ++i) {
 					out[0] = out[1] = out[2] = out[3] = col;
@@ -821,8 +821,9 @@ void SmackerDecoder::SmackerAudioTrack::queueCompressedBuffer(byte *buffer, uint
 		// (the exact opposite to the base values)
 		if (!is16Bits) {
 			for (int k = 0; k < (isStereo ? 2 : 1); k++) {
-				bases[k] += (int8) ((int16) audioTrees[k]->getCode(audioBS));
-				*curPointer++ = CLIP<int>(bases[k], 0, 255) ^ 0x80;
+				int8 delta = (int8) ((int16) audioTrees[k]->getCode(audioBS));
+				bases[k] = (bases[k] + delta) & 0xFF;
+				*curPointer++ = bases[k] ^ 0x80;
 				curPos++;
 			}
 		} else {

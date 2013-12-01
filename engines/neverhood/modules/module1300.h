@@ -30,8 +30,6 @@
 
 namespace Neverhood {
 
-// Module1300
-
 class Module1300 : public Module {
 public:
 	Module1300(NeverhoodEngine *vm, Module *parentModule, int which);
@@ -41,28 +39,6 @@ protected:
 	uint32 _musicFileHash;
 	void createScene(int sceneNum, int which);
 	void updateScene();
-};
-
-class AsScene1302Bridge : public AnimatedSprite {
-public:
-	AsScene1302Bridge(NeverhoodEngine *vm, Scene *parentScene);
-protected:
-	Scene *_parentScene;
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	void stLowerBridge();
-	void stRaiseBridge();
-	void cbLowerBridgeEvent();
-};
-
-class SsScene1302Fence : public StaticSprite {
-public:
-	SsScene1302Fence(NeverhoodEngine *vm);
-protected:
-	int16 _firstY;
-	void update();
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	void suMoveDown();
-	void suMoveUp();
 };
 
 class Scene1302 : public Scene {
@@ -84,30 +60,12 @@ protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
-class AsScene1303Balloon : public AnimatedSprite {
-public:
-	AsScene1303Balloon(NeverhoodEngine *vm, Scene *parentScene);
-protected:
-	Scene *_parentScene;
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 hmBalloonPopped(int messageNum, const MessageParam &param, Entity *sender);
-	void stPopBalloon();
-};
-
 class Scene1303 : public Scene {
 public:
 	Scene1303(NeverhoodEngine *vm, Module *parentModule);
 protected:
 	Sprite *_sprite1;
 	Sprite *_asBalloon;
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-};
-
-class AsScene1304Needle : public AnimatedSprite {
-public:
-	AsScene1304Needle(NeverhoodEngine *vm, Scene *parentScene, int surfacePriority, int16 x, int16 y);
-protected:
-	Scene *_parentScene;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
@@ -128,24 +86,6 @@ protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
-class AsScene1306Elevator : public AnimatedSprite {
-public:
-	AsScene1306Elevator(NeverhoodEngine *vm, Scene *parentScene, AnimatedSprite *asElevatorDoor);
-protected:
-	Scene *_parentScene;
-	AnimatedSprite *_asElevatorDoor;
-	bool _isUp;
-	bool _isDown;
-	int _countdown;
-	void update();
-	void upGoingDown();
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	void stGoingUp();
-	void cbGoingUpEvent();
-	void stGoingDown();
-	void cbGoingDownEvent();
-};
-
 class Scene1306 : public Scene {
 public:
 	Scene1306(NeverhoodEngine *vm, Module *parentModule, int which);
@@ -159,30 +99,6 @@ protected:
 	Sprite *_asKey;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 handleMessage416EB0(int messageNum, const MessageParam &param, Entity *sender);
-};
-
-class AsScene1307Key : public AnimatedSprite {
-public:
-	AsScene1307Key(NeverhoodEngine *vm, Scene *parentScene, uint keyIndex, NRect *clipRects);
-protected:
-	Scene *_parentScene;
-	NPointArray *_pointList;
-	uint _pointIndex;
-	int _frameIndex;
-	uint _keyIndex;
-	NRect *_clipRects;
-	bool _isClickable;
-	int16 _prevX, _prevY;
-	int16 _deltaX, _deltaY;
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	void suRemoveKey();
-	void suInsertKey();
-	void suMoveKey();
-	void stRemoveKey();
-	void stInsertKey();
-	void stMoveKey();
-	void stUnlock();
-	void stInsert();
 };
 
 class Scene1307 : public Scene {
@@ -199,51 +115,6 @@ protected:
 	bool _doLeaveScene;
 	bool _isPuzzleSolved;
 	void update();
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-};
-
-class AsScene1308JaggyDoor : public AnimatedSprite {
-public:
-	AsScene1308JaggyDoor(NeverhoodEngine *vm, Scene *parentScene);
-protected:
-	Scene *_parentScene;
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	void stOpenDoor();
-	void stOpenDoorDone();
-	void stCloseDoor();
-	void stCloseDoorDone();
-};
-
-class AsScene1308KeyboardDoor : public AnimatedSprite {
-public:
-	AsScene1308KeyboardDoor(NeverhoodEngine *vm, Scene *parentScene);
-protected:
-	Scene *_parentScene;
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	void stFallingKeys();
-	void stFallingKeysDone();
-};
-
-class AsScene1308LightWallSymbols : public AnimatedSprite {
-public:
-	AsScene1308LightWallSymbols(NeverhoodEngine *vm, Scene *parentScene);
-protected:
-	Scene *_parentScene;
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	void stFadeIn();
-	void stFadeOut();
-	void stFadeOutDone();
-};
-
-class SsScene1308Number : public StaticSprite {
-public:
-	SsScene1308Number(NeverhoodEngine *vm, uint32 fileHash, int index);
-};
-
-class AsScene1308Mouse : public AnimatedSprite {
-public:
-	AsScene1308Mouse(NeverhoodEngine *vm);
-protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 

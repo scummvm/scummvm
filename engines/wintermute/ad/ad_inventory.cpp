@@ -128,9 +128,9 @@ bool AdInventory::persist(BasePersistenceManager *persistMgr) {
 	BaseObject::persist(persistMgr);
 
 	_takenItems.persist(persistMgr);
-	persistMgr->transfer(TMEMBER(_scrollOffset));
+	persistMgr->transferSint32(TMEMBER(_scrollOffset));
 
 	return STATUS_OK;
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

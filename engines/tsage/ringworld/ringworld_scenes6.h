@@ -318,15 +318,11 @@ public:
 	Hotspot6 _hotspot6;
 	Hotspot7 _hotspot7;
 	Hotspot8 _hotspot8;
-	int _field1B0A;
 
 	Scene5300();
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void signal();
-	virtual void synchronize(Serializer &s) {
-		Scene::synchronize(s);
-		s.syncAsSint16LE(_field1B0A);
-	}
+	virtual void synchronize(Serializer &s);
 };
 
 } // End of namespace Ringworld

@@ -23,6 +23,10 @@
 #ifndef COMMON_SCUMMSYS_H
 #define COMMON_SCUMMSYS_H
 
+#ifndef __has_feature         // Optional of course.
+  #define __has_feature(x) 0  // Compatibility with non-clang compilers.
+#endif
+
 // This is a convenience macro to test whether the compiler used is a GCC
 // version, which is at least major.minor.
 #define GCC_ATLEAST(major, minor) (defined(__GNUC__) && (__GNUC__ > (major) || (__GNUC__ == (major) && __GNUC_MINOR__ >= (minor))))
@@ -142,6 +146,63 @@
 	#if !defined(__SYMBIAN32__)
 	#include <new>
 	#endif
+#endif
+
+// The following math constants are usually defined by the system math.h header, but 
+// they are not part of the ANSI C++ standards and so can NOT be relied upon to be
+// present i.e. when -std=c++11 is passed to GCC, enabling strict ANSI compliance.
+// As we rely on these being present, we define them if they are not set.
+
+#ifndef M_E
+	#define M_E 2.7182818284590452354 /* e */
+#endif
+
+#ifndef M_LOG2E
+	#define M_LOG2E 1.4426950408889634074 /* log_2 e */
+#endif
+
+#ifndef M_LOG10E
+	#define M_LOG10E 0.43429448190325182765 /* log_10 e */
+#endif
+
+#ifndef M_LN2
+	#define M_LN2 0.69314718055994530942 /* log_e 2 */
+#endif
+
+#ifndef M_LN10
+	#define M_LN10 2.30258509299404568402 /* log_e 10 */
+#endif
+
+#ifndef M_PI
+	#define M_PI 3.14159265358979323846 /* pi */
+#endif
+
+#ifndef M_PI_2
+	#define M_PI_2 1.57079632679489661923 /* pi/2 */
+#endif
+
+#ifndef M_PI_4
+	#define M_PI_4 0.78539816339744830962 /* pi/4 */
+#endif
+
+#ifndef M_1_PI
+	#define M_1_PI 0.31830988618379067154 /* 1/pi */
+#endif
+
+#ifndef M_2_PI
+	#define M_2_PI 0.63661977236758134308 /* 2/pi */
+#endif
+
+#ifndef M_2_SQRTPI
+	#define M_2_SQRTPI 1.12837916709551257390 /* 2/sqrt(pi) */
+#endif
+
+#ifndef M_SQRT2
+	#define M_SQRT2 1.41421356237309504880 /* sqrt(2) */
+#endif
+
+#ifndef M_SQRT1_2
+	#define M_SQRT1_2 0.70710678118654752440 /* 1/sqrt(2) */
 #endif
 
 // Include our C++11 compatability header for pre-C++11 compilers.
@@ -344,6 +405,8 @@
 	typedef unsigned int uint32;
 	typedef signed int int32;
 	typedef unsigned int uint;
+	typedef signed long long int64;
+	typedef unsigned long long uint64;
 #endif
 
 

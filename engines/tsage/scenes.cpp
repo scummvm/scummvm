@@ -43,6 +43,7 @@ SceneManager::SceneManager() {
 	g_saver->addListener(this);
 	_objectCount = 0;
 	_loadMode = 0;
+	_sceneLoadCount = 0;
 }
 
 SceneManager::~SceneManager() {
@@ -56,8 +57,13 @@ void SceneManager::setNewScene(int sceneNumber) {
 
 void SceneManager::checkScene() {
 	if (_nextSceneNumber != -1) {
+		int nextSceneNumber = _nextSceneNumber;
+
 		sceneChange();
-		_nextSceneNumber = -1;
+
+		// Unless we've already switched to yet another scene, reset
+		if (_nextSceneNumber == nextSceneNumber)
+			_nextSceneNumber = -1;
 	}
 
 	g_globals->dispatchSounds();
@@ -247,6 +253,14 @@ void SceneManager::listenerSynchronize(Serializer &s) {
 		}
 	}
 
+	// Walk regions loading
+	if (g_vm->getGameID() == GType_Ringworld2) {
+		int walkRegionsId = GLOBALS._walkRegions._resNum;
+		s.syncAsSint16LE(walkRegionsId);
+		if (s.isLoading())
+			GLOBALS._walkRegions.load(walkRegionsId);
+	}
+
 	g_globals->_sceneManager._scrollerRect.synchronize(s);
 	SYNC_POINTER(g_globals->_scrollFollower);
 	s.syncAsSint16LE(_loadMode);
@@ -260,6 +274,11 @@ Scene::Scene() : _sceneBounds(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT),
 	_activeScreenNumber = 0;
 	_oldSceneBounds = Rect(4000, 4000, 4100, 4100);
 	Common::fill(&_zoomPercents[0], &_zoomPercents[256], 0);
+
+	_field12 = 0;
+	_screenNumber = 0;
+	_fieldA = 0;
+	_fieldE = 0;
 }
 
 Scene::~Scene() {

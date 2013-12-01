@@ -52,8 +52,8 @@ protected:
 public:
 	struct Frame {
 		// Die Hotspot-Angabe bezieht sich auf das ungeflippte Bild!!
-		int         hotspotX;
-		int         hotspotY;
+		int32         hotspotX;
+		int32         hotspotY;
 		bool        flipV;
 		bool        flipH;
 		Common::String  fileName;
@@ -88,8 +88,8 @@ public:
 
 protected:
 	Animation::ANIMATION_TYPES   _animationType;
-	int                          _FPS;
-	int                          _millisPerFrame;
+	int32                        _FPS;
+	int32                        _millisPerFrame;
 	bool                         _scalingAllowed;
 	bool                         _alphaAllowed;
 	bool                         _colorModulationAllowed;

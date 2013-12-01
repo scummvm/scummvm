@@ -467,9 +467,9 @@ bool GameFeatures::autoDetectSci21KernelType() {
 		// seen it happen in the RAMA demo, thus we can assume that the
 		// game is using a SCI2.1 table
 
-		// HACK: The Inside the Chest Demo doesn't have sounds at all, but
-		// it's using a SCI2 kernel
-		if (g_sci->getGameId() == GID_CHEST) {
+		// HACK: The Inside the Chest Demo and King's Questions minigame
+		// don't have sounds at all, but they're using a SCI2 kernel
+		if (g_sci->getGameId() == GID_CHEST || g_sci->getGameId() == GID_KQUESTIONS) {
 			_sci21KernelType = SCI_VERSION_2;
 			return true;
 		}

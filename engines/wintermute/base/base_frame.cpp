@@ -142,7 +142,7 @@ TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF(KILL_SOUND)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////
-bool BaseFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
+bool BaseFrame::loadBuffer(char *buffer, int lifeTime, bool keepLoaded) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(DELAY)
 	TOKEN_TABLE(IMAGE)
@@ -181,10 +181,10 @@ bool BaseFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 	bool decoration = false;
 	bool mirrorX = false;
 	bool mirrorY = false;
-	BasePlatform::setRectEmpty(&rect);
+	rect.setEmpty();
 	char *surface_file = nullptr;
 
-	while ((cmd = parser.getCommand((char **)&buffer, commands, &params)) > 0) {
+	while ((cmd = parser.getCommand(&buffer, commands, &params)) > 0) {
 		switch (cmd) {
 		case TOKEN_DELAY:
 			parser.scanStr(params, "%d", &_delay);
@@ -249,7 +249,7 @@ bool BaseFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 
 		case TOKEN_SUBFRAME: {
 			BaseSubFrame *subframe = new BaseSubFrame(_gameRef);
-			if (!subframe || DID_FAIL(subframe->loadBuffer((byte *)params, lifeTime, keepLoaded))) {
+			if (!subframe || DID_FAIL(subframe->loadBuffer(params, lifeTime, keepLoaded))) {
 				delete subframe;
 				cmd = PARSERR_GENERIC;
 			} else {
@@ -290,7 +290,7 @@ bool BaseFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 			break;
 
 		case TOKEN_EDITOR_PROPERTY:
-			parseEditorProperty((byte *)params, false);
+			parseEditorProperty(params, false);
 			break;
 		}
 	}
@@ -325,7 +325,7 @@ bool BaseFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 		}
 	}
 
-	if (BasePlatform::isRectEmpty(&rect)) {
+	if (rect.isRectEmpty()) {
 		sub->setDefaultRect();
 	} else {
 		sub->setRect(rect);
@@ -352,7 +352,7 @@ bool BaseFrame::getBoundingRect(Rect32 *rect, int x, int y, float scaleX, float 
 	if (!rect) {
 		return false;
 	}
-	BasePlatform::setRectEmpty(rect);
+	rect->setEmpty();
 
 	Rect32 subRect;
 
@@ -414,12 +414,12 @@ bool BaseFrame::persist(BasePersistenceManager *persistMgr) {
 	BaseScriptable::persist(persistMgr);
 
 	_applyEvent.persist(persistMgr);
-	persistMgr->transfer(TMEMBER(_delay));
-	persistMgr->transfer(TMEMBER(_editorExpanded));
-	persistMgr->transfer(TMEMBER(_keyframe));
-	persistMgr->transfer(TMEMBER(_killSound));
-	persistMgr->transfer(TMEMBER(_moveX));
-	persistMgr->transfer(TMEMBER(_moveY));
+	persistMgr->transferUint32(TMEMBER(_delay));
+	persistMgr->transferBool(TMEMBER(_editorExpanded));
+	persistMgr->transferBool(TMEMBER(_keyframe));
+	persistMgr->transferBool(TMEMBER(_killSound));
+	persistMgr->transferSint32(TMEMBER(_moveX));
+	persistMgr->transferSint32(TMEMBER(_moveY));
 	persistMgr->transferPtr(TMEMBER_PTR(_sound));
 	_subframes.persist(persistMgr);
 
@@ -764,4 +764,4 @@ const char *BaseFrame::scToString() {
 	return "[frame]";
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

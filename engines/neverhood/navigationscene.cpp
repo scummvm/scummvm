@@ -25,33 +25,36 @@
 
 namespace Neverhood {
 
+enum AreaType {
+	kAreaCanMoveForward = 0,
+	kAreaCannotMoveForward = 1
+};
+
 NavigationScene::NavigationScene(NeverhoodEngine *vm, Module *parentModule, uint32 navigationListId, int navigationIndex, const byte *itemsTypes)
 	: Scene(vm, parentModule), _itemsTypes(itemsTypes), _navigationIndex(navigationIndex), _smackerDone(false),
 	_isWalkingForward(false), _isTurning(false), _smackerFileHash(0), _interactive(true), _leaveSceneAfter(false) {
 
 	_navigationList = _vm->_staticData->getNavigationList(navigationListId);
-	
+	_navigationListId = navigationListId;
+
 	if (_navigationIndex < 0) {
 		_navigationIndex = (int)getGlobalVar(V_NAVIGATION_INDEX);
 		if (_navigationIndex >= (int)_navigationList->size())
-			_navigationIndex = 0; 
+			_navigationIndex = 0;
 	}
 	setGlobalVar(V_NAVIGATION_INDEX, _navigationIndex);
-	
+
 	SetUpdateHandler(&NavigationScene::update);
 	SetMessageHandler(&NavigationScene::handleMessage);
-	
-	_smackerPlayer = new SmackerPlayer(_vm, this, (*_navigationList)[_navigationIndex].fileHash, true, true);	
-	addEntity(_smackerPlayer);
-	addSurface(_smackerPlayer->getSurface());
-	
+
+	_smackerPlayer = addSmackerPlayer(new SmackerPlayer(_vm, this, (*_navigationList)[_navigationIndex].fileHash, true, true));
+
 	createMouseCursor();
 
 	_vm->_screen->clear();
 	_vm->_screen->setSmackerDecoder(_smackerPlayer->getSmackerDecoder());
 
 	sendMessage(_parentModule, 0x100A, _navigationIndex);
-
 }
 
 NavigationScene::~NavigationScene() {
@@ -97,7 +100,7 @@ void NavigationScene::update() {
 			_vm->_screen->setSmackerDecoder(_smackerPlayer->getSmackerDecoder());
 			sendMessage(_parentModule, 0x100A, _navigationIndex);
 		}
-	} 
+	}
 	Scene::update();
 }
 
@@ -123,39 +126,34 @@ uint32 NavigationScene::handleMessage(int messageNum, const MessageParam &param,
 }
 
 void NavigationScene::createMouseCursor() {
-
 	const NavigationItem &navigationItem = (*_navigationList)[_navigationIndex];
 	uint32 mouseCursorFileHash;
 	int areaType;
 
-	if (_mouseCursor) {
+	if (_mouseCursor)
 		deleteSprite((Sprite**)&_mouseCursor);
-	}
 
 	mouseCursorFileHash = navigationItem.mouseCursorFileHash;
 	if (mouseCursorFileHash == 0)
 		mouseCursorFileHash = 0x63A40028;
-		
-	if (_itemsTypes) {
+
+	if (_itemsTypes)
 		areaType = _itemsTypes[_navigationIndex];
-	} else if (navigationItem.middleSmackerFileHash != 0 || navigationItem.middleFlag) {
-		areaType = 0;
-	} else {
-		areaType = 1;
-	}
+	else if (navigationItem.middleSmackerFileHash != 0 || navigationItem.middleFlag)
+		areaType = kAreaCanMoveForward;
+	else
+		areaType = kAreaCannotMoveForward;
 
 	insertNavigationMouse(mouseCursorFileHash, areaType);
 	sendPointMessage(_mouseCursor, 0x4002, _vm->getMousePos());
-	
 }
 
 void NavigationScene::handleNavigation(const NPoint &mousePos) {
-
 	const NavigationItem &navigationItem = (*_navigationList)[_navigationIndex];
 	bool oldIsWalkingForward = _isWalkingForward;
 	bool oldIsTurning = _isTurning;
 	uint32 direction = sendPointMessage(_mouseCursor, 0x2064, mousePos);
-	
+
 	switch (direction) {
 	case 0:
 		if (navigationItem.leftSmackerFileHash != 0) {
@@ -206,13 +204,12 @@ void NavigationScene::handleNavigation(const NPoint &mousePos) {
 		}
 		break;
 	}
-	
+
 	if (oldIsTurning != _isTurning)
 		_vm->_soundMan->setSoundThreePlayFlag(_isTurning);
 
 	if (oldIsWalkingForward != _isWalkingForward)
 		_vm->_soundMan->setTwoSoundsPlayFlag(_isWalkingForward);
-
 }
 
 } // End of namespace Neverhood

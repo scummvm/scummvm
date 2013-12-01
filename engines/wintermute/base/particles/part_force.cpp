@@ -49,17 +49,17 @@ PartForce::~PartForce(void) {
 bool PartForce::persist(BasePersistenceManager *persistMgr) {
 	if (persistMgr->getIsSaving()) {
 		const char *name = getName();
-		persistMgr->transfer(TMEMBER(name));
+		persistMgr->transferConstChar(TMEMBER(name));
 	} else {
 		const char *name;
-		persistMgr->transfer(TMEMBER(name));
+		persistMgr->transferConstChar(TMEMBER(name));
 		setName(name);
 	}
-	persistMgr->transfer(TMEMBER(_pos));
-	persistMgr->transfer(TMEMBER(_direction));
-	persistMgr->transfer(TMEMBER_INT(_type));
+	persistMgr->transferVector2(TMEMBER(_pos));
+	persistMgr->transferVector2(TMEMBER(_direction));
+	persistMgr->transferSint32(TMEMBER_INT(_type));
 
 	return STATUS_OK;
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

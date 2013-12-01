@@ -117,6 +117,7 @@ RMGfxBuffer::operator void *() {
 }
 
 RMGfxBuffer::RMGfxBuffer(int dimx, int dimy, int nBpp) {
+	_origBuf = _buf = NULL;
 	create(dimx, dimy, nBpp);
 }
 
@@ -1865,7 +1866,7 @@ void RMGfxSourceBuffer8RLEWordAA::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RM
 	CORO_END_CODE;
 }
 
-int RMGfxSourceBuffer8RLEWordAA::init(byte *buf, int dimx, int dimy, bool bLoadPalette) {
+int RMGfxSourceBuffer8RLEWordAA::init(const byte *buf, int dimx, int dimy, bool bLoadPalette) {
 	return RMGfxSourceBuffer8RLE::init(buf, dimx, dimy, bLoadPalette);
 }
 

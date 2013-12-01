@@ -79,7 +79,7 @@ TOKEN_DEF(PRECACHE)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-bool AdTalkNode::loadBuffer(byte *buffer, bool complete) {
+bool AdTalkNode::loadBuffer(char *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(ACTION)
 	TOKEN_TABLE(SPRITESET_FILE)
@@ -92,12 +92,12 @@ bool AdTalkNode::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE(EDITOR_PROPERTY)
 	TOKEN_TABLE_END
 
-	byte *params;
+	char *params;
 	int cmd;
 	BaseParser parser;
 
 	if (complete) {
-		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_ACTION) {
+		if (parser.getCommand(&buffer, commands, &params) != TOKEN_ACTION) {
 			_gameRef->LOG(0, "'ACTION' keyword expected.");
 			return STATUS_FAILED;
 		}
@@ -108,14 +108,14 @@ bool AdTalkNode::loadBuffer(byte *buffer, bool complete) {
 	_playToEnd = false;
 	_preCache = false;
 
-	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
+	while ((cmd = parser.getCommand(&buffer, commands, &params)) > 0) {
 		switch (cmd) {
 		case TOKEN_SPRITE:
-			BaseUtils::setString(&_spriteFilename, (char *)params);
+			BaseUtils::setString(&_spriteFilename, params);
 			break;
 
 		case TOKEN_SPRITESET_FILE:
-			BaseUtils::setString(&_spriteSetFilename, (char *)params);
+			BaseUtils::setString(&_spriteSetFilename, params);
 			break;
 
 		case TOKEN_SPRITESET: {
@@ -130,20 +130,20 @@ bool AdTalkNode::loadBuffer(byte *buffer, bool complete) {
 		break;
 
 		case TOKEN_START_TIME:
-			parser.scanStr((char *)params, "%d", &_startTime);
+			parser.scanStr(params, "%d", &_startTime);
 			break;
 
 		case TOKEN_END_TIME:
-			parser.scanStr((char *)params, "%d", &_endTime);
+			parser.scanStr(params, "%d", &_endTime);
 			break;
 
 		case TOKEN_PRECACHE:
-			parser.scanStr((char *)params, "%b", &_preCache);
+			parser.scanStr(params, "%b", &_preCache);
 			break;
 
 		case TOKEN_COMMENT:
 			if (_gameRef->_editorMode) {
-				BaseUtils::setString(&_comment, (char *)params);
+				BaseUtils::setString(&_comment, params);
 			}
 			break;
 
@@ -191,14 +191,14 @@ bool AdTalkNode::loadBuffer(byte *buffer, bool complete) {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdTalkNode::persist(BasePersistenceManager *persistMgr) {
-	persistMgr->transfer(TMEMBER(_comment));
-	persistMgr->transfer(TMEMBER(_startTime));
-	persistMgr->transfer(TMEMBER(_endTime));
-	persistMgr->transfer(TMEMBER(_playToEnd));
+	persistMgr->transferCharPtr(TMEMBER(_comment));
+	persistMgr->transferUint32(TMEMBER(_startTime));
+	persistMgr->transferUint32(TMEMBER(_endTime));
+	persistMgr->transferBool(TMEMBER(_playToEnd));
 	persistMgr->transferPtr(TMEMBER_PTR(_sprite));
-	persistMgr->transfer(TMEMBER(_spriteFilename));
+	persistMgr->transferCharPtr(TMEMBER(_spriteFilename));
 	persistMgr->transferPtr(TMEMBER_PTR(_spriteSet));
-	persistMgr->transfer(TMEMBER(_spriteSetFilename));
+	persistMgr->transferCharPtr(TMEMBER(_spriteSetFilename));
 
 	return STATUS_OK;
 }
@@ -292,4 +292,4 @@ BaseSprite *AdTalkNode::getSprite(TDirection dir) {
 	}
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

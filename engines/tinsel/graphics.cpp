@@ -798,7 +798,7 @@ static void PackedWrtNonZero(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP,
  */
 void ClearScreen() {
 	byte blackColorIndex = (!TinselV1Mac) ? 0 : 255;
-	void *pDest = _vm->screen().getBasePtr(0, 0);
+	void *pDest = _vm->screen().getPixels();
 	memset(pDest, blackColorIndex, SCREEN_WIDTH * SCREEN_HEIGHT);
 	g_system->fillScreen(blackColorIndex);
 	g_system->updateScreen();

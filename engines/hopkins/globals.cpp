@@ -134,7 +134,7 @@ Globals::~Globals() {
 void Globals::setConfig() {
 	// CHECKME: Should be in Globals() but it doesn't work
 	// The Polish version is a translation of the English version. The filenames are the same.
-	// The Russian version looks like a translation of the English version, based on the filenames. 
+	// The Russian version looks like a translation of the English version, based on the filenames.
 	switch (_vm->getLanguage()) {
 	case Common::EN_ANY:
 	case Common::PL_POL:
@@ -148,7 +148,7 @@ void Globals::setConfig() {
 		_language = LANG_SP;
 		break;
 	default:
-		warning("Unknown language in internal language mapping");
+		error("Hopkins - SetConfig(): Unknown language in internal language mapping");
 		break;
 	}
 	// End of CHECKME

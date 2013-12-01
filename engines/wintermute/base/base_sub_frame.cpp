@@ -34,10 +34,11 @@
 #include "engines/wintermute/base/base_surface_storage.h"
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_engine.h"
-#include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
+#include "engines/wintermute/graphics/transform_tools.h"
+#include "engines/wintermute/graphics/transform_struct.h"
 
 namespace Wintermute {
 
@@ -46,12 +47,13 @@ IMPLEMENT_PERSISTENT(BaseSubFrame, false)
 //////////////////////////////////////////////////////////////////////////
 BaseSubFrame::BaseSubFrame(BaseGame *inGame) : BaseScriptable(inGame, true) {
 	_surface = nullptr;
-	_hotspotX = _hotspotY = 0;
-	_alpha = 0xFFFFFFFF;
+	_hotspotX = kDefaultHotspotX;
+	_hotspotY = kDefaultHotspotY;
+	_alpha = kDefaultRgbaMod;
 	_transparent = 0xFFFF00FF;
 
 	_wantsDefaultRect = false;
-	BasePlatform::setRectEmpty(&_rect);
+	_rect.setEmpty();
 
 	_editorSelected = false;
 
@@ -94,7 +96,7 @@ TOKEN_DEF(EDITOR_SELECTED)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////
-bool BaseSubFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
+bool BaseSubFrame::loadBuffer(char *buffer, int lifeTime, bool keepLoaded) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(IMAGE)
 	TOKEN_TABLE(TRANSPARENT)
@@ -118,13 +120,13 @@ bool BaseSubFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 	int r = 255, g = 255, b = 255;
 	int ar = 255, ag = 255, ab = 255, alpha = 255;
 	bool custoTrans = false;
-	BasePlatform::setRectEmpty(&rect);
+	rect.setEmpty();
 	char *surfaceFile = nullptr;
 
 	delete _surface;
 	_surface = nullptr;
 
-	while ((cmd = parser.getCommand((char **)&buffer, commands, &params)) > 0) {
+	while ((cmd = parser.getCommand(&buffer, commands, &params)) > 0) {
 		switch (cmd) {
 		case TOKEN_IMAGE:
 			surfaceFile = params;
@@ -176,7 +178,7 @@ bool BaseSubFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 			break;
 
 		case TOKEN_EDITOR_PROPERTY:
-			parseEditorProperty((byte *)params, false);
+			parseEditorProperty(params, false);
 			break;
 		}
 	}
@@ -205,7 +207,7 @@ bool BaseSubFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 	    return STATUS_FAILED;
 	}
 	*/
-	if (BasePlatform::isRectEmpty(&rect)) {
+	if (rect.isRectEmpty()) {
 		setDefaultRect();
 	} else {
 		setRect(rect);
@@ -216,7 +218,7 @@ bool BaseSubFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 
 Rect32 BaseSubFrame::getRect() {
 	if (_wantsDefaultRect && _surface) {
-		BasePlatform::setRect(&_rect, 0, 0, _surface->getWidth(), _surface->getHeight());
+		_rect.setRect(0, 0, _surface->getWidth(), _surface->getHeight());
 		_wantsDefaultRect = false;
 	}
 	return _rect;
@@ -233,12 +235,18 @@ const char* BaseSubFrame::getSurfaceFilename() {
 
 //////////////////////////////////////////////////////////////////////
 bool BaseSubFrame::draw(int x, int y, BaseObject *registerOwner, float zoomX, float zoomY, bool precise, uint32 alpha, float rotate, TSpriteBlendMode blendMode) {
+	
+	rotate = fmod(rotate, 360.0f);
+	if (rotate < 0) {
+		rotate += 360.0f;
+	}
+
 	if (!_surface) {
 		return STATUS_OK;
 	}
 
 	if (registerOwner != nullptr && !_decoration) {
-		if (zoomX == 100 && zoomY == 100) {
+		if (zoomX == kDefaultZoomX && zoomY == kDefaultZoomY) {
 			BaseEngine::getRenderer()->addRectToList(new BaseActiveRect(_gameRef,  registerOwner, this, x - _hotspotX + getRect().left, y  - _hotspotY + getRect().top, getRect().right - getRect().left, getRect().bottom - getRect().top, zoomX, zoomY, precise));
 		} else {
 			BaseEngine::getRenderer()->addRectToList(new BaseActiveRect(_gameRef,  registerOwner, this, (int)(x - (_hotspotX + getRect().left) * (zoomX / 100)), (int)(y - (_hotspotY + getRect().top) * (zoomY / 100)), (int)((getRect().right - getRect().left) * (zoomX / 100)), (int)((getRect().bottom - getRect().top) * (zoomY / 100)), zoomX, zoomY, precise));
@@ -251,17 +259,24 @@ bool BaseSubFrame::draw(int x, int y, BaseObject *registerOwner, float zoomX, fl
 	bool res;
 
 	//if (Alpha==0xFFFFFFFF) Alpha = _alpha; // TODO: better (combine owner's and self alpha)
-	if (_alpha != 0xFFFFFFFF) {
+	if (_alpha != kDefaultRgbaMod) {
 		alpha = _alpha;
 	}
 
-	if (rotate != 0.0f) {
-		res = _surface->displayTransform((int)(x - _hotspotX * (zoomX / 100)), (int)(y - _hotspotY * (zoomY / 100)), _hotspotX, _hotspotY, getRect(), zoomX, zoomY, alpha, rotate, blendMode, _mirrorX, _mirrorY);
+	if (rotate != kDefaultAngle) {
+		Point32 boxOffset, rotatedHotspot, hotspotOffset, newOrigin;
+		Point32 origin(x, y);
+		Rect32 oldRect = getRect();
+		Point32 newHotspot;
+		TransformStruct transform = TransformStruct(zoomX, zoomY, (uint32)rotate, _hotspotX, _hotspotY, blendMode, alpha, _mirrorX, _mirrorY, 0, 0);
+		Rect32 newRect = TransformTools::newRect (oldRect, transform, &newHotspot);
+		newOrigin = origin - newHotspot;
+		res = _surface->displayTransform(newOrigin.x, newOrigin.y, oldRect, newRect, transform); 
 	} else {
-		if (zoomX == 100 && zoomY == 100) {
+		if (zoomX == kDefaultZoomX && zoomY == kDefaultZoomY) {
 			res = _surface->displayTrans(x - _hotspotX, y - _hotspotY, getRect(), alpha, blendMode, _mirrorX, _mirrorY);
 		} else {
-			res = _surface->displayTransZoom((int)(x - _hotspotX * (zoomX / 100)), (int)(y - _hotspotY * (zoomY / 100)), getRect(), zoomX, zoomY, alpha, blendMode, _mirrorX, _mirrorY);
+			res = _surface->displayTransZoom((int)(x - _hotspotX * (zoomX / kDefaultZoomX)), (int)(y - _hotspotY * (zoomY / kDefaultZoomY)), getRect(), zoomX, zoomY, alpha, blendMode, _mirrorX, _mirrorY);
 		}
 	}
 
@@ -278,11 +293,10 @@ bool BaseSubFrame::getBoundingRect(Rect32 *rect, int x, int y, float scaleX, flo
 	float ratioX = scaleX / 100.0f;
 	float ratioY = scaleY / 100.0f;
 
-	BasePlatform::setRect(rect,
-	                      (int)(x - _hotspotX * ratioX),
-	                      (int)(y - _hotspotY * ratioY),
-	                      (int)(x - _hotspotX * ratioX + (getRect().right - getRect().left) * ratioX),
-	                      (int)(y - _hotspotY * ratioY + (getRect().bottom - getRect().top) * ratioY));
+	rect->setRect((int)(x - _hotspotX * ratioX),
+				  (int)(y - _hotspotY * ratioY),
+				  (int)(x - _hotspotX * ratioX + (getRect().right - getRect().left) * ratioX),
+				  (int)(y - _hotspotY * ratioY + (getRect().bottom - getRect().top) * ratioY));
 	return true;
 }
 
@@ -302,9 +316,9 @@ bool BaseSubFrame::saveAsText(BaseDynamicBuffer *buffer, int indent, bool comple
 	}
 
 	Rect32 rect;
-	BasePlatform::setRectEmpty(&rect);
+	rect.setEmpty();
 	if (_surface) {
-		BasePlatform::setRect(&rect, 0, 0, _surface->getWidth(), _surface->getHeight());
+		rect.setRect(0, 0, _surface->getWidth(), _surface->getHeight());
 	}
 	if (!(rect == getRect())) {
 		buffer->putTextIndent(indent + 2, "RECT { %d,%d,%d,%d }\n", getRect().left, getRect().top, getRect().right, getRect().bottom);
@@ -360,7 +374,7 @@ void BaseSubFrame::setDefaultRect() {
 		_wantsDefaultRect = true;
 	} else {
 		_wantsDefaultRect = false;
-		BasePlatform::setRectEmpty(&_rect);
+		_rect.setEmpty();
 	}
 }
 
@@ -370,27 +384,27 @@ bool BaseSubFrame::persist(BasePersistenceManager *persistMgr) {
 
 	BaseScriptable::persist(persistMgr);
 
-	persistMgr->transfer(TMEMBER(_2DOnly));
-	persistMgr->transfer(TMEMBER(_3DOnly));
-	persistMgr->transfer(TMEMBER(_alpha));
-	persistMgr->transfer(TMEMBER(_decoration));
-	persistMgr->transfer(TMEMBER(_editorSelected));
-	persistMgr->transfer(TMEMBER(_hotspotX));
-	persistMgr->transfer(TMEMBER(_hotspotY));
-	persistMgr->transfer(TMEMBER(_rect));
-	persistMgr->transfer(TMEMBER(_wantsDefaultRect));
+	persistMgr->transferBool(TMEMBER(_2DOnly));
+	persistMgr->transferBool(TMEMBER(_3DOnly));
+	persistMgr->transferUint32(TMEMBER(_alpha));
+	persistMgr->transferBool(TMEMBER(_decoration));
+	persistMgr->transferBool(TMEMBER(_editorSelected));
+	persistMgr->transferSint32(TMEMBER(_hotspotX));
+	persistMgr->transferSint32(TMEMBER(_hotspotY));
+	persistMgr->transferRect32(TMEMBER(_rect));
+	persistMgr->transferBool(TMEMBER(_wantsDefaultRect));
 
-	persistMgr->transfer(TMEMBER(_surfaceFilename));
-	persistMgr->transfer(TMEMBER(_cKDefault));
-	persistMgr->transfer(TMEMBER(_cKRed));
-	persistMgr->transfer(TMEMBER(_cKGreen));
-	persistMgr->transfer(TMEMBER(_cKBlue));
-	persistMgr->transfer(TMEMBER(_lifeTime));
+	persistMgr->transferCharPtr(TMEMBER(_surfaceFilename));
+	persistMgr->transferBool(TMEMBER(_cKDefault));
+	persistMgr->transferByte(TMEMBER(_cKRed));
+	persistMgr->transferByte(TMEMBER(_cKGreen));
+	persistMgr->transferByte(TMEMBER(_cKBlue));
+	persistMgr->transferSint32(TMEMBER(_lifeTime));
 
-	persistMgr->transfer(TMEMBER(_keepLoaded));
-	persistMgr->transfer(TMEMBER(_mirrorX));
-	persistMgr->transfer(TMEMBER(_mirrorY));
-	persistMgr->transfer(TMEMBER(_transparent));
+	persistMgr->transferBool(TMEMBER(_keepLoaded));
+	persistMgr->transferBool(TMEMBER(_mirrorX));
+	persistMgr->transferBool(TMEMBER(_mirrorY));
+	persistMgr->transferUint32(TMEMBER(_transparent));
 
 	return STATUS_OK;
 }
@@ -657,4 +671,4 @@ bool BaseSubFrame::setSurfaceSimple() {
 	}
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

@@ -973,7 +973,7 @@ void AGOSEngine::invertBox(HitArea *ha, byte a, byte b, byte c, byte d) {
 	_videoLockOut |= 0x8000;
 
 	Graphics::Surface *screen = _system->lockScreen();
-	src = (byte *)screen->pixels + ha->y * screen->pitch + ha->x;
+	src = (byte *)screen->getBasePtr(ha->x, ha->y);
 
 	// WORKAROUND: Hitareas for saved game names aren't adjusted for scrolling locations
 	if (getGameType() == GType_SIMON2 && ha->id >= 208 && ha->id <= 213) {

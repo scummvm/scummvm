@@ -43,6 +43,8 @@ namespace Common {
  * behavior in some operations.
  */
 class String {
+public:
+	static const uint32 npos = 0xFFFFFFFF;
 protected:
 	/**
 	 * The size of the internal storage. Increasing this means less heap
@@ -191,6 +193,9 @@ public:
 	/** Remove the character at position p from the string. */
 	void deleteChar(uint32 p);
 
+	/** Remove all characters from position p to the p + len. If len = String::npos, removes all characters to the end */
+	void erase(uint32 p, uint32 len = npos);
+
 	/** Set character c at position p, replacing the previous character there. */
 	void setChar(char c, uint32 p);
 
@@ -229,6 +234,13 @@ public:
 	static String vformat(const char *fmt, va_list args);
 
 public:
+	typedef char          value_type;
+	/**
+	 * Unsigned version of the underlying type. This can be used to cast
+	 * individual string characters to bigger integer types without sign
+	 * extension happening.
+	 */
+	typedef unsigned char unsigned_type;
 	typedef char *        iterator;
 	typedef const char *  const_iterator;
 

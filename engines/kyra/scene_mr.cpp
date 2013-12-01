@@ -577,6 +577,7 @@ void KyraEngine_MR::initSceneScreen(int unk1) {
 	}
 
 	updateCharPal(0);
+	_screen->updateScreen();
 
 	if (!_menuDirectlyToLoad) {
 		_emc->start(&_sceneScriptState, 3);

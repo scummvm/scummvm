@@ -230,7 +230,7 @@ void RL2Decoder::RL2VideoTrack::copyDirtyRectsToBuffer(uint8 *dst, uint pitch) {
 	for (Common::List<Common::Rect>::const_iterator it = _dirtyRects.begin(); it != _dirtyRects.end(); ++it) {
 		for (int y = (*it).top; y < (*it).bottom; ++y) {
 			const int x = (*it).left;
-			memcpy(dst + y * pitch + x, (byte *)_surface->pixels + y * getWidth() + x, (*it).right - x);
+			memcpy(dst + y * pitch + x, (byte *)_surface->getPixels() + y * getWidth() + x, (*it).right - x);
 		}
 	}
 
@@ -238,7 +238,7 @@ void RL2Decoder::RL2VideoTrack::copyDirtyRectsToBuffer(uint8 *dst, uint pitch) {
 }
 
 void RL2Decoder::RL2VideoTrack::copyFrame(uint8 *data) {
-	memcpy((byte *)_surface->pixels, data, getWidth() * getHeight());
+	memcpy((byte *)_surface->getPixels(), data, getWidth() * getHeight());
 
 	// Redraw
 	_dirtyRects.clear();
@@ -248,7 +248,7 @@ void RL2Decoder::RL2VideoTrack::copyFrame(uint8 *data) {
 void RL2Decoder::RL2VideoTrack::rl2DecodeFrameWithoutBackground(int screenOffset) {
 	if (screenOffset == -1)
 		screenOffset = _videoBase;
-	byte *destP = (byte *)_surface->pixels + screenOffset;
+	byte *destP = (byte *)_surface->getPixels() + screenOffset;
 	int frameSize = _surface->w * _surface->h - screenOffset;
 
 	while (frameSize > 0) {
@@ -280,8 +280,8 @@ void RL2Decoder::RL2VideoTrack::rl2DecodeFrameWithoutBackground(int screenOffset
 void RL2Decoder::RL2VideoTrack::rl2DecodeFrameWithBackground() {
 	int screenOffset = _videoBase;
 	int frameSize = _surface->w * _surface->h - _videoBase;
-	byte *src = (byte *)_backSurface->pixels;
-	byte *dest = (byte *)_surface->pixels;
+	byte *src = (byte *)_backSurface->getPixels();
+	byte *dest = (byte *)_surface->getPixels();
 
 	while (frameSize > 0) {
 		byte nextByte = _fileStream->readByte();
