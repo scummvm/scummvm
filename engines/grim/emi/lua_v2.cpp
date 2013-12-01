@@ -199,7 +199,7 @@ void Lua_V2::GetActiveCD() {
 }
 
 void Lua_V2::PurgeText() {
-	TextObject::getPool().deleteObjects();
+	g_emi->purgeText();
 }
 
 void Lua_V2::GetFontDimensions() {
@@ -314,22 +314,11 @@ void Lua_V2::GetCameraRoll() {
 }
 
 void Lua_V2::PushText() {
-	Common::List<TextObject *> *textobjects = new Common::List<TextObject *>;
-	TextObject::Pool::iterator it = TextObject::getPool().begin();
-	for (; it != TextObject::getPool().end(); ++it) {
-		textobjects->push_back(*it);
-		TextObject::getPool().removeObject((*it)->getId());
-	}
-	g_emi->pushText(textobjects);
+	g_emi->pushText();
 }
 
 void Lua_V2::PopText() {
-	Common::List<TextObject *> *textobjects = g_emi->popText();
-	Common::List<TextObject *>::iterator it = textobjects->begin();
-	for (; it != textobjects->end(); ++it) {
-		TextObject::getPool().addObject(*it);
-	}
-	delete textobjects;
+	g_emi->popText();
 }
 
 void Lua_V2::GetSectorName() {

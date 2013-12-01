@@ -118,6 +118,10 @@ public:
 	void saveState(SaveGame *state) const;
 	bool restoreState(SaveGame *state);
 
+	int getStackLevel() { return _stackLevel; }
+	void incStackLevel() { _stackLevel++; }
+	void decStackLevel() { assert(_stackLevel > 0); _stackLevel--; }
+
 	enum Justify {
 		NONE,
 		CENTER,
@@ -141,6 +145,8 @@ protected:
 	bool _blastDraw;
 	bool _isSpeech;
 	bool _created;
+
+	int _stackLevel;
 };
 
 } // end of namespace Grim
