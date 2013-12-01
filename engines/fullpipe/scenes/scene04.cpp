@@ -33,6 +33,7 @@
 #include "fullpipe/interaction.h"
 #include "fullpipe/gameloader.h"
 #include "fullpipe/behavior.h"
+#include "fullpipe/motion.h"
 
 namespace Fullpipe {
 
@@ -446,7 +447,30 @@ void sceneHandler04_updateBottle() {
 }
 
 void sceneHandler04_winArcade() {
-	warning("sceneHandler04_winArcade()");
+	if (g_fullpipe->getObjectState(sO_LowerPipe) == g_fullpipe->getObjectEnumState(sO_LowerPipe, sO_IsClosed)
+		&& g_vars->scene04_soundPlaying) {
+		g_vars->scene04_clock->changeStatics2(ST_CLK_CLOSED);
+		g_vars->scene04_hand->changeStatics2(ST_HND_EMPTY);
+
+		chainQueue(QU_HND_TAKEBOTTLE, 1);
+
+		if (g_vars->scene04_walkingKozyawka) {
+			g_vars->scene04_kozyawkiObjList.push_back(g_vars->scene04_walkingKozyawka);
+
+			g_vars->scene04_walkingKozyawka->changeStatics2(ST_KZW_EMPTY);
+			g_vars->scene04_walkingKozyawka->hide();
+			g_vars->scene04_walkingKozyawka = 0;
+		}
+
+		g_vars->scene04_var19 = 0;
+		g_vars->scene04_soundPlaying = 0;
+
+		getSc2MctlCompoundBySceneId(g_fullpipe->_currentScene->_sceneId)->setEnabled();
+
+		getGameLoaderInteractionController()->enableFlag24();
+
+		g_fullpipe->stopSoundStream2();
+	}
 }
 
 int sceneHandler04(ExCommand *ex) {
