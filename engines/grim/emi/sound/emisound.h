@@ -65,7 +65,7 @@ public:
 	int32 getPosIn16msTicks(const char *soundName);
 
 	void setVolume(const char *soundName, int volume);
-	void setPan(const char *soundName, int pan);
+	void setPan(const char *soundName, int pan); /* pan: 0 .. 127 */
 
 	void setMusicState(int stateId);
 	void selectMusicSet(int setId);

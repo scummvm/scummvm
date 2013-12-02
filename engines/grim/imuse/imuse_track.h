@@ -69,7 +69,8 @@ struct Track {
 		soundName[0] = 0;
 	}
 
-	int getPan() const { return (pan != 6400) ? 2 * (pan / 1000) - 127 : 0; }
+	/* getPan() returns -127 ... 127 */
+	int getPan() const { return (pan != 64000) ? 2 * (pan / 1000) - 127 : 0; }
 	int getVol() const { return vol / 1000; }
 	Audio::Mixer::SoundType getType() const {
 		Audio::Mixer::SoundType type = Audio::Mixer::kPlainSoundType;

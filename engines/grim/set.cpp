@@ -747,7 +747,16 @@ void Set::setSoundPosition(const char *soundName, const Math::Vector3d &pos) {
 }
 
 void Set::setSoundPosition(const char *soundName, const Math::Vector3d &pos, int minVol, int maxVol) {
+	int newBalance, newVolume;
+	calculateSoundPosition(pos, minVol, maxVol, newVolume, newBalance);
+	g_sound->setVolume(soundName, newVolume);
+	g_sound->setPan(soundName, newBalance);
+}
+
+void Set::calculateSoundPosition(const Math::Vector3d &pos, int minVol, int maxVol, int &volume, int &balance) {
 	// TODO: The volume and pan needs to be updated when the setup changes.
+
+	/* distance calculation */
 	Math::Vector3d cameraPos = _currSetup->_pos;
 	Math::Vector3d vector = pos - cameraPos;
 	float distance = vector.getMagnitude();
@@ -757,23 +766,35 @@ void Set::setSoundPosition(const char *soundName, const Math::Vector3d &pos, int
 	newVolume += minVol;
 	if (newVolume > _maxVolume)
 		newVolume = _maxVolume;
-	g_sound->setVolume(soundName, newVolume);
+	volume = newVolume;
+	float angle;
 
-	Math::Vector3d cameraVector = _currSetup->_interest - _currSetup->_pos;
-	Math::Vector3d up(0, 0, 1);
-	Math::Vector3d right;
-	cameraVector.normalize();
-	float roll = -_currSetup->_roll * LOCAL_PI / 180.f;
-	float cosr = cos(roll);
-	// Rotate the up vector by roll.
-	up = up * cosr + Math::Vector3d::crossProduct(cameraVector, up) * sin(roll) +
-		 cameraVector * Math::Vector3d::dotProduct(cameraVector, up) * (1 - cosr);
-	right = Math::Vector3d::crossProduct(cameraVector, up);
-	right.normalize();
-	float angle = atan2(Math::Vector3d::dotProduct(vector, right),
-						Math::Vector3d::dotProduct(vector, cameraVector));
+	if (g_grim->getGameType() == GType_MONKEY4) {
+		Math::Quaternion q = Math::Quaternion(
+		    _currSetup->_interest.x(), _currSetup->_interest.y(), _currSetup->_interest.z(),
+		    _currSetup->_roll);
+		Math::Matrix4 worldRot = q.toMatrix();
+		Math::Vector3d relPos = (pos - _currSetup->_pos);
+		Math::Vector3d p(relPos);
+		worldRot.inverseRotate(&p);
+		angle = atan2(p.x(), p.z());
+	} else {
+		Math::Vector3d cameraVector = _currSetup->_interest - _currSetup->_pos;
+		Math::Vector3d up(0, 0, 1);
+		Math::Vector3d right;
+		cameraVector.normalize();
+		float roll = -_currSetup->_roll * LOCAL_PI / 180.f;
+		float cosr = cos(roll);
+		// Rotate the up vector by roll.
+		up = up * cosr + Math::Vector3d::crossProduct(cameraVector, up) * sin(roll) +
+			 cameraVector * Math::Vector3d::dotProduct(cameraVector, up) * (1 - cosr);
+		right = Math::Vector3d::crossProduct(cameraVector, up);
+		right.normalize();
+		angle = atan2(Math::Vector3d::dotProduct(vector, right),
+							Math::Vector3d::dotProduct(vector, cameraVector));
+	}
 	float pan = sin(angle);
-	g_sound->setPan(soundName, (int)((pan + 1.f) / 2.f * 127.f + 0.5f));
+	balance = (int)((pan + 1.f) / 2.f * 127.f + 0.5f);
 }
 
 Sector *Set::getSectorBase(int id) {

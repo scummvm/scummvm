@@ -39,7 +39,7 @@ public:
 	AIFFTrack(Audio::Mixer::SoundType soundType, DisposeAfterUse::Flag disposeOfStream = DisposeAfterUse::YES);
 	~AIFFTrack();
 	bool openSound(const Common::String &soundName, Common::SeekableReadStream *file);
-	bool isPlaying() { return true; }
+	bool isPlaying();
 	bool isStreamOpen() { return _stream != NULL; }
 	void setLooping(bool looping);
 	bool play();

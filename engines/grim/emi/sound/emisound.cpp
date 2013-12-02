@@ -135,7 +135,9 @@ void EMISound::setVolume(const char *soundName, int volume) {
 }
 
 void EMISound::setPan(const char *soundName, int pan) {
-	warning("EMI doesn't support sound-panning yet, %s", soundName);
+	int32 channel = getChannelByName(soundName);
+	assert(channel != -1);
+	g_system->getMixer()->setChannelBalance(*_channels[channel]->getHandle(), pan * 2 - 127);
 }
 
 SoundTrack *EMISound::createEmptyMusicTrack() const {

@@ -42,6 +42,21 @@ PoolSound::~PoolSound() {
 	delete _track;
 }
 
+void PoolSound::setVolume(int volume) {
+	if (!_track) {
+		warning("PoolSound::setVolume: no track found");
+		return;
+	}
+	_track->setVolume(volume);
+}
+
+void PoolSound::setBalance(int balance) {
+	if (!_track) {
+		warning("PoolSound::setBalance: no track found");
+		return;
+	}
+	_track->setBalance(balance);
+}
 void PoolSound::play(bool looping) {
 	if (!_track)
 		return;

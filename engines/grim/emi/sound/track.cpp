@@ -33,6 +33,8 @@ SoundTrack::SoundTrack() {
 	_stream = NULL;
 	_handle = NULL;
 	_paused = false;
+	_balance = 0;
+	_volume = Audio::Mixer::kMaxChannelVolume;
 	_disposeAfterPlaying = DisposeAfterUse::YES;
 
 	// Initialize to a plain sound for now
@@ -52,10 +54,24 @@ void SoundTrack::setSoundName(const Common::String &name) {
 	_soundName = name;
 }
 
+void SoundTrack::setVolume(int volume) {
+	_volume = volume;
+	if (_handle) {
+		g_system->getMixer()->setChannelVolume(*_handle, _volume);
+	}
+}
+
+void SoundTrack::setBalance(int balance) {
+	_balance = balance;
+	if (_handle) {
+		g_system->getMixer()->setChannelBalance(*_handle, _balance);
+	}
+}
+
 bool SoundTrack::play() {
 	if (_stream) {
 		// If _disposeAfterPlaying is NO, the destructor will take care of the stream.
-		g_system->getMixer()->playStream(_soundType, _handle, _stream, -1, Audio::Mixer::kMaxChannelVolume, 0, _disposeAfterPlaying);
+		g_system->getMixer()->playStream(_soundType, _handle, _stream, -1, _volume, _balance, _disposeAfterPlaying);
 		return true;
 	}
 	return false;
