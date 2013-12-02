@@ -518,20 +518,28 @@ void GrimEngine::updateDisplayScene() {
 		}
 		drawPrimitives();
 	} else if (_mode == NormalMode || _mode == OverworldMode) {
-		if (!_currSet)
-			return;
-
-		g_driver->clearScreen();
-
-		drawNormalMode();
-
-		g_driver->drawBuffers();
-		drawPrimitives();
+		updateNormalMode();
 	} else if (_mode == DrawMode) {
-		_doFlip = false;
-		_prevSmushFrame = 0;
-		_movieTime = 0;
+		updateDrawMode();
 	}
+}
+
+void GrimEngine::updateNormalMode() {
+	if (!_currSet)
+		return;
+
+	g_driver->clearScreen();
+
+	drawNormalMode();
+
+	g_driver->drawBuffers();
+	drawPrimitives();
+}
+
+void GrimEngine::updateDrawMode() {
+	_doFlip = false;
+	_prevSmushFrame = 0;
+	_movieTime = 0;
 }
 
 void GrimEngine::drawNormalMode() {

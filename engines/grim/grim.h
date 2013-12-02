@@ -202,6 +202,8 @@ protected:
 	void savegameCallback();
 	void createRenderer();
 	virtual LuaBase *createLua();
+	virtual void updateNormalMode();
+	virtual void updateDrawMode();
 	virtual void drawNormalMode();
 
 	void savegameSave();
