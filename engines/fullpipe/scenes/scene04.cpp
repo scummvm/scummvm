@@ -433,6 +433,16 @@ void sceneHandler04_sub9(StaticANIObject *ani) {
 	warning("sceneHandler04_sub9()");
 }
 
+void sceneHandler04_sub12() {
+	StaticANIObject *ball =  g_fullpipe->_currentScene->getStaticANIObject1ById(ANI_BIGBALL, -1);
+
+	if (ball && ball->_flags & 4)
+		for (uint i = 0; i < ball->_movements.size(); i++)
+			((Movement *)ball->_movements[i])->_counterMax = 0;
+
+	g_vars->scene04_var13 = 0;
+}
+
 void sceneHandler04_sub15() {
 	warning("sceneHandler04_sub15()");
 }
