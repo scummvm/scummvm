@@ -457,6 +457,8 @@ Ringworld2Globals::Ringworld2Globals() {
 	_foodCount = 0;
 	_rimLocation = 0;
 	_rimTransportLocation = 0;
+
+	_debugCardGame = false;
 }
 
 Ringworld2Globals::~Ringworld2Globals() {
@@ -583,6 +585,8 @@ void Ringworld2Globals::reset() {
 	_player._characterScene[R2_QUINN] = 100;
 	_player._characterScene[R2_SEEKER] = 300;
 	_player._characterScene[R2_MIRANDA] = 300;
+
+	_debugCardGame = false;
 }
 
 void Ringworld2Globals::synchronize(Serializer &s) {

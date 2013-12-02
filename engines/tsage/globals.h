@@ -292,6 +292,7 @@ public:
 	byte _stripManager_lookupList[12];
 	byte _scene1550JunkLocations[508];
 	Common::Point _balloonPosition;
+	bool _debugCardGame;               // moved from scene 1337 so it can be easily set in the debugger
 
 	ScannerDialog *_scannerDialog;
 

@@ -312,7 +312,6 @@ public:
 	int _field4242;
 	bool _field4244;
 	bool _field4246;
-	int _field4248;
 	int _field424A;
 	int _instructionsDisplayedFl;
 	int _instructionsWaitCount;

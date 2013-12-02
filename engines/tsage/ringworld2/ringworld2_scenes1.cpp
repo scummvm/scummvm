@@ -2247,7 +2247,6 @@ Scene1337::Scene1337() {
 	_field4242 = 0;
 	_field4244 = false;
 	_field4246 = false;
-	_field4248 = 0;
 	_field424A = 0;
 	_instructionsDisplayedFl = 0;
 	_instructionsWaitCount = 0;
@@ -3398,7 +3397,7 @@ void Scene1337::Action4::signal() {
 			scene->_gameBoardSide[scene->_currentPlayerNumb]._handCard[0]._card.fixPriority(170);
 		}
 
-		if ((scene->_field4248 == 1) || (scene->_currentPlayerNumb == 2))
+		if ((R2_GLOBALS._debugCardGame) || (scene->_currentPlayerNumb == 2))
 			scene->setAnimationInfo(&scene->_gameBoardSide[scene->_currentPlayerNumb]._handCard[0]);
 
 		scene->_animatedCard._card.hide();
@@ -3433,7 +3432,7 @@ void Scene1337::Action4::signal() {
 			scene->_gameBoardSide[scene->_currentPlayerNumb]._handCard[1]._card.fixPriority(170);
 		}
 
-		if ((scene->_field4248 == 1) || (scene->_currentPlayerNumb == 2))
+		if ((R2_GLOBALS._debugCardGame) || (scene->_currentPlayerNumb == 2))
 			scene->setAnimationInfo(&scene->_gameBoardSide[scene->_currentPlayerNumb]._handCard[1]);
 
 		scene->_animatedCard._card.hide();
@@ -3468,7 +3467,7 @@ void Scene1337::Action4::signal() {
 			scene->_gameBoardSide[scene->_currentPlayerNumb]._handCard[2]._card.fixPriority(170);
 		}
 
-		if ((scene->_field4248 == 1) || (scene->_currentPlayerNumb == 2))
+		if ((R2_GLOBALS._debugCardGame) || (scene->_currentPlayerNumb == 2))
 			scene->setAnimationInfo(&scene->_gameBoardSide[scene->_currentPlayerNumb]._handCard[2]);
 
 		scene->_animatedCard._card.hide();
@@ -3503,7 +3502,7 @@ void Scene1337::Action4::signal() {
 			scene->_gameBoardSide[scene->_currentPlayerNumb]._handCard[3]._card.fixPriority(170);
 		}
 
-		if ((scene->_field4248 == 1) || (scene->_currentPlayerNumb == 2))
+		if ((R2_GLOBALS._debugCardGame) || (scene->_currentPlayerNumb == 2))
 			scene->setAnimationInfo(&scene->_gameBoardSide[scene->_currentPlayerNumb]._handCard[3]);
 
 		scene->_animatedCard._card.hide();
@@ -5529,7 +5528,6 @@ void Scene1337::subPostInit() {
 
 	_field4244 = true;
 	_field4246 = false;
-	_field4248 = 0;
 	_field424A = -1;
 
 	_background1.setup2(9531, 1, 1, 249, 168, 155, 0);
