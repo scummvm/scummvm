@@ -87,4 +87,11 @@ bool MP3Track::hasLooped() {
 	return las->getCompleteIterations() > 0;
 }
 
+bool MP3Track::isPlaying() {
+	if (!_handle)
+		return false;
+
+	return g_system->getMixer()->isSoundHandleActive(*_handle);
+}
+
 } // end of namespace Grim
