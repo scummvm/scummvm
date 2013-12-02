@@ -10,6 +10,10 @@ List of fixed bugs in EMI scripts:
 	further details. At the moment, these modifications applies only to the demo
 	and the Windows retail versions.
 
+	-Fix the way that Guybrush stands on the raft when using his inventory in mot - mot.lua.patch
+	There is a varible that is never declared in mot.lua which positions Guybrush on
+	the raft. Instead of using that one, just use the other variable they probably meant to use.
+
 Contents of residualvm-emi-patch.m4b and its rebuild:
 
 residualvm-emi-patch.m4b contains all .patchr files in the
