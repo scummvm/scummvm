@@ -448,6 +448,28 @@ void sceneHandler04_sub15() {
 }
 
 void sceneHandler04_sub17() {
+#if 0
+	StaticANIObject *ball =  g_fullpipe->_currentScene->getStaticANIObject1ById(ANI_BIGBALL, -1);
+
+	if (g_vars->scene04_var01
+		 && (!ball || !(ball->_flags & 4))
+		 && g_vars->scene04_ladder->collisionDetection(g_fullpipe->_aniMan) > 3) {
+
+		if (!g_fullpipe->_rnd->getRandomNumber(49)) {
+			if (g_vars->scene04_var15)
+				chainQueue(QU_BALL_WALKR, 0);
+			else
+				chainQueue(QU_BALL_WALKL, 0);
+
+			g_vars->scene04_var15 = !g_vars->scene04_var15;
+
+			sceneHandler04_checkBigBallClick();
+
+			g_vars->scene04_var14 = 0;
+		}
+	}
+#endif
+
 	warning("sceneHandler04_sub17()");
 }
 
