@@ -135,6 +135,9 @@ void global_messageHandler_handleSound(ExCommand *cmd) {
 	debug(0, "STUB: global_messageHandler_handleSound()");
 }
 
+void FullpipeEngine::stopSoundStream2() {
+	warning("STUB: FullpipeEngine::stopSoundStream2()");
+}
 
 
 } // End of namespace Fullpipe

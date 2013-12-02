@@ -185,10 +185,10 @@ public:
 class Scene1337 : public SceneExt {
 	class unkObj1337sub1: public SceneHotspot {
 	public:
-		SceneObject _object1;
+		SceneObject _card;
 
-		int _field34;
-		Common::Point _field36;
+		int _cardId;
+		Common::Point _stationPos;
 
 		unkObj1337sub1();
 		void synchronize(Serializer &s);
@@ -196,9 +196,9 @@ class Scene1337 : public SceneExt {
 
 	class unkObj1337_1: public SceneHotspot {
 	public:
-		unkObj1337sub1 _arr1[4];
-		unkObj1337sub1 _arr2[8];
-		unkObj1337sub1 _arr3[1];
+		unkObj1337sub1 _handCard[4];
+		unkObj1337sub1 _outpostStation[8];
+		unkObj1337sub1 _delayPile[1];
 		unkObj1337sub1 _arr4[1];
 
 		Common::Point _fieldB94;
@@ -213,8 +213,7 @@ class Scene1337 : public SceneExt {
 
 	class Action1337: public Action {
 	public:
-		void subD18B5(int resNum, int stripNum, int frameNum);
-		void skipFrames(int32 skipCount);
+		void waitFrames(int32 frameCount);
 	};
 
 	class Action1: public Action1337 {
@@ -277,9 +276,9 @@ public:
 	ASound _aSound2;
 	BackgroundSceneObject _background1;
 	bool _autoplay;
-	unkObj1337_1 _arrunkObj1337[4];
+	unkObj1337_1 _gameBoardSide[4];
 	SceneItem _item1;
-	SceneObject _object1;
+	SceneObject _currentPlayerArrow;
 	Action1 _action1;
 	Action2 _action2;
 	Action3 _action3;
@@ -293,33 +292,35 @@ public:
 	Action11 _action11;
 	Action12 _action12;
 	Action13 _action13;
-	unkObj1337sub1 _item2;
-	unkObj1337sub1 _item3;
+	unkObj1337sub1 _animatedCard;
+	unkObj1337sub1 _shuffleAnimation;
 	unkObj1337sub1 _item4;
 	BackgroundSceneObject _background2;
-	int _field3E24;
+	int _cardsAvailableNumb;
 	int _field3E26;
-	int _field3E28[100];
+	int _availableCardsPile[100];
 	unkObj1337sub1 *_field3EF0;
 	unkObj1337sub1 *_field3EF4;
 	unkObj1337sub1 *_field3EF8;
 	unkObj1337sub1 _item5;
 	unkObj1337sub1 _item6;
-	unkObj1337sub1 _item7;
+	unkObj1337sub1 _discardPile;
 	unkObj1337sub1 _item8;
-	int _field423C;
-	int _field423E;
+	bool _shuffleEndedFl;
+	int _currentPlayerNumb;
 	int _field4240;
 	int _field4242;
-	int _field4244;
-	int _field4246;
-	int _field4248;
+	bool _field4244;
+	bool _field4246;
 	int _field424A;
-	int _field424C;
-	int _field424E;
+	int _instructionsDisplayedFl;
+	int _instructionsWaitCount;
+	int _cursorCurRes;
+	int _cursorCurStrip;
+	int _cursorCurFrame;
 
-	SceneObject _arrObject1[8];
-	SceneObject _arrObject2[8];
+	SceneObject _upperDisplayCard[8];
+	SceneObject _lowerDisplayCard[8];
 
 	Scene1337();
 	virtual void synchronize(Serializer &s);
@@ -358,10 +359,10 @@ public:
 	void subC51A0(unkObj1337sub1 *subObj1, unkObj1337sub1 *subObj2);
 	void displayDialog(int dialogNumb);
 	void subPostInit();
-	void subCB59B();
+	void displayInstructions();
 	void suggestInstructions();
 	void shuffleCards();
-	void subCCF26();
+	void firstShuffle();
 	void subCD193();
 	void subCDB90(int arg1, Common::Point pt);
 	void subCF31D();
@@ -370,11 +371,10 @@ public:
 	void subD0281();
 	void subD02CA();
 	void subD183F(int arg1, int arg2);
-	void subD18B5(int resNum, int rlbNum, int arg3);
-	int  subD18F5();
-	int  subD1917();
-	int  subD1940(bool flag);
-	void subD195F(int arg1, int arg2);
+	void setCursorData(int resNum, int rlbNum, int frameNum);
+	void subD18F5();
+	void subD1917();
+	void subD1940(bool flag);
 	void subD1975(int arg1, int arg2);
 	void subD1A48(int arg1);
 

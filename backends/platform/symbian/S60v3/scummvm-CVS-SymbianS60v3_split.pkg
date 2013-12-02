@@ -65,6 +65,9 @@
 "..\..\..\..\README"-"!:\resource\apps\scummvm\README"
 "..\..\..\..\NEWS"-"!:\resource\apps\scummvm\NEWS"
 
+; Scummvm help
+"..\help\ScummVM.hlp"-"!:\resource\help\ScummVM.hlp"
+
 ; Common datafiles needed for some games
 "..\..\..\..\dists\engine-data\drascula.dat"-"c:\data\scummvm\drascula.dat"
 "..\..\..\..\dists\engine-data\hugo.dat"-"c:\data\scummvm\hugo.dat"
@@ -105,6 +108,7 @@
 "..\..\..\..\gui\themes\fonts\helvBO12.bdf"-"c:\data\scummvm\helvBO12.bdf"
 "..\..\..\..\gui\themes\fonts\helvR12-iso-8859-1.bdf"-"c:\data\scummvm\helvR12-iso-8859-1.bdf"
 "..\..\..\..\gui\themes\fonts\helvR12.bdf"-"c:\data\scummvm\helvR12.bdf"
+;"..\..\..\..\gui\themes\"-"c:\data\scummvm\"
 
 ; Config/log files: 'empty' will automagically be removed on uninstall
 ""-"c:\data\scummvm\scummvm.ini",FILENULL

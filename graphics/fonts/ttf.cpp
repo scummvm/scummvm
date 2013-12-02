@@ -141,7 +141,7 @@ private:
 
 TTFFont::TTFFont()
     : _initialized(false), _face(), _ttfFile(0), _size(0), _width(0), _height(0), _ascent(0),
-      _descent(0), _glyphs(), _monochrome(false), _hasKerning(false) {
+      _descent(0), _glyphs(), _monochrome(false), _hasKerning(false), _allowLateCaching(false) {
 }
 
 TTFFont::~TTFFont() {

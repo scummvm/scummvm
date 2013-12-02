@@ -187,10 +187,12 @@ namespace Fullpipe {
 #define QU_EGTR_MD2_SHOW 4698
 #define QU_EGTR_MD1_SHOW 4697
 #define QU_EGTR_SLIMSHOW 4883
+#define QU_HND_TAKEBOTTLE 1443
 #define QU_IN2_DO 5144
 #define QU_INTR_FINISH 5138
 #define QU_INTR_GETUPMAN 5136
 #define QU_INTR_STARTINTRO 5133
+#define QU_KOZAW_WALK 505
 #define QU_PNK_CLICK 550
 #define QU_SC3_ENTERLIFT 2779
 #define QU_SC3_EXITLIFT 2808
@@ -258,6 +260,7 @@ namespace Fullpipe {
 #define ST_EGTR_MID1 2863
 #define ST_EGTR_MID2 2869
 #define ST_EGTR_SLIM 336
+#define ST_HND_EMPTY 603
 #define ST_IN1MAN_SLEEP 5112
 #define ST_KZW_EMPTY 498
 #define ST_LBN_0N 2832

@@ -33,11 +33,31 @@
 #include "fullpipe/interaction.h"
 #include "fullpipe/gameloader.h"
 #include "fullpipe/behavior.h"
+#include "fullpipe/motion.h"
 
 namespace Fullpipe {
 
-void scene04_callback(int *param) {
-	warning("STUB: scene04_callback");
+static const int scene04_speakerPhases[] = {
+	0, 1,  2,  3, -1, -1,
+	0, 2,  3, -1, -1, -1,
+	0, 2, -1, -1, -1, -1
+};
+
+void scene04_speakerCallback(int *phase) {
+	if (g_vars->scene04_soundPlaying) {
+		if (g_vars->scene04_speakerPhase >= 0) {
+			*phase = scene04_speakerPhases[g_vars->scene04_speakerPhase + 6 * g_vars->scene04_speakerVariant];
+
+			g_vars->scene04_speakerPhase++;
+
+			if (scene04_speakerPhases[g_vars->scene04_speakerPhase + 6 * g_vars->scene04_speakerVariant] < 0) {
+				g_vars->scene04_speakerPhase = 0;
+				g_vars->scene04_speakerVariant = g_fullpipe->_rnd->getRandomNumber(2);
+			}
+		} else {
+			++g_vars->scene04_speakerPhase;
+		}
+	}
 }
 
 void scene04_initScene(Scene *sc) {
@@ -141,9 +161,9 @@ void scene04_initScene(Scene *sc) {
 	}
 
 	g_vars->scene04_var02 = 0;
-	g_vars->scene04_soundPlaying = 0;
+	g_vars->scene04_soundPlaying = false;
 	g_vars->scene04_var04 = 0;
-	g_vars->scene04_var05 = 0;
+	g_vars->scene04_walkingKozyawka = 0;
 	g_vars->scene04_var06 = 2;
 	g_vars->scene04_dynamicPhaseIndex = 0;
 
@@ -166,11 +186,11 @@ void scene04_initScene(Scene *sc) {
 		g_vars->scene04_mamasha->hide();
 
 	g_vars->scene04_speaker = sc->getStaticANIObject1ById(ANI_SPEAKER_4, -1);
-	g_vars->scene04_speaker->_callback2 = scene04_callback;
+	g_vars->scene04_speaker->_callback2 = scene04_speakerCallback;
 	g_vars->scene04_speaker->startAnim(MV_SPK4_PLAY, 0, -1);
 
-	g_vars->scene04_var16 = 0;
-	g_vars->scene04_var17 = 0;
+	g_vars->scene04_speakerVariant = 0;
+	g_vars->scene04_speakerPhase = 0;
 
 	g_fullpipe->initArcadeKeys("SC_4");
 }
@@ -264,7 +284,30 @@ void sceneHandler04_clickPlank() {
 }
 
 void sceneHandler04_dropBottle() {
-	warning("sceneHandler04_dropBottle()");
+	g_vars->scene04_var12 = 1;
+	g_vars->scene04_bottleY = 10;
+	g_vars->scene04_var06 = 0;
+
+	while (g_vars->scene04_kozyawkiAni.size()) {
+		StaticANIObject *koz = g_vars->scene04_kozyawkiAni.front();
+		g_vars->scene04_kozyawkiAni.pop_front();
+
+		for (Common::List<GameObject *>::iterator it = g_vars->scene04_bottleObjList.begin(); it != g_vars->scene04_bottleObjList.end(); ++it)
+			if (*it == koz) {
+				g_vars->scene04_bottleObjList.erase(it);
+				break;
+			}
+
+		koz->queueMessageQueue(0);
+		koz->hide();
+
+		g_vars->scene04_kozyawkiObjList.push_back(koz);
+	}
+
+	g_vars->scene04_hand->changeStatics2(ST_HND_EMPTY);
+
+	g_vars->scene04_hand->setOXY(429, 21);
+	g_vars->scene04_hand->_priority = 15;
 }
 
 void sceneHandler04_gotoLadder(int par) {
@@ -327,8 +370,15 @@ void sceneHandler04_sub1(ExCommand *ex) {
 	g_fullpipe->_behaviorManager->setFlagByStaticAniObject(g_fullpipe->_aniMan, 1);
 }
 
-void sceneHandler04_sub3() {
-	warning("sceneHandler04_sub3()");
+void sceneHandler04_walkKozyawka() {
+	if (g_vars->scene04_kozyawkiObjList.size()) {
+		g_vars->scene04_walkingKozyawka = g_vars->scene04_kozyawkiObjList.front();
+		g_vars->scene04_kozyawkiObjList.pop_front();
+
+		MessageQueue *mq = new MessageQueue(g_fullpipe->_currentScene->getMessageQueueById(QU_KOZAW_WALK), 0, 1);
+		mq->replaceKeyCode(-1, g_vars->scene04_walkingKozyawka->_okeyCode);
+		mq->chain(0);
+	}
 }
 
 void sceneHandler04_sub4() {
@@ -339,8 +389,36 @@ void sceneHandler04_sub5() {
 	warning("sceneHandler04_sub5()");
 }
 
-void sceneHandler04_sub6() {
-	warning("sceneHandler04_sub6()");
+void sceneHandler04_bottleUpdateObjects(int off) {
+	for (Common::List<GameObject *>::iterator it = g_vars->scene04_bottleObjList.begin(); it != g_vars->scene04_bottleObjList.end(); ++it) {
+		GameObject *obj = *it;
+
+		obj->setOXY(obj->_field_8 + 20, off + obj->_field_8 + 24);
+	}
+}
+
+void sceneHandler04_liftBottle() {
+	int newy = g_vars->scene04_bottleY + g_vars->scene04_spring->_oy;
+
+	g_vars->scene04_bottleY += 5;
+
+	sceneHandler04_bottleUpdateObjects(newy - g_vars->scene04_spring->_oy);
+
+	g_vars->scene04_spring->setOXY(g_vars->scene04_spring->_ox, newy);
+
+	if (g_vars->scene04_bottle->_oy >= 226) {
+		sceneHandler04_bottleUpdateObjects(226 - g_vars->scene04_bottle->_oy);
+
+		g_vars->scene04_spring->setOXY(g_vars->scene04_spring->_ox, 437);
+		g_vars->scene04_var12 = 0;
+		g_vars->scene04_var09 = 0;
+		g_vars->scene04_var19 = 1;
+		g_vars->scene04_var06 = 2;
+		g_vars->scene04_var20 = 10;
+		g_vars->scene04_var02 = 0;
+
+		g_fullpipe->setObjectState(sO_LowerPipe, g_fullpipe->getObjectEnumState(sO_LowerPipe, sO_IsClosed));
+	}
 }
 
 void sceneHandler04_sub7() {
@@ -375,10 +453,6 @@ void sceneHandler04_testPlank(ExCommand *ex) {
 	warning("sceneHandler04_testPlank()");
 }
 
-void sceneHandler04_bottleUpdateObjects(int off) {
-	warning("sceneHandler04_bottleUpdateObjects()");
-}
-
 void sceneHandler04_updateBottle() {
 	Common::Point point;
 
@@ -397,7 +471,30 @@ void sceneHandler04_updateBottle() {
 }
 
 void sceneHandler04_winArcade() {
-	warning("sceneHandler04_winArcade()");
+	if (g_fullpipe->getObjectState(sO_LowerPipe) == g_fullpipe->getObjectEnumState(sO_LowerPipe, sO_IsClosed)
+		&& g_vars->scene04_soundPlaying) {
+		g_vars->scene04_clock->changeStatics2(ST_CLK_CLOSED);
+		g_vars->scene04_hand->changeStatics2(ST_HND_EMPTY);
+
+		chainQueue(QU_HND_TAKEBOTTLE, 1);
+
+		if (g_vars->scene04_walkingKozyawka) {
+			g_vars->scene04_kozyawkiObjList.push_back(g_vars->scene04_walkingKozyawka);
+
+			g_vars->scene04_walkingKozyawka->changeStatics2(ST_KZW_EMPTY);
+			g_vars->scene04_walkingKozyawka->hide();
+			g_vars->scene04_walkingKozyawka = 0;
+		}
+
+		g_vars->scene04_var19 = 0;
+		g_vars->scene04_soundPlaying = 0;
+
+		getSc2MctlCompoundBySceneId(g_fullpipe->_currentScene->_sceneId)->setEnabled();
+
+		getGameLoaderInteractionController()->enableFlag24();
+
+		g_fullpipe->stopSoundStream2();
+	}
 }
 
 int sceneHandler04(ExCommand *ex) {
@@ -450,13 +547,14 @@ int sceneHandler04(ExCommand *ex) {
 		break;
 
 	case MSG_KOZAWRESTART:
-		if (g_vars->scene04_var05) {
-			g_vars->scene04_kozyawkiObjList.push_back(g_vars->scene04_var05);
-			g_vars->scene04_var05->hide();
-			g_vars->scene04_var05 = 0;
+		if (g_vars->scene04_walkingKozyawka) {
+			g_vars->scene04_kozyawkiObjList.push_back(g_vars->scene04_walkingKozyawka);
+			g_vars->scene04_walkingKozyawka->hide();
+			g_vars->scene04_walkingKozyawka = 0;
 		}
+
 		if (g_vars->scene04_soundPlaying)
-			sceneHandler04_sub3();
+			sceneHandler04_walkKozyawka();
 
 		break;
 
@@ -507,7 +605,7 @@ int sceneHandler04(ExCommand *ex) {
 				sceneHandler04_sub5();
 
 			if (g_vars->scene04_var12)
-				sceneHandler04_sub6();
+				sceneHandler04_liftBottle();
 
 			if (g_vars->scene04_var08)
 				sceneHandler04_clickLadder();

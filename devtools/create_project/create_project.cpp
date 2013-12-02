@@ -43,6 +43,7 @@
 #include <stack>
 #include <algorithm>
 #include <iomanip>
+#include <iterator>
 
 #include <cstring>
 #include <cstdlib>

@@ -116,10 +116,12 @@ public:
 	SpeakerDriver _driverSpeaker;
 	SpeakerShooter _shooterSpeaker;
 	ASoundExt _sound1;
-	int _action1Count, _talkCount, _field1FBA;
-	int _cuffedDriverFl, _field1FBE;
-	int _field1FC0;
-	int _field1FC2, _harrisonMovedFl;
+	int _action1Count, _talkCount;
+	bool _harrissonTalkFl;
+	bool _cuffedDriverFl;
+	bool _cuffedPassengerFl;
+	bool _field1FC0;
+	bool _driverOutOfTruckFl, _harrisonMovedFl;
 
 	Scene410();
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
@@ -255,7 +257,8 @@ public:
 	NamedObject _door, _counterDoor;
 	Exit _exit;
 	NamedHotspot _interior, _shelf, _counter;
-	int _field19AC, _field19AE;
+	bool _managerCallsWeaselFl;
+	bool _talkManagerFl;
 
 	Scene450();
 	virtual void synchronize(Serializer &s);
