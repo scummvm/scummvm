@@ -304,8 +304,10 @@ void Lua_V1::PutActorAt() {
 	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R'))
 		return;
 
-	if (!lua_isnumber(xObj) || !lua_isnumber(yObj) || !lua_isnumber(zObj))
+	if (!lua_isnumber(xObj) || !lua_isnumber(yObj) || !lua_isnumber(zObj)) {
+		warning("PutActorAt called without valid target position");
 		return;
+	}
 
 	Actor *actor = getactor(actorObj);
 	float x = lua_getnumber(xObj);
