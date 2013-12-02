@@ -37,8 +37,9 @@ public:
 
 	virtual const char *getUpdateFilename();
 
-	void pushText(Common::List<TextObject *> *objects);
-	Common::List<TextObject *> *popText();
+	void pushText();
+	void popText();
+	void purgeText();
 
 	void invalidateActiveActorsList() override;
 	void invalidateTextObjectsSortOrder() override;
@@ -53,7 +54,6 @@ private:
 	static bool compareActor(const Actor *x, const Actor *y);
 	void sortTextObjects();
 
-	Common::List<Common::List<TextObject *> *> _textstack;
 	Common::List<TextObject *> _textObjects;
 
 	bool _textObjectsSortOrderInvalidated;

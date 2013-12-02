@@ -83,14 +83,34 @@ const char *EMIEngine::getUpdateFilename() {
 		return 0;
 }
 
-void EMIEngine::pushText(Common::List<TextObject *> *objects) {
-	_textstack.push_back(objects);
+void EMIEngine::pushText() {
+	foreach (TextObject *t, TextObject::getPool()) {
+		t->incStackLevel();
+	}
+	invalidateTextObjectsSortOrder();
 }
 
-Common::List<TextObject *> *EMIEngine::popText() {
-	Common::List<TextObject *> *object = _textstack.front();
-	_textstack.pop_front();
-	return object;
+void EMIEngine::popText() {
+	foreach (TextObject *t, TextObject::getPool()) {
+		if (t->getStackLevel() == 0) {
+			warning("Text stack top not empty; deleting object");
+			TextObject::getPool().removeObject(t->getId());
+			delete t;
+		} else {
+			t->decStackLevel();
+		}
+	}
+	invalidateTextObjectsSortOrder();
+}
+
+void EMIEngine::purgeText() {
+	foreach (TextObject *t, TextObject::getPool()) {
+		if (t->getStackLevel() == 0) {
+			TextObject::getPool().removeObject(t->getId());
+			delete(t);
+		}
+	}
+	invalidateTextObjectsSortOrder();
 }
 
 void EMIEngine::drawNormalMode() {
@@ -174,7 +194,9 @@ void EMIEngine::sortTextObjects() {
 
 	_textObjects.clear();
 	foreach (TextObject *t, TextObject::getPool()) {
-		_textObjects.push_back(t);
+		if (t->getStackLevel() == 0) {
+			_textObjects.push_back(t);
+		}
 	}
 
 	Common::sort(_textObjects.begin(), _textObjects.end(), compareTextLayer);

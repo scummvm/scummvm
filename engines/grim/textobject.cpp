@@ -48,7 +48,7 @@ void TextObjectCommon::setLayer(int layer) {
 TextObject::TextObject() :
 		TextObjectCommon(), _numberLines(1), _textID(""), _elapsedTime(0),
 		_maxLineWidth(0), _lines(NULL), _userData(NULL), _created(false),
-		_blastDraw(false), _isSpeech(false) {
+		_blastDraw(false), _isSpeech(false), _stackLevel(0) {
 }
 
 TextObject::~TextObject() {
@@ -92,6 +92,7 @@ void TextObject::saveState(SaveGame *state) const {
 
 	if (g_grim->getGameType() == GType_MONKEY4) {
 		state->writeLESint32(_layer);
+		state->writeLESint32(_stackLevel);
 	}
 }
 
@@ -116,6 +117,7 @@ bool TextObject::restoreState(SaveGame *state) {
 
 	if (g_grim->getGameType() == GType_MONKEY4) {
 		_layer = state->readLESint32();
+		_stackLevel = state->readLESint32();
 		g_grim->invalidateTextObjectsSortOrder();
 	}
 
