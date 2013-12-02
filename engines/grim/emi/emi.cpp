@@ -178,6 +178,11 @@ void EMIEngine::drawNormalMode() {
 
 }
 
+void EMIEngine::updateDrawMode() {
+	// For EMI, draw mode is just like normal mode with frozen frame time.
+	updateNormalMode();
+}
+
 void EMIEngine::invalidateTextObjectsSortOrder() {
 	_textObjectsSortOrderInvalidated = true;
 }

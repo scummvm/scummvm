@@ -1191,7 +1191,8 @@ void GrimEngine::buildActiveActorsList() {
 
 	_activeActors.clear();
 	foreach (Actor *a, Actor::getPool()) {
-		if ((_mode == NormalMode && a->isInSet(_currSet->getName())) || a->isInOverworld()) {
+		if (((_mode == NormalMode || _mode == DrawMode) && a->isInSet(_currSet->getName())) ||
+		    a->isInOverworld()) {
 			_activeActors.push_back(a);
 		}
 	}

@@ -49,6 +49,7 @@ public:
 private:
 	LuaBase *createLua() override;
 	void drawNormalMode() override;
+	void updateDrawMode() override;
 	static bool compareTextLayer(const TextObject *x, const TextObject *y);
 	void drawTextObjects() override;
 	static bool compareActor(const Actor *x, const Actor *y);
