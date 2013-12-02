@@ -29,6 +29,7 @@
 #include "buried/graphics.h"
 #include "buried/invdata.h"
 #include "buried/inventory_window.h"
+#include "buried/navarrow.h"
 #include "buried/resources.h"
 #include "buried/scene_view.h"
 #include "buried/sound.h"
@@ -1305,6 +1306,622 @@ int CapacitanceDockingBayDoor::specifyCursor(Window *viewWindow, const Common::P
 	return kCursorArrow;
 }
 
+class ScanningRoomEntryScan : public SceneBase {
+public:
+	ScanningRoomEntryScan(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
+	int postExitRoom(Window *viewWindow, const Location &newLocation);
+	int timerCallback(Window *viewWindow);
+
+private:
+	DestinationScene _savedForwardData;
+};
+
+ScanningRoomEntryScan::ScanningRoomEntryScan(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_savedForwardData = _staticData.destForward;
+
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().aiSCHeardInitialSpeech == 0)
+		_staticData.destForward.destinationScene = Location(-1, -1, -1, -1, -1, -1);
+
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().aiSCInitialAudioChannel > 0) {
+		if (_vm->_sound->isSoundEffectPlaying(((SceneViewWindow *)viewWindow)->getGlobalFlags().aiSCInitialAudioChannel - 1))
+			_staticData.destForward.destinationScene = Location(-1, -1, -1, -1, -1, -1);
+		else
+			((SceneViewWindow *)viewWindow)->getGlobalFlags().aiSCInitialAudioChannel = 0;
+	}
+
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().aiSCConversationStatus == 3)
+		_staticData.destForward.destinationScene = Location(-1, -1, -1, -1, -1, -1);
+}
+
+int ScanningRoomEntryScan::postEnterRoom(Window *viewWindow, const Location &priorLocation) {
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().aiSCHeardInitialSpeech == 0) {
+		// Play the scanning movie
+		((SceneViewWindow *)viewWindow)->playSynchronousAnimation(7);
+
+		// Set the flag
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().aiSCHeardInitialSpeech = 1;
+
+		// Start the initial monologue
+		byte channel = _vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 12), 127, false, true) + 1;
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().aiSCInitialAudioChannel = channel;
+	}
+
+	return SC_TRUE;
+}
+
+int ScanningRoomEntryScan::postExitRoom(Window *viewWindow, const Location &newLocation) {
+	if (newLocation.timeZone == 6 && newLocation.environment == 4 && newLocation.node != 3 && newLocation.node != 0 &&
+			_staticData.location.timeZone == newLocation.timeZone) {
+		_vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 13), 128, false, true);
+	}
+
+	return SC_TRUE;
+}
+
+int ScanningRoomEntryScan::timerCallback(Window *viewWindow) {
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().aiSCInitialAudioChannel > 0 && !_vm->_sound->isSoundEffectPlaying(((SceneViewWindow *)viewWindow)->getGlobalFlags().aiSCInitialAudioChannel - 1)) {
+		_staticData.destForward = _savedForwardData;
+		((GameUIWindow *)viewWindow->getParent())->_navArrowWindow->updateAllArrows(_staticData);
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().aiSCInitialAudioChannel = 0;
+	}
+
+	return SC_TRUE;
+}
+
+class ScanningRoomWalkWarning : public SceneBase {
+public:
+	ScanningRoomWalkWarning(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int postExitRoom(Window *viewWindow, const Location &newLocation);
+	int timerCallback(Window *viewWindow);
+
+private:
+	DestinationScene _savedForwardData;
+};
+
+ScanningRoomWalkWarning::ScanningRoomWalkWarning(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_savedForwardData = _staticData.destForward;
+
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().aiSCInitialAudioChannel > 0) {
+		if (_vm->_sound->isSoundEffectPlaying(((SceneViewWindow *)viewWindow)->getGlobalFlags().aiSCInitialAudioChannel - 1))
+			_staticData.destForward.destinationScene = Location(-1, -1, -1, -1, -1, -1);
+		else
+			((SceneViewWindow *)viewWindow)->getGlobalFlags().aiSCInitialAudioChannel = 0;
+	}
+}
+
+int ScanningRoomWalkWarning::postExitRoom(Window *viewWindow, const Location &newLocation) {
+	if (newLocation.timeZone == 6 && newLocation.environment == 4 && newLocation.node != 3 && newLocation.node != 0 &&
+			((SceneViewWindow *)viewWindow)->getGlobalFlags().aiSCMoveCenterWarning == 0) {
+		if (_staticData.location.timeZone == newLocation.timeZone)
+			_vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 13), 128, false, true);
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().aiSCMoveCenterWarning = 1;
+	}
+
+	return SC_TRUE;
+}
+
+int ScanningRoomWalkWarning::timerCallback(Window *viewWindow) {
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().aiSCInitialAudioChannel > 0 && !_vm->_sound->isSoundEffectPlaying(((SceneViewWindow *)viewWindow)->getGlobalFlags().aiSCInitialAudioChannel - 1)) {
+		_staticData.destForward = _savedForwardData;
+		((GameUIWindow *)viewWindow->getParent())->_navArrowWindow->updateAllArrows(_staticData);
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().aiSCInitialAudioChannel = 0;
+	}
+
+	return SC_TRUE;
+}
+
+class ScanningRoomDockingBayDoor : public SceneBase {
+public:
+	ScanningRoomDockingBayDoor(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int timerCallback(Window *viewWindow);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	bool _audioEnded;
+	Common::Rect _doorRegion;
+};
+
+ScanningRoomDockingBayDoor::ScanningRoomDockingBayDoor(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_audioEnded = true;
+	_doorRegion = Common::Rect(152, 34, 266, 148);
+
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().aiSCInitialAudioChannel > 0) {
+		if (!_vm->_sound->isSoundEffectPlaying(((SceneViewWindow *)viewWindow)->getGlobalFlags().aiSCInitialAudioChannel - 1)) {
+			((SceneViewWindow *)viewWindow)->getGlobalFlags().aiSCInitialAudioChannel = 0;
+			_audioEnded = true;
+		} else {
+			_audioEnded = false;
+		}
+	}
+}
+
+int ScanningRoomDockingBayDoor::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_audioEnded && _doorRegion.contains(pointLocation)) {
+		// Change the still frame
+		int oldFrame = _staticData.navFrameIndex;
+		_staticData.navFrameIndex = 46;
+		viewWindow->invalidateWindow(false);
+
+		// Play the beep and voiceovers
+		_vm->_sound->playSynchronousSoundEffect(_vm->getFilePath(_staticData.location.timeZone, 1, 12));
+		_vm->_sound->playSynchronousSoundEffect(_vm->getFilePath(_staticData.location.timeZone, 1, 13));
+
+		// Reset the frame
+		_staticData.navFrameIndex = oldFrame;
+		viewWindow->invalidateWindow(false);
+
+		// Play Arthur's voiceover
+		if (((SceneViewWindow *)viewWindow)->getGlobalFlags().aiSCDBDoorWarning == 0) {
+			_vm->_sound->playSynchronousSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 11), 127);
+			((SceneViewWindow *)viewWindow)->getGlobalFlags().aiSCDBDoorWarning = 1;
+		}
+	}
+
+	return SC_FALSE;
+}
+
+int ScanningRoomDockingBayDoor::timerCallback(Window *viewWindow) {
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().aiSCInitialAudioChannel > 0 && !_vm->_sound->isSoundEffectPlaying(((SceneViewWindow *)viewWindow)->getGlobalFlags().aiSCInitialAudioChannel - 1)) {
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().aiSCInitialAudioChannel = 0;
+		_audioEnded = true;
+	}
+
+	return SC_TRUE;
+}
+
+int ScanningRoomDockingBayDoor::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_audioEnded && _doorRegion.contains(pointLocation))
+		return kCursorFinger;
+
+	return kCursorArrow;
+}
+
+class ScanningRoomScienceWingDoor : public SceneBase {
+public:
+	ScanningRoomScienceWingDoor(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	Common::Rect _doorRegion;
+};
+
+ScanningRoomScienceWingDoor::ScanningRoomScienceWingDoor(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_doorRegion = Common::Rect(152, 34, 266, 148);
+}
+
+int ScanningRoomScienceWingDoor::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_doorRegion.contains(pointLocation)) {
+		// Change the still frame
+		int oldFrame = _staticData.navFrameIndex;
+		_staticData.navFrameIndex = 44;
+		viewWindow->invalidateWindow(false);
+
+		// Play the beep and voiceovers
+		_vm->_sound->playSynchronousSoundEffect(_vm->getFilePath(_staticData.location.timeZone, 1, 12));
+		_vm->_sound->playSynchronousSoundEffect(_vm->getFilePath(_staticData.location.timeZone, 1, 13));
+
+		// Reset the frame
+		_staticData.navFrameIndex = oldFrame;
+		viewWindow->invalidateWindow(false);
+	}
+
+	return SC_FALSE;
+}
+
+int ScanningRoomScienceWingDoor::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_doorRegion.contains(pointLocation))
+		return kCursorFinger;
+
+	return kCursorArrow;
+}
+
+class ArthurScanningRoomConversation : public SceneBase {
+public:
+	ArthurScanningRoomConversation(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	Common::Rect _yes;
+	Common::Rect _no;
+};
+
+ArthurScanningRoomConversation::ArthurScanningRoomConversation(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_yes = Common::Rect(152, 54, 284, 124);
+	_no = Common::Rect(194, 128, 244, 152);
+}
+
+int ArthurScanningRoomConversation::postEnterRoom(Window *viewWindow, const Location &priorLocation) {
+	// If this is the initial entry, play Arthur's comment
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().aiSCConversationStatus == 0) {
+		((SceneViewWindow *)viewWindow)->playSynchronousAnimation(9);
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().aiSCConversationStatus = 1;
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().aiSCPlayedNoStinger = 0;
+	}
+
+	_staticData.cycleStartFrame = 0;
+	_staticData.cycleFrameCount = 20;
+	_staticData.navFrameIndex = 37;
+	viewWindow->invalidateWindow(false);
+	return SC_TRUE;
+}
+
+int ArthurScanningRoomConversation::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_yes.contains(pointLocation)) {
+		switch (((SceneViewWindow *)viewWindow)->getGlobalFlags().aiSCConversationStatus) {
+		case 1: // Proceed with scan, then ask about downloading into biochips
+			((SceneViewWindow *)viewWindow)->playSynchronousAnimation(8);
+			_staticData.navFrameIndex = 36;
+			((SceneViewWindow *)viewWindow)->playSynchronousAnimation(10);
+			_staticData.navFrameIndex = 37;
+			((SceneViewWindow *)viewWindow)->getGlobalFlags().aiSCConversationStatus = 2;
+			((SceneViewWindow *)viewWindow)->getGlobalFlags().aiSCPlayedNoStinger = 0;
+			viewWindow->invalidateWindow(false); // Original doesn't do this, but I can't see how it works otherwise
+			return SC_TRUE;
+		case 2: { // Proceed with downloading
+			((SceneViewWindow *)viewWindow)->playSynchronousAnimation(11);
+			_staticData.navFrameIndex = 36;
+			((SceneViewWindow *)viewWindow)->getGlobalFlags().aiSCConversationStatus = 3;
+
+			// Move the player back and play the instructions for the door
+			DestinationScene destData;
+			destData.destinationScene = Location(6, 4, 1, 2, 1, 0);
+			destData.transitionType = TRANSITION_VIDEO;
+			destData.transitionData = 0;
+			destData.transitionStartFrame = -1;
+			destData.transitionLength = -1;
+			((SceneViewWindow *)viewWindow)->moveToDestination(destData);
+			return SC_TRUE;
+		}
+		}
+	} else if (_no.contains(pointLocation)) {
+		switch (((SceneViewWindow *)viewWindow)->getGlobalFlags().aiSCConversationStatus) {
+		case 1: { // No-go on the scan, so drop the player back and play the rejection sound file
+			if (((SceneViewWindow *)viewWindow)->getGlobalFlags().aiSCPlayedNoStinger == 0) {
+				_vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 9), 128, false, true);
+				((SceneViewWindow *)viewWindow)->getGlobalFlags().aiSCPlayedNoStinger = 1;
+			}
+
+			DestinationScene destData;
+			destData.destinationScene = Location(6, 4, 1, 2, 1, 0);
+			destData.transitionType = TRANSITION_VIDEO;
+			destData.transitionData = 0;
+			destData.transitionStartFrame = -1;
+			destData.transitionLength = -1;
+			((SceneViewWindow *)viewWindow)->moveToDestination(destData);
+			return SC_TRUE;
+		}
+		case 2: { // No-go on the download, so drop the player back and play the rejection sound file
+			if (((SceneViewWindow *)viewWindow)->getGlobalFlags().aiSCPlayedNoStinger == 0) {
+				_vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 10), 128, false, true);
+				((SceneViewWindow *)viewWindow)->getGlobalFlags().aiSCPlayedNoStinger = 1;
+			}
+
+			DestinationScene destData;
+			destData.destinationScene = Location(6, 4, 1, 2, 1, 0);
+			destData.transitionType = TRANSITION_VIDEO;
+			destData.transitionData = 0;
+			destData.transitionStartFrame = -1;
+			destData.transitionLength = -1;
+			((SceneViewWindow *)viewWindow)->moveToDestination(destData);
+			return SC_TRUE;
+		}
+		}
+	}
+
+	return SC_FALSE;
+}
+
+int ArthurScanningRoomConversation::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_yes.contains(pointLocation) || _no.contains(pointLocation))
+		return kCursorFinger;
+
+	return kCursorArrow;
+}
+
+class ScanningRoomNexusDoorNormalFacing : public SceneBase {
+public:
+	ScanningRoomNexusDoorNormalFacing(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	Common::Rect _clickable;
+};
+
+ScanningRoomNexusDoorNormalFacing::ScanningRoomNexusDoorNormalFacing(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_clickable = Common::Rect(162, 67, 284, 189);
+}
+
+int ScanningRoomNexusDoorNormalFacing::postEnterRoom(Window *viewWindow, const Location &priorLocation) {
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().aiSCHeardNexusDoorComment == 0 && ((SceneViewWindow *)viewWindow)->getGlobalFlags().aiSCConversationStatus == 3) {
+		_vm->_sound->playSynchronousSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 8));
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().aiSCHeardNexusDoorComment = 1;
+	}
+
+	return SC_TRUE;
+}
+
+int ScanningRoomNexusDoorNormalFacing::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_clickable.contains(pointLocation)) {
+		// Change the still frame
+		int oldFrame = _staticData.navFrameIndex;
+		_staticData.navFrameIndex = 43;
+		viewWindow->invalidateWindow(false);
+
+		// Play the beep and voiceovers
+		_vm->_sound->playSynchronousSoundEffect(_vm->getFilePath(_staticData.location.timeZone, 1, 12));
+		_vm->_sound->playSynchronousSoundEffect(_vm->getFilePath(_staticData.location.timeZone, 1, 13));
+
+		// Reset the frame
+		_staticData.navFrameIndex = oldFrame;
+		viewWindow->invalidateWindow(false);
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int ScanningRoomNexusDoorNormalFacing::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_clickable.contains(pointLocation))
+		return kCursorFinger;
+
+	return kCursorArrow;
+}
+
+class ScanningRoomNexusDoorZoomInCodePad : public SceneBase {
+public:
+	ScanningRoomNexusDoorZoomInCodePad(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	Common::Rect _controls;
+};
+
+ScanningRoomNexusDoorZoomInCodePad::ScanningRoomNexusDoorZoomInCodePad(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_controls = Common::Rect(160, 50, 282, 140);
+}
+
+int ScanningRoomNexusDoorZoomInCodePad::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_controls.contains(pointLocation)) {
+		DestinationScene destinationData;
+		destinationData.destinationScene = _staticData.location;
+		destinationData.destinationScene.depth = 1;
+		destinationData.transitionType = TRANSITION_VIDEO;
+		destinationData.transitionData = 1;
+		destinationData.transitionStartFrame = -1;
+		destinationData.transitionLength = -1;
+		((SceneViewWindow *)viewWindow)->moveToDestination(destinationData);
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int ScanningRoomNexusDoorZoomInCodePad::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_controls.contains(pointLocation))
+		return kCursorMagnifyingGlass;
+
+	return kCursorArrow;
+}
+
+class ScanningRoomNexusDoorCodePad : public SceneBase {
+public:
+	ScanningRoomNexusDoorCodePad(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	~ScanningRoomNexusDoorCodePad();
+	void preDestructor();
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int onCharacter(Window *viewWindow, const Common::KeyState &character);
+	int gdiPaint(Window *viewWindow);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	Common::Rect _numbers[10];
+	Common::String _entries;
+	Graphics::Font *_textFont;
+	int _lineHeight;
+	Common::Rect _display;
+};
+
+ScanningRoomNexusDoorCodePad::ScanningRoomNexusDoorCodePad(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_numbers[0] = Common::Rect(200, 129, 229, 146);
+	_numbers[1] = Common::Rect(165, 63, 194, 80);
+	_numbers[2] = Common::Rect(200, 63, 229, 80);
+	_numbers[3] = Common::Rect(235, 63, 264, 80);
+	_numbers[4] = Common::Rect(165, 85, 194, 102);
+	_numbers[5] = Common::Rect(200, 85, 229, 102);
+	_numbers[6] = Common::Rect(235, 85, 264, 102);
+	_numbers[7] = Common::Rect(165, 107, 194, 124);
+	_numbers[8] = Common::Rect(200, 107, 229, 124);
+	_numbers[9] = Common::Rect(235, 107, 264, 124);
+	_display = Common::Rect(166, 40, 262, 58);
+	_lineHeight = _vm->getLanguage() == Common::JA_JPN ? 12 : 14;
+	_textFont = _vm->_gfx->createFont(_lineHeight);
+}
+
+ScanningRoomNexusDoorCodePad::~ScanningRoomNexusDoorCodePad() {
+	preDestructor();
+}
+
+void ScanningRoomNexusDoorCodePad::preDestructor() {
+	delete _textFont;
+	_textFont = 0;
+}
+
+int ScanningRoomNexusDoorCodePad::postEnterRoom(Window *viewWindow, const Location &priorLocation) {
+	// Play Arthur's comment, if applicable
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().aiSCHeardNexusDoorCode == 0 && ((SceneViewWindow *)viewWindow)->getGlobalFlags().aiSCConversationStatus == 3) {
+		_vm->_sound->playSynchronousSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 7));
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().aiSCHeardNexusDoorCode = 1;
+	}
+
+	return SC_TRUE;
+}
+
+int ScanningRoomNexusDoorCodePad::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	for (int i = 0; i < 10; i++) {
+		if (_numbers[i].contains(pointLocation)) {
+			if (_entries.size() < 5) {
+				// Append
+				_entries += (char)('0' + i);
+				viewWindow->invalidateWindow(false);
+
+				if (_entries == "32770") {
+					// If the answer is correct, move to the depth with the open hatch movie
+					DestinationScene destinationData;
+					destinationData.destinationScene = _staticData.location;
+					destinationData.destinationScene.depth = 2;
+					destinationData.transitionType = TRANSITION_VIDEO;
+					destinationData.transitionData = 3;
+					destinationData.transitionStartFrame = -1;
+					destinationData.transitionLength = -1;
+					((SceneViewWindow *)viewWindow)->moveToDestination(destinationData);
+				}
+
+				return SC_TRUE;
+			} else {
+				// Reset
+				_entries = (char)('0' + i);
+				viewWindow->invalidateWindow(false);
+				return SC_TRUE;
+			}
+		}
+	}
+
+	DestinationScene destinationData;
+	destinationData.destinationScene = _staticData.location;
+	destinationData.destinationScene.depth = 0;
+	destinationData.transitionType = TRANSITION_VIDEO;
+	destinationData.transitionData = 2;
+	destinationData.transitionStartFrame = -1;
+	destinationData.transitionLength = -1;
+	((SceneViewWindow *)viewWindow)->moveToDestination(destinationData);
+	return SC_TRUE;
+}
+
+int ScanningRoomNexusDoorCodePad::onCharacter(Window *viewWindow, const Common::KeyState &character) {
+	if (character.keycode >= Common::KEYCODE_0 && character.keycode <= Common::KEYCODE_9) {
+		char c = (char)('0' + character.keycode - Common::KEYCODE_0);
+
+		if (_entries.size() < 5) {
+			// Append
+			_entries += c;
+			viewWindow->invalidateWindow(false);
+
+			if (_entries == "32770") {
+				// If the answer is correct, move to the depth with the open hatch movie
+				DestinationScene destinationData;
+				destinationData.destinationScene = _staticData.location;
+				destinationData.destinationScene.depth = 2;
+				destinationData.transitionType = TRANSITION_VIDEO;
+				destinationData.transitionData = 3;
+				destinationData.transitionStartFrame = -1;
+				destinationData.transitionLength = -1;
+				((SceneViewWindow *)viewWindow)->moveToDestination(destinationData);
+			}
+
+			return SC_TRUE;
+		} else {
+			// Reset
+			_entries = c;
+			viewWindow->invalidateWindow(false);
+			return SC_TRUE;
+		}
+	}
+
+	if ((character.keycode == Common::KEYCODE_BACKSPACE || character.keycode == Common::KEYCODE_DELETE) && !_entries.empty()) {
+		// Delete last character
+		_entries.deleteLastChar();
+		viewWindow->invalidateWindow(false);
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int ScanningRoomNexusDoorCodePad::gdiPaint(Window *viewWindow) {
+	if (!_entries.empty()) {
+		uint32 textColor = _vm->_gfx->getColor(208, 144, 24);
+		Common::Rect absoluteRect = viewWindow->getAbsoluteRect();
+		Common::Rect rect(_display);
+		rect.translate(absoluteRect.left, absoluteRect.top);
+		_vm->_gfx->renderText(_vm->_gfx->getScreen(), _textFont, _entries, rect.left, rect.top, rect.width(), rect.height(), textColor, _lineHeight, kTextAlignLeft, true);
+	}
+
+	return SC_REPAINT;
+}
+
+int ScanningRoomNexusDoorCodePad::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	for (int i = 0; i < 10; i++)
+		if (_numbers[i].contains(pointLocation))
+			return kCursorFinger;
+
+	return kCursorPutDown;
+}
+
+class ScanningRoomNexusDoorPullHandle : public SceneBase {
+public:
+	ScanningRoomNexusDoorPullHandle(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	Common::Rect _handle;
+};
+
+ScanningRoomNexusDoorPullHandle::ScanningRoomNexusDoorPullHandle(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_handle = Common::Rect(186, 44, 276, 154);
+}
+
+int ScanningRoomNexusDoorPullHandle::postEnterRoom(Window *viewWindow, const Location &priorLocation) {
+	// Play Arthur's comment, if applicable
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().aiSCHeardNexusDoorCode == 0 && ((SceneViewWindow *)viewWindow)->getGlobalFlags().aiSCConversationStatus == 3) {
+		_vm->_sound->playSynchronousSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 7));
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().aiSCHeardNexusDoorCode = 1;
+	}
+
+	return SC_TRUE;
+}
+
+int ScanningRoomNexusDoorPullHandle::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_handle.contains(pointLocation)) {
+		DestinationScene destinationData;
+		destinationData.destinationScene = Location(6, 5, 0, 0, 1, 0);
+		destinationData.transitionType = TRANSITION_VIDEO;
+		destinationData.transitionData = 4;
+		destinationData.transitionStartFrame = -1;
+		destinationData.transitionLength = -1;
+		((SceneViewWindow *)viewWindow)->moveToDestination(destinationData);
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int ScanningRoomNexusDoorPullHandle::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_handle.contains(pointLocation))
+		return kCursorFinger;
+
+	return kCursorArrow;
+}
+
 class SpaceDoor : public SceneBase {
 public:
 	SpaceDoor(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
@@ -1394,6 +2011,17 @@ int SpaceDoor::specifyCursor(Window *viewWindow, const Common::Point &pointLocat
 		return kCursorFinger;
 
 	return kCursorArrow;
+}
+
+class ScanningRoomNexusDoorToGlobe : public SceneBase {
+public:
+	ScanningRoomNexusDoorToGlobe(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+};
+
+ScanningRoomNexusDoorToGlobe::ScanningRoomNexusDoorToGlobe(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().aiSCConversationStatus == 3)
+		_staticData.destForward.destinationScene = Location(-1, -1, -1, -1, -1, -1);
 }
 
 class DockingBayPlaySoundEntering : public SceneBase {
@@ -1523,6 +2151,26 @@ SceneBase *SceneViewWindow::constructAILabSceneObject(Window *viewWindow, const 
 		return new PlaySoundEnteringScene(_vm, viewWindow, sceneStaticData, priorLocation, 8, offsetof(GlobalFlags, aiDBPlayedFourthArthur));
 	case 39:
 		return new DisableForwardMovement(_vm, viewWindow, sceneStaticData, priorLocation, offsetof(GlobalFlags, generalWalkthroughMode), 1);
+	case 40:
+		return new ScanningRoomEntryScan(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 41:
+		return new ScanningRoomWalkWarning(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 42:
+		return new ScanningRoomDockingBayDoor(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 43:
+		return new ScanningRoomScienceWingDoor(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 44:
+		return new ArthurScanningRoomConversation(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 45:
+		return new ScanningRoomNexusDoorNormalFacing(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 46:
+		return new ScanningRoomNexusDoorZoomInCodePad(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 47:
+		return new ScanningRoomNexusDoorCodePad(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 48:
+		return new ScanningRoomNexusDoorPullHandle(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 49:
+		return new ScanningRoomNexusDoorToGlobe(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 52:
 		return new SpaceDoorTimer(_vm, viewWindow, sceneStaticData, priorLocation, 164, 40, 276, 140, -1, -1, 1, TRANSITION_VIDEO, 0, -1, -1, -1, -1);
 	case 53:
