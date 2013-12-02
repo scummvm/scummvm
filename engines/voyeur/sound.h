@@ -25,6 +25,8 @@
 
 #include "common/scummsys.h"
 #include "common/str.h"
+#include "audio/mixer.h"
+#include "audio/decoders/voc.h"
 #include "voyeur/files.h"
 
 namespace Voyeur {
@@ -32,8 +34,10 @@ namespace Voyeur {
 class SoundManager {
 private:
 	VoyeurEngine *_vm;
+	Audio::Mixer *_mixer;
+	Audio::SoundHandle _soundHandle;
 public:
-	SoundManager();
+	SoundManager(Audio::Mixer *mixer);
 	void setVm(VoyeurEngine *vm) { _vm = vm; }
 
 	void playVOCMap(byte *voc, int vocSize);

@@ -20,15 +20,22 @@
  *
  */
 
+#include "audio/audiostream.h"
+#include "audio/decoders/raw.h"
+#include "common/memstream.h"
 #include "voyeur/sound.h"
 
 namespace Voyeur {
 
-SoundManager::SoundManager() {
+SoundManager::SoundManager(Audio::Mixer *mixer) {
+	_mixer = mixer;
 }
 
 void SoundManager::playVOCMap(byte *voc, int vocSize) {
-	// TODO
+	Common::MemoryReadStream *dataStream = new Common::MemoryReadStream(voc, vocSize, DisposeAfterUse::NO);
+	Audio::AudioStream *audioStream = Audio::makeVOCStream(dataStream, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
+
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, audioStream);
 }
 
 bool SoundManager::vocMapStatus() {
@@ -37,11 +44,11 @@ bool SoundManager::vocMapStatus() {
 }
 
 void SoundManager::continueVocMap() {
-	// TODO
+	// No implementation needed in ScummVM
 }
 
 void SoundManager::abortVOCMap() {
-	// TODO
+	_mixer->stopHandle(_soundHandle);
 }
 
 } // End of namespace Voyeur

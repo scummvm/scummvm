@@ -33,7 +33,7 @@ namespace Voyeur {
 VoyeurEngine *g_vm;
 
 VoyeurEngine::VoyeurEngine(OSystem *syst, const VoyeurGameDescription *gameDesc) : Engine(syst),
-		_gameDescription(gameDesc), _randomSource("Voyeur"),
+		_gameDescription(gameDesc), _randomSource("Voyeur"), _soundManager(_mixer),
 		_defaultFontInfo(3, 0xff, 0xff, 0, 0, ALIGN_LEFT, 0, Common::Point(), 1, 1, 
 			Common::Point(1, 1), 1, 0, 0) {
 	DebugMan.addDebugChannel(kDebugPath, "Path", "Pathfinding debug level");
