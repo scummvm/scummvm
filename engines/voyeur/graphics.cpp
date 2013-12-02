@@ -584,13 +584,13 @@ void GraphicsManager::flipPage() {
 
 void GraphicsManager::restoreBack(Common::Array<Common::Rect> &rectList, int rectListCount,
 		PictureResource *srcPic, PictureResource *destPic) {
-	bool saveBack = _saveBack;
-	_saveBack = false;
-
 	// WORKAROUND: Since _backgroundPage can point to a resource freed at the end of display methods,
 	// I'm now explicitly resetting it to null in screenReset(), so at this point it can be null
 	if (!srcPic)
 		return;
+
+	bool saveBack = _saveBack;
+	_saveBack = false;
 
 	if (rectListCount == -1) {
 		sDrawPic(srcPic, destPic, Common::Point());
