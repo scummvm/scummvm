@@ -474,7 +474,10 @@ void sceneHandler04_sub17() {
 }
 
 void sceneHandler04_takeBottle() {
-	warning("sceneHandler04_takeBottle()");
+  g_vars->scene04_var02 = 1;
+  g_vars->scene04_hand->_priority = 5;
+
+  g_fullpipe->setObjectState(sO_LowerPipe, g_fullpipe->getObjectEnumState(sO_LowerPipe, sO_IsOpened));
 }
 
 void sceneHandler04_takeKozyawka() {
