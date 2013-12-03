@@ -427,6 +427,69 @@ int PlayArthurOffsetTimed::postEnterRoom(Window *viewWindow, const Location &pri
 	return SC_TRUE;
 }
 
+class HabitatWingIceteroidDoor : public BaseOxygenTimer {
+public:
+	HabitatWingIceteroidDoor(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	Common::Rect _doorHandle;
+};
+
+HabitatWingIceteroidDoor::HabitatWingIceteroidDoor(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		BaseOxygenTimer(vm, viewWindow, sceneStaticData, priorLocation) {
+	_doorHandle = Common::Rect(122, 48, 246, 172);
+}
+
+int HabitatWingIceteroidDoor::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_doorHandle.contains(pointLocation)) {
+		if (((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->isItemInInventory(kItemBioChipAI)) {
+			if (((SceneViewWindow * )viewWindow)->getGlobalFlags().aiHWIceDoorUnlocked == 0) {
+				// Move to depth one (door open)
+				DestinationScene destData;
+				destData.destinationScene = _staticData.location;
+				destData.destinationScene.depth = 1;
+				destData.transitionType = TRANSITION_VIDEO;
+				destData.transitionData = 6;
+				destData.transitionStartFrame = -1;
+				destData.transitionLength = -1;
+				((SceneViewWindow *)viewWindow)->moveToDestination(destData);
+
+				// Add the explosive charge to your inventory
+				((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->addItem(kItemExplosiveCharge);
+
+				// Set the door unlocked flag
+				((SceneViewWindow * )viewWindow)->getGlobalFlags().aiHWIceDoorUnlocked = 1;
+			} else {
+				// Move to depth one (door open)
+				DestinationScene destData;
+				destData.destinationScene = _staticData.location;
+				destData.destinationScene.depth = 1;
+				destData.transitionType = TRANSITION_VIDEO;
+				destData.transitionData = 3;
+				destData.transitionStartFrame = -1;
+				destData.transitionLength = -1;
+				((SceneViewWindow *)viewWindow)->moveToDestination(destData);
+			}
+		} else {
+			// Play the closed door video clip
+			((SceneViewWindow *)viewWindow)->playSynchronousAnimation(7);
+		}
+
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int HabitatWingIceteroidDoor::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_doorHandle.contains(pointLocation))
+		return kCursorFinger;
+
+	return kCursorArrow;
+}
+
 class NexusDoor : public BaseOxygenTimer {
 public:
 	NexusDoor(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
@@ -2424,6 +2487,8 @@ SceneBase *SceneViewWindow::constructAILabSceneObject(Window *viewWindow, const 
 		return new HabitatWingLockedDoor(_vm, viewWindow, sceneStaticData, priorLocation, 99, 12, 13, 166, 32, 286, 182);
 	case 8:
 		return new HabitatWingLockedDoor(_vm, viewWindow, sceneStaticData, priorLocation, 100, 12, 13, 130, 48, 290, 189);
+	case 9:
+		return new HabitatWingIceteroidDoor(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 11:
 		return new BaseOxygenTimer(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 12:
