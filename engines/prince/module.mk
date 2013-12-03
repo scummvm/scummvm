@@ -15,6 +15,7 @@ MODULE_OBJS = \
 	prince.o \
 	archive.o \
 	decompress.o \
+	hero.o \
 	cursor.o 
 
 # This module can be built as a plugin

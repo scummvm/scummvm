@@ -31,6 +31,7 @@
 #include "common/fs.h"
 #include "common/keyboard.h"
 #include "common/substream.h"
+#include "common/str.h"
 
 #include "graphics/cursorman.h"
 #include "graphics/surface.h"
@@ -56,6 +57,7 @@
 #include "prince/mhwanh.h"
 #include "prince/cursor.h"
 #include "prince/archive.h"
+#include "prince/hero.h"
 
 namespace Prince {
 
@@ -74,13 +76,15 @@ PrinceEngine::PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc)
 	Engine(syst), _gameDescription(gameDesc), _graph(NULL), _script(NULL),
 	_locationNr(0), _debugger(NULL), _midiPlayer(NULL),
 	_cameraX(0), _newCameraX(0), _frameNr(0), _cursor1(NULL), _cursor2(NULL), _font(NULL),
-	_walizkaBmp(NULL), _roomBmp(NULL), _voiceStream(NULL), _cursorNr(0) {
+	_walizkaBmp(NULL), _roomBmp(NULL), _cursorNr(0) {
 
 	// Debug/console setup
 	DebugMan.addDebugChannel(DebugChannel::kScript, "script", "Prince Script debug channel");
 	DebugMan.addDebugChannel(DebugChannel::kEngine, "engine", "Prince Engine debug channel");
 
 	DebugMan.enableDebugChannel("script");
+
+	memset(_voiceStream, 0, sizeof(_voiceStream));
 
 	gDebugLevel = 10;
 }
@@ -196,16 +200,18 @@ void PrinceEngine::init() {
 	if (!voices->open("data/voices/databank.ptc"))
 		error("Can't open data/voices/databank.ptc");
 
+	PtcArchive *sound = new PtcArchive();
+	if (!sound->open("sound/databank.ptc"))
+		error("Can't open sound/databank.ptc");
+
 	SearchMan.add("all", all);
 	SearchMan.add("data/voices", voices);
+	SearchMan.add("sound", sound);
 
 	_graph = new GraphicsMan(this);
 
 	_rnd = new Common::RandomSource("prince");
 	_debugger = new Debugger(this);
-
-	SearchMan.addSubDirectoryMatching(gameDataDir, "all", 0, 2);
-	SearchMan.addSubDirectoryMatching(gameDataDir, "data/voices", 0, 2);
 
 	_midiPlayer = new MusicPlayer(this);
 	 
@@ -263,6 +269,13 @@ Common::Error PrinceEngine::run() {
 }
 
 bool PrinceEngine::loadLocation(uint16 locationNr) {
+	_flicPlayer.close();
+
+	memset(_textSlots, 0, sizeof(_textSlots));
+	for(uint32 sampleId = 0; sampleId < MAX_SAMPLES; ++sampleId) {
+		stopSample(sampleId);
+	}
+
 	debugEngine("PrinceEngine::loadLocation %d", locationNr);
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	SearchMan.remove(Common::String::format("%02d", _locationNr));
@@ -357,19 +370,42 @@ bool PrinceEngine::playNextFrame() {
 }
 
 void PrinceEngine::playSample(uint16 sampleId, uint16 loopType) {
-	if (_voiceStream) {
+	if (_voiceStream[sampleId]) {
 
-		Audio::RewindableAudioStream *audioStream = Audio::makeWAVStream(_voiceStream, DisposeAfterUse::YES);
-		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, audioStream, sampleId);
+		if (_mixer->isSoundIDActive(sampleId)) {
+			return;
+		}
+
+		Audio::AudioStream *audioStream = Audio::makeWAVStream(_voiceStream[sampleId], DisposeAfterUse::YES);
+		if (loopType) {
+			audioStream = new Audio::LoopingAudioStream((Audio::RewindableAudioStream*)audioStream, 0, DisposeAfterUse::NO);
+		}
+		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle[sampleId], audioStream, sampleId);
 	}
 }
 
 void PrinceEngine::stopSample(uint16 sampleId) {
 	_mixer->stopID(sampleId);
-	_voiceStream = NULL;
+	_voiceStream[sampleId] = NULL;
 }
 
-bool PrinceEngine::loadVoice(uint32 slot, const Common::String &streamName) {
+bool PrinceEngine::loadSample(uint32 sampleSlot, const Common::String &streamName) {
+	// FIXME: This is just a workaround streamName is a path 
+	// SOUND\\SCIERKA1.WAV for now only last path component is used
+	Common::String normalizedPath = lastPathComponent(streamName, '\\');
+
+	debugEngine("loadSample slot %d, name %s", sampleSlot, normalizedPath.c_str());
+
+	_mixer->stopID(sampleSlot);
+	_voiceStream[sampleSlot] = NULL;
+	_voiceStream[sampleSlot] = SearchMan.createReadStreamForMember(normalizedPath);
+	if (_voiceStream[sampleSlot] == NULL) {
+		error("Can't load sample %s to slot %d", normalizedPath.c_str(), sampleSlot);
+	}
+	return _voiceStream[sampleSlot] == NULL;
+}
+
+bool PrinceEngine::loadVoice(uint32 slot, uint32 sampleSlot, const Common::String &streamName) {
 	debugEngine("Loading wav %s slot %d", streamName.c_str(), slot);
 
 	if (slot > MAXTEXTS) {
@@ -377,26 +413,26 @@ bool PrinceEngine::loadVoice(uint32 slot, const Common::String &streamName) {
 		return false;
 	}
 
-	_voiceStream = SearchMan.createReadStreamForMember(streamName);
-	if (!_voiceStream) {
+	_voiceStream[sampleSlot] = SearchMan.createReadStreamForMember(streamName);
+	if (!_voiceStream[sampleSlot]) {
 		error("Can't open %s", streamName.c_str());
 		return false;
 	}
 
-	uint32 id = _voiceStream->readUint32LE();
+	uint32 id = _voiceStream[sampleSlot]->readUint32LE();
 	if (id != 0x46464952) {
 		error("It's not RIFF file %s", streamName.c_str());
 		return false;
 	}
 
-	_voiceStream->skip(0x20);
-	id = _voiceStream->readUint32LE();
+	_voiceStream[sampleSlot]->skip(0x20);
+	id = _voiceStream[sampleSlot]->readUint32LE();
 	if (id != 0x61746164) {
 		error("No data section in %s id %04x", streamName.c_str(), id);
 		return false;
 	}
 
-	id = _voiceStream->readUint32LE();
+	id = _voiceStream[sampleSlot]->readUint32LE();
 	debugEngine("SetVoice slot %d time %04x", slot, id); 
 	id <<= 3;
 	id /= 22050;
@@ -405,7 +441,7 @@ bool PrinceEngine::loadVoice(uint32 slot, const Common::String &streamName) {
 	_textSlots[slot]._time = id;
 
 	debugEngine("SetVoice slot %d time %04x", slot, id); 
-	_voiceStream->seek(0);
+	_voiceStream[sampleSlot]->seek(0);
 
 	return true;
 }

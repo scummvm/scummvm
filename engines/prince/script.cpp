@@ -41,6 +41,7 @@ static const uint16 NUM_OPCODES = 144;
 Script::Script(PrinceEngine *vm) : 
 	_code(NULL), _stacktop(0), _vm(vm), _opcodeNF(false),
 	_waitFlag(0), _result(true) {
+	memset(_flags, 0, sizeof(_flags));
 }
 
 Script::~Script() {
@@ -146,7 +147,7 @@ uint16 Script::readScript16bits() {
 uint16 Script::readScriptValue() {
 	uint16 value = readScript16bits();
 	if (value & FLAG_MASK) {
-		value = _flags[value - FLAG_MASK];
+		return getFlagValue((Flags::Id)value);
 	}
 	return value;
 }
@@ -183,6 +184,7 @@ void Script::O_SETSAMPLE() {
 	int32 sampleNameOffset = readScript32bits();
 	const char * sampleName = (const char *)&_code[_currentInstruction + sampleNameOffset - 4];
 	debugScript("O_SETSAMPLE %d %s", sampleId, sampleName);
+	_vm->loadSample(sampleId, sampleName);
 }
 
 void Script::O_FREESAMPLE() {
@@ -355,6 +357,7 @@ void Script::O_BACKANIMUPDATEON() {
 void Script::O_CHANGECURSOR() {
 	uint16 cursorId = readScriptValue();
 	debugScript("O_CHANGECURSOR %x", cursorId);
+	_vm->changeCursor(cursorId);
 }
 
 void Script::O_CHANGEANIMTYPE() {
@@ -765,7 +768,7 @@ void Script::O_GETANIMDATA() {
 
 void Script::O_SETBGCODE() {
 	int32 offset = readScript32bits();
-	_bgOpcodePC = _currentInstruction + offset;
+	_bgOpcodePC = _currentInstruction + offset - 4;
 	debugScript("O_SETBGCODE next %08x, offset %08x", _bgOpcodePC, offset);
 }
 
@@ -926,11 +929,18 @@ void Script::O_STOPSAMPLE() {
 
 void Script::O_BACKANIMRANGE() {
 	uint16 slotId = readScriptValue();
-	uint16 animId = readScriptValue();
+	uint16 animId = readScript16bits();
 	uint16 low = readScriptValue();
 	uint16 high = readScriptValue();
 
+	if (animId != 0xFFFF) {
+		if (animId & FLAG_MASK) {
+			animId = getFlagValue((Flags::Id)animId);
+		}
+	}
+
 	debugScript("O_BACKANIMRANGE slotId %d, animId %d, low %d, high %d", slotId, animId, low, high);
+	_result = 1;
 }
 
 void Script::O_CLEARPATH() {
@@ -982,7 +992,7 @@ void Script::O_POPSTRING() {
 
 void Script::O_SETFGCODE() {
 	int32 offset = readScript32bits();
-	_fgOpcodePC = _currentInstruction + offset;	
+	_fgOpcodePC = _currentInstruction + offset - 4;	
 
 	debugScript("O_SETFGCODE next %08x, offset %08x", _fgOpcodePC, offset);
 }
@@ -1125,6 +1135,7 @@ void Script::SetVoice(uint32 sampleSlot) {
 	uint16 slot = readScriptValue();
 	_vm->loadVoice(
 		slot,
+		sampleSlot,
 		Common::String::format(
 			"%03d-%02d.WAV", 
 			_currentString, 

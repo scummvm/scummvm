@@ -59,6 +59,7 @@ class VariaTxt;
 class Cursor;
 class MhwanhDecoder;
 class Font;
+class Hero;
 
 struct Text {
 	const char *_str;
@@ -103,7 +104,8 @@ public:
 
 	bool loadLocation(uint16 locationNr);
 	bool loadAnim(uint16 animNr, bool loop);
-	bool loadVoice(uint32 slot, const Common::String &name);
+	bool loadVoice(uint32 textSlot, uint32 sampleSlot, const Common::String &name);
+	bool loadSample(uint32 sampleSlot, const Common::String &name);
 
 	void playSample(uint16 sampleId, uint16 loopType);
 	void stopSample(uint16 sampleId);
@@ -146,14 +148,19 @@ private:
 	Font *_font;
 	MusicPlayer *_midiPlayer;
 
-	Audio::SoundHandle _soundHandle;
-	Common::SeekableReadStream *_voiceStream;
+
+	static const uint32 MAX_SAMPLES = 60;	
+	Common::SeekableReadStream *_voiceStream[MAX_SAMPLES];
+	Audio::SoundHandle _soundHandle[MAX_SAMPLES];
+
 	Common::Array<Mob> _mobList;
 	Common::Array<Object *> _objList;
 
 	uint16 _cameraX;
 	uint16 _newCameraX;
 	uint16 _sceneWidth;
+
+	Hero* _mainHero;
 
 	bool _flicLooped;
 	

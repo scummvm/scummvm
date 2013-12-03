@@ -86,6 +86,7 @@ void PtcArchive::close() {
 }
 
 bool PtcArchive::hasFile(const Common::String &name) const {
+	// TODO: check if path matching should be added
 	return _items.contains(name);
 }
 
