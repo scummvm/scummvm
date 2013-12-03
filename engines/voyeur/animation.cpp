@@ -153,9 +153,6 @@ RL2Decoder::RL2VideoTrack::RL2VideoTrack(const RL2FileHeader &header, RL2AudioTr
 	} else {
 		_backSurface = new Graphics::Surface();
 		_backSurface->create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
-
-		stream->seek(0x324);
-		rl2DecodeFrameWithoutBackground(0);
 	}
 
 	_videoBase = header._videoBase;
@@ -204,6 +201,9 @@ const Graphics::Surface *RL2Decoder::RL2VideoTrack::decodeNextFrame() {
 		// Read in the background frame
 		_fileStream->seek(0x324);
 		rl2DecodeFrameWithoutBackground(0);
+
+		Common::copy((byte *)_surface->getPixels(), (byte *)_surface->getPixels() + (320 * 200), 
+			(byte *)_backSurface->getPixels());
 		_dirtyRects.push_back(Common::Rect(0, 0, _surface->w, _surface->h));
 	}
 
@@ -215,10 +215,15 @@ const Graphics::Surface *RL2Decoder::RL2VideoTrack::decodeNextFrame() {
 		_audioTrack->queueSound(_fileStream, _header._frameSoundSizes[_curFrame]);
 
 	// Decode the graphic data
-	if (_backSurface) 
+	if (_backSurface) {
+		if (_curFrame > 0)
+			Common::copy((byte *)_backSurface->getPixels(), (byte *)_backSurface->getPixels() + (320 * 200), 
+				(byte *)_surface->getPixels());
+
 		rl2DecodeFrameWithBackground();
-	else
+	} else {
 		rl2DecodeFrameWithoutBackground();
+	}
 
 	_curFrame++;
 	_nextFrameStartTime += _frameDelay;

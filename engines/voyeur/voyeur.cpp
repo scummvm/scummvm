@@ -164,7 +164,7 @@ bool VoyeurEngine::doHeadTitle() {
 			return false;
 	}
 
-	showTitleScreen();
+//	showTitleScreen();
 
 	// Opening
 	if (!_voy._incriminate) {
