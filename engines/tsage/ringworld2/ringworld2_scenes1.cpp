@@ -3348,7 +3348,6 @@ void Scene1337::Action3::signal() {
 		break;
 	}
 
-	// CHECKME: It's not logical that the number of available cards is decreased for Action Index 12
 	if (_actionIndex > 12) {
 		scene->_currentPlayerNumb = 0;
 		R2_GLOBALS._sceneObjects->draw();
