@@ -183,31 +183,31 @@ public:
 };
 
 class Scene1337 : public SceneExt {
-	class unkObj1337sub1: public SceneHotspot {
+	class Card: public SceneHotspot {
 	public:
 		SceneObject _card;
 
 		int _cardId;
 		Common::Point _stationPos;
 
-		unkObj1337sub1();
+		Card();
 		void synchronize(Serializer &s);
 	};
 
-	class unkObj1337_1: public SceneHotspot {
+	class GameBoardSide: public SceneHotspot {
 	public:
-		unkObj1337sub1 _handCard[4];
-		unkObj1337sub1 _outpostStation[8];
-		unkObj1337sub1 _delayPile[1];
-		unkObj1337sub1 _arr4[1];
+		Card _handCard[4];
+		Card _outpostStation[8];
+		Card _delayPile;
+		Card _arr4;
 
 		Common::Point _fieldB94;
 		Common::Point _fieldB98;
 		Common::Point _fieldB9C;
 		Common::Point _fieldBA0;
-		int _fieldBA4;
+		int _frameNum;
 
-		unkObj1337_1();
+		GameBoardSide();
 		void synchronize(Serializer &s);
 	};
 
@@ -276,7 +276,7 @@ public:
 	ASound _aSound2;
 	BackgroundSceneObject _background1;
 	bool _autoplay;
-	unkObj1337_1 _gameBoardSide[4];
+	GameBoardSide _gameBoardSide[4];
 	SceneItem _item1;
 	SceneObject _currentPlayerArrow;
 	Action1 _action1;
@@ -292,20 +292,20 @@ public:
 	Action11 _action11;
 	Action12 _action12;
 	Action13 _action13;
-	unkObj1337sub1 _animatedCard;
-	unkObj1337sub1 _shuffleAnimation;
-	unkObj1337sub1 _item4;
+	Card _animatedCard;
+	Card _shuffleAnimation;
+	Card _item4;
 	BackgroundSceneObject _background2;
 	int _cardsAvailableNumb;
 	int _field3E26;
 	int _availableCardsPile[100];
-	unkObj1337sub1 *_field3EF0;
-	unkObj1337sub1 *_field3EF4;
-	unkObj1337sub1 *_field3EF8;
-	unkObj1337sub1 _item5;
-	unkObj1337sub1 _item6;
-	unkObj1337sub1 _discardPile;
-	unkObj1337sub1 _item8;
+	Card *_field3EF0;
+	Card *_field3EF4;
+	Card *_field3EF8;
+	Card _item5;
+	Card _item6;
+	Card _discardPile;
+	Card _item8;
 	bool _shuffleEndedFl;
 	int _currentPlayerNumb;
 	int _field4240;
@@ -326,7 +326,7 @@ public:
 	virtual void synchronize(Serializer &s);
 
 	void actionDisplay(int resNum, int lineNum, int x, int y, int arg5, int width, int textMode, int fontNum, int colFG, int colBGExt, int colFGExt);
-	void setAnimationInfo(unkObj1337sub1 *subObj);
+	void setAnimationInfo(Card *subObj);
 	void subC20E5();
 	void subC20F9();
 	void subC2586();
@@ -339,24 +339,24 @@ public:
 	int  subC27B5(int arg1);
 	int  subC27F9(int arg1);
 	void subC2835(int arg1);
-	bool subC2BF8(unkObj1337sub1 *subObj1, Common::Point pt);
+	bool subC2BF8(Card *subObj1, Common::Point pt);
 	void subC2C2F();
-	void subC318B(int arg1, unkObj1337sub1 *subObj2, int arg3);
+	void subC318B(int arg1, Card *subObj2, int arg3);
 	int  subC3257(int arg1);
 	bool subC32B1(int arg1, int arg2);
 	int  subC331B(int arg1);
 	bool subC3386(int arg1, int arg2);
-	void subC33C0(unkObj1337sub1 *subObj1, unkObj1337sub1 *subObj2);
-	void subC3456(unkObj1337sub1 *subObj1, unkObj1337sub1 *subObj2);
-	void subC340B(unkObj1337sub1 *subObj1, unkObj1337sub1 *subObj2);
-	void subC34A1(unkObj1337sub1 *subObj1, unkObj1337sub1 *subObj2);
-	unkObj1337sub1 *subC34EC(int arg1);
-	void subC358E(unkObj1337sub1 *subObj1, int arg2);
+	void subC33C0(Card *subObj1, Card *subObj2);
+	void subC3456(Card *subObj1, Card *subObj2);
+	void subC340B(Card *subObj1, Card *subObj2);
+	void subC34A1(Card *subObj1, Card *subObj2);
+	Card *subC34EC(int arg1);
+	void subC358E(Card *subObj1, int arg2);
 	int  subC3E92(int arg1);
-	void subC4A39(unkObj1337sub1 *subObj);
+	void subC4A39(Card *subObj);
 	void subC4CD2();
 	void subC4CEC();
-	void subC51A0(unkObj1337sub1 *subObj1, unkObj1337sub1 *subObj2);
+	void subC51A0(Card *subObj1, Card *subObj2);
 	void displayDialog(int dialogNumb);
 	void subPostInit();
 	void displayInstructions();
