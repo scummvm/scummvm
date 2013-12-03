@@ -587,6 +587,37 @@ int IceteroidElevatorExtremeControls::specifyCursor(Window *viewWindow, const Co
 	return kCursorArrow;
 }
 
+class ScienceWingStingersTimed : public BaseOxygenTimer {
+public:
+	ScienceWingStingersTimed(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
+};
+
+ScienceWingStingersTimed::ScienceWingStingersTimed(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		BaseOxygenTimer(vm, viewWindow, sceneStaticData, priorLocation) {
+}
+
+int ScienceWingStingersTimed::postEnterRoom(Window *viewWindow, const Location &priorLocation) {
+	BaseOxygenTimer::postEnterRoom(viewWindow, priorLocation);
+
+	byte effectID = ((SceneViewWindow *)viewWindow)->getGlobalFlags().aiSWStingerChannelID;
+
+	if (!_vm->_sound->isSoundEffectPlaying(effectID - 1)) {
+		byte &lastStinger = ((SceneViewWindow *)viewWindow)->getGlobalFlags().aiSWStingerID;
+
+		byte newStingerID = _vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, lastStinger + 7)) + 1;
+
+		lastStinger++;
+		if (lastStinger > 3)
+			lastStinger = 0;
+
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().aiSWStingerChannelID = newStingerID;
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().aiSWStingerID = lastStinger;
+	}
+
+	return SC_TRUE;
+}
+
 class NexusDoor : public BaseOxygenTimer {
 public:
 	NexusDoor(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
@@ -2676,6 +2707,8 @@ SceneBase *SceneViewWindow::constructAILabSceneObject(Window *viewWindow, const 
 		return new PlaySoundExitingFromSceneDeux(_vm, viewWindow, sceneStaticData, priorLocation, 14);
 	case 70:
 		return new SpaceDoorTimer(_vm, viewWindow, sceneStaticData, priorLocation, 92, 92, 212, 189, 48, -1, 1, TRANSITION_VIDEO, 0, -1, -1, -1, -1);
+	case 74:
+		return new ScienceWingStingersTimed(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 75:
 		return new HabitatWingLockedDoor(_vm, viewWindow, sceneStaticData, priorLocation, 51, 4, 5, 146, 0, 396, 84);
 	case 90:
