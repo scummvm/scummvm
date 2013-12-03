@@ -60,10 +60,21 @@ void Layer::advanceFrame(int num) {
 }
 
 void Layer::saveState(SaveGame *state) {
-
+	if (_bitmap) {
+		state->writeBool(true);
+		state->writeString(_bitmap->getFilename());
+	} else {
+		state->writeBool(false);
+	}
+	state->writeLESint32(_frame);
+	state->writeLESint32(_sortOrder);
 }
 
 void Layer::restoreState(SaveGame *state) {
-
+	bool hasBitmap = state->readBool();
+	if (hasBitmap)
+		_bitmap = Bitmap::create(state->readString());
+	_frame = state->readLESint32();
+	_sortOrder = state->readLESint32();
 }
 }
