@@ -876,8 +876,8 @@ void Scene1100::postInit(SceneObjectList *OwnerList) {
 		R2_GLOBALS._player._moveRate = 30;
 		R2_GLOBALS._player._moveDiff = Common::Point(16, 2);
 
-		_rightLandslide.setup2(1104, 2, 1, 175, 125, 102, 1);
-		_purplePlant.setup2(1102, 5, 1, 216, 167, 1, 0);
+		_rightLandslide.setup2(1104, 2, 1, 175, 125, 102, EFFECT_SHADED);
+		_purplePlant.setup2(1102, 5, 1, 216, 167, 1, EFFECT_NONE);
 
 		_leftImpacts.postInit();
 		_leftImpacts.setup(1113, 2, 1);
@@ -2455,7 +2455,7 @@ void Scene1337::Action1::signal() {
 		scene->_gameBoardSide[0]._outpostStation[0]._card.remove();
 		scene->_gameBoardSide[0]._outpostStation[1]._card.remove();
 
-		scene->_background2.setup2(1332, 5, 1, 165, 95, 110, 1);
+		scene->_background2.setup2(1332, 5, 1, 165, 95, 110, EFFECT_SHADED);
 
 		scene->_gameBoardSide[1]._handCard[0]._card.postInit();
 		scene->_gameBoardSide[1]._handCard[0]._card.setVisage(1332);
@@ -3083,7 +3083,7 @@ void Scene1337::Action2::signal() {
 		break;
 	case 3:
 		scene->_shuffleAnimation._card.remove();
-		scene->_background2.setup2(1332, 5, 1, 162, 95, 110, 1);
+		scene->_background2.setup2(1332, 5, 1, 162, 95, 110, EFFECT_SHADED);
 		scene->_shuffleEndedFl = true;
 		break;
 	default:
@@ -5533,7 +5533,7 @@ void Scene1337::subPostInit() {
 	_field4246 = false;
 	_field424A = -1;
 
-	_background1.setup2(9531, 1, 1, 249, 168, 155, 0);
+	_background1.setup2(9531, 1, 1, 249, 168, 155, EFFECT_NONE);
 
 	_autoplay = false;
 	_instructionsDisplayedFl = 0;
