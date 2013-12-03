@@ -297,15 +297,17 @@ public:
 	Card _item4;
 	BackgroundSceneObject _background2;
 	int _cardsAvailableNumb;
-	int _field3E26;
+
+	// Discarded cards are put in the available cards pile, with an higher index so there no conflict
+	int _currentDiscardIndex;
 	int _availableCardsPile[100];
-	Card *_field3EF0;
+	Card *_discardCard;
 	Card *_field3EF4;
 	Card *_field3EF8;
 	Card _item5;
 	Card _item6;
 	Card _discardPile;
-	Card _item8;
+	Card _stockPile;
 	bool _shuffleEndedFl;
 	int _currentPlayerNumb;
 	int _field4240;
