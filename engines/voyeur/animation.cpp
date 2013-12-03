@@ -50,7 +50,7 @@ bool RL2Decoder::loadStream(Common::SeekableReadStream *stream) {
 	// Add an audio track if sound is present
 	RL2AudioTrack *audioTrack = NULL;
 	if (_header._soundRate) {
-		audioTrack = new RL2AudioTrack(_header, _soundType);
+		audioTrack = new RL2AudioTrack(_header, stream, _soundType);
 		addTrack(audioTrack);
 	}
 
@@ -211,8 +211,7 @@ const Graphics::Surface *RL2Decoder::RL2VideoTrack::decodeNextFrame() {
 	_fileStream->seek(_header._frameOffsets[_curFrame]);
 
 	// If there's any sound data, pass it to the audio track
-	if (_header._frameSoundSizes[_curFrame] > 0 && _audioTrack)
-		_audioTrack->queueSound(_fileStream, _header._frameSoundSizes[_curFrame]);
+	_fileStream->seek(_header._frameSoundSizes[_curFrame], SEEK_CUR);
 
 	// Decode the graphic data
 	if (_backSurface) {
@@ -321,9 +320,24 @@ void RL2Decoder::RL2VideoTrack::rl2DecodeFrameWithBackground() {
 
 /*------------------------------------------------------------------------*/
 
-RL2Decoder::RL2AudioTrack::RL2AudioTrack(const RL2FileHeader &header, Audio::Mixer::SoundType soundType): 
+RL2Decoder::RL2AudioTrack::RL2AudioTrack(const RL2FileHeader &header, Common::SeekableReadStream *stream, Audio::Mixer::SoundType soundType): 
 		_header(header), _soundType(soundType) {
 	_audStream = createAudioStream();
+
+	// Add all the sound data for all the frames at once to avoid stuttering
+	for (int frameNumber = 0; frameNumber < header._numFrames; ++frameNumber) {
+		int offset = _header._frameOffsets[frameNumber];
+		int size = _header._frameSoundSizes[frameNumber];
+
+		byte *data = (byte *)malloc(size);
+		stream->seek(offset);
+		stream->read(data, size);
+		Common::MemoryReadStream *memoryStream = new Common::MemoryReadStream(data, size,
+			DisposeAfterUse::YES);
+
+		_audStream->queueAudioStream(Audio::makeRawStream(memoryStream, _header._rate, 
+			Audio::FLAG_UNSIGNED, DisposeAfterUse::YES), DisposeAfterUse::YES);
+	}
 }
 
 RL2Decoder::RL2AudioTrack::~RL2AudioTrack() {
@@ -340,6 +354,8 @@ void RL2Decoder::RL2AudioTrack::queueSound(Common::SeekableReadStream *stream, i
 
 		_audStream->queueAudioStream(Audio::makeRawStream(memoryStream, _header._rate, 
 			Audio::FLAG_UNSIGNED, DisposeAfterUse::YES), DisposeAfterUse::YES);
+		//		_audioTrack->queueSound(_fileStream, _header._frameSoundSizes[_curFrame]);
+
 	} else {
 		delete stream;
 	}

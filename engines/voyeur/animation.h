@@ -81,7 +81,8 @@ public:
 private:
 	class RL2AudioTrack : public AudioTrack {
 	public:
-		RL2AudioTrack(const RL2FileHeader &header, Audio::Mixer::SoundType soundType);
+		RL2AudioTrack(const RL2FileHeader &header, Common::SeekableReadStream *stream,
+			Audio::Mixer::SoundType soundType);
 		~RL2AudioTrack();
 
 		void queueSound(Common::SeekableReadStream *stream, int size);
