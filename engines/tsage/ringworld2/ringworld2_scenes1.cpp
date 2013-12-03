@@ -3091,6 +3091,9 @@ void Scene1337::Action2::signal() {
 	}
 }
 
+/**
+ * Deal cards
+ */
 void Scene1337::Action3::signal() {
 	Scene1337 *scene = (Scene1337 *)R2_GLOBALS._sceneManager._scene;
 
@@ -3366,7 +3369,7 @@ void Scene1337::Action4::signal() {
 	case 0:
 		if ((scene->_gameBoardSide[scene->_currentPlayerNumb]._handCard[0]._cardId == 0) && (scene->subC264B(scene->_gameBoardSide[scene->_currentPlayerNumb]._delayCard._cardId))) {
 			if (scene->_cardsAvailableNumb < 0)
-				scene->subC264B(scene->_gameBoardSide[scene->_currentPlayerNumb]._delayCard._cardId);
+				scene->shuffleCards();
 			scene->_animatedCard._card.setPosition(Common::Point(162, 95), 0);
 			scene->_animatedCard._card.show();
 			scene->_aSound2.play(61);
@@ -5544,7 +5547,7 @@ void Scene1337::suggestInstructions() {
 	if (MessageDialog::show(NEED_INSTRUCTIONS, NO_MSG, YES_MSG) == 0) {
 		if (R2_GLOBALS._v57709 == 0)
 			subD18F5();
-		firstShuffle();
+		dealCards();
 	} else {
 		if (R2_GLOBALS._v57709 == 0)
 			subD18F5();
@@ -5591,6 +5594,8 @@ void Scene1337::shuffleCards() {
 	}
 
 	_shuffleEndedFl = false;
+
+	// Shuffle cards
 	_animatedCard._card.setAction(&_action2);
 
 	while(!_shuffleEndedFl && !g_vm->shouldQuit()) {
@@ -5601,9 +5606,11 @@ void Scene1337::shuffleCards() {
 	}
 }
 
-void Scene1337::firstShuffle() {
+void Scene1337::dealCards() {
 	_animatedCard._card._moveDiff = Common::Point(30, 30);
 	shuffleCards();
+
+	// Deal cards
 	_item1.setAction(&_action3);
 }
 void Scene1337::subCD193() {

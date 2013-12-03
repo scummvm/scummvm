@@ -362,7 +362,7 @@ public:
 	void displayInstructions();
 	void suggestInstructions();
 	void shuffleCards();
-	void firstShuffle();
+	void dealCards();
 	void subCD193();
 	void subCDB90(int arg1, Common::Point pt);
 	void subCF31D();
