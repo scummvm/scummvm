@@ -96,7 +96,6 @@ namespace Fullpipe {
 #define MSG_SC4_KOZAWFALL 2858
 #define MSG_SC4_MANFROMBOTTLE 2854
 #define MSG_SC4_MANTOBOTTLE 2852
-#define PIC_SC4_LADDER 1438
 #define MSG_GOTOLADDER 618
 #define MSG_SHAKEBOTTLE 584
 #define MSG_SHOOTKOZAW 557
@@ -110,6 +109,8 @@ namespace Fullpipe {
 #define MV_IN1MAN_SLEEP 5111
 #define MV_KZW_JUMP 558
 #define MV_KZW_JUMPROTATE 561
+#define MV_KZW_TOHOLERV 537
+#define MV_KZW_WALKPLANK 500
 #define MV_BDG_OPEN 1379
 #define MV_BTN_CLICK 599
 #define MV_CLK_GO 589
@@ -288,6 +289,7 @@ namespace Fullpipe {
 #define ST_MAN_EMPTY 476
 #define ST_MAN_RIGHT 325
 #define ST_MAN_SIT 1164
+#define ST_PNK_WEIGHTLEFT 503
 #define TrubaDown 697
 #define TrubaLeft 474
 #define TrubaRight 696

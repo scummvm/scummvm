@@ -485,7 +485,16 @@ void sceneHandler04_takeKozyawka() {
 }
 
 void sceneHandler04_testPlank(ExCommand *ex) {
-	warning("sceneHandler04_testPlank()");
+	MessageQueue *mq = g_fullpipe->_globalMessageQueueList->getMessageQueueById(ex->_parId);
+
+	if (!mq)
+		return;
+
+	if (g_vars->scene04_plank->_movement || !g_vars->scene04_plank->_statics || g_vars->scene04_plank->_statics->_staticsId != ST_PNK_WEIGHTLEFT) {
+		mq->getExCommandByIndex(0)->_messageNum = MV_KZW_TOHOLERV;
+	} else {
+		mq->getExCommandByIndex(0)->_messageNum = MV_KZW_WALKPLANK;
+	}
 }
 
 void sceneHandler04_updateBottle() {
