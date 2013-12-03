@@ -56,11 +56,18 @@ struct SoundDesc {
 bool VimaTrack::isPlaying() {
 	// FIXME: Actually clean up the data better
 	// (we don't currently handle the case where it isn't asked for through isPlaying, or deleted explicitly).
-	if (_stream->endOfData()) {
-		g_system->getMixer()->stopHandle(*_handle);
+	if (!_handle)
 		return false;
-	} else
-		return true;
+
+	if (g_system->getMixer()->isSoundHandleActive(*_handle)) {
+		if (_stream->endOfData()) {
+			g_system->getMixer()->stopHandle(*_handle);
+			return false;
+		} else {
+			return true;
+		}
+	}
+	return false;
 }
 
 bool VimaTrack::openSound(const Common::String &voiceName, Common::SeekableReadStream *file) {
