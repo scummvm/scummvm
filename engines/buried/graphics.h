@@ -101,6 +101,7 @@ public:
 	bool checkPointAgainstMaskedBitmap(const Graphics::Surface *bitmap, int x, int y, const Common::Point &point, byte rTrans, byte gTrans, byte bTrans);
 	void crossBlit(Graphics::Surface *dst, int xDst, int yDst, int w, int h, const Graphics::Surface *src, int xSrc, int ySrc);
 	void renderText(Graphics::Surface *dst, Graphics::Font *font, const Common::String &text, int x, int y, int w, int h, uint32 color, int lineHeight, TextAlign textAlign = kTextAlignLeft, bool centerVertically = false);
+	void drawEllipse(const Common::Rect &rect, uint32 color);
 
 	Graphics::Surface *remapPalettedFrame(const Graphics::Surface *frame, const byte *palette);
 

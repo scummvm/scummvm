@@ -798,4 +798,38 @@ void GraphicsManager::renderText(Graphics::Surface *dst, Graphics::Font *font, c
 	}
 }
 
+void GraphicsManager::drawEllipse(const Common::Rect &rect, uint32 color) {
+	// HACK: This just hardcodes the sizes of the rows of the ellipses
+	// for the one thing in the game that needs it.
+
+	static const int rows7[7] = { 7, 13, 15, 15, 15, 13, 7 };
+	static const int rows10[10] = { 7, 11, 13, 15, 15, 15, 15, 13, 11, 7 };
+	static const int rows12[12] = { 7, 11, 13, 13, 15, 15, 15, 15, 13, 13, 11, 7 };
+	static const int rows15[15] = { 5, 9, 11, 13, 13, 15, 15, 15, 15, 15, 13, 13, 11, 9, 5 };
+
+	const int *table = 0;
+	switch (rect.height()) {
+	case 7:
+		table = rows7;
+		break;
+	case 10:
+		table = rows10;
+		break;
+	case 12:
+		table = rows12;
+		break;
+	case 15:
+		table = rows15;
+		break;
+	}
+
+	assert(table);
+
+	for (int y = 0; y < rect.height(); y++) {
+		int width = table[y];
+		int x = rect.left + (rect.width() - width) / 2;
+		_screen->hLine(x, y + rect.top, x + width, color);
+	}
+}
+
 } // End of namespace Buried
