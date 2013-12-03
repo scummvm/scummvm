@@ -427,6 +427,319 @@ int PlayArthurOffsetTimed::postEnterRoom(Window *viewWindow, const Location &pri
 	return SC_TRUE;
 }
 
+class NexusDoor : public BaseOxygenTimer {
+public:
+	NexusDoor(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	uint32 _entryStartTime;
+	Common::Rect _door;
+	bool _jumped;
+};
+
+NexusDoor::NexusDoor(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		BaseOxygenTimer(vm, viewWindow, sceneStaticData, priorLocation) {
+	_door = Common::Rect(148, 30, 328, 192);
+}
+
+int NexusDoor::postEnterRoom(Window *viewWindow, const Location &priorLocation) {
+	BaseOxygenTimer::postEnterRoom(viewWindow, priorLocation);
+
+	if (priorLocation.environment != _staticData.location.environment || priorLocation.timeZone != _staticData.location.timeZone) {
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().aiOxygenTimer = GC_AIHW_STARTING_VALUE;
+		((SceneViewWindow *)viewWindow)->displayLiveText(_vm->getString(IDS_AI_ENTERING_NON_PRES_ENV_TEXT));
+	}
+
+	return SC_TRUE;
+}
+
+int NexusDoor::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_door.contains(pointLocation)) {
+		DestinationScene destData;
+		destData.destinationScene = Location(6, 5, 1, 0, 1, 0);
+		destData.transitionType = TRANSITION_VIDEO;
+		destData.transitionData = 0;
+		destData.transitionStartFrame = -1;
+		destData.transitionLength = -1;
+		((SceneViewWindow *)viewWindow)->moveToDestination(destData);
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int NexusDoor::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_door.contains(pointLocation))
+		return kCursorFinger;
+
+	return kCursorArrow;
+}
+
+class NexusPuzzle : public SceneBase {
+public:
+	NexusPuzzle(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
+	int gdiPaint(Window *viewWindow);
+	int mouseDown(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	Common::Rect _lights[7];
+	int _data[7];
+	bool _resetMessage;
+};
+
+NexusPuzzle::NexusPuzzle(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_data[0] = 2;
+	_data[1] = 2;
+	_data[2] = 2;
+	_data[3] = 0;
+	_data[4] = 1;
+	_data[5] = 1;
+	_data[6] = 1;
+
+	_lights[0] = Common::Rect(209, 39, 225, 47);
+	_lights[1] = Common::Rect(209, 52, 225, 63);
+	_lights[2] = Common::Rect(209, 71, 225, 84);
+	_lights[3] = Common::Rect(209, 90, 225, 106);
+	_lights[4] = Common::Rect(209, 110, 225, 123);
+	_lights[5] = Common::Rect(209, 126, 225, 137);
+	_lights[6] = Common::Rect(209, 140, 225, 148);
+
+	_resetMessage = false;
+}
+
+int NexusPuzzle::postEnterRoom(Window *viewWindow, const Location &priorLocation) {
+	// If we came from outside (node zero), display the atmosphere message
+	if (priorLocation.node == 0) {
+		((SceneViewWindow *)viewWindow)->displayLiveText(_vm->getString(IDS_AI_ENTERING_PRES_ENV_TEXT));
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().aiOxygenTimer = GC_AIHW_STARTING_VALUE;
+	}
+
+	// Check to see if we heard the brain comment before
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().aiNXPlayedBrainComment == 0) {
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().aiNXPlayedBrainComment = 1;
+
+		if (((SceneViewWindow *)viewWindow)->getGlobalFlags().generalWalkthroughMode == 0) {
+			// Play a synchronous comment here to introduce the player to the puzzle
+			_vm->_sound->playSynchronousSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 9));
+		} else {
+			// Play a synchronous comment to introduce what is about to happen
+			_vm->_sound->playSynchronousSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 8));
+
+			// Play the Farnstein voiceover
+			_vm->_sound->playSynchronousSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 14));
+
+			// Move to the next node, playing the Arthur retrieval movie
+			DestinationScene destData;
+			destData.destinationScene = _staticData.location;
+			destData.destinationScene.node = 2;
+			destData.transitionType = TRANSITION_VIDEO;
+			destData.transitionData = 1;
+			destData.transitionStartFrame = -1;
+			destData.transitionLength = -1;
+			((SceneViewWindow *)viewWindow)->moveToDestination(destData);
+		}
+	}
+
+	return SC_TRUE;
+}
+
+int NexusPuzzle::gdiPaint(Window *viewWindow) {
+	// Puzzle is only in adventure mode
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().generalWalkthroughMode == 1)
+		return SC_REPAINT;
+
+	uint32 green = _vm->_gfx->getColor(0, 255, 0);
+	uint32 red = _vm->_gfx->getColor(255, 0, 0);
+	Common::Rect absoluteRect = viewWindow->getAbsoluteRect();
+
+	for (int i = 0; i < 7; i++) {
+		if (_data[i] != 0) {
+			uint32 color = (_data[i] == 1) ? green : red;
+
+			Common::Rect rect(_lights[i]);
+			rect.translate(absoluteRect.left, absoluteRect.top);
+			rect.left++;
+			rect.top++;
+
+			_vm->_gfx->drawEllipse(rect, color);
+		}
+	}
+
+	return SC_REPAINT;
+}
+	
+int NexusPuzzle::mouseDown(Window *viewWindow, const Common::Point &pointLocation) {
+	// Puzzle is only in adventure mode
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().generalWalkthroughMode == 1)
+		return SC_FALSE;
+
+	// Reset the live text, if the puzzle was reset
+	if (_resetMessage) {
+		((SceneViewWindow *)viewWindow)->displayLiveText("");
+		_resetMessage = false;
+	}
+
+	// Check to see if we clicked on any of the colored circles, and if a jump is allowed
+	for (int i = 0; i < 7; i++) {
+		if (_lights[i].contains(pointLocation) && _data[i] != 0) {
+			if (_data[i] == 1) {
+				// Can we move up one?
+				if (i > 0) {
+					if (_data[i - 1] == 0) {
+						_data[i - 1] = _data[i];
+						_data[i] = 0;
+						viewWindow->invalidateWindow(false);
+					} else if (i > 1 && _data[i - 2] == 0) {
+						_data[i - 2] = _data[i];
+						_data[i] = 0;
+						viewWindow->invalidateWindow(false);
+					}
+				}
+			} else {
+				if (i < 6) {
+					if (_data[i + 1] == 0) {
+						_data[i + 1] = _data[i];
+						_data[i] = 0;
+						viewWindow->invalidateWindow(false);
+					} else if (i < 5 && _data[i + 2] == 0) {
+						_data[i + 2] = _data[i];
+						_data[i] = 0;
+						viewWindow->invalidateWindow(false);
+					}
+				}
+			}
+
+			// Check to see if we completed the puzzle
+			if (_data[0] == 1 && _data[1] == 1 && _data[2] == 1 && _data[3] == 0 && _data[4] == 2 && _data[5] == 2 && _data[6] == 2) {
+				// Play the Farnstein voiceover
+				_vm->_sound->playSynchronousSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 14));
+
+				// Move to the next node, playing the Arthur retrieval movie
+				DestinationScene destData;
+				destData.destinationScene = _staticData.location;
+				destData.destinationScene.node = 2;
+				destData.transitionType = TRANSITION_VIDEO;
+				destData.transitionData = 1;
+				destData.transitionStartFrame = -1;
+				destData.transitionLength = -1;
+				((SceneViewWindow *)viewWindow)->moveToDestination(destData);
+				return SC_TRUE;
+			}
+
+			// Check to see that we can still make valid moves
+			bool validMove = false;
+			for (int j = 0; j < 7; j++) {
+				if (_data[j] == 1) {
+					if (j > 1 && _data[j - 2] == 0) {
+						validMove = true;
+						break;
+					}
+
+					if (j > 0 && _data[j - 1] == 0) {
+						validMove = true;
+						break;
+					}
+				} else if (_data[j] == 2) {
+					if (j < 5 && _data[j + 2] == 0) {
+						validMove = true;
+						break;
+					}
+
+					if (j < 6 && _data[j + 1] == 0) {
+						validMove = true;
+						break;
+					}
+				}
+			}
+
+			if (!validMove) {
+				// Reset the puzzle
+				_data[0] = 2;
+				_data[1] = 2;
+				_data[2] = 2;
+				_data[3] = 0;
+				_data[4] = 1;
+				_data[5] = 1;
+				_data[6] = 1;
+				viewWindow->invalidateWindow(false);
+
+				Common::String text;
+				if (_vm->getVersion() >= MAKEVERSION(1, 0, 4, 0))
+					text = _vm->getString(IDS_AI_NX_CODE_RESET_MESSAGE);
+				else
+					text = "Unable to complete in current state. Resetting code lock.";
+
+				((SceneViewWindow *)viewWindow)->displayLiveText(text);
+				_resetMessage = true;
+			}
+
+			return SC_TRUE;
+		}
+	}
+
+	return SC_FALSE;
+}
+
+int NexusPuzzle::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	// Puzzle is only in adventure mode
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().generalWalkthroughMode == 1)
+		return kCursorArrow;
+
+	for (int i = 0; i < 7; i++)
+		if (_lights[i].contains(pointLocation) && _data[i] != 0) // In the liiiiiight
+			return kCursorFinger;
+
+	return kCursorArrow;
+}
+
+class NexusEnd : public SceneBase {
+public:
+	NexusEnd(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
+};
+
+NexusEnd::NexusEnd(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+}
+
+int NexusEnd::postEnterRoom(Window *viewWindow, const Location &priorLocation) {
+	if (!((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->isItemInInventory(kItemBioChipAI)) {
+		// Congrats, you have Arthur!
+
+		// Swap and activate the chips
+		((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->removeItem(kItemBioChipBlank);
+		((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->addItem(kItemBioChipAI);
+		((GameUIWindow *)viewWindow->getParent())->_bioChipRightWindow->changeCurrentBioChip(kItemBioChipAI);
+
+		// Play Arthur's comments
+
+		Cursor oldCursor = _vm->_gfx->setCursor(kCursorWait);
+
+		((GameUIWindow *)viewWindow->getParent())->_bioChipRightWindow->_forceComment = true;
+		((GameUIWindow *)viewWindow->getParent())->_bioChipRightWindow->invalidateWindow(false);
+		_vm->_sound->playSynchronousSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 10));
+
+		((GameUIWindow *)viewWindow->getParent())->_bioChipRightWindow->_forceComment = false;
+		((GameUIWindow *)viewWindow->getParent())->_bioChipRightWindow->_forceHelp = true;
+		((GameUIWindow *)viewWindow->getParent())->_bioChipRightWindow->invalidateWindow(false);
+		_vm->_sound->playSynchronousSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 11));
+
+		((GameUIWindow *)viewWindow->getParent())->_bioChipRightWindow->_forceHelp = false;
+		((GameUIWindow *)viewWindow->getParent())->_bioChipRightWindow->invalidateWindow(false);
+		_vm->_sound->playSynchronousSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 12));
+		_vm->_sound->playSynchronousSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 13));
+		_vm->_gfx->setCursor(oldCursor);
+	}
+
+	return SC_TRUE;
+}
+
 class HabitatWingLockedDoor : public BaseOxygenTimer {
 public:
 	HabitatWingLockedDoor(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
@@ -2189,6 +2502,12 @@ SceneBase *SceneViewWindow::constructAILabSceneObject(Window *viewWindow, const 
 		return new SpaceDoorTimer(_vm, viewWindow, sceneStaticData, priorLocation, 92, 92, 212, 189, 48, -1, 1, TRANSITION_VIDEO, 0, -1, -1, -1, -1);
 	case 75:
 		return new HabitatWingLockedDoor(_vm, viewWindow, sceneStaticData, priorLocation, 51, 4, 5, 146, 0, 396, 84);
+	case 90:
+		return new NexusDoor(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 91:
+		return new NexusPuzzle(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 92:
+		return new NexusEnd(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 93:
 		return new BaseOxygenTimer(_vm, viewWindow, sceneStaticData, priorLocation);
 	}
