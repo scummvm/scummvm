@@ -529,6 +529,64 @@ int IceteroidPodTimed::specifyCursor(Window *viewWindow, const Common::Point &po
 	return kCursorArrow;
 }
 
+class IceteroidElevatorExtremeControls : public BaseOxygenTimer {
+public:
+	IceteroidElevatorExtremeControls(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+			int upTimeZone = -1, int upEnvironment = -1, int upNode = -1, int upFacing = -1, int upOrientation = -1, int upDepth = -1, int upAnimID = -1,
+			int downTimeZone = -1, int downEnvironment = -1, int downNode = -1, int downFacing = -1, int downOrientation = -1, int downDepth = -1, int downAnimID = -1);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	Common::Rect _up, _down;
+	DestinationScene _upDestination;
+	DestinationScene _downDestination;
+};
+
+IceteroidElevatorExtremeControls::IceteroidElevatorExtremeControls(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+		int upTimeZone, int upEnvironment, int upNode, int upFacing, int upOrientation, int upDepth, int upAnimID,
+		int downTimeZone, int downEnvironment, int downNode, int downFacing, int downOrientation, int downDepth, int downAnimID) :
+		BaseOxygenTimer(vm, viewWindow, sceneStaticData, priorLocation) {
+	_up = Common::Rect(192, 123, 212, 143);
+	_down = Common::Rect(192, 148, 212, 168);
+
+	_upDestination.destinationScene = Location(upTimeZone, upEnvironment, upNode, upFacing, upOrientation, upDepth);
+	_upDestination.transitionType = TRANSITION_VIDEO;
+	_upDestination.transitionData = upAnimID;
+	_upDestination.transitionStartFrame = -1;
+	_upDestination.transitionLength = -1;
+
+	_downDestination.destinationScene = Location(downTimeZone, downEnvironment, downNode, downFacing, downOrientation, downDepth);
+	_downDestination.transitionType = TRANSITION_VIDEO;
+	_downDestination.transitionData = downAnimID;
+	_downDestination.transitionStartFrame = -1;
+	_downDestination.transitionLength = -1;
+}
+
+int IceteroidElevatorExtremeControls::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_up.contains(pointLocation) && _upDestination.transitionData >= 0) {
+		((SceneViewWindow *)viewWindow)->moveToDestination(_upDestination);
+		return SC_TRUE;
+	}
+
+	if (_down.contains(pointLocation) && _downDestination.transitionData >= 0) {
+		((SceneViewWindow *)viewWindow)->moveToDestination(_downDestination);
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int IceteroidElevatorExtremeControls::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_up.contains(pointLocation) && _upDestination.transitionData >= 0)
+		return kCursorFinger;
+
+	if (_down.contains(pointLocation) && _downDestination.transitionData >= 0)
+		return kCursorFinger;
+
+	return kCursorArrow;
+}
+
 class NexusDoor : public BaseOxygenTimer {
 public:
 	NexusDoor(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
@@ -2598,6 +2656,12 @@ SceneBase *SceneViewWindow::constructAILabSceneObject(Window *viewWindow, const 
 		return new SpaceDoorTimer(_vm, viewWindow, sceneStaticData, priorLocation, 164, 40, 276, 140, -1, -1, 1, TRANSITION_VIDEO, 2, -1, -1, -1, -1);
 	case 54:
 		return new PlaySoundExitingFromSceneDeux(_vm, viewWindow, sceneStaticData, priorLocation, 14);
+	case 55:
+		return new IceteroidElevatorExtremeControls(_vm, viewWindow, sceneStaticData, priorLocation, 6, 6, 6, 0, 1, 0, 6);
+	case 56:
+		return new IceteroidElevatorExtremeControls(_vm, viewWindow, sceneStaticData, priorLocation, 6, 6, 3, 0, 1, 0, 5, 6, 6, 2, 0, 1, 0, 7);
+	case 57:
+		return new IceteroidElevatorExtremeControls(_vm, viewWindow, sceneStaticData, priorLocation, -1, -1, -1, -1, -1, -1, -1, 6, 6, 6, 0, 1, 0, 4);
 	case 60:
 		return new BaseOxygenTimer(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 63:
