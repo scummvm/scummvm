@@ -2222,10 +2222,10 @@ void Scene1337::Card::synchronize(Serializer &s) {
 }
 
 Scene1337::GameBoardSide::GameBoardSide() {
-	_fieldB94 = Common::Point(0, 0);
-	_fieldB98 = Common::Point(0, 0);
-	_fieldB9C = Common::Point(0, 0);
-	_fieldBA0 = Common::Point(0, 0);
+	_card1Pos = Common::Point(0, 0);
+	_card2Pos = Common::Point(0, 0);
+	_card3Pos = Common::Point(0, 0);
+	_card4Pos = Common::Point(0, 0);
 	_frameNum = 0;
 }
 
@@ -3375,7 +3375,7 @@ void Scene1337::Action4::signal() {
 			scene->_aSound2.play(61);
 
 			NpcMover *mover = new NpcMover();
-			scene->_animatedCard._card.addMover(mover, &scene->_gameBoardSide[scene->_currentPlayerNumb]._fieldB94, this);
+			scene->_animatedCard._card.addMover(mover, &scene->_gameBoardSide[scene->_currentPlayerNumb]._card1Pos, this);
 
 			scene->_gameBoardSide[scene->_currentPlayerNumb]._handCard[0]._cardId = scene->_availableCardsPile[scene->_cardsAvailableNumb];
 			scene->_availableCardsPile[scene->_cardsAvailableNumb] = 0;
@@ -3389,8 +3389,8 @@ void Scene1337::Action4::signal() {
 		}
 		break;
 	case 1:
-		if ( ( scene->_animatedCard._card._position.x == scene->_gameBoardSide[scene->_currentPlayerNumb]._fieldB94.x)
-			&& ( scene->_animatedCard._card._position.y == scene->_gameBoardSide[scene->_currentPlayerNumb]._fieldB94.y) ) {
+		if ( ( scene->_animatedCard._card._position.x == scene->_gameBoardSide[scene->_currentPlayerNumb]._card1Pos.x)
+			&& ( scene->_animatedCard._card._position.y == scene->_gameBoardSide[scene->_currentPlayerNumb]._card1Pos.y) ) {
 			scene->_gameBoardSide[scene->_currentPlayerNumb]._handCard[0]._card.postInit();
 			scene->_gameBoardSide[scene->_currentPlayerNumb]._handCard[0]._card._moveDiff = Common::Point(30, 30);
 			scene->_gameBoardSide[scene->_currentPlayerNumb]._handCard[0]._card.setVisage(1332);
@@ -3413,7 +3413,7 @@ void Scene1337::Action4::signal() {
 			scene->_aSound2.play(61);
 
 			NpcMover *mover = new NpcMover();
-			scene->_animatedCard._card.addMover(mover, &scene->_gameBoardSide[scene->_currentPlayerNumb]._fieldB98, this);
+			scene->_animatedCard._card.addMover(mover, &scene->_gameBoardSide[scene->_currentPlayerNumb]._card2Pos, this);
 
 			scene->_gameBoardSide[scene->_currentPlayerNumb]._handCard[1]._cardId = scene->_availableCardsPile[scene->_cardsAvailableNumb];
 			scene->_availableCardsPile[scene->_cardsAvailableNumb] = 0;
@@ -3424,8 +3424,8 @@ void Scene1337::Action4::signal() {
 			signal();
 		break;
 	case 2:
-		if ( ( scene->_animatedCard._card._position.x == scene->_gameBoardSide[scene->_currentPlayerNumb]._fieldB98.x)
-			&& ( scene->_animatedCard._card._position.y == scene->_gameBoardSide[scene->_currentPlayerNumb]._fieldB98.y) ) {
+		if ( ( scene->_animatedCard._card._position.x == scene->_gameBoardSide[scene->_currentPlayerNumb]._card2Pos.x)
+			&& ( scene->_animatedCard._card._position.y == scene->_gameBoardSide[scene->_currentPlayerNumb]._card2Pos.y) ) {
 			scene->_gameBoardSide[scene->_currentPlayerNumb]._handCard[1]._card.postInit();
 			scene->_gameBoardSide[scene->_currentPlayerNumb]._handCard[1]._card._moveDiff = Common::Point(30, 30);
 			scene->_gameBoardSide[scene->_currentPlayerNumb]._handCard[1]._card.setVisage(1332);
@@ -3448,7 +3448,7 @@ void Scene1337::Action4::signal() {
 			scene->_aSound2.play(61);
 
 			NpcMover *mover = new NpcMover();
-			scene->_animatedCard._card.addMover(mover, &scene->_gameBoardSide[scene->_currentPlayerNumb]._fieldB9C, this);
+			scene->_animatedCard._card.addMover(mover, &scene->_gameBoardSide[scene->_currentPlayerNumb]._card3Pos, this);
 
 			scene->_gameBoardSide[scene->_currentPlayerNumb]._handCard[2]._cardId = scene->_availableCardsPile[scene->_cardsAvailableNumb];
 			scene->_availableCardsPile[scene->_cardsAvailableNumb] = 0;
@@ -3459,8 +3459,8 @@ void Scene1337::Action4::signal() {
 			signal();
 		break;
 	case 3:
-		if ( ( scene->_animatedCard._card._position.x == scene->_gameBoardSide[scene->_currentPlayerNumb]._fieldB9C.x)
-			&& ( scene->_animatedCard._card._position.y == scene->_gameBoardSide[scene->_currentPlayerNumb]._fieldB9C.y) ) {
+		if ( ( scene->_animatedCard._card._position.x == scene->_gameBoardSide[scene->_currentPlayerNumb]._card3Pos.x)
+			&& ( scene->_animatedCard._card._position.y == scene->_gameBoardSide[scene->_currentPlayerNumb]._card3Pos.y) ) {
 			scene->_gameBoardSide[scene->_currentPlayerNumb]._handCard[2]._card.postInit();
 			scene->_gameBoardSide[scene->_currentPlayerNumb]._handCard[2]._card._moveDiff = Common::Point(30, 30);
 			scene->_gameBoardSide[scene->_currentPlayerNumb]._handCard[2]._card.setVisage(1332);
@@ -3483,7 +3483,7 @@ void Scene1337::Action4::signal() {
 			scene->_aSound2.play(61);
 
 			NpcMover *mover = new NpcMover();
-			scene->_animatedCard._card.addMover(mover, &scene->_gameBoardSide[scene->_currentPlayerNumb]._fieldBA0, this);
+			scene->_animatedCard._card.addMover(mover, &scene->_gameBoardSide[scene->_currentPlayerNumb]._card4Pos, this);
 
 			scene->_gameBoardSide[scene->_currentPlayerNumb]._handCard[3]._cardId = scene->_availableCardsPile[scene->_cardsAvailableNumb];
 			scene->_availableCardsPile[scene->_cardsAvailableNumb] = 0;
@@ -3494,8 +3494,8 @@ void Scene1337::Action4::signal() {
 			signal();
 		break;
 	case 4:
-		if ( ( scene->_animatedCard._card._position.x == scene->_gameBoardSide[scene->_currentPlayerNumb]._fieldBA0.x)
-			&& ( scene->_animatedCard._card._position.y == scene->_gameBoardSide[scene->_currentPlayerNumb]._fieldBA0.y) ) {
+		if ( ( scene->_animatedCard._card._position.x == scene->_gameBoardSide[scene->_currentPlayerNumb]._card4Pos.x)
+			&& ( scene->_animatedCard._card._position.y == scene->_gameBoardSide[scene->_currentPlayerNumb]._card4Pos.y) ) {
 			scene->_gameBoardSide[scene->_currentPlayerNumb]._handCard[3]._card.postInit();
 			scene->_gameBoardSide[scene->_currentPlayerNumb]._handCard[3]._card._moveDiff = Common::Point(30, 30);
 			scene->_gameBoardSide[scene->_currentPlayerNumb]._handCard[3]._card.setVisage(1332);
@@ -3934,7 +3934,7 @@ void Scene1337::Action11::signal() {
 
 			if ((found) && (scene->subC3E92(scene->_field4240) != -1)) {
 				scene->_field3EF0 = &scene->_gameBoardSide[0]._handCard[i];
-				scene->_field3EF4 = &scene->_gameBoardSide[0]._arr4;
+				scene->_field3EF4 = &scene->_gameBoardSide[0]._emptyStationPos;
 				if (scene->_field4240 != 0) {
 					int tmpVal = scene->subC3E92(scene->_field4240);
 					scene->_field3EF8 = &scene->_gameBoardSide[scene->_field4240]._handCard[tmpVal];
@@ -3953,7 +3953,7 @@ void Scene1337::Action11::signal() {
 
 			if ((found) && (scene->subC3E92(scene->_field4240) != -1)) {
 				scene->_field3EF0 = &scene->_gameBoardSide[1]._handCard[i];
-				scene->_field3EF4 = &scene->_gameBoardSide[1]._arr4;
+				scene->_field3EF4 = &scene->_gameBoardSide[1]._emptyStationPos;
 				if (scene->_field4240 != 1) {
 					int tmpVal = scene->subC3E92(scene->_field4240);
 					scene->_field3EF8 = &scene->_gameBoardSide[scene->_field4240]._handCard[tmpVal];
@@ -3977,7 +3977,7 @@ void Scene1337::Action11::signal() {
 				else {
 					scene->subC4CEC();
 					scene->_field3EF0 = &scene->_gameBoardSide[2]._handCard[i];
-					scene->_field3EF4 = &scene->_gameBoardSide[2]._arr4;
+					scene->_field3EF4 = &scene->_gameBoardSide[2]._emptyStationPos;
 					if (scene->_field4240 != 2) {
 						int tmpVal = scene->subC3E92(scene->_field4240);
 						scene->_field3EF8 = &scene->_gameBoardSide[scene->_field4240]._handCard[tmpVal];
@@ -3997,7 +3997,7 @@ void Scene1337::Action11::signal() {
 
 			if ((found) && (scene->subC3E92(scene->_field4240) != -1)) {
 				scene->_field3EF0 = &scene->_gameBoardSide[3]._handCard[i];
-				scene->_field3EF4 = &scene->_gameBoardSide[3]._arr4;
+				scene->_field3EF4 = &scene->_gameBoardSide[3]._emptyStationPos;
 				if (scene->_field4240 != 3) {
 					int tmpVal = scene->subC3E92(scene->_field4240);
 					scene->_field3EF8 = &scene->_gameBoardSide[scene->_field4240]._handCard[tmpVal];
@@ -4360,12 +4360,12 @@ void Scene1337::postInit(SceneObjectList *OwnerList) {
 
 	_gameBoardSide[2]._delayCard._stationPos = Common::Point(199, 174);
 
-	_gameBoardSide[2]._arr4._stationPos = Common::Point(145, 148);
+	_gameBoardSide[2]._emptyStationPos._stationPos = Common::Point(145, 148);
 
-	_gameBoardSide[2]._fieldB94 = Common::Point(10, 174);
-	_gameBoardSide[2]._fieldB98 = Common::Point(37, 174);
-	_gameBoardSide[2]._fieldB9C = Common::Point(64, 174);
-	_gameBoardSide[2]._fieldBA0 = Common::Point(91, 174);
+	_gameBoardSide[2]._card1Pos = Common::Point(10, 174);
+	_gameBoardSide[2]._card2Pos = Common::Point(37, 174);
+	_gameBoardSide[2]._card3Pos = Common::Point(64, 174);
+	_gameBoardSide[2]._card4Pos = Common::Point(91, 174);
 	_gameBoardSide[2]._frameNum = 2;
 
 	_gameBoardSide[3]._handCard[0]._stationPos = Common::Point(14, 14);
@@ -4384,12 +4384,12 @@ void Scene1337::postInit(SceneObjectList *OwnerList) {
 
 	_gameBoardSide[3]._delayCard._stationPos = Common::Point(37, 145);
 
-	_gameBoardSide[3]._arr4._stationPos = Common::Point(63, 92);
+	_gameBoardSide[3]._emptyStationPos._stationPos = Common::Point(63, 92);
 
-	_gameBoardSide[3]._fieldB94 = Common::Point(14, 14);
-	_gameBoardSide[3]._fieldB98 = Common::Point(14, 36);
-	_gameBoardSide[3]._fieldB9C = Common::Point(14, 58);
-	_gameBoardSide[3]._fieldBA0 = Common::Point(14, 80);
+	_gameBoardSide[3]._card1Pos = Common::Point(14, 14);
+	_gameBoardSide[3]._card2Pos = Common::Point(14, 36);
+	_gameBoardSide[3]._card3Pos = Common::Point(14, 58);
+	_gameBoardSide[3]._card4Pos = Common::Point(14, 80);
 	_gameBoardSide[3]._frameNum = 3;
 
 	_gameBoardSide[0]._handCard[0]._stationPos = Common::Point(280, 5);
@@ -4408,12 +4408,12 @@ void Scene1337::postInit(SceneObjectList *OwnerList) {
 
 	_gameBoardSide[0]._delayCard._stationPos = Common::Point(91, 16);
 
-	_gameBoardSide[0]._arr4._stationPos = Common::Point(145, 42);
+	_gameBoardSide[0]._emptyStationPos._stationPos = Common::Point(145, 42);
 
-	_gameBoardSide[0]._fieldB94 = Common::Point(280, 5);
-	_gameBoardSide[0]._fieldB98 = Common::Point(253, 5);
-	_gameBoardSide[0]._fieldB9C = Common::Point(226, 5);
-	_gameBoardSide[0]._fieldBA0 = Common::Point(199, 5);
+	_gameBoardSide[0]._card1Pos = Common::Point(280, 5);
+	_gameBoardSide[0]._card2Pos = Common::Point(253, 5);
+	_gameBoardSide[0]._card3Pos = Common::Point(226, 5);
+	_gameBoardSide[0]._card4Pos = Common::Point(199, 5);
 	_gameBoardSide[0]._frameNum = 2;
 
 	_gameBoardSide[1]._handCard[0]._stationPos = Common::Point(283, 146);
@@ -4432,12 +4432,12 @@ void Scene1337::postInit(SceneObjectList *OwnerList) {
 
 	_gameBoardSide[1]._delayCard._stationPos = Common::Point(253, 43);
 
-	_gameBoardSide[1]._arr4._stationPos = Common::Point(227, 96);
+	_gameBoardSide[1]._emptyStationPos._stationPos = Common::Point(227, 96);
 
-	_gameBoardSide[1]._fieldB94 = Common::Point(283, 146);
-	_gameBoardSide[1]._fieldB98 = Common::Point(283, 124);
-	_gameBoardSide[1]._fieldB9C = Common::Point(283, 102);
-	_gameBoardSide[1]._fieldBA0 = Common::Point(283, 80);
+	_gameBoardSide[1]._card1Pos = Common::Point(283, 146);
+	_gameBoardSide[1]._card2Pos = Common::Point(283, 124);
+	_gameBoardSide[1]._card3Pos = Common::Point(283, 102);
+	_gameBoardSide[1]._card4Pos = Common::Point(283, 80);
 	_gameBoardSide[1]._frameNum = 4;
 
 	subPostInit();
@@ -5099,7 +5099,7 @@ void Scene1337::subC318B(int arg1, Card *subObj1, int arg3) {
 	}
 
 	_field3EF0 = subObj1;
-	_field3EF4 = &_gameBoardSide[arg3]._arr4;
+	_field3EF4 = &_gameBoardSide[arg3]._emptyStationPos;
 	_field3EF8 = &_gameBoardSide[arg3]._handCard[randIndx];
 
 	_item1.setAction(&_action11);
@@ -5255,7 +5255,7 @@ Scene1337::Card *Scene1337::subC34EC(int arg1) {
 void Scene1337::subC358E(Card *subObj1, int arg2) {
 	_field3EF0 = subObj1;
 	_field3EF4 = subC34EC(arg2);
-	_field3EF8 = &_gameBoardSide[arg2]._arr4;
+	_field3EF8 = &_gameBoardSide[arg2]._emptyStationPos;
 	_field4240 = arg2;
 	_item1.setAction(&_action10);
 }
@@ -5710,10 +5710,10 @@ void Scene1337::subCDB90(int arg1, Common::Point pt) {
 					actionDisplay(1330, 43, 159, 10, 1, 200, 0, 7, 0, 154, 154);
 				} else if (subC2BF8(&_item8, pt)) {
 					actionDisplay(1330, 4, 159, 10, 1, 200, 0, 7, 0, 154, 154);
-				} else if ( (subC2BF8(&_gameBoardSide[2]._arr4, pt))
-					       || (subC2BF8(&_gameBoardSide[3]._arr4, pt))
-					       || (subC2BF8(&_gameBoardSide[0]._arr4, pt))
-					       || (subC2BF8(&_gameBoardSide[1]._arr4, pt)) ) {
+				} else if ( (subC2BF8(&_gameBoardSide[2]._emptyStationPos, pt))
+					       || (subC2BF8(&_gameBoardSide[3]._emptyStationPos, pt))
+					       || (subC2BF8(&_gameBoardSide[0]._emptyStationPos, pt))
+					       || (subC2BF8(&_gameBoardSide[1]._emptyStationPos, pt)) ) {
 					actionDisplay(1330, 32, 159, 10, 1, 200, 0, 7, 0, 154, 154);
 				} else {
 					if (subC2BF8(&_gameBoardSide[2]._handCard[0], pt))
@@ -5849,17 +5849,17 @@ void Scene1337::subCDB90(int arg1, Common::Point pt) {
 		found = true;
 	}
 
-	if (subC2BF8(&_gameBoardSide[3]._arr4, pt)) {
+	if (subC2BF8(&_gameBoardSide[3]._emptyStationPos, pt)) {
 		actionDisplay(1330, 147, 20, 99, 1, 136, 0, 7, 0, 172, 172);
 		found = true;
 	}
 
-	if (subC2BF8(&_gameBoardSide[1]._arr4, pt)) {
+	if (subC2BF8(&_gameBoardSide[1]._emptyStationPos, pt)) {
 		actionDisplay(1330, 146, 300, 99, 1, 136, 0, 7, 0, 117, 117);
 		found = true;
 	}
 
-	if (subC2BF8(&_gameBoardSide[0]._arr4, pt)) {
+	if (subC2BF8(&_gameBoardSide[0]._emptyStationPos, pt)) {
 		actionDisplay(1330, 11, 159, 10, 1, 200, 0, 7, 0, 154, 154);
 		found = true;
 	}
@@ -6601,7 +6601,7 @@ void Scene1337::subD02CA() {
 						} else {
 							if ((subC27F9(_item6._cardId) == -1) && (subC27B5(_item6._cardId) == -1)) {
 								if (_item6._cardId == 13) {
-									if (subC2BF8(&_gameBoardSide[0]._arr4, Common::Point(_item6._stationPos.x + 12, _item6._stationPos.y + 12)) != 0) {
+									if (subC2BF8(&_gameBoardSide[0]._emptyStationPos, Common::Point(_item6._stationPos.x + 12, _item6._stationPos.y + 12)) != 0) {
 										for (int k = 0; k <= 7; k++) {
 											if (_gameBoardSide[0]._outpostStation[k]._cardId != 0) {
 												found = true;
@@ -6611,7 +6611,7 @@ void Scene1337::subD02CA() {
 
 										if (!found)
 											actionDisplay(1330, 74, 159, 10, 1, 200, 0, 7, 0, 154, 154);
-									} else if (subC2BF8(&_gameBoardSide[3]._arr4, Common::Point(_item6._stationPos.x + 12, _item6._stationPos.y + 12)) != 0) {
+									} else if (subC2BF8(&_gameBoardSide[3]._emptyStationPos, Common::Point(_item6._stationPos.x + 12, _item6._stationPos.y + 12)) != 0) {
 										for (int k = 0; k <= 7; k++) {
 											if (_gameBoardSide[3]._outpostStation[k]._cardId != 0) {
 												found = true;
@@ -6620,7 +6620,7 @@ void Scene1337::subD02CA() {
 										}
 										if (!found)
 											actionDisplay(1330, 74, 159, 10, 1, 200, 0, 7, 0, 154, 154);
-									} else if (subC2BF8(&_gameBoardSide[1]._arr4, Common::Point(_item6._stationPos.x + 12, _item6._stationPos.y + 12)) != 0) {
+									} else if (subC2BF8(&_gameBoardSide[1]._emptyStationPos, Common::Point(_item6._stationPos.x + 12, _item6._stationPos.y + 12)) != 0) {
 										for (int k = 0; k <= 7; k++) {
 											if (_gameBoardSide[1]._outpostStation[k]._cardId == 0) {
 												found = true;
@@ -6634,7 +6634,7 @@ void Scene1337::subD02CA() {
 									}
 								} else if (_item6._cardId == 25) {
 									int k;
-									if (subC2BF8(&_gameBoardSide[0]._arr4, Common::Point(_item6._stationPos.x + 12, _item6._stationPos.y + 12)) != 0) {
+									if (subC2BF8(&_gameBoardSide[0]._emptyStationPos, Common::Point(_item6._stationPos.x + 12, _item6._stationPos.y + 12)) != 0) {
 										if ( (_gameBoardSide[0]._handCard[0]._cardId != 0)
 											|| (_gameBoardSide[0]._handCard[1]._cardId != 0)
 											|| (_gameBoardSide[0]._handCard[2]._cardId != 0)
@@ -6648,7 +6648,7 @@ void Scene1337::subD02CA() {
 										} else {
 											actionDisplay(1330, 99, 159, 10, 1, 200, 0, 7, 0, 154, 154);
 										}
-									} else if (subC2BF8(&_gameBoardSide[1]._arr4, Common::Point(_item6._stationPos.x + 12, _item6._stationPos.y + 12)) != 0) {
+									} else if (subC2BF8(&_gameBoardSide[1]._emptyStationPos, Common::Point(_item6._stationPos.x + 12, _item6._stationPos.y + 12)) != 0) {
 										if ( (_gameBoardSide[1]._handCard[0]._cardId != 0)
 											|| (_gameBoardSide[1]._handCard[1]._cardId != 0)
 											|| (_gameBoardSide[1]._handCard[2]._cardId != 0)
@@ -6664,7 +6664,7 @@ void Scene1337::subD02CA() {
 										}
 									}
 
-									if (subC2BF8(&_gameBoardSide[3]._arr4, Common::Point(_item6._stationPos.x + 12, _item6._stationPos.y + 12)) != 0) {
+									if (subC2BF8(&_gameBoardSide[3]._emptyStationPos, Common::Point(_item6._stationPos.x + 12, _item6._stationPos.y + 12)) != 0) {
 										if ( (_gameBoardSide[3]._handCard[0]._cardId != 0)
 											|| (_gameBoardSide[3]._handCard[1]._cardId != 0)
 											|| (_gameBoardSide[3]._handCard[2]._cardId != 0)

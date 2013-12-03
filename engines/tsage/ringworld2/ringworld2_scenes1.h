@@ -199,12 +199,12 @@ class Scene1337 : public SceneExt {
 		Card _handCard[4];
 		Card _outpostStation[8];
 		Card _delayCard;
-		Card _arr4;
+		Card _emptyStationPos;
 
-		Common::Point _fieldB94;
-		Common::Point _fieldB98;
-		Common::Point _fieldB9C;
-		Common::Point _fieldBA0;
+		Common::Point _card1Pos;
+		Common::Point _card2Pos;
+		Common::Point _card3Pos;
+		Common::Point _card4Pos;
 		int _frameNum;
 
 		GameBoardSide();
