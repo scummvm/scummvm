@@ -2032,7 +2032,7 @@ bool SceneViewWindow::playAICommentFromData(const AIComment &commentData) {
 			return false;
 		}
 		break;
-	case 3: // Future Apartment
+	case 4: // Future Apartment
 		commentFileName += "FUTAPT/";
 
 		switch (commentData.location.environment) {
@@ -2049,7 +2049,7 @@ bool SceneViewWindow::playAICommentFromData(const AIComment &commentData) {
 			return false;
 		}
 		break;
-	case 4: // Da Vinci
+	case 5: // Da Vinci
 		commentFileName += "DAVINCI/";
 
 		switch (commentData.location.environment) {
@@ -2072,7 +2072,7 @@ bool SceneViewWindow::playAICommentFromData(const AIComment &commentData) {
 			return false;
 		}
 		break;
-	case 5: // Space Station
+	case 6: // Space Station
 		commentFileName += "AILAB/";
 
 		switch (commentData.location.environment) {
@@ -2542,7 +2542,7 @@ Common::Array<AnimEvent> SceneViewWindow::getAnimationDatabase(int timeZone, int
 }
 
 Common::Array<AIComment> SceneViewWindow::getAICommentDatabase(int timeZone, int environment) {
-	Common::SeekableReadStream *stream = _vm->getAnimData(_vm->computeAIDBResourceID(timeZone, environment));
+	Common::SeekableReadStream *stream = _vm->getAIData(_vm->computeAIDBResourceID(timeZone, environment));
 	Common::Array<AIComment> comments;
 
 	if (!stream)
