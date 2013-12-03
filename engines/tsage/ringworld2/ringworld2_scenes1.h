@@ -198,7 +198,7 @@ class Scene1337 : public SceneExt {
 	public:
 		Card _handCard[4];
 		Card _outpostStation[8];
-		Card _delayPile;
+		Card _delayCard;
 		Card _arr4;
 
 		Common::Point _fieldB94;
