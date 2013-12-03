@@ -490,6 +490,45 @@ int HabitatWingIceteroidDoor::specifyCursor(Window *viewWindow, const Common::Po
 	return kCursorArrow;
 }
 
+class IceteroidPodTimed : public BaseOxygenTimer {
+public:
+	IceteroidPodTimed(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+			int left = -1, int top = -1, int right = -1, int bottom = -1, int animID = -1, int timeZone = -1,
+			int environment = -1, int node = -1, int facing = -1, int orientation = -1, int depth = -1);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	Common::Rect _engageButton;
+	DestinationScene _clickDestination;
+};
+
+IceteroidPodTimed::IceteroidPodTimed(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+			int left, int top, int right, int bottom, int animID, int timeZone,
+			int environment, int node, int facing, int orientation, int depth) :
+		BaseOxygenTimer(vm, viewWindow, sceneStaticData, priorLocation) {
+	_engageButton = Common::Rect(left, top, right, bottom);
+	_clickDestination.destinationScene = Location(timeZone, environment, node, facing, orientation, depth);
+	_clickDestination.transitionType = TRANSITION_VIDEO;
+	_clickDestination.transitionData = animID;
+	_clickDestination.transitionStartFrame = -1;
+	_clickDestination.transitionLength = -1;
+}
+
+int IceteroidPodTimed::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_engageButton.contains(pointLocation)) // Make it so!
+		((SceneViewWindow *)viewWindow)->moveToDestination(_clickDestination);
+
+	return SC_FALSE;
+}
+
+int IceteroidPodTimed::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_engageButton.contains(pointLocation))
+		return kCursorFinger;
+
+	return kCursorArrow;
+}
+
 class NexusDoor : public BaseOxygenTimer {
 public:
 	NexusDoor(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
@@ -2549,6 +2588,10 @@ SceneBase *SceneViewWindow::constructAILabSceneObject(Window *viewWindow, const 
 		return new ScanningRoomNexusDoorPullHandle(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 49:
 		return new ScanningRoomNexusDoorToGlobe(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 50:
+		return new IceteroidPodTimed(_vm, viewWindow, sceneStaticData, priorLocation, 174, 96, 246, 118, 1, 6, 6, 1, 0, 1, 0);
+	case 51:
+		return new IceteroidPodTimed(_vm, viewWindow, sceneStaticData, priorLocation, 174, 96, 246, 118, 3, 6, 6, 0, 0, 1, 0);
 	case 52:
 		return new SpaceDoorTimer(_vm, viewWindow, sceneStaticData, priorLocation, 164, 40, 276, 140, -1, -1, 1, TRANSITION_VIDEO, 0, -1, -1, -1, -1);
 	case 53:
@@ -2557,6 +2600,10 @@ SceneBase *SceneViewWindow::constructAILabSceneObject(Window *viewWindow, const 
 		return new PlaySoundExitingFromSceneDeux(_vm, viewWindow, sceneStaticData, priorLocation, 14);
 	case 60:
 		return new BaseOxygenTimer(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 63:
+		return new IceteroidPodTimed(_vm, viewWindow, sceneStaticData, priorLocation, 174, 96, 246, 118, 14, 6, 6, 5, 0, 1, 0);
+	case 64:
+		return new IceteroidPodTimed(_vm, viewWindow, sceneStaticData, priorLocation, 174, 96, 246, 118, 15, 6, 6, 4, 0, 1, 0);
 	case 65:
 		return new SpaceDoorTimer(_vm, viewWindow, sceneStaticData, priorLocation, 164, 26, 268, 124, -1, -1, 1, TRANSITION_VIDEO, 13, -1, -1, -1, -1);
 	case 66:
