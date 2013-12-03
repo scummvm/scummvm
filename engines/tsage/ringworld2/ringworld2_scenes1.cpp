@@ -4128,6 +4128,7 @@ void Scene1337::Action12::signal() {
 		break;
 	case 1: {
 		scene->_availableCardsPile[scene->_field3E26] = scene->_field3EF4->_cardId;
+		scene->_field3E26++;
 		scene->_field3EF4->_cardId = scene->_field3EF0->_cardId;
 		scene->_field3EF0->_cardId = 0;
 		scene->_field3EF0->_card.remove();
