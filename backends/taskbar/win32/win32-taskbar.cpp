@@ -28,22 +28,17 @@
 
 #if defined(WIN32) && defined(USE_TASKBAR)
 
-// Needed for taskbar functions
-#if defined(__GNUC__) && defined(__MINGW32__) && !defined(__MINGW64__)
-	#include "backends/taskbar/win32/mingw-compat.h"
-#else
-	// We need certain functions that are excluded by default
-	#undef NONLS
-	#undef NOICONS
-	#include <windows.h>
-	#if defined(ARRAYSIZE)
-		#undef ARRAYSIZE
-	#endif
+// We need certain functions that are excluded by default
+#undef NONLS
+#undef NOICONS
+#include <windows.h>
+#if defined(ARRAYSIZE)
+#undef ARRAYSIZE
+#endif
 
-	#if defined(_MSC_VER)
-		// Default MSVC headers for ITaskbarList3 and IShellLink
-		#include <SDKDDKVer.h>
-	#endif
+#if defined(_MSC_VER)
+	// Default MSVC headers for ITaskbarList3 and IShellLink
+	#include <SDKDDKVer.h>
 #endif
 
 #include <shlobj.h>
