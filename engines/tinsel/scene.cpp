@@ -130,14 +130,14 @@ const SCENE_STRUC *GetSceneStruc(const byte *pStruc) {
 	const byte *p = pStruc;
 	memset(&g_tempStruc, 0, sizeof(SCENE_STRUC));
 
-	g_tempStruc.numEntrance    = FROM_LE_32(READ_32(p)); p += sizeof(uint32);
-	g_tempStruc.numPoly        = FROM_LE_32(READ_32(p)); p += sizeof(uint32);
-	g_tempStruc.numTaggedActor = FROM_LE_32(READ_32(p)); p += sizeof(uint32);
-	g_tempStruc.defRefer       = FROM_LE_32(READ_32(p)); p += sizeof(uint32);
-	g_tempStruc.hSceneScript   = FROM_LE_32(READ_32(p)); p += sizeof(uint32);
-	g_tempStruc.hEntrance      = FROM_LE_32(READ_32(p)); p += sizeof(uint32);
-	g_tempStruc.hPoly          = FROM_LE_32(READ_32(p)); p += sizeof(uint32);
-	g_tempStruc.hTaggedActor   = FROM_LE_32(READ_32(p)); p += sizeof(uint32);
+	g_tempStruc.numEntrance    = FROM_LE_32(READ_LE_UINT32(p)); p += sizeof(uint32);
+	g_tempStruc.numPoly        = FROM_LE_32(READ_LE_UINT32(p)); p += sizeof(uint32);
+	g_tempStruc.numTaggedActor = FROM_LE_32(READ_LE_UINT32(p)); p += sizeof(uint32);
+	g_tempStruc.defRefer       = FROM_LE_32(READ_LE_UINT32(p)); p += sizeof(uint32);
+	g_tempStruc.hSceneScript   = FROM_LE_32(READ_LE_UINT32(p)); p += sizeof(uint32);
+	g_tempStruc.hEntrance      = FROM_LE_32(READ_LE_UINT32(p)); p += sizeof(uint32);
+	g_tempStruc.hPoly          = FROM_LE_32(READ_LE_UINT32(p)); p += sizeof(uint32);
+	g_tempStruc.hTaggedActor   = FROM_LE_32(READ_LE_UINT32(p)); p += sizeof(uint32);
 
 	return &g_tempStruc;
 }
@@ -223,7 +223,7 @@ static void LoadScene(SCNHANDLE scene, int entry) {
 		// CdPlay() stuff
 		byte *cptr = FindChunk(scene, CHUNK_CDPLAY_FILENUM);
 		assert(cptr);
-		i = READ_32(cptr);
+		i = READ_LE_UINT32(cptr);
 		assert(i < 512);
 		cptr = FindChunk(scene, CHUNK_CDPLAY_FILENAME);
 		assert(cptr);
@@ -266,10 +266,10 @@ static void LoadScene(SCNHANDLE scene, int entry) {
 		// Run the appropriate entrance code (if any)
 		es = (const ENTRANCE_STRUC *)LockMem(ss->hEntrance);
 		for (i = 0; i < ss->numEntrance; i++) {
-			if (FROM_32(es->eNumber) == (uint)entry) {
+			if (FROM_LE_32(es->eNumber) == (uint)entry) {
 				if (es->hScript) {
 					init.event = STARTUP;
-					init.hTinselCode = FROM_32(es->hScript);
+					init.hTinselCode = FROM_LE_32(es->hScript);
 
 					CoroScheduler.createProcess(PID_TCODE, SceneTinselProcess, &init, sizeof(init));
 				}

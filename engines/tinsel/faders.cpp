@@ -117,10 +117,10 @@ static void FadeProcess(CORO_PARAM, const void *param) {
 				pFade->pPalQ->numColors, (uint32) *_ctx->pColMult);
 		else
 			FadePalette(_ctx->fadeRGB, _ctx->pPalette->palRGB,
-				FROM_32(_ctx->pPalette->numColors), (uint32) *_ctx->pColMult);
+				FROM_LE_32(_ctx->pPalette->numColors), (uint32) *_ctx->pColMult);
 
 		// send new palette to video DAC
-		UpdateDACqueue(pFade->pPalQ->posInDAC, FROM_32(_ctx->pPalette->numColors), _ctx->fadeRGB);
+		UpdateDACqueue(pFade->pPalQ->posInDAC, FROM_LE_32(_ctx->pPalette->numColors), _ctx->fadeRGB);
 
 		// allow time for video DAC to be updated
 		CORO_SLEEP(1);

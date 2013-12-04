@@ -73,7 +73,7 @@ uint8* psxPJCRLEUnwinder(uint16 imageWidth, uint16 imageHeight, uint8 *srcIdx) {
 
 	while (remainingBlocks) { // Repeat until all blocks are decompressed
 		if (!controlBits) {
-			controlData = READ_16(srcIdx);
+			controlData = READ_LE_UINT16(srcIdx);
 			srcIdx += 2;
 
 			// If bit 15 of controlData is enabled, compression data is type 1.
@@ -92,7 +92,7 @@ uint8* psxPJCRLEUnwinder(uint16 imageWidth, uint16 imageHeight, uint8 *srcIdx) {
 			// If there is compression, we need to fetch an index
 			// to be treated as "base" for compression.
 			if (compressionType != 0) {
-				controlData = READ_16(srcIdx);
+				controlData = READ_LE_UINT16(srcIdx);
 				srcIdx += 2;
 				baseIndex = controlData;
 			}
@@ -114,7 +114,7 @@ uint8* psxPJCRLEUnwinder(uint16 imageWidth, uint16 imageHeight, uint8 *srcIdx) {
 		switch (compressionType) {
 			case 0: // No compression, plain copy of indexes
 				while (decremTiles) {
-					WRITE_LE_UINT16(dstIdx, READ_16(srcIdx));
+					WRITE_LE_UINT16(dstIdx, READ_LE_UINT16(srcIdx));
 					srcIdx += 2;
 					dstIdx += 2;
 					decremTiles--;
@@ -272,7 +272,7 @@ static void PsxDrawTiles(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP, bool apply
 			assert(boxBounds.bottom >= boxBounds.top);
 			assert(boxBounds.right >= boxBounds.left);
 
-			int16 indexVal = READ_16(srcP);
+			int16 indexVal = READ_LE_UINT16(srcP);
 			srcP += sizeof(uint16);
 
 			// Draw a 4x4 block based on the opcode as in index into the block list
@@ -381,7 +381,7 @@ static void WrtNonZero(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP, bool applyCl
 			assert(boxBounds.bottom >= boxBounds.top);
 			assert(boxBounds.right >= boxBounds.left);
 
-			int16 indexVal = READ_16(srcP);
+			int16 indexVal = READ_LE_UINT16(srcP);
 			srcP += sizeof(uint16);
 
 			if (indexVal >= 0) {
@@ -763,8 +763,8 @@ void DrawObject(DRAWOBJECT *pObj) {
 			byte *p = (byte *)LockMem(pObj->hBits & HANDLEMASK);
 
 			srcPtr = p + (pObj->hBits & OFFSETMASK);
-			pObj->charBase = (char *)p + READ_32(p + 0x10);
-			pObj->transOffset = READ_32(p + 0x14);
+			pObj->charBase = (char *)p + READ_LE_UINT32(p + 0x10);
+			pObj->transOffset = READ_LE_UINT32(p + 0x14);
 
 			// Decompress block indexes for Discworld PSX
 			if (TinselV1PSX) {
@@ -793,7 +793,7 @@ void DrawObject(DRAWOBJECT *pObj) {
 						psxPaletteMapper(pObj->pPal, srcPtr + sizeof(uint16), psxMapperTable);
 
 						psxFourBitClut = true;
-						psxSkipBytes = READ_32(p + sizeof(uint32) * 5) << 4; // Fetch number of bytes we have to skip
+						psxSkipBytes = READ_LE_UINT32(p + sizeof(uint32) * 5) << 4; // Fetch number of bytes we have to skip
 						switch (indexType) {
 							case 0xDD: // Normal uncompressed indexes
 								psxRLEindex = false;
@@ -905,16 +905,19 @@ void DrawObject(DRAWOBJECT *pObj) {
 		case 0x48:
 			WrtNonZero(pObj, srcPtr, destPtr, typeId >= 0x40);
 			break;
+
 		case 0x04:
 		case 0x44:
 			// WrtConst with/without clipping
 			WrtConst(pObj, destPtr, typeId == 0x44);
 			break;
+
 		case 0x84:
 		case 0xC4:
 			// WrtTrans with/without clipping
 			WrtTrans(pObj, destPtr, typeId == 0xC4);
 			break;
+
 		default:
 			error("Unknown drawing type %d", typeId);
 		}
