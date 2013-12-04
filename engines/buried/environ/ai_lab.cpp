@@ -1240,6 +1240,43 @@ int ScienceWingPanelInterface::gdiPaint(Window *viewWindow) {
 	return SC_FALSE;
 }
 
+class ScienceWingMachineRoomDoor : public BaseOxygenTimer {
+public:
+	ScienceWingMachineRoomDoor(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	
+private:
+	int _cursorID;
+	Common::Rect _clickRegion;
+	DestinationScene _clickDestination;
+};
+
+ScienceWingMachineRoomDoor::ScienceWingMachineRoomDoor(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		BaseOxygenTimer(vm, viewWindow, sceneStaticData, priorLocation) {
+	_clickRegion = Common::Rect(162, 54, 250, 142);
+	_cursorID = kCursorFinger;
+	_clickDestination.destinationScene = Location(6, 8, 0, 0, 1, 0);
+	_clickDestination.transitionType = TRANSITION_VIDEO;
+	_clickDestination.transitionData = (((SceneViewWindow *)viewWindow)->getGlobalFlags().aiMRPressurized == 0) ? 2 : 3;
+	_clickDestination.transitionStartFrame = -1;
+	_clickDestination.transitionLength = -1;
+}
+
+int ScienceWingMachineRoomDoor::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_clickRegion.contains(pointLocation))
+		((SceneViewWindow *)viewWindow)->moveToDestination(_clickDestination);
+
+	return SC_FALSE;
+}
+
+int ScienceWingMachineRoomDoor::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_clickRegion.contains(pointLocation))
+		return _cursorID;
+
+	return 0;
+}
+
 class ScienceWingStingersTimed : public BaseOxygenTimer {
 public:
 	ScienceWingStingersTimed(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
@@ -1294,7 +1331,7 @@ int NexusDoor::postEnterRoom(Window *viewWindow, const Location &priorLocation) 
 
 	if (priorLocation.environment != _staticData.location.environment || priorLocation.timeZone != _staticData.location.timeZone) {
 		((SceneViewWindow *)viewWindow)->getGlobalFlags().aiOxygenTimer = GC_AIHW_STARTING_VALUE;
-		((SceneViewWindow *)viewWindow)->displayLiveText(_vm->getString(IDS_AI_ENTERING_NON_PRES_ENV_TEXT));
+		((SceneViewWindow *)viewWindow)->displayLiveText(_vm->getString(IDS_AI_ENTERING_PRES_ENV_TEXT));
 	}
 
 	return SC_TRUE;
@@ -3181,6 +3218,50 @@ ScanningRoomNexusDoorToGlobe::ScanningRoomNexusDoorToGlobe(BuriedEngine *vm, Win
 		_staticData.destForward.destinationScene = Location(-1, -1, -1, -1, -1, -1);
 }
 
+class MachineRoomEntry : public SceneBase {
+public:
+	MachineRoomEntry(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation, int soundID = -1);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
+	int timerCallback(Window *viewWindow);
+
+private:
+	int _soundID;
+	bool _die;
+};
+
+MachineRoomEntry::MachineRoomEntry(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation, int soundID) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_soundID = soundID;
+	_die = false;
+}
+
+int MachineRoomEntry::postEnterRoom(Window *viewWindow, const Location &priorLocation) {
+	// If the machine room is not pressurized, flag ourselves for death
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().aiMRPressurized == 0) {
+		_die = true;
+		((SceneViewWindow *)viewWindow)->_disableArthur = true;
+		return SC_TRUE;
+	}
+
+	// Otherwise, notify the player they have entered a pressurized room and their oxygen has replenished
+	if (_staticData.location.node != priorLocation.node) {
+		((SceneViewWindow *)viewWindow)->displayLiveText(_vm->getString(IDS_AI_ENTERING_PRES_ENV_TEXT));
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().aiOxygenTimer = GC_AIHW_STARTING_VALUE;
+	}
+
+	return SC_TRUE;
+}
+
+int MachineRoomEntry::timerCallback(Window *viewWindow) {
+	// If we have not pressurized the room, kill the player
+	if (_die) {
+		((SceneViewWindow *)viewWindow)->showDeathScene(41);
+		return SC_DEATH;
+	}
+
+	return SC_TRUE;
+}
+
 class DockingBayPlaySoundEntering : public SceneBase {
 public:
 	DockingBayPlaySoundEntering(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
@@ -3376,10 +3457,17 @@ SceneBase *SceneViewWindow::constructAILabSceneObject(Window *viewWindow, const 
 		return new ScienceWingZoomIntoPanel(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 72:
 		return new ScienceWingPanelInterface(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 73:
+		return new ScienceWingMachineRoomDoor(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 74:
 		return new ScienceWingStingersTimed(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 75:
 		return new HabitatWingLockedDoor(_vm, viewWindow, sceneStaticData, priorLocation, 51, 4, 5, 146, 0, 396, 84);
+	case 80:
+		// Scene exists, but is just the default one
+		break;
+	case 87:
+		return new MachineRoomEntry(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 90:
 		return new NexusDoor(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 91:
@@ -3390,9 +3478,11 @@ SceneBase *SceneViewWindow::constructAILabSceneObject(Window *viewWindow, const 
 		return new BaseOxygenTimer(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 100:
 		return new TakeWaterCanister(_vm, viewWindow, sceneStaticData, priorLocation);
+	default:
+		warning("TODO: AI lab scene object %d", sceneStaticData.classID);
+		break;
 	}
 
-	warning("TODO: AI lab scene object %d", sceneStaticData.classID);
 	return new SceneBase(_vm, viewWindow, sceneStaticData, priorLocation);
 }
 
