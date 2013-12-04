@@ -901,6 +901,27 @@ int IceteroidDispenserControls::droppedItem(Window *viewWindow, int itemID, cons
 	return SIC_REJECT;
 }
 
+class PlaySoundExitingForward : public BaseOxygenTimer {
+public:
+	PlaySoundExitingForward(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation, int soundFileNameID);
+	int postExitRoom(Window *viewWindow, const Location &newLocation);
+
+private:
+	int _soundFileNameID;
+};
+
+PlaySoundExitingForward::PlaySoundExitingForward(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation, int soundFileNameID) :
+		BaseOxygenTimer(vm, viewWindow, sceneStaticData, priorLocation) {
+	_soundFileNameID = soundFileNameID;
+}
+
+int PlaySoundExitingForward::postExitRoom(Window *viewWindow, const Location &newLocation) {
+	if (_soundFileNameID >= 0 && _staticData.location.timeZone == newLocation.timeZone && _staticData.location.node != newLocation.node)
+		_vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, _soundFileNameID), 128, false, true);
+
+	return SC_TRUE;
+}
+
 class TakeWaterCanister : public BaseOxygenTimer {
 public:
 	TakeWaterCanister(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
@@ -3077,6 +3098,8 @@ SceneBase *SceneViewWindow::constructAILabSceneObject(Window *viewWindow, const 
 		return new TakeWaterCanister(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 68:
 		return new PlaySoundExitingFromSceneDeux(_vm, viewWindow, sceneStaticData, priorLocation, 14);
+	case 69:
+		return new PlaySoundExitingForward(_vm, viewWindow, sceneStaticData, priorLocation, 14);
 	case 70:
 		return new SpaceDoorTimer(_vm, viewWindow, sceneStaticData, priorLocation, 92, 92, 212, 189, 48, -1, 1, TRANSITION_VIDEO, 0, -1, -1, -1, -1);
 	case 74:
