@@ -187,7 +187,7 @@ bool SoundManager::playDW1MacMusic(int dwFileOffset) {
 	uint32 length = s.readUint32BE();
 
 	// TODO: It's a bad idea to load the music track in a buffer.
-	// We should use a SubReadStream instead, and keep midi.dat open.
+	// We should use a readStream instead, and keep midi.dat open.
 	// However, the track lengths aren't that big (about 1-4MB),
 	// so this shouldn't be a major issue.
 	byte *soundData = (byte *)malloc(length);
