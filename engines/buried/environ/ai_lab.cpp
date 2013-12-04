@@ -587,6 +587,126 @@ int IceteroidElevatorExtremeControls::specifyCursor(Window *viewWindow, const Co
 	return kCursorArrow;
 }
 
+class IceteroidZoomInMineControls : public BaseOxygenTimer {
+public:
+	IceteroidZoomInMineControls(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	Common::Rect _controls;
+};
+
+IceteroidZoomInMineControls::IceteroidZoomInMineControls(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		BaseOxygenTimer(vm, viewWindow, sceneStaticData, priorLocation) {
+	_controls = Common::Rect(152, 76, 180, 114);
+}
+
+int IceteroidZoomInMineControls::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_controls.contains(pointLocation)) {
+		DestinationScene destinationData;
+		destinationData.destinationScene = _staticData.location;
+		destinationData.destinationScene.depth = 1;
+		destinationData.transitionType = TRANSITION_VIDEO;
+		destinationData.transitionData = 8;
+		destinationData.transitionStartFrame = -1;
+		destinationData.transitionLength = -1;
+		((SceneViewWindow *)viewWindow)->moveToDestination(destinationData);
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int IceteroidZoomInMineControls::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_controls.contains(pointLocation))
+		return kCursorMagnifyingGlass;
+
+	return kCursorArrow;
+}
+
+class IceteroidMineControls : public BaseOxygenTimer {
+public:
+	IceteroidMineControls(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	Common::Rect _mineButton, _makeOxygenButton;
+};
+
+IceteroidMineControls::IceteroidMineControls(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		BaseOxygenTimer(vm, viewWindow, sceneStaticData, priorLocation) {
+	_mineButton = Common::Rect(190, 40, 204, 128);
+	_makeOxygenButton = Common::Rect(205, 40, 220, 128);
+}
+
+int IceteroidMineControls::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_mineButton.contains(pointLocation) && ((SceneViewWindow *)viewWindow)->getGlobalFlags().aiIceMined < 255) {
+		GraphicsManager *gfx = _vm->_gfx;
+		Cursor oldCursor = gfx->setCursor(kCursorWait);
+
+		// Update the amount of ice mined
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().aiIceMined++;
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().aiICUsedMiningControls = 1;
+
+		// Transition to another scene, using the video clip
+		DestinationScene destinationData;
+		destinationData.destinationScene = _staticData.location;
+		destinationData.destinationScene.facing = 2;
+		destinationData.destinationScene.orientation = 2;
+		destinationData.destinationScene.depth = 0;
+		destinationData.transitionType = TRANSITION_VIDEO;
+		destinationData.transitionData = 10;
+		destinationData.transitionStartFrame = -1;
+		destinationData.transitionLength = -1;
+		((SceneViewWindow *)viewWindow)->moveToDestination(destinationData);
+
+		// Reset the cursor
+		gfx->setCursor(oldCursor);
+		return SC_TRUE;
+	}
+
+	if (_makeOxygenButton.contains(pointLocation) && ((SceneViewWindow *)viewWindow)->getGlobalFlags().aiIceMined > 0 && ((SceneViewWindow *)viewWindow)->getGlobalFlags().aiOxygenReserves < 255) {
+		int currentStillFrame = _staticData.navFrameIndex;
+		_staticData.navFrameIndex = 108;
+		viewWindow->invalidateWindow(false);
+
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().aiICProcessedOxygen = 1;
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().aiIceMined--;
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().aiOxygenReserves++;
+
+		// Play the conversion audio file
+		_vm->_sound->playSynchronousSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 13), 128);
+
+		// Reset the frame
+		_staticData.navFrameIndex = currentStillFrame;
+		viewWindow->invalidateWindow(false);
+		return SC_TRUE;
+	}
+
+	// Move back to the far view
+	DestinationScene destinationData;
+	destinationData.destinationScene = _staticData.location;
+	destinationData.destinationScene.depth = 0;
+	destinationData.transitionType = TRANSITION_VIDEO;
+	destinationData.transitionData = 9;
+	destinationData.transitionStartFrame = -1;
+	destinationData.transitionLength = -1;
+	((SceneViewWindow *)viewWindow)->moveToDestination(destinationData);
+	return SC_TRUE;
+}
+
+int IceteroidMineControls::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_mineButton.contains(pointLocation) && ((SceneViewWindow *)viewWindow)->getGlobalFlags().aiIceMined < 255)
+		return kCursorFinger;
+
+	if (_makeOxygenButton.contains(pointLocation) && ((SceneViewWindow *)viewWindow)->getGlobalFlags().aiIceMined > 0 && ((SceneViewWindow *)viewWindow)->getGlobalFlags().aiOxygenReserves < 255)
+		return kCursorFinger;
+
+	return kCursorPutDown;
+}
+
 class TakeWaterCanister : public BaseOxygenTimer {
 public:
 	TakeWaterCanister(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
@@ -2741,6 +2861,10 @@ SceneBase *SceneViewWindow::constructAILabSceneObject(Window *viewWindow, const 
 		return new IceteroidElevatorExtremeControls(_vm, viewWindow, sceneStaticData, priorLocation, 6, 6, 3, 0, 1, 0, 5, 6, 6, 2, 0, 1, 0, 7);
 	case 57:
 		return new IceteroidElevatorExtremeControls(_vm, viewWindow, sceneStaticData, priorLocation, -1, -1, -1, -1, -1, -1, -1, 6, 6, 6, 0, 1, 0, 4);
+	case 58:
+		return new IceteroidZoomInMineControls(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 59:
+		return new IceteroidMineControls(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 60:
 		return new BaseOxygenTimer(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 63:
