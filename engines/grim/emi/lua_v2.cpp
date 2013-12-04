@@ -465,6 +465,10 @@ void Lua_V2::AdvanceLayerFrame() {
 		int layer = (int)lua_getuserdata(param1);
 		int one = (int)lua_getnumber(param2);
 		Layer *l = Layer::getPool().getObject(layer);
+		if (!l) {
+			warning("Lua_V2::AdvanceLayerFrame: no layer found");
+			return;
+		}
 		l->advanceFrame(one);
 	}
 }

@@ -47,6 +47,7 @@
 #include "engines/grim/lua.h"
 #include "engines/grim/lua_v1.h"
 #include "engines/grim/emi/poolsound.h"
+#include "engines/grim/emi/layer.h"
 #include "engines/grim/actor.h"
 #include "engines/grim/movie/movie.h"
 #include "engines/grim/savegame.h"
@@ -833,6 +834,9 @@ void GrimEngine::savegameRestore() {
 	if (getGameType() == GType_MONKEY4) {
 		PoolSound::getPool().restoreObjects(_savedState);
 		Debug::debug(Debug::Engine, "Pool sounds saved successfully.");
+
+		Layer::getPool().restoreObjects(_savedState);
+		Debug::debug(Debug::Engine, "Layers restored successfully.");
 	}
 
 	restoreGRIM();
@@ -993,6 +997,9 @@ void GrimEngine::savegameSave() {
 	if (getGameType() == GType_MONKEY4) {
 		PoolSound::getPool().saveObjects(_savedState);
 		Debug::debug(Debug::Engine, "Pool sounds saved successfully.");
+
+		Layer::getPool().saveObjects(_savedState);
+		Debug::debug(Debug::Engine, "Layers saved successfully.");
 	}
 
 	saveGRIM();
