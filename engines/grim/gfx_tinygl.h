@@ -57,8 +57,7 @@ public:
 
 	void getBoundingBoxPos(const Mesh *model, int *x1, int *y1, int *x2, int *y2);
 
-	void startActorDraw(const Math::Vector3d &pos, float scale, const Math::Quaternion &quat,
-						const bool inOverworld, const float alpha, const bool depthOnly);
+	void startActorDraw(const Actor *actor);
 	void finishActorDraw();
 	void setShadow(Shadow *shadow);
 	void drawShadowPlanes();
@@ -137,6 +136,7 @@ private:
 	float _alpha;
 	Common::HashMap<int, TinyGL::Buffer *> _buffers;
 	uint _bufferId;
+	const Actor *_currentActor;
 
 	void readPixels(int x, int y, int width, int height, uint8 *buffer);
 	void blit(const Graphics::PixelFormat &format, BlitImage *blit, byte *dst, byte *src, int x, int y, int width, int height, bool trans);

@@ -512,8 +512,8 @@ void GfxTinyGL::getBoundingBoxPos(const Mesh *model, int *x1, int *y1, int *x2, 
 	}*/
 }
 
-void GfxTinyGL::startActorDraw(const Math::Vector3d &pos, float scale, const Math::Quaternion &quat,
-							   const bool inOverworld, const float alpha, const bool depthOnly) {
+void GfxTinyGL::startActorDraw(const Actor *actor) {
+	_currentActor = actor;
 	tglEnable(TGL_TEXTURE_2D);
 	tglMatrixMode(TGL_PROJECTION);
 	tglPushMatrix();
@@ -535,13 +535,18 @@ void GfxTinyGL::startActorDraw(const Math::Vector3d &pos, float scale, const Mat
 	}
 
 	// FIXME: TinyGL doesn't seem to support translucency.
+	const float alpha = actor->getEffectiveAlpha();
 	if (alpha < 1.f) {
 		_alpha = alpha;
 //    tglEnable(TGL_BLEND);
 //    tglBlendFunc(TGL_SRC_ALPHA, TGL_ONE_MINUS_SRC_ALPHA);
 	}
 
-	if (inOverworld) {
+	const Math::Vector3d &pos = actor->getWorldPos();
+	const Math::Quaternion &quat = actor->getRotationQuat();
+	const float &scale = actor->getScale();
+
+	if (actor->isInOverworld()) {
 		tglMatrixMode(TGL_PROJECTION);
 		tglLoadIdentity();
 		float right = 1;
@@ -564,8 +569,9 @@ void GfxTinyGL::startActorDraw(const Math::Vector3d &pos, float scale, const Mat
 		tglMultMatrixf(quat.toMatrix().getData());
 	}
 
-	if (depthOnly)
+	if (actor->getSortOrder() >= 100) {
 		tglColorMask(false, false, false, false);
+	}
 }
 
 void GfxTinyGL::finishActorDraw() {
@@ -602,6 +608,7 @@ void GfxTinyGL::finishActorDraw() {
 	}*/
 
 	tglColorMask(TGL_TRUE, TGL_TRUE, TGL_TRUE, TGL_TRUE);
+	_currentActor = NULL;
 }
 
 void GfxTinyGL::drawShadowPlanes() {
