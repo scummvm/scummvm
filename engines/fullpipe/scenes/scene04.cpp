@@ -474,14 +474,35 @@ void sceneHandler04_sub17() {
 }
 
 void sceneHandler04_takeBottle() {
-  g_vars->scene04_var02 = 1;
-  g_vars->scene04_hand->_priority = 5;
+	g_vars->scene04_var02 = 1;
+	g_vars->scene04_hand->_priority = 5;
 
-  g_fullpipe->setObjectState(sO_LowerPipe, g_fullpipe->getObjectEnumState(sO_LowerPipe, sO_IsOpened));
+	g_fullpipe->setObjectState(sO_LowerPipe, g_fullpipe->getObjectEnumState(sO_LowerPipe, sO_IsOpened));
 }
 
 void sceneHandler04_takeKozyawka() {
-	warning("sceneHandler04_takeKozyawka()");
+	if (g_vars->scene04_kozyawkiAni.size() > 0) {
+		if (g_vars->scene04_kozyawkiAni.size() == 1) 
+			g_vars->scene04_var19 = 1;
+
+		StaticANIObject *koz = g_vars->scene04_kozyawkiAni.front();
+		g_vars->scene04_kozyawkiAni.pop_front();
+
+		if (koz) {
+			koz->queueMessageQueue(0);
+			koz->hide();
+
+			g_vars->scene04_kozyawkiObjList.push_back(koz);
+
+			for (Common::List<GameObject *>::iterator it = g_vars->scene04_bottleObjList.begin(); it != g_vars->scene04_bottleObjList.end(); ++it)
+				if (*it == koz) {
+					g_vars->scene04_bottleObjList.erase(it);
+					break;
+				}
+
+			g_vars->scene04_var06 -= 2;
+		}
+	}
 }
 
 void sceneHandler04_testPlank(ExCommand *ex) {
