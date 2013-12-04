@@ -896,21 +896,6 @@ void DrawObject(DRAWOBJECT *pObj) {
 		default:
 			error("Unknown drawing type %d", typeId);
 		}
-	} else if (TinselV1Mac) {
-		// Tinsel v1 Mac decoders
-		// TODO: Finish this
-		switch (typeId) {
-		case 0x01:
-		case 0x41:
-			// TODO
-			break;
-		case 0x08:
-		case 0x48:
-			WrtAll(pObj, srcPtr, destPtr, typeId >= 0x40);
-			break;
-		default:
-			error("Unknown drawing type %d", typeId);
-		}
 	} else if (TinselV1) {
 		// Tinsel v1 decoders
 		switch (typeId) {
