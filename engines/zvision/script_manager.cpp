@@ -511,7 +511,7 @@ void ScriptManager::do_changeLocation() {
 	_activeControls = &nodeview._controls;
 
 	// Revert to the idle cursor
-	_engine->getCursorManager()->revertToIdle();
+	_engine->getCursorManager()->changeCursor(CursorIndex_Idle);
 
 	// Reset the background velocity
 	_engine->getRenderManager()->setBackgroundVelocity(0);

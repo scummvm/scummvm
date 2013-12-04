@@ -143,6 +143,8 @@ Common::Error ZVision::run() {
 		uint32 currentTime = _clock.getLastMeasuredTime();
 		uint32 deltaTime = _clock.getDeltaTime();
 
+		_cursorManager->setItemID(_scriptManager->getStateValue(StateKey_InventoryItem));
+
 		processEvents();
 
 		// Call _renderManager->update() first so the background renders

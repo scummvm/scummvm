@@ -239,7 +239,7 @@ bool LeverControl::onMouseMove(const Common::Point &screenSpacePos, const Common
 			}
 		}
 	} else if (_frameInfo[_currentFrame].hotspot.contains(backgroundImageSpacePos)) {
-		_engine->getCursorManager()->changeCursor(_cursorName);
+		_engine->getCursorManager()->changeCursor(_engine->getCursorManager()->getCursorId(_cursorName));
 		cursorWasChanged = true;
 	}
 

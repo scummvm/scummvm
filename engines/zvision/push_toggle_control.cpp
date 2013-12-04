@@ -88,7 +88,7 @@ bool PushToggleControl::onMouseMove(const Common::Point &screenSpacePos, const C
 		return false;
 
 	if (_hotspot.contains(backgroundImageSpacePos)) {
-		_engine->getCursorManager()->changeCursor(_hoverCursor);
+		_engine->getCursorManager()->changeCursor(_engine->getCursorManager()->getCursorId(_hoverCursor));
 		return true;
 	}
 

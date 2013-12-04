@@ -150,14 +150,14 @@ void ZVision::onMouseMove(const Common::Point &pos) {
 				// We use fixed point math to get better accuracy
 				Common::Rational velocity = (Common::Rational(MAX_ROTATION_SPEED, ROTATION_SCREEN_EDGE_OFFSET) * (pos.x - _workingWindow.left)) - MAX_ROTATION_SPEED;
 				_renderManager->setBackgroundVelocity(velocity.toInt());
-				_cursorManager->setLeftCursor();
+				_cursorManager->changeCursor(CursorIndex_Left);
 				cursorWasChanged = true;
 			} else if (pos.x <= _workingWindow.right && pos.x > _workingWindow.right - ROTATION_SCREEN_EDGE_OFFSET) {
 				// Linear function of distance to the right edge (y = mx)
 				// We use fixed point math to get better accuracy
 				Common::Rational velocity = Common::Rational(MAX_ROTATION_SPEED, ROTATION_SCREEN_EDGE_OFFSET) * (pos.x - _workingWindow.right + ROTATION_SCREEN_EDGE_OFFSET);
 				_renderManager->setBackgroundVelocity(velocity.toInt());
-				_cursorManager->setRightCursor();
+				_cursorManager->changeCursor(CursorIndex_Right);
 				cursorWasChanged = true;
 			} else {
 				_renderManager->setBackgroundVelocity(0);
@@ -168,14 +168,14 @@ void ZVision::onMouseMove(const Common::Point &pos) {
 				// We use fixed point math to get better accuracy
 				Common::Rational velocity = (Common::Rational(MAX_ROTATION_SPEED, ROTATION_SCREEN_EDGE_OFFSET) * (pos.y - _workingWindow.top)) - MAX_ROTATION_SPEED;
 				_renderManager->setBackgroundVelocity(velocity.toInt());
-				_cursorManager->setUpCursor();
+				_cursorManager->changeCursor(CursorIndex_UpArr);
 				cursorWasChanged = true;
 			} else if (pos.y <= _workingWindow.bottom && pos.y > _workingWindow.bottom - ROTATION_SCREEN_EDGE_OFFSET) {
 				// Linear function of distance to the bottom edge (y = mx)
 				// We use fixed point math to get better accuracy
 				Common::Rational velocity = Common::Rational(MAX_ROTATION_SPEED, ROTATION_SCREEN_EDGE_OFFSET) * (pos.y - _workingWindow.bottom + ROTATION_SCREEN_EDGE_OFFSET);
 				_renderManager->setBackgroundVelocity(velocity.toInt());
-				_cursorManager->setDownCursor();
+				_cursorManager->changeCursor(CursorIndex_DownArr);
 				cursorWasChanged = true;
 			} else {
 				_renderManager->setBackgroundVelocity(0);
@@ -186,7 +186,7 @@ void ZVision::onMouseMove(const Common::Point &pos) {
 	}
 
 	if (!cursorWasChanged) {
-		_cursorManager->revertToIdle();
+		_cursorManager->changeCursor(CursorIndex_Idle);
 	}
 }
 
