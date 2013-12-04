@@ -47,6 +47,8 @@ ResidualVM
        Travis Howell         - Various code fixes, Windows port
        Guillem Jover         - Few code improvements
        Filippos Karapetis    - Compilation fixes
+       Christian Krause      - Various fixes and improvements for EMI
+       Ingo van Lil          - Various fixes and improvements for EMI
        Joost Peters          - Various code fixes
        George Macon          - Few fixes
        Josh Matthews         - Few fixes to engine
@@ -54,12 +56,14 @@ ResidualVM
        Christian Neumair     - Various optimisation patches
        Vincent Pelletier     - Various engine improvements and code fixes
        Daniel Schepler       - Initial engine codebase, LUA support
+       Dmitry Smirnov        - Minor spelling corrections
        Yaron Tausky          - Fixes to subtitles
        Julien Templier       - create_project tool
        Pino Toscano          - Debian GNU/Linux package files
        Lionel Ulmer          - OpenGL optimisations
        Joni Vahamaki         - A lot of engine improvements and fixes
        JenniBee              - Compilation fixes
+       karjonas              - Various engine code fixes
 
     Myst 3:
        Matthew Hoops         - Various engine improvements and code fixes
