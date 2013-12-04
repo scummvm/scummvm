@@ -872,31 +872,53 @@ void DrawObject(DRAWOBJECT *pObj) {
 				(pObj->flags & DMA_FLIPH), packType);
 		}
 
-	} else {	// TinselV1
+	} else if (TinselV1PSX) {
+		// Tinsel v1 decoders, PSX specific variants
 		switch (typeId) {
 		case 0x01:
 		case 0x41:
-			if (TinselV1PSX) {
-				PsxDrawTiles(pObj, srcPtr, destPtr, typeId >= 0x40, psxFourBitClut, psxSkipBytes, psxMapperTable, true);
-			} else if (TinselV1Mac) {
-				// TODO
-			} else if (TinselV1) {
-				WrtNonZero(pObj, srcPtr, destPtr, typeId >= 0x40);
-			} else if (TinselV0) {
-				t0WrtNonZero(pObj, srcPtr, destPtr, typeId >= 0x40);
-			} 
+			PsxDrawTiles(pObj, srcPtr, destPtr, typeId >= 0x40, psxFourBitClut, psxSkipBytes, psxMapperTable, true);
 			break;
 		case 0x08:
 		case 0x48:
-			if (TinselV1PSX) {
-				PsxDrawTiles(pObj, srcPtr, destPtr, typeId >= 0x40, psxFourBitClut, psxSkipBytes, psxMapperTable, false);
-			} else if (TinselV1Mac) {
-				WrtAll(pObj, srcPtr, destPtr, typeId >= 0x40);
-			} else if (TinselV1) {
-				WrtNonZero(pObj, srcPtr, destPtr, typeId >= 0x40);
-			} else if (TinselV0) {
-				WrtAll(pObj, srcPtr, destPtr, typeId >= 0x40);
-			}
+			PsxDrawTiles(pObj, srcPtr, destPtr, typeId >= 0x40, psxFourBitClut, psxSkipBytes, psxMapperTable, false);
+			break;
+		case 0x84:
+		case 0xC4:
+			// WrtTrans with/without clipping
+			WrtTrans(pObj, destPtr, typeId == 0xC4);
+			break;
+		case 0x04:
+		case 0x44:
+			// WrtConst with/without clipping
+			WrtConst(pObj, destPtr, typeId == 0x44);
+			break;
+		default:
+			error("Unknown drawing type %d", typeId);
+		}
+	} else if (TinselV1Mac) {
+		// Tinsel v1 Mac decoders
+		// TODO: Finish this
+		switch (typeId) {
+		case 0x01:
+		case 0x41:
+			// TODO
+			break;
+		case 0x08:
+		case 0x48:
+			WrtAll(pObj, srcPtr, destPtr, typeId >= 0x40);
+			break;
+		default:
+			error("Unknown drawing type %d", typeId);
+		}
+	} else if (TinselV1) {
+		// Tinsel v1 decoders
+		switch (typeId) {
+		case 0x01:
+		case 0x08:
+		case 0x41:
+		case 0x48:
+			WrtNonZero(pObj, srcPtr, destPtr, typeId >= 0x40);
 			break;
 		case 0x04:
 		case 0x44:
@@ -905,12 +927,26 @@ void DrawObject(DRAWOBJECT *pObj) {
 			break;
 		case 0x84:
 		case 0xC4:
-			if (!TinselV0) {
-				// WrtTrans with/without clipping
-				WrtTrans(pObj, destPtr, typeId == 0xC4);
-			} else {
-				WrtTrans(pObj, destPtr, (typeId & 0x40) != 0);
-			}
+			// WrtTrans with/without clipping
+			WrtTrans(pObj, destPtr, typeId == 0xC4);
+			break;
+		default:
+			error("Unknown drawing type %d", typeId);
+		}
+	} else {
+		// Tinsel v0 decoders
+		switch (typeId) {
+		case 0x01:
+		case 0x41:
+			t0WrtNonZero(pObj, srcPtr, destPtr, typeId >= 0x40);
+			break;
+		case 0x08:
+		case 0x48:
+			WrtAll(pObj, srcPtr, destPtr, typeId >= 0x40);
+			break;
+		case 0x84:
+		case 0xC4:
+			WrtTrans(pObj, destPtr, (typeId & 0x40) != 0);
 			break;
 		default:
 			error("Unknown drawing type %d", typeId);
