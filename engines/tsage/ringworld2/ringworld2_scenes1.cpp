@@ -5815,7 +5815,8 @@ void Scene1337::subCDB90(int arg1, Common::Point pt) {
 	}
 
 	if (subC2BF8(&_gameBoardSide[2]._delayCard, pt)) {
-		if (_gameBoardSide[0]._delayCard._cardId != 0) {
+		// The original uses _gameBoardSide[0], which is obviously a bug.
+		if (_gameBoardSide[2]._delayCard._cardId != 0) {
 			actionDisplay(1330, 39, 159, 10, 1, 200, 0, 7, 0, 154, 154);
 		} else {
 			actionDisplay(1330, 11, 159, 10, 1, 200, 0, 7, 0, 154, 154);
