@@ -177,48 +177,6 @@ bool SoundManager::playSample(int id, Audio::Mixer::SoundType type, Audio::Sound
 	return true;
 }
 
-bool SoundManager::playDW1MacMusic(int dwFileOffset) {
-	Common::File s;
-	
-	if (!s.open("midi.dat"))
-		error(CANNOT_FIND_FILE, "midi.dat");
-
-	s.seek(dwFileOffset);
-	uint32 length = s.readUint32BE();
-
-	// TODO: It's a bad idea to load the music track in a buffer.
-	// We should use a readStream instead, and keep midi.dat open.
-	// However, the track lengths aren't that big (about 1-4MB),
-	// so this shouldn't be a major issue.
-	byte *soundData = (byte *)malloc(length);
-	assert(soundData);
-
-	// read all of the sample
-	if (s.read(soundData, length) != length)
-		error(FILE_IS_CORRUPT, "midi.dat");
-
-	Common::SeekableReadStream *memStream = new Common::MemoryReadStream(soundData, length);
-
-	Audio::SoundHandle *handle = &_channels[kChannelDW1MacMusic].handle;
-	//_channels[kChannelDW1MacMusic].sampleNum = dwFileOffset;
-
-	// Stop any previously playing music track
-	_vm->_mixer->stopHandle(*handle);
-
-	// FIXME: Should set this in a different place ;)
-	_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, _vm->_config->_musicVolume);
-
-	// TODO: Compression support (MP3/OGG/FLAC) for midi.dat in DW1 Mac
-	Audio::RewindableAudioStream *musicStream = Audio::makeRawStream(memStream, 22050, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
-
-	if (musicStream)
-		_vm->_mixer->playStream(Audio::Mixer::kMusicSoundType, handle, Audio::makeLoopingAudioStream(musicStream, 0));
-
-	s.close();
-
-	return true;
-}
-
 // playSample for DiscWorld 2
 bool SoundManager::playSample(int id, int sub, bool bLooped, int x, int y, int priority,
 		Audio::Mixer::SoundType type, Audio::SoundHandle *handle) {
