@@ -970,6 +970,276 @@ int TakeWaterCanister::specifyCursor(Window *viewWindow, const Common::Point &po
 	return kCursorArrow;
 }
 
+class ScienceWingZoomIntoPanel : public BaseOxygenTimer {
+public:
+	ScienceWingZoomIntoPanel(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	int _cursorID;
+	Common::Rect _clickRegion;
+	DestinationScene _clickDestination;
+};
+
+ScienceWingZoomIntoPanel::ScienceWingZoomIntoPanel(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		BaseOxygenTimer(vm, viewWindow, sceneStaticData, priorLocation) {
+	_clickRegion = Common::Rect(282, 6, 390, 189);
+	_cursorID = kCursorMagnifyingGlass;
+	_clickDestination.destinationScene = _staticData.location;
+	_clickDestination.destinationScene.depth = 1;
+	_clickDestination.transitionType = TRANSITION_VIDEO;
+	_clickDestination.transitionData = 1;
+	_clickDestination.transitionStartFrame = -1;
+	_clickDestination.transitionLength = -1;
+}
+
+int ScienceWingZoomIntoPanel::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_clickRegion.contains(pointLocation))
+		((SceneViewWindow *)viewWindow)->moveToDestination(_clickDestination);
+	
+	return SC_FALSE;
+}
+
+int ScienceWingZoomIntoPanel::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_clickRegion.contains(pointLocation))
+		return _cursorID;
+
+	return kCursorArrow;
+}
+
+class ScienceWingPanelInterface : public BaseOxygenTimer {
+public:
+	ScienceWingPanelInterface(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	~ScienceWingPanelInterface();
+	void preDestructor();
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int gdiPaint(Window *viewWindow);
+
+private:
+	Common::Rect _stationRegions[15];
+	int _currentSelection;
+	int _currentTextIndex;
+	int _lineHeight;
+	Graphics::Font *_textFont;
+	Common::Rect _leftTextRegion;
+	Common::Rect _rightTextRegion;
+};
+
+ScienceWingPanelInterface::ScienceWingPanelInterface(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		BaseOxygenTimer(vm, viewWindow, sceneStaticData, priorLocation) {
+	_currentSelection = -1;
+	_currentTextIndex = -1;
+	_stationRegions[0] = Common::Rect(265, 110, 286, 135);
+	_stationRegions[1] = Common::Rect(102, 45, 180, 134);
+	_stationRegions[2] = Common::Rect(195, 106, 216, 133);
+	_stationRegions[3] = Common::Rect(268, 72, 283, 87);
+	_stationRegions[4] = Common::Rect(221, 46, 236, 74);
+	_stationRegions[5] = Common::Rect(290, 72, 317, 108);
+	_stationRegions[6] = Common::Rect(264, 55, 288, 67);
+	_stationRegions[7] = Common::Rect(194, 74, 266, 84);
+	_stationRegions[8] = Common::Rect(198, 62, 214, 74);
+	_stationRegions[9] = Common::Rect(221, 106, 236, 134);
+	_stationRegions[10] = Common::Rect(245, 46, 260, 74);
+	_stationRegions[11] = Common::Rect(245, 106, 260, 134);
+	_stationRegions[12] = Common::Rect(266, 92, 290, 109);
+	_stationRegions[13] = Common::Rect(194, 96, 264, 106);
+	_stationRegions[14] = Common::Rect(180, 85, 194, 94);
+	_leftTextRegion = Common::Rect(83, 144, 211, 170);
+	_rightTextRegion = Common::Rect(228, 144, 356, 170);
+	_lineHeight = _vm->getLanguage() == Common::JA_JPN ? 10 : 13;
+	_textFont = _vm->_gfx->createFont(_lineHeight);
+}
+
+ScienceWingPanelInterface::~ScienceWingPanelInterface() {
+	preDestructor();
+}
+
+void ScienceWingPanelInterface::preDestructor() {
+	delete _textFont;
+	_textFont = 0;
+}
+
+int ScienceWingPanelInterface::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	byte &oxygenReserves = ((SceneViewWindow *)viewWindow)->getGlobalFlags().aiOxygenReserves;
+
+	if (_currentSelection == 2) {
+		if (((SceneViewWindow *)viewWindow)->getGlobalFlags().aiMRPressurized == 0 && (_stationRegions[_currentSelection].contains(pointLocation) || _rightTextRegion.contains(pointLocation))) {
+			if (oxygenReserves > 0 && ((SceneViewWindow *)viewWindow)->getGlobalFlags().aiICProcessedOxygen != 0) {
+				// Decrement reserves flag
+				oxygenReserves--;
+
+				// Set the machine room to pressurized
+				((SceneViewWindow *)viewWindow)->getGlobalFlags().aiMRPressurized = 1;
+
+				// Display pressurizing message
+				viewWindow->invalidateWindow(false);
+				_currentTextIndex = IDS_AI_PRES_PANEL_PRES_ENV_TEXT;
+
+				// Play sound file
+				_vm->_sound->playSynchronousSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 13), 128);
+
+				// Display pressurized text
+				viewWindow->invalidateWindow(false);
+				_currentTextIndex = IDS_AI_PRES_PANEL_ENV_PRES_TEXT;
+				return SC_TRUE;
+			} else {
+				// Not enough oxygen reserves
+				viewWindow->invalidateWindow(false);
+				_currentTextIndex = IDS_AI_PRES_PANEL_INSUF_OXYGEN;
+
+				((SceneViewWindow *)viewWindow)->getGlobalFlags().aiSWAttemptedPresMR = 1;
+
+				return SC_TRUE;
+			}
+		}
+	}
+
+	// Check against the hotspots
+	for (int i = 0; i < 15; i++) {
+		if (_stationRegions[i].contains(pointLocation) && _currentSelection != i) {
+			switch (i) {
+			case 0:
+				_staticData.navFrameIndex = 60;
+				viewWindow->invalidateWindow(false);
+				_currentSelection = i;
+				_currentTextIndex = IDS_AI_PRES_PANEL_ENV_PRES_TEXT;
+				return SC_TRUE;
+			case 1:
+				_staticData.navFrameIndex = 61;
+				viewWindow->invalidateWindow(false);
+				_currentSelection = i;
+				_currentTextIndex = IDS_AI_PRES_PANEL_ZERO_PRES_ENV;
+				return SC_TRUE;
+			case 2:
+				_staticData.navFrameIndex = 62;
+				viewWindow->invalidateWindow(false);
+				_currentSelection = i;
+
+				if (((SceneViewWindow *)viewWindow)->getGlobalFlags().aiMRPressurized == 1)
+					_currentTextIndex = IDS_AI_PRES_PANEL_ENV_PRES_TEXT;
+				else
+					_currentTextIndex = IDS_AI_PRES_PANEL_ENV_DEPRES;
+				return SC_TRUE;
+			case 3:
+				_staticData.navFrameIndex = 63;
+				viewWindow->invalidateWindow(false);
+				_currentSelection = i;
+
+				if (((SceneViewWindow *)viewWindow)->getGlobalFlags().aiCRPressurized == 1)
+					_currentTextIndex = IDS_AI_PRES_PANEL_ENV_PRES_TEXT;
+				else
+					_currentTextIndex = IDS_AI_PRES_PANEL_ENV_DEPRES_OBST;
+				return SC_TRUE;
+			case 4:
+				_staticData.navFrameIndex = 64;
+				viewWindow->invalidateWindow(false);
+				_currentSelection = i;
+				_currentTextIndex = IDS_AI_PRES_PANEL_ENV_DEPRES_BREACH;
+				return SC_TRUE;
+			case 5:
+				_staticData.navFrameIndex = 65;
+				viewWindow->invalidateWindow(false);
+				_currentSelection = i;
+				_currentTextIndex = IDS_AI_PRES_PANEL_ENV_PRES_TEXT;
+				return SC_TRUE;
+			case 6:
+				_staticData.navFrameIndex = 66;
+				viewWindow->invalidateWindow(false);
+				_currentSelection = i;
+				_currentTextIndex = IDS_AI_PRES_PANEL_ENV_DEPRES_BREACH;
+				return SC_TRUE;
+			case 7:
+				_staticData.navFrameIndex = 67;
+				viewWindow->invalidateWindow(false);
+				_currentSelection = i;
+				_currentTextIndex = IDS_AI_PRES_PANEL_ENV_DEPRES_BREACH;
+				return SC_TRUE;
+			case 8:
+				_staticData.navFrameIndex = 68;
+				viewWindow->invalidateWindow(false);
+				_currentSelection = i;
+				_currentTextIndex = IDS_AI_PRES_PANEL_ENV_DEPRES_BREACH;
+				return SC_TRUE;
+			case 9:
+				_staticData.navFrameIndex = 69;
+				viewWindow->invalidateWindow(false);
+				_currentSelection = i;
+				_currentTextIndex = IDS_AI_PRES_PANEL_ENV_DEPRES_BREACH;
+				return SC_TRUE;
+			case 10:
+				_staticData.navFrameIndex = 70;
+				viewWindow->invalidateWindow(false);
+				_currentSelection = i;
+				_currentTextIndex = IDS_AI_PRES_PANEL_ENV_DEPRES_BREACH;
+				return SC_TRUE;
+			case 11:
+				_staticData.navFrameIndex = 71;
+				viewWindow->invalidateWindow(false);
+				_currentSelection = i;
+				_currentTextIndex = IDS_AI_PRES_PANEL_ENV_DEPRES_BREACH;
+				return SC_TRUE;
+			case 12:
+				_staticData.navFrameIndex = 72;
+				viewWindow->invalidateWindow(false);
+				_currentSelection = i;
+				_currentTextIndex = IDS_AI_PRES_PANEL_ENV_PRES_TEXT;
+				return SC_TRUE;
+			case 13:
+			case 14:
+				_staticData.navFrameIndex = 73;
+				viewWindow->invalidateWindow(false);
+				_currentSelection = i;
+				_currentTextIndex = IDS_AI_PRES_PANEL_ENV_DEPRES_BREACH;
+				return SC_TRUE;
+			}
+		}
+	}
+
+	// By default, return to depth zero (zoomed out)
+	DestinationScene destData;
+	destData.destinationScene = _staticData.location;
+	destData.destinationScene.depth = 0;
+	destData.transitionType = TRANSITION_NONE;
+	destData.transitionData = -1;
+	destData.transitionStartFrame = -1;
+	destData.transitionLength = -1;
+	((SceneViewWindow *)viewWindow)->moveToDestination(destData);
+	return SC_TRUE;
+}
+
+int ScienceWingPanelInterface::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	for (int i = 0; i < 15; i++)
+		if (_stationRegions[i].contains(pointLocation))
+			return kCursorFinger;
+
+	return kCursorPutDown;
+}
+
+int ScienceWingPanelInterface::gdiPaint(Window *viewWindow) {
+	if (_currentSelection >= 0) {
+		uint32 color = _vm->_gfx->getColor(208, 144, 24);
+
+		Common::String location = _vm->getString(IDS_AI_PRES_PANEL_DESC_BASE + _currentSelection);
+		if (_currentSelection == 2)
+			location += _vm->getString(IDS_AI_PRES_PANEL_DESC_BASE + 19);
+
+		Common::Rect absoluteRect = viewWindow->getAbsoluteRect();
+		Common::Rect rect(_leftTextRegion);
+		rect.translate(absoluteRect.left, absoluteRect.top);
+		_vm->_gfx->renderText(_vm->_gfx->getScreen(), _textFont, location, rect.left, rect.top, rect.width(), rect.height(), color, _lineHeight, kTextAlignCenter, true);
+
+		if (_currentTextIndex >= 0) {
+			rect = _rightTextRegion;
+			rect.translate(absoluteRect.left, absoluteRect.top);
+			_vm->_gfx->renderText(_vm->_gfx->getScreen(), _textFont, _vm->getString(_currentTextIndex), rect.left, rect.top, rect.width(), rect.height(), color, _lineHeight, kTextAlignCenter, true);
+		}
+	}
+
+	return SC_FALSE;
+}
+
 class ScienceWingStingersTimed : public BaseOxygenTimer {
 public:
 	ScienceWingStingersTimed(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
@@ -3102,6 +3372,10 @@ SceneBase *SceneViewWindow::constructAILabSceneObject(Window *viewWindow, const 
 		return new PlaySoundExitingForward(_vm, viewWindow, sceneStaticData, priorLocation, 14);
 	case 70:
 		return new SpaceDoorTimer(_vm, viewWindow, sceneStaticData, priorLocation, 92, 92, 212, 189, 48, -1, 1, TRANSITION_VIDEO, 0, -1, -1, -1, -1);
+	case 71:
+		return new ScienceWingZoomIntoPanel(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 72:
+		return new ScienceWingPanelInterface(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 74:
 		return new ScienceWingStingersTimed(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 75:
