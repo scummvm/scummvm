@@ -170,14 +170,10 @@ void PalettesToVideoDAC() {
 			pal[i * 3 + 2] = TINSEL_GetBValue(pColors[i]);
 		}
 
-		// Swap black/white colors in the Mac version.
-		// We need to swap the current black/white values so that screen fade
-		// in/out is done correctly.
+		// In DW1 Mac, color 254 should be black, like in the PC version.
+		// We fix it here.
 		if (TinselV1Mac) {
-			byte macWhite = pal[  0 * 3 + 0];
-			byte macBlack = pal[254 * 3 + 0];
-			pal[254 * 3 + 0] = pal[254 * 3 + 1] = pal[254 * 3 + 2] = macWhite;
-			pal[  0 * 3 + 0] = pal[  0 * 3 + 1] = pal[  0 * 3 + 2] = macBlack;
+			pal[254 * 3 + 0] = pal[254 * 3 + 1] = pal[254 * 3 + 2] = 0;
 		}
 
 		// update the system palette
@@ -556,8 +552,7 @@ void CreateTranslucentPalette(SCNHANDLE hPalette) {
 	// leave background color alone
 	g_transPalette[0] = 0;
 
-	int32 numColors = FROM_32(pPal->numColors);
-	for (int32 i = 0; i < numColors; i++) {
+	for (uint i = 0; i < FROM_32(pPal->numColors); i++) {
 		// get the RGB color model values
 		uint8 red   = TINSEL_GetRValue(pPal->palRGB[i]);
 		uint8 green = TINSEL_GetGValue(pPal->palRGB[i]);
@@ -569,8 +564,7 @@ void CreateTranslucentPalette(SCNHANDLE hPalette) {
 
 		// map the Value field to one of the 4 colors reserved for the translucent palette
 		val /= 63;
-		byte blackColorIndex = (!TinselV1Mac) ? 0 : 255;
-		g_transPalette[i + 1] = (uint8)((val == 0) ? blackColorIndex : val +
+		g_transPalette[i + 1] = (uint8)((val == 0) ? 0 : val +
 			(TinselV2 ? TranslucentColor() : COL_HILIGHT) - 1);
 	}
 }
@@ -581,12 +575,12 @@ void CreateTranslucentPalette(SCNHANDLE hPalette) {
 void CreateGhostPalette(SCNHANDLE hPalette) {
 	// get a pointer to the palette
 	PALETTE *pPal = (PALETTE *)LockMem(hPalette);
+	int i;
 
 	// leave background color alone
 	g_ghostPalette[0] = 0;
 
-	int32 numColors = FROM_32(pPal->numColors);
-	for (int32 i = 0; i < numColors; i++) {
+	for (i = 0; i < (int)FROM_32(pPal->numColors); i++) {
 		// get the RGB color model values
 		uint8 red   = TINSEL_GetRValue(pPal->palRGB[i]);
 		uint8 green = TINSEL_GetGValue(pPal->palRGB[i]);
