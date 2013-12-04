@@ -190,6 +190,9 @@ namespace Fullpipe {
 #define QU_EGTR_MD2_SHOW 4698
 #define QU_EGTR_MD1_SHOW 4697
 #define QU_EGTR_SLIMSHOW 4883
+#define QU_HND_TAKE0 1440
+#define QU_HND_TAKE1 1441
+#define QU_HND_TAKE2 1442
 #define QU_HND_TAKEBOTTLE 1443
 #define QU_IN2_DO 5144
 #define QU_INTR_FINISH 5138

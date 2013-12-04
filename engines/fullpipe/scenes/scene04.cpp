@@ -443,8 +443,21 @@ void sceneHandler04_sub12() {
 	g_vars->scene04_var13 = 0;
 }
 
-void sceneHandler04_sub15() {
-	warning("sceneHandler04_sub15()");
+void sceneHandler04_handTake() {
+	g_vars->scene04_clock->changeStatics2(ST_CLK_CLOSED);
+
+	if (g_vars->scene04_kozyawkiAni.size()) {
+		if (g_vars->scene04_kozyawkiAni.size() == 1) {
+			chainQueue(QU_HND_TAKE1, 0);
+			g_vars->scene04_var19 = 0;
+		} else {
+			chainQueue((g_vars->scene04_kozyawkiAni.size() != 2) ? QU_HND_TAKEBOTTLE : QU_HND_TAKE2, 0);
+			g_vars->scene04_var19 = 0;
+		}
+	} else {
+		chainQueue(QU_HND_TAKE0, 0);
+		g_vars->scene04_var19 = 0;
+	}
 }
 
 void sceneHandler04_sub17() {
@@ -591,7 +604,7 @@ int sceneHandler04(ExCommand *ex) {
 		if (g_vars->scene04_var10)
 			sceneHandler04_sub1(0);
 
-		sceneHandler04_sub15();
+		sceneHandler04_handTake();
 		sceneHandler04_stopSound();
 		break;
 
@@ -784,7 +797,7 @@ int sceneHandler04(ExCommand *ex) {
 			if (g_vars->scene04_var10)
 				sceneHandler04_sub1(0);
 
-			sceneHandler04_sub15();
+			sceneHandler04_handTake();
 		}
 
 		break;
