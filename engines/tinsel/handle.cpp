@@ -30,7 +30,6 @@
 #include "tinsel/dw.h"
 #include "tinsel/handle.h"
 #include "tinsel/heapmem.h"			// heap memory manager
-#include "tinsel/scn.h"		// for the DW1 Mac resource handler
 #include "tinsel/timers.h"	// for DwGetCurrentTime()
 #include "tinsel/tinsel.h"
 #include "tinsel/scene.h"
@@ -85,7 +84,7 @@ static char g_szCdPlayFile[100];
 //----------------- FORWARD REFERENCES --------------------
 
 static void LoadFile(MEMHANDLE *pH);	// load a memory block as a file
-static void convertFileToLE(MEMHANDLE *pH);
+
 
 /**
  * Loads the graphics handle table index file and preloads all the
@@ -302,9 +301,6 @@ void LoadFile(MEMHANDLE *pH) {
 		// discardable - unlock the memory
 		MemoryUnlock(pH->_node);
 
-		if (TinselV1Mac)
-			convertFileToLE(pH);
-
 		// set the loaded flag
 		pH->filesize |= fLoaded;
 
@@ -326,7 +322,6 @@ void LoadFile(MEMHANDLE *pH) {
  */
 byte *LockMem(SCNHANDLE offset) {
 	uint32 handle = offset >> SCNHANDLE_SHIFT;	// calc memory handle to use
-	//debug("Locking offset of type %d (%x), offset %d, handle %d", (offset & HANDLEMASK) >> SCNHANDLE_SHIFT, (offset & HANDLEMASK) >> SCNHANDLE_SHIFT, offset & OFFSETMASK, handle);
 	MEMHANDLE *pH;			// points to table entry
 
 	// range check the memory handle
@@ -378,136 +373,6 @@ byte *LockMem(SCNHANDLE offset) {
 	}
 
 	return MemoryDeref(pH->_node) + (offset & OFFSETMASK);
-}
-
-void convertFileToLE(MEMHANDLE *pH) {
-	assert(TinselV1Mac);
-
-	char szFilename[sizeof(pH->szName) + 1];
-	// extract and zero terminate the filename
-	memcpy(szFilename, pH->szName, sizeof(pH->szName));
-	szFilename[sizeof(pH->szName)] = 0;
-
-	debug("Converting file: %s", szFilename);
-
-	byte *data = MemoryDeref(pH->_node);
-	byte *ptr = data;
-
-	// Process each chunk
-
-	while (true) {
-		uint32 pos = ptr - data;
-
-		uint32 chunkId = READ_BE_UINT32(ptr);
-		WRITE_LE_UINT32(ptr, chunkId);	ptr += 4;
-
-		uint32 nextChunkOffset = READ_BE_UINT32(ptr);
-		WRITE_LE_UINT32(ptr, nextChunkOffset);	ptr += 4;
-
-		uint32 chunkSize = (nextChunkOffset > 0 ? nextChunkOffset : pH->filesize & FSIZE_MASK) - pos;
-		uint32 chunkDataSize = chunkSize - 4 - 4;	// chunk ID, chunk length
-		uint32 tmp = 0;	// for temp data
-
-		debug("Chunk ID: %x, size %d, next chunk: %d", chunkId, chunkSize, nextChunkOffset);
-
-		switch (chunkId) {
-		case CHUNK_SCENE - 1:
-			assert(chunkDataSize == 8 * 4);
-			for (uint32 i = 0; i < 8; i++) {
-				// numEntrance, numPoly, numTaggedActor, defRefer, hSceneScript,
-				// hEntrance, hPoly, hTaggedActor
-				WRITE_LE_UINT32(ptr, READ_BE_UINT32(ptr));	ptr += 4;
-			}
-			break;
-		case CHUNK_TOTAL_ACTORS - 1:
-		case CHUNK_TOTAL_GLOBALS - 1:
-		case CHUNK_TOTAL_OBJECTS - 1:
-		case CHUNK_TOTAL_POLY - 1:
-			assert(chunkDataSize == 4);
-			WRITE_LE_UINT32(ptr, READ_BE_UINT32(ptr));	ptr += 4;
-			break;
-		case CHUNK_OBJECTS - 1:
-			// INV_OBJECT structure
-			assert(chunkDataSize % 16 == 0);
-			for (uint32 i = 0; i < chunkDataSize / 16; i++) {
-				WRITE_LE_UINT32(ptr, READ_BE_UINT32(ptr));	ptr += 4;	// id
-				WRITE_LE_UINT32(ptr, READ_BE_UINT32(ptr));	ptr += 4;	// hIconFilm
-				WRITE_LE_UINT32(ptr, READ_BE_UINT32(ptr));	ptr += 4;	// hScript
-				WRITE_LE_UINT32(ptr, READ_BE_UINT32(ptr));	ptr += 4;	// attribute
-			}
-			break;
-		case CHUNK_FONT:
-			assert(chunkDataSize == 4 * 11 + 4 * 300 + 4 * 223);
-			// FONT structure: xSpacing, ySpacing, xShadow, yShadow, spaceSize
-			// OBJ_INIT: hObjImg, objFlags, objID, objX, objY, objZ
-			for (uint32 i = 0; i < 11; i++) {
-				WRITE_LE_UINT32(ptr, READ_BE_UINT32(ptr));	ptr += 4;
-			}
-			// SCNHANDLE fontDef[300]
-			for (uint32 i = 0; i < 300; i++) {
-				WRITE_LE_UINT32(ptr, READ_BE_UINT32(ptr));	ptr += 4;
-			}
-			// TODO: the font chunk in dw.scn is 2136 bytes, we've only processed the
-			// first 44 + 300 * 4 = 1244 ones, so we're left with 892 more...
-			// Since all resources are BE in the Mac version, I assume that these are
-			// 32-bit integers that should be byte swapped as well.
-			for (uint32 i = 0; i < 223; i++) {
-				WRITE_LE_UINT32(ptr, READ_BE_UINT32(ptr));	ptr += 4;
-			}
-			break;
-		case CHUNK_BITMAP:
-			// TODO
-			break;
-		case CHUNK_PALETTE:
-			// Palette entries: 32-bit integers, each one with [R, G, B, unused] bytes
-			assert(chunkDataSize % 256 == 0);
-			for (uint32 i = 0; i < 256; i++) {
-				WRITE_LE_UINT32(ptr, READ_BE_UINT32(ptr));	ptr += 4;
-			}
-			break;
-		case CHUNK_IMAGE:
-			assert(chunkDataSize % 16 == 0);
-			for (uint32 i = 0; i < chunkDataSize / 16; i++) {
-				WRITE_LE_UINT16(ptr, READ_BE_UINT16(ptr));	ptr += 2;	// width
-				WRITE_LE_UINT16(ptr, READ_BE_UINT16(ptr));	ptr += 2;	// height
-				WRITE_LE_UINT32(ptr, READ_BE_UINT32(ptr));	ptr += 4;
-				WRITE_LE_UINT32(ptr, READ_BE_UINT32(ptr));	ptr += 4;
-				WRITE_LE_UINT32(ptr, READ_BE_UINT32(ptr));	ptr += 4;
-			}
-			break;
-		case CHUNK_ANI_FRAME:
-			assert(chunkDataSize % 8 == 0);
-			for (uint32 i = 0; i < chunkDataSize / 8; i++) {
-				WRITE_LE_UINT32(ptr, READ_BE_UINT32(ptr));	ptr += 4;	// SCNHANDLE
-				WRITE_LE_UINT32(ptr, READ_BE_UINT32(ptr));	ptr += 4;
-			}
-			break;
-		case CHUNK_FILM:
-			// Filled with 32-bit integers
-			assert(chunkDataSize % 4 == 0);
-			for (uint32 i = 0; i < chunkDataSize / 4; i++) {
-				WRITE_LE_UINT32(ptr, READ_BE_UINT32(ptr));	ptr += 4;
-			}
-			break;
-		case CHUNK_PCODE:
-			// Too complicated to handle here - handled by the script parser
-			break;
-		case CHUNK_ENTRANCE:
-			// Entrance structure (ENTRANCE_STRUC)
-			assert(chunkDataSize == 8);
-			WRITE_LE_UINT32(ptr, READ_BE_UINT32(ptr));	ptr += 4;	// eNumber - entrance number
-			WRITE_LE_UINT32(ptr, READ_BE_UINT32(ptr));	ptr += 4;	// hScript - handle to entrance script
-			break;
-		default:
-			error("Unknown chunk ID: %x", chunkId);
-		}
-
-		// Jump to the next chunk
-		if (!nextChunkOffset)
-			break;
-		
-		ptr = data + nextChunkOffset;
-	}
 }
 
 /**

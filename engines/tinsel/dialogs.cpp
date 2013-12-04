@@ -5619,6 +5619,21 @@ extern void RegisterIcons(void *cptr, int num) {
 			memmove(destP, srcP, 12);
 			destP->attribute = 0;
 		}
+	} else if (TinselV1Mac) {
+		// Macintosh version has BE encoded resources, so the values need to be byte swapped
+		MEM_NODE *node = MemoryAllocFixed(g_numObjects * sizeof(INV_OBJECT));
+		assert(node);
+		g_invObjects = (INV_OBJECT *)MemoryDeref(node);
+		assert(g_invObjects);
+		INV_OBJECT *srcP = (INV_OBJECT *)cptr;
+		INV_OBJECT *destP = (INV_OBJECT *)g_invObjects;
+
+		for (int i = 0; i < num; ++i, ++destP, ++srcP) {
+			destP->id = FROM_BE_32(srcP->id);
+			destP->hIconFilm = FROM_BE_32(srcP->hIconFilm);
+			destP->hScript = FROM_BE_32(srcP->hScript);
+			destP->attribute = FROM_BE_32(srcP->attribute);
+		}
 	} else if (TinselV2) {
 		if (g_invFilms == NULL) {
 			// First time - allocate memory
