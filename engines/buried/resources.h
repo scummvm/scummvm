@@ -161,6 +161,7 @@ namespace Buried {
 #define IDS_AI_IS_JUMP_IN_TEXT                  1755
 
 // 1.04+:
+#define IDS_AI_IC_OXYGEN_REFILLED       1767
 #define IDS_AI_NX_CODE_RESET_MESSAGE    1768
 
 

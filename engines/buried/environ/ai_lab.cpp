@@ -707,6 +707,200 @@ int IceteroidMineControls::specifyCursor(Window *viewWindow, const Common::Point
 	return kCursorPutDown;
 }
 
+class IceteroidZoomInDispenser : public BaseOxygenTimer {
+public:
+	IceteroidZoomInDispenser(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	Common::Rect _controls;
+};
+
+IceteroidZoomInDispenser::IceteroidZoomInDispenser(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		BaseOxygenTimer(vm, viewWindow, sceneStaticData, priorLocation) {
+	_controls = Common::Rect(90, 0, 350, 189);
+}
+
+int IceteroidZoomInDispenser::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_controls.contains(pointLocation)) {
+		DestinationScene destinationData;
+		destinationData.destinationScene = _staticData.location;
+		destinationData.destinationScene.depth = 1;
+		destinationData.transitionType = TRANSITION_VIDEO;
+		destinationData.transitionData = 11;
+		destinationData.transitionStartFrame = -1;
+		destinationData.transitionLength = -1;
+		((SceneViewWindow *)viewWindow)->moveToDestination(destinationData);
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int IceteroidZoomInDispenser::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_controls.contains(pointLocation))
+		return kCursorMagnifyingGlass;
+
+	return kCursorArrow;
+}
+
+class IceteroidDispenserControls : public BaseOxygenTimer {
+public:
+	IceteroidDispenserControls(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int preExitRoom(Window *viewWindow, const Location &priorLocation);
+	int mouseDown(Window *viewWindow, const Common::Point &pointLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int draggingItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
+	int droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
+
+private:
+	Common::Rect _oxygenHandle;
+	Common::Rect _fillHandle;
+	Common::Rect _dropZone;
+};
+
+IceteroidDispenserControls::IceteroidDispenserControls(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		BaseOxygenTimer(vm, viewWindow, sceneStaticData, priorLocation) {
+	_oxygenHandle = Common::Rect(290, 42, 410, 128);
+	_fillHandle = Common::Rect(0, 36, 102, 132);
+	_dropZone = Common::Rect(0, 136, 148, 189);
+
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().aiICWaterInFillHandle > 0)
+		_staticData.navFrameIndex = 110;
+}
+
+int IceteroidDispenserControls::preExitRoom(Window *viewWindow, const Location &priorLocation) {
+	// Add the canister back into the inventory
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().aiICWaterInFillHandle > 0) {
+		_staticData.navFrameIndex = 109;
+
+		if (((SceneViewWindow *)viewWindow)->getGlobalFlags().aiICWaterInFillHandle == 1)
+			((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->addItem(kItemWaterCanEmpty);
+		else
+			((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->addItem(kItemWaterCanFull);
+
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().aiICWaterInFillHandle = 0;
+		((GameUIWindow *)viewWindow->getParent())->_bioChipRightWindow->sceneChanged();
+	}
+
+	return BaseOxygenTimer::preExitRoom(viewWindow, priorLocation);
+}
+
+int IceteroidDispenserControls::mouseDown(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_dropZone.contains(pointLocation) && ((SceneViewWindow *)viewWindow)->getGlobalFlags().aiICWaterInFillHandle > 0) {
+		int itemID = (((SceneViewWindow *)viewWindow)->getGlobalFlags().aiICWaterInFillHandle == 1) ? kItemWaterCanEmpty : kItemWaterCanFull;
+
+		// Reset present flag and change the frame of the background
+		_staticData.navFrameIndex = 109;
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().aiICWaterInFillHandle = 0;
+
+		// Start dragging
+		Common::Point ptInventoryWindow = viewWindow->convertPointToGlobal(pointLocation);
+		ptInventoryWindow = ((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->convertPointToLocal(ptInventoryWindow);
+		((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->startDraggingNewItem(itemID, ptInventoryWindow);
+
+		// Update the biochips
+		((GameUIWindow *)viewWindow->getParent())->_bioChipRightWindow->sceneChanged();
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int IceteroidDispenserControls::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_oxygenHandle.contains(pointLocation)) {
+		if (((SceneViewWindow *)viewWindow)->getGlobalFlags().aiOxygenReserves > 0 || ((SceneViewWindow *)viewWindow)->getGlobalFlags().aiICProcessedOxygen == 1) {
+			Cursor oldCursor = _vm->_gfx->setCursor(kCursorWait);
+
+			// Reset the flags
+			if (((SceneViewWindow *)viewWindow)->getGlobalFlags().aiICProcessedOxygen == 0)
+				((SceneViewWindow *)viewWindow)->getGlobalFlags().aiOxygenReserves--;
+
+			// Set the use flag
+			((SceneViewWindow *)viewWindow)->getGlobalFlags().aiICRefilledOxygen = 1;
+
+			// Play the refill animation
+			((SceneViewWindow *)viewWindow)->playSynchronousAnimation(18);
+
+			((SceneViewWindow *)viewWindow)->getGlobalFlags().aiOxygenTimer = GC_AIHW_STARTING_VALUE;
+
+			// Place a message in the window
+			Common::String text;
+			if (_vm->getVersion() >= MAKEVERSION(1, 0, 4, 0))
+				text = _vm->getString(IDS_AI_IC_OXYGEN_REFILLED);
+			else
+				text = "Emergency oxygen reserves refilled.";
+			((SceneViewWindow *)viewWindow)->displayLiveText(text, false);
+
+			_vm->_gfx->setCursor(oldCursor);
+		} else {
+			// Play voiceover informing the player the oxygen needs to be refilled
+			_vm->_sound->playSynchronousSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 12));
+		}
+
+		return SC_TRUE;
+	}
+
+	if (_fillHandle.contains(pointLocation) && ((SceneViewWindow *)viewWindow)->getGlobalFlags().aiICWaterInFillHandle > 0) {
+		Cursor oldCursor = _vm->_gfx->setCursor(kCursorWait);
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().aiICWaterInFillHandle = 2;
+		((SceneViewWindow *)viewWindow)->playSynchronousAnimation(17);
+		_vm->_gfx->setCursor(oldCursor);
+		return SC_TRUE;
+	}
+
+	DestinationScene destinationData;
+	destinationData.destinationScene = _staticData.location;
+	destinationData.destinationScene.depth = 0;
+	destinationData.transitionType = TRANSITION_VIDEO;
+	destinationData.transitionData = 12;
+	destinationData.transitionStartFrame = -1;
+	destinationData.transitionLength = -1;
+	((SceneViewWindow *)viewWindow)->moveToDestination(destinationData);
+	return SC_TRUE;
+}
+
+int IceteroidDispenserControls::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	// Water canister
+	if (_dropZone.contains(pointLocation) && ((SceneViewWindow *)viewWindow)->getGlobalFlags().aiICWaterInFillHandle > 0)
+		return kCursorOpenHand;
+
+	// Oxygen handle
+	if (_oxygenHandle.contains(pointLocation))
+		return kCursorFinger;
+
+	// Fill handle
+	if (_fillHandle.contains(pointLocation) && ((SceneViewWindow *)viewWindow)->getGlobalFlags().aiICWaterInFillHandle > 0)
+		return kCursorFinger;
+
+	return kCursorPutDown;
+}
+
+int IceteroidDispenserControls::draggingItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) {
+	if ((itemID == kItemWaterCanFull || itemID == kItemWaterCanEmpty) && _dropZone.contains(pointLocation) && ((SceneViewWindow *)viewWindow)->getGlobalFlags().aiICWaterInFillHandle == 0)
+		return 1;
+
+	return 0;
+}
+
+int IceteroidDispenserControls::droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) {
+	if ((itemID == kItemWaterCanFull || itemID == kItemWaterCanEmpty) && _dropZone.contains(pointLocation) && ((SceneViewWindow *)viewWindow)->getGlobalFlags().aiICWaterInFillHandle == 0) {
+		_staticData.navFrameIndex = 110;
+		viewWindow->invalidateWindow(false);
+
+		if (itemID == kItemWaterCanEmpty)
+			((SceneViewWindow *)viewWindow)->getGlobalFlags().aiICWaterInFillHandle = 1;
+		else
+			((SceneViewWindow *)viewWindow)->getGlobalFlags().aiICWaterInFillHandle = 2;
+
+		return SIC_ACCEPT;
+	}
+
+	return SIC_REJECT;
+}
+
 class TakeWaterCanister : public BaseOxygenTimer {
 public:
 	TakeWaterCanister(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
@@ -2867,6 +3061,10 @@ SceneBase *SceneViewWindow::constructAILabSceneObject(Window *viewWindow, const 
 		return new IceteroidMineControls(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 60:
 		return new BaseOxygenTimer(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 61:
+		return new IceteroidZoomInDispenser(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 62:
+		return new IceteroidDispenserControls(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 63:
 		return new IceteroidPodTimed(_vm, viewWindow, sceneStaticData, priorLocation, 174, 96, 246, 118, 14, 6, 6, 5, 0, 1, 0);
 	case 64:
