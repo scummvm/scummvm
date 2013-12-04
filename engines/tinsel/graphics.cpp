@@ -822,58 +822,95 @@ void DrawObject(DRAWOBJECT *pObj) {
 
 	// Handle various draw types
 	uint8 typeId = pObj->flags & 0xff;
-	int packType = pObj->flags >> 14;	// TinselV2
 
-	if (TinselV2 && packType != 0) {
-		// Color packing for TinselV2
+	if (TinselV2) {
+		// Tinsel v2 decoders
+		// Initial switch statement for the different bit packing types
+		int packType = pObj->flags >> 14;
 
-		if (packType == 1)
-			pObj->baseCol = 0xF0;	// 16 from 240
-		else if (packType == 2)
-			pObj->baseCol = 0xE0;	// 16 from 224
-		// 3 = variable color
-
-		PackedWrtNonZero(pObj, srcPtr, destPtr, (pObj->flags & DMA_CLIP) != 0,
-			(pObj->flags & DMA_FLIPH), packType);
-	} else {
-		switch (typeId) {
-		case 0x01:	// all versions, draw sprite without clipping
-		case 0x41:	// all versions, draw sprite with clipping
-		case 0x02:	// TinselV2, draw sprite without clipping
-		case 0x11:	// TinselV2, draw sprite without clipping, flipped horizontally
-		case 0x42:	// TinselV2, draw sprite with clipping
-		case 0x51:	// TinselV2, draw sprite with clipping, flipped horizontally
-		case 0x81:	// TinselV2, draw sprite with clipping
-		case 0xC1:	// TinselV2, draw sprite with clipping
-			assert(TinselV2 || (typeId == 0x01 || typeId == 0x41));
-
-			if (TinselV2)
+		if (packType == 0) {
+			// No color packing
+			switch (typeId) {
+			case 0x01:
+			case 0x11:
+			case 0x41:
+			case 0x51:
+			case 0x81:
+			case 0xC1:
 				t2WrtNonZero(pObj, srcPtr, destPtr, typeId >= 0x40, (typeId & 0x10) != 0);
-			else if (TinselV1PSX)
+				break;
+			case 0x02:
+			case 0x42:
+				// This renderer called 'RlWrtAll', but is the same as t2WrtNonZero
+				t2WrtNonZero(pObj, srcPtr, destPtr, typeId >= 0x40, false);
+				break;
+			case 0x04:
+			case 0x44:
+				// WrtConst with/without clipping
+				WrtConst(pObj, destPtr, typeId == 0x44);
+				break;
+			case 0x08:
+			case 0x48:
+				WrtAll(pObj, srcPtr, destPtr, typeId >= 0x40);
+				break;
+			case 0x84:
+			case 0xC4:
+				// WrtTrans with/without clipping
+				WrtTrans(pObj, destPtr, typeId == 0xC4);
+				break;
+			default:
+				error("Unknown drawing type %d", typeId);
+			}
+		} else {
+			// 1 = 16 from 240
+			// 2 = 16 from 224
+			// 3 = variable color
+			if (packType == 1) pObj->baseCol = 0xF0;
+			else if (packType == 2) pObj->baseCol = 0xE0;
+
+			PackedWrtNonZero(pObj, srcPtr, destPtr, (pObj->flags & DMA_CLIP) != 0,
+				(pObj->flags & DMA_FLIPH), packType);
+		}
+
+	} else {	// TinselV1
+		switch (typeId) {
+		case 0x01:
+		case 0x41:
+			if (TinselV1PSX) {
 				PsxDrawTiles(pObj, srcPtr, destPtr, typeId >= 0x40, psxFourBitClut, psxSkipBytes, psxMapperTable, true);
-			else if (TinselV1Mac)
-				{} // TODO
-			else if (TinselV1)
-				WrtNonZero(pObj, srcPtr, destPtr, typeId == 0x41);
-			else if (TinselV0)
-				t0WrtNonZero(pObj, srcPtr, destPtr, typeId == 0x41);
+			} else if (TinselV1Mac) {
+				// TODO
+			} else if (TinselV1) {
+				WrtNonZero(pObj, srcPtr, destPtr, typeId >= 0x40);
+			} else if (TinselV0) {
+				t0WrtNonZero(pObj, srcPtr, destPtr, typeId >= 0x40);
+			} 
 			break;
-		case 0x08:	// draw background without clipping
-		case 0x48:	// draw background with clipping
-			if (TinselV2 || TinselV1Mac || TinselV0)
-				WrtAll(pObj, srcPtr, destPtr, typeId == 0x48);
-			else if (TinselV1PSX)
-				PsxDrawTiles(pObj, srcPtr, destPtr, typeId == 0x48, psxFourBitClut, psxSkipBytes, psxMapperTable, false);
-			else if (TinselV1)
-				WrtNonZero(pObj, srcPtr, destPtr, typeId == 0x48);
+		case 0x08:
+		case 0x48:
+			if (TinselV1PSX) {
+				PsxDrawTiles(pObj, srcPtr, destPtr, typeId >= 0x40, psxFourBitClut, psxSkipBytes, psxMapperTable, false);
+			} else if (TinselV1Mac) {
+				WrtAll(pObj, srcPtr, destPtr, typeId >= 0x40);
+			} else if (TinselV1) {
+				WrtNonZero(pObj, srcPtr, destPtr, typeId >= 0x40);
+			} else if (TinselV0) {
+				WrtAll(pObj, srcPtr, destPtr, typeId >= 0x40);
+			}
 			break;
-		case 0x04:	// fill with constant color without clipping
-		case 0x44:	// fill with constant color with clipping
+		case 0x04:
+		case 0x44:
+			// WrtConst with/without clipping
 			WrtConst(pObj, destPtr, typeId == 0x44);
 			break;
-		case 0x84:	// draw transparent surface without clipping
-		case 0xC4:	// draw transparent surface with clipping
-			WrtTrans(pObj, destPtr, typeId == 0xC4);
+		case 0x84:
+		case 0xC4:
+			if (!TinselV0) {
+				// WrtTrans with/without clipping
+				WrtTrans(pObj, destPtr, typeId == 0xC4);
+			} else {
+				WrtTrans(pObj, destPtr, (typeId & 0x40) != 0);
+			}
 			break;
 		default:
 			error("Unknown drawing type %d", typeId);
