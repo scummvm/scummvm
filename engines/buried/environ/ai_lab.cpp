@@ -587,6 +587,54 @@ int IceteroidElevatorExtremeControls::specifyCursor(Window *viewWindow, const Co
 	return kCursorArrow;
 }
 
+class TakeWaterCanister : public BaseOxygenTimer {
+public:
+	TakeWaterCanister(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int mouseDown(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	Common::Rect _canister;
+}; 
+
+TakeWaterCanister::TakeWaterCanister(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		BaseOxygenTimer(vm, viewWindow, sceneStaticData, priorLocation) {
+	_canister = Common::Rect(232, 76, 376, 134);
+
+	// If the canister has not been taken, change the still
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().aiICTakenWaterCanister == 0)
+		_staticData.navFrameIndex = 111;
+}
+
+int TakeWaterCanister::mouseDown(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_canister.contains(pointLocation) && ((SceneViewWindow *)viewWindow)->getGlobalFlags().aiICTakenWaterCanister == 0) {
+		// Set the frame
+		_staticData.navFrameIndex = 51;
+
+		// Walkthrough mode skips the filling the canister puzzle and gets it filled already
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().aiICTakenWaterCanister = 1;
+		int itemID = (((SceneViewWindow *)viewWindow)->getGlobalFlags().generalWalkthroughMode == 1) ? kItemWaterCanFull : kItemWaterCanEmpty;
+
+		// Start dragging
+		Common::Point ptInventoryWindow = viewWindow->convertPointToGlobal(pointLocation);
+		ptInventoryWindow = ((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->convertPointToLocal(ptInventoryWindow);
+		((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->startDraggingNewItem(itemID, ptInventoryWindow);
+
+		// Update the biochips
+		((GameUIWindow *)viewWindow->getParent())->_bioChipRightWindow->sceneChanged();
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+	
+int TakeWaterCanister::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_canister.contains(pointLocation) && ((SceneViewWindow *)viewWindow)->getGlobalFlags().aiICTakenWaterCanister == 0)
+		return kCursorOpenHand;
+
+	return kCursorArrow;
+}
+
 class ScienceWingStingersTimed : public BaseOxygenTimer {
 public:
 	ScienceWingStingersTimed(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
@@ -2703,6 +2751,8 @@ SceneBase *SceneViewWindow::constructAILabSceneObject(Window *viewWindow, const 
 		return new SpaceDoorTimer(_vm, viewWindow, sceneStaticData, priorLocation, 164, 26, 268, 124, -1, -1, 1, TRANSITION_VIDEO, 13, -1, -1, -1, -1);
 	case 66:
 		return new SpaceDoorTimer(_vm, viewWindow, sceneStaticData, priorLocation, 164, 26, 268, 124, -1, -1, 1, TRANSITION_VIDEO, 16, -1, -1, -1, -1);
+	case 67:
+		return new TakeWaterCanister(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 68:
 		return new PlaySoundExitingFromSceneDeux(_vm, viewWindow, sceneStaticData, priorLocation, 14);
 	case 70:
@@ -2719,6 +2769,8 @@ SceneBase *SceneViewWindow::constructAILabSceneObject(Window *viewWindow, const 
 		return new NexusEnd(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 93:
 		return new BaseOxygenTimer(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 100:
+		return new TakeWaterCanister(_vm, viewWindow, sceneStaticData, priorLocation);
 	}
 
 	warning("TODO: AI lab scene object %d", sceneStaticData.classID);
