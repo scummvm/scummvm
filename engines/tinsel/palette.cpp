@@ -72,6 +72,8 @@ static VIDEO_DAC_Q *g_pDAChead;
 /** the translucent palette lookup table */
 uint8 g_transPalette[MAX_COLORS];	// used in graphics.cpp
 
+uint8 g_ghostPalette[MAX_COLORS];
+
 static int g_translucentIndex	= 228;
 
 static int g_talkIndex		= 233;
@@ -572,6 +574,35 @@ void CreateTranslucentPalette(SCNHANDLE hPalette) {
 			(TinselV2 ? TranslucentColor() : COL_HILIGHT) - 1);
 	}
 }
+
+/**
+ * Creates the ghost palette
+ */
+void CreateGhostPalette(SCNHANDLE hPalette) {
+	// get a pointer to the palette
+	PALETTE *pPal = (PALETTE *)LockMem(hPalette);
+
+	// leave background color alone
+	g_ghostPalette[0] = 0;
+
+	int32 numColors = FROM_32(pPal->numColors);
+	for (int32 i = 0; i < numColors; i++) {
+		// get the RGB color model values
+		uint8 red   = TINSEL_GetRValue(pPal->palRGB[i]);
+		uint8 green = TINSEL_GetGValue(pPal->palRGB[i]);
+		uint8 blue  = TINSEL_GetBValue(pPal->palRGB[i]);
+
+		// calculate the Value field of the HSV color model
+		unsigned val = (red > green) ? red : green;
+		val = (val > blue) ? val : blue;
+
+		// map the Value field to one of the 4 colors reserved for the translucent palette
+		val /= 64;
+		assert(/*val >= 0 &&*/ val <= 3);
+		g_ghostPalette[i + 1] = (uint8)(val + SysVar(ISV_GHOST_BASE));
+	}
+}
+
 
 /**
  * Returns an adjusted color RGB
