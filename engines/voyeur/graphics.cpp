@@ -482,10 +482,24 @@ error("TODO: var22/var24/var2C not initialised before use?");
 			byte onOff = srcPic->_onOff;
 
 			if (srcFlags & DISPFLAG_2) {
-				if (srcFlags & DISPFLAG_8) {
-					error("sDrawPic: TODO");
-				} else {
-					error("sDrawPic: TODO");
+				if (!(srcFlags & DISPFLAG_8)) {
+					srcP = srcImgData + srcOffset;
+					
+					if (destFlags & DISPFLAG_8) {
+						// loc_272C3
+						error("TODO");
+					} else {
+						destP = destImgData + screenOffset;
+						for (int yp = 0; yp < height1; ++yp) {
+							for (int xp = 0; xp < width2; ++xp, ++destP) {
+								if ((int8)*srcP++ < 0)
+									*destP = onOff;
+							}
+
+							destP += widthDiff2;
+							srcP += widthDiff;
+						}
+					}
 				}
 			} else {
 				// loc_27477

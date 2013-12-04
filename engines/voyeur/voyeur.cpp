@@ -509,7 +509,6 @@ void VoyeurEngine::doOpening() {
 		_eventsManager.pollEvents();
 		g_system->delayMillis(10);
 	}
-	
 }
 
 void VoyeurEngine::playRL2Video(const Common::String &filename) {

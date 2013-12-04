@@ -996,8 +996,8 @@ int ViewPortResource::drawText(const Common::String &msg) {
 			int charWidth = fontData._charWidth[charValue];
 			_fontChar._bounds.setWidth(charWidth);
 
-			uint16 offset = READ_LE_UINT16(fontData._data1 + charValue * 2);
-			_fontChar._imgData = fontData._data2 + offset * 2;
+			uint16 offset = READ_LE_UINT16(fontData._charOffsets + charValue * 2);
+			_fontChar._imgData = fontData._charImages + offset * 2;
 
 			gfxManager.sDrawPic(&_fontChar, this, Common::Point(xp, yp));
 			
@@ -1109,8 +1109,8 @@ FontResource::FontResource(BoltFilesState &state, byte *src) {
 	for (int i = 0; i < totalChars; ++i)
 		_charWidth[i] = READ_LE_UINT16(src + 8 + 2 * i);
 
-	_data1 = src + 8 + totalChars * 2;
-	_data2 = _data1 + totalChars * 2;
+	_charOffsets = src + 8 + totalChars * 2;
+	_charImages = _charOffsets + totalChars * 2;
 }
 
 FontResource::~FontResource() {

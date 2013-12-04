@@ -304,8 +304,8 @@ public:
 	int _fontHeight;
 	int _topPadding;
 	int *_charWidth;
-	byte *_data1;
-	byte *_data2;
+	byte *_charOffsets;
+	byte *_charImages;
 
 	FontResource(BoltFilesState &state, byte *src);
 	virtual ~FontResource();
