@@ -406,6 +406,7 @@ void convertFileToLE(MEMHANDLE *pH) {
 
 		uint32 chunkSize = (nextChunkOffset > 0 ? nextChunkOffset : pH->filesize & FSIZE_MASK) - pos;
 		uint32 chunkDataSize = chunkSize - 4 - 4;	// chunk ID, chunk length
+		uint32 tmp = 0;	// for temp data
 
 		debug("Chunk ID: %x, size %d, next chunk: %d", chunkId, chunkSize, nextChunkOffset);
 
