@@ -484,7 +484,7 @@ void Script::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsSint32LE(_nr);
 
 	if (s.isLoading())
-		load(_nr, g_sci->getResMan());
+		load(_nr, g_sci->getResMan(), g_sci->getScriptPatcher());
 	s.skip(4, VER(14), VER(22));		// OBSOLETE: Used to be _bufSize
 	s.skip(4, VER(14), VER(22));		// OBSOLETE: Used to be _scriptSize
 	s.skip(4, VER(14), VER(22));		// OBSOLETE: Used to be _heapSize
