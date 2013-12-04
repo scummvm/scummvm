@@ -124,7 +124,7 @@ static void BGmainProcess(CORO_PARAM, const void *param) {
 			pReel = (const FREEL *)param;
 
 			// Get the MULTI_INIT structure
-			pmi = (const MULTI_INIT *)LockMem(FROM_LE_32(pReel->mobj));
+			pmi = (const MULTI_INIT *)LockMem(FROM_32(pReel->mobj));
 
 			// Initialize and insert the object, and initialize its script.
 			g_pBG[0] = MultiInitObject(pmi);
@@ -249,10 +249,10 @@ void StartupBackground(CORO_PARAM, SCNHANDLE hFilm) {
 
 	pim = GetImageFromFilm(hFilm, 0, NULL, NULL, &pfilm);
 
-	SetBackPal(FROM_LE_32(pim->hImgPal));
+	SetBackPal(FROM_32(pim->hImgPal));
 
 	// Extract the film speed
-	g_BGspeed = ONE_SECOND / FROM_LE_32(pfilm->frate);
+	g_BGspeed = ONE_SECOND / FROM_32(pfilm->frate);
 
 	// Start display process for each reel in the film
 	CoroScheduler.createProcess(PID_REEL, BGmainProcess, &pfilm->reels[0], sizeof(FREEL));

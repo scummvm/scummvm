@@ -54,11 +54,11 @@ byte *FindChunk(SCNHANDLE handle, uint32 chunk) {
 		chunk -= 0x2L;
 
 	while (1) {
-		if (READ_LE_UINT32(lptr) == chunk)
+		if (READ_32(lptr) == chunk)
 			return (byte *)(lptr + 2);
 
 		++lptr;
-		add = READ_LE_UINT32(lptr);
+		add = READ_32(lptr);
 
 		if (!add)
 			// End of file reached

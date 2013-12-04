@@ -546,7 +546,7 @@ void CreateTranslucentPalette(SCNHANDLE hPalette) {
 	// leave background color alone
 	g_transPalette[0] = 0;
 
-	for (uint i = 0; i < FROM_LE_32(pPal->numColors); i++) {
+	for (uint i = 0; i < FROM_32(pPal->numColors); i++) {
 		// get the RGB color model values
 		uint8 red   = TINSEL_GetRValue(pPal->palRGB[i]);
 		uint8 green = TINSEL_GetGValue(pPal->palRGB[i]);
