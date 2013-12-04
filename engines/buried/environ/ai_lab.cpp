@@ -3116,6 +3116,383 @@ int ScanningRoomNexusDoorPullHandle::specifyCursor(Window *viewWindow, const Com
 	return kCursorArrow;
 }
 
+class MachineRoomExitDoor : public SceneBase {
+public:
+	MachineRoomExitDoor(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	Common::Rect _clickable;
+	DestinationScene _destData;
+};
+
+MachineRoomExitDoor::MachineRoomExitDoor(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_clickable = Common::Rect(138, 0, 338, 189);
+	_destData.destinationScene = Location(6, 7, 1, 3, 1, 0);
+	_destData.transitionType = TRANSITION_VIDEO;
+	_destData.transitionData = 4;
+	_destData.transitionStartFrame = -1;
+	_destData.transitionLength = -1;
+}
+
+int MachineRoomExitDoor::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_clickable.contains(pointLocation)) {
+		((SceneViewWindow *)viewWindow)->moveToDestination(_destData);
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int MachineRoomExitDoor::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_clickable.contains(pointLocation))
+		return kCursorFinger;
+
+	return kCursorArrow;
+}
+
+class MachineRoomTamperedSculpture : public SceneBase {
+public:
+	MachineRoomTamperedSculpture(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
+	int locateAttempted(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	Common::Rect _clickable;
+};
+
+MachineRoomTamperedSculpture::MachineRoomTamperedSculpture(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_clickable = Common::Rect(184, 54, 274, 142);
+}
+
+int MachineRoomTamperedSculpture::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_clickable.contains(pointLocation)) {
+		if (((SceneViewWindow *)viewWindow)->getGlobalFlags().aiMRCorrectFreqSet == 2) {
+			// Play the morph movie
+			((SceneViewWindow *)viewWindow)->playSynchronousAnimation(1);
+
+			// Attempt to add it to the biochip
+			if (((SceneViewWindow *)viewWindow)->addNumberToGlobalFlagTable(offsetof(GlobalFlags, evcapBaseID), offsetof(GlobalFlags, evcapNumCaptured), 12, AI_EVIDENCE_SCULPTURE))
+				((SceneViewWindow *)viewWindow)->displayLiveText(_vm->getString(IDS_MBT_EVIDENCE_RIPPLE_DOCUMENTED));
+			else
+				((SceneViewWindow *)viewWindow)->displayLiveText(_vm->getString(IDS_MBT_EVIDENCE_ALREADY_ACQUIRED));
+
+			// Turn off evidence capture
+			((GameUIWindow *)viewWindow->getParent())->_bioChipRightWindow->disableEvidenceCapture();
+
+			// Set the scoring flag
+			((SceneViewWindow *)viewWindow)->getGlobalFlags().scoreFoundSculptureDiagram = 1;
+
+			// Update the AI chip and check for spontaneous comments
+			if (((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->isItemInInventory(kItemBioChipAI))
+				((SceneViewWindow *)viewWindow)->playAIComment(_staticData.location, AI_COMMENT_TYPE_SPONTANEOUS);
+
+			((GameUIWindow *)viewWindow->getParent())->_bioChipRightWindow->sceneChanged();
+		} else {
+			// Play the normal morphing animation
+			((SceneViewWindow *)viewWindow)->playSynchronousAnimation(0);
+		}
+
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int MachineRoomTamperedSculpture::postEnterRoom(Window *viewWindow, const Location &priorLocation) {
+	// If we have not yet captured it, set the anachronism message
+	if (!((SceneViewWindow *)viewWindow)->isNumberInGlobalFlagTable(offsetof(GlobalFlags, evcapBaseID), offsetof(GlobalFlags, evcapNumCaptured), AI_EVIDENCE_SCULPTURE))
+		((SceneViewWindow *)viewWindow)->displayLiveText(_vm->getString(IDS_MBT_EVIDENCE_PRESENT));
+
+	return SC_TRUE;
+}
+
+int MachineRoomTamperedSculpture::locateAttempted(Window *viewWindow, const Common::Point &pointLocation) {
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().bcLocateEnabled == 1 && _clickable.contains(pointLocation) &&
+			!((SceneViewWindow *)viewWindow)->isNumberInGlobalFlagTable(offsetof(GlobalFlags, evcapBaseID), offsetof(GlobalFlags, evcapNumCaptured), AI_EVIDENCE_SCULPTURE)) {
+		((SceneViewWindow *)viewWindow)->displayLiveText(_vm->getString(IDS_MBT_EVIDENCE_MUST_BE_REVEALED)); // All will be reveaaaaaled
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int MachineRoomTamperedSculpture::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().bcLocateEnabled == 1) {
+		if (_clickable.contains(pointLocation))
+			return -2;
+		return -1;
+	}
+
+	if (_clickable.contains(pointLocation))
+		return kCursorFinger;
+
+	return kCursorArrow;
+}
+
+class MachineRoomHarmonicsInterface : public SceneBase {
+public:
+	MachineRoomHarmonicsInterface(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	Common::Rect _testButton;
+	Common::Rect _turnRight;
+	Common::Rect _turnLeft;
+	int _currentSelection;
+	bool _tested;
+};
+
+MachineRoomHarmonicsInterface::MachineRoomHarmonicsInterface(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_testButton = Common::Rect(122, 90, 160, 118);
+	_turnRight = Common::Rect(128, 27, 173, 48);
+	_turnLeft = Common::Rect(128, 53, 173, 80);
+	_currentSelection = ((SceneViewWindow *)viewWindow)->getGlobalFlags().aiMRCorrectFreqSet;
+	_tested = false;
+
+	switch (_currentSelection) {
+	case 0:
+		_staticData.navFrameIndex = 105;
+		break;
+	case 1:
+		_staticData.navFrameIndex = 107;
+		break;
+	case 2:
+		_staticData.navFrameIndex = 109;
+		break;
+	case 3:
+		_staticData.navFrameIndex = 111;
+		break;
+	case 4:
+		_staticData.navFrameIndex = 113;
+		break;
+	case 5:
+		_staticData.navFrameIndex = 115;
+		break;
+	case 6:
+		_staticData.navFrameIndex = 116;
+		break;
+	case 7:
+		_staticData.navFrameIndex = 118;
+		break;
+	}
+}
+
+int MachineRoomHarmonicsInterface::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_turnRight.contains(pointLocation)) {
+		_staticData.navFrameIndex = 103;
+		viewWindow->invalidateWindow(false);
+
+		// TODO: Delay
+
+		_staticData.navFrameIndex = 104;
+		viewWindow->invalidateWindow(false);
+
+		// TODO: Delay
+
+		_currentSelection++;
+		if (_currentSelection > 7)
+			_currentSelection = 0;
+
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().aiMRCorrectFreqSet = _currentSelection;
+		_tested = false;
+
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().aiMRUsedHarmonicsInterface = 1;
+
+		switch (_currentSelection) {
+		case 0:
+			_staticData.navFrameIndex = 105;
+			break;
+		case 1:
+			_staticData.navFrameIndex = 107;
+			break;
+		case 2:
+			_staticData.navFrameIndex = 109;
+			break;
+		case 3:
+			_staticData.navFrameIndex = 111;
+			break;
+		case 4:
+			_staticData.navFrameIndex = 113;
+			break;
+		case 5:
+			_staticData.navFrameIndex = 115;
+			break;
+		case 6:
+			_staticData.navFrameIndex = 116;
+			break;
+		case 7:
+			_staticData.navFrameIndex = 118;
+			break;
+		}
+
+		viewWindow->invalidateWindow(false);
+		return SC_TRUE;
+	}
+
+	if (_turnLeft.contains(pointLocation)) {
+		_staticData.navFrameIndex = 104;
+		viewWindow->invalidateWindow(false);
+
+		// TODO: Delay
+
+		_staticData.navFrameIndex = 103;
+		viewWindow->invalidateWindow(false);
+
+		// TODO: Delay
+
+		_currentSelection--;
+		if (_currentSelection < 0)
+			_currentSelection = 7;
+
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().aiMRCorrectFreqSet = _currentSelection;
+		_tested = false;
+
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().aiMRUsedHarmonicsInterface = 1;
+
+		switch (_currentSelection) {
+		case 0:
+			_staticData.navFrameIndex = 105;
+			break;
+		case 1:
+			_staticData.navFrameIndex = 107;
+			break;
+		case 2:
+			_staticData.navFrameIndex = 109;
+			break;
+		case 3:
+			_staticData.navFrameIndex = 111;
+			break;
+		case 4:
+			_staticData.navFrameIndex = 113;
+			break;
+		case 5:
+			_staticData.navFrameIndex = 115;
+			break;
+		case 6:
+			_staticData.navFrameIndex = 116;
+			break;
+		case 7:
+			_staticData.navFrameIndex = 118;
+			break;
+		}
+
+		viewWindow->invalidateWindow(false);
+		return SC_TRUE;
+	}
+
+	if (_testButton.contains(pointLocation) && _currentSelection != 5 && !_tested) {
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().aiMRUsedHarmonicsInterface = 1;
+
+		// Play the proper sound effect
+		int fileID;
+		switch (_currentSelection) {
+		case 0:
+			fileID = 6;
+			break;
+		case 1:
+			fileID = 7;
+			break;
+		case 2:
+			fileID = 8;
+			break;
+		case 3:
+			fileID = 9;
+			break;
+		case 4:
+			fileID = 10;
+			break;
+		case 6:
+			fileID = 11;
+			break;
+		case 7:
+			fileID = 12;
+			break;
+		}
+
+		_vm->_sound->playSynchronousSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, fileID), 128);
+
+		// Increment the frame to display the results
+		_staticData.navFrameIndex++;
+		viewWindow->invalidateWindow(false);
+
+		_tested = true;
+
+		// Set the score flag
+		if (_currentSelection == 2)
+			((SceneViewWindow *)viewWindow)->getGlobalFlags().scoreResearchMorphSculpture = 1;
+
+		return SC_TRUE;
+	}
+
+	// Return the player to the original position (depth zero)
+	DestinationScene destData;
+	destData.destinationScene = _staticData.location;
+	destData.destinationScene.depth = 0;
+	destData.transitionType = TRANSITION_NONE;
+	destData.transitionData = -1;
+	destData.transitionStartFrame = -1;
+	destData.transitionLength = -1;
+	((SceneViewWindow *)viewWindow)->moveToDestination(destData);
+	return SC_TRUE;
+}
+
+int MachineRoomHarmonicsInterface::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_turnRight.contains(pointLocation))
+		return kCursorArrowRight;
+
+	if (_turnLeft.contains(pointLocation))
+		return kCursorArrowRight;
+
+	if (_testButton.contains(pointLocation) && _currentSelection != 5 && !_tested)
+		return kCursorFinger;
+
+	return kCursorPutDown;
+}
+
+class MachineRoomHarmonicsZoomIn : public SceneBase {
+public:
+	MachineRoomHarmonicsZoomIn(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	Common::Rect _clickRegion;
+	DestinationScene _clickDestination;
+};
+
+MachineRoomHarmonicsZoomIn::MachineRoomHarmonicsZoomIn(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_clickRegion = Common::Rect(90, 60, 178, 134);
+	_clickDestination.destinationScene = _staticData.location;
+	_clickDestination.destinationScene.depth = 1;
+	_clickDestination.transitionType = TRANSITION_NONE;
+	_clickDestination.transitionData = -1;
+	_clickDestination.transitionStartFrame = -1;
+	_clickDestination.transitionLength = -1;
+}
+
+int MachineRoomHarmonicsZoomIn::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_clickRegion.contains(pointLocation))
+		((SceneViewWindow *)viewWindow)->moveToDestination(_clickDestination);
+
+	return SC_FALSE;
+}
+
+int MachineRoomHarmonicsZoomIn::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_clickRegion.contains(pointLocation))
+		return kCursorMagnifyingGlass;
+
+	return kCursorArrow;
+}
+
 class SpaceDoor : public SceneBase {
 public:
 	SpaceDoor(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
@@ -3292,6 +3669,41 @@ int DockingBayPlaySoundEntering::postEnterRoom(Window *viewWindow, const Locatio
 	return SC_TRUE;
 }
 
+class MachineRoomPlayAnim : public SceneBase {
+public:
+	MachineRoomPlayAnim(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+			int left = -1, int top = -1, int right = -1, int bottom = -1, int animID = -1);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	Common::Rect _clickable;
+	int _animID;
+};
+
+MachineRoomPlayAnim::MachineRoomPlayAnim(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+		int left, int top, int right, int bottom, int animID) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_clickable = Common::Rect(left, top, right, bottom);
+	_animID = animID;
+}
+
+int MachineRoomPlayAnim::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_clickable.contains(pointLocation) && _animID >= 0) {
+		((SceneViewWindow *)viewWindow)->playSynchronousAnimation(_animID);
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int MachineRoomPlayAnim::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_clickable.contains(pointLocation))
+		return kCursorFinger;
+
+	return kCursorArrow;
+}
+
 bool SceneViewWindow::initializeAILabTimeZoneAndEnvironment(Window *viewWindow, int environment) {
 	if (environment == -1) {
 		GlobalFlags &flags = ((SceneViewWindow *)viewWindow)->getGlobalFlags();
@@ -3466,6 +3878,18 @@ SceneBase *SceneViewWindow::constructAILabSceneObject(Window *viewWindow, const 
 	case 80:
 		// Scene exists, but is just the default one
 		break;
+	case 81:
+		return new MachineRoomExitDoor(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 82:
+		return new MachineRoomPlayAnim(_vm, viewWindow, sceneStaticData, priorLocation, 156, 30, 251, 125, 2);
+	case 83:
+		return new MachineRoomPlayAnim(_vm, viewWindow, sceneStaticData, priorLocation, 184, 38, 272, 126, 3);
+	case 84:
+		return new MachineRoomTamperedSculpture(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 85:
+		return new MachineRoomHarmonicsInterface(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 86:
+		return new MachineRoomHarmonicsZoomIn(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 87:
 		return new MachineRoomEntry(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 90:
