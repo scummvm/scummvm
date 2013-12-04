@@ -115,13 +115,11 @@ public:
 	void setSFXVolumes(uint8 volume);
 
 	bool sampleExists(int id);
-	bool sampleIsPlaying();
+	bool sampleIsPlaying(int id = -1);
 
+	// TODO: Internal method, make this protected?
 	void openSampleFiles();
 	void closeSampleStream();
-
-private:
-	void showSoundError(const char *errorMsg, const char *soundFile);
 };
 
 } // End of namespace Tinsel
