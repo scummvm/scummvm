@@ -2411,7 +2411,8 @@ void SceneViewWindow::onPaint() {
 }
 
 void SceneViewWindow::onTimer(uint timer) {
-	_vm->_sound->timerCallback();
+	SoundManager *sound = _vm->_sound; // Take a copy in case we die while in the timer
+	sound->timerCallback();
 
 	if (_paused)
 		return;
@@ -2422,7 +2423,7 @@ void SceneViewWindow::onTimer(uint timer) {
 	if (_currentScene && !_infoWindowDisplayed && !_bioChipWindowDisplayed && !_burnedLetterDisplayed)
 		_currentScene->timerCallback(this);
 
-	_vm->_sound->timerCallback();
+	sound->timerCallback();
 }
 
 bool SceneViewWindow::onSetCursor(uint message) {
