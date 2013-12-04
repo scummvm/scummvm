@@ -850,7 +850,7 @@ void DrawObject(DRAWOBJECT *pObj) {
 			if (TinselV2)
 				t2WrtNonZero(pObj, srcPtr, destPtr, typeId >= 0x40, (typeId & 0x10) != 0);
 			else if (TinselV1PSX)
-				PsxDrawTiles(pObj, srcPtr, destPtr, typeId == 0x41, psxFourBitClut, psxSkipBytes, psxMapperTable, true);
+				PsxDrawTiles(pObj, srcPtr, destPtr, typeId >= 0x40, psxFourBitClut, psxSkipBytes, psxMapperTable, true);
 			else if (TinselV1Mac)
 				{} // TODO
 			else if (TinselV1)
