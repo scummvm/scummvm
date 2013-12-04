@@ -797,10 +797,9 @@ static void PackedWrtNonZero(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP,
  * Clears both the screen surface buffer and screen to the specified value
  */
 void ClearScreen() {
-	byte blackColorIndex = (!TinselV1Mac) ? 0 : 255;
 	void *pDest = _vm->screen().getPixels();
-	memset(pDest, blackColorIndex, SCREEN_WIDTH * SCREEN_HEIGHT);
-	g_system->fillScreen(blackColorIndex);
+	memset(pDest, 0, SCREEN_WIDTH * SCREEN_HEIGHT);
+	g_system->fillScreen(0);
 	g_system->updateScreen();
 }
 
