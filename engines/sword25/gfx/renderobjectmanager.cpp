@@ -103,13 +103,16 @@ bool RenderObjectManager::render() {
 	_uta->clear();
 
 	// Add rectangles of objects which don't exist in this frame any more
-    for (RenderObjectQueue::iterator it = _prevQueue->begin(); it != _prevQueue->end(); ++it)
-    	if (!_currQueue->exists(*it))
-    		_uta->addRect((*it)._bbox);
-    // Add rectangles of objects which are different from the previous frame
-    for (RenderObjectQueue::iterator it = _currQueue->begin(); it != _currQueue->end(); ++it)
-    	if (!_prevQueue->exists(*it))
-    		_uta->addRect((*it)._bbox);
+	for (RenderObjectQueue::iterator it = _prevQueue->begin(); it != _prevQueue->end(); ++it) {
+		if (!_currQueue->exists(*it))
+			_uta->addRect((*it)._bbox);
+	}
+	
+	// Add rectangles of objects which are different from the previous frame
+	for (RenderObjectQueue::iterator it = _currQueue->begin(); it != _currQueue->end(); ++it) {
+		if (!_prevQueue->exists(*it))
+			_uta->addRect((*it)._bbox);
+	}
 
 	RectangleList *updateRects = _uta->getRectangles();
 	Common::Array<int> updateRectsMinZ;

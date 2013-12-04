@@ -142,6 +142,7 @@ public:
 	void toggleMute();
 	void playSound(int id, int flag);
 	void startSceneTrack();
+	void stopSoundStream2();
 
 	int _sfxVolume;
 

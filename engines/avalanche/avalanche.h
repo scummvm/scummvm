@@ -41,6 +41,7 @@
 #include "avalanche/menu.h"
 #include "avalanche/closing.h"
 #include "avalanche/sound.h"
+#include "avalanche/nim.h"
 
 #include "common/serializer.h"
 
@@ -59,7 +60,7 @@ struct AvalancheGameDescription {
 	ADGameDescription desc;
 };
 
-static const int kSavegameVersion = 1;
+static const int kSavegameVersion = 2;
 
 enum Pitch {
 	kPitchInvalid,
@@ -84,6 +85,7 @@ public:
 	Menu *_menu;
 	Closing *_closing;
 	SoundHandler *_sound;
+	Nim *_nim;
 
 	OSystem *_system;
 
@@ -289,7 +291,7 @@ public:
 	void newGame(); // This sets up the DNA for a completely new game.
 	bool getFlag(char x);
 	bool decreaseMoney(uint16 amount); // Called pennycheck in the original.
-	
+
 	Common::String getName(People whose);
 	Common::String getItem(byte which); // Called get_better in the original.
 	Common::String f5Does(); // This procedure determines what f5 does.

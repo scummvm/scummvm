@@ -156,7 +156,7 @@ void RenderQueue::update() {
 		byte *srcp = _vm->_screen->_backScreen + _vm->_cameraX + _vm->_cameraY * _vm->_sceneWidth;
 		int16 w = MIN<int16>(640, _vm->_sceneWidth);
 		int16 h = MIN<int16>(400, _vm->_cameraHeight);
-  		while (h--) {
+		while (h--) {
 			memcpy(destp, srcp, w);
 			destp += 640;
 			srcp += _vm->_sceneWidth;

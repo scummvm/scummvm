@@ -2,24 +2,33 @@
 ##################################################################################################################
 
 	@WorkingEngines = qw(
-		scumm agos sky queen gob groovie saga drascula
-		kyra lure agi touche parallaction cine
-		cruise made tinsel tucker sword1 sword2 draci sci teenagent mohawk hugo toon lastexpress tsage cge
-		composer toltecs tony wintermute pegasus
+		agos agi cine cge composer cruise draci
+		drascula hugo gob groovie kyra lastexpress
+		lure made mohawk parallaction pegasus queen
+		saga sci scumm sky sword1 sword2 teenagent tinsel
+		toltecs tony toon touche tsage tucker wintermute
+		dreamweb fullpipe hopkins mortevielle
+		neverhood testbed avalanche zvision
 	);
+#### New engines
+####		sword25
 
 	@WorkingEngines_1st = qw(
-		scumm queen groovie saga drascula
-		touche parallaction cine
-?		cruise made tucker lastexpress composer wintermute
+		cine composer cruise drascula groovie
+		lastexpress made parallaction queen
+		saga scumm touche tucker wintermute
+		avalanche zvision
 	);
 
 	@WorkingEngines_2nd = qw(
-		agos sky gob kyra lure 
-		agi tinsel sword1 sword2 
-		draci sci teenagent hugo toon
-		tsage cge toltecs tony pegasus
+		agi agos cge draci gob hopkins
+		hugo kyra lure mohawk pegasus sci
+		sky sword1 sword2 teenagent
+		tinsel tsage toltecs tony toon
+		dreamweb fullpipe mortevielle
+		neverhood testbed
 	);
+####		sword25
 
 	@TestingEngines = qw(
 
@@ -34,20 +43,32 @@
 		lol
 		agos2
 		eob
+		cstime
+		myst
+		riven
+		saga2
+		sci32
+		groovie2
 	);
 
 	#disabled subengines lol saga2 personal nightmare
 
+	# see configure.engines
 	%UseableFeatures = (
 		'zlib'		=> 'zlib.lib',
 		'mad'		=> 'libmad.lib',
 		'tremor'	=> 'libtremor.lib',
-		'flac'		=> 'libflac.lib'
+		'flac'		=> 'libflacdec.lib',
+		'freetype2'		=> 'freetype.lib',
+		'faad'		=> 'libFAAD2.lib',
+		'mpeg2'	=>  'libmpeg2.lib'
 	);
+		# 'mpeg2'	=>  'libmpeg2.lib'
 
 	# these are normally enabled for each variation
 	#$DefaultFeatures = qw(zlib,mad);
-	$DefaultFeatures = qw(zlib,mad,tremor,flac);
+	#$DefaultFeatures = qw(zlib,mad,tremor,);
+	$DefaultFeatures = qw(mad,tremor,faad,flac,freetype2,mpeg2,zlib,);
 
 ##################################################################################################################
 	##
@@ -64,7 +85,8 @@
 		$HaltOnError = 0;
 		$SkipExistingPackages = 0;
 		$ReallyQuiet = 0;
-		$DevBase = "C:\\S";
+		$DevBase = "D:\\Symbian";
+		$Compiler = "D:\\Program/ Files\\CodeSourcery\\Sourcery/ G++ Lite";
 
 		# specify an optional FTP server to upload to after each Build+Package (can leave empty)
 		#$FTP_Host = "host.com";
@@ -77,14 +99,14 @@
 		# Note1: the \epoc32 directory needs to be in these rootdirs
 		# Note2: these paths do NOT end in a backslash!
 	#	$SDK_RootDirs{'UIQ2'}	= "$DevBase\\UIQ_21";
-		$SDK_RootDirs{'UIQ3'}	= "$DevBase\\UIQ3";
+	#	$SDK_RootDirs{'UIQ3'}	= "$DevBase\\UIQ3";
 	#	$SDK_RootDirs{'S60v1'}	= "$DevBase\\S60v1";
 	#	$SDK_RootDirs{'S60v2'}	= "$DevBase\\S60v2";
 		$SDK_RootDirs{'S60v3'}	= "$DevBase\\S60v3";
 	#	$SDK_RootDirs{'S80'}	= "$DevBase\\S80";
 	#	$SDK_RootDirs{'S90'}	= "$DevBase\\S90";
 
-		$SDK_ToolchainDirs{'S60v3'} = "$DevBase\\arm-symbianelf\\bin";
+		$SDK_ToolchainDirs{'S60v3'} = "$Compiler\\arm-symbianelf\\bin";
 		$SDK_ToolchainDirs{'UIQ2'}	= "$DevBase\\ECompXL\\bin"; # only needed for UIQ2/UIQ3
 		$SDK_ToolchainDirs{'UIQ3'}	= "$DevBase\\ECompXL\\bin"; # only needed for UIQ2/UIQ3
 
@@ -94,7 +116,7 @@
 		{
 			## Standard libraries
 			$SDK_LibraryDirs{'ALL'}{'zlib.lib'}		= "$DevBase\\zlib-1.2.2\\epoc";
-			#$SDK_LibraryDirs{'ALL'}{'libmad.lib'}	= "$DevBase\\libmad-0.15.1b\\group";
+			$SDK_LibraryDirs{'ALL'}{'libmad.lib'}	= "$DevBase\\libmad-0.15.1b\\group";
 			$SDK_LibraryDirs{'ALL'}{'libtremor.lib'}= "$DevBase\\tremor\\epoc";
 
 			## SDL 1.2.12 / AnotherGuest / Symbian version
@@ -186,44 +208,7 @@
 		# now you can add $VariationSets only built on this PC below this line :)
 
 	}
-	elsif ($ENV{'COMPUTERNAME'} eq "EMBEDDEV-LAPE") #################################################################
-	{
-		$Producer = "AnotherGuest";
-		$RedirectSTDERR = 1;
-		$HaltOnError = 0;
-		$SkipExistingPackages = 1;
-		$ReallyQuiet = 1;
-
-		#$FTP_Host = "host.com";
-		#$FTP_User = "ag@host.com";
-		#$FTP_Pass = "password";
-		#$FTP_Dir  = "cvsbuilds";
-
-		#$SDK_RootDirs{'UIQ2'}= "D:\\UIQ2";
-		$SDK_RootDirs{'UIQ3'}= "G:\\UIQ3";
-		#$SDK_RootDirs{'S60v1'}= "D:\\S60v1";
-		#$SDK_RootDirs{'S60v2'}= "D:\\S60v2";
-		$SDK_RootDirs{'S60v3'}= "G:\\S60v3";
-		#$SDK_RootDirs{'S80'}= "D:\\S80";
-		#$SDK_RootDirs{'S90'}= "D:\\S90";
-		$ECompXL_BinDir= "D:\\ECompXL\\";
-		if (0) # so we can turn them on/off easily
-		{
-#			$SDK_LibraryDirs{'ALL'}{'zlib.lib'}		= "C:\\S\\zlib-1.2.2\\epoc";
-#			$SDK_LibraryDirs{'ALL'}{'libmad.lib'}	= "C:\\S\\libmad-0.15.1b\\group";
-#			$SDK_LibraryDirs{'ALL'}{'libtremor.lib'}= "C:\\tremor\\epoc";
-			$SDK_LibraryDirs{'UIQ2'}{'esdl.lib'} = "E:\\WICKED\\ESDL\\epoc\\UIQ";
-			$SDK_LibraryDirs{'S60v1'}{'esdl.lib'}	= $SDK_LibraryDirs{'S60v2'}{'esdl.lib'} = "E:\\WICKED\\ESDL\\epoc\\S60";
-			$SDK_LibraryDirs{'S80'}{'esdl.lib'}		= "E:\\WICKED\\ESDL\\epoc\\S80";
-			$SDK_LibraryDirs{'S90'}{'esdl.lib'}		= "E:\\WICKED\\ESDL\\epoc\\S90";
-			$SDK_LibraryDirs{'S60v3'}{'esdl.lib'}		= "E:\\WICKED\\ESDL\\epoc\\S60\\S60V3";
-			$SDK_LibraryDirs{'UIQ3'}{'esdl.lib'}		= "E:\\WICKED\\ESDL\\epoc\\UIQ\\UIQ3";
-		}
-
-		# now you can add $VariationSets only built on this PC below this line :)
-
-	}
-	elsif ($ENV{'COMPUTERNAME'} eq "EMBEDDEV_VAIO1") #################################################################
+	elsif ($ENV{'COMPUTERNAME'} eq "EMBEDDEV-VAIO2") #################################################################
 	{
 		$Producer = "AnotherGuest";
 		$RedirectSTDERR = 1;
@@ -255,6 +240,47 @@
 			$SDK_LibraryDirs{'S90'}{'esdl.lib'}		= "E:\\WICKED\\ESDL\\epoc\\S90";
 			$SDK_LibraryDirs{'S60v3'}{'esdl.lib'}		= "E:\\WICKED\\ESDL\\epoc\\S60\\S60V3";
 			$SDK_LibraryDirs{'UIQ3'}{'esdl.lib'}		= "E:\\WICKED\\ESDL\\epoc\\UIQ\\UIQ3";
+		}
+
+		# now you can add $VariationSets only built on this PC below this line :)
+
+	}
+	elsif ($ENV{'COMPUTERNAME'} eq "PC-FOREVER1111") #################################################################
+	{
+		$Producer = "Fedor";
+		$RedirectSTDERR = 1;
+		$HaltOnError = 0;
+		$SkipExistingPackages = 0;
+		$ReallyQuiet = 0;
+		$Compiler = "D:\\Program/ Files\\CodeSourcery\\Sourcery/ G++ Lite";
+
+		#$FTP_Host = "host.com";
+		#$FTP_User = "ag@host.com";
+		#$FTP_Pass = "password";
+		#$FTP_Dir  = "cvsbuilds";
+
+		#$SDK_RootDirs{'UIQ2'}= "C:\\UIQ2";
+		#$SDK_RootDirs{'UIQ3'}= "C:\\UIQ3";
+		#$SDK_RootDirs{'S60v1'}= "C:\\S60v1";
+		#$SDK_RootDirs{'S60v2'}= "C:\\S60v2";
+		#$SDK_RootDirs{'S80'}= "C:\\S80";
+		#$SDK_RootDirs{'S90'}= "C:\\S90";
+		#$ECompXL_BinDir= "C:\\ECompXL\\";
+
+		$SDK_RootDirs{'S60v3'}= "D:\\Symbian\\S60_5th_Edition_SDK_v1.0";
+		$SDK_ToolchainDirs{'S60v3'} = "$Compiler\\arm-symbianelf\\bin";
+
+		# these supporting libraries get built first, then all the Variations
+		# Note: the string {'xxx.lib'} is used in checking in build success: so needs to be accurate!
+		if (0) # so we can turn them on/off easily
+		{
+#			$SDK_LibraryDirs{'ALL'}{'zlib.lib'}		= "C:\\S\\zlib-1.2.2\\epoc";
+			$SDK_LibraryDirs{'ALL'}{'libmad.lib'}	= "D:\\Symbian\\Projects\\SDL\\libs\\libmad-0.15.1b\\epoc";
+#			$SDK_LibraryDirs{'ALL'}{'libtremor.lib'}= "D:\\Symbian\\Projects\\SDL\\libs\\Tremor\\epoc";
+#			$SDK_LibraryDirs{'UIQ2'}{'esdl.lib'}	= $SDK_LibraryDirs{'UIQ3'}{'esdl.lib'} = "C:\\S\\ESDL\\epoc\\UIQ";
+#			$SDK_LibraryDirs{'S60v1'}{'esdl.lib'}	= $SDK_LibraryDirs{'S60v2'}{'esdl.lib'} = $SDK_LibraryDirs{'S60v3'}{'esdl.lib'} = "C:\\S\\ESDL\\epoc\\S60";
+#			$SDK_LibraryDirs{'S80'}{'esdl.lib'}		= "C:\\S\\ESDL\\epoc\\S80";
+#			$SDK_LibraryDirs{'S90'}{'esdl.lib'}		= "C:\\S\\ESDL\\epoc\\S90";
 		}
 
 		# now you can add $VariationSets only built on this PC below this line :)
@@ -298,8 +324,8 @@
 		# the first one includes all SDKs & release-ready engines
 
 			$VariationSets{'ALL'}{'all'} = "$DefaultFeatures @WorkingEngines @EnablableSubEngines";
-#			$VariationSets{'ALL'}{'1St'} = "$DefaultFeatures @WorkingEngines_1st @EnablableSubEngines";
-#			$VariationSets{'ALL'}{'2nd'} = "$DefaultFeatures @WorkingEngines_2nd @EnablableSubEngines";
+			# $VariationSets{'ALL'}{'1St'} = "$DefaultFeatures @WorkingEngines_1st @EnablableSubEngines";
+			# $VariationSets{'ALL'}{'2nd'} = "$DefaultFeatures @WorkingEngines_2nd @EnablableSubEngines";
 		# now one for each ready-for-release engine
 		if (0)
 		{

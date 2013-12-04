@@ -50,5 +50,4 @@ bool AvalancheConsole::Cmd_MagicLines(int argc, const char **argv) {
 	return false;
 }
 
-
 } // End of namespace Avalanche

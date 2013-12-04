@@ -712,7 +712,7 @@ void Scene125::signal() {
 		R2_GLOBALS._player._canWalk = false;
 		break;
 	case 10:
- 		switch (_consoleMode) {
+		switch (_consoleMode) {
 		case 12:
 			_sceneMode = 129;
 

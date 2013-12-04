@@ -30,18 +30,19 @@
 namespace TsAGE {
 
 Debugger::Debugger() : GUI::Debugger() {
-	DCmd_Register("continue",		WRAP_METHOD(Debugger, Cmd_Exit));
-	DCmd_Register("scene",			WRAP_METHOD(Debugger, Cmd_Scene));
-	DCmd_Register("walk_regions",	WRAP_METHOD(Debugger, Cmd_WalkRegions));
-	DCmd_Register("priority_regions",	WRAP_METHOD(Debugger, Cmd_PriorityRegions));
-	DCmd_Register("scene_regions",	WRAP_METHOD(Debugger, Cmd_SceneRegions));
-	DCmd_Register("setflag",		WRAP_METHOD(Debugger, Cmd_SetFlag));
-	DCmd_Register("getflag",		WRAP_METHOD(Debugger, Cmd_GetFlag));
-	DCmd_Register("clearflag",		WRAP_METHOD(Debugger, Cmd_ClearFlag));
-	DCmd_Register("listobjects",	WRAP_METHOD(Debugger, Cmd_ListObjects));
-	DCmd_Register("moveobject",		WRAP_METHOD(Debugger, Cmd_MoveObject));
-	DCmd_Register("hotspots",		WRAP_METHOD(Debugger, Cmd_Hotspots));
-	DCmd_Register("sound",			WRAP_METHOD(Debugger, Cmd_Sound));
+	DCmd_Register("continue",         WRAP_METHOD(Debugger, Cmd_Exit));
+	DCmd_Register("scene",            WRAP_METHOD(Debugger, Cmd_Scene));
+	DCmd_Register("walk_regions",     WRAP_METHOD(Debugger, Cmd_WalkRegions));
+	DCmd_Register("priority_regions", WRAP_METHOD(Debugger, Cmd_PriorityRegions));
+	DCmd_Register("scene_regions",    WRAP_METHOD(Debugger, Cmd_SceneRegions));
+	DCmd_Register("setflag",          WRAP_METHOD(Debugger, Cmd_SetFlag));
+	DCmd_Register("getflag",          WRAP_METHOD(Debugger, Cmd_GetFlag));
+	DCmd_Register("clearflag",        WRAP_METHOD(Debugger, Cmd_ClearFlag));
+	DCmd_Register("listobjects",      WRAP_METHOD(Debugger, Cmd_ListObjects));
+	DCmd_Register("moveobject",       WRAP_METHOD(Debugger, Cmd_MoveObject));
+	DCmd_Register("hotspots",         WRAP_METHOD(Debugger, Cmd_Hotspots));
+	DCmd_Register("sound",            WRAP_METHOD(Debugger, Cmd_Sound));
+	DCmd_Register("setdebug",         WRAP_METHOD(Debugger, Cmd_SetDebug));
 }
 
 static int strToInt(const char *s) {
@@ -338,6 +339,14 @@ bool Debugger::Cmd_Sound(int argc, const char **argv) {
 	int soundNum = strToInt(argv[1]);
 	g_globals->_soundHandler.play(soundNum);
 	return false;
+}
+
+/**
+ * Activate internal debugger, when available
+ */
+bool Debugger::Cmd_SetDebug(int argc, const char **argv) {
+	DebugPrintf("Not available in this game\n");
+	return true;
 }
 
 /*
@@ -705,6 +714,21 @@ bool Ringworld2Debugger::Cmd_MoveObject(int argc, const char **argv) {
 	else
 		DebugPrintf("Invalid object Id %s\n", argv[1]);
 
+	return true;
+}
+
+/**
+ * Activate internal debugger, when available
+ */
+bool Ringworld2Debugger::Cmd_SetDebug(int argc, const char **argv) {
+	if (argc != 1) {
+		DebugPrintf("Usage: %s\n", argv[0]);
+		return true;
+	}
+
+	// Set the internal debugger flag(s?) to true
+	// _debugCardGame is reset by scene1337::subPostInit()
+	R2_GLOBALS._debugCardGame = true;
 	return true;
 }
 } // End of namespace TsAGE

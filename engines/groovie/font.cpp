@@ -112,7 +112,7 @@ bool T7GFont::load(Common::SeekableReadStream &stream) {
 	return true;
 }
 
-void T7GFont::drawChar(Graphics::Surface *dst, byte chr, int x, int y, uint32 color) const {
+void T7GFont::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const {
 	// We ignore the color, as the font is already colored
 	const Glyph *glyph = getGlyph(chr);
 	const byte *src = glyph->pixels;
@@ -125,7 +125,7 @@ void T7GFont::drawChar(Graphics::Surface *dst, byte chr, int x, int y, uint32 co
 	}
 }
 
-const T7GFont::Glyph *T7GFont::getGlyph(byte chr) const {
+const T7GFont::Glyph *T7GFont::getGlyph(uint32 chr) const {
 	assert (chr < 128);
 
 	byte numGlyph = _mapChar2Glyph[chr];

@@ -40,7 +40,7 @@ public:
 	Clock(AvalancheEngine *vm);
 
 	void update();
-	
+
 private:
 	static const int kCenterX = 510;
 	static const int kCenterY = 183;

@@ -103,7 +103,7 @@ protected:
 	Audio::Mixer	*_mixer;
 	char			_musicFile[PATH_LEN];
 
-	bool 	_sfxLooping;
+	bool	_sfxLooping;
 	int		_sfxVolume;
 	int		_sfxRate;
 	uint	_sfxChannel;
@@ -156,7 +156,7 @@ class AmigaSoundMan_ns : public SoundMan_ns {
 	Audio::AudioStream *_musicStream;
 	Audio::SoundHandle	_musicHandle;
 
-	uint32 	beepSoundBufferSize;
+	uint32	beepSoundBufferSize;
 	int8	*beepSoundBuffer;
 
 	Channel _channels[NUM_SFX_CHANNELS];
@@ -188,7 +188,7 @@ protected:
 
 	Common::String _musicFile;
 
-	bool 	_sfxLooping;
+	bool	_sfxLooping;
 	int		_sfxVolume;
 	int		_sfxRate;
 	uint	_sfxChannel;

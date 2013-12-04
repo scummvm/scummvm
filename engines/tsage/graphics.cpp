@@ -71,18 +71,13 @@ GfxSurface surfaceFromRes(const byte *imgData) {
 	s._transColor = *(imgData + 8);
 
 	byte flags = imgData[9];
+	s._flags = (g_vm->getGameID() != GType_Ringworld) ? flags : 0;
+
 	bool rleEncoded = (flags & 2) != 0;
 
 	// Figure out the centroid
 	s._centroid.x = READ_LE_UINT16(imgData + 4);
 	s._centroid.y = READ_LE_UINT16(imgData + 6);
-
-	if (g_vm->getGameID() != GType_Ringworld) {
-		if (flags & 4)
-			s._centroid.x = r.width() - (s._centroid.x + 1);
-		if (flags & 8)
-			s._centroid.y = r.height() - (s._centroid.y + 1);
-	}
 
 	const byte *srcP = imgData + 10;
 	Graphics::Surface destSurface = s.lockSurface();
@@ -194,8 +189,9 @@ void Rect::contain(const Rect &r) {
  * @percent Scaling percentage
  */
 void Rect::resize(const GfxSurface &surface, int xp, int yp, int percent) {
-	int xe = surface.getBounds().width() * percent / 100;
-	int ye = surface.getBounds().height() * percent / 100;
+	const Rect &bounds = surface.getBounds();
+	int xe = bounds.width() * percent / 100;
+	int ye = bounds.height() * percent / 100;
 	this->set(0, 0, xe, ye);
 
 	if (!right) ++right;
@@ -203,8 +199,13 @@ void Rect::resize(const GfxSurface &surface, int xp, int yp, int percent) {
 
 	this->moveTo(xp, yp);
 
-	int xd = surface._centroid.x * percent / 100;
-	int yd = surface._centroid.y * percent / 100;
+	int xa = (surface._flags & FRAME_FLIP_CENTROID_X) == 0 ? surface._centroid.x : 
+		bounds.width() - (surface._centroid.x + 1);
+	int ya = (surface._flags & FRAME_FLIP_CENTROID_Y) == 0 ? surface._centroid.y : 
+		bounds.height() - (surface._centroid.y + 1);
+
+	int xd = xa * percent / 100;
+	int yd = ya * percent / 100;
 	this->translate(-xd, -yd);
 }
 
@@ -234,6 +235,7 @@ GfxSurface::GfxSurface() : _bounds(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT) {
 	_customSurface = NULL;
 	_transColor = -1;
 	_trackDirtyRects = false;
+	_flags = 0;
 }
 
 GfxSurface::GfxSurface(const GfxSurface &s) {
@@ -417,6 +419,7 @@ GfxSurface &GfxSurface::operator=(const GfxSurface &s) {
 	_bounds = s._bounds;
 	_centroid = s._centroid;
 	_transColor = s._transColor;
+	_flags = s._flags;
 
 	if (_customSurface) {
 		// Surface owns the internal data, so replicate it so new surface owns it's own
@@ -1242,8 +1245,9 @@ GfxButton *GfxDialog::execute(GfxButton *defaultButton) {
 }
 
 void GfxDialog::setPalette() {
-	if (g_vm->getGameID() == GType_BlueForce) {
-		g_globals->_scenePalette.loadPalette(2);
+	if (g_vm->getGameID() != GType_Ringworld) {
+		if (g_vm->getGameID() == GType_BlueForce)
+			g_globals->_scenePalette.loadPalette(2);
 		g_globals->_scenePalette.setPalette(0, 1);
 		g_globals->_scenePalette.setPalette(g_globals->_gfxColors.background, 1);
 		g_globals->_scenePalette.setPalette(g_globals->_gfxColors.foreground, 1);

@@ -307,7 +307,6 @@ public:
 	int _frameCount;
 	int _resCount;
 	int _mapImagePitch;
-	int _unused;
 public:
 	MazeUI();
 	virtual ~MazeUI();

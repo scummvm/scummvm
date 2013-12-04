@@ -157,7 +157,7 @@ private:
 	void followAvalotY(byte tripnum);
 	void backAndForth(byte tripnum);
 	void faceAvvy(byte tripnum);
-	
+
 	// Movements for Homing NPCs: Spludwick and Geida.
 	void spin(Direction dir, byte &tripnum);
 	void takeAStep(byte &tripnum);

@@ -1410,7 +1410,7 @@ void Game::enterNewRoom() {
 	// for the dragon in the persons array
 	if (_newRoom == _info._mapRoom) {
 		_persons[kDragonObject]._x = 160;
-	  	_persons[kDragonObject]._y = 0;
+		_persons[kDragonObject]._y = 0;
 	}
 
 	// Set the appropriate loop status before loading the room

@@ -44,6 +44,15 @@ chdir("../../../");
 	"mmp/scummvm_toltecs.mmp",
 	"mmp/scummvm_pegasus.mmp",
 	"mmp/scummvm_wintermute.mmp",
+	# New engines
+	"mmp/scummvm_avalanche.mmp",
+	"mmp/scummvm_dreamweb.mmp",
+	"mmp/scummvm_fullpipe.mmp",
+	"mmp/scummvm_mortevielle.mmp",
+	"mmp/scummvm_neverhood.mmp",
+	"mmp/scummvm_sword25.mmp",
+	"mmp/scummvm_testbed.mmp",
+	"mmp/scummvm_zvision.mmp",
 	# Target Platform Project Files
 	"S60/ScummVM_S60.mmp",
 	"S60v3/ScummVM_S60v3.mmp",
@@ -79,10 +88,14 @@ Preparing to update all the Symbian MMP project files with objects from module.m
 
 # some modules.mk files have #ifndef ENABLE_XXXX blocks:
 my @section_empty = (""); # section standard: no #ifdef's in module.mk files
-my @sections_scumm = ("", "ENABLE_SCUMM_7_8", "ENABLE_HE"); # special sections for engine SCUMM
-my @sections_saga = ("", "ENABLE_IHNM", "ENABLE_SAGA2"); # special sections for engine SAGA
-my @sections_kyra = ("", "ENABLE_LOL","ENABLE_EOB"); # special sections for engine KYRA
 my @sections_agos = ("", "ENABLE_AGOS2"); # special sections for engine AGOS
+my @section_video = ("", "USE_BINK", "USE_MPEG2"); # special sections for engine VIDEO ###, "USE_THEORADEC"
+my @sections_groovie = ("", "ENABLE_GROOVIE2"); # special sections for engine GROOVIE
+my @sections_kyra = ("", "ENABLE_LOL","ENABLE_EOB"); # special sections for engine KYRA
+my @sections_mohawk = ("", "ENABLE_CSTIME", "ENABLE_MYST", "ENABLE_RIVEN");  # special sections for engine MOHAWK
+my @sections_saga = ("", "ENABLE_IHNM", "ENABLE_SAGA2"); # special sections for engine SAGA
+my @sections_sci = ("", "ENABLE_SCI32");  # special sections for engine SCI
+my @sections_scumm = ("", "ENABLE_SCUMM_7_8", "ENABLE_HE"); # special sections for engine SCUMM
 
 # files excluded from build, case insensitive, will be matched in filename string only
 my @excludes_snd = (
@@ -126,13 +139,13 @@ my @excludes_scumm = (
 );
 
 
-#arseModule(mmpStr,		dirStr,		ifdefArray,				[exclusionsArray])
+#ParseModule(mmpStr,		dirStr,		ifdefArray,				[exclusionsArray])
 ParseModule("_base",	"base",		\@section_empty); # now in ./TRG/ScummVM_TRG.mmp, these never change anyways...
 ParseModule("_base",	"common",	\@section_empty);
 ParseModule("_base",	"gui",		\@section_empty,		\@excludes_gui);
 ParseModule("_base",	"graphics",	\@section_empty,		\@excludes_graphics);
 ParseModule("_base",	"audio",	\@section_empty,		\@excludes_snd);
-ParseModule("_base",	"video",	\@section_empty);
+ParseModule("_base",	"video",	\@section_video); #
 
 chdir("engines/");
 ParseModule("_scumm",	"scumm",	\@sections_scumm,		\@excludes_scumm );
@@ -156,21 +169,30 @@ ParseModule("_drascula","drascula",	\@section_empty);
 ParseModule("_made",	"made",		\@section_empty);
 ParseModule("_m4",	"m4",		\@section_empty);
 ParseModule("_tinsel",	"tinsel",	\@section_empty);
-ParseModule("_groovie",	"groovie",	\@section_empty);
+ParseModule("_groovie",	"groovie",	\@sections_groovie);
 ParseModule("_tucker",	"tucker",	\@section_empty);
-ParseModule("_sci",	"sci",		\@section_empty);
+ParseModule("_sci",	"sci",		\@sections_sci);
 ParseModule("_draci",	"draci",	\@section_empty);
 ParseModule("_teenagent","teenagent",	\@section_empty);
-ParseModule("_mohawk"   ,"mohawk",	\@section_empty);
+ParseModule("_mohawk"   ,"mohawk",	\@sections_mohawk);
 ParseModule("_hugo"     ,"hugo",	\@section_empty);
 ParseModule("_toon"     ,"toon",	\@section_empty);
 ParseModule("_lastexpress","lastexpress",	\@section_empty);
 ParseModule("_tsage","tsage",	\@section_empty);
-ParseModule("_tony","tony",	\@section_empty);
+ParseModule("_tony",	"tony",	\@section_empty);
 ParseModule("_toltecs","toltecs",	\@section_empty);
 ParseModule("_hopkins","hopkins",	\@section_empty);
 ParseModule("_pegasus","pegasus",	\@section_empty);
 ParseModule("_wintermute","wintermute",	\@section_empty);
+##### new engines
+ParseModule("_avalanche"     ,"avalanche",	\@section_empty);
+ParseModule("_dreamweb"     ,"dreamweb",	\@section_empty);
+ParseModule("_fullpipe"     ,"fullpipe",	\@section_empty);
+ParseModule("_mortevielle"  ,"mortevielle",	\@section_empty);
+ParseModule("_neverhood"  ,"neverhood",	\@section_empty);
+ParseModule("_sword25"     ,"sword25",	\@section_empty);
+ParseModule("_testbed"     ,"testbed",	\@section_empty);
+ParseModule("_zvision"     ,"zvision",	\@section_empty);
 print "
 =======================================================================================
 Done. Enjoy :P

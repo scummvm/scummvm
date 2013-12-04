@@ -167,7 +167,7 @@ public:
 	bool isGameFinished(uint32 menuIndex, uint32 savegameIndex);
 
 	// Accessors
- 	uint32       getTime(uint32 index) { return getEntry(index)->time; }
+	uint32       getTime(uint32 index) { return getEntry(index)->time; }
 	ChapterIndex getChapter(uint32 index) { return getEntry(index)->chapter; }
 	uint32       getValue(uint32 index) { return getEntry(index)->value; }
 	uint32       getLastSavegameTicks() const { return _gameTicksLastSavegame; }

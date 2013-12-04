@@ -550,7 +550,7 @@ public:
 	SceneActor _teal;
 	SceneActor _door;
 	SceneActor _manholeCover;
-	SceneActor _actor8;
+	SceneActor _sapphire;
 	SequenceManager _sequenceManager;
 	bool _soundFaded;
 
@@ -566,7 +566,7 @@ class Scene3500 : public SceneExt {
 	public:
 		int _direction;
 		bool _field20;
-		int _field22;
+		int _field22; // CHECKME: Useless field
 		bool _field24;
 
 		Action1();

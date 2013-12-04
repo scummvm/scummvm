@@ -1958,7 +1958,7 @@ void Scene840::BoatKeysInset::postInit(SceneObjectList *OwnerList) {
 		_waveKeys.setDetails(840, 53, 8, -1, 2, (SceneItem *)NULL);
 	}
 
-	_v1B4 = _v1B6 = 0;
+	_usedRentalKeys = _usedWaveKeys = false;
 }
 
 void Scene840::BoatKeysInset::remove() {
@@ -2067,7 +2067,7 @@ bool Scene840::BoatKeysInset::RentalKeys::startAction(CursorType action, Event &
 			BF_INVENTORY.setObjectScene(INV_RENTAL_KEYS, 1);
 			T2_GLOBALS._uiElements.addScore(30);
 
-			scene->_boatKeysInset._v1B4 = 1;
+			scene->_boatKeysInset._usedRentalKeys = true;
 			remove();
 		}
 		return true;
@@ -2085,7 +2085,7 @@ bool Scene840::BoatKeysInset::WaveKeys::startAction(CursorType action, Event &ev
 			SceneItem::display2(840, 56);
 			BF_INVENTORY.setObjectScene(INV_WAVE_KEYS, 1);
 			T2_GLOBALS._uiElements.addScore(50);
-			scene->_boatKeysInset._v1B6 = 1;
+			scene->_boatKeysInset._usedWaveKeys = true;
 			remove();
 		} else {
 			SceneItem::display2(840, 9);
@@ -2093,6 +2093,15 @@ bool Scene840::BoatKeysInset::WaveKeys::startAction(CursorType action, Event &ev
 		return true;
 	default:
 		return NamedObject::startAction(action, event);
+	}
+}
+
+void Scene840::BoatKeysInset::synchronize(Serializer &s) {
+	FocusObject::synchronize(s);
+
+	if (s.getVersion() >= 12) {
+		s.syncAsSint16LE(_usedWaveKeys);
+		s.syncAsSint16LE(_usedRentalKeys);
 	}
 }
 
@@ -2467,10 +2476,10 @@ void Scene840::signal() {
 		_boatKeysInset.setDetails(840, 50, 8, 51);
 		break;
 	case 8412:
-		if (_boatKeysInset._v1B6) {
+		if (_boatKeysInset._usedWaveKeys) {
 			_sceneMode = 8409;
 			setAction(&_sequenceManager1, this, 8409, &BF_GLOBALS._player, &_carter, &_doors, NULL);
-		} else if (!_boatKeysInset._v1B4) {
+		} else if (!_boatKeysInset._usedRentalKeys) {
 			BF_GLOBALS._player.enableControl();
 		} else {
 			_sceneMode = 3;

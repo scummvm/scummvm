@@ -297,7 +297,7 @@ public:
 	virtual void	parseGetData(ZonePtr z);
 	virtual void	parseDoorData(ZonePtr z);
 	virtual void	parseHearData(ZonePtr z);
-	virtual void 	parseNoneData(ZonePtr z);
+	virtual void	parseNoneData(ZonePtr z);
 protected:
 	void	parseAnswerCounter(Answer *answer);
 	virtual Answer *parseAnswer();

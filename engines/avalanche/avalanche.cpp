@@ -42,7 +42,7 @@ AvalancheEngine::AvalancheEngine(OSystem *syst, const AvalancheGameDescription *
 	_system->getTimeAndDate(time);
 	_rnd->setSeed(time.tm_sec + time.tm_min + time.tm_hour);
 	_showDebugLines = false;
-	
+
 	_clock = nullptr;
 	_graphics = nullptr;
 	_parser = nullptr;
@@ -55,6 +55,7 @@ AvalancheEngine::AvalancheEngine(OSystem *syst, const AvalancheGameDescription *
 	_menu = nullptr;
 	_closing = nullptr;
 	_sound = nullptr;
+	_nim = nullptr;
 
 	_platform = gd->desc.platform;
 	initVariables();
@@ -77,6 +78,7 @@ AvalancheEngine::~AvalancheEngine() {
 	delete _menu;
 	delete _closing;
 	delete _sound;
+	delete _nim;
 
 	for (int i = 0; i < 31; i++) {
 		for (int j = 0; j < 2; j++) {
@@ -182,6 +184,7 @@ Common::ErrorCode AvalancheEngine::initialize() {
 	_menu = new Menu(this);
 	_closing = new Closing(this);
 	_sound = new SoundHandler(this);
+	_nim = new Nim(this);
 
 	_graphics->init();
 	_dialogs->init();
@@ -210,6 +213,7 @@ const char *AvalancheEngine::getCopyrightString() const {
 void AvalancheEngine::synchronize(Common::Serializer &sz) {
 	_animation->synchronize(sz);
 	_parser->synchronize(sz);
+	_nim->synchronize(sz);
 	_sequence->synchronize(sz);
 	_background->synchronize(sz);
 
@@ -349,7 +353,7 @@ void AvalancheEngine::synchronize(Common::Serializer &sz) {
 		sz.syncAsByte(_timer->_times[i]._action);
 		sz.syncAsByte(_timer->_times[i]._reason);
 	}
-	
+
 }
 
 bool AvalancheEngine::canSaveGameStateCurrently() { // TODO: Refine these!!!
@@ -417,7 +421,7 @@ bool AvalancheEngine::loadGame(const int16 slot) {
 
 	// Check version. We can't restore from obsolete versions.
 	byte saveVersion = f->readByte();
-	if (saveVersion != kSavegameVersion) {
+	if (saveVersion > kSavegameVersion) {
 		warning("Savegame of incompatible version!");
 		delete f;
 		return false;
@@ -466,9 +470,9 @@ bool AvalancheEngine::loadGame(const int16 slot) {
 	_animation->animLink();
 	_background->update();
 
-	Common::String tmpStr = Common::String::format("%cLoaded: %c%s.ASG%c%c%c%s%c%csaved on %s.", 
-		kControlItalic, kControlRoman, description.c_str(), kControlCenter, kControlNewLine, 
-		kControlNewLine, _roomnName.c_str(), kControlNewLine, kControlNewLine, 
+	Common::String tmpStr = Common::String::format("%cLoaded: %c%s.ASG%c%c%c%s%c%csaved on %s.",
+		kControlItalic, kControlRoman, description.c_str(), kControlCenter, kControlNewLine,
+		kControlNewLine, _roomnName.c_str(), kControlNewLine, kControlNewLine,
 		expandDate(t.tm_mday, t.tm_mon, t.tm_year).c_str());
 	_dialogs->displayText(tmpStr);
 

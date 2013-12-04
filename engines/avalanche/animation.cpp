@@ -248,7 +248,7 @@ void AnimationType::walk() {
 				break;
 			case kMagicUnfinished: {
 				bounce();
-				Common::String tmpStr = Common::String::format("%c%cSorry.%cThis place is not available yet!", 
+				Common::String tmpStr = Common::String::format("%c%cSorry.%cThis place is not available yet!",
 					kControlBell, kControlCenter, kControlRoman);
 				_anim->_vm->_dialogs->displayText(tmpStr);
 				}
@@ -792,7 +792,7 @@ void Animation::callSpecial(uint16 which) {
 		_vm->_magics[11]._data = 5;
 		_vm->_magics[3]._operation = kMagicBounce; // Now works as planned!
 		stopWalking();
-		_vm->_dialogs->displayScrollChain('q', 26);
+		_vm->_dialogs->displayScrollChain('Q', 26);
 		_vm->_userMovesAvvy = true;
 		break;
 	case 3: // _vm->special 3: Room 71: triggers dart.
@@ -824,12 +824,12 @@ void Animation::callSpecial(uint16 which) {
 		if (_vm->_friarWillTieYouUp) {
 			// _vm->special 5: Room 42: touched tree, and get tied up.
 			_vm->_magics[4]._operation = kMagicBounce; // Boundary effect is now working again.
-			_vm->_dialogs->displayScrollChain('q', 35);
+			_vm->_dialogs->displayScrollChain('Q', 35);
 			_sprites[0]->remove();
 
 			AnimationType *spr1 = _sprites[1];
 			_vm->_background->draw(-1, -1, 1);
-			_vm->_dialogs->displayScrollChain('q', 36);
+			_vm->_dialogs->displayScrollChain('Q', 36);
 			_vm->_tiedUp = true;
 			_vm->_friarWillTieYouUp = false;
 			spr1->walkTo(2);
@@ -862,7 +862,7 @@ void Animation::callSpecial(uint16 which) {
 	case 8:        // _vm->special 8: leave du Lustie's room.
 		if (_vm->_geidaFollows && !_vm->_lustieIsAsleep) {
 			AnimationType *spr1 = _sprites[1];
-			_vm->_dialogs->displayScrollChain('q', 63);
+			_vm->_dialogs->displayScrollChain('Q', 63);
 			spr1->turn(kDirDown);
 			spr1->stopWalk();
 			spr1->_callEachStepFl = false; // Geida
@@ -885,9 +885,9 @@ void Animation::callSpecial(uint16 which) {
 		if ((_vm->_catacombX == 4) && (_vm->_catacombY == 1)) {
 			// Into Geida's room.
 			if (_vm->_objects[kObjectKey - 1])
-				_vm->_dialogs->displayScrollChain('q', 62);
+				_vm->_dialogs->displayScrollChain('Q', 62);
 			else {
-				_vm->_dialogs->displayScrollChain('q', 61);
+				_vm->_dialogs->displayScrollChain('Q', 61);
 				return;
 			}
 		}
@@ -1247,7 +1247,7 @@ void Animation::animLink() {
 
 	if (_mustExclaim) {
 		_mustExclaim = false;
-		_vm->_dialogs->displayScrollChain('x', _sayWhat);
+		_vm->_dialogs->displayScrollChain('X', _sayWhat);
 	}
 }
 

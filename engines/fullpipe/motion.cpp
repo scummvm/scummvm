@@ -765,7 +765,7 @@ MessageQueue *MovGraph2::buildMovInfo1MessageQueue(MovInfo1 *movInfo) {
 
 			MessageQueue *mq2 = genMovement(&movinfo);
 
-			if (mq2) {
+			if (!mq2) {
 				delete mq;
 				return 0;
 			}
@@ -978,6 +978,8 @@ MessageQueue *MovGraph2::doWalkTo(StaticANIObject *obj, int xpos, int ypos, int 
 
 	if (minPath < 0.0 || ((linkInfoSource.node != linkInfoDest.node || !linkInfoSource.node) && !tempLinkList.size()))
 		return 0;
+
+	memset(&movInfo1, 0, sizeof(movInfo1));
 
 	movInfo1.subIndex = idxsub;
 	movInfo1.pt1.x = obj->_ox;

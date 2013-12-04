@@ -62,7 +62,7 @@ struct ProgramContext {
 	AnimationPtr	_anim;
 	ProgramPtr		_program;
 	InstructionPtr _inst;
-	uint32 		_ip;
+	uint32		_ip;
 	uint16		_modCounter;
 	bool		_suspend;
 };

@@ -451,6 +451,13 @@ int ConversationChoiceDialog::execute(const Common::StringArray &choiceList) {
 	draw();
 	g_globals->_events.showCursor();
 
+	// WORKAROUND: On-screen dialogs are really meant to use a GfxManager instance
+	// for their lifetime, which prevents saving or loading. Since I don't want to spend a lot
+	// of time refactoring this already working dialog, fake it by putting a dummy gfxmanager at
+	// the end of the gfx manager list so as to prevent saving or loading
+	GfxManager gfxManager;
+	GLOBALS._gfxManagers.push_back(&gfxManager);
+
 	// Event handling loop
 	Event event;
 	while (!g_vm->shouldQuit()) {
@@ -502,6 +509,7 @@ int ConversationChoiceDialog::execute(const Common::StringArray &choiceList) {
 
 	// Remove the dialog
 	remove();
+	GLOBALS._gfxManagers.remove(&gfxManager);
 
 	return _selectedIndex;
 }

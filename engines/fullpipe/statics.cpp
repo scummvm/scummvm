@@ -152,15 +152,19 @@ StaticANIObject::StaticANIObject(StaticANIObject *src) : GameObject(src) {
 	_statics = 0;
 
 	for (uint i = 0; i < src->_movements.size(); i++) {
-		Movement *mov;
-		if (((Movement *)src->_movements[i])->_currMovement) {
-			mov = new Movement(getMovementById(src->getMovementIdById(((Movement *)src->_movements[i])->_id)), this);
-			mov->_id = ((Movement *)src->_movements[i])->_id;
+		Movement *newmov;
+		Movement *mov = (Movement *)src->_movements[i];
+
+		if (mov->_currMovement) {
+			// WORKAROUND: Original uses weird construction here:
+			//    new Movement(getMovementById(src->getMovementIdById(mov->_id)), this);
+			newmov = new Movement(src->getMovementById(src->getMovementIdById(mov->_id)), this);
+			newmov->_id = mov->_id;
 		} else {
-			mov = new Movement(((Movement *)src->_movements[i]), 0, -1, this);
+			newmov = new Movement(mov, 0, -1, this);
 		}
 
-		_movements.push_back(mov);
+		_movements.push_back(newmov);
 	}
 }
 
@@ -1231,7 +1235,7 @@ Movement::Movement(Movement *src, int *oldIdxs, int newSize, StaticANIObject *an
 	_m2y = src->_m2y;
 
 	if (newSize != -1) {
-		if (newSize >= src->_dynamicPhases.size() + 1)
+		if (newSize >= (int)src->_dynamicPhases.size() + 1)
 			newSize = src->_dynamicPhases.size() + 1;
 	} else {
 		newSize = src->_dynamicPhases.size();

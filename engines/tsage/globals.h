@@ -200,19 +200,19 @@ public:
 	int8 _breakerBoxStatusArr[18];
 	int _hiddenDoorStatus;
 	int _nico910State;
-	int _v4CEE4;
-	int _v4CEE6;
-	int _v4CEE8;
+	int _stuart910State;
+	int _nico910Talk;
+	int _stuart910Talk;
 	int _deziTopic;
 	int _deathReason;
 	int _driveFromScene;
 	int _driveToScene;
 	uint8 _subFlagBitArr1;
 	uint8 _subFlagBitArr2;
-	int _v50CC2;
+	bool _scene410HarrisonTalkFl;
 	int _scene410Action1Count;
 	int _scene410TalkCount;
-	int _scene410HarrisonMovedFl;
+	bool _scene410HarrisonMovedFl;
 	Bookmark _bookmark;
 	int _mapLocationId;
 	int _clip1Bullets, _clip2Bullets;
@@ -292,6 +292,7 @@ public:
 	byte _stripManager_lookupList[12];
 	byte _scene1550JunkLocations[508];
 	Common::Point _balloonPosition;
+	bool _debugCardGame;               // moved from scene 1337 so it can be easily set in the debugger
 
 	ScannerDialog *_scannerDialog;
 

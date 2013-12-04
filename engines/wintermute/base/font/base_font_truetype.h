@@ -56,9 +56,8 @@ private:
 		bool _marked;
 		uint32 _lastUsed;
 
-		BaseCachedTTFontText() {
+		BaseCachedTTFontText() : _text() {
 			//_text = L"";
-			_text = "";
 			_width = _maxHeight = _maxLength = -1;
 			_align = TAL_LEFT;
 			_surface = nullptr;

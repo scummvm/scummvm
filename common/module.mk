@@ -35,6 +35,7 @@ MODULE_OBJS := \
 	translation.o \
 	unarj.o \
 	unzip.o \
+	ustr.o \
 	util.o \
 	winexe.o \
 	winexe_ne.o \

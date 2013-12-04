@@ -201,7 +201,7 @@ void Timer::updateTimer() {
 			}
 		}
 	}
- 
+
 	_vm->_roomCycles++; // Cycles since you've been in this room.
 }
 
@@ -224,7 +224,7 @@ void Timer::openDrawbridge() {
 }
 
 void Timer::avariciusTalks() {
-	_vm->_dialogs->displayScrollChain('q', _vm->_avariciusTalk);
+	_vm->_dialogs->displayScrollChain('Q', _vm->_avariciusTalk);
 	_vm->_avariciusTalk++;
 
 	if (_vm->_avariciusTalk < 17)
@@ -267,25 +267,25 @@ void Timer::stairs() {
 void Timer::cardiffSurvey() {
 	if (_vm->_cardiffQuestionNum == 0) {
 		_vm->_cardiffQuestionNum++;
-		_vm->_dialogs->displayScrollChain('q', 27);
+		_vm->_dialogs->displayScrollChain('Q', 27);
 	}
 
-	_vm->_dialogs->displayScrollChain('z', _vm->_cardiffQuestionNum);
+	_vm->_dialogs->displayScrollChain('Z', _vm->_cardiffQuestionNum);
 	_vm->_interrogation = _vm->_cardiffQuestionNum;
 	addTimer(182, kProcCardiffSurvey, kReasonCardiffsurvey);
 }
 
 void Timer::cardiffReturn() {
-	_vm->_dialogs->displayScrollChain('q', 28);
+	_vm->_dialogs->displayScrollChain('Q', 28);
 	cardiffSurvey(); // Add end of question.
 }
 
 void Timer::cwytalotInHerts() {
-	_vm->_dialogs->displayScrollChain('q', 29);
+	_vm->_dialogs->displayScrollChain('Q', 29);
 }
 
 void Timer::getTiedUp() {
-	_vm->_dialogs->displayScrollChain('q', 34); // ...Trouble!
+	_vm->_dialogs->displayScrollChain('Q', 34); // ...Trouble!
 	_vm->_userMovesAvvy = false;
 	_vm->_beenTiedUp = true;
 	_vm->_animation->stopWalking();
@@ -312,18 +312,18 @@ void Timer::hangAround() {
 	avvy->init(7, true); // Robin Hood
 	_vm->setRoom(kPeopleRobinHood, kRoomRobins);
 	_vm->_animation->appearPed(0, 1);
-	_vm->_dialogs->displayScrollChain('q', 39);
+	_vm->_dialogs->displayScrollChain('Q', 39);
 	avvy->walkTo(6);
 	addTimer(55, kProcHangAround2, kReasonHangingAround);
 }
 
 void Timer::hangAround2() {
-	_vm->_dialogs->displayScrollChain('q', 40);
+	_vm->_dialogs->displayScrollChain('Q', 40);
 	AnimationType *spr = _vm->_animation->_sprites[1];
 	spr->_vanishIfStill = false;
 	spr->walkTo(3);
 	_vm->setRoom(kPeopleFriarTuck, kRoomRobins);
-	_vm->_dialogs->displayScrollChain('q', 41);
+	_vm->_dialogs->displayScrollChain('Q', 41);
 	_vm->_animation->_sprites[0]->remove();
 	spr->remove(); // Get rid of Robin Hood and Friar Tuck.
 
@@ -367,7 +367,7 @@ void Timer::afterTheShootemup() {
 
 	warning("STUB: Timer::after_the_shootemup()");
 
-	_vm->_dialogs->displayScrollChain('q', 70);
+	_vm->_dialogs->displayScrollChain('Q', 70);
 }
 
 void Timer::jacquesWakesUp() {
@@ -423,7 +423,7 @@ void Timer::naughtyDuke() { // This is when the Duke comes in and takes your mon
 
 void Timer::naughtyDuke2() {
 	AnimationType *spr = _vm->_animation->_sprites[1];
-	_vm->_dialogs->displayScrollChain('q', 48); // "Ha ha, it worked again!"
+	_vm->_dialogs->displayScrollChain('Q', 48); // "Ha ha, it worked again!"
 	spr->walkTo(0); // Walk to the door.
 	spr->_vanishIfStill = true; // Then go away!
 
@@ -476,14 +476,14 @@ void Timer::jump() {
 			_vm->_arrowInTheDoor = false; // You've got it.
 			_vm->_objects[kObjectBolt - 1] = true;
 			_vm->refreshObjectList();
-			_vm->_dialogs->displayScrollChain('q', 50);
+			_vm->_dialogs->displayScrollChain('Q', 50);
 			_vm->incScore(3);
 		}
 	}
 }
 
 void Timer::crapulusSaysSpludOut() {
-	_vm->_dialogs->displayScrollChain('q', 56);
+	_vm->_dialogs->displayScrollChain('Q', 56);
 	_vm->_crapulusWillTell = false;
 }
 
@@ -578,7 +578,7 @@ void Timer::robinHoodAndGeida() {
 }
 
 void Timer::robinHoodAndGeidaTalk() {
-	_vm->_dialogs->displayScrollChain('q', 66);
+	_vm->_dialogs->displayScrollChain('Q', 66);
 
 	AnimationType *avvy = _vm->_animation->_sprites[0];
 	AnimationType *spr = _vm->_animation->_sprites[1];
@@ -597,7 +597,7 @@ void Timer::avalotReturns() {
 	spr->remove();
 	avvy->init(0, true);
 	_vm->_animation->appearPed(0, 0);
-	_vm->_dialogs->displayScrollChain('q', 67);
+	_vm->_dialogs->displayScrollChain('Q', 67);
 	_vm->_userMovesAvvy = true;
 }
 
@@ -628,12 +628,12 @@ void Timer::arkataShouts() {
 	if (_vm->_teetotal)
 		return;
 
-	_vm->_dialogs->displayScrollChain('q', 76);
+	_vm->_dialogs->displayScrollChain('Q', 76);
 	addTimer(160, kProcArkataShouts, kReasonArkataShouts);
 }
 
 void Timer::winning() {
-	_vm->_dialogs->displayScrollChain('q', 79);
+	_vm->_dialogs->displayScrollChain('Q', 79);
 	_vm->_pingo->winningPic();
 
 	warning("STUB: Timer::winning()");

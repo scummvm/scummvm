@@ -1359,7 +1359,7 @@ void GraphicsManager::drawCompressedSprite(byte *surface, const byte *srcData, i
 	_posYClipped = 0;
 	_clipX1 = 0;
 	_clipY1 = 0;
-	if ((xp300 <= _minX) || (yp300 <= _minY) || (xp300 >= _maxX + 300) || 	(yp300 >= _maxY + 300))
+	if ((xp300 <= _minX) || (yp300 <= _minY) || (xp300 >= _maxX + 300) || (yp300 >= _maxY + 300))
 		return;
 
 	// Clipped values are greater or equal to zero, thanks to the previous test

@@ -73,10 +73,16 @@ Vars::Vars() {
 	scene04_soundPlaying = false;
 	scene04_dynamicPhaseIndex = 0;
 
+	scene04_sceneClickX = 0;
+	scene04_sceneClickY = 0;
+
+	scene04_dudePosX = 0;
+	scene04_dudePosY = 0;
+
 	scene04_var01 = 0;
 	scene04_var02 = 0;
 	scene04_var04 = 0;
-	scene04_var05 = 0;
+	scene04_walkingKozyawka = 0;
 	scene04_var06 = 0;
 	scene04_var07 = 0;
 	scene04_var08 = 0;
@@ -87,10 +93,13 @@ Vars::Vars() {
 	scene04_var13 = 0;
 	scene04_var14 = 0;
 	scene04_var15 = 0;
-	scene04_var16 = 0;
-	scene04_var17 = 0;
+	scene04_speakerVariant = 0;
+	scene04_speakerPhase = 0;
 	scene04_var18 = 0;
 	scene04_var19 = 0;
+	scene04_var20 = 0;
+	scene04_var24 = 0;
+	scene04_bottleY = 0;
 
 	selector = 0;
 }

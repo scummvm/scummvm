@@ -69,11 +69,12 @@ void Objects::update(ObjectIndex index, EntityIndex entity, ObjectLocation locat
 	getFlags()->flag_3 = true;
 
 	// Compartments
-	if (original_location != location && (original_location == kObjectLocation2 || location == kObjectLocation2))
+	if (original_location != location && (original_location == kObjectLocation2 || location == kObjectLocation2)) {
 		if ((index >= kObjectCompartment1 && index <= kObjectCompartment8)
-	     || (index >= kObjectCompartmentA && index <= kObjectCompartmentF)) {
-		 	getScenes()->updateDoorsAndClock();
+		   || (index >= kObjectCompartmentA && index <= kObjectCompartmentF)) {
+			getScenes()->updateDoorsAndClock();
 		}
+	}
 }
 
 void Objects::updateLocation2(ObjectIndex index, ObjectLocation location2) {
