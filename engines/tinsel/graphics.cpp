@@ -212,59 +212,6 @@ static void t0WrtNonZero(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP, bool apply
 }
 
 /**
- * Straight rendering with transparency support, Mac variant
- */
-static void MacDrawTiles(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP, bool applyClipping) {
-	// TODO: Finish off clipping
-
-	if (applyClipping) {
-		// Adjust the height down to skip any bottom clipping
-		pObj->height -= pObj->botClip;
-
-		// Make adjustment for the top clipping row
-		srcP += sizeof(uint16) * ((pObj->width + 3) >> 2) * (pObj->topClip >> 2);
-		pObj->height -= pObj->topClip;
-		pObj->topClip %= 4;
-	}
-
-	// Simple RLE-like scheme: the two first bytes of each data chunk determine
-	// if bytes should be repeated or copied.
-	// Example: 10 00 00 20 will repeat byte 0x0 0x10 times, and will copy 0x20
-	// bytes from the input stream afterwards
-
-	// Vertical loop
-	for (int y = 0; y < pObj->height; ++y) {
-		// Horizontal loop
-		for (int x = 0; x < pObj->width; ) {
-			byte repeatBytes = *srcP++;
-			if (repeatBytes > 0) {
-				byte fillColor = *srcP++;
-				if (fillColor > 0)	// color 0 is transparent
-					memset(destP, fillColor, repeatBytes);
-				destP += repeatBytes;
-				x += repeatBytes;
-			} else {
-				byte copyBytes = *srcP++;
-				for (int z = 0; z < copyBytes; ++z) {
-					if (*srcP > 0)	// color 0 is transparent
-						*destP = *srcP;
-					srcP++;
-					destP++;
-				}
-				// Round up to the next even number
-				if (copyBytes % 2)
-					srcP++;
-				x += copyBytes;
-			}
-		}	// horizontal loop
-
-		// Move to next line
-		destP += (SCREEN_WIDTH - pObj->width);
-	}	// vertical loop
-}
-
-
-/**
  * Straight rendering with transparency support, PSX variant supporting also 4-BIT clut data
  */
 static void PsxDrawTiles(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP, bool applyClipping, bool fourBitClut, uint32 psxSkipBytes, byte *psxMapperTable, bool transparency) {
@@ -325,7 +272,7 @@ static void PsxDrawTiles(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP, bool apply
 			assert(boxBounds.bottom >= boxBounds.top);
 			assert(boxBounds.right >= boxBounds.left);
 
-			int16 indexVal = READ_LE_UINT16(srcP);
+			int16 indexVal = READ_16(srcP);
 			srcP += sizeof(uint16);
 
 			// Draw a 4x4 block based on the opcode as in index into the block list
@@ -434,7 +381,7 @@ static void WrtNonZero(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP, bool applyCl
 			assert(boxBounds.bottom >= boxBounds.top);
 			assert(boxBounds.right >= boxBounds.left);
 
-			int16 indexVal = READ_LE_UINT16(srcP);
+			int16 indexVal = READ_16(srcP);
 			srcP += sizeof(uint16);
 
 			if (indexVal >= 0) {
@@ -816,8 +763,8 @@ void DrawObject(DRAWOBJECT *pObj) {
 			byte *p = (byte *)LockMem(pObj->hBits & HANDLEMASK);
 
 			srcPtr = p + (pObj->hBits & OFFSETMASK);
-			pObj->charBase = (char *)p + READ_LE_UINT32(p + 0x10);
-			pObj->transOffset = READ_LE_UINT32(p + 0x14);
+			pObj->charBase = (char *)p + READ_32(p + 0x10);
+			pObj->transOffset = READ_32(p + 0x14);
 
 			// Decompress block indexes for Discworld PSX
 			if (TinselV1PSX) {
@@ -846,7 +793,7 @@ void DrawObject(DRAWOBJECT *pObj) {
 						psxPaletteMapper(pObj->pPal, srcPtr + sizeof(uint16), psxMapperTable);
 
 						psxFourBitClut = true;
-						psxSkipBytes = READ_LE_UINT32(p + sizeof(uint32) * 5) << 4; // Fetch number of bytes we have to skip
+						psxSkipBytes = READ_32(p + sizeof(uint32) * 5) << 4; // Fetch number of bytes we have to skip
 						switch (indexType) {
 							case 0xDD: // Normal uncompressed indexes
 								psxRLEindex = false;
@@ -905,7 +852,7 @@ void DrawObject(DRAWOBJECT *pObj) {
 			else if (TinselV1PSX)
 				PsxDrawTiles(pObj, srcPtr, destPtr, typeId == 0x41, psxFourBitClut, psxSkipBytes, psxMapperTable, true);
 			else if (TinselV1Mac)
-				MacDrawTiles(pObj, srcPtr, destPtr, typeId == 0x41);
+				{} // TODO
 			else if (TinselV1)
 				WrtNonZero(pObj, srcPtr, destPtr, typeId == 0x41);
 			else if (TinselV0)
