@@ -61,8 +61,7 @@ public:
 
 	void getBoundingBoxPos(const Mesh *model, int *x1, int *y1, int *x2, int *y2);
 
-	void startActorDraw(const Math::Vector3d &pos, float scale, const Math::Quaternion &quat,
-						const bool inOverworld, const float alpha, const bool depthOnly);
+	void startActorDraw(const Actor *actor);
 	void finishActorDraw();
 	void setShadow(Shadow *shadow);
 	void drawShadowPlanes();
@@ -137,6 +136,7 @@ private:
 	GLuint _dimFragProgram;
 	GLint _maxLights;
 	float _alpha;
+	const Actor *_currentActor;
 };
 
 } // end of namespace Grim

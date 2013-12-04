@@ -379,8 +379,8 @@ void GfxOpenGL::getBoundingBoxPos(const Mesh *model, int *x1, int *y1, int *x2, 
 	*y2 = (int)bottom;
 }
 
-void GfxOpenGL::startActorDraw(const Math::Vector3d &pos, float scale, const Math::Quaternion &quat,
-							   const bool inOverworld, const float alpha, const bool depthOnly) {
+void GfxOpenGL::startActorDraw(const Actor *actor) {
+	_currentActor = actor;
 	glEnable(GL_TEXTURE_2D);
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
@@ -401,13 +401,18 @@ void GfxOpenGL::startActorDraw(const Math::Vector3d &pos, float scale, const Mat
 		glShadowProjection(_currentShadowArray->pos, shadowSector->getVertices()[0], shadowSector->getNormal(), _currentShadowArray->dontNegate);
 	}
 
+	const float alpha = actor->getEffectiveAlpha();
 	if (alpha < 1.f) {
 		_alpha = alpha;
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
 
-	if (inOverworld) {
+	const Math::Vector3d &pos = actor->getWorldPos();
+	const Math::Quaternion &quat = actor->getRotationQuat();
+	const float &scale = actor->getScale();
+
+	if (actor->isInOverworld()) {
 		// At distance 3.2, a 6.4x4.8 actor fills the screen.
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
@@ -431,7 +436,7 @@ void GfxOpenGL::startActorDraw(const Math::Vector3d &pos, float scale, const Mat
 		glMultMatrixf(quat.toMatrix().getData());
 	}
 
-	if (depthOnly) {
+	if (actor->getSortOrder() >= 100) {
 		glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 		glDepthMask(GL_TRUE);
 	}
@@ -454,6 +459,7 @@ void GfxOpenGL::finishActorDraw() {
 		glDisable(GL_POLYGON_OFFSET_FILL);
 	}
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+	_currentActor = NULL;
 }
 
 void GfxOpenGL::setShadow(Shadow *shadow) {
@@ -595,17 +601,30 @@ void GfxOpenGL::drawSprite(const Sprite *sprite) {
 	GLdouble modelview[16];
 	glGetDoublev(GL_MODELVIEW_MATRIX, modelview);
 
-	// We want screen-aligned sprites so reset the rotation part of the matrix.
-	for (int i = 0; i < 3; i++) {
-		for (int j = 0; j < 3; j++) {
-			if (i == j) {
-				modelview[i * 4 + j] = 1.0f;
-			} else {
-				modelview[i * 4 + j] = 0.0f;
+	if (g_grim->getGameType() == GType_MONKEY4) {
+		const Math::Quaternion quat =
+			_currentActor->isInOverworld()
+			? Math::Quaternion::fromEuler(0, 0, _currentActor->getYaw())
+			: Math::Quaternion::fromEuler(0, 0, _currentActor->getRoll());
+		Math::Matrix4 act = quat.toMatrix();
+		act.transpose();
+		act(3,0) = modelview[12];
+		act(3,1) = modelview[13];
+		act(3,2) = modelview[14];
+		glLoadMatrixf(act.getData());
+	} else {
+		// We want screen-aligned sprites so reset the rotation part of the matrix.
+		for (int i = 0; i < 3; i++) {
+			for (int j = 0; j < 3; j++) {
+				if (i == j) {
+					modelview[i * 4 + j] = 1.0f;
+				} else {
+					modelview[i * 4 + j] = 0.0f;
+				}
 			}
 		}
+		glLoadMatrixd(modelview);
 	}
-	glLoadMatrixd(modelview);
 
 	glAlphaFunc(GL_GREATER, 0.5);
 	glEnable(GL_ALPHA_TEST);
