@@ -744,8 +744,7 @@ void LoadBasicChunks() {
 	RegisterIcons(cptr, numObjects);
 
 	cptr = FindChunk(MASTER_SCNHANDLE, CHUNK_TOTAL_POLY);
-	// Max polygons are 0 in DW1 Mac (both in the demo and the full version)
-	if (cptr != NULL && *cptr != 0)
+	if (cptr != NULL)
 		MaxPolygons(*cptr);
 
 	if (TinselV2) {
