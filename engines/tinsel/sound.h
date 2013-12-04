@@ -51,8 +51,7 @@ protected:
 	enum {
 		kChannelTalk = 0,
 		kChannelTinsel1 = 0, // Always using this channel for DW1
-		kChannelSFX = 1,
-		kChannelDW1MacMusic = 2
+		kChannelSFX = 1
 	};
 	static const int kNumChannels = kChannelSFX + kNumSFX;
 
@@ -109,7 +108,6 @@ public:
 	bool playSample(int id, Audio::Mixer::SoundType type, Audio::SoundHandle *handle = 0);
 	bool playSample(int id, int sub, bool bLooped, int x, int y, int priority,
 			Audio::Mixer::SoundType type, Audio::SoundHandle *handle = 0);
-	void playDW1MacMusic(Common::File &s, uint32 length);
 
 	void stopAllSamples();                // Stops any currently playing sample
 	void stopSpecSample(int id, int sub = 0); // Stops a specific sample
@@ -117,13 +115,11 @@ public:
 	void setSFXVolumes(uint8 volume);
 
 	bool sampleExists(int id);
-	bool sampleIsPlaying();
+	bool sampleIsPlaying(int id = -1);
 
+	// TODO: Internal method, make this protected?
 	void openSampleFiles();
 	void closeSampleStream();
-
-private:
-	void showSoundError(const char *errorMsg, const char *soundFile);
 };
 
 } // End of namespace Tinsel

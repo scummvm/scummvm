@@ -730,20 +730,21 @@ void LoadBasicChunks() {
 
 	cptr = FindChunk(INV_OBJ_SCNHANDLE, CHUNK_OBJECTS);
 
-	// Convert to native endianness
+#ifdef SCUMM_BIG_ENDIAN
+	//convert to native endianness
 	INV_OBJECT *io = (INV_OBJECT *)cptr;
 	for (int i = 0; i < numObjects; i++, io++) {
-		io->id        = FROM_32(io->id);
-		io->hIconFilm = FROM_32(io->hIconFilm);
-		io->hScript   = FROM_32(io->hScript);
-		io->attribute = FROM_32(io->attribute);
+		io->id        = FROM_LE_32(io->id);
+		io->hIconFilm = FROM_LE_32(io->hIconFilm);
+		io->hScript   = FROM_LE_32(io->hScript);
+		io->attribute = FROM_LE_32(io->attribute);
 	}
+#endif
 
 	RegisterIcons(cptr, numObjects);
 
 	cptr = FindChunk(MASTER_SCNHANDLE, CHUNK_TOTAL_POLY);
-	// Max polygons are 0 in DW1 Mac (both in the demo and the full version)
-	if (cptr != NULL && *cptr != 0)
+	if (cptr != NULL)
 		MaxPolygons(*cptr);
 
 	if (TinselV2) {

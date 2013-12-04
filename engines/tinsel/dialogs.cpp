@@ -1143,7 +1143,7 @@ static void FirstScene(int first) {
 	// Fill in the rest
 	for (i = 0; i < NUM_RGROUP_BOXES && i + first < g_numScenes; i++) {
 		cd.box[i].textMethod = TM_STRINGNUM;
-		cd.box[i].ixText = FROM_32(g_pHopper[i + first].hSceneDesc);
+		cd.box[i].ixText = FROM_LE_32(g_pHopper[i + first].hSceneDesc);
 	}
 	// Blank out the spare ones (if any)
 	while (i < NUM_RGROUP_BOXES) {
@@ -1166,10 +1166,10 @@ static void SetChosenScene() {
 static void FirstEntry(int first) {
 	int	i;
 
-	g_InvD[INV_MENU].hInvTitle = FROM_32(g_pChosenScene->hSceneDesc);
+	g_InvD[INV_MENU].hInvTitle = FROM_LE_32(g_pChosenScene->hSceneDesc);
 
 	// get number of entrances
-	g_numEntries = FROM_32(g_pChosenScene->numEntries);
+	g_numEntries = FROM_LE_32(g_pChosenScene->numEntries);
 
 	// Force first to a sensible value
 	if (first > g_numEntries-NUM_RGROUP_BOXES)
@@ -1179,7 +1179,7 @@ static void FirstEntry(int first) {
 
 	for (i = 0; i < NUM_RGROUP_BOXES && i < g_numEntries; i++) {
 		cd.box[i].textMethod = TM_STRINGNUM;
-		cd.box[i].ixText = FROM_32(g_pEntries[FROM_32(g_pChosenScene->entryIndex) + i + first].hDesc);
+		cd.box[i].ixText = FROM_LE_32(g_pEntries[FROM_LE_32(g_pChosenScene->entryIndex) + i + first].hDesc);
 	}
 	// Blank out the spare ones (if any)
 	while (i < NUM_RGROUP_BOXES) {
@@ -1191,17 +1191,17 @@ static void FirstEntry(int first) {
 }
 
 static void HopAction() {
-	PHOPENTRY pEntry = g_pEntries + FROM_32(g_pChosenScene->entryIndex) + cd.selBox + cd.extraBase;
+	PHOPENTRY pEntry = g_pEntries + FROM_LE_32(g_pChosenScene->entryIndex) + cd.selBox + cd.extraBase;
 
-	uint32 hScene = FROM_32(g_pChosenScene->hScene);
-	uint32 eNumber = FROM_32(pEntry->eNumber);
+	uint32 hScene = FROM_LE_32(g_pChosenScene->hScene);
+	uint32 eNumber = FROM_LE_32(pEntry->eNumber);
 	debugC(DEBUG_BASIC, kTinselDebugAnimations, "Scene hopper chose scene %xh,%d\n", hScene, eNumber);
 
-	if (FROM_32(pEntry->flags) & fCall) {
+	if (FROM_LE_32(pEntry->flags) & fCall) {
 		SaveScene(Common::nullContext);
 		NewScene(Common::nullContext, g_pChosenScene->hScene, pEntry->eNumber, TRANS_FADE);
 	}
-	else if (FROM_32(pEntry->flags) & fHook)
+	else if (FROM_LE_32(pEntry->flags) & fHook)
 		HookScene(hScene, eNumber, TRANS_FADE);
 	else
 		NewScene(Common::nullContext, hScene, eNumber, TRANS_CUT);
@@ -2568,7 +2568,7 @@ static OBJECT *AddInvObject(int num, const FREEL **pfreel, const FILM **pfilm) {
 	pim = GetImageFromFilm(invObj->hIconFilm, 0, pfreel, &pmi, pfilm);
 
 	// Poke in the background palette
-	pim->hImgPal = TO_32(BgPal());
+	pim->hImgPal = TO_LE_32(BgPal());
 
 	// Set up the multi-object
 	pPlayObj = MultiInitObject(pmi);
@@ -2609,7 +2609,7 @@ static void FillInInventory() {
 				MultiSetAniXY(g_iconArray[n], g_InvD[g_ino].inventoryX + xpos , g_InvD[g_ino].inventoryY + ypos);
 				MultiSetZPosition(g_iconArray[n], Z_INV_ICONS);
 
-				InitStepAnimScript(&g_iconAnims[n], g_iconArray[n], FROM_32(pfr->script), ONE_SECOND / FROM_32(pfilm->frate));
+				InitStepAnimScript(&g_iconAnims[n], g_iconArray[n], FROM_LE_32(pfr->script), ONE_SECOND / FROM_LE_32(pfilm->frate));
 
 				n++;
 			}
@@ -2697,17 +2697,17 @@ static OBJECT *AddObject(const FREEL *pfreel, int num) {
 	pim = GetImageFromReel(pfreel, &pmi);
 
 	// Poke in the background palette
-	pim->hImgPal = TO_32(BgPal());
+	pim->hImgPal = TO_LE_32(BgPal());
 
 	// Horrible bodge involving global variables to save
 	// width and/or height of some window frame components
 	if (num == g_TL) {
-		g_TLwidth = FROM_16(pim->imgWidth);
-		g_TLheight = FROM_16(pim->imgHeight) & ~C16_FLAG_MASK;
+		g_TLwidth = FROM_LE_16(pim->imgWidth);
+		g_TLheight = FROM_LE_16(pim->imgHeight) & ~C16_FLAG_MASK;
 	} else if (num == g_TR) {
-		g_TRwidth = FROM_16(pim->imgWidth);
+		g_TRwidth = FROM_LE_16(pim->imgWidth);
 	} else if (num == g_BL) {
-		g_BLheight = FROM_16(pim->imgHeight) & ~C16_FLAG_MASK;
+		g_BLheight = FROM_LE_16(pim->imgHeight) & ~C16_FLAG_MASK;
 	}
 
 	// Set up and insert the multi-object
@@ -3406,9 +3406,9 @@ static void AlterCursor(int num) {
 	pim = GetImageFromFilm(g_hWinParts, num, &pfreel);
 
 	// Poke in the background palette
-	pim->hImgPal = TO_32(BgPal());
+	pim->hImgPal = TO_LE_32(BgPal());
 
-	SetTempCursor(FROM_32(pfreel->script));
+	SetTempCursor(FROM_LE_32(pfreel->script));
 }
 
 enum InvCursorFN {IC_AREA, IC_DROP};
@@ -5619,6 +5619,21 @@ extern void RegisterIcons(void *cptr, int num) {
 			memmove(destP, srcP, 12);
 			destP->attribute = 0;
 		}
+	} else if (TinselV1Mac) {
+		// Macintosh version has BE encoded resources, so the values need to be byte swapped
+		MEM_NODE *node = MemoryAllocFixed(g_numObjects * sizeof(INV_OBJECT));
+		assert(node);
+		g_invObjects = (INV_OBJECT *)MemoryDeref(node);
+		assert(g_invObjects);
+		INV_OBJECT *srcP = (INV_OBJECT *)cptr;
+		INV_OBJECT *destP = (INV_OBJECT *)g_invObjects;
+
+		for (int i = 0; i < num; ++i, ++destP, ++srcP) {
+			destP->id = FROM_BE_32(srcP->id);
+			destP->hIconFilm = FROM_BE_32(srcP->hIconFilm);
+			destP->hScript = FROM_BE_32(srcP->hScript);
+			destP->attribute = FROM_BE_32(srcP->attribute);
+		}
 	} else if (TinselV2) {
 		if (g_invFilms == NULL) {
 			// First time - allocate memory
@@ -5657,7 +5672,7 @@ extern void setInvWinParts(SCNHANDLE hf) {
 
 #ifdef DEBUG
 	pfilm = (const FILM *)LockMem(hf);
-	assert(FROM_32(pfilm->numreels) >= (uint32)(TinselV2 ? T2_HOPEDFORREELS : T1_HOPEDFORREELS)); // not as many reels as expected
+	assert(FROM_LE_32(pfilm->numreels) >= (uint32)(TinselV2 ? T2_HOPEDFORREELS : T1_HOPEDFORREELS)); // not as many reels as expected
 #endif
 }
 
@@ -5674,7 +5689,7 @@ extern void setFlagFilms(SCNHANDLE hf) {
 
 #ifdef DEBUG
 	pfilm = (const FILM *)LockMem(hf);
-	assert(FROM_32(pfilm->numreels) >= HOPEDFORFREELS); // not as many reels as expected
+	assert(FROM_LE_32(pfilm->numreels) >= HOPEDFORFREELS); // not as many reels as expected
 #endif
 }
 
