@@ -170,8 +170,7 @@ void PalettesToVideoDAC() {
 			pal[i * 3 + 2] = TINSEL_GetBValue(pColors[i]);
 		}
 
-		// In DW1 Mac, color 254 should be black, like in the PC version.
-		// We fix it here.
+		// In DW1 Mac, the last palette color should be black. We fix it here.
 		if (TinselV1Mac) {
 			pal[254 * 3 + 0] = pal[254 * 3 + 1] = pal[254 * 3 + 2] = 0;
 		}
