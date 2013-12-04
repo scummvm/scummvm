@@ -106,7 +106,7 @@ static void FadeProcess(CORO_PARAM, const void *param) {
 		FadingPalette(pFade->pPalQ, true);
 
 	// get pointer to palette - reduce pointer indirection a bit
-	_ctx->pPalette = (PALETTE *)LockMem(FROM_32(pFade->pPalQ->hPal));
+	_ctx->pPalette = (PALETTE *)LockMem(pFade->pPalQ->hPal);
 
 	for (_ctx->pColMult = pFade->pColorMultTable; *_ctx->pColMult >= 0; _ctx->pColMult++) {
 		// go through all multipliers in table - until a negative entry

@@ -298,7 +298,7 @@ PALQ *AllocPalette(SCNHANDLE hNewPal) {
 	PALETTE *pNewPal;
 
 	// get pointer to new palette
-	pNewPal = (PALETTE *)LockMem(FROM_32(hNewPal));
+	pNewPal = (PALETTE *)LockMem(hNewPal);
 
 	// search all structs in palette allocator - see if palette already allocated
 	for (p = g_palAllocData; p < g_palAllocData + NUM_PALETTES; p++) {
