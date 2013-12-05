@@ -202,6 +202,7 @@ private:
 	bool initializeAILabTimeZoneAndEnvironment(Window *viewWindow, int environment);
 	bool startAILabAmbient(int oldTimeZone, int oldEnvironment, int environment, bool fade);
 	SceneBase *constructAILabSceneObject(Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	bool checkCustomSpaceStationAICommentDependencies(const Location &commentLocation, const AIComment &commentData);
 
 	// Castle
 	bool initializeCastleTimeZoneAndEnvironment(Window *viewWindow, int environment);

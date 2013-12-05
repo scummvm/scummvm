@@ -3743,6 +3743,38 @@ bool SceneViewWindow::startAILabAmbient(int oldTimeZone, int oldEnvironment, int
 	return true;
 }
 
+bool SceneViewWindow::checkCustomSpaceStationAICommentDependencies(const Location &commentLocation, const AIComment &commentData) {
+	switch (commentData.dependencyFlagOffsetB) {
+	case 1: // After failing to pressurize from SW panel interface, before using mining controls
+		return _globalFlags.aiSWAttemptedPresMR == 1 && _globalFlags.aiICUsedMiningControls == 1;
+	case 2: // Never used oxygen before
+		return _globalFlags.aiICRefilledOxygen == 0;
+	case 3: // If no water canister is in our inventory
+		return !((GameUIWindow *)getParent())->_inventoryWindow->isItemInInventory(kItemWaterCanFull) && !((GameUIWindow *)getParent())->_inventoryWindow->isItemInInventory(kItemWaterCanEmpty);
+	case 4: // Have not used pressurization interface
+		return _globalFlags.aiSWAttemptedPresMR == 0;
+	case 5: // If tried biomass, not enough reserve oxygen
+		return _globalFlags.aiSWAttemptedPresMR == 1 && _globalFlags.aiOxygenReserves == 0;
+	case 6: // If tried biomass, not enough reserve, has not run mining sequence
+		return _globalFlags.aiSWAttemptedPresMR == 1 && _globalFlags.aiOxygenReserves == 0 && _globalFlags.aiICUsedMiningControls == 0;
+	case 7: // If tried biomass, not enough reserve, has run mining sequence, has not run processing sequence
+		return _globalFlags.aiSWAttemptedPresMR == 1 && _globalFlags.aiOxygenReserves == 0 && _globalFlags.aiICUsedMiningControls == 1 && _globalFlags.aiICProcessedOxygen == 0;
+	case 8: // If we have not pressurized the machine room
+		return _globalFlags.aiMRPressurized == 0;
+	case 9: // If we have not revealed the diagram
+		return _globalFlags.scoreFoundSculptureDiagram == 0;
+	case 10: // If we have not revealed the diagram or used the harmonics interface
+		return _globalFlags.scoreFoundSculptureDiagram == 0 && _globalFlags.aiMRUsedHarmonicsInterface == 0;
+	case 11: // After we have recorded evidence
+		return _globalFlags.scoreFoundSculptureDiagram == 1;
+	case 12: // Before using mining control, after having tried to pressurize biomass room
+		// clone2727: This was mistakenly cut out of the original
+		return _globalFlags.aiICUsedMiningControls == 0 && _globalFlags.aiSWAttemptedPresMR == 1;
+	}
+
+	return false;
+}
+
 SceneBase *SceneViewWindow::constructAILabSceneObject(Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) {
 	// TODO
 
