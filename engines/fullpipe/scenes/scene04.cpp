@@ -474,7 +474,6 @@ void sceneHandler04_handTake() {
 }
 
 void sceneHandler04_sub17() {
-#if 0
 	StaticANIObject *ball =  g_fullpipe->_currentScene->getStaticANIObject1ById(ANI_BIGBALL, -1);
 
 	if (g_vars->scene04_var01
@@ -494,9 +493,6 @@ void sceneHandler04_sub17() {
 			g_vars->scene04_var14 = 0;
 		}
 	}
-#endif
-
-	warning("sceneHandler04_sub17()");
 }
 
 void sceneHandler04_takeBottle() {

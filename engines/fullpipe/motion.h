@@ -175,6 +175,7 @@ public:
 
 public:
 	MctlLadder();
+	int collisionDetection(StaticANIObject *man);
 };
 
 class MovGraphNode : public CObject {

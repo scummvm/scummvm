@@ -201,6 +201,12 @@ MctlLadder::MctlLadder() {
 	_ladder_field_24 = 0;
 }
 
+int MctlLadder::collisionDetection(StaticANIObject *man) {
+	warning("STUB: MctlLaddercollisionDetection()");
+
+	return 0;
+}
+
 MctlConnectionPoint *MctlCompound::findClosestConnectionPoint(int ox, int oy, int destIndex, int connectionX, int connectionY, int sourceIndex, int *minDistancePtr) {
 	warning("STUB: MctlCompound::findClosestConnectionPoint()");
 
