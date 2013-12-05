@@ -78,6 +78,8 @@ bool SceneViewWindow::checkCustomAICommentDependencies(const Location &commentLo
 	switch (commentLocation.timeZone) {
 	case 1:
 		return checkCustomCastleAICommentDependencies(commentLocation, commentData);
+	case 6:
+		return checkCustomSpaceStationAICommentDependencies(commentLocation, commentData);
 	}
 
 	return false;
