@@ -23,6 +23,7 @@
 #include "voyeur/voyeur.h"
 #include "voyeur/animation.h"
 #include "voyeur/graphics.h"
+#include "voyeur/staticres.h"
 #include "voyeur/utils.h"
 #include "common/scummsys.h"
 #include "common/config-manager.h"
@@ -84,7 +85,12 @@ Common::Error VoyeurEngine::run() {
 	globalInitBolt();
 
 	_eventsManager.resetMouse();
-	doHeadTitle();
+	if (doHeadTitle()) {
+		if (_game._iForceDeath >= 1 && _game._iForceDeath <= 4)
+			_voy._eCursorOff[58] |= 0x80;
+
+		_game.playStamp();
+	}
 
 	//doHeadTitle();
 
@@ -176,11 +182,16 @@ bool VoyeurEngine::doHeadTitle() {
 	}
 
 	if (_voy._eCursorOff[58] & 0x80) {
+		// TODO: Check when these are called, and the two different loops.
+		// Also, comptuerNu isn't an array in IDB?
+		/*
 		if (_voy._evidence[19] == 0) {
-			// TODO
+			Common::copy(&COMPUTER_DEFAULTS[0], &COMPUTER_DEFAULTS[9 * 8], &_voy._computerNum[0]);
+			_voy._evidence[19] = 9;
 		} else {
-			// TODO
+			error("_computerNum loaded with uninitialized list here");
 		}
+		*/
 	}
 
 	_voy._eCursorOff[55] = 140;

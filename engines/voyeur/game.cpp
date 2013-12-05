@@ -51,6 +51,7 @@ void IntData::audioInit() {
 /*------------------------------------------------------------------------*/
 
 Game::Game() {
+	_iForceDeath = -1;
 }
 
 void Game::doTransitionCard(const Common::String &time, const Common::String &location) {
@@ -95,6 +96,10 @@ void Game::doTransitionCard(const Common::String &time, const Common::String &lo
 }
 
 void Game::addVideoEventStart() {
+
+}
+
+void Game::playStamp() {
 
 }
 

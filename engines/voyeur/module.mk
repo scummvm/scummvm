@@ -9,6 +9,7 @@ MODULE_OBJS := \
 	files.o \
 	graphics.o \
 	sound.o \
+	staticres.o \
 	utils.o \
 	voyeur.o
 
