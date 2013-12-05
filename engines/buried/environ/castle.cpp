@@ -1035,6 +1035,87 @@ bool SceneViewWindow::startCastleAmbient(int oldTimeZone, int oldEnvironment, in
 	return true;
 }
 
+bool SceneViewWindow::checkCustomCastleAICommentDependencies(const Location &commentLocation, const AIComment &commentData) {
+	switch (commentData.dependencyFlagOffsetB) {
+	case 1: // Did we click on the tower door at node 3?
+		return _globalFlags.cgTSTriedDoorA == 1;
+	case 2: // Did we click on the tower door at node 5?
+		return _globalFlags.cgTSTriedDoorB == 1;
+	case 3: // Did we click on either of the tower doors?
+		return _globalFlags.cgTSTriedDoorA == 1 || _globalFlags.cgTSTriedDoorB == 1;
+	case 4: // Is the grappling hook in our inventory?
+		return !((GameUIWindow *)getParent())->_inventoryWindow->isItemInInventory(kItemGrapplingHook);
+	case 5: // Have we not been to the middle bailey?
+		return _globalFlags.cgMBVisited == 0;
+	case 6: // Have we not been to the keep?
+		return _globalFlags.cgKCVisited == 0;
+	case 7: // Have we not been across the moat?
+		return _globalFlags.cgMBCrossedMoat == 0;
+	case 8: // If we have not been in the keep, and the hook is in our inventory
+		return _globalFlags.cgKCVisited == 0 && ((GameUIWindow *)getParent())->_inventoryWindow->isItemInInventory(kItemGrapplingHook);
+	case 9: // If we have not been in the keep and if AI table 33 is equal to 0
+		return _globalFlags.cgKCVisited == 0 && _globalFlags.aiData[33] == 0;
+	case 10: // If we have found the mold, did not read the journal, and do not have a key
+		return !((GameUIWindow *)getParent())->_inventoryWindow->isItemInInventory(kItemCopperKey) && _globalFlags.cgSmithyStatus == 1 && _globalFlags.cgKSSmithyEntryRead == 0;
+	case 11: // If we have found the mold, did not read the journal, and do not have a key
+		return !((GameUIWindow *)getParent())->_inventoryWindow->isItemInInventory(kItemCopperKey) && _globalFlags.cgSmithyStatus == 1 && _globalFlags.cgKSSmithyEntryRead == 1;
+	case 12: // If we have found the mold, do not have the medallion, and do not have the key
+		return !((GameUIWindow *)getParent())->_inventoryWindow->isItemInInventory(kItemCopperKey) && _globalFlags.cgBSFoundMold == 1 && _globalFlags.cgSmithyStatus == 1 && _globalFlags.cgKSSmithyEntryRead == 1;
+	case 13: // If we have found the mold, have a medallion, do not have a key, and AI offset 41 >= 2
+		return !((GameUIWindow *)getParent())->_inventoryWindow->isItemInInventory(kItemCopperKey) && _globalFlags.cgBSFoundMold == 1 && _globalFlags.cgSmithyStatus == 1 && ((GameUIWindow *)getParent())->_inventoryWindow->isItemInInventory(kItemCopperMedallion) && _globalFlags.aiData[41] >= 2;
+	case 14: // Is the hammer not in our invetory
+		return !((GameUIWindow *)getParent())->_inventoryWindow->isItemInInventory(kItemHammer);
+	case 15: // If we have not found the mold, did not read the journal, and do not have a key
+		return !((GameUIWindow *)getParent())->_inventoryWindow->isItemInInventory(kItemCopperKey) && _globalFlags.cgBSFoundMold == 0 && _globalFlags.cgKSSmithyEntryRead == 0;
+	case 16: // If we have not found the mold, did read the journal, and do not have a key
+		return !((GameUIWindow *)getParent())->_inventoryWindow->isItemInInventory(kItemCopperKey) && _globalFlags.cgBSFoundMold == 0 && _globalFlags.cgKSSmithyEntryRead == 1;
+	case 17: // If we have not been to the treasure room, and if we are not waiting for the guards
+		return commentLocation.depth != 1 && _globalFlags.cgTRVisited == 0;
+	case 18: // Is the letter not in our inventory?
+		return !((GameUIWindow *)getParent())->_inventoryWindow->isItemInInventory(kItemBurnedLetter);
+	case 19: // If we have not read either journal and not been to the treasure room
+		return _globalFlags.cgTRVisited == 0 && _globalFlags.cgKSReadJournal == 0;
+	case 20: // If we are in the king's study and if we have not been to the treasure room
+		return _globalFlags.cgTRVisited == 0 && commentLocation.node != 11;
+	case 21: // If we are inside the king's study
+		return commentLocation.node != 11;
+	case 22: // If the key is not in the inventory, have not opened the chest and have clicked on the locked chest
+		return !((GameUIWindow *)getParent())->_inventoryWindow->isItemInInventory(kItemCopperKey) && _globalFlags.cgSRClickedOnLockedChest == 1;
+	case 23: // If the key is not in the inventory, have not opened the chest, have clicked on the locked chest, read the journal entry, and not found the armoire
+		return !((GameUIWindow *)getParent())->_inventoryWindow->isItemInInventory(kItemCopperKey) && _globalFlags.cgSRClickedOnLockedChest == 1 && _globalFlags.cgKSSmithyEntryRead == 1 && _globalFlags.cgFoundChestPanel == 0;
+	case 24: // If we have not made the copper key, we have clicked on the chest, and have found the panel in the armoire
+		return !((GameUIWindow *)getParent())->_inventoryWindow->isItemInInventory(kItemCopperKey) && _globalFlags.cgSRClickedOnLockedChest == 1 && _globalFlags.cgFoundChestPanel == 1;
+	case 25: // If we have the key and have clicked on the locked chest
+		return ((GameUIWindow *)getParent())->_inventoryWindow->isItemInInventory(kItemCopperKey) && _globalFlags.cgSRClickedOnLockedChest == 1;
+	case 26: // If we have not read the letter, have not been to 1/8/3/3/0/0, have not been to the treasure room
+		return _globalFlags.readBurnedLetter == 0 && _globalFlags.cgTRVisited == 0 && _globalFlags.cgViewedKeepPlans == 0 && _globalFlags.cgTapestryFlag == 0;
+	case 27: // Have not been to the treasure room
+		return _globalFlags.cgTRVisited == 0 && _globalFlags.cgTapestryFlag == 0;
+	case 28: // Has read the burned letter, have not been to treasure room
+		return _globalFlags.readBurnedLetter == 1 && _globalFlags.cgTRVisited == 0 && _globalFlags.cgTapestryFlag == 0;
+	case 29: // Has seen 1/8/3/3/0/0, has not been to treasure room
+		return _globalFlags.cgViewedKeepPlans == 1 && _globalFlags.cgTRVisited == 0 && _globalFlags.cgTapestryFlag == 0;
+	case 30: // Has seen 1/8/3/3/0/0, has not been to treasure room, has read the burned letter
+		return _globalFlags.cgViewedKeepPlans == 1 && _globalFlags.cgTRVisited == 0 && _globalFlags.readBurnedLetter == 1 && _globalFlags.cgTapestryFlag == 0;
+	case 31: // If the door to CGSR has been opened, hasn't opened chest
+		return _globalFlags.cgSROpenedChest == 0 && commentLocation.node != 5;
+	case 32: // If the door to CGSR has been opened, has been to 1/8/3/3/0/0, has not been to treasure room
+		return _globalFlags.cgViewedKeepPlans == 1 && _globalFlags.cgTRVisited == 0;
+	case 33: // Has opened chest, has read burned letter, has not clicked on tapestry
+		return _globalFlags.cgSROpenedChest == 1 && _globalFlags.readBurnedLetter == 1 && _globalFlags.cgTapestryFlag == 0;
+	case 34: // If the door to CGSR has been opened
+		return commentLocation.node != 5;
+	case 35: // If we have not used the locate feature in the treasure room, have not found the sword
+		return _globalFlags.cgTRFoundSword == 0;
+	case 36: // If we do not have the key
+		return !((GameUIWindow *)getParent())->_inventoryWindow->isItemInInventory(kItemCopperKey);
+	case 37: // If we have not been in the keep and the hook is in our inventory (clone2727: ????????)
+		return !((GameUIWindow *)getParent())->_inventoryWindow->isItemInInventory(kItemBloodyArrow);
+	}
+
+	return false;
+}
+
 SceneBase *SceneViewWindow::constructCastleSceneObject(Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) {
 	// TODO
 

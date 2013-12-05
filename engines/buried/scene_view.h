@@ -207,6 +207,7 @@ private:
 	bool initializeCastleTimeZoneAndEnvironment(Window *viewWindow, int environment);
 	bool startCastleAmbient(int oldTimeZone, int oldEnvironment, int environment, bool fade);
 	SceneBase *constructCastleSceneObject(Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	bool checkCustomCastleAICommentDependencies(const Location &commentLocation, const AIComment &commentData);
 
 	// Da Vinci's Studio
 	bool initializeDaVinciTimeZoneAndEnvironment(Window *viewWindow, int environment);
