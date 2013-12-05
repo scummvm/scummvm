@@ -68,7 +68,7 @@ void GraphicsMan::draw(uint16 posX, uint16 posY, const Graphics::Surface *s)
 	change();
 }
 
-void GraphicsMan::drawTransparent(const Graphics::Surface *s)
+void GraphicsMan::drawTransparent(uint16 posX, uint16 posY, const Graphics::Surface *s)
 {
 	for (uint y = 0; y < s->h; ++y) {
 		for (uint x = 0; x < s->w; ++x) {

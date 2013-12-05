@@ -1,6 +1,7 @@
 MODULE := engines/prince
 
 MODULE_OBJS = \
+	animation.o \
 	debugger.o \
 	script.o \
 	graphics.o \
@@ -16,6 +17,8 @@ MODULE_OBJS = \
 	archive.o \
 	decompress.o \
 	hero.o \
+	hero_set.o \
+	detail/animation.o \
 	cursor.o 
 
 # This module can be built as a plugin

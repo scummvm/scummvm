@@ -20,42 +20,11 @@
  *
  */
 
-#ifndef PRINCE_GRAPHICS_H
-#define PRINCE_GRAPHICS_H
-
-#include "graphics/surface.h"
-
-
 namespace Prince {
 
-class PrinceEngine;
+typedef const char *HeroSetAnimNames[26];
 
-class GraphicsMan
-{
-public:
-	GraphicsMan(PrinceEngine *vm);
-    ~GraphicsMan();
-
-	void update();
-
-	void change();
-
-	void setPalette(const byte *palette);
-
-	void draw(uint16 x, uint16 y, const Graphics::Surface *s);
-	void drawTransparent(uint16 x, uint16 y, const Graphics::Surface *s);
-
-	Graphics::Surface *_frontScreen;
-	Graphics::Surface *_backScreen;
-	const Graphics::Surface *_roomBackground;
-
-private:
-
-	PrinceEngine *_vm;
-
-	bool _changed;
-};
+extern const HeroSetAnimNames *heroSetTable[7];
 
 }
-
-#endif
+/* vim: set tabstop=4 noexpandtab: */

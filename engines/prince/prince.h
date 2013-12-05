@@ -71,6 +71,21 @@ struct Text {
 	}
 };
 
+struct AnimListItem {
+	uint16 _type;
+	uint16 _fileNumber;
+	uint16 _startPhase;
+	uint16 _endPhase;
+	uint16 _loopPhase;
+	int16 _x;
+	int16 _y;
+	uint16 _loopType;
+	uint16 _nextAnim;
+	uint16 _flags;
+
+	bool loadFromStream(Common::SeekableReadStream &stream);
+};
+
 struct DebugChannel {
 
 enum Type {
@@ -119,6 +134,8 @@ public:
 	Text _textSlots[MAXTEXTS];
 
 	uint64 _frameNr;
+	Hero* _mainHero;
+	Hero* _secondHero;
 
 private:
 	bool playNextFrame();
@@ -155,12 +172,11 @@ private:
 
 	Common::Array<Mob> _mobList;
 	Common::Array<Object *> _objList;
+	Common::Array<AnimListItem> _animList;
 
 	uint16 _cameraX;
 	uint16 _newCameraX;
 	uint16 _sceneWidth;
-
-	Hero* _mainHero;
 
 	bool _flicLooped;
 	

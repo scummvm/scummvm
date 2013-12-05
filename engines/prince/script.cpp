@@ -25,6 +25,7 @@
 #include "prince/flags.h"
 #include "prince/variatxt.h"
 #include "prince/font.h"
+#include "prince/hero.h"
 
 #include "common/debug.h"
 #include "common/debug-channels.h"
@@ -543,22 +544,23 @@ void Script::O_WALKHERO() {
 
 void Script::O_SETHERO() {
 	uint16 hero = readScriptValue();
-	uint16 x = readScriptValue();
-	uint16 y = readScriptValue();
+	int16 x = readScriptValue();
+	int16 y = readScriptValue();
 	uint16 dir = readScriptValue();
 	debugScript("O_SETHERO hero %d, x %d, y %d, dir %d", hero, x, y, dir);
+	_vm->_mainHero->setPos(x, y);
 }
 
 void Script::O_HEROOFF() {
 	uint16 heroId = readScriptValue();
 	debugScript("O_HEROOFF %d", heroId);
-	// sets hero visible flag to false
+	_vm->_mainHero->setVisible(false);
 }
 
 void Script::O_HEROON() {
 	uint16 heroId = readScriptValue();
 	debugScript("O_HEROON %d", heroId);
-	// sets hero visible flag to true
+	_vm->_mainHero->setVisible(true);
 }
 
 void Script::O_CLSTEXT() {

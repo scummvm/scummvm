@@ -58,6 +58,7 @@
 #include "prince/cursor.h"
 #include "prince/archive.h"
 #include "prince/hero.h"
+#include "prince/resource.h"
 
 namespace Prince {
 
@@ -104,6 +105,8 @@ PrinceEngine::~PrinceEngine() {
 	delete _variaTxt;
 	delete[] _talkTxt;
 	delete _graph;
+	delete _mainHero;
+	delete _secondHero;
 
 	for (uint32 i = 0; i < _objList.size(); ++i) {
 		delete _objList[i];
@@ -113,77 +116,6 @@ PrinceEngine::~PrinceEngine() {
 
 GUI::Debugger *PrinceEngine::getDebugger() {
 	return _debugger;
-}
-
-template <typename T>
-bool loadFromStream(T &resource, Common::SeekableReadStream &stream) {
-	return resource.loadFromStream(stream);
-}
-
-template <>
-bool loadFromStream<MhwanhDecoder>(MhwanhDecoder &image, Common::SeekableReadStream &stream) {
-	return image.loadStream(stream);
-}
-
-template <>
-bool loadFromStream<Graphics::BitmapDecoder>(Graphics::BitmapDecoder &image, Common::SeekableReadStream &stream) {
-	return image.loadStream(stream);
-}
-
-template<typename T>
-bool loadResource(T *resource, const char *resourceName, bool required = true) {
-	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(resourceName);
-	if (!stream) {
-		if (required) 
-			error("Can't load %s", resourceName);
-		return false;
-	}
-
-	bool ret = loadFromStream(*resource, *stream);
-
-	delete stream;
-
-	return ret;
-} 
-
-template <typename T>
-bool loadResource(Common::Array<T> &array, const char *resourceName, bool required = true) {
-	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(resourceName);
-	if (!stream) {
-		if (required)
-			error("Can't load %s", resourceName);
-		return false;
-	}
-
-	T t;
-	while (t.loadFromStream(*stream))
-		array.push_back(t);
-
-	delete stream;
-	return true;
-}
-
-template <typename T>
-bool loadResource(Common::Array<T *> &array, const char *resourceName, bool required = true) {
-	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(resourceName);
-	if (!stream) {
-		if (required)
-			error("Can't load %s", resourceName);
-		return false;
-	}
-
-	// FIXME: This is stupid. Maybe loadFromStream should be helper method that returns initiailzed object
-	while (true) {	
-		T* t = new T();
-		if (!t->loadFromStream(*stream)) {
-			delete t;
-			break;
-		}
-		array.push_back(t);
-	}
-
-	delete stream;
-	return true;
 }
 
 void PrinceEngine::init() {
@@ -216,22 +148,22 @@ void PrinceEngine::init() {
 	_midiPlayer = new MusicPlayer(this);
 	 
 	_font = new Font();
-	loadResource(_font, "all/font1.raw");
+	Resource::loadResource(_font, "all/font1.raw");
 
 	_walizkaBmp = new MhwanhDecoder();
-	loadResource(_walizkaBmp, "all/walizka");
+	Resource::loadResource(_walizkaBmp, "all/walizka");
 
 	_script = new Script(this);
-	loadResource(_script, "all/skrypt.dat");
+	Resource::loadResource(_script, "all/skrypt.dat");
 
 	_variaTxt = new VariaTxt();
-	loadResource(_variaTxt, "all/variatxt.dat");
+	Resource::loadResource(_variaTxt, "all/variatxt.dat");
 	
 	_cursor1 = new Cursor();
-	loadResource(_cursor1, "all/mouse1.cur");
+	Resource::loadResource(_cursor1, "all/mouse1.cur");
 
 	_cursor2 = new Cursor();
-	loadResource(_cursor2, "all/mouse2.cur");
+	Resource::loadResource(_cursor2, "all/mouse2.cur");
 
 	Common::SeekableReadStream *talkTxtStream = SearchMan.createReadStreamForMember("all/talktxt.dat");
 	if (!talkTxtStream) {
@@ -245,11 +177,16 @@ void PrinceEngine::init() {
 	delete talkTxtStream;
 
 	_roomBmp = new Graphics::BitmapDecoder();
+
+	_mainHero = new Hero();
+	_secondHero = new Hero();
+
+	_mainHero->loadAnimSet(0);
 }
 
 void PrinceEngine::showLogo() {
 	MhwanhDecoder logo;
-	if (loadResource(&logo, "logo.raw")) {
+	if (Resource::loadResource(&logo, "logo.raw")) {
 		_graph->setPalette(logo.getPalette());
 		_graph->draw(0, 0, logo.getSurface());
 		_graph->update();
@@ -266,6 +203,33 @@ Common::Error PrinceEngine::run() {
 	mainLoop();
 
 	return Common::kNoError;
+}
+
+bool AnimListItem::loadFromStream(Common::SeekableReadStream &stream) {
+	int32 pos = stream.pos();
+
+	uint16 type = stream.readUint16LE();
+	if (type == 0xFFFF) {
+		return false;
+	}
+	_type = type;
+	_fileNumber = stream.readUint16LE();
+	_startPhase = stream.readUint16LE();
+	_endPhase = stream.readUint16LE();
+	_loopPhase = stream.readUint16LE();
+	_x = stream.readSint16LE();
+	_y = stream.readSint16LE();
+	_loopType = stream.readUint16LE();
+	_nextAnim = stream.readUint16LE();
+	_flags = stream.readUint16LE();
+
+	debug("AnimListItem type %d, fileNumber %d, x %d, y %d, flags %d", _type, _fileNumber, _x, _y, _flags);
+
+
+	// 32 byte aligment
+	stream.seek(pos + 32);
+
+	return true;
 }
 
 bool PrinceEngine::loadLocation(uint16 locationNr) {
@@ -303,19 +267,22 @@ bool PrinceEngine::loadLocation(uint16 locationNr) {
 	_midiPlayer->loadMidi(musName);
 
 	// load location background, replace old one
-	loadResource(_roomBmp, "room");
+	Resource::loadResource(_roomBmp, "room");
 	if (_roomBmp->getSurface()) {
 		_sceneWidth = _roomBmp->getSurface()->w;
 	}
 
 	_mobList.clear();
-	loadResource(_mobList, "mob.lst", false);
+	Resource::loadResource(_mobList, "mob.lst", false);
 
 	for (uint32 i = 0; i < _objList.size(); ++i) {
 		delete _objList[i];
 	}
 	_objList.clear();
-	loadResource(_objList, "obj.lst", false);
+	Resource::loadResource(_objList, "obj.lst", false);
+
+	_animList.clear();
+	Resource::loadResource(_animList, "anim.lst", false);
 
 	return true;
 }
@@ -359,7 +326,7 @@ bool PrinceEngine::playNextFrame() {
 
 	const Graphics::Surface *s = _flicPlayer.decodeNextFrame();
 	if (s) {
-		_graph->drawTransparent(s);
+		_graph->drawTransparent(0, 0, s);
 		_graph->change();
 	} else if (_flicLooped) {
         _flicPlayer.rewind();
@@ -597,6 +564,13 @@ void PrinceEngine::drawScreen() {
 		_graph->draw(0, 0, &visiblePart);
 	}
 
+	if (_mainHero->_visible) {
+		const Graphics::Surface *mainHeroSurface = _mainHero->getSurface();
+
+		if (mainHeroSurface) 
+			_graph->drawTransparent(_mainHero->_middleX, _mainHero->_middleY, mainHeroSurface);
+	}
+
 	playNextFrame();
 
 	//if (_objectList)
@@ -649,6 +623,7 @@ void PrinceEngine::mainLoop() {
 		// TODO: Update all structures, animations, naks, heros etc.
 
 		_script->step();
+
 		drawScreen();
 
 		// Calculate the frame delay based off a desired frame time

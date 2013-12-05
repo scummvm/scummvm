@@ -24,8 +24,13 @@
 #define PRINCE_HERO_H
 
 #include "common/scummsys.h"
+#include "common/array.h"
+
+#include "graphics/surface.h"
 
 namespace Prince {
+
+class Animation;
 
 class Hero {
 public:
@@ -42,14 +47,28 @@ public:
 		DMOVE = 9
 	};
 
+	enum Direction {
+		LEFT = 1,
+		RIGHT = 2,
+		UP = 3, 
+		DOWN = 4
+	};
+
 	Hero();
 
-private:
+	bool loadAnimSet(uint32 heroAnimNumber);
+
+	const Graphics::Surface * getSurface();
+
+	void setPos(int16 x, int16 y) { _middleX = x; _middleX = y; }
+	void setVisible(bool flag) { _visible = flag; }
+
+//private:
 	uint16 _number;
 	uint16 _visible;
 	State _state;
-	uint16 _middleX;
-	uint16 _middleY;
+	int16 _middleX;
+	int16 _middleY;
 
 	// Coords array of coordinates
 	// DirTab array of directions
@@ -74,7 +93,7 @@ private:
 	// Font subtitiles font
 	// Color subtitiles color
 	// AnimSet number of animation set
-	// MoveAnims MoveSet
+	Common::Array<Animation *> _moveSet; // MoveAnims MoveSet
 	// TurnAnim ??
 	
 	uint32 _moveDelay;

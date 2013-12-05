@@ -24,7 +24,9 @@
 #define PRINCE_MHWANH_H
 
 #include "graphics/decoders/image_decoder.h"
+#include "graphics/decoders/bmp.h"
 #include "graphics/surface.h"
+#include "resource.h"
 
 namespace Prince {
 
@@ -45,6 +47,18 @@ private:
 	byte *_palette;
 	uint16 _paletteColorCount;
 };
+
+namespace Resource {
+	template <> inline
+	bool loadFromStream<MhwanhDecoder>(MhwanhDecoder &image, Common::SeekableReadStream &stream) {
+		return image.loadStream(stream);
+	}
+
+	template <> inline
+	bool loadFromStream<Graphics::BitmapDecoder>(Graphics::BitmapDecoder &image, Common::SeekableReadStream &stream) {
+		return image.loadStream(stream);
+	}
+}
 
 }
 

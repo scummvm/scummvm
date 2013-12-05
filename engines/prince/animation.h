@@ -23,13 +23,29 @@
 #ifndef PRINCE_ANIMATION_H
 #define PRINCE_ANIMATION_H
 
+#include "common/array.h"
+#include "common/stream.h"
+
+#include "graphics/surface.h"
+
 namespace Prince {
 
-class Animation {
+// FIXME: temp hack !!!
+namespace Detail {
+	class Animation;
+}
 
+class Animation {
+public:
+	Animation();
+	~Animation();
     bool loadFromStream(Common::SeekableReadStream &stream);
 
-    const Graphics::Surface *getSurface(uint16 frameIndex) const;
+    const Graphics::Surface *getSurface(uint16 frameIndex);
+
+private:
+	Common::Array<Graphics::Surface *> _frameList;
+	Detail::Animation *_helper;
 };
 
 }

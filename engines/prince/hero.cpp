@@ -19,15 +19,55 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
+#include "common/debug.h"
 
 #include "prince/hero.h"
+#include "prince/hero_set.h"
+#include "prince/animation.h"
+#include "prince/resource.h"
+
 
 namespace Prince {
 
+static const uint32 kMoveSetSize = 26;
+
 Hero::Hero() : _number(0), _visible(false), _state(STAY), _middleX(0), _middleY(0)
-    , _boreNum(0), _currHeight(0), _moveDelay(0), _shadMinus(1)
-{
+    , _boreNum(0), _currHeight(0), _moveDelay(0), _shadMinus(1) {
 } 
+
+bool Hero::loadAnimSet(uint32 animSetNr) {
+	animSetNr = 6;
+	if (animSetNr > sizeof(heroSetTable)) {
+		return false;
+	}
+
+	for (uint32 i = 0; i < _moveSet.size(); ++i) {
+		delete _moveSet[i];
+	}
+
+	const HeroSetAnimNames &animSet = *heroSetTable[animSetNr];
+
+	_moveSet.resize(kMoveSetSize);
+	for (uint32 i = 0; i < kMoveSetSize; ++i) {
+		debug("Anim set item %d %s", i, animSet[i]);
+		Animation *anim = NULL;
+		if (animSet[i] != NULL) {
+			anim = new Animation();
+			Resource::loadResource(anim, animSet[i]);
+		}
+		_moveSet[i] = anim;
+	}
+
+
+	return true;
+}
+
+const Graphics::Surface * Hero::getSurface() {
+	if (_moveSet[3]) {
+		return _moveSet[3]->getSurface(0);
+	}
+	return NULL;
+}
 
 }
 
