@@ -192,6 +192,7 @@ class Scene1337 : public SceneExt {
 
 		Card();
 		void synchronize(Serializer &s);
+		bool isIn(Common::Point pt);
 	};
 
 	class GameBoardSide: public SceneHotspot {
@@ -341,7 +342,6 @@ public:
 	int  subC27B5(int arg1);
 	int  subC27F9(int arg1);
 	void subC2835(int arg1);
-	bool subC2BF8(Card *subObj1, Common::Point pt);
 	void subC2C2F();
 	void subC318B(int arg1, Card *subObj2, int arg3);
 	int  subC3257(int arg1);
