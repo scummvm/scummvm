@@ -319,7 +319,20 @@ void sceneHandler04_lowerPlank() {
 }
 
 void sceneHandler04_manFromBottle() {
-	warning("sceneHandler04_manFromBottle()");
+	for (Common::List<GameObject *>::iterator it = g_vars->scene04_bottleObjList.begin(); it != g_vars->scene04_bottleObjList.end(); ++it)
+		if (*it == g_fullpipe->_aniMan) {
+			g_vars->scene04_bottleObjList.erase(it);
+			g_vars->scene04_var06 -= 9;
+			break;
+		}
+
+	//if (g_vars->scene04_ladder)
+	//	delete g_vars->scene04_ladder;
+
+	//g_vars->scene04_ladder = 0;
+
+	getSc2MctlCompoundBySceneId(g_fullpipe->_currentScene->_sceneId)->setEnabled();
+	getGameLoaderInteractionController()->enableFlag24();
 }
 
 void sceneHandler04_manToBottle() {
