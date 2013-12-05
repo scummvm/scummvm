@@ -326,10 +326,10 @@ void sceneHandler04_manFromBottle() {
 			break;
 		}
 
-	//if (g_vars->scene04_ladder)
-	//	delete g_vars->scene04_ladder;
+	if (g_vars->scene04_ladder)
+		delete g_vars->scene04_ladder;
 
-	//g_vars->scene04_ladder = 0;
+	g_vars->scene04_ladder = 0;
 
 	getSc2MctlCompoundBySceneId(g_fullpipe->_currentScene->_sceneId)->setEnabled();
 	getGameLoaderInteractionController()->enableFlag24();

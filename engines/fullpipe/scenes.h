@@ -26,6 +26,7 @@
 namespace Fullpipe {
 
 class StaticANIObject;
+ class MctlLadder;
 
 int defaultUpdateCursor();
 
@@ -93,7 +94,7 @@ public:
 	Common::List<GameObject *> scene04_bottleObjList;
 	Common::List<StaticANIObject *> scene04_kozyawkiAni;
 
-	int scene04_ladder;
+	MctlLadder *scene04_ladder;
 	bool scene04_coinPut;
 	bool scene04_soundPlaying;
 	int scene04_dynamicPhaseIndex;
