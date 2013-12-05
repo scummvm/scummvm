@@ -43,6 +43,7 @@ const LanguageDescription g_languages[] = {
 	{    "it", "it_IT", "Italian", IT_ITA },
 	{    "jp", "ja_JP", "Japanese", JA_JPN },
 	{    "kr", "ko_KR", "Korean", KO_KOR },
+	{    "lv", "lv_LV", "Latvian", LV_LAT },
 	{    "nb", "nb_NO", "Norwegian Bokm\xE5l", NB_NOR }, // TODO Someone should verify the unix locale
 	{    "pl", "pl_PL", "Polish", PL_POL },
 	{    "br", "pt_BR", "Portuguese", PT_BRA },

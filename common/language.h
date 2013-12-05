@@ -48,6 +48,7 @@ enum Language {
 	IT_ITA,
 	JA_JPN,
 	KO_KOR,
+	LV_LAT,
 	NB_NOR,
 	PL_POL,
 	PT_BRA,
