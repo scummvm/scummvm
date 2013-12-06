@@ -2465,7 +2465,11 @@ void Scene1337::Action1::signal() {
 		scene->_gameBoardSide[0]._outpostStation[0]._card.remove();
 		scene->_gameBoardSide[0]._outpostStation[1]._card.remove();
 
-		scene->_background2.setup2(1332, 5, 1, 165, 95, 110, EFFECT_SHADED);
+		scene->_stockPile.setup(1332, 5, 1);
+		scene->_stockPile.setPosition(Common::Point(165, 95));
+		scene->_stockPile.setPriority(110);
+		scene->_stockPile._effect = EFFECT_SHADED;
+		scene->_stockPile.show();
 
 		scene->_gameBoardSide[1]._handCard[0]._card.postInit();
 		scene->_gameBoardSide[1]._handCard[0]._card.setVisage(1332);
@@ -3042,7 +3046,7 @@ void Scene1337::Action1::signal() {
 		scene->_discardPile._cardId = 0;
 		scene->_discardPile._card.remove();
 
-		scene->_background2.remove();
+		scene->_stockPile.remove();
 		}
 	// No break on purpose
 	case 0:
@@ -3093,7 +3097,11 @@ void Scene1337::Action2::signal() {
 		break;
 	case 3:
 		scene->_shuffleAnimation._card.remove();
-		scene->_background2.setup2(1332, 5, 1, 162, 95, 110, EFFECT_SHADED);
+		scene->_stockPile.setup(1332, 5, 1);
+		scene->_stockPile.setPosition(Common::Point(162, 95));
+		scene->_stockPile.setPriority(110);
+		scene->_stockPile._effect = EFFECT_SHADED;
+		scene->_stockPile.show();
 		scene->_shuffleEndedFl = true;
 		break;
 	default:
@@ -3392,7 +3400,7 @@ void Scene1337::Action4::signal() {
 			scene->_cardsAvailableNumb--;
 
 			if (scene->_cardsAvailableNumb < 0)
-				scene->_background2.remove();
+				scene->_stockPile.remove();
 		} else {
 			// Self call, forcing next actionIndex
 			signal();
@@ -3429,7 +3437,7 @@ void Scene1337::Action4::signal() {
 			scene->_availableCardsPile[scene->_cardsAvailableNumb] = 0;
 			scene->_cardsAvailableNumb--;
 			if (scene->_cardsAvailableNumb < 0)
-				scene->_background2.remove();
+				scene->_stockPile.remove();
 		} else
 			signal();
 		break;
@@ -3464,7 +3472,7 @@ void Scene1337::Action4::signal() {
 			scene->_availableCardsPile[scene->_cardsAvailableNumb] = 0;
 			scene->_cardsAvailableNumb--;
 			if (scene->_cardsAvailableNumb < 0)
-				scene->_background2.remove();
+				scene->_stockPile.remove();
 		} else
 			signal();
 		break;
@@ -3499,7 +3507,7 @@ void Scene1337::Action4::signal() {
 			scene->_availableCardsPile[scene->_cardsAvailableNumb] = 0;
 			scene->_cardsAvailableNumb--;
 			if (scene->_cardsAvailableNumb < 0)
-				scene->_background2.remove();
+				scene->_stockPile.remove();
 		} else
 			signal();
 		break;
@@ -4451,6 +4459,8 @@ void Scene1337::postInit(SceneObjectList *OwnerList) {
 	_gameBoardSide[1]._frameNum = 4;
 
 	subPostInit();
+
+	_stockPile.postInit();
 }
 
 void Scene1337::remove() {
@@ -5504,8 +5514,8 @@ void Scene1337::subPostInit() {
 	_discardPile._cardId = 0;
 	_discardPile._stationPos = Common::Point(128, 95);
 
-	_stockPile._cardId = 0;
-	_stockPile._stationPos = Common::Point(162, 95);
+	_stockCard._cardId = 0;
+	_stockCard._stationPos = Common::Point(162, 95);
 
 	_selectedCard._cardId = 0;
 
@@ -5533,7 +5543,12 @@ void Scene1337::subPostInit() {
 	_field4246 = false;
 	_field424A = -1;
 
-	_background1.setup2(9531, 1, 1, 249, 168, 155, EFFECT_NONE);
+	_helpIcon.postInit();
+	_helpIcon.setup(9531, 1, 1);
+	_helpIcon.setPosition(Common::Point(249, 168));
+	_helpIcon.setPriority(155);
+	_helpIcon._effect = EFFECT_NONE;
+	_helpIcon.show();
 
 	_autoplay = false;
 	_instructionsDisplayedFl = false;
@@ -5706,9 +5721,9 @@ void Scene1337::subCDB90(int arg1, Common::Point pt) {
 						displayDialog(_discardPile._cardId);
 					else
 						actionDisplay(1330, 7, 159, 10, 1, 200, 0, 7, 0, 154, 154);
-				} else if (_background1._bounds.contains(pt)) {
+				} else if (_helpIcon._bounds.contains(pt)) {
 					actionDisplay(1330, 43, 159, 10, 1, 200, 0, 7, 0, 154, 154);
-				} else if (_stockPile.isIn(pt)) {
+				} else if (_stockCard.isIn(pt)) {
 					actionDisplay(1330, 4, 159, 10, 1, 200, 0, 7, 0, 154, 154);
 				} else if ( (_gameBoardSide[2]._emptyStationPos.isIn(pt))
 					     || (_gameBoardSide[3]._emptyStationPos.isIn(pt))
@@ -5868,14 +5883,14 @@ void Scene1337::subCDB90(int arg1, Common::Point pt) {
 	if (found)
 		return;
 
-	if (_background1._bounds.contains(pt)) {
+	if (_helpIcon._bounds.contains(pt)) {
 		subCD193();
 		return;
 	}
 
 	if (_discardPile.isIn(pt))
 		actionDisplay(1330, 9, 159, 10, 1, 200, 0, 7, 0, 154, 154);
-	else if (_stockPile.isIn(pt))
+	else if (_stockCard.isIn(pt))
 		actionDisplay(1330, 5, 159, 10, 1, 200, 0, 7, 0, 154, 154);
 	else {
 		switch (curReg) {

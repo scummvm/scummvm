@@ -275,7 +275,7 @@ public:
 
 	ASound _aSound1;
 	ASound _aSound2;
-	BackgroundSceneObject _background1;
+	SceneActor _helpIcon;
 	bool _autoplay;
 	GameBoardSide _gameBoardSide[4];
 	SceneItem _item1;
@@ -296,7 +296,7 @@ public:
 	Card _animatedCard;
 	Card _shuffleAnimation;
 	Card _item4;
-	BackgroundSceneObject _background2;
+	SceneActor _stockPile;
 	int _cardsAvailableNumb;
 
 	// Discarded cards are put in the available cards pile, with an higher index so there no conflict
@@ -308,7 +308,7 @@ public:
 	Card _item5;
 	Card _selectedCard;
 	Card _discardPile;
-	Card _stockPile;
+	Card _stockCard;
 	bool _shuffleEndedFl;
 	int _currentPlayerNumb;
 	int _field4240;
