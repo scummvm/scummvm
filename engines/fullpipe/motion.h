@@ -191,6 +191,7 @@ public:
 
 public:
 	MctlLadder();
+	virtual ~MctlLadder();
 	int collisionDetection(StaticANIObject *man);
 
 	virtual void addObject(StaticANIObject *obj);

@@ -196,6 +196,10 @@ MctlLadder::MctlLadder() {
 	_ladder_field_24 = 0;
 }
 
+MctlLadder::~MctlLadder() {
+	freeItems();
+}
+
 int MctlLadder::collisionDetection(StaticANIObject *man) {
 	warning("STUB: MctlLaddercollisionDetection()");
 
@@ -270,7 +274,14 @@ bool MctlLadder::initMovement(StaticANIObject *ani, MctlLadderMovement *movement
 }
 
 void MctlLadder::freeItems() {
-	warning("STUB: MctlLadder::freeItems()");
+	_mgm.clear();
+
+	for (Common::List<MctlLadderMovement *>::iterator it = _movements.begin(); it != _movements.end(); ++it) {
+		delete (*it)->movVars;
+		delete [] (*it)->staticIds;
+	}
+
+	_movements.clear();
 }
 
 MessageQueue *MctlLadder::method34(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId) {
