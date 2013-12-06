@@ -161,16 +161,32 @@ public:
 	MessageQueue *genMovement(MGMInfo *mgminfo);
 };
 
+struct MctlLadderMovementVars {
+	int varUpGo;
+	int varDownGo;
+	int varUpStop;
+	int varDownStop;
+	int varUpStart;
+	int varDownStart;
+};
+
+struct MctlLadderMovement {
+	int objId;
+	int staticIdsSize;
+	MctlLadderMovementVars *movVars;
+	int *staticIds;
+};
+
 class MctlLadder : public MotionController {
 public:
-	int _ladder_field_C;
+	int _objId;
 	int _ladder_field_10;
 	int _ladder_field_14;
 	int _ladder_field_18;
 	int _ladder_field_1C;
 	int _ladder_field_20;
 	int _ladder_field_24;
-	PreloadItem _preload;
+	Common::List<MctlLadderMovement *> _movements;
 	MGM _mgm;
 
 public:

@@ -186,13 +186,8 @@ MessageQueue *MctlCompound::doWalkTo(StaticANIObject *subj, int xpos, int ypos, 
 }
 
 MctlLadder::MctlLadder() {
-	_preload.preloadId1 = 0;
-	_preload.keyCode = 0;
-	_preload.sceneId = 0;
-	_preload.preloadId2 = 0;
-
 	_ladder_field_18 = 0;
-	_ladder_field_C = 0;
+	_objId = 0;
 	_ladder_field_1C = 0;
 	_ladder_field_10 = 0;
 	_ladder_field_14 = 0;
