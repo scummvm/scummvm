@@ -761,6 +761,70 @@ SiegeCycleTopView::SiegeCycleTopView(BuriedEngine *vm, Window *viewWindow, const
 	}
 }
 
+class CourtyardCannon : public SceneBase {
+public:
+	CourtyardCannon(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	Common::Rect _cannon;
+};
+
+CourtyardCannon::CourtyardCannon(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_cannon = Common::Rect(160, 10, 280, 140);
+}
+
+int CourtyardCannon::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_cannon.contains(pointLocation))
+		((SceneViewWindow *)viewWindow)->playSynchronousAnimation(0);
+
+	return SC_TRUE;
+}
+
+int CourtyardCannon::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_cannon.contains(pointLocation))
+		return kCursorFinger;
+
+	return kCursorArrow;
+}
+
+class CourtyardGunDeath : public SceneBase {
+public:
+	CourtyardGunDeath(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	Common::Rect _gun;
+};
+
+CourtyardGunDeath::CourtyardGunDeath(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_gun = Common::Rect(140, 68, 294, 189);
+}
+
+int CourtyardGunDeath::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_gun.contains(pointLocation)) {
+		// Play the animation
+		((SceneViewWindow *)viewWindow)->playSynchronousAnimation(4);
+
+		// Kill the player
+		((SceneViewWindow *)viewWindow)->showDeathScene(31);
+	}
+
+	// Success!
+	return SC_TRUE;
+}
+
+int CourtyardGunDeath::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_gun.contains(pointLocation))
+		return kCursorFinger;
+
+	return kCursorArrow;
+}
+
 class PaintingTowerCapAgent : public SceneBase {
 public:
 	PaintingTowerCapAgent(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
@@ -794,6 +858,97 @@ int PaintingTowerCapAgent::postEnterRoom(Window *viewWindow, const Location &pri
 	}
 
 	return SC_TRUE;
+}
+
+class ClickChangeSceneTranslate : public SceneBase {
+public:
+	ClickChangeSceneTranslate(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+			int left = -1, int top = -1, int right = -1, int bottom = -1, int cursorID = 0, int timeZone = -1, int environment = -1,
+			int node = -1, int facing = -1, int orientation = -1, int depth = -1, int transitionType = -1, int transitionData = -1,
+			int transitionStartFrame = -1, int transitionLength = -1, int transLeft = -1, int transTop = -1, int transRight = -1,
+			int transBottom = -1, int transTextID = -1);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int gdiPaint(Window *viewWindow);
+	int mouseMove(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	int _cursorID;
+	Common::Rect _clickRegion;
+	DestinationScene _clickDestination;
+	Common::Rect _translateRect;
+	int _textID;
+	bool _textTranslated;
+};
+
+ClickChangeSceneTranslate::ClickChangeSceneTranslate(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+		int left, int top, int right, int bottom, int cursorID, int timeZone, int environment,
+		int node, int facing, int orientation, int depth, int transitionType, int transitionData,
+		int transitionStartFrame, int transitionLength, int transLeft, int transTop, int transRight,
+		int transBottom, int transTextID) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_clickRegion = Common::Rect(left, top, right, bottom);
+	_cursorID = cursorID;
+	_clickDestination.destinationScene.timeZone = timeZone;
+	_clickDestination.destinationScene.environment = environment;
+	_clickDestination.destinationScene.node = node;
+	_clickDestination.destinationScene.facing = facing;
+	_clickDestination.destinationScene.orientation = orientation;
+	_clickDestination.destinationScene.depth = depth;
+	_clickDestination.transitionType = transitionType;
+	_clickDestination.transitionData = transitionData;
+	_clickDestination.transitionStartFrame = transitionStartFrame;
+	_clickDestination.transitionLength = transitionLength;
+	_translateRect = Common::Rect(transLeft, transTop, transRight, transBottom);
+	_textTranslated = false;
+	_textID = transTextID;
+}
+
+int ClickChangeSceneTranslate::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_clickRegion.contains(pointLocation))
+		((SceneViewWindow *)viewWindow)->moveToDestination(_clickDestination);
+
+	return SC_FALSE;
+}
+
+int ClickChangeSceneTranslate::gdiPaint(Window *viewWindow) {
+	if (_textTranslated && ((SceneViewWindow *)viewWindow)->getGlobalFlags().bcTranslateEnabled == 1) {
+		Common::Rect absoluteRect = viewWindow->getAbsoluteRect();
+		Common::Rect rect(_translateRect);
+		rect.translate(absoluteRect.left, absoluteRect.top);
+		_vm->_gfx->getScreen()->frameRect(rect, _vm->_gfx->getColor(255, 0, 0));
+	}
+
+	return SC_REPAINT;
+}
+
+int ClickChangeSceneTranslate::mouseMove(Window *viewWindow, const Common::Point &pointLocation) {
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().bcTranslateEnabled == 1) {
+		if (_translateRect.contains(pointLocation)) {
+			((SceneViewWindow *)viewWindow)->displayTranslationText(_vm->getString(_textID));
+			_textTranslated = true;
+			viewWindow->invalidateWindow(false);
+		} else {
+			if (_textTranslated) {
+				_textTranslated = false;
+				viewWindow->invalidateWindow(false);
+			}
+		}
+	} else {
+		if (_textTranslated) {
+			_textTranslated = false;
+			viewWindow->invalidateWindow(false);
+		}
+	}
+
+	return SC_FALSE;
+}
+
+int ClickChangeSceneTranslate::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_clickRegion.contains(pointLocation))
+		return _cursorID;
+
+	return 0;
 }
 
 class WalkDownPaintingTowerElevator : public SceneBase {
@@ -1105,6 +1260,8 @@ SceneBase *SceneViewWindow::constructDaVinciSceneObject(Window *viewWindow, cons
 		return new ClickPlayVideo(_vm, viewWindow, sceneStaticData, priorLocation, 4, kCursorFinger, 180, 122, 290, 189);
 	case 24:
 		return new ClickChangeScene(_vm, viewWindow, sceneStaticData, priorLocation, 186, 28, 292, 158, kCursorMagnifyingGlass, 5, 4, 4, 2, 1, 1, TRANSITION_VIDEO, 5, -1, -1);
+	case 25:
+		return new ClickChangeSceneTranslate(_vm, viewWindow, sceneStaticData, priorLocation, 0, 0, 432, 189, kCursorPutDown, 5, 4, 4, 2, 1, 0, TRANSITION_VIDEO, 6, -1, -1, 190, 88, 308, 160, IDDS_WORKSHOP_TOOLS_TEXT);
 	case 26:
 		return new ClickChangeScene(_vm, viewWindow, sceneStaticData, priorLocation, 0, 44, 232, 189, kCursorMagnifyingGlass, 5, 4, 4, 3, 0, 1, TRANSITION_VIDEO, 7, -1, -1);
 	case 27:
@@ -1145,6 +1302,8 @@ SceneBase *SceneViewWindow::constructDaVinciSceneObject(Window *viewWindow, cons
 		return new ClickChangeScene(_vm, viewWindow, sceneStaticData, priorLocation, 0, 0, 432, 189, kCursorPutDown, 5, 2, 0, 2, 1, 0, TRANSITION_VIDEO, 14, -1, -1);
 	case 55:
 		return new ClickChangeScene(_vm, viewWindow, sceneStaticData, priorLocation, 210, 0, 330, 110, kCursorMagnifyingGlass, 5, 2, 3, 4, 1, 1, TRANSITION_VIDEO, 15, -1, -1);
+	case 57:
+		return new CourtyardCannon(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 58:
 		return new ClickPlayVideoSwitch(_vm, viewWindow, sceneStaticData, priorLocation, 1, kCursorFinger, offsetof(GlobalFlags, dsCYWeebleClicked), 200, 88, 270, 189);
 	case 59:
@@ -1153,6 +1312,8 @@ SceneBase *SceneViewWindow::constructDaVinciSceneObject(Window *viewWindow, cons
 		return new ClickPlayVideo(_vm, viewWindow, sceneStaticData, priorLocation, 5, kCursorFinger, 42, 0, 418, 100);
 	case 61:
 		return new ClickPlayVideo(_vm, viewWindow, sceneStaticData, priorLocation, 3, kCursorFinger, 178, 144, 288, 189);
+	case 62:
+		return new CourtyardGunDeath(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 65:
 		return new BasicDoor(_vm, viewWindow, sceneStaticData, priorLocation, 122, 8, 326, 189, 5, 5, 0, 2, 1, 1, TRANSITION_WALK, 11, 738, 18);
 	case 66:
