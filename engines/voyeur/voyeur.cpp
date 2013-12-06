@@ -130,7 +130,7 @@ void VoyeurEngine::globalInitBolt() {
 	Common::fill((byte *)&_voy, (byte *)&_voy + sizeof(SVoy), 0);
 	_voy._eCursorOff[0x74 / 2] = 1;
 	_voy._eCursorOff[0x68 / 2] = 0;
-	_voy._eventTable[998]._data = NULL; // Original set 63h:63h
+	_voy._field4376 = NULL; // Original set 63h:63h
 	_voy._evidence[19] = 0;
 	_voy._evidence[17] = 0;
 	_voy._evidence[18] = 9999;
@@ -253,8 +253,8 @@ bool VoyeurEngine::doLock() {
 		lock.getSysDate();
 		lock.getThePassword();
 		
-		_voy._eventTable[999]._type = lock.fieldC;
-		_voy._eventTable[999]._data = _bVoy->memberAddr(0x704);
+		_voy._field4380 = lock.fieldC;
+		_voy._field4386 = _bVoy->memberAddr(0x704);
 
 		Common::String password = lock._password;
 		cursorPic = _bVoy->getPictureResource(0x702);
@@ -411,7 +411,7 @@ bool VoyeurEngine::doLock() {
 			lock._password = displayString;
 		lock.saveThePassword();
 
-		_voy._eventTable[999]._data = NULL;
+		_voy._field4386 = NULL;
 		_bVoy->freeBoltGroup(0x10700);
 	}
 
@@ -479,15 +479,17 @@ void VoyeurEngine::doOpening() {
 	byte *whTable = _bVoy->memberAddr(0x217);
 	int frmaeIndex = 0;
 	int creditShow = 1;
-	_v2A098 = 1;
+
 	_voy._eCursorOff[52] = 0;
 	_voy._RTVNum = 0;
 	_voy._eCursorOff[50] = _voy._RTVNum;
-	_v2A0A6 = 4;
-	_v2A0A4 = 0;
 	_voy._eCursorOff[58] = 16;
-	_v2A09A = -1;
+	_eventsManager._videoComputerNum = 4;
+	_eventsManager._videoComputerBut1  = 0;
+	_eventsManager._videoComputerBut4 = 1;
+	_eventsManager._videoDead = -1;
 	addVideoEventStart();
+
 	_voy._eCursorOff[58] &= ~1;
 
 	for (int i = 0; i < 256; ++i)

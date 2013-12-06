@@ -66,10 +66,6 @@ private:
 	Common::Array<int> _resolves;
 	FontInfoResource _defaultFontInfo;
 	int _iForceDeath;
-	int _v2A098;
-	int _v2A0A6;
-	int _v2A0A4;
-	int _v2A09A;
 
 	void ESP_Init();
 	void initialiseManagers();

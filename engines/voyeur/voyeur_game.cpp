@@ -25,9 +25,14 @@
 namespace Voyeur {
 
 void VoyeurEngine::addVideoEventStart() {
-	
+	VoyeurEvent &e = _voy._events[_voy._evidence[19]];
+	e._computerNum = _eventsManager._videoComputerNum;
+	e._computerBut[0] = _eventsManager._videoComputerBut1;
+	e._computerBut[1] = _voy._delaySecs;
+	e._computerBut[2] = 1;
+	e._computerBut[3] = _eventsManager._videoComputerBut4;
+	e._dead = _eventsManager._videoDead;
 }
-
 
 void VoyeurEngine::playStamp() {
 

@@ -50,15 +50,13 @@ public:
 	IntNode(uint16 curTime, uint16 timeReset, uint16 flags);
 };
 
-class Event {
+class VoyeurEvent {
 public:
-	int _hours;
-	int _minutes;
-	int _seconds;
-	int _type;
-	int _data1;
-	int _data2;
-	byte *_data;
+	int _computerNum;
+	int _computerBut[4];
+	int _computerOn;
+	int _computerOff;
+	int _dead;
 };
 
 class SVoy {
@@ -98,14 +96,16 @@ public:
 	int _phones[5];
 	int _numPhonesUsed;
 	int _evidence[20];
-	int _computerNum;
-	int _computerBut;
-	int _computerOn;
-	int _computerOff;
-	int _dead;
-	int _deadTime;
-	int _eventCnt;
-	Event _eventTable[1000];
+	VoyeurEvent _events[1000];
+	int _field4376;
+	int _field4378;
+	int _field437A;
+	int _field437C;
+	int _field437E;
+	int _field4380;
+	int _field4382;
+	int _field4384;
+	byte *_field4386;
 	int _curICF0;
 	int _curICF1;
 	int _fadeICF0;
@@ -170,6 +170,11 @@ public:
 	int _fadeFirstCol, _fadeLastCol;
 	int _fadeCount;
 	int _fadeStatus;
+
+	int _videoComputerNum;
+	int _videoComputerBut1;
+	int _videoComputerBut4;
+	int _videoDead;
 public:
 	EventsManager();
 	void setVm(VoyeurEngine *vm) { _vm = vm; }

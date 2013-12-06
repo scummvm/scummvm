@@ -506,7 +506,7 @@ error("TODO: var22/var24/var2C not initialised before use?");
 					// loc_27481
 					destP = (byte *)_screenSurface.getPixels() + screenOffset;
 					for (int yp = 0; yp < height1; ++yp) {
-						Common::fill(srcP, srcP + width2, onOff);
+						Common::fill(destP, destP + width2, onOff);
 						destP += width2 + widthDiff2;
 					}
 				} else {

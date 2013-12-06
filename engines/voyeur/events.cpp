@@ -72,6 +72,11 @@ EventsManager::EventsManager(): _intPtr(_gameData),
 	_fadeStatus = 0;
 	_priorFrameTime = g_system->getMillis();
 	Common::fill(&_keyState[0], &_keyState[256], false);
+
+	_videoComputerNum = 0;
+	_videoComputerBut1 = 0;
+	_videoComputerBut4 = 0;
+	_videoDead = 0;
 }
 
 void EventsManager::resetMouse() {
