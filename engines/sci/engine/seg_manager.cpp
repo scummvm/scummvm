@@ -28,7 +28,8 @@
 namespace Sci {
 
 
-SegManager::SegManager(ResourceManager *resMan) {
+SegManager::SegManager(ResourceManager *resMan, ScriptPatcher *scriptPatcher)
+	: _resMan(resMan), _scriptPatcher(scriptPatcher) {
 	_heap.push_back(0);
 
 	_clonesSegId = 0;
@@ -43,8 +44,6 @@ SegManager::SegManager(ResourceManager *resMan) {
 	_arraysSegId = 0;
 	_stringSegId = 0;
 #endif
-
-	_resMan = resMan;
 
 	createClassTable();
 }
@@ -983,7 +982,7 @@ int SegManager::instantiateScript(int scriptNum) {
 		scr = allocateScript(scriptNum, &segmentId);
 	}
 
-	scr->load(scriptNum, _resMan);
+	scr->load(scriptNum, _resMan, _scriptPatcher);
 	scr->initializeLocals(this);
 	scr->initializeClasses(this);
 	scr->initializeObjects(this, segmentId);

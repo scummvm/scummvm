@@ -28,9 +28,9 @@
 
 #include "fullpipe/objects.h"
 #include "fullpipe/statics.h"
+#include "fullpipe/gameloader.h"
 #include "fullpipe/motion.h"
 #include "fullpipe/messages.h"
-#include "fullpipe/gameloader.h"
 
 namespace Fullpipe {
 
@@ -183,6 +183,28 @@ MessageQueue *MctlCompound::doWalkTo(StaticANIObject *subj, int xpos, int ypos, 
 	}
 
 	return mq;
+}
+
+MctlLadder::MctlLadder() {
+	_preload.preloadId1 = 0;
+	_preload.keyCode = 0;
+	_preload.sceneId = 0;
+	_preload.preloadId2 = 0;
+
+	_ladder_field_18 = 0;
+	_ladder_field_C = 0;
+	_ladder_field_1C = 0;
+	_ladder_field_10 = 0;
+	_ladder_field_14 = 0;
+
+	_ladder_field_20 = 0;
+	_ladder_field_24 = 0;
+}
+
+int MctlLadder::collisionDetection(StaticANIObject *man) {
+	warning("STUB: MctlLaddercollisionDetection()");
+
+	return 0;
 }
 
 MctlConnectionPoint *MctlCompound::findClosestConnectionPoint(int ox, int oy, int destIndex, int connectionX, int connectionY, int sourceIndex, int *minDistancePtr) {

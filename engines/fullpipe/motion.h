@@ -161,6 +161,23 @@ public:
 	MessageQueue *genMovement(MGMInfo *mgminfo);
 };
 
+class MctlLadder : public MotionController {
+public:
+	int _ladder_field_C;
+	int _ladder_field_10;
+	int _ladder_field_14;
+	int _ladder_field_18;
+	int _ladder_field_1C;
+	int _ladder_field_20;
+	int _ladder_field_24;
+	PreloadItem _preload;
+	MGM _mgm;
+
+public:
+	MctlLadder();
+	int collisionDetection(StaticANIObject *man);
+};
+
 class MovGraphNode : public CObject {
 public:
 	int _x;

@@ -319,7 +319,20 @@ void sceneHandler04_lowerPlank() {
 }
 
 void sceneHandler04_manFromBottle() {
-	warning("sceneHandler04_manFromBottle()");
+	for (Common::List<GameObject *>::iterator it = g_vars->scene04_bottleObjList.begin(); it != g_vars->scene04_bottleObjList.end(); ++it)
+		if (*it == g_fullpipe->_aniMan) {
+			g_vars->scene04_bottleObjList.erase(it);
+			g_vars->scene04_var06 -= 9;
+			break;
+		}
+
+	if (g_vars->scene04_ladder)
+		delete g_vars->scene04_ladder;
+
+	g_vars->scene04_ladder = 0;
+
+	getSc2MctlCompoundBySceneId(g_fullpipe->_currentScene->_sceneId)->setEnabled();
+	getGameLoaderInteractionController()->enableFlag24();
 }
 
 void sceneHandler04_manToBottle() {
@@ -433,24 +446,98 @@ void sceneHandler04_sub9(StaticANIObject *ani) {
 	warning("sceneHandler04_sub9()");
 }
 
-void sceneHandler04_sub15() {
-	warning("sceneHandler04_sub15()");
+void sceneHandler04_sub12() {
+	StaticANIObject *ball =  g_fullpipe->_currentScene->getStaticANIObject1ById(ANI_BIGBALL, -1);
+
+	if (ball && ball->_flags & 4)
+		for (uint i = 0; i < ball->_movements.size(); i++)
+			((Movement *)ball->_movements[i])->_counterMax = 0;
+
+	g_vars->scene04_var13 = 0;
+}
+
+void sceneHandler04_handTake() {
+	g_vars->scene04_clock->changeStatics2(ST_CLK_CLOSED);
+
+	if (g_vars->scene04_kozyawkiAni.size()) {
+		if (g_vars->scene04_kozyawkiAni.size() == 1) {
+			chainQueue(QU_HND_TAKE1, 0);
+			g_vars->scene04_var19 = 0;
+		} else {
+			chainQueue((g_vars->scene04_kozyawkiAni.size() != 2) ? QU_HND_TAKEBOTTLE : QU_HND_TAKE2, 0);
+			g_vars->scene04_var19 = 0;
+		}
+	} else {
+		chainQueue(QU_HND_TAKE0, 0);
+		g_vars->scene04_var19 = 0;
+	}
 }
 
 void sceneHandler04_sub17() {
-	warning("sceneHandler04_sub17()");
+	StaticANIObject *ball =  g_fullpipe->_currentScene->getStaticANIObject1ById(ANI_BIGBALL, -1);
+
+	if (g_vars->scene04_var01
+		 && (!ball || !(ball->_flags & 4))
+		 && g_vars->scene04_ladder->collisionDetection(g_fullpipe->_aniMan) > 3) {
+
+		if (!g_fullpipe->_rnd->getRandomNumber(49)) {
+			if (g_vars->scene04_var15)
+				chainQueue(QU_BALL_WALKR, 0);
+			else
+				chainQueue(QU_BALL_WALKL, 0);
+
+			g_vars->scene04_var15 = !g_vars->scene04_var15;
+
+			sceneHandler04_checkBigBallClick();
+
+			g_vars->scene04_var14 = 0;
+		}
+	}
 }
 
 void sceneHandler04_takeBottle() {
-	warning("sceneHandler04_takeBottle()");
+	g_vars->scene04_var02 = 1;
+	g_vars->scene04_hand->_priority = 5;
+
+	g_fullpipe->setObjectState(sO_LowerPipe, g_fullpipe->getObjectEnumState(sO_LowerPipe, sO_IsOpened));
 }
 
 void sceneHandler04_takeKozyawka() {
-	warning("sceneHandler04_takeKozyawka()");
+	if (g_vars->scene04_kozyawkiAni.size() > 0) {
+		if (g_vars->scene04_kozyawkiAni.size() == 1) 
+			g_vars->scene04_var19 = 1;
+
+		StaticANIObject *koz = g_vars->scene04_kozyawkiAni.front();
+		g_vars->scene04_kozyawkiAni.pop_front();
+
+		if (koz) {
+			koz->queueMessageQueue(0);
+			koz->hide();
+
+			g_vars->scene04_kozyawkiObjList.push_back(koz);
+
+			for (Common::List<GameObject *>::iterator it = g_vars->scene04_bottleObjList.begin(); it != g_vars->scene04_bottleObjList.end(); ++it)
+				if (*it == koz) {
+					g_vars->scene04_bottleObjList.erase(it);
+					break;
+				}
+
+			g_vars->scene04_var06 -= 2;
+		}
+	}
 }
 
 void sceneHandler04_testPlank(ExCommand *ex) {
-	warning("sceneHandler04_testPlank()");
+	MessageQueue *mq = g_fullpipe->_globalMessageQueueList->getMessageQueueById(ex->_parId);
+
+	if (!mq)
+		return;
+
+	if (g_vars->scene04_plank->_movement || !g_vars->scene04_plank->_statics || g_vars->scene04_plank->_statics->_staticsId != ST_PNK_WEIGHTLEFT) {
+		mq->getExCommandByIndex(0)->_messageNum = MV_KZW_TOHOLERV;
+	} else {
+		mq->getExCommandByIndex(0)->_messageNum = MV_KZW_WALKPLANK;
+	}
 }
 
 void sceneHandler04_updateBottle() {
@@ -526,7 +613,7 @@ int sceneHandler04(ExCommand *ex) {
 		if (g_vars->scene04_var10)
 			sceneHandler04_sub1(0);
 
-		sceneHandler04_sub15();
+		sceneHandler04_handTake();
 		sceneHandler04_stopSound();
 		break;
 
@@ -719,7 +806,7 @@ int sceneHandler04(ExCommand *ex) {
 			if (g_vars->scene04_var10)
 				sceneHandler04_sub1(0);
 
-			sceneHandler04_sub15();
+			sceneHandler04_handTake();
 		}
 
 		break;

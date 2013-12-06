@@ -55,6 +55,7 @@ class AudioPlayer;
 class SoundCommandParser;
 class EventManager;
 class SegManager;
+class ScriptPatcher;
 
 class GfxAnimate;
 class GfxCache;
@@ -269,6 +270,7 @@ public:
 	bool hasMacIconBar() const;
 
 	inline ResourceManager *getResMan() const { return _resMan; }
+	inline ScriptPatcher *getScriptPatcher() const { return _scriptPatcher; }
 	inline Kernel *getKernel() const { return _kernel; }
 	inline EngineState *getEngineState() const { return _gamestate; }
 	inline Vocabulary *getVocabulary() const { return _vocabulary; }
@@ -400,6 +402,7 @@ private:
 	const ADGameDescription *_gameDescription;
 	const SciGameId _gameId;
 	ResourceManager *_resMan; /**< The resource manager */
+	ScriptPatcher *_scriptPatcher; /**< The script patcher */
 	EngineState *_gamestate;
 	Kernel *_kernel;
 	Vocabulary *_vocabulary;

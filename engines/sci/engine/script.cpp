@@ -32,7 +32,8 @@
 
 namespace Sci {
 
-Script::Script() : SegmentObj(SEG_TYPE_SCRIPT), _buf(NULL) {
+Script::Script()
+	: SegmentObj(SEG_TYPE_SCRIPT), _buf(NULL) {
 	freeScript();
 }
 
@@ -65,7 +66,7 @@ void Script::freeScript() {
 	_objects.clear();
 }
 
-void Script::load(int script_nr, ResourceManager *resMan) {
+void Script::load(int script_nr, ResourceManager *resMan, ScriptPatcher *scriptPatcher) {
 	freeScript();
 
 	Resource *script = resMan->findResource(ResourceId(kResourceTypeScript, script_nr), 0);
@@ -136,7 +137,7 @@ void Script::load(int script_nr, ResourceManager *resMan) {
 	memcpy(_buf, script->data, script->size);
 
 	// Check scripts for matching signatures and patch those, if found
-	patcherProcessScript(_nr, _buf, script->size);
+	scriptPatcher->processScript(_nr, _buf, script->size);
 
 	if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1) {
 		Resource *heap = resMan->findResource(ResourceId(kResourceTypeHeap, _nr), 0);

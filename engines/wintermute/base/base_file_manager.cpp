@@ -246,8 +246,13 @@ bool BaseFileManager::registerPackages() {
 				// Italian
 				} else if (_language == Common::IT_ITA && (fileName != "italian.dcp" && fileName != "xlanguage_it.dcp")) {
 					continue;
+				// Latvian
+				} else if (_language == Common::LV_LAT && (fileName != "latvian.dcp" && fileName != "xlanguage_lv.dcp")) {
+					// TODO: 'latvian.dcp' is just guesswork. Is there any
+					// game using Latvian and using this filename?
+					continue;
 				// Polish
-				} else if (_language == Common::PL_POL && (fileName != "polish.dcp" && fileName != "xlanguage_po.dcp")) {
+				} else if (_language == Common::PL_POL && (fileName != "polish.dcp" && fileName != "xlanguage_pl.dcp")) {
 					continue;
 				// Portuguese
 				} else if (_language == Common::PT_BRA && (fileName != "portuguese.dcp" && fileName != "xlanguage_pt.dcp")) {

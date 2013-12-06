@@ -25,6 +25,7 @@
 #include "sci/engine/script.h"
 #include "sci/engine/state.h"
 #include "sci/engine/features.h"
+#include "sci/engine/script_patches.h"
 
 #include "common/util.h"
 
@@ -76,72 +77,27 @@ namespace Sci {
 //        You have to use the exact same order in both the table and the enum, otherwise
 //        it won't work.
 
-#define SIG_END               0xFFFF
-#define SIG_MISMATCH          0xFFFE
-#define SIG_COMMANDMASK       0xF000
-#define SIG_VALUEMASK         0x0FFF
-#define SIG_BYTEMASK          0x00FF
-#define SIG_MAGICDWORD        0xF000
-#define SIG_ADDTOOFFSET       0xE000
-#define SIG_SELECTOR16        0x9000
-#define SIG_SELECTOR8         0x8000
-#define SIG_UINT16            0x1000
-#define SIG_BYTE              0x0000
-
-#define PATCH_END                   SIG_END
-#define PATCH_COMMANDMASK           SIG_COMMANDMASK
-#define PATCH_VALUEMASK             SIG_VALUEMASK
-#define PATCH_BYTEMASK              SIG_BYTEMASK
-#define PATCH_ADDTOOFFSET           SIG_ADDTOOFFSET
-#define PATCH_GETORIGINALBYTE       0xD000
-#define PATCH_GETORIGINALBYTEADJUST 0xC000
-#define PATCH_SELECTOR16            SIG_SELECTOR16
-#define PATCH_SELECTOR8             SIG_SELECTOR8
-#define PATCH_UINT16                SIG_UINT16
-#define PATCH_BYTE                  SIG_BYTE
-
-// defines maximum scratch area for getting original bytes from unpatched script data
-#define PATCH_VALUELIMIT      4096
-
-struct SciScriptPatcherEntry {
-	bool active;
-	uint16 scriptNr;
-	const char *description;
-	int16 applyCount;
-	uint32 magicDWord;
-	int magicOffset;
-	const uint16 *signatureData;
-	const uint16 *patchData;
-};
-
-#define SCI_SIGNATUREENTRY_TERMINATOR { false, 0, NULL, 0, 0, 0, NULL, NULL }
-
-struct SciScriptPatcherSelector {
-	const char *name;
-	int16 id;
-};
-
-SciScriptPatcherSelector selectorTable[] = {
-	{ "cycles",            -1, }, // system selector
-	{ "seconds",           -1, }, // system selector
-	{ "init",              -1, }, // system selector
-	{ "dispose",           -1, }, // system selector
-	{ "new",               -1, }, // system selector
-	{ "curEvent",          -1, }, // system selector
-	{ "disable",           -1, }, // system selector
-	{ "show",              -1, }, // system selector
-	{ "x",                 -1, }, // system selector
-	{ "cel",               -1, }, // system selector
-	{ "setMotion",         -1, }, // system selector
-	{ "deskSarg",          -1, }, // Gabriel Knight
-	{ "localize",          -1, }, // Freddy Pharkas
-	{ "put",               -1, }, // Police Quest 1 VGA
-	{ "solvePuzzle",       -1, }, // Quest For Glory 3
-	{ "timesShownID",      -1, }, // Space Quest 1 VGA
-	{ "startText",         -1, }, // King's Quest 6 CD / Laura Bow 2 CD for audio+text support
-	{ "startAudio",        -1, }, // King's Quest 6 CD / Laura Bow 2 CD for audio+text support
-	{ "modNum",            -1, }, // King's Quest 6 CD / Laura Bow 2 CD for audio+text support
-	{ NULL,                -1 }
+static const char *selectorNameTable[] = {
+	"cycles",       // system selector
+	"seconds",      // system selector
+	"init",         // system selector
+	"dispose",      // system selector
+	"new",          // system selector
+	"curEvent",     // system selector
+	"disable",      // system selector
+	"show",         // system selector
+	"x",            // system selector
+	"cel",          // system selector
+	"setMotion",    // system selector
+	"deskSarg",     // Gabriel Knight
+	"localize",     // Freddy Pharkas
+	"put",          // Police Quest 1 VGA
+	"solvePuzzle",  // Quest For Glory 3
+	"timesShownID", // Space Quest 1 VGA
+	"startText",    // King's Quest 6 CD / Laura Bow 2 CD for audio+text support
+	"startAudio",   // King's Quest 6 CD / Laura Bow 2 CD for audio+text support
+	"modNum",       // King's Quest 6 CD / Laura Bow 2 CD for audio+text support
+	NULL
 };
 
 enum ScriptPatcherSelectors {
@@ -209,9 +165,9 @@ const uint16 camelotPatchPeepingTom[] = {
 	PATCH_END
 };
 
-//         script, description,                                            signature                   patch
+//         script, description,                                       signature                   patch
 SciScriptPatcherEntry camelotSignatures[] = {
-	{  true,   62, "fix peepingTom Sierra bug",                    1, 0, 0, camelotSignaturePeepingTom, camelotPatchPeepingTom },
+	{ true,    62, "fix peepingTom Sierra bug",                    1, camelotSignaturePeepingTom, camelotPatchPeepingTom },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -278,9 +234,9 @@ const uint16 ecoquest1PatchStayAndHelp[] = {
 	PATCH_END
 };
 
-//          script, description,                                            signature                      patch
+//          script, description,                                      signature                      patch
 SciScriptPatcherEntry ecoquest1Signatures[] = {
-	{  true,   660, "CD: bad messagebox and freeze",               1, 0, 0, ecoquest1SignatureStayAndHelp, ecoquest1PatchStayAndHelp },
+	{  true,   660, "CD: bad messagebox and freeze",               1, ecoquest1SignatureStayAndHelp, ecoquest1PatchStayAndHelp },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -403,10 +359,10 @@ const uint16 ecoquest2PatchEcorderTutorial[] = {
 	PATCH_END
 };
 
-//          script, description,                                            signature                          patch
+//          script, description,                                      signature                          patch
 SciScriptPatcherEntry ecoquest2Signatures[] = {
-	{  true,    50, "initial text not removed on ecorder",         1, 0, 0, ecoquest2SignatureEcorder,         ecoquest2PatchEcorder },
-	{  true,   333, "initial text not removed on ecorder tutorial",1, 0, 0, ecoquest2SignatureEcorderTutorial, ecoquest2PatchEcorderTutorial },
+	{  true,    50, "initial text not removed on ecorder",         1, ecoquest2SignatureEcorder,         ecoquest2PatchEcorder },
+	{  true,   333, "initial text not removed on ecorder tutorial",1, ecoquest2SignatureEcorderTutorial, ecoquest2PatchEcorderTutorial },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -433,9 +389,9 @@ const uint16 fanmadePatchInfiniteLoop[] = {
 	PATCH_END
 };
 
-//          script, description,                                            signature                     patch
+//          script, description,                                      signature                     patch
 SciScriptPatcherEntry fanmadeSignatures[] = {
-	{  true,   999, "infinite loop on typo",                       1, 0, 0, fanmadeSignatureInfiniteLoop, fanmadePatchInfiniteLoop },
+	{  true,   999, "infinite loop on typo",                       1, fanmadeSignatureInfiniteLoop, fanmadePatchInfiniteLoop },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -556,10 +512,10 @@ const uint16 freddypharkasPatchMacInventory[] = {
 
 //          script, description,                                            signature                            patch
 SciScriptPatcherEntry freddypharkasSignatures[] = {
-	{  true,     0, "CD: score early disposal",                    1, 0, 0, freddypharkasSignatureScoreDisposal, freddypharkasPatchScoreDisposal },
-	{  true,    15, "Mac: broken inventory",                       1, 0, 0, freddypharkasSignatureMacInventory,  freddypharkasPatchMacInventory },
-	{  true,   235, "CD: canister pickup hang",                    3, 0, 0, freddypharkasSignatureCanisterHang,  freddypharkasPatchCanisterHang },
-	{  true,   320, "ladder event issue",                          2, 0, 0, freddypharkasSignatureLadderEvent,   freddypharkasPatchLadderEvent },
+	{  true,     0, "CD: score early disposal",                    1, freddypharkasSignatureScoreDisposal, freddypharkasPatchScoreDisposal },
+	{  true,    15, "Mac: broken inventory",                       1, freddypharkasSignatureMacInventory,  freddypharkasPatchMacInventory },
+	{  true,   235, "CD: canister pickup hang",                    3, freddypharkasSignatureCanisterHang,  freddypharkasPatchCanisterHang },
+	{  true,   320, "ladder event issue",                          2, freddypharkasSignatureLadderEvent,   freddypharkasPatchLadderEvent },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -697,10 +653,10 @@ const uint16 gk1PatchInterrogationBug[] = {
 
 //          script, description,                                            signature                     patch
 SciScriptPatcherEntry gk1Signatures[] = {
-	{  true,    51, "interrogation bug",                           1, 0, 0, gk1SignatureInterrogationBug, gk1PatchInterrogationBug },
-	{  true,   212, "day 5 phone freeze",                          1, 0, 0, gk1SignatureDay5PhoneFreeze, gk1PatchDay5PhoneFreeze },
-	{  true,   230, "day 6 police beignet timer issue",            1, 0, 0, gk1SignatureDay6PoliceBeignet, gk1PatchDay6PoliceBeignet },
-	{  true,   230, "day 6 police sleep timer issue",              1, 0, 0, gk1SignatureDay6PoliceSleep, gk1PatchDay6PoliceSleep },
+	{  true,    51, "interrogation bug",                           1, gk1SignatureInterrogationBug, gk1PatchInterrogationBug },
+	{  true,   212, "day 5 phone freeze",                          1, gk1SignatureDay5PhoneFreeze, gk1PatchDay5PhoneFreeze },
+	{  true,   230, "day 6 police beignet timer issue",            1, gk1SignatureDay6PoliceBeignet, gk1PatchDay6PoliceBeignet },
+	{  true,   230, "day 6 police sleep timer issue",              1, gk1SignatureDay6PoliceSleep, gk1PatchDay6PoliceSleep },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -821,9 +777,9 @@ const uint16 kq5PatchWinGMSignals[] = {
 
 //          script, description,                                            signature                  patch
 SciScriptPatcherEntry kq5Signatures[] = {
-	{  true,     0, "CD: harpy volume change",                     1, 0, 0, kq5SignatureCdHarpyVolume, kq5PatchCdHarpyVolume },
-	{  true,   200, "CD: witch cage init",                         1, 0, 0, kq5SignatureWitchCageInit, kq5PatchWitchCageInit },
-	{ false,   124, "Win: GM Music signal checks",                 4, 0, 0, kq5SignatureWinGMSignals, kq5PatchWinGMSignals },
+	{  true,     0, "CD: harpy volume change",                     1, kq5SignatureCdHarpyVolume, kq5PatchCdHarpyVolume },
+	{  true,   200, "CD: witch cage init",                         1, kq5SignatureWitchCageInit, kq5PatchWitchCageInit },
+	{ false,   124, "Win: GM Music signal checks",                 4, kq5SignatureWinGMSignals, kq5PatchWinGMSignals },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -1019,19 +975,19 @@ const uint16 kq6laurabow2CDPatchAudioTextSupport5[] = {
 	PATCH_END
 };
 
-//          script, description,                                            signature                     patch
+//          script, description,                                      signature                     patch
 SciScriptPatcherEntry kq6Signatures[] = {
-	{  true,   481, "duplicate baby cry",                          1, 0, 0, kq6SignatureDuplicateBabyCry, kq6PatchDuplicateBabyCry },
-	{  true,   907, "inventory stack fix",                         1, 0, 0, kq6SignatureInventoryStackFix, kq6PatchInventoryStackFix },
+	{  true,   481, "duplicate baby cry",                          1, kq6SignatureDuplicateBabyCry, kq6PatchDuplicateBabyCry },
+	{  true,   907, "inventory stack fix",                         1, kq6SignatureInventoryStackFix, kq6PatchInventoryStackFix },
 	// King's Quest 6 and Laura Bow 2 share basic patches for audio + text support
 	// *** King's Quest 6 audio + text support - CURRENTLY DISABLED ***
 	//  TODO: fix window placement (currently part of the text windows go off-screen)
 	//  TODO: fix hi-res portraits mode graphic glitches
-	{ false,   924, "CD: audio + text support 1",                  1, 0, 0, kq6laurabow2CDSignatureAudioTextSupport1, kq6laurabow2CDPatchAudioTextSupport1 },
-	{ false,   924, "CD: audio + text support 2",                  1, 0, 0, kq6laurabow2CDSignatureAudioTextSupport2, kq6laurabow2CDPatchAudioTextSupport2 },
-	{ false,   924, "CD: audio + text support 3",                  1, 0, 0, kq6laurabow2CDSignatureAudioTextSupport3, kq6laurabow2CDPatchAudioTextSupport3 },
-	{ false,   928, "CD: audio + text support 4",                  1, 0, 0, kq6laurabow2CDSignatureAudioTextSupport4, kq6laurabow2CDPatchAudioTextSupport4 },
-	{ false,   928, "CD: audio + text support 5",                  2, 0, 0, kq6laurabow2CDSignatureAudioTextSupport5, kq6laurabow2CDPatchAudioTextSupport5 },
+	{ false,   924, "CD: audio + text support 1",                  1, kq6laurabow2CDSignatureAudioTextSupport1, kq6laurabow2CDPatchAudioTextSupport1 },
+	{ false,   924, "CD: audio + text support 2",                  1, kq6laurabow2CDSignatureAudioTextSupport2, kq6laurabow2CDPatchAudioTextSupport2 },
+	{ false,   924, "CD: audio + text support 3",                  1, kq6laurabow2CDSignatureAudioTextSupport3, kq6laurabow2CDPatchAudioTextSupport3 },
+	{ false,   928, "CD: audio + text support 4",                  1, kq6laurabow2CDSignatureAudioTextSupport4, kq6laurabow2CDPatchAudioTextSupport4 },
+	{ false,   928, "CD: audio + text support 5",                  2, kq6laurabow2CDSignatureAudioTextSupport5, kq6laurabow2CDPatchAudioTextSupport5 },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -1075,9 +1031,9 @@ const uint16 longbowPatchShowHandCode[] = {
 	PATCH_END
 };
 
-//          script, description,                                            signature                     patch
+//          script, description,                                      signature                     patch
 SciScriptPatcherEntry longbowSignatures[] = {
-	{  true,   210, "hand code crash",                             5, 0, 0, longbowSignatureShowHandCode, longbowPatchShowHandCode },
+	{  true,   210, "hand code crash",                             5, longbowSignatureShowHandCode, longbowPatchShowHandCode },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -1119,7 +1075,7 @@ const uint16 larry2PatchWearParachutePoints[] = {
 
 //          script, description,                                            signature                           patch
 SciScriptPatcherEntry larry2Signatures[] = {
-	{  true,    63, "plane: no points for wearing plane",          1, 0, 0, larry2SignatureWearParachutePoints, larry2PatchWearParachutePoints },
+	{  true,    63, "plane: no points for wearing plane",          1, larry2SignatureWearParachutePoints, larry2PatchWearParachutePoints },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -1148,7 +1104,7 @@ const uint16 larry5PatchGermanEndingPattiTalker[] = {
 
 //          script, description,                                            signature                               patch
 SciScriptPatcherEntry larry5Signatures[] = {
-	{  true,   380, "German-only: Enlarge Patti Textbox",          1, 0, 0, larry5SignatureGermanEndingPattiTalker, larry5PatchGermanEndingPattiTalker },
+	{  true,   380, "German-only: Enlarge Patti Textbox",          1, larry5SignatureGermanEndingPattiTalker, larry5PatchGermanEndingPattiTalker },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -1199,7 +1155,7 @@ const uint16 larry6PatchDeathDialog[] = {
 
 //          script, description,                                            signature                   patch
 SciScriptPatcherEntry larry6Signatures[] = {
-	{  true,    82, "death dialog memory corruption",              1, 0, 0, larry6SignatureDeathDialog, larry6PatchDeathDialog },
+	{  true,    82, "death dialog memory corruption",              1, larry6SignatureDeathDialog, larry6PatchDeathDialog },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -1323,14 +1279,14 @@ const uint16 laurabow2CDPatchFixProblematicIconBar[] = {
 
 //          script, description,                                            signature                                  patch
 SciScriptPatcherEntry laurabow2Signatures[] = {
-	{  true,   560, "CD: painting closing immediately",            1, 0, 0, laurabow2CDSignaturePaintingClosing,       laurabow2CDPatchPaintingClosing },
-	{  true,     0, "CD: fix problematic icon bar",                1, 0, 0, laurabow2CDSignatureFixProblematicIconBar, laurabow2CDPatchFixProblematicIconBar },
+	{  true,   560, "CD: painting closing immediately",            1, laurabow2CDSignaturePaintingClosing,       laurabow2CDPatchPaintingClosing },
+	{  true,     0, "CD: fix problematic icon bar",                1, laurabow2CDSignatureFixProblematicIconBar, laurabow2CDPatchFixProblematicIconBar },
 	// King's Quest 6 and Laura Bow 2 share basic patches for audio + text support
-	{ false,   924, "CD: audio + text support 1",                  1, 0, 0, kq6laurabow2CDSignatureAudioTextSupport1,  kq6laurabow2CDPatchAudioTextSupport1 },
-	{ false,   924, "CD: audio + text support 2",                  1, 0, 0, kq6laurabow2CDSignatureAudioTextSupport2,  kq6laurabow2CDPatchAudioTextSupport2 },
-	{ false,   924, "CD: audio + text support 3",                  1, 0, 0, kq6laurabow2CDSignatureAudioTextSupport3,  kq6laurabow2CDPatchAudioTextSupport3 },
-	{ false,   928, "CD: audio + text support 4",                  1, 0, 0, kq6laurabow2CDSignatureAudioTextSupport4,  kq6laurabow2CDPatchAudioTextSupport4 },
-	{ false,   928, "CD: audio + text support 5",                  2, 0, 0, kq6laurabow2CDSignatureAudioTextSupport5,  kq6laurabow2CDPatchAudioTextSupport5 },
+	{ false,   924, "CD: audio + text support 1",                  1, kq6laurabow2CDSignatureAudioTextSupport1,  kq6laurabow2CDPatchAudioTextSupport1 },
+	{ false,   924, "CD: audio + text support 2",                  1, kq6laurabow2CDSignatureAudioTextSupport2,  kq6laurabow2CDPatchAudioTextSupport2 },
+	{ false,   924, "CD: audio + text support 3",                  1, kq6laurabow2CDSignatureAudioTextSupport3,  kq6laurabow2CDPatchAudioTextSupport3 },
+	{ false,   928, "CD: audio + text support 4",                  1, kq6laurabow2CDSignatureAudioTextSupport4,  kq6laurabow2CDPatchAudioTextSupport4 },
+	{ false,   928, "CD: audio + text support 5",                  2, kq6laurabow2CDSignatureAudioTextSupport5,  kq6laurabow2CDPatchAudioTextSupport5 },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -1370,9 +1326,9 @@ const uint16 mothergoose256PatchSaveLimit[] = {
 
 //          script, description,                                            signature                         patch
 SciScriptPatcherEntry mothergoose256Signatures[] = {
-	{  true,     0, "replay save issue",                           1, 0, 0, mothergoose256SignatureReplay,    mothergoose256PatchReplay },
-	{  true,     0, "save limit dialog (SCI1.1)",                  1, 0, 0, mothergoose256SignatureSaveLimit, mothergoose256PatchSaveLimit },
-	{  true,   994, "save limit dialog (SCI1)",                    1, 0, 0, mothergoose256SignatureSaveLimit, mothergoose256PatchSaveLimit },
+	{  true,     0, "replay save issue",                           1, mothergoose256SignatureReplay,    mothergoose256PatchReplay },
+	{  true,     0, "save limit dialog (SCI1.1)",                  1, mothergoose256SignatureSaveLimit, mothergoose256PatchSaveLimit },
+	{  true,   994, "save limit dialog (SCI1)",                    1, mothergoose256SignatureSaveLimit, mothergoose256PatchSaveLimit },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -1435,7 +1391,7 @@ const uint16 pq1vgaPatchPutGunInLockerBug[] = {
 
 //          script, description,                                            signature                         patch
 SciScriptPatcherEntry pq1vgaSignatures[] = {
-	{  true,   341, "put gun in locker bug",                       1, 0, 0, pq1vgaSignaturePutGunInLockerBug, pq1vgaPatchPutGunInLockerBug },
+	{  true,   341, "put gun in locker bug",                       1, pq1vgaSignaturePutGunInLockerBug, pq1vgaPatchPutGunInLockerBug },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -1633,14 +1589,14 @@ const uint16 qfg1vgaPatchFunnyRoomFix[] = {
 
 //          script, description,                                            signature                            patch
 SciScriptPatcherEntry qfg1vgaSignatures[] = {
-	{  true,   215, "fight event issue",                           1, 0, 0, qfg1vgaSignatureFightEvents,         qfg1vgaPatchFightEvents },
-	{  true,   216, "weapon master event issue",                   1, 0, 0, qfg1vgaSignatureFightEvents,         qfg1vgaPatchFightEvents },
-	{  true,   814, "window text temp space",                      1, 0, 0, qfg1vgaSignatureTempSpace,           qfg1vgaPatchTempSpace },
-	{  true,   814, "dialog header offset",                        3, 0, 0, qfg1vgaSignatureDialogHeader,        qfg1vgaPatchDialogHeader },
-	{  true,   331, "moving to crusher",                           1, 0, 0, qfg1vgaSignatureMoveToCrusher,       qfg1vgaPatchMoveToCrusher },
-	{  true,    41, "moving to castle gate",                       1, 0, 0, qfg1vgaSignatureMoveToCastleGate,    qfg1vgaPatchMoveToCastleGate },
-	{  true,   210, "cheetaur description fixed",                  1, 0, 0, qfg1vgaSignatureCheetaurDescription, qfg1vgaPatchCheetaurDescription },
-	{  true,    96, "funny room script bug fixed",                 1, 0, 0, qfg1vgaSignatureFunnyRoomFix,        qfg1vgaPatchFunnyRoomFix },
+	{  true,   215, "fight event issue",                           1, qfg1vgaSignatureFightEvents,         qfg1vgaPatchFightEvents },
+	{  true,   216, "weapon master event issue",                   1, qfg1vgaSignatureFightEvents,         qfg1vgaPatchFightEvents },
+	{  true,   814, "window text temp space",                      1, qfg1vgaSignatureTempSpace,           qfg1vgaPatchTempSpace },
+	{  true,   814, "dialog header offset",                        3, qfg1vgaSignatureDialogHeader,        qfg1vgaPatchDialogHeader },
+	{  true,   331, "moving to crusher",                           1, qfg1vgaSignatureMoveToCrusher,       qfg1vgaPatchMoveToCrusher },
+	{  true,    41, "moving to castle gate",                       1, qfg1vgaSignatureMoveToCastleGate,    qfg1vgaPatchMoveToCastleGate },
+	{  true,   210, "cheetaur description fixed",                  1, qfg1vgaSignatureCheetaurDescription, qfg1vgaPatchCheetaurDescription },
+	{  true,    96, "funny room script bug fixed",                 1, qfg1vgaSignatureFunnyRoomFix,        qfg1vgaPatchFunnyRoomFix },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -1678,7 +1634,7 @@ const uint16 qfg2PatchImportDialog[] = {
 
 //          script, description,                                            signature                  patch
 SciScriptPatcherEntry qfg2Signatures[] = {
-	{  true,   944, "import dialog continuous calls",              1, 0, 0, qfg2SignatureImportDialog, qfg2PatchImportDialog },
+	{  true,   944, "import dialog continuous calls",              1, qfg2SignatureImportDialog, qfg2PatchImportDialog },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -1749,8 +1705,8 @@ const uint16 qfg3PatchWooDialog[] = {
 
 //          script, description,                                            signature                  patch
 SciScriptPatcherEntry qfg3Signatures[] = {
-	{  true,   944, "import dialog continuous calls",              1, 0, 0, qfg3SignatureImportDialog, qfg3PatchImportDialog },
-	{  true,   440, "dialog crash when asking about Woo",          1, 0, 0, qfg3SignatureWooDialog,    qfg3PatchWooDialog },
+	{  true,   944, "import dialog continuous calls",              1, qfg3SignatureImportDialog, qfg3PatchImportDialog },
+	{  true,   440, "dialog crash when asking about Woo",          1, qfg3SignatureWooDialog,    qfg3PatchWooDialog },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -1870,10 +1826,10 @@ const uint16 sq4CdPatchTextOptions[] = {
 
 //          script, description,                                            signature                        patch
 SciScriptPatcherEntry sq4Signatures[] = {
-	{  true,   298, "Floppy: endless flight",                      1, 0, 0, sq4FloppySignatureEndlessFlight, sq4FloppyPatchEndlessFlight },
-	{  true,   818, "CD: Speech and subtitles option",             1, 0, 0, sq4CdSignatureTextOptions,       sq4CdPatchTextOptions },
-	{  true,     0, "CD: Babble icon speech and subtitles fix",    1, 0, 0, sq4CdSignatureBabbleIcon,        sq4CdPatchBabbleIcon },
-	{  true,   818, "CD: Speech and subtitles option button",      1, 0, 0, sq4CdSignatureTextOptionsButton, sq4CdPatchTextOptionsButton },
+	{  true,   298, "Floppy: endless flight",                      1, sq4FloppySignatureEndlessFlight, sq4FloppyPatchEndlessFlight },
+	{  true,   818, "CD: Speech and subtitles option",             1, sq4CdSignatureTextOptions,       sq4CdPatchTextOptions },
+	{  true,     0, "CD: Babble icon speech and subtitles fix",    1, sq4CdSignatureBabbleIcon,        sq4CdPatchBabbleIcon },
+	{  true,   818, "CD: Speech and subtitles option button",      1, sq4CdSignatureTextOptionsButton, sq4CdPatchTextOptionsButton },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -1947,8 +1903,8 @@ const uint16 sq1vgaPatchEgoShowsCard[] = {
 
 //          script, description,                                            signature                                   patch
 SciScriptPatcherEntry sq1vgaSignatures[] = {
-	{  true,    45, "Ulence Flats: timepod graphic glitch",        1, 0, 0, sq1vgaSignatureUlenceFlatsTimepodGfxGlitch, sq1vgaPatchUlenceFlatsTimepodGfxGlitch },
-	{  true,    58, "Sarien armory droid zapping ego first time",  1, 0, 0, sq1vgaSignatureEgoShowsCard,                sq1vgaPatchEgoShowsCard },
+	{  true,    45, "Ulence Flats: timepod graphic glitch",        1, sq1vgaSignatureUlenceFlatsTimepodGfxGlitch, sq1vgaPatchUlenceFlatsTimepodGfxGlitch },
+	{  true,    58, "Sarien armory droid zapping ego first time",  1, sq1vgaSignatureEgoShowsCard,                sq1vgaPatchEgoShowsCard },
 	SCI_SIGNATUREENTRY_TERMINATOR};
 
 // ===========================================================================
@@ -2005,13 +1961,31 @@ const uint16 sq5PatchToolboxFix[] = {
 
 //          script, description,                                            signature                        patch
 SciScriptPatcherEntry sq5Signatures[] = {
-	{  true,   226, "toolbox fix",                                 1, 0, 0, sq5SignatureToolboxFix,          sq5PatchToolboxFix },
+	{  true,   226, "toolbox fix",                                 1, sq5SignatureToolboxFix,          sq5PatchToolboxFix },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
+// =================================================================================
+
+ScriptPatcher::ScriptPatcher() {
+	int selectorCount = ARRAYSIZE(selectorNameTable);
+	int selectorNr;
+
+	// Allocate table for selector-IDs and initialize that table as well
+	_selectorIdTable = new Selector[ selectorCount ];
+	for (selectorNr = 0; selectorNr < selectorCount; selectorNr++)
+		_selectorIdTable[selectorNr] = -1;
+		
+	_runtimeTable = NULL;
+}
+
+ScriptPatcher::~ScriptPatcher() {
+	delete[] _runtimeTable;
+	delete[] _selectorIdTable;
+}
 
 // will actually patch previously found signature area
-void Script::patcherApplyPatch(const SciScriptPatcherEntry *patchEntry, byte *scriptData, const uint32 scriptSize, int32 signatureOffset, const bool isMacSci11) {
+void ScriptPatcher::applyPatch(const SciScriptPatcherEntry *patchEntry, byte *scriptData, const uint32 scriptSize, int32 signatureOffset, const bool isMacSci11) {
 	const uint16 *patchData = patchEntry->patchData;
 	byte orgData[PATCH_VALUELIMIT];
 	int32 offset = signatureOffset;
@@ -2067,7 +2041,7 @@ void Script::patcherApplyPatch(const SciScriptPatcherEntry *patchEntry, byte *sc
 				break;
 			}
 			case PATCH_SELECTOR16: {
-				patchSelector = selectorTable[patchValue].id;
+				patchSelector = _selectorIdTable[patchValue];
 				byte1 = patchSelector & 0xFF;
 				byte2 = patchSelector >> 8;
 				break;
@@ -2086,7 +2060,7 @@ void Script::patcherApplyPatch(const SciScriptPatcherEntry *patchEntry, byte *sc
 			break;
 		}
 		case PATCH_SELECTOR8: {
-			patchSelector = selectorTable[patchValue].id;
+			patchSelector = _selectorIdTable[patchValue];
 			if (patchSelector & 0xFF00)
 				error("Script-Patcher: 8 bit selector required, game uses 16 bit selector");
 			scriptData[offset] = patchSelector & 0xFF;
@@ -2103,18 +2077,18 @@ void Script::patcherApplyPatch(const SciScriptPatcherEntry *patchEntry, byte *sc
 }
 
 // will return -1 if no match was found, otherwise an offset to the start of the signature match
-int32 Script::patcherFindSignature(const SciScriptPatcherEntry *patchEntry, const byte *scriptData, const uint32 scriptSize, const bool isMacSci11) {
+int32 ScriptPatcher::findSignature(const SciScriptPatcherEntry *patchEntry, SciScriptPatcherRuntimeEntry *runtimeEntry, const byte *scriptData, const uint32 scriptSize, const bool isMacSci11) {
 	if (scriptSize < 4) // we need to find a DWORD, so less than 4 bytes is not okay
 		return -1;
 
-	const uint32 magicDWord = patchEntry->magicDWord; // is platform-specific BE/LE form, so that the later match will work
+	const uint32 magicDWord = runtimeEntry->magicDWord; // is platform-specific BE/LE form, so that the later match will work
 	const uint32 searchLimit = scriptSize - 3;
 	uint32 DWordOffset = 0;
 	// first search for the magic DWORD
 	while (DWordOffset < searchLimit) {
 		if (magicDWord == READ_UINT32(scriptData + DWordOffset)) {
 			// magic DWORD found, check if actual signature matches
-			uint32 offset = DWordOffset + patchEntry->magicOffset;
+			uint32 offset = DWordOffset + runtimeEntry->magicOffset;
 			uint32 byteOffset = offset;
 			const uint16 *signatureData = patchEntry->signatureData;
 			uint16 sigSelector = 0;
@@ -2145,7 +2119,7 @@ int32 Script::patcherFindSignature(const SciScriptPatcherEntry *patchEntry, cons
 							break;
 						}
 						case SIG_SELECTOR16: {
-							sigSelector = selectorTable[sigValue].id;
+							sigSelector = _selectorIdTable[sigValue];
 							byte1 = sigSelector & 0xFF;
 							byte2 = sigSelector >> 8;
 							break;
@@ -2169,7 +2143,7 @@ int32 Script::patcherFindSignature(const SciScriptPatcherEntry *patchEntry, cons
 				}
 				case SIG_SELECTOR8: {
 					if (byteOffset < scriptSize) {
-						sigSelector = selectorTable[sigValue].id;
+						sigSelector = _selectorIdTable[sigValue];
 						if (sigSelector & 0xFF00)
 							error("Script-Patcher: 8 bit selector required, game uses 16 bit selector\nFaulty patch: '%s'", patchEntry->description);
 						if (scriptData[byteOffset] != (sigSelector & 0xFF))
@@ -2208,9 +2182,10 @@ int32 Script::patcherFindSignature(const SciScriptPatcherEntry *patchEntry, cons
 
 // This method calculates the magic DWORD for each entry in the signature table
 //  and it also initializes the selector table for selectors used in the signatures/patches of the current game
-void Script::patcherInitSignature(SciScriptPatcherEntry *patchTable, bool isMacSci11) {
+void ScriptPatcher::initSignature(SciScriptPatcherEntry *patchTable, bool isMacSci11) {
 	SciScriptPatcherEntry *curEntry = patchTable;
-	SciScriptPatcherSelector *curSelector = NULL;
+	SciScriptPatcherRuntimeEntry *curRuntimeEntry;
+	Selector curSelector = -1;
 	int step;
 	int magicOffset;
 	byte magicDWord[4];
@@ -2221,10 +2196,24 @@ void Script::patcherInitSignature(SciScriptPatcherEntry *patchTable, bool isMacS
     uint32 curValue;
     byte byte1;
     byte byte2;
+    int patchEntryCount = 0;
+    
+    // Count entries and allocate runtime data
+    while (curEntry->signatureData) {
+		patchEntryCount++; curEntry++;
+    }
+    _runtimeTable = new SciScriptPatcherRuntimeEntry[patchEntryCount];
+    memset(_runtimeTable, 0, sizeof(SciScriptPatcherRuntimeEntry) * patchEntryCount);
 
+	curEntry = patchTable;
+	curRuntimeEntry = _runtimeTable;
     while (curEntry->signatureData) {
 		// process signature
 		memset(magicDWord, 0, sizeof(magicDWord));
+		
+		curRuntimeEntry->active = curEntry->defaultActive;
+		curRuntimeEntry->magicDWord = 0;
+		curRuntimeEntry->magicOffset = 0;
 
 		for (step = 0; step < 2; step++) {
 			switch (step) {
@@ -2240,10 +2229,10 @@ void Script::patcherInitSignature(SciScriptPatcherEntry *patchTable, bool isMacS
 				switch (curCommand) {
 				case SIG_MAGICDWORD: {
 					if (step == 0) {
-						if ((curEntry->magicDWord) || (magicDWordLeft))
+						if ((curRuntimeEntry->magicDWord) || (magicDWordLeft))
 							error("Script-Patcher: Magic-DWORD specified multiple times in signature\nFaulty patch: '%s'", curEntry->description);
 						magicDWordLeft = 4;
-						curEntry->magicOffset = magicOffset;
+						curRuntimeEntry->magicOffset = magicOffset;
 					}
 					break;
 				}
@@ -2271,15 +2260,17 @@ void Script::patcherInitSignature(SciScriptPatcherEntry *patchTable, bool isMacS
 						break;
 					}
 					case SIG_SELECTOR16: {
-						curSelector = &selectorTable[curValue];
-						if (curSelector->id == -1)
-							curSelector->id = g_sci->getKernel()->findSelector(curSelector->name);
+						curSelector = _selectorIdTable[curValue];
+						if (curSelector == -1) {
+							curSelector = g_sci->getKernel()->findSelector(selectorNameTable[curValue]);
+							_selectorIdTable[curValue] = curSelector;
+						}
 						if (!isMacSci11) {
-							byte1 = curSelector->id & 0x00FF;
-							byte2 = curSelector->id >> 8;
+							byte1 = curSelector & 0x00FF;
+							byte2 = curSelector >> 8;
 						} else {
-							byte1 = curSelector->id >> 8;
-							byte2 = curSelector->id & 0x00FF;
+							byte1 = curSelector >> 8;
+							byte2 = curSelector & 0x00FF;
 						}
 						break;
 					}
@@ -2294,7 +2285,7 @@ void Script::patcherInitSignature(SciScriptPatcherEntry *patchTable, bool isMacS
 							magicDWordLeft--;
 						}
 						if (!magicDWordLeft) {
-							curEntry->magicDWord = READ_LE_UINT32(magicDWord);
+							curRuntimeEntry->magicDWord = READ_LE_UINT32(magicDWord);
 						}
 					}
 					break;
@@ -2302,15 +2293,16 @@ void Script::patcherInitSignature(SciScriptPatcherEntry *patchTable, bool isMacS
 				case SIG_BYTE:
 				case SIG_SELECTOR8: {
 					if (curCommand == SIG_SELECTOR8) {
-						curSelector = &selectorTable[curValue];
-						if (curSelector->id == -1) {
-							curSelector->id = g_sci->getKernel()->findSelector(curSelector->name);
-							if (curSelector->id != -1) {
-								if (curSelector->id & 0xFF00)
+						curSelector = _selectorIdTable[curValue];
+						if (curSelector == -1) {
+							curSelector = g_sci->getKernel()->findSelector(selectorNameTable[curValue]);
+							_selectorIdTable[curValue] = curSelector;
+							if (curSelector != -1) {
+								if (curSelector & 0xFF00)
 									error("Script-Patcher: 8 bit selector required, game uses 16 bit selector\nFaulty patch: '%s'", curEntry->description);
 							}
 						}
-						curValue = curSelector->id;
+						curValue = curSelector;
 					}
 					magicOffset--;
 					if (magicDWordLeft) {
@@ -2318,7 +2310,7 @@ void Script::patcherInitSignature(SciScriptPatcherEntry *patchTable, bool isMacS
 						magicDWord[4 - magicDWordLeft] = (byte)curValue;
 						magicDWordLeft--;
 						if (!magicDWordLeft) {
-							curEntry->magicDWord = READ_LE_UINT32(magicDWord);
+							curRuntimeEntry->magicDWord = READ_LE_UINT32(magicDWord);
 						}
 					}
 				}
@@ -2329,35 +2321,38 @@ void Script::patcherInitSignature(SciScriptPatcherEntry *patchTable, bool isMacS
 		}
 		if (magicDWordLeft)
 			error("Script-Patcher: Magic-DWORD beyond End-Of-Signature\nFaulty patch: '%s'", curEntry->description);
-		if (!curEntry->magicDWord)
+		if (!curRuntimeEntry->magicDWord)
 			error("Script-Patcher: Magic-DWORD not specified in signature\nFaulty patch: '%s'", curEntry->description);
     
-		curEntry++;
+		curEntry++; curRuntimeEntry++;
     }
 }
 
 // This method enables certain patches
 //  It's used for patches, which are not meant to get applied all the time
-void Script::patcherEnablePatch(SciScriptPatcherEntry *patchTable, const char *searchDescription) {
+void ScriptPatcher::enablePatch(SciScriptPatcherEntry *patchTable, const char *searchDescription) {
 	SciScriptPatcherEntry *curEntry = patchTable;
+	SciScriptPatcherRuntimeEntry *runtimeEntry = _runtimeTable;
 	int searchDescriptionLen = strlen( searchDescription );
 	int matchCount = 0;
 	
     while (curEntry->signatureData) {
 		if (strncmp(curEntry->description, searchDescription, searchDescriptionLen) == 0) {
 			// match found, enable patch
-			curEntry->active = true;
+			runtimeEntry->active = true;
 			matchCount++;
 		}
-		curEntry++;
+		curEntry++; runtimeEntry++;
     }
     
     if (!matchCount)
 		error("Script-Patcher: no patch found to enable");
 }
 
-void Script::patcherProcessScript(uint16 scriptNr, byte *scriptData, const uint32 scriptSize) {
+void ScriptPatcher::processScript(uint16 scriptNr, byte *scriptData, const uint32 scriptSize) {
 	SciScriptPatcherEntry *signatureTable = NULL;
+	SciScriptPatcherEntry *curEntry = NULL;
+	SciScriptPatcherRuntimeEntry *curRuntimeEntry = NULL;
 	const Sci::SciGameId gameId = g_sci->getGameId();
 
 	switch (gameId) {
@@ -2431,48 +2426,51 @@ void Script::patcherProcessScript(uint16 scriptNr, byte *scriptData, const uint3
 	if (signatureTable) {
 		bool isMacSci11 = (g_sci->getPlatform() == Common::kPlatformMacintosh && getSciVersion() >= SCI_VERSION_1_1);
 
-		if (!signatureTable->magicDWord) {
+		if (!_runtimeTable) {
 			// Abort, in case selectors are not yet initialized (happens for games w/o selector-dictionary)
 			if (!g_sci->getKernel()->selectorNamesAvailable())
 				return;
 		
 			// signature table needs to get initialized (Magic DWORD set, selector table set)
-			patcherInitSignature(signatureTable, isMacSci11);
+			initSignature(signatureTable, isMacSci11);
 			
 			// Do additional game-specific initialization
 			switch (gameId) {
 			case GID_KQ5:
 				if (g_sci->_features->useAltWinGMSound()) {
 					// See the explanation in the kq5SignatureWinGMSignals comment
-					patcherEnablePatch(signatureTable, "Win: GM Music signal checks");
+					enablePatch(signatureTable, "Win: GM Music signal checks");
 				}
 				break;
 			case GID_LAURABOW2:
 				if (g_sci->speechAndSubtitlesEnabled()) {
 					// Enables Audio + subtitles patches for Laura Bow 2, when "Text and Speech: Both" is selected
-					patcherEnablePatch(signatureTable, "CD: audio + text support");
+					enablePatch(signatureTable, "CD: audio + text support");
 				}
 				break;
 			default:
 				break;
 			}
 		}
+
+		curEntry = signatureTable;
+		curRuntimeEntry = _runtimeTable;
 	
-		while (signatureTable->signatureData) {
-			if ( (scriptNr == signatureTable->scriptNr) && (signatureTable->active) ) {
+		while (curEntry->signatureData) {
+			if ( (scriptNr == curEntry->scriptNr) && (curRuntimeEntry->active) ) {
 				int32 foundOffset = 0;
-				int16 applyCount = signatureTable->applyCount;
+				int16 applyCount = curEntry->applyCount;
 				do {
-					foundOffset = patcherFindSignature(signatureTable, scriptData, scriptSize, isMacSci11);
+					foundOffset = findSignature(curEntry, curRuntimeEntry, scriptData, scriptSize, isMacSci11);
 					if (foundOffset != -1) {
 						// found, so apply the patch
-						debugC(kDebugLevelScriptPatcher, "Script-Patcher: '%s' on script %d offset %d", signatureTable->description, scriptNr, foundOffset);
-						patcherApplyPatch(signatureTable, scriptData, scriptSize, foundOffset, isMacSci11);
+						debugC(kDebugLevelScriptPatcher, "Script-Patcher: '%s' on script %d offset %d", curEntry->description, scriptNr, foundOffset);
+						applyPatch(curEntry, scriptData, scriptSize, foundOffset, isMacSci11);
 					}
 					applyCount--;
 				} while ((foundOffset != -1) && (applyCount));
 			}
-			signatureTable++;
+			curEntry++; curRuntimeEntry++;
 		}
 	}
 }

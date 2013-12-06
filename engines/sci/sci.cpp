@@ -38,6 +38,7 @@
 #include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/script.h"	// for script_adjust_opcode_formats
+#include "sci/engine/script_patches.h"
 #include "sci/engine/selector.h"	// for SELECTOR
 
 #include "sci/sound/audio.h"
@@ -184,6 +185,7 @@ SciEngine::~SciEngine() {
 
 	delete[] _opcode_formats;
 
+	delete _scriptPatcher;
 	delete _resMan;	// should be deleted last
 	g_sci = 0;
 }
@@ -217,8 +219,9 @@ Common::Error SciEngine::run() {
 	// Add the after market GM patches for the specified game, if they exist
 	_resMan->addNewGMPatch(_gameId);
 	_gameObjectAddress = _resMan->findGameObject();
-
-	SegManager *segMan = new SegManager(_resMan);
+	
+	_scriptPatcher = new ScriptPatcher();
+	SegManager *segMan = new SegManager(_resMan, _scriptPatcher);
 
 	// Initialize the game screen
 	_gfxScreen = new GfxScreen(_resMan);
