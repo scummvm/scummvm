@@ -306,7 +306,7 @@ public:
 	Card *_field3EF4;
 	Card *_field3EF8;
 	Card _item5;
-	Card _item6;
+	Card _selectedCard;
 	Card _discardPile;
 	Card _stockPile;
 	bool _shuffleEndedFl;
