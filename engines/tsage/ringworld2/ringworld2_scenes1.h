@@ -316,7 +316,7 @@ public:
 	bool _field4244;
 	bool _field4246;
 	int _field424A;
-	int _instructionsDisplayedFl;
+	bool _instructionsDisplayedFl;
 	int _instructionsWaitCount;
 	int _cursorCurRes;
 	int _cursorCurStrip;

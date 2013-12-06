@@ -2258,7 +2258,7 @@ Scene1337::Scene1337() {
 	_field4244 = false;
 	_field4246 = false;
 	_field424A = 0;
-	_instructionsDisplayedFl = 0;
+	_instructionsDisplayedFl = false;
 	_instructionsWaitCount = 0;
 
 	_unkFctPtr412 = nullptr;
@@ -4492,10 +4492,10 @@ void Scene1337::process(Event &event) {
 }
 
 void Scene1337::dispatch() {
-	if (_instructionsDisplayedFl == 0) {
+	if (!_instructionsDisplayedFl) {
 		++_instructionsWaitCount;
 		if (_instructionsWaitCount == 4) {
-			_instructionsDisplayedFl = 1;
+			_instructionsDisplayedFl = true;
 			suggestInstructions();
 		}
 	}
@@ -5537,7 +5537,7 @@ void Scene1337::subPostInit() {
 	_background1.setup2(9531, 1, 1, 249, 168, 155, EFFECT_NONE);
 
 	_autoplay = false;
-	_instructionsDisplayedFl = 0;
+	_instructionsDisplayedFl = false;
 	_instructionsWaitCount = 0;
 }
 
@@ -6408,60 +6408,65 @@ void Scene1337::subD02CA() {
 		int i;
 		for (i = 0; i < 4; i++) {
 			if ((_gameBoardSide[2]._handCard[i].isIn(_item6._stationPos)) && (_gameBoardSide[2]._handCard[i]._cardId != 0)) {
-				_item6._cardId = _gameBoardSide[2]._handCard[i]._cardId;
-				_item6._stationPos = _gameBoardSide[2]._handCard[i]._stationPos;
-				// _item6._actorName = _gameBoardSide[2]._handCard[di]._actorName;
-				_item6._fieldE = _gameBoardSide[2]._handCard[i]._fieldE;
-				_item6._field10 = _gameBoardSide[2]._handCard[i]._field10;
-				warning("_item6._field12 = _gameBoardSide[2]._handCard[di]._field12;");
-				warning("_item6._field14 = _gameBoardSide[2]._handCard[di]._field14;");
-				warning("_item6._field16 = _gameBoardSide[2]._handCard[di]._field16;");
-				_item6._sceneRegionId = _gameBoardSide[2]._handCard[i]._sceneRegionId;
-				_item6._position = _gameBoardSide[2]._handCard[i]._position;
-				_item6._yDiff = _gameBoardSide[2]._handCard[i]._yDiff;
-				_item6._bounds = _gameBoardSide[2]._handCard[i]._bounds;
-				_item6._resNum = _gameBoardSide[2]._handCard[i]._resNum;
-				_item6._lookLineNum = _gameBoardSide[2]._handCard[i]._lookLineNum;
-				_item6._talkLineNum = _gameBoardSide[2]._handCard[i]._talkLineNum;
-				_item6._useLineNum = _gameBoardSide[2]._handCard[i]._useLineNum;
-				_item6._action = _gameBoardSide[2]._handCard[i]._action;
-				warning("_item6._field0 = _gameBoardSide[2]._handCard[di]._field0;");
-				_item6._card._updateStartFrame = _gameBoardSide[2]._handCard[i]._card._updateStartFrame;
-				_item6._card._walkStartFrame = _gameBoardSide[2]._handCard[i]._card._walkStartFrame;
+				Card *handcard = &_gameBoardSide[2]._handCard[i];
+				_item6._cardId = handcard->_cardId;
+				_item6._stationPos = handcard->_stationPos;
+				// _item6._actorName = handcard->_actorName;
+				_item6._fieldE = handcard->_fieldE;
+				_item6._field10 = handcard->_field10;
+				warning("_item6._field12 = handcard->_field12;");
+				warning("_item6._field14 = handcard->_field14;");
+				warning("_item6._field16 = handcard->_field16;");
+				_item6._sceneRegionId = handcard->_sceneRegionId;
+				_item6._position = handcard->_position;
+				_item6._yDiff = handcard->_yDiff;
+				_item6._bounds = handcard->_bounds;
+				_item6._resNum = handcard->_resNum;
+				_item6._lookLineNum = handcard->_lookLineNum;
+				_item6._talkLineNum = handcard->_talkLineNum;
+				_item6._useLineNum = handcard->_useLineNum;
+				_item6._action = handcard->_action;
+				warning("_item6._field0 = handcard->_field0;");
+				_item6._card._updateStartFrame = handcard->_card._updateStartFrame;
+				_item6._card._walkStartFrame = handcard->_card._walkStartFrame;
 				// _field2E is named _field3C in R2R
-				_item6._card._field2E = _gameBoardSide[2]._handCard[i]._card._field2E;
-				_item6._card._percent = _gameBoardSide[2]._handCard[i]._card._percent;
-				_item6._card._priority = _gameBoardSide[2]._handCard[i]._card._priority;
-				_item6._card._angle = _gameBoardSide[2]._handCard[i]._card._angle;
-				_item6._card._flags = _gameBoardSide[2]._handCard[i]._card._flags;
-				_item6._card._xe = _gameBoardSide[2]._handCard[i]._card._xe;
-				_item6._card._xs = _gameBoardSide[2]._handCard[i]._card._xs;
-				_item6._card._paneRects[0] = _gameBoardSide[2]._handCard[i]._card._paneRects[0];
-				_item6._card._paneRects[1] = _gameBoardSide[2]._handCard[i]._card._paneRects[1];
-				_item6._card._visage = _gameBoardSide[2]._handCard[i]._card._visage;
-				_item6._card._objectWrapper = _gameBoardSide[2]._handCard[i]._card._objectWrapper;
-				_item6._card._strip = _gameBoardSide[2]._handCard[i]._card._strip;
-				_item6._card._animateMode = _gameBoardSide[2]._handCard[i]._card._animateMode;
-				_item6._card._frame = _gameBoardSide[2]._handCard[i]._card._frame;
-				_item6._card._endFrame = _gameBoardSide[2]._handCard[i]._card._endFrame;
+				_item6._card._field2E = handcard->_card._field2E;
+				_item6._card._percent = handcard->_card._percent;
+				_item6._card._priority = handcard->_card._priority;
+				_item6._card._angle = handcard->_card._angle;
+				_item6._card._flags = handcard->_card._flags;
+				_item6._card._xe = handcard->_card._xe;
+				_item6._card._xs = handcard->_card._xs;
+				_item6._card._paneRects[0] = handcard->_card._paneRects[0];
+				_item6._card._paneRects[1] = handcard->_card._paneRects[1];
+				_item6._card._visage = handcard->_card._visage;
+				_item6._card._objectWrapper = handcard->_card._objectWrapper;
+				_item6._card._strip = handcard->_card._strip;
+				_item6._card._animateMode = handcard->_card._animateMode;
+				_item6._card._frame = handcard->_card._frame;
+				_item6._card._endFrame = handcard->_card._endFrame;
 				// _field68 is named _field76 in R2R
-				_item6._card._field68 = _gameBoardSide[2]._handCard[i]._card._field68;
-				_item6._card._frameChange = _gameBoardSide[2]._handCard[i]._card._frameChange;
-				_item6._card._numFrames = _gameBoardSide[2]._handCard[i]._card._numFrames;
-				_item6._card._regionIndex = _gameBoardSide[2]._handCard[i]._card._regionIndex;
-				_item6._card._mover = _gameBoardSide[2]._handCard[i]._card._mover;
-				_item6._card._moveDiff = _gameBoardSide[2]._handCard[i]._card._moveDiff;
-				_item6._card._moveRate = _gameBoardSide[2]._handCard[i]._card._moveRate;
-				_item6._card._actorDestPos = _gameBoardSide[2]._handCard[i]._card._actorDestPos;
-				_item6._card._endAction = _gameBoardSide[2]._handCard[i]._card._endAction;
-				_item6._card._regionBitList = _gameBoardSide[2]._handCard[i]._card._regionBitList;
-				// _item6._object1._actorName = _gameBoardSide[2]._handCard[di]._object1._actorName;
-				_item6._card._fieldE = _gameBoardSide[2]._handCard[i]._card._fieldE;
-				_item6._card._field10 = _gameBoardSide[2]._handCard[i]._card._field10;
-				warning("_item6._object1._field12 = _gameBoardSide[2]._handCard[di]._object1._field12;");
-				warning("_item6._object1._field14 = _gameBoardSide[2]._handCard[di]._object1._field14;");
-				warning("_item6._object1._field16 = _gameBoardSide[2]._handCard[di]._object1._field16;");
-				_item6._card = _gameBoardSide[2]._handCard[i]._card;
+				_item6._card._field68 = handcard->_card._field68;
+				_item6._card._frameChange = handcard->_card._frameChange;
+				_item6._card._numFrames = handcard->_card._numFrames;
+				_item6._card._regionIndex = handcard->_card._regionIndex;
+				_item6._card._mover = handcard->_card._mover;
+				_item6._card._moveDiff = handcard->_card._moveDiff;
+				_item6._card._moveRate = handcard->_card._moveRate;
+				_item6._card._actorDestPos = handcard->_card._actorDestPos;
+				_item6._card._endAction = handcard->_card._endAction;
+				_item6._card._regionBitList = handcard->_card._regionBitList;
+				// _item6._object1._actorName = handcard->_object1._actorName;
+				_item6._card._fieldE = handcard->_card._fieldE;
+				_item6._card._field10 = handcard->_card._field10;
+				warning("_item6._card._field12 = handcard->_card._field12;");
+				warning("_item6._card._field14 = handcard->_card._field14;");
+				warning("_item6._card._field16 = handcard->_card._field16;");
+				// _item6._card = _gameBoardSide[2]._handCard[i]._card;
+
+				_gameBoardSide[2]._handCard[i]._cardId = 0;
+				_gameBoardSide[2]._handCard[i]._card.remove();
+				break;
 			}
 		}
 
@@ -6469,6 +6474,9 @@ void Scene1337::subD02CA() {
 			subCDB90(1, _item6._stationPos);
 			subD0281();
 			return;
+		} else {
+			setCursorData(1332, _item6._card._strip, _item6._card._frame);
+			R2_GLOBALS._sceneObjects->draw();
 		}
 	} else if (R2_GLOBALS._v57810 == 300) {
 		subCDB90(3, _item6._stationPos);
@@ -6480,9 +6488,6 @@ void Scene1337::subD02CA() {
 		return;
 	}
 
-	// That continues the block when R2_GLOBALS._v57810 == 200 and di != 4
-	setCursorData(1332, _item6._card._strip, _item6._card._frame);
-	R2_GLOBALS._sceneObjects->draw();
 	Event event;
 	bool found = false;
 	bool found_di;
@@ -6867,6 +6872,7 @@ void Scene1337::setCursorData(int resNum, int rlbNum, int frameNum) {
 }
 
 void Scene1337::subD18F5() {
+	warning("subD18F5 - %d", R2_GLOBALS._v57709);
 	if (R2_GLOBALS._v57709 == 0)
 		R2_GLOBALS._events.setCursor(CURSOR_CROSSHAIRS);
 
@@ -6874,6 +6880,7 @@ void Scene1337::subD18F5() {
 }
 
 void Scene1337::subD1917() {
+	warning("subD1917 - %d", R2_GLOBALS._v57709);
 	if (R2_GLOBALS._v57709 != 0) {
 		R2_GLOBALS._v57709--;
 		if (R2_GLOBALS._v57709 != 0) {
