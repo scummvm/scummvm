@@ -48,11 +48,6 @@ void ZB_fillTriangleFlatShadowMask(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoint *
 		return;
 	fz = (float)(1.0 / fz);
 
-	fdx1 *= fz;
-	fdy1 *= fz;
-	fdx2 *= fz;
-	fdy2 *= fz;
-
 	// screen coordinates
 
 	pm1 = zb->shadow_mask_buf + zb->xsize * p0->y;

@@ -146,7 +146,6 @@ void glopTexImage2D(GLContext *c, GLParam *p) {
 				pixPtr.getRGBAt(i, r, g, b);
 				temp.setPixelAt(i, 255, r, g, b);
 			}
-			format = TGL_RGBA;
 			pixels = temp.getRawBuffer();
 			do_free_after_rgb2rgba = true;
 		}
