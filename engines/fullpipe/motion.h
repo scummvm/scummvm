@@ -198,6 +198,10 @@ public:
 	virtual void freeItems();
 	virtual MessageQueue *method34(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId);
 	virtual MessageQueue *doWalkTo(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId);
+
+private:
+	int findObjectPos(StaticANIObject *obj);
+	bool initMovement(StaticANIObject *ani, MctlLadderMovement *movement);
 };
 
 class MovGraphNode : public CObject {
