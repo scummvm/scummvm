@@ -441,7 +441,7 @@ bool BuriedEngine::syncGlobalFlags(Common::Serializer &s, GlobalFlags &flags) {
 	s.syncAsByte(flags.asRBLastStingerID);
 	s.syncAsByte(flags.asRBStingerID);
 	s.syncAsByte(flags.aiICProcessedOxygen);
-	s.syncAsByte(flags.dsCYWeeblieClicked);
+	s.syncAsByte(flags.dsCYWeebleClicked);
 	s.syncAsByte(flags.aiICUsedMiningControls);
 	s.syncAsByte(flags.aiSWAttemptedPresMR);
 	s.syncAsByte(flags.aiICRefilledOxygen);

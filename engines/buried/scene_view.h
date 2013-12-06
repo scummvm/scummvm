@@ -214,6 +214,7 @@ private:
 	bool initializeDaVinciTimeZoneAndEnvironment(Window *viewWindow, int environment);
 	bool startDaVinciAmbient(int oldTimeZone, int oldEnvironment, int environment, bool fade);
 	SceneBase *constructDaVinciSceneObject(Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	bool checkCustomDaVinciAICommentDependencies(const Location &commentLocation, const AIComment &commentData);
 
 	// Future Apartment
 	bool startFutureApartmentAmbient(int oldTimeZone, int oldEnvironment, int environment, bool fade);
