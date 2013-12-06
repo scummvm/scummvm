@@ -192,6 +192,12 @@ public:
 public:
 	MctlLadder();
 	int collisionDetection(StaticANIObject *man);
+
+	virtual void addObject(StaticANIObject *obj);
+	virtual int removeObject(StaticANIObject *obj) { return 1; }
+	virtual void freeItems();
+	virtual MessageQueue *method34(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId);
+	virtual MessageQueue *doWalkTo(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId);
 };
 
 class MovGraphNode : public CObject {

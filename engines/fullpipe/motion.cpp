@@ -202,6 +202,26 @@ int MctlLadder::collisionDetection(StaticANIObject *man) {
 	return 0;
 }
 
+void MctlLadder::addObject(StaticANIObject *obj) {
+	warning("STUB: MctlLadder::addObject()");
+}
+
+void MctlLadder::freeItems() {
+	warning("STUB: MctlLadder::freeItems()");
+}
+
+MessageQueue *MctlLadder::method34(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId) {
+	warning("STUB: MctlLadder::method34()");
+
+	return 0;
+}
+
+MessageQueue *MctlLadder::doWalkTo(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId) {
+	warning("STUB: MctlLadder::doWalkTo()");
+
+	return 0;
+}
+
 MctlConnectionPoint *MctlCompound::findClosestConnectionPoint(int ox, int oy, int destIndex, int connectionX, int connectionY, int sourceIndex, int *minDistancePtr) {
 	warning("STUB: MctlCompound::findClosestConnectionPoint()");
 
