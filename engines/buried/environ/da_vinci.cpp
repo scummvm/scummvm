@@ -572,6 +572,195 @@ enum {
 	DS_SC_COMPLETED = 8
 };
 
+class AssembleSiegeCycle : public SceneBase {
+public:
+	AssembleSiegeCycle(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int mouseDown(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int draggingItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
+	int droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
+
+private:
+	Common::Rect _driveDropRegion;
+	Common::Rect _wheelDropRegion;
+	Common::Rect _pegDropRegion;
+	Common::Rect _completedCycle;
+
+	bool resetStillFrame(Window *viewWindow);
+};
+
+AssembleSiegeCycle::AssembleSiegeCycle(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_driveDropRegion = Common::Rect(102, 0, 170, 140);
+	_wheelDropRegion = Common::Rect(264, 0, 334, 170);
+	_pegDropRegion = Common::Rect(260, 10, 310, 162);
+	_completedCycle = Common::Rect(102, 0, 330, 189);
+
+	// Determine which still frame to display
+	resetStillFrame(viewWindow);
+}
+
+int AssembleSiegeCycle::mouseDown(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_completedCycle.contains(pointLocation) && ((SceneViewWindow *)viewWindow)->getGlobalFlags().dsWSGrabbedSiegeCycle == 0) {
+		if (((SceneViewWindow *)viewWindow)->getGlobalFlags().dsWSSiegeCycleStatus & DS_SC_COMPLETED) {
+			// Reset the present flag and change frame index of background
+			((SceneViewWindow *)viewWindow)->getGlobalFlags().dsWSGrabbedSiegeCycle = 1;
+			resetStillFrame(viewWindow);
+
+			// Begin dragging
+			Common::Point ptInventoryWindow = viewWindow->convertPointToGlobal(pointLocation);
+			ptInventoryWindow = ((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->convertPointToLocal(ptInventoryWindow);
+			((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->startDraggingNewItem(kItemSiegeCycle, ptInventoryWindow);
+			return SC_TRUE;
+		} else {
+			// Otherwise, check to see if the pegs have been placed and haven't been hammer in
+			if (((SceneViewWindow *)viewWindow)->getGlobalFlags().dsWSSiegeCycleStatus & DS_SC_PEGS)
+				((SceneViewWindow *)viewWindow)->displayLiveText(_vm->getString(IDS_DS_WS_UNSTABLE_CYCLE_MESSAGE));
+		}
+	}
+
+	return SC_FALSE;
+}
+
+int AssembleSiegeCycle::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_completedCycle.contains(pointLocation) && ((SceneViewWindow *)viewWindow)->getGlobalFlags().dsWSGrabbedSiegeCycle == 0 && (((SceneViewWindow *)viewWindow)->getGlobalFlags().dsWSSiegeCycleStatus & DS_SC_COMPLETED) != 0)
+		return kCursorOpenHand;
+
+	if (_completedCycle.contains(pointLocation) && ((SceneViewWindow *)viewWindow)->getGlobalFlags().dsWSGrabbedSiegeCycle == 0 && (((SceneViewWindow *)viewWindow)->getGlobalFlags().dsWSSiegeCycleStatus & DS_SC_DRIVE_ASSEMBLY) != 0
+			&& (((SceneViewWindow *)viewWindow)->getGlobalFlags().dsWSSiegeCycleStatus & DS_SC_WHEEL_ASSEMBLY) != 0 && (((SceneViewWindow *)viewWindow)->getGlobalFlags().dsWSSiegeCycleStatus & DS_SC_PEGS) != 0)
+		return kCursorOpenHand;
+
+	return kCursorArrow;
+}
+
+int AssembleSiegeCycle::draggingItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) {
+	switch (itemID) {
+	case kItemDriveAssembly:
+		if (_driveDropRegion.contains(pointLocation) && (((SceneViewWindow *)viewWindow)->getGlobalFlags().dsWSSiegeCycleStatus & DS_SC_DRIVE_ASSEMBLY) == 0)
+			return 1;
+		break;
+	case kItemWheelAssembly:
+		if (_wheelDropRegion.contains(pointLocation) && (((SceneViewWindow *)viewWindow)->getGlobalFlags().dsWSSiegeCycleStatus & DS_SC_WHEEL_ASSEMBLY) == 0)
+			return 1;
+		break;
+	case kItemWoodenPegs:
+		if (_pegDropRegion.contains(pointLocation) && (((SceneViewWindow *)viewWindow)->getGlobalFlags().dsWSSiegeCycleStatus & DS_SC_PEGS) == 0 && (((SceneViewWindow *)viewWindow)->getGlobalFlags().dsWSSiegeCycleStatus & DS_SC_WHEEL_ASSEMBLY) != 0 && (((SceneViewWindow *)viewWindow)->getGlobalFlags().dsWSSiegeCycleStatus & DS_SC_DRIVE_ASSEMBLY) != 0)
+			return 1;
+		break;
+	case kItemHammer:
+		if (_pegDropRegion.contains(pointLocation) && (((SceneViewWindow *)viewWindow)->getGlobalFlags().dsWSSiegeCycleStatus & DS_SC_PEGS) != 0 && (((SceneViewWindow *)viewWindow)->getGlobalFlags().dsWSSiegeCycleStatus & DS_SC_WHEEL_ASSEMBLY) != 0 && (((SceneViewWindow *)viewWindow)->getGlobalFlags().dsWSSiegeCycleStatus & DS_SC_DRIVE_ASSEMBLY) != 0)
+			return 1;
+		break;
+	}
+
+	return 0;
+}
+
+int AssembleSiegeCycle::droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) {
+	if (pointLocation.x == -1 && pointLocation.y == -1)
+		return 0;
+
+	switch (itemID) {
+	case kItemDriveAssembly:
+		if (_driveDropRegion.contains(pointLocation) && (((SceneViewWindow *)viewWindow)->getGlobalFlags().dsWSSiegeCycleStatus & DS_SC_DRIVE_ASSEMBLY) == 0) {
+			((SceneViewWindow *)viewWindow)->getGlobalFlags().dsWSSiegeCycleStatus |= DS_SC_DRIVE_ASSEMBLY;
+			resetStillFrame(viewWindow);
+			viewWindow->invalidateWindow(false);
+			return SIC_ACCEPT;
+		}
+		break;
+	case kItemWheelAssembly:
+		if (_wheelDropRegion.contains(pointLocation) && (((SceneViewWindow *)viewWindow)->getGlobalFlags().dsWSSiegeCycleStatus & DS_SC_WHEEL_ASSEMBLY) == 0) {
+			((SceneViewWindow *)viewWindow)->getGlobalFlags().dsWSSiegeCycleStatus |= DS_SC_WHEEL_ASSEMBLY;
+			resetStillFrame(viewWindow);
+			viewWindow->invalidateWindow(false);
+			return SIC_ACCEPT;
+		}
+		break;
+	case kItemWoodenPegs:
+		if (_pegDropRegion.contains(pointLocation) && (((SceneViewWindow *)viewWindow)->getGlobalFlags().dsWSSiegeCycleStatus & DS_SC_PEGS) == 0 && (((SceneViewWindow *)viewWindow)->getGlobalFlags().dsWSSiegeCycleStatus & DS_SC_WHEEL_ASSEMBLY) != 0 && (((SceneViewWindow *)viewWindow)->getGlobalFlags().dsWSSiegeCycleStatus & DS_SC_DRIVE_ASSEMBLY) != 0) {
+			((SceneViewWindow *)viewWindow)->getGlobalFlags().dsWSSiegeCycleStatus |= DS_SC_PEGS;
+			resetStillFrame(viewWindow);
+			viewWindow->invalidateWindow(false);
+			return SIC_ACCEPT;
+		}
+		break;
+	case kItemHammer:
+		if (_pegDropRegion.contains(pointLocation) && (((SceneViewWindow *)viewWindow)->getGlobalFlags().dsWSSiegeCycleStatus & DS_SC_PEGS) != 0 && (((SceneViewWindow *)viewWindow)->getGlobalFlags().dsWSSiegeCycleStatus & DS_SC_WHEEL_ASSEMBLY) != 0 && (((SceneViewWindow *)viewWindow)->getGlobalFlags().dsWSSiegeCycleStatus & DS_SC_DRIVE_ASSEMBLY) != 0) {
+			((SceneViewWindow *)viewWindow)->getGlobalFlags().dsWSSiegeCycleStatus |= DS_SC_COMPLETED;
+			resetStillFrame(viewWindow);
+
+			// Play the hammer movie
+			((SceneViewWindow *)viewWindow)->playSynchronousAnimation(3);
+
+			viewWindow->invalidateWindow(false);
+		}
+		break;
+	}
+
+	return SIC_REJECT;
+}
+
+bool AssembleSiegeCycle::resetStillFrame(Window *viewWindow) {
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().dsWSGrabbedSiegeCycle >= 1) {
+		_staticData.navFrameIndex = 213;
+	} else {
+		byte status = ((SceneViewWindow *)viewWindow)->getGlobalFlags().dsWSSiegeCycleStatus;
+		_staticData.navFrameIndex = 105;
+
+		if (status & DS_SC_COMPLETED) {
+			_staticData.navFrameIndex = 220;
+		} else {
+			if ((status & DS_SC_DRIVE_ASSEMBLY) != 0 && (status & DS_SC_WHEEL_ASSEMBLY) != 0 && (status & DS_SC_PEGS) != 0) {
+				_staticData.navFrameIndex = 215;
+			} else {
+				if ((status & DS_SC_DRIVE_ASSEMBLY) != 0 && (status & DS_SC_WHEEL_ASSEMBLY) != 0) {
+					_staticData.navFrameIndex = 220;
+				} else {
+					if ((status & DS_SC_DRIVE_ASSEMBLY) != 0)
+						_staticData.navFrameIndex = 216;
+					else if ((status & DS_SC_WHEEL_ASSEMBLY) != 0)
+						_staticData.navFrameIndex = 218;
+				}
+			}
+		}
+	}
+
+	return true;
+}
+
+class SiegeCycleTopView : public SceneBase {
+public:
+	SiegeCycleTopView(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+};
+
+SiegeCycleTopView::SiegeCycleTopView(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().dsWSGrabbedSiegeCycle >= 1) {
+		_staticData.navFrameIndex = 214;
+	} else {
+		byte status = ((SceneViewWindow *)viewWindow)->getGlobalFlags().dsWSSiegeCycleStatus;
+		_staticData.navFrameIndex = 106;
+
+		if (status & DS_SC_COMPLETED) {
+			_staticData.navFrameIndex = 221;
+		} else {
+			if ((status & DS_SC_DRIVE_ASSEMBLY) != 0 && (status & DS_SC_WHEEL_ASSEMBLY) != 0 && (status & DS_SC_PEGS) != 0) {
+				_staticData.navFrameIndex = 221;
+			} else {
+				if ((status & DS_SC_DRIVE_ASSEMBLY) != 0 && (status & DS_SC_WHEEL_ASSEMBLY) != 0) {
+					_staticData.navFrameIndex = 221;
+				} else {
+					if ((status & DS_SC_DRIVE_ASSEMBLY) != 0)
+						_staticData.navFrameIndex = 217;
+					else if ((status & DS_SC_WHEEL_ASSEMBLY) != 0)
+						_staticData.navFrameIndex = 219;
+				}
+			}
+		}
+	}
+}
+
 class PaintingTowerCapAgent : public SceneBase {
 public:
 	PaintingTowerCapAgent(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
@@ -936,6 +1125,10 @@ SceneBase *SceneViewWindow::constructDaVinciSceneObject(Window *viewWindow, cons
 		return new WheelAssemblyItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 150, 150, 276, 189, kItemWheelAssembly, 100, offsetof(GlobalFlags, dsWSPickedUpWheelAssembly));
 	case 35:
 		return new ViewSiegeCyclePlans(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 36:
+		return new AssembleSiegeCycle(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 37:
+		return new SiegeCycleTopView(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 38:
 		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 130, 74, 182, 120, kItemCoilOfRope, 48, offsetof(GlobalFlags, dsGDTakenCoilOfRope));
 	case 41:
