@@ -3643,8 +3643,7 @@ void Scene1337::Action7::signal() {
 		scene->setAnimationInfo(scene->_field3EF4);
 		scene->_aSound1.play(59);
 		scene->_item5._cardId = 1;
-		scene->_item5._stationPos.x = scene->_field3EF4->_stationPos.x;
-		scene->_item5._stationPos.y = scene->_field3EF4->_stationPos.y;
+		scene->_item5._stationPos = scene->_field3EF4->_stationPos;
 		scene->_item5._card.postInit();
 		scene->_item5._card.hide();
 		scene->_item5._card._flags = OBJFLAG_HIDING;
