@@ -864,6 +864,11 @@ void DrasculaEngine::updateEvents() {
 #endif
 		switch (event.type) {
 		case Common::EVENT_KEYDOWN:
+			if (event.kbd.keycode == Common::KEYCODE_d && event.kbd.hasFlags(Common::KBD_CTRL)) {
+				// Start the debugger
+				getDebugger()->attach();
+				getDebugger()->onFrame();
+			}
 			addKeyToBuffer(event.kbd);
 			break;
 		case Common::EVENT_KEYUP:
