@@ -5,13 +5,13 @@ MODULE_OBJS := \
 	debugger.o \
 	detection.o \
 	events.o \
-	game.o \
 	files.o \
 	graphics.o \
 	sound.o \
 	staticres.o \
 	utils.o \
-	voyeur.o
+	voyeur.o \
+	voyeur_game.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_VOYEUR), DYNAMIC_PLUGIN)

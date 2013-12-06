@@ -26,7 +26,6 @@
 #include "voyeur/debugger.h"
 #include "voyeur/events.h"
 #include "voyeur/files.h"
-#include "voyeur/game.h"
 #include "voyeur/graphics.h"
 #include "voyeur/sound.h"
 #include "common/scummsys.h"
@@ -64,9 +63,13 @@ class VoyeurEngine : public Engine {
 private:
 	const VoyeurGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
-
 	Common::Array<int> _resolves;
 	FontInfoResource _defaultFontInfo;
+	int _iForceDeath;
+	int _v2A098;
+	int _v2A0A6;
+	int _v2A0A4;
+	int _v2A09A;
 
 	void ESP_Init();
 	void initialiseManagers();
@@ -74,12 +77,14 @@ private:
 	void initBolt();
 	void vInitInterrupts();
 	void initInput();
+	void addVideoEventStart();
 
 	bool doHeadTitle();
 	void showConversionScreen();
 	bool doLock();
 	void showTitleScreen();
 	void doOpening();
+	void playStamp();
 protected:
 	// Engine APIs
 	virtual Common::Error run();
@@ -89,7 +94,6 @@ public:
 	Debugger _debugger;
 	EventsManager _eventsManager;
 	FilesManager _filesManager;
-	Game _game;
 	GraphicsManager _graphicsManager;
 	SoundManager _soundManager;
 	SVoy _voy;
@@ -112,6 +116,7 @@ public:
 	virtual Common::Error saveGameState(int slot, const Common::String &desc);
 
 	void playRL2Video(const Common::String &filename);
+	void doTransitionCard(const Common::String &time, const Common::String &location);
 };
 
 } // End of namespace Voyeur

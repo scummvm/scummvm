@@ -39,6 +39,7 @@ VoyeurEngine::VoyeurEngine(OSystem *syst, const VoyeurGameDescription *gameDesc)
 			Common::Point(1, 1), 1, 0, 0) {
 	DebugMan.addDebugChannel(kDebugPath, "Path", "Pathfinding debug level");
 	_bVoy = NULL;
+	_iForceDeath = -1;
 
 	initialiseManagers();
 }
@@ -86,10 +87,10 @@ Common::Error VoyeurEngine::run() {
 
 	_eventsManager.resetMouse();
 	if (doHeadTitle()) {
-		if (_game._iForceDeath >= 1 && _game._iForceDeath <= 4)
+		if (_iForceDeath >= 1 && _iForceDeath <= 4)
 			_voy._eCursorOff[58] |= 0x80;
 
-		_game.playStamp();
+		playStamp();
 	}
 
 	//doHeadTitle();
@@ -106,7 +107,6 @@ void VoyeurEngine::initialiseManagers() {
 	_debugger.setVm(this);
 	_eventsManager.setVm(this);
 	_filesManager.setVm(this);
-	_game.setVm(this);
 	_graphicsManager.setVm(this);
 	_soundManager.setVm(this);
 
@@ -175,7 +175,7 @@ bool VoyeurEngine::doHeadTitle() {
 	// Opening
 	if (!_voy._incriminate) {
 		doOpening();
-		_game.doTransitionCard("Saturday Afternoon", "Player's Apartment");
+		doTransitionCard("Saturday Afternoon", "Player's Apartment");
 		_eventsManager.delay(90);
 	} else {
 		_voy._incriminate = false;
@@ -479,15 +479,15 @@ void VoyeurEngine::doOpening() {
 	byte *whTable = _bVoy->memberAddr(0x217);
 	int frmaeIndex = 0;
 	int creditShow = 1;
-	_game._v2A098 = 1;
+	_v2A098 = 1;
 	_voy._eCursorOff[52] = 0;
 	_voy._RTVNum = 0;
 	_voy._eCursorOff[50] = _voy._RTVNum;
-	_game._v2A0A6 = 4;
-	_game._v2A0A4 = 0;
+	_v2A0A6 = 4;
+	_v2A0A4 = 0;
 	_voy._eCursorOff[58] = 16;
-	_game._v2A09A = -1;
-	_game.addVideoEventStart();
+	_v2A09A = -1;
+	addVideoEventStart();
 	_voy._eCursorOff[58] &= ~1;
 
 	for (int i = 0; i < 256; ++i)
@@ -543,6 +543,47 @@ void VoyeurEngine::playRL2Video(const Common::String &filename) {
 		_eventsManager.pollEvents();
 		g_system->delayMillis(10);
 	}
+}
+
+void VoyeurEngine::doTransitionCard(const Common::String &time, const Common::String &location) {
+	_graphicsManager.setColor(128, 16, 16, 16);
+	_graphicsManager.setColor(224, 220, 220, 220);
+	_eventsManager._intPtr.field38 = true;
+	_eventsManager._intPtr._hasPalette = true;
+
+	(*_graphicsManager._vPort)->setupViewPort();
+	(*_graphicsManager._vPort)->fillPic(128);
+	_graphicsManager.flipPage();
+	_eventsManager.sWaitFlip();
+
+	(*_graphicsManager._vPort)->_parent->_flags |= DISPFLAG_8;
+	_graphicsManager.flipPage();
+	_eventsManager.sWaitFlip();
+	(*_graphicsManager._vPort)->fillPic(128);
+
+	FontInfoResource &fi = *_graphicsManager._fontPtr;
+	fi._curFont = _bVoy->boltEntry(257)._fontResource;
+	fi._foreColor = 224;
+	fi._fontSaveBack = 0;
+	fi._pos = Common::Point(0, 116);
+	fi._justify = ALIGN_CENTRE;
+	fi._justifyWidth = 384;
+	fi._justifyHeight = 120;
+
+	(*_graphicsManager._vPort)->drawText(time);
+	
+	if (!location.empty()) {
+		fi._pos = Common::Point(0, 138);
+		fi._justify = ALIGN_CENTRE;
+		fi._justifyWidth = 384;
+		fi._justifyHeight = 140;
+
+		(*_graphicsManager._vPort)->drawText(location);
+	}
+
+	(*_graphicsManager._vPort)->_parent->_flags |= DISPFLAG_8;
+	_graphicsManager.flipPage();
+	_eventsManager.sWaitFlip();
 }
 
 } // End of namespace Voyeur

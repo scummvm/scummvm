@@ -21,7 +21,6 @@
  */
 
 #include "voyeur/graphics.h"
-#include "voyeur/game.h"
 #include "voyeur/voyeur.h"
 #include "engines/util.h"
 #include "graphics/palette.h"

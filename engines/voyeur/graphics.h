@@ -23,10 +23,9 @@
 #ifndef VOYEUR_GRAPHICS_H
 #define VOYEUR_GRAPHICS_H
 
-//#include "voyeur/files.h"
-#include "voyeur/game.h"
 #include "common/scummsys.h"
 #include "common/array.h"
+#include "common/rect.h"
 #include "graphics/surface.h"
 
 namespace Voyeur {

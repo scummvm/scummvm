@@ -22,6 +22,7 @@
 
 #include "voyeur/events.h"
 #include "voyeur/voyeur.h"
+#include "common/events.h"
 #include "graphics/cursorman.h"
 #include "graphics/palette.h"
 
@@ -39,6 +40,27 @@ IntNode::IntNode(uint16 curTime, uint16 timeReset, uint16 flags) {
 	_curTime = curTime;
 	_timeReset = timeReset;
 	_flags = flags;
+}
+
+/*------------------------------------------------------------------------*/
+
+IntData::IntData() {
+	_field9 = false;
+	_flipWait = false;
+	_hasPalette = false;
+	field16 = 0;
+	field1A = 0;
+	field1E = 0;
+	field22 = 0;
+	field24 = 0;
+	field26 = 0;
+	field2A = 0;
+	field38 = 0;
+	field3B = 0;
+	field3D = 0;
+	_palStartIndex = 0;
+	_palEndIndex = 0;
+	_palette = NULL;
 }
 
 /*------------------------------------------------------------------------*/
