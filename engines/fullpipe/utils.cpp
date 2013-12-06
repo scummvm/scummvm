@@ -26,7 +26,6 @@
 #include "common/memstream.h"
 
 #include "fullpipe/objects.h"
-#include "fullpipe/gameloader.h"
 #include "fullpipe/motion.h"
 #include "fullpipe/ngiarchive.h"
 #include "fullpipe/messages.h"
