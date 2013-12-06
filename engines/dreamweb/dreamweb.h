@@ -110,6 +110,8 @@ protected:
 	virtual Common::Error run();
 	virtual bool hasFeature(EngineFeature f) const;
 
+	GUI::Debugger *getDebugger() { return _console; }
+
 public:
 	DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gameDesc);
 	virtual ~DreamWebEngine();
