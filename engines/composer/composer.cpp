@@ -42,6 +42,7 @@
 #include "composer/composer.h"
 #include "composer/graphics.h"
 #include "composer/resource.h"
+#include "composer/console.h"
 
 namespace Composer {
 
@@ -57,6 +58,7 @@ ComposerEngine::ComposerEngine(OSystem *syst, const ComposerGameDescription *gam
 	_mouseEnabled = false;
 	_mouseSpriteId = 0;
 	_lastButton = NULL;
+	_console = NULL;
 }
 
 ComposerEngine::~ComposerEngine() {
@@ -73,6 +75,7 @@ ComposerEngine::~ComposerEngine() {
 		i->_surface.free();
 
 	delete _rnd;
+	delete _console;
 }
 
 Common::Error ComposerEngine::run() {
@@ -112,6 +115,8 @@ Common::Error ComposerEngine::run() {
 		cursor->getHotspotY(), cursor->getKeyColor());
 	CursorMan.replaceCursorPalette(cursor->getPalette(), cursor->getPaletteStartIndex(), cursor->getPaletteCount());
 	delete cursor;
+
+	_console = new Console(this);
 
 	loadLibrary(0);
 
@@ -190,11 +195,11 @@ Common::Error ComposerEngine::run() {
 			case Common::EVENT_KEYDOWN:
 				switch (event.kbd.keycode) {
 				case Common::KEYCODE_d:
-					/*if (event.kbd.hasFlags(Common::KBD_CTRL)) {
+					if (event.kbd.hasFlags(Common::KBD_CTRL)) {
 						// Start the debugger
 						getDebugger()->attach();
 						getDebugger()->onFrame();
-					}*/
+					}
 					break;
 
 				case Common::KEYCODE_q:
