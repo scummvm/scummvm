@@ -78,6 +78,8 @@ bool SceneViewWindow::checkCustomAICommentDependencies(const Location &commentLo
 	switch (commentLocation.timeZone) {
 	case 1:
 		return checkCustomCastleAICommentDependencies(commentLocation, commentData);
+	case 4:
+		return commentData.dependencyFlagOffsetB == 1; // Not sure what this one does
 	case 5:
 		return checkCustomDaVinciAICommentDependencies(commentLocation, commentData);
 	case 6:
