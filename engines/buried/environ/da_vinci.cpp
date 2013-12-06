@@ -469,6 +469,102 @@ int PaintingTowerInsideDoor::specifyCursor(Window *viewWindow, const Common::Poi
 	return kCursorArrow;
 }
 
+class WheelAssemblyItemAcquire : public SceneBase {
+public:
+	WheelAssemblyItemAcquire(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+			int left = 0, int top = 0, int right = 0, int bottom = 0, int itemID = 0, int clearStillFrame = 0, int itemFlagOffset = 0);
+	int mouseDown(Window *viewWindow, const Common::Point &pointLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	bool _itemPresent;
+	Common::Rect _acquireRegion;
+	int _fullFrameIndex;
+	int _clearFrameIndex;
+	int _itemID;
+	int _itemFlagOffset;
+	Common::Rect _zoomUpRegion;
+};
+
+WheelAssemblyItemAcquire::WheelAssemblyItemAcquire(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+		int left, int top, int right, int bottom, int itemID, int clearStillFrame, int itemFlagOffset) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_itemPresent = true;
+	_itemID = itemID;
+	_acquireRegion = Common::Rect(left, top, right, bottom);
+	_fullFrameIndex = _staticData.navFrameIndex;
+	_clearFrameIndex = clearStillFrame;
+	_itemFlagOffset = itemFlagOffset;
+	_zoomUpRegion = Common::Rect(134, 168, 200, 189);
+
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlagByte(_itemFlagOffset) != 0) {
+		_itemPresent = false;
+		_staticData.navFrameIndex = _clearFrameIndex;
+	}
+}
+
+int WheelAssemblyItemAcquire::mouseDown(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_itemPresent && _acquireRegion.contains(pointLocation)) {
+		_itemPresent = false;
+		_staticData.navFrameIndex = _clearFrameIndex;
+		viewWindow->invalidateWindow(false);
+
+		if (_itemFlagOffset >= 0)
+			((SceneViewWindow *)viewWindow)->setGlobalFlagByte(_itemFlagOffset, 1);
+
+		Common::Point ptInventoryWindow = viewWindow->convertPointToGlobal(pointLocation);
+		ptInventoryWindow = ((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->convertPointToLocal(ptInventoryWindow);
+		((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->startDraggingNewItem(_itemID, ptInventoryWindow);
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int WheelAssemblyItemAcquire::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (!_itemPresent && _zoomUpRegion.contains(pointLocation)) {
+		DestinationScene destData;
+		destData.destinationScene = Location(5, 4, 8, 1, 1, 1);
+		destData.transitionType = TRANSITION_VIDEO;
+		destData.transitionData = 15;
+		destData.transitionStartFrame = -1;
+		destData.transitionLength = -1;
+		((SceneViewWindow *)viewWindow)->moveToDestination(destData);
+	}
+
+	return SC_FALSE;
+}
+
+int WheelAssemblyItemAcquire::droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) {
+	if (pointLocation.x == -1 && pointLocation.y == -1)
+		return 0;
+
+	if (_itemID == itemID && !_itemPresent && pointLocation.x >= 0 && pointLocation.y >= 0) {
+		_itemPresent = true;
+		_staticData.navFrameIndex = _fullFrameIndex;
+
+		if (_itemFlagOffset >= 0)
+			((SceneViewWindow *)viewWindow)->setGlobalFlagByte(_itemFlagOffset, 0);
+
+		viewWindow->invalidateWindow(false);
+		return SIC_ACCEPT;
+	}
+
+	return SIC_REJECT;
+}
+
+int WheelAssemblyItemAcquire::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_itemPresent && _acquireRegion.contains(pointLocation))
+		return kCursorOpenHand;
+
+	if (!_itemPresent && _zoomUpRegion.contains(pointLocation))
+		return kCursorMagnifyingGlass;
+
+	return kCursorArrow;
+}
+
 enum {
 	DS_SC_DRIVE_ASSEMBLY = 1,
 	DS_SC_WHEEL_ASSEMBLY = 2,
@@ -552,6 +648,81 @@ int WalkDownPaintingTowerElevator::specifyCursor(Window *viewWindow, const Commo
 		return _cursorID;
 
 	return kCursorArrow;
+}
+
+class ViewSiegeCyclePlans : public SceneBase {
+public:
+	ViewSiegeCyclePlans(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int gdiPaint(Window *viewWindow);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int mouseMove(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	Common::Rect _transText[3];
+	int _textTranslated;
+};
+
+ViewSiegeCyclePlans::ViewSiegeCyclePlans(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_transText[0] = Common::Rect(245, 8, 307, 24);
+	_transText[1] = Common::Rect(132, 40, 188, 76);
+	_transText[2] = Common::Rect(278, 146, 332, 178);
+	_textTranslated = -1;
+
+	// Set the scene visited flag
+	((SceneViewWindow *)viewWindow)->getGlobalFlags().dsWSSeenCycleSketch = 1;
+}
+
+int ViewSiegeCyclePlans::gdiPaint(Window *viewWindow) {
+	if (_textTranslated >= 0 && ((SceneViewWindow *)viewWindow)->getGlobalFlags().bcTranslateEnabled == 1) {
+		Common::Rect absoluteRect = viewWindow->getAbsoluteRect();
+		Common::Rect rect(_transText[_textTranslated]);
+		rect.translate(absoluteRect.left, absoluteRect.top);
+		_vm->_gfx->getScreen()->frameRect(rect, _vm->_gfx->getColor(255, 0, 0));
+	}
+
+	return SC_REPAINT;
+}
+
+int ViewSiegeCyclePlans::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	// Return to depth zero
+	DestinationScene destData;
+	destData.destinationScene = _staticData.location;
+	destData.destinationScene.depth = 0;
+	destData.transitionType = TRANSITION_VIDEO;
+	destData.transitionData = 16;
+	destData.transitionStartFrame = -1;
+	destData.transitionLength = -1;
+	((SceneViewWindow *)viewWindow)->moveToDestination(destData);
+	return SC_TRUE;
+}
+
+int ViewSiegeCyclePlans::mouseMove(Window *viewWindow, const Common::Point &pointLocation) {
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().bcTranslateEnabled == 1) {
+		for (int i = 0; i < 3; i++) {
+			if (_transText[i].contains(pointLocation)) {
+				((SceneViewWindow *)viewWindow)->getGlobalFlags().dsPTTransElevatorControls = 1;
+
+				Common::String text = _vm->getString(IDS_DS_WS_CYCLE_PLANS_TEXT_A + i);
+				((SceneViewWindow *)viewWindow)->displayTranslationText(text);
+				_textTranslated = i;
+				viewWindow->invalidateWindow(false);
+				break;
+			}
+		}
+	} else {
+		if (_textTranslated >= 0) {
+			_textTranslated = -1;
+			viewWindow->invalidateWindow(false);
+		}
+	}
+
+	return SC_FALSE;
+}
+
+int ViewSiegeCyclePlans::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	return kCursorPutDown;
 }
 
 bool SceneViewWindow::initializeDaVinciTimeZoneAndEnvironment(Window *viewWindow, int environment) {
@@ -761,6 +932,10 @@ SceneBase *SceneViewWindow::constructDaVinciSceneObject(Window *viewWindow, cons
 		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 158, 90, 328, 162, kItemDriveAssembly, 145, offsetof(GlobalFlags, dsWSPickedUpGearAssembly));
 	case 33:
 		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 164, 126, 276, 160, kItemWoodenPegs, 96, offsetof(GlobalFlags, dsWSPickedUpPegs));
+	case 34:
+		return new WheelAssemblyItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 150, 150, 276, 189, kItemWheelAssembly, 100, offsetof(GlobalFlags, dsWSPickedUpWheelAssembly));
+	case 35:
+		return new ViewSiegeCyclePlans(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 38:
 		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 130, 74, 182, 120, kItemCoilOfRope, 48, offsetof(GlobalFlags, dsGDTakenCoilOfRope));
 	case 41:
