@@ -600,7 +600,7 @@ private:
 		void stop(bool fade = false, unsigned int time = fadeTime);
 		void setLastFrame();
 
-		inline bool isValid() const { return _chore > -1; }
+		inline bool isValid() const { return _chore > -1 && _costume != nullptr; }
 		bool isPlaying() const;
 		inline bool equals(const Costume *cost, int chore) const {
 			return (_costume == cost && _chore == chore);
