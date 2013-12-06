@@ -202,6 +202,7 @@ namespace Fullpipe {
 #define QU_PNK_CLICK 550
 #define QU_SC3_ENTERLIFT 2779
 #define QU_SC3_EXITLIFT 2808
+#define QU_SC4_GOCLOCK 595
 #define QU_SC4_MANFROMBOTTLE 2851
 #define SC_1 301
 #define SC_10 653

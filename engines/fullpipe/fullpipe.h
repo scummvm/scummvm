@@ -143,6 +143,7 @@ public:
 	void playSound(int id, int flag);
 	void startSceneTrack();
 	void stopSoundStream2();
+	void stopAllSoundStreams();
 
 	int _sfxVolume;
 

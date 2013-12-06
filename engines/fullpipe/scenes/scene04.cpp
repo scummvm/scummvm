@@ -434,8 +434,21 @@ void sceneHandler04_liftBottle() {
 	}
 }
 
-void sceneHandler04_sub7() {
-	warning("sceneHandler04_sub7()");
+void sceneHandler04_startSounds(const char *snd1, const char *snd2, const char *snd3) {
+	warning("STUB: sceneHandler04_startSounds()");
+}
+
+void sceneHandler04_goClock() {
+	sceneHandler04_walkKozyawka();
+	chainQueue(QU_SC4_GOCLOCK, 0);
+	g_vars->scene04_soundPlaying = 1;
+	g_vars->scene04_coinPut = 0;
+
+	g_fullpipe->stopAllSoundStreams();
+
+	sceneHandler04_startSounds("sc4_start.ogg", "sc4_loop.ogg", "sc4_stop2.ogg");
+
+	g_vars->scene04_var14 = 0;
 }
 
 void sceneHandler04_sub8(ExCommand *ex) {
@@ -701,7 +714,7 @@ int sceneHandler04(ExCommand *ex) {
 				sceneHandler04_sub1(0);
 
 			if (g_vars->scene04_coinPut && g_vars->scene04_var18 && !g_vars->scene04_var09 && !g_vars->scene04_soundPlaying)
-				sceneHandler04_sub7();
+				sceneHandler04_goClock();
 
 			if (g_vars->scene04_var01) {
 				if (!g_vars->scene04_soundPlaying) {
