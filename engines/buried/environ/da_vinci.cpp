@@ -596,6 +596,103 @@ bool SceneViewWindow::startDaVinciAmbient(int oldTimeZone, int oldEnvironment, i
 	return true;
 }
 
+bool SceneViewWindow::checkCustomDaVinciAICommentDependencies(const Location &commentLocation, const AIComment &commentData) {
+	switch (commentData.dependencyFlagOffsetB) {
+	case 1: // Has not raised platform
+		return _globalFlags.dsPTRaisedPlatform == 0;
+	case 2: // Has raised platform
+		return _globalFlags.dsPTRaisedPlatform == 1;
+	case 3: // Has not been to codec tower
+		return _globalFlags.dsVisitedCodexTower == 0;
+	case 4: // Has not been on balcony, has not been down elevator
+		return _globalFlags.dsPTBeenOnBalcony == 0 && _globalFlags.dsPTWalkedDownElevator == 0;
+	case 5: // Has not raised platform, has not translated levers
+		return _globalFlags.dsPTRaisedPlatform == 0 && _globalFlags.dsPTTransElevatorControls == 0;
+	case 6: // Has not raised platform, has not translated levers, translation biochip is in inventory
+		return _globalFlags.dsPTRaisedPlatform == 0 && _globalFlags.dsPTTransElevatorControls == 0 && ((GameUIWindow *)getParent())->_inventoryWindow->isItemInInventory(kItemBioChipTranslate);
+	case 7: // If clicked on codex door
+		return _globalFlags.dsGDClickedOnCodexDoor == 1;
+	case 8: // If clicked on codex door, siege cycle not in inventory
+		return _globalFlags.dsGDClickedOnCodexDoor == 1 && ((GameUIWindow *)getParent())->_inventoryWindow->isItemInInventory(kItemSiegeCycle);
+	case 9: // If gear assembly has never been in inventory
+		return _globalFlags.genHadDriveAssembly == 0;
+	case 10: // If siege cycle has never been inventory
+		return _globalFlags.genHadSiegeCycle == 0;
+	case 11: // If neither wheel assembly or drive assembly have ever been in inventory, and after viewing siege cycle plans
+		return _globalFlags.genHadDriveAssembly == 0 && _globalFlags.genHadWheelAssembly == 0;
+	case 12: // After player has been to 5/4/8/1/1/1, siege cycle has never been in inventory
+		return (_globalFlags.dsWSSiegeCycleStatus & DS_SC_DRIVE_ASSEMBLY) != 0 && (_globalFlags.dsWSSiegeCycleStatus & DS_SC_WHEEL_ASSEMBLY) != 0;
+	case 13: // After player has been to 5/4/4/2/0/1 or 5/4/4/3/0/1, siege cycle has never been in inventory
+		return _globalFlags.dsWSSeenBallistaSketch == 1 && _globalFlags.genHadSiegeCycle == 0;
+	case 14: // After player has been to (5/4/4/2/0/1 or 5/4/4/3/0/1) and 5/4/8/1/1/1, before any parts are on the jig
+		return _globalFlags.dsWSSeenCycleSketch == 1 && _globalFlags.dsWSSeenBallistaSketch == 1 && _globalFlags.dsWSSiegeCycleStatus == 0 && _globalFlags.dsWSGrabbedSiegeCycle == 0;
+	case 15: // After player has been to 5/4/4/2/0/1 or 5/4/4/3/0/1, before any parts are on the jig
+		return _globalFlags.dsWSSeenBallistaSketch == 1 && _globalFlags.dsWSSiegeCycleStatus == 0 && _globalFlags.dsWSGrabbedSiegeCycle == 0;
+	case 16: // After player has been to 5/4/4/2/0/1 or 5/4/4/3/0/1, if wheel assembly and drive assembly have never been in inventory
+		return _globalFlags.dsWSSeenBallistaSketch == 1 && _globalFlags.dsWSSiegeCycleStatus == 0 && _globalFlags.dsWSGrabbedSiegeCycle == 0 && !((GameUIWindow *)getParent())->_inventoryWindow->isItemInInventory(kItemDriveAssembly) && !((GameUIWindow *)getParent())->_inventoryWindow->isItemInInventory(kItemWoodenPegs);
+	case 17: // After player has been to 5/4/4/2/0/1 or 5/4/4/3/0/1
+		return _globalFlags.dsWSSeenBallistaSketch == 1;
+	case 18: // Has tried door of codex tower, has never connected ballista hook, has not seen 5/4/4/2/0/1 or 5/4/4/3/0/1
+		return _globalFlags.dsGDClickedOnCodexDoor == 1 && _globalFlags.dsCYNeverConnectedHook == 0 && _globalFlags.dsWSSeenBallistaSketch == 0;
+	case 19: // Has tried door of codex tower, has not seen 5/4/4/2/0/1 or 5/4/4/3/0/1, has not been to codex tower
+		return _globalFlags.dsGDClickedOnCodexDoor == 1 && _globalFlags.dsWSSeenBallistaSketch == 0 && _globalFlags.dsVisitedCodexTower == 0;
+	case 20: // Has tried door of codex tower, has seen 5/4/4/2/0/1 or 5/4/4/3/0/1, has never shot ballista
+		return _globalFlags.dsGDClickedOnCodexDoor == 1 && _globalFlags.dsWSSeenBallistaSketch == 1 && _globalFlags.dsCYNeverShotBallista == 0;
+	case 21: // Has tried door of codex tower, has seen 5/4/4/2/0/1 or 5/4/4/3/0/1, has never used crank
+		return _globalFlags.dsGDClickedOnCodexDoor == 1 && _globalFlags.dsWSSeenBallistaSketch == 1 && _globalFlags.dsCYNeverUsedCrank == 0;
+	case 22: // Has never connected ballista hook to codex tower
+		return _globalFlags.dsCYNeverConnectedHook == 0;
+	case 23: // Has tried door of codex tower, has not seen 5/4/4/2/0/1 or 5/4/4/3/0/1, has not been to codex tower
+		return _globalFlags.dsGDClickedOnCodexDoor == 1 && _globalFlags.dsWSSeenBallistaSketch == 0 && _globalFlags.dsVisitedCodexTower == 0;
+	case 24: // Has tried door of codex tower, has seen 5/4/4/2/0/1 or 5/4/4/3/0/1, has not been to codex tower, siege cycle not in inventory
+		return _globalFlags.dsGDClickedOnCodexDoor == 1 && _globalFlags.dsWSSeenBallistaSketch == 1 && _globalFlags.dsVisitedCodexTower == 0 && _globalFlags.dsCYBallistaStatus == 2 && !((GameUIWindow *)getParent())->_inventoryWindow->isItemInInventory(kItemSiegeCycle);
+	case 25: // Has tried door of codex tower, has seen 5/4/4/2/0/1 or 5/4/4/3/0/1, has not been to codex tower, has siege cycle in inventory
+		return _globalFlags.dsGDClickedOnCodexDoor == 1 && _globalFlags.dsWSSeenBallistaSketch == 1 && _globalFlags.dsVisitedCodexTower == 0 && ((GameUIWindow *)getParent())->_inventoryWindow->isItemInInventory(kItemSiegeCycle);
+	case 26: // Has tried door of codex tower, has not seen 5/4/4/2/0/1 or 5/4/4/3/0/1, has not been to codex tower, has siege cycle in inventory
+		return _globalFlags.dsGDClickedOnCodexDoor == 1 && _globalFlags.dsWSSeenBallistaSketch == 0 && _globalFlags.dsVisitedCodexTower == 0 && ((GameUIWindow *)getParent())->_inventoryWindow->isItemInInventory(kItemSiegeCycle);
+	case 27: // Has tried door of codex tower, has not connected ballista hook to codex tower
+		return _globalFlags.dsGDClickedOnCodexDoor == 1 && _globalFlags.dsCYBallistaStatus < 2;
+	case 28: // Before ever opening codex tower balcony door
+		return _globalFlags.dsCYNeverOpenedBalconyDoor == 0;
+	case 29: // Before ever opening codex tower balcony door, after trying unsuccessfully to open door
+		return _globalFlags.dsCYNeverOpenedBalconyDoor == 0 && _globalFlags.dsCYTriedOpeningDoor == 1;
+	case 30: // Before ever opening codex tower balcony door, after trying unsuccessfully to open door, balcony key in inventory
+		return _globalFlags.dsCYNeverOpenedBalconyDoor == 0 && _globalFlags.dsCYTriedOpeningDoor == 1 && ((GameUIWindow *)getParent())->_inventoryWindow->isItemInInventory(kItemBalconyKey);
+	case 31: // Before ever opening codex tower balcony door, after trying unsuccessfully to open door, metal bar in inventory, balcony key not in inventory
+		return _globalFlags.dsCYNeverOpenedBalconyDoor == 0 && _globalFlags.dsCYTriedOpeningDoor == 1 && ((GameUIWindow *)getParent())->_inventoryWindow->isItemInInventory(kItemMetalBar) && !((GameUIWindow *)getParent())->_inventoryWindow->isItemInInventory(kItemBalconyKey);
+	case 32: // Lens filter not in ineventory
+		return !((GameUIWindow *)getParent())->_inventoryWindow->isItemInInventory(kItemLensFilter);
+	case 33: // Player has not found formulae, before trying to translate any codex
+		return _globalFlags.dsCTCodexFormulaeFound == 0 && _globalFlags.dsCYTranslatedCodex == 0;
+	case 34: // Player has not found formulae, after trying to translate any codex
+		return _globalFlags.dsCTCodexFormulaeFound == 0 && _globalFlags.dsCYTranslatedCodex == 1;
+	case 35: // Player has not found formulae, after trying to translate any codex, lens filter in inventory, lens filter not being used
+		return _globalFlags.dsCTCodexFormulaeFound == 0 && _globalFlags.dsCYTranslatedCodex == 1 && ((GameUIWindow *)getParent())->_inventoryWindow->isItemInInventory(kItemLensFilter) && _globalFlags.lensFilterActivated == 0;
+	case 36: // After trying unsuccessfully to open the door
+		return _globalFlags.dsCYTriedOpeningDoor == 1;
+	case 37: // Player has not found formulae
+		return _globalFlags.dsCTCodexFormulaeFound == 0;
+	case 38: // Heart not in inventory
+		return !((GameUIWindow *)getParent())->_inventoryWindow->isItemInInventory(kItemPreservedHeart);
+	case 39: // After trying to use the codex tower elevator
+		return _globalFlags.dsCYTriedElevator == 1;
+	case 40: // After trying to translate any codex
+		return _globalFlags.dsCYTranslatedCodex == 1;
+	case 41: // Not node 8, 9, 10, or 11, player has not found codex
+		return commentLocation.node != 8 && commentLocation.node != 9 && commentLocation.node != 10 && commentLocation.node != 11 && _globalFlags.dsCYFoundCodexes == 1;
+	case 42: // Not node 8, 9, 10, or 11
+		return commentLocation.node != 8 && commentLocation.node != 9 && commentLocation.node != 10 && commentLocation.node != 11;
+	case 43: // Not node 8, 9, 10, or 11, player has not found formulae, lens filter in inventory
+		return commentLocation.node != 8 && commentLocation.node != 9 && commentLocation.node != 10 && commentLocation.node != 11 && _globalFlags.dsCTCodexFormulaeFound == 0 && ((GameUIWindow *)getParent())->_inventoryWindow->isItemInInventory(kItemLensFilter);
+	case 44: // After player has been to 5/4/4/2/0/1 or 5/4/4/3/0/1, before building siege cycle, drive/gear assembly not in inventory
+		return _globalFlags.dsWSSeenBallistaSketch == 1 && _globalFlags.dsWSSiegeCycleStatus == 0 && _globalFlags.dsWSPickedUpWheelAssembly == 0;
+	case 45: // After weeble has been spun/clicked
+		return _globalFlags.dsCYWeebleClicked == 1;
+	}
+
+	return false;
+}
+
 SceneBase *SceneViewWindow::constructDaVinciSceneObject(Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) {
 	// TODO
 
@@ -681,7 +778,7 @@ SceneBase *SceneViewWindow::constructDaVinciSceneObject(Window *viewWindow, cons
 	case 55:
 		return new ClickChangeScene(_vm, viewWindow, sceneStaticData, priorLocation, 210, 0, 330, 110, kCursorMagnifyingGlass, 5, 2, 3, 4, 1, 1, TRANSITION_VIDEO, 15, -1, -1);
 	case 58:
-		return new ClickPlayVideoSwitch(_vm, viewWindow, sceneStaticData, priorLocation, 1, kCursorFinger, offsetof(GlobalFlags, dsCYWeeblieClicked), 200, 88, 270, 189);
+		return new ClickPlayVideoSwitch(_vm, viewWindow, sceneStaticData, priorLocation, 1, kCursorFinger, offsetof(GlobalFlags, dsCYWeebleClicked), 200, 88, 270, 189);
 	case 59:
 		return new ClickPlayVideo(_vm, viewWindow, sceneStaticData, priorLocation, 2, kCursorFinger, 70, 136, 190, 189);
 	case 60:

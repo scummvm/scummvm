@@ -260,7 +260,7 @@ struct GlobalFlags {
 	byte asRBLastStingerID;             // 253
 	byte asRBStingerID;                 // 254
 	byte aiICProcessedOxygen;           // 255
-	byte dsCYWeeblieClicked;            // 256
+	byte dsCYWeebleClicked;             // 256
 	byte aiICUsedMiningControls;        // 257
 	byte aiSWAttemptedPresMR;           // 258
 	byte aiICRefilledOxygen;            // 259
