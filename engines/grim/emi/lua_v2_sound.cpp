@@ -386,7 +386,7 @@ void Lua_V2::PlaySound() {
 		return;
 	}
 
-	if (!lua_isnumber(volumeObj)) {
+	if (g_grim->getGameFlags() != ADGF_DEMO && !lua_isnumber(volumeObj)) {
 		error("Lua_V2::PlaySound - ERROR: Unknown parameters");
 		return;
 	}
@@ -410,7 +410,9 @@ void Lua_V2::PlaySound() {
 	}
 
 	track->openSound(filename, stream);
-	track->setVolume(volume);
+	if (g_grim->getGameFlags() != ADGF_DEMO) {
+		track->setVolume(volume);
+	}
 	track->play();
 }
 
