@@ -28,4 +28,4 @@ Console::Console(ComposerEngine *vm) : GUI::Debugger() {
 	_vm = vm;
 }
 
-} // End of namespace Agi
+} // End of namespace Composer
