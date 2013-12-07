@@ -30,6 +30,7 @@
 #include "buried/graphics.h"
 #include "buried/invdata.h"
 #include "buried/inventory_window.h"
+#include "buried/navarrow.h"
 #include "buried/resources.h"
 #include "buried/scene_view.h"
 #include "buried/sound.h"
@@ -884,6 +885,85 @@ int SpinBallista::specifyCursor(Window *viewWindow, const Common::Point &pointLo
 		return kCursorFinger;
 
 	return kCursorArrow;
+}
+
+class PlaceSiegeCycleOnTrack : public SceneBase {
+public:
+	PlaceSiegeCycleOnTrack(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int draggingItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
+	int droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
+
+private:
+	Common::Rect _cycleRect;
+	void setArrows(Window *viewWindow);
+};
+
+PlaceSiegeCycleOnTrack::PlaceSiegeCycleOnTrack(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_cycleRect = Common::Rect(0, 0, 350, 160);
+
+	// If we placed the cycle on the track, change the still frame
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().dsCYPlacedSiegeCycle != 0) {
+		_staticData.navFrameIndex = 229;
+		setArrows(viewWindow);
+	}
+}
+
+int PlaceSiegeCycleOnTrack::draggingItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) {
+	if (itemID == kItemSiegeCycle && _cycleRect.contains(pointLocation) && ((SceneViewWindow *)viewWindow)->getGlobalFlags().dsCYPlacedSiegeCycle == 0)
+		return 1;
+
+	return 0;
+}
+
+int PlaceSiegeCycleOnTrack::droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) {
+	if (pointLocation.x == -1 && pointLocation.y == -1)
+		return 0;
+
+	if (itemID == kItemSiegeCycle && _cycleRect.contains(pointLocation) && ((SceneViewWindow *)viewWindow)->getGlobalFlags().dsCYPlacedSiegeCycle == 0) {
+		_staticData.navFrameIndex = 229;
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().dsCYPlacedSiegeCycle = 1;
+		viewWindow->invalidateWindow(false);
+		setArrows(viewWindow);
+		return SIC_ACCEPT;
+	}
+
+	return SIC_REJECT;
+}
+
+void PlaceSiegeCycleOnTrack::setArrows(Window *viewWindow) {
+	// Can only walk to the siege cycle
+	_staticData.destForward.destinationScene = Location(5, 5, 13, 0, 0, 0);
+	_staticData.destForward.transitionType = TRANSITION_VIDEO;
+	_staticData.destForward.transitionData = 12;
+	_staticData.destForward.transitionStartFrame = -1;
+	_staticData.destForward.transitionLength = -1;
+
+	_staticData.destUp.destinationScene = Location(-1, -1, -1, -1, -1, -1);
+	_staticData.destUp.transitionType = -1;
+	_staticData.destUp.transitionData = -1;
+	_staticData.destUp.transitionStartFrame = -1;
+	_staticData.destUp.transitionLength = -1;
+
+	_staticData.destLeft.destinationScene = Location(-1, -1, -1, -1, -1, -1);
+	_staticData.destLeft.transitionType = -1;
+	_staticData.destLeft.transitionData = -1;
+	_staticData.destLeft.transitionStartFrame = -1;
+	_staticData.destLeft.transitionLength = -1;
+
+	_staticData.destRight.destinationScene = Location(-1, -1, -1, -1, -1, -1);
+	_staticData.destRight.transitionType = -1;
+	_staticData.destRight.transitionData = -1;
+	_staticData.destRight.transitionStartFrame = -1;
+	_staticData.destRight.transitionLength = -1;
+
+	_staticData.destDown.destinationScene = Location(-1, -1, -1, -1, -1, -1);
+	_staticData.destDown.transitionType = -1;
+	_staticData.destDown.transitionData = -1;
+	_staticData.destDown.transitionStartFrame = -1;
+	_staticData.destDown.transitionLength = -1;
+
+	((GameUIWindow *)viewWindow->getParent())->_navArrowWindow->updateAllArrows(_staticData);
 }
 
 class AimBallistaAwayFromTower : public SceneBase {
@@ -1753,6 +1833,8 @@ SceneBase *SceneViewWindow::constructDaVinciSceneObject(Window *viewWindow, cons
 		return new BasicDoor(_vm, viewWindow, sceneStaticData, priorLocation, 122, 8, 326, 189, 5, 5, 0, 2, 1, 1, TRANSITION_WALK, 11, 738, 18);
 	case 66:
 		return new BasicDoor(_vm, viewWindow, sceneStaticData, priorLocation, 170, 0, 432, 189, 5, 4, 0, 0, 1, 1, TRANSITION_WALK, 11, 1220, 12);
+	case 67:
+		return new PlaceSiegeCycleOnTrack(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 68:
 		return new AimBallistaAwayFromTower(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 69:
