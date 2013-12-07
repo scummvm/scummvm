@@ -28,9 +28,9 @@
 #include "engines/grim/resource.h"
 #include "engines/grim/emi/costumeemi.h"
 #include "engines/grim/emi/modelemi.h"
-#include "engines/grim/costume/chore.h"
 #include "engines/grim/costume/head.h"
 #include "engines/grim/emi/costume/emianim_component.h"
+#include "engines/grim/emi/costume/emichore.h"
 #include "engines/grim/emi/costume/emiluavar_component.h"
 #include "engines/grim/emi/costume/emiluacode_component.h"
 #include "engines/grim/emi/costume/emimesh_component.h"
@@ -66,7 +66,7 @@ void EMICostume::load(Common::SeekableReadStream *data) {
 		if (length < 1000)
 			length *= 1000;
 
-		_chores[i] = new PoolChore(name, i, this, (int)length, numTracks);
+		_chores[i] = new EMIChore(name, i, this, (int)length, numTracks);
 
 		for (int k = 0; k < numTracks; k++) {
 			int componentNameLength = data->readUint32LE();

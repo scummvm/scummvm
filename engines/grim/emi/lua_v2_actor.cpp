@@ -26,11 +26,11 @@
 #include "engines/grim/actor.h"
 #include "engines/grim/grim.h"
 #include "engines/grim/costume.h"
-#include "engines/grim/costume/chore.h"
 
 #include "engines/grim/emi/emi.h"
 #include "engines/grim/emi/costumeemi.h"
 #include "engines/grim/emi/skeleton.h"
+#include "engines/grim/emi/costume/emichore.h"
 #include "engines/grim/emi/costume/emiskel_component.h"
 
 namespace Grim {
@@ -246,7 +246,7 @@ void Lua_V2::IsChoreValid() {
 		return;
 
 	int chore = lua_getuserdata(choreObj);
-	Chore *c = PoolChore::getPool().getObject(chore);
+	Chore *c = EMIChore::getPool().getObject(chore);
 
 	if (c) {
 		pushbool(c != NULL);
@@ -262,7 +262,7 @@ void Lua_V2::IsChorePlaying() {
 		return;
 
 	int chore = lua_getuserdata(choreObj);
-	Chore *c = PoolChore::getPool().getObject(chore);
+	Chore *c = EMIChore::getPool().getObject(chore);
 
 	if (c) {
 		pushbool(c->isPlaying());
@@ -278,7 +278,7 @@ void Lua_V2::IsChoreLooping() {
 		return;
 
 	int chore = lua_getuserdata(choreObj);
-	Chore *c = PoolChore::getPool().getObject(chore);
+	Chore *c = EMIChore::getPool().getObject(chore);
 
 	if (c) {
 		pushbool(c->isLooping());
@@ -293,7 +293,7 @@ void Lua_V2::SetChoreLooping() {
 		return;
 
 	int chore = lua_getuserdata(choreObj);
-	Chore *c = PoolChore::getPool().getObject(chore);
+	Chore *c = EMIChore::getPool().getObject(chore);
 
 	if (c) {
 		c->setLooping(false);
@@ -330,7 +330,7 @@ void Lua_V2::StopChore() {
 	float time = lua_getnumber(timeObj);
 	// FIXME: implement missing rest part of code
 	warning("Lua_V2::StopChore: stub, chore: %d time: %f", chore, time);
-	Chore *c = PoolChore::getPool().getObject(chore);
+	Chore *c = EMIChore::getPool().getObject(chore);
 	if (c) {
 		c->stop();
 	}
@@ -345,7 +345,7 @@ void Lua_V2::AdvanceChore() {
 
 	int chore = lua_getuserdata(choreObj);
 	float time = lua_getnumber(timeObj);
-	Chore *c = PoolChore::getPool().getObject(chore);
+	Chore *c = EMIChore::getPool().getObject(chore);
 	if (c) {
 		if (!c->isPlaying()) {
 			warning("AdvanceChore() called on stopped chore %s (%s)",
@@ -665,7 +665,7 @@ void Lua_V2::GetActorChores() {
 	for (int i = 0; i < num; ++i) {
 		lua_pushobject(result);
 		lua_pushnumber(i);
-		lua_pushusertag(((PoolChore *)costume->getChore(i))->getId(), MKTAG('C','H','O','R'));
+		lua_pushusertag(((EMIChore *)costume->getChore(i))->getId(), MKTAG('C','H','O','R'));
 		lua_settable();
 	}
 
@@ -707,7 +707,7 @@ void Lua_V2::PlayActorChore() {
 		costume = actor->findCostume(costumeName);
 	}
 
-	PoolChore *chore = (PoolChore *)costume->getChore(choreName);
+	EMIChore *chore = (EMIChore *)costume->getChore(choreName);
 	if (0 == strncmp("wear_", choreName, 5)) {
 		actor->setLastWearChore(costume->getChoreId(choreName), costume);
 	}
