@@ -2,6 +2,7 @@ MODULE := engines/fullpipe
 
 MODULE_OBJS = \
 	behavior.o \
+	console.o \
 	detection.o \
 	floaters.o \
 	fullpipe.o \

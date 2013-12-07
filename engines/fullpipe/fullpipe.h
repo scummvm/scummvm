@@ -36,6 +36,9 @@
 
 #include "engines/engine.h"
 
+#include "gui/debugger.h"
+#include "fullpipe/console.h"
+
 struct ADGameDescription;
 
 namespace Fullpipe {
@@ -79,6 +82,9 @@ protected:
 public:
 	FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	virtual ~FullpipeEngine();
+
+	Console *_console;
+	GUI::Debugger *getDebugger() { return _console; }
 
 	void initialize();
 
