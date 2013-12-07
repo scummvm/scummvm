@@ -50,6 +50,8 @@ public:
 	void stopVideo(); // MCIWndStop
 	int getCurFrame(); // MCIWndGetPosition
 	int getFrameCount(); // MCIWndGetLength
+	void setSourceRect(const Common::Rect &srcRect); // MCIWndPutSource
+	void setDestRect(const Common::Rect &dstRect); // MCIWndPutDest
 
 	bool openVideo(const Common::String &fileName); // MCIWndOpen
 	void closeVideo(); // MCIWndClose
@@ -74,6 +76,7 @@ private:
 	Mode _mode;
 	Graphics::Surface *_ownedFrame;
 	bool _needsPalConversion;
+	Common::Rect _srcRect, _dstRect;
 };
 
 } // End of namespace Buried
