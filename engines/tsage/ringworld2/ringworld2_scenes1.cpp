@@ -2255,7 +2255,7 @@ Scene1337::Scene1337() {
 	_currentPlayerNumb = 0;
 	_field4240 = 0;
 	_field4242 = 0;
-	_field4244 = false;
+	_showPlayerTurn = false;
 	_field4246 = false;
 	_field424A = 0;
 	_instructionsDisplayedFl = false;
@@ -3549,6 +3549,7 @@ void Scene1337::Action4::signal() {
 	}
 }
 
+// Animations for discarding a card
 void Scene1337::Action5::signal() {
 	Scene1337 *scene = (Scene1337 *)R2_GLOBALS._sceneManager._scene;
 
@@ -3557,6 +3558,7 @@ void Scene1337::Action5::signal() {
 		scene->_availableCardsPile[scene->_currentDiscardIndex] = scene->_discardCard->_cardId;
 		scene->_currentDiscardIndex--;
 		if (!g_globals->_sceneObjects->contains(&scene->_discardPile._card)) {
+			// The first discarded card makes the pile appear
 			scene->_discardPile._card.postInit();
 			scene->_discardPile._card.hide();
 			scene->_discardPile._card.setVisage(1332);
@@ -4128,7 +4130,7 @@ void Scene1337::Action11::signal() {
 		}
 
 		scene->_currentPlayerNumb--;
-		scene->_field4244 = false;
+		scene->_showPlayerTurn = false;
 		scene->subC4A39(scene->_field3EF4);
 		break;
 	default:
@@ -4521,7 +4523,10 @@ void Scene1337::actionDisplay(int resNum, int lineNum, int x, int y, int arg5, i
 	// TODO: Check if it's normal that arg5 is unused and replaced by an hardcoded 0 value
 	// May hide an original bug
 
-	SceneItem::display(resNum, lineNum, SET_X, x, SET_Y, y, SET_KEEP_ONSCREEN, 0, SET_WIDTH, width, SET_POS_MODE, -1, SET_TEXT_MODE, textMode, SET_FONT, fontNum, SET_FG_COLOR, colFG, SET_EXT_BGCOLOR, colBGExt, SET_EXT_FGCOLOR, colFGExt, LIST_END);
+	SceneItem::display(resNum, lineNum, SET_X, x, SET_Y, y, SET_KEEP_ONSCREEN, 0, 
+		               SET_WIDTH, width, SET_POS_MODE, -1, SET_TEXT_MODE, textMode, 
+					   SET_FONT, fontNum, SET_FG_COLOR, colFG, SET_EXT_BGCOLOR, colBGExt, 
+					   SET_EXT_FGCOLOR, colFGExt, LIST_END);
 }
 
 void Scene1337::setAnimationInfo(Card *subObj) {
@@ -4556,7 +4561,7 @@ void Scene1337::subC20F9() {
 		if (_currentPlayerNumb == 3)
 			_currentPlayerNumb = 0;
 
-		if (_field4244) {
+		if (_showPlayerTurn) {
 			_currentPlayerArrow.show();
 			switch (_currentPlayerNumb) {
 			case 0:
@@ -4627,7 +4632,7 @@ void Scene1337::subC20F9() {
 }
 
 void Scene1337::subC2586() {
-	if (_field4244)
+	if (_showPlayerTurn)
 		_currentPlayerArrow.hide();
 
 	switch (_currentPlayerNumb) {
@@ -4647,7 +4652,7 @@ void Scene1337::subC2586() {
 		break;
 	}
 
-	_field4244 = true;
+	_showPlayerTurn = true;
 
 }
 
@@ -5539,7 +5544,7 @@ void Scene1337::subPostInit() {
 	_currentPlayerArrow.animate(ANIM_MODE_2, NULL);
 	_currentPlayerArrow.hide();
 
-	_field4244 = true;
+	_showPlayerTurn = true;
 	_field4246 = false;
 	_field424A = -1;
 
@@ -6524,7 +6529,7 @@ void Scene1337::subD02CA() {
 						setCursorData(5, 1, 4);
 						found = true;
 						_currentPlayerNumb--;
-						_field4244 = false;
+						_showPlayerTurn = false;
 						subC20F9();
 					} else {
 						actionDisplay(1330, 127, 159, 10, 1, 200, 0, 7, 0, 154, 154);

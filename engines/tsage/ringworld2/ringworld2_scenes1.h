@@ -313,7 +313,7 @@ public:
 	int _currentPlayerNumb;
 	int _field4240;
 	int _field4242;
-	bool _field4244;
+	bool _showPlayerTurn;
 	bool _field4246;
 	int _field424A;
 	bool _instructionsDisplayedFl;
