@@ -185,3 +185,6 @@ ScummVM.includes
 
 #Ignore Mac DS_Store files
 .DS_Store
+
+#Ignore temporary file created by create_project
+dists/msvc9/engines/plugins_table.h
