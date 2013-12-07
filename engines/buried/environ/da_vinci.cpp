@@ -23,6 +23,7 @@
  *
  */
 
+#include "buried/avi_frames.h"
 #include "buried/biochip_right.h"
 #include "buried/buried.h"
 #include "buried/gameui.h"
@@ -885,6 +886,181 @@ int SpinBallista::specifyCursor(Window *viewWindow, const Common::Point &pointLo
 	return kCursorArrow;
 }
 
+class AimBallistaAwayFromTower : public SceneBase {
+public:
+	AimBallistaAwayFromTower(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	~AimBallistaAwayFromTower();
+	void preDestructor();
+	int paint(Window *viewWindow, Graphics::Surface *preBuffer);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	Common::Rect _raiseBallista;
+	Common::Rect _lowerBallista;
+	Common::Rect _turnBallistaLeft;
+	Common::Rect _turnBallistaRight;
+	Common::Rect _ballistaHandle;
+	AVIFrames *_viewFrameExtractor;
+};
+
+AimBallistaAwayFromTower::AimBallistaAwayFromTower(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_turnBallistaLeft = Common::Rect(0, 84, 44, 189);
+	_turnBallistaRight = Common::Rect(45, 84, 90, 189);
+	_lowerBallista = Common::Rect(368, 82, 432, 189);
+	_raiseBallista = Common::Rect(304, 82, 367, 189);
+	_ballistaHandle = Common::Rect(170, 116, 212, 189);
+
+	_viewFrameExtractor = new AVIFrames(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 6));
+}
+
+AimBallistaAwayFromTower::~AimBallistaAwayFromTower() {
+	preDestructor();
+}
+
+void AimBallistaAwayFromTower::preDestructor() {
+	delete _viewFrameExtractor;
+	_viewFrameExtractor = 0;
+}
+
+int AimBallistaAwayFromTower::paint(Window *viewWindow, Graphics::Surface *preBuffer) {
+	SceneBase::paint(viewWindow, preBuffer);
+
+	byte xPos = ((SceneViewWindow *)viewWindow)->getGlobalFlags().dsCYBallistaXPos;
+	byte yPos = ((SceneViewWindow *)viewWindow)->getGlobalFlags().dsCYBallistaYPos;
+	const Graphics::Surface *frame = _viewFrameExtractor->getFrame(yPos * 20 + xPos + 200);
+
+	if (frame)
+		_vm->_gfx->crossBlit(preBuffer, 120, 51, 160, 56, frame, 0, 0);
+
+	return SC_REPAINT;
+}
+
+int AimBallistaAwayFromTower::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_ballistaHandle.contains(pointLocation)) {
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().dsCYNeverShotBallista = 1;
+
+		// Play the handle movie
+		((SceneViewWindow *)viewWindow)->playClippedSynchronousAnimation(14, 96, 110, 296, 189);
+
+		return SC_TRUE;
+	} else if (_raiseBallista.contains(pointLocation)) {
+		byte &yPos = ((SceneViewWindow *)viewWindow)->getGlobalFlags().dsCYBallistaYPos;
+
+		if (yPos == 0)
+			return SC_FALSE;
+
+		yPos--;
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().dsCYNeverUsedCrank = 1;
+
+		// Start the spin sound
+		int soundID = _vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 12), 128, true, false);
+
+		// Spin the wheel halfway
+		((SceneViewWindow *)viewWindow)->playClippedSynchronousAnimation(17, 300, 70, 432, 189);
+
+		// Stop the spin sound
+		_vm->_sound->stopSoundEffect(soundID);
+
+		// Repaint
+		viewWindow->invalidateWindow(false);
+		return SC_TRUE;
+	} else if (_lowerBallista.contains(pointLocation)) {
+		byte &yPos = ((SceneViewWindow *)viewWindow)->getGlobalFlags().dsCYBallistaYPos;
+
+		if (yPos >= 4)
+			return SC_FALSE;
+
+		yPos++;
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().dsCYNeverUsedCrank = 1;
+
+		// Start the spin sound
+		int soundID = _vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 12), 128, true, false);
+
+		// Spin the wheel halfway
+		((SceneViewWindow *)viewWindow)->playClippedSynchronousAnimation(18, 300, 70, 432, 189);
+
+		// Stop the spin sound
+		_vm->_sound->stopSoundEffect(soundID);
+
+		// Repaint
+		viewWindow->invalidateWindow(false);
+		return SC_TRUE;
+	} else if (_turnBallistaRight.contains(pointLocation)) {
+		byte &xPos = ((SceneViewWindow *)viewWindow)->getGlobalFlags().dsCYBallistaXPos;
+
+		if (xPos >= 19)
+			return SC_FALSE;
+
+		xPos++;
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().dsCYNeverUsedCrank = 1;
+
+		// Start the spin sound
+		int soundID = _vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 12), 128, true, false);
+
+		// Spin the wheel halfway
+		((SceneViewWindow *)viewWindow)->playClippedSynchronousAnimation(16, 0, 70, 100, 189);
+
+		// Stop the spin sound
+		_vm->_sound->stopSoundEffect(soundID);
+
+		// Repaint
+		viewWindow->invalidateWindow(false);
+		return SC_TRUE;
+	} else if (_turnBallistaLeft.contains(pointLocation)) {
+		byte &xPos = ((SceneViewWindow *)viewWindow)->getGlobalFlags().dsCYBallistaXPos;
+
+		if (xPos == 0)
+			return SC_FALSE;
+
+		xPos--;
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().dsCYNeverUsedCrank = 1;
+
+		// Start the spin sound
+		int soundID = _vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 12), 128, true, false);
+
+		// Spin the wheel halfway
+		((SceneViewWindow *)viewWindow)->playClippedSynchronousAnimation(15, 0, 70, 100, 189);
+
+		// Stop the spin sound
+		_vm->_sound->stopSoundEffect(soundID);
+
+		// Repaint
+		viewWindow->invalidateWindow(false);
+		return SC_TRUE;
+	}
+
+	// Return to previous scene
+	DestinationScene destData;
+	destData.destinationScene = Location(5, 5, 8, 5, 1, 0);
+	destData.transitionType = TRANSITION_VIDEO;
+	destData.transitionData = 10;
+	destData.transitionStartFrame = -1;
+	destData.transitionLength = -1;
+	((SceneViewWindow *)viewWindow)->moveToDestination(destData);
+	return SC_TRUE;
+}
+
+int AimBallistaAwayFromTower::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_raiseBallista.contains(pointLocation))
+		return kCursorArrowUp;
+
+	if (_lowerBallista.contains(pointLocation))
+		return kCursorArrowDown;
+
+	if (_turnBallistaRight.contains(pointLocation))
+		return kCursorArrowRight;
+
+	if (_turnBallistaLeft.contains(pointLocation))
+		return kCursorArrowLeft;
+
+	if (_ballistaHandle.contains(pointLocation))
+		return kCursorFinger;
+
+	return kCursorPutDown;
+}
+
 class PaintingTowerCapAgent : public SceneBase {
 public:
 	PaintingTowerCapAgent(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
@@ -1009,6 +1185,201 @@ int ClickChangeSceneTranslate::specifyCursor(Window *viewWindow, const Common::P
 		return _cursorID;
 
 	return 0;
+}
+
+class AimBallistaToTower : public SceneBase {
+public:
+	AimBallistaToTower(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	~AimBallistaToTower();
+	void preDestructor();
+	int paint(Window *viewWindow, Graphics::Surface *preBuffer);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	Common::Rect _raiseBallista;
+	Common::Rect _lowerBallista;
+	Common::Rect _turnBallistaLeft;
+	Common::Rect _turnBallistaRight;
+	Common::Rect _ballistaHandle;
+	AVIFrames *_viewFrameExtractor;
+};
+
+AimBallistaToTower::AimBallistaToTower(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_turnBallistaLeft = Common::Rect(0, 84, 44, 189);
+	_turnBallistaRight = Common::Rect(45, 84, 90, 189);
+	_lowerBallista = Common::Rect(368, 82, 432, 189);
+	_raiseBallista = Common::Rect(304, 82, 367, 189);
+	_ballistaHandle = Common::Rect(170, 116, 212, 189);
+
+	_viewFrameExtractor = new AVIFrames(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 6));
+}
+
+AimBallistaToTower::~AimBallistaToTower() {
+	preDestructor();
+}
+
+void AimBallistaToTower::preDestructor() {
+	delete _viewFrameExtractor;
+	_viewFrameExtractor = 0;
+}
+
+int AimBallistaToTower::paint(Window *viewWindow, Graphics::Surface *preBuffer) {
+	SceneBase::paint(viewWindow, preBuffer);
+
+	byte xPos = ((SceneViewWindow *)viewWindow)->getGlobalFlags().dsCYBallistaXPos;
+	byte yPos = ((SceneViewWindow *)viewWindow)->getGlobalFlags().dsCYBallistaYPos;
+	const Graphics::Surface *frame = _viewFrameExtractor->getFrame(yPos * 20 + xPos);
+
+	if (frame)
+		_vm->_gfx->crossBlit(preBuffer, 120, 51, 160, 56, frame, 0, 0);
+
+	return SC_REPAINT;
+}
+
+int AimBallistaToTower::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_ballistaHandle.contains(pointLocation)) {
+		byte xPos = ((SceneViewWindow *)viewWindow)->getGlobalFlags().dsCYBallistaXPos;
+		byte yPos = ((SceneViewWindow *)viewWindow)->getGlobalFlags().dsCYBallistaYPos;
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().dsCYNeverShotBallista = 1;
+
+		if (xPos == 9 && yPos == 2) {
+			// Play the launch movie
+			((SceneViewWindow *)viewWindow)->playSynchronousAnimation(20);
+
+			// Reset the ballista status
+			((SceneViewWindow *)viewWindow)->getGlobalFlags().dsCYBallistaStatus = 2;
+			((SceneViewWindow *)viewWindow)->getGlobalFlags().dsCYNeverConnectedHook = 1;
+
+			// Step down
+			DestinationScene destData;
+			destData.destinationScene = Location(5, 5, 8, 5, 1, 2);
+			destData.transitionType = TRANSITION_VIDEO;
+			destData.transitionData = 11;
+			destData.transitionStartFrame = -1;
+			destData.transitionLength = -1;
+			((SceneViewWindow *)viewWindow)->moveToDestination(destData);
+		} else {
+			// Play the launch movie
+			((SceneViewWindow *)viewWindow)->playClippedSynchronousAnimation(19, 110, 108, 290, 189);
+		}
+
+		return SC_TRUE;
+	} else if (_raiseBallista.contains(pointLocation)) {
+		byte &yPos = ((SceneViewWindow *)viewWindow)->getGlobalFlags().dsCYBallistaYPos;
+
+		if (yPos == 0)
+			return SC_FALSE;
+
+		yPos--;
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().dsCYNeverUsedCrank = 1;
+
+		// Start the spin sound
+		int soundID = _vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 12), 128, true, false);
+
+		// Spin the wheel halfway
+		((SceneViewWindow *)viewWindow)->playClippedSynchronousAnimation(23, 300, 70, 432, 189);
+
+		// Stop the spin sound
+		_vm->_sound->stopSoundEffect(soundID);
+
+		// Repaint
+		viewWindow->invalidateWindow(false);
+		return SC_TRUE;
+	} else if (_lowerBallista.contains(pointLocation)) {
+		byte &yPos = ((SceneViewWindow *)viewWindow)->getGlobalFlags().dsCYBallistaYPos;
+
+		if (yPos >= 4)
+			return SC_FALSE;
+
+		yPos++;
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().dsCYNeverUsedCrank = 1;
+
+		// Start the spin sound
+		int soundID = _vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 12), 128, true, false);
+
+		// Spin the wheel halfway
+		((SceneViewWindow *)viewWindow)->playClippedSynchronousAnimation(24, 300, 70, 432, 189);
+
+		// Stop the spin sound
+		_vm->_sound->stopSoundEffect(soundID);
+
+		// Repaint
+		viewWindow->invalidateWindow(false);
+		return SC_TRUE;
+	} else if (_turnBallistaRight.contains(pointLocation)) {
+		byte &xPos = ((SceneViewWindow *)viewWindow)->getGlobalFlags().dsCYBallistaXPos;
+
+		if (xPos >= 19)
+			return SC_FALSE;
+
+		xPos++;
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().dsCYNeverUsedCrank = 1;
+
+		// Start the spin sound
+		int soundID = _vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 12), 128, true, false);
+
+		// Spin the wheel halfway
+		((SceneViewWindow *)viewWindow)->playClippedSynchronousAnimation(22, 0, 70, 100, 189);
+
+		// Stop the spin sound
+		_vm->_sound->stopSoundEffect(soundID);
+
+		// Repaint
+		viewWindow->invalidateWindow(false);
+		return SC_TRUE;
+	} else if (_turnBallistaLeft.contains(pointLocation)) {
+		byte &xPos = ((SceneViewWindow *)viewWindow)->getGlobalFlags().dsCYBallistaXPos;
+
+		if (xPos == 0)
+			return SC_FALSE;
+
+		xPos--;
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().dsCYNeverUsedCrank = 1;
+
+		// Start the spin sound
+		int soundID = _vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 12), 128, true, false);
+
+		// Spin the wheel halfway
+		((SceneViewWindow *)viewWindow)->playClippedSynchronousAnimation(21, 0, 70, 100, 189);
+
+		// Stop the spin sound
+		_vm->_sound->stopSoundEffect(soundID);
+
+		// Repaint
+		viewWindow->invalidateWindow(false);
+		return SC_TRUE;
+	}
+
+	// Return to previous scene
+	DestinationScene destData;
+	destData.destinationScene = Location(5, 5, 8, 5, 1, 1);
+	destData.transitionType = TRANSITION_VIDEO;
+	destData.transitionData = 11;
+	destData.transitionStartFrame = -1;
+	destData.transitionLength = -1;
+	((SceneViewWindow *)viewWindow)->moveToDestination(destData);
+	return SC_TRUE;
+}
+
+int AimBallistaToTower::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_raiseBallista.contains(pointLocation))
+		return kCursorArrowUp;
+
+	if (_lowerBallista.contains(pointLocation))
+		return kCursorArrowDown;
+
+	if (_turnBallistaRight.contains(pointLocation))
+		return kCursorArrowRight;
+
+	if (_turnBallistaLeft.contains(pointLocation))
+		return kCursorArrowLeft;
+
+	if (_ballistaHandle.contains(pointLocation))
+		return kCursorFinger;
+
+	return kCursorPutDown;
 }
 
 class WalkDownPaintingTowerElevator : public SceneBase {
@@ -1382,6 +1753,10 @@ SceneBase *SceneViewWindow::constructDaVinciSceneObject(Window *viewWindow, cons
 		return new BasicDoor(_vm, viewWindow, sceneStaticData, priorLocation, 122, 8, 326, 189, 5, 5, 0, 2, 1, 1, TRANSITION_WALK, 11, 738, 18);
 	case 66:
 		return new BasicDoor(_vm, viewWindow, sceneStaticData, priorLocation, 170, 0, 432, 189, 5, 4, 0, 0, 1, 1, TRANSITION_WALK, 11, 1220, 12);
+	case 68:
+		return new AimBallistaAwayFromTower(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 69:
+		return new AimBallistaToTower(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 70:
 		return new PaintingTowerCapAgent(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 72:
