@@ -20,31 +20,24 @@
  *
  */
 
-#ifndef GRIM_EMICHORE_H
-#define GRIM_EMICHORE_H
-
-#include "engines/grim/costume/chore.h"
-#include "engines/grim/pool.h"
-#include "engines/grim/emi/costume/emimesh_component.h"
-#include "engines/grim/emi/costume/emiskel_component.h"
+#include "engines/grim/emi/costume/emichore.h"
+#include "engines/grim/emi/modelemi.h"
 
 namespace Grim {
 
-class EMIChore : public PoolObject<EMIChore>, public Chore {
-public:
-	EMIChore(char name[32], int id, Costume *owner, int length, int numTracks);
-	static int32 getStaticTag() { return MKTAG('C', 'H', 'O', 'R'); }
+EMIChore::EMIChore(char name[32], int id, Costume *owner, int length, int numTracks) :
+		Chore(name, id, owner, length, numTracks), _mesh(NULL), _skeleton(NULL) {
+}
 
-	void addComponent(Component *component);
-	bool isWearChore() { return _mesh && _skeleton; }
-	EMIMeshComponent *getMesh() { return _mesh; }
-	EMISkelComponent *getSkeleton() { return _skeleton; }
-
-private:
-	EMIMeshComponent *_mesh;
-	EMISkelComponent *_skeleton;
-};
+void EMIChore::addComponent(Component *component) {
+	if (component->isComponentType('m', 'e', 's', 'h')) {
+		_mesh = static_cast<EMIMeshComponent *>(component);
+	} else if (component->isComponentType('s', 'k', 'e', 'l')) {
+		_skeleton = static_cast<EMISkelComponent *>(component);
+	}
+	if (_mesh && _mesh->_obj && _skeleton) {
+		_mesh->_obj->setSkeleton(_skeleton->_obj);
+	}
+}
 
 } // end of namespace Grim
-
-#endif

@@ -27,6 +27,7 @@
 
 #include "engines/grim/object.h"
 #include "engines/grim/costume.h"
+#include "engines/grim/emi/costume/emichore.h"
 
 namespace Grim {
 
@@ -42,16 +43,23 @@ public:
 
 	void load(Common::SeekableReadStream *data);
 
+	void playChore(int num) override;
+	void playChoreLooping(int num) override;
+
 	int update(uint frameTime);
 	void draw();
 
+	void saveState(SaveGame *state) const override;
+	bool restoreState(SaveGame *state) override;
+
 	Material *findSharedMaterial(const Common::String &name);
 public:
+	EMIChore *_wearChore;
 	EMISkelComponent *_emiSkel;
-	EMIMeshComponent *_emiMesh;
 	Common::List<Material *> _materials;
 private:
 	Component *loadEMIComponent(Component *parent, int parentID, const char *name, Component *prevComponent);
+	void setWearChore(EMIChore *chore);
 
 	friend class Chore;
 };

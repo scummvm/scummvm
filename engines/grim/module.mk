@@ -16,6 +16,7 @@ MODULE_OBJS := \
 	costume/sprite_component.o \
 	costume/anim_component.o \
 	emi/costume/emianim_component.o \
+	emi/costume/emichore.o \
 	emi/costume/emiluavar_component.o \
 	emi/costume/emiluacode_component.o \
 	emi/costume/emimesh_component.o \

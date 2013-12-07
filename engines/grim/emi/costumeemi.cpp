@@ -30,19 +30,17 @@
 #include "engines/grim/emi/modelemi.h"
 #include "engines/grim/costume/head.h"
 #include "engines/grim/emi/costume/emianim_component.h"
-#include "engines/grim/emi/costume/emichore.h"
 #include "engines/grim/emi/costume/emiluavar_component.h"
 #include "engines/grim/emi/costume/emiluacode_component.h"
 #include "engines/grim/emi/costume/emimesh_component.h"
 #include "engines/grim/emi/costume/emiskel_component.h"
 #include "engines/grim/emi/costume/emisprite_component.h"
 #include "engines/grim/emi/costume/emitexi_component.h"
-#include "engines/grim/costume/main_model_component.h"
 
 namespace Grim {
 
 EMICostume::EMICostume(const Common::String &fname, Costume *prevCost) :
-		Costume(fname, prevCost), _emiSkel(NULL), _emiMesh(NULL) {
+		Costume(fname, prevCost), _wearChore(NULL), _emiSkel(NULL) {
 }
 
 void EMICostume::load(Common::SeekableReadStream *data) {
@@ -66,7 +64,8 @@ void EMICostume::load(Common::SeekableReadStream *data) {
 		if (length < 1000)
 			length *= 1000;
 
-		_chores[i] = new EMIChore(name, i, this, (int)length, numTracks);
+		EMIChore *chore = new EMIChore(name, i, this, (int)length, numTracks);
+		_chores[i] = chore;
 
 		for (int k = 0; k < numTracks; k++) {
 			int componentNameLength = data->readUint32LE();
@@ -92,28 +91,12 @@ void EMICostume::load(Common::SeekableReadStream *data) {
 			if (component) {
 				component->setCostume(this);
 				component->init();
-
-				if (strcmp(_chores[i]->getName(), "wear_default") == 0) {
-					if (component->isComponentType('m', 'e', 's', 'h')) {
-						_emiMesh = static_cast<EMIMeshComponent *>(component);
-						if (_emiSkel) {
-							_emiMesh->_obj->setSkeleton(_emiSkel->_obj);
-						}
-						for (unsigned int z = 0; z < _emiMesh->_obj->_numTextures; ++z)
-							_materials.push_back(_emiMesh->_obj->_mats[z]);
-					} else if (component->isComponentType('s', 'k', 'e', 'l')) {
-						_emiSkel = static_cast<EMISkelComponent *>(component);
-						if (_emiMesh) {
-							_emiMesh->_obj->setSkeleton(_emiSkel->_obj);
-						}
-					}
-
-				}
+				chore->addComponent(component);
 			}
 
 			components.push_back(component);
 
-			ChoreTrack &track = _chores[i]->_tracks[k];
+			ChoreTrack &track = chore->_tracks[k];
 			track.numKeys = data->readUint32LE();
 			track.keys = new TrackKey[track.numKeys];
 			track.component = component;
@@ -134,7 +117,7 @@ void EMICostume::load(Common::SeekableReadStream *data) {
 
 		// Some chores report duration 1000 while they have components with
 		// keyframes after 1000. See elaine_wedding/take_contract, for example.
-		_chores[i]->_length = ceil(length);
+		chore->_length = ceil(length);
 	}
 
 	_numComponents = components.size();
@@ -142,6 +125,22 @@ void EMICostume::load(Common::SeekableReadStream *data) {
 	for (int i = 0; i < _numComponents; ++i) {
 		_components[i] = components[i];
 	}
+}
+
+void EMICostume::playChore(int num) {
+	EMIChore *chore = static_cast<EMIChore *>(_chores[num]);
+	if (chore->isWearChore()) {
+		setWearChore(chore);
+	}
+	Costume::playChore(num);
+}
+
+void EMICostume::playChoreLooping(int num) {
+	EMIChore *chore = static_cast<EMIChore *>(_chores[num]);
+	if (chore->isWearChore()) {
+		setWearChore(chore);
+	}
+	Costume::playChoreLooping(num);
 }
 
 Component *EMICostume::loadEMIComponent(Component *parent, int parentID, const char *name, Component *prevComponent) {
@@ -197,8 +196,8 @@ void EMICostume::draw() {
 		}
 	}
 
-	if (_emiMesh && !drewMesh) {
-		_emiMesh->draw();
+	if (_wearChore && !drewMesh) {
+		_wearChore->getMesh()->draw();
 	}
 }
 
@@ -226,6 +225,23 @@ int EMICostume::update(uint time) {
 	return 0;
 }
 
+void EMICostume::saveState(SaveGame *state) const {
+	Costume::saveState(state);
+	state->writeLESint32(_wearChore ? _wearChore->getChoreId() : -1);
+}
+
+bool EMICostume::restoreState(SaveGame *state) override {
+	bool ret = Costume::restoreState(state);
+	if (ret) {
+		int id = state->readLESint32();
+		if (id >= 0) {
+			EMIChore *chore = static_cast<EMIChore *>(_chores[id]);
+			setWearChore(chore);
+		}
+	}
+	return ret;
+}
+
 Material *EMICostume::findSharedMaterial(const Common::String &name) {
 	Common::List<Material *>::iterator it = _materials.begin();
 	for (; it != _materials.end(); ++it)
@@ -235,6 +251,21 @@ Material *EMICostume::findSharedMaterial(const Common::String &name) {
 	Material *mat = g_resourceloader->loadMaterial(name.c_str(), NULL);
 	_materials.push_back(mat);
 	return mat;
+}
+
+void EMICostume::setWearChore(EMIChore *chore) {
+	if (chore != _wearChore) {
+		_materials.clear();
+		for (unsigned int i = 0; i < chore->getMesh()->_obj->_numTextures; i++) {
+			_materials.push_back(chore->getMesh()->_obj->_mats[i]);
+		}
+		_wearChore = chore;
+
+		if (_emiSkel) {
+			_emiSkel->reset();
+		}
+		_emiSkel = chore->getSkeleton();
+	}
 }
 
 } // end of namespace Grim

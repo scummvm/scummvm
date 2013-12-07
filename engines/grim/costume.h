@@ -51,9 +51,9 @@ public:
 
 	const Common::String &getFilename() const { return _fname; }
 	void playChore(const char *name);
-	void playChore(int num);
+	virtual void playChore(int num);
 	void playChoreLooping(const char *name);
-	void playChoreLooping(int num);
+	virtual void playChoreLooping(int num);
 	void setChoreLastFrame(int num);
 	void setChoreLooping(int num, bool val);
 	void stopChore(int num);
