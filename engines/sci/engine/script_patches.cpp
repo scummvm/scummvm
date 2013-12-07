@@ -975,19 +975,39 @@ const uint16 kq6laurabow2CDPatchAudioTextSupport5[] = {
 	PATCH_END
 };
 
-//          script, description,                                      signature                     patch
+// Additional patches specifically for King's Quest 6
+//  Fixes text window placement, when portrait+text is shown
+// Patched method: Kq6Talker::init
+const uint16 kq6CDSignatureAudioTextSupport1[] = {
+	SIG_MAGICDWORD,
+	0x89, 0x5a,                         // lsg global[5a]
+	0x35, 0x02,                         // ldi 02
+	0x1a,                               // eq?
+	0x31, 0x32,                         // bnt [jump-for-text-code]
+	0x87, 0x00,                         // lap param[0]
+	SIG_END
+};
+
+const uint16 kq6CDPatchAudioTextSupport1[] = {
+	PATCH_ADDTOOFFSET +5,
+	0x33, 0x32,                         // jmp [jump-for-text-code]
+	PATCH_END
+};
+
+//          script, description,                                      signature                                 patch
 SciScriptPatcherEntry kq6Signatures[] = {
-	{  true,   481, "duplicate baby cry",                          1, kq6SignatureDuplicateBabyCry, kq6PatchDuplicateBabyCry },
-	{  true,   907, "inventory stack fix",                         1, kq6SignatureInventoryStackFix, kq6PatchInventoryStackFix },
+	{  true,   481, "duplicate baby cry",                          1, kq6SignatureDuplicateBabyCry,             kq6PatchDuplicateBabyCry },
+	{  true,   907, "inventory stack fix",                         1, kq6SignatureInventoryStackFix,            kq6PatchInventoryStackFix },
 	// King's Quest 6 and Laura Bow 2 share basic patches for audio + text support
-	// *** King's Quest 6 audio + text support - CURRENTLY DISABLED ***
-	//  TODO: fix window placement (currently part of the text windows go off-screen)
-	//  TODO: fix hi-res portraits mode graphic glitches
-	{ false,   924, "CD: audio + text support 1",                  1, kq6laurabow2CDSignatureAudioTextSupport1, kq6laurabow2CDPatchAudioTextSupport1 },
-	{ false,   924, "CD: audio + text support 2",                  1, kq6laurabow2CDSignatureAudioTextSupport2, kq6laurabow2CDPatchAudioTextSupport2 },
-	{ false,   924, "CD: audio + text support 3",                  1, kq6laurabow2CDSignatureAudioTextSupport3, kq6laurabow2CDPatchAudioTextSupport3 },
-	{ false,   928, "CD: audio + text support 4",                  1, kq6laurabow2CDSignatureAudioTextSupport4, kq6laurabow2CDPatchAudioTextSupport4 },
-	{ false,   928, "CD: audio + text support 5",                  2, kq6laurabow2CDSignatureAudioTextSupport5, kq6laurabow2CDPatchAudioTextSupport5 },
+	// *** King's Quest 6 audio + text support ***
+	//  ToDO: fix window placement+size for dialog w/o portraits (lowres+hires)
+	//  TODO: fix lowres portraits staying on screen when hires portraits are used
+	{ false,   924, "CD: audio + text support KQ6&LB2 1",          1, kq6laurabow2CDSignatureAudioTextSupport1, kq6laurabow2CDPatchAudioTextSupport1 },
+	{ false,   924, "CD: audio + text support KQ6&LB2 2",          1, kq6laurabow2CDSignatureAudioTextSupport2, kq6laurabow2CDPatchAudioTextSupport2 },
+	{ false,   924, "CD: audio + text support KQ6&LB2 3",          1, kq6laurabow2CDSignatureAudioTextSupport3, kq6laurabow2CDPatchAudioTextSupport3 },
+	{ false,   928, "CD: audio + text support KQ6&LB2 4",          1, kq6laurabow2CDSignatureAudioTextSupport4, kq6laurabow2CDPatchAudioTextSupport4 },
+	{ false,   928, "CD: audio + text support KQ6&LB2 5",          2, kq6laurabow2CDSignatureAudioTextSupport5, kq6laurabow2CDPatchAudioTextSupport5 },
+	{ false,   909, "CD: audio + text support KQ6 1",              1, kq6CDSignatureAudioTextSupport1,          kq6CDPatchAudioTextSupport1 },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -2440,6 +2460,12 @@ void ScriptPatcher::processScript(uint16 scriptNr, byte *scriptData, const uint3
 				if (g_sci->_features->useAltWinGMSound()) {
 					// See the explanation in the kq5SignatureWinGMSignals comment
 					enablePatch(signatureTable, "Win: GM Music signal checks");
+				}
+				break;
+			case GID_KQ6:
+				if (g_sci->speechAndSubtitlesEnabled()) {
+					// Enables Audio + subtitles patches for King's Quest 6, when "Text and Speech: Both" is selected
+					enablePatch(signatureTable, "CD: audio + text support");
 				}
 				break;
 			case GID_LAURABOW2:
