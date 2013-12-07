@@ -133,7 +133,12 @@ uint32 SaveGame::beginSection(uint32 sectionTag) {
 		}
 		if (!_sectionBuffer || _sectionAlloc < _sectionSize) {
 			_sectionAlloc = _sectionSize;
-			_sectionBuffer = (byte *)realloc(_sectionBuffer, _sectionAlloc);
+			byte *buff = (byte *)realloc(_sectionBuffer, _sectionAlloc);
+			if (buff == nullptr) {
+				free(_sectionBuffer);
+				error("Could not allocate memory for save game");
+			}
+			_sectionBuffer = buff;
 		}
 
 		_inSaveFile->seek(-(int32)_sectionSize, SEEK_CUR);
