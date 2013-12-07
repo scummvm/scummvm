@@ -994,6 +994,51 @@ const uint16 kq6CDPatchAudioTextSupport1[] = {
 	PATCH_END
 };
 
+//  Fixes text window placement, when portrait+text is shown (Guard in room 220)
+// Patched method: tlkGateGuard1::init
+const uint16 kq6CDSignatureAudioTextSupportGuard[] = {
+	SIG_MAGICDWORD,
+	0x89, 0x5a,                         // lsg global[5a]
+	0x35, 0x01,                         // ldi 01
+	0x1a,                               // eq?
+	0x31, 0x13,                         // bnt [jump-for-audio-code]
+	SIG_END
+};
+
+const uint16 kq6CDPatchAudioTextSupportGuard[] = {
+	PATCH_ADDTOOFFSET +5,
+	0x18, 0x18,                         // waste bytes, never jump
+	PATCH_END
+};
+
+//  Fixes text window placement, when portrait+text is shown (Stepmother in room 250)
+// Patched method: tlkStepmother::init
+const uint16 kq6CDSignatureAudioTextSupportStepmother[] = {
+	SIG_MAGICDWORD,
+	0x89, 0x5a,                         // lsg global[5a]
+	0x35, 0x02,                         // ldi 02
+	0x12,                               // and
+	0x31, 0x1a,                         // bnt [jump-for-text-code]
+	SIG_END
+};
+
+const uint16 kq6CDPatchAudioTextSupportJumpAlways[] = {
+	PATCH_ADDTOOFFSET +5,
+	0x33,                               // jump always
+	PATCH_END
+};
+
+//  Fixes text window placement, when portrait+text is shown (Gnomes in room 450)
+// Patched method: GnomeTalker::init
+const uint16 kq6CDSignatureAudioTextSupportGnomes[] = {
+	SIG_MAGICDWORD,
+	0x89, 0x5a,                         // lsg global[5a]
+	0x35, 0x02,                         // ldi 02
+	0x1a,                               // eq?
+	0x31, 0x16,                         // bnt [jump-for-text-code]
+	SIG_END
+};
+
 //          script, description,                                      signature                                 patch
 SciScriptPatcherEntry kq6Signatures[] = {
 	{  true,   481, "duplicate baby cry",                          1, kq6SignatureDuplicateBabyCry,             kq6PatchDuplicateBabyCry },
@@ -1008,6 +1053,9 @@ SciScriptPatcherEntry kq6Signatures[] = {
 	{ false,   928, "CD: audio + text support KQ6&LB2 4",          1, kq6laurabow2CDSignatureAudioTextSupport4, kq6laurabow2CDPatchAudioTextSupport4 },
 	{ false,   928, "CD: audio + text support KQ6&LB2 5",          2, kq6laurabow2CDSignatureAudioTextSupport5, kq6laurabow2CDPatchAudioTextSupport5 },
 	{ false,   909, "CD: audio + text support KQ6 1",              1, kq6CDSignatureAudioTextSupport1,          kq6CDPatchAudioTextSupport1 },
+	{ false,  1009, "CD: audio + text support KQ6 Guard",          1, kq6CDSignatureAudioTextSupportGuard,      kq6CDPatchAudioTextSupportGuard },
+	{ false,  1027, "CD: audio + text support KQ6 Stepmother",     1, kq6CDSignatureAudioTextSupportStepmother, kq6CDPatchAudioTextSupportJumpAlways },
+	{ false,  1037, "CD: audio + text support KQ6 Gnomes",         1, kq6CDSignatureAudioTextSupportGnomes,     kq6CDPatchAudioTextSupportJumpAlways },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
