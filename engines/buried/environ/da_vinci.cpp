@@ -763,6 +763,140 @@ SiegeCycleTopView::SiegeCycleTopView(BuriedEngine *vm, Window *viewWindow, const
 	}
 }
 
+class UnlockCodexTowerDoor : public SceneBase {
+public:
+	UnlockCodexTowerDoor(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int draggingItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
+	int droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
+
+private:
+	Common::Rect _dropRect;
+};
+
+UnlockCodexTowerDoor::UnlockCodexTowerDoor(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_dropRect = Common::Rect(138, 120, 198, 189);
+}
+
+int UnlockCodexTowerDoor::draggingItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) {
+	if (itemID == kItemBalconyKey && _dropRect.contains(pointLocation))
+		return 1;
+
+	return 0;
+}
+
+int UnlockCodexTowerDoor::droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) {
+	if (pointLocation.x == -1 && pointLocation.y == -1)
+		return 0;
+
+	if (itemID == kItemBalconyKey && _dropRect.contains(pointLocation)) {
+		// Play the unlocking animation
+		((SceneViewWindow *)viewWindow)->playSynchronousAnimation(0);
+
+		// Set the unlocked door flag
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().dsCTUnlockedDoor = 1;
+	}
+
+	// Player keeps the item
+	return SIC_REJECT;
+}
+
+class CodexTowerOutsideDoor : public SceneBase {
+public:
+	CodexTowerOutsideDoor(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int draggingItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
+	int droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	Common::Rect _dropRect;
+	Common::Rect _doorRect;
+};
+
+CodexTowerOutsideDoor::CodexTowerOutsideDoor(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_dropRect = Common::Rect(130, 0, 200, 189);
+	_doorRect = Common::Rect(0, 0, 166, 189);
+}
+
+int CodexTowerOutsideDoor::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_doorRect.contains(pointLocation)) {
+		if (((SceneViewWindow *)viewWindow)->getGlobalFlags().dsCTUnlockedDoor >= 1) {
+			// Set the opened door flag
+			((SceneViewWindow *)viewWindow)->getGlobalFlags().dsCYNeverOpenedBalconyDoor = 1;
+
+			DestinationScene destData;
+			destData.destinationScene = _staticData.location;
+			destData.destinationScene.depth = 1;
+			destData.transitionType = TRANSITION_VIDEO;
+			destData.transitionData = 2;
+			destData.transitionStartFrame = -1;
+			destData.transitionLength = -1;
+
+			// Play a different video otherwise
+			if (((SceneViewWindow *)viewWindow)->getGlobalFlags().dsCTViewedAgent3 == 0) {
+				destData.transitionType = TRANSITION_VIDEO;
+				destData.transitionData = 1;
+			}
+
+			((SceneViewWindow *)viewWindow)->moveToDestination(destData);
+		} else {
+			// Door is locked, play the door lock sound and set the tried flag
+			((SceneViewWindow *)viewWindow)->getGlobalFlags().dsCTTriedLockedDoor = 1;
+			((SceneViewWindow *)viewWindow)->getGlobalFlags().dsCYTriedOpeningDoor = 1;
+			_vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 13));
+
+			// Check for spontaneous AI comments
+			if (((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->isItemInInventory(kItemBioChipAI))
+				((SceneViewWindow *)viewWindow)->playAIComment(_staticData.location, AI_COMMENT_TYPE_SPONTANEOUS);
+
+			((GameUIWindow *)viewWindow->getParent())->_bioChipRightWindow->sceneChanged();
+		}
+	}
+
+	return SC_FALSE;
+}
+
+int CodexTowerOutsideDoor::draggingItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) {
+	// Little known fact that the metal bar can be used to unlock the door
+	if (itemID == kItemMetalBar && _dropRect.contains(pointLocation) && ((SceneViewWindow *)viewWindow)->getGlobalFlags().dsCTUnlockedDoor == 0 && ((SceneViewWindow *)viewWindow)->getGlobalFlags().dsCTViewedAgent3 == 0)
+		return 1;
+
+	return 0;
+}
+
+int CodexTowerOutsideDoor::droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) {
+	if (pointLocation.x == -1 && pointLocation.y == -1)
+		return 0;
+
+	if (itemID == kItemMetalBar && _dropRect.contains(pointLocation) && ((SceneViewWindow *)viewWindow)->getGlobalFlags().dsCTUnlockedDoor == 0 && ((SceneViewWindow *)viewWindow)->getGlobalFlags().dsCTViewedAgent3 == 0) {
+		// Move to the next scene
+		DestinationScene destData;
+		destData.destinationScene = _staticData.location;
+		destData.destinationScene.depth = 1;
+		destData.transitionType = TRANSITION_VIDEO;
+		destData.transitionData = 2;
+		destData.transitionStartFrame = -1;
+		destData.transitionLength = -1;
+		((SceneViewWindow *)viewWindow)->moveToDestination(destData);
+
+		// Set the unlocked door flag
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().dsCTUnlockedDoor = 1;
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().dsCTViewedAgent3 = 1;
+	}
+
+	// Player keeps the item
+	return SIC_REJECT;
+}
+
+int CodexTowerOutsideDoor::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_doorRect.contains(pointLocation))
+		return kCursorFinger;
+
+	return kCursorArrow;
+}
+
 class CourtyardCannon : public SceneBase {
 public:
 	CourtyardCannon(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
@@ -1799,6 +1933,10 @@ SceneBase *SceneViewWindow::constructDaVinciSceneObject(Window *viewWindow, cons
 		return new SiegeCycleTopView(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 38:
 		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 130, 74, 182, 120, kItemCoilOfRope, 48, offsetof(GlobalFlags, dsGDTakenCoilOfRope));
+	case 39:
+		return new UnlockCodexTowerDoor(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 40:
+		return new CodexTowerOutsideDoor(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 41:
 		return new BasicDoor(_vm, viewWindow, sceneStaticData, priorLocation, 116, 0, 326, 189, 5, 2, 2, 1, 1, 1, TRANSITION_WALK, 11, 225, 15);
 	case 46:
@@ -1847,6 +1985,8 @@ SceneBase *SceneViewWindow::constructDaVinciSceneObject(Window *viewWindow, cons
 		return new ClickPlaySound(_vm, viewWindow, sceneStaticData, priorLocation, -1, 13, kCursorFinger, 140, 0, 432, 189);
 	case 75:
 		return new ClickPlaySound(_vm, viewWindow, sceneStaticData, priorLocation, offsetof(GlobalFlags, dsCYTriedElevator), 13, kCursorFinger, 140, 130, 432, 189);
+	case 76:
+		return new PlaySoundEnteringScene(_vm, viewWindow, sceneStaticData, priorLocation, 12, offsetof(GlobalFlags, dsCTPlayedBallistaFalling));
 	}
 
 	warning("TODO: Da Vinci scene object %d", sceneStaticData.classID);
