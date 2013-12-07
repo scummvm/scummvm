@@ -3380,6 +3380,9 @@ void Scene1337::Action3::signal() {
 	}
 }
 
+/** 
+ * Action used to handle the other players' turn
+ */
 void Scene1337::Action4::signal() {
 	Scene1337 *scene = (Scene1337 *)R2_GLOBALS._sceneManager._scene;
 
@@ -3549,7 +3552,9 @@ void Scene1337::Action4::signal() {
 	}
 }
 
-// Animations for discarding a card
+/** 
+ * Animations for discarding a card
+ */
 void Scene1337::Action5::signal() {
 	Scene1337 *scene = (Scene1337 *)R2_GLOBALS._sceneManager._scene;
 
@@ -6878,6 +6883,9 @@ void Scene1337::setCursorData(int resNum, int rlbNum, int frameNum) {
 		// FIXME: Use another cursor when possible
 		R2_GLOBALS._events.setCursor(CURSOR_CROSSHAIRS);
 	} else {
+		// TODO: The original was using some ressource caching, which was useless and complex 
+		// and which has been removed. This cursor behavior clearly made intensive use of this caching...
+		// We now have to find a way to cache these cursor pointers and avoid loading them multiple times per seconds
 		uint size;
 		byte *cursor = g_resourceManager->getSubResource(resNum, rlbNum, frameNum, &size);
 		// Decode the cursor
@@ -6887,6 +6895,8 @@ void Scene1337::setCursorData(int resNum, int rlbNum, int frameNum) {
 		const byte *cursorData = (const byte *)surface.getPixels();
 		CursorMan.replaceCursor(cursorData, surface.w, surface.h, s._centroid.x, s._centroid.y, s._transColor);
 		s.unlockSurface();
+
+		DEALLOCATE(cursor);
 	}
 }
 
