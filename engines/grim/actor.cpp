@@ -849,7 +849,15 @@ void Actor::walkForward() {
 
 Math::Vector3d Actor::getSimplePuckVector() const {
 	if (g_grim->getGameType() == GType_MONKEY4) {
-		return Math::Vector3d(_yaw.getSine(), 0, _yaw.getCosine());
+		Math::Angle yaw = 0;
+		const Actor *a = this;
+		while (a) {
+			yaw += a->_yaw;
+			if (!a->isAttached())
+				break;
+			a = Actor::getPool().getObject(a->_attachedActor);
+		}
+		return Math::Vector3d(yaw.getSine(), 0, yaw.getCosine());
 	} else {
 		return Math::Vector3d(-_yaw.getSine(), _yaw.getCosine(), 0);
 	}
@@ -1010,7 +1018,7 @@ void Actor::turn(int dir) {
 
 Math::Angle Actor::getYawTo(const Actor *a) const {
 	Math::Vector3d forwardVec = getSimplePuckVector();
-	Math::Vector3d delta = a->getPos() - _pos;
+	Math::Vector3d delta = a->getWorldPos() - getWorldPos();
 
 	if (g_grim->getGameType() == GType_MONKEY4) {
 		delta.y() = 0;
