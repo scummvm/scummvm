@@ -129,6 +129,8 @@ void VideoWindow::closeVideo() {
 		_mode = kModeClosed;
 		_lastFrame = 0;
 		_rect = Common::Rect();
+		_srcRect = Common::Rect();
+		_dstRect = Common::Rect();
 
 		if (_ownedFrame) {
 			_ownedFrame->free();
@@ -184,8 +186,20 @@ void VideoWindow::updateVideo() {
 void VideoWindow::onPaint() {
 	if (_lastFrame) {
 		Common::Rect absoluteRect = getAbsoluteRect();
-		_vm->_gfx->blit(_lastFrame, absoluteRect.left, absoluteRect.top);
+
+		if (_srcRect.isEmpty() && _dstRect.isEmpty())
+			_vm->_gfx->blit(_lastFrame, absoluteRect.left, absoluteRect.top);
+		else
+			_vm->_gfx->crossBlit(_vm->_gfx->getScreen(), absoluteRect.left + _dstRect.left, absoluteRect.top + _dstRect.top, _dstRect.width(), _dstRect.height(), _lastFrame, _srcRect.left, _srcRect.top);
 	}
+}
+
+void VideoWindow::setSourceRect(const Common::Rect &srcRect) {
+	_srcRect = srcRect;
+}
+
+void VideoWindow::setDestRect(const Common::Rect &dstRect) {
+	_dstRect = dstRect;
 }
 
 } // End of namespace Buried
