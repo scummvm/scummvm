@@ -31,6 +31,7 @@
 #include "common/random.h"
 #include "common/util.h"
 #include "engines/engine.h"
+#include "gui/debugger.h"
 
 #include "tony/mpal/mpal.h"
 #include "tony/mpal/memory.h"
@@ -108,6 +109,7 @@ public:
 	Common::List<FPSfx *> _activeSfx;
 	Globals _globals;
 	Debugger *_debugger;
+	GUI::Debugger *getDebugger() { return _debugger; }
 
 	int16 _cTableDialog[256];
 	int16 _lTableDialog[256];
