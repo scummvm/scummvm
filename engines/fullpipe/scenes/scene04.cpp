@@ -196,7 +196,19 @@ void scene04_initScene(Scene *sc) {
 }
 
 bool sceneHandler04_friesAreWalking() {
-	warning("STUB: sceneHandler04_friesAreWalking()");
+	if (g_vars->scene04_var01 && g_fullpipe->_aniMan->isIdle() && !(g_fullpipe->_aniMan->_flags & 0x100)) {
+		int col = g_vars->scene04_ladder->collisionDetection(g_fullpipe->_aniMan);
+		if (col >= 3 && col <= 6 ) {
+			Movement *koz;
+
+			if (!g_vars->scene04_walkingKozyawka
+				 || (koz = g_vars->scene04_walkingKozyawka->_movement) == 0
+				 || koz->_id != MV_KZW_WALKPLANK
+				 || koz->_currDynamicPhaseIndex < 10
+				 || koz->_currDynamicPhaseIndex > 41)
+				return true;
+		}
+	}
 
 	return false;
 }
