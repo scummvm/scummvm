@@ -315,7 +315,17 @@ bool BitmapData::loadTile(Common::SeekableReadStream *o) {
 	for (int i = 0; i < numSubImages; ++i) {
 		data[i] = new char[size];
 		o->seek(8, SEEK_CUR);
-		o->read(data[i], size);
+		if (_bpp == 16) {
+			uint16 *d = (uint16 *)data[i];
+			for (int j = 0; j < _width * _height; ++j) {
+				d[j] = o->readUint16LE();
+			}
+		} else if (_bpp == 32) {
+			uint32 *d = (uint32 *)data[i];
+			for (int j = 0; j < _width * _height; ++j) {
+				d[j] = o->readUint32LE();
+			}
+		}
 	}
 
 	Graphics::PixelFormat pixelFormat;
