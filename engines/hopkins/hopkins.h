@@ -48,6 +48,7 @@
 #include "common/util.h"
 #include "engines/engine.h"
 #include "graphics/surface.h"
+#include "gui/debugger.h"
 
 /**
  * This is the namespace of the Hopkins engine.
@@ -135,6 +136,8 @@ protected:
 	// Engine APIs
 	virtual Common::Error run();
 	virtual bool hasFeature(EngineFeature f) const;
+
+	GUI::Debugger *getDebugger() { return _debug; }
 
 public:
 	AnimationManager *_animMan;
