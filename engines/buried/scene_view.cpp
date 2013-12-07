@@ -1648,8 +1648,78 @@ bool SceneViewWindow::playPlacedSynchronousAnimation(int animationID, int left, 
 }
 
 bool SceneViewWindow::playClippedSynchronousAnimation(int animationID, int left, int top, int right, int bottom) {
-	// TODO
-	return playPlacedSynchronousAnimation(animationID, left, top);
+	_useWaitCursor = true;
+
+	Common::Array<AnimEvent> animDatabase = getAnimationDatabase(_currentScene->_staticData.location.timeZone, _currentScene->_staticData.location.environment);
+
+	bool found = false;
+	uint i = 0;
+	for (; i < animDatabase.size(); i++) {
+		if (animDatabase[i].animationID == animationID) {
+			found = true;
+			break;
+		}
+	}
+
+	if (!found)
+		return false;
+
+	VideoWindow *animationMovie = new VideoWindow(_vm, this);
+	Common::String fileName = _vm->getFilePath(_currentScene->_staticData.location.timeZone, _currentScene->_staticData.location.environment, animDatabase[i].fileNameID);
+	if (!animationMovie->openVideo(fileName))
+		error("Failed to open video '%s'", fileName.c_str());
+
+	animationMovie->setWindowPos(kWindowPosTopMost, left, top, right - left, bottom - top, kWindowPosNoActivate | kWindowPosNoZOrder);
+
+	animationMovie->setSourceRect(Common::Rect(left, top, right, bottom));
+	animationMovie->setDestRect(Common::Rect(0, 0, right - left, bottom - top));
+
+	// TODO: Try switching to the second audio stream if translation is enabled
+
+	if (_currentScene && _currentScene->movieCallback(this, animationMovie, animationID, MOVIE_START) == SC_FALSE) {
+		// FIXME: Nah, why bother to free the movie
+		// (Probably, this is never hit)
+		return false;
+	}
+
+	animationMovie->seekToFrame(animDatabase[i].startFrame);
+	animationMovie->enableWindow(false);
+	animationMovie->showWindow(kWindowShow);
+	_parent->invalidateWindow(false);
+
+	// Empty the input queue
+	_vm->removeMouseMessages(this);
+	_vm->removeKeyboardMessages(this);
+
+	// Stop background sound if the video has sound
+	if (animDatabase[i].audioStreamCount > 0)
+		_vm->_sound->stop();
+
+	animationMovie->playToFrame(animDatabase[i].startFrame + animDatabase[i].frameCount - 1);
+
+	while (!_vm->shouldQuit() && animationMovie->getMode() != VideoWindow::kModeStopped) {
+		_vm->yield();
+		_vm->_sound->timerCallback();
+	}
+
+	if (_vm->shouldQuit()) {
+		delete animationMovie;
+		return true;
+	}
+
+	_vm->removeMouseMessages(this);
+	_vm->removeKeyboardMessages(this);
+
+	// Restart background sound if the video had sound
+	if (animDatabase[i].audioStreamCount > 0)
+		_vm->_sound->restart();
+
+	if (_currentScene && _currentScene->movieCallback(this, animationMovie, animationID, MOVIE_STOPPED) == SC_FALSE)
+		return false;
+
+	delete animationMovie;
+	_useWaitCursor = false;
+	return true;
 }
 
 bool SceneViewWindow::startAsynchronousAnimation(int animationID, bool loopAnimation) {
