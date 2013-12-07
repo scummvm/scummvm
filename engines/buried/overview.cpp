@@ -68,6 +68,7 @@ bool OverviewWindow::startOverview() {
 
 	showWindow(kWindowShow);
 	invalidateWindow();
+	setFocus();
 
 	_timer = setTimer(1000);
 	return true;
