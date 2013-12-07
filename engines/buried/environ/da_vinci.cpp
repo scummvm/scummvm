@@ -825,6 +825,66 @@ int CourtyardGunDeath::specifyCursor(Window *viewWindow, const Common::Point &po
 	return kCursorArrow;
 }
 
+class ChangeBallistaDepth : public SceneBase {
+public:
+	ChangeBallistaDepth(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+};
+
+ChangeBallistaDepth::ChangeBallistaDepth(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().dsCYBallistaStatus != _staticData.location.depth) {
+		Location newLocation = _staticData.location;
+		newLocation.depth = ((SceneViewWindow *)viewWindow)->getGlobalFlags().dsCYBallistaStatus;
+		((SceneViewWindow *)viewWindow)->getSceneStaticData(newLocation, _staticData);
+	}
+}
+
+class SpinBallista : public SceneBase {
+public:
+	SpinBallista(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	Common::Rect _handle;
+};
+
+SpinBallista::SpinBallista(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_handle = Common::Rect(126, 106, 190, 162);
+}
+
+int SpinBallista::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_handle.contains(pointLocation) && ((SceneViewWindow *)viewWindow)->getGlobalFlags().dsCYBallistaStatus < 2) {
+		DestinationScene destData;
+		destData.destinationScene = _staticData.location;
+		destData.transitionType = TRANSITION_VIDEO;
+		destData.transitionStartFrame = -1;
+		destData.transitionLength = -1;
+
+		if (((SceneViewWindow *)viewWindow)->getGlobalFlags().dsCYBallistaStatus == 1) {
+			destData.transitionData = 7;
+			destData.destinationScene.depth = 0;
+			((SceneViewWindow *)viewWindow)->getGlobalFlags().dsCYBallistaStatus = 0;
+		} else {
+			destData.transitionData = 6;
+			destData.destinationScene.depth = 1;
+			((SceneViewWindow *)viewWindow)->getGlobalFlags().dsCYBallistaStatus = 1;
+		}
+
+		((SceneViewWindow *)viewWindow)->moveToDestination(destData);
+	}
+
+	return SC_TRUE;
+}
+
+int SpinBallista::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_handle.contains(pointLocation) && ((SceneViewWindow *)viewWindow)->getGlobalFlags().dsCYBallistaStatus < 2)
+		return kCursorFinger;
+
+	return kCursorArrow;
+}
+
 class PaintingTowerCapAgent : public SceneBase {
 public:
 	PaintingTowerCapAgent(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
@@ -1314,6 +1374,10 @@ SceneBase *SceneViewWindow::constructDaVinciSceneObject(Window *viewWindow, cons
 		return new ClickPlayVideo(_vm, viewWindow, sceneStaticData, priorLocation, 3, kCursorFinger, 178, 144, 288, 189);
 	case 62:
 		return new CourtyardGunDeath(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 63:
+		return new ChangeBallistaDepth(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 64:
+		return new SpinBallista(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 65:
 		return new BasicDoor(_vm, viewWindow, sceneStaticData, priorLocation, 122, 8, 326, 189, 5, 5, 0, 2, 1, 1, TRANSITION_WALK, 11, 738, 18);
 	case 66:
