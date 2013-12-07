@@ -1,174 +1,86 @@
 # Android specific build targets
 
 # These must be incremented for each market upload
-ANDROID_VERSIONCODE = 1
-ANDROID_PLUGIN_VERSIONCODE = 1
+ANDROID_VERSIONCODE = 1000
 
-JAVA_FILES = \
-	ResidualVM.java \
-	ResidualVMEvents.java \
-	ResidualVMApplication.java \
-	ResidualVMActivity.java \
-	EditableSurfaceView.java \
-	Unpacker.java
+ANDROID_TARGET_VERSION = 15
 
-JAVA_FILES_PLUGIN = \
-	PluginProvider.java
-
-JAVA_FILES_GEN = \
-	Manifest.java \
-	R.java
+NDK_BUILD = $(ANDROID_NDK)/ndk-build
+SDK_ANDROID = $(ANDROID_SDK)/tools/android
 
 PATH_DIST = $(srcdir)/dists/android
 PATH_RESOURCES = $(PATH_DIST)/res
 
 PORT_DISTFILES = $(PATH_DIST)/README.Android
 DIST_ANDROID_CONTROLS = $(PATH_DIST)/assets/arrows.tga
+DIST_JAVA_SRC_DIR = $(srcdir)/backends/platform/android
 
 RESOURCES = \
-	$(PATH_RESOURCES)/values/strings.xml \
-	$(PATH_RESOURCES)/layout/main.xml \
-	$(PATH_RESOURCES)/layout/splash.xml \
-	$(PATH_RESOURCES)/drawable/gradient.xml \
-	$(PATH_RESOURCES)/drawable/residualvm.png \
-	$(PATH_RESOURCES)/drawable/residualvm_big.png
+	$(PATH_BUILD_RES)/values/strings.xml \
+	$(PATH_BUILD_RES)/menu/game_menu.xml \
+	$(PATH_BUILD_RES)/layout/main.xml \
+	$(PATH_BUILD_RES)/layout/splash.xml \
+	$(PATH_BUILD_RES)/drawable/gradient.xml \
+	$(PATH_BUILD_RES)/drawable/residualvm.png \
+	$(PATH_BUILD_RES)/drawable/residualvm_big.png
 
-PLUGIN_RESOURCES = \
-	$(PATH_RESOURCES)/values/strings.xml \
-	$(PATH_RESOURCES)/drawable/residualvm.png
 
-# FIXME: find/mark plugin entry points and add all this back again:
-#LDFLAGS += -Wl,--gc-sections
-#CXXFLAGS += -ffunction-sections -fdata-sections -fvisibility=hidden -fvisibility-inlines-hidden
-
-AAPT = $(ANDROID_SDK)/platform-tools/aapt
-ADB = $(ANDROID_SDK)/platform-tools/adb
-DX = $(ANDROID_SDK)/platform-tools/dx
-APKBUILDER = $(ANDROID_SDK)/tools/apkbuilder
-JAVAC ?= javac
-JAVACFLAGS = -source 1.5 -target 1.5
-
-ANDROID_JAR = $(ANDROID_SDK)/platforms/android-8/android.jar
+DIST_ANDROID_MK = $(PATH_DIST)/jni/Android.mk
+DIST_BUILD_XML = $(PATH_DIST)/build.xml
 
 PATH_BUILD = ./build.tmp
 PATH_BUILD_ASSETS = $(PATH_BUILD)/assets
-PATH_BUILD_CLASSES_MAIN_TOP = $(PATH_BUILD)/classes.main
-PATH_BUILD_CLASSES_PLUGIN_TOP = $(PATH_BUILD)/classes.plugin
-
-PATH_STAGE_PREFIX = build.stage
-PATH_STAGE_MAIN = $(PATH_STAGE_PREFIX).main
-
-PATH_REL = org/residualvm/residualvm
-PATH_SRC_TOP = $(srcdir)/backends/platform/android
-PATH_SRC = $(PATH_SRC_TOP)/$(PATH_REL)
-
-PATH_GEN_TOP = $(PATH_BUILD)/java
-PATH_GEN = $(PATH_GEN_TOP)/$(PATH_REL)
-PATH_CLASSES_MAIN = $(PATH_BUILD_CLASSES_MAIN_TOP)/$(PATH_REL)
-PATH_CLASSES_PLUGIN = $(PATH_BUILD_CLASSES_PLUGIN_TOP)/$(PATH_REL)
+PATH_BUILD_RES = $(PATH_BUILD)/res
+PATH_BUILD_LIBRESIDUALVM = $(PATH_BUILD)/libs/armeabi/libresidualvm.so
 
 FILE_MANIFEST_SRC = $(srcdir)/dists/android/AndroidManifest.xml
 FILE_MANIFEST = $(PATH_BUILD)/AndroidManifest.xml
-FILE_DEX = $(PATH_BUILD)/classes.dex
-FILE_DEX_PLUGIN = $(PATH_BUILD)/plugins/classes.dex
-FILE_RESOURCES = resources.ap_
-FILE_RESOURCES_MAIN = $(PATH_BUILD)/$(FILE_RESOURCES)
-
-SRC_GEN = $(addprefix $(PATH_GEN)/, $(JAVA_FILES_GEN))
-
-CLASSES_MAIN = $(addprefix $(PATH_CLASSES_MAIN)/, $(JAVA_FILES:%.java=%.class))
-CLASSES_GEN = $(addprefix $(PATH_CLASSES_MAIN)/, $(JAVA_FILES_GEN:%.java=%.class))
-CLASSES_PLUGIN = $(addprefix $(PATH_CLASSES_PLUGIN)/, $(JAVA_FILES_PLUGIN:%.java=%.class))
 
 APK_MAIN = residualvm.apk
 APK_PLUGINS = $(patsubst plugins/lib%.so, residualvm-engine-%.apk, $(PLUGINS))
 
-$(FILE_MANIFEST): $(FILE_MANIFEST_SRC)
+$(FILE_MANIFEST): $(FILE_MANIFEST_SRC) | $(PATH_BUILD)
 	@$(MKDIR) -p $(@D)
 	sed "s/@ANDROID_VERSIONCODE@/$(ANDROID_VERSIONCODE)/" < $< > $@
 
-$(SRC_GEN): $(FILE_MANIFEST) $(filter %.xml,$(RESOURCES)) $(ANDROID_JAR)
-	@$(MKDIR) -p $(PATH_GEN_TOP)
-	$(AAPT) package -m -J $(PATH_GEN_TOP) -M $< -S $(PATH_RESOURCES) -I $(ANDROID_JAR)
-
-$(PATH_CLASSES_MAIN)/%.class: $(PATH_GEN)/%.java $(SRC_GEN)
-	@$(MKDIR) -p $(@D)
-	$(JAVAC) $(JAVACFLAGS) -cp $(PATH_SRC_TOP) -d $(PATH_BUILD_CLASSES_MAIN_TOP) -bootclasspath $(ANDROID_JAR) $<
-
-$(PATH_CLASSES_MAIN)/%.class: $(PATH_SRC)/%.java $(SRC_GEN)
-	@$(MKDIR) -p $(@D)
-	$(JAVAC) $(JAVACFLAGS) -cp $(PATH_SRC_TOP):$(PATH_GEN_TOP) -d $(PATH_BUILD_CLASSES_MAIN_TOP) -bootclasspath $(ANDROID_JAR) $<
-
-$(PATH_CLASSES_PLUGIN)/%.class: $(PATH_SRC)/%.java
-	@$(MKDIR) -p $(@D)
-	$(JAVAC) $(JAVACFLAGS) -cp $(PATH_SRC_TOP) -d $(PATH_BUILD_CLASSES_PLUGIN_TOP) -bootclasspath $(ANDROID_JAR) $<
-
-$(FILE_DEX): $(CLASSES_MAIN) $(CLASSES_GEN)
-	$(DX) --dex --output=$@ $(PATH_BUILD_CLASSES_MAIN_TOP)
-
-$(FILE_DEX_PLUGIN): $(CLASSES_PLUGIN)
-	@$(MKDIR) -p $(@D)
-	$(DX) --dex --output=$@ $(PATH_BUILD_CLASSES_PLUGIN_TOP)
-
-$(PATH_BUILD)/%/AndroidManifest.xml: $(PATH_DIST)/mkplugin.sh $(srcdir)/configure $(PATH_DIST)/plugin-manifest.xml
-	@$(MKDIR) -p $(@D)
-	$(PATH_DIST)/mkplugin.sh $(srcdir)/configure $* $(PATH_DIST)/plugin-manifest.xml $(ANDROID_PLUGIN_VERSIONCODE) $@
-
-$(PATH_STAGE_PREFIX).%/res/values/strings.xml: $(PATH_DIST)/mkplugin.sh $(srcdir)/configure $(PATH_DIST)/plugin-manifest.xml
-	@$(MKDIR) -p $(@D)
-	$(PATH_DIST)/mkplugin.sh $(srcdir)/configure $* $(PATH_DIST)/plugin-strings.xml $(ANDROID_PLUGIN_VERSIONCODE) $@
-
-$(PATH_STAGE_PREFIX).%/res/drawable/residualvm.png: $(PATH_RESOURCES)/drawable/residualvm.png
+$(PATH_BUILD)/res/%: $(PATH_DIST)/res/% | $(PATH_BUILD)
 	@$(MKDIR) -p $(@D)
 	$(CP) $< $@
 
-$(FILE_RESOURCES_MAIN): $(FILE_MANIFEST) $(RESOURCES) $(ANDROID_JAR) $(DIST_FILES_THEMES) $(DIST_FILES_ENGINEDATA) $(DIST_ANDROID_CONTROLS)
+$(PATH_BUILD)/libs/%: $(PATH_DIST)/libs/% | $(PATH_BUILD)
+	@$(MKDIR) -p $(@D)
+	$(CP) $< $@
+
+$(PATH_BUILD_ASSETS): $(DIST_FILES_THEMES) $(DIST_FILES_ENGINEDATA) $(DIST_ANDROID_CONTROLS) $(DIST_BUILD_XML) | $(PATH_BUILD)
 	$(INSTALL) -d $(PATH_BUILD_ASSETS)
 	$(INSTALL) -c -m 644 $(DIST_FILES_THEMES) $(DIST_FILES_ENGINEDATA)  $(DIST_ANDROID_CONTROLS) $(PATH_BUILD_ASSETS)/
-	work_dir=`pwd`; \
-	for i in $(PATH_BUILD_ASSETS)/*.zip; do \
-		echo "recompress $$i"; \
-		cd "$$work_dir"; \
-		$(RM) -rf $(PATH_BUILD_ASSETS)/tmp; \
-		$(MKDIR) $(PATH_BUILD_ASSETS)/tmp; \
-		unzip -q $$i -d $(PATH_BUILD_ASSETS)/tmp; \
-		cd $(PATH_BUILD_ASSETS)/tmp; \
-		zip -r ../`basename $$i` *; \
-	done
-	@$(RM) -rf $(PATH_BUILD_ASSETS)/tmp
-	$(AAPT) package -f -0 "" -M $< -S $(PATH_RESOURCES) -A $(PATH_BUILD_ASSETS) -I $(ANDROID_JAR) -F $@
+	$(INSTALL) -d $(PATH_BUILD)/jni
+	$(INSTALL) -c -m 644 $(DIST_ANDROID_MK) $(PATH_BUILD)/jni
+	$(INSTALL) -c -m 644 $(DIST_BUILD_XML) $(PATH_BUILD)
 
-$(PATH_BUILD)/%/$(FILE_RESOURCES): $(PATH_BUILD)/%/AndroidManifest.xml $(PATH_STAGE_PREFIX).%/res/values/strings.xml $(PATH_STAGE_PREFIX).%/res/drawable/residualvm.png plugins/lib%.so $(ANDROID_JAR)
-	$(AAPT) package -f -M $< -S $(PATH_STAGE_PREFIX).$*/res -I $(ANDROID_JAR) -F $@
+$(PATH_BUILD): $(DIST_ANDROID_MK)
+	$(MKDIR) -p $(PATH_BUILD) $(PATH_BUILD)/res
+	$(MKDIR) -p $(PATH_BUILD)/libs
 
-$(APK_MAIN): $(EXECUTABLE) $(FILE_RESOURCES_MAIN) $(FILE_DEX)
-	$(INSTALL) -d $(PATH_STAGE_MAIN)/common/lib/armeabi
-	$(INSTALL) -c -m 644 libresidualvm.so $(PATH_STAGE_MAIN)/common/lib/armeabi/
-	$(STRIP) $(PATH_STAGE_MAIN)/common/lib/armeabi/libresidualvm.so
-	$(APKBUILDER) $@ -z $(FILE_RESOURCES_MAIN) -f $(FILE_DEX) -rf $(PATH_STAGE_MAIN)/common || { $(RM) $@; exit 1; }
+$(PATH_BUILD_LIBRESIDUALVM): libresidualvm.so | $(PATH_BUILD)
+	$(INSTALL) -c -m 644 libresidualvm.so $(PATH_BUILD)
+	$(STRIP) $(PATH_BUILD)/libresidualvm.so
+	cd $(PATH_BUILD); $(NDK_BUILD)
 
-residualvm-engine-%.apk: plugins/lib%.so $(PATH_BUILD)/%/$(FILE_RESOURCES) $(FILE_DEX_PLUGIN)
-	$(INSTALL) -d $(PATH_STAGE_PREFIX).$*/apk/lib/armeabi/
-	$(INSTALL) -c -m 644 plugins/lib$*.so $(PATH_STAGE_PREFIX).$*/apk/lib/armeabi/
-	$(STRIP) $(PATH_STAGE_PREFIX).$*/apk/lib/armeabi/lib$*.so
-	$(APKBUILDER) $@ -z $(PATH_BUILD)/$*/$(FILE_RESOURCES) -f $(FILE_DEX_PLUGIN) -rf $(PATH_STAGE_PREFIX).$*/apk || { $(RM) $@; exit 1; }
+$(PATH_BUILD_RES): $(RESOURCES) | $(PATH_BUILD)
 
-all: $(APK_MAIN) $(APK_PLUGINS)
+$(APK_MAIN): $(FILE_MANIFEST) $(PATH_BUILD_RES) $(PATH_BUILD_ASSETS) $(PATH_BUILD_LIBRESIDUALVM) | $(PATH_BUILD)
+	$(SDK_ANDROID) update project -p $(PATH_BUILD) -t android-$(ANDROID_TARGET_VERSION) -n ResidualVM
+	(cd $(PATH_BUILD); ant debug -Dsource.dir="$(realpath $(DIST_JAVA_SRC_DIR))")
+	$(CP) $(PATH_BUILD)/bin/ResidualVM-debug.apk $@
+
+
+all: $(APK_MAIN)
 
 clean: androidclean
 
 androidclean:
-	@$(RM) -rf $(PATH_BUILD) $(PATH_STAGE_PREFIX).* *.apk release
-
-# remove debugging signature
-release/%.apk: %.apk
-	@$(MKDIR) -p $(@D)
-	@$(RM) $@
-	$(CP) $< $@.tmp
-	zip -d $@.tmp META-INF/\*
-	jarsigner $(JARSIGNER_FLAGS) $@.tmp release
-	zipalign 4 $@.tmp $@
-	$(RM) $@.tmp
+	@$(RM) -rf $(PATH_BUILD) *.apk release
 
 androidrelease: $(addprefix release/, $(APK_MAIN) $(APK_PLUGINS))
 
@@ -190,4 +102,4 @@ androiddistdebug: all
 		sed 's/$$/\r/' < $$i > debug/`basename $$i`.txt; \
 	done
 
-.PHONY: androidrelease androidtest
+.PHONY: androidrelease androidtest $(PATH_BUILD_SRC)
