@@ -886,12 +886,12 @@ void SciEngine::syncSoundSettings() {
 	}
 }
 
-// used by Script Patcher. Used to find out, if Laura Bow 2 needs patching for Speech+Subtitles - or not
+// used by Script Patcher. Used to find out, if Laura Bow 2/King's Quest 6 need patching for Speech+Subtitles - or not
 bool SciEngine::speechAndSubtitlesEnabled() {
 	bool subtitlesOn = ConfMan.getBool("subtitles");
 	bool speechOn = !ConfMan.getBool("speech_mute");
 	
-	if (subtitlesOn && speechOn)
+	if (isCD() && subtitlesOn && speechOn)
 		return true;
 	return false;
 }
