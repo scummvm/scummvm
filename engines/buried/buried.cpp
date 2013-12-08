@@ -112,6 +112,8 @@ Common::Error BuriedEngine::run() {
 	if (_library && !_library->load(getLibraryName()))
 		error("Failed to load library DLL '%s'", getLibraryName().c_str());
 
+	syncSoundSettings();
+
 	_gfx = new GraphicsManager(this);
 	_sound = new SoundManager(this);
 	_mainWindow = new FrameWindow(this);
