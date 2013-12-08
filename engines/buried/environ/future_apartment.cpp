@@ -1121,6 +1121,220 @@ int RightClockShelf::specifyCursor(Window *viewWindow, const Common::Point &poin
 	return kCursorPutDown;
 }
 
+class MainDeskView : public SceneBase {
+public:
+	MainDeskView(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	Common::Rect _papers;
+	Common::Rect _terminal;
+	Common::Rect _vidPhone;
+	Common::Rect _deskLight;
+};
+
+MainDeskView::MainDeskView(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_papers = Common::Rect(38, 126, 132, 154);
+	_terminal = Common::Rect(138, 118, 274, 166);
+	_vidPhone = Common::Rect(334, 46, 418, 142);
+	_deskLight = Common::Rect(20, 62, 82, 122);
+}
+
+int MainDeskView::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_papers.contains(pointLocation) && ((SceneViewWindow *)viewWindow)->getGlobalFlags().generalWalkthroughMode == 0) {
+		DestinationScene newScene;
+		newScene.destinationScene = _staticData.location;
+		newScene.destinationScene.depth = 2;
+		newScene.transitionType = TRANSITION_VIDEO;
+		newScene.transitionData = 40;
+		newScene.transitionStartFrame = -1;
+		newScene.transitionLength = -1;
+		((SceneViewWindow *)viewWindow)->moveToDestination(newScene);
+		return SC_TRUE;
+	}
+
+	if (_terminal.contains(pointLocation)) {
+		// Play the terminal access movie
+		((SceneViewWindow *)viewWindow)->playSynchronousAnimation(44);
+		return SC_TRUE;
+	}
+
+	if (_vidPhone.contains(pointLocation)) {
+		// Move to the vidphone
+		DestinationScene newScene;
+		newScene.destinationScene = _staticData.location;
+		newScene.destinationScene.depth = 3;
+		newScene.transitionType = TRANSITION_VIDEO;
+		newScene.transitionData = 42;
+		newScene.transitionStartFrame = -1;
+		newScene.transitionLength = -1;
+		((SceneViewWindow *)viewWindow)->moveToDestination(newScene);
+		return SC_TRUE;
+	}
+
+	if (_deskLight.contains(pointLocation)) {
+		// Play the desk light animation
+		((SceneViewWindow *)viewWindow)->playSynchronousAnimation(39);
+		return SC_TRUE;
+	}
+
+	DestinationScene newScene;
+	newScene.destinationScene = _staticData.location;
+	newScene.destinationScene.depth = 0;
+	newScene.transitionType = TRANSITION_VIDEO;
+	newScene.transitionData = 45;
+	newScene.transitionStartFrame = -1;
+	newScene.transitionLength = -1;
+	((SceneViewWindow *)viewWindow)->moveToDestination(newScene);
+	return SC_TRUE;
+}
+
+int MainDeskView::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_papers.contains(pointLocation) && ((SceneViewWindow *)viewWindow)->getGlobalFlags().generalWalkthroughMode == 0)
+		return kCursorMagnifyingGlass;
+
+	if (_terminal.contains(pointLocation) || _deskLight.contains(pointLocation))
+		return kCursorFinger;
+
+	if (_vidPhone.contains(pointLocation))
+		return kCursorMagnifyingGlass;
+
+	return kCursorPutDown;
+}
+
+class ViewVidPhone : public SceneBase {
+public:
+	ViewVidPhone(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
+	int preExitRoom(Window *viewWindow, const Location &newLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int movieCallback(Window *viewWindow, VideoWindow *movie, int animationID, int status);
+
+private:
+	Common::Rect _playButton;
+	Common::Rect _pauseButton;
+	Common::Rect _prevButton;
+	bool _playingMovie;
+	int _curMovie;
+};
+
+ViewVidPhone::ViewVidPhone(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_playButton = Common::Rect(102, 22, 120, 40);
+	_pauseButton = Common::Rect(98, 49, 112, 63);
+	_prevButton = Common::Rect(91, 81, 105, 95);
+	_playingMovie = false;
+	_curMovie = -1;
+}
+
+int ViewVidPhone::postEnterRoom(Window *viewWindow, const Location &priorLocation) {
+	// Play messages sound effect here
+	_vm->_sound->playSoundEffect("BITDATA/FUTAPT/FAMN_ANS.BTA");
+	return SC_TRUE;
+}
+
+int ViewVidPhone::preExitRoom(Window *viewWindow, const Location &newLocation) {
+	if (_playingMovie) {
+		((SceneViewWindow *)viewWindow)->stopAsynchronousAnimation();
+		_playingMovie = false;
+		_vm->_sound->restart();
+	}
+
+	return SC_TRUE;
+}
+
+int ViewVidPhone::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_playButton.contains(pointLocation)) {
+		if (_curMovie == 0) {
+			((SceneViewWindow *)viewWindow)->stopAsynchronousAnimation();
+			_vm->_sound->restart();
+			_curMovie = -1;
+		} else {
+			if (_playingMovie)
+				((SceneViewWindow *)viewWindow)->stopAsynchronousAnimation();
+
+			_curMovie = 0;
+			_vm->_sound->stop();
+			((SceneViewWindow *)viewWindow)->startAsynchronousAnimation(33, false);
+			_playingMovie = true;
+		}
+
+		return SC_TRUE;
+	}
+
+	if (_pauseButton.contains(pointLocation)) {
+		if (_curMovie == 1) {
+			((SceneViewWindow *)viewWindow)->stopAsynchronousAnimation();
+			_vm->_sound->restart();
+			_curMovie = -1;
+		} else {
+			if (_playingMovie)
+				((SceneViewWindow *)viewWindow)->stopAsynchronousAnimation();
+
+			_curMovie = 1;
+			_vm->_sound->stop();
+			((SceneViewWindow *)viewWindow)->startAsynchronousAnimation(34, false);
+			_playingMovie = true;
+		}
+
+		return SC_TRUE;
+	}
+
+	if (_prevButton.contains(pointLocation)) {
+		if (_curMovie == 2) {
+			((SceneViewWindow *)viewWindow)->stopAsynchronousAnimation();
+			_vm->_sound->restart();
+			_curMovie = -1;
+		} else {
+			if (_playingMovie)
+				((SceneViewWindow *)viewWindow)->stopAsynchronousAnimation();
+
+			_curMovie = 2;
+			_vm->_sound->stop();
+			((SceneViewWindow *)viewWindow)->startAsynchronousAnimation(35, false);
+			_playingMovie = true;
+		}
+
+		return SC_TRUE;
+	}
+
+	if (_playingMovie)
+		((SceneViewWindow *)viewWindow)->stopAsynchronousAnimation();
+
+	_playingMovie = false;
+	_vm->_sound->restart();
+
+	DestinationScene newScene;
+	newScene.destinationScene = _staticData.location;
+	newScene.destinationScene.depth = 1;
+	newScene.transitionType = TRANSITION_VIDEO;
+	newScene.transitionData = 43;
+	newScene.transitionStartFrame = -1;
+	newScene.transitionLength = -1;
+	((SceneViewWindow *)viewWindow)->moveToDestination(newScene);
+	return SC_TRUE;
+}
+
+int ViewVidPhone::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_playButton.contains(pointLocation) || _pauseButton.contains(pointLocation) || _prevButton.contains(pointLocation))
+		return kCursorFinger;
+
+	return kCursorPutDown;
+}
+
+int ViewVidPhone::movieCallback(Window *viewWindow, VideoWindow *movie, int animationID, int status) {
+	if (animationID == -1 && status == MOVIE_STOPPED) {
+		_vm->_sound->restart();
+		_playingMovie = false;
+		_curMovie = -1;
+	}
+
+	return SC_TRUE;
+}
+
 class MainEnvironDoorDown : public SceneBase {
 public:
 	MainEnvironDoorDown(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
@@ -1380,8 +1594,12 @@ SceneBase *SceneViewWindow::constructFutureApartmentSceneObject(Window *viewWind
 		return new ClickChangeScene(_vm, viewWindow, sceneStaticData, priorLocation, 44, 26, 254, 144, kCursorMagnifyingGlass, 4, 3, 0, 2, 0, 1, TRANSITION_VIDEO, 30, -1, -1);
 	case 50:
 		return new ClickChangeScene(_vm, viewWindow, sceneStaticData, priorLocation, 82, 38, 346, 138, kCursorMagnifyingGlass, 4, 3, 9, 2, 0, 1, TRANSITION_VIDEO, 38, -1, -1);
+	case 51:
+		return new MainDeskView(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 52:
 		return new BrowseBook(_vm, viewWindow, sceneStaticData, priorLocation, IDBD_LETTERS_BOOK_DATA, -1, 0, 4, 3, 9, 2, 0, 1, TRANSITION_VIDEO, 41, -1, -1);
+	case 53:
+		return new ViewVidPhone(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 54:
 		return new ClickPlayVideo(_vm, viewWindow, sceneStaticData, priorLocation, 36, kCursorFinger, 0, 0, 432, 189);
 	case 56:
