@@ -1008,6 +1008,157 @@ int CodexTowerGrabLens::droppedItem(Window *viewWindow, int itemID, const Common
 	return GenericItemAcquire::droppedItem(viewWindow, itemID, pointLocation, itemFlags);
 }
 
+class CodexCabinetOpenDoor : public SceneBase {
+public:
+	CodexCabinetOpenDoor(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	Common::Rect _openDoor;
+};
+
+CodexCabinetOpenDoor::CodexCabinetOpenDoor(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+
+	_openDoor = Common::Rect(80, 0, 302, 189);
+}
+
+int CodexCabinetOpenDoor::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_openDoor.contains(pointLocation)) {
+		DestinationScene destData;
+		destData.destinationScene = _staticData.location;
+		destData.destinationScene.depth = 1;
+		destData.transitionType = TRANSITION_VIDEO;
+		destData.transitionStartFrame = -1;
+		destData.transitionLength = -1;
+
+		if (((SceneViewWindow *)viewWindow)->getGlobalFlags().dsCTTakenHeart == 0)
+			destData.transitionData = 5;
+		else
+			destData.transitionData = 6;
+
+		((SceneViewWindow *)viewWindow)->moveToDestination(destData);
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int CodexCabinetOpenDoor::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_openDoor.contains(pointLocation))
+		return kCursorFinger;
+
+	return kCursorArrow;
+}
+
+class CodexTowerGrabHeart : public SceneBase {
+public:
+	CodexTowerGrabHeart(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int postExitRoom(Window *viewWindow, const Location &newLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int mouseDown(Window *viewWindow, const Common::Point &pointLocation);
+	int droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	bool _itemPresent;
+	Common::Rect _acquireRegion;
+	int _fullFrameIndex;
+	int _clearFrameIndex;
+	int _itemID;
+	int _itemFlagOffset;
+	Common::Rect _eyeRegion;
+};
+
+CodexTowerGrabHeart::CodexTowerGrabHeart(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_itemPresent = true;
+	_itemID = kItemPreservedHeart;
+	_acquireRegion = Common::Rect(214, 118, 270, 189);
+	_fullFrameIndex = _staticData.navFrameIndex;
+	_clearFrameIndex = 162;
+	_itemFlagOffset = offsetof(GlobalFlags, dsCTTakenHeart);
+	_eyeRegion = Common::Rect(248, 116, 286, 180);
+
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().dsCTTakenHeart != 0) {
+		_itemPresent = false;
+		_staticData.navFrameIndex = _clearFrameIndex;
+	}
+}
+
+int CodexTowerGrabHeart::postExitRoom(Window *viewWindow, const Location &newLocation) {
+	if (_staticData.location.depth != newLocation.depth && _staticData.location.timeZone == newLocation.timeZone)
+		_vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 14));
+
+	return SC_TRUE;
+}
+
+int CodexTowerGrabHeart::mouseDown(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_acquireRegion.contains(pointLocation) && _itemPresent) {
+		_itemPresent = false;
+		_staticData.navFrameIndex = _clearFrameIndex;
+
+		if (_itemFlagOffset >= 0)
+			((SceneViewWindow *)viewWindow)->setGlobalFlagByte(_itemFlagOffset, 1);
+
+		// Call inventory drag start function
+		Common::Point ptInventoryWindow = viewWindow->convertPointToGlobal(pointLocation);
+		ptInventoryWindow = ((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->convertPointToLocal(ptInventoryWindow);
+		((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->startDraggingNewItem(_itemID, ptInventoryWindow);
+
+		// Update the biochips
+		((GameUIWindow *)viewWindow->getParent())->_bioChipRightWindow->sceneChanged();
+
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int CodexTowerGrabHeart::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_eyeRegion.contains(pointLocation) && !_itemPresent) {
+		// Play the spinning eyes animation
+		((SceneViewWindow *)viewWindow)->playSynchronousAnimation(7);
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int CodexTowerGrabHeart::droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) {
+	if (pointLocation.x == -1 && pointLocation.y == -1)
+		return 0;
+
+	if (itemID == _itemID && !_itemPresent) {
+		// Redraw the background
+		_itemPresent = true;
+		_staticData.navFrameIndex = _fullFrameIndex;
+
+		if (_itemFlagOffset >= 0)
+			((SceneViewWindow *)viewWindow)->setGlobalFlagByte(_itemFlagOffset, 0);
+
+		viewWindow->invalidateWindow();
+
+		// Update the biochips
+		((GameUIWindow *)viewWindow->getParent())->_bioChipRightWindow->sceneChanged();
+
+		return SIC_ACCEPT;
+	}
+
+	return SIC_REJECT;
+}
+
+int CodexTowerGrabHeart::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_acquireRegion.contains(pointLocation) && _itemPresent)
+		return kCursorOpenHand;
+
+	if (_eyeRegion.contains(pointLocation) && !_itemPresent)
+		return kCursorFinger;
+
+	return kCursorArrow;
+}
+
 class ClickBirdDevice : public SceneBase {
 public:
 	ClickBirdDevice(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
@@ -2129,6 +2280,10 @@ SceneBase *SceneViewWindow::constructDaVinciSceneObject(Window *viewWindow, cons
 		return new CodexTowerLensEvidenceCapture(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 43:
 		return new CodexTowerGrabLens(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 44:
+		return new CodexCabinetOpenDoor(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 45:
+		return new CodexTowerGrabHeart(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 46:
 		return new ClickPlayVideo(_vm, viewWindow, sceneStaticData, priorLocation, 8, kCursorFinger, 102, 124, 164, 189);
 	case 51:
