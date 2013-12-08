@@ -83,10 +83,12 @@ private:
 
 	void playStamp();
 	void initStamp();
+	void closeStamp();
 	void initUseCount();
 	void initThreadStruct(ThreadResource *thread, int v1, int idx);
 	bool stm_loadAStack(ThreadResource *thread, int idx);
 	void stm_unloadAStack(int idx);
+	void stm_unloadAllStacks();
 	void stm_doState(ThreadResource *thread);
 protected:
 	// Engine APIs

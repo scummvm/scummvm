@@ -417,6 +417,7 @@ public:
 	int _field0;
 	int _controlIndex;
 	int _field4, _field6;
+	int _flags;
 	int _field3A;
 	int _field3E;
 	byte *_ctlPtr;

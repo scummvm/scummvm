@@ -59,6 +59,9 @@ void VoyeurEngine::playStamp() {
 	}
 
 	_voy._field4386 = 0;
+	closeStamp();
+	_stampLibPtr->freeBoltGroup(0x10000);
+	delete _stampLibPtr;
 }
 
 void VoyeurEngine::initStamp() {
@@ -69,6 +72,10 @@ void VoyeurEngine::initStamp() {
 		error("No control entries");
 
 	initUseCount();
+}
+
+void VoyeurEngine::closeStamp() {
+	stm_unloadAllStacks();
 }
 
 void VoyeurEngine::initUseCount() {
@@ -102,6 +109,7 @@ bool VoyeurEngine::stm_loadAStack(ThreadResource *thread, int idx) {
 	}
 
 	thread->_ctlPtr = _controlPtr->_entries[idx];
+	return true;
 }
 
 void VoyeurEngine::stm_unloadAStack(int idx) {
@@ -112,8 +120,17 @@ void VoyeurEngine::stm_unloadAStack(int idx) {
 	}
 }
 
-void VoyeurEngine::stm_doState(ThreadResource *thread) {
+void VoyeurEngine::stm_unloadAllStacks() {
+	if (_stampFlags & 1) {
+		for (int i = 0; i < 8; ++i) {
+			if (_stm_useCount[i])
+				_stampLibPtr->freeBoltMember(_controlPtr->_memberIds[i]);
+		}
+	}
+}
 
+void VoyeurEngine::stm_doState(ThreadResource *thread) {
+	warning("TODO: stm_doState");
 }
 
 } // End of namespace Voyeur

@@ -236,7 +236,9 @@ BoltFile::BoltFile(const Common::String &filename, BoltFilesState &state): _stat
 }
 
 BoltFile::~BoltFile() {
-	_state._curFd->close();
+	_file.close();
+	if (_state._curFd == &_file)
+		_state._curFd = NULL;
 }
 
 bool BoltFile::getBoltGroup(uint32 id) {
@@ -1306,6 +1308,7 @@ VInitCyclResource::VInitCyclResource(BoltFilesState &state, const byte *src) {
 /*------------------------------------------------------------------------*/
 
 ThreadResource::ThreadResource(BoltFilesState &state, const byte *src) {
+	_flags = READ_LE_UINT16(&src[8]);
 }
 
 /*------------------------------------------------------------------------*/
@@ -1330,10 +1333,8 @@ ControlResource::ControlResource(BoltFilesState &state, const byte *src) {
 	uint32 ptrId = READ_LE_UINT32(&src[0x32]);
 	_ptr = state._curLibPtr->getBoltEntryFromLong(ptrId)._data;
 
-	for (int i = 0; i < 8; ++i) {
+	for (int i = 0; i < 8; ++i)
 		_memberIds[i] = READ_LE_UINT16(src + i * 2);
-		_entries[i] = NULL;
-	}
 
 	// Load pointer list
 	uint32 *idP = (uint32 *)&src[0x10];
@@ -1341,9 +1342,7 @@ ControlResource::ControlResource(BoltFilesState &state, const byte *src) {
 
 	for (int i = 0; i < count; ++i, ++idP) {
 		uint32 id = READ_LE_UINT32(idP);
-		BoltEntry &entry = state._curLibPtr->getBoltEntryFromLong(id);
-
-		_entries[i] = entry._data;
+		state._curLibPtr->resolveIt(id, &_entries[i]);
 	}
 }
 
