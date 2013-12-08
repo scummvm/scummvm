@@ -245,7 +245,7 @@ int scene04_updateCursor() {
 }
 
 void sceneHandlers_sub01(ExCommand *ex) {
-	warning("sceneHandlers_sub01()");
+	warning("STUB: sceneHandlers_sub01()");
 }
 
 void sceneHandler04_checkBigBallClick() {
@@ -279,7 +279,7 @@ void sceneHandler04_clickButton() {
 }
 
 void sceneHandler04_clickLadder() {
-	warning("sceneHandler04_clickLadder()");
+	warning("STUB: sceneHandler04_clickLadder()");
 }
 
 void sceneHandler04_jumpOnLadder() {
@@ -358,7 +358,7 @@ void sceneHandler04_dropBottle() {
 }
 
 void sceneHandler04_gotoLadder(int par) {
-	warning("sceneHandler04_gotoLadder()");
+	warning("STUB: sceneHandler04_gotoLadder()");
 }
 
 void sceneHandler04_lowerPlank() {
@@ -395,7 +395,7 @@ void sceneHandler04_raisePlank() {
 }
 
 void sceneHandler04_shootKozyawka() {
-	warning("sceneHandler04_shootKozyawka()");
+	warning("STUB: sceneHandler04_shootKozyawka()");
 }
 
 void sceneHandler04_showCoin() {
@@ -409,7 +409,7 @@ void sceneHandler04_showCoin() {
 }
 
 void sceneHandler04_stopSound() {
-	warning("sceneHandler04_stopSound()");
+	warning("STUB: sceneHandler04_stopSound()");
 }
 
 void sceneHandler04_sub1(ExCommand *ex) {
@@ -442,11 +442,11 @@ void sceneHandler04_walkKozyawka() {
 }
 
 void sceneHandler04_sub4() {
-	warning("sceneHandler04_sub4()");
+	warning("STUB: sceneHandler04_sub4()");
 }
 
 void sceneHandler04_sub5() {
-	warning("sceneHandler04_sub5()");
+	warning("STUB: sceneHandler04_sub5()");
 }
 
 void sceneHandler04_bottleUpdateObjects(int off) {
@@ -499,7 +499,7 @@ void sceneHandler04_goClock() {
 }
 
 void sceneHandler04_sub8(ExCommand *ex) {
-	warning("sceneHandler04_sub8()");
+	warning("STUB: sceneHandler04_sub8()");
 }
 
 void sceneHandler04_sub12() {
