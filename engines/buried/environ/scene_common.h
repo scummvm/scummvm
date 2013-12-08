@@ -214,6 +214,23 @@ private:
 	byte _evidenceID;
 };
 
+class ClickPlayLoopingVideoClip : public SceneBase {
+public:
+	ClickPlayLoopingVideoClip(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+			int cursorID = 0, int animID = -1, int left = 0, int top = 0, int right = 0, int bottom = 0, int flagOffset = -1, int newFlagValue = -1);
+	int preExitRoom(Window *viewWindow, const Location &newLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	int _cursorID;
+	int _animID;
+	Common::Rect _clickRegion;
+	int _flagOffset;
+	int _flagValue;
+	bool _playing;
+};
+
 class OneShotEntryVideoWarning : public SceneBase {
 public:
 	OneShotEntryVideoWarning(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
