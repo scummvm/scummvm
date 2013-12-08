@@ -840,6 +840,19 @@ void KitchenUnitPostBox::changeBackgroundBitmap() {
 	}
 }
 
+class FlagChangeBackground : public SceneBase {
+public:
+	FlagChangeBackground(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+			int flagOffset = -1, byte minFlagValue = 1, int newStillFrame = 0);
+};
+
+FlagChangeBackground::FlagChangeBackground(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+		int flagOffset, byte minFlagValue, int newStillFrame) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	if (flagOffset >= 0 && ((SceneViewWindow *)viewWindow)->getGlobalFlagByte(flagOffset) >= minFlagValue)
+		_staticData.navFrameIndex = newStillFrame;
+}
+
 class ClickZoomToyShelf : public SceneBase {
 public:
 	ClickZoomToyShelf(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
@@ -1102,6 +1115,12 @@ SceneBase *SceneViewWindow::constructFutureApartmentSceneObject(Window *viewWind
 		return new ClickChangeScene(_vm, viewWindow, sceneStaticData, priorLocation, 0, 0, 432, 189, kCursorPutDown, 4, 2, 2, 0, 1, 1, TRANSITION_VIDEO, 4, -1, -1);
 	case 23:
 		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 81, 146, 134, 189, kItemRemoteControl, 45, offsetof(GlobalFlags, faERTakenRemoteControl));
+	case 24:
+		return new FlagChangeBackground(_vm, viewWindow, sceneStaticData, priorLocation, offsetof(GlobalFlags, faERTakenRemoteControl), 1, 33);
+	case 25:
+		return new FlagChangeBackground(_vm, viewWindow, sceneStaticData, priorLocation, offsetof(GlobalFlags, faERTakenRemoteControl), 1, 21);
+	case 26:
+		return new FlagChangeBackground(_vm, viewWindow, sceneStaticData, priorLocation, offsetof(GlobalFlags, faERTakenRemoteControl), 1, 9);
 	case 30:
 		return new PlayStingers(_vm, viewWindow, sceneStaticData, priorLocation, 128, offsetof(GlobalFlags, faStingerID), offsetof(GlobalFlags, faStingerChannelID), 10, 14);
 	case 32:
