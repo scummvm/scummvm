@@ -128,9 +128,6 @@ void VideoWindow::closeVideo() {
 		_video = 0;
 		_mode = kModeClosed;
 		_lastFrame = 0;
-		_rect = Common::Rect();
-		_srcRect = Common::Rect();
-		_dstRect = Common::Rect();
 
 		if (_ownedFrame) {
 			_ownedFrame->free();
