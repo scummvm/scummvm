@@ -3663,7 +3663,7 @@ void Scene1337::Action7::signal() {
 		scene->_item5._card.hide();
 		scene->_item5._card._flags = OBJFLAG_HIDING;
 
-		scene->subC4A39(&scene->_item5);
+		scene->discardCard(&scene->_item5);
 		break;
 	default:
 		break;
@@ -3697,7 +3697,7 @@ void Scene1337::Action8::signal() {
 		}
 		scene->setAnimationInfo(scene->_field3EF4);
 		scene->_aSound1.play(58);
-		scene->subC4A39(scene->_field3EF4);
+		scene->discardCard(scene->_field3EF4);
 		break;
 	default:
 		break;
@@ -3904,7 +3904,7 @@ void Scene1337::Action10::signal() {
 		break;
 	case 2:
 		scene->_animatedCard._card.hide();
-		scene->subC4A39(scene->_field3EF8);
+		scene->discardCard(scene->_field3EF8);
 		break;
 	default:
 		break;
@@ -4136,7 +4136,7 @@ void Scene1337::Action11::signal() {
 
 		scene->_currentPlayerNumb--;
 		scene->_showPlayerTurn = false;
-		scene->subC4A39(scene->_field3EF4);
+		scene->discardCard(scene->_field3EF4);
 		break;
 	default:
 		break;
@@ -4308,7 +4308,7 @@ void Scene1337::Action12::signal() {
 			scene->setAnimationInfo(scene->_discardCard);
 			break;
 		}
-		scene->subC4A39(scene->_field3EF4);
+		scene->discardCard(scene->_field3EF4);
 		break;
 	default:
 		break;
@@ -4342,7 +4342,7 @@ void Scene1337::Action13::signal() {
 		signal();
 		break;
 	case 2:
-		scene->subC4A39(scene->_field3EF4);
+		scene->discardCard(scene->_field3EF4);
 		break;
 	default:
 		break;
@@ -4483,7 +4483,7 @@ void Scene1337::remove() {
 void Scene1337::process(Event &event) {
 	if (event.eventType == EVENT_BUTTON_DOWN) {
 		if (event.btnState != BTNSHIFT_RIGHT) {
-			subD183F(R2_GLOBALS._v5780E, 1);
+			updateCursorId(R2_GLOBALS._mouseCursorId, true);
 			event.handled = true;
 		} else if (_unkFctPtr412) {
 			FunctionPtrType tmpFctPtr = _unkFctPtr412;
@@ -4919,7 +4919,7 @@ void Scene1337::subC2835(int arg1) {
 		return;
 	}
 
-	subC4A39(&_gameBoardSide[arg1]._handCard[i]);
+	discardCard(&_gameBoardSide[arg1]._handCard[i]);
 }
 
 void Scene1337::subC2C2F() {
@@ -4942,7 +4942,7 @@ void Scene1337::subC2C2F() {
 		case 20:
 		// No break on purpose
 		case 21:
-			subC4A39(&_gameBoardSide[3]._delayCard);
+			discardCard(&_gameBoardSide[3]._delayCard);
 			found = false;
 			break;
 		default:
@@ -5103,7 +5103,7 @@ void Scene1337::subC2C2F() {
 		}
 	}
 
-	subC4A39(&_gameBoardSide[3]._handCard[randIndx]);
+	discardCard(&_gameBoardSide[3]._handCard[randIndx]);
 }
 
 void Scene1337::subC318B(int arg1, Card *subObj1, int arg3) {
@@ -5280,8 +5280,8 @@ void Scene1337::subC358E(Card *subObj1, int arg2) {
 	_item1.setAction(&_action10);
 }
 
-void Scene1337::subC4A39(Card *subObj) {
-	_discardCard = subObj;
+void Scene1337::discardCard(Card *card) {
+	_discardCard = card;
 
 	_item1.setAction(&_action5);
 }
@@ -5408,7 +5408,7 @@ void Scene1337::displayDialog(int dialogNumb) {
 void Scene1337::subPostInit() {
 	R2_GLOBALS._v57709 = 0;
 	R2_GLOBALS._v5780C = 0;
-	subD183F(1, 0);
+	updateCursorId(1, false);
 	subD1940(true); // _v5780C++
 	subD18F5();
 
@@ -5643,7 +5643,7 @@ void Scene1337::subCD193() {
 	warning("STUBBED: subCD193()");
 }
 
-void Scene1337::subCDB90(int arg1, Common::Point pt) {
+void Scene1337::handleClick(int arg1, Common::Point pt) {
 	bool found = false;
 	int curReg = R2_GLOBALS._sceneRegions.indexOf(g_globals->_events._mousePos);
 
@@ -5970,7 +5970,7 @@ void Scene1337::subCF31D() {
 		// No break on purpose
 		case 21:
 			tmpVal = 0;
-			subC4A39(&_gameBoardSide[1]._delayCard);
+			discardCard(&_gameBoardSide[1]._delayCard);
 			break;
 		default:
 			found = false;
@@ -6181,7 +6181,7 @@ void Scene1337::subCF979() {
 		case 20:
 		//No break on purpose
 		case 21:
-			subC4A39(&_gameBoardSide[0]._delayCard);
+			discardCard(&_gameBoardSide[0]._delayCard);
 			found = false;
 			break;
 		default:
@@ -6422,13 +6422,14 @@ void Scene1337::subD0281() {
 	if (subC27F9(this->_gameBoardSide[2]._delayCard._cardId) == -1)
 		_unkFctPtr412 = &Scene1337::subD026D;
 	else
-		subC4A39(&_gameBoardSide[2]._delayCard);
+		discardCard(&_gameBoardSide[2]._delayCard);
 }
 
 void Scene1337::subD02CA() {
 	_selectedCard._stationPos = g_globals->_events._mousePos;
 
 	if (R2_GLOBALS._v57810 == 200) {
+		// Hand
 		int i;
 		for (i = 0; i < 4; i++) {
 			if ((_gameBoardSide[2]._handCard[i].isIn(_selectedCard._stationPos)) && (_gameBoardSide[2]._handCard[i]._cardId != 0)) {
@@ -6495,7 +6496,7 @@ void Scene1337::subD02CA() {
 		}
 
 		if (i == 4) {
-			subCDB90(1, _selectedCard._stationPos);
+			handleClick(1, _selectedCard._stationPos);
 			subD0281();
 			return;
 		} else {
@@ -6503,11 +6504,15 @@ void Scene1337::subD02CA() {
 			R2_GLOBALS._sceneObjects->draw();
 		}
 	} else if (R2_GLOBALS._v57810 == 300) {
-		subCDB90(3, _selectedCard._stationPos);
+		// Eye
+		handleClick(3, _selectedCard._stationPos);
 		subD0281();
 		return;
 	} else {
-		subD1A48(R2_GLOBALS._v57810);
+		// The original code is calling a function full of dead code.
+		// Only this message remains after a cleanup. 
+		MessageDialog::show(WRONG_ANSWER_MSG, OK_BTN_STRING);
+		//
 		subD0281();
 		return;
 	}
@@ -6546,7 +6551,7 @@ void Scene1337::subD02CA() {
 
 			if ((!found) && (!found_di)) {
 				if (_discardPile.isIn(Common::Point(_selectedCard._stationPos.x + 12, _selectedCard._stationPos.y + 12))) {
-					subC4A39(&_selectedCard);
+					discardCard(&_selectedCard);
 				} else if (!found) {
 					bool foundVar4;
 					int i;
@@ -6845,26 +6850,28 @@ void Scene1337::subD02CA() {
 	}
 }
 
-void Scene1337::subD183F(int arg1, int arg2) {
+void Scene1337::updateCursorId(int cursorId, bool updateFl) {
 	if ((R2_GLOBALS._v57709 != 0) || (R2_GLOBALS._v5780C != 0))
 		return;
 
-	R2_GLOBALS._v5780E = arg1 + arg2;
+	R2_GLOBALS._mouseCursorId = cursorId;
 
-	if (arg2 != 0) {
-		if (R2_GLOBALS._v5780E < 1)
-			R2_GLOBALS._v5780E = 2;
+	if (updateFl) {
+		R2_GLOBALS._mouseCursorId++;
 
-		if (R2_GLOBALS._v5780E > 2)
-			R2_GLOBALS._v5780E = 1;
+		if (R2_GLOBALS._mouseCursorId < 1)
+			R2_GLOBALS._mouseCursorId = 2;
+
+		if (R2_GLOBALS._mouseCursorId > 2)
+			R2_GLOBALS._mouseCursorId = 1;
 	}
 
 	// The original was using an intermediate function to call setCursorData.
 	// It has been removed to improve readability
-	if (R2_GLOBALS._v5780E == 1) {
+	if (R2_GLOBALS._mouseCursorId == 1) {
 		R2_GLOBALS._v57810 = 200;
 		setCursorData(5, 1, 4);
-	} else if (R2_GLOBALS._v5780E == 2) {
+	} else if (R2_GLOBALS._mouseCursorId == 2) {
 		R2_GLOBALS._v57810 = 300;
 		setCursorData(5, 1, 5);
 	} else {
@@ -6931,27 +6938,6 @@ void Scene1337::subD1975(int arg1, int arg2) {
 	warning("STUBBED lvl2 Scene1337::subD1975()");
 }
 
-void Scene1337::subD1A48(int arg1) {
-	int tmpVal = -1;
-
-	switch (arg1) {
-	case 200:
-		tmpVal = 141;
-		break;
-	case 300:
-		tmpVal = 142;
-		break;
-	default:
-		MessageDialog::show(WRONG_ANSWER_MSG, OK_BTN_STRING);
-		break;
-	}
-
-	if (tmpVal == -1)
-		return;
-
-	actionDisplay(1330, tmpVal, -1, -1, 1, 220, 1, 5, 0, 105, 0);
-}
-
 /*--------------------------------------------------------------------------
  * Scene 1500 - Cutscene: Ship landing
  *
@@ -7016,6 +7002,7 @@ void Scene1500::postInit(SceneObjectList *OwnerList) {
 		_sceneMode = 0;
 		R2_GLOBALS._sound1.play(102);
 	}
+
 	signal();
 }
 

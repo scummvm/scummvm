@@ -355,7 +355,7 @@ public:
 	Card *subC34EC(int arg1);
 	void subC358E(Card *subObj1, int arg2);
 	int  subC3E92(int arg1);
-	void subC4A39(Card *subObj);
+	void discardCard(Card *card);
 	void subC4CD2();
 	void subC4CEC();
 	void subC51A0(Card *subObj1, Card *subObj2);
@@ -366,19 +366,18 @@ public:
 	void shuffleCards();
 	void dealCards();
 	void subCD193();
-	void subCDB90(int arg1, Common::Point pt);
+	void handleClick(int arg1, Common::Point pt);
 	void subCF31D();
 	void subCF979();
 	void subD026D();
 	void subD0281();
 	void subD02CA();
-	void subD183F(int arg1, int arg2);
+	void updateCursorId(int arg1, bool arg2);
 	void setCursorData(int resNum, int rlbNum, int frameNum);
 	void subD18F5();
 	void subD1917();
 	void subD1940(bool flag);
 	void subD1975(int arg1, int arg2);
-	void subD1A48(int arg1);
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void remove();
