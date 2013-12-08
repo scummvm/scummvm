@@ -783,8 +783,8 @@ void Actor::walkForward() {
 				Math::Angle ax = Math::Vector2d(normal.x(), normal.y()).getAngle();
 				Math::Angle az = Math::Vector2d(normal.z(), normal.y()).getAngle();
 
-				float y1 = -_moveYaw.getCosine() * (az - _pitch).getCosine();
-				float y2 = -_moveYaw.getSine() * (ax - _pitch).getCosine();
+				float y1 = _moveYaw.getCosine() * (az - _pitch).getCosine();
+				float y2 = _moveYaw.getSine() * (ax - _pitch).getCosine();
 				forwardVec = Math::Vector3d(-_moveYaw.getSine() * ax.getSine() * _pitch.getCosine(), y1 + y2,
 											-_moveYaw.getCosine() * az.getSine() * _pitch.getCosine());
 			}
