@@ -37,6 +37,84 @@
 
 namespace Buried {
 
+class OvenDoor : public SceneBase {
+public:
+	OvenDoor(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+			int openAnimID = 0, int closeAnimID = 0, int openFrame = 0, int closedFrame = 0, int flagOffset = 0,
+			int left = 0, int top = 0, int right = 0, int bottom = 0);
+	int postExitRoom(Window *viewWindow, const Location &newLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	int _openAnimationID;
+	int _closeAnimationID;
+	int _openFrame;
+	int _closedFrame;
+	int _flagOffset;
+	Common::Rect _clickableRegion;
+};
+
+OvenDoor::OvenDoor(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+		int openAnimID, int closeAnimID, int openFrame, int closedFrame, int flagOffset,
+		int left, int top, int right, int bottom) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_openAnimationID = openAnimID;
+	_closeAnimationID = closeAnimID;
+	_openFrame = openFrame;
+	_closedFrame = closedFrame;
+	_flagOffset = flagOffset;
+	_clickableRegion = Common::Rect(left, top, right, bottom);
+
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlagByte(_flagOffset) == 1)
+		_staticData.navFrameIndex = _openFrame;
+	else
+		_staticData.navFrameIndex = _closedFrame;
+}
+
+int OvenDoor::postExitRoom(Window *viewWindow, const Location &newLocation) {
+	if ((newLocation.orientation == 0 || newLocation.facing != _staticData.location.facing || newLocation.node != _staticData.location.node) && ((SceneViewWindow *)viewWindow)->getGlobalFlagByte(_flagOffset) == 1) {
+		if (_staticData.location.timeZone == newLocation.timeZone)
+			_vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 7));
+
+		((SceneViewWindow *)viewWindow)->setGlobalFlagByte(_flagOffset, 0);
+	}
+
+	return SC_TRUE;
+}
+
+int OvenDoor::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_clickableRegion.contains(pointLocation)) {
+		if (((SceneViewWindow *)viewWindow)->getGlobalFlagByte(_flagOffset) == 1) {
+			// Change the flag status
+			((SceneViewWindow *)viewWindow)->setGlobalFlagByte(_flagOffset, 0);
+
+			// Play the specified animation
+			((SceneViewWindow *)viewWindow)->playSynchronousAnimation(_closeAnimationID);
+			_staticData.navFrameIndex = _closedFrame;
+
+			return SC_TRUE;
+		} else {
+			// Change the flag status
+			((SceneViewWindow *)viewWindow)->setGlobalFlagByte(_flagOffset, 1);
+
+			// Play the specified animation
+			((SceneViewWindow *)viewWindow)->playSynchronousAnimation(_openAnimationID);
+			_staticData.navFrameIndex = _openFrame;
+			return SC_TRUE;
+		}
+	}
+
+	return SC_FALSE;
+}
+
+int OvenDoor::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_clickableRegion.contains(pointLocation))
+		return kCursorFinger;
+
+	return kCursorArrow;
+}
+
 class KitchenUnitTurnOn : public SceneBase {
 public:
 	KitchenUnitTurnOn(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
@@ -990,6 +1068,10 @@ SceneBase *SceneViewWindow::constructFutureApartmentSceneObject(Window *viewWind
 	// TODO
 
 	switch (sceneStaticData.classID) {
+	case 3:
+		return new OvenDoor(_vm, viewWindow, sceneStaticData, priorLocation, 2, 3, 37, 25, offsetof(GlobalFlags, faKIOvenStatus), 0, 0, 270, 80);
+	case 4:
+		return new OvenDoor(_vm, viewWindow, sceneStaticData, priorLocation, 4, 5, 38, 26, offsetof(GlobalFlags, faKIOvenStatus), 0, 50, 300, 189);
 	case 5:
 		return new KitchenUnitTurnOn(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 6:
