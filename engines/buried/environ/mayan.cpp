@@ -477,6 +477,87 @@ int ViewSingleTranslation::specifyCursor(Window *viewWindow, const Common::Point
 	return kCursorArrow;
 }
 
+class GenericCavernDoorMainView : public SceneBase {
+public:
+	GenericCavernDoorMainView(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+			int topZoomDepth = 0, int topLeft = -1, int topTop = -1, int topRight = -1, int topBottom = -1,
+			int rightZoomDepth = 0, int rightLeft = -1, int rightTop = -1, int rightRight = -1, int rightBottom = -1,
+			int offeringHeadZoomDepth = 0, int offeringHeadLeft = -1, int offeringHeadTop = -1, int offeringHeadRight = -1, int offeringHeadBottom = -1);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	int _topZoomDepth;
+	int _rightZoomDepth;
+	int _offeringHeadZoomDepth;
+	Common::Rect _topZoomRegion;
+	Common::Rect _rightZoomRegion;
+	Common::Rect _offeringHeadZoomRegion;
+};
+
+GenericCavernDoorMainView::GenericCavernDoorMainView(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+		int topZoomDepth, int topLeft, int topTop, int topRight, int topBottom,
+		int rightZoomDepth, int rightLeft, int rightTop, int rightRight, int rightBottom,
+		int offeringHeadZoomDepth, int offeringHeadLeft, int offeringHeadTop, int offeringHeadRight, int offeringHeadBottom) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_topZoomDepth = topZoomDepth;
+	_rightZoomDepth = rightZoomDepth;
+	_offeringHeadZoomDepth = offeringHeadZoomDepth;
+	_topZoomRegion = Common::Rect(topLeft, topTop, topRight, topBottom);
+	_rightZoomRegion = Common::Rect(rightLeft, rightTop, rightRight, rightBottom);
+	_offeringHeadZoomRegion = Common::Rect(offeringHeadLeft, offeringHeadTop, offeringHeadRight, offeringHeadBottom);
+
+	if (_staticData.location.node == 7)
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().myMCViewedDeathGodDoor = 1;
+}
+
+int GenericCavernDoorMainView::postEnterRoom(Window *viewWindow, const Location &priorLocation) {
+	if (_staticData.location.node == 7 && (_staticData.location.timeZone != priorLocation.timeZone ||
+			_staticData.location.environment != priorLocation.environment || _staticData.location.node != priorLocation.node ||
+			_staticData.location.facing != priorLocation.facing || _staticData.location.orientation != priorLocation.orientation ||
+			_staticData.location.depth != priorLocation.depth) && !((SceneViewWindow *)viewWindow)->isNumberInGlobalFlagTable(offsetof(GlobalFlags, evcapBaseID), offsetof(GlobalFlags, evcapNumCaptured), MAYAN_EVIDENCE_BROKEN_GLASS_PYRAMID))
+		((SceneViewWindow *)viewWindow)->displayLiveText(_vm->getString(IDS_MBT_EVIDENCE_PRESENT));
+	return SC_TRUE;
+}
+
+int GenericCavernDoorMainView::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	// Build a default structure
+	DestinationScene newDestination;
+	newDestination.destinationScene = _staticData.location;
+	newDestination.transitionType = TRANSITION_FADE;
+	newDestination.transitionData = -1;
+	newDestination.transitionStartFrame = -1;
+	newDestination.transitionLength = -1;
+
+	if (_topZoomRegion.contains(pointLocation)) {
+		newDestination.destinationScene.depth = _topZoomDepth;
+		((SceneViewWindow *)viewWindow)->moveToDestination(newDestination);
+		return SC_TRUE;
+	}
+
+	if (_rightZoomRegion.contains(pointLocation)) {
+		newDestination.destinationScene.depth = _rightZoomDepth;
+		((SceneViewWindow *)viewWindow)->moveToDestination(newDestination);
+		return SC_TRUE;
+	}
+
+	if (_offeringHeadZoomRegion.contains(pointLocation)) {
+		newDestination.destinationScene.depth = _offeringHeadZoomDepth;
+		((SceneViewWindow *)viewWindow)->moveToDestination(newDestination);
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int GenericCavernDoorMainView::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_topZoomRegion.contains(pointLocation) || _rightZoomRegion.contains(pointLocation) || _offeringHeadZoomRegion.contains(pointLocation))
+		return kCursorMagnifyingGlass;
+
+	return kCursorArrow;
+}
+
 bool SceneViewWindow::initializeMayanTimeZoneAndEnvironment(Window *viewWindow, int environment) {
 	if (environment == -1) {
 		GlobalFlags &flags = ((SceneViewWindow *)viewWindow)->getGlobalFlags();
@@ -592,18 +673,26 @@ SceneBase *SceneViewWindow::constructMayanSceneObject(Window *viewWindow, const 
 		return new ViewSingleTranslation(_vm, viewWindow, sceneStaticData, priorLocation, IDMYTP_OUTER_NORTH_TRANS_TEXT, 6, 38, 428, 76, offsetof(GlobalFlags, myTPTextTranslated));
 	case 13:
 		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 140, 124, 174, 158, kItemCavernSkull, 3, offsetof(GlobalFlags, myMCPickedUpSkull));
+	case 14:
+		return new GenericCavernDoorMainView(_vm, viewWindow, sceneStaticData, priorLocation, 1, 126, 1, 306, 30, 2, 287, 30, 379, 82, 3, 275, 84, 401, 174);
 	case 15:
 		return new ViewSingleTranslation(_vm, viewWindow, sceneStaticData, priorLocation, IDMYMC_WG_DOOR_TOP_TRANS_TEXT, 12, 128, 426, 156, offsetof(GlobalFlags, myMCTransDoor), offsetof(GlobalFlags, myWGTransDoorTop));
 	case 16:
 		return new ViewSingleTranslation(_vm, viewWindow, sceneStaticData, priorLocation, IDMYMC_WG_DOOR_RIGHT_TRANS_TEXT, 46, 1, 315, 188, offsetof(GlobalFlags, myMCTransDoor), offsetof(GlobalFlags, myMCTransWGOffering));
+	case 18:
+		return new GenericCavernDoorMainView(_vm, viewWindow, sceneStaticData, priorLocation, 1, 126, 1, 306, 30, 2, 287, 30, 379, 82, 3, 275, 84, 401, 174);
 	case 19:
 		return new ViewSingleTranslation(_vm, viewWindow, sceneStaticData, priorLocation, IDMYMC_WATERGOD_DOOR_TOP_TRANS_TEXT, 12, 128, 426, 156, offsetof(GlobalFlags, myMCTransDoor));
 	case 20:
 		return new ViewSingleTranslation(_vm, viewWindow, sceneStaticData, priorLocation, IDMYMC_WATERGOD_DOOR_RIGHT_TRANS_TEXT, 46, 1, 315, 188, offsetof(GlobalFlags, myMCTransDoor), offsetof(GlobalFlags, myMCTransWTOffering));
+	case 22:
+		return new GenericCavernDoorMainView(_vm, viewWindow, sceneStaticData, priorLocation, 1, 126, 1, 306, 30, 2, 287, 30, 379, 82, 3, 275, 84, 401, 174);
 	case 23:
 		return new ViewSingleTranslation(_vm, viewWindow, sceneStaticData, priorLocation, IDMYMC_AG_DOOR_TOP_TRANS_TEXT, 12, 128, 426, 156, offsetof(GlobalFlags, myMCTransDoor));
 	case 24:
 		return new ViewSingleTranslation(_vm, viewWindow, sceneStaticData, priorLocation, IDMYMC_AG_DOOR_RIGHT_TRANS_TEXT, 46, 1, 315, 188, offsetof(GlobalFlags, myMCTransDoor), offsetof(GlobalFlags, myMCTransAGOffering));
+	case 26:
+		return new GenericCavernDoorMainView(_vm, viewWindow, sceneStaticData, priorLocation, 1, 126, 1, 306, 30, 2, 287, 30, 379, 82, 3, 275, 84, 401, 174);
 	case 27:
 		return new ViewSingleTranslation(_vm, viewWindow, sceneStaticData, priorLocation, IDMYMC_DEATHGOD_DOOR_TOP_TRANS_TEXT, 12, 128, 426, 156, offsetof(GlobalFlags, myMCTransDoor));
 	case 28:
