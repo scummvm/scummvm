@@ -30,7 +30,7 @@
 #define FIRST_ENGINE "grim"               // Name of the engine which should be sorted as first element
 
 #define ENABLE_LANGUAGE_EXTENSIONS "grim,myst3"    // Comma separated list of projects that need language extensions
-#define DISABLE_EDIT_AND_CONTINUE "grim,myst3,residualvm"     // Comma separated list of projects that need Edit&Continue to be disabled for co-routine support (the main project is automatically added)
+#define DISABLE_EDIT_AND_CONTINUE ""     // Comma separated list of projects that need Edit&Continue to be disabled for co-routine support (the main project is automatically added)
 
 #define ADDITIONAL_LIBRARY "glu32"            // Add a single library to the list of externally linked libraries
 #define NEEDS_RTTI 0                     // Enable RTTI globally
