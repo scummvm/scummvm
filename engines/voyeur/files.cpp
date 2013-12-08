@@ -558,6 +558,7 @@ void StampBoltFile::initControl() {
 	_state._curMemberPtr->_controlResource = res = new ControlResource(_state, 
 		_state._curMemberPtr->_data);
 
+	_state._vm->_controlGroupPtr = _state._curGroupPtr;
 	_state._vm->_controlPtr = res;
 }
 

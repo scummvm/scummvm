@@ -36,12 +36,14 @@ void VoyeurEngine::addVideoEventStart() {
 }
 
 void VoyeurEngine::playStamp() {
-	BoltFile *boltFile = NULL;
-	_filesManager.openBoltLib("stampblt.blt", boltFile);
+	_stampLibPtr = NULL;
+	_filesManager.openBoltLib("stampblt.blt", _stampLibPtr);
 
-	boltFile->getBoltGroup(0x10000);
+	_stampLibPtr->getBoltGroup(0x10000);
 	_voy._resolvePtr = &RESOLVE_TABLE[0];
-	PtrResource *threadsList = boltFile->boltEntry(3)._ptrResource;
+	initStamp();
+
+	PtrResource *threadsList = _stampLibPtr->boltEntry(3)._ptrResource;
 	byte *threadP = threadsList->_entries[0]->_data;
 	initThreadStruct(threadP);
 
@@ -57,6 +59,20 @@ void VoyeurEngine::playStamp() {
 	}
 
 	_voy._field4386 = 0;
+}
+
+void VoyeurEngine::initStamp() {
+	_stampFlags &= ~1;
+	_stackGroupPtr = _controlGroupPtr;
+
+	if (_controlPtr->_entries.size() == 0)
+		error("No control entries");
+
+	initUseCount();
+}
+
+void VoyeurEngine::initUseCount() {
+	Common::fill(&_stm_useCount[0], &_stm_useCount[8], 0);
 }
 
 void VoyeurEngine::initThreadStruct(byte *threadStruct) {

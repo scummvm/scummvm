@@ -66,7 +66,6 @@ private:
 	Common::Array<int> _resolves;
 	FontInfoResource _defaultFontInfo;
 	int _iForceDeath;
-	byte *_stampData;
 
 	void ESP_Init();
 	void initialiseManagers();
@@ -83,6 +82,8 @@ private:
 	void doOpening();
 
 	void playStamp();
+	void initStamp();
+	void initUseCount();
 	void initThreadStruct(byte *threadStruct);
 protected:
 	// Engine APIs
@@ -97,7 +98,13 @@ public:
 	SoundManager _soundManager;
 	SVoy _voy;
 
+	BoltFile *_stampLibPtr;
+	BoltGroup *_controlGroupPtr;
 	ControlResource *_controlPtr;
+	byte *_stampData;
+	BoltGroup *_stackGroupPtr;
+	int _stampFlags;
+	int _stm_useCount[8];
 public:
 	VoyeurEngine(OSystem *syst, const VoyeurGameDescription *gameDesc);
 	virtual ~VoyeurEngine();
