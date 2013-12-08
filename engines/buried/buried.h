@@ -152,6 +152,8 @@ private:
 	typedef Common::List<VideoWindow *> VideoList;
 	VideoList _videos;
 
+	bool _yielding;
+
 	struct MessageInfo { // I did think about calling this "Envelope"
 		Window *dest;
 		Message *message;

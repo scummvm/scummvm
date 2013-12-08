@@ -58,6 +58,7 @@ BuriedEngine::BuriedEngine(OSystem *syst, const BuriedGameDescription *gameDesc)
 	_captureWindow = 0;
 	_console = 0;
 	_pauseStartTime = 0;
+	_yielding = false;
 
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "WIN31/MANUAL", 0, 2);
@@ -326,6 +327,10 @@ bool BuriedEngine::hasMessage(Window *window, int messageBegin, int messageEnd) 
 void BuriedEngine::yield() {
 	// A cut down version of the Win16 yield function. Win32 handles this
 	// asynchronously, which we don't want. Only needed for internal event loops.
+
+	// Mark us that we're yielding so we can't save or load in a synchronous sequence
+	_yielding = true;
+
 	updateTimers();
 	updateVideos();
 
@@ -336,6 +341,8 @@ void BuriedEngine::yield() {
 
 	_gfx->updateScreen();
 	_system->delayMillis(10);
+
+	_yielding = false;
 }
 
 void BuriedEngine::pollForEvents() {
