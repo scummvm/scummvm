@@ -119,6 +119,8 @@ namespace Fullpipe {
 #define MV_MAN_GOLADDER 451
 #define MV_MAN_GOLADDER2 2844
 #define MV_MAN_GOU 460
+#define MV_MAN_JUMPONPLANK 551
+#define MV_MAN_LOOKLADDER 520
 #define MV_MAN_LOOKUP 4773
 #define MV_MAN_STARTLADDER 452
 #define MV_MAN_STARTLADDER2 2842
@@ -291,8 +293,11 @@ namespace Fullpipe {
 #define ST_LBN_9N 2777
 #define ST_LBN_9P 2778
 #define ST_MAN_EMPTY 476
+#define ST_MAN_LADDERDOWN 521
+#define ST_MAN_ONPLANK 552
 #define ST_MAN_RIGHT 325
 #define ST_MAN_SIT 1164
+#define ST_MAN_STANDLADDER 453
 #define ST_PNK_WEIGHTLEFT 503
 #define TrubaDown 697
 #define TrubaLeft 474

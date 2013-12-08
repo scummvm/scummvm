@@ -95,6 +95,8 @@ public:
 	Common::List<StaticANIObject *> scene04_kozyawkiAni;
 
 	MctlLadder *scene04_ladder;
+	int scene04_ladderOffset;
+
 	bool scene04_coinPut;
 	bool scene04_soundPlaying;
 	int scene04_dynamicPhaseIndex;
@@ -102,11 +104,16 @@ public:
 	int scene04_sceneClickY;
 	int scene04_dudePosX;
 	int scene04_dudePosY;
+	int scene04_bottleY;
+
+	StaticANIObject *scene04_walkingKozyawka;
+
+	int scene04_speakerVariant;
+	int scene04_speakerPhase;
 
 	int scene04_var01;
 	int scene04_var02;
 	int scene04_var04;
-	StaticANIObject *scene04_walkingKozyawka;
 	int scene04_var06;
 	int scene04_var07;
 	int scene04_var08;
@@ -117,13 +124,10 @@ public:
 	int scene04_var13;
 	int scene04_var14;
 	int scene04_var15;
-	int scene04_speakerVariant;
-	int scene04_speakerPhase;
 	int scene04_var18;
 	int scene04_var19;
 	int scene04_var20;
 	StaticANIObject *scene04_var24;
-	int scene04_bottleY;
 
 	PictureObject *selector;
 };

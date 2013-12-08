@@ -282,13 +282,48 @@ void sceneHandler04_clickLadder() {
 	warning("sceneHandler04_clickLadder()");
 }
 
-void sceneHandler04_sub13() {
-	warning("sceneHandler04_sub13()");
+void sceneHandler04_jumpOnLadder() {
+	if (g_fullpipe->_aniMan->_movement && g_fullpipe->_aniMan->_movement->_id != MV_MAN_LOOKLADDER)
+		return;
+
+	if (g_fullpipe->_aniMan->_statics->_staticsId != ST_MAN_STANDLADDER && g_fullpipe->_aniMan->_statics->_staticsId != ST_MAN_LADDERDOWN)
+		return;
+
+	g_fullpipe->_aniMan->changeStatics2(ST_MAN_LADDERDOWN);
+
+	g_fullpipe->_aniMan->_flags |= 1;
+
+	MGM mgm;
+	MGMInfo mgminfo;
+
+	mgm.addItem(ANI_MAN);
+
+	mgminfo.ani = g_fullpipe->_aniMan;
+	mgminfo.staticsId2 = ST_MAN_ONPLANK;
+	mgminfo.x1 = 938;
+	mgminfo.y1 = 442;
+	mgminfo.field_1C = 10;
+	mgminfo.field_10 = 1;
+	mgminfo.flags = 78;
+	mgminfo.movementId = MV_MAN_JUMPONPLANK;
+
+	MessageQueue *mq = mgm.genMovement(&mgminfo);
+
+	if (mq) {
+		mq->_flags |= 1;
+
+		if (!mq->chain(g_fullpipe->_aniMan))
+			delete mq;
+
+		g_fullpipe->_aniMan->_priority = 10;
+	}
+
+	g_vars->scene04_ladderOffset = g_vars->scene04_ladder->collisionDetection(g_fullpipe->_aniMan);
 }
 
 void sceneHandler04_clickPlank() {
 	if (sceneHandler04_friesAreWalking())
-		sceneHandler04_sub13();
+		sceneHandler04_jumpOnLadder();
 	else if (g_vars->scene04_var01)
 		g_fullpipe->playSound(SND_4_033, 0);
 	else if (!g_vars->scene04_soundPlaying)
