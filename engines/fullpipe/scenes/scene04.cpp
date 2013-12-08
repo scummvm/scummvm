@@ -502,10 +502,6 @@ void sceneHandler04_sub8(ExCommand *ex) {
 	warning("sceneHandler04_sub8()");
 }
 
-void sceneHandler04_sub9(StaticANIObject *ani) {
-	warning("sceneHandler04_sub9()");
-}
-
 void sceneHandler04_sub12() {
 	StaticANIObject *ball =  g_fullpipe->_currentScene->getStaticANIObject1ById(ANI_BIGBALL, -1);
 
@@ -530,6 +526,25 @@ void sceneHandler04_handTake() {
 	} else {
 		chainQueue(QU_HND_TAKE0, 0);
 		g_vars->scene04_var19 = 0;
+	}
+}
+
+void sceneHandler04_sub9(StaticANIObject *ani) {
+	g_vars->scene04_bottleObjList.push_back(ani);
+	g_vars->scene04_kozyawkiAni.push_back(ani);
+
+	g_vars->scene04_var06 += 2;
+	g_vars->scene04_walkingKozyawka = 0;
+	g_vars->scene04_var24 = 0;
+
+	if (g_vars->scene04_kozyawkiAni.size() > 1 )
+		g_vars->scene04_var19 = 0;
+
+	if (g_vars->scene04_kozyawkiAni.size() <= 2 || g_vars->scene04_hand->_movement) {
+		sceneHandler04_walkKozyawka();
+	} else {
+		sceneHandler04_handTake();
+		sceneHandler04_stopSound();
 	}
 }
 
