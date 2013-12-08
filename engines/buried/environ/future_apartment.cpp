@@ -1010,6 +1010,58 @@ int ToyClick::specifyCursor(Window *viewWindow, const Common::Point &pointLocati
 	return kCursorPutDown;
 }
 
+class ClickOnCoffeeTable : public SceneBase {
+public:
+	ClickOnCoffeeTable(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	Common::Rect _toyClickRect;
+	Common::Rect _tazClickRect;
+};
+
+ClickOnCoffeeTable::ClickOnCoffeeTable(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_toyClickRect = Common::Rect(242, 56, 358, 138);
+	_tazClickRect = Common::Rect(174, 0, 234, 56);
+}
+
+int ClickOnCoffeeTable::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_toyClickRect.contains(pointLocation)) {
+		((SceneViewWindow *)viewWindow)->playSynchronousAnimation(31);
+		return SC_TRUE;
+	}
+
+	if (_tazClickRect.contains(pointLocation)) {
+		((SceneViewWindow *)viewWindow)->playSynchronousAnimation(26);
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().faMNTazClicked = 1;
+
+		if (((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->isItemInInventory(kItemBioChipAI))
+			((SceneViewWindow *)viewWindow)->playAIComment(_staticData.location, AI_COMMENT_TYPE_SPONTANEOUS);
+
+		((GameUIWindow *)viewWindow->getParent())->_bioChipRightWindow->sceneChanged();
+		return SC_TRUE;
+	}
+
+	DestinationScene newScene;
+	newScene.destinationScene = _staticData.location;
+	newScene.destinationScene.depth = 0;
+	newScene.transitionType = TRANSITION_VIDEO;
+	newScene.transitionData = 32;
+	newScene.transitionStartFrame = -1;
+	newScene.transitionLength = -1;
+	((SceneViewWindow *)viewWindow)->moveToDestination(newScene);
+	return SC_TRUE;
+}
+
+int ClickOnCoffeeTable::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_toyClickRect.contains(pointLocation) || _tazClickRect.contains(pointLocation))
+		return kCursorFinger;
+
+	return kCursorPutDown;
+}
+
 class ClickZoomInBottomOfBookshelf : public SceneBase {
 public:
 	ClickZoomInBottomOfBookshelf(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
@@ -1590,8 +1642,14 @@ SceneBase *SceneViewWindow::constructFutureApartmentSceneObject(Window *viewWind
 		return new ClickChangeScene(_vm, viewWindow, sceneStaticData, priorLocation, 168, 38, 268, 108, kCursorMagnifyingGlass, 4, 3, 5, 0, 0, 1, TRANSITION_VIDEO, 28, -1, -1);
 	case 43:
 		return new ClickChangeScene(_vm, viewWindow, sceneStaticData, priorLocation, 0, 0, 432, 189, kCursorPutDown, 4, 3, 5, 0, 0, 0, TRANSITION_VIDEO, 29, -1, -1);
+	case 44:
+		return new ClickPlayLoopingVideoClip(_vm, viewWindow, sceneStaticData, priorLocation, kCursorFinger, 25, 120, 0, 299, 132, offsetof(GlobalFlags, faMNPongClicked), 1);
+	case 45:
+		return new ClickPlayLoopingVideoClip(_vm, viewWindow, sceneStaticData, priorLocation, kCursorFinger, 27, 0, 0, 432, 189);
 	case 46:
 		return new ClickChangeScene(_vm, viewWindow, sceneStaticData, priorLocation, 44, 26, 254, 144, kCursorMagnifyingGlass, 4, 3, 0, 2, 0, 1, TRANSITION_VIDEO, 30, -1, -1);
+	case 47:
+		return new ClickOnCoffeeTable(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 50:
 		return new ClickChangeScene(_vm, viewWindow, sceneStaticData, priorLocation, 82, 38, 346, 138, kCursorMagnifyingGlass, 4, 3, 9, 2, 0, 1, TRANSITION_VIDEO, 38, -1, -1);
 	case 51:
