@@ -366,8 +366,14 @@ void BuriedEngine::pollForEvents() {
 				_focusedWindow->postMessage(new KeyUpMessage(event.kbd, 0));
 			break;
 		case Common::EVENT_KEYDOWN:
-			if (_focusedWindow)
-				_focusedWindow->postMessage(new KeyDownMessage(event.kbd, 0));
+			if (event.kbd.keycode == Common::KEYCODE_d && (event.kbd.flags & Common::KBD_CTRL)) {
+				// Gobble up ctrl+d for the console
+				_console->attach();
+				_console->onFrame();
+			} else {
+				if (_focusedWindow)
+					_focusedWindow->postMessage(new KeyDownMessage(event.kbd, 0));
+			}
 			break;
 		case Common::EVENT_LBUTTONDOWN: {
 			Window *window = _captureWindow ? _captureWindow : _mainWindow->childWindowAtPoint(event.mouse);

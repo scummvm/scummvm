@@ -34,6 +34,9 @@ public:
 	BuriedConsole(BuriedEngine *vm);
 	~BuriedConsole();
 
+	bool cmdGiveItem(int argc, const char **argv);
+	bool cmdRemoveItem(int argc, const char **argv);
+
 private:
 	BuriedEngine *_vm;
 };
