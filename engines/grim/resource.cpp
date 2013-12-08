@@ -414,6 +414,8 @@ Material *ResourceLoader::loadMaterial(const Common::String &filename, CMap *c) 
 			const Common::String replacement("fx/candle.sprb");
 			warning("Could not find material %s, using %s instead", filename.c_str(), replacement.c_str());
 			return loadMaterial(replacement, NULL);
+		} else {
+			error("Could not find material %s", filename.c_str());
 		}
 	}
 
