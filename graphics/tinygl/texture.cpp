@@ -173,8 +173,11 @@ void glopTexImage2D(GLContext *c, GLParam *p) {
 		im->pixmap.free();
 	im->pixmap = Graphics::PixelBuffer(pf, pixels1);
 
-	if (do_free_after_rgb2rgba)
-		gl_free(pixels);
+	if (do_free_after_rgb2rgba) {
+		// pixels as been assigned to tmp.getRawBuffer() which was created with
+		// DisposeAfterUse::NO, therefore delete[] it
+		delete[] pixels;
+	}
 }
 
 // TODO: not all tests are done
