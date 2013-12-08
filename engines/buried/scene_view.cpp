@@ -1947,7 +1947,7 @@ bool SceneViewWindow::startPlacedAsynchronousAnimationExtern(int left, int top, 
 }
 
 bool SceneViewWindow::retrieveAICommentEntry(const Location &commentLocation, int commentType, const Common::Array<AIComment> &commentDatabase, int &lastFoundIndex, AIComment &currentCommentData) {
-	if (commentDatabase.empty())
+	if (commentDatabase.empty() || (uint32)lastFoundIndex >= commentDatabase.size())
 		return false;
 
 	const AIComment *commentData = &commentDatabase[lastFoundIndex];
@@ -2619,9 +2619,9 @@ Common::Array<AIComment> SceneViewWindow::getAICommentDatabase(int timeZone, int
 	if (!stream)
 		return comments;
 
-	stream->readUint16LE();
+	uint16 count = stream->readUint16LE();
 	
-	while (stream->pos() < stream->size()) {
+	for (uint16 i = 0; i < count; i++) {
 		AIComment comment;
 		comment.location.timeZone = stream->readSint16LE();
 		comment.location.environment = stream->readSint16LE();
