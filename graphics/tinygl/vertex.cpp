@@ -283,7 +283,6 @@ void glopVertex(GLContext *c, GLParam *p) {
 			case 0:
       			gl_draw_triangle(c, &c->vertex[2], &c->vertex[1], &c->vertex[0]);
       			break;
-			default:
 			case 1:
       			gl_draw_triangle(c,&c->vertex[0], &c->vertex[1], &c->vertex[2]);
       			break;
