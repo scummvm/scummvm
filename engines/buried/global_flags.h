@@ -130,7 +130,7 @@ struct GlobalFlags {
 	byte myWGTransDoorTop;              // 111
 	byte myWGSeenLowerPassage;          // 112
 	byte myWGCrossedRopeBridge;         // 113
-	byte myWMCViewedDeathGodDoor;       // 114
+	byte myMCViewedDeathGodDoor;        // 114
 	byte myTPTransBreathOfItzamna;      // 115
 	uint32 myAGHeadAOpenedTime;         // 116-119
 	uint32 myAGHeadBOpenedTime;         // 120-123
