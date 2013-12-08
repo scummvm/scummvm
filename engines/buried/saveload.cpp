@@ -308,7 +308,7 @@ bool BuriedEngine::syncGlobalFlags(Common::Serializer &s, GlobalFlags &flags) {
 	s.syncAsByte(flags.myWGTransDoorTop);
 	s.syncAsByte(flags.myWGSeenLowerPassage);
 	s.syncAsByte(flags.myWGCrossedRopeBridge);
-	s.syncAsByte(flags.myWMCViewedDeathGodDoor);
+	s.syncAsByte(flags.myMCViewedDeathGodDoor);
 	s.syncAsByte(flags.myTPTransBreathOfItzamna);
 	SYNC_FLAG_UINT32(myAGHeadAOpenedTime);
 	SYNC_FLAG_UINT32(myAGHeadBOpenedTime);
