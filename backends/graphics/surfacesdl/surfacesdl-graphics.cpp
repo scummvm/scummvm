@@ -59,29 +59,28 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 	, _overlayNumTex(0), _overlayTexIds(0)
 #endif
 	{
-
-	if (SDL_InitSubSystem(SDL_INIT_VIDEO) == -1) {
-		error("Could not initialize SDL: %s", SDL_GetError());
-	}
-
-	// This is also called in initSDL(), but initializing graphics
-	// may reset it.
-	SDL_EnableUNICODE(1);
-
-	SDL_ShowCursor(SDL_DISABLE);
 }
 
 SurfaceSdlGraphicsManager::~SurfaceSdlGraphicsManager() {
-	// Unregister the event observer
-	if (g_system->getEventManager()->getEventDispatcher() != NULL)
-		g_system->getEventManager()->getEventDispatcher()->unregisterObserver(this);
-
 	closeOverlay();
 }
 
-void SurfaceSdlGraphicsManager::initEventObserver() {
+void SurfaceSdlGraphicsManager::activateManager() {
+	GraphicsManager::activateManager();
+	initEventSource();
+
 	// Register the graphics manager as a event observer
 	g_system->getEventManager()->getEventDispatcher()->registerObserver(this, 10, false);
+}
+
+void SurfaceSdlGraphicsManager::deactivateManager() {
+	// Unregister the event observer
+	if (g_system->getEventManager()->getEventDispatcher()) {
+		g_system->getEventManager()->getEventDispatcher()->unregisterObserver(this);
+	}
+
+	deinitEventSource();
+	GraphicsManager::deactivateManager();
 }
 
 void SurfaceSdlGraphicsManager::resetGraphicsScale() {
@@ -115,10 +114,6 @@ bool SurfaceSdlGraphicsManager::getFeatureState(OSystem::Feature f) {
 		default:
 			return false;
 	}
-}
-
-const OSystem::GraphicsMode *SurfaceSdlGraphicsManager::supportedGraphicsModes() {
-	return s_supportedGraphicsModes;
 }
 
 const OSystem::GraphicsMode *SurfaceSdlGraphicsManager::getSupportedGraphicsModes() const {

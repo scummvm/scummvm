@@ -183,7 +183,7 @@ void initCommonGFX(bool defaultTo1XScaler) {
 			g_system->setGraphicsMode(gfxMode.c_str());
 
 			// HACK: For OpenGL modes, we will still honor the graphics scale override
-			if (defaultTo1XScaler && (gfxMode.equalsIgnoreCase("gl1") || gfxMode.equalsIgnoreCase("gl2") || gfxMode.equalsIgnoreCase("gl4")))
+			if (defaultTo1XScaler && (gfxMode.equalsIgnoreCase("opengl_linear") || gfxMode.equalsIgnoreCase("opengl_nearest")))
 				g_system->resetGraphicsScale();
 		}
 	}

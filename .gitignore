@@ -69,6 +69,9 @@ project.xcworkspace
 
 /plugins
 
+/engines/plugins_table.h
+/engines/engines.mk
+
 /test/runner
 /test/runner.cpp
 /test/*.dSYM
@@ -125,6 +128,10 @@ ResidualVM.includes
 
 #Ignore Mac DS_Store files
 .DS_Store
+
+#Ignore MS Visual C++ temporary files/subdirectories (except create_project.bat)
+dists/msvc*/**
+!dists/msvc*/create_project.bat
 
 # Emacs files
 *~

@@ -28,6 +28,7 @@ MODULE_OBJS := \
 	textconsole.o \
 	tokenizer.o \
 	translation.o \
+	ustr.o \
 	unzip.o \
 	util.o \
 	winexe.o \

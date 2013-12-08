@@ -35,6 +35,8 @@
 #include "backends/events/sdl/sdl-events.h"
 #include "backends/log/log.h"
 
+#include "common/array.h"
+
 /**
  * Base OSystem class for all SDL ports.
  */

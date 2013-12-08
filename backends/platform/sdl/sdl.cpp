@@ -77,6 +77,9 @@ OSystem_SDL::~OSystem_SDL() {
 	// Hence, we perform the destruction on our own.
 	delete _savefileManager;
 	_savefileManager = 0;
+	if (_graphicsManager) {
+		_graphicsManager->deactivateManager();
+	}
 	delete _graphicsManager;
 	_graphicsManager = 0;
 	delete _eventManager;
@@ -110,6 +113,12 @@ void OSystem_SDL::init() {
 	// Initialize SDL
 	initSDL();
 
+	// Enable unicode support if possible
+	SDL_EnableUNICODE(1);
+
+	// Disable OS cursor
+	SDL_ShowCursor(SDL_DISABLE);
+
 	if (!_logger)
 		_logger = new Backends::Log::Log(this);
 
@@ -129,6 +138,7 @@ void OSystem_SDL::init() {
 	if (_taskbarManager == 0)
 		_taskbarManager = new Common::TaskbarManager();
 #endif
+
 }
 
 void OSystem_SDL::initBackend() {
@@ -140,12 +150,9 @@ void OSystem_SDL::initBackend() {
 	if (_eventSource == 0)
 		_eventSource = new SdlEventSource();
 
-	int graphicsManagerType = 0;
-
 	if (_graphicsManager == 0) {
 		if (_graphicsManager == 0) {
 			_graphicsManager = new SurfaceSdlGraphicsManager(_eventSource);
-			graphicsManagerType = 0;
 		}
 	}
 
@@ -188,8 +195,7 @@ void OSystem_SDL::initBackend() {
 	// so the virtual keyboard can be initialized, but we have to add the
 	// graphics manager as an event observer after initializing the event
 	// manager.
-	if (graphicsManagerType == 0)
-		((SurfaceSdlGraphicsManager *)_graphicsManager)->initEventObserver();
+	_graphicsManager->activateManager();
 }
 
 #if defined(USE_TASKBAR)
@@ -210,21 +216,18 @@ void OSystem_SDL::engineDone() {
 void OSystem_SDL::initSDL() {
 	// Check if SDL has not been initialized
 	if (!_initedSDL) {
-		uint32 sdlFlags = 0;
+		// We always initialize the video subsystem because we will need it to
+		// be initialized before the graphics managers to retrieve the desktop
+		// resolution, for example. WebOS also requires this initialization
+		// or otherwise the application won't start.
+		uint32 sdlFlags = SDL_INIT_VIDEO;
+
 		if (ConfMan.hasKey("disable_sdl_parachute"))
 			sdlFlags |= SDL_INIT_NOPARACHUTE;
-
-#ifdef WEBOS
-		// WebOS needs this flag or otherwise the application won't start
-		sdlFlags |= SDL_INIT_VIDEO;
-#endif
 
 		// Initialize SDL (SDL Subsystems are initiliazed in the corresponding sdl managers)
 		if (SDL_Init(sdlFlags) == -1)
 			error("Could not initialize SDL: %s", SDL_GetError());
-
-		// Enable unicode support if possible
-		SDL_EnableUNICODE(1);
 
 		_initedSDL = true;
 	}
@@ -321,17 +324,6 @@ Common::String OSystem_SDL::getSystemLanguage() const {
 
 	const LCID languageIdentifier = GetThreadLocale();
 
-	// GetLocalInfo is only supported starting from Windows 2000, according to this:
-	// http://msdn.microsoft.com/en-us/library/dd318101%28VS.85%29.aspx
-	// On the other hand the locale constants used, seem to exist on Windows 98 too,
-	// check this for that: http://msdn.microsoft.com/en-us/library/dd464799%28v=VS.85%29.aspx
-	//
-	// I am not exactly sure what is the truth now, it might be very well that this breaks
-	// support for systems older than Windows 2000....
-	//
-	// TODO: Check whether this (or ScummVM at all ;-) works on a system with Windows 98 for
-	// example and if it does not and we still want Windows 9x support, we should definitly
-	// think of another solution.
 	if (GetLocaleInfo(languageIdentifier, LOCALE_SISO639LANGNAME, langName, sizeof(langName)) != 0 &&
 		GetLocaleInfo(languageIdentifier, LOCALE_SISO3166CTRYNAME, ctryName, sizeof(ctryName)) != 0) {
 		Common::String localeName = langName;
@@ -344,10 +336,15 @@ Common::String OSystem_SDL::getSystemLanguage() const {
 	}
 #else // WIN32
 	// Activating current locale settings
-	const char *locale = setlocale(LC_ALL, "");
+	const Common::String locale = setlocale(LC_ALL, "");
+ 
+	// Restore default C locale to prevent issues with
+	// portability of sscanf(), atof(), etc.
+	// See bug #3615148
+	setlocale(LC_ALL, "C");
 
 	// Detect the language from the locale
-	if (!locale) {
+	if (locale.empty()) {
 		return ModularBackend::getSystemLanguage();
 	} else {
 		int length = 0;
@@ -356,14 +353,14 @@ Common::String OSystem_SDL::getSystemLanguage() const {
 		// ".UTF-8" or the like. We do this, since
 		// our translation languages are usually
 		// specified without any charset information.
-		for (int i = 0; locale[i]; ++i, ++length) {
+		for (int size = locale.size(); length < size; ++length) {
 			// TODO: Check whether "@" should really be checked
 			// here.
-			if (locale[i] == '.' || locale[i] == ' ' || locale[i] == '@')
+			if (locale[length] == '.' || locale[length] == ' ' || locale[length] == '@')
 				break;
 		}
 
-		return Common::String(locale, length);
+		return Common::String(locale.c_str(), length);
 	}
 #endif // WIN32
 #else // USE_DETECTLANG
@@ -484,4 +481,3 @@ Common::TimerManager *OSystem_SDL::getTimerManager() {
 	return _timerManager;
 #endif
 }
-

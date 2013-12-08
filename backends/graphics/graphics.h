@@ -37,6 +37,27 @@ class GraphicsManager : public PaletteManager {
 public:
 	virtual ~GraphicsManager() {}
 
+	/**
+	 * Makes this graphics manager active. That means it should be ready to
+	 * process inputs now. However, even without being active it should be
+	 * able to query the supported modes and other bits.
+	 *
+	 * HACK: Actually this is specific to SdlGraphicsManager subclasses.
+	 * But sadly we cannot cast from GraphicsManager to SdlGraphicsManager
+	 * because there is no relation between these two.
+	 */
+	virtual void activateManager() {}
+
+	/**
+	 * Makes this graphics manager inactive. This should allow another
+	 * graphics manager to become active again.
+	 *
+	 * HACK: Actually this is specific to SdlGraphicsManager subclasses.
+	 * But sadly we cannot cast from GraphicsManager to SdlGraphicsManager
+	 * because there is no relation between these two.
+	 */
+	virtual void deactivateManager() {}
+
 	virtual bool hasFeature(OSystem::Feature f) = 0;
 	virtual void setFeatureState(OSystem::Feature f, bool enable) = 0;
 	virtual bool getFeatureState(OSystem::Feature f) = 0;

@@ -80,15 +80,16 @@ bool OSystem_POSIX::hasFeature(Feature f) {
 }
 
 Common::String OSystem_POSIX::getDefaultConfigFileName() {
-	char configFile[MAXPATHLEN];
+	Common::String configFile;
 
 	// On POSIX type systems, by default we store the config file inside
 	// to the HOME directory of the user.
 	const char *home = getenv("HOME");
-	if (home != NULL && strlen(home) < MAXPATHLEN)
-		snprintf(configFile, MAXPATHLEN, "%s/%s", home, _baseConfigName.c_str());
-	else
-		strcpy(configFile, _baseConfigName.c_str());
+	if (home != NULL && (strlen(home) + 1 + _baseConfigName.size()) < MAXPATHLEN) {
+		configFile = Common::String::format("%s/%s", home, _baseConfigName.c_str());
+	} else {
+		configFile = _baseConfigName;
+	}
 
 	return configFile;
 }

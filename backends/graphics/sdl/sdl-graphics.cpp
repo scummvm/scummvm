@@ -26,10 +26,15 @@
 
 SdlGraphicsManager::SdlGraphicsManager(SdlEventSource *source)
 	: _eventSource(source) {
-	_eventSource->setGraphicsManager(this);
 }
 
 SdlGraphicsManager::~SdlGraphicsManager() {
-	_eventSource->setGraphicsManager(0);
 }
 
+void SdlGraphicsManager::initEventSource() {
+	_eventSource->setGraphicsManager(this);
+}
+
+void SdlGraphicsManager::deinitEventSource() {
+	_eventSource->setGraphicsManager(0);
+}
