@@ -385,14 +385,15 @@ void Lua_V2::PlaySound() {
 		error("Lua_V2::PlaySound - ERROR: Unknown parameters");
 		return;
 	}
-
-	if (g_grim->getGameFlags() != ADGF_DEMO && !lua_isnumber(volumeObj)) {
-		error("Lua_V2::PlaySound - ERROR: Unknown parameters");
-		return;
-	}
-	int volume = (int)lua_getnumber(volumeObj);
-
 	const char *str = lua_getstring(strObj);
+
+	int volume = 100;
+	if (!lua_isnumber(volumeObj)) {
+		warning("Lua_V2::PlaySound - Unexpected parameter(s) found, using default volume", str);
+	} else {
+		volume = (int)lua_getnumber(volumeObj);
+	}
+
 	Common::String filename = addSoundSuffix(str);
 
 	SoundTrack *track;
