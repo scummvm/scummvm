@@ -202,4 +202,14 @@ void VideoWindow::setDestRect(const Common::Rect &dstRect) {
 	_dstRect = dstRect;
 }
 
+void VideoWindow::pauseVideo() {
+	if (_video)
+		_video->pauseVideo(true);
+}
+
+void VideoWindow::resumeVideo() {
+	if (_video)
+		_video->pauseVideo(false);
+}
+
 } // End of namespace Buried
