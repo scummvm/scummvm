@@ -66,6 +66,7 @@ void tglGetFloatv(int pname, float *v) {
 		break;
 	case TGL_POINT_SIZE_RANGE:
 		v[0] = v[1] = 1.0f;
+		break;
 	default:
 		fprintf(stderr, "warning: unknown pname in glGetFloatv()\n");
 		break;
