@@ -187,9 +187,6 @@ void VimaTrack::playTrack() {
 			if (!_stream) {
 				return;
 			}
-		} else {
-			warning("Out of regions");
-			//return;
 		}
 		mixer_size -= result;
 		assert(mixer_size >= 0);
