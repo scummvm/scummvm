@@ -49,6 +49,7 @@ EMISound::EMISound() {
 	for (int i = 0; i < NUM_CHANNELS; i++) {
 		_channels[i] = NULL;
 	}
+	_curMusicState = -1;
 	_music = NULL;
 	initMusicTable();
 }
@@ -160,6 +161,8 @@ bool EMISound::initTrack(const Common::String &filename, SoundTrack *track) {
 }
 
 void EMISound::setMusicState(int stateId) {
+	if (stateId == _curMusicState)
+		return;
 	if (_music) {
 		delete _music;
 		_music = NULL;
@@ -182,6 +185,7 @@ void EMISound::setMusicState(int stateId) {
 	} else {
 		filename = _musicTable[stateId]._filename;
 	}
+	_curMusicState = stateId;
 	_music = createEmptyMusicTrack();
 
 	warning("Loading music: %s", filename.c_str());

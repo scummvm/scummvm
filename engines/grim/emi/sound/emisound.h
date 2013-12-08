@@ -79,6 +79,7 @@ public:
 
 	uint32 getMsPos(int stateId);
 private:
+	int _curMusicState;
 	void freeAllChannels();
 	bool initTrack(const Common::String &filename, SoundTrack *track);
 	SoundTrack *createEmptyMusicTrack() const;
