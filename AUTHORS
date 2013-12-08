@@ -8,18 +8,18 @@ ResidualVM
   Teams
   -----
     Grim Team:
-       James Brown           - Core developer (retired)
-       Giulio Camuffo        - Core developer
-       Dries Harnie          - EMI support, various code fixes and
-                               improvements
-       Pawel Kolodziejski    - Core developer (suspended)
-       Einar Johan T. Somaen - EMI support, various code fixes and
-                               improvements
-       Joel Teichroeb        - EMI support, various engine fixes and
-                               improvements
+       James Brown                  - Core developer (retired)
+       Giulio Camuffo               - Core developer
+       Dries Harnie                 - EMI support, various code fixes and
+                                      improvements
+       Pawel Kolodziejski           - Core developer (suspended)
+       Einar Johan T. Somaen        - EMI support, various code fixes and
+                                      improvements
+       Joel Teichroeb               - EMI support, various engine fixes and
+                                      improvements
 
     Myst 3 Team:
-       Bastien Bouclet       - Core developer
+       Bastien Bouclet              - Core developer
 
   Contributors
   ------------
@@ -27,46 +27,52 @@ ResidualVM
      list. Contact us and we'll add you.
 
     Grim:
-       Thomas Allen          - Various engine code fixes and improvements
-       Torbjorn Andersson    - Various code fixes
-       Ori Avtalion          - Lipsync, LAF support, various code fixes
-       Robert Biro           - Antialiasing support
-       Bastien Bouclet       - Various fixes to engine
-       Marcus Comstedt       - Initial Dreamcast port
-       Andrea Corna          - Patcher module, various engine improvements
-       Jonathan Gray         - Various code fixes
-       Tobias Gunkel         - Initial Android port, few engines fixes
-       Azamat H. Hackimov    - Configure fix
-       Vincent Hamm          - Various engine code fixes and improvements
-       Sven Hesse            - Various compilation fixes
-       Matthew Hoops         - Some engine improvements, some work on EMI
-                               support
-       Erich Hoover          - x86-64 fixes, various code fixes and
-                               improvements
-       Max Horn              - Minor code fixes
-       Travis Howell         - Various code fixes, Windows port
-       Guillem Jover         - Few code improvements
-       Filippos Karapetis    - Compilation fixes
-       Christian Krause      - Various fixes and improvements for EMI
-       Ingo van Lil          - Various fixes and improvements for EMI
-       Joost Peters          - Various code fixes
-       George Macon          - Few fixes
-       Josh Matthews         - Few fixes to engine
-       Matthieu Milan        - Various engine improvements
-       Christian Neumair     - Various optimisation patches
-       Vincent Pelletier     - Various engine improvements and code fixes
-       Daniel Schepler       - Initial engine codebase, LUA support
-       Dmitry Smirnov        - Minor spelling corrections
-       Yaron Tausky          - Fixes to subtitles
-       Julien Templier       - create_project tool
-       Pino Toscano          - Debian GNU/Linux package files
-       Lionel Ulmer          - OpenGL optimisations
-       Joni Vahamaki         - A lot of engine improvements and fixes
-       JenniBee              - Compilation fixes
-       karjonas              - Various engine code fixes
+       Thomas Allen                 - Various engine code fixes and
+                                      improvements
+       Torbjorn Andersson           - Various code fixes
+       Ori Avtalion                 - Lipsync, LAF support, various code
+                                      fixes
+       Robert Biro                  - Antialiasing support
+       Bastien Bouclet              - Various fixes to engine
+       Marcus Comstedt              - Initial Dreamcast port
+       Andrea Corna                 - Patcher module, various engine
+                                      improvements
+       Jonathan Gray                - Various code fixes
+       Tobias Gunkel                - Initial Android port, few engines fixes
+       Azamat H. Hackimov           - Configure fix
+       Vincent Hamm                 - Various engine code fixes and
+                                      improvements
+       Sven Hesse                   - Various compilation fixes
+       Matthew Hoops                - Some engine improvements, some work on
+                                      EMI support
+       Erich Hoover                 - x86-64 fixes, various code fixes and
+                                      improvements
+       Max Horn                     - Minor code fixes
+       Travis Howell                - Various code fixes, Windows port
+       Guillem Jover                - Few code improvements
+       Filippos Karapetis           - Compilation fixes
+       Christian Krause             - Various fixes and improvements for EMI
+       Ingo van Lil                 - Various fixes and improvements for EMI
+       Joost Peters                 - Various code fixes
+       George Macon                 - Few fixes
+       Josh Matthews                - Few fixes to engine
+       Matthieu Milan               - Various engine improvements
+       Christian Neumair            - Various optimisation patches
+       Vincent Pelletier            - Various engine improvements and code
+                                      fixes
+       Daniel Schepler              - Initial engine codebase, LUA support
+       Dmitry Smirnov               - Minor spelling corrections
+       Yaron Tausky                 - Fixes to subtitles
+       Julien Templier              - create_project tool
+       Pino Toscano                 - Debian GNU/Linux package files
+       Lionel Ulmer                 - OpenGL optimisations
+       Joni Vahamaki                - A lot of engine improvements and fixes
+       JenniBee                     - Compilation fixes
+       karjonas                     - Various engine code fixes
 
     Myst 3:
-       Matthew Hoops         - Various engine improvements and code fixes
+       Matthew Hoops                - Various engine improvements and code
+                                      fixes
 
 ScummVM code
 ************
