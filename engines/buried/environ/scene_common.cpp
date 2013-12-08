@@ -468,6 +468,66 @@ int DisplayMessageWithEvidenceWhenEnteringNode::postEnterRoom(Window *viewWindow
 	return SC_TRUE;
 }
 
+ClickPlayLoopingVideoClip::ClickPlayLoopingVideoClip(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+		int cursorID, int animID, int left, int top, int right, int bottom, int flagOffset, int newFlagValue) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_cursorID = cursorID;
+	_animID = animID;
+	_clickRegion = Common::Rect(left, top, right, bottom);
+	_flagOffset = flagOffset;
+	_flagValue = newFlagValue;
+	_playing = false;
+}
+
+int ClickPlayLoopingVideoClip::preExitRoom(Window *viewWindow, const Location &newLocation) {
+	if (_playing) {
+		((SceneViewWindow *)viewWindow)->stopAsynchronousAnimation();
+		_vm->_sound->restart();
+		_playing = false;
+
+		if (_flagOffset >= 0 && _flagValue >= 0)
+			((SceneViewWindow *)viewWindow)->setGlobalFlagByte(_flagOffset, _flagValue);
+	}
+
+	return SC_TRUE;
+}
+
+int ClickPlayLoopingVideoClip::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_clickRegion.contains(pointLocation)) {
+		if (_playing) {
+			// Stop the clip
+			((SceneViewWindow *)viewWindow)->stopAsynchronousAnimation();
+			_playing = false;
+			_vm->_sound->restart();
+
+			// Change the flag
+			if (_flagOffset >= 0 && _flagValue >= 0)
+				((SceneViewWindow *)viewWindow)->setGlobalFlagByte(_flagOffset, _flagValue);
+
+			// Check for spontaneous AI comments
+			if (((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->isItemInInventory(kItemBioChipAI))
+				((SceneViewWindow *)viewWindow)->playAIComment(_staticData.location, AI_COMMENT_TYPE_SPONTANEOUS);
+
+			((GameUIWindow *)viewWindow->getParent())->_bioChipRightWindow->sceneChanged();
+			return SC_TRUE;
+		} else {
+			// Start playing asynchronously
+			_vm->_sound->stop();
+			_playing = ((SceneViewWindow *)viewWindow)->startAsynchronousAnimation(_animID, true);
+			return SC_TRUE;
+		}
+	}
+
+	return SC_FALSE;
+}
+
+int ClickPlayLoopingVideoClip::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_clickRegion.contains(pointLocation))
+		return _cursorID;
+
+	return kCursorArrow;
+}
+
 OneShotEntryVideoWarning::OneShotEntryVideoWarning(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
 		int animID, int flagOffset, int warningMessageID) : SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
 	_animID = animID;
