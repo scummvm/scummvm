@@ -161,8 +161,8 @@ bool VoyeurEngine::doHeadTitle() {
 	_eventsManager.startMainClockInt();
 
 	// Show starting screen
-	if (_bVoy->getBoltGroup(0x10500))
-		showConversionScreen();
+//	if (_bVoy->getBoltGroup(0x10500))
+//		showConversionScreen();
 	if (shouldQuit())
 		return false;
 
@@ -176,8 +176,8 @@ bool VoyeurEngine::doHeadTitle() {
 
 	// Opening
 	if (!_voy._incriminate) {
-		doOpening();
-		doTransitionCard("Saturday Afternoon", "Player's Apartment");
+//		doOpening();
+//		doTransitionCard("Saturday Afternoon", "Player's Apartment");
 		_eventsManager.delay(90);
 	} else {
 		_voy._incriminate = false;
