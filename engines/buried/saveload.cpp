@@ -47,14 +47,11 @@ Common::StringArray BuriedEngine::listSaveFiles() {
 }
 
 bool BuriedEngine::canLoadGameStateCurrently() {
-	// TODO: This probably needs to be more strict
-	return !isDemo() && _mainWindow;
+	return !isDemo() && _mainWindow && !_yielding;
 }
 
 bool BuriedEngine::canSaveGameStateCurrently() {
-	// TODO: This should be OK, except possibly synchronous video saving may give
-	// weird results. Need to investigate.
-	return !isDemo() && _mainWindow && ((FrameWindow *)_mainWindow)->isGameInProgress();
+	return !isDemo() && _mainWindow && !_yielding && ((FrameWindow *)_mainWindow)->isGameInProgress();
 }
 
 Common::Error BuriedEngine::loadGameState(int slot) {
