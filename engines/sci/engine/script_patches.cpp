@@ -145,7 +145,7 @@ enum ScriptPatcherSelectors {
 static const uint16 camelotSignaturePeepingTom[] = {
 	0x72, SIG_MAGICDWORD, SIG_UINT16 + 0x7e, 0x07, // lofsa fawaz <-- start of proper initializion code
 	0xa1, 0xb9,                      // sag b9h
-	SIG_ADDTOOFFSET +571,            // skip 571 bytes
+	SIG_ADDTOOFFSET + 571,           // skip 571 bytes
 	0x39, 0x7a,                      // pushi 7a <-- initialization code when walking automatically
 	0x78,                            // push1
 	0x7a,                            // push2
@@ -160,7 +160,7 @@ static const uint16 camelotSignaturePeepingTom[] = {
 };
 
 static const uint16 camelotPatchPeepingTom[] = {
-	PATCH_ADDTOOFFSET +576,
+	PATCH_ADDTOOFFSET + 576,
 	0x32, PATCH_UINT16 + 0xbd, 0xfd, // jmp to fawaz::doit / properly init peepingTom code
 	PATCH_END
 };
@@ -266,7 +266,7 @@ static const uint16 ecoquest2SignatureEcorder[] = {
 	0x35, 0x0a,                      // ldi 0a
 	0x65, 0x20,                      // aTop ticks
 	0x33,                            // jmp [end]
-	SIG_ADDTOOFFSET +1,              // [skip 1 byte]
+	SIG_ADDTOOFFSET + 1,             // [skip 1 byte]
 	0x3c,                            // dup
 	0x35, 0x03,                      // ldi 03
 	0x1a,                            // eq?
@@ -359,10 +359,10 @@ static const uint16 ecoquest2PatchEcorderTutorial[] = {
 	PATCH_END
 };
 
-//          script, description,                                      signature                          patch
+//          script, description,                                       signature                          patch
 static const SciScriptPatcherEntry ecoquest2Signatures[] = {
-	{  true,    50, "initial text not removed on ecorder",         1, ecoquest2SignatureEcorder,         ecoquest2PatchEcorder },
-	{  true,   333, "initial text not removed on ecorder tutorial",1, ecoquest2SignatureEcorderTutorial, ecoquest2PatchEcorderTutorial },
+	{  true,    50, "initial text not removed on ecorder",          1, ecoquest2SignatureEcorder,         ecoquest2PatchEcorder },
+	{  true,   333, "initial text not removed on ecorder tutorial", 1, ecoquest2SignatureEcorderTutorial, ecoquest2PatchEcorderTutorial },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -379,7 +379,7 @@ static const uint16 fanmadeSignatureInfiniteLoop[] = {
 	0x4b, 0x04,                      // send 04
 	SIG_MAGICDWORD,
 	0x18,                            // not
-	0x30, SIG_UINT16 + 0x2f, 0x00,   // bnt 002f  [06a5]	--> jmp ffbc  [0664] --> BUG! infinite loop
+	0x30, SIG_UINT16 + 0x2f, 0x00,   // bnt 002f  [06a5]    --> jmp ffbc  [0664] --> BUG! infinite loop
 	SIG_END
 };
 
@@ -505,7 +505,7 @@ static const uint16 freddypharkasSignatureMacInventory[] = {
 
 static const uint16 freddypharkasPatchMacInventory[] = {
 	0x39, 0x02,                      // pushi 02 (now matches the DOS version)
-	PATCH_ADDTOOFFSET +23,
+	PATCH_ADDTOOFFSET + 23,
 	0x39, 0x04,                      // pushi 04 (now matches the DOS version)
 	PATCH_END
 };
@@ -527,22 +527,22 @@ static const SciScriptPatcherEntry freddypharkasSignatures[] = {
 static const uint16 gk1SignatureDay6PoliceBeignet[] = {
 	0x35, 0x04,                         // ldi 04
 	0x1a,                               // eq?
-	0x30, SIG_ADDTOOFFSET +2,           // bnt [next state check]
+	0x30, SIG_ADDTOOFFSET + 2,          // bnt [next state check]
 	0x38, SIG_SELECTOR16 + SELECTOR_dispose, // pushi dispose
 	0x76,                               // push0
-	0x72, SIG_ADDTOOFFSET +2,           // lofsa deskSarg
+	0x72, SIG_ADDTOOFFSET + 2,          // lofsa deskSarg
 	0x4a, SIG_UINT16 + 0x04, 0x00,      // send 04
 	SIG_MAGICDWORD,
 	0x34, SIG_UINT16 + 0xdc, 0x00,      // ldi 220
-	0x65, SIG_ADDTOOFFSET +1,           // aTop cycles (1a for PC, 1c for Mac)
+	0x65, SIG_ADDTOOFFSET + 1,          // aTop cycles (1a for PC, 1c for Mac)
 	0x32,                               // jmp [end]
 	SIG_END
 };
 
 static const uint16 gk1PatchDay6PoliceBeignet[] = {
-	PATCH_ADDTOOFFSET +16,
+	PATCH_ADDTOOFFSET + 16,
 	0x34, PATCH_UINT16 + 0x17, 0x00,    // ldi 23
-	0x65, PATCH_GETORIGINALBYTEADJUST +20, +2, // aTop seconds (1c for PC, 1e for Mac)
+	0x65, PATCH_GETORIGINALBYTEADJUST + 20, +2, // aTop seconds (1c for PC, 1e for Mac)
 	PATCH_END
 };
 
@@ -553,18 +553,18 @@ static const uint16 gk1PatchDay6PoliceBeignet[] = {
 static const uint16 gk1SignatureDay6PoliceSleep[] = {
 	0x35, 0x08,                         // ldi 08
 	0x1a,                               // eq?
-	0x31, SIG_ADDTOOFFSET +1,           // bnt [next state check]
+	0x31, SIG_ADDTOOFFSET + 1,          // bnt [next state check]
 	SIG_MAGICDWORD,
 	0x34, SIG_UINT16 + 0xdc, 0x00,      // ldi 220
-	0x65, SIG_ADDTOOFFSET +1,           // aTop cycles (1a for PC, 1c for Mac)
+	0x65, SIG_ADDTOOFFSET + 1,          // aTop cycles (1a for PC, 1c for Mac)
 	0x32,                               // jmp [end]
 	0
 };
 
 static const uint16 gk1PatchDay6PoliceSleep[] = {
-	PATCH_ADDTOOFFSET +5,
+	PATCH_ADDTOOFFSET + 5,
 	0x34, SIG_UINT16 + 0x2a, 0x00,      // ldi 42
-	0x65, PATCH_GETORIGINALBYTEADJUST +9, +2, // aTop seconds (1c for PC, 1e for Mac)
+	0x65, PATCH_GETORIGINALBYTEADJUST + 9, +2, // aTop seconds (1c for PC, 1e for Mac)
 	PATCH_END
 };
 
@@ -575,17 +575,17 @@ static const uint16 gk1SignatureDay5PhoneFreeze[] = {
 	0x4a,
 	SIG_MAGICDWORD, SIG_UINT16 + 0x0c, 0x00, // send 0c
 	0x35, 0x03,                         // ldi 03
-	0x65, SIG_ADDTOOFFSET +1,           // aTop cycles
-	0x32, SIG_ADDTOOFFSET +2,           // jmp [end]
+	0x65, SIG_ADDTOOFFSET + 1,          // aTop cycles
+	0x32, SIG_ADDTOOFFSET + 2,          // jmp [end]
 	0x3c,                               // dup
 	0x35, 0x21,                         // ldi 21
 	SIG_END
 };
 
 static const uint16 gk1PatchDay5PhoneFreeze[] = {
-	PATCH_ADDTOOFFSET +3,
+	PATCH_ADDTOOFFSET + 3,
 	0x35, 0x06,                         // ldi 01
-	0x65, PATCH_GETORIGINALBYTEADJUST +6, +6, // aTop ticks
+	0x65, PATCH_GETORIGINALBYTEADJUST + 6, +6, // aTop ticks
 	PATCH_END
 };
 
@@ -727,23 +727,23 @@ static const uint16 kq5PatchCdHarpyVolume[] = {
 //
 // Fixes bug: #4964
 static const uint16 kq5SignatureWitchCageInit[] = {
-	SIG_UINT16 + 0x00, 0x00,	// top
-	SIG_UINT16 + 0x00, 0x00,	// left
-	SIG_UINT16 + 0x00, 0x00,	// bottom
-	SIG_UINT16 + 0x00, 0x00,	// right
-	SIG_UINT16 + 0x00, 0x00,	// extra property #1
+	SIG_UINT16 + 0x00, 0x00,    // top
+	SIG_UINT16 + 0x00, 0x00,    // left
+	SIG_UINT16 + 0x00, 0x00,    // bottom
+	SIG_UINT16 + 0x00, 0x00,    // right
+	SIG_UINT16 + 0x00, 0x00,    // extra property #1
 	SIG_MAGICDWORD,
-	SIG_UINT16 + 0x7a, 0x00,	// extra property #2
-	SIG_UINT16 + 0xc8, 0x00,	// extra property #3
-	SIG_UINT16 + 0xa3, 0x00,	// extra property #4
+	SIG_UINT16 + 0x7a, 0x00,    // extra property #2
+	SIG_UINT16 + 0xc8, 0x00,    // extra property #3
+	SIG_UINT16 + 0xa3, 0x00,    // extra property #4
 	SIG_END
 };
 
 static const uint16 kq5PatchWitchCageInit[] = {
-	PATCH_UINT16 + 0x00, 0x00,	// top
-	PATCH_UINT16 + 0x7a, 0x00,	// left
-	PATCH_UINT16 + 0xc8, 0x00,	// bottom
-	PATCH_UINT16 + 0xa3, 0x00,	// right
+	PATCH_UINT16 + 0x00, 0x00,  // top
+	PATCH_UINT16 + 0x7a, 0x00,  // left
+	PATCH_UINT16 + 0xc8, 0x00,  // bottom
+	PATCH_UINT16 + 0xa3, 0x00,  // right
 	PATCH_END
 };
 
@@ -857,8 +857,8 @@ static const uint16 kq6PatchInventoryStackFix[] = {
 	0x12,                               // and
 	0x65, 0x30,                         // aTop state
 	0x38,                               // pushi "show"
-	PATCH_GETORIGINALBYTE +22,
-	PATCH_GETORIGINALBYTE +23,
+	PATCH_GETORIGINALBYTE + 22,
+	PATCH_GETORIGINALBYTE + 23,
 	0x78,                               // push1
 	0x87, 0x00,                         // lap param[0]
 	0x31, 0x04,                         // bnt [call show using global 0]
@@ -867,7 +867,7 @@ static const uint16 kq6PatchInventoryStackFix[] = {
 	0x89, 0x00,                         // lsg global[0], save 1 byte total, see above
 	0x54, 0x06,                         // self 06 (call x::show)
 	0x31,                               // bnt [menu exit code]
-	PATCH_GETORIGINALBYTEADJUST +39, +6,// dynamic offset must be 0x0E for PC and 0x0D for mac
+	PATCH_GETORIGINALBYTEADJUST + 39, +6, // dynamic offset must be 0x0E for PC and 0x0D for mac
 	0x34, PATCH_UINT16 + 0x00, 0x20,    // ldi 2000
 	0x12,                               // and
 	0x2f, 0x05,                         // bt [to return]
@@ -893,7 +893,7 @@ static const uint16 kq6laurabow2CDSignatureAudioTextSupport1[] = {
 };
 
 static const uint16 kq6laurabow2CDPatchAudioTextSupport1[] = {
-	PATCH_ADDTOOFFSET +5,
+	PATCH_ADDTOOFFSET + 5,
 	0x33, 0x13,                         // jmp [audio call]
 	PATCH_END
 };
@@ -909,7 +909,7 @@ static const uint16 kq6laurabow2CDSignatureAudioTextSupport2[] = {
 };
 
 static const uint16 kq6laurabow2CDPatchAudioTextSupport2[] = {
-	PATCH_ADDTOOFFSET +7,
+	PATCH_ADDTOOFFSET + 7,
 	0xa1, 98,                           // sag global[98d]
 	PATCH_END
 };
@@ -925,7 +925,7 @@ static const uint16 kq6laurabow2CDSignatureAudioTextSupport3[] = {
 };
 
 static const uint16 kq6laurabow2CDPatchAudioTextSupport3[] = {
-	PATCH_ADDTOOFFSET +3,
+	PATCH_ADDTOOFFSET + 3,
 	0x89, 98,                           // lsg global[98d]
 	PATCH_END
 };
@@ -953,11 +953,11 @@ static const uint16 kq6laurabow2CDSignatureAudioTextSupport4[] = {
 };
 
 static const uint16 kq6laurabow2CDPatchAudioTextSupport4[] = {
-	PATCH_ADDTOOFFSET +2,
+	PATCH_ADDTOOFFSET + 2,
 	0x34, PATCH_UINT16 + 0x01, 0x00,    // ldi 0001 (waste 1 byte)
 	0x12,
 	0x18,                               // not - prepares acc for KQ6 talker::startText
-	PATCH_ADDTOOFFSET +19,
+	PATCH_ADDTOOFFSET + 19,
 	0x89, 98,                           // lsp global[98d]
 	PATCH_END
 };
@@ -990,7 +990,7 @@ static const uint16 kq6CDSignatureAudioTextSupport1[] = {
 };
 
 static const uint16 kq6CDPatchAudioTextSupport1[] = {
-	PATCH_ADDTOOFFSET +5,
+	PATCH_ADDTOOFFSET + 5,
 	0x33, 0x32,                         // jmp [jump-for-text-code]
 	PATCH_END
 };
@@ -1012,7 +1012,7 @@ static const uint16 kq6CDSignatureAudioTextSupport2[] = {
 };
 
 static const uint16 kq6CDPatchAudioTextSupport2[] = {
-	PATCH_ADDTOOFFSET +2,
+	PATCH_ADDTOOFFSET + 2,
 	0x67, 0x8a,                         // pTos viewInPrint
 	0x14,                               // or
 	0x2f,                               // bt [skip following code]
@@ -1030,7 +1030,7 @@ static const uint16 kq6CDSignatureAudioTextSupportGuards[] = {
 };
 
 static const uint16 kq6CDPatchAudioTextSupportGuards[] = {
-	PATCH_ADDTOOFFSET +2,
+	PATCH_ADDTOOFFSET + 2,
 	0x34, PATCH_UINT16 + 0x01, 0x00,    // ldi 0001 (waste 1 byte to overwrite eq?)
 	PATCH_END
 };
@@ -1047,7 +1047,7 @@ static const uint16 kq6CDSignatureAudioTextSupportStepmother[] = {
 };
 
 static const uint16 kq6CDPatchAudioTextSupportJumpAlways[] = {
-	PATCH_ADDTOOFFSET +5,
+	PATCH_ADDTOOFFSET + 5,
 	0x33,                               // jump always
 	PATCH_END
 };
@@ -1099,12 +1099,12 @@ static const SciScriptPatcherEntry kq6Signatures[] = {
 static const uint16 longbowSignatureShowHandCode[] = {
 	0x78,                            // push1
 	0x78,                            // push1
-	0x72, SIG_ADDTOOFFSET +2,        // lofsa (letter, that was typed)
+	0x72, SIG_ADDTOOFFSET + 2,       // lofsa (letter, that was typed)
 	0x36,                            // push
-	0x40, SIG_ADDTOOFFSET +2,        // call
+	0x40, SIG_ADDTOOFFSET + 2,       // call
 	0x02,                            // perform the call above with 2 parameters
 	0x36,                            // push
-	0x40, SIG_ADDTOOFFSET +2,        // call
+	0x40, SIG_ADDTOOFFSET + 2,       // call
 	SIG_MAGICDWORD,
 	0x02,                            // perform the call above with 2 parameters
 	0x38, SIG_SELECTOR16 + SELECTOR_setMotion, // pushi "setMotion" (0x11c in Longbow German)
@@ -1115,7 +1115,7 @@ static const uint16 longbowSignatureShowHandCode[] = {
 
 static const uint16 longbowPatchShowHandCode[] = {
 	0x39, 0x01,                      // pushi 1 (combine the two push1's in one, like in the English version)
-	PATCH_ADDTOOFFSET +3,            // leave the lofsa call untouched
+	PATCH_ADDTOOFFSET + 3,           // leave the lofsa call untouched
 	// The following will remove the duplicate call
 	0x32, PATCH_UINT16 + 0x02, 0x00, // jmp 02 - skip 2 bytes (the remainder of the first call)
 	0x48,                            // ret (dummy, should never be reached)
@@ -1158,9 +1158,9 @@ static const uint16 larry2SignatureWearParachutePoints[] = {
 };
 
 static const uint16 larry2PatchWearParachutePoints[] = {
-	PATCH_ADDTOOFFSET +4,
+	PATCH_ADDTOOFFSET + 4,
 	0x80, PATCH_UINT16 + 0x5a, 0x00, // lag 5a (global 90)
-	PATCH_ADDTOOFFSET +6,
+	PATCH_ADDTOOFFSET + 6,
 	0xa0, PATCH_UINT16 + 0x5a, 0x00, // sag 5a (global 90)
 	PATCH_END
 };
@@ -1215,18 +1215,18 @@ static const uint16 larry6SignatureDeathDialog[] = {
 	0x3e, SIG_UINT16 + 0x33, 0x01,   // link 0133 (offset 0x20)
 	0x35, 0xff,                      // ldi ff
 	0xa3, 0x00,                      // sal 00
-	SIG_ADDTOOFFSET +680,            // [skip 680 bytes]
+	SIG_ADDTOOFFSET + 680,           // [skip 680 bytes]
 	0x8f, 0x01,                      // lsp 01 (offset 0x2cf)
 	0x7a,                            // push2
 	0x5a, SIG_UINT16 + 0x04, 0x00, SIG_UINT16 + 0x0e, 0x01, // lea 0004 010e
 	0x36,                            // push
 	0x43, 0x7c, 0x0e,                // kMessage[7c] 0e
-	SIG_ADDTOOFFSET +90,             // [skip 90 bytes]
+	SIG_ADDTOOFFSET + 90,            // [skip 90 bytes]
 	0x38, SIG_UINT16 + 0xd6, 0x00,   // pushi 00d6 (offset 0x335)
 	0x78,                            // push1
 	0x5a, SIG_UINT16 + 0x04, 0x00, SIG_UINT16 + 0x0e, 0x01, // lea 0004 010e
 	0x36,                            // push
-	SIG_ADDTOOFFSET +76,             // [skip 76 bytes]
+	SIG_ADDTOOFFSET + 76,            // [skip 76 bytes]
 	0x38, SIG_UINT16 + 0xcd, 0x00,   // pushi 00cd (offset 0x38b)
 	0x39, 0x03,                      // pushi 03
 	0x5a, SIG_UINT16 + 0x04, 0x00, SIG_UINT16 + 0x0e, 0x01, // lea 0004 010e
@@ -1236,11 +1236,11 @@ static const uint16 larry6SignatureDeathDialog[] = {
 
 static const uint16 larry6PatchDeathDialog[] = {
 	0x3e, 0x00, 0x02,                // link 0200
-	PATCH_ADDTOOFFSET +687,
+	PATCH_ADDTOOFFSET + 687,
 	0x5a, PATCH_UINT16 + 0x04, 0x00, PATCH_UINT16 + 0x40, 0x01, // lea 0004 0140
-	PATCH_ADDTOOFFSET +98,
+	PATCH_ADDTOOFFSET + 98,
 	0x5a, PATCH_UINT16 + 0x04, 0x00, PATCH_UINT16 + 0x40, 0x01, // lea 0004 0140
-	PATCH_ADDTOOFFSET +82,
+	PATCH_ADDTOOFFSET + 82,
 	0x5a, PATCH_UINT16 + 0x04, 0x00, PATCH_UINT16 + 0x40, 0x01, // lea 0004 0140
 	PATCH_END
 };
@@ -1253,7 +1253,7 @@ static const SciScriptPatcherEntry larry6Signatures[] = {
 
 // ===========================================================================
 // Laura Bow 2
-// 
+//
 // Moving away the painting in the room with the hidden safe is problematic
 //  for the CD version of the game. safePic::doVerb gets triggered by the mouse-click.
 // This method sets local 0 as signal, which is only meant to get handled, when
@@ -1306,7 +1306,7 @@ static const uint16 laurabow2CDSignaturePaintingClosing[] = {
 };
 
 static const uint16 laurabow2CDPatchPaintingClosing[] = {
-	PATCH_ADDTOOFFSET +2,
+	PATCH_ADDTOOFFSET + 2,
 	0x3c,                               // dup (1 additional byte)
 	0x76,                               // push0
 	0x3c,                               // dup (1 additional byte)
@@ -1441,7 +1441,7 @@ static const uint16 pq1vgaSignaturePutGunInLockerBug[] = {
 	0x35, 0x00,                      // ldi 00
 	0x1a,                            // eq?
 	0x31, 0x25,                      // bnt [next state check]
-	SIG_ADDTOOFFSET +22,             // [skip 22 bytes]
+	SIG_ADDTOOFFSET + 22,            // [skip 22 bytes]
 	SIG_MAGICDWORD,
 	0x38, SIG_SELECTOR16 + SELECTOR_put, // pushi "put"
 	0x78,                            // push1
@@ -1463,9 +1463,9 @@ static const uint16 pq1vgaSignaturePutGunInLockerBug[] = {
 };
 
 static const uint16 pq1vgaPatchPutGunInLockerBug[] = {
-	PATCH_ADDTOOFFSET +3,
+	PATCH_ADDTOOFFSET + 3,
 	0x31, 0x1c,                      // bnt [next state check]
-	PATCH_ADDTOOFFSET +22,
+	PATCH_ADDTOOFFSET + 22,
 	0x35, 0x02,                      // ldi 02
 	0x65, 0x1c,                      // aTop 1c (set timer to 2 seconds)
 	0x33, 0x17,                      // jmp [end of method]
@@ -1593,7 +1593,7 @@ static const uint16 qfg1vgaSignatureMoveToCrusher[] = {
 };
 
 static const uint16 qfg1vgaPatchMoveToCrusher[] = {
-	PATCH_ADDTOOFFSET +3,
+	PATCH_ADDTOOFFSET + 3,
 	0x39, 0x55,                         // pushi 55 (85 - x)
 	PATCH_END
 };
@@ -1613,7 +1613,7 @@ static const uint16 qfg1vgaSignatureMoveToCastleGate[] = {
 };
 
 static const uint16 qfg1vgaPatchMoveToCastleGate[] = {
-	PATCH_ADDTOOFFSET +3,
+	PATCH_ADDTOOFFSET + 3,
 	0x39, 0x72,                         // pushi 72 (114 - x)
 	PATCH_END
 };
@@ -1638,7 +1638,7 @@ static const uint16 qfg1vgaSignatureCheetaurDescription[] = {
 };
 
 static const uint16 qfg1vgaPatchCheetaurDescription[] = {
-	PATCH_ADDTOOFFSET +14,
+	PATCH_ADDTOOFFSET + 14,
 	0x39, 0x11,                         // pushi 11 -> monster type cheetaur
 	PATCH_END
 };
@@ -1670,7 +1670,7 @@ static const uint16 qfg1vgaSignatureFunnyRoomFix[] = {
 };
 
 static const uint16 qfg1vgaPatchFunnyRoomFix[] = {
-	PATCH_ADDTOOFFSET +3,
+	PATCH_ADDTOOFFSET + 3,
 	0x2e, PATCH_UINT16 + 0x29, 0x00,    // bt 0029 [-> next state] - saves 4 bytes
 	0x35, 0x01,                         // ldi 01
 	0xa3, 0x4e,                         // sal 4e
@@ -1719,7 +1719,7 @@ static const uint16 qfg2SignatureImportDialog[] = {
 };
 
 static const uint16 qfg2PatchImportDialog[] = {
-	PATCH_ADDTOOFFSET +5,
+	PATCH_ADDTOOFFSET + 5,
 	0x48,                               // ret
 	PATCH_END
 };
@@ -1745,7 +1745,7 @@ static const uint16 qfg3SignatureImportDialog[] = {
 };
 
 static const uint16 qfg3PatchImportDialog[] = {
-	PATCH_ADDTOOFFSET +4,
+	PATCH_ADDTOOFFSET + 4,
 	0x48,                               // ret
 	PATCH_END
 };
@@ -1790,7 +1790,7 @@ static const uint16 qfg3SignatureWooDialog[] = {
 };
 
 static const uint16 qfg3PatchWooDialog[] = {
-	PATCH_ADDTOOFFSET +0x29,
+	PATCH_ADDTOOFFSET + 0x29,
 	0x33, 0x11,                         // jmp to 0x6a2, the call to hero::solvePuzzle for 0xFFFC
 	PATCH_END
 };
@@ -1821,7 +1821,7 @@ static const uint16 sq4FloppySignatureEndlessFlight[] = {
 };
 
 static const uint16 sq4FloppyPatchEndlessFlight[] = {
-	PATCH_ADDTOOFFSET +5,
+	PATCH_ADDTOOFFSET + 5,
 	0x35, 0x03,                         // ldi 03 (which would be the content of the property)
 	PATCH_END
 };
@@ -1844,7 +1844,7 @@ static const uint16 sq4CdSignatureTextOptionsButton[] = {
 };
 
 static const uint16 sq4CdPatchTextOptionsButton[] = {
-	PATCH_ADDTOOFFSET +7,
+	PATCH_ADDTOOFFSET + 7,
 	0x39, 0x0b,                         // pushi 0x0b
 	PATCH_END
 };
@@ -1937,7 +1937,7 @@ static const SciScriptPatcherEntry sq4Signatures[] = {
 // We simply set the correct starting cel number to fix the bug.
 // Responsible method: robotIntoShip::changeState(9)
 static const uint16 sq1vgaSignatureUlenceFlatsTimepodGfxGlitch[] = {
-	0x39, 
+	0x39,
 	SIG_MAGICDWORD, SIG_SELECTOR8 + SELECTOR_cel, // pushi "cel"
 	0x78,                               // push1
 	0x39, 0x0a,                         // pushi 0x0a (set ship::cel to 10)
@@ -1946,7 +1946,7 @@ static const uint16 sq1vgaSignatureUlenceFlatsTimepodGfxGlitch[] = {
 };
 
 static const uint16 sq1vgaPatchUlenceFlatsTimepodGfxGlitch[] = {
-	PATCH_ADDTOOFFSET +3,
+	PATCH_ADDTOOFFSET + 3,
 	0x39, 0x09,                         // pushi 0x09 (set ship::cel to 9)
 	PATCH_END
 };
@@ -1997,7 +1997,8 @@ static const uint16 sq1vgaPatchEgoShowsCard[] = {
 static const SciScriptPatcherEntry sq1vgaSignatures[] = {
 	{  true,    45, "Ulence Flats: timepod graphic glitch",        1, sq1vgaSignatureUlenceFlatsTimepodGfxGlitch, sq1vgaPatchUlenceFlatsTimepodGfxGlitch },
 	{  true,    58, "Sarien armory droid zapping ego first time",  1, sq1vgaSignatureEgoShowsCard,                sq1vgaPatchEgoShowsCard },
-	SCI_SIGNATUREENTRY_TERMINATOR};
+	SCI_SIGNATUREENTRY_TERMINATOR
+};
 
 // ===========================================================================
 // The toolbox in sq5 is buggy. When you click on the upper part of the "put
@@ -2043,7 +2044,7 @@ static const uint16 sq5SignatureToolboxFix[] = {
 
 static const uint16 sq5PatchToolboxFix[] = {
 	0x31, 0x41,                    // bnt [check for state 2]
-	PATCH_ADDTOOFFSET +16,         // skip to jmp offset
+	PATCH_ADDTOOFFSET + 16,        // skip to jmp offset
 	0x35, 0x01,                    // ldi 01
 	0x65, 0x14,                    // aTop [state]
 	0x36, 0x00, 0x00,              // ldi 0000 (waste 3 bytes)
@@ -2067,7 +2068,7 @@ ScriptPatcher::ScriptPatcher() {
 	_selectorIdTable = new Selector[ selectorCount ];
 	for (selectorNr = 0; selectorNr < selectorCount; selectorNr++)
 		_selectorIdTable[selectorNr] = -1;
-		
+
 	_runtimeTable = NULL;
 }
 
@@ -2122,7 +2123,7 @@ void ScriptPatcher::applyPatch(const SciScriptPatcherEntry *patchEntry, byte *sc
 		case PATCH_SELECTOR16: {
 			byte byte1;
 			byte byte2;
-						
+
 			switch (patchCommand) {
 			case PATCH_UINT16: {
 				byte1 = patchValue & PATCH_BYTEMASK;
@@ -2255,14 +2256,14 @@ int32 ScriptPatcher::findSignature(const SciScriptPatcherEntry *patchEntry, SciS
 						sigWord = SIG_MISMATCH; // out of bounds
 					}
 				}
-				
+
 				if (sigWord == SIG_MISMATCH)
 					break;
-				
+
 				signatureData++;
 				sigWord = *signatureData;
 			}
-			
+
 			if (sigWord == SIG_END) // signature fully matched?
 				return offset;
 		}
@@ -2282,27 +2283,27 @@ void ScriptPatcher::initSignature(const SciScriptPatcherEntry *patchTable, bool 
 	int magicOffset;
 	byte magicDWord[4];
 	int magicDWordLeft = 0;
-    const uint16 *curData;
-    uint16 curWord;
-    uint16 curCommand;
-    uint32 curValue;
-    byte byte1;
-    byte byte2;
-    int patchEntryCount = 0;
-    
-    // Count entries and allocate runtime data
-    while (curEntry->signatureData) {
+	const uint16 *curData;
+	uint16 curWord;
+	uint16 curCommand;
+	uint32 curValue;
+	byte byte1;
+	byte byte2;
+	int patchEntryCount = 0;
+
+	// Count entries and allocate runtime data
+	while (curEntry->signatureData) {
 		patchEntryCount++; curEntry++;
-    }
-    _runtimeTable = new SciScriptPatcherRuntimeEntry[patchEntryCount];
-    memset(_runtimeTable, 0, sizeof(SciScriptPatcherRuntimeEntry) * patchEntryCount);
+	}
+	_runtimeTable = new SciScriptPatcherRuntimeEntry[patchEntryCount];
+	memset(_runtimeTable, 0, sizeof(SciScriptPatcherRuntimeEntry) * patchEntryCount);
 
 	curEntry = patchTable;
 	curRuntimeEntry = _runtimeTable;
-    while (curEntry->signatureData) {
+	while (curEntry->signatureData) {
 		// process signature
 		memset(magicDWord, 0, sizeof(magicDWord));
-		
+
 		curRuntimeEntry->active = curEntry->defaultActive;
 		curRuntimeEntry->magicDWord = 0;
 		curRuntimeEntry->magicOffset = 0;
@@ -2312,7 +2313,7 @@ void ScriptPatcher::initSignature(const SciScriptPatcherEntry *patchTable, bool 
 			case 0: curData = curEntry->signatureData; break;
 			case 1: curData = curEntry->patchData; break;
 			}
-		
+
 			curWord = *curData;
 			magicOffset = 0;
 			while (curWord != SIG_END) {
@@ -2415,9 +2416,9 @@ void ScriptPatcher::initSignature(const SciScriptPatcherEntry *patchTable, bool 
 			error("Script-Patcher: Magic-DWORD beyond End-Of-Signature\nFaulty patch: '%s'", curEntry->description);
 		if (!curRuntimeEntry->magicDWord)
 			error("Script-Patcher: Magic-DWORD not specified in signature\nFaulty patch: '%s'", curEntry->description);
-    
+
 		curEntry++; curRuntimeEntry++;
-    }
+	}
 }
 
 // This method enables certain patches
@@ -2425,19 +2426,19 @@ void ScriptPatcher::initSignature(const SciScriptPatcherEntry *patchTable, bool 
 void ScriptPatcher::enablePatch(const SciScriptPatcherEntry *patchTable, const char *searchDescription) {
 	const SciScriptPatcherEntry *curEntry = patchTable;
 	SciScriptPatcherRuntimeEntry *runtimeEntry = _runtimeTable;
-	int searchDescriptionLen = strlen( searchDescription );
+	int searchDescriptionLen = strlen(searchDescription);
 	int matchCount = 0;
-	
-    while (curEntry->signatureData) {
+
+	while (curEntry->signatureData) {
 		if (strncmp(curEntry->description, searchDescription, searchDescriptionLen) == 0) {
 			// match found, enable patch
 			runtimeEntry->active = true;
 			matchCount++;
 		}
 		curEntry++; runtimeEntry++;
-    }
-    
-    if (!matchCount)
+	}
+
+	if (!matchCount)
 		error("Script-Patcher: no patch found to enable");
 }
 
@@ -2522,10 +2523,10 @@ void ScriptPatcher::processScript(uint16 scriptNr, byte *scriptData, const uint3
 			// Abort, in case selectors are not yet initialized (happens for games w/o selector-dictionary)
 			if (!g_sci->getKernel()->selectorNamesAvailable())
 				return;
-		
+
 			// signature table needs to get initialized (Magic DWORD set, selector table set)
 			initSignature(signatureTable, isMacSci11);
-			
+
 			// Do additional game-specific initialization
 			switch (gameId) {
 			case GID_KQ5:
@@ -2553,9 +2554,9 @@ void ScriptPatcher::processScript(uint16 scriptNr, byte *scriptData, const uint3
 
 		curEntry = signatureTable;
 		curRuntimeEntry = _runtimeTable;
-	
+
 		while (curEntry->signatureData) {
-			if ( (scriptNr == curEntry->scriptNr) && (curRuntimeEntry->active) ) {
+			if ((scriptNr == curEntry->scriptNr) && (curRuntimeEntry->active)) {
 				int32 foundOffset = 0;
 				int16 applyCount = curEntry->applyCount;
 				do {
