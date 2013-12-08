@@ -27,7 +27,7 @@
 #define PROJECT_NAME "residualvm"         // Used for folders, icons, resources and project/solution name
 #define LIBS_DEFINE "RESIDUALVM_LIBS"     // Name of the include environment variable
 #define REVISION_DEFINE "SCUMMVM_INTERNAL_REVISION"
-#define FIRST_ENGINE "grime"              // Name of the engine which should be sorted as first element
+#define FIRST_ENGINE "grim"               // Name of the engine which should be sorted as first element
 
 #define ENABLE_LANGUAGE_EXTENSIONS "grim,myst3"    // Comma separated list of projects that need language extensions
 #define DISABLE_EDIT_AND_CONTINUE "grim,myst3,residualvm"     // Comma separated list of projects that need Edit&Continue to be disabled for co-routine support (the main project is automatically added)
