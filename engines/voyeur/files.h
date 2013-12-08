@@ -41,6 +41,8 @@ class ViewPortListResource;
 class FontResource;
 class CMapResource;
 class VInitCyclResource;
+class PtrResource;
+class ControlResource;
 
 #define DECOMPRESS_SIZE 0x7000
 
@@ -147,6 +149,9 @@ public:
 };
 
 class StampBoltFile: public BoltFile {
+private:
+	void initPtr();
+	void initControl();
 protected:
 	virtual void initResource(int resType);
 public:
@@ -185,6 +190,7 @@ public:
 	int _size;
 	byte *_data;
 
+	// bvoy.blt resource types
 	PictureResource *_picResource;
 	ViewPortResource *_viewPortResource;
 	ViewPortListResource *_viewPortListResource;
@@ -192,6 +198,10 @@ public:
 	FontInfoResource *_fontInfoResource;
 	CMapResource *_cMapResource;
 	VInitCyclResource *_vInitCyclResource;
+
+	// stampblt.blt resource types
+	PtrResource *_ptrResource;
+	ControlResource *_controlResource;
 public:
 	BoltEntry(Common::SeekableReadStream *f);
 	virtual ~BoltEntry();
@@ -224,6 +234,8 @@ class DisplayResource {
 public:
 	uint32 _flags;
 };
+
+/* bvoy.blt resource types */
 
 class PictureResource: public DisplayResource {
 public:
@@ -374,6 +386,25 @@ public:
 public:
 	VInitCyclResource(BoltFilesState &state, const byte *src);
 	virtual ~VInitCyclResource() {}
+};
+
+/* stampblt.blt resources */
+
+class PtrResource {
+public:
+	Common::Array<BoltEntry *> _entries;
+
+	PtrResource(BoltFilesState &state, const byte *src);
+	virtual ~PtrResource() {}
+};
+
+class ControlResource {
+public:
+	byte *_ptr;
+	Common::Array<byte *> _entries;
+
+	ControlResource(BoltFilesState &state, const byte *src);
+	virtual ~ControlResource() {}
 };
 
 } // End of namespace Voyeur

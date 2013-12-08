@@ -41,9 +41,9 @@ void VoyeurEngine::playStamp() {
 
 	boltFile->getBoltGroup(0x10000);
 	_voy._resolvePtr = &RESOLVE_TABLE[0];
-	byte *commandData = boltFile->memberAddr(3);
-	//uint32 commandId = READ_LE_UINT32(commandData);
-	//initThreadStruct(commandId);
+	PtrResource *threadsList = boltFile->boltEntry(3)._ptrResource;
+	byte *threadP = threadsList->_entries[0]->_data;
+	initThreadStruct(threadP);
 
 	_voy._delaySecs = 0;
 	_eventsManager._videoComputerNum = 9;
@@ -57,6 +57,10 @@ void VoyeurEngine::playStamp() {
 	}
 
 	_voy._field4386 = 0;
+}
+
+void VoyeurEngine::initThreadStruct(byte *threadStruct) {
+	// TODO
 }
 
 } // End of namespace Voyeur

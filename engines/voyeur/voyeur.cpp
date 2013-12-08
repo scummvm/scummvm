@@ -40,6 +40,7 @@ VoyeurEngine::VoyeurEngine(OSystem *syst, const VoyeurGameDescription *gameDesc)
 	DebugMan.addDebugChannel(kDebugPath, "Path", "Pathfinding debug level");
 	_bVoy = NULL;
 	_iForceDeath = -1;
+	_controlPtr = NULL;
 
 	initialiseManagers();
 }

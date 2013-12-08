@@ -83,7 +83,7 @@ private:
 	void doOpening();
 
 	void playStamp();
-	void initThreadStruct(int commandId);
+	void initThreadStruct(byte *threadStruct);
 protected:
 	// Engine APIs
 	virtual Common::Error run();
@@ -96,6 +96,8 @@ public:
 	GraphicsManager _graphicsManager;
 	SoundManager _soundManager;
 	SVoy _voy;
+
+	ControlResource *_controlPtr;
 public:
 	VoyeurEngine(OSystem *syst, const VoyeurGameDescription *gameDesc);
 	virtual ~VoyeurEngine();
