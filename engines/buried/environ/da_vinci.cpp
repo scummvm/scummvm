@@ -1008,6 +1008,47 @@ int CodexTowerGrabLens::droppedItem(Window *viewWindow, int itemID, const Common
 	return GenericItemAcquire::droppedItem(viewWindow, itemID, pointLocation, itemFlags);
 }
 
+class ClickBirdDevice : public SceneBase {
+public:
+	ClickBirdDevice(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	Common::Rect _birdToy;
+};
+
+ClickBirdDevice::ClickBirdDevice(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_birdToy = Common::Rect(90, 52, 198, 98);
+}
+
+int ClickBirdDevice::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_birdToy.contains(pointLocation)) {
+		// Play the animation
+		((SceneViewWindow *)viewWindow)->playSynchronousAnimation(10);
+	} else {
+		// Return back
+		DestinationScene destData;
+		destData.destinationScene = _staticData.location;
+		destData.destinationScene.depth = 0;
+		destData.transitionType = TRANSITION_VIDEO;
+		destData.transitionData = 16;
+		destData.transitionStartFrame = -1;
+		destData.transitionLength = -1;
+		((SceneViewWindow *)viewWindow)->moveToDestination(destData);
+	}
+
+	return SC_TRUE;
+}
+
+int ClickBirdDevice::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_birdToy.contains(pointLocation))
+		return kCursorFinger;
+
+	return kCursorPutDown;
+}
+
 class CourtyardCannon : public SceneBase {
 public:
 	CourtyardCannon(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
@@ -1767,6 +1808,23 @@ int LensFilterNotify::postEnterRoom(Window *viewWindow, const Location &newLocat
 	return SC_TRUE;
 }
 
+class CodexFormulaeNotify : public SceneBase {
+public:
+	CodexFormulaeNotify(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int postEnterRoom(Window *viewWindow, const Location &newLocation);
+};
+
+CodexFormulaeNotify::CodexFormulaeNotify(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+}
+
+int CodexFormulaeNotify::postEnterRoom(Window *viewWindow, const Location &newLocation) {
+	if (newLocation.node != _staticData.location.node && !((SceneViewWindow *)viewWindow)->isNumberInGlobalFlagTable(offsetof(GlobalFlags, evcapBaseID), offsetof(GlobalFlags, evcapNumCaptured), DAVINCI_EVIDENCE_CODEX))
+		((SceneViewWindow *)viewWindow)->displayLiveText(_vm->getString(IDS_MBT_EVIDENCE_PRESENT));
+
+	return SC_TRUE;
+}
+
 class ViewSiegeCyclePlans : public SceneBase {
 public:
 	ViewSiegeCyclePlans(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
@@ -2083,6 +2141,8 @@ SceneBase *SceneViewWindow::constructDaVinciSceneObject(Window *viewWindow, cons
 		return new ClickChangeScene(_vm, viewWindow, sceneStaticData, priorLocation, 0, 0, 432, 189, kCursorPutDown, 5, 2, 0, 2, 1, 0, TRANSITION_VIDEO, 14, -1, -1);
 	case 55:
 		return new ClickChangeScene(_vm, viewWindow, sceneStaticData, priorLocation, 210, 0, 330, 110, kCursorMagnifyingGlass, 5, 2, 3, 4, 1, 1, TRANSITION_VIDEO, 15, -1, -1);
+	case 56:
+		return new ClickBirdDevice(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 57:
 		return new CourtyardCannon(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 58:
@@ -2121,6 +2181,8 @@ SceneBase *SceneViewWindow::constructDaVinciSceneObject(Window *viewWindow, cons
 		return new ClickPlaySound(_vm, viewWindow, sceneStaticData, priorLocation, offsetof(GlobalFlags, dsCYTriedElevator), 13, kCursorFinger, 140, 130, 432, 189);
 	case 76:
 		return new PlaySoundEnteringScene(_vm, viewWindow, sceneStaticData, priorLocation, 12, offsetof(GlobalFlags, dsCTPlayedBallistaFalling));
+	case 77:
+		return new CodexFormulaeNotify(_vm, viewWindow, sceneStaticData, priorLocation);
 	}
 
 	warning("TODO: Da Vinci scene object %d", sceneStaticData.classID);
