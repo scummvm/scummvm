@@ -99,6 +99,8 @@ public:
 
 	bool scene04_coinPut;
 	bool scene04_soundPlaying;
+	bool scene04_needJumping;
+
 	int scene04_dynamicPhaseIndex;
 	int scene04_sceneClickX;
 	int scene04_sceneClickY;
@@ -111,7 +113,6 @@ public:
 	int scene04_speakerVariant;
 	int scene04_speakerPhase;
 
-	int scene04_var01;
 	int scene04_var02;
 	int scene04_var04;
 	int scene04_var06;

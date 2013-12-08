@@ -72,6 +72,7 @@ Vars::Vars() {
 	scene04_coinPut = false;
 	scene04_soundPlaying = false;
 	scene04_dynamicPhaseIndex = 0;
+	scene04_needJumping = false;
 
 	scene04_sceneClickX = 0;
 	scene04_sceneClickY = 0;
@@ -79,7 +80,6 @@ Vars::Vars() {
 	scene04_dudePosX = 0;
 	scene04_dudePosY = 0;
 
-	scene04_var01 = 0;
 	scene04_var02 = 0;
 	scene04_var04 = 0;
 	scene04_walkingKozyawka = 0;
