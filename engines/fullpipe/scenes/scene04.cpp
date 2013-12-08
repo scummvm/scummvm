@@ -442,6 +442,73 @@ void sceneHandler04_walkKozyawka() {
 }
 
 void sceneHandler04_sub4() {
+#if 0
+	int var20 = g_vars->scene04_var20;
+	int oldDynIndex = g_vars->scene04_dynamicPhaseIndex;
+	v2 = g_vars->scene04_var20 + g_vars->scene04_dynamicPhaseIndex;
+	g_vars->scene04_dynamicPhaseIndex += g_vars->scene04_var20;
+
+	if (g_vars->scene04_var20 + g_vars->scene04_dynamicPhaseIndex < 0) {
+		v2 = 0;
+		var20 = 0;
+		g_vars->scene04_dynamicPhaseIndex = 0;
+		g_vars->scene04_var20 = 0;
+	}
+
+	if (v2 > 14) {
+		v2 = 14;
+		var20 = 0;
+		g_vars->scene04_dynamicPhaseIndex = 14;
+		g_vars->scene04_var20 = 0;
+	}
+
+	v4 = __OFSUB__(g_vars->scene04_var06, v2);
+	v3 = g_vars->scene04_var06 - v2 < 0;
+
+	if (g_vars->scene04_var06 > v2) {
+		++var20;
+		v4 = __OFSUB__(g_vars->scene04_var06, v2);
+		v3 = g_vars->scene04_var06 - v2 < 0;
+		g_vars->scene04_var20 = var20;
+	}
+
+	if (v3 ^ v4) {
+		--var20;
+		g_vars->scene04_var20 = var20;
+	}
+
+	if (oldDynIndex <= g_vars->scene04_var06)
+		if (v2 <= g_vars->scene04_var06)
+			goto LABEL_16;
+	} else if (v2 > g_vars->scene04_var06) {
+		goto LABEL_16;
+	}
+
+	g_vars->scene04_var25++;
+
+	if (var20 && g_vars->scene04_var25 > 1) {
+		g_vars->scene04_var25 = 0;
+		g_vars->scene04_var20--;
+	}
+ LABEL_16:
+
+	Common::Point point;
+
+	int curdelta = g_vars->scene04_spring->getCurrDimensions(&point)->y - g_vars->scene04_dynamicPhaseIndex;
+
+	if (g_vars->scene04_dynamicPhaseIndex) {
+		if (!g_vars->scene04_spring->_movement)
+			g_vars->scene04_spring->startAnim(MV_SPR_LOWER, 0, -1);
+
+		g_vars->scene04_spring->_movement->setDynamicPhaseIndex(g_vars->scene04_dynamicPhaseIndex);
+	} else {
+		g_vars->scene04_spring->changeStatics2(ST_SPR_UP);
+	}
+
+	if (g_vars->scene04_dynamicPhaseIndex != oldDynIndex)
+		sceneHandler04_bottleUpdateObjects(curdelta - (g_vars->scene04_spring->getCurrDimensions(&point)->y - g_vars->scene04_dynamicPhaseIndex));
+#endif
+
 	warning("STUB: sceneHandler04_sub4()");
 }
 
