@@ -1159,6 +1159,321 @@ int CodexTowerGrabHeart::specifyCursor(Window *viewWindow, const Common::Point &
 	return kCursorArrow;
 }
 
+class ZoomInOnCodexes : public SceneBase {
+public:
+	ZoomInOnCodexes(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int locateAttempted(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	
+private:
+	Common::Rect _leftCodex;
+	Common::Rect _middleCodex;
+	Common::Rect _rightCodex;
+};
+
+ZoomInOnCodexes::ZoomInOnCodexes(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_leftCodex = Common::Rect(82, 32, 212, 92);
+	_middleCodex = Common::Rect(218, 58, 284, 128);
+	_rightCodex = Common::Rect(285, 35, 345, 91);
+}
+
+int ZoomInOnCodexes::postEnterRoom(Window *viewWindow, const Location &priorLocation) {
+	// If we have not yet captured the codex evidence, display a message
+	if (!((SceneViewWindow *)viewWindow)->isNumberInGlobalFlagTable(offsetof(GlobalFlags, evcapBaseID), offsetof(GlobalFlags, evcapNumCaptured), DAVINCI_EVIDENCE_CODEX))
+		((SceneViewWindow *)viewWindow)->displayLiveText(_vm->getString(IDS_MBT_EVIDENCE_PRESENT));
+
+	((SceneViewWindow *)viewWindow)->getGlobalFlags().dsCYFoundCodexes = 1;
+	return SC_TRUE;
+}
+
+int ZoomInOnCodexes::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_leftCodex.contains(pointLocation)) {
+		DestinationScene destData;
+		destData.destinationScene = _staticData.location;
+		destData.destinationScene.depth = 1;
+		destData.transitionType = TRANSITION_VIDEO;
+		destData.transitionData = 17;
+		destData.transitionStartFrame = -1;
+		destData.transitionLength = -1;
+		((SceneViewWindow *)viewWindow)->moveToDestination(destData);
+		return SC_TRUE;
+	} else if (_middleCodex.contains(pointLocation)) {
+		DestinationScene destData;
+		destData.destinationScene = _staticData.location;
+		destData.destinationScene.depth = 2;
+		destData.transitionType = TRANSITION_VIDEO;
+		destData.transitionData = 21;
+		destData.transitionStartFrame = -1;
+		destData.transitionLength = -1;
+		((SceneViewWindow *)viewWindow)->moveToDestination(destData);
+		return SC_TRUE;
+	} else if (_rightCodex.contains(pointLocation)) {
+		DestinationScene destData;
+		destData.destinationScene = _staticData.location;
+		destData.destinationScene.depth = 3;
+		destData.transitionType = TRANSITION_VIDEO;
+		destData.transitionData = 19;
+		destData.transitionStartFrame = -1;
+		destData.transitionLength = -1;
+		((SceneViewWindow *)viewWindow)->moveToDestination(destData);
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int ZoomInOnCodexes::locateAttempted(Window *viewWindow, const Common::Point &pointLocation) {
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().bcLocateEnabled == 1 && _middleCodex.contains(pointLocation) && !((SceneViewWindow *)viewWindow)->isNumberInGlobalFlagTable(offsetof(GlobalFlags, evcapBaseID), offsetof(GlobalFlags, evcapNumCaptured), DAVINCI_EVIDENCE_CODEX)) {
+		((SceneViewWindow *)viewWindow)->displayLiveText(_vm->getString(IDS_MBT_EVIDENCE_MUST_BE_REVEALED));
+		((GameUIWindow *)viewWindow->getParent())->_bioChipRightWindow->disableEvidenceCapture();
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int ZoomInOnCodexes::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().bcLocateEnabled == 1) {
+		if (_middleCodex.contains(pointLocation))
+			return -2;
+
+		return -1;
+	}
+
+	if (_leftCodex.contains(pointLocation) || _middleCodex.contains(pointLocation) || _rightCodex.contains(pointLocation))
+		return kCursorMagnifyingGlass;
+
+	return kCursorArrow;
+}
+
+class BrowseCodex : public SceneBase {
+public:
+	BrowseCodex(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+			int timeZone = -1, int environment = -1, int node = -1, int facing = -1, int orientation = -1,
+			int depth = -1, int transitionType = -1, int transitionData = -1, int transitionStartFrame = -1, int transitionLength = -1,
+			int startFrame = -1, int frameCount = -1, int lensStartFrame = -1);
+	int gdiPaint(Window *viewWindow);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int mouseMove(Window *viewWindow, const Common::Point &pointLocation);
+	int timerCallback(Window *viewWindow);
+	int locateAttempted(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	int _curPage;
+	Common::Rect _top, _bottom, _left, _right, _putDown;
+	DestinationScene _putDownDestination;
+	int _startFrame;
+	int _frameCount;
+	int _lensStartFrame;
+	bool _translateAttempted;
+	bool _lensActivated;
+};
+
+BrowseCodex::BrowseCodex(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+		int timeZone, int environment, int node, int facing, int orientation,
+		int depth, int transitionType, int transitionData, int transitionStartFrame, int transitionLength,
+		int startFrame, int frameCount, int lensStartFrame) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_curPage = 0;
+	_lensActivated = false;
+	_translateAttempted = false;
+	_startFrame = startFrame;
+	_frameCount = frameCount;
+	_lensStartFrame = lensStartFrame;
+	_putDownDestination.destinationScene = Location(timeZone, environment, node, facing, orientation, depth);
+	_putDownDestination.transitionType = transitionType;
+	_putDownDestination.transitionData = transitionData;
+	_putDownDestination.transitionStartFrame = transitionStartFrame;
+	_putDownDestination.transitionLength = transitionLength;
+
+	_staticData.navFrameIndex = startFrame;
+
+	_top = Common::Rect(150, 0, 282, 70);
+	_bottom = Common::Rect(150, 119, 282, 189);
+	_left = Common::Rect(0, 0, 150, 189);
+	_right = Common::Rect(282, 0, 432, 189);
+	_putDown = Common::Rect(150, 70, 282, 119);
+}
+
+int BrowseCodex::gdiPaint(Window *viewWindow) {
+	if (_translateAttempted) {
+		Common::Rect absoluteRect = viewWindow->getAbsoluteRect();
+		Common::Rect rect(5, 5, 427, 184);
+		rect.translate(absoluteRect.left, absoluteRect.top);
+		_vm->_gfx->getScreen()->frameRect(rect, _vm->_gfx->getColor(255, 0, 0));
+	}
+
+	return SC_REPAINT;
+}
+
+int BrowseCodex::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	int startingPage = _startFrame;
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().lensFilterActivated == 1 && _lensStartFrame >= 0)
+		startingPage = _lensStartFrame;
+
+	if (_top.contains(pointLocation) && (_curPage % 2) != 0) {
+		_curPage--;
+		_staticData.navFrameIndex = startingPage + _curPage;
+
+		Graphics::Surface *newBackground = ((SceneViewWindow *)viewWindow)->getStillFrameCopy(_staticData.navFrameIndex);
+		((SceneViewWindow *)viewWindow)->pushNewTransition(newBackground, 0, _vm->_gfx->computeVPushOffset(_vm->getTransitionSpeed()), 0);
+		newBackground->free();
+		delete newBackground;
+		viewWindow->invalidateWindow(false);
+		return SC_TRUE;
+	} else if (_bottom.contains(pointLocation) && (_curPage % 2) == 0) {
+		_curPage++;
+		_staticData.navFrameIndex = startingPage + _curPage;
+
+		Graphics::Surface *newBackground = ((SceneViewWindow *)viewWindow)->getStillFrameCopy(_staticData.navFrameIndex);
+		((SceneViewWindow *)viewWindow)->pushNewTransition(newBackground, 3, _vm->_gfx->computeVPushOffset(_vm->getTransitionSpeed()), 0);
+		newBackground->free();
+		delete newBackground;
+		viewWindow->invalidateWindow(false);
+		return SC_TRUE;
+	} else if (_left.contains(pointLocation) && _curPage >= 2) {
+		_curPage -= 2;
+		_staticData.navFrameIndex = startingPage + _curPage;
+
+		Graphics::Surface *newBackground = ((SceneViewWindow *)viewWindow)->getStillFrameCopy(_staticData.navFrameIndex);
+		((SceneViewWindow *)viewWindow)->slideInTransition(newBackground, 1, _vm->_gfx->computeHPushOffset(_vm->getTransitionSpeed()), 0);
+		newBackground->free();
+		delete newBackground;
+		viewWindow->invalidateWindow(false);
+		return SC_TRUE;
+	} else if (_right.contains(pointLocation) && _curPage < _frameCount - 2) {
+		_curPage += 2;
+		_staticData.navFrameIndex = startingPage + _curPage;
+
+		if (_staticData.location.timeZone == 5 && _staticData.location.environment == 2 &&
+				_staticData.location.node == 5 && _staticData.location.facing == 2 &&
+				_staticData.location.orientation == 5 && _staticData.location.depth == 2 &&
+				_curPage == 2) {
+			((SceneViewWindow *)viewWindow)->getGlobalFlags().dsCTCodexAtlanticusPage2 = 1;
+		} else {
+			((SceneViewWindow *)viewWindow)->getGlobalFlags().dsCTCodexAtlanticusPage2 = 0;
+		}
+
+		Graphics::Surface *newBackground = ((SceneViewWindow *)viewWindow)->getStillFrameCopy(_staticData.navFrameIndex);
+		((SceneViewWindow *)viewWindow)->slideOutTransition(newBackground, 1, _vm->_gfx->computeHPushOffset(_vm->getTransitionSpeed()), 0);
+		newBackground->free();
+		delete newBackground;
+		viewWindow->invalidateWindow(false);
+		return SC_TRUE;
+	} else if (_putDown.contains(pointLocation) && _putDownDestination.destinationScene.timeZone >= 0) {
+		((SceneViewWindow *)viewWindow)->moveToDestination(_putDownDestination);
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int BrowseCodex::mouseMove(Window *viewWindow, const Common::Point &pointLocation) {
+	Common::Rect transRegion(25, 25, 382, 139);
+
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().bcTranslateEnabled == 1) {
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().dsCYTranslatedCodex = 1;
+
+		if (transRegion.contains(pointLocation)) {
+			if (!_translateAttempted) {
+				_translateAttempted = true;
+				viewWindow->invalidateWindow(false);
+				((SceneViewWindow *)viewWindow)->displayTranslationText("");
+			}
+		} else {
+			if (_translateAttempted) {
+				_translateAttempted = false;
+				viewWindow->invalidateWindow(false);
+				((SceneViewWindow *)viewWindow)->displayTranslationText("");
+			}
+		}
+	} else {
+		if (_translateAttempted) {
+			_translateAttempted = false;
+			viewWindow->invalidateWindow(false);
+			((SceneViewWindow *)viewWindow)->displayTranslationText("");
+		}
+	}
+
+	return SC_FALSE;
+}
+
+int BrowseCodex::timerCallback(Window *viewWindow) {
+	if (_translateAttempted && ((SceneViewWindow *)viewWindow)->getGlobalFlags().bcTranslateEnabled == 0) {
+		_translateAttempted = false;
+		viewWindow->invalidateWindow(false);
+	}
+
+	// Are we looking at the proper codex?
+	if (_lensStartFrame >= 0) {
+		if (((SceneViewWindow *)viewWindow)->getGlobalFlags().lensFilterActivated == 1) {
+			if (!_lensActivated) {
+				_lensActivated = true;
+				_staticData.navFrameIndex = _lensStartFrame;
+				((SceneViewWindow *)viewWindow)->getGlobalFlags().dsCTCodexFormulaeFound = 1;
+				_curPage = 0;
+				viewWindow->invalidateWindow(false);
+
+				// Play the capture animation
+				((SceneViewWindow *)viewWindow)->playSynchronousAnimation(24);
+
+				// Attempt to add it to your evidence biochip
+				if (((SceneViewWindow *)viewWindow)->addNumberToGlobalFlagTable(offsetof(GlobalFlags, evcapBaseID), offsetof(GlobalFlags, evcapNumCaptured), 12, DAVINCI_EVIDENCE_CODEX))
+					((SceneViewWindow *)viewWindow)->displayLiveText(_vm->getString(IDS_MBT_EVIDENCE_RIPPLE_DOCUMENTED));
+				else
+					((SceneViewWindow *)viewWindow)->displayLiveText(_vm->getString(IDS_MBT_EVIDENCE_ALREADY_ACQUIRED));
+
+				// Set the scoring flag
+				((SceneViewWindow *)viewWindow)->getGlobalFlags().scoreLoggedCodexEvidence = 1;
+			}
+		} else {
+			if (_lensActivated) {
+				_lensActivated = false;
+				_staticData.navFrameIndex = _startFrame + _curPage;
+				viewWindow->invalidateWindow(false);
+			}
+		}
+	}
+
+	return SC_TRUE;
+}
+
+int BrowseCodex::locateAttempted(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_lensStartFrame >= 0 && !((SceneViewWindow *)viewWindow)->isNumberInGlobalFlagTable(offsetof(GlobalFlags, evcapBaseID), offsetof(GlobalFlags, evcapNumCaptured), DAVINCI_EVIDENCE_CODEX)) {
+		((SceneViewWindow *)viewWindow)->displayLiveText(_vm->getString(IDS_MBT_EVIDENCE_MUST_BE_REVEALED));
+		((GameUIWindow *)viewWindow->getParent())->_bioChipRightWindow->disableEvidenceCapture();
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int BrowseCodex::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_lensStartFrame >= 0 && ((SceneViewWindow *)viewWindow)->getGlobalFlags().bcLocateEnabled == 1 && !((SceneViewWindow *)viewWindow)->isNumberInGlobalFlagTable(offsetof(GlobalFlags, evcapBaseID), offsetof(GlobalFlags, evcapNumCaptured), DAVINCI_EVIDENCE_CODEX))
+		return -2;
+
+	if (_top.contains(pointLocation) && (_curPage % 2) != 0)
+		return kCursorMoveUp;
+
+	if (_left.contains(pointLocation) && _curPage >= 2)
+		return kCursorPrevPage;
+
+	if (_right.contains(pointLocation) && _curPage < _frameCount - 2)
+		return kCursorNextPage;
+
+	if (_bottom.contains(pointLocation) && (_curPage % 2) == 0)
+		return kCursorMoveDown;
+
+	if (_putDown.contains(pointLocation) && _putDownDestination.destinationScene.timeZone >= 0)
+		return kCursorPutDown;
+
+	return kCursorArrow;
+}
+
 class ClickBirdDevice : public SceneBase {
 public:
 	ClickBirdDevice(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
@@ -2362,6 +2677,14 @@ SceneBase *SceneViewWindow::constructDaVinciSceneObject(Window *viewWindow, cons
 		return new CodexTowerGrabHeart(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 46:
 		return new ClickPlayVideo(_vm, viewWindow, sceneStaticData, priorLocation, 8, kCursorFinger, 102, 124, 164, 189);
+	case 47:
+		return new ZoomInOnCodexes(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 48:
+		return new BrowseCodex(_vm, viewWindow, sceneStaticData, priorLocation, 5, 2, 3, 1, 0, 0, TRANSITION_VIDEO, 18, -1, -1, 181, 8, -1);
+	case 49:
+		return new BrowseCodex(_vm, viewWindow, sceneStaticData, priorLocation, 5, 2, 3, 1, 0, 0, TRANSITION_VIDEO, 22, -1, -1, 189, 10, 199);
+	case 50:
+		return new BrowseCodex(_vm, viewWindow, sceneStaticData, priorLocation, 5, 2, 3, 1, 0, 0, TRANSITION_VIDEO, 20, -1, -1, 173, 8, -1);
 	case 51:
 		return new ClickChangeScene(_vm, viewWindow, sceneStaticData, priorLocation, 0, 36, 240, 189, kCursorMagnifyingGlass, 5, 2, 4, 0, 0, 1, TRANSITION_VIDEO, 11, -1, -1);
 	case 52:
