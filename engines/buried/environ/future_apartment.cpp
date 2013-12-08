@@ -1068,6 +1068,10 @@ SceneBase *SceneViewWindow::constructFutureApartmentSceneObject(Window *viewWind
 	// TODO
 
 	switch (sceneStaticData.classID) {
+	case 1:
+		return new ClickPlayVideoSwitchAI(_vm, viewWindow, sceneStaticData, priorLocation, 0, kCursorFinger, offsetof(GlobalFlags, faKICoffeeSpilled), 212, 114, 246, 160);
+	case 2:
+		return new ClickPlayVideoSwitchAI(_vm, viewWindow, sceneStaticData, priorLocation, 1, kCursorFinger, offsetof(GlobalFlags, faKIBirdsBobbed), 150, 40, 260, 164);
 	case 3:
 		return new OvenDoor(_vm, viewWindow, sceneStaticData, priorLocation, 2, 3, 37, 25, offsetof(GlobalFlags, faKIOvenStatus), 0, 0, 270, 80);
 	case 4:
