@@ -1613,6 +1613,82 @@ int PaintingTowerCapAgent::postEnterRoom(Window *viewWindow, const Location &pri
 	return SC_TRUE;
 }
 
+class CodexTowerElevatorControls : public SceneBase {
+public:
+	CodexTowerElevatorControls(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int gdiPaint(Window *viewWindow);
+	int mouseMove(Window *viewWindow, const Common::Point &pointLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	Common::Rect _transText[4];
+	Common::Rect _controls[2];
+	int _textTranslated;
+};
+
+CodexTowerElevatorControls::CodexTowerElevatorControls(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_transText[0] = Common::Rect(234, 52, 301, 72);
+	_transText[1] = Common::Rect(232, 147, 299, 167);
+	_transText[2] = Common::Rect(325, 51, 380, 71);
+	_transText[3] = Common::Rect(321, 147, 388, 168);
+	_controls[0] = Common::Rect(236, 38, 296, 264);
+	_controls[1] = Common::Rect(350, 70, 432, 140);
+	_textTranslated = -1;
+}
+
+int CodexTowerElevatorControls::gdiPaint(Window *viewWindow) {
+	if (_textTranslated >= 0 && ((SceneViewWindow *)viewWindow)->getGlobalFlags().bcTranslateEnabled == 1) {
+		Common::Rect absoluteRect = viewWindow->getAbsoluteRect();
+		Common::Rect rect(_transText[_textTranslated]);
+		rect.translate(absoluteRect.left, absoluteRect.top);
+		_vm->_gfx->getScreen()->frameRect(rect, _vm->_gfx->getColor(255, 0, 0));
+	}
+
+	return SC_REPAINT;
+}
+
+int CodexTowerElevatorControls::mouseMove(Window *viewWindow, const Common::Point &pointLocation) {
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().bcTranslateEnabled == 1) {
+		for (int i = 0; i < 4; i++) {
+			if (_transText[i].contains(pointLocation)) {
+				((SceneViewWindow *)viewWindow)->getGlobalFlags().dsPTTransElevatorControls = 1;
+
+				Common::String text = _vm->getString(IDDS_ELEVATOR_CONTROLS_TEXT_A + i);
+				((SceneViewWindow *)viewWindow)->displayTranslationText(text);
+				_textTranslated = i;
+				viewWindow->invalidateWindow(false);
+				break;
+			}
+		}
+	} else {
+		if (_textTranslated >= 0) {
+			_textTranslated = -1;
+			viewWindow->invalidateWindow(false);
+		}
+	}
+
+	return SC_FALSE;
+}
+
+int CodexTowerElevatorControls::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_controls[0].contains(pointLocation) || _controls[1].contains(pointLocation)) {
+		_vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 13));
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().dsCTTriedElevatorControls = 1;
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int CodexTowerElevatorControls::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_controls[0].contains(pointLocation) || _controls[1].contains(pointLocation))
+		return kCursorFinger;
+
+	return kCursorArrow;
+}
+
 class ClickChangeSceneTranslate : public SceneBase {
 public:
 	ClickChangeSceneTranslate(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
@@ -2326,6 +2402,8 @@ SceneBase *SceneViewWindow::constructDaVinciSceneObject(Window *viewWindow, cons
 		return new AimBallistaToTower(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 70:
 		return new PaintingTowerCapAgent(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 71:
+		return new CodexTowerElevatorControls(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 72:
 		return new PlaySoundExitingFromScene(_vm, viewWindow, sceneStaticData, priorLocation, 13);
 	case 73:
