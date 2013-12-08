@@ -185,9 +185,14 @@ bool FilesManager::openBoltLib(const Common::String &filename, BoltFile *&boltFi
 		return true;
 	}
 
-	// TODO: Specific library classes for buoy.blt versus stampblt.blt 
 	// Create the bolt file interface object and load the index
-	boltFile = _boltFilesState._curLibPtr = new BoltFile(_boltFilesState);
+	if (filename == "bvoy.blt")
+		boltFile = _boltFilesState._curLibPtr = new BVoyBoltFile(_boltFilesState);
+	else if (filename == "stampblt.blt")
+		boltFile = _boltFilesState._curLibPtr = new StampBoltFile(_boltFilesState);
+	else
+		error("Unknown bolt file specified");
+
 	return true;
 }
 
@@ -212,20 +217,10 @@ byte *FilesManager::fload(const Common::String &filename, int *size) {
 
 /*------------------------------------------------------------------------*/
 
-const BoltMethodPtr BoltFile::_fnInitType[25] = {
-	&BoltFile::initDefault, &BoltFile::initDefault, &BoltFile::initDefault, &BoltFile::initDefault,
-	&BoltFile::initDefault, &BoltFile::initDefault, &BoltFile::initDefault, &BoltFile::initDefault,
-	&BoltFile::sInitPic, &BoltFile::initDefault, &BoltFile::vInitCMap, &BoltFile::vInitCycl,
-	&BoltFile::initDefault, &BoltFile::initDefault, &BoltFile::initDefault, &BoltFile::initViewPort,
-	&BoltFile::initViewPortList, &BoltFile::initFont, &BoltFile::initFontInfo,
-	&BoltFile::initSoundMap, &BoltFile::initDefault, &BoltFile::initDefault, &BoltFile::initDefault,
-	&BoltFile::initDefault, &BoltFile::initDefault
-};
-
-BoltFile::BoltFile(BoltFilesState &state): _state(state) {
+BoltFile::BoltFile(const Common::String &filename, BoltFilesState &state): _state(state) {
 	_state._curFd = &_file;
-	if (!_file.open("bvoy.blt"))
-		error("Could not open buoy.blt");
+	if (!_file.open(filename))
+		error("Could not open %s", filename.c_str());
 	_state._curFilePosition = 0;
 
 	// Read in the file header
@@ -403,7 +398,7 @@ byte *BoltFile::getBoltMember(uint32 id) {
 	if (_state._curGroupPtr->_processed) {
 		// TODO: Figure out weird access type. Uncompressed read perhaps?
 		//int fileDiff = _state._curGroupPtr->_fileOffset - _state._curMemberPtr->_fileOffset;
-
+		error("TODO: processed bolt flag");
 	} else {
 		_state._bufStart = _state._decompressBuf;
 		_state._bufSize = DECOMPRESS_SIZE;
@@ -425,7 +420,7 @@ byte *BoltFile::getBoltMember(uint32 id) {
 
 	// Initialise the resource
 	assert(_state._curMemberPtr->_initMethod < 25);
-	(this->*_fnInitType[_state._curMemberPtr->_initMethod])();
+	initResource(_state._curMemberPtr->_initMethod);
 
 	return _state._curMemberPtr->_data;
 }
@@ -435,27 +430,44 @@ void BoltFile::initDefault() {
 		_state._curMemberPtr->_mode);	
 }
 
-void BoltFile::sInitPic() {
-	// Read in the header data
-	_state._curMemberPtr->_data = _state.decompress(NULL, 24, _state._curMemberPtr->_mode);
-	_state._curMemberPtr->_picResource = new PictureResource(_state, 
-		_state._curMemberPtr->_data);
+/*------------------------------------------------------------------------*/
+
+BVoyBoltFile::BVoyBoltFile(BoltFilesState &state): BoltFile("bvoy.blt", state) {
 }
 
-void BoltFile::vInitCMap() {
-	initDefault();
-	_state._curMemberPtr->_cMapResource = new CMapResource(
-		_state, _state._curMemberPtr->_data);
+void BVoyBoltFile::initResource(int resType) {
+	switch (resType) {
+	case 8:
+		sInitPic();
+		break;
+	case 10:
+		vInitCMap();
+		break;
+	case 11:
+		vInitCycl();
+		break;
+	case 15:
+		initViewPort();
+		break;
+	case 16:
+		initViewPortList();
+		break;
+	case 17:
+		initFont();
+		break;
+	case 18:
+		initFontInfo();
+		break;
+	case 19:
+		initSoundMap();
+		break;
+	default:
+		initDefault();
+		break;
+	}
 }
 
-void BoltFile::vInitCycl() {
-	initDefault();
-	_state._vm->_eventsManager.vStopCycle();
-	_state._curMemberPtr->_vInitCyclResource = new VInitCyclResource(
-		_state, _state._curMemberPtr->_data);
-}
-
-void BoltFile::initViewPort() {
+void BVoyBoltFile::initViewPort() {
 	initDefault();
 
 	ViewPortResource *viewPort;
@@ -467,7 +479,7 @@ void BoltFile::initViewPort() {
 	viewPort->_parent = getBoltEntryFromLong(READ_LE_UINT32(src + 2))._viewPortResource;
 }
 
-void BoltFile::initViewPortList() {
+void BVoyBoltFile::initViewPortList() {
 	initDefault();
 
 	ViewPortListResource *res;
@@ -478,19 +490,52 @@ void BoltFile::initViewPortList() {
 	_state._vm->_graphicsManager._vPort = &res->_entries[0];
 }
 
-void BoltFile::initFontInfo() {
+void BVoyBoltFile::initFontInfo() {
 	initDefault();
 	_state._curMemberPtr->_fontInfoResource = new FontInfoResource(
 		_state, _state._curMemberPtr->_data);
 }
 
-void BoltFile::initFont() {
+void BVoyBoltFile::initFont() {
 	initDefault();
 	_state._curMemberPtr->_fontResource = new FontResource(_state, _state._curMemberPtr->_data);
 }
 
-void BoltFile::initSoundMap() {
+void BVoyBoltFile::initSoundMap() {
 	initDefault();
+}
+
+void BVoyBoltFile::sInitPic() {
+	// Read in the header data
+	_state._curMemberPtr->_data = _state.decompress(NULL, 24, _state._curMemberPtr->_mode);
+	_state._curMemberPtr->_picResource = new PictureResource(_state, 
+		_state._curMemberPtr->_data);
+}
+
+void BVoyBoltFile::vInitCMap() {
+	initDefault();
+	_state._curMemberPtr->_cMapResource = new CMapResource(
+		_state, _state._curMemberPtr->_data);
+}
+
+void BVoyBoltFile::vInitCycl() {
+	initDefault();
+	_state._vm->_eventsManager.vStopCycle();
+	_state._curMemberPtr->_vInitCyclResource = new VInitCyclResource(
+		_state, _state._curMemberPtr->_data);
+}
+
+/*------------------------------------------------------------------------*/
+
+StampBoltFile::StampBoltFile(BoltFilesState &state): BoltFile("stampblt.blt", state) {
+}
+
+void StampBoltFile::initResource(int resType) {
+	switch (resType) {
+	default:
+		initDefault();
+		break;
+	}
 }
 
 /*------------------------------------------------------------------------*/

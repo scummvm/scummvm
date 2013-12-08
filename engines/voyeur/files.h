@@ -44,8 +44,6 @@ class VInitCyclResource;
 
 #define DECOMPRESS_SIZE 0x7000
 
-typedef void (BoltFile::*BoltMethodPtr)();
-
 class ResolveEntry {
 public:
 	uint32 _id;
@@ -98,22 +96,13 @@ public:
 
 class BoltFile {
 private:
-	static const BoltMethodPtr _fnInitType[25];
-private:
-	BoltFilesState &_state;
 	Common::Array<BoltGroup> _groups;
 	Common::File _file;
+protected:
+	BoltFilesState &_state;
 
-	// initType method table
+	virtual void initResource(int resType) = 0;
 	void initDefault();
-	void sInitPic();
-	void vInitCMap();
-	void vInitCycl();
-	void initViewPort();
-	void initViewPortList();
-	void initFontInfo();
-	void initFont();
-	void initSoundMap();
 private:
 	void resolveAll();
 	byte *getBoltMember(uint32 id);
@@ -124,7 +113,7 @@ private:
 	void initGro() {}	// TODO
 	void termGro() {}	// TODO
 public:
-	BoltFile(BoltFilesState &state);
+	BoltFile(const Common::String &filename, BoltFilesState &state);
 	~BoltFile();
 
 	bool getBoltGroup(uint32 id);
@@ -138,6 +127,30 @@ public:
 	BoltEntry &getBoltEntryFromLong(uint32 id);
 	PictureResource *getPictureResource(uint32 id);
 	CMapResource *getCMapResource(uint32 id);
+};
+
+class BVoyBoltFile: public BoltFile {
+private:
+	// initType method table
+	void sInitPic();
+	void vInitCMap();
+	void vInitCycl();
+	void initViewPort();
+	void initViewPortList();
+	void initFontInfo();
+	void initFont();
+	void initSoundMap();
+protected:
+	virtual void initResource(int resType);
+public:
+	BVoyBoltFile(BoltFilesState &state);
+};
+
+class StampBoltFile: public BoltFile {
+protected:
+	virtual void initResource(int resType);
+public:
+	StampBoltFile(BoltFilesState &state);
 };
 
 class BoltGroup {

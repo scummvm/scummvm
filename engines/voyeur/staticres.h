@@ -29,6 +29,8 @@ namespace Voyeur {
 
 extern const int COMPUTER_DEFAULTS[];
 
+extern const int RESOLVE_TABLE[];
+
 } // End of namespace Voyeur
 
 #endif

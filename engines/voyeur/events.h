@@ -66,7 +66,7 @@ public:
 	int _RTVNum;
 	int _switchBGNum;
 	int _group;
-	int _resolvePtr;
+	const int *_resolvePtr;
 	int _seconds;
 	int _minutes;
 	int _hours;
@@ -171,6 +171,7 @@ public:
 	int _fadeCount;
 	int _fadeStatus;
 
+	int _v2A0A2;
 	int _videoComputerNum;
 	int _videoComputerBut1;
 	int _videoComputerBut4;

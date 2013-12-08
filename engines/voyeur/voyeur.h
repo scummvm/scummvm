@@ -66,6 +66,7 @@ private:
 	Common::Array<int> _resolves;
 	FontInfoResource _defaultFontInfo;
 	int _iForceDeath;
+	byte *_stampData;
 
 	void ESP_Init();
 	void initialiseManagers();
@@ -80,7 +81,9 @@ private:
 	bool doLock();
 	void showTitleScreen();
 	void doOpening();
+
 	void playStamp();
+	void initThreadStruct(int commandId);
 protected:
 	// Engine APIs
 	virtual Common::Error run();

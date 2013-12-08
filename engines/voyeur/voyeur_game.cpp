@@ -21,6 +21,7 @@
  */
 
 #include "voyeur/voyeur.h"
+#include "voyeur/staticres.h"
 
 namespace Voyeur {
 
@@ -35,7 +36,27 @@ void VoyeurEngine::addVideoEventStart() {
 }
 
 void VoyeurEngine::playStamp() {
+	BoltFile *boltFile = NULL;
+	_filesManager.openBoltLib("stampblt.blt", boltFile);
 
+	boltFile->getBoltGroup(0x10000);
+	_voy._resolvePtr = &RESOLVE_TABLE[0];
+	byte *commandData = boltFile->memberAddr(3);
+	//uint32 commandId = READ_LE_UINT32(commandData);
+	//initThreadStruct(commandId);
+
+	_voy._delaySecs = 0;
+	_eventsManager._videoComputerNum = 9;
+	_eventsManager._videoComputerBut1 = 0;
+	_eventsManager._v2A0A2 = 0;
+	_voy._eCursorOff[53] = 1;
+
+	bool breakFlag = false;
+	while (!breakFlag && !shouldQuit()) {
+		breakFlag = true;
+	}
+
+	_voy._field4386 = 0;
 }
 
 } // End of namespace Voyeur
