@@ -4524,7 +4524,7 @@ void Scene1337::dispatch() {
 	Scene::dispatch();
 }
 
-void Scene1337::actionDisplay(int resNum, int lineNum, int x, int y, int arg5, int width, int textMode, int fontNum, int colFG, int colBGExt, int colFGExt) {
+void Scene1337::actionDisplay(int resNum, int lineNum, int x, int y, int keepOnScreen, int width, int textMode, int fontNum, int colFG, int colBGExt, int colFGExt) {
 	// TODO: Check if it's normal that arg5 is unused and replaced by an hardcoded 0 value
 	// May hide an original bug
 

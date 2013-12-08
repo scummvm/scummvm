@@ -328,7 +328,7 @@ public:
 	Scene1337();
 	virtual void synchronize(Serializer &s);
 
-	void actionDisplay(int resNum, int lineNum, int x, int y, int arg5, int width, int textMode, int fontNum, int colFG, int colBGExt, int colFGExt);
+	void actionDisplay(int resNum, int lineNum, int x, int y, int keepOnScreen, int width, int textMode, int fontNum, int colFG, int colBGExt, int colFGExt);
 	void setAnimationInfo(Card *subObj);
 	void subC20E5();
 	void subC20F9();
