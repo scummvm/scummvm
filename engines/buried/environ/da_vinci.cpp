@@ -897,6 +897,117 @@ int CodexTowerOutsideDoor::specifyCursor(Window *viewWindow, const Common::Point
 	return kCursorArrow;
 }
 
+class CodexTowerLensEvidenceCapture : public SceneBase {
+public:
+	CodexTowerLensEvidenceCapture(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int locateAttempted(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	Common::Rect _evidenceRegion;
+	bool _captured;
+	Common::Rect _drum;
+};
+
+CodexTowerLensEvidenceCapture::CodexTowerLensEvidenceCapture(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_evidenceRegion = Common::Rect(210, 106, 238, 132);
+	_drum = Common::Rect(288, 0, 368, 52);
+	_captured = false;
+
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().dsCTRetrievedLens >= 1) {
+		_staticData.navFrameIndex = 172;
+		_captured = true;
+	}
+}
+
+int CodexTowerLensEvidenceCapture::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_drum.contains(pointLocation)) {
+		// Play the drum animation
+		((SceneViewWindow *)viewWindow)->playSynchronousAnimation(9);
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int CodexTowerLensEvidenceCapture::locateAttempted(Window *viewWindow, const Common::Point &pointLocation) {
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().dsCTRetrievedLens == 0 && ((SceneViewWindow *)viewWindow)->getGlobalFlags().bcLocateEnabled == 1) {
+		if (_evidenceRegion.contains(pointLocation)) {
+			BuriedEngine *vm = _vm;
+
+			DestinationScene destData;
+			destData.destinationScene = _staticData.location;
+			destData.destinationScene.depth = 1;
+			destData.transitionType = TRANSITION_VIDEO;
+			destData.transitionData = 3;
+			destData.transitionStartFrame = -1;
+			destData.transitionLength = -1;
+			((SceneViewWindow *)viewWindow)->moveToDestination(destData);
+
+			// Add it to the list
+			if (((SceneViewWindow *)viewWindow)->addNumberToGlobalFlagTable(offsetof(GlobalFlags, evcapBaseID), offsetof(GlobalFlags, evcapNumCaptured), 12, DAVINCI_EVIDENCE_LENS_FILTER))
+				((SceneViewWindow *)viewWindow)->displayLiveText(vm->getString(IDS_MBT_EVIDENCE_ACQUIRED));
+			else
+				((SceneViewWindow *)viewWindow)->displayLiveText(vm->getString(IDS_MBT_EVIDENCE_ALREADY_ACQUIRED));
+
+			// Turn off capture
+			((GameUIWindow *)viewWindow->getParent())->_bioChipRightWindow->disableEvidenceCapture();
+		}
+
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int CodexTowerLensEvidenceCapture::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().dsCTRetrievedLens == 0 && ((SceneViewWindow *)viewWindow)->getGlobalFlags().bcLocateEnabled == 1) {
+		if (_evidenceRegion.contains(pointLocation))
+			return -2;
+
+		return -1;
+	}
+
+	if (_drum.contains(pointLocation))
+		return kCursorFinger;
+
+	return kCursorArrow;
+}
+
+class CodexTowerGrabLens : public GenericItemAcquire {
+public:
+	CodexTowerGrabLens(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
+};
+
+CodexTowerGrabLens::CodexTowerGrabLens(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		GenericItemAcquire(vm, viewWindow, sceneStaticData, priorLocation, 200, 78, 262, 123, kItemLensFilter, 169, offsetof(GlobalFlags, dsCTRetrievedLens)) {
+}
+
+int CodexTowerGrabLens::droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) {
+	if (pointLocation.x == -1 && pointLocation.y == -1 && itemID == _itemID && !_itemPresent) {
+		if (((SceneViewWindow *)viewWindow)->getGlobalFlags().generalWalkthroughMode == 1) {
+			((SceneViewWindow *)viewWindow)->getGlobalFlags().lensFilterActivated = 1;
+			((SceneViewWindow *)viewWindow)->displayLiveText(_vm->getString(IDS_LENS_FILTER_ACTIVATED));
+		}
+
+		// Move back
+		DestinationScene destData;
+		destData.destinationScene = _staticData.location;
+		destData.destinationScene.depth = 0;
+		destData.transitionType = TRANSITION_VIDEO;
+		destData.transitionData = 4;
+		destData.transitionStartFrame = -1;
+		destData.transitionLength = -1;
+		((SceneViewWindow *)viewWindow)->moveToDestination(destData);
+		return 0;
+	}
+
+	return GenericItemAcquire::droppedItem(viewWindow, itemID, pointLocation, itemFlags);
+}
+
 class CourtyardCannon : public SceneBase {
 public:
 	CourtyardCannon(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
@@ -1639,6 +1750,23 @@ int WalkDownPaintingTowerElevator::specifyCursor(Window *viewWindow, const Commo
 	return kCursorArrow;
 }
 
+class LensFilterNotify : public SceneBase {
+public:
+	LensFilterNotify(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int postEnterRoom(Window *viewWindow, const Location &newLocation);
+};
+
+LensFilterNotify::LensFilterNotify(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+}
+
+int LensFilterNotify::postEnterRoom(Window *viewWindow, const Location &newLocation) {
+	if (newLocation.node != _staticData.location.node && !((SceneViewWindow *)viewWindow)->isNumberInGlobalFlagTable(offsetof(GlobalFlags, evcapBaseID), offsetof(GlobalFlags, evcapNumCaptured), DAVINCI_EVIDENCE_LENS_FILTER))
+		((SceneViewWindow *)viewWindow)->displayLiveText(_vm->getString(IDS_MBT_EVIDENCE_PRESENT));
+
+	return SC_TRUE;
+}
+
 class ViewSiegeCyclePlans : public SceneBase {
 public:
 	ViewSiegeCyclePlans(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
@@ -1939,6 +2067,10 @@ SceneBase *SceneViewWindow::constructDaVinciSceneObject(Window *viewWindow, cons
 		return new CodexTowerOutsideDoor(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 41:
 		return new BasicDoor(_vm, viewWindow, sceneStaticData, priorLocation, 116, 0, 326, 189, 5, 2, 2, 1, 1, 1, TRANSITION_WALK, 11, 225, 15);
+	case 42:
+		return new CodexTowerLensEvidenceCapture(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 43:
+		return new CodexTowerGrabLens(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 46:
 		return new ClickPlayVideo(_vm, viewWindow, sceneStaticData, priorLocation, 8, kCursorFinger, 102, 124, 164, 189);
 	case 51:
@@ -1981,6 +2113,8 @@ SceneBase *SceneViewWindow::constructDaVinciSceneObject(Window *viewWindow, cons
 		return new PaintingTowerCapAgent(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 72:
 		return new PlaySoundExitingFromScene(_vm, viewWindow, sceneStaticData, priorLocation, 13);
+	case 73:
+		return new LensFilterNotify(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 74:
 		return new ClickPlaySound(_vm, viewWindow, sceneStaticData, priorLocation, -1, 13, kCursorFinger, 140, 0, 432, 189);
 	case 75:
