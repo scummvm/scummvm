@@ -4118,15 +4118,15 @@ void Scene1337::Action11::signal() {
 		scene->_animatedCard._card.hide();
 		switch (scene->_field4240) {
 		case 0:
-			scene->_discardCard->_card.setFrame(2);
+			scene->_discardCard->_card.setFrame2(2);
 			scene->_discardCard->_card.show();
 			break;
 		case 1:
-			scene->_discardCard->_card.setFrame(4);
+			scene->_discardCard->_card.setFrame2(4);
 			scene->_discardCard->_card.show();
 			break;
 		case 3:
-			scene->_discardCard->_card.setFrame(3);
+			scene->_discardCard->_card.setFrame2(3);
 			scene->_discardCard->_card.show();
 			break;
 		default:
