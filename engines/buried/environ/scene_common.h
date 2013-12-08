@@ -117,6 +117,20 @@ private:
 	DestinationScene _clickDestination;
 };
 
+class ClickPlayVideoSwitchAI : public SceneBase {
+public:
+	ClickPlayVideoSwitchAI(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+			int animID = 0, int cursorID = 0, int flagOffset = 0, int left = 0, int top = 0, int right = 0, int bottom = 0);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	int _cursorID;
+	int _animID;
+	Common::Rect _clickRegion;
+	int _flagOffset;
+};
+
 class ClickChangeSceneSetFlag : public ClickChangeScene {
 public:
 	ClickChangeSceneSetFlag(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
