@@ -86,8 +86,8 @@ public:
 	void processScript(uint16 scriptNr, byte *scriptData, const uint32 scriptSize);
 
 private:
-	void initSignature(SciScriptPatcherEntry *patchTable, bool isMacSci11);
-	void enablePatch(SciScriptPatcherEntry *patchTable, const char *searchDescription);
+	void initSignature(const SciScriptPatcherEntry *patchTable, bool isMacSci11);
+	void enablePatch(const SciScriptPatcherEntry *patchTable, const char *searchDescription);
 	int32 findSignature(const SciScriptPatcherEntry *patchEntry, SciScriptPatcherRuntimeEntry *runtimeEntry, const byte *scriptData, const uint32 scriptSize, bool isMacSci11);
 	void applyPatch(const SciScriptPatcherEntry *patchEntry, byte *scriptData, const uint32 scriptSize, int32 signatureOffset, bool isMacSci11);
 	
