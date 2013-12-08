@@ -23,6 +23,7 @@
  *
  */
 
+#include "buried/biochip_right.h"
 #include "buried/buried.h"
 #include "buried/gameui.h"
 #include "buried/graphics.h"
@@ -853,6 +854,57 @@ FlagChangeBackground::FlagChangeBackground(BuriedEngine *vm, Window *viewWindow,
 		_staticData.navFrameIndex = newStillFrame;
 }
 
+class ClickZoomInTopOfBookshelf : public SceneBase {
+public:
+	ClickZoomInTopOfBookshelf(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	Common::Rect _awardZoom, _bookZoom;
+};
+
+ClickZoomInTopOfBookshelf::ClickZoomInTopOfBookshelf(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_awardZoom = Common::Rect(66, 20, 168, 64);
+	_bookZoom = Common::Rect(206, 0, 370, 84);
+}
+
+int ClickZoomInTopOfBookshelf::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_awardZoom.contains(pointLocation)) {
+		DestinationScene newScene;
+		newScene.destinationScene = _staticData.location;
+		newScene.destinationScene.depth = 1;
+		newScene.transitionType = TRANSITION_VIDEO;
+		newScene.transitionData = 9;
+		newScene.transitionStartFrame = -1;
+		newScene.transitionLength = -1;
+		((SceneViewWindow *)viewWindow)->moveToDestination(newScene);
+		return SC_TRUE;
+	}
+
+	if (_bookZoom.contains(pointLocation)) {
+		DestinationScene newScene;
+		newScene.destinationScene = _staticData.location;
+		newScene.destinationScene.depth = 2;
+		newScene.transitionType = TRANSITION_VIDEO;
+		newScene.transitionData = 11;
+		newScene.transitionStartFrame = -1;
+		newScene.transitionLength = -1;
+		((SceneViewWindow *)viewWindow)->moveToDestination(newScene);
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int ClickZoomInTopOfBookshelf::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_awardZoom.contains(pointLocation) || _bookZoom.contains(pointLocation))
+		return kCursorMagnifyingGlass;
+
+	return kCursorArrow;
+}
+
 class ClickZoomToyShelf : public SceneBase {
 public:
 	ClickZoomToyShelf(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
@@ -958,6 +1010,117 @@ int ToyClick::specifyCursor(Window *viewWindow, const Common::Point &pointLocati
 	return kCursorPutDown;
 }
 
+class ClickZoomInBottomOfBookshelf : public SceneBase {
+public:
+	ClickZoomInBottomOfBookshelf(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	Common::Rect _leftClocks;
+	Common::Rect _rightClocks;
+};
+
+ClickZoomInBottomOfBookshelf::ClickZoomInBottomOfBookshelf(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_leftClocks = Common::Rect(72, 32, 186, 110);
+	_rightClocks = Common::Rect(194, 10, 370, 100);
+}
+
+int ClickZoomInBottomOfBookshelf::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_leftClocks.contains(pointLocation)) {
+		DestinationScene newScene;
+		newScene.destinationScene = _staticData.location;
+		newScene.destinationScene.depth = 1;
+		newScene.transitionType = TRANSITION_VIDEO;
+		newScene.transitionData = 7;
+		newScene.transitionStartFrame = -1;
+		newScene.transitionLength = -1;
+		((SceneViewWindow *)viewWindow)->moveToDestination(newScene);
+		return SC_TRUE;
+	}
+
+	if (_rightClocks.contains(pointLocation)) {
+		DestinationScene newScene;
+		newScene.destinationScene = _staticData.location;
+		newScene.destinationScene.depth = 2;
+		newScene.transitionType = TRANSITION_VIDEO;
+		newScene.transitionData = 3;
+		newScene.transitionStartFrame = -1;
+		newScene.transitionLength = -1;
+		((SceneViewWindow *)viewWindow)->moveToDestination(newScene);
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int ClickZoomInBottomOfBookshelf::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_leftClocks.contains(pointLocation) || _rightClocks.contains(pointLocation))
+		return kCursorMagnifyingGlass;
+
+	return kCursorArrow;
+}
+
+class RightClockShelf : public SceneBase {
+public:
+	RightClockShelf(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	Common::Rect _alienClock;
+	Common::Rect _alarmClock;
+	Common::Rect _pendulum;
+};
+
+RightClockShelf::RightClockShelf(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_alienClock = Common::Rect(0, 152, 80, 189);
+	_alarmClock = Common::Rect(82, 102, 148, 189);
+	_pendulum = Common::Rect(274, 0, 384, 189);
+}
+
+int RightClockShelf::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_alienClock.contains(pointLocation)) {
+		((SceneViewWindow *)viewWindow)->playSynchronousAnimation(4);
+		return SC_TRUE;
+	}
+
+	if (_alarmClock.contains(pointLocation)) {
+		((SceneViewWindow *)viewWindow)->playSynchronousAnimation(2);
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().faMNClockClicked = 1;
+
+		if (((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->isItemInInventory(kItemBioChipAI))
+			((SceneViewWindow *)viewWindow)->playAIComment(_staticData.location, AI_COMMENT_TYPE_SPONTANEOUS);
+
+		((GameUIWindow *)viewWindow->getParent())->_bioChipRightWindow->sceneChanged();
+		return SC_TRUE;
+	}
+
+	if (_pendulum.contains(pointLocation)) {
+		((SceneViewWindow *)viewWindow)->playSynchronousAnimation(5);
+		return SC_TRUE;
+	}
+
+	DestinationScene newScene;
+	newScene.destinationScene = _staticData.location;
+	newScene.destinationScene.depth = 0;
+	newScene.transitionType = TRANSITION_VIDEO;
+	newScene.transitionData = 6;
+	newScene.transitionStartFrame = -1;
+	newScene.transitionLength = -1;
+	((SceneViewWindow *)viewWindow)->moveToDestination(newScene);
+	return SC_TRUE;
+}
+
+int RightClockShelf::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_alienClock.contains(pointLocation) || _alarmClock.contains(pointLocation) || _pendulum.contains(pointLocation))
+		return kCursorFinger;
+
+	return kCursorPutDown;
+}
+
 class MainEnvironDoorDown : public SceneBase {
 public:
 	MainEnvironDoorDown(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
@@ -1055,6 +1218,70 @@ int MainEnvironDoorExit::postEnterRoom(Window *viewWindow, const Location &prior
 	return SC_FALSE;
 }
 
+class ClickOnBooks : public SceneBase {
+public:
+	ClickOnBooks(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+			int left = -1, int top = -1, int right = -1, int bottom = -1, int cursorID = 0,
+			int timeZone = -1, int environment = -1, int node = -1, int facing = -1, int orientation = -1, int depth = -1,
+			int transitionType = -1, int transitionData = -1, int transitionStartFrame = -1, int transitionLength = -1,
+			int soundFileNameID = -1, int soundLeft = -1, int soundTop = -1, int soundRight = -1, int soundBottom = -1);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	int _cursorID;
+	Common::Rect _clickRegion;
+	DestinationScene _clickDestination;
+	int _soundFileNameID;
+	Common::Rect _soundRegion;
+};
+
+ClickOnBooks::ClickOnBooks(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+		int left, int top, int right, int bottom, int cursorID,
+		int timeZone, int environment, int node, int facing, int orientation, int depth,
+		int transitionType, int transitionData, int transitionStartFrame, int transitionLength,
+		int soundFileNameID, int soundLeft, int soundTop, int soundRight, int soundBottom) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_clickRegion = Common::Rect(left, top, right, bottom);
+	_cursorID = cursorID;
+	_clickDestination.destinationScene = Location(timeZone, environment, node, facing, orientation, depth);
+	_clickDestination.transitionType = transitionType;
+	_clickDestination.transitionData = transitionData;
+	_clickDestination.transitionStartFrame = transitionStartFrame;
+	_clickDestination.transitionLength = transitionLength;
+	_soundFileNameID = soundFileNameID;
+	_soundRegion = Common::Rect(soundLeft, soundTop, soundRight, soundBottom);
+}
+
+int ClickOnBooks::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_soundRegion.contains(pointLocation)) {
+		_vm->_sound->playSynchronousSoundEffect(_vm->getFilePath(_soundFileNameID), 128);
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().faMNBooksClicked = 1;
+
+		((GameUIWindow *)viewWindow->getParent())->_bioChipRightWindow->sceneChanged();
+
+		if (((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->isItemInInventory(kItemBioChipAI))
+			((SceneViewWindow *)viewWindow)->playAIComment(_staticData.location, AI_COMMENT_TYPE_SPONTANEOUS);
+
+		return SC_TRUE;
+	}
+
+	if (_clickRegion.contains(pointLocation))
+		((SceneViewWindow *)viewWindow)->moveToDestination(_clickDestination);
+
+	return SC_FALSE;
+}
+
+int ClickOnBooks::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_soundRegion.contains(pointLocation))
+		return kCursorFinger;
+
+	if (_clickRegion.contains(pointLocation))
+		return _cursorID;
+
+	return kCursorArrow;
+}
+
 class EnvironDoorExitSound : public SceneBase {
 public:
 	EnvironDoorExitSound(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
@@ -1123,10 +1350,18 @@ SceneBase *SceneViewWindow::constructFutureApartmentSceneObject(Window *viewWind
 		return new FlagChangeBackground(_vm, viewWindow, sceneStaticData, priorLocation, offsetof(GlobalFlags, faERTakenRemoteControl), 1, 9);
 	case 30:
 		return new PlayStingers(_vm, viewWindow, sceneStaticData, priorLocation, 128, offsetof(GlobalFlags, faStingerID), offsetof(GlobalFlags, faStingerChannelID), 10, 14);
+	case 31:
+		return new ClickZoomInTopOfBookshelf(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 32:
 		return new ClickChangeScene(_vm, viewWindow, sceneStaticData, priorLocation, 0, 0, 432, 189, kCursorPutDown, 4, 3, 9, 0, 1, 0, TRANSITION_VIDEO, 10, -1, -1);
+	case 33:
+		return new ClickOnBooks(_vm, viewWindow, sceneStaticData, priorLocation, 0, 0, 432, 189, kCursorPutDown, 4, 3, 9, 0, 1, 0, TRANSITION_VIDEO, 12, -1, -1, IDS_FUTAPT_BOOK_AUDIO_FILENAME, 182, 8, 396, 156);
+	case 34:
+		return new ClickZoomInBottomOfBookshelf(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 35:
 		return new ClickChangeScene(_vm, viewWindow, sceneStaticData, priorLocation, 0, 0, 432, 189, kCursorPutDown, 4, 3, 9, 0, 0, 0, TRANSITION_VIDEO, 8, -1, -1);
+	case 36:
+		return new RightClockShelf(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 37:
 		return new ClickZoomToyShelf(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 38:
