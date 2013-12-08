@@ -142,6 +142,7 @@ void MaterialData::initEMI(Common::SeekableReadStream *data) {
 				_textures[i]._width = 0;
 				_textures[i]._height = 0;
 				_textures[i]._texture = new int(1); // HACK to avoid initializing.
+				_textures[i]._data = NULL;
 				continue;
 			}
 			loadTGA(texData, _textures + i);
