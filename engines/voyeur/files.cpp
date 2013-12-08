@@ -276,6 +276,11 @@ void BoltFile::freeBoltGroup(uint32 id) {
 	_state._curGroupPtr->unload();
 }
 
+void BoltFile::freeBoltMember(uint32 id) {
+	// TODO: Determine whether this is needed
+	warning("TODO: BoltFile::freeBoltMember");
+}
+
 BoltEntry &BoltFile::getBoltEntryFromLong(uint32 id) {
 	BoltGroup &group = _groups[id >> 24];
 	assert(group._loaded);
@@ -532,6 +537,9 @@ StampBoltFile::StampBoltFile(BoltFilesState &state): BoltFile("stampblt.blt", st
 
 void StampBoltFile::initResource(int resType) {
 	switch (resType) {
+	case 0:
+		initThread();
+		break;
 	case 6:
 		initPtr();
 		break;
@@ -542,6 +550,13 @@ void StampBoltFile::initResource(int resType) {
 		initDefault();
 		break;
 	}
+}
+
+void StampBoltFile::initThread() {
+	initDefault();
+
+	_state._curMemberPtr->_threadResource = new ThreadResource(_state, 
+		_state._curMemberPtr->_data);
 }
 
 void StampBoltFile::initPtr() {
@@ -611,6 +626,7 @@ BoltEntry::BoltEntry(Common::SeekableReadStream *f): _file(f) {
 	_vInitCyclResource = NULL;
 	_ptrResource = NULL;
 	_controlResource = NULL;
+	_threadResource = NULL;
 
 	byte buffer[16];
 	_file->read(&buffer[0], 16);
@@ -646,7 +662,8 @@ void BoltEntry::load() {
 bool BoltEntry::hasResource() const {
 	return _picResource || _viewPortResource || _viewPortListResource
 		|| _fontResource || _fontInfoResource || _cMapResource 
-		|| _vInitCyclResource || _ptrResource || _controlResource;
+		|| _vInitCyclResource || _ptrResource || _controlResource
+		|| _threadResource;
 }
 
 /*------------------------------------------------------------------------*/
@@ -1288,6 +1305,11 @@ VInitCyclResource::VInitCyclResource(BoltFilesState &state, const byte *src) {
 
 /*------------------------------------------------------------------------*/
 
+ThreadResource::ThreadResource(BoltFilesState &state, const byte *src) {
+}
+
+/*------------------------------------------------------------------------*/
+
 PtrResource::PtrResource(BoltFilesState &state, const byte *src) {
 	// Load pointer list
 	uint32 *idP = (uint32 *)&src[0];
@@ -1308,6 +1330,11 @@ ControlResource::ControlResource(BoltFilesState &state, const byte *src) {
 	uint32 ptrId = READ_LE_UINT32(&src[0x32]);
 	_ptr = state._curLibPtr->getBoltEntryFromLong(ptrId)._data;
 
+	for (int i = 0; i < 8; ++i) {
+		_memberIds[i] = READ_LE_UINT16(src + i * 2);
+		_entries[i] = NULL;
+	}
+
 	// Load pointer list
 	uint32 *idP = (uint32 *)&src[0x10];
 	int count = READ_LE_UINT16(&src[0x36]);
@@ -1316,7 +1343,7 @@ ControlResource::ControlResource(BoltFilesState &state, const byte *src) {
 		uint32 id = READ_LE_UINT32(idP);
 		BoltEntry &entry = state._curLibPtr->getBoltEntryFromLong(id);
 
-		_entries.push_back(entry._data);
+		_entries[i] = entry._data;
 	}
 }
 

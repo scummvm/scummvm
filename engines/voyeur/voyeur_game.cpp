@@ -44,8 +44,8 @@ void VoyeurEngine::playStamp() {
 	initStamp();
 
 	PtrResource *threadsList = _stampLibPtr->boltEntry(3)._ptrResource;
-	byte *threadP = threadsList->_entries[0]->_data;
-	initThreadStruct(threadP);
+	ThreadResource *threadP = threadsList->_entries[0]->_threadResource;
+	initThreadStruct(threadP, 0, 0);
 
 	_voy._delaySecs = 0;
 	_eventsManager._videoComputerNum = 9;
@@ -65,7 +65,7 @@ void VoyeurEngine::initStamp() {
 	_stampFlags &= ~1;
 	_stackGroupPtr = _controlGroupPtr;
 
-	if (_controlPtr->_entries.size() == 0)
+	if (!_controlPtr->_entries[0])
 		error("No control entries");
 
 	initUseCount();
@@ -75,8 +75,45 @@ void VoyeurEngine::initUseCount() {
 	Common::fill(&_stm_useCount[0], &_stm_useCount[8], 0);
 }
 
-void VoyeurEngine::initThreadStruct(byte *threadStruct) {
-	// TODO
+void VoyeurEngine::initThreadStruct(ThreadResource *thread, int v1, int idx) {
+	thread->_controlIndex = -1;
+	if (stm_loadAStack(thread, idx)) {
+		thread->_field4 = thread->_field6 = -1;
+		thread->_field0 = idx;
+		thread->_field3A = -1;
+		thread->_field3E = -1;
+
+		stm_doState(thread);
+	}
+}
+
+bool VoyeurEngine::stm_loadAStack(ThreadResource *thread, int idx) {
+	if (_stampFlags & 1) {
+		stm_unloadAStack(thread->_controlIndex);
+		if  (!_stm_useCount[idx]) {
+			BoltEntry &boltEntry = _stampLibPtr->boltEntry(_controlPtr->_memberIds[idx]);
+			if (!boltEntry._data)
+				return false;
+
+			_controlPtr->_entries[idx] = boltEntry._data;
+		}
+
+		++_stm_useCount[idx];
+	}
+
+	thread->_ctlPtr = _controlPtr->_entries[idx];
+}
+
+void VoyeurEngine::stm_unloadAStack(int idx) {
+	if ((_stampFlags & 1) && _stm_useCount[idx]) {
+		if (--_stm_useCount[idx] == 0) {
+			_stampLibPtr->freeBoltMember(_controlPtr->_memberIds[idx]);
+		}
+	}
+}
+
+void VoyeurEngine::stm_doState(ThreadResource *thread) {
+
 }
 
 } // End of namespace Voyeur

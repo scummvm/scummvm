@@ -43,6 +43,7 @@ class CMapResource;
 class VInitCyclResource;
 class PtrResource;
 class ControlResource;
+class ThreadResource;
 
 #define DECOMPRESS_SIZE 0x7000
 
@@ -120,6 +121,7 @@ public:
 
 	bool getBoltGroup(uint32 id);
 	void freeBoltGroup(uint32 id);
+	void freeBoltMember(uint32 id);
 	byte *memberAddr(uint32 id);
 	byte *memberAddrOffset(uint32 id);
 	void resolveIt(uint32 id, byte **p);
@@ -150,6 +152,7 @@ public:
 
 class StampBoltFile: public BoltFile {
 private:
+	void initThread();
 	void initPtr();
 	void initControl();
 protected:
@@ -202,6 +205,7 @@ public:
 	// stampblt.blt resource types
 	PtrResource *_ptrResource;
 	ControlResource *_controlResource;
+	ThreadResource *_threadResource;
 public:
 	BoltEntry(Common::SeekableReadStream *f);
 	virtual ~BoltEntry();
@@ -400,11 +404,25 @@ public:
 
 class ControlResource {
 public:
+	int _memberIds[8];
+	byte *_entries[8];
 	byte *_ptr;
-	Common::Array<byte *> _entries;
 
 	ControlResource(BoltFilesState &state, const byte *src);
 	virtual ~ControlResource() {}
+};
+
+class ThreadResource {
+public:
+	int _field0;
+	int _controlIndex;
+	int _field4, _field6;
+	int _field3A;
+	int _field3E;
+	byte *_ctlPtr;
+public:
+	ThreadResource(BoltFilesState &state, const byte *src);
+	virtual ~ThreadResource() {}
 };
 
 } // End of namespace Voyeur

@@ -84,7 +84,10 @@ private:
 	void playStamp();
 	void initStamp();
 	void initUseCount();
-	void initThreadStruct(byte *threadStruct);
+	void initThreadStruct(ThreadResource *thread, int v1, int idx);
+	bool stm_loadAStack(ThreadResource *thread, int idx);
+	void stm_unloadAStack(int idx);
+	void stm_doState(ThreadResource *thread);
 protected:
 	// Engine APIs
 	virtual Common::Error run();
