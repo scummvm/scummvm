@@ -188,8 +188,8 @@ MessageQueue *MctlCompound::doWalkTo(StaticANIObject *subj, int xpos, int ypos, 
 MctlLadder::MctlLadder() {
 	_ladder_field_18 = 0;
 	_objId = 0;
-	_ladder_field_1C = 0;
-	_ladder_field_10 = 0;
+	_height = 0;
+	_ladderY = 0;
 	_ladder_field_14 = 0;
 
 	_ladder_field_20 = 0;
@@ -206,12 +206,12 @@ int MctlLadder::collisionDetection(StaticANIObject *man) {
 
 	double delta;
 
-	if ((double)(man->_oy - _ladder_field_10) / (double)_ladder_field_1C < 0.0)
+	if ((double)(man->_oy - _ladderY) / (double)_height < 0.0)
 		delta = -0.5;
 	else 
 		delta = 0.5;
 
-	int res = (int)((double)(man->_oy - _ladder_field_10) / (double)_ladder_field_1C + delta);
+	int res = (int)((double)(man->_oy - _ladderY) / (double)_height + delta);
 
 	if (res < 0)
 		return 0;
