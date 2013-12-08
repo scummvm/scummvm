@@ -57,6 +57,7 @@ BuriedEngine::BuriedEngine(OSystem *syst, const BuriedGameDescription *gameDesc)
 	_focusedWindow = 0;
 	_captureWindow = 0;
 	_console = 0;
+	_pauseStartTime = 0;
 
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "WIN31/MANUAL", 0, 2);
@@ -422,6 +423,27 @@ uint32 BuriedEngine::computeAIDBResourceID(int timeZone, int environment) {
 
 uint32 BuriedEngine::computeFileNameResourceID(int timeZone, int environment, int fileOffset) {
 	return RESID_FILENAMES_BASE + RESOFFSET_FILENAME_TIMEZONE * timeZone + RESOFFSET_FILENAME_ENVIRON * environment + fileOffset;
+}
+
+void BuriedEngine::pauseEngineIntern(bool pause) {
+	if (pause) {
+		_sound->stop();
+
+		for (VideoList::iterator it = _videos.begin(); it != _videos.end(); it++)
+			(*it)->pauseVideo();
+
+		_pauseStartTime = g_system->getMillis();
+	} else {
+		_sound->restart();
+
+		for (VideoList::iterator it = _videos.begin(); it != _videos.end(); it++)
+			(*it)->resumeVideo();
+
+		uint32 timeDiff = g_system->getMillis() - _pauseStartTime;
+
+		for (TimerMap::iterator it = _timers.begin(); it != _timers.end(); it++)
+			it->_value.nextTrigger += timeDiff;
+	}
 }
 
 } // End of namespace Buried

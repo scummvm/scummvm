@@ -72,6 +72,7 @@ public:
 
 	bool hasFeature(EngineFeature f) const;
 	GUI::Debugger *getDebugger();
+	void pauseEngineIntern(bool pause);
 
 	// Resources
 	Common::String getString(uint32 stringID);
@@ -146,6 +147,7 @@ private:
 	typedef Common::HashMap<uint, Timer> TimerMap;
 	TimerMap _timers;
 	uint _timerSeed;
+	uint32 _pauseStartTime;
 
 	typedef Common::List<VideoWindow *> VideoList;
 	VideoList _videos;
