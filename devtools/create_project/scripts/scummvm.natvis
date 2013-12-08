@@ -15,6 +15,29 @@
 -->
 
 <AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+  <UIVisualizer ServiceId="{A452AFEA-3DF6-46BB-9177-C0B08F318025}" Id="1" MenuName="Add to Image Watch"/>
+
+  <Type Name="Graphics::Surface">
+    <UIVisualizer ServiceId="{A452AFEA-3DF6-46BB-9177-C0B08F318025}" Id="1" />
+  </Type>
+
+  <Type Name="Graphics::Surface">
+    <Expand>
+      <Synthetic Name="[type]">
+        <DisplayString>UINT8</DisplayString>
+      </Synthetic>
+      <Item Name="[channels]" Condition="format.bytesPerPixel==1">1</Item>
+      <Item Name="[channels]" Condition="format.bytesPerPixel==2">2</Item>
+      <Synthetic Name="[channels]" Condition="format.bytesPerPixel==4">
+        <DisplayString>RGBA</DisplayString>
+      </Synthetic>
+      <Item Name="[width]">w</Item>
+      <Item Name="[height]">h</Item>
+      <Item Name="[stride]">pitch</Item>
+      <Item Name="[data]">pixels</Item>
+    </Expand>
+  </Type>
+
   <Type Name="Common::Array&lt;*&gt;">
     <DisplayString>{{size = {_size}}}</DisplayString>
     <Expand>
