@@ -80,4 +80,11 @@ bool MP3Track::openSound(const Common::String &soundName, Common::SeekableReadSt
 #endif
 }
 
+bool MP3Track::hasLooped() {
+	if (!_stream)
+		return false;
+	Audio::LoopingAudioStream *las = static_cast<Audio::LoopingAudioStream*>(_stream);
+	return las->getCompleteIterations() > 0;
+}
+
 } // end of namespace Grim

@@ -70,6 +70,8 @@ public:
 	void setMusicState(int stateId);
 	void selectMusicSet(int setId);
 
+	bool stateHasLooped(int stateId);
+
 	void restoreState(SaveGame *savedState);
 	void saveState(SaveGame *savedState);
 // The stack-classes currently ignore g_imusestate completely.

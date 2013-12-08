@@ -47,6 +47,7 @@ public:
 	~MP3Track();
 	bool openSound(const Common::String &soundName, Common::SeekableReadStream *file);
 	bool isPlaying() { return !_endFlag; }
+	bool hasLooped() override;
 };
 
 }

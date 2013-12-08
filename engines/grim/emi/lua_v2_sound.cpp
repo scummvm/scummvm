@@ -126,9 +126,7 @@ void Lua_V2::ImStateHasLooped() {
 
 	int state = (int)lua_getnumber(stateObj);
 
-	// See ImStateHasEnded for clues to return-value
-	pushbool(false); // TODO: Implement
-	error("Lua_V2::ImStateHasLooped(%d) - TODO: Implement opcode", state);
+	pushbool(g_sound->stateHasLooped(state));
 }
 
 void Lua_V2::EnableVoiceFX() {

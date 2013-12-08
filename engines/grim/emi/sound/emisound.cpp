@@ -160,6 +160,17 @@ bool EMISound::initTrack(const Common::String &filename, SoundTrack *track) {
 	}
 }
 
+bool EMISound::stateHasLooped(int stateId) {
+	if (stateId == _curMusicState) {
+		if (_music) {
+			return _music->hasLooped();
+		}
+	} else {
+		warning("EMISound::stateHasLooped called for a different music state than the current one");
+	}
+	return false;
+}
+
 void EMISound::setMusicState(int stateId) {
 	if (stateId == _curMusicState)
 		return;
