@@ -77,7 +77,7 @@ namespace Sci {
 //        You have to use the exact same order in both the table and the enum, otherwise
 //        it won't work.
 
-static const char *selectorNameTable[] = {
+static const char *const selectorNameTable[] = {
 	"cycles",       // system selector
 	"seconds",      // system selector
 	"init",         // system selector
