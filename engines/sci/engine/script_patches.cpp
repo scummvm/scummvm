@@ -953,9 +953,10 @@ const uint16 kq6laurabow2CDSignatureAudioTextSupport4[] = {
 };
 
 const uint16 kq6laurabow2CDPatchAudioTextSupport4[] = {
-	PATCH_ADDTOOFFSET +5,
-	0x18,                               // not (never jump here)
-	0x18,                               // not (never jump here)
+	PATCH_ADDTOOFFSET +2,
+	0x34, PATCH_UINT16 + 0x01, 0x00,    // ldi 0001 (waste 1 byte)
+	0x12,
+	0x18,                               // not - prepares acc for KQ6 talker::startText
 	PATCH_ADDTOOFFSET +19,
 	0x89, 98,                           // lsp global[98d]
 	PATCH_END
@@ -991,6 +992,30 @@ const uint16 kq6CDSignatureAudioTextSupport1[] = {
 const uint16 kq6CDPatchAudioTextSupport1[] = {
 	PATCH_ADDTOOFFSET +5,
 	0x33, 0x32,                         // jmp [jump-for-text-code]
+	PATCH_END
+};
+
+// Additional patches specifically for King's Quest 6
+//  Fixes low-res portrait staying on screen for hi-res mode
+// Patched method: Talker::startText
+//  this method is called by Narrator::say and acc is 0 for text-only and true for audio+text
+const uint16 kq6CDSignatureAudioTextSupport2[] = {
+	SIG_MAGICDWORD,
+	0x3f, 0x01,                         // link 01
+	0x63, 0x8a,                         // pToa viewInPrint
+	0x18,                               // not
+	0x31, 0x06,                         // bnt [skip following code]
+	0x38, SIG_UINT16 + 0xe1, 0x00,      // pushi 00e1
+	0x76,                               // push0
+	0x54, 0x04,                         // self 04
+	SIG_END
+};
+
+const uint16 kq6CDPatchAudioTextSupport2[] = {
+	PATCH_ADDTOOFFSET +2,
+	0x67, 0x8a,                         // pTos viewInPrint
+	0x14,                               // or
+	0x2f,                               // bt [skip following code]
 	PATCH_END
 };
 
@@ -1045,14 +1070,14 @@ SciScriptPatcherEntry kq6Signatures[] = {
 	{  true,   907, "inventory stack fix",                         1, kq6SignatureInventoryStackFix,            kq6PatchInventoryStackFix },
 	// King's Quest 6 and Laura Bow 2 share basic patches for audio + text support
 	// *** King's Quest 6 audio + text support ***
-	//  ToDO: fix window placement+size for dialog w/o portraits (lowres+hires)
-	//  TODO: fix lowres portraits staying on screen when hires portraits are used
+	//  TODO: all window placements seems to be fixed, game should be played through to check for any more issues
 	{ false,   924, "CD: audio + text support KQ6&LB2 1",          1, kq6laurabow2CDSignatureAudioTextSupport1, kq6laurabow2CDPatchAudioTextSupport1 },
 	{ false,   924, "CD: audio + text support KQ6&LB2 2",          1, kq6laurabow2CDSignatureAudioTextSupport2, kq6laurabow2CDPatchAudioTextSupport2 },
 	{ false,   924, "CD: audio + text support KQ6&LB2 3",          1, kq6laurabow2CDSignatureAudioTextSupport3, kq6laurabow2CDPatchAudioTextSupport3 },
 	{ false,   928, "CD: audio + text support KQ6&LB2 4",          1, kq6laurabow2CDSignatureAudioTextSupport4, kq6laurabow2CDPatchAudioTextSupport4 },
 	{ false,   928, "CD: audio + text support KQ6&LB2 5",          2, kq6laurabow2CDSignatureAudioTextSupport5, kq6laurabow2CDPatchAudioTextSupport5 },
 	{ false,   909, "CD: audio + text support KQ6 1",              1, kq6CDSignatureAudioTextSupport1,          kq6CDPatchAudioTextSupport1 },
+	{ false,   928, "CD: audio + text support KQ6 2",              1, kq6CDSignatureAudioTextSupport2,          kq6CDPatchAudioTextSupport2 },
 	{ false,  1009, "CD: audio + text support KQ6 Guard",          1, kq6CDSignatureAudioTextSupportGuard,      kq6CDPatchAudioTextSupportGuard },
 	{ false,  1027, "CD: audio + text support KQ6 Stepmother",     1, kq6CDSignatureAudioTextSupportStepmother, kq6CDPatchAudioTextSupportJumpAlways },
 	{ false,  1037, "CD: audio + text support KQ6 Gnomes",         1, kq6CDSignatureAudioTextSupportGnomes,     kq6CDPatchAudioTextSupportJumpAlways },
