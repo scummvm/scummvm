@@ -59,10 +59,10 @@ public:
 	GenericItemAcquire(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
 			int left = 0, int top = 0, int right = 0, int bottom = 0, int itemID = 0, int clearStillFrame = 0, int itemFlagOffset = 0);
 	int mouseDown(Window *viewWindow, const Common::Point &pointLocation);
-	int droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
+	virtual int droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
 	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
 
-private:
+protected:
 	bool _itemPresent;
 	Common::Rect _acquireRegion;
 	int _fullFrameIndex;
