@@ -201,9 +201,22 @@ MctlLadder::~MctlLadder() {
 }
 
 int MctlLadder::collisionDetection(StaticANIObject *man) {
-	warning("STUB: MctlLaddercollisionDetection()");
+	if (findObjectPos(man) < 0)
+		return 0;
 
-	return 0;
+	double delta;
+
+	if ((double)(man->_oy - _ladder_field_10) / (double)_ladder_field_1C < 0.0)
+		delta = -0.5;
+	else 
+		delta = 0.5;
+
+	int res = (int)((double)(man->_oy - _ladder_field_10) / (double)_ladder_field_1C + delta);
+
+	if (res < 0)
+		return 0;
+
+	return res;
 }
 
 void MctlLadder::addObject(StaticANIObject *obj) {
