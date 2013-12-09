@@ -424,6 +424,8 @@ private:
 	bool getStateInfo();
 	byte *getDataOffset();
 	void getButtonsText();
+	const byte *getRecordOffset(const byte *p);
+	const byte *getNextRecord(const byte *p);
 public:
 	VoyeurEngine *_vm;
 
@@ -439,6 +441,7 @@ public:
 	int _field44;
 	uint32 _field46;
 	byte *_field4A;
+	const byte *_field8E[8];
 
 	byte *_ctlPtr;
 	byte *_field28E;

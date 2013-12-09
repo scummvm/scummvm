@@ -1387,7 +1387,21 @@ byte *ThreadResource::getDataOffset() {
 }
 
 void ThreadResource::getButtonsText() {
-	warning("TODO: stm_getButtonsText");
+	int idx = 0;
+	
+	for (const byte *p = _field4A; *p != 0x49; p = getNextRecord(p)) {
+		if (*p == 0xC0) {
+			++p;
+			if (*p++ & 0x80) {
+				assert(idx < 7);
+				_field8E[idx] = getRecordOffset(p);
+				p += 4;
+			}
+
+			++idx;
+			_field8E[idx] = NULL;
+		}
+	}
 }
 
 void ThreadResource::unloadAllStacks(VoyeurEngine *vm) {
@@ -1401,6 +1415,56 @@ void ThreadResource::unloadAllStacks(VoyeurEngine *vm) {
 
 void ThreadResource::initUseCount() {
 	Common::fill(&_useCount[0], &_useCount[8], 0);
+}
+
+const byte *ThreadResource::getRecordOffset(const byte *p) {
+	uint32 recSize = READ_LE_UINT32(p) + READ_LE_UINT32(p + 6);
+	return _ctlPtr + recSize;
+}
+
+const byte *ThreadResource::getNextRecord(const byte *p) {
+	byte v = *p++;
+
+	switch (v) {
+	case 2:
+	case 4:
+	case 6:
+	case 8:
+	case 10:
+		return p + 8;
+	case 1:
+	case 3:
+	case 5:
+	case 7:
+	case 9:
+	case 11:
+	case 21:
+	case 22:
+	case 25:
+	case 26:
+		return p + 5;
+	case 17:
+	case 23:
+	case 24:
+	case 27:
+	case 28:
+		return p + 2;
+	case 19:
+	case 41:
+		return p + 6;
+	case 18:
+	case 51:
+	case 52:
+		return p + 1;
+	case 74:
+		return p + 4;
+	case 192:
+		if (*p * 0x80)
+			p += 4;
+		return p + 2;
+	default:
+		return p;
+	}
 }
 
 /*------------------------------------------------------------------------*/
