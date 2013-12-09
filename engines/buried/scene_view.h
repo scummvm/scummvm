@@ -224,6 +224,11 @@ private:
 	bool initializeMayanTimeZoneAndEnvironment(Window *viewWindow, int environment);
 	bool startMayanAmbient(int oldTimeZone, int oldEnvironment, int environment, bool fade);
 	SceneBase *constructMayanSceneObject(Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+
+	// Agent 3's Lair
+	bool initializeAgent3LairTimeZoneAndEnvironment(Window *viewWindow, int environment);
+	bool startAgent3LairAmbient(int oldTimeZone, int oldEnvironment, int environment, bool fade);
+	SceneBase *constructAgent3LairSceneObject(Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
 };
 
 } // End of namespace Buried
