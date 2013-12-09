@@ -558,6 +558,54 @@ int GenericCavernDoorMainView::specifyCursor(Window *viewWindow, const Common::P
 	return kCursorArrow;
 }
 
+class MainCavernGlassCapture : public SceneBase {
+public:
+	MainCavernGlassCapture(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int locateAttempted(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	Common::Rect _glass;
+};
+
+MainCavernGlassCapture::MainCavernGlassCapture(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_glass = Common::Rect(305, 126, 355, 156);
+}
+
+int MainCavernGlassCapture::locateAttempted(Window *viewWindow, const Common::Point &pointLocation) {
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().bcLocateEnabled == 1) {
+		if (_glass.contains(pointLocation)) {
+			// Play the animation
+			((SceneViewWindow *)viewWindow)->playSynchronousAnimation(22);
+
+			// Attempt to add it to the biochip
+			if (((SceneViewWindow *)viewWindow)->addNumberToGlobalFlagTable(offsetof(GlobalFlags, evcapBaseID), offsetof(GlobalFlags, evcapNumCaptured), 12, MAYAN_EVIDENCE_BROKEN_GLASS_PYRAMID))
+				((SceneViewWindow *)viewWindow)->displayLiveText(_vm->getString(IDS_MBT_EVIDENCE_ACQUIRED));
+			else
+				((SceneViewWindow *)viewWindow)->displayLiveText(_vm->getString(IDS_MBT_EVIDENCE_ALREADY_ACQUIRED));
+
+			// Disable capture
+			((GameUIWindow *)viewWindow->getParent())->_bioChipRightWindow->disableEvidenceCapture();
+		}
+
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int MainCavernGlassCapture::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().bcLocateEnabled == 1) {
+		if (_glass.contains(pointLocation))
+			return -2;
+
+		return -1;
+	}
+
+	return kCursorArrow;
+}
+
 bool SceneViewWindow::initializeMayanTimeZoneAndEnvironment(Window *viewWindow, int environment) {
 	if (environment == -1) {
 		GlobalFlags &flags = ((SceneViewWindow *)viewWindow)->getGlobalFlags();
@@ -727,6 +775,8 @@ SceneBase *SceneViewWindow::constructMayanSceneObject(Window *viewWindow, const 
 		return new PlayStingers(_vm, viewWindow, sceneStaticData, priorLocation, 128, offsetof(GlobalFlags, myMCStingerID), offsetof(GlobalFlags, myMCStingerChannelID), 11, 14);
 	case 71:
 		return new DisplayMessageWithEvidenceWhenEnteringNode(_vm, viewWindow, sceneStaticData, priorLocation, MAYAN_EVIDENCE_BROKEN_GLASS_PYRAMID, IDS_MBT_EVIDENCE_PRESENT);
+	case 72:
+		return new MainCavernGlassCapture(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 103:
 		return new PlaySoundEnteringFromScene(_vm, viewWindow, sceneStaticData, priorLocation, 12, 2, 4, 4, 2, 1, 5);
 	case 120:
