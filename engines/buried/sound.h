@@ -51,7 +51,7 @@ public:
 	bool adjustAmbientSoundVolume(byte newVolumeLevel, bool fade, byte steps, uint32 fadeLength);
 	uint32 getAmbientPosition();
 
-	bool setSecondaryAmbientSound(const Common::String &fileName, bool fade = false, byte finalVolumeLevel = 64);
+	bool setSecondaryAmbientSound(const Common::String &fileName = "", bool fade = false, byte finalVolumeLevel = 64);
 	bool adjustSecondaryAmbientSoundVolume(byte newVolumeLevel, bool fade, byte steps, uint32 fadeLength);
 	uint32 getSecondaryAmbientPosition();
 	bool restartSecondaryAmbientSound();
