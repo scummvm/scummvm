@@ -5074,13 +5074,11 @@ void Scene1337::subC2C2F() {
 
 			for (int i = 0; i <= 3; i++) {
 				if (tmpRandIndx != 3) {
-				// The variables 'i' and 'j' are not used in the inner code of the loop.
-				// It's understandable for 'i', which helps making sure that tmpVal is used properly,
-				// but it's suspect for j
+				// The variable 'j' is not used in the inner code of the loop, which is suspicious.
+				// 'i' is used indirectly to increment tmpRandIndx.
 					for (int j = 0; j <= 7; j++) {
-						if ((_gameBoardSide[tmpRandIndx]._delayCard._cardId == 0) && (subC32B1(tmpRandIndx, _gameBoardSide[3]._handCard[randIndx]._cardId))) {
-							tmpVal = j;
-						}
+						if ((_gameBoardSide[tmpRandIndx]._delayCard._cardId == 0) && subC32B1(tmpRandIndx, _gameBoardSide[3]._handCard[randIndx]._cardId))
+							tmpVal = tmpRandIndx;
 					}
 				}
 
@@ -5094,7 +5092,7 @@ void Scene1337::subC2C2F() {
 
 			if (tmpVal != -1) {
 				// Useless second identical check skipped
-				subC3456(&_gameBoardSide[3]._handCard[randIndx], &_gameBoardSide[tmpVal]._delayCard);
+				subC3456(&_gameBoardSide[tmpVal]._handCard[randIndx], &_gameBoardSide[tmpVal]._delayCard);
 				return;
 			}
 			}
@@ -6908,7 +6906,6 @@ void Scene1337::setCursorData(int resNum, int rlbNum, int frameNum) {
 }
 
 void Scene1337::subD18F5() {
-	warning("subD18F5 - %d", R2_GLOBALS._v57709);
 	if (R2_GLOBALS._v57709 == 0)
 		R2_GLOBALS._events.setCursor(CURSOR_CROSSHAIRS);
 
@@ -6916,7 +6913,6 @@ void Scene1337::subD18F5() {
 }
 
 void Scene1337::subD1917() {
-	warning("subD1917 - %d", R2_GLOBALS._v57709);
 	if (R2_GLOBALS._v57709 != 0) {
 		R2_GLOBALS._v57709--;
 		if (R2_GLOBALS._v57709 != 0) {
