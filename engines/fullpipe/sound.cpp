@@ -139,5 +139,9 @@ void FullpipeEngine::stopSoundStream2() {
 	warning("STUB: FullpipeEngine::stopSoundStream2()");
 }
 
+void FullpipeEngine::stopAllSoundStreams() {
+	warning("STUB: FullpipeEngine::stopAllSoundStreams()");
+}
+
 
 } // End of namespace Fullpipe

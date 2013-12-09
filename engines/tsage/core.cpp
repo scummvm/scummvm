@@ -2888,6 +2888,8 @@ void BackgroundSceneObject::setup2(int visage, int stripFrameNum, int frameNum, 
 	setFrame(frameNum);
 	setPosition(Common::Point(posX, posY));
 	fixPriority(priority);
+
+	_effect = effect;
 }
 
 void BackgroundSceneObject::copySceneToBackground() {

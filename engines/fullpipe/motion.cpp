@@ -28,9 +28,9 @@
 
 #include "fullpipe/objects.h"
 #include "fullpipe/statics.h"
+#include "fullpipe/gameloader.h"
 #include "fullpipe/motion.h"
 #include "fullpipe/messages.h"
-#include "fullpipe/gameloader.h"
 
 namespace Fullpipe {
 
@@ -183,6 +183,130 @@ MessageQueue *MctlCompound::doWalkTo(StaticANIObject *subj, int xpos, int ypos, 
 	}
 
 	return mq;
+}
+
+MctlLadder::MctlLadder() {
+	_ladder_field_18 = 0;
+	_objId = 0;
+	_height = 0;
+	_ladderY = 0;
+	_ladder_field_14 = 0;
+
+	_ladder_field_20 = 0;
+	_ladder_field_24 = 0;
+}
+
+MctlLadder::~MctlLadder() {
+	freeItems();
+}
+
+int MctlLadder::collisionDetection(StaticANIObject *man) {
+	if (findObjectPos(man) < 0)
+		return 0;
+
+	double delta;
+
+	if ((double)(man->_oy - _ladderY) / (double)_height < 0.0)
+		delta = -0.5;
+	else 
+		delta = 0.5;
+
+	int res = (int)((double)(man->_oy - _ladderY) / (double)_height + delta);
+
+	if (res < 0)
+		return 0;
+
+	return res;
+}
+
+void MctlLadder::addObject(StaticANIObject *obj) {
+	if (findObjectPos(obj) < 0) {
+		MctlLadderMovement *movement = new MctlLadderMovement;
+		
+		if (initMovement(obj, movement)) {
+			_mgm.addItem(obj->_id);
+			_movements.push_back(movement);
+		} else {
+			delete movement;
+		}
+	}
+}
+
+int MctlLadder::findObjectPos(StaticANIObject *obj) {
+	int res = -1;
+
+	for (Common::List<MctlLadderMovement *>::iterator it = _movements.begin(); it != _movements.end(); ++it, ++res)
+		if ((*it)->objId == obj->_id)
+			break;
+
+	return res;
+}
+
+bool MctlLadder::initMovement(StaticANIObject *ani, MctlLadderMovement *movement) {
+	GameVar *v = g_fullpipe->getGameLoaderGameVar()->getSubVarByName(ani->getName());
+
+	if (!v)
+		return false;
+
+	v = v->getSubVarByName("Test_Ladder");
+
+	if (!v)
+		return false;
+
+	movement->staticIdsSize = 6;
+	movement->movVars = new MctlLadderMovementVars;
+	movement->staticIds = new int[movement->staticIdsSize];
+
+	v = v->getSubVarByName("Up");
+
+	if (!v)
+		return false;
+
+	movement->movVars->varUpStart = v->getSubVarAsInt("Start");
+	movement->movVars->varUpGo = v->getSubVarAsInt("Go");
+	movement->movVars->varUpStop = v->getSubVarAsInt("Stop");
+
+	movement->staticIds[0] = ani->getMovementById(movement->movVars->varUpStart)->_staticsObj1->_staticsId;
+	movement->staticIds[2] = ani->getMovementById(movement->movVars->varUpGo)->_staticsObj1->_staticsId;
+
+	v = v->getSubVarByName("Down");
+
+	if (!v)
+		return false;
+
+	movement->movVars->varDownStart = v->getSubVarAsInt("Start");
+	movement->movVars->varDownGo = v->getSubVarAsInt("Go");
+	movement->movVars->varDownStop = v->getSubVarAsInt("Stop");
+
+	movement->staticIds[1] = ani->getMovementById(movement->movVars->varDownStart)->_staticsObj1->_staticsId;
+	movement->staticIds[3] = ani->getMovementById(movement->movVars->varDownGo)->_staticsObj1->_staticsId;
+
+	movement->objId = ani->_id;
+
+	return true;
+}
+
+void MctlLadder::freeItems() {
+	_mgm.clear();
+
+	for (Common::List<MctlLadderMovement *>::iterator it = _movements.begin(); it != _movements.end(); ++it) {
+		delete (*it)->movVars;
+		delete [] (*it)->staticIds;
+	}
+
+	_movements.clear();
+}
+
+MessageQueue *MctlLadder::method34(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId) {
+	warning("STUB: MctlLadder::method34()");
+
+	return 0;
+}
+
+MessageQueue *MctlLadder::doWalkTo(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId) {
+	warning("STUB: MctlLadder::doWalkTo()");
+
+	return 0;
 }
 
 MctlConnectionPoint *MctlCompound::findClosestConnectionPoint(int ox, int oy, int destIndex, int connectionX, int connectionY, int sourceIndex, int *minDistancePtr) {

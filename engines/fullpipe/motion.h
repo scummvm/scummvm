@@ -161,6 +161,50 @@ public:
 	MessageQueue *genMovement(MGMInfo *mgminfo);
 };
 
+struct MctlLadderMovementVars {
+	int varUpGo;
+	int varDownGo;
+	int varUpStop;
+	int varDownStop;
+	int varUpStart;
+	int varDownStart;
+};
+
+struct MctlLadderMovement {
+	int objId;
+	int staticIdsSize;
+	MctlLadderMovementVars *movVars;
+	int *staticIds;
+};
+
+class MctlLadder : public MotionController {
+public:
+	int _objId;
+	int _ladderY;
+	int _ladder_field_14;
+	int _ladder_field_18;
+	int _height;
+	int _ladder_field_20;
+	int _ladder_field_24;
+	Common::List<MctlLadderMovement *> _movements;
+	MGM _mgm;
+
+public:
+	MctlLadder();
+	virtual ~MctlLadder();
+	int collisionDetection(StaticANIObject *man);
+
+	virtual void addObject(StaticANIObject *obj);
+	virtual int removeObject(StaticANIObject *obj) { return 1; }
+	virtual void freeItems();
+	virtual MessageQueue *method34(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId);
+	virtual MessageQueue *doWalkTo(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId);
+
+private:
+	int findObjectPos(StaticANIObject *obj);
+	bool initMovement(StaticANIObject *ani, MctlLadderMovement *movement);
+};
+
 class MovGraphNode : public CObject {
 public:
 	int _x;

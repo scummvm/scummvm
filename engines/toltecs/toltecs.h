@@ -36,13 +36,16 @@
 
 #include "graphics/surface.h"
 
+#include "gui/debugger.h"
+
+#include "toltecs/console.h"
+
 namespace Toltecs {
 
 struct ToltecsGameDescription;
 
 class AnimationPlayer;
 class ArchiveReader;
-class Console;
 class Input;
 class MenuSystem;
 class MoviePlayer;
@@ -109,6 +112,8 @@ public:
 	Common::Language getLanguage() const;
 	const Common::String& getTargetName() const { return _targetName; }
 	void syncSoundSettings();
+
+	GUI::Debugger *getDebugger() { return _console; }
 
 	void setupSysStrings();
 	void requestSavegame(int slotNum, Common::String &description);

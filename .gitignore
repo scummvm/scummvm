@@ -185,3 +185,7 @@ ScummVM.includes
 
 #Ignore Mac DS_Store files
 .DS_Store
+
+#Ignore MS Visual C++ temporary files/subdirectories (except create_project.bat)
+dists/msvc*/**
+!dists/msvc*/create_project.bat

@@ -34,11 +34,14 @@
 #include "engines/engine.h"
 #include "engines/util.h"
 
+#include "gui/debugger.h"
+
 #include "graphics/surface.h"
 
 #include "audio/mixer.h"
 
 #include "composer/resource.h"
+#include "composer/console.h"
 
 namespace Audio {
 	class QueuingAudioStream;
@@ -158,6 +161,9 @@ public:
 	Common::Language getLanguage() const;
 
 	const ComposerGameDescription *_gameDescription;
+
+	Console *_console;
+	GUI::Debugger *getDebugger() { return _console; }
 
 private:
 	Common::RandomSource *_rnd;

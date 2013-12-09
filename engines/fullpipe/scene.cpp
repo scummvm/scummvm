@@ -447,7 +447,7 @@ void Scene::objectList_sortByPriority(PtrList &list) {
 }
 
 void Scene::draw() {
-	debug(0, ">>>>> Scene::draw()");
+	debug(6, ">>>>> Scene::draw()");
 	updateScrolling();
 
 	drawContent(60000, 0, true);
@@ -470,11 +470,74 @@ void Scene::draw() {
 }
 
 void Scene::updateScrolling() {
-	debug(0, "STUB Scene::updateScrolling()");
+	if (_messageQueueId && !_x && !_y) {
+		MessageQueue *mq = g_fullpipe->_globalMessageQueueList->getMessageQueueById(_messageQueueId);
+
+		if (mq)
+			mq->update();
+
+		_messageQueueId = 0;
+	}
+
+	if (_x || _y) {
+		int offsetX = 0;
+		int offsetY = 0;
+
+		if (_x < 0) {
+			if (!g_fullpipe->_sceneRect.left && !(((PictureObject *)_picObjList[0])->_flags & 2))
+				_x = 0;
+
+			if (_x <= -g_fullpipe->_scrollSpeed) {
+				offsetX = -g_fullpipe->_scrollSpeed;
+				_x += g_fullpipe->_scrollSpeed;
+			}
+		} else if (_x >= g_fullpipe->_scrollSpeed) {
+			offsetX = g_fullpipe->_scrollSpeed;
+			_x -= g_fullpipe->_scrollSpeed;
+		} else {
+			_x = 0;
+		}
+
+		if (_y > 0) {
+			offsetY = g_fullpipe->_scrollSpeed;
+			_y -= g_fullpipe->_scrollSpeed;
+		}
+
+		if (_y < 0) {
+			offsetY -= g_fullpipe->_scrollSpeed;
+			_y += g_fullpipe->_scrollSpeed;
+		}
+
+		g_fullpipe->_sceneRect.translate(offsetX, offsetY);
+	}
+
+	updateScrolling2();
 }
 
 void Scene::updateScrolling2() {
-	warning("STUB Scene::updateScrolling2()");
+	if (_picObjList.size()) {
+		Common::Point point;
+		int offsetY = 0;
+		int offsetX = 0;
+
+		((PictureObject *)_picObjList[0])->getDimensions(&point);
+
+		int flags = ((PictureObject *)_picObjList[0])->_flags;
+
+		if (g_fullpipe->_sceneRect.left < 0 && !(flags & 2))
+			offsetX = -g_fullpipe->_sceneRect.left;
+
+		if (g_fullpipe->_sceneRect.top < 0 && !(flags & 0x20))
+			offsetY = -g_fullpipe->_sceneRect.top;
+
+		if (g_fullpipe->_sceneRect.right > point.x - 1 && g_fullpipe->_sceneRect.left > 0 && !(flags & 2))
+			offsetX = point.x - g_fullpipe->_sceneRect.right - 1;
+
+		if (g_fullpipe->_sceneRect.bottom > point.y - 1 && g_fullpipe->_sceneRect.top > 0 && !(flags & 0x20))
+			offsetY = point.y - g_fullpipe->_sceneRect.bottom - 1;
+
+		g_fullpipe->_sceneRect.translate(offsetX, offsetY);
+	}
 }
 
 StaticANIObject *Scene::getStaticANIObjectAtPos(int x, int y) {
@@ -525,7 +588,7 @@ int Scene::getPictureObjectIdAtPos(int x, int y) {
 }
 
 void Scene::update(int counterdiff) {
-	debug(0, "Scene::update(%d)", counterdiff);
+	debug(6, "Scene::update(%d)", counterdiff);
 
 	for (PtrList::iterator s = _staticANIObjectList2.begin(); s != _staticANIObjectList2.end(); ++s)
 		((StaticANIObject *)*s)->update(counterdiff);
@@ -603,7 +666,7 @@ void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
 					}
 				}
 				_bigPictureArray[bgNumX][0]->getDimensions(&point);
-				int v32 = point.x + bgPosX;
+				int oldx = point.x + bgPosX;
 				bgPosX += point.x;
 				bgNumX++;
 
@@ -612,7 +675,7 @@ void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
 						break;
 					bgNumX = 0;
 				}
-				if (v32 >= g_fullpipe->_sceneRect.right - 1)
+				if (oldx >= g_fullpipe->_sceneRect.right - 1)
 					break;
 			}
 		}

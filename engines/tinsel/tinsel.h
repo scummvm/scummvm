@@ -32,6 +32,8 @@
 #include "common/util.h"
 
 #include "engines/engine.h"
+#include "gui/debugger.h"
+
 #include "tinsel/debugger.h"
 #include "tinsel/graphics.h"
 #include "tinsel/sound.h"
@@ -150,6 +152,7 @@ class TinselEngine : public Engine {
 	Common::Point _mousePos;
 	uint8 _dosPlayerDir;
 	Console *_console;
+	GUI::Debugger *getDebugger() { return _console; }
 
 	static const char *const _sampleIndices[][3];
 	static const char *const _sampleFiles[][3];

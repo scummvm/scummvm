@@ -689,6 +689,118 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO0()
 	},
+	// Reversion: The Escape Version 1.3.2369 (Chinese)
+	{
+		"reversion1",
+		"Version 1.3.2369",
+		{
+			{"xlanguage_nz.dcp", 0, "7146dfa43ffdf0886e034fffe2c8a0c0", 13722261},
+			{"data.dcp", 0, "aecb5deeea7b0baa871fbd0cef35a648", 254219204},
+			AD_LISTEND
+		},
+		Common::ZH_CNA,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	// Reversion: The Escape Version 1.3.2369 (English)
+	{
+		"reversion1",
+		"Version 1.3.2369",
+		{
+			{"xlanguage_en.dcp", 0, "64b6fa7eedc09c231f6ce046e77fee05", 11339619},
+			{"data.dcp", 0, "aecb5deeea7b0baa871fbd0cef35a648", 254219204},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	// Reversion: The Escape Version 1.3.2369 (French)
+	{
+		"reversion1",
+		"Version 1.3.2369",
+		{
+			{"xlanguage_fr.dcp", 0, "d561d562224afea809153a1fd9fdb0c0", 11963210},
+			{"data.dcp", 0, "aecb5deeea7b0baa871fbd0cef35a648", 254219204},
+			AD_LISTEND
+		},
+		Common::FR_FRA,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	// Reversion: The Escape Version 1.3.2369 (German)
+	{
+		"reversion1",
+		"Version 1.3.2369",
+		{
+			{"xlanguage_de.dcp", 0, "4e3f614c36bd6bae74b8cc83e663a8f0", 14040310},
+			{"data.dcp", 0, "aecb5deeea7b0baa871fbd0cef35a648", 254219204},
+			AD_LISTEND
+		},
+		Common::DE_DEU,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	// Reversion: The Escape Version 1.3.2369 (Italian)
+	{
+		"reversion1",
+		"Version 1.3.2369",
+		{
+			{"xlanguage_it.dcp", 0, "10d09b7fe61946f09dd91d5e8d090f94", 11913752},
+			{"data.dcp", 0, "aecb5deeea7b0baa871fbd0cef35a648", 254219204},
+			AD_LISTEND
+		},
+		Common::IT_ITA,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	// Reversion: The Escape Version 1.3.2369 (Latvian)
+	{
+		"reversion1",
+		"Version 1.3.2369",
+		{
+			{"xlanguage_lv.dcp", 0, "704359ab5040b0dab6545064d7aa6eb9", 11414925},
+			{"data.dcp", 0, "aecb5deeea7b0baa871fbd0cef35a648", 254219204},
+			AD_LISTEND
+		},
+		Common::LV_LAT,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	// Reversion: The Escape Version 1.3.2369 (Polish)
+	{
+		"reversion1",
+		"Version 1.3.2369",
+		{
+			{"xlanguage_pl.dcp", 0, "c4ad33f57e1e998169552d521c1d6638", 11532215},
+			{"data.dcp", 0, "aecb5deeea7b0baa871fbd0cef35a648", 254219204},
+			AD_LISTEND
+		},
+		Common::PL_POL,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	// Reversion: The Escape Version 1.3.2369 (Portuguese)
+	{
+		"reversion1",
+		"Version 1.3.2369",
+		{
+			{"xlanguage_pt.dcp", 0, "886886b6b14aadac844078de856799a6", 10620797},
+			{"data.dcp", 0, "aecb5deeea7b0baa871fbd0cef35a648", 254219204},
+			AD_LISTEND
+		},
+		Common::PT_BRA,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
 	// Reversion: The Meeting (Chinese)
 	{
 		"reversion2",

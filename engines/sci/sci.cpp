@@ -38,6 +38,7 @@
 #include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/script.h"	// for script_adjust_opcode_formats
+#include "sci/engine/script_patches.h"
 #include "sci/engine/selector.h"	// for SELECTOR
 
 #include "sci/sound/audio.h"
@@ -184,6 +185,7 @@ SciEngine::~SciEngine() {
 
 	delete[] _opcode_formats;
 
+	delete _scriptPatcher;
 	delete _resMan;	// should be deleted last
 	g_sci = 0;
 }
@@ -217,8 +219,9 @@ Common::Error SciEngine::run() {
 	// Add the after market GM patches for the specified game, if they exist
 	_resMan->addNewGMPatch(_gameId);
 	_gameObjectAddress = _resMan->findGameObject();
-
-	SegManager *segMan = new SegManager(_resMan);
+	
+	_scriptPatcher = new ScriptPatcher();
+	SegManager *segMan = new SegManager(_resMan, _scriptPatcher);
 
 	// Initialize the game screen
 	_gfxScreen = new GfxScreen(_resMan);
@@ -883,12 +886,12 @@ void SciEngine::syncSoundSettings() {
 	}
 }
 
-// used by Script Patcher. Used to find out, if Laura Bow 2 needs patching for Speech+Subtitles - or not
+// used by Script Patcher. Used to find out, if Laura Bow 2/King's Quest 6 need patching for Speech+Subtitles - or not
 bool SciEngine::speechAndSubtitlesEnabled() {
 	bool subtitlesOn = ConfMan.getBool("subtitles");
 	bool speechOn = !ConfMan.getBool("speech_mute");
 	
-	if (subtitlesOn && speechOn)
+	if (isCD() && subtitlesOn && speechOn)
 		return true;
 	return false;
 }
@@ -910,13 +913,12 @@ void SciEngine::syncIngameAudioOptions() {
 			case GID_FREDDYPHARKAS:
 			case GID_ECOQUEST:
 			case GID_LSL6:
-				// TODO: The following need script patches for simultaneous speech and subtitles
-				//  GID_KQ6
 				_gamestate->variables[VAR_GLOBAL][90] = make_reg(0, 3);	// speech + subtitles
 				break;
 			case GID_LAURABOW2:
-				// Laura Bow 2 gets patched when speech and subtitles are enabled
-				//  It then does both, when the user has "speech" selected. That's why we select speech here
+			case GID_KQ6:
+				// Laura Bow 2 + King's Quest 6 get patched when speech and subtitles are enabled
+				//  When the user has "speech" selected, the game will then do both That's why we select speech here
 			default:
 				// Game does not support speech and subtitles, set it to speech
 				_gamestate->variables[VAR_GLOBAL][90] = make_reg(0, 2);	// speech
@@ -943,6 +945,7 @@ void SciEngine::updateScummVMAudioOptions() {
 			// speech
 			switch (_gameId) {
 			case GID_LAURABOW2:
+			case GID_KQ6:
 				// We don't sync "speech" for Laura Bow 2 in case the user choose "both" in the setting
 				//  Because "speech" (2) within SCI means "speech + subtitles" for Laura Bow 2
 				if (subtitlesOn && speechOn)

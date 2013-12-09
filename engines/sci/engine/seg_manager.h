@@ -49,7 +49,7 @@ public:
 	/**
 	 * Initialize the segment manager.
 	 */
-	SegManager(ResourceManager *resMan);
+	SegManager(ResourceManager *resMan, ScriptPatcher *scriptPatcher);
 
 	/**
 	 * Deallocate all memory associated with the segment manager.
@@ -448,6 +448,7 @@ private:
 	Common::HashMap<int, SegmentId> _scriptSegMap;
 
 	ResourceManager *_resMan;
+	ScriptPatcher *_scriptPatcher;
 
 	SegmentId _clonesSegId; ///< ID of the (a) clones segment
 	SegmentId _listsSegId; ///< ID of the (a) list segment

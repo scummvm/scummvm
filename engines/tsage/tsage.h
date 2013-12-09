@@ -27,6 +27,7 @@
 #include "common/rect.h"
 #include "audio/mixer.h"
 #include "common/file.h"
+#include "gui/debugger.h"
 
 #include "tsage/core.h"
 #include "tsage/resources.h"
@@ -76,6 +77,7 @@ public:
 
 	MemoryManager _memoryManager;
 	Debugger *_debugger;
+	GUI::Debugger *getDebugger() { return _debugger; }
 
 	const char *getGameId() const;
 	uint32 getGameID() const;

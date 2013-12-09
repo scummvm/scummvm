@@ -284,7 +284,7 @@ public:
 	int _scene180Mode;	// _v575f7
 	int _v57709;
 	int _v5780C;
-	int _v5780E;
+	int _mouseCursorId;
 	int _v57810;
 	int _speechSubtitles;
 	Common::Point _s1550PlayerArea[3]; // only used for Quinn and Seeker

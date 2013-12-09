@@ -32,6 +32,24 @@
 namespace Graphics {
 
 class Font;
+
+/**
+ * Loads a TTF font file from a given data stream object.
+ *
+ * @param stream     Stream object to load font data from.
+ * @param size       The point size to load.
+ * @param dpi        The dpi to use for size calculations, by default 72dpi
+ *                   are used.
+ * @param monochrome Whether the font should be loaded in pure monochrome
+ *                   mode. In case this is true no aliasing is used.
+ * @param mapping    A mapping from code points 0-255 into UTF-32 code points.
+ *                   This can be used to support various 8bit character sets.
+ *                   In case the msb of the UTF-32 code point is set the font
+ *                   loading fails in case no glyph for it is found. When this
+ *                   is non-null only characters given in the mapping are
+ *                   supported.
+ * @return 0 in case loading fails, otherwise a pointer to the Font object.
+ */
 Font *loadTTFFont(Common::SeekableReadStream &stream, int size, uint dpi = 0, bool monochrome = false, const uint32 *mapping = 0);
 
 void shutdownTTF();

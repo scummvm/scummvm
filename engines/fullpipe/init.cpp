@@ -65,7 +65,7 @@ void FullpipeEngine::initObjectStates() {
 	setObjectState(sO_Guardian, getObjectEnumState(sO_Guardian, sO_OnRight));
 	setObjectState(sO_Grandma, getObjectEnumState(sO_Grandma, sO_In_14));
 	setObjectState(sO_Boot_15, getObjectEnumState(sO_Boot_15, sO_NotPresent));
-	setObjectState(sO_LeftPipe_15, getObjectEnumState(sO_LeftPipe_15, sO_OpenedShe));
+	setObjectState(sO_LeftPipe_15, getObjectEnumState(sO_LeftPipe_15, sO_IsOpened));
 	setObjectState(sO_Pedestal_16, getObjectEnumState(sO_Pedestal_16, sO_IsFree));
 	setObjectState(sO_Cup, getObjectEnumState(sO_Cup, sO_InSmokeRoom));
 	setObjectState(sO_Pedestal_17, getObjectEnumState(sO_Pedestal_17, sO_IsFree));
@@ -84,7 +84,7 @@ void FullpipeEngine::initObjectStates() {
 	setObjectState(sO_Lever_23, getObjectEnumState(sO_Lever_23, sO_NotTaken));
 	setObjectState(sO_LeverHandle_23, getObjectEnumState(sO_LeverHandle_23, sO_WithoutStool));
 	setObjectState(sO_LowerPipe_21, getObjectEnumState(sO_LowerPipe_21, sO_IsClosed));
-	setObjectState(sO_StarsDown_24, getObjectEnumState(sO_StarsDown_24, sO_OpenedShe));
+	setObjectState(sO_StarsDown_24, getObjectEnumState(sO_StarsDown_24, sO_IsOpened));
 	setObjectState(sO_Hatch_26, getObjectEnumState(sO_Hatch_26, sO_Closed));
 	setObjectState(sO_Sock_26, getObjectEnumState(sO_Sock_26, sO_NotHanging));
 	setObjectState(sO_LeftPipe_26, getObjectEnumState(sO_LeftPipe_26, sO_IsClosed));

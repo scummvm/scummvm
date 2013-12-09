@@ -24,6 +24,7 @@
 #ifndef ZVISION_ZVISION_H
 #define ZVISION_ZVISION_H
 
+#include "zvision/core/console.h"
 #include "zvision/detection.h"
 #include "zvision/utility/clock.h"
 
@@ -44,7 +45,6 @@ class VideoDecoder;
 namespace ZVision {
 
 struct ZVisionGameDescription;
-class Console;
 class ScriptManager;
 class RenderManager;
 class CursorManager;
@@ -117,6 +117,7 @@ public:
 	StringManager *getStringManager() const { return _stringManager; }
 	Common::RandomSource *getRandomSource() const { return _rnd; }
 	ZVisionGameId getGameId() const { return _gameDescription->gameId; }
+	GUI::Debugger *getDebugger() { return _console; }
 
 	/**
 	 * Play a video until it is finished. This is a blocking call. It will call

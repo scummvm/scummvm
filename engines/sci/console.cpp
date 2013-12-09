@@ -2980,7 +2980,7 @@ void Console::printKernelCallsFound(int kernelFuncNum, bool showFoundScripts) {
 	Script *script;
 	// Create a custom segment manager here, so that the game's segment
 	// manager won't be affected by loading and unloading scripts here.
-	SegManager *customSegMan = new SegManager(_engine->getResMan());
+	SegManager *customSegMan = new SegManager(_engine->getResMan(), _engine->getScriptPatcher());
 
 	Common::List<ResourceId>::iterator itr;
 	for (itr = resources.begin(); itr != resources.end(); ++itr) {
