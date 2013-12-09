@@ -36,6 +36,13 @@
 
 #include "graphics/font.h"
 
+// For some reason, the Win32 API thinks it's OK to define "_environ" in stdlib.h.
+// I refuse to give in and rename a variable on grounds that Windows is completely
+// wrong, so this shall remain.
+#ifdef WIN32
+#undef _environ
+#endif
+
 namespace Buried {
 
 class OvenDoor : public SceneBase {
@@ -841,6 +848,197 @@ void KitchenUnitPostBox::changeBackgroundBitmap() {
 	}
 }
 
+class EnvironSystemControls : public SceneBase {
+public:
+	EnvironSystemControls(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
+	int preExitRoom(Window *viewWindow, const Location &newLocation);
+	int mouseDown(Window *viewWindow, const Common::Point &pointLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int draggingItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
+	int droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	Common::Rect _environCart;
+	Common::Rect _environButton;
+	Common::Rect _allSatButton;
+};
+
+EnvironSystemControls::EnvironSystemControls(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_environCart = Common::Rect(176, 70, 256, 136);
+	_environButton = Common::Rect(102, 85, 152, 143);
+	_allSatButton = Common::Rect(278, 85, 326, 143);
+}
+
+int EnvironSystemControls::postEnterRoom(Window *viewWindow, const Location &priorLocation) {
+	switch (((SceneViewWindow *)viewWindow)->getGlobalFlags().faERCurrentCartridge) {
+	case 0: // No cartridge inserted
+		((SceneViewWindow *)viewWindow)->playSynchronousAnimation(11);
+		_staticData.navFrameIndex = 57;
+		break;
+	case 1: // Geno single inserted
+		((SceneViewWindow *)viewWindow)->playSynchronousAnimation(7);
+		_staticData.navFrameIndex = 59;
+		break;
+	case 2: // Agent 3's cartridge inserted
+		((SceneViewWindow *)viewWindow)->playSynchronousAnimation(9);
+		_staticData.navFrameIndex = 56;
+		break;
+	}
+
+	return SC_TRUE;
+}
+
+int EnvironSystemControls::preExitRoom(Window *viewWindow, const Location &newLocation) {
+	_staticData.navFrameIndex = 50;
+
+	switch (((SceneViewWindow *)viewWindow)->getGlobalFlags().faERCurrentCartridge) {
+	case 0: // No cartridge inserted
+		((SceneViewWindow *)viewWindow)->playSynchronousAnimation(12);
+		break;
+	case 1: // Geno single inserted
+		((SceneViewWindow *)viewWindow)->playSynchronousAnimation(8);
+		_staticData.navFrameIndex = 59;
+		break;
+	case 2: // Agent 3's cartridge inserted
+		((SceneViewWindow *)viewWindow)->playSynchronousAnimation(10);
+		_staticData.navFrameIndex = 56;
+		break;
+	}
+
+	return SC_TRUE;
+}
+
+int EnvironSystemControls::mouseDown(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_environCart.contains(pointLocation) && ((SceneViewWindow *)viewWindow)->getGlobalFlags().faERCurrentCartridge > 0) {
+		int itemID = 0;
+		switch (((SceneViewWindow *)viewWindow)->getGlobalFlags().faERCurrentCartridge) {
+		case 1:
+			itemID = kItemGenoSingleCart;
+			break;
+		case 2:
+			itemID = kItemEnvironCart;
+			break;
+		case 3:
+			itemID = kItemClassicGamesCart; // Alas, the only time this is used in the code
+			break;
+		}
+
+		// Reset the flag and change the frame index
+		_staticData.navFrameIndex = 57;
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().faERCurrentCartridge = 0;
+
+		// Start dragging
+		Common::Point ptInventoryWindow = viewWindow->convertPointToGlobal(pointLocation);
+		ptInventoryWindow = ((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->convertPointToLocal(ptInventoryWindow);
+		((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->startDraggingNewItem(itemID, ptInventoryWindow);
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int EnvironSystemControls::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	DestinationScene newScene;
+	newScene.destinationScene = _staticData.location;
+	newScene.destinationScene.depth = 1;
+	newScene.transitionType = TRANSITION_VIDEO;
+	newScene.transitionData = 2;
+	newScene.transitionStartFrame = -1;
+	newScene.transitionLength = -1;
+
+	// If there is something in the slot, return here
+	if (_environCart.contains(pointLocation) && ((SceneViewWindow *)viewWindow)->getGlobalFlags().faERCurrentCartridge > 0)
+		return SC_FALSE;
+
+	if (_environButton.contains(pointLocation)) {
+		switch (((SceneViewWindow *)viewWindow)->getGlobalFlags().faERCurrentCartridge) {
+		case 0:
+			newScene.destinationScene.depth = 3;
+			newScene.transitionData = 16;
+			break;
+		case 1:
+			newScene.destinationScene.depth = 4;
+			newScene.transitionData = 16;
+			break;
+		case 2:
+			newScene.destinationScene.depth = 5;
+			newScene.transitionData = 16;
+			break;
+		}
+	} else if (_allSatButton.contains(pointLocation)) {
+		newScene.destinationScene.depth = 7;
+		newScene.transitionData = 16;
+	}
+
+	((SceneViewWindow *)viewWindow)->moveToDestination(newScene);
+	return SC_TRUE;
+}
+
+int EnvironSystemControls::draggingItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) {
+	if ((itemID == kItemGenoSingleCart || itemID == kItemEnvironCart || itemID == kItemClassicGamesCart) &&
+			_environCart.contains(pointLocation) && ((SceneViewWindow *)viewWindow)->getGlobalFlags().faERCurrentCartridge == 0)
+		return 1;
+
+	return 0;
+}
+
+int EnvironSystemControls::droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) {
+	if (pointLocation.x == -1 && pointLocation.y == -1)
+		return 0;
+
+	if ((itemID == kItemGenoSingleCart || itemID == kItemEnvironCart || itemID == kItemClassicGamesCart) &&
+			((SceneViewWindow *)viewWindow)->getGlobalFlags().faERCurrentCartridge == 0) {
+		switch (itemID) {
+		case kItemGenoSingleCart: {
+			_staticData.navFrameIndex = 59;
+			((SceneViewWindow *)viewWindow)->getGlobalFlags().faERCurrentCartridge = 1;
+			viewWindow->invalidateWindow(false);
+			DestinationScene newScene;
+			newScene.destinationScene = _staticData.location;
+			newScene.destinationScene.depth = 4;
+			newScene.transitionType = TRANSITION_VIDEO;
+			newScene.transitionData = 16;
+			newScene.transitionStartFrame = -1;
+			newScene.transitionLength = -1;
+			((SceneViewWindow *)viewWindow)->moveToDestination(newScene);
+			return SIC_ACCEPT;
+		}
+		case kItemEnvironCart: {
+			_staticData.navFrameIndex = 56;
+			((SceneViewWindow *)viewWindow)->getGlobalFlags().faERCurrentCartridge = 2;
+			viewWindow->invalidateWindow(false);
+			DestinationScene newScene;
+			newScene.destinationScene = _staticData.location;
+			newScene.destinationScene.depth = 5;
+			newScene.transitionType = TRANSITION_VIDEO;
+			newScene.transitionData = 16;
+			newScene.transitionStartFrame = -1;
+			newScene.transitionLength = -1;
+			((SceneViewWindow *)viewWindow)->moveToDestination(newScene);
+			return SIC_ACCEPT;
+		}
+		}
+
+		viewWindow->invalidateWindow(false);
+		return SIC_ACCEPT;
+	}
+
+	return SIC_REJECT;
+}
+
+int EnvironSystemControls::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_environCart.contains(pointLocation) && ((SceneViewWindow *)viewWindow)->getGlobalFlags().faERCurrentCartridge > 0)
+		return kCursorOpenHand;
+
+	if (_environButton.contains(pointLocation) || _allSatButton.contains(pointLocation))
+		return kCursorFinger;
+
+	return kCursorPutDown;
+}
+
 class FlagChangeBackground : public SceneBase {
 public:
 	FlagChangeBackground(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
@@ -1548,6 +1746,111 @@ int ClickOnBooks::specifyCursor(Window *viewWindow, const Common::Point &pointLo
 	return kCursorArrow;
 }
 
+class ViewEnvironCart : public SceneBase {
+public:
+	ViewEnvironCart(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int timerCallback(Window *viewWindow);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+};
+
+ViewEnvironCart::ViewEnvironCart(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().lensFilterActivated == 0)
+		_staticData.navFrameIndex = 66;
+}
+
+int ViewEnvironCart::timerCallback(Window *viewWindow) {
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().lensFilterActivated == 1) {
+		_staticData.navFrameIndex = 64;
+
+		// Kill the ambient sound
+		_vm->_sound->setAmbientSound();
+
+		// Set the research scoring flag
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().scoreResearchEnvironCart = 1;
+
+		// Sit back and relax as you get abducted
+		((SceneViewWindow *)viewWindow)->playSynchronousAnimation(15);
+		_staticData.navFrameIndex = 55;
+
+		// Empty the input queue
+		BuriedEngine *vm = _vm;
+		vm->removeMouseMessages(viewWindow);
+		vm->removeKeyboardMessages(viewWindow);
+
+		// Make the jump to Agent 3's lair
+		DestinationScene newScene;
+		newScene.destinationScene = Location(3, 2, 6, 0, 0, 0);
+		newScene.transitionType = TRANSITION_NONE;
+		newScene.transitionData = -1;
+		newScene.transitionStartFrame = -1;
+		newScene.transitionLength = -1;
+		((SceneViewWindow *)viewWindow)->moveToDestination(newScene);
+
+		vm->removeMouseMessages(viewWindow);
+		vm->removeKeyboardMessages(viewWindow);
+	}
+
+	return SC_TRUE;
+}
+
+int ViewEnvironCart::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	// Move back
+	DestinationScene newScene;
+	newScene.destinationScene = _staticData.location;
+	newScene.destinationScene.depth = 1;
+	newScene.transitionType = TRANSITION_VIDEO;
+	newScene.transitionData = 4;
+	newScene.transitionStartFrame = -1;
+	newScene.transitionLength = -1;
+	((SceneViewWindow *)viewWindow)->moveToDestination(newScene);
+	return SC_TRUE;
+}
+
+int ViewEnvironCart::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	return kCursorFinger;
+}
+
+class MainEnvironSitDownClick : public SceneBase {
+public:
+	MainEnvironSitDownClick(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	Common::Rect _environ;
+};
+
+MainEnvironSitDownClick::MainEnvironSitDownClick(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_environ = Common::Rect(120, 0, 302, 189);
+}
+
+int MainEnvironSitDownClick::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_environ.contains(pointLocation)) {
+		DestinationScene newScene;
+		newScene.destinationScene = _staticData.location;
+		newScene.destinationScene.orientation = 1;
+		newScene.destinationScene.depth = 1;
+		newScene.transitionType = TRANSITION_NONE;
+		newScene.transitionData = -1;
+		newScene.transitionStartFrame = -1;
+		newScene.transitionLength = -1;
+		((SceneViewWindow *)viewWindow)->moveToDestination(newScene);
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int MainEnvironSitDownClick::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_environ.contains(pointLocation))
+		return kCursorFinger;
+
+	return kCursorArrow;
+}
+
 class EnvironDoorExitSound : public SceneBase {
 public:
 	EnvironDoorExitSound(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
@@ -1604,6 +1907,10 @@ SceneBase *SceneViewWindow::constructFutureApartmentSceneObject(Window *viewWind
 		return new ClickChangeScene(_vm, viewWindow, sceneStaticData, priorLocation, 134, 0, 300, 189, kCursorFinger, 4, 2, 2, 0, 1, 1, TRANSITION_VIDEO, 0, -1, -1);
 	case 16:
 		return new ClickChangeScene(_vm, viewWindow, sceneStaticData, priorLocation, 163, 25, 273, 145, kCursorMagnifyingGlass, 4, 2, 2, 0, 1, 2, TRANSITION_VIDEO, 1, -1, -1);
+	case 17:
+		return new EnvironSystemControls(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 20:
+		return new ViewEnvironCart(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 21:
 		return new ClickChangeScene(_vm, viewWindow, sceneStaticData, priorLocation, 0, 0, 432, 189, kCursorPutDown, 4, 2, 2, 0, 1, 1, TRANSITION_VIDEO, 4, -1, -1);
 	case 23:
@@ -1664,6 +1971,8 @@ SceneBase *SceneViewWindow::constructFutureApartmentSceneObject(Window *viewWind
 		return new MainEnvironDoorDown(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 57:
 		return new MainEnvironDoorExit(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 58:
+		return new MainEnvironSitDownClick(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 59:
 		return new EnvironDoorExitSound(_vm, viewWindow, sceneStaticData, priorLocation);
 	}
