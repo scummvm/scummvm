@@ -21,6 +21,7 @@
  */
 
 #include "common/archive.h"
+#include "common/file.h"	// for DumpFile
 #include "common/system.h"
 
 #include "sci/sci.h"
@@ -139,6 +140,27 @@ void Portrait::doit(Common::Point position, uint16 resourceId, uint16 noun, uint
 	ResourceId syncResourceId = ResourceId(kResourceTypeSync36, resourceId, noun, verb, cond, seq);
 	Resource *syncResource = _resMan->findResource(syncResourceId, true);
 	uint syncOffset = 0;
+
+#if 0
+		// Dump the sync resources to disk
+		Common::DumpFile *outFile = new Common::DumpFile();
+		Common::String outName = syncResourceId.toPatchNameBase36() + ".sync36";
+		outFile->open(outName);
+		syncResource->writeToStream(outFile);
+		outFile->finalize();
+		outFile->close();
+
+		ResourceId raveResourceId = ResourceId(kResourceTypeRave, resourceId, noun, verb, cond, seq);
+		Resource *raveResource = _resMan->findResource(raveResourceId, true);
+		outName = raveResourceId.toPatchNameBase36() + ".rave";
+		outFile->open(outName);
+		raveResource->writeToStream(outFile);
+		outFile->finalize();
+		outFile->close();
+		_resMan->unlockResource(raveResource);
+
+		delete outFile;
+#endif
 
 	// Set the portrait palette
 	_palette->set(&_portraitPalette, false, true);

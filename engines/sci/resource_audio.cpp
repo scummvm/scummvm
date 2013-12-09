@@ -395,15 +395,22 @@ int ResourceManager::readAudioMapSCI11(ResourceSource *map) {
 				syncSize = READ_LE_UINT16(ptr);
 				ptr += 2;
 
+				// FIXME: The sync36 resource seems to be two bytes too big in KQ6CD
+				// (bytes taken from the RAVE resource right after it)
 				if (syncSize > 0)
 					addResource(ResourceId(kResourceTypeSync36, map->_volumeNumber, n & 0xffffff3f), src, offset, syncSize);
 			}
 
 			if (n & 0x40) {
 				// This seems to define the size of raw lipsync data (at least
-				// in kq6), may also just be general appended data.
-				syncSize += READ_LE_UINT16(ptr);
+				// in KQ6 CD Windows).
+				int kq6HiresSyncSize = READ_LE_UINT16(ptr);
 				ptr += 2;
+
+				if (kq6HiresSyncSize > 0) {
+					addResource(ResourceId(kResourceTypeRave, map->_volumeNumber, n & 0xffffff3f), src, offset + syncSize, kq6HiresSyncSize);
+					syncSize += kq6HiresSyncSize;
+				}
 			}
 
 			addResource(ResourceId(kResourceTypeAudio36, map->_volumeNumber, n & 0xffffff3f), src, offset + syncSize);
