@@ -97,6 +97,8 @@ bool SceneViewWindow::startEnvironmentAmbient(int oldTimeZone, int oldEnvironmen
 		return startCastleAmbient(oldTimeZone, oldEnvironment, environment, fade);
 	case 2:
 		return startMayanAmbient(oldTimeZone, oldEnvironment, environment, fade);
+	case 3:
+		return startAgent3LairAmbient(oldTimeZone, oldEnvironment, environment, fade);
 	case 4:
 		return startFutureApartmentAmbient(oldTimeZone, oldEnvironment, environment, fade);
 	case 5:
@@ -117,7 +119,6 @@ SceneBase *SceneViewWindow::constructSceneObject(Window *viewWindow, const Locat
 
 	switch (sceneStaticData.location.timeZone) {
 	case 0: // Miscellaneous scenes
-	case 3: // Agent 3's Lair
 	case 7: // Alien
 		// TODO
 		warning("Could not create scene object for time zone %d", sceneStaticData.location.timeZone);
@@ -126,6 +127,8 @@ SceneBase *SceneViewWindow::constructSceneObject(Window *viewWindow, const Locat
 		return constructCastleSceneObject(viewWindow, sceneStaticData, priorLocation);
 	case 2: // Mayan
 		return constructMayanSceneObject(viewWindow, sceneStaticData, priorLocation);
+	case 3: // Agent 3's Lair
+		return constructAgent3LairSceneObject(viewWindow, sceneStaticData, priorLocation);
 	case 4: // Future Apartment
 		return constructFutureApartmentSceneObject(viewWindow, sceneStaticData, priorLocation);
 	case 5: // Da Vinci
@@ -146,6 +149,8 @@ bool SceneViewWindow::initializeTimeZoneAndEnvironment(Window *viewWindow, int t
 		return initializeCastleTimeZoneAndEnvironment(viewWindow, environment);
 	case 2:
 		return initializeMayanTimeZoneAndEnvironment(viewWindow, environment);
+	case 3:
+		return initializeAgent3LairTimeZoneAndEnvironment(viewWindow, environment);
 	case 4:
 		// Nothing to do
 		return true;
