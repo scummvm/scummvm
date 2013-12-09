@@ -302,17 +302,17 @@ public:
 	// Discarded cards are put in the available cards pile, with an higher index so there no conflict
 	int _currentDiscardIndex;
 	int _availableCardsPile[100];
-	Card *_discardCard;
-	Card *_field3EF4;
-	Card *_field3EF8;
+	Card *_actionCard1;
+	Card *_actionCard2;
+	Card *_actionCard3;
 	Card _item5;
 	Card _selectedCard;
 	Card _discardPile;
 	Card _stockCard;
 	bool _shuffleEndedFl;
 	int _currentPlayerNumb;
-	int _field4240;
-	int _field4242;
+	int _actionIdx1;
+	int _actionIdx2;
 	bool _showPlayerTurn;
 	bool _field4246;
 	int _field424A;
@@ -354,7 +354,7 @@ public:
 	void subC34A1(Card *subObj1, Card *subObj2);
 	Card *subC34EC(int arg1);
 	void subC358E(Card *subObj1, int arg2);
-	int  subC3E92(int arg1);
+	int  subC3E92(int playerId);
 	void discardCard(Card *card);
 	void subC4CD2();
 	void subC4CEC();
