@@ -29,6 +29,7 @@ MODULE_OBJS = \
 	demo/demo_menu.o \
 	demo/features.o \
 	demo/movie_scene.o \
+	environ/agent3_lair.o \
 	environ/ai_lab.o \
 	environ/castle.o \
 	environ/da_vinci.o \
