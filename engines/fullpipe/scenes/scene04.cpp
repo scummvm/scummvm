@@ -445,7 +445,7 @@ void sceneHandler04_bottleUpdateObjects(int off) {
 	for (Common::List<GameObject *>::iterator it = g_vars->scene04_bottleObjList.begin(); it != g_vars->scene04_bottleObjList.end(); ++it) {
 		GameObject *obj = *it;
 
-		obj->setOXY(obj->_field_8 + 20, off + obj->_field_8 + 24);
+		obj->setOXY(obj->_ox, off + obj->_oy);
 	}
 }
 
