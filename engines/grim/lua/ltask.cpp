@@ -247,7 +247,7 @@ void pause_scripts() {
 
 	for (t = lua_rootState->next; t != NULL; t = t->next) {
 		if (lua_state != t)
-			t->paused = true;
+			t->all_paused = true;
 	}
 }
 
@@ -274,7 +274,7 @@ void unpause_scripts() {
 
 	for (t = lua_rootState->next; t != NULL; t = t->next) {
 		if (lua_state != t)
-			t->paused = false;
+			t->all_paused = false;
 	}
 }
 
@@ -320,7 +320,7 @@ void runtasks(LState *const rootState) {
 	while (lua_state) {
 		LState *nextState = NULL;
 		bool stillRunning;
-		if (!lua_state->updated && !lua_state->paused) {
+		if (!lua_state->all_paused && !lua_state->updated && !lua_state->paused) {
 			jmp_buf	errorJmp;
 			lua_state->errorJmp = &errorJmp;
 			if (setjmp(errorJmp)) {
@@ -361,7 +361,7 @@ void runtasks(LState *const rootState) {
 	// Check for states that may have been created in this run.
 	LState *state = lua_state->next;
 	while (state) {
-		if (!state->paused && !state->updated) {
+		if (!state->all_paused && !state->paused && !state->updated) {
 			// New state! Run a new pass.
 			runtasks(rootState);
 			return;
