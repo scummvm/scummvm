@@ -328,6 +328,9 @@ namespace Buried {
 #define IDS_FUTAPT_ENVIRON_DOOR_CLOSE	6196
 #define IDS_AGENT3_VIRUS_PW_ACCEPTED    6197
 
+// 1.04+:
+#define IDS_AGENT3_VIRUS_NETWORK_TEXT   6198
+
 #define IDS_FOOTSTEPS_FILENAME_BASE		6200
 
 #define IDS_INN_STILL_FRAME_FILENAME	6300
@@ -355,6 +358,16 @@ namespace Buried {
 #define IDES_ITEM_DESC_BASE				8256
 
 // 1.04+:
+#define IDS_AL_VULGAR_LANG_A            9000
+#define IDS_AL_VULGAR_LANG_B            9001
+#define IDS_AL_VULGAR_LANG_C            9002
+#define IDS_AL_VULGAR_LANG_D            9003
+#define IDS_AL_VULGAR_LANG_E            9004
+#define IDS_AL_VULGAR_LANG_F            9005
+#define IDS_AL_VULGAR_LANG_G            9006
+#define IDS_AL_VULGAR_LANG_H            9007
+#define IDS_AL_VULGAR_LANG_I            9009
+#define IDS_AL_CASTRATION_TEXT          9016
 #define IDS_COMPL_WALK_SCORE_DESC_TEMPL 9031
 #define IDS_DEATH_WALK_SCORE_DESC_TEMPL 9031
 #define IDS_COMPL_WALK_SCORE_AMT_TEMPL  9032
