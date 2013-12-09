@@ -1814,6 +1814,7 @@ EOF
 	# We need at least 256MB for a static build with all engines...
 	if test "$_compile_free_memory" -lt "256" ; then
 		echo insufficient
+		echo "To override this check, pass --disable-ramcheck option to configure."
 		exit 1
 	else
 		echo ok
