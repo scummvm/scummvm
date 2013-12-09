@@ -496,7 +496,7 @@ void StaticANIObject::draw() {
 	Common::Point point;
 	Common::Rect rect;
 
-	debug(0, "StaticANIObject::draw() (%s) [%d] [%d, %d]", transCyrillic((byte *)_objectName), _id, _ox, _oy);
+	debug(6, "StaticANIObject::draw() (%s) [%d] [%d, %d]", transCyrillic((byte *)_objectName), _id, _ox, _oy);
 
 	if (_shadowsOn && g_fullpipe->_currentScene && g_fullpipe->_currentScene->_shadows
 		&& (getCurrDimensions(point)->x != 1 || getCurrDimensions(point)->y != 1)) {
@@ -556,7 +556,7 @@ void StaticANIObject::draw() {
 }
 
 void StaticANIObject::draw2() {
-	debug(0, "StatciANIObject::draw2(): id: (%s) %d [%d, %d]", transCyrillic((byte *)_objectName), _id, _ox, _oy);
+	debug(6, "StatciANIObject::draw2(): id: (%s) %d [%d, %d]", transCyrillic((byte *)_objectName), _id, _ox, _oy);
 
 	if ((_flags & 4) && (_flags & 0x10)) {
 		if (_movement) {
@@ -891,7 +891,7 @@ void StaticANIObject::hide() {
 }
 
 void StaticANIObject::show1(int x, int y, int movId, int mqId) {
-	debug(0, "StaticANIObject::show1(%d, %d, %d, %d)", x, y, movId, mqId);
+	debug(6, "StaticANIObject::show1(%d, %d, %d, %d)", x, y, movId, mqId);
 
 	if (_messageQueueId)
 		return;
@@ -998,20 +998,17 @@ bool StaticANIObject::startAnim(int movementId, int messageQueueId, int dynPhase
 	int newy = _oy;
 	Common::Point point;
 
-	debug(0, "0 %d %d", newx, newy);
 	if (_movement) {
 		_movement->getCurrDynamicPhaseXY(point);
 
 		newx -= point.x;
 		newy -= point.y;
 
-		debug(0, "1 %d %d", newx, newy);
 	} else if (_statics) {
 		_statics->getSomeXY(point);
 
 		newx -= point.x;
 		newy -= point.y;
-		debug(0, "2 %d %d - %d %d assa", newx, newy, point.x, point.y);
 	}
 
 	_movement = mov;
@@ -1029,7 +1026,6 @@ bool StaticANIObject::startAnim(int movementId, int messageQueueId, int dynPhase
 			newx += point.x + _movement->_mx;
 			newy += point.y + _movement->_my;
 
-			debug(0, "3 %d %d", newx, newy);
 			_stepArray.gotoNextPoint();
 
 			ExCommand *ex = _movement->_currDynamicPhase->getExCommand();
@@ -1794,7 +1790,7 @@ DynamicPhase::DynamicPhase(DynamicPhase *src, bool reverse) {
 	_field_7E = 0;
 	_rect = new Common::Rect();
 
-	debug(0, "DynamicPhase::DynamicPhase(src, %d)", reverse);
+	debug(1, "DynamicPhase::DynamicPhase(src, %d)", reverse);
 
 	if (reverse) {
 		if (!src->_bitmap)

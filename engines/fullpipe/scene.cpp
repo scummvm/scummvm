@@ -447,7 +447,7 @@ void Scene::objectList_sortByPriority(PtrList &list) {
 }
 
 void Scene::draw() {
-	debug(0, ">>>>> Scene::draw()");
+	debug(6, ">>>>> Scene::draw()");
 	updateScrolling();
 
 	drawContent(60000, 0, true);
@@ -525,7 +525,7 @@ int Scene::getPictureObjectIdAtPos(int x, int y) {
 }
 
 void Scene::update(int counterdiff) {
-	debug(0, "Scene::update(%d)", counterdiff);
+	debug(6, "Scene::update(%d)", counterdiff);
 
 	for (PtrList::iterator s = _staticANIObjectList2.begin(); s != _staticANIObjectList2.end(); ++s)
 		((StaticANIObject *)*s)->update(counterdiff);
