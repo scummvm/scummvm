@@ -241,7 +241,7 @@ int sceneHandler03(ExCommand *ex) {
 		g_fullpipe->lift_sub05(ex);
 		break;
 
-	case 93:
+	case 29:
 		{
 			StaticANIObject *ani = g_fullpipe->_currentScene->getStaticANIObjectAtPos(ex->_sceneClickX, ex->_sceneClickY);
 			if (ani && ani->_id == ANI_LIFTBUTTON) {
@@ -266,7 +266,7 @@ int sceneHandler03(ExCommand *ex) {
 			break;
 		}
 
-	case 97:
+	case 33:
 		{
 			int res = 0;
 
