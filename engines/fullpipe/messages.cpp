@@ -779,8 +779,8 @@ bool chainQueue(int queueId, int flags) {
 
 	nmq->_flags |= flags;
 
-	if (!mq->chain(0)) {
-		delete mq;
+	if (!nmq->chain(0)) {
+		delete nmq;
 
 		return false;
 	}
