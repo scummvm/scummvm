@@ -515,7 +515,29 @@ void Scene::updateScrolling() {
 }
 
 void Scene::updateScrolling2() {
-	warning("STUB Scene::updateScrolling2()");
+	if (_picObjList.size()) {
+		Common::Point point;
+		int offsetY = 0;
+		int offsetX = 0;
+
+		((PictureObject *)_picObjList[0])->getDimensions(&point);
+
+		int flags = ((PictureObject *)_picObjList[0])->_flags;
+
+		if (g_fullpipe->_sceneRect.left < 0 && !(flags & 2))
+			offsetX = -g_fullpipe->_sceneRect.left;
+
+		if (g_fullpipe->_sceneRect.top < 0 && !(flags & 0x20))
+			offsetY = -g_fullpipe->_sceneRect.top;
+
+		if (g_fullpipe->_sceneRect.right > point.x - 1 && g_fullpipe->_sceneRect.left > 0 && !(flags & 2))
+			offsetX = point.x - g_fullpipe->_sceneRect.right - 1;
+
+		if (g_fullpipe->_sceneRect.bottom > point.y - 1 && g_fullpipe->_sceneRect.top > 0 && !(flags & 0x20))
+			offsetY = point.y - g_fullpipe->_sceneRect.bottom - 1;
+
+		g_fullpipe->_sceneRect.translate(offsetX, offsetY);
+	}
 }
 
 StaticANIObject *Scene::getStaticANIObjectAtPos(int x, int y) {
