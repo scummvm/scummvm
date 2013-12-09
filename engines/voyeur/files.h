@@ -414,6 +414,14 @@ public:
 
 class ThreadResource {
 public:
+	static int _stampFlags;
+	static int _useCount[8];
+
+	static void initUseCount();
+	static void unloadAllStacks(VoyeurEngine *vm);
+public:
+	VoyeurEngine *_vm;
+
 	int _field0;
 	int _controlIndex;
 	int _field4, _field6;
@@ -424,6 +432,10 @@ public:
 public:
 	ThreadResource(BoltFilesState &state, const byte *src);
 	virtual ~ThreadResource() {}
+
+	bool loadAStack(int idx);
+	void unloadAStack(int idx);
+	void doState();
 };
 
 } // End of namespace Voyeur

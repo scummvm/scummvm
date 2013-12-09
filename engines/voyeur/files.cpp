@@ -1307,8 +1307,55 @@ VInitCyclResource::VInitCyclResource(BoltFilesState &state, const byte *src) {
 
 /*------------------------------------------------------------------------*/
 
-ThreadResource::ThreadResource(BoltFilesState &state, const byte *src) {
+int ThreadResource::_stampFlags = 0;
+int ThreadResource::_useCount[8];
+
+ThreadResource::ThreadResource(BoltFilesState &state, const byte *src):
+		_vm(state._vm) {
 	_flags = READ_LE_UINT16(&src[8]);
+}
+
+bool ThreadResource::loadAStack(int idx) {
+	if (_stampFlags & 1) {
+		unloadAStack(_controlIndex);
+		if  (!_useCount[idx]) {
+			BoltEntry &boltEntry = _vm->_stampLibPtr->boltEntry(_vm->_controlPtr->_memberIds[idx]);
+			if (!boltEntry._data)
+				return false;
+
+			_vm->_controlPtr->_entries[idx] = boltEntry._data;
+		}
+
+		++_useCount[idx];
+	}
+
+	_ctlPtr = _vm->_controlPtr->_entries[idx];
+	return true;
+}
+
+void ThreadResource::unloadAStack(int idx) {
+	if ((_stampFlags & 1) && _useCount[idx]) {
+		if (--_useCount[idx] == 0) {
+			_vm->_stampLibPtr->freeBoltMember(_vm->_controlPtr->_memberIds[idx]);
+		}
+	}
+}
+
+void ThreadResource::doState() {
+	warning("TODO: stm_doState");
+}
+
+void ThreadResource::unloadAllStacks(VoyeurEngine *vm) {
+	if (_stampFlags & 1) {
+		for (int i = 0; i < 8; ++i) {
+			if (_useCount[i])
+				vm->_stampLibPtr->freeBoltMember(vm->_controlPtr->_memberIds[i]);
+		}
+	}
+}
+
+void ThreadResource::initUseCount() {
+	Common::fill(&_useCount[0], &_useCount[8], 0);
 }
 
 /*------------------------------------------------------------------------*/

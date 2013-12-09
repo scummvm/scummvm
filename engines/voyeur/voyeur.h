@@ -84,12 +84,7 @@ private:
 	void playStamp();
 	void initStamp();
 	void closeStamp();
-	void initUseCount();
-	void initThreadStruct(ThreadResource *thread, int v1, int idx);
-	bool stm_loadAStack(ThreadResource *thread, int idx);
-	void stm_unloadAStack(int idx);
-	void stm_unloadAllStacks();
-	void stm_doState(ThreadResource *thread);
+	void initThreadStruct(ThreadResource *thread, int idx, int v3);
 protected:
 	// Engine APIs
 	virtual Common::Error run();
@@ -108,8 +103,6 @@ public:
 	ControlResource *_controlPtr;
 	byte *_stampData;
 	BoltGroup *_stackGroupPtr;
-	int _stampFlags;
-	int _stm_useCount[8];
 public:
 	VoyeurEngine(OSystem *syst, const VoyeurGameDescription *gameDesc);
 	virtual ~VoyeurEngine();

@@ -65,72 +65,29 @@ void VoyeurEngine::playStamp() {
 }
 
 void VoyeurEngine::initStamp() {
-	_stampFlags &= ~1;
+	ThreadResource::_stampFlags &= ~1;
 	_stackGroupPtr = _controlGroupPtr;
 
 	if (!_controlPtr->_entries[0])
 		error("No control entries");
 
-	initUseCount();
+	ThreadResource::initUseCount();
 }
 
 void VoyeurEngine::closeStamp() {
-	stm_unloadAllStacks();
+	ThreadResource::unloadAllStacks(this);
 }
 
-void VoyeurEngine::initUseCount() {
-	Common::fill(&_stm_useCount[0], &_stm_useCount[8], 0);
-}
-
-void VoyeurEngine::initThreadStruct(ThreadResource *thread, int v1, int idx) {
+void VoyeurEngine::initThreadStruct(ThreadResource *thread, int idx, int v3) {
 	thread->_controlIndex = -1;
-	if (stm_loadAStack(thread, idx)) {
+	if (thread->loadAStack(idx)) {
 		thread->_field4 = thread->_field6 = -1;
-		thread->_field0 = idx;
+		thread->_field0 = v3;
 		thread->_field3A = -1;
 		thread->_field3E = -1;
 
-		stm_doState(thread);
+		thread->doState();
 	}
-}
-
-bool VoyeurEngine::stm_loadAStack(ThreadResource *thread, int idx) {
-	if (_stampFlags & 1) {
-		stm_unloadAStack(thread->_controlIndex);
-		if  (!_stm_useCount[idx]) {
-			BoltEntry &boltEntry = _stampLibPtr->boltEntry(_controlPtr->_memberIds[idx]);
-			if (!boltEntry._data)
-				return false;
-
-			_controlPtr->_entries[idx] = boltEntry._data;
-		}
-
-		++_stm_useCount[idx];
-	}
-
-	thread->_ctlPtr = _controlPtr->_entries[idx];
-	return true;
-}
-
-void VoyeurEngine::stm_unloadAStack(int idx) {
-	if ((_stampFlags & 1) && _stm_useCount[idx]) {
-		if (--_stm_useCount[idx] == 0) {
-			_stampLibPtr->freeBoltMember(_controlPtr->_memberIds[idx]);
-		}
-	}
-}
-
-void VoyeurEngine::stm_unloadAllStacks() {
-	if (_stampFlags & 1) {
-		for (int i = 0; i < 8; ++i) {
-			if (_stm_useCount[i])
-				_stampLibPtr->freeBoltMember(_controlPtr->_memberIds[i]);
-		}
-	}
-}
-
-void VoyeurEngine::stm_doState(ThreadResource *thread) {
-	warning("TODO: stm_doState");
 }
 
 } // End of namespace Voyeur
