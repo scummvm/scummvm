@@ -133,6 +133,7 @@ namespace Fullpipe {
 #define MV_PNK_WEIGHTRIGHT 502
 #define MV_SC4_COIN_default 1029
 #define MV_SPK4_PLAY 3276
+#define MV_SPR_LOWER 543
 #define PIC_CMN_EVAL 3468
 #define PIC_CSR_DEFAULT 4891
 #define PIC_CSR_DEFAULT_INV 4892
@@ -299,6 +300,7 @@ namespace Fullpipe {
 #define ST_MAN_SIT 1164
 #define ST_MAN_STANDLADDER 453
 #define ST_PNK_WEIGHTLEFT 503
+#define ST_SPR_UP 544
 #define TrubaDown 697
 #define TrubaLeft 474
 #define TrubaRight 696

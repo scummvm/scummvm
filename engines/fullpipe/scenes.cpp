@@ -99,6 +99,7 @@ Vars::Vars() {
 	scene04_var19 = 0;
 	scene04_var20 = 0;
 	scene04_var24 = 0;
+	scene04_var25 = 0;
 	scene04_bottleY = 0;
 	scene04_ladderOffset = 0;
 

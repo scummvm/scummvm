@@ -441,43 +441,39 @@ void sceneHandler04_walkKozyawka() {
 	}
 }
 
+void sceneHandler04_bottleUpdateObjects(int off) {
+	for (Common::List<GameObject *>::iterator it = g_vars->scene04_bottleObjList.begin(); it != g_vars->scene04_bottleObjList.end(); ++it) {
+		GameObject *obj = *it;
+
+		obj->setOXY(obj->_field_8 + 20, off + obj->_field_8 + 24);
+	}
+}
+
 void sceneHandler04_sub4() {
-#if 0
-	int var20 = g_vars->scene04_var20;
 	int oldDynIndex = g_vars->scene04_dynamicPhaseIndex;
-	v2 = g_vars->scene04_var20 + g_vars->scene04_dynamicPhaseIndex;
+	int v2 = g_vars->scene04_var20 + g_vars->scene04_dynamicPhaseIndex;
+
 	g_vars->scene04_dynamicPhaseIndex += g_vars->scene04_var20;
 
 	if (g_vars->scene04_var20 + g_vars->scene04_dynamicPhaseIndex < 0) {
 		v2 = 0;
-		var20 = 0;
 		g_vars->scene04_dynamicPhaseIndex = 0;
 		g_vars->scene04_var20 = 0;
 	}
 
 	if (v2 > 14) {
 		v2 = 14;
-		var20 = 0;
 		g_vars->scene04_dynamicPhaseIndex = 14;
 		g_vars->scene04_var20 = 0;
 	}
 
-	v4 = __OFSUB__(g_vars->scene04_var06, v2);
-	v3 = g_vars->scene04_var06 - v2 < 0;
+	if (g_vars->scene04_var06 > v2)
+		g_vars->scene04_var20++;
 
-	if (g_vars->scene04_var06 > v2) {
-		++var20;
-		v4 = __OFSUB__(g_vars->scene04_var06, v2);
-		v3 = g_vars->scene04_var06 - v2 < 0;
-		g_vars->scene04_var20 = var20;
-	}
+	if (g_vars->scene04_var06 < v2)
+		g_vars->scene04_var20--;
 
-	if (v3 ^ v4) {
-		--var20;
-		g_vars->scene04_var20 = var20;
-	}
-
-	if (oldDynIndex <= g_vars->scene04_var06)
+	if (oldDynIndex <= g_vars->scene04_var06) {
 		if (v2 <= g_vars->scene04_var06)
 			goto LABEL_16;
 	} else if (v2 > g_vars->scene04_var06) {
@@ -486,7 +482,7 @@ void sceneHandler04_sub4() {
 
 	g_vars->scene04_var25++;
 
-	if (var20 && g_vars->scene04_var25 > 1) {
+	if (g_vars->scene04_var20 && g_vars->scene04_var25 > 1) {
 		g_vars->scene04_var25 = 0;
 		g_vars->scene04_var20--;
 	}
@@ -494,7 +490,7 @@ void sceneHandler04_sub4() {
 
 	Common::Point point;
 
-	int curdelta = g_vars->scene04_spring->getCurrDimensions(&point)->y - g_vars->scene04_dynamicPhaseIndex;
+	int curdelta = g_vars->scene04_spring->getCurrDimensions(point)->y - g_vars->scene04_dynamicPhaseIndex;
 
 	if (g_vars->scene04_dynamicPhaseIndex) {
 		if (!g_vars->scene04_spring->_movement)
@@ -506,22 +502,11 @@ void sceneHandler04_sub4() {
 	}
 
 	if (g_vars->scene04_dynamicPhaseIndex != oldDynIndex)
-		sceneHandler04_bottleUpdateObjects(curdelta - (g_vars->scene04_spring->getCurrDimensions(&point)->y - g_vars->scene04_dynamicPhaseIndex));
-#endif
-
-	warning("STUB: sceneHandler04_sub4()");
+		sceneHandler04_bottleUpdateObjects(curdelta - (g_vars->scene04_spring->getCurrDimensions(point)->y - g_vars->scene04_dynamicPhaseIndex));
 }
 
 void sceneHandler04_sub5() {
 	warning("STUB: sceneHandler04_sub5()");
-}
-
-void sceneHandler04_bottleUpdateObjects(int off) {
-	for (Common::List<GameObject *>::iterator it = g_vars->scene04_bottleObjList.begin(); it != g_vars->scene04_bottleObjList.end(); ++it) {
-		GameObject *obj = *it;
-
-		obj->setOXY(obj->_field_8 + 20, off + obj->_field_8 + 24);
-	}
 }
 
 void sceneHandler04_liftBottle() {
