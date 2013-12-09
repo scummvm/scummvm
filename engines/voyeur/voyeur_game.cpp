@@ -78,11 +78,11 @@ void VoyeurEngine::closeStamp() {
 	ThreadResource::unloadAllStacks(this);
 }
 
-void VoyeurEngine::initThreadStruct(ThreadResource *thread, int idx, int v3) {
+void VoyeurEngine::initThreadStruct(ThreadResource *thread, int idx, int id) {
 	thread->_controlIndex = -1;
 	if (thread->loadAStack(idx)) {
 		thread->_field4 = thread->_field6 = -1;
-		thread->_field0 = v3;
+		thread->_threadId = id;
 		thread->_field3A = -1;
 		thread->_field3E = -1;
 

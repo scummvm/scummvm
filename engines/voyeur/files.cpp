@@ -1309,10 +1309,11 @@ VInitCyclResource::VInitCyclResource(BoltFilesState &state, const byte *src) {
 
 int ThreadResource::_stampFlags = 0;
 int ThreadResource::_useCount[8];
+byte *ThreadResource::_threadDataPtr = NULL;
 
 ThreadResource::ThreadResource(BoltFilesState &state, const byte *src):
 		_vm(state._vm) {
-	_flags = READ_LE_UINT16(&src[8]);
+	_flags = src[8];
 }
 
 bool ThreadResource::loadAStack(int idx) {
@@ -1341,8 +1342,52 @@ void ThreadResource::unloadAStack(int idx) {
 	}
 }
 
-void ThreadResource::doState() {
+bool ThreadResource::doState() {
+	_flags |= 1;
+
+	if (!getStateInfo()) 
+		return false;
+
 	warning("TODO: stm_doState");
+	return true;
+}
+
+bool ThreadResource::getStateInfo() {
+	_field9 = 0;
+	int id = READ_LE_UINT16(_ctlPtr);
+
+	if (id <= _threadId) {
+		_field9 |= 0x80;
+		return false;
+	} else {
+		uint32 fld = READ_LE_UINT32(_ctlPtr + 2);
+		fld += _threadId << 3;
+		_field46 = READ_LE_UINT32(_ctlPtr + fld + 4);
+		
+		fld = READ_LE_UINT32(_ctlPtr + fld);
+		byte *baseP = _ctlPtr + fld;
+		_field42 = READ_LE_UINT16(baseP);
+		_field40 = READ_LE_UINT16(baseP + 2);
+		_field44 = READ_LE_UINT16(baseP + 4);
+
+		_field28E = getDataOffset();
+		_field28E += READ_LE_UINT32(baseP + 6) / 2;
+
+		_field4A = baseP + 10;
+		
+		getButtonsText();
+		return true;
+	}
+}
+
+byte *ThreadResource::getDataOffset() {
+	uint32 offset = READ_LE_UINT32(_ctlPtr + 10);
+	_threadDataPtr = _ctlPtr + offset;
+	return _threadDataPtr;
+}
+
+void ThreadResource::getButtonsText() {
+	warning("TODO: stm_getButtonsText");
 }
 
 void ThreadResource::unloadAllStacks(VoyeurEngine *vm) {

@@ -84,7 +84,7 @@ private:
 	void playStamp();
 	void initStamp();
 	void closeStamp();
-	void initThreadStruct(ThreadResource *thread, int idx, int v3);
+	void initThreadStruct(ThreadResource *thread, int idx, int id);
 protected:
 	// Engine APIs
 	virtual Common::Error run();
