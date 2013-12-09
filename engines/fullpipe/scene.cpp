@@ -470,7 +470,48 @@ void Scene::draw() {
 }
 
 void Scene::updateScrolling() {
-	debug(0, "STUB Scene::updateScrolling()");
+	if (_messageQueueId && !_x && !_y) {
+		MessageQueue *mq = g_fullpipe->_globalMessageQueueList->getMessageQueueById(_messageQueueId);
+
+		if (mq)
+			mq->update();
+
+		_messageQueueId = 0;
+	}
+
+	if (_x || _y) {
+		int offsetX = 0;
+		int offsetY = 0;
+
+		if (_x < 0) {
+			if (!g_fullpipe->_sceneRect.left && !(((PictureObject *)_picObjList[0])->_flags & 2))
+				_x = 0;
+
+			if (_x <= -g_fullpipe->_scrollSpeed) {
+				offsetX = -g_fullpipe->_scrollSpeed;
+				_x += g_fullpipe->_scrollSpeed;
+			}
+		} else if (_x >= g_fullpipe->_scrollSpeed) {
+			offsetX = g_fullpipe->_scrollSpeed;
+			_x -= g_fullpipe->_scrollSpeed;
+		} else {
+			_x = 0;
+		}
+
+		if (_y > 0) {
+			offsetY = g_fullpipe->_scrollSpeed;
+			_y -= g_fullpipe->_scrollSpeed;
+		}
+
+		if (_y < 0) {
+			offsetY -= g_fullpipe->_scrollSpeed;
+			_y += g_fullpipe->_scrollSpeed;
+		}
+
+		g_fullpipe->_sceneRect.translate(offsetX, offsetY);
+	}
+
+	updateScrolling2();
 }
 
 void Scene::updateScrolling2() {
@@ -603,7 +644,7 @@ void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
 					}
 				}
 				_bigPictureArray[bgNumX][0]->getDimensions(&point);
-				int v32 = point.x + bgPosX;
+				int oldx = point.x + bgPosX;
 				bgPosX += point.x;
 				bgNumX++;
 
@@ -612,7 +653,7 @@ void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
 						break;
 					bgNumX = 0;
 				}
-				if (v32 >= g_fullpipe->_sceneRect.right - 1)
+				if (oldx >= g_fullpipe->_sceneRect.right - 1)
 					break;
 			}
 		}
