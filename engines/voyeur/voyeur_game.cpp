@@ -40,7 +40,7 @@ void VoyeurEngine::playStamp() {
 	_filesManager.openBoltLib("stampblt.blt", _stampLibPtr);
 
 	_stampLibPtr->getBoltGroup(0x10000);
-	_voy._resolvePtr = &RESOLVE_TABLE[0];
+	_resolvePtr = &RESOLVE_TABLE[0];
 	initStamp();
 
 	PtrResource *threadsList = _stampLibPtr->boltEntry(3)._ptrResource;
@@ -51,7 +51,7 @@ void VoyeurEngine::playStamp() {
 	_eventsManager._videoComputerNum = 9;
 	_eventsManager._videoComputerBut1 = 0;
 	_eventsManager._v2A0A2 = 0;
-	_voy._eCursorOff[53] = 1;
+	_voy._field46E = 1;
 
 	int buttonId;
 	bool breakFlag = false;
@@ -62,31 +62,31 @@ void VoyeurEngine::playStamp() {
 
 		threadP->parsePlayCommands();
 
-		bool flag = breakFlag = (_voy._eCursorOff[58] & 2) != 0;
-
-		switch (_voy._eCursorOff[54]) {
+		bool flag = breakFlag = (_voy._field478 & 2) != 0;
+		 
+		switch (_voy._field470) {
 		case 5:
 			buttonId = threadP->doInterface();
 			
 			if (buttonId == -2) {
 				switch (doApt()) {
 				case 0:
-					_voy._eCursorOff[55] = 140;
+					_voy._field472 = 140;
 					break;
 				case 1:
-					_voy._eCursorOff[58] = -2;
-					_voy._eCursorOff[53] = 1;
+					_voy._field478 = -2;
+					_voy._field46E = 1;
 					threadP->chooseSTAMPButton(22);
-					_voy._eCursorOff[55] = 143;
+					_voy._field472 = 143;
 					break;
 				case 2:
-					_voy._eCursorOff[58] = -2;
+					_voy._field478 = -2;
 					reviewTape();
-					_voy._eCursorOff[53] = 1;
-					_voy._eCursorOff[55] = 142;
+					_voy._field46E = 1;
+					_voy._field472 = 142;
 					break;
 				case 3:
-					_voy._eCursorOff[58] = -2;
+					_voy._field478 = -2;
 					threadP->chooseSTAMPButton(21);
 					break;
 				case 4:
@@ -94,9 +94,9 @@ void VoyeurEngine::playStamp() {
 					break;
 				case 5:
 					doGossip();
-					_voy._eCursorOff[53] = 1;
-					_voy._eCursorOff[55] = 141;
-					_voy._eCursorOff[58] = -1;
+					_voy._field46E = 1;
+					_voy._field472 = 141;
+					_voy._field478 = -1;
 					break;
 				default:
 					break;
@@ -111,7 +111,7 @@ void VoyeurEngine::playStamp() {
 			break;
 
 		case 16:
-			_voy._eCursorOff[56] = 17;
+			_voy._field474 = 17;
 			buttonId = threadP->doApt();
 			
 			switch (buttonId) {
@@ -121,7 +121,7 @@ void VoyeurEngine::playStamp() {
 				break;
 			case 2:
 				reviewTape();
-				_voy._eCursorOff[53] = 1;
+				_voy._field46E = 1;
 				break;
 			case 4:
 				flag = true;
@@ -134,12 +134,12 @@ void VoyeurEngine::playStamp() {
 
 		case 17:
 			doTapePlaying();
-			if (!checkForMurder() && _voy._eCursorOff[56] <= 15)
+			if (!checkForMurder() && _voy._field474 <= 15)
 				checkForIncriminate();
 
 			if (_voy._videoEventId != -1)
 				playAVideoEvent(_voy._videoEventId);
-			_voy._eCursorOff[58] &= 0x10;
+			_voy._field478 &= 0x10;
 			threadP->chooseSTAMPButton(0);
 			break;
 
@@ -159,13 +159,13 @@ void VoyeurEngine::playStamp() {
 				flag = true;
 
 				if (buttonId == 4) {
-					_voy._eCursorOff[54] = 131;
+					_voy._field470 = 131;
 					_eventsManager.checkForKey();
 					threadP->chooseSTAMPButton(buttonId);
 					flag = true;
 				} else {
 					threadP->chooseSTAMPButton(buttonId);
-					_voy._eCursorOff[53] = 1;
+					_voy._field46E = 1;
 				}
 			}
 			break;
@@ -184,9 +184,9 @@ void VoyeurEngine::playStamp() {
 
 				_eventsManager._videoComputerBut4 = -1;
 
-				if (_voy._eCursorOff[59] != -1) {
-					_bVoy->freeBoltGroup(_voy._eCursorOff[59]);
-					_voy._eCursorOff[59] = -1;
+				if (_voy._field47A != -1) {
+					_bVoy->freeBoltGroup(_voy._field47A);
+					_voy._field47A = -1;
 				}
 
 				if (_playStamp1 != -1) {

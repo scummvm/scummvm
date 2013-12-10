@@ -31,6 +31,8 @@ extern const int COMPUTER_DEFAULTS[];
 
 extern const int RESOLVE_TABLE[];
 
+extern const int BLIND_TABLE[];
+
 } // End of namespace Voyeur
 
 #endif

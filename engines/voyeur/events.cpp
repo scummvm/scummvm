@@ -44,6 +44,19 @@ IntNode::IntNode(uint16 curTime, uint16 timeReset, uint16 flags) {
 
 /*------------------------------------------------------------------------*/
 
+VoyeurEvent::VoyeurEvent(int v1, int v2, int v3, int v4, int v5, int v6, int v7) {
+	_computerNum = v1;
+	_computerBut[0] = v2;
+	_computerBut[1] = v3;
+	_computerBut[2] = v4;
+	_computerBut[3] = v5;
+	_computerOn = v6;
+	_dead = v7;
+}
+
+
+/*------------------------------------------------------------------------*/
+
 IntData::IntData() {
 	_field9 = false;
 	_flipWait = false;
@@ -406,7 +419,7 @@ void EventsManager::mouseOff() {
 }
 
 void EventsManager::getMouseInfo() {
-	if (_vm->_voy._eCursorOff[58] & 0x10) {
+	if (_vm->_voy._field478 & 0x10) {
 		if ((_gameCounter - _joe) > 8) {
 			_joe = _gameCounter;
 
@@ -431,6 +444,10 @@ void EventsManager::getMouseInfo() {
 
 void EventsManager::checkForKey() {
 	warning("TODO: checkForKey");
+}
+
+void EventsManager::startCursorBlink() {
+	error("TODO: startCursorBlink");
 }
 
 } // End of namespace Voyeur

@@ -45,6 +45,10 @@ public:
 	void continueVocMap();
 	void stopVOCPlay();
 	void abortVOCMap();
+	void setVOCOffset(int offset);
+	Common::String getVOCFileName(int idx);
+	void startVOCPlay(const Common::String &filename);
+	int getVOCStatus();
 };
 
 } // End of namespace Voyeur

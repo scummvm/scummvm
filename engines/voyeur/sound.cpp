@@ -55,4 +55,20 @@ void SoundManager::stopVOCPlay() {
 	warning("TODO: stopVOCPlay()");
 }
 
+void SoundManager::setVOCOffset(int offset) {
+	error("TODO: setVOCOffset");
+}
+
+Common::String SoundManager::getVOCFileName(int idx) {
+	error("TODO: getVOCFileName");
+}
+
+void SoundManager::startVOCPlay(const Common::String &filename) {
+	error("TODO: startVOCPlay");
+}
+
+int SoundManager::getVOCStatus() {
+	error("TODO: getVOCStatus");
+}
+
 } // End of namespace Voyeur

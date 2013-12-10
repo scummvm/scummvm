@@ -115,6 +115,7 @@ public:
 	bool _bob;
 	int _playStamp1;
 	int _playStamp2;
+	const int *_resolvePtr;
 public:
 	VoyeurEngine(OSystem *syst, const VoyeurGameDescription *gameDesc);
 	virtual ~VoyeurEngine();

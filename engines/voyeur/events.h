@@ -57,6 +57,8 @@ public:
 	int _computerOn;
 	int _computerOff;
 	int _dead;
+public:
+	VoyeurEvent(int v1, int v2, int v3, int v4, int v5, int v6, int v7);
 };
 
 class SVoy {
@@ -65,21 +67,25 @@ public:
 	int _RTANum;
 	int _RTVNum;
 	int _switchBGNum;
-	int _group;
-	const int *_resolvePtr;
-	int _seconds;
-	int _minutes;
-	int _hours;
-	int _morning;
-	int _timeChangeFlag;
-	int _totalSeconds;
-	int _gameSeconds;
-	int _vCursorOn[160];
-	int _vCursorOff[160];
-	int _aCursorOn[60];
-	int _aCursorOff[60];
-	int _eCursorOn[60];
-	int _eCursorOff[60];
+	int _arr1[8][20];
+	int _arr2[8][20];
+	int _arr3[3][20];
+	int _arr4[3][20];
+	int _arr5[3][20];
+	int _arr6[3][20];
+	int _arr7[20];
+
+	int _field468;
+	int _field46A;
+	int _vocSecondsOffset;
+	int _field46E;
+	int _field470;
+	int _field472;
+	int _field474;
+	int _field478;
+	int _field47A;
+	int _field4F2;
+
 	int _timeStart;
 	int _duration;
 	int _vidStart;
@@ -96,7 +102,8 @@ public:
 	int _phones[5];
 	int _numPhonesUsed;
 	int _evidence[20];
-	VoyeurEvent _events[1000];
+	
+	Common::Array<VoyeurEvent> _events;
 	int _field4376;
 	int _field4378;
 	int _field437A;
@@ -207,6 +214,7 @@ public:
 	Common::Point getMousePos() { return _mousePos; }
 	void getMouseInfo();
 	void checkForKey();
+	void startCursorBlink();
 };
 
 } // End of namespace Voyeur

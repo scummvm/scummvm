@@ -430,6 +430,7 @@ private:
 	const byte *getRecordOffset(const byte *p);
 	const byte *getNextRecord(const byte *p);
 	void cardAction(const byte *p);
+	void addAudioEventStart();
 public:
 	VoyeurEngine *_vm;
 
@@ -442,7 +443,7 @@ public:
 	int _field3E;
 	int _field40;
 	int _field42;
-	int _field44;
+	int _parseCount;
 	uint32 _field46;
 	byte *_field4A;
 	byte _field4E[64];

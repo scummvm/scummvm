@@ -91,7 +91,7 @@ Common::Error VoyeurEngine::run() {
 	_eventsManager.resetMouse();
 	if (doHeadTitle()) {
 		if (_iForceDeath >= 1 && _iForceDeath <= 4)
-			_voy._eCursorOff[58] |= 0x80;
+			_voy._field478 |= 0x80;
 
 		playStamp();
 	}
@@ -131,12 +131,11 @@ void VoyeurEngine::globalInitBolt() {
 
 	// Setup default flags
 	Common::fill((byte *)&_voy, (byte *)&_voy + sizeof(SVoy), 0);
-	_voy._eCursorOff[0x74 / 2] = 1;
-	_voy._eCursorOff[0x68 / 2] = 0;
+	_voy._field478 = 1;
 	_voy._field4376 = NULL; // Original set 63h:63h
-	_voy._evidence[19] = 0;
-	_voy._evidence[17] = 0;
-	_voy._evidence[18] = 9999;
+	_voy._field4F2 = 9999;
+	_voy._field472 = -1;
+	_voy._field478 = 256;
 	
 	_voy._curICF0 = _graphicsManager._palFlag ? 0xFFFFA5E0 : 0x5F90; 
 	_eventsManager.addFadeInt();
@@ -184,7 +183,7 @@ bool VoyeurEngine::doHeadTitle() {
 		_voy._incriminate = false;
 	}
 
-	if (_voy._eCursorOff[58] & 0x80) {
+	if (_voy._field478 & 0x80) {
 		// TODO: Check when these are called, and the two different loops.
 		// Also, comptuerNu isn't an array in IDB?
 		/*
@@ -197,7 +196,7 @@ bool VoyeurEngine::doHeadTitle() {
 		*/
 	}
 
-	_voy._eCursorOff[55] = 140;
+	_voy._field472 = 140;
 	return true;
 }
 
@@ -483,17 +482,17 @@ void VoyeurEngine::doOpening() {
 	int frmaeIndex = 0;
 	int creditShow = 1;
 
-	_voy._eCursorOff[52] = 0;
+	_voy._vocSecondsOffset = 0;
 	_voy._RTVNum = 0;
-	_voy._eCursorOff[50] = _voy._RTVNum;
-	_voy._eCursorOff[58] = 16;
+	_voy._field468 = _voy._RTVNum;
+	_voy._field478 = 16;
 	_eventsManager._videoComputerNum = 4;
 	_eventsManager._videoComputerBut1  = 0;
 	_eventsManager._videoComputerBut4 = 1;
 	_eventsManager._videoDead = -1;
 	addVideoEventStart();
 
-	_voy._eCursorOff[58] &= ~1;
+	_voy._field478 &= ~1;
 
 	for (int i = 0; i < 256; ++i)
 		_graphicsManager.setColor(i, 8, 8, 8);
