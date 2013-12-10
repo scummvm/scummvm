@@ -372,7 +372,7 @@ public:
 	virtual int getMaximumSaveSlot() const { return 99; }
 	virtual void removeSaveState(const char *target, int slot) const;
 
-	//const ADGameDescription *fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const;
+	const ADGameDescription *fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const;
 };
 
 bool QueenMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -401,9 +401,8 @@ const ExtraGuiOptions QueenMetaEngine::getExtraGuiOptions(const Common::String &
 	return options;
 }
 
-/* FIXME - Migrate this code (Use as falllback):
-GameList QueenMetaEngine::detectGames(const Common::FSList &fslist) const {
-	GameList detectedGames;
+const ADGameDescription *QueenMetaEngine::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
+	static ADGameDescription desc;
 
 	// Iterate over all files in the given directory
 	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
@@ -417,27 +416,31 @@ GameList QueenMetaEngine::detectGames(const Common::FSList &fslist) const {
 			}
 			Queen::DetectedGameVersion version;
 			if (Queen::Resource::detectVersion(&version, &dataFile)) {
-				GameDescriptor dg(queenGameDescriptor.gameid, queenGameDescriptor.description, version.language, version.platform);
+				desc.gameid = "queen";
+				desc.language = version.language;
+				desc.platform = version.platform;
+				desc.flags = ADGF_NO_FLAGS;
+				desc.guioptions = GUIO0();
 				if (version.features & Queen::GF_DEMO) {
-					dg.updateDesc("Demo");
-					dg.setGUIOptions(GUIO_NOSPEECH);
+					desc.extra = "Demo";
+					desc.flags = ADGF_DEMO;
+					desc.guioptions = GUIO_NOSPEECH;
 				} else if (version.features & Queen::GF_INTERVIEW) {
-					dg.updateDesc("Interview");
-					dg.setGUIOptions(GUIO_NOSPEECH);
+					desc.extra = "Interview";
+					desc.flags = ADGF_DEMO;
+					desc.guioptions = GUIO_NOSPEECH;
 				} else if (version.features & Queen::GF_FLOPPY) {
-					dg.updateDesc("Floppy");
-					dg.setGUIOptions(GUIO_NOSPEECH);
+					desc.extra = "Floppy";
+					desc.guioptions = GUIO_NOSPEECH;
 				} else if (version.features & Queen::GF_TALKIE) {
-					dg.updateDesc("Talkie");
+					desc.extra = "Talkie";
 				}
-				detectedGames.push_back(dg);
-				break;
+				return (const ADGameDescription *)&desc;
 			}
 		}
 	}
-	return detectedGames;
+	return 0;
 }
-*/
 
 SaveStateList QueenMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
