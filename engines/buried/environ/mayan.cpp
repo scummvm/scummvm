@@ -558,6 +558,178 @@ int GenericCavernDoorMainView::specifyCursor(Window *viewWindow, const Common::P
 	return kCursorArrow;
 }
 
+class GenericCavernDoorOfferingHead : public SceneBase {
+public:
+	GenericCavernDoorOfferingHead(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+			int correctOfferingID = -1, int correctOfferingDestDepth = 0, int transitionType = -1, int transitionData = -1, int transitionStartFrame = -1, int transitionLength = -1);
+	int draggingItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
+	int droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	DestinationScene _correctDestination;
+	int _correctOfferingID;
+	Common::Rect _dropRegion;
+
+	bool isValidItemToDrop(Window *viewWindow, int itemID);
+};
+
+GenericCavernDoorOfferingHead::GenericCavernDoorOfferingHead(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+		int correctOfferingID, int correctOfferingDestDepth, int transitionType, int transitionData, int transitionStartFrame, int transitionLength) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_correctDestination.destinationScene = _staticData.location;
+	_correctDestination.destinationScene.depth = correctOfferingDestDepth;
+	_correctDestination.transitionType = transitionType;
+	_correctDestination.transitionData = transitionData;
+	_correctDestination.transitionStartFrame = transitionStartFrame;
+	_correctDestination.transitionLength = transitionLength;
+	_correctOfferingID = correctOfferingID;
+	_dropRegion = Common::Rect(24, 92, 226, 154);
+}
+
+int GenericCavernDoorOfferingHead::draggingItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) {
+	// If this is walkthrough mode, only accept the correct item
+	if (isValidItemToDrop(viewWindow, itemID) && _dropRegion.contains(pointLocation))
+		return 1;
+
+	return 0;
+}
+
+int GenericCavernDoorOfferingHead::droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) {
+	if (pointLocation.x == -1 && pointLocation.y == -1)
+		return 0;
+
+	if (!isValidItemToDrop(viewWindow, itemID))
+		return SIC_REJECT;
+
+	if (_dropRegion.contains(pointLocation)) {
+		switch (itemID) {
+		case kItemBalconyKey:
+			((SceneViewWindow *)viewWindow)->playSynchronousAnimation(2);
+			break;
+		case kItemBloodyArrow:
+			((SceneViewWindow *)viewWindow)->playSynchronousAnimation(3);
+			break;
+		case kItemObsidianBlock:
+			((SceneViewWindow *)viewWindow)->playSynchronousAnimation(5);
+			break;
+		case kItemCoilOfRope:
+			((SceneViewWindow *)viewWindow)->playSynchronousAnimation(6);
+			break;
+		case kItemCopperKey:
+			((SceneViewWindow *)viewWindow)->playSynchronousAnimation(7);
+			break;
+		case kItemCopperMedallion:
+			((SceneViewWindow *)viewWindow)->playSynchronousAnimation(8);
+			break;
+		case kItemCeramicBowl:
+			((SceneViewWindow *)viewWindow)->playSynchronousAnimation(9);
+			break;
+		case kItemGrapplingHook:
+			((SceneViewWindow *)viewWindow)->playSynchronousAnimation(10);
+			break;
+		case kItemHammer:
+			((SceneViewWindow *)viewWindow)->playSynchronousAnimation(11);
+			break;
+		case kItemPreservedHeart:
+			((SceneViewWindow *)viewWindow)->playSynchronousAnimation(12);
+			break;
+		case kItemJadeBlock:
+			((SceneViewWindow *)viewWindow)->playSynchronousAnimation(13);
+			break;
+		case kItemLimestoneBlock:
+			((SceneViewWindow *)viewWindow)->playSynchronousAnimation(14);
+			break;
+		case kItemMetalBar:
+			((SceneViewWindow *)viewWindow)->playSynchronousAnimation(15);
+			break;
+		case kItemCavernSkull:
+			((SceneViewWindow *)viewWindow)->playSynchronousAnimation(16);
+			break;
+		case kItemEntrySkull:
+			((SceneViewWindow *)viewWindow)->playSynchronousAnimation(17);
+			break;
+		case kItemSpearSkull:
+			((SceneViewWindow *)viewWindow)->playSynchronousAnimation(18);
+			break;
+		case kItemWaterCanFull:
+			((SceneViewWindow *)viewWindow)->playSynchronousAnimation(19);
+			break;
+		case kItemWoodenPegs:
+			((SceneViewWindow *)viewWindow)->playSynchronousAnimation(20);
+			break;
+		case kItemGoldCoins:
+			((SceneViewWindow *)viewWindow)->playSynchronousAnimation(21);
+			break;
+		}
+
+		// Reset the offering flag
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().myMCTransMadeAnOffering = 1;
+
+		// If this was the correct offering, move to the open door scene
+		if (itemID == _correctOfferingID) {
+			_vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 10), 128, false, true);
+			((SceneViewWindow *)viewWindow)->moveToDestination(_correctDestination);
+		}
+
+		// These items don't get consumed
+		if (itemID == kItemWaterCanFull || itemID == kItemGoldCoins)
+			return SIC_REJECT;
+
+		return SIC_ACCEPT;
+	}
+
+	return SIC_REJECT;
+}
+
+int GenericCavernDoorOfferingHead::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	Location newLocation = _staticData.location;
+	newLocation.depth = 0;
+	((SceneViewWindow *)viewWindow)->jumpToScene(newLocation);
+	return SC_TRUE;
+}
+
+int GenericCavernDoorOfferingHead::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	return kCursorPutDown;
+}
+
+bool GenericCavernDoorOfferingHead::isValidItemToDrop(Window *viewWindow, int itemID) {
+	// If this is walkthrough mode, only accept the correct item
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().generalWalkthroughMode == 1) {
+		if (itemID == _correctOfferingID || (_staticData.location.node == 8 && itemID == kItemBloodyArrow))
+			return true;
+
+		return false;
+	}
+
+	// Otherwise, any of the allowed items
+	switch (itemID) {
+	case kItemCavernSkull:
+	case kItemEntrySkull:
+	case kItemSpearSkull:
+	case kItemBloodyArrow:
+	case kItemCopperMedallion:
+	case kItemCoilOfRope:
+	case kItemCopperKey:
+	case kItemJadeBlock:
+	case kItemLimestoneBlock:
+	case kItemObsidianBlock:
+	case kItemGrapplingHook:
+	case kItemPreservedHeart:
+	case kItemHammer:
+	case kItemGoldCoins:
+	case kItemWaterCanEmpty:
+	case kItemWaterCanFull:
+	case kItemWoodenPegs:
+	case kItemBalconyKey:
+	case kItemBurnedLetter: // Can't actually drop this, though
+		return true;
+	}
+
+	return false;
+}
+
 class MainCavernGlassCapture : public SceneBase {
 public:
 	MainCavernGlassCapture(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
@@ -727,18 +899,24 @@ SceneBase *SceneViewWindow::constructMayanSceneObject(Window *viewWindow, const 
 		return new ViewSingleTranslation(_vm, viewWindow, sceneStaticData, priorLocation, IDMYMC_WG_DOOR_TOP_TRANS_TEXT, 12, 128, 426, 156, offsetof(GlobalFlags, myMCTransDoor), offsetof(GlobalFlags, myWGTransDoorTop));
 	case 16:
 		return new ViewSingleTranslation(_vm, viewWindow, sceneStaticData, priorLocation, IDMYMC_WG_DOOR_RIGHT_TRANS_TEXT, 46, 1, 315, 188, offsetof(GlobalFlags, myMCTransDoor), offsetof(GlobalFlags, myMCTransWGOffering));
+	case 17:
+		return new GenericCavernDoorOfferingHead(_vm, viewWindow, sceneStaticData, priorLocation, kItemGoldCoins, 4, TRANSITION_WALK, -1, 1082, 13);
 	case 18:
 		return new GenericCavernDoorMainView(_vm, viewWindow, sceneStaticData, priorLocation, 1, 126, 1, 306, 30, 2, 287, 30, 379, 82, 3, 275, 84, 401, 174);
 	case 19:
 		return new ViewSingleTranslation(_vm, viewWindow, sceneStaticData, priorLocation, IDMYMC_WATERGOD_DOOR_TOP_TRANS_TEXT, 12, 128, 426, 156, offsetof(GlobalFlags, myMCTransDoor));
 	case 20:
 		return new ViewSingleTranslation(_vm, viewWindow, sceneStaticData, priorLocation, IDMYMC_WATERGOD_DOOR_RIGHT_TRANS_TEXT, 46, 1, 315, 188, offsetof(GlobalFlags, myMCTransDoor), offsetof(GlobalFlags, myMCTransWTOffering));
+	case 21:
+		return new GenericCavernDoorOfferingHead(_vm, viewWindow, sceneStaticData, priorLocation, kItemWaterCanFull, 4, TRANSITION_WALK, -1, 1125, 13);
 	case 22:
 		return new GenericCavernDoorMainView(_vm, viewWindow, sceneStaticData, priorLocation, 1, 126, 1, 306, 30, 2, 287, 30, 379, 82, 3, 275, 84, 401, 174);
 	case 23:
 		return new ViewSingleTranslation(_vm, viewWindow, sceneStaticData, priorLocation, IDMYMC_AG_DOOR_TOP_TRANS_TEXT, 12, 128, 426, 156, offsetof(GlobalFlags, myMCTransDoor));
 	case 24:
 		return new ViewSingleTranslation(_vm, viewWindow, sceneStaticData, priorLocation, IDMYMC_AG_DOOR_RIGHT_TRANS_TEXT, 46, 1, 315, 188, offsetof(GlobalFlags, myMCTransDoor), offsetof(GlobalFlags, myMCTransAGOffering));
+	case 25:
+		return new GenericCavernDoorOfferingHead(_vm, viewWindow, sceneStaticData, priorLocation, kItemBloodyArrow, 4, TRANSITION_WALK, -1, 1010, 12);
 	case 26:
 		return new GenericCavernDoorMainView(_vm, viewWindow, sceneStaticData, priorLocation, 1, 126, 1, 306, 30, 2, 287, 30, 379, 82, 3, 275, 84, 401, 174);
 	case 27:
