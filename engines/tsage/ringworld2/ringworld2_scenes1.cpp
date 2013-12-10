@@ -2257,7 +2257,7 @@ Scene1337::Scene1337() {
 	_actionIdx2 = 0;
 	_showPlayerTurn = false;
 	_field4246 = false;
-	_field424A = 0;
+	_winnerId = 0;
 	_instructionsDisplayedFl = false;
 	_instructionsWaitCount = 0;
 
@@ -3373,7 +3373,7 @@ void Scene1337::Action3::signal() {
 		scene->_currentPlayerNumb = 0;
 		R2_GLOBALS._sceneObjects->draw();
 		scene->actionDisplay(1330, 0, 159, 10, 1, 200, 0, 7, 0, 154, 154);
-		scene->subC20F9();
+		scene->handleNextTurn();
 	} else if (_actionIndex >= 1) {
 		scene->_availableCardsPile[scene->_cardsAvailableNumb] = 0;
 		scene->_cardsAvailableNumb--;
@@ -3532,16 +3532,16 @@ void Scene1337::Action4::signal() {
 		scene->_animatedCard._card.hide();
 		switch (scene->_currentPlayerNumb) {
 		case 0:
-			scene->subCF979();
+			scene->handlePlayer0();
 			break;
 		case 1:
-			scene->subCF31D();
+			scene->handlePlayer1();
 			break;
 		case 2:
 			scene->subD0281();
 			break;
 		case 3:
-			scene->subC2C2F();
+			scene->handlePlayer3();
 			break;
 		default:
 			break;
@@ -3590,7 +3590,7 @@ void Scene1337::Action5::signal() {
 		scene->_animatedCard._card.hide();
 		scene->setAnimationInfo(&scene->_discardPile);
 		scene->_aSound2.play(61);
-		scene->subC20F9();
+		scene->handleNextTurn();
 		break;
 	default:
 		break;
@@ -3630,7 +3630,7 @@ void Scene1337::Action6::signal() {
 			scene->setCursorData(5, 1, 4);
 			scene->subC4CEC();
 		}
-		scene->subC20F9();
+		scene->handleNextTurn();
 		break;
 	default:
 		break;
@@ -3739,7 +3739,7 @@ void Scene1337::Action9::signal() {
 			scene->subC4CEC();
 		}
 
-		scene->subC20F9();
+		scene->handleNextTurn();
 		break;
 	default:
 		break;
@@ -4539,24 +4539,24 @@ void Scene1337::actionDisplay(int resNum, int lineNum, int x, int y, int keepOnS
 					   SET_EXT_FGCOLOR, colFGExt, LIST_END);
 }
 
-void Scene1337::setAnimationInfo(Card *subObj) {
-	if (!subObj)
+void Scene1337::setAnimationInfo(Card *card) {
+	if (!card)
 		return;
 
-	if (subObj->_cardId > 9) {
-		if (subObj->_cardId > 25) {
-			subObj->_card.setStrip2(4);
-			subObj->_card.setFrame(subObj->_cardId - 25);
+	if (card->_cardId > 9) {
+		if (card->_cardId > 25) {
+			card->_card.setStrip2(4);
+			card->_card.setFrame(card->_cardId - 25);
 		} else {
-			subObj->_card.setStrip2(3);
-			subObj->_card.setFrame(subObj->_cardId - 9);
+			card->_card.setStrip2(3);
+			card->_card.setFrame(card->_cardId - 9);
 		}
 	} else {
-		subObj->_card.setStrip2(2);
-		subObj->_card.setFrame(subObj->_cardId);
+		card->_card.setStrip2(2);
+		card->_card.setFrame(card->_cardId);
 	}
 
-	subObj->_card.show();
+	card->_card.show();
 	R2_GLOBALS._sceneObjects->draw();
 }
 
@@ -4564,8 +4564,8 @@ void Scene1337::subC20E5() {
 	subC2586();
 }
 
-void Scene1337::subC20F9() {
-	switch (_field424A) {
+void Scene1337::handleNextTurn() {
+	switch (_winnerId) {
 	case -1:
 		++_currentPlayerNumb;
 		if (_currentPlayerNumb > 3)
@@ -4636,7 +4636,7 @@ void Scene1337::subC20F9() {
 		break;
 	}
 
-	if (_field424A != -1)
+	if (_winnerId != -1)
 		R2_GLOBALS._sceneManager.changeScene(125);
 
 }
@@ -4712,18 +4712,18 @@ int Scene1337::subC26CB(int arg1, int arg2) {
 	return -1;
 }
 
-int Scene1337::subC2719(int arg1) {
+int Scene1337::findNormalCardInHand(int playerId) {
 	for (int i = 0; i <= 3; i++) {
-		if (_gameBoardSide[arg1]._handCard[i]._cardId == 1)
+		if (_gameBoardSide[playerId]._handCard[i]._cardId == 1)
 			return i;
 	}
 
 	return -1;
 }
 
-int Scene1337::subC274D(int arg1) {
+int Scene1337::subC274D(int playerId) {
 	for (int i = 0; i <= 3; i++) {
-		if (_gameBoardSide[arg1]._handCard[i]._cardId == 13)
+		if (_gameBoardSide[playerId]._handCard[i]._cardId == 13)
 			return i;
 	}
 
@@ -4927,188 +4927,6 @@ void Scene1337::subC2835(int arg1) {
 	discardCard(&_gameBoardSide[arg1]._handCard[i]);
 }
 
-void Scene1337::subC2C2F() {
-	bool found = true;
-
-	if (_gameBoardSide[3]._delayCard._cardId != 0) {
-		switch (_gameBoardSide[3]._delayCard._cardId) {
-		case 10:
-		// No break on purpose
-		case 12:
-		// No break on purpose
-		case 15:
-		// No break on purpose
-		case 17:
-		// No break on purpose
-		case 18:
-		// No break on purpose
-		case 19:
-		// No break on purpose
-		case 20:
-		// No break on purpose
-		case 21:
-			discardCard(&_gameBoardSide[3]._delayCard);
-			found = false;
-			break;
-		default:
-			found = false;
-			int i;
-			for (i = 0; i <= 3; i++) {
-				if (subC3386(_gameBoardSide[3]._delayCard._cardId, _gameBoardSide[3]._handCard[i]._cardId)) {
-					found = true;
-					break;
-				}
-			}
-
-			if (found) {
-				found = false;
-				subC34A1(&_gameBoardSide[3]._handCard[i], &_gameBoardSide[3]._delayCard);
-			}
-			break;
-		}
-	}
-
-	if (!found)
-		return;
-
-	int randIndx = R2_GLOBALS._randomSource.getRandomNumber(3);
-
-	if (_gameBoardSide[3]._handCard[randIndx]._cardId == 1) {
-		found = false;
-
-		for (int i = 0; i <= 7; i++) {
-			if ((_gameBoardSide[3]._outpostStation[i]._cardId == 0) && (!subC2687(_gameBoardSide[3]._delayCard._cardId))) {
-				subC340B(&_gameBoardSide[3]._handCard[randIndx], &_gameBoardSide[3]._outpostStation[i]);
-				found = true;
-				break;
-			}
-		}
-
-		if (found) {
-			return;
-		}
-	} else if (_gameBoardSide[3]._handCard[randIndx]._cardId <= 9) {
-		found = false;
-
-		for (int i = 0; i <= 7; i++) {
-			if (_gameBoardSide[3]._outpostStation[i]._cardId == _gameBoardSide[3]._handCard[randIndx]._cardId) {
-				found = true;
-				break;
-			}
-		}
-
-		if (!found) {
-			for (int i = 0; i <= 7; i++) {
-				if ((_gameBoardSide[3]._outpostStation[i]._cardId == 1) && (!subC2687(_gameBoardSide[3]._delayCard._cardId))) {
-					int tmpVal = 0;
-
-					for (int j = 0; j <= 7; j++) {
-						if ((_gameBoardSide[3]._outpostStation[j]._cardId > 1) && (_gameBoardSide[3]._outpostStation[j]._cardId <= 9))
-							++tmpVal;
-					}
-
-					if (tmpVal == 7)
-						_field424A = 3;
-
-					subC33C0(&_gameBoardSide[3]._handCard[randIndx], &_gameBoardSide[3]._outpostStation[i]);
-					found = true;
-					break;
-				}
-			}
-			if (found)
-				return;
-		}
-	} else if (_gameBoardSide[3]._handCard[randIndx]._cardId == 13) {
-		int tmpVal = subC331B(3);
-
-		if (tmpVal != -1) {
-			subC358E(&_gameBoardSide[3]._handCard[randIndx], tmpVal);
-			return;
-		}
-	} else if (_gameBoardSide[3]._handCard[randIndx]._cardId == 25) {
-		int tmpVal = -1;
-		found = false;
-		int tmpRandIndx = R2_GLOBALS._randomSource.getRandomNumber(3);
-
-		for (int i = 0; i <= 3; i++) {
-			if (  (tmpRandIndx != 3)
-			  && (  (_gameBoardSide[tmpRandIndx]._handCard[0]._cardId != 0)
-			     || (_gameBoardSide[tmpRandIndx]._handCard[1]._cardId != 0)
-			     || (_gameBoardSide[tmpRandIndx]._handCard[2]._cardId != 0)
-			     || (_gameBoardSide[tmpRandIndx]._handCard[3]._cardId != 0) )) {
-				tmpVal = tmpRandIndx;
-				break;
-			}
-
-			++tmpRandIndx;
-			if (tmpRandIndx > 3)
-				tmpRandIndx = 0;
-		}
-
-		if (tmpVal != -1) {
-			subC318B(3, &_gameBoardSide[3]._handCard[randIndx], tmpVal);
-			return;
-		}
-	} else {
-		switch (_gameBoardSide[3]._handCard[randIndx]._cardId) {
-		case 10:
-		// No break on purpose
-		case 11:
-		// No break on purpose
-		case 12:
-		// No break on purpose
-		case 14:
-		// No break on purpose
-		case 15:
-		// No break on purpose
-		case 16:
-		// No break on purpose
-		case 17:
-		// No break on purpose
-		case 18:
-		// No break on purpose
-		case 19:
-		// No break on purpose
-		case 20:
-		// No break on purpose
-		case 21:
-		// No break on purpose
-		case 24: {
-			int tmpVal = -1;
-			int tmpRandIndx = R2_GLOBALS._randomSource.getRandomNumber(3);
-
-			for (int i = 0; i <= 3; i++) {
-				if (tmpRandIndx != 3) {
-				// The variable 'j' is not used in the inner code of the loop, which is suspicious.
-				// 'i' is used indirectly to increment tmpRandIndx.
-					for (int j = 0; j <= 7; j++) {
-						if ((_gameBoardSide[tmpRandIndx]._delayCard._cardId == 0) && subC32B1(tmpRandIndx, _gameBoardSide[3]._handCard[randIndx]._cardId))
-							tmpVal = tmpRandIndx;
-					}
-				}
-
-				++tmpRandIndx;
-				if (tmpRandIndx > 3)
-					tmpRandIndx = 0;
-
-				if (tmpVal != -1)
-					break;
-			}
-
-			if (tmpVal != -1) {
-				// Useless second identical check skipped
-				subC3456(&_gameBoardSide[tmpVal]._handCard[randIndx], &_gameBoardSide[tmpVal]._delayCard);
-				return;
-			}
-			}
-		default:
-			break;
-		}
-	}
-
-	discardCard(&_gameBoardSide[3]._handCard[randIndx]);
-}
-
 void Scene1337::subC318B(int arg1, Card *subObj1, int arg3) {
 	_actionIdx1 = arg1;
 	_actionIdx2 = arg3;
@@ -5237,16 +5055,16 @@ int Scene1337::subC3E92(int playerId) {
 	return randIndx;
 }
 
-void Scene1337::subC340B(Card *subObj1, Card *subObj2) {
-	_actionCard1 = subObj1;
-	_actionCard2 = subObj2;
+void Scene1337::playCard(Card *card, Card *dest) {
+	_actionCard1 = card;
+	_actionCard2 = dest;
 
 	_item1.setAction(&_action6);
 }
 
-void Scene1337::subC3456(Card *subObj1, Card *subObj2) {
-	_actionCard1 = subObj1;
-	_actionCard2 = subObj2;
+void Scene1337::playDelayCard(Card *card, Card *dest) {
+	_actionCard1 = card;
+	_actionCard2 = dest;
 
 	_item1.setAction(&_action9);
 }
@@ -5553,7 +5371,7 @@ void Scene1337::subPostInit() {
 
 	_showPlayerTurn = true;
 	_field4246 = false;
-	_field424A = -1;
+	_winnerId = -1;
 
 	_helpIcon.postInit();
 	_helpIcon.setup(9531, 1, 1);
@@ -5949,221 +5767,7 @@ void Scene1337::handleClick(int arg1, Common::Point pt) {
 	}
 }
 
-void Scene1337::subCF31D() {
-	int tmpVal = 1;
-	bool found;
-	int count;
-
-	if (this->_gameBoardSide[1]._delayCard._cardId != 0) {
-		switch (_gameBoardSide[1]._delayCard._cardId) {
-		case 10:
-		// No break on purpose
-		case 12:
-		// No break on purpose
-		case 15:
-		// No break on purpose
-		case 17:
-		// No break on purpose
-		case 18:
-		// No break on purpose
-		case 19:
-		// No break on purpose
-		case 20:
-		// No break on purpose
-		case 21:
-			tmpVal = 0;
-			discardCard(&_gameBoardSide[1]._delayCard);
-			break;
-		default:
-			found = false;
-			int i;
-			for (i = 0; i <= 3; i++) {
-				if (subC3386(_gameBoardSide[1]._delayCard._cardId, _gameBoardSide[1]._handCard[i]._cardId)) {
-					found = true;
-					break;
-				}
-			}
-
-			if (found) {
-				tmpVal = 0;
-				subC34A1(&_gameBoardSide[1]._handCard[i], &_gameBoardSide[1]._delayCard);
-			}
-		}
-	}
-
-	if (tmpVal != 1)
-		return;
-
-	found = false;
-	for (int i = 0; i <= 3; i++) {
-		int tmpIndx = subC26CB(1, i);
-		if (tmpIndx == -1)
-			break;
-
-		tmpVal = 0;
-		for (int j = 0; j <= 7; j++) {
-			if (_gameBoardSide[1]._outpostStation[j]._cardId == _gameBoardSide[1]._handCard[tmpIndx]._cardId) {
-				tmpVal = 1;
-				break;
-			}
-		}
-
-		if (tmpVal == 0)
-			break;
-
-		for (int j = 0; j <= 7; j++) {
-			if (_gameBoardSide[1]._outpostStation[j]._cardId == 1) {
-				if (!subC2687(_gameBoardSide[1]._delayCard._cardId)) {
-					count = 0;
-					for (int k = 0; k <= 7; k++) {
-						if ((_gameBoardSide[1]._outpostStation[k]._cardId > 1) && (_gameBoardSide[1]._outpostStation[k]._cardId <= 9))
-							++count;
-					}
-
-					if (count == 7)
-						_field424A = 1;
-
-					subC33C0(&_gameBoardSide[1]._handCard[tmpIndx], &_gameBoardSide[1]._outpostStation[j]);
-					found = true;
-					break;
-				}
-			}
-		}
-	}
-
-	if (found)
-		return;
-
-	tmpVal = subC2719(1);
-	if (tmpVal != -1) {
-		for (int i = 0; i <= 7; i++) {
-			if ((_gameBoardSide[1]._outpostStation[i]._cardId == 0) && (!subC2687(_gameBoardSide[1]._delayCard._cardId))) {
-				subC340B(&_gameBoardSide[1]._handCard[tmpVal], &_gameBoardSide[1]._outpostStation[i]);
-				found = true;
-				break;
-			}
-		}
-	}
-
-	if (found)
-		return;
-
-	tmpVal = subC274D(1);
-	int tmpVal2 = subC331B(1);
-
-	if ((tmpVal != -1) && ( tmpVal2 != -1)) {
-		subC358E(&_gameBoardSide[1]._handCard[tmpVal], tmpVal2);
-		found = true;
-	}
-
-	if (found)
-		return;
-
-	tmpVal = subC2781(1);
-	if (tmpVal != -1) {
-		count = -1;
-		int rndVal = R2_GLOBALS._randomSource.getRandomNumber(3);
-		for (int i = 0; i <= 3; i++) {
-			if (rndVal != 1) {
-				if (  (_gameBoardSide[rndVal]._handCard[0]._cardId != 0)
-				   || (_gameBoardSide[rndVal]._handCard[1]._cardId != 0)
-				   || (_gameBoardSide[rndVal]._handCard[2]._cardId != 0)
-				   || (_gameBoardSide[rndVal]._handCard[3]._cardId == 0)) {
-					count = rndVal;
-					break;
-				}
-				// CHECKME: inside the check on rndVal?
-				rndVal--;
-				if (rndVal < 0)
-					rndVal = 3;
-			}
-		}
-
-		if (count != -1) {
-			subC318B(1, &_gameBoardSide[1]._handCard[tmpVal], count);
-			found = true;
-		}
-	}
-
-	if (found)
-		return;
-
-	count = -1;
-	int i;
-	for (i = 0; i <= 3; i++) {
-		tmpVal = subC27B5(_gameBoardSide[1]._handCard[i]._cardId);
-		if (tmpVal != -1) {
-			int rndVal = R2_GLOBALS._randomSource.getRandomNumber(3);
-
-			for (int j = 0; j <= 3; j++) {
-				//CHECKME: tmpVal or rndVal?
-				if (tmpVal != 1) {
-					for (int k = 0; k <= 7; k++) {
-						// CHECKME: 'k' is not used in that loop.
-						// It looks suspicious.
-						if ((_gameBoardSide[tmpVal]._delayCard._cardId == 0) && (subC32B1(tmpVal, _gameBoardSide[1]._handCard[i]._cardId))) {
-							count = tmpVal;
-							break;
-						}
-					}
-				}
-
-				if (count != -1) {
-					found = true;
-					break;
-				} else {
-					rndVal--;
-					if (rndVal < 0)
-						rndVal = 3;
-				}
-			}
-
-			if (found)
-				break;
-		}
-	}
-
-	if (found)
-		subC3456(&_gameBoardSide[1]._handCard[i], &_gameBoardSide[count]._delayCard);
-	else {
-		int j;
-		for (j = 0; j <= 3; j++) {
-			if (subC27F9(_gameBoardSide[1]._handCard[j]._cardId) != -1) {
-				count = -1;
-				int rndVal = R2_GLOBALS._randomSource.getRandomNumber(3);
-				for (int l = 0; l <= 3; l++) {
-					if (rndVal != 1) {
-						for (int m = 0; m <= 7; m++) {
-							// 'm' is not used in that loop. It looks suspicious.
-							if ((_gameBoardSide[rndVal]._delayCard._cardId == 0) && (_gameBoardSide[1]._handCard[j]._cardId == 1)) {
-								count = rndVal;
-								break;
-							}
-						}
-					}
-					if (count != -1) {
-						found = true;
-						break;
-					} else {
-						rndVal--;
-						if (rndVal < 0)
-							rndVal = 3;
-					}
-				}
-				if (found)
-					break;
-			}
-		}
-
-		if (found)
-			subC3456(&_gameBoardSide[1]._handCard[j], &_gameBoardSide[count]._delayCard);
-		else
-			subC2835(1);
-	}
-
-}
-
-void Scene1337::subCF979() {
+void Scene1337::handlePlayer0() {
 	bool found = true;
 
 	if (_gameBoardSide[0]._delayCard._cardId != 0) {
@@ -6233,7 +5837,7 @@ void Scene1337::subCF979() {
 						}
 
 						if (count == 7)
-							_field424A = 0;
+							_winnerId = 0;
 
 						subC33C0(&_gameBoardSide[0]._handCard[tmpVal], &_gameBoardSide[0]._outpostStation[j]);
 						found = true;
@@ -6250,12 +5854,12 @@ void Scene1337::subCF979() {
 		return;
 
 	found = false;
-	tmpVal = subC2719(0);
+	tmpVal = findNormalCardInHand(0);
 
 	if (tmpVal != -1) {
 		for (int i = 0; i <= 7; i++) {
 			if ((_gameBoardSide[0]._outpostStation[i]._cardId == 0) && (!subC2687(_gameBoardSide[0]._delayCard._cardId))) {
-				subC340B(&_gameBoardSide[0]._handCard[tmpVal], &_gameBoardSide[0]._outpostStation[i]);
+				playCard(&_gameBoardSide[0]._handCard[tmpVal], &_gameBoardSide[0]._outpostStation[i]);
 				found = true;
 				break;
 			}
@@ -6298,7 +5902,7 @@ void Scene1337::subCF979() {
 			// The variable 'j' is not used in the inner code of the loop. It's suspect
 			for (int j = 0; j <= 7; j++) {
 				if ((_gameBoardSide[2]._delayCard._cardId == 0) && (subC32B1(2, _gameBoardSide[0]._handCard[i]._cardId))) {
-					subC3456(&_gameBoardSide[0]._handCard[i], &_gameBoardSide[2]._delayCard);
+					playDelayCard(&_gameBoardSide[0]._handCard[i], &_gameBoardSide[2]._delayCard);
 					found = true;
 					break;
 				}
@@ -6317,7 +5921,7 @@ void Scene1337::subCF979() {
 			// The variable 'j' is not used in the inner code of the loop. It's suspect
 			for (int j = 0; j <= 7; j++) {
 				if ((_gameBoardSide[2]._delayCard._cardId == 0) && (subC32B1(2, _gameBoardSide[0]._handCard[i]._cardId))) {
-					subC3456(&_gameBoardSide[0]._handCard[i], &_gameBoardSide[2]._delayCard);
+					playDelayCard(&_gameBoardSide[0]._handCard[i], &_gameBoardSide[2]._delayCard);
 					found = true;
 				}
 			}
@@ -6361,7 +5965,7 @@ void Scene1337::subCF979() {
 			// The variable 'j' is not used in the inner code of the loop. It's suspect.
 			for (int j = 0; j <= 7; j++) {
 				if ((_gameBoardSide[1]._delayCard._cardId == 0) && (subC32B1(1, _gameBoardSide[0]._handCard[i]._cardId))) {
-					subC3456(&_gameBoardSide[0]._handCard[i], &_gameBoardSide[1]._delayCard);
+					playDelayCard(&_gameBoardSide[0]._handCard[i], &_gameBoardSide[1]._delayCard);
 					found = true;
 				}
 			}
@@ -6370,7 +5974,7 @@ void Scene1337::subCF979() {
 			// The variable 'j' is not used in the inner code of the loop. It's suspect.
 				for (int j = 0; j <= 7; j++) {
 					if ((_gameBoardSide[3]._delayCard._cardId == 0) && (subC32B1(3, _gameBoardSide[0]._handCard[i]._cardId))) {
-					subC3456(&_gameBoardSide[0]._handCard[i], &_gameBoardSide[3]._delayCard);
+					playDelayCard(&_gameBoardSide[0]._handCard[i], &_gameBoardSide[3]._delayCard);
 					found = true;
 					}
 				}
@@ -6390,7 +5994,7 @@ void Scene1337::subCF979() {
 			// The variable 'j' is not used in the inner code of the loop. It's suspect.
 			for (int j = 0; j <= 7; j++) {
 				if ((_gameBoardSide[1]._delayCard._cardId == 0) && (subC32B1(1, _gameBoardSide[0]._handCard[i]._cardId))) {
-					subC3456(&_gameBoardSide[0]._handCard[i], &_gameBoardSide[1]._delayCard);
+					playDelayCard(&_gameBoardSide[0]._handCard[i], &_gameBoardSide[1]._delayCard);
 					found = true;
 				}
 			}
@@ -6399,7 +6003,7 @@ void Scene1337::subCF979() {
 			// The variable 'j' is not used in the inner code of the loop. It's suspect.
 				for (int j = 0; j <= 7; j++) {
 					if ((_gameBoardSide[3]._delayCard._cardId == 0) && (subC32B1(3, _gameBoardSide[0]._handCard[i]._cardId))) {
-					subC3456(&_gameBoardSide[0]._handCard[i], &_gameBoardSide[3]._delayCard);
+					playDelayCard(&_gameBoardSide[0]._handCard[i], &_gameBoardSide[3]._delayCard);
 					found = true;
 					}
 				}
@@ -6414,6 +6018,402 @@ void Scene1337::subCF979() {
 		return;
 
 	subC2835(0);
+}
+
+void Scene1337::handlePlayer1() {
+	int tmpVal = 1;
+	bool found;
+	int count;
+
+	if (this->_gameBoardSide[1]._delayCard._cardId != 0) {
+		switch (_gameBoardSide[1]._delayCard._cardId) {
+		case 10:
+			// No break on purpose
+		case 12:
+			// No break on purpose
+		case 15:
+			// No break on purpose
+		case 17:
+			// No break on purpose
+		case 18:
+			// No break on purpose
+		case 19:
+			// No break on purpose
+		case 20:
+			// No break on purpose
+		case 21:
+			tmpVal = 0;
+			discardCard(&_gameBoardSide[1]._delayCard);
+			break;
+		default:
+			found = false;
+			int i;
+			for (i = 0; i <= 3; i++) {
+				if (subC3386(_gameBoardSide[1]._delayCard._cardId, _gameBoardSide[1]._handCard[i]._cardId)) {
+					found = true;
+					break;
+				}
+			}
+
+			if (found) {
+				tmpVal = 0;
+				subC34A1(&_gameBoardSide[1]._handCard[i], &_gameBoardSide[1]._delayCard);
+			}
+		}
+	}
+
+	if (tmpVal != 1)
+		return;
+
+	found = false;
+	for (int i = 0; i <= 3; i++) {
+		int tmpIndx = subC26CB(1, i);
+		if (tmpIndx == -1)
+			break;
+
+		tmpVal = 0;
+		for (int j = 0; j <= 7; j++) {
+			if (_gameBoardSide[1]._outpostStation[j]._cardId == _gameBoardSide[1]._handCard[tmpIndx]._cardId) {
+				tmpVal = 1;
+				break;
+			}
+		}
+
+		if (tmpVal == 0)
+			break;
+
+		for (int j = 0; j <= 7; j++) {
+			if (_gameBoardSide[1]._outpostStation[j]._cardId == 1) {
+				if (!subC2687(_gameBoardSide[1]._delayCard._cardId)) {
+					count = 0;
+					for (int k = 0; k <= 7; k++) {
+						if ((_gameBoardSide[1]._outpostStation[k]._cardId > 1) && (_gameBoardSide[1]._outpostStation[k]._cardId <= 9))
+							++count;
+					}
+
+					if (count == 7)
+						_winnerId = 1;
+
+					subC33C0(&_gameBoardSide[1]._handCard[tmpIndx], &_gameBoardSide[1]._outpostStation[j]);
+					found = true;
+					break;
+				}
+			}
+		}
+	}
+
+	if (found)
+		return;
+
+	tmpVal = findNormalCardInHand(1);
+	if (tmpVal != -1) {
+		for (int i = 0; i <= 7; i++) {
+			if ((_gameBoardSide[1]._outpostStation[i]._cardId == 0) && (!subC2687(_gameBoardSide[1]._delayCard._cardId))) {
+				playCard(&_gameBoardSide[1]._handCard[tmpVal], &_gameBoardSide[1]._outpostStation[i]);
+				found = true;
+				break;
+			}
+		}
+	}
+
+	if (found)
+		return;
+
+	tmpVal = subC274D(1);
+	int tmpVal2 = subC331B(1);
+
+	if ((tmpVal != -1) && ( tmpVal2 != -1)) {
+		subC358E(&_gameBoardSide[1]._handCard[tmpVal], tmpVal2);
+		found = true;
+	}
+
+	if (found)
+		return;
+
+	tmpVal = subC2781(1);
+	if (tmpVal != -1) {
+		count = -1;
+		int rndVal = R2_GLOBALS._randomSource.getRandomNumber(3);
+		for (int i = 0; i <= 3; i++) {
+			if (rndVal != 1) {
+				if (  (_gameBoardSide[rndVal]._handCard[0]._cardId != 0)
+					|| (_gameBoardSide[rndVal]._handCard[1]._cardId != 0)
+					|| (_gameBoardSide[rndVal]._handCard[2]._cardId != 0)
+					|| (_gameBoardSide[rndVal]._handCard[3]._cardId == 0)) {
+						count = rndVal;
+						break;
+				}
+				// CHECKME: inside the check on rndVal?
+				rndVal--;
+				if (rndVal < 0)
+					rndVal = 3;
+			}
+		}
+
+		if (count != -1) {
+			subC318B(1, &_gameBoardSide[1]._handCard[tmpVal], count);
+			found = true;
+		}
+	}
+
+	if (found)
+		return;
+
+	count = -1;
+	int i;
+	for (i = 0; i <= 3; i++) {
+		tmpVal = subC27B5(_gameBoardSide[1]._handCard[i]._cardId);
+		if (tmpVal != -1) {
+			int rndVal = R2_GLOBALS._randomSource.getRandomNumber(3);
+
+			for (int j = 0; j <= 3; j++) {
+				//CHECKME: tmpVal or rndVal?
+				if (tmpVal != 1) {
+					for (int k = 0; k <= 7; k++) {
+						// CHECKME: 'k' is not used in that loop.
+						// It looks suspicious.
+						if ((_gameBoardSide[tmpVal]._delayCard._cardId == 0) && (subC32B1(tmpVal, _gameBoardSide[1]._handCard[i]._cardId))) {
+							count = tmpVal;
+							break;
+						}
+					}
+				}
+
+				if (count != -1) {
+					found = true;
+					break;
+				} else {
+					rndVal--;
+					if (rndVal < 0)
+						rndVal = 3;
+				}
+			}
+
+			if (found)
+				break;
+		}
+	}
+
+	if (found)
+		playDelayCard(&_gameBoardSide[1]._handCard[i], &_gameBoardSide[count]._delayCard);
+	else {
+		int j;
+		for (j = 0; j <= 3; j++) {
+			if (subC27F9(_gameBoardSide[1]._handCard[j]._cardId) != -1) {
+				count = -1;
+				int rndVal = R2_GLOBALS._randomSource.getRandomNumber(3);
+				for (int l = 0; l <= 3; l++) {
+					if (rndVal != 1) {
+						for (int m = 0; m <= 7; m++) {
+							// 'm' is not used in that loop. It looks suspicious.
+							if ((_gameBoardSide[rndVal]._delayCard._cardId == 0) && (_gameBoardSide[1]._handCard[j]._cardId == 1)) {
+								count = rndVal;
+								break;
+							}
+						}
+					}
+					if (count != -1) {
+						found = true;
+						break;
+					} else {
+						rndVal--;
+						if (rndVal < 0)
+							rndVal = 3;
+					}
+				}
+				if (found)
+					break;
+			}
+		}
+
+		if (found)
+			playDelayCard(&_gameBoardSide[1]._handCard[j], &_gameBoardSide[count]._delayCard);
+		else
+			subC2835(1);
+	}
+
+}
+
+void Scene1337::handlePlayer3() {
+	bool found = true;
+
+	if (_gameBoardSide[3]._delayCard._cardId != 0) {
+		switch (_gameBoardSide[3]._delayCard._cardId) {
+		case 10:
+			// No break on purpose
+		case 12:
+			// No break on purpose
+		case 15:
+			// No break on purpose
+		case 17:
+			// No break on purpose
+		case 18:
+			// No break on purpose
+		case 19:
+			// No break on purpose
+		case 20:
+			// No break on purpose
+		case 21:
+			discardCard(&_gameBoardSide[3]._delayCard);
+			found = false;
+			break;
+		default:
+			found = false;
+			int i;
+			for (i = 0; i <= 3; i++) {
+				if (subC3386(_gameBoardSide[3]._delayCard._cardId, _gameBoardSide[3]._handCard[i]._cardId)) {
+					found = true;
+					break;
+				}
+			}
+
+			if (found) {
+				found = false;
+				subC34A1(&_gameBoardSide[3]._handCard[i], &_gameBoardSide[3]._delayCard);
+			}
+			break;
+		}
+	}
+
+	if (!found)
+		return;
+
+	int randIndx = R2_GLOBALS._randomSource.getRandomNumber(3);
+
+	if (_gameBoardSide[3]._handCard[randIndx]._cardId == 1) {
+		found = false;
+
+		for (int i = 0; i <= 7; i++) {
+			if ((_gameBoardSide[3]._outpostStation[i]._cardId == 0) && (!subC2687(_gameBoardSide[3]._delayCard._cardId))) {
+				playCard(&_gameBoardSide[3]._handCard[randIndx], &_gameBoardSide[3]._outpostStation[i]);
+				found = true;
+				break;
+			}
+		}
+
+		if (found) {
+			return;
+		}
+	} else if (_gameBoardSide[3]._handCard[randIndx]._cardId <= 9) {
+		found = false;
+
+		for (int i = 0; i <= 7; i++) {
+			if (_gameBoardSide[3]._outpostStation[i]._cardId == _gameBoardSide[3]._handCard[randIndx]._cardId) {
+				found = true;
+				break;
+			}
+		}
+
+		if (!found) {
+			for (int i = 0; i <= 7; i++) {
+				if ((_gameBoardSide[3]._outpostStation[i]._cardId == 1) && (!subC2687(_gameBoardSide[3]._delayCard._cardId))) {
+					int tmpVal = 0;
+
+					for (int j = 0; j <= 7; j++) {
+						if ((_gameBoardSide[3]._outpostStation[j]._cardId > 1) && (_gameBoardSide[3]._outpostStation[j]._cardId <= 9))
+							++tmpVal;
+					}
+
+					if (tmpVal == 7)
+						_winnerId = 3;
+
+					subC33C0(&_gameBoardSide[3]._handCard[randIndx], &_gameBoardSide[3]._outpostStation[i]);
+					found = true;
+					break;
+				}
+			}
+			if (found)
+				return;
+		}
+	} else if (_gameBoardSide[3]._handCard[randIndx]._cardId == 13) {
+		int tmpVal = subC331B(3);
+
+		if (tmpVal != -1) {
+			subC358E(&_gameBoardSide[3]._handCard[randIndx], tmpVal);
+			return;
+		}
+	} else if (_gameBoardSide[3]._handCard[randIndx]._cardId == 25) {
+		int tmpVal = -1;
+		found = false;
+		int tmpRandIndx = R2_GLOBALS._randomSource.getRandomNumber(3);
+
+		for (int i = 0; i <= 3; i++) {
+			if (  (tmpRandIndx != 3)
+				&& (  (_gameBoardSide[tmpRandIndx]._handCard[0]._cardId != 0)
+				|| (_gameBoardSide[tmpRandIndx]._handCard[1]._cardId != 0)
+				|| (_gameBoardSide[tmpRandIndx]._handCard[2]._cardId != 0)
+				|| (_gameBoardSide[tmpRandIndx]._handCard[3]._cardId != 0) )) {
+					tmpVal = tmpRandIndx;
+					break;
+			}
+
+			++tmpRandIndx;
+			if (tmpRandIndx > 3)
+				tmpRandIndx = 0;
+		}
+
+		if (tmpVal != -1) {
+			subC318B(3, &_gameBoardSide[3]._handCard[randIndx], tmpVal);
+			return;
+		}
+	} else {
+		switch (_gameBoardSide[3]._handCard[randIndx]._cardId) {
+		case 10:
+			// No break on purpose
+		case 11:
+			// No break on purpose
+		case 12:
+			// No break on purpose
+		case 14:
+			// No break on purpose
+		case 15:
+			// No break on purpose
+		case 16:
+			// No break on purpose
+		case 17:
+			// No break on purpose
+		case 18:
+			// No break on purpose
+		case 19:
+			// No break on purpose
+		case 20:
+			// No break on purpose
+		case 21:
+			// No break on purpose
+		case 24: {
+			int tmpVal = -1;
+			int tmpRandIndx = R2_GLOBALS._randomSource.getRandomNumber(3);
+
+			for (int i = 0; i <= 3; i++) {
+				if (tmpRandIndx != 3) {
+					// The variable 'j' is not used in the inner code of the loop, which is suspicious.
+					// 'i' is used indirectly to increment tmpRandIndx.
+					for (int j = 0; j <= 7; j++) {
+						if ((_gameBoardSide[tmpRandIndx]._delayCard._cardId == 0) && subC32B1(tmpRandIndx, _gameBoardSide[3]._handCard[randIndx]._cardId))
+							tmpVal = tmpRandIndx;
+					}
+				}
+
+				++tmpRandIndx;
+				if (tmpRandIndx > 3)
+					tmpRandIndx = 0;
+
+				if (tmpVal != -1)
+					break;
+			}
+
+			if (tmpVal != -1) {
+				// Useless second identical check skipped
+				playDelayCard(&_gameBoardSide[tmpVal]._handCard[randIndx], &_gameBoardSide[tmpVal]._delayCard);
+				return;
+			}
+				 }
+		default:
+			break;
+		}
+	}
+
+	discardCard(&_gameBoardSide[3]._handCard[randIndx]);
 }
 
 void Scene1337::subD026D() {
@@ -6542,7 +6542,7 @@ void Scene1337::subD02CA() {
 						found = true;
 						_currentPlayerNumb--;
 						_showPlayerTurn = false;
-						subC20F9();
+						handleNextTurn();
 					} else {
 						actionDisplay(1330, 127, 159, 10, 1, 200, 0, 7, 0, 154, 154);
 						found_di = true;
@@ -6570,7 +6570,7 @@ void Scene1337::subD02CA() {
 							if (subC27B5(_gameBoardSide[2]._delayCard._cardId) != -1) {
 								actionDisplay(1330, 55, 159, 10, 1, 200, 0, 7, 0, 154, 154);
 							} else {
-								subC340B(&_selectedCard, &_gameBoardSide[2]._outpostStation[i]);
+								playCard(&_selectedCard, &_gameBoardSide[2]._outpostStation[i]);
 								return;
 							}
 						} else {
@@ -6599,7 +6599,7 @@ void Scene1337::subD02CA() {
 								actionDisplay(1330, 35, 159, 10, 1, 200, 0, 7, 0, 154, 154);
 							} else {
 								if (j == 7)
-									_field424A = 2;
+									_winnerId = 2;
 
 								subC33C0(&_selectedCard, &_gameBoardSide[2]._outpostStation[i]);
 								return;
@@ -6758,7 +6758,7 @@ void Scene1337::subD02CA() {
 											break;
 										}
 									} else {
-										subC3456(&_selectedCard, &_gameBoardSide[0]._delayCard);
+										playDelayCard(&_selectedCard, &_gameBoardSide[0]._delayCard);
 										found = true;
 									}
 								} else if (_gameBoardSide[3]._delayCard.isIn(Common::Point(_selectedCard._stationPos.x + 12, _selectedCard._stationPos.y + 12))) {
@@ -6794,7 +6794,7 @@ void Scene1337::subD02CA() {
 											break;
 										}
 									} else {
-										subC3456(&_selectedCard, &_gameBoardSide[3]._delayCard);
+										playDelayCard(&_selectedCard, &_gameBoardSide[3]._delayCard);
 										found = true;
 									}
 								} else if (_gameBoardSide[1]._delayCard.isIn(Common::Point(_selectedCard._stationPos.x + 12, _selectedCard._stationPos.y + 12))) {
@@ -6830,7 +6830,7 @@ void Scene1337::subD02CA() {
 											break;
 										}
 									} else {
-										subC3456(&_selectedCard, &_gameBoardSide[1]._delayCard);
+										playDelayCard(&_selectedCard, &_gameBoardSide[1]._delayCard);
 										found = true;
 									}
 								} else {
