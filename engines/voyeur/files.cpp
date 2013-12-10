@@ -1316,6 +1316,18 @@ ThreadResource::ThreadResource(BoltFilesState &state, const byte *src):
 	_flags = src[8];
 }
 
+void ThreadResource::initThreadStruct(int idx, int id) {
+	_controlIndex = -1;
+	if (loadAStack(idx)) {
+		_field4 = _field6 = -1;
+		_threadId = id;
+		_field3A = -1;
+		_field3E = -1;
+
+		doState();
+	}
+}
+
 bool ThreadResource::loadAStack(int idx) {
 	if (_stampFlags & 1) {
 		unloadAStack(_controlIndex);
@@ -1348,8 +1360,18 @@ bool ThreadResource::doState() {
 	if (!getStateInfo()) 
 		return false;
 
-	warning("TODO: stm_doState");
-	return true;
+	getButtonsFlags();
+	getField1CE();
+
+	_vm->_glGoScene = -1;
+	_vm->_glGoStack = -1;
+
+	performOpenCard();
+	if (_field40 & 1) {
+		return chooseSTAMPButton(_vm->getRandomNumber(_field42 - 1));
+	} else {
+		return true;
+	}
 }
 
 bool ThreadResource::getStateInfo() {
@@ -1393,7 +1415,7 @@ void ThreadResource::getButtonsText() {
 		if (*p == 0xC0) {
 			++p;
 			if (*p++ & 0x80) {
-				assert(idx < 7);
+				assert(idx < 63);
 				_field8E[idx] = getRecordOffset(p);
 				p += 4;
 			}
@@ -1404,11 +1426,49 @@ void ThreadResource::getButtonsText() {
 	}
 }
 
+void ThreadResource::getButtonsFlags() {
+	int idx = 0;
+	
+	for (const byte *p = _field4A; *p != 0x49; p = getNextRecord(p)) {
+		if (*p == 0xC0) {
+			if (*++p & 0x20)
+				_field40 |= 2;
+
+			_field4E[idx] = *p++;
+			_field18E[idx] = *p++;
+
+			if (_field4E[idx] & 0x80)
+				p += 4;
+
+			++idx;
+		}
+	}
+}
+
+void ThreadResource::getField1CE() {
+	int idx = 0;
+	
+	for (const byte *p = _field4A; *p != 0x49; p = getNextRecord(p)) {
+		assert(idx < 47);
+		_field1CE[idx++] = getRecordOffset(p);
+		_field1CE[idx] = NULL;
+	}
+}
+
 void ThreadResource::unloadAllStacks(VoyeurEngine *vm) {
 	if (_stampFlags & 1) {
 		for (int i = 0; i < 8; ++i) {
 			if (_useCount[i])
 				vm->_stampLibPtr->freeBoltMember(vm->_controlPtr->_memberIds[i]);
+		}
+	}
+}
+
+void ThreadResource::performOpenCard() {
+	for (const byte *p = _field4A; *p != 0x49; p = getNextRecord(p)) {
+		if (*p == 0x47) {
+			cardAction(p + 1);
+			return;
 		}
 	}
 }
@@ -1465,6 +1525,15 @@ const byte *ThreadResource::getNextRecord(const byte *p) {
 	default:
 		return p;
 	}
+}
+
+void ThreadResource::cardAction(const byte *p) {
+	warning("TODO: cardAction");
+}
+
+bool ThreadResource::chooseSTAMPButton(int idx) {
+	warning("TODO: chooseSTAMPButton");
+	return false;
 }
 
 /*------------------------------------------------------------------------*/

@@ -41,6 +41,8 @@ VoyeurEngine::VoyeurEngine(OSystem *syst, const VoyeurGameDescription *gameDesc)
 	_bVoy = NULL;
 	_iForceDeath = -1;
 	_controlPtr = NULL;
+	_bob = false;
+	_playStamp1 = _playStamp2 = 0;
 
 	initialiseManagers();
 }

@@ -424,8 +424,12 @@ private:
 	bool getStateInfo();
 	byte *getDataOffset();
 	void getButtonsText();
+	void getButtonsFlags();
+	void getField1CE();
+	void performOpenCard();
 	const byte *getRecordOffset(const byte *p);
 	const byte *getNextRecord(const byte *p);
+	void cardAction(const byte *p);
 public:
 	VoyeurEngine *_vm;
 
@@ -441,17 +445,30 @@ public:
 	int _field44;
 	uint32 _field46;
 	byte *_field4A;
-	const byte *_field8E[8];
-
+	byte _field4E[64];
+	const byte *_field8E[64];
+	byte _field18E[64];
+	const byte *_field1CE[48];
 	byte *_ctlPtr;
 	byte *_field28E;
 public:
 	ThreadResource(BoltFilesState &state, const byte *src);
 	virtual ~ThreadResource() {}
 
+	void initThreadStruct(int idx, int id);
 	bool loadAStack(int idx);
 	void unloadAStack(int idx);
 	bool doState();
+
+	bool chooseSTAMPButton(int idx);
+	void parsePlayCommands();
+	int doInterface();
+	void doRoom();
+	int doApt();
+	void doTapePlaying();
+	void checkForMurder();
+	void checkForIncriminate();
+
 };
 
 } // End of namespace Voyeur

@@ -84,7 +84,14 @@ private:
 	void playStamp();
 	void initStamp();
 	void closeStamp();
-	void initThreadStruct(ThreadResource *thread, int idx, int id);
+	void reviewTape();
+	bool doGossip();
+	int doApt();
+	void doTapePlaying();
+	bool checkForMurder();
+	void checkForIncriminate();
+	void playAVideoEvent(int eventId);
+	int getChooseButton();
 protected:
 	// Engine APIs
 	virtual Common::Error run();
@@ -103,6 +110,11 @@ public:
 	ControlResource *_controlPtr;
 	byte *_stampData;
 	BoltGroup *_stackGroupPtr;
+	int _glGoScene;
+	int _glGoStack;
+	bool _bob;
+	int _playStamp1;
+	int _playStamp2;
 public:
 	VoyeurEngine(OSystem *syst, const VoyeurGameDescription *gameDesc);
 	virtual ~VoyeurEngine();

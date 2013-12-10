@@ -51,4 +51,8 @@ void SoundManager::abortVOCMap() {
 	_mixer->stopHandle(_soundHandle);
 }
 
+void SoundManager::stopVOCPlay() {
+	warning("TODO: stopVOCPlay()");
+}
+
 } // End of namespace Voyeur

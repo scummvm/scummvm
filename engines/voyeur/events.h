@@ -104,16 +104,22 @@ public:
 	int _field437E;
 	int _field4380;
 	int _field4382;
-	int _field4384;
+	int _videoEventId;
 	byte *_field4386;
 	int _curICF0;
 	int _curICF1;
 	int _fadeICF0;
 	int _fadeICF1;
-	int _fadeFunc;
+	void (*_fadeFunc)();
 	int _lastInplay;
 	int _incriminate;
 	int _policeEvent;
+
+	// Fields not originally in _voy, but I'm putting in for convenience
+	int _newIncriminate;
+	int _newLastInplay;
+	int _newFadeICF1;
+	void (*_newFadeFunc)();
 };
 
 class IntData {
@@ -145,6 +151,7 @@ private:
 	VoyeurEngine *_vm;
 	uint32 _priorFrameTime;
 	uint32 _gameCounter;
+	uint32 _joe;
 	bool _keyState[256];
 	int _mouseButton;
 	Common::List<IntNode *> _intNodes;
@@ -198,6 +205,8 @@ public:
 	void mouseOn();
 	void mouseOff();
 	Common::Point getMousePos() { return _mousePos; }
+	void getMouseInfo();
+	void checkForKey();
 };
 
 } // End of namespace Voyeur

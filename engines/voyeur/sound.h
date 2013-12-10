@@ -43,6 +43,7 @@ public:
 	void playVOCMap(byte *voc, int vocSize);
 	bool vocMapStatus();
 	void continueVocMap();
+	void stopVOCPlay();
 	void abortVOCMap();
 };
 

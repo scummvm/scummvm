@@ -71,6 +71,7 @@ EventsManager::EventsManager(): _intPtr(_gameData),
 	_mouseButton = 0;
 	_fadeStatus = 0;
 	_priorFrameTime = g_system->getMillis();
+	_joe = 0;
 	Common::fill(&_keyState[0], &_keyState[256], false);
 
 	_v2A0A2 = 0;
@@ -402,6 +403,34 @@ void EventsManager::mouseOn() {
 
 void EventsManager::mouseOff() {
 	CursorMan.showMouse(false);
+}
+
+void EventsManager::getMouseInfo() {
+	if (_vm->_voy._eCursorOff[58] & 0x10) {
+		if ((_gameCounter - _joe) > 8) {
+			_joe = _gameCounter;
+
+			// TODO: Figure out difference between setOneColor and setColor calls
+			if (_vm->_bob) {
+				_vm->_bob = false;
+				//_vm->_graphicsManager.setColor(128, 55, 5, 5);
+				_vm->_graphicsManager.setColor(128, 220, 20, 20);
+			} else {
+				_vm->_bob = true;
+				//_vm->_graphicsManager.setColor(128, 55, 55, 55);
+				_vm->_graphicsManager.setColor(128, 220, 20, 20);
+			}
+		}
+	}
+
+	_vm->_voy._incriminate = _vm->_voy._newIncriminate;
+	_vm->_voy._lastInplay = _vm->_voy._newLastInplay;
+	_vm->_voy._fadeFunc = _vm->_voy._newFadeFunc;
+	_vm->_voy._fadeICF1 = _vm->_voy._newFadeICF1;
+}
+
+void EventsManager::checkForKey() {
+	warning("TODO: checkForKey");
 }
 
 } // End of namespace Voyeur
