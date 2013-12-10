@@ -2261,7 +2261,7 @@ Scene1337::Scene1337() {
 	_instructionsDisplayedFl = false;
 	_instructionsWaitCount = 0;
 
-	_unkFctPtr412 = nullptr;
+	_delayedFunction = nullptr;
 	_actionCard1 = nullptr;
 	_actionCard2 = nullptr;
 	_actionCard3 = nullptr;
@@ -3538,7 +3538,7 @@ void Scene1337::Action4::signal() {
 			scene->handlePlayer1();
 			break;
 		case 2:
-			scene->subD0281();
+			scene->handlePlayer2();
 			break;
 		case 3:
 			scene->handlePlayer3();
@@ -3707,6 +3707,7 @@ void Scene1337::Action8::signal() {
 	}
 }
 
+// Play delay card
 void Scene1337::Action9::signal() {
 	Scene1337 *scene = (Scene1337 *)R2_GLOBALS._sceneManager._scene;
 
@@ -3915,7 +3916,7 @@ void Scene1337::Action10::signal() {
 	}
 }
 
-// Use trick (card #25?) and pick a card from the opponent
+// Use trick (card #25 - thieft ?) and pick a card from the opponent
 void Scene1337::Action11::signal() {
 	Scene1337 *scene = (Scene1337 *)R2_GLOBALS._sceneManager._scene;
 
@@ -4368,7 +4369,7 @@ void Scene1337::postInit(SceneObjectList *OwnerList) {
 	R2_GLOBALS._player.enableControl();
 	R2_GLOBALS._player._canWalk = false;
 
-	_unkFctPtr412 = NULL;
+	_delayedFunction = nullptr;
 
 	_actionCard1 = nullptr;
 	_actionCard2 = nullptr;
@@ -4490,17 +4491,17 @@ void Scene1337::process(Event &event) {
 		if (event.btnState != BTNSHIFT_RIGHT) {
 			updateCursorId(R2_GLOBALS._mouseCursorId, true);
 			event.handled = true;
-		} else if (_unkFctPtr412) {
-			FunctionPtrType tmpFctPtr = _unkFctPtr412;
-			_unkFctPtr412 = NULL;
+		} else if (_delayedFunction) {
+			FunctionPtrType tmpFctPtr = _delayedFunction;
+			_delayedFunction = nullptr;
 			(this->*tmpFctPtr)();
 			event.handled = true;
 		}
 	} else if (event.eventType == EVENT_KEYPRESS) {
 		if (event.kbd.keycode == Common::KEYCODE_SPACE) {
-			if (_unkFctPtr412) {
-				FunctionPtrType tmpFctPtr = _unkFctPtr412;
-				_unkFctPtr412 = NULL;
+			if (_delayedFunction) {
+				FunctionPtrType tmpFctPtr = _delayedFunction;
+				_delayedFunction = nullptr;
 				(this->*tmpFctPtr)();
 				event.handled = true;
 			}
@@ -4593,7 +4594,7 @@ void Scene1337::handleNextTurn() {
 			}
 
 			if (!_autoplay)
-				_unkFctPtr412 = &Scene1337::subC20E5;
+				_delayedFunction = &Scene1337::subC20E5;
 			else
 				subC20E5();
 		} else {
@@ -4756,8 +4757,8 @@ int Scene1337::subC27B5(int arg1) {
 	}
 }
 
-int Scene1337::subC27F9(int arg1) {
-	switch (arg1) {
+int Scene1337::isSlowCard(int cardId) {
+	switch (cardId) {
 	case 10:
 	// No break on purpose
 	case 12:
@@ -4773,7 +4774,7 @@ int Scene1337::subC27F9(int arg1) {
 	case 20:
 	// No break on purpose
 	case 21:
-		return arg1;
+		return cardId;
 	default:
 		return -1;
 	}
@@ -4785,7 +4786,7 @@ void Scene1337::subC2835(int arg1) {
 	switch (arg1) {
 	case 0:
 		for (i = 0; i <= 3; i++) {
-			if (subC27F9(_gameBoardSide[arg1]._handCard[i]._cardId) != -1) {
+			if (isSlowCard(_gameBoardSide[arg1]._handCard[i]._cardId) != -1) {
 				found = true;
 				break;
 			}
@@ -4883,7 +4884,7 @@ void Scene1337::subC2835(int arg1) {
 			break;
 
 		for (i = 0; i <= 3; i++) {
-			if (subC27F9(_gameBoardSide[arg1]._handCard[i]._cardId) != -1) {
+			if (isSlowCard(_gameBoardSide[arg1]._handCard[i]._cardId) != -1) {
 				found = true;
 				break;
 			}
@@ -4927,21 +4928,21 @@ void Scene1337::subC2835(int arg1) {
 	discardCard(&_gameBoardSide[arg1]._handCard[i]);
 }
 
-void Scene1337::subC318B(int arg1, Card *subObj1, int arg3) {
-	_actionIdx1 = arg1;
-	_actionIdx2 = arg3;
+void Scene1337::playThieftCard(int playerId, Card *card, int victimId) {
+	_actionIdx1 = playerId;
+	_actionIdx2 = victimId;
 
 	int randIndx;
 
 	for (;;) {
 		randIndx = R2_GLOBALS._randomSource.getRandomNumber(3);
-		if (_gameBoardSide[arg3]._handCard[randIndx]._cardId != 0)
+		if (_gameBoardSide[victimId]._handCard[randIndx]._cardId != 0)
 			break;
 	}
 
-	_actionCard1 = subObj1;
-	_actionCard2 = &_gameBoardSide[arg3]._emptyStationPos;
-	_actionCard3 = &_gameBoardSide[arg3]._handCard[randIndx];
+	_actionCard1 = card;
+	_actionCard2 = &_gameBoardSide[victimId]._emptyStationPos;
+	_actionCard3 = &_gameBoardSide[victimId]._handCard[randIndx];
 
 	_item1.setAction(&_action11);
 }
@@ -5016,17 +5017,17 @@ int Scene1337::subC331B(int arg1) {
 	return -1;
 }
 
-bool Scene1337::subC3386(int arg1, int arg2) {
-	if ((arg1 == 11) && (arg2 == 26))
+bool Scene1337::checkAntiDelayCard(int delayCardId, int cardId) {
+	if ((delayCardId == 11) && (cardId == 26))
 		return true;
 
-	if ((arg1 == 14) && (arg2 == 30))
+	if ((delayCardId == 14) && (cardId == 30))
 		return true;
 
-	if ((arg1 == 16) && (arg2 == 32))
+	if ((delayCardId == 16) && (cardId == 32))
 		return true;
 
-	if ((arg1 == 24) && (arg2 == 28))
+	if ((delayCardId == 24) && (cardId == 28))
 		return true;
 
 	return false;
@@ -5795,7 +5796,7 @@ void Scene1337::handlePlayer0() {
 			found = false;
 
 			for (i = 0; i <= 3; i++) {
-				if (subC3386(_gameBoardSide[0]._delayCard._cardId, _gameBoardSide[0]._handCard[i]._cardId)) {
+				if (checkAntiDelayCard(_gameBoardSide[0]._delayCard._cardId, _gameBoardSide[0]._handCard[i]._cardId)) {
 					found = true;
 					break;
 				}
@@ -5889,7 +5890,7 @@ void Scene1337::handlePlayer0() {
 		  || (_gameBoardSide[2]._handCard[1]._cardId != 0)
 		  || (_gameBoardSide[2]._handCard[2]._cardId != 0)
 		  || (_gameBoardSide[2]._handCard[3]._cardId != 0) ) {
-			subC318B(0, &_gameBoardSide[0]._handCard[tmpVal], 2);
+			playThieftCard(0, &_gameBoardSide[0]._handCard[tmpVal], 2);
 			found = true;
 		}
 	}
@@ -5917,7 +5918,7 @@ void Scene1337::handlePlayer0() {
 		return;
 
 	for (int i = 0; i <= 3; i++) {
-		if (subC27F9(_gameBoardSide[0]._handCard[i]._cardId) != -1) {
+		if (isSlowCard(_gameBoardSide[0]._handCard[i]._cardId) != -1) {
 			// The variable 'j' is not used in the inner code of the loop. It's suspect
 			for (int j = 0; j <= 7; j++) {
 				if ((_gameBoardSide[2]._delayCard._cardId == 0) && (subC32B1(2, _gameBoardSide[0]._handCard[i]._cardId))) {
@@ -5951,7 +5952,7 @@ void Scene1337::handlePlayer0() {
 		  || (_gameBoardSide[1]._handCard[1]._cardId != 0)
 		  || (_gameBoardSide[1]._handCard[2]._cardId != 0)
 		  || (_gameBoardSide[1]._handCard[3]._cardId != 0) ) {
-			subC318B(0, &_gameBoardSide[0]._handCard[tmpVal], 1);
+			playThieftCard(0, &_gameBoardSide[0]._handCard[tmpVal], 1);
 			found = true;
 		}
 	}
@@ -5960,7 +5961,7 @@ void Scene1337::handlePlayer0() {
 		return;
 
 	for (int i = 0; i <= 3; i++) {
-		tmpVal = subC27F9(_gameBoardSide[0]._handCard[i]._cardId);
+		tmpVal = isSlowCard(_gameBoardSide[0]._handCard[i]._cardId);
 		if (tmpVal != -1) {
 			// The variable 'j' is not used in the inner code of the loop. It's suspect.
 			for (int j = 0; j <= 7; j++) {
@@ -6049,7 +6050,7 @@ void Scene1337::handlePlayer1() {
 			found = false;
 			int i;
 			for (i = 0; i <= 3; i++) {
-				if (subC3386(_gameBoardSide[1]._delayCard._cardId, _gameBoardSide[1]._handCard[i]._cardId)) {
+				if (checkAntiDelayCard(_gameBoardSide[1]._delayCard._cardId, _gameBoardSide[1]._handCard[i]._cardId)) {
 					found = true;
 					break;
 				}
@@ -6151,7 +6152,7 @@ void Scene1337::handlePlayer1() {
 		}
 
 		if (count != -1) {
-			subC318B(1, &_gameBoardSide[1]._handCard[tmpVal], count);
+			playThieftCard(1, &_gameBoardSide[1]._handCard[tmpVal], count);
 			found = true;
 		}
 	}
@@ -6199,7 +6200,7 @@ void Scene1337::handlePlayer1() {
 	else {
 		int j;
 		for (j = 0; j <= 3; j++) {
-			if (subC27F9(_gameBoardSide[1]._handCard[j]._cardId) != -1) {
+			if (isSlowCard(_gameBoardSide[1]._handCard[j]._cardId) != -1) {
 				count = -1;
 				int rndVal = R2_GLOBALS._randomSource.getRandomNumber(3);
 				for (int l = 0; l <= 3; l++) {
@@ -6261,7 +6262,7 @@ void Scene1337::handlePlayer3() {
 			found = false;
 			int i;
 			for (i = 0; i <= 3; i++) {
-				if (subC3386(_gameBoardSide[3]._delayCard._cardId, _gameBoardSide[3]._handCard[i]._cardId)) {
+				if (checkAntiDelayCard(_gameBoardSide[3]._delayCard._cardId, _gameBoardSide[3]._handCard[i]._cardId)) {
 					found = true;
 					break;
 				}
@@ -6353,7 +6354,7 @@ void Scene1337::handlePlayer3() {
 		}
 
 		if (tmpVal != -1) {
-			subC318B(3, &_gameBoardSide[3]._handCard[randIndx], tmpVal);
+			playThieftCard(3, &_gameBoardSide[3]._handCard[randIndx], tmpVal);
 			return;
 		}
 	} else {
@@ -6420,9 +6421,9 @@ void Scene1337::subD026D() {
 	subD02CA();
 }
 
-void Scene1337::subD0281() {
-	if (subC27F9(this->_gameBoardSide[2]._delayCard._cardId) == -1)
-		_unkFctPtr412 = &Scene1337::subD026D;
+void Scene1337::handlePlayer2() {
+	if (isSlowCard(this->_gameBoardSide[2]._delayCard._cardId) == -1)
+		_delayedFunction = &Scene1337::subD026D;
 	else
 		discardCard(&_gameBoardSide[2]._delayCard);
 }
@@ -6499,7 +6500,7 @@ void Scene1337::subD02CA() {
 
 		if (i == 4) {
 			handleClick(1, _selectedCard._stationPos);
-			subD0281();
+			handlePlayer2();
 			return;
 		} else {
 			setCursorData(1332, _selectedCard._card._strip, _selectedCard._card._frame);
@@ -6508,14 +6509,14 @@ void Scene1337::subD02CA() {
 	} else if (R2_GLOBALS._v57810 == 300) {
 		// Eye
 		handleClick(3, _selectedCard._stationPos);
-		subD0281();
+		handlePlayer2();
 		return;
 	} else {
 		// The original code is calling a function full of dead code.
 		// Only this message remains after a cleanup. 
 		MessageDialog::show(WRONG_ANSWER_MSG, OK_BTN_STRING);
 		//
-		subD0281();
+		handlePlayer2();
 		return;
 	}
 
@@ -6611,7 +6612,7 @@ void Scene1337::subD02CA() {
 						if ((_selectedCard._cardId == 26) || (_selectedCard._cardId == 30) ||(_selectedCard._cardId == 32) || (_selectedCard._cardId == 28)) {
 							if (_gameBoardSide[2]._delayCard.isIn(Common::Point(_selectedCard._stationPos.x + 12, _selectedCard._stationPos.y + 12))) {
 								actionDisplay(1330, 42, 159, 10, 1, 200, 0, 7, 0, 154, 154);
-							} else if (!subC3386(_gameBoardSide[2]._delayCard._cardId, _selectedCard._cardId)) {
+							} else if (!checkAntiDelayCard(_gameBoardSide[2]._delayCard._cardId, _selectedCard._cardId)) {
 								if (_gameBoardSide[2]._delayCard._cardId != 0) {
 									switch (_gameBoardSide[2]._delayCard._cardId) {
 									case 11:
@@ -6637,7 +6638,7 @@ void Scene1337::subD02CA() {
 								return;
 							}
 						} else {
-							if ((subC27F9(_selectedCard._cardId) == -1) && (subC27B5(_selectedCard._cardId) == -1)) {
+							if ((isSlowCard(_selectedCard._cardId) == -1) && (subC27B5(_selectedCard._cardId) == -1)) {
 								if (_selectedCard._cardId == 13) {
 									if (_gameBoardSide[0]._emptyStationPos.isIn(Common::Point(_selectedCard._stationPos.x + 12, _selectedCard._stationPos.y + 12))) {
 										for (int k = 0; k <= 7; k++) {
@@ -6681,7 +6682,7 @@ void Scene1337::subD02CA() {
 													if (_gameBoardSide[2]._handCard[k]._cardId == 0)
 														break;
 												}
-												subC318B(2, &_gameBoardSide[2]._handCard[k], 0);
+												playThieftCard(2, &_gameBoardSide[2]._handCard[k], 0);
 												return;
 										} else {
 											actionDisplay(1330, 99, 159, 10, 1, 200, 0, 7, 0, 154, 154);
@@ -6695,7 +6696,7 @@ void Scene1337::subD02CA() {
 													if (_gameBoardSide[2]._handCard[k]._cardId == 0)
 														break;
 												}
-												subC318B(2, &_gameBoardSide[2]._handCard[k], 1);
+												playThieftCard(2, &_gameBoardSide[2]._handCard[k], 1);
 												return;
 										} else {
 											actionDisplay(1330, 99, 159, 10, 1, 200, 0, 7, 0, 154, 154);
@@ -6711,7 +6712,7 @@ void Scene1337::subD02CA() {
 													if (_gameBoardSide[2]._handCard[k]._cardId == 0)
 														break;
 												}
-												subC318B(2, &_gameBoardSide[2]._handCard[k], 3);
+												playThieftCard(2, &_gameBoardSide[2]._handCard[k], 3);
 												return;
 										} else {
 											actionDisplay(1330, 99, 159, 10, 1, 200, 0, 7, 0, 154, 154);

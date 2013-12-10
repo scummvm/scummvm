@@ -271,7 +271,7 @@ class Scene1337 : public SceneExt {
 	};
 public:
 	typedef void (Scene1337::*FunctionPtrType)();
-	FunctionPtrType _unkFctPtr412;
+	FunctionPtrType _delayedFunction;
 
 	ASound _aSound1;
 	ASound _aSound2;
@@ -340,13 +340,13 @@ public:
 	int  subC274D(int arg1);
 	int  subC2781(int arg1);
 	int  subC27B5(int arg1);
-	int  subC27F9(int arg1);
+	int  isSlowCard(int cardId);
 	void subC2835(int arg1);
-	void subC318B(int arg1, Card *subObj2, int arg3);
+	void playThieftCard(int playerId, Card *card, int victimId);
 	int  subC3257(int arg1);
 	bool subC32B1(int arg1, int arg2);
 	int  subC331B(int arg1);
-	bool subC3386(int arg1, int arg2);
+	bool checkAntiDelayCard(int delayCardId, int cardId);
 	void subC33C0(Card *subObj1, Card *subObj2);
 	void playDelayCard(Card *card, Card *dest);
 	void playCard(Card *card, Card *dest);
@@ -370,7 +370,7 @@ public:
 	void handlePlayer1();
 	void handlePlayer3();
 	void subD026D();
-	void subD0281();
+	void handlePlayer2();
 	void subD02CA();
 	void updateCursorId(int arg1, bool arg2);
 	void setCursorData(int resNum, int rlbNum, int frameNum);
