@@ -122,6 +122,19 @@ static const QueenGameDescription gameDescriptions[] = {
 		},
 	},
 
+	// Amiga Floppy - English
+	{
+		{
+			"queen",
+			"Floppy",
+			AD_ENTRY1s("queen.1", "00000000000000000000000000000000", 351775), // TODO: Fill in correct MD5
+			Common::EN_ANY,
+			Common::kPlatformAmiga,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+	},
+
 	// DOS Floppy - English
 	{
 		{
@@ -148,11 +161,83 @@ static const QueenGameDescription gameDescriptions[] = {
 		},
 	},
 
-	// TODO: Need Entry for Uncompressed French Release.
+	// DOS Floppy - French
+	{
+		{
+			"queen",
+			"Floppy",
+			AD_ENTRY1s("queen.1", "00000000000000000000000000000000", 22157304), // TODO: Fill in correct MD5
+			Common::FR_FRA,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+	},
 
-	// TODO: Need Entry for Uncompressed German Release.
+	// DOS CD - French
+	{
+		{
+			"queen",
+			"Talkie",
+			AD_ENTRY1s("queen.1", "00000000000000000000000000000000", 186689095), // TODO: Fill in correct MD5
+			Common::FR_FRA,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+	},
 
-	// TODO: Need Entry for Uncompressed Hebrew Release.
+	// DOS Floppy - German
+	{
+		{
+			"queen",
+			"Floppy",
+			AD_ENTRY1s("queen.1", "00000000000000000000000000000000", 22240013), // TODO: Fill in correct MD5
+			Common::DE_DEU,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+	},
+
+	// DOS CD - German
+	{
+		{
+			"queen",
+			"Talkie",
+			AD_ENTRY1s("queen.1", "00000000000000000000000000000000", 217648975), // TODO: Fill in correct MD5
+			Common::DE_DEU,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+	},
+
+	// DOS CD - Hebrew
+	{
+		{
+			"queen",
+			"Talkie",
+			AD_ENTRY1s("queen.1", "00000000000000000000000000000000", 190705558), // TODO: Fill in correct MD5
+			Common::HE_ISR,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+	},
+
+	// DOS Floppy - Italian
+	{
+		{
+			"queen",
+			"Floppy",
+			AD_ENTRY1s("queen.1", "00000000000000000000000000000000", 22461366), // TODO: Fill in correct MD5
+			Common::IT_ITA,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+	},
 
 	// DOS CD - Italian
 	{
@@ -166,6 +251,20 @@ static const QueenGameDescription gameDescriptions[] = {
 			GUIO0()
 		},
 	},
+
+	// DOS CD - Spanish
+	{
+		{
+			"queen",
+			"Talkie",
+			AD_ENTRY1s("queen.1", "00000000000000000000000000000000", 190730602), // TODO: Fill in correct MD5
+			Common::ES_ESP,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+	},
+
 
 	// DOS CD - English (Compressed Freeware Release v1.0)
 	{
@@ -244,6 +343,8 @@ static const QueenGameDescription gameDescriptions[] = {
 			GUIO0()
 		},
 	},
+
+	// TODO: Freeware Release for Spanish DOS CD is missing.
 
 	{ AD_TABLE_END_MARKER }
 };
