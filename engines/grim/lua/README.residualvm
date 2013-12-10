@@ -8,7 +8,7 @@ The major changes made from the original version of Lua 3.1 are:
 * Added several internal functions which implement this multithreading.
 * Added save/restore Lua state in the files: lsave.cpp and lrestore.cpp.
 * Unified types like int -> int32 and similiars.
-* Removed few unused library functions by games.
+* Removed few library functions not used by game engine.
 * Formatting code.
 * Replace FILE usage code with File class code.
 * Remove union from TaggedString, that simplify things.
