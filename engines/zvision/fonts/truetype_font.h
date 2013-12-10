@@ -43,12 +43,12 @@ public:
 	~TruetypeFont();
 
 private:
-	ZVision *_engine;
+//	ZVision *_engine;
 	Graphics::Font *_font;
 	int _lineHeight;
 
-	size_t _maxCharWidth;
-	size_t _maxCharHeight;
+//	size_t _maxCharWidth;
+//	size_t _maxCharHeight;
 
 public:
 	int32 _fontHeight;

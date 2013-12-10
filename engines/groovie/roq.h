@@ -75,7 +75,6 @@ private:
 	byte _codebook4[256 * 4];
 
 	// Buffers
-	// Graphics::Surface *_fg, *_thirdBuf;
 	Graphics::Surface *_bg;
 	Graphics::Surface *_currBuf, *_prevBuf;
 	void buildShowBuf();

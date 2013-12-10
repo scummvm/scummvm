@@ -606,7 +606,7 @@ int16 Op_InitializeState() {
 }
 
 int16 Op_GetlowMemory() {
-	return lowMemory;
+	return 0;
 }
 
 int16 Op_AniDir() {
