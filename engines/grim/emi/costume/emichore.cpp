@@ -20,50 +20,24 @@
  *
  */
 
-#ifndef GRIM_COSTUMEEMI_H
-#define GRIM_COSTUMEEMI_H
-
-#include "common/stream.h"
-
-#include "engines/grim/object.h"
-#include "engines/grim/costume.h"
 #include "engines/grim/emi/costume/emichore.h"
+#include "engines/grim/emi/modelemi.h"
 
 namespace Grim {
 
-typedef uint32 tag32;
+EMIChore::EMIChore(char name[32], int id, Costume *owner, int length, int numTracks) :
+		Chore(name, id, owner, length, numTracks), _mesh(NULL), _skeleton(NULL) {
+}
 
-class EMISkelComponent;
-class EMIMeshComponent;
-class Material;
-
-class EMICostume : public Costume {
-public:
-	EMICostume(const Common::String &filename, Costume *prevCost);
-
-	void load(Common::SeekableReadStream *data);
-
-	void playChore(int num) override;
-	void playChoreLooping(int num) override;
-
-	int update(uint frameTime);
-	void draw();
-
-	void saveState(SaveGame *state) const override;
-	bool restoreState(SaveGame *state) override;
-
-	Material *findSharedMaterial(const Common::String &name);
-public:
-	EMIChore *_wearChore;
-	EMISkelComponent *_emiSkel;
-	Common::List<Material *> _materials;
-private:
-	Component *loadEMIComponent(Component *parent, int parentID, const char *name, Component *prevComponent);
-	void setWearChore(EMIChore *chore);
-
-	friend class Chore;
-};
+void EMIChore::addComponent(Component *component) {
+	if (component->isComponentType('m', 'e', 's', 'h')) {
+		_mesh = static_cast<EMIMeshComponent *>(component);
+	} else if (component->isComponentType('s', 'k', 'e', 'l')) {
+		_skeleton = static_cast<EMISkelComponent *>(component);
+	}
+	if (_mesh && _mesh->_obj && _skeleton) {
+		_mesh->_obj->setSkeleton(_skeleton->_obj);
+	}
+}
 
 } // end of namespace Grim
-
-#endif

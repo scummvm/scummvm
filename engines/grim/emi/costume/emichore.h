@@ -20,48 +20,29 @@
  *
  */
 
-#ifndef GRIM_COSTUMEEMI_H
-#define GRIM_COSTUMEEMI_H
+#ifndef GRIM_EMICHORE_H
+#define GRIM_EMICHORE_H
 
-#include "common/stream.h"
-
-#include "engines/grim/object.h"
-#include "engines/grim/costume.h"
-#include "engines/grim/emi/costume/emichore.h"
+#include "engines/grim/costume/chore.h"
+#include "engines/grim/pool.h"
+#include "engines/grim/emi/costume/emimesh_component.h"
+#include "engines/grim/emi/costume/emiskel_component.h"
 
 namespace Grim {
 
-typedef uint32 tag32;
-
-class EMISkelComponent;
-class EMIMeshComponent;
-class Material;
-
-class EMICostume : public Costume {
+class EMIChore : public PoolObject<EMIChore>, public Chore {
 public:
-	EMICostume(const Common::String &filename, Costume *prevCost);
+	EMIChore(char name[32], int id, Costume *owner, int length, int numTracks);
+	static int32 getStaticTag() { return MKTAG('C', 'H', 'O', 'R'); }
 
-	void load(Common::SeekableReadStream *data);
+	void addComponent(Component *component);
+	bool isWearChore() { return _mesh && _skeleton; }
+	EMIMeshComponent *getMesh() { return _mesh; }
+	EMISkelComponent *getSkeleton() { return _skeleton; }
 
-	void playChore(int num) override;
-	void playChoreLooping(int num) override;
-
-	int update(uint frameTime);
-	void draw();
-
-	void saveState(SaveGame *state) const override;
-	bool restoreState(SaveGame *state) override;
-
-	Material *findSharedMaterial(const Common::String &name);
-public:
-	EMIChore *_wearChore;
-	EMISkelComponent *_emiSkel;
-	Common::List<Material *> _materials;
 private:
-	Component *loadEMIComponent(Component *parent, int parentID, const char *name, Component *prevComponent);
-	void setWearChore(EMIChore *chore);
-
-	friend class Chore;
+	EMIMeshComponent *_mesh;
+	EMISkelComponent *_skeleton;
 };
 
 } // end of namespace Grim

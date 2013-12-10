@@ -25,8 +25,6 @@
 
 #include "engines/grim/animation.h"
 
-#include "engines/grim/pool.h"
-
 namespace Grim {
 
 class Costume;
@@ -91,12 +89,6 @@ private:
 	int _currTime;
 
 	friend class EMICostume;
-};
-
-class PoolChore : public PoolObject<PoolChore>, public Chore {
-public:
-	PoolChore(char name[32], int id, Costume *owner, int length, int numTracks) : Chore(name, id, owner, length, numTracks){}
-	static int32 getStaticTag() { return MKTAG('C', 'H', 'O', 'R'); }
 };
 
 } // end of namespace Grim

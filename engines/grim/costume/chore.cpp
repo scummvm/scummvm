@@ -21,6 +21,7 @@
  */
 
 #include "engines/grim/costume.h"
+#include "engines/grim/savegame.h"
 #include "engines/grim/textsplit.h"
 
 #include "engines/grim/costume/chore.h"
