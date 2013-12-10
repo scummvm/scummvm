@@ -557,16 +557,33 @@ void GlobalMessageQueueList::disableQueueById(int id) {
 }
 
 int GlobalMessageQueueList::compact() {
+	int *useList = new int[size() + 2];
+
+	for (uint i = 0; i < size() + 2; i++)
+		useList[i] = 0;
+
 	for (uint i = 0; i < size();) {
 		if (((MessageQueue *)_storage[i])->_isFinished) {
 			disableQueueById(_storage[i]->_id);
 			remove_at(i);
 		} else {
+			if (_storage[i]->_id < size() + 2)
+				useList[_storage[i]->_id] = 1;
 			i++;
 		}
 	}
 
-	return size() + 1;
+	uint i;
+
+	for (i = 1; i < size() + 2; i++) {
+		if (!useList[i]) {
+			delete [] useList;
+
+			return i;
+		}
+	}
+
+	return i;
 }
 
 void GlobalMessageQueueList::addMessageQueue(MessageQueue *msg) {
