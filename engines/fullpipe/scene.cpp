@@ -450,6 +450,9 @@ void Scene::draw() {
 	debug(6, ">>>>> Scene::draw()");
 	updateScrolling();
 
+	// Clean previous stuff
+	g_fullpipe->_backgroundSurface.fillRect(Common::Rect(0, 0, 799, 599), 0);
+
 	drawContent(60000, 0, true);
 
 	objectList_sortByPriority(_staticANIObjectList2);
