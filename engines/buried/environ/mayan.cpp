@@ -778,6 +778,43 @@ int MainCavernGlassCapture::specifyCursor(Window *viewWindow, const Common::Poin
 	return kCursorArrow;
 }
 
+class WalkVolumeChange : public SceneBase {
+public:
+	WalkVolumeChange(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+			byte newVolume = 0, uint32 volumeChangeTime = 0, int stepCount = -1, int entryEffectFileNameID = -1);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
+	int preExitRoom(Window *viewWindow, const Location &newLocation);
+
+private:
+	byte _newVolume;
+	uint32 _volumeChangeTime;
+	int _stepCount;
+	int _entryEffectFileNameID;
+};
+
+WalkVolumeChange::WalkVolumeChange(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+		byte newVolume, uint32 volumeChangeTime, int stepCount, int entryEffectFileNameID) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_newVolume = newVolume;
+	_volumeChangeTime = volumeChangeTime;
+	_stepCount = stepCount;
+	_entryEffectFileNameID = entryEffectFileNameID;
+}
+
+int WalkVolumeChange::postEnterRoom(Window *viewWindow, const Location &priorLocation) {
+	if (_entryEffectFileNameID >= 0 && priorLocation.node != _staticData.location.node)
+		_vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, _entryEffectFileNameID), 128, false, true);
+
+	return SC_TRUE;
+}
+
+int WalkVolumeChange::preExitRoom(Window *viewWindow, const Location &newLocation) {
+	if (_stepCount >= 0 && newLocation.node != _staticData.location.node)
+		_vm->_sound->adjustAmbientSoundVolume(_newVolume, true, _stepCount, _volumeChangeTime);
+
+	return SC_TRUE;
+}
+
 bool SceneViewWindow::initializeMayanTimeZoneAndEnvironment(Window *viewWindow, int environment) {
 	if (environment == -1) {
 		GlobalFlags &flags = ((SceneViewWindow *)viewWindow)->getGlobalFlags();
@@ -955,6 +992,36 @@ SceneBase *SceneViewWindow::constructMayanSceneObject(Window *viewWindow, const 
 		return new DisplayMessageWithEvidenceWhenEnteringNode(_vm, viewWindow, sceneStaticData, priorLocation, MAYAN_EVIDENCE_BROKEN_GLASS_PYRAMID, IDS_MBT_EVIDENCE_PRESENT);
 	case 72:
 		return new MainCavernGlassCapture(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 75:
+		return new WalkVolumeChange(_vm, viewWindow, sceneStaticData, priorLocation, 40, 4500, 12, 14);
+	case 76:
+		return new WalkVolumeChange(_vm, viewWindow, sceneStaticData, priorLocation, 64, 6333, 12);
+	case 77:
+		return new WalkVolumeChange(_vm, viewWindow, sceneStaticData, priorLocation, 2, 1000, 2);
+	case 78:
+		return new WalkVolumeChange(_vm, viewWindow, sceneStaticData, priorLocation, 2, 1000, 2, 14);
+	case 79:
+		return new WalkVolumeChange(_vm, viewWindow, sceneStaticData, priorLocation, 40, 6500, 12);
+	case 80:
+		return new WalkVolumeChange(_vm, viewWindow, sceneStaticData, priorLocation, 16, 4750, 12);
+	case 81:
+		return new WalkVolumeChange(_vm, viewWindow, sceneStaticData, priorLocation, 30, 7750, 6);
+	case 82:
+		return new WalkVolumeChange(_vm, viewWindow, sceneStaticData, priorLocation, 16, 2250, 18);
+	case 83:
+		return new WalkVolumeChange(_vm, viewWindow, sceneStaticData, priorLocation, 30, 2410, 6);
+	case 84:
+		return new WalkVolumeChange(_vm, viewWindow, sceneStaticData, priorLocation, 64, 7666, 18);
+	case 85:
+		return new WalkVolumeChange(_vm, viewWindow, sceneStaticData, priorLocation, 255, 0, -1, 10); // First param has to be wrong
+	case 90:
+		return new WalkVolumeChange(_vm, viewWindow, sceneStaticData, priorLocation, 40, 3160, 12, 14);
+	case 91:
+		return new WalkVolumeChange(_vm, viewWindow, sceneStaticData, priorLocation, 64, 4160, 12);
+	case 92:
+		return new WalkVolumeChange(_vm, viewWindow, sceneStaticData, priorLocation, 40, 4160, 12);
+	case 93:
+		return new WalkVolumeChange(_vm, viewWindow, sceneStaticData, priorLocation, 16, 3160, 12);
 	case 103:
 		return new PlaySoundEnteringFromScene(_vm, viewWindow, sceneStaticData, priorLocation, 12, 2, 4, 4, 2, 1, 5);
 	case 120:
