@@ -203,6 +203,8 @@ void BioChipRightWindow::onPaint() {
 			if (currentLocation.timeZone == 4)
 				bitmapResID++;
 
+		if (_jumpInProgress)
+			bitmapResID += 6;
 		break;
 	}
 	case kItemBioChipTranslate:
