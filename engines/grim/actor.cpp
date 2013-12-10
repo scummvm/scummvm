@@ -251,6 +251,8 @@ void Actor::saveState(SaveGame *savedState) const {
 
 		savedState->writeLESint32(_attachedActor);
 		savedState->writeString(_attachedJoint);
+
+		_lastWearChore.saveState(savedState);
 	}
 
 	savedState->writeBool(_drawnToClean);
@@ -418,6 +420,8 @@ bool Actor::restoreState(SaveGame *savedState) {
 		// will be recalculated in next update()
 		_haveSectorSortOrder = false;
 		_sectorSortOrder = 0;
+
+		_lastWearChore.restoreState(savedState, this);
 	}
 
 	if (_cleanBuffer) {
