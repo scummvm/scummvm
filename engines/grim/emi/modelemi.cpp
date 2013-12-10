@@ -261,6 +261,18 @@ void EMIModel::draw() {
 	}
 }
 
+void EMIModel::getBoundingBox(int *x1, int *y1, int *x2, int *y2) const {
+	int winX1, winY1, winX2, winY2;
+	g_driver->getBoundingBoxPos(this, &winX1, &winY1, &winX2, &winY2);
+	if (winX1 != -1 && winY1 != -1 && winX2 != -1 && winY2 != -1) {
+		*x1 = MIN(*x1, winX1);
+		*y1 = MIN(*y1, winY1);
+		*x2 = MAX(*x2, winX2);
+		*y2 = MAX(*y2, winY2);
+	}
+}
+
+
 EMIModel::EMIModel(const Common::String &filename, Common::SeekableReadStream *data, EMIModel *parent) : _fname(filename) {
 	_numVertices = 0;
 	_vertices = NULL;
