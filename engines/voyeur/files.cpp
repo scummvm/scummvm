@@ -1536,6 +1536,24 @@ bool ThreadResource::chooseSTAMPButton(int idx) {
 	return false;
 }
 
+void ThreadResource::parsePlayCommands() {
+
+}
+
+int ThreadResource::doApt() {
+	warning("TODO: doApt");
+	return 0;
+}
+
+void ThreadResource::doRoom() {
+	warning("TODO: doRoom");
+}
+
+int ThreadResource::doInterface() {
+	warning("TODO: doInterface");
+	return 0;
+}
+
 /*------------------------------------------------------------------------*/
 
 PtrResource::PtrResource(BoltFilesState &state, const byte *src) {
