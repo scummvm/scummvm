@@ -126,7 +126,7 @@ private:
 
 	void checkPC(uint32 address);
 
-	uint16 readScriptValue();
+	uint16 readScriptFlagValue();
 	Flags::Id readScriptFlagId();
 
 	// instantiation not needed here
