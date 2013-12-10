@@ -24,6 +24,7 @@
 #define PRINCE_SCRIPT_H
 
 #include "common/random.h"
+#include "common/endian.h"
 
 #include "audio/mixer.h"
 
@@ -37,25 +38,68 @@ namespace Prince {
 
 class PrinceEngine;
 
+namespace Detail {
+	template <typename T> T LittleEndianReader(void *data);
+	template <> inline uint8 LittleEndianReader<uint8>(void *data) { return *(uint8*)(data); }
+	template <> inline uint16 LittleEndianReader<uint16>(void *data) { return READ_LE_UINT16(data); }
+	template <> inline uint32 LittleEndianReader<uint32>(void *data) { return READ_LE_UINT32(data); }
+}
+
 class Script {
 public:
-	Script(PrinceEngine *vm);
-	virtual ~Script();
+	Script();
+	~Script();
 
 	bool loadFromStream(Common::SeekableReadStream &stream);
 
-	void step();
+	template <typename T>
+	T read(uint32 address) {
+		assert((_data + address + sizeof(T)) <= (_data + _dataSize));
+		return Detail::LittleEndianReader<T>(&_data[address]);
+	}
+
+	// Some magic numbers for now, data stored in header
+	uint32 getRoomTableOffset() { return read<uint32>(0); }
+	uint32 getStartGameOffset() { return read<uint32>(4); }
+
+	const char *getString(uint32 offset) {
+		return (const char *)(&_data[offset]);
+	}
+
+private:
+	uint8 *_data;
+	uint32 _dataSize;
+};
+
+class InterpreterFlags {
+public:
+	InterpreterFlags();
 
 	void setFlagValue(Flags::Id flag, uint16 value);
 	uint16 getFlagValue(Flags::Id flag);
 
+	void resetAllFlags();
+
+	static const uint16 FLAG_MASK = 0x8000;
+
+private:
+	static const uint16 MAX_FLAGS = 2000;
+	int16 _flags[MAX_FLAGS];
+};
+
+class Interpreter {
+public:
+	Interpreter(PrinceEngine *vm, Script *script, InterpreterFlags *flags);
+
 	void stopBg() { _bgOpcodePC = 0; }
+
+	void step();
 
 private:
 	PrinceEngine *_vm;
+	Script *_script;
+	InterpreterFlags *_flags;
 
-	byte *_code;
-	uint32 _codeSize;
 	uint32 _currentInstruction;
 
 	uint32 _bgOpcodePC;
@@ -64,13 +108,9 @@ private:
 	uint16 _lastOpcode;
 	uint32 _lastInstruction;
 	byte _result;
-	static const uint16 MAX_FLAGS = 2000;
-	static const uint16 FLAG_MASK = 0x8000;
-	int16 _flags[MAX_FLAGS];
-	bool _opcodeNF;
 
+	bool _opcodeNF; // break interpreter loop
 
-	// Stack
 	static const uint32 _STACK_SIZE = 500;
 	uint32 _stack[_STACK_SIZE];
 	uint8 _stacktop;
@@ -83,21 +123,19 @@ private:
 
 	// Helper functions
 	uint32 step(uint32 opcodePC);
-	void checkPC(uint32 address);
-	uint8 getCodeByte(uint32 address);
-	uint8 readScript8bits();
-	uint16 readScript16bits();
 
-	uint32 readScript32bits();
-	uint16 readScript8or16bits();
+	void checkPC(uint32 address);
 
 	uint16 readScriptValue();
-	Flags::Id readScriptFlagId() { return (Flags::Id)readScript16bits(); }
+	Flags::Id readScriptFlagId();
 
-	void debugScript(const char *s, ...);
+	// instantiation not needed here
+	template <typename T> T readScript();
+
+	void debugInterpreter(const char *s, ...);
 	void SetVoice(uint32 slot);
 
-	typedef void (Script::*OpcodeFunc)();
+	typedef void (Interpreter::*OpcodeFunc)();
 	static OpcodeFunc _opcodes[];
 
 	// Keep opcode handlers names as they are in original code 
@@ -246,6 +284,7 @@ private:
 	void O_INPUTLINE();
 	void O_SETVOICED();
 	void O_BREAK_POINT();
+
 };
 
 }

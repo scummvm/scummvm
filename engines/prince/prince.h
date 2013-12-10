@@ -53,6 +53,8 @@ struct PrinceGameDescription;
 class PrinceEngine;
 class GraphicsMan;
 class Script;
+class Interpreter;
+class InterpreterFlags;
 class Debugger;
 class MusicPlayer;
 class VariaTxt;
@@ -162,6 +164,8 @@ private:
 	Debugger *_debugger;
 	GraphicsMan *_graph;
 	Script *_script;
+	InterpreterFlags *_flags;
+	Interpreter *_interpreter;
 	Font *_font;
 	MusicPlayer *_midiPlayer;
 

@@ -74,10 +74,10 @@ void PrinceEngine::debugEngine(const char *s, ...) {
 }
 
 PrinceEngine::PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc) : 
-	Engine(syst), _gameDescription(gameDesc), _graph(NULL), _script(NULL),
-	_locationNr(0), _debugger(NULL), _midiPlayer(NULL),
-	_cameraX(0), _newCameraX(0), _frameNr(0), _cursor1(NULL), _cursor2(NULL), _font(NULL),
-	_walizkaBmp(NULL), _roomBmp(NULL), _cursorNr(0) {
+	Engine(syst), _gameDescription(gameDesc), _graph(nullptr), _script(nullptr), _interpreter(nullptr), _flags(nullptr),
+	_locationNr(0), _debugger(nullptr), _midiPlayer(nullptr),
+	_cameraX(0), _newCameraX(0), _frameNr(0), _cursor1(nullptr), _cursor2(nullptr), _font(nullptr),
+	_walizkaBmp(nullptr), _roomBmp(nullptr), _cursorNr(0) {
 
 	// Debug/console setup
 	DebugMan.addDebugChannel(DebugChannel::kScript, "script", "Prince Script debug channel");
@@ -99,6 +99,8 @@ PrinceEngine::~PrinceEngine() {
 	delete _cursor2;
 	delete _midiPlayer;
 	delete _script;
+	delete _flags;
+	delete _interpreter;
 	delete _font;
 	delete _roomBmp;
 	delete _walizkaBmp;
@@ -153,8 +155,11 @@ void PrinceEngine::init() {
 	_walizkaBmp = new MhwanhDecoder();
 	Resource::loadResource(_walizkaBmp, "all/walizka");
 
-	_script = new Script(this);
+	_script = new Script();
 	Resource::loadResource(_script, "all/skrypt.dat");
+
+	_flags = new InterpreterFlags();
+	_interpreter = new Interpreter(this, _script, _flags);
 
 	_variaTxt = new VariaTxt();
 	Resource::loadResource(_variaTxt, "all/variatxt.dat");
@@ -249,8 +254,8 @@ bool PrinceEngine::loadLocation(uint16 locationNr) {
 	_cameraX = 0;
 	_newCameraX = 0;
 	
-	_script->setFlagValue(Flags::CURRROOM, _locationNr);
-	_script->stopBg();
+	_flags->setFlagValue(Flags::CURRROOM, _locationNr);
+	_interpreter->stopBg();
 
 	changeCursor(0);
 
@@ -290,7 +295,7 @@ bool PrinceEngine::loadLocation(uint16 locationNr) {
 void PrinceEngine::changeCursor(uint16 curId) {
 	_debugger->_cursorNr = curId;
 
-	const Graphics::Surface *curSurface = NULL;
+	const Graphics::Surface *curSurface = nullptr;
 
 	uint16 hotspotX = 0;
 	uint16 hotspotY = 0;
@@ -353,7 +358,7 @@ void PrinceEngine::playSample(uint16 sampleId, uint16 loopType) {
 
 void PrinceEngine::stopSample(uint16 sampleId) {
 	_mixer->stopID(sampleId);
-	_voiceStream[sampleId] = NULL;
+	_voiceStream[sampleId] = nullptr;
 }
 
 bool PrinceEngine::loadSample(uint32 sampleSlot, const Common::String &streamName) {
@@ -364,12 +369,12 @@ bool PrinceEngine::loadSample(uint32 sampleSlot, const Common::String &streamNam
 	debugEngine("loadSample slot %d, name %s", sampleSlot, normalizedPath.c_str());
 
 	_mixer->stopID(sampleSlot);
-	_voiceStream[sampleSlot] = NULL;
+	_voiceStream[sampleSlot] = nullptr;
 	_voiceStream[sampleSlot] = SearchMan.createReadStreamForMember(normalizedPath);
-	if (_voiceStream[sampleSlot] == NULL) {
+	if (_voiceStream[sampleSlot] == nullptr) {
 		error("Can't load sample %s to slot %d", normalizedPath.c_str(), sampleSlot);
 	}
-	return _voiceStream[sampleSlot] == NULL;
+	return _voiceStream[sampleSlot] == nullptr;
 }
 
 bool PrinceEngine::loadVoice(uint32 slot, uint32 sampleSlot, const Common::String &streamName) {
@@ -466,7 +471,7 @@ void PrinceEngine::keyHandler(Common::Event event) {
 		scrollCameraRight(32);
 		break;
 	case Common::KEYCODE_ESCAPE:
-		_script->setFlagValue(Flags::ESCAPED2, 1);
+		_flags->setFlagValue(Flags::ESCAPED2, 1);
 		break;
 	}
 }
@@ -551,7 +556,7 @@ void PrinceEngine::showTexts() {
 
 		--text._time;
 		if (text._time == 0) {
-			text._str = NULL;
+			text._str = nullptr;
 		}
 	}
 }
@@ -587,7 +592,6 @@ void PrinceEngine::drawScreen() {
 
 void PrinceEngine::mainLoop() {
 
-	loadLocation(4);
 	changeCursor(0);
 
 	while (!shouldQuit()) {
@@ -622,7 +626,7 @@ void PrinceEngine::mainLoop() {
 
 		// TODO: Update all structures, animations, naks, heros etc.
 
-		_script->step();
+		_interpreter->step();
 
 		drawScreen();
 
