@@ -576,12 +576,11 @@ int GlobalMessageQueueList::compact() {
 	uint i;
 
 	for (i = 1; i < size() + 2; i++) {
-		if (!useList[i]) {
-			delete [] useList;
-
-			return i;
-		}
+		if (!useList[i])
+			break;
 	}
+
+	delete [] useList;
 
 	return i;
 }
