@@ -91,25 +91,41 @@ void EMIEngine::pushText() {
 }
 
 void EMIEngine::popText() {
+	Common::List<TextObject *> toDelete;
+
 	foreach (TextObject *t, TextObject::getPool()) {
 		if (t->getStackLevel() == 0) {
 			warning("Text stack top not empty; deleting object");
-			TextObject::getPool().removeObject(t->getId());
-			delete t;
+			toDelete.push_back(t);
 		} else {
 			t->decStackLevel();
 		}
 	}
+
+	while (!toDelete.empty()) {
+		TextObject *t = toDelete.front();
+		toDelete.pop_front();
+		delete t;
+	}
+
 	invalidateTextObjectsSortOrder();
 }
 
 void EMIEngine::purgeText() {
+	Common::List<TextObject *> toDelete;
+
 	foreach (TextObject *t, TextObject::getPool()) {
 		if (t->getStackLevel() == 0) {
-			TextObject::getPool().removeObject(t->getId());
-			delete(t);
+			toDelete.push_back(t);
 		}
 	}
+
+	while (!toDelete.empty()) {
+		TextObject *t = toDelete.front();
+		toDelete.pop_front();
+		delete t;
+	}
+
 	invalidateTextObjectsSortOrder();
 }
 
