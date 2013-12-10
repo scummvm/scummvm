@@ -4568,7 +4568,7 @@ void Scene1337::subC20F9() {
 	switch (_field424A) {
 	case -1:
 		++_currentPlayerNumb;
-		if (_currentPlayerNumb == 3)
+		if (_currentPlayerNumb > 3)
 			_currentPlayerNumb = 0;
 
 		if (_showPlayerTurn) {
