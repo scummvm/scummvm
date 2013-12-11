@@ -224,6 +224,7 @@ private:
 	bool initializeMayanTimeZoneAndEnvironment(Window *viewWindow, int environment);
 	bool startMayanAmbient(int oldTimeZone, int oldEnvironment, int environment, bool fade);
 	SceneBase *constructMayanSceneObject(Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	bool checkCustomMayanAICommentDependencies(const Location &commentLocation, const AIComment &commentData);
 
 	// Agent 3's Lair
 	bool initializeAgent3LairTimeZoneAndEnvironment(Window *viewWindow, int environment);

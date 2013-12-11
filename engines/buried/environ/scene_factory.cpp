@@ -73,11 +73,11 @@ int OldApartmentSuitCap::postEnterRoom(Window *viewWindow, const Location &prior
 }
 
 bool SceneViewWindow::checkCustomAICommentDependencies(const Location &commentLocation, const AIComment &commentData) {
-	// TODO
-
 	switch (commentLocation.timeZone) {
 	case 1:
 		return checkCustomCastleAICommentDependencies(commentLocation, commentData);
+	case 2:
+		return checkCustomMayanAICommentDependencies(commentLocation, commentData);
 	case 4:
 		return commentData.dependencyFlagOffsetB == 1; // Not sure what this one does
 	case 5:
