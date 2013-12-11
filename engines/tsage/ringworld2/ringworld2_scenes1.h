@@ -333,7 +333,7 @@ public:
 	void subC20E5();
 	void handleNextTurn();
 	void subC2586();
-	bool subC264B(int arg1);
+	bool subC264B(int cardId);
 	bool subC2687(int arg1);
 	int  subC26CB(int arg1, int arg2);
 	int  findNormalCardInHand(int playerId);
@@ -353,7 +353,7 @@ public:
 	void subC34A1(Card *subObj1, Card *subObj2);
 	Card *subC34EC(int arg1);
 	void subC358E(Card *subObj1, int arg2);
-	int  subC3E92(int playerId);
+	int  getFreeHandCard(int playerId);
 	void discardCard(Card *card);
 	void subC4CD2();
 	void subC4CEC();
