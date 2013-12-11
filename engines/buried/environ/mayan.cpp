@@ -730,6 +730,58 @@ bool GenericCavernDoorOfferingHead::isValidItemToDrop(Window *viewWindow, int it
 	return false;
 }
 
+class WealthGodRopeDrop : public SceneBase {
+public:
+	WealthGodRopeDrop(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
+	int draggingItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
+	int droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
+
+private:
+	Common::Rect _dropRope;
+};
+
+WealthGodRopeDrop::WealthGodRopeDrop(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().myWGPlacedRope == 1)
+		_staticData.navFrameIndex = 121;
+
+	_dropRope = Common::Rect(222, 149, 282, 189);
+}
+
+int WealthGodRopeDrop::postEnterRoom(Window *viewWindow, const Location &priorLocation) {
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().myWGPlacedRope != 0) {
+		Location newLocation = _staticData.location;
+		newLocation.depth = 1;
+		((SceneViewWindow *)viewWindow)->jumpToScene(newLocation);
+	}
+
+	return SC_TRUE;
+}
+
+int WealthGodRopeDrop::draggingItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) {
+	// OK, I honestly didn't know you could use the grappling hook here
+	if (_dropRope.contains(pointLocation) && (itemID == kItemCoilOfRope || itemID == kItemGrapplingHook))
+		return 1;
+
+	return 0;
+}
+
+int WealthGodRopeDrop::droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) {
+	if (pointLocation.x == -1 && pointLocation.y == -1)
+		return 0;
+
+	if (_dropRope.contains(pointLocation) && (itemID == kItemCoilOfRope || itemID == kItemGrapplingHook)) {
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().myWGPlacedRope = 1;
+		Location newLocation = _staticData.location;
+		newLocation.depth = 1;
+		((SceneViewWindow *)viewWindow)->jumpToScene(newLocation);
+		return SIC_ACCEPT;
+	}
+
+	return SIC_REJECT;
+}
+
 class MainCavernGlassCapture : public SceneBase {
 public:
 	MainCavernGlassCapture(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
@@ -1084,6 +1136,8 @@ SceneBase *SceneViewWindow::constructMayanSceneObject(Window *viewWindow, const 
 		return new ViewSingleTranslation(_vm, viewWindow, sceneStaticData, priorLocation, IDMYMC_DEATHGOD_DOOR_TOP_TRANS_TEXT, 12, 128, 426, 156, offsetof(GlobalFlags, myMCTransDoor));
 	case 28:
 		return new ViewSingleTranslation(_vm, viewWindow, sceneStaticData, priorLocation, IDMYMC_DEATHGOD_DOOR_RIGHT_TRANS_TEXT, 46, 1, 315, 188, offsetof(GlobalFlags, myMCTransDoor), offsetof(GlobalFlags, myMCTransDGOffering));
+	case 30:
+		return new WealthGodRopeDrop(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 31:
 		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 194, 106, 278, 126, kItemJadeBlock, 105, offsetof(GlobalFlags, myWGRetrievedJadeBlock));
 	case 32:
