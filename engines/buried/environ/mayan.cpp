@@ -900,6 +900,115 @@ bool SceneViewWindow::startMayanAmbient(int oldTimeZone, int oldEnvironment, int
 	return true;
 }
 
+bool SceneViewWindow::checkCustomMayanAICommentDependencies(const Location &commentLocation, const AIComment &commentData) {
+	//((GameUIWindow *)getParent())->_inventoryWindow->isItemInInventory
+
+	switch (commentData.dependencyFlagOffsetB) {
+	case 1: // Player hasn't translated any inscriptions
+		return _globalFlags.myTPTextTranslated == 0;
+	case 2: // Player hasn't translated any inscriptions, has translate biochip
+		return _globalFlags.myTPTextTranslated == 0 && ((GameUIWindow *)getParent())->_inventoryWindow->isItemInInventory(kItemBioChipTranslate);
+	case 3: // Player hasn't translated any inscriptions, doesn't have translate biochip
+		return _globalFlags.myTPTextTranslated == 0 && !((GameUIWindow *)getParent())->_inventoryWindow->isItemInInventory(kItemBioChipTranslate);
+	case 4: // Has translated inscription above calendar, calendar not set to sacred day, player has never been to main cavern
+		return _globalFlags.myTPCalendarTopTranslated == 1 && _globalFlags.myTPCodeWheelStatus == 0 && _globalFlags.myVisitedMainCavern == 0;
+	case 5: // Has translated inscription above calendar, calendar is set to sacred day, player has never been to main cavern
+		return _globalFlags.myTPCalendarTopTranslated == 1 && _globalFlags.myTPCodeWheelStatus == 1 && _globalFlags.myVisitedMainCavern == 0;
+	case 6: // Player has never been to main cavern
+		return _globalFlags.myVisitedMainCavern == 0;
+	case 7: // Player has never been to main cavern, calendar not set to sacred day
+		return _globalFlags.myVisitedMainCavern == 0 && _globalFlags.myTPCodeWheelStatus == 0;
+	case 8: // Ceramic bowl not in the inventory
+		return !((GameUIWindow *)getParent())->_inventoryWindow->isItemInInventory(kItemCeramicBowl);
+	case 9: // If node is not 5, 6, or 8
+		return commentLocation.node != 6 && commentLocation.node != 5 && commentLocation.node != 8;
+	case 10: // If node is not 1, 0, 7, or 8
+		return commentLocation.node != 1 && commentLocation.node != 0 && commentLocation.node != 7 && commentLocation.node != 8;
+	case 11: // If node is not 0, 8, or 1
+		return commentLocation.node != 0 && commentLocation.node != 8 && commentLocation.node != 1;
+	case 12: // If not translated any sacred days
+		return _globalFlags.myTPCalendarListTranslated == 0;
+	case 13: // Not any door, no translations
+		return _globalFlags.myVisitedSpecRooms == 0 && _globalFlags.myMCTransDoor == 0;
+	case 14: // Not any door, no translations, has translate chip
+		return _globalFlags.myVisitedSpecRooms == 0 && _globalFlags.myMCTransDoor == 0 && ((GameUIWindow *)getParent())->_inventoryWindow->isItemInInventory(kItemBioChipTranslate);
+	case 15: // Not any door, has translated arrow or translated water or translated wealth
+		return _globalFlags.myVisitedSpecRooms == 0 && (_globalFlags.myMCTransAGOffering == 1 || _globalFlags.myMCTransWGOffering == 1 || _globalFlags.myMCTransWTOffering == 1);
+	case 16: // Has translated wealth, has not been through wealth god door
+		return _globalFlags.myMCTransWGOffering == 1 && _globalFlags.myVisitedWealthGod == 0;
+	case 17: // Has translated water, has not been through water god door
+		return _globalFlags.myMCTransWTOffering == 1 && _globalFlags.myVisitedWaterGod == 0;
+	case 18: // Has translated arrow, has not been through arrow god door
+		return _globalFlags.myMCTransAGOffering == 1 && _globalFlags.myVisitedArrowGod == 0;
+	case 19: // Has translated death, has not been through death god door
+		return _globalFlags.myMCTransDGOffering == 1 && _globalFlags.myVisitedDeathGod == 0;
+	case 20: // Has not been through death god door
+		return _globalFlags.myVisitedDeathGod == 0;
+	case 21: // Has translated death
+		return _globalFlags.myMCTransDGOffering == 1;
+	case 22: // After making any offering
+		return _globalFlags.myMCTransMadeAnOffering == 1;
+	case 23: // Before crossing rope bridge
+		return _globalFlags.myWGCrossedRopeBridge == 0;
+	case 24: // If player has translated inscription above wealth god door in cavern
+		return _globalFlags.myMCTransWGOffering == 1;
+	case 25: // If player has not translated inscription above wealth god door in cavern
+		return _globalFlags.myMCTransWGOffering == 0;
+	case 26: // If player has translated inscription above wealth god door in cavern, has never been to wealth god altar room
+		return _globalFlags.myMCTransWGOffering == 1 && _globalFlags.myWGSeenLowerPassage == 0;
+	case 27: // Has not attached either rope or grappling hook, has never been to wealth god altar room
+		return _globalFlags.myWGPlacedRope == 0 && _globalFlags.myWGSeenLowerPassage == 0;
+	case 28: // Player has never stepped on swings
+		return _globalFlags.myWTSteppedOnSwings == 0;
+	case 29: // Player has never been on far ledge
+		return _globalFlags.myWTSteppedOnFarLedge == 0;
+	case 30: // Never put in heart
+		return _globalFlags.myDGOfferedHeart == 0;
+	case 31: // Never put in heart, no heart in inventory
+		return _globalFlags.myDGOfferedHeart == 0 && ((GameUIWindow *)getParent())->_inventoryWindow->isItemInInventory(kItemPreservedHeart);
+	case 32: // After put in heart, puzzle box never opened
+		return _globalFlags.myDGOfferedHeart == 1 && _globalFlags.myDGOpenedPuzzleBox == 0;
+	case 33: // After put in heart, puzzle box never opened, player has not translated 'Itzamna' inscription over inside door of temple
+		return _globalFlags.myDGOfferedHeart == 1 && _globalFlags.myDGOpenedPuzzleBox == 0 && _globalFlags.myTPTransBreathOfItzamna == 0;
+	case 34: // After put in heart, puzzle box never opened, player has translated 'Itzamna' inscription over inside door of temple
+		return _globalFlags.myDGOfferedHeart == 1 && _globalFlags.myDGOpenedPuzzleBox == 0 && _globalFlags.myTPTransBreathOfItzamna == 1;
+	case 35: // Before interacting with any heads
+		return _globalFlags.myAGHeadATouched == 0 && _globalFlags.myAGHeadBTouched == 0 && _globalFlags.myAGHeadCTouched == 0 && _globalFlags.myAGHeadDTouched == 0;
+	case 36: // After interacting with any head, before jamming any head
+		return (_globalFlags.myAGHeadATouched == 1 || _globalFlags.myAGHeadBTouched == 1 || _globalFlags.myAGHeadCTouched == 1 || _globalFlags.myAGHeadDTouched == 1) && _globalFlags.myAGHeadAStatus == 0 && _globalFlags.myAGHeadBStatus == 0 && _globalFlags.myAGHeadCStatus == 0 && _globalFlags.myAGHeadDStatus == 0;
+	case 37: // S2 jam, S1 not jam, not altar
+		return _globalFlags.myAGHeadAStatus == 0 && _globalFlags.myAGHeadBStatus == 2 && _globalFlags.myAGVisitedAltar == 0;
+	case 38: // S1 jam, S2 not jam, S3 not jam, not altar
+		return _globalFlags.myAGHeadAStatus == 2 && _globalFlags.myAGHeadBStatus == 0 && _globalFlags.myAGHeadCStatus == 0 && _globalFlags.myAGHeadDStatus == 0 && _globalFlags.myAGVisitedAltar == 0;
+	case 39: // S1 jam, S2 not jam, S3 not jam, S4 not jam, not altar, no skulls
+		return _globalFlags.myAGHeadAStatus == 2 && _globalFlags.myAGHeadBStatus == 0 && _globalFlags.myAGHeadCStatus == 0 && _globalFlags.myAGHeadDStatus == 0 && _globalFlags.myAGVisitedAltar == 0 && !((GameUIWindow *)getParent())->_inventoryWindow->isItemInInventory(kItemCavernSkull) && !((GameUIWindow *)getParent())->_inventoryWindow->isItemInInventory(kItemEntrySkull) && !((GameUIWindow *)getParent())->_inventoryWindow->isItemInInventory(kItemSpearSkull);
+	case 40: // Before interacting with S3 or S4, not altar
+		return _globalFlags.myAGHeadCTouched == 0 && _globalFlags.myAGHeadDTouched == 0 && _globalFlags.myAGVisitedAltar == 0;
+	case 41: // S1 jam, S2 jam, S3 not jam, S4 not jam, after interacting with S3 and S4, not altar, no skulls
+		return _globalFlags.myAGHeadAStatus == 2 && _globalFlags.myAGHeadBStatus == 2 && _globalFlags.myAGHeadCStatus == 0 && _globalFlags.myAGHeadDStatus == 0 && _globalFlags.myAGHeadCTouched == 1 && _globalFlags.myAGHeadDTouched == 1 && _globalFlags.myAGVisitedAltar == 0 && !((GameUIWindow *)getParent())->_inventoryWindow->isItemInInventory(kItemCavernSkull) && !((GameUIWindow *)getParent())->_inventoryWindow->isItemInInventory(kItemEntrySkull) && !((GameUIWindow *)getParent())->_inventoryWindow->isItemInInventory(kItemSpearSkull);
+	case 42: // S1 jam, S2 not jam, S3 not jam, S4 not jam, after interacting with S3 and S4, not altar, only 1 skull in inventory
+		return _globalFlags.myAGHeadAStatus == 2 && _globalFlags.myAGHeadBStatus == 0 && _globalFlags.myAGHeadCStatus == 0 && _globalFlags.myAGHeadDStatus == 0 && _globalFlags.myAGHeadCTouched == 1 && _globalFlags.myAGHeadDTouched == 1 && _globalFlags.myAGVisitedAltar == 0 && (((GameUIWindow *)getParent())->_inventoryWindow->isItemInInventory(kItemCavernSkull) ^ ((GameUIWindow *)getParent())->_inventoryWindow->isItemInInventory(kItemEntrySkull) ^ ((GameUIWindow *)getParent())->_inventoryWindow->isItemInInventory(kItemSpearSkull));
+	case 43: // S1 jam, S2 jam, S3 not jam, S4 not jam, after interacting with S3 and S4, not altar, no skulls
+		return _globalFlags.myAGHeadAStatus == 2 && _globalFlags.myAGHeadBStatus == 2 && _globalFlags.myAGHeadCStatus == 0 && _globalFlags.myAGHeadDStatus == 0 && _globalFlags.myAGHeadCTouched == 1 && _globalFlags.myAGHeadDTouched == 1 && _globalFlags.myAGVisitedAltar == 0 && !((GameUIWindow *)getParent())->_inventoryWindow->isItemInInventory(kItemCavernSkull) && !((GameUIWindow *)getParent())->_inventoryWindow->isItemInInventory(kItemEntrySkull) && !((GameUIWindow *)getParent())->_inventoryWindow->isItemInInventory(kItemSpearSkull);
+	case 44: // S1 jam, S2 not jam, S3 jam, S4 not jam, not altar, no skulls
+		return _globalFlags.myAGHeadAStatus == 2 && _globalFlags.myAGHeadBStatus == 0 && _globalFlags.myAGHeadCStatus == 2 && _globalFlags.myAGHeadDStatus == 0 && _globalFlags.myAGVisitedAltar == 0 && !((GameUIWindow *)getParent())->_inventoryWindow->isItemInInventory(kItemCavernSkull) && !((GameUIWindow *)getParent())->_inventoryWindow->isItemInInventory(kItemEntrySkull) && !((GameUIWindow *)getParent())->_inventoryWindow->isItemInInventory(kItemSpearSkull);
+	case 45: // S1 jam, S2 not jam, S3 not jam, S4 jam, not altar, no skulls
+		return _globalFlags.myAGHeadAStatus == 2 && _globalFlags.myAGHeadBStatus == 0 && _globalFlags.myAGHeadCStatus == 0 && _globalFlags.myAGHeadDStatus == 2 && _globalFlags.myAGVisitedAltar == 0 && !((GameUIWindow *)getParent())->_inventoryWindow->isItemInInventory(kItemCavernSkull) && !((GameUIWindow *)getParent())->_inventoryWindow->isItemInInventory(kItemEntrySkull) && !((GameUIWindow *)getParent())->_inventoryWindow->isItemInInventory(kItemSpearSkull);
+	case 46: // S1 jam, S2 not jam, S3 not jam, S4 jam, not altar, only 1 skull in inventory
+		return _globalFlags.myAGHeadAStatus == 2 && _globalFlags.myAGHeadBStatus == 0 && _globalFlags.myAGHeadCStatus == 0 && _globalFlags.myAGHeadDStatus == 2 && _globalFlags.myAGVisitedAltar == 0 && (((GameUIWindow *)getParent())->_inventoryWindow->isItemInInventory(kItemCavernSkull) ^ ((GameUIWindow *)getParent())->_inventoryWindow->isItemInInventory(kItemEntrySkull) ^ ((GameUIWindow *)getParent())->_inventoryWindow->isItemInInventory(kItemSpearSkull));
+	case 47: // S1 jam, S3 jam, S4 jam, not altar
+		return _globalFlags.myAGHeadAStatus == 2 && _globalFlags.myAGHeadCStatus == 2 && _globalFlags.myAGHeadDStatus == 2 && _globalFlags.myAGVisitedAltar == 0;
+	case 48: // S1 jam, S3 jam, not altar, only 1 skull in inventory
+		return _globalFlags.myAGHeadAStatus == 2 && _globalFlags.myAGHeadCStatus == 2 && _globalFlags.myAGHeadDStatus == 2 && _globalFlags.myAGVisitedAltar == 0 && (((GameUIWindow *)getParent())->_inventoryWindow->isItemInInventory(kItemCavernSkull) ^ ((GameUIWindow *)getParent())->_inventoryWindow->isItemInInventory(kItemEntrySkull) ^ ((GameUIWindow *)getParent())->_inventoryWindow->isItemInInventory(kItemSpearSkull));
+	case 49: // S1 jam, S2 jam, S3 jam, not altar
+		return _globalFlags.myAGHeadAStatus == 2 && _globalFlags.myAGHeadCStatus == 2 && _globalFlags.myAGHeadDStatus == 2 && _globalFlags.myAGVisitedAltar == 0;
+	case 50: // S1 not jam, S2 jam, not altar
+		return _globalFlags.myAGHeadAStatus == 0 && _globalFlags.myAGHeadBStatus == 2 && _globalFlags.myAGVisitedAltar == 0;
+	}
+
+	return false;
+}
+
 SceneBase *SceneViewWindow::constructMayanSceneObject(Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) {
 	// TODO
 
