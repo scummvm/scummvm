@@ -355,10 +355,10 @@ void MessageQueue::deleteExCommandByIndex(uint idx, bool doFree) {
 		idx--;
 	}
 
-	_exCommands.erase(it);
-
 	if (doFree)
 		delete *it;
+
+	_exCommands.erase(it);
 }
 
 void MessageQueue::transferExCommands(MessageQueue *mq) {
