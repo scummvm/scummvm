@@ -711,4 +711,10 @@ void FullpipeEngine::initArcadeKeys(const char *varname) {
 	warning("STUB: FullpipeEngine::initArcadeKeys(\"%s\")", varname);
 }
 
+void FullpipeEngine::processArcade(ExCommand *ex) {
+	warning("STUB: FullpipeEngine::processArcade()");
+}
+
+
+
 } // End of namespace Fullpipe

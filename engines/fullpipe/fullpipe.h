@@ -241,7 +241,9 @@ public:
 	void openMainMenu();
 
 	void initArcadeKeys(const char *varname);
+	void processArcade(ExCommand *ex);
 	void winArcade();
+
 	void getAllInventory();
 
 	int lift_getButtonIdP(int objid);

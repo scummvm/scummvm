@@ -244,10 +244,6 @@ int scene04_updateCursor() {
 	return g_fullpipe->_cursorId;
 }
 
-void sceneHandlers_sub01(ExCommand *ex) {
-	warning("STUB: sceneHandlers_sub01()");
-}
-
 void sceneHandler04_checkBigBallClick() {
 	StaticANIObject *ball = g_fullpipe->_currentScene->getStaticANIObject1ById(ANI_BIGBALL, -1);
 
@@ -890,7 +886,7 @@ int sceneHandler04(ExCommand *ex) {
 				if (!pic || !canInteractAny(g_fullpipe->_aniMan, pic,ex->_keyCode)) {
 					if ((g_fullpipe->_sceneRect.right - ex->_sceneClickX < 47 && g_fullpipe->_sceneRect.right < g_fullpipe->_sceneWidth - 1)
 						|| (ex->_sceneClickX - g_fullpipe->_sceneRect.left < 47 && g_fullpipe->_sceneRect.left > 0))
-						sceneHandlers_sub01(ex);
+						g_fullpipe->processArcade(ex);
 				}
 			}
 		}
