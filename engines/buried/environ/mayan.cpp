@@ -815,6 +815,21 @@ int WalkVolumeChange::preExitRoom(Window *viewWindow, const Location &newLocatio
 	return SC_TRUE;
 }
 
+class SetVolumeAndFlag : public SceneBase {
+public:
+	SetVolumeAndFlag(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+			byte newVolume = 64, int flagOffset = -1, byte flagValue = 255);
+};
+
+SetVolumeAndFlag::SetVolumeAndFlag(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+		byte newVolume, int flagOffset, byte flagValue) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_vm->_sound->adjustAmbientSoundVolume(newVolume, false, 0, 0);
+
+	if (flagOffset >= 0)
+		((SceneViewWindow *)viewWindow)->setGlobalFlagByte(flagOffset, flagValue);
+}
+
 bool SceneViewWindow::initializeMayanTimeZoneAndEnvironment(Window *viewWindow, int environment) {
 	if (environment == -1) {
 		GlobalFlags &flags = ((SceneViewWindow *)viewWindow)->getGlobalFlags();
@@ -1123,6 +1138,12 @@ SceneBase *SceneViewWindow::constructMayanSceneObject(Window *viewWindow, const 
 		return new WalkVolumeChange(_vm, viewWindow, sceneStaticData, priorLocation, 64, 7666, 18);
 	case 85:
 		return new WalkVolumeChange(_vm, viewWindow, sceneStaticData, priorLocation, 255, 0, -1, 10); // First param has to be wrong
+	case 86:
+		return new SetVolumeAndFlag(_vm, viewWindow, sceneStaticData, priorLocation, 64, offsetof(GlobalFlags, myWGSeenLowerPassage));
+	case 87:
+		return new SetVolumeAndFlag(_vm, viewWindow, sceneStaticData, priorLocation, 64, offsetof(GlobalFlags, myWGCrossedRopeBridge));
+	case 88:
+		return new SetVolumeAndFlag(_vm, viewWindow, sceneStaticData, priorLocation, 64);
 	case 90:
 		return new WalkVolumeChange(_vm, viewWindow, sceneStaticData, priorLocation, 40, 3160, 12, 14);
 	case 91:
