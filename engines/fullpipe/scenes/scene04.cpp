@@ -473,20 +473,14 @@ void sceneHandler04_springWobble() {
 	if (g_vars->scene04_bottleWeight < newdelta)
 		g_vars->scene04_var20--;
 
-	if (oldDynIndex <= g_vars->scene04_bottleWeight) {
-		if (newdelta <= g_vars->scene04_bottleWeight)
-			goto LABEL_16;
-	} else if (newdelta > g_vars->scene04_bottleWeight) {
-		goto LABEL_16;
-	}
+	if ((oldDynIndex > g_vars->scene04_bottleWeight && newdelta > g_vars->scene04_bottleWeight) || newdelta <= g_vars->scene04_bottleWeight) {
+		g_vars->scene04_var25++;
 
-	g_vars->scene04_var25++;
-
-	if (g_vars->scene04_var20 && g_vars->scene04_var25 > 1) {
-		g_vars->scene04_var25 = 0;
-		g_vars->scene04_var20 = g_vars->scene04_var20 - g_vars->scene04_var20 / abs(g_vars->scene04_var20);
+		if (g_vars->scene04_var20 && g_vars->scene04_var25 > 1) {
+			g_vars->scene04_var25 = 0;
+			g_vars->scene04_var20 = g_vars->scene04_var20 - g_vars->scene04_var20 / abs(g_vars->scene04_var20);
+		}
 	}
- LABEL_16:
 
 	Common::Point point;
 
