@@ -136,6 +136,7 @@ public:
 
 	void playRL2Video(const Common::String &filename);
 	void doTransitionCard(const Common::String &time, const Common::String &location);
+	void playAVideo(int id);
 };
 
 } // End of namespace Voyeur

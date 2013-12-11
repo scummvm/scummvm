@@ -215,6 +215,7 @@ public:
 	void getMouseInfo();
 	void checkForKey();
 	void startCursorBlink();
+	void incrementTime(int amt);
 };
 
 } // End of namespace Voyeur

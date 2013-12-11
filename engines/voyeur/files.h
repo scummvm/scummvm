@@ -431,6 +431,7 @@ private:
 	const byte *getNextRecord(const byte *p);
 	void cardAction(const byte *p);
 	void addAudioEventStart();
+	void addAudioEventEnd();
 public:
 	VoyeurEngine *_vm;
 

@@ -1555,11 +1555,12 @@ void ThreadResource::parsePlayCommands() {
 		uint16 id = GET_WORD;
 
 		switch (id) {
-		case 0:
+		case 1:
 			_vm->_playStamp2 = READ_LE_UINT16(dataP);
 			dataP += 2;
 			break;
-		case 1:
+
+		case 2:
 			v2 = GET_WORD;
 			if (v2 == 0 || READ_LE_UINT16(_vm->_controlPtr->_ptr + 4) == 0) {
 				_vm->_eventsManager._videoComputerBut4 = READ_LE_UINT16(dataP);
@@ -1616,6 +1617,26 @@ void ThreadResource::parsePlayCommands() {
 			
 			dataP += 6;
 			break;
+
+		case 3:
+			break;
+
+		case 4:
+		case 22:
+			_vm->_eventsManager._videoComputerBut4 = READ_LE_UINT16(dataP) - 1;
+			dataP += 2;
+
+			// TODO: Original had a block here that would never be executed
+
+			_vm->_voy._vocSecondsOffset = 0;
+			_vm->_voy._field468 = _vm->_voy._RTVNum;
+			_vm->_voy._field478 &= ~0x11;
+			_vm->playAVideo(_vm->_eventsManager._videoComputerBut4);
+			_vm->_voy._field478 |= 1;
+			_vm->_eventsManager._videoComputerBut4 = -1;
+			parseIndex = 999;
+			break;			
+
 		default:
 			break;
 		}
@@ -1643,6 +1664,10 @@ void ThreadResource::addAudioEventStart() {
 		_vm->_eventsManager._videoComputerBut1, _vm->_voy._delaySecs, 2, 
 		_vm->_eventsManager._videoComputerBut4, _vm->_voy._vocSecondsOffset, 
 		_vm->_eventsManager._videoDead));
+}
+
+void ThreadResource::addAudioEventEnd() {
+	error("TODO: addAudioEventEnd");
 }
 
 /*------------------------------------------------------------------------*/

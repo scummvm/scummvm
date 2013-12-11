@@ -450,4 +450,8 @@ void EventsManager::startCursorBlink() {
 	error("TODO: startCursorBlink");
 }
 
+void EventsManager::incrementTime(int amt) {
+	error("TODO: incrementTime");
+}
+
 } // End of namespace Voyeur

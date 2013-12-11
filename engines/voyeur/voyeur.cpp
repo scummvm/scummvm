@@ -590,4 +590,8 @@ void VoyeurEngine::doTransitionCard(const Common::String &time, const Common::St
 	_eventsManager.sWaitFlip();
 }
 
+void VoyeurEngine::playAVideo(int id) {
+	warning("TODO: playAVideo");
+}
+
 } // End of namespace Voyeur
