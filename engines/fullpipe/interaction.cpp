@@ -186,7 +186,7 @@ bool InteractionController::handleInteraction(StaticANIObject *subj, GameObject 
 			ex->_excFlags = 3;
 			ex->_field_14 = (obj->_objtype != kObjTypePictureObject);
 			ex->_field_20 = invId;
-			mq->_exCommands.push_back(ex);
+			mq->addExCommandToEnd(ex);
 
 			if (mq->_isFinished) {
 				mq->_isFinished = 0;
@@ -255,7 +255,7 @@ LABEL_38:
 			ex->_field_14 = 0x100;
 			ex->_messageNum = 0;
 			ex->_excFlags = 3;
-			mq->_exCommands.push_back(ex);
+			mq->addExCommandToEnd(ex);
 		}
 
 		ex = new ExCommand(obj->_id, 34, 0x100, 0, 0, 0, 1, 0, 0, 0);
@@ -263,19 +263,19 @@ LABEL_38:
 		ex->_field_14 = 0x100;
 		ex->_messageNum = 0;
 		ex->_excFlags = 3;
-		mq->_exCommands.push_back(ex);
+		mq->addExCommandToEnd(ex);
 
 		ex = new ExCommand(subj->_id, 34, 0x100, 0, 0, 0, 1, 0, 0, 0);
 		ex->_keyCode = subj->_okeyCode;
 		ex->_field_14 = 0x100;
 		ex->_messageNum = 0;
 		ex->_excFlags = 3;
-		mq->_exCommands.push_back(ex);
+		mq->addExCommandToEnd(ex);
 
 		ex = new ExCommand(subj->_id, 17, 0x40, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 3;
 		ex->_keyCode = 0;
-		mq->_exCommands.push_back(ex);
+		mq->addExCommandToEnd(ex);
 
 		if (!mq->chain(subj)) {
 			delete mq;
@@ -317,7 +317,7 @@ LABEL_38:
 			ex->_excFlags = 3;
 			ex->_field_20 = invId;
 			ex->_field_14 = (obj->_objtype != kObjTypePictureObject);
-			mq->_exCommands.push_back(ex);
+			mq->addExCommandToEnd(ex);
 
 			someFlag = true;
 
@@ -357,14 +357,14 @@ LABEL_38:
 						ex->_field_14 = 0x80;
 						ex->_keyCode = ani->_okeyCode;
 						ex->_excFlags = 3;
-						mq->_exCommands.push_back(ex);
+						mq->addExCommandToEnd(ex);
 					}
 				}
 				ex = new ExCommand(ani->_id, 34, 0x100, 0, 0, 0, 1, 0, 0, 0);
 				ex->_keyCode = ani->_okeyCode;
 				ex->_field_14 = 0x100;
 				ex->_excFlags = 3;
-				mq->_exCommands.push_back(ex);
+				mq->addExCommandToEnd(ex);
 			} else {
 				ex = new ExCommand(subj->_id, 55, 0, 0, 0, 0, 1, 0, 0, 0);
 				ex->_x = ani->_id;
@@ -373,7 +373,7 @@ LABEL_38:
 				ex->_excFlags = 2;
 				ex->_field_14 = (obj->_objtype != kObjTypePictureObject);
 				ex->_field_20 = invId;
-				mq->_exCommands.push_back(ex);
+				mq->addExCommandToEnd(ex);
 
 				if (!mq->_isFinished)
 					return true;

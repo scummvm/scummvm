@@ -420,7 +420,7 @@ void sceneHandler04_sub1(ExCommand *ex) {
 	if (ex) {
 		ExCommand *newex = new ExCommand(ex);
 
-		mq->_exCommands.push_back(newex);
+		mq->addExCommandToEnd(newex);
 	  }
 
 	mq->_flags |= 1;

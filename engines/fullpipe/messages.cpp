@@ -326,6 +326,10 @@ void MessageQueue::addExCommand(ExCommand *ex) {
 	_exCommands.push_front(ex);
 }
 
+void MessageQueue::addExCommandToEnd(ExCommand *ex) {
+	_exCommands.push_back(ex);
+}
+
 ExCommand *MessageQueue::getExCommandByIndex(uint idx) {
 	if (idx > _exCommands.size())
 		return 0;
@@ -492,7 +496,7 @@ int MessageQueue::calcDuration(StaticANIObject *obj) {
 	ExCommand *ex;
 	Movement *mov;
 
-	for (uint i = 0; (ex = getExCommandByIndex(i)); i++)
+	for (uint i = 0; (ex = getExCommandByIndex(i)); i++) {
 		if (ex->_parentId == obj->_id) {
 			if (ex->_messageKind == 1 || ex->_messageKind == 20) {
 				if ((mov = obj->getMovementById(ex->_messageNum)) != 0) {
@@ -503,6 +507,7 @@ int MessageQueue::calcDuration(StaticANIObject *obj) {
 				}
 			}
 		}
+	}
 
 	return res;
 }
