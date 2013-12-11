@@ -387,7 +387,7 @@ void Lua_V2::PlaySound() {
 
 	int volume = 100;
 	if (!lua_isnumber(volumeObj)) {
-		warning("Lua_V2::PlaySound - Unexpected parameter(s) found, using default volume", str);
+		warning("Lua_V2::PlaySound - Unexpected parameter(s) found, using default volume for %s", str);
 	} else {
 		volume = (int)lua_getnumber(volumeObj);
 	}
