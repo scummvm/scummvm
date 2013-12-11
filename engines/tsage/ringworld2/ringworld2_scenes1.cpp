@@ -5078,18 +5078,11 @@ void Scene1337::subC34A1(Card *subObj1, Card *subObj2) {
 
 Scene1337::Card *Scene1337::subC34EC(int arg1) {
 	for (int i = 0; i <= 7; i++) {
-		if (_gameBoardSide[arg1]._outpostStation[i]._cardId == 1) {
+		if ((_gameBoardSide[arg1]._outpostStation[i]._cardId > 0) && (_gameBoardSide[arg1]._outpostStation[i]._cardId < 10))
 			return &_gameBoardSide[arg1]._outpostStation[i];
-		}
 	}
 
-	for (int i = 0; i <= 7; i++) {
-		if ((_gameBoardSide[arg1]._outpostStation[i]._cardId != 0) && (_gameBoardSide[arg1]._outpostStation[i]._cardId < 10)) {
-			return &_gameBoardSide[arg1]._outpostStation[i];
-		}
-	}
-
-	return NULL;
+	return nullptr;
 }
 
 void Scene1337::subC358E(Card *subObj1, int arg2) {
