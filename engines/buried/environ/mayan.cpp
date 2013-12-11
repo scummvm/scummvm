@@ -30,6 +30,7 @@
 #include "buried/graphics.h"
 #include "buried/invdata.h"
 #include "buried/inventory_window.h"
+#include "buried/navarrow.h"
 #include "buried/resources.h"
 #include "buried/scene_view.h"
 #include "buried/sound.h"
@@ -782,6 +783,144 @@ int WealthGodRopeDrop::droppedItem(Window *viewWindow, int itemID, const Common:
 	return SIC_REJECT;
 }
 
+class WaterGodInitialWalkSetFlag : public SceneBase {
+public:
+	WaterGodInitialWalkSetFlag(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+};
+
+WaterGodInitialWalkSetFlag::WaterGodInitialWalkSetFlag(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	// Set flag on entry
+	((SceneViewWindow *)viewWindow)->getGlobalFlags().myWTCurrentBridgeStatus = 1;
+}
+
+class WaterGodBridgeJump : public SceneBase {
+public:
+	WaterGodBridgeJump(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+			int movieFileNameID = 0, int playingStartingFrame = 0, int sequenceStartingFrame = 0, int framesPerCycle = 0,
+			int jumpFudgeFrames = 0, int sequenceLength = 0, bool jumpMidCycle = false, int frameOffsetToEndOfSwing = 0);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
+	int preExitRoom(Window *viewWindow, const Location &newLocation);
+	int postExitRoom(Window *viewWindow, const Location &newLocation);
+	int timerCallback(Window *viewWindow);
+	int movieCallback(Window *viewWindow, VideoWindow *movie, int animationID, int status);
+
+private:
+	int _movieID;
+	int _startingMovieFrame;
+	int _playingStartingFrame;
+	int _framesPerCycle;
+	int _sequenceLength;
+	int _jumpFudgeFrames;
+	int _finalFrameIndex;
+	int _soundID;
+	DestinationScene _savedDestForward;
+	bool _jumpMidCycle;
+	int _frameOffsetToEndOfSwing;
+};
+
+WaterGodBridgeJump::WaterGodBridgeJump(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+		int movieFileNameID, int playingStartingFrame, int sequenceStartingFrame, int framesPerCycle,
+		int jumpFudgeFrames, int sequenceLength, bool jumpMidCycle, int frameOffsetToEndOfSwing) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_movieID = movieFileNameID;
+	_playingStartingFrame = playingStartingFrame;
+	_startingMovieFrame = sequenceStartingFrame;
+	_framesPerCycle = framesPerCycle;
+	_sequenceLength = sequenceLength;
+	_jumpFudgeFrames = jumpFudgeFrames;
+	_finalFrameIndex = -1;
+	_soundID = -1;
+	_jumpMidCycle = jumpMidCycle;
+	_frameOffsetToEndOfSwing = frameOffsetToEndOfSwing;
+
+	// Save the forward movement data for later
+	_savedDestForward = _staticData.destForward;
+	_staticData.destForward.destinationScene = Location(-1, -1, -1, -1, -1, -1);
+	_staticData.destForward.transitionType = -1;
+	_staticData.destForward.transitionData = -1;
+	_staticData.destForward.transitionStartFrame = -1;
+	_staticData.destForward.transitionLength = -1;
+
+	// Set visited flag
+	((SceneViewWindow *)viewWindow)->getGlobalFlags().myWTSteppedOnSwings = 1;
+}
+
+int WaterGodBridgeJump::postEnterRoom(Window *viewWindow, const Location &priorLocation) {
+	// Raise the ambient sound
+	_vm->_sound->adjustSecondaryAmbientSoundVolume(128, false, 0, 0);
+	uint32 ambientPos = _vm->_sound->getSecondaryAmbientPosition();
+
+	int frameStartingOffset = (ambientPos / 1838) % _sequenceLength + (_startingMovieFrame - _playingStartingFrame) % _sequenceLength;
+
+	// Load and start the new asynchronous animation
+	((SceneViewWindow *)viewWindow)->startAsynchronousAnimation(_movieID, _startingMovieFrame, _playingStartingFrame + frameStartingOffset, _sequenceLength, true);
+	return SC_TRUE;
+}
+
+int WaterGodBridgeJump::preExitRoom(Window *viewWindow, const Location &newLocation) {
+	_finalFrameIndex = ((SceneViewWindow *)viewWindow)->getAsynchronousAnimationCurrentPosition();
+
+	// Moving to another node should kill the anim
+	if (newLocation.node != 4 || newLocation.timeZone != 2 || newLocation.environment != 4)
+		((SceneViewWindow *)viewWindow)->stopAsynchronousAnimation();
+
+	// If we are walking into a node less than 5, kill the ambient
+	if (newLocation.node <= 3)
+		_vm->_sound->adjustSecondaryAmbientSoundVolume(0, false, 0, 0);
+
+	return SC_TRUE;
+}
+
+int WaterGodBridgeJump::postExitRoom(Window *viewWindow, const Location &newLocation) {
+	if (newLocation.facing == _staticData.location.facing && newLocation.timeZone == _staticData.location.timeZone &&
+			newLocation.facing == _staticData.location.facing && newLocation.timeZone == _staticData.location.timeZone &&
+			newLocation.facing == _staticData.location.facing && newLocation.timeZone == _staticData.location.timeZone) {
+		if (_jumpMidCycle) {
+			int diff = (_finalFrameIndex - _playingStartingFrame) % (_framesPerCycle * 2);
+			int diffB = (_finalFrameIndex - _playingStartingFrame - _framesPerCycle) % _framesPerCycle;
+			int diffC = _framesPerCycle - (_finalFrameIndex - _playingStartingFrame) % _framesPerCycle;
+
+			if (diff > _framesPerCycle || diffB > _framesPerCycle || diffC > _jumpFudgeFrames * 2) {
+				if (_staticData.location.facing == 0)
+					((SceneViewWindow *)viewWindow)->showDeathScene(14);
+				else
+					((SceneViewWindow *)viewWindow)->showDeathScene(15);
+
+				return SC_DEATH;
+			}
+		} else {
+			if ((_finalFrameIndex - _playingStartingFrame) % _framesPerCycle > _jumpFudgeFrames && _framesPerCycle - (_finalFrameIndex - _playingStartingFrame) % _framesPerCycle > _jumpFudgeFrames) {
+				if (_staticData.location.facing == 0)
+					((SceneViewWindow *)viewWindow)->showDeathScene(14);
+				else
+					((SceneViewWindow *)viewWindow)->showDeathScene(15);
+
+				return SC_DEATH;
+			}
+		}
+	}
+
+	return SC_TRUE;
+}
+
+int WaterGodBridgeJump::timerCallback(Window *viewWindow) {
+	// If we have reached the end of the starting sequence, reset the arrows
+	if (_staticData.destForward.destinationScene.timeZone == -1 && ((SceneViewWindow *)viewWindow)->getAsynchronousAnimationCurrentPosition() >= _startingMovieFrame) {
+		_staticData.destForward = _savedDestForward;
+		((GameUIWindow *)viewWindow->getParent())->_navArrowWindow->updateAllArrows(_staticData);
+	}
+
+	return SC_TRUE;
+}
+
+int WaterGodBridgeJump::movieCallback(Window *viewWindow, VideoWindow *movie, int animationID, int status) {
+	if (status == MOVIE_LOOPING_RESTART)
+		_vm->_sound->restartSecondaryAmbientSound();
+
+	return SC_TRUE;
+}
+
 class MainCavernGlassCapture : public SceneBase {
 public:
 	MainCavernGlassCapture(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
@@ -863,6 +1002,67 @@ int WalkVolumeChange::postEnterRoom(Window *viewWindow, const Location &priorLoc
 int WalkVolumeChange::preExitRoom(Window *viewWindow, const Location &newLocation) {
 	if (_stepCount >= 0 && newLocation.node != _staticData.location.node)
 		_vm->_sound->adjustAmbientSoundVolume(_newVolume, true, _stepCount, _volumeChangeTime);
+
+	return SC_TRUE;
+}
+
+class AdjustSecondaryAmbientOnEntry : public SceneBase {
+public:
+	AdjustSecondaryAmbientOnEntry(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
+	int preExitRoom(Window *viewWindow, const Location &newLocation);
+};
+
+AdjustSecondaryAmbientOnEntry::AdjustSecondaryAmbientOnEntry(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+}
+
+int AdjustSecondaryAmbientOnEntry::postEnterRoom(Window *viewWindow, const Location &priorLocation) {
+	_vm->_sound->adjustSecondaryAmbientSoundVolume(128, false, 0, 0);
+	return SC_TRUE;
+}
+
+int AdjustSecondaryAmbientOnEntry::preExitRoom(Window *viewWindow, const Location &newLocation) {
+	// Kill the ambient if moving to a different node
+	if (newLocation.node != _staticData.location.node)
+		_vm->_sound->adjustSecondaryAmbientSoundVolume(0, false, 0, 0);
+
+	return SC_TRUE;
+}
+
+class WalkDualAmbientVolumeChange : public SceneBase {
+public:
+	WalkDualAmbientVolumeChange(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+			byte newVolume = 0, byte secondVolume = 0, uint32 volumeChangeTime = 0, int stepCount = -1);
+	int preExitRoom(Window *viewWindow, const Location &newLocation);
+
+private:
+	byte _newVolume;
+	uint32 _volumeChangeTime;
+	int _stepCount;
+	byte _secondVolume;
+};
+
+WalkDualAmbientVolumeChange::WalkDualAmbientVolumeChange(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+		byte newVolume, byte secondVolume, uint32 volumeChangeTime, int stepCount) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_newVolume = newVolume;
+	_volumeChangeTime = volumeChangeTime;
+	_stepCount = stepCount;
+	_secondVolume = secondVolume;
+
+	// If we have stepped on the far ledge, set the flag
+	if (_staticData.location.timeZone == 2 && _staticData.location.environment == 4 &&
+			_staticData.location.node == 5 && _staticData.location.facing == 0 &&
+			_staticData.location.orientation == 1 && _staticData.location.depth == 0)
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().myWTSteppedOnFarLedge = 1;
+}
+
+int WalkDualAmbientVolumeChange::preExitRoom(Window *viewWindow, const Location &newLocation) {
+	if (_stepCount >= 0 && newLocation.node != _staticData.location.node) {
+		_vm->_sound->adjustAmbientSoundVolume(_newVolume, true, _stepCount, _volumeChangeTime);
+		_vm->_sound->adjustSecondaryAmbientSoundVolume(_secondVolume, true, _stepCount, _volumeChangeTime);
+	}
 
 	return SC_TRUE;
 }
@@ -1146,6 +1346,32 @@ SceneBase *SceneViewWindow::constructMayanSceneObject(Window *viewWindow, const 
 		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 158, 88, 288, 116, kItemLimestoneBlock, 84, offsetof(GlobalFlags, myWTRetrievedLimestoneBlock));
 	case 34:
 		return new BasicDoor(_vm, viewWindow, sceneStaticData, priorLocation, 80, 0, 332, 189, 2, 4, 0, 2, 1, 1, TRANSITION_WALK, -1, 401, 14, 14);
+	case 35:
+		return new WaterGodInitialWalkSetFlag(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 36:
+		return new WaterGodBridgeJump(_vm, viewWindow, sceneStaticData, priorLocation, 4, 0, 93, 37, 10, 73, false, 18);
+	case 37:
+		return new WaterGodBridgeJump(_vm, viewWindow, sceneStaticData, priorLocation, 4, 166, 259, 37, 10, 73);
+	case 38:
+		return new WaterGodBridgeJump(_vm, viewWindow, sceneStaticData, priorLocation, 4, 332, 425, 37, 10, 73);
+	case 39:
+		return new WaterGodBridgeJump(_vm, viewWindow, sceneStaticData, priorLocation, 4, 498, 591, 37, 10, 73);
+	case 40:
+		return new WaterGodBridgeJump(_vm, viewWindow, sceneStaticData, priorLocation, 4, 664, 757, 37, 10, 73);
+	case 41:
+		return new WaterGodBridgeJump(_vm, viewWindow, sceneStaticData, priorLocation, 4, 830, 925, 37, 10, 71, true);
+	case 42:
+		return new WaterGodBridgeJump(_vm, viewWindow, sceneStaticData, priorLocation, 4, 999, 1075, 37, 10, 73);
+	case 43:
+		return new WaterGodBridgeJump(_vm, viewWindow, sceneStaticData, priorLocation, 4, 1149, 1242, 37, 10, 73);
+	case 44:
+		return new WaterGodBridgeJump(_vm, viewWindow, sceneStaticData, priorLocation, 4, 1315, 1408, 37, 10, 73);
+	case 45:
+		return new WaterGodBridgeJump(_vm, viewWindow, sceneStaticData, priorLocation, 4, 1481, 1574, 37, 10, 73);
+	case 46:
+		return new WaterGodBridgeJump(_vm, viewWindow, sceneStaticData, priorLocation, 4, 1647, 1740, 37, 10, 73);
+	case 47:
+		return new WaterGodBridgeJump(_vm, viewWindow, sceneStaticData, priorLocation, 4, 1813, 1906, 37, 10, 73);
 	case 50:
 		return new BasicDoor(_vm, viewWindow, sceneStaticData, priorLocation,106, 0, 294, 189, 2, 5, 0, 1, 1, 1, TRANSITION_WALK, -1, 427, 13, 11);
 	case 51:
@@ -1206,6 +1432,12 @@ SceneBase *SceneViewWindow::constructMayanSceneObject(Window *viewWindow, const 
 		return new WalkVolumeChange(_vm, viewWindow, sceneStaticData, priorLocation, 40, 4160, 12);
 	case 93:
 		return new WalkVolumeChange(_vm, viewWindow, sceneStaticData, priorLocation, 16, 3160, 12);
+	case 100:
+		return new AdjustSecondaryAmbientOnEntry(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 101:
+		return new WalkDualAmbientVolumeChange(_vm, viewWindow, sceneStaticData, priorLocation, 16, 32, 6900, 12);
+	case 102:
+		return new WalkDualAmbientVolumeChange(_vm, viewWindow, sceneStaticData, priorLocation, 64, 128, 6900, 12);
 	case 103:
 		return new PlaySoundEnteringFromScene(_vm, viewWindow, sceneStaticData, priorLocation, 12, 2, 4, 4, 2, 1, 5);
 	case 120:
