@@ -334,8 +334,8 @@ public:
 	void handleNextTurn();
 	void subC2586();
 	bool subC264B(int cardId);
-	bool subC2687(int arg1);
-	int  subC26CB(int arg1, int arg2);
+	bool subC2687(int cardId);
+	int  subC26CB(int playerId, int handCardId);
 	int  findNormalCardInHand(int playerId);
 	int  subC274D(int arg1);
 	int  subC2781(int arg1);

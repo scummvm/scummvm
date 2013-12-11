@@ -4690,8 +4690,8 @@ bool Scene1337::subC264B(int cardId) {
 	}
 }
 
-bool Scene1337::subC2687(int arg1) {
-	switch (arg1) {
+bool Scene1337::subC2687(int cardId) {
+	switch (cardId) {
 	case 11:
 	// No break on purpose
 	case 14:
@@ -4705,10 +4705,9 @@ bool Scene1337::subC2687(int arg1) {
 	}
 }
 
-int Scene1337::subC26CB(int arg1, int arg2) {
-	if ((_gameBoardSide[arg1]._handCard[arg2]._cardId > 1) && (_gameBoardSide[arg1]._handCard[arg2]._cardId <= 9)) {
-		return arg2;
-	}
+int Scene1337::subC26CB(int playerId, int handCardId) {
+	if ((_gameBoardSide[playerId]._handCard[handCardId]._cardId > 1) && (_gameBoardSide[playerId]._handCard[handCardId]._cardId <= 9))
+		return handCardId;
 
 	return -1;
 }
@@ -5384,8 +5383,6 @@ void Scene1337::subPostInit() {
 	_autoplay = false;
 	_instructionsDisplayedFl = false;
 	_instructionsWaitCount = 0;
-
-	actionDisplay(1330, 114, 159, 10, 1, 200, 0, 7, 0, 154, 154);
 }
 
 void Scene1337::suggestInstructions() {
@@ -6086,21 +6083,19 @@ void Scene1337::handlePlayer1() {
 			break;
 
 		for (int j = 0; j <= 7; j++) {
-			if (_gameBoardSide[1]._outpostStation[j]._cardId == 1) {
-				if (!subC2687(_gameBoardSide[1]._delayCard._cardId)) {
-					count = 0;
-					for (int k = 0; k <= 7; k++) {
-						if ((_gameBoardSide[1]._outpostStation[k]._cardId > 1) && (_gameBoardSide[1]._outpostStation[k]._cardId <= 9))
-							++count;
-					}
-
-					if (count == 7)
-						_winnerId = 1;
-
-					subC33C0(&_gameBoardSide[1]._handCard[tmpIndx], &_gameBoardSide[1]._outpostStation[j]);
-					found = true;
-					break;
+			if ((_gameBoardSide[1]._outpostStation[j]._cardId == 1) && !subC2687(_gameBoardSide[1]._delayCard._cardId)) {
+				count = 0;
+				for (int k = 0; k <= 7; k++) {
+					if ((_gameBoardSide[1]._outpostStation[k]._cardId > 1) && (_gameBoardSide[1]._outpostStation[k]._cardId <= 9))
+						++count;
 				}
+
+				if (count == 7)
+					_winnerId = 1;
+
+				subC33C0(&_gameBoardSide[1]._handCard[tmpIndx], &_gameBoardSide[1]._outpostStation[j]);
+				found = true;
+				break;
 			}
 		}
 	}
