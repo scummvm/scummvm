@@ -449,34 +449,34 @@ void sceneHandler04_bottleUpdateObjects(int off) {
 	}
 }
 
-void sceneHandler04_sub4() {
+void sceneHandler04_springWobble() {
 	int oldDynIndex = g_vars->scene04_dynamicPhaseIndex;
-	int v2 = g_vars->scene04_var20 + g_vars->scene04_dynamicPhaseIndex;
+	int newdelta = g_vars->scene04_var20 + g_vars->scene04_dynamicPhaseIndex;
 
 	g_vars->scene04_dynamicPhaseIndex += g_vars->scene04_var20;
 
-	if (g_vars->scene04_var20 + g_vars->scene04_dynamicPhaseIndex < 0) {
-		v2 = 0;
+	if (newdelta < 0) {
+		newdelta = 0;
 		g_vars->scene04_dynamicPhaseIndex = 0;
 		g_vars->scene04_var20 = 0;
 	}
 
-	if (v2 > 14) {
-		v2 = 14;
+	if (newdelta > 14) {
+		newdelta = 14;
 		g_vars->scene04_dynamicPhaseIndex = 14;
 		g_vars->scene04_var20 = 0;
 	}
 
-	if (g_vars->scene04_var06 > v2)
+	if (g_vars->scene04_var06 > newdelta)
 		g_vars->scene04_var20++;
 
-	if (g_vars->scene04_var06 < v2)
+	if (g_vars->scene04_var06 < newdelta)
 		g_vars->scene04_var20--;
 
 	if (oldDynIndex <= g_vars->scene04_var06) {
-		if (v2 <= g_vars->scene04_var06)
+		if (newdelta <= g_vars->scene04_var06)
 			goto LABEL_16;
-	} else if (v2 > g_vars->scene04_var06) {
+	} else if (newdelta > g_vars->scene04_var06) {
 		goto LABEL_16;
 	}
 
@@ -484,7 +484,7 @@ void sceneHandler04_sub4() {
 
 	if (g_vars->scene04_var20 && g_vars->scene04_var25 > 1) {
 		g_vars->scene04_var25 = 0;
-		g_vars->scene04_var20--;
+		g_vars->scene04_var20 = g_vars->scene04_var20 - g_vars->scene04_var20 / abs(g_vars->scene04_var20);
 	}
  LABEL_16:
 
@@ -813,7 +813,7 @@ int sceneHandler04(ExCommand *ex) {
 					g_fullpipe->_aniMan2 = g_fullpipe->_aniMan;
 			}
 
-			sceneHandler04_sub4();
+			sceneHandler04_springWobble();
 
 			if (g_vars->scene04_var07 && !g_vars->scene04_var09)
 				sceneHandler04_sub5();
