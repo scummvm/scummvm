@@ -176,6 +176,8 @@ public:
 	Floaters *_floaters;
 	MGM *_mgm;
 
+	Common::Array<Common::Point *> _arcadeKeys;
+
 	void initMap();
 	void updateMapPiece(int mapId, int update);
 	void updateScreen();

@@ -708,7 +708,23 @@ int defaultUpdateCursor() {
 }
 
 void FullpipeEngine::initArcadeKeys(const char *varname) {
-	warning("STUB: FullpipeEngine::initArcadeKeys(\"%s\")", varname);
+	GameVar *var = getGameLoaderGameVar()->getSubVarByName(varname)->getSubVarByName("KEYPOS");
+
+	if (!var)
+		return;
+
+	int cnt = var->getSubVarsCount();
+
+	for (int i = 0; i < cnt; i++) {
+		Common::Point *point = new Common::Point;
+
+		GameVar *sub = var->getSubVarByIndex(i);
+
+		point->x = sub->getSubVarAsInt("X");
+		point->y = sub->getSubVarAsInt("Y");
+
+		_arcadeKeys.push_back(point);
+	}
 }
 
 void FullpipeEngine::processArcade(ExCommand *ex) {
