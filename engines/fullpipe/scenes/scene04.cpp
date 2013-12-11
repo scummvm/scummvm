@@ -490,8 +490,6 @@ void sceneHandler04_springWobble() {
 
 	Common::Point point;
 
-	int curdelta = g_vars->scene04_spring->getCurrDimensions(point)->y - g_vars->scene04_dynamicPhaseIndex;
-
 	if (g_vars->scene04_dynamicPhaseIndex) {
 		if (!g_vars->scene04_spring->_movement)
 			g_vars->scene04_spring->startAnim(MV_SPR_LOWER, 0, -1);
@@ -502,7 +500,7 @@ void sceneHandler04_springWobble() {
 	}
 
 	if (g_vars->scene04_dynamicPhaseIndex != oldDynIndex)
-		sceneHandler04_bottleUpdateObjects(curdelta - (g_vars->scene04_spring->getCurrDimensions(point)->y - g_vars->scene04_dynamicPhaseIndex));
+		sceneHandler04_bottleUpdateObjects(oldDynIndex - g_vars->scene04_dynamicPhaseIndex);
 }
 
 void sceneHandler04_sub5() {
