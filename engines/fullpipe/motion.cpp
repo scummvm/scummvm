@@ -1520,7 +1520,33 @@ MessageQueue *MGM::genMovement(MGMInfo *mgminfo) {
 }
 
 void MGM::updateAnimStatics(StaticANIObject *ani, int staticsId) {
-	warning("STUB: MGM::updateAnimStatics()");
+	if (getItemIndexById(ani->_id) == -1)
+		return;
+
+	if (ani->_movement) {
+		ani->queueMessageQueue(0);
+		ani->_movement->gotoLastFrame();
+		ani->_statics = ani->_movement->_staticsObj2;
+		ani->_movement = 0;
+
+		ani->setOXY(ani->_movement->_ox, ani->_movement->_oy);
+	}
+
+	if (ani->_statics) {
+		Common::Point point;
+
+		getPoint(&point, ani->_id, ani->_statics->_staticsId, staticsId);
+
+		ani->setOXY(ani->_ox + point.x, ani->_oy + point.y);
+
+		ani->_statics = ani->getStaticsById(staticsId);
+	}
+}
+
+Common::Point *MGM::getPoint(Common::Point *point, int aniId, int staticsId1, int staticsId2) {
+	warning("STUB: MGM::getPoint()");
+
+	return point;
 }
 
 MovGraphLink::MovGraphLink() {
