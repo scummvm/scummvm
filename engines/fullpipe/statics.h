@@ -155,7 +155,7 @@ class Movement : public GameObject {
 	int calcDuration();
 
 	void removeFirstPhase();
-	bool gotoNextFrame(int callback1, void (*callback2)(int *));
+	bool gotoNextFrame(void (*_callback1)(int, Common::Point *point, int, int), void (*callback2)(int *));
 	bool gotoPrevFrame();
 	void gotoFirstFrame();
 	void gotoLastFrame();
@@ -174,7 +174,7 @@ class StaticANIObject : public GameObject {
 	int16 _field_32;
 	int _field_34;
 	int _initialCounter;
-	int _callback1;
+	void (*_callback1)(int, Common::Point *point, int, int);
 	void (*_callback2)(int *);
 	PtrList _movements;
 	PtrList _staticsList;

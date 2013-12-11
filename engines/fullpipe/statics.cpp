@@ -1570,7 +1570,7 @@ void Movement::removeFirstPhase() {
 	_updateFlag1 = 0;
 }
 
-bool Movement::gotoNextFrame(int callback1, void (*callback2)(int *)) {
+bool Movement::gotoNextFrame(void (*callback1)(int, Common::Point *point, int, int), void (*callback2)(int *)) {
 	debug(8, "Movement::gotoNextFrame()");
 
 	if (!callback2) {
@@ -1622,7 +1622,7 @@ bool Movement::gotoNextFrame(int callback1, void (*callback2)(int *)) {
 		if (_currMovement->_framePosOffsets) {
 			if (callback1) {
 				point = *_currMovement->_framePosOffsets[_currDynamicPhaseIndex];
-				//callback1(_currDynamicPhaseIndex, &point, _ox, _oy);
+				callback1(_currDynamicPhaseIndex, &point, _ox, _oy);
 
 				_ox += deltax - point.x;
 				_oy += point.y;
