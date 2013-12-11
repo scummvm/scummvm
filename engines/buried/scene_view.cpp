@@ -93,6 +93,7 @@ SceneViewWindow::~SceneViewWindow() {
 	delete _stillFrames;
 	delete _cycleFrames;
 	delete _walkMovie;
+	delete _asyncMovie;
 }
 
 bool SceneViewWindow::startNewGame(bool walkthrough) {
