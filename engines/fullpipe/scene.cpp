@@ -451,7 +451,7 @@ void Scene::draw() {
 	updateScrolling();
 
 	// Clean previous stuff
-	g_fullpipe->_backgroundSurface.fillRect(Common::Rect(0, 0, 799, 599), 0);
+	g_fullpipe->_backgroundSurface.fillRect(Common::Rect(0, 0, 800, 600), 0);
 
 	drawContent(60000, 0, true);
 

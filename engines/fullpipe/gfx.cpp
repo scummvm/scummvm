@@ -659,8 +659,8 @@ void Picture::displayPicture() {
 	if (!_dataSize)
 		return;
 
-	g_fullpipe->_backgroundSurface.fillRect(Common::Rect(0, 0, 799, 599), 0);
-	g_fullpipe->_system->copyRectToScreen(g_fullpipe->_backgroundSurface.getBasePtr(0, 0), g_fullpipe->_backgroundSurface.pitch, 0, 0, 799, 599);
+	g_fullpipe->_backgroundSurface.fillRect(Common::Rect(0, 0, 800, 600), 0);
+	g_fullpipe->_system->copyRectToScreen(g_fullpipe->_backgroundSurface.getBasePtr(0, 0), g_fullpipe->_backgroundSurface.pitch, 0, 0, 800, 600);
 
 	draw(0, 0, 0, 0);
 
