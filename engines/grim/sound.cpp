@@ -137,4 +137,12 @@ void SoundPlayer::flushStack() {
 	return _emiSound->flushStack();
 }
 
+bool SoundPlayer::stateHasLooped(int stateId) {
+	assert(_emiSound); // This shouldn't ever be called from Grim.
+	if (g_grim->getGameType() == GType_MONKEY4) {
+		return _emiSound->stateHasLooped(stateId);
+	}
+	return false;
+}
+
 } // end of namespace Grim

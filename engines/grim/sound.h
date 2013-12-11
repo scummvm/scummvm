@@ -53,6 +53,8 @@ public:
 	void pushState();
 	void popState();
 	void flushStack();
+
+	bool stateHasLooped(int setId);
 };
 
 extern SoundPlayer *g_sound;

@@ -63,6 +63,7 @@ public:
 	Audio::SoundHandle *getHandle() { return _handle; }
 	Common::String getSoundName();
 	void setSoundName(const Common::String &name);
+	virtual bool hasLooped() { return false; }
 };
 
 }

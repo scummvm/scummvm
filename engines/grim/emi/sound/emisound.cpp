@@ -49,6 +49,7 @@ EMISound::EMISound() {
 	for (int i = 0; i < NUM_CHANNELS; i++) {
 		_channels[i] = NULL;
 	}
+	_curMusicState = -1;
 	_music = NULL;
 	initMusicTable();
 }
@@ -159,7 +160,20 @@ bool EMISound::initTrack(const Common::String &filename, SoundTrack *track) {
 	}
 }
 
+bool EMISound::stateHasLooped(int stateId) {
+	if (stateId == _curMusicState) {
+		if (_music) {
+			return _music->hasLooped();
+		}
+	} else {
+		warning("EMISound::stateHasLooped called for a different music state than the current one");
+	}
+	return false;
+}
+
 void EMISound::setMusicState(int stateId) {
+	if (stateId == _curMusicState)
+		return;
 	if (_music) {
 		delete _music;
 		_music = NULL;
@@ -182,6 +196,7 @@ void EMISound::setMusicState(int stateId) {
 	} else {
 		filename = _musicTable[stateId]._filename;
 	}
+	_curMusicState = stateId;
 	_music = createEmptyMusicTrack();
 
 	warning("Loading music: %s", filename.c_str());
