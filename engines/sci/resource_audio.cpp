@@ -101,32 +101,34 @@ bool Resource::loadFromAudioVolumeSCI11(Common::SeekableReadStream *file) {
 	}
 	file->seek(-4, SEEK_CUR);
 
-	ResourceType type = _resMan->convertResType(file->readByte());
-	if (((getType() == kResourceTypeAudio || getType() == kResourceTypeAudio36) && (type != kResourceTypeAudio))
-		|| ((getType() == kResourceTypeSync || getType() == kResourceTypeSync36) && (type != kResourceTypeSync))) {
-		warning("Resource type mismatch loading %s", _id.toString().c_str());
-		unalloc();
-		return false;
-	}
-
-	_headerSize = file->readByte();
-
-	if (type == kResourceTypeAudio) {
-		if (_headerSize != 7 && _headerSize != 11 && _headerSize != 12) {
-			warning("Unsupported audio header");
+	// Rave-resources (King's Quest 6) don't have any header at all
+	if (getType() != kResourceTypeRave) {
+		ResourceType type = _resMan->convertResType(file->readByte());
+		if (((getType() == kResourceTypeAudio || getType() == kResourceTypeAudio36) && (type != kResourceTypeAudio))
+			|| ((getType() == kResourceTypeSync || getType() == kResourceTypeSync36) && (type != kResourceTypeSync))) {
+			warning("Resource type mismatch loading %s", _id.toString().c_str());
 			unalloc();
 			return false;
 		}
+	
+		_headerSize = file->readByte();
 
-		if (_headerSize != 7) { // Size is defined already from the map
-			// Load sample size
-			file->seek(7, SEEK_CUR);
-			size = file->readUint32LE();
-			// Adjust offset to point at the header data again
-			file->seek(-11, SEEK_CUR);
+		if (type == kResourceTypeAudio) {
+			if (_headerSize != 7 && _headerSize != 11 && _headerSize != 12) {
+				warning("Unsupported audio header");
+				unalloc();
+				return false;
+			}
+
+			if (_headerSize != 7) { // Size is defined already from the map
+				// Load sample size
+				file->seek(7, SEEK_CUR);
+				size = file->readUint32LE();
+				// Adjust offset to point at the header data again
+				file->seek(-11, SEEK_CUR);
+			}
 		}
 	}
-
 	return loadPatch(file);
 }
 
@@ -863,6 +865,7 @@ void AudioVolumeResourceSource::loadResource(ResourceManager *resMan, Resource *
 				switch (res->getType()) {
 				case kResourceTypeSync:
 				case kResourceTypeSync36:
+				case kResourceTypeRave:
 					// we should already have a (valid) size
 					break;
 				default:
