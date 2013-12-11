@@ -115,7 +115,7 @@ public:
 
 	int scene04_var02;
 	int scene04_var04;
-	int scene04_var06;
+	int scene04_bottleWeight;
 	int scene04_var07;
 	int scene04_var08;
 	int scene04_var09;

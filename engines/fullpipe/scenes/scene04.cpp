@@ -164,7 +164,7 @@ void scene04_initScene(Scene *sc) {
 	g_vars->scene04_soundPlaying = false;
 	g_vars->scene04_var04 = 0;
 	g_vars->scene04_walkingKozyawka = 0;
-	g_vars->scene04_var06 = 2;
+	g_vars->scene04_bottleWeight = 2;
 	g_vars->scene04_dynamicPhaseIndex = 0;
 
 	g_vars->scene04_kozyawkiAni.clear();
@@ -333,7 +333,7 @@ void sceneHandler04_clickPlank() {
 void sceneHandler04_dropBottle() {
 	g_vars->scene04_var12 = 1;
 	g_vars->scene04_bottleY = 10;
-	g_vars->scene04_var06 = 0;
+	g_vars->scene04_bottleWeight = 0;
 
 	while (g_vars->scene04_kozyawkiAni.size()) {
 		StaticANIObject *koz = g_vars->scene04_kozyawkiAni.front();
@@ -369,7 +369,7 @@ void sceneHandler04_manFromBottle() {
 	for (Common::List<GameObject *>::iterator it = g_vars->scene04_bottleObjList.begin(); it != g_vars->scene04_bottleObjList.end(); ++it)
 		if (*it == g_fullpipe->_aniMan) {
 			g_vars->scene04_bottleObjList.erase(it);
-			g_vars->scene04_var06 -= 9;
+			g_vars->scene04_bottleWeight -= 9;
 			break;
 		}
 
@@ -385,7 +385,7 @@ void sceneHandler04_manFromBottle() {
 void sceneHandler04_manToBottle() {
 	g_vars->scene04_bottleObjList.push_back(g_fullpipe->_aniMan);
 	g_vars->scene04_var20 = 5;
-	g_vars->scene04_var06 += 9;
+	g_vars->scene04_bottleWeight += 9;
 	g_fullpipe->_aniMan2 = g_fullpipe->_aniMan;
 	g_vars->scene04_var10 = 1;
 }
@@ -467,16 +467,16 @@ void sceneHandler04_springWobble() {
 		g_vars->scene04_var20 = 0;
 	}
 
-	if (g_vars->scene04_var06 > newdelta)
+	if (g_vars->scene04_bottleWeight > newdelta)
 		g_vars->scene04_var20++;
 
-	if (g_vars->scene04_var06 < newdelta)
+	if (g_vars->scene04_bottleWeight < newdelta)
 		g_vars->scene04_var20--;
 
-	if (oldDynIndex <= g_vars->scene04_var06) {
-		if (newdelta <= g_vars->scene04_var06)
+	if (oldDynIndex <= g_vars->scene04_bottleWeight) {
+		if (newdelta <= g_vars->scene04_bottleWeight)
 			goto LABEL_16;
-	} else if (newdelta > g_vars->scene04_var06) {
+	} else if (newdelta > g_vars->scene04_bottleWeight) {
 		goto LABEL_16;
 	}
 
@@ -525,7 +525,7 @@ void sceneHandler04_liftBottle() {
 		g_vars->scene04_var12 = 0;
 		g_vars->scene04_var09 = 0;
 		g_vars->scene04_var19 = 1;
-		g_vars->scene04_var06 = 2;
+		g_vars->scene04_bottleWeight = 2;
 		g_vars->scene04_var20 = 10;
 		g_vars->scene04_var02 = 0;
 
@@ -585,7 +585,7 @@ void sceneHandler04_sub9(StaticANIObject *ani) {
 	g_vars->scene04_bottleObjList.push_back(ani);
 	g_vars->scene04_kozyawkiAni.push_back(ani);
 
-	g_vars->scene04_var06 += 2;
+	g_vars->scene04_bottleWeight += 2;
 	g_vars->scene04_walkingKozyawka = 0;
 	g_vars->scene04_var24 = 0;
 
@@ -649,7 +649,7 @@ void sceneHandler04_takeKozyawka() {
 					break;
 				}
 
-			g_vars->scene04_var06 -= 2;
+			g_vars->scene04_bottleWeight -= 2;
 		}
 	}
 }
