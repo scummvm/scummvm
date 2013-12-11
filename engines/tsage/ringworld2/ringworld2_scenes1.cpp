@@ -6414,13 +6414,9 @@ void Scene1337::handlePlayer3() {
 	discardCard(&_gameBoardSide[3]._handCard[randIndx]);
 }
 
-void Scene1337::subD026D() {
-	subD02CA();
-}
-
 void Scene1337::handlePlayer2() {
 	if (isSlowCard(this->_gameBoardSide[2]._delayCard._cardId) == -1)
-		_delayedFunction = &Scene1337::subD026D;
+		_delayedFunction = &Scene1337::subD02CA;
 	else
 		discardCard(&_gameBoardSide[2]._delayCard);
 }

@@ -368,9 +368,8 @@ public:
 	void handleClick(int arg1, Common::Point pt);
 	void handlePlayer0();
 	void handlePlayer1();
-	void handlePlayer3();
-	void subD026D();
 	void handlePlayer2();
+	void handlePlayer3();
 	void subD02CA();
 	void updateCursorId(int arg1, bool arg2);
 	void setCursorData(int resNum, int rlbNum, int frameNum);
