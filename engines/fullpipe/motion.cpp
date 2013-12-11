@@ -1519,6 +1519,10 @@ MessageQueue *MGM::genMovement(MGMInfo *mgminfo) {
 	return 0;
 }
 
+void MGM::updateAnimStatics(StaticANIObject *ani, int staticsId) {
+	warning("STUB: MGM::updateAnimStatics()");
+}
+
 MovGraphLink::MovGraphLink() {
 	_distance = 0;
 	_angle = 0;

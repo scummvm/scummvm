@@ -61,6 +61,7 @@ class GameObject;
 class GlobalMessageQueueList;
 struct MessageHandler;
 struct MovTable;
+class MGM;
 class NGIArchive;
 class Scene;
 class SoundList;
@@ -173,6 +174,7 @@ public:
 	MovTable *_movTable;
 
 	Floaters *_floaters;
+	MGM *_mgm;
 
 	void initMap();
 	void updateMapPiece(int mapId, int update);

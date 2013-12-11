@@ -27,6 +27,7 @@
 #include "fullpipe/statics.h"
 #include "fullpipe/messages.h"
 #include "fullpipe/interaction.h"
+#include "fullpipe/motion.h"
 
 #include "fullpipe/constants.h"
 #include "fullpipe/objectnames.h"
@@ -880,7 +881,23 @@ MessageQueue *StaticANIObject::changeStatics1(int msgNum) {
 }
 
 void StaticANIObject::changeStatics2(int objId) {
-	warning("STUB: StaticANIObject::changeStatics2(%d)", objId);
+	_animExFlag = 0;
+
+	deleteFromGlobalMessageQueue();
+
+	if (_movement || _statics) {
+		g_fullpipe->_mgm->addItem(_id);
+		g_fullpipe->_mgm->updateAnimStatics(this, objId);
+	} else {
+		_statics = getStaticsById(objId);
+	}
+
+	if (_messageQueueId) {
+		if (g_fullpipe->_globalMessageQueueList->getMessageQueueById(_messageQueueId))
+			g_fullpipe->_globalMessageQueueList->deleteQueueById(_messageQueueId);
+
+		_messageQueueId = 0;
+	}
 }
 
 void StaticANIObject::hide() {
@@ -1664,7 +1681,7 @@ bool Movement::gotoNextFrame(void (*callback1)(int, Common::Point *point, int, i
 				point.x = _framePosOffsets[_currDynamicPhaseIndex]->x;
 				point.y = _framePosOffsets[_currDynamicPhaseIndex]->y;
 
-				//callback1(_currDynamicPhaseIndex, &point, _ox, _oy);
+				callback1(_currDynamicPhaseIndex, &point, _ox, _oy);
 				_ox += point.x;
 				_oy += point.y;
 			} else if (oldDynIndex >= _currDynamicPhaseIndex) {

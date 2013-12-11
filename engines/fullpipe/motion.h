@@ -159,6 +159,7 @@ public:
 	int getItemIndexById(int objId);
 
 	MessageQueue *genMovement(MGMInfo *mgminfo);
+	void updateAnimStatics(StaticANIObject *ani, int staticsId);
 };
 
 struct MctlLadderMovementVars {
