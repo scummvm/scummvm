@@ -268,7 +268,7 @@ void ThreadResource::parsePlayCommands() {
 	Common::fill(&_vm->_voy._arr7[0], &_vm->_voy._arr7[20], 0);
 
 	byte *dataP = _field28E;
-	int v2;
+	int v2, v3;
 
 	for (int parseIndex = 0; parseIndex < _parseCount; ++parseIndex) {
 		uint16 id = GET_WORD;
@@ -338,6 +338,50 @@ void ThreadResource::parsePlayCommands() {
 			break;
 
 		case 3:
+			v2 = GET_WORD;
+			if (v2 == 0 || READ_LE_UINT16(_vm->_controlPtr->_ptr + 4) == 0) {
+				_vm->_eventsManager._videoComputerBut4 = READ_LE_UINT16(dataP);
+				_vm->_voy._field468 = READ_LE_UINT16(dataP + 2);
+				_vm->_voy._field46A = READ_LE_UINT16(dataP + 4);
+
+				if (_vm->_voy._RTVNum < _vm->_voy._field468 ||
+						(_vm->_voy._field468 + _vm->_voy._field46A)  < _vm->_voy._RTVNum) {
+					_vm->_eventsManager._videoComputerBut4 = -1;
+				} else {
+					_vm->_voy._vocSecondsOffset = _vm->_voy._RTVNum - _vm->_voy._field468;
+					addAudioEventStart();
+					_vm->_voy._field478 &= ~1;
+					_vm->_voy._field478 |= 0x10;
+					_vm->playAVideo(_vm->_eventsManager._videoComputerBut4);
+
+					_vm->_voy._field478 &= ~0x10;
+					_vm->_voy._field478 |= 1;
+					addVideoEventEnd();
+					_vm->_eventsManager.incrementTime(1);
+				
+					_vm->_eventsManager._videoComputerBut4 = -1;
+					_vm->_playStamp1 = -1;
+
+					if (_vm->_eventsManager._videoDead != -1) {
+						_vm->_bVoy->freeBoltGroup(0x10E00);
+						_vm->_eventsManager._videoDead = -1;
+						(*_vm->_graphicsManager._vPort)->_flags |= 8;
+
+						_vm->_graphicsManager.flipPage();
+						_vm->_eventsManager.sWaitFlip();
+					}
+
+					_vm->_eventsManager._videoDead = -1;
+					if (_field42 == 2 && _vm->_voy._incriminate == 0) {
+						_vm->_voy._field470 = 132;
+						parseIndex = 999;
+					} else {
+						_vm->_voy._field470 = 129;
+					}
+				}
+			}
+
+			dataP += 6;
 			break;
 
 		case 4:
@@ -345,16 +389,204 @@ void ThreadResource::parsePlayCommands() {
 			_vm->_eventsManager._videoComputerBut4 = READ_LE_UINT16(dataP) - 1;
 			dataP += 2;
 
-			// TODO: Original had a block here that would never be executed
+			if (id == 22) {
+				int resolveIndex = GET_WORD;
+				_vm->_playStamp1 = _vm->_resolvePtr[resolveIndex];
+			}
 
 			_vm->_voy._vocSecondsOffset = 0;
 			_vm->_voy._field468 = _vm->_voy._RTVNum;
 			_vm->_voy._field478 &= ~0x11;
 			_vm->playAVideo(_vm->_eventsManager._videoComputerBut4);
 			_vm->_voy._field478 |= 1;
-			_vm->_eventsManager._videoComputerBut4 = -1;
-			parseIndex = 999;
+
+			if (id != 2) {
+				_vm->_eventsManager._videoComputerBut4 = -1;
+				parseIndex = 999;
+			} else {
+				// TODO: Double-check this
+				int count = _vm->_bVoy->getBoltGroup(_vm->_playStamp1)->_entries.size();
+				_vm->_soundManager.stopVOCPlay();
+				_vm->_eventsManager.getMouseInfo();
+
+				for (int i = 0; i < count; ++i) {
+					PictureResource *pic = _vm->_bVoy->boltEntry(_vm->_playStamp1 + i * 2)._picResource;
+					CMapResource *pal = _vm->_bVoy->boltEntry(_vm->_playStamp1 + i * 2 + 1)._cMapResource;
+
+					(*_vm->_graphicsManager._vPort)->setupViewPort(pic);
+					pal->startFade();
+
+					(*_vm->_graphicsManager._vPort)->_flags |= 8;
+					_vm->_graphicsManager.flipPage();
+					_vm->_eventsManager.sWaitFlip();
+
+					while (!_vm->shouldQuit() && (_vm->_eventsManager._fadeStatus & 1))
+						_vm->_eventsManager.delay(1);
+
+					if (i > 0) {
+						_vm->_bVoy->freeBoltMember(_vm->_playStamp1 + i * 2);
+						_vm->_bVoy->freeBoltMember(_vm->_playStamp1 + i * 2 + 1);
+					}
+
+					Common::String file = Common::String::format("news%d.voc", i + 1);
+					_vm->_soundManager.startVOCPlay(file);
+
+					while (!_vm->shouldQuit() && !_vm->_voy._incriminate &&
+							_vm->_soundManager.getVOCStatus()) {
+						_vm->_eventsManager.delay(1);
+						_vm->_eventsManager.getMouseInfo();
+					}
+
+					_vm->_soundManager.stopVOCPlay();
+
+					if (i == (count - 1))
+						_vm->_eventsManager.delay(480);
+
+					if (_vm->shouldQuit() || _vm->_voy._incriminate)
+						break;
+				}
+
+				_vm->_bVoy->freeBoltGroup(_vm->_playStamp1);
+				_vm->_playStamp1 = -1;
+				_vm->_eventsManager._videoComputerBut4 = -1;
+				parseIndex = 999;
+			}
 			break;			
+
+		case 5:
+			v2 = READ_LE_UINT16(dataP);
+			if (v2 == 0 || READ_LE_UINT16(_vm->_controlPtr->_ptr + 4) == 0) {
+				_vm->_voy._field470 = 5;
+				int count = READ_LE_UINT16(dataP + 2);
+				_vm->_voy._field476 = READ_LE_UINT16(dataP + 4);
+
+				if (_vm->_voy._field474 != count) {
+					if (_vm->_voy._field474 > 1)
+						_vm->_voy._field478 &= ~0x100;
+
+					_vm->_voy._field474 = count;
+					_vm->_eventsManager._videoComputerBut1 = LEVEL_M[count - 1];
+					_vm->_eventsManager._videoComputerNum = LEVEL_H[count - 1];
+					//_vm->_v2A0A2 = 0;
+					_vm->_voy._RTVNum = 0;
+					_vm->_voy._RTANum = 255;
+				}
+
+				_vm->_voy._delaySecs = (_vm->_voy._field474 == 6) ? 1 : 0;
+			}
+
+			dataP += 6;
+			break;
+
+		case 6:
+			_vm->_voy._field470 = 6;
+			v2 = GET_WORD;
+			_vm->_playStamp1 = _vm->_resolvePtr[v2];
+			break;
+
+		case 7:
+			v2 = READ_LE_UINT16(dataP);
+			v3 = READ_LE_UINT16(dataP + 2) - 1;
+
+			if (v2 == 0 || READ_LE_UINT16(_vm->_controlPtr->_ptr + 4) == 0) {
+				int idx = 0;
+				while (_vm->_voy._arr1[idx][v3] != 9999)
+					++idx;
+
+				_vm->_voy._arr1[idx][v3] = READ_LE_UINT16(dataP + 4) + READ_LE_UINT16(dataP + 6);
+				_vm->_voy._arr2[idx][v3] = v3;
+			}
+
+			dataP += 8;
+			break;
+
+		case 8:
+			v2 = READ_LE_UINT16(dataP);
+			v3 = READ_LE_UINT16(dataP + 2) - 1;
+
+			if (v2 == 0 || READ_LE_UINT16(_vm->_controlPtr->_ptr + 4) == 0) {
+				int idx = 0;
+				while (_vm->_voy._arr3[idx][v3] != 9999)
+					++idx;
+
+				_vm->_voy._arr3[idx][v3] = READ_LE_UINT16(dataP + 4) + READ_LE_UINT16(dataP + 6);
+				_vm->_voy._arr4[idx][v3] = v3;
+			}
+
+			dataP += 8;
+			break;
+
+		case 9:
+			v2 = READ_LE_UINT16(dataP);
+			v3 = READ_LE_UINT16(dataP + 2) - 1;
+
+			if (v2 == 0 || READ_LE_UINT16(_vm->_controlPtr->_ptr + 4) == 0) {
+				int idx = 0;
+				while (_vm->_voy._arr5[idx][v3] != 9999)
+					++idx;
+
+				_vm->_voy._arr5[idx][v3] = READ_LE_UINT16(dataP + 4) + READ_LE_UINT16(dataP + 6);
+				_vm->_voy._arr6[idx][v3] = v3;
+			}
+
+			dataP += 8;
+			break;
+
+		case 10:
+			if (_vm->_iForceDeath == -1) {
+				int randomVal;
+				do {
+					randomVal = _vm->getRandomNumber(3);
+				} while (randomVal == _vm->_voy._field4380);
+
+				_vm->_voy._field4380 = randomVal;
+				WRITE_LE_UINT16(_vm->_controlPtr->_ptr + 4, randomVal);
+			} else {
+				_vm->_voy._field4380 = _vm->_iForceDeath;
+				WRITE_LE_UINT16(_vm->_controlPtr->_ptr + 4, _vm->_iForceDeath);
+			}
+
+			_vm->saveLastInplay();
+			break;
+
+		case 11:
+			_vm->_voy._field478 = 2;
+			break;
+
+		case 12:
+			v2 = READ_LE_UINT16(dataP);
+
+			if (v2 == 0 || READ_LE_UINT16(_vm->_controlPtr->_ptr + 4) == 0) {
+				_vm->_voy._field47A = _vm->_resolvePtr[READ_LE_UINT16(dataP + 2)];
+				_vm->_voy._arr7[READ_LE_UINT16(dataP + 4) - 1] = 1;
+			}
+
+			dataP += 6;
+			break;
+
+		case 13:
+			v2 = READ_LE_UINT16(dataP);
+
+			if (v2 == 0 || READ_LE_UINT16(_vm->_controlPtr->_ptr + 4) == 0) {
+				_vm->_voy._field4E2 = READ_LE_UINT16(dataP + 2);
+				_vm->_voy._field4EC = READ_LE_UINT16(dataP + 4);
+				_vm->_voy._field4EE = READ_LE_UINT16(dataP + 6);
+
+				_vm->_voy._rect4E4.left = COMP_BUT_TABLE[_vm->_voy._field4E2 * 4];
+				_vm->_voy._rect4E4.top = COMP_BUT_TABLE[_vm->_voy._field4E2 * 4 + 1];
+				_vm->_voy._rect4E4.right = COMP_BUT_TABLE[_vm->_voy._field4E2 * 4 + 2];
+				_vm->_voy._rect4E4.bottom = COMP_BUT_TABLE[_vm->_voy._field4E2 * 4 + 3];
+			}
+
+			dataP += 8;
+			break;
+
+		case 14:
+			_vm->_playStamp1 = 2048;
+			_vm->_voy._field470 = 130;
+			break;
+
+		// TODO: More
 
 		default:
 			break;
@@ -387,6 +619,10 @@ void ThreadResource::addAudioEventStart() {
 
 void ThreadResource::addAudioEventEnd() {
 	error("TODO: addAudioEventEnd");
+}
+
+void ThreadResource::addVideoEventEnd() {
+	error("TODO: addVideoEventEnd");
 }
 
 } // End of namespace Voyeur

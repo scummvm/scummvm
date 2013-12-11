@@ -594,4 +594,8 @@ void VoyeurEngine::playAVideo(int id) {
 	warning("TODO: playAVideo");
 }
 
+void VoyeurEngine::saveLastInplay() {
+	error("TODO: saveLastInplay");
+}
+
 } // End of namespace Voyeur

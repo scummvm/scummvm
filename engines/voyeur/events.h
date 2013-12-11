@@ -82,8 +82,14 @@ public:
 	int _field470;
 	int _field472;
 	int _field474;
+	int _field476;
 	int _field478;
 	int _field47A;
+	int _field4E2;
+	Common::Rect _rect4E4;
+	int _field4EC;
+	int _field4EE;
+	int _field4F0;
 	int _field4F2;
 
 	int _timeStart;

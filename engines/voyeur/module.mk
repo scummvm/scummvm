@@ -6,6 +6,7 @@ MODULE_OBJS := \
 	detection.o \
 	events.o \
 	files.o \
+	files_threads.o \
 	graphics.o \
 	sound.o \
 	staticres.o \

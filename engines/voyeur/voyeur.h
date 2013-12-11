@@ -65,7 +65,6 @@ private:
 	Common::RandomSource _randomSource;
 	Common::Array<int> _resolves;
 	FontInfoResource _defaultFontInfo;
-	int _iForceDeath;
 
 	void ESP_Init();
 	void initialiseManagers();
@@ -116,6 +115,7 @@ public:
 	int _playStamp1;
 	int _playStamp2;
 	const int *_resolvePtr;
+	int _iForceDeath;
 public:
 	VoyeurEngine(OSystem *syst, const VoyeurGameDescription *gameDesc);
 	virtual ~VoyeurEngine();
@@ -137,6 +137,7 @@ public:
 	void playRL2Video(const Common::String &filename);
 	void doTransitionCard(const Common::String &time, const Common::String &location);
 	void playAVideo(int id);
+	void saveLastInplay();
 };
 
 } // End of namespace Voyeur

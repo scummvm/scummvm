@@ -31,7 +31,13 @@ extern const int COMPUTER_DEFAULTS[];
 
 extern const int RESOLVE_TABLE[];
 
+extern const int LEVEL_H[];
+
+extern const int LEVEL_M[];
+
 extern const int BLIND_TABLE[];
+
+extern const int COMP_BUT_TABLE[];
 
 } // End of namespace Voyeur
 

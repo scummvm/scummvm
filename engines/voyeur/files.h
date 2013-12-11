@@ -119,7 +119,7 @@ public:
 	BoltFile(const Common::String &filename, BoltFilesState &state);
 	~BoltFile();
 
-	bool getBoltGroup(uint32 id);
+	BoltGroup *getBoltGroup(uint32 id);
 	void freeBoltGroup(uint32 id);
 	void freeBoltMember(uint32 id);
 	byte *memberAddr(uint32 id);
@@ -299,6 +299,7 @@ public:
 	virtual ~ViewPortResource();
 
 	void setupViewPort();
+	void setupViewPort(PictureResource *pic);
 	int drawText(const Common::String &msg);
 	int textWidth(const Common::String &msg);
 	void addSaveRect(int pageIndex, const Common::Rect &r);
@@ -432,6 +433,7 @@ private:
 	void cardAction(const byte *p);
 	void addAudioEventStart();
 	void addAudioEventEnd();
+	void addVideoEventEnd();
 public:
 	VoyeurEngine *_vm;
 
