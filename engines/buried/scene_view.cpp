@@ -1126,7 +1126,7 @@ bool SceneViewWindow::walkTransition(const Location &location, const Destination
 
 bool SceneViewWindow::pushTransition(Graphics::Surface *curBackground, Graphics::Surface *newBackground, int direction, int stripSize, int totalTime) {
 	// Check the validity of the parameters
-	if (!curBackground || !newBackground || direction < 0 | direction > 4 || stripSize <= 0 || totalTime < 0)
+	if (!curBackground || !newBackground || direction < 0 || direction > 4 || stripSize <= 0 || totalTime < 0)
 		return false;
 
 	// Change the cursor to an hourglass

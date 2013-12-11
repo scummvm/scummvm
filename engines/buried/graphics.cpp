@@ -773,7 +773,7 @@ void GraphicsManager::renderText(Graphics::Surface *dst, Graphics::Font *font, c
 	Common::StringArray lines;
 	font->wordWrapText(text, w, lines);
 
-	Graphics::TextAlign align;
+	Graphics::TextAlign align = Graphics::kTextAlignLeft;
 	switch (textAlign) {
 	case kTextAlignLeft:
 		align = Graphics::kTextAlignLeft;

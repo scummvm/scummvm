@@ -3392,7 +3392,7 @@ int MachineRoomHarmonicsInterface::mouseUp(Window *viewWindow, const Common::Poi
 		((SceneViewWindow *)viewWindow)->getGlobalFlags().aiMRUsedHarmonicsInterface = 1;
 
 		// Play the proper sound effect
-		int fileID;
+		int fileID = -1;
 		switch (_currentSelection) {
 		case 0:
 			fileID = 6;

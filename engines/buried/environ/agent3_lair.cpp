@@ -288,8 +288,8 @@ int LairEntry::onCharacter(Window *viewWindow, const Common::KeyState &character
 	if (character.keycode == Common::KEYCODE_DELETE || character.keycode == Common::KEYCODE_BACKSPACE) {
 		if (!_passwordEntered.empty())
 			_passwordEntered.deleteLastChar();
-	} else if (character.keycode == Common::KEYCODE_SPACE || (character.keycode >= Common::KEYCODE_a && character.keycode <= Common::KEYCODE_z) ||
-			(character.keycode >= Common::KEYCODE_0 && character.keycode <= Common::KEYCODE_9) && _passwordEntered.size() < 15) {
+	} else if ((character.keycode == Common::KEYCODE_SPACE || (character.keycode >= Common::KEYCODE_a && character.keycode <= Common::KEYCODE_z) ||
+			(character.keycode >= Common::KEYCODE_0 && character.keycode <= Common::KEYCODE_9)) && _passwordEntered.size() < 15) {
 	
 		if (character.keycode == Common::KEYCODE_SPACE)
 			_passwordEntered += ' ';
