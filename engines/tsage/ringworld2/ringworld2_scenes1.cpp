@@ -2256,7 +2256,7 @@ Scene1337::Scene1337() {
 	_actionIdx1 = 0;
 	_actionIdx2 = 0;
 	_showPlayerTurn = false;
-	_field4246 = false;
+	_displayHelpFl = false;
 	_winnerId = 0;
 	_instructionsDisplayedFl = false;
 	_instructionsWaitCount = 0;
@@ -4092,7 +4092,7 @@ void Scene1337::Action11::signal() {
 						}
 					}
 				} // while
-				scene->_field4246 = true;
+				scene->_displayHelpFl = true;
 				scene->subC4CEC();
 			} else {
 				if (scene->_actionIdx2 != 2) {
@@ -4649,9 +4649,9 @@ void Scene1337::subC2586() {
 	switch (_currentPlayerNumb) {
 	case 2:
 		subC4CD2();
-		if (_field4246)
+		if (_displayHelpFl)
 			actionDisplay(1330, 114, 159, 10, 1, 200, 0, 7, 0, 154, 154);
-		_field4246 = false;
+		_displayHelpFl = false;
 	// No break on purpose
 	case 0:
 	// No break on purpose
@@ -5085,11 +5085,11 @@ Scene1337::Card *Scene1337::subC34EC(int arg1) {
 	return nullptr;
 }
 
-void Scene1337::subC358E(Card *subObj1, int arg2) {
-	_actionCard1 = subObj1;
-	_actionCard2 = subC34EC(arg2);
-	_actionCard3 = &_gameBoardSide[arg2]._emptyStationPos;
-	_actionIdx1 = arg2;
+void Scene1337::playCounterTrickCard(Card *card, int playerId) {
+	_actionCard1 = card;
+	_actionCard2 = subC34EC(playerId);
+	_actionCard3 = &_gameBoardSide[playerId]._emptyStationPos;
+	_actionIdx1 = playerId;
 	_item1.setAction(&_action10);
 }
 
@@ -5363,7 +5363,7 @@ void Scene1337::subPostInit() {
 	_currentPlayerArrow.hide();
 
 	_showPlayerTurn = true;
-	_field4246 = false;
+	_displayHelpFl = false;
 	_winnerId = -1;
 
 	_helpIcon.postInit();
@@ -5866,7 +5866,7 @@ void Scene1337::handlePlayer0() {
 	if (tmpVal != -1) {
 		for (int i = 0; i <= 7; i++) {
 			if (_gameBoardSide[2]._outpostStation[i]._cardId != 0) {
-				subC358E(&_gameBoardSide[0]._handCard[tmpVal], 2);
+				playCounterTrickCard(&_gameBoardSide[0]._handCard[tmpVal], 2);
 				found = true;
 				break;
 			}
@@ -5931,7 +5931,7 @@ void Scene1337::handlePlayer0() {
 	int tmpVal2 = subC331B(0);
 
 	if ((tmpVal != -1) && (tmpVal2 != -1)) {
-		subC358E(&_gameBoardSide[0]._handCard[tmpVal], tmpVal2);
+		playCounterTrickCard(&_gameBoardSide[0]._handCard[tmpVal], tmpVal2);
 		found = true;
 	}
 
@@ -6114,7 +6114,7 @@ void Scene1337::handlePlayer1() {
 	int tmpVal2 = subC331B(1);
 
 	if ((tmpVal != -1) && ( tmpVal2 != -1)) {
-		subC358E(&_gameBoardSide[1]._handCard[tmpVal], tmpVal2);
+		playCounterTrickCard(&_gameBoardSide[1]._handCard[tmpVal], tmpVal2);
 		found = true;
 	}
 
@@ -6320,7 +6320,7 @@ void Scene1337::handlePlayer3() {
 		int tmpVal = subC331B(3);
 
 		if (tmpVal != -1) {
-			subC358E(&_gameBoardSide[3]._handCard[randIndx], tmpVal);
+			playCounterTrickCard(&_gameBoardSide[3]._handCard[randIndx], tmpVal);
 			return;
 		}
 	} else if (_gameBoardSide[3]._handCard[randIndx]._cardId == 25) {
@@ -6630,7 +6630,7 @@ void Scene1337::subD02CA() {
 										for (int k = 0; k <= 7; k++) {
 											if (_gameBoardSide[0]._outpostStation[k]._cardId != 0) {
 												found = true;
-												subC358E(&_selectedCard, 0);
+												playCounterTrickCard(&_selectedCard, 0);
 											}
 										}
 
@@ -6640,7 +6640,7 @@ void Scene1337::subD02CA() {
 										for (int k = 0; k <= 7; k++) {
 											if (_gameBoardSide[3]._outpostStation[k]._cardId != 0) {
 												found = true;
-												subC358E(&_selectedCard, 3);
+												playCounterTrickCard(&_selectedCard, 3);
 											}
 										}
 										if (!found)
@@ -6649,7 +6649,7 @@ void Scene1337::subD02CA() {
 										for (int k = 0; k <= 7; k++) {
 											if (_gameBoardSide[1]._outpostStation[k]._cardId == 0) {
 												found = true;
-												subC358E(&_selectedCard, 1);
+												playCounterTrickCard(&_selectedCard, 1);
 											}
 										}
 										if (!found)

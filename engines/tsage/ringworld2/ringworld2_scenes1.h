@@ -314,7 +314,7 @@ public:
 	int _actionIdx1;
 	int _actionIdx2;
 	bool _showPlayerTurn;
-	bool _field4246;
+	bool _displayHelpFl;
 	int _winnerId;
 	bool _instructionsDisplayedFl;
 	int _instructionsWaitCount;
@@ -352,7 +352,7 @@ public:
 	void playCard(Card *card, Card *dest);
 	void subC34A1(Card *subObj1, Card *subObj2);
 	Card *subC34EC(int arg1);
-	void subC358E(Card *subObj1, int arg2);
+	void playCounterTrickCard(Card *card, int playerId);
 	int  getFreeHandCard(int playerId);
 	void discardCard(Card *card);
 	void subC4CD2();
