@@ -61,7 +61,7 @@ void scene04_speakerCallback(int *phase) {
 }
 
 void scene04_initScene(Scene *sc) {
-	g_vars->scene04_needJumping = false;
+	g_vars->scene04_dudeOnLadder = false;
 	g_vars->scene04_bottle = sc->getPictureObjectById(PIC_SC4_BOTTLE, 0);
 	g_vars->scene04_hand = sc->getStaticANIObject1ById(ANI_HAND, -1);
 	g_vars->scene04_plank = sc->getStaticANIObject1ById(ANI_PLANK, -1);
@@ -196,7 +196,7 @@ void scene04_initScene(Scene *sc) {
 }
 
 bool sceneHandler04_friesAreWalking() {
-	if (g_vars->scene04_needJumping && g_fullpipe->_aniMan->isIdle() && !(g_fullpipe->_aniMan->_flags & 0x100)) {
+	if (g_vars->scene04_dudeOnLadder && g_fullpipe->_aniMan->isIdle() && !(g_fullpipe->_aniMan->_flags & 0x100)) {
 		int col = g_vars->scene04_ladder->collisionDetection(g_fullpipe->_aniMan);
 		if (col >= 3 && col <= 6 ) {
 			Movement *koz;
@@ -310,7 +310,7 @@ void sceneHandler04_walkClimbLadder(ExCommand *ex) {
 
 	mq->chain(0);
 
-	g_vars->scene04_needJumping = 1;
+	g_vars->scene04_dudeOnLadder = 1;
 
 	g_vars->scene04_ladder = new MctlLadder;
 	g_vars->scene04_ladder->_objId = MV_MAN_TURN_SUD;
@@ -345,7 +345,7 @@ void sceneHandler04_clickLadder() {
 	g_vars->scene04_dudePosX = g_fullpipe->_aniMan->_ox;
 	g_vars->scene04_dudePosY = g_fullpipe->_aniMan->_oy;
 
-	if (g_vars->scene04_needJumping) {
+	if (g_vars->scene04_dudeOnLadder) {
 		if (!g_fullpipe->_aniMan->isIdle() || (g_fullpipe->_aniMan->_flags & 0x100)) {
 			g_vars->scene04_var08 = 1;
 		} else {
@@ -426,7 +426,7 @@ void sceneHandler04_jumpOnLadder() {
 void sceneHandler04_clickPlank() {
 	if (sceneHandler04_friesAreWalking())
 		sceneHandler04_jumpOnLadder();
-	else if (g_vars->scene04_needJumping)
+	else if (g_vars->scene04_dudeOnLadder)
 		g_fullpipe->playSound(SND_4_033, 0);
 	else if (!g_vars->scene04_soundPlaying)
 		chainQueue(QU_PNK_CLICK, 0);
@@ -750,7 +750,7 @@ void sceneHandler04_sub9(StaticANIObject *ani) {
 void sceneHandler04_sub17() {
 	StaticANIObject *ball =  g_fullpipe->_currentScene->getStaticANIObject1ById(ANI_BIGBALL, -1);
 
-	if (g_vars->scene04_needJumping
+	if (g_vars->scene04_dudeOnLadder
 		 && (!ball || !(ball->_flags & 4))
 		 && g_vars->scene04_ladder->collisionDetection(g_fullpipe->_aniMan) > 3) {
 
@@ -977,7 +977,7 @@ int sceneHandler04(ExCommand *ex) {
 			if (g_vars->scene04_coinPut && g_vars->scene04_var18 && !g_vars->scene04_var09 && !g_vars->scene04_soundPlaying)
 				sceneHandler04_goClock();
 
-			if (g_vars->scene04_needJumping) {
+			if (g_vars->scene04_dudeOnLadder) {
 				if (!g_vars->scene04_soundPlaying) {
 					g_fullpipe->startSceneTrack();
 
@@ -1037,7 +1037,7 @@ int sceneHandler04(ExCommand *ex) {
 				sceneHandler04_clickPlank();
 
 				ex->_messageKind = 0;
-			} else if (g_vars->scene04_needJumping) {
+			} else if (g_vars->scene04_dudeOnLadder) {
 				sceneHandler04_sub8(ex);
 			} else if (!ani || !canInteractAny(g_fullpipe->_aniMan, ani, ex->_keyCode)) {
 				PictureObject *pic = g_fullpipe->_currentScene->getPictureObjectById(picid, 0);

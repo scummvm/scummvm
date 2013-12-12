@@ -99,7 +99,7 @@ public:
 
 	bool scene04_coinPut;
 	bool scene04_soundPlaying;
-	bool scene04_needJumping;
+	bool scene04_dudeOnLadder;
 
 	int scene04_dynamicPhaseIndex;
 	int scene04_sceneClickX;

@@ -72,7 +72,7 @@ Vars::Vars() {
 	scene04_coinPut = false;
 	scene04_soundPlaying = false;
 	scene04_dynamicPhaseIndex = 0;
-	scene04_needJumping = false;
+	scene04_dudeOnLadder = false;
 
 	scene04_sceneClickX = 0;
 	scene04_sceneClickY = 0;
