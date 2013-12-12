@@ -299,6 +299,7 @@ namespace Fullpipe {
 #define ST_MAN_RIGHT 325
 #define ST_MAN_SIT 1164
 #define ST_MAN_STANDLADDER 453
+#define ST_MAN_UP 449
 #define ST_PNK_WEIGHTLEFT 503
 #define ST_SPR_UP 544
 #define TrubaDown 697

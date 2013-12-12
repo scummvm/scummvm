@@ -274,8 +274,55 @@ void sceneHandler04_clickButton() {
 	}
 }
 
+void sceneHandler04_downLadder(int x, int y) {
+	warning("STUB: sceneHandler04_downLadder()");
+}
+
+void sceneHandler04_walkClimbLadder(ExCommand *ex) {
+	warning("STUB: sceneHandler04_walkClimbLadder()");
+}
+
 void sceneHandler04_clickLadder() {
-	warning("STUB: sceneHandler04_clickLadder()");
+	g_vars->scene04_dudePosX = g_fullpipe->_aniMan->_ox;
+	g_vars->scene04_dudePosY = g_fullpipe->_aniMan->_oy;
+
+	if (g_vars->scene04_needJumping) {
+		if (!g_fullpipe->_aniMan->isIdle() || (g_fullpipe->_aniMan->_flags & 0x100)) {
+			g_vars->scene04_var08 = 1;
+		} else {
+			int h3 = 3 * g_vars->scene04_ladder->_height;
+			int half = abs(g_vars->scene04_ladder->_height) / 2;
+			int start = g_vars->scene04_ladder->_ladderY - g_vars->scene04_ladder->_ladder_field_24;
+			int min = 2 * h3 + start + half + 1;
+			int max =     h3 + start - half - 1;
+
+			if (g_vars->scene04_sceneClickY > max)
+				g_vars->scene04_sceneClickY = max;
+
+			if (g_vars->scene04_sceneClickY < min)
+				g_vars->scene04_sceneClickY = min;
+
+			sceneHandler04_downLadder(g_vars->scene04_sceneClickX, g_vars->scene04_sceneClickY);
+
+			g_vars->scene04_var08 = 0;
+		}
+	} else {
+		if (g_fullpipe->_aniMan->isIdle() && !(g_fullpipe->_aniMan->_flags & 0x100)) {
+			if (abs(1095 - g_vars->scene04_dudePosX) > 1 || abs(434 - g_vars->scene04_dudePosY) > 1) {
+				MessageQueue *mq = getSc2MctlCompoundBySceneId(g_fullpipe->_currentScene->_sceneId)->method34(g_fullpipe->_aniMan, 1095, 434, 1, ST_MAN_UP);
+				if (mq) {
+					ExCommand *ex = new ExCommand(0, 17, MSG_SC4_CLICKLADDER, 0, 0, 0, 1, 0, 0, 0);
+
+					ex->_excFlags = 3;
+					mq->addExCommandToEnd(ex);
+
+					postExCommand(g_fullpipe->_aniMan->_id, 2, 1095, 434, 0, -1);
+				}
+			} else {
+				sceneHandler04_walkClimbLadder(0);
+			}
+		}
+	}
 }
 
 void sceneHandler04_jumpOnLadder() {

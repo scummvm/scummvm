@@ -809,4 +809,17 @@ bool chainQueue(int queueId, int flags) {
 	return true;
 }
 
+void postExCommand(int parentId, int keyCode, int x, int y, int f20, int f14) {
+	ExCommand *ex = new ExCommand(parentId, 17, 64, 0, 0, 0, 1, 0, 0, 0);
+
+	ex->_keyCode = keyCode;
+	ex->_excFlags |= 3;
+	ex->_x = x;
+	ex->_y = y;
+	ex->_field_20 = f20;
+	ex->_field_14 = f14;
+
+	ex->postMessage();
+}
+
 } // End of namespace Fullpipe
