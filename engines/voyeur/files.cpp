@@ -1333,7 +1333,7 @@ PtrResource::PtrResource(BoltFilesState &state, const byte *src) {
 ControlResource::ControlResource(BoltFilesState &state, const byte *src) {
 	// Get pointer
 	uint32 ptrId = READ_LE_UINT32(&src[0x32]);
-	_ptr = state._curLibPtr->getBoltEntryFromLong(ptrId)._data;
+	state._curLibPtr->resolveIt(ptrId, &_ptr);
 
 	for (int i = 0; i < 8; ++i)
 		_memberIds[i] = READ_LE_UINT16(src + i * 2);

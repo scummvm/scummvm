@@ -543,7 +543,7 @@ void ThreadResource::parsePlayCommands() {
 			if (_vm->_iForceDeath == -1) {
 				int randomVal;
 				do {
-					randomVal = _vm->getRandomNumber(3);
+					randomVal = _vm->getRandomNumber(3) + 1;
 				} while (randomVal == _vm->_voy._field4380);
 
 				_vm->_voy._field4380 = randomVal;
