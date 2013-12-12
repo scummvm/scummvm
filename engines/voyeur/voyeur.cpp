@@ -595,7 +595,11 @@ void VoyeurEngine::playAVideo(int id) {
 }
 
 void VoyeurEngine::saveLastInplay() {
-	error("TODO: saveLastInplay");
+	LockClass lock;
+	lock.getThePassword();
+	lock.fieldC = _voy._field4380;
+	lock.getSysDate();
+	lock.saveThePassword();
 }
 
 } // End of namespace Voyeur

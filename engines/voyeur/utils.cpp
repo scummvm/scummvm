@@ -30,7 +30,7 @@ LockTime::LockTime() {
 }
 
 void LockClass::getSysDate() {
-
+	// May not be needed for ScummVM
 }
 
 void LockClass::getThePassword() {
@@ -41,11 +41,11 @@ void LockClass::getThePassword() {
 	fieldC = -1;
 
 	// TODO: Original loaded 'VOYEUR.DAT' here to get most recent game's password.
-	// We'll want to transform this to proper savegames in ScummVM
+	// but since we allow seperate savegames in ScummVM, this is somewhat deprecated.
 }
 
 void LockClass::saveThePassword() {
-	//TODO
+	// May not be needed for ScummVM
 }
 
 Common::String LockClass::getDateString() {

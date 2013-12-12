@@ -137,6 +137,10 @@ public:
 	void playRL2Video(const Common::String &filename);
 	void doTransitionCard(const Common::String &time, const Common::String &location);
 	void playAVideo(int id);
+
+	/**
+	 * Saves the last time the game was played
+	 */
 	void saveLastInplay();
 	void loadTheApt();
 	void freeTheApt();
