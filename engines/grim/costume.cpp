@@ -439,7 +439,6 @@ void Costume::getBoundingBox(int *x1, int *y1, int *x2, int *y2) {
 			c->getBoundingBox(x1, y1, x2, y2);
 		}
 
-		//TODO: why is it lowercase 'mesh'? 
 		if (_components[i] &&(_components[i]->isComponentType('m','e','s','h'))) {
 			EMIMeshComponent *c = static_cast<EMIMeshComponent *>(_components[i]);
 			c->getBoundingBox(x1, y1, x2, y2);

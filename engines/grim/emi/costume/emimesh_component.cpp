@@ -87,7 +87,7 @@ void EMIMeshComponent::draw() {
 	//translateObject(true);
 }
 
-void EMIMeshComponent::getBoundingBox(int *x1, int *y1, int *x2, int *y2) {
+void EMIMeshComponent::getBoundingBox(int *x1, int *y1, int *x2, int *y2) const {
 	// If the object was drawn by being a component
 	// of it's parent then don't draw it
 

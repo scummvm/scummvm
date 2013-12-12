@@ -442,13 +442,7 @@ void GfxOpenGL::getBoundingBoxPos(const EMIModel *model, int *x1, int *y1, int *
 		return;
 	}
 	
-	//*x1 = (int)left;
-	//*y1 = (int)top;
-	//*x2 = (int)right;
-	//*y2 = (int)bottom;
-
-	//TODO: For some reasons the x axis needs to be flipped to get the correct positioned texts?
-	*x1 = (int)left;
+    *x1 = (int)left;
 	*y1 = (int)(_gameHeight - bottom);
 	*x2 = (int)right;
 	*y2 = (int)(_gameHeight - top);
