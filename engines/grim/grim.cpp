@@ -75,7 +75,7 @@ GfxBase *g_driver = NULL;
 int g_imuseState = -1;
 
 GrimEngine::GrimEngine(OSystem *syst, uint32 gameFlags, GrimGameType gameType, Common::Platform platform, Common::Language language) :
-		Engine(syst), _currSet(NULL), _selectedActor(NULL) {
+		Engine(syst), _currSet(NULL), _selectedActor(NULL), _pauseStartTime(0) {
 	g_grim = this;
 
 	_debugger = new Debugger();
@@ -518,20 +518,28 @@ void GrimEngine::updateDisplayScene() {
 		}
 		drawPrimitives();
 	} else if (_mode == NormalMode || _mode == OverworldMode) {
-		if (!_currSet)
-			return;
-
-		g_driver->clearScreen();
-
-		drawNormalMode();
-
-		g_driver->drawBuffers();
-		drawPrimitives();
+		updateNormalMode();
 	} else if (_mode == DrawMode) {
-		_doFlip = false;
-		_prevSmushFrame = 0;
-		_movieTime = 0;
+		updateDrawMode();
 	}
+}
+
+void GrimEngine::updateNormalMode() {
+	if (!_currSet)
+		return;
+
+	g_driver->clearScreen();
+
+	drawNormalMode();
+
+	g_driver->drawBuffers();
+	drawPrimitives();
+}
+
+void GrimEngine::updateDrawMode() {
+	_doFlip = false;
+	_prevSmushFrame = 0;
+	_movieTime = 0;
 }
 
 void GrimEngine::drawNormalMode() {
@@ -1188,7 +1196,8 @@ void GrimEngine::buildActiveActorsList() {
 
 	_activeActors.clear();
 	foreach (Actor *a, Actor::getPool()) {
-		if ((_mode == NormalMode && a->isInSet(_currSet->getName())) || a->isInOverworld()) {
+		if (((_mode == NormalMode || _mode == DrawMode) && a->isInSet(_currSet->getName())) ||
+		    a->isInOverworld()) {
 			_activeActors.push_back(a);
 		}
 	}
@@ -1252,6 +1261,12 @@ void GrimEngine::openMainMenuDialog() {
 void GrimEngine::pauseEngineIntern(bool pause) {
 	g_imuse->pause(pause);
 	g_movie->pause(pause);
+
+	if (pause) {
+		_pauseStartTime = _system->getMillis();
+	} else {
+		_frameStart += _system->getMillis() - _pauseStartTime;
+	}
 }
 
 void GrimEngine::debugLua(const Common::String &str) {

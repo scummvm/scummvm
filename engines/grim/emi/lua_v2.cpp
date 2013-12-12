@@ -291,11 +291,6 @@ void Lua_V2::Display() {
 	// dummy
 }
 
-void Lua_V2::RenderModeUser() {
-	lua_Object param1 = lua_getparam(1);
-	g_movie->pause(!lua_isnil(param1));
-}
-
 void Lua_V2::GetCameraPosition() {
 	Set::Setup *setup = g_grim->getCurrSet()->getCurrSetup();
 	lua_pushnumber(setup->_pos.x());

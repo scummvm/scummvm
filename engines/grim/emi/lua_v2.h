@@ -159,7 +159,6 @@ protected:
 	DECLARE_LUA_OPCODE(SectEditForgetIt);
 	DECLARE_LUA_OPCODE(FRUTEY_Begin);
 	DECLARE_LUA_OPCODE(FRUTEY_End);
-	DECLARE_LUA_OPCODE(RenderModeUser);
 	DECLARE_LUA_OPCODE(GetFontDimensions);
 	DECLARE_LUA_OPCODE(GetTextObjectDimensions);
 	DECLARE_LUA_OPCODE(GetTextCharPosition);

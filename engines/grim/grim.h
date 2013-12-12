@@ -202,6 +202,8 @@ protected:
 	void savegameCallback();
 	void createRenderer();
 	virtual LuaBase *createLua();
+	virtual void updateNormalMode();
+	virtual void updateDrawMode();
 	virtual void drawNormalMode();
 
 	void savegameSave();
@@ -257,6 +259,7 @@ protected:
 	Common::Platform _gamePlatform;
 	Common::Language _gameLanguage;
 	Debugger *_debugger;
+	uint32 _pauseStartTime;
 };
 
 extern GrimEngine *g_grim;
