@@ -197,7 +197,7 @@ void VoyeurEngine::playStamp() {
 				// Break out of loop
 				flag = false;
 
-			} else if (threadP->_field40 == 2) {
+			} else if (threadP->_field40 & 2) {
 				_eventsManager.getMouseInfo();
 				threadP->chooseSTAMPButton(0);
 				flag = true;

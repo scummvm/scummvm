@@ -430,10 +430,18 @@ private:
 	void performOpenCard();
 	const byte *getRecordOffset(const byte *p);
 	const byte *getNextRecord(const byte *p);
+	const byte *getSTAMPCard(int cardId);
+	int getStateFromID(uint32 id);
+	uint32 getSID(int sid);
 	void cardAction(const byte *p);
+	void doSTAMPCardAction();
 	void addAudioEventStart();
 	void addAudioEventEnd();
 	void addVideoEventEnd();
+	bool goToStateID(int stackId, int sceneId);
+	bool goToState(int stackId, int sceneId);
+	const byte *cardPerform(const byte *card);
+	void savePrevious();
 public:
 	VoyeurEngine *_vm;
 
@@ -464,7 +472,7 @@ public:
 	void unloadAStack(int idx);
 	bool doState();
 
-	bool chooseSTAMPButton(int idx);
+	bool chooseSTAMPButton(int buttonId);
 	void parsePlayCommands();
 	int doInterface();
 	void doRoom();

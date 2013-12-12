@@ -249,16 +249,88 @@ const byte *ThreadResource::getNextRecord(const byte *p) {
 	}
 }
 
-void ThreadResource::cardAction(const byte *p) {
-	warning("TODO: cardAction");
+const byte *ThreadResource::getSTAMPCard(int cardId) {
+	const byte *p;
+	int count = 0;
+	for (p = _field4A; count <= cardId && *p != 0x49; p = getNextRecord(p)) {
+		if (*p == 0xC0)
+			++count;
+	}
+
+	return p;
 }
 
-bool ThreadResource::chooseSTAMPButton(int idx) {
-	warning("TODO: chooseSTAMPButton");
+int ThreadResource::getStateFromID(uint32 id) {
+	int count = READ_LE_UINT16(_ctlPtr);
+
+	for (int i = 0; i < count; ++i) {
+		uint32 sid = getSID(i);
+		if (sid == id)
+			return i;
+	}
+
+	return -1;
+}
+
+uint32 ThreadResource::getSID(int sid) {
+	uint32 offset = READ_LE_UINT32(_ctlPtr + 2) + (sid << 3) + 4;
+	return READ_LE_UINT32(_ctlPtr + offset);
+}
+
+void ThreadResource::doSTAMPCardAction() {
+	for (const byte *p = _field4A; *p != 0x49; p = getNextRecord(p)) {
+		if (*p == 0x48) {
+			cardAction(p + 1);
+			return;
+		}
+	}
+}
+
+void ThreadResource::cardAction(const byte *card) {
+	_vm->_glGoScene = -1;
+	_vm->_glGoStack = -1;
+
+	// Loop to perform card commands
+	while (!_vm->shouldQuit() && *card < 70 && _vm->_glGoScene == -1) {
+		card = cardPerform(card);
+	}
+}
+
+bool ThreadResource::chooseSTAMPButton(int buttonId) {
+	_flags &= ~1;
+
+	for (int idx = 0; idx < _field42; ++idx) {
+		if (_field18E[idx] == buttonId) {
+			const byte *card = getSTAMPCard(idx);
+			cardAction(card);
+
+			bool flag = true;
+			while (!_vm->shouldQuit() && _vm->_glGoStack != -1 && flag) {
+				doSTAMPCardAction();
+				flag = goToStateID(_vm->_glGoStack, _vm->_glGoScene);
+			}
+
+			while (!_vm->shouldQuit() && _vm->_glGoScene != -1 && flag) {
+				doSTAMPCardAction();
+				flag = goToState(-1, _vm->_glGoScene);
+			}
+
+			return flag;
+		}
+	}
+
 	return false;
 }
 
 void ThreadResource::parsePlayCommands() {
+	_vm->_voy._field470 = -1;
+	_vm->_voy._field468 = 0;
+	_vm->_voy._field46A = 0;
+	_vm->_voy._field47A = -1;
+	_vm->_voy._field4E2 = -1;
+	_vm->_voy._field478 &= ~8;
+	_vm->_eventsManager._videoDead = -1;
+
 	Common::fill(&_vm->_voy._arr1[0][0], &_vm->_voy._arr1[8][20], 0);
 	Common::fill(&_vm->_voy._arr2[0][0], &_vm->_voy._arr2[8][20], 0);
 	Common::fill(&_vm->_voy._arr3[0][0], &_vm->_voy._arr3[3][20], 9999);
@@ -707,6 +779,11 @@ void ThreadResource::parsePlayCommands() {
 	}
 }
 
+const byte *ThreadResource::cardPerform(const byte *card) {
+	error("TODO");
+	return NULL;
+}
+
 int ThreadResource::doApt() {
 	warning("TODO: doApt");
 	return 0;
@@ -734,6 +811,39 @@ void ThreadResource::addAudioEventEnd() {
 
 void ThreadResource::addVideoEventEnd() {
 	error("TODO: addVideoEventEnd");
+}
+
+bool ThreadResource::goToStateID(int stackId, int sceneId) {
+	// Save current stack
+	savePrevious();
+
+	if (_controlIndex == stackId || stackId == -1 || loadAStack(stackId)) {
+		// Now in the correct state
+		_threadId = getStateFromID(sceneId);
+
+		if (_threadId != -1) {
+			return doState();
+		} else {
+			_threadId = _field4;
+			_controlIndex = _field6;
+		}
+	}
+
+	return false;
+}
+
+bool ThreadResource::goToState(int stackId, int sceneId) {
+	error("TODO: goToState");
+}
+
+void ThreadResource::savePrevious() {
+	if (_field4 == _threadId && _controlIndex == _field6) {
+		_flags &= ~1;
+	} else {
+		_flags |= 1;
+		_field4 = _threadId;
+		_field6 = _controlIndex;
+	}
 }
 
 } // End of namespace Voyeur
