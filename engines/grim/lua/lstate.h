@@ -15,6 +15,9 @@ namespace Grim {
 #define MAX_C_BLOCKS 10
 #define GARBAGE_BLOCK 150
 
+#define LUA_SG_ALL_PAUSED 0x01
+#define LUA_SG_PAUSED     0x02
+
 typedef int32 StkId;  /* index to stack elements */
 
 struct Stack {
@@ -75,7 +78,8 @@ extern int32 IMtable_size;
 struct LState {
 	LState *prev; // handle to previous state in list
 	LState *next; // handle to next state in list
-	bool paused; // flag mean if task is paused
+	bool all_paused; // true if all scripts have been paused
+	bool paused;     // true if this particular script has been paused
 	int32 state_counter1;
 	int32 state_counter2;
 	bool updated;

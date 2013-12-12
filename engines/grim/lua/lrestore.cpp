@@ -555,7 +555,11 @@ void lua_Restore(SaveGame *savedState) {
 		}
 
 		state->updated = savedState->readBool();
-		state->paused = savedState->readBool();
+
+		byte pauseState = savedState->readByte();
+		state->all_paused = pauseState & LUA_SG_ALL_PAUSED;
+		state->paused = pauseState & LUA_SG_PAUSED;
+
 		state->state_counter1 = savedState->readLESint32();
 		state->state_counter2 = savedState->readLESint32();
 

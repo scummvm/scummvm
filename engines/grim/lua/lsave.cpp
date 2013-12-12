@@ -378,7 +378,12 @@ void lua_Save(SaveGame *savedState) {
 		savedState->writeLESint32(n);
 
 		savedState->writeBool(state->updated);
-		savedState->writeBool(state->paused);
+
+		byte pauseState = 0;
+		pauseState = state->all_paused ? LUA_SG_ALL_PAUSED : 0;
+		pauseState |= state->paused ? LUA_SG_PAUSED : 0;
+		savedState->writeByte(pauseState);
+
 		savedState->writeLESint32(state->state_counter1);
 		savedState->writeLESint32(state->state_counter2);
 
