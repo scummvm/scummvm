@@ -275,11 +275,70 @@ void sceneHandler04_clickButton() {
 }
 
 void sceneHandler04_downLadder(int x, int y) {
-	warning("STUB: sceneHandler04_downLadder()");
+	g_vars->scene04_ladder->method34(g_fullpipe->_aniMan, x + g_vars->scene04_ladder->_ladder_field_20, y + g_vars->scene04_ladder->_ladder_field_24, 0, 0);
 }
 
 void sceneHandler04_walkClimbLadder(ExCommand *ex) {
-	warning("STUB: sceneHandler04_walkClimbLadder()");
+	MessageQueue *mq = new MessageQueue(g_fullpipe->_globalMessageQueueList->compact());
+
+	ExCommand *ex1 = new ExCommand(ANI_MAN, 1, MV_MAN_TOLADDER, 0, 0, 0, 1, 0, 0, 0);
+
+	ex1->_keyCode = g_fullpipe->_aniMan->_okeyCode;
+	ex1->_excFlags |= 2;
+
+	mq->addExCommandToEnd(ex1);
+
+	ExCommand *ex2 = new ExCommand(ANI_MAN, 1, MV_MAN_STOPLADDER, 0, 0, 0, 1, 0, 0, 0);
+
+	ex2->_keyCode = g_fullpipe->_aniMan->_okeyCode;
+	ex2->_excFlags |= 2;
+
+	mq->addExCommandToEnd(ex2);
+
+	ExCommand *ex3;
+
+	if (ex) {
+		ex3 = new ExCommand(ex);
+	} else {
+		ex3 = new ExCommand(0, 17, MSG_SC4_CLICKLADDER, 0, 0, 0, 1, 0, 0, 0);
+		ex3->_excFlags |= 3;
+	}
+
+	mq->addExCommandToEnd(ex3);
+
+	mq->setFlags(mq->getFlags() | 1);
+
+	mq->chain(0);
+
+	g_vars->scene04_needJumping = 1;
+
+	g_vars->scene04_ladder = new MctlLadder;
+	g_vars->scene04_ladder->_objId = MV_MAN_TURN_SUD;
+	g_vars->scene04_ladder->_ladderY = 406;
+	g_vars->scene04_ladder->_ladder_field_14 = 12;
+	g_vars->scene04_ladder->_ladder_field_18 = 0;
+	g_vars->scene04_ladder->_height = -40;
+	g_vars->scene04_ladder->_ladder_field_20 = 0;
+	g_vars->scene04_ladder->_ladder_field_24 = -60;
+
+	g_vars->scene04_ladder->addObject(g_fullpipe->_aniMan);
+
+	if (g_vars->scene04_soundPlaying) {
+		g_vars->scene04_ladder->_movements.front()->movVars->varUpStart = MV_MAN_STARTLADDER2;
+		g_vars->scene04_ladder->_movements.front()->movVars->varUpGo = MV_MAN_GOLADDER2;
+		g_vars->scene04_ladder->_movements.front()->movVars->varUpStop = MV_MAN_STOPLADDER2;
+		g_vars->scene04_ladder->_movements.front()->staticIds[2] = ST_MAN_GOLADDER2;
+	} else {
+		g_vars->scene04_ladder->_movements.front()->movVars->varUpStart = MV_MAN_STARTLADDER;
+		g_vars->scene04_ladder->_movements.front()->movVars->varUpGo = MV_MAN_GOLADDER;
+		g_vars->scene04_ladder->_movements.front()->movVars->varUpStop = MV_MAN_STOPLADDER;
+		g_vars->scene04_ladder->_movements.front()->staticIds[2] = ST_MAN_GOLADDER;
+	}
+
+	g_fullpipe->_aniMan->_priority = 12;
+
+	getSc2MctlCompoundBySceneId(g_fullpipe->_currentScene->_sceneId)->clearEnabled();
+	getGameLoaderInteractionController()->disableFlag24();
 }
 
 void sceneHandler04_clickLadder() {

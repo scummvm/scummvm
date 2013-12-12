@@ -129,6 +129,7 @@ namespace Fullpipe {
 #define MV_MAN_TOLADDER 448
 #define MV_MAN_TOLADDER2 2841
 #define MV_MAN_TURN_LU 486
+#define MV_MAN_TURN_SUD 1089
 #define MV_PNK_WEIGHTLEFT 541
 #define MV_PNK_WEIGHTRIGHT 502
 #define MV_SC4_COIN_default 1029
@@ -293,6 +294,8 @@ namespace Fullpipe {
 #define ST_LBN_8P 2775
 #define ST_LBN_9N 2777
 #define ST_LBN_9P 2778
+#define ST_MAN_GOLADDER 450
+#define ST_MAN_GOLADDER2 2843
 #define ST_MAN_EMPTY 476
 #define ST_MAN_LADDERDOWN 521
 #define ST_MAN_ONPLANK 552
