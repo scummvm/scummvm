@@ -30,6 +30,7 @@ namespace Voyeur {
 int ThreadResource::_stampFlags = 0;
 int ThreadResource::_useCount[8];
 byte *ThreadResource::_threadDataPtr = NULL;
+CMapResource *ThreadResource::_cmd14Pal = NULL;
 
 ThreadResource::ThreadResource(BoltFilesState &state, const byte *src):
 		_vm(state._vm) {
@@ -269,6 +270,8 @@ void ThreadResource::parsePlayCommands() {
 
 	byte *dataP = _field28E;
 	int v2, v3;
+	PictureResource *pic;
+	CMapResource *pal;
 
 	for (int parseIndex = 0; parseIndex < _parseCount; ++parseIndex) {
 		uint16 id = GET_WORD;
@@ -410,8 +413,8 @@ void ThreadResource::parsePlayCommands() {
 				_vm->_eventsManager.getMouseInfo();
 
 				for (int i = 0; i < count; ++i) {
-					PictureResource *pic = _vm->_bVoy->boltEntry(_vm->_playStamp1 + i * 2)._picResource;
-					CMapResource *pal = _vm->_bVoy->boltEntry(_vm->_playStamp1 + i * 2 + 1)._cMapResource;
+					pic = _vm->_bVoy->boltEntry(_vm->_playStamp1 + i * 2)._picResource;
+					pal = _vm->_bVoy->boltEntry(_vm->_playStamp1 + i * 2 + 1)._cMapResource;
 
 					(*_vm->_graphicsManager._vPort)->setupViewPort(pic);
 					pal->startFade();
@@ -586,7 +589,113 @@ void ThreadResource::parsePlayCommands() {
 			_vm->_voy._field470 = 130;
 			break;
 
-		// TODO: More
+		case 15:
+			_vm->_playStamp1 = (_vm->_voy._field4382 - 1) * 8 + 0x7700;
+			_vm->_voy._field47A = ((READ_LE_UINT16(_vm->_controlPtr->_ptr + 4) 
+				- 1) << 8) + 0x7B00;
+
+			pic = _vm->_bVoy->boltEntry(_vm->_playStamp1)._picResource;
+			_cmd14Pal = _vm->_bVoy->boltEntry(_vm->_playStamp1 + 1)._cMapResource;
+
+			(*_vm->_graphicsManager._vPort)->setupViewPort(pic);
+			_cmd14Pal->startFade();
+
+			(*_vm->_graphicsManager._vPort)->_flags |= 8;
+			_vm->_graphicsManager.flipPage();
+			_vm->_eventsManager.sWaitFlip();
+
+			while (!_vm->shouldQuit() && (_vm->_eventsManager._fadeStatus & 1))
+				_vm->_eventsManager.delay(1);
+			_vm->_eventsManager.getMouseInfo();
+
+			for (int idx = 1; idx < 4; ++idx) {
+				if (idx == 3) {
+					pic = _vm->_bVoy->boltEntry(_vm->_voy._field47A)._picResource;
+					_cmd14Pal = _vm->_bVoy->boltEntry(_vm->_voy._field47A + 1)._cMapResource;
+				} else {
+					pic = _vm->_bVoy->boltEntry(_vm->_playStamp1 + idx * 2)._picResource;
+					_cmd14Pal = _vm->_bVoy->boltEntry(_vm->_playStamp1 + idx * 2 + 1)._cMapResource;
+				}
+
+				(*_vm->_graphicsManager._vPort)->setupViewPort(pic);
+				_cmd14Pal->startFade();
+
+				(*_vm->_graphicsManager._vPort)->_flags |= 8;
+				_vm->_graphicsManager.flipPage();
+				_vm->_eventsManager.sWaitFlip();
+
+				while (!_vm->shouldQuit() && (_vm->_eventsManager._fadeStatus & 1))
+					_vm->_eventsManager.delay(1);
+
+				_vm->_bVoy->freeBoltMember(_vm->_playStamp1 + (idx - 1) * 2);
+				_vm->_bVoy->freeBoltMember(_vm->_playStamp1 + (idx - 1) * 2 + 1);
+
+				Common::String fname = Common::String::format("news%d.voc", idx);
+
+				while (!_vm->shouldQuit() && !_vm->_voy._incriminate && 
+						_vm->_soundManager.getVOCStatus())
+					_vm->_eventsManager.delay(1);
+
+				_vm->_soundManager.stopVOCPlay();
+				if (idx == 3)
+					_vm->_eventsManager.delay(3);
+
+				if (_vm->shouldQuit() || _vm->_voy._incriminate)
+					break;
+			}
+
+			_vm->_bVoy->freeBoltGroup(_vm->_playStamp1);
+			_vm->_bVoy->freeBoltGroup(_vm->_voy._field47A);
+			_vm->_playStamp1 = -1;
+			_vm->_voy._field47A = -1;
+			break;
+
+		case 16:
+			_vm->_voy._field470 = 16;
+			break;
+
+		case 17:
+			_vm->_voy._field470 = 17;
+			break;
+
+		case 18:
+			v2 = READ_LE_UINT16(dataP);
+			v3 = READ_LE_UINT16(dataP + 2);
+
+			if (v2 == 0 || READ_LE_UINT16(_vm->_controlPtr->_ptr + 4) == 0)
+				_vm->_voy._field4F2 = v3;
+			
+			dataP += 4;
+			break;
+
+		case 19:
+			_vm->_voy._field472 = 140;
+			_vm->loadTheApt();
+			_vm->_voy._field472 = 141;
+			_vm->freeTheApt();
+			break;
+
+		case 20:
+			_vm->_voy._field472 = -1;
+			_vm->loadTheApt();
+			_vm->_voy._field472 = 141;
+			_vm->freeTheApt();
+			break;
+
+		case 21:
+			_vm->_voy._field472 = -1;
+			_vm->loadTheApt();
+			_vm->_voy._field472 = 140;
+			_vm->freeTheApt();
+			break;
+
+		case 23:
+			_vm->_voy._field474 = 17;
+			_vm->_voy._field472 = -1;
+			_vm->loadTheApt();
+			_vm->_voy._field472 = 144;
+			_vm->freeTheApt();
+			break;
 
 		default:
 			break;

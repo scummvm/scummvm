@@ -264,4 +264,12 @@ int VoyeurEngine::getChooseButton()  {
 	return 0;
 }
 
+void VoyeurEngine::loadTheApt() {
+	error("TODO: loadTheApt");
+}
+
+void VoyeurEngine::freeTheApt() {
+	error("TODO: freeTheApt");
+}
+
 } // End of namespace Voyeur

@@ -138,6 +138,8 @@ public:
 	void doTransitionCard(const Common::String &time, const Common::String &location);
 	void playAVideo(int id);
 	void saveLastInplay();
+	void loadTheApt();
+	void freeTheApt();
 };
 
 } // End of namespace Voyeur
