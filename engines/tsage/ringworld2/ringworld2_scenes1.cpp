@@ -4371,6 +4371,7 @@ void Scene1337::postInit(SceneObjectList *OwnerList) {
 
 	R2_GLOBALS._player.enableControl();
 	R2_GLOBALS._player._canWalk = false;
+	R2_GLOBALS._player._uiEnabled = false;
 
 	_delayedFunction = nullptr;
 
