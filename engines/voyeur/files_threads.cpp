@@ -169,10 +169,11 @@ void ThreadResource::getButtonsFlags() {
 void ThreadResource::getField1CE() {
 	int idx = 0;
 	
-	for (const byte *p = _field4A; *p != 0x49; p = getNextRecord(p)) {
+	for (const byte *p = _field4A; *p++ != 0x49; p = getNextRecord(p)) {
 		assert(idx < 47);
 		_field1CE[idx++] = getRecordOffset(p);
 		_field1CE[idx] = NULL;
+		p += 4;
 	}
 }
 
@@ -199,7 +200,7 @@ void ThreadResource::initUseCount() {
 }
 
 const byte *ThreadResource::getRecordOffset(const byte *p) {
-	uint32 recSize = READ_LE_UINT32(p) + READ_LE_UINT32(p + 6);
+	uint32 recSize = READ_LE_UINT32(p) + READ_LE_UINT32(_ctlPtr + 6);
 	return _ctlPtr + recSize;
 }
 
