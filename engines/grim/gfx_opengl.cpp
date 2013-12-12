@@ -637,6 +637,7 @@ void GfxOpenGL::drawSprite(const Sprite *sprite) {
 		float halfHeight = (sprite->_height / 2) * _scaleH;
 
 		glBegin(GL_POLYGON);
+		glColor4f(1.0f, 1.0f, 1.0f, _alpha);
 		glTexCoord2f(0.0f, 1.0f);
 		glVertex3f(-halfWidth, -halfHeight, 0.0f);
 		glTexCoord2f(0.0f, 0.0f);
@@ -645,6 +646,7 @@ void GfxOpenGL::drawSprite(const Sprite *sprite) {
 		glVertex3f(+halfWidth, +halfHeight, 0.0f);
 		glTexCoord2f(1.0f, 1.0f);
 		glVertex3f(+halfWidth, -halfHeight, 0.0f);
+		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 		glEnd();
 	} else {
 		// In Grim, the bottom edge of the sprite is at y=0 and

@@ -717,6 +717,11 @@ void GfxTinyGL::drawModelFace(const Mesh *mesh, const MeshFace *face) {
 }
 
 void GfxTinyGL::drawSprite(const Sprite *sprite) {
+	// HACK: TinyGL doesn't support blending well, but atleast we can skip completely
+	// translucent sprites:
+	if (_alpha <= 0.0f) {
+		return;
+	}
 	tglMatrixMode(TGL_TEXTURE);
 	tglLoadIdentity();
 	tglMatrixMode(TGL_MODELVIEW);
@@ -758,6 +763,7 @@ void GfxTinyGL::drawSprite(const Sprite *sprite) {
 		float halfHeight = (sprite->_height / 2) * _scaleH;
 
 		tglBegin(TGL_POLYGON);
+		tglColor4f(1.0f, 1.0f, 1.0f, _alpha);
 		tglTexCoord2f(0.0f, 1.0f);
 		tglVertex3f(-halfWidth, -halfHeight, 0.0f);
 		tglTexCoord2f(0.0f, 0.0f);
@@ -766,6 +772,7 @@ void GfxTinyGL::drawSprite(const Sprite *sprite) {
 		tglVertex3f(+halfWidth, +halfHeight, 0.0f);
 		tglTexCoord2f(1.0f, 1.0f);
 		tglVertex3f(+halfWidth, -halfHeight, 0.0f);
+		tglColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 		tglEnd();
 	} else {
 		// In Grim, the bottom edge of the sprite is at y=0 and
