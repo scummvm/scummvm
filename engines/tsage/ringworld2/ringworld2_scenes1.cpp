@@ -6840,6 +6840,8 @@ void Scene1337::subD02CA() {
 			R2_GLOBALS._sceneObjects->draw();
 			g_globals->_events.delay(g_globals->_sceneHandler->_delayTicks);
 		}
+
+		g_globals->_sceneObjects->recurse(SceneHandler::dispatchObject);
 	}
 }
 
