@@ -257,8 +257,6 @@ bool ThreadResource::chooseSTAMPButton(int idx) {
 	return false;
 }
 
-#define GET_WORD READ_LE_UINT16(dataP); dataP += 2; {}
-
 void ThreadResource::parsePlayCommands() {
 	Common::fill(&_vm->_voy._arr1[0][0], &_vm->_voy._arr1[8][20], 0);
 	Common::fill(&_vm->_voy._arr2[0][0], &_vm->_voy._arr2[8][20], 0);
@@ -274,7 +272,8 @@ void ThreadResource::parsePlayCommands() {
 	CMapResource *pal;
 
 	for (int parseIndex = 0; parseIndex < _parseCount; ++parseIndex) {
-		uint16 id = GET_WORD;
+		uint16 id = READ_LE_UINT16(dataP);
+		dataP += 2;
 
 		switch (id) {
 		case 1:
@@ -283,11 +282,12 @@ void ThreadResource::parsePlayCommands() {
 			break;
 
 		case 2:
-			v2 = GET_WORD;
+			v2 = READ_LE_UINT16(dataP);
+
 			if (v2 == 0 || READ_LE_UINT16(_vm->_controlPtr->_ptr + 4) == 0) {
-				_vm->_eventsManager._videoComputerBut4 = READ_LE_UINT16(dataP);
-				_vm->_voy._field468 = READ_LE_UINT16(dataP + 2);
-				_vm->_voy._field46A = READ_LE_UINT16(dataP + 4);
+				_vm->_eventsManager._videoComputerBut4 = READ_LE_UINT16(dataP + 2);
+				_vm->_voy._field468 = READ_LE_UINT16(dataP + 4);
+				_vm->_voy._field46A = READ_LE_UINT16(dataP + 6);
 
 				if (_vm->_voy._RTVNum < _vm->_voy._field468 ||
 						(_vm->_voy._field468 + _vm->_voy._field46A)  < _vm->_voy._RTVNum) {
@@ -337,15 +337,16 @@ void ThreadResource::parsePlayCommands() {
 				}				
 			} 
 			
-			dataP += 6;
+			dataP += 8;
 			break;
 
 		case 3:
-			v2 = GET_WORD;
+			v2 = READ_LE_UINT16(dataP);
+
 			if (v2 == 0 || READ_LE_UINT16(_vm->_controlPtr->_ptr + 4) == 0) {
-				_vm->_eventsManager._videoComputerBut4 = READ_LE_UINT16(dataP);
-				_vm->_voy._field468 = READ_LE_UINT16(dataP + 2);
-				_vm->_voy._field46A = READ_LE_UINT16(dataP + 4);
+				_vm->_eventsManager._videoComputerBut4 = READ_LE_UINT16(dataP + 2);
+				_vm->_voy._field468 = READ_LE_UINT16(dataP + 4);
+				_vm->_voy._field46A = READ_LE_UINT16(dataP + 6);
 
 				if (_vm->_voy._RTVNum < _vm->_voy._field468 ||
 						(_vm->_voy._field468 + _vm->_voy._field46A)  < _vm->_voy._RTVNum) {
@@ -384,7 +385,7 @@ void ThreadResource::parsePlayCommands() {
 				}
 			}
 
-			dataP += 6;
+			dataP += 8;
 			break;
 
 		case 4:
@@ -393,7 +394,8 @@ void ThreadResource::parsePlayCommands() {
 			dataP += 2;
 
 			if (id == 22) {
-				int resolveIndex = GET_WORD;
+				int resolveIndex = READ_LE_UINT16(dataP);
+				dataP += 2;
 				_vm->_playStamp1 = _vm->_resolvePtr[resolveIndex];
 			}
 
@@ -483,8 +485,9 @@ void ThreadResource::parsePlayCommands() {
 
 		case 6:
 			_vm->_voy._field470 = 6;
-			v2 = GET_WORD;
+			v2 = READ_LE_UINT16(dataP);
 			_vm->_playStamp1 = _vm->_resolvePtr[v2];
+			dataP += 2;
 			break;
 
 		case 7:
@@ -702,8 +705,6 @@ void ThreadResource::parsePlayCommands() {
 		}
 	}
 }
-
-#undef GET_WORD
 
 int ThreadResource::doApt() {
 	warning("TODO: doApt");
