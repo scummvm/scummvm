@@ -4365,6 +4365,7 @@ void Scene1337::postInit(SceneObjectList *OwnerList) {
 
 	// Hide the user interface
 	BF_GLOBALS._interfaceY = SCREEN_HEIGHT;
+	R2_GLOBALS._uiElements._visible = false;
 
 	R2_GLOBALS._player.enableControl();
 	R2_GLOBALS._player._canWalk = false;
