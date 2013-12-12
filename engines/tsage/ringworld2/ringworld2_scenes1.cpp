@@ -4149,6 +4149,7 @@ void Scene1337::Action11::signal() {
 	}
 }
 
+// Pick a card in opponent hand
 void Scene1337::Action12::signal() {
 	Scene1337 *scene = (Scene1337 *)R2_GLOBALS._sceneManager._scene;
 
@@ -4185,7 +4186,8 @@ void Scene1337::Action12::signal() {
 				break;
 			case 1:
 				for (i = 0; i <= 3; i++) {
-					if (scene->_gameBoardSide[3]._handCard[i]._cardId != 0)
+					// The original game was counting in the hand of player 3, which is obviously wrong
+					if (scene->_gameBoardSide[1]._handCard[i]._cardId != 0)
 						++count;
 				}
 				break;
