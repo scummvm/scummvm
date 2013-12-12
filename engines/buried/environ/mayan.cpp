@@ -37,9 +37,14 @@
 #include "buried/environ/scene_base.h"
 #include "buried/environ/scene_common.h"
 
+#include "common/system.h"
 #include "graphics/surface.h"
 
 namespace Buried {
+
+enum {
+	WAR_GOD_HEAD_TIMER_VALUE = 3000
+};
 
 class PlaceCeramicBowl : public SceneBase {
 public:
@@ -921,6 +926,339 @@ int WaterGodBridgeJump::movieCallback(Window *viewWindow, VideoWindow *movie, in
 	return SC_TRUE;
 }
 
+class ArrowGodHead : public SceneBase {
+public:
+	ArrowGodHead(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+			int headID = 0, int clickLeft = -1, int clickTop = -1, int clickRight = -1, int clickBottom = -1,
+			int emptyClosedStill = -1, int emptyOpenStill = -1, int fullClosedStill = -1, int fullOpenStill = -1,
+			int emptyClosedAnim = -1, int emptyOpenAnim = -1, int fullClosedAnim = -1, int fullOpenAnim = -1);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
+	int mouseDown(Window *viewWindow, const Common::Point &pointLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int draggingItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
+	int droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int timerCallback(Window *viewWindow);
+
+private:
+	int _headID;
+	Common::Rect _skullRegion;
+	int _stillFrames[4];
+	int _soundID;
+	int _headAnimations[4];
+};
+
+ArrowGodHead::ArrowGodHead(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+		int headID, int clickLeft, int clickTop, int clickRight, int clickBottom,
+		int emptyClosedStill, int emptyOpenStill, int fullClosedStill, int fullOpenStill,
+		int emptyClosedAnim, int emptyOpenAnim, int fullClosedAnim, int fullOpenAnim) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_soundID = -1;
+	_headID = headID;
+	_skullRegion = Common::Rect(clickLeft, clickTop, clickRight, clickBottom);
+	_stillFrames[0] = emptyClosedStill;
+	_stillFrames[1] = emptyOpenStill;
+	_stillFrames[2] = fullClosedStill;
+	_stillFrames[3] = fullOpenStill;
+	_headAnimations[0] = emptyClosedAnim;
+	_headAnimations[1] = emptyOpenAnim;
+	_headAnimations[2] = fullClosedAnim;
+	_headAnimations[3] = fullOpenAnim;
+	_staticData.navFrameIndex = _stillFrames[((SceneViewWindow *)viewWindow)->getGlobalFlagByte(offsetof(GlobalFlags, myAGHeadAStatus) + _headID)];
+}
+
+int ArrowGodHead::postEnterRoom(Window *viewWindow, const Location &priorLocation) {
+	byte headAStatus = ((SceneViewWindow *)viewWindow)->getGlobalFlags().myAGHeadAStatus;
+	byte headDStatus = ((SceneViewWindow *)viewWindow)->getGlobalFlags().myAGHeadDStatus;
+
+	if (_staticData.location.node == 0) {
+		if (headAStatus == 0)
+			_vm->_sound->adjustSecondaryAmbientSoundVolume(128, false, 0, 0);
+		else if (headDStatus == 0)
+			_vm->_sound->adjustSecondaryAmbientSoundVolume(64, false, 0, 0);
+		else
+			_vm->_sound->adjustSecondaryAmbientSoundVolume(0, false, 0, 0);
+	} else if (_staticData.location.node == 2) {
+		if (headAStatus == 0 || headDStatus == 0)
+			_vm->_sound->adjustSecondaryAmbientSoundVolume(128, false, 0, 0);
+		else
+			_vm->_sound->adjustSecondaryAmbientSoundVolume(0, false, 0, 0);
+	}
+
+	return SC_TRUE;
+}
+
+int ArrowGodHead::mouseDown(Window *viewWindow, const Common::Point &pointLocation) {
+	// For walkthrough mode, don't allow input
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().generalWalkthroughMode == 1 && (_headID == 0 || _headID == 3))
+		return SC_FALSE;
+
+	if (_skullRegion.contains(pointLocation) && ((SceneViewWindow *)viewWindow)->getGlobalFlagByte(offsetof(GlobalFlags, myAGHeadAStatus) + _headID) == 3) {
+		byte skullIndex = ((SceneViewWindow *)viewWindow)->getGlobalFlagByte(offsetof(GlobalFlags, myAGHeadAStatusSkullID) + _headID);
+		((SceneViewWindow *)viewWindow)->setGlobalFlagByte(offsetof(GlobalFlags, myAGHeadAStatusSkullID) + _headID, 0);
+		((SceneViewWindow *)viewWindow)->setGlobalFlagByte(offsetof(GlobalFlags, myAGHeadAStatus) + _headID, 1);
+		_staticData.navFrameIndex = _stillFrames[1];
+		((SceneViewWindow *)viewWindow)->setGlobalFlagByte(offsetof(GlobalFlags, myAGHeadATouched) + _headID, 1);
+
+		// Begin dragging
+		Common::Point ptInventoryWindow = viewWindow->convertPointToWindow(pointLocation, ((GameUIWindow *)viewWindow->getParent())->_inventoryWindow);
+		((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->startDraggingNewItem(skullIndex, ptInventoryWindow);
+		((GameUIWindow *)viewWindow->getParent())->_bioChipRightWindow->sceneChanged();
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int ArrowGodHead::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	// For walkthrough mode, don't allow input
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().generalWalkthroughMode == 1 && (_headID == 0 || _headID == 3))
+		return SC_FALSE;
+
+	// Did we click on the head?
+	if (_skullRegion.contains(pointLocation)) {
+		byte headStatus = ((SceneViewWindow *)viewWindow)->getGlobalFlagByte(offsetof(GlobalFlags, myAGHeadAStatus) + _headID);
+		((SceneViewWindow *)viewWindow)->setGlobalFlagByte(offsetof(GlobalFlags, myAGHeadATouched) + _headID, 1);
+
+		if (headStatus & 1)
+			headStatus--;
+		else
+			headStatus++;
+
+		((SceneViewWindow *)viewWindow)->setGlobalFlagByte(offsetof(GlobalFlags, myAGHeadAStatus) + _headID, headStatus);
+
+		// Play the proper movie
+		int currentSoundID = -1;
+		if (headStatus == 2)
+			currentSoundID = _vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 14), 128, false, true);
+		else
+			currentSoundID = _vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 13), 128, false, true);
+
+		if ((_headID == 1 || _headID == 2) && headStatus == 0) {
+			if (_staticData.location.node == 0)
+				_vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 11), 127);
+			else
+				_vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 11), 96);
+		}
+
+		((SceneViewWindow *)viewWindow)->playSynchronousAnimation(_headAnimations[headStatus]);
+
+		_staticData.navFrameIndex = _stillFrames[headStatus];
+		viewWindow->invalidateWindow(false);
+
+		byte headAStatus = ((SceneViewWindow *)viewWindow)->getGlobalFlags().myAGHeadAStatus;
+		byte headBStatus = ((SceneViewWindow *)viewWindow)->getGlobalFlags().myAGHeadBStatus;
+		byte headCStatus = ((SceneViewWindow *)viewWindow)->getGlobalFlags().myAGHeadCStatus;
+		byte headDStatus = ((SceneViewWindow *)viewWindow)->getGlobalFlags().myAGHeadDStatus;
+
+		if (_staticData.location.node == 0) {
+			if (headAStatus == 0)
+				_vm->_sound->adjustSecondaryAmbientSoundVolume(128, false, 0, 0);
+			else if (headDStatus == 0)
+				_vm->_sound->adjustSecondaryAmbientSoundVolume(64, false, 0, 0);
+			else
+				_vm->_sound->adjustSecondaryAmbientSoundVolume(0, false, 0, 0);
+		} else if (_staticData.location.node == 2) {
+			if (headAStatus == 0 || headDStatus == 0)
+				_vm->_sound->adjustSecondaryAmbientSoundVolume(128, false, 0, 0);
+			else
+				_vm->_sound->adjustSecondaryAmbientSoundVolume(0, false, 0, 0);
+		}
+
+		_vm->_sound->stopSoundEffect(currentSoundID);
+
+		if (_staticData.location.node == 0 && (headBStatus < 3 && headCStatus < 3))
+			_vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 11), 127);
+		else if (_staticData.location.node == 2 && (headBStatus < 3 && headCStatus < 3))
+			_vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 11), 96);
+
+		if (headStatus & 1)
+			((SceneViewWindow *)viewWindow)->setGlobalFlagDWord(offsetof(GlobalFlags, myAGHeadAOpenedTime) + _headID * 4, g_system->getMillis());
+
+		((GameUIWindow *)viewWindow->getParent())->_bioChipRightWindow->sceneChanged();
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int ArrowGodHead::draggingItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) {
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().generalWalkthroughMode == 1 && (_headID == 0 || _headID == 3))
+		return 0;
+
+	if ((itemID == kItemCavernSkull || itemID == kItemEntrySkull || itemID == kItemSpearSkull) && ((SceneViewWindow *)viewWindow)->getGlobalFlagByte(offsetof(GlobalFlags, myAGHeadAStatus) + _headID) < 2 && _skullRegion.contains(pointLocation))
+		return 1;
+
+	return 0;
+}
+
+int ArrowGodHead::droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) {
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().generalWalkthroughMode == 1 && (_headID == 0 || _headID == 3))
+		return SIC_REJECT;
+
+	if (pointLocation.x == -1 && pointLocation.y == -1)
+		return 0;
+
+	if ((itemID == kItemCavernSkull || itemID == kItemEntrySkull || itemID == kItemSpearSkull) && ((SceneViewWindow *)viewWindow)->getGlobalFlagByte(offsetof(GlobalFlags, myAGHeadAStatus) + _headID) == 1 && _skullRegion.contains(pointLocation)) {
+		((SceneViewWindow *)viewWindow)->setGlobalFlagByte(offsetof(GlobalFlags, myAGHeadAStatus) + _headID, 2);
+		((SceneViewWindow *)viewWindow)->setGlobalFlagByte(offsetof(GlobalFlags, myAGHeadATouched) + _headID, 1);
+		((SceneViewWindow *)viewWindow)->setGlobalFlagByte(offsetof(GlobalFlags, myAGHeadAStatusSkullID) + _headID, itemID);
+
+		int currentSoundID = _vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 14), 128, false, true);
+
+		((SceneViewWindow *)viewWindow)->playSynchronousAnimation(_headAnimations[2]);
+
+		_staticData.navFrameIndex = _stillFrames[2];
+		viewWindow->invalidateWindow(false);
+
+		byte headAStatus = ((SceneViewWindow *)viewWindow)->getGlobalFlags().myAGHeadAStatus;
+		byte headDStatus = ((SceneViewWindow *)viewWindow)->getGlobalFlags().myAGHeadDStatus;
+
+		if (_staticData.location.node == 0) {
+			if (headAStatus == 0)
+				_vm->_sound->adjustSecondaryAmbientSoundVolume(128, false, 0, 0);
+			else if (headDStatus == 0)
+				_vm->_sound->adjustSecondaryAmbientSoundVolume(64, false, 0, 0);
+			else
+				_vm->_sound->adjustSecondaryAmbientSoundVolume(0, false, 0, 0);
+		} else if (_staticData.location.node == 2) {
+			if (headAStatus == 0 || headDStatus == 0)
+				_vm->_sound->adjustSecondaryAmbientSoundVolume(128, false, 0, 0);
+			else
+				_vm->_sound->adjustSecondaryAmbientSoundVolume(0, false, 0, 0);
+		}
+
+		_vm->_sound->stopSoundEffect(currentSoundID);
+
+		((GameUIWindow *)viewWindow->getParent())->_bioChipRightWindow->sceneChanged();
+		return SIC_ACCEPT;
+	}
+
+	return SIC_REJECT;
+}
+
+int ArrowGodHead::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().generalWalkthroughMode == 1 && (_headID == 0 || _headID == 3))
+		return 0;
+
+	if (_skullRegion.contains(pointLocation)) {
+		if (((SceneViewWindow *)viewWindow)->getGlobalFlagByte(offsetof(GlobalFlags, myAGHeadAStatus) + _headID) == 3)
+			return kCursorOpenHand;
+
+		return kCursorFinger;
+	}
+
+	return 0;
+}
+
+int ArrowGodHead::timerCallback(Window *viewWindow) {
+	for (int i = 0; i < 4; i++) {
+		uint32 lastStartedTimer = ((SceneViewWindow *)viewWindow)->getGlobalFlagDWord(offsetof(GlobalFlags, myAGHeadAOpenedTime) + i * 4);
+
+		if (lastStartedTimer > 0 && g_system->getMillis() > (lastStartedTimer + WAR_GOD_HEAD_TIMER_VALUE)) {
+			((SceneViewWindow *)viewWindow)->setGlobalFlagDWord(offsetof(GlobalFlags, myAGHeadAOpenedTime) + i * 4, 0);
+
+			if (i == _headID) {
+				Cursor oldCursor = _vm->_gfx->setCursor(kCursorWait);
+
+				byte status = ((SceneViewWindow *)viewWindow)->getGlobalFlagByte(offsetof(GlobalFlags, myAGHeadAStatus) + i);
+
+				if (status & 1) {
+					status--;
+					((SceneViewWindow *)viewWindow)->setGlobalFlagByte(offsetof(GlobalFlags, myAGHeadAStatus) + i, status);
+
+					int currentSoundID = -1;
+					if (status == 2)
+						currentSoundID = _vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 14), 128, false, true);
+					else
+						currentSoundID = _vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 13), 128, false, true);
+
+					((SceneViewWindow *)viewWindow)->playSynchronousAnimation(_headAnimations[status]);
+
+					_staticData.navFrameIndex = _stillFrames[status];
+					viewWindow->invalidateWindow(false);
+
+					_vm->_sound->stopSoundEffect(currentSoundID);
+
+					byte headAStatus = ((SceneViewWindow *)viewWindow)->getGlobalFlags().myAGHeadAStatus;
+					byte headBStatus = ((SceneViewWindow *)viewWindow)->getGlobalFlags().myAGHeadBStatus;
+					byte headCStatus = ((SceneViewWindow *)viewWindow)->getGlobalFlags().myAGHeadCStatus;
+					byte headDStatus = ((SceneViewWindow *)viewWindow)->getGlobalFlags().myAGHeadDStatus;
+
+					if (_staticData.location.node == 0) {
+						if (headAStatus == 0)
+							_vm->_sound->adjustSecondaryAmbientSoundVolume(128, false, 0, 0);
+						else if (headDStatus == 0)
+							_vm->_sound->adjustSecondaryAmbientSoundVolume(64, false, 0, 0);
+						else
+							_vm->_sound->adjustSecondaryAmbientSoundVolume(0, false, 0, 0);
+					} else if (_staticData.location.node == 2) {
+						if (headAStatus == 0 || headDStatus == 0)
+							_vm->_sound->adjustSecondaryAmbientSoundVolume(128, false, 0, 0);
+						else
+							_vm->_sound->adjustSecondaryAmbientSoundVolume(0, false, 0, 0);
+					}
+
+					// Play the door closing sound, if applicable
+					if (i == 1 || i == 2) {
+						if (_staticData.location.node == 0 && (headBStatus == 0 || headCStatus == 0))
+							_vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 11), 127);
+						else if (_staticData.location.node == 2 && (headBStatus == 0 || headCStatus == 0))
+							_vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 11), 96);
+					}
+				}
+
+				((GameUIWindow *)viewWindow->getParent())->_bioChipRightWindow->sceneChanged();
+				_vm->_gfx->setCursor(oldCursor);
+			} else {
+				Cursor oldCursor = _vm->_gfx->setCursor(kCursorWait);
+
+				byte status = ((SceneViewWindow *)viewWindow)->getGlobalFlagByte(offsetof(GlobalFlags, myAGHeadAStatus) + i);
+
+				if (status & 1) {
+					status--;
+					((SceneViewWindow *)viewWindow)->setGlobalFlagByte(offsetof(GlobalFlags, myAGHeadAStatus) + i, status);
+
+					if (status == 2)
+						_vm->_sound->playSynchronousSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 14), 128);
+					else
+						_vm->_sound->playSynchronousSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 13), 128);
+
+					byte headAStatus = ((SceneViewWindow *)viewWindow)->getGlobalFlags().myAGHeadAStatus;
+					byte headDStatus = ((SceneViewWindow *)viewWindow)->getGlobalFlags().myAGHeadDStatus;
+
+					if (_staticData.location.node == 0) {
+						if (headAStatus == 0)
+							_vm->_sound->adjustSecondaryAmbientSoundVolume(128, false, 0, 0);
+						else if (headDStatus == 0)
+							_vm->_sound->adjustSecondaryAmbientSoundVolume(64, false, 0, 0);
+						else
+							_vm->_sound->adjustSecondaryAmbientSoundVolume(0, false, 0, 0);
+					} else if (_staticData.location.node == 2) {
+						if (headAStatus == 0 || headDStatus == 0)
+							_vm->_sound->adjustSecondaryAmbientSoundVolume(128, false, 0, 0);
+						else
+							_vm->_sound->adjustSecondaryAmbientSoundVolume(0, false, 0, 0);
+					}
+				}
+
+				((GameUIWindow *)viewWindow->getParent())->_bioChipRightWindow->sceneChanged();
+
+				if (_headID == 1 || _headID == 2) {
+					if (_staticData.location.node == 0)
+						_vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 11), 127);
+					else if (_staticData.location.node == 2)
+						_vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 11), 96);
+				}
+
+				_vm->_gfx->setCursor(oldCursor);
+			}
+		}
+	}
+
+	return SC_TRUE;
+}
+
 class MainCavernGlassCapture : public SceneBase {
 public:
 	MainCavernGlassCapture(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
@@ -1382,6 +1720,14 @@ SceneBase *SceneViewWindow::constructMayanSceneObject(Window *viewWindow, const 
 		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 201, 4, 235, 22, kItemCopperMedallion, 45, offsetof(GlobalFlags, myAGRetrievedCopperMedal));
 	case 54:
 		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 206, 110, 280, 142, kItemObsidianBlock, 72, offsetof(GlobalFlags, myAGRetrievedObsidianBlock));
+	case 55:
+		return new ArrowGodHead(_vm, viewWindow, sceneStaticData, priorLocation, 0,  182, 87, 242, 189, 4, 75, 83, 79, 0, 2, 1, 3);
+	case 56:
+		return new ArrowGodHead(_vm, viewWindow, sceneStaticData, priorLocation, 1,  194, 89, 256, 189, 10, 76, 84, 80, 4, 6, 5, 7);
+	case 57:
+		return new ArrowGodHead(_vm, viewWindow, sceneStaticData, priorLocation, 2,  178, 93, 246, 189, 28, 77, 85, 81, 8, 10, 9, 11);
+	case 58:
+		return new ArrowGodHead(_vm, viewWindow, sceneStaticData, priorLocation, 3,  188, 92, 252, 189, 34, 78, 86, 82, 12, 14, 13, 15);
 	case 60:
 		return new PlaySoundExitingFromScene(_vm, viewWindow, sceneStaticData, priorLocation, 11);
 	case 65:
