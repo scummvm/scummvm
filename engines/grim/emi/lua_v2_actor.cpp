@@ -672,6 +672,21 @@ void Lua_V2::GetActorChores() {
 	lua_pushobject(result);
 }
 
+bool Lua_V2::findCostume(lua_Object costumeObj, Actor *actor, Costume **costume) {
+	*costume = NULL;
+	if (lua_isnil(costumeObj))
+		return true;
+	if (lua_isstring(costumeObj)) {
+		const char *costumeName = lua_getstring(costumeObj);
+		*costume = actor->findCostume(costumeName);
+		if (*costume == NULL) {
+			actor->pushCostume(costumeName);
+			*costume = actor->findCostume(costumeName);
+		}
+	}
+	return (*costume != NULL);
+}
+
 void Lua_V2::PlayActorChore() {
 	lua_Object actorObj = lua_getparam(1);
 	lua_Object choreObj = lua_getparam(2);
@@ -699,13 +714,10 @@ void Lua_V2::PlayActorChore() {
 	}
 
 	const char *choreName = lua_getstring(choreObj);
-	const char *costumeName = lua_getstring(costumeObj);
-	Costume *costume = actor->findCostume(costumeName);
 
-	if (costume == NULL) {
-		actor->pushCostume(costumeName);
-		costume = actor->findCostume(costumeName);
-	}
+	Costume *costume;
+	if (!findCostume(costumeObj, actor, &costume))
+		return;
 
 	EMIChore *chore = (EMIChore *)costume->getChore(choreName);
 	if (0 == strncmp("wear_", choreName, 5)) {

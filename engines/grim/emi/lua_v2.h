@@ -33,6 +33,8 @@ public:
 	void registerOpcodes();
 
 protected:
+	virtual bool findCostume(lua_Object costumeObj, Actor *actor, Costume **costume);
+
 	DECLARE_LUA_OPCODE(UndimAll);
 	DECLARE_LUA_OPCODE(SetActorLocalAlpha);
 	DECLARE_LUA_OPCODE(UndimRegion);

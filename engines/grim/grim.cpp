@@ -1109,6 +1109,11 @@ void GrimEngine::setSet(Set *scene) {
 	if (scene == _currSet)
 		return;
 
+	if (getGameType() == GType_MONKEY4) {
+		foreach (PoolSound *s, PoolSound::getPool()) {
+			s->stop();
+		}
+	}
 	// Stop the actors. This fixes bug #289 (https://github.com/residualvm/residualvm/issues/289)
 	// and it makes sense too, since when changing set the directions
 	// and coords change too.

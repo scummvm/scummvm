@@ -26,6 +26,7 @@
 #include "audio/mixer.h"
 #include "audio/audiostream.h"
 #include "engines/grim/emi/sound/track.h"
+#include "common/textconsole.h"
 
 namespace Grim {
 
@@ -70,6 +71,10 @@ void SoundTrack::setBalance(int balance) {
 
 bool SoundTrack::play() {
 	if (_stream) {
+		if (isPlaying()) {
+			warning("sound: %s already playing, don't start again!", _soundName.c_str());
+			return true;
+		}
 		// If _disposeAfterPlaying is NO, the destructor will take care of the stream.
 		g_system->getMixer()->playStream(_soundType, _handle, _stream, -1, _volume, _balance, _disposeAfterPlaying);
 		return true;
