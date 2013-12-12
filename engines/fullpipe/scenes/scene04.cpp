@@ -459,8 +459,61 @@ void sceneHandler04_dropBottle() {
 	g_vars->scene04_hand->_priority = 15;
 }
 
-void sceneHandler04_gotoLadder(int par) {
-	warning("STUB: sceneHandler04_gotoLadder()");
+void sceneHandler04_gotoLadder(ExCommand *ex) {
+	MGM mgm;
+	MGMInfo mgminfo;
+
+	mgm.addItem(ANI_MAN);
+
+	mgminfo.ani = g_fullpipe->_aniMan;
+	mgminfo.staticsId2 = ST_MAN_UP;
+	mgminfo.x1 = 1095;
+	mgminfo.y1 = 434;
+	mgminfo.field_1C = 12;
+	mgminfo.field_10 = 1;
+	mgminfo.flags = 78;
+	mgminfo.movementId = MV_MAN_PLANKTOLADDER;
+
+	MessageQueue *mq = mgm.genMovement(&mgminfo);
+
+	if (mq) {
+		mq->deleteExCommandByIndex(mq->getCount() - 1, 1);
+
+		ExCommand *ex1 = new ExCommand(ANI_MAN, 1, MV_MAN_TOLADDER, 0, 0, 0, 1, 0, 0, 0);
+		ex1->_excFlags = 2;
+		ex1->_field_24 = 1;
+		ex1->_keyCode = -1;
+		mq->addExCommandToEnd(ex1);
+
+		ExCommand *ex2 = new ExCommand(ANI_MAN, 1, MV_MAN_STOPLADDER, 0, 0, 0, 1, 0, 0, 0);
+		ex2->_excFlags = 2;
+		ex2->_field_24 = 1;
+		ex2->_keyCode = -1;
+		mq->addExCommandToEnd(ex2);
+
+		ExCommand *ex3 = new ExCommand(g_fullpipe->_aniMan->_id, 34, 256, 0, 0, 0, 1, 0, 0, 0);
+		ex3->_field_14 = 256;
+		ex3->_messageNum = 0;
+		ex3->_excFlags |= 3;
+		mq->addExCommandToEnd(ex3);
+
+		if (ex) {
+			ExCommand *ex4 = new ExCommand(ex);
+
+			mq->addExCommandToEnd(ex4);
+		}
+
+		mq->setFlags(mq->getFlags() | 1);
+
+		if (mq->chain(g_fullpipe->_aniMan)) {
+			g_fullpipe->_aniMan->_priority = 12;
+			g_fullpipe->_aniMan->_flags |= 1;
+		} else {
+			delete mq;
+		}
+	}
+
+	g_vars->scene04_var04 = 0;
 }
 
 void sceneHandler04_lowerPlank() {
