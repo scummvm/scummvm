@@ -137,7 +137,7 @@ SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc, SciGameId gam
 	SearchMan.addSubDirectoryMatching(gameDataDir, "duk");	// Duck movie files in Phantasmagoria 2
 	SearchMan.addSubDirectoryMatching(gameDataDir, "Robot Folder"); // Mac robot files
 	SearchMan.addSubDirectoryMatching(gameDataDir, "Sound Folder"); // Mac audio files
-	SearchMan.addSubDirectoryMatching(gameDataDir, "Voices Folder"); // Mac audio36 files
+	SearchMan.addSubDirectoryMatching(gameDataDir, "Voices Folder", 0, 2, true); // Mac audio36 files (recursive for Torin)
 	SearchMan.addSubDirectoryMatching(gameDataDir, "Voices"); // Mac audio36 files
 	SearchMan.addSubDirectoryMatching(gameDataDir, "VMD Folder"); // Mac VMD files
 

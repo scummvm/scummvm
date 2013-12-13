@@ -170,7 +170,7 @@ MessageQueue *MctlCompound::doWalkTo(StaticANIObject *subj, int xpos, int ypos, 
 		for (uint i = 0; i < closestP->_messageQueueObj->getCount(); i++) {
 			ex = new ExCommand(closestP->_messageQueueObj->getExCommandByIndex(i));
 			ex->_excFlags |= 2;
-			mq->_exCommands.push_back(ex);
+			mq->addExCommandToEnd(ex);
 		}
 
 		ex = new ExCommand(subj->_id, 51, 0, xpos, ypos, 0, 1, 0, 0, 0);
@@ -179,7 +179,7 @@ MessageQueue *MctlCompound::doWalkTo(StaticANIObject *subj, int xpos, int ypos, 
 		ex->_keyCode = subj->_okeyCode;
 		ex->_excFlags |= 2;
 
-		mq->_exCommands.push_back(ex);
+		mq->addExCommandToEnd(ex);
 	}
 
 	return mq;
@@ -817,7 +817,7 @@ MessageQueue *MovGraph2::buildMovInfo1MessageQueue(MovInfo1 *movInfo) {
 				ex->_keyCode = _items2[movInfo->field_0]->_obj->_okeyCode;
 				ex->_field_24 = 1;
 				ex->_field_14 = -1;
-				mq->_exCommands.push_back(ex);
+				mq->addExCommandToEnd(ex);
 
 				curX += mg2i->_mx;
 				curY += mg2i->_my;
@@ -1046,20 +1046,20 @@ MessageQueue *MovGraph2::doWalkTo(StaticANIObject *obj, int xpos, int ypos, int 
 			ex->_keyCode = picAniInfo.field_8;
 			ex->_excFlags |= 2;
 
-			mq->_exCommands.push_back(ex);
+			mq->addExCommandToEnd(ex);
 		} else {
 			ExCommand *ex = new ExCommand(picAniInfo.objectId, 22, obj->_statics->_staticsId, 0, 0, 0, 1, 0, 0, 0);
 
 			ex->_keyCode = picAniInfo.field_8;
 			ex->_excFlags |= 3;
-			mq->_exCommands.push_back(ex);
+			mq->addExCommandToEnd(ex);
 
 			ex = new ExCommand(picAniInfo.objectId, 5, -1, obj->_ox, obj->_oy, 0, 1, 0, 0, 0);
 
 			ex->_field_14 = -1;
 			ex->_keyCode = picAniInfo.field_8;
 			ex->_excFlags |= 3;
-			mq->_exCommands.push_back(ex);
+			mq->addExCommandToEnd(ex);
 		}
 
 		obj->setPicAniInfo(&picAniInfo);
@@ -1160,6 +1160,7 @@ MessageQueue *MovGraph2::doWalkTo(StaticANIObject *obj, int xpos, int ypos, int 
 	if (_items2[idx]->_subItems[idxsub]._staticsId1 != obj->_statics->_staticsId)
 		movInfo1.flags |= 2;
 
+	// FIXME: This somehow corrupts the heap (reported by MSVC)
 	buildMovInfo1SubItems(&movInfo1, &tempLinkList, &linkInfoSource, &linkInfoDest);
 
 	MessageQueue *mq = buildMovInfo1MessageQueue(&movInfo1);
@@ -1517,6 +1518,36 @@ MessageQueue *MGM::genMovement(MGMInfo *mgminfo) {
 	warning("STUB: MGM::genMovement()");
 
 	return 0;
+}
+
+void MGM::updateAnimStatics(StaticANIObject *ani, int staticsId) {
+	if (getItemIndexById(ani->_id) == -1)
+		return;
+
+	if (ani->_movement) {
+		ani->queueMessageQueue(0);
+		ani->_movement->gotoLastFrame();
+		ani->_statics = ani->_movement->_staticsObj2;
+		ani->_movement = 0;
+
+		ani->setOXY(ani->_movement->_ox, ani->_movement->_oy);
+	}
+
+	if (ani->_statics) {
+		Common::Point point;
+
+		getPoint(&point, ani->_id, ani->_statics->_staticsId, staticsId);
+
+		ani->setOXY(ani->_ox + point.x, ani->_oy + point.y);
+
+		ani->_statics = ani->getStaticsById(staticsId);
+	}
+}
+
+Common::Point *MGM::getPoint(Common::Point *point, int aniId, int staticsId1, int staticsId2) {
+	warning("STUB: MGM::getPoint()");
+
+	return point;
 }
 
 MovGraphLink::MovGraphLink() {

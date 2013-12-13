@@ -56,33 +56,33 @@ public:
 	struct InventoryEntry : Common::Serializable {
 		CursorStyle cursor;
 		SceneIndex scene;
-		byte field_2;
+		byte usable;
 		bool isSelectable;
-		bool isPresent;
-		bool manualSelect;
+		bool inPocket;
+		bool floating;
 		ObjectLocation location;
 
 		InventoryEntry() {
 			cursor = kCursorNormal;
 			scene = kSceneNone;
-			field_2 = 0;
+			usable = 0;
 			isSelectable = false;
-			isPresent = false;
-			manualSelect = true;
+			inPocket = false;
+			floating = true;
 			location = kObjectLocationNone;
 		}
 
 		Common::String toString() {
-			return Common::String::format("{ %d - %d - %d - %d - %d - %d - %d }", cursor, scene, field_2, isSelectable, isPresent, manualSelect, location);
+			return Common::String::format("{ %d - %d - %d - %d - %d - %d - %d }", cursor, scene, usable, isSelectable, inPocket, floating, location);
 		}
 
 		void saveLoadWithSerializer(Common::Serializer &s) {
 			s.syncAsByte(cursor);
 			s.syncAsByte(scene);
-			s.syncAsByte(field_2);
+			s.syncAsByte(usable);
 			s.syncAsByte(isSelectable);
-			s.syncAsByte(isPresent);
-			s.syncAsByte(manualSelect);
+			s.syncAsByte(inPocket);
+			s.syncAsByte(floating);
 			s.syncAsByte(location);
 		}
 	};

@@ -99,7 +99,7 @@ public:
 
 	bool scene04_coinPut;
 	bool scene04_soundPlaying;
-	bool scene04_needJumping;
+	bool scene04_dudeOnLadder;
 
 	int scene04_dynamicPhaseIndex;
 	int scene04_sceneClickX;
@@ -115,7 +115,7 @@ public:
 
 	int scene04_var02;
 	int scene04_var04;
-	int scene04_var06;
+	int scene04_bottleWeight;
 	int scene04_var07;
 	int scene04_var08;
 	int scene04_var09;
@@ -129,6 +129,7 @@ public:
 	int scene04_var19;
 	int scene04_var20;
 	StaticANIObject *scene04_var24;
+	int scene04_var25;
 
 	PictureObject *selector;
 };

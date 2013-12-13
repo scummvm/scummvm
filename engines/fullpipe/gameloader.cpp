@@ -209,7 +209,7 @@ bool GameLoader::gotoScene(int sceneId, int entranceId) {
 			ex->_messageNum = 0;
 			ex->_excFlags |= 3;
 
-			mq->_exCommands.push_back(ex);
+			mq->addExCommandToEnd(ex);
 		}
 
 		mq->setFlags(mq->getFlags() | 1);

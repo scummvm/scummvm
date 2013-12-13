@@ -309,7 +309,7 @@ void MessageQueue::update() {
 	if (_counter > 0)
 		_counter--;
 
-	if (_exCommands.size()) {
+	if (getCount()) {
 		sendNextCommand();
 	} else if (_counter == 0) {
 		_isFinished = 1;
@@ -326,8 +326,12 @@ void MessageQueue::addExCommand(ExCommand *ex) {
 	_exCommands.push_front(ex);
 }
 
+void MessageQueue::addExCommandToEnd(ExCommand *ex) {
+	_exCommands.push_back(ex);
+}
+
 ExCommand *MessageQueue::getExCommandByIndex(uint idx) {
-	if (idx > _exCommands.size())
+	if (idx > getCount())
 		return 0;
 
 	Common::List<ExCommand *>::iterator it = _exCommands.begin();
@@ -341,7 +345,7 @@ ExCommand *MessageQueue::getExCommandByIndex(uint idx) {
 }
 
 void MessageQueue::deleteExCommandByIndex(uint idx, bool doFree) {
-	if (idx > _exCommands.size())
+	if (idx > getCount())
 		return;
 
 	Common::List<ExCommand *>::iterator it = _exCommands.begin();
@@ -351,10 +355,10 @@ void MessageQueue::deleteExCommandByIndex(uint idx, bool doFree) {
 		idx--;
 	}
 
-	_exCommands.erase(it);
-
 	if (doFree)
 		delete *it;
+
+	_exCommands.erase(it);
 }
 
 void MessageQueue::transferExCommands(MessageQueue *mq) {
@@ -365,7 +369,7 @@ void MessageQueue::transferExCommands(MessageQueue *mq) {
 }
 
 void MessageQueue::sendNextCommand() {
-	if (_exCommands.size()) {
+	if (getCount()) {
 		if (!(_flags & 4) && (_flags & 1)) {
 			messageQueueCallback1(16);
 		}
@@ -492,7 +496,8 @@ int MessageQueue::calcDuration(StaticANIObject *obj) {
 	ExCommand *ex;
 	Movement *mov;
 
-	for (uint i = 0; (ex = getExCommandByIndex(i)); i++)
+	for (uint i = 0; i < getCount(); i++) {
+		ex = getExCommandByIndex(i);
 		if (ex->_parentId == obj->_id) {
 			if (ex->_messageKind == 1 || ex->_messageKind == 20) {
 				if ((mov = obj->getMovementById(ex->_messageNum)) != 0) {
@@ -503,12 +508,13 @@ int MessageQueue::calcDuration(StaticANIObject *obj) {
 				}
 			}
 		}
+	}
 
 	return res;
 }
 
 void MessageQueue::changeParam28ForObjectId(int objId, int oldParam28, int newParam28) {
-	for (uint i = 0; i < _exCommands.size(); i++) {
+	for (uint i = 0; i < getCount(); i++) {
 		ExCommand *ex = getExCommandByIndex(i);
 		int k = ex->_messageKind;
 
@@ -557,16 +563,32 @@ void GlobalMessageQueueList::disableQueueById(int id) {
 }
 
 int GlobalMessageQueueList::compact() {
+	int *useList = new int[size() + 2];
+
+	for (uint i = 0; i < size() + 2; i++)
+		useList[i] = 0;
+
 	for (uint i = 0; i < size();) {
 		if (((MessageQueue *)_storage[i])->_isFinished) {
 			disableQueueById(_storage[i]->_id);
 			remove_at(i);
 		} else {
+			if (_storage[i]->_id < size() + 2)
+				useList[_storage[i]->_id] = 1;
 			i++;
 		}
 	}
 
-	return size() + 1;
+	uint i;
+
+	for (i = 1; i < size() + 2; i++) {
+		if (!useList[i])
+			break;
+	}
+
+	delete [] useList;
+
+	return i;
 }
 
 void GlobalMessageQueueList::addMessageQueue(MessageQueue *msg) {
@@ -779,13 +801,26 @@ bool chainQueue(int queueId, int flags) {
 
 	nmq->_flags |= flags;
 
-	if (!mq->chain(0)) {
-		delete mq;
+	if (!nmq->chain(0)) {
+		delete nmq;
 
 		return false;
 	}
 
 	return true;
+}
+
+void postExCommand(int parentId, int keyCode, int x, int y, int f20, int f14) {
+	ExCommand *ex = new ExCommand(parentId, 17, 64, 0, 0, 0, 1, 0, 0, 0);
+
+	ex->_keyCode = keyCode;
+	ex->_excFlags |= 3;
+	ex->_x = x;
+	ex->_y = y;
+	ex->_field_20 = f20;
+	ex->_field_14 = f14;
+
+	ex->postMessage();
 }
 
 } // End of namespace Fullpipe

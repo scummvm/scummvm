@@ -61,6 +61,7 @@ class GameObject;
 class GlobalMessageQueueList;
 struct MessageHandler;
 struct MovTable;
+class MGM;
 class NGIArchive;
 class Scene;
 class SoundList;
@@ -173,6 +174,9 @@ public:
 	MovTable *_movTable;
 
 	Floaters *_floaters;
+	MGM *_mgm;
+
+	Common::Array<Common::Point *> _arcadeKeys;
 
 	void initMap();
 	void updateMapPiece(int mapId, int update);
@@ -239,7 +243,9 @@ public:
 	void openMainMenu();
 
 	void initArcadeKeys(const char *varname);
+	void processArcade(ExCommand *ex);
 	void winArcade();
+
 	void getAllInventory();
 
 	int lift_getButtonIdP(int objid);

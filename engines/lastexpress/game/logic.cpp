@@ -468,7 +468,7 @@ void Logic::switchChapter() const {
 
 	case kChapter3:
 		getInventory()->get(kItemFirebird)->location = kObjectLocation4;
-		getInventory()->get(kItemFirebird)->isPresent = false;
+		getInventory()->get(kItemFirebird)->inPocket = false;
 		getInventory()->get(kItem11)->location = kObjectLocation1;
 		getInventory()->addItem(kItemWhistle);
 		getInventory()->addItem(kItemKey);

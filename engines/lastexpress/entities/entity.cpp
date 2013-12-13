@@ -943,10 +943,10 @@ void Entity::timeCheckSavepoint(TimeValue timeValue, uint &parameter, EntityInde
 	}
 }
 
-void Entity::timeCheckObject(TimeValue timeValue, uint &parameter, ObjectIndex object, ObjectLocation location) const {
+void Entity::timeCheckObject(TimeValue timeValue, uint &parameter, ObjectIndex object, ObjectModel model) const {
 	if (getState()->time > timeValue && !parameter) {
 		parameter = 1;
-		getObjects()->updateLocation2(object, location);
+		getObjects()->updateModel(object, model);
 	}
 }
 

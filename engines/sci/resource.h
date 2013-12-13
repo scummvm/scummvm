@@ -112,6 +112,8 @@ enum ResourceType {
 	kResourceTypeMacIconBarPictS, // IBIS resources (icon bar, selected)
 	kResourceTypeMacPict,        // PICT resources (inventory)
 
+	kResourceTypeRave,	// KQ6 hires RAVE (special sync) resources
+
 	kResourceTypeInvalid
 };
 
@@ -143,6 +145,19 @@ class ResourceId {
 	uint16 _number;
 	uint32 _tuple; // Only used for audio36 and sync36
 
+	static Common::String intToBase36(uint32 number, int minChar) {
+		// Convert from an integer to a base36 string
+		Common::String string;
+
+		while (minChar--) {
+			int character = number % 36;
+			string = ((character < 10) ? (character + '0') : (character + 'A' - 10)) + string;
+			number /= 36;
+		}
+
+		return string;
+	}
+
 public:
 	ResourceId() : _type(kResourceTypeInvalid), _number(0), _tuple(0) { }
 
@@ -167,6 +182,22 @@ public:
 		}
 
 		return retStr;
+	}
+
+	// Convert from a resource ID to a base36 patch name
+	Common::String toPatchNameBase36() {
+		Common::String output;
+
+		output += (getType() == kResourceTypeAudio36) ? '@' : '#'; // Identifier
+		output += intToBase36(getNumber(), 3);                     // Map
+		output += intToBase36(getTuple() >> 24, 2);                // Noun
+		output += intToBase36((getTuple() >> 16) & 0xff, 2);       // Verb
+		output += '.';                                                   // Separator
+		output += intToBase36((getTuple() >> 8) & 0xff, 2);        // Cond
+		output += intToBase36(getTuple() & 0xff, 1);               // Seq
+
+		assert(output.size() == 12); // We should always get 12 characters in the end
+		return output;
 	}
 
 	inline ResourceType getType() const { return _type; }

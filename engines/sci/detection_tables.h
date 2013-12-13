@@ -4005,6 +4005,18 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"ressci.000", 0, "118f9bec04bfe17c4f87bbb5ddb43c18", 56126981},
 		AD_LISTEND},
 		Common::FR_FRA, Common::kPlatformWindows, ADGF_UNSTABLE, GUIO4(GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
+	// Torin's Passage - English Macintosh
+	{"torin", "", {
+		{"Data1", 0, "63887e33cc282c92dc1f916f54aea8eb", 700786},
+		{"Data2", 0, "da2f13be2819a7333fee372d38b8d1a2", 122485},
+		{"Data3", 0, "e9fda4f1714ddb443545ba8a2d58ef18", 7299126},
+		{"Data4", 0, "59b432ec35b24a216432a556e25087ef", 7209309},
+		{"Data5", 0, "189e809f24aee83c707dea03a543c7c4", 6615563},
+		{"Data6", 0, "b639487c83d1dae0e001e700f3631566", 7594881},
+		{"Data7", 0, "2afd9b5434102b89610916b904c3f73a", 7627374},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK | ADGF_UNSTABLE, GUIO4(GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI) },
 #endif // ENABLE_SCI32
 
 	// SCI Fanmade Games

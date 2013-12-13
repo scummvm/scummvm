@@ -159,6 +159,8 @@ public:
 	int getItemIndexById(int objId);
 
 	MessageQueue *genMovement(MGMInfo *mgminfo);
+	void updateAnimStatics(StaticANIObject *ani, int staticsId);
+	Common::Point *getPoint(Common::Point *point, int aniId, int staticsId1, int staticsId2);
 };
 
 struct MctlLadderMovementVars {

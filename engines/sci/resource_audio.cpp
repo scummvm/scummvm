@@ -101,32 +101,34 @@ bool Resource::loadFromAudioVolumeSCI11(Common::SeekableReadStream *file) {
 	}
 	file->seek(-4, SEEK_CUR);
 
-	ResourceType type = _resMan->convertResType(file->readByte());
-	if (((getType() == kResourceTypeAudio || getType() == kResourceTypeAudio36) && (type != kResourceTypeAudio))
-		|| ((getType() == kResourceTypeSync || getType() == kResourceTypeSync36) && (type != kResourceTypeSync))) {
-		warning("Resource type mismatch loading %s", _id.toString().c_str());
-		unalloc();
-		return false;
-	}
-
-	_headerSize = file->readByte();
-
-	if (type == kResourceTypeAudio) {
-		if (_headerSize != 7 && _headerSize != 11 && _headerSize != 12) {
-			warning("Unsupported audio header");
+	// Rave-resources (King's Quest 6) don't have any header at all
+	if (getType() != kResourceTypeRave) {
+		ResourceType type = _resMan->convertResType(file->readByte());
+		if (((getType() == kResourceTypeAudio || getType() == kResourceTypeAudio36) && (type != kResourceTypeAudio))
+			|| ((getType() == kResourceTypeSync || getType() == kResourceTypeSync36) && (type != kResourceTypeSync))) {
+			warning("Resource type mismatch loading %s", _id.toString().c_str());
 			unalloc();
 			return false;
 		}
+	
+		_headerSize = file->readByte();
 
-		if (_headerSize != 7) { // Size is defined already from the map
-			// Load sample size
-			file->seek(7, SEEK_CUR);
-			size = file->readUint32LE();
-			// Adjust offset to point at the header data again
-			file->seek(-11, SEEK_CUR);
+		if (type == kResourceTypeAudio) {
+			if (_headerSize != 7 && _headerSize != 11 && _headerSize != 12) {
+				warning("Unsupported audio header");
+				unalloc();
+				return false;
+			}
+
+			if (_headerSize != 7) { // Size is defined already from the map
+				// Load sample size
+				file->seek(7, SEEK_CUR);
+				size = file->readUint32LE();
+				// Adjust offset to point at the header data again
+				file->seek(-11, SEEK_CUR);
+			}
 		}
 	}
-
 	return loadPatch(file);
 }
 
@@ -395,15 +397,22 @@ int ResourceManager::readAudioMapSCI11(ResourceSource *map) {
 				syncSize = READ_LE_UINT16(ptr);
 				ptr += 2;
 
+				// FIXME: The sync36 resource seems to be two bytes too big in KQ6CD
+				// (bytes taken from the RAVE resource right after it)
 				if (syncSize > 0)
 					addResource(ResourceId(kResourceTypeSync36, map->_volumeNumber, n & 0xffffff3f), src, offset, syncSize);
 			}
 
 			if (n & 0x40) {
 				// This seems to define the size of raw lipsync data (at least
-				// in kq6), may also just be general appended data.
-				syncSize += READ_LE_UINT16(ptr);
+				// in KQ6 CD Windows).
+				int kq6HiresSyncSize = READ_LE_UINT16(ptr);
 				ptr += 2;
+
+				if (kq6HiresSyncSize > 0) {
+					addResource(ResourceId(kResourceTypeRave, map->_volumeNumber, n & 0xffffff3f), src, offset + syncSize, kq6HiresSyncSize);
+					syncSize += kq6HiresSyncSize;
+				}
 			}
 
 			addResource(ResourceId(kResourceTypeAudio36, map->_volumeNumber, n & 0xffffff3f), src, offset + syncSize);
@@ -856,6 +865,7 @@ void AudioVolumeResourceSource::loadResource(ResourceManager *resMan, Resource *
 				switch (res->getType()) {
 				case kResourceTypeSync:
 				case kResourceTypeSync36:
+				case kResourceTypeRave:
 					// we should already have a (valid) size
 					break;
 				default:

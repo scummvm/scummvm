@@ -72,7 +72,7 @@ Vars::Vars() {
 	scene04_coinPut = false;
 	scene04_soundPlaying = false;
 	scene04_dynamicPhaseIndex = 0;
-	scene04_needJumping = false;
+	scene04_dudeOnLadder = false;
 
 	scene04_sceneClickX = 0;
 	scene04_sceneClickY = 0;
@@ -83,7 +83,7 @@ Vars::Vars() {
 	scene04_var02 = 0;
 	scene04_var04 = 0;
 	scene04_walkingKozyawka = 0;
-	scene04_var06 = 0;
+	scene04_bottleWeight = 0;
 	scene04_var07 = 0;
 	scene04_var08 = 0;
 	scene04_var09 = 0;
@@ -99,6 +99,7 @@ Vars::Vars() {
 	scene04_var19 = 0;
 	scene04_var20 = 0;
 	scene04_var24 = 0;
+	scene04_var25 = 0;
 	scene04_bottleY = 0;
 	scene04_ladderOffset = 0;
 
@@ -707,7 +708,29 @@ int defaultUpdateCursor() {
 }
 
 void FullpipeEngine::initArcadeKeys(const char *varname) {
-	warning("STUB: FullpipeEngine::initArcadeKeys(\"%s\")", varname);
+	GameVar *var = getGameLoaderGameVar()->getSubVarByName(varname)->getSubVarByName("KEYPOS");
+
+	if (!var)
+		return;
+
+	int cnt = var->getSubVarsCount();
+
+	for (int i = 0; i < cnt; i++) {
+		Common::Point *point = new Common::Point;
+
+		GameVar *sub = var->getSubVarByIndex(i);
+
+		point->x = sub->getSubVarAsInt("X");
+		point->y = sub->getSubVarAsInt("Y");
+
+		_arcadeKeys.push_back(point);
+	}
 }
+
+void FullpipeEngine::processArcade(ExCommand *ex) {
+	warning("STUB: FullpipeEngine::processArcade()");
+}
+
+
 
 } // End of namespace Fullpipe

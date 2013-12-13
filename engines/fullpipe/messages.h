@@ -100,12 +100,14 @@ class MessageQueue : public CObject {
 	char *_queueName;
 	int16 _dataId;
 	CObject *_field_14;
-	Common::List<ExCommand *> _exCommands;
 	int _counter;
 	int _field_38;
 	int _isFinished;
 	int _parId;
 	int _flag1;
+
+  private:
+	Common::List<ExCommand *> _exCommands;
 
  public:
 	MessageQueue();
@@ -121,6 +123,7 @@ class MessageQueue : public CObject {
 	uint getCount() { return _exCommands.size(); }
 
 	void addExCommand(ExCommand *ex);
+	void addExCommandToEnd(ExCommand *ex);
 	ExCommand *getExCommandByIndex(uint idx);
 	void deleteExCommandByIndex(uint idx, bool doFree);
 
@@ -175,6 +178,7 @@ void updateGlobalMessageQueue(int id, int objid);
 void clearGlobalMessageQueueList1();
 
 bool chainQueue(int queueId, int flags);
+void postExCommand(int parentId, int keyCode, int x, int y, int f20, int f16);
 
 } // End of namespace Fullpipe
 

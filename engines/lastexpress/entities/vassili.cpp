@@ -112,7 +112,7 @@ IMPLEMENT_FUNCTION(5, Vassili, chapter1Handler)
 					break;
 			}
 
-			if (!params->param2 && getObjects()->get(kObjectCompartmentA).location == kObjectLocation1) {
+			if (!params->param2 && getObjects()->get(kObjectCompartmentA).status == kObjectLocation1) {
 				params->param2 = 1;
 				getEntities()->drawSequenceLeft(kEntityVassili, "303A");
 				getObjects()->update(kObjectCompartmentA, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
@@ -289,7 +289,7 @@ IMPLEMENT_FUNCTION(9, Vassili, function9)
 
 	case kActionDefault:
 	case kActionDrawScene:
-		if ((getObjects()->get(kObjectCompartmentA).location == kObjectLocation2 && getEntities()->isPlayerPosition(kCarRedSleeping, 17))
+		if ((getObjects()->get(kObjectCompartmentA).status == kObjectLocation2 && getEntities()->isPlayerPosition(kCarRedSleeping, 17))
 		|| getEntities()->isPlayerPosition(kCarRedSleeping, 18)
 		|| getEntities()->isPlayerPosition(kCarRedSleeping, 37)
 		|| getEntities()->isPlayerPosition(kCarRedSleeping, 38)
@@ -388,7 +388,7 @@ IMPLEMENT_FUNCTION(12, Vassili, chapter2)
 		getData()->inventoryItem = kItemNone;
 
 		getObjects()->update(kObjectCompartmentA, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
-		getObjects()->updateLocation2(kObjectCompartmentA, kObjectLocation1);
+		getObjects()->updateModel(kObjectCompartmentA, kObjectModel1);
 		break;
 	}
 IMPLEMENT_FUNCTION_END
@@ -532,7 +532,7 @@ IMPLEMENT_FUNCTION(16, Vassili, chapter4)
 		getData()->inventoryItem = kItemNone;
 
 		getObjects()->update(kObjectCompartmentA, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
-		getObjects()->updateLocation2(kObjectCompartmentA, kObjectLocation1);
+		getObjects()->updateModel(kObjectCompartmentA, kObjectModel1);
 		break;
 	}
 IMPLEMENT_FUNCTION_END
