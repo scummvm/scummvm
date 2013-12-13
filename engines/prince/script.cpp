@@ -26,18 +26,91 @@
 #include "prince/variatxt.h"
 #include "prince/font.h"
 #include "prince/hero.h"
+#include "prince/resource.h"
 
 #include "common/debug.h"
 #include "common/debug-channels.h"
 #include "common/stream.h"
 #include "common/archive.h"
-
-#include "audio/decoders/wave.h"
-#include "audio/audiostream.h"
+#include "common/memstream.h"
 
 namespace Prince {
 
 static const uint16 NUM_OPCODES = 144;
+
+Room::Room() {}
+
+void Room::loadMobs(Common::SeekableReadStream &stream) {
+	debug("loadMobs %d", stream.pos());
+	static const uint8 MAX_MOBS = 64;
+	uint8 mobs[MAX_MOBS];
+	stream.read(&mobs, sizeof(mobs));
+	for(uint8 i = 0; i < sizeof(mobs); ++i) {
+		debug("mob %d flag %d", i, mobs[i]);
+	}
+}
+
+void Room::loadBackAnim(Common::SeekableReadStream &stream) {
+	debug("loadBackAnim %d", stream.pos());
+	static const uint8 MAX_BACK_ANIMS = 64;
+	uint32 backAnim[MAX_BACK_ANIMS];
+	debug("loadBackAnim sizeof %lu", sizeof(backAnim));
+	stream.read(backAnim, sizeof(backAnim));
+	for(uint8 i = 0; i < MAX_BACK_ANIMS; ++i) {
+		debug("back anim offset %d", backAnim[i]);
+	}
+}
+
+void Room::loadObj(Common::SeekableReadStream &stream) {}
+void Room::loadNak(Common::SeekableReadStream &stream) {}
+void Room::loadItemUse(Common::SeekableReadStream &stream) {}
+void Room::loadItemGive(Common::SeekableReadStream &stream) {}
+void Room::loadWalkTo(Common::SeekableReadStream &stream) {}
+void Room::loadExamine(Common::SeekableReadStream &stream) {}
+void Room::loadPickup(Common::SeekableReadStream &stream) {}
+void Room::loadUse(Common::SeekableReadStream &stream) {}
+void Room::loadPushOpen(Common::SeekableReadStream &stream) {}
+void Room::loadPullClose(Common::SeekableReadStream &stream) {}
+void Room::loadTalk(Common::SeekableReadStream &stream) {}
+void Room::loadGive(Common::SeekableReadStream &stream) {}
+
+void Room::nextLoadStep(Common::SeekableReadStream &stream, LoadingStep step) {
+	uint32 offset = stream.readUint32LE();
+	uint32 pos = stream.pos();
+	stream.seek(offset);
+
+	debug("nextLoadStep offset %d, pos %d", offset, pos);
+
+	(this->*step)(stream);
+
+	stream.seek(pos);
+}
+
+bool Room::loadFromStream(Common::SeekableReadStream &stream) {
+
+	uint32 pos = stream.pos();
+
+	nextLoadStep(stream, &Room::loadMobs);
+	nextLoadStep(stream, &Room::loadBackAnim);
+	nextLoadStep(stream, &Room::loadObj);
+	nextLoadStep(stream, &Room::loadNak);
+	nextLoadStep(stream, &Room::loadItemUse);
+	nextLoadStep(stream, &Room::loadItemGive);
+	nextLoadStep(stream, &Room::loadWalkTo);
+	nextLoadStep(stream, &Room::loadExamine);
+	nextLoadStep(stream, &Room::loadPickup);
+	nextLoadStep(stream, &Room::loadUse);
+	nextLoadStep(stream, &Room::loadPushOpen);
+	nextLoadStep(stream, &Room::loadPullClose);
+	nextLoadStep(stream, &Room::loadTalk);
+	nextLoadStep(stream, &Room::loadGive);
+
+	// skip some data for now
+	static const uint8 ROOM_ENTRY_SIZE = 64;
+	stream.seek(pos + ROOM_ENTRY_SIZE);
+
+	return true;;
+}
 
 Script::Script() : _data(nullptr), _dataSize(0) {
 }
@@ -59,6 +132,12 @@ bool Script::loadFromStream(Common::SeekableReadStream &stream) {
 		return false;
 
 	stream.read(_data, _dataSize);
+
+	Common::MemoryReadStream scriptDataStream(_data, _dataSize);
+	scriptDataStream.seek(getRoomTableOffset()+64);
+	debug("room table offset %d", scriptDataStream.pos());
+	Room room;
+	room.loadFromStream(scriptDataStream);
 	
 	return true;
 }

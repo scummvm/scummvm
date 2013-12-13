@@ -26,6 +26,7 @@
 #include "common/stream.h"
 #include "common/archive.h"
 #include "common/debug-channels.h"
+#include "common/ptr.h"
 
 namespace Prince {
 
@@ -36,43 +37,44 @@ namespace Resource {
 		return resource.loadFromStream(stream);
 	}
 
-
 	template<typename T>
 	bool loadResource(T *resource, const char *resourceName, bool required = true) {
-		Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(resourceName);
+		Common::ScopedPtr<Common::SeekableReadStream> stream(SearchMan.createReadStreamForMember(resourceName));
 		if (!stream) {
 			if (required) 
 				error("Can't load %s", resourceName);
 			return false;
 		}
 
-		bool ret = loadFromStream(*resource, *stream);
-
-		delete stream;
-
-		return ret;
+		return loadFromStream(*resource, *stream);
 	} 
 
 	template <typename T>
+	bool loadResource(Common::Array<T> &array, Common::SeekableReadStream &stream, bool required = true) {
+		T t;
+		while (t.loadFromStream(stream))
+			array.push_back(t);
+
+		return true;
+	}
+
+
+	template <typename T>
 	bool loadResource(Common::Array<T> &array, const char *resourceName, bool required = true) {
-		Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(resourceName);
+		Common::ScopedPtr<Common::SeekableReadStream> stream(SearchMan.createReadStreamForMember(resourceName));
 		if (!stream) {
 			if (required)
 				error("Can't load %s", resourceName);
 			return false;
 		}
 
-		T t;
-		while (t.loadFromStream(*stream))
-			array.push_back(t);
-
-		delete stream;
-		return true;
+		return loadResource(array, *stream, required);
 	}
 
 	template <typename T>
 	bool loadResource(Common::Array<T *> &array, const char *resourceName, bool required = true) {
-		Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(resourceName);
+
+		Common::ScopedPtr<Common::SeekableReadStream> stream(SearchMan.createReadStreamForMember(resourceName));
 		if (!stream) {
 			if (required)
 				error("Can't load %s", resourceName);
@@ -88,10 +90,9 @@ namespace Resource {
 			}
 			array.push_back(t);
 		}
-
-		delete stream;
 		return true;
 	}
+
 }
 
 }

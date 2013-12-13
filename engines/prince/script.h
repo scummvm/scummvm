@@ -25,8 +25,7 @@
 
 #include "common/random.h"
 #include "common/endian.h"
-
-#include "audio/mixer.h"
+#include "common/array.h"
 
 #include "prince/flags.h"
 
@@ -44,6 +43,35 @@ namespace Detail {
 	template <> inline uint16 LittleEndianReader<uint16>(void *data) { return READ_LE_UINT16(data); }
 	template <> inline uint32 LittleEndianReader<uint32>(void *data) { return READ_LE_UINT32(data); }
 }
+
+class Room {
+public:
+	Room();
+
+	bool loadFromStream(Common::SeekableReadStream &stream);
+
+private:
+
+	typedef void (Room::*LoadingStep)(Common::SeekableReadStream &stream);
+
+	void nextLoadStep(Common::SeekableReadStream &stream, LoadingStep step);
+
+	void loadMobs(Common::SeekableReadStream &stream);
+	void loadBackAnim(Common::SeekableReadStream &stream);
+	void loadObj(Common::SeekableReadStream &stream);
+	void loadNak(Common::SeekableReadStream &stream);
+	void loadItemUse(Common::SeekableReadStream &stream);
+	void loadItemGive(Common::SeekableReadStream &stream);
+	void loadWalkTo(Common::SeekableReadStream &stream);
+	void loadExamine(Common::SeekableReadStream &stream);
+	void loadPickup(Common::SeekableReadStream &stream);
+	void loadUse(Common::SeekableReadStream &stream);
+	void loadPushOpen(Common::SeekableReadStream &stream);
+	void loadPullClose(Common::SeekableReadStream &stream);
+	void loadTalk(Common::SeekableReadStream &stream);
+	void loadGive(Common::SeekableReadStream &stream);
+};
+
 
 class Script {
 public:
@@ -69,6 +97,7 @@ public:
 private:
 	uint8 *_data;
 	uint32 _dataSize;
+	Common::Array<Room> _roomList;
 };
 
 class InterpreterFlags {
@@ -114,7 +143,7 @@ private:
 	static const uint32 _STACK_SIZE = 500;
 	uint32 _stack[_STACK_SIZE];
 	uint8 _stacktop;
-	uint8 _savedStacktop;
+	//uint8 _savedStacktop;
 	uint32 _waitFlag;
 
 	const byte *_string;
@@ -123,8 +152,6 @@ private:
 
 	// Helper functions
 	uint32 step(uint32 opcodePC);
-
-	void checkPC(uint32 address);
 
 	uint16 readScriptFlagValue();
 	Flags::Id readScriptFlagId();
