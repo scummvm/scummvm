@@ -833,7 +833,15 @@ bool ThreadResource::goToStateID(int stackId, int sceneId) {
 }
 
 bool ThreadResource::goToState(int stackId, int sceneId) {
-	error("TODO: goToState");
+	savePrevious();
+	if (stackId == -1 || loadAStack(stackId)) {
+		if (sceneId != -1)
+			_threadId = sceneId;
+
+		return doState();
+	} else {
+		return false;
+	}
 }
 
 void ThreadResource::savePrevious() {
