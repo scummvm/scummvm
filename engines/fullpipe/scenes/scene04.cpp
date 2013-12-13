@@ -652,8 +652,29 @@ void sceneHandler04_springWobble() {
 		sceneHandler04_bottleUpdateObjects(oldDynIndex - g_vars->scene04_dynamicPhaseIndex);
 }
 
-void sceneHandler04_sub5() {
-	warning("STUB: sceneHandler04_sub5()");
+void sceneHandler04_leaveScene() {
+	g_fullpipe->_aniMan2 = 0;
+
+    MessageQueue *mq = new MessageQueue(g_fullpipe->_currentScene->getMessageQueueById(QU_SC4_MANTOBOTTLE), 0, 0);
+	ExCommand *ex = 0;
+
+	for (uint i = 0; i < mq->getCount(); i++) {
+		if (mq->getExCommandByIndex(i)->_messageKind == 27) {
+			ex = mq->getExCommandByIndex(i);
+			break;
+		}
+	}
+
+	ex->_y = g_vars->scene04_bottle->_oy - 304;
+
+	mq->chain(0);
+
+	g_vars->scene04_var07 = 0;
+	g_vars->scene04_dudeOnLadder = 0;
+
+	g_fullpipe->_behaviorManager->setFlagByStaticAniObject(g_fullpipe->_aniMan, 0);
+
+	g_fullpipe->updateMapPiece(PIC_MAP_P03, 1);
 }
 
 void sceneHandler04_liftBottle() {
@@ -963,7 +984,7 @@ int sceneHandler04(ExCommand *ex) {
 			sceneHandler04_springWobble();
 
 			if (g_vars->scene04_var07 && !g_vars->scene04_var09)
-				sceneHandler04_sub5();
+				sceneHandler04_leaveScene();
 
 			if (g_vars->scene04_var12)
 				sceneHandler04_liftBottle();

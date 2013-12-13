@@ -173,6 +173,7 @@ namespace Fullpipe {
 #define PIC_IN1_PIPETITLE 5167
 #define PIC_INV_MENU 991
 #define PIC_MAP_A13 5275
+#define PIC_MAP_P03 5279
 #define PIC_MAP_S01 5223
 #define PIC_SC1_KUCHKA 1321
 #define PIC_SC1_LADDER 1091
@@ -209,6 +210,7 @@ namespace Fullpipe {
 #define QU_SC3_EXITLIFT 2808
 #define QU_SC4_GOCLOCK 595
 #define QU_SC4_MANFROMBOTTLE 2851
+#define QU_SC4_MANTOBOTTLE 2850
 #define SC_1 301
 #define SC_10 653
 #define SC_11 654
