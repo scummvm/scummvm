@@ -309,7 +309,7 @@ void MessageQueue::update() {
 	if (_counter > 0)
 		_counter--;
 
-	if (_exCommands.size()) {
+	if (getCount()) {
 		sendNextCommand();
 	} else if (_counter == 0) {
 		_isFinished = 1;
@@ -331,7 +331,7 @@ void MessageQueue::addExCommandToEnd(ExCommand *ex) {
 }
 
 ExCommand *MessageQueue::getExCommandByIndex(uint idx) {
-	if (idx > _exCommands.size())
+	if (idx > getCount())
 		return 0;
 
 	Common::List<ExCommand *>::iterator it = _exCommands.begin();
@@ -345,7 +345,7 @@ ExCommand *MessageQueue::getExCommandByIndex(uint idx) {
 }
 
 void MessageQueue::deleteExCommandByIndex(uint idx, bool doFree) {
-	if (idx > _exCommands.size())
+	if (idx > getCount())
 		return;
 
 	Common::List<ExCommand *>::iterator it = _exCommands.begin();
@@ -369,7 +369,7 @@ void MessageQueue::transferExCommands(MessageQueue *mq) {
 }
 
 void MessageQueue::sendNextCommand() {
-	if (_exCommands.size()) {
+	if (getCount()) {
 		if (!(_flags & 4) && (_flags & 1)) {
 			messageQueueCallback1(16);
 		}
@@ -496,7 +496,8 @@ int MessageQueue::calcDuration(StaticANIObject *obj) {
 	ExCommand *ex;
 	Movement *mov;
 
-	for (uint i = 0; (ex = getExCommandByIndex(i)); i++) {
+	for (uint i = 0; i < getCount(); i++) {
+		ex = getExCommandByIndex(i);
 		if (ex->_parentId == obj->_id) {
 			if (ex->_messageKind == 1 || ex->_messageKind == 20) {
 				if ((mov = obj->getMovementById(ex->_messageNum)) != 0) {
@@ -513,7 +514,7 @@ int MessageQueue::calcDuration(StaticANIObject *obj) {
 }
 
 void MessageQueue::changeParam28ForObjectId(int objId, int oldParam28, int newParam28) {
-	for (uint i = 0; i < _exCommands.size(); i++) {
+	for (uint i = 0; i < getCount(); i++) {
 		ExCommand *ex = getExCommandByIndex(i);
 		int k = ex->_messageKind;
 
