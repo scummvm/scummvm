@@ -5073,9 +5073,9 @@ void Scene1337::playDelayCard(Card *card, Card *dest) {
 	_item1.setAction(&_action9);
 }
 
-void Scene1337::subC34A1(Card *subObj1, Card *subObj2) {
-	_actionCard1 = subObj1;
-	_actionCard2 = subObj2;
+void Scene1337::playAntiDelayCard(Card *card, Card *dest) {
+	_actionCard1 = card;
+	_actionCard2 = dest;
 
 	_item1.setAction(&_action8);
 }
@@ -5800,7 +5800,7 @@ void Scene1337::handlePlayer0() {
 
 			if (found) {
 				found = false;
-				subC34A1(&_gameBoardSide[0]._handCard[i], &_gameBoardSide[0]._delayCard);
+				playAntiDelayCard(&_gameBoardSide[0]._handCard[i], &_gameBoardSide[0]._delayCard);
 			}
 			break;
 		}
@@ -6054,7 +6054,7 @@ void Scene1337::handlePlayer1() {
 
 			if (found) {
 				tmpVal = 0;
-				subC34A1(&_gameBoardSide[1]._handCard[i], &_gameBoardSide[1]._delayCard);
+				playAntiDelayCard(&_gameBoardSide[1]._handCard[i], &_gameBoardSide[1]._delayCard);
 			}
 		}
 	}
@@ -6264,7 +6264,7 @@ void Scene1337::handlePlayer3() {
 
 			if (found) {
 				found = false;
-				subC34A1(&_gameBoardSide[3]._handCard[i], &_gameBoardSide[3]._delayCard);
+				playAntiDelayCard(&_gameBoardSide[3]._handCard[i], &_gameBoardSide[3]._delayCard);
 			}
 			break;
 		}
@@ -6585,11 +6585,20 @@ void Scene1337::subD02CA() {
 								}
 							}
 							if (foundVar4) {
+								// This station is already in place
 								actionDisplay(1330, 34, 159, 10, 1, 200, 0, 7, 0, 154, 154);
 							} else if (subC27B5(_gameBoardSide[2]._delayCard._cardId) != -1) {
+								// You must eliminate your delay before you can play a station
 								actionDisplay(1330, 35, 159, 10, 1, 200, 0, 7, 0, 154, 154);
 							} else {
-								if (j == 7)
+								int tmpVal = 0;
+
+								for (int j = 0; j <= 7; j++) {
+									if ((_gameBoardSide[2]._outpostStation[j]._cardId > 1) && (_gameBoardSide[2]._outpostStation[j]._cardId <= 9))
+										++tmpVal;
+								}
+
+								if (tmpVal == 7)
 									_winnerId = 2;
 
 								subC33C0(&_selectedCard, &_gameBoardSide[2]._outpostStation[i]);
@@ -6624,7 +6633,7 @@ void Scene1337::subD02CA() {
 									actionDisplay(1330, 41, 159, 10, 1, 200, 0, 7, 0, 154, 154);
 								}
 							} else {
-								subC34A1(&_selectedCard, &_gameBoardSide[2]._delayCard);
+								playAntiDelayCard(&_selectedCard, &_gameBoardSide[2]._delayCard);
 								return;
 							}
 						} else {

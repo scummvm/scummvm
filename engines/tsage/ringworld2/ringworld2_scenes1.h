@@ -350,7 +350,7 @@ public:
 	void subC33C0(Card *subObj1, Card *subObj2);
 	void playDelayCard(Card *card, Card *dest);
 	void playCard(Card *card, Card *dest);
-	void subC34A1(Card *subObj1, Card *subObj2);
+	void playAntiDelayCard(Card *card, Card *dest);
 	Card *subC34EC(int arg1);
 	void playCounterTrickCard(Card *card, int playerId);
 	int  getFreeHandCard(int playerId);
