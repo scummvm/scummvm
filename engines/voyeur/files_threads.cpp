@@ -155,10 +155,10 @@ void ThreadResource::getButtonsFlags() {
 			if (*++p & 0x20)
 				_field40 |= 2;
 
-			_field4E[idx] = *p++;
+			_buttonFlags[idx] = *p++;
 			_field18E[idx] = *p++;
 
-			if (_field4E[idx] & 0x80)
+			if (_buttonFlags[idx] & 0x80)
 				p += 4;
 
 			++idx;
@@ -780,9 +780,258 @@ void ThreadResource::parsePlayCommands() {
 }
 
 const byte *ThreadResource::cardPerform(const byte *card) {
-	error("TODO");
-	return NULL;
+	int var7 = 0;
+	uint32 varC = 0;
+	const byte *p, *p2;
+	byte *pDest;
+
+	uint16 id = *card++;
+	int varD = 5;
+	uint32 v2;
+	int v3;
+	byte bVal;
+	uint32 idx1, idx2;
+
+	switch (id) {
+	case 1:
+		v2 = READ_LE_UINT32(card);
+		card += 4;
+		WRITE_LE_UINT32(_vm->_controlPtr->_ptr + (*card << 2), v2);
+		++card;
+		break;
+
+	case 2:
+		v2 = READ_LE_UINT32(_vm->_controlPtr->_ptr + (*card++ << 2)),
+		WRITE_LE_UINT32(_vm->_controlPtr->_ptr + (*card++ << 2), v2);
+		break;
+
+	case 3:
+		v2 = READ_LE_UINT32(card);
+		card += 4;
+		WRITE_LE_UINT32(_vm->_controlPtr->_ptr + (*card++ << 2), v2);
+		break;
+
+	case 4:
+		v2 = READ_LE_UINT32(_vm->_controlPtr->_ptr + (*card++ << 2));
+		WRITE_LE_UINT32(_vm->_controlPtr->_ptr + (*card++ << 2), v2);
+		break;
+
+	case 5:
+		v2 = READ_LE_UINT32(card);
+		card += 4;
+		pDest = _vm->_controlPtr->_ptr + (*card++ << 2);
+		WRITE_LE_UINT32(pDest, READ_LE_UINT32(pDest) - v2);
+		break;
+
+	case 6:
+		idx1 = *card++;
+		idx2 = *card++;
+
+		v2 = READ_LE_UINT32(_vm->_controlPtr->_ptr + idx2);
+		pDest = _vm->_controlPtr->_ptr + idx1;
+		WRITE_LE_UINT32(pDest, READ_LE_UINT32(pDest) - v2);
+		break;
+
+	case 7:
+		v3 = *card++;
+		v2 = READ_LE_UINT32(card);
+		card += 4;
+		pDest = _vm->_controlPtr->_ptr + (v3 << 2);
+		WRITE_LE_UINT32(pDest, READ_LE_UINT32(pDest) * v2);
+		break;
+
+	case 8:
+		idx1 = *card++;
+		idx2 = *card++;
+
+		pDest = _vm->_controlPtr->_ptr + (idx1 << 2);
+		p2 = _vm->_controlPtr->_ptr + (idx2 << 2);
+		WRITE_LE_UINT32(pDest, READ_LE_UINT32(pDest) * READ_LE_UINT32(p2));
+		break;
+
+	case 9:
+		idx1 = *card++;
+		v2 = READ_LE_UINT32(card);
+		card += 4;
+
+		pDest = _vm->_controlPtr->_ptr + (idx1 << 2);
+		WRITE_LE_UINT32(pDest, READ_LE_UINT32(pDest) / v2);
+		break;
+
+	case 10:
+		idx1 = *card++;
+		idx2 = *card++;
+
+		pDest = _vm->_controlPtr->_ptr + (idx1 << 2);
+		p2 = _vm->_controlPtr->_ptr + (idx2 << 2);
+		WRITE_LE_UINT32(pDest, READ_LE_UINT32(pDest) / READ_LE_UINT32(p2));
+		break;
+	
+	case 11:
+		v2 = READ_LE_UINT32(card);
+		card += 4;
+		v2 = _vm->getRandomNumber(v2 - 1) + 1;
+		WRITE_LE_UINT32(_vm->_controlPtr->_ptr + (*card++ << 2), v2);
+		break;
+
+	case 17:
+		_vm->_glGoScene = READ_LE_UINT16(card);
+		card += 2;
+		_vm->_glGoStack = -1;
+		break;
+
+	case 18:
+		v2 = READ_LE_UINT32(_vm->_controlPtr->_ptr + (*card++ << 2));
+		_vm->_glGoScene = getStateFromID(v2);
+		break;
+
+	case 19:
+		_vm->_glGoScene = READ_LE_UINT32(card);
+		card += 4;
+		_vm->_glGoStack = READ_LE_UINT16(card);
+		card += 2;
+		break;
+
+	case 22:
+	case 23:
+	case 26:
+	case 27:
+		varD -= 3;	
+		// Deliberate fall-through
+
+	case 20:
+	case 21:
+	case 24:
+	case 25:
+		bVal = card[varD];
+		if (bVal == 61) {
+			if (cardPerform2(card, id)) {
+				card += varD;
+				while (*card != 30 && *card != 29)
+					card = cardPerform(card);
+
+				if (*card == 29) {
+					int count = 1;
+					while (count > 0) {
+						card = getNextRecord(card);
+						if (*card == 30)
+							--count;
+						if (*card >= 21 && *card <= 28)
+							++count;
+					}
+				}
+			} else {
+				card += varD;
+				int count = 1;
+				while (count > 0) {
+					card = getNextRecord(card);
+					if (*card == 29 || *card == 30)
+						--count;
+					if (*card < 21 || *card > 28)
+						continue;
+
+					const byte *nextP = getNextRecord(card + 2);
+					if (*nextP == 61)
+						++count;
+				}
+			}
+			
+			++card;
+		} else {
+			if (cardPerform2(card, id)) {
+				card += varD;
+				card = cardPerform(card);
+				while (*card++ != 61) ;		
+			} else {
+				card += varD;
+				while (*card != 61 && *card != 29)
+					++card;
+			}
+		}
+		break;
+
+	case 41:
+		bVal = *card++;
+		assert(bVal < 8);
+		_fieldA[bVal] = READ_LE_UINT32(card);
+		card += 4;
+
+		_field2A[bVal] = READ_LE_UINT16(card);
+		card += 2;
+	
+	case 45:
+		_field3A = _field46;
+		_field3E = _controlIndex;
+		break;
+
+	case 46:
+		_vm->_glGoScene = _field3A;
+		_vm->_glGoStack = _field3E;
+		_field3A = -1;
+		_field3E = -1;
+		break;
+
+	case 51:
+		setButtonFlag(READ_LE_UINT16(card), 64);
+		break;
+
+	case 52:
+		clearButtonFlag(READ_LE_UINT16(card), 64);
+		break;
+
+	default:
+		break;
+	}
+
+	return card;
 }
+
+bool ThreadResource::cardPerform2(const byte *pSrc, int cardCmdId) {
+	uint32 vLong, vLong2;
+
+	switch (cardCmdId) {
+	case 21:
+		vLong = READ_LE_UINT32(pSrc + 1);
+		return READ_LE_UINT32(_vm->_controlPtr->_ptr + (*pSrc << 2)) == vLong;
+
+	case 22:
+		vLong = READ_LE_UINT32(pSrc + 1);
+		return READ_LE_UINT32(_vm->_controlPtr->_ptr + (*pSrc << 2)) != vLong;
+
+	case 23:
+		vLong = READ_LE_UINT32(_vm->_controlPtr->_ptr + (*pSrc << 2));
+		vLong2 = READ_LE_UINT32(_vm->_controlPtr->_ptr + (*(pSrc + 1) << 2));
+		return vLong == vLong2;
+
+	case 24:
+		vLong = READ_LE_UINT32(_vm->_controlPtr->_ptr + (*pSrc << 2));
+		vLong2 = READ_LE_UINT32(_vm->_controlPtr->_ptr + (*(pSrc + 1) << 2));
+		return vLong != vLong2;
+
+	case 25:
+		vLong = READ_LE_UINT32(_vm->_controlPtr->_ptr + (*pSrc << 2)); 
+		vLong2 = READ_LE_UINT32(pSrc + 1);
+		return vLong < vLong2;
+
+	case 26:
+		vLong = READ_LE_UINT32(_vm->_controlPtr->_ptr + (*pSrc << 2)); 
+		vLong2 = READ_LE_UINT32(pSrc + 1);
+		return vLong > vLong2;
+
+	case 27:
+		vLong = READ_LE_UINT32(_vm->_controlPtr->_ptr + (*pSrc << 2));
+		vLong2 = READ_LE_UINT32(_vm->_controlPtr->_ptr + (*(pSrc + 1) << 2));
+		return vLong < vLong2;
+
+	case 28:
+		vLong = READ_LE_UINT32(_vm->_controlPtr->_ptr + (*pSrc << 2));
+		vLong2 = READ_LE_UINT32(_vm->_controlPtr->_ptr + (*(pSrc + 1) << 2));
+		return vLong > vLong2;
+
+	default:
+		return false;
+	}
+}	
 
 int ThreadResource::doApt() {
 	warning("TODO: doApt");
@@ -852,6 +1101,14 @@ void ThreadResource::savePrevious() {
 		_field4 = _threadId;
 		_field6 = _controlIndex;
 	}
+}
+
+void ThreadResource::setButtonFlag(int idx, byte bits) {
+	_buttonFlags[idx] |= bits;
+}
+
+void ThreadResource::clearButtonFlag(int idx, byte bits) {
+	_buttonFlags[idx] &= ~bits;
 }
 
 } // End of namespace Voyeur

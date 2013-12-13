@@ -441,7 +441,10 @@ private:
 	bool goToStateID(int stackId, int sceneId);
 	bool goToState(int stackId, int sceneId);
 	const byte *cardPerform(const byte *card);
+	bool cardPerform2(const byte *p, int cardCmdId);
 	void savePrevious();
+	void setButtonFlag(int idx, byte bits);
+	void clearButtonFlag(int idx, byte bits);
 public:
 	VoyeurEngine *_vm;
 
@@ -450,6 +453,8 @@ public:
 	int _field4, _field6;
 	byte _flags;
 	int _field9;
+	int _fieldA[8];
+	int _field2A[8];
 	int _field3A;
 	int _field3E;
 	int _field40;
@@ -457,7 +462,7 @@ public:
 	int _parseCount;
 	uint32 _field46;
 	byte *_field4A;
-	byte _field4E[64];
+	byte _buttonFlags[64];
 	const byte *_field8E[64];
 	byte _field18E[64];
 	const byte *_field1CE[48];
