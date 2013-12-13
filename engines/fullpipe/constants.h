@@ -277,6 +277,7 @@ namespace Fullpipe {
 #define ST_HND_EMPTY 603
 #define ST_IN1MAN_SLEEP 5112
 #define ST_KZW_EMPTY 498
+#define ST_KZW_RIGHT 559
 #define ST_LBN_0N 2832
 #define ST_LBN_0P 2833
 #define ST_LBN_1N 2753
@@ -301,12 +302,14 @@ namespace Fullpipe {
 #define ST_MAN_GOLADDER2 2843
 #define ST_MAN_EMPTY 476
 #define ST_MAN_LADDERDOWN 521
+#define ST_MAN_LOOKPLANK 555
 #define ST_MAN_ONPLANK 552
 #define ST_MAN_RIGHT 325
 #define ST_MAN_SIT 1164
 #define ST_MAN_STANDLADDER 453
 #define ST_MAN_UP 449
 #define ST_PNK_WEIGHTLEFT 503
+#define ST_PNK_WEIGHTRIGHT 504
 #define ST_SPR_UP 544
 #define TrubaDown 697
 #define TrubaLeft 474

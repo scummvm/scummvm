@@ -549,8 +549,120 @@ void sceneHandler04_raisePlank() {
 	g_vars->scene04_plank->startAnim(MV_PNK_WEIGHTLEFT, 0, -1);
 }
 
+MessageQueue *sceneHandler04_kozFly3(StaticANIObject *ani, double phase) {
+	warning("STUB: sceneHandler04_kozFly3()");
+
+	return 0;
+}
+
+MessageQueue *sceneHandler04_kozFly5(StaticANIObject *ani, double phase) {
+	warning("STUB: sceneHandler04_kozFly5()");
+
+	return 0;
+}
+
+MessageQueue *sceneHandler04_kozFly6(StaticANIObject *ani) {
+	warning("STUB: sceneHandler04_kozFly6()");
+
+	return 0;
+}
+
+MessageQueue *sceneHandler04_kozFly7(StaticANIObject *ani, double phase) {
+	warning("STUB: sceneHandler04_kozFly7()");
+
+	return 0;
+}
+
+static const int kozTrajectory3[] = {
+	3, 2, 0,
+	3, 2, 0,
+	3, 2, 0
+};
+
+static const int kozTrajectory4[] = {
+	5, 3, 1,
+	5, 4, 1,
+	5, 3, 1
+};
+
+static const int kozTrajectory5[] = {
+	6, 5, 4,
+	6, 5, 4,
+	6, 5, 4
+};
+
+static const int kozTrajectory6[] = {
+	7, 6, 5,
+	7, 6, 5,
+	7, 6, 5
+};
+
 void sceneHandler04_shootKozyawka() {
-	warning("STUB: sceneHandler04_shootKozyawka()");
+	g_vars->scene04_plank->changeStatics2(ST_PNK_WEIGHTRIGHT);
+
+	if (!g_vars->scene04_walkingKozyawka)
+		return;
+
+	if (g_vars->scene04_walkingKozyawka->_movement) {
+		if (g_vars->scene04_walkingKozyawka->_movement->_id == MV_KZW_WALKPLANK) {
+			int dphase = g_vars->scene04_walkingKozyawka->_movement->_currDynamicPhaseIndex;
+
+			if (dphase < 41) {
+				int col = 3 * dphase / 15;
+				if (col > 2)
+					col = 2;
+
+				int row = g_vars->scene04_kozyawkiAni.size();
+				if (row > 2)
+					row = 2;
+
+				int idx = 3 * row + col;
+				int phase;
+
+				if (g_vars->scene04_ladderOffset == 3) {
+					phase = kozTrajectory3[idx];
+				} else if (g_vars->scene04_ladderOffset == 4) {
+					phase = kozTrajectory4[idx];
+				} else {
+					if (g_vars->scene04_ladderOffset == 5)
+						phase = kozTrajectory5[idx];
+					else
+						phase = kozTrajectory6[idx];
+				}
+
+				g_vars->scene04_walkingKozyawka->queueMessageQueue(0);
+				g_vars->scene04_walkingKozyawka->_movement = 0;
+				g_vars->scene04_walkingKozyawka->_statics = g_vars->scene04_walkingKozyawka->getStaticsById(ST_KZW_RIGHT);
+
+				MessageQueue *mq;
+
+				if (phase > 2) {
+					if (phase > 5) {
+						if (phase == 6)
+							mq = sceneHandler04_kozFly6(g_vars->scene04_walkingKozyawka);
+						else
+							mq = sceneHandler04_kozFly7(g_vars->scene04_walkingKozyawka, (double)(phase - 6) * 0.3333333333333333);
+					} else {
+						mq = sceneHandler04_kozFly5(g_vars->scene04_walkingKozyawka, (double)(phase - 2) * 0.3333333333333333);
+					}
+				} else {
+					mq = sceneHandler04_kozFly3(g_vars->scene04_walkingKozyawka, (double)phase * 0.5);
+				}
+
+				if (mq) {
+					g_vars->scene04_var24 = g_vars->scene04_walkingKozyawka;
+
+					if (!mq->chain(g_vars->scene04_walkingKozyawka) )
+						delete mq;
+				}
+			}
+		}
+	}
+
+	if (g_vars->scene04_ladderOffset > 3)
+		g_fullpipe->_aniMan->changeStatics1(ST_MAN_LOOKPLANK);
+
+	g_vars->scene04_var04 = 1;
 }
 
 void sceneHandler04_showCoin() {
