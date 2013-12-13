@@ -6593,7 +6593,7 @@ void Scene1337::subD02CA() {
 							} else {
 								int tmpVal = 0;
 
-								for (int j = 0; j <= 7; j++) {
+								for (j = 0; j <= 7; j++) {
 									if ((_gameBoardSide[2]._outpostStation[j]._cardId > 1) && (_gameBoardSide[2]._outpostStation[j]._cardId <= 9))
 										++tmpVal;
 								}
