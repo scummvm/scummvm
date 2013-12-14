@@ -107,6 +107,7 @@ namespace Fullpipe {
 #define MSG_UPDATEBOTTLE 613
 #define MV_EGTR_FATASK 5332
 #define MV_IN1MAN_SLEEP 5111
+#define MV_KZW_GOR 564
 #define MV_KZW_JUMP 558
 #define MV_KZW_JUMPROTATE 561
 #define MV_KZW_TOHOLERV 537
@@ -117,6 +118,7 @@ namespace Fullpipe {
 #define MV_HND_POINT 602
 #define MV_KZW_JUMPHIT 2857
 #define MV_KZW_JUMPOUT 586
+#define MV_KZW_RAISEHEAD 577
 #define MV_KZW_STANDUP 563
 #define MV_KZW_TURN 562
 #define MV_MAN_GOD 481

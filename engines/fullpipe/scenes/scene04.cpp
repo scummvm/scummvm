@@ -666,9 +666,44 @@ MessageQueue *sceneHandler04_kozFly5(StaticANIObject *ani, double phase) {
 }
 
 MessageQueue *sceneHandler04_kozFly6(StaticANIObject *ani) {
-	warning("STUB: sceneHandler04_kozFly6()");
+	MGM mgm;
+	MGMInfo mgminfo;
 
-	return 0;
+	mgm.addItem(ANI_KOZAWKA);
+
+	mgminfo.ani = ani;
+	mgminfo.staticsId2 = ST_KZW_SIT;
+	mgminfo.x1 = 397 - 4 * g_fullpipe->_rnd->getRandomNumber(1);
+	mgminfo.field_1C = ani->_priority;
+	mgminfo.y1 = g_vars->scene04_bottle->_oy - 4 * g_fullpipe->_rnd->getRandomNumber(1) + 109;
+	mgminfo.field_10 = 1;
+	mgminfo.flags = 78;
+	mgminfo.movementId = MV_KZW_JUMPROTATE;
+
+	MessageQueue *mq = mgm.genMovement(&mgminfo);
+
+	if (mq) {
+		mq->deleteExCommandByIndex(mq->getCount() - 1, 1);
+
+		ExCommand *ex = new ExCommand(ANI_KOZAWKA, 1, MV_KZW_STANDUP, 0, 0, 0, 1, 0, 0, 0);
+		ex->_excFlags |= 2;
+		ex->_keyCode = ani->_okeyCode;
+		mq->addExCommandToEnd(ex);
+
+		ex = new ExCommand(ANI_KOZAWKA, 1, MV_KZW_GOR, 0, 0, 0, 1, 0, 0, 0);
+		ex->_excFlags |= 2;
+		ex->_keyCode = ani->_okeyCode;
+		mq->addExCommandToEnd(ex);
+
+		ex = new ExCommand(ANI_KOZAWKA, 1, MV_KZW_RAISEHEAD, 0, 0, 0, 1, 0, 0, 0);
+		ex->_excFlags |= 2;
+		ex->_keyCode = ani->_okeyCode;
+		mq->addExCommandToEnd(ex);
+
+		g_vars->scene04_var11 = 1;
+	}
+
+	return mq;
 }
 
 void sceneHandler04_kozMove(Movement *mov, int from, int to, Common::Point *points, double phase) {
