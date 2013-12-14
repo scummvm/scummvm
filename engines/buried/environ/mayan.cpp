@@ -1259,6 +1259,225 @@ int ArrowGodHead::timerCallback(Window *viewWindow) {
 	return SC_TRUE;
 }
 
+class ArrowGodDepthChange : public SceneBase {
+public:
+	ArrowGodDepthChange(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
+	int postExitRoom(Window *viewWindow, const Location &newLocation);
+	int timerCallback(Window *viewWindow);
+
+private:
+	bool _scheduledDepthChange;
+	int _soundID;
+
+	bool adjustSpearVolume(Window *viewWindow);
+};
+
+ArrowGodDepthChange::ArrowGodDepthChange(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_scheduledDepthChange = false;
+	_soundID = -1;
+
+	byte headAStatus = ((SceneViewWindow *)viewWindow)->getGlobalFlags().myAGHeadAStatus;
+	byte headBStatus = ((SceneViewWindow *)viewWindow)->getGlobalFlags().myAGHeadBStatus;
+	byte headCStatus = ((SceneViewWindow *)viewWindow)->getGlobalFlags().myAGHeadCStatus;
+	byte headDStatus = ((SceneViewWindow *)viewWindow)->getGlobalFlags().myAGHeadDStatus;
+
+	int targetDepth = 0;
+
+	if (headBStatus > 0 || headCStatus > 0) {
+		if (headBStatus > 0) {
+			if (headAStatus == 0 || headDStatus == 0) {
+				if (headAStatus == 0 && headDStatus == 0) {
+					targetDepth = 11;
+				} else if (headAStatus > 0 && headDStatus == 0) {
+					targetDepth = 10;
+				} else if (headAStatus == 0 && headDStatus > 0) {
+					targetDepth = 9;
+				}
+			} else {
+				targetDepth = 8;
+			}
+		} else if (headCStatus > 0) {
+			if (headAStatus == 0 || headDStatus == 0) {
+				if (headAStatus == 0 && headDStatus == 0) {
+					targetDepth = 7;
+				} else if (headAStatus > 0 && headDStatus == 0) {
+					targetDepth = 6;
+				} else if (headAStatus == 0 && headDStatus > 0) {
+					targetDepth = 5;
+				}
+			} else {
+				targetDepth = 4;
+			}
+		}
+	} else if (headAStatus == 0 || headDStatus == 0) {
+		if (headAStatus == 0 && headBStatus == 0) {
+			targetDepth = 3;
+		} else {
+			if (headAStatus > 0 && headDStatus == 0) {
+				targetDepth = 2;
+			} else if (headAStatus == 0 && headDStatus > 0) {
+				targetDepth = 1;
+			}
+		}
+	}
+
+	if (_staticData.location.depth != targetDepth) {
+		Location newLocation = _staticData.location;
+		newLocation.depth = targetDepth;
+		((SceneViewWindow *)viewWindow)->getSceneStaticData(newLocation, _staticData);
+		_frameCycleCount = _staticData.cycleStartFrame;
+
+		// Reload the frame files, if applicable
+		((SceneViewWindow *)viewWindow)->changeStillFrameMovie(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, SF_STILLS));
+
+		if (_staticData.cycleStartFrame >= 0)
+			((SceneViewWindow *)viewWindow)->changeCycleFrameMovie(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, SF_CYCLES));
+	}
+}
+
+int ArrowGodDepthChange::postEnterRoom(Window *viewWindow, const Location &priorLocation) {
+	if (((priorLocation.depth >= 8 && priorLocation.depth <= 11) && _staticData.location.depth < 8) ||
+			((priorLocation.depth >= 4 && priorLocation.depth <= 7) && _staticData.location.depth < 4)) {
+		byte headBStatus = ((SceneViewWindow *)viewWindow)->getGlobalFlags().myAGHeadBStatus;
+		byte headCStatus = ((SceneViewWindow *)viewWindow)->getGlobalFlags().myAGHeadCStatus;
+		byte &headDStatus = ((SceneViewWindow *)viewWindow)->getGlobalFlags().myAGHeadDStatus;
+		byte doorLevelVolume = 0;
+
+		switch (_staticData.location.node) {
+		case 0:
+		case 1:
+			doorLevelVolume = 127;
+			break;
+		case 2:
+			doorLevelVolume = 96;
+
+			if (headDStatus == 2) {
+				headDStatus--;
+				_vm->_sound->playSynchronousSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 13), 128);
+				_scheduledDepthChange = true;
+				adjustSpearVolume(viewWindow);
+				((SceneViewWindow *)viewWindow)->jumpToScene(_staticData.location);
+				return SC_TRUE; // Original does not return here, but the status of this would be bad in that case
+			}
+			break;
+		case 3:
+			if (headCStatus == 0)
+				doorLevelVolume = 127;
+			else if (headBStatus == 0)
+				doorLevelVolume = 64;
+			break;
+		}
+
+		if (doorLevelVolume > 0)
+			_vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 11), doorLevelVolume);
+	}
+
+	adjustSpearVolume(viewWindow);
+	return SC_TRUE;
+}
+
+int ArrowGodDepthChange::postExitRoom(Window *viewWindow, const Location &newLocation) {
+	if (_staticData.location.timeZone == newLocation.timeZone &&
+			_staticData.location.environment == newLocation.environment &&
+			_staticData.location.node == newLocation.node &&
+			_staticData.location.facing == newLocation.facing &&
+			_staticData.location.orientation == newLocation.orientation &&
+			_staticData.location.depth == newLocation.depth &&
+			!_scheduledDepthChange) {
+		// Notify the player of his gruesome death
+		((SceneViewWindow *)viewWindow)->showDeathScene(13);
+		return SC_DEATH;
+	}
+
+	return SC_TRUE;
+}
+
+int ArrowGodDepthChange::timerCallback(Window *viewWindow) {
+	SceneBase::timerCallback(viewWindow);
+
+	// Check to see if we moved into a death scene
+	if (_staticData.location.timeZone == 2 && _staticData.location.environment == 5 &&
+			_staticData.location.node == 1 && _staticData.location.facing == 3 &&
+			_staticData.location.orientation == 1 && (_staticData.location.depth == 1 ||
+			_staticData.location.depth == 3 || _staticData.location.depth == 11 ||
+			_staticData.location.depth == 7 || _staticData.location.depth == 5 ||
+			_staticData.location.depth == 9)) {
+		if (_staticData.location.depth == 1)
+			((SceneViewWindow *)viewWindow)->playSynchronousAnimation(19);
+
+		((SceneViewWindow *)viewWindow)->showDeathScene(13);
+		return SC_DEATH;
+	}
+
+	if (_staticData.location.timeZone == 2 && _staticData.location.environment == 5 &&
+			_staticData.location.node == 3 && _staticData.location.facing == 3 &&
+			_staticData.location.orientation == 1 && (_staticData.location.depth == 2 ||
+			_staticData.location.depth == 3 || _staticData.location.depth == 11 ||
+			_staticData.location.depth == 10 || _staticData.location.depth == 6 ||
+			_staticData.location.depth == 7)) {
+		((SceneViewWindow *)viewWindow)->playSynchronousAnimation(17);
+		((SceneViewWindow *)viewWindow)->showDeathScene(13);
+		return SC_DEATH;
+	}
+
+	// Loop through the four heads
+	for (int i = 0; i < 4; i++) {
+		uint32 lastStartedTimer = ((SceneViewWindow *)viewWindow)->getGlobalFlagDWord(offsetof(GlobalFlags, myAGHeadAOpenedTime) + i * 4);
+
+		// Check if there is a timer going for this head
+		if (lastStartedTimer > 0 && (g_system->getMillis() > (lastStartedTimer + WAR_GOD_HEAD_TIMER_VALUE) ||
+				i == 0 || (((SceneViewWindow *)viewWindow)->getGlobalFlags().generalWalkthroughMode == 1 && i == 1) ||
+				(((SceneViewWindow *)viewWindow)->getGlobalFlagByte(offsetof(GlobalFlags, myAGHeadAStatus) + i) == 2 && i == 3))) {
+			((SceneViewWindow *)viewWindow)->setGlobalFlagDWord(offsetof(GlobalFlags, myAGHeadAOpenedTime) + i * 4, 0);
+			Cursor oldCursor = _vm->_gfx->setCursor(kCursorWait);
+			byte status = ((SceneViewWindow *)viewWindow)->getGlobalFlagByte(offsetof(GlobalFlags, myAGHeadAStatus) + i);
+
+			if (status & 1) {
+				status--;
+				((SceneViewWindow *)viewWindow)->setGlobalFlagByte(offsetof(GlobalFlags, myAGHeadAStatus) + i, status);
+				_vm->_sound->playSynchronousSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, (status == 2) ? 14 : 13), 128);
+				_scheduledDepthChange = true;
+				adjustSpearVolume(viewWindow);
+			}
+
+			((GameUIWindow *)viewWindow->getParent())->_bioChipRightWindow->sceneChanged();
+			_vm->_gfx->setCursor(oldCursor);
+		}
+	}
+
+	if (_scheduledDepthChange) {
+		_scheduledDepthChange = false;
+		Location location = _staticData.location;
+		((SceneViewWindow *)viewWindow)->jumpToScene(location);
+	}
+
+	return SC_TRUE;
+}
+
+bool ArrowGodDepthChange::adjustSpearVolume(Window *viewWindow) {
+	// TODO: Looks like there's a bug in the original. node == 3 should also be in here, I think
+	// Need to investigate
+	if (_staticData.location.node >= 0 && _staticData.location.node <= 2) {
+		byte headAStatus = ((SceneViewWindow *)viewWindow)->getGlobalFlags().myAGHeadAStatus;
+		byte headDStatus = ((SceneViewWindow *)viewWindow)->getGlobalFlags().myAGHeadDStatus;
+
+		if (headAStatus == 0) {
+			_vm->_sound->adjustSecondaryAmbientSoundVolume(128, false, 0, 0);
+		} else if (headDStatus == 0) {
+			if (_staticData.location.node == 2)
+				_vm->_sound->adjustSecondaryAmbientSoundVolume(128, false, 0, 0);
+			else
+				_vm->_sound->adjustSecondaryAmbientSoundVolume(64, false, 0, 0);
+		} else {
+			_vm->_sound->adjustSecondaryAmbientSoundVolume(0, false, 0, 0);
+		}
+	}
+
+	return true;
+}
+
 class MainCavernGlassCapture : public SceneBase {
 public:
 	MainCavernGlassCapture(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
@@ -1728,6 +1947,8 @@ SceneBase *SceneViewWindow::constructMayanSceneObject(Window *viewWindow, const 
 		return new ArrowGodHead(_vm, viewWindow, sceneStaticData, priorLocation, 2,  178, 93, 246, 189, 28, 77, 85, 81, 8, 10, 9, 11);
 	case 58:
 		return new ArrowGodHead(_vm, viewWindow, sceneStaticData, priorLocation, 3,  188, 92, 252, 189, 34, 78, 86, 82, 12, 14, 13, 15);
+	case 59:
+		return new ArrowGodDepthChange(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 60:
 		return new PlaySoundExitingFromScene(_vm, viewWindow, sceneStaticData, priorLocation, 11);
 	case 65:
