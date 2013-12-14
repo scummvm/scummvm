@@ -333,7 +333,7 @@ void ThreadResource::parsePlayCommands() {
 	_vm->_voy._field478 &= ~8;
 	_vm->_eventsManager._videoDead = -1;
 
-	Common::fill(&_vm->_voy._arr1[0][0], &_vm->_voy._arr1[8][20], 0);
+	Common::fill(&_vm->_voy._arr1[0][0], &_vm->_voy._arr1[8][20], 9999);
 	Common::fill(&_vm->_voy._arr2[0][0], &_vm->_voy._arr2[8][20], 0);
 	Common::fill(&_vm->_voy._arr3[0][0], &_vm->_voy._arr3[3][20], 9999);
 	Common::fill(&_vm->_voy._arr4[0][0], &_vm->_voy._arr4[3][20], 0);
@@ -576,8 +576,9 @@ void ThreadResource::parsePlayCommands() {
 				while (_vm->_voy._arr1[idx][v3] != 9999)
 					++idx;
 
-				_vm->_voy._arr1[idx][v3] = READ_LE_UINT16(dataP + 4) + READ_LE_UINT16(dataP + 6);
-				_vm->_voy._arr2[idx][v3] = v3;
+				v2 = READ_LE_UINT16(dataP + 4);
+				_vm->_voy._arr1[idx][v3] = v2;
+				_vm->_voy._arr2[idx][v3] = v2 + READ_LE_UINT16(dataP + 6) - 2;
 			}
 
 			dataP += 8;
