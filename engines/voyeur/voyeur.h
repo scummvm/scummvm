@@ -53,8 +53,10 @@ namespace Voyeur {
 #define MAX_RESOLVE 1000
 
 enum VoyeurDebugChannels {
-	kDebugPath      = 1 <<  0
+	kDebugPath      = 1 << 0,
+	kDebugScripts	= 1 << 1
 };
+
 
 struct VoyeurGameDescription;
 

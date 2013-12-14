@@ -241,7 +241,7 @@ const byte *ThreadResource::getNextRecord(const byte *p) {
 	case 74:
 		return p + 4;
 	case 192:
-		if (*p * 0x80)
+		if (*p & 0x80)
 			p += 4;
 		return p + 2;
 	default:
@@ -252,6 +252,7 @@ const byte *ThreadResource::getNextRecord(const byte *p) {
 const byte *ThreadResource::getSTAMPCard(int cardId) {
 	const byte *p;
 	int count = 0;
+
 	for (p = _field4A; count <= cardId && *p != 0x49; p = getNextRecord(p)) {
 		if (*p == 0xC0)
 			++count;
@@ -1063,6 +1064,8 @@ void ThreadResource::addVideoEventEnd() {
 }
 
 bool ThreadResource::goToStateID(int stackId, int sceneId) {
+	debugC(DEBUG_BASIC, kDebugScripts, "goToStateID - %d, %d", stackId, sceneId);
+
 	// Save current stack
 	savePrevious();
 
@@ -1082,6 +1085,8 @@ bool ThreadResource::goToStateID(int stackId, int sceneId) {
 }
 
 bool ThreadResource::goToState(int stackId, int sceneId) {
+	debugC(DEBUG_BASIC, kDebugScripts, "goToState - %d, %d", stackId, sceneId);
+
 	savePrevious();
 	if (stackId == -1 || loadAStack(stackId)) {
 		if (sceneId != -1)
