@@ -816,7 +816,7 @@ ViewPortResource::ViewPortResource(BoltFilesState &state, const byte *src):
 	// Get the rect list
 	for (int listIndex = 0; listIndex < 3; ++listIndex) {
 		_rectListCount[listIndex] = (int16)READ_LE_UINT16(src + 0x40 + 2 * listIndex);
-		uint32 id = READ_LE_UINT32(src + 0x34 + listIndex * 4);
+		int id = (int)READ_LE_UINT32(src + 0x34 + listIndex * 4);
 
 		if (id == -1) {
 			_rectListPtr[listIndex] = NULL;
@@ -826,8 +826,8 @@ ViewPortResource::ViewPortResource(BoltFilesState &state, const byte *src):
 			if (_rectListCount[listIndex] > 0) {
 				int16 *rectList = (int16 *)state._curLibPtr->memberAddrOffset(id);
 				for (int i = 0; i < _rectListCount[listIndex]; ++i) {
-					int xs = FROM_LE_16(rectList[0]);
-					int ys = FROM_LE_16(rectList[1]);
+					xs = FROM_LE_16(rectList[0]);
+					ys = FROM_LE_16(rectList[1]);
 					_rectListPtr[i]->push_back(Common::Rect(xs, ys, xs + FROM_LE_16(rectList[2]),
 						ys + FROM_LE_16(rectList[3])));
 				}
@@ -1171,7 +1171,7 @@ ViewPortListResource::ViewPortListResource(BoltFilesState &state, const byte *sr
 		_palette.push_back(ViewPortPalEntry(palData));
 
 	// Load view port pointer list
-	uint32 *idP = (uint32 *)&src[8];
+	const uint32 *idP = (const uint32 *)&src[8];
 	for (uint i = 0; i < count; ++i, ++idP) {
 		uint32 id = READ_LE_UINT32(idP);
 		BoltEntry &entry = state._curLibPtr->getBoltEntryFromLong(id);
@@ -1184,7 +1184,7 @@ ViewPortListResource::ViewPortListResource(BoltFilesState &state, const byte *sr
 /*------------------------------------------------------------------------*/
 
 ViewPortPalEntry::ViewPortPalEntry(const byte *src) {
-	uint16 *v = (uint16 *)src;
+	const uint16 *v = (const uint16 *)src;
 	_rEntry = READ_LE_UINT16(v++);
 	_gEntry = READ_LE_UINT16(v++);
 	_bEntry = READ_LE_UINT16(v++);
@@ -1317,7 +1317,7 @@ VInitCyclResource::VInitCyclResource(BoltFilesState &state, const byte *src) {
 
 PtrResource::PtrResource(BoltFilesState &state, const byte *src) {
 	// Load pointer list
-	uint32 *idP = (uint32 *)&src[0];
+	const uint32 *idP = (const uint32 *)&src[0];
 	int size = state._curMemberPtr->_size;
 
 	for (int i = 0; i < size / 4; ++i, ++idP) {
@@ -1339,7 +1339,7 @@ ControlResource::ControlResource(BoltFilesState &state, const byte *src) {
 		_memberIds[i] = READ_LE_UINT16(src + i * 2);
 
 	// Load pointer list
-	uint32 *idP = (uint32 *)&src[0x10];
+	const uint32 *idP = (const uint32 *)&src[0x10];
 	int count = READ_LE_UINT16(&src[0x36]);
 
 	Common::fill(&_entries[0], &_entries[8], (byte *)nullptr);

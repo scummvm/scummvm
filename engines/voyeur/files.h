@@ -117,7 +117,7 @@ private:
 	void termGro() {}	// TODO
 public:
 	BoltFile(const Common::String &filename, BoltFilesState &state);
-	~BoltFile();
+	virtual ~BoltFile();
 
 	BoltGroup *getBoltGroup(uint32 id);
 	void freeBoltGroup(uint32 id);

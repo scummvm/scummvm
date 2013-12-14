@@ -92,7 +92,7 @@ RL2Decoder::RL2FileHeader::RL2FileHeader() {
 
 RL2Decoder::RL2FileHeader::~RL2FileHeader() {
 	delete[] _frameOffsets;
-	_frameSoundSizes;
+	delete[] _frameSoundSizes;
 }
 
 void RL2Decoder::RL2FileHeader::load(Common::SeekableReadStream *stream) {
