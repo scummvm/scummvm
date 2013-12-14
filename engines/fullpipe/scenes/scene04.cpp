@@ -313,10 +313,10 @@ void sceneHandler04_walkClimbLadder(ExCommand *ex) {
 	g_vars->scene04_dudeOnLadder = 1;
 
 	g_vars->scene04_ladder = new MctlLadder;
-	g_vars->scene04_ladder->_objId = MV_MAN_TURN_SUD;
+	g_vars->scene04_ladder->_ladderX = 1089;
 	g_vars->scene04_ladder->_ladderY = 406;
 	g_vars->scene04_ladder->_ladder_field_14 = 12;
-	g_vars->scene04_ladder->_ladder_field_18 = 0;
+	g_vars->scene04_ladder->_width = 0;
 	g_vars->scene04_ladder->_height = -40;
 	g_vars->scene04_ladder->_ladder_field_20 = 0;
 	g_vars->scene04_ladder->_ladder_field_24 = -60;

@@ -181,10 +181,10 @@ struct MctlLadderMovement {
 
 class MctlLadder : public MotionController {
 public:
-	int _objId;
+	int _ladderX;
 	int _ladderY;
 	int _ladder_field_14;
-	int _ladder_field_18;
+	int _width;
 	int _height;
 	int _ladder_field_20;
 	int _ladder_field_24;
