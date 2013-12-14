@@ -550,9 +550,52 @@ void sceneHandler04_raisePlank() {
 }
 
 MessageQueue *sceneHandler04_kozFly3(StaticANIObject *ani, double phase) {
-	warning("STUB: sceneHandler04_kozFly3()");
+	MGM mgm;
+	MGMInfo mgminfo;
 
-	return 0;
+	mgm.addItem(ANI_KOZAWKA);
+
+	mgminfo.ani = ani;
+	mgminfo.staticsId2 = ST_KZW_SIT;
+	mgminfo.x1 = (int)(723.0 - phase * 185.0);
+	mgminfo.y1 = 486;
+	mgminfo.field_1C = 10;
+	mgminfo.field_10 = 1;
+	mgminfo.flags = 78;
+	mgminfo.movementId = MV_KZW_JUMP;
+
+	MessageQueue *mq = mgm.genMovement(&mgminfo);
+
+	if (mq) {
+		ExCommand *ex = new ExCommand(ANI_KOZAWKA, 1, MV_KZW_STANDUP, 0, 0, 0, 1, 0, 0, 0);
+		ex->_excFlags |= 2;
+		ex->_keyCode = ani->_okeyCode;
+		mq->addExCommandToEnd(ex);
+
+		ex = new ExCommand(ANI_KOZAWKA, 1, MV_KZW_TURN, 0, 0, 0, 1, 0, 0, 0);
+		ex->_excFlags |= 2;
+		ex->_keyCode = ani->_okeyCode;
+		mq->addExCommandToEnd(ex);
+
+		for (int i = 0; i < 5; i++) {
+			ex = new ExCommand(ANI_KOZAWKA, 1, rMV_KZW_GOR, 0, 0, 0, 1, 0, 0, 0);
+			ex->_excFlags |= 2;
+			ex->_keyCode = ani->_okeyCode;
+			mq->addExCommandToEnd(ex);
+		}
+
+		ex = new ExCommand(ANI_KOZAWKA, 6, 0, 0, 0, 0, 1, 0, 0, 0);
+		ex->_excFlags |= 3;
+		ex->_keyCode = ani->_okeyCode;
+		mq->addExCommandToEnd(ex);
+
+		ex = new ExCommand(ANI_KOZAWKA, 17, MSG_KOZAWRESTART, 0, 0, 0, 1, 0, 0, 0);
+		ex->_excFlags |= 3;
+		ex->_keyCode = ani->_okeyCode;
+		mq->addExCommandToEnd(ex);
+	}
+
+	return mq;
 }
 
 MessageQueue *sceneHandler04_kozFly5(StaticANIObject *ani, double phase) {
