@@ -334,7 +334,7 @@ public:
 	void handleNextTurn();
 	void subC2586();
 	bool subC264B(int cardId);
-	bool subC2687(int cardId);
+	bool isStopConstructionCard(int cardId);
 	int  subC26CB(int playerId, int handCardId);
 	int  findNormalCardInHand(int playerId);
 	int  findCard13InHand(int playerId);
@@ -347,7 +347,7 @@ public:
 	bool subC32B1(int victimId, int cardId);
 	int  getPlayerWithOutpost(int playerId);
 	bool checkAntiDelayCard(int delayCardId, int cardId);
-	void playStationCard(Card *subObj1, Card *subObj2);
+	void playStationCard(Card *station, Card *platform);
 	void playDelayCard(Card *card, Card *dest);
 	void playPlatformCard(Card *card, Card *dest);
 	void playAntiDelayCard(Card *card, Card *dest);
