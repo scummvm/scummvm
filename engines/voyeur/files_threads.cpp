@@ -585,7 +585,7 @@ void ThreadResource::parsePlayCommands() {
 			break;
 
 		case 8:
-			v2 = READ_LE_UINT16(dataP);
+ 			v2 = READ_LE_UINT16(dataP);
 			v3 = READ_LE_UINT16(dataP + 2) - 1;
 
 			if (v2 == 0 || READ_LE_UINT16(_vm->_controlPtr->_ptr + 4) == 0) {
@@ -593,8 +593,9 @@ void ThreadResource::parsePlayCommands() {
 				while (_vm->_voy._arr3[idx][v3] != 9999)
 					++idx;
 
-				_vm->_voy._arr3[idx][v3] = READ_LE_UINT16(dataP + 4) + READ_LE_UINT16(dataP + 6);
-				_vm->_voy._arr4[idx][v3] = v3;
+				v2 = READ_LE_UINT16(dataP + 4);
+				_vm->_voy._arr3[idx][v3] = v2;
+				_vm->_voy._arr4[idx][v3] = v2 + READ_LE_UINT16(dataP + 6) - 2;
 			}
 
 			dataP += 8;
