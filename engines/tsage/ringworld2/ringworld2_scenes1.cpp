@@ -6142,7 +6142,7 @@ void Scene1337::handlePlayer3() {
 			// No break on purpose
 		case 21:
 			discardCard(&_gameBoardSide[3]._delayCard);
-			break;
+			return;
 		default:
 			int i;
 			for (i = 0; i <= 3; i++) {
