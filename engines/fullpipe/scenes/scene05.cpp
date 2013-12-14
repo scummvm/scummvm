@@ -80,7 +80,7 @@ void sceneHandler05_makeOtmFeedback() {
 }
 
 void sceneHandler05_showHandle() {
-	warning("STUB: sceneHandler05_showHandle()");
+	g_fullpipe->_currentScene->getStaticANIObject1ById(ANI_HANDLE, -1)->show1(-1, -1, -1, 0);
 }
 
 void sceneHandler05_handleDown() {
@@ -88,7 +88,7 @@ void sceneHandler05_handleDown() {
 }
 
 void sceneHandler05_hideHandle() {
-	warning("STUB: sceneHandler05_hideHandle()");
+	g_fullpipe->_currentScene->getStaticANIObject1ById(ANI_HANDLE, -1)->hide();
 }
 
 void sceneHandler05_handleUp() {
