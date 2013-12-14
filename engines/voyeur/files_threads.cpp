@@ -349,7 +349,7 @@ void ThreadResource::parsePlayCommands() {
 	for (int parseIndex = 0; parseIndex < _parseCount; ++parseIndex) {
 		uint16 id = READ_LE_UINT16(dataP);
 		debugC(DEBUG_BASIC, kDebugScripts, "parsePlayCommands (%d of %d) - cmd #%d",
-			parseIndex, _parseCount, id);
+			parseIndex + 1, _parseCount, id);
 		dataP += 2;
 
 		switch (id) {
