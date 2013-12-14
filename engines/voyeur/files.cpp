@@ -1342,6 +1342,7 @@ ControlResource::ControlResource(BoltFilesState &state, const byte *src) {
 	uint32 *idP = (uint32 *)&src[0x10];
 	int count = READ_LE_UINT16(&src[0x36]);
 
+	Common::fill(&_entries[0], &_entries[8], (byte *)nullptr);
 	for (int i = 0; i < count; ++i, ++idP) {
 		uint32 id = READ_LE_UINT32(idP);
 		state._curLibPtr->resolveIt(id, &_entries[i]);
