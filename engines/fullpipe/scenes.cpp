@@ -92,14 +92,14 @@ Vars::Vars() {
 	scene04_bottleIsDropped = false;
 	scene04_bigBallIn = false;
 	scene04_bigBallCounter = 0;
-	scene04_var15 = 0;
+	scene04_bigBallFromLeft = false;
 	scene04_speakerVariant = 0;
 	scene04_speakerPhase = 0;
-	scene04_var18 = 0;
-	scene04_var19 = 0;
-	scene04_var20 = 0;
-	scene04_var24 = 0;
-	scene04_var25 = 0;
+	scene04_clockCanGo = false;
+	scene04_objectIsTaken = false;
+	scene04_springOffset = 0;
+	scene04_lastKozyawka = 0;
+	scene04_springDelay = 0;
 	scene04_bottleY = 0;
 	scene04_ladderOffset = 0;
 

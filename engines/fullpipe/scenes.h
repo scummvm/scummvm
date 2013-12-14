@@ -124,12 +124,12 @@ public:
 	bool scene04_bottleIsDropped;
 	bool scene04_bigBallIn;
 	int scene04_bigBallCounter;
-	int scene04_var15;
-	int scene04_var18;
-	int scene04_var19;
-	int scene04_var20;
-	StaticANIObject *scene04_var24;
-	int scene04_var25;
+	bool scene04_bigBallFromLeft;
+	bool scene04_clockCanGo;
+	bool scene04_objectIsTaken;
+	int scene04_springOffset;
+	StaticANIObject *scene04_lastKozyawka;
+	int scene04_springDelay;
 
 	PictureObject *selector;
 };
