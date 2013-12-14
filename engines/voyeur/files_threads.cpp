@@ -35,6 +35,7 @@ CMapResource *ThreadResource::_cmd14Pal = NULL;
 ThreadResource::ThreadResource(BoltFilesState &state, const byte *src):
 		_vm(state._vm) {
 	_flags = src[8];
+	_ctlPtr = nullptr;
 }
 
 void ThreadResource::initThreadStruct(int idx, int id) {
@@ -114,7 +115,7 @@ bool ThreadResource::getStateInfo() {
 		_parseCount = READ_LE_UINT16(baseP + 4);
 
 		_field28E = getDataOffset();
-		_field28E += READ_LE_UINT32(baseP + 6) / 2;
+		_field28E += (READ_LE_UINT32(baseP + 6) / 2) << 1;
 
 		_field4A = baseP + 10;
 		
