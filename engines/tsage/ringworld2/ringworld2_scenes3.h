@@ -619,8 +619,8 @@ class Scene3500 : public SceneExt {
 
 	class MazeUI3500 : public MazeUI {
 	public:
-		int cellFromX(int arg1);
-		int cellFromY(int arg1);
+		int16 cellFromX(int arg1);
+		int16 cellFromY(int arg1);
 		int getCellFromMapXY(Common::Point pt);
 		bool setMazePosition2(Common::Point &p);
 	};

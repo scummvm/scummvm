@@ -3500,11 +3500,11 @@ bool Scene3500::Throttle::startAction(CursorType action, Event &event) {
 
 /*--------------------------------------------------------------------------*/
 
-int Scene3500::MazeUI3500::cellFromX(int x) {
+int16 Scene3500::MazeUI3500::cellFromX(int x) {
 	return (_cellSize.x / 2) + x - (x % _cellSize.x);
 }
 
-int Scene3500::MazeUI3500::cellFromY(int y) {
+int16 Scene3500::MazeUI3500::cellFromY(int y) {
 	return (_cellSize.y / 2) + y - (y % _cellSize.y) - 1;
 }
 
@@ -3888,10 +3888,10 @@ void Scene3500::dispatch() {
 	if (!_rotation)
 		return;
 
-	int newMazeX = 0;
-	int newMazeY = 0;
-	int mazePosX = 0;
-	int mazePosY = 0;
+	int16 newMazeX = 0;
+	int16 newMazeY = 0;
+	int16 mazePosX = 0;
+	int16 mazePosY = 0;
 	int deltaX = 0;
 	int deltaY = 0;
 	int tmpCellId = 0;
