@@ -149,7 +149,7 @@ void VoyeurEngine::playStamp() {
 				_graphicsManager._backgroundPage = _bVoy->boltEntry(_playStamp1)._picResource;
 				_graphicsManager._backColors = _bVoy->boltEntry(_playStamp1 + 1)._cMapResource;
 
-				int buttonId = getChooseButton();
+				buttonId = getChooseButton();
 				if (_voy._fadeFunc)
 					buttonId = 4;
 

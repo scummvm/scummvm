@@ -110,7 +110,7 @@ public:
 	int _evidence[20];
 	
 	Common::Array<VoyeurEvent> _events;
-	int _field4376;
+	byte *_field4376;
 	int _field4378;
 	int _field437A;
 	int _field437C;

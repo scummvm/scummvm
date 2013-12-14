@@ -134,7 +134,7 @@ void VoyeurEngine::globalInitBolt() {
 	// Setup default flags
 	Common::fill((byte *)&_voy, (byte *)&_voy + sizeof(SVoy), 0);
 	_voy._field478 = 1;
-	_voy._field4376 = NULL; // Original set 63h:63h
+	_voy._field4376 = nullptr; // Original set 63h:63h
 	_voy._field4F2 = 9999;
 	_voy._field472 = -1;
 	_voy._field478 = 256;
@@ -473,6 +473,7 @@ void VoyeurEngine::showTitleScreen() {
 }
 
 void VoyeurEngine::doOpening() {
+/*
 	_graphicsManager.screenReset();
 
 	if (!_bVoy->getBoltGroup(0x10200))
@@ -519,13 +520,14 @@ void VoyeurEngine::doOpening() {
 		if (decoder.needsUpdate()) {
 			const Graphics::Surface *frame = decoder.decodeNextFrame();
 
-			Common::copy((byte *)frame->getPixels(), (byte *)frame->getPixels() + 320 * 200,
+			Common::copy((const byte *)frame->getPixels(), (const byte *)frame->getPixels() + 320 * 200,
 				(byte *)_graphicsManager._screenSurface.getPixels());
 		}
 
 		_eventsManager.pollEvents();
 		g_system->delayMillis(10);
 	}
+	*/
 }
 
 void VoyeurEngine::playRL2Video(const Common::String &filename) {
@@ -542,7 +544,7 @@ void VoyeurEngine::playRL2Video(const Common::String &filename) {
 		if (decoder.needsUpdate()) {
 			const Graphics::Surface *frame = decoder.decodeNextFrame();
 
-			Common::copy((byte *)frame->getPixels(), (byte *)frame->getPixels() + 320 * 200,
+			Common::copy((const byte *)frame->getPixels(), (const byte *)frame->getPixels() + 320 * 200,
 				(byte *)_graphicsManager._screenSurface.getPixels());
 		}
 

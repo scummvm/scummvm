@@ -798,9 +798,7 @@ void ThreadResource::parsePlayCommands() {
 }
 
 const byte *ThreadResource::cardPerform(const byte *card) {
-	int var7 = 0;
-	uint32 varC = 0;
-	const byte *p, *p2;
+	const byte *p2;
 	byte *pDest;
 
 	uint16 id = *card++;

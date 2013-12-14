@@ -87,9 +87,6 @@ void GraphicsManager::setupMCGASaveRect(ViewPortResource *viewPort) {
 }
 
 void GraphicsManager::addRectOptSaveRect(ViewPortResource *viewPort, int idx, const Common::Rect &bounds) {
-	int count1, count2;
-	int idx1, varE, var24;
-
 	if (viewPort->_rectListCount[idx] == -1)
 		return;
 
@@ -138,7 +135,7 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 	bool isClipped = false;
 	int var52;
 	int var20, var22;
-	int var26, var2C;
+	int var26;
 	byte pixel;
 
 	byte *srcImgData, *destImgData;
