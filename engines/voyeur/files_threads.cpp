@@ -348,6 +348,8 @@ void ThreadResource::parsePlayCommands() {
 
 	for (int parseIndex = 0; parseIndex < _parseCount; ++parseIndex) {
 		uint16 id = READ_LE_UINT16(dataP);
+		debugC(DEBUG_BASIC, kDebugScripts, "parsePlayCommands (%d of %d) - cmd #%d",
+			parseIndex, _parseCount, id);
 		dataP += 2;
 
 		switch (id) {
@@ -606,8 +608,9 @@ void ThreadResource::parsePlayCommands() {
 				while (_vm->_voy._arr5[idx][v3] != 9999)
 					++idx;
 
-				_vm->_voy._arr5[idx][v3] = READ_LE_UINT16(dataP + 4) + READ_LE_UINT16(dataP + 6);
-				_vm->_voy._arr6[idx][v3] = v3;
+				v2 = READ_LE_UINT16(dataP + 4);
+				_vm->_voy._arr5[idx][v3] = v2;
+				_vm->_voy._arr6[idx][v3] = v2 + READ_LE_UINT16(dataP + 6) - 2;
 			}
 
 			dataP += 8;
