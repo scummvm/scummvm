@@ -879,6 +879,8 @@ void sceneHandler04_showCoin() {
 }
 
 void sceneHandler04_stopSound() {
+	g_vars->scene04_soundPlaying = 0;
+
 	warning("STUB: sceneHandler04_stopSound()");
 }
 
@@ -1018,6 +1020,10 @@ void sceneHandler04_liftBottle() {
 
 void sceneHandler04_startSounds(const char *snd1, const char *snd2, const char *snd3) {
 	warning("STUB: sceneHandler04_startSounds()");
+
+	// playFile(snd1);
+	// playFile(snd2);
+	// playFile(snd3);
 }
 
 void sceneHandler04_goClock() {
