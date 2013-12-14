@@ -1033,10 +1033,6 @@ void sceneHandler04_goClock() {
 	g_vars->scene04_var14 = 0;
 }
 
-void sceneHandler04_sub8(ExCommand *ex) {
-	warning("STUB: sceneHandler04_sub8()");
-}
-
 void sceneHandler04_sub12() {
 	StaticANIObject *ball =  g_fullpipe->_currentScene->getStaticANIObject1ById(ANI_BIGBALL, -1);
 
@@ -1045,6 +1041,82 @@ void sceneHandler04_sub12() {
 			((Movement *)ball->_movements[i])->_counterMax = 0;
 
 	g_vars->scene04_var13 = 0;
+}
+
+void sceneHandler04_sub8(ExCommand *ex) {
+	if (!g_fullpipe->_aniMan->isIdle())
+		return;
+
+	if (!(g_fullpipe->_aniMan->_flags & 0x100)) {
+		if (getSc2MctlCompoundBySceneId(g_fullpipe->_currentScene->_sceneId)->_objtype == kObjTypeMctlCompound) {
+			MctlCompound *mc = (MctlCompound *)getSc2MctlCompoundBySceneId(g_fullpipe->_currentScene->_sceneId);
+
+			if (mc->_motionControllers[0]->_movGraphReactObj->pointInRegion(g_fullpipe->_sceneRect.left + ex->_x, g_fullpipe->_sceneRect.top + ex->_y)) {
+				if (g_vars->scene04_ladder->collisionDetection(g_fullpipe->_aniMan)) {
+					MessageQueue *mq = g_vars->scene04_ladder->controllerWalkTo(g_fullpipe->_aniMan, 0);
+
+					if (mq) {
+						mq->addExCommandToEnd(new ExCommand(ex));
+
+						if (mq->chain(g_fullpipe->_aniMan) )
+							ex->_messageKind = 0;
+						else
+							delete mq;
+
+						if (g_vars->scene04_var13) {
+							sceneHandler04_sub12();
+							return;
+						}
+					}
+				} else {
+					MessageQueue *mq = new MessageQueue(g_fullpipe->_globalMessageQueueList->compact());
+					ExCommand *ex1;
+
+					if (g_fullpipe->_aniMan->_statics->_staticsId == ST_MAN_LADDERDOWN) {
+						ex1 = new ExCommand(ANI_MAN, 1, MV_MAN_LOOKLADDERRV, 0, 0, 0, 1, 0, 0, 0);
+						ex1->_keyCode = g_fullpipe->_aniMan->_okeyCode;
+						ex1->_excFlags |= 2;
+						mq->addExCommandToEnd(ex1);
+					}
+
+					ex1 = new ExCommand(ANI_MAN, 1, MV_MAN_STARTLADDERD, 0, 0, 0, 1, 0, 0, 0);
+					ex1->_keyCode = g_fullpipe->_aniMan->_okeyCode;
+					ex1->_excFlags |= 2;
+					mq->addExCommandToEnd(ex1);
+
+					ex1 = new ExCommand(ANI_MAN, 1, MV_MAN_FROMLADDER, 0, 0, 0, 1, 0, 0, 0);
+					ex1->_keyCode = g_fullpipe->_aniMan->_okeyCode;
+					ex1->_excFlags |= 2;
+					mq->addExCommandToEnd(ex1);
+
+					ex1 = new ExCommand(ex);
+					mq->addExCommandToEnd(ex1);
+
+					mq->setFlags(mq->getFlags() | 1);
+
+					if (mq->chain(g_fullpipe->_aniMan)) {
+						if (g_vars->scene04_ladder)
+							delete g_vars->scene04_ladder;
+
+						g_vars->scene04_ladder = 0;
+						g_vars->scene04_dudeOnLadder = 0;
+
+						ex->_messageKind = 0;
+
+						mc->setEnabled();
+						getGameLoaderInteractionController()->enableFlag24();
+					} else if (mq) {
+						delete mq;
+					}
+
+					if (g_vars->scene04_var13) {
+						sceneHandler04_sub12();
+						return;
+					}
+				}
+			}
+		}
+	}
 }
 
 void sceneHandler04_handTake() {

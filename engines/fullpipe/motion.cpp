@@ -309,6 +309,10 @@ MessageQueue *MctlLadder::doWalkTo(StaticANIObject *subj, int xpos, int ypos, in
 	return 0;
 }
 
+MessageQueue *MctlLadder::controllerWalkTo(StaticANIObject *ani, int off) {
+	return doWalkTo(ani, _objId + off * _ladder_field_18, _ladderY + off * _height, 1, 0);
+}
+
 MctlConnectionPoint *MctlCompound::findClosestConnectionPoint(int ox, int oy, int destIndex, int connectionX, int connectionY, int sourceIndex, int *minDistancePtr) {
 	warning("STUB: MctlCompound::findClosestConnectionPoint()");
 
