@@ -151,6 +151,7 @@ public:
 	void startSceneTrack();
 	void stopSoundStream2();
 	void stopAllSoundStreams();
+	void stopAllSoundInstances(int id);
 
 	int _sfxVolume;
 

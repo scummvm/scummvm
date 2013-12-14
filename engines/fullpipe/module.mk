@@ -28,6 +28,7 @@ MODULE_OBJS = \
 	scenes/scene02.o \
 	scenes/scene03.o \
 	scenes/scene04.o \
+	scenes/scene05.o \
 	scenes/sceneDbg.o \
 	scenes/sceneIntro.o
 

@@ -50,6 +50,9 @@ int scene04_updateCursor();
 void scene04_initScene(Scene *sc);
 int sceneHandler04(ExCommand *cmd);
 
+void scene05_initScene(Scene *sc);
+int sceneHandler05(ExCommand *cmd);
+
 void sceneDbgMenu_initScene(Scene *sc);
 int sceneHandlerDbgMenu(ExCommand *cmd);
 
@@ -130,6 +133,13 @@ public:
 	int scene04_springOffset;
 	StaticANIObject *scene04_lastKozyawka;
 	int scene04_springDelay;
+
+	StaticANIObject *scene05_handle;
+	StaticANIObject *scene05_wacko;
+	StaticANIObject *scene05_bigHatch;
+	int scene05_var01;
+	int scene05_var02;
+	int scene05_var03;
 
 	PictureObject *selector;
 };

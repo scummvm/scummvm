@@ -26,6 +26,7 @@
 namespace Fullpipe {
 
 #define ANI_BIGBALL 4923
+#define ANI_BIGLUK 909
 #define ANI_BOOT_1 4231
 #define ANI_BUTTON 598
 #define ANI_CLOCK 588
@@ -33,6 +34,7 @@ namespace Fullpipe {
 #define ANI_DADAYASHIK 306
 #define ANI_EGGEATER 334
 #define ANI_HAND 601
+#define ANI_HANDLE 622
 #define ANI_IN1MAN 5110
 #define ANI_INV_COIN 875
 #define ANI_INV_EGGAPL 1564
@@ -45,6 +47,7 @@ namespace Fullpipe {
 #define ANI_LIFTBUTTON 2751
 #define ANI_MAMASHA_4 660
 #define ANI_MAN 322
+#define ANI_OTMOROZ 419
 #define ANI_PLANK 501
 #define ANI_SC2_BOX 1020
 #define ANI_SC4_BOOT 1035
@@ -96,6 +99,15 @@ namespace Fullpipe {
 #define MSG_SC4_KOZAWFALL 2858
 #define MSG_SC4_MANFROMBOTTLE 2854
 #define MSG_SC4_MANTOBOTTLE 2852
+#define MSG_SC5_BGRSOUNDOFF 5315
+#define MSG_SC5_BGRSOUNDON 5314
+#define MSG_SC5_HANDLEDOWN 916
+#define MSG_SC5_HANDLEUP 915
+#define MSG_SC5_HIDEHANDLE 917
+#define MSG_SC5_MAKEMANFLIGHT 1136
+#define MSG_SC5_MAKEOTMFEEDBACK 1169
+#define MSG_SC5_SHOWHANDLE 918
+#define MSG_SC5_TESTLUK 914
 #define MSG_GOTOLADDER 618
 #define MSG_SHAKEBOTTLE 584
 #define MSG_SHOOTKOZAW 557
@@ -140,6 +152,8 @@ namespace Fullpipe {
 #define MV_MAN_TOLADDER2 2841
 #define MV_MAN_TURN_LU 486
 #define MV_MAN_TURN_SUD 1089
+#define MV_MANHDL_HANDLEDOWN 630
+#define MV_MANHDL_HANDLEUP 631
 #define MV_PNK_WEIGHTLEFT 541
 #define MV_PNK_WEIGHTRIGHT 502
 #define MV_SC4_COIN_default 1029
@@ -275,14 +289,19 @@ namespace Fullpipe {
 #define SND_4_010 3125
 #define SND_4_012 3127
 #define SND_4_033 4990
+#define SND_5_026 5316
 #define SND_CMN_031 3516
 #define SND_CMN_070 5199
 #define SND_INTR_019 5220
+#define ST_BLK_CLOSED 912
 #define ST_CLK_CLOSED 590
 #define ST_DYAS_LIES 318
 #define ST_EGTR_MID1 2863
 #define ST_EGTR_MID2 2869
 #define ST_EGTR_SLIM 336
+#define ST_HDL_BROKEN 3342
+#define ST_HDL_DOWN 625
+#define ST_HDL_UP 624
 #define ST_HND_EMPTY 603
 #define ST_IN1MAN_SLEEP 5112
 #define ST_KZW_EMPTY 498
@@ -319,6 +338,9 @@ namespace Fullpipe {
 #define ST_MAN_SIT 1164
 #define ST_MAN_STANDLADDER 453
 #define ST_MAN_UP 449
+#define ST_OTM_BOX_LEFT 429
+#define ST_OTM_GLS_LEFT 421
+#define ST_OTM_VNT_LEFT 434
 #define ST_PNK_WEIGHTLEFT 503
 #define ST_PNK_WEIGHTRIGHT 504
 #define ST_SPR_UP 544

@@ -103,6 +103,13 @@ Vars::Vars() {
 	scene04_bottleY = 0;
 	scene04_ladderOffset = 0;
 
+	scene05_handle = 0;
+	scene05_wacko = 0;
+	scene05_bigHatch = 0;
+	scene05_var01 = 0;
+	scene05_var02 = 0;
+	scene05_var03 = 0;
+
 	selector = 0;
 }
 
@@ -265,7 +272,6 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 		_updateCursorCallback = scene04_updateCursor;
 		break;
 
-#if 0
 	case SC_5:
 		sceneVar = _gameLoader->_gameVar->getSubVarByName("SC_5");
 		scene->preloadMovements(sceneVar);
@@ -277,6 +283,7 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 		_updateCursorCallback = defaultUpdateCursor;
 		break;
 
+#if 0
 	case SC_6:
 		sceneVar = _gameLoader->_gameVar->getSubVarByName("SC_6");
 		scene->preloadMovements(sceneVar);
