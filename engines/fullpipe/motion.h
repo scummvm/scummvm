@@ -146,6 +146,8 @@ struct MGMInfo {
 	int x2;
 	int y2;
 	int flags;
+
+	MGMInfo() { memset(this, 0, sizeof(MGMInfo)); }
 };
 
 class MGM : public CObject {

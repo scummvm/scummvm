@@ -599,9 +599,70 @@ MessageQueue *sceneHandler04_kozFly3(StaticANIObject *ani, double phase) {
 }
 
 MessageQueue *sceneHandler04_kozFly5(StaticANIObject *ani, double phase) {
-	warning("STUB: sceneHandler04_kozFly5()");
+	MGM mgm;
+	MGMInfo mgminfo;
 
-	return 0;
+	mgm.addItem(ANI_KOZAWKA);
+
+	mgminfo.ani = ani;
+	mgminfo.staticsId2 = ST_KZW_JUMPOUT;
+	mgminfo.x1 = 525;
+	mgminfo.y1 = (int)(344.0 - (double)(320 - g_vars->scene04_bottle->_oy) * phase);
+	mgminfo.field_1C = 10;
+	mgminfo.field_10 = 1;
+	mgminfo.flags = 78;
+	mgminfo.movementId = MV_KZW_JUMPHIT;
+
+	MessageQueue *mq1 = mgm.genMovement(&mgminfo);
+
+	memset(&mgminfo, 0, sizeof(mgminfo));
+	mgminfo.ani = ani;
+	mgminfo.staticsId1 = ST_KZW_JUMPOUT;
+	mgminfo.staticsId2 = ST_KZW_SIT;
+	mgminfo.x2 = 525;
+	mgminfo.y2 = (int)(344.0 - (double)(320 - g_vars->scene04_bottle->_oy) * phase);
+	mgminfo.y1 = 486;
+	mgminfo.field_1C = 10;
+	mgminfo.field_10 = 1;
+	mgminfo.flags = 117;
+	mgminfo.movementId = MV_KZW_JUMPOUT;
+
+	MessageQueue *mq2 = mgm.genMovement(&mgminfo);
+
+	if (mq1 && mq2) {
+		mq1->addExCommandToEnd(new ExCommand(mq2->getExCommandByIndex(0)));
+
+		delete mq2;
+
+		ExCommand *ex = new ExCommand(ANI_KOZAWKA, 1, MV_KZW_STANDUP, 0, 0, 0, 1, 0, 0, 0);
+		ex->_excFlags |= 2;
+		ex->_keyCode = ani->_okeyCode;
+		mq1->addExCommandToEnd(ex);
+
+		ex = new ExCommand(ANI_KOZAWKA, 1, MV_KZW_TURN, 0, 0, 0, 1, 0, 0, 0);
+		ex->_excFlags |= 2;
+		ex->_keyCode = ani->_okeyCode;
+		mq1->addExCommandToEnd(ex);
+
+		for (int i = 0; i < 5; i++) {
+			ex = new ExCommand(ANI_KOZAWKA, 1, rMV_KZW_GOR, 0, 0, 0, 1, 0, 0, 0);
+			ex->_excFlags |= 2;
+			ex->_keyCode = ani->_okeyCode;
+			mq1->addExCommandToEnd(ex);
+		}
+
+		ex = new ExCommand(ANI_KOZAWKA, 6, 0, 0, 0, 0, 1, 0, 0, 0);
+		ex->_excFlags |= 3;
+		ex->_keyCode = ani->_okeyCode;
+		mq1->addExCommandToEnd(ex);
+
+		ex = new ExCommand(ANI_KOZAWKA, 17, MSG_KOZAWRESTART, 0, 0, 0, 1, 0, 0, 0);
+		ex->_excFlags |= 3;
+		ex->_keyCode = ani->_okeyCode;
+		mq1->addExCommandToEnd(ex);
+	}
+
+	return mq1;
 }
 
 MessageQueue *sceneHandler04_kozFly6(StaticANIObject *ani) {

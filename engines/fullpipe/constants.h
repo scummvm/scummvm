@@ -115,6 +115,8 @@ namespace Fullpipe {
 #define MV_BTN_CLICK 599
 #define MV_CLK_GO 589
 #define MV_HND_POINT 602
+#define MV_KZW_JUMPHIT 2857
+#define MV_KZW_JUMPOUT 586
 #define MV_KZW_STANDUP 563
 #define MV_KZW_TURN 562
 #define MV_MAN_GOD 481
@@ -279,6 +281,7 @@ namespace Fullpipe {
 #define ST_HND_EMPTY 603
 #define ST_IN1MAN_SLEEP 5112
 #define ST_KZW_EMPTY 498
+#define ST_KZW_JUMPOUT 587
 #define ST_KZW_RIGHT 559
 #define ST_KZW_SIT 560
 #define ST_LBN_0N 2832
