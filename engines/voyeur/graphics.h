@@ -110,6 +110,7 @@ public:
 	void resetPalette();
 	void setColor(int idx, byte r, byte g, byte b);
 	void screenReset();
+	void doScroll(const Common::Point &pt);
 };
 
 } // End of namespace Voyeur

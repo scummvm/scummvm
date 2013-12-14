@@ -146,6 +146,11 @@ public:
 	void saveLastInplay();
 	void loadTheApt();
 	void freeTheApt();
+	void makeViewFinder();
+	void initIFace();
+	void checkTransition();
+	void doTimeBar(int v);
+	void flashTimeBar();
 };
 
 } // End of namespace Voyeur

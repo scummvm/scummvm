@@ -658,4 +658,8 @@ void GraphicsManager::screenReset() {
 	_vm->_eventsManager.sWaitFlip();
 }
 
+void GraphicsManager::doScroll(const Common::Point &pt) {
+	error("TODO: doScroll");
+}
+
 } // End of namespace Voyeur

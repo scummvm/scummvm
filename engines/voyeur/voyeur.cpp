@@ -117,6 +117,7 @@ void VoyeurEngine::initialiseManagers() {
 }
 
 void VoyeurEngine::ESP_Init() {
+	ThreadResource::init();
 }
 
 void VoyeurEngine::globalInitBolt() {

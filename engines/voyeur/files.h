@@ -421,6 +421,10 @@ public:
 	static CMapResource *_cmd14Pal;
 	static void initUseCount();
 	static void unloadAllStacks(VoyeurEngine *vm);
+	static int _currentMouseX;
+	static int _currentMouseY;
+
+	static void init();
 private:
 	bool getStateInfo();
 	byte *getDataOffset();

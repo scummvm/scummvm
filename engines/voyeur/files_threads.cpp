@@ -27,10 +27,21 @@
 
 namespace Voyeur {
 
-int ThreadResource::_stampFlags = 0;
+int ThreadResource::_stampFlags;
 int ThreadResource::_useCount[8];
-byte *ThreadResource::_threadDataPtr = NULL;
-CMapResource *ThreadResource::_cmd14Pal = NULL;
+byte *ThreadResource::_threadDataPtr;
+CMapResource *ThreadResource::_cmd14Pal;
+int ThreadResource::_currentMouseX;
+int ThreadResource::_currentMouseY;
+
+void ThreadResource::init() {
+	_stampFlags = 0;
+	Common::fill(&_useCount[0], &_useCount[8], 0);
+	_threadDataPtr = nullptr;
+	_cmd14Pal = nullptr;
+	_currentMouseX = 392;
+	_currentMouseY = 57;
+}
 
 ThreadResource::ThreadResource(BoltFilesState &state, const byte *src):
 		_vm(state._vm) {
@@ -1050,7 +1061,76 @@ void ThreadResource::doRoom() {
 }
 
 int ThreadResource::doInterface() {
-	warning("TODO: doInterface");
+	int varA = -1;
+	int var8 = 0;
+
+	if (_vm->_voy._field478 != _vm->_voy._field46E) {
+		_vm->_voy._field46E = 0;
+		return -1;
+	}
+
+	_vm->_voy._field478 &= ~0x100;
+	_vm->_playStamp1 = -1;
+	_vm->_eventsManager._intPtr.field1E = 1;
+	_vm->_eventsManager._intPtr.field1A = 0;
+
+	if (_vm->_voy._RTVNum >= _vm->_voy._field476 || _vm->_voy._RTVNum < 0)
+		_vm->_voy._RTVNum = _vm->_voy._field476 - 1;
+
+	if (_vm->_voy._field474 < 15 && (_vm->_voy._field476 - 3) < _vm->_voy._RTVNum) {
+		_vm->_voy._RTVNum = _vm->_voy._field476;
+		_vm->makeViewFinder();
+
+		_vm->_eventsManager.setMousePos(Common::Point(_currentMouseX, _currentMouseY));
+		_vm->initIFace();
+		_vm->_voy._RTVNum = _vm->_voy._field476 - 4;
+		_vm->_voy._field478 &= ~1;
+
+		while (!_vm->shouldQuit() && _vm->_voy._RTVNum < _vm->_voy._field476) {
+			_vm->flashTimeBar();
+		}
+
+		_vm->_voy._field478 = 1;
+		chooseSTAMPButton(20);
+		parsePlayCommands();
+	}
+
+	_vm->checkTransition();
+	_vm->makeViewFinder();
+	_vm->_eventsManager.getMouseInfo();
+	_vm->_eventsManager.setMousePos(Common::Point(_currentMouseX, _currentMouseY));
+	_vm->initIFace();
+
+	byte *dataP = _vm->_bVoy->memberAddr(_vm->_playStamp1);
+	_vm->_playStamp2 = 151 - _vm->getRandomNumber(5);
+	_vm->_voy._vocSecondsOffset = _vm->getRandomNumber(29);
+
+	Common::String fname = _vm->_soundManager.getVOCFileName(_vm->_playStamp2);
+	_vm->_soundManager.startVOCPlay(fname);
+	_vm->_eventsManager.getMouseInfo();
+	_vm->_eventsManager.setMousePos(Common::Point(_currentMouseX, _currentMouseY));
+	
+	_vm->_graphicsManager.setColor(240, 220, 220, 220);
+	_vm->_eventsManager._intPtr.field38 = true;
+	_vm->_eventsManager._intPtr._hasPalette = true;
+	_vm->_voy._field478 &= ~1;
+
+	for (;;) {
+		_vm->doTimeBar(1);
+		_vm->_eventsManager.getMouseInfo();
+
+		const Common::Point &pt = _vm->_eventsManager.getMousePos();
+		if (pt.x != _currentMouseX || pt.y != _currentMouseY || var8 != varA) {
+			varA = var8;
+			_vm->_graphicsManager.doScroll(pt);
+
+			_currentMouseX = pt.x;
+			_currentMouseY = pt.y;
+		}
+
+		// TODO
+	}
+
 	return 0;
 }
 

@@ -272,4 +272,24 @@ void VoyeurEngine::freeTheApt() {
 	error("TODO: freeTheApt");
 }
 
+void VoyeurEngine::makeViewFinder() {
+	error("TODO");
+}
+
+void VoyeurEngine::initIFace(){
+	error("TODO");
+}
+
+void VoyeurEngine::checkTransition(){
+	error("TODO");
+}
+
+void VoyeurEngine::doTimeBar(int v) {
+	error("TODO");
+}
+
+void VoyeurEngine::flashTimeBar(){
+	error("TODO");
+}
+
 } // End of namespace Voyeur
