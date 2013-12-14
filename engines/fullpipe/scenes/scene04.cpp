@@ -671,10 +671,74 @@ MessageQueue *sceneHandler04_kozFly6(StaticANIObject *ani) {
 	return 0;
 }
 
-MessageQueue *sceneHandler04_kozFly7(StaticANIObject *ani, double phase) {
-	warning("STUB: sceneHandler04_kozFly7()");
+void sceneHandler04_kozMove(Movement *mov, int from, int to, Common::Point *points, double phase) {
+	for (int i = from; i < to; i++) {
+		mov->setDynamicPhaseIndex(i);
 
-	return 0;
+		Common::Point *p;
+		if (mov->_framePosOffsets) {
+			p = mov->_framePosOffsets[mov->_currDynamicPhaseIndex];
+		} else {
+			p = &mov->_somePoint;
+			p->x = 0;
+			p->y = 0;
+		}
+
+		p->y = (int)((double)points[i].y * phase);
+	}
+}
+
+MessageQueue *sceneHandler04_kozFly7(StaticANIObject *ani, double phase) {
+	MGM mgm;
+	MGMInfo mgminfo;
+
+	mgm.addItem(ANI_KOZAWKA);
+
+	mgminfo.ani = ani;
+	mgminfo.staticsId2 = 560;
+	mgminfo.x1 = (int)(250.0 - phase * 100.0);
+	mgminfo.y1 = 455;
+	mgminfo.field_1C = 10;
+	mgminfo.field_10 = 1;
+	mgminfo.flags = 78;
+	mgminfo.movementId = MV_KZW_JUMPROTATE;
+
+	MessageQueue *mq = mgm.genMovement(&mgminfo);
+
+	if (mq) {
+		sceneHandler04_kozMove(ani->getMovementById(MV_KZW_JUMPROTATE), 1, 9, g_vars->scene04_jumpRotateKozyawki, phase * 0.5 + 1.5);
+
+		ani->_priority = 10;
+
+		ExCommand *ex = new ExCommand(ANI_KOZAWKA, 1, MV_KZW_STANDUP, 0, 0, 0, 1, 0, 0, 0);
+		ex->_excFlags |= 2;
+		ex->_keyCode = ani->_okeyCode;
+		mq->addExCommandToEnd(ex);
+
+		ex = new ExCommand(ANI_KOZAWKA, 1, MV_KZW_TURN, 0, 0, 0, 1, 0, 0, 0);
+		ex->_excFlags |= 2;
+		ex->_keyCode = ani->_okeyCode;
+		mq->addExCommandToEnd(ex);
+
+		for (int i = 0; i < 2; i++) {
+			ex = new ExCommand(ANI_KOZAWKA, 1, rMV_KZW_GOR, 0, 0, 0, 1, 0, 0, 0);
+			ex->_excFlags |= 2;
+			ex->_keyCode = ani->_okeyCode;
+			mq->addExCommandToEnd(ex);
+		}
+
+		ex = new ExCommand(ANI_KOZAWKA, 6, 0, 0, 0, 0, 1, 0, 0, 0);
+		ex->_excFlags |= 3;
+		ex->_keyCode = ani->_okeyCode;
+		mq->addExCommandToEnd(ex);
+
+		ex = new ExCommand(ANI_KOZAWKA, 17, MSG_KOZAWRESTART, 0, 0, 0, 1, 0, 0, 0);
+		ex->_excFlags |= 3;
+		ex->_keyCode = ani->_okeyCode;
+		mq->addExCommandToEnd(ex);
+	}
+
+	return mq;
 }
 
 static const int kozTrajectory3[] = {
