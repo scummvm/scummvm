@@ -113,17 +113,17 @@ public:
 	int scene04_speakerVariant;
 	int scene04_speakerPhase;
 
-	int scene04_var02;
-	int scene04_var04;
+	bool scene04_bottleIsTaken;
+	bool scene04_kozyawkaOnLadder;
 	int scene04_bottleWeight;
-	int scene04_var07;
-	int scene04_var08;
-	int scene04_var09;
-	int scene04_var10;
-	int scene04_var11;
-	int scene04_var12;
-	int scene04_var13;
-	int scene04_var14;
+	bool scene04_var07;
+	bool scene04_ladderClickable;
+	bool scene04_handIsDown;
+	bool scene04_dudeInBottle;
+	bool scene04_kozHeadRaised;
+	bool scene04_bottleIsDropped;
+	bool scene04_bigBallIn;
+	int scene04_bigBallCounter;
 	int scene04_var15;
 	int scene04_var18;
 	int scene04_var19;
