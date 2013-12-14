@@ -2257,7 +2257,7 @@ Scene1337::Scene1337() {
 	_actionIdx2 = 0;
 	_showPlayerTurn = false;
 	_displayHelpFl = false;
-	_winnerId = 0;
+	_winnerId = -1;
 	_instructionsDisplayedFl = false;
 	_instructionsWaitCount = 0;
 
@@ -5797,7 +5797,6 @@ void Scene1337::handlePlayer0() {
 	}
 
 	int tmpVal;
-	bool found = false;
 	for (int i = 0; i <= 3; i++) {
 		tmpVal = subC26CB(0, i);
 
@@ -5813,14 +5812,14 @@ void Scene1337::handlePlayer0() {
 			if (!flag) {
 				for (int j = 0; j <= 7; j++) {
 					if ((_gameBoardSide[0]._outpostStation[j]._cardId == 1) && (!subC2687(_gameBoardSide[0]._delayCard._cardId))) {
-						int count = 0;
+						int stationCount = 0;
 						for (int k = 0; k <= 7; k++) {
 							if ((_gameBoardSide[0]._outpostStation[k]._cardId > 1) && (_gameBoardSide[0]._outpostStation[k]._cardId <= 9)) {
-								++count;
+								++stationCount;
 							}
 						}
 
-						if (count == 7)
+						if (stationCount == 7)
 							_winnerId = 0;
 
 						subC33C0(&_gameBoardSide[0]._handCard[tmpVal], &_gameBoardSide[0]._outpostStation[j]);
@@ -5954,7 +5953,6 @@ void Scene1337::handlePlayer0() {
 void Scene1337::handlePlayer1() {
 	int tmpVal = 1;
 	bool found;
-	int count;
 
 	if (this->_gameBoardSide[1]._delayCard._cardId != 0) {
 		switch (_gameBoardSide[1]._delayCard._cardId) {
@@ -6015,13 +6013,13 @@ void Scene1337::handlePlayer1() {
 
 		for (int j = 0; j <= 7; j++) {
 			if ((_gameBoardSide[1]._outpostStation[j]._cardId == 1) && !subC2687(_gameBoardSide[1]._delayCard._cardId)) {
-				count = 0;
+				int stationCount = 0;
 				for (int k = 0; k <= 7; k++) {
 					if ((_gameBoardSide[1]._outpostStation[k]._cardId > 1) && (_gameBoardSide[1]._outpostStation[k]._cardId <= 9))
-						++count;
+						++stationCount;
 				}
 
-				if (count == 7)
+				if (stationCount == 7)
 					_winnerId = 1;
 
 				subC33C0(&_gameBoardSide[1]._handCard[tmpIndx], &_gameBoardSide[1]._outpostStation[j]);
@@ -6061,7 +6059,7 @@ void Scene1337::handlePlayer1() {
 
 	tmpVal = checkThieftCard(1);
 	if (tmpVal != -1) {
-		count = -1;
+		int playerIdFound = -1;
 		int rndVal = R2_GLOBALS._randomSource.getRandomNumber(3);
 		for (int i = 0; i <= 3; i++) {
 			if (rndVal != 1) {
@@ -6069,7 +6067,7 @@ void Scene1337::handlePlayer1() {
 					|| (_gameBoardSide[rndVal]._handCard[1]._cardId != 0)
 					|| (_gameBoardSide[rndVal]._handCard[2]._cardId != 0)
 					|| (_gameBoardSide[rndVal]._handCard[3]._cardId == 0)) {
-						count = rndVal;
+						playerIdFound = rndVal;
 						break;
 				}
 				// CHECKME: inside the check on rndVal?
@@ -6079,8 +6077,8 @@ void Scene1337::handlePlayer1() {
 			}
 		}
 
-		if (count != -1) {
-			playThieftCard(1, &_gameBoardSide[1]._handCard[tmpVal], count);
+		if (playerIdFound != -1) {
+			playThieftCard(1, &_gameBoardSide[1]._handCard[tmpVal], playerIdFound);
 			found = true;
 		}
 	}
@@ -6088,7 +6086,7 @@ void Scene1337::handlePlayer1() {
 	if (found)
 		return;
 
-	count = -1;
+	int count = -1;
 	int i;
 	for (i = 0; i <= 3; i++) {
 		tmpVal = subC27B5(_gameBoardSide[1]._handCard[i]._cardId);
@@ -6236,14 +6234,13 @@ void Scene1337::handlePlayer3() {
 		if (!found) {
 			for (int i = 0; i <= 7; i++) {
 				if ((_gameBoardSide[3]._outpostStation[i]._cardId == 1) && (!subC2687(_gameBoardSide[3]._delayCard._cardId))) {
-					int tmpVal = 0;
-
+					int stationCount = 0;
 					for (int j = 0; j <= 7; j++) {
 						if ((_gameBoardSide[3]._outpostStation[j]._cardId > 1) && (_gameBoardSide[3]._outpostStation[j]._cardId <= 9))
-							++tmpVal;
+							++stationCount;
 					}
 
-					if (tmpVal == 7)
+					if (stationCount == 7)
 						_winnerId = 3;
 
 					subC33C0(&_gameBoardSide[3]._handCard[randIndx], &_gameBoardSide[3]._outpostStation[i]);
@@ -6525,14 +6522,13 @@ void Scene1337::subD02CA() {
 								// You must eliminate your delay before you can play a station
 								actionDisplay(1330, 35, 159, 10, 1, 200, 0, 7, 0, 154, 154);
 							} else {
-								int tmpVal = 0;
-
-								for (j = 0; j <= 7; j++) {
-									if ((_gameBoardSide[2]._outpostStation[j]._cardId > 1) && (_gameBoardSide[2]._outpostStation[j]._cardId <= 9))
-										++tmpVal;
+								int stationCount = 0;
+								for (int k = 0; k <= 7; k++) {
+									if ((_gameBoardSide[2]._outpostStation[k]._cardId > 1) && (_gameBoardSide[2]._outpostStation[k]._cardId <= 9))
+										++stationCount;
 								}
 
-								if (tmpVal == 7)
+								if (stationCount == 7)
 									_winnerId = 2;
 
 								subC33C0(&_selectedCard, &_gameBoardSide[2]._outpostStation[i]);
