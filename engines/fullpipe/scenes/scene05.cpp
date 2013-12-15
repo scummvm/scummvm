@@ -144,7 +144,7 @@ void sceneHandler05_genFlies() {
 			g_fullpipe->_floaters->_array2.back()->val2 = 585;
 			g_fullpipe->_floaters->_array2.back()->val3 = -70;
 			g_fullpipe->_floaters->_array2.back()->val11 = 8.0;
-        }
+		}
 	}
 
 	g_vars->scene05_floatersTicker = 0;
@@ -299,23 +299,23 @@ int sceneHandler05(ExCommand *ex) {
 
 	switch (ex->_messageNum) {
 	case MSG_SC5_BGRSOUNDOFF:
-        g_fullpipe->stopAllSoundInstances(SND_5_026);
+		g_fullpipe->stopAllSoundInstances(SND_5_026);
 		break;
 
 	case MSG_SC5_BGRSOUNDON:
-        g_fullpipe->playSound(SND_5_026, 1);
+		g_fullpipe->playSound(SND_5_026, 1);
 		break;
 
 	case MSG_SC5_MAKEMANFLIGHT:
-        sceneHandler05_makeManFlight();
+		sceneHandler05_makeManFlight();
 		break;
 
 	case MSG_SC5_MAKEOTMFEEDBACK:
-        if (!g_fullpipe->_aniMan->_movement || (g_fullpipe->_aniMan->_movement->_id != MV_MANHDL_HANDLEUP 
+		if (!g_fullpipe->_aniMan->_movement || (g_fullpipe->_aniMan->_movement->_id != MV_MANHDL_HANDLEUP 
 												&& g_fullpipe->_aniMan->_movement->_id != MV_MANHDL_HANDLEDOWN)) {
 			sceneHandler05_makeWackoFeedback();
 			g_vars->scene05_wackoTicker = 0;
-        }
+		}
 		break;
 
 	case MSG_SC5_SHOWHANDLE:
