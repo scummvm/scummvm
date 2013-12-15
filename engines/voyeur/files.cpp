@@ -382,6 +382,8 @@ void BoltFile::resolveFunction(uint32 id, GraphicMethodPtr *fn) {
 void BoltFile::resolveAll() {
 	for (uint idx = 0; idx < _state._resolves.size(); ++idx)
 		*_state._resolves[idx]._p = memberAddrOffset(_state._resolves[idx]._id);
+
+	_state._resolves.clear();
 }
 
 byte *BoltFile::getBoltMember(uint32 id) {
