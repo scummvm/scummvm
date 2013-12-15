@@ -160,8 +160,119 @@ void sceneHandler05_handleUp() {
 	sceneHandler05_resetTicks();
 }
 
-void sceneHandler05_testHatch(ExCommand *ex) {
-	warning("STUB: sceneHandler05_testHatch()");
+void sceneHandler05_testHatch(ExCommand *inex) {
+	ExCommand *ex;
+
+	if (g_fullpipe->_currentScene->getStaticANIObject1ById(ANI_BIGLUK, -1)->_statics->_staticsId == ST_BLK_CLOSED) {
+		ex = new ExCommand(SC_5, 17, 61, 0, 0, 0, 1, 0, 0, 0);
+		ex->_keyCode = TrubaLeft;
+		ex->_excFlags |= 2;
+		ex->postMessage();
+
+		return;
+	}
+
+	StaticANIObject *wacko = g_fullpipe->_currentScene->getStaticANIObject1ById(ANI_OTMOROZ, -1);
+
+	if (wacko->_movement)
+		wacko->changeStatics2(wacko->_movement->_staticsObj2->_staticsId);
+
+	if (g_fullpipe->getObjectState(sO_WeirdWacko) == g_fullpipe->getObjectEnumState(sO_WeirdWacko, sO_InGlasses)) {
+		MessageQueue *mq = g_fullpipe->_globalMessageQueueList->getMessageQueueById(inex->_parId);
+
+		if (mq)
+			mq->deleteExCommandByIndex(mq->getCount() - 1, 1);
+
+		if (wacko->_statics->_staticsId != ST_OTM_GLS_LEFT) {
+			mq = wacko->changeStatics1(ST_OTM_GLS_LEFT);
+
+			if (!mq) {
+				wacko->changeStatics2(ST_OTM_GLS_LEFT);
+				mq = new MessageQueue(g_fullpipe->_globalMessageQueueList->compact());
+			}
+
+			mq->setFlags(mq->getFlags() | 1);
+
+			ex = new ExCommand(ANI_OTMOROZ, 1, MV_OTM_HANDLEUP, 0, 0, 0, 1, 0, 0, 0);
+			ex->_excFlags |= 2u;
+			mq->addExCommandToEnd(ex);
+
+			ex = new ExCommand(SC_5, 17, 61, 0, 0, 0, 1, 0, 0, 0);
+			ex->_keyCode = TrubaLeft;
+			ex->_excFlags |= 2;
+			mq->addExCommandToEnd(ex);
+
+			mq->_isFinished = 0;
+			return;
+		}
+
+		mq = new MessageQueue(g_fullpipe->_globalMessageQueueList->compact());
+		mq->setFlags(mq->getFlags() | 1);
+
+		ex = new ExCommand(ANI_OTMOROZ, 1, MV_OTM_HANDLEUP, 0, 0, 0, 1, 0, 0, 0);
+		ex->_excFlags |= 2;
+		mq->addExCommandToEnd(ex);
+
+		ex = new ExCommand(SC_5, 17, 61, 0, 0, 0, 1, 0, 0, 0);
+		ex->_keyCode = TrubaLeft;
+		ex->_excFlags |= 2;
+		mq->addExCommandToEnd(ex);
+
+		if (!mq->chain(wacko))
+			delete mq;
+	} else if (g_fullpipe->getObjectState(sO_WeirdWacko) == g_fullpipe->getObjectEnumState(sO_WeirdWacko, sO_WithDrawer)) {
+		MessageQueue *mq = g_fullpipe->_globalMessageQueueList->getMessageQueueById(inex->_parId);
+
+		if (mq)
+			mq->deleteExCommandByIndex(mq->getCount() - 1, 1);
+
+		if (wacko->_statics->_staticsId != ST_OTM_BOX_LEFT) {
+			mq = wacko->changeStatics1(ST_OTM_BOX_LEFT);
+			if (!mq) {
+				wacko->changeStatics2(ST_OTM_BOX_LEFT);
+				mq = new MessageQueue(g_fullpipe->_globalMessageQueueList->compact());
+			}
+
+			mq->setFlags(mq->getFlags() | 1);
+
+			ex = new ExCommand(ANI_OTMOROZ, 1, MV_OTM_BOXHANDLEUP, 0, 0, 0, 1, 0, 0, 0);
+			ex->_excFlags |= 2;
+			mq->addExCommandToEnd(ex);
+
+			ex = new ExCommand(SC_5, 17, 61, 0, 0, 0, 1, 0, 0, 0);
+			ex->_keyCode = TrubaLeft;
+			ex->_excFlags |= 2;
+			mq->addExCommandToEnd(ex);
+
+			mq->_isFinished = 0;
+
+			return;
+		}
+
+		mq = new MessageQueue(g_fullpipe->_globalMessageQueueList->compact());
+		mq->setFlags(mq->getFlags() | 1);
+
+		ex = new ExCommand(ANI_OTMOROZ, 1, MV_OTM_BOXHANDLEUP, 0, 0, 0, 1, 0, 0, 0);
+		ex->_excFlags |= 2;
+		mq->addExCommandToEnd(ex);
+
+		ex = new ExCommand(SC_5, 17, 61, 0, 0, 0, 1, 0, 0, 0);
+		ex->_keyCode = TrubaLeft;
+		ex->_excFlags |= 2;
+		mq->addExCommandToEnd(ex);
+
+		if (!mq->chain(wacko))
+			delete mq;
+
+		return;
+	} else {
+		ex = new ExCommand(SC_5, 17, 61, 0, 0, 0, 1, 0, 0, 0);
+		ex->_keyCode = TrubaLeft;
+		ex->_excFlags |= 2;
+		ex->postMessage();
+
+		return;
+	}
 }
 
 
@@ -226,7 +337,7 @@ int sceneHandler05(ExCommand *ex) {
 			}
 
 			if (g_vars->scene05_var01) {
-				if ((g_fullpipe->_updateTicks - g_vars->scene05_var01) > 62 ) {
+				if ((g_fullpipe->_updateTicks - g_vars->scene05_var01) > 62) {
 					if (!g_fullpipe->_aniMan->_movement || (g_fullpipe->_aniMan->_movement->_id != MV_MANHDL_HANDLEUP 
 															&& g_fullpipe->_aniMan->_movement->_id != MV_MANHDL_HANDLEDOWN)) {
 						if (g_vars->scene05_var02 % 2)
