@@ -1064,7 +1064,8 @@ int ThreadResource::doInterface() {
 	PictureResource *pic;
 	Common::Point pt;
 
-	if (_vm->_voy._field478 != _vm->_voy._field46E) {
+	_vm->_voy._field478 |= 1;
+	if (_vm->_voy._field46E) {
 		_vm->_voy._field46E = 0;
 		return -2;
 	}
