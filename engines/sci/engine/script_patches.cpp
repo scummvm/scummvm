@@ -89,6 +89,7 @@ static const char *const selectorNameTable[] = {
 	"x",            // system selector
 	"cel",          // system selector
 	"setMotion",    // system selector
+	"overlay",      // system selector
 	"deskSarg",     // Gabriel Knight
 	"localize",     // Freddy Pharkas
 	"put",          // Police Quest 1 VGA
@@ -112,6 +113,7 @@ enum ScriptPatcherSelectors {
 	SELECTOR_x,
 	SELECTOR_cel,
 	SELECTOR_setMotion,
+	SELECTOR_overlay,
 	SELECTOR_deskSarg,
 	SELECTOR_localize,
 	SELECTOR_put,
@@ -510,7 +512,7 @@ static const uint16 freddypharkasPatchMacInventory[] = {
 	PATCH_END
 };
 
-//          script, description,                                            signature                            patch
+//          script, description,                                      signature                            patch
 static const SciScriptPatcherEntry freddypharkasSignatures[] = {
 	{  true,     0, "CD: score early disposal",                    1, freddypharkasSignatureScoreDisposal, freddypharkasPatchScoreDisposal },
 	{  true,    15, "Mac: broken inventory",                       1, freddypharkasSignatureMacInventory,  freddypharkasPatchMacInventory },
@@ -651,7 +653,7 @@ static const uint16 gk1PatchInterrogationBug[] = {
 	PATCH_END
 };
 
-//          script, description,                                            signature                     patch
+//          script, description,                                      signature                     patch
 static const SciScriptPatcherEntry gk1Signatures[] = {
 	{  true,    51, "interrogation bug",                           1, gk1SignatureInterrogationBug, gk1PatchInterrogationBug },
 	{  true,   212, "day 5 phone freeze",                          1, gk1SignatureDay5PhoneFreeze, gk1PatchDay5PhoneFreeze },
@@ -775,7 +777,7 @@ static const uint16 kq5PatchWinGMSignals[] = {
 	PATCH_END
 };
 
-//          script, description,                                            signature                  patch
+//          script, description,                                      signature                  patch
 static const SciScriptPatcherEntry kq5Signatures[] = {
 	{  true,     0, "CD: harpy volume change",                     1, kq5SignatureCdHarpyVolume, kq5PatchCdHarpyVolume },
 	{  true,   200, "CD: witch cage init",                         1, kq5SignatureWitchCageInit, kq5PatchWitchCageInit },
@@ -1165,7 +1167,7 @@ static const uint16 larry2PatchWearParachutePoints[] = {
 	PATCH_END
 };
 
-//          script, description,                                            signature                           patch
+//          script, description,                                      signature                           patch
 static const SciScriptPatcherEntry larry2Signatures[] = {
 	{  true,    63, "plane: no points for wearing plane",          1, larry2SignatureWearParachutePoints, larry2PatchWearParachutePoints },
 	SCI_SIGNATUREENTRY_TERMINATOR
@@ -1194,7 +1196,7 @@ static const uint16 larry5PatchGermanEndingPattiTalker[] = {
 	PATCH_END
 };
 
-//          script, description,                                            signature                               patch
+//          script, description,                                      signature                               patch
 static const SciScriptPatcherEntry larry5Signatures[] = {
 	{  true,   380, "German-only: Enlarge Patti Textbox",          1, larry5SignatureGermanEndingPattiTalker, larry5PatchGermanEndingPattiTalker },
 	SCI_SIGNATUREENTRY_TERMINATOR
@@ -1245,7 +1247,7 @@ static const uint16 larry6PatchDeathDialog[] = {
 	PATCH_END
 };
 
-//          script, description,                                            signature                   patch
+//          script, description,                                      signature                   patch
 static const SciScriptPatcherEntry larry6Signatures[] = {
 	{  true,    82, "death dialog memory corruption",              1, larry6SignatureDeathDialog, larry6PatchDeathDialog },
 	SCI_SIGNATUREENTRY_TERMINATOR
@@ -1369,7 +1371,7 @@ static const uint16 laurabow2CDPatchFixProblematicIconBar[] = {
 };
 
 
-//          script, description,                                            signature                                  patch
+//          script, description,                                      signature                                  patch
 static const SciScriptPatcherEntry laurabow2Signatures[] = {
 	{  true,   560, "CD: painting closing immediately",            1, laurabow2CDSignaturePaintingClosing,       laurabow2CDPatchPaintingClosing },
 	{  true,     0, "CD: fix problematic icon bar",                1, laurabow2CDSignatureFixProblematicIconBar, laurabow2CDPatchFixProblematicIconBar },
@@ -1416,7 +1418,7 @@ static const uint16 mothergoose256PatchSaveLimit[] = {
 	PATCH_END
 };
 
-//          script, description,                                            signature                         patch
+//          script, description,                                      signature                         patch
 static const SciScriptPatcherEntry mothergoose256Signatures[] = {
 	{  true,     0, "replay save issue",                           1, mothergoose256SignatureReplay,    mothergoose256PatchReplay },
 	{  true,     0, "save limit dialog (SCI1.1)",                  1, mothergoose256SignatureSaveLimit, mothergoose256PatchSaveLimit },
@@ -1481,9 +1483,43 @@ static const uint16 pq1vgaPatchPutGunInLockerBug[] = {
 	PATCH_END
 };
 
-//          script, description,                                            signature                         patch
+// When restoring a saved game, which was made while driving around,
+//  the game didn't redraw the map. This also happened in Sierra SCI.
+//
+// The map is a picture resource and drawn over the main picture.
+//  This is called an "overlay" in SCI. This wasn't implemented properly.
+//  We fix it by actually implementing it properly.
+//
+// Applies to at least: English floppy
+// Responsible method: rm500::init, changeOverlay::changeState (script 500)
+// Fixes bug: #5016
+static const uint16 pq1vgaSignatureMapSaveRestoreBug[] = {
+	0x39, 0x04,                          // pushi 04
+	SIG_ADDTOOFFSET +2,                  // skip either lsg global[f9] or pTos register
+	//0x89, 0xf9,                          // lsg global[f9]
+	SIG_MAGICDWORD,
+	0x38, 0x64, 0x80,                    // pushi 8064
+	0x76,                                // push0
+	0x89, 0x28,                          // lsg global[28]
+	0x43, 0x08, 0x08,                    // kDrawPic (8)
+	SIG_END
+};
+
+static const uint16 pq1vgaPatchMapSaveRestoreBug[] = {
+	0x38, PATCH_SELECTOR16 + SELECTOR_overlay, // pushi "overlay"
+	0x7a,                            // push2
+	0x89, 0xf9,                      // lsg global[f9]
+	0x39, 0x64,                      // pushi 64 (no transition)
+	0x81, 0x02,                      // lag global[02] (current room object)
+	0x4a, 0x08,                      // send 08
+	0x18,                            // not (waste byte)
+	PATCH_END
+};
+
+//          script, description,                                      signature                         patch
 static const SciScriptPatcherEntry pq1vgaSignatures[] = {
 	{  true,   341, "put gun in locker bug",                       1, pq1vgaSignaturePutGunInLockerBug, pq1vgaPatchPutGunInLockerBug },
+	{  true,   500, "map save/restore bug",                        2, pq1vgaSignatureMapSaveRestoreBug, pq1vgaPatchMapSaveRestoreBug },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -1679,7 +1715,7 @@ static const uint16 qfg1vgaPatchFunnyRoomFix[] = {
 	PATCH_END
 };
 
-//          script, description,                                            signature                            patch
+//          script, description,                                      signature                            patch
 static const SciScriptPatcherEntry qfg1vgaSignatures[] = {
 	{  true,   215, "fight event issue",                           1, qfg1vgaSignatureFightEvents,         qfg1vgaPatchFightEvents },
 	{  true,   216, "weapon master event issue",                   1, qfg1vgaSignatureFightEvents,         qfg1vgaPatchFightEvents },
@@ -1724,7 +1760,7 @@ static const uint16 qfg2PatchImportDialog[] = {
 	PATCH_END
 };
 
-//          script, description,                                            signature                  patch
+//          script, description,                                      signature                  patch
 static const SciScriptPatcherEntry qfg2Signatures[] = {
 	{  true,   944, "import dialog continuous calls",              1, qfg2SignatureImportDialog, qfg2PatchImportDialog },
 	SCI_SIGNATUREENTRY_TERMINATOR
@@ -1795,7 +1831,7 @@ static const uint16 qfg3PatchWooDialog[] = {
 	PATCH_END
 };
 
-//          script, description,                                            signature                  patch
+//          script, description,                                      signature                  patch
 static const SciScriptPatcherEntry qfg3Signatures[] = {
 	{  true,   944, "import dialog continuous calls",              1, qfg3SignatureImportDialog, qfg3PatchImportDialog },
 	{  true,   440, "dialog crash when asking about Woo",          1, qfg3SignatureWooDialog,    qfg3PatchWooDialog },
@@ -1916,7 +1952,7 @@ static const uint16 sq4CdPatchTextOptions[] = {
 	PATCH_END
 };
 
-//          script, description,                                            signature                        patch
+//          script, description,                                      signature                        patch
 static const SciScriptPatcherEntry sq4Signatures[] = {
 	{  true,   298, "Floppy: endless flight",                      1, sq4FloppySignatureEndlessFlight, sq4FloppyPatchEndlessFlight },
 	{  true,   818, "CD: Speech and subtitles option",             1, sq4CdSignatureTextOptions,       sq4CdPatchTextOptions },
@@ -1993,7 +2029,7 @@ static const uint16 sq1vgaPatchEgoShowsCard[] = {
 };
 
 
-//          script, description,                                            signature                                   patch
+//          script, description,                                      signature                                   patch
 static const SciScriptPatcherEntry sq1vgaSignatures[] = {
 	{  true,    45, "Ulence Flats: timepod graphic glitch",        1, sq1vgaSignatureUlenceFlatsTimepodGfxGlitch, sq1vgaPatchUlenceFlatsTimepodGfxGlitch },
 	{  true,    58, "Sarien armory droid zapping ego first time",  1, sq1vgaSignatureEgoShowsCard,                sq1vgaPatchEgoShowsCard },
@@ -2052,7 +2088,7 @@ static const uint16 sq5PatchToolboxFix[] = {
 	PATCH_END
 };
 
-//          script, description,                                            signature                        patch
+//          script, description,                                      signature                        patch
 static const SciScriptPatcherEntry sq5Signatures[] = {
 	{  true,   226, "toolbox fix",                                 1, sq5SignatureToolboxFix,          sq5PatchToolboxFix },
 	SCI_SIGNATUREENTRY_TERMINATOR
