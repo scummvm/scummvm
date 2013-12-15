@@ -4495,7 +4495,7 @@ void Scene1337::remove() {
 
 void Scene1337::process(Event &event) {
 	if (event.eventType == EVENT_BUTTON_DOWN) {
-		if (event.btnState != BTNSHIFT_RIGHT) {
+		if (event.btnState == BTNSHIFT_RIGHT) {
 			updateCursorId(R2_GLOBALS._mouseCursorId, true);
 			event.handled = true;
 		} else if (_delayedFunction) {
