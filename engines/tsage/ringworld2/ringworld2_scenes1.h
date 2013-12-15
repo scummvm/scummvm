@@ -333,7 +333,7 @@ public:
 	void subC20E5();
 	void handleNextTurn();
 	void subC2586();
-	bool subC264B(int cardId);
+	bool isStationCard(int cardId);
 	bool isStopConstructionCard(int cardId);
 	int  subC26CB(int playerId, int handCardId);
 	int  findNormalCardInHand(int playerId);
@@ -343,8 +343,8 @@ public:
 	int  isSlowCard(int cardId);
 	void subC2835(int playerId);
 	void playThieftCard(int playerId, Card *card, int victimId);
-	int  subC3257(int cardId);
-	bool subC32B1(int victimId, int cardId);
+	int  getPreventionCardId(int cardId);
+	bool isAttackPossible(int victimId, int cardId);
 	int  getPlayerWithOutpost(int playerId);
 	bool checkAntiDelayCard(int delayCardId, int cardId);
 	void playStationCard(Card *station, Card *platform);
