@@ -192,7 +192,7 @@ class Scene1337 : public SceneExt {
 
 		OptionsDialog();
 		virtual ~OptionsDialog() {}
-		virtual GfxButton *OptionsDialog::execute(GfxButton *defaultButton);
+		virtual GfxButton *execute(GfxButton *defaultButton);
 	public:
 		static void show();
 	};
