@@ -1765,6 +1765,236 @@ int DeathGodAltar::locateAttempted(Window *viewWindow, const Common::Point &poin
 	return SC_FALSE;
 }
 
+class DeathGodPuzzleBox : public SceneBase {
+public:
+	DeathGodPuzzleBox(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	~DeathGodPuzzleBox();
+	void preDestructor();
+	int paint(Window *viewWindow, Graphics::Surface *preBuffer);
+	int gdiPaint(Window *viewWindow);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int mouseMove(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	int _puzzleIndexes[4];
+	Common::Rect _clickableRegions[4];
+	Common::Rect _puzzleRightHandle;
+	AVIFrames _puzzleFrames[4];
+	bool _translateText;
+
+	bool isPuzzleSolved() const;
+};
+
+DeathGodPuzzleBox::DeathGodPuzzleBox(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_translateText = false;
+	_puzzleIndexes[0] = _puzzleIndexes[1] = _puzzleIndexes[2] = _puzzleIndexes[3] = 0;
+	_clickableRegions[0] = Common::Rect(30, 0, 111, 189);
+	_clickableRegions[1] = Common::Rect(112, 0, 187, 189);
+	_clickableRegions[2] = Common::Rect(188, 0, 252, 189);
+	_clickableRegions[3] = Common::Rect(253, 0, 330, 189);
+	_puzzleRightHandle = Common::Rect(380, 0, 432, 189);
+
+	// Load the spinner movies
+	_puzzleFrames[0].open(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 4));
+	_puzzleFrames[1].open(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 5));
+	_puzzleFrames[2].open(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 6));
+	_puzzleFrames[3].open(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 7));
+}
+
+DeathGodPuzzleBox::~DeathGodPuzzleBox() {
+	preDestructor();
+}
+
+void DeathGodPuzzleBox::preDestructor() {
+	_puzzleFrames[0].close();
+	_puzzleFrames[1].close();
+	_puzzleFrames[2].close();
+	_puzzleFrames[3].close();
+}
+
+int DeathGodPuzzleBox::paint(Window *viewWindow, Graphics::Surface *preBuffer) {
+	SceneBase::paint(viewWindow, preBuffer);
+
+	for (int i = 0; i < 4; i++) {
+		const Graphics::Surface *spinnerFrame = _puzzleFrames[i].getFrame(_puzzleIndexes[i]);
+		_vm->_gfx->crossBlit(preBuffer, _clickableRegions[i].left, _clickableRegions[i].top, _clickableRegions[i].width(), _clickableRegions[i].height(), spinnerFrame, 0, 0);
+	}
+
+	return SC_REPAINT;
+}
+
+int DeathGodPuzzleBox::gdiPaint(Window *viewWindow) {
+	if (_translateText && ((SceneViewWindow *)viewWindow)->getGlobalFlags().bcTranslateEnabled == 1) {
+		Common::Rect absoluteRect = viewWindow->getAbsoluteRect();
+		Common::Rect rect(42, 64, 324, 125);
+		rect.translate(absoluteRect.left, absoluteRect.top);
+		_vm->_gfx->getScreen()->frameRect(rect, _vm->_gfx->getColor(255, 0, 0));
+	}
+
+	return SC_REPAINT;
+}
+
+int DeathGodPuzzleBox::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	for (int i = 0; i < 4; i++) {
+		if (_clickableRegions[i].contains(pointLocation)) {
+			if (pointLocation.y - _clickableRegions[i].top > _clickableRegions[i].height() / 2) {
+				// Start the roll sound
+				_vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 14), 128, false, true);
+
+				// Spin the wheel, stop at the new value
+				// FIXME: Timing
+				for (int j = 0; j < 6; j++) {
+					_puzzleIndexes[i]--;
+					if (_puzzleIndexes[i] < 0)
+						_puzzleIndexes[i] = _puzzleFrames[i].getFrameCount() - 2;
+					viewWindow->invalidateWindow();
+					_vm->_gfx->updateScreen();
+				}
+
+				_translateText = false;
+				mouseMove(viewWindow, pointLocation);
+			} else {
+				// Start the roll sound
+				_vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 14), 128, false, true);
+
+				// Spin the wheel, stop at the new value
+				// FIXME: Timing
+				for (int j = 0; j < 6; j++) {
+					_puzzleIndexes[i]++;
+					if (_puzzleIndexes[i] > _puzzleFrames[i].getFrameCount() - 2)
+						_puzzleIndexes[i] = 0;
+					viewWindow->invalidateWindow();
+					_vm->_gfx->updateScreen();
+				}
+
+				_translateText = false;
+				mouseMove(viewWindow, pointLocation);
+			}
+		}
+	}
+
+	if (_puzzleRightHandle.contains(pointLocation)) {
+		if (isPuzzleSolved()) {
+			DestinationScene newDestination;
+			newDestination.destinationScene = _staticData.location;
+			newDestination.destinationScene.depth = 2;
+			newDestination.transitionType = TRANSITION_VIDEO;
+			newDestination.transitionStartFrame = -1;
+			newDestination.transitionLength = -1;
+
+			if (((SceneViewWindow *)viewWindow)->getGlobalFlags().takenEnvironCart == 0)
+				newDestination.transitionData = 4;
+			else
+				newDestination.transitionData = 5;
+
+			BuriedEngine *vm = _vm;
+			((SceneViewWindow *)viewWindow)->moveToDestination(newDestination);
+
+			// Play animation capturing the evidence
+			// FIXME: Is this right? Shouldn't this be if takenEnvironCart == 0 only?
+			((SceneViewWindow *)viewWindow)->playSynchronousAnimation(7);
+
+			// Attempt to add it to the biochip
+			if (((SceneViewWindow *)viewWindow)->addNumberToGlobalFlagTable(offsetof(GlobalFlags, evcapBaseID), offsetof(GlobalFlags, evcapNumCaptured), 12, MAYAN_EVIDENCE_ENVIRON_CART))
+				((SceneViewWindow *)viewWindow)->displayLiveText(vm->getString(IDS_MBT_EVIDENCE_RIPPLE_DOCUMENTED));
+			else
+				((SceneViewWindow *)viewWindow)->displayLiveText(vm->getString(IDS_MBT_EVIDENCE_ALREADY_ACQUIRED));
+
+			// Disable capture
+			((GameUIWindow *)viewWindow->getParent())->_bioChipRightWindow->disableEvidenceCapture();
+
+			// Set the scoring flag
+			((SceneViewWindow *)viewWindow)->getGlobalFlags().scoreCompletedDeathGod = 1;
+			((SceneViewWindow *)viewWindow)->getGlobalFlags().myDGOpenedPuzzleBox = 1;
+
+			// Play an Arthur comment
+			if (((SceneViewWindow *)viewWindow)->getGlobalFlags().takenEnvironCart == 0 && ((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->isItemInInventory(kItemBioChipAI))
+				vm->_sound->playSoundEffect("BITDATA/MAYAN/MYDG_C01.BTA"); // Broken in 1.01
+
+			return SC_TRUE;
+		} else {
+			// We did the puzzle incorrectly, so spin the wheels and kill the player
+			((SceneViewWindow *)viewWindow)->playPlacedSynchronousAnimation(8, 320, 0);
+			((SceneViewWindow *)viewWindow)->showDeathScene(12);
+			return SC_DEATH;
+		}
+
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int DeathGodPuzzleBox::mouseMove(Window *viewWindow, const Common::Point &pointLocation) {
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().bcTranslateEnabled == 1) {
+		Common::Rect translateTextRegion(42, 64, 324, 126);
+
+		if (translateTextRegion.contains(pointLocation)) {
+			if (!_translateText) {
+				Common::String translatedText = _vm->getString(IDMYDG_PUZZLE_BOX_TRANS_TEXT_BASE + _puzzleIndexes[0] / 6);
+				translatedText += ' ';
+				translatedText += _vm->getString(IDMYDG_PUZZLE_BOX_TRANS_TEXT_BASE + 10 + _puzzleIndexes[1] / 6);
+				translatedText += ' ';
+				translatedText += _vm->getString(IDMYDG_PUZZLE_BOX_TRANS_TEXT_BASE + 20 + _puzzleIndexes[2] / 6);
+				translatedText += ' ';
+				translatedText += _vm->getString(IDMYDG_PUZZLE_BOX_TRANS_TEXT_BASE + 30 + _puzzleIndexes[3] / 6);
+
+				((SceneViewWindow *)viewWindow)->displayTranslationText(translatedText);
+
+				_translateText = true;
+				viewWindow->invalidateWindow(false);
+			}
+		} else {
+			if (_translateText) {
+				_translateText = false;
+				viewWindow->invalidateWindow(false);
+			}
+		}
+	}
+
+	return SC_FALSE;
+}
+
+int DeathGodPuzzleBox::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	for (int i = 0; i < 4; i++) {
+		if (_clickableRegions[i].contains(pointLocation)) {
+			if (pointLocation.y - _clickableRegions[i].top > _clickableRegions[i].height() / 2)
+				return kCursorArrowDown;
+
+			return kCursorArrowUp;
+		}
+	}
+
+	if (_puzzleRightHandle.contains(pointLocation))
+		return kCursorFinger;
+
+	return kCursorArrow;
+}
+
+bool DeathGodPuzzleBox::isPuzzleSolved() const {
+	// TODO: Ask players for solutions for other languages
+	// clone2727 only has the English, French, and Japanese source
+
+	switch (_vm->getLanguage()) {
+	case Common::DE_DEU:
+		return _puzzleIndexes[0] == 12 && _puzzleIndexes[1] == 18 && _puzzleIndexes[2] == 30 && _puzzleIndexes[3] == 24;
+	case Common::EN_ANY:
+		return _puzzleIndexes[0] == 18 && _puzzleIndexes[1] == 36 && _puzzleIndexes[2] == 12 && _puzzleIndexes[3] == 24;
+	case Common::FR_FRA:
+		return _puzzleIndexes[0] == 12 && _puzzleIndexes[1] == 18 && _puzzleIndexes[2] == 42 && _puzzleIndexes[3] == 24;
+	case Common::JA_JPN:
+		return _puzzleIndexes[0] == 12 && _puzzleIndexes[1] == 24 && _puzzleIndexes[2] == 30 && _puzzleIndexes[3] == 18;
+	default:
+		// Default to English, but warn about it
+		warning("Unknown language for puzzle box");
+		return _puzzleIndexes[0] == 18 && _puzzleIndexes[1] == 36 && _puzzleIndexes[2] == 12 && _puzzleIndexes[3] == 24;
+	}
+
+	return false;
+}
+
 class MainCavernGlassCapture : public SceneBase {
 public:
 	MainCavernGlassCapture(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
@@ -2244,6 +2474,8 @@ SceneBase *SceneViewWindow::constructMayanSceneObject(Window *viewWindow, const 
 		return new BasicDoor(_vm, viewWindow, sceneStaticData, priorLocation, 90, 15, 346, 189, 2, 6, 0, 0, 1, 1, TRANSITION_WALK, -1, 33, 12, 13);
 	case 66:
 		return new DeathGodAltar(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 67:
+		return new DeathGodPuzzleBox(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 68:
 		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 206, 76, 246, 116, kItemEnvironCart, 53, offsetof(GlobalFlags, takenEnvironCart));
 	case 69:
