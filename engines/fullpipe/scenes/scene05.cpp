@@ -72,7 +72,18 @@ void scene05_initScene(Scene *sc) {
 }
 
 void sceneHandler05_makeManFlight() {
-	warning("STUB: sceneHandler05_makeManFlight()");
+	int qid;
+
+	if (!g_vars->scene05_bigHatch->_statics || g_vars->scene05_bigHatch->_statics->_staticsId != ST_BLK_OPEN)
+		qid = QU_SC5_MANBUMP;
+	else
+		qid = QU_SC5_MANFLY;
+
+	MessageQueue *mq = new MessageQueue(g_fullpipe->_currentScene->getMessageQueueById(qid), 0, 0);
+
+	mq->setFlags(mq->getFlags() | 1);
+
+	mq->chain(0);
 }
 
 void sceneHandler05_makeOtmFeedback() {
