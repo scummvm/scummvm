@@ -4490,6 +4490,7 @@ void Scene1337::remove() {
 	}
 
 	R2_GLOBALS._uiElements._active = true;
+	R2_GLOBALS._uiElements._visible = true;
 	SceneExt::remove();
 }
 
@@ -5418,9 +5419,10 @@ void Scene1337::dealCards() {
 	// Deal cards
 	_item1.setAction(&_action3);
 }
-void Scene1337::subCD193() {
+
+void Scene1337::showOptionsDialog() {
 	// Display menu with "Auto Play", "New Game", "Quit" and "Continue"
-	warning("STUBBED: subCD193()");
+	OptionsDialog::show();
 }
 
 void Scene1337::handleClick(int arg1, Common::Point pt) {
@@ -5674,7 +5676,7 @@ void Scene1337::handleClick(int arg1, Common::Point pt) {
 		return;
 
 	if (_helpIcon._bounds.contains(pt)) {
-		subCD193();
+		showOptionsDialog();
 		return;
 	}
 
@@ -6762,6 +6764,94 @@ void Scene1337::subD1940(bool flag) {
 
 void Scene1337::subD1975(int arg1, int arg2) {
 	warning("STUBBED lvl2 Scene1337::subD1975()");
+}
+
+void Scene1337::OptionsDialog::show() {
+	OptionsDialog *dlg = new OptionsDialog();
+	dlg->draw();
+
+	// Show the dialog
+	GfxButton *btn = dlg->execute(NULL);
+
+	// Figure out the new selected character
+	if (btn == &dlg->_quitGame)
+		R2_GLOBALS._sceneManager.changeScene(125);
+	else if (btn == &dlg->_restartGame)
+		R2_GLOBALS._sceneManager.changeScene(1330);
+	
+	// Remove the dialog
+	dlg->remove();
+	delete dlg;
+}
+
+Scene1337::OptionsDialog::OptionsDialog() {
+	// Set the elements text
+	Scene1337 *scene = (Scene1337 *)R2_GLOBALS._sceneManager._scene;
+	_autoplay.setText(scene->_autoplay ? AUTO_PLAY_ON : AUTO_PLAY_OFF);
+	_restartGame.setText(START_NEW_CARD_GAME);
+	_quitGame.setText(QUIT_CARD_GAME);
+	_continueGame.setText(CONTINUE_CARD_GAME);
+
+	// Set position of the elements
+	_autoplay._bounds.moveTo(5, 2);
+	_restartGame._bounds.moveTo(5, _autoplay._bounds.bottom + 2);
+	_quitGame._bounds.moveTo(5, _restartGame._bounds.bottom + 2);
+	_continueGame._bounds.moveTo(5, _quitGame._bounds.bottom + 2);
+
+	// Add the items to the dialog
+	addElements(&_autoplay, &_restartGame, &_quitGame, &_continueGame, NULL);
+
+	// Set the dialog size and position
+	frame();
+	_bounds.collapse(-6, -6);
+	setCenter(160, 100);
+}
+
+GfxButton *Scene1337::OptionsDialog::execute(GfxButton *defaultButton) {
+	_gfxManager.activate();
+
+	// Event loop
+	GfxButton *selectedButton = NULL;
+
+	bool breakFlag = false;
+	while (!g_vm->shouldQuit() && !breakFlag) {
+		Event event;
+		while (g_globals->_events.getEvent(event) && !breakFlag) {
+			// Adjust mouse positions to be relative within the dialog
+			event.mousePos.x -= _gfxManager._bounds.left;
+			event.mousePos.y -= _gfxManager._bounds.top;
+
+			for (GfxElementList::iterator i = _elements.begin(); i != _elements.end(); ++i) {
+				if ((*i)->process(event))
+					selectedButton = static_cast<GfxButton *>(*i);
+			}
+
+			if (selectedButton == &_autoplay) {
+				// Toggle Autoplay
+				selectedButton = NULL;
+				Scene1337 *scene = (Scene1337 *)R2_GLOBALS._sceneManager._scene;
+				scene->_autoplay = !scene->_autoplay;
+
+				_autoplay.setText(scene->_autoplay ? AUTO_PLAY_ON : AUTO_PLAY_OFF);
+				_autoplay.draw();
+			} else if (selectedButton) {
+				breakFlag = true;
+				break;
+			} else if (!event.handled) {
+				if ((event.eventType == EVENT_KEYPRESS) && (event.kbd.keycode == Common::KEYCODE_ESCAPE)) {
+					selectedButton = NULL;
+					breakFlag = true;
+					break;
+				}
+			}
+		}
+
+		g_system->delayMillis(10);
+		GLOBALS._screenSurface.updateScreen();
+	}
+
+	_gfxManager.deactivate();
+	return selectedButton;
 }
 
 /*--------------------------------------------------------------------------

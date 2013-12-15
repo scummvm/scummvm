@@ -183,6 +183,20 @@ public:
 };
 
 class Scene1337 : public SceneExt {
+	class OptionsDialog: public GfxDialog {
+	private:
+		GfxButton _autoplay;
+		GfxButton _restartGame;
+		GfxButton _quitGame;
+		GfxButton _continueGame;
+
+		OptionsDialog();
+		virtual ~OptionsDialog() {}
+		virtual GfxButton *OptionsDialog::execute(GfxButton *defaultButton);
+	public:
+		static void show();
+	};
+
 	class Card: public SceneHotspot {
 	public:
 		SceneObject _card;
@@ -364,7 +378,7 @@ public:
 	void suggestInstructions();
 	void shuffleCards();
 	void dealCards();
-	void subCD193();
+	void showOptionsDialog();
 	void handleClick(int arg1, Common::Point pt);
 	void handlePlayer0();
 	void handlePlayer1();
