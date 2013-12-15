@@ -113,7 +113,7 @@ public:
 };
 
 struct MGMSubItem {
-	int movement;
+	Movement *movement;
 	int staticsIndex;
 	int field_8;
 	int field_C;
@@ -162,6 +162,9 @@ public:
 	MessageQueue *genMovement(MGMInfo *mgminfo);
 	void updateAnimStatics(StaticANIObject *ani, int staticsId);
 	Common::Point *getPoint(Common::Point *point, int aniId, int staticsId1, int staticsId2);
+	int getStaticsIndexById(int idx, int16 id);
+	void clearMovements2(int idx);
+	int recalcOffsets(int idx, int st1idx, int st2idx, bool flip, bool flop);
 };
 
 struct MctlLadderMovementVars {

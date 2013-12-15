@@ -1576,10 +1576,64 @@ void MGM::updateAnimStatics(StaticANIObject *ani, int staticsId) {
 	}
 }
 
-Common::Point *MGM::getPoint(Common::Point *point, int aniId, int staticsId1, int staticsId2) {
-	warning("STUB: MGM::getPoint()");
+Common::Point *MGM::getPoint(Common::Point *point, int objectId, int staticsId1, int staticsId2) {
+	int idx = getItemIndexById(objectId);
+
+	if (idx == -1) {
+		point->x = -1;
+		point->y = -1;
+	} else {
+		int st1idx = getStaticsIndexById(idx, staticsId1);
+		int st2idx = getStaticsIndexById(idx, staticsId2);
+
+		if (st1idx == st2idx) {
+			point->x = 0;
+			point->y = 0;
+		} else {
+			int subidx = st1idx + st2idx * _items[idx]->statics.size();
+
+			if (!_items[idx]->subItems[subidx]->movement) {
+				clearMovements2(idx);
+				recalcOffsets(idx, st1idx, st2idx, false, true);
+
+				if (!_items[idx]->subItems[subidx]->movement) {
+					clearMovements2(idx);
+					recalcOffsets(idx, st1idx, st2idx, true, false);
+				}
+			}
+
+			MGMSubItem *sub = _items[idx]->subItems[subidx];
+
+			if (sub->movement) {
+				point->x = sub->x;
+				point->y = sub->y;
+			} else {
+				point->x = 0;
+				point->y = 0;
+			}
+		}
+	}
 
 	return point;
+}
+
+int MGM::getStaticsIndexById(int idx, int16 id) {
+	for (uint i = 0; i < _items[idx]->statics.size(); i++) {
+		if (_items[idx]->statics[i]->_staticsId == id)
+			return i;
+	}
+
+	return 0;
+}
+
+void MGM::clearMovements2(int idx) {
+	_items[idx]->movements2.clear();
+}
+
+int MGM::recalcOffsets(int idx, int st1idx, int st2idx, bool flip, bool flop) {
+	warning("STUB: MGM::recalcOffsets()");
+
+	return 0;
 }
 
 MovGraphLink::MovGraphLink() {
