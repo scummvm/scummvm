@@ -117,6 +117,8 @@ namespace Fullpipe {
 #define MSG_TAKEKOZAW 611
 #define MSG_TESTPLANK 538
 #define MSG_UPDATEBOTTLE 613
+#define MV_BLK_CLOSE 911
+#define MV_BLK_OPEN 910
 #define MV_EGTR_FATASK 5332
 #define MV_IN1MAN_SLEEP 5111
 #define MV_KZW_GOR 564

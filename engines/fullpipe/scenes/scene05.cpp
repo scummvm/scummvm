@@ -121,12 +121,30 @@ void sceneHandler05_makeWackoFeedback() {
 	}
 }
 
+void sceneHandler05_resetTicks() {
+	if (g_fullpipe->_aniMan->_movement && (g_fullpipe->_aniMan->_movement->_id == MV_MANHDL_HANDLEUP 
+										   || g_fullpipe->_aniMan->_movement->_id == MV_MANHDL_HANDLEDOWN))
+		g_vars->scene05_var01 = g_fullpipe->_updateTicks;
+	else
+		g_vars->scene05_var01 = 0;
+}
+
+void sceneHandler05_genFlies() {
+	warning("STUB: sceneHandler05_genFlies()");
+}
+
 void sceneHandler05_showHandle() {
 	g_fullpipe->_currentScene->getStaticANIObject1ById(ANI_HANDLE, -1)->show1(-1, -1, -1, 0);
 }
 
 void sceneHandler05_handleDown() {
-	warning("STUB: sceneHandler05_handleDown()");
+	StaticANIObject *hatch = g_fullpipe->_currentScene->getStaticANIObject1ById(ANI_BIGLUK, -1);
+
+	hatch->changeStatics2(ST_BLK_CLOSED);
+	hatch->startAnim(MV_BLK_OPEN, 0, -1);
+
+	sceneHandler05_resetTicks();
+	sceneHandler05_genFlies();
 }
 
 void sceneHandler05_hideHandle() {
@@ -134,7 +152,12 @@ void sceneHandler05_hideHandle() {
 }
 
 void sceneHandler05_handleUp() {
-	warning("STUB: sceneHandler05_handleUp()");
+	StaticANIObject *hatch = g_fullpipe->_currentScene->getStaticANIObject1ById(ANI_BIGLUK, -1);
+
+	hatch->changeStatics2(ST_BLK_OPEN);
+	hatch->startAnim(MV_BLK_CLOSE, 0, -1);
+
+	sceneHandler05_resetTicks();
 }
 
 void sceneHandler05_testHatch(ExCommand *ex) {
