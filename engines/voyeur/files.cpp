@@ -255,7 +255,7 @@ BoltGroup *BoltFile::getBoltGroup(uint32 id) {
 	if (_state._curGroupPtr->_callInitGro)
 		initGro();
 
-	if ((id >> 16) != 0) {
+	if ((id >> 8) != 0) {
 		id &= 0xff00;
 		for (int idx = 0; idx < _state._curGroupPtr->_count; ++idx, ++id) {
 			byte *member = getBoltMember(id);
