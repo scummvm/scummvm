@@ -86,8 +86,39 @@ void sceneHandler05_makeManFlight() {
 	mq->chain(0);
 }
 
-void sceneHandler05_makeOtmFeedback() {
-	warning("STUB: sceneHandler05_makeOtmFeedback()");
+void sceneHandler05_makeWackoFeedback() {
+	int staticsId1;
+	int staticsId2;
+
+	if (g_fullpipe->getObjectState(sO_WeirdWacko) == g_fullpipe->getObjectEnumState(sO_WeirdWacko, sO_InGlasses)) {
+		staticsId1 = ST_OTM_GLS_LEFT;
+		staticsId2 = (g_vars->scene05_handle->_statics->_staticsId == ST_HDL_DOWN) ? MV_OTM_HANDLEUP : MV_OTM_HANDLEDOWN;
+	} else if (g_fullpipe->getObjectState(sO_WeirdWacko) != g_fullpipe->getObjectEnumState(sO_WeirdWacko, sO_WithDrawer)) {
+		return;
+	} else {
+		staticsId1 = ST_OTM_BOX_LEFT;
+		staticsId2 = (g_vars->scene05_handle->_statics->_staticsId == ST_HDL_DOWN) ? MV_OTM_BOXHANDLEUP : MV_OTM_BOXHANDLEDOWN;
+	}
+
+	if (g_vars->scene05_wacko->_movement)
+		g_vars->scene05_wacko->changeStatics2(g_vars->scene05_wacko->_movement->_staticsObj2->_staticsId);
+
+	if (staticsId1 == g_vars->scene05_wacko->_statics->_staticsId) {
+		g_vars->scene05_wacko->startAnim(staticsId2, 0, -1);
+	} else {
+		MessageQueue *mq = g_vars->scene05_wacko->changeStatics1(staticsId1);
+
+		if (mq) {
+			mq->setFlags(mq->getFlags() | 1);
+
+			ExCommand *ex = new ExCommand(0, 17, MSG_SC5_MAKEOTMFEEDBACK, 0, 0, 0, 1, 0, 0, 0);
+
+			ex->_excFlags |= 2;
+
+			mq->addExCommandToEnd(ex);
+			mq->_isFinished = 0;
+		}
+	}
 }
 
 void sceneHandler05_showHandle() {
@@ -131,7 +162,7 @@ int sceneHandler05(ExCommand *ex) {
 	case MSG_SC5_MAKEOTMFEEDBACK:
         if (!g_fullpipe->_aniMan->_movement || (g_fullpipe->_aniMan->_movement->_id != MV_MANHDL_HANDLEUP 
 												&& g_fullpipe->_aniMan->_movement->_id != MV_MANHDL_HANDLEDOWN)) {
-			sceneHandler05_makeOtmFeedback();
+			sceneHandler05_makeWackoFeedback();
 			g_vars->scene05_var01 = 0;
         }
 		break;
@@ -176,7 +207,7 @@ int sceneHandler05(ExCommand *ex) {
 					if (!g_fullpipe->_aniMan->_movement || (g_fullpipe->_aniMan->_movement->_id != MV_MANHDL_HANDLEUP 
 															&& g_fullpipe->_aniMan->_movement->_id != MV_MANHDL_HANDLEDOWN)) {
 						if (g_vars->scene05_var02 % 2)
-							sceneHandler05_makeOtmFeedback();
+							sceneHandler05_makeWackoFeedback();
 
 						g_vars->scene05_var01 = 0;
 
