@@ -130,7 +130,24 @@ void sceneHandler05_resetTicks() {
 }
 
 void sceneHandler05_genFlies() {
-	warning("STUB: sceneHandler05_genFlies()");
+	if (g_vars->scene05_floatersTicker <= 1000)
+		return;
+
+	if (g_fullpipe->_rnd->getRandomNumber(1)) {
+		int numFlies = g_fullpipe->_rnd->getRandomNumber(3) + 1;
+
+		for (int i = 0; i < numFlies; i++) {
+			int x = g_fullpipe->_rnd->getRandomNumber(55) + 538;
+			int y = g_fullpipe->_rnd->getRandomNumber(60) + i * 30 + 520;
+
+			g_fullpipe->_floaters->genFlies(g_fullpipe->_currentScene, x, y, 5, 1);
+			g_fullpipe->_floaters->_array2.back()->val2 = 585;
+			g_fullpipe->_floaters->_array2.back()->val3 = -70;
+			g_fullpipe->_floaters->_array2.back()->val11 = 8.0;
+        }
+	}
+
+	g_vars->scene05_floatersTicker = 0;
 }
 
 void sceneHandler05_showHandle() {
