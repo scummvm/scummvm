@@ -1134,7 +1134,7 @@ int ThreadResource::doInterface() {
 			_vm->_soundManager.startVOCPlay(_vm->_soundManager.getVOCFileName(_vm->_playStamp2));
 		}
 
-		Common::Point pt = _vm->_eventsManager.getMousePos() + Common::Point(120, 75);
+		pt = _vm->_eventsManager.getMousePos() + Common::Point(120, 75);
 
 		for (int idx = 0; idx < READ_LE_UINT16(dataP); ++idx) {
 			if (READ_LE_UINT16(dataP + (idx * 8 + 2)) <= pt.x &&
