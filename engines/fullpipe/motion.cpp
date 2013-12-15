@@ -303,7 +303,15 @@ void MctlLadder::freeItems() {
 }
 
 MessageQueue *MctlLadder::method34(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId) {
-	warning("STUB: MctlLadder::method34()");
+	MessageQueue *mq = doWalkTo(subj, xpos, ypos, fuzzyMatch, staticsId);
+
+	if (mq) {
+		if (mq->chain(subj))
+			return mq;
+
+	} else {
+		delete mq;
+	}
 
 	return 0;
 }
