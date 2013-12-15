@@ -104,6 +104,7 @@ public:
 	void sDrawPic(DisplayResource *srcDisplay, DisplayResource *destDisplay, const Common::Point &initialOffset);
 	void fillPic(DisplayResource *display, byte onOff = 0);
 	void sDisplayPic(PictureResource *pic);
+	void drawANumber(DisplayResource *display, int num, int offset);
 	void flipPage();
 	void clearPalette();
 	void setPalette(const byte *palette, int start, int count);

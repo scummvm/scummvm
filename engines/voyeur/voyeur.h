@@ -151,6 +151,7 @@ public:
 	void checkTransition();
 	void doTimeBar(int v);
 	void flashTimeBar();
+	void checkPhoneCall();
 };
 
 } // End of namespace Voyeur

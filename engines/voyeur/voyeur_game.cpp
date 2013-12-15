@@ -273,23 +273,27 @@ void VoyeurEngine::freeTheApt() {
 }
 
 void VoyeurEngine::makeViewFinder() {
-	error("TODO");
+	error("TODO:makeViewFinder");
 }
 
 void VoyeurEngine::initIFace(){
-	error("TODO");
+	error("TODO: initIFace");
 }
 
 void VoyeurEngine::checkTransition(){
-	error("TODO");
+	error("TODO: checkTransition");
 }
 
 void VoyeurEngine::doTimeBar(int v) {
-	error("TODO");
+	error("TODO: doTimeBar");
 }
 
 void VoyeurEngine::flashTimeBar(){
-	error("TODO");
+	error("TODO: flashTimeBar");
+}
+
+void VoyeurEngine::checkPhoneCall() {
+	error("TODO: checkPhoneCall");
 }
 
 } // End of namespace Voyeur

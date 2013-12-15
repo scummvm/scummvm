@@ -1061,10 +1061,12 @@ void ThreadResource::doRoom() {
 int ThreadResource::doInterface() {
 	int varA = -1;
 	int var8 = 0;
+	PictureResource *pic;
+	Common::Point pt;
 
 	if (_vm->_voy._field478 != _vm->_voy._field46E) {
 		_vm->_voy._field46E = 0;
-		return -1;
+		return -2;
 	}
 
 	_vm->_voy._field478 &= ~0x100;
@@ -1113,11 +1115,11 @@ int ThreadResource::doInterface() {
 	_vm->_eventsManager._intPtr._hasPalette = true;
 	_vm->_voy._field478 &= ~1;
 
-	for (;;) {
+	do {
 		_vm->doTimeBar(1);
 		_vm->_eventsManager.getMouseInfo();
 
-		const Common::Point &pt = _vm->_eventsManager.getMousePos();
+		pt = _vm->_eventsManager.getMousePos();
 		if (pt.x != _currentMouseX || pt.y != _currentMouseY || var8 != varA) {
 			varA = var8;
 			_vm->_graphicsManager.doScroll(pt);
@@ -1126,10 +1128,126 @@ int ThreadResource::doInterface() {
 			_currentMouseY = pt.y;
 		}
 
-		// TODO
-	}
+		_vm->checkPhoneCall();
+		if (!_vm->_soundManager.getVOCStatus()) {
+			_vm->_playStamp2 = 151 - _vm->getRandomNumber(5);
+			_vm->_soundManager.startVOCPlay(_vm->_soundManager.getVOCFileName(_vm->_playStamp2));
+		}
 
-	return 0;
+		Common::Point pt = _vm->_eventsManager.getMousePos() + Common::Point(120, 75);
+
+		for (int idx = 0; idx < READ_LE_UINT16(dataP); ++idx) {
+			if (READ_LE_UINT16(dataP + (idx * 8 + 2)) <= pt.x &&
+					READ_LE_UINT16(dataP + (idx * 8 + 6)) >= pt.x &&
+					READ_LE_UINT16(dataP + (idx * 8 + 4)) <= pt.y &&
+					READ_LE_UINT16(dataP + (idx * 8 + 8)) >= pt.y) {
+				// Rect check done
+				for (int arrIndex = 0; arrIndex < 3; ++arrIndex) {
+					if (_vm->_voy._arr3[arrIndex][idx] <= _vm->_voy._RTVNum &&
+							_vm->_voy._arr4[arrIndex][idx] > _vm->_voy._RTVNum) {
+						// Draw the picture
+						pic = _vm->_bVoy->boltEntry(276)._picResource;
+						_vm->_graphicsManager.sDrawPic(pic, *_vm->_graphicsManager._vPort, 
+							Common::Point(178, 108));
+						var8 = idx;
+					}
+
+					if (_vm->_voy._arr5[arrIndex][idx] <= _vm->_voy._RTVNum &&
+							_vm->_voy._arr6[idx][idx] > _vm->_voy._RTVNum) {
+						// Draw the picture
+						pic = _vm->_bVoy->boltEntry(277)._picResource;
+						_vm->_graphicsManager.sDrawPic(pic, *_vm->_graphicsManager._vPort, 
+							Common::Point(178, 108));
+						var8 = idx;
+					}
+				}
+
+				for (int arrIndex = 0; arrIndex < 3; ++arrIndex) {
+					if (_vm->_voy._arr1[arrIndex][idx] <= _vm->_voy._RTVNum &&
+							_vm->_voy._arr2[arrIndex][idx] > _vm->_voy._RTVNum) {
+						// Draw the picture
+						pic = _vm->_bVoy->boltEntry(375)._picResource;
+						_vm->_graphicsManager.sDrawPic(pic, *_vm->_graphicsManager._vPort, 
+							Common::Point(178, 108));
+						var8 = idx;
+					}
+				}
+			}
+		}
+
+		if (var8 == -1) {
+			// Draw the default picture
+			pic = _vm->_bVoy->boltEntry(274)._picResource;
+			_vm->_graphicsManager.sDrawPic(pic, *_vm->_graphicsManager._vPort, 
+				Common::Point(178, 108));
+		}
+
+		if (_vm->_voy._RTVNum & 2) {
+			_vm->_graphicsManager.drawANumber(*_vm->_graphicsManager._vPort, 
+				10 / _vm->_eventsManager._videoComputerBut1, 0x1900BE);
+			_vm->_graphicsManager.drawANumber(*_vm->_graphicsManager._vPort, 
+				10 % _vm->_eventsManager._videoComputerBut1, 0x1900BE);
+
+			if (_vm->_voy._RTANum & 4) {
+				int v = 10 / _vm->_eventsManager._videoComputerNum;
+				_vm->_graphicsManager.drawANumber(*_vm->_graphicsManager._vPort, 
+					v == 0 ? 10 : v, 0x1900BE);
+				_vm->_graphicsManager.drawANumber(*_vm->_graphicsManager._vPort, 
+					_vm->_eventsManager._videoComputerNum % 10, 0x1900AC);
+
+				pic = _vm->_bVoy->boltEntry(274)._picResource;
+				_vm->_graphicsManager.sDrawPic(pic, *_vm->_graphicsManager._vPort, 
+					Common::Point(215, 27));
+			}
+		}
+
+		_vm->_voy._RTANum = 0;
+		(*_vm->_graphicsManager._vPort)->_flags |= 8;
+		_vm->_graphicsManager.flipPage();
+		_vm->_eventsManager.sWaitFlip();
+
+		pt = _vm->_eventsManager.getMousePos();
+		if ((_vm->_voy._field476 <= _vm->_voy._RTVNum) || ((_vm->_voy._field478 & 0x80) &&
+				(_vm->_voy._fadeFunc != NULL) && (pt.x == 0))) {
+			_vm->_eventsManager.getMouseInfo();
+
+			if (_vm->_voy._field474 == 15) {
+				var8 = 20;
+				_vm->_voy._field474 = 17;
+				_vm->_soundManager.stopVOCPlay();
+				_vm->checkTransition();
+				_vm->_voy._lastInplay = true;
+			} else {
+				_vm->_voy._field478 = 1;
+				_currentMouseX = pt.x;
+				_currentMouseY = pt.y;
+
+				chooseSTAMPButton(20);
+				parsePlayCommands();
+				_vm->checkTransition();
+				_vm->makeViewFinder();
+
+				_vm->_eventsManager.setMousePos(Common::Point(_currentMouseX, _currentMouseY));
+				_vm->initIFace();
+				
+				dataP = _vm->_bVoy->memberAddr(_vm->_playStamp1 + 1);
+				_vm->_eventsManager.getMouseInfo();
+				_vm->_eventsManager.setMousePos(Common::Point(_currentMouseX, _currentMouseY));
+
+				_vm->_voy._field478 &= ~2;
+				_vm->_eventsManager._intPtr.field1E = 1;
+				_vm->_eventsManager._intPtr.field1A = 0;
+			}
+		}
+	} while (!_vm->_voy._fadeFunc && !_vm->shouldQuit() && 
+		(!_vm->_voy._lastInplay || var8 == -1));
+
+	_vm->_voy._field478 |= 1;
+	_vm->_bVoy->freeBoltGroup(_vm->_playStamp1);
+	if (_vm->_playStamp2 != -1)
+		_vm->_soundManager.stopVOCPlay();
+
+	return !_vm->_voy._fadeFunc ? var8 : -2;
 }
 
 void ThreadResource::addAudioEventStart() {

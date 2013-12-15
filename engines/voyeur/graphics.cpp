@@ -529,6 +529,10 @@ error("TODO: var22/var24/var2C not initialised before use?");
 	}
 }
 
+void GraphicsManager::drawANumber(DisplayResource *display, int num, int offset) {
+	warning("TODO: drawANumber");
+}
+
 void GraphicsManager::fillPic(DisplayResource *display, byte onOff) {
 	PictureResource *pic;
 	if (display->_flags & DISPFLAG_VIEWPORT) {
