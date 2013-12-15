@@ -336,12 +336,12 @@ public:
 	bool isStationCard(int cardId);
 	bool isStopConstructionCard(int cardId);
 	int  subC26CB(int playerId, int handCardId);
-	int  findNormalCardInHand(int playerId);
+	int  findPlatformCardInHand(int playerId);
 	int  findCard13InHand(int playerId);
 	int  checkThieftCard(int playerId);
-	int  subC27B5(int cardId);
+	int  isDelayCard(int cardId);
 	int  isSlowCard(int cardId);
-	void subC2835(int playerId);
+	void handlePlayer01Discard(int playerId);
 	void playThieftCard(int playerId, Card *card, int victimId);
 	int  getPreventionCardId(int cardId);
 	bool isAttackPossible(int victimId, int cardId);
