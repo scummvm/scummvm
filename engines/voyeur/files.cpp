@@ -163,9 +163,10 @@ byte *BoltFilesState::decompress(byte *buf, int size, int mode) {
 #undef NEXT_BYTE
 
 void BoltFilesState::nextBlock() {
-	if (_curFilePosition != _bufferEnd)
-		_curFd->seek(_bufferEnd);
+	if (&_curLibPtr->_file != _curFd || _curFilePosition != _bufferEnd)
+		_curLibPtr->_file.seek(_bufferEnd);
 
+	_curFd = &_curLibPtr->_file;
 	_bufferBegin = _bufferEnd;
 	int bytesRead = _curFd->read(_bufStart, _bufSize);
 
@@ -219,7 +220,6 @@ byte *FilesManager::fload(const Common::String &filename, int *size) {
 /*------------------------------------------------------------------------*/
 
 BoltFile::BoltFile(const Common::String &filename, BoltFilesState &state): _state(state) {
-	_state._curFd = &_file;
 	if (!_file.open(filename))
 		error("Could not open %s", filename.c_str());
 	_state._curFilePosition = 0;
@@ -233,13 +233,15 @@ BoltFile::BoltFile(const Common::String &filename, BoltFilesState &state): _stat
 
 	int totalGroups = header[11] ? header[11] : 0x100;
 	for (int i = 0; i < totalGroups; ++i)
-		_groups.push_back(BoltGroup(_state._curFd));
+		_groups.push_back(BoltGroup(&_file));
 }
 
 BoltFile::~BoltFile() {
 	_file.close();
 	if (_state._curFd == &_file)
 		_state._curFd = NULL;
+	if (_state._curLibPtr == this)
+		_state._curLibPtr = NULL;
 }
 
 BoltGroup *BoltFile::getBoltGroup(uint16 id, bool process) {

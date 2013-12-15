@@ -100,7 +100,6 @@ public:
 class BoltFile {
 private:
 	Common::Array<BoltGroup> _groups;
-	Common::File _file;
 protected:
 	BoltFilesState &_state;
 
@@ -115,6 +114,8 @@ private:
 	void termMem() {}	// TODO
 	void initGro() {}	// TODO
 	void termGro() {}	// TODO
+public:
+	Common::File _file;
 public:
 	BoltFile(const Common::String &filename, BoltFilesState &state);
 	virtual ~BoltFile();
