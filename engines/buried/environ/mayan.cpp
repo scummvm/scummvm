@@ -736,6 +736,163 @@ bool GenericCavernDoorOfferingHead::isValidItemToDrop(Window *viewWindow, int it
 	return false;
 }
 
+class DeathGodCavernDoorOfferingHead : public SceneBase {
+public:
+	DeathGodCavernDoorOfferingHead(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+			int correctOfferingDestDepth = 0, int transitionType = -1, int transitionData = -1, int transitionStartFrame = -1, int transitionLength = -1);
+	int preExitRoom(Window *viewWindow, const Location &newLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int draggingItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
+	int droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	DestinationScene _correctDestination;
+	Common::Rect _dropRegion;
+};
+
+DeathGodCavernDoorOfferingHead::DeathGodCavernDoorOfferingHead(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+		int correctOfferingDestDepth, int transitionType, int transitionData, int transitionStartFrame, int transitionLength) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_correctDestination.destinationScene = _staticData.location;
+	_correctDestination.destinationScene.depth = correctOfferingDestDepth;
+	_correctDestination.transitionType = transitionType;
+	_correctDestination.transitionData = transitionData;
+	_correctDestination.transitionStartFrame = transitionStartFrame;
+	_correctDestination.transitionLength = transitionLength;
+	_dropRegion = Common::Rect(50, 76, 228, 182);
+
+	byte offerings = ((SceneViewWindow *)viewWindow)->getGlobalFlags().myMCDeathGodOfferings;
+
+	if (offerings & 1) {
+		if (offerings & 2) {
+			if (offerings & 4)
+				_staticData.navFrameIndex = 190;
+			else
+				_staticData.navFrameIndex = 189;
+		} else if (offerings & 4) {
+			_staticData.navFrameIndex = 188;
+		} else {
+			_staticData.navFrameIndex = 186;
+		}
+	} else if (offerings & 2) {
+		if (offerings & 4)
+			_staticData.navFrameIndex = 187;
+		else
+			_staticData.navFrameIndex = 185;
+	} else if (offerings & 4) {
+		_staticData.navFrameIndex = 184;
+	}
+}
+
+int DeathGodCavernDoorOfferingHead::preExitRoom(Window *viewWindow, const Location &newLocation) {
+	// Put any pieces placed in the head back in the inventory
+	byte &offerings = ((SceneViewWindow *)viewWindow)->getGlobalFlags().myMCDeathGodOfferings;
+
+	if (offerings & 1)
+		((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->addItem(kItemObsidianBlock);
+	if (offerings & 2)
+		((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->addItem(kItemJadeBlock);
+	if (offerings & 4)
+		((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->addItem(kItemLimestoneBlock);
+
+	offerings = 0;
+	return SC_TRUE;
+}
+
+int DeathGodCavernDoorOfferingHead::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	// Return to depth zero
+	DestinationScene newDest;
+	newDest.destinationScene = _staticData.location;
+	newDest.destinationScene.depth = 0;
+	newDest.transitionType = TRANSITION_NONE;
+	newDest.transitionData = -1;
+	newDest.transitionStartFrame = -1;
+	newDest.transitionLength = -1;
+	((SceneViewWindow *)viewWindow)->moveToDestination(newDest);
+	return SC_TRUE;
+}
+
+int DeathGodCavernDoorOfferingHead::draggingItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) {
+	if ((itemID == kItemJadeBlock || itemID == kItemLimestoneBlock || itemID == kItemObsidianBlock) && _dropRegion.contains(pointLocation)) {
+		byte offerings = ((SceneViewWindow *)viewWindow)->getGlobalFlags().myMCDeathGodOfferings;
+
+		if ((offerings & 1) != 0 && itemID == kItemObsidianBlock)
+			return 0;
+		if ((offerings & 2) != 0 && itemID == kItemJadeBlock)
+			return 0;
+		if ((offerings & 4) != 0 && itemID == kItemLimestoneBlock)
+			return 0;
+
+		return 1;
+	}
+
+	return 0;
+}
+
+int DeathGodCavernDoorOfferingHead::droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) {
+	if (pointLocation.x == -1 && pointLocation.y == -1)
+		return 0;
+
+	if ((itemID == kItemJadeBlock || itemID == kItemLimestoneBlock || itemID == kItemObsidianBlock) && _dropRegion.contains(pointLocation)) {
+		byte &offerings = ((SceneViewWindow *)viewWindow)->getGlobalFlags().myMCDeathGodOfferings;
+
+		// Make sure we didn't already place the item
+		if ((offerings & 1) != 0 && itemID == kItemObsidianBlock)
+			return SIC_REJECT;
+		if ((offerings & 2) != 0 && itemID == kItemJadeBlock)
+			return SIC_REJECT;
+		if ((offerings & 4) != 0 && itemID == kItemLimestoneBlock)
+			return SIC_REJECT;
+
+		// Add the item
+		if (itemID == kItemObsidianBlock)
+			offerings |= 1;
+		else if (itemID == kItemJadeBlock)
+			offerings |= 2;
+		else if (itemID == kItemLimestoneBlock)
+			offerings |= 4;
+
+		// Change the image
+		if (offerings & 1) {
+			if (offerings & 2) {
+				if (offerings & 4)
+					_staticData.navFrameIndex = 190;
+				else
+					_staticData.navFrameIndex = 189;
+			} else if (offerings & 4) {
+				_staticData.navFrameIndex = 188;
+			} else {
+				_staticData.navFrameIndex = 186;
+			}
+		} else if (offerings & 2) {
+			if (offerings & 4)
+				_staticData.navFrameIndex = 187;
+			else
+				_staticData.navFrameIndex = 185;
+		} else if (offerings & 4) {
+			_staticData.navFrameIndex = 184;
+		} else {
+			_staticData.navFrameIndex = 152;
+		}
+
+		viewWindow->invalidateWindow(false);
+
+		if ((offerings & 1) != 0 && (offerings & 2) != 0 && (offerings & 4) != 0) {
+			_vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 10), 128, false, true);
+			((SceneViewWindow *)viewWindow)->moveToDestination(_correctDestination);
+		}
+
+		return SIC_ACCEPT;
+	}
+
+	return SIC_REJECT;
+}
+
+int DeathGodCavernDoorOfferingHead::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	return kCursorPutDown;
+}
+
 class WealthGodRopeDrop : public SceneBase {
 public:
 	WealthGodRopeDrop(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
@@ -1893,6 +2050,8 @@ SceneBase *SceneViewWindow::constructMayanSceneObject(Window *viewWindow, const 
 		return new ViewSingleTranslation(_vm, viewWindow, sceneStaticData, priorLocation, IDMYMC_DEATHGOD_DOOR_TOP_TRANS_TEXT, 12, 128, 426, 156, offsetof(GlobalFlags, myMCTransDoor));
 	case 28:
 		return new ViewSingleTranslation(_vm, viewWindow, sceneStaticData, priorLocation, IDMYMC_DEATHGOD_DOOR_RIGHT_TRANS_TEXT, 46, 1, 315, 188, offsetof(GlobalFlags, myMCTransDoor), offsetof(GlobalFlags, myMCTransDGOffering));
+	case 29:
+		return new DeathGodCavernDoorOfferingHead(_vm, viewWindow, sceneStaticData, priorLocation, 4, TRANSITION_WALK, -1, 1010, 12);
 	case 30:
 		return new WealthGodRopeDrop(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 31:
