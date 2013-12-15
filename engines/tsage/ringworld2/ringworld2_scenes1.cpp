@@ -6295,12 +6295,12 @@ void Scene1337::subD02CA() {
 				Card *handcard = &_gameBoardSide[2]._handCard[i];
 				_selectedCard._cardId = handcard->_cardId;
 				_selectedCard._stationPos = handcard->_stationPos;
-				// _selectedCard._actorName = handcard->_actorName;
+				//warning("_selectedCard._actorName = handcard->_actorName;");
 				_selectedCard._fieldE = handcard->_fieldE;
 				_selectedCard._field10 = handcard->_field10;
-				warning("_selectedCard._field12 = handcard->_field12;");
-				warning("_selectedCard._field14 = handcard->_field14;");
-				warning("_selectedCard._field16 = handcard->_field16;");
+				//warning("_selectedCard._field12 = handcard->_field12;");
+				//warning("_selectedCard._field14 = handcard->_field14;");
+				//warning("_selectedCard._field16 = handcard->_field16;");
 				_selectedCard._sceneRegionId = handcard->_sceneRegionId;
 				_selectedCard._position = handcard->_position;
 				_selectedCard._yDiff = handcard->_yDiff;
@@ -6310,7 +6310,7 @@ void Scene1337::subD02CA() {
 				_selectedCard._talkLineNum = handcard->_talkLineNum;
 				_selectedCard._useLineNum = handcard->_useLineNum;
 				_selectedCard._action = handcard->_action;
-				warning("_selectedCard._field0 = handcard->_field0;");
+				//warning("_selectedCard._field0 = handcard->_field0;");
 				_selectedCard._card._updateStartFrame = handcard->_card._updateStartFrame;
 				_selectedCard._card._walkStartFrame = handcard->_card._walkStartFrame;
 				// _field2E is named _field3C in R2R
@@ -6343,10 +6343,9 @@ void Scene1337::subD02CA() {
 				// _selectedCard._object1._actorName = handcard->_object1._actorName;
 				_selectedCard._card._fieldE = handcard->_card._fieldE;
 				_selectedCard._card._field10 = handcard->_card._field10;
-				warning("_selectedCard._card._field12 = handcard->_card._field12;");
-				warning("_selectedCard._card._field14 = handcard->_card._field14;");
-				warning("_selectedCard._card._field16 = handcard->_card._field16;");
-				// _selectedCard._card = _gameBoardSide[2]._handCard[i]._card;
+				//warning("_selectedCard._card._field12 = handcard->_card._field12;");
+				//warning("_selectedCard._card._field14 = handcard->_card._field14;");
+				//warning("_selectedCard._card._field16 = handcard->_card._field16;");
 
 				_gameBoardSide[2]._handCard[i]._cardId = 0;
 				_gameBoardSide[2]._handCard[i]._card.remove();
