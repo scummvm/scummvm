@@ -1862,6 +1862,38 @@ static const uint16 sq4FloppyPatchEndlessFlight[] = {
 	PATCH_END
 };
 
+// Floppy-only: When the player tries to throw something at the sequel police in Space Quest X (zero g zone),
+//   the game will first show a textbox and then cause a signature mismatch in ScummVM/
+//   crash the whole game in Sierra SCI/display garbage (the latter when the Sierra "patch" got applied).
+//
+// All of this is caused by a typo in the script. Right after the code for showing the textbox,
+//  there is more similar code for showing another textbox, but without a pointer to the text.
+//  This has to be a typo, because there is no unused text to be found within that script.
+//
+// Sierra's "patch" didn't include a proper fix (as in a modified script). Instead they shipped a dummy
+//  text resource, which somewhat "solved" the issue in Sierra SCI, but it still showed another textbox
+//  with garbage in it. Funnily Sierra must have known that, because that new text resource contains:
+//  "Hi! This is a kludge!"
+//
+// We properly fix it by removing the faulty code.
+// Applies to at least: English Floppy
+// Responsible method: sp1::doVerb
+// Fixes bug: found by SCI developer
+static const uint16 sq4FloppySignatureThrowStuffAtSequelPoliceBug[] = {
+	0x47, 0xff, 0x00, 0x02,             // call export 255_0, 2
+	0x3a,                               // toss
+	SIG_MAGICDWORD,
+	0x36,                               // push
+	0x47, 0xff, 0x00, 0x02,             // call export 255_0, 2
+	SIG_END
+};
+
+static const uint16 sq4FloppyPatchThrowStuffAtSequelPoliceBug[] = {
+	PATCH_ADDTOOFFSET +5,
+	0x48,                            // ret
+	PATCH_END
+};
+
 // The scripts in SQ4CD support simultaneous playing of speech and subtitles,
 // but this was not available as an option. The following two patches enable
 // this functionality in the game's GUI options dialog.
@@ -1952,12 +1984,13 @@ static const uint16 sq4CdPatchTextOptions[] = {
 	PATCH_END
 };
 
-//          script, description,                                      signature                        patch
+//          script, description,                                      signature                                      patch
 static const SciScriptPatcherEntry sq4Signatures[] = {
-	{  true,   298, "Floppy: endless flight",                      1, sq4FloppySignatureEndlessFlight, sq4FloppyPatchEndlessFlight },
-	{  true,   818, "CD: Speech and subtitles option",             1, sq4CdSignatureTextOptions,       sq4CdPatchTextOptions },
-	{  true,     0, "CD: Babble icon speech and subtitles fix",    1, sq4CdSignatureBabbleIcon,        sq4CdPatchBabbleIcon },
-	{  true,   818, "CD: Speech and subtitles option button",      1, sq4CdSignatureTextOptionsButton, sq4CdPatchTextOptionsButton },
+	{  true,   298, "Floppy: endless flight",                      1, sq4FloppySignatureEndlessFlight,               sq4FloppyPatchEndlessFlight },
+	{  true,   700, "Floppy: throw stuff at sequel police bug",    1, sq4FloppySignatureThrowStuffAtSequelPoliceBug, sq4FloppyPatchThrowStuffAtSequelPoliceBug },
+	{  true,   818, "CD: Speech and subtitles option",             1, sq4CdSignatureTextOptions,                     sq4CdPatchTextOptions },
+	{  true,     0, "CD: Babble icon speech and subtitles fix",    1, sq4CdSignatureBabbleIcon,                      sq4CdPatchBabbleIcon },
+	{  true,   818, "CD: Speech and subtitles option button",      1, sq4CdSignatureTextOptionsButton,               sq4CdPatchTextOptionsButton },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
