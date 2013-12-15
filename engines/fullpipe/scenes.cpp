@@ -106,9 +106,9 @@ Vars::Vars() {
 	scene05_handle = 0;
 	scene05_wacko = 0;
 	scene05_bigHatch = 0;
-	scene05_var01 = 0;
-	scene05_var02 = 0;
-	scene05_var03 = 0;
+	scene05_wackoTicker = 0;
+	scene05_handleFlipper = 0;
+	scene05_floatersTicker = 0;
 
 	selector = 0;
 }

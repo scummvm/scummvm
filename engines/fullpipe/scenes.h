@@ -137,9 +137,9 @@ public:
 	StaticANIObject *scene05_handle;
 	StaticANIObject *scene05_wacko;
 	StaticANIObject *scene05_bigHatch;
-	int scene05_var01;
-	int scene05_var02;
-	int scene05_var03;
+	int scene05_wackoTicker;
+	int scene05_handleFlipper;
+	int scene05_floatersTicker;
 
 	PictureObject *selector;
 };
