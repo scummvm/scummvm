@@ -242,7 +242,7 @@ BoltFile::~BoltFile() {
 		_state._curFd = NULL;
 }
 
-BoltGroup *BoltFile::getBoltGroup(uint32 id) {
+BoltGroup *BoltFile::getBoltGroup(uint16 id, bool process) {
 	++_state._fromGroupFlag;
 	_state._curLibPtr = this;
 	_state._curGroupPtr = &_groups[(id >> 8) & 0xff];
@@ -255,7 +255,8 @@ BoltGroup *BoltFile::getBoltGroup(uint32 id) {
 	if (_state._curGroupPtr->_callInitGro)
 		initGro();
 
-	if ((id >> 8) != 0) {
+	if (process) {
+		// Pre-process the resources
 		id &= 0xff00;
 		for (int idx = 0; idx < _state._curGroupPtr->_count; ++idx, ++id) {
 			byte *member = getBoltMember(id);
@@ -272,7 +273,9 @@ BoltGroup *BoltFile::getBoltGroup(uint32 id) {
 	return _state._curGroupPtr;
 }
 
-void BoltFile::freeBoltGroup(uint32 id) {
+void BoltFile::freeBoltGroup(uint16 id, bool freeEntries) {
+	// TODO: I currently ignore freeEntries flag, in favour of always
+	// freeing. Need to check whether this can really ever be false.
 	_state._curLibPtr = this;
 	_state._curGroupPtr = &_groups[(id >> 8) & 0xff];
 
@@ -691,9 +694,13 @@ PictureResource::PictureResource(BoltFilesState &state, const byte *src) {
 	_imgData = NULL;
 
 	int nbytes = _bounds.width() * _bounds.height();
-	if (_flags & 0x20) {
-		error("TODO: sInitPic flags&0x20");
-	} else if (_flags & 8) {
+	if (_flags & PICFLAG_20) {
+		if (_flags & (PICFLAG_80 | PICFLAG_40)) {
+			error("TODO: sInitPic");
+		} else {
+			error("TODO: sInitPic");
+		}
+	} else if (_flags & PICFLAG_8) {
 		int mode = 0;
 		if (_bounds.width() == 320) {
 			mode = 147;
@@ -724,15 +731,15 @@ PictureResource::PictureResource(BoltFilesState &state, const byte *src) {
 		}
 
 //		byte *imgData = _imgData;
-		if (_flags & 0x10) {
+		if (_flags & PICFLAG_10) {
 			// TODO: Figure out what it's doing. Looks like a direct clearing
 			// of the screen directly
 		} else {
 			// TODO: Figure out direct screen loading
 		}
 	} else {
-		if (_flags & 0x1000) {
-			if (!(_flags & 0x10))
+		if (_flags & PICFLAG_1000) {
+			if (!(_flags & PICFLAG_10))
 				nbytes = state._curMemberPtr->_size - 24;
 
 			int mask = (nbytes + 0x3FFF) >> 14;
@@ -753,7 +760,7 @@ PictureResource::PictureResource(BoltFilesState &state, const byte *src) {
 			}
 		}
 
-		if (_flags & 0x10) {
+		if (_flags & PICFLAG_10) {
 			_imgData = new byte[nbytes];
 			Common::fill(_imgData, _imgData + nbytes, 0);
 		} else {

@@ -119,8 +119,8 @@ public:
 	BoltFile(const Common::String &filename, BoltFilesState &state);
 	virtual ~BoltFile();
 
-	BoltGroup *getBoltGroup(uint32 id);
-	void freeBoltGroup(uint32 id);
+	BoltGroup *getBoltGroup(uint16 id, bool process = true);
+	void freeBoltGroup(uint16 id, bool freeEntries = true);
 	void freeBoltMember(uint32 id);
 	byte *memberAddr(uint32 id);
 	byte *memberAddrOffset(uint32 id);
@@ -240,6 +240,9 @@ public:
 };
 
 /* bvoy.blt resource types */
+
+enum PictureFlag { PICFLAG_8 = 8, PICFLAG_10 = 0x10, PICFLAG_20 = 0x20, 
+	PICFLAG_40 = 0x40, PICFLAG_80 = 0x80, PICFLAG_1000 = 0x1000 };
 
 class PictureResource: public DisplayResource {
 public:

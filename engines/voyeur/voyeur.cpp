@@ -124,8 +124,8 @@ void VoyeurEngine::globalInitBolt() {
 	initBolt();
 
 	_filesManager.openBoltLib("bvoy.blt", _bVoy);
-	_bVoy->getBoltGroup(0x10000);
-	_bVoy->getBoltGroup(0x10100);
+	_bVoy->getBoltGroup(0x000);
+	_bVoy->getBoltGroup(0x100);
 
 	_graphicsManager._fontPtr = &_defaultFontInfo;
 	_graphicsManager._fontPtr->_curFont = _bVoy->boltEntry(0x101)._fontResource;
@@ -163,7 +163,7 @@ bool VoyeurEngine::doHeadTitle() {
 	_eventsManager.startMainClockInt();
 
 	// Show starting screen
-//	if (_bVoy->getBoltGroup(0x10500))
+//	if (_bVoy->getBoltGroup(0x500))
 //		showConversionScreen();
 	if (shouldQuit())
 		return false;
@@ -236,7 +236,7 @@ void VoyeurEngine::showConversionScreen() {
 		_eventsManager.delay(1);
 
 	_graphicsManager.screenReset();
-	_bVoy->freeBoltGroup(0x10500);
+	_bVoy->freeBoltGroup(0x500);
 
 
 }
@@ -253,7 +253,7 @@ bool VoyeurEngine::doLock() {
 	int keyCount;
 	int key;
 
-	if (_bVoy->getBoltGroup(0x10700)) {
+	if (_bVoy->getBoltGroup(0x700)) {
 		lock.getSysDate();
 		lock.getThePassword();
 		
@@ -416,7 +416,7 @@ bool VoyeurEngine::doLock() {
 		lock.saveThePassword();
 
 		_voy._field4386 = NULL;
-		_bVoy->freeBoltGroup(0x10700);
+		_bVoy->freeBoltGroup(0x700);
 	}
 
 	_eventsManager.mouseOff();
@@ -428,7 +428,7 @@ bool VoyeurEngine::doLock() {
 }
 
 void VoyeurEngine::showTitleScreen() {
-	if (_bVoy->getBoltGroup(0x10500)) {
+	if (_bVoy->getBoltGroup(0x500)) {
 		_graphicsManager._backgroundPage = _bVoy->getPictureResource(0x500);
 
 		(*_graphicsManager._vPort)->setupViewPort();
@@ -468,7 +468,7 @@ void VoyeurEngine::showTitleScreen() {
 		playRL2Video("a1100100.rl2");
 		_graphicsManager.screenReset();
 
-		_bVoy->freeBoltGroup(0x10500);
+		_bVoy->freeBoltGroup(0x500);
 	}
 }
 
@@ -476,7 +476,7 @@ void VoyeurEngine::doOpening() {
 /*
 	_graphicsManager.screenReset();
 
-	if (!_bVoy->getBoltGroup(0x10200))
+	if (!_bVoy->getBoltGroup(0x200, true))
 		return;
 
 	byte *frameTable = _bVoy->memberAddr(0x215);

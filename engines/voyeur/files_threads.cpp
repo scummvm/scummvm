@@ -421,7 +421,7 @@ void ThreadResource::parsePlayCommands() {
 					_vm->_eventsManager.incrementTime(1);
 					_vm->_eventsManager.incrementTime(1);
 
-					_vm->_bVoy->freeBoltGroup(0x17F00);
+					_vm->_bVoy->freeBoltGroup(0x7F00);
 					_vm->_voy._field478 = -17;
 					_vm->_eventsManager._videoComputerBut4 = -1;
 					_vm->_voy._field470 = 129;
@@ -459,7 +459,7 @@ void ThreadResource::parsePlayCommands() {
 					_vm->_playStamp1 = -1;
 
 					if (_vm->_eventsManager._videoDead != -1) {
-						_vm->_bVoy->freeBoltGroup(0x10E00);
+						_vm->_bVoy->freeBoltGroup(0xE00);
 						_vm->_eventsManager._videoDead = -1;
 						(*_vm->_graphicsManager._vPort)->_flags |= 8;
 
@@ -1434,8 +1434,9 @@ void ThreadResource::freeTheApt() {
 }
 
 void ThreadResource::doAptAnim(int mode) {
-	_vm->_bVoy->freeBoltGroup(0x10100);
+	_vm->_bVoy->freeBoltGroup(0x100, true);
 
+	// Figure out the resource to use
 	int id = 0;
 	switch (_vm->_voy._field472) {
 	case 140:
@@ -1479,6 +1480,7 @@ void ThreadResource::doAptAnim(int mode) {
 	if (mode)
 		id += 0x100;
 
+	// Do the display
 	if (_vm->_bVoy->getBoltGroup(id)) {
 		CMapResource *pal = _vm->_bVoy->boltEntry(id)._cMapResource;
 		pal->_steps = 1;
@@ -1497,7 +1499,7 @@ void ThreadResource::doAptAnim(int mode) {
 		_vm->_bVoy->freeBoltGroup(id);
 	}
 
-	_vm->_bVoy->getBoltGroup(0x10100);
+	_vm->_bVoy->getBoltGroup(0x100);
 }
 
 } // End of namespace Voyeur

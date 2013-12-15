@@ -39,7 +39,7 @@ void VoyeurEngine::playStamp() {
 	_stampLibPtr = NULL;
 	_filesManager.openBoltLib("stampblt.blt", _stampLibPtr);
 
-	_stampLibPtr->getBoltGroup(0x10000);
+	_stampLibPtr->getBoltGroup(0);
 	_resolvePtr = &RESOLVE_TABLE[0];
 	initStamp();
 
@@ -210,7 +210,7 @@ void VoyeurEngine::playStamp() {
 
 	_voy._field4386 = 0;
 	closeStamp();
-	_stampLibPtr->freeBoltGroup(0x10000);
+	_stampLibPtr->freeBoltGroup(0);
 	delete _stampLibPtr;
 }
 
