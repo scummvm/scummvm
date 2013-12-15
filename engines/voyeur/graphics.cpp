@@ -663,4 +663,47 @@ void GraphicsManager::doScroll(const Common::Point &pt) {
 	error("TODO: doScroll");
 }
 
+void GraphicsManager::fadeDownICF1(int steps) {
+	if (steps > 0) {
+		int stepAmount = _vm->_voy._field4378 / steps;
+
+		for (int idx = 0; idx < steps; ++idx) {
+			_vm->_voy._field4378 -= stepAmount;
+			_vm->_eventsManager.delay(1);
+		}
+	}
+
+	_vm->_voy._field4378 = 0;
+}
+
+void GraphicsManager::fadeUpICF1(int steps) {
+	if (steps > 0) {
+		int stepAmount = (63 - _vm->_voy._field4378) / steps;
+
+		for (int idx = 0; idx < steps; ++idx) {
+			_vm->_voy._field4378 += stepAmount;
+			_vm->_eventsManager.delay(1);
+		}
+	}
+
+	_vm->_voy._field4378 = 63;
+}
+
+void GraphicsManager::fadeDownICF(int steps) {
+	if (steps > 0) {
+		_vm->_eventsManager.mouseOff();
+		int stepAmount1 = _vm->_voy._field4376 / steps;
+		int stepAmount2 = _vm->_voy._field4378 / steps;
+
+		for (int idx = 0; idx < steps; ++idx) {
+			_vm->_voy._field4376 -= stepAmount1;
+			_vm->_voy._field4378 -= stepAmount2;
+			_vm->_eventsManager.delay(1);
+		}
+	}
+
+	_vm->_voy._field4376 = 0;
+	_vm->_voy._field4378 = 0;
+}
+
 } // End of namespace Voyeur

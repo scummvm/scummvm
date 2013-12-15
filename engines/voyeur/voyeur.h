@@ -87,7 +87,6 @@ private:
 	void closeStamp();
 	void reviewTape();
 	bool doGossip();
-	int doApt();
 	void doTapePlaying();
 	bool checkForMurder();
 	void checkForIncriminate();
@@ -144,8 +143,6 @@ public:
 	 * Saves the last time the game was played
 	 */
 	void saveLastInplay();
-	void loadTheApt();
-	void freeTheApt();
 	void makeViewFinder();
 	void initIFace();
 	void checkTransition();

@@ -423,6 +423,8 @@ public:
 	static void unloadAllStacks(VoyeurEngine *vm);
 	static int _currentMouseX;
 	static int _currentMouseY;
+	static int _doAptState1;
+	static int _doAptState2;
 
 	static void init();
 private:
@@ -449,6 +451,9 @@ private:
 	void savePrevious();
 	void setButtonFlag(int idx, byte bits);
 	void clearButtonFlag(int idx, byte bits);
+	void loadTheApt();
+	void freeTheApt();
+	void doAptAnim(int mode);
 public:
 	VoyeurEngine *_vm;
 

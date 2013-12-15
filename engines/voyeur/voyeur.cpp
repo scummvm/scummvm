@@ -134,7 +134,7 @@ void VoyeurEngine::globalInitBolt() {
 	// Setup default flags
 	Common::fill((byte *)&_voy, (byte *)&_voy + sizeof(SVoy), 0);
 	_voy._field478 = 1;
-	_voy._field4376 = nullptr; // Original set 63h:63h
+	_voy._field4376 = _voy._field4378 = 127;
 	_voy._field4F2 = 9999;
 	_voy._field472 = -1;
 	_voy._field478 = 256;

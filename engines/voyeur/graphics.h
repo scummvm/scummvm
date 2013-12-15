@@ -112,6 +112,9 @@ public:
 	void setColor(int idx, byte r, byte g, byte b);
 	void screenReset();
 	void doScroll(const Common::Point &pt);
+	void fadeDownICF1(int steps);
+	void fadeUpICF1(int steps);
+	void fadeDownICF(int steps);
 };
 
 } // End of namespace Voyeur

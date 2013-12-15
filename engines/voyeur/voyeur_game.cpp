@@ -69,7 +69,7 @@ void VoyeurEngine::playStamp() {
 			buttonId = threadP->doInterface();
 			
 			if (buttonId == -2) {
-				switch (doApt()) {
+				switch (threadP->doApt()) {
 				case 0:
 					_voy._field472 = 140;
 					break;
@@ -237,11 +237,6 @@ bool VoyeurEngine::doGossip() {
 	return false;
 }
 
-int VoyeurEngine::doApt() {
-	warning("TODO");
-	return 0;
-}
-
 void VoyeurEngine::doTapePlaying() {
 	warning("TODO");
 }
@@ -262,14 +257,6 @@ void VoyeurEngine::playAVideoEvent(int eventId) {
 int VoyeurEngine::getChooseButton()  {
 	warning("TODO");
 	return 0;
-}
-
-void VoyeurEngine::loadTheApt() {
-	error("TODO: loadTheApt");
-}
-
-void VoyeurEngine::freeTheApt() {
-	error("TODO: freeTheApt");
 }
 
 void VoyeurEngine::makeViewFinder() {

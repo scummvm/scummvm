@@ -33,6 +33,8 @@ byte *ThreadResource::_threadDataPtr;
 CMapResource *ThreadResource::_cmd14Pal;
 int ThreadResource::_currentMouseX;
 int ThreadResource::_currentMouseY;
+int ThreadResource::_doAptState1;
+int ThreadResource::_doAptState2;
 
 void ThreadResource::init() {
 	_stampFlags = 0;
@@ -41,6 +43,8 @@ void ThreadResource::init() {
 	_cmd14Pal = nullptr;
 	_currentMouseX = 392;
 	_currentMouseY = 57;
+	_doAptState1 = -1;
+	_doAptState2 = -1;
 }
 
 ThreadResource::ThreadResource(BoltFilesState &state, const byte *src):
@@ -764,31 +768,31 @@ void ThreadResource::parsePlayCommands() {
 
 		case 19:
 			_vm->_voy._field472 = 140;
-			_vm->loadTheApt();
+			loadTheApt();
 			_vm->_voy._field472 = 141;
-			_vm->freeTheApt();
+			freeTheApt();
 			break;
 
 		case 20:
 			_vm->_voy._field472 = -1;
-			_vm->loadTheApt();
+			loadTheApt();
 			_vm->_voy._field472 = 141;
-			_vm->freeTheApt();
+			freeTheApt();
 			break;
 
 		case 21:
 			_vm->_voy._field472 = -1;
-			_vm->loadTheApt();
+			loadTheApt();
 			_vm->_voy._field472 = 140;
-			_vm->freeTheApt();
+			freeTheApt();
 			break;
 
 		case 23:
 			_vm->_voy._field474 = 17;
 			_vm->_voy._field472 = -1;
-			_vm->loadTheApt();
+			loadTheApt();
 			_vm->_voy._field472 = 144;
-			_vm->freeTheApt();
+			freeTheApt();
 			break;
 
 		default:
@@ -1050,7 +1054,24 @@ bool ThreadResource::cardPerform2(const byte *pSrc, int cardCmdId) {
 }	
 
 int ThreadResource::doApt() {
-	warning("TODO: doApt");
+	int varC = -1;
+	loadTheApt();
+
+	_vm->_playStamp2 = 151;
+	byte *dataP = _vm->_bVoy->memberAddr(_vm->_playStamp1);
+	PictureResource *srcPic = _vm->_bVoy->boltEntry(_vm->_playStamp1 + 3)._picResource;
+	_vm->_eventsManager.getMouseInfo();
+
+	if (_doAptState1 == -1) {
+		_doAptState1 = READ_LE_UINT16(dataP + 18) + 16;
+		_doAptState2 = READ_LE_UINT16(dataP + 20) + 16;
+		_vm->_playStamp2 = 153;
+	}
+
+	if (_vm->_voy._field470 == 16) {
+		// TODO
+	}
+
 	return 0;
 }
 
@@ -1317,6 +1338,166 @@ void ThreadResource::setButtonFlag(int idx, byte bits) {
 
 void ThreadResource::clearButtonFlag(int idx, byte bits) {
 	_buttonFlags[idx] &= ~bits;
+}
+
+void ThreadResource::loadTheApt() {
+	switch (_vm->_voy._field474) {
+	case 1:
+	case 2:
+	case 5:
+	case 6:
+	case 7:
+	case 8:
+	case 9:
+	case 17:
+		_vm->_playStamp1 = 0x5700;
+		break;
+	case 3:
+		_vm->_playStamp1 = 0x5800;
+		break;
+	case 4:
+	case 10:
+	case 11:
+	case 12:
+	case 13:
+	case 14:
+	case 15:
+	case 16:
+		_vm->_playStamp1 = 0x5900;
+		break;
+	default:
+		break;
+	}
+
+	if (_vm->_voy._field472 == 143)
+		_vm->_voy._field472 = -1;
+
+	if (_vm->_voy._field472  != -1) {
+		doAptAnim(1);
+		_vm->_bVoy->getBoltGroup(_vm->_playStamp1);
+		_vm->_voy._field472 = -1;
+		_vm->_graphicsManager._backgroundPage = _vm->_bVoy->boltEntry(
+			_vm->_playStamp1 + 5)._picResource;
+		(*_vm->_graphicsManager._vPort)->setupViewPort(
+			_vm->_graphicsManager._backgroundPage);
+	} else {
+		_vm->_bVoy->getBoltGroup(_vm->_playStamp1);
+		_vm->_graphicsManager._backgroundPage = _vm->_bVoy->boltEntry(
+			_vm->_playStamp1 + 5)._picResource;
+		(*_vm->_graphicsManager._vPort)->setupViewPort(
+			_vm->_graphicsManager._backgroundPage);
+	}
+
+	CMapResource *pal = _vm->_bVoy->boltEntry(_vm->_playStamp1 + 4)._cMapResource;
+	pal->_steps = 1; 
+	pal->startFade();
+
+	(*_vm->_graphicsManager._vPort)->_flags |= 8;
+	_vm->_graphicsManager.flipPage();
+	_vm->_eventsManager.sWaitFlip();
+
+	while (!_vm->shouldQuit() && (_vm->_eventsManager._fadeStatus & 1))
+		_vm->_eventsManager.delay(1);
+}
+
+void ThreadResource::freeTheApt() {
+	_vm->_graphicsManager.fadeDownICF1(5);
+	(*_vm->_graphicsManager._vPort)->_flags |= 8;
+	_vm->_graphicsManager.flipPage();
+	_vm->_eventsManager.sWaitFlip();
+
+	while (!_vm->shouldQuit() && (_vm->_eventsManager._fadeStatus & 1))
+		_vm->_eventsManager.delay(1);
+
+	_vm->_graphicsManager.fadeUpICF1(0);
+
+	if (_vm->_playStamp2 != -1) {
+		_vm->_soundManager.stopVOCPlay();
+		_vm->_playStamp2 = -1;
+	}
+
+	if (_vm->_voy._field472 == -1) {
+		_vm->_graphicsManager.fadeDownICF(6);
+	} else {
+		doAptAnim(2);
+	}
+
+	if (_vm->_voy._field472 == 140) {
+		_vm->_graphicsManager.screenReset();
+		_vm->_graphicsManager.resetPalette();
+	}
+
+	(*_vm->_graphicsManager._vPort)->setupViewPort(nullptr);
+	_vm->_bVoy->freeBoltGroup(_vm->_playStamp1);
+	_vm->_playStamp1 = -1;
+	_vm->_voy._field4386 = 0;
+}
+
+void ThreadResource::doAptAnim(int mode) {
+	_vm->_bVoy->freeBoltGroup(0x10100);
+
+	int id = 0;
+	switch (_vm->_voy._field472) {
+	case 140:
+		id = 0x5A00;
+		break;
+	case 141:
+		id = 0x6000;
+		break;
+	case 142:
+		id = 0x6600;
+		break;
+	case 143:
+		id = 0x6C00;
+		break;
+	case 144:
+		id = 0x6F00;
+		break;
+	default:
+		break;
+	}
+
+	int id2 = (id == 0x6C00 || id == 0x6F00) ? 1 : 2;
+	switch (_vm->_voy._field474) {
+	case 3:
+		id += id2 << 8;
+		break;
+	case 4:
+	case 10:
+	case 11:
+	case 12:
+	case 13:
+	case 14:
+	case 15:
+	case 16:
+		id += id2 << 9;
+		break;
+	default:
+		break;
+	}
+
+	if (mode)
+		id += 0x100;
+
+	if (_vm->_bVoy->getBoltGroup(id)) {
+		CMapResource *pal = _vm->_bVoy->boltEntry(id)._cMapResource;
+		pal->_steps = 1;
+
+		for (int idx = 0; (idx < 6) && !_vm->shouldQuit(); ++idx) {
+			PictureResource *pic = _vm->_bVoy->boltEntry(id + idx)._picResource;
+			(*_vm->_graphicsManager._vPort)->setupViewPort(pic);
+
+			(*_vm->_graphicsManager._vPort)->_flags |= 8;
+			_vm->_graphicsManager.flipPage();
+			_vm->_eventsManager.sWaitFlip();
+
+			_vm->_eventsManager.delay(5);
+		}
+
+		_vm->_bVoy->freeBoltGroup(id);
+	}
+
+	_vm->_bVoy->getBoltGroup(0x10100);
 }
 
 } // End of namespace Voyeur
