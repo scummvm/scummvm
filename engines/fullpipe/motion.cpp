@@ -185,6 +185,11 @@ MessageQueue *MctlCompound::doWalkTo(StaticANIObject *subj, int xpos, int ypos, 
 	return mq;
 }
 
+MctlCompoundArrayItem::~MctlCompoundArrayItem() {
+	delete _movGraphReactObj;
+	delete _motionControllerObj;
+}
+
 MctlLadder::MctlLadder() {
 	_width = 0;
 	_ladderX = 0;
@@ -317,6 +322,21 @@ MctlConnectionPoint *MctlCompound::findClosestConnectionPoint(int ox, int oy, in
 	warning("STUB: MctlCompound::findClosestConnectionPoint()");
 
 	return 0;
+}
+
+MctlConnectionPoint::MctlConnectionPoint() {
+	_connectionX = 0;
+	_connectionY = 0;
+	_field_C = 0;
+	_field_10 = 0;
+	_field_14 = 0;
+	_field_16 = 0;
+	_messageQueueObj = 0;
+	_motionControllerObj = 0;
+}
+
+MctlConnectionPoint::~MctlConnectionPoint() {
+	delete _messageQueueObj;
 }
 
 bool MctlCompoundArray::load(MfcArchive &file) {

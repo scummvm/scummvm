@@ -86,6 +86,7 @@ public:
 
 public:
 	MctlCompoundArrayItem() : _movGraphReactObj(0), _motionControllerObj(0), _field_20(0), _field_24(0), _field_28(0) {}
+	~MctlCompoundArrayItem();
 };
 
 class MctlCompoundArray : public Common::Array<MctlCompoundArrayItem *>, public CObject {
@@ -413,6 +414,9 @@ public:
 	int16 _field_16;
 	MessageQueue *_messageQueueObj;
 	int _motionControllerObj;
+
+	MctlConnectionPoint();
+	~MctlConnectionPoint();
 };
 
 } // End of namespace Fullpipe
