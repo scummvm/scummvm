@@ -6265,7 +6265,7 @@ void Scene1337::handlePlayer3() {
 
 			if (victimId != -1) {
 				// Useless second identical check skipped
-				playDelayCard(&_gameBoardSide[victimId]._handCard[randIndx], &_gameBoardSide[victimId]._delayCard);
+				playDelayCard(&_gameBoardSide[3]._handCard[randIndx], &_gameBoardSide[victimId]._delayCard);
 				return;
 			}
 				 }
