@@ -1635,6 +1635,136 @@ bool ArrowGodDepthChange::adjustSpearVolume(Window *viewWindow) {
 	return true;
 }
 
+class DeathGodAltar : public SceneBase {
+public:
+	DeathGodAltar(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int draggingItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
+	int droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int locateAttempted(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	Common::Rect _heartPool;
+	Common::Rect _puzzleBox;
+	Common::Rect _blood;
+};
+
+DeathGodAltar::DeathGodAltar(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_heartPool = Common::Rect(89, 80, 159, 112);
+	_puzzleBox = Common::Rect(150, 45, 260, 111);
+	_blood = Common::Rect(88, 76, 162, 114);
+}
+
+int DeathGodAltar::postEnterRoom(Window *viewWindow, const Location &priorLocation) {
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().myDGOfferedHeart == 1) {
+		if (!((SceneViewWindow *)viewWindow)->isNumberInGlobalFlagTable(offsetof(GlobalFlags, evcapBaseID), offsetof(GlobalFlags, evcapNumCaptured), MAYAN_EVIDENCE_ENVIRON_CART)) {
+			((SceneViewWindow *)viewWindow)->playSynchronousAnimation(3);
+			_staticData.navFrameIndex = 51;
+			viewWindow->invalidateWindow(false);
+
+			if ((_staticData.location.timeZone != priorLocation.timeZone || _staticData.location.environment != priorLocation.environment ||
+					_staticData.location.node != priorLocation.node || _staticData.location.facing != priorLocation.facing ||
+					_staticData.location.orientation != priorLocation.orientation || _staticData.location.depth != priorLocation.depth) &&
+					!((SceneViewWindow *)viewWindow)->isNumberInGlobalFlagTable(offsetof(GlobalFlags, evcapBaseID), offsetof(GlobalFlags, evcapNumCaptured), MAYAN_EVIDENCE_ENVIRON_CART))
+				((SceneViewWindow *)viewWindow)->displayLiveText(_vm->getString(IDS_MBT_EVIDENCE_PRESENT));
+		}
+	} else if ((_staticData.location.timeZone != priorLocation.timeZone || _staticData.location.environment != priorLocation.environment ||
+			_staticData.location.node != priorLocation.node || _staticData.location.facing != priorLocation.facing ||
+			_staticData.location.orientation != priorLocation.orientation || _staticData.location.depth != priorLocation.depth) &&
+			!((SceneViewWindow *)viewWindow)->isNumberInGlobalFlagTable(offsetof(GlobalFlags, evcapBaseID), offsetof(GlobalFlags, evcapNumCaptured), MAYAN_EVIDENCE_PHONY_BLOOD)) {
+		((SceneViewWindow *)viewWindow)->displayLiveText(_vm->getString(IDS_MBT_EVIDENCE_PRESENT));
+	}
+
+	return SC_TRUE;
+}
+
+int DeathGodAltar::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_puzzleBox.contains(pointLocation) && ((SceneViewWindow *)viewWindow)->getGlobalFlags().myDGOfferedHeart == 1 && ((SceneViewWindow *)viewWindow)->getGlobalFlags().takenEnvironCart == 0) {
+		Location puzzleLocation = _staticData.location;
+		puzzleLocation.depth = 1;
+		((SceneViewWindow *)viewWindow)->jumpToScene(puzzleLocation);
+	}
+
+	return SC_FALSE;
+}
+
+int DeathGodAltar::draggingItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) {
+	if (itemID == kItemPreservedHeart && ((SceneViewWindow *)viewWindow)->getGlobalFlags().myDGOfferedHeart == 0 && _heartPool.contains(pointLocation))
+		return 1;
+
+	return 0;
+}
+
+int DeathGodAltar::droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) {
+	if (pointLocation.x == -1 && pointLocation.y == -1)
+		return 0;
+
+	if (itemID == kItemPreservedHeart && ((SceneViewWindow *)viewWindow)->getGlobalFlags().myDGOfferedHeart == 0 && _heartPool.contains(pointLocation)) {
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().myDGOfferedHeart = 1;
+		((SceneViewWindow *)viewWindow)->playSynchronousAnimation(2);
+		((SceneViewWindow *)viewWindow)->playSynchronousAnimation(3);
+		_staticData.navFrameIndex = 51;
+
+		if (!((SceneViewWindow *)viewWindow)->isNumberInGlobalFlagTable(offsetof(GlobalFlags, evcapBaseID), offsetof(GlobalFlags, evcapNumCaptured), MAYAN_EVIDENCE_ENVIRON_CART))
+			((SceneViewWindow *)viewWindow)->displayLiveText(_vm->getString(IDS_MBT_EVIDENCE_PRESENT));
+
+		return SIC_ACCEPT;
+	}
+
+	return SIC_REJECT;
+}
+
+int DeathGodAltar::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().bcLocateEnabled == 1) {
+		if (((SceneViewWindow *)viewWindow)->getGlobalFlags().myDGOfferedHeart == 1 &&
+				((SceneViewWindow *)viewWindow)->getGlobalFlags().takenEnvironCart == 0 &&
+				_staticData.navFrameIndex == 51 && _puzzleBox.contains(pointLocation))
+			return -2;
+
+		if (_blood.contains(pointLocation))
+			return -2;
+
+		return -1;
+	} else if (_puzzleBox.contains(pointLocation) && ((SceneViewWindow *)viewWindow)->getGlobalFlags().myDGOfferedHeart == 1 && ((SceneViewWindow *)viewWindow)->getGlobalFlags().takenEnvironCart == 0) {
+		// This logic is broken in 1.04, 1.05, and 1.10. I fixed it here to match mouseUp
+		return kCursorFinger;
+	}
+
+	return kCursorArrow;
+}
+
+int DeathGodAltar::locateAttempted(Window *viewWindow, const Common::Point &pointLocation) {
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().bcLocateEnabled == 1 &&
+			((SceneViewWindow *)viewWindow)->getGlobalFlags().takenEnvironCart == 0 &&
+			_puzzleBox.contains(pointLocation) && _staticData.navFrameIndex == 51 &&
+			!((SceneViewWindow *)viewWindow)->isNumberInGlobalFlagTable(offsetof(GlobalFlags, evcapBaseID), offsetof(GlobalFlags, evcapNumCaptured), MAYAN_EVIDENCE_ENVIRON_CART)) {
+		((SceneViewWindow *)viewWindow)->displayLiveText(_vm->getString(IDS_MBT_EVIDENCE_MUST_BE_REVEALED)); // All will be reveaaaaaaaaled (Yes, I used this joke twice now)
+		return SC_TRUE;
+	}
+
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().bcLocateEnabled == 1) {
+		if (_blood.contains(pointLocation)) {
+			((SceneViewWindow *)viewWindow)->playSynchronousAnimation(6);
+
+			// Attempt to add it to the biochip
+			if (((SceneViewWindow *)viewWindow)->addNumberToGlobalFlagTable(offsetof(GlobalFlags, evcapBaseID), offsetof(GlobalFlags, evcapNumCaptured), 12, MAYAN_EVIDENCE_PHONY_BLOOD))
+				((SceneViewWindow *)viewWindow)->displayLiveText(_vm->getString(IDS_MBT_EVIDENCE_ACQUIRED));
+			else
+				((SceneViewWindow *)viewWindow)->displayLiveText(_vm->getString(IDS_MBT_EVIDENCE_ALREADY_ACQUIRED));
+
+			// Disable capture
+			((GameUIWindow *)viewWindow->getParent())->_bioChipRightWindow->disableEvidenceCapture();
+		}
+
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
 class MainCavernGlassCapture : public SceneBase {
 public:
 	MainCavernGlassCapture(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
@@ -2112,6 +2242,8 @@ SceneBase *SceneViewWindow::constructMayanSceneObject(Window *viewWindow, const 
 		return new PlaySoundExitingFromScene(_vm, viewWindow, sceneStaticData, priorLocation, 11);
 	case 65:
 		return new BasicDoor(_vm, viewWindow, sceneStaticData, priorLocation, 90, 15, 346, 189, 2, 6, 0, 0, 1, 1, TRANSITION_WALK, -1, 33, 12, 13);
+	case 66:
+		return new DeathGodAltar(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 68:
 		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 206, 76, 246, 116, kItemEnvironCart, 53, offsetof(GlobalFlags, takenEnvironCart));
 	case 69:
