@@ -344,17 +344,16 @@ public:
 
 	void actionDisplay(int resNum, int lineNum, int x, int y, int keepOnScreen, int width, int textMode, int fontNum, int colFG, int colBGExt, int colFGExt);
 	void setAnimationInfo(Card *card);
-	void subC20E5();
 	void handleNextTurn();
-	void subC2586();
+	void handlePlayerTurn();
 	bool isStationCard(int cardId);
 	bool isStopConstructionCard(int cardId);
-	int  subC26CB(int playerId, int handCardId);
+	int  getStationId(int playerId, int handCardId);
 	int  findPlatformCardInHand(int playerId);
 	int  findCard13InHand(int playerId);
 	int  checkThieftCard(int playerId);
 	int  isDelayCard(int cardId);
-	int  isSlowCard(int cardId);
+	int  getStationCardId(int cardId);
 	void handlePlayer01Discard(int playerId);
 	void playThieftCard(int playerId, Card *card, int victimId);
 	int  getPreventionCardId(int cardId);
@@ -365,7 +364,7 @@ public:
 	void playDelayCard(Card *card, Card *dest);
 	void playPlatformCard(Card *card, Card *dest);
 	void playAntiDelayCard(Card *card, Card *dest);
-	Card *subC34EC(int arg1);
+	Card *getStationCard(int arg1);
 	void playCounterTrickCard(Card *card, int playerId);
 	int  getFreeHandCard(int playerId);
 	void discardCard(Card *card);
@@ -384,7 +383,7 @@ public:
 	void handlePlayer1();
 	void handlePlayer2();
 	void handlePlayer3();
-	void subD02CA();
+	void handleAutoplayPlayer2();
 	void updateCursorId(int arg1, bool arg2);
 	void setCursorData(int resNum, int rlbNum, int frameNum);
 	void subD18F5();

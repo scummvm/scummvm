@@ -3538,7 +3538,7 @@ void Scene1337::Action4::signal() {
 			scene->handlePlayer1();
 			break;
 		case 2:
-			scene->handlePlayer2();
+			scene->handleAutoplayPlayer2();
 			break;
 		case 3:
 			scene->handlePlayer3();
@@ -4569,10 +4569,6 @@ void Scene1337::setAnimationInfo(Card *card) {
 	R2_GLOBALS._sceneObjects->draw();
 }
 
-void Scene1337::subC20E5() {
-	subC2586();
-}
-
 void Scene1337::handleNextTurn() {
 	switch (_winnerId) {
 	case -1:
@@ -4602,11 +4598,11 @@ void Scene1337::handleNextTurn() {
 			}
 
 			if (!_autoplay)
-				_delayedFunction = &Scene1337::subC20E5;
+				_delayedFunction = &Scene1337::handlePlayerTurn;
 			else
-				subC20E5();
+				handlePlayerTurn();
 		} else {
-			subC20E5();
+			handlePlayerTurn();
 		}
 		break;
 	case 0:
@@ -4650,7 +4646,7 @@ void Scene1337::handleNextTurn() {
 
 }
 
-void Scene1337::subC2586() {
+void Scene1337::handlePlayerTurn() {
 	if (_showPlayerTurn)
 		_currentPlayerArrow.hide();
 
@@ -4713,7 +4709,7 @@ bool Scene1337::isStopConstructionCard(int cardId) {
 	}
 }
 
-int Scene1337::subC26CB(int playerId, int handCardId) {
+int Scene1337::getStationId(int playerId, int handCardId) {
 	if ((_gameBoardSide[playerId]._handCard[handCardId]._cardId > 1) && (_gameBoardSide[playerId]._handCard[handCardId]._cardId <= 9))
 		return handCardId;
 
@@ -4764,7 +4760,7 @@ int Scene1337::isDelayCard(int cardId) {
 	}
 }
 
-int Scene1337::isSlowCard(int cardId) {
+int Scene1337::getStationCardId(int cardId) {
 	switch (cardId) {
 	case 10:
 	// No break on purpose
@@ -4791,7 +4787,7 @@ void Scene1337::handlePlayer01Discard(int playerId) {
 	switch (playerId) {
 	case 0:
 		for (int i = 0; i <= 3; i++) {
-			if (isSlowCard(_gameBoardSide[playerId]._handCard[i]._cardId) != -1) {
+			if (getStationCardId(_gameBoardSide[playerId]._handCard[i]._cardId) != -1) {
 				discardCard(&_gameBoardSide[playerId]._handCard[i]);
 				return;
 			}
@@ -4862,7 +4858,7 @@ void Scene1337::handlePlayer01Discard(int playerId) {
 		}
 
 		for (int i = 0; i <= 3; i++) {
-			if (isSlowCard(_gameBoardSide[playerId]._handCard[i]._cardId) != -1) {
+			if (getStationCardId(_gameBoardSide[playerId]._handCard[i]._cardId) != -1) {
 				discardCard(&_gameBoardSide[playerId]._handCard[i]);
 				return;
 			}
@@ -5044,10 +5040,11 @@ void Scene1337::playAntiDelayCard(Card *card, Card *dest) {
 	_item1.setAction(&_action8);
 }
 
-Scene1337::Card *Scene1337::subC34EC(int arg1) {
+
+Scene1337::Card *Scene1337::getStationCard(int playerId) {
 	for (int i = 0; i <= 7; i++) {
-		if ((_gameBoardSide[arg1]._outpostStation[i]._cardId > 0) && (_gameBoardSide[arg1]._outpostStation[i]._cardId < 10))
-			return &_gameBoardSide[arg1]._outpostStation[i];
+		if ((_gameBoardSide[playerId]._outpostStation[i]._cardId >= 1) && (_gameBoardSide[playerId]._outpostStation[i]._cardId <= 9))
+			return &_gameBoardSide[playerId]._outpostStation[i];
 	}
 
 	return nullptr;
@@ -5055,7 +5052,7 @@ Scene1337::Card *Scene1337::subC34EC(int arg1) {
 
 void Scene1337::playCounterTrickCard(Card *card, int playerId) {
 	_actionCard1 = card;
-	_actionCard2 = subC34EC(playerId);
+	_actionCard2 = getStationCard(playerId);
 	_actionCard3 = &_gameBoardSide[playerId]._emptyStationPos;
 	_actionIdx1 = playerId;
 	_item1.setAction(&_action10);
@@ -5763,7 +5760,7 @@ void Scene1337::handlePlayer0() {
 
 	int tmpVal;
 	for (int i = 0; i <= 3; i++) {
-		tmpVal = subC26CB(0, i);
+		tmpVal = getStationId(0, i);
 
 		if (tmpVal != -1) {
 			bool flag = false;
@@ -5840,7 +5837,7 @@ void Scene1337::handlePlayer0() {
 	}
 
 	for (int i = 0; i <= 3; i++) {
-		if (isSlowCard(_gameBoardSide[0]._handCard[i]._cardId) != -1) {
+		if (getStationCardId(_gameBoardSide[0]._handCard[i]._cardId) != -1) {
 			// The variable 'j' is not used in the inner code of the loop. It's suspect
 			for (int j = 0; j <= 7; j++) {
 				if ((_gameBoardSide[2]._delayCard._cardId == 0) && isAttackPossible(2, _gameBoardSide[0]._handCard[i]._cardId)) {
@@ -5871,7 +5868,7 @@ void Scene1337::handlePlayer0() {
 	}
 
 	for (int i = 0; i <= 3; i++) {
-		tmpVal = isSlowCard(_gameBoardSide[0]._handCard[i]._cardId);
+		tmpVal = getStationCardId(_gameBoardSide[0]._handCard[i]._cardId);
 		if (tmpVal != -1) {
 			// The variable 'j' is not used in the inner code of the loop. It's suspect.
 			for (int j = 0; j <= 7; j++) {
@@ -5947,7 +5944,7 @@ void Scene1337::handlePlayer1() {
 	}
 
 	for (int i = 0; i <= 3; i++) {
-		int tmpIndx = subC26CB(1, i);
+		int tmpIndx = getStationId(1, i);
 		if (tmpIndx == -1)
 			break;
 
@@ -6057,7 +6054,7 @@ void Scene1337::handlePlayer1() {
 
 	int j;
 	for (j = 0; j <= 3; j++) {
-		if (isSlowCard(_gameBoardSide[1]._handCard[j]._cardId) != -1) {
+		if (getStationCardId(_gameBoardSide[1]._handCard[j]._cardId) != -1) {
 			count = -1;
 			int rndVal = R2_GLOBALS._randomSource.getRandomNumber(3);
 			for (int l = 0; l <= 3; l++) {
@@ -6239,14 +6236,14 @@ void Scene1337::handlePlayer3() {
 	discardCard(&_gameBoardSide[3]._handCard[randIndx]);
 }
 
-void Scene1337::handlePlayer2() {
-	if (isSlowCard(this->_gameBoardSide[2]._delayCard._cardId) == -1)
-		_delayedFunction = &Scene1337::subD02CA;
+void Scene1337::handleAutoplayPlayer2() {
+	if (getStationCardId(this->_gameBoardSide[2]._delayCard._cardId) == -1)
+		_delayedFunction = &Scene1337::handlePlayer2;
 	else
 		discardCard(&_gameBoardSide[2]._delayCard);
 }
 
-void Scene1337::subD02CA() {
+void Scene1337::handlePlayer2() {
 	_selectedCard._stationPos = g_globals->_events._mousePos;
 
 	if (R2_GLOBALS._v57810 == 200) {
@@ -6317,7 +6314,7 @@ void Scene1337::subD02CA() {
 
 		if (i == 4) {
 			handleClick(1, _selectedCard._stationPos);
-			handlePlayer2();
+			handleAutoplayPlayer2();
 			return;
 		} else {
 			setCursorData(1332, _selectedCard._card._strip, _selectedCard._card._frame);
@@ -6326,14 +6323,14 @@ void Scene1337::subD02CA() {
 	} else if (R2_GLOBALS._v57810 == 300) {
 		// Eye
 		handleClick(3, _selectedCard._stationPos);
-		handlePlayer2();
+		handleAutoplayPlayer2();
 		return;
 	} else {
 		// The original code is calling a function full of dead code.
 		// Only this message remains after a cleanup. 
 		MessageDialog::show(WRONG_ANSWER_MSG, OK_BTN_STRING);
 		//
-		handlePlayer2();
+		handleAutoplayPlayer2();
 		return;
 	}
 
@@ -6434,6 +6431,7 @@ void Scene1337::subD02CA() {
 							actionDisplay(1330, 37, 159, 10, 1, 200, 0, 7, 0, 154, 154);
 						}
 					} else {
+						// Check anti-delay card
 						if ((_selectedCard._cardId == 26) || (_selectedCard._cardId == 30) ||(_selectedCard._cardId == 32) || (_selectedCard._cardId == 28)) {
 							if (_gameBoardSide[2]._delayCard.isIn(Common::Point(_selectedCard._stationPos.x + 12, _selectedCard._stationPos.y + 12))) {
 								actionDisplay(1330, 42, 159, 10, 1, 200, 0, 7, 0, 154, 154);
@@ -6463,7 +6461,7 @@ void Scene1337::subD02CA() {
 								return;
 							}
 						} else {
-							if ((isSlowCard(_selectedCard._cardId) == -1) && (isDelayCard(_selectedCard._cardId) == -1)) {
+							if ((getStationCardId(_selectedCard._cardId) == -1) && (isDelayCard(_selectedCard._cardId) == -1)) {
 								if (_selectedCard._cardId == 13) {
 									if (_gameBoardSide[0]._emptyStationPos.isIn(Common::Point(_selectedCard._stationPos.x + 12, _selectedCard._stationPos.y + 12))) {
 										for (int k = 0; k <= 7; k++) {
