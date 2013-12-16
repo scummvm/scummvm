@@ -148,6 +148,13 @@ FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_objectAtCursor = 0;
 	_objectIdAtCursor = 0;
 
+	_arcadeOverlay = 0;
+	_arcadeOverlayHelper = 0;
+	_arcadeOverlayX = 0;
+	_arcadeOverlayY = 0;
+	_arcadeOverlayMidX = 0;
+	_arcadeOverlayMidY = 0;
+
 	_isSaveAllowed = true;
 
 	g_fullpipe = this;

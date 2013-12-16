@@ -63,6 +63,7 @@ struct MessageHandler;
 struct MovTable;
 class MGM;
 class NGIArchive;
+class PictureObject;
 class Scene;
 class SoundList;
 class StaticANIObject;
@@ -242,6 +243,13 @@ public:
 	void openMap();
 	void openHelp();
 	void openMainMenu();
+
+	PictureObject *_arcadeOverlay;
+	PictureObject *_arcadeOverlayHelper;
+	int _arcadeOverlayX;
+	int _arcadeOverlayY;
+	int _arcadeOverlayMidX;
+	int _arcadeOverlayMidY;
 
 	void initArcadeKeys(const char *varname);
 	void processArcade(ExCommand *ex);

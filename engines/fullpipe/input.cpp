@@ -295,7 +295,20 @@ void FullpipeEngine::initArcadeKeys(const char *varname) {
 }
 
 void FullpipeEngine::setArcadeOverlay(int picId) {
-	warning("STUB: setArcadeOverlay()");
+	Common::Point point;
+	Common::Point point2;
+
+	_arcadeOverlayX = 800;
+	_arcadeOverlayY = 545;
+
+	_arcadeOverlayHelper = accessScene(SC_INV)->getPictureObjectById(PIC_CSR_HELPERBGR, 0);
+	_arcadeOverlay = accessScene(SC_INV)->getPictureObjectById(picId, 0);
+
+	_arcadeOverlay->getDimensions(&point);
+	_arcadeOverlayHelper->getDimensions(&point2);
+
+	_arcadeOverlayMidX = (point2.x - point.x) / 2;
+	_arcadeOverlayMidY = abs(point2.y - point.y) / 2;
 }
 
 
