@@ -110,6 +110,10 @@ Vars::Vars() {
 	scene05_handleFlipper = 0;
 	scene05_floatersTicker = 0;
 
+	scene06_var01 = 0;
+	scene06_var02 = 0;
+	scene06_var03 = 0;
+	scene06_var04 = 0;
 	scene06_mumsy = 0;
 	scene06_var06 = 0;
 	scene06_invHandle = 0;
@@ -124,6 +128,16 @@ Vars::Vars() {
 	scene06_var13 = 0;
 	scene06_var14 = 0;
 	scene06_var15 = 1;
+	scene06_var16 = 0;
+	scene06_var17 = 0;
+	scene06_var18 = 0;
+	scene06_sceneClickX = 0;
+	scene06_sceneClickY = 0;
+	scene06_mumsyPos = 0;
+	scene06_mumsyJumpBk = 0;
+	scene06_mumsyJumpFw = 0;
+	scene06_mumsyJumpBkPercent = 0;
+	scene06_mumsyJumpFwPercent = 0;
 
 	selector = 0;
 }

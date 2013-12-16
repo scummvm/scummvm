@@ -510,4 +510,8 @@ InputController *FullpipeEngine::getGameLoaderInputController() {
 		return 0;
 }
 
+MotionController *getCurrSceneSc2MotionController() {
+	return getSc2MctlCompoundBySceneId(g_fullpipe->_currentScene->_sceneId);
+}
+
 } // End of namespace Fullpipe

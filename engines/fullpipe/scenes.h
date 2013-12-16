@@ -25,8 +25,9 @@
 
 namespace Fullpipe {
 
+struct BehaviorEntryInfo;
 class StaticANIObject;
- class MctlLadder;
+class MctlLadder;
 
 int defaultUpdateCursor();
 
@@ -142,20 +143,34 @@ public:
 	int scene05_floatersTicker;
 
 	StaticANIObject *scene06_mumsy;
+	int scene06_var01;
+	int scene06_var02;
+	int scene06_var03;
+	int scene06_var04;
 	int scene06_var06;
 	StaticANIObject *scene06_invHandle;
 	StaticANIObject *scene06_liftButton;
 	StaticANIObject *scene06_ballDrop;
 	int scene06_var07;
 	int scene06_var08;
-	int scene06_var09;
+	StaticANIObject *scene06_var09;
 	int scene06_var10;
-	int scene06_var11;
+	StaticANIObject *scene06_var11;
 	Common::Array<StaticANIObject *> scene06_balls;
 	int scene06_var12;
 	int scene06_var13;
 	int scene06_var14;
 	int scene06_var15;
+	int scene06_var16;
+	int scene06_var17;
+	int scene06_var18;
+	int scene06_sceneClickX;
+	int scene06_sceneClickY;
+	int scene06_mumsyPos;
+	BehaviorEntryInfo *scene06_mumsyJumpBk;
+	BehaviorEntryInfo *scene06_mumsyJumpFw;
+	int scene06_mumsyJumpBkPercent;
+	int scene06_mumsyJumpFwPercent;
 
 	PictureObject *selector;
 };
