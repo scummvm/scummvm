@@ -204,11 +204,11 @@ TimeValue Prehistoric::getViewTime(const RoomID room, const DirectionConstant di
 void Prehistoric::findSpotEntry(const RoomID room, const DirectionConstant direction, SpotFlags flags, SpotTable::Entry &entry) {
 	Neighborhood::findSpotEntry(room, direction, flags, entry);
 
+	// The original strangely disabled the loop for the two volcano spots:
+	// (kPrehistoric01, kSouth) and (kPrehistoric25, kSouth)
+	// We don't do that here.
+
 	switch (MakeRoomView(room, direction)) {
-	case MakeRoomView(kPrehistoric01, kSouth):
-	case MakeRoomView(kPrehistoric25, kSouth):
-		entry.clear();
-		break;
 	case MakeRoomView(kPrehistoric01, kEast):
 		if (GameState.getPrehistoricSeenFlyer1())
 			entry.clear();
