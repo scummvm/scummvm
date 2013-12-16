@@ -320,7 +320,7 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 		_behaviorManager->initBehavior(scene, sceneVar);
 		scene->initObjectCursors("SC_6");
 		setSceneMusicParameters(sceneVar);
-		sub_415300();
+		scene06_initMumsy();
 		insertMessageHandler(sceneHandler06, 2, 2);
 		_updateCursorCallback = scene06_updateCursor;
 		break;

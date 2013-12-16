@@ -81,6 +81,8 @@ class BehaviorManager : public CObject {
 	bool setBehaviorEnabled(StaticANIObject *obj, int aniId, int quId, int flag);
 
 	void setFlagByStaticAniObject(StaticANIObject *ani, int flag);
+
+	BehaviorEntryInfo *getBehaviorEntryInfoByMessageQueueDataId(StaticANIObject *ani, int id1, int id2);
 };
 
 } // End of namespace Fullpipe

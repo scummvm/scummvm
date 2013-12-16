@@ -198,6 +198,12 @@ void BehaviorManager::setFlagByStaticAniObject(StaticANIObject *ani, int flag) {
 	}
 }
 
+BehaviorEntryInfo *BehaviorManager::getBehaviorEntryInfoByMessageQueueDataId(StaticANIObject *ani, int id1, int id2) {
+	warning("STUB: getBehaviorEntryInfoByMessageQueueDataId()");
+
+	return 0;
+}
+
 void BehaviorInfo::clear() {
 	_ani = 0;
 	_staticsId = 0;
