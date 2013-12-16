@@ -56,7 +56,7 @@ MemoryPool::~MemoryPool() {
 #endif
 
 	for (size_t i = 0; i < _pages.size(); ++i)
-		delete _pages[i].start;
+		::free(_pages[i].start);
 }
 
 void MemoryPool::allocPage() {
@@ -152,7 +152,7 @@ void MemoryPool::freeUnusedPages() {
 					iter2 = *(void ***)iter2;
 			}
 
-			delete _pages[i].start;
+			::free(_pages[i].start);
 			++freedPagesCount;
 			_pages[i].start = NULL;
 		}
