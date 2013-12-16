@@ -331,7 +331,7 @@ void MessageQueue::addExCommandToEnd(ExCommand *ex) {
 }
 
 ExCommand *MessageQueue::getExCommandByIndex(uint idx) {
-	if (idx > getCount())
+	if (idx >= getCount())
 		return 0;
 
 	Common::List<ExCommand *>::iterator it = _exCommands.begin();
@@ -345,7 +345,7 @@ ExCommand *MessageQueue::getExCommandByIndex(uint idx) {
 }
 
 void MessageQueue::deleteExCommandByIndex(uint idx, bool doFree) {
-	if (idx > getCount())
+	if (idx >= getCount())
 		return;
 
 	Common::List<ExCommand *>::iterator it = _exCommands.begin();
