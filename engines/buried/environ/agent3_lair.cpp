@@ -66,6 +66,9 @@ LairEntry::LairEntry(BuriedEngine *vm, Window *viewWindow, const LocationStaticD
 	_rawStepDelay = 15000;
 	_flickerOn = ((SceneViewWindow *)viewWindow)->getCyclingStatus();
 	((SceneViewWindow *)viewWindow)->enableCycling(true);
+
+	// Force load the cycle file
+	((SceneViewWindow *)viewWindow)->changeCycleFrameMovie(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, SF_CYCLES));
 }
 
 int LairEntry::postEnterRoom(Window *viewWindow, const Location &priorLocation) {
