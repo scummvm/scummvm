@@ -45,9 +45,27 @@ void scene06_initMumsy() {
 }
 
 int scene06_updateCursor() {
-	warning("STUB: scene06_updateCursor()");
+	g_fullpipe->updateCursorCommon();
 
-	return 0;
+	if (g_vars->scene06_var07) {
+		if (g_vars->scene06_var08) {
+			g_fullpipe->_cursorId = PIC_CSR_ARCADE2_D;
+
+			return PIC_CSR_ARCADE2_D;
+		}
+		if (g_fullpipe->_aniMan == (StaticANIObject *)g_fullpipe->_objectAtCursor) {
+			if (g_fullpipe->_aniMan->_statics->_staticsId == ST_MAN6_BALL && g_fullpipe->_cursorId == PIC_CSR_DEFAULT) {
+				g_fullpipe->_cursorId = PIC_CSR_ITN;
+
+				return PIC_CSR_ITN;
+			}
+		} else if (g_fullpipe->_objectAtCursor && (StaticANIObject *)g_fullpipe->_objectAtCursor == g_vars->scene06_var09
+				   && g_fullpipe->_cursorId == PIC_CSR_DEFAULT) {
+			g_fullpipe->_cursorId = PIC_CSR_ITN;
+		}
+	}
+
+	return g_fullpipe->_cursorId;
 }
 
 void sceneHandler06_setExits(Scene *sc) {
