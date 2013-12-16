@@ -427,8 +427,8 @@ public:
 	static void unloadAllStacks(VoyeurEngine *vm);
 	static int _currentMouseX;
 	static int _currentMouseY;
-	static int _doAptState1;
-	static int _doAptState2;
+	static int _doAptPosX;
+	static int _doAptPosY;
 
 	static void init();
 private:

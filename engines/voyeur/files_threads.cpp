@@ -33,8 +33,8 @@ byte *ThreadResource::_threadDataPtr;
 CMapResource *ThreadResource::_cmd14Pal;
 int ThreadResource::_currentMouseX;
 int ThreadResource::_currentMouseY;
-int ThreadResource::_doAptState1;
-int ThreadResource::_doAptState2;
+int ThreadResource::_doAptPosX;
+int ThreadResource::_doAptPosY;
 
 void ThreadResource::init() {
 	_stampFlags = 0;
@@ -43,8 +43,8 @@ void ThreadResource::init() {
 	_cmd14Pal = nullptr;
 	_currentMouseX = 392;
 	_currentMouseY = 57;
-	_doAptState1 = -1;
-	_doAptState2 = -1;
+	_doAptPosX = -1;
+	_doAptPosY = -1;
 }
 
 ThreadResource::ThreadResource(BoltFilesState &state, const byte *src):
@@ -1062,17 +1062,104 @@ int ThreadResource::doApt() {
 	PictureResource *srcPic = _vm->_bVoy->boltEntry(_vm->_playStamp1 + 3)._picResource;
 	_vm->_eventsManager.getMouseInfo();
 
-	if (_doAptState1 == -1) {
-		_doAptState1 = READ_LE_UINT16(dataP + 18) + 16;
-		_doAptState2 = READ_LE_UINT16(dataP + 20) + 16;
+	if (_doAptPosX == -1) {
+		_doAptPosX = READ_LE_UINT16(dataP + 18) + 16;
+		_doAptPosY = READ_LE_UINT16(dataP + 20) + 16;
 		_vm->_playStamp2 = 153;
 	}
 
 	if (_vm->_voy._field470 == 16) {
-		// TODO
+		WRITE_LE_UINT16(dataP + 2, 999);
+		WRITE_LE_UINT16(dataP + 26, 999);
+		_doAptPosX = READ_LE_UINT16(dataP + 34) + 28;
+		_doAptPosY = READ_LE_UINT16(dataP + 36) + 28;
 	}
 
-	return 0;
+	_vm->_eventsManager.setMousePos(Common::Point(_doAptPosX, _doAptPosY));
+	_vm->_soundManager.startVOCPlay(_vm->_soundManager.getVOCFileName(_vm->_playStamp2));
+	_vm->_playStamp2 = 151;
+
+	_vm->_graphicsManager.setColor(129, 82, 82, 82);
+	_vm->_graphicsManager.setColor(130, 112, 112, 112);
+	_vm->_graphicsManager.setColor(131, 215, 215, 215);
+	_vm->_graphicsManager.setColor(132, 235, 235, 235);
+
+	_vm->_eventsManager._intPtr.field38 = true;
+	_vm->_eventsManager._intPtr._hasPalette = true;
+
+	int result;
+	Common::Point pt;
+	PictureResource *pic;
+	do {
+		_vm->_eventsManager.getMouseInfo();
+		if (_vm->_soundManager.getVOCStatus()) {
+			_vm->_playStamp2 = _vm->getRandomNumber(4) + 151;
+			_vm->_soundManager.startVOCPlay(_vm->_soundManager.getVOCFileName(_vm->_playStamp2));
+		}
+
+		result = -1;
+		pt = _vm->_eventsManager.getMousePos();
+		for (int idx = 0; idx < READ_LE_UINT16(dataP); ++idx) {
+			if (READ_LE_UINT16(dataP + idx * 8 + 2) <= pt.x &&
+				READ_LE_UINT16(dataP + idx * 8 + 6) >= pt.x &&
+				READ_LE_UINT16(dataP + idx * 8 + 4) <= pt.y &&
+				READ_LE_UINT16(dataP + idx * 8 + 8) >= pt.y) {
+				// Found entry
+				result = idx;
+
+				if (idx != varC) {
+					if ((_vm->_voy._field478 & 0x100) && (result == 2))
+						result = 5;
+
+					pic = _vm->_bVoy->boltEntry(_vm->_playStamp1 + 
+						result + 6)._picResource;
+					_vm->_graphicsManager.sDrawPic(pic, *_vm->_graphicsManager._vPort,
+						Common::Point(106, 200));
+				}
+
+				break;
+			}
+		}
+
+		pic = _vm->_bVoy->boltEntry((result == -1) ? _vm->_playStamp1 + 2 :
+			_vm->_playStamp1 + 3)._picResource;
+		_vm->_graphicsManager.sDrawPic(pic, *_vm->_graphicsManager._vPort, pt);
+
+		(*_vm->_graphicsManager._vPort)->_flags |= 8;
+		_vm->_graphicsManager.flipPage();
+		_vm->_eventsManager.sWaitFlip();
+
+	} while (!_vm->shouldQuit() && !_vm->_voy._lastInplay && result == -1);
+
+	pt = _vm->_eventsManager.getMousePos();
+	_doAptPosX = pt.x;
+	_doAptPosY = pt.y;
+
+	switch (result) {
+	case 0:
+		_vm->_voy._field472 = 140;
+		break;
+	case 1:
+		_vm->_voy._field472 = 143;
+		break;
+	case 2:
+		_vm->_voy._field472 = 142;
+	case 5:
+		_vm->_voy._field472 = 141;
+		break;
+	default:
+		_vm->_voy._field472 = -1;
+		break;
+	}
+
+	freeTheApt();
+	if (_vm->_voy._field474 == 1 && result == 0)
+		_vm->checkTransition();
+
+	if (!result)
+		_vm->makeViewFinder();
+
+	return result;
 }
 
 void ThreadResource::doRoom() {
