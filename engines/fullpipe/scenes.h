@@ -54,6 +54,11 @@ int sceneHandler04(ExCommand *cmd);
 void scene05_initScene(Scene *sc);
 int sceneHandler05(ExCommand *cmd);
 
+void scene06_initScene(Scene *sc);
+void scene06_initMumsy();
+int sceneHandler06(ExCommand *cmd);
+int scene06_updateCursor();
+
 void sceneDbgMenu_initScene(Scene *sc);
 int sceneHandlerDbgMenu(ExCommand *cmd);
 

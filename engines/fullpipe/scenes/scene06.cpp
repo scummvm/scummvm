@@ -44,6 +44,12 @@ void scene06_initMumsy() {
 	g_vars->scene06_mumsyJumpBkPercent = g_vars->scene06_mumsyJumpBk->_percent;
 }
 
+int scene06_updateCursor() {
+	warning("STUB: scene06_updateCursor()");
+
+	return 0;
+}
+
 void sceneHandler06_setExits(Scene *sc) {
 	warning("STUB: sceneHandler06_setExits()");
 }
