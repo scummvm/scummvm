@@ -274,4 +274,9 @@ void FullpipeEngine::updateCursorCommon() {
 	_cursorId = PIC_CSR_DEFAULT;
 }
 
+void FullpipeEngine::setArcadeOverlay(int picId) {
+	warning("STUB: setArcadeOverlay()");
+}
+
+
 } // End of namespace Fullpipe

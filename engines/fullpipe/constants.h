@@ -25,10 +25,12 @@
 
 namespace Fullpipe {
 
+#define ANI_BALLDROP 2685
 #define ANI_BIGBALL 4923
 #define ANI_BIGLUK 909
 #define ANI_BOOT_1 4231
 #define ANI_BUTTON 598
+#define ANI_BUTTON_6 2988
 #define ANI_CLOCK 588
 #define ANI_DOMINO_3 2732
 #define ANI_DADAYASHIK 306
@@ -42,11 +44,14 @@ namespace Fullpipe {
 #define ANI_INV_EGGCOIN 1567
 #define ANI_INV_EGGDOM 1561
 #define ANI_INV_EGGGLS 1573
+#define ANI_INV_HANDLE 893
 #define ANI_INV_MAP 5321
 #define ANI_KOZAWKA 495
 #define ANI_LIFTBUTTON 2751
+#define ANI_MAMASHA 656
 #define ANI_MAMASHA_4 660
 #define ANI_MAN 322
+#define ANI_NEWBALL 1073
 #define ANI_OTMOROZ 419
 #define ANI_PLANK 501
 #define ANI_SC2_BOX 1020
@@ -242,6 +247,8 @@ namespace Fullpipe {
 #define QU_SC4_MANTOBOTTLE 2850
 #define QU_SC5_MANBUMP 1167
 #define QU_SC5_MANFLY 1168
+#define QU_SC6_ENTERLIFT 1054
+#define QU_SC6_EXITLIFT 1055
 #define SC_1 301
 #define SC_10 653
 #define SC_11 654
@@ -347,6 +354,7 @@ namespace Fullpipe {
 #define ST_MAN_SIT 1164
 #define ST_MAN_STANDLADDER 453
 #define ST_MAN_UP 449
+#define ST_NBL_NORM 1076
 #define ST_OTM_BOX_LEFT 429
 #define ST_OTM_GLS_LEFT 421
 #define ST_OTM_VNT_LEFT 434

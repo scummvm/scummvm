@@ -52,7 +52,7 @@ void FullpipeEngine::initObjectStates() {
 	setObjectState(sO_Fly_12, 0);
 	setObjectState(sO_ClockAxis, getObjectEnumState(sO_ClockAxis, sO_NotAvailable));
 	setObjectState(sO_ClockHandle, getObjectEnumState(sO_ClockHandle, sO_In_7));
-	setObjectState(sO_BigMumsy, getObjectEnumState(sO_BigMumsy, sO_Sleeping));
+	setObjectState(sO_BigMumsy, getObjectEnumState(sO_BigMumsy, sO_IsSleeping));
 	setObjectState(sO_CoinSlot_1, getObjectEnumState(sO_CoinSlot_1, sO_Empty));
 	setObjectState(sO_FriesPit, getObjectEnumState(sO_FriesPit, sO_WithApple));
 	setObjectState(sO_Jug, getObjectEnumState(sO_Jug, sO_Blocked));

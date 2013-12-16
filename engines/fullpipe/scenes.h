@@ -141,6 +141,22 @@ public:
 	int scene05_handleFlipper;
 	int scene05_floatersTicker;
 
+	StaticANIObject *scene06_mumsy;
+	int scene06_var06;
+	StaticANIObject *scene06_invHandle;
+	StaticANIObject *scene06_liftButton;
+	StaticANIObject *scene06_ballDrop;
+	int scene06_var07;
+	int scene06_var08;
+	int scene06_var09;
+	int scene06_var10;
+	int scene06_var11;
+	Common::Array<StaticANIObject *> scene06_balls;
+	int scene06_var12;
+	int scene06_var13;
+	int scene06_var14;
+	int scene06_var15;
+
 	PictureObject *selector;
 };
 

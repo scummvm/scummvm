@@ -246,6 +246,7 @@ public:
 	void initArcadeKeys(const char *varname);
 	void processArcade(ExCommand *ex);
 	void winArcade();
+	void setArcadeOverlay(int picId);
 
 	void getAllInventory();
 

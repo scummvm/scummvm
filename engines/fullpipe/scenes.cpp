@@ -110,6 +110,21 @@ Vars::Vars() {
 	scene05_handleFlipper = 0;
 	scene05_floatersTicker = 0;
 
+	scene06_mumsy = 0;
+	scene06_var06 = 0;
+	scene06_invHandle = 0;
+	scene06_liftButton = 0;
+	scene06_ballDrop = 0;
+	scene06_var07 = 0;
+	scene06_var08 = 0;
+	scene06_var09 = 0;
+	scene06_var10 = 0;
+	scene06_var11 = 0;
+	scene06_var12 = 0;
+	scene06_var13 = 0;
+	scene06_var14 = 0;
+	scene06_var15 = 1;
+
 	selector = 0;
 }
 

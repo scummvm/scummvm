@@ -39,7 +39,7 @@ namespace Fullpipe {
 void scene02_initScene(Scene *sc) {
 	g_vars->scene02_guvTheDrawer = sc->getStaticANIObject1ById(ANI_DADAYASHIK, -1);
 
-	if (g_fullpipe->getObjectState(sO_GuvTheDrawer) == g_fullpipe->getObjectEnumState(sO_GuvTheDrawer, sO_Sleeping)) {
+	if (g_fullpipe->getObjectState(sO_GuvTheDrawer) == g_fullpipe->getObjectEnumState(sO_GuvTheDrawer, sO_IsSleeping)) {
 		Scene *s = g_fullpipe->_currentScene;
 
 		g_fullpipe->_currentScene = sc;
