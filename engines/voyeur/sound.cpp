@@ -24,6 +24,7 @@
 #include "audio/decoders/raw.h"
 #include "common/memstream.h"
 #include "voyeur/sound.h"
+#include "voyeur/staticres.h"
 
 namespace Voyeur {
 
@@ -60,11 +61,18 @@ void SoundManager::setVOCOffset(int offset) {
 }
 
 Common::String SoundManager::getVOCFileName(int idx) {
-	error("TODO: getVOCFileName");
+	return Common::String::format("%s.voc", VOC_FILENAMES[idx]);
 }
 
 void SoundManager::startVOCPlay(const Common::String &filename) {
-	error("TODO: startVOCPlay");
+	Common::File f;
+	if (!f.open(filename))
+		error("Could not find voc file - %s", filename.c_str());
+
+	Audio::AudioStream *audioStream = Audio::makeVOCStream(f.readStream(f.size()), 
+		Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
+
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, audioStream);
 }
 
 int SoundManager::getVOCStatus() {

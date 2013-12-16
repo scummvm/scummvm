@@ -74,4 +74,35 @@ const int COMP_BUT_TABLE[] = {
 	68, 79, 98, 102
 };
 
+const char *const VOC_FILENAMES[] = {
+    "A2110100", nullptr, "A2300100", nullptr, "B1220100", nullptr, "C1220100", nullptr, 
+	"C1290100", nullptr, "D1220100", nullptr, "D1270100", nullptr, "E1210100", nullptr, 
+	"E1260100", nullptr, "E1280100", nullptr, "E1325100", nullptr, "F1200100", nullptr,
+	"G1250100", nullptr, "G1260100", nullptr, "H1200100", nullptr, "H1230100", nullptr, 
+	"H1310100", nullptr, "I1300100", nullptr, "J1220100", nullptr, "J1230100", nullptr, 
+	"J1320100", nullptr, "K1260100", nullptr, "K1280100", nullptr, "K1325100", nullptr,
+	"L1210100", nullptr, "L1280100", nullptr, "L1290100", nullptr, "L1300100", nullptr, 
+	"L1310100", nullptr, "M1260100", nullptr, "M1310100", nullptr, "N1210100", nullptr, 
+	"N1225100", nullptr, "N1275510", nullptr, "N1280510", nullptr, "N1325100", nullptr,
+	"O1230100", nullptr, "O1260100", nullptr, "O1260520", nullptr, "O1280100", nullptr, 
+	"O1325540", nullptr, "P1276710", nullptr, "P1280540", nullptr, "P1280740", nullptr, 
+	"P1290510", nullptr, "P1325100", nullptr, "P1325300", nullptr, "P1325520", nullptr,
+	"Q1230100", nullptr, "Q1240530", nullptr, "Q1240730", nullptr, "Q1260100", nullptr, 
+	"Q1260520", nullptr, "Q1260720", nullptr, "Q1325100", nullptr, "R1280540", nullptr, 
+	"Z1110510", nullptr, "Z1110520", nullptr, "Z1110530", nullptr, "Z1110540", nullptr,
+	"Z1110545", nullptr, "Z2320100", nullptr, "Z2905300", nullptr, "Z3110100", nullptr, 
+	"Z3115510", nullptr, "Z3115520", nullptr, "Z3115530", nullptr, "Z3115540", nullptr, 
+	"Z4915100", nullptr, "Z4915200", nullptr, "Z4915300",
+	nullptr, nullptr, nullptr, nullptr, nullptr,
+	"MMARG", "MZACK", "MREED", "MJESSI", "MCHLOE", "MCAMERA", "MENDCRED",
+	"NEWCALL2", "PHONE1", "PHONE2", "PHONE3", "PHONE6", "PHONE8",
+	"B1300100", "C1250100", "C1320100", "D1320100", "E1210200", "E1260200",
+	"E1280200", "E1310100", "G1230100", "G1300100", "I1210100", "I1270100",
+	"I1280100", "J1250100", "J1280100", "K1260200", "K1270100", "K1325200",
+	"L1240100", "M1200100", "M1230100", "M1290100", "N1250100", "N1260100",
+	"N1280100", "O1250510", "O1290510", "O1320510", "O1320710", "P1240100",
+	"P1240530", "P1260100", "P1270100", "P1280100", "P1280530", "P1320530",
+	"Q1240100", "E1325100"
+};
+
 } // End of namespace Voyeur

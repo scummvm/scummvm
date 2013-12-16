@@ -39,6 +39,8 @@ extern const int BLIND_TABLE[];
 
 extern const int COMP_BUT_TABLE[];
 
+extern const char *const VOC_FILENAMES[];
+
 } // End of namespace Voyeur
 
 #endif
