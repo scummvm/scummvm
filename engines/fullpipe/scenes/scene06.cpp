@@ -98,7 +98,16 @@ void sceneHandler06_sub01() {
 }
 
 void sceneHandler06_spinHandle() {
-	warning("STUB: sceneHandler06_spinHandle()");
+	int tummy = g_fullpipe->getObjectState(sO_TummyTrampie);
+
+	if (tummy == g_fullpipe->getObjectEnumState(sO_TummyTrampie, sO_IsEating))
+		g_fullpipe->setObjectState(sO_TummyTrampie, g_fullpipe->getObjectEnumState(sO_TummyTrampie, sO_IsSleeping));
+	else if (tummy == g_fullpipe->getObjectEnumState(sO_TummyTrampie, sO_IsSleeping))
+		g_fullpipe->setObjectState(sO_TummyTrampie, g_fullpipe->getObjectEnumState(sO_TummyTrampie, sO_IsDrinking));
+	else if (tummy == g_fullpipe->getObjectEnumState(sO_TummyTrampie, sO_IsDrinking))
+		g_fullpipe->setObjectState(sO_TummyTrampie, g_fullpipe->getObjectEnumState(sO_TummyTrampie, sO_IsScratchingBelly));
+	else if (tummy == g_fullpipe->getObjectEnumState(sO_TummyTrampie, sO_IsScratchingBelly))
+		g_fullpipe->setObjectState(sO_TummyTrampie, g_fullpipe->getObjectEnumState(sO_TummyTrampie, sO_IsEating));
 }
 
 void sceneHandler06_uPipeClick() {

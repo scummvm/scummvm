@@ -45,7 +45,7 @@ void FullpipeEngine::initObjectStates() {
 	setSwallowedEggsState();
 
 	setObjectState(sO_WeirdWacko, getObjectEnumState(sO_WeirdWacko, sO_InGlasses));
-	setObjectState(sO_TumyTrampie, getObjectEnumState(sO_TumyTrampie, sO_Drinking));
+	setObjectState(sO_TummyTrampie, getObjectEnumState(sO_TummyTrampie, sO_IsDrinking));
 	setObjectState(sO_StairsUp_8, getObjectEnumState(sO_StairsUp_8, sO_NotBroken));
 	setObjectState(sO_HareTheNooksiter, getObjectEnumState(sO_HareTheNooksiter, sO_WithHandle));
 	setObjectState(sO_Elephantine, getObjectEnumState(sO_Elephantine, sO_WithBoot));
