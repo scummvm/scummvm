@@ -114,6 +114,10 @@ public:
 	 */
 	virtual void flipBuffer() = 0;
 
+	/**
+	 * FIXME: The implementations of these functions (for Grim and EMI, respectively)
+	 * are very similar. Needs refactoring. See issue #789.
+	 */
 	virtual void getBoundingBoxPos(const Mesh *mesh, int *x1, int *y1, int *x2, int *y2) = 0;
 	virtual void getBoundingBoxPos(const EMIModel *mesh, int *x1, int *y1, int *x2, int *y2) = 0;
 	virtual void startActorDraw(const Actor *act) = 0;
