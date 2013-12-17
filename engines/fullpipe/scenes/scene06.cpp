@@ -77,7 +77,20 @@ void sceneHandler06_winArcade() {
 }
 
 void sceneHandler06_enableDrops() {
-	warning("STUB: sceneHandler06_enableDrops()");
+	chainQueue(QU_SC6_DROPS, 0);
+
+	g_vars->scene06_mumsy->changeStatics2(ST_MOM_SITS);
+	g_fullpipe->setObjectState(sO_BigMumsy, g_fullpipe->getObjectEnumState(sO_BigMumsy, sO_IsPlaying));
+
+	chainQueue(QU_MOM_STANDUP, 1);
+
+	g_vars->scene06_var07 = 1;
+	g_vars->scene06_var12 = 0;
+	g_vars->scene06_mumsyPos = 0;
+	g_vars->scene06_var13 = 0;
+	g_vars->scene06_var16 = 0;
+
+	sceneHandler06_setExits(g_fullpipe->_currentScene);
 }
 
 void sceneHandler06_sub01() {

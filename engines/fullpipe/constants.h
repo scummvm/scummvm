@@ -253,6 +253,7 @@ namespace Fullpipe {
 #define QU_KOZAW_WALK 505
 #define QU_MOM_JUMPBK 671
 #define QU_MOM_JUMPFW 670
+#define QU_MOM_STANDUP 2899
 #define QU_PNK_CLICK 550
 #define QU_SC3_ENTERLIFT 2779
 #define QU_SC3_EXITLIFT 2808
@@ -261,6 +262,7 @@ namespace Fullpipe {
 #define QU_SC4_MANTOBOTTLE 2850
 #define QU_SC5_MANBUMP 1167
 #define QU_SC5_MANFLY 1168
+#define QU_SC6_DROPS 2898
 #define QU_SC6_ENTERLIFT 1054
 #define QU_SC6_EXITLIFT 1055
 #define SC_1 301
@@ -369,6 +371,7 @@ namespace Fullpipe {
 #define ST_MAN_STANDLADDER 453
 #define ST_MAN_UP 449
 #define ST_MAN6_BALL 2688
+#define ST_MOM_SITS 659
 #define ST_MOM_STANDS 658
 #define ST_NBL_NORM 1076
 #define ST_OTM_BOX_LEFT 429
