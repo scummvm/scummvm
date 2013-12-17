@@ -356,6 +356,8 @@ void Dialogs::scrollModeMusic() {
 				case Common::KEYCODE_RIGHTBRACKET:
 					value = 11;
 					break;
+				default:
+					break;
 				}
 
 				lastOne = thisOne;
