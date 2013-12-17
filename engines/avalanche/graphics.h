@@ -77,6 +77,11 @@ public:
 	void drawChar(byte ander, int x, int y, Color color);
 	void drawDebugLines();
 
+	// For the mini-game "Nim".
+	void blackOutScreen();
+	void loadNimStone();
+	void drawNimStone(int x, int y);
+
 	void clearAlso();
 	void clearTextBar();
 	void setAlsoLine(int x1, int y1, int x2, int y2, Color color);
@@ -125,11 +130,13 @@ private:
 	Graphics::Surface _screen; // Only used in refreshScreen() to make it more optimized. (No recreation of it at every call of the function.)
 	Graphics::Surface _scrolls;
 	Graphics::Surface _surface;
+	Graphics::Surface _nimStone; // For the mini-game "Nim".
 	byte _egaPalette[64][3];
 
 	AvalancheEngine *_vm;
 
 	Graphics::Surface loadPictureGraphic(Common::File &file); // Reads Graphic-planar EGA data.
+	Graphics::Surface loadPictureSign(Common::File &file, int xl, int yl); // Reads a tricky type of picture used for the "game over"/"about" scrolls and in the mini-game Nim.
 	void drawText(Graphics::Surface &surface, const Common::String text, FontType font, byte fontHeight, int16 x, int16 y, Color color);
 	// Taken from Free Pascal's Procedure InternalEllipseDefault. Used to replace Pascal's procedure arc.
 	// Returns the end point of the arc. (Needed in Clock.)
