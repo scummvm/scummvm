@@ -115,6 +115,7 @@ public:
 	virtual void flipBuffer() = 0;
 
 	virtual void getBoundingBoxPos(const Mesh *mesh, int *x1, int *y1, int *x2, int *y2) = 0;
+	virtual void getBoundingBoxPos(const EMIModel *mesh, int *x1, int *y1, int *x2, int *y2) = 0;
 	virtual void startActorDraw(const Actor *act) = 0;
 	virtual void finishActorDraw() = 0;
 	virtual void setShadow(Shadow *shadow) = 0;

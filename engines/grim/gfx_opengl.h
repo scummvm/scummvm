@@ -60,6 +60,7 @@ public:
 	bool isHardwareAccelerated();
 
 	void getBoundingBoxPos(const Mesh *model, int *x1, int *y1, int *x2, int *y2);
+	void getBoundingBoxPos(const EMIModel *model, int *x1, int *y1, int *x2, int *y2);
 
 	void startActorDraw(const Actor *actor);
 	void finishActorDraw();

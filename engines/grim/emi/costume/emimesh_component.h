@@ -37,6 +37,7 @@ public:
 	int update(uint time);
 	void reset();
 	void draw();
+	void getBoundingBox(int *x1, int *y1, int *x2, int *y2) const;
 
 public:
 	bool _hierShared;

@@ -112,6 +112,7 @@ public:
 	void prepareForRender();
 	void prepareTextures();
 	void draw();
+	void getBoundingBox(int *x1, int *y1, int *x2, int *y2) const;
 };
 
 } // end of namespace Grim
