@@ -284,16 +284,6 @@ class Scene1337 : public SceneExt {
 		void signal();
 	};
 public:
-	typedef void (Scene1337::*FunctionPtrType)();
-	FunctionPtrType _delayedFunction;
-
-	ASound _aSound1;
-	ASound _aSound2;
-	SceneActor _helpIcon;
-	bool _autoplay;
-	GameBoardSide _gameBoardSide[4];
-	SceneItem _item1;
-	SceneObject _currentPlayerArrow;
 	Action1 _action1;
 	Action2 _action2;
 	Action3 _action3;
@@ -307,34 +297,46 @@ public:
 	Action11 _action11;
 	Action12 _action12;
 	Action13 _action13;
-	Card _animatedCard;
-	Card _shuffleAnimation;
-	Card _item4;
-	SceneActor _stockPile;
-	int _cardsAvailableNumb;
+
+	typedef void (Scene1337::*FunctionPtrType)();
+	FunctionPtrType _delayedFunction;
+
+	bool _autoplay;
+	bool _shuffleEndedFl;
+	bool _showPlayerTurn;
+	bool _displayHelpFl;
+	bool _instructionsDisplayedFl;
 
 	// Discarded cards are put in the available cards pile, with an higher index so there no conflict
 	int _currentDiscardIndex;
 	int _availableCardsPile[100];
-	Card *_actionCard1;
-	Card *_actionCard2;
-	Card *_actionCard3;
-	Card _item5;
-	Card _selectedCard;
-	Card _discardPile;
-	Card _stockCard;
-	bool _shuffleEndedFl;
+	int _cardsAvailableNumb;
 	int _currentPlayerNumb;
 	int _actionIdx1;
 	int _actionIdx2;
-	bool _showPlayerTurn;
-	bool _displayHelpFl;
 	int _winnerId;
-	bool _instructionsDisplayedFl;
 	int _instructionsWaitCount;
 	int _cursorCurRes;
 	int _cursorCurStrip;
 	int _cursorCurFrame;
+
+	ASound _aSound1;
+	ASound _aSound2;
+	GameBoardSide _gameBoardSide[4];
+	SceneActor _helpIcon;
+	SceneActor _stockPile;
+	SceneItem _actionItem;
+	SceneObject _currentPlayerArrow;
+
+	Card *_actionCard1;
+	Card *_actionCard2;
+	Card *_actionCard3;
+	Card _animatedCard;
+	Card _shuffleAnimation;
+	Card _discardedPlatformCard;
+	Card _selectedCard;
+	Card _discardPile;
+	Card _stockCard;
 
 	SceneObject _upperDisplayCard[8];
 	SceneObject _lowerDisplayCard[8];

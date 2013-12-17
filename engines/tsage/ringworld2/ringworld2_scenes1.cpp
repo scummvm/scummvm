@@ -3663,13 +3663,13 @@ void Scene1337::Action7::signal() {
 		}
 		scene->setAnimationInfo(scene->_actionCard2);
 		scene->_aSound1.play(59);
-		scene->_item5._cardId = 1;
-		scene->_item5._stationPos = scene->_actionCard2->_stationPos;
-		scene->_item5._card.postInit();
-		scene->_item5._card.hide();
-		scene->_item5._card._flags = OBJFLAG_HIDING;
+		scene->_discardedPlatformCard._cardId = 1;
+		scene->_discardedPlatformCard._stationPos = scene->_actionCard2->_stationPos;
+		scene->_discardedPlatformCard._card.postInit();
+		scene->_discardedPlatformCard._card.hide();
+		scene->_discardedPlatformCard._card._flags = OBJFLAG_HIDING;
 
-		scene->discardCard(&scene->_item5);
+		scene->discardCard(&scene->_discardedPlatformCard);
 		break;
 	default:
 		break;
@@ -3972,7 +3972,7 @@ void Scene1337::Action11::signal() {
 					int tmpVal = scene->getFreeHandCard(scene->_actionIdx1);
 					scene->_actionCard3 = &scene->_gameBoardSide[scene->_actionIdx1]._handCard[tmpVal];
 				}
-				scene->_item1.setAction(&scene->_action12);
+				scene->_actionItem.setAction(&scene->_action12);
 				noAction = false;
 			}
 			break;
@@ -3991,7 +3991,7 @@ void Scene1337::Action11::signal() {
 					int tmpVal = scene->getFreeHandCard(scene->_actionIdx1);
 					scene->_actionCard3 = &scene->_gameBoardSide[scene->_actionIdx1]._handCard[tmpVal];
 				}
-				scene->_item1.setAction(&scene->_action12);
+				scene->_actionItem.setAction(&scene->_action12);
 				noAction = false;
 			}
 			break;
@@ -4015,7 +4015,7 @@ void Scene1337::Action11::signal() {
 						int tmpVal = scene->getFreeHandCard(scene->_actionIdx1);
 						scene->_actionCard3 = &scene->_gameBoardSide[scene->_actionIdx1]._handCard[tmpVal];
 					}
-					scene->_item1.setAction(&scene->_action12);
+					scene->_actionItem.setAction(&scene->_action12);
 					noAction = false;
 				}
 			}
@@ -4035,7 +4035,7 @@ void Scene1337::Action11::signal() {
 					int tmpVal = scene->getFreeHandCard(scene->_actionIdx1);
 					scene->_actionCard3 = &scene->_gameBoardSide[scene->_actionIdx1]._handCard[tmpVal];
 				}
-				scene->_item1.setAction(&scene->_action12);
+				scene->_actionItem.setAction(&scene->_action12);
 				noAction = false;
 			}
 			break;
@@ -4662,7 +4662,7 @@ void Scene1337::handlePlayerTurn() {
 	case 1:
 	// No break on purpose
 	case 3:
-		_item1.setAction(&_action4);
+		_actionItem.setAction(&_action4);
 	default:
 		break;
 	}
@@ -4907,7 +4907,7 @@ void Scene1337::playThieftCard(int playerId, Card *card, int victimId) {
 	_actionCard2 = &_gameBoardSide[victimId]._emptyStationPos;
 	_actionCard3 = &_gameBoardSide[victimId]._handCard[randIndx];
 
-	_item1.setAction(&_action11);
+	_actionItem.setAction(&_action11);
 }
 
 int Scene1337::getPreventionCardId(int cardId) {
@@ -4999,7 +4999,7 @@ bool Scene1337::checkAntiDelayCard(int delayCardId, int cardId) {
 void Scene1337::playStationCard(Card *station, Card *platform) {
 	_actionCard1 = station;
 	_actionCard2 = platform;
-	_item1.setAction(&_action7);
+	_actionItem.setAction(&_action7);
 }
 
 int Scene1337::getFreeHandCard(int playerId) {
@@ -5023,21 +5023,21 @@ void Scene1337::playPlatformCard(Card *card, Card *dest) {
 	_actionCard1 = card;
 	_actionCard2 = dest;
 
-	_item1.setAction(&_action6);
+	_actionItem.setAction(&_action6);
 }
 
 void Scene1337::playDelayCard(Card *card, Card *dest) {
 	_actionCard1 = card;
 	_actionCard2 = dest;
 
-	_item1.setAction(&_action9);
+	_actionItem.setAction(&_action9);
 }
 
 void Scene1337::playAntiDelayCard(Card *card, Card *dest) {
 	_actionCard1 = card;
 	_actionCard2 = dest;
 
-	_item1.setAction(&_action8);
+	_actionItem.setAction(&_action8);
 }
 
 
@@ -5055,13 +5055,13 @@ void Scene1337::playCounterTrickCard(Card *card, int playerId) {
 	_actionCard2 = getStationCard(playerId);
 	_actionCard3 = &_gameBoardSide[playerId]._emptyStationPos;
 	_actionIdx1 = playerId;
-	_item1.setAction(&_action10);
+	_actionItem.setAction(&_action10);
 }
 
 void Scene1337::discardCard(Card *card) {
 	_actionCard1 = card;
 
-	_item1.setAction(&_action5);
+	_actionItem.setAction(&_action5);
 }
 
 void Scene1337::subC4CD2() {
@@ -5082,7 +5082,7 @@ void Scene1337::subC51A0(Card *subObj1, Card *subObj2) {
 	_actionCard1 = subObj1;
 	_actionCard2 = subObj2;
 
-	_item1.setAction(&_action13);
+	_actionItem.setAction(&_action13);
 }
 
 void Scene1337::displayDialog(int dialogNumb) {
@@ -5359,7 +5359,7 @@ void Scene1337::suggestInstructions() {
 }
 
 void Scene1337::displayInstructions() {
-	_item1.setAction(&_action1);
+	_actionItem.setAction(&_action1);
 }
 
 void Scene1337::shuffleCards() {
@@ -5414,7 +5414,7 @@ void Scene1337::dealCards() {
 	shuffleCards();
 
 	// Deal cards
-	_item1.setAction(&_action3);
+	_actionItem.setAction(&_action3);
 }
 
 void Scene1337::showOptionsDialog() {
