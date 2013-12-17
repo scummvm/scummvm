@@ -85,7 +85,7 @@ void sceneHandler06_enableDrops() {
 	chainQueue(QU_MOM_STANDUP, 1);
 
 	g_vars->scene06_var07 = 1;
-	g_vars->scene06_var12 = 0;
+	g_vars->scene06_numBallsGiven = 0;
 	g_vars->scene06_mumsyPos = 0;
 	g_vars->scene06_var13 = 0;
 	g_vars->scene06_var16 = 0;
@@ -117,7 +117,17 @@ void sceneHandler06_buttonPush() {
 }
 
 void sceneHandler06_showNextBall() {
-	warning("STUB: sceneHandler06_showNextBall()");
+	if (g_vars->scene06_balls.size()) {
+		g_vars->scene06_var09 = new StaticANIObject(g_vars->scene06_balls.front());
+		g_vars->scene06_balls.remove_at(0);
+
+		MessageQueue *mq = new MessageQueue(g_fullpipe->_currentScene->getMessageQueueById(QU_SC6_SHOWNEXTBALL), 0, 1);
+
+		mq->replaceKeyCode(-1, g_vars->scene06_var09->_okeyCode);
+		mq->chain(0);
+
+		++g_vars->scene06_numBallsGiven;
+	}
 }
 
 void sceneHandler06_installHandle() {
@@ -181,7 +191,7 @@ void scene06_initScene(Scene *sc) {
 	g_vars->scene06_var10 = 0;
 	g_vars->scene06_var11 = 0;
 	g_vars->scene06_balls.clear();
-	g_vars->scene06_var12 = 0;
+	g_vars->scene06_numBallsGiven = 0;
 	g_vars->scene06_var13 = 0;
 	g_vars->scene06_var14 = 0;
 	g_vars->scene06_var15 = 1;
@@ -332,7 +342,7 @@ int sceneHandler06(ExCommand *ex) {
 				}
 
 				if (g_vars->scene06_var09 == st) {
-					if (g_vars->scene06_var12 == 1)
+					if (g_vars->scene06_numBallsGiven == 1)
 						sceneHandler06_takeBall();
 
 					ex->_messageKind = 0;
@@ -430,7 +440,7 @@ int sceneHandler06(ExCommand *ex) {
 				&& !g_vars->scene06_var09
 				&& !g_vars->scene06_var10
 				&& !g_vars->scene06_var11
-				&& g_vars->scene06_var12 >= 15
+				&& g_vars->scene06_numBallsGiven >= 15
 				&& !g_vars->scene06_ballDrop->_movement
 				&& !g_vars->scene06_mumsy->_movement
 				&& !g_vars->scene06_var16)

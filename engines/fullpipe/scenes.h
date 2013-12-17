@@ -162,7 +162,7 @@ public:
 	int scene06_var10;
 	StaticANIObject *scene06_var11;
 	Common::Array<StaticANIObject *> scene06_balls;
-	int scene06_var12;
+	int scene06_numBallsGiven;
 	int scene06_var13;
 	int scene06_var14;
 	int scene06_var15;
