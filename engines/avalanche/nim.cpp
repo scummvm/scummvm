@@ -54,8 +54,6 @@ void Nim::resetVariables() {
 		_old[i] = 0;
 		_stones[i] = 0;
 	}
-
-	memset(_stonePic, 0, 4 * 23 * 7);
 }
 
 void Nim::synchronize(Common::Serializer &sz) {
@@ -78,9 +76,9 @@ void Nim::playNim() {
 
 	_vm->_dialogs->displayScrollChain('Q', 3);
 	_playedNim++;
-	_vm->fadeOut();
-
+	
 	_vm->_graphics->saveScreen();
+	_vm->fadeOut();
 
 	CursorMan.showMouse(false);
 	setup();
@@ -138,6 +136,21 @@ void Nim::chalk(int x,int y, Common::String z) {
 }
 
 void Nim::setup() {
+	_vm->fadeIn();
+	_vm->_graphics->loadNim();
+	_vm->_graphics->drawFilledRectangle(Common::Rect(0, 0, 640, 200), kColorBlack);
+	// Upper left rectangle.
+	_vm->_graphics->drawRectangle(Common::Rect(10, 5, 381, 71), kColorRed);
+	_vm->_graphics->drawFilledRectangle(Common::Rect(11, 6, 380, 70), kColorBrown);
+	// Bottom right rectangle.
+	_vm->_graphics->drawRectangle(Common::Rect(394, 50, 635, 198), kColorRed);
+	_vm->_graphics->drawFilledRectangle(Common::Rect(395, 51, 634, 197), kColorBrown);
+		
+	_vm->_graphics->drawNimLogo();
+	_vm->_graphics->drawNimInitials();
+	
+	_vm->_graphics->refreshScreen();
+
 	warning("STUB: Nim::setup()");
 }
 

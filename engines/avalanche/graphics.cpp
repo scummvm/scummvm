@@ -59,7 +59,11 @@ GraphicManager::~GraphicManager() {
 	_screen.free();
 	_scrolls.free();
 	_backup.free();
+
 	_nimStone.free();
+	for (int i = 0; i < 3; i++)
+		_nimInitials[i].free();
+	_nimLogo.free();
 
 	for (int i = 0; i < 10; i++)
 		_digits[i].free();
@@ -452,11 +456,15 @@ void GraphicManager::drawDebugLines() {
 	}
 }
 
-void GraphicManager::blackOutScreen() {
-	_surface.fillRect(Common::Rect(0, 0, _surface.w, _surface.h), Color::kColorBlack);
+void GraphicManager::drawFilledRectangle(Common::Rect rect, Color color) {
+	_surface.fillRect(rect, color);
 }
 
-void GraphicManager::loadNimStone() {
+void GraphicManager::drawRectangle(Common::Rect rect, Color color) {
+	_surface.frameRect(rect, color);
+}
+
+void GraphicManager::loadNim() {
 	Common::File file;
 	Common::String filename = "nim.avd";
 
@@ -466,12 +474,24 @@ void GraphicManager::loadNimStone() {
 	file.seek(41);
 
 	_nimStone = loadPictureSign(file, 7, 23);
+	for (int i = 0; i < 3; i++)
+		_nimInitials[i] = loadPictureSign(file, 7, 23);
+	_nimLogo = loadPictureSign(file, 30, 37);
 
 	file.close();
 }
 
 void GraphicManager::drawNimStone(int x, int y) {
 	drawPicture(_surface, _nimStone, x, y);
+}
+
+void GraphicManager::drawNimInitials() {
+	for (int i = 0; i < 3; i++)
+		drawPicture(_surface, _nimInitials[i], 0, 75 + i * 35);
+}
+
+void GraphicManager::drawNimLogo() {
+	drawPicture(_surface, _nimLogo, 392, 5);
 }
 
 /**

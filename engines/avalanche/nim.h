@@ -44,7 +44,6 @@ private:
 
 	byte _old[3];
 	byte _stones[3];
-	byte _stonePic[4][23][7]; // Picture of Nimstone.
 	byte _turns;
 	bool _dogfoodsTurn;
 	byte _stonesLeft;
