@@ -1573,7 +1573,7 @@ void ThreadResource::doAptAnim(int mode) {
 		pal->_steps = 1;
 
 		for (int idx = 0; (idx < 6) && !_vm->shouldQuit(); ++idx) {
-			PictureResource *pic = _vm->_bVoy->boltEntry(id + idx)._picResource;
+			PictureResource *pic = _vm->_bVoy->boltEntry(id + idx + 1)._picResource;
 			(*_vm->_graphicsManager._vPort)->setupViewPort(pic);
 
 			(*_vm->_graphicsManager._vPort)->_flags |= 8;
