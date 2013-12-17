@@ -188,14 +188,12 @@ void Nim::setup() {
 		_old[i] = 0;
 }
 
-void Nim::plotStone(byte x, byte y) {
-	_vm->_graphics->drawNimStone(64 + x * 7 * 8 + x * 8, 75 + y * 35);
-}
-
 void Nim::board() {
 	for (int i = 0; i < 3; i++)
 		for (int j = 0; j < _stones[i]; j++)
-			plotStone(j, i);
+			_vm->_graphics->drawNimStone(64 + j * 7 * 8 + j * 8, 75 + i * 35);
+			// It's practically the body of the Pascal function "plotstone()", reimplemented.
+			// It's the only place where we use it, so there's no reason to keep it separated as a function.
 	_vm->_graphics->refreshScreen();
 }
 

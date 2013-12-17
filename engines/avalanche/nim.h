@@ -56,7 +56,6 @@ private:
 
 	void chalk(int x, int y, Common::String text);
 	void setup();
-	void plotStone(byte x, byte y);
 	void board();
 	void startMove();
 	void showChanges();
