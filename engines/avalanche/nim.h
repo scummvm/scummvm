@@ -54,7 +54,7 @@ private:
 	int8 _mNum, _mRow;
 	byte _playedNim; // How many times you've played Nim.
 
-	void chalk(int x,int y, Common::String z);
+	void chalk(int x, int y, Common::String text);
 	void setup();
 	void plotStone(byte x,byte y);
 	void board();

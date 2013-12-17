@@ -131,13 +131,25 @@ void Nim::playNim() {
 	}
 }
 
-void Nim::chalk(int x,int y, Common::String z) {
-	warning("STUB: Nim::chalk()");
+void Nim::chalk(int x, int y, Common::String text) {
+	const Color greys[] = { kColorBlack, kColorDarkgray, kColorLightgray, kColorWhite };
+	
+	for (int i = 0; i < 4; i++) {
+		_vm->_graphics->drawNormalText(text, _vm->_font, 8, x - i, y, greys[i]);
+		_vm->_graphics->refreshScreen();
+		int freq = i * 100 * text.size();
+		if (freq == 0)
+			_vm->_system->delayMillis(3);
+		else
+			_vm->_sound->playNote(freq, 3);
+		_vm->_system->delayMillis(30);
+	}
 }
 
 void Nim::setup() {
 	_vm->fadeIn();
 	_vm->_graphics->loadNim();
+
 	_vm->_graphics->drawFilledRectangle(Common::Rect(0, 0, 640, 200), kColorBlack);
 	// Upper left rectangle.
 	_vm->_graphics->drawRectangle(Common::Rect(10, 5, 381, 71), kColorRed);
@@ -148,10 +160,32 @@ void Nim::setup() {
 		
 	_vm->_graphics->drawNimLogo();
 	_vm->_graphics->drawNimInitials();
+
+	_vm->_graphics->drawNormalText("SCOREBOARD:", _vm->_font, 8, 475, 45, kColorWhite);
+	_vm->_graphics->drawNormalText("Turn:", _vm->_font, 8, 420, 55, kColorYellow);
+	_vm->_graphics->drawNormalText("Player:", _vm->_font, 8, 490, 55, kColorYellow);
+	_vm->_graphics->drawNormalText("Move:", _vm->_font, 8, 570, 55, kColorYellow);
 	
+	chalk(27, 7, "Take pieces away with:");
+	chalk(77, 17, "1) the mouse (click leftmost)");
+	chalk(53, 27, "or 2) the keyboard:");
+	chalk(220, 27, Common::String(24) + '/' + 25 + ": choose row,");
+	chalk(164, 37, Common::String("+/- or ") + 27 + '/' + 26 + ": more/fewer,");
+	chalk(204, 47, "Enter: take stones.");
+
 	_vm->_graphics->refreshScreen();
 
-	warning("STUB: Nim::setup()");
+	for (int i = 0; i < 3; i++)
+		_stones[i] = i + 3;
+	_stonesLeft = 12;
+
+	_turns = 0;
+	_dogfoodsTurn = true;
+
+	_row = 1;
+	_number = 1;
+	for (int i = 0; i < 3; i++)
+		_old[i] = 0;
 }
 
 void Nim::plotStone(byte x,byte y) {

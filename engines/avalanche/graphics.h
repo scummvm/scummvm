@@ -82,6 +82,8 @@ public:
 	void drawRectangle(Common::Rect rect, Color color);
 	void loadNim();
 	void drawNimStone(int x, int y);
+	// Maybe we'll be able to get rid of these two and squeeze them into loadNim() later
+	// since I am not sure that we'll need to redraw them any other times.
 	void drawNimInitials();
 	void drawNimLogo();
 
