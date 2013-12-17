@@ -810,6 +810,25 @@ bool chainQueue(int queueId, int flags) {
 	return true;
 }
 
+bool chainObjQueue(StaticANIObject *obj, int queueId, int flags) {
+	MessageQueue *mq = g_fullpipe->_currentScene->getMessageQueueById(queueId);
+
+	if (!mq)
+		return false;
+
+	MessageQueue *nmq = new MessageQueue(mq, 0, 0);
+
+	nmq->_flags |= flags;
+
+	if (!nmq->chain(obj)) {
+		delete nmq;
+
+		return false;
+	}
+
+	return true;
+}
+
 void postExCommand(int parentId, int keyCode, int x, int y, int f20, int f14) {
 	ExCommand *ex = new ExCommand(parentId, 17, 64, 0, 0, 0, 1, 0, 0, 0);
 

@@ -226,20 +226,31 @@ void sceneHandler06_sub03() {
 	warning("STUB: sceneHandler06_sub03()");
 }
 
-void sceneHandler06_sub04(int par) {
-	warning("STUB: sceneHandler06_sub04()");
-}
-
 void sceneHandler06_sub05() {
 	warning("STUB: sceneHandler06_sub05()");
 }
 
-void sceneHandler06_sub06() {
-	warning("STUB: sceneHandler06_sub06()");
-}
-
 void sceneHandler06_sub09() {
 	warning("STUB: sceneHandler06_sub09()");
+}
+
+void sceneHandler06_sub04(int par) {
+	int pixel;
+
+	if (g_vars->scene06_var04 <= 475) {
+		if (g_vars->scene06_mumsy->getPixelAtPos(g_vars->scene06_var03, g_vars->scene06_var04, &pixel)) {
+			if (pixel) {
+				chainObjQueue(g_vars->scene06_mumsy, QU_MOM_JUMPBK, 0);
+				sceneHandler06_sub09();
+			}
+		}
+	} else {
+		sceneHandler06_sub05();
+	}
+}
+
+void sceneHandler06_sub06() {
+	warning("STUB: sceneHandler06_sub06()");
 }
 
 void sceneHandler06_sub10() {
