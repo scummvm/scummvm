@@ -318,7 +318,7 @@ void Dialogs::scrollModeMusic() {
 			|| (event.kbd.keycode == Common::KEYCODE_u) || (event.kbd.keycode == Common::KEYCODE_i)
 			|| (event.kbd.keycode == Common::KEYCODE_o) || (event.kbd.keycode == Common::KEYCODE_p)
 			|| (event.kbd.keycode == Common::KEYCODE_LEFTBRACKET) || (event.kbd.keycode == Common::KEYCODE_RIGHTBRACKET))) {
-				byte value;
+				byte value = 0;
 				switch (event.kbd.keycode) {
 				case Common::KEYCODE_q:
 					value = 0;
@@ -355,8 +355,6 @@ void Dialogs::scrollModeMusic() {
 					break;
 				case Common::KEYCODE_RIGHTBRACKET:
 					value = 11;
-					break;
-				default:
 					break;
 				}
 
