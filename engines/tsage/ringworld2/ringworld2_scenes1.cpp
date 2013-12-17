@@ -5825,26 +5825,19 @@ void Scene1337::handlePlayer0() {
 	}
 
 	for (int i = 0; i <= 3; i++) {
-		if (isDelayCard(_gameBoardSide[0]._handCard[i]._cardId) != -1) {
-			// The variable 'j' is not used in the inner code of the loop. It's suspect
-			for (int j = 0; j <= 7; j++) {
-				if ((_gameBoardSide[2]._delayCard._cardId == 0) && isAttackPossible(2, _gameBoardSide[0]._handCard[i]._cardId)) {
-					playDelayCard(&_gameBoardSide[0]._handCard[i], &_gameBoardSide[2]._delayCard);
-					return;
-				}
-			}
+		if ((isDelayCard(_gameBoardSide[0]._handCard[i]._cardId) != -1)
+		&&  (_gameBoardSide[2]._delayCard._cardId == 0)
+		&&  isAttackPossible(2, _gameBoardSide[0]._handCard[i]._cardId)) {
+			playDelayCard(&_gameBoardSide[0]._handCard[i], &_gameBoardSide[2]._delayCard);
+			return;
 		}
 	}
 
 	for (int i = 0; i <= 3; i++) {
-		if (getStationCardId(_gameBoardSide[0]._handCard[i]._cardId) != -1) {
-			// The variable 'j' is not used in the inner code of the loop. It's suspect
-			for (int j = 0; j <= 7; j++) {
-				if ((_gameBoardSide[2]._delayCard._cardId == 0) && isAttackPossible(2, _gameBoardSide[0]._handCard[i]._cardId)) {
-					playDelayCard(&_gameBoardSide[0]._handCard[i], &_gameBoardSide[2]._delayCard);
-					return;
-				}
-			}
+		if ((getStationCardId(_gameBoardSide[0]._handCard[i]._cardId) != -1)
+		&&  (_gameBoardSide[2]._delayCard._cardId == 0) && isAttackPossible(2, _gameBoardSide[0]._handCard[i]._cardId)) {
+			playDelayCard(&_gameBoardSide[0]._handCard[i], &_gameBoardSide[2]._delayCard);
+			return;
 		}
 	}
 
@@ -5870,20 +5863,14 @@ void Scene1337::handlePlayer0() {
 	for (int i = 0; i <= 3; i++) {
 		tmpVal = getStationCardId(_gameBoardSide[0]._handCard[i]._cardId);
 		if (tmpVal != -1) {
-			// The variable 'j' is not used in the inner code of the loop. It's suspect.
-			for (int j = 0; j <= 7; j++) {
-				if ((_gameBoardSide[1]._delayCard._cardId == 0) && isAttackPossible(1, _gameBoardSide[0]._handCard[i]._cardId)) {
-					playDelayCard(&_gameBoardSide[0]._handCard[i], &_gameBoardSide[1]._delayCard);
-					return;
-				}
+			if ((_gameBoardSide[1]._delayCard._cardId == 0) && isAttackPossible(1, _gameBoardSide[0]._handCard[i]._cardId)) {
+				playDelayCard(&_gameBoardSide[0]._handCard[i], &_gameBoardSide[1]._delayCard);
+				return;
 			}
 
-			// The variable 'j' is not used in the inner code of the loop. It's suspect.
-			for (int j = 0; j <= 7; j++) {
-				if ((_gameBoardSide[3]._delayCard._cardId == 0) && isAttackPossible(3, _gameBoardSide[0]._handCard[i]._cardId)) {
-					playDelayCard(&_gameBoardSide[0]._handCard[i], &_gameBoardSide[3]._delayCard);
-					return;
-				}
+			if ((_gameBoardSide[3]._delayCard._cardId == 0) && isAttackPossible(3, _gameBoardSide[0]._handCard[i]._cardId)) {
+				playDelayCard(&_gameBoardSide[0]._handCard[i], &_gameBoardSide[3]._delayCard);
+				return;
 			}
 		}
 	}
@@ -5891,20 +5878,14 @@ void Scene1337::handlePlayer0() {
 	for (int i = 0; i <= 3; i++) {
 		tmpVal = isDelayCard(_gameBoardSide[0]._handCard[i]._cardId);
 		if (tmpVal != -1) {
-			// The variable 'j' is not used in the inner code of the loop. It's suspect.
-			for (int j = 0; j <= 7; j++) {
-				if ((_gameBoardSide[1]._delayCard._cardId == 0) && isAttackPossible(1, _gameBoardSide[0]._handCard[i]._cardId)) {
-					playDelayCard(&_gameBoardSide[0]._handCard[i], &_gameBoardSide[1]._delayCard);
-					return;
-				}
+			if ((_gameBoardSide[1]._delayCard._cardId == 0) && isAttackPossible(1, _gameBoardSide[0]._handCard[i]._cardId)) {
+				playDelayCard(&_gameBoardSide[0]._handCard[i], &_gameBoardSide[1]._delayCard);
+				return;
 			}
 
-			// The variable 'j' is not used in the inner code of the loop. It's suspect.
-			for (int j = 0; j <= 7; j++) {
-				if ((_gameBoardSide[3]._delayCard._cardId == 0) && isAttackPossible(3, _gameBoardSide[0]._handCard[i]._cardId)) {
-					playDelayCard(&_gameBoardSide[0]._handCard[i], &_gameBoardSide[3]._delayCard);
-					return;
-				}
+			if ((_gameBoardSide[3]._delayCard._cardId == 0) && isAttackPossible(3, _gameBoardSide[0]._handCard[i]._cardId)) {
+				playDelayCard(&_gameBoardSide[0]._handCard[i], &_gameBoardSide[3]._delayCard);
+				return;
 			}
 		}
 	}
@@ -6007,11 +5988,12 @@ void Scene1337::handlePlayer1() {
 						playerIdFound = rndVal;
 						break;
 				}
-				// CHECKME: inside the check on rndVal?
-				rndVal--;
-				if (rndVal < 0)
-					rndVal = 3;
 			}
+			// The original was only updating in the rndVal block, 
+			// which was a bug as the checks were stopping at this point
+			rndVal--;
+			if (rndVal < 0)
+				rndVal = 3;
 		}
 
 		if (playerIdFound != -1) {
@@ -6030,14 +6012,8 @@ void Scene1337::handlePlayer1() {
 			for (int j = 0; j <= 3; j++) {
 				//CHECKME: tmpVal or rndVal?
 				if (tmpVal != 1) {
-					for (int k = 0; k <= 7; k++) {
-						// CHECKME: 'k' is not used in that loop.
-						// It looks suspicious.
-						if ((_gameBoardSide[tmpVal]._delayCard._cardId == 0) && isAttackPossible(tmpVal, _gameBoardSide[1]._handCard[i]._cardId)) {
-							count = tmpVal;
-							break;
-						}
-					}
+					if ((_gameBoardSide[tmpVal]._delayCard._cardId == 0) && isAttackPossible(tmpVal, _gameBoardSide[1]._handCard[i]._cardId))
+						count = tmpVal;
 				}
 
 				if (count != -1) {
@@ -6059,13 +6035,8 @@ void Scene1337::handlePlayer1() {
 			int rndVal = R2_GLOBALS._randomSource.getRandomNumber(3);
 			for (int l = 0; l <= 3; l++) {
 				if (rndVal != 1) {
-					for (int m = 0; m <= 7; m++) {
-						// 'm' is not used in that loop. It looks suspicious.
-						if ((_gameBoardSide[rndVal]._delayCard._cardId == 0) && (_gameBoardSide[1]._handCard[j]._cardId == 1)) {
-							count = rndVal;
-							break;
-						}
-					}
+					if ((_gameBoardSide[rndVal]._delayCard._cardId == 0) && (_gameBoardSide[1]._handCard[j]._cardId == 1))
+						count = rndVal;
 				}
 				if (count != -1) {
 					playDelayCard(&_gameBoardSide[1]._handCard[j], &_gameBoardSide[count]._delayCard);
@@ -6206,12 +6177,9 @@ void Scene1337::handlePlayer3() {
 
 			for (int i = 0; i <= 3; i++) {
 				if (tmpRandIndx != 3) {
-					// The variable 'j' is not used in the inner code of the loop, which is suspicious.
-					// 'i' is used indirectly to increment tmpRandIndx.
-					for (int j = 0; j <= 7; j++) {
-						if ((_gameBoardSide[tmpRandIndx]._delayCard._cardId == 0) && isAttackPossible(tmpRandIndx, _gameBoardSide[3]._handCard[randIndx]._cardId))
-							victimId = tmpRandIndx;
-					}
+					if ((_gameBoardSide[tmpRandIndx]._delayCard._cardId == 0)
+					&&  isAttackPossible(tmpRandIndx, _gameBoardSide[3]._handCard[randIndx]._cardId))
+						victimId = tmpRandIndx;
 				}
 
 				++tmpRandIndx;
