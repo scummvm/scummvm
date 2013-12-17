@@ -172,8 +172,33 @@ void sceneHandler06_sub02() {
 	warning("STUB: sceneHandler06_sub02()");
 }
 
+void sceneHandler06_sub07() {
+	warning("STUB: sceneHandler06_sub07()");
+}
+
+void sceneHandler06_throwCallback(int *arg) {
+	if (g_vars->scene06_var08) {
+		int dist = (g_fullpipe->_mouseVirtY - g_vars->scene06_sceneClickY)
+			* (g_fullpipe->_mouseVirtY - g_vars->scene06_sceneClickY)
+            + (g_fullpipe->_mouseVirtX - g_vars->scene06_sceneClickX)
+			* (g_fullpipe->_mouseVirtX - g_vars->scene06_sceneClickX);
+
+		*arg = sqrt(dist) * 0.1;
+
+		if (*arg > 8)
+			*arg = 8;
+	} else {
+		*arg = *arg + 1;
+		if (*arg == 12)
+			sceneHandler06_sub07();
+	}
+}
+
 void sceneHandler06_throwBall() {
-	warning("STUB: sceneHandler06_throwBall()");
+	g_fullpipe->_aniMan->_callback2 = sceneHandler06_throwCallback;
+	g_fullpipe->_aniMan->startAnim(MV_MAN6_THROWBALL, 0, -1);
+
+	g_vars->scene06_var08 = 1;
 }
 
 void sceneHandler06_sub03() {
@@ -190,10 +215,6 @@ void sceneHandler06_sub05() {
 
 void sceneHandler06_sub06() {
 	warning("STUB: sceneHandler06_sub06()");
-}
-
-void sceneHandler06_sub07() {
-	warning("STUB: sceneHandler06_sub07()");
 }
 
 void sceneHandler06_sub09() {
