@@ -188,12 +188,15 @@ void Nim::setup() {
 		_old[i] = 0;
 }
 
-void Nim::plotStone(byte x,byte y) {
-	warning("STUB: Nim::plotStone()");
+void Nim::plotStone(byte x, byte y) {
+	_vm->_graphics->drawNimStone(64 + x * 7 * 8 + x * 8, 75 + y * 35);
 }
 
 void Nim::board() {
-	warning("STUB: Nim::board()");
+	for (int i = 0; i < 3; i++)
+		for (int j = 0; j < _stones[i]; j++)
+			plotStone(j, i);
+	_vm->_graphics->refreshScreen();
 }
 
 void Nim::startMove() {
@@ -233,7 +236,7 @@ bool Nim::find(byte x) {
 	return true;
 }
 
-void Nim::findAp(byte start,byte stepsize) {
+void Nim::findAp(byte start, byte stepsize) {
 	warning("STUB: Nim::findAp()");
 }
 

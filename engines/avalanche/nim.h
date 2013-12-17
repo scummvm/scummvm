@@ -56,7 +56,7 @@ private:
 
 	void chalk(int x, int y, Common::String text);
 	void setup();
-	void plotStone(byte x,byte y);
+	void plotStone(byte x, byte y);
 	void board();
 	void startMove();
 	void showChanges();
@@ -67,7 +67,7 @@ private:
 	void endOfGame();
 	void dogFood();
 	bool find(byte x);
-	void findAp(byte start,byte stepsize);
+	void findAp(byte start, byte stepsize);
 };
 
 } // End of namespace Avalanche
