@@ -143,8 +143,29 @@ void sceneHandler06_installHandle() {
 	chainQueue(QU_SC6_SHOWHANDLE, 0);
 }
 
+void sceneHandler06_sub08() {
+	warning("STUB: sceneHandler06_sub08()");
+}
+
 void sceneHandler06_takeBall() {
-	warning("STUB: sceneHandler06_takeBall()");
+	if (g_vars->scene06_var09 && !g_vars->scene06_var09->_movement && g_vars->scene06_var09->_statics->_staticsId == ST_NBL_NORM) {
+		if (abs(1158 - g_fullpipe->_aniMan->_ox) > 1
+			|| abs(452 - g_fullpipe->_aniMan->_oy) > 1
+			|| g_fullpipe->_aniMan->_movement
+			|| g_fullpipe->_aniMan->_statics->_staticsId != (0x4000 | ST_MAN_RIGHT)) {
+			MessageQueue *mq = getCurrSceneSc2MotionController()->method34(g_fullpipe->_aniMan, 1158, 452, 1, (0x4000 | ST_MAN_RIGHT));
+
+			if (mq) {
+				ExCommand *ex = new ExCommand(0, 17, MSG_SC6_TAKEBALL, 0, 0, 0, 1, 0, 0, 0);
+				ex->_excFlags |= 3;
+				mq->addExCommandToEnd(ex);
+
+				postExCommand(g_fullpipe->_aniMan->_id, 2, 1158, 452, 0, -1);
+			}
+		} else {
+			sceneHandler06_sub08();
+		}
+	}
 }
 
 void sceneHandler06_sub02() {
@@ -173,10 +194,6 @@ void sceneHandler06_sub06() {
 
 void sceneHandler06_sub07() {
 	warning("STUB: sceneHandler06_sub07()");
-}
-
-void sceneHandler06_sub08() {
-	warning("STUB: sceneHandler06_sub08()");
 }
 
 void sceneHandler06_sub09() {
