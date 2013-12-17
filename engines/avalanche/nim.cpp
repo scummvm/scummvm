@@ -49,10 +49,13 @@ void Nim::resetVariables() {
 	_squeak = false;
 	_mNum = 0;
 	_mRow = 0;
+	_lmo = false;
 
 	for (int i = 0; i < 3; i++) {
 		_old[i] = 0;
 		_stones[i] = 0;
+		_inAp[i] = 0;
+		_r[i] = 0;
 	}
 }
 
@@ -233,16 +236,144 @@ void Nim::endOfGame() {
 }
 
 void Nim::dogFood() {
-	warning("STUB: Nim::dogFood()");
+	_lmo = false;
+	byte live = 0;
+	byte sr[3];
+
+	for (int i = 0; i < 3; i++) {
+		if (_stones[i] > 0) {
+			_r[live] = i + 1;
+			sr[live] = _stones[i];
+			live++;
+		}
+	}
+	
+	switch (live) {
+	case 1: // Only one is free - so take 'em all!
+		_row = _r[0];
+		_number = _stones[_r[0]];
+		return;
+	case 2: // Two are free - make them equal!
+		if (sr[0] > sr[1]) { // T > b
+			_row = _r[0];
+			_number = sr[0] - sr[1];
+			return;
+		}
+		else if (sr[0] < sr[1]) { // B > t
+			_row = _r[1];
+			_number = sr[1] - sr[0];
+			return;
+		}
+		else { // B = t... oh no, we've lost!
+			_row = _r[0];
+			_number = 1;
+			return;
+		}
+		break;
+	case 3: { // Ho hum... this'll be difficult!
+				// There are three possible courses of action when we have 3 lines left:
+				// 1) Look for 2 equal lines, then take the odd one out.
+				// 2) Look for A.P.s, and capitalise on them.
+				// 3) Go any old where.
+				const byte other[3][2] = { { 2, 3 }, { 1, 3 }, { 1, 2 } };
+
+				for (int i = 0; i < 3; i++) // Look for 2 equal lines.
+					if (_stones[other[i][0]] == _stones[other[i][1]]) {
+						_row = i + 1; // This row.
+						_number = _stones[i]; // All of 'em.
+						return;
+					}
+
+				bool sorted;
+				do {
+					sorted = true;
+					for (int i = 0; i < 2; i++)
+						if (sr[i] > sr[i + 1]) {
+							byte temp = sr[i + 1];
+							sr[i + 1] = sr[i];
+							sr[i] = temp;
+
+							temp = _r[i + 1];
+							_r[i + 1] = _r[i];
+							_r[i] = temp;
+
+							sorted = false;
+						}
+				} while (sorted);
+				
+				// Now we look for A.P.s...
+				for (int i = 1; i <= 3; i++) {
+					findAp(i, 1); // There are 3 "1"s.
+					if (_lmo)
+						return; // Cut - out.
+				}
+				findAp(1, 2); // Only "2" possible.
+				if (_lmo)
+					return;
+
+				// A.P.search must have failed - use the default move.
+				_row = _r[2];
+				_number = 1;
+				return;
+		}
+		break;
+	default:
+		break;
+	}
 }
 
 bool Nim::find(byte x) {
-	warning("STUB: Nim::find()");
-	return true;
+	bool ret = false;
+	for (int i = 0; i < 3; i++)
+		if (_stones[i] == x) {
+			ret = true;
+			_inAp[i] = true;
+		}
+	return ret;
 }
 
-void Nim::findAp(byte start, byte stepsize) {
-	warning("STUB: Nim::findAp()");
+void Nim::findAp(byte start, byte stepSize) {
+	byte thisOne = 0;
+	byte matches = 0;
+	for (int i = 0; i < 3; i++)
+		_inAp[i] = 0; // Blank 'em all!
+	for (int i = 0; i < 3; i++)
+		if (find(start + i * stepSize))
+			matches++;
+		else
+			thisOne = i;
+
+	// Now..Matches must be 0, 1, 2, or 3.
+	// 0 / 1 mean there are no A.P.s here, so we'll keep looking,
+	// 2 means there is a potential A.P.that we can create (ideal!), and
+	// 3 means that we're already in an A.P. (Trouble!)
+
+	byte ooo; // Odd one out.
+
+	switch (matches) {
+	case 2:
+		for (int i = 0; i < 3; i++) // Find which one didn't fit the A.P.
+			if (!_inAp[i])
+				ooo = i;
+
+		if (_stones[ooo] > (start + thisOne * stepSize)) { // Check if it's possible!
+			// Create an A.P.
+			_row = ooo + 1; // Already calculated.
+			// Start + thisone * stepsize will give the amount we SHOULD have here.
+			_number = _stones[_row - 1] - (start + thisOne * stepSize);
+			_lmo = true;
+			return;
+		}
+		break;
+	case 3:  // We're actually IN an A.P! Trouble! Oooh dear.
+		// Take 1 from the largest pile.
+		_row = _r[2];
+		_number = 1;
+		_lmo = true;
+		return;
+	default:
+		break;
+	}
 }
 
 } // End of namespace Avalanche
