@@ -102,7 +102,8 @@ void sceneHandler06_spinHandle() {
 }
 
 void sceneHandler06_uPipeClick() {
-	warning("STUB: sceneHandler06_uPipeClick()");
+	if (getGameLoaderInteractionController()->_flag24)
+		handleObjectInteraction(g_fullpipe->_aniMan2, g_fullpipe->_currentScene->getPictureObjectById(PIC_SC6_LADDER, 0), 0);
 }
 
 void sceneHandler06_buttonPush() {
@@ -114,7 +115,7 @@ void sceneHandler06_showNextBall() {
 }
 
 void sceneHandler06_installHandle() {
-	warning("STUB: sceneHandler06_installHandle()");
+	chainQueue(QU_SC6_SHOWHANDLE, 0);
 }
 
 void sceneHandler06_takeBall() {

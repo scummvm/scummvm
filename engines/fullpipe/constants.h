@@ -236,6 +236,7 @@ namespace Fullpipe {
 #define PIC_SC4_LRTRUBA 616
 #define PIC_SC4_MASK 585
 #define PIC_SC4_PLANK 5183
+#define PIC_SC6_LADDER 1104
 #define PIC_SCD_SEL 734
 #define QU_BALL_WALKL 4920
 #define QU_BALL_WALKR 4919
@@ -265,6 +266,7 @@ namespace Fullpipe {
 #define QU_SC6_DROPS 2898
 #define QU_SC6_ENTERLIFT 1054
 #define QU_SC6_EXITLIFT 1055
+#define QU_SC6_SHOWHANDLE 1689
 #define SC_1 301
 #define SC_10 653
 #define SC_11 654
