@@ -185,7 +185,7 @@ void Nim::setup() {
 	_turns = 0;
 	_dogfoodsTurn = true;
 
-	_row = 1;
+	_row = 0;
 	_number = 1;
 	for (int i = 0; i < 3; i++)
 		_old[i] = 0;
@@ -242,7 +242,7 @@ void Nim::dogFood() {
 
 	for (int i = 0; i < 3; i++) {
 		if (_stones[i] > 0) {
-			_r[live] = i + 1;
+			_r[live] = i;
 			sr[live] = _stones[i];
 			live++;
 		}
@@ -279,7 +279,7 @@ void Nim::dogFood() {
 
 				for (int i = 0; i < 3; i++) // Look for 2 equal lines.
 					if (_stones[other[i][0]] == _stones[other[i][1]]) {
-						_row = i + 1; // This row.
+						_row = i; // This row.
 						_number = _stones[i]; // All of 'em.
 						return;
 					}
@@ -358,9 +358,9 @@ void Nim::findAp(byte start, byte stepSize) {
 
 		if (_stones[ooo] > (start + thisOne * stepSize)) { // Check if it's possible!
 			// Create an A.P.
-			_row = ooo + 1; // Already calculated.
+			_row = ooo; // Already calculated.
 			// Start + thisone * stepsize will give the amount we SHOULD have here.
-			_number = _stones[_row - 1] - (start + thisOne * stepSize);
+			_number = _stones[_row] - (start + thisOne * stepSize);
 			_lmo = true;
 			return;
 		}
