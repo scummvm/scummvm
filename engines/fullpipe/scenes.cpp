@@ -121,7 +121,7 @@ Vars::Vars() {
 	scene06_ballDrop = 0;
 	scene06_var07 = 0;
 	scene06_var08 = 0;
-	scene06_var09 = 0;
+	scene06_currentBall = 0;
 	scene06_var10 = 0;
 	scene06_var11 = 0;
 	scene06_numBallsGiven = 0;

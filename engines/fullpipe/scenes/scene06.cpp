@@ -59,7 +59,7 @@ int scene06_updateCursor() {
 
 				return PIC_CSR_ITN;
 			}
-		} else if (g_fullpipe->_objectAtCursor && (StaticANIObject *)g_fullpipe->_objectAtCursor == g_vars->scene06_var09
+		} else if (g_fullpipe->_objectAtCursor && (StaticANIObject *)g_fullpipe->_objectAtCursor == g_vars->scene06_currentBall
 				   && g_fullpipe->_cursorId == PIC_CSR_DEFAULT) {
 			g_fullpipe->_cursorId = PIC_CSR_ITN;
 		}
@@ -127,12 +127,12 @@ void sceneHandler06_buttonPush() {
 
 void sceneHandler06_showNextBall() {
 	if (g_vars->scene06_balls.size()) {
-		g_vars->scene06_var09 = new StaticANIObject(g_vars->scene06_balls.front());
+		g_vars->scene06_currentBall = new StaticANIObject(g_vars->scene06_balls.front());
 		g_vars->scene06_balls.remove_at(0);
 
 		MessageQueue *mq = new MessageQueue(g_fullpipe->_currentScene->getMessageQueueById(QU_SC6_SHOWNEXTBALL), 0, 1);
 
-		mq->replaceKeyCode(-1, g_vars->scene06_var09->_okeyCode);
+		mq->replaceKeyCode(-1, g_vars->scene06_currentBall->_okeyCode);
 		mq->chain(0);
 
 		++g_vars->scene06_numBallsGiven;
@@ -148,7 +148,7 @@ void sceneHandler06_sub08() {
 }
 
 void sceneHandler06_takeBall() {
-	if (g_vars->scene06_var09 && !g_vars->scene06_var09->_movement && g_vars->scene06_var09->_statics->_staticsId == ST_NBL_NORM) {
+	if (g_vars->scene06_currentBall && !g_vars->scene06_currentBall->_movement && g_vars->scene06_currentBall->_statics->_staticsId == ST_NBL_NORM) {
 		if (abs(1158 - g_fullpipe->_aniMan->_ox) > 1
 			|| abs(452 - g_fullpipe->_aniMan->_oy) > 1
 			|| g_fullpipe->_aniMan->_movement
@@ -169,11 +169,32 @@ void sceneHandler06_takeBall() {
 }
 
 void sceneHandler06_sub02() {
-	warning("STUB: sceneHandler06_sub02()");
+	if (g_vars->scene06_var10) {
+		g_vars->scene06_var17 = 4 * g_fullpipe->_aniMan->_movement->_currDynamicPhaseIndex + 16;
+		g_vars->scene06_var18 = 5 * (g_fullpipe->_aniMan->_movement->_currDynamicPhaseIndex + 4);
+
+		if (g_fullpipe->_aniMan->_movement->_currDynamicPhaseIndex < 4) {
+			g_fullpipe->_aniMan->_movement->setDynamicPhaseIndex(11);
+
+			g_vars->scene06_var08 = 0;
+
+			return;
+		}
+
+		g_fullpipe->_aniMan->_movement->setDynamicPhaseIndex(9);
+	}
+
+	g_vars->scene06_var08 = 0;
 }
 
 void sceneHandler06_sub07() {
-	warning("STUB: sceneHandler06_sub07()");
+	if (g_vars->scene06_var10) {
+		g_vars->scene06_var11 = g_vars->scene06_var10;
+		g_vars->scene06_var10 = 0;
+		g_vars->scene06_var11->show1(g_fullpipe->_aniMan->_ox - 60, g_fullpipe->_aniMan->_oy - 60, -1, 0);
+
+		g_vars->scene06_var11->_priority = 27;
+	}
 }
 
 void sceneHandler06_throwCallback(int *arg) {
@@ -234,7 +255,7 @@ void scene06_initScene(Scene *sc) {
 	g_vars->scene06_ballDrop = sc->getStaticANIObject1ById(ANI_BALLDROP, -1);
 	g_vars->scene06_var07 = 0;
 	g_vars->scene06_var08 = 0;
-	g_vars->scene06_var09 = 0;
+	g_vars->scene06_currentBall = 0;
 	g_vars->scene06_var10 = 0;
 	g_vars->scene06_var11 = 0;
 	g_vars->scene06_balls.clear();
@@ -388,7 +409,7 @@ int sceneHandler06(ExCommand *ex) {
 					return 0;
 				}
 
-				if (g_vars->scene06_var09 == st) {
+				if (g_vars->scene06_currentBall == st) {
 					if (g_vars->scene06_numBallsGiven == 1)
 						sceneHandler06_takeBall();
 
@@ -484,7 +505,7 @@ int sceneHandler06(ExCommand *ex) {
 				sceneHandler06_sub04(g_vars->scene06_var17);
 			}
 			if (g_vars->scene06_var07
-				&& !g_vars->scene06_var09
+				&& !g_vars->scene06_currentBall
 				&& !g_vars->scene06_var10
 				&& !g_vars->scene06_var11
 				&& g_vars->scene06_numBallsGiven >= 15
