@@ -76,7 +76,7 @@ void SoundManager::startVOCPlay(const Common::String &filename) {
 }
 
 int SoundManager::getVOCStatus() {
-	error("TODO: getVOCStatus");
+	return _mixer->isSoundHandleActive(_soundHandle);
 }
 
 } // End of namespace Voyeur
