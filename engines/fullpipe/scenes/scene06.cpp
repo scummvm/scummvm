@@ -107,7 +107,13 @@ void sceneHandler06_uPipeClick() {
 }
 
 void sceneHandler06_buttonPush() {
-	warning("STUB: sceneHandler06_buttonPush()");
+	g_vars->scene06_invHandle = g_fullpipe->_currentScene->getStaticANIObject1ById(ANI_INV_HANDLE, -1);
+
+	if (g_vars->scene06_invHandle)
+		if (g_vars->scene06_invHandle->_flags & 4)
+			if (g_vars->scene06_invHandle->_statics)
+				if (g_vars->scene06_invHandle->_statics->_staticsId == ST_HDL_PLUGGED)
+					chainQueue(QU_SC6_FALLHANDLE, 1);
 }
 
 void sceneHandler06_showNextBall() {

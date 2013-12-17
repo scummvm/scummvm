@@ -258,6 +258,7 @@ namespace Fullpipe {
 #define QU_PNK_CLICK 550
 #define QU_SC3_ENTERLIFT 2779
 #define QU_SC3_EXITLIFT 2808
+#define QU_SC6_FALLHANDLE 2995
 #define QU_SC4_GOCLOCK 595
 #define QU_SC4_MANFROMBOTTLE 2851
 #define QU_SC4_MANTOBOTTLE 2850
@@ -335,6 +336,7 @@ namespace Fullpipe {
 #define ST_EGTR_SLIM 336
 #define ST_HDL_BROKEN 3342
 #define ST_HDL_DOWN 625
+#define ST_HDL_PLUGGED 2397
 #define ST_HDL_UP 624
 #define ST_HND_EMPTY 603
 #define ST_IN1MAN_SLEEP 5112
