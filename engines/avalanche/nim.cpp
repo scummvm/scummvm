@@ -35,11 +35,27 @@ const char * const Nim::kNames[2] = {"Avalot", "Dogfood"};
 Nim::Nim(AvalancheEngine *vm) {
 	_vm = vm;
 
-	_playedNim = 0;
+	resetVariables();
 }
 
 void Nim::resetVariables() {
 	_playedNim = 0;
+	_turns = 0;
+	_dogfoodsTurn = false;
+	_stonesLeft = 0;
+	_clicked = false;
+	_row = 0;
+	_number = 0;
+	_squeak = false;
+	_mNum = 0;
+	_mRow = 0;
+
+	for (int i = 0; i < 3; i++) {
+		_old[i] = 0;
+		_stones[i] = 0;
+	}
+
+	memset(_stonePic, 0, 4 * 23 * 7);
 }
 
 void Nim::synchronize(Common::Serializer &sz) {
