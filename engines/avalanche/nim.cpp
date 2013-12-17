@@ -198,7 +198,14 @@ void Nim::board() {
 }
 
 void Nim::startMove() {
-	warning("STUB: Nim::startMove()");
+	_turns++;
+	Common::String turnsStr = Common::String::format("%d", _turns);
+	int y = 55 + _turns * 10;
+	_dogfoodsTurn = !_dogfoodsTurn;
+	chalk(433, y, turnsStr);
+	chalk(493, y, kNames[_dogfoodsTurn]);
+	for (int i = 0; i < 3; i++)
+		_old[i] = _stones[i];
 }
 
 void Nim::showChanges() {
