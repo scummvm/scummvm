@@ -674,7 +674,7 @@ public:
 class Scene3600 : public SceneExt {
 	class Action3600: public ActionExt {
 	public:
-		bool _field1E;
+		bool _part2Fl;
 		int _fadePct;
 
 		Action3600();

@@ -4285,14 +4285,14 @@ void Scene3600::synchronize(Serializer &s) {
 }
 
 Scene3600::Action3600::Action3600() {
-	_field1E = false;
+	_part2Fl = false;
 	_fadePct = 0;
 }
 
 void Scene3600::Action3600::synchronize(Serializer &s) {
 	Action::synchronize(s);
 
-	s.syncAsSint16LE(_field1E);
+	s.syncAsSint16LE(_part2Fl);
 	s.syncAsSint16LE(_fadePct);
 }
 
@@ -4305,8 +4305,8 @@ void Scene3600::Action3600::signal() {
 		setDelay(60);
 		break;
 	case 1:
-		if (!_field1E) {
-			_field1E = true;
+		if (!_part2Fl) {
+			_part2Fl = true;
 			scene->_steppingDisk.setAction(NULL);
 			R2_GLOBALS._sound2.play(330, NULL, 0);
 			R2_GLOBALS._sound2.fade(127, 5, 10, false, NULL);
@@ -4360,7 +4360,7 @@ void Scene3600::Action2::signal() {
 bool Scene3600::LightShaft::startAction(CursorType action, Event &event) {
 	Scene3600 *scene = (Scene3600 *)R2_GLOBALS._sceneManager._scene;
 
-	if ((action != CURSOR_USE) || !scene->_action1._field1E)
+	if ((action != CURSOR_USE) || !scene->_action1._part2Fl)
 		return SceneItem::startAction(action, event);
 
 	R2_GLOBALS._walkRegions.enableRegion(2);
@@ -4581,7 +4581,7 @@ void Scene3600::postInit(SceneObjectList *OwnerList) {
 		_consoleLights.setup(3601, 5, 1);
 		_consoleLights.animate(ANIM_MODE_2, NULL);
 
-		_action1._field1E = true;
+		_action1._part2Fl = true;
 		_action1._fadePct = 0;
 		_action1.setActionIndex(1);
 
@@ -4616,7 +4616,7 @@ void Scene3600::postInit(SceneObjectList *OwnerList) {
 		_steppingDisk.fixPriority(149);
 		_steppingDisk.changeZoom(-1);
 
-		_action1._field1E = false;
+		_action1._part2Fl = false;
 		_action1._fadePct = 90;
 
 		_sceneMode = 3600;
@@ -4854,7 +4854,7 @@ void Scene3600::signal() {
 	// No break on purpose
 	case 3623:
 		if ((_protector._position.x == 226) && (_protector._position.y == 152)
-				&& _action1._field1E && (_protector._visage == 3127) && (!R2_GLOBALS.getFlag(71))) {
+				&& _action1._part2Fl && (_protector._visage == 3127) && (!R2_GLOBALS.getFlag(71))) {
 			R2_GLOBALS._sound2.stop();
 			R2_GLOBALS._sound2.play(331);
 			R2_GLOBALS.setFlag(71);
@@ -4902,7 +4902,7 @@ void Scene3600::process(Event &event) {
 }
 
 void Scene3600::dispatch() {
-	if ((R2_GLOBALS._player.getRegionIndex() == 200) && _action1._field1E && !_lightEntered) {
+	if ((R2_GLOBALS._player.getRegionIndex() == 200) && _action1._part2Fl && !_lightEntered) {
 		R2_GLOBALS._sound2.fadeOut2(NULL);
 		if (_protector._mover)
 			_protector.addMover(NULL);
@@ -4943,7 +4943,7 @@ void Scene3600::dispatch() {
 		_webbster.setAction(&_sequenceManager1, this, 3613, &_webbster, NULL);
 	}
 
-	if ((_protector.getRegionIndex() == 200) && _action1._field1E && !_ghoulTeleported) {
+	if ((_protector.getRegionIndex() == 200) && _action1._part2Fl && !_ghoulTeleported) {
 		R2_GLOBALS._sound2.fadeOut2(NULL);
 		_sceneMode = 3620;
 		_ghoulTeleported = true;
