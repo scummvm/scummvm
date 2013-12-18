@@ -1092,7 +1092,7 @@ int ThreadResource::doApt() {
 	PictureResource *pic;
 	do {
 		_vm->_eventsManager.getMouseInfo();
-		if (_vm->_soundManager.getVOCStatus()) {
+		if (!_vm->_soundManager.getVOCStatus()) {
 			_vm->_playStamp2 = _vm->getRandomNumber(4) + 151;
 			_vm->_soundManager.startVOCPlay(_vm->_soundManager.getVOCFileName(_vm->_playStamp2));
 		}
