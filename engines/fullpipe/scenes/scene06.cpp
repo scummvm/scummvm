@@ -94,20 +94,20 @@ void sceneHandler06_winArcade() {
 			g_vars->scene06_someBall = 0;
 		}
 
-		if (g_vars->scene06_var11) {
-			g_vars->scene06_var11->_flags &= 0xFFFB;
+		if (g_vars->scene06_flyingBall) {
+			g_vars->scene06_flyingBall->_flags &= 0xFFFB;
 
-			g_vars->scene06_balls.push_back(g_vars->scene06_var11);
+			g_vars->scene06_balls.push_back(g_vars->scene06_flyingBall);
 
-			g_vars->scene06_var11 = 0;
+			g_vars->scene06_flyingBall = 0;
 		}
 
-		if (g_vars->scene06_var10) {
-			g_vars->scene06_var10->_flags &= 0xFFFB;
+		if (g_vars->scene06_ballInHands) {
+			g_vars->scene06_ballInHands->_flags &= 0xFFFB;
 
-			g_vars->scene06_balls.push_back(g_vars->scene06_var10);
+			g_vars->scene06_balls.push_back(g_vars->scene06_ballInHands);
 
-			g_vars->scene06_var10 = 0;
+			g_vars->scene06_ballInHands = 0;
 		}
 
 		g_vars->scene06_arcadeEnabled = false;
@@ -133,8 +133,8 @@ void sceneHandler06_enableDrops() {
 	g_vars->scene06_arcadeEnabled = true;
 	g_vars->scene06_numBallsGiven = 0;
 	g_vars->scene06_mumsyPos = 0;
-	g_vars->scene06_var13 = 0;
-	g_vars->scene06_var16 = 0;
+	g_vars->scene06_mumsyNumBalls = 0;
+	g_vars->scene06_mumsyGotBall = false;
 
 	sceneHandler06_setExits(g_fullpipe->_currentScene);
 }
@@ -142,7 +142,7 @@ void sceneHandler06_enableDrops() {
 void sceneHandler06_mumsyBallTake() {
 	int momAni = 0;
 
-	switch (g_vars->scene06_var13) {
+	switch (g_vars->scene06_mumsyNumBalls) {
     case 1:
 		momAni = MV_MOM_TAKE1;
 		break;
@@ -167,7 +167,7 @@ void sceneHandler06_mumsyBallTake() {
 	ex->_excFlags = 2u;
 	mq->addExCommandToEnd(ex);
 
-	if (g_vars->scene06_var13 >= 5) {
+	if (g_vars->scene06_mumsyNumBalls >= 5) {
 		g_fullpipe->setObjectState(sO_BigMumsy, g_fullpipe->getObjectEnumState(sO_BigMumsy, sO_IsGone));
 
 		if (g_fullpipe->getObjectState(sO_ClockAxis) == g_fullpipe->getObjectEnumState(sO_ClockAxis, sO_IsNotAvailable))
@@ -225,7 +225,7 @@ void sceneHandler06_mumsyBallTake() {
 	mq->setFlags(mq->getFlags() | 1);
 	mq->chain(0);
 
-	g_vars->scene06_var13 = 0;
+	g_vars->scene06_mumsyNumBalls = 0;
 	g_vars->scene06_arcadeEnabled = false;
 
 	g_fullpipe->_aniMan2 = 0;
@@ -294,7 +294,7 @@ void sceneHandler06_sub08() {
 
 		g_fullpipe->_aniMan->startAnim(MV_MAN6_TAKEBALL, 0, -1);
 
-		g_vars->scene06_var10 = g_vars->scene06_currentBall;
+		g_vars->scene06_ballInHands = g_vars->scene06_currentBall;
 		g_vars->scene06_currentBall = 0;
 
 		if (getCurrSceneSc2MotionController()->_isEnabled)
@@ -329,9 +329,9 @@ void sceneHandler06_takeBall() {
 }
 
 void sceneHandler06_aiming() {
-	if (g_vars->scene06_var10) {
-		g_vars->scene06_var17 = 4 * g_fullpipe->_aniMan->_movement->_currDynamicPhaseIndex + 16;
-		g_vars->scene06_var18 = 5 * (g_fullpipe->_aniMan->_movement->_currDynamicPhaseIndex + 4);
+	if (g_vars->scene06_ballInHands) {
+		g_vars->scene06_ballDeltaX = 4 * g_fullpipe->_aniMan->_movement->_currDynamicPhaseIndex + 16;
+		g_vars->scene06_ballDeltaY = 5 * (g_fullpipe->_aniMan->_movement->_currDynamicPhaseIndex + 4);
 
 		if (g_fullpipe->_aniMan->_movement->_currDynamicPhaseIndex < 4) {
 			g_fullpipe->_aniMan->_movement->setDynamicPhaseIndex(11);
@@ -348,12 +348,12 @@ void sceneHandler06_aiming() {
 }
 
 void sceneHandler06_sub07() {
-	if (g_vars->scene06_var10) {
-		g_vars->scene06_var11 = g_vars->scene06_var10;
-		g_vars->scene06_var10 = 0;
-		g_vars->scene06_var11->show1(g_fullpipe->_aniMan->_ox - 60, g_fullpipe->_aniMan->_oy - 60, -1, 0);
+	if (g_vars->scene06_ballInHands) {
+		g_vars->scene06_flyingBall = g_vars->scene06_ballInHands;
+		g_vars->scene06_ballInHands = 0;
+		g_vars->scene06_flyingBall->show1(g_fullpipe->_aniMan->_ox - 60, g_fullpipe->_aniMan->_oy - 60, -1, 0);
 
-		g_vars->scene06_var11->_priority = 27;
+		g_vars->scene06_flyingBall->_priority = 27;
 	}
 }
 
@@ -387,51 +387,51 @@ void sceneHandler06_eggieWalk() {
 		StaticANIObject *ani = g_fullpipe->_currentScene->getStaticANIObject1ById(ANI_EGGIE, -1);
 
 		if (!ani || !(ani->_flags & 4)) {
-			if (g_vars->scene06_var15)
+			if (g_vars->scene06_eggieDirection)
 				chainQueue(QU_EGG6_GOR, 0);
 			else
 				chainQueue(QU_EGG6_GOL, 0);
 
-			g_vars->scene06_var14 = 0;
-			g_vars->scene06_var15 = (g_vars->scene06_var15 == 0);
+			g_vars->scene06_eggieTimeout = 0;
+			g_vars->scene06_eggieDirection = !g_vars->scene06_eggieDirection;
 		}
 	}
 }
 
 void sceneHandler06_dropBall() {
-	if (g_vars->scene06_numBallsGiven >= 15 || g_vars->scene06_var13 >= 5)
+	if (g_vars->scene06_numBallsGiven >= 15 || g_vars->scene06_mumsyNumBalls >= 5)
 		g_vars->scene06_ballDrop->hide();
 	else
 		chainQueue(QU_SC6_DROPS3, 0);
 }
 
 void sceneHandler06_sub05() {
-	g_vars->scene06_var04 = 475;
+	g_vars->scene06_ballY = 475;
 
-	g_vars->scene06_var11->setOXY(g_vars->scene06_var03, g_vars->scene06_var04);
+	g_vars->scene06_flyingBall->setOXY(g_vars->scene06_ballX, g_vars->scene06_ballY);
 
 	MessageQueue *mq = new MessageQueue(g_fullpipe->_currentScene->getMessageQueueById(QU_SC6_FALLBALL), 0, 1);
 
-	mq->replaceKeyCode(-1, g_vars->scene06_var11->_okeyCode);
+	mq->replaceKeyCode(-1, g_vars->scene06_flyingBall->_okeyCode);
 	mq->chain(0);
 
-	g_vars->scene06_balls.push_back(g_vars->scene06_var11);
+	g_vars->scene06_balls.push_back(g_vars->scene06_flyingBall);
 
-	g_vars->scene06_var11 = 0;
+	g_vars->scene06_flyingBall = 0;
 
 	sceneHandler06_dropBall();
 	sceneHandler06_eggieWalk();
 }
 
 void sceneHandler06_sub09() {
-	if (g_vars->scene06_var11) {
-		g_vars->scene06_var11->hide();
+	if (g_vars->scene06_flyingBall) {
+		g_vars->scene06_flyingBall->hide();
 
-		g_vars->scene06_balls.push_back(g_vars->scene06_var11);
+		g_vars->scene06_balls.push_back(g_vars->scene06_flyingBall);
 
-		g_vars->scene06_var11 = 0;
+		g_vars->scene06_flyingBall = 0;
 
-		g_vars->scene06_var13++;
+		g_vars->scene06_mumsyNumBalls++;
 
 		if (g_vars->scene06_mumsy->_movement) {
 			Common::Point point;
@@ -468,7 +468,7 @@ void sceneHandler06_sub09() {
 		}
 
 		chainQueue(QU_MOM_PUTBALL, 1);
-		g_vars->scene06_var16 = 1;
+		g_vars->scene06_mumsyGotBall = true;
 
 		sceneHandler06_dropBall();
 	}
@@ -477,8 +477,8 @@ void sceneHandler06_sub09() {
 void sceneHandler06_sub04(int par) {
 	int pixel;
 
-	if (g_vars->scene06_var04 <= 475) {
-		if (g_vars->scene06_mumsy->getPixelAtPos(g_vars->scene06_var03, g_vars->scene06_var04, &pixel)) {
+	if (g_vars->scene06_ballY <= 475) {
+		if (g_vars->scene06_mumsy->getPixelAtPos(g_vars->scene06_ballX, g_vars->scene06_ballY, &pixel)) {
 			if (pixel) {
 				chainObjQueue(g_vars->scene06_mumsy, QU_MOM_JUMPBK, 0);
 				sceneHandler06_sub09();
@@ -498,13 +498,13 @@ void scene06_initScene(Scene *sc) {
 	g_vars->scene06_arcadeEnabled = false;
 	g_vars->scene06_aimingBall = false;
 	g_vars->scene06_currentBall = 0;
-	g_vars->scene06_var10 = 0;
-	g_vars->scene06_var11 = 0;
+	g_vars->scene06_ballInHands = 0;
+	g_vars->scene06_flyingBall = 0;
 	g_vars->scene06_balls.clear();
 	g_vars->scene06_numBallsGiven = 0;
-	g_vars->scene06_var13 = 0;
-	g_vars->scene06_var14 = 0;
-	g_vars->scene06_var15 = 1;
+	g_vars->scene06_mumsyNumBalls = 0;
+	g_vars->scene06_eggieTimeout = 0;
+	g_vars->scene06_eggieDirection = true;
 
 	StaticANIObject *ball = sc->getStaticANIObject1ById(ANI_NEWBALL, -1);
 
@@ -572,9 +572,9 @@ int sceneHandler06(ExCommand *ex) {
 		break;
 
 	case MSG_SC6_TESTNUMBALLS:
-		g_vars->scene06_var16 = 0;
+		g_vars->scene06_mumsyGotBall = false;
 
-		if (g_vars->scene06_var13 < 5 || !g_vars->scene06_arcadeEnabled)
+		if (g_vars->scene06_mumsyNumBalls < 5 || !g_vars->scene06_arcadeEnabled)
 			return 0;
 
 		sceneHandler06_mumsyBallTake();
@@ -656,7 +656,7 @@ int sceneHandler06(ExCommand *ex) {
 						sceneHandler06_takeBall();
 
 					ex->_messageKind = 0;
-				} else if (g_vars->scene06_var10 && g_fullpipe->_aniMan == st && !g_fullpipe->_aniMan->_movement && g_fullpipe->_aniMan->_statics->_staticsId == ST_MAN6_BALL) {
+				} else if (g_vars->scene06_ballInHands && g_fullpipe->_aniMan == st && !g_fullpipe->_aniMan->_movement && g_fullpipe->_aniMan->_statics->_staticsId == ST_MAN6_BALL) {
 					g_vars->scene06_sceneClickX = ex->_sceneClickX;
 					g_vars->scene06_sceneClickY = ex->_sceneClickY;
 
@@ -689,13 +689,13 @@ int sceneHandler06(ExCommand *ex) {
 				int ox = g_fullpipe->_aniMan2->_ox;
 				int oy = g_fullpipe->_aniMan2->_oy;
 
-				g_vars->scene06_var01 = ox;
-				g_vars->scene06_var02 = oy;
+				g_vars->scene06_manX = ox;
+				g_vars->scene06_manY = oy;
 
 				if (g_vars->scene06_arcadeEnabled && oy <= 470 && ox >= 1088) {
 					if (ox < g_fullpipe->_sceneRect.left + 600) {
 						g_fullpipe->_currentScene->_x = ox - g_fullpipe->_sceneRect.left - 700;
-						ox = g_vars->scene06_var01;
+						ox = g_vars->scene06_manX;
 					}
 
 					if (ox > g_fullpipe->_sceneRect.right - 50)
@@ -703,7 +703,7 @@ int sceneHandler06(ExCommand *ex) {
 				} else {
 					if (ox < g_fullpipe->_sceneRect.left + 200) {
 						g_fullpipe->_currentScene->_x = ox - g_fullpipe->_sceneRect.left - 300;
-						ox = g_vars->scene06_var01;
+						ox = g_vars->scene06_manX;
 					}
 
 					if (ox > g_fullpipe->_sceneRect.right - 200)
@@ -724,9 +724,9 @@ int sceneHandler06(ExCommand *ex) {
 					g_vars->scene06_mumsyJumpFw->_percent = 0;
 
 				if (g_vars->scene06_aimingBall) {
-					g_vars->scene06_var14++;
+					g_vars->scene06_eggieTimeout++;
 
-					if (g_vars->scene06_var14 >= 600)
+					if (g_vars->scene06_eggieTimeout >= 600)
 						sceneHandler06_eggieWalk();
 				}
 			} else {
@@ -734,27 +734,27 @@ int sceneHandler06(ExCommand *ex) {
 				g_vars->scene06_mumsyJumpBk->_percent = 0;
 			}
 
-			if (g_vars->scene06_var11) {
-				g_vars->scene06_var03 = g_vars->scene06_var11->_ox - g_vars->scene06_var17;
-				g_vars->scene06_var04 = g_vars->scene06_var11->_oy - g_vars->scene06_var18;
+			if (g_vars->scene06_flyingBall) {
+				g_vars->scene06_ballX = g_vars->scene06_flyingBall->_ox - g_vars->scene06_ballDeltaX;
+				g_vars->scene06_ballY = g_vars->scene06_flyingBall->_oy - g_vars->scene06_ballDeltaY;
 
-				g_vars->scene06_var11->setOXY(g_vars->scene06_var03, g_vars->scene06_var04);
+				g_vars->scene06_flyingBall->setOXY(g_vars->scene06_ballX, g_vars->scene06_ballY);
 
-				if (g_vars->scene06_var17 >= 2)
-					g_vars->scene06_var17 -= 2;
+				if (g_vars->scene06_ballDeltaX >= 2)
+					g_vars->scene06_ballDeltaX -= 2;
 
-				g_vars->scene06_var18 -= 5;
+				g_vars->scene06_ballDeltaY -= 5;
 
-				sceneHandler06_sub04(g_vars->scene06_var17);
+				sceneHandler06_sub04(g_vars->scene06_ballDeltaX);
 			}
 			if (g_vars->scene06_arcadeEnabled
 				&& !g_vars->scene06_currentBall
-				&& !g_vars->scene06_var10
-				&& !g_vars->scene06_var11
+				&& !g_vars->scene06_ballInHands
+				&& !g_vars->scene06_flyingBall
 				&& g_vars->scene06_numBallsGiven >= 15
 				&& !g_vars->scene06_ballDrop->_movement
 				&& !g_vars->scene06_mumsy->_movement
-				&& !g_vars->scene06_var16)
+				&& !g_vars->scene06_mumsyGotBall)
 				sceneHandler06_mumsyBallTake();
 			g_fullpipe->_behaviorManager->updateBehaviors();
 			g_fullpipe->startSceneTrack();
