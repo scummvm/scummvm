@@ -312,7 +312,30 @@ void FullpipeEngine::setArcadeOverlay(int picId) {
 }
 
 int FullpipeEngine::drawArcadeOverlay(int adjust) {
-	warning("STUB: drawArcadeOverlay()");
+	_arcadeOverlayHelper->drawAt(_sceneRect.left + _arcadeOverlayX, _sceneRect.top + _arcadeOverlayY);
+	_arcadeOverlay->drawAt(_sceneRect.left + _arcadeOverlayX + _arcadeOverlayMidX, _sceneRect.top + _arcadeOverlayY + _arcadeOverlayMidY);
+
+	if (adjust) {
+		if (_arcadeOverlayX > 745) {
+			_arcadeOverlayX -= 15;
+
+			if (_arcadeOverlayX < 745)
+				_arcadeOverlayX = 745;
+		}
+
+		return 1;
+	}
+
+	if (_arcadeOverlayX >= 800) {
+		return 0;
+	} else {
+		_arcadeOverlayX += 15;
+
+		if (_arcadeOverlayX <= 800)
+			return 1;
+
+		_arcadeOverlayX = 800;
+	}
 
 	return 1;
 }
