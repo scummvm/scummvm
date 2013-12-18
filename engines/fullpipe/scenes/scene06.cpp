@@ -143,8 +143,33 @@ void sceneHandler06_installHandle() {
 	chainQueue(QU_SC6_SHOWHANDLE, 0);
 }
 
+int sceneHandler06_updateScreenCallback() {
+	int res;
+
+	res = g_fullpipe->drawArcadeOverlay(g_vars->scene06_var07);
+	if (!res )
+		g_fullpipe->_updateScreenCallback = 0;
+
+	return res;
+}
+
 void sceneHandler06_sub08() {
-	warning("STUB: sceneHandler06_sub08()");
+	if (g_vars->scene06_currentBall) {
+		g_vars->scene06_currentBall->hide();
+
+		g_fullpipe->_aniMan->startAnim(MV_MAN6_TAKEBALL, 0, -1);
+
+		g_vars->scene06_var10 = g_vars->scene06_currentBall;
+		g_vars->scene06_currentBall = 0;
+
+		if (getCurrSceneSc2MotionController()->_isEnabled)
+			g_fullpipe->_updateScreenCallback = sceneHandler06_updateScreenCallback;
+
+		getCurrSceneSc2MotionController()->clearEnabled();
+		getGameLoaderInteractionController()->disableFlag24();
+
+		g_vars->scene06_ballDrop->queueMessageQueue(0);
+	}
 }
 
 void sceneHandler06_takeBall() {
@@ -238,7 +263,10 @@ void sceneHandler06_sub03() {
 }
 
 void sceneHandler06_sub10() {
-	warning("STUB: sceneHandler06_sub10()");
+	if (g_vars->scene06_numBallsGiven >= 15 || g_vars->scene06_var13 >= 5 )
+		g_vars->scene06_ballDrop->hide();
+	else
+		chainQueue(QU_SC6_DROPS3, 0);
 }
 
 void sceneHandler06_sub05() {

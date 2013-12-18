@@ -255,6 +255,7 @@ public:
 	void processArcade(ExCommand *ex);
 	void winArcade();
 	void setArcadeOverlay(int picId);
+	int drawArcadeOverlay(int adjust);
 
 	void getAllInventory();
 

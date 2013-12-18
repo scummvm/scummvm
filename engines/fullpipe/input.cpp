@@ -311,5 +311,10 @@ void FullpipeEngine::setArcadeOverlay(int picId) {
 	_arcadeOverlayMidY = abs(point2.y - point.y) / 2;
 }
 
+int FullpipeEngine::drawArcadeOverlay(int adjust) {
+	warning("STUB: drawArcadeOverlay()");
+
+	return 1;
+}
 
 } // End of namespace Fullpipe
