@@ -337,6 +337,7 @@ void EventsManager::vDoFadeInt() {
 	if (--_fadeCount == 0) {
 		_fadeIntNode._flags |= 1;
 		_fadeStatus &= ~1;
+		return;
 	}
 
 
