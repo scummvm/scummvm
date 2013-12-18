@@ -204,7 +204,7 @@ void sceneHandler06_throwCallback(int *arg) {
             + (g_fullpipe->_mouseVirtX - g_vars->scene06_sceneClickX)
 			* (g_fullpipe->_mouseVirtX - g_vars->scene06_sceneClickX);
 
-		*arg = sqrt(dist) * 0.1;
+		*arg = (int)(sqrt((double)dist) * 0.1);
 
 		if (*arg > 8)
 			*arg = 8;

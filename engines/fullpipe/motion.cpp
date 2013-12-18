@@ -507,8 +507,8 @@ double MovGraph::calcDistance(Common::Point *point, MovGraphLink *link, int fuzz
 			return -1.0;
 		}
 	} else {
-		point->x = n1x + (dist2x * distm / link->_distance);
-		point->y = n1y + (dist2y * distm / link->_distance);
+		point->x = (int)(n1x + (dist2x * distm / link->_distance));
+		point->y = (int)(n1y + (dist2y * distm / link->_distance));
 	}
 
 	return res;
@@ -1166,7 +1166,7 @@ MessageQueue *MovGraph2::doWalkTo(StaticANIObject *obj, int xpos, int ypos, int 
 		double dst1 = sqrt((double)((ypos - nod->_y) * (ypos - nod->_y) + (xpos - nod->_x) * (xpos - nod->_x)));
 		int dst = linkInfoDest.link->_movGraphNode2->_distance - nod->_distance;
 
-		movInfo1.distance2 = nod->_distance + (dst1 * (double)dst / linkInfoDest.link->_distance);
+		movInfo1.distance2 = (int)(nod->_distance + (dst1 * (double)dst / linkInfoDest.link->_distance));
 
 		calcDistance(&movInfo1.pt2, linkInfoDest.link, 1);
 
@@ -1798,15 +1798,15 @@ bool MovGraphReact::pointInRegion(int x, int y) {
 	double xinters;
 	Common::Point p, p1, p2;
 
-	p.x = (double)x;
-	p.y = (double)y;
+	p.x = x;
+	p.y = y;
 
-	p1.x = (double)_points[0]->x;
-	p1.y = (double)_points[0]->y;
+	p1.x = _points[0]->x;
+	p1.y = _points[0]->y;
 
 	for (int i = 1; i <= _pointCount; i++) {
-		p2.x = (double)_points[i % _pointCount]->x;
-		p2.y = (double)_points[i % _pointCount]->y;
+		p2.x = _points[i % _pointCount]->x;
+		p2.y = _points[i % _pointCount]->y;
 
 		if (p.y > MIN(p1.y, p2.y)) {
 			if (p.y <= MAX(p1.y, p2.y)) {
