@@ -115,12 +115,12 @@ Vars::Vars() {
 	scene06_var03 = 0;
 	scene06_var04 = 0;
 	scene06_mumsy = 0;
-	scene06_var06 = 0;
+	scene06_someBall = 0;
 	scene06_invHandle = 0;
 	scene06_liftButton = 0;
 	scene06_ballDrop = 0;
-	scene06_var07 = 0;
-	scene06_var08 = 0;
+	scene06_arcadeEnabled = false;
+	scene06_aimingBall = false;
 	scene06_currentBall = 0;
 	scene06_var10 = 0;
 	scene06_var11 = 0;

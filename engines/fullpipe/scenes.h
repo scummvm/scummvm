@@ -152,12 +152,12 @@ public:
 	int scene06_var02;
 	int scene06_var03;
 	int scene06_var04;
-	StaticANIObject *scene06_var06;
+	StaticANIObject *scene06_someBall;
 	StaticANIObject *scene06_invHandle;
 	StaticANIObject *scene06_liftButton;
 	StaticANIObject *scene06_ballDrop;
-	int scene06_var07;
-	int scene06_var08;
+	bool scene06_arcadeEnabled;
+	bool scene06_aimingBall;
 	StaticANIObject *scene06_currentBall;
 	StaticANIObject *scene06_var10;
 	StaticANIObject *scene06_var11;

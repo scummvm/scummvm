@@ -47,8 +47,8 @@ void scene06_initMumsy() {
 int scene06_updateCursor() {
 	g_fullpipe->updateCursorCommon();
 
-	if (g_vars->scene06_var07) {
-		if (g_vars->scene06_var08) {
+	if (g_vars->scene06_arcadeEnabled) {
+		if (g_vars->scene06_aimingBall) {
 			g_fullpipe->_cursorId = PIC_CSR_ARCADE2_D;
 
 			return PIC_CSR_ARCADE2_D;
@@ -72,7 +72,7 @@ void sceneHandler06_setExits(Scene *sc) {
 	MotionController *mc = getSc2MctlCompoundBySceneId(sc->_sceneId);
 
 	mc->enableLinks(sO_CloseThing, (g_fullpipe->getObjectState(sO_BigMumsy) != g_fullpipe->getObjectEnumState(sO_BigMumsy, sO_IsGone)));
-	mc->enableLinks(sO_CloseThing2, (g_vars->scene06_var07 != 0));
+	mc->enableLinks(sO_CloseThing2, g_vars->scene06_arcadeEnabled);
 }
 
 void sceneHandler06_winArcade() {
@@ -81,17 +81,17 @@ void sceneHandler06_winArcade() {
 	if (g_fullpipe->getObjectState(sO_ClockAxis) == g_fullpipe->getObjectEnumState(sO_ClockAxis, sO_IsNotAvailable))
 		g_fullpipe->setObjectState(sO_ClockAxis, g_fullpipe->getObjectEnumState(sO_ClockAxis, sO_WithoutHandle));
 
-	if (g_vars->scene06_var07) {
+	if (g_vars->scene06_arcadeEnabled) {
 		g_fullpipe->_aniMan->_callback2 = 0;
 
 		g_fullpipe->_aniMan->changeStatics2(ST_MAN_RIGHT | 0x4000);
 
-		if (g_vars->scene06_var06) {
-			g_vars->scene06_var06->_flags &= 0xFFFB;
+		if (g_vars->scene06_someBall) {
+			g_vars->scene06_someBall->_flags &= 0xFFFB;
 
-			g_vars->scene06_balls.push_back(g_vars->scene06_var06);
+			g_vars->scene06_balls.push_back(g_vars->scene06_someBall);
 
-			g_vars->scene06_var06 = 0;
+			g_vars->scene06_someBall = 0;
 		}
 
 		if (g_vars->scene06_var11) {
@@ -110,8 +110,8 @@ void sceneHandler06_winArcade() {
 			g_vars->scene06_var10 = 0;
 		}
 
-		g_vars->scene06_var07 = 0;
-		g_vars->scene06_var08 = 0;
+		g_vars->scene06_arcadeEnabled = false;
+		g_vars->scene06_aimingBall = false;
 	}
 
 	g_vars->scene06_mumsy->_flags &= 0xFFFB;
@@ -130,7 +130,7 @@ void sceneHandler06_enableDrops() {
 
 	chainQueue(QU_MOM_STANDUP, 1);
 
-	g_vars->scene06_var07 = 1;
+	g_vars->scene06_arcadeEnabled = true;
 	g_vars->scene06_numBallsGiven = 0;
 	g_vars->scene06_mumsyPos = 0;
 	g_vars->scene06_var13 = 0;
@@ -226,7 +226,7 @@ void sceneHandler06_mumsyBallTake() {
 	mq->chain(0);
 
 	g_vars->scene06_var13 = 0;
-	g_vars->scene06_var07 = 0;
+	g_vars->scene06_arcadeEnabled = false;
 
 	g_fullpipe->_aniMan2 = 0;
 }
@@ -280,7 +280,8 @@ void sceneHandler06_installHandle() {
 int sceneHandler06_updateScreenCallback() {
 	int res;
 
-	res = g_fullpipe->drawArcadeOverlay(g_vars->scene06_var07);
+	res = g_fullpipe->drawArcadeOverlay(g_vars->scene06_arcadeEnabled);
+
 	if (!res)
 		g_fullpipe->_updateScreenCallback = 0;
 
@@ -327,7 +328,7 @@ void sceneHandler06_takeBall() {
 	}
 }
 
-void sceneHandler06_sub02() {
+void sceneHandler06_aiming() {
 	if (g_vars->scene06_var10) {
 		g_vars->scene06_var17 = 4 * g_fullpipe->_aniMan->_movement->_currDynamicPhaseIndex + 16;
 		g_vars->scene06_var18 = 5 * (g_fullpipe->_aniMan->_movement->_currDynamicPhaseIndex + 4);
@@ -335,7 +336,7 @@ void sceneHandler06_sub02() {
 		if (g_fullpipe->_aniMan->_movement->_currDynamicPhaseIndex < 4) {
 			g_fullpipe->_aniMan->_movement->setDynamicPhaseIndex(11);
 
-			g_vars->scene06_var08 = 0;
+			g_vars->scene06_aimingBall = false;
 
 			return;
 		}
@@ -343,7 +344,7 @@ void sceneHandler06_sub02() {
 		g_fullpipe->_aniMan->_movement->setDynamicPhaseIndex(9);
 	}
 
-	g_vars->scene06_var08 = 0;
+	g_vars->scene06_aimingBall = false;
 }
 
 void sceneHandler06_sub07() {
@@ -357,7 +358,7 @@ void sceneHandler06_sub07() {
 }
 
 void sceneHandler06_throwCallback(int *arg) {
-	if (g_vars->scene06_var08) {
+	if (g_vars->scene06_aimingBall) {
 		int dist = (g_fullpipe->_mouseVirtY - g_vars->scene06_sceneClickY)
 			* (g_fullpipe->_mouseVirtY - g_vars->scene06_sceneClickY)
             + (g_fullpipe->_mouseVirtX - g_vars->scene06_sceneClickX)
@@ -378,12 +379,13 @@ void sceneHandler06_throwBall() {
 	g_fullpipe->_aniMan->_callback2 = sceneHandler06_throwCallback;
 	g_fullpipe->_aniMan->startAnim(MV_MAN6_THROWBALL, 0, -1);
 
-	g_vars->scene06_var08 = 1;
+	g_vars->scene06_aimingBall = true;
 }
 
-void sceneHandler06_sub03() {
+void sceneHandler06_eggieWalk() {
 	if (15 - g_vars->scene06_numBallsGiven >= 4 && !g_fullpipe->_rnd->getRandomNumber(9)) {
 		StaticANIObject *ani = g_fullpipe->_currentScene->getStaticANIObject1ById(ANI_EGGIE, -1);
+
 		if (!ani || !(ani->_flags & 4)) {
 			if (g_vars->scene06_var15)
 				chainQueue(QU_EGG6_GOR, 0);
@@ -396,7 +398,7 @@ void sceneHandler06_sub03() {
 	}
 }
 
-void sceneHandler06_sub10() {
+void sceneHandler06_dropBall() {
 	if (g_vars->scene06_numBallsGiven >= 15 || g_vars->scene06_var13 >= 5)
 		g_vars->scene06_ballDrop->hide();
 	else
@@ -417,8 +419,8 @@ void sceneHandler06_sub05() {
 
 	g_vars->scene06_var11 = 0;
 
-	sceneHandler06_sub10();
-	sceneHandler06_sub03();
+	sceneHandler06_dropBall();
+	sceneHandler06_eggieWalk();
 }
 
 void sceneHandler06_sub09() {
@@ -468,7 +470,7 @@ void sceneHandler06_sub09() {
 		chainQueue(QU_MOM_PUTBALL, 1);
 		g_vars->scene06_var16 = 1;
 
-		sceneHandler06_sub10();
+		sceneHandler06_dropBall();
 	}
 }
 
@@ -489,12 +491,12 @@ void sceneHandler06_sub04(int par) {
 
 void scene06_initScene(Scene *sc) {
 	g_vars->scene06_mumsy = sc->getStaticANIObject1ById(ANI_MAMASHA, -1);
-	g_vars->scene06_var06 = 0;
+	g_vars->scene06_someBall = 0;
 	g_vars->scene06_invHandle = sc->getStaticANIObject1ById(ANI_INV_HANDLE, -1);
 	g_vars->scene06_liftButton = sc->getStaticANIObject1ById(ANI_BUTTON_6, -1);
 	g_vars->scene06_ballDrop = sc->getStaticANIObject1ById(ANI_BALLDROP, -1);
-	g_vars->scene06_var07 = 0;
-	g_vars->scene06_var08 = 0;
+	g_vars->scene06_arcadeEnabled = false;
+	g_vars->scene06_aimingBall = false;
 	g_vars->scene06_currentBall = 0;
 	g_vars->scene06_var10 = 0;
 	g_vars->scene06_var11 = 0;
@@ -572,7 +574,7 @@ int sceneHandler06(ExCommand *ex) {
 	case MSG_SC6_TESTNUMBALLS:
 		g_vars->scene06_var16 = 0;
 
-		if (g_vars->scene06_var13 < 5 || !g_vars->scene06_var07)
+		if (g_vars->scene06_var13 < 5 || !g_vars->scene06_arcadeEnabled)
 			return 0;
 
 		sceneHandler06_mumsyBallTake();
@@ -627,12 +629,12 @@ int sceneHandler06(ExCommand *ex) {
 		break;
 
 	case 30:
-		if (g_vars->scene06_var08) {
-			sceneHandler06_sub02();
+		if (g_vars->scene06_aimingBall) {
+			sceneHandler06_aiming();
 			break;
 		}
 
-		if (!g_vars->scene06_var07) {
+		if (!g_vars->scene06_arcadeEnabled) {
 			// Do nothing
 			break;
 		}
@@ -643,7 +645,7 @@ int sceneHandler06(ExCommand *ex) {
 			StaticANIObject *st = g_fullpipe->_currentScene->getStaticANIObjectAtPos(ex->_sceneClickX, ex->_sceneClickY);
 
 			if (st) {
-				if (!g_vars->scene06_var07 && st->_id == ANI_LIFTBUTTON) {
+				if (!g_vars->scene06_arcadeEnabled && st->_id == ANI_LIFTBUTTON) {
 					g_fullpipe->lift_sub1(st);
 					ex->_messageKind = 0;
 					return 0;
@@ -690,7 +692,7 @@ int sceneHandler06(ExCommand *ex) {
 				g_vars->scene06_var01 = ox;
 				g_vars->scene06_var02 = oy;
 
-				if (g_vars->scene06_var07 && oy <= 470 && ox >= 1088) {
+				if (g_vars->scene06_arcadeEnabled && oy <= 470 && ox >= 1088) {
 					if (ox < g_fullpipe->_sceneRect.left + 600) {
 						g_fullpipe->_currentScene->_x = ox - g_fullpipe->_sceneRect.left - 700;
 						ox = g_vars->scene06_var01;
@@ -710,7 +712,7 @@ int sceneHandler06(ExCommand *ex) {
 
 				res = 1;
 			}
-			if (g_vars->scene06_var07) {
+			if (g_vars->scene06_arcadeEnabled) {
 				if (g_vars->scene06_mumsyPos > -3)
 					g_vars->scene06_mumsyJumpBk->_percent = g_vars->scene06_mumsyJumpBkPercent;
 				else
@@ -721,10 +723,11 @@ int sceneHandler06(ExCommand *ex) {
 				else
 					g_vars->scene06_mumsyJumpFw->_percent = 0;
 
-				if (g_vars->scene06_var08) {
+				if (g_vars->scene06_aimingBall) {
 					g_vars->scene06_var14++;
+
 					if (g_vars->scene06_var14 >= 600)
-						sceneHandler06_sub03();
+						sceneHandler06_eggieWalk();
 				}
 			} else {
 				g_vars->scene06_mumsyJumpFw->_percent = 0;
@@ -744,7 +747,7 @@ int sceneHandler06(ExCommand *ex) {
 
 				sceneHandler06_sub04(g_vars->scene06_var17);
 			}
-			if (g_vars->scene06_var07
+			if (g_vars->scene06_arcadeEnabled
 				&& !g_vars->scene06_currentBall
 				&& !g_vars->scene06_var10
 				&& !g_vars->scene06_var11
