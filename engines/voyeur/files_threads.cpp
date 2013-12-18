@@ -1581,7 +1581,7 @@ void ThreadResource::doAptAnim(int mode) {
 			_vm->_graphicsManager.flipPage();
 			_vm->_eventsManager.sWaitFlip();
 
-			_vm->_eventsManager.delay(50);
+			_vm->_eventsManager.delay(5);
 		}
 
 		_vm->_bVoy->freeBoltGroup(id);
