@@ -269,6 +269,7 @@ namespace Fullpipe {
 #define QU_KOZAW_WALK 505
 #define QU_MOM_JUMPBK 671
 #define QU_MOM_JUMPFW 670
+#define QU_MOM_PUTBALL 2903
 #define QU_MOM_SITDOWN 685
 #define QU_MOM_STANDUP 2899
 #define QU_MOM_TOLIFT 2902

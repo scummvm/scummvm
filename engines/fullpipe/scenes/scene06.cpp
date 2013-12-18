@@ -419,7 +419,54 @@ void sceneHandler06_sub05() {
 }
 
 void sceneHandler06_sub09() {
-	warning("STUB: sceneHandler06_sub09()");
+	if (g_vars->scene06_var11) {
+		g_vars->scene06_var11->hide();
+
+		g_vars->scene06_balls.push_back(g_vars->scene06_var11);
+
+		g_vars->scene06_var11 = 0;
+
+		g_vars->scene06_var13++;
+
+		if (g_vars->scene06_mumsy->_movement) {
+			Common::Point point;
+
+			if (g_vars->scene06_mumsy->_movement->_id == MV_MOM_JUMPFW) {
+				if (g_vars->scene06_mumsy->_movement->_currDynamicPhaseIndex <= 5) {
+					g_vars->scene06_mumsy->_movement->calcSomeXY(point, 0);
+
+					point.x = -point.x;
+					point.y = -point.y;
+				} else {
+					g_vars->scene06_mumsy->_movement->calcSomeXY(point, 1);
+
+					g_vars->scene06_mumsyPos++;
+				}
+			} else if (g_vars->scene06_mumsy->_movement->_id == MV_MOM_JUMPBK) {
+				if (g_vars->scene06_mumsy->_movement->_currDynamicPhaseIndex <= 4) {
+					g_vars->scene06_mumsy->_movement->calcSomeXY(point, 0);
+
+					point.x = -point.x;
+					point.y = -point.y;
+				} else {
+					g_vars->scene06_mumsy->_movement->calcSomeXY(point, 1);
+
+					g_vars->scene06_mumsyPos--;
+				}
+			}
+
+			g_vars->scene06_mumsy->changeStatics2(ST_MOM_STANDS);
+			g_vars->scene06_mumsy->setOXY(point.x + g_vars->scene06_mumsy->_ox,
+										  point.y + g_vars->scene06_mumsy->_oy);
+		} else {
+			g_vars->scene06_mumsy->changeStatics2(ST_MOM_STANDS);
+		}
+
+		chainQueue(QU_MOM_PUTBALL, 1);
+		g_vars->scene06_var16 = 1;
+
+		sceneHandler06_sub10();
+	}
 }
 
 void sceneHandler06_sub04(int par) {
@@ -435,10 +482,6 @@ void sceneHandler06_sub04(int par) {
 	} else {
 		sceneHandler06_sub05();
 	}
-}
-
-void sceneHandler06_sub06() {
-	warning("STUB: sceneHandler06_sub06()");
 }
 
 void scene06_initScene(Scene *sc) {
