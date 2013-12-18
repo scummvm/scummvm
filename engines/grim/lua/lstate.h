@@ -15,8 +15,19 @@ namespace Grim {
 #define MAX_C_BLOCKS 10
 #define GARBAGE_BLOCK 150
 
-#define LUA_SG_ALL_PAUSED 0x01
-#define LUA_SG_PAUSED     0x02
+/* The pause status for the scripts is stored in one byte in the savegame.
+ *
+ * The "single script pause" status will be stored in the highest significant bit.
+ * For GRIM that flag is never set because GRIM does not pause single scripts.
+ *
+ * The "all scripts pause" status is a number which counts, how often
+ * pause_scripts(TRUE) was called without a corresponding unpause_scripts() call.
+ * The value is stored in the lower 7 bit of the pause status byte.
+ * For GRIM, since the (un)pause_scripts() are called symmetrically, only
+ * the lowest bit will be used.
+ */
+#define LUA_SG_ALL_PAUSED 0x7f
+#define LUA_SG_PAUSED     0x80
 
 typedef int32 StkId;  /* index to stack elements */
 
@@ -78,8 +89,8 @@ extern int32 IMtable_size;
 struct LState {
 	LState *prev; // handle to previous state in list
 	LState *next; // handle to next state in list
-	bool all_paused; // true if all scripts have been paused
-	bool paused;     // true if this particular script has been paused
+	int all_paused; // counter of often pause_scripts(TRUE) was called
+	bool paused;    // true if this particular script has been paused
 	int32 state_counter1;
 	int32 state_counter2;
 	bool updated;
