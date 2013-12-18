@@ -295,9 +295,9 @@ bool Scene410::Driver::startAction(CursorType action, Event &event) {
 			}
 		} else if (!scene->_cuffedDriverFl) {
 			SceneItem::display2(410, 7);
-		} else if (!scene->_field1FC0) {
+		} else if (!scene->_getDriverFl) {
 			scene->_sceneMode = 4124;
-			scene->_field1FC0 = true;
+			scene->_getDriverFl = true;
 			T2_GLOBALS._uiElements.addScore(30);
 			scene->signal();
 		} else {
@@ -483,7 +483,7 @@ bool Scene410::Harrison::startAction(CursorType action, Event &event) {
 		} else {
 			BF_GLOBALS._player.disableControl();
 			scene->_cuffedDriverFl = true;
-			scene->_field1FC0 = true;
+			scene->_getDriverFl = true;
 			BF_GLOBALS._walkRegions.enableRegion(22);
 			scene->_sceneMode = 4109;
 			scene->_stripManager.start(4112, scene);
@@ -505,7 +505,7 @@ Scene410::Scene410(): SceneExt() {
 
 	_action1Count = _talkCount = 0;
 	_cuffedPassengerFl = false;
-	_field1FC0 = false;
+	_getDriverFl = false;
 }
 
 void Scene410::synchronize(Serializer &s) {
@@ -515,7 +515,7 @@ void Scene410::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_harrissonTalkFl);
 	s.syncAsSint16LE(_cuffedDriverFl);
 	s.syncAsSint16LE(_cuffedPassengerFl);
-	s.syncAsSint16LE(_field1FC0);
+	s.syncAsSint16LE(_getDriverFl);
 	s.syncAsSint16LE(_driverOutOfTruckFl);
 	s.syncAsSint16LE(_harrisonMovedFl);
 }
