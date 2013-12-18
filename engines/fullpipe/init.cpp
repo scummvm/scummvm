@@ -50,7 +50,7 @@ void FullpipeEngine::initObjectStates() {
 	setObjectState(sO_HareTheNooksiter, getObjectEnumState(sO_HareTheNooksiter, sO_WithHandle));
 	setObjectState(sO_Elephantine, getObjectEnumState(sO_Elephantine, sO_WithBoot));
 	setObjectState(sO_Fly_12, 0);
-	setObjectState(sO_ClockAxis, getObjectEnumState(sO_ClockAxis, sO_NotAvailable));
+	setObjectState(sO_ClockAxis, getObjectEnumState(sO_ClockAxis, sO_IsNotAvailable));
 	setObjectState(sO_ClockHandle, getObjectEnumState(sO_ClockHandle, sO_In_7));
 	setObjectState(sO_BigMumsy, getObjectEnumState(sO_BigMumsy, sO_IsSleeping));
 	setObjectState(sO_CoinSlot_1, getObjectEnumState(sO_CoinSlot_1, sO_Empty));

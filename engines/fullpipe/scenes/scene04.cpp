@@ -182,7 +182,7 @@ void scene04_initScene(Scene *sc) {
 	g_vars->scene04_bigBallCounter = 0;
 	g_vars->scene04_bigBallFromLeft = true;
 
-	if (g_fullpipe->getObjectState(sO_BigMumsy) != g_fullpipe->getObjectEnumState(sO_BigMumsy, sO_Gone))
+	if (g_fullpipe->getObjectState(sO_BigMumsy) != g_fullpipe->getObjectEnumState(sO_BigMumsy, sO_IsGone))
 		g_vars->scene04_mamasha->hide();
 
 	g_vars->scene04_speaker = sc->getStaticANIObject1ById(ANI_SPEAKER_4, -1);

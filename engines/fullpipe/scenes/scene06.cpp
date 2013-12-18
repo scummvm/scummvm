@@ -73,7 +73,6 @@ void sceneHandler06_setExits(Scene *sc) {
 }
 
 void sceneHandler06_winArcade() {
-	warning("STUB: sceneHandler06_winArcade()");
 }
 
 void sceneHandler06_enableDrops() {
@@ -93,8 +92,96 @@ void sceneHandler06_enableDrops() {
 	sceneHandler06_setExits(g_fullpipe->_currentScene);
 }
 
-void sceneHandler06_sub01() {
-	warning("STUB: sceneHandler06_sub01()");
+void sceneHandler06_mumsyBallTake() {
+	int momAni = 0;
+
+	switch (g_vars->scene06_var13) {
+    case 1:
+		momAni = MV_MOM_TAKE1;
+		break;
+    case 2:
+		momAni = MV_MOM_TAKE2;
+		break;
+    case 3:
+		momAni = MV_MOM_TAKE3;
+		break;
+    case 4:
+		momAni = MV_MOM_TAKE4;
+		break;
+    case 5:
+		momAni = MV_MOM_TAKE5;
+		break;
+	}
+
+	MessageQueue *mq = new MessageQueue(g_fullpipe->_globalMessageQueueList->compact());
+
+	ExCommand *ex = new ExCommand(ANI_MAMASHA, 2, 50, 0, 0, 0, 1, 0, 0, 0);
+
+	ex->_excFlags = 2u;
+	mq->addExCommandToEnd(ex);
+
+	if (g_vars->scene06_var13 >= 5) {
+		g_fullpipe->setObjectState(sO_BigMumsy, g_fullpipe->getObjectEnumState(sO_BigMumsy, sO_IsGone));
+
+		if (g_fullpipe->getObjectState(sO_ClockAxis) == g_fullpipe->getObjectEnumState(sO_ClockAxis, sO_IsNotAvailable))
+			g_fullpipe->setObjectState(sO_ClockAxis, g_fullpipe->getObjectEnumState(sO_ClockAxis, sO_WithoutHandle));
+
+		ex = new ExCommand(ANI_MAMASHA, 1, momAni, 0, 0, 0, 1, 0, 0, 0);
+		ex->_excFlags |= 2;
+		mq->addExCommandToEnd(ex);
+
+		if (g_vars->scene06_mumsyPos + 3 >= 0) {
+			ex = new ExCommand(ANI_MAMASHA, 1, MV_MOM_STARTBK, 0, 0, 0, 1, 0, 0, 0);
+			ex->_excFlags |= 2u;
+			mq->addExCommandToEnd(ex);
+
+			for (int i = 0; i < g_vars->scene06_mumsyPos + 3; i++) {
+				ex = new ExCommand(ANI_MAMASHA, 1, MV_MOM_CYCLEBK, 0, 0, 0, 1, 0, 0, 0);
+				ex->_excFlags |= 2;
+				mq->addExCommandToEnd(ex);
+			}
+
+			ex = new ExCommand(ANI_MAMASHA, 1, MV_MOM_STOPBK, 0, 0, 0, 1, 0, 0, 0);
+			ex->_excFlags |= 2;
+			mq->addExCommandToEnd(ex);
+		}
+
+		ex = new ExCommand(0, 18, QU_MOM_TOLIFT, 0, 0, 0, 1, 0, 0, 0);
+		ex->_excFlags |= 3;
+		mq->addExCommandToEnd(ex);
+	} else {
+		if (momAni) {
+			ex = new ExCommand(ANI_MAMASHA, 1, momAni, 0, 0, 0, 1, 0, 0, 0);
+			ex->_excFlags |= 2;
+			mq->addExCommandToEnd(ex);
+		}
+
+		if (g_vars->scene06_mumsyPos < 0) {
+			for (int i = 0; i > g_vars->scene06_mumsyPos; i--) {
+				ex = new ExCommand(ANI_MAMASHA, 1, MV_MOM_JUMPFW, 0, 0, 0, 1, 0, 0, 0);
+				ex->_excFlags |= 2;
+				mq->addExCommandToEnd(ex);
+			}
+		} else if (g_vars->scene06_mumsyPos > 0) {
+			for (int i = 0; i < g_vars->scene06_mumsyPos; i++) {
+				ex = new ExCommand(ANI_MAMASHA, 1, MV_MOM_JUMPBK, 0, 0, 0, 1, 0, 0, 0);
+				ex->_excFlags |= 2;
+				mq->addExCommandToEnd(ex);
+			}
+		}
+
+		ex = new ExCommand(0, 18, QU_MOM_SITDOWN, 0, 0, 0, 1, 0, 0, 0);
+		ex->_excFlags |= 3u;
+		mq->addExCommandToEnd(ex);
+	}
+
+	mq->setFlags(mq->getFlags() | 1);
+	mq->chain(0);
+
+	g_vars->scene06_var13 = 0;
+	g_vars->scene06_var07 = 0;
+
+	g_fullpipe->_aniMan2 = 0;
 }
 
 void sceneHandler06_spinHandle() {
@@ -147,7 +234,7 @@ int sceneHandler06_updateScreenCallback() {
 	int res;
 
 	res = g_fullpipe->drawArcadeOverlay(g_vars->scene06_var07);
-	if (!res )
+	if (!res)
 		g_fullpipe->_updateScreenCallback = 0;
 
 	return res;
@@ -263,7 +350,7 @@ void sceneHandler06_sub03() {
 }
 
 void sceneHandler06_sub10() {
-	if (g_vars->scene06_numBallsGiven >= 15 || g_vars->scene06_var13 >= 5 )
+	if (g_vars->scene06_numBallsGiven >= 15 || g_vars->scene06_var13 >= 5)
 		g_vars->scene06_ballDrop->hide();
 	else
 		chainQueue(QU_SC6_DROPS3, 0);
@@ -398,7 +485,7 @@ int sceneHandler06(ExCommand *ex) {
 		if (g_vars->scene06_var13 < 5 || !g_vars->scene06_var07)
 			return 0;
 
-		sceneHandler06_sub01();
+		sceneHandler06_mumsyBallTake();
 		break;
 
 	case MSG_SC6_JUMPFW:
@@ -575,7 +662,7 @@ int sceneHandler06(ExCommand *ex) {
 				&& !g_vars->scene06_ballDrop->_movement
 				&& !g_vars->scene06_mumsy->_movement
 				&& !g_vars->scene06_var16)
-				sceneHandler06_sub01();
+				sceneHandler06_mumsyBallTake();
 			g_fullpipe->_behaviorManager->updateBehaviors();
 			g_fullpipe->startSceneTrack();
 

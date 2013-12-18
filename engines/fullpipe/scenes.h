@@ -152,7 +152,7 @@ public:
 	int scene06_var02;
 	int scene06_var03;
 	int scene06_var04;
-	int scene06_var06;
+	StaticANIObject *scene06_var06;
 	StaticANIObject *scene06_invHandle;
 	StaticANIObject *scene06_liftButton;
 	StaticANIObject *scene06_ballDrop;
