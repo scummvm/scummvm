@@ -978,7 +978,7 @@ static const uint16 kq6laurabow2CDPatchAudioTextSupport5[] = {
 	PATCH_END
 };
 
-// Additional patches specifically for King's Quest 6
+// Additional patch specifically for King's Quest 6
 //  Fixes text window placement, when portrait+text is shown
 // Patched method: Kq6Talker::init
 static const uint16 kq6CDSignatureAudioTextSupport1[] = {
@@ -997,7 +997,7 @@ static const uint16 kq6CDPatchAudioTextSupport1[] = {
 	PATCH_END
 };
 
-// Additional patches specifically for King's Quest 6
+// Additional patch specifically for King's Quest 6
 //  Fixes low-res portrait staying on screen for hi-res mode
 // Patched method: Talker::startText
 //  this method is called by Narrator::say and acc is 0 for text-only and true for audio+text
@@ -1018,6 +1018,27 @@ static const uint16 kq6CDPatchAudioTextSupport2[] = {
 	0x67, 0x8a,                         // pTos viewInPrint
 	0x14,                               // or
 	0x2f,                               // bt [skip following code]
+	PATCH_END
+};
+
+// Additional patch specifically for King's Quest 6
+//  Fixes special windows, used for example in the Pawn shop (room 280),
+//   when the man in a robe complains about no more mints.
+// Patched method: KQ6Print::say
+//  Currently those windows wait for a mouse-click and don't close automatically
+static const uint16 kq6CDSignatureAudioTextSupport3[] = {
+	SIG_MAGICDWORD,
+	0x8f, 0x01,                         // lsp param[1]
+	0x35, 0x01,                         // ldi 01
+	0x1a,                               // eq?
+	0x31, 0x0c,                         // bnt [code to set property repressText to 1]
+	0x38,                               // pushi (selector addText)
+	SIG_END
+};
+
+static const uint16 kq6CDPatchAudioTextSupport3[] = {
+	PATCH_ADDTOOFFSET +5,
+	0x18, 0x18,                         // not (waste bytes)
 	PATCH_END
 };
 
@@ -1079,6 +1100,7 @@ static const SciScriptPatcherEntry kq6Signatures[] = {
 	{ false,   928, "CD: audio + text support KQ6&LB2 5",          2, kq6laurabow2CDSignatureAudioTextSupport5, kq6laurabow2CDPatchAudioTextSupport5 },
 	{ false,   909, "CD: audio + text support KQ6 1",              1, kq6CDSignatureAudioTextSupport1,          kq6CDPatchAudioTextSupport1 },
 	{ false,   928, "CD: audio + text support KQ6 2",              1, kq6CDSignatureAudioTextSupport2,          kq6CDPatchAudioTextSupport2 },
+	{ false,   104, "CD: audio + text support KQ6 3",              1, kq6CDSignatureAudioTextSupport3,          kq6CDPatchAudioTextSupport3 },
 	{ false,  1009, "CD: audio + text support KQ6 Guards",         2, kq6CDSignatureAudioTextSupportGuards,     kq6CDPatchAudioTextSupportGuards },
 	{ false,  1027, "CD: audio + text support KQ6 Stepmother",     1, kq6CDSignatureAudioTextSupportStepmother, kq6CDPatchAudioTextSupportJumpAlways },
 	{ false,  1037, "CD: audio + text support KQ6 Gnomes",         1, kq6CDSignatureAudioTextSupportGnomes,     kq6CDPatchAudioTextSupportJumpAlways },
