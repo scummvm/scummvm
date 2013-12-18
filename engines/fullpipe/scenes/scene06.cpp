@@ -223,7 +223,18 @@ void sceneHandler06_throwBall() {
 }
 
 void sceneHandler06_sub03() {
-	warning("STUB: sceneHandler06_sub03()");
+	if (15 - g_vars->scene06_numBallsGiven >= 4 && !g_fullpipe->_rnd->getRandomNumber(9)) {
+		StaticANIObject *ani = g_fullpipe->_currentScene->getStaticANIObject1ById(ANI_EGGIE, -1);
+		if (!ani || !(ani->_flags & 4)) {
+			if (g_vars->scene06_var15)
+				chainQueue(QU_EGG6_GOR, 0);
+			else
+				chainQueue(QU_EGG6_GOL, 0);
+
+			g_vars->scene06_var14 = 0;
+			g_vars->scene06_var15 = (g_vars->scene06_var15 == 0);
+		}
+	}
 }
 
 void sceneHandler06_sub10() {

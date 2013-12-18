@@ -35,6 +35,7 @@ namespace Fullpipe {
 #define ANI_DOMINO_3 2732
 #define ANI_DADAYASHIK 306
 #define ANI_EGGEATER 334
+#define ANI_EGGIE 4929
 #define ANI_HAND 601
 #define ANI_HANDLE 622
 #define ANI_IN1MAN 5110
@@ -241,6 +242,8 @@ namespace Fullpipe {
 #define PIC_SCD_SEL 734
 #define QU_BALL_WALKL 4920
 #define QU_BALL_WALKR 4919
+#define QU_EGG6_GOL 4936
+#define QU_EGG6_GOR 4935
 #define QU_EGTR_MD2_SHOW 4698
 #define QU_EGTR_MD1_SHOW 4697
 #define QU_EGTR_SLIMSHOW 4883
