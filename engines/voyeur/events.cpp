@@ -201,8 +201,8 @@ void EventsManager::videoTimer() {
 	if (_gameData._hasPalette) {
 		_gameData._hasPalette = false;
 
-		g_system->getPaletteManager()->setPalette(_gameData._palette,
-			_gameData._palStartIndex, 
+		g_system->getPaletteManager()->setPalette(_gameData._palette +
+			_gameData._palStartIndex * 3, _gameData._palStartIndex, 
 			_gameData._palEndIndex - _gameData._palStartIndex + 1);
 	}
 }
@@ -423,14 +423,13 @@ void EventsManager::getMouseInfo() {
 		if ((_gameCounter - _joe) > 8) {
 			_joe = _gameCounter;
 
-			// TODO: Figure out difference between setOneColor and setColor calls
 			if (_vm->_bob) {
 				_vm->_bob = false;
-				//_vm->_graphicsManager.setColor(128, 55, 5, 5);
+				_vm->_graphicsManager.setOneColor(128, 55, 5, 5);
 				_vm->_graphicsManager.setColor(128, 220, 20, 20);
 			} else {
 				_vm->_bob = true;
-				//_vm->_graphicsManager.setColor(128, 55, 55, 55);
+				_vm->_graphicsManager.setOneColor(128, 55, 55, 55);
 				_vm->_graphicsManager.setColor(128, 220, 20, 20);
 			}
 		}

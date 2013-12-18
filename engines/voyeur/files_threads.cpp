@@ -1575,12 +1575,13 @@ void ThreadResource::doAptAnim(int mode) {
 		for (int idx = 0; (idx < 6) && !_vm->shouldQuit(); ++idx) {
 			PictureResource *pic = _vm->_bVoy->boltEntry(id + idx + 1)._picResource;
 			(*_vm->_graphicsManager._vPort)->setupViewPort(pic);
+			pal->startFade();
 
 			(*_vm->_graphicsManager._vPort)->_flags |= 8;
 			_vm->_graphicsManager.flipPage();
 			_vm->_eventsManager.sWaitFlip();
 
-			_vm->_eventsManager.delay(5);
+			_vm->_eventsManager.delay(50);
 		}
 
 		_vm->_bVoy->freeBoltGroup(id);

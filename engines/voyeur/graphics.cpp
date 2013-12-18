@@ -56,6 +56,7 @@ GraphicsManager::GraphicsManager():
 	_backgroundPage = NULL;
 	_vPort = NULL;
 	_fontPtr = NULL;
+	Common::fill(&_VGAColors[0], &_VGAColors[PALETTE_SIZE], 0);
 }
 
 void GraphicsManager::sInitGraphics() {
@@ -350,6 +351,7 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 					// loc_25D40
 					if (srcFlags & DISPFLAG_100) {
 						// loc_25D4A
+						error("TODO: sDrawPic");
 					} else {
 						// loc_2606D
 						destP = (byte *)_screenSurface.getPixels() + screenOffset;
@@ -453,13 +455,35 @@ error("TODO: var22/var24/var2C not initialised before use?");
 					}
 				} else {
 					if (srcFlags & 0x100) {
+						// Simple run-length encoded image
 						srcP = srcImgData;
 
 						if (isClipped) {
 							// loc_26424
+							error("TODO: sDrawPic");
 
 						} else {
 							// loc_26543
+							for (int yp = 0; yp < height1; ++yp) {
+								int runLength = 0;
+								for (int xp = 0; xp < width2; ++xp, --runLength) {
+									if (runLength <= 0) {
+										// Start of run length, so get pixel and repeat length
+										pixel = *srcP++;
+										if (pixel & 0x80) {
+											pixel &= 0x7f;
+											runLength = *srcP++;
+											if (runLength == 0)
+												runLength = width2;
+										}
+									}
+
+									// Copy pixel to output
+									*destP++ = pixel;
+								}
+
+								destP += widthDiff2;
+							}
 						}
 					} else {
 						for (int yp = 0; yp < height1; ++yp) {
@@ -644,6 +668,14 @@ void GraphicsManager::setColor(int idx, byte r, byte g, byte b) {
 
 	_vm->_eventsManager._intPtr._palStartIndex = MIN(_vm->_eventsManager._intPtr._palStartIndex, idx);
 	_vm->_eventsManager._intPtr._palEndIndex = MAX(_vm->_eventsManager._intPtr._palEndIndex, idx);
+}
+
+void GraphicsManager::setOneColor(int idx, byte r, byte g, byte b) {
+	byte palEntry[3];
+	palEntry[0] = r;
+	palEntry[1] = g;
+	palEntry[2] = b;
+	g_system->getPaletteManager()->setPalette(&palEntry[0], idx, 1);
 }
 
 void GraphicsManager::screenReset() {
