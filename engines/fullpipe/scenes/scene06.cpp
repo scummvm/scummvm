@@ -288,7 +288,7 @@ int sceneHandler06_updateScreenCallback() {
 	return res;
 }
 
-void sceneHandler06_sub08() {
+void sceneHandler06_startAiming() {
 	if (g_vars->scene06_currentBall) {
 		g_vars->scene06_currentBall->hide();
 
@@ -323,7 +323,7 @@ void sceneHandler06_takeBall() {
 				postExCommand(g_fullpipe->_aniMan->_id, 2, 1158, 452, 0, -1);
 			}
 		} else {
-			sceneHandler06_sub08();
+			sceneHandler06_startAiming();
 		}
 	}
 }
@@ -347,7 +347,7 @@ void sceneHandler06_aiming() {
 	g_vars->scene06_aimingBall = false;
 }
 
-void sceneHandler06_sub07() {
+void sceneHandler06_ballStartFly() {
 	if (g_vars->scene06_ballInHands) {
 		g_vars->scene06_flyingBall = g_vars->scene06_ballInHands;
 		g_vars->scene06_ballInHands = 0;
@@ -371,7 +371,7 @@ void sceneHandler06_throwCallback(int *arg) {
 	} else {
 		*arg = *arg + 1;
 		if (*arg == 12)
-			sceneHandler06_sub07();
+			sceneHandler06_ballStartFly();
 	}
 }
 
@@ -405,7 +405,7 @@ void sceneHandler06_dropBall() {
 		chainQueue(QU_SC6_DROPS3, 0);
 }
 
-void sceneHandler06_sub05() {
+void sceneHandler06_fallBall() {
 	g_vars->scene06_ballY = 475;
 
 	g_vars->scene06_flyingBall->setOXY(g_vars->scene06_ballX, g_vars->scene06_ballY);
@@ -423,7 +423,7 @@ void sceneHandler06_sub05() {
 	sceneHandler06_eggieWalk();
 }
 
-void sceneHandler06_sub09() {
+void sceneHandler06_catchBall() {
 	if (g_vars->scene06_flyingBall) {
 		g_vars->scene06_flyingBall->hide();
 
@@ -474,18 +474,19 @@ void sceneHandler06_sub09() {
 	}
 }
 
-void sceneHandler06_sub04(int par) {
+void sceneHandler06_checkBallTarget(int par) {
 	int pixel;
 
 	if (g_vars->scene06_ballY <= 475) {
 		if (g_vars->scene06_mumsy->getPixelAtPos(g_vars->scene06_ballX, g_vars->scene06_ballY, &pixel)) {
 			if (pixel) {
 				chainObjQueue(g_vars->scene06_mumsy, QU_MOM_JUMPBK, 0);
-				sceneHandler06_sub09();
+
+				sceneHandler06_catchBall();
 			}
 		}
 	} else {
-		sceneHandler06_sub05();
+		sceneHandler06_fallBall();
 	}
 }
 
@@ -745,7 +746,7 @@ int sceneHandler06(ExCommand *ex) {
 
 				g_vars->scene06_ballDeltaY -= 5;
 
-				sceneHandler06_sub04(g_vars->scene06_ballDeltaX);
+				sceneHandler06_checkBallTarget(g_vars->scene06_ballDeltaX);
 			}
 			if (g_vars->scene06_arcadeEnabled
 				&& !g_vars->scene06_currentBall
