@@ -396,6 +396,166 @@ int LairEntry::onCharacter(Window *viewWindow, const Common::KeyState &character
 	return SC_TRUE;
 }
 
+class GeneratorCoreZoom : public SceneBase {
+public:
+	GeneratorCoreZoom(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	Common::Rect _clickableArea;
+};
+
+GeneratorCoreZoom::GeneratorCoreZoom(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().alRDTakenDeadCore == 1)
+		_staticData.navFrameIndex = 82;
+
+	_clickableArea = Common::Rect(42, 34, 132, 116);
+}
+
+int GeneratorCoreZoom::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_clickableArea.contains(pointLocation)) {
+		DestinationScene newScene;
+		newScene.destinationScene = _staticData.location;
+		newScene.destinationScene.depth = 1;
+		newScene.transitionType = TRANSITION_VIDEO;
+		newScene.transitionStartFrame = -1;
+		newScene.transitionLength = -1;
+
+		if (((SceneViewWindow *)viewWindow)->getGlobalFlags().alRDTakenDeadCore == 1)
+			newScene.transitionData = 7;
+		else
+			newScene.transitionData = 6;
+
+		((SceneViewWindow *)viewWindow)->moveToDestination(newScene);
+
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int GeneratorCoreZoom::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_clickableArea.contains(pointLocation))
+		return kCursorMagnifyingGlass;
+
+	return kCursorArrow;
+}
+
+class GeneratorCoreAcquire : public SceneBase {
+public:
+	GeneratorCoreAcquire(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int mouseDown(Window *viewWindow, const Common::Point &pointLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int draggingItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
+	int droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	int _currentStatus;
+	Common::Rect _deadCore;
+	Common::Rect _closedEmpty;
+};
+
+GeneratorCoreAcquire::GeneratorCoreAcquire(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().alRDTakenDeadCore == 1) {
+		_staticData.navFrameIndex = 80;
+		_currentStatus = 2;
+	} else {
+		_currentStatus = 0;
+	}
+
+	_deadCore = Common::Rect(167, 0, 257, 138);
+	_closedEmpty = Common::Rect(181, 76, 257, 132);
+}
+
+int GeneratorCoreAcquire::mouseDown(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_currentStatus == 1 && _deadCore.contains(pointLocation)) {
+		_staticData.navFrameIndex = 80;
+		_currentStatus = 2;
+		viewWindow->invalidateWindow(false);
+
+		// Taken the core
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().alRDTakenDeadCore = 1;
+
+		Common::Point ptInventoryWindow = viewWindow->convertPointToWindow(pointLocation, ((GameUIWindow *)viewWindow->getParent())->_inventoryWindow);
+		((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->startDraggingNewItem(kItemBurnedOutCore, ptInventoryWindow);
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int GeneratorCoreAcquire::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_currentStatus == 0 && _closedEmpty.contains(pointLocation)) {
+		((SceneViewWindow *)viewWindow)->playSynchronousAnimation(9);
+		_staticData.navFrameIndex = 77;
+		_currentStatus = 1;
+		return SC_TRUE;
+	}
+
+	DestinationScene newScene;
+	newScene.destinationScene = _staticData.location;
+	newScene.destinationScene.depth = 0;
+	newScene.transitionType = TRANSITION_NONE;
+	newScene.transitionData = -1;
+	newScene.transitionStartFrame = -1;
+	newScene.transitionLength = -1;
+	((SceneViewWindow *)viewWindow)->moveToDestination(newScene);
+	return SC_TRUE;
+}
+
+int GeneratorCoreAcquire::draggingItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) {
+	if (_currentStatus == 2 && (itemID == kItemGeneratorCore || itemID == kItemBurnedOutCore) && _closedEmpty.contains(pointLocation))
+		return 1;
+
+	return 0; // Original had a nice bug here returning the put down cursor
+}
+
+int GeneratorCoreAcquire::droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) {
+	if (pointLocation.x == -1 && pointLocation.y == -1)
+		return 0;
+
+	if (_currentStatus == 2 && (itemID == kItemGeneratorCore || itemID == kItemBurnedOutCore) && _closedEmpty.contains(pointLocation)) {
+		if (itemID == kItemBurnedOutCore) {
+			// Change background and status
+			_staticData.navFrameIndex = 77;
+			_currentStatus = 1;
+			((SceneViewWindow *)viewWindow)->getGlobalFlags().alRDTakenDeadCore = 0;
+			viewWindow->invalidateWindow(false);
+		} else if (itemID == kItemGeneratorCore) {
+			_staticData.navFrameIndex = 79;
+
+			// Move to the new scene
+			DestinationScene newScene;
+			newScene.destinationScene = _staticData.location;
+			newScene.destinationScene.depth = 0;
+			newScene.destinationScene.environment = 2;
+			newScene.transitionType = TRANSITION_VIDEO;
+			newScene.transitionData = 8;
+			newScene.transitionStartFrame = -1;
+			newScene.transitionLength = -1;
+			((SceneViewWindow *)viewWindow)->moveToDestination(newScene);
+		}
+
+		return SIC_ACCEPT;
+	}
+
+	return SIC_REJECT;
+}
+
+int GeneratorCoreAcquire::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_currentStatus == 0 && _closedEmpty.contains(pointLocation))
+		return kCursorFinger;
+
+	if (_currentStatus == 1 && _deadCore.contains(pointLocation))
+		return kCursorOpenHand;
+
+	return kCursorPutDown;
+}
+
 bool SceneViewWindow::initializeAgent3LairTimeZoneAndEnvironment(Window *viewWindow, int environment) {
 	if (environment == -1)
 		((SceneViewWindow *)viewWindow)->getGlobalFlags().alNMWrongAlienPrefixCode = 0;
@@ -414,6 +574,10 @@ SceneBase *SceneViewWindow::constructAgent3LairSceneObject(Window *viewWindow, c
 	switch (sceneStaticData.classID) {
 	case 1:
 		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 177, 96, 231, 184, kItemGeneratorCore, 15, offsetof(GlobalFlags, alRDTakenLiveCore));
+	case 2:
+		return new GeneratorCoreZoom(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 3:
+		return new GeneratorCoreAcquire(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 10:
 		return new LairEntry(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 20:
