@@ -226,8 +226,26 @@ void sceneHandler06_sub03() {
 	warning("STUB: sceneHandler06_sub03()");
 }
 
+void sceneHandler06_sub10() {
+	warning("STUB: sceneHandler06_sub10()");
+}
+
 void sceneHandler06_sub05() {
-	warning("STUB: sceneHandler06_sub05()");
+	g_vars->scene06_var04 = 475;
+
+	g_vars->scene06_var11->setOXY(g_vars->scene06_var03, g_vars->scene06_var04);
+
+	MessageQueue *mq = new MessageQueue(g_fullpipe->_currentScene->getMessageQueueById(QU_SC6_FALLBALL), 0, 1);
+
+	mq->replaceKeyCode(-1, g_vars->scene06_var11->_okeyCode);
+	mq->chain(0);
+
+	g_vars->scene06_balls.push_back(g_vars->scene06_var11);
+
+	g_vars->scene06_var11 = 0;
+
+	sceneHandler06_sub10();
+	sceneHandler06_sub03();
 }
 
 void sceneHandler06_sub09() {
@@ -252,11 +270,6 @@ void sceneHandler06_sub04(int par) {
 void sceneHandler06_sub06() {
 	warning("STUB: sceneHandler06_sub06()");
 }
-
-void sceneHandler06_sub10() {
-	warning("STUB: sceneHandler06_sub10()");
-}
-
 
 void scene06_initScene(Scene *sc) {
 	g_vars->scene06_mumsy = sc->getStaticANIObject1ById(ANI_MAMASHA, -1);

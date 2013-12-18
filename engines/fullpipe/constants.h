@@ -268,6 +268,7 @@ namespace Fullpipe {
 #define QU_SC6_DROPS 2898
 #define QU_SC6_ENTERLIFT 1054
 #define QU_SC6_EXITLIFT 1055
+#define QU_SC6_FALLBALL 2690
 #define QU_SC6_SHOWHANDLE 1689
 #define QU_SC6_SHOWNEXTBALL 2689
 #define SC_1 301
