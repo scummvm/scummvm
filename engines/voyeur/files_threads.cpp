@@ -1054,25 +1054,25 @@ bool ThreadResource::cardPerform2(const byte *pSrc, int cardCmdId) {
 }	
 
 int ThreadResource::doApt() {
-	int varC = -1;
 	loadTheApt();
 
 	_vm->_playStamp2 = 151;
-	byte *dataP = _vm->_bVoy->memberAddr(_vm->_playStamp1);
+	_vm->_voy._field4386 = _vm->_bVoy->memberAddr(_vm->_playStamp1); 
+	byte *hotspotsP = _vm->_bVoy->memberAddr(_vm->_playStamp1 + 1);
 	PictureResource *srcPic = _vm->_bVoy->boltEntry(_vm->_playStamp1 + 3)._picResource;
 	_vm->_eventsManager.getMouseInfo();
 
 	if (_doAptPosX == -1) {
-		_doAptPosX = READ_LE_UINT16(dataP + 18) + 16;
-		_doAptPosY = READ_LE_UINT16(dataP + 20) + 16;
+		_doAptPosX = READ_LE_UINT16(hotspotsP + 18) + 16;
+		_doAptPosY = READ_LE_UINT16(hotspotsP + 20) + 16;
 		_vm->_playStamp2 = 153;
 	}
 
 	if (_vm->_voy._field470 == 16) {
-		WRITE_LE_UINT16(dataP + 2, 999);
-		WRITE_LE_UINT16(dataP + 26, 999);
-		_doAptPosX = READ_LE_UINT16(dataP + 34) + 28;
-		_doAptPosY = READ_LE_UINT16(dataP + 36) + 28;
+		WRITE_LE_UINT16(hotspotsP + 2, 999);
+		WRITE_LE_UINT16(hotspotsP + 26, 999);
+		_doAptPosX = READ_LE_UINT16(hotspotsP + 34) + 28;
+		_doAptPosY = READ_LE_UINT16(hotspotsP + 36) + 28;
 	}
 
 	_vm->_eventsManager.setMousePos(Common::Point(_doAptPosX, _doAptPosY));
@@ -1087,32 +1087,37 @@ int ThreadResource::doApt() {
 	_vm->_eventsManager._intPtr.field38 = true;
 	_vm->_eventsManager._intPtr._hasPalette = true;
 
-	int result;
+	// Main loop to allow users to move the cursor and select hotspots
+	int hotspotId;
+	int prevHotspotId = -1;
 	Common::Point pt;
 	PictureResource *pic;
 	do {
 		_vm->_eventsManager.getMouseInfo();
 		if (!_vm->_soundManager.getVOCStatus()) {
+			// Previous sound ended, so start up a new one
 			_vm->_playStamp2 = _vm->getRandomNumber(4) + 151;
 			_vm->_soundManager.startVOCPlay(_vm->_soundManager.getVOCFileName(_vm->_playStamp2));
 		}
 
-		result = -1;
+		// Loop through the hotspot list
+		hotspotId = -1;
 		pt = _vm->_eventsManager.getMousePos();
-		for (int idx = 0; idx < READ_LE_UINT16(dataP); ++idx) {
-			if (READ_LE_UINT16(dataP + idx * 8 + 2) <= pt.x &&
-				READ_LE_UINT16(dataP + idx * 8 + 6) >= pt.x &&
-				READ_LE_UINT16(dataP + idx * 8 + 4) <= pt.y &&
-				READ_LE_UINT16(dataP + idx * 8 + 8) >= pt.y) {
-				// Found entry
-				result = idx;
+		for (int idx = 0; idx < READ_LE_UINT16(hotspotsP); ++idx) {
+			if (pt.x > READ_LE_UINT16(hotspotsP + idx * 8 + 2) &&
+				pt.x < READ_LE_UINT16(hotspotsP + idx * 8 + 6) &&
+				pt.y > READ_LE_UINT16(hotspotsP + idx * 8 + 4) &&
+				pt.y < READ_LE_UINT16(hotspotsP + idx * 8 + 8)) {
+				// Cursor is within hotspot area
+				hotspotId = idx;
 
-				if (idx != varC) {
-					if ((_vm->_voy._field478 & 0x100) && (result == 2))
-						result = 5;
+				if (idx != prevHotspotId) {
+					if ((_vm->_voy._field478 & 0x100) && (hotspotId == 2))
+						hotspotId = 5;
 
+					// Draw the text description for the highlighted hotspot
 					pic = _vm->_bVoy->boltEntry(_vm->_playStamp1 + 
-						result + 6)._picResource;
+						hotspotId + 6)._picResource;
 					_vm->_graphicsManager.sDrawPic(pic, *_vm->_graphicsManager._vPort,
 						Common::Point(106, 200));
 				}
@@ -1121,7 +1126,8 @@ int ThreadResource::doApt() {
 			}
 		}
 
-		pic = _vm->_bVoy->boltEntry((result == -1) ? _vm->_playStamp1 + 2 :
+		// Draw either standard or highlighted eye cursor
+		pic = _vm->_bVoy->boltEntry((hotspotId == -1) ? _vm->_playStamp1 + 2 :
 			_vm->_playStamp1 + 3)._picResource;
 		_vm->_graphicsManager.sDrawPic(pic, *_vm->_graphicsManager._vPort, pt);
 
@@ -1129,13 +1135,13 @@ int ThreadResource::doApt() {
 		_vm->_graphicsManager.flipPage();
 		_vm->_eventsManager.sWaitFlip();
 
-	} while (!_vm->shouldQuit() && !_vm->_voy._lastInplay && result == -1);
+	} while (!_vm->shouldQuit() && (!_vm->_voy._lastInplay || hotspotId == -1));
 
 	pt = _vm->_eventsManager.getMousePos();
 	_doAptPosX = pt.x;
 	_doAptPosY = pt.y;
 
-	switch (result) {
+	switch (hotspotId) {
 	case 0:
 		_vm->_voy._field472 = 140;
 		break;
@@ -1153,13 +1159,13 @@ int ThreadResource::doApt() {
 	}
 
 	freeTheApt();
-	if (_vm->_voy._field474 == 1 && result == 0)
+	if (_vm->_voy._field474 == 1 && hotspotId == 0)
 		_vm->checkTransition();
 
-	if (!result)
+	if (!hotspotId)
 		_vm->makeViewFinder();
 
-	return result;
+	return hotspotId;
 }
 
 void ThreadResource::doRoom() {
