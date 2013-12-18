@@ -190,6 +190,16 @@ void Portrait::doit(Common::Point position, uint16 resourceId, uint16 noun, uint
 	uint syncOffset = 0;
 #endif
 
+#if 0
+	// prints out the current lip sync ASCII data
+	char debugPrint[4000];
+	if (raveResource->size < 4000) {
+		memcpy(debugPrint, raveResource->data, raveResource->size);
+		debugPrint[raveResource->size] = 0; // set terminating NUL
+		debug("kPortrait: %s", debugPrint);
+	}
+#endif
+
 	// TODO: play through the game if this is 100% accurate
 	// TODO: maybe try to create the missing sync resources for low-res KQ6 out of the rave resources
 
