@@ -50,11 +50,11 @@ public:
 	virtual int removeObject(StaticANIObject *obj) { return 0; }
 	virtual void freeItems() {}
 	virtual int method28() { return 0; }
-	virtual int method2C() { return 0; }
+	virtual int method2C(StaticANIObject *obj, int x, int y) { return 0; }
 	virtual int method30() { return 0; }
 	virtual MessageQueue *method34(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId) { return 0; }
 	virtual int changeCallback() { return 0; }
-	virtual int method3C() { return 0; }
+	virtual int method3C(StaticANIObject *ani, int flag) { return 0; }
 	virtual int method40() { return 0; }
 	virtual int method44() { return 0; }
 	virtual int method48() { return -1; }
@@ -317,10 +317,10 @@ public:
 	virtual int removeObject(StaticANIObject *obj);
 	virtual void freeItems();
 	virtual int method28();
-	virtual int method2C();
+	virtual int method2C(StaticANIObject *obj, int x, int y);
 	virtual MessageQueue *method34(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId);
 	virtual int changeCallback();
-	virtual int method3C();
+	virtual int method3C(StaticANIObject *ani, int flag);
 	virtual int method44();
 	virtual MessageQueue *doWalkTo(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId);
 	virtual int method50();

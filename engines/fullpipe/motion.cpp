@@ -440,10 +440,9 @@ int MovGraph::method28() {
 	return 0;
 }
 
-int MovGraph::method2C() {
-	warning("STUB: MovGraph::method2C()");
-
-	return 0;
+int MovGraph::method2C(StaticANIObject *obj, int x, int y) {
+	obj->setOXY(x, y);
+	return method3C(obj, 1);
 }
 
 MessageQueue *MovGraph::method34(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId) {
@@ -458,7 +457,7 @@ int MovGraph::changeCallback() {
 	return 0;
 }
 
-int MovGraph::method3C() {
+int MovGraph::method3C(StaticANIObject *ani, int flag) {
 	warning("STUB: MovGraph::method3C()");
 
 	return 0;
