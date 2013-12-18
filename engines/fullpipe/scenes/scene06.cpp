@@ -73,6 +73,50 @@ void sceneHandler06_setExits(Scene *sc) {
 }
 
 void sceneHandler06_winArcade() {
+	g_fullpipe->setObjectState(sO_BigMumsy, g_fullpipe->getObjectEnumState(sO_BigMumsy, sO_IsGone));
+
+	if (g_fullpipe->getObjectState(sO_ClockAxis) == g_fullpipe->getObjectEnumState(sO_ClockAxis, sO_IsNotAvailable))
+		g_fullpipe->setObjectState(sO_ClockAxis, g_fullpipe->getObjectEnumState(sO_ClockAxis, sO_WithoutHandle));
+
+	if (g_vars->scene06_var07) {
+		g_fullpipe->_aniMan->_callback2 = 0;
+
+		g_fullpipe->_aniMan->changeStatics2(ST_MAN_RIGHT | 0x4000);
+
+		if (g_vars->scene06_var06) {
+			g_vars->scene06_var06->_flags &= 0xFFFB;
+
+			g_vars->scene06_balls.push_back(g_vars->scene06_var06);
+
+			g_vars->scene06_var06 = 0;
+		}
+
+		if (g_vars->scene06_var11) {
+			g_vars->scene06_var11->_flags &= 0xFFFB;
+
+			g_vars->scene06_balls.push_back(g_vars->scene06_var11);
+
+			g_vars->scene06_var11 = 0;
+		}
+
+		if (g_vars->scene06_var10) {
+			g_vars->scene06_var10->_flags &= 0xFFFB;
+
+			g_vars->scene06_balls.push_back(g_vars->scene06_var10);
+
+			g_vars->scene06_var10 = 0;
+		}
+
+		g_vars->scene06_var07 = 0;
+		g_vars->scene06_var08 = 0;
+	}
+
+	g_vars->scene06_mumsy->_flags &= 0xFFFB;
+
+	sceneHandler06_setExits(g_fullpipe->_currentScene);
+
+	getCurrSceneSc2MotionController()->setEnabled();
+	getGameLoaderInteractionController()->enableFlag24();
 }
 
 void sceneHandler06_enableDrops() {
