@@ -1846,32 +1846,41 @@ void GfxOpenGL::drawPolygon(const PrimitiveObject *primitive) {
 	glEnable(GL_LIGHTING);
 }
 
+static void readPixels(int x, int y, int width, int height, char *buffer) {
+	char *p = buffer;
+	for (int i = y; i < y + height; i++) {
+		glReadPixels(x, 479 - i, width, 1, GL_RGBA, GL_UNSIGNED_BYTE, p);
+		p += width * 4;
+	}
+}
+
 void GfxOpenGL::createSpecialtyTextures() {
 	//make a buffer big enough to hold any of the textures
 	char *buffer = new char[256 * 256 * 4];
 
-	glReadPixels(0, 0, 256, 256, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+	// TODO: Handle screen resolutions other than 640 x 480
+	readPixels(0, 0, 256, 256, buffer);
 	_specialty[0].create(buffer, 256, 256);
 
-	glReadPixels(256, 0, 256, 256, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+	readPixels(256, 0, 256, 256, buffer);
 	_specialty[1].create(buffer, 256, 256);
 
-	glReadPixels(512, 0, 128, 128, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+	readPixels(512, 0, 128, 128, buffer);
 	_specialty[2].create(buffer, 128, 128);
 
-	glReadPixels(512, 128, 128, 128, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+	readPixels(512, 128, 128, 128, buffer);
 	_specialty[3].create(buffer, 128, 128);
 
-	glReadPixels(0, 256, 256, 256, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+	readPixels(0, 256, 256, 256, buffer);
 	_specialty[4].create(buffer, 256, 256);
 
-	glReadPixels(256, 256, 256, 256, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+	readPixels(256, 256, 256, 256, buffer);
 	_specialty[5].create(buffer, 256, 256);
 
-	glReadPixels(512, 256, 128, 128, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+	readPixels(512, 256, 128, 128, buffer);
 	_specialty[6].create(buffer, 128, 128);
 
-	glReadPixels(512, 384, 128, 128, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+	readPixels(512, 384, 128, 128, buffer);
 	_specialty[7].create(buffer, 128, 128);
 
 	delete[] buffer;
