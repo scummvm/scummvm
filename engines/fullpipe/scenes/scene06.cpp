@@ -69,7 +69,10 @@ int scene06_updateCursor() {
 }
 
 void sceneHandler06_setExits(Scene *sc) {
-	warning("STUB: sceneHandler06_setExits()");
+	MotionController *mc = getSc2MctlCompoundBySceneId(sc->_sceneId);
+
+	mc->enableLinks(sO_CloseThing, (g_fullpipe->getObjectState(sO_BigMumsy) != g_fullpipe->getObjectEnumState(sO_BigMumsy, sO_IsGone)));
+	mc->enableLinks(sO_CloseThing2, (g_vars->scene06_var07 != 0));
 }
 
 void sceneHandler06_winArcade() {

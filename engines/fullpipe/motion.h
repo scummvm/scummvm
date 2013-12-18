@@ -59,6 +59,8 @@ public:
 	virtual int method44() { return 0; }
 	virtual int method48() { return -1; }
 	virtual MessageQueue *doWalkTo(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId) { return 0; }
+
+	void enableLinks(const char *linkName, bool enable);
 };
 
 class MovGraphReact : public CObject {

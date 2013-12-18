@@ -42,6 +42,10 @@ bool MotionController::load(MfcArchive &file) {
 	return true;
 }
 
+void MotionController::enableLinks(const char *linkName, bool enable) {
+	warning("STUB: MotionController::enableLinks()");
+}
+
 bool MctlCompound::load(MfcArchive &file) {
 	debug(5, "MctlCompound::load()");
 
