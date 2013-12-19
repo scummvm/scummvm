@@ -85,6 +85,7 @@ static const char *const selectorNameTable[] = {
 	"new",          // system selector
 	"curEvent",     // system selector
 	"disable",      // system selector
+	"doit",         // system selector
 	"show",         // system selector
 	"x",            // system selector
 	"cel",          // system selector
@@ -109,6 +110,7 @@ enum ScriptPatcherSelectors {
 	SELECTOR_new,
 	SELECTOR_curEvent,
 	SELECTOR_disable,
+	SELECTOR_doit,
 	SELECTOR_show,
 	SELECTOR_x,
 	SELECTOR_cel,
@@ -880,6 +882,59 @@ static const uint16 kq6PatchInventoryStackFix[] = {
 	PATCH_END
 };
 
+// The "Drink Me" bottle code doesn't repaint the AddToPics elements to the screen,
+//  when Alexander returns back from the effect of the bottle.
+//  It's pretty strange that Sierra didn't find this bug, because it occurs when
+//  drinking the bottle right on the screen, where the bottle is found.
+// This bug also occurs in Sierra SCI.
+// Applies to at least: PC-CD, English PC floppy, German PC floppy, English Mac
+// Responsible method: drinkMeScript::changeState
+// Fixes bug: #5252
+static const uint16 kq6SignatureDrinkMeFix[] = {
+	SIG_MAGICDWORD,
+	0x3c,                               // dup
+	0x35, 0x0f,                         // ldi 0f
+	0x1a,                               // eq?
+	0x30, SIG_UINT16 + 0xa4, 0x00,      // bnt [skip to next check]
+	SIG_ADDTOOFFSET +161,
+	0x32, SIG_UINT16 + 0x7f, 0x00,      // jmp [return]
+	0x3c,                               // dup
+	0x35, 0x10,                         // ldi 10
+	0x1a,                               // eq?
+	0x31, 0x07,                         // bnt [skip to next check]
+	0x35, 0x03,                         // ldi 03
+	0x65, 0x1a,                         // aTop (cycles)
+	0x32, SIG_UINT16 + 0x72, 0x00,      // jmp [return]
+	0x3c,                               // dup
+	0x35, 0x11,                         // ldi 11
+	0x1a,                               // eq?
+	0x31, 0x13,                         // bnt [skip to next check]
+	SIG_ADDTOOFFSET +20,
+	0x35, 0x12,                         // ldi 12
+	SIG_ADDTOOFFSET +23,
+	0x35, 0x13,                         // ldi 13
+	SIG_END
+};
+
+static const uint16 kq6PatchDrinkMeFix[] = {
+	PATCH_ADDTOOFFSET +5,               // skip to bnt offset
+	PATCH_GETORIGINALBYTEADJUST +5, +13, // adjust jump to [check for 11h code]
+	SIG_ADDTOOFFSET +162,
+	0x39, PATCH_SELECTOR8 + SELECTOR_doit, // pushi (doit)
+	0x76,                               // push0
+	0x81, 0x0a,                         // lag 0a
+	0x4a, 0x04,                         // send 04 (call addToPics::doit)
+	0x3a,                               // toss
+	0x48,                               // ret
+	PATCH_ADDTOOFFSET +8,               // skip to check 11h code
+	0x35, 0x10,                         // ldi 10 instead of 11
+	PATCH_ADDTOOFFSET +23,              // skip to check 12h code
+	0x35, 0x11,                         // ldi 11 instead of 12
+	PATCH_ADDTOOFFSET +23,              // skip to check 13h code
+	0x35, 0x12,                         // ldi 12 instead of 13
+	PATCH_END
+};
+
 // Audio + subtitles support - SHARED! - used for King's Quest 6 and Laura Bow 2
 //  this patch gets enabled, when the user selects "both" in the ScummVM "Speech + Subtitles" menu
 //  We currently use global 98d to hold a kMemory pointer.
@@ -1090,6 +1145,7 @@ static const uint16 kq6CDSignatureAudioTextSupportGnomes[] = {
 static const SciScriptPatcherEntry kq6Signatures[] = {
 	{  true,   481, "duplicate baby cry",                          1, kq6SignatureDuplicateBabyCry,             kq6PatchDuplicateBabyCry },
 	{  true,   907, "inventory stack fix",                         1, kq6SignatureInventoryStackFix,            kq6PatchInventoryStackFix },
+	{  true,    87, "Drink Me bottle fix",                         1, kq6SignatureDrinkMeFix,                   kq6PatchDrinkMeFix },
 	// King's Quest 6 and Laura Bow 2 share basic patches for audio + text support
 	// *** King's Quest 6 audio + text support ***
 	//  TODO: all window placements seems to be fixed, game should be played through to check for any more issues
