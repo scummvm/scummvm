@@ -139,6 +139,10 @@ Vars::Vars() {
 	scene06_mumsyJumpBkPercent = 0;
 	scene06_mumsyJumpFwPercent = 0;
 
+	scene07_lukeAnim = 0;
+	scene07_lukePercent = 0;
+	scene07_plusMinus = 0;
+
 	selector = 0;
 }
 

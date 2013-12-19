@@ -177,6 +177,10 @@ public:
 	int scene06_mumsyJumpBkPercent;
 	int scene06_mumsyJumpFwPercent;
 
+	BehaviorEntryInfo *scene07_lukeAnim;
+	int scene07_lukePercent;
+	StaticANIObject *scene07_plusMinus;
+
 	PictureObject *selector;
 };
 

@@ -32,6 +32,7 @@ namespace Fullpipe {
 #define ANI_BUTTON 598
 #define ANI_BUTTON_6 2988
 #define ANI_CLOCK 588
+#define ANI_CORNERSITTER 71
 #define ANI_DOMINO_3 2732
 #define ANI_DADAYASHIK 306
 #define ANI_EGGEATER 334
@@ -55,6 +56,7 @@ namespace Fullpipe {
 #define ANI_NEWBALL 1073
 #define ANI_OTMOROZ 419
 #define ANI_PLANK 501
+#define ANI_PLUSMINUS 2938
 #define ANI_SC2_BOX 1020
 #define ANI_SC4_BOOT 1035
 #define ANI_SC4_COIN 690
@@ -351,6 +353,7 @@ namespace Fullpipe {
 #define ST_BLK_CLOSED 912
 #define ST_BLK_OPEN 913
 #define ST_CLK_CLOSED 590
+#define ST_CST_HANDLELESS 794
 #define ST_DYAS_LIES 318
 #define ST_EGTR_MID1 2863
 #define ST_EGTR_MID2 2869
@@ -402,6 +405,8 @@ namespace Fullpipe {
 #define ST_OTM_BOX_LEFT 429
 #define ST_OTM_GLS_LEFT 421
 #define ST_OTM_VNT_LEFT 434
+#define ST_PMS_MINUS 2942
+#define ST_PMS_PLUS 2941
 #define ST_PNK_WEIGHTLEFT 503
 #define ST_PNK_WEIGHTRIGHT 504
 #define ST_SPR_UP 544
