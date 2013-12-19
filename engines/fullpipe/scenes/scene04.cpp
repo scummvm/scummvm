@@ -1115,7 +1115,7 @@ void sceneHandler04_leaveLadder(ExCommand *ex) {
 
 						mc->setEnabled();
 						getGameLoaderInteractionController()->enableFlag24();
-					} else if (mq) {
+					} else {
 						delete mq;
 					}
 
