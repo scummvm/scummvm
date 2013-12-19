@@ -59,6 +59,9 @@ void scene06_initMumsy();
 int sceneHandler06(ExCommand *cmd);
 int scene06_updateCursor();
 
+void scene07_initScene(Scene *sc);
+int sceneHandler07(ExCommand *cmd);
+
 void sceneDbgMenu_initScene(Scene *sc);
 int sceneHandlerDbgMenu(ExCommand *cmd);
 
