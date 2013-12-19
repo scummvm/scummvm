@@ -111,7 +111,7 @@ void VoyeurEngine::playStamp() {
 			break;
 
 		case 16:
-			_voy._checkTransitionId = 17;
+			_voy._transitionId = 17;
 			buttonId = threadP->doApt();
 			
 			switch (buttonId) {
@@ -134,7 +134,7 @@ void VoyeurEngine::playStamp() {
 
 		case 17:
 			doTapePlaying();
-			if (!checkForMurder() && _voy._checkTransitionId <= 15)
+			if (!checkForMurder() && _voy._transitionId <= 15)
 				checkForIncriminate();
 
 			if (_voy._videoEventId != -1)
@@ -260,7 +260,58 @@ int VoyeurEngine::getChooseButton()  {
 }
 
 void VoyeurEngine::makeViewFinder() {
-	error("TODO:makeViewFinder");
+	_graphicsManager._backgroundPage = _bVoy->boltEntry(0x103)._picResource;
+	_graphicsManager.sDrawPic(_graphicsManager._backgroundPage, 
+		*_graphicsManager._vPort, Common::Point(0, 0));
+	CMapResource *pal = _bVoy->boltEntry(0x104)._cMapResource;
+
+	int palOffset = 0;
+	switch (_voy._transitionId) {
+	case 1:
+	case 2:
+	case 5:
+	case 6:
+	case 7:
+	case 8:
+	case 9:
+	case 17:
+		palOffset = 0;
+		break;
+	case 3:
+		palOffset = 1;
+		break;
+	case 4:
+	case 10:
+	case 11:
+	case 12:
+	case 13:
+	case 14:
+	case 15:
+	case 16:
+		palOffset = 2;
+		break;
+	default:
+		break;
+	}
+
+	(*_graphicsManager._vPort)->drawIfaceTime();
+	doTimeBar(1);
+	pal->startFade();
+
+	(*_graphicsManager._vPort)->_flags |= 8;
+	_graphicsManager.flipPage();
+	_eventsManager.sWaitFlip();
+
+	while (!shouldQuit() && (_eventsManager._fadeStatus & 1))
+		_eventsManager.delay(1);
+
+	_graphicsManager.setColor(241, 105, 105, 105);
+	_graphicsManager.setColor(242, 105, 105, 105);
+	_graphicsManager.setColor(243, 105, 105, 105);
+	_graphicsManager.setColor(palOffset + 241, 219, 235, 235);
+
+	_eventsManager._intPtr.field38 = 1;
+	_eventsManager._intPtr._hasPalette = true;
 }
 
 void VoyeurEngine::initIFace(){
@@ -270,8 +321,8 @@ void VoyeurEngine::initIFace(){
 void VoyeurEngine::checkTransition(){
 	Common::String time, day;
 
-	if (_voy._checkTransitionId != _checkTransitionId) {
-		switch (_voy._checkTransitionId) {
+	if (_voy._transitionId != _checkTransitionId) {
+		switch (_voy._transitionId) {
 		case 0:
 			break;
 		case 1:
@@ -291,7 +342,7 @@ void VoyeurEngine::checkTransition(){
 		if (!day.empty()) {
 			_graphicsManager.fadeDownICF(6);
 
-			if (_voy._checkTransitionId != 17) {
+			if (_voy._transitionId != 17) {
 				const char *amPm = _voy._isAM ? AM : PM;
 				time = Common::String::format("%d:%02d%s",
 					_gameHour, _gameMinute, amPm);
@@ -301,7 +352,7 @@ void VoyeurEngine::checkTransition(){
 			_eventsManager.delay(180);
 		}
 
-		_checkTransitionId = _voy._checkTransitionId;
+		_checkTransitionId = _voy._transitionId;
 	}
 }
 

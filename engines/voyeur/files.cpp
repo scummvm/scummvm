@@ -1170,6 +1170,26 @@ void ViewPortResource::fillPic(byte onOff) {
 	_state._vm->_graphicsManager.fillPic(this, onOff);
 }
 
+void ViewPortResource::drawIfaceTime() {
+	// Hour display
+	_state._vm->_graphicsManager.drawANumber(*_state._vm->_graphicsManager._vPort, 
+		(_state._vm->_gameHour / 10) == 0 ? 10 : _state._vm->_gameHour / 10,
+		Common::Point(161, 25));
+	_state._vm->_graphicsManager.drawANumber(*_state._vm->_graphicsManager._vPort, 
+		_state._vm->_gameHour % 10, Common::Point(172, 25));
+
+	// Minute display
+	_state._vm->_graphicsManager.drawANumber(*_state._vm->_graphicsManager._vPort, 
+		_state._vm->_gameMinute / 10, Common::Point(190, 25));
+	_state._vm->_graphicsManager.drawANumber(*_state._vm->_graphicsManager._vPort, 
+		_state._vm->_gameMinute % 10, Common::Point(201, 25));
+
+	// AM/PM indicator
+	PictureResource *pic = _state._vm->_bVoy->boltEntry(_state._vm->_voy._isAM ? 272 : 273)._picResource;
+	_state._vm->_graphicsManager.sDrawPic(pic, *_state._vm->_graphicsManager._vPort, 
+		Common::Point(215, 27));
+}
+
 /*------------------------------------------------------------------------*/
 
 ViewPortListResource::ViewPortListResource(BoltFilesState &state, const byte *src) {

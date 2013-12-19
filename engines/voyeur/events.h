@@ -81,7 +81,7 @@ public:
 	int _field46E;
 	int _field470;
 	int _field472;
-	int _checkTransitionId;
+	int _transitionId;
 	int _field476;
 	int _field478;
 	int _field47A;

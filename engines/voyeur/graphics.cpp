@@ -553,7 +553,7 @@ error("TODO: var22/var24/var2C not initialised before use?");
 	}
 }
 
-void GraphicsManager::drawANumber(DisplayResource *display, int num, int offset) {
+void GraphicsManager::drawANumber(DisplayResource *display, int num, const Common::Point &pt) {
 	warning("TODO: drawANumber");
 }
 

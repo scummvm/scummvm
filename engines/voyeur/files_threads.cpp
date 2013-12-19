@@ -557,11 +557,11 @@ void ThreadResource::parsePlayCommands() {
 				int count = READ_LE_UINT16(dataP + 2);
 				_vm->_voy._field476 = READ_LE_UINT16(dataP + 4);
 
-				if (_vm->_voy._checkTransitionId != count) {
-					if (_vm->_voy._checkTransitionId > 1)
+				if (_vm->_voy._transitionId != count) {
+					if (_vm->_voy._transitionId > 1)
 						_vm->_voy._field478 &= ~0x100;
 
-					_vm->_voy._checkTransitionId = count;
+					_vm->_voy._transitionId = count;
 					_vm->_gameMinute = LEVEL_M[count - 1];
 					_vm->_gameHour = LEVEL_H[count - 1];
 					//_vm->_v2A0A2 = 0;
@@ -569,7 +569,7 @@ void ThreadResource::parsePlayCommands() {
 					_vm->_voy._RTANum = 255;
 				}
 
-				_vm->_voy._isAM = (_vm->_voy._checkTransitionId == 6) ? 1 : 0;
+				_vm->_voy._isAM = (_vm->_voy._transitionId == 6) ? 1 : 0;
 			}
 
 			dataP += 6;
@@ -788,7 +788,7 @@ void ThreadResource::parsePlayCommands() {
 			break;
 
 		case 23:
-			_vm->_voy._checkTransitionId = 17;
+			_vm->_voy._transitionId = 17;
 			_vm->_voy._field472 = -1;
 			loadTheApt();
 			_vm->_voy._field472 = 144;
@@ -1158,7 +1158,7 @@ int ThreadResource::doApt() {
 	}
 
 	freeTheApt();
-	if (_vm->_voy._checkTransitionId == 1 && hotspotId == 0)
+	if (_vm->_voy._transitionId == 1 && hotspotId == 0)
 		_vm->checkTransition();
 
 	if (!hotspotId)
@@ -1191,7 +1191,7 @@ int ThreadResource::doInterface() {
 	if (_vm->_voy._RTVNum >= _vm->_voy._field476 || _vm->_voy._RTVNum < 0)
 		_vm->_voy._RTVNum = _vm->_voy._field476 - 1;
 
-	if (_vm->_voy._checkTransitionId < 15 && (_vm->_voy._field476 - 3) < _vm->_voy._RTVNum) {
+	if (_vm->_voy._transitionId < 15 && (_vm->_voy._field476 - 3) < _vm->_voy._RTVNum) {
 		_vm->_voy._RTVNum = _vm->_voy._field476;
 		_vm->makeViewFinder();
 
@@ -1298,16 +1298,16 @@ int ThreadResource::doInterface() {
 
 		if (_vm->_voy._RTVNum & 2) {
 			_vm->_graphicsManager.drawANumber(*_vm->_graphicsManager._vPort, 
-				10 / _vm->_gameMinute, 0x1900BE);
+				10 / _vm->_gameMinute, Common::Point(190, 25));
 			_vm->_graphicsManager.drawANumber(*_vm->_graphicsManager._vPort, 
-				10 % _vm->_gameMinute, 0x1900BE);
+				10 % _vm->_gameMinute, Common::Point(190, 25));
 
 			if (_vm->_voy._RTANum & 4) {
 				int v = 10 / _vm->_gameHour;
 				_vm->_graphicsManager.drawANumber(*_vm->_graphicsManager._vPort, 
-					v == 0 ? 10 : v, 0x1900BE);
+					v == 0 ? 10 : v, Common::Point(190, 25));
 				_vm->_graphicsManager.drawANumber(*_vm->_graphicsManager._vPort, 
-					_vm->_gameHour % 10, 0x1900AC);
+					_vm->_gameHour % 10, Common::Point(172, 25));
 
 				pic = _vm->_bVoy->boltEntry(274)._picResource;
 				_vm->_graphicsManager.sDrawPic(pic, *_vm->_graphicsManager._vPort, 
@@ -1325,9 +1325,9 @@ int ThreadResource::doInterface() {
 				(_vm->_voy._fadeFunc != NULL) && (pt.x == 0))) {
 			_vm->_eventsManager.getMouseInfo();
 
-			if (_vm->_voy._checkTransitionId == 15) {
+			if (_vm->_voy._transitionId == 15) {
 				var8 = 20;
-				_vm->_voy._checkTransitionId = 17;
+				_vm->_voy._transitionId = 17;
 				_vm->_soundManager.stopVOCPlay();
 				_vm->checkTransition();
 				_vm->_voy._mouseClicked = true;
@@ -1433,7 +1433,7 @@ void ThreadResource::clearButtonFlag(int idx, byte bits) {
 }
 
 void ThreadResource::loadTheApt() {
-	switch (_vm->_voy._checkTransitionId) {
+	switch (_vm->_voy._transitionId) {
 	case 1:
 	case 2:
 	case 5:
@@ -1551,7 +1551,7 @@ void ThreadResource::doAptAnim(int mode) {
 	}
 
 	int id2 = (id == 0x6C00 || id == 0x6F00) ? 1 : 2;
-	switch (_vm->_voy._checkTransitionId) {
+	switch (_vm->_voy._transitionId) {
 	case 3:
 		id += id2 << 8;
 		break;
