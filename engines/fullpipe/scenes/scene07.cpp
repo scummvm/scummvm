@@ -77,7 +77,18 @@ void sceneHandler07_closeLuke() {
 }
 
 void sceneHandler07_hideLuke() {
-	warning("STUB: sceneHandler07_hideLuke()");
+	g_fullpipe->_currentScene->getStaticANIObject1ById(ANI_LUKE, -1)->hide();
+
+	Movement *mov = g_fullpipe->_currentScene->getStaticANIObject1ById(ANI_CORNERSITTER, -1)->_movement;
+
+	if (mov) {
+		if (mov->_id == MV_CST_CLOSELUKE) {
+			StaticANIObject *ani = g_fullpipe->_currentScene->getStaticANIObject1ById(ANI_HOOLIGAN, -1);
+
+			ani->changeStatics2(ST_HGN_LOOK);
+			ani->_flags &= 0xFFFB;
+		}
+	}
 }
 
 void sceneHandler07_showBox() {

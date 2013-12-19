@@ -148,6 +148,7 @@ namespace Fullpipe {
 #define MSG_UPDATEBOTTLE 613
 #define MV_BLK_CLOSE 911
 #define MV_BLK_OPEN 910
+#define MV_CST_CLOSELUKE 807
 #define MV_EGTR_FATASK 5332
 #define MV_IN1MAN_SLEEP 5111
 #define MV_BDG_OPEN 1379
@@ -369,6 +370,7 @@ namespace Fullpipe {
 #define ST_EGTR_MID1 2863
 #define ST_EGTR_MID2 2869
 #define ST_EGTR_SLIM 336
+#define ST_HGN_LOOK 811
 #define ST_HGN_LUKE 810
 #define ST_HDL_BROKEN 3342
 #define ST_HDL_DOWN 625
