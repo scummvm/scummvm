@@ -28,6 +28,7 @@ namespace Fullpipe {
 class Statics;
 class Movement;
 class MctlConnectionPoint;
+class MovGraphLink;
 
 int startWalkTo(int objId, int objKey, int x, int y, int a5);
 int doSomeAnimation(int objId, int objKey, int a3);
@@ -61,6 +62,7 @@ public:
 	virtual MessageQueue *doWalkTo(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId) { return 0; }
 
 	void enableLinks(const char *linkName, bool enable);
+	MovGraphLink *getLinkByName(const char *name);
 };
 
 class MovGraphReact : public CObject {

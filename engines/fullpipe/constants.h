@@ -26,12 +26,14 @@
 namespace Fullpipe {
 
 #define ANI_BALLDROP 2685
+#define ANI_BATUTA 737
 #define ANI_BIGBALL 4923
 #define ANI_BIGLUK 909
 #define ANI_BOOT_1 4231
 #define ANI_BUTTON 598
 #define ANI_BUTTON_6 2988
 #define ANI_CLOCK 588
+#define ANI_CLOCK_8 2989
 #define ANI_CORNERSITTER 71
 #define ANI_DOMINO_3 2732
 #define ANI_DADAYASHIK 306
@@ -65,6 +67,7 @@ namespace Fullpipe {
 #define ANI_SC7_BOX 791
 #define ANI_SPEAKER_4 3275
 #define ANI_SPRING 542
+#define ANI_VMYATS 764
 #define MSG_CLICKBOTTLE 569
 #define MSG_CLICKBUTTON 609
 #define MSG_CLICKPLANK 549
@@ -148,6 +151,7 @@ namespace Fullpipe {
 #define MSG_UPDATEBOTTLE 613
 #define MV_BLK_CLOSE 911
 #define MV_BLK_OPEN 910
+#define MV_CLK8_GO 2990
 #define MV_CST_CLOSELUKE 807
 #define MV_EGTR_FATASK 5332
 #define MV_IN1MAN_SLEEP 5111
@@ -263,6 +267,8 @@ namespace Fullpipe {
 #define PIC_SC4_MASK 585
 #define PIC_SC4_PLANK 5183
 #define PIC_SC6_LADDER 1104
+#define PIC_SC8_ARCADENOW 1043
+#define PIC_SC8_LADDER 754
 #define PIC_SCD_SEL 734
 #define QU_BALL_WALKL 4920
 #define QU_BALL_WALKR 4919
@@ -364,6 +370,10 @@ namespace Fullpipe {
 #define SND_INTR_019 5220
 #define ST_BLK_CLOSED 912
 #define ST_BLK_OPEN 913
+#define ST_BTT_CHESHET 746
+#define ST_BTT_NOSPOON 739
+#define ST_BTT_SLEEPS 748
+#define ST_BTT_SPOON 741
 #define ST_CLK_CLOSED 590
 #define ST_CST_HANDLELESS 794
 #define ST_DYAS_LIES 318

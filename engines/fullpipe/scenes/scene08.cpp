@@ -27,6 +27,10 @@
 #include "fullpipe/constants.h"
 #include "fullpipe/scenes.h"
 #include "fullpipe/scene.h"
+#include "fullpipe/statics.h"
+#include "fullpipe/floaters.h"
+#include "fullpipe/motion.h"
+#include "fullpipe/gameloader.h"
 
 namespace Fullpipe {
 
@@ -53,7 +57,7 @@ void scene08_initScene(Scene *sc) {
 	if (batuta == g_fullpipe->getObjectEnumState(sO_TummyTrampie, sO_IsEating)) {
 		g_vars->scene08_batuta->changeStatics2(ST_BTT_SPOON);
 	} else if (batuta == g_fullpipe->getObjectEnumState(sO_TummyTrampie, sO_IsDrinking)) {
-		g_vars->scene08_batuta->changeStatics2(g_vars->scene08_batuta, ST_BTT_NOSPOON);
+		g_vars->scene08_batuta->changeStatics2(ST_BTT_NOSPOON);
 
 		g_vars->scene08_clock->startAnim(MV_CLK8_GO, 0, -1);
 		g_vars->scene08_clock->_movement->setDynamicPhaseIndex(3);
@@ -90,10 +94,10 @@ void scene08_initScene(Scene *sc) {
 
 	g_fullpipe->_currentScene = oldsc;
 
-	g_fullpipe->_floaters->init(getGameLoaderGameVar()->getSubVarByName("SC_8"));
+	g_fullpipe->_floaters->init(g_fullpipe->getGameLoaderGameVar()->getSubVarByName("SC_8"));
 	g_fullpipe->_floaters->genFlies(sc, 100, 100, 0, 0);
 
-	setArcadeOverlay(PIC_CSR_ARCADE3);
+	g_fullpipe->setArcadeOverlay(PIC_CSR_ARCADE3);
 }
 
 } // End of namespace Fullpipe

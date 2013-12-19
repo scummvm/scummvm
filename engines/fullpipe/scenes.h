@@ -184,6 +184,17 @@ public:
 	int scene07_lukePercent;
 	StaticANIObject *scene07_plusMinus;
 
+	StaticANIObject *scene08_batuta;
+	StaticANIObject *scene08_vmyats;
+	StaticANIObject *scene08_clock;
+	int scene08_var01;
+	int scene08_var02;
+	int scene08_var03;
+	int scene08_var04;
+	int scene08_var05;
+	int scene08_var06;
+	int scene08_var07;
+
 	PictureObject *selector;
 };
 

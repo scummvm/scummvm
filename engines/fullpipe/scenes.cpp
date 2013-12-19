@@ -143,6 +143,17 @@ Vars::Vars() {
 	scene07_lukePercent = 0;
 	scene07_plusMinus = 0;
 
+	scene08_batuta = 0;
+	scene08_vmyats = 0;
+	scene08_clock = 0;
+	scene08_var01 = 0;
+	scene08_var02 = 0;
+	scene08_var03 = 0;
+	scene08_var04 = 0;
+	scene08_var05 = 0;
+	scene08_var06 = 0;
+	scene08_var07 = 0;
+
 	selector = 0;
 }
 

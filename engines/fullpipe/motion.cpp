@@ -46,6 +46,12 @@ void MotionController::enableLinks(const char *linkName, bool enable) {
 	warning("STUB: MotionController::enableLinks()");
 }
 
+MovGraphLink *MotionController::getLinkByName(const char *name) {
+	warning("STUB: MotionController::getLinkByName()");
+
+	return 0;
+}
+
 bool MctlCompound::load(MfcArchive &file) {
 	debug(5, "MctlCompound::load()");
 
