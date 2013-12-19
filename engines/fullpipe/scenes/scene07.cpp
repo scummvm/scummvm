@@ -28,6 +28,8 @@
 #include "fullpipe/scenes.h"
 #include "fullpipe/scene.h"
 #include "fullpipe/statics.h"
+#include "fullpipe/messages.h"
+#include "fullpipe/behavior.h"
 
 namespace Fullpipe {
 
@@ -50,6 +52,82 @@ void scene07_initScene(Scene *sc) {
 
 		g_fullpipe->_currentScene = oldsc;
 	}
+}
+
+void sceneHandler07_openLuke() {
+	warning("STUB: sceneHandler07_openLuke()");
+}
+
+void sceneHandler07_closeLuke() {
+	warning("STUB: sceneHandler07_closeLuke()");
+}
+
+void sceneHandler07_hideLuke() {
+	warning("STUB: sceneHandler07_hideLuke()");
+}
+
+void sceneHandler07_showBox() {
+	warning("STUB: sceneHandler07_showBox()");
+}
+
+void sceneHandler07_hideBox() {
+	warning("STUB: sceneHandler07_hideBox()");
+}
+
+int sceneHandler07(ExCommand *ex) {
+	if (ex->_messageKind != 17)
+		return 0;
+
+	switch(ex->_messageNum) {
+	case MSG_SC7_OPENLUKE:
+		sceneHandler07_openLuke();
+		break;
+
+	case MSG_SC7_PULL:
+		if (g_vars->scene07_plusMinus->_statics->_staticsId == ST_PMS_MINUS)
+			g_vars->scene07_plusMinus->_statics = g_vars->scene07_plusMinus->getStaticsById(ST_PMS_PLUS);
+		else
+			g_vars->scene07_plusMinus->_statics = g_vars->scene07_plusMinus->getStaticsById(ST_PMS_MINUS);
+
+		break;
+
+    case MSG_SC7_CLOSELUKE:
+		sceneHandler07_closeLuke();
+		break;
+
+	case MSG_SC7_HIDELUKE:
+		sceneHandler07_hideLuke();
+		break;
+
+	case MSG_SC7_SHOWBOX:
+		sceneHandler07_showBox();
+		break;
+
+	case MSG_SC7_HIDEBOX:
+		sceneHandler07_hideBox();
+		break;
+
+	case 33:
+		{
+			int res = 0;
+
+			if (g_fullpipe->_aniMan2) {
+				if (g_fullpipe->_aniMan2->_ox < g_fullpipe->_sceneRect.left + 200)
+					g_fullpipe->_currentScene->_x = g_fullpipe->_aniMan2->_ox - g_fullpipe->_sceneRect.left - 300;
+
+				if (g_fullpipe->_aniMan2->_ox > g_fullpipe->_sceneRect.right - 200)
+					g_fullpipe->_currentScene->_x = g_fullpipe->_aniMan2->_ox - g_fullpipe->_sceneRect.right + 300;
+
+				res = 1;
+			}
+
+			g_fullpipe->_behaviorManager->updateBehaviors();
+
+			return res;
+		}
+	}
+
+	return 0;
 }
 
 } // End of namespace Fullpipe
