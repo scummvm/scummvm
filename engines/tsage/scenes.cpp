@@ -275,10 +275,7 @@ Scene::Scene() : _sceneBounds(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT),
 	_oldSceneBounds = Rect(4000, 4000, 4100, 4100);
 	Common::fill(&_zoomPercents[0], &_zoomPercents[256], 0);
 
-	_field12 = 0;
 	_screenNumber = 0;
-	_fieldA = 0;
-	_fieldE = 0;
 }
 
 Scene::~Scene() {
@@ -288,15 +285,23 @@ void Scene::synchronize(Serializer &s) {
 	if (s.getVersion() >= 2)
 		StripCallback::synchronize(s);
 
-	s.syncAsSint32LE(_field12);
+	if (s.getVersion() < 14) {
+		int useless = 0;
+		s.syncAsSint32LE(useless);
+	}
+
 	s.syncAsSint32LE(_screenNumber);
 	s.syncAsSint32LE(_activeScreenNumber);
 	s.syncAsSint32LE(_sceneMode);
 	_backgroundBounds.synchronize(s);
 	_sceneBounds.synchronize(s);
 	_oldSceneBounds.synchronize(s);
-	s.syncAsSint16LE(_fieldA);
-	s.syncAsSint16LE(_fieldE);
+
+	if (s.getVersion() < 14) {
+		int useless = 0;
+		s.syncAsSint16LE(useless);
+		s.syncAsSint16LE(useless);
+	}
 
 	for (int i = 0; i < 256; ++i)
 		s.syncAsUint16LE(_enabledSections[i]);
@@ -309,7 +314,6 @@ void Scene::synchronize(Serializer &s) {
 
 void Scene::postInit(SceneObjectList *OwnerList) {
 	_action = NULL;
-	_field12 = 0;
 	_sceneMode = 0;
 }
 
