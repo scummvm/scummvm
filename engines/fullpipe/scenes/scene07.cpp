@@ -81,11 +81,14 @@ void sceneHandler07_hideLuke() {
 }
 
 void sceneHandler07_showBox() {
-	warning("STUB: sceneHandler07_showBox()");
+	StaticANIObject *box = g_fullpipe->_currentScene->getStaticANIObject1ById(ANI_SC7_BOX, -1);
+
+	box->show1(492, 474, MV_SC7_BOX_default, 0);
+	box->_priority = 25;
 }
 
 void sceneHandler07_hideBox() {
-	warning("STUB: sceneHandler07_hideBox()");
+	g_fullpipe->_currentScene->getStaticANIObject1ById(ANI_SC7_BOX, -1)->hide();
 }
 
 int sceneHandler07(ExCommand *ex) {

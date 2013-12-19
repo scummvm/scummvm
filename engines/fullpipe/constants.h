@@ -62,6 +62,7 @@ namespace Fullpipe {
 #define ANI_SC2_BOX 1020
 #define ANI_SC4_BOOT 1035
 #define ANI_SC4_COIN 690
+#define ANI_SC7_BOX 791
 #define ANI_SPEAKER_4 3275
 #define ANI_SPRING 542
 #define MSG_CLICKBOTTLE 569
@@ -203,6 +204,7 @@ namespace Fullpipe {
 #define MV_PNK_WEIGHTLEFT 541
 #define MV_PNK_WEIGHTRIGHT 502
 #define MV_SC4_COIN_default 1029
+#define MV_SC7_BOX_default 792
 #define MV_SPK4_PLAY 3276
 #define MV_SPR_LOWER 543
 #define PIC_CMN_EVAL 3468
