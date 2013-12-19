@@ -10101,7 +10101,7 @@ void Scene1625::signal() {
 			break;
 		}
 		//_field412 = _stripManager._field2E8;
-		_stripManager._field2E8 = 0;
+		_stripManager._currObj44Id = 0;
 		break;
 	case 1625:
 		_tealHead.postInit();

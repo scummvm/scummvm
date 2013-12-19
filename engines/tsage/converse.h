@@ -212,8 +212,8 @@ private:
 	int getNewIndex(int newId);
 public:
 	int _stripNum;
-	int _obj44Index;
-	int _field20;
+	int _obj44ListIndex;
+	int _useless;
 	int _sceneNumber;
 	Rect _sceneBounds;
 	ConversationChoiceDialog _choiceDialog;
@@ -221,8 +221,8 @@ public:
 	StripCallback *_callbackObject;
 	Speaker *_activeSpeaker;
 	bool _textShown;
-	bool _field2E6;
-	int _field2E8;
+	bool _uselessFl;
+	int _currObj44Id;
 	int _exitMode;
 	Common::Array<Obj44> _obj44List;
 	Common::Array<byte> _script;

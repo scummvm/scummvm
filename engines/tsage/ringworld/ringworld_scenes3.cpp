@@ -799,7 +799,7 @@ void Scene2100::Action9::signal() {
 		scene->_stripManager.start(6010, this);
 		break;
 	case 6:
-		if (scene->_stripManager._field2E8 != 165)
+		if (scene->_stripManager._currObj44Id != 165)
 			setAction(&scene->_action10);
 		else
 			setAction(&scene->_action11);
@@ -1010,7 +1010,7 @@ void Scene2100::Action12::signal() {
 		scene->_stripManager.start(6052, this);
 		break;
 	case 8:
-		if (scene->_stripManager._field2E8 == 320)
+		if (scene->_stripManager._currObj44Id == 320)
 			g_globals->setFlag(74);
 		setDelay(30);
 		break;
@@ -2352,11 +2352,11 @@ void Scene2150::Action2::signal() {
 		scene->_hotspot14.setStrip(6);
 		scene->_hotspot14.setPosition(Common::Point(59, 54));
 
-		if (scene->_stripManager._field2E8 == 15) {
+		if (scene->_stripManager._currObj44Id == 15) {
 			scene->_hotspot14.setFrame(5);
 			RING_INVENTORY._ale._sceneNumber = 1;
 		} else {
-			scene->_hotspot14.setFrame(scene->_stripManager._field2E8 - 5);
+			scene->_hotspot14.setFrame(scene->_stripManager._currObj44Id - 5);
 		}
 
 		g_globals->_player.setFrame(1);

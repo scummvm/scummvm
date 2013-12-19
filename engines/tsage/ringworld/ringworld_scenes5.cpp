@@ -462,7 +462,7 @@ void Scene4000::Action12::signal() {
 		break;
 	case 2:
 		g_globals->setFlag(32);
-		if (scene->_stripManager._field2E8 == 275) {
+		if (scene->_stripManager._currObj44Id == 275) {
 			g_globals->setFlag(82);
 			ADD_MOVER_NULL(scene->_guardRock, 292, 138);
 			ADD_PLAYER_MOVER(283, 147);
@@ -471,7 +471,7 @@ void Scene4000::Action12::signal() {
 		}
 		break;
 	case 3:
-		if (scene->_stripManager._field2E8 == 275) {
+		if (scene->_stripManager._currObj44Id == 275) {
 			g_globals->_sceneManager.changeScene(4100);
 		} else {
 			ADD_PLAYER_MOVER_THIS(scene->_guardRock, 300, 132);
