@@ -982,6 +982,10 @@ void sceneHandler04_leaveScene() {
 		}
 	}
 
+	if (!ex) {
+		error("sceneHandler04_leaveScene(): Cannot find exit");
+	}
+
 	ex->_y = g_vars->scene04_bottle->_oy - 304;
 
 	mq->chain(0);
