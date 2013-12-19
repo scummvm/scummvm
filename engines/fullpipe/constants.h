@@ -403,6 +403,7 @@ namespace Fullpipe {
 #define ST_LBN_9N 2777
 #define ST_LBN_9P 2778
 #define ST_LUK_CLOSED 805
+#define ST_LUK_OPEN 806
 #define ST_MAN_GOLADDER 450
 #define ST_MAN_GOLADDER2 2843
 #define ST_MAN_EMPTY 476
