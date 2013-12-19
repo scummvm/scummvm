@@ -1135,7 +1135,7 @@ int ThreadResource::doApt() {
 		_vm->_graphicsManager.flipPage();
 		_vm->_eventsManager.sWaitFlip();
 
-	} while (!_vm->shouldQuit() && (!_vm->_voy._lastInplay || hotspotId == -1));
+	} while (!_vm->shouldQuit() && (!_vm->_voy._mouseClicked || hotspotId == -1));
 
 	pt = _vm->_eventsManager.getMousePos();
 	_doAptPosX = pt.x;
@@ -1331,7 +1331,7 @@ int ThreadResource::doInterface() {
 				_vm->_voy._field474 = 17;
 				_vm->_soundManager.stopVOCPlay();
 				_vm->checkTransition();
-				_vm->_voy._lastInplay = true;
+				_vm->_voy._mouseClicked = true;
 			} else {
 				_vm->_voy._field478 = 1;
 				_currentMouseX = pt.x;
@@ -1355,7 +1355,7 @@ int ThreadResource::doInterface() {
 			}
 		}
 	} while (!_vm->_voy._fadeFunc && !_vm->shouldQuit() && 
-		(!_vm->_voy._lastInplay || var8 == -1));
+		(!_vm->_voy._mouseClicked || var8 == -1));
 
 	_vm->_voy._field478 |= 1;
 	_vm->_bVoy->freeBoltGroup(_vm->_playStamp1);

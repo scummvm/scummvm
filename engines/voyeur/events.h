@@ -124,13 +124,13 @@ public:
 	int _fadeICF0;
 	int _fadeICF1;
 	void (*_fadeFunc)();
-	int _lastInplay;
+	bool _mouseClicked;
 	int _incriminate;
 	int _policeEvent;
 
 	// Fields not originally in _voy, but I'm putting in for convenience
 	int _newIncriminate;
-	int _newLastInplay;
+	bool _newMouseClicked;
 	int _newFadeICF1;
 	void (*_newFadeFunc)();
 };

@@ -237,14 +237,15 @@ void EventsManager::pollEvents() {
 			return;
 		case Common::EVENT_LBUTTONDOWN:
 			_mouseButton = 1;
-			_vm->_voy._incriminate = true;
+			_vm->_voy._newMouseClicked = true;
 			return;
 		case Common::EVENT_RBUTTONDOWN:
 			_mouseButton = 2;
+			_vm->_voy._newMouseClicked = true;
 			return;
 		case Common::EVENT_LBUTTONUP:
 		case Common::EVENT_RBUTTONUP:
-			_vm->_voy._incriminate = false;
+			_vm->_voy._newMouseClicked = false;
 			_mouseButton = 0;
 			return;
 		case Common::EVENT_MOUSEMOVE:
@@ -437,7 +438,7 @@ void EventsManager::getMouseInfo() {
 	}
 
 	_vm->_voy._incriminate = _vm->_voy._newIncriminate;
-	_vm->_voy._lastInplay = _vm->_voy._newLastInplay;
+	_vm->_voy._mouseClicked = _vm->_voy._newMouseClicked;
 	_vm->_voy._fadeFunc = _vm->_voy._newFadeFunc;
 	_vm->_voy._fadeICF1 = _vm->_voy._newFadeICF1;
 }
