@@ -579,7 +579,7 @@ public:
 	Hotspot11 _hotspot11;
 	Hotspot12 _hotspot12;
 	Rect _rect1;
-	int _field30A;
+	int _sceneMode;
 
 	Scene2230();
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
