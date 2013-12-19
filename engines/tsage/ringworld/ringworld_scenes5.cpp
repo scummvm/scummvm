@@ -4222,7 +4222,12 @@ void Scene4300::process(Event &event) {
 
 void Scene4301::Action1::synchronize(Serializer &s) {
 	Action::synchronize(s);
-	s.syncAsSint16LE(_field34E);
+
+	if (s.getVersion() < 14) {
+		int useless = 0;
+		s.syncAsSint16LE(useless);
+	}
+
 	for (int idx = 0; idx < 6; ++idx)
 		s.syncAsSint16LE(_indexList[idx]);
 }
@@ -4268,7 +4273,6 @@ void Scene4301::Action1::signal() {
 		scene->_hotspot3.fixPriority(255);
 		scene->_hotspot3.hide();
 
-		_field34E = 0;
 		_state = 0;
 		_actionIndex = 2;
 		break;
