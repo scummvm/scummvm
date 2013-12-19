@@ -941,8 +941,8 @@ void ViewPortResource::setupViewPort() {
 		&GraphicsManager::restoreMCGASaveRect);
 }
 
-void ViewPortResource::setupViewPort(PictureResource *pic) {
-	setupViewPort(pic, NULL,
+void ViewPortResource::setupViewPort(PictureResource *pic, Common::Rect *clipRect) {
+	setupViewPort(pic, clipRect,
 		&GraphicsManager::setupMCGASaveRect, &GraphicsManager::addRectOptSaveRect,
 		&GraphicsManager::restoreMCGASaveRect);
 }
@@ -1045,7 +1045,7 @@ int ViewPortResource::drawText(const Common::String &msg) {
 	if (fontInfo._fontFlags & DISPFLAG_1) {
 		gfxManager._drawPtr->_pos = Common::Point(_fontRect.left, _fontRect.top);
 		gfxManager._drawPtr->_penColor = fontInfo._backColor;
-		sFillBox(_fontRect.width());
+		sFillBox(_fontRect.width(), _fontRect.height());
 	}
 
 	bool saveBack = gfxManager._saveBack;
@@ -1160,10 +1160,23 @@ int ViewPortResource::textWidth(const Common::String &msg) {
 
 void ViewPortResource::addSaveRect(int pageIndex, const Common::Rect &r) {
 	// TODO
+	warning("TODO: addSaveRect");
 }
 
-void ViewPortResource::sFillBox(int width) {
-	// TODO
+void ViewPortResource::sFillBox(int width, int height) {
+	bool saveBack = _state._vm->_graphicsManager._saveBack;
+	_state._vm->_graphicsManager._saveBack = false;
+
+	PictureResource pr;
+	pr._flags = 1;
+	pr._select = 0xff;
+	pr._pick = 0;
+	pr._onOff = _state._vm->_graphicsManager._drawPtr->_penColor;
+	pr._bounds = Common::Rect(0, 0, width, height);
+
+	_state._vm->_graphicsManager.sDrawPic(&pr, this, 
+		_state._vm->_graphicsManager._drawPtr->_pos);
+	_state._vm->_graphicsManager._saveBack = saveBack;
 }
 
 void ViewPortResource::fillPic(byte onOff) {

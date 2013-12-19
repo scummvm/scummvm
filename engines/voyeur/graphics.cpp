@@ -554,7 +554,8 @@ error("TODO: var22/var24/var2C not initialised before use?");
 }
 
 void GraphicsManager::drawANumber(DisplayResource *display, int num, const Common::Point &pt) {
-	warning("TODO: drawANumber");
+	PictureResource *pic = _vm->_bVoy->boltEntry(num + 261)._picResource;
+	sDrawPic(pic, display, pt);
 }
 
 void GraphicsManager::fillPic(DisplayResource *display, byte onOff) {
@@ -692,7 +693,44 @@ void GraphicsManager::screenReset() {
 }
 
 void GraphicsManager::doScroll(const Common::Point &pt) {
-	error("TODO: doScroll");
+	Common::Rect clipRect(72, 47, 240, 148);
+	(*_vm->_graphicsManager._vPort)->setupViewPort(NULL, &clipRect);
+
+	PictureResource *pic;
+	int base = 0;
+	switch (_vm->_voy._transitionId) {
+	case 0:
+		break;
+	case 1:
+	case 2:
+	case 5:
+	case 6:
+	case 7:
+	case 8:
+	case 9:
+		base = 0xB00;
+		break;
+	case 3:
+		base = 0xC00;
+		break;
+	default:
+		base = 0xD00;
+	}
+
+	if (base) {
+		pic = _vm->_bVoy->boltEntry(base + 3)._picResource;
+		sDrawPic(pic, *_vPort, Common::Point(784 - pt.x + 712, 150 - pt.y - 104));
+		pic = _vm->_bVoy->boltEntry(base + 4)._picResource;
+		sDrawPic(pic, *_vPort, Common::Point(784 - pt.x + 712, 150 - pt.y - 44));
+		pic = _vm->_bVoy->boltEntry(base + 5)._picResource;
+		sDrawPic(pic, *_vPort, Common::Point(784 - pt.x + 712, 150 - pt.y + 16));
+		pic = _vm->_bVoy->boltEntry(base + 6)._picResource;
+		sDrawPic(pic, *_vPort, Common::Point(784 - pt.x + 712, 150 - pt.y + 76));
+		pic = _vm->_bVoy->boltEntry(base + 7)._picResource;
+		sDrawPic(pic, *_vPort, Common::Point(784 - pt.x + 712, 150 - pt.y + 136));
+	}
+
+	(*_vPort)->setupViewPort();
 }
 
 void GraphicsManager::fadeDownICF1(int steps) {

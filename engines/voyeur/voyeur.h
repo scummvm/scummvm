@@ -120,6 +120,9 @@ public:
 	int _checkTransitionId;
 	int _gameHour;
 	int _gameMinute;
+	int _flashTimeVal;
+	bool _flashTimeFlag;
+	int _timeBarVal;
 public:
 	VoyeurEngine(OSystem *syst, const VoyeurGameDescription *gameDesc);
 	virtual ~VoyeurEngine();
@@ -149,7 +152,7 @@ public:
 	void makeViewFinder();
 	void initIFace();
 	void checkTransition();
-	void doTimeBar(int v);
+	void doTimeBar(bool force);
 	void flashTimeBar();
 	void checkPhoneCall();
 };

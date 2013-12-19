@@ -295,7 +295,7 @@ void VoyeurEngine::makeViewFinder() {
 	}
 
 	(*_graphicsManager._vPort)->drawIfaceTime();
-	doTimeBar(1);
+	doTimeBar(true);
 	pal->startFade();
 
 	(*_graphicsManager._vPort)->_flags |= 8;
@@ -315,7 +315,40 @@ void VoyeurEngine::makeViewFinder() {
 }
 
 void VoyeurEngine::initIFace(){
-	error("TODO: initIFace");
+	int playStamp1 = _playStamp1;
+	switch (_voy._transitionId) {
+	case 0:
+		break;
+	case 1:
+	case 2:
+	case 5:
+	case 6:
+	case 7:
+	case 8:
+	case 9:
+		_playStamp1 = 0xB00;
+		break;
+	case 3:
+		_playStamp1 = 0xC00;
+		break;
+	default:
+		_playStamp1 = 0xD00;
+		break;
+	}
+	if (playStamp1 != -1)
+		_bVoy->freeBoltGroup(playStamp1, true);
+
+	_bVoy->getBoltGroup(_playStamp1);
+	CMapResource *pal = _bVoy->boltEntry(_playStamp1 + 2)._cMapResource;
+	pal->startFade();
+
+	_graphicsManager.doScroll(_eventsManager.getMousePos());
+	
+	_voy._field4386 = _bVoy->memberAddr(_playStamp1);
+
+	// Note: the original did two loops to preload members here, which is
+	// redundant for ScummVM, since computers are faster these days, and
+	// getting resources as needed will be fast enough.
 }
 
 void VoyeurEngine::checkTransition(){
@@ -356,12 +389,49 @@ void VoyeurEngine::checkTransition(){
 	}
 }
 
-void VoyeurEngine::doTimeBar(int v) {
-	error("TODO: doTimeBar");
+void VoyeurEngine::doTimeBar(bool force) {
+	flashTimeBar();
+
+	if ((force || _timeBarVal != _voy._RTVNum) && _voy._field476 > 0) {
+		if (_voy._RTVNum > _voy._field476 || _voy._RTVNum < 0)
+			_voy._RTVNum = _voy._field476 - 1;
+		
+		_timeBarVal = _voy._RTVNum;
+		int height = ((_voy._field476 - _voy._RTVNum) * 59) / _voy._field476;
+		int fullHeight = MAX(151 - height, 93);
+
+		_graphicsManager._drawPtr->_penColor = 134;
+		_graphicsManager._drawPtr->_pos = Common::Point(39, 92);
+
+		(*_graphicsManager._vPort)->sFillBox(6, fullHeight - 92);
+		if (height > 0) {
+			_graphicsManager.setColor(215, 238, 238, 238);
+			_eventsManager._intPtr.field38 = 1;
+			_eventsManager._intPtr._hasPalette = true;
+
+			_graphicsManager._drawPtr->_penColor = 215;
+			_graphicsManager._drawPtr->_pos = Common::Point(39, fullHeight);
+			(*_graphicsManager._vPort)->sFillBox(6, height);
+		}
+	}
 }
 
 void VoyeurEngine::flashTimeBar(){
-	error("TODO: flashTimeBar");
+	if (_voy._RTVNum >= 0 && (_voy._field476 - _voy._RTVNum) < 11 &&
+		(_eventsManager._intPtr.field1A >= (_flashTimeVal + 15) ||
+		_eventsManager._intPtr.field1A < _flashTimeVal)) {
+		// Within time range
+		_flashTimeVal = _eventsManager._intPtr.field1A;
+
+		if (_flashTimeFlag)
+			_graphicsManager.setColor(240, 220, 20, 20);
+		else
+			_graphicsManager.setColor(240, 220, 220, 220);
+		
+		_eventsManager._intPtr.field38 = 1;
+		_eventsManager._intPtr._hasPalette = true;
+		_flashTimeFlag = !_flashTimeFlag;
+	}
 }
 
 void VoyeurEngine::checkPhoneCall() {

@@ -47,6 +47,9 @@ VoyeurEngine::VoyeurEngine(OSystem *syst, const VoyeurGameDescription *gameDesc)
 	_checkTransitionId = -1;
 	_gameHour = 0;
 	_gameMinute = 0;
+	_flashTimeVal = 0;
+	_flashTimeFlag = false;
+	_timeBarVal = -1;
 
 	initialiseManagers();
 }

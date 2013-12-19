@@ -303,11 +303,11 @@ public:
 	virtual ~ViewPortResource();
 
 	void setupViewPort();
-	void setupViewPort(PictureResource *pic);
+	void setupViewPort(PictureResource *pic, Common::Rect *clipRect = NULL);
 	int drawText(const Common::String &msg);
 	int textWidth(const Common::String &msg);
 	void addSaveRect(int pageIndex, const Common::Rect &r);
-	void sFillBox(int width);
+	void sFillBox(int width, int height);
 	void fillPic(byte onOff = 0);
 	void drawIfaceTime();
 };

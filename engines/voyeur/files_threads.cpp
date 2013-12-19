@@ -1230,7 +1230,7 @@ int ThreadResource::doInterface() {
 	_vm->_voy._field478 &= ~1;
 
 	do {
-		_vm->doTimeBar(1);
+		_vm->doTimeBar(true);
 		_vm->_eventsManager.getMouseInfo();
 
 		pt = _vm->_eventsManager.getMousePos();
