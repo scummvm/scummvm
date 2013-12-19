@@ -1566,9 +1566,13 @@ void MGM::updateAnimStatics(StaticANIObject *ani, int staticsId) {
 		ani->queueMessageQueue(0);
 		ani->_movement->gotoLastFrame();
 		ani->_statics = ani->_movement->_staticsObj2;
+
+		int x = ani->_movement->_ox;
+		int y = ani->_movement->_oy;
+
 		ani->_movement = 0;
 
-		ani->setOXY(ani->_movement->_ox, ani->_movement->_oy);
+		ani->setOXY(x, y);
 	}
 
 	if (ani->_statics) {
