@@ -39,6 +39,7 @@ namespace Fullpipe {
 #define ANI_EGGIE 4929
 #define ANI_HAND 601
 #define ANI_HANDLE 622
+#define ANI_HOOLIGAN 808
 #define ANI_IN1MAN 5110
 #define ANI_INV_COIN 875
 #define ANI_INV_EGGAPL 1564
@@ -50,6 +51,7 @@ namespace Fullpipe {
 #define ANI_INV_MAP 5321
 #define ANI_KOZAWKA 495
 #define ANI_LIFTBUTTON 2751
+#define ANI_LUKE 803
 #define ANI_MAMASHA 656
 #define ANI_MAMASHA_4 660
 #define ANI_MAN 322
@@ -261,6 +263,7 @@ namespace Fullpipe {
 #define PIC_SCD_SEL 734
 #define QU_BALL_WALKL 4920
 #define QU_BALL_WALKR 4919
+#define QU_CST_CLOSELUKE 820
 #define QU_EGG6_GOL 4936
 #define QU_EGG6_GOR 4935
 #define QU_EGTR_MD2_SHOW 4698
@@ -364,6 +367,7 @@ namespace Fullpipe {
 #define ST_EGTR_MID1 2863
 #define ST_EGTR_MID2 2869
 #define ST_EGTR_SLIM 336
+#define ST_HGN_LUKE 810
 #define ST_HDL_BROKEN 3342
 #define ST_HDL_DOWN 625
 #define ST_HDL_PLUGGED 2397
@@ -394,6 +398,7 @@ namespace Fullpipe {
 #define ST_LBN_8P 2775
 #define ST_LBN_9N 2777
 #define ST_LBN_9P 2778
+#define ST_LUK_CLOSED 805
 #define ST_MAN_GOLADDER 450
 #define ST_MAN_GOLADDER2 2843
 #define ST_MAN_EMPTY 476

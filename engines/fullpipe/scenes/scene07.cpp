@@ -59,7 +59,21 @@ void sceneHandler07_openLuke() {
 }
 
 void sceneHandler07_closeLuke() {
-	warning("STUB: sceneHandler07_closeLuke()");
+	g_fullpipe->_currentScene->getStaticANIObject1ById(ANI_LUKE, -1)->changeStatics2(ST_LUK_CLOSED);
+
+	if (!g_vars->scene07_lukeAnim) {
+		StaticANIObject *ani = g_fullpipe->_currentScene->getStaticANIObject1ById(ANI_CORNERSITTER, -1);
+
+		g_vars->scene07_lukeAnim = g_fullpipe->_behaviorManager->getBehaviorEntryInfoByMessageQueueDataId(ani, ST_CST_HANDLELESS, QU_CST_CLOSELUKE);
+	}
+
+	g_vars->scene07_lukePercent = g_vars->scene07_lukeAnim->_percent;
+	g_vars->scene07_lukeAnim->_percent = 0;
+
+	StaticANIObject *ani = g_fullpipe->_currentScene->getStaticANIObject1ById(ANI_HOOLIGAN, -1);
+
+	ani->changeStatics2(ST_HGN_LUKE);
+	ani->show1(-1, -1, -1, 0);
 }
 
 void sceneHandler07_hideLuke() {
