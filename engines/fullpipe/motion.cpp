@@ -318,9 +318,6 @@ MessageQueue *MctlLadder::method34(StaticANIObject *subj, int xpos, int ypos, in
 	if (mq) {
 		if (mq->chain(subj))
 			return mq;
-
-	} else {
-		delete mq;
 	}
 
 	return 0;
