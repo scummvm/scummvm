@@ -63,7 +63,7 @@ public:
 
 class SVoy {
 public:
-	int _delaySecs;
+	int _isAM;
 	int _RTANum;
 	int _RTVNum;
 	int _switchBGNum;
@@ -81,7 +81,7 @@ public:
 	int _field46E;
 	int _field470;
 	int _field472;
-	int _field474;
+	int _checkTransitionId;
 	int _field476;
 	int _field478;
 	int _field47A;
@@ -192,8 +192,6 @@ public:
 	int _fadeStatus;
 
 	int _v2A0A2;
-	int _videoComputerNum;
-	int _videoComputerBut1;
 	int _videoComputerBut4;
 	int _videoDead;
 public:

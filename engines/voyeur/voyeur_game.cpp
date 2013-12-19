@@ -27,9 +27,9 @@ namespace Voyeur {
 
 void VoyeurEngine::addVideoEventStart() {
 	VoyeurEvent &e = _voy._events[_voy._evidence[19]];
-	e._computerNum = _eventsManager._videoComputerNum;
-	e._computerBut[0] = _eventsManager._videoComputerBut1;
-	e._computerBut[1] = _voy._delaySecs;
+	e._computerNum = _gameHour;
+	e._computerBut[0] = _gameMinute;
+	e._computerBut[1] = _voy._isAM;
 	e._computerBut[2] = 1;
 	e._computerBut[3] = _eventsManager._videoComputerBut4;
 	e._dead = _eventsManager._videoDead;
@@ -47,9 +47,9 @@ void VoyeurEngine::playStamp() {
 	ThreadResource *threadP = threadsList->_entries[0]->_threadResource;
 	threadP->initThreadStruct(0, 0);
 
-	_voy._delaySecs = 0;
-	_eventsManager._videoComputerNum = 9;
-	_eventsManager._videoComputerBut1 = 0;
+	_voy._isAM = 0;
+	_gameHour = 9;
+	_gameMinute = 0;
 	_eventsManager._v2A0A2 = 0;
 	_voy._field46E = 1;
 
@@ -111,7 +111,7 @@ void VoyeurEngine::playStamp() {
 			break;
 
 		case 16:
-			_voy._field474 = 17;
+			_voy._checkTransitionId = 17;
 			buttonId = threadP->doApt();
 			
 			switch (buttonId) {
@@ -134,7 +134,7 @@ void VoyeurEngine::playStamp() {
 
 		case 17:
 			doTapePlaying();
-			if (!checkForMurder() && _voy._field474 <= 15)
+			if (!checkForMurder() && _voy._checkTransitionId <= 15)
 				checkForIncriminate();
 
 			if (_voy._videoEventId != -1)
@@ -268,7 +268,41 @@ void VoyeurEngine::initIFace(){
 }
 
 void VoyeurEngine::checkTransition(){
-	error("TODO: checkTransition");
+	Common::String time, day;
+
+	if (_voy._checkTransitionId != _checkTransitionId) {
+		switch (_voy._checkTransitionId) {
+		case 0:
+			break;
+		case 1:
+		case 2:
+		case 3:
+		case 4:
+			day = SATURDAY;
+			break;
+		case 17: 
+			day = MONDAY;
+			break;
+		default:
+			day = SUNDAY;
+			break;
+		}
+
+		if (!day.empty()) {
+			_graphicsManager.fadeDownICF(6);
+
+			if (_voy._checkTransitionId != 17) {
+				const char *amPm = _voy._isAM ? AM : PM;
+				time = Common::String::format("%d:%02d%s",
+					_gameHour, _gameMinute, amPm);
+			}
+
+			doTransitionCard(day, time);
+			_eventsManager.delay(180);
+		}
+
+		_checkTransitionId = _voy._checkTransitionId;
+	}
 }
 
 void VoyeurEngine::doTimeBar(int v) {

@@ -53,7 +53,7 @@ void SoundManager::abortVOCMap() {
 }
 
 void SoundManager::stopVOCPlay() {
-	warning("TODO: stopVOCPlay()");
+	_mixer->stopHandle(_soundHandle);
 }
 
 void SoundManager::setVOCOffset(int offset) {

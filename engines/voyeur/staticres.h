@@ -41,6 +41,12 @@ extern const int COMP_BUT_TABLE[];
 
 extern const char *const VOC_FILENAMES[];
 
+extern const char *const SATURDAY;
+extern const char *const SUNDAY;
+extern const char *const MONDAY;
+extern const char *const AM;
+extern const char *const PM;
+
 } // End of namespace Voyeur
 
 #endif

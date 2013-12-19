@@ -44,6 +44,9 @@ VoyeurEngine::VoyeurEngine(OSystem *syst, const VoyeurGameDescription *gameDesc)
 	_controlPtr = NULL;
 	_bob = false;
 	_playStamp1 = _playStamp2 = 0;
+	_checkTransitionId = -1;
+	_gameHour = 0;
+	_gameMinute = 0;
 
 	initialiseManagers();
 }
@@ -489,8 +492,8 @@ void VoyeurEngine::doOpening() {
 	_voy._RTVNum = 0;
 	_voy._field468 = _voy._RTVNum;
 	_voy._field478 = 16;
-	_eventsManager._videoComputerNum = 4;
-	_eventsManager._videoComputerBut1  = 0;
+	_eventsManager._gameHour = 4;
+	_eventsManager._gameMinute  = 0;
 	_eventsManager._videoComputerBut4 = 1;
 	_eventsManager._videoDead = -1;
 	addVideoEventStart();

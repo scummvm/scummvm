@@ -88,8 +88,6 @@ EventsManager::EventsManager(): _intPtr(_gameData),
 	Common::fill(&_keyState[0], &_keyState[256], false);
 
 	_v2A0A2 = 0;
-	_videoComputerNum = 0;
-	_videoComputerBut1 = 0;
 	_videoComputerBut4 = 0;
 	_videoDead = 0;
 }

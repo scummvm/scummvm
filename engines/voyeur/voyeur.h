@@ -117,6 +117,9 @@ public:
 	int _playStamp2;
 	const int *_resolvePtr;
 	int _iForceDeath;
+	int _checkTransitionId;
+	int _gameHour;
+	int _gameMinute;
 public:
 	VoyeurEngine(OSystem *syst, const VoyeurGameDescription *gameDesc);
 	virtual ~VoyeurEngine();

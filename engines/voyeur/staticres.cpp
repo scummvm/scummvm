@@ -105,4 +105,10 @@ const char *const VOC_FILENAMES[] = {
 	"Q1240100", "E1325100"
 };
 
+const char *const SATURDAY = "Saturday";
+const char *const SUNDAY = "Sunday";
+const char *const MONDAY = "Monday Morning";
+const char *const AM = "am";
+const char *const PM = "pm";
+
 } // End of namespace Voyeur
