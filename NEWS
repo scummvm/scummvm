@@ -11,8 +11,8 @@ For a more comprehensive changelog of the latest experimental code, see:
      is faster and can handle all kinds of exotic JPEG images :)
    - Switched from our custom PNG decoder to libpng, which
      is faster and can handle all kinds of exotic PNG images :)
-	 (NOTE: The change to libpng was done in version 1.6.0, but
-	 it was not added to the NEWS file).
+     (NOTE: The change to libpng was done in version 1.6.0, but
+     it was not added to the NEWS file).
 
  Gob:
    - Improved video quality in Urban Runner.
@@ -20,10 +20,10 @@ For a more comprehensive changelog of the latest experimental code, see:
  SCI:
    - Added support for the more detailed RAVE lip syncing data in the
      Windows version of King's Quest 6. Portraits should now be much
-	 more expressive when talking.
+     more expressive when talking.
    - Added support for simultaneous speech and subtitles in the CD
      versions of Laura Bow 2 and King's Quest 6 (toggled via the
-	 ScummVM audio options).
+     ScummVM audio options).
    - Fixed music fading.
    - Fixed several script bugs in Camelot, Crazy Nick's, Hoyle 3,
      QFG1VGA, KQ5, KQ6, LB2, LSL2, LSL5, Pharkas, PQ1VGA, SQ4, SQ5.
@@ -35,7 +35,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  Broken Sword 2:
    - Added back support for MPEG-2 videos.
-	
+
  Tinsel:
    - Discworld 1 and 2 no longer crash on big-endian systems.
 
