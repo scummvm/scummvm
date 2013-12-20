@@ -51,7 +51,6 @@ private:
 	byte _row;
 	byte _number;
 	bool _squeak;
-	int8 _mNum, _mRow;
 	byte _playedNim; // How many times you've played Nim.
 
 	// Inner variables for dogFood(), find() and findAp().
@@ -65,8 +64,7 @@ private:
 	void startMove();
 	void showChanges();
 	void blip();
-	bool checkMouse();
-	void less();
+	bool checkInput();
 	void takeSome();
 	void endOfGame();
 	bool find(byte x); // This gives TRUE if there's a pile with x stones in.

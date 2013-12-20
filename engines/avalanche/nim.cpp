@@ -47,8 +47,6 @@ void Nim::resetVariables() {
 	_row = 0;
 	_number = 0;
 	_squeak = false;
-	_mNum = 0;
-	_mRow = 0;
 	_lmo = false;
 
 	for (int i = 0; i < 3; i++) {
@@ -223,32 +221,35 @@ void Nim::blip() {
 	_vm->_sound->playNote(1771, 3);
 }
 
-bool Nim::checkMouse() {
-	Common::Point cursorPos = _vm->getMousePos();
-	_vm->_graphics->refreshScreen();
-	Common::Event event;
-	// This loop needs "some" revision!!!
-	while (_vm->getEvent(event)) {
+bool Nim::checkInput() {
+	while (!_vm->shouldQuit()) {
 		_vm->_graphics->refreshScreen();
-		if (event.type == Common::EVENT_LBUTTONUP) {
-			_mRow = (cursorPos.y / 2 - 38) / 35 - 1;
-			if ((_mRow < 0) || (_mRow > 2)) {
-				blip();
-				return false;
+		Common::Event event;
+		while (_vm->getEvent(event)) {
+			if (event.type == Common::EVENT_LBUTTONUP) {
+				Common::Point cursorPos = _vm->getMousePos();
+
+				int8 mRow = (cursorPos.y / 2 - 38) / 35 - 1;
+				if ((mRow < 0) || (mRow > 2)) {
+					blip();
+					return false;
+				}
+
+				int8 mNum = _stones[mRow] - ((cursorPos.x - 64) / 64);
+				if ((mNum < 1) || (mNum > _stones[mRow])) {
+					blip();
+					return false;
+				}
+
+				_number = mNum;
+				_row = mRow;
+
+				return true;
 			}
-			_mNum = _stones[_mRow] - ((cursorPos.x - 64) / 64);
-			if ((_mNum < 1) || (_mNum > _stones[_mRow])) {
-				blip();
-				return false;
-			}
-			return true;
 		}
 	}
-}
 
-void Nim::less() {
-	if (_number > 1)
-		_number--;
+
 }
 
 void Nim::takeSome() {
@@ -272,16 +273,14 @@ void Nim::takeSome() {
 		_vm->_graphics->drawRectangle(Common::Rect(63 + (sr - _number) * 64, 38 + 35 * (_row + 1), 54 + sr * 64, 63 + 35 * (_row + 1)), kColorBlue);
 		_vm->_graphics->refreshScreen();
 
-		bool clicked = false;
+		bool validInput = false;
 		do {
-			clicked = checkMouse();
-		} while (clicked == false);
+			validInput = checkInput();
+		} while (!validInput);
 		
 		_vm->_graphics->drawRectangle(Common::Rect(63 + (sr - _number) * 64, 38 + 35 * (_row + 1), 54 + sr * 64, 63 + 35 * (_row + 1)), kColorBlack);
 		_vm->_graphics->refreshScreen();
 
-		_number = _mNum;
-		_row = _mRow;
 		return;
 
 	} while (true);
