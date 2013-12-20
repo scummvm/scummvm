@@ -201,7 +201,7 @@ static const uint16 ecoquest1SignatureStayAndHelp[] = {
 	0x76,                            // push0
 	0x81, 0x00,                      // lag global[0]
 	0x4a, 0x06,                      // send 06 - call ego::setMotion(0)
-	0x39, SIG_SELECTOR8(SELECTOR_init), // pushi "init"
+	0x39, SIG_SELECTOR8(init),       // pushi "init"
 	0x39, 0x04,                      // pushi 04
 	0x76,                            // push0
 	0x76,                            // push0
@@ -225,7 +225,7 @@ static const uint16 ecoquest1PatchStayAndHelp[] = {
 	0x76,                            // push0
 	0x81, 0x00,                      // lag global[0]
 	0x4a, 0x06,                      // send 06 - call ego::setMotion(0)
-	0x39, PATCH_SELECTOR8(SELECTOR_init), // pushi "init"
+	0x39, PATCH_SELECTOR8(init),     // pushi "init"
 	0x39, 0x06,                      // pushi 06
 	0x39, 0x02,                      // pushi 02 (additional 2 bytes)
 	0x76,                            // push0
@@ -436,7 +436,7 @@ static const uint16 freddypharkasPatchScoreDisposal[] = {
 // Applies to at least: English PC-CD
 // Responsible method: rm235::init and sEnterFrom500::changeState
 static const uint16 freddypharkasSignatureCanisterHang[] = {
-	0x38, SIG_SELECTOR16(SELECTOR_disable), // pushi disable
+	0x38, SIG_SELECTOR16(disable),   // pushi disable
 	0x7a,                            // push2
 	SIG_MAGICDWORD,
 	0x39, 0x07,                      // pushi 07
@@ -468,15 +468,15 @@ static const uint16 freddypharkasPatchCanisterHang[] = {
 // Responsible method: lowerLadder::doit and highLadder::doit
 static const uint16 freddypharkasSignatureLadderEvent[] = {
 	0x39, SIG_MAGICDWORD,
-	SIG_SELECTOR8(SELECTOR_new),     // pushi new
+	SIG_SELECTOR8(new),              // pushi new
 	0x76,                            // push0
-	0x38, SIG_SELECTOR16(SELECTOR_curEvent), // pushi curEvent
+	0x38, SIG_SELECTOR16(curEvent),  // pushi curEvent
 	0x76,                            // push0
 	0x81, 0x50,                      // lag global[50]
 	0x4a, 0x04,                      // send 04 - read User::curEvent
 	0x4a, 0x04,                      // send 04 - call curEvent::new
 	0xa5, 0x00,                      // sat temp[0]
-	0x38, SIG_SELECTOR16(SELECTOR_localize),
+	0x38, SIG_SELECTOR16(localize),
 	0x76,                            // push0
 	0x4a, 0x04,                      // send 04 - call curEvent::localize
 	SIG_END
@@ -532,7 +532,7 @@ static const uint16 gk1SignatureDay6PoliceBeignet[] = {
 	0x35, 0x04,                         // ldi 04
 	0x1a,                               // eq?
 	0x30, SIG_ADDTOOFFSET(+2),          // bnt [next state check]
-	0x38, SIG_SELECTOR16(SELECTOR_dispose), // pushi dispose
+	0x38, SIG_SELECTOR16(dispose),      // pushi dispose
 	0x76,                               // push0
 	0x72, SIG_ADDTOOFFSET(+2),          // lofsa deskSarg
 	0x4a, SIG_UINT16(0x0004),           // send 04
@@ -621,7 +621,7 @@ static const uint16 gk1SignatureInterrogationBug[] = {
 	0x76,                            // push0
 	0x4a, SIG_UINT16(0x0004),        // send 0004
 	0xa5, 0x00,                      // sat 00
-	0x38, SIG_SELECTOR16(SELECTOR_dispose), // pushi dispose
+	0x38, SIG_SELECTOR16(dispose),   // pushi dispose
 	0x76,                            // push0
 	0x63, 0x50,                      // pToa 50
 	0x4a, SIG_UINT16(0x0004),        // send 0004
@@ -638,7 +638,7 @@ static const uint16 gk1PatchInterrogationBug[] = {
 	0x76,                            // push0
 	0x4a, 0x04, 0x00,                // send 0004
 	0xa5, 0x00,                      // sat 00
-	0x38, SIG_SELECTOR16(SELECTOR_dispose), // pushi dispose
+	0x38, SIG_SELECTOR16(dispose),   // pushi dispose
 	0x76,                            // push0
 	0x63, 0x50,                      // pToa 50
 	0x4a, 0x04, 0x00,                // send 0004
@@ -833,7 +833,7 @@ static const uint16 kq6SignatureInventoryStackFix[] = {
 	0x34, SIG_UINT16(0xdfff),           // ldi dfff
 	0x12,                               // and
 	0x65, 0x30,                         // aTop state
-	0x38, SIG_SELECTOR16(SELECTOR_show), // pushi "show" ("show" is e1h for KQ6CD)
+	0x38, SIG_SELECTOR16(show),         // pushi "show" ("show" is e1h for KQ6CD)
 	0x78,                               // push1
 	0x87, 0x00,                         // lap param[0]
 	0x31, 0x04,                         // bnt [use global for show]
@@ -920,7 +920,7 @@ static const uint16 kq6PatchDrinkMeFix[] = {
 	PATCH_ADDTOOFFSET(+5),              // skip to bnt offset
 	PATCH_GETORIGINALBYTEADJUST +5, +13, // adjust jump to [check for 11h code]
 	PATCH_ADDTOOFFSET(+162),
-	0x39, PATCH_SELECTOR8(SELECTOR_doit), // pushi (doit)
+	0x39, PATCH_SELECTOR8(doit),        // pushi (doit)
 	0x76,                               // push0
 	0x81, 0x0a,                         // lag 0a
 	0x4a, 0x04,                         // send 04 (call addToPics::doit)
@@ -945,7 +945,7 @@ static const uint16 kq6laurabow2CDSignatureAudioTextSupport1[] = {
 	0x12,                               // and
 	SIG_MAGICDWORD,
 	0x31, 0x13,                         // bnt [audio call]
-	0x38, SIG_SELECTOR16(SELECTOR_modNum), // pushi modNum
+	0x38, SIG_SELECTOR16(modNum),       // pushi modNum
 	SIG_END
 };
 
@@ -993,7 +993,7 @@ static const uint16 kq6laurabow2CDSignatureAudioTextSupport4[] = {
 	0x35, 0x01,                         // ldi 01
 	0x12,                               // and
 	0x31, 0x08,                         // bnt [skip code]
-	0x38, SIG_SELECTOR16(SELECTOR_startText), // pushi startText
+	0x38, SIG_SELECTOR16(startText),    // pushi startText
 	0x78,                               // push1
 	0x8f, 0x01,                         // lsp param[1]
 	0x54, 0x06,                         // self 06
@@ -1002,7 +1002,7 @@ static const uint16 kq6laurabow2CDSignatureAudioTextSupport4[] = {
 	0x12,                               // and
 	0x31, 0x08,                         // bnt [skip code]
 	SIG_MAGICDWORD,
-	0x38, SIG_SELECTOR16(SELECTOR_startAudio), // pushi startAudio
+	0x38, SIG_SELECTOR16(startAudio),   // pushi startAudio
 	0x78,                               // push1
 	0x8f, 0x01,                         // lsp param[1]
 	0x54, 0x06,                         // self 06
@@ -1187,8 +1187,8 @@ static const uint16 longbowSignatureShowHandCode[] = {
 	0x40, SIG_ADDTOOFFSET(+2),       // call
 	SIG_MAGICDWORD,
 	0x02,                            // perform the call above with 2 parameters
-	0x38, SIG_SELECTOR16(SELECTOR_setMotion), // pushi "setMotion" (0x11c in Longbow German)
-	0x39, SIG_SELECTOR8(SELECTOR_x), // pushi "x" (0x04 in Longbow German)
+	0x38, SIG_SELECTOR16(setMotion), // pushi "setMotion" (0x11c in Longbow German)
+	0x39, SIG_SELECTOR8(x),          // pushi "x" (0x04 in Longbow German)
 	0x51, 0x1e,                      // class MoveTo
 	SIG_END
 };
@@ -1523,7 +1523,7 @@ static const uint16 pq1vgaSignaturePutGunInLockerBug[] = {
 	0x31, 0x25,                      // bnt [next state check]
 	SIG_ADDTOOFFSET(+22),            // [skip 22 bytes]
 	SIG_MAGICDWORD,
-	0x38, SIG_SELECTOR16(SELECTOR_put), // pushi "put"
+	0x38, SIG_SELECTOR16(put),       // pushi "put"
 	0x78,                            // push1
 	0x76,                            // push0
 	0x81, 0x00,                      // lag 00
@@ -1535,7 +1535,7 @@ static const uint16 pq1vgaSignaturePutGunInLockerBug[] = {
 	0x35, 0x01,                      // ldi 01
 	0x1a,                            // eq?
 	0x31, 0x08,                      // bnt [end of method]
-	0x39, SIG_SELECTOR8(SELECTOR_dispose), // pushi "dispose"
+	0x39, SIG_SELECTOR8(dispose),    // pushi "dispose"
 	0x76,                            // push0
 	0x72, SIG_UINT16(0x0088),        // lofsa 0088
 	0x4a, 0x04,                      // send 04 - locker::dispose
@@ -1553,7 +1553,7 @@ static const uint16 pq1vgaPatchPutGunInLockerBug[] = {
 	0x35, 0x01,                      // ldi 01
 	0x1a,                            // eq?
 	0x31, 0x11,                      // bnt [end of method]
-	0x38, PATCH_SELECTOR16(SELECTOR_put), // pushi "put"
+	0x38, PATCH_SELECTOR16(put),     // pushi "put"
 	0x78,                            // push1
 	0x76,                            // push0
 	0x81, 0x00,                      // lag 00
@@ -1583,7 +1583,7 @@ static const uint16 pq1vgaSignatureMapSaveRestoreBug[] = {
 };
 
 static const uint16 pq1vgaPatchMapSaveRestoreBug[] = {
-	0x38, PATCH_SELECTOR16(SELECTOR_overlay), // pushi "overlay"
+	0x38, PATCH_SELECTOR16(overlay), // pushi "overlay"
 	0x7a,                            // push2
 	0x89, 0xf9,                      // lsg global[f9]
 	0x39, 0x64,                      // pushi 64 (no transition)
@@ -1613,7 +1613,7 @@ static const SciScriptPatcherEntry pq1vgaSignatures[] = {
 // Responsible method: pointBox::doit
 static const uint16 qfg1vgaSignatureFightEvents[] = {
 	0x39, SIG_MAGICDWORD,
-	SIG_SELECTOR8(SELECTOR_new),        // pushi "new"
+	SIG_SELECTOR8(new),                 // pushi "new"
 	0x76,                               // push0
 	0x51, 0x07,                         // class Event
 	0x4a, 0x04,                         // send 04 - call Event::new
@@ -1633,7 +1633,7 @@ static const uint16 qfg1vgaSignatureFightEvents[] = {
 };
 
 static const uint16 qfg1vgaPatchFightEvents[] = {
-	0x38, PATCH_SELECTOR16(SELECTOR_curEvent), // pushi 15a (selector curEvent)
+	0x38, PATCH_SELECTOR16(curEvent), // pushi 15a (selector curEvent)
 	0x76,                            // push0
 	0x81, 0x50,                      // lag global[50]
 	0x4a, 0x04,                      // send 04 - read User::curEvent -> needs one byte more than previous code
@@ -1891,7 +1891,7 @@ static const uint16 qfg3SignatureWooDialog[] = {
 	0x35, 0x9b,                         // ldi 9b
 	0x1a,                               // eq?
 	0x31, 0x0c,                         // bnt 0c
-	0x38, SIG_SELECTOR16(SELECTOR_solvePuzzle), // pushi 0297
+	0x38, SIG_SELECTOR16(solvePuzzle),  // pushi 0297
 	0x7a,                               // push2
 	0x38, SIG_UINT16(0x010c),           // pushi 010c
 	0x7a,                               // push2
@@ -2035,7 +2035,7 @@ static const uint16 sq4CdSignatureTextOptions[] = {
 	0x35, 0x01,                         // ldi 0x01
 	0xa1, 0x5a,                         // sag 0x5a (save acc to global 90)
 	0x3a,                               // toss
-	0x38, SIG_SELECTOR16(SELECTOR_show), // pushi 0x00d9
+	0x38, SIG_SELECTOR16(show),         // pushi 0x00d9
 	0x76,                               // push0
 	0x54, 0x04,                         // self 0x04
 	0x48,                               // ret
@@ -2084,7 +2084,7 @@ static const SciScriptPatcherEntry sq4Signatures[] = {
 // Responsible method: robotIntoShip::changeState(9)
 static const uint16 sq1vgaSignatureUlenceFlatsTimepodGfxGlitch[] = {
 	0x39,
-	SIG_MAGICDWORD, SIG_SELECTOR8(SELECTOR_cel), // pushi "cel"
+	SIG_MAGICDWORD, SIG_SELECTOR8(cel), // pushi "cel"
 	0x78,                               // push1
 	0x39, 0x0a,                         // pushi 0x0a (set ship::cel to 10)
 	0x38, SIG_UINT16(0x00a0),           // pushi 0x00a0 (ship::setLoop)
@@ -2099,9 +2099,9 @@ static const uint16 sq1vgaPatchUlenceFlatsTimepodGfxGlitch[] = {
 
 static const uint16 sq1vgaSignatureEgoShowsCard[] = {
 	SIG_MAGICDWORD,
-	0x38, SIG_SELECTOR16(SELECTOR_timesShownID), // push "timesShownID"
+	0x38, SIG_SELECTOR16(timesShownID), // push "timesShownID"
 	0x78,                               // push1
-	0x38, SIG_SELECTOR16(SELECTOR_timesShownID), // push "timesShownID"
+	0x38, SIG_SELECTOR16(timesShownID), // push "timesShownID"
 	0x76,                               // push0
 	0x51, 0x7c,                         // class DeltaurRegion
 	0x4a, 0x04,                         // send 0x04 (get timesShownID)
@@ -2120,7 +2120,7 @@ static const uint16 sq1vgaSignatureEgoShowsCard[] = {
 // Note that this script patch is merely a reordering of the
 // instructions in the original script.
 static const uint16 sq1vgaPatchEgoShowsCard[] = {
-	0x38, PATCH_SELECTOR16(SELECTOR_timesShownID), // push "timesShownID"
+	0x38, PATCH_SELECTOR16(timesShownID), // push "timesShownID"
 	0x76,                               // push0
 	0x51, 0x7c,                         // class DeltaurRegion
 	0x4a, 0x04,                         // send 0x04 (get timesShownID)
@@ -2128,7 +2128,7 @@ static const uint16 sq1vgaPatchEgoShowsCard[] = {
 	0x35, 0x01,                         // ldi 1
 	0x02,                               // add
 	0x36,                               // push (this push corresponds to the wrong one above)
-	0x38, PATCH_SELECTOR16(SELECTOR_timesShownID), // push "timesShownID"
+	0x38, PATCH_SELECTOR16(timesShownID), // push "timesShownID"
 	0x78,                               // push1
 	0x36,                               // push
 	0x51, 0x7c,                         // class DeltaurRegion
@@ -2241,7 +2241,7 @@ void ScriptPatcher::applyPatch(const SciScriptPatcherEntry *patchEntry, byte *sc
 		uint16 patchCommand = patchWord & PATCH_COMMANDMASK;
 		uint16 patchValue = patchWord & PATCH_VALUEMASK;
 		switch (patchCommand) {
-		case PATCH_codeADDTOOFFSET: {
+		case PATCH_CODE_ADDTOOFFSET: {
 			// add value to offset
 			offset += patchValue;
 			break;
@@ -2265,13 +2265,13 @@ void ScriptPatcher::applyPatch(const SciScriptPatcherEntry *patchEntry, byte *sc
 			offset++;
 			break;
 		}
-		case PATCH_codeUINT16:
-		case PATCH_codeSELECTOR16: {
+		case PATCH_CODE_UINT16:
+		case PATCH_CODE_SELECTOR16: {
 			byte byte1;
 			byte byte2;
 
 			switch (patchCommand) {
-			case PATCH_codeUINT16: {
+			case PATCH_CODE_UINT16: {
 				byte1 = patchValue & PATCH_BYTEMASK;
 				patchData++; patchWord = *patchData;
 				if (patchWord & PATCH_COMMANDMASK)
@@ -2279,7 +2279,7 @@ void ScriptPatcher::applyPatch(const SciScriptPatcherEntry *patchEntry, byte *sc
 				byte2 = patchWord & PATCH_BYTEMASK;
 				break;
 			}
-			case PATCH_codeSELECTOR16: {
+			case PATCH_CODE_SELECTOR16: {
 				patchSelector = _selectorIdTable[patchValue];
 				byte1 = patchSelector & 0xFF;
 				byte2 = patchSelector >> 8;
@@ -2298,7 +2298,7 @@ void ScriptPatcher::applyPatch(const SciScriptPatcherEntry *patchEntry, byte *sc
 			}
 			break;
 		}
-		case PATCH_codeSELECTOR8: {
+		case PATCH_CODE_SELECTOR8: {
 			patchSelector = _selectorIdTable[patchValue];
 			if (patchSelector & 0xFF00)
 				error("Script-Patcher: 8 bit selector required, game uses 16 bit selector");
@@ -2306,7 +2306,7 @@ void ScriptPatcher::applyPatch(const SciScriptPatcherEntry *patchEntry, byte *sc
 			offset++;
 			break;
 		}
-		case PATCH_codeBYTE:
+		case PATCH_CODE_BYTE:
 			scriptData[offset] = patchValue & PATCH_BYTEMASK;
 			offset++;
 		}
@@ -2337,19 +2337,19 @@ int32 ScriptPatcher::findSignature(const SciScriptPatcherEntry *patchEntry, SciS
 				uint16 sigCommand = sigWord & SIG_COMMANDMASK;
 				uint16 sigValue = sigWord & SIG_VALUEMASK;
 				switch (sigCommand) {
-				case SIG_codeADDTOOFFSET: {
+				case SIG_CODE_ADDTOOFFSET: {
 					// add value to offset
 					byteOffset += sigValue;
 					break;
 				}
-				case SIG_codeUINT16:
-				case SIG_codeSELECTOR16: {
+				case SIG_CODE_UINT16:
+				case SIG_CODE_SELECTOR16: {
 					if ((byteOffset + 1) < scriptSize) {
 						byte byte1;
 						byte byte2;
 
 						switch (sigCommand) {
-						case SIG_codeUINT16: {
+						case SIG_CODE_UINT16: {
 							byte1 = sigValue & SIG_BYTEMASK;
 							signatureData++; sigWord = *signatureData;
 							if (sigWord & SIG_COMMANDMASK)
@@ -2357,7 +2357,7 @@ int32 ScriptPatcher::findSignature(const SciScriptPatcherEntry *patchEntry, SciS
 							byte2 = sigWord & SIG_BYTEMASK;
 							break;
 						}
-						case SIG_codeSELECTOR16: {
+						case SIG_CODE_SELECTOR16: {
 							sigSelector = _selectorIdTable[sigValue];
 							byte1 = sigSelector & 0xFF;
 							byte2 = sigSelector >> 8;
@@ -2380,7 +2380,7 @@ int32 ScriptPatcher::findSignature(const SciScriptPatcherEntry *patchEntry, SciS
 					}
 					break;
 				}
-				case SIG_codeSELECTOR8: {
+				case SIG_CODE_SELECTOR8: {
 					if (byteOffset < scriptSize) {
 						sigSelector = _selectorIdTable[sigValue];
 						if (sigSelector & 0xFF00)
@@ -2393,7 +2393,7 @@ int32 ScriptPatcher::findSignature(const SciScriptPatcherEntry *patchEntry, SciS
 					}
 					break;
 				}
-				case SIG_codeBYTE:
+				case SIG_CODE_BYTE:
 					if (byteOffset < scriptSize) {
 						if (scriptData[byteOffset] != sigWord)
 							sigWord = SIG_MISMATCH;
@@ -2475,17 +2475,17 @@ void ScriptPatcher::initSignature(const SciScriptPatcherEntry *patchTable, bool 
 					}
 					break;
 				}
-				case SIG_codeADDTOOFFSET: {
+				case SIG_CODE_ADDTOOFFSET: {
 					magicOffset -= curValue;
 					if (magicDWordLeft)
 						error("Script-Patcher: Magic-DWORD contains AddToOffset command\nFaulty patch: '%s'", curEntry->description);
 					break;
 				}
-				case SIG_codeUINT16:
-				case SIG_codeSELECTOR16: {
+				case SIG_CODE_UINT16:
+				case SIG_CODE_SELECTOR16: {
 					// UINT16 or 1
 					switch (curCommand) {
-					case SIG_codeUINT16: {
+					case SIG_CODE_UINT16: {
 						curData++; curWord = *curData;
 						if (curWord & SIG_COMMANDMASK)
 							error("Script-Patcher: signature entry inconsistent\nFaulty patch: '%s'", curEntry->description);
@@ -2498,7 +2498,7 @@ void ScriptPatcher::initSignature(const SciScriptPatcherEntry *patchTable, bool 
 						}
 						break;
 					}
-					case SIG_codeSELECTOR16: {
+					case SIG_CODE_SELECTOR16: {
 						curSelector = _selectorIdTable[curValue];
 						if (curSelector == -1) {
 							curSelector = g_sci->getKernel()->findSelector(selectorNameTable[curValue]);
@@ -2529,9 +2529,9 @@ void ScriptPatcher::initSignature(const SciScriptPatcherEntry *patchTable, bool 
 					}
 					break;
 				}
-				case SIG_codeBYTE:
-				case SIG_codeSELECTOR8: {
-					if (curCommand == SIG_codeSELECTOR8) {
+				case SIG_CODE_BYTE:
+				case SIG_CODE_SELECTOR8: {
+					if (curCommand == SIG_CODE_SELECTOR8) {
 						curSelector = _selectorIdTable[curValue];
 						if (curSelector == -1) {
 							curSelector = g_sci->getKernel()->findSelector(selectorNameTable[curValue]);
