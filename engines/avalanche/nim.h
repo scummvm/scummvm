@@ -48,7 +48,7 @@ private:
 	bool _dogfoodsTurn;
 	byte _stonesLeft;
 	bool _clicked;
-	byte _row;
+	int8 _row;
 	byte _number;
 	bool _squeak;
 	byte _playedNim; // How many times you've played Nim.
@@ -64,7 +64,9 @@ private:
 	void startMove();
 	void showChanges();
 	void blip();
-	bool checkInput();
+	void findNextUp(); // Inner function for checkInput().
+	void findNextDown(); // Same as above.
+	bool checkInput(); // It returns TRUE if the player confirmed his selection of stones either by pressing RETURN or by clicking on a stone.
 	void takeSome();
 	void endOfGame();
 	bool find(byte x); // This gives TRUE if there's a pile with x stones in.

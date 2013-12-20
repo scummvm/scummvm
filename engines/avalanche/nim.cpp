@@ -221,6 +221,28 @@ void Nim::blip() {
 	_vm->_sound->playNote(1771, 3);
 }
 
+void Nim::findNextUp() {
+	while (_stones[_row] == 0) {
+		_row--;
+		if (_row < 0)
+			_row = 2;
+	}
+
+	if (_number > _stones[_row])
+		_number = _stones[_row];
+}
+
+void Nim::findNextDown() {
+	while (_stones[_row] == 0) {
+		_row++;
+		if (_row > 2)
+			_row = 0;
+	}
+
+	if (_number > _stones[_row])
+		_number = _stones[_row];
+}
+
 bool Nim::checkInput() {
 	while (!_vm->shouldQuit()) {
 		_vm->_graphics->refreshScreen();
@@ -229,22 +251,111 @@ bool Nim::checkInput() {
 			if (event.type == Common::EVENT_LBUTTONUP) {
 				Common::Point cursorPos = _vm->getMousePos();
 
-				int8 mRow = (cursorPos.y / 2 - 38) / 35 - 1;
-				if ((mRow < 0) || (mRow > 2)) {
+				int8 newRow = (cursorPos.y / 2 - 38) / 35 - 1;
+				if ((newRow < 0) || (newRow > 2)) {
 					blip();
 					return false;
 				}
 
-				int8 mNum = _stones[mRow] - ((cursorPos.x - 64) / 64);
-				if ((mNum < 1) || (mNum > _stones[mRow])) {
+				int8 newNum = _stones[newRow] - ((cursorPos.x - 64) / 64);
+				if ((newNum < 1) || (newNum > _stones[newRow])) {
 					blip();
 					return false;
 				}
 
-				_number = mNum;
-				_row = mRow;
+				_number = newNum;
+				_row = newRow;
 
 				return true;
+			} else if (event.type == Common::EVENT_KEYDOWN) {
+				switch (event.kbd.keycode) {
+				case Common::KEYCODE_LEFT:
+				case Common::KEYCODE_KP_PLUS:
+					if (_stones[_row] > _number)
+						_number++;
+					return false;
+				case Common::KEYCODE_RIGHT:
+				case Common::KEYCODE_KP_MINUS:
+					if (_number > 1)
+						_number--;
+					return false;
+				case Common::KEYCODE_1:
+					_number = 1;
+					return false;
+				case Common::KEYCODE_2:
+					if (_stones[_row] >= 2)
+						_number = 2;
+					return false;
+				case Common::KEYCODE_3:
+					if (_stones[_row] >= 3)
+						_number = 3;
+					else
+						_number = _stones[_row];
+					return false;
+				case Common::KEYCODE_4:
+					if (_stones[_row] >= 4)
+						_number = 4;
+					else
+						_number = _stones[_row];
+					return false;
+				case Common::KEYCODE_5:
+					if (_stones[_row] == 5)
+						_number = 5;
+					else
+						_number = _stones[_row];
+					return false;
+				case Common::KEYCODE_HOME:
+					_number = _stones[_row];
+					return false;
+				case Common::KEYCODE_END:
+					_number = 1;
+					return false;
+				case Common::KEYCODE_UP:
+					_row--;
+					if (_row < 0)
+						_row = 2;
+					findNextUp();
+					return false;
+				case Common::KEYCODE_DOWN:
+					_row++;
+					if (_row > 2)
+						_row = 0;
+					findNextDown();
+					return false;
+				case Common::KEYCODE_a:
+					if (_stones[0] != 0) {
+						_row = 0;
+						if (_number > _stones[_row])
+							_number = _stones[_row];
+					}
+					return false;
+				case Common::KEYCODE_b:
+					if (_stones[1] != 0) {
+						_row = 1;
+						if (_number > _stones[_row])
+							_number = _stones[_row];
+					}
+					return false;
+				case Common::KEYCODE_c:
+					if (_stones[2] != 0) {
+						_row = 2;
+						if (_number > _stones[_row])
+							_number = _stones[_row];
+					}
+					return false;
+				case Common::KEYCODE_PAGEUP:
+					_row = 0;
+					findNextDown();
+					return false;
+				case Common::KEYCODE_PAGEDOWN:
+					_row = 2;
+					findNextUp();
+					return false;
+				case Common::KEYCODE_RETURN:
+					return true;
+				default:
+					break;
+				}
 			}
 		}
 	}
@@ -254,8 +365,9 @@ bool Nim::checkInput() {
 
 void Nim::takeSome() {
 	_number = 1;
-	byte sr;
+	
 	do {
+		byte sr;
 		do {
 			sr = _stones[_row];
 			if (sr == 0) {
@@ -270,17 +382,28 @@ void Nim::takeSome() {
 		if (_number > sr)
 			_number = sr;
 
-		_vm->_graphics->drawRectangle(Common::Rect(63 + (sr - _number) * 64, 38 + 35 * (_row + 1), 54 + sr * 64, 63 + 35 * (_row + 1)), kColorBlue);
+		int x1 = 63 + (_stones[_row] - _number) * 64;
+		int y1 = 38 + 35 * (_row + 1);
+		int x2 = 54 + _stones[_row] * 64;
+		int y2 = 63 + 35 * (_row + 1);
+		_vm->_graphics->drawRectangle(Common::Rect(x1, y1, x2, y2), kColorBlue); // Draw the selection rectangle.
 		_vm->_graphics->refreshScreen();
 
-		bool validInput = false;
+		bool confirm = false;
 		do {
-			validInput = checkInput();
-		} while (!validInput);
+			confirm = checkInput();
+			
+			if (!confirm) {
+				_vm->_graphics->drawRectangle(Common::Rect(x1, y1, x2, y2), kColorBlack); // Erase the previous selection.
+				x1 = 63 + (_stones[_row] - _number) * 64;
+				y1 = 38 + 35 * (_row + 1);
+				x2 = 54 + _stones[_row] * 64;
+				y2 = 63 + 35 * (_row + 1);
+				_vm->_graphics->drawRectangle(Common::Rect(x1, y1, x2, y2), kColorBlue); // Draw the new one.
+				_vm->_graphics->refreshScreen();
+			}
+		} while (!confirm);
 		
-		_vm->_graphics->drawRectangle(Common::Rect(63 + (sr - _number) * 64, 38 + 35 * (_row + 1), 54 + sr * 64, 63 + 35 * (_row + 1)), kColorBlack);
-		_vm->_graphics->refreshScreen();
-
 		return;
 
 	} while (true);
