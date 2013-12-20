@@ -1097,6 +1097,26 @@ static const uint16 kq6CDPatchAudioTextSupport3[] = {
 	PATCH_END
 };
 
+// Additional patch specifically for King's Quest 6
+//  Fixes text-window size for hires portraits mode
+//   Otherwise at least at the end some text-windows will be way too small
+// Patched method: Talker::init
+static const uint16 kq6CDSignatureAudioTextSupport4[] = {
+	SIG_MAGICDWORD,
+	0x63, 0x94,                         // pToa raving
+	0x31, 0x0a,                         // bnt [no rave code]
+	0x35, 0x00,                         // ldi 00
+	SIG_ADDTOOFFSET(6),                 // skip reset of bust, eyes and mouth
+	0x33, 0x24,                         // jmp [to super class code]
+	SIG_END
+};
+
+static const uint16 kq6CDPatchAudioTextSupport4[] = {
+	PATCH_ADDTOOFFSET(+12),
+	0x33, PATCH_GETORIGINALBYTEADJUST +13, (uint16)-6, // adjust jump to also include setSize call
+	PATCH_END
+};
+
 //  Fixes text window placement, when portrait+text is shown (Guard in room 220)
 // Patched method: tlkGateGuard1::init & tlkGateGuard2::init
 static const uint16 kq6CDSignatureAudioTextSupportGuards[] = {
@@ -1157,6 +1177,7 @@ static const SciScriptPatcherEntry kq6Signatures[] = {
 	{ false,   909, "CD: audio + text support KQ6 1",              1, kq6CDSignatureAudioTextSupport1,          kq6CDPatchAudioTextSupport1 },
 	{ false,   928, "CD: audio + text support KQ6 2",              1, kq6CDSignatureAudioTextSupport2,          kq6CDPatchAudioTextSupport2 },
 	{ false,   104, "CD: audio + text support KQ6 3",              1, kq6CDSignatureAudioTextSupport3,          kq6CDPatchAudioTextSupport3 },
+	{ false,   928, "CD: audio + text support KQ6 4",              1, kq6CDSignatureAudioTextSupport4,          kq6CDPatchAudioTextSupport4 },
 	{ false,  1009, "CD: audio + text support KQ6 Guards",         2, kq6CDSignatureAudioTextSupportGuards,     kq6CDPatchAudioTextSupportGuards },
 	{ false,  1027, "CD: audio + text support KQ6 Stepmother",     1, kq6CDSignatureAudioTextSupportStepmother, kq6CDPatchAudioTextSupportJumpAlways },
 	{ false,  1037, "CD: audio + text support KQ6 Gnomes",         1, kq6CDSignatureAudioTextSupportGnomes,     kq6CDPatchAudioTextSupportJumpAlways },
