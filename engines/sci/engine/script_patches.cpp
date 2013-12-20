@@ -546,7 +546,7 @@ static const uint16 gk1SignatureDay6PoliceBeignet[] = {
 static const uint16 gk1PatchDay6PoliceBeignet[] = {
 	PATCH_ADDTOOFFSET(+16),
 	0x34, PATCH_UINT16(0x0017),         // ldi 23
-	0x65, PATCH_GETORIGINALBYTEADJUST +20, +2, // aTop seconds (1c for PC, 1e for Mac)
+	0x65, PATCH_GETORIGINALBYTEADJUST(+20, +2), // aTop seconds (1c for PC, 1e for Mac)
 	PATCH_END
 };
 
@@ -568,7 +568,7 @@ static const uint16 gk1SignatureDay6PoliceSleep[] = {
 static const uint16 gk1PatchDay6PoliceSleep[] = {
 	PATCH_ADDTOOFFSET(+5),
 	0x34, SIG_UINT16(0x002a),           // ldi 42
-	0x65, PATCH_GETORIGINALBYTEADJUST +9, +2, // aTop seconds (1c for PC, 1e for Mac)
+	0x65, PATCH_GETORIGINALBYTEADJUST(+9, +2), // aTop seconds (1c for PC, 1e for Mac)
 	PATCH_END
 };
 
@@ -589,7 +589,7 @@ static const uint16 gk1SignatureDay5PhoneFreeze[] = {
 static const uint16 gk1PatchDay5PhoneFreeze[] = {
 	PATCH_ADDTOOFFSET(+3),
 	0x35, 0x06,                         // ldi 01
-	0x65, PATCH_GETORIGINALBYTEADJUST +6, +6, // aTop ticks
+	0x65, PATCH_GETORIGINALBYTEADJUST(+6, +6), // aTop ticks
 	PATCH_END
 };
 
@@ -861,8 +861,8 @@ static const uint16 kq6PatchInventoryStackFix[] = {
 	0x12,                               // and
 	0x65, 0x30,                         // aTop state
 	0x38,                               // pushi "show"
-	PATCH_GETORIGINALBYTE +22,
-	PATCH_GETORIGINALBYTE +23,
+	PATCH_GETORIGINALBYTE(+22),
+	PATCH_GETORIGINALBYTE(+23),
 	0x78,                               // push1
 	0x87, 0x00,                         // lap param[0]
 	0x31, 0x04,                         // bnt [call show using global 0]
@@ -871,7 +871,7 @@ static const uint16 kq6PatchInventoryStackFix[] = {
 	0x89, 0x00,                         // lsg global[0], save 1 byte total, see above
 	0x54, 0x06,                         // self 06 (call x::show)
 	0x31,                               // bnt [menu exit code]
-	PATCH_GETORIGINALBYTEADJUST +39, +6,// dynamic offset must be 0x0E for PC and 0x0D for mac
+	PATCH_GETORIGINALBYTEADJUST(+39, +6),// dynamic offset must be 0x0E for PC and 0x0D for mac
 	0x34, PATCH_UINT16(0x2000),         // ldi 2000
 	0x12,                               // and
 	0x2f, 0x05,                         // bt [to return]
@@ -918,7 +918,7 @@ static const uint16 kq6SignatureDrinkMeFix[] = {
 
 static const uint16 kq6PatchDrinkMeFix[] = {
 	PATCH_ADDTOOFFSET(+5),              // skip to bnt offset
-	PATCH_GETORIGINALBYTEADJUST +5, +13, // adjust jump to [check for 11h code]
+	PATCH_GETORIGINALBYTEADJUST(+5, +13), // adjust jump to [check for 11h code]
 	PATCH_ADDTOOFFSET(+162),
 	0x39, PATCH_SELECTOR8(doit),        // pushi (doit)
 	0x76,                               // push0
@@ -1113,7 +1113,7 @@ static const uint16 kq6CDSignatureAudioTextSupport4[] = {
 
 static const uint16 kq6CDPatchAudioTextSupport4[] = {
 	PATCH_ADDTOOFFSET(+12),
-	0x33, PATCH_GETORIGINALBYTEADJUST +13, (uint16)-6, // adjust jump to also include setSize call
+	0x33, PATCH_GETORIGINALBYTEADJUST(+13, -6), // adjust jump to also include setSize call
 	PATCH_END
 };
 
@@ -2267,7 +2267,7 @@ void ScriptPatcher::applyPatch(const SciScriptPatcherEntry *patchEntry, byte *sc
 			offset += patchValue;
 			break;
 		}
-		case PATCH_GETORIGINALBYTE: {
+		case PATCH_CODE_GETORIGINALBYTE: {
 			// get original byte from script
 			if (patchValue >= orgDataSize)
 				error("Script-Patcher: can not get requested original byte from script");
@@ -2275,7 +2275,7 @@ void ScriptPatcher::applyPatch(const SciScriptPatcherEntry *patchEntry, byte *sc
 			offset++;
 			break;
 		}
-		case PATCH_GETORIGINALBYTEADJUST: {
+		case PATCH_CODE_GETORIGINALBYTEADJUST: {
 			// get original byte from script and adjust it
 			if (patchValue >= orgDataSize)
 				error("Script-Patcher: can not get requested original byte from script");
