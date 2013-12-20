@@ -27,7 +27,7 @@
 
 namespace Sci {
 
-// Please do not use the #defines, that are called SIG_code* / PATCH_code* inside signature/patch-tables
+// Please do not use the #defines, that are called SIG_CODE_* / PATCH_CODE_* inside signature/patch-tables
 #define SIG_END                      0xFFFF
 #define SIG_MISMATCH                 0xFFFE
 #define SIG_COMMANDMASK              0xF000
