@@ -101,6 +101,18 @@ void scene08_initScene(Scene *sc) {
 	g_fullpipe->setArcadeOverlay(PIC_CSR_ARCADE3);
 }
 
+void scene08_setupMusic() {
+	warning("STUB: scene08_setupMusic()");
+}
+
+int scene08_updateCursor() {
+	warning("STUB: scene08_updateCursor()");
+
+	g_fullpipe->updateCursorCommon();
+
+	return g_fullpipe->_cursorId;
+}
+
 void sceneHandler08_winArcade() {
 	warning("STUB: sceneHandler08_winArcade()");
 }
