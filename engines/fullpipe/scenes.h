@@ -194,6 +194,7 @@ public:
 	int scene08_var05;
 	int scene08_var06;
 	int scene08_var07;
+	int scene08_var08;
 
 	PictureObject *selector;
 };

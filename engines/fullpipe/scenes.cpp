@@ -153,6 +153,7 @@ Vars::Vars() {
 	scene08_var05 = 0;
 	scene08_var06 = 0;
 	scene08_var07 = 0;
+	scene08_var08 = 0;
 
 	selector = 0;
 }

@@ -139,11 +139,18 @@ namespace Fullpipe {
 #define MSG_SC7_OPENLUKE 823
 #define MSG_SC7_PULL 2943
 #define MSG_SC7_SHOWBOX 816
+#define MSG_SC8_ARCADENOW 1044
+#define MSG_SC8_ENTERUP 3037
+#define MSG_SC8_GETHIMUP 789
+#define MSG_SC8_HIDELADDER_D 1107
+#define MSG_SC8_RESUMEFLIGHT 784
+#define MSG_SC8_STANDUP 2976
 #define MSG_GOTOLADDER 618
 #define MSG_SHAKEBOTTLE 584
 #define MSG_SHOOTKOZAW 557
 #define MSG_SHOWCOIN 1033
 #define MSG_SPINHANDLE 2398
+#define MSG_STARTARCADE 781
 #define MSG_STARTHAND 612
 #define MSG_TAKEBOTTLE 614
 #define MSG_TAKEKOZAW 611
@@ -170,6 +177,7 @@ namespace Fullpipe {
 #define MV_KZW_STANDUP 563
 #define MV_KZW_TURN 562
 #define MV_MAN_FROMLADDER 493
+#define MV_MAN_FROMLADDERUP 1522
 #define MV_MAN_GOD 481
 #define MV_MAN_GOLADDER 451
 #define MV_MAN_GOLADDER2 2844
@@ -185,6 +193,7 @@ namespace Fullpipe {
 #define MV_MAN_STOPLADDER 454
 #define MV_MAN_STOPLADDER2 2845
 #define MV_MAN_TOLADDER 448
+#define MV_MAN_TOLADDERD 1524
 #define MV_MAN_TOLADDER2 2841
 #define MV_MAN_TURN_LU 486
 #define MV_MAN_TURN_SUD 1089
@@ -365,6 +374,7 @@ namespace Fullpipe {
 #define SND_4_012 3127
 #define SND_4_033 4990
 #define SND_5_026 5316
+#define SND_8_014 3624
 #define SND_CMN_031 3516
 #define SND_CMN_070 5199
 #define SND_INTR_019 5220
@@ -436,6 +446,7 @@ namespace Fullpipe {
 #define ST_PNK_WEIGHTLEFT 503
 #define ST_PNK_WEIGHTRIGHT 504
 #define ST_SPR_UP 544
+#define ST_VMT_MIN 766
 #define TrubaDown 697
 #define TrubaLeft 474
 #define TrubaRight 696
