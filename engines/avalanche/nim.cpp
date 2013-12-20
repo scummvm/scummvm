@@ -191,7 +191,7 @@ void Nim::setup() {
 }
 
 void Nim::board() {
-	_vm->_graphics->drawFilledRectangle(Common::Rect(57, 75, 393, 200), kColorBlack);
+	_vm->_graphics->drawFilledRectangle(Common::Rect(57, 72, 393, 200), kColorBlack);
 	for (int i = 0; i < 3; i++)
 		for (int j = 0; j < _stones[i]; j++)
 			_vm->_graphics->drawNimStone(64 + j * 8 * 8, 75 + i * 35);
