@@ -226,6 +226,7 @@ bool Nim::checkMouse() {
 	Common::Point cursorPos = _vm->getMousePos();
 	_vm->_graphics->refreshScreen();
 	Common::Event event;
+	// This loop needs "some" revision!!!
 	while (_vm->getEvent(event)) {
 		_vm->_graphics->refreshScreen();
 		if (event.type == Common::EVENT_LBUTTONUP) {
@@ -283,7 +284,24 @@ void Nim::takeSome() {
 }
 
 void Nim::endOfGame() {
-	warning("STUB: Nim::endOfGame()");
+	CursorMan.showMouse(false);
+
+	chalk(595, 55 + _turns * 10, "Wins!");
+	_vm->_graphics->drawNormalText("- - -   Press any key...  - - -", _vm->_font, 8, 100, 190, kColorYellow);
+
+	Common::Event event;
+	bool escape = false;
+	while (!_vm->shouldQuit() && !escape) {
+		_vm->_graphics->refreshScreen();
+		while (_vm->getEvent(event)) {
+			if ((event.type == Common::EVENT_LBUTTONUP) || (event.type == Common::EVENT_KEYDOWN)) {
+				escape = true;
+				break;
+			}
+		}
+	}
+
+	CursorMan.showMouse(true);
 }
 
 bool Nim::find(byte x) {
