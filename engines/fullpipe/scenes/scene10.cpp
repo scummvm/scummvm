@@ -51,4 +51,97 @@ void scene10_initScene(Scene *sc) {
 	}
 }
 
+int sceneHandler10(ExCommand *ex) {
+	if (ex->msg._messageKind != 17)
+		return 0;
+
+	switch(ex->_messageNum) {
+	case MSG_LIFT_CLOSEDOOR:
+		lift_closedoorSeq();
+        break;
+
+	case MSG_LIFT_EXITLIFT:
+		lift_exitSeq(ex);
+		break;
+
+	case MSG_LIFT_STARTEXITQUEUE:
+		lift_startExitQueue();
+		break;
+
+	case MSG_LIFT_CLICKBUTTON:
+		lift_animation3();
+		break;
+
+	case MSG_SC10_LADDERTOBACK:
+        g_vars->scene10_ladder->_priority = 49;
+		break;
+
+	case MSG_SC10_LADDERTOFORE:
+		g_vars->scene10_ladder->_priority = 0;
+		break;
+
+	case MSG_LIFT_GO:
+		lift_goAnimation();
+		break;
+
+	case MSG_SC10_CLICKGUM:
+		sceneHandler10_clickGum();
+
+		ex->_messageKind = 0;
+		break;
+
+	case MSG_SC10_HIDEGUM:
+		sceneHandler10_hideGum();
+		break;
+
+	case MSG_SC10_SHOWGUM:
+		sceneHandler10_showGum();
+		break;
+
+	case 64:
+		lift_sub05(ex);
+		break;
+
+	case 29:
+		if (g_fullpipe->_currentScene->getPictureObjectIdAtPos(ex->_sceneClickX, ex->_sceneClickY) == PIC_SC10_LADDER) {
+			handleObjectInteraction(g_aniMan, g_fullpipe->_currentScene->getPictureObjectById(PIC_SC10_DTRUBA, 0), ex->_keyCode);
+			ex->_messageKind = 0;
+
+			return 0;
+		}
+
+		StaticANIObject *ani = g_fullpipe->_currentScene->getStaticANIObjectAtPos(ex->_sceneClickX, ex->_sceneClickY);
+
+		if (ani && ani->_id == ANI_LIFTBUTTON) {
+			lift_sub1(ani);
+			ex->_messageKind = 0;
+
+			return 0;
+		}
+		break;
+
+	case 33:
+		{
+			int res = 0;
+
+			if (g_fullpipe->_aniMan2) {
+				if (g_fullpipe->_aniMan2->_ox < g_fullpipe->_sceneRect.left + 200)
+					g_fullpipe->_currentScene->_x = g_fullpipe->_aniMan2->_ox - g_fullpipe->_sceneRect.left - 300;
+
+				if (g_fullpipe->_aniMan2->_ox > g_fullpipe->_sceneRect.right - 200)
+					g_fullpipe->_currentScene->_x = g_fullpipe->_aniMan2->_ox - g_fullpipe->_sceneRect.right + 300;
+
+				res = 1;
+			}
+
+			g_fullpipe->_behaviorManager->updateBehaviors();
+			g_fullpipe->startSceneTrack();
+
+			return res;
+		}
+	}
+
+	return 0;
+}
+
 } // End of namespace Fullpipe
