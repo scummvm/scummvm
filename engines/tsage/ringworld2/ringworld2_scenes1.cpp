@@ -11490,7 +11490,7 @@ void Scene1800::signal() {
 		_sceneMode = 14;
 		R2_GLOBALS._events.setCursor(CURSOR_CROSSHAIRS);
 		R2_GLOBALS._player.setup(1801, 7, 1);
-		R2_GLOBALS._player.animate(ANIM_MODE_8, NULL);
+		R2_GLOBALS._player.animate(ANIM_MODE_8, 0, NULL);
 		_stripManager.start(550, this);
 		break;
 	case 14:
@@ -11510,7 +11510,7 @@ void Scene1800::signal() {
 		_sceneMode = 24;
 		R2_GLOBALS._events.setCursor(CURSOR_CROSSHAIRS);
 		R2_GLOBALS._player.setup(1801, 5, 1);
-		R2_GLOBALS._player.animate(ANIM_MODE_8, NULL);
+		R2_GLOBALS._player.animate(ANIM_MODE_8, 0, NULL);
 		_stripManager.start(550, this);
 		break;
 	case 24:
@@ -15182,7 +15182,7 @@ void Scene1950::signal() {
 		R2_GLOBALS._player.disableControl(CURSOR_WALK);
 		R2_GLOBALS._player._canWalk = true;
 		R2_GLOBALS._player.setVisage(22);
-		R2_GLOBALS._player.animate(ANIM_MODE_9, NULL);
+		R2_GLOBALS._player.animate(ANIM_MODE_9);
 		Common::Point pt(340, 160);
 		NpcMover *mover = new NpcMover();
 		R2_GLOBALS._player.addMover(mover, &pt, this);
@@ -15198,7 +15198,7 @@ void Scene1950::signal() {
 		R2_GLOBALS._player.disableControl(CURSOR_WALK);
 		R2_GLOBALS._player._canWalk = true;
 		R2_GLOBALS._player.setVisage(22);
-		R2_GLOBALS._player.animate(ANIM_MODE_9, NULL);
+		R2_GLOBALS._player.animate(ANIM_MODE_9);
 		Common::Point pt(-20, 160);
 		NpcMover *mover = new NpcMover();
 		R2_GLOBALS._player.addMover(mover, &pt, this);
