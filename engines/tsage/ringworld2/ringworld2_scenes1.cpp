@@ -6223,8 +6223,8 @@ void Scene1337::handlePlayer2() {
 				_selectedCard._cardId = handcard->_cardId;
 				_selectedCard._stationPos = handcard->_stationPos;
 				//warning("_selectedCard._actorName = handcard->_actorName;");
-				_selectedCard._fieldE = handcard->_fieldE;
-				_selectedCard._field10 = handcard->_field10;
+				//warning("_selectedCard._fieldE = handcard->_fieldE;");
+				//warning("_selectedCard._field10 = handcard->_field10;");
 				//warning("_selectedCard._field12 = handcard->_field12;");
 				//warning("_selectedCard._field14 = handcard->_field14;");
 				//warning("_selectedCard._field16 = handcard->_field16;");
@@ -6241,7 +6241,7 @@ void Scene1337::handlePlayer2() {
 				_selectedCard._card._updateStartFrame = handcard->_card._updateStartFrame;
 				_selectedCard._card._walkStartFrame = handcard->_card._walkStartFrame;
 				// _field2E is named _field3C in R2R
-				_selectedCard._card._field2E = handcard->_card._field2E;
+				_selectedCard._card._oldPosition = handcard->_card._oldPosition;
 				_selectedCard._card._percent = handcard->_card._percent;
 				_selectedCard._card._priority = handcard->_card._priority;
 				_selectedCard._card._angle = handcard->_card._angle;
@@ -6257,7 +6257,7 @@ void Scene1337::handlePlayer2() {
 				_selectedCard._card._frame = handcard->_card._frame;
 				_selectedCard._card._endFrame = handcard->_card._endFrame;
 				// _field68 is named _field76 in R2R
-				_selectedCard._card._field68 = handcard->_card._field68;
+				_selectedCard._card._loopCount = handcard->_card._loopCount;
 				_selectedCard._card._frameChange = handcard->_card._frameChange;
 				_selectedCard._card._numFrames = handcard->_card._numFrames;
 				_selectedCard._card._regionIndex = handcard->_card._regionIndex;
@@ -6268,8 +6268,8 @@ void Scene1337::handlePlayer2() {
 				_selectedCard._card._endAction = handcard->_card._endAction;
 				_selectedCard._card._regionBitList = handcard->_card._regionBitList;
 				// _selectedCard._object1._actorName = handcard->_object1._actorName;
-				_selectedCard._card._fieldE = handcard->_card._fieldE;
-				_selectedCard._card._field10 = handcard->_card._field10;
+				//warning("_selectedCard._card._fieldE = handcard->_card._fieldE;");
+				//warning("_selectedCard._card._field10 = handcard->_card._field10;");
 				//warning("_selectedCard._card._field12 = handcard->_card._field12;");
 				//warning("_selectedCard._card._field14 = handcard->_card._field14;");
 				//warning("_selectedCard._card._field16 = handcard->_card._field16;");

@@ -358,7 +358,6 @@ public:
 	byte _palette[256 * 3];
 	GfxColors _colors;
 	SynchronizedList<PaletteModifier *> _listeners;
-	int _field412;
 
 	uint8 _redColor;
 	uint8 _greenColor;
@@ -410,12 +409,11 @@ class SceneItem : public EventHandler {
 public:
 	Rect _bounds;
 	Common::String _msg;
-	int _fieldE, _field10;
 	Common::Point _position;
 	int _yDiff;
 	int _sceneRegionId;
 public:
-	SceneItem() : EventHandler() { _msg = "Feature"; _action = NULL; _sceneRegionId = 0; _yDiff = 0; _fieldE = _field10 = 0;}
+	SceneItem() : EventHandler() { _msg = "Feature"; _action = NULL; _sceneRegionId = 0; _yDiff = 0;}
 
 	virtual void synchronize(Serializer &s);
 	virtual Common::String getClassName() { return "SceneItem"; }
@@ -529,7 +527,7 @@ public:
 	int changeFrame();
 	uint32 _updateStartFrame;
 	uint32 _walkStartFrame;
-	Common::Point _field2E;
+	Common::Point _oldPosition;
 	int _percent;
 	int _priority;
 	int _angle;
@@ -542,7 +540,7 @@ public:
 	AnimateMode  _animateMode;
 	int _frame;
 	int _endFrame;
-	int _field68;
+	int _loopCount;
 	int _frameChange;
 	int _numFrames;
 	int _regionIndex;
@@ -651,7 +649,6 @@ class Player : public SceneObject {
 public:
 	bool _canWalk;
 	bool _uiEnabled;
-	int _field8C;
 	bool _enabled;
 
 	// Return to Ringworld specific fields
@@ -778,8 +775,6 @@ public:
 class ScenePriorities : public Common::List<Region> {
 public:
 	int _resNum;
-	int _field14;
-	int _field16;
 	Region _defaultPriorityRegion;
 public:
 	void load(int resNum);
@@ -885,7 +880,6 @@ public:
 	RefCounter _lockCtr;
 	RefCounter _waitCtr;
 	int _nextWaitCtr;
-	int _field14;
 public:
 	GameHandler();
 	virtual ~GameHandler();

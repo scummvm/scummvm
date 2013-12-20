@@ -38,13 +38,15 @@ void StripProxy::process(Event &event) {
 
 void UIElement::synchronize(Serializer &s) {
 	BackgroundSceneObject::synchronize(s);
-	s.syncAsSint16LE(_field88);
+	if (s.getVersion() < 15) {
+		int useless = 0;
+		s.syncAsSint16LE(useless);
+	}
 	s.syncAsSint16LE(_enabled);
 	s.syncAsSint16LE(_frameNum);
 }
 
 void UIElement::setup(int visage, int stripNum, int frameNum, int posX, int posY, int priority) {
-	_field88 = 0;
 	_frameNum = frameNum;
 	_enabled = true;
 
