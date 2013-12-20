@@ -69,9 +69,9 @@ private:
 	void less();
 	void takeSome();
 	void endOfGame();
-	void dogFood();
 	bool find(byte x); // This gives TRUE if there's a pile with x stones in.
 	void findAp(byte start, byte stepSize);
+	void dogFood();
 };
 
 } // End of namespace Avalanche
