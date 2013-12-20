@@ -44,17 +44,17 @@ void scene05_initScene(Scene *sc) {
 	g_vars->scene05_handleFlipper = 1;
 	g_vars->scene05_floatersTicker = 1000;
 
-	Scene *oldscene = g_fullpipe->_currentScene;
+	Scene *oldscene = g_fp->_currentScene;
 
-	g_fullpipe->_currentScene = sc;
+	g_fp->_currentScene = sc;
 
-	if (g_fullpipe->getObjectState(sO_WeirdWacko) == g_fullpipe->getObjectEnumState(sO_WeirdWacko, sO_InGlasses)) {
+	if (g_fp->getObjectState(sO_WeirdWacko) == g_fp->getObjectEnumState(sO_WeirdWacko, sO_InGlasses)) {
 		g_vars->scene05_wacko->changeStatics2(ST_OTM_GLS_LEFT);
 		g_vars->scene05_bigHatch->changeStatics2(ST_BLK_CLOSED);
 
 		g_vars->scene05_handle->changeStatics2(ST_HDL_UP);
 		g_vars->scene05_handle->_flags |= 4;
-	} else if (g_fullpipe->getObjectState(sO_WeirdWacko) == g_fullpipe->getObjectEnumState(sO_WeirdWacko, sO_WithDrawer)) {
+	} else if (g_fp->getObjectState(sO_WeirdWacko) == g_fp->getObjectEnumState(sO_WeirdWacko, sO_WithDrawer)) {
 		g_vars->scene05_wacko->changeStatics2(ST_OTM_BOX_LEFT);
 		g_vars->scene05_bigHatch->changeStatics2(ST_BLK_CLOSED);
 		g_vars->scene05_handle->changeStatics2(ST_HDL_UP);
@@ -62,13 +62,13 @@ void scene05_initScene(Scene *sc) {
 	} else {
 		g_vars->scene05_wacko->changeStatics2(ST_OTM_VNT_LEFT);
 
-		if (g_fullpipe->getObjectState(sO_WeirdWacko) != g_fullpipe->getObjectEnumState(sO_WeirdWacko, sO_WithPlunger)) {
+		if (g_fp->getObjectState(sO_WeirdWacko) != g_fp->getObjectEnumState(sO_WeirdWacko, sO_WithPlunger)) {
 			g_vars->scene05_handle->changeStatics2(ST_HDL_BROKEN);
 			g_vars->scene05_bigHatch->changeStatics2(ST_BLK_CLOSED);
 		}
 	}
 
-	g_fullpipe->_currentScene = oldscene;
+	g_fp->_currentScene = oldscene;
 }
 
 void sceneHandler05_makeManFlight() {
@@ -79,7 +79,7 @@ void sceneHandler05_makeManFlight() {
 	else
 		qid = QU_SC5_MANFLY;
 
-	MessageQueue *mq = new MessageQueue(g_fullpipe->_currentScene->getMessageQueueById(qid), 0, 0);
+	MessageQueue *mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(qid), 0, 0);
 
 	mq->setFlags(mq->getFlags() | 1);
 
@@ -90,10 +90,10 @@ void sceneHandler05_makeWackoFeedback() {
 	int staticsId1;
 	int staticsId2;
 
-	if (g_fullpipe->getObjectState(sO_WeirdWacko) == g_fullpipe->getObjectEnumState(sO_WeirdWacko, sO_InGlasses)) {
+	if (g_fp->getObjectState(sO_WeirdWacko) == g_fp->getObjectEnumState(sO_WeirdWacko, sO_InGlasses)) {
 		staticsId1 = ST_OTM_GLS_LEFT;
 		staticsId2 = (g_vars->scene05_handle->_statics->_staticsId == ST_HDL_DOWN) ? MV_OTM_HANDLEUP : MV_OTM_HANDLEDOWN;
-	} else if (g_fullpipe->getObjectState(sO_WeirdWacko) != g_fullpipe->getObjectEnumState(sO_WeirdWacko, sO_WithDrawer)) {
+	} else if (g_fp->getObjectState(sO_WeirdWacko) != g_fp->getObjectEnumState(sO_WeirdWacko, sO_WithDrawer)) {
 		return;
 	} else {
 		staticsId1 = ST_OTM_BOX_LEFT;
@@ -122,9 +122,9 @@ void sceneHandler05_makeWackoFeedback() {
 }
 
 void sceneHandler05_resetTicks() {
-	if (g_fullpipe->_aniMan->_movement && (g_fullpipe->_aniMan->_movement->_id == MV_MANHDL_HANDLEUP 
-										   || g_fullpipe->_aniMan->_movement->_id == MV_MANHDL_HANDLEDOWN))
-		g_vars->scene05_wackoTicker = g_fullpipe->_updateTicks;
+	if (g_fp->_aniMan->_movement && (g_fp->_aniMan->_movement->_id == MV_MANHDL_HANDLEUP 
+										   || g_fp->_aniMan->_movement->_id == MV_MANHDL_HANDLEDOWN))
+		g_vars->scene05_wackoTicker = g_fp->_updateTicks;
 	else
 		g_vars->scene05_wackoTicker = 0;
 }
@@ -133,17 +133,17 @@ void sceneHandler05_genFlies() {
 	if (g_vars->scene05_floatersTicker <= 1000)
 		return;
 
-	if (g_fullpipe->_rnd->getRandomNumber(1)) {
-		int numFlies = g_fullpipe->_rnd->getRandomNumber(3) + 1;
+	if (g_fp->_rnd->getRandomNumber(1)) {
+		int numFlies = g_fp->_rnd->getRandomNumber(3) + 1;
 
 		for (int i = 0; i < numFlies; i++) {
-			int x = g_fullpipe->_rnd->getRandomNumber(55) + 538;
-			int y = g_fullpipe->_rnd->getRandomNumber(60) + i * 30 + 520;
+			int x = g_fp->_rnd->getRandomNumber(55) + 538;
+			int y = g_fp->_rnd->getRandomNumber(60) + i * 30 + 520;
 
-			g_fullpipe->_floaters->genFlies(g_fullpipe->_currentScene, x, y, 5, 1);
-			g_fullpipe->_floaters->_array2.back()->val2 = 585;
-			g_fullpipe->_floaters->_array2.back()->val3 = -70;
-			g_fullpipe->_floaters->_array2.back()->val11 = 8.0;
+			g_fp->_floaters->genFlies(g_fp->_currentScene, x, y, 5, 1);
+			g_fp->_floaters->_array2.back()->val2 = 585;
+			g_fp->_floaters->_array2.back()->val3 = -70;
+			g_fp->_floaters->_array2.back()->val11 = 8.0;
 		}
 	}
 
@@ -151,11 +151,11 @@ void sceneHandler05_genFlies() {
 }
 
 void sceneHandler05_showHandle() {
-	g_fullpipe->_currentScene->getStaticANIObject1ById(ANI_HANDLE, -1)->show1(-1, -1, -1, 0);
+	g_fp->_currentScene->getStaticANIObject1ById(ANI_HANDLE, -1)->show1(-1, -1, -1, 0);
 }
 
 void sceneHandler05_handleDown() {
-	StaticANIObject *hatch = g_fullpipe->_currentScene->getStaticANIObject1ById(ANI_BIGLUK, -1);
+	StaticANIObject *hatch = g_fp->_currentScene->getStaticANIObject1ById(ANI_BIGLUK, -1);
 
 	hatch->changeStatics2(ST_BLK_CLOSED);
 	hatch->startAnim(MV_BLK_OPEN, 0, -1);
@@ -165,11 +165,11 @@ void sceneHandler05_handleDown() {
 }
 
 void sceneHandler05_hideHandle() {
-	g_fullpipe->_currentScene->getStaticANIObject1ById(ANI_HANDLE, -1)->hide();
+	g_fp->_currentScene->getStaticANIObject1ById(ANI_HANDLE, -1)->hide();
 }
 
 void sceneHandler05_handleUp() {
-	StaticANIObject *hatch = g_fullpipe->_currentScene->getStaticANIObject1ById(ANI_BIGLUK, -1);
+	StaticANIObject *hatch = g_fp->_currentScene->getStaticANIObject1ById(ANI_BIGLUK, -1);
 
 	hatch->changeStatics2(ST_BLK_OPEN);
 	hatch->startAnim(MV_BLK_CLOSE, 0, -1);
@@ -180,7 +180,7 @@ void sceneHandler05_handleUp() {
 void sceneHandler05_testHatch(ExCommand *inex) {
 	ExCommand *ex;
 
-	if (g_fullpipe->_currentScene->getStaticANIObject1ById(ANI_BIGLUK, -1)->_statics->_staticsId == ST_BLK_CLOSED) {
+	if (g_fp->_currentScene->getStaticANIObject1ById(ANI_BIGLUK, -1)->_statics->_staticsId == ST_BLK_CLOSED) {
 		ex = new ExCommand(SC_5, 17, 61, 0, 0, 0, 1, 0, 0, 0);
 		ex->_keyCode = TrubaLeft;
 		ex->_excFlags |= 2;
@@ -189,13 +189,13 @@ void sceneHandler05_testHatch(ExCommand *inex) {
 		return;
 	}
 
-	StaticANIObject *wacko = g_fullpipe->_currentScene->getStaticANIObject1ById(ANI_OTMOROZ, -1);
+	StaticANIObject *wacko = g_fp->_currentScene->getStaticANIObject1ById(ANI_OTMOROZ, -1);
 
 	if (wacko->_movement)
 		wacko->changeStatics2(wacko->_movement->_staticsObj2->_staticsId);
 
-	if (g_fullpipe->getObjectState(sO_WeirdWacko) == g_fullpipe->getObjectEnumState(sO_WeirdWacko, sO_InGlasses)) {
-		MessageQueue *mq = g_fullpipe->_globalMessageQueueList->getMessageQueueById(inex->_parId);
+	if (g_fp->getObjectState(sO_WeirdWacko) == g_fp->getObjectEnumState(sO_WeirdWacko, sO_InGlasses)) {
+		MessageQueue *mq = g_fp->_globalMessageQueueList->getMessageQueueById(inex->_parId);
 
 		if (mq)
 			mq->deleteExCommandByIndex(mq->getCount() - 1, 1);
@@ -205,7 +205,7 @@ void sceneHandler05_testHatch(ExCommand *inex) {
 
 			if (!mq) {
 				wacko->changeStatics2(ST_OTM_GLS_LEFT);
-				mq = new MessageQueue(g_fullpipe->_globalMessageQueueList->compact());
+				mq = new MessageQueue(g_fp->_globalMessageQueueList->compact());
 			}
 
 			mq->setFlags(mq->getFlags() | 1);
@@ -223,7 +223,7 @@ void sceneHandler05_testHatch(ExCommand *inex) {
 			return;
 		}
 
-		mq = new MessageQueue(g_fullpipe->_globalMessageQueueList->compact());
+		mq = new MessageQueue(g_fp->_globalMessageQueueList->compact());
 		mq->setFlags(mq->getFlags() | 1);
 
 		ex = new ExCommand(ANI_OTMOROZ, 1, MV_OTM_HANDLEUP, 0, 0, 0, 1, 0, 0, 0);
@@ -237,8 +237,8 @@ void sceneHandler05_testHatch(ExCommand *inex) {
 
 		if (!mq->chain(wacko))
 			delete mq;
-	} else if (g_fullpipe->getObjectState(sO_WeirdWacko) == g_fullpipe->getObjectEnumState(sO_WeirdWacko, sO_WithDrawer)) {
-		MessageQueue *mq = g_fullpipe->_globalMessageQueueList->getMessageQueueById(inex->_parId);
+	} else if (g_fp->getObjectState(sO_WeirdWacko) == g_fp->getObjectEnumState(sO_WeirdWacko, sO_WithDrawer)) {
+		MessageQueue *mq = g_fp->_globalMessageQueueList->getMessageQueueById(inex->_parId);
 
 		if (mq)
 			mq->deleteExCommandByIndex(mq->getCount() - 1, 1);
@@ -247,7 +247,7 @@ void sceneHandler05_testHatch(ExCommand *inex) {
 			mq = wacko->changeStatics1(ST_OTM_BOX_LEFT);
 			if (!mq) {
 				wacko->changeStatics2(ST_OTM_BOX_LEFT);
-				mq = new MessageQueue(g_fullpipe->_globalMessageQueueList->compact());
+				mq = new MessageQueue(g_fp->_globalMessageQueueList->compact());
 			}
 
 			mq->setFlags(mq->getFlags() | 1);
@@ -266,7 +266,7 @@ void sceneHandler05_testHatch(ExCommand *inex) {
 			return;
 		}
 
-		mq = new MessageQueue(g_fullpipe->_globalMessageQueueList->compact());
+		mq = new MessageQueue(g_fp->_globalMessageQueueList->compact());
 		mq->setFlags(mq->getFlags() | 1);
 
 		ex = new ExCommand(ANI_OTMOROZ, 1, MV_OTM_BOXHANDLEUP, 0, 0, 0, 1, 0, 0, 0);
@@ -299,11 +299,11 @@ int sceneHandler05(ExCommand *ex) {
 
 	switch (ex->_messageNum) {
 	case MSG_SC5_BGRSOUNDOFF:
-		g_fullpipe->stopAllSoundInstances(SND_5_026);
+		g_fp->stopAllSoundInstances(SND_5_026);
 		break;
 
 	case MSG_SC5_BGRSOUNDON:
-		g_fullpipe->playSound(SND_5_026, 1);
+		g_fp->playSound(SND_5_026, 1);
 		break;
 
 	case MSG_SC5_MAKEMANFLIGHT:
@@ -311,8 +311,8 @@ int sceneHandler05(ExCommand *ex) {
 		break;
 
 	case MSG_SC5_MAKEOTMFEEDBACK:
-		if (!g_fullpipe->_aniMan->_movement || (g_fullpipe->_aniMan->_movement->_id != MV_MANHDL_HANDLEUP 
-												&& g_fullpipe->_aniMan->_movement->_id != MV_MANHDL_HANDLEDOWN)) {
+		if (!g_fp->_aniMan->_movement || (g_fp->_aniMan->_movement->_id != MV_MANHDL_HANDLEUP 
+												&& g_fp->_aniMan->_movement->_id != MV_MANHDL_HANDLEDOWN)) {
 			sceneHandler05_makeWackoFeedback();
 			g_vars->scene05_wackoTicker = 0;
 		}
@@ -343,20 +343,20 @@ int sceneHandler05(ExCommand *ex) {
 	case 33: 
 		{
 			int res = 0;
-			if (g_fullpipe->_aniMan2) {
-				if (g_fullpipe->_aniMan2->_ox < g_fullpipe->_sceneRect.left + 200)
-					g_fullpipe->_currentScene->_x = g_fullpipe->_aniMan2->_ox - g_fullpipe->_sceneRect.left - 300;
+			if (g_fp->_aniMan2) {
+				if (g_fp->_aniMan2->_ox < g_fp->_sceneRect.left + 200)
+					g_fp->_currentScene->_x = g_fp->_aniMan2->_ox - g_fp->_sceneRect.left - 300;
 
-				if (g_fullpipe->_aniMan2->_ox > g_fullpipe->_sceneRect.right - 200)
-					g_fullpipe->_currentScene->_x = g_fullpipe->_aniMan2->_ox - g_fullpipe->_sceneRect.right + 300;
+				if (g_fp->_aniMan2->_ox > g_fp->_sceneRect.right - 200)
+					g_fp->_currentScene->_x = g_fp->_aniMan2->_ox - g_fp->_sceneRect.right + 300;
 
 				res = 1;
 			}
 
 			if (g_vars->scene05_wackoTicker) {
-				if ((g_fullpipe->_updateTicks - g_vars->scene05_wackoTicker) > 62) {
-					if (!g_fullpipe->_aniMan->_movement || (g_fullpipe->_aniMan->_movement->_id != MV_MANHDL_HANDLEUP 
-															&& g_fullpipe->_aniMan->_movement->_id != MV_MANHDL_HANDLEDOWN)) {
+				if ((g_fp->_updateTicks - g_vars->scene05_wackoTicker) > 62) {
+					if (!g_fp->_aniMan->_movement || (g_fp->_aniMan->_movement->_id != MV_MANHDL_HANDLEUP 
+															&& g_fp->_aniMan->_movement->_id != MV_MANHDL_HANDLEDOWN)) {
 						if (g_vars->scene05_handleFlipper % 2)
 							sceneHandler05_makeWackoFeedback();
 
@@ -369,11 +369,11 @@ int sceneHandler05(ExCommand *ex) {
 
 			++g_vars->scene05_floatersTicker;
 
-			g_fullpipe->_floaters->update();
+			g_fp->_floaters->update();
 
-			g_fullpipe->_behaviorManager->updateBehaviors();
+			g_fp->_behaviorManager->updateBehaviors();
 
-			g_fullpipe->startSceneTrack();
+			g_fp->startSceneTrack();
 
 			return res;
 		}

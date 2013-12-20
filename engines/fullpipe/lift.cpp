@@ -67,7 +67,7 @@ int FullpipeEngine::lift_getButtonIdP(int objid) {
 }
 
 void FullpipeEngine::lift_setButton(const char *name, int state) {
-	GameVar *var = g_fullpipe->getGameLoaderGameVar()->getSubVarByName("OBJSTATES")->getSubVarByName(sO_LiftButtons);
+	GameVar *var = g_fp->getGameLoaderGameVar()->getSubVarByName("OBJSTATES")->getSubVarByName(sO_LiftButtons);
 
 	if (var)
 		var->setSubVarAsInt(name, state);

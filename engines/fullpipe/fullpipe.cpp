@@ -40,7 +40,7 @@
 
 namespace Fullpipe {
 
-FullpipeEngine *g_fullpipe = 0;
+FullpipeEngine *g_fp = 0;
 Vars *g_vars = 0;
 
 FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
@@ -157,7 +157,7 @@ FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc)
 
 	_isSaveAllowed = true;
 
-	g_fullpipe = this;
+	g_fp = this;
 	g_vars = new Vars;
 }
 

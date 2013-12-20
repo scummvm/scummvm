@@ -36,8 +36,8 @@ int handleObjectInteraction(StaticANIObject *subject, GameObject *object, int in
 bool canInteractAny(GameObject *obj1, GameObject *obj2, int invId) {
 	int sceneId = 0;
 
-	if (g_fullpipe->_currentScene)
-		sceneId = g_fullpipe->_currentScene->_sceneId;
+	if (g_fp->_currentScene)
+		sceneId = g_fp->_currentScene->_sceneId;
 
 	InteractionController *intC = getGameLoaderInteractionController();
 	for (ObList::iterator i = intC->_interactions.begin(); i != intC->_interactions.end(); ++i) {
@@ -137,7 +137,7 @@ bool InteractionController::handleInteraction(StaticANIObject *subj, GameObject 
 			obj->setPicAniInfo(&aniInfo);
 
 			if (abs(xpos - subj->_ox) > 1 || abs(ypos - subj->_oy) > 1) {
-				mq = getSc2MctlCompoundBySceneId(g_fullpipe->_currentScene->_sceneId)->doWalkTo(subj, xpos, ypos, 1, cinter->_staticsId2);
+				mq = getSc2MctlCompoundBySceneId(g_fp->_currentScene->_sceneId)->doWalkTo(subj, xpos, ypos, 1, cinter->_staticsId2);
 				if (mq) {
 					dur = mq->calcDuration(subj);
 					delete mq;
@@ -305,7 +305,7 @@ LABEL_38:
 
 		if (abs(xpos - subj->_ox) > 1 || abs(ypos - subj->_oy) > 1
 				|| (inter->_staticsId2 != 0 && (subj->_statics == 0 || subj->_statics->_staticsId != inter->_staticsId2))) {
-			mq = getSc2MctlCompoundBySceneId(g_fullpipe->_currentScene->_sceneId)->method34(subj, xpos, ypos, 1, inter->_staticsId2);
+			mq = getSc2MctlCompoundBySceneId(g_fp->_currentScene->_sceneId)->method34(subj, xpos, ypos, 1, inter->_staticsId2);
 
 			if (!mq)
 				return false;
@@ -444,7 +444,7 @@ bool Interaction::load(MfcArchive &file) {
 }
 
 bool Interaction::canInteract(GameObject *obj1, GameObject *obj2, int invId) {
-	if (_sceneId > 0 && g_fullpipe->_currentScene && g_fullpipe->_currentScene->_sceneId != _sceneId)
+	if (_sceneId > 0 && g_fp->_currentScene && g_fp->_currentScene->_sceneId != _sceneId)
 		return false;
 
 	if (_flags & 0x20000)
@@ -476,20 +476,20 @@ bool Interaction::canInteract(GameObject *obj1, GameObject *obj2, int invId) {
 
 	if (_objectState1) {
 		if (_flags & 0x10) {
-			if ((g_fullpipe->getObjectState(obj1->getName()) & _objectState1) == 0)
+			if ((g_fp->getObjectState(obj1->getName()) & _objectState1) == 0)
 				return false;
 		} else {
-			if (g_fullpipe->getObjectState(obj1->getName()) != _objectState1)
+			if (g_fp->getObjectState(obj1->getName()) != _objectState1)
 				return false;
 		}
 	}
 
 	if (_objectState2) {
 		if (_flags & 0x10) {
-			if ((g_fullpipe->getObjectState(obj2->getName()) & _objectState2) == 0)
+			if ((g_fp->getObjectState(obj2->getName()) & _objectState2) == 0)
 				return false;
 		} else {
-			if (g_fullpipe->getObjectState(obj2->getName()) != _objectState2)
+			if (g_fp->getObjectState(obj2->getName()) != _objectState2)
 				return false;
 		}
 	}

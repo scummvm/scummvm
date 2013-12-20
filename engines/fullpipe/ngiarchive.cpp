@@ -91,7 +91,7 @@ NGIArchive::NGIArchive(const Common::String &filename) : _ngiFilename(filename) 
 
 	free(fat);
 
-	g_fullpipe->_currArchive = this;
+	g_fp->_currArchive = this;
 
 	debug(0, "NGIArchive::NGIArchive(%s): Located %d files", filename.c_str(), _headers.size());
 }
@@ -103,7 +103,7 @@ NGIArchive::~NGIArchive() {
 		delete it->_value;
 	}
 
-	g_fullpipe->_currArchive = 0;
+	g_fp->_currArchive = 0;
 }
 
 bool NGIArchive::hasFile(const Common::String &name) const {

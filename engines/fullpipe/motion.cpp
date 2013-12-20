@@ -258,7 +258,7 @@ int MctlLadder::findObjectPos(StaticANIObject *obj) {
 }
 
 bool MctlLadder::initMovement(StaticANIObject *ani, MctlLadderMovement *movement) {
-	GameVar *v = g_fullpipe->getGameLoaderGameVar()->getSubVarByName(ani->getName());
+	GameVar *v = g_fp->getGameLoaderGameVar()->getSubVarByName(ani->getName());
 
 	if (!v)
 		return false;
@@ -567,7 +567,7 @@ bool MovGraph2::initDirections(StaticANIObject *obj, MovGraph2Item *item) {
 	item->_obj = obj;
 	item->_objectId = obj->_id;
 
-	GameVar *var = g_fullpipe->getGameLoaderGameVar()->getSubVarByName(obj->_objectName);
+	GameVar *var = g_fp->getGameLoaderGameVar()->getSubVarByName(obj->_objectName);
 	if (!var)
 		return false;
 
@@ -828,7 +828,7 @@ MessageQueue *MovGraph2::buildMovInfo1MessageQueue(MovInfo1 *movInfo) {
 	int curY = movInfo->pt1.y;
 	int curDistance = movInfo->distance1;
 
-	MessageQueue *mq = new MessageQueue(g_fullpipe->_globalMessageQueueList->compact());
+	MessageQueue *mq = new MessageQueue(g_fp->_globalMessageQueueList->compact());
 
 	for (int i = 0; i < movInfo->itemsCount - 1; i++) {
 		if (movInfo->items[i + 1]->subIndex != 10) {
@@ -1064,7 +1064,7 @@ MessageQueue *MovGraph2::doWalkTo(StaticANIObject *obj, int xpos, int ypos, int 
 	}
 
 	if (obj->_ox == xpos && obj->_oy == ypos) {
-		g_fullpipe->_globalMessageQueueList->compact();
+		g_fp->_globalMessageQueueList->compact();
 
 		MessageQueue *mq = new MessageQueue();
 
@@ -1530,7 +1530,7 @@ void MGM::rebuildTables(int objId) {
 	_items[idx]->movements1.clear();
 	_items[idx]->movements2.clear();
 
-	StaticANIObject *obj = g_fullpipe->_currentScene->getStaticANIObject1ById(objId, -1);
+	StaticANIObject *obj = g_fp->_currentScene->getStaticANIObject1ById(objId, -1);
 
 	if (!obj)
 		return;
@@ -1841,10 +1841,10 @@ bool MovGraphReact::pointInRegion(int x, int y) {
 }
 
 int startWalkTo(int objId, int objKey, int x, int y, int a5) {
-	MctlCompound *mc = getSc2MctlCompoundBySceneId(g_fullpipe->_currentScene->_sceneId);
+	MctlCompound *mc = getSc2MctlCompoundBySceneId(g_fp->_currentScene->_sceneId);
 
 	if (mc)
-		return (mc->method34(g_fullpipe->_currentScene->getStaticANIObject1ById(objId, objKey), x, y, a5, 0) != 0);
+		return (mc->method34(g_fp->_currentScene->getStaticANIObject1ById(objId, objKey), x, y, a5, 0) != 0);
 
 	return 0;
 }

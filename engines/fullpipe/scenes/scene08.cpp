@@ -46,28 +46,28 @@ void scene08_initScene(Scene *sc) {
 	g_vars->scene08_var04 = -37;
 	g_vars->scene08_var05 = -1;
 
-	Scene *oldsc = g_fullpipe->_currentScene;
-	g_fullpipe->_currentScene = sc;
+	Scene *oldsc = g_fp->_currentScene;
+	g_fp->_currentScene = sc;
 
-	int batuta = g_fullpipe->getObjectState(sO_TummyTrampie);
+	int batuta = g_fp->getObjectState(sO_TummyTrampie);
 	MovGraphLink *lock = getSc2MctlCompoundBySceneId(sc->_sceneId)->getLinkByName(sO_CloseThing);
 
 	if (lock)
 		lock->_flags &= 0xDFFFFFFF;
 
-	if (batuta == g_fullpipe->getObjectEnumState(sO_TummyTrampie, sO_IsEating)) {
+	if (batuta == g_fp->getObjectEnumState(sO_TummyTrampie, sO_IsEating)) {
 		g_vars->scene08_batuta->changeStatics2(ST_BTT_SPOON);
-	} else if (batuta == g_fullpipe->getObjectEnumState(sO_TummyTrampie, sO_IsDrinking)) {
+	} else if (batuta == g_fp->getObjectEnumState(sO_TummyTrampie, sO_IsDrinking)) {
 		g_vars->scene08_batuta->changeStatics2(ST_BTT_NOSPOON);
 
 		g_vars->scene08_clock->startAnim(MV_CLK8_GO, 0, -1);
 		g_vars->scene08_clock->_movement->setDynamicPhaseIndex(3);
-	} else if (batuta== g_fullpipe->getObjectEnumState(sO_TummyTrampie, sO_IsScratchingBelly)) {
+	} else if (batuta== g_fp->getObjectEnumState(sO_TummyTrampie, sO_IsScratchingBelly)) {
 		g_vars->scene08_batuta->changeStatics2(ST_BTT_CHESHET);
 
 		g_vars->scene08_clock->startAnim(MV_CLK8_GO, 0, -1);
 		g_vars->scene08_clock->_movement->setDynamicPhaseIndex(8);
-	} else if (batuta == g_fullpipe->getObjectEnumState(sO_TummyTrampie, sO_IsSleeping)) {
+	} else if (batuta == g_fp->getObjectEnumState(sO_TummyTrampie, sO_IsSleeping)) {
 		g_vars->scene08_batuta->changeStatics2(ST_BTT_SLEEPS);
 
 		g_vars->scene08_clock->startAnim(MV_CLK8_GO, 0, -1);
@@ -81,7 +81,7 @@ void scene08_initScene(Scene *sc) {
 
 	g_vars->scene08_clock->_callback2 = 0;
 
-	if (g_fullpipe->getObjectState(sO_StairsUp_8) == g_fullpipe->getObjectEnumState(sO_StairsUp_8, sO_Broken)) {
+	if (g_fp->getObjectState(sO_StairsUp_8) == g_fp->getObjectEnumState(sO_StairsUp_8, sO_Broken)) {
 		g_vars->scene08_var07 = 0;
 
 		sc->getPictureObjectById(PIC_SC8_LADDER, 0)->_flags &= 0xFFFB;
@@ -93,12 +93,12 @@ void scene08_initScene(Scene *sc) {
 
 	sc->getPictureObjectById(PIC_SC8_ARCADENOW, 0)->_flags &= 0xFFFB;
 
-	g_fullpipe->_currentScene = oldsc;
+	g_fp->_currentScene = oldsc;
 
-	g_fullpipe->_floaters->init(g_fullpipe->getGameLoaderGameVar()->getSubVarByName("SC_8"));
-	g_fullpipe->_floaters->genFlies(sc, 100, 100, 0, 0);
+	g_fp->_floaters->init(g_fp->getGameLoaderGameVar()->getSubVarByName("SC_8"));
+	g_fp->_floaters->genFlies(sc, 100, 100, 0, 0);
 
-	g_fullpipe->setArcadeOverlay(PIC_CSR_ARCADE3);
+	g_fp->setArcadeOverlay(PIC_CSR_ARCADE3);
 }
 
 void scene08_setupMusic() {
@@ -108,9 +108,9 @@ void scene08_setupMusic() {
 int scene08_updateCursor() {
 	warning("STUB: scene08_updateCursor()");
 
-	g_fullpipe->updateCursorCommon();
+	g_fp->updateCursorCommon();
 
-	return g_fullpipe->_cursorId;
+	return g_fp->_cursorId;
 }
 
 void sceneHandler08_winArcade() {
@@ -245,52 +245,52 @@ int sceneHandler08(ExCommand *cmd) {
 		{
 			int res = 0;
 
-			if (g_fullpipe->_aniMan2) {
+			if (g_fp->_aniMan2) {
 				if (g_vars->scene08_var06) {
-					int scHeight = g_fullpipe->_sceneRect.bottom - g_fullpipe->_sceneRect.top;
+					int scHeight = g_fp->_sceneRect.bottom - g_fp->_sceneRect.top;
 
-					if (g_fullpipe->_aniMan2->_oy < g_fullpipe->_sceneRect.top + 200) {
-						g_fullpipe->_sceneRect.top = g_fullpipe->_aniMan2->_oy - 200;
+					if (g_fp->_aniMan2->_oy < g_fp->_sceneRect.top + 200) {
+						g_fp->_sceneRect.top = g_fp->_aniMan2->_oy - 200;
 
-						if (g_fullpipe->_sceneRect.top < 0)
-							g_fullpipe->_sceneRect.top = 0;
+						if (g_fp->_sceneRect.top < 0)
+							g_fp->_sceneRect.top = 0;
 
-						g_fullpipe->_sceneRect.bottom = scHeight + g_fullpipe->_sceneRect.top;
+						g_fp->_sceneRect.bottom = scHeight + g_fp->_sceneRect.top;
 					}
 
-					if (g_fullpipe->_aniMan2->_oy > g_fullpipe->_sceneRect.bottom - 350) {
-						g_fullpipe->_sceneRect.bottom = g_fullpipe->_aniMan2->_oy + 350;
-						g_fullpipe->_sceneRect.top = g_fullpipe->_aniMan2->_oy + 350 - scHeight;
+					if (g_fp->_aniMan2->_oy > g_fp->_sceneRect.bottom - 350) {
+						g_fp->_sceneRect.bottom = g_fp->_aniMan2->_oy + 350;
+						g_fp->_sceneRect.top = g_fp->_aniMan2->_oy + 350 - scHeight;
 					}
 				} else {
-					if (g_fullpipe->_aniMan2->_ox < g_fullpipe->_sceneRect.left + 200)
-						g_fullpipe->_currentScene->_x = g_fullpipe->_aniMan2->_ox - g_fullpipe->_sceneRect.left - 300;
+					if (g_fp->_aniMan2->_ox < g_fp->_sceneRect.left + 200)
+						g_fp->_currentScene->_x = g_fp->_aniMan2->_ox - g_fp->_sceneRect.left - 300;
 
-					if (g_fullpipe->_aniMan2->_ox > g_fullpipe->_sceneRect.right - 200)
-						g_fullpipe->_currentScene->_x = g_fullpipe->_aniMan2->_ox - g_fullpipe->_sceneRect.right + 300;
+					if (g_fp->_aniMan2->_ox > g_fp->_sceneRect.right - 200)
+						g_fp->_currentScene->_x = g_fp->_aniMan2->_ox - g_fp->_sceneRect.right + 300;
 
 					res = 1;
 				}
 			}
 
-			g_fullpipe->_floaters->update();
+			g_fp->_floaters->update();
 
 			if (g_vars->scene08_var06) {
 				if (g_vars->scene08_var01)
 					sceneHandler08_calcFlight();
 			} else {
-				Movement *mov = g_fullpipe->_aniMan->_movement;
+				Movement *mov = g_fp->_aniMan->_movement;
 
 				if (mov) {
 					if (mov->_id == MV_MAN_TOLADDERD && mov->_currDynamicPhaseIndex == 8)
-						g_fullpipe->_aniMan->_priority = 2;
+						g_fp->_aniMan->_priority = 2;
 
 					if (mov && mov->_id == MV_MAN_FROMLADDERUP && mov->_currDynamicPhaseIndex == 13)
-						g_fullpipe->_aniMan->_priority = 20;
+						g_fp->_aniMan->_priority = 20;
 				}
 
-				g_fullpipe->_behaviorManager->updateBehaviors();
-				g_fullpipe->startSceneTrack();
+				g_fp->_behaviorManager->updateBehaviors();
+				g_fp->startSceneTrack();
 			}
 
 			if (g_vars->scene08_var02)
@@ -300,7 +300,7 @@ int sceneHandler08(ExCommand *cmd) {
 				g_vars->scene08_var05--;
 
 				if (!g_vars->scene08_var05) {
-					g_fullpipe->playSound(SND_8_014, 0);
+					g_fp->playSound(SND_8_014, 0);
 
 					g_vars->scene08_var05 = 71;
 				}

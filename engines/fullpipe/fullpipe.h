@@ -279,7 +279,7 @@ public:
 
 };
 
-extern FullpipeEngine *g_fullpipe;
+extern FullpipeEngine *g_fp;
 extern Vars *g_vars;
 
 } // End of namespace Fullpipe

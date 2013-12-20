@@ -39,12 +39,12 @@ namespace Fullpipe {
 void scene02_initScene(Scene *sc) {
 	g_vars->scene02_guvTheDrawer = sc->getStaticANIObject1ById(ANI_DADAYASHIK, -1);
 
-	if (g_fullpipe->getObjectState(sO_GuvTheDrawer) == g_fullpipe->getObjectEnumState(sO_GuvTheDrawer, sO_IsSleeping)) {
-		Scene *s = g_fullpipe->_currentScene;
+	if (g_fp->getObjectState(sO_GuvTheDrawer) == g_fp->getObjectEnumState(sO_GuvTheDrawer, sO_IsSleeping)) {
+		Scene *s = g_fp->_currentScene;
 
-		g_fullpipe->_currentScene = sc;
+		g_fp->_currentScene = sc;
 		g_vars->scene02_guvTheDrawer->changeStatics2(ST_DYAS_LIES);
-		g_fullpipe->_currentScene = s;
+		g_fp->_currentScene = s;
 	}
 
 	g_vars->scene02_boxDelay = 0;
@@ -55,23 +55,23 @@ void scene02_initScene(Scene *sc) {
 		g_vars->scene02_boxOpen = false;
 	} else {
 		g_vars->scene02_boxOpen = true;
-		g_vars->scene02_boxDelay = 100 * g_fullpipe->_rnd->getRandomNumber(32767) + 150;
+		g_vars->scene02_boxDelay = 100 * g_fp->_rnd->getRandomNumber(32767) + 150;
 	}
 
-	g_fullpipe->_floaters->init(g_fullpipe->_gameLoader->_gameVar->getSubVarByName("SC_2"));
+	g_fp->_floaters->init(g_fp->_gameLoader->_gameVar->getSubVarByName("SC_2"));
 }
 
 void sceneHandler02_ladderClick() {
-	handleObjectInteraction(g_fullpipe->_aniMan2, g_fullpipe->_currentScene->getPictureObjectById(PIC_SC2_DTRUBA, 0), 0);
+	handleObjectInteraction(g_fp->_aniMan2, g_fp->_currentScene->getPictureObjectById(PIC_SC2_DTRUBA, 0), 0);
 }
 
 void sceneHandler02_showLadder() {
-	g_fullpipe->_currentScene->getPictureObjectById(PIC_SC2_LADDER, 0)->_flags |= 4;
+	g_fp->_currentScene->getPictureObjectById(PIC_SC2_LADDER, 0)->_flags |= 4;
 }
 
 void sceneHandler02_hideLadder() {
-	g_fullpipe->_currentScene->getPictureObjectById(PIC_SC2_LADDER, 0)->_flags &= 0xfffb;
-	g_fullpipe->_aniMan2->_priority = 25;
+	g_fp->_currentScene->getPictureObjectById(PIC_SC2_LADDER, 0)->_flags &= 0xfffb;
+	g_fp->_aniMan2->_priority = 25;
 }
 
 int sceneHandler02(ExCommand *ex) {
@@ -90,7 +90,7 @@ int sceneHandler02(ExCommand *ex) {
 		return 0;
 
 	case MSG_SC2_PUTMANUP:
-		g_fullpipe->_aniMan2->_priority = 0;
+		g_fp->_aniMan2->_priority = 0;
 		return 0;
 
 	case MSG_SC2_HIDELADDER:
@@ -98,12 +98,12 @@ int sceneHandler02(ExCommand *ex) {
 		return 0;
 
 	case 33:
-		if (g_fullpipe->_aniMan2) {
-			if (g_fullpipe->_aniMan2->_ox < g_fullpipe->_sceneRect.left + 200)
-				g_fullpipe->_currentScene->_x = g_fullpipe->_aniMan2->_ox - g_fullpipe->_sceneRect.left - 300;
+		if (g_fp->_aniMan2) {
+			if (g_fp->_aniMan2->_ox < g_fp->_sceneRect.left + 200)
+				g_fp->_currentScene->_x = g_fp->_aniMan2->_ox - g_fp->_sceneRect.left - 300;
 
-			if (g_fullpipe->_aniMan2->_ox > g_fullpipe->_sceneRect.right - 200)
-				g_fullpipe->_currentScene->_x = g_fullpipe->_aniMan2->_ox - g_fullpipe->_sceneRect.right + 300;
+			if (g_fp->_aniMan2->_ox > g_fp->_sceneRect.right - 200)
+				g_fp->_currentScene->_x = g_fp->_aniMan2->_ox - g_fp->_sceneRect.right + 300;
 
 			res = 1;
 		}
@@ -111,24 +111,24 @@ int sceneHandler02(ExCommand *ex) {
 		if (g_vars->scene02_boxOpen) {
 			if (g_vars->scene02_boxDelay >= 1) {
 				--g_vars->scene02_boxDelay;
-			} else if (g_fullpipe->_floaters->_array2.size() >= 1) {
-				if (g_fullpipe->_floaters->_array2[0]->val5 == -50) {
-					g_fullpipe->_floaters->stopAll();
+			} else if (g_fp->_floaters->_array2.size() >= 1) {
+				if (g_fp->_floaters->_array2[0]->val5 == -50) {
+					g_fp->_floaters->stopAll();
 					g_vars->scene02_boxOpen = false;
-					g_vars->scene02_boxDelay = 100 * g_fullpipe->_rnd->getRandomNumber(32767) + 150;
+					g_vars->scene02_boxDelay = 100 * g_fp->_rnd->getRandomNumber(32767) + 150;
 				} else {
-					g_fullpipe->_floaters->_array2[0]->val3 = -50;
+					g_fp->_floaters->_array2[0]->val3 = -50;
 				}
 			} else {
-				g_fullpipe->_floaters->genFlies(g_fullpipe->_currentScene, g_fullpipe->_rnd->getRandomNumber(700) + 100, -50, 0, 0);
-				g_vars->scene02_boxDelay = 500 * g_fullpipe->_rnd->getRandomNumber(32767) + 1000;
+				g_fp->_floaters->genFlies(g_fp->_currentScene, g_fp->_rnd->getRandomNumber(700) + 100, -50, 0, 0);
+				g_vars->scene02_boxDelay = 500 * g_fp->_rnd->getRandomNumber(32767) + 1000;
 			}
 		}
 
-		g_fullpipe->_floaters->update();
-		g_fullpipe->_behaviorManager->updateBehaviors();
+		g_fp->_floaters->update();
+		g_fp->_behaviorManager->updateBehaviors();
 
-		g_fullpipe->startSceneTrack();
+		g_fp->startSceneTrack();
 	}
 
 	return res;

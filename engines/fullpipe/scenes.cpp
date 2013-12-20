@@ -754,9 +754,9 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 }
 
 int defaultUpdateCursor() {
-	g_fullpipe->updateCursorCommon();
+	g_fp->updateCursorCommon();
 
-	return g_fullpipe->_cursorId;
+	return g_fp->_cursorId;
 }
 
 void FullpipeEngine::processArcade(ExCommand *ex) {

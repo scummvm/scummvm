@@ -132,7 +132,7 @@ void BehaviorManager::updateBehavior(BehaviorInfo *behaviorInfo, BehaviorEntry *
 				mq->sendNextCommand();
 
 				bhi->_flags &= 0xFFFFFFFD;
-			} else if (behaviorInfo->_counter >= bhi->_delay && bhi->_percent && g_fullpipe->_rnd->getRandomNumber(32767) <= entry->_items[i]->_percent) {
+			} else if (behaviorInfo->_counter >= bhi->_delay && bhi->_percent && g_fp->_rnd->getRandomNumber(32767) <= entry->_items[i]->_percent) {
 				MessageQueue *mq = new MessageQueue(bhi->_messageQueue, 0, 1);
 
 				mq->sendNextCommand();
@@ -149,7 +149,7 @@ void BehaviorManager::updateStaticAniBehavior(StaticANIObject *ani, int delay, B
 	MessageQueue *mq = 0;
 
 	if (bhe->_flags & 1) {
-		uint rnd = g_fullpipe->_rnd->getRandomNumber(32767);
+		uint rnd = g_fp->_rnd->getRandomNumber(32767);
 		uint runPercent = 0;
 		for (int i = 0; i < bhe->_itemsCount; i++) {
 			if (!(bhe->_items[i]->_flags & 1) && bhe->_items[i]->_percent) {
@@ -164,7 +164,7 @@ void BehaviorManager::updateStaticAniBehavior(StaticANIObject *ani, int delay, B
 		for (int i = 0; i < bhe->_itemsCount; i++) {
 			if (!(bhe->_items[i]->_flags & 1) && delay >= bhe->_items[i]->_delay) {
 				if (bhe->_items[i]->_percent) {
-					if (g_fullpipe->_rnd->getRandomNumber(32767) <= bhe->_items[i]->_percent) {
+					if (g_fp->_rnd->getRandomNumber(32767) <= bhe->_items[i]->_percent) {
 						mq = new MessageQueue(bhe->_items[i]->_messageQueue, 0, 1);
 						break;
 					}
@@ -252,11 +252,11 @@ void BehaviorInfo::initObjectBehavior(GameVar *var, Scene *sc, StaticANIObject *
 		if (strcmp(var->_value.stringValue, "ROOT"))
 			break;
 
-		GameVar *v1 = g_fullpipe->getGameLoaderGameVar()->getSubVarByName("BEHAVIOR")->getSubVarByName(ani->getName());
+		GameVar *v1 = g_fp->getGameLoaderGameVar()->getSubVarByName("BEHAVIOR")->getSubVarByName(ani->getName());
 		if (v1 == var)
 			return;
 
-		sc = g_fullpipe->accessScene(ani->_sceneId);
+		sc = g_fp->accessScene(ani->_sceneId);
 		clear();
 		var = v1;
 		_itemsCount = var->getSubVarsCount();

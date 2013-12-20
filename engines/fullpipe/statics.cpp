@@ -191,7 +191,7 @@ bool StaticANIObject::load(MfcArchive &file) {
 
 		char *movname = genFileName(_id, movNum, "mov");
 
-		Common::SeekableReadStream *f = g_fullpipe->_currArchive->createReadStreamForMember(movname);
+		Common::SeekableReadStream *f = g_fp->_currArchive->createReadStreamForMember(movname);
 
 		Movement *mov = new Movement();
 
@@ -249,11 +249,11 @@ void StaticANIObject::setFlags40(bool state) {
 
 void StaticANIObject::deleteFromGlobalMessageQueue() {
 	while (_messageQueueId) {
-		if (g_fullpipe->_globalMessageQueueList->getMessageQueueById(_messageQueueId)) {
+		if (g_fp->_globalMessageQueueList->getMessageQueueById(_messageQueueId)) {
 			if (!isIdle())
 				return;
 
-			g_fullpipe->_globalMessageQueueList->deleteQueueById(_messageQueueId);
+			g_fp->_globalMessageQueueList->deleteQueueById(_messageQueueId);
 		} else {
 			_messageQueueId = 0;
 		}
@@ -285,7 +285,7 @@ MessageQueue *StaticANIObject::getMessageQueue() {
 	if (this->_messageQueueId <= 0)
 		return 0;
 
-	return g_fullpipe->_globalMessageQueueList->getMessageQueueById(_messageQueueId);
+	return g_fp->_globalMessageQueueList->getMessageQueueById(_messageQueueId);
 }
 
 bool StaticANIObject::trySetMessageQueue(int msgNum, int qId) {
@@ -304,7 +304,7 @@ bool StaticANIObject::trySetMessageQueue(int msgNum, int qId) {
 
 bool StaticANIObject::isIdle() {
 	if (_messageQueueId) {
-		MessageQueue *m = g_fullpipe->_globalMessageQueueList->getMessageQueueById(_messageQueueId);
+		MessageQueue *m = g_fp->_globalMessageQueueList->getMessageQueueById(_messageQueueId);
 
 		if (m && m->getFlags() & 1)
 			return false;
@@ -429,7 +429,7 @@ void Movement::draw(bool flipFlag, int angle) {
 	int y = _oy - point.y;
 
 	if (_currDynamicPhase->getPaletteData())
-		g_fullpipe->_globalPalette = _currDynamicPhase->getPaletteData();
+		g_fp->_globalPalette = _currDynamicPhase->getPaletteData();
 
 	if (_currDynamicPhase->getAlpha() < 0xFF) {
 		warning("Movement::draw: alpha < 0xff: %d", _currDynamicPhase->getAlpha());
@@ -499,7 +499,7 @@ void StaticANIObject::draw() {
 
 	debug(6, "StaticANIObject::draw() (%s) [%d] [%d, %d]", transCyrillic((byte *)_objectName), _id, _ox, _oy);
 
-	if (_shadowsOn && g_fullpipe->_currentScene && g_fullpipe->_currentScene->_shadows
+	if (_shadowsOn && g_fp->_currentScene && g_fp->_currentScene->_shadows
 		&& (getCurrDimensions(point)->x != 1 || getCurrDimensions(point)->y != 1)) {
 
 		DynamicPhase *dyn;
@@ -517,7 +517,7 @@ void StaticANIObject::draw() {
 		if (dyn->getDynFlags() & 4) {
 			rect = *dyn->_rect;
 
-			DynamicPhase *shd = g_fullpipe->_currentScene->_shadows->findSize(rect.width(), rect.height());
+			DynamicPhase *shd = g_fp->_currentScene->_shadows->findSize(rect.width(), rect.height());
 			if (shd) {
 				shd->getDimensions(&point);
 				int midx = _ox - point.x / 2 - dyn->_someX;
@@ -573,7 +573,7 @@ void StaticANIObject::draw2() {
 }
 
 MovTable *StaticANIObject::countMovements() {
-	GameVar *preloadSubVar = g_fullpipe->getGameLoaderGameVar()->getSubVarByName(getName())->getSubVarByName("PRELOAD");
+	GameVar *preloadSubVar = g_fp->getGameLoaderGameVar()->getSubVarByName(getName())->getSubVarByName("PRELOAD");
 
 	if (!preloadSubVar || preloadSubVar->getSubVarsCount() == 0)
 		return 0;
@@ -599,7 +599,7 @@ MovTable *StaticANIObject::countMovements() {
 }
 
 void StaticANIObject::setSpeed(int speed) {
-	GameVar *var = g_fullpipe->getGameLoaderGameVar()->getSubVarByName(getName())->getSubVarByName("SpeedUp");
+	GameVar *var = g_fp->getGameLoaderGameVar()->getSubVarByName(getName())->getSubVarByName("SpeedUp");
 
 	if (!var)
 		return;
@@ -886,15 +886,15 @@ void StaticANIObject::changeStatics2(int objId) {
 	deleteFromGlobalMessageQueue();
 
 	if (_movement || _statics) {
-		g_fullpipe->_mgm->addItem(_id);
-		g_fullpipe->_mgm->updateAnimStatics(this, objId);
+		g_fp->_mgm->addItem(_id);
+		g_fp->_mgm->updateAnimStatics(this, objId);
 	} else {
 		_statics = getStaticsById(objId);
 	}
 
 	if (_messageQueueId) {
-		if (g_fullpipe->_globalMessageQueueList->getMessageQueueById(_messageQueueId))
-			g_fullpipe->_globalMessageQueueList->deleteQueueById(_messageQueueId);
+		if (g_fp->_globalMessageQueueList->getMessageQueueById(_messageQueueId))
+			g_fp->_globalMessageQueueList->deleteQueueById(_messageQueueId);
 
 		_messageQueueId = 0;
 	}
@@ -1376,10 +1376,10 @@ bool Movement::load(MfcArchive &file, StaticANIObject *ani) {
 			_flipFlag = 1;
 	}
 
-	if (g_fullpipe->_gameProjectVersion >= 8)
+	if (g_fp->_gameProjectVersion >= 8)
 		_field_50 = file.readUint32LE();
 
-	if (g_fullpipe->_gameProjectVersion < 12)
+	if (g_fp->_gameProjectVersion < 12)
 		_counterMax = 83;
 	else
 		_counterMax = file.readUint32LE();
@@ -1817,9 +1817,9 @@ DynamicPhase::DynamicPhase(DynamicPhase *src, bool reverse) {
 		_data = _bitmap->_pixels;
 		_dataSize = src->_dataSize;
 
-		if (g_fullpipe->_currArchive) {
+		if (g_fp->_currArchive) {
 			_mfield_14 = 0;
-			_libHandle = g_fullpipe->_currArchive;
+			_libHandle = g_fp->_currArchive;
 		}
 
 		_mflags |= 1;
@@ -1877,12 +1877,12 @@ bool DynamicPhase::load(MfcArchive &file) {
 	_rect->right = file.readUint32LE();
 	_rect->bottom = file.readUint32LE();
 
-	assert (g_fullpipe->_gameProjectVersion >= 1);
+	assert (g_fp->_gameProjectVersion >= 1);
 
 	_someX = file.readUint32LE();
 	_someY = file.readUint32LE();
 
-	assert (g_fullpipe->_gameProjectVersion >= 12);
+	assert (g_fp->_gameProjectVersion >= 12);
 
 	_dynFlags = file.readUint32LE();
 
@@ -1909,13 +1909,13 @@ bool StaticPhase::load(MfcArchive &file) {
 	_initialCountdown = file.readUint16LE();
 	_field_6A = file.readUint16LE();
 	
-	if (g_fullpipe->_gameProjectVersion >= 12) {
+	if (g_fp->_gameProjectVersion >= 12) {
 		_exCommand = (ExCommand *)file.readClass();
 
 		return true;
 	}
 
-	assert (g_fullpipe->_gameProjectVersion >= 12);
+	assert (g_fp->_gameProjectVersion >= 12);
 
 	return true;
 }

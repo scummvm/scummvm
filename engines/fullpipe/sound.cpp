@@ -86,7 +86,7 @@ bool Sound::load(MfcArchive &file, NGIArchive *archive) {
 	_id = file.readUint32LE();
 	_description = file.readPascalString();
 
-	assert(g_fullpipe->_gameProjectVersion >= 6);
+	assert(g_fp->_gameProjectVersion >= 6);
 
 	_objectId = file.readUint16LE();
 

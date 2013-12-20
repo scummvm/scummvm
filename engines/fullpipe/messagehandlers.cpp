@@ -55,7 +55,7 @@ int global_messageHandler1(ExCommand *cmd) {
 			cmd->_messageNum = MV_MAN_STOPLADDER2;
 	}
 
-	if (g_fullpipe->_inputDisabled) {
+	if (g_fp->_inputDisabled) {
 		if (cmd->_messageKind == 17) {
 			switch (cmd->_messageNum) {
 			case 29:
@@ -71,25 +71,25 @@ int global_messageHandler1(ExCommand *cmd) {
 	} else if (cmd->_messageKind == 17) {
 		switch (cmd->_messageNum) {
 		case MSG_MANSHADOWSON:
-			g_fullpipe->_aniMan->_shadowsOn = 1;
+			g_fp->_aniMan->_shadowsOn = 1;
 			break;
 		case MSG_HMRKICK_STUCCO:
 			global_messageHandler_KickStucco();
 			break;
 		case MSG_MANSHADOWSOFF:
-			g_fullpipe->_aniMan->_shadowsOn = 0;
+			g_fp->_aniMan->_shadowsOn = 0;
 			break;
 		case MSG_DISABLESAVES:
-			g_fullpipe->disableSaves(cmd);
+			g_fp->disableSaves(cmd);
 			break;
 		case MSG_ENABLESAVES:
-			g_fullpipe->enableSaves();
+			g_fp->enableSaves();
 			break;
 		case MSG_HMRKICK_METAL:
 			global_messageHandler_KickMetal();
 			break;
 		case 29: // left mouse
-			if (g_fullpipe->_inventoryScene) {
+			if (g_fp->_inventoryScene) {
 				if (getGameLoaderInventory()->handleLeftClick(cmd))
 					cmd->_messageKind = 0;
 			}
@@ -101,22 +101,22 @@ int global_messageHandler1(ExCommand *cmd) {
 			}
 			break;
 		case 36: // keydown
-			g_fullpipe->defHandleKeyDown(cmd->_keyCode);
+			g_fp->defHandleKeyDown(cmd->_keyCode);
 
 			switch (cmd->_keyCode) {
 			case '\x1B': // ESC
-				if (g_fullpipe->_currentScene) {
+				if (g_fp->_currentScene) {
 					getGameLoaderInventory()->unselectItem(0);
-					g_fullpipe->openMainMenu();
+					g_fp->openMainMenu();
 					cmd->_messageKind = 0;
 				}
 				break;
 			case 't':
-				g_fullpipe->stopAllSounds();
+				g_fp->stopAllSounds();
 				cmd->_messageKind = 0;
 				break;
 			case 'u':
-				g_fullpipe->toggleMute();
+				g_fp->toggleMute();
 				cmd->_messageKind = 0;
 				break;
 			case ' ':
@@ -130,13 +130,13 @@ int global_messageHandler1(ExCommand *cmd) {
 				}
 				break;
 			case '\t':
-				if (g_fullpipe->_flgCanOpenMap)
-					g_fullpipe->openMap();
+				if (g_fp->_flgCanOpenMap)
+					g_fp->openMap();
 				cmd->_messageKind = 0;
 				break;
 			case 'p':
-				if (g_fullpipe->_flgCanOpenMap)
-					g_fullpipe->openHelp();
+				if (g_fp->_flgCanOpenMap)
+					g_fp->openHelp();
 				cmd->_messageKind = 0;
 				break;
 			default:
@@ -144,47 +144,47 @@ int global_messageHandler1(ExCommand *cmd) {
 			}
 			break;
 		case 33:
-			if (!g_fullpipe->_inventoryScene)
+			if (!g_fp->_inventoryScene)
 				break;
 
 			int invItem;
 
-			if (g_fullpipe->_updateFlag && (invItem = g_fullpipe->_inventory->getHoveredItem(&g_fullpipe->_mouseScreenPos))) {
-				g_fullpipe->_cursorId = PIC_CSR_ITN;
-				if (!g_fullpipe->_currSelectedInventoryItemId && !g_fullpipe->_aniMan->_movement && 
-					!(g_fullpipe->_aniMan->_flags & 0x100) && g_fullpipe->_aniMan->isIdle()) {
-					int st = g_fullpipe->_aniMan->_statics->_staticsId;
+			if (g_fp->_updateFlag && (invItem = g_fp->_inventory->getHoveredItem(&g_fp->_mouseScreenPos))) {
+				g_fp->_cursorId = PIC_CSR_ITN;
+				if (!g_fp->_currSelectedInventoryItemId && !g_fp->_aniMan->_movement && 
+					!(g_fp->_aniMan->_flags & 0x100) && g_fp->_aniMan->isIdle()) {
+					int st = g_fp->_aniMan->_statics->_staticsId;
 					ExCommand *newex = 0;
 
 					if (st == ST_MAN_RIGHT) {
-						newex = new ExCommand(g_fullpipe->_aniMan->_id, 1, rMV_MAN_LOOKUP, 0, 0, 0, 1, 0, 0, 0);
+						newex = new ExCommand(g_fp->_aniMan->_id, 1, rMV_MAN_LOOKUP, 0, 0, 0, 1, 0, 0, 0);
 					} else if (st == (0x4000 | ST_MAN_RIGHT)) {
-						newex = new ExCommand(g_fullpipe->_aniMan->_id, 1, MV_MAN_LOOKUP, 0, 0, 0, 1, 0, 0, 0);
+						newex = new ExCommand(g_fp->_aniMan->_id, 1, MV_MAN_LOOKUP, 0, 0, 0, 1, 0, 0, 0);
 					}
 
 					if (newex) {
-						newex->_keyCode = g_fullpipe->_aniMan->_okeyCode;
+						newex->_keyCode = g_fp->_aniMan->_okeyCode;
 						newex->_excFlags |= 3;
 						newex->postMessage();
 					}
 				}
 
-				if (g_fullpipe->_currSelectedInventoryItemId != invItem)
-					g_fullpipe->playSound(SND_CMN_070, 0);
+				if (g_fp->_currSelectedInventoryItemId != invItem)
+					g_fp->playSound(SND_CMN_070, 0);
 
-				g_fullpipe->_currSelectedInventoryItemId = invItem;
-				g_fullpipe->setCursor(g_fullpipe->_cursorId);
+				g_fp->_currSelectedInventoryItemId = invItem;
+				g_fp->setCursor(g_fp->_cursorId);
 				break;
 			}
-			if (g_fullpipe->_updateCursorCallback)
-				g_fullpipe->_updateCursorCallback();
+			if (g_fp->_updateCursorCallback)
+				g_fp->_updateCursorCallback();
 
-			g_fullpipe->_currSelectedInventoryItemId = 0;
-			g_fullpipe->setCursor(g_fullpipe->_cursorId);
+			g_fp->_currSelectedInventoryItemId = 0;
+			g_fp->setCursor(g_fp->_cursorId);
 			break;
 		case 65: // open map
-			if (cmd->_field_2C == 11 && cmd->_field_14 == ANI_INV_MAP && g_fullpipe->_flgCanOpenMap)
-				g_fullpipe->openMap();
+			if (cmd->_field_2C == 11 && cmd->_field_14 == ANI_INV_MAP && g_fp->_flgCanOpenMap)
+				g_fp->openMap();
 			break;
 		default:
 			break;
@@ -228,13 +228,13 @@ int global_messageHandler2(ExCommand *cmd) {
 		break;
 
 	case 28:
-		ani = g_fullpipe->_currentScene->getStaticANIObject1ById(cmd->_parentId, cmd->_keyCode);
+		ani = g_fp->_currentScene->getStaticANIObject1ById(cmd->_parentId, cmd->_keyCode);
 		if (ani)
 			ani->_priority = cmd->_field_14;
 		break;
 
 	case 25:
-		ani = g_fullpipe->_currentScene->getStaticANIObject1ById(cmd->_parentId, cmd->_keyCode);
+		ani = g_fp->_currentScene->getStaticANIObject1ById(cmd->_parentId, cmd->_keyCode);
 		if (ani) {
 			if (cmd->_field_14) {
 				ani->setFlags40(true);
@@ -247,7 +247,7 @@ int global_messageHandler2(ExCommand *cmd) {
 		break;
 
 	case 26:
-		ani = g_fullpipe->_currentScene->getStaticANIObject1ById(cmd->_parentId, cmd->_keyCode);
+		ani = g_fp->_currentScene->getStaticANIObject1ById(cmd->_parentId, cmd->_keyCode);
 		if (ani) {
 			Movement *mov = ani->_movement;
 			if (mov)
@@ -258,7 +258,7 @@ int global_messageHandler2(ExCommand *cmd) {
 	default:
 #if 0
 		// We never put anything into _defMsgArray
-		while (::iterator it = g_fullpipe->_defMsgArray.begin(); it != g_fullpipe->_defMsgArray.end(); ++it)
+		while (::iterator it = g_fp->_defMsgArray.begin(); it != g_fp->_defMsgArray.end(); ++it)
 			if (((ExCommand *)*it)->_field_24 == _messageNum) {
 				((ExCommand *)*it)->firef34(v13);
 				res = 1;
@@ -267,11 +267,11 @@ int global_messageHandler2(ExCommand *cmd) {
 
 		//debug_msg(_messageNum);
 
-		if (!g_fullpipe->_soundEnabled || cmd->_messageNum != 33 || g_fullpipe->_currSoundListCount <= 0)
+		if (!g_fp->_soundEnabled || cmd->_messageNum != 33 || g_fp->_currSoundListCount <= 0)
 			return res;
 
-		for (int snd = 0; snd < g_fullpipe->_currSoundListCount; snd++) {
-			SoundList *s = g_fullpipe->_currSoundList1[snd];
+		for (int snd = 0; snd < g_fp->_currSoundListCount; snd++) {
+			SoundList *s = g_fp->_currSoundList1[snd];
 		    int ms = s->getCount();
 			for (int i = 0; i < ms; i++) {
 				s->getSoundByIndex(i)->setPanAndVolumeByStaticAni();
@@ -292,7 +292,7 @@ int global_messageHandler3(ExCommand *cmd) {
 		case 31:
 		case 32:
 		case 36:
-			if (g_fullpipe->_inputDisabled)
+			if (g_fp->_inputDisabled)
 				cmd->_messageKind = 0;
 			break;
 		default:
@@ -306,41 +306,41 @@ int global_messageHandler3(ExCommand *cmd) {
 	case 17:
 		switch (cmd->_messageNum) {
 		case 61:
-			return g_fullpipe->_gameLoader->preloadScene(cmd->_parentId, cmd->_keyCode);
+			return g_fp->_gameLoader->preloadScene(cmd->_parentId, cmd->_keyCode);
 		case 62:
-			return g_fullpipe->_gameLoader->gotoScene(cmd->_parentId, cmd->_keyCode);
+			return g_fp->_gameLoader->gotoScene(cmd->_parentId, cmd->_keyCode);
 		case 64:
-			if (g_fullpipe->_currentScene && g_fullpipe->_msgObjectId2
-					&& (!(cmd->_keyCode & 4) || g_fullpipe->_msgObjectId2 != cmd->_field_14 || g_fullpipe->_msgId != cmd->_field_20)) {
-				ani = g_fullpipe->_currentScene->getStaticANIObject1ById(g_fullpipe->_msgObjectId2, g_fullpipe->_msgId);
+			if (g_fp->_currentScene && g_fp->_msgObjectId2
+					&& (!(cmd->_keyCode & 4) || g_fp->_msgObjectId2 != cmd->_field_14 || g_fp->_msgId != cmd->_field_20)) {
+				ani = g_fp->_currentScene->getStaticANIObject1ById(g_fp->_msgObjectId2, g_fp->_msgId);
 				if (ani) {
 					ani->_flags &= 0xFF7F;
 					ani->_flags &= 0xFEFF;
 					ani->deleteFromGlobalMessageQueue();
 				}
 			}
-			g_fullpipe->_msgX = 0;
-			g_fullpipe->_msgY = 0;
-			g_fullpipe->_msgObjectId2 = 0;
-			g_fullpipe->_msgId = 0;
+			g_fp->_msgX = 0;
+			g_fp->_msgY = 0;
+			g_fp->_msgObjectId2 = 0;
+			g_fp->_msgId = 0;
 			if ((cmd->_keyCode & 1) || (cmd->_keyCode & 2)) {
-				g_fullpipe->_msgX = cmd->_x;
-				g_fullpipe->_msgY = cmd->_y;
+				g_fp->_msgX = cmd->_x;
+				g_fp->_msgY = cmd->_y;
 			}
 			if (cmd->_keyCode & 4) {
-				g_fullpipe->_msgObjectId2 = cmd->_field_14;
-				g_fullpipe->_msgId = cmd->_field_20;
+				g_fp->_msgObjectId2 = cmd->_field_14;
+				g_fp->_msgId = cmd->_field_20;
 			}
 			return result;
 		case 29:
-			if (!g_fullpipe->_currentScene)
+			if (!g_fp->_currentScene)
 				return result;
 
-			if (g_fullpipe->_gameLoader->_interactionController->_flag24) {
-				ani = g_fullpipe->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
-				ani2 = g_fullpipe->_currentScene->getStaticANIObject1ById(g_fullpipe->_gameLoader->_field_FA, -1);
+			if (g_fp->_gameLoader->_interactionController->_flag24) {
+				ani = g_fp->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
+				ani2 = g_fp->_currentScene->getStaticANIObject1ById(g_fp->_gameLoader->_field_FA, -1);
 				if (ani) {
-					if (g_fullpipe->_msgObjectId2 == ani->_id && g_fullpipe->_msgId == ani->_okeyCode) {
+					if (g_fp->_msgObjectId2 == ani->_id && g_fp->_msgId == ani->_okeyCode) {
 						cmd->_messageKind = 0;
 						return result;
 					}
@@ -349,10 +349,10 @@ int global_messageHandler3(ExCommand *cmd) {
 						return 1;
 					}
 				} else {
-					int id = g_fullpipe->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
-					PictureObject *pic = g_fullpipe->_currentScene->getPictureObjectById(id, 0);
+					int id = g_fp->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
+					PictureObject *pic = g_fp->_currentScene->getPictureObjectById(id, 0);
 					if (pic) {
-						if (g_fullpipe->_msgObjectId2 == pic->_id && g_fullpipe->_msgId == pic->_okeyCode) {
+						if (g_fp->_msgObjectId2 == pic->_id && g_fp->_msgId == pic->_okeyCode) {
 							cmd->_messageKind = 0;
 							return result;
 						}
@@ -364,13 +364,13 @@ int global_messageHandler3(ExCommand *cmd) {
 					}
 				}
 			}
-			if (getSc2MctlCompoundBySceneId(g_fullpipe->_currentScene->_sceneId)->_isEnabled && cmd->_keyCode <= 0) {
-				if (g_fullpipe->_msgX != cmd->_sceneClickX || g_fullpipe->_msgY != cmd->_sceneClickY) {
-					ani = g_fullpipe->_currentScene->getStaticANIObject1ById(g_fullpipe->_gameLoader->_field_FA, -1);
+			if (getSc2MctlCompoundBySceneId(g_fp->_currentScene->_sceneId)->_isEnabled && cmd->_keyCode <= 0) {
+				if (g_fp->_msgX != cmd->_sceneClickX || g_fp->_msgY != cmd->_sceneClickY) {
+					ani = g_fp->_currentScene->getStaticANIObject1ById(g_fp->_gameLoader->_field_FA, -1);
 					if (!ani || (ani->isIdle() && !(ani->_flags & 0x80) && !(ani->_flags & 0x100))) {
-						result = startWalkTo(g_fullpipe->_gameLoader->_field_FA, -1, cmd->_sceneClickX, cmd->_sceneClickY, 0);
+						result = startWalkTo(g_fp->_gameLoader->_field_FA, -1, cmd->_sceneClickX, cmd->_sceneClickY, 0);
 						if (result) {
-							ExCommand *ex = new ExCommand(g_fullpipe->_gameLoader->_field_FA, 17, 64, 0, 0, 0, 1, 0, 0, 0);
+							ExCommand *ex = new ExCommand(g_fp->_gameLoader->_field_FA, 17, 64, 0, 0, 0, 1, 0, 0, 0);
 
 							ex->_keyCode = 1;
 							ex->_excFlags |= 3;
@@ -388,7 +388,7 @@ int global_messageHandler3(ExCommand *cmd) {
 			return result;
 		}
 	case 58:
-		g_fullpipe->setCursor(cmd->_keyCode);
+		g_fp->setCursor(cmd->_keyCode);
 		return result;
 	case 59:
 		setInputDisabled(1);
@@ -398,7 +398,7 @@ int global_messageHandler3(ExCommand *cmd) {
 		return result;
 	case 56:
 		if (cmd->_field_2C) {
-			ani = g_fullpipe->_currentScene->getStaticANIObject1ById(cmd->_parentId, cmd->_keyCode);
+			ani = g_fp->_currentScene->getStaticANIObject1ById(cmd->_parentId, cmd->_keyCode);
 			if (ani) {
 				getGameLoaderInventory()->addItem2(ani);
 				result = 1;
@@ -412,13 +412,13 @@ int global_messageHandler3(ExCommand *cmd) {
 	case 57:
 		if (cmd->_field_2C) {
 			if (!cmd->_field_20) {
-				getGameLoaderInventory()->removeItem2(g_fullpipe->_currentScene, cmd->_parentId, cmd->_x, cmd->_y, cmd->_field_14);
+				getGameLoaderInventory()->removeItem2(g_fp->_currentScene, cmd->_parentId, cmd->_x, cmd->_y, cmd->_field_14);
 				getGameLoaderInventory()->rebuildItemRects();
 				return 1;
 			}
-			ani = g_fullpipe->_currentScene->getStaticANIObject1ById(g_fullpipe->_gameLoader->_field_FA, -1);
+			ani = g_fp->_currentScene->getStaticANIObject1ById(g_fp->_gameLoader->_field_FA, -1);
 			if (ani) {
-				getGameLoaderInventory()->removeItem2(g_fullpipe->_currentScene, cmd->_parentId, ani->_ox + cmd->_x, ani->_oy + cmd->_y, ani->_priority + cmd->_field_14);
+				getGameLoaderInventory()->removeItem2(g_fp->_currentScene, cmd->_parentId, ani->_ox + cmd->_x, ani->_oy + cmd->_y, ani->_priority + cmd->_field_14);
 				getGameLoaderInventory()->rebuildItemRects();
 				return 1;
 			}
@@ -428,13 +428,13 @@ int global_messageHandler3(ExCommand *cmd) {
 		getGameLoaderInventory()->rebuildItemRects();
 		return 1;
 	case 55:
-		if (g_fullpipe->_currentScene) {
+		if (g_fp->_currentScene) {
 			GameObject *obj;
 			if (cmd->_field_14)
-				obj = g_fullpipe->_currentScene->getStaticANIObject1ById(cmd->_x, cmd->_y);
+				obj = g_fp->_currentScene->getStaticANIObject1ById(cmd->_x, cmd->_y);
 			else
-				obj = g_fullpipe->_currentScene->getPictureObjectById(cmd->_x, cmd->_y);
-			handleObjectInteraction(g_fullpipe->_currentScene->getStaticANIObject1ById(cmd->_parentId, cmd->_keyCode), obj, cmd->_field_20);
+				obj = g_fp->_currentScene->getPictureObjectById(cmd->_x, cmd->_y);
+			handleObjectInteraction(g_fp->_currentScene->getStaticANIObject1ById(cmd->_parentId, cmd->_keyCode), obj, cmd->_field_20);
 			result = 1;
 		}
 		return result;
@@ -448,7 +448,7 @@ int global_messageHandler3(ExCommand *cmd) {
 		if (cmd->_objtype == kObjTypeObjstateCommand) {
 			ObjstateCommand *c = (ObjstateCommand *)cmd;
 			result = 1;
-			g_fullpipe->setObjectState(c->_objCommandName, c->_value);
+			g_fp->setObjectState(c->_objCommandName, c->_value);
 		}
 		return result;
 	default:
@@ -461,7 +461,7 @@ int global_messageHandler4(ExCommand *cmd) {
 
 	switch (cmd->_messageKind) {
 	case 18: {
-		MessageQueue *mq = new MessageQueue(g_fullpipe->_currentScene->getMessageQueueById(cmd->_messageNum), cmd->_parId, 0);
+		MessageQueue *mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(cmd->_messageNum), cmd->_parId, 0);
 
 		if (cmd->_excFlags & 1)
 			mq->_flag1 = 1;
@@ -472,10 +472,10 @@ int global_messageHandler4(ExCommand *cmd) {
 		break;
 	}
 	case 2:
-		if (!g_fullpipe->_currentScene)
+		if (!g_fp->_currentScene)
 			break;
 
-		ani = g_fullpipe->_currentScene->getStaticANIObject1ById(cmd->_parentId, cmd->_keyCode);
+		ani = g_fp->_currentScene->getStaticANIObject1ById(cmd->_parentId, cmd->_keyCode);
 		if (!ani)
 			break;
 
@@ -483,10 +483,10 @@ int global_messageHandler4(ExCommand *cmd) {
 		break;
 
 	case 1: {
-		if (!g_fullpipe->_currentScene)
+		if (!g_fp->_currentScene)
 			break;
 
-		ani = g_fullpipe->_currentScene->getStaticANIObject1ById(cmd->_parentId, cmd->_keyCode);
+		ani = g_fp->_currentScene->getStaticANIObject1ById(cmd->_parentId, cmd->_keyCode);
 		if (!ani)
 			break;
 
@@ -502,10 +502,10 @@ int global_messageHandler4(ExCommand *cmd) {
 		break;
 	}
 	case 8:
-		if (!g_fullpipe->_currentScene)
+		if (!g_fp->_currentScene)
 			break;
 
-		ani = g_fullpipe->_currentScene->getStaticANIObject1ById(cmd->_parentId, cmd->_keyCode);
+		ani = g_fp->_currentScene->getStaticANIObject1ById(cmd->_parentId, cmd->_keyCode);
 		if (!ani)
 			break;
 
@@ -513,10 +513,10 @@ int global_messageHandler4(ExCommand *cmd) {
 		break;
 
 	case 20: {
-		if (!g_fullpipe->_currentScene)
+		if (!g_fp->_currentScene)
 			break;
 
-		ani = g_fullpipe->_currentScene->getStaticANIObject1ById(cmd->_parentId, cmd->_keyCode);
+		ani = g_fp->_currentScene->getStaticANIObject1ById(cmd->_parentId, cmd->_keyCode);
 		if (!ani)
 			break;
 
@@ -534,10 +534,10 @@ int global_messageHandler4(ExCommand *cmd) {
 		break;
 	}
 	case 21:
-		if (!g_fullpipe->_currentScene)
+		if (!g_fp->_currentScene)
 			break;
 
-		ani = g_fullpipe->_currentScene->getStaticANIObject1ById(cmd->_parentId, cmd->_keyCode);
+		ani = g_fp->_currentScene->getStaticANIObject1ById(cmd->_parentId, cmd->_keyCode);
 		if (!ani)
 			break;
 
@@ -548,17 +548,17 @@ int global_messageHandler4(ExCommand *cmd) {
 		// Nop in original
 		break;
 	case 3:
-		g_fullpipe->_currentScene->_y = cmd->_messageNum - cmd->_messageNum % g_fullpipe->_scrollSpeed;
+		g_fp->_currentScene->_y = cmd->_messageNum - cmd->_messageNum % g_fp->_scrollSpeed;
 		break;
 
 	case 4:
-		g_fullpipe->_currentScene->_x = cmd->_messageNum - cmd->_messageNum % g_fullpipe->_scrollSpeed;
+		g_fp->_currentScene->_x = cmd->_messageNum - cmd->_messageNum % g_fp->_scrollSpeed;
 		break;
 
 	case 19: {
-		if (!g_fullpipe->_currentScene)
+		if (!g_fp->_currentScene)
 			break;
-		ani = g_fullpipe->_currentScene->getStaticANIObject1ById(cmd->_parentId, cmd->_keyCode);
+		ani = g_fp->_currentScene->getStaticANIObject1ById(cmd->_parentId, cmd->_keyCode);
 		if (!ani)
 			break;
 
@@ -573,10 +573,10 @@ int global_messageHandler4(ExCommand *cmd) {
 		break;
 	}
 	case 22:
-		if (!g_fullpipe->_currentScene)
+		if (!g_fp->_currentScene)
 			break;
 
-		ani = g_fullpipe->_currentScene->getStaticANIObject1ById(cmd->_parentId, cmd->_keyCode);
+		ani = g_fp->_currentScene->getStaticANIObject1ById(cmd->_parentId, cmd->_keyCode);
 		if (!ani)
 			break;
 
@@ -585,10 +585,10 @@ int global_messageHandler4(ExCommand *cmd) {
 		break;
 
 	case 6:
-		if (!g_fullpipe->_currentScene)
+		if (!g_fp->_currentScene)
 			break;
 
-		ani = g_fullpipe->_currentScene->getStaticANIObject1ById(cmd->_parentId, cmd->_keyCode);
+		ani = g_fp->_currentScene->getStaticANIObject1ById(cmd->_parentId, cmd->_keyCode);
 		if (!ani)
 			break;
 
@@ -596,18 +596,18 @@ int global_messageHandler4(ExCommand *cmd) {
 		break;
 
 	case 27:
-		if (!g_fullpipe->_currentScene || g_fullpipe->_currentScene->getStaticANIObject1ById(cmd->_parentId, cmd->_keyCode) == 0) {
-			ani = g_fullpipe->accessScene(cmd->_field_20)->getStaticANIObject1ById(cmd->_parentId, -1);
+		if (!g_fp->_currentScene || g_fp->_currentScene->getStaticANIObject1ById(cmd->_parentId, cmd->_keyCode) == 0) {
+			ani = g_fp->accessScene(cmd->_field_20)->getStaticANIObject1ById(cmd->_parentId, -1);
 			if (ani) {
 				ani = new StaticANIObject(ani);
-				g_fullpipe->_currentScene->addStaticANIObject(ani, 1);
+				g_fp->_currentScene->addStaticANIObject(ani, 1);
 			}
 		}
 
 		// fall through
 	case 5:
-		if (g_fullpipe->_currentScene)
-			ani = g_fullpipe->_currentScene->getStaticANIObject1ById(cmd->_parentId, cmd->_keyCode);
+		if (g_fp->_currentScene)
+			ani = g_fp->_currentScene->getStaticANIObject1ById(cmd->_parentId, cmd->_keyCode);
 
 		if (!ani)
 			break;
@@ -619,10 +619,10 @@ int global_messageHandler4(ExCommand *cmd) {
 		break;
 
 	case 10:
-		if (!g_fullpipe->_currentScene)
+		if (!g_fp->_currentScene)
 			break;
 
-		ani = g_fullpipe->_currentScene->getStaticANIObject1ById(cmd->_parentId, cmd->_keyCode);
+		ani = g_fp->_currentScene->getStaticANIObject1ById(cmd->_parentId, cmd->_keyCode);
 		if (!ani)
 			break;
 
@@ -633,34 +633,34 @@ int global_messageHandler4(ExCommand *cmd) {
 		break;
 
 	case 7: {
-		if (!g_fullpipe->_currentScene->_picObjList.size())
+		if (!g_fp->_currentScene->_picObjList.size())
 			break;
 
-		int offX = g_fullpipe->_scrollSpeed * (cmd->_x / g_fullpipe->_scrollSpeed);
-		int offY = g_fullpipe->_scrollSpeed * (cmd->_y / g_fullpipe->_scrollSpeed);
+		int offX = g_fp->_scrollSpeed * (cmd->_x / g_fp->_scrollSpeed);
+		int offY = g_fp->_scrollSpeed * (cmd->_y / g_fp->_scrollSpeed);
 
 		if (cmd->_messageNum) {
-			g_fullpipe->_currentScene->_x = offX - g_fullpipe->_sceneRect.left;
-			g_fullpipe->_currentScene->_y = offY - g_fullpipe->_sceneRect.top;
+			g_fp->_currentScene->_x = offX - g_fp->_sceneRect.left;
+			g_fp->_currentScene->_y = offY - g_fp->_sceneRect.top;
 
 			if (cmd->_field_24) {
-				g_fullpipe->_currentScene->_messageQueueId = cmd->_parId;
+				g_fp->_currentScene->_messageQueueId = cmd->_parId;
 			}
 		} else {
-			g_fullpipe->_sceneRect.moveTo(offX, offY);
+			g_fp->_sceneRect.moveTo(offX, offY);
 
-			g_fullpipe->_currentScene->_x = 0;
-			g_fullpipe->_currentScene->_y = 0;
+			g_fp->_currentScene->_x = 0;
+			g_fp->_currentScene->_y = 0;
 
-			g_fullpipe->_currentScene->updateScrolling2();
+			g_fp->_currentScene->updateScrolling2();
 		}
 		break;
 	}
 	case 34:
-		if (!g_fullpipe->_currentScene)
+		if (!g_fp->_currentScene)
 			break;
 
-		ani = g_fullpipe->_currentScene->getStaticANIObject1ById(cmd->_parentId, cmd->_keyCode);
+		ani = g_fp->_currentScene->getStaticANIObject1ById(cmd->_parentId, cmd->_keyCode);
 		if (!ani)
 			break;
 
@@ -690,15 +690,15 @@ int MovGraph_messageHandler(ExCommand *cmd) {
 	if (cmd->_messageNum != 33)
 		return 0;
 
-	StaticANIObject *ani = g_fullpipe->_currentScene->getStaticANIObject1ById(g_fullpipe->_gameLoader->_field_FA, -1);
+	StaticANIObject *ani = g_fp->_currentScene->getStaticANIObject1ById(g_fp->_gameLoader->_field_FA, -1);
 
-	if (!getSc2MctlCompoundBySceneId(g_fullpipe->_currentScene->_sceneId))
+	if (!getSc2MctlCompoundBySceneId(g_fp->_currentScene->_sceneId))
 		return 0;
 
-	if (getSc2MctlCompoundBySceneId(g_fullpipe->_currentScene->_sceneId)->_objtype != kObjTypeMovGraph || !ani)
+	if (getSc2MctlCompoundBySceneId(g_fp->_currentScene->_sceneId)->_objtype != kObjTypeMovGraph || !ani)
 		return 0;
 
-	MovGraph *gr = (MovGraph *)getSc2MctlCompoundBySceneId(g_fullpipe->_currentScene->_sceneId);
+	MovGraph *gr = (MovGraph *)getSc2MctlCompoundBySceneId(g_fp->_currentScene->_sceneId);
 
 	MovGraphLink *link = 0;
 	double mindistance = 1.0e10;
