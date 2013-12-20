@@ -430,7 +430,7 @@ void Nim::dogFood() {
 		} while (!sorted);
 
 		// Now we look for A.P.s...
-		for (int i = 0; i < 3; i++) {
+		for (int i = 1; i <= 3; i++) {
 			findAp(i, 1); // There are 3 "1"s.
 			if (_lmo)
 				return; // Cut - out.
