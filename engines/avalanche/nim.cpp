@@ -86,14 +86,18 @@ void Nim::playNim() {
 	CursorMan.showMouse(false);
 	setup();
 	board();
-	CursorMan.showMouse(true);
+	//CursorMan.showMouse(true);
 
 	do {
+		
 		startMove();
 		if (_dogfoodsTurn)
 			dogFood();
-		else
+		else {
+			CursorMan.showMouse(true);
 			takeSome();
+			CursorMan.showMouse(false);
+		}
 		_stones[_row] -= _number;
 		showChanges();
 	} while (_stonesLeft != 0);
@@ -101,13 +105,10 @@ void Nim::playNim() {
 	endOfGame(); // Winning sequence is A1, B3, B1, C1, C1, btw.
 
 	_vm->fadeOut();
-	CursorMan.showMouse(false);
-
 	_vm->_graphics->restoreScreen();
 	_vm->_graphics->removeBackup();
-
-	CursorMan.showMouse(true);
 	_vm->fadeIn();
+	CursorMan.showMouse(true);
 
 	if (_dogfoodsTurn) {
 		// Dogfood won - as usual.
@@ -284,10 +285,8 @@ void Nim::takeSome() {
 }
 
 void Nim::endOfGame() {
-	CursorMan.showMouse(false);
-
 	chalk(595, 55 + _turns * 10, "Wins!");
-	_vm->_graphics->drawNormalText("- - -   Press any key...  - - -", _vm->_font, 8, 100, 190, kColorYellow);
+	_vm->_graphics->drawNormalText("- - -   Press any key...  - - -", _vm->_font, 8, 100, 190, kColorWhite);
 
 	Common::Event event;
 	bool escape = false;
@@ -300,8 +299,6 @@ void Nim::endOfGame() {
 			}
 		}
 	}
-
-	CursorMan.showMouse(true);
 }
 
 bool Nim::find(byte x) {
