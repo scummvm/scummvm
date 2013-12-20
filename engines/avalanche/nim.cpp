@@ -192,9 +192,10 @@ void Nim::setup() {
 }
 
 void Nim::board() {
+	_vm->_graphics->drawFilledRectangle(Common::Rect(57, 75, 393, 200), kColorBlack);
 	for (int i = 0; i < 3; i++)
 		for (int j = 0; j < _stones[i]; j++)
-			_vm->_graphics->drawNimStone(64 + j * 7 * 8 + j * 8, 75 + i * 35);
+			_vm->_graphics->drawNimStone(64 + j * 8 * 8, 75 + i * 35);
 			// It's practically the body of the Pascal function "plotstone()", reimplemented.
 			// It's the only place where we use it, so there's no reason to keep it separated as a function.
 	_vm->_graphics->refreshScreen();
@@ -212,23 +213,73 @@ void Nim::startMove() {
 }
 
 void Nim::showChanges() {
-	warning("STUB: Nim::showChanges()");
+	chalk(573, 55 + _turns * 10, Common::String('A' + _row) + Common::String('0' + _number));
+	board();
+	_stonesLeft -= _number;
 }
 
 void Nim::blip() {
-	warning("STUB: Nim::blip()");
+	_vm->_sound->playNote(1771, 3);
 }
 
-void Nim::checkMouse() {
-	warning("STUB: Nim::checkMouse()");
+bool Nim::checkMouse() {
+	Common::Point cursorPos = _vm->getMousePos();
+	_vm->_graphics->refreshScreen();
+	Common::Event event;
+	while (_vm->getEvent(event)) {
+		_vm->_graphics->refreshScreen();
+		if (event.type == Common::EVENT_LBUTTONUP) {
+			_mRow = (cursorPos.y / 2 - 38) / 35 - 1;
+			if ((_mRow < 0) || (_mRow > 2)) {
+				blip();
+				return false;
+			}
+			_mNum = _stones[_mRow] - ((cursorPos.x - 64) / 64);
+			if ((_mNum < 1) || (_mNum > _stones[_mRow])) {
+				blip();
+				return false;
+			}
+			return true;
+		}
+	}
 }
 
 void Nim::less() {
-	warning("STUB: Nim::less()");
+	if (_number > 1)
+		_number--;
 }
 
 void Nim::takeSome() {
-	warning("STUB: Nim::takeSome()");
+	_number = 1;
+	byte sr;
+	do {
+		do {
+			sr = _stones[_row];
+			if (sr == 0) {
+				_row = _row % 2 + 1;
+				_number = 1;
+			}
+		} while (sr == 0);
+		
+		if (_number > sr)
+			_number = sr;
+
+		_vm->_graphics->drawRectangle(Common::Rect(63 + (sr - _number) * 64, 38 + 35 * (_row + 1), 54 + sr * 64, 63 + 35 * (_row + 1)), kColorBlue);
+		_vm->_graphics->refreshScreen();
+
+		bool clicked = false;
+		do {
+			clicked = checkMouse();
+		} while (clicked == false);
+		
+		_vm->_graphics->drawRectangle(Common::Rect(63 + (sr - _number) * 64, 38 + 35 * (_row + 1), 54 + sr * 64, 63 + 35 * (_row + 1)), kColorBlack);
+		_vm->_graphics->refreshScreen();
+
+		_number = _mNum;
+		_row = _mRow;
+		return;
+
+	} while (true);
 }
 
 void Nim::endOfGame() {
@@ -247,7 +298,7 @@ void Nim::dogFood() {
 			live++;
 		}
 	}
-	
+
 	switch (live) {
 	case 1: // Only one is free - so take 'em all!
 		_row = _r[0];
@@ -265,7 +316,7 @@ void Nim::dogFood() {
 			_number = 1;
 		}
 		return;
-	case 3: { 
+	case 3: {
 		// Ho hum... this'll be difficult!
 		// There are three possible courses of action when we have 3 lines left:
 		// 1) Look for 2 equal lines, then take the odd one out.
@@ -297,8 +348,8 @@ void Nim::dogFood() {
 					sorted = false;
 				}
 			}
-		} while (sorted);
-		
+		} while (!sorted);
+
 		// Now we look for A.P.s...
 		for (int i = 0; i < 3; i++) {
 			findAp(i, 1); // There are 3 "1"s.
@@ -313,7 +364,7 @@ void Nim::dogFood() {
 		_row = _r[2];
 		_number = 1;
 		return;
-		}
+	}
 	default:
 		break;
 	}
@@ -333,8 +384,10 @@ bool Nim::find(byte x) {
 void Nim::findAp(byte start, byte stepSize) {
 	byte thisOne = 0;
 	byte matches = 0;
+
 	for (int i = 0; i < 3; i++)
 		_inAp[i] = 0; // Blank 'em all!
+
 	for (int i = 0; i < 3; i++) {
 		if (find(start + i * stepSize))
 			matches++;
@@ -342,7 +395,7 @@ void Nim::findAp(byte start, byte stepSize) {
 			thisOne = i;
 	}
 
-	// Now..Matches must be 0, 1, 2, or 3.
+	// Now... Matches must be 0, 1, 2, or 3.
 	// 0 / 1 mean there are no A.P.s here, so we'll keep looking,
 	// 2 means there is a potential A.P.that we can create (ideal!), and
 	// 3 means that we're already in an A.P. (Trouble!)

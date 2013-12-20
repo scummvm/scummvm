@@ -65,7 +65,7 @@ private:
 	void startMove();
 	void showChanges();
 	void blip();
-	void checkMouse();
+	bool checkMouse();
 	void less();
 	void takeSome();
 	void endOfGame();
