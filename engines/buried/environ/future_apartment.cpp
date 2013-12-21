@@ -1039,6 +1039,58 @@ int EnvironSystemControls::specifyCursor(Window *viewWindow, const Common::Point
 	return kCursorPutDown;
 }
 
+class EnvironGenoVideo : public SceneBase {
+public:
+	EnvironGenoVideo(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
+	int preExitRoom(Window *viewWindow, const Location &newLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	Common::Rect _returnRegion;
+};
+
+EnvironGenoVideo::EnvironGenoVideo(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_returnRegion = Common::Rect(136, 150, 292, 189);
+}
+
+int EnvironGenoVideo::postEnterRoom(Window *viewWindow, const Location &priorLocation) {
+	_vm->_sound->stop();
+	((SceneViewWindow *)viewWindow)->startAsynchronousAnimation(13, false);
+	return SC_TRUE;
+}
+
+int EnvironGenoVideo::preExitRoom(Window *viewWindow, const Location &newLocation) {
+	((SceneViewWindow *)viewWindow)->stopAsynchronousAnimation();
+	_vm->_sound->restart();
+	return SC_TRUE;
+}
+
+int EnvironGenoVideo::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_returnRegion.contains(pointLocation)) {
+		DestinationScene newScene;
+		newScene.destinationScene = _staticData.location;
+		newScene.destinationScene.depth = 1;
+		newScene.transitionType = TRANSITION_VIDEO;
+		newScene.transitionData = 4;
+		newScene.transitionStartFrame = -1;
+		newScene.transitionLength = -1;
+		((SceneViewWindow *)viewWindow)->moveToDestination(newScene);
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int EnvironGenoVideo::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_returnRegion.contains(pointLocation))
+		return kCursorFinger;
+
+	return kCursorArrow;
+}
+
 class FlagChangeBackground : public SceneBase {
 public:
 	FlagChangeBackground(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
@@ -1955,6 +2007,8 @@ SceneBase *SceneViewWindow::constructFutureApartmentSceneObject(Window *viewWind
 		return new EnvironSystemControls(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 18:
 		return new ClickEnvironNatureScenes(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 19:
+		return new EnvironGenoVideo(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 20:
 		return new ViewEnvironCart(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 21:
