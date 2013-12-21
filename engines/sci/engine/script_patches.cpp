@@ -1079,21 +1079,38 @@ static const uint16 kq6CDPatchAudioTextSupport2[] = {
 // Additional patch specifically for King's Quest 6
 //  Fixes special windows, used for example in the Pawn shop (room 280),
 //   when the man in a robe complains about no more mints.
+//  We have to change even more code, because the game uses PODialog class for
+//   text windows and myDialog class for audio. Both are saved to KQ6Print::dialog
+//  Sadly PODialog is created during KQ6Print::addText, myDialog is set during
+//   KQ6Print::showSelf, which is called much later and KQ6Print::addText requires
+//   KQ6Print::dialog to be set, which means we have to set it before calling addText
+//   for audio mode, otherwise the user would have to click to get those windows disposed.
 // Patched method: KQ6Print::say
-//  Currently those windows wait for a mouse-click and don't close automatically
 static const uint16 kq6CDSignatureAudioTextSupport3[] = {
+	0x31, 0x6e,                         // bnt [to text code]
+	SIG_ADDTOOFFSET(+85),
 	SIG_MAGICDWORD,
 	0x8f, 0x01,                         // lsp param[1]
 	0x35, 0x01,                         // ldi 01
 	0x1a,                               // eq?
 	0x31, 0x0c,                         // bnt [code to set property repressText to 1]
 	0x38,                               // pushi (selector addText)
+	SIG_ADDTOOFFSET(+9),                // skip addText-calling code
+	0x33, 0x10,                         // jmp [to ret]
+	0x35, 0x01,                         // ldi 01
+	0x65, 0x2e,                         // aTop repressText
+	0x33, 0x0a,                         // jmp [to ret]
 	SIG_END
 };
 
 static const uint16 kq6CDPatchAudioTextSupport3[] = {
-	PATCH_ADDTOOFFSET(+5),
-	0x18, 0x18,                         // not (waste bytes)
+	0x31, 0x5c,                         // adjust jump to reuse audio mode addText-calling code
+	PATCH_ADDTOOFFSET(102),
+	0x48,                               // ret
+	0x48,                               // waste byte
+	0x72, 0x0e, 0x00,                   // lofsa myDialog
+	0x65, 0x12,                         // aTop dialog
+	0x33, 0xed,                         // jump back to audio mode addText-calling code
 	PATCH_END
 };
 
