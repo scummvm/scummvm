@@ -418,6 +418,10 @@ void EventsManager::mouseOff() {
 	CursorMan.showMouse(false);
 }
 
+void EventsManager::hideCursor() {
+	error("TODO: hideCursor");
+}
+
 void EventsManager::getMouseInfo() {
 	if (_vm->_voy._field478 & 0x10) {
 		if ((_gameCounter - _joe) > 8) {

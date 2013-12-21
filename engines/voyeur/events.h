@@ -85,6 +85,10 @@ public:
 	int _field476;
 	int _field478;
 	int _field47A;
+	int _field4AC;
+	int _field4AE[5];
+	int _field4B8;
+
 	int _field4E2;
 	Common::Rect _rect4E4;
 	int _field4EC;
@@ -216,6 +220,7 @@ public:
 	void setCursorColor(int idx, int mode);
 	void mouseOn();
 	void mouseOff();
+	void hideCursor();
 	Common::Point getMousePos() { return _mousePos; }
 	void getMouseInfo();
 	void checkForKey();

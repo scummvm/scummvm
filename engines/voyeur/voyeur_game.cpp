@@ -35,6 +35,14 @@ void VoyeurEngine::addVideoEventStart() {
 	e._dead = _eventsManager._videoDead;
 }
 
+void VoyeurEngine::addComputerEventEnd() {
+	error("TODO: addComputerEventEnd");
+}
+
+void VoyeurEngine::addPlainEvent() {
+	error("TODO: addPlainEvent");
+}
+
 void VoyeurEngine::playStamp() {
 	_stampLibPtr = NULL;
 	_filesManager.openBoltLib("stampblt.blt", _stampLibPtr);
@@ -314,6 +322,10 @@ void VoyeurEngine::makeViewFinder() {
 	_eventsManager._intPtr._hasPalette = true;
 }
 
+void VoyeurEngine::makeViewFinderP() {
+	_graphicsManager.screenReset();
+}
+
 void VoyeurEngine::initIFace(){
 	int playStamp1 = _playStamp1;
 	switch (_voy._transitionId) {
@@ -389,6 +401,14 @@ void VoyeurEngine::checkTransition(){
 	}
 }
 
+bool VoyeurEngine::doComputerText(int v) {
+	error("TODO: doComputerText");
+}
+
+void VoyeurEngine::getComputerBrush() {
+	error("TODO: getComputerBrush");
+}
+
 void VoyeurEngine::doTimeBar(bool force) {
 	flashTimeBar();
 
@@ -435,7 +455,27 @@ void VoyeurEngine::flashTimeBar(){
 }
 
 void VoyeurEngine::checkPhoneCall() {
-	error("TODO: checkPhoneCall");
+	if ((_voy._field476 - _voy._RTVNum) >= 36 && _voy._field4B8 < 5 && 
+			_playStamp2 <= 151 && _playStamp2 > 146) {
+		if ((_voy._switchBGNum < _checkPhoneVal || _checkPhoneVal > 180) &&
+				!_soundManager.getVOCStatus()) {
+			int soundIndex;
+			do {
+				soundIndex = getRandomNumber(4);
+			} while (_voy._field4AE[soundIndex]);
+			_playStamp2 = 154 + soundIndex;
+
+			_soundManager.stopVOCPlay();
+			_soundManager.startVOCPlay(_playStamp2);
+			_checkPhoneVal = _voy._switchBGNum;
+			++_voy._field4AE[soundIndex];
+			++_voy._field4B8;
+		}
+	}
+}
+
+void VoyeurEngine::doEvidDisplay(int v1, int v2) {
+	error("TODO: doEvidDisplay");
 }
 
 } // End of namespace Voyeur

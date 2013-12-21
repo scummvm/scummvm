@@ -48,6 +48,7 @@ public:
 	void setVOCOffset(int offset);
 	Common::String getVOCFileName(int idx);
 	void startVOCPlay(const Common::String &filename);
+	void startVOCPlay(int soundId);
 	int getVOCStatus();
 };
 

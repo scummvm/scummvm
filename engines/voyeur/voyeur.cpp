@@ -50,6 +50,7 @@ VoyeurEngine::VoyeurEngine(OSystem *syst, const VoyeurGameDescription *gameDesc)
 	_flashTimeVal = 0;
 	_flashTimeFlag = false;
 	_timeBarVal = -1;
+	_checkPhoneVal = 0;
 
 	initialiseManagers();
 }

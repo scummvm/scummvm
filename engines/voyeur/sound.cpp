@@ -75,6 +75,10 @@ void SoundManager::startVOCPlay(const Common::String &filename) {
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, audioStream);
 }
 
+void SoundManager::startVOCPlay(int soundId) {
+	startVOCPlay(getVOCFileName(soundId));
+}
+
 int SoundManager::getVOCStatus() {
 	return _mixer->isSoundHandleActive(_soundHandle);
 }

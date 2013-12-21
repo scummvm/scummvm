@@ -74,7 +74,6 @@ private:
 	void initBolt();
 	void vInitInterrupts();
 	void initInput();
-	void addVideoEventStart();
 
 	bool doHeadTitle();
 	void showConversionScreen();
@@ -123,6 +122,7 @@ public:
 	int _flashTimeVal;
 	bool _flashTimeFlag;
 	int _timeBarVal;
+	int _checkPhoneVal;
 public:
 	VoyeurEngine(OSystem *syst, const VoyeurGameDescription *gameDesc);
 	virtual ~VoyeurEngine();
@@ -150,11 +150,19 @@ public:
 	 */
 	void saveLastInplay();
 	void makeViewFinder();
+	void makeViewFinderP();
 	void initIFace();
 	void checkTransition();
+	bool doComputerText(int v);
+	void getComputerBrush();
 	void doTimeBar(bool force);
 	void flashTimeBar();
 	void checkPhoneCall();
+	void doEvidDisplay(int v1, int v2);
+
+	void addVideoEventStart();
+	void addComputerEventEnd();
+	void addPlainEvent();
 };
 
 } // End of namespace Voyeur

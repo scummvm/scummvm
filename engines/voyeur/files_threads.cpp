@@ -1168,7 +1168,210 @@ int ThreadResource::doApt() {
 }
 
 void ThreadResource::doRoom() {
-	warning("TODO: doRoom");
+	VoyeurEngine &vm = *_vm;
+	SVoy &voy = vm._voy;
+
+	vm.makeViewFinderP();
+	voy._field437E = 0;
+	int varE = 0;
+	
+	if (!vm._bVoy->getBoltGroup(vm._playStamp1, true))
+		return;
+
+	vm._graphicsManager._backColors = vm._bVoy->boltEntry(vm._playStamp1 + 1)._cMapResource;
+	vm._graphicsManager._backgroundPage = vm._bVoy->boltEntry(vm._playStamp1)._picResource;
+	(*vm._graphicsManager._vPort)->setupViewPort(vm._graphicsManager._backgroundPage);
+	vm._graphicsManager._backColors->startFade();
+
+	voy._field437A = 2;
+	voy._field437C = 0;
+	voy._field437E = 1;
+	
+	byte *dataP = vm._bVoy->memberAddr(vm._playStamp1 + 4);
+	int count = READ_LE_UINT16(dataP);
+	int i4e4 = -1;
+
+	PictureResource *pic1 = vm._bVoy->boltEntry(vm._playStamp1 + 2)._picResource;
+	PictureResource *pic2 = vm._bVoy->boltEntry(vm._playStamp1 + 3)._picResource;
+
+	byte arr[10];
+	strcpy((char *)&arr[0], "0");
+	voy._field4386 = &arr[0];
+
+	vm._eventsManager.getMouseInfo();
+	vm._eventsManager.setMousePos(Common::Point(192, 120));
+	voy._field437E = 0;
+	vm._playStamp2 = 146;
+	voy._field4AC = voy._RTVNum;
+
+	voy._vocSecondsOffset = 0;
+	vm._soundManager.startVOCPlay(vm._playStamp2);
+	voy._field478 &= ~1;
+
+	bool breakFlag = false;
+	while (!breakFlag) {
+		vm._graphicsManager.setColor(128, 0, 255, 0);
+		vm._eventsManager._intPtr.field38 = 1;
+		vm._eventsManager._intPtr._hasPalette = true;
+
+		do {
+			if (vm._playStamp2 != -1 && !vm._soundManager.getVOCStatus()) {
+				voy._field4AC = voy._RTVNum;
+				voy._vocSecondsOffset = 0;
+				vm._soundManager.startVOCPlay(vm._playStamp2);
+			}
+
+			vm._eventsManager.getMouseInfo();
+			Common::Point pt = vm._eventsManager.getMousePos();
+			i4e4 = -1;
+			if (voy._field4E2 != -1 && voy._rect4E4.contains(pt))
+				i4e4 = 999;
+
+			for (int idx = 0; idx < count; ++idx) {
+				if (pt.x > READ_LE_UINT16(dataP + idx * 12 + 6) &&
+						pt.x < READ_LE_UINT16(dataP + idx * 12 + 10) &&
+						pt.y > READ_LE_UINT16(dataP + idx * 12 + 8) &&
+						pt.y < READ_LE_UINT16(dataP + idx * 12 + 12)) {
+					int arrIndex = READ_LE_UINT16(dataP + idx * 12 + 2);
+					if (voy._arr7[arrIndex - 1] == 1) {
+						i4e4 = idx;
+						break;
+					}
+				}
+			}
+
+			if (i4e4 == -1) {
+				vm._graphicsManager.sDrawPic(pic1, *vm._graphicsManager._vPort,
+					Common::Point(pt.x - 9, pt.y - 9));
+				vm._eventsManager.setCursorColor(128, 0);
+			} else if (i4e4 != 999 || voy._RTVNum < voy._field4EC ||
+					(voy._field4EE - 2) < voy._RTVNum) {
+				vm._graphicsManager.sDrawPic(pic2, *vm._graphicsManager._vPort,
+					Common::Point(pt.x - 12, pt.y - 9));
+				vm._eventsManager.setCursorColor(128, 1);
+			} else {
+				vm._graphicsManager.sDrawPic(pic2, 
+					*vm._graphicsManager._vPort,
+					Common::Point(pt.x - 12, pt.y - 9));
+				vm._eventsManager.setCursorColor(128, 2);
+			}
+
+			vm._eventsManager._intPtr.field38 = 1;
+			vm._eventsManager._intPtr._hasPalette = true;
+			vm._graphicsManager.flipPage();
+			vm._eventsManager.sWaitFlip();
+		} while (!vm.shouldQuit() && !voy._incriminate);
+
+		if (!voy._mouseClicked || i4e4 == -1) {
+			if (voy._fadeFunc)
+				breakFlag = true;
+
+			Common::Point pt = vm._eventsManager.getMousePos();
+			vm._eventsManager.getMouseInfo();
+			vm._eventsManager.setMousePos(pt);
+		} else {
+			voy._field478 |= 16;
+			vm._eventsManager.startCursorBlink();
+
+			if (i4e4 == 999) {
+				(*_vm->_graphicsManager._vPort)->_flags |= 8;
+				_vm->_graphicsManager.flipPage();
+				_vm->_eventsManager.sWaitFlip();
+
+				if (vm._playStamp2 != -1) {
+					voy._vocSecondsOffset = voy._RTVNum - 
+						voy._field4AC;
+					vm._soundManager.stopVOCPlay();
+				}
+
+				vm.getComputerBrush();
+
+				(*vm._graphicsManager._vPort)->_flags |= 8;
+				vm._graphicsManager.flipPage();
+				vm._eventsManager.sWaitFlip();
+				vm.addPlainEvent();
+
+				voy._incriminate = false;
+				vm._eventsManager.startCursorBlink();
+
+				if (vm.doComputerText(9999))
+					vm.addComputerEventEnd();
+
+				vm._bVoy->freeBoltGroup(0x4900);
+			} else {
+				vm.doEvidDisplay(i4e4, 999);
+			}
+
+			voy._field478 &= ~0x10;
+			if (!voy._incriminate)
+				vm._eventsManager.delay(18000);
+
+			vm._bVoy->freeBoltGroup(vm._playStamp1);
+			vm._bVoy->getBoltGroup(vm._playStamp1);
+			dataP = vm._bVoy->memberAddr(vm._playStamp1 + 4);
+			pic1 = vm._bVoy->boltEntry(vm._playStamp1 + 2)._picResource;
+			pic2 = vm._bVoy->boltEntry(vm._playStamp1 + 3)._picResource;
+			vm._graphicsManager._backColors = vm._bVoy->boltEntry(
+				vm._playStamp1 + 2)._cMapResource;
+			vm._graphicsManager._backgroundPage = vm._bVoy->boltEntry(
+				vm._playStamp1)._picResource;
+
+			vm._graphicsManager._backColors->startFade();
+			(*vm._graphicsManager._vPort)->_flags |= 8;
+			vm._graphicsManager.flipPage();
+			vm._eventsManager.sWaitFlip();
+
+			while (!vm.shouldQuit() && (vm._eventsManager._fadeStatus & 1))
+				vm._eventsManager.delay(1);
+			vm._eventsManager.hideCursor();
+
+			while (!vm.shouldQuit() && voy._field4378 > 0) {
+				if (voy._field4376 < 63) {
+					voy._field4376 += 4;
+					if (voy._field4376 > 63)
+						voy._field4376 = 63;
+				}
+
+				if (voy._field4378 > 0) {
+					voy._field4378 -= 8;
+					if (voy._field4378 < 0)
+						voy._field4378 = 0;
+				}
+
+				vm._eventsManager.delay(1);
+			}
+
+			(*vm._graphicsManager._vPort)->_flags |= 8;
+			vm._graphicsManager.flipPage();
+			vm._eventsManager.sWaitFlip();
+
+			vm._graphicsManager.fadeUpICF1(0);
+			voy._field478 &= 0x10;
+		}
+	}
+
+	voy._field478 = 1;
+	vm._eventsManager.incrementTime(1);
+	voy._field4386 = 0;
+	voy._field437E = 0;
+	vm.makeViewFinderP();
+
+	if (voy._field47A != -1) {
+		vm._bVoy->freeBoltGroup(voy._field47A, 1);
+		voy._field47A = -1;
+	}
+
+	if (vm._playStamp1 != -1) {
+		vm._bVoy->freeBoltGroup(vm._playStamp1);
+		vm._playStamp1 = -1;
+	}
+
+	if (vm._playStamp2 != -1) {
+		vm._soundManager.stopVOCPlay();
+		vm._playStamp2 = -1;
+	}
+
+	chooseSTAMPButton(0);
 }
 
 int ThreadResource::doInterface() {
