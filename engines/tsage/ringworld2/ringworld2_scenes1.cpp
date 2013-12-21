@@ -6336,6 +6336,7 @@ void Scene1337::handlePlayer2() {
 			if (!found) {
 				if (_discardPile.isIn(Common::Point(_selectedCard._stationPos.x + 12, _selectedCard._stationPos.y + 12))) {
 					discardCard(&_selectedCard);
+					return;
 				} else {
 					if (_selectedCard._cardId == 1) {
 						bool isInCardFl = false;
