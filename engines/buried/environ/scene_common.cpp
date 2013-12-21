@@ -447,6 +447,283 @@ SetFlagOnEntry::SetFlagOnEntry(BuriedEngine *vm, Window *viewWindow, const Locat
 		((SceneViewWindow *)viewWindow)->setGlobalFlagByte(flagOffset, flagNewValue);
 }
 
+InteractiveNewsNetwork::InteractiveNewsNetwork(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+		int enterTransition, int timeZone, int environment, int node, int facing, int orientation, int depth,
+		int transitionType, int transitionData, int transitionStartFrame, int transitionLength) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	// Close the cycle/still movies
+	((SceneViewWindow *)viewWindow)->changeStillFrameMovie("");
+	((SceneViewWindow *)viewWindow)->changeCycleFrameMovie("");
+
+	_currentMovieFrame = 0;
+	_returnDestination.destinationScene.timeZone = timeZone;
+	_returnDestination.destinationScene.environment = environment;
+	_returnDestination.destinationScene.node = node;
+	_returnDestination.destinationScene.facing = facing;
+	_returnDestination.destinationScene.orientation = orientation;
+	_returnDestination.destinationScene.depth = depth;
+	_returnDestination.transitionType = transitionType;
+	_returnDestination.transitionData = transitionData;
+	_returnDestination.transitionStartFrame = transitionStartFrame;
+	_returnDestination.transitionLength = transitionLength;
+	_playingMovie = false;
+	_loopingMovie = false;
+	_playingAudio = false;
+	_enterTransition = enterTransition;
+	_audioChannel = -1;
+
+	loadFrameDatabase();
+	loadMovieDatabase();
+
+	if (!_stillFrames.open(_vm->getFilePath(IDS_INN_STILL_FRAME_FILENAME)))
+		error("Failed to open INN still frames");
+}
+
+InteractiveNewsNetwork::~InteractiveNewsNetwork() {
+	// Restart sound
+	_vm->_sound->restart();
+}
+
+int InteractiveNewsNetwork::postEnterRoom(Window *viewWindow, const Location &priorLocation) {
+	// Play any entry animation
+	if (_enterTransition >= 0)
+		((SceneViewWindow *)viewWindow)->playSynchronousAnimation(_enterTransition);
+
+	// Stop the ambient sound
+	_vm->_sound->setAmbientSound();
+
+	// Play the intro movie
+	_playingMovie = ((SceneViewWindow *)viewWindow)->playSynchronousAnimationExtern(IDS_INN_MEDIA_FILENAME_BASE);
+	_currentMovieFrame = 1;
+
+	// Start the INN ambient
+	_vm->_sound->setAmbientSound(_vm->getFilePath(IDS_INN_AMBIENT_FILENAME));
+	return SC_TRUE;
+}
+
+int InteractiveNewsNetwork::preExitRoom(Window *viewWindow, const Location &newLocation) {
+	// Stop a playing movie
+	if (_playingMovie) {
+		((SceneViewWindow *)viewWindow)->stopAsynchronousAnimation();
+		_playingMovie = false;
+		_loopingMovie = false;
+		_vm->_sound->restart();
+	}
+
+	// Stop audio
+	if (_playingAudio && _audioChannel != -1) {
+		_vm->_sound->stopSoundEffect(_audioChannel);
+		_audioChannel = -1;
+		_playingAudio = false;
+	}
+
+	// Stop the INN ambient
+	_vm->_sound->setAmbientSound();
+
+	// Start the environment ambient
+	((SceneViewWindow *)viewWindow)->startEnvironmentAmbient(-1, -1, _staticData.location.timeZone, _staticData.location.environment);
+
+	return SC_TRUE;
+}
+
+int InteractiveNewsNetwork::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	int oldMovieFrame = _currentMovieFrame;
+
+	if (_currentMovieFrame > (int)_frameDatabase.size())
+		return SC_FALSE;
+
+	const INNFrame &currentData = _frameDatabase[_currentMovieFrame];
+
+	for (int i = 0; i < 8; i++) {
+		const INNHotspotData &hotspotData = currentData.hotspots[i];
+
+		if (hotspotData.stillFrameOffset >= 0 || hotspotData.stillFrameOffset == -2) {
+			Common::Rect currentRegion(hotspotData.left, hotspotData.top, hotspotData.right, hotspotData.bottom);
+
+			if (currentRegion.contains(pointLocation)) {
+				if (hotspotData.stillFrameOffset == -2) {
+					// Return from a hyperlink
+					if (!_hyperLinkHistory.empty()) {
+						_currentMovieFrame = _hyperLinkHistory.back();
+						_hyperLinkHistory.pop_back();
+					}
+				} else {
+					// Check if we clicked on a hyperlink
+					int newMovieFrame = hotspotData.stillFrameOffset - 1;
+
+					if (i < 5 && newMovieFrame > 58 && newMovieFrame < 157)
+						_hyperLinkHistory.push_back(_currentMovieFrame);
+
+					_currentMovieFrame = newMovieFrame;
+				}
+
+				// Check for the exit frame
+				if (_currentMovieFrame == 157) {
+					((SceneViewWindow *)viewWindow)->moveToDestination(_returnDestination);
+					return SC_TRUE;
+				}
+
+				// If we are in Agent 3's lair, and we clicked on the symbiotry talks, change the destination
+				if (_staticData.location.timeZone == 3 && _currentMovieFrame == 8 && _currentMovieFrame == 8 && oldMovieFrame != 7) {
+					_currentMovieFrame = 7;
+					((SceneViewWindow *)viewWindow)->getGlobalFlags().scoreResearchINNUpdate = 1;
+				}
+
+				// If we are playing a video, make sure it's stipped
+				if (_playingMovie) {
+					((SceneViewWindow *)viewWindow)->stopAsynchronousAnimation();
+					_playingMovie = false;
+					_loopingMovie = false;
+				}
+
+				if (_playingAudio && _audioChannel != -1) {
+					_vm->_sound->stopSoundEffect(_audioChannel);
+					_audioChannel = -1;
+					_playingAudio = false;
+				}
+
+				// Repaint
+				viewWindow->invalidateWindow();
+
+				// Start playing any video clip
+				const INNFrame &newFrame = _frameDatabase[_currentMovieFrame];
+
+				// No full screen video -> restart the sound
+				if (newFrame.pageType != MEDIA_TYPE_VIDEO_FULL)
+					_vm->_sound->restart();
+
+				if (newFrame.pageType > 0) {
+					for (uint j = 0; j < _movieDatabase.size(); j++) {
+						const INNMediaElement &mediaCurrentData = _movieDatabase[j];
+
+						if (mediaCurrentData.frameIndex == _currentMovieFrame) {
+							switch (mediaCurrentData.mediaType) {
+							case MEDIA_TYPE_VIDEO_FULL:
+								// Check for a commercial, play the sponsor clip
+								if (_currentMovieFrame >= 2 && _currentMovieFrame <= 4)
+									_vm->_sound->playSynchronousSoundEffect(_vm->getFilePath(IDS_INN_MEDIA_FILENAME_BASE + 39));
+
+
+								_vm->_sound->stop();
+								_playingMovie = ((SceneViewWindow *)viewWindow)->startAsynchronousAnimationExtern(IDS_INN_MEDIA_FILENAME_BASE + mediaCurrentData.fileIDOffset, -1, -1, -1, false);
+								_loopingMovie = false;
+								break;
+							case MEDIA_TYPE_VIDEO_SMALL_A:
+								_playingMovie = ((SceneViewWindow *)viewWindow)->startPlacedAsynchronousAnimationExtern(275, 16, 120, 120, IDS_INN_MEDIA_FILENAME_BASE + mediaCurrentData.fileIDOffset, -1, -1, -1, true);
+								_loopingMovie = true;
+								break;
+							case MEDIA_TYPE_VIDEO_SMALL_B:
+								_playingMovie = ((SceneViewWindow *)viewWindow)->startPlacedAsynchronousAnimationExtern(255, 16, 159, 120, IDS_INN_MEDIA_FILENAME_BASE + mediaCurrentData.fileIDOffset, -1, -1, -1, true);
+								_loopingMovie = true;
+								break;
+							case MEDIA_TYPE_AUDIO:
+								_playingAudio = true;
+								_audioChannel = _vm->_sound->playSoundEffect(_vm->getFilePath(IDS_INN_MEDIA_FILENAME_BASE + mediaCurrentData.fileIDOffset));
+								break;
+							}
+						}
+					}
+				}
+
+				// Check for scoring frames
+				switch (_currentMovieFrame) {
+				case 20:
+					((SceneViewWindow *)viewWindow)->getGlobalFlags().scoreResearchINNHighBidder = 1;
+					break;
+				case 25:
+					((SceneViewWindow *)viewWindow)->getGlobalFlags().scoreResearchINNAppeal = 1;
+					break;
+				case 109:
+					((SceneViewWindow *)viewWindow)->getGlobalFlags().scoreResearchINNJumpsuit = 1;
+					break;
+				case 159: // Read global_flags.h to see why I hate this
+					((SceneViewWindow *)viewWindow)->getGlobalFlags().scoreResearchINNLouvreReport = 1;
+					break;
+				}
+	
+				return SC_TRUE;
+			}
+		}
+	}
+
+	return SC_FALSE;
+}
+
+int InteractiveNewsNetwork::paint(Window *viewWindow, Graphics::Surface *preBuffer) {
+	const Graphics::Surface *stillFrame = _stillFrames.getFrame(_currentMovieFrame);
+
+	if (stillFrame)
+		_vm->_gfx->crossBlit(preBuffer, 0, 0, 432, 189, stillFrame, 0, 0);
+
+	return SC_REPAINT;
+}
+
+int InteractiveNewsNetwork::movieCallback(Window *viewWindow, VideoWindow *movie, int animationID, int status) {
+	// Restart sound if the movie has ended
+	if (animationID == -1 && status == MOVIE_STOPPED) {
+		_vm->_sound->restart();
+		return SC_FALSE;
+	}
+
+	return SC_TRUE;
+}
+
+int InteractiveNewsNetwork::timerCallback(Window *viewWindow) {
+	// Check to see if audio has stopped
+	if (_playingAudio && _audioChannel != -1 && !_vm->_sound->isSoundEffectPlaying(_audioChannel)) {
+		_audioChannel = -1;
+		_playingAudio = false;
+	}
+
+	return SC_TRUE;
+}
+
+void InteractiveNewsNetwork::loadFrameDatabase() {
+	Common::SeekableReadStream *frameData = _vm->getINNData(IDBD_INN_BINARY_DATA);
+
+	if (!frameData)
+		error("Failed to find INN frame database");
+
+	uint16 count = frameData->readUint16LE();
+	_frameDatabase.resize(count);
+
+	for (uint16 i = 0; i < count; i++) {
+		 INNFrame &frame = _frameDatabase[i];
+		 frame.topicID = frameData->readSint16LE();
+		 frame.pageType = frameData->readSint16LE();
+		 frame.stillFrameOffset = frameData->readSint32LE();
+
+		for (int j = 0; j < 8; j++) {
+			frame.hotspots[j].left = frameData->readSint16LE();
+			frame.hotspots[j].top = frameData->readSint16LE();
+			frame.hotspots[j].right = frameData->readSint16LE();
+			frame.hotspots[j].bottom = frameData->readSint16LE();
+			frame.hotspots[j].stillFrameOffset = frameData->readSint32LE();
+		}
+	}
+
+	delete frameData;
+}
+
+void InteractiveNewsNetwork::loadMovieDatabase() {
+	Common::SeekableReadStream *movieData = _vm->getINNData(IDBD_INN_MEDIA_BINARY_DATA);
+
+	if (!movieData)
+		error("Failed to find INN movie database");
+
+	uint16 count = movieData->readUint16LE();
+	_movieDatabase.resize(count);
+
+	for (uint16 i = 0; i < count; i++) {
+		INNMediaElement &element = _movieDatabase[i];
+		element.frameIndex = movieData->readSint32LE();
+		element.mediaType = movieData->readSint16LE();
+		element.fileIDOffset = movieData->readSint16LE();
+	}
+
+	delete movieData;
+}
+
 DisplayMessageWithEvidenceWhenEnteringNode::DisplayMessageWithEvidenceWhenEnteringNode(BuriedEngine *vm, Window *viewWindow,
 			const LocationStaticData &sceneStaticData, const Location &priorLocation, int evidenceID, int messageBoxTextID) :
 		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {

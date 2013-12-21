@@ -2013,6 +2013,8 @@ SceneBase *SceneViewWindow::constructFutureApartmentSceneObject(Window *viewWind
 		return new ViewEnvironCart(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 21:
 		return new ClickChangeScene(_vm, viewWindow, sceneStaticData, priorLocation, 0, 0, 432, 189, kCursorPutDown, 4, 2, 2, 0, 1, 1, TRANSITION_VIDEO, 4, -1, -1);
+	case 22:
+		return new InteractiveNewsNetwork(_vm, viewWindow, sceneStaticData, priorLocation, -1, 4, 2, 2, 0, 1, 1, TRANSITION_VIDEO, 4, -1, -1);
 	case 23:
 		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 81, 146, 134, 189, kItemRemoteControl, 45, offsetof(GlobalFlags, faERTakenRemoteControl));
 	case 24:
