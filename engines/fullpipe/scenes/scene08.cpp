@@ -142,7 +142,14 @@ void sceneHandler08_hideLadder() {
 }
 
 void sceneHandler08_arcadeNow() {
-	warning("STUB: sceneHandler08_arcadeNow()");
+	MovGraphLink *lnk = getCurrSceneSc2MotionController()->getLinkByName(sO_Stairway);
+
+	g_fp->setObjectState(sO_TummyTrampie, g_fp->getObjectEnumState(sO_TummyTrampie, sO_IsSleeping));
+
+	g_vars->scene08_batuta->changeStatics2(ST_BTT_SLEEPS);
+
+	if (lnk)
+		lnk->_flags |= 0x20000000;
 }
 
 void sceneHandler08_resumeFlight() {
