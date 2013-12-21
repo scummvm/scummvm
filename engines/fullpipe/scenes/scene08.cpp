@@ -32,6 +32,7 @@
 #include "fullpipe/motion.h"
 #include "fullpipe/gameloader.h"
 #include "fullpipe/behavior.h"
+#include "fullpipe/interaction.h"
 
 namespace Fullpipe {
 
@@ -194,7 +195,10 @@ void sceneHandler08_calcOffset() {
 }
 
 void sceneHandler08_finishArcade() {
-	warning("STUB: sceneHandler08_finishArcade()");
+	g_vars->scene08_var06 = 0;
+
+	getGameLoaderInteractionController()->enableFlag24();
+	getCurrSceneSc2MotionController()->setEnabled();
 }
 
 void sceneHandler08_jumpOff() {
@@ -206,7 +210,16 @@ void sceneHandler08_pushCallback(int *par) {
 }
 
 void sceneHandler08_sitDown() {
-	warning("STUB: sceneHandler08_sitDown()");
+	g_fp->_aniMan->setOXY(380, g_fp->_aniMan->_oy);
+
+	g_fp->_aniMan->changeStatics2(ST_MAN8_FLYDOWN);
+	g_fp->_aniMan->startAnim(MV_MAN8_SITDOWN, 0, -1);
+
+	g_vars->scene08_vmyats->changeStatics2(ST_VMT_MIN);
+	g_vars->scene08_vmyats->hide();
+
+	g_vars->scene08_var01 = 0;
+	g_vars->scene08_var03 = 1;
 }
 
 void sceneHandler08_standUp() {

@@ -208,6 +208,7 @@ namespace Fullpipe {
 #define MV_MAN_TURN_SUD 1089
 #define MV_MAN6_TAKEBALL 2691
 #define MV_MAN6_THROWBALL 2692
+#define MV_MAN8_SITDOWN 2968
 #define MV_MANHDL_HANDLEDOWN 630
 #define MV_MANHDL_HANDLEUP 631
 #define MV_MOM_CYCLEBK 3012
@@ -451,6 +452,7 @@ namespace Fullpipe {
 #define ST_MAN_STANDLADDER 453
 #define ST_MAN_UP 449
 #define ST_MAN6_BALL 2688
+#define ST_MAN8_FLYDOWN 771
 #define ST_MOM_SITS 659
 #define ST_MOM_STANDS 658
 #define ST_NBL_NORM 1076
