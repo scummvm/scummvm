@@ -112,6 +112,8 @@ void VoyeurEngine::playStamp() {
 			} else {
 				threadP->chooseSTAMPButton(buttonId);
 			}
+
+			flag = true;
 			break;
 
 		case 6:
