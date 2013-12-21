@@ -4320,6 +4320,7 @@ void Scene1337::Action12::signal() {
 			break;
 		}
 		scene->discardCard(scene->_actionCard2);
+		scene->handleNextTurn();
 		break;
 	default:
 		break;
@@ -5038,6 +5039,8 @@ void Scene1337::playAntiDelayCard(Card *card, Card *dest) {
 	_actionCard2 = dest;
 
 	_actionItem.setAction(&_action8);
+
+	handleNextTurn();
 }
 
 
@@ -5056,6 +5059,7 @@ void Scene1337::playCounterTrickCard(Card *card, int playerId) {
 	_actionCard3 = &_gameBoardSide[playerId]._emptyStationPos;
 	_actionIdx1 = playerId;
 	_actionItem.setAction(&_action10);
+	handleNextTurn();
 }
 
 void Scene1337::discardCard(Card *card) {
