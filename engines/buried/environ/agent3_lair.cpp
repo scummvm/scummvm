@@ -640,6 +640,76 @@ int GeneratorCoreAcquire::specifyCursor(Window *viewWindow, const Common::Point 
 	return kCursorPutDown;
 }
 
+class ZoomInPostItAndINN : public SceneBase {
+public:
+	ZoomInPostItAndINN(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	Common::Rect _postItNote;
+	Common::Rect _innScreen;
+};
+
+ZoomInPostItAndINN::ZoomInPostItAndINN(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_postItNote = Common::Rect(8, 150, 57, 189);
+	_innScreen = Common::Rect(64, 97, 208, 160);
+}
+
+int ZoomInPostItAndINN::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_postItNote.contains(pointLocation)) {
+		DestinationScene newScene;
+		newScene.destinationScene = _staticData.location;
+		newScene.destinationScene.depth = 1;
+		newScene.transitionType = TRANSITION_VIDEO;
+		newScene.transitionData = 5;
+		newScene.transitionStartFrame = -1;
+		newScene.transitionLength = 1;
+		((SceneViewWindow *)viewWindow)->moveToDestination(newScene);
+		return SC_TRUE;
+	}
+
+	if (_innScreen.contains(pointLocation)) {
+		DestinationScene newScene;
+		newScene.destinationScene = _staticData.location;
+		newScene.destinationScene.depth = 2;
+		newScene.transitionType = TRANSITION_VIDEO;
+		newScene.transitionData = 16;
+		newScene.transitionStartFrame = -1;
+		newScene.transitionLength = 1;
+		((SceneViewWindow *)viewWindow)->moveToDestination(newScene);
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int ZoomInPostItAndINN::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_postItNote.contains(pointLocation) || _innScreen.contains(pointLocation))
+		return kCursorMagnifyingGlass;
+
+	return kCursorArrow;
+}
+
+class ClickChangeScenePostIt : public ClickChangeScene {
+public:
+	ClickChangeScenePostIt(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+			int left = -1, int top = -1, int right = -1, int bottom = -1, int cursorID = 0,
+			int timeZone = -1, int environment = -1, int node = -1, int facing = -1, int orientation = -1, int depth = -1,
+			int transitionType = -1, int transitionData = -1, int transitionStartFrame = -1, int transitionLength = -1);
+};
+
+ClickChangeScenePostIt::ClickChangeScenePostIt(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+			int left, int top, int right, int bottom, int cursorID,
+			int timeZone, int environment, int node, int facing, int orientation, int depth,
+			int transitionType, int transitionData, int transitionStartFrame, int transitionLength) :
+			ClickChangeScene(vm, viewWindow, sceneStaticData, priorLocation, left, top, right, bottom, cursorID,
+					timeZone, environment, node, facing, orientation, depth, transitionType, transitionData,
+					transitionStartFrame, transitionLength) {
+	((SceneViewWindow *)viewWindow)->getGlobalFlags().scoreResearchAgent3Note = 1;
+}
+
 bool SceneViewWindow::initializeAgent3LairTimeZoneAndEnvironment(Window *viewWindow, int environment) {
 	if (environment == -1)
 		((SceneViewWindow *)viewWindow)->getGlobalFlags().alNMWrongAlienPrefixCode = 0;
@@ -670,6 +740,10 @@ SceneBase *SceneViewWindow::constructAgent3LairSceneObject(Window *viewWindow, c
 		return new ReplicatorInterface(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 25:
 		return new ClickChangeScene(_vm, viewWindow, sceneStaticData, priorLocation, 150, 24, 280, 124, kCursorFinger, 3, 2, 4, 0, 1, 1, TRANSITION_VIDEO, 6, -1, -1);
+	case 27:
+		return new ZoomInPostItAndINN(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 28:
+		return new ClickChangeScenePostIt(_vm, viewWindow, sceneStaticData, priorLocation, 109, 0, 322, 189, kCursorPutDown, 3, 2, 0, 2, 1, 0, TRANSITION_VIDEO, 9, -1, -1);
 	case 29:
 		return new InteractiveNewsNetwork(_vm, viewWindow, sceneStaticData, priorLocation, -1, 3, 2, 0, 2, 1, 0, TRANSITION_VIDEO, 17, -1, -1);
 	}
