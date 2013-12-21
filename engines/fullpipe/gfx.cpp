@@ -1178,6 +1178,34 @@ bool BigPicture::load(MfcArchive &file) {
 	return true;
 }
 
+void BigPicture::draw(int x, int y, int style, int angle) {
+	if (_bitmap)
+		init();
+
+	if (_bitmap) {
+		_bitmap->_flags &= 0xFEFFFFFF;
+
+		int nx = _x;
+		int ny = _y;
+
+		if (x != -1)
+			nx = x;
+
+		if (y != -1)
+			ny = y;
+
+		if (_alpha < 0xFF) {
+			//vrtSetAlphaBlendMode(g_vrtDrawHandle, 1, v9);
+		}
+
+		_bitmap->putDib(nx, ny, 0);
+
+		if (_alpha < 0xFF) {
+			//vrtSetAlphaBlendMode(g_vrtDrawHandle, 0, 255);
+		}
+	}
+}
+
 Shadows::Shadows() {
 	_staticAniObjectId = 0;
 	_movementId = 0;
