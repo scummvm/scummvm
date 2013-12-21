@@ -150,7 +150,7 @@ void Nim::chalk(int x, int y, Common::String text) {
 
 void Nim::setup() {
 	_vm->fadeIn();
-	_vm->_graphics->loadNim();
+	_vm->_graphics->nimLoad();
 
 	_vm->_graphics->drawFilledRectangle(Common::Rect(0, 0, 640, 200), kColorBlack);
 	// Upper left rectangle.
@@ -160,8 +160,8 @@ void Nim::setup() {
 	_vm->_graphics->drawRectangle(Common::Rect(394, 50, 635, 198), kColorRed);
 	_vm->_graphics->drawFilledRectangle(Common::Rect(395, 51, 634, 197), kColorBrown);
 		
-	_vm->_graphics->drawNimLogo();
-	_vm->_graphics->drawNimInitials();
+	_vm->_graphics->nimDrawLogo();
+	_vm->_graphics->nimDrawInitials();
 
 	_vm->_graphics->drawNormalText("SCOREBOARD:", _vm->_font, 8, 475, 45, kColorWhite);
 	_vm->_graphics->drawNormalText("Turn:", _vm->_font, 8, 420, 55, kColorYellow);
@@ -194,7 +194,7 @@ void Nim::board() {
 	_vm->_graphics->drawFilledRectangle(Common::Rect(57, 72, 393, 200), kColorBlack);
 	for (int i = 0; i < 3; i++)
 		for (int j = 0; j < _stones[i]; j++)
-			_vm->_graphics->drawNimStone(64 + j * 8 * 8, 75 + i * 35);
+			_vm->_graphics->nimDrawStone(64 + j * 8 * 8, 75 + i * 35);
 			// It's practically the body of the Pascal function "plotstone()", reimplemented.
 			// It's the only place where we use it, so there's no reason to keep it separated as a function.
 	_vm->_graphics->refreshScreen();

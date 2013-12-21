@@ -80,10 +80,10 @@ public:
 	// For the mini-game "Nim".
 	void drawFilledRectangle(Common::Rect rect, Color color);
 	void drawRectangle(Common::Rect rect, Color color);
-	void loadNim();
-	void drawNimStone(int x, int y);
-	void drawNimInitials();
-	void drawNimLogo();
+	void nimLoad();
+	void nimDrawStone(int x, int y);
+	void nimDrawInitials();
+	void nimDrawLogo();
 
 	void clearAlso();
 	void clearTextBar();

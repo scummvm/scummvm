@@ -464,7 +464,7 @@ void GraphicManager::drawRectangle(Common::Rect rect, Color color) {
 	_surface.frameRect(rect, color);
 }
 
-void GraphicManager::loadNim() {
+void GraphicManager::nimLoad() {
 	Common::File file;
 	Common::String filename = "nim.avd";
 
@@ -481,16 +481,16 @@ void GraphicManager::loadNim() {
 	file.close();
 }
 
-void GraphicManager::drawNimStone(int x, int y) {
+void GraphicManager::nimDrawStone(int x, int y) {
 	drawPicture(_surface, _nimStone, x, y);
 }
 
-void GraphicManager::drawNimInitials() {
+void GraphicManager::nimDrawInitials() {
 	for (int i = 0; i < 3; i++)
 		drawPicture(_surface, _nimInitials[i], 0, 75 + i * 35);
 }
 
-void GraphicManager::drawNimLogo() {
+void GraphicManager::nimDrawLogo() {
 	drawPicture(_surface, _nimLogo, 392, 5);
 }
 
