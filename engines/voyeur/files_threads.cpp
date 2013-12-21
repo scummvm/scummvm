@@ -1170,10 +1170,9 @@ int ThreadResource::doApt() {
 void ThreadResource::doRoom() {
 	VoyeurEngine &vm = *_vm;
 	SVoy &voy = vm._voy;
-
+	
 	vm.makeViewFinderP();
 	voy._field437E = 0;
-	int varE = 0;
 	
 	if (!vm._bVoy->getBoltGroup(vm._playStamp1, true))
 		return;

@@ -44,12 +44,12 @@ IntNode::IntNode(uint16 curTime, uint16 timeReset, uint16 flags) {
 
 /*------------------------------------------------------------------------*/
 
-VoyeurEvent::VoyeurEvent(int v1, int v2, int v3, int v4, int v5, int v6, int v7) {
-	_computerNum = v1;
-	_computerBut[0] = v2;
-	_computerBut[1] = v3;
-	_computerBut[2] = v4;
-	_computerBut[3] = v5;
+VoyeurEvent::VoyeurEvent(int hour, int minute, bool isAM, int v4, int v5, int v6, int v7) {
+	_hour = hour;
+	_minute = minute;
+	_isAM = isAM;
+	_field6 = v4;
+	_field8 = v5;
 	_computerOn = v6;
 	_dead = v7;
 }

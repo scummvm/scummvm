@@ -26,12 +26,12 @@
 namespace Voyeur {
 
 void VoyeurEngine::addVideoEventStart() {
-	VoyeurEvent &e = _voy._events[_voy._evidence[19]];
-	e._computerNum = _gameHour;
-	e._computerBut[0] = _gameMinute;
-	e._computerBut[1] = _voy._isAM;
-	e._computerBut[2] = 1;
-	e._computerBut[3] = _eventsManager._videoComputerBut4;
+	VoyeurEvent &e = _voy._events[_voy._eventCount];
+	e._hour = _gameHour;
+	e._minute = _gameMinute;
+	e._isAM = _voy._isAM;
+	e._field6 = 1;
+	e._field8 = _eventsManager._videoComputerBut4;
 	e._dead = _eventsManager._videoDead;
 }
 

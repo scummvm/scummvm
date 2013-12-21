@@ -52,13 +52,16 @@ public:
 
 class VoyeurEvent {
 public:
-	int _computerNum;
-	int _computerBut[4];
+	int _hour;
+	int _minute;
+	bool _isAM;
+	int _field6;
+	int _field8;
 	int _computerOn;
 	int _computerOff;
 	int _dead;
 public:
-	VoyeurEvent(int v1, int v2, int v3, int v4, int v5, int v6, int v7);
+	VoyeurEvent(int hour, int minute, bool isAM, int v4, int v5, int v6, int v7);
 };
 
 class SVoy {
@@ -95,6 +98,9 @@ public:
 	int _field4EE;
 	int _field4F0;
 	int _field4F2;
+	int _eventCount;
+	Common::Array<VoyeurEvent> _events;
+
 
 	int _timeStart;
 	int _duration;
@@ -113,7 +119,6 @@ public:
 	int _numPhonesUsed;
 	int _evidence[20];
 	
-	Common::Array<VoyeurEvent> _events;
 	int _field4376;
 	int _field4378;
 	int _field437A;
