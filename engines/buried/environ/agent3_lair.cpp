@@ -670,6 +670,8 @@ SceneBase *SceneViewWindow::constructAgent3LairSceneObject(Window *viewWindow, c
 		return new ReplicatorInterface(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 25:
 		return new ClickChangeScene(_vm, viewWindow, sceneStaticData, priorLocation, 150, 24, 280, 124, kCursorFinger, 3, 2, 4, 0, 1, 1, TRANSITION_VIDEO, 6, -1, -1);
+	case 29:
+		return new InteractiveNewsNetwork(_vm, viewWindow, sceneStaticData, priorLocation, -1, 3, 2, 0, 2, 1, 0, TRANSITION_VIDEO, 17, -1, -1);
 	}
 
 	warning("TODO: Agent 3 lair scene object %d", sceneStaticData.classID);
