@@ -35,6 +35,7 @@
 #include "buried/environ/scene_common.h"
 
 #include "common/system.h"
+#include "graphics/font.h"
 
 namespace Buried {
 
@@ -480,6 +481,196 @@ int ReplicatorInterface::specifyCursor(Window *viewWindow, const Common::Point &
 	return kCursorArrow;
 }
 
+class TransporterControls : public SceneBase {
+public:
+	TransporterControls(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	~TransporterControls();
+	void preDestructor();
+	int postExitRoom(Window *viewWindow, const Location &newLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int onCharacter(Window *viewWindow, const Common::KeyState &character);
+	int gdiPaint(Window *viewWindow);
+
+private:
+	Common::Rect _monitor, _retract;
+	Common::String _transportCode;
+	Common::String _prefixCode;
+	int _monitorStatus;
+	Graphics::Font *_textFont;
+	int _lineHeight;
+};
+
+TransporterControls::TransporterControls(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_monitor = Common::Rect(171, 42, 307, 136);
+	_retract = Common::Rect(362, 115, 394, 132);
+	_monitorStatus = 0;
+
+	_lineHeight = (_vm->getLanguage() == Common::JA_JPN) ? 10 : 12;
+	_textFont = _vm->_gfx->createFont(_lineHeight);
+}
+
+TransporterControls::~TransporterControls() {
+	preDestructor();
+}
+
+void TransporterControls::preDestructor() {
+	delete _textFont;
+	_textFont = 0;
+}
+
+int TransporterControls::postExitRoom(Window *viewWindow, const Location &newLocation) {
+	if (newLocation.timeZone == _staticData.location.timeZone && newLocation.environment == _staticData.location.environment &&
+			newLocation.node == _staticData.location.node && newLocation.facing != _staticData.location.facing) {
+		_vm->_sound->playSoundEffect("BITDATA/AGENT3/ALNMTRO.BTA");
+	}
+
+	return SC_TRUE;
+}
+
+int TransporterControls::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_monitor.contains(pointLocation) && (_monitorStatus == 0 || _monitorStatus == 2)) {
+		_monitorStatus = 1;
+		_staticData.navFrameIndex = 84;
+		viewWindow->invalidateWindow();
+	} else if (_retract.contains(pointLocation)) {
+		DestinationScene newScene;
+		newScene.destinationScene = _staticData.location;
+		newScene.destinationScene.depth = 0;
+		newScene.transitionType = TRANSITION_VIDEO;
+		newScene.transitionData = 20;
+		newScene.transitionStartFrame = -1;
+		newScene.transitionLength = -1;
+		((SceneViewWindow *)viewWindow)->moveToDestination(newScene);
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int TransporterControls::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if ((_monitor.contains(pointLocation) && (_monitorStatus == 0 || _monitorStatus == 2)) || _retract.contains(pointLocation))
+		return kCursorFinger;
+
+	return kCursorArrow;
+}
+
+int TransporterControls::onCharacter(Window *viewWindow, const Common::KeyState &character) {
+	if (_monitorStatus == 1) {
+		if (character.keycode == Common::KEYCODE_BACKSPACE || character.keycode == Common::KEYCODE_DELETE) {
+			if (!_transportCode.empty()) {
+				_transportCode.deleteLastChar();
+				_vm->_sound->playSoundEffect("BITDATA/COMMON/GENB14.BTA");
+			}
+		} else if (character.keycode >= Common::KEYCODE_0 && character.keycode <= Common::KEYCODE_9) {
+			_transportCode += (char)(character.keycode - Common::KEYCODE_0 + '0');
+			_vm->_sound->playSoundEffect("BITDATA/COMMON/GENB14.BTA");
+		}
+
+		viewWindow->invalidateWindow(false);
+
+		if (_transportCode.size() >= 12) {
+			if (_transportCode == "657255190235") {
+				if (((SceneViewWindow *)viewWindow)->getGlobalFlags().generalWalkthroughMode == 1) {
+					// Bypass the prefix code puzzle in walkthrough mode
+					_monitorStatus = 4;
+					_staticData.navFrameIndex = 87;
+					viewWindow->invalidateWindow(false);
+
+					// Wait two seconds
+					uint32 startTime = g_system->getMillis();
+					while (!_vm->shouldQuit() && startTime + 2000 > g_system->getMillis())
+						_vm->yield();
+
+					// Move to a different depth to enter the transporter
+					DestinationScene newScene;
+					newScene.destinationScene = _staticData.location;
+					newScene.destinationScene.depth = 2;
+					newScene.transitionType = TRANSITION_VIDEO;
+					newScene.transitionData = 7;
+					newScene.transitionStartFrame = -1;
+					newScene.transitionLength = -1;
+					((SceneViewWindow *)viewWindow)->moveToDestination(newScene);
+				} else {
+					_monitorStatus = 3;
+					_staticData.navFrameIndex = 85;
+					viewWindow->invalidateWindow(false);
+				}
+			} else {
+				_monitorStatus = 2;
+				_staticData.navFrameIndex = 86;
+				_transportCode.clear();
+				viewWindow->invalidateWindow(false);
+			}
+		}
+
+		return SC_TRUE;
+	} else if (_monitorStatus == 3) {
+		// Original allows any character to be printed and doesn't include backspace here
+		// That sucks; I'm using the same code as for the transporter code.
+		if (character.keycode == Common::KEYCODE_BACKSPACE || character.keycode == Common::KEYCODE_DELETE) {
+			if (!_prefixCode.empty()) {
+				_prefixCode.deleteLastChar();
+				_vm->_sound->playSoundEffect("BITDATA/COMMON/GENB14.BTA");
+			}
+		} else if (character.keycode >= Common::KEYCODE_0 && character.keycode <= Common::KEYCODE_9) {
+			_prefixCode += (char)(character.keycode - Common::KEYCODE_0 + '0');
+			_vm->_sound->playSoundEffect("BITDATA/COMMON/GENB14.BTA");
+		}
+
+		viewWindow->invalidateWindow(false);
+
+		if (_prefixCode.size() >= 3) {
+			// Flag a wrong prefix for later
+			((SceneViewWindow *)viewWindow)->getGlobalFlags().alNMWrongAlienPrefixCode = (_prefixCode != "272");
+
+			_prefixCode.clear();
+			_monitorStatus = 4;
+			_staticData.navFrameIndex = 87;
+			viewWindow->invalidateWindow(false);
+
+			// Wait two seconds
+			uint32 startTime = g_system->getMillis();
+			while (!_vm->shouldQuit() && startTime + 2000 > g_system->getMillis())
+				_vm->yield();
+
+			// Move to a different depth to enter the transporter
+			DestinationScene newScene;
+			newScene.destinationScene = _staticData.location;
+			newScene.destinationScene.depth = 2;
+			newScene.transitionType = TRANSITION_VIDEO;
+			newScene.transitionData = 7;
+			newScene.transitionStartFrame = -1;
+			newScene.transitionLength = -1;
+			((SceneViewWindow *)viewWindow)->moveToDestination(newScene);
+		}
+
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int TransporterControls::gdiPaint(Window *viewWindow) {
+	if (_monitorStatus == 1 || _monitorStatus == 3) {
+		uint32 color = _vm->_gfx->getColor(80, 216, 144);
+		Common::Rect absoluteRect = viewWindow->getAbsoluteRect();
+
+		if (_monitorStatus == 1) {
+			Common::Rect textRegion(190, 78, 280, 128);
+			textRegion.translate(absoluteRect.left, absoluteRect.top);
+			_vm->_gfx->renderText(_vm->_gfx->getScreen(), _textFont, _transportCode, textRegion.left, textRegion.top, textRegion.width(), textRegion.height(), color, _lineHeight);
+		} else {
+			Common::Rect textRegion(190, 120, 253, 133);
+			textRegion.translate(absoluteRect.left, absoluteRect.top);
+			_vm->_gfx->renderText(_vm->_gfx->getScreen(), _textFont, _prefixCode, textRegion.left, textRegion.top, textRegion.width(), textRegion.height(), color, _lineHeight);
+		}
+	}
+
+	return SC_TRUE;
+}
+
 class GeneratorCoreZoom : public SceneBase {
 public:
 	GeneratorCoreZoom(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
@@ -692,6 +883,44 @@ int ZoomInPostItAndINN::specifyCursor(Window *viewWindow, const Common::Point &p
 	return kCursorArrow;
 }
 
+class CompleteTransport : public SceneBase {
+public:
+	CompleteTransport(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int timerCallback(Window *viewWindow);
+};
+
+CompleteTransport::CompleteTransport(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+}
+
+int CompleteTransport::timerCallback(Window *viewWindow) {
+	((SceneViewWindow *)viewWindow)->playSynchronousAnimation(19);
+
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().alNMWrongAlienPrefixCode == 1) {
+		((SceneViewWindow *)viewWindow)->showDeathScene(21);
+	} else {
+		if (((SceneViewWindow *)viewWindow)->getGlobalFlags().lensFilterActivated == 1) {
+			DestinationScene newScene;
+			newScene.destinationScene = Location(7, 1, 5, 3, 1, 0);
+			newScene.transitionType = TRANSITION_VIDEO;
+			newScene.transitionData = 18;
+			newScene.transitionStartFrame = -1;
+			newScene.transitionLength = -1;
+			((SceneViewWindow *)viewWindow)->moveToDestination(newScene);
+		} else {
+			DestinationScene newScene;
+			newScene.destinationScene = Location(7, 1, 5, 3, 1, 1);
+			newScene.transitionType = TRANSITION_NONE;
+			newScene.transitionData = -1;
+			newScene.transitionStartFrame = -1;
+			newScene.transitionLength = -1;
+			((SceneViewWindow *)viewWindow)->jumpToScene(newScene.destinationScene);
+		}
+	}
+
+	return SC_TRUE;
+}
+
 class ClickChangeScenePostIt : public ClickChangeScene {
 public:
 	ClickChangeScenePostIt(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
@@ -710,6 +939,23 @@ ClickChangeScenePostIt::ClickChangeScenePostIt(BuriedEngine *vm, Window *viewWin
 	((SceneViewWindow *)viewWindow)->getGlobalFlags().scoreResearchAgent3Note = 1;
 }
 
+class PlayTransporterClosing : public SceneBase {
+public:
+	PlayTransporterClosing(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int postExitRoom(Window *viewWindow, const Location &newLocation);
+};
+
+PlayTransporterClosing::PlayTransporterClosing(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+}
+
+int PlayTransporterClosing::postExitRoom(Window *viewWindow, const Location &newLocation) {
+	if (_staticData.location.node == newLocation.node && _staticData.location.timeZone == newLocation.timeZone)
+		_vm->_sound->playSoundEffect("BITDATA/AGENT3/ALNMTCLS.BTA");
+
+	return SC_TRUE;
+}
+ 
 bool SceneViewWindow::initializeAgent3LairTimeZoneAndEnvironment(Window *viewWindow, int environment) {
 	if (environment == -1)
 		((SceneViewWindow *)viewWindow)->getGlobalFlags().alNMWrongAlienPrefixCode = 0;
@@ -723,8 +969,6 @@ bool SceneViewWindow::startAgent3LairAmbient(int oldTimeZone, int oldEnvironment
 }
 
 SceneBase *SceneViewWindow::constructAgent3LairSceneObject(Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) {
-	// TODO
-
 	switch (sceneStaticData.classID) {
 	case 1:
 		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 177, 96, 231, 184, kItemGeneratorCore, 15, offsetof(GlobalFlags, alRDTakenLiveCore));
@@ -740,15 +984,21 @@ SceneBase *SceneViewWindow::constructAgent3LairSceneObject(Window *viewWindow, c
 		return new ReplicatorInterface(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 25:
 		return new ClickChangeScene(_vm, viewWindow, sceneStaticData, priorLocation, 150, 24, 280, 124, kCursorFinger, 3, 2, 4, 0, 1, 1, TRANSITION_VIDEO, 6, -1, -1);
+	case 26:
+		return new TransporterControls(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 27:
 		return new ZoomInPostItAndINN(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 28:
 		return new ClickChangeScenePostIt(_vm, viewWindow, sceneStaticData, priorLocation, 109, 0, 322, 189, kCursorPutDown, 3, 2, 0, 2, 1, 0, TRANSITION_VIDEO, 9, -1, -1);
 	case 29:
 		return new InteractiveNewsNetwork(_vm, viewWindow, sceneStaticData, priorLocation, -1, 3, 2, 0, 2, 1, 0, TRANSITION_VIDEO, 17, -1, -1);
+	case 30:
+		return new CompleteTransport(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 31:
+		return new PlayTransporterClosing(_vm, viewWindow, sceneStaticData, priorLocation);
 	}
 
-	warning("TODO: Agent 3 lair scene object %d", sceneStaticData.classID);
+	warning("Unknown Agent 3 lair scene object %d", sceneStaticData.classID);
 
 	return new SceneBase(_vm, viewWindow, sceneStaticData, priorLocation);
 }
