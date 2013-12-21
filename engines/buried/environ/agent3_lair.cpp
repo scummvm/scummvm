@@ -396,6 +396,90 @@ int LairEntry::onCharacter(Window *viewWindow, const Common::KeyState &character
 	return SC_TRUE;
 }
 
+class ReplicatorInterface : public SceneBase {
+public:
+	ReplicatorInterface(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int postExitRoom(Window *viewWindow, const Location &newLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	int _currentItem;
+	Common::Rect _runProgram, _scrollUp, _scrollDown;
+};
+
+ReplicatorInterface::ReplicatorInterface(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_currentItem = 0;
+	_runProgram = Common::Rect(140, 45, 228, 67);
+	_scrollUp = Common::Rect(253, 61, 277, 83);
+	_scrollDown = Common::Rect(253, 83, 277, 105);
+}
+
+int ReplicatorInterface::postExitRoom(Window *viewWindow, const Location &newLocation) {
+	if (newLocation.timeZone == _staticData.location.timeZone && newLocation.environment == _staticData.location.environment)
+		_vm->_sound->playSoundEffect("BITDATA/AGENT3/ALNMRCLS.BTA");
+
+	return SC_TRUE;
+}
+
+int ReplicatorInterface::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_runProgram.contains(pointLocation)) {
+		_vm->_sound->playSynchronousSoundEffect("BITDATA/COMMON/GENB14.BTA");
+
+		switch (_currentItem) {
+		case 1:
+			((SceneViewWindow *)viewWindow)->playSynchronousAnimation(4);
+			break;
+		case 2:
+			((SceneViewWindow *)viewWindow)->playSynchronousAnimation(3);
+			break;
+		case 3:
+			((SceneViewWindow *)viewWindow)->playSynchronousAnimation(1);
+			break;
+		case 4:
+			((SceneViewWindow *)viewWindow)->playSynchronousAnimation(2);
+			break;
+		}
+
+		_staticData.navFrameIndex = 76;
+		_currentItem = 0;
+		viewWindow->invalidateWindow(false);
+		return SC_TRUE;
+	}
+
+	if (_scrollUp.contains(pointLocation)) {
+		_currentItem++;
+		if (_currentItem > 4)
+			_currentItem = 1;
+
+		_staticData.navFrameIndex = _currentItem + 76;
+		viewWindow->invalidateWindow(false);
+		_vm->_sound->playSynchronousSoundEffect("BITDATA/COMMON/GENB14.BTA");
+		return SC_TRUE;
+	}
+
+	if (_scrollDown.contains(pointLocation)) {
+		_currentItem--;
+		if (_currentItem < 1)
+			_currentItem = 4;
+
+		_staticData.navFrameIndex = _currentItem + 76;
+		viewWindow->invalidateWindow(false);
+		_vm->_sound->playSynchronousSoundEffect("BITDATA/COMMON/GENB14.BTA");
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int ReplicatorInterface::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_runProgram.contains(pointLocation) || _scrollUp.contains(pointLocation) || _scrollDown.contains(pointLocation))
+		return kCursorFinger;
+
+	return kCursorArrow;
+}
+
 class GeneratorCoreZoom : public SceneBase {
 public:
 	GeneratorCoreZoom(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
@@ -582,6 +666,8 @@ SceneBase *SceneViewWindow::constructAgent3LairSceneObject(Window *viewWindow, c
 		return new LairEntry(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 20:
 		return new ClickChangeScene(_vm, viewWindow, sceneStaticData, priorLocation, 36, 15, 396, 189, kCursorFinger, 3, 2, 0, 1, 1, 1, TRANSITION_VIDEO, 0, -1, -1);
+	case 21:
+		return new ReplicatorInterface(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 25:
 		return new ClickChangeScene(_vm, viewWindow, sceneStaticData, priorLocation, 150, 24, 280, 124, kCursorFinger, 3, 2, 4, 0, 1, 1, TRANSITION_VIDEO, 6, -1, -1);
 	}
