@@ -129,16 +129,22 @@ int scene08_updateCursor() {
 	return g_fp->_cursorId;
 }
 
-void sceneHandler08_winArcade() {
-	warning("STUB: sceneHandler08_winArcade()");
-}
-
 void sceneHandler08_enterUp() {
 	warning("STUB: sceneHandler08_enterUp()");
 }
 
+void sceneHandler08_winArcade() {
+	if (g_vars->scene08_var06) {
+		g_vars->scene08_var06 = 0;
+		g_fp->_sceneRect.top = 0;
+		g_fp->_sceneRect.bottom = 600;
+
+		sceneHandler08_enterUp();
+	}
+}
+
 void sceneHandler08_hideLadder() {
-	warning("STUB: sceneHandler08_hideLadder()");
+	g_fp->_currentScene->getPictureObjectById(PIC_SC8_LADDER_D, 0)->_flags &= 0xFFFB;
 }
 
 void sceneHandler08_arcadeNow() {
@@ -153,7 +159,10 @@ void sceneHandler08_arcadeNow() {
 }
 
 void sceneHandler08_resumeFlight() {
-	warning("STUB: sceneHandler08_resumeFlight()");
+	g_vars->scene08_var08 = 3;
+	g_vars->scene08_var04 = -39;
+	g_vars->scene08_var01 = 1;
+	g_vars->scene08_var07 = 0;
 }
 
 void sceneHandler08_startArcade() {
@@ -201,11 +210,19 @@ void sceneHandler08_sitDown() {
 }
 
 void sceneHandler08_standUp() {
-	warning("STUB: sceneHandler08_standUp()");
+	chainQueue(QU_SC8_STANDUP, 1);
+	g_vars->scene08_var03 = 0;
 }
 
-void sceneHandler08_updateScreenCallback() {
-	warning("STUB: sceneHandler08_updateScreenCallback()");
+int sceneHandler08_updateScreenCallback() {
+	int res;
+
+	res = g_fp->drawArcadeOverlay(g_vars->scene08_var06);
+
+	if (!res)
+		g_fp->_updateScreenCallback = 0;
+
+	return res;
 }
 
 int sceneHandler08(ExCommand *cmd) {
