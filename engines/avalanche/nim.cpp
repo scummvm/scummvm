@@ -424,6 +424,8 @@ void Nim::endOfGame() {
 			}
 		}
 	}
+
+	_vm->_graphics->nimFree();
 }
 
 bool Nim::find(byte x) {

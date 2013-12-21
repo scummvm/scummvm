@@ -60,11 +60,6 @@ GraphicManager::~GraphicManager() {
 	_scrolls.free();
 	_backup.free();
 
-	_nimStone.free();
-	for (int i = 0; i < 3; i++)
-		_nimInitials[i].free();
-	_nimLogo.free();
-
 	for (int i = 0; i < 10; i++)
 		_digits[i].free();
 	for (int i = 0; i < 9; i++)
@@ -492,6 +487,13 @@ void GraphicManager::nimDrawInitials() {
 
 void GraphicManager::nimDrawLogo() {
 	drawPicture(_surface, _nimLogo, 392, 5);
+}
+
+void GraphicManager::nimFree() {
+	_nimStone.free();
+	for (int i = 0; i < 3; i++)
+		_nimInitials[i].free();
+	_nimLogo.free();
 }
 
 /**

@@ -84,6 +84,7 @@ public:
 	void nimDrawStone(int x, int y);
 	void nimDrawInitials();
 	void nimDrawLogo();
+	void nimFree();
 
 	void clearAlso();
 	void clearTextBar();
