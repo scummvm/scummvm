@@ -106,9 +106,25 @@ void scene08_setupMusic() {
 }
 
 int scene08_updateCursor() {
-	warning("STUB: scene08_updateCursor()");
-
 	g_fp->updateCursorCommon();
+
+	if (g_vars->scene08_var06) {
+		if (g_vars->scene08_var03) {
+			if (g_fp->_objectIdAtCursor == PIC_SC8_LADDERD && g_fp->_cursorId == PIC_CSR_ITN)
+				g_fp->_cursorId = PIC_CSR_GOU;
+		} else {
+			g_fp->_cursorId = -1;
+		}
+	} else {
+		if (g_fp->_objectIdAtCursor == PIC_SC8_LADDERD && g_fp->_cursorId == PIC_CSR_ITN) {
+			if (g_fp->_aniMan2->_oy >= 520) {
+				if (g_fp->_aniMan2->_oy <= 750)
+					g_fp->_cursorId = PIC_CSR_GOU;
+			} else {
+				g_fp->_cursorId = PIC_CSR_GOD;
+			}
+		}
+	}
 
 	return g_fp->_cursorId;
 }

@@ -287,6 +287,7 @@ namespace Fullpipe {
 #define PIC_SC6_LADDER 1104
 #define PIC_SC8_ARCADENOW 1043
 #define PIC_SC8_LADDER 754
+#define PIC_SC8_LADDERD 1106
 #define PIC_SC10_DTRUBA 974
 #define PIC_SC10_LADDER 995
 #define PIC_SCD_SEL 734
