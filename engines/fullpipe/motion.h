@@ -372,6 +372,10 @@ struct MovInfo1 {
 	Common::Array<MovInfo1Sub *> items;
 	int itemsCount;
 	int flags;
+
+	MovInfo1() { clear(); }
+	MovInfo1(MovInfo1 *src);
+	void clear();
 };
 
 struct MovGraph2Item { // 744

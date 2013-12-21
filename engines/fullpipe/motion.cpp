@@ -354,6 +354,32 @@ MctlConnectionPoint::~MctlConnectionPoint() {
 	delete _messageQueueObj;
 }
 
+MovInfo1::MovInfo1(MovInfo1 *src) {
+	field_0 = src->field_0;
+	pt1 = src->pt1;
+	pt2 = src->pt2;
+	distance1 = src->distance1;
+	distance2 = src->distance2;
+	subIndex = src->subIndex;
+	item1Index = src->item1Index;
+	items = src->items;
+	itemsCount = src->itemsCount;
+	flags = src->flags;
+}
+
+void MovInfo1::clear() {
+	field_0 = 0;
+	pt1.x = pt1.y = 0;
+	pt2.x = pt2.y = 0;
+	distance1 = 0;
+	distance2 = 0;
+	subIndex = 0;
+	item1Index = 0;
+	items.clear();
+	itemsCount = 0;
+	flags = 0;
+}
+
 bool MctlCompoundArray::load(MfcArchive &file) {
 	debug(5, "MctlCompoundArray::load()");
 
@@ -820,9 +846,7 @@ void MovGraph2::buildMovInfo1SubItems(MovInfo1 *movinfo, Common::Array<MovGraphL
 }
 
 MessageQueue *MovGraph2::buildMovInfo1MessageQueue(MovInfo1 *movInfo) {
-	MovInfo1 movinfo;
-
-	memcpy(&movinfo, movInfo, sizeof(movinfo));
+	MovInfo1 movinfo(movInfo);
 
 	int curX = movInfo->pt1.x;
 	int curY = movInfo->pt1.y;
@@ -1141,7 +1165,7 @@ MessageQueue *MovGraph2::doWalkTo(StaticANIObject *obj, int xpos, int ypos, int 
 	if (minPath < 0.0 || ((linkInfoSource.node != linkInfoDest.node || !linkInfoSource.node) && !tempLinkList.size()))
 		return 0;
 
-	memset(&movInfo1, 0, sizeof(movInfo1));
+	movInfo1.clear();
 
 	movInfo1.subIndex = idxsub;
 	movInfo1.pt1.x = obj->_ox;
