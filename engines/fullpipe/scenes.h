@@ -67,6 +67,10 @@ void scene08_setupMusic();
 int sceneHandler08(ExCommand *cmd);
 int scene08_updateCursor();
 
+void scene10_initScene(Scene *sc);
+int sceneHandler10(ExCommand *cmd);
+int scene10_updateCursor();
+
 void sceneDbgMenu_initScene(Scene *sc);
 int sceneHandlerDbgMenu(ExCommand *cmd);
 
