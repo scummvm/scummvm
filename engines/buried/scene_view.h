@@ -230,6 +230,11 @@ private:
 	bool initializeAgent3LairTimeZoneAndEnvironment(Window *viewWindow, int environment);
 	bool startAgent3LairAmbient(int oldTimeZone, int oldEnvironment, int environment, bool fade);
 	SceneBase *constructAgent3LairSceneObject(Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+
+	// Alien
+	bool initializeAlienTimeZoneAndEnvironment(Window *viewWindow, int environment);
+	bool startAlienAmbient(int oldTimeZone, int oldEnvironment, int environment, bool fade);
+	SceneBase *constructAlienSceneObject(Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
 };
 
 } // End of namespace Buried
