@@ -26,7 +26,9 @@
 #ifndef BURIED_SCENE_COMMON_H
 #define BURIED_SCENE_COMMON_H
 
+#include "buried/avi_frames.h"
 #include "buried/bookdata.h"
+#include "buried/inndata.h"
 #include "buried/environ/scene_base.h"
 
 namespace Buried {
@@ -201,6 +203,36 @@ class SetFlagOnEntry : public SceneBase {
 public:
 	SetFlagOnEntry(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
 			int flagOffset = -1, byte flagNewValue = 1);
+};
+
+class InteractiveNewsNetwork : public SceneBase {
+public:
+	InteractiveNewsNetwork(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+			int enterTransition = -1, int timeZone = -1, int environment = -1, int node = -1, int facing = -1, int orientation = -1, int depth = -1,
+			int transitionType = -1, int transitionData = -1, int transitionStartFrame = -1, int transitionLength = -1);
+	~InteractiveNewsNetwork();
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
+	int preExitRoom(Window *viewWindow, const Location &newLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int paint(Window *viewWindow, Graphics::Surface *preBuffer);
+	int movieCallback(Window *viewWindow, VideoWindow *movie, int animationID, int status);
+	int timerCallback(Window *viewWindow);
+
+private:
+	int _enterTransition;
+	int _currentMovieFrame;
+	DestinationScene _returnDestination;
+	AVIFrames _stillFrames;
+	Common::Array<INNFrame> _frameDatabase;
+	Common::Array<INNMediaElement> _movieDatabase;
+	Common::Array<byte> _hyperLinkHistory;
+	bool _playingMovie;
+	bool _loopingMovie;
+	bool _playingAudio;
+	int _audioChannel;
+
+	void loadFrameDatabase();
+	void loadMovieDatabase();
 };
 
 class DisplayMessageWithEvidenceWhenEnteringNode : public SceneBase {
