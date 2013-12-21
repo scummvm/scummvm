@@ -40,10 +40,10 @@ void scene10_initScene(Scene *sc) {
 	g_vars->scene10_inflater = sc->getStaticANIObject1ById(sc, ANI_NADUVATEL, -1);
 	g_vars->scene10_ladder = sc->getPictureObjectById(sc, PIC_SC10_LADDER, 0);
 
-	g_fullpipe->lift_setButton(sO_Level1, ST_LBN_1N);
-	g_fullpipe->lift_sub5(sc, QU_SC10_ENTERLIFT, QU_SC10_EXITLIFT);
+	g_fp->lift_setButton(sO_Level1, ST_LBN_1N);
+	g_fp->lift_sub5(sc, QU_SC10_ENTERLIFT, QU_SC10_EXITLIFT);
 
-	if (g_fullpipe->getObjectState(sO_Inflater) == g_fullpipe->getObjectEnumState(sO_Inflater, sO_WithGum)) {
+	if (g_fp->getObjectState(sO_Inflater) == g_fp->getObjectEnumState(sO_Inflater, sO_WithGum)) {
 		g_vars->scene10_hasGum = 1;
 	} else {
 		g_vars->scene10_hasGum = 0;
@@ -103,14 +103,14 @@ int sceneHandler10(ExCommand *ex) {
 		break;
 
 	case 29:
-		if (g_fullpipe->_currentScene->getPictureObjectIdAtPos(ex->_sceneClickX, ex->_sceneClickY) == PIC_SC10_LADDER) {
-			handleObjectInteraction(g_aniMan, g_fullpipe->_currentScene->getPictureObjectById(PIC_SC10_DTRUBA, 0), ex->_keyCode);
+		if (g_fp->_currentScene->getPictureObjectIdAtPos(ex->_sceneClickX, ex->_sceneClickY) == PIC_SC10_LADDER) {
+			handleObjectInteraction(g_aniMan, g_fp->_currentScene->getPictureObjectById(PIC_SC10_DTRUBA, 0), ex->_keyCode);
 			ex->_messageKind = 0;
 
 			return 0;
 		}
 
-		StaticANIObject *ani = g_fullpipe->_currentScene->getStaticANIObjectAtPos(ex->_sceneClickX, ex->_sceneClickY);
+		StaticANIObject *ani = g_fp->_currentScene->getStaticANIObjectAtPos(ex->_sceneClickX, ex->_sceneClickY);
 
 		if (ani && ani->_id == ANI_LIFTBUTTON) {
 			lift_sub1(ani);
@@ -124,18 +124,18 @@ int sceneHandler10(ExCommand *ex) {
 		{
 			int res = 0;
 
-			if (g_fullpipe->_aniMan2) {
-				if (g_fullpipe->_aniMan2->_ox < g_fullpipe->_sceneRect.left + 200)
-					g_fullpipe->_currentScene->_x = g_fullpipe->_aniMan2->_ox - g_fullpipe->_sceneRect.left - 300;
+			if (g_fp->_aniMan2) {
+				if (g_fp->_aniMan2->_ox < g_fp->_sceneRect.left + 200)
+					g_fp->_currentScene->_x = g_fp->_aniMan2->_ox - g_fp->_sceneRect.left - 300;
 
-				if (g_fullpipe->_aniMan2->_ox > g_fullpipe->_sceneRect.right - 200)
-					g_fullpipe->_currentScene->_x = g_fullpipe->_aniMan2->_ox - g_fullpipe->_sceneRect.right + 300;
+				if (g_fp->_aniMan2->_ox > g_fp->_sceneRect.right - 200)
+					g_fp->_currentScene->_x = g_fp->_aniMan2->_ox - g_fp->_sceneRect.right + 300;
 
 				res = 1;
 			}
 
-			g_fullpipe->_behaviorManager->updateBehaviors();
-			g_fullpipe->startSceneTrack();
+			g_fp->_behaviorManager->updateBehaviors();
+			g_fp->startSceneTrack();
 
 			return res;
 		}
