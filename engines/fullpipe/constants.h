@@ -39,6 +39,7 @@ namespace Fullpipe {
 #define ANI_DADAYASHIK 306
 #define ANI_EGGEATER 334
 #define ANI_EGGIE 4929
+#define ANI_GUM 978
 #define ANI_HAND 601
 #define ANI_HANDLE 622
 #define ANI_HOOLIGAN 808
@@ -57,8 +58,11 @@ namespace Fullpipe {
 #define ANI_MAMASHA 656
 #define ANI_MAMASHA_4 660
 #define ANI_MAN 322
+#define ANI_NADUVATEL 944
 #define ANI_NEWBALL 1073
 #define ANI_OTMOROZ 419
+#define ANI_PACHKA 975
+#define ANI_PACHKA2 3008
 #define ANI_PLANK 501
 #define ANI_PLUSMINUS 2938
 #define ANI_SC2_BOX 1020
@@ -145,6 +149,11 @@ namespace Fullpipe {
 #define MSG_SC8_HIDELADDER_D 1107
 #define MSG_SC8_RESUMEFLIGHT 784
 #define MSG_SC8_STANDUP 2976
+#define MSG_SC10_CLICKGUM 992
+#define MSG_SC10_HIDEGUM 993
+#define MSG_SC10_LADDERTOBACK 3002
+#define MSG_SC10_LADDERTOFORE 3004
+#define MSG_SC10_SHOWGUM 994
 #define MSG_GOTOLADDER 618
 #define MSG_SHAKEBOTTLE 584
 #define MSG_SHOOTKOZAW 557
@@ -278,6 +287,8 @@ namespace Fullpipe {
 #define PIC_SC6_LADDER 1104
 #define PIC_SC8_ARCADENOW 1043
 #define PIC_SC8_LADDER 754
+#define PIC_SC10_DTRUBA 974
+#define PIC_SC10_LADDER 995
 #define PIC_SCD_SEL 734
 #define QU_BALL_WALKL 4920
 #define QU_BALL_WALKR 4919
@@ -318,6 +329,8 @@ namespace Fullpipe {
 #define QU_SC6_FALLBALL 2690
 #define QU_SC6_SHOWHANDLE 1689
 #define QU_SC6_SHOWNEXTBALL 2689
+#define QU_SC10_ENTERLIFT 1067
+#define QU_SC10_EXITLIFT 2809
 #define SC_1 301
 #define SC_10 653
 #define SC_11 654

@@ -155,6 +155,13 @@ Vars::Vars() {
 	scene08_var07 = 0;
 	scene08_var08 = 0;
 
+	scene10_gum = 0;
+	scene10_packet = 0;
+	scene10_packet2 = 0;
+	scene10_inflater = 0;
+	scene10_ladder = 0;
+	scene10_hasGum = 0;
+
 	selector = 0;
 }
 

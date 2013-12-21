@@ -30,15 +30,16 @@
 #include "fullpipe/statics.h"
 
 #include "fullpipe/behavior.h"
+#include "fullpipe/interaction.h"
 
 namespace Fullpipe {
 
 void scene10_initScene(Scene *sc) {
-	g_vars->scene10_gum = sc->getStaticANIObject1ById(sc, ANI_GUM, -1);
-	g_vars->scene10_packet = sc->getStaticANIObject1ById(sc, ANI_PACHKA, -1);
-	g_vars->scene10_packet2 = sc->getStaticANIObject1ById(sc, ANI_PACHKA2, -1);
-	g_vars->scene10_inflater = sc->getStaticANIObject1ById(sc, ANI_NADUVATEL, -1);
-	g_vars->scene10_ladder = sc->getPictureObjectById(sc, PIC_SC10_LADDER, 0);
+	g_vars->scene10_gum = sc->getStaticANIObject1ById(ANI_GUM, -1);
+	g_vars->scene10_packet = sc->getStaticANIObject1ById(ANI_PACHKA, -1);
+	g_vars->scene10_packet2 = sc->getStaticANIObject1ById(ANI_PACHKA2, -1);
+	g_vars->scene10_inflater = sc->getStaticANIObject1ById(ANI_NADUVATEL, -1);
+	g_vars->scene10_ladder = sc->getPictureObjectById(PIC_SC10_LADDER, 0);
 
 	g_fp->lift_setButton(sO_Level1, ST_LBN_1N);
 	g_fp->lift_sub5(sc, QU_SC10_ENTERLIFT, QU_SC10_EXITLIFT);
@@ -51,25 +52,38 @@ void scene10_initScene(Scene *sc) {
 	}
 }
 
+void sceneHandler10_clickGum() {
+	warning("STUB: sceneHandler10_clickGum()");
+}
+
+void sceneHandler10_hideGum() {
+	warning("STUB: sceneHandler10_hideGum()");
+}
+
+void sceneHandler10_showGum() {
+	warning("STUB: sceneHandler10_showGum()");
+}
+
+
 int sceneHandler10(ExCommand *ex) {
-	if (ex->msg._messageKind != 17)
+	if (ex->_messageKind != 17)
 		return 0;
 
 	switch(ex->_messageNum) {
 	case MSG_LIFT_CLOSEDOOR:
-		lift_closedoorSeq();
+		g_fp->lift_closedoorSeq();
         break;
 
 	case MSG_LIFT_EXITLIFT:
-		lift_exitSeq(ex);
+		g_fp->lift_exitSeq(ex);
 		break;
 
 	case MSG_LIFT_STARTEXITQUEUE:
-		lift_startExitQueue();
+		g_fp->lift_startExitQueue();
 		break;
 
 	case MSG_LIFT_CLICKBUTTON:
-		lift_animation3();
+		g_fp->lift_animation3();
 		break;
 
 	case MSG_SC10_LADDERTOBACK:
@@ -81,7 +95,7 @@ int sceneHandler10(ExCommand *ex) {
 		break;
 
 	case MSG_LIFT_GO:
-		lift_goAnimation();
+		g_fp->lift_goAnimation();
 		break;
 
 	case MSG_SC10_CLICKGUM:
@@ -99,24 +113,26 @@ int sceneHandler10(ExCommand *ex) {
 		break;
 
 	case 64:
-		lift_sub05(ex);
+		g_fp->lift_sub05(ex);
 		break;
 
 	case 29:
-		if (g_fp->_currentScene->getPictureObjectIdAtPos(ex->_sceneClickX, ex->_sceneClickY) == PIC_SC10_LADDER) {
-			handleObjectInteraction(g_aniMan, g_fp->_currentScene->getPictureObjectById(PIC_SC10_DTRUBA, 0), ex->_keyCode);
-			ex->_messageKind = 0;
+		{
+			if (g_fp->_currentScene->getPictureObjectIdAtPos(ex->_sceneClickX, ex->_sceneClickY) == PIC_SC10_LADDER) {
+				handleObjectInteraction(g_fp->_aniMan, g_fp->_currentScene->getPictureObjectById(PIC_SC10_DTRUBA, 0), ex->_keyCode);
+				ex->_messageKind = 0;
 
-			return 0;
-		}
+				return 0;
+			}
 
-		StaticANIObject *ani = g_fp->_currentScene->getStaticANIObjectAtPos(ex->_sceneClickX, ex->_sceneClickY);
+			StaticANIObject *ani = g_fp->_currentScene->getStaticANIObjectAtPos(ex->_sceneClickX, ex->_sceneClickY);
 
-		if (ani && ani->_id == ANI_LIFTBUTTON) {
-			lift_sub1(ani);
-			ex->_messageKind = 0;
+			if (ani && ani->_id == ANI_LIFTBUTTON) {
+				g_fp->lift_sub1(ani);
+				ex->_messageKind = 0;
 
-			return 0;
+				return 0;
+			}
 		}
 		break;
 

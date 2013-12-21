@@ -201,6 +201,13 @@ public:
 	int scene08_var07;
 	int scene08_var08;
 
+	StaticANIObject *scene10_gum;
+	StaticANIObject *scene10_packet;
+	StaticANIObject *scene10_packet2;
+	StaticANIObject *scene10_inflater;
+	PictureObject *scene10_ladder;
+	int scene10_hasGum;
+
 	PictureObject *selector;
 };
 
