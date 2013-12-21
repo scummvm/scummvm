@@ -90,8 +90,6 @@ bool SceneViewWindow::checkCustomAICommentDependencies(const Location &commentLo
 }
 
 bool SceneViewWindow::startEnvironmentAmbient(int oldTimeZone, int oldEnvironment, int timeZone, int environment, bool fade) {
-	// TODO
-
 	switch (timeZone) {
 	case 1:
 		return startCastleAmbient(oldTimeZone, oldEnvironment, environment, fade);
@@ -105,6 +103,8 @@ bool SceneViewWindow::startEnvironmentAmbient(int oldTimeZone, int oldEnvironmen
 		return startDaVinciAmbient(oldTimeZone, oldEnvironment, environment, fade);
 	case 6:
 		return startAILabAmbient(oldTimeZone, oldEnvironment, environment, fade);
+	case 7:
+		return startAlienAmbient(oldTimeZone, oldEnvironment, environment, fade);
 	case 10:
 		return _vm->_sound->setAmbientSound();
 	}
@@ -119,8 +119,7 @@ SceneBase *SceneViewWindow::constructSceneObject(Window *viewWindow, const Locat
 
 	switch (sceneStaticData.location.timeZone) {
 	case 0: // Miscellaneous scenes
-	case 7: // Alien
-		// TODO
+		// This seems unused?
 		warning("Could not create scene object for time zone %d", sceneStaticData.location.timeZone);
 		break;
 	case 1: // Castle
@@ -135,6 +134,8 @@ SceneBase *SceneViewWindow::constructSceneObject(Window *viewWindow, const Locat
 		return constructDaVinciSceneObject(viewWindow, sceneStaticData, priorLocation);
 	case 6: // AI Lab
 		return constructAILabSceneObject(viewWindow, sceneStaticData, priorLocation);
+	case 7: // Alien
+		return constructAlienSceneObject(viewWindow, sceneStaticData, priorLocation);
 	case 10: // Old Apartment
 		return new OldApartmentSuitCap(_vm, viewWindow, sceneStaticData, priorLocation);
 	}
@@ -143,7 +144,6 @@ SceneBase *SceneViewWindow::constructSceneObject(Window *viewWindow, const Locat
 }
 
 bool SceneViewWindow::initializeTimeZoneAndEnvironment(Window *viewWindow, int timeZone, int environment) {
-	// TODO
 	switch (timeZone) {
 	case 1:
 		return initializeCastleTimeZoneAndEnvironment(viewWindow, environment);
@@ -158,6 +158,8 @@ bool SceneViewWindow::initializeTimeZoneAndEnvironment(Window *viewWindow, int t
 		return initializeDaVinciTimeZoneAndEnvironment(viewWindow, environment);
 	case 6:
 		return initializeAILabTimeZoneAndEnvironment(viewWindow, environment);
+	case 7:
+		return initializeAlienTimeZoneAndEnvironment(viewWindow, environment);
 	}
 
 	return false;
