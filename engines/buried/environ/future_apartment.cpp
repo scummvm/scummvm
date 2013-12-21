@@ -1746,6 +1746,50 @@ int ClickOnBooks::specifyCursor(Window *viewWindow, const Common::Point &pointLo
 	return kCursorArrow;
 }
 
+class ClickEnvironNatureScenes : public SceneBase {
+public:
+	ClickEnvironNatureScenes(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	Common::Rect _controls;
+};
+
+ClickEnvironNatureScenes::ClickEnvironNatureScenes(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_controls = Common::Rect(0, 160, 432, 189);
+	_staticData.navFrameIndex = 52;
+}
+
+int ClickEnvironNatureScenes::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_controls.contains(pointLocation)) {
+		DestinationScene newScene;
+		newScene.destinationScene = _staticData.location;
+		newScene.destinationScene.depth = 1;
+		newScene.transitionType = TRANSITION_VIDEO;
+		newScene.transitionData = 4;
+		newScene.transitionStartFrame = -1;
+		newScene.transitionLength = -1;
+		((SceneViewWindow *)viewWindow)->moveToDestination(newScene);
+		return SC_TRUE;
+	}
+
+	// Update the image
+	_staticData.navFrameIndex++;
+	if (_staticData.navFrameIndex > 54)
+		_staticData.navFrameIndex = 52;
+	viewWindow->invalidateWindow(false);
+	return SC_TRUE;
+}
+
+int ClickEnvironNatureScenes::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_controls.contains(pointLocation))
+		return kCursorPutDown;
+
+	return kCursorArrow;
+}
+
 class ViewEnvironCart : public SceneBase {
 public:
 	ViewEnvironCart(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
@@ -1909,6 +1953,8 @@ SceneBase *SceneViewWindow::constructFutureApartmentSceneObject(Window *viewWind
 		return new ClickChangeScene(_vm, viewWindow, sceneStaticData, priorLocation, 163, 25, 273, 145, kCursorMagnifyingGlass, 4, 2, 2, 0, 1, 2, TRANSITION_VIDEO, 1, -1, -1);
 	case 17:
 		return new EnvironSystemControls(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 18:
+		return new ClickEnvironNatureScenes(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 20:
 		return new ViewEnvironCart(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 21:
