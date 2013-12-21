@@ -96,7 +96,8 @@ public:
 	int *_vertexBone;
 
 	// Stuff we dont know how to use:
-	Math::Vector4d *_sphereData;
+	float _radius;
+	Math::Vector3d *_center;
 	Math::Vector3d *_boxData;
 	Math::Vector3d *_boxData2;
 	int _numTexSets;
