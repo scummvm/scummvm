@@ -130,6 +130,34 @@ int EntryWithoutLensFilter::timerCallback(Window *viewWindow) {
 	return SC_TRUE;
 }
 
+class PlayPodAudio : public SceneBase {
+public:
+	PlayPodAudio(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation, int untransAudio, int transSoundID);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
+
+private:
+	int _untransSoundID;
+	int _transSoundID;
+};
+
+PlayPodAudio::PlayPodAudio(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation, int untransAudio, int transSoundID) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_untransSoundID = untransAudio;
+	_transSoundID = transSoundID;
+}
+
+int PlayPodAudio::postEnterRoom(Window *viewWindow, const Location &priorLocation) {
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().bcTranslateEnabled == 1) {
+		if (_transSoundID >= 0)
+			_vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, _transSoundID));
+	} else {
+		if (_untransSoundID >= 0)
+			_vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, _untransSoundID));
+	}
+
+	return SC_TRUE;
+}
+
 bool SceneViewWindow::initializeAlienTimeZoneAndEnvironment(Window *viewWindow, int environment) {
 	if (environment == -1) {
 		GlobalFlags &flags = ((SceneViewWindow *)viewWindow)->getGlobalFlags();
@@ -162,6 +190,10 @@ SceneBase *SceneViewWindow::constructAlienSceneObject(Window *viewWindow, const 
 		return new NormalTransporter(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 13:
 		return new EntryWithoutLensFilter(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 30:
+		return new PlayPodAudio(_vm, viewWindow, sceneStaticData, priorLocation, 9, 10);
+	case 31:
+		return new PlayPodAudio(_vm, viewWindow, sceneStaticData, priorLocation, 11, 12);
 	case 50:
 		return new PlayStingers(_vm, viewWindow, sceneStaticData, priorLocation, 127, offsetof(GlobalFlags, asRBLastStingerID), offsetof(GlobalFlags, asRBStingerID), 10, 14);
 	}
