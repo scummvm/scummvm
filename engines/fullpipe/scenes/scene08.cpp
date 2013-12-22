@@ -183,19 +183,43 @@ void sceneHandler08_airMoves() {
 	warning("STUB: sceneHandler08_airMoves()");
 }
 
-void sceneHandler08_jumpLogic(ExCommand *cmd) {
-	warning("STUB: sceneHandler08_jumpLogic(cmd)");
-}
-
-void sceneHandler08_calcFlight() {
-	warning("STUB: sceneHandler08_calcFlight()");
-}
-
 void sceneHandler08_finishArcade() {
 	g_vars->scene08_var06 = 0;
 
 	getGameLoaderInteractionController()->enableFlag24();
 	getCurrSceneSc2MotionController()->setEnabled();
+}
+
+void sceneHandler08_jumpOff(ExCommand *cmd) {
+	MessageQueue *mq = new MessageQueue(g_fp->_globalMessageQueueList->compact());
+
+	mq->addExCommandToEnd(new ExCommand(cmd));
+	mq->setFlags(mq->getFlags() | 1);
+
+	g_fp->_globalMessageQueueList->addMessageQueue(mq);
+
+	g_fp->_aniMan->startAnim(MV_MAN8_JUMPOFF, mq->_id, -1);
+
+	sceneHandler08_finishArcade();
+}
+
+void sceneHandler08_standUp() {
+	chainQueue(QU_SC8_STANDUP, 1);
+	g_vars->scene08_var03 = 0;
+}
+
+void sceneHandler08_jumpLogic(ExCommand *cmd) {
+  if (g_fp->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY) == PIC_SC8_LADDERD) {
+    sceneHandler08_jumpOff(cmd);
+
+    cmd->_messageKind = 0;
+  } else {
+    sceneHandler08_standUp();
+  }
+}
+
+void sceneHandler08_calcFlight() {
+	warning("STUB: sceneHandler08_calcFlight()");
 }
 
 void sceneHandler08_checkEndArcade() {
@@ -247,10 +271,6 @@ void sceneHandler08_calcOffset() {
 	warning("STUB: sceneHandler08_calcOffset()");
 }
 
-void sceneHandler08_jumpOff() {
-	warning("STUB: sceneHandler08_jumpOff()");
-}
-
 void sceneHandler08_pushCallback(int *par) {
 	warning("STUB: sceneHandler08_pushCallback()");
 }
@@ -266,11 +286,6 @@ void sceneHandler08_sitDown() {
 
 	g_vars->scene08_var01 = 0;
 	g_vars->scene08_var03 = 1;
-}
-
-void sceneHandler08_standUp() {
-	chainQueue(QU_SC8_STANDUP, 1);
-	g_vars->scene08_var03 = 0;
 }
 
 int sceneHandler08_updateScreenCallback() {
