@@ -926,7 +926,7 @@ static const uint16 kq6PatchDrinkMeFix[] = {
 	0x4a, 0x04,                         // send 04 (call addToPics::doit)
 	0x3a,                               // toss
 	0x48,                               // ret
-	PATCH_ADDTOOFFSET(+8),               // skip to check 11h code
+	PATCH_ADDTOOFFSET(+8),              // skip to check 11h code
 	0x35, 0x10,                         // ldi 10 instead of 11
 	PATCH_ADDTOOFFSET(+23),             // skip to check 12h code
 	0x35, 0x11,                         // ldi 11 instead of 12
@@ -938,6 +938,7 @@ static const uint16 kq6PatchDrinkMeFix[] = {
 // Audio + subtitles support - SHARED! - used for King's Quest 6 and Laura Bow 2
 //  this patch gets enabled, when the user selects "both" in the ScummVM "Speech + Subtitles" menu
 //  We currently use global 98d to hold a kMemory pointer.
+// Applies to at least: KQ6 PC-CD, LB2 PC-CD
 // Patched method: Messager::sayNext / lb2Messager::sayNext (always use text branch)
 static const uint16 kq6laurabow2CDSignatureAudioTextSupport1[] = {
 	0x89, 0x5a,                         // lsg global[5a]
@@ -955,6 +956,7 @@ static const uint16 kq6laurabow2CDPatchAudioTextSupport1[] = {
 	PATCH_END
 };
 
+// Applies to at least: KQ6 PC-CD, LB2 PC-CD
 // Patched method: Messager::sayNext / lb2Messager::sayNext (allocate audio memory)
 static const uint16 kq6laurabow2CDSignatureAudioTextSupport2[] = {
 	0x7a,                               // push2
@@ -971,6 +973,7 @@ static const uint16 kq6laurabow2CDPatchAudioTextSupport2[] = {
 	PATCH_END
 };
 
+// Applies to at least: KQ6 PC-CD, LB2 PC-CD
 // Patched method: Messager::sayNext / lb2Messager::sayNext (release audio memory)
 static const uint16 kq6laurabow2CDSignatureAudioTextSupport3[] = {
 	0x7a,                               // push2
@@ -987,8 +990,19 @@ static const uint16 kq6laurabow2CDPatchAudioTextSupport3[] = {
 	PATCH_END
 };
 
+// startText call gets acc = 0 for text-only and acc = 2 for audio+text
+// Applies to at least: KQ6 PC-CD, LB2 PC-CD
 // Patched method: Narrator::say (use audio memory)
 static const uint16 kq6laurabow2CDSignatureAudioTextSupport4[] = {
+	// set caller property code
+	0x31, 0x08,                         // bnt [set acc to 0 for caller]
+	0x87, 0x02,                         // lap param[2]
+	0x31, 0x04,                         // bnt [set acc to 0 for caller]
+	0x87, 0x02,                         // lap param[2]
+	0x33, 0x02,                         // jmp [set caller]
+	0x35, 0x00,                         // ldi 00
+	0x65, 0x68,                         // aTop caller
+	// call startText + startAudio code
 	0x89, 0x5a,                         // lsg global[5a]
 	0x35, 0x01,                         // ldi 01
 	0x12,                               // and
@@ -1010,15 +1024,23 @@ static const uint16 kq6laurabow2CDSignatureAudioTextSupport4[] = {
 };
 
 static const uint16 kq6laurabow2CDPatchAudioTextSupport4[] = {
-	PATCH_ADDTOOFFSET(+2),
-	0x34, PATCH_UINT16(0x0001),         // ldi 0001 (waste 1 byte)
-	0x12,
-	0x18,                               // not - prepares acc for KQ6 talker::startText
-	PATCH_ADDTOOFFSET(+19),
+	0x31, 0x02,                         // bnt [set caller]
+	0x87, 0x02,                         // lap param[2]
+	0x65, 0x68,                         // aTop caller
+	0x81, 0x5a,                         // lag global[5a]
+	0x78,                               // push1
+	0x12,                               // and
+	0x31, 0x11,                         // bnt [skip startText code]
+	0x81, 0x5a,                         // lag global[5a]
+	0x7a,                               // push2
+	0x12,                               // and
+	0x33, 0x03,                         // skip over 3 unused bytes
+	PATCH_ADDTOOFFSET(+22),
 	0x89, 98,                           // lsp global[98d]
 	PATCH_END
 };
 
+// Applies to at least: KQ6 PC-CD, LB2 PC-CD
 // Patched method: Talker::display/Narrator::say (remove reset saved mouse cursor code)
 //  code would screw over mouse cursor
 static const uint16 kq6laurabow2CDSignatureAudioTextSupport5[] = {
@@ -1034,28 +1056,30 @@ static const uint16 kq6laurabow2CDPatchAudioTextSupport5[] = {
 };
 
 // Additional patch specifically for King's Quest 6
-//  Fixes text window placement, when portrait+text is shown
+//  Fixes text window placement, when in "dual" mode
+// Applies to at least: PC-CD
 // Patched method: Kq6Talker::init
 static const uint16 kq6CDSignatureAudioTextSupport1[] = {
 	SIG_MAGICDWORD,
 	0x89, 0x5a,                         // lsg global[5a]
 	0x35, 0x02,                         // ldi 02
 	0x1a,                               // eq?
-	0x31, 0x32,                         // bnt [jump-for-text-code]
-	0x87, 0x00,                         // lap param[0]
+	0x31, SIG_ADDTOOFFSET(+1),          // bnt [jump-to-text-code]
+	0x78,                               // push1
 	SIG_END
 };
 
 static const uint16 kq6CDPatchAudioTextSupport1[] = {
-	PATCH_ADDTOOFFSET(+5),
-	0x33, 0x32,                         // jmp [jump-for-text-code]
+	PATCH_ADDTOOFFSET(+4),
+	0x12,                               // and
 	PATCH_END
 };
 
 // Additional patch specifically for King's Quest 6
 //  Fixes low-res portrait staying on screen for hi-res mode
+// Applies to at least: PC-CD
 // Patched method: Talker::startText
-//  this method is called by Narrator::say and acc is 0 for text-only and true for audio+text
+//  this method is called by Narrator::say and acc is 0 for text-only and 2 for dual mode (audio+text)
 static const uint16 kq6CDSignatureAudioTextSupport2[] = {
 	SIG_MAGICDWORD,
 	0x3f, 0x01,                         // link 01
@@ -1085,6 +1109,7 @@ static const uint16 kq6CDPatchAudioTextSupport2[] = {
 //   KQ6Print::showSelf, which is called much later and KQ6Print::addText requires
 //   KQ6Print::dialog to be set, which means we have to set it before calling addText
 //   for audio mode, otherwise the user would have to click to get those windows disposed.
+// Applies to at least: PC-CD
 // Patched method: KQ6Print::say
 static const uint16 kq6CDSignatureAudioTextSupport3[] = {
 	0x31, 0x6e,                         // bnt [to text code]
@@ -1107,7 +1132,7 @@ static const uint16 kq6CDPatchAudioTextSupport3[] = {
 	0x31, 0x5c,                         // adjust jump to reuse audio mode addText-calling code
 	PATCH_ADDTOOFFSET(102),
 	0x48,                               // ret
-	0x48,                               // waste byte
+	0x48,                               // ret (waste byte)
 	0x72, 0x0e, 0x00,                   // lofsa myDialog
 	0x65, 0x12,                         // aTop dialog
 	0x33, 0xed,                         // jump back to audio mode addText-calling code
@@ -1117,6 +1142,7 @@ static const uint16 kq6CDPatchAudioTextSupport3[] = {
 // Additional patch specifically for King's Quest 6
 //  Fixes text-window size for hires portraits mode
 //   Otherwise at least at the end some text-windows will be way too small
+// Applies to at least: PC-CD
 // Patched method: Talker::init
 static const uint16 kq6CDSignatureAudioTextSupport4[] = {
 	SIG_MAGICDWORD,
@@ -1134,7 +1160,8 @@ static const uint16 kq6CDPatchAudioTextSupport4[] = {
 	PATCH_END
 };
 
-//  Fixes text window placement, when portrait+text is shown (Guard in room 220)
+//  Fixes text window placement, when dual mode is active (Guards in room 220)
+// Applies to at least: PC-CD
 // Patched method: tlkGateGuard1::init & tlkGateGuard2::init
 static const uint16 kq6CDSignatureAudioTextSupportGuards[] = {
 	SIG_MAGICDWORD,
@@ -1146,36 +1173,100 @@ static const uint16 kq6CDSignatureAudioTextSupportGuards[] = {
 
 static const uint16 kq6CDPatchAudioTextSupportGuards[] = {
 	PATCH_ADDTOOFFSET(+2),
-	0x34, PATCH_UINT16(0x0001),         // ldi 0001 (waste 1 byte to overwrite eq?)
-	PATCH_END
-};
-
-//  Fixes text window placement, when portrait+text is shown (Stepmother in room 250)
-// Patched method: tlkStepmother::init
-static const uint16 kq6CDSignatureAudioTextSupportStepmother[] = {
-	SIG_MAGICDWORD,
-	0x89, 0x5a,                         // lsg global[5a]
 	0x35, 0x02,                         // ldi 02
-	0x12,                               // and
-	0x31, 0x1a,                         // bnt [jump-for-text-code]
-	SIG_END
-};
-
-static const uint16 kq6CDPatchAudioTextSupportJumpAlways[] = {
-	PATCH_ADDTOOFFSET(+5),
-	0x33,                               // jump always
+	0x1c,                               // ne?
 	PATCH_END
 };
 
-//  Fixes text window placement, when portrait+text is shown (Gnomes in room 450)
-// Patched method: GnomeTalker::init
-static const uint16 kq6CDSignatureAudioTextSupportGnomes[] = {
+//  Fixes "Girl In The Tower" to get played in dual mode as well
+// Applies to at least: PC-CD
+// Patched method: rm740::cue
+static const uint16 kq6CDSignatureAudioTextSupportGirlInTheTower[] = {
 	SIG_MAGICDWORD,
 	0x89, 0x5a,                         // lsg global[5a]
 	0x35, 0x02,                         // ldi 02
 	0x1a,                               // eq?
-	0x31, 0x16,                         // bnt [jump-for-text-code]
+	0x31,                               // bnt [jump-for-text-code]
 	SIG_END
+};
+
+static const uint16 kq6CDPatchAudioTextSupportGirlInTheTower[] = {
+	PATCH_ADDTOOFFSET(+4),
+	0x12,                               // and
+	PATCH_END
+};
+
+// Additional patch specifically for King's Quest 6
+//  Adds another button state for the text/audio button. We currently use the "speech" view for "dual" mode.
+// View 947, loop 9, cel 0+1 -> "text"
+// View 947, loop 8, cel 0+1 -> "speech"
+// View 947, loop 12, cel 0+1 -> "dual" (TODO: inject our own 2 views for the new "dual" mode)
+// Applies to at least: PC-CD
+// Patched method: iconTextSwitch::show, iconTextSwitch::doit
+static const uint16 kq6CDSignatureAudioTextMenuSupport[] = {
+	SIG_MAGICDWORD,
+	0x89, 0x5a,                         // lsg global[5a]
+	0x35, 0x02,                         // ldi 02
+	0x1a,                               // eq?
+	0x31, 0x06,                         // bnt [set text view]
+	0x35, 0x08,                         // ldi 08
+	0x65, 0x14,                         // aTop loop
+	0x33, 0x04,                         // jmp [skip over text view]
+	0x35, 0x09,                         // ldi 09
+	0x65, 0x14,                         // aTop loop
+	SIG_ADDTOOFFSET(+102),              // skip to iconTextSwitch::doit code
+	0x89, 0x5a,                         // lsg global[5a]
+	0x3c,                               // dup
+	0x35, 0x01,                         // ldi 01
+	0x1a,                               // eq?
+	0x31, 0x06,                         // bnt [set text mode]
+	0x35, 0x02,                         // ldi 02
+	0xa1, 0x5a,                         // sag global[5a]
+	0x33, 0x0a,                         // jmp [skip over text mode code]
+	0x3c,                               // dup
+	0x35, 0x02,                         // ldi 02
+	0x1a,                               // eq?
+	0x31, 0x04,                         // bnt [skip over text ode code]
+	0x35, 0x01,                         // ldi 01
+	0xa1, 0x5a,                         // sag global[5a]
+	0x3a,                               // toss
+	0x67, 0x14,                         // pTos loop
+	0x35, 0x09,                         // ldi 09
+	0x1a,                               // eq?
+	0x31, 0x04,                         // bnt [set text view]
+	0x35, 0x08,                         // ldi 08
+	0x33, 0x02,                         // jmp [skip text view]
+	0x35, 0x09,                         // ldi 09
+	0x65, 0x14,                         // aTop loop
+	SIG_END
+};
+
+static const uint16 kq6CDPatchAudioTextMenuSupport[] = {
+	PATCH_ADDTOOFFSET(+13),
+	0x33, 0x79,                         // jmp to new text+dual code
+	PATCH_ADDTOOFFSET(+104),            // seek to iconTextSwitch::doit
+	0x81, 0x5a,                         // lag global[5a]
+	0x78,                               // push1
+	0x02,                               // add
+	0xa1, 0x5a,                         // sag global[5a]
+	0x36,                               // push
+	0x35, 0x03,                         // ldi 03
+	0x1e,                               // gt?
+	0x31, 0x03,                         // bnt [skip over]
+	0x78,                               // push1
+	0xa9, 0x5a,                         // ssg global[5a]
+	0x33, 0x17,                         // jmp [iconTextSwitch::show call]
+	// additional code for iconTextSwitch::show
+	0x89, 0x5a,                         // lsg global[5a]
+	0x35, 0x01,                         // ldi 01
+	0x1a,                               // eq?
+	0x31, 0x04,                         // bnt [dual mode]
+	0x35, 0x09,                         // ldi 09
+	0x33, 0x02,                         // jmp [skip over dual mode]
+	0x35, 0x08,                         // ldi 08 (-> insert dual mode view here)
+	0x65, 0x14,                         // aTop loop
+	0x32, PATCH_UINT16(0xff75),         // jmp [back to iconTextSwitch::show]
+	PATCH_END
 };
 
 //          script, description,                                      signature                                 patch
@@ -1185,19 +1276,18 @@ static const SciScriptPatcherEntry kq6Signatures[] = {
 	{  true,    87, "Drink Me bottle fix",                         1, kq6SignatureDrinkMeFix,                   kq6PatchDrinkMeFix },
 	// King's Quest 6 and Laura Bow 2 share basic patches for audio + text support
 	// *** King's Quest 6 audio + text support ***
-	//  TODO: all window placements seems to be fixed, game should be played through to check for any more issues
-	{ false,   924, "CD: audio + text support KQ6&LB2 1",          1, kq6laurabow2CDSignatureAudioTextSupport1, kq6laurabow2CDPatchAudioTextSupport1 },
-	{ false,   924, "CD: audio + text support KQ6&LB2 2",          1, kq6laurabow2CDSignatureAudioTextSupport2, kq6laurabow2CDPatchAudioTextSupport2 },
-	{ false,   924, "CD: audio + text support KQ6&LB2 3",          1, kq6laurabow2CDSignatureAudioTextSupport3, kq6laurabow2CDPatchAudioTextSupport3 },
-	{ false,   928, "CD: audio + text support KQ6&LB2 4",          1, kq6laurabow2CDSignatureAudioTextSupport4, kq6laurabow2CDPatchAudioTextSupport4 },
-	{ false,   928, "CD: audio + text support KQ6&LB2 5",          2, kq6laurabow2CDSignatureAudioTextSupport5, kq6laurabow2CDPatchAudioTextSupport5 },
-	{ false,   909, "CD: audio + text support KQ6 1",              1, kq6CDSignatureAudioTextSupport1,          kq6CDPatchAudioTextSupport1 },
-	{ false,   928, "CD: audio + text support KQ6 2",              1, kq6CDSignatureAudioTextSupport2,          kq6CDPatchAudioTextSupport2 },
-	{ false,   104, "CD: audio + text support KQ6 3",              1, kq6CDSignatureAudioTextSupport3,          kq6CDPatchAudioTextSupport3 },
-	{ false,   928, "CD: audio + text support KQ6 4",              1, kq6CDSignatureAudioTextSupport4,          kq6CDPatchAudioTextSupport4 },
-	{ false,  1009, "CD: audio + text support KQ6 Guards",         2, kq6CDSignatureAudioTextSupportGuards,     kq6CDPatchAudioTextSupportGuards },
-	{ false,  1027, "CD: audio + text support KQ6 Stepmother",     1, kq6CDSignatureAudioTextSupportStepmother, kq6CDPatchAudioTextSupportJumpAlways },
-	{ false,  1037, "CD: audio + text support KQ6 Gnomes",         1, kq6CDSignatureAudioTextSupportGnomes,     kq6CDPatchAudioTextSupportJumpAlways },
+	{ false,   924, "CD: audio + text support KQ6&LB2 1",             1, kq6laurabow2CDSignatureAudioTextSupport1,     kq6laurabow2CDPatchAudioTextSupport1 },
+	{ false,   924, "CD: audio + text support KQ6&LB2 2",             1, kq6laurabow2CDSignatureAudioTextSupport2,     kq6laurabow2CDPatchAudioTextSupport2 },
+	{ false,   924, "CD: audio + text support KQ6&LB2 3",             1, kq6laurabow2CDSignatureAudioTextSupport3,     kq6laurabow2CDPatchAudioTextSupport3 },
+	{ false,   928, "CD: audio + text support KQ6&LB2 4",             1, kq6laurabow2CDSignatureAudioTextSupport4,     kq6laurabow2CDPatchAudioTextSupport4 },
+	{ false,   928, "CD: audio + text support KQ6&LB2 5",             2, kq6laurabow2CDSignatureAudioTextSupport5,     kq6laurabow2CDPatchAudioTextSupport5 },
+	{ false,   909, "CD: audio + text support KQ6 1",                 2, kq6CDSignatureAudioTextSupport1,              kq6CDPatchAudioTextSupport1 },
+	{ false,   928, "CD: audio + text support KQ6 2",                 1, kq6CDSignatureAudioTextSupport2,              kq6CDPatchAudioTextSupport2 },
+	{ false,   104, "CD: audio + text support KQ6 3",                 1, kq6CDSignatureAudioTextSupport3,              kq6CDPatchAudioTextSupport3 },
+	{ false,   928, "CD: audio + text support KQ6 4",                 1, kq6CDSignatureAudioTextSupport4,              kq6CDPatchAudioTextSupport4 },
+	{ false,  1009, "CD: audio + text support KQ6 Guards",            2, kq6CDSignatureAudioTextSupportGuards,         kq6CDPatchAudioTextSupportGuards },
+	{ false,   740, "CD: audio + text support KQ6 Girl In The Tower", 1, kq6CDSignatureAudioTextSupportGirlInTheTower, kq6CDPatchAudioTextSupportGirlInTheTower },
+	{ false,   903, "CD: audio + text support KQ6 menu",              1, kq6CDSignatureAudioTextMenuSupport,           kq6CDPatchAudioTextMenuSupport },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -1486,6 +1576,72 @@ static const uint16 laurabow2CDPatchFixProblematicIconBar[] = {
 	PATCH_END
 };
 
+// Directly use global 5a for view-cel id
+//  That way it's possible to use a new "dual" mode view in the game menu
+// View 995, loop 13, cel 0 -> "text"
+// View 995, loop 13, cel 1 -> "speech"
+// View 995, loop 13, cel 2 -> "dual" (TODO: inject our own view for the new "dual" mode)
+// Patched method: gcWin::open
+static const uint16 laurabow2CDSignatureAudioTextMenuSupport1[] = {
+	SIG_MAGICDWORD,
+	0x89, 0x5a,                         // lsg global[5a]
+	0x35, 0x02,                         // ldi 02
+	0x1a,                               // eq?
+	0x36,                               // push
+	SIG_END
+};
+
+static const uint16 laurabow2CDPatchAudioTextMenuSupport1[] = {
+	PATCH_ADDTOOFFSET(+2),
+	0x35, 0x01,                         // ldi 01
+	0x04,                               // sub
+	PATCH_END
+};
+
+//  Adds another button state for the text/audio button. We currently use the "speech" view for "dual" mode.
+//  TODO: inject our own 2 views for the new "dual" mode
+// Patched method: iconMode::doit
+static const uint16 laurabow2CDSignatureAudioTextMenuSupport2[] = {
+	SIG_MAGICDWORD,
+	0x89, 0x5a,                         // lsg global[5a]
+	0x3c,                               // dup
+	0x1a,                               // eq?
+	0x31, 0x0a,                         // bnt [set text mode]
+	0x35, 0x02,                         // ldi 02
+	0xa1, 0x5a,                         // sag global[5a]
+	0x35, 0x01,                         // ldi 01
+	0xa5, 0x00,                         // sat temp[0]
+	0x33, 0x0e,                         // jmp [draw cel code]
+	0x3c,                               // dup
+	0x35, 0x02,                         // ldi 02
+	0x1a,                               // eq?
+	0x31, 0x08,                         // bnt [draw cel code]
+	0x35, 0x01,                         // ldi 01
+	0xa1, 0x5a,                         // sag global[5a]
+	0x35, 0x00,                         // ldi 00
+	0xa5, 0x00,                         // sat temp[0]
+	0x3a,                               // toss
+	SIG_END
+};
+
+static const uint16 laurabow2CDPatchAudioTextMenuSupport2[] = {
+	0x81, 0x5a,                         // lag global[5a]
+	0x78,                               // push1
+	0x02,                               // add
+	0xa1, 0x5a,                         // sag global[5a]
+	0x36,                               // push
+	0x35, 0x03,                         // ldi 03
+	0x1e,                               // gt?
+	0x31, 0x03,                         // bnt [skip over]
+	0x78,                               // push1
+	0xa9, 0x5a,                         // ssg global[5a]
+	0x89, 0x5a,                         // lsg global[5a]
+	0x35, 0x01,                         // ldi 01
+	0x04,                               // sub
+	0xa5, 0x00,                         // sat temp[0] - calculate global[5a] - 1 to use as view cel id
+	0x33, 0x07,                         // jmp [draw cel code, don't do toss]
+	PATCH_END
+};
 
 //          script, description,                                      signature                                  patch
 static const SciScriptPatcherEntry laurabow2Signatures[] = {
@@ -1497,6 +1653,8 @@ static const SciScriptPatcherEntry laurabow2Signatures[] = {
 	{ false,   924, "CD: audio + text support 3",                  1, kq6laurabow2CDSignatureAudioTextSupport3,  kq6laurabow2CDPatchAudioTextSupport3 },
 	{ false,   928, "CD: audio + text support 4",                  1, kq6laurabow2CDSignatureAudioTextSupport4,  kq6laurabow2CDPatchAudioTextSupport4 },
 	{ false,   928, "CD: audio + text support 5",                  2, kq6laurabow2CDSignatureAudioTextSupport5,  kq6laurabow2CDPatchAudioTextSupport5 },
+	{ false,    24, "CD: audio + text support LB2 menu 1",             1, laurabow2CDSignatureAudioTextMenuSupport1, laurabow2CDPatchAudioTextMenuSupport1 },
+	{ false,    24, "CD: audio + text support LB2 menu 2",             1, laurabow2CDSignatureAudioTextMenuSupport2, laurabow2CDPatchAudioTextMenuSupport2 },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -2720,14 +2878,14 @@ void ScriptPatcher::processScript(uint16 scriptNr, byte *scriptData, const uint3
 				}
 				break;
 			case GID_KQ6:
-				if (g_sci->speechAndSubtitlesEnabled()) {
-					// Enables Audio + subtitles patches for King's Quest 6, when "Text and Speech: Both" is selected
+				if (g_sci->isCD()) {
+					// Enables Dual mode patches (audio + subtitles at the same time) for King's Quest 6
 					enablePatch(signatureTable, "CD: audio + text support");
 				}
 				break;
 			case GID_LAURABOW2:
-				if (g_sci->speechAndSubtitlesEnabled()) {
-					// Enables Audio + subtitles patches for Laura Bow 2, when "Text and Speech: Both" is selected
+				if (g_sci->isCD()) {
+					// Enables Dual mode patches (audio + subtitles at the same time) for Laura Bow 2
 					enablePatch(signatureTable, "CD: audio + text support");
 				}
 				break;

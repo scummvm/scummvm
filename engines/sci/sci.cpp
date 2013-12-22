@@ -913,12 +913,10 @@ void SciEngine::syncIngameAudioOptions() {
 			case GID_FREDDYPHARKAS:
 			case GID_ECOQUEST:
 			case GID_LSL6:
-				_gamestate->variables[VAR_GLOBAL][90] = make_reg(0, 3);	// speech + subtitles
-				break;
 			case GID_LAURABOW2:
 			case GID_KQ6:
-				// Laura Bow 2 + King's Quest 6 get patched when speech and subtitles are enabled
-				//  When the user has "speech" selected, the game will then do both That's why we select speech here
+				_gamestate->variables[VAR_GLOBAL][90] = make_reg(0, 3);	// speech + subtitles
+				break;
 			default:
 				// Game does not support speech and subtitles, set it to speech
 				_gamestate->variables[VAR_GLOBAL][90] = make_reg(0, 2);	// speech
@@ -932,8 +930,6 @@ void SciEngine::updateScummVMAudioOptions() {
 	// depending on the in-game settings
 	if (isCD() && getSciVersion() == SCI_VERSION_1_1) {
 		uint16 ingameSetting = _gamestate->variables[VAR_GLOBAL][90].getOffset();
-		bool subtitlesOn = ConfMan.getBool("subtitles");
-		bool speechOn = !ConfMan.getBool("speech_mute");
 		
 		switch (ingameSetting) {
 		case 1:
@@ -943,17 +939,6 @@ void SciEngine::updateScummVMAudioOptions() {
 			break;
 		case 2:
 			// speech
-			switch (_gameId) {
-			case GID_LAURABOW2:
-			case GID_KQ6:
-				// We don't sync "speech" for Laura Bow 2 in case the user choose "both" in the setting
-				//  Because "speech" (2) within SCI means "speech + subtitles" for Laura Bow 2
-				if (subtitlesOn && speechOn)
-					return;
-				break;
-			default:
-				break;
-			}
 			ConfMan.setBool("subtitles", false);
 			ConfMan.setBool("speech_mute", false);
 			break;
