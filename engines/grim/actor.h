@@ -552,6 +552,9 @@ private:
 	Math::Vector3d getSimplePuckVector() const;
 	void calculateOrientation(const Math::Vector3d &pos, Math::Angle *pitch, Math::Angle *yaw, Math::Angle *roll);
 
+	void getBBoxInfo(Math::Vector3d &bboxPos, Math::Vector3d &bboxSize) const;
+	bool getSphereInfo(bool adjustZ, float &size, Math::Vector3d &pos) const;
+
 	Common::String _name;
 	Common::String _setName;    // The actual current set
 

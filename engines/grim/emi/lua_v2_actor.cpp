@@ -798,14 +798,23 @@ void Lua_V2::SetActorCollisionMode() {
 	Actor *actor = getactor(actorObj);
 	assert(actor);
 	int mode = (int)lua_getnumber(modeObj);
-	// From _actors.lua
-	// COLLISION_OFF = 0
-	// COLLISION_BOX = 1
-	// COLLISION_SPHERE = 2
 
-	// FIXME: set collision mode
-	//actor->func(mode);
-	warning("Lua_V2::SetActorCollisionMode: implement opcode. Mode %d", mode);
+	Actor::CollisionMode m;
+	switch (mode) {
+		case Actor::CollisionOff:
+			m = Actor::CollisionOff;
+			break;
+		case Actor::CollisionBox:
+			m = Actor::CollisionBox;
+			break;
+		case Actor::CollisionSphere:
+			m = Actor::CollisionSphere;
+			break;
+		default:
+			warning("Lua_V2::SetActorCollisionMode(): wrong collisionmode: %d, using default 0", mode);
+			m = Actor::CollisionOff;
+	}
+	actor->setCollisionMode(m);
 }
 
 void Lua_V2::SetActorCollisionScale() {
@@ -819,9 +828,7 @@ void Lua_V2::SetActorCollisionScale() {
 	assert(actor);
 
 	float scale = lua_getnumber(scaleObj);
-	// FIXME: set collision scale
-	//actor->func(scale);
-	warning("Lua_V2::SetActorCollisionScale: implement opcode. Scale %f", scale);
+	actor->setCollisionScale(scale);
 }
 
 void Lua_V2::GetActorPuckVector() {
