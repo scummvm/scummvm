@@ -37,6 +37,43 @@
 
 namespace Buried {
 
+class NerveNavigation : public SceneBase {
+public:
+	NerveNavigation(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+			int left = -1, int top = -1, int right = -1, int bottom = -1);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	Common::Rect _nerve;
+	Location _forwardLocation;
+};
+
+NerveNavigation::NerveNavigation(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+		int left, int top, int right, int bottom) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_nerve = Common::Rect(left, top, right, bottom);
+	_forwardLocation = _staticData.destForward.destinationScene;
+	_staticData.destForward.destinationScene = Location(-1, -1, -1, -1, -1, -1);
+}
+
+int NerveNavigation::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_nerve.contains(pointLocation)) {
+		_staticData.destForward.destinationScene = _forwardLocation;
+		((SceneViewWindow *)viewWindow)->moveToDestination(_staticData.destForward);
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int NerveNavigation::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_nerve.contains(pointLocation))
+		return kCursorFinger;
+
+	return kCursorArrow;
+}
+
 class ArmControls : public SceneBase {
 public:
 	ArmControls(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
@@ -541,6 +578,12 @@ SceneBase *SceneViewWindow::constructAlienSceneObject(Window *viewWindow, const 
 		return new InorganicPodTransDeath(_vm, viewWindow, sceneStaticData, priorLocation, 92, 88, 158, 128, 2, 52);
 	case 33:
 		return new InorganicPodTransDeath(_vm, viewWindow, sceneStaticData, priorLocation, 92, 88, 158, 128, 26, 53);
+	case 40:
+		return new NerveNavigation(_vm, viewWindow, sceneStaticData, priorLocation, 262, 122, 302, 189);
+	case 41:
+		return new NerveNavigation(_vm, viewWindow, sceneStaticData, priorLocation, 170, 144, 250, 180);
+	case 42:
+		return new NerveNavigation(_vm, viewWindow, sceneStaticData, priorLocation, 180, 160, 270, 189);
 	case 50:
 		return new PlayStingers(_vm, viewWindow, sceneStaticData, priorLocation, 127, offsetof(GlobalFlags, asRBLastStingerID), offsetof(GlobalFlags, asRBStingerID), 10, 14);
 	}
