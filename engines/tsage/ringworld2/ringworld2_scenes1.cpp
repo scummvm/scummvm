@@ -1202,18 +1202,10 @@ void Scene1100::signal() {
 		R2_GLOBALS._events.setCursor(CURSOR_CROSSHAIRS);
 		if (_nextStripNum == 0) {
 			R2_GLOBALS.setFlag(55);
-			if (R2_GLOBALS.getFlag(55)) {
-				if (R2_GLOBALS._player._characterIndex == R2_QUINN)
-					_stripManager.start(318, this);
-				else
-					_stripManager.start(323, this);
-			} else {
-				// This part is totally useless as flag 55 has been set right before the check
-				if (R2_GLOBALS._player._characterIndex == R2_QUINN)
-					_stripManager.start(317, this);
-				else
-					_stripManager.start(322, this);
-			}
+			if (R2_GLOBALS._player._characterIndex == R2_QUINN)
+				_stripManager.start(318, this);
+			else
+				_stripManager.start(323, this);
 		} else
 			_stripManager.start3(_nextStripNum, this, _stripManager._lookupList);
 
@@ -11910,28 +11902,14 @@ void Scene1850::postInit(SceneObjectList *OwnerList) {
 				_screen.setPosition(Common::Point(122, 113));
 				_screen.fixPriority(114);
 				_screen._effect = EFFECT_SHADED2;
-
-				// Totally useless test
-				if (R2_GLOBALS._player._characterIndex == R2_QUINN) {
-					_screen.setDetails(1850, 28, -1, -1, 2, (SceneItem *) NULL);
-				} else {
-					// And the associated dead code
-					_screen.setDetails(1850, 30, -1, -1, 2, (SceneItem *) NULL);
-				}
+				_screen.setDetails(1850, 28, -1, -1, 2, (SceneItem *) NULL);
 
 				_helmet.postInit();
 				_helmet.setup(1853, 3, 2);
 				_helmet.setPosition(Common::Point(139, 111));
 				_helmet.fixPriority(114);
 				_helmet._effect = EFFECT_SHADED2;
-
-				// Still totally useless test
-				if (R2_GLOBALS._player._characterIndex == R2_QUINN) {
-					_helmet.setDetails(1850, 29, -1, -1, 2, (SceneItem *) NULL);
-				} else {
-					// Another piece of dead code
-					_helmet.setDetails(1850, 28, -1, -1, 2, (SceneItem *) NULL);
-				}
+				_helmet.setDetails(1850, 29, -1, -1, 2, (SceneItem *) NULL);
 
 				if (R2_GLOBALS.getFlag(31)) {
 					_screen._shade = 0;
@@ -11954,28 +11932,14 @@ void Scene1850::postInit(SceneObjectList *OwnerList) {
 				_screen.setPosition(Common::Point(122, 113));
 				_screen.fixPriority(114);
 				_screen._effect = EFFECT_SHADED2;
-
-				// Totally useless test
-				if (R2_GLOBALS._player._characterIndex == R2_QUINN) {
-					// Dead code
-					_screen.setDetails(1850, 28, -1, -1, 2, (SceneItem *) NULL);
-				} else {
-					_screen.setDetails(1850, 30, -1, -1, 2, (SceneItem *) NULL);
-				}
+				_screen.setDetails(1850, 30, -1, -1, 2, (SceneItem *) NULL);
 
 				_helmet.postInit();
 				_helmet.setup(1853, 3, 2);
 				_helmet.setPosition(Common::Point(139, 111));
 				_helmet.fixPriority(114);
 				_helmet._effect = EFFECT_SHADED2;
-
-				// Again, useless test
-				if (R2_GLOBALS._player._characterIndex == R2_QUINN) {
-					// and dead code
-					_helmet.setDetails(1850, 29, -1, -1, 1, (SceneItem *) NULL);
-				} else {
-					_helmet.setDetails(1850, 28, -1, -1, 1, (SceneItem *) NULL);
-				}
+				_helmet.setDetails(1850, 28, -1, -1, 1, (SceneItem *) NULL);
 
 				if (R2_GLOBALS.getFlag(31)) {
 					_screen._shade = 0;
