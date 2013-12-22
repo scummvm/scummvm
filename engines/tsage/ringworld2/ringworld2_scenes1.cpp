@@ -5569,9 +5569,9 @@ void Scene1337::handleClick(int arg1, Common::Point pt) {
 				actionDisplay(1330, 34, 159, 10, 1, 200, 0, 7, 0, 154, 154);
 				break;
 			}
-			found = true;
-			break;
-		} else if (_gameBoardSide[0]._outpostStation[i].isIn(pt)) {
+			return;
+		}
+		if (_gameBoardSide[0]._outpostStation[i].isIn(pt)) {
 			switch (_gameBoardSide[0]._outpostStation[i]._cardId) {
 			case 0:
 				actionDisplay(1330, 11, 159, 10, 1, 200, 0, 7, 0, 154, 154);
@@ -5580,9 +5580,9 @@ void Scene1337::handleClick(int arg1, Common::Point pt) {
 				actionDisplay(1330, 1, 159, 10, 1, 200, 0, 7, 0, 154, 154);
 				break;
 			}
-			found = true;
-			break;
-		} else if (_gameBoardSide[1]._outpostStation[i].isIn(pt)) {
+			return;
+		}
+		if (_gameBoardSide[1]._outpostStation[i].isIn(pt)) {
 			switch (_gameBoardSide[1]._outpostStation[i]._cardId) {
 			case 0:
 				actionDisplay(1330, 146, 300, 99, 1, 136, 0, 7, 0, 117, 117);
@@ -5591,9 +5591,9 @@ void Scene1337::handleClick(int arg1, Common::Point pt) {
 				actionDisplay(1330, 144, 300, 99, 1, 136, 0, 7, 0, 117, 117);
 				break;
 			}
-			found = true;
-			break;
-		} else if (_gameBoardSide[3]._outpostStation[i].isIn(pt)) {
+			return;
+		}
+		if (_gameBoardSide[3]._outpostStation[i].isIn(pt)) {
 			switch (_gameBoardSide[3]._outpostStation[i]._cardId) {
 			case 0:
 				actionDisplay(1330, 147, 20, 99, 1, 136, 0, 7, 0, 172, 172);
@@ -5602,61 +5602,54 @@ void Scene1337::handleClick(int arg1, Common::Point pt) {
 				actionDisplay(1330, 145, 20, 99, 1, 136, 0, 7, 0, 172, 172);
 				break;
 			}
-			found = true;
-			break;
+			return;
 		}
 	}
 
 	if (_gameBoardSide[2]._delayCard.isIn(pt)) {
 		// The original uses _gameBoardSide[0], which is obviously a bug.
-		if (_gameBoardSide[2]._delayCard._cardId != 0) {
+		if (_gameBoardSide[2]._delayCard._cardId != 0)
 			actionDisplay(1330, 39, 159, 10, 1, 200, 0, 7, 0, 154, 154);
-		} else {
+		else
 			actionDisplay(1330, 11, 159, 10, 1, 200, 0, 7, 0, 154, 154);
-		}
-		found = true;
-	}
 
+		return;
+	}
 	if (_gameBoardSide[3]._delayCard.isIn(pt)) {
-		if (_gameBoardSide[3]._delayCard._cardId != 0) {
+		if (_gameBoardSide[3]._delayCard._cardId != 0)
 			actionDisplay(1330, 145, 20, 99, 1, 136, 0, 7, 0, 172, 172);
-		} else {
+		else
 			actionDisplay(1330, 147, 20, 99, 1, 136, 0, 7, 0, 172, 172);
-		}
-		found = true;
-	}
 
+		return;
+	}
 	if (_gameBoardSide[1]._delayCard.isIn(pt)) {
-		if (_gameBoardSide[1]._delayCard._cardId != 0) {
+		if (_gameBoardSide[1]._delayCard._cardId != 0)
 			actionDisplay(1330, 144, 300, 99, 1, 136, 0, 7, 0, 117, 117);
-		} else {
+		else
 			actionDisplay(1330, 146, 300, 99, 1, 136, 0, 7, 0, 117, 117);
-		}
-		found = true;
-	}
 
+		return;
+	}
 	if (_gameBoardSide[0]._delayCard.isIn(pt)) {
-		if (_gameBoardSide[0]._delayCard._cardId != 0) {
+		if (_gameBoardSide[0]._delayCard._cardId != 0)
 			actionDisplay(1330, 1, 159, 10, 1, 200, 0, 7, 0, 154, 154);
-		} else {
+		else
 			actionDisplay(1330, 11, 159, 10, 1, 200, 0, 7, 0, 154, 154);
-		}
-		found = true;
-	}
 
+		return;
+	}
 	if (_gameBoardSide[3]._emptyStationPos.isIn(pt)) {
 		actionDisplay(1330, 147, 20, 99, 1, 136, 0, 7, 0, 172, 172);
-		found = true;
+		return;
 	}
-
 	if (_gameBoardSide[1]._emptyStationPos.isIn(pt)) {
 		actionDisplay(1330, 146, 300, 99, 1, 136, 0, 7, 0, 117, 117);
-		found = true;
+		return;
 	}
-
 	if (_gameBoardSide[0]._emptyStationPos.isIn(pt)) {
 		actionDisplay(1330, 11, 159, 10, 1, 200, 0, 7, 0, 154, 154);
-		found = true;
+		return;
 	}
 
 	if (found)
