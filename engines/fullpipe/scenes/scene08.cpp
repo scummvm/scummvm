@@ -131,7 +131,16 @@ int scene08_updateCursor() {
 }
 
 void sceneHandler08_enterUp() {
-	warning("STUB: sceneHandler08_enterUp()");
+	g_fp->_currentScene->getPictureObjectById(PIC_SC8_LADDER, 0)->_flags &= 0xFFFB;
+
+	g_fp->_aniMan->changeStatics2(ST_MAN8_HANDSUP);
+	g_fp->_aniMan->setOXY(386, 236);
+	g_fp->_aniMan->_priority = 10;
+	g_fp->_aniMan->_flags = 4;
+
+	chainObjQueue(g_fp->_aniMan, QU_SC8_FINISH, 1);
+
+	g_vars->scene08_var01 = 0;
 }
 
 void sceneHandler08_winArcade() {
