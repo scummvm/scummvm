@@ -663,6 +663,156 @@ int EncounterAmbassadorFirstZoom::specifyCursor(Window *viewWindow, const Common
 	return kCursorArrow;
 }
 
+class AmbassadorEncounterPodField : public SceneBase {
+public:
+	AmbassadorEncounterPodField(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
+	int draggingItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
+	int droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
+	int timerCallback(Window *viewWindow);
+
+private:
+	uint32 _timerStart;
+};
+
+AmbassadorEncounterPodField::AmbassadorEncounterPodField(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_timerStart = 0;
+}
+
+int AmbassadorEncounterPodField::postEnterRoom(Window *viewWindow, const Location &priorLocation) {
+	_timerStart = g_system->getMillis();
+	return SC_TRUE;
+}
+
+int AmbassadorEncounterPodField::draggingItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) {
+	if (itemID == kItemBurnedOutCore)
+		return 1;
+
+	return 0;
+}
+
+int AmbassadorEncounterPodField::droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) {
+	if (itemID == kItemBurnedOutCore) {
+		DestinationScene destData;
+		destData.destinationScene = _staticData.location;
+		destData.destinationScene.depth = 2;
+		destData.transitionType = TRANSITION_VIDEO;
+		destData.transitionData = 20;
+		destData.transitionStartFrame = -1;
+		destData.transitionLength = -1;
+		((SceneViewWindow *)viewWindow)->moveToDestination(destData);
+		return SIC_ACCEPT;
+	}
+
+	return SIC_REJECT;
+}
+
+int AmbassadorEncounterPodField::timerCallback(Window *viewWindow) {
+	if (_timerStart != 0 && (_timerStart + 30000) < g_system->getMillis()) {
+		((SceneViewWindow *)viewWindow)->playSynchronousAnimation(19);
+		((SceneViewWindow *)viewWindow)->showDeathScene(51);
+		return SC_DEATH;
+	}
+
+	SceneBase::timerCallback(viewWindow);
+	return SC_TRUE;
+}
+
+class AmbassadorEncounterPodWalkForward : public SceneBase {
+public:
+	AmbassadorEncounterPodWalkForward(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
+	int timerCallback(Window *viewWindow);
+
+private:
+	uint32 _timerStart;
+};
+
+AmbassadorEncounterPodWalkForward::AmbassadorEncounterPodWalkForward(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_timerStart = 0;
+}
+
+int AmbassadorEncounterPodWalkForward::postEnterRoom(Window *viewWindow, const Location &priorLocation) {
+	_timerStart = g_system->getMillis();
+	return SC_TRUE;
+}
+
+int AmbassadorEncounterPodWalkForward::timerCallback(Window *viewWindow) {
+	if (_timerStart != 0 && (_timerStart + 15000) < g_system->getMillis()) {
+		((SceneViewWindow *)viewWindow)->playSynchronousAnimation(21);
+		((SceneViewWindow *)viewWindow)->showDeathScene(55);
+		return SC_DEATH;
+	}
+
+	SceneBase::timerCallback(viewWindow);
+	return SC_TRUE;
+}
+
+class AmbassadorEncounterTransportArmsOff : public SceneBase {
+public:
+	AmbassadorEncounterTransportArmsOff(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int timerCallback(Window *viewWindow);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	uint32 _timerStart;
+	Common::Rect _transportButton;
+};
+
+AmbassadorEncounterTransportArmsOff::AmbassadorEncounterTransportArmsOff(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_timerStart = 0;
+	_transportButton = Common::Rect(258, 38, 288, 82);
+}
+
+int AmbassadorEncounterTransportArmsOff::postEnterRoom(Window *viewWindow, const Location &priorLocation) {
+	_timerStart = g_system->getMillis();
+	return SC_TRUE;
+}
+
+int AmbassadorEncounterTransportArmsOff::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_transportButton.contains(pointLocation)) {
+		// Congrats, you defeated Icarus!
+		_timerStart = 0;
+
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().scoreDefeatedIcarus = 1;
+
+		DestinationScene destData;
+		destData.destinationScene = _staticData.location;
+		destData.destinationScene.depth = 0;
+		destData.transitionType = TRANSITION_VIDEO;
+		destData.transitionData = 24;
+		destData.transitionStartFrame = -1;
+		destData.transitionLength = -1;
+		((SceneViewWindow *)viewWindow)->moveToDestination(destData);
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int AmbassadorEncounterTransportArmsOff::timerCallback(Window *viewWindow) {
+	if (_timerStart != 0 && (_timerStart + 20000) < g_system->getMillis()) {
+		((SceneViewWindow *)viewWindow)->playSynchronousAnimation(23);
+		((SceneViewWindow *)viewWindow)->showDeathScene(54);
+		return SC_DEATH;
+	}
+
+	SceneBase::timerCallback(viewWindow);
+	return SC_TRUE;
+}
+
+int AmbassadorEncounterTransportArmsOff::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_transportButton.contains(pointLocation))
+		return kCursorFinger;
+
+	return kCursorArrow;
+}
+
 class NormalTransporter : public SceneBase {
 public:
 	NormalTransporter(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
@@ -977,6 +1127,12 @@ SceneBase *SceneViewWindow::constructAlienSceneObject(Window *viewWindow, const 
 		return new AlienDoorBOpen(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 8:
 		return new AlienDoorBEncounter(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 9:
+		return new AmbassadorEncounterPodField(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 10:
+		return new AmbassadorEncounterPodWalkForward(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 11:
+		return new AmbassadorEncounterTransportArmsOff(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 12:
 		return new NormalTransporter(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 13:
