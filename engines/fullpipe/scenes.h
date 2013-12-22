@@ -196,14 +196,14 @@ public:
 	StaticANIObject *scene08_batuta;
 	StaticANIObject *scene08_vmyats;
 	StaticANIObject *scene08_clock;
-	bool scene08_inArcade;
+	bool scene08_inAir;
 	bool scene08_flyingUp;
-	int scene08_var03;
-	int scene08_var04;
-	int scene08_var05;
-	int scene08_var06;
-	int scene08_var07;
-	int scene08_var08;
+	int scene08_onBelly;
+	int scene08_stairsOffset;
+	int scene08_snoringCountdown;
+	bool scene08_inArcade;
+	bool scene08_stairsVisible;
+	int scene08_manOffsetY;
 
 	StaticANIObject *scene10_gum;
 	StaticANIObject *scene10_packet;

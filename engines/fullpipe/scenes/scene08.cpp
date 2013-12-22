@@ -37,15 +37,15 @@
 namespace Fullpipe {
 
 void scene08_initScene(Scene *sc) {
-	g_vars->scene08_var06 = 0;
 	g_vars->scene08_inArcade = false;
+	g_vars->scene08_inAir = false;
 	g_vars->scene08_flyingUp = false;
-	g_vars->scene08_var03 = 0;
+	g_vars->scene08_onBelly = false;
 	g_vars->scene08_batuta = sc->getStaticANIObject1ById(ANI_BATUTA, -1);
 	g_vars->scene08_vmyats = sc->getStaticANIObject1ById(ANI_VMYATS, -1);
 	g_vars->scene08_clock = sc->getStaticANIObject1ById(ANI_CLOCK_8, -1);
-	g_vars->scene08_var04 = -37;
-	g_vars->scene08_var05 = -1;
+	g_vars->scene08_stairsOffset = -37;
+	g_vars->scene08_snoringCountdown = -1;
 
 	Scene *oldsc = g_fp->_currentScene;
 	g_fp->_currentScene = sc;
@@ -77,19 +77,19 @@ void scene08_initScene(Scene *sc) {
 		if (lock)
 			lock->_flags |= 0x20000000;
 
-		g_vars->scene08_var05 = 71;
+		g_vars->scene08_snoringCountdown = 71;
 	}
 
 	g_vars->scene08_clock->_callback2 = 0;
 
 	if (g_fp->getObjectState(sO_StairsUp_8) == g_fp->getObjectEnumState(sO_StairsUp_8, sO_Broken)) {
-		g_vars->scene08_var07 = 0;
+		g_vars->scene08_stairsVisible = false;
 
 		sc->getPictureObjectById(PIC_SC8_LADDER, 0)->_flags &= 0xFFFB;
 
-		g_vars->scene08_var04 = -39;
+		g_vars->scene08_stairsOffset = -39;
 	} else {
-		g_vars->scene08_var07 = 1;
+		g_vars->scene08_stairsVisible = true;
 	}
 
 	sc->getPictureObjectById(PIC_SC8_ARCADENOW, 0)->_flags &= 0xFFFB;
@@ -110,8 +110,8 @@ void scene08_setupMusic() {
 int scene08_updateCursor() {
 	g_fp->updateCursorCommon();
 
-	if (g_vars->scene08_var06) {
-		if (g_vars->scene08_var03) {
+	if (g_vars->scene08_inArcade) {
+		if (g_vars->scene08_onBelly) {
 			if (g_fp->_objectIdAtCursor == PIC_SC8_LADDERD && g_fp->_cursorId == PIC_CSR_ITN)
 				g_fp->_cursorId = PIC_CSR_GOU;
 		} else {
@@ -141,12 +141,12 @@ void sceneHandler08_enterUp() {
 
 	chainObjQueue(g_fp->_aniMan, QU_SC8_FINISH, 1);
 
-	g_vars->scene08_inArcade = false;
+	g_vars->scene08_inAir = false;
 }
 
 void sceneHandler08_winArcade() {
-	if (g_vars->scene08_var06) {
-		g_vars->scene08_var06 = 0;
+	if (g_vars->scene08_inArcade) {
+		g_vars->scene08_inArcade = false;
 		g_fp->_sceneRect.top = 0;
 		g_fp->_sceneRect.bottom = 600;
 
@@ -170,10 +170,10 @@ void sceneHandler08_arcadeNow() {
 }
 
 void sceneHandler08_resumeFlight() {
-	g_vars->scene08_var08 = 3;
-	g_vars->scene08_var04 = -39;
-	g_vars->scene08_inArcade = true;
-	g_vars->scene08_var07 = 0;
+	g_vars->scene08_manOffsetY = 3;
+	g_vars->scene08_stairsOffset = -39;
+	g_vars->scene08_inAir = true;
+	g_vars->scene08_stairsVisible = false;
 }
 
 int sceneHandler08_calcOffset(int off, int flag) {
@@ -198,10 +198,10 @@ void sceneHandler08_pushCallback(int *par) {
 	*par = (y - 703) / 10;
 	if (*par > 11) {
 		*par = 11;
-		g_vars->scene08_var08 = 0;
+		g_vars->scene08_manOffsetY = 0;
 	}
 	if (*par >= 0)
-		g_vars->scene08_var08 -= sceneHandler08_calcOffset(*par, g_vars->scene08_var08 < 0);
+		g_vars->scene08_manOffsetY -= sceneHandler08_calcOffset(*par, g_vars->scene08_manOffsetY < 0);
 	else
 		*par = 0;
 }
@@ -209,7 +209,7 @@ void sceneHandler08_pushCallback(int *par) {
 int sceneHandler08_updateScreenCallback() {
 	int res;
 
-	res = g_fp->drawArcadeOverlay(g_vars->scene08_var06);
+	res = g_fp->drawArcadeOverlay(g_vars->scene08_inArcade);
 
 	if (!res)
 		g_fp->_updateScreenCallback = 0;
@@ -218,10 +218,10 @@ int sceneHandler08_updateScreenCallback() {
 }
 
 void sceneHandler08_startArcade() {
-	g_vars->scene08_var06 = 1;
 	g_vars->scene08_inArcade = true;
+	g_vars->scene08_inAir = true;
 	g_vars->scene08_flyingUp = false;
-	g_vars->scene08_var03 = 0;
+	g_vars->scene08_onBelly = false;
 
 	getGameLoaderInteractionController()->disableFlag24();
 	getCurrSceneSc2MotionController()->clearEnabled();
@@ -235,7 +235,7 @@ void sceneHandler08_startArcade() {
 
 	g_fp->_aniMan = g_fp->_currentScene->getStaticANIObject1ById(ANI_MAN, -1);
 
-	g_vars->scene08_var08 = 15;
+	g_vars->scene08_manOffsetY = 15;
 
 	g_fp->_currentScene->_y = 0;
 
@@ -273,7 +273,7 @@ void sceneHandler08_airMoves() {
 }
 
 void sceneHandler08_finishArcade() {
-	g_vars->scene08_var06 = 0;
+	g_vars->scene08_inArcade = false;
 
 	getGameLoaderInteractionController()->enableFlag24();
 	getCurrSceneSc2MotionController()->setEnabled();
@@ -294,7 +294,7 @@ void sceneHandler08_jumpOff(ExCommand *cmd) {
 
 void sceneHandler08_standUp() {
 	chainQueue(QU_SC8_STANDUP, 1);
-	g_vars->scene08_var03 = 0;
+	g_vars->scene08_onBelly = false;
 }
 
 void sceneHandler08_jumpLogic(ExCommand *cmd) {
@@ -326,7 +326,7 @@ void sceneHandler08_badLuck() {
 
 	g_fp->setObjectState(sO_StairsUp_8, g_fp->getObjectEnumState(sO_StairsUp_8, sO_NotBroken));
 
-	g_vars->scene08_inArcade = false;
+	g_vars->scene08_inAir = false;
 }
 
 void sceneHandler08_sitDown() {
@@ -338,20 +338,20 @@ void sceneHandler08_sitDown() {
 	g_vars->scene08_vmyats->changeStatics2(ST_VMT_MIN);
 	g_vars->scene08_vmyats->hide();
 
-	g_vars->scene08_inArcade = false;
-	g_vars->scene08_var03 = 1;
+	g_vars->scene08_inAir = false;
+	g_vars->scene08_onBelly = true;
 }
 
 void sceneHandler08_calcFlight() {
 	Common::Point point;
-	int y = g_vars->scene08_var08 + g_fp->_aniMan->_oy;
+	int y = g_vars->scene08_manOffsetY + g_fp->_aniMan->_oy;
 
 	g_fp->_aniMan->setOXY(g_fp->_aniMan->_ox, y);
 
-	g_vars->scene08_var08 += 2;
+	g_vars->scene08_manOffsetY += 2;
 
-	if (g_vars->scene08_var08 < g_vars->scene08_var04)
-		g_vars->scene08_var08 = g_vars->scene08_var04;
+	if (g_vars->scene08_manOffsetY < g_vars->scene08_stairsOffset)
+		g_vars->scene08_manOffsetY = g_vars->scene08_stairsOffset;
 
 	y = y + g_fp->_aniMan->getSomeXY(point)->y;
 
@@ -367,20 +367,22 @@ void sceneHandler08_calcFlight() {
 			g_vars->scene08_vmyats->startAnim(MV_VMT_DEF, 0, -1);
 	}
 
-	if (g_fp->_aniMan->_oy <= 280 && g_vars->scene08_var07 && g_fp->_aniMan->_statics && g_fp->_aniMan->_statics->_staticsId == ST_MAN8_HANDSUP) {
+	if (g_fp->_aniMan->_oy <= 280 && g_vars->scene08_stairsVisible
+		&& g_fp->_aniMan->_statics && g_fp->_aniMan->_statics->_staticsId == ST_MAN8_HANDSUP) {
 		sceneHandler08_badLuck();
-	} else if (g_fp->_aniMan->_oy > 236 || g_vars->scene08_var07 || !g_fp->_aniMan->_statics || g_fp->_aniMan->_statics->_staticsId != ST_MAN8_HANDSUP) {
+	} else if (g_fp->_aniMan->_oy > 236 || g_vars->scene08_stairsVisible
+			   || !g_fp->_aniMan->_statics || g_fp->_aniMan->_statics->_staticsId != ST_MAN8_HANDSUP) {
 		if (g_fp->_aniMan->_movement || g_fp->_aniMan->_oy < 660
 			 || (g_vars->scene08_vmyats->_movement && g_vars->scene08_vmyats->_movement->_currDynamicPhaseIndex > 0)
-			|| abs(g_vars->scene08_var08) > 2) {
-			if (g_vars->scene08_var08 >= 0 && !g_fp->_aniMan->_movement) {
+			|| abs(g_vars->scene08_manOffsetY) > 2) {
+			if (g_vars->scene08_manOffsetY >= 0 && !g_fp->_aniMan->_movement) {
 				if (g_fp->_aniMan->_statics->_staticsId == ST_MAN8_HANDSUP)
 					g_fp->_aniMan->startAnim(MV_MAN8_HANDSDOWN, 0, -1);
 				else
 					g_fp->_aniMan->changeStatics2(ST_MAN8_FLYDOWN);
 			}
 
-			if (g_fp->_aniMan->_oy < 500 && !g_fp->_aniMan->_movement && g_fp->_aniMan->_statics->_staticsId == ST_MAN8_FLYUP && g_vars->scene08_var08 < 0)
+			if (g_fp->_aniMan->_oy < 500 && !g_fp->_aniMan->_movement && g_fp->_aniMan->_statics->_staticsId == ST_MAN8_FLYUP && g_vars->scene08_manOffsetY < 0)
 				g_fp->_aniMan->startAnim(MV_MAN8_HANDSUP, 0, -1);
 		} else {
 			sceneHandler08_sitDown();
@@ -393,10 +395,10 @@ void sceneHandler08_calcFlight() {
 void sceneHandler08_checkEndArcade() {
 	if (g_vars->scene08_flyingUp) {
 		int x = g_fp->_aniMan->_ox;
-		int y = g_vars->scene08_var08 + g_fp->_aniMan->_oy;
+		int y = g_vars->scene08_manOffsetY + g_fp->_aniMan->_oy;
 
-		if (!((g_vars->scene08_var08 + g_fp->_aniMan->_oy) % 3))
-			g_vars->scene08_var08--;
+		if (!((g_vars->scene08_manOffsetY + g_fp->_aniMan->_oy) % 3))
+			g_vars->scene08_manOffsetY--;
 
 		g_fp->_aniMan->setOXY(x, y);
 
@@ -431,12 +433,12 @@ int sceneHandler08(ExCommand *cmd) {
 		break;
 
 	case MSG_SC8_STANDUP:
-		g_vars->scene08_var08 = -10;
+		g_vars->scene08_manOffsetY = -10;
 		g_vars->scene08_vmyats->changeStatics2(ST_VMT_MIN);
 		g_vars->scene08_vmyats->setOXY(382, 703);
 		g_vars->scene08_vmyats->_priority = 29;
 		g_vars->scene08_vmyats->_callback2 = sceneHandler08_pushCallback;
-		g_vars->scene08_inArcade = true;
+		g_vars->scene08_inAir = true;
 		break;
 
 	case MSG_SC8_ARCADENOW:
@@ -448,7 +450,7 @@ int sceneHandler08(ExCommand *cmd) {
 		break;
 
 	case MSG_SC8_GETHIMUP:
-		g_vars->scene08_var08 = 0;
+		g_vars->scene08_manOffsetY = 0;
 		g_vars->scene08_flyingUp = true;
 		break;
 
@@ -457,12 +459,12 @@ int sceneHandler08(ExCommand *cmd) {
 		break;
 
 	case 29:
-		if (g_vars->scene08_var06) {
-			if (g_vars->scene08_inArcade) {
+		if (g_vars->scene08_inArcade) {
+			if (g_vars->scene08_inAir) {
 				sceneHandler08_airMoves();
 				break;
 			}
-			if (g_vars->scene08_var03) {
+			if (g_vars->scene08_onBelly) {
 				sceneHandler08_jumpLogic(cmd);
 				break;
 			}
@@ -474,7 +476,7 @@ int sceneHandler08(ExCommand *cmd) {
 			int res = 0;
 
 			if (g_fp->_aniMan2) {
-				if (g_vars->scene08_var06) {
+				if (g_vars->scene08_inArcade) {
 					int scHeight = g_fp->_sceneRect.bottom - g_fp->_sceneRect.top;
 
 					if (g_fp->_aniMan2->_oy < g_fp->_sceneRect.top + 200) {
@@ -503,8 +505,8 @@ int sceneHandler08(ExCommand *cmd) {
 
 			g_fp->_floaters->update();
 
-			if (g_vars->scene08_var06) {
-				if (g_vars->scene08_inArcade)
+			if (g_vars->scene08_inArcade) {
+				if (g_vars->scene08_inAir)
 					sceneHandler08_calcFlight();
 			} else {
 				Movement *mov = g_fp->_aniMan->_movement;
@@ -524,13 +526,13 @@ int sceneHandler08(ExCommand *cmd) {
 			if (g_vars->scene08_flyingUp)
 				sceneHandler08_checkEndArcade();
 
-			if (g_vars->scene08_var05 > 0) {
-				g_vars->scene08_var05--;
+			if (g_vars->scene08_snoringCountdown > 0) {
+				g_vars->scene08_snoringCountdown--;
 
-				if (!g_vars->scene08_var05) {
+				if (!g_vars->scene08_snoringCountdown) {
 					g_fp->playSound(SND_8_014, 0);
 
-					g_vars->scene08_var05 = 71;
+					g_vars->scene08_snoringCountdown = 71;
 				}
 			}
 

@@ -146,14 +146,14 @@ Vars::Vars() {
 	scene08_batuta = 0;
 	scene08_vmyats = 0;
 	scene08_clock = 0;
-	scene08_inArcade = false;
+	scene08_inAir = false;
 	scene08_flyingUp = false;
-	scene08_var03 = 0;
-	scene08_var04 = 0;
-	scene08_var05 = 0;
-	scene08_var06 = 0;
-	scene08_var07 = 0;
-	scene08_var08 = 0;
+	scene08_onBelly = false;
+	scene08_stairsOffset = -37;
+	scene08_snoringCountdown = -1;
+	scene08_inArcade = false;
+	scene08_stairsVisible = true;
+	scene08_manOffsetY = 0;
 
 	scene10_gum = 0;
 	scene10_packet = 0;
