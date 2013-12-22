@@ -25,6 +25,7 @@
 
 #include "buried/buried.h"
 #include "buried/graphics.h"
+#include "buried/invdata.h"
 #include "buried/resources.h"
 #include "buried/scene_view.h"
 #include "buried/sound.h"
@@ -74,6 +75,144 @@ int ArmControls::specifyCursor(Window *viewWindow, const Common::Point &pointLoc
 			return kCursorFinger;
 
 	return kCursorArrow;
+}
+
+class OpenAlienDoorA : public SceneBase {
+public:
+	OpenAlienDoorA(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
+};
+
+OpenAlienDoorA::OpenAlienDoorA(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+}
+
+int OpenAlienDoorA::postEnterRoom(Window *viewWindow, const Location &priorLocation) {
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().asDangerDoorASealed != 1 && ((SceneViewWindow *)viewWindow)->getGlobalFlags().generalWalkthroughMode == 0) {
+		DestinationScene destData;
+		destData.destinationScene = _staticData.location;
+		destData.destinationScene.depth = 1;
+		destData.transitionType = TRANSITION_VIDEO;
+		destData.transitionData = 16;
+		destData.transitionStartFrame = -1;
+		destData.transitionLength = -1;
+
+		Common::String text = _vm->getString(IDS_AS_RA_BEINGS_DETECTED_20_METERS);
+		((SceneViewWindow *)viewWindow)->moveToDestination(destData);
+		((SceneViewWindow *)viewWindow)->displayLiveText(text);
+		return SC_FALSE;
+	}
+
+	return SC_TRUE;
+}
+
+class AlienDoorAEncounter : public SceneBase {
+public:
+	AlienDoorAEncounter(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
+	int postExitRoom(Window *viewWindow, const Location &newLocation);
+	int draggingItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
+	int droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
+	int timerCallback(Window *viewWindow);
+
+private:
+	uint32 _timerStart;
+	LocationStaticData _originalSceneData;
+	bool _cloaked;
+	Common::Rect _nerve;
+};
+
+AlienDoorAEncounter::AlienDoorAEncounter(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_timerStart = 0;
+	_cloaked = false;
+	_nerve = Common::Rect(184, 160, 268, 189);
+
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().asTakenEvidenceThisTrip == 1) {
+		_originalSceneData = _staticData;
+		_staticData.destUp.destinationScene = Location(-1, -1, -1, -1, -1, -1);
+		_staticData.destLeft.destinationScene = Location(-1, -1, -1, -1, -1, -1);
+		_staticData.destRight.destinationScene = Location(-1, -1, -1, -1, -1, -1);
+		_staticData.destDown.destinationScene = Location(-1, -1, -1, -1, -1, -1);
+		_staticData.destForward.destinationScene = Location(-1, -1, -1, -1, -1, -1);
+	}
+}
+
+int AlienDoorAEncounter::postEnterRoom(Window *viewWindow, const Location &priorLocation) {
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().asTakenEvidenceThisTrip == 1)
+		_timerStart = g_system->getMillis();
+
+	return SC_TRUE;
+}
+
+int AlienDoorAEncounter::postExitRoom(Window *viewWindow, const Location &newLocation) {
+	if (_staticData.location.depth != newLocation.depth && _staticData.location.timeZone == newLocation.timeZone && _staticData.location.node == newLocation.node)
+		_vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 7), 128, false, true);
+
+	return SC_TRUE;
+}
+
+int AlienDoorAEncounter::draggingItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) {
+	if (itemID == kItemRichardsSword && ((SceneViewWindow *)viewWindow)->getGlobalFlags().asTakenEvidenceThisTrip == 1 && _nerve.contains(pointLocation))
+		return 1;
+
+	return 0;
+}
+
+int AlienDoorAEncounter::droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) {
+	if (itemID == kItemRichardsSword && ((SceneViewWindow *)viewWindow)->getGlobalFlags().asTakenEvidenceThisTrip == 1 && _nerve.contains(pointLocation)) {
+		// Reset the nerve flag
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().asDangerDoorASealed = 1;
+
+		DestinationScene destData;
+		destData.destinationScene = _staticData.location;
+		destData.destinationScene.depth = 0;
+		destData.transitionType = TRANSITION_VIDEO;
+		destData.transitionData = 11;
+		destData.transitionStartFrame = -1;
+		destData.transitionLength = -1;
+		((SceneViewWindow *)viewWindow)->moveToDestination(destData);
+	}
+
+	return SIC_REJECT;
+}
+
+int AlienDoorAEncounter::timerCallback(Window *viewWindow) {
+	if (_timerStart != 0) {
+		if (_cloaked) {
+			if (((SceneViewWindow *)viewWindow)->getGlobalFlags().bcCloakingEnabled == 0) {
+				_cloaked = false;
+				_timerStart = g_system->getMillis();
+			}
+		} else {
+			if (((SceneViewWindow *)viewWindow)->getGlobalFlags().bcCloakingEnabled == 1) {
+				_cloaked = true;
+			} else {
+				if (_timerStart + 15000 < g_system->getMillis()) {
+					((SceneViewWindow *)viewWindow)->playSynchronousAnimation(12);
+					((SceneViewWindow *)viewWindow)->showDeathScene(50);
+					return SC_DEATH;
+				}
+			}
+		}
+	}
+
+	return SC_TRUE;
+}
+
+class AlienDoorAMoveDeath : public SceneBase {
+public:
+	AlienDoorAMoveDeath(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int timerCallback(Window *viewWindow);
+};
+
+AlienDoorAMoveDeath::AlienDoorAMoveDeath(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+}
+
+int AlienDoorAMoveDeath::timerCallback(Window *viewWindow) {
+	((SceneViewWindow *)viewWindow)->showDeathScene(50);
+	return SC_DEATH;
 }
 
 class NormalTransporter : public SceneBase {
@@ -267,6 +406,12 @@ SceneBase *SceneViewWindow::constructAlienSceneObject(Window *viewWindow, const 
 	switch (sceneStaticData.classID) {
 	case 1:
 		return new ArmControls(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 4:
+		return new OpenAlienDoorA(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 5:
+		return new AlienDoorAEncounter(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 6:
+		return new AlienDoorAMoveDeath(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 12:
 		return new NormalTransporter(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 13:
