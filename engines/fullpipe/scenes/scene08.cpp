@@ -182,8 +182,34 @@ void sceneHandler08_calcFlight() {
 	warning("STUB: sceneHandler08_calcFlight()");
 }
 
+void sceneHandler08_finishArcade() {
+	g_vars->scene08_var06 = 0;
+
+	getGameLoaderInteractionController()->enableFlag24();
+	getCurrSceneSc2MotionController()->setEnabled();
+}
+
 void sceneHandler08_checkEndArcade() {
-	warning("STUB: sceneHandler08_checkEndArcade()");
+	if (g_vars->scene08_var02) {
+		int x = g_fp->_aniMan->_ox;
+		int y = g_vars->scene08_var08 + g_fp->_aniMan->_oy;
+
+		if (!((g_vars->scene08_var08 + g_fp->_aniMan->_oy) % 3))
+			g_vars->scene08_var08--;
+
+		g_fp->_aniMan->setOXY(x, y);
+
+		if (y < 80) {
+			sceneHandler08_finishArcade();
+
+			ExCommand *ex = new ExCommand(SC_8, 17, 0, 0, 0, 0, 1, 0, 0, 0);
+			ex->_messageNum = 61;
+			ex->_excFlags |= 2;
+			ex->_keyCode = TrubaUp;
+
+			ex->postMessage();
+		}
+	}
 }
 
 void sceneHandler08_badLuck() {
@@ -210,13 +236,6 @@ void sceneHandler08_badLuck() {
 
 void sceneHandler08_calcOffset() {
 	warning("STUB: sceneHandler08_calcOffset()");
-}
-
-void sceneHandler08_finishArcade() {
-	g_vars->scene08_var06 = 0;
-
-	getGameLoaderInteractionController()->enableFlag24();
-	getCurrSceneSc2MotionController()->setEnabled();
 }
 
 void sceneHandler08_jumpOff() {
