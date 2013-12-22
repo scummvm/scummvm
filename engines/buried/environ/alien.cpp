@@ -158,6 +158,45 @@ int PlayPodAudio::postEnterRoom(Window *viewWindow, const Location &priorLocatio
 	return SC_TRUE;
 }
 
+class InorganicPodTransDeath : public SceneBase {
+public:
+	InorganicPodTransDeath(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+			int left = -1, int top = -1, int right = -1, int bottom = -1, int animID = -1, int deathScene = -1);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	Common::Rect _clickRegion;
+	int _transportAnimID;
+	int _deathScene;
+};
+
+InorganicPodTransDeath::InorganicPodTransDeath(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+		int left, int top, int right, int bottom, int animID, int deathScene) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_clickRegion = Common::Rect(left, top, right, bottom);
+	_transportAnimID = animID;
+	_deathScene = deathScene;
+}
+
+int InorganicPodTransDeath::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_clickRegion.contains(pointLocation)) {
+		_vm->_sound->setAmbientSound();
+		((SceneViewWindow *)viewWindow)->playSynchronousAnimation(_transportAnimID);
+		_staticData.navFrameIndex = -1;
+		((SceneViewWindow *)viewWindow)->showDeathScene(_deathScene);
+	}
+
+	return SC_FALSE;
+}
+
+int InorganicPodTransDeath::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_clickRegion.contains(pointLocation))
+		return kCursorFinger;
+
+	return kCursorArrow;
+}
+
 bool SceneViewWindow::initializeAlienTimeZoneAndEnvironment(Window *viewWindow, int environment) {
 	if (environment == -1) {
 		GlobalFlags &flags = ((SceneViewWindow *)viewWindow)->getGlobalFlags();
@@ -194,6 +233,10 @@ SceneBase *SceneViewWindow::constructAlienSceneObject(Window *viewWindow, const 
 		return new PlayPodAudio(_vm, viewWindow, sceneStaticData, priorLocation, 9, 10);
 	case 31:
 		return new PlayPodAudio(_vm, viewWindow, sceneStaticData, priorLocation, 11, 12);
+	case 32:
+		return new InorganicPodTransDeath(_vm, viewWindow, sceneStaticData, priorLocation, 92, 88, 158, 128, 2, 52);
+	case 33:
+		return new InorganicPodTransDeath(_vm, viewWindow, sceneStaticData, priorLocation, 92, 88, 158, 128, 26, 53);
 	case 50:
 		return new PlayStingers(_vm, viewWindow, sceneStaticData, priorLocation, 127, offsetof(GlobalFlags, asRBLastStingerID), offsetof(GlobalFlags, asRBStingerID), 10, 14);
 	}
