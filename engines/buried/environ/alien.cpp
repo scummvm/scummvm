@@ -36,6 +36,46 @@
 
 namespace Buried {
 
+class ArmControls : public SceneBase {
+public:
+	ArmControls(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	Common::Rect _controls[3];
+	int _animIDs[3];
+};
+
+ArmControls::ArmControls(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_controls[0] = Common::Rect(124, 150, 140, 164);
+	_controls[1] = Common::Rect(145, 146, 161, 160);
+	_controls[2] = Common::Rect(155, 162, 165, 172);
+	_animIDs[0] = 3;
+	_animIDs[1] = 4;
+	_animIDs[2] = 5;
+}
+
+int ArmControls::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	for (int i = 0; i < 3; i++) {
+		if (_controls[i].contains(pointLocation)) {
+			((SceneViewWindow *)viewWindow)->playSynchronousAnimation(_animIDs[i]);
+			return SC_TRUE;
+		}
+	}
+
+	return SC_FALSE;
+}
+
+int ArmControls::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	for (int i = 0; i < 3; i++)
+		if (_controls[i].contains(pointLocation))
+			return kCursorFinger;
+
+	return kCursorArrow;
+}
+
 class NormalTransporter : public SceneBase {
 public:
 	NormalTransporter(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
@@ -225,6 +265,8 @@ SceneBase *SceneViewWindow::constructAlienSceneObject(Window *viewWindow, const 
 	// TODO
 
 	switch (sceneStaticData.classID) {
+	case 1:
+		return new ArmControls(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 12:
 		return new NormalTransporter(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 13:
