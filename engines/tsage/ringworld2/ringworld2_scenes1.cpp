@@ -3158,14 +3158,12 @@ void Scene1337::Action3::signal() {
 		scene->_gameBoardSide[2]._handCard[0]._card.setVisage(1332);
 		scene->_gameBoardSide[2]._handCard[0]._card.setPosition(scene->_gameBoardSide[2]._handCard[0]._stationPos, 0);
 		scene->_gameBoardSide[2]._handCard[0]._card.fixPriority(170);
-		if (scene->_gameBoardSide[2]._handCard[0]._cardId > 9) {
-			if (scene->_gameBoardSide[2]._handCard[0]._cardId > 25) {
-				scene->_gameBoardSide[2]._handCard[0]._card.setStrip(4);
-				scene->_gameBoardSide[2]._handCard[0]._card.setFrame(scene->_gameBoardSide[2]._handCard[0]._cardId - 25);
-			} else {
-				scene->_gameBoardSide[2]._handCard[0]._card.setStrip(3);
-				scene->_gameBoardSide[2]._handCard[0]._card.setFrame(scene->_gameBoardSide[2]._handCard[0]._cardId - 9);
-			}
+		if (scene->_gameBoardSide[2]._handCard[0]._cardId > 25) {
+			scene->_gameBoardSide[2]._handCard[0]._card.setStrip(4);
+			scene->_gameBoardSide[2]._handCard[0]._card.setFrame(scene->_gameBoardSide[2]._handCard[0]._cardId - 25);
+		} else if (scene->_gameBoardSide[2]._handCard[0]._cardId > 9) {
+			scene->_gameBoardSide[2]._handCard[0]._card.setStrip(3);
+			scene->_gameBoardSide[2]._handCard[0]._card.setFrame(scene->_gameBoardSide[2]._handCard[0]._cardId - 9);
 		} else {
 			scene->_gameBoardSide[2]._handCard[0]._card.setStrip(2);
 			scene->_gameBoardSide[2]._handCard[0]._card.setFrame(scene->_gameBoardSide[2]._handCard[0]._cardId);
@@ -3237,14 +3235,12 @@ void Scene1337::Action3::signal() {
 		scene->_gameBoardSide[2]._handCard[1]._card.setPosition(scene->_gameBoardSide[2]._handCard[1]._stationPos, 0);
 		scene->_gameBoardSide[2]._handCard[1]._card.fixPriority(170);
 
-		if (scene->_gameBoardSide[2]._handCard[1]._cardId > 9) {
-			if (scene->_gameBoardSide[2]._handCard[1]._cardId > 25) {
-				scene->_gameBoardSide[2]._handCard[1]._card.setStrip(4);
-				scene->_gameBoardSide[2]._handCard[1]._card.setFrame(scene->_gameBoardSide[2]._handCard[1]._cardId - 25);
-			} else {
-				scene->_gameBoardSide[2]._handCard[1]._card.setStrip(3);
-				scene->_gameBoardSide[2]._handCard[1]._card.setFrame(scene->_gameBoardSide[2]._handCard[1]._cardId - 9);
-			}
+		if (scene->_gameBoardSide[2]._handCard[1]._cardId > 25) {
+			scene->_gameBoardSide[2]._handCard[1]._card.setStrip(4);
+			scene->_gameBoardSide[2]._handCard[1]._card.setFrame(scene->_gameBoardSide[2]._handCard[1]._cardId - 25);
+		} else if (scene->_gameBoardSide[2]._handCard[1]._cardId > 9) {
+			scene->_gameBoardSide[2]._handCard[1]._card.setStrip(3);
+			scene->_gameBoardSide[2]._handCard[1]._card.setFrame(scene->_gameBoardSide[2]._handCard[1]._cardId - 9);
 		} else {
 			scene->_gameBoardSide[2]._handCard[1]._card.setStrip(2);
 			scene->_gameBoardSide[2]._handCard[1]._card.setFrame(scene->_gameBoardSide[2]._handCard[1]._cardId);
@@ -3317,14 +3313,12 @@ void Scene1337::Action3::signal() {
 		scene->_gameBoardSide[2]._handCard[2]._card.setPosition(scene->_gameBoardSide[2]._handCard[2]._stationPos, 0);
 		scene->_gameBoardSide[2]._handCard[2]._card.fixPriority(170);
 
-		if (scene->_gameBoardSide[2]._handCard[2]._cardId > 9) {
-			if (scene->_gameBoardSide[2]._handCard[2]._cardId > 25) {
-				scene->_gameBoardSide[2]._handCard[2]._card.setStrip(4);
-				scene->_gameBoardSide[2]._handCard[2]._card.setFrame(scene->_gameBoardSide[2]._handCard[2]._cardId - 25);
-			} else {
-				scene->_gameBoardSide[2]._handCard[2]._card.setStrip(3);
-				scene->_gameBoardSide[2]._handCard[2]._card.setFrame(scene->_gameBoardSide[2]._handCard[2]._cardId - 9);
-			}
+		if (scene->_gameBoardSide[2]._handCard[2]._cardId > 25) {
+			scene->_gameBoardSide[2]._handCard[2]._card.setStrip(4);
+			scene->_gameBoardSide[2]._handCard[2]._card.setFrame(scene->_gameBoardSide[2]._handCard[2]._cardId - 25);
+		} else if (scene->_gameBoardSide[2]._handCard[2]._cardId > 9) {
+			scene->_gameBoardSide[2]._handCard[2]._card.setStrip(3);
+			scene->_gameBoardSide[2]._handCard[2]._card.setFrame(scene->_gameBoardSide[2]._handCard[2]._cardId - 9);
 		} else {
 			scene->_gameBoardSide[2]._handCard[2]._card.setStrip(2);
 			scene->_gameBoardSide[2]._handCard[2]._card.setFrame(scene->_gameBoardSide[2]._handCard[2]._cardId);
@@ -4097,11 +4091,9 @@ void Scene1337::Action11::signal() {
 				} // while
 				scene->_displayHelpFl = true;
 				scene->subC4CEC();
-			} else {
-				if (scene->_actionIdx2 != 2) {
-					int tmpVal = scene->getFreeHandCard(scene->_actionIdx2);
-					scene->_actionCard3 = &scene->_gameBoardSide[scene->_actionIdx2]._handCard[tmpVal];
-				}
+			} else if (scene->_actionIdx2 != 2) {
+				int tmpVal = scene->getFreeHandCard(scene->_actionIdx2);
+				scene->_actionCard3 = &scene->_gameBoardSide[scene->_actionIdx2]._handCard[tmpVal];
 			}
 		}
 
@@ -4264,21 +4256,19 @@ void Scene1337::Action12::signal() {
 					}
 				}
 				scene->subC4CEC();
-			} else {
-				if (scene->_actionIdx1 != 1) {
-					switch (scene->_actionIdx1) {
-					case 0:
-						scene->_actionCard3 = &scene->_gameBoardSide[0]._handCard[scene->getFreeHandCard(0)];
-						break;
-					case 3:
-						scene->_actionCard3 = &scene->_gameBoardSide[3]._handCard[scene->getFreeHandCard(3)];
-						break;
-					default:
-						break;
-					}
-				} else {
-					scene->_actionCard3 = &scene->_gameBoardSide[1]._handCard[scene->getFreeHandCard(1)];
+			} else if (scene->_actionIdx1 != 1) {
+				switch (scene->_actionIdx1) {
+				case 0:
+					scene->_actionCard3 = &scene->_gameBoardSide[0]._handCard[scene->getFreeHandCard(0)];
+					break;
+				case 3:
+					scene->_actionCard3 = &scene->_gameBoardSide[3]._handCard[scene->getFreeHandCard(3)];
+					break;
+				default:
+					break;
 				}
+			} else {
+				scene->_actionCard3 = &scene->_gameBoardSide[1]._handCard[scene->getFreeHandCard(1)];
 			}
 
 			scene->_actionCard1->_card.postInit();
@@ -4553,14 +4543,12 @@ void Scene1337::setAnimationInfo(Card *card) {
 	if (!card)
 		return;
 
-	if (card->_cardId > 9) {
-		if (card->_cardId > 25) {
-			card->_card.setStrip2(4);
-			card->_card.setFrame(card->_cardId - 25);
-		} else {
-			card->_card.setStrip2(3);
-			card->_card.setFrame(card->_cardId - 9);
-		}
+	if (card->_cardId > 25) {
+		card->_card.setStrip2(4);
+		card->_card.setFrame(card->_cardId - 25);
+	} else if (card->_cardId > 9) {
+		card->_card.setStrip2(3);
+		card->_card.setFrame(card->_cardId - 9);
 	} else {
 		card->_card.setStrip2(2);
 		card->_card.setFrame(card->_cardId);
@@ -5514,53 +5502,51 @@ void Scene1337::handleClick(int arg1, Common::Point pt) {
 						displayDialog(_discardPile._cardId);
 					else
 						actionDisplay(1330, 7, 159, 10, 1, 200, 0, 7, 0, 154, 154);
-				} else if (_helpIcon._bounds.contains(pt)) {
+				} else if (_helpIcon._bounds.contains(pt))
 					actionDisplay(1330, 43, 159, 10, 1, 200, 0, 7, 0, 154, 154);
-				} else if (_stockCard.isIn(pt)) {
+				else if (_stockCard.isIn(pt))
 					actionDisplay(1330, 4, 159, 10, 1, 200, 0, 7, 0, 154, 154);
-				} else if ( (_gameBoardSide[2]._emptyStationPos.isIn(pt))
+				else if ( (_gameBoardSide[2]._emptyStationPos.isIn(pt))
 					     || (_gameBoardSide[3]._emptyStationPos.isIn(pt))
 					     || (_gameBoardSide[0]._emptyStationPos.isIn(pt))
-					     || (_gameBoardSide[1]._emptyStationPos.isIn(pt)) ) {
+					     || (_gameBoardSide[1]._emptyStationPos.isIn(pt)) )
 					actionDisplay(1330, 32, 159, 10, 1, 200, 0, 7, 0, 154, 154);
-				} else {
-					if (_gameBoardSide[2]._handCard[0].isIn(pt))
-						displayDialog(_gameBoardSide[2]._handCard[0]._cardId);
-					else if (_gameBoardSide[2]._handCard[1].isIn(pt))
-						displayDialog(_gameBoardSide[2]._handCard[1]._cardId);
-					else if (_gameBoardSide[2]._handCard[2].isIn(pt))
-						displayDialog(_gameBoardSide[2]._handCard[2]._cardId);
-					else if (_gameBoardSide[2]._handCard[3].isIn(pt))
-						displayDialog(_gameBoardSide[2]._handCard[3]._cardId);
-					else if ((curReg >= 6) && (curReg <= 9))
-						actionDisplay(1330, 29, 159, 10, 1, 200, 0, 7, 0, 154, 154);
-					else if ((curReg >= 11) && (curReg <= 14))
-						actionDisplay(1330, 31, 159, 10, 1, 200, 0, 7, 0, 154, 154);
-					else if ((curReg >= 16) && (curReg <= 19))
-						actionDisplay(1330, 30, 159, 10, 1, 200, 0, 7, 0, 154, 154);
-					else {
-						switch (curReg) {
-						case 0:
-							actionDisplay(1330, 2, 159, 134, 1, 200, 0, 7, 0, 105, 105);
-							break;
-						case 5:
-							actionDisplay(1330, 25, 159, 10, 1, 200, 0, 7, 0, 154, 154);
-							break;
-						case 10:
-							actionDisplay(1330, 27, 159, 10, 1, 200, 0, 7, 0, 154, 154);
-							break;
-						case 15:
-							actionDisplay(1330, 26, 159, 10, 1, 200, 0, 7, 0, 154, 154);
-							break;
-						case 20:
-							actionDisplay(1330, 28, 159, 10, 1, 200, 0, 7, 0, 154, 154);
-							break;
-						case 21:
-							actionDisplay(1330, 24, 159, 10, 1, 200, 0, 7, 0, 154, 154);
-							break;
-						default:
-							break;
-						}
+				else if (_gameBoardSide[2]._handCard[0].isIn(pt))
+					displayDialog(_gameBoardSide[2]._handCard[0]._cardId);
+				else if (_gameBoardSide[2]._handCard[1].isIn(pt))
+					displayDialog(_gameBoardSide[2]._handCard[1]._cardId);
+				else if (_gameBoardSide[2]._handCard[2].isIn(pt))
+					displayDialog(_gameBoardSide[2]._handCard[2]._cardId);
+				else if (_gameBoardSide[2]._handCard[3].isIn(pt))
+					displayDialog(_gameBoardSide[2]._handCard[3]._cardId);
+				else if ((curReg >= 6) && (curReg <= 9))
+					actionDisplay(1330, 29, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+				else if ((curReg >= 11) && (curReg <= 14))
+					actionDisplay(1330, 31, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+				else if ((curReg >= 16) && (curReg <= 19))
+					actionDisplay(1330, 30, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+				else {
+					switch (curReg) {
+					case 0:
+						actionDisplay(1330, 2, 159, 134, 1, 200, 0, 7, 0, 105, 105);
+						break;
+					case 5:
+						actionDisplay(1330, 25, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+						break;
+					case 10:
+						actionDisplay(1330, 27, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+						break;
+					case 15:
+						actionDisplay(1330, 26, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+						break;
+					case 20:
+						actionDisplay(1330, 28, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+						break;
+					case 21:
+						actionDisplay(1330, 24, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+						break;
+					default:
+						break;
 					}
 				}
 			}
@@ -6078,8 +6064,7 @@ void Scene1337::handlePlayer3() {
 			discardCard(&_gameBoardSide[3]._delayCard);
 			return;
 		default:
-			int i;
-			for (i = 0; i <= 3; i++) {
+			for (int i = 0; i <= 3; i++) {
 				if (checkAntiDelayCard(_gameBoardSide[3]._delayCard._cardId, _gameBoardSide[3]._handCard[i]._cardId)) {
 					playAntiDelayCard(&_gameBoardSide[3]._handCard[i], &_gameBoardSide[3]._delayCard);
 					return;
@@ -6401,234 +6386,232 @@ void Scene1337::handlePlayer2() {
 						} else {
 							actionDisplay(1330, 37, 159, 10, 1, 200, 0, 7, 0, 154, 154);
 						}
-					} else {
+					} else if ((_selectedCard._cardId == 26) || (_selectedCard._cardId == 30) ||(_selectedCard._cardId == 32) || (_selectedCard._cardId == 28)) {
 						// Check anti-delay card
-						if ((_selectedCard._cardId == 26) || (_selectedCard._cardId == 30) ||(_selectedCard._cardId == 32) || (_selectedCard._cardId == 28)) {
-							if (_gameBoardSide[2]._delayCard.isIn(Common::Point(_selectedCard._stationPos.x + 12, _selectedCard._stationPos.y + 12))) {
-								actionDisplay(1330, 42, 159, 10, 1, 200, 0, 7, 0, 154, 154);
-							} else if (!checkAntiDelayCard(_gameBoardSide[2]._delayCard._cardId, _selectedCard._cardId)) {
-								if (_gameBoardSide[2]._delayCard._cardId != 0) {
-									switch (_gameBoardSide[2]._delayCard._cardId) {
-									case 11:
-										actionDisplay(1330, 68, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+						if (_gameBoardSide[2]._delayCard.isIn(Common::Point(_selectedCard._stationPos.x + 12, _selectedCard._stationPos.y + 12))) {
+							actionDisplay(1330, 42, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+						} else if (!checkAntiDelayCard(_gameBoardSide[2]._delayCard._cardId, _selectedCard._cardId)) {
+							if (_gameBoardSide[2]._delayCard._cardId != 0) {
+								switch (_gameBoardSide[2]._delayCard._cardId) {
+								case 11:
+									actionDisplay(1330, 68, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+									break;
+								case 14:
+									actionDisplay(1330, 80, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+									break;
+								case 16:
+									actionDisplay(1330, 84, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+									break;
+								case 24:
+									actionDisplay(1330, 96, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+									break;
+								default:
+									break;
+								}
+							} else {
+								actionDisplay(1330, 41, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+							}
+						} else {
+							playAntiDelayCard(&_selectedCard, &_gameBoardSide[2]._delayCard);
+							return;
+						}
+					} else {
+						if ((getStationCardId(_selectedCard._cardId) == -1) && (isDelayCard(_selectedCard._cardId) == -1)) {
+							if (_selectedCard._cardId == 13) {
+								if (_gameBoardSide[0]._emptyStationPos.isIn(Common::Point(_selectedCard._stationPos.x + 12, _selectedCard._stationPos.y + 12))) {
+									for (int k = 0; k <= 7; k++) {
+										if (_gameBoardSide[0]._outpostStation[k]._cardId != 0) {
+											playCounterTrickCard(&_selectedCard, 0);
+											return;
+										}
+									}
+									actionDisplay(1330, 74, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+								} else if (_gameBoardSide[3]._emptyStationPos.isIn(Common::Point(_selectedCard._stationPos.x + 12, _selectedCard._stationPos.y + 12))) {
+									for (int k = 0; k <= 7; k++) {
+										if (_gameBoardSide[3]._outpostStation[k]._cardId != 0) {
+											playCounterTrickCard(&_selectedCard, 3);
+											return;
+										}
+									}
+									actionDisplay(1330, 74, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+								} else if (_gameBoardSide[1]._emptyStationPos.isIn(Common::Point(_selectedCard._stationPos.x + 12, _selectedCard._stationPos.y + 12))) {
+									for (int k = 0; k <= 7; k++) {
+										if (_gameBoardSide[1]._outpostStation[k]._cardId == 0) {
+											playCounterTrickCard(&_selectedCard, 1);
+											return;
+										}
+									}
+									actionDisplay(1330, 74, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+								} else {
+									actionDisplay(1330, 128, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+								}
+							} else if (_selectedCard._cardId == 25) {
+								if (_gameBoardSide[0]._emptyStationPos.isIn(Common::Point(_selectedCard._stationPos.x + 12, _selectedCard._stationPos.y + 12))) {
+									if ( (_gameBoardSide[0]._handCard[0]._cardId != 0)
+										|| (_gameBoardSide[0]._handCard[1]._cardId != 0)
+										|| (_gameBoardSide[0]._handCard[2]._cardId != 0)
+										|| (_gameBoardSide[0]._handCard[3]._cardId != 0) ) {
+											int k;
+											for (k = 0; k <= 3; k++){
+												if (_gameBoardSide[2]._handCard[k]._cardId == 0)
+													break;
+											}
+											playThieftCard(2, &_gameBoardSide[2]._handCard[k], 0);
+											return;
+									} else {
+										actionDisplay(1330, 99, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+									}
+								} else if (_gameBoardSide[1]._emptyStationPos.isIn(Common::Point(_selectedCard._stationPos.x + 12, _selectedCard._stationPos.y + 12))) {
+									if ( (_gameBoardSide[1]._handCard[0]._cardId != 0)
+										|| (_gameBoardSide[1]._handCard[1]._cardId != 0)
+										|| (_gameBoardSide[1]._handCard[2]._cardId != 0)
+										|| (_gameBoardSide[1]._handCard[3]._cardId != 0) ) {
+											int k;
+											for (k = 0; k <= 3; k++){
+												if (_gameBoardSide[2]._handCard[k]._cardId == 0)
+													break;
+											}
+											playThieftCard(2, &_gameBoardSide[2]._handCard[k], 1);
+											return;
+									} else {
+										actionDisplay(1330, 99, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+									}
+								}
+
+								if (_gameBoardSide[3]._emptyStationPos.isIn(Common::Point(_selectedCard._stationPos.x + 12, _selectedCard._stationPos.y + 12))) {
+									if ( (_gameBoardSide[3]._handCard[0]._cardId != 0)
+										|| (_gameBoardSide[3]._handCard[1]._cardId != 0)
+										|| (_gameBoardSide[3]._handCard[2]._cardId != 0)
+										|| (_gameBoardSide[3]._handCard[3]._cardId != 0) ) {
+											int k;
+											for (k = 0; k <= 3; k++){
+												if (_gameBoardSide[2]._handCard[k]._cardId == 0)
+													break;
+											}
+											playThieftCard(2, &_gameBoardSide[2]._handCard[k], 3);
+											return;
+									} else {
+										actionDisplay(1330, 99, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+									}
+								} else {
+									actionDisplay(1330, 129, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+								}
+							} else if (_selectedCard._cardId == 29) {
+								actionDisplay(1330, 136, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+							} else if (_selectedCard._cardId == 27) {
+								actionDisplay(1330, 137, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+							}
+						} else {
+							if (_gameBoardSide[0]._delayCard.isIn(Common::Point(_selectedCard._stationPos.x + 12, _selectedCard._stationPos.y + 12))) {
+								if (_gameBoardSide[0]._delayCard._cardId != 0) {
+									actionDisplay(1330, 15, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+								} else if (!isAttackPossible(0, _selectedCard._cardId)) {
+									switch (_selectedCard._cardId) {
+									case 10:
+										actionDisplay(1330, 66, 159, 10, 1, 200, 0, 7, 0, 154, 154);
 										break;
-									case 14:
-										actionDisplay(1330, 80, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+									case 12:
+										actionDisplay(1330, 70, 159, 10, 1, 200, 0, 7, 0, 154, 154);
 										break;
-									case 16:
-										actionDisplay(1330, 84, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+									case 15:
+										actionDisplay(1330, 82, 159, 10, 1, 200, 0, 7, 0, 154, 154);
 										break;
-									case 24:
-										actionDisplay(1330, 96, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+									case 17:
+										actionDisplay(1330, 86, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+										break;
+									case 18:
+										actionDisplay(1330, 88, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+										break;
+									case 19:
+										actionDisplay(1330, 90, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+										break;
+									case 20:
+										actionDisplay(1330, 92, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+										break;
+									case 21:
+										actionDisplay(1330, 94, 159, 10, 1, 200, 0, 7, 0, 154, 154);
 										break;
 									default:
 										break;
 									}
 								} else {
-									actionDisplay(1330, 41, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+									playDelayCard(&_selectedCard, &_gameBoardSide[0]._delayCard);
+									return;
 								}
-							} else {
-								playAntiDelayCard(&_selectedCard, &_gameBoardSide[2]._delayCard);
-								return;
-							}
-						} else {
-							if ((getStationCardId(_selectedCard._cardId) == -1) && (isDelayCard(_selectedCard._cardId) == -1)) {
-								if (_selectedCard._cardId == 13) {
-									if (_gameBoardSide[0]._emptyStationPos.isIn(Common::Point(_selectedCard._stationPos.x + 12, _selectedCard._stationPos.y + 12))) {
-										for (int k = 0; k <= 7; k++) {
-											if (_gameBoardSide[0]._outpostStation[k]._cardId != 0) {
-												playCounterTrickCard(&_selectedCard, 0);
-												return;
-											}
-										}
-										actionDisplay(1330, 74, 159, 10, 1, 200, 0, 7, 0, 154, 154);
-									} else if (_gameBoardSide[3]._emptyStationPos.isIn(Common::Point(_selectedCard._stationPos.x + 12, _selectedCard._stationPos.y + 12))) {
-										for (int k = 0; k <= 7; k++) {
-											if (_gameBoardSide[3]._outpostStation[k]._cardId != 0) {
-												playCounterTrickCard(&_selectedCard, 3);
-												return;
-											}
-										}
-										actionDisplay(1330, 74, 159, 10, 1, 200, 0, 7, 0, 154, 154);
-									} else if (_gameBoardSide[1]._emptyStationPos.isIn(Common::Point(_selectedCard._stationPos.x + 12, _selectedCard._stationPos.y + 12))) {
-										for (int k = 0; k <= 7; k++) {
-											if (_gameBoardSide[1]._outpostStation[k]._cardId == 0) {
-												playCounterTrickCard(&_selectedCard, 1);
-												return;
-											}
-										}
-										actionDisplay(1330, 74, 159, 10, 1, 200, 0, 7, 0, 154, 154);
-									} else {
-										actionDisplay(1330, 128, 159, 10, 1, 200, 0, 7, 0, 154, 154);
-									}
-								} else if (_selectedCard._cardId == 25) {
-									if (_gameBoardSide[0]._emptyStationPos.isIn(Common::Point(_selectedCard._stationPos.x + 12, _selectedCard._stationPos.y + 12))) {
-										if ( (_gameBoardSide[0]._handCard[0]._cardId != 0)
-											|| (_gameBoardSide[0]._handCard[1]._cardId != 0)
-											|| (_gameBoardSide[0]._handCard[2]._cardId != 0)
-											|| (_gameBoardSide[0]._handCard[3]._cardId != 0) ) {
-												int k;
-												for (k = 0; k <= 3; k++){
-													if (_gameBoardSide[2]._handCard[k]._cardId == 0)
-														break;
-												}
-												playThieftCard(2, &_gameBoardSide[2]._handCard[k], 0);
-												return;
-										} else {
-											actionDisplay(1330, 99, 159, 10, 1, 200, 0, 7, 0, 154, 154);
-										}
-									} else if (_gameBoardSide[1]._emptyStationPos.isIn(Common::Point(_selectedCard._stationPos.x + 12, _selectedCard._stationPos.y + 12))) {
-										if ( (_gameBoardSide[1]._handCard[0]._cardId != 0)
-											|| (_gameBoardSide[1]._handCard[1]._cardId != 0)
-											|| (_gameBoardSide[1]._handCard[2]._cardId != 0)
-											|| (_gameBoardSide[1]._handCard[3]._cardId != 0) ) {
-												int k;
-												for (k = 0; k <= 3; k++){
-													if (_gameBoardSide[2]._handCard[k]._cardId == 0)
-														break;
-												}
-												playThieftCard(2, &_gameBoardSide[2]._handCard[k], 1);
-												return;
-										} else {
-											actionDisplay(1330, 99, 159, 10, 1, 200, 0, 7, 0, 154, 154);
-										}
-									}
-
-									if (_gameBoardSide[3]._emptyStationPos.isIn(Common::Point(_selectedCard._stationPos.x + 12, _selectedCard._stationPos.y + 12))) {
-										if ( (_gameBoardSide[3]._handCard[0]._cardId != 0)
-											|| (_gameBoardSide[3]._handCard[1]._cardId != 0)
-											|| (_gameBoardSide[3]._handCard[2]._cardId != 0)
-											|| (_gameBoardSide[3]._handCard[3]._cardId != 0) ) {
-												int k;
-												for (k = 0; k <= 3; k++){
-													if (_gameBoardSide[2]._handCard[k]._cardId == 0)
-														break;
-												}
-												playThieftCard(2, &_gameBoardSide[2]._handCard[k], 3);
-												return;
-										} else {
-											actionDisplay(1330, 99, 159, 10, 1, 200, 0, 7, 0, 154, 154);
-										}
-									} else {
-										actionDisplay(1330, 129, 159, 10, 1, 200, 0, 7, 0, 154, 154);
-									}
-								} else if (_selectedCard._cardId == 29) {
-									actionDisplay(1330, 136, 159, 10, 1, 200, 0, 7, 0, 154, 154);
-								} else if (_selectedCard._cardId == 27) {
-									actionDisplay(1330, 137, 159, 10, 1, 200, 0, 7, 0, 154, 154);
-								}
-							} else {
-								if (_gameBoardSide[0]._delayCard.isIn(Common::Point(_selectedCard._stationPos.x + 12, _selectedCard._stationPos.y + 12))) {
-									if (_gameBoardSide[0]._delayCard._cardId != 0) {
-										actionDisplay(1330, 15, 159, 10, 1, 200, 0, 7, 0, 154, 154);
-									} else if (!isAttackPossible(0, _selectedCard._cardId)) {
-										switch (_selectedCard._cardId) {
-										case 10:
-											actionDisplay(1330, 66, 159, 10, 1, 200, 0, 7, 0, 154, 154);
-											break;
-										case 12:
-											actionDisplay(1330, 70, 159, 10, 1, 200, 0, 7, 0, 154, 154);
-											break;
-										case 15:
-											actionDisplay(1330, 82, 159, 10, 1, 200, 0, 7, 0, 154, 154);
-											break;
-										case 17:
-											actionDisplay(1330, 86, 159, 10, 1, 200, 0, 7, 0, 154, 154);
-											break;
-										case 18:
-											actionDisplay(1330, 88, 159, 10, 1, 200, 0, 7, 0, 154, 154);
-											break;
-										case 19:
-											actionDisplay(1330, 90, 159, 10, 1, 200, 0, 7, 0, 154, 154);
-											break;
-										case 20:
-											actionDisplay(1330, 92, 159, 10, 1, 200, 0, 7, 0, 154, 154);
-											break;
-										case 21:
-											actionDisplay(1330, 94, 159, 10, 1, 200, 0, 7, 0, 154, 154);
-											break;
-										default:
-											break;
-										}
-									} else {
-										playDelayCard(&_selectedCard, &_gameBoardSide[0]._delayCard);
-										return;
-									}
-								} else if (_gameBoardSide[3]._delayCard.isIn(Common::Point(_selectedCard._stationPos.x + 12, _selectedCard._stationPos.y + 12))) {
-									if (_gameBoardSide[3]._delayCard._cardId != 0) {
-										actionDisplay(1330, 17, 159, 10, 1, 200, 0, 7, 0, 154, 154);
-									} else if (!isAttackPossible(3, _selectedCard._cardId)) {
-										switch (_selectedCard._cardId) {
-										case 10:
-											actionDisplay(1330, 66, 159, 10, 1, 200, 0, 7, 0, 154, 154);
-											break;
-										case 12:
-											actionDisplay(1330, 70, 159, 10, 1, 200, 0, 7, 0, 154, 154);
-											break;
-										case 15:
-											actionDisplay(1330, 82, 159, 10, 1, 200, 0, 7, 0, 154, 154);
-											break;
-										case 17:
-											actionDisplay(1330, 86, 159, 10, 1, 200, 0, 7, 0, 154, 154);
-											break;
-										case 18:
-											actionDisplay(1330, 88, 159, 10, 1, 200, 0, 7, 0, 154, 154);
-											break;
-										case 19:
-											actionDisplay(1330, 90, 159, 10, 1, 200, 0, 7, 0, 154, 154);
-											break;
-										case 20:
-											actionDisplay(1330, 92, 159, 10, 1, 200, 0, 7, 0, 154, 154);
-											break;
-										case 21:
-											actionDisplay(1330, 94, 159, 10, 1, 200, 0, 7, 0, 154, 154);
-											break;
-										default:
-											break;
-										}
-									} else {
-										playDelayCard(&_selectedCard, &_gameBoardSide[3]._delayCard);
-										return;
-									}
-								} else if (_gameBoardSide[1]._delayCard.isIn(Common::Point(_selectedCard._stationPos.x + 12, _selectedCard._stationPos.y + 12))) {
-									if (_gameBoardSide[1]._delayCard._cardId != 0) {
-										actionDisplay(1330, 19, 159, 10, 1, 200, 0, 7, 0, 154, 154);
-									} else if (!isAttackPossible(1, _selectedCard._cardId)) {
-										switch (_selectedCard._cardId) {
-										case 10:
-											actionDisplay(1330, 66, 159, 10, 1, 200, 0, 7, 0, 154, 154);
-											break;
-										case 12:
-											actionDisplay(1330, 70, 159, 10, 1, 200, 0, 7, 0, 154, 154);
-											break;
-										case 15:
-											actionDisplay(1330, 82, 159, 10, 1, 200, 0, 7, 0, 154, 154);
-											break;
-										case 17:
-											actionDisplay(1330, 86, 159, 10, 1, 200, 0, 7, 0, 154, 154);
-											break;
-										case 18:
-											actionDisplay(1330, 88, 159, 10, 1, 200, 0, 7, 0, 154, 154);
-											break;
-										case 19:
-											actionDisplay(1330, 90, 159, 10, 1, 200, 0, 7, 0, 154, 154);
-											break;
-										case 20:
-											actionDisplay(1330, 92, 159, 10, 1, 200, 0, 7, 0, 154, 154);
-											break;
-										case 21:
-											actionDisplay(1330, 94, 159, 10, 1, 200, 0, 7, 0, 154, 154);
-											break;
-										default:
-											break;
-										}
-									} else {
-										playDelayCard(&_selectedCard, &_gameBoardSide[1]._delayCard);
-										return;
+							} else if (_gameBoardSide[3]._delayCard.isIn(Common::Point(_selectedCard._stationPos.x + 12, _selectedCard._stationPos.y + 12))) {
+								if (_gameBoardSide[3]._delayCard._cardId != 0) {
+									actionDisplay(1330, 17, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+								} else if (!isAttackPossible(3, _selectedCard._cardId)) {
+									switch (_selectedCard._cardId) {
+									case 10:
+										actionDisplay(1330, 66, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+										break;
+									case 12:
+										actionDisplay(1330, 70, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+										break;
+									case 15:
+										actionDisplay(1330, 82, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+										break;
+									case 17:
+										actionDisplay(1330, 86, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+										break;
+									case 18:
+										actionDisplay(1330, 88, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+										break;
+									case 19:
+										actionDisplay(1330, 90, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+										break;
+									case 20:
+										actionDisplay(1330, 92, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+										break;
+									case 21:
+										actionDisplay(1330, 94, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+										break;
+									default:
+										break;
 									}
 								} else {
-									actionDisplay(1330, 38, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+									playDelayCard(&_selectedCard, &_gameBoardSide[3]._delayCard);
+									return;
 								}
+							} else if (_gameBoardSide[1]._delayCard.isIn(Common::Point(_selectedCard._stationPos.x + 12, _selectedCard._stationPos.y + 12))) {
+								if (_gameBoardSide[1]._delayCard._cardId != 0) {
+									actionDisplay(1330, 19, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+								} else if (!isAttackPossible(1, _selectedCard._cardId)) {
+									switch (_selectedCard._cardId) {
+									case 10:
+										actionDisplay(1330, 66, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+										break;
+									case 12:
+										actionDisplay(1330, 70, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+										break;
+									case 15:
+										actionDisplay(1330, 82, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+										break;
+									case 17:
+										actionDisplay(1330, 86, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+										break;
+									case 18:
+										actionDisplay(1330, 88, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+										break;
+									case 19:
+										actionDisplay(1330, 90, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+										break;
+									case 20:
+										actionDisplay(1330, 92, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+										break;
+									case 21:
+										actionDisplay(1330, 94, 159, 10, 1, 200, 0, 7, 0, 154, 154);
+										break;
+									default:
+										break;
+									}
+								} else {
+									playDelayCard(&_selectedCard, &_gameBoardSide[1]._delayCard);
+									return;
+								}
+							} else {
+								actionDisplay(1330, 38, 159, 10, 1, 200, 0, 7, 0, 154, 154);
 							}
 						}
 					}
