@@ -1178,6 +1178,24 @@ static const uint16 kq6CDPatchAudioTextSupportGuards[] = {
 	PATCH_END
 };
 
+//  Fixes text window placement, when portrait+text is shown (Stepmother in room 250)
+// Applies to at least: PC-CD
+// Patched method: tlkStepmother::init
+static const uint16 kq6CDSignatureAudioTextSupportStepmother[] = {
+	SIG_MAGICDWORD,
+	0x89, 0x5a,                         // lsg global[5a]
+	0x35, 0x02,                         // ldi 02
+	0x12,                               // and
+	0x31,                               // bnt [jump-for-text-code]
+	SIG_END
+};
+
+static const uint16 kq6CDPatchAudioTextSupportJumpAlways[] = {
+	PATCH_ADDTOOFFSET(+4),
+	0x1a,                               // eq?
+	PATCH_END
+};
+
 //  Fixes "Girl In The Tower" to get played in dual mode as well
 // Applies to at least: PC-CD
 // Patched method: rm740::cue
@@ -1286,6 +1304,7 @@ static const SciScriptPatcherEntry kq6Signatures[] = {
 	{ false,   104, "CD: audio + text support KQ6 3",                 1, kq6CDSignatureAudioTextSupport3,              kq6CDPatchAudioTextSupport3 },
 	{ false,   928, "CD: audio + text support KQ6 4",                 1, kq6CDSignatureAudioTextSupport4,              kq6CDPatchAudioTextSupport4 },
 	{ false,  1009, "CD: audio + text support KQ6 Guards",            2, kq6CDSignatureAudioTextSupportGuards,         kq6CDPatchAudioTextSupportGuards },
+	{ false,  1027, "CD: audio + text support KQ6 Stepmother",        1, kq6CDSignatureAudioTextSupportStepmother,     kq6CDPatchAudioTextSupportJumpAlways },
 	{ false,   740, "CD: audio + text support KQ6 Girl In The Tower", 1, kq6CDSignatureAudioTextSupportGirlInTheTower, kq6CDPatchAudioTextSupportGirlInTheTower },
 	{ false,   903, "CD: audio + text support KQ6 menu",              1, kq6CDSignatureAudioTextMenuSupport,           kq6CDPatchAudioTextMenuSupport },
 	SCI_SIGNATUREENTRY_TERMINATOR
