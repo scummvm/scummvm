@@ -24,6 +24,7 @@
  */
 
 #include "buried/buried.h"
+#include "buried/graphics.h"
 #include "buried/resources.h"
 #include "buried/scene_view.h"
 #include "buried/sound.h"
@@ -33,6 +34,50 @@
 #include "common/system.h"
 
 namespace Buried {
+
+class NormalTransporter : public SceneBase {
+public:
+	NormalTransporter(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	Common::Rect _clickRegion;
+};
+
+NormalTransporter::NormalTransporter(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_clickRegion = Common::Rect(118, 93, 153, 125);
+}
+
+int NormalTransporter::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_clickRegion.contains(pointLocation)) {
+		if (((SceneViewWindow *)viewWindow)->getGlobalFlags().asAmbassadorEncounter == 1) {
+			_vm->_sound->setAmbientSound();
+			((SceneViewWindow *)viewWindow)->playSynchronousAnimation(1);
+			_staticData.navFrameIndex = -1;
+			((SceneViewWindow *)viewWindow)->showCompletionScene();
+		} else {
+			DestinationScene destData;
+			destData.destinationScene = Location(3, 2, 4, 0, 1, 0);
+			destData.transitionType = TRANSITION_VIDEO;
+			destData.transitionData = 1;
+			destData.transitionStartFrame = -1;
+			destData.transitionLength = -1;
+			((SceneViewWindow *)viewWindow)->moveToDestination(destData);
+			return SC_TRUE;
+		}
+	}
+
+	return SC_FALSE;
+}
+
+int NormalTransporter::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_clickRegion.contains(pointLocation))
+		return kCursorFinger;
+
+	return kCursorArrow;
+}
 
 bool SceneViewWindow::initializeAlienTimeZoneAndEnvironment(Window *viewWindow, int environment) {
 	if (environment == -1) {
@@ -62,6 +107,8 @@ SceneBase *SceneViewWindow::constructAlienSceneObject(Window *viewWindow, const 
 	// TODO
 
 	switch (sceneStaticData.classID) {
+	case 12:
+		return new NormalTransporter(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 50:
 		return new PlayStingers(_vm, viewWindow, sceneStaticData, priorLocation, 127, offsetof(GlobalFlags, asRBLastStingerID), offsetof(GlobalFlags, asRBStingerID), 10, 14);
 	}
