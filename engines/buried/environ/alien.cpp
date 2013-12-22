@@ -603,6 +603,66 @@ int AlienDoorBEncounter::specifyCursor(Window *viewWindow, const Common::Point &
 	return kCursorArrow;
 }
 
+class EncounterAmbassadorFirstZoom : public SceneBase {
+public:
+	EncounterAmbassadorFirstZoom(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	Common::Rect _panel;
+};
+
+EncounterAmbassadorFirstZoom::EncounterAmbassadorFirstZoom(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_panel = Common::Rect(110, 0, 420, 62);
+}
+
+int EncounterAmbassadorFirstZoom::postEnterRoom(Window *viewWindow, const Location &priorLocation) {
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().asTakenEvidenceThisTrip == 1 && ((SceneViewWindow *)viewWindow)->getGlobalFlags().asAmbassadorEncounter == 0) {
+		((SceneViewWindow *)viewWindow)->getGlobalFlags().asAmbassadorEncounter = 1;
+
+		// Here we go!
+		((SceneViewWindow *)viewWindow)->displayLiveText(_vm->getString(IDS_AS_RA_BEINGS_DETECTED_5_METERS));
+		((SceneViewWindow *)viewWindow)->playSynchronousAnimation(18); // "Why are you here?"
+		_staticData.navFrameIndex = 127;
+
+		DestinationScene destData;
+		destData.destinationScene = Location(7, 1, 6, 0, 1, 1);
+		destData.transitionType = TRANSITION_NONE;
+		destData.transitionData = -1;
+		destData.transitionStartFrame = -1;
+		destData.transitionLength = -1;
+		((SceneViewWindow *)viewWindow)->moveToDestination(destData);
+	}
+
+	return SC_TRUE;
+}
+
+int EncounterAmbassadorFirstZoom::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_panel.contains(pointLocation)) {
+		DestinationScene destData;
+		destData.destinationScene = _staticData.location;
+		destData.destinationScene.depth = 1;
+		destData.transitionType = TRANSITION_VIDEO;
+		destData.transitionData = 6;
+		destData.transitionStartFrame = -1;
+		destData.transitionLength = -1;
+		((SceneViewWindow *)viewWindow)->moveToDestination(destData);
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int EncounterAmbassadorFirstZoom::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_panel.contains(pointLocation))
+		return kCursorMagnifyingGlass;
+
+	return kCursorArrow;
+}
+
 class NormalTransporter : public SceneBase {
 public:
 	NormalTransporter(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
@@ -798,6 +858,82 @@ int CheeseGirlPod::specifyCursor(Window *viewWindow, const Common::Point &pointL
 	return kCursorArrow;
 }
 
+class TransporterStatusRead : public SceneBase {
+public:
+	TransporterStatusRead(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int gdiPaint(Window *viewWindow);
+	int mouseMove(Window *viewWindow, const Common::Point &pointLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	int _currentRegion;
+	Common::Rect _transRegions[3];
+};
+
+TransporterStatusRead::TransporterStatusRead(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_currentRegion = -1;
+	_transRegions[0] = Common::Rect(184, 40, 208, 62);
+	_transRegions[1] = Common::Rect(221, 55, 245, 77);
+	_transRegions[2] = Common::Rect(262, 39, 286, 61);
+}
+
+int TransporterStatusRead::gdiPaint(Window *viewWindow) {
+	if (_currentRegion >= 0 && ((SceneViewWindow *)viewWindow)->getGlobalFlags().bcTranslateEnabled == 1) {
+		Common::Rect absoluteRect = viewWindow->getAbsoluteRect();
+		Common::Rect rect(_transRegions[_currentRegion]);
+		rect.translate(absoluteRect.left, absoluteRect.top);
+		_vm->_gfx->getScreen()->frameRect(rect, _vm->_gfx->getColor(255, 0, 0));
+	}
+
+	return SC_REPAINT;
+}
+
+int TransporterStatusRead::mouseMove(Window *viewWindow, const Common::Point &pointLocation) {
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().bcTranslateEnabled == 1) {
+		bool found = false;
+
+		for (int i = 0; i < 3 && !found; i++) {
+			if (_transRegions[i].contains(pointLocation)) {
+				found = true;
+
+				if (_currentRegion != i) {
+					_currentRegion = i;
+					viewWindow->invalidateWindow(false);
+					((SceneViewWindow *)viewWindow)->displayTranslationText(_vm->getString(IDS_AS_RA_POD_A_STATUS_TEXT + i));
+				}
+			}
+		}
+
+		if (!found && _currentRegion >= 0) {
+			_currentRegion = -1;
+			viewWindow->invalidateWindow(false);
+			((SceneViewWindow *)viewWindow)->displayLiveText();
+		}
+
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int TransporterStatusRead::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	DestinationScene destData;
+	destData.destinationScene = _staticData.location;
+	destData.destinationScene.depth = 0;
+	destData.transitionType = TRANSITION_VIDEO;
+	destData.transitionData = 7;
+	destData.transitionStartFrame = -1;
+	destData.transitionLength = -1;
+	((SceneViewWindow *)viewWindow)->moveToDestination(destData);
+	return SC_TRUE;
+}
+
+int TransporterStatusRead::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	return kCursorPutDown;
+}
+
 bool SceneViewWindow::initializeAlienTimeZoneAndEnvironment(Window *viewWindow, int environment) {
 	if (environment == -1) {
 		GlobalFlags &flags = ((SceneViewWindow *)viewWindow)->getGlobalFlags();
@@ -821,13 +957,16 @@ bool SceneViewWindow::startAlienAmbient(int oldTimeZone, int oldEnvironment, int
 	return true;
 }
 
-
 SceneBase *SceneViewWindow::constructAlienSceneObject(Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) {
 	// TODO
 
 	switch (sceneStaticData.classID) {
 	case 1:
 		return new ArmControls(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 2:
+		return new EncounterAmbassadorFirstZoom(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 3:
+		return new TransporterStatusRead(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 4:
 		return new OpenAlienDoorA(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 5:
