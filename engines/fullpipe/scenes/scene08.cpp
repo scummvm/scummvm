@@ -180,7 +180,33 @@ void sceneHandler08_startArcade() {
 }
 
 void sceneHandler08_airMoves() {
-	warning("STUB: sceneHandler08_airMoves()");
+	if (g_fp->_aniMan->isIdle() && !(g_fp->_aniMan->_flags & 0x100)) {
+		int x = g_fp->_aniMan->_ox;
+		int y = g_fp->_aniMan->_oy;
+		Common::Point point;
+
+		if (703 - g_fp->_aniMan->getSomeXY(point)->y - y < 150) {
+			if (g_fp->_aniMan->_statics) {
+				if (g_fp->_aniMan->_statics->_staticsId == ST_MAN8_FLYDOWN) {
+					y -= 25;
+
+					g_fp->_aniMan->setOXY(x, y);
+				}
+			}
+
+			g_fp->_aniMan->changeStatics2(ST_MAN8_STAND);
+			g_fp->_aniMan->setOXY(380, y);
+			g_fp->_aniMan->startAnim(MV_MAN8_JUMP, 0, -1);
+
+		} else if (g_fp->_aniMan->_statics) {
+			if (g_fp->_aniMan->_statics->_staticsId == ST_MAN8_FLYUP) {
+				g_fp->_aniMan->startAnim(MV_MAN8_DRYGUP, 0, -1);
+
+			} else if (g_fp->_aniMan->_statics->_staticsId == ST_MAN8_FLYDOWN) {
+				g_fp->_aniMan->startAnim(MV_MAN8_DRYGDOWN, 0, -1);
+			}
+		}
+	}
 }
 
 void sceneHandler08_finishArcade() {
@@ -281,8 +307,8 @@ void sceneHandler08_calcFlight() {
 	if (g_fp->_aniMan->_oy <= 280 && g_vars->scene08_var07 && g_fp->_aniMan->_statics && g_fp->_aniMan->_statics->_staticsId == ST_MAN8_HANDSUP) {
 		sceneHandler08_badLuck();
 	} else if (g_fp->_aniMan->_oy > 236 || g_vars->scene08_var07 || !g_fp->_aniMan->_statics || g_fp->_aniMan->_statics->_staticsId != ST_MAN8_HANDSUP) {
-		if (g_fp->_aniMan->_movement || g_fp->_aniMan->_oy < 660 
-			 || (g_vars->scene08_vmyats->_movement && g_vars->scene08_vmyats->_movement->_currDynamicPhaseIndex > 0) 
+		if (g_fp->_aniMan->_movement || g_fp->_aniMan->_oy < 660
+			 || (g_vars->scene08_vmyats->_movement && g_vars->scene08_vmyats->_movement->_currDynamicPhaseIndex > 0)
 			|| abs(g_vars->scene08_var08) > 2) {
 			if (g_vars->scene08_var08 >= 0 && !g_fp->_aniMan->_movement) {
 				if (g_fp->_aniMan->_statics->_staticsId == ST_MAN8_HANDSUP)
