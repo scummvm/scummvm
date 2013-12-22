@@ -64,7 +64,7 @@ public:
 	KeyframeAnim *loadKeyframe(const Common::String &fname);
 	Material *loadMaterial(const Common::String &fname, CMap *c);
 	Model *loadModel(const Common::String &fname, CMap *c, Model *parent = NULL);
-	EMIModel *loadModelEMI(const Common::String &fname, EMIModel *parent = NULL);
+	EMIModel *loadModelEMI(const Common::String &fname, EMICostume *costume);
 	LipSync *loadLipSync(const Common::String &fname);
 	Skeleton *loadSkeleton(const Common::String &fname);
 	Sprite *loadSprite(const Common::String &fname, EMICostume *costume);

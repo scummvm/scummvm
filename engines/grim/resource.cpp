@@ -440,7 +440,7 @@ Model *ResourceLoader::loadModel(const Common::String &filename, CMap *c, Model 
 	return result;
 }
 
-EMIModel *ResourceLoader::loadModelEMI(const Common::String &filename, EMIModel *parent) {
+EMIModel *ResourceLoader::loadModelEMI(const Common::String &filename, EMICostume *costume) {
 	Common::String fname = fixFilename(filename);
 	Common::SeekableReadStream *stream;
 
@@ -450,7 +450,7 @@ EMIModel *ResourceLoader::loadModelEMI(const Common::String &filename, EMIModel 
 		return NULL;
 	}
 
-	EMIModel *result = new EMIModel(filename, stream, parent);
+	EMIModel *result = new EMIModel(filename, stream, costume);
 	_emiModels.push_back(result);
 	delete stream;
 

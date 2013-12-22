@@ -52,7 +52,9 @@ public:
 	void saveState(SaveGame *state) const override;
 	bool restoreState(SaveGame *state) override;
 
-	Material *findSharedMaterial(const Common::String &name);
+	Material *loadMaterial(const Common::String &name);
+	Material *findMaterial(const Common::String &name);
+
 public:
 	EMIChore *_wearChore;
 	EMISkelComponent *_emiSkel;

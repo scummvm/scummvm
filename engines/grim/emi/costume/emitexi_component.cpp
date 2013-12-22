@@ -40,7 +40,7 @@ EMITexiComponent::~EMITexiComponent() {
 
 void EMITexiComponent::init() {
 	EMICostume *c = static_cast<EMICostume *>(_cost);
-	_mat = c->findSharedMaterial(_name);
+	_mat = c->findMaterial(_name);
 }
 
 int EMITexiComponent::update(uint time) {

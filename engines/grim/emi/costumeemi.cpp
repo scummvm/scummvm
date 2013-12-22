@@ -157,7 +157,7 @@ Component *EMICostume::loadEMIComponent(Component *parent, int parentID, const c
 	name += 4;
 
 	if (tag == MKTAG('m', 'e', 's', 'h')) {
-		return new EMIMeshComponent(parent, parentID, name, prevComponent, tag);
+		return new EMIMeshComponent(parent, parentID, name, prevComponent, tag, this);
 	} else if (tag == MKTAG('s', 'k', 'e', 'l')) {
 		return new EMISkelComponent(parent, parentID, name, prevComponent, tag);
 	} else if (tag == MKTAG('t', 'e', 'x', 'i')) {
@@ -242,24 +242,28 @@ bool EMICostume::restoreState(SaveGame *state) override {
 	return ret;
 }
 
-Material *EMICostume::findSharedMaterial(const Common::String &name) {
+Material *EMICostume::findMaterial(const Common::String &name) {
 	Common::String fixedName = g_resourceloader->fixFilename(name, false);
 	Common::List<Material *>::iterator it = _materials.begin();
-	for (; it != _materials.end(); ++it)
-		if ((*it)->getFilename() == fixedName)
+	for (; it != _materials.end(); ++it) {
+		if ((*it)->getFilename() == fixedName) {
 			return *it;
+		}
+	}
+	return NULL;
+}
 
-	Material *mat = g_resourceloader->loadMaterial(name.c_str(), NULL);
-	_materials.push_back(mat);
+Material *EMICostume::loadMaterial(const Common::String &name) {
+	Material *mat = findMaterial(name);
+	if (!mat) {
+		mat = g_resourceloader->loadMaterial(name.c_str(), NULL);
+		_materials.push_back(mat);
+	}
 	return mat;
 }
 
 void EMICostume::setWearChore(EMIChore *chore) {
 	if (chore != _wearChore) {
-		_materials.clear();
-		for (unsigned int i = 0; i < chore->getMesh()->_obj->_numTextures; i++) {
-			_materials.push_back(chore->getMesh()->_obj->_mats[i]);
-		}
 		_wearChore = chore;
 
 		if (_emiSkel) {

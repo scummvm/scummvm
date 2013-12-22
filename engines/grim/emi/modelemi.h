@@ -44,6 +44,7 @@ struct EMIColormap {
 // Todo: port this to math::vector
 struct Vector3int;
 
+class EMICostume;
 class EMIModel;
 struct BoneInfo;
 struct Bone;
@@ -103,8 +104,9 @@ public:
 	int _setType;
 
 	Common::String _fname;
+	EMICostume *_costume;
 public:
-	EMIModel(const Common::String &filename, Common::SeekableReadStream *data, EMIModel *parent = NULL);
+	EMIModel(const Common::String &filename, Common::SeekableReadStream *data, EMICostume *costume);
 	~EMIModel();
 	void setTex(uint32 index);
 	void setSkeleton(Skeleton *skel);
