@@ -87,6 +87,7 @@ CompletionWindow::CompletionWindow(BuriedEngine *vm, Window *parent, GlobalFlags
 	CHECK_PUZZLE_FLAG(scoreLoggedCodexEvidence);
 	CHECK_PUZZLE_FLAG(scoreEnteredMainCavern);
 	CHECK_PUZZLE_FLAG(scoreGotWealthGodPiece);
+	CHECK_PUZZLE_FLAG(scoreGotRainGodPiece);
 	CHECK_PUZZLE_FLAG(scoreGotWarGodPiece);
 	CHECK_PUZZLE_FLAG(scoreCompletedDeathGod);
 	CHECK_PUZZLE_FLAG(scoreEliminatedAgent3);
