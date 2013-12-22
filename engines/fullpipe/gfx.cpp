@@ -807,7 +807,7 @@ bool Bitmap::putDibRB(int32 *palette, int pX, int pY) {
 	uint16 *srcPtr;
 
 	if (!palette && pX == -1) {
-		warning("Bitmap::putDibRB(): Both global and local palettes are empty");
+		debug(2, "Bitmap::putDibRB(): Both global and local palettes are empty");
 		return false;
 	}
 
@@ -1179,7 +1179,7 @@ bool BigPicture::load(MfcArchive &file) {
 }
 
 void BigPicture::draw(int x, int y, int style, int angle) {
-	if (_bitmap)
+	if (!_bitmap)
 		init();
 
 	if (_bitmap) {
