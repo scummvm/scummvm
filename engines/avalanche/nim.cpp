@@ -359,8 +359,7 @@ bool Nim::checkInput() {
 			}
 		}
 	}
-
-
+	return false;
 }
 
 void Nim::takeSome() {
