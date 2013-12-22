@@ -1406,13 +1406,15 @@ void Lua_V1::GetVisibleThings() {
 	lua_Object result = lua_createtable();
 
 	// TODO verify code below
-	foreach (Actor *a, g_grim->getActiveActors()) {
-		// Consider the active actor visible
-		if (actor == a || actor->getYawTo(a) < 90) {
-			lua_pushobject(result);
-			lua_pushusertag(a->getId(), MKTAG('A','C','T','R'));
-			lua_pushnumber(1);
-			lua_settable();
+	if (actor->isInSet(g_grim->getCurrSet()->getName())) {
+		foreach (Actor *a, g_grim->getActiveActors()) {
+			// Consider the active actor visible
+			if (actor == a || actor->getYawTo(a) < 90) {
+				lua_pushobject(result);
+				lua_pushusertag(a->getId(), MKTAG('A','C','T','R'));
+				lua_pushnumber(1);
+				lua_settable();
+			}
 		}
 	}
 	lua_pushobject(result);
