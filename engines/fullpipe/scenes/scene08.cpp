@@ -175,8 +175,48 @@ void sceneHandler08_resumeFlight() {
 	g_vars->scene08_var07 = 0;
 }
 
+void sceneHandler08_calcOffset() {
+	warning("STUB: sceneHandler08_calcOffset()");
+}
+
+void sceneHandler08_pushCallback(int *par) {
+	warning("STUB: sceneHandler08_pushCallback()");
+}
+
+int sceneHandler08_updateScreenCallback() {
+	int res;
+
+	res = g_fp->drawArcadeOverlay(g_vars->scene08_var06);
+
+	if (!res)
+		g_fp->_updateScreenCallback = 0;
+
+	return res;
+}
+
 void sceneHandler08_startArcade() {
-	warning("STUB: sceneHandler08_startArcade()");
+	g_vars->scene08_var06 = 1;
+	g_vars->scene08_var01 = 1;
+	g_vars->scene08_var02 = 0;
+	g_vars->scene08_var03 = 0;
+
+	getGameLoaderInteractionController()->disableFlag24();
+	getCurrSceneSc2MotionController()->clearEnabled();
+
+	g_vars->scene08_batuta->stopAnim_maybe();
+
+	g_vars->scene08_vmyats->_statics = g_vars->scene08_vmyats->getStaticsById(ST_VMT_MIN);
+	g_vars->scene08_vmyats->setOXY(382, 703);
+	g_vars->scene08_vmyats->_priority = 29;
+	g_vars->scene08_vmyats->_callback2 = sceneHandler08_pushCallback;
+
+	g_fp->_aniMan = g_fp->_currentScene->getStaticANIObject1ById(ANI_MAN, -1);
+
+	g_vars->scene08_var08 = 15;
+
+	g_fp->_currentScene->_y = 0;
+
+	g_fp->_updateScreenCallback = sceneHandler08_updateScreenCallback;
 }
 
 void sceneHandler08_airMoves() {
@@ -348,25 +388,6 @@ void sceneHandler08_checkEndArcade() {
 			ex->postMessage();
 		}
 	}
-}
-
-void sceneHandler08_calcOffset() {
-	warning("STUB: sceneHandler08_calcOffset()");
-}
-
-void sceneHandler08_pushCallback(int *par) {
-	warning("STUB: sceneHandler08_pushCallback()");
-}
-
-int sceneHandler08_updateScreenCallback() {
-	int res;
-
-	res = g_fp->drawArcadeOverlay(g_vars->scene08_var06);
-
-	if (!res)
-		g_fp->_updateScreenCallback = 0;
-
-	return res;
 }
 
 int sceneHandler08(ExCommand *cmd) {
