@@ -209,6 +209,8 @@ namespace Fullpipe {
 #define MV_MAN6_TAKEBALL 2691
 #define MV_MAN6_THROWBALL 2692
 #define MV_MAN8_BADLUCK 783
+#define MV_MAN8_HANDSDOWN 772
+#define MV_MAN8_HANDSUP 777
 #define MV_MAN8_JUMPOFF 2969
 #define MV_MAN8_SITDOWN 2968
 #define MV_MANHDL_HANDLEDOWN 630
@@ -233,6 +235,7 @@ namespace Fullpipe {
 #define MV_SC7_BOX_default 792
 #define MV_SPK4_PLAY 3276
 #define MV_SPR_LOWER 543
+#define MV_VMT_DEF 765
 #define PIC_CMN_EVAL 3468
 #define PIC_CSR_DEFAULT 4891
 #define PIC_CSR_DEFAULT_INV 4892
@@ -456,6 +459,7 @@ namespace Fullpipe {
 #define ST_MAN_UP 449
 #define ST_MAN6_BALL 2688
 #define ST_MAN8_FLYDOWN 771
+#define ST_MAN8_FLYUP 769
 #define ST_MAN8_HANDSUP 773
 #define ST_MOM_SITS 659
 #define ST_MOM_STANDS 658

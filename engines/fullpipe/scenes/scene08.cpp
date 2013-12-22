@@ -218,8 +218,87 @@ void sceneHandler08_jumpLogic(ExCommand *cmd) {
   }
 }
 
+void sceneHandler08_badLuck() {
+	g_fp->_currentScene->getPictureObjectById(PIC_SC8_LADDER, 0)->_flags &= 0xFFFB;
+
+	g_fp->_aniMan->changeStatics2(ST_MAN8_HANDSUP);
+	g_fp->_aniMan->setOXY(376, 280);
+	g_fp->_aniMan->_priority = 10;
+
+	MessageQueue *mq = new MessageQueue(g_fp->_globalMessageQueueList->compact());
+
+	ExCommand *ex = new ExCommand(g_fp->_aniMan->_id, 1, MV_MAN8_BADLUCK, 0, 0, 0, 1, 0, 0, 0);
+	ex->_excFlags |= 2;
+	ex->_keyCode = g_fp->_aniMan->_okeyCode;
+	mq->addExCommandToEnd(ex);
+
+	mq->setFlags(mq->getFlags() | 1);
+	mq->chain(0);
+
+	g_fp->setObjectState(sO_StairsUp_8, g_fp->getObjectEnumState(sO_StairsUp_8, sO_NotBroken));
+
+	g_vars->scene08_var01 = 0;
+}
+
+void sceneHandler08_sitDown() {
+	g_fp->_aniMan->setOXY(380, g_fp->_aniMan->_oy);
+
+	g_fp->_aniMan->changeStatics2(ST_MAN8_FLYDOWN);
+	g_fp->_aniMan->startAnim(MV_MAN8_SITDOWN, 0, -1);
+
+	g_vars->scene08_vmyats->changeStatics2(ST_VMT_MIN);
+	g_vars->scene08_vmyats->hide();
+
+	g_vars->scene08_var01 = 0;
+	g_vars->scene08_var03 = 1;
+}
+
 void sceneHandler08_calcFlight() {
-	warning("STUB: sceneHandler08_calcFlight()");
+	Common::Point point;
+	int y = g_vars->scene08_var08 + g_fp->_aniMan->_oy;
+
+	g_fp->_aniMan->setOXY(g_fp->_aniMan->_ox, y);
+
+	g_vars->scene08_var08 += 2;
+
+	if (g_vars->scene08_var08 < g_vars->scene08_var04)
+		g_vars->scene08_var08 = g_vars->scene08_var04;
+
+	y = y + g_fp->_aniMan->getSomeXY(point)->y;
+
+	if (g_fp->_aniMan->_statics && g_fp->_aniMan->_statics->_staticsId == ST_MAN8_FLYDOWN)
+		y -= 25;
+
+	if (y <= g_vars->scene08_vmyats->_oy) {
+		g_vars->scene08_vmyats->hide();
+	} else {
+		g_vars->scene08_vmyats->show1(-1, -1, -1, 0);
+
+		if (!g_vars->scene08_vmyats->_movement)
+			g_vars->scene08_vmyats->startAnim(MV_VMT_DEF, 0, -1);
+	}
+
+	if (g_fp->_aniMan->_oy <= 280 && g_vars->scene08_var07 && g_fp->_aniMan->_statics && g_fp->_aniMan->_statics->_staticsId == ST_MAN8_HANDSUP) {
+		sceneHandler08_badLuck();
+	} else if (g_fp->_aniMan->_oy > 236 || g_vars->scene08_var07 || !g_fp->_aniMan->_statics || g_fp->_aniMan->_statics->_staticsId != ST_MAN8_HANDSUP) {
+		if (g_fp->_aniMan->_movement || g_fp->_aniMan->_oy < 660 
+			 || (g_vars->scene08_vmyats->_movement && g_vars->scene08_vmyats->_movement->_currDynamicPhaseIndex > 0) 
+			|| abs(g_vars->scene08_var08) > 2) {
+			if (g_vars->scene08_var08 >= 0 && !g_fp->_aniMan->_movement) {
+				if (g_fp->_aniMan->_statics->_staticsId == ST_MAN8_HANDSUP)
+					g_fp->_aniMan->startAnim(MV_MAN8_HANDSDOWN, 0, -1);
+				else
+					g_fp->_aniMan->changeStatics2(ST_MAN8_FLYDOWN);
+			}
+
+			if (g_fp->_aniMan->_oy < 500 && !g_fp->_aniMan->_movement && g_fp->_aniMan->_statics->_staticsId == ST_MAN8_FLYUP && g_vars->scene08_var08 < 0)
+				g_fp->_aniMan->startAnim(MV_MAN8_HANDSUP, 0, -1);
+		} else {
+			sceneHandler08_sitDown();
+		}
+	} else {
+		sceneHandler08_enterUp();
+	}
 }
 
 void sceneHandler08_checkEndArcade() {
@@ -245,47 +324,12 @@ void sceneHandler08_checkEndArcade() {
 	}
 }
 
-void sceneHandler08_badLuck() {
-	g_fp->_currentScene->getPictureObjectById(PIC_SC8_LADDER, 0)->_flags &= 0xFFFB;
-
-	g_fp->_aniMan->changeStatics2(ST_MAN8_HANDSUP);
-	g_fp->_aniMan->setOXY(376, 280);
-	g_fp->_aniMan->_priority = 10;
-
-	MessageQueue *mq = new MessageQueue(g_fp->_globalMessageQueueList->compact());
-
-	ExCommand *ex = new ExCommand(g_fp->_aniMan->_id, 1, MV_MAN8_BADLUCK, 0, 0, 0, 1, 0, 0, 0);
-	ex->_excFlags |= 2;
-	ex->_keyCode = g_fp->_aniMan->_okeyCode;
-	mq->addExCommandToEnd(ex);
-
-	mq->setFlags(mq->getFlags() | 1);
-	mq->chain(0);
-
-	g_fp->setObjectState(sO_StairsUp_8, g_fp->getObjectEnumState(sO_StairsUp_8, sO_NotBroken));
-
-	g_vars->scene08_var01 = 0;
-}
-
 void sceneHandler08_calcOffset() {
 	warning("STUB: sceneHandler08_calcOffset()");
 }
 
 void sceneHandler08_pushCallback(int *par) {
 	warning("STUB: sceneHandler08_pushCallback()");
-}
-
-void sceneHandler08_sitDown() {
-	g_fp->_aniMan->setOXY(380, g_fp->_aniMan->_oy);
-
-	g_fp->_aniMan->changeStatics2(ST_MAN8_FLYDOWN);
-	g_fp->_aniMan->startAnim(MV_MAN8_SITDOWN, 0, -1);
-
-	g_vars->scene08_vmyats->changeStatics2(ST_VMT_MIN);
-	g_vars->scene08_vmyats->hide();
-
-	g_vars->scene08_var01 = 0;
-	g_vars->scene08_var03 = 1;
 }
 
 int sceneHandler08_updateScreenCallback() {
