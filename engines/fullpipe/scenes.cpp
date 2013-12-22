@@ -146,8 +146,8 @@ Vars::Vars() {
 	scene08_batuta = 0;
 	scene08_vmyats = 0;
 	scene08_clock = 0;
-	scene08_var01 = 0;
-	scene08_var02 = 0;
+	scene08_inArcade = false;
+	scene08_flyingUp = false;
 	scene08_var03 = 0;
 	scene08_var04 = 0;
 	scene08_var05 = 0;

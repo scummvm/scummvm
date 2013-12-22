@@ -38,8 +38,8 @@ namespace Fullpipe {
 
 void scene08_initScene(Scene *sc) {
 	g_vars->scene08_var06 = 0;
-	g_vars->scene08_var01 = 0;
-	g_vars->scene08_var02 = 0;
+	g_vars->scene08_inArcade = false;
+	g_vars->scene08_flyingUp = false;
 	g_vars->scene08_var03 = 0;
 	g_vars->scene08_batuta = sc->getStaticANIObject1ById(ANI_BATUTA, -1);
 	g_vars->scene08_vmyats = sc->getStaticANIObject1ById(ANI_VMYATS, -1);
@@ -141,7 +141,7 @@ void sceneHandler08_enterUp() {
 
 	chainObjQueue(g_fp->_aniMan, QU_SC8_FINISH, 1);
 
-	g_vars->scene08_var01 = 0;
+	g_vars->scene08_inArcade = false;
 }
 
 void sceneHandler08_winArcade() {
@@ -172,7 +172,7 @@ void sceneHandler08_arcadeNow() {
 void sceneHandler08_resumeFlight() {
 	g_vars->scene08_var08 = 3;
 	g_vars->scene08_var04 = -39;
-	g_vars->scene08_var01 = 1;
+	g_vars->scene08_inArcade = true;
 	g_vars->scene08_var07 = 0;
 }
 
@@ -219,8 +219,8 @@ int sceneHandler08_updateScreenCallback() {
 
 void sceneHandler08_startArcade() {
 	g_vars->scene08_var06 = 1;
-	g_vars->scene08_var01 = 1;
-	g_vars->scene08_var02 = 0;
+	g_vars->scene08_inArcade = true;
+	g_vars->scene08_flyingUp = false;
 	g_vars->scene08_var03 = 0;
 
 	getGameLoaderInteractionController()->disableFlag24();
@@ -326,7 +326,7 @@ void sceneHandler08_badLuck() {
 
 	g_fp->setObjectState(sO_StairsUp_8, g_fp->getObjectEnumState(sO_StairsUp_8, sO_NotBroken));
 
-	g_vars->scene08_var01 = 0;
+	g_vars->scene08_inArcade = false;
 }
 
 void sceneHandler08_sitDown() {
@@ -338,7 +338,7 @@ void sceneHandler08_sitDown() {
 	g_vars->scene08_vmyats->changeStatics2(ST_VMT_MIN);
 	g_vars->scene08_vmyats->hide();
 
-	g_vars->scene08_var01 = 0;
+	g_vars->scene08_inArcade = false;
 	g_vars->scene08_var03 = 1;
 }
 
@@ -391,7 +391,7 @@ void sceneHandler08_calcFlight() {
 }
 
 void sceneHandler08_checkEndArcade() {
-	if (g_vars->scene08_var02) {
+	if (g_vars->scene08_flyingUp) {
 		int x = g_fp->_aniMan->_ox;
 		int y = g_vars->scene08_var08 + g_fp->_aniMan->_oy;
 
@@ -436,7 +436,7 @@ int sceneHandler08(ExCommand *cmd) {
 		g_vars->scene08_vmyats->setOXY(382, 703);
 		g_vars->scene08_vmyats->_priority = 29;
 		g_vars->scene08_vmyats->_callback2 = sceneHandler08_pushCallback;
-		g_vars->scene08_var01 = 1;
+		g_vars->scene08_inArcade = true;
 		break;
 
 	case MSG_SC8_ARCADENOW:
@@ -449,7 +449,7 @@ int sceneHandler08(ExCommand *cmd) {
 
 	case MSG_SC8_GETHIMUP:
 		g_vars->scene08_var08 = 0;
-		g_vars->scene08_var02 = 1;
+		g_vars->scene08_flyingUp = true;
 		break;
 
 	case MSG_STARTARCADE:
@@ -458,7 +458,7 @@ int sceneHandler08(ExCommand *cmd) {
 
 	case 29:
 		if (g_vars->scene08_var06) {
-			if (g_vars->scene08_var01) {
+			if (g_vars->scene08_inArcade) {
 				sceneHandler08_airMoves();
 				break;
 			}
@@ -504,7 +504,7 @@ int sceneHandler08(ExCommand *cmd) {
 			g_fp->_floaters->update();
 
 			if (g_vars->scene08_var06) {
-				if (g_vars->scene08_var01)
+				if (g_vars->scene08_inArcade)
 					sceneHandler08_calcFlight();
 			} else {
 				Movement *mov = g_fp->_aniMan->_movement;
@@ -521,7 +521,7 @@ int sceneHandler08(ExCommand *cmd) {
 				g_fp->startSceneTrack();
 			}
 
-			if (g_vars->scene08_var02)
+			if (g_vars->scene08_flyingUp)
 				sceneHandler08_checkEndArcade();
 
 			if (g_vars->scene08_var05 > 0) {
