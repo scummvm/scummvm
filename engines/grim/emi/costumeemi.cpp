@@ -243,9 +243,10 @@ bool EMICostume::restoreState(SaveGame *state) override {
 }
 
 Material *EMICostume::findSharedMaterial(const Common::String &name) {
+	Common::String fixedName = g_resourceloader->fixFilename(name, false);
 	Common::List<Material *>::iterator it = _materials.begin();
 	for (; it != _materials.end(); ++it)
-		if ((*it)->getFilename() == name)
+		if ((*it)->getFilename() == fixedName)
 			return *it;
 
 	Material *mat = g_resourceloader->loadMaterial(name.c_str(), NULL);
