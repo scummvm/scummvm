@@ -175,12 +175,34 @@ void sceneHandler08_resumeFlight() {
 	g_vars->scene08_var07 = 0;
 }
 
-void sceneHandler08_calcOffset() {
-	warning("STUB: sceneHandler08_calcOffset()");
+int sceneHandler08_calcOffset(int off, int flag) {
+	if (off > 0) {
+		if (flag)
+			return off * 31 / 10; // off * 3.1
+		else
+			return 5 * off;
+	} else {
+		return 5 * off;
+	}
 }
 
 void sceneHandler08_pushCallback(int *par) {
-	warning("STUB: sceneHandler08_pushCallback()");
+	Common::Point point;
+
+	int y = g_fp->_aniMan->_oy + g_fp->_aniMan->getSomeXY(point)->y;
+
+	if (g_fp->_aniMan->_statics && g_fp->_aniMan->_statics->_staticsId == ST_MAN8_FLYDOWN)
+		y -= 25;
+
+	*par = (y - 703) / 10;
+	if (*par > 11) {
+		*par = 11;
+		g_vars->scene08_var08 = 0;
+	}
+	if (*par >= 0)
+		g_vars->scene08_var08 -= sceneHandler08_calcOffset(*par, g_vars->scene08_var08 < 0);
+	else
+		*par = 0;
 }
 
 int sceneHandler08_updateScreenCallback() {
