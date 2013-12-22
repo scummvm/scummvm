@@ -227,12 +227,21 @@ int EMICostume::update(uint time) {
 
 void EMICostume::saveState(SaveGame *state) const {
 	Costume::saveState(state);
+	Common::List<Material *>::const_iterator it = _materials.begin();
+	for (; it != _materials.end(); ++it) {
+		state->writeLESint32((*it)->getActiveTexture());
+	}
 	state->writeLESint32(_wearChore ? _wearChore->getChoreId() : -1);
 }
 
 bool EMICostume::restoreState(SaveGame *state) override {
 	bool ret = Costume::restoreState(state);
 	if (ret) {
+		Common::List<Material *>::const_iterator it = _materials.begin();
+		for (; it != _materials.end(); ++it) {
+			(*it)->setActiveTexture(state->readLESint32());
+		}
+
 		int id = state->readLESint32();
 		if (id >= 0) {
 			EMIChore *chore = static_cast<EMIChore *>(_chores[id]);
