@@ -103,7 +103,8 @@ void scene08_initScene(Scene *sc) {
 }
 
 void scene08_setupMusic() {
-	warning("STUB: scene08_setupMusic()");
+	if (g_fp->getObjectState(sO_TummyTrampie) == g_fp->getObjectEnumState(sO_TummyTrampie, sO_IsSleeping))
+		g_fp->playTrack(g_fp->getGameLoaderGameVar()->getSubVarByName("SC_8"), "MUSIC_ARCADE", 1);
 }
 
 int scene08_updateCursor() {

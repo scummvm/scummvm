@@ -149,6 +149,7 @@ public:
 	void stopAllSounds();
 	void toggleMute();
 	void playSound(int id, int flag);
+	void playTrack(GameVar *sceneVar, const char *name, bool delayed);
 	void startSceneTrack();
 	void stopSoundStream2();
 	void stopAllSoundStreams();

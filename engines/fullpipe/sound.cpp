@@ -128,7 +128,11 @@ void FullpipeEngine::toggleMute() {
 }
 
 void FullpipeEngine::playSound(int id, int flag) {
-	warning("STUB: FullpipeEngine::playSounds(%d, %d)", id, flag);
+	warning("STUB: FullpipeEngine::playSound(%d, %d)", id, flag);
+}
+
+void FullpipeEngine::playTrack(GameVar *sceneVar, const char *name, bool delayed) {
+	warning("STUB: FullpipeEngine::playTrack(var, %s, %d)", name, delayed);
 }
 
 void global_messageHandler_handleSound(ExCommand *cmd) {
