@@ -32,6 +32,7 @@
 #include "buried/environ/scene_common.h"
 
 #include "common/system.h"
+#include "graphics/surface.h"
 
 namespace Buried {
 
@@ -79,6 +80,56 @@ int NormalTransporter::specifyCursor(Window *viewWindow, const Common::Point &po
 	return kCursorArrow;
 }
 
+class EntryWithoutLensFilter : public SceneBase {
+public:
+	EntryWithoutLensFilter(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
+	int paint(Window *viewWindow, Graphics::Surface *preBuffer);
+	int timerCallback(Window *viewWindow);
+
+private:
+	bool _transPlayed;
+};
+
+EntryWithoutLensFilter::EntryWithoutLensFilter(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_transPlayed = false;
+}
+
+int EntryWithoutLensFilter::postEnterRoom(Window *viewWindow, const Location &priorLocation) {
+	_vm->_sound->playSynchronousSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 8));
+
+	Common::String text;
+	if (_vm->getVersion() >= MAKEVERSION(1, 0, 4, 0))
+		text = _vm->getString(IDS_AS_VISIBILITY_MESSAGE);
+	else
+		text = "Alert: No visible light waves detected. Jumpsuit's built-in light source ineffective.";
+
+	((SceneViewWindow *)viewWindow)->displayLiveText(text);
+	return SC_TRUE;
+}
+
+int EntryWithoutLensFilter::paint(Window *viewWindow, Graphics::Surface *preBuffer) {
+	preBuffer->fillRect(Common::Rect(432, 189), _vm->_gfx->getColor(0, 0, 0));
+	return SC_REPAINT;
+}
+
+int EntryWithoutLensFilter::timerCallback(Window *viewWindow) {
+	if (!_transPlayed && ((SceneViewWindow *)viewWindow)->getGlobalFlags().lensFilterActivated == 1) {
+		_transPlayed = true;
+		DestinationScene destData;
+		destData.destinationScene = _staticData.location;
+		destData.destinationScene.depth = 0;
+		destData.transitionType = TRANSITION_NONE;
+		destData.transitionData = -1;
+		destData.transitionStartFrame = -1;
+		destData.transitionLength = -1;
+		((SceneViewWindow *)viewWindow)->moveToDestination(destData);
+	}
+
+	return SC_TRUE;
+}
+
 bool SceneViewWindow::initializeAlienTimeZoneAndEnvironment(Window *viewWindow, int environment) {
 	if (environment == -1) {
 		GlobalFlags &flags = ((SceneViewWindow *)viewWindow)->getGlobalFlags();
@@ -109,6 +160,8 @@ SceneBase *SceneViewWindow::constructAlienSceneObject(Window *viewWindow, const 
 	switch (sceneStaticData.classID) {
 	case 12:
 		return new NormalTransporter(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 13:
+		return new EntryWithoutLensFilter(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 50:
 		return new PlayStingers(_vm, viewWindow, sceneStaticData, priorLocation, 127, offsetof(GlobalFlags, asRBLastStingerID), offsetof(GlobalFlags, asRBStingerID), 10, 14);
 	}
