@@ -23,9 +23,12 @@
  *
  */
 
+#include "buried/biochip_right.h"
 #include "buried/buried.h"
+#include "buried/gameui.h"
 #include "buried/graphics.h"
 #include "buried/invdata.h"
+#include "buried/inventory_window.h"
 #include "buried/resources.h"
 #include "buried/scene_view.h"
 #include "buried/sound.h"
@@ -36,6 +39,241 @@
 #include "graphics/surface.h"
 
 namespace Buried {
+
+class RetrieveFromPods : public SceneBase {
+public:
+	RetrieveFromPods(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+			int doorLeft = -1, int doorTop = -1, int doorRight = -1, int doorBottom = -1, int openAnim = -1, int openNormFrame = -1,
+			int popAnim = -1, int openPoppedAnim = -1, int openPoppedFrame = -1, int grabLeft = -1, int grabTop = -1, int grabRight = -1,
+			int grabBottom = -1, int openEmptyAnim = -1, int openEmptyFrame = -1, int itemID = -1, int takenFlagOffset = -1,
+			int podStatusFlagOffset = -1, int returnDepth = -1, int popSwordAnim = -1);
+	virtual int mouseDown(Window *viewWindow, const Common::Point &pointLocation);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int draggingItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
+	int droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
+	virtual int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+protected:
+	Common::Rect _openDoor;
+	Common::Rect _grabObject;
+	int _itemID;
+	int _itemFlagOffset;
+	int _podStatusFlagOffset;
+	int _openNormFrame;
+	int _openPoppedFrame;
+	int _openEmptyFrame;
+	int _openAnim;
+	int _popAnim;
+	int _openPoppedAnim;
+	int _openEmptyAnim;
+	int _popSwordAnim;
+	int _returnDepth;
+	bool _doorOpen;
+};
+
+RetrieveFromPods::RetrieveFromPods(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+		int doorLeft, int doorTop, int doorRight, int doorBottom, int openAnim, int openNormFrame,
+		int popAnim, int openPoppedAnim, int openPoppedFrame, int grabLeft, int grabTop, int grabRight,
+		int grabBottom, int openEmptyAnim, int openEmptyFrame, int itemID, int takenFlagOffset,
+		int podStatusFlagOffset, int returnDepth, int popSwordAnim) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_openDoor = Common::Rect(doorLeft, doorTop, doorRight, doorBottom);
+	_grabObject = Common::Rect(grabLeft, grabTop, grabRight, grabBottom);
+	_itemID = itemID;
+	_itemFlagOffset = takenFlagOffset;
+	_podStatusFlagOffset = podStatusFlagOffset;
+	_openNormFrame = openNormFrame;
+	_openPoppedFrame = openPoppedFrame;
+	_openEmptyFrame = openEmptyFrame;
+	_openAnim = openAnim;
+	_popAnim = popAnim;
+	_openPoppedAnim = openPoppedAnim;
+	_openEmptyAnim = openEmptyAnim;
+	_returnDepth = returnDepth;
+	_doorOpen = false;
+	_popSwordAnim = popSwordAnim;
+}
+
+int RetrieveFromPods::mouseDown(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_doorOpen && _grabObject.contains(pointLocation) && ((SceneViewWindow *)viewWindow)->getGlobalFlagByte(_podStatusFlagOffset) == 1 && ((SceneViewWindow *)viewWindow)->getGlobalFlagByte(_itemFlagOffset) == 0) {
+		_staticData.navFrameIndex = _openEmptyFrame;
+		((SceneViewWindow *)viewWindow)->setGlobalFlagByte(_itemFlagOffset, 1);
+		((SceneViewWindow *)viewWindow)->setGlobalFlagByte(_podStatusFlagOffset, 2);
+
+		// Begin dragging
+		Common::Point ptInventoryWindow = viewWindow->convertPointToGlobal(pointLocation);
+		ptInventoryWindow = ((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->convertPointToLocal(ptInventoryWindow);
+		((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->startDraggingNewItem(_itemID, ptInventoryWindow);
+
+		// Update the biochips
+		((GameUIWindow *)viewWindow->getParent())->_bioChipRightWindow->sceneChanged();
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int RetrieveFromPods::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	if (!_doorOpen && _openDoor.contains(pointLocation)) {
+		_doorOpen = true;
+
+		switch (((SceneViewWindow *)viewWindow)->getGlobalFlagByte(_podStatusFlagOffset)) {
+		case 0:
+			((SceneViewWindow *)viewWindow)->playSynchronousAnimation(_openAnim);
+			_staticData.navFrameIndex = _openNormFrame;
+			break;
+		case 1:
+			((SceneViewWindow *)viewWindow)->playSynchronousAnimation(_openPoppedAnim);
+			_staticData.navFrameIndex = _openPoppedFrame;
+			break;
+		case 2:
+			((SceneViewWindow *)viewWindow)->playSynchronousAnimation(_openEmptyAnim);
+			_staticData.navFrameIndex = _openEmptyFrame;
+			break;
+		}
+
+		return SC_TRUE;
+	}
+
+	if (_returnDepth >= 0) {
+		DestinationScene destData;
+		destData.destinationScene = _staticData.location;
+		destData.destinationScene.depth = _returnDepth;
+		destData.transitionType = TRANSITION_NONE;
+		destData.transitionData = -1;
+		destData.transitionStartFrame = -1;
+		destData.transitionLength = -1;
+		((SceneViewWindow *)viewWindow)->moveToDestination(destData);
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int RetrieveFromPods::draggingItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) {
+	if (itemID == kItemExplosiveCharge || itemID == kItemRichardsSword) {
+		if (_doorOpen && _openDoor.contains(pointLocation) && ((SceneViewWindow *)viewWindow)->getGlobalFlagByte(_podStatusFlagOffset) == 0)
+			return 1;
+
+		return 0;
+	}
+
+	if (itemID == _itemID && _doorOpen && _grabObject.contains(pointLocation) && ((SceneViewWindow *)viewWindow)->getGlobalFlagByte(_itemFlagOffset) == 1 && ((SceneViewWindow *)viewWindow)->getGlobalFlagByte(_podStatusFlagOffset) == 2)
+		return 1;
+
+	return 0;
+}
+
+int RetrieveFromPods::droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) {
+	if ((itemID == kItemExplosiveCharge || itemID == kItemRichardsSword) && _doorOpen && _openDoor.contains(pointLocation) && ((SceneViewWindow *)viewWindow)->getGlobalFlagByte(_podStatusFlagOffset) == 0) {
+		// Play the popping movie and change the still frame
+		if (itemID == kItemRichardsSword && _popSwordAnim >= 0)
+			((SceneViewWindow *)viewWindow)->playSynchronousAnimation(_popSwordAnim);
+		else
+			((SceneViewWindow *)viewWindow)->playSynchronousAnimation(_popAnim);
+
+		_staticData.navFrameIndex = _openPoppedFrame;
+
+		((SceneViewWindow *)viewWindow)->setGlobalFlagByte(_podStatusFlagOffset, 1);
+
+		// If in walkthrough mode, open all the pods
+		if (((SceneViewWindow *)viewWindow)->getGlobalFlags().generalWalkthroughMode == 1) {
+			((SceneViewWindow *)viewWindow)->getGlobalFlags().asRBPodAStatus = 1;
+			((SceneViewWindow *)viewWindow)->getGlobalFlags().asRBPodBStatus = 1;
+			((SceneViewWindow *)viewWindow)->getGlobalFlags().asRBPodCStatus = 1;
+			((SceneViewWindow *)viewWindow)->getGlobalFlags().asRBPodDStatus = 1;
+			((SceneViewWindow *)viewWindow)->getGlobalFlags().asRBPodEStatus = 1;
+			((SceneViewWindow *)viewWindow)->getGlobalFlags().asRBPodFStatus = 1;
+		}
+
+		// Explosive charge doesn't get returned
+		if (itemID == kItemExplosiveCharge)
+			return SIC_ACCEPT;
+
+		// Sword does
+		return SIC_REJECT;
+	}
+
+	if (itemID == _itemID && _doorOpen) {
+		if (pointLocation.x == -1 && pointLocation.y == -1) {
+			((SceneViewWindow *)viewWindow)->getGlobalFlags().asTakenEvidenceThisTrip = 1;
+
+			InventoryWindow *invWindow = ((GameUIWindow *)viewWindow->getParent())->_inventoryWindow;
+			if (invWindow->isItemInInventory(kItemEnvironCart) && invWindow->isItemInInventory(kItemMayanPuzzleBox) && invWindow->isItemInInventory(kItemCodexAtlanticus) && invWindow->isItemInInventory(kItemInteractiveSculpture) && invWindow->isItemInInventory(kItemRichardsSword))
+				((SceneViewWindow *)viewWindow)->getGlobalFlags().scoreGotKrynnArtifacts = 1;
+		} else if (_grabObject.contains(pointLocation) && ((SceneViewWindow *)viewWindow)->getGlobalFlagByte(_itemFlagOffset) == 1 && ((SceneViewWindow *)viewWindow)->getGlobalFlagByte(_podStatusFlagOffset) == 2) {
+			// Change the still frame to reflect the return of the inventory item
+			_staticData.navFrameIndex = _openPoppedFrame;
+			viewWindow->invalidateWindow(false);
+
+			// Reset flags
+			((SceneViewWindow *)viewWindow)->setGlobalFlagByte(_itemFlagOffset, 0);
+			((SceneViewWindow *)viewWindow)->setGlobalFlagByte(_podStatusFlagOffset, 1);
+			return SIC_ACCEPT;
+		}
+	}
+
+	return SIC_REJECT;
+}
+
+class DoubleZoomIn : public SceneBase {
+public:
+	DoubleZoomIn(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+			int leftA, int topA, int rightA, int bottomA, int depthA, int leftB, int topB, int rightB, int bottomB, int depthB);
+	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+
+private:
+	Common::Rect _zoomRegion[2];
+	int _zoomDest[2];
+};
+
+DoubleZoomIn::DoubleZoomIn(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
+		int leftA, int topA, int rightA, int bottomA, int depthA, int leftB, int topB, int rightB, int bottomB, int depthB) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	_zoomRegion[0] = Common::Rect(leftA, topA, rightA, bottomA);
+	_zoomRegion[1] = Common::Rect(leftB, topB, rightB, bottomB);
+	_zoomDest[0] = depthA;
+	_zoomDest[1] = depthB;
+}
+
+int DoubleZoomIn::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
+	for (int i = 0; i < 2; i++) {
+		if (_zoomRegion[i].contains(pointLocation)) {
+			DestinationScene destData;
+			destData.destinationScene = _staticData.location;
+			destData.destinationScene.depth = _zoomDest[i];
+			destData.transitionType = TRANSITION_NONE;
+			destData.transitionData = -1;
+			destData.transitionStartFrame = -1;
+			destData.transitionLength = -1;
+			((SceneViewWindow *)viewWindow)->moveToDestination(destData);
+			return SC_TRUE;
+		}
+	}
+
+	return SC_FALSE;
+}
+
+int DoubleZoomIn::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_zoomRegion[0].contains(pointLocation) || _zoomRegion[1].contains(pointLocation))
+		return kCursorMagnifyingGlass;
+
+	return kCursorArrow;
+}
+
+int RetrieveFromPods::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_openDoor.contains(pointLocation) && !_doorOpen)
+		return kCursorFinger;
+
+	if (_grabObject.contains(pointLocation) && _itemFlagOffset >= 0 && ((SceneViewWindow *)viewWindow)->getGlobalFlagByte(_podStatusFlagOffset) == 1 && ((SceneViewWindow *)viewWindow)->getGlobalFlagByte(_itemFlagOffset) == 0)
+		return kCursorOpenHand;
+
+	if (_returnDepth >= 0)
+		return kCursorPutDown;
+
+	return kCursorArrow;
+}
 
 class NerveNavigation : public SceneBase {
 public:
@@ -526,6 +764,40 @@ int InorganicPodTransDeath::specifyCursor(Window *viewWindow, const Common::Poin
 	return kCursorArrow;
 }
 
+class CheeseGirlPod : public RetrieveFromPods {
+public:
+	CheeseGirlPod(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int mouseDown(Window *viewWindow, const Common::Point &pointLocation);
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+};
+
+CheeseGirlPod::CheeseGirlPod(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		RetrieveFromPods(vm, viewWindow, sceneStaticData, priorLocation, 128, 0, 352, 189, 20, 76, 21, 22, 77, 170, 54, 252, 156, 23, 78, -1, -1, offsetof(GlobalFlags, asRBPodFStatus), 0, 28) {
+}
+
+int CheeseGirlPod::mouseDown(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_doorOpen && _grabObject.contains(pointLocation) && ((SceneViewWindow *)viewWindow)->getGlobalFlagByte(_podStatusFlagOffset) == 1) {
+		((SceneViewWindow *)viewWindow)->playSynchronousAnimation(23);
+		return SC_TRUE;
+	}
+
+	return SC_FALSE;
+}
+
+int CheeseGirlPod::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
+	if (_openDoor.contains(pointLocation) && !_doorOpen)
+		return kCursorFinger;
+
+	// If we're over the grab region, use the finger cursor so we can click on Frank
+	if (_grabObject.contains(pointLocation) && ((SceneViewWindow *)viewWindow)->getGlobalFlagByte(_podStatusFlagOffset) == 1)
+		return kCursorFinger;
+
+	if (_returnDepth >= 0)
+		return kCursorPutDown;
+
+	return kCursorArrow;
+}
+
 bool SceneViewWindow::initializeAlienTimeZoneAndEnvironment(Window *viewWindow, int environment) {
 	if (environment == -1) {
 		GlobalFlags &flags = ((SceneViewWindow *)viewWindow)->getGlobalFlags();
@@ -570,6 +842,22 @@ SceneBase *SceneViewWindow::constructAlienSceneObject(Window *viewWindow, const 
 		return new NormalTransporter(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 13:
 		return new EntryWithoutLensFilter(_vm, viewWindow, sceneStaticData, priorLocation);
+	case 20:
+		return new RetrieveFromPods(_vm, viewWindow, sceneStaticData, priorLocation, 172, 46, 272, 166, 0, 61, 1, 2, 62, 198, 78, 248, 116, 3, 63, kItemEnvironCart, offsetof(GlobalFlags, asRBPodATakenEnvironCart), offsetof(GlobalFlags, asRBPodAStatus), -1, 29);
+	case 21:
+		return new DoubleZoomIn(_vm, viewWindow, sceneStaticData, priorLocation, 240, 88, 300, 178, 1, 100, 0, 160, 98, 2);
+	case 22:
+		return new RetrieveFromPods(_vm, viewWindow, sceneStaticData, priorLocation, 150, 0, 394, 189, 4, 64, 5, 6, 65, 190, 74, 312, 142, 7, 66, kItemMayanPuzzleBox, offsetof(GlobalFlags, asRBPodBTakenPuzzleBox), offsetof(GlobalFlags, asRBPodBStatus), 0, 25);
+	case 23:
+		return new RetrieveFromPods(_vm, viewWindow, sceneStaticData, priorLocation, 140, 8, 274, 189, 8, 67, 9, 10, 68, 176, 42, 232, 124, 11, 69, kItemCodexAtlanticus, offsetof(GlobalFlags, asRBPodCTakenCodex), offsetof(GlobalFlags, asRBPodCStatus), 0, 26);
+	case 24:
+		return new RetrieveFromPods(_vm, viewWindow, sceneStaticData, priorLocation, 100, 0, 280, 189, 12, 70, 13, 14, 71, 146, 60, 252, 156, 15, 72, kItemInteractiveSculpture, offsetof(GlobalFlags, asRBPodDTakenSculpture), offsetof(GlobalFlags, asRBPodDStatus), -1, 27);
+	case 25:
+		return new DoubleZoomIn(_vm, viewWindow, sceneStaticData, priorLocation, 256, 0, 322, 100, 1, 106, 84, 172, 189, 2);
+	case 26:
+		return new RetrieveFromPods(_vm, viewWindow, sceneStaticData, priorLocation, 134, 0, 276, 189, 16, 73, 17, 18, 74, 190, 4, 224, 166, 19, 75, kItemRichardsSword, offsetof(GlobalFlags, asRBPodETakenSword), offsetof(GlobalFlags, asRBPodEStatus), 0);
+	case 27:
+		return new CheeseGirlPod(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 30:
 		return new PlayPodAudio(_vm, viewWindow, sceneStaticData, priorLocation, 9, 10);
 	case 31:
