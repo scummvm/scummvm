@@ -229,6 +229,8 @@ namespace Fullpipe {
 #define MV_MOM_TAKE4 2888
 #define MV_MOM_TAKE5 2889
 #define MV_NDV_BLOW2 2855
+#define MV_NDV_DENIES 952
+#define MV_NDV_DENY_NOGUM 3022
 #define MV_OTM_BOXHANDLEDOWN 626
 #define MV_OTM_BOXHANDLEUP 627
 #define MV_OTM_HANDLEDOWN 620
@@ -345,6 +347,7 @@ namespace Fullpipe {
 #define QU_SC8_STANDUP 2975
 #define QU_SC10_ENTERLIFT 1067
 #define QU_SC10_EXITLIFT 2809
+#define QU_SC10_TAKEGUM 3026
 #define SC_1 301
 #define SC_10 653
 #define SC_11 654
@@ -469,6 +472,7 @@ namespace Fullpipe {
 #define ST_MOM_SITS 659
 #define ST_MOM_STANDS 658
 #define ST_NBL_NORM 1076
+#define ST_NDV_SIT 946
 #define ST_OTM_BOX_LEFT 429
 #define ST_OTM_GLS_LEFT 421
 #define ST_OTM_VNT_LEFT 434

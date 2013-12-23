@@ -31,6 +31,7 @@
 
 #include "fullpipe/behavior.h"
 #include "fullpipe/interaction.h"
+#include "fullpipe/motion.h"
 
 namespace Fullpipe {
 
@@ -74,7 +75,36 @@ int scene10_updateCursor() {
 }
 
 void sceneHandler10_clickGum() {
-	warning("STUB: sceneHandler10_clickGum()");
+	if (g_vars->scene10_hasGum) {
+		if (sceneHandler10_inflaterIsBlind()) {
+			if (g_vars->scene10_hasGum) {
+				int x = g_vars->scene10_gum->_ox - 139;
+				int y = g_vars->scene10_gum->_oy - 48;
+
+				if (abs(x - g_fp->_aniMan->_ox) > 1 || abs(y - g_fp->_aniMan->_oy) > 1) {
+					MessageQueue *mq = getCurrSceneSc2MotionController()->method34(g_fp->_aniMan, x, y, 1, ST_MAN_RIGHT);
+					if (mq) {
+						ExCommand *ex = new ExCommand(0, 17, MSG_SC10_CLICKGUM, 0, 0, 0, 1, 0, 0, 0);
+						ex->_excFlags = 2;
+						mq->addExCommandToEnd(ex);
+
+						postExCommand(g_fp->_aniMan->_id, 2, x, y, 0, -1);
+					}
+				} else {
+					g_vars->scene10_hasGum = 0;
+
+					chainQueue(QU_SC10_TAKEGUM, 1);
+				}
+			}
+		} else {
+			g_vars->scene10_inflater->changeStatics2(ST_NDV_SIT);
+
+			if (g_fp->getObjectState(sO_Inflater) == g_fp->getObjectEnumState(sO_Inflater, sO_WithGum))
+				g_vars->scene10_inflater->startAnim(MV_NDV_DENIES, 0, -1);
+			else
+				g_vars->scene10_inflater->startAnim(MV_NDV_DENY_NOGUM, 0, -1);
+		}
+	}
 }
 
 void sceneHandler10_hideGum() {
