@@ -919,15 +919,30 @@ void GfxPicture::vectorFloodFill(int16 x, int16 y, byte color, byte priority, by
 	}
 
 	// This logic was taken directly from sierra sci, floodfill will get aborted on various occations
-	if (screenMask & GFX_SCREEN_MASK_VISUAL) {
-		if ((color == _screen->getColorWhite()) || (searchColor != _screen->getColorWhite()))
-			return;
-	} else if (screenMask & GFX_SCREEN_MASK_PRIORITY) {
-		if ((priority == 0) || (searchPriority != 0))
-			return;
-	} else if (screenMask & GFX_SCREEN_MASK_CONTROL) {
-		if ((control == 0) || (searchControl != 0))
-			return;
+	if (isEGA) {
+		if (screenMask & GFX_SCREEN_MASK_VISUAL) {
+			if ((color == _screen->getColorWhite()) || (searchColor != _screen->getColorWhite()))
+				return;
+		} else if (screenMask & GFX_SCREEN_MASK_PRIORITY) {
+			if ((priority == 0) || (searchPriority != 0))
+				return;
+		} else if (screenMask & GFX_SCREEN_MASK_CONTROL) {
+			if ((control == 0) || (searchControl != 0))
+				return;
+		}
+	} else {
+		// VGA logic (SCI1 early w/o QfG2)
+		//  fixes Space Quest 4 orange ship lifting off (bug #6446)
+		if (screenMask & GFX_SCREEN_MASK_VISUAL) {
+			if (color == _screen->getColorWhite())
+				return;
+		} else if (screenMask & GFX_SCREEN_MASK_PRIORITY) {
+			if (priority == 0)
+				return;
+		} else if (screenMask & GFX_SCREEN_MASK_CONTROL) {
+			if (control == 0)
+				return;
+		}
 	}
 
 	// Now remove screens, that already got the right color/priority/control
