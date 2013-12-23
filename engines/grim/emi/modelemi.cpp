@@ -26,6 +26,7 @@
 #include "engines/grim/material.h"
 #include "engines/grim/gfx_base.h"
 #include "engines/grim/resource.h"
+#include "engines/grim/emi/costumeemi.h"
 #include "engines/grim/emi/modelemi.h"
 #include "engines/grim/emi/animationemi.h"
 #include "engines/grim/emi/skeleton.h"
@@ -245,7 +246,7 @@ void EMIModel::prepareTextures() {
 	for (uint32 i = 0; i < _numTextures; i++) {
 		// HACK: As we dont know what specialty-textures are yet, we skip loading them
 		if (!_texNames[i].contains("specialty"))
-			_mats[i] = g_resourceloader->loadMaterial(_texNames[i].c_str(), NULL);
+			_mats[i] = _costume->loadMaterial(_texNames[i]);
 		else
 			_mats[i] = g_driver->getSpecialtyTexture(_texNames[i][9] - '0');
 	}
@@ -273,7 +274,8 @@ void EMIModel::getBoundingBox(int *x1, int *y1, int *x2, int *y2) const {
 }
 
 
-EMIModel::EMIModel(const Common::String &filename, Common::SeekableReadStream *data, EMIModel *parent) : _fname(filename) {
+EMIModel::EMIModel(const Common::String &filename, Common::SeekableReadStream *data, EMICostume *costume) :
+		_fname(filename), _costume(costume) {
 	_numVertices = 0;
 	_vertices = NULL;
 	_drawVertices = NULL;

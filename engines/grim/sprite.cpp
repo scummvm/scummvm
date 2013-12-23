@@ -73,7 +73,7 @@ void Sprite::loadBinary(Common::SeekableReadStream *stream, EMICostume *costume)
 	offX = get_float(data + 8);
 	offY = get_float(data + 12);
 
-	_material = costume->findSharedMaterial(texname);
+	_material = costume->loadMaterial(texname);
 	_width = width;
 	_height = height;
 	_next = NULL;

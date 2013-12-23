@@ -27,11 +27,12 @@
 
 namespace Grim {
 
+class EMICostume;
 class EMIModel;
 
 class EMIMeshComponent : public Component {
 public:
-	EMIMeshComponent(Component *parent, int parentID, const char *filename, Component *prevComponent, tag32 tag);
+	EMIMeshComponent(Component *parent, int parentID, const char *filename, Component *prevComponent, tag32 tag, EMICostume *costume);
 	~EMIMeshComponent();
 	void init();
 	int update(uint time);
@@ -40,6 +41,7 @@ public:
 	void getBoundingBox(int *x1, int *y1, int *x2, int *y2) const;
 
 public:
+	EMICostume *_costume;
 	bool _hierShared;
 	Common::List<EMIMeshComponent*> _children;
 	EMIMeshComponent *_parentModel;

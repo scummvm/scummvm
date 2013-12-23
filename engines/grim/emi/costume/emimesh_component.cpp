@@ -29,7 +29,8 @@
 
 namespace Grim {
 
-EMIMeshComponent::EMIMeshComponent(Component *p, int parentID, const char *filename, Component *prevComponent, tag32 t) : Component(p, parentID, filename, t), _obj(NULL), _parentModel(NULL), _hasComplained(false) {
+EMIMeshComponent::EMIMeshComponent(Component *p, int parentID, const char *filename, Component *prevComponent, tag32 t, EMICostume *costume) :
+		Component(p, parentID, filename, t), _costume(costume), _obj(NULL), _parentModel(NULL), _hasComplained(false) {
 	_hierShared = false;
 }
 
@@ -54,7 +55,7 @@ EMIMeshComponent::~EMIMeshComponent() {
 
 void EMIMeshComponent::init() {
 	_visible = true;
-	_obj = g_resourceloader->loadModelEMI(_name);
+	_obj = g_resourceloader->loadModelEMI(_name, _costume);
 }
 
 int EMIMeshComponent::update(uint time) {
