@@ -104,7 +104,12 @@ void EventsManager::startMainClockInt() {
 }
 
 void EventsManager::mainVoyeurIntFunc() {
-	// TODO
+	if (!(_vm->_voy._field478 & 1)) {
+		++_vm->_voy._switchBGNum;
+		++_vm->_voy._RTVNum;
+		if (_vm->_voy._RTVNum >= _vm->_voy._field4F2)
+			_vm->_voy._field4F0 = 1;
+	}
 }
 
 void EventsManager::vStopCycle() {
@@ -146,6 +151,9 @@ void EventsManager::checkForNextFrameCounter() {
 
 		// Run the timer-based updates
 		voyeurTimer();
+
+		if ((_gameCounter % GAME_FRAME_RATE) == 0)
+			mainVoyeurIntFunc();
 
 		// Display the frame
 		g_system->copyRectToScreen((byte *)_vm->_graphicsManager._screenSurface.getPixels(), 
@@ -193,6 +201,7 @@ void EventsManager::voyeurTimer() {
 
 		(this->*node._intFunc)();
 	}
+
 }
 
 void EventsManager::videoTimer() {
@@ -423,6 +432,8 @@ void EventsManager::hideCursor() {
 }
 
 void EventsManager::getMouseInfo() {
+	pollEvents();
+
 	if (_vm->_voy._field478 & 0x10) {
 		if ((_gameCounter - _joe) > 8) {
 			_joe = _gameCounter;
@@ -454,7 +465,8 @@ void EventsManager::startCursorBlink() {
 }
 
 void EventsManager::incrementTime(int amt) {
-	error("TODO: incrementTime");
+	for (int i = 0; i < amt; ++i)
+		mainVoyeurIntFunc();
 }
 
 } // End of namespace Voyeur

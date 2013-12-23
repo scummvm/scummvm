@@ -1208,7 +1208,7 @@ void ThreadResource::doRoom() {
 	voy._field478 &= ~1;
 
 	bool breakFlag = false;
-	while (!breakFlag) {
+	while (!vm.shouldQuit() && !breakFlag) {
 		vm._graphicsManager.setColor(128, 0, 255, 0);
 		vm._eventsManager._intPtr.field38 = 1;
 		vm._eventsManager._intPtr._hasPalette = true;
@@ -1374,8 +1374,6 @@ void ThreadResource::doRoom() {
 }
 
 int ThreadResource::doInterface() {
-	int varA = -1;
-	int var8 = 0;
 	PictureResource *pic;
 	Common::Point pt;
 
@@ -1431,13 +1429,15 @@ int ThreadResource::doInterface() {
 	_vm->_eventsManager._intPtr._hasPalette = true;
 	_vm->_voy._field478 &= ~1;
 
+	int priorRegionIndex = -1;
+	int regionIndex = 0;
 	do {
 		_vm->doTimeBar(true);
 		_vm->_eventsManager.getMouseInfo();
 
 		pt = _vm->_eventsManager.getMousePos();
-		if (pt.x != _currentMouseX || pt.y != _currentMouseY || var8 != varA) {
-			varA = var8;
+		if (pt.x != _currentMouseX || pt.y != _currentMouseY || regionIndex != priorRegionIndex) {
+			priorRegionIndex = regionIndex;
 			_vm->_graphicsManager.doScroll(pt);
 
 			_currentMouseX = pt.x;
@@ -1451,6 +1451,7 @@ int ThreadResource::doInterface() {
 		}
 
 		pt = _vm->_eventsManager.getMousePos() + Common::Point(120, 75);
+		regionIndex = -1;
 
 		for (int idx = 0; idx < READ_LE_UINT16(dataP); ++idx) {
 			if (READ_LE_UINT16(dataP + (idx * 8 + 2)) <= pt.x &&
@@ -1465,7 +1466,7 @@ int ThreadResource::doInterface() {
 						pic = _vm->_bVoy->boltEntry(276)._picResource;
 						_vm->_graphicsManager.sDrawPic(pic, *_vm->_graphicsManager._vPort, 
 							Common::Point(178, 108));
-						var8 = idx;
+						regionIndex = idx;
 					}
 
 					if (_vm->_voy._arr5[arrIndex][idx] <= _vm->_voy._RTVNum &&
@@ -1474,44 +1475,45 @@ int ThreadResource::doInterface() {
 						pic = _vm->_bVoy->boltEntry(277)._picResource;
 						_vm->_graphicsManager.sDrawPic(pic, *_vm->_graphicsManager._vPort, 
 							Common::Point(178, 108));
-						var8 = idx;
+						regionIndex = idx;
 					}
 				}
 
-				for (int arrIndex = 0; arrIndex < 3; ++arrIndex) {
+				for (int arrIndex = 0; arrIndex < 8; ++arrIndex) {
 					if (_vm->_voy._arr1[arrIndex][idx] <= _vm->_voy._RTVNum &&
 							_vm->_voy._arr2[arrIndex][idx] > _vm->_voy._RTVNum) {
 						// Draw the picture
 						pic = _vm->_bVoy->boltEntry(375)._picResource;
 						_vm->_graphicsManager.sDrawPic(pic, *_vm->_graphicsManager._vPort, 
 							Common::Point(178, 108));
-						var8 = idx;
+						regionIndex = idx;
 					}
 				}
 			}
 		}
 
-		if (var8 == -1) {
-			// Draw the default picture
+		if (regionIndex == -1) {
+			// Draw the crosshairs cursor in the center of the screen
 			pic = _vm->_bVoy->boltEntry(274)._picResource;
 			_vm->_graphicsManager.sDrawPic(pic, *_vm->_graphicsManager._vPort, 
 				Common::Point(178, 108));
 		}
 
-		if (_vm->_voy._RTVNum & 2) {
+		// Regularly update the time display
+		if (_vm->_voy._RTANum & 2) {
 			_vm->_graphicsManager.drawANumber(*_vm->_graphicsManager._vPort, 
-				10 / _vm->_gameMinute, Common::Point(190, 25));
+				_vm->_gameMinute / 10, Common::Point(190, 25));
 			_vm->_graphicsManager.drawANumber(*_vm->_graphicsManager._vPort, 
-				10 % _vm->_gameMinute, Common::Point(190, 25));
+				_vm->_gameMinute % 10, Common::Point(201, 25));
 
 			if (_vm->_voy._RTANum & 4) {
-				int v = 10 / _vm->_gameHour;
+				int v = _vm->_gameHour / 10;
 				_vm->_graphicsManager.drawANumber(*_vm->_graphicsManager._vPort, 
-					v == 0 ? 10 : v, Common::Point(190, 25));
+					v == 0 ? 10 : v, Common::Point(161, 25));
 				_vm->_graphicsManager.drawANumber(*_vm->_graphicsManager._vPort, 
 					_vm->_gameHour % 10, Common::Point(172, 25));
 
-				pic = _vm->_bVoy->boltEntry(274)._picResource;
+				pic = _vm->_bVoy->boltEntry(_vm->_voy._isAM ? 272 : 273)._picResource;
 				_vm->_graphicsManager.sDrawPic(pic, *_vm->_graphicsManager._vPort, 
 					Common::Point(215, 27));
 			}
@@ -1528,7 +1530,7 @@ int ThreadResource::doInterface() {
 			_vm->_eventsManager.getMouseInfo();
 
 			if (_vm->_voy._transitionId == 15) {
-				var8 = 20;
+				regionIndex = 20;
 				_vm->_voy._transitionId = 17;
 				_vm->_soundManager.stopVOCPlay();
 				_vm->checkTransition();
@@ -1556,14 +1558,14 @@ int ThreadResource::doInterface() {
 			}
 		}
 	} while (!_vm->_voy._fadeFunc && !_vm->shouldQuit() && 
-		(!_vm->_voy._mouseClicked || var8 == -1));
+		(!_vm->_voy._mouseClicked || regionIndex == -1));
 
 	_vm->_voy._field478 |= 1;
 	_vm->_bVoy->freeBoltGroup(_vm->_playStamp1);
 	if (_vm->_playStamp2 != -1)
 		_vm->_soundManager.stopVOCPlay();
 
-	return !_vm->_voy._fadeFunc ? var8 : -2;
+	return !_vm->_voy._fadeFunc ? regionIndex : -2;
 }
 
 void ThreadResource::addAudioEventStart() {

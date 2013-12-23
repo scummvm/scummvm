@@ -456,8 +456,20 @@ private:
 	void savePrevious();
 	void setButtonFlag(int idx, byte bits);
 	void clearButtonFlag(int idx, byte bits);
+
+	/**
+	 * Loads data needed for displaying the initial apartment screen
+	 */
 	void loadTheApt();
+
+	/**
+	 * Frees the apartment screen data
+	 */
 	void freeTheApt();
+
+	/**
+	 * Does any necessary animation at the start or end of showing the apartment.
+	 */
 	void doAptAnim(int mode);
 public:
 	VoyeurEngine *_vm;
@@ -495,7 +507,12 @@ public:
 	void parsePlayCommands();
 	int doInterface();
 	void doRoom();
+
+	/**
+	 * Shows the apartment screen
+	 */
 	int doApt();
+
 	void doTapePlaying();
 	void checkForMurder();
 	void checkForIncriminate();

@@ -155,7 +155,15 @@ public:
 	void checkTransition();
 	bool doComputerText(int v);
 	void getComputerBrush();
+
+	/**
+	 * Displays the time/charge remaining on the video camera screen
+	 */
 	void doTimeBar(bool force);
+
+	/**
+	 * If necessary, flashes the time remaining bar on the video camera screen
+	 */
 	void flashTimeBar();
 	void checkPhoneCall();
 	void doEvidDisplay(int v1, int v2);
