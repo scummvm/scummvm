@@ -916,7 +916,7 @@ void ViewPortResource::setupViewPort(PictureResource *page, Common::Rect *clipRe
 		}
 		
 		xDiff = r.right - clipRect->right;
-		yDiff = r.right - clipRect->right;
+		yDiff = r.bottom - clipRect->bottom;
 
 		if (xDiff > 0)
 			r.setWidth(xDiff <= r.width() ? r.width() - xDiff : 0);
