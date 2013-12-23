@@ -165,6 +165,12 @@ public:
 	 * If necessary, flashes the time remaining bar on the video camera screen
 	 */
 	void flashTimeBar();
+
+	/**
+	 * Handle scrolling of the mansion view in the camera sights
+	 */
+	void doScroll(const Common::Point &pt);
+
 	void checkPhoneCall();
 	void doEvidDisplay(int v1, int v2);
 

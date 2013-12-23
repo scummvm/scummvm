@@ -1438,7 +1438,7 @@ int ThreadResource::doInterface() {
 		pt = _vm->_eventsManager.getMousePos();
 		if (pt.x != _currentMouseX || pt.y != _currentMouseY || regionIndex != priorRegionIndex) {
 			priorRegionIndex = regionIndex;
-			_vm->_graphicsManager.doScroll(pt);
+			_vm->doScroll(pt);
 
 			_currentMouseX = pt.x;
 			_currentMouseY = pt.y;

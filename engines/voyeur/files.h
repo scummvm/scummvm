@@ -505,6 +505,10 @@ public:
 
 	bool chooseSTAMPButton(int buttonId);
 	void parsePlayCommands();
+
+	/**
+	 * Do the camera view looking at the mansion
+	 */
 	int doInterface();
 	void doRoom();
 

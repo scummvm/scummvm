@@ -356,13 +356,54 @@ void VoyeurEngine::initIFace(){
 	CMapResource *pal = _bVoy->boltEntry(_playStamp1 + 2)._cMapResource;
 	pal->startFade();
 
-	_graphicsManager.doScroll(_eventsManager.getMousePos());
+	doScroll(_eventsManager.getMousePos());
 	
 	_voy._field4386 = _bVoy->memberAddr(_playStamp1);
 
 	// Note: the original did two loops to preload members here, which is
 	// redundant for ScummVM, since computers are faster these days, and
 	// getting resources as needed will be fast enough.
+}
+
+void VoyeurEngine::doScroll(const Common::Point &pt) {
+	Common::Rect clipRect(72, 47, 72 + 240, 47 + 148);
+	(*_graphicsManager._vPort)->setupViewPort(NULL, &clipRect);
+
+	PictureResource *pic;
+	int base = 0;
+	switch (_voy._transitionId) {
+	case 0:
+		break;
+	case 1:
+	case 2:
+	case 5:
+	case 6:
+	case 7:
+	case 8:
+	case 9:
+		base = 0xB00;
+		break;
+	case 3:
+		base = 0xC00;
+		break;
+	default:
+		base = 0xD00;
+	}
+
+	if (base) {
+		pic = _bVoy->boltEntry(base + 3)._picResource;
+ 		_graphicsManager.sDrawPic(pic, *_graphicsManager._vPort, Common::Point(784 - pt.x - 712, 150 - pt.y - 104));
+		pic = _bVoy->boltEntry(base + 4)._picResource;
+		_graphicsManager.sDrawPic(pic, *_graphicsManager._vPort, Common::Point(784 - pt.x - 712, 150 - pt.y - 44));
+		pic = _bVoy->boltEntry(base + 5)._picResource;
+		_graphicsManager.sDrawPic(pic, *_graphicsManager._vPort, Common::Point(784 - pt.x - 712, 150 - pt.y + 16));
+		pic = _bVoy->boltEntry(base + 6)._picResource;
+		_graphicsManager.sDrawPic(pic, *_graphicsManager._vPort, Common::Point(784 - pt.x - 712, 150 - pt.y + 76));
+		pic = _bVoy->boltEntry(base + 7)._picResource;
+		_graphicsManager.sDrawPic(pic, *_graphicsManager._vPort, Common::Point(784 - pt.x - 712, 150 - pt.y + 136));
+	}
+
+	(*_graphicsManager._vPort)->setupViewPort();
 }
 
 void VoyeurEngine::checkTransition(){
