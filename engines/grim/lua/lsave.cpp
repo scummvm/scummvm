@@ -380,7 +380,7 @@ void lua_Save(SaveGame *savedState) {
 		savedState->writeBool(state->updated);
 
 		byte pauseState = 0;
-		pauseState = state->all_paused ? LUA_SG_ALL_PAUSED : 0;
+		pauseState = state->all_paused & LUA_SG_ALL_PAUSED;
 		pauseState |= state->paused ? LUA_SG_PAUSED : 0;
 		savedState->writeByte(pauseState);
 

@@ -244,10 +244,22 @@ void pause_script() {
 
 void pause_scripts() {
 	LState *t;
+	lua_Object boolObj = lua_getparam(1);
+
+	bool p = false;
+	if (!lua_isnil(boolObj))
+		p = true;
+
 
 	for (t = lua_rootState->next; t != NULL; t = t->next) {
-		if (lua_state != t)
-			t->all_paused = true;
+		if (lua_state != t) {
+			if (p) {
+				t->all_paused++;
+			} else {
+				t->all_paused = 1;
+			}
+		}
+
 	}
 }
 
@@ -271,10 +283,21 @@ void unpause_script() {
 
 void unpause_scripts() {
 	LState *t;
+	lua_Object boolObj = lua_getparam(1);
+
+	bool p = false;
+	if (!lua_isnil(boolObj))
+		p = true;
 
 	for (t = lua_rootState->next; t != NULL; t = t->next) {
-		if (lua_state != t)
-			t->all_paused = false;
+		if (lua_state != t) {
+			if (p) {
+				if (t->all_paused > 0)
+					t->all_paused--;
+			} else {
+				t->all_paused = 0;
+			}
+		}
 	}
 }
 
