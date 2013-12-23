@@ -78,7 +78,7 @@ namespace Fullpipe {
 #define sO_Grandpa "\xc4\xe5\xe4\xf3\xf8\xea\xe0"	// "Дедушка"
 #define sO_Plank_25 "\xc4\xee\xf1\xea\xe0_25"	// "Доска_25"
 #define sO_Plank_34 "\xc4\xee\xf1\xea\xe0_34"	// "Доска_34"
-#define sO_DudeJumped "\xc4\xff\xe4\xff \xef\xf0\xfb\xe3\xe0\xeb"	// "Дядя прыгал"
+#define sO_DudeHasJumped "\xc4\xff\xe4\xff \xef\xf0\xfb\xe3\xe0\xeb"	// "Дядя прыгал"
 #define sO_Dude "\xc4\xff\xe4\xff"	// "Дядя"
 #define sO_GuvTheDrawer "\xc4\xff\xe4\xff-\xff\xf9\xe8\xea"	// "Дядя-ящик"
 #define sO_DudeSwinged "\xc4\xff\xe4\xff_\xea\xe0\xf2\xe0\xeb\xf1\xff"	// "Дядя_катался"

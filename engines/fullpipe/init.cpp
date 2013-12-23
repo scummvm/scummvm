@@ -60,7 +60,7 @@ void FullpipeEngine::initObjectStates() {
 	setObjectState(sO_Pipe_9, getObjectEnumState(sO_Pipe_9, sO_WithJug));
 	setObjectState(sO_Inflater, getObjectEnumState(sO_Inflater, sO_WithGum));
 	setObjectState(sO_Swingie, getObjectEnumState(sO_Swingie, sO_IsSwinging));
-	setObjectState(sO_DudeJumped, getObjectEnumState(sO_DudeJumped, sO_No));
+	setObjectState(sO_DudeHasJumped, getObjectEnumState(sO_DudeHasJumped, sO_No));
 	setObjectState(sO_Bridge, getObjectEnumState(sO_Bridge, sO_Convoluted));
 	setObjectState(sO_Guardian, getObjectEnumState(sO_Guardian, sO_OnRight));
 	setObjectState(sO_Grandma, getObjectEnumState(sO_Grandma, sO_In_14));

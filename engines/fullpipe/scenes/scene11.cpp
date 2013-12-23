@@ -40,6 +40,11 @@ void scene11_dudeSwingCallback(int *arg) {
 	warning("STUB: scene11_dudeSwingCallback()");
 }
 
+void scene11_setupMusic() {
+	if (g_fp->getObjectState(sO_DudeHasJumped) == g_fp->getObjectEnumState(sO_DudeHasJumped, sO_Yes))
+		g_fp->playTrack(g_fp->getGameLoaderGameVar()->getSubVarByName("SC_11"), "MUSIC2", 1);
+}
+
 void scene11_initScene(Scene *sc) {
 	g_vars->scene11_swingie = sc->getStaticANIObject1ById(ANI_SWINGER, -1);
 	g_vars->scene11_boots = sc->getStaticANIObject1ById(ANI_BOOTS_11, -1);
