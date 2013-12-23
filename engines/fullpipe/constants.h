@@ -489,6 +489,17 @@ namespace Fullpipe {
 #define rMV_MAN_LOOKUP 4775
 #define rMV_KZW_GOR 566
 
+// Scene 11
+#define ANI_BOOTS_11 2704
+#define ANI_KACHELI 1094
+#define ANI_MAN11 1108
+#define ANI_SWINGER 1113
+#define PIC_SC11_HINT 5170
+#define ST_KCH_STATIC 1122
+#define ST_SWR_SIT 1147
+#define ST_SWR_SITBALD 1153
+#define ST_SWR_STAND3 3014
+
 } // End of namespace Fullpipe
 
 #endif /* FULLPIPE_CONSTANTS_H */

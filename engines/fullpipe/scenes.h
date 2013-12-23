@@ -28,6 +28,7 @@ namespace Fullpipe {
 struct BehaviorEntryInfo;
 class StaticANIObject;
 class MctlLadder;
+class MGM;
 
 int defaultUpdateCursor();
 
@@ -211,6 +212,31 @@ public:
 	StaticANIObject *scene10_inflater;
 	PictureObject *scene10_ladder;
 	int scene10_hasGum;
+
+	StaticANIObject *scene11_swingie;
+	StaticANIObject *scene11_boots;
+	StaticANIObject *scene11_dudeOnSwing;
+	PictureObject *scene11_hint;
+	MGM scene11_var01;
+	int scene11_var02;
+	int scene11_var03;
+	int scene11_var04;
+	int scene11_var05;
+	int scene11_var06;
+	int scene11_var07;
+	double scene11_var08;
+	double scene11_var09;
+	double scene11_var10;
+	double scene11_var11;
+	double scene11_var12;
+	int scene11_var13;
+	int scene11_var14;
+	int scene11_var15;
+	int scene11_var16;
+	int scene11_var17;
+	int scene11_var18;
+	int scene11_var19;
+	int scene11_var20;
 
 	PictureObject *selector;
 };

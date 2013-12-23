@@ -26,13 +26,13 @@
 #include "fullpipe/objectnames.h"
 #include "fullpipe/constants.h"
 #include "fullpipe/gfx.h"
+#include "fullpipe/motion.h"
 #include "fullpipe/scenes.h"
 #include "fullpipe/statics.h"
 #include "fullpipe/scene.h"
 #include "fullpipe/messages.h"
 #include "fullpipe/gameloader.h"
 #include "fullpipe/behavior.h"
-#include "fullpipe/motion.h"
 #include "fullpipe/interaction.h"
 
 namespace Fullpipe {

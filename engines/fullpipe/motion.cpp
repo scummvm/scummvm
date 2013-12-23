@@ -339,6 +339,10 @@ MctlConnectionPoint *MctlCompound::findClosestConnectionPoint(int ox, int oy, in
 	return 0;
 }
 
+void MctlCompound::replaceNodeX(int from, int to) {
+	warning("STUB: MctlCompound::replaceNodeX()");
+}
+
 MctlConnectionPoint::MctlConnectionPoint() {
 	_connectionX = 0;
 	_connectionY = 0;

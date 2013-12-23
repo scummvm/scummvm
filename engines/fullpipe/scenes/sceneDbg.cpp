@@ -25,6 +25,7 @@
 #include "fullpipe/constants.h"
 
 #include "fullpipe/gameloader.h"
+#include "fullpipe/motion.h"
 #include "fullpipe/scenes.h"
 #include "fullpipe/statics.h"
 #include "fullpipe/input.h"

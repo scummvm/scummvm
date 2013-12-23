@@ -25,6 +25,7 @@
 #include "fullpipe/objects.h"
 #include "fullpipe/objectnames.h"
 #include "fullpipe/constants.h"
+#include "fullpipe/motion.h"
 #include "fullpipe/scenes.h"
 #include "fullpipe/scene.h"
 #include "fullpipe/statics.h"

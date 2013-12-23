@@ -59,7 +59,7 @@ void FullpipeEngine::initObjectStates() {
 	setObjectState(sO_RightStairs_9, getObjectEnumState(sO_RightStairs_9, sO_IsClosed));
 	setObjectState(sO_Pipe_9, getObjectEnumState(sO_Pipe_9, sO_WithJug));
 	setObjectState(sO_Inflater, getObjectEnumState(sO_Inflater, sO_WithGum));
-	setObjectState(sO_Swingie, getObjectEnumState(sO_Swingie, sO_Swinging));
+	setObjectState(sO_Swingie, getObjectEnumState(sO_Swingie, sO_IsSwinging));
 	setObjectState(sO_DudeJumped, getObjectEnumState(sO_DudeJumped, sO_No));
 	setObjectState(sO_Bridge, getObjectEnumState(sO_Bridge, sO_Convoluted));
 	setObjectState(sO_Guardian, getObjectEnumState(sO_Guardian, sO_OnRight));
@@ -73,7 +73,7 @@ void FullpipeEngine::initObjectStates() {
 	setObjectState(sO_RightPipe_17, getObjectEnumState(sO_RightPipe_17, sO_IsClosed));
 	setObjectState(sO_Fly_17, 1);
 	setObjectState(sO_DudeSwinged, 0);
-	setObjectState(sO_Girl, getObjectEnumState(sO_Girl, sO_Swinging));
+	setObjectState(sO_Girl, getObjectEnumState(sO_Girl, sO_IsSwinging));
 	setObjectState(sO_Sugar, getObjectEnumState(sO_Sugar, sO_Present));
 	setObjectState(sO_Janitors, getObjectEnumState(sO_Janitors, sO_Together));
 	setObjectState(sO_Bag_22, getObjectEnumState(sO_Bag_22, sO_NotFallen));

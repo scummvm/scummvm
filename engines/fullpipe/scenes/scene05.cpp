@@ -27,6 +27,7 @@
 #include "fullpipe/constants.h"
 #include "fullpipe/statics.h"
 #include "fullpipe/scene.h"
+#include "fullpipe/motion.h"
 #include "fullpipe/scenes.h"
 #include "fullpipe/messages.h"
 #include "fullpipe/floaters.h"

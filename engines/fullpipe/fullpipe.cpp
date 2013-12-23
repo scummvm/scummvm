@@ -33,9 +33,9 @@
 #include "fullpipe/behavior.h"
 #include "fullpipe/modal.h"
 #include "fullpipe/input.h"
+#include "fullpipe/motion.h"
 #include "fullpipe/scenes.h"
 #include "fullpipe/floaters.h"
-#include "fullpipe/motion.h"
 #include "fullpipe/console.h"
 
 namespace Fullpipe {

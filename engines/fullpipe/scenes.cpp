@@ -162,6 +162,30 @@ Vars::Vars() {
 	scene10_ladder = 0;
 	scene10_hasGum = 0;
 
+	scene11_swingie = 0;
+	scene11_boots = 0;
+	scene11_dudeOnSwing = 0;
+	scene11_hint = 0;
+	scene11_var02 = 0;
+	scene11_var03 = 0;
+	scene11_var04 = 0;
+	scene11_var05 = 0;
+	scene11_var06 = 0;
+	scene11_var07 = 0;
+	scene11_var08 = 1.0;
+	scene11_var09 = 1.0;
+	scene11_var10 = 1.0;
+	scene11_var11 = 1.0;
+	scene11_var12 = 0.0;
+	scene11_var13 = 0;
+	scene11_var14 = 0;
+	scene11_var15 = 0;
+	scene11_var16 = 0;
+	scene11_var17 = 0;
+	scene11_var18 = 0;
+	scene11_var19 = 0;
+	scene11_var20 = 0;
+
 	selector = 0;
 }
 

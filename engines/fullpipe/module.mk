@@ -33,6 +33,7 @@ MODULE_OBJS = \
 	scenes/scene07.o \
 	scenes/scene08.o \
 	scenes/scene10.o \
+	scenes/scene11.o \
 	scenes/sceneDbg.o \
 	scenes/sceneIntro.o
 
