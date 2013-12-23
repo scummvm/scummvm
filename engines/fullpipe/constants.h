@@ -228,6 +228,7 @@ namespace Fullpipe {
 #define MV_MOM_TAKE3 2887
 #define MV_MOM_TAKE4 2888
 #define MV_MOM_TAKE5 2889
+#define MV_NDV_BLOW2 2855
 #define MV_OTM_BOXHANDLEDOWN 626
 #define MV_OTM_BOXHANDLEUP 627
 #define MV_OTM_HANDLEDOWN 620

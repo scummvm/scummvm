@@ -53,9 +53,9 @@ void scene10_initScene(Scene *sc) {
 }
 
 bool sceneHandler10_inflaterIsBlind() {
-	warning("STUB: sceneHandler10_inflaterIsBlind()");
-
-	return false;
+	return g_vars->scene10_inflater->_movement
+		&& g_vars->scene10_inflater->_movement->_id == MV_NDV_BLOW2
+		&& g_vars->scene10_inflater->_movement->_currDynamicPhaseIndex < 42;
 }
 
 int scene10_updateCursor() {
@@ -78,11 +78,17 @@ void sceneHandler10_clickGum() {
 }
 
 void sceneHandler10_hideGum() {
-	warning("STUB: sceneHandler10_hideGum()");
+	g_vars->scene10_gum->hide();
+	g_vars->scene10_packet->hide();
+	g_vars->scene10_packet2->hide();
 }
 
 void sceneHandler10_showGum() {
-	warning("STUB: sceneHandler10_showGum()");
+	if (g_vars->scene10_hasGum)
+		g_vars->scene10_gum->show1(-1, -1, -1, 0);
+
+	g_vars->scene10_packet->show1(-1, -1, -1, 0);
+	g_vars->scene10_packet2->show1(-1, -1, -1, 0);
 }
 
 
