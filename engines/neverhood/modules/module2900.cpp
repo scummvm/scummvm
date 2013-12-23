@@ -215,7 +215,7 @@ uint32 Scene2901::handleMessage(int messageNum, const MessageParam &param, Entit
 		if (param.asPoint().x <= 20 || param.asPoint().x >= 620)
 			leaveScene((uint32)-1);
 		break;
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		if (_currLocationButtonNum != _selectedButtonNum)
 			leaveScene(_selectedButtonNum);
 		break;

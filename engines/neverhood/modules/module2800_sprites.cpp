@@ -40,13 +40,13 @@ AsScene2803LightCord::AsScene2803LightCord(NeverhoodEngine *vm, Scene *parentSce
 uint32 AsScene2803LightCord::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (!_isBusy && param.asInteger() == calcHash("ClickSwitch")) {
-			sendMessage(_parentScene, 0x480F, 0);
+			sendMessage(_parentScene, NM_LEVER_DOWN, 0);
 			playSound(0, 0x4E1CA4A0);
 		}
 		break;
-	case 0x480F:
+	case NM_LEVER_DOWN:
 		stPulled();
 		break;
 	case 0x482A:
@@ -62,7 +62,7 @@ uint32 AsScene2803LightCord::handleMessage(int messageNum, const MessageParam &p
 uint32 AsScene2803LightCord::hmPulled(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		gotoNextState();
 		break;
 	}
@@ -107,7 +107,7 @@ AsScene2803TestTubeOne::AsScene2803TestTubeOne(NeverhoodEngine *vm, uint32 fileH
 uint32 AsScene2803TestTubeOne::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		if (param.asInteger())
 			startAnimation(_fileHash2, 0, -1);
 		else
@@ -133,7 +133,7 @@ AsScene2803Rope::AsScene2803Rope(NeverhoodEngine *vm, Scene *parentScene, int16 
 uint32 AsScene2803Rope::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		startAnimation(0x9D098C23, 50, -1);
 		SetMessageHandler(&AsScene2803Rope::hmReleased);
 		break;
@@ -150,7 +150,7 @@ uint32 AsScene2803Rope::handleMessage(int messageNum, const MessageParam &param,
 uint32 AsScene2803Rope::hmReleased(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		gotoNextState();
 		break;
 	case 0x482A:
@@ -509,7 +509,7 @@ void AsScene2804BeamCoil::stBeaming() {
 uint32 AsScene2804BeamCoil::hmBeaming(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		gotoNextState();
 		break;
 	}
@@ -561,12 +561,12 @@ AsScene2806Spew::AsScene2806Spew(NeverhoodEngine *vm)
 uint32 AsScene2806Spew::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		playSound(0, 0x48640244);
 		startAnimation(0x04211490, 0, -1);
 		setVisible(true);
 		break;
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		stopAnimation();
 		setVisible(false);
 		break;
@@ -774,7 +774,7 @@ uint32 AsScene2808Handle::handleMessage(int messageNum, const MessageParam &para
 uint32 AsScene2808Handle::hmActivating(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		gotoNextState();
 		break;
 	}
@@ -817,7 +817,7 @@ AsScene2808Flow::AsScene2808Flow(NeverhoodEngine *vm, Scene *parentScene, int te
 uint32 AsScene2808Flow::hmFlowing(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		gotoNextState();
 		break;
 	}
@@ -875,12 +875,12 @@ AsScene2809Spew::AsScene2809Spew(NeverhoodEngine *vm)
 uint32 AsScene2809Spew::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		playSound(0, 0x48640244);
 		startAnimation(0x04211490, 0, -1);
 		setVisible(true);
 		break;
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		stopAnimation();
 		setVisible(false);
 		break;
@@ -903,7 +903,7 @@ AsScene2810Rope::AsScene2810Rope(NeverhoodEngine *vm, Scene *parentScene, int16 
 uint32 AsScene2810Rope::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		startAnimation(0x9D098C23, 35, 53);
 		break;
 	case 0x482A:
@@ -934,13 +934,13 @@ AsScene2812Winch::~AsScene2812Winch() {
 uint32 AsScene2812Winch::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		startAnimation(0x20DA08A0, 0, -1);
 		setVisible(true);
 		_vm->_soundMan->addSound(0x00B000E2, 0xC874EE6C);
 		_vm->_soundMan->playSoundLooping(0xC874EE6C);
 		break;
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		startAnimation(0x20DA08A0, 7, -1);
 		break;
 	}
@@ -979,7 +979,7 @@ uint32 AsScene2812Rope::handleMessage(int messageNum, const MessageParam &param,
 uint32 AsScene2812Rope::hmRopingDown(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		gotoNextState();
 		break;
 	}
@@ -1002,7 +1002,7 @@ AsScene2812TrapDoor::AsScene2812TrapDoor(NeverhoodEngine *vm)
 uint32 AsScene2812TrapDoor::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		startAnimation(0x805D0029, 0, -1);
 		playSound(0, 0xEA005F40);
 		_newStickFrameIndex = STICK_LAST_FRAME;
@@ -1026,7 +1026,7 @@ uint32 KmScene2801::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4004:
 		GotoState(&Klaymen::stTryStandIdle);
 		break;
-	case 0x4812:
+	case NM_KLAYMEN_PICKUP:
 		GotoState(&Klaymen::stPickUpGeneric);
 		break;
 	case 0x4817:
@@ -1198,7 +1198,7 @@ uint32 KmScene2803Small::xHandleMessage(int messageNum, const MessageParam &para
 uint32 KmScene2803Small::hmShrink(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = hmLowLevelAnimation(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x80C110B5)
 			sendMessage(_parentScene, 0x482A, 0);
 		else if (param.asInteger() == 0x33288344)
@@ -1227,7 +1227,7 @@ KmScene2805::KmScene2805(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16
 uint32 KmScene2805::xHandleMessage(int messageNum, const MessageParam &param) {
 	uint32 messageResult = 0;
 	switch (messageNum) {
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		_isSittingInTeleporter = param.asInteger() != 0;
 		messageResult = 1;
 		break;
@@ -1310,7 +1310,7 @@ uint32 KmScene2806::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x480D:
 		GotoState(&Klaymen::stPullCord);
 		break;
-	case 0x4816:
+	case NM_KLAYMEN_PRESS_BUTTON:
 		if (param.asInteger() == 0)
 			GotoState(&Klaymen::stPressButtonSide);
 		break;
@@ -1368,7 +1368,7 @@ uint32 KmScene2809::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x480D:
 		GotoState(&Klaymen::stPullCord);
 		break;
-	case 0x4816:
+	case NM_KLAYMEN_PRESS_BUTTON:
 		if (param.asInteger() == 0)
 			GotoState(&Klaymen::stPressButtonSide);
 		break;
@@ -1464,7 +1464,7 @@ uint32 KmScene2810::xHandleMessage(int messageNum, const MessageParam &param) {
 		if (param.asInteger() == 3)
 			GotoState(&Klaymen::stFinishGrow);
 		break;
-	case 0x4812:
+	case NM_KLAYMEN_PICKUP:
 		GotoState(&Klaymen::stPickUpGeneric);
 		break;
 	case 0x4817:
@@ -1552,7 +1552,7 @@ uint32 KmScene2812::xHandleMessage(int messageNum, const MessageParam &param) {
 		_destY = param.asInteger();
 		GotoState(&Klaymen::stJumpToGrabFall);
 		break;
-	case 0x4812:
+	case NM_KLAYMEN_PICKUP:
 		if (param.asInteger() == 2)
 			GotoState(&Klaymen::stPickUpNeedle);
 		else if (param.asInteger() == 1)
@@ -1564,7 +1564,7 @@ uint32 KmScene2812::xHandleMessage(int messageNum, const MessageParam &param) {
 		setDoDeltaX(param.asInteger());
 		gotoNextStateExt();
 		break;
-	case 0x481A:
+	case NM_KLAYMEN_INSERT_DISK:
 		GotoState(&Klaymen::stInsertDisk);
 		break;
 	case 0x481B:

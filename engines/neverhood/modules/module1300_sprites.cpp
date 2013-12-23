@@ -46,13 +46,13 @@ AsScene1302Bridge::AsScene1302Bridge(NeverhoodEngine *vm, Scene *parentScene)
 uint32 AsScene1302Bridge::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		gotoNextState();
 		break;
-	case 0x4808:
+	case NM_DOOR_OPEN:
 		stLowerBridge();
 		break;
-	case 0x4809:
+	case NM_DOOR_CLOSE:
 		stRaiseBridge();
 		break;
 	}
@@ -99,12 +99,12 @@ void SsScene1302Fence::update() {
 uint32 SsScene1302Fence::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x4808:
+	case NM_DOOR_OPEN:
 		playSound(0);
 		SetMessageHandler(NULL);
 		SetSpriteUpdate(&SsScene1302Fence::suMoveDown);
 		break;
-	case 0x4809:
+	case NM_DOOR_CLOSE:
 		playSound(1);
 		SetMessageHandler(NULL);
 		SetSpriteUpdate(&SsScene1302Fence::suMoveUp);
@@ -150,7 +150,7 @@ uint32 AsScene1303Balloon::handleMessage(int messageNum, const MessageParam &par
 		sendMessage(_parentScene, 0x4826, 0);
 		messageResult = 1;
 		break;
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		stPopBalloon();
 		break;
 	}
@@ -160,11 +160,11 @@ uint32 AsScene1303Balloon::handleMessage(int messageNum, const MessageParam &par
 uint32 AsScene1303Balloon::hmBalloonPopped(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x020B0003)
 			playSound(0, 0x742B0055);
 		break;
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		playSound(0, 0x470007EE);
 		stopAnimation();
 		setVisible(false);
@@ -241,10 +241,10 @@ uint32 AsScene1306Elevator::handleMessage(int messageNum, const MessageParam &pa
 			_countdown = 144;
 		messageResult = _isUp ? 1 : 0;
 		break;
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		gotoNextState();
 		break;
-	case 0x4808:
+	case NM_DOOR_OPEN:
 		if (_isDown)
 			stGoingUp();
 		break;
@@ -262,7 +262,7 @@ void AsScene1306Elevator::stGoingUp() {
 }
 
 void AsScene1306Elevator::cbGoingUpEvent() {
-	sendMessage(_parentScene, 0x4808, 0);
+	sendMessage(_parentScene, NM_DOOR_OPEN, 0);
 	_isUp = true;
 	_countdown = 144;
 	stopAnimation();
@@ -282,7 +282,7 @@ void AsScene1306Elevator::stGoingDown() {
 
 void AsScene1306Elevator::cbGoingDownEvent() {
 	_isDown = true;
-	sendMessage(_parentScene, 0x4809, 0);
+	sendMessage(_parentScene, NM_DOOR_CLOSE, 0);
 	stopAnimation();
 	SetUpdateHandler(&AsScene1306Elevator::update);
 }
@@ -361,7 +361,7 @@ uint32 AsScene1307Key::handleMessage(int messageNum, const MessageParam &param, 
 			messageResult = 1;
 		}
 		break;
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		_isClickable = param.asInteger() != 0;
 		break;
 	case 0x2001:
@@ -480,13 +480,13 @@ AsScene1308JaggyDoor::AsScene1308JaggyDoor(NeverhoodEngine *vm, Scene *parentSce
 uint32 AsScene1308JaggyDoor::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		gotoNextState();
 		break;
-	case 0x4808:
+	case NM_DOOR_OPEN:
 		stOpenDoor();
 		break;
-	case 0x4809:
+	case NM_DOOR_CLOSE:
 		stCloseDoor();
 		break;
 	}
@@ -530,7 +530,7 @@ AsScene1308KeyboardDoor::AsScene1308KeyboardDoor(NeverhoodEngine *vm, Scene *par
 uint32 AsScene1308KeyboardDoor::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		gotoNextState();
 		break;
 	}
@@ -568,7 +568,7 @@ uint32 AsScene1308LightWallSymbols::handleMessage(int messageNum, const MessageP
 	case 0x2003:
 		stFadeOut();
 		break;
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		gotoNextState();
 		break;
 	}
@@ -615,7 +615,7 @@ AsScene1308Mouse::AsScene1308Mouse(NeverhoodEngine *vm)
 uint32 AsScene1308Mouse::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x66382026)
 			playSound(0, 0x0CD84468);
 		else if (param.asInteger() == 0x6E28061C)
@@ -663,7 +663,7 @@ uint32 KmScene1304::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4004:
 		GotoState(&Klaymen::stTryStandIdle);
 		break;
-	case 0x4812:
+	case NM_KLAYMEN_PICKUP:
 		if (param.asInteger() == 2)
 			GotoState(&Klaymen::stPickUpNeedle);
 		else if (param.asInteger() == 1)
@@ -750,7 +750,7 @@ KmScene1306::KmScene1306(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16
 uint32 KmScene1306::xHandleMessage(int messageNum, const MessageParam &param) {
 	uint32 messageResult = 0;
 	switch (messageNum) {
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		_isSittingInTeleporter = param.asInteger() != 0;
 		messageResult = 1;
 		break;
@@ -764,7 +764,7 @@ uint32 KmScene1306::xHandleMessage(int messageNum, const MessageParam &param) {
 		else
 			GotoState(&Klaymen::stTryStandIdle);
 		break;
-	case 0x4812:
+	case NM_KLAYMEN_PICKUP:
 		if (param.asInteger() == 2)
 			GotoState(&Klaymen::stPickUpNeedle);
 		else if (param.asInteger() == 1)
@@ -772,7 +772,7 @@ uint32 KmScene1306::xHandleMessage(int messageNum, const MessageParam &param) {
 		else
 			GotoState(&Klaymen::stPickUpGeneric);
 		break;
-	case 0x4816:
+	case NM_KLAYMEN_PRESS_BUTTON:
 		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stPressButton);
 		else if (param.asInteger() == 2)
@@ -784,7 +784,7 @@ uint32 KmScene1306::xHandleMessage(int messageNum, const MessageParam &param) {
 		setDoDeltaX(param.asInteger());
 		gotoNextStateExt();
 		break;
-	case 0x481A:
+	case NM_KLAYMEN_INSERT_DISK:
 		GotoState(&Klaymen::stInsertDisk);
 		break;
 	case 0x481B:
@@ -886,7 +886,7 @@ uint32 KmScene1308::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x480D:
 		GotoState(&Klaymen::stUseLever);
 		break;
-	case 0x4812:
+	case NM_KLAYMEN_PICKUP:
 		if (param.asInteger() == 2)
 			GotoState(&Klaymen::stPickUpNeedle);
 		else if (param.asInteger() == 1)
@@ -898,7 +898,7 @@ uint32 KmScene1308::xHandleMessage(int messageNum, const MessageParam &param) {
 		setDoDeltaX(param.asInteger());
 		gotoNextStateExt();
 		break;
-	case 0x481A:
+	case NM_KLAYMEN_INSERT_DISK:
 		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stInsertKey);
 		else
@@ -916,7 +916,7 @@ uint32 KmScene1308::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x481E:
 		GotoState(&Klaymen::stReturnFromUse);
 		break;
-	case 0x4827:
+	case NM_KLAYMEN_RELEASE_LEVER:
 		GotoState(&Klaymen::stReleaseLever);
 		break;
 	case 0x4834:

@@ -114,11 +114,11 @@ uint32 NavigationScene::handleMessage(int messageNum, const MessageParam &param,
 		if (_interactive)
 			handleNavigation(param.asPoint());
 		break;
-	case 0x0009:
+	case NM_KEYPRESS_SPACE:
 		if (!_interactive)
 			_smackerDone = true;
 		break;
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		_smackerDone = true;
 		break;
 	}

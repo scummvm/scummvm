@@ -551,7 +551,7 @@ void Scene2201::update() {
 uint32 Scene2201::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x402064D8)
 			sendEntityMessage(_klaymen, 0x1014, _ssDoorButton);
 		else if (param.asInteger() == 0x35803198) {
@@ -575,7 +575,7 @@ uint32 Scene2201::handleMessage(int messageNum, const MessageParam &param, Entit
 		break;
 	case 0x480B:
 		if (sender == _ssDoorButton)
-			sendMessage(_asDoor, 0x4808, 0);
+			sendMessage(_asDoor, NM_DOOR_OPEN, 0);
 		break;
 	case 0x4826:
 		if (sender == _asTape) {
@@ -666,7 +666,7 @@ uint32 Scene2202::handleMessage(int messageNum, const MessageParam &param, Entit
 		if (param.asPoint().x <= 20 || param.asPoint().x >= 620)
 			leaveScene(0);
 		break;
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		_movingCubePosition = (int16)param.asInteger();
 		_ssMovingCube = (Sprite*)sender;
 		break;
@@ -798,7 +798,7 @@ uint32 Scene2203::handleMessage(int messageNum, const MessageParam &param, Entit
 		else
 			_ssSmallRightDoor->setVisible(false);
 		break;
-	case 0x4808:
+	case NM_DOOR_OPEN:
 		if (sender == _asLeftDoor) {
 			_ssSmallLeftDoor->setVisible(true);
 			_klaymen->setClipRect(_leftDoorClipRect);
@@ -911,7 +911,7 @@ void Scene2205::update() {
 uint32 Scene2205::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x6449569A)
 			setMessageList(0x004B0690);
 		else if (param.asInteger() == 0x2841369C)
@@ -1012,7 +1012,7 @@ Scene2206::~Scene2206() {
 uint32 Scene2206::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x800C6694)
 			readClickedColumn();
 		else if (param.asInteger() == 0x402064D8)
@@ -1031,9 +1031,9 @@ uint32 Scene2206::handleMessage(int messageNum, const MessageParam &param, Entit
 		if (sender == _ssButton) {
 			setGlobalVar(V_SPIKES_RETRACTED, getGlobalVar(V_SPIKES_RETRACTED) ? 0 : 1);
 			if (getGlobalVar(V_SPIKES_RETRACTED))
-				sendMessage(_asDoorSpikes, 0x4808, 0);
+				sendMessage(_asDoorSpikes, NM_DOOR_OPEN, 0);
 			else
-				sendMessage(_asDoorSpikes, 0x4809, 0);
+				sendMessage(_asDoorSpikes, NM_DOOR_CLOSE, 0);
 		}
 		break;
 	case 0x4826:
@@ -1179,7 +1179,7 @@ void Scene2207::update() {
 uint32 Scene2207::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x0014F275) {
 			if (_klaymenAtElevator) {
 				sendMessage(_asElevator, 0x2000, _mouseClickPos.y);
@@ -1221,7 +1221,7 @@ uint32 Scene2207::handleMessage(int messageNum, const MessageParam &param, Entit
 	case 0x2003:
 		_isKlaymenBusy = false;
 		break;
-	case 0x4807:
+	case NM_LEVER_UP:
 		sendMessage(_asWallRobotAnimation, 0x2007, 0);
 		sendMessage(_asWallCannonAnimation, 0x2007, 0);
 		break;
@@ -1236,7 +1236,7 @@ uint32 Scene2207::handleMessage(int messageNum, const MessageParam &param, Entit
 			}
 		}
 		break;
-	case 0x480F:
+	case NM_LEVER_DOWN:
 		sendMessage(_asWallRobotAnimation, 0x2006, 0);
 		sendMessage(_asWallCannonAnimation, 0x2006, 0);
 		_asWallRobotAnimation->setVisible(true);
@@ -1519,7 +1519,7 @@ void Scene2242::update() {
 uint32 Scene2242::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x800C6694)
 			readClickedColumn();
 		break;
@@ -1620,7 +1620,7 @@ HallOfRecordsScene::~HallOfRecordsScene() {
 uint32 HallOfRecordsScene::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x800C6694)
 			readClickedColumn();
 		break;
@@ -1708,7 +1708,7 @@ Scene2247::~Scene2247() {
 uint32 Scene2247::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x800C6694)
 			readClickedColumn();
 		break;

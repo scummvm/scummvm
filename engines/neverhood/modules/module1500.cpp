@@ -124,7 +124,7 @@ void Scene1501::update() {
 uint32 Scene1501::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x0009:
+	case NM_KEYPRESS_SPACE:
 		_skip = true;
 		break;
 	}

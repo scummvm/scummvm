@@ -169,7 +169,7 @@ AsDiskplayerSceneKey::AsDiskplayerSceneKey(NeverhoodEngine *vm)
 uint32 AsDiskplayerSceneKey::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		gotoNextState();
 		break;
 	}
@@ -460,7 +460,7 @@ uint32 DiskplayerScene::handleMessage(int messageNum, const MessageParam &param,
 				}
 			}
 			break;
-		case 0x2000:
+		case NM_ANIMATION_UPDATE:
 			tuneIn();
 			break;
 		case 0x2001:

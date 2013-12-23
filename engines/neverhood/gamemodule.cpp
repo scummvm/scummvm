@@ -122,7 +122,7 @@ void GameModule::handleMouseUp(int16 x, int16 y) {
 void GameModule::handleSpaceKey() {
 	if (_childObject) {
 		debug(2, "GameModule::handleSpaceKey()");
-		sendMessage(_childObject, 0x0009, 0);
+		sendMessage(_childObject, NM_KEYPRESS_SPACE, 0);
 	}
 }
 
@@ -150,7 +150,7 @@ void GameModule::handleEscapeKey() {
 	else if (!_prevChildObject && _canRequestMainMenu)
 		_mainMenuRequested = true;
 	else if (_childObject)
-		sendMessage(_childObject, 0x000C, 0);
+		sendMessage(_childObject, NM_KEYPRESS_ESC, 0);
 }
 
 void GameModule::initKeySlotsPuzzle() {

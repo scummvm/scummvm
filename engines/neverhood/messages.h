@@ -26,6 +26,15 @@
 namespace Neverhood {
 
 enum NeverhoodMessage {
+	NM_KEYPRESS_SPACE           = 0x0009,
+	NM_KEYPRESS_ESC             = 0x000C,
+	NM_ANIMATION_START          = 0x100D,
+	NM_ANIMATION_UPDATE         = 0x2000,
+	NM_ANIMATION_STOP           = 0x3002,
+	NM_LEVER_UP                 = 0x4807,
+	NM_DOOR_OPEN                = 0x4808,
+	NM_DOOR_CLOSE               = 0x4809,
+	NM_LEVER_DOWN               = 0x480F,
 	NM_KLAYMEN_PICKUP			= 0x4812,
 	NM_KLAYMEN_PRESS_BUTTON		= 0x4816,
 	NM_KLAYMEN_INSERT_DISK		= 0x481A,

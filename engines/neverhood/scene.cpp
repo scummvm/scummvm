@@ -451,7 +451,7 @@ void Scene::processMessageList() {
 				_isKlaymenBusy = true;
 				sendPointMessage(_klaymen, 0x4001, _mouseClickPos);
 			} else if (messageNum == 0x100D) {
-				if (this->hasMessageHandler() && sendMessage(this, 0x100D, messageParam) != 0)
+				if (this->hasMessageHandler() && sendMessage(this, NM_ANIMATION_START, messageParam) != 0)
 					continue;
 			} else if (messageNum == 0x101A) {
 				_messageListStatus = 0;

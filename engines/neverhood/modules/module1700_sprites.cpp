@@ -74,7 +74,7 @@ KmScene1705::KmScene1705(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16
 uint32 KmScene1705::xHandleMessage(int messageNum, const MessageParam &param) {
 	uint32 messageResult = 0;
 	switch (messageNum) {
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		_isSittingInTeleporter = param.asInteger() != 0;
 		messageResult = 1;
 		break;
@@ -91,7 +91,7 @@ uint32 KmScene1705::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4803:
 		GotoState(&Klaymen::stFallSkipJump);
 		break;
-	case 0x4812:
+	case NM_KLAYMEN_PICKUP:
 		if (param.asInteger() == 2)
 			GotoState(&Klaymen::stPickUpNeedle);
 		else if (param.asInteger() == 1)

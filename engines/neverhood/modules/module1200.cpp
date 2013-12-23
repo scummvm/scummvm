@@ -296,7 +296,7 @@ void Scene1201::update() {
 uint32 Scene1201::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x07053000) {
 			_creatureExploded = true;
 			sendMessage(_asCreature, 0x2004, 0);
@@ -431,7 +431,7 @@ uint32 Scene1202::handleMessage(int messageNum, const MessageParam &param, Entit
 		if ((param.asPoint().x <= 20 || param.asPoint().x >= 620) && !_isPuzzleSolved)
 			leaveScene(0);
 		break;
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		_clickedIndex = (int)param.asInteger();
 		break;
 	case 0x2002:

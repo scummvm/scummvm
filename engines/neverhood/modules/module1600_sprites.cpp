@@ -211,11 +211,11 @@ uint32 AsCommonCar::handleMessage(int messageNum, const MessageParam &param, Ent
 uint32 AsCommonCar::hmAnimation(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = AsCommonCar::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (_isBusy && param.asInteger() == 0x025424A2)
 			gotoNextState();
 		break;
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		gotoNextState();
 		break;
 	}
@@ -227,7 +227,7 @@ uint32 AsCommonCar::hmLeaveCar(int messageNum, const MessageParam &param, Entity
 	case 0x2009:
 		stEnterCar();
 		break;
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		sendMessage(_parentScene, 0x200A, 0);
 		SetMessageHandler(&AsCommonCar::handleMessage);
 		break;
@@ -866,7 +866,7 @@ uint32 KmScene1608::xHandleMessage(int messageNum, const MessageParam &param) {
 		else
 			GotoState(&Klaymen::stTryStandIdle);
 		break;
-	case 0x4812:
+	case NM_KLAYMEN_PICKUP:
 		if (param.asInteger() == 2)
 			GotoState(&Klaymen::stPickUpNeedle);
 		else if (param.asInteger() == 1)

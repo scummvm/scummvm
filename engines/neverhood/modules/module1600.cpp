@@ -417,13 +417,13 @@ void Scene1608::upRidingCar() {
 uint32 Scene1608::hmLowerFloor(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x20250B1A) {
 			clearRectList();
 			_klaymen->setVisible(false);
 			showMouse(false);
 			_sprite1->setVisible(false);
-			//sendMessage(_asDoor, 0x4809, 0); // Play sound?
+			//sendMessage(_asDoor, NM_DOOR_CLOSE, 0); // Play sound?
 			_countdown1 = 28;
 		}
 		break;
@@ -444,7 +444,7 @@ uint32 Scene1608::hmLowerFloor(int messageNum, const MessageParam &param, Entity
 uint32 Scene1608::hmUpperFloor(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x60842040)
 			_carStatus = 1;
 		break;
@@ -548,7 +548,7 @@ uint32 Scene1609::handleMessage(int messageNum, const MessageParam &param, Entit
 		if (param.asPoint().x <= 20 || param.asPoint().x >= 620)
 			leaveScene(0);
 		break;
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		if (!_isSolved) {
 			if (_changeCurrentSymbol)
 				_asSymbols[_symbolPosition]->change(_currentSymbolIndex + 12, false);

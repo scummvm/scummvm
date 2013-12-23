@@ -204,7 +204,7 @@ uint32 Scene1907::handleMessage(int messageNum, const MessageParam &param, Entit
 			leaveScene(0);
 		}
 		break;
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		if (getGlobalVar(V_STAIRS_DOWN)) {
 			playSound(0);
 			for (int i = 0; i < 9; i++)

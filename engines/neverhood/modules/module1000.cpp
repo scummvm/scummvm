@@ -192,7 +192,7 @@ uint32 Scene1001::handleMessage(int messageNum, const MessageParam &param, Entit
 	uint32 messageResult = 0;
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x00342624) {
 			sendEntityMessage(_klaymen, 0x1014, _asLever);
 			setMessageList2(0x004B4910);
@@ -220,7 +220,7 @@ uint32 Scene1001::handleMessage(int messageNum, const MessageParam &param, Entit
 	case 0x480B:
 		sendMessage(_asWindow, 0x2001, 0);
 		break;
-	case 0x480F:
+	case NM_LEVER_DOWN:
 		sendMessage(_asHammer, 0x2000, 0);
 		break;
 	}
@@ -347,7 +347,7 @@ uint32 Scene1002::handleMessage(int messageNum, const MessageParam &param, Entit
 	uint32 messageResult = 0;
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0xE6EE60E1) {
 			if (getGlobalVar(V_FLYTRAP_RING_DOOR))
 				setMessageList(0x004B4428);
@@ -381,7 +381,7 @@ uint32 Scene1002::handleMessage(int messageNum, const MessageParam &param, Entit
 	case 0x1024:
 		sendMessage(_parentModule, 0x1024, param.asInteger());
 		break;
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		if (_isClimbingLadder) {
 			setMessageList2(0x004B43D0);
 		} else {
@@ -416,8 +416,8 @@ uint32 Scene1002::handleMessage(int messageNum, const MessageParam &param, Entit
 		} else if (sender == _asRing3) {
 			setGlobalVar(V_RADIO_ENABLED, 0);
 			playSound(1);
-			sendMessage(_asDoor, 0x4808, 0);
-			sendMessage(_asOutsideDoorBackground, 0x4808, 0);
+			sendMessage(_asDoor, NM_DOOR_OPEN, 0);
+			sendMessage(_asOutsideDoorBackground, NM_DOOR_OPEN, 0);
 		} else if (sender == _asRing4) {
 			setGlobalVar(V_RADIO_ENABLED, 0);
 			playSound(0, 0xE0558848);
@@ -426,25 +426,25 @@ uint32 Scene1002::handleMessage(int messageNum, const MessageParam &param, Entit
 			playSound(0, 0x44014282);
 		}
 		break;
-	case 0x4807:
+	case NM_LEVER_UP:
 		if (sender == _asRing3) {
 			playSound(2);
-			sendMessage(_asDoor, 0x4809, 0);
-			sendMessage(_asOutsideDoorBackground, 0x4809, 0);
+			sendMessage(_asDoor, NM_DOOR_CLOSE, 0);
+			sendMessage(_asOutsideDoorBackground, NM_DOOR_CLOSE, 0);
 		} else if (sender == _asVenusFlyTrap) {
 			if (getGlobalVar(V_FLYTRAP_RING_DOOR)) {
-				sendMessage(_asRing3, 0x4807, 0);
+				sendMessage(_asRing3, NM_LEVER_UP, 0);
 			}
 		}
 		break;
 	case 0x480B:
 		sendEntityMessage(_klaymen, 0x1014, _asDoorSpy);
 		break;
-	case 0x480F:
+	case NM_LEVER_DOWN:
 		setGlobalVar(V_RADIO_ENABLED, 0);
 		playSound(1);
-		sendMessage(_asDoor, 0x4808, 0);
-		sendMessage(_asOutsideDoorBackground, 0x4808, 0);
+		sendMessage(_asDoor, NM_DOOR_OPEN, 0);
+		sendMessage(_asOutsideDoorBackground, NM_DOOR_OPEN, 0);
 		break;
 	case 0x8000:
 		setSpriteSurfacePriority(_ssCeiling, 995);
@@ -521,13 +521,13 @@ uint32 Scene1004::handleMessage(int messageNum, const MessageParam &param, Entit
 	uint32 messageResult = 0;
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x926500A1) {
 			setMessageList(0x004B7C20);
 			messageResult = 1;
 		}
 		break;
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		loadDataResource(0x01900A04);
 		break;
 	case 0x2001:

@@ -122,7 +122,7 @@ uint32 AsScene1907Symbol::handleMessage(int messageNum, const MessageParam &para
 uint32 AsScene1907Symbol::hmTryToPlugIn(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		gotoNextState();
 		break;
 	}
@@ -394,7 +394,7 @@ void AsScene1907WaterHint::update() {
 uint32 AsScene1907WaterHint::hmShowing(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		gotoNextState();
 		break;
 	}

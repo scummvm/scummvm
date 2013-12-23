@@ -81,7 +81,7 @@ KmScene2501::KmScene2501(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16
 uint32 KmScene2501::xHandleMessage(int messageNum, const MessageParam &param) {
 	uint32 messageResult = 0;
 	switch (messageNum) {
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		_isSittingInTeleporter = param.asInteger() != 0;
 		messageResult = 1;
 		break;

@@ -243,7 +243,7 @@ uint32 Scene2609::handleMessage(int messageNum, const MessageParam &param, Entit
 		if ((param.asPoint().x <= 20 || param.asPoint().x >= 620) && !_isBusy)
 			leaveScene(0);
 		break;
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		_isBusy = true;
 		break;
 	case 0x2001:

@@ -385,7 +385,7 @@ void Scene2501::upRidingCar() {
 uint32 Scene2501::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x60842040)
 			_carStatus = 1;
 		break;

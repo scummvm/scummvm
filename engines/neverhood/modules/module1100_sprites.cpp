@@ -48,7 +48,7 @@ SsScene1105Button::SsScene1105Button(NeverhoodEngine *vm, Scene *parentScene, ui
 
 void SsScene1105Button::update() {
 	if (_countdown != 0 && (--_countdown == 0)) {
-		sendMessage(_parentScene, 0x4807, 0);
+		sendMessage(_parentScene, NM_LEVER_UP, 0);
 		setVisible(false);
 	}
 }
@@ -96,7 +96,7 @@ SsScene1105SymbolDie::SsScene1105SymbolDie(NeverhoodEngine *vm, uint dieIndex, i
 uint32 SsScene1105SymbolDie::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		loadSymbolSprite();
 		break;
 	}
@@ -142,7 +142,7 @@ uint32 AsScene1105TeddyBear::handleMessage(int messageNum, const MessageParam &p
 			playSound(1);
 		}
 		break;
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		sendMessage(_parentScene, 0x2003, 0);
 		stopAnimation();
 		break;
@@ -206,7 +206,7 @@ KmScene1109::KmScene1109(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16
 uint32 KmScene1109::xHandleMessage(int messageNum, const MessageParam &param) {
 	uint32 messageResult = 0;
 	switch (messageNum) {
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		_isSittingInTeleporter = param.asInteger() != 0;
 		messageResult = 1;
 		break;

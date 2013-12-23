@@ -225,7 +225,7 @@ void Scene1401::update() {
 uint32 Scene1401::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x02144CB1)
 			sendEntityMessage(_klaymen, 0x1014, _ssFloorButton);
 		else if (param.asInteger() == 0x402064D8)
@@ -254,7 +254,7 @@ uint32 Scene1401::handleMessage(int messageNum, const MessageParam &param, Entit
 			if (_asProjector && _asProjector->getX() > 404 && _asProjector->getX() < 504)
 				sendMessage(_asProjector , 0x4839, 0);
 		} else if (sender == _ssButton)
-			sendMessage(_asBackDoor, 0x4808, 0);
+			sendMessage(_asBackDoor, NM_DOOR_OPEN, 0);
 		break;
 	case 0x4826:
 		if (sender == _asProjector) {
@@ -375,7 +375,7 @@ void Scene1402::upShaking() {
 uint32 Scene1402::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x00F43389) {
 			if (getGlobalVar(V_MOUSE_PUZZLE_SOLVED))
 				leaveScene(0);
@@ -394,7 +394,7 @@ uint32 Scene1402::handleMessage(int messageNum, const MessageParam &param, Entit
 		else
 			leaveScene(1);
 		break;
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		stopShaking();
 		showMouse(true);
 		setRectList(0x004B0C48);
@@ -473,7 +473,7 @@ uint32 Scene1407::handleMessage(int messageNum, const MessageParam &param, Entit
 			}
 		}
 		break;
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		// The mouse got the cheese (nomnom)
 		setGlobalVar(V_MOUSE_PUZZLE_SOLVED, 1);
 		playSound(0, 0x68E25540);
@@ -534,7 +534,7 @@ Scene1403::Scene1403(NeverhoodEngine *vm, Module *parentModule, int which)
 uint32 Scene1403::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x88C11390) {
 			setRectList(0x004B2008);
 			_isProjecting = true;
@@ -555,10 +555,10 @@ uint32 Scene1403::handleMessage(int messageNum, const MessageParam &param, Entit
 				setSurfacePriority(_sprite3->getSurface(), 995);
 		}
 		break;
-	case 0x4807:
+	case NM_LEVER_UP:
 		_sprite1->setVisible(false);
 		break;
-	case 0x480F:
+	case NM_LEVER_DOWN:
 		_sprite1->setVisible(true);
 		break;
 	case 0x4826:
@@ -655,7 +655,7 @@ Scene1404::~Scene1404() {
 uint32 Scene1404::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x410650C2) {
 			if (_asProjector && _asProjector->getX() == 220)
 				setMessageList(0x004B8C40);
@@ -729,7 +729,7 @@ uint32 Scene1405::handleMessage(int messageNum, const MessageParam &param, Entit
 		if (param.asPoint().x <= 20 || param.asPoint().x >= 620)
 			leaveScene(0);
 		break;
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		if (_selectFirstTile) {
 			_firstTileIndex = param.asInteger();
 			_selectFirstTile = false;

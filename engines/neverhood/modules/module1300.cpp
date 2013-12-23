@@ -358,7 +358,7 @@ uint32 Scene1302::handleMessage(int messageNum, const MessageParam &param, Entit
 	uint32 messageResult = 0;
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x4A845A00)
 			sendEntityMessage(_klaymen, 0x1014, _asRing1);
 		else if (param.asInteger() == 0x43807801) {
@@ -402,7 +402,7 @@ uint32 Scene1302::handleMessage(int messageNum, const MessageParam &param, Entit
 				setMessageList(0x004B0978);
 		}
 		break;
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		if (_klaymen->getY() > 360) {
 			sendEntityMessage(_klaymen, 0x1014, _asVenusFlyTrap);
 			setMessageList2(0x004B08F0);
@@ -421,39 +421,39 @@ uint32 Scene1302::handleMessage(int messageNum, const MessageParam &param, Entit
 		if (sender == _asRing1)
 			playSound(0, 0x665198C0);
 		else if (sender == _asRing2) {
-			sendMessage(_asBridge, 0x4808, 0);
+			sendMessage(_asBridge, NM_DOOR_OPEN, 0);
 			setGlobalVar(V_FLYTRAP_RING_BRIDGE, 1);
 		} else if (sender == _asRing3)
 			playSound(0, 0xE2D389C0);
 		else if (sender == _asRing4) {
-			sendMessage(_ssFence, 0x4808, 0);
+			sendMessage(_ssFence, NM_DOOR_OPEN, 0);
 			setGlobalVar(V_FLYTRAP_RING_FENCE, 1);
 		} else if (sender == _asRing5)
 			playSound(0, 0x40428A09);
 		break;
-	case 0x4807:
+	case NM_LEVER_UP:
 		if (sender == _asRing2) {
-			sendMessage(_asBridge, 0x4809, 0);
+			sendMessage(_asBridge, NM_DOOR_CLOSE, 0);
 			setGlobalVar(V_FLYTRAP_RING_BRIDGE, 0);
 			_sprite2->setVisible(false);
 		} else if (sender == _asRing4) {
-			sendMessage(_ssFence, 0x4809, 0);
+			sendMessage(_ssFence, NM_DOOR_CLOSE, 0);
 			setGlobalVar(V_FLYTRAP_RING_FENCE, 0);
 		} else if (sender == _asVenusFlyTrap) {
 			if (getGlobalVar(V_FLYTRAP_RING_BRIDGE))
-				sendMessage(_asRing2, 0x4807, 0);
+				sendMessage(_asRing2, NM_LEVER_UP, 0);
 			else
-				sendMessage(_asRing4, 0x4807, 0);
+				sendMessage(_asRing4, NM_LEVER_UP, 0);
 		}
 		break;
-	case 0x480F:
+	case NM_LEVER_DOWN:
 		if (sender == _asRing2) {
 			playSound(0, 0x60755842);
-			sendMessage(_asBridge, 0x4808, 0);
+			sendMessage(_asBridge, NM_DOOR_OPEN, 0);
 			setGlobalVar(V_FLYTRAP_RING_BRIDGE, 1);
 		} else if (sender == _asRing4) {
 			playSound(0, 0x60755842);
-			sendMessage(_ssFence, 0x4808, 0);
+			sendMessage(_ssFence, NM_DOOR_OPEN, 0);
 			setGlobalVar(V_FLYTRAP_RING_FENCE, 1);
 		}
 		break;
@@ -500,7 +500,7 @@ Scene1303::Scene1303(NeverhoodEngine *vm, Module *parentModule)
 uint32 Scene1303::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		setGlobalVar(V_BALLOON_POPPED, 1);
 		sendMessage(_asBalloon, 0x2000, 0);
 		break;
@@ -555,7 +555,7 @@ Scene1304::Scene1304(NeverhoodEngine *vm, Module *parentModule, int which)
 uint32 Scene1304::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x415634A4) {
 			if (getGlobalVar(V_BALLOON_POPPED))
 				cancelMessageList();
@@ -681,7 +681,7 @@ Scene1306::Scene1306(NeverhoodEngine *vm, Module *parentModule, int which)
 		sendMessage(this, 0x2000, 0);
 		SetMessageHandler(&Scene1306::handleMessage416EB0);
 		clearRectList();
-		sendMessage(_asElevator, 0x4808, 0);
+		sendMessage(_asElevator, NM_DOOR_OPEN, 0);
 	}
 
 }
@@ -693,7 +693,7 @@ Scene1306::~Scene1306() {
 uint32 Scene1306::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x402064D8)
 			sendEntityMessage(_klaymen, 0x1014, _ssButton);
 		else if (param.asInteger() == 0x01C66840) {
@@ -707,7 +707,7 @@ uint32 Scene1306::handleMessage(int messageNum, const MessageParam &param, Entit
 			SetMessageHandler(&Scene1306::handleMessage416EB0);
 		}
 		break;
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		if (param.asInteger() != 0) {
 			setRectList(0x004AFD28);
 			_klaymen->setKlaymenIdleTable3();
@@ -718,7 +718,7 @@ uint32 Scene1306::handleMessage(int messageNum, const MessageParam &param, Entit
 		break;
 	case 0x480B:
 		if (sender == _ssButton)
-			sendMessage(_asElevator, 0x4808, 0);
+			sendMessage(_asElevator, NM_DOOR_OPEN, 0);
 		break;
 	case 0x4826:
 		if (sender == _asKey) {
@@ -752,11 +752,11 @@ uint32 Scene1306::handleMessage(int messageNum, const MessageParam &param, Entit
 uint32 Scene1306::handleMessage416EB0(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x4808:
+	case NM_DOOR_OPEN:
 		setMessageList(0x004AFBD0);
 		SetMessageHandler(&Scene1306::handleMessage);
 		break;
-	case 0x4809:
+	case NM_DOOR_CLOSE:
 		leaveScene(1);
 		break;
 	case 0x482A:
@@ -981,7 +981,7 @@ Scene1308::Scene1308(NeverhoodEngine *vm, Module *parentModule, int which)
 		// Klaymen entering from the left
 		insertKlaymen<KmScene1308>(41, 440);
 		setMessageList(0x004B57D0);
-		sendMessage(_asJaggyDoor, 0x4808, 0);
+		sendMessage(_asJaggyDoor, NM_DOOR_OPEN, 0);
 		_sprite1->setVisible(false);
 		if (getGlobalVar(V_KEYDOOR_UNLOCKED)) {
 			_sprite4 = insertStaticSprite(0x0101A624, 1100);
@@ -1009,7 +1009,7 @@ Scene1308::Scene1308(NeverhoodEngine *vm, Module *parentModule, int which)
 uint32 Scene1308::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x88C11390) {
 			setRectList(0x004B59A0);
 			_isProjecting = true;
@@ -1022,7 +1022,7 @@ uint32 Scene1308::handleMessage(int messageNum, const MessageParam &param, Entit
 			_isProjecting = false;
 		} else if (param.asInteger() == 0x4AC68808) {
 			clearRectList();
-			sendMessage(_asJaggyDoor, 0x4809, 0);
+			sendMessage(_asJaggyDoor, NM_DOOR_CLOSE, 0);
 			_sprite1->setVisible(false);
 			_klaymen->setVisible(false);
 		}
@@ -1035,7 +1035,7 @@ uint32 Scene1308::handleMessage(int messageNum, const MessageParam &param, Entit
 				setSurfacePriority(_sprite3->getSurface(), 995);
 		}
 		break;
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		if (getGlobalVar(V_KEYDOOR_UNLOCKED))
 			setRectList(0x004B5990);
 		else
@@ -1056,10 +1056,10 @@ uint32 Scene1308::handleMessage(int messageNum, const MessageParam &param, Entit
 		_sprite4->setVisible(true);
 		setRectList(0x004B5990);
 		break;
-	case 0x4807:
+	case NM_LEVER_UP:
 		sendMessage(_asLightWallSymbols, 0x2003, 0);
 		break;
-	case 0x480F:
+	case NM_LEVER_DOWN:
 		sendMessage(_asLightWallSymbols, 0x2002, 0);
 		_ssNumber1->setVisible(true);
 		_ssNumber2->setVisible(true);
@@ -1141,7 +1141,7 @@ void Scene1317::upChooseKing() {
 uint32 Scene1317::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		stChooseKing();
 		break;
 	}
@@ -1170,7 +1170,7 @@ uint32 Scene1317::hmChooseKing(int messageNum, const MessageParam &param, Entity
 uint32 Scene1317::hmHoborgAsKing(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		stEndMovie();
 		break;
 	}
@@ -1180,7 +1180,7 @@ uint32 Scene1317::hmHoborgAsKing(int messageNum, const MessageParam &param, Enti
 uint32 Scene1317::hmEndMovie(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		leaveScene(0);
 		break;
 	}

@@ -62,7 +62,7 @@ void AsScene2201Door::update() {
 uint32 AsScene2201Door::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x11001090) {
 			if (_isOpen)
 				_ssDoorLight->setVisible(true);
@@ -71,15 +71,15 @@ uint32 AsScene2201Door::handleMessage(int messageNum, const MessageParam &param,
 				_ssDoorLight->setVisible(false);
 		}
 		break;
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		if (_isOpen)
 			_countdown = 144;
 		messageResult = _isOpen ? 1 : 0;
 		break;
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		gotoNextState();
 		break;
-	case 0x4808:
+	case NM_DOOR_OPEN:
 		_countdown = 144;
 		if (!_isOpen)
 			stOpenDoor();
@@ -382,20 +382,20 @@ uint32 AsScene2203Door::handleMessage(int messageNum, const MessageParam &param,
 			sendMessage(_parentScene, 0x2001, 0);
 		messageResult = 1;
 		break;
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		_otherDoor = (Sprite*)param.asEntity();
 		break;
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		if (_doorIndex == getGlobalVar(V_LARGE_DOOR_NUMBER))
-			sendMessage(_parentScene, 0x4808, 0);
+			sendMessage(_parentScene, NM_DOOR_OPEN, 0);
 		stopAnimation();
 		break;
-	case 0x4808:
+	case NM_DOOR_OPEN:
 		setGlobalVar(V_LARGE_DOOR_NUMBER, _doorIndex);
-		sendMessage(_otherDoor, 0x4809, 0);
+		sendMessage(_otherDoor, NM_DOOR_CLOSE, 0);
 		openDoor();
 		break;
-	case 0x4809:
+	case NM_DOOR_CLOSE:
 		closeDoor();
 		sendMessage(_parentScene, 0x2003, 0);
 		break;
@@ -425,7 +425,7 @@ SsScene2205DoorFrame::SsScene2205DoorFrame(NeverhoodEngine *vm)
 uint32 SsScene2205DoorFrame::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		loadSprite(getGlobalVar(V_LIGHTS_ON) ? 0x24306227 : 0xD90032A0, kSLFDefDrawOffset | kSLFDefPosition);
 		break;
 	}
@@ -458,13 +458,13 @@ void AsScene2206DoorSpikes::update() {
 uint32 AsScene2206DoorSpikes::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x4808:
+	case NM_DOOR_OPEN:
 		_deltaIndex = 0;
 		playSound(0, 0x032746E0);
 		SetMessageHandler(NULL);
 		SetSpriteUpdate(&AsScene2206DoorSpikes::suOpen);
 		break;
-	case 0x4809:
+	case NM_DOOR_CLOSE:
 		_deltaIndex = 0;
 		playSound(0, 0x002642C0);
 		SetMessageHandler(NULL);
@@ -629,7 +629,7 @@ void AsScene2207Elevator::suSetPosition() {
 uint32 AsScene2207Elevator::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		moveToY(param.asInteger());
 		break;
 	}
@@ -685,14 +685,14 @@ uint32 AsScene2207Lever::handleMessage(int messageNum, const MessageParam &param
 		sendMessage(_parentScene, 0x4826, 0);
 		messageResult = 1;
 		break;
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		gotoNextState();
 		stopAnimation();
 		break;
-	case 0x4807:
+	case NM_LEVER_UP:
 		stLeverUp();
 		break;
-	case 0x480F:
+	case NM_LEVER_DOWN:
 		stLeverDown();
 		break;
 	case 0x482A:
@@ -712,7 +712,7 @@ void AsScene2207Lever::stLeverDown() {
 }
 
 void AsScene2207Lever::stLeverDownEvent() {
-	sendMessage(_parentScene, 0x480F, 0);
+	sendMessage(_parentScene, NM_LEVER_DOWN, 0);
 }
 
 void AsScene2207Lever::stLeverUp() {
@@ -723,7 +723,7 @@ void AsScene2207Lever::stLeverUp() {
 }
 
 void AsScene2207Lever::stLeverUpEvent() {
-	sendMessage(_parentScene, 0x4807, 0);
+	sendMessage(_parentScene, NM_LEVER_UP, 0);
 }
 
 AsScene2207WallRobotAnimation::AsScene2207WallRobotAnimation(NeverhoodEngine *vm, Scene *parentScene)
@@ -748,7 +748,7 @@ AsScene2207WallRobotAnimation::~AsScene2207WallRobotAnimation() {
 uint32 AsScene2207WallRobotAnimation::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (!_idle) {
 			if (param.asInteger() == 0x3423093) {
 				_vm->_soundMan->addSound(0x80D00820, 0x12121943);
@@ -775,7 +775,7 @@ uint32 AsScene2207WallRobotAnimation::handleMessage(int messageNum, const Messag
 	case 0x2007:
 		stStopAnimation();
 		break;
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		gotoNextState();
 		break;
 	}
@@ -828,7 +828,7 @@ uint32 AsScene2207WallCannonAnimation::handleMessage(int messageNum, const Messa
 	case 0x2007:
 		stStopAnimation();
 		break;
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		gotoNextState();
 		break;
 	}
@@ -879,10 +879,10 @@ uint32 KmScene2201::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4004:
 		GotoState(&Klaymen::stTryStandIdle);
 		break;
-	case 0x4812:
+	case NM_KLAYMEN_PICKUP:
 		GotoState(&Klaymen::stPickUpGeneric);
 		break;
-	case 0x4816:
+	case NM_KLAYMEN_PRESS_BUTTON:
 		if (param.asInteger() == 0)
 			GotoState(&Klaymen::stPressButtonSide);
 		break;
@@ -946,7 +946,7 @@ uint32 KmScene2203::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4004:
 		GotoState(&Klaymen::stTryStandIdle);
 		break;
-	case 0x4812:
+	case NM_KLAYMEN_PICKUP:
 		if (param.asInteger() == 2)
 			GotoState(&Klaymen::stPickUpNeedle);
 		else if (param.asInteger() == 1)
@@ -954,7 +954,7 @@ uint32 KmScene2203::xHandleMessage(int messageNum, const MessageParam &param) {
 		else
 			GotoState(&Klaymen::stPickUpGeneric);
 		break;
-	case 0x4816:
+	case NM_KLAYMEN_PRESS_BUTTON:
 		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stPressButton);
 		else if (param.asInteger() == 2)
@@ -972,7 +972,7 @@ uint32 KmScene2203::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4819:
 		GotoState(&KmScene2203::stClayDoorOpen);
 		break;
-	case 0x481A:
+	case NM_KLAYMEN_INSERT_DISK:
 		GotoState(&Klaymen::stInsertDisk);
 		break;
 	case 0x481B:
@@ -1015,9 +1015,9 @@ void KmScene2203::stClayDoorOpen() {
 uint32 KmScene2203::hmClayDoorOpen(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = hmLowLevelAnimation(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x040D4186) {
-			sendMessage(_attachedSprite, 0x4808, 0);
+			sendMessage(_attachedSprite, NM_DOOR_OPEN, 0);
 		}
 		break;
 	}
@@ -1050,7 +1050,7 @@ uint32 KmScene2205::xHandleMessage(int messageNum, const MessageParam &param) {
 		} else
 			GotoState(&Klaymen::stPeekWall);
 		break;
-	case 0x4816:
+	case NM_KLAYMEN_PRESS_BUTTON:
 		if (param.asInteger() == 0)
 			GotoState(&Klaymen::stPressButtonSide);
 		break;
@@ -1105,13 +1105,13 @@ uint32 KmScene2206::xHandleMessage(int messageNum, const MessageParam &param) {
 		} else
 			GotoState(&Klaymen::stPeekWall);
 		break;
-	case 0x4812:
+	case NM_KLAYMEN_PICKUP:
 		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stPickUpTube);
 		else
 			GotoState(&Klaymen::stPickUpGeneric);
 		break;
-	case 0x4816:
+	case NM_KLAYMEN_PRESS_BUTTON:
 		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stPressButton);
 		else if (param.asInteger() == 2)
@@ -1216,10 +1216,10 @@ uint32 KmScene2207::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x480D:
 		GotoState(&Klaymen::stInteractLever);
 		break;
-	case 0x4812:
+	case NM_KLAYMEN_PICKUP:
 		GotoState(&Klaymen::stPickUpGeneric);
 		break;
-	case 0x4816:
+	case NM_KLAYMEN_PRESS_BUTTON:
 		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stPressButton);
 		else if (param.asInteger() == 2)
@@ -1237,7 +1237,7 @@ uint32 KmScene2207::xHandleMessage(int messageNum, const MessageParam &param) {
 		else
 			startWalkToAttachedSpriteXDistance(param.asPoint().x);
 		break;
-	case 0x4827:
+	case NM_KLAYMEN_RELEASE_LEVER:
 		GotoState(&Klaymen::stReleaseLever);
 		break;
 	case 0x482D:
@@ -1280,7 +1280,7 @@ uint32 KmScene2242::xHandleMessage(int messageNum, const MessageParam &param) {
 		} else
 			GotoState(&Klaymen::stPeekWall);
 		break;
-	case 0x4812:
+	case NM_KLAYMEN_PICKUP:
 		if (param.asInteger() == 2)
 			GotoState(&Klaymen::stPickUpNeedle);
 		else if (param.asInteger() == 1)

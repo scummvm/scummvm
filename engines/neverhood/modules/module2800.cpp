@@ -779,10 +779,10 @@ void Scene2803::upKlaymenStairs() {
 uint32 Scene2803::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x480F:
+	case NM_LEVER_DOWN:
 		toggleBackground();
 		// NOTE Intentional fall-through
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x84251F82)
 			setMessageList(0x004B7A50);
 		else if (param.asInteger() == 0x4254A2D2)
@@ -1015,7 +1015,7 @@ Scene2803Small::Scene2803Small(NeverhoodEngine *vm, Module *parentModule, int wh
 uint32 Scene2803Small::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0xB4E4884C) {
 			setMessageList(0x004B6180);
 		} else if (param.asInteger() == 0xB1FDAB2E) {
@@ -1211,7 +1211,7 @@ uint32 Scene2804::handleMessage(int messageNum, const MessageParam &param, Entit
 			leaveScene(0);
 		}
 		break;
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		_isWorking = true;
 		sendMessage(_asCoil, 0x2002, 0);
 		if (getGlobalVar(V_SHRINK_LIGHTS_ON)) {
@@ -1317,7 +1317,7 @@ Scene2805::Scene2805(NeverhoodEngine *vm, Module *parentModule, int which)
 uint32 Scene2805::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		if (param.asInteger()) {
 			setRectList(0x004AE318);
 			_klaymen->setKlaymenIdleTable3();
@@ -1407,12 +1407,12 @@ Scene2806::Scene2806(NeverhoodEngine *vm, Module *parentModule, int which)
 uint32 Scene2806::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x44262B12) {
 			setMessageList(0x004AF0E0);
 		}
 		break;
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		sendMessage(_asSpew, 0x2000, 0);
 		break;
 	}
@@ -1562,7 +1562,7 @@ uint32 Scene2808::handleMessage(int messageNum, const MessageParam &param, Entit
 			leaveScene(1);
 		}
 		break;
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		if (!_isFlowing)
 			_asTestTubes[param.asInteger()]->fill();
 		break;
@@ -1697,12 +1697,12 @@ void Scene2809::update() {
 uint32 Scene2809::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x160DA937) {
 			setMessageList(0x004B5B98);
 		}
 		break;
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		sendMessage(_asSpew, 0x2000, 0);
 		break;
 	}
@@ -1904,7 +1904,7 @@ void Scene2810::insertKlaymenLadder() {
 uint32 Scene2810::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0xE574F14C)
 			setMessageList(0x004AE458);
 		else if (param.asInteger() == 0x7214A05C || param.asInteger() == 0x2905E574)
@@ -1934,7 +1934,7 @@ uint32 Scene2810::handleMessage(int messageNum, const MessageParam &param, Entit
 		else if (param.asInteger() == 0x2064294C || param.asInteger() == 0x2194E053)
 			setMessageList(0x004AE688);
 		break;
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		setRectList(0x004AE800);
 		_isRopingDown = true;
 		break;
@@ -2037,7 +2037,7 @@ void Scene2812::update() {
 uint32 Scene2812::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x0004269B)
 			sendEntityMessage(_klaymen, 0x1014, _asRope);
 		break;

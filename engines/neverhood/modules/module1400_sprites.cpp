@@ -59,11 +59,11 @@ void AsScene1401Pipe::upSuckInProjector() {
 uint32 AsScene1401Pipe::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x0A8A1490)
 			playSound(1, 0x6AB6666F);
 		break;
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		_countdown1 = 70;
 		_countdown2 = 8;
 		stStartSucking();
@@ -78,7 +78,7 @@ uint32 AsScene1401Pipe::handleMessage(int messageNum, const MessageParam &param,
 uint32 AsScene1401Pipe::hmSuckInProjector(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		if (_countdown1 != 0)
 			stStartSucking();
 		else
@@ -121,7 +121,7 @@ AsScene1401Mouse::AsScene1401Mouse(NeverhoodEngine *vm)
 uint32 AsScene1401Mouse::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x66382026)
 			playSound(0, 0x0CD84468);
 		else if (param.asInteger() == 0x6E28061C)
@@ -222,10 +222,10 @@ uint32 AsScene1401BackDoor::handleMessage(int messageNum, const MessageParam &pa
 			_countdown = 168;
 		messageResult = _isOpen ? 1 : 0;
 		break;
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		gotoNextState();
 		break;
-	case 0x4808:
+	case NM_DOOR_OPEN:
 		_countdown = 168;
 		if (!_isOpen)
 			stOpenDoor();
@@ -292,7 +292,7 @@ uint32 AsCommonProjector::handleMessage(int messageNum, const MessageParam &para
 		sendMessage(_parentScene, 0x4826, 0);
 		messageResult = 1;
 		break;
-	case 0x4807:
+	case NM_LEVER_UP:
 		setGlobalVar(V_PROJECTOR_SLOT, (_x - _asProjectorItem->point.x) / 108);
 		if ((int8)getGlobalVar(V_PROJECTOR_SLOT) == _asProjectorItem->lockSlotIndex)
 			stStartLockedInSlot();
@@ -338,8 +338,8 @@ uint32 AsCommonProjector::hmLockedInSlot(int messageNum, const MessageParam &par
 			sendMessage(_parentScene, 0x4826, 0);
 		messageResult = 1;
 		break;
-	case 0x4807:
-		sendMessage(_parentScene, 0x4807, 0);
+	case NM_LEVER_UP:
+		sendMessage(_parentScene, NM_LEVER_UP, 0);
 		stStopProjecting();
 		break;
 	case 0x480B:
@@ -357,7 +357,7 @@ uint32 AsCommonProjector::hmLockedInSlot(int messageNum, const MessageParam &par
 		else
 			messageResult = getGlobalVar(V_PROJECTOR_SLOT) > 0 ? 1 : 0;
 		break;
-	case 0x480F:
+	case NM_LEVER_DOWN:
 		stStartProjecting();
 		break;
 	case 0x482A:
@@ -373,7 +373,7 @@ uint32 AsCommonProjector::hmLockedInSlot(int messageNum, const MessageParam &par
 uint32 AsCommonProjector::hmAnimation(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		gotoNextState();
 		break;
 	}
@@ -481,7 +481,7 @@ void AsCommonProjector::stStartProjecting() {
 }
 
 void AsCommonProjector::stLockedInSlot() {
-	sendMessage(_parentScene, 0x480F, 0);
+	sendMessage(_parentScene, NM_LEVER_DOWN, 0);
 	startAnimation(0xD833207F, 0, -1);
 	SetMessageHandler(&AsCommonProjector::hmLockedInSlot);
 	SetSpriteUpdate(NULL);
@@ -559,7 +559,7 @@ uint32 AsScene1402PuzzleBox::handleMessage(int messageNum, const MessageParam &p
 		_playBackwards = true;
 		NextState(&AsScene1402PuzzleBox::stMoveDownDone);
 		break;
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		gotoNextState();
 		break;
 	}
@@ -902,7 +902,7 @@ uint32 KmScene1401::xHandleMessage(int messageNum, const MessageParam &param) {
 		else
 			GotoState(&Klaymen::stMoveObjectFaceObject);
 		break;
-	case 0x4816:
+	case NM_KLAYMEN_PRESS_BUTTON:
 		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stPressButton);
 		else if (param.asInteger() == 2)
@@ -1019,7 +1019,7 @@ uint32 KmScene1403::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x480D:
 		GotoState(&Klaymen::stUseLever);
 		break;
-	case 0x4812:
+	case NM_KLAYMEN_PICKUP:
 		if (param.asInteger() == 2)
 			GotoState(&Klaymen::stPickUpNeedle);
 		else if (param.asInteger() == 1)
@@ -1037,7 +1037,7 @@ uint32 KmScene1403::xHandleMessage(int messageNum, const MessageParam &param) {
 		else
 			startWalkToAttachedSpriteXDistance(param.asPoint().x);
 		break;
-	case 0x4827:
+	case NM_KLAYMEN_RELEASE_LEVER:
 		GotoState(&Klaymen::stReleaseLever);
 		break;
 	case 0x483F:
@@ -1073,7 +1073,7 @@ uint32 KmScene1404::xHandleMessage(int messageNum, const MessageParam &param) {
 		else
 			GotoState(&Klaymen::stMoveObjectFaceObject);
 		break;
-	case 0x4812:
+	case NM_KLAYMEN_PICKUP:
 		if (param.asInteger() == 2)
 			GotoState(&Klaymen::stPickUpNeedle);
 		else if (param.asInteger() == 1)
@@ -1085,7 +1085,7 @@ uint32 KmScene1404::xHandleMessage(int messageNum, const MessageParam &param) {
 		setDoDeltaX(param.asInteger());
 		gotoNextStateExt();
 		break;
-	case 0x481A:
+	case NM_KLAYMEN_INSERT_DISK:
 		GotoState(&Klaymen::stInsertDisk);
 		break;
 	case 0x481B:

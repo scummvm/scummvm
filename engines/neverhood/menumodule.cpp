@@ -374,7 +374,7 @@ MainMenu::MainMenu(NeverhoodEngine *vm, Module *parentModule)
 uint32 MainMenu::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		leaveScene(param.asInteger());
 		break;
 	}
@@ -448,7 +448,7 @@ void CreditsScene::update() {
 uint32 CreditsScene::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x0009:
+	case NM_KEYPRESS_SPACE:
 		leaveScene(0);
 		break;
 	case 0x000B:
@@ -997,7 +997,7 @@ uint32 GameStateMenu::handleMessage(int messageNum, const MessageParam &param, E
 			setCurrWidget(_textEditWidget);
 		}
 		break;
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		// Handle menu button click
 		switch (param.asInteger()) {
 		case 0:
@@ -1166,7 +1166,7 @@ QueryOverwriteMenu::QueryOverwriteMenu(NeverhoodEngine *vm, Module *parentModule
 uint32 QueryOverwriteMenu::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		// Handle menu button click
 		leaveScene(param.asInteger());
 		break;

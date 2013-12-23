@@ -309,7 +309,7 @@ uint32 Scene1105::handleMessage(int messageNum, const MessageParam &param, Entit
 		_leaveResult = 1;
 		SetUpdateHandler(&Scene1105::upClosePanel);
 		break;
-	case 0x4807:
+	case NM_LEVER_UP:
 		if (sender == _ssActionButton) {
 			if (getSubVar(VA_GOOD_DICE_NUMBERS, 0) == getSubVar(VA_CURR_DICE_NUMBERS, 0) &&
 				getSubVar(VA_GOOD_DICE_NUMBERS, 1) == getSubVar(VA_CURR_DICE_NUMBERS, 1) &&
@@ -513,7 +513,7 @@ Scene1109::Scene1109(NeverhoodEngine *vm, Module *parentModule, int which)
 uint32 Scene1109::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		if (param.asInteger()) {
 			setRectList(0x004B63A8);
 			_klaymen->setKlaymenIdleTable3();
