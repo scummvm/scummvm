@@ -23,7 +23,7 @@
 // StuffIt parsing based on http://code.google.com/p/theunarchiver/wiki/StuffItFormat
 // Compression 14 based on libxad (http://sourceforge.net/projects/libxad/)
 
-#include "grim/stuffit.h"
+#include "engines/grim/stuffit.h"
 
 #include "common/bitstream.h"
 #include "common/debug.h"
