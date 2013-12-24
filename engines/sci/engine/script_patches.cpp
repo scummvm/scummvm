@@ -1281,7 +1281,7 @@ static const uint16 kq6CDPatchAudioTextMenuSupport[] = {
 	0x31, 0x04,                         // bnt [dual mode]
 	0x35, 0x09,                         // ldi 09
 	0x33, 0x02,                         // jmp [skip over dual mode]
-	0x35, 0x08,                         // ldi 08 (-> insert dual mode view here)
+	0x35, 0x0c,                         // ldi 0c (view 947, loop 12, cel 0+1 is our "dual" view, injected by view.cpp)
 	0x65, 0x14,                         // aTop loop
 	0x32, PATCH_UINT16(0xff75),         // jmp [back to iconTextSwitch::show]
 	PATCH_END
