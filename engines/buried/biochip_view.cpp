@@ -28,6 +28,7 @@
 #include "buried/biochip_view.h"
 #include "buried/buried.h"
 #include "buried/fbcdata.h"
+#include "buried/frame_window.h"
 #include "buried/gameui.h"
 #include "buried/graphics.h"
 #include "buried/invdata.h"
@@ -35,6 +36,7 @@
 #include "buried/resources.h"
 #include "buried/scene_view.h"
 
+#include "common/error.h"
 #include "common/stream.h"
 #include "common/system.h"
 #include "graphics/surface.h"
@@ -584,10 +586,23 @@ void InterfaceBioChipViewWindow::onLButtonDown(const Common::Point &point, uint 
 void InterfaceBioChipViewWindow::onLButtonUp(const Common::Point &point, uint flags) {
 	switch (_curRegion) {
 	case REGION_SAVE:
-		// TODO
+		if (!_vm->isDemo())
+			_vm->runSaveDialog();
 		break;
 	case REGION_RESTORE:
-		// TODO
+		if (!_vm->isDemo()) {
+			FrameWindow *frameWindow = (FrameWindow *)_vm->_mainWindow;
+			Common::Error result = _vm->runLoadDialog();
+
+			if (result.getCode() == Common::kUnknownError) {
+				// Try to get us back to the main menu at this point
+				frameWindow->showMainMenu();
+				return;
+			} else if (result.getCode() == Common::kNoError) {
+				// Loaded successfully
+				return;
+			}
+		}
 		break;
 	case REGION_QUIT:
 		// TODO

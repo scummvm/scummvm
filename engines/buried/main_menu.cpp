@@ -30,6 +30,7 @@
 #include "buried/resources.h"
 #include "buried/sound.h"
 
+#include "common/error.h"
 #include "graphics/surface.h"
 
 namespace Buried {
@@ -199,9 +200,21 @@ void MainMenuWindow::onLButtonUp(const Common::Point &point, uint flags) {
 			// TODO: Easter egg with control down
 			((FrameWindow *)_parent)->startNewGame(_walkthrough, _showIntro);
 			return;
-		case BUTTON_RESTORE_GAME:
-			// TODO
+		case BUTTON_RESTORE_GAME: {
+			FrameWindow *frameWindow = (FrameWindow *)_parent;
+			Common::Error result = _vm->runLoadDialog();
+
+			if (result.getCode() == Common::kUnknownError) {
+				// Try to get us back to the main menu at this point
+				frameWindow->showMainMenu();
+				return;
+			} else if (result.getCode() == Common::kNoError) {
+				// Loaded successfully
+				return;
+			}
+
 			break;
+		}
 		case BUTTON_CREDITS:
 			((FrameWindow *)_parent)->showCredits();
 			return;
