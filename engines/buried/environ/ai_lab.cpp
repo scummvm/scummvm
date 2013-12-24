@@ -3776,8 +3776,6 @@ bool SceneViewWindow::checkCustomSpaceStationAICommentDependencies(const Locatio
 }
 
 SceneBase *SceneViewWindow::constructAILabSceneObject(Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) {
-	// TODO
-
 	switch (sceneStaticData.classID) {
 	case 1:
 		return new UseCheeseGirlPropellant(_vm, viewWindow, sceneStaticData, priorLocation);
@@ -3935,7 +3933,7 @@ SceneBase *SceneViewWindow::constructAILabSceneObject(Window *viewWindow, const 
 	case 100:
 		return new TakeWaterCanister(_vm, viewWindow, sceneStaticData, priorLocation);
 	default:
-		warning("TODO: AI lab scene object %d", sceneStaticData.classID);
+		warning("Unknown AI lab scene object %d", sceneStaticData.classID);
 		break;
 	}
 
