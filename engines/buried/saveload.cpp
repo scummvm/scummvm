@@ -24,11 +24,13 @@
  */
 
 #include "common/scummsys.h"
+#include "common/config-manager.h"
 #include "common/error.h"
 #include "common/savefile.h"
 #include "common/serializer.h"
 #include "common/system.h"
 #include "common/translation.h"
+#include "gui/saveload.h"
 
 #include "buried/buried.h"
 #include "buried/frame_window.h"
@@ -492,6 +494,54 @@ bool BuriedEngine::syncGlobalFlags(Common::Serializer &s, GlobalFlags &flags) {
 	s.syncBytes(flags.aiData, sizeof(flags.aiData));
 
 	return s.bytesSynced() - startBytes == 1024;
+}
+
+Common::Error BuriedEngine::runLoadDialog() {
+	GUI::SaveLoadChooser slc(_("Load game:"), _("Load"), false);
+
+	Common::String gameId = ConfMan.get("gameid");
+
+	const EnginePlugin *plugin = 0;
+	EngineMan.findGame(gameId, &plugin);
+
+	int slot = slc.runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
+
+	Common::Error result;
+
+	if (slot >= 0) {
+		if (loadGameState(slot).getCode() == Common::kNoError)
+			result = Common::kNoError;
+		else
+			result = Common::kUnknownError;
+	} else {
+		result = Common::kUserCanceled;
+	}
+
+	return result;
+}
+
+Common::Error BuriedEngine::runSaveDialog() {
+	GUI::SaveLoadChooser slc(_("Save game:"), _("Save"), true);
+
+	Common::String gameId = ConfMan.get("gameid");
+
+	const EnginePlugin *plugin = 0;
+	EngineMan.findGame(gameId, &plugin);
+
+	int slot = slc.runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
+
+	Common::Error result;
+
+	if (slot >= 0) {
+		if (saveGameState(slot, slc.getResultString()).getCode() == Common::kNoError)
+			result = Common::kNoError;
+		else
+			result = Common::kUnknownError;
+	} else {
+		result = Common::kUserCanceled;
+	}
+
+	return result;
 }
 
 } // End of namespace Buried
