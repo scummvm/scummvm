@@ -32,7 +32,8 @@ MODULE_OBJS := \
 	zork_raw.o \
 	sidefx.o \
 	music_node.o \
-	inventory_manager.o
+	inventory_manager.o \
+	slot_control.o
  
 MODULE_DIRS += \
 	engines/zvision

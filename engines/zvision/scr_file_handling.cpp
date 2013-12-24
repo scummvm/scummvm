@@ -29,6 +29,7 @@
 #include "zvision/actions.h"
 #include "zvision/push_toggle_control.h"
 #include "zvision/lever_control.h"
+#include "zvision/slot_control.h"
 
 #include "common/textconsole.h"
 #include "common/file.h"
@@ -342,6 +343,8 @@ Control *ScriptManager::parseControl(Common::String &line, Common::SeekableReadS
 		return NULL;
 	} else if (controlType.equalsIgnoreCase("lever")) {
 		return new LeverControl(_engine, key, stream);
+	} else if (controlType.equalsIgnoreCase("slot")) {
+		return new SlotControl(_engine, key, stream);
 	}
 	return NULL;
 }
