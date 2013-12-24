@@ -55,7 +55,6 @@ public:
 	bool startNewGame(bool walkthrough = false);
 	bool startNewGameIntro(bool walkthrough = false);
 	bool startNewGame(const Location &startingLocation);
-	bool startNewGame(const Common::String &restoreFile);
 	bool showDeathScene(int deathSceneIndex);
 	bool showCompletionScene();
 
