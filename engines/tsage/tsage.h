@@ -83,7 +83,6 @@ public:
 	uint32 getGameID() const;
 	uint32 getFeatures() const;
 	Common::String getPrimaryFilename() const;
-	bool shouldQuit();
 
 	virtual Common::Error init();
 	virtual Common::Error run();
