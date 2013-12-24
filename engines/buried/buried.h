@@ -134,6 +134,8 @@ public:
 	static Common::StringArray listSaveFiles();
 	bool loadState(Common::SeekableReadStream *saveFile, Location &location, GlobalFlags &flags, Common::Array<int> &inventoryItems);
 	bool saveState(Common::WriteStream *saveFile, Location &location, GlobalFlags &flags, Common::Array<int> &inventoryItems);
+	Common::Error runSaveDialog();
+	Common::Error runLoadDialog();
 
 private:
 	Database *_library;
