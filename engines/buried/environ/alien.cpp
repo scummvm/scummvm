@@ -1108,8 +1108,6 @@ bool SceneViewWindow::startAlienAmbient(int oldTimeZone, int oldEnvironment, int
 }
 
 SceneBase *SceneViewWindow::constructAlienSceneObject(Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) {
-	// TODO
-
 	switch (sceneStaticData.classID) {
 	case 1:
 		return new ArmControls(_vm, viewWindow, sceneStaticData, priorLocation);
@@ -1171,7 +1169,7 @@ SceneBase *SceneViewWindow::constructAlienSceneObject(Window *viewWindow, const 
 		return new PlayStingers(_vm, viewWindow, sceneStaticData, priorLocation, 127, offsetof(GlobalFlags, asRBLastStingerID), offsetof(GlobalFlags, asRBStingerID), 10, 14);
 	}
 
-	warning("TODO: Alien scene object %d", sceneStaticData.classID);
+	warning("Unknown Alien scene object %d", sceneStaticData.classID);
 	return new SceneBase(_vm, viewWindow, sceneStaticData, priorLocation);
 }
 

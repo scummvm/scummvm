@@ -1970,8 +1970,6 @@ bool SceneViewWindow::startFutureApartmentAmbient(int oldTimeZone, int oldEnviro
 }
 
 SceneBase *SceneViewWindow::constructFutureApartmentSceneObject(Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) {
-	// TODO
-
 	switch (sceneStaticData.classID) {
 	case 1:
 		return new ClickPlayVideoSwitchAI(_vm, viewWindow, sceneStaticData, priorLocation, 0, kCursorFinger, offsetof(GlobalFlags, faKICoffeeSpilled), 212, 114, 246, 160);
@@ -2079,7 +2077,7 @@ SceneBase *SceneViewWindow::constructFutureApartmentSceneObject(Window *viewWind
 		return new EnvironDoorExitSound(_vm, viewWindow, sceneStaticData, priorLocation);
 	}
 
-	warning("TODO: Future apartment scene object %d", sceneStaticData.classID);
+	warning("Unknown Future apartment scene object %d", sceneStaticData.classID);
 
 	return new SceneBase(_vm, viewWindow, sceneStaticData, priorLocation);
 }
