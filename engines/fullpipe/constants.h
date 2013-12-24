@@ -504,6 +504,7 @@ namespace Fullpipe {
 #define ANI_BOOT_15 4779
 #define ANI_GRANDMA_ASS 1265
 #define PIC_SC15_LADDER 3253
+#define PIC_SC15_LTRUBA 1261
 #define QU_SC15_ENTERLIFT 2811
 #define QU_SC15_EXITLIFT 2812
 #define ST_GMS_BOOT 1270
