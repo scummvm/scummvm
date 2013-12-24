@@ -29,6 +29,9 @@
 #include "fullpipe/scenes.h"
 #include "fullpipe/scene.h"
 #include "fullpipe/floaters.h"
+#include "fullpipe/messages.h"
+#include "fullpipe/statics.h"
+#include "fullpipe/behavior.h"
 
 namespace Fullpipe {
 
@@ -42,6 +45,37 @@ void scene12_initScene() {
 		g_vars->scene12_flyCountdown = 600 * g_fp->_rnd->getRandomNumber(32767) / 0x7fff + 600;
 
 	g_fp->setObjectState("Муха_12", g_fp->_rnd->getRandomNumber(1));
+}
+
+void sceneHandler12_updateFloaters() {
+	warning("STUB: sceneHandler12_updateFloaters()");
+}
+
+int sceneHandler12(ExCommand *cmd) {
+	int res = 0;
+
+	if (cmd->_messageKind == 17 && cmd->_messageNum == 33) {
+		if (g_fp->_aniMan2) {
+			if (g_fp->_aniMan2->_ox < g_fp->_sceneRect.left + 200)
+				g_fp->_currentScene->_x = g_fp->_aniMan2->_ox - g_fp->_sceneRect.left - 300;
+
+			if (g_fp->_aniMan2->_ox > g_fp->_sceneRect.right - 200)
+				g_fp->_currentScene->_x = g_fp->_aniMan2->_ox - g_fp->_sceneRect.right + 300;
+
+			res = 1;
+		}
+
+		g_vars->scene12_flyCountdown--;
+
+		if (!g_vars->scene12_flyCountdown)
+			sceneHandler12_updateFloaters();
+
+		g_fp->_floaters->update();
+
+		g_fp->_behaviorManager->updateBehaviors();
+	}
+
+	return res;
 }
 
 } // End of namespace Fullpipe
