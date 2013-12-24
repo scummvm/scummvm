@@ -1920,9 +1920,9 @@ int PaintingTowerCapAgent::postEnterRoom(Window *viewWindow, const Location &pri
 		// Set flag for scoring
 		((SceneViewWindow *)viewWindow)->getGlobalFlags().scoreResearchAgent3DaVinci = 1;
 	} else {
-		if (false) { // TODO: If control down
+		// Moonwalk
+		if (_vm->isControlDown())
 			((SceneViewWindow *)viewWindow)->playSynchronousAnimation(12);
-		}
 	}
 
 	return SC_TRUE;

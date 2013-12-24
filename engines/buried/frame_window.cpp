@@ -145,6 +145,7 @@ bool FrameWindow::showMainMenu() {
 		((MainMenuWindow *)_mainChildWindow)->showMainMenu();
 	}
 
+	setFocus();
 	_vm->removeMouseMessages(this);
 	_vm->removeMouseMessages(_mainChildWindow);
 	return true;
@@ -170,6 +171,8 @@ bool FrameWindow::returnToMainMenu() {
 		_mainChildWindow = new MainMenuWindow(_vm, this);
 		((MainMenuWindow *)_mainChildWindow)->showMainMenu();
 	}
+
+	setFocus();
 
 	// Empty input queue
 	_vm->removeMouseMessages(this);

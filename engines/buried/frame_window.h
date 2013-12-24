@@ -66,6 +66,7 @@ public:
 	bool isFrameCachingAllowed() const { return _cacheFrames; }
 
 	bool _reviewerMode;
+	bool _controlDown;
 
 	bool isGameInProgress() const { return _gameInProgress; }
 	Window *getMainChildWindow() const { return _mainChildWindow; }
@@ -73,7 +74,6 @@ public:
 
 private:
 	Window *_mainChildWindow;
-	bool _controlDown;
 
 	bool _cacheFrames;
 	bool _cycleDefault;
