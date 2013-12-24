@@ -2351,8 +2351,6 @@ bool SceneViewWindow::checkCustomMayanAICommentDependencies(const Location &comm
 }
 
 SceneBase *SceneViewWindow::constructMayanSceneObject(Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) {
-	// TODO
-
 	switch (sceneStaticData.classID) {
 	case 1:
 		return new VideoDeath(_vm, viewWindow, sceneStaticData, priorLocation, 10, IDS_HUMAN_PRESENCE_500METERS);
@@ -2544,7 +2542,7 @@ SceneBase *SceneViewWindow::constructMayanSceneObject(Window *viewWindow, const 
 		return new ViewSingleTranslation(_vm, viewWindow, sceneStaticData, priorLocation, IDS_MY_WT_ALTAR_TEXT, 106, 128, 344, 162);
 	}
 
-	warning("TODO: Mayan scene object %d", sceneStaticData.classID);
+	warning("Unknown Mayan scene object %d", sceneStaticData.classID);
 	return new SceneBase(_vm, viewWindow, sceneStaticData, priorLocation);
 }
 

@@ -2582,8 +2582,6 @@ bool SceneViewWindow::checkCustomDaVinciAICommentDependencies(const Location &co
 }
 
 SceneBase *SceneViewWindow::constructDaVinciSceneObject(Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) {
-	// TODO
-
 	switch (sceneStaticData.classID) {
 	case 1:
 		return new SwapStillOnFlag(_vm, viewWindow, sceneStaticData, priorLocation, offsetof(GlobalFlags, dsPTElevatorPresent), 1);
@@ -2741,7 +2739,7 @@ SceneBase *SceneViewWindow::constructDaVinciSceneObject(Window *viewWindow, cons
 		return new CodexFormulaeNotify(_vm, viewWindow, sceneStaticData, priorLocation);
 	}
 
-	warning("TODO: Da Vinci scene object %d", sceneStaticData.classID);
+	warning("Unknown Da Vinci scene object %d", sceneStaticData.classID);
 	return new SceneBase(_vm, viewWindow, sceneStaticData, priorLocation);
 }
 
