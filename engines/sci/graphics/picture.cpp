@@ -919,7 +919,7 @@ void GfxPicture::vectorFloodFill(int16 x, int16 y, byte color, byte priority, by
 	}
 
 	// This logic was taken directly from sierra sci, floodfill will get aborted on various occations
-	if (isEGA) {
+	if (!_addToFlag) {
 		if (screenMask & GFX_SCREEN_MASK_VISUAL) {
 			if ((color == _screen->getColorWhite()) || (searchColor != _screen->getColorWhite()))
 				return;
@@ -931,7 +931,9 @@ void GfxPicture::vectorFloodFill(int16 x, int16 y, byte color, byte priority, by
 				return;
 		}
 	} else {
-		// VGA logic (SCI1 early w/o QfG2)
+		// When adding a picture onto another picture, don't abort in case current pixel was already drawn previously
+		//  It seems Sierra SCI unpacks such pictures separately and then copies them over
+		//  We draw directly to the screen.
 		//  fixes Space Quest 4 orange ship lifting off (bug #6446)
 		if (screenMask & GFX_SCREEN_MASK_VISUAL) {
 			if (color == _screen->getColorWhite())
@@ -982,6 +984,12 @@ void GfxPicture::vectorFloodFill(int16 x, int16 y, byte color, byte priority, by
 			_screen->putPixel(--w, p.y, screenMask, color, priority, control);
 		while (e < r && (matchedMask = _screen->isFillMatch(e + 1, p.y, matchMask, searchColor, searchPriority, searchControl, isEGA)))
 			_screen->putPixel(++e, p.y, screenMask, color, priority, control);
+#if 0
+		// debug code for floodfill
+		_screen->copyToScreen();
+		g_system->updateScreen();
+		g_system->delayMillis(100);
+#endif
 		// checking lines above and below for possible flood targets
 		a_set = b_set = 0;
 		while (w <= e) {
