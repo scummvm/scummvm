@@ -369,6 +369,16 @@ public:
 
 	void scaleBuffer(const void *src, void *dst, uint32 srcWidth, uint32 srcHeight, byte bytesPerPixel, uint32 dstWidth, uint32 dstHeight);
 
+	void blitSurfaceToSurface(Graphics::Surface &src, Graphics::Surface &dst, int x, int y);
+	void blitSurfaceToSurface(Graphics::Surface &src, Graphics::Surface &dst, int x, int y, uint32 colorkey);
+	void blitSurfaceToBkg(Graphics::Surface &src, int x, int y);
+	void blitSurfaceToBkg(Graphics::Surface &src, int x, int y, uint32 colorkey);
+	void blitSurfaceUpBkg(Graphics::Surface &src, int x, int y);
+	void blitSurfaceUpBkg(Graphics::Surface &src, int x, int y, uint32 colorkey);
+	Graphics::Surface *getBkgRect(Common::Rect &rect);
+	Graphics::Surface *loadImage(const char *file);
+	Graphics::Surface *loadImage(Common::String &file);
+
 private:
 	/**
 	 * Renders a subRectangle of an image to the backbuffer. The destinationRect and SubRect

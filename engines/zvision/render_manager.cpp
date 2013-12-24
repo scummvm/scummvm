@@ -721,4 +721,60 @@ void RenderManager::scaleBuffer(const void *src, void *dst, uint32 srcWidth, uin
 	}
 }
 
+void RenderManager::blitSurfaceToSurface(Graphics::Surface &src, Graphics::Surface &dst, int x, int y) {
+	Common::Rect pos(x, y, x + src.w, y + src.h);
+	pos.clip(dst.w, dst.h);
+	copyRectToSurface(src, dst, Common::Rect(), pos);
+}
+
+void RenderManager::blitSurfaceToSurface(Graphics::Surface &src, Graphics::Surface &dst, int x, int y, uint32 colorkey) {
+	Common::Rect pos(x, y, x + src.w, y + src.h);
+	pos.clip(dst.w, dst.h);
+	copyRectToSurface(src, dst, Common::Rect(), pos, colorkey);
+}
+
+void RenderManager::blitSurfaceToBkg(Graphics::Surface &src, int x, int y) {
+	blitSurfaceToSurface(src, _currentBackground, x, y);
+	moveBackground(0); // Temporary workaround
+}
+
+void RenderManager::blitSurfaceToBkg(Graphics::Surface &src, int x, int y, uint32 colorkey) {
+	blitSurfaceToSurface(src, _currentBackground, x, y, colorkey);
+	moveBackground(0); // Temporary workaround
+}
+
+void RenderManager::blitSurfaceUpBkg(Graphics::Surface &src, int x, int y) {
+	blitSurfaceToSurface(src, _workingWindowBuffer, x, y);
+}
+
+void RenderManager::blitSurfaceUpBkg(Graphics::Surface &src, int x, int y, uint32 colorkey) {
+	blitSurfaceToSurface(src, _workingWindowBuffer, x, y, colorkey);
+}
+
+Graphics::Surface *RenderManager::getBkgRect(Common::Rect &rect) {
+	Common::Rect dst = rect;
+	dst.clip(_currentBackground.w, _currentBackground.h);
+
+	if (dst.isEmpty() || !dst.isValidRect())
+		return NULL;
+
+	Graphics::Surface *srf = new Graphics::Surface;
+	srf->create(dst.width(), dst.height(), _currentBackground.format);
+
+	srf->copyRectToSurface(_currentBackground, 0, 0, Common::Rect(dst));
+
+	return srf;
+}
+
+Graphics::Surface *RenderManager::loadImage(Common::String &file) {
+	Graphics::Surface *tmp = new Graphics::Surface;
+	readImageToSurface(file, *tmp);
+	return tmp;
+}
+
+Graphics::Surface *RenderManager::loadImage(const char *file) {
+	Common::String str = Common::String(file);
+	return loadImage(str);
+}
+
 } // End of namespace ZVision
