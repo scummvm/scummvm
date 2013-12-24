@@ -33,6 +33,7 @@
 #include "common/textconsole.h"
 #include "common/translation.h"
 #include "engines/util.h"
+#include "gui/message.h"
 
 #include "buried/buried.h"
 #include "buried/console.h"
@@ -459,6 +460,13 @@ void BuriedEngine::pauseEngineIntern(bool pause) {
 		for (TimerMap::iterator it = _timers.begin(); it != _timers.end(); it++)
 			it->_value.nextTrigger += timeDiff;
 	}
+}
+
+bool BuriedEngine::runQuitDialog() {
+	// TODO: Would be nice to load the text out of the EXE for this
+	// v1.04+: IDS_APP_MESSAGE_QUIT_TEXT (9024)
+	GUI::MessageDialog dialog(_("Are you sure you want to quit?"), _("Yes"), _("No"));
+	return dialog.runModal() == GUI::kMessageOK;
 }
 
 } // End of namespace Buried

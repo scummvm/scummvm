@@ -2436,7 +2436,9 @@ void SceneViewWindow::onKeyUp(const Common::KeyState &key, uint flags) {
 		break;
 	case Common::KEYCODE_q:
 		if (key.flags & Common::KBD_CTRL) {
-			// TODO: Return to main menu
+			// Return to main menu
+			if (_vm->runQuitDialog())
+				((FrameWindow *)_vm->_mainWindow)->showMainMenu();
 			return;
 		}
 		break;
