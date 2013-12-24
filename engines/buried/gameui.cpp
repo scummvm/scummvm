@@ -25,6 +25,7 @@
 
 #include "buried/biochip_right.h"
 #include "buried/buried.h"
+#include "buried/frame_window.h"
 #include "buried/gameui.h"
 #include "buried/graphics.h"
 #include "buried/invdata.h"
@@ -37,6 +38,7 @@
 #include "buried/sound.h"
 #include "buried/video_window.h"
 
+#include "common/error.h"
 #include "common/keyboard.h"
 #include "common/system.h"
 #include "graphics/surface.h"
@@ -128,41 +130,6 @@ bool GameUIWindow::startNewGame(const Location &startingLocation) {
 	invalidateWindow(false);
 
 	return true;
-}
-
-bool GameUIWindow::startNewGame(const Common::String &fileName) {
-	_doNotDraw = false;
-	showWindow(kWindowShow);
-	invalidateWindow(false);
-
-	_navArrowWindow->showWindow(kWindowShow);
-	_liveTextWindow->showWindow(kWindowShow);
-	_sceneViewWindow->showWindow(kWindowShow);
-	_inventoryWindow->showWindow(kWindowShow);
-	_bioChipRightWindow->showWindow(kWindowShow);
-	_sceneViewWindow->startNewGame(fileName);
-
-	return true;
-}
-
-bool GameUIWindow::loadGame() {
-	_doNotDraw = false;
-
-	// TODO;
-
-	return false;
-}
-
-bool GameUIWindow::loadGame(const Common::String &fileName) {
-	// TODO
-
-	return true;
-}
-
-bool GameUIWindow::saveGame() {
-	// TODO
-
-	return false;
 }
 
 bool GameUIWindow::changeCurrentDate(int timeZoneID) {
@@ -341,7 +308,7 @@ void GameUIWindow::onKeyUp(const Common::KeyState &key, uint flags) {
 			_bioChipRightWindow->changeCurrentBioChip(kItemBioChipInterface);
 			_bioChipRightWindow->invalidateWindow(false);
 			_bioChipRightWindow->sendMessage(new LButtonUpMessage(Common::Point(50, 130), 0));
-			saveGame();
+			_vm->runSaveDialog();
 			return;
 		}
 		// Fall through
@@ -351,7 +318,9 @@ void GameUIWindow::onKeyUp(const Common::KeyState &key, uint flags) {
 			_bioChipRightWindow->changeCurrentBioChip(kItemBioChipInterface);
 			_bioChipRightWindow->invalidateWindow(false);
 			_bioChipRightWindow->sendMessage(new LButtonUpMessage(Common::Point(50, 130), 0));
-			loadGame();
+
+			if (_vm->runLoadDialog().getCode() == Common::kUnknownError)
+				((FrameWindow *)_vm->_mainWindow)->showMainMenu();
 			return;
 		}
 		// Fall through
