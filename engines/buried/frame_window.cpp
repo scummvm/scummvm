@@ -363,7 +363,14 @@ void FrameWindow::onKeyDown(const Common::KeyState &key, uint flags) {
 	_controlDown = (key.flags & Common::KBD_CTRL) != 0;
 
 	if (key.keycode == Common::KEYCODE_ESCAPE) {
-		// TODO: Possibly quit
+		if (_gameInProgress || !_atMainMenu) {
+			// Ask if the player wants to return 
+			if (_vm->runQuitDialog())
+				showMainMenu();
+		} else {
+			// Quit from the main menu
+			_vm->quitGame();
+		}
 	}
 }
 
