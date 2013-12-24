@@ -103,4 +103,28 @@ void Control::parseTiltControl(ZVision *engine, Common::SeekableReadStream &stre
 	renderTable->generateRenderTable();
 }
 
+void Control::getParams(Common::String &input_str, Common::String &parameter, Common::String &values) {
+	const char *chrs = input_str.c_str();
+	uint lbr;
+
+	for (lbr = 0; lbr < input_str.size(); lbr++)
+		if (chrs[lbr] == '(')
+			break;
+
+	if (lbr >= input_str.size())
+		return;
+
+	uint rbr;
+
+	for (rbr = lbr + 1; rbr < input_str.size(); rbr++)
+		if (chrs[rbr] == ')')
+			break;
+
+	if (rbr >= input_str.size())
+		return;
+
+	parameter = Common::String(chrs, chrs + lbr);
+	values = Common::String(chrs + lbr + 1, chrs + rbr);
+}
+
 } // End of namespace ZVision

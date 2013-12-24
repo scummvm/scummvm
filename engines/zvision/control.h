@@ -24,6 +24,7 @@
 #define ZVISION_CONTROL_H
 
 #include "common/keyboard.h"
+#include "common/str.h"
 
 
 namespace Common {
@@ -102,6 +103,7 @@ protected:
 	ZVision *_engine;
 	uint32 _key;
 
+	void getParams(Common::String &input_str, Common::String &parameter, Common::String &values);
 // Static member functions
 public:
 	static void parseFlatControl(ZVision *engine);
