@@ -155,7 +155,11 @@ void DemoMainMenuWindow::onLButtonUp(const Common::Point &point, uint flags) {
 	case BUTTON_INTERACTIVE:
 		if (_interactive.contains(point)) {
 			_vm->_sound->setAmbientSound();
-			// TODO: Reviewer mode check (control)
+
+			// Reviewer mode check (control)
+			if (_vm->isControlDown())
+				((FrameWindow *)_parent)->_reviewerMode = true;
+
 			((FrameWindow *)_parent)->startNewGame();
 		}
 		return;

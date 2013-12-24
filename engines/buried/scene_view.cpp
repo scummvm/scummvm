@@ -899,7 +899,7 @@ bool SceneViewWindow::playTransition(const DestinationScene &destinationData, in
 	// Call the appropriate function for the transition type
 	switch (destinationData.transitionType) {
 	case TRANSITION_PUSH:
-		if (false) { // TODO: control down check
+		if (_vm->isControlDown()) {
 			if (navFrame >= 0) {
 				LocationStaticData destinationStaticData;
 				if (!getSceneStaticData(destinationData.destinationScene, destinationStaticData))
@@ -933,7 +933,7 @@ bool SceneViewWindow::playTransition(const DestinationScene &destinationData, in
 		}
 		break;
 	case TRANSITION_WALK:
-		if (false) { // TODO: control down check
+		if (_vm->isControlDown()) {
 			if (navFrame >= 0) {
 				LocationStaticData destinationStaticData;
 				if (!getSceneStaticData(destinationData.destinationScene, destinationStaticData))
@@ -952,7 +952,7 @@ bool SceneViewWindow::playTransition(const DestinationScene &destinationData, in
 		}
 		break;
 	case TRANSITION_VIDEO:
-		if (false) { // TODO: control down check and debug mode check (maybe?)
+		if (_vm->isControlDown() && false) { // TODO: debug mode check (maybe?)
 			if (navFrame >= 0) {
 				LocationStaticData destinationStaticData;
 				if (!getSceneStaticData(destinationData.destinationScene, destinationStaticData))

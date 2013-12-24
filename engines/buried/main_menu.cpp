@@ -29,6 +29,7 @@
 #include "buried/main_menu.h"
 #include "buried/resources.h"
 #include "buried/sound.h"
+#include "buried/video_window.h"
 
 #include "common/error.h"
 #include "graphics/surface.h"
@@ -197,8 +198,37 @@ void MainMenuWindow::onLButtonUp(const Common::Point &point, uint flags) {
 			((FrameWindow *)_parent)->showOverview();
 			return;
 		case BUTTON_NEW_GAME:
-			// TODO: Easter egg with control down
-			((FrameWindow *)_parent)->startNewGame(_walkthrough, _showIntro);
+			if (_vm->isControlDown()) {
+				// Easter egg
+				_disableDrawing = true;
+				invalidateWindow(false);
+
+				// Play the intro movie
+				VideoWindow *video = new VideoWindow(_vm, this);
+
+				if (video->openVideo("BITDATA/INTRO/INTRO_O.BTV")) {
+					video->setWindowPos(0, 104, 145, 0, 0, kWindowPosNoSize | kWindowPosNoZOrder);
+					video->enableWindow(false);
+					video->showWindow(kWindowShow);
+					_vm->_sound->stop();
+					video->playVideo();
+
+					while (!_vm->shouldQuit() && video->getMode() != VideoWindow::kModeStopped)
+						_vm->yield();
+
+					_vm->_sound->restart();
+				}
+
+				delete video;
+
+				if (_vm->shouldQuit())
+					return;
+
+				_disableDrawing = false;
+				invalidateWindow(false);
+			} else {
+				((FrameWindow *)_parent)->startNewGame(_walkthrough, _showIntro);
+			}
 			return;
 		case BUTTON_RESTORE_GAME: {
 			FrameWindow *frameWindow = (FrameWindow *)_parent;

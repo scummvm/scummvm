@@ -126,6 +126,7 @@ public:
 	void setTransitionSpeed(int newSpeed);
 	void releaseCapture() { _captureWindow = 0; }
 	bool runQuitDialog();
+	bool isControlDown() const;
 
 	// Save/Load
 	bool canLoadGameStateCurrently();
