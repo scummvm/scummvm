@@ -104,4 +104,113 @@ int scene15_updateCursor() {
 	return g_fp->_cursorId;
 }
 
+int sceneHandler15(ExCommand *cmd) {
+	if (cmd->_messageKind != 17)
+		return 0;
+
+	switch(cmd->_messageNum) {
+	case MSG_LIFT_CLOSEDOOR:
+		g_fp->lift_closedoorSeq();
+		break;
+
+	case MSG_LIFT_EXITLIFT:
+		g_fp->lift_exitSeq(cmd);
+		break;
+
+	case MSG_LIFT_STARTEXITQUEUE:
+		g_fp->lift_startExitQueue();
+		break;
+
+	case MSG_SC4_HIDEBOOT:
+		g_vars->scene15_boot->_flags &= 0xFFFB;
+		break;
+
+	case MSG_SC15_STOPCHANTING:
+		g_fp->stopAllSoundInstances(SND_15_001);
+
+		g_vars->scene15_var05 = 120;
+		break;
+
+	case MSG_SC15_ASSDRYG:
+		if (g_fp->_rnd->getRandomNumber(1))
+			g_fp->playSound(SND_15_011, 0);
+		else
+			g_fp->playSound(SND_15_006, 0);
+
+		break;
+
+	case MSG_SC15_LADDERTOBACK:
+		g_vars->scene15_ladder->_priority = 60;
+		break;
+
+	case MSG_LIFT_GO:
+		g_fp->lift_goAnimation();
+		break;
+
+	case MSG_LIFT_CLICKBUTTON:
+		g_fp->lift_animation3();
+		break;
+
+	case MSG_SC15_PULL:
+		if (g_vars->scene15_plusminus->_statics->_staticsId == ST_PMS_MINUS)
+			g_vars->scene15_plusminus->_statics = g_vars->scene15_plusminus->getStaticsById(ST_PMS_PLUS);
+		else
+			g_vars->scene15_plusminus->_statics = g_vars->scene15_plusminus->getStaticsById(ST_PMS_MINUS);
+
+		break;
+
+	case 64:
+		g_fp->lift_sub05(cmd);
+		break;
+
+	case 29:
+		{
+			if (g_fp->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY) == PIC_SC15_LADDER) {
+				handleObjectInteraction(g_fp->_aniMan, g_fp->_currentScene->getPictureObjectById(PIC_SC15_DTRUBA, 0), cmd->_keyCode);
+				cmd->_messageKind = 0;
+
+				return 0;
+			}
+
+			StaticANIObject *ani = g_fp->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
+
+			if (ani && ani->_id == ANI_LIFTBUTTON) {
+				g_fp->lift_sub1(ani);
+
+				cmd->_messageKind = 0;
+			}
+			break;
+		}
+
+	case 30:
+		// nop
+		break;
+
+	case 33:
+		if (g_fp->_aniMan2) {
+			int x = g_fp->_aniMan2->_ox;
+
+			g_vars->scene15_var06 = x;
+			g_vars->scene15_var07 = g_fp->_aniMan2->_oy;
+
+			if (x < g_fp->_sceneRect.left + g_vars->scene15_var01)
+				g_fp->_currentScene->_x = x - g_vars->scene15_var03 - g_fp->_sceneRect.left;
+
+			if (x > g_fp->_sceneRect.right - g_vars->scene15_var01)
+				g_fp->_currentScene->_x = x + g_vars->scene15_var03 - g_fp->_sceneRect.right;
+		}
+
+		if (g_vars->scene15_var05 > 0) {
+			g_vars->scene15_var05--;
+
+			if (!g_vars->scene15_var05)
+				g_fp->playSound(SND_15_001, 1);
+		}
+
+		g_fp->_behaviorManager->updateBehaviors();
+	}
+
+	return 0;
+}
+
 } // End of namespace Fullpipe

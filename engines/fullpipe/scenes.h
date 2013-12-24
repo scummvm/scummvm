@@ -243,6 +243,8 @@ public:
 	int scene15_var03;
 	int scene15_var04;
 	int scene15_var05;
+	int scene15_var06;
+	int scene15_var07;
 	StaticANIObject *scene15_plusminus;
 	PictureObject *scene15_ladder;
 	StaticANIObject *scene15_boot;
