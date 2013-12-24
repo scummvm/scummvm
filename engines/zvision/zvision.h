@@ -109,6 +109,8 @@ private:
 
 	const Common::Rect _workingWindow_ZGI;
 	const Common::Rect _workingWindow_ZNM;
+
+	int _rendDelay;
 public:
 	uint32 getFeatures() const;
 	Common::Language getLanguage() const;
@@ -152,6 +154,9 @@ public:
 
 	Common::String generateSaveFileName(uint slot);
 	Common::String generateAutoSaveFileName();
+
+	void setRenderDelay(uint);
+	bool canRender();
 
 private:
 	void initialize();

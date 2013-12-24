@@ -462,6 +462,8 @@ void ScriptManager::do_changeLocation() {
 	assert(_nextLocation.world != 0);
 	debug(1, "Changing location to: %c %c %c %c %u", _nextLocation.world, _nextLocation.room, _nextLocation.node, _nextLocation.view, _nextLocation.offset);
 
+	_engine->setRenderDelay(2);
+
 	if (getStateValue(StateKey_World) != 'g' || getStateValue(StateKey_Room) != 'j') {
 		if (_nextLocation.world != 'g' || _nextLocation.room != 'j') {
 			setStateValue(StateKey_LastWorld, getStateValue(StateKey_World));

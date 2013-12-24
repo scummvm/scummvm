@@ -62,7 +62,8 @@ ZVision::ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc)
 	  _saveManager(nullptr),
 	  _stringManager(nullptr),
 	  _cursorManager(nullptr),
-	  _aud_id(0) {
+	  _aud_id(0),
+	  _rendDelay(2) {
 
 	debug(1, "ZVision::ZVision");
 }
@@ -156,7 +157,10 @@ Common::Error ZVision::run() {
 		_renderManager->renderBackbufferToScreen();
 
 		// Update the screen
-		_system->updateScreen();
+		if (_rendDelay <= 0)
+			_system->updateScreen();
+		else
+			_rendDelay--;
 
 		// Calculate the frame delay based off a desired frame time
 		int delay = _desiredFrameTime - int32(_system->getMillis() - currentTime);
@@ -191,6 +195,14 @@ int ZVision::getAudioId() {
 	if (_aud_id < 0)
 		_aud_id = 0;
 	return _aud_id;
+}
+
+void ZVision::setRenderDelay(uint delay) {
+	_rendDelay = delay;
+}
+
+bool ZVision::canRender() {
+	return _rendDelay <= 0;
 }
 
 } // End of namespace ZVision
