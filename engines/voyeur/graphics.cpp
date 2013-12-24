@@ -137,7 +137,7 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 	int var52;
 	int var20, var22;
 	int var26;
-	byte pixel;
+	byte pixel = 0;
 
 	byte *srcImgData, *destImgData;
 	byte *srcP, *destP;

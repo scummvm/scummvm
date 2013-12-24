@@ -47,6 +47,9 @@ extern const char *const MONDAY;
 extern const char *const AM;
 extern const char *const PM;
 
+extern const char *const START_OF_MESSAGE;
+extern const char *const END_OF_MESSAGE;
+
 } // End of namespace Voyeur
 
 #endif

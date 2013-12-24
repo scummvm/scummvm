@@ -153,7 +153,7 @@ public:
 	void makeViewFinderP();
 	void initIFace();
 	void checkTransition();
-	bool doComputerText(int v);
+	bool doComputerText(int maxLen);
 	void getComputerBrush();
 
 	/**
@@ -173,10 +173,6 @@ public:
 
 	void checkPhoneCall();
 	void doEvidDisplay(int v1, int v2);
-
-	void addVideoEventStart();
-	void addComputerEventEnd();
-	void addPlainEvent();
 };
 
 } // End of namespace Voyeur

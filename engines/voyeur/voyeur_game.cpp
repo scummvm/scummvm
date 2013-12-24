@@ -25,24 +25,6 @@
 
 namespace Voyeur {
 
-void VoyeurEngine::addVideoEventStart() {
-	VoyeurEvent &e = _voy._events[_voy._eventCount];
-	e._hour = _gameHour;
-	e._minute = _gameMinute;
-	e._isAM = _voy._isAM;
-	e._field6 = 1;
-	e._field8 = _eventsManager._videoComputerBut4;
-	e._dead = _eventsManager._videoDead;
-}
-
-void VoyeurEngine::addComputerEventEnd() {
-	error("TODO: addComputerEventEnd");
-}
-
-void VoyeurEngine::addPlainEvent() {
-	error("TODO: addPlainEvent");
-}
-
 void VoyeurEngine::playStamp() {
 	_stampLibPtr = NULL;
 	_filesManager.openBoltLib("stampblt.blt", _stampLibPtr);
@@ -444,12 +426,107 @@ void VoyeurEngine::checkTransition(){
 	}
 }
 
-bool VoyeurEngine::doComputerText(int v) {
-	error("TODO: doComputerText");
+bool VoyeurEngine::doComputerText(int maxLen) {
+	FontInfoResource &font = *_graphicsManager._fontPtr;
+	int totalChars = 0;
+
+	font._curFont = _bVoy->boltEntry(0x4910)._fontResource;
+	font._foreColor = 129;
+	font._fontSaveBack = false;
+	font._fontFlags = 0;
+	if (_voy._vocSecondsOffset > 60)
+		_voy._vocSecondsOffset = 0;
+
+	if (_voy._RTVNum > _voy._field4EE && maxLen == 9999) {
+		if (_playStamp2 != -1)
+			_soundManager.startVOCPlay(_playStamp2);
+		font._justify = ALIGN_LEFT;
+		font._justifyWidth = 384;
+		font._justifyHeight = 100;
+		font._pos = Common::Point(128, 100);
+		(*_graphicsManager._vPort)->drawText(END_OF_MESSAGE);
+	} else if (_voy._RTVNum < _voy._field4EC && maxLen == 9999) {
+		if (_playStamp2 != -1)
+			_soundManager.startVOCPlay(_playStamp2);
+		font._justify = ALIGN_LEFT;
+		font._justifyWidth = 384;
+		font._justifyHeight = 100;
+		font._pos = Common::Point(120, 100);
+		(*_graphicsManager._vPort)->drawText(START_OF_MESSAGE);
+	} else {
+		char *msg = (char *)_bVoy->memberAddr(0x4900 + _voy._computerTextId);
+		font._pos = Common::Point(96, 60);
+
+		bool showEnd = true;
+		int yp = 60;
+		do {
+			if (_playStamp2 != -1 && !_soundManager.getVOCStatus()) {
+				if (_voy._vocSecondsOffset > 60)
+					_voy._vocSecondsOffset = 0;
+				_soundManager.startVOCPlay(_playStamp2);
+			}
+
+			char c = *msg++;
+			if (c == '\0') {
+				if (showEnd) {
+					_eventsManager.delay(90);
+					_graphicsManager._drawPtr->_pos = Common::Point(54, 96);
+					_graphicsManager._drawPtr->_penColor = 254;
+					(*_graphicsManager._vPort)->sFillBox(196, 124);
+					_graphicsManager._fontPtr->_justify = ALIGN_LEFT;
+					_graphicsManager._fontPtr->_justifyWidth = 384;
+					_graphicsManager._fontPtr->_justifyHeight = 100;
+					_graphicsManager._fontPtr->_pos = Common::Point(128, 100);
+					(*_graphicsManager._vPort)->drawText(END_OF_MESSAGE);
+				}
+				break;
+			}
+
+			if (c == '~' || c == '^') {
+				if (c == '^') {
+					yp += 10;
+				} else {
+					_eventsManager.delay(90);
+					_graphicsManager._drawPtr->_pos = Common::Point(54, 96);
+					_graphicsManager._drawPtr->_penColor = 255;
+					(*_graphicsManager._vPort)->sFillBox(196, 124);
+					yp = 60;
+				}
+
+				_graphicsManager._fontPtr->_pos = Common::Point(96, yp);
+			} else if (c == '_') {
+				showEnd = false;
+			} else {
+				_graphicsManager._fontPtr->_justify = ALIGN_LEFT;
+				_graphicsManager._fontPtr->_justifyWidth = 0;
+				_graphicsManager._fontPtr->_justifyHeight = 0;
+				(*_graphicsManager._vPort)->drawText(Common::String(c));
+				_eventsManager.delay(4);
+			}
+
+			(*_graphicsManager._vPort)->_flags |= 8;
+			_graphicsManager.flipPage();
+			_eventsManager.sWaitFlip();
+			_eventsManager.getMouseInfo();
+			++totalChars;
+
+		} while (!shouldQuit() && !_voy._incriminate && totalChars < maxLen);
+
+		_voy._field4EE = 0;
+	}
+
+	(*_graphicsManager._vPort)->_flags |= 8;
+	_graphicsManager.flipPage();
+	_eventsManager.sWaitFlip();
+
+	_graphicsManager._fontPtr->_curFont = _bVoy->boltEntry(0x101)._fontResource;
+	return totalChars;
 }
 
 void VoyeurEngine::getComputerBrush() {
 	error("TODO: getComputerBrush");
+//	if (_bVoy->getBoltGroup(0x4900)) {
+//	}
 }
 
 void VoyeurEngine::doTimeBar(bool force) {
@@ -518,6 +595,16 @@ void VoyeurEngine::checkPhoneCall() {
 }
 
 void VoyeurEngine::doEvidDisplay(int v1, int v2) {
+	_eventsManager.getMouseInfo();
+	(*_graphicsManager._vPort)->_flags |= 8;
+	_graphicsManager.flipPage();
+	_eventsManager.sWaitFlip();
+
+	if (_playStamp2 != -1) {
+		_voy._vocSecondsOffset = _voy._RTVNum - _voy._field4AC;
+		_soundManager.stopVOCPlay();
+	}
+
 	error("TODO: doEvidDisplay");
 }
 

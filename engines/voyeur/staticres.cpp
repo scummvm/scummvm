@@ -111,4 +111,7 @@ const char *const MONDAY = "Monday Morning";
 const char *const AM = "am";
 const char *const PM = "pm";
 
+const char *const START_OF_MESSAGE = "*** Start of Message ***";
+const char *const END_OF_MESSAGE = "*** End of Message ***";
+
 } // End of namespace Voyeur

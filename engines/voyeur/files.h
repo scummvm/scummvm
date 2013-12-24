@@ -446,9 +446,6 @@ private:
 	uint32 getSID(int sid);
 	void cardAction(const byte *p);
 	void doSTAMPCardAction();
-	void addAudioEventStart();
-	void addAudioEventEnd();
-	void addVideoEventEnd();
 	bool goToStateID(int stackId, int sceneId);
 	bool goToState(int stackId, int sceneId);
 	const byte *cardPerform(const byte *card);

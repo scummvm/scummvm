@@ -44,19 +44,6 @@ IntNode::IntNode(uint16 curTime, uint16 timeReset, uint16 flags) {
 
 /*------------------------------------------------------------------------*/
 
-VoyeurEvent::VoyeurEvent(int hour, int minute, bool isAM, int v4, int v5, int v6, int v7) {
-	_hour = hour;
-	_minute = minute;
-	_isAM = isAM;
-	_field6 = v4;
-	_field8 = v5;
-	_computerOn = v6;
-	_dead = v7;
-}
-
-
-/*------------------------------------------------------------------------*/
-
 IntData::IntData() {
 	_field9 = false;
 	_flipWait = false;
@@ -467,6 +454,78 @@ void EventsManager::startCursorBlink() {
 void EventsManager::incrementTime(int amt) {
 	for (int i = 0; i < amt; ++i)
 		mainVoyeurIntFunc();
+}
+
+void EventsManager::addVideoEventStart() {
+	VoyeurEvent &e = _vm->_voy._events[_vm->_voy._eventCount];
+	e._hour = _vm->_gameHour;
+	e._minute = _vm->_gameMinute;
+	e._isAM = _vm->_voy._isAM;
+	e._type = EVTYPE_VIDEO;
+	e._field8 = _vm->_eventsManager._videoComputerBut4;
+	e._computerOn = _vm->_voy._vocSecondsOffset;
+	e._dead = _vm->_eventsManager._videoDead;
+}
+
+void EventsManager::addVideoEventEnd() {
+	VoyeurEvent &e = _vm->_voy._events[_vm->_voy._eventCount];
+	e._computerOff = _vm->_voy._RTVNum - _vm->_voy._field468 - _vm->_voy._vocSecondsOffset;
+	if (_vm->_voy._eventCount < (TOTAL_EVENTS - 1))
+		++_vm->_voy._eventCount;
+}
+
+void EventsManager::addAudioEventStart() {
+	VoyeurEvent &e = _vm->_voy._events[_vm->_voy._eventCount];
+	e._hour = _vm->_gameHour;
+	e._minute = _vm->_gameMinute;
+	e._isAM = _vm->_voy._isAM;
+	e._type = EVTYPE_AUDIO;
+	e._field8 = _vm->_eventsManager._videoComputerBut4;
+	e._computerOn = _vm->_voy._field47A;
+	e._dead = _vm->_eventsManager._videoDead;
+}
+
+void EventsManager::addAudioEventEnd() {
+	VoyeurEvent &e = _vm->_voy._events[_vm->_voy._eventCount];
+	e._computerOff = _vm->_voy._RTVNum - _vm->_voy._field468 - _vm->_voy._vocSecondsOffset;
+	if (_vm->_voy._eventCount < (TOTAL_EVENTS - 1))
+		++_vm->_voy._eventCount;
+}
+
+void EventsManager::addEvidEventStart(int v) {
+	VoyeurEvent &e = _vm->_voy._events[_vm->_voy._eventCount];
+	e._hour = _vm->_gameHour;
+	e._minute = _vm->_gameMinute;
+	e._isAM = _vm->_voy._isAM;
+	e._type = EVTYPE_EVID;
+	e._field8 = _vm->_eventsManager._videoComputerBut4;
+	e._computerOn = _vm->_voy._vocSecondsOffset;
+	e._dead = _vm->_eventsManager._videoDead;
+
+}
+
+void EventsManager::addEvidEventEnd(int dead) {
+	VoyeurEvent &e = _vm->_voy._events[_vm->_voy._eventCount];
+	e._dead = dead;
+	if (_vm->_voy._eventCount < (TOTAL_EVENTS - 1))
+		++_vm->_voy._eventCount;
+}
+
+void EventsManager::addComputerEventStart() {
+	VoyeurEvent &e = _vm->_voy._events[_vm->_voy._eventCount];
+	e._hour = _vm->_gameHour;
+	e._minute = _vm->_gameMinute;
+	e._isAM = _vm->_voy._isAM;
+	e._type = EVTYPE_COMPUTER;
+	e._field8 = _vm->_playStamp1;
+	e._computerOn = _vm->_voy._computerTextId;
+}
+
+void EventsManager::addComputerEventEnd(int v) {
+	VoyeurEvent &e = _vm->_voy._events[_vm->_voy._eventCount];
+	e._computerOff = v;
+	if (_vm->_voy._eventCount < (TOTAL_EVENTS - 1))
+		++_vm->_voy._eventCount;
 }
 
 } // End of namespace Voyeur

@@ -36,6 +36,7 @@ class CMapResource;
 
 #define GAME_FRAME_RATE 50
 #define GAME_FRAME_TIME (1000 / GAME_FRAME_RATE)
+#define TOTAL_EVENTS 1000
 
 typedef void (EventsManager::*EventMethodPtr)();
  
@@ -50,18 +51,18 @@ public:
 	IntNode(uint16 curTime, uint16 timeReset, uint16 flags);
 };
 
-class VoyeurEvent {
-public:
+enum VoyeurEventType { EVTYPE_VIDEO = 1, EVTYPE_AUDIO = 2, EVTYPE_EVID = 3,
+	EVTYPE_COMPUTER = 4 };
+
+struct VoyeurEvent {
 	int _hour;
 	int _minute;
 	bool _isAM;
-	int _field6;
+	VoyeurEventType _type;
 	int _field8;
 	int _computerOn;
 	int _computerOff;
 	int _dead;
-public:
-	VoyeurEvent(int hour, int minute, bool isAM, int v4, int v5, int v6, int v7);
 };
 
 class SVoy {
@@ -92,15 +93,14 @@ public:
 	int _field4AE[5];
 	int _field4B8;
 
-	int _field4E2;
+	int _computerTextId;
 	Common::Rect _rect4E4;
 	int _field4EC;
 	int _field4EE;
 	int _field4F0;
 	int _field4F2;
 	int _eventCount;
-	Common::Array<VoyeurEvent> _events;
-
+	VoyeurEvent _events[TOTAL_EVENTS];
 
 	int _timeStart;
 	int _duration;
@@ -231,6 +231,15 @@ public:
 	void checkForKey();
 	void startCursorBlink();
 	void incrementTime(int amt);
+
+	void addVideoEventStart();
+	void addVideoEventEnd();
+	void addAudioEventStart();
+	void addAudioEventEnd();
+	void addEvidEventStart(int v);
+	void addEvidEventEnd(int dead);
+	void addComputerEventStart();
+	void addComputerEventEnd(int v);
 };
 
 } // End of namespace Voyeur

@@ -344,7 +344,7 @@ void ThreadResource::parsePlayCommands() {
 	_vm->_voy._field468 = 0;
 	_vm->_voy._field46A = 0;
 	_vm->_voy._field47A = -1;
-	_vm->_voy._field4E2 = -1;
+	_vm->_voy._computerTextId = -1;
 	_vm->_voy._field478 &= ~8;
 	_vm->_eventsManager._videoDead = -1;
 
@@ -386,7 +386,7 @@ void ThreadResource::parsePlayCommands() {
 					_vm->_eventsManager._videoComputerBut4 = -1;
 				} else {
 					_vm->_voy._vocSecondsOffset = _vm->_voy._RTVNum - _vm->_voy._field468;
-					addAudioEventStart();
+					_vm->_eventsManager.addAudioEventStart();
 
 					assert(_vm->_eventsManager._videoComputerBut4 < 38);
 					_vm->_graphicsManager._backgroundPage = _vm->_bVoy->boltEntry(
@@ -417,7 +417,7 @@ void ThreadResource::parsePlayCommands() {
 
 					_vm->_voy._field478 |= 1;
 					_vm->_soundManager.stopVOCPlay();
-					addAudioEventEnd();
+					_vm->_eventsManager.addAudioEventEnd();
 					_vm->_eventsManager.incrementTime(1);
 					_vm->_eventsManager.incrementTime(1);
 
@@ -445,14 +445,14 @@ void ThreadResource::parsePlayCommands() {
 					_vm->_eventsManager._videoComputerBut4 = -1;
 				} else {
 					_vm->_voy._vocSecondsOffset = _vm->_voy._RTVNum - _vm->_voy._field468;
-					addAudioEventStart();
+					_vm->_eventsManager.addAudioEventStart();
 					_vm->_voy._field478 &= ~1;
 					_vm->_voy._field478 |= 0x10;
 					_vm->playAVideo(_vm->_eventsManager._videoComputerBut4);
 
 					_vm->_voy._field478 &= ~0x10;
 					_vm->_voy._field478 |= 1;
-					addVideoEventEnd();
+					_vm->_eventsManager.addVideoEventEnd();
 					_vm->_eventsManager.incrementTime(1);
 				
 					_vm->_eventsManager._videoComputerBut4 = -1;
@@ -669,14 +669,14 @@ void ThreadResource::parsePlayCommands() {
 			v2 = READ_LE_UINT16(dataP);
 
 			if (v2 == 0 || READ_LE_UINT16(_vm->_controlPtr->_ptr + 4) == 0) {
-				_vm->_voy._field4E2 = READ_LE_UINT16(dataP + 2);
+				_vm->_voy._computerTextId = READ_LE_UINT16(dataP + 2);
 				_vm->_voy._field4EC = READ_LE_UINT16(dataP + 4);
 				_vm->_voy._field4EE = READ_LE_UINT16(dataP + 6);
 
-				_vm->_voy._rect4E4.left = COMP_BUT_TABLE[_vm->_voy._field4E2 * 4];
-				_vm->_voy._rect4E4.top = COMP_BUT_TABLE[_vm->_voy._field4E2 * 4 + 1];
-				_vm->_voy._rect4E4.right = COMP_BUT_TABLE[_vm->_voy._field4E2 * 4 + 2];
-				_vm->_voy._rect4E4.bottom = COMP_BUT_TABLE[_vm->_voy._field4E2 * 4 + 3];
+				_vm->_voy._rect4E4.left = COMP_BUT_TABLE[_vm->_voy._computerTextId * 4];
+				_vm->_voy._rect4E4.top = COMP_BUT_TABLE[_vm->_voy._computerTextId * 4 + 1];
+				_vm->_voy._rect4E4.right = COMP_BUT_TABLE[_vm->_voy._computerTextId * 4 + 2];
+				_vm->_voy._rect4E4.bottom = COMP_BUT_TABLE[_vm->_voy._computerTextId * 4 + 3];
 			}
 
 			dataP += 8;
@@ -1223,7 +1223,7 @@ void ThreadResource::doRoom() {
 			vm._eventsManager.getMouseInfo();
 			Common::Point pt = vm._eventsManager.getMousePos();
 			i4e4 = -1;
-			if (voy._field4E2 != -1 && voy._rect4E4.contains(pt))
+			if (voy._computerTextId != -1 && voy._rect4E4.contains(pt))
 				i4e4 = 999;
 
 			for (int idx = 0; idx < count; ++idx) {
@@ -1288,13 +1288,14 @@ void ThreadResource::doRoom() {
 				(*vm._graphicsManager._vPort)->_flags |= 8;
 				vm._graphicsManager.flipPage();
 				vm._eventsManager.sWaitFlip();
-				vm.addPlainEvent();
+				vm._eventsManager.addComputerEventStart();
 
 				voy._incriminate = false;
 				vm._eventsManager.startCursorBlink();
 
-				if (vm.doComputerText(9999))
-					vm.addComputerEventEnd();
+				int v = vm.doComputerText(9999); 
+				if (v)
+					vm._eventsManager.addComputerEventEnd(v);
 
 				vm._bVoy->freeBoltGroup(0x4900);
 			} else {
@@ -1566,21 +1567,6 @@ int ThreadResource::doInterface() {
 		_vm->_soundManager.stopVOCPlay();
 
 	return !_vm->_voy._fadeFunc ? regionIndex : -2;
-}
-
-void ThreadResource::addAudioEventStart() {
-	_vm->_voy._events.push_back(VoyeurEvent(_vm->_gameHour,
-		_vm->_gameMinute, _vm->_voy._isAM, 2, 
-		_vm->_eventsManager._videoComputerBut4, _vm->_voy._vocSecondsOffset, 
-		_vm->_eventsManager._videoDead));
-}
-
-void ThreadResource::addAudioEventEnd() {
-	error("TODO: addAudioEventEnd");
-}
-
-void ThreadResource::addVideoEventEnd() {
-	error("TODO: addVideoEventEnd");
 }
 
 bool ThreadResource::goToStateID(int stackId, int sceneId) {
