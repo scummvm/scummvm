@@ -168,7 +168,6 @@ public:
 	uint16 getVersion() const;
 	bool getIsDemo() const;
 	const Common::String &getTargetName() const;
-	bool shouldQuit();
 
 	int getRandomNumber(int maxNumber);
 	Common::String generateSaveName(int slotNumber);
