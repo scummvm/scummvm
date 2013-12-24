@@ -248,7 +248,7 @@ bool FrameWindow::startNewGame(bool walkthrough, bool introMovie) {
 	// Create Game UI window to kick things off
 	_mainChildWindow = new GameUIWindow(_vm, this);
 	_mainChildWindow->showWindow(kWindowShow);
-	_mainChildWindow->setFocus();
+	setFocus();
 
 	if (introMovie)
 		((GameUIWindow *)_mainChildWindow)->startNewGameIntro(walkthrough);
@@ -271,7 +271,7 @@ bool FrameWindow::startNewGame(const Common::String &fileName) {
 	// Create Game UI window to kick things off
 	_mainChildWindow = new GameUIWindow(_vm, this);
 	_mainChildWindow->showWindow(kWindowShow);
-	_mainChildWindow->setFocus();
+	setFocus();
 	((GameUIWindow *)_mainChildWindow)->startNewGame(fileName);
 
 	_vm->removeMouseMessages(this);
@@ -400,7 +400,7 @@ void FrameWindow::loadFromState(const Location &location, const GlobalFlags &fla
 		delete _mainChildWindow;
 		_mainChildWindow = new GameUIWindow(_vm, this);
 		_mainChildWindow->showWindow(kWindowShow);
-		_mainChildWindow->setFocus();
+		setFocus();
 	}
 
 	GameUIWindow *gameUI = (GameUIWindow *)_mainChildWindow;
