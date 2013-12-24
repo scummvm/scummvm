@@ -1923,7 +1923,6 @@ void HopkinsEngine::bombExplosion() {
 }
 
 void HopkinsEngine::restoreSystem() {
-	quitGame();
 	_events->refreshEvents();
 }
 
@@ -2913,4 +2912,7 @@ bool HopkinsEngine::isUnderwaterSubScene() {
 	return (_globals->_curRoomNum >= 77) && (_globals->_curRoomNum <= 89);
 }
 
+bool HopkinsEngine::shouldQuit() {
+	return getEventManager()->shouldQuit() || getEventManager()->shouldRTL();
+}
 } // End of namespace Hopkins

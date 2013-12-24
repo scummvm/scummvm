@@ -1781,7 +1781,7 @@ void GraphicsManager::initScreen(const Common::String &file, int mode, bool init
 
 		do {
 			int dataVal1 = _vm->_script->handleOpcode(ptr + 20 * dataOffset);
-			if (_vm->shouldQuit())
+			if (dataVal1 == -1 || _vm->shouldQuit())
 				return;
 
 			if (dataVal1 == 2)
