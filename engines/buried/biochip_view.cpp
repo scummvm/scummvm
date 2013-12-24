@@ -605,7 +605,10 @@ void InterfaceBioChipViewWindow::onLButtonUp(const Common::Point &point, uint fl
 		}
 		break;
 	case REGION_QUIT:
-		// TODO
+		if (_vm->runQuitDialog()) {
+			((FrameWindow *)_vm->_mainWindow)->showMainMenu();
+			return;
+		}
 		break;
 	case REGION_PAUSE:
 		// TODO
