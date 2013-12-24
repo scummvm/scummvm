@@ -186,6 +186,9 @@ Vars::Vars() {
 	scene11_var19 = 0;
 	scene11_var20 = 0;
 
+	scene12_fly = 0;
+	scene12_flyCountdown = 0;
+
 	scene15_chantingCountdown = 0;
 	scene15_plusminus = 0;
 	scene15_ladder = 0;

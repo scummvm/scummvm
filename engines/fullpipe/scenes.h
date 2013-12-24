@@ -242,6 +242,9 @@ public:
 	int scene11_var19;
 	int scene11_var20;
 
+	int scene12_fly;
+	int scene12_flyCountdown;
+
 	int scene15_chantingCountdown;
 	StaticANIObject *scene15_plusminus;
 	PictureObject *scene15_ladder;
