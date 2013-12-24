@@ -49,11 +49,7 @@ public:
 	bool startNewGame(bool walkthrough = false);
 	bool startNewGameIntro(bool walkthrough = false);
 	bool startNewGame(const Location &startingLocation);
-	bool startNewGame(const Common::String &fileName);
 	// startNewGame(continue data, location struct);
-	bool loadGame();
-	bool loadGame(const Common::String &fileName);
-	bool saveGame();
 	bool changeCurrentDate(int timeZoneID);
 	bool flashWarningLight();
 	bool setWarningState(bool newState);

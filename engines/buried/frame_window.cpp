@@ -260,25 +260,6 @@ bool FrameWindow::startNewGame(bool walkthrough, bool introMovie) {
 	return true;
 }
 
-bool FrameWindow::startNewGame(const Common::String &fileName) {
-	_gameInProgress = true;
-	_atMainMenu = false;
-
-	_vm->removeMouseMessages(this);
-
-	delete _mainChildWindow;
-
-	// Create Game UI window to kick things off
-	_mainChildWindow = new GameUIWindow(_vm, this);
-	_mainChildWindow->showWindow(kWindowShow);
-	setFocus();
-	((GameUIWindow *)_mainChildWindow)->startNewGame(fileName);
-
-	_vm->removeMouseMessages(this);
-	_vm->removeMouseMessages(_mainChildWindow);
-	return true;
-}
-
 bool FrameWindow::showDeathScene(int deathSceneIndex, GlobalFlags globalFlags) {
 	_gameInProgress = false;
 	_atMainMenu = false;

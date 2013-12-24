@@ -194,12 +194,6 @@ bool SceneViewWindow::startNewGame(const Location &startingLocation) {
 	return true;
 }
 
-bool SceneViewWindow::startNewGame(const Common::String &restoreFile) {
-	((GameUIWindow *)_parent)->loadGame(restoreFile);
-	invalidateWindow(false);
-	return true;
-}
-
 bool SceneViewWindow::showDeathScene(int deathSceneIndex) {
 	return ((FrameWindow *)(_parent->getParent()))->showDeathScene(deathSceneIndex, _globalFlags); // TODO: Inventory
 }

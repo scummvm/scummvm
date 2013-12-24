@@ -45,7 +45,6 @@ public:
 	bool showClosingScreen();
 	bool showFeaturesScreen();
 	bool startNewGame(bool walkthrough = false, bool introMovie = false);
-	bool startNewGame(const Common::String &fileName);
 	// TODO: startNewGame with continue data
 	bool showDeathScene(int deathSceneIndex, GlobalFlags globalFlags);
 	bool showCompletionScene(GlobalFlags globalFlags);
