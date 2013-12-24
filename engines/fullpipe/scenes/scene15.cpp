@@ -37,11 +37,7 @@
 namespace Fullpipe {
 
 void scene15_initScene(Scene *sc) {
-	g_vars->scene15_var01 = 200;
-	g_vars->scene15_var02 = 200;
-	g_vars->scene15_var03 = 300;
-	g_vars->scene15_var04 = 300;
-	g_vars->scene15_var05 = 0;
+	g_vars->scene15_chantingCountdown = 0;
 
 	StaticANIObject *grandma = sc->getStaticANIObject1ById(ANI_GRANDMA_ASS, -1);
 
@@ -128,7 +124,7 @@ int sceneHandler15(ExCommand *cmd) {
 	case MSG_SC15_STOPCHANTING:
 		g_fp->stopAllSoundInstances(SND_15_001);
 
-		g_vars->scene15_var05 = 120;
+		g_vars->scene15_chantingCountdown = 120;
 		break;
 
 	case MSG_SC15_ASSDRYG:
@@ -190,20 +186,17 @@ int sceneHandler15(ExCommand *cmd) {
 		if (g_fp->_aniMan2) {
 			int x = g_fp->_aniMan2->_ox;
 
-			g_vars->scene15_var06 = x;
-			g_vars->scene15_var07 = g_fp->_aniMan2->_oy;
+			if (x < g_fp->_sceneRect.left + 200)
+				g_fp->_currentScene->_x = x - 300 - g_fp->_sceneRect.left;
 
-			if (x < g_fp->_sceneRect.left + g_vars->scene15_var01)
-				g_fp->_currentScene->_x = x - g_vars->scene15_var03 - g_fp->_sceneRect.left;
-
-			if (x > g_fp->_sceneRect.right - g_vars->scene15_var01)
-				g_fp->_currentScene->_x = x + g_vars->scene15_var03 - g_fp->_sceneRect.right;
+			if (x > g_fp->_sceneRect.right - 200)
+				g_fp->_currentScene->_x = x + 300 - g_fp->_sceneRect.right;
 		}
 
-		if (g_vars->scene15_var05 > 0) {
-			g_vars->scene15_var05--;
+		if (g_vars->scene15_chantingCountdown > 0) {
+			g_vars->scene15_chantingCountdown--;
 
-			if (!g_vars->scene15_var05)
+			if (!g_vars->scene15_chantingCountdown)
 				g_fp->playSound(SND_15_001, 1);
 		}
 
