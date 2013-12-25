@@ -85,7 +85,7 @@ private:
 	void initStamp();
 	void closeStamp();
 	void reviewTape();
-	bool doGossip();
+	void doGossip();
 	void doTapePlaying();
 	bool checkForMurder();
 	void checkForIncriminate();
@@ -173,6 +173,16 @@ public:
 
 	void checkPhoneCall();
 	void doEvidDisplay(int v1, int v2);
+
+	/**
+	 * Flips the active page and waits until it's drawn
+	 */
+	void flipPageAndWait();
+
+	/**
+	 * Flips the active page and waits until it's drawn and faded in
+	 */
+	void flipPageAndWaitForFade();
 };
 
 } // End of namespace Voyeur

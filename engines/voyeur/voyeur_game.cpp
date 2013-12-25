@@ -22,6 +22,7 @@
 
 #include "voyeur/voyeur.h"
 #include "voyeur/staticres.h"
+#include "voyeur/animation.h"
 
 namespace Voyeur {
 
@@ -221,7 +222,7 @@ void VoyeurEngine::closeStamp() {
 }
 
 void VoyeurEngine::reviewTape() {
-	int var22 = 0;
+//	int var22 = 0;
 	int si = 0;
 	int newX = -1;
 	int newY = -1;
@@ -496,9 +497,78 @@ void VoyeurEngine::reviewTape() {
 	_eventsManager.sWaitFlip();
 }
 
-bool VoyeurEngine::doGossip() {
-	warning("TODO: doGossip");
-	return false;
+void VoyeurEngine::doGossip() {
+	_graphicsManager.resetPalette();
+	_graphicsManager.screenReset();
+
+	if (!_bVoy->getBoltGroup(0x300))
+		return;
+
+	PictureResource *pic = _bVoy->boltEntry(0x300)._picResource;
+	(*_graphicsManager._vPort)->setupViewPort(pic);
+	CMapResource *pal = _bVoy->boltEntry(0x301)._cMapResource;
+	pal->startFade();
+
+	flipPageAndWaitForFade();
+
+	// Load the gossip animation
+	::Video::RL2Decoder decoder;
+	decoder.loadFile("a2050100.rl2");
+
+	byte *frameNumsP = _bVoy->memberAddr(0x309);
+	byte *posP = _bVoy->memberAddr(0x30A);
+
+	// Main playback loop
+	int picCtr = 0;
+	decoder.start();
+	while (!shouldQuit() && !decoder.endOfVideo() && !_voy._incriminate) {
+		if (decoder.hasDirtyPalette()) {
+			const byte *palette = decoder.getPalette();
+			_graphicsManager.setPalette(palette, 0, 256);
+		}
+		
+		if (decoder.needsUpdate()) {
+			const Graphics::Surface *frame = decoder.decodeNextFrame();
+
+			Common::copy((const byte *)frame->getPixels(), (const byte *)frame->getPixels() + 320 * 200,
+				(byte *)_graphicsManager._screenSurface.getPixels());
+
+			if (decoder.getCurFrame() >= READ_LE_UINT16(frameNumsP + picCtr * 4)) {
+				PictureResource *pic = _bVoy->boltEntry(0x302 + picCtr)._picResource;
+				Common::Point pt(READ_LE_UINT16(posP + 4 * picCtr + 2), 
+					READ_LE_UINT16(posP + 4 * picCtr));
+				_graphicsManager.sDrawPic(pic, *_graphicsManager._vPort, pt);
+			}
+
+			flipPageAndWait();
+		}
+
+		_eventsManager.pollEvents();
+		g_system->delayMillis(10);
+	}
+
+	decoder.loadFile("a2110100.rl2");
+	decoder.start();
+
+	while (!shouldQuit() && !decoder.endOfVideo() && !_voy._incriminate) {
+		if (decoder.hasDirtyPalette()) {
+			const byte *palette = decoder.getPalette();
+			_graphicsManager.setPalette(palette, 0, 256);
+		}
+
+		if (decoder.needsUpdate()) {
+			const Graphics::Surface *frame = decoder.decodeNextFrame();
+
+			Common::copy((const byte *)frame->getPixels(), (const byte *)frame->getPixels() + 320 * 200,
+				(byte *)_graphicsManager._screenSurface.getPixels());
+		}
+
+		_eventsManager.pollEvents();
+		g_system->delayMillis(10);
+	}
+
+	_bVoy->freeBoltGroup(0x300);
+	_graphicsManager.screenReset();
 }
 
 void VoyeurEngine::doTapePlaying() {

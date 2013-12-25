@@ -513,12 +513,7 @@ void ThreadResource::parsePlayCommands() {
 					(*_vm->_graphicsManager._vPort)->setupViewPort(pic);
 					pal->startFade();
 
-					(*_vm->_graphicsManager._vPort)->_flags |= 8;
-					_vm->_graphicsManager.flipPage();
-					_vm->_eventsManager.sWaitFlip();
-
-					while (!_vm->shouldQuit() && (_vm->_eventsManager._fadeStatus & 1))
-						_vm->_eventsManager.delay(1);
+					_vm->flipPageAndWaitForFade();
 
 					if (i > 0) {
 						_vm->_bVoy->freeBoltMember(_vm->_playStamp1 + i * 2);

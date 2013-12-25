@@ -613,4 +613,17 @@ void VoyeurEngine::saveLastInplay() {
 	lock.saveThePassword();
 }
 
+void VoyeurEngine::flipPageAndWait() {
+	(*_graphicsManager._vPort)->_flags |= 8;
+	_graphicsManager.flipPage();
+	_eventsManager.sWaitFlip();
+}
+
+void VoyeurEngine::flipPageAndWaitForFade() {
+	flipPageAndWait();
+
+	while (!shouldQuit() && (_eventsManager._fadeStatus & 1))
+		_eventsManager.delay(1);
+}
+
 } // End of namespace Voyeur
