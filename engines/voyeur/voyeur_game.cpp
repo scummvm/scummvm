@@ -221,7 +221,279 @@ void VoyeurEngine::closeStamp() {
 }
 
 void VoyeurEngine::reviewTape() {
-	warning("TODO: reviewTape");
+	int var22 = 0;
+	int si = 0;
+	int newX = -1;
+	int newY = -1;
+	int var20 = 7;
+	Common::Rect tempRect(58, 30, 58 + 223, 30 + 124);
+	Common::Point pt;
+	int evtIndex = 0;
+	int foundIndex;
+
+	_bVoy->getBoltGroup(0x900);
+	PictureResource *cursor = _bVoy->boltEntry(0x903)._picResource;
+
+	if ((_voy._eventCount - 8) != 0)
+		si = MAX(_voy._eventCount - 8, 0);
+
+	if ((si + _voy._eventCount) <= 7)
+		var20 = si + _voy._eventCount - 1;
+
+	bool breakFlag = false;
+	while (!shouldQuit() && !breakFlag) {
+		_voy._field4386 = _bVoy->memberAddr(0x907);
+		byte *dataP = _bVoy->memberAddr(0x906);
+		int varA = READ_LE_UINT16(dataP);
+		_graphicsManager._backColors = _bVoy->boltEntry(0x902)._cMapResource;
+		_graphicsManager._backgroundPage = _bVoy->boltEntry(0x901)._picResource;
+		(*_graphicsManager._vPort)->setupViewPort(_graphicsManager._backgroundPage);
+		_graphicsManager._backColors->startFade();
+
+		(*_graphicsManager._vPort)->_flags |= 8;
+		_graphicsManager.flipPage();
+		_eventsManager.sWaitFlip();
+		while (!shouldQuit() && (_eventsManager._fadeStatus & 1))
+			_eventsManager.delay(1);
+
+		_graphicsManager.setColor(1, 32, 32, 32);
+		_graphicsManager.setColor(2, 96, 96, 96);
+		_graphicsManager.setColor(3, 160, 160, 160);
+		_graphicsManager.setColor(4, 224, 224, 224);
+		_graphicsManager.setColor(9, 24, 64, 24);
+		_graphicsManager.setColor(10, 64, 132, 64);
+		_graphicsManager.setColor(11, 100, 192, 100);
+		_graphicsManager.setColor(12, 120, 248, 120);
+		_eventsManager.setCursorColor(128, 1);
+
+		_eventsManager._intPtr.field38 = 1;
+		_eventsManager._intPtr._hasPalette = true;
+		_graphicsManager._fontPtr->_curFont = _bVoy->boltEntry(0x909)._fontResource;
+		_graphicsManager._fontPtr->_fontSaveBack = false;
+		_graphicsManager._fontPtr->_fontFlags = 0;
+
+		_eventsManager.getMouseInfo();
+		if (newX == -1) {
+			_eventsManager.setMousePos(Common::Point((int16)READ_LE_UINT16(dataP + 10) + 12,
+				(int16)READ_LE_UINT16(dataP + 12) + 6));
+		} else {
+			_eventsManager.setMousePos(Common::Point(newX, newY));
+		}
+
+		_playStamp2 = 151;
+		_voy._vocSecondsOffset = 0;
+		bool var1E = true;
+		do {
+			if (_playStamp2 != -1 && !_soundManager.getVOCStatus()) {
+				_voy._field4AC = _voy._RTVNum;
+				_soundManager.startVOCPlay(_playStamp2);
+			}
+
+			if (var1E) {
+				var1E = false;
+				(*_graphicsManager._vPort)->_flags |= 8;
+				_graphicsManager.flipPage();
+				_eventsManager.sWaitFlip();
+
+				_graphicsManager._drawPtr->_penColor = 0;
+				_graphicsManager._drawPtr->_pos = Common::Point(tempRect.left, tempRect.top);
+				// TODO: Check - does drawText need to work on PictureResources?
+				((ViewPortResource *)_graphicsManager._backgroundPage)->sFillBox(tempRect.width(), tempRect.height());
+
+				newX = si;
+				int yp = 45;
+				evtIndex = si;
+				for (int idx = 0; idx < 8 && evtIndex < _voy._eventCount; ++idx) {
+					_graphicsManager._fontPtr->_picFlags = 0;
+					_graphicsManager._fontPtr->_picSelect = 0xff;
+					_graphicsManager._fontPtr->_picPick = 7;
+					_graphicsManager._fontPtr->_picOnOff = (idx == var20) ? 8 : 0;
+					_graphicsManager._fontPtr->_pos = Common::Point(68, yp);
+					_graphicsManager._fontPtr->_justify = ALIGN_LEFT;
+					_graphicsManager._fontPtr->_justifyWidth = 0;
+					_graphicsManager._fontPtr->_justifyHeight = 0;
+
+					Common::String msg = _eventsManager.getEvidString(evtIndex);
+					// TODO: Does drawText need to work on picture resources?
+					((ViewPortResource *)_graphicsManager._backgroundPage)->drawText(msg);
+					
+					yp += 15;
+					++evtIndex;
+				}
+
+				(*_graphicsManager._vPort)->addSaveRect(
+					(*_graphicsManager._vPort)->_lastPage, tempRect);
+				(*_graphicsManager._vPort)->_flags |= 8;
+				_graphicsManager.flipPage();
+				_eventsManager.sWaitFlip();
+
+				(*_graphicsManager._vPort)->addSaveRect(
+					(*_graphicsManager._vPort)->_lastPage, tempRect);
+			}
+
+			_graphicsManager.sDrawPic(cursor, *_graphicsManager._vPort,
+				_eventsManager.getMousePos());
+			(*_graphicsManager._vPort)->_flags |= 8;
+			_graphicsManager.flipPage();
+			_eventsManager.sWaitFlip();
+
+			_eventsManager.getMouseInfo();
+			foundIndex = -1;
+			Common::Point tempPos = _eventsManager.getMousePos() + Common::Point(14, 7);
+			for (int idx = 0; idx < varA; ++idx) {
+				if (READ_LE_UINT16(dataP + idx * 8 + 2) <= tempPos.x &&
+					READ_LE_UINT16(dataP + idx * 8 + 6) >= tempPos.x &&
+					READ_LE_UINT16(dataP + idx * 8 + 4) <= tempPos.y &&
+					READ_LE_UINT16(dataP + idx * 8 + 4) <= tempPos.y) {
+					// Found hotspot area
+					foundIndex = idx;
+					break;
+				}
+			}
+			
+			pt = _eventsManager.getMousePos();
+			if (tempPos.x >= 68 && tempPos.x <= 277 && tempPos.y >= 31 && tempPos.y <= 154) {
+				tempPos.y -= 2;
+				foundIndex = (tempPos.y - 31) / 15;
+				if ((tempPos.y - 31) % 15 >= 12 || (si + foundIndex) >= _voy._eventCount) {
+					_eventsManager.setCursorColor(128, 0);
+					foundIndex = 999;
+				} else if (!_voy._mouseClicked) {
+					_eventsManager.setCursorColor(128, 2);
+					foundIndex = 999;
+				} else {
+					_eventsManager.setCursorColor(128, 2);
+					var20 = foundIndex;
+
+					(*_graphicsManager._vPort)->_flags |= 8;
+					_graphicsManager.flipPage();
+					_eventsManager.sWaitFlip();
+
+					_graphicsManager._drawPtr->_penColor = 0;
+					_graphicsManager._drawPtr->_pos = Common::Point(tempRect.left, tempRect.top);
+					// TODO: Does sFillBox need to work on picture resources?
+					((ViewPortResource *)_graphicsManager._backgroundPage)->sFillBox(tempRect.width(), tempRect.height());
+
+					evtIndex = si;
+					int yp = 45;
+					
+					for (int idx = 0; idx < 8 && evtIndex < _voy._eventCount; ++idx) {
+						_graphicsManager._fontPtr->_picFlags = 0;
+						_graphicsManager._fontPtr->_picSelect = 0xff;
+						_graphicsManager._fontPtr->_picPick = 7;
+						_graphicsManager._fontPtr->_picOnOff = (idx == var20) ? 8 : 0;
+						_graphicsManager._fontPtr->_pos = Common::Point(68, yp);
+						_graphicsManager._fontPtr->_justify = ALIGN_LEFT;
+						_graphicsManager._fontPtr->_justifyWidth = 0;
+						_graphicsManager._fontPtr->_justifyHeight = 0;
+
+						Common::String msg = _eventsManager.getEvidString(evtIndex);
+						// TODO: Does sFillBox need to work on picture resources?
+						((ViewPortResource *)_graphicsManager._backgroundPage)->drawText(msg);
+
+						yp += 115;
+						++evtIndex;
+					}
+
+					(*_graphicsManager._vPort)->addSaveRect(
+						(*_graphicsManager._vPort)->_lastPage, tempRect);
+					(*_graphicsManager._vPort)->_flags |= 8;
+					_graphicsManager.flipPage();
+					_eventsManager.sWaitFlip();
+
+					(*_graphicsManager._vPort)->addSaveRect(
+						(*_graphicsManager._vPort)->_lastPage, tempRect);
+					(*_graphicsManager._vPort)->_flags |= 8;
+					_graphicsManager.flipPage();
+					_eventsManager.sWaitFlip();
+
+					_eventsManager.getMouseInfo();
+					foundIndex = 999;
+				}
+			} else if ((_voy._field478 & 0x40) && READ_LE_UINT16(_voy._field4386) == pt.x &&
+					READ_LE_UINT16(_voy._field4386 + 6) == pt.y) {
+				foundIndex = 999;
+			} else if ((_voy._field478 & 0x40) && READ_LE_UINT16(_voy._field4386) == pt.x &&
+					READ_LE_UINT16(_voy._field4386 + 2) == pt.y) {
+				foundIndex = 998;
+			} else {
+				_eventsManager.setCursorColor(128, (foundIndex == -1) ? 0 : 1);
+			}
+
+			_eventsManager._intPtr.field38 = true;
+			_eventsManager._intPtr._hasPalette = true;
+
+			if (_voy._incriminate || _voy._fadeICF1) {
+				switch (foundIndex) {
+				case 2:
+					if (si > 0) {
+						--si;
+						var1E = true;
+					}
+					foundIndex = -1;
+					break;
+
+				case 3:
+					if (si > 0) {
+						si -= 8;
+						if (si < 0)
+							si = 0;
+						var1E = true;
+					}
+					foundIndex = -1;
+					break;
+
+				case 4:
+					if ((_voy._eventCount - 8) > si) {
+						++si;
+						var1E = true;
+					}
+					foundIndex = -1;
+					break;
+
+				case 5:
+					if (_voy._eventCount >= 8 && (_voy._eventCount - 8) != si) {
+						si += 8;
+						if ((_voy._eventCount - 8) < si)
+							si = _voy._eventCount - 8;
+						var1E = true;
+					}
+					foundIndex = -1;
+					break;
+
+				default:
+					break;
+				}
+
+				while (var20 > 0 && (var20 + si) >= _voy._eventCount)
+					--var20;
+			}
+
+			pt = _eventsManager.getMousePos();
+			if (_voy._incriminate && READ_LE_UINT16(_voy._field4386) == pt.x &&
+					(_voy._field478 & 0x40) && _voy._fadeFunc) {
+				WRITE_LE_UINT32(_controlPtr->_ptr + 4, (pt.y / 60) + 1);
+				foundIndex = -1;
+				_voy._fadeFunc = 0;
+			}
+			
+			if (_voy._fadeFunc)
+				foundIndex = 0;
+
+		} while (!shouldQuit() && (!_voy._incriminate || foundIndex == -1));
+
+
+
+		warning("TODO");
+	}
+
+	_graphicsManager._fontPtr->_curFont = _bVoy->boltEntry(0x101)._fontResource;
+	_bVoy->freeBoltGroup(0x900);
+
+	(*_graphicsManager._vPort)->fillPic(0);
+	(*_graphicsManager._vPort)->_flags |= 8;
+	_graphicsManager.flipPage();
+	_eventsManager.sWaitFlip();
 }
 
 bool VoyeurEngine::doGossip() {

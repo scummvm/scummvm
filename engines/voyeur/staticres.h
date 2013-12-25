@@ -50,6 +50,8 @@ extern const char *const PM;
 extern const char *const START_OF_MESSAGE;
 extern const char *const END_OF_MESSAGE;
 
+extern const char *const EVENT_TYPE_STRINGS[4];
+
 } // End of namespace Voyeur
 
 #endif

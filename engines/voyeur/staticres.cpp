@@ -114,4 +114,6 @@ const char *const PM = "pm";
 const char *const START_OF_MESSAGE = "*** Start of Message ***";
 const char *const END_OF_MESSAGE = "*** End of Message ***";
 
+const char *const EVENT_TYPE_STRINGS[4] = { "Video", "Audio" "Evidence", "Computer" };
+
 } // End of namespace Voyeur

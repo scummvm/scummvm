@@ -22,6 +22,7 @@
 
 #include "voyeur/events.h"
 #include "voyeur/voyeur.h"
+#include "voyeur/staticres.h"
 #include "common/events.h"
 #include "graphics/cursorman.h"
 #include "graphics/palette.h"
@@ -359,12 +360,12 @@ void EventsManager::vDoFadeInt() {
 }
 
 void EventsManager::vDoCycleInt() {
-	// TODO: more
+	warning("TODO");
 }
 
 
 void EventsManager::fadeIntFunc() {
-	// TODO: more
+	warning("TODO");
 }
 
 void EventsManager::vInitColor() {
@@ -526,6 +527,13 @@ void EventsManager::addComputerEventEnd(int v) {
 	e._computerOff = v;
 	if (_vm->_voy._eventCount < (TOTAL_EVENTS - 1))
 		++_vm->_voy._eventCount;
+}
+
+Common::String EventsManager::getEvidString(int eventIndex) {
+	assert(eventIndex <= _vm->_voy._eventCount);
+	VoyeurEvent &e = _vm->_voy._events[eventIndex];
+	return Common::String::format("%03d %.2d:%.2d %s %s", eventIndex + 1,
+		e._hour, e._minute, e._isAM ? AM : PM, EVENT_TYPE_STRINGS[e._type - 1]);
 }
 
 } // End of namespace Voyeur

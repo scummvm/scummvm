@@ -240,6 +240,7 @@ public:
 	void addEvidEventEnd(int dead);
 	void addComputerEventStart();
 	void addComputerEventEnd(int v);
+	Common::String getEvidString(int eventIndex);
 };
 
 } // End of namespace Voyeur
