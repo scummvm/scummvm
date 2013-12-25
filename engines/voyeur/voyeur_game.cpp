@@ -648,8 +648,47 @@ bool VoyeurEngine::checkForMurder() {
 	return false;
 }
 
-void VoyeurEngine::checkForIncriminate() {
-	warning("TODO");
+bool VoyeurEngine::checkForIncriminate() {
+	_voy._field4382 = 0;
+
+	for (int idx = 0; idx < _voy._eventCount; ++idx) {
+		VoyeurEvent &evt = _voy._events[idx];
+		
+		if (evt._type == EVTYPE_VIDEO) {
+			if (evt._field8 == 44 && evt._computerOn <= 40 &&
+					(evt._computerOff + evt._computerOn) >= 70) {
+				_voy._field4382 = 1;
+			}
+
+			if (evt._field8 == 44 && evt._computerOn <= 79 &&
+					(evt._computerOff + evt._computerOn) >= 129) {
+				_voy._field4382 = 1;
+			}
+
+			if (evt._field8 == 20 && evt._computerOn <= 28 &&
+					(evt._computerOff + evt._computerOn) >= 45) {
+				_voy._field4382 = 2;
+			}
+
+			if (evt._field8 == 35 && evt._computerOn <= 17 &&
+					(evt._computerOff + evt._computerOn) >= 36) {
+				_voy._field4382 = 3;
+			}
+
+			if (evt._field8 == 30 && evt._computerOn <= 80 &&
+					(evt._computerOff + evt._computerOn) >= 139) {
+				_voy._field4382 = 4;
+			}
+		}
+
+		if (_voy._field4382) {
+			WRITE_LE_UINT32(_controlPtr->_ptr + 12, 88);
+			_voy._videoEventId = idx;
+			return true;
+		}
+	}
+
+	_voy._videoEventId = -1;
 }
 
 void VoyeurEngine::playAVideoEvent(int eventId) {

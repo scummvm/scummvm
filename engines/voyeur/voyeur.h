@@ -88,7 +88,7 @@ private:
 	void doGossip();
 	void doTapePlaying();
 	bool checkForMurder();
-	void checkForIncriminate();
+	bool checkForIncriminate();
 	void playAVideoEvent(int eventId);
 	int getChooseButton();
 protected:
