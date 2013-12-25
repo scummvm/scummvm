@@ -2495,7 +2495,7 @@ void Klaymen::stFalling() {
 	SetSpriteUpdate(NULL);
 	SetMessageHandler(&Klaymen::hmLowLevelAnimation);
 	NextState(&Klaymen::stFallTouchdown);
-	sendMessage(_parentScene, 0x2002, 0);
+	sendMessage(_parentScene, NM_POSITION_CHANGE, 0);
 	_attachedSprite = NULL;
 	sendMessage(_parentScene, 0x8001, 0);
 }

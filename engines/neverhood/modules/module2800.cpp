@@ -1213,7 +1213,7 @@ uint32 Scene2804::handleMessage(int messageNum, const MessageParam &param, Entit
 		break;
 	case NM_ANIMATION_UPDATE:
 		_isWorking = true;
-		sendMessage(_asCoil, 0x2002, 0);
+		sendMessage(_asCoil, NM_POSITION_CHANGE, 0);
 		if (getGlobalVar(V_SHRINK_LIGHTS_ON)) {
 			sendMessage(_asTarget, 0x2004, 0);
 			_countdown2 = 48;
@@ -1569,7 +1569,7 @@ uint32 Scene2808::handleMessage(int messageNum, const MessageParam &param, Entit
 	case 0x2001:
 		_isFlowing = true;
 		break;
-	case 0x2002:
+	case NM_POSITION_CHANGE:
 		if (isAnyTestTubeFilled()) {
 			_leaveResult = 3;
 			if (!isMixtureGood())
@@ -2046,7 +2046,7 @@ uint32 Scene2812::handleMessage(int messageNum, const MessageParam &param, Entit
 		setRectList(0x004AF710);
 		_klaymen->setClipRect(_sprite4->getDrawRect().x, 0, 640, _sprite4->getDrawRect().y2());
 		break;
-	case 0x2002:
+	case NM_POSITION_CHANGE:
 		_isRopingDown = false;
 		setRectList(0x004AF700);
 		_klaymen->setClipRect(_sprite4->getDrawRect().x, 0, 640, _sprite3->getDrawRect().y2());

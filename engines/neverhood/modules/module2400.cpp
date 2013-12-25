@@ -257,7 +257,7 @@ void Scene2401::update() {
 			} else if (waterInside) {
 				playPipeSound(0xD0431020);
 				for (uint i = 0; i < 5; i++) {
-					sendMessage(_asWaterFlushing[i], 0x2002, getSubVar(VA_CURR_WATER_PIPES_LEVEL, i));
+					sendMessage(_asWaterFlushing[i], NM_POSITION_CHANGE, getSubVar(VA_CURR_WATER_PIPES_LEVEL, i));
 					setSubVar(VA_CURR_WATER_PIPES_LEVEL, i, 0);
 				}
 			}
@@ -334,7 +334,7 @@ uint32 Scene2401::handleMessage(int messageNum, const MessageParam &param, Entit
 			_countdown1 = 8;
 		} else if (sender == _ssFloorButton && getGlobalVar(V_WATER_RUNNING)) {
 			_countdown2 = 144;
-			sendMessage(_asFlowingWater, 0x2002, 0);
+			sendMessage(_asFlowingWater, NM_POSITION_CHANGE, 0);
 			playSound(0, 0xE1130324);
 		}
 		break;

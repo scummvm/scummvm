@@ -409,7 +409,7 @@ uint32 Scene1302::handleMessage(int messageNum, const MessageParam &param, Entit
 		} else
 			setMessageList2(0x004B0920);
 		break;
-	case 0x2002:
+	case NM_POSITION_CHANGE:
 		if (_klaymen->getX() > 545)
 			leaveScene(1);
 		break;
@@ -873,7 +873,7 @@ uint32 Scene1307::handleMessage(int messageNum, const MessageParam &param, Entit
 				leaveScene(0);
 		}
 		break;
-	case 0x2002:
+	case NM_POSITION_CHANGE:
 		// Check if all keys are in the correct keyholes
 		if (getSubVar(VA_IS_KEY_INSERTED, 0) && getSubVar(VA_CURR_KEY_SLOT_NUMBERS, 0) == getSubVar(VA_GOOD_KEY_SLOT_NUMBERS, 0) &&
 			getSubVar(VA_IS_KEY_INSERTED, 1) && getSubVar(VA_CURR_KEY_SLOT_NUMBERS, 1) == getSubVar(VA_GOOD_KEY_SLOT_NUMBERS, 1) &&
@@ -1060,7 +1060,7 @@ uint32 Scene1308::handleMessage(int messageNum, const MessageParam &param, Entit
 		sendMessage(_asLightWallSymbols, 0x2003, 0);
 		break;
 	case NM_KLAYMEN_LOWER_LEVER:
-		sendMessage(_asLightWallSymbols, 0x2002, 0);
+		sendMessage(_asLightWallSymbols, NM_POSITION_CHANGE, 0);
 		_ssNumber1->setVisible(true);
 		_ssNumber2->setVisible(true);
 		_ssNumber3->setVisible(true);

@@ -401,7 +401,7 @@ void AsScene1307Key::suInsertKey() {
 			playSound(0);
 	} else {
 		SetSpriteUpdate(NULL);
-		sendMessage(_parentScene, 0x2002, 0);
+		sendMessage(_parentScene, NM_POSITION_CHANGE, 0);
 	}
 }
 
@@ -562,7 +562,7 @@ AsScene1308LightWallSymbols::AsScene1308LightWallSymbols(NeverhoodEngine *vm, Sc
 uint32 AsScene1308LightWallSymbols::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x2002:
+	case NM_POSITION_CHANGE:
 		stFadeIn();
 		break;
 	case 0x2003:

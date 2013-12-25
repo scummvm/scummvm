@@ -295,12 +295,12 @@ Scene2501::Scene2501(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	if (which >= 0 && _tracks[_currTrackIndex]->which2 == which) {
 		NPoint testPoint = (*_trackPoints)[_trackPoints->size() - 1];
-		sendMessage(_asCar, 0x2002, _trackPoints->size() - 1);
+		sendMessage(_asCar, NM_POSITION_CHANGE, _trackPoints->size() - 1);
 		if (testPoint.x < 0 || testPoint.x >= 640 || testPoint.y < 0 || testPoint.y >= 480)
 			sendMessage(_asCar, NM_CAR_MOVE_TO_PREV_POINT, 150);
 	} else {
 		NPoint testPoint = (*_trackPoints)[0];
-		sendMessage(_asCar, 0x2002, 0);
+		sendMessage(_asCar, NM_POSITION_CHANGE, 0);
 		if (testPoint.x < 0 || testPoint.x >= 640 || testPoint.y < 0 || testPoint.y >= 480)
 			sendMessage(_asCar, NM_CAR_MOVE_TO_NEXT_POINT, 150);
 	}
@@ -460,9 +460,9 @@ void Scene2501::changeTrack() {
 	_trackPoints = _dataResource.getPointArray(_tracks[_currTrackIndex]->trackPointsName);
 	_asCar->setPathPoints(_trackPoints);
 	if (_currTrackIndex == 0)
-		sendMessage(_asCar, 0x2002, _trackPoints->size() - 1);
+		sendMessage(_asCar, NM_POSITION_CHANGE, _trackPoints->size() - 1);
 	else
-		sendMessage(_asCar, 0x2002, 0);
+		sendMessage(_asCar, NM_POSITION_CHANGE, 0);
 	sendPointMessage(_asCar, 0x2004, _clickPoint);
 	_newTrackIndex = -1;
 }

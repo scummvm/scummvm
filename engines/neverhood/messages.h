@@ -36,6 +36,7 @@ enum NeverhoodMessage {
 	NM_SCENE_LEAVE              = 0x1019,
 	NM_PRIORITY_CHANGE          = 0x1022,
 	NM_ANIMATION_UPDATE         = 0x2000,
+	NM_POSITION_CHANGE          = 0x2002,
 	NM_KLAYMEN_CLIMB_LADDER     = 0x2005,
 	NM_KLAYMEN_STOP_CLIMBING    = 0x2006,
 

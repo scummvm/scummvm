@@ -581,7 +581,7 @@ uint32 Scene3009::handleMessage(int messageNum, const MessageParam &param, Entit
 	case 0x2001:
 		_lockSymbolsPart1Countdown = 24;
 		break;
-	case 0x2002:
+	case NM_POSITION_CHANGE:
 		// Raise/lower the cannon
 		if (!getGlobalVar(V_CANNON_TURNED) && !_isTurning) {
 			if (getGlobalVar(V_CANNON_RAISED)) {
@@ -769,7 +769,7 @@ uint32 Scene3010::handleMessage(int messageNum, const MessageParam &param, Entit
 			_doorUnlocked = true;
 		}
 		break;
-	case 0x2002:
+	case NM_POSITION_CHANGE:
 		if (!_checkUnlocked && _countdown == 0) {
 			_asDeadBolts[param.asInteger()]->lock();
 		}

@@ -214,7 +214,7 @@ uint32 Scene1001::handleMessage(int messageNum, const MessageParam &param, Entit
 			}
 		}
 		break;
-	case 0x2002:
+	case NM_POSITION_CHANGE:
 		setRectList(0x004B49F0);
 		break;
 	case 0x480B:
@@ -395,7 +395,7 @@ uint32 Scene1002::handleMessage(int messageNum, const MessageParam &param, Entit
 			}
 		}
 		break;
-	case 0x2002:
+	case NM_POSITION_CHANGE:
 		_messageList = NULL;
 		break;
 	case NM_KLAYMEN_CLIMB_LADDER:
@@ -533,8 +533,8 @@ uint32 Scene1004::handleMessage(int messageNum, const MessageParam &param, Entit
 	case 0x2001:
 		setRectList(0x004B7C70);
 		break;
-	case 0x2002:
-		sendMessage(_asTrashCan, 0x2002, 0);
+	case NM_POSITION_CHANGE:
+		sendMessage(_asTrashCan, NM_POSITION_CHANGE, 0);
 		break;
 	}
 	return messageResult;

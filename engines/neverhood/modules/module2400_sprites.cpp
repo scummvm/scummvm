@@ -91,7 +91,7 @@ uint32 AsScene2401FlowingWater::handleMessage(int messageNum, const MessageParam
 		if (_isWaterFlowing && param.asInteger() == 0x02421405)
 			startAnimationByHash(0x10203116, 0x01084280, 0);
 		break;
-	case 0x2002:
+	case NM_POSITION_CHANGE:
 		if (!_isWaterFlowing) {
 			_vm->_soundMan->addSound(0x40F11C09, 0x980C1420);
 			_vm->_soundMan->playSoundLooping(0x980C1420);
@@ -141,7 +141,7 @@ uint32 AsScene2401WaterFlushing::handleMessage(int messageNum, const MessagePara
 			_flushLoopCount--;
 		}
 		break;
-	case 0x2002:
+	case NM_POSITION_CHANGE:
 		if (param.asInteger() > 0) {
 			_flushLoopCount = param.asInteger() - 1;
 			_countdown = _vm->_rnd->getRandomNumber(3) + 1;

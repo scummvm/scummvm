@@ -964,7 +964,7 @@ uint32 AsScene1004TrashCan::handleMessage(int messageNum, const MessageParam &pa
 		if (param.asInteger() == 0x225A8587)
 			playSound(0, 0x109AFC4C);
 		break;
-	case 0x2002:
+	case NM_POSITION_CHANGE:
 		startAnimation(0xEB312C11, 0, -1);
 		setVisible(true);
 		break;
@@ -1040,7 +1040,7 @@ uint32 KmScene1001::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x4836:
 		if (param.asInteger() == 1) {
-			sendMessage(_parentScene, 0x2002, 0);
+			sendMessage(_parentScene, NM_POSITION_CHANGE, 0);
 			GotoState(&KmScene1001::stWakeUp);
 		}
 		break;
@@ -1613,7 +1613,7 @@ uint32 KmScene1004::hmReadNote(int messageNum, const MessageParam &param, Entity
 	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x04684052) {
 			_acceptInput = true;
-			sendMessage(_parentScene, 0x2002, 0);
+			sendMessage(_parentScene, NM_POSITION_CHANGE, 0);
 		}
 		break;
 	}

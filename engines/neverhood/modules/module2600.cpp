@@ -250,9 +250,9 @@ uint32 Scene2609::handleMessage(int messageNum, const MessageParam &param, Entit
 		_isBusy = false;
 		sendMessage(_asWater, 0x2001, 0);
 		break;
-	case 0x2002:
+	case NM_POSITION_CHANGE:
 		_isBusy = false;
-		sendMessage(_asWater, 0x2002, 0);
+		sendMessage(_asWater, NM_POSITION_CHANGE, 0);
 		break;
 	}
 	return 0;

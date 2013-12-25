@@ -318,7 +318,7 @@ uint32 Scene1105::handleMessage(int messageNum, const MessageParam &param, Entit
 				playSound(2);
 				_doMoveTeddy = true;
 			} else {
-				sendMessage(_asTeddyBear, 0x2002, 0);
+				sendMessage(_asTeddyBear, NM_POSITION_CHANGE, 0);
 			}
 			showMouse(false);
 			_isActionButtonClicked = true;
@@ -460,7 +460,7 @@ void Scene1105::update() {
 	if (_isClosePanelDone && !isSoundPlaying(1))
 		leaveScene(_leaveResult);
 	if (_doMoveTeddy && !isSoundPlaying(2)) {
-		sendMessage(_asTeddyBear, 0x2002, 0);
+		sendMessage(_asTeddyBear, NM_POSITION_CHANGE, 0);
 		_doMoveTeddy = false;
 	}
 }

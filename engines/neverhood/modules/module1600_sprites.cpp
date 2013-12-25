@@ -97,7 +97,7 @@ uint32 AsCommonCar::handleMessage(int messageNum, const MessageParam &param, Ent
 	case NM_SCENE_LEAVE:
 		SetSpriteUpdate(NULL);
 		break;
-	case 0x2002:
+	case NM_POSITION_CHANGE:
 		// Set the current position without moving
 		_currPointIndex = param.asInteger();
 		_stepError = 0;

@@ -294,7 +294,7 @@ uint32 AsScene3009VerticalIndicator::handleMessage(int messageNum, const Message
 	switch (messageNum) {
 	case 0x1011:
 		if (_enabled) {
-			sendMessage(_parentScene, 0x2002, 0);
+			sendMessage(_parentScene, NM_POSITION_CHANGE, 0);
 		}
 		messageResult = 1;
 		break;
@@ -501,7 +501,7 @@ uint32 SsScene3010DeadBoltButton::handleMessage(int messageNum, const MessagePar
 				_buttonLocked = true;
 				sendMessage(_parentScene, 0x2000, _buttonIndex);
 			} else {
-				sendMessage(_parentScene, 0x2002, _buttonIndex);
+				sendMessage(_parentScene, NM_POSITION_CHANGE, _buttonIndex);
 			}
 			_needRefresh = true;
 			updatePosition();

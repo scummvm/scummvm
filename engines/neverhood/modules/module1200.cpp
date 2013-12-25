@@ -320,7 +320,7 @@ uint32 Scene1201::handleMessage(int messageNum, const MessageParam &param, Entit
 			setMessageList2(0x004AECC0);
 		}
 		break;
-	case 0x2002:
+	case NM_POSITION_CHANGE:
 		if (getGlobalVar(V_TNT_DUMMY_FUSE_LIT)) {
 			// Move the TNT dummy if the fuse is burning
 			sendEntityMessage(_klaymen, 0x1014, _asTntMan);
@@ -434,7 +434,7 @@ uint32 Scene1202::handleMessage(int messageNum, const MessageParam &param, Entit
 	case NM_ANIMATION_UPDATE:
 		_clickedIndex = (int)param.asInteger();
 		break;
-	case 0x2002:
+	case NM_POSITION_CHANGE:
 		_counter--;
 		break;
 	}

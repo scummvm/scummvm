@@ -230,7 +230,7 @@ uint32 AsScene1201TntMan::handleMessage(int messageNum, const MessageParam &para
 			playSound(0, 0x51800A04);
 		break;
 	case 0x1011:
-		sendMessage(_parentScene, 0x2002, 0);
+		sendMessage(_parentScene, NM_POSITION_CHANGE, 0);
 		messageResult = 1;
 		break;
 	case 0x480B:
@@ -648,7 +648,7 @@ void AsScene1202TntItem::stChangePositionFadeIn() {
 }
 
 void AsScene1202TntItem::stChangePositionDone() {
-	sendMessage(_parentScene, 0x2002, _itemIndex);
+	sendMessage(_parentScene, NM_POSITION_CHANGE, _itemIndex);
 	stShowIdle();
 }
 

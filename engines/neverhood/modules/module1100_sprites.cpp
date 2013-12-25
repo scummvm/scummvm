@@ -133,7 +133,7 @@ AsScene1105TeddyBear::AsScene1105TeddyBear(NeverhoodEngine *vm, Scene *parentSce
 uint32 AsScene1105TeddyBear::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x2002:
+	case NM_POSITION_CHANGE:
 		if (getGlobalVar(V_ROBOT_TARGET)) {
 			startAnimation(0x6B0C0432, 0, -1);
 			playSound(0);

@@ -383,7 +383,7 @@ uint32 Scene1402::handleMessage(int messageNum, const MessageParam &param, Entit
 				clearRectList();
 				_klaymen->setVisible(false);
 				showMouse(false);
-				sendMessage(_asPuzzleBox, 0x2002, 0);
+				sendMessage(_asPuzzleBox, NM_POSITION_CHANGE, 0);
 				startShaking();
 			}
 		}

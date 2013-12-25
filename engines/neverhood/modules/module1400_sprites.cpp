@@ -553,7 +553,7 @@ AsScene1402PuzzleBox::AsScene1402PuzzleBox(NeverhoodEngine *vm, Scene *parentSce
 uint32 AsScene1402PuzzleBox::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x2002:
+	case NM_POSITION_CHANGE:
 		playSound(1);
 		startAnimation(0x20060259, -1, -1);
 		_playBackwards = true;

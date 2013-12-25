@@ -670,7 +670,7 @@ uint32 Scene2202::handleMessage(int messageNum, const MessageParam &param, Entit
 		_movingCubePosition = (int16)param.asInteger();
 		_ssMovingCube = (Sprite*)sender;
 		break;
-	case 0x2002:
+	case NM_POSITION_CHANGE:
 		_isCubeMoving = false;
 		_ssDoneMovingCube = (Sprite*)sender;
 		if (param.asInteger() <= 2)
@@ -786,7 +786,7 @@ uint32 Scene2203::handleMessage(int messageNum, const MessageParam &param, Entit
 		else
 			setMessageList2(0x004B83C8);
 		break;
-	case 0x2002:
+	case NM_POSITION_CHANGE:
 		if (sender == _asLeftDoor)
 			setMessageList2(0x004B8370);
 		else
@@ -1215,7 +1215,7 @@ uint32 Scene2207::handleMessage(int messageNum, const MessageParam &param, Entit
 				setMessageList(0x004B37D8);
 		}
 		break;
-	case 0x2002:
+	case NM_POSITION_CHANGE:
 		_elevatorSurfacePriority = param.asInteger();
 		break;
 	case 0x2003:
@@ -1262,7 +1262,7 @@ uint32 Scene2207::handleMessage(int messageNum, const MessageParam &param, Entit
 uint32 Scene2207::handleMessage2(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x2002:
+	case NM_POSITION_CHANGE:
 		_elevatorSurfacePriority = param.asInteger();
 		break;
 	case 0x2004:

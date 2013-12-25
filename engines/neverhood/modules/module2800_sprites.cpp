@@ -217,7 +217,7 @@ SsScene2804LightCoil::SsScene2804LightCoil(NeverhoodEngine *vm)
 uint32 SsScene2804LightCoil::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x2002:
+	case NM_POSITION_CHANGE:
 		setVisible(true);
 		updatePosition();
 		messageResult = 1;
@@ -470,7 +470,7 @@ void AsScene2804BeamCoil::update() {
 uint32 AsScene2804BeamCoil::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x2002:
+	case NM_POSITION_CHANGE:
 		show();
 		_countdown = 92;
 		messageResult = 1;
@@ -791,7 +791,7 @@ void AsScene2808Handle::activate() {
 
 void AsScene2808Handle::stActivated() {
 	stopAnimation();
-	sendMessage(_parentScene, 0x2002, 0);
+	sendMessage(_parentScene, NM_POSITION_CHANGE, 0);
 }
 
 AsScene2808Flow::AsScene2808Flow(NeverhoodEngine *vm, Scene *parentScene, int testTubeSetNum)
@@ -1594,7 +1594,7 @@ uint32 KmScene2812::xHandleMessage(int messageNum, const MessageParam &param) {
 		GotoState(&Klaymen::stStartClimbLadderUp);
 		break;
 	case 0x4823:
-		sendMessage(_parentScene, 0x2002, 0);
+		sendMessage(_parentScene, NM_POSITION_CHANGE, 0);
 		GotoState(&Klaymen::stClimbLadderHalf);
 		break;
 	case 0x482D:

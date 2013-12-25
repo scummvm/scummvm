@@ -317,7 +317,7 @@ void SsScene2202PuzzleCube::stopMoving() {
 	loadSprite(kSsScene2202PuzzleCubeFileHashes2[_cubeSymbol], kSLFCenteredDrawOffset);
 	SetSpriteUpdate(NULL);
 	_isMoving = false;
-	sendMessage(_parentScene, 0x2002, _cubePosition);
+	sendMessage(_parentScene, NM_POSITION_CHANGE, _cubePosition);
 }
 
 static const uint32 kAsCommonKeyFileHashes[] = {
@@ -377,7 +377,7 @@ uint32 AsScene2203Door::handleMessage(int messageNum, const MessageParam &param,
 	switch (messageNum) {
 	case 0x1011:
 		if (_doorIndex == getGlobalVar(V_LARGE_DOOR_NUMBER))
-			sendMessage(_parentScene, 0x2002, 0);
+			sendMessage(_parentScene, NM_POSITION_CHANGE, 0);
 		else
 			sendMessage(_parentScene, 0x2001, 0);
 		messageResult = 1;
@@ -607,9 +607,9 @@ void AsScene2207Elevator::update() {
 	}
 
 	if (_pointIndex > 20 && _surface->getPriority() != 900)
-		sendMessage(_parentScene, 0x2002, 900);
+		sendMessage(_parentScene, NM_POSITION_CHANGE, 900);
 	else if (_pointIndex < 20 && _surface->getPriority() != 1100)
-		sendMessage(_parentScene, 0x2002, 1100);
+		sendMessage(_parentScene, NM_POSITION_CHANGE, 1100);
 
 	AnimatedSprite::update();
 
