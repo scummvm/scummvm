@@ -238,6 +238,7 @@ public:
 	Scene *accessScene(int sceneId);
 	void setSceneMusicParameters(GameVar *var);
 	int convertScene(int scene);
+	int getSceneFromTag(int tag);
 
 	NGIArchive *_currArchive;
 

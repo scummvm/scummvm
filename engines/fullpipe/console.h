@@ -33,6 +33,8 @@ public:
 
 private:
 	FullpipeEngine *_vm;
+
+	bool Cmd_Scene(int argc, const char **argv);
 };
 
 } // End of namespace Fullpipe

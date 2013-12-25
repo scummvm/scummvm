@@ -214,6 +214,15 @@ int FullpipeEngine::convertScene(int scene) {
 	return scenes[scene - 1];
 }
 
+int FullpipeEngine::getSceneFromTag(int tag) {
+	for (int i = 0; i < ARRAYSIZE(scenes); i++) {
+		if (scenes[i] == tag)
+			return i + 1;
+	}
+
+	return 1;
+}
+
 bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 	GameVar *sceneVar;
 	Common::Point sceneDim;
