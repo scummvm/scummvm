@@ -236,7 +236,9 @@ public:
 
 class RectResource: public Common::Rect {
 public:
-	RectResource(BoltFilesState &state, const byte *src);
+	Common::Array<Common::Rect> _entries;
+public:
+	RectResource(const byte *src, int size);
 	RectResource(int xp, int yp, int width, int height);
 	virtual ~RectResource() {}
 };

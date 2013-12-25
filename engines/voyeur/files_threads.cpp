@@ -1053,20 +1053,21 @@ int ThreadResource::doApt() {
 
 	_vm->_playStamp2 = 151;
 	_vm->_voy._viewBounds = _vm->_bVoy->boltEntry(_vm->_playStamp1)._rectResource; 
-	byte *hotspotsP = _vm->_bVoy->memberAddr(_vm->_playStamp1 + 1);
+	Common::Array<Common::Rect> &hotspots = _vm->_bVoy->boltEntry(
+		_vm->_playStamp1 + 1)._rectResource->_entries;
 	_vm->_eventsManager.getMouseInfo();
 
 	if (_doAptPosX == -1) {
-		_doAptPosX = READ_LE_UINT16(hotspotsP + 18) + 16;
-		_doAptPosY = READ_LE_UINT16(hotspotsP + 20) + 16;
+		_doAptPosX = hotspots[2].left;
+		_doAptPosY = hotspots[2].top;
 		_vm->_playStamp2 = 153;
 	}
 
 	if (_vm->_voy._field470 == 16) {
-		WRITE_LE_UINT16(hotspotsP + 2, 999);
-		WRITE_LE_UINT16(hotspotsP + 26, 999);
-		_doAptPosX = READ_LE_UINT16(hotspotsP + 34) + 28;
-		_doAptPosY = READ_LE_UINT16(hotspotsP + 36) + 28;
+		hotspots[0].left = 999;
+		hotspots[3].left = 999;
+		_doAptPosX = hotspots[4].left + 28;
+		_doAptPosY = hotspots[4].top + 28;
 	}
 
 	_vm->_eventsManager.setMousePos(Common::Point(_doAptPosX, _doAptPosY));
@@ -1097,11 +1098,9 @@ int ThreadResource::doApt() {
 		// Loop through the hotspot list
 		hotspotId = -1;
 		pt = _vm->_eventsManager.getMousePos();
-		for (int idx = 0; idx < READ_LE_UINT16(hotspotsP); ++idx) {
-			if (pt.x > READ_LE_UINT16(hotspotsP + idx * 8 + 2) &&
-				pt.x < READ_LE_UINT16(hotspotsP + idx * 8 + 6) &&
-				pt.y > READ_LE_UINT16(hotspotsP + idx * 8 + 4) &&
-				pt.y < READ_LE_UINT16(hotspotsP + idx * 8 + 8)) {
+		for (int idx = 0; idx < hotspots.size(); ++idx) {
+			if (pt.x > hotspots[idx].left && pt.x < hotspots[idx].right &&
+				pt.y > hotspots[idx].top && pt.y < hotspots[idx].bottom) {
 				// Cursor is within hotspot area
 				hotspotId = idx;
 

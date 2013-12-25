@@ -525,8 +525,10 @@ void BVoyBoltFile::initSoundMap() {
 }
 
 void BVoyBoltFile::sInitRect() {
-	_state._curMemberPtr->_data = _state.decompress(NULL, 8, _state._curMemberPtr->_mode);
-	_state._curMemberPtr->_rectResource = new RectResource(_state, _state._curMemberPtr->_data);
+	_state._curMemberPtr->_data = _state.decompress(NULL, _state._curMemberPtr->_size, 
+		_state._curMemberPtr->_mode);
+	_state._curMemberPtr->_rectResource = new RectResource(_state._curMemberPtr->_data,
+		_state._curMemberPtr->_size);
 }
 
 void BVoyBoltFile::sInitPic() {
@@ -692,11 +694,22 @@ bool BoltEntry::hasResource() const {
 
 /*------------------------------------------------------------------------*/
 
-RectResource::RectResource(BoltFilesState &state, const byte *src) {
-	left = READ_LE_UINT16(src);
-	top = READ_LE_UINT16(src + 2);
-	setWidth(READ_LE_UINT16(src + 4));
-	setHeight(READ_LE_UINT16(src + 6));
+RectResource::RectResource(const byte *src, int size) {
+	int count = 1;
+	if (size != 8) {
+		count = READ_LE_UINT16(src);
+		src += 2;
+	}
+
+	for (int i = 0; i < count; ++i, src += 8) {
+		_entries.push_back(Common::Rect(READ_LE_UINT16(src), READ_LE_UINT16(src + 2),
+			READ_LE_UINT16(src + 4), READ_LE_UINT16(src + 6)));
+	}
+
+	left = _entries[0].left;
+	top = _entries[0].top;
+	right = _entries[0].right;
+	bottom = _entries[0].bottom;
 }
 
 RectResource::RectResource(int x1, int y1, int x2, int y2) {
