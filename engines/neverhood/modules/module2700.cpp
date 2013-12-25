@@ -955,14 +955,14 @@ Scene2704::Scene2704(NeverhoodEngine *vm, Module *parentModule, int which, uint3
 		if (testPoint.x > 0 && testPoint.x < 640 && testPoint.y > 0 && testPoint.y < 480)
 			sendMessage(_asCar, NM_CAR_ENTER, 0);
 		else
-			sendMessage(_asCar, NM_CAR_MOVE_TO_PREV_POINT, 0);
+			sendMessage(_asCar, NM_CAR_MOVE_TO_PREV_POINT, 150);
 	} else {
 		NPoint testPoint = (*_trackPoints)[0];
 		sendMessage(_asCar, NM_POSITION_CHANGE, 0);
 		if (testPoint.x > 0 && testPoint.x < 640 && testPoint.y > 0 && testPoint.y < 480)
 			sendMessage(_asCar, NM_CAR_ENTER, 0);
 		else
-			sendMessage(_asCar, NM_CAR_MOVE_TO_NEXT_POINT, 0);
+			sendMessage(_asCar, NM_CAR_MOVE_TO_NEXT_POINT, 150);
 	}
 
 	if (clipRect) {
