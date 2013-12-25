@@ -90,7 +90,6 @@ private:
 	bool checkForMurder();
 	bool checkForIncriminate();
 	void playAVideoEvent(int eventIndex);
-	void playAVideoDuration(int v1, int v2);
 	int getChooseButton();
 protected:
 	// Engine APIs
@@ -145,6 +144,7 @@ public:
 	void playRL2Video(const Common::String &filename);
 	void doTransitionCard(const Common::String &time, const Common::String &location);
 	void playAVideo(int id);
+	void playAVideoDuration(int v1, int v2);
 
 	/**
 	 * Saves the last time the game was played

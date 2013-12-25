@@ -689,6 +689,7 @@ bool VoyeurEngine::checkForIncriminate() {
 	}
 
 	_voy._videoEventId = -1;
+	return false;
 }
 
 void VoyeurEngine::playAVideoEvent(int eventIndex) {
@@ -702,8 +703,58 @@ void VoyeurEngine::playAVideoEvent(int eventIndex) {
 }
 
 int VoyeurEngine::getChooseButton()  {
-	warning("TODO");
-	return 0;
+	int prevIndex = -2;
+	Common::Array<Common::Rect> &hotspots = _bVoy->boltEntry(_playStamp1 
+		+ 6)._rectResource->_entries;
+	int selectedIndex = -1;
+
+	(*_graphicsManager._vPort)->setupViewPort(_graphicsManager._backgroundPage);
+	_graphicsManager._backColors->_steps = 0;
+	_graphicsManager._backColors->startFade();
+	flipPageAndWait();
+
+	_voy._viewBounds = _bVoy->boltEntry(_playStamp1 + 7)._rectResource;
+	PictureResource *cursorPic = _bVoy->boltEntry(_playStamp1 + 2)._picResource;
+
+	do {
+		do {
+			if (_playStamp2 != -1 && !_soundManager.getVOCStatus())
+				_soundManager.startVOCPlay(_playStamp2);
+
+			_eventsManager.getMouseInfo();
+			selectedIndex = -1;
+			Common::Point pt = _eventsManager.getMousePos();
+			
+			for (uint idx = 0; idx < hotspots.size(); ++idx) {
+				if (hotspots[idx].contains(pt)) {
+					if (!_voy._field4F0 || (idx + 1) != READ_LE_UINT32(_controlPtr->_ptr + 4)) {
+						selectedIndex = idx;
+						if (selectedIndex != prevIndex) {
+							PictureResource *btnPic = _bVoy->boltEntry(_playStamp1 + 8 + idx)._picResource;
+							_graphicsManager.sDrawPic(btnPic, *_graphicsManager._vPort,
+								Common::Point(106, 200));
+
+							cursorPic = _bVoy->boltEntry(_playStamp1 + 4)._picResource;
+						}
+					}
+				}
+			}
+
+			if (selectedIndex == -1) {
+				cursorPic = _bVoy->boltEntry(_playStamp1 + 2)._picResource;
+				PictureResource *btnPic = _bVoy->boltEntry(_playStamp1 + 12)._picResource;
+				_graphicsManager.sDrawPic(btnPic, *_graphicsManager._vPort,
+					Common::Point(106, 200));
+			}
+
+			_graphicsManager.sDrawPic(cursorPic, *_graphicsManager._vPort,
+				Common::Point(pt.x + 13, pt.y - 12));
+
+			flipPageAndWait();
+		} while (!shouldQuit() && !_voy._incriminate);
+	} while (!shouldQuit() && selectedIndex == -1 && !_voy._fadeFunc);
+
+	return selectedIndex;
 }
 
 void VoyeurEngine::makeViewFinder() {
