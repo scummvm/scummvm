@@ -83,6 +83,9 @@ static const char *credits[] = {
 "A0""Arnaud Boutonne",
 "C0""Arnaud Boutonn\351",
 "",
+"C1""Buried",
+"C0""Matthew Hoops",
+"",
 "C1""CGE",
 "A0""Arnaud Boutonne",
 "C0""Arnaud Boutonn\351",
@@ -870,7 +873,7 @@ static const char *credits[] = {
 "C0""",
 "C0""Jan Nedoma for providing the sources to the Wintermute-engine, and for his support while porting the engine to ScummVM.",
 "C0""",
-"C0""Bob Bell, Michel Kripalani, Tommy Yune, from Presto Studios for providing the source code of The Journeyman Project: Pegasus Prime.",
+"C0""Bob Bell, David Black, Michel Kripalani, and Tommy Yune from Presto Studios for providing the source code of The Journeyman Project: Pegasus Prime and The Journeyman Project 2: Buried in Time.",
 "C0""",
 "",
 };
