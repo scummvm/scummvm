@@ -1226,7 +1226,6 @@ MessageQueue *MovGraph2::doWalkTo(StaticANIObject *obj, int xpos, int ypos, int 
 	if (_items2[idx]->_subItems[idxsub]._staticsId1 != obj->_statics->_staticsId)
 		movInfo1.flags |= 2;
 
-	// FIXME: This somehow corrupts the heap (reported by MSVC)
 	buildMovInfo1SubItems(&movInfo1, &tempLinkList, &linkInfoSource, &linkInfoDest);
 
 	MessageQueue *mq = buildMovInfo1MessageQueue(&movInfo1);
