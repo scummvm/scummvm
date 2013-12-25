@@ -144,7 +144,7 @@ public:
 	void playRL2Video(const Common::String &filename);
 	void doTransitionCard(const Common::String &time, const Common::String &location);
 	void playAVideo(int id);
-	void playAVideoDuration(int v1, int v2);
+	void playAVideoDuration(int videoId, int duration);
 
 	/**
 	 * Saves the last time the game was played
