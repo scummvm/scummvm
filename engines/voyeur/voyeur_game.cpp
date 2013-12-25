@@ -597,7 +597,54 @@ void VoyeurEngine::doTapePlaying() {
 }
 
 bool VoyeurEngine::checkForMurder() {
-	warning("TODO");
+	int v = READ_LE_UINT32(_controlPtr->_ptr + 12);
+
+	for (int idx = 0; idx < _voy._eventCount; ++idx) {
+		VoyeurEvent &evt = _voy._events[idx];
+
+		if (evt._type == EVTYPE_VIDEO) {
+			switch (READ_LE_UINT32(_controlPtr->_ptr + 4)) {
+			case 1:
+				if (evt._field8 == 41 && evt._computerOn <= 15 &&
+						(evt._computerOff + evt._computerOn) >= 16) {
+					WRITE_LE_UINT32(_controlPtr->_ptr + 12, 1);
+				}
+				break;
+
+			case 2:
+				if (evt._field8 == 53 && evt._computerOn <= 19 &&
+						(evt._computerOff + evt._computerOn) >= 21) {
+					WRITE_LE_UINT32(_controlPtr->_ptr + 12, 2);
+				}
+				break;
+
+			case 3:
+				if (evt._field8 == 50 && evt._computerOn <= 28 &&
+						(evt._computerOff + evt._computerOn) >= 29) {
+					WRITE_LE_UINT32(_controlPtr->_ptr + 12, 3);
+				}
+				break;
+
+			case 4:
+				if (evt._field8 == 43 && evt._computerOn <= 10 &&
+						(evt._computerOff + evt._computerOn) >= 14) {
+					WRITE_LE_UINT32(_controlPtr->_ptr + 12, 4);
+				}
+				break;
+
+			default:
+				break;
+			}
+		}
+
+		if (READ_LE_UINT32(_controlPtr->_ptr + 12) == READ_LE_UINT32(_controlPtr->_ptr + 4)) {
+			_voy._videoEventId = idx;
+			return true;
+		}
+	}
+
+	WRITE_LE_UINT32(_controlPtr->_ptr + 12, v);
+	_voy._videoEventId = -1;
 	return false;
 }
 
