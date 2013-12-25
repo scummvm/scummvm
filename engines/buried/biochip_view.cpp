@@ -39,7 +39,9 @@
 #include "common/error.h"
 #include "common/stream.h"
 #include "common/system.h"
+#include "common/translation.h"
 #include "graphics/surface.h"
+#include "gui/message.h"
 
 namespace Buried {
 
@@ -611,7 +613,15 @@ void InterfaceBioChipViewWindow::onLButtonUp(const Common::Point &point, uint fl
 		}
 		break;
 	case REGION_PAUSE:
-		// TODO
+		if (!_vm->isDemo()) {
+			((SceneViewWindow *)getParent()->getParent())->_paused = true;
+
+			// TODO: Would be nice to load the translated text from IDS_APP_MESSAGE_PAUSED_TEXT (9023)
+			GUI::MessageDialog dialog(_("Your game is now Paused.  Click OK to continue."));
+			dialog.runModal();
+
+			((SceneViewWindow *)getParent()->getParent())->_paused = false;
+		}
 		break;
 	case REGION_FLICKER:
 		if (_flicker.contains(point)) {
