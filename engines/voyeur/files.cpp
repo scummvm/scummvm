@@ -453,6 +453,9 @@ BVoyBoltFile::BVoyBoltFile(BoltFilesState &state): BoltFile("bvoy.blt", state) {
 
 void BVoyBoltFile::initResource(int resType) {
 	switch (resType) {
+	case 2:
+		sInitRect();
+		break;
 	case 8:
 		sInitPic();
 		break;
@@ -519,6 +522,11 @@ void BVoyBoltFile::initFont() {
 
 void BVoyBoltFile::initSoundMap() {
 	initDefault();
+}
+
+void BVoyBoltFile::sInitRect() {
+	_state._curMemberPtr->_data = _state.decompress(NULL, 8, _state._curMemberPtr->_mode);
+	_state._curMemberPtr->_rectResource = new RectResource(_state, _state._curMemberPtr->_data);
 }
 
 void BVoyBoltFile::sInitPic() {
@@ -627,17 +635,20 @@ void BoltGroup::unload() {
 /*------------------------------------------------------------------------*/
 
 BoltEntry::BoltEntry(Common::SeekableReadStream *f): _file(f) {
-	_data = NULL;
-	_picResource = NULL;
-	_viewPortResource = NULL;
-	_viewPortListResource = NULL;
-	_fontResource = NULL;
-	_fontInfoResource = NULL;
-	_cMapResource = NULL;
-	_vInitCyclResource = NULL;
-	_ptrResource = NULL;
-	_controlResource = NULL;
-	_threadResource = NULL;
+	_data = nullptr;
+	_rectResource = nullptr;
+	_picResource = nullptr;
+	_viewPortResource = nullptr;
+	_viewPortListResource = nullptr;
+	_fontResource = nullptr;
+	_fontInfoResource = nullptr;
+	_cMapResource = nullptr;
+	_vInitCyclResource = nullptr;
+	_ptrResource = nullptr;
+	_controlResource = nullptr;
+	_vInitCyclResource = nullptr;
+	_cycleResource = nullptr;
+	_threadResource = nullptr;
 
 	byte buffer[16];
 	_file->read(&buffer[0], 16);
@@ -651,6 +662,7 @@ BoltEntry::BoltEntry(Common::SeekableReadStream *f): _file(f) {
 
 BoltEntry::~BoltEntry() {
 	delete[] _data;
+	delete _rectResource;
 	delete _picResource;
 	delete _viewPortResource;
 	delete _viewPortListResource;
@@ -658,6 +670,7 @@ BoltEntry::~BoltEntry() {
 	delete _fontInfoResource;
 	delete _cMapResource;
 	delete _vInitCyclResource;
+	delete _cycleResource;
 	delete _ptrResource;
 	delete _controlResource;
 }
@@ -671,10 +684,26 @@ void BoltEntry::load() {
  * Returns true if the given bolt entry has an attached resource
  */
 bool BoltEntry::hasResource() const {
-	return _picResource || _viewPortResource || _viewPortListResource
+	return _rectResource ||  _picResource || _viewPortResource || _viewPortListResource
 		|| _fontResource || _fontInfoResource || _cMapResource 
-		|| _vInitCyclResource || _ptrResource || _controlResource
-		|| _threadResource;
+		|| _vInitCyclResource || _cycleResource
+		|| _ptrResource || _controlResource || _threadResource;
+}
+
+/*------------------------------------------------------------------------*/
+
+RectResource::RectResource(BoltFilesState &state, const byte *src) {
+	left = READ_LE_UINT16(src);
+	top = READ_LE_UINT16(src + 2);
+	setWidth(READ_LE_UINT16(src + 4));
+	setHeight(READ_LE_UINT16(src + 6));
+}
+
+RectResource::RectResource(int x1, int y1, int x2, int y2) {
+	left = x1;
+	top = y1;
+	right = x2;
+	bottom = y2;
 }
 
 /*------------------------------------------------------------------------*/

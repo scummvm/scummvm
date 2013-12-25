@@ -201,7 +201,7 @@ void VoyeurEngine::playStamp() {
 		} while (flag);
 	}
 
-	_voy._field4386 = 0;
+	_voy._viewBounds = nullptr;
 	closeStamp();
 	_stampLibPtr->freeBoltGroup(0);
 	delete _stampLibPtr;
@@ -243,7 +243,7 @@ void VoyeurEngine::reviewTape() {
 
 	bool breakFlag = false;
 	while (!shouldQuit() && !breakFlag) {
-		_voy._field4386 = _bVoy->memberAddr(0x907);
+		_voy._viewBounds = _bVoy->boltEntry(0x907)._rectResource;
 		byte *dataP = _bVoy->memberAddr(0x906);
 		int varA = READ_LE_UINT16(dataP);
 		_graphicsManager._backColors = _bVoy->boltEntry(0x902)._cMapResource;
@@ -411,11 +411,11 @@ void VoyeurEngine::reviewTape() {
 					_eventsManager.getMouseInfo();
 					foundIndex = 999;
 				}
-			} else if ((_voy._field478 & 0x40) && READ_LE_UINT16(_voy._field4386) == pt.x &&
-					READ_LE_UINT16(_voy._field4386 + 6) == pt.y) {
+			} else if ((_voy._field478 & 0x40) && _voy._viewBounds->left == pt.x &&
+					_voy._viewBounds->bottom == pt.y) {
 				foundIndex = 999;
-			} else if ((_voy._field478 & 0x40) && READ_LE_UINT16(_voy._field4386) == pt.x &&
-					READ_LE_UINT16(_voy._field4386 + 2) == pt.y) {
+			} else if ((_voy._field478 & 0x40) && _voy._viewBounds->left == pt.x &&
+					_voy._viewBounds->top == pt.y) {
 				foundIndex = 998;
 			} else {
 				_eventsManager.setCursorColor(128, (foundIndex == -1) ? 0 : 1);
@@ -471,7 +471,7 @@ void VoyeurEngine::reviewTape() {
 			}
 
 			pt = _eventsManager.getMousePos();
-			if (_voy._incriminate && READ_LE_UINT16(_voy._field4386) == pt.x &&
+			if (_voy._incriminate && _voy._viewBounds->left == pt.x &&
 					(_voy._field478 & 0x40) && _voy._fadeFunc) {
 				WRITE_LE_UINT32(_controlPtr->_ptr + 4, (pt.y / 60) + 1);
 				foundIndex = -1;
@@ -703,7 +703,7 @@ void VoyeurEngine::initIFace(){
 
 	doScroll(_eventsManager.getMousePos());
 	
-	_voy._field4386 = _bVoy->memberAddr(_playStamp1);
+	_voy._viewBounds = _bVoy->boltEntry(_playStamp1)._rectResource;
 
 	// Note: the original did two loops to preload members here, which is
 	// redundant for ScummVM, since computers are faster these days, and

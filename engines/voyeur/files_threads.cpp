@@ -1052,7 +1052,7 @@ int ThreadResource::doApt() {
 	loadTheApt();
 
 	_vm->_playStamp2 = 151;
-	_vm->_voy._field4386 = _vm->_bVoy->memberAddr(_vm->_playStamp1); 
+	_vm->_voy._viewBounds = _vm->_bVoy->boltEntry(_vm->_playStamp1)._rectResource; 
 	byte *hotspotsP = _vm->_bVoy->memberAddr(_vm->_playStamp1 + 1);
 	_vm->_eventsManager.getMouseInfo();
 
@@ -1188,9 +1188,8 @@ void ThreadResource::doRoom() {
 	PictureResource *pic1 = vm._bVoy->boltEntry(vm._playStamp1 + 2)._picResource;
 	PictureResource *pic2 = vm._bVoy->boltEntry(vm._playStamp1 + 3)._picResource;
 
-	byte arr[10];
-	strcpy((char *)&arr[0], "0");
-	voy._field4386 = &arr[0];
+	RectResource viewBounds(48, 38, 336, 202);
+	voy._viewBounds = &viewBounds;
 
 	vm._eventsManager.getMouseInfo();
 	vm._eventsManager.setMousePos(Common::Point(192, 120));
@@ -1347,7 +1346,7 @@ void ThreadResource::doRoom() {
 
 	voy._field478 = 1;
 	vm._eventsManager.incrementTime(1);
-	voy._field4386 = 0;
+	voy._viewBounds = nullptr;
 	voy._field437E = 0;
 	vm.makeViewFinderP();
 
@@ -1707,7 +1706,7 @@ void ThreadResource::freeTheApt() {
 	(*_vm->_graphicsManager._vPort)->setupViewPort(nullptr);
 	_vm->_bVoy->freeBoltGroup(_vm->_playStamp1);
 	_vm->_playStamp1 = -1;
-	_vm->_voy._field4386 = 0;
+	_vm->_voy._viewBounds = nullptr;
 }
 
 void ThreadResource::doAptAnim(int mode) {

@@ -35,6 +35,7 @@ class VoyeurEngine;
 class BoltFile;
 class BoltGroup;
 class BoltEntry;
+class RectResource;
 class PictureResource;
 class ViewPortResource;
 class ViewPortListResource;
@@ -43,6 +44,7 @@ class CMapResource;
 class VInitCyclResource;
 class PtrResource;
 class ControlResource;
+class CycleResource;
 class ThreadResource;
 
 #define DECOMPRESS_SIZE 0x7000
@@ -137,6 +139,7 @@ public:
 class BVoyBoltFile: public BoltFile {
 private:
 	// initType method table
+	void sInitRect();
 	void sInitPic();
 	void vInitCMap();
 	void vInitCycl();
@@ -195,6 +198,7 @@ public:
 	byte *_data;
 
 	// bvoy.blt resource types
+	RectResource *_rectResource;
 	PictureResource *_picResource;
 	ViewPortResource *_viewPortResource;
 	ViewPortListResource *_viewPortListResource;
@@ -202,6 +206,7 @@ public:
 	FontInfoResource *_fontInfoResource;
 	CMapResource *_cMapResource;
 	VInitCyclResource *_vInitCyclResource;
+	CycleResource *_cycleResource;	// TODO: Dup with VInit?
 
 	// stampblt.blt resource types
 	PtrResource *_ptrResource;
@@ -227,6 +232,13 @@ public:
 
 	bool openBoltLib(const Common::String &filename, BoltFile *&boltFile);
 	byte *fload(const Common::String &filename, int *size = NULL);
+};
+
+class RectResource: public Common::Rect {
+public:
+	RectResource(BoltFilesState &state, const byte *src);
+	RectResource(int xp, int yp, int width, int height);
+	virtual ~RectResource() {}
 };
 
 enum DisplayFlag { DISPFLAG_1 = 1, DISPFLAG_2 = 2, DISPFLAG_4 = 4, DISPFLAG_8 = 8, 

@@ -127,7 +127,7 @@ public:
 	int _field4380;
 	int _field4382;
 	int _videoEventId;
-	byte *_field4386;
+	RectResource *_viewBounds;
 	int _curICF0;
 	int _curICF1;
 	int _fadeICF0;

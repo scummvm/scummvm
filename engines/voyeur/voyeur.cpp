@@ -265,7 +265,7 @@ bool VoyeurEngine::doLock() {
 		lock.getThePassword();
 		
 		_voy._field4380 = lock.fieldC;
-		_voy._field4386 = _bVoy->memberAddr(0x704);
+		_voy._viewBounds = _bVoy->boltEntry(0x704)._rectResource;
 
 		Common::String password = lock._password;
 		cursorPic = _bVoy->getPictureResource(0x702);
@@ -422,7 +422,7 @@ bool VoyeurEngine::doLock() {
 			lock._password = displayString;
 		lock.saveThePassword();
 
-		_voy._field4386 = NULL;
+		_voy._viewBounds = nullptr;
 		_bVoy->freeBoltGroup(0x700);
 	}
 
