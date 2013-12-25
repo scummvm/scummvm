@@ -572,7 +572,28 @@ void VoyeurEngine::doGossip() {
 }
 
 void VoyeurEngine::doTapePlaying() {
-	warning("TODO");
+	if (!_bVoy->getBoltGroup(0xA00))
+		return;
+
+	_eventsManager.getMouseInfo();
+	_graphicsManager._backColors = _bVoy->boltEntry(0xA01)._cMapResource;
+	_graphicsManager._backgroundPage = _bVoy->boltEntry(0xA00)._picResource;
+	PictureResource *pic = _bVoy->boltEntry(0xA02)._picResource;
+
+	(*_graphicsManager._vPort)->setupViewPort(_graphicsManager._backgroundPage);
+	_graphicsManager.sDrawPic(pic, *_graphicsManager._vPort, Common::Point(57, 30));
+	flipPageAndWaitForFade();
+
+	CycleResource *cycle = _bVoy->boltEntry(0xA05)._cycleResource;
+	cycle->vStartCycle();
+
+	_soundManager.startVOCPlay("vcr.voc");
+	while (!shouldQuit() && !_voy._incriminate && _soundManager.getVOCStatus()) {
+		_eventsManager.delay(2);
+	}
+
+	_soundManager.stopVOCPlay();
+	_bVoy->freeBoltGroup(0xA00);
 }
 
 bool VoyeurEngine::checkForMurder() {

@@ -1393,4 +1393,14 @@ ControlResource::ControlResource(BoltFilesState &state, const byte *src) {
 	}
 }
 
+/*------------------------------------------------------------------------*/
+
+void CycleResource::vStartCycle() {
+	error("TODO: vStartCycle");
+}
+
+void CycleResource::vStopCycle() {
+	error("TODO: vStopCycle");
+}
+
 } // End of namespace Voyeur

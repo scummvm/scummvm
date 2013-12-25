@@ -418,6 +418,15 @@ public:
 	virtual ~ControlResource() {}
 };
 
+class CycleResource {
+public:
+	CycleResource(BoltFilesState &state, const byte *src) {}
+	virtual ~CycleResource() {}
+
+	void vStartCycle();
+	void vStopCycle();
+};
+
 class ThreadResource {
 public:
 	static int _stampFlags;
