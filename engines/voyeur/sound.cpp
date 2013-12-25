@@ -61,7 +61,7 @@ void SoundManager::setVOCOffset(int offset) {
 }
 
 Common::String SoundManager::getVOCFileName(int idx) {
-	return Common::String::format("%s.voc", VOC_FILENAMES[idx]);
+	return Common::String::format("%s.voc", SZ_FILENAMES[idx]);
 }
 
 void SoundManager::startVOCPlay(const Common::String &filename) {

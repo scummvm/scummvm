@@ -39,7 +39,7 @@ extern const int BLIND_TABLE[];
 
 extern const int COMP_BUT_TABLE[];
 
-extern const char *const VOC_FILENAMES[];
+extern const char *const SZ_FILENAMES[];
 
 extern const char *const SATURDAY;
 extern const char *const SUNDAY;

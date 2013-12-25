@@ -691,8 +691,14 @@ bool VoyeurEngine::checkForIncriminate() {
 	_voy._videoEventId = -1;
 }
 
-void VoyeurEngine::playAVideoEvent(int eventId) {
-	warning("TODO");
+void VoyeurEngine::playAVideoEvent(int eventIndex) {
+	VoyeurEvent &evt = _voy._events[eventIndex];
+	_eventsManager._videoComputerBut4 = evt._field8;
+	_voy._vocSecondsOffset = evt._computerOn;
+	_eventsManager._videoDead = evt._dead;
+	_voy._field478 &= ~1;
+	
+	playAVideoDuration(_eventsManager._videoComputerBut4, evt._computerOff);
 }
 
 int VoyeurEngine::getChooseButton()  {

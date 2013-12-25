@@ -1098,7 +1098,7 @@ int ThreadResource::doApt() {
 		// Loop through the hotspot list
 		hotspotId = -1;
 		pt = _vm->_eventsManager.getMousePos();
-		for (int idx = 0; idx < hotspots.size(); ++idx) {
+		for (int idx = 0; idx < (int)hotspots.size(); ++idx) {
 			if (pt.x > hotspots[idx].left && pt.x < hotspots[idx].right &&
 				pt.y > hotspots[idx].top && pt.y < hotspots[idx].bottom) {
 				// Cursor is within hotspot area

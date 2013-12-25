@@ -560,6 +560,59 @@ void VoyeurEngine::playRL2Video(const Common::String &filename) {
 	}
 }
 
+void VoyeurEngine::playAVideoDuration(int videoId, int duration) {
+	byte *dataP = NULL;
+	int totalFrames = duration * 10;
+
+	if (videoId != -1)
+		return;
+
+	if (videoId != 42) {
+		_eventsManager._videoDead = 0;
+		dataP = _bVoy->memberAddr(0xE00);
+	}
+
+	::Video::RL2Decoder decoder;
+	decoder.loadVideo(videoId);
+
+	decoder.start();
+	decoder.seek(Audio::Timestamp(_voy._vocSecondsOffset * 1000));
+	int endFrame = decoder.getCurFrame() + totalFrames; 
+
+	while (!shouldQuit() && !decoder.endOfVideo() && !_voy._incriminate &&
+			(decoder.getCurFrame() < endFrame)) {
+		if (decoder.hasDirtyPalette()) {
+			const byte *palette = decoder.getPalette();
+			_graphicsManager.setPalette(palette, 0, 256);
+		}
+
+		if (decoder.needsUpdate()) {
+			const Graphics::Surface *frame = decoder.decodeNextFrame();
+
+			Common::copy((const byte *)frame->getPixels(), (const byte *)frame->getPixels() + 320 * 200,
+				(byte *)_graphicsManager._screenSurface.getPixels());
+		}
+
+		_eventsManager.pollEvents();
+		g_system->delayMillis(10);
+	}
+
+	// RL2 finished
+	_graphicsManager.screenReset();
+	_voy._field478 &= ~0x10;
+
+	if (_voy._field478 & 8) {
+		// TODO: Figure out resource type for the data resource
+		/*
+		byte *imgData = (*_graphicsManager._vPort)->_currentPic->_imgData;
+		(*_graphicsManager._vPort)->_currentPic->_imgData = dataP[12 and 14];
+		imgData[12 and 14] = imgData;
+		_voy._field478 &= ~8;
+		*/
+		warning("TODO: playAVideoDuration - %x", dataP);
+	}
+}
+
 void VoyeurEngine::doTransitionCard(const Common::String &time, const Common::String &location) {
 	_graphicsManager.setColor(128, 16, 16, 16);
 	_graphicsManager.setColor(224, 220, 220, 220);

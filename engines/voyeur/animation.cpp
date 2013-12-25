@@ -21,6 +21,7 @@
  */
 
 #include "voyeur/animation.h"
+#include "voyeur/staticres.h"
 #include "common/memstream.h"
 #include "common/system.h"
 #include "audio/decoders/raw.h"
@@ -33,6 +34,11 @@ RL2Decoder::RL2Decoder(Audio::Mixer::SoundType soundType) : _soundType(soundType
 
 RL2Decoder::~RL2Decoder() {
 	close();
+}
+
+bool RL2Decoder::loadVideo(int videoId) {
+	Common::String filename = Common::String::format("%s.rl2", ::Voyeur::SZ_FILENAMES[videoId]);
+	return loadFile(filename);
 }
 
 bool RL2Decoder::loadStream(Common::SeekableReadStream *stream) {

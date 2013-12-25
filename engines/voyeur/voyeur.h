@@ -89,7 +89,8 @@ private:
 	void doTapePlaying();
 	bool checkForMurder();
 	bool checkForIncriminate();
-	void playAVideoEvent(int eventId);
+	void playAVideoEvent(int eventIndex);
+	void playAVideoDuration(int v1, int v2);
 	int getChooseButton();
 protected:
 	// Engine APIs

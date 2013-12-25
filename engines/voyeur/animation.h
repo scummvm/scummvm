@@ -73,6 +73,7 @@ public:
 	virtual ~RL2Decoder();
 
 	bool loadStream(Common::SeekableReadStream *stream);
+	bool loadVideo(int videoId);
 
 	const Common::List<Common::Rect> *getDirtyRects() const;
 	void clearDirtyRects();
