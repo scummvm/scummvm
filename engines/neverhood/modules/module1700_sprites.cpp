@@ -56,7 +56,7 @@ uint32 SsScene1705Tape::handleMessage(int messageNum, const MessageParam &param,
 		sendMessage(_parentScene, 0x4826, 0);
 		messageResult = 1;
 		break;
-	case 0x4806:
+	case NM_KLAYMEN_USE_OBJECT:
 		setSubVar(VA_HAS_TAPE, _tapeIndex, 1);
 		setVisible(false);
 		SetMessageHandler(NULL);
@@ -82,7 +82,7 @@ uint32 KmScene1705::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4800:
 		startWalkToX(param.asPoint().x, false);
 		break;
-	case 0x4004:
+	case NM_KLAYMEN_STAND_IDLE:
 		if (_isSittingInTeleporter)
 			GotoState(&Klaymen::stSitIdleTeleporter);
 		else
@@ -109,12 +109,12 @@ uint32 KmScene1705::xHandleMessage(int messageNum, const MessageParam &param) {
 		else
 			startWalkToAttachedSpriteXDistance(param.asPoint().x);
 		break;
-	case 0x481D:
+	case NM_KLAYMEN_TURN_TO_USE:
 		if (_isSittingInTeleporter) {
 			GotoState(&Klaymen::stTurnToUseInTeleporter);
 		}
 		break;
-	case 0x481E:
+	case NM_KLAYMEN_RETURN_FROM_USE:
 		if (_isSittingInTeleporter)
 			GotoState(&Klaymen::stReturnFromUseInTeleporter);
 		break;

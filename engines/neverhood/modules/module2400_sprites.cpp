@@ -197,7 +197,7 @@ uint32 AsScene2401Door::handleMessage(int messageNum, const MessageParam &param,
 	case NM_ANIMATION_STOP:
 		gotoNextState();
 		break;
-	case NM_DOOR_OPEN:
+	case NM_KLAYMEN_OPEN_DOOR:
 		if (!_isOpen) {
 			_countdown = 168;
 			_isOpen = true;
@@ -257,7 +257,7 @@ uint32 AsScene2402Door::handleMessage(int messageNum, const MessageParam &param,
 	case NM_ANIMATION_STOP:
 		gotoNextState();
 		break;
-	case NM_DOOR_OPEN:
+	case NM_KLAYMEN_OPEN_DOOR:
 		_countdown = 144;
 		_isOpen = true;
 		setVisible(true);
@@ -368,7 +368,7 @@ uint32 KmScene2401::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4800:
 		startWalkToX(param.asPoint().x, false);
 		break;
-	case 0x4004:
+	case NM_KLAYMEN_STAND_IDLE:
 		GotoState(&Klaymen::stTryStandIdle);
 		break;
 	case NM_KLAYMEN_PRESS_BUTTON:
@@ -508,7 +508,7 @@ uint32 KmScene2402::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4800:
 		startWalkToX(param.asPoint().x, false);
 		break;
-	case 0x4004:
+	case NM_KLAYMEN_STAND_IDLE:
 		if (!getGlobalVar(V_TV_JOKE_TOLD))
 			GotoState(&Klaymen::stStandWonderAbout);
 		else
@@ -577,7 +577,7 @@ uint32 KmScene2403::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4800:
 		startWalkToX(param.asPoint().x, false);
 		break;
-	case 0x4004:
+	case NM_KLAYMEN_STAND_IDLE:
 		GotoState(&Klaymen::stTryStandIdle);
 		break;
 	case 0x480D:
@@ -661,7 +661,7 @@ uint32 KmScene2406::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4800:
 		startWalkToX(param.asPoint().x, false);
 		break;
-	case 0x4004:
+	case NM_KLAYMEN_STAND_IDLE:
 		GotoState(&Klaymen::stTryStandIdle);
 		break;
 	case 0x4804:
@@ -692,10 +692,10 @@ uint32 KmScene2406::xHandleMessage(int messageNum, const MessageParam &param) {
 		else
 			startWalkToAttachedSpriteXDistance(param.asPoint().x);
 		break;
-	case 0x481D:
+	case NM_KLAYMEN_TURN_TO_USE:
 		GotoState(&Klaymen::stTurnToUse);
 		break;
-	case 0x481E:
+	case NM_KLAYMEN_RETURN_FROM_USE:
 		GotoState(&Klaymen::stReturnFromUse);
 		break;
 	case 0x481F:

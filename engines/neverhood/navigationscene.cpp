@@ -106,11 +106,11 @@ void NavigationScene::update() {
 
 uint32 NavigationScene::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	switch (messageNum) {
-	case 0x0000:
+	case NM_MOUSE_MOVE:
 		if (_interactive)
 			sendMessage(_mouseCursor, 0x4002, param);
 		break;
-	case 0x0001:
+	case NM_MOUSE_CLICK:
 		if (_interactive)
 			handleNavigation(param.asPoint());
 		break;

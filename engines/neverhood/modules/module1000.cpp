@@ -220,7 +220,7 @@ uint32 Scene1001::handleMessage(int messageNum, const MessageParam &param, Entit
 	case 0x480B:
 		sendMessage(_asWindow, 0x2001, 0);
 		break;
-	case NM_LEVER_DOWN:
+	case NM_KLAYMEN_LOWER_LEVER:
 		sendMessage(_asHammer, 0x2000, 0);
 		break;
 	}
@@ -317,7 +317,7 @@ Scene1002::Scene1002(NeverhoodEngine *vm, Module *parentModule, int which)
 	_asVenusFlyTrap = insertSprite<AsScene1002VenusFlyTrap>(this, _klaymen, false);
 	addCollisionSprite(_asVenusFlyTrap);
 
-	sendEntityMessage(_klaymen, 0x2007, _asVenusFlyTrap);
+	sendEntityMessage(_klaymen, NM_CAR_MOVE_TO_PREV_POINT, _asVenusFlyTrap);
 
 	_asOutsideDoorBackground = insertSprite<AsScene1002OutsideDoorBackground>();
 
@@ -398,15 +398,15 @@ uint32 Scene1002::handleMessage(int messageNum, const MessageParam &param, Entit
 	case 0x2002:
 		_messageList = NULL;
 		break;
-	case 0x2005:
+	case NM_KLAYMEN_CLIMB_LADDER:
 		_isClimbingLadder = true;
 		setRectList(0x004B4418);
 		break;
-	case 0x2006:
+	case NM_KLAYMEN_STOP_CLIMBING:
 		_isClimbingLadder = false;
 		setRectList(0x004B43A0);
 		break;
-	case 0x4806:
+	case NM_KLAYMEN_USE_OBJECT:
 		if (sender == _asRing1) {
 			setGlobalVar(V_RADIO_ENABLED, 0);
 			playSound(0, 0x665198C0);
@@ -416,8 +416,8 @@ uint32 Scene1002::handleMessage(int messageNum, const MessageParam &param, Entit
 		} else if (sender == _asRing3) {
 			setGlobalVar(V_RADIO_ENABLED, 0);
 			playSound(1);
-			sendMessage(_asDoor, NM_DOOR_OPEN, 0);
-			sendMessage(_asOutsideDoorBackground, NM_DOOR_OPEN, 0);
+			sendMessage(_asDoor, NM_KLAYMEN_OPEN_DOOR, 0);
+			sendMessage(_asOutsideDoorBackground, NM_KLAYMEN_OPEN_DOOR, 0);
 		} else if (sender == _asRing4) {
 			setGlobalVar(V_RADIO_ENABLED, 0);
 			playSound(0, 0xE0558848);
@@ -426,25 +426,25 @@ uint32 Scene1002::handleMessage(int messageNum, const MessageParam &param, Entit
 			playSound(0, 0x44014282);
 		}
 		break;
-	case NM_LEVER_UP:
+	case NM_KLAYMEN_RAISE_LEVER:
 		if (sender == _asRing3) {
 			playSound(2);
-			sendMessage(_asDoor, NM_DOOR_CLOSE, 0);
-			sendMessage(_asOutsideDoorBackground, NM_DOOR_CLOSE, 0);
+			sendMessage(_asDoor, NM_KLAYMEN_CLOSE_DOOR, 0);
+			sendMessage(_asOutsideDoorBackground, NM_KLAYMEN_CLOSE_DOOR, 0);
 		} else if (sender == _asVenusFlyTrap) {
 			if (getGlobalVar(V_FLYTRAP_RING_DOOR)) {
-				sendMessage(_asRing3, NM_LEVER_UP, 0);
+				sendMessage(_asRing3, NM_KLAYMEN_RAISE_LEVER, 0);
 			}
 		}
 		break;
 	case 0x480B:
 		sendEntityMessage(_klaymen, 0x1014, _asDoorSpy);
 		break;
-	case NM_LEVER_DOWN:
+	case NM_KLAYMEN_LOWER_LEVER:
 		setGlobalVar(V_RADIO_ENABLED, 0);
 		playSound(1);
-		sendMessage(_asDoor, NM_DOOR_OPEN, 0);
-		sendMessage(_asOutsideDoorBackground, NM_DOOR_OPEN, 0);
+		sendMessage(_asDoor, NM_KLAYMEN_OPEN_DOOR, 0);
+		sendMessage(_asOutsideDoorBackground, NM_KLAYMEN_OPEN_DOOR, 0);
 		break;
 	case 0x8000:
 		setSpriteSurfacePriority(_ssCeiling, 995);
@@ -581,7 +581,7 @@ Scene1005::Scene1005(NeverhoodEngine *vm, Module *parentModule, int which)
 uint32 Scene1005::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x0001:
+	case NM_MOUSE_CLICK:
 		if (param.asPoint().x <= 20 || param.asPoint().x >= 620)
 			leaveScene(0);
 		break;

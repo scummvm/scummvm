@@ -79,7 +79,7 @@ uint32 AsScene2201Door::handleMessage(int messageNum, const MessageParam &param,
 	case NM_ANIMATION_STOP:
 		gotoNextState();
 		break;
-	case NM_DOOR_OPEN:
+	case NM_KLAYMEN_OPEN_DOOR:
 		_countdown = 144;
 		if (!_isOpen)
 			stOpenDoor();
@@ -343,7 +343,7 @@ uint32 AsCommonKey::handleMessage(int messageNum, const MessageParam &param, Ent
 		sendMessage(_parentScene, 0x4826, 0);
 		messageResult = 1;
 		break;
-	case 0x4806:
+	case NM_KLAYMEN_USE_OBJECT:
 		setSubVar(VA_HAS_KEY, _keyIndex, 1);
 		setVisible(false);
 		SetMessageHandler(NULL);
@@ -387,15 +387,15 @@ uint32 AsScene2203Door::handleMessage(int messageNum, const MessageParam &param,
 		break;
 	case NM_ANIMATION_STOP:
 		if (_doorIndex == getGlobalVar(V_LARGE_DOOR_NUMBER))
-			sendMessage(_parentScene, NM_DOOR_OPEN, 0);
+			sendMessage(_parentScene, NM_KLAYMEN_OPEN_DOOR, 0);
 		stopAnimation();
 		break;
-	case NM_DOOR_OPEN:
+	case NM_KLAYMEN_OPEN_DOOR:
 		setGlobalVar(V_LARGE_DOOR_NUMBER, _doorIndex);
-		sendMessage(_otherDoor, NM_DOOR_CLOSE, 0);
+		sendMessage(_otherDoor, NM_KLAYMEN_CLOSE_DOOR, 0);
 		openDoor();
 		break;
-	case NM_DOOR_CLOSE:
+	case NM_KLAYMEN_CLOSE_DOOR:
 		closeDoor();
 		sendMessage(_parentScene, 0x2003, 0);
 		break;
@@ -458,13 +458,13 @@ void AsScene2206DoorSpikes::update() {
 uint32 AsScene2206DoorSpikes::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case NM_DOOR_OPEN:
+	case NM_KLAYMEN_OPEN_DOOR:
 		_deltaIndex = 0;
 		playSound(0, 0x032746E0);
 		SetMessageHandler(NULL);
 		SetSpriteUpdate(&AsScene2206DoorSpikes::suOpen);
 		break;
-	case NM_DOOR_CLOSE:
+	case NM_KLAYMEN_CLOSE_DOOR:
 		_deltaIndex = 0;
 		playSound(0, 0x002642C0);
 		SetMessageHandler(NULL);
@@ -543,7 +543,7 @@ uint32 SsScene2206TestTube::handleMessage(int messageNum, const MessageParam &pa
 		sendMessage(_parentScene, 0x4826, 0);
 		messageResult = 1;
 		break;
-	case 0x4806:
+	case NM_KLAYMEN_USE_OBJECT:
 		setGlobalVar(V_HAS_TEST_TUBE, 1);
 		setVisible(false);
 		SetMessageHandler(NULL);
@@ -689,17 +689,17 @@ uint32 AsScene2207Lever::handleMessage(int messageNum, const MessageParam &param
 		gotoNextState();
 		stopAnimation();
 		break;
-	case NM_LEVER_UP:
+	case NM_KLAYMEN_RAISE_LEVER:
 		stLeverUp();
 		break;
-	case NM_LEVER_DOWN:
+	case NM_KLAYMEN_LOWER_LEVER:
 		stLeverDown();
 		break;
-	case 0x482A:
-		sendMessage(_parentScene, 0x1022, 990);
+	case NM_MOVE_TO_BACK:
+		sendMessage(_parentScene, NM_PRIORITY_CHANGE, 990);
 		break;
-	case 0x482B:
-		sendMessage(_parentScene, 0x1022, 1010);
+	case NM_MOVE_TO_FRONT:
+		sendMessage(_parentScene, NM_PRIORITY_CHANGE, 1010);
 		break;
 	}
 	return messageResult;
@@ -712,7 +712,7 @@ void AsScene2207Lever::stLeverDown() {
 }
 
 void AsScene2207Lever::stLeverDownEvent() {
-	sendMessage(_parentScene, NM_LEVER_DOWN, 0);
+	sendMessage(_parentScene, NM_KLAYMEN_LOWER_LEVER, 0);
 }
 
 void AsScene2207Lever::stLeverUp() {
@@ -723,7 +723,7 @@ void AsScene2207Lever::stLeverUp() {
 }
 
 void AsScene2207Lever::stLeverUpEvent() {
-	sendMessage(_parentScene, NM_LEVER_UP, 0);
+	sendMessage(_parentScene, NM_KLAYMEN_RAISE_LEVER, 0);
 }
 
 AsScene2207WallRobotAnimation::AsScene2207WallRobotAnimation(NeverhoodEngine *vm, Scene *parentScene)
@@ -769,10 +769,10 @@ uint32 AsScene2207WallRobotAnimation::handleMessage(int messageNum, const Messag
 				playSound(0, 0xE0702146);
 		}
 		break;
-	case 0x2006:
+	case NM_KLAYMEN_STOP_CLIMBING:
 		stStartAnimation();
 		break;
-	case 0x2007:
+	case NM_CAR_MOVE_TO_PREV_POINT:
 		stStopAnimation();
 		break;
 	case NM_ANIMATION_STOP:
@@ -822,10 +822,10 @@ AsScene2207WallCannonAnimation::AsScene2207WallCannonAnimation(NeverhoodEngine *
 uint32 AsScene2207WallCannonAnimation::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x2006:
+	case NM_KLAYMEN_STOP_CLIMBING:
 		stStartAnimation();
 		break;
-	case 0x2007:
+	case NM_CAR_MOVE_TO_PREV_POINT:
 		stStopAnimation();
 		break;
 	case NM_ANIMATION_STOP:
@@ -876,7 +876,7 @@ uint32 KmScene2201::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4800:
 		startWalkToX(param.asPoint().x, false);
 		break;
-	case 0x4004:
+	case NM_KLAYMEN_STAND_IDLE:
 		GotoState(&Klaymen::stTryStandIdle);
 		break;
 	case NM_KLAYMEN_PICKUP:
@@ -899,10 +899,10 @@ uint32 KmScene2201::xHandleMessage(int messageNum, const MessageParam &param) {
 		else
 			startWalkToAttachedSpriteXDistance(param.asPoint().x);
 		break;
-	case 0x481D:
+	case NM_KLAYMEN_TURN_TO_USE:
 		GotoState(&Klaymen::stTurnToUse);
 		break;
-	case 0x481E:
+	case NM_KLAYMEN_RETURN_FROM_USE:
 		GotoState(&Klaymen::stReturnFromUse);
 		break;
 	case 0x482D:
@@ -943,7 +943,7 @@ uint32 KmScene2203::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4800:
 		startWalkToX(param.asPoint().x, false);
 		break;
-	case 0x4004:
+	case NM_KLAYMEN_STAND_IDLE:
 		GotoState(&Klaymen::stTryStandIdle);
 		break;
 	case NM_KLAYMEN_PICKUP:
@@ -981,10 +981,10 @@ uint32 KmScene2203::xHandleMessage(int messageNum, const MessageParam &param) {
 		else
 			startWalkToAttachedSpriteXDistance(param.asPoint().x);
 		break;
-	case 0x481D:
+	case NM_KLAYMEN_TURN_TO_USE:
 		GotoState(&Klaymen::stTurnToUse);
 		break;
-	case 0x481E:
+	case NM_KLAYMEN_RETURN_FROM_USE:
 		GotoState(&Klaymen::stReturnFromUse);
 		break;
 	case 0x482D:
@@ -1017,7 +1017,7 @@ uint32 KmScene2203::hmClayDoorOpen(int messageNum, const MessageParam &param, En
 	switch (messageNum) {
 	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x040D4186) {
-			sendMessage(_attachedSprite, NM_DOOR_OPEN, 0);
+			sendMessage(_attachedSprite, NM_KLAYMEN_OPEN_DOOR, 0);
 		}
 		break;
 	}
@@ -1040,7 +1040,7 @@ uint32 KmScene2205::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4800:
 		startWalkToX(param.asPoint().x, false);
 		break;
-	case 0x4004:
+	case NM_KLAYMEN_STAND_IDLE:
 		GotoState(&Klaymen::stTryStandIdle);
 		break;
 	case 0x4804:
@@ -1092,7 +1092,7 @@ uint32 KmScene2206::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4800:
 		startWalkToX(param.asPoint().x, false);
 		break;
-	case 0x4004:
+	case NM_KLAYMEN_STAND_IDLE:
 		GotoState(&Klaymen::stTryStandIdle);
 		break;
 	case 0x4803:
@@ -1174,7 +1174,7 @@ void KmScene2206::suRidePlatformDown() {
 	_platformDeltaY++;
 	_y += _platformDeltaY;
 	if (_y > 600)
-		sendMessage(this, 0x1019, 0);
+		sendMessage(this, NM_SCENE_LEAVE, 0);
 }
 
 void KmScene2206::stRidePlatformDown() {
@@ -1202,7 +1202,7 @@ uint32 KmScene2207::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x2001:
 		GotoState(&Klaymen::stRidePlatform);
 		break;
-	case 0x2005:
+	case NM_KLAYMEN_CLIMB_LADDER:
 		suRidePlatform();
 		GotoState(&Klaymen::stTryStandIdle);
 		break;
@@ -1210,7 +1210,7 @@ uint32 KmScene2207::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4800:
 		startWalkToX(param.asPoint().x, false);
 		break;
-	case 0x4004:
+	case NM_KLAYMEN_STAND_IDLE:
 		GotoState(&Klaymen::stTryStandIdle);
 		break;
 	case 0x480D:
@@ -1270,7 +1270,7 @@ uint32 KmScene2242::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4800:
 		startWalkToX(param.asPoint().x, false);
 		break;
-	case 0x4004:
+	case NM_KLAYMEN_STAND_IDLE:
 		GotoState(&Klaymen::stTryStandIdle);
 		break;
 	case 0x4804:
@@ -1336,7 +1336,7 @@ uint32 KmHallOfRecords::xHandleMessage(int messageNum, const MessageParam &param
 	case 0x4800:
 		startWalkToX(param.asPoint().x, false);
 		break;
-	case 0x4004:
+	case NM_KLAYMEN_STAND_IDLE:
 		GotoState(&Klaymen::stTryStandIdle);
 		break;
 	case 0x4804:
@@ -1389,7 +1389,7 @@ uint32 KmScene2247::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4800:
 		startWalkToX(param.asPoint().x, false);
 		break;
-	case 0x4004:
+	case NM_KLAYMEN_STAND_IDLE:
 		GotoState(&Klaymen::stTryStandIdle);
 		break;
 	case 0x4804:

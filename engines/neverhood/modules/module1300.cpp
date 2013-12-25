@@ -350,7 +350,7 @@ Scene1302::Scene1302(NeverhoodEngine *vm, Module *parentModule, int which)
 	_asVenusFlyTrap = insertSprite<AsScene1002VenusFlyTrap>(this, _klaymen, true);
 	addCollisionSprite(_asVenusFlyTrap);
 
-	sendEntityMessage(_klaymen, 0x2007, _asVenusFlyTrap);
+	sendEntityMessage(_klaymen, NM_CAR_MOVE_TO_PREV_POINT, _asVenusFlyTrap);
 
 }
 
@@ -359,9 +359,9 @@ uint32 Scene1302::handleMessage(int messageNum, const MessageParam &param, Entit
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case NM_ANIMATION_START:
-		if (param.asInteger() == 0x4A845A00)
+		if (param.asInteger() == 0x4A845A00) {
 			sendEntityMessage(_klaymen, 0x1014, _asRing1);
-		else if (param.asInteger() == 0x43807801) {
+		} else if (param.asInteger() == 0x43807801) {
 			if (!getGlobalVar(V_FLYTRAP_RING_BRIDGE)) {
 				sendEntityMessage(_klaymen, 0x1014, _asRing2);
 				if (_asVenusFlyTrap->getX() - 10 < 218 + 32 && _asVenusFlyTrap->getX() + 10 > 218 + 32)
@@ -371,9 +371,9 @@ uint32 Scene1302::handleMessage(int messageNum, const MessageParam &param, Entit
 			} else
 				setMessageList(0x004B0950);
 			messageResult = 1;
-		} else if (param.asInteger() == 0x46C26A01)
+		} else if (param.asInteger() == 0x46C26A01) {
 			sendEntityMessage(_klaymen, 0x1014, _asRing3);
-		else if (param.asInteger() == 0x468C7B11) {
+		} else if (param.asInteger() == 0x468C7B11) {
 			if (!getGlobalVar(V_FLYTRAP_RING_FENCE)) {
 				sendEntityMessage(_klaymen, 0x1014, _asRing4);
 				if (_asVenusFlyTrap->getX() - 10 < 218 + 32 + 32 + 32 && _asVenusFlyTrap->getX() + 10 > 218 + 32 + 32 + 32)
@@ -383,9 +383,9 @@ uint32 Scene1302::handleMessage(int messageNum, const MessageParam &param, Entit
 			} else
 				setMessageList(0x004B0950);
 			messageResult = 1;
-		} else if (param.asInteger() == 0x42845B19)
+		} else if (param.asInteger() == 0x42845B19) {
 			sendEntityMessage(_klaymen, 0x1014, _asRing5);
-		else if (param.asInteger() == 0x430A6060) {
+		} else if (param.asInteger() == 0x430A6060) {
 			if (getGlobalVar(V_FLYTRAP_RING_BRIDGE))
 				setMessageList2(0x004B0910);
 			else
@@ -416,52 +416,52 @@ uint32 Scene1302::handleMessage(int messageNum, const MessageParam &param, Entit
 	case 0x2032:
 		_sprite2->setVisible(true);
 		break;
-	case 0x4806:
+	case NM_KLAYMEN_USE_OBJECT:
 		sendMessage(_parentModule, 0x1024, 2);
 		if (sender == _asRing1)
 			playSound(0, 0x665198C0);
 		else if (sender == _asRing2) {
-			sendMessage(_asBridge, NM_DOOR_OPEN, 0);
+			sendMessage(_asBridge, NM_KLAYMEN_OPEN_DOOR, 0);
 			setGlobalVar(V_FLYTRAP_RING_BRIDGE, 1);
-		} else if (sender == _asRing3)
+		} else if (sender == _asRing3) {
 			playSound(0, 0xE2D389C0);
-		else if (sender == _asRing4) {
-			sendMessage(_ssFence, NM_DOOR_OPEN, 0);
+		} else if (sender == _asRing4) {
+			sendMessage(_ssFence, NM_KLAYMEN_OPEN_DOOR, 0);
 			setGlobalVar(V_FLYTRAP_RING_FENCE, 1);
 		} else if (sender == _asRing5)
 			playSound(0, 0x40428A09);
 		break;
-	case NM_LEVER_UP:
+	case NM_KLAYMEN_RAISE_LEVER:
 		if (sender == _asRing2) {
-			sendMessage(_asBridge, NM_DOOR_CLOSE, 0);
+			sendMessage(_asBridge, NM_KLAYMEN_CLOSE_DOOR, 0);
 			setGlobalVar(V_FLYTRAP_RING_BRIDGE, 0);
 			_sprite2->setVisible(false);
 		} else if (sender == _asRing4) {
-			sendMessage(_ssFence, NM_DOOR_CLOSE, 0);
+			sendMessage(_ssFence, NM_KLAYMEN_CLOSE_DOOR, 0);
 			setGlobalVar(V_FLYTRAP_RING_FENCE, 0);
 		} else if (sender == _asVenusFlyTrap) {
 			if (getGlobalVar(V_FLYTRAP_RING_BRIDGE))
-				sendMessage(_asRing2, NM_LEVER_UP, 0);
+				sendMessage(_asRing2, NM_KLAYMEN_RAISE_LEVER, 0);
 			else
-				sendMessage(_asRing4, NM_LEVER_UP, 0);
+				sendMessage(_asRing4, NM_KLAYMEN_RAISE_LEVER, 0);
 		}
 		break;
-	case NM_LEVER_DOWN:
+	case NM_KLAYMEN_LOWER_LEVER:
 		if (sender == _asRing2) {
 			playSound(0, 0x60755842);
-			sendMessage(_asBridge, NM_DOOR_OPEN, 0);
+			sendMessage(_asBridge, NM_KLAYMEN_OPEN_DOOR, 0);
 			setGlobalVar(V_FLYTRAP_RING_BRIDGE, 1);
 		} else if (sender == _asRing4) {
 			playSound(0, 0x60755842);
-			sendMessage(_ssFence, NM_DOOR_OPEN, 0);
+			sendMessage(_ssFence, NM_KLAYMEN_OPEN_DOOR, 0);
 			setGlobalVar(V_FLYTRAP_RING_FENCE, 1);
 		}
 		break;
-	case 0x482A:
-		sendMessage(_asVenusFlyTrap, 0x482B, 0);
+	case NM_MOVE_TO_BACK:
+		sendMessage(_asVenusFlyTrap, NM_MOVE_TO_FRONT, 0);
 		break;
-	case 0x482B:
-		sendMessage(_asVenusFlyTrap, 0x482A, 0);
+	case NM_MOVE_TO_FRONT:
+		sendMessage(_asVenusFlyTrap, NM_MOVE_TO_BACK, 0);
 		break;
 	case 0x8000:
 		setSpriteSurfacePriority(_class595, 995);
@@ -629,7 +629,7 @@ Scene1306::Scene1306(NeverhoodEngine *vm, Module *parentModule, int which)
 	insertStaticSprite(0x00042313, 1100);
 
 	if (which < 0) {
-		// Resoring game
+		// Restoring game
 		insertKlaymen<KmScene1306>(380, 440);
 		setMessageList(0x004AFAD0);
 		sendMessage(this, 0x2000, 0);
@@ -681,7 +681,7 @@ Scene1306::Scene1306(NeverhoodEngine *vm, Module *parentModule, int which)
 		sendMessage(this, 0x2000, 0);
 		SetMessageHandler(&Scene1306::handleMessage416EB0);
 		clearRectList();
-		sendMessage(_asElevator, NM_DOOR_OPEN, 0);
+		sendMessage(_asElevator, NM_KLAYMEN_OPEN_DOOR, 0);
 	}
 
 }
@@ -718,7 +718,7 @@ uint32 Scene1306::handleMessage(int messageNum, const MessageParam &param, Entit
 		break;
 	case 0x480B:
 		if (sender == _ssButton)
-			sendMessage(_asElevator, NM_DOOR_OPEN, 0);
+			sendMessage(_asElevator, NM_KLAYMEN_OPEN_DOOR, 0);
 		break;
 	case 0x4826:
 		if (sender == _asKey) {
@@ -733,12 +733,12 @@ uint32 Scene1306::handleMessage(int messageNum, const MessageParam &param, Entit
 			}
 		}
 		break;
-	case 0x482A:
+	case NM_MOVE_TO_BACK:
 		setSurfacePriority(_asElevator->getSurface(), 1100);
 		setSurfacePriority(_asElevatorDoor->getSurface(), 1090);
 		setSurfacePriority(_sprite1->getSurface(), 1080);
 		break;
-	case 0x482B:
+	case NM_MOVE_TO_FRONT:
 		setSurfacePriority(_asElevator->getSurface(), 100);
 		setSurfacePriority(_asElevatorDoor->getSurface(), 90);
 		setSurfacePriority(_sprite1->getSurface(), 80);
@@ -752,19 +752,19 @@ uint32 Scene1306::handleMessage(int messageNum, const MessageParam &param, Entit
 uint32 Scene1306::handleMessage416EB0(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case NM_DOOR_OPEN:
+	case NM_KLAYMEN_OPEN_DOOR:
 		setMessageList(0x004AFBD0);
 		SetMessageHandler(&Scene1306::handleMessage);
 		break;
-	case NM_DOOR_CLOSE:
+	case NM_KLAYMEN_CLOSE_DOOR:
 		leaveScene(1);
 		break;
-	case 0x482A:
+	case NM_MOVE_TO_BACK:
 		setSurfacePriority(_asElevator->getSurface(), 1100);
 		setSurfacePriority(_asElevatorDoor->getSurface(), 1090);
 		setSurfacePriority(_sprite1->getSurface(), 1080);
 		break;
-	case 0x482B:
+	case NM_MOVE_TO_FRONT:
 		setSurfacePriority(_asElevator->getSurface(), 100);
 		setSurfacePriority(_asElevatorDoor->getSurface(), 90);
 		setSurfacePriority(_sprite1->getSurface(), 80);
@@ -840,7 +840,7 @@ uint32 Scene1307::handleMessage(int messageNum, const MessageParam &param, Entit
 	uint32 messageResult = 0;
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x0001:
+	case NM_MOUSE_CLICK:
 		if (!_isPuzzleSolved) {
 			if (param.asPoint().x > 20 && param.asPoint().x < 620) {
 				if (_asCurrKey && !_isInsertingKey) {
@@ -981,7 +981,7 @@ Scene1308::Scene1308(NeverhoodEngine *vm, Module *parentModule, int which)
 		// Klaymen entering from the left
 		insertKlaymen<KmScene1308>(41, 440);
 		setMessageList(0x004B57D0);
-		sendMessage(_asJaggyDoor, NM_DOOR_OPEN, 0);
+		sendMessage(_asJaggyDoor, NM_KLAYMEN_OPEN_DOOR, 0);
 		_sprite1->setVisible(false);
 		if (getGlobalVar(V_KEYDOOR_UNLOCKED)) {
 			_sprite4 = insertStaticSprite(0x0101A624, 1100);
@@ -1022,12 +1022,12 @@ uint32 Scene1308::handleMessage(int messageNum, const MessageParam &param, Entit
 			_isProjecting = false;
 		} else if (param.asInteger() == 0x4AC68808) {
 			clearRectList();
-			sendMessage(_asJaggyDoor, NM_DOOR_CLOSE, 0);
+			sendMessage(_asJaggyDoor, NM_KLAYMEN_CLOSE_DOOR, 0);
 			_sprite1->setVisible(false);
 			_klaymen->setVisible(false);
 		}
 		break;
-	case 0x1022:
+	case NM_PRIORITY_CHANGE:
 		if (sender == _asProjector) {
 			if (param.asInteger() >= 1000)
 				setSurfacePriority(_sprite3->getSurface(), 1100);
@@ -1056,10 +1056,10 @@ uint32 Scene1308::handleMessage(int messageNum, const MessageParam &param, Entit
 		_sprite4->setVisible(true);
 		setRectList(0x004B5990);
 		break;
-	case NM_LEVER_UP:
+	case NM_KLAYMEN_RAISE_LEVER:
 		sendMessage(_asLightWallSymbols, 0x2003, 0);
 		break;
-	case NM_LEVER_DOWN:
+	case NM_KLAYMEN_LOWER_LEVER:
 		sendMessage(_asLightWallSymbols, 0x2002, 0);
 		_ssNumber1->setVisible(true);
 		_ssNumber2->setVisible(true);
@@ -1151,7 +1151,7 @@ uint32 Scene1317::handleMessage(int messageNum, const MessageParam &param, Entit
 uint32 Scene1317::hmChooseKing(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x0001:
+	case NM_MOUSE_CLICK:
 		if (param.asPoint().x >= 21 && param.asPoint().y >= 24 &&
 			param.asPoint().x <= 261 && param.asPoint().y <= 280) {
 			stHoborgAsKing();

@@ -42,18 +42,18 @@ uint32 AsScene2803LightCord::handleMessage(int messageNum, const MessageParam &p
 	switch (messageNum) {
 	case NM_ANIMATION_START:
 		if (!_isBusy && param.asInteger() == calcHash("ClickSwitch")) {
-			sendMessage(_parentScene, NM_LEVER_DOWN, 0);
+			sendMessage(_parentScene, NM_KLAYMEN_LOWER_LEVER, 0);
 			playSound(0, 0x4E1CA4A0);
 		}
 		break;
-	case NM_LEVER_DOWN:
+	case NM_KLAYMEN_LOWER_LEVER:
 		stPulled();
 		break;
-	case 0x482A:
-		sendMessage(_parentScene, 0x1022, 990);
+	case NM_MOVE_TO_BACK:
+		sendMessage(_parentScene, NM_PRIORITY_CHANGE, 990);
 		break;
-	case 0x482B:
-		sendMessage(_parentScene, 0x1022, 1010);
+	case NM_MOVE_TO_FRONT:
+		sendMessage(_parentScene, NM_PRIORITY_CHANGE, 1010);
 		break;
 	}
 	return messageResult;
@@ -137,11 +137,11 @@ uint32 AsScene2803Rope::handleMessage(int messageNum, const MessageParam &param,
 		startAnimation(0x9D098C23, 50, -1);
 		SetMessageHandler(&AsScene2803Rope::hmReleased);
 		break;
-	case 0x482A:
-		sendMessage(_parentScene, 0x1022, 990);
+	case NM_MOVE_TO_BACK:
+		sendMessage(_parentScene, NM_PRIORITY_CHANGE, 990);
 		break;
-	case 0x482B:
-		sendMessage(_parentScene, 0x1022, 1010);
+	case NM_MOVE_TO_FRONT:
+		sendMessage(_parentScene, NM_PRIORITY_CHANGE, 1010);
 		break;
 	}
 	return messageResult;
@@ -153,11 +153,11 @@ uint32 AsScene2803Rope::hmReleased(int messageNum, const MessageParam &param, En
 	case NM_ANIMATION_STOP:
 		gotoNextState();
 		break;
-	case 0x482A:
-		sendMessage(_parentScene, 0x1022, 990);
+	case NM_MOVE_TO_BACK:
+		sendMessage(_parentScene, NM_PRIORITY_CHANGE, 990);
 		break;
-	case 0x482B:
-		sendMessage(_parentScene, 0x1022, 1010);
+	case NM_MOVE_TO_FRONT:
+		sendMessage(_parentScene, NM_PRIORITY_CHANGE, 1010);
 		break;
 	}
 	return messageResult;
@@ -247,7 +247,7 @@ uint32 SsScene2804LightTarget::handleMessage(int messageNum, const MessageParam 
 		updatePosition();
 		messageResult = 1;
 		break;
-	case 0x2005:
+	case NM_KLAYMEN_CLIMB_LADDER:
 		setVisible(false);
 		updatePosition();
 		messageResult = 1;
@@ -537,7 +537,7 @@ uint32 AsScene2804BeamTarget::handleMessage(int messageNum, const MessageParam &
 		startAnimation(0x03842000, 0, -1);
 		messageResult = 1;
 		break;
-	case 0x2005:
+	case NM_KLAYMEN_CLIMB_LADDER:
 		setVisible(false);
 		stopAnimation();
 		messageResult = 1;
@@ -906,11 +906,11 @@ uint32 AsScene2810Rope::handleMessage(int messageNum, const MessageParam &param,
 	case NM_ANIMATION_STOP:
 		startAnimation(0x9D098C23, 35, 53);
 		break;
-	case 0x482A:
-		sendMessage(_parentScene, 0x1022, 990);
+	case NM_MOVE_TO_BACK:
+		sendMessage(_parentScene, NM_PRIORITY_CHANGE, 990);
 		break;
-	case 0x482B:
-		sendMessage(_parentScene, 0x1022, 1010);
+	case NM_MOVE_TO_FRONT:
+		sendMessage(_parentScene, NM_PRIORITY_CHANGE, 1010);
 		break;
 	}
 	return messageResult;
@@ -962,15 +962,15 @@ AsScene2812Rope::AsScene2812Rope(NeverhoodEngine *vm, Scene *parentScene)
 uint32 AsScene2812Rope::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x4806:
+	case NM_KLAYMEN_USE_OBJECT:
 		setDoDeltaX(((Sprite*)sender)->isDoDeltaX() ? 1 : 0);
 		stRopingDown();
 		break;
-	case 0x482A:
-		sendMessage(_parentScene, 0x1022, 990);
+	case NM_MOVE_TO_BACK:
+		sendMessage(_parentScene, NM_PRIORITY_CHANGE, 990);
 		break;
-	case 0x482B:
-		sendMessage(_parentScene, 0x1022, 1010);
+	case NM_MOVE_TO_FRONT:
+		sendMessage(_parentScene, NM_PRIORITY_CHANGE, 1010);
 		break;
 	}
 	return messageResult;
@@ -987,7 +987,7 @@ uint32 AsScene2812Rope::hmRopingDown(int messageNum, const MessageParam &param, 
 }
 
 void AsScene2812Rope::stRopingDown() {
-	sendMessage(_parentScene, 0x4806, 0);
+	sendMessage(_parentScene, NM_KLAYMEN_USE_OBJECT, 0);
 	startAnimation(0x9D098C23, 0, -1);
 	SetMessageHandler(&AsScene2812Rope::hmRopingDown);
 }
@@ -1023,7 +1023,7 @@ uint32 KmScene2801::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4800:
 		startWalkToX(param.asPoint().x, false);
 		break;
-	case 0x4004:
+	case NM_KLAYMEN_STAND_IDLE:
 		GotoState(&Klaymen::stTryStandIdle);
 		break;
 	case NM_KLAYMEN_PICKUP:
@@ -1039,10 +1039,10 @@ uint32 KmScene2801::xHandleMessage(int messageNum, const MessageParam &param) {
 		else
 			startWalkToAttachedSpriteXDistance(param.asPoint().x);
 		break;
-	case 0x481D:
+	case NM_KLAYMEN_TURN_TO_USE:
 		GotoState(&Klaymen::stTurnToUse);
 		break;
-	case 0x481E:
+	case NM_KLAYMEN_RETURN_FROM_USE:
 		GotoState(&Klaymen::stReturnFromUse);
 		break;
 	case 0x481F:
@@ -1093,7 +1093,7 @@ uint32 KmScene2803::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4800:
 		startWalkToX(param.asPoint().x, false);
 		break;
-	case 0x4004:
+	case NM_KLAYMEN_STAND_IDLE:
 		GotoState(&Klaymen::stTryStandIdle);
 		break;
 	case 0x4803:
@@ -1114,10 +1114,10 @@ uint32 KmScene2803::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4818:
 		startWalkToX(_dataResource.getPoint(param.asInteger()).x, false);
 		break;
-	case 0x481D:
+	case NM_KLAYMEN_TURN_TO_USE:
 		GotoState(&Klaymen::stTurnToUse);
 		break;
-	case 0x481E:
+	case NM_KLAYMEN_RETURN_FROM_USE:
 		GotoState(&Klaymen::stReturnFromUse);
 		break;
 	case 0x481F:
@@ -1154,7 +1154,7 @@ uint32 KmScene2803Small::xHandleMessage(int messageNum, const MessageParam &para
 	case 0x4800:
 		startWalkToXSmall(param.asPoint().x);
 		break;
-	case 0x4004:
+	case NM_KLAYMEN_STAND_IDLE:
 		GotoState(&Klaymen::stStandIdleSmall);
 		break;
 	case 0x4817:
@@ -1200,7 +1200,7 @@ uint32 KmScene2803Small::hmShrink(int messageNum, const MessageParam &param, Ent
 	switch (messageNum) {
 	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x80C110B5)
-			sendMessage(_parentScene, 0x482A, 0);
+			sendMessage(_parentScene, NM_MOVE_TO_BACK, 0);
 		else if (param.asInteger() == 0x33288344)
 			playSound(2, 0x10688664);
 		break;
@@ -1235,7 +1235,7 @@ uint32 KmScene2805::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4800:
 		startWalkToX(param.asPoint().x, false);
 		break;
-	case 0x4004:
+	case NM_KLAYMEN_STAND_IDLE:
 		if (_isSittingInTeleporter)
 			GotoState(&Klaymen::stSitIdleTeleporter);
 		else
@@ -1245,11 +1245,11 @@ uint32 KmScene2805::xHandleMessage(int messageNum, const MessageParam &param) {
 		setDoDeltaX(param.asInteger());
 		gotoNextStateExt();
 		break;
-	case 0x481D:
+	case NM_KLAYMEN_TURN_TO_USE:
 		if (_isSittingInTeleporter)
 			GotoState(&Klaymen::stTurnToUseInTeleporter);
 		break;
-	case 0x481E:
+	case NM_KLAYMEN_RETURN_FROM_USE:
 		if (_isSittingInTeleporter)
 			GotoState(&Klaymen::stReturnFromUseInTeleporter);
 		break;
@@ -1301,7 +1301,7 @@ uint32 KmScene2806::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4800:
 		startWalkToX(param.asPoint().x, false);
 		break;
-	case 0x4004:
+	case NM_KLAYMEN_STAND_IDLE:
 		GotoState(&Klaymen::stTryStandIdle);
 		break;
 	case 0x4804:
@@ -1359,7 +1359,7 @@ uint32 KmScene2809::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4800:
 		startWalkToX(param.asPoint().x, false);
 		break;
-	case 0x4004:
+	case NM_KLAYMEN_STAND_IDLE:
 		GotoState(&Klaymen::stTryStandIdle);
 		break;
 	case 0x4804:
@@ -1404,7 +1404,7 @@ uint32 KmScene2810Small::xHandleMessage(int messageNum, const MessageParam &para
 	case 0x4800:
 		startWalkToXSmall(param.asPoint().x);
 		break;
-	case 0x4004:
+	case NM_KLAYMEN_STAND_IDLE:
 		GotoState(&Klaymen::stStandIdleSmall);
 		break;
 	case 0x4817:
@@ -1453,7 +1453,7 @@ uint32 KmScene2810::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4800:
 		startWalkToX(param.asPoint().x, false);
 		break;
-	case 0x4004:
+	case NM_KLAYMEN_STAND_IDLE:
 		GotoState(&Klaymen::stTryStandIdle);
 		break;
 	case 0x4803:
@@ -1545,7 +1545,7 @@ uint32 KmScene2812::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4800:
 		startWalkToX(param.asPoint().x, false);
 		break;
-	case 0x4004:
+	case NM_KLAYMEN_STAND_IDLE:
 		GotoState(&Klaymen::stTryStandIdle);
 		break;
 	case 0x4805:
@@ -1573,10 +1573,10 @@ uint32 KmScene2812::xHandleMessage(int messageNum, const MessageParam &param) {
 		else
 			startWalkToAttachedSpriteXDistance(param.asPoint().x);
 		break;
-	case 0x481D:
+	case NM_KLAYMEN_TURN_TO_USE:
 		GotoState(&Klaymen::stTurnToUse);
 		break;
-	case 0x481E:
+	case NM_KLAYMEN_RETURN_FROM_USE:
 		GotoState(&Klaymen::stReturnFromUse);
 		break;
 	case 0x4820:

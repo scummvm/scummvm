@@ -49,10 +49,10 @@ uint32 AsScene1302Bridge::handleMessage(int messageNum, const MessageParam &para
 	case NM_ANIMATION_STOP:
 		gotoNextState();
 		break;
-	case NM_DOOR_OPEN:
+	case NM_KLAYMEN_OPEN_DOOR:
 		stLowerBridge();
 		break;
-	case NM_DOOR_CLOSE:
+	case NM_KLAYMEN_CLOSE_DOOR:
 		stRaiseBridge();
 		break;
 	}
@@ -99,12 +99,12 @@ void SsScene1302Fence::update() {
 uint32 SsScene1302Fence::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case NM_DOOR_OPEN:
+	case NM_KLAYMEN_OPEN_DOOR:
 		playSound(0);
 		SetMessageHandler(NULL);
 		SetSpriteUpdate(&SsScene1302Fence::suMoveDown);
 		break;
-	case NM_DOOR_CLOSE:
+	case NM_KLAYMEN_CLOSE_DOOR:
 		playSound(1);
 		SetMessageHandler(NULL);
 		SetSpriteUpdate(&SsScene1302Fence::suMoveUp);
@@ -193,7 +193,7 @@ uint32 AsScene1304Needle::handleMessage(int messageNum, const MessageParam &para
 		sendMessage(_parentScene, 0x4826, 0);
 		messageResult = 1;
 		break;
-	case 0x4806:
+	case NM_KLAYMEN_USE_OBJECT:
 		setGlobalVar(V_HAS_NEEDLE, 1);
 		setVisible(false);
 		SetMessageHandler(NULL);
@@ -244,7 +244,7 @@ uint32 AsScene1306Elevator::handleMessage(int messageNum, const MessageParam &pa
 	case NM_ANIMATION_STOP:
 		gotoNextState();
 		break;
-	case NM_DOOR_OPEN:
+	case NM_KLAYMEN_OPEN_DOOR:
 		if (_isDown)
 			stGoingUp();
 		break;
@@ -262,7 +262,7 @@ void AsScene1306Elevator::stGoingUp() {
 }
 
 void AsScene1306Elevator::cbGoingUpEvent() {
-	sendMessage(_parentScene, NM_DOOR_OPEN, 0);
+	sendMessage(_parentScene, NM_KLAYMEN_OPEN_DOOR, 0);
 	_isUp = true;
 	_countdown = 144;
 	stopAnimation();
@@ -282,7 +282,7 @@ void AsScene1306Elevator::stGoingDown() {
 
 void AsScene1306Elevator::cbGoingDownEvent() {
 	_isDown = true;
-	sendMessage(_parentScene, NM_DOOR_CLOSE, 0);
+	sendMessage(_parentScene, NM_KLAYMEN_CLOSE_DOOR, 0);
 	stopAnimation();
 	SetUpdateHandler(&AsScene1306Elevator::update);
 }
@@ -430,7 +430,7 @@ void AsScene1307Key::stRemoveKey() {
 
 void AsScene1307Key::stInsertKey() {
 	_pointIndex = 0;
-	sendMessage(_parentScene, 0x1022, kAsScene1307KeySurfacePriorities[getSubVar(VA_CURR_KEY_SLOT_NUMBERS, _keyIndex) % 4]);
+	sendMessage(_parentScene, NM_PRIORITY_CHANGE, kAsScene1307KeySurfacePriorities[getSubVar(VA_CURR_KEY_SLOT_NUMBERS, _keyIndex) % 4]);
 	setClipRect(_clipRects[getSubVar(VA_CURR_KEY_SLOT_NUMBERS, _keyIndex) % 4]);
 	_newStickFrameIndex = STICK_LAST_FRAME;
 	SetSpriteUpdate(&AsScene1307Key::suInsertKey);
@@ -440,7 +440,7 @@ void AsScene1307Key::stMoveKey() {
 	NPoint pt = (*_pointList)[getSubVar(VA_CURR_KEY_SLOT_NUMBERS, _keyIndex)];
 	int16 newX = pt.x + kAsScene1307KeyXDelta;
 	int16 newY = pt.y + kAsScene1307KeyYDelta;
-	sendMessage(_parentScene, 0x1022, 1000);
+	sendMessage(_parentScene, NM_PRIORITY_CHANGE, 1000);
 	setClipRect(0, 0, 640, 480);
 	_prevX = _x;
 	_prevY = _y;
@@ -483,10 +483,10 @@ uint32 AsScene1308JaggyDoor::handleMessage(int messageNum, const MessageParam &p
 	case NM_ANIMATION_STOP:
 		gotoNextState();
 		break;
-	case NM_DOOR_OPEN:
+	case NM_KLAYMEN_OPEN_DOOR:
 		stOpenDoor();
 		break;
-	case NM_DOOR_CLOSE:
+	case NM_KLAYMEN_CLOSE_DOOR:
 		stCloseDoor();
 		break;
 	}
@@ -660,7 +660,7 @@ uint32 KmScene1304::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4800:
 		startWalkToX(param.asPoint().x, false);
 		break;
-	case 0x4004:
+	case NM_KLAYMEN_STAND_IDLE:
 		GotoState(&Klaymen::stTryStandIdle);
 		break;
 	case NM_KLAYMEN_PICKUP:
@@ -711,7 +711,7 @@ uint32 KmScene1305::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4800:
 		startWalkToX(param.asPoint().x, false);
 		break;
-	case 0x4004:
+	case NM_KLAYMEN_STAND_IDLE:
 		GotoState(&Klaymen::stTryStandIdle);
 		break;
 	case 0x4804:
@@ -758,7 +758,7 @@ uint32 KmScene1306::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4800:
 		startWalkToX(param.asPoint().x, false);
 		break;
-	case 0x4004:
+	case NM_KLAYMEN_STAND_IDLE:
 		if (_isSittingInTeleporter)
 			GotoState(&Klaymen::stSitIdleTeleporter);
 		else
@@ -793,13 +793,13 @@ uint32 KmScene1306::xHandleMessage(int messageNum, const MessageParam &param) {
 		else
 			startWalkToAttachedSpriteXDistance(param.asPoint().x);
 		break;
-	case 0x481D:
+	case NM_KLAYMEN_TURN_TO_USE:
 		if (_isSittingInTeleporter)
 			GotoState(&Klaymen::stTurnToUseInTeleporter);
 		else
 			GotoState(&Klaymen::stTurnToUse);
 		break;
-	case 0x481E:
+	case NM_KLAYMEN_RETURN_FROM_USE:
 		if (_isSittingInTeleporter)
 			GotoState(&Klaymen::stReturnFromUseInTeleporter);
 		else
@@ -874,10 +874,10 @@ uint32 KmScene1308::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4800:
 		startWalkToX(param.asPoint().x, false);
 		break;
-	case 0x4004:
+	case NM_KLAYMEN_STAND_IDLE:
 		GotoState(&Klaymen::stTryStandIdle);
 		break;
-	case 0x480A:
+	case NM_KLAYMEN_MOVE_OBJECT:
 		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stMoveObjectSkipTurnFaceObject);
 		else
@@ -910,10 +910,10 @@ uint32 KmScene1308::xHandleMessage(int messageNum, const MessageParam &param) {
 		else
 			startWalkToAttachedSpriteXDistance(param.asPoint().x);
 		break;
-	case 0x481D:
+	case NM_KLAYMEN_TURN_TO_USE:
 		GotoState(&Klaymen::stTurnToUse);
 		break;
-	case 0x481E:
+	case NM_KLAYMEN_RETURN_FROM_USE:
 		GotoState(&Klaymen::stReturnFromUse);
 		break;
 	case NM_KLAYMEN_RELEASE_LEVER:

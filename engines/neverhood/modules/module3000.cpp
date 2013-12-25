@@ -552,7 +552,7 @@ void Scene3009::update() {
 uint32 Scene3009::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x0001:
+	case NM_MOUSE_CLICK:
 		if ((param.asPoint().x <= 20 || param.asPoint().x >= 620) && !getGlobalVar(V_CANNON_RAISED)) {
 			setGlobalVar(V_CANNON_TARGET_STATUS, 0);
 			leaveScene(0);
@@ -731,7 +731,7 @@ void Scene3010::update() {
 uint32 Scene3010::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x0001:
+	case NM_MOUSE_CLICK:
 		if ((param.asPoint().x <= 20 || param.asPoint().x >= 620) && _countdown == 0 && !_checkUnlocked) {
 			if (!_boltUnlocking[0] && !_boltUnlocking[1] && !_boltUnlocking[2]) {
 				showMouse(false);
@@ -853,7 +853,7 @@ void Scene3011::update() {
 uint32 Scene3011::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x0001:
+	case NM_MOUSE_CLICK:
 		if (param.asPoint().x <= 20 || param.asPoint().x >= 620) {
 			leaveScene(0);
 		}

@@ -455,10 +455,10 @@ uint32 CreditsScene::handleMessage(int messageNum, const MessageParam &param, En
 		if (param.asInteger() == Common::KEYCODE_ESCAPE && _canAbort)
 			leaveScene(0);
 		break;
-	case 0x101D:
+	case NM_MOUSE_HIDE:
 		_ticksDuration = _ticksTime - _vm->_system->getMillis();
 		break;
-	case 0x101E:
+	case NM_MOUSE_SHOW:
 		_ticksTime = _ticksDuration + _vm->_system->getMillis();
 		break;
 	}

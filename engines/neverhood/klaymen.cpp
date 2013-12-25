@@ -77,7 +77,7 @@ uint32 Klaymen::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4800:
 		startWalkToX(param.asPoint().x, false);
 		break;
-	case 0x4004:
+	case NM_KLAYMEN_STAND_IDLE:
 		GotoState(&Klaymen::stTryStandIdle);
 		break;
 	case 0x4818:
@@ -335,7 +335,7 @@ uint32 Klaymen::hmPickUpTube(int messageNum, const MessageParam &param, Entity *
 	switch (messageNum) {
 	case NM_ANIMATION_START:
 		if (param.asInteger() == 0xC1380080) {
-			sendMessage(_attachedSprite, 0x4806, 0);
+			sendMessage(_attachedSprite, NM_KLAYMEN_USE_OBJECT, 0);
 			playSound(0, 0xC8004340);
 		} else if (param.asInteger() == 0x02B20220) {
 			playSound(0, 0xC5408620);
@@ -518,7 +518,7 @@ uint32 Klaymen::hmLowLevel(int messageNum, const MessageParam &param, Entity *se
 	case 0x1014:
 		_attachedSprite = (Sprite*)(param.asEntity());
 		break;
-	case 0x1019:
+	case NM_SCENE_LEAVE:
 		gotoNextStateExt();
 		break;
 	case 0x101C:
@@ -861,7 +861,7 @@ void Klaymen::suWalkingTestExit() {
 		(_actionStatus != 2 && _actionStatus != 3 && xdiff <= 10 && (_currFrameIndex >= 12 || _currFrameIndex <= 4)) ||
 		(_actionStatus == 3 && xdiff < 30) ||
 		(_actionStatus == 3 && xdiff < 150 && _currFrameIndex >= 6)) {
-		sendMessage(this, 0x1019, 0);
+		sendMessage(this, NM_SCENE_LEAVE, 0);
 	} else {
 		HitRect *hitRectPrev = _parentScene->findHitRectAtPos(_x, _y);
 		_x += xdelta;
@@ -895,9 +895,9 @@ uint32 Klaymen::hmLever(int messageNum, const MessageParam &param, Entity *sende
 	switch (messageNum) {
 	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x4AB28209) {
-			sendMessage(_attachedSprite, 0x482A, 0);
+			sendMessage(_attachedSprite, NM_MOVE_TO_BACK, 0);
 		} else if (param.asInteger() == 0x88001184) {
-			sendMessage(_attachedSprite, 0x482B, 0);
+			sendMessage(_attachedSprite, NM_MOVE_TO_FRONT, 0);
 		}
 		break;
 	}
@@ -921,7 +921,7 @@ uint32 Klaymen::hmPickUpObject(int messageNum, const MessageParam &param, Entity
 	switch (messageNum) {
 	case NM_ANIMATION_START:
 		if (param.asInteger() == 0xC1380080) {
-			sendMessage(_attachedSprite, 0x4806, 0);
+			sendMessage(_attachedSprite, NM_KLAYMEN_USE_OBJECT, 0);
 			playSound(0, 0x40208200);
 		} else if (param.asInteger() == 0x02B20220) {
 			playSound(0, 0xC5408620);
@@ -1107,9 +1107,9 @@ uint32 Klaymen::hmWalkFrontBackSmall(int messageNum, const MessageParam &param, 
 	switch (messageNum) {
 	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x80C110B5)
-			sendMessage(_parentScene, 0x482A, 0);
+			sendMessage(_parentScene, NM_MOVE_TO_BACK, 0);
 		else if (param.asInteger() == 0x110010D1)
-			sendMessage(_parentScene, 0x482B, 0);
+			sendMessage(_parentScene, NM_MOVE_TO_FRONT, 0);
 		else if (param.asInteger() == 0x32180101)
 			playSound(0, 0x4924AAC4);
 		else if (param.asInteger() == 0x0A2A9098)
@@ -1189,10 +1189,10 @@ uint32 Klaymen::hmPullReleaseCord(int messageNum, const MessageParam &param, Ent
 	switch (messageNum) {
 	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x4AB28209) {
-			sendMessage(_attachedSprite, 0x482A, 0);
-			sendMessage(_attachedSprite, NM_LEVER_DOWN, 0);
+			sendMessage(_attachedSprite, NM_MOVE_TO_BACK, 0);
+			sendMessage(_attachedSprite, NM_KLAYMEN_LOWER_LEVER, 0);
 		} else if (param.asInteger() == 0x88001184) {
-			sendMessage(_attachedSprite, 0x482B, 0);
+			sendMessage(_attachedSprite, NM_MOVE_TO_FRONT, 0);
 		}
 		break;
 	}
@@ -1479,7 +1479,7 @@ void Klaymen::suUpdateDestX() {
 void Klaymen::stReleaseRing() {
 	_busyStatus = 1;
 	_acceptInput = false;
-	sendMessage(_attachedSprite, NM_LEVER_UP, 0);
+	sendMessage(_attachedSprite, NM_KLAYMEN_RAISE_LEVER, 0);
 	_attachedSprite = NULL;
 	startAnimation(0xB869A4B9, 0, -1);
 	SetUpdateHandler(&Klaymen::update);
@@ -1588,11 +1588,11 @@ uint32 Klaymen::hmClimbLadderUpDown(int messageNum, const MessageParam &param, E
 			if (_ladderStatus == 1) {
 				startAnimationByHash(0x3A292504, 0x01084280, 0);
 				if (_destY >= _y - 30)
-					sendMessage(this, 0x1019, 0);
+					sendMessage(this, NM_SCENE_LEAVE, 0);
 			} else {
 				startAnimationByHash(0x122D1505, 0x01084280, 0);
 				if (_destY <= _y)
-					sendMessage(this, 0x1019, 0);
+					sendMessage(this, NM_SCENE_LEAVE, 0);
 			}
 		}
 		break;
@@ -1641,9 +1641,9 @@ uint32 Klaymen::hmWalkToFront(int messageNum, const MessageParam &param, Entity 
 	switch (messageNum) {
 	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x80C110B5) {
-			sendMessage(_parentScene, 0x482A, 0);
+			sendMessage(_parentScene, NM_MOVE_TO_BACK, 0);
 		} else if (param.asInteger() == 0x110010D1) {
-			sendMessage(_parentScene, 0x482B, 0);
+			sendMessage(_parentScene, NM_MOVE_TO_FRONT, 0);
 		} else if (param.asInteger() == 0x32180101) {
 			playSound(0, _soundFlag ? 0x48498E46 : 0x405002D8);
 		} else if (param.asInteger() == 0x0A2A9098) {
@@ -1783,7 +1783,7 @@ void Klaymen::stMoveObjectSkipTurnFaceObject() {
 }
 
 void Klaymen::evMoveObjectTurnDone() {
-	sendMessage(_attachedSprite, NM_LEVER_UP, 0);
+	sendMessage(_attachedSprite, NM_KLAYMEN_RAISE_LEVER, 0);
 }
 
 uint32 Klaymen::hmMoveObjectTurn(int messageNum, const MessageParam &param, Entity *sender) {
@@ -1804,7 +1804,7 @@ uint32 Klaymen::hmMoveObjectTurn(int messageNum, const MessageParam &param, Enti
 			playSound(0, 0x0460E2FA);
 		}
 		break;
-	case 0x480A:
+	case NM_KLAYMEN_MOVE_OBJECT:
 		_isMoveObjectRequested = true;
 		return 0;
 	}
@@ -1839,7 +1839,7 @@ void Klaymen::stUseLever() {
 		if (_isLeverDown) {
 			stUseLeverRelease();
 		} else {
-			sendMessage(_attachedSprite, 0x482B, 0);
+			sendMessage(_attachedSprite, NM_MOVE_TO_FRONT, 0);
 			startAnimation(0x0C303040, 0, -1);
 			SetSpriteUpdate(&Klaymen::suUpdateDestX);
 			SetMessageHandler(&Klaymen::hmLever);
@@ -1853,7 +1853,7 @@ void Klaymen::stUseLever() {
 // Exactly the same code as sub420DA0 which was removed
 void Klaymen::stPullLeverDown() {
 	startAnimation(0x0D318140, 0, -1);
-	sendMessage(_attachedSprite, NM_LEVER_DOWN, 0);
+	sendMessage(_attachedSprite, NM_KLAYMEN_LOWER_LEVER, 0);
 	NextState(&Klaymen::stHoldLeverDown);
 }
 
@@ -1871,7 +1871,7 @@ void Klaymen::stUseLeverRelease() {
 	SetUpdateHandler(&Klaymen::update);
 	SetMessageHandler(&Klaymen::hmLever);
 	SetSpriteUpdate(&Klaymen::suUpdateDestX);
-	sendMessage(_attachedSprite, NM_LEVER_UP, 0);
+	sendMessage(_attachedSprite, NM_KLAYMEN_RAISE_LEVER, 0);
 	NextState(&Klaymen::stPullLeverDown);
 	_acceptInput = false;
 }
@@ -1883,7 +1883,7 @@ void Klaymen::stReleaseLever() {
 		SetUpdateHandler(&Klaymen::update);
 		SetMessageHandler(&Klaymen::hmLever);
 		SetSpriteUpdate(&Klaymen::suUpdateDestX);
-		sendMessage(_attachedSprite, NM_LEVER_UP, 0);
+		sendMessage(_attachedSprite, NM_KLAYMEN_RAISE_LEVER, 0);
 		NextState(&Klaymen::stLetGoOfLever);
 		_acceptInput = false;
 		_isLeverDown = false;
@@ -1898,7 +1898,7 @@ void Klaymen::stLetGoOfLever() {
 }
 
 void Klaymen::evLeverReleasedEvent() {
-	sendMessage(_attachedSprite, 0x482A, 0);
+	sendMessage(_attachedSprite, NM_MOVE_TO_BACK, 0);
 }
 
 void Klaymen::stInsertDisk() {
@@ -2035,13 +2035,13 @@ uint32 Klaymen::hmJumpToGrab(int messageNum, const MessageParam &param, Entity *
 	switch (messageNum) {
 	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x168050A0)
-			sendMessage(_attachedSprite, 0x4806, 0);
+			sendMessage(_attachedSprite, NM_KLAYMEN_USE_OBJECT, 0);
 		else if (param.asInteger() == 0x320AC306)
 			startAnimationByHash(0x00AB8C10, 0x01084280, 0);
 		else if (param.asInteger() == 0x4AB28209)
-			sendMessage(_attachedSprite, 0x482A, 0);
+			sendMessage(_attachedSprite, NM_MOVE_TO_BACK, 0);
 		else if (param.asInteger() == 0x88001184)
-			sendMessage(_attachedSprite, 0x482B, 0);
+			sendMessage(_attachedSprite, NM_MOVE_TO_FRONT, 0);
 		break;
 	}
 	return messageResult;
@@ -2086,7 +2086,7 @@ void Klaymen::stJumpToGrabFall() {
 		SetUpdateHandler(&Klaymen::update);
 		SetMessageHandler(&Klaymen::hmJumpToGrab);
 		SetSpriteUpdate(&Klaymen::suJumpToGrab);
-		sendMessage(_attachedSprite, 0x482B, 0);
+		sendMessage(_attachedSprite, NM_MOVE_TO_FRONT, 0);
 	}
 }
 
@@ -2444,7 +2444,7 @@ void Klaymen::suFallDown() {
 	if (hitRect->type == 0x5001) {
 		_y = hitRect->rect.y1;
 		updateBounds();
-		sendMessage(this, 0x1019, 0);
+		sendMessage(this, NM_SCENE_LEAVE, 0);
 	}
 	_parentScene->checkCollision(this, 0xFFFF, 0x4810, 0);
 }
@@ -2511,7 +2511,7 @@ void Klaymen::suFallSkipJump() {
 	if (hitRect->type == 0x5001) {
 		_y = hitRect->rect.y1;
 		updateBounds();
-		sendMessage(this, 0x1019, 0);
+		sendMessage(this, NM_SCENE_LEAVE, 0);
 	}
 }
 
@@ -2607,7 +2607,7 @@ void Klaymen::stInteractLever() {
 void Klaymen::stPullLever() {
 	startAnimation(0x0D318140, 0, -1);
 	NextState(&Klaymen::stLookLeverDown);
-	sendMessage(_attachedSprite, NM_LEVER_DOWN, 0);
+	sendMessage(_attachedSprite, NM_KLAYMEN_LOWER_LEVER, 0);
 }
 
 void Klaymen::stLookLeverDown() {

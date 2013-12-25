@@ -442,7 +442,7 @@ uint32 DiskplayerScene::handleMessage(int messageNum, const MessageParam &param,
 	Scene::handleMessage(messageNum, param, sender);
 	if (!_inputDisabled) {
 		switch (messageNum) {
-		case 0x0001:
+		case NM_MOUSE_CLICK:
 			if (param.asPoint().x <= 20 || param.asPoint().x >= 620) {
 				sendMessage(_parentModule, 0x1009, 0);
 			} else if (!_dropKey &&

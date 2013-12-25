@@ -45,10 +45,10 @@ uint32 AsScene2101Door::handleMessage(int messageNum, const MessageParam &param,
 	case NM_ANIMATION_STOP:
 		gotoNextState();
 		break;
-	case NM_DOOR_OPEN:
+	case NM_KLAYMEN_OPEN_DOOR:
 		stOpenDoor();
 		break;
-	case NM_DOOR_CLOSE:
+	case NM_KLAYMEN_CLOSE_DOOR:
 		stCloseDoor();
 		break;
 	}
@@ -118,7 +118,7 @@ SsCommonFloorButton::SsCommonFloorButton(NeverhoodEngine *vm, Scene *parentScene
 
 void SsCommonFloorButton::update() {
 	if (_countdown != 0 && (--_countdown == 0)) {
-		sendMessage(_parentScene, 0x1022, 1010);
+		sendMessage(_parentScene, NM_PRIORITY_CHANGE, 1010);
 		if (_fileHash1)
 			loadSprite(_fileHash1, kSLFDefDrawOffset | kSLFDefPosition);
 		else
@@ -132,7 +132,7 @@ uint32 SsCommonFloorButton::handleMessage(int messageNum, const MessageParam &pa
 	case 0x480B:
 		sendMessage(_parentScene, 0x480B, 0);
 		setVisible(true);
-		sendMessage(_parentScene, 0x1022, 990);
+		sendMessage(_parentScene, NM_PRIORITY_CHANGE, 990);
 		loadSprite(_fileHash2, kSLFDefDrawOffset | kSLFDefPosition);
 		_countdown = 16;
 		playSound(0, _soundFileHash);
@@ -158,7 +158,7 @@ uint32 KmScene2101::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4800:
 		startWalkToX(param.asPoint().x, false);
 		break;
-	case 0x4004:
+	case NM_KLAYMEN_STAND_IDLE:
 		if (_isSittingInTeleporter)
 			GotoState(&Klaymen::stSitIdleTeleporter);
 		else
@@ -193,11 +193,11 @@ uint32 KmScene2101::xHandleMessage(int messageNum, const MessageParam &param) {
 		else
 			startWalkToAttachedSpriteXDistance(param.asPoint().x);
 		break;
-	case 0x481D:
+	case NM_KLAYMEN_TURN_TO_USE:
 		if (_isSittingInTeleporter)
 			GotoState(&Klaymen::stTurnToUseInTeleporter);
 		break;
-	case 0x481E:
+	case NM_KLAYMEN_RETURN_FROM_USE:
 		if (_isSittingInTeleporter)
 			GotoState(&Klaymen::stReturnFromUseInTeleporter);
 		break;

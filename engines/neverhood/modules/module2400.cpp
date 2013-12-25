@@ -253,7 +253,7 @@ void Scene2401::update() {
 			if (puzzleSolved) {
 				setGlobalVar(V_NOTES_DOOR_UNLOCKED, 1);
 				setGlobalVar(V_NOTES_PUZZLE_SOLVED, 1);
-				sendMessage(_asDoor, NM_DOOR_OPEN, 0);
+				sendMessage(_asDoor, NM_KLAYMEN_OPEN_DOOR, 0);
 			} else if (waterInside) {
 				playPipeSound(0xD0431020);
 				for (uint i = 0; i < 5; i++) {
@@ -338,11 +338,11 @@ uint32 Scene2401::handleMessage(int messageNum, const MessageParam &param, Entit
 			playSound(0, 0xE1130324);
 		}
 		break;
-	case 0x482A:
+	case NM_MOVE_TO_BACK:
 		_palette->addBasePalette(0xB103B604, 0, 65, 0);
 		_palette->startFadeToPalette(12);
 		break;
-	case 0x482B:
+	case NM_MOVE_TO_FRONT:
 		_palette->addBasePalette(0x91D3A391, 0, 65, 0);
 		_palette->startFadeToPalette(12);
 		break;
@@ -411,7 +411,7 @@ Scene2402::~Scene2402() {
 void Scene2402::update() {
 	if (_countdown != 0 && (--_countdown) == 0) {
 		if (_pipeStatus >= 10) {
-			sendMessage(_asDoor, NM_DOOR_OPEN, 0);
+			sendMessage(_asDoor, NM_KLAYMEN_OPEN_DOOR, 0);
 			_ssDoorFrame->loadSprite(0x00B415E0, kSLFDefDrawOffset | kSLFDefPosition);
 		} else if (_pipeStatus >= 5) {
 			_countdown = 8;
@@ -541,7 +541,7 @@ uint32 Scene2403::handleMessage(int messageNum, const MessageParam &param, Entit
 			}
 		}
 		break;
-	case NM_LEVER_DOWN:
+	case NM_KLAYMEN_LOWER_LEVER:
 		if (sender == _asLightCord)
 			leaveScene(2);
 		break;

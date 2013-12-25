@@ -575,7 +575,7 @@ uint32 Scene2201::handleMessage(int messageNum, const MessageParam &param, Entit
 		break;
 	case 0x480B:
 		if (sender == _ssDoorButton)
-			sendMessage(_asDoor, NM_DOOR_OPEN, 0);
+			sendMessage(_asDoor, NM_KLAYMEN_OPEN_DOOR, 0);
 		break;
 	case 0x4826:
 		if (sender == _asTape) {
@@ -662,7 +662,7 @@ void Scene2202::update() {
 uint32 Scene2202::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x0001:
+	case NM_MOUSE_CLICK:
 		if (param.asPoint().x <= 20 || param.asPoint().x >= 620)
 			leaveScene(0);
 		break;
@@ -798,7 +798,7 @@ uint32 Scene2203::handleMessage(int messageNum, const MessageParam &param, Entit
 		else
 			_ssSmallRightDoor->setVisible(false);
 		break;
-	case NM_DOOR_OPEN:
+	case NM_KLAYMEN_OPEN_DOOR:
 		if (sender == _asLeftDoor) {
 			_ssSmallLeftDoor->setVisible(true);
 			_klaymen->setClipRect(_leftDoorClipRect);
@@ -1031,19 +1031,19 @@ uint32 Scene2206::handleMessage(int messageNum, const MessageParam &param, Entit
 		if (sender == _ssButton) {
 			setGlobalVar(V_SPIKES_RETRACTED, getGlobalVar(V_SPIKES_RETRACTED) ? 0 : 1);
 			if (getGlobalVar(V_SPIKES_RETRACTED))
-				sendMessage(_asDoorSpikes, NM_DOOR_OPEN, 0);
+				sendMessage(_asDoorSpikes, NM_KLAYMEN_OPEN_DOOR, 0);
 			else
-				sendMessage(_asDoorSpikes, NM_DOOR_CLOSE, 0);
+				sendMessage(_asDoorSpikes, NM_KLAYMEN_CLOSE_DOOR, 0);
 		}
 		break;
 	case 0x4826:
 		sendEntityMessage(_klaymen, 0x1014, _ssTestTube);
 		setMessageList(0x004B8988);
 		break;
-	case 0x482A:
+	case NM_MOVE_TO_BACK:
 		klaymenBehindSpikes();
 		break;
-	case 0x482B:
+	case NM_MOVE_TO_FRONT:
 		klaymenInFrontSpikes();
 		break;
 	}
@@ -1221,9 +1221,9 @@ uint32 Scene2207::handleMessage(int messageNum, const MessageParam &param, Entit
 	case 0x2003:
 		_isKlaymenBusy = false;
 		break;
-	case NM_LEVER_UP:
-		sendMessage(_asWallRobotAnimation, 0x2007, 0);
-		sendMessage(_asWallCannonAnimation, 0x2007, 0);
+	case NM_KLAYMEN_RAISE_LEVER:
+		sendMessage(_asWallRobotAnimation, NM_CAR_MOVE_TO_PREV_POINT, 0);
+		sendMessage(_asWallCannonAnimation, NM_CAR_MOVE_TO_PREV_POINT, 0);
 		break;
 	case 0x480B:
 		if (sender == _ssButton) {
@@ -1236,9 +1236,9 @@ uint32 Scene2207::handleMessage(int messageNum, const MessageParam &param, Entit
 			}
 		}
 		break;
-	case NM_LEVER_DOWN:
-		sendMessage(_asWallRobotAnimation, 0x2006, 0);
-		sendMessage(_asWallCannonAnimation, 0x2006, 0);
+	case NM_KLAYMEN_LOWER_LEVER:
+		sendMessage(_asWallRobotAnimation, NM_KLAYMEN_STOP_CLIMBING, 0);
+		sendMessage(_asWallCannonAnimation, NM_KLAYMEN_STOP_CLIMBING, 0);
 		_asWallRobotAnimation->setVisible(true);
 		_asWallCannonAnimation->setVisible(true);
 		break;
@@ -1267,7 +1267,7 @@ uint32 Scene2207::handleMessage2(int messageNum, const MessageParam &param, Enti
 		break;
 	case 0x2004:
 		SetMessageHandler(&Scene2207::handleMessage);
-		sendMessage(_klaymen, 0x2005, 0);
+		sendMessage(_klaymen, NM_KLAYMEN_CLIMB_LADDER, 0);
 		sendEntityMessage(_klaymen, 0x1014, _asLever);
 		setMessageList(0x004B3920);
 		setRectList(0x004B3948);
@@ -1400,7 +1400,7 @@ void Scene2208::update() {
 uint32 Scene2208::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x0001:
+	case NM_MOUSE_CLICK:
 		if (param.asPoint().x <= 40 || param.asPoint().x >= 600)
 			leaveScene(0);
 		break;

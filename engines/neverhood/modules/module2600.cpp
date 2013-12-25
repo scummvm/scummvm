@@ -239,7 +239,7 @@ Scene2609::Scene2609(NeverhoodEngine *vm, Module *parentModule, int which)
 uint32 Scene2609::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x0001:
+	case NM_MOUSE_CLICK:
 		if ((param.asPoint().x <= 20 || param.asPoint().x >= 620) && !_isBusy)
 			leaveScene(0);
 		break;

@@ -478,11 +478,11 @@ uint32 Scene2801::handleMessage(int messageNum, const MessageParam &param, Entit
 			setMessageList(0x004B6C40);
 		}
 		break;
-	case 0x482A:
+	case NM_MOVE_TO_BACK:
 		_palette->addBasePalette(0xB103B604, 0, 65, 0);
 		_palette->startFadeToPalette(12);
 		break;
-	case 0x482B:
+	case NM_MOVE_TO_FRONT:
 		_palette->addBasePalette(_paletteHash, 0, 65, 0);
 		_palette->startFadeToPalette(12);
 		break;
@@ -586,7 +586,7 @@ uint32 Scene2802::handleMessage(int messageNum, const MessageParam &param, Entit
 	int prevTuneStatus = _currTuneStatus;
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x0001:
+	case NM_MOUSE_CLICK:
 		if (param.asPoint().x <= 20 || param.asPoint().x >= 620) {
 			leaveScene(0);
 		} else if (_currTuneStatus == 0) {
@@ -779,7 +779,7 @@ void Scene2803::upKlaymenStairs() {
 uint32 Scene2803::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case NM_LEVER_DOWN:
+	case NM_KLAYMEN_LOWER_LEVER:
 		toggleBackground();
 		// NOTE Intentional fall-through
 	case NM_ANIMATION_START:
@@ -797,11 +797,11 @@ uint32 Scene2803::handleMessage(int messageNum, const MessageParam &param, Entit
 		} else if (param.asInteger() == 0x9626F390)
 			setMessageList(0x004B7A88);
 		break;
-	case 0x482A:
+	case NM_MOVE_TO_BACK:
 		klaymenStairs();
 		setPaletteArea1();
 		break;
-	case 0x482B:
+	case NM_MOVE_TO_FRONT:
 		klaymenFloor();
 		setPaletteArea0();
 		break;
@@ -1043,7 +1043,7 @@ uint32 Scene2803Small::handleMessage(int messageNum, const MessageParam &param, 
 			setMessageList(0x004B61A8);
 		}
 		break;
-	case 0x482A:
+	case NM_MOVE_TO_BACK:
 		if (_klaymen->getX() < 200) {
 			setPaletteArea3();
 		} else if (_klaymen->getX() < 500) {
@@ -1055,7 +1055,7 @@ uint32 Scene2803Small::handleMessage(int messageNum, const MessageParam &param, 
 			setPaletteArea2();
 		}
 		break;
-	case 0x482B:
+	case NM_MOVE_TO_FRONT:
 		_sprite6->setVisible(false);
 		_sprite7->setVisible(false);
 		_klaymen->setClipRect(0, 0, 640, 480);
@@ -1206,7 +1206,7 @@ Scene2804::Scene2804(NeverhoodEngine *vm, Module *parentModule, int which)
 uint32 Scene2804::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x0001:
+	case NM_MOUSE_CLICK:
 		if (param.asPoint().x <= 20 || param.asPoint().x >= 620) {
 			leaveScene(0);
 		}
@@ -1243,7 +1243,7 @@ void Scene2804::update() {
 	if (_countdown2 != 0 && (--_countdown2) == 0) {
 		_isWorking = false;
 		sendMessage(_asCoil, 0x2003, 0);
-		sendMessage(_asTarget, 0x2005, 0);
+		sendMessage(_asTarget, NM_KLAYMEN_CLIMB_LADDER, 0);
 		for (uint index = 0; index < 5; index++)
 			_asCrystals[index]->hide();
 	}
@@ -1487,7 +1487,7 @@ Scene2807::Scene2807(NeverhoodEngine *vm, Module *parentModule, int which)
 uint32 Scene2807::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x0001:
+	case NM_MOUSE_CLICK:
 		if (param.asPoint().x <= 20 || param.asPoint().x >= 620) {
 			leaveScene(0);
 		}
@@ -1557,7 +1557,7 @@ Scene2808::Scene2808(NeverhoodEngine *vm, Module *parentModule, int which)
 uint32 Scene2808::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x0001:
+	case NM_MOUSE_CLICK:
 		if ((param.asPoint().x <= 20 || param.asPoint().x >= 620) && !isAnyTestTubeFilled()) {
 			leaveScene(1);
 		}
@@ -2051,7 +2051,7 @@ uint32 Scene2812::handleMessage(int messageNum, const MessageParam &param, Entit
 		setRectList(0x004AF700);
 		_klaymen->setClipRect(_sprite4->getDrawRect().x, 0, 640, _sprite3->getDrawRect().y2());
 		break;
-	case 0x4806:
+	case NM_KLAYMEN_USE_OBJECT:
 		sendMessage(_asWinch, 0x2000, 0);
 		sendMessage(_asTrapDoor, 0x2000, 0);
 		break;
@@ -2064,12 +2064,12 @@ uint32 Scene2812::handleMessage(int messageNum, const MessageParam &param, Entit
 			setMessageList(0x004AF668);
 		}
 		break;
-	case 0x482A:
+	case NM_MOVE_TO_BACK:
 		setPaletteArea1(false);
 		_sprite1->setVisible(true);
 		_klaymen->setClipRect(_sprite1->getDrawRect().x, 0, _sprite1->getDrawRect().x2(), _sprite3->getDrawRect().y2());
 		break;
-	case 0x482B:
+	case NM_MOVE_TO_FRONT:
 		setPaletteArea0(false);
 		_sprite1->setVisible(false);
 		_klaymen->setClipRect(_sprite4->getDrawRect().x, 0, 640, _sprite3->getDrawRect().y2());
@@ -2160,7 +2160,7 @@ void Scene2822::update() {
 uint32 Scene2822::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x0001:
+	case NM_MOUSE_CLICK:
 		if (param.asPoint().x <= 20 || param.asPoint().x >= 620) {
 			leaveScene(0);
 		} else if (param.asPoint().x >= 257 && param.asPoint().y >= 235 &&

@@ -225,7 +225,7 @@ uint32 AsScene1401BackDoor::handleMessage(int messageNum, const MessageParam &pa
 	case NM_ANIMATION_STOP:
 		gotoNextState();
 		break;
-	case NM_DOOR_OPEN:
+	case NM_KLAYMEN_OPEN_DOOR:
 		_countdown = 168;
 		if (!_isOpen)
 			stOpenDoor();
@@ -292,7 +292,7 @@ uint32 AsCommonProjector::handleMessage(int messageNum, const MessageParam &para
 		sendMessage(_parentScene, 0x4826, 0);
 		messageResult = 1;
 		break;
-	case NM_LEVER_UP:
+	case NM_KLAYMEN_RAISE_LEVER:
 		setGlobalVar(V_PROJECTOR_SLOT, (_x - _asProjectorItem->point.x) / 108);
 		if ((int8)getGlobalVar(V_PROJECTOR_SLOT) == _asProjectorItem->lockSlotIndex)
 			stStartLockedInSlot();
@@ -314,11 +314,11 @@ uint32 AsCommonProjector::handleMessage(int messageNum, const MessageParam &para
 		else
 			messageResult = getGlobalVar(V_PROJECTOR_SLOT) > 0 ? 1 : 0;
 		break;
-	case 0x482A:
-		sendMessage(_parentScene, 0x1022, 990);
+	case NM_MOVE_TO_BACK:
+		sendMessage(_parentScene, NM_PRIORITY_CHANGE, 990);
 		break;
-	case 0x482B:
-		sendMessage(_parentScene, 0x1022, 1010);
+	case NM_MOVE_TO_FRONT:
+		sendMessage(_parentScene, NM_PRIORITY_CHANGE, 1010);
 		break;
 	case 0x4839:
 		stStartSuckedIn();
@@ -338,8 +338,8 @@ uint32 AsCommonProjector::hmLockedInSlot(int messageNum, const MessageParam &par
 			sendMessage(_parentScene, 0x4826, 0);
 		messageResult = 1;
 		break;
-	case NM_LEVER_UP:
-		sendMessage(_parentScene, NM_LEVER_UP, 0);
+	case NM_KLAYMEN_RAISE_LEVER:
+		sendMessage(_parentScene, NM_KLAYMEN_RAISE_LEVER, 0);
 		stStopProjecting();
 		break;
 	case 0x480B:
@@ -357,14 +357,14 @@ uint32 AsCommonProjector::hmLockedInSlot(int messageNum, const MessageParam &par
 		else
 			messageResult = getGlobalVar(V_PROJECTOR_SLOT) > 0 ? 1 : 0;
 		break;
-	case NM_LEVER_DOWN:
+	case NM_KLAYMEN_LOWER_LEVER:
 		stStartProjecting();
 		break;
-	case 0x482A:
-		sendMessage(_parentScene, 0x1022, 990);
+	case NM_MOVE_TO_BACK:
+		sendMessage(_parentScene, NM_PRIORITY_CHANGE, 990);
 		break;
-	case 0x482B:
-		sendMessage(_parentScene, 0x1022, 1010);
+	case NM_MOVE_TO_FRONT:
+		sendMessage(_parentScene, NM_PRIORITY_CHANGE, 1010);
 		break;
 	}
 	return messageResult;
@@ -388,11 +388,11 @@ void AsCommonProjector::suMoving() {
 	moveProjector();
 	if (_beforeMoveX == _x) {
 		if (getGlobalVar(V_PROJECTOR_SLOT) == 0 && _asProjectorItem->leftBorderLeaves != 0) {
-			sendMessage(_parentScene, 0x1019, 0);
+			sendMessage(_parentScene, NM_SCENE_LEAVE, 0);
 			incGlobalVar(V_PROJECTOR_LOCATION, -1);
 			setGlobalVar(V_PROJECTOR_SLOT, kAsCommonProjectorItems[getGlobalVar(V_PROJECTOR_LOCATION)].maxSlotCount);
 		} else if ((int8)getGlobalVar(V_PROJECTOR_SLOT) == _asProjectorItem->maxSlotCount && _asProjectorItem->rightBorderLeaves != 0) {
-			sendMessage(_parentScene, 0x1019, 1);
+			sendMessage(_parentScene, NM_SCENE_LEAVE, 1);
 			incGlobalVar(V_PROJECTOR_LOCATION, +1);
 			setGlobalVar(V_PROJECTOR_SLOT, 0);
 		}
@@ -481,7 +481,7 @@ void AsCommonProjector::stStartProjecting() {
 }
 
 void AsCommonProjector::stLockedInSlot() {
-	sendMessage(_parentScene, NM_LEVER_DOWN, 0);
+	sendMessage(_parentScene, NM_KLAYMEN_LOWER_LEVER, 0);
 	startAnimation(0xD833207F, 0, -1);
 	SetMessageHandler(&AsCommonProjector::hmLockedInSlot);
 	SetSpriteUpdate(NULL);
@@ -691,7 +691,7 @@ void AsScene1407Mouse::suWalkTo() {
 		xdelta = -_deltaX;
 	_deltaX = 0;
 	if (_walkDestX == _x)
-		sendMessage(this, 0x1019, 0);
+		sendMessage(this, NM_SCENE_LEAVE, 0);
 	else {
 		_x += xdelta;
 		updateBounds();
@@ -709,7 +709,7 @@ void AsScene1407Mouse::upGoThroughHole() {
 uint32 AsScene1407Mouse::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x0001:
+	case NM_MOUSE_CLICK:
 		{
 			int16 mouseX = param.asPoint().x;
 			int16 mouseY = param.asPoint().y;
@@ -735,7 +735,7 @@ uint32 AsScene1407Mouse::handleMessage(int messageNum, const MessageParam &param
 			}
 		}
 		break;
-	case 0x1019:
+	case NM_SCENE_LEAVE:
 		gotoNextState();
 		break;
 	case 0x2001:
@@ -893,10 +893,10 @@ uint32 KmScene1401::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4800:
 		startWalkToX(param.asPoint().x, false);
 		break;
-	case 0x4004:
+	case NM_KLAYMEN_STAND_IDLE:
 		GotoState(&Klaymen::stTryStandIdle);
 		break;
-	case 0x480A:
+	case NM_KLAYMEN_MOVE_OBJECT:
 		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stMoveObjectSkipTurnFaceObject);
 		else
@@ -960,10 +960,10 @@ uint32 KmScene1402::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4800:
 		startWalkToX(param.asPoint().x, false);
 		break;
-	case 0x4004:
+	case NM_KLAYMEN_STAND_IDLE:
 		GotoState(&Klaymen::stTryStandIdle);
 		break;
-	case 0x480A:
+	case NM_KLAYMEN_MOVE_OBJECT:
 		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stMoveObjectSkipTurnFaceObject);
 		else
@@ -979,10 +979,10 @@ uint32 KmScene1402::xHandleMessage(int messageNum, const MessageParam &param) {
 		else
 			startWalkToAttachedSpriteXDistance(param.asPoint().x);
 		break;
-	case 0x481D:
+	case NM_KLAYMEN_TURN_TO_USE:
 		GotoState(&Klaymen::stTurnToUse);
 		break;
-	case 0x481E:
+	case NM_KLAYMEN_RETURN_FROM_USE:
 		GotoState(&Klaymen::stReturnFromUse);
 		break;
 	}
@@ -1007,10 +1007,10 @@ uint32 KmScene1403::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4800:
 		startWalkToX(param.asPoint().x, false);
 		break;
-	case 0x4004:
+	case NM_KLAYMEN_STAND_IDLE:
 		GotoState(&Klaymen::stTryStandIdle);
 		break;
-	case 0x480A:
+	case NM_KLAYMEN_MOVE_OBJECT:
 		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stMoveObjectSkipTurnFaceObject);
 		else
@@ -1064,10 +1064,10 @@ uint32 KmScene1404::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4800:
 		startWalkToX(param.asPoint().x, false);
 		break;
-	case 0x4004:
+	case NM_KLAYMEN_STAND_IDLE:
 		GotoState(&Klaymen::stTryStandIdle);
 		break;
-	case 0x480A:
+	case NM_KLAYMEN_MOVE_OBJECT:
 		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stMoveObjectSkipTurnFaceObject);
 		else
@@ -1094,10 +1094,10 @@ uint32 KmScene1404::xHandleMessage(int messageNum, const MessageParam &param) {
 		else
 			startWalkToAttachedSpriteXDistance(param.asPoint().x);
 		break;
-	case 0x481D:
+	case NM_KLAYMEN_TURN_TO_USE:
 		GotoState(&Klaymen::stTurnToUse);
 		break;
-	case 0x481E:
+	case NM_KLAYMEN_RETURN_FROM_USE:
 		GotoState(&Klaymen::stReturnFromUse);
 		break;
 	case 0x481F:

@@ -207,7 +207,7 @@ Scene1401::Scene1401(NeverhoodEngine *vm, Module *parentModule, int which)
 	_klaymen->setClipRect(_sprite3->getDrawRect().x, 0, 640, 480);
 
 	if (which == 0 && _asProjector)
-		sendMessage(_asProjector, 0x482B, 0);
+		sendMessage(_asProjector, NM_MOVE_TO_FRONT, 0);
 
 	_asBackDoor = insertSprite<AsScene1401BackDoor>(_klaymen, which == 0);
 
@@ -237,7 +237,7 @@ uint32 Scene1401::handleMessage(int messageNum, const MessageParam &param, Entit
 				setMessageList(0x004B66B0);
 		}
 		break;
-	case 0x1019:
+	case NM_SCENE_LEAVE:
 		if (param.asInteger() != 0)
 			leaveScene(2);
 		else
@@ -254,7 +254,7 @@ uint32 Scene1401::handleMessage(int messageNum, const MessageParam &param, Entit
 			if (_asProjector && _asProjector->getX() > 404 && _asProjector->getX() < 504)
 				sendMessage(_asProjector , 0x4839, 0);
 		} else if (sender == _ssButton)
-			sendMessage(_asBackDoor, NM_DOOR_OPEN, 0);
+			sendMessage(_asBackDoor, NM_KLAYMEN_OPEN_DOOR, 0);
 		break;
 	case 0x4826:
 		if (sender == _asProjector) {
@@ -265,15 +265,15 @@ uint32 Scene1401::handleMessage(int messageNum, const MessageParam &param, Entit
 				setMessageList2(0x004B65F0);
 		}
 		break;
-	case 0x482A:
+	case NM_MOVE_TO_BACK:
 		_sprite1->setVisible(true);
 		if (_asProjector)
-			sendMessage(_asProjector, 0x482B, 0);
+			sendMessage(_asProjector, NM_MOVE_TO_FRONT, 0);
 		break;
-	case 0x482B:
+	case NM_MOVE_TO_FRONT:
 		_sprite1->setVisible(false);
 		if (_asProjector)
-			sendMessage(_asProjector, 0x482A, 0);
+			sendMessage(_asProjector, NM_MOVE_TO_BACK, 0);
 		break;
 	}
 	return 0;
@@ -388,7 +388,7 @@ uint32 Scene1402::handleMessage(int messageNum, const MessageParam &param, Entit
 			}
 		}
 		break;
-	case 0x1019:
+	case NM_SCENE_LEAVE:
 		if (param.asInteger())
 			leaveScene(0);
 		else
@@ -455,7 +455,7 @@ void Scene1407::update() {
 uint32 Scene1407::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x0001:
+	case NM_MOUSE_CLICK:
 		if (_puzzleSolvedCountdown == 0) {
 			if (param.asPoint().x <= 20 || param.asPoint().x >= 620) {
 				// Exit scene
@@ -544,10 +544,10 @@ uint32 Scene1403::handleMessage(int messageNum, const MessageParam &param, Entit
 			_isProjecting = false;
 		}
 		break;
-	case 0x1019:
+	case NM_SCENE_LEAVE:
 		leaveScene(0);
 		break;
-	case 0x1022:
+	case NM_PRIORITY_CHANGE:
 		if (sender == _asProjector) {
 			if (param.asInteger() >= 1000)
 				setSurfacePriority(_sprite3->getSurface(), 1100);
@@ -555,10 +555,10 @@ uint32 Scene1403::handleMessage(int messageNum, const MessageParam &param, Entit
 				setSurfacePriority(_sprite3->getSurface(), 995);
 		}
 		break;
-	case NM_LEVER_UP:
+	case NM_KLAYMEN_RAISE_LEVER:
 		_sprite1->setVisible(false);
 		break;
-	case NM_LEVER_DOWN:
+	case NM_KLAYMEN_LOWER_LEVER:
 		_sprite1->setVisible(true);
 		break;
 	case 0x4826:
@@ -663,7 +663,7 @@ uint32 Scene1404::handleMessage(int messageNum, const MessageParam &param, Entit
 				setMessageList(0x004B8CE8);
 		}
 		break;
-	case 0x1019:
+	case NM_SCENE_LEAVE:
 		leaveScene(0);
 		break;
 	case 0x4826:
@@ -725,7 +725,7 @@ void Scene1405::update() {
 uint32 Scene1405::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x0001:
+	case NM_MOUSE_CLICK:
 		if (param.asPoint().x <= 20 || param.asPoint().x >= 620)
 			leaveScene(0);
 		break;

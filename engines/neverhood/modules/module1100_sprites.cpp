@@ -48,7 +48,7 @@ SsScene1105Button::SsScene1105Button(NeverhoodEngine *vm, Scene *parentScene, ui
 
 void SsScene1105Button::update() {
 	if (_countdown != 0 && (--_countdown == 0)) {
-		sendMessage(_parentScene, NM_LEVER_UP, 0);
+		sendMessage(_parentScene, NM_KLAYMEN_RAISE_LEVER, 0);
 		setVisible(false);
 	}
 }
@@ -214,7 +214,7 @@ uint32 KmScene1109::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4800:
 		startWalkToX(param.asPoint().x, false);
 		break;
-	case 0x4004:
+	case NM_KLAYMEN_STAND_IDLE:
 		if (_isSittingInTeleporter)
 			GotoState(&Klaymen::stSitIdleTeleporter);
 		else
@@ -231,11 +231,11 @@ uint32 KmScene1109::xHandleMessage(int messageNum, const MessageParam &param) {
 		setDoDeltaX(param.asInteger());
 		gotoNextStateExt();
 		break;
-	case 0x481D:
+	case NM_KLAYMEN_TURN_TO_USE:
 		if (_isSittingInTeleporter)
 			GotoState(&Klaymen::stTurnToUseInTeleporter);
 		break;
-	case 0x481E:
+	case NM_KLAYMEN_RETURN_FROM_USE:
 		if (_isSittingInTeleporter)
 			GotoState(&Klaymen::stReturnFromUseInTeleporter);
 		break;

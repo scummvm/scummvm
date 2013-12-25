@@ -261,7 +261,7 @@ uint32 SsScene3009SymbolArrow::handleMessage(int messageNum, const MessageParam 
 			_countdown = 2;
 			loadSprite(kSsScene3009SymbolArrowFileHashes1[_index], kSLFDefDrawOffset);
 			playSound(0);
-			sendMessage(_asSymbol, 0x2005, _incrDecr);
+			sendMessage(_asSymbol, NM_KLAYMEN_CLIMB_LADDER, _incrDecr);
 		}
 		messageResult = 1;
 		break;
@@ -388,7 +388,7 @@ AsScene3009Symbol::AsScene3009Symbol(NeverhoodEngine *vm, Scene3009 *parentScene
 uint32 AsScene3009Symbol::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x2005:
+	case NM_KLAYMEN_CLIMB_LADDER:
 		if (param.asInteger()) {
 			if (_symbolIndex == 11)
 				_symbolIndex = 0;

@@ -72,7 +72,7 @@ uint32 AsScene1201Tape::handleMessage(int messageNum, const MessageParam &param,
 		sendMessage(_parentScene, 0x4826, 0);
 		messageResult = 1;
 		break;
-	case 0x4806:
+	case NM_KLAYMEN_USE_OBJECT:
 		setSubVar(VA_HAS_TAPE, _nameHash, 1);
 		setVisible(false);
 		SetMessageHandler(NULL);
@@ -105,7 +105,7 @@ uint32 AsScene1201TntManRope::handleMessage(int messageNum, const MessageParam &
 		if (param.asInteger() == 0x02060018)
 			playSound(0, 0x47900E06);
 		break;
-	case 0x2006:
+	case NM_KLAYMEN_STOP_CLIMBING:
 		startAnimation(0x928F0C10, 1, -1);
 		_newStickFrameIndex = STICK_LAST_FRAME;
 		break;
@@ -184,7 +184,7 @@ AsScene1201KlaymenHead::AsScene1201KlaymenHead(NeverhoodEngine *vm)
 uint32 AsScene1201KlaymenHead::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x2006:
+	case NM_KLAYMEN_STOP_CLIMBING:
 		_x = 436;
 		_y = 339;
 		startAnimation(0xA060C599, 0, -1);
@@ -225,7 +225,7 @@ uint32 AsScene1201TntMan::handleMessage(int messageNum, const MessageParam &para
 	switch (messageNum) {
 	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x092870C0)
-			sendMessage(_asTntManRope, 0x2006, 0);
+			sendMessage(_asTntManRope, NM_KLAYMEN_STOP_CLIMBING, 0);
 		else if (param.asInteger() == 0x11CA0144)
 			playSound(0, 0x51800A04);
 		break;
@@ -378,7 +378,7 @@ uint32 AsScene1201Match::hmIdle(int messageNum, const MessageParam &param, Entit
 		sendMessage(_parentScene, 0x2001, 0);
 		messageResult = 1;
 		break;
-	case 0x4806:
+	case NM_KLAYMEN_USE_OBJECT:
 		setVisible(false);
 		setGlobalVar(V_MATCH_STATUS, 3);
 		break;
@@ -466,7 +466,7 @@ uint32 AsScene1201Creature::hmWaiting(int messageNum, const MessageParam &param,
 	case 0x2004:
 		GotoState(&AsScene1201Creature::stStartReachForTntDummy);
 		break;
-	case 0x2006:
+	case NM_KLAYMEN_STOP_CLIMBING:
 		GotoState(&AsScene1201Creature::stPincerSnapKlaymen);
 		break;
 	}
@@ -556,7 +556,7 @@ AsScene1201LeftDoor::AsScene1201LeftDoor(NeverhoodEngine *vm, Sprite *klaymen)
 uint32 AsScene1201LeftDoor::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case NM_DOOR_CLOSE:
+	case NM_KLAYMEN_CLOSE_DOOR:
 		stCloseDoor();
 		break;
 	}
@@ -671,10 +671,10 @@ uint32 KmScene1201::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4800:
 		startWalkToX(param.asPoint().x, false);
 		break;
-	case 0x4004:
+	case NM_KLAYMEN_STAND_IDLE:
 		GotoState(&Klaymen::stTryStandIdle);
 		break;
-	case 0x480A:
+	case NM_KLAYMEN_MOVE_OBJECT:
 		GotoState(&Klaymen::stMoveObject);
 		break;
 	case NM_KLAYMEN_PICKUP:
@@ -703,10 +703,10 @@ uint32 KmScene1201::xHandleMessage(int messageNum, const MessageParam &param) {
 		else
 			startWalkToAttachedSpriteXDistance(param.asPoint().x);
 		break;
-	case 0x481D:
+	case NM_KLAYMEN_TURN_TO_USE:
 		GotoState(&Klaymen::stTurnToUse);
 		break;
-	case 0x481E:
+	case NM_KLAYMEN_RETURN_FROM_USE:
 		GotoState(&Klaymen::stReturnFromUse);
 		break;
 	case 0x481F:

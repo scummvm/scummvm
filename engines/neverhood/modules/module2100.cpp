@@ -147,7 +147,7 @@ void Scene2101::update() {
 	if (_countdown1 != 0) {
 		if (_doorStatus == 2) {
 			if (--_countdown1 == 0) {
-				sendMessage(_asDoor, NM_DOOR_CLOSE, 0);
+				sendMessage(_asDoor, NM_KLAYMEN_CLOSE_DOOR, 0);
 				_doorStatus = 1;
 			}
 		} else {
@@ -155,12 +155,12 @@ void Scene2101::update() {
 				_canAcceptInput  = false;
 			if (--_countdown1 == 0) {
 				if (_klaymen->getX() < 480) {
-					sendMessage(_asDoor, NM_DOOR_CLOSE, 0);
+					sendMessage(_asDoor, NM_KLAYMEN_CLOSE_DOOR, 0);
 					_doorStatus = 1;
 				} else if (_klaymen->getX() >= 480 && _klaymen->getX() <= 575) {
 					_klaymen->setDoDeltaX(0);
 					setMessageList2(0x004B8F48);
-					sendMessage(_asDoor, NM_DOOR_CLOSE, 0);
+					sendMessage(_asDoor, NM_KLAYMEN_CLOSE_DOOR, 0);
 					sendMessage(_asHitByDoorEffect, 0x2001, 0);
 					_doorStatus = 1;
 				}
@@ -196,7 +196,7 @@ uint32 Scene2101::handleMessage(int messageNum, const MessageParam &param, Entit
 		break;
 	case 0x480B:
 		if (sender == _ssFloorButton && _doorStatus == 1) {
-			sendMessage(_asDoor, NM_DOOR_OPEN, 0);
+			sendMessage(_asDoor, NM_KLAYMEN_OPEN_DOOR, 0);
 			_doorStatus = 0;
 			_countdown1 = 90;
 		}
