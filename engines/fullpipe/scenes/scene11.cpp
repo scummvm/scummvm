@@ -194,16 +194,20 @@ int sceneHandler11(ExCommand *cmd) {
 				goto LABEL_27;
 
 			int x = g_fp->_aniMan2->_ox;
-			g_vars->scene11_var21 = g_fp->_aniMan2->_ox;
 			int y = g_fp->_aniMan2->_oy;
-			g_vars->scene11_var22 = g_fp->_aniMan2->_oy;
+
+			g_vars->scene11_var21 = x;
+			g_vars->scene11_var22 = y;
+
 			if (g_vars->scene11_var03) {
 				if (x > g_fp->_sceneRect.right - 200)
-					OffsetRect(&g_fp->_sceneRect, x - g_fp->_sceneRect.right + 200, 0);
+					g_fp->_currentScene->_x = x - g_fp->_sceneRect.right + 300;
 				goto LABEL_26;
 			}
+
 			if (g_vars->scene11_var04) {
-				g_fp->_currentScene->bg._x = g_fp->_sceneWidth - x;
+				g_fp->_currentScene->_x = g_fp->_sceneWidth - x;
+
 				if (g_vars->scene11_var21 < 910)
 					g_vars->scene11_var04 = 0;
 			LABEL_26:
@@ -214,9 +218,12 @@ int sceneHandler11(ExCommand *cmd) {
 						sceneHandler11_sub06();
 					g_vars->scene11_var06 = g_fp->_sceneRect.left;
 				}
+
 				if (!g_vars->scene11_var02)
 					goto LABEL_50;
+
 				v6 = g_vars->scene11_var16;
+
 				if (g_vars->scene11_var16 <= 0 || g_vars->scene11_var15 - g_vars->scene11_var16 <= 72) {
 					v7 = g_vars->scene11_var18;
 				} else {
@@ -226,13 +233,15 @@ int sceneHandler11(ExCommand *cmd) {
 					g_vars->scene11_var18 = 0;
 					g_vars->scene11_var16 = 0;
 				}
+
 				if (!g_vars->scene11_var02)
 					goto LABEL_50;
+
 				if (g_vars->scene11_var17 == v7 || v6 <= 0 || g_vars->scene11_var15 - v6 <= 2) {
 				LABEL_49:
 					if (g_vars->scene11_var02) {
 					LABEL_61:
-						g_fp->_behaviorManager_updateBehaviors();
+						g_fp->_behaviorManager->updateBehaviors();
 						g_fp->startSceneTrack();
 						return v2;
 					}
@@ -244,9 +253,9 @@ int sceneHandler11(ExCommand *cmd) {
 						&& (g_vars->scene11_dudeOnSwing->changeStatics2(ST_KCH_STATIC), !g_vars->scene11_var02)
 						&& g_vars->scene11_var19) {
 						if (!g_vars->scene11_swingie->_movement) {
-							if (g_vars->scene11_boots->_flags & 4 && g_vars->scene11_boots->_statics->_staticsId == ST_BTS11_2) {
+							if ((g_vars->scene11_boots->_flags & 4) && g_vars->scene11_boots->_statics->_staticsId == ST_BTS11_2) {
 								sceneHandler11_sub07();
-								BehaviorManager_updateBehaviors(&g_behaviorManager);
+								g_fp->_behaviorManager->updateBehaviors();
 								startSceneTrack();
 								return v2;
 							}
@@ -277,21 +286,21 @@ int sceneHandler11(ExCommand *cmd) {
 				if (x <= g_fp->_sceneRect.right - 200) {
 				LABEL_18:
 					if (y < g_fp->_sceneRect.top + 200) {
-						g_fp->_currentScene->bg._y = y - g_fp->_sceneRect.top - 300;
+						g_fp->_currentScene->_y = y - g_fp->_sceneRect.top - 300;
 						y = g_vars->scene11_var22;
 						x = g_vars->scene11_var21;
 					}
 					if (y > g_fp->_sceneRect.bottom - 300) {
-						g_fp->_currentScene->bg._y = y - g_fp->_sceneRect.bottom + 300;
+						g_fp->_currentScene->_y = y - g_fp->_sceneRect.bottom + 300;
 						x = g_vars->scene11_var21;
 					}
 					if (x >= 940)
 						g_vars->scene11_var04 = 1;
 					goto LABEL_26;
 				}
-				g_fp->_currentScene->bg._x = x - g_fp->_sceneRect.right + 300;
+				g_fp->_currentScene->_x = x - g_fp->_sceneRect.right + 300;
 			} else {
-				g_fp->_currentScene->bg._x = x - g_fp->_sceneRect.left - 300;
+				g_fp->_currentScene->_x = x - g_fp->_sceneRect.left - 300;
 			}
 			y = g_vars->scene11_var22;
 			x = g_vars->scene11_var21;
@@ -302,23 +311,28 @@ int sceneHandler11(ExCommand *cmd) {
 
 	case 29:
 		if (g_vars->scene11_var19) {
-			if (g_fp->_currentScene->getStaticANIObjectAtPos(g_fp->_sceneRect.left + cmd->_x, g_fp->_sceneRect.top + cmd->_y) == g_vars->scene11_swingie && cmd->_keyCode == ANI_INV_BOOT)
+			if (g_fp->_currentScene->getStaticANIObjectAtPos(g_fp->_sceneRect.left + cmd->_x, g_fp->_sceneRect.top + cmd->_y) == g_vars->scene11_swingie
+				&& cmd->_keyCode == ANI_INV_BOOT)
 				sceneHandler11_putBoot();
 		} else {
-			if (!g_vars->scene11_var02)
-				goto LABEL_69;
-			sceneHandler11_sub05();
-			g_vars->scene11_var16 = g_vars->scene11_var15;
+			if (g_vars->scene11_var02) {
+				sceneHandler11_sub05();
+				g_vars->scene11_var16 = g_vars->scene11_var15;
+			}
 		}
+
 		if (!g_vars->scene11_var02) {
-		LABEL_69:
-			v10 = (GameObject *)Scene_getStaticANIObjectAtPos(g_fp->_currentScene, cmd->_sceneClickX, cmd->_sceneClickY);
-			if (!v10 || !canInteractAny(&g_fp->_aniMan->go, v10, cmd->_keyCode)) {
-				v11 = Scene_getPictureObjectIdAtPos(g_fp->_currentScene, cmd->_sceneClickX, cmd->_sceneClickY);
-				v12 = (GameObject *)Scene_getPictureObjectById(g_fp->_currentScene, v11, 0);
-				if (!v12 || !canInteractAny(g_fp->_aniMan, v12, cmd->_keyCode)) {
-					if ((v13 = cmd->_sceneClickX, g_fp->_sceneRect.right - v13 < 47) && g_fp->_sceneRect.right < g_fp->_sceneWidth - 1 || v13 - g_fp->_sceneRect.left < 47 && g_fp->_sceneRect.left > 0) {
-						processArcade(cmd);
+			StaticANIObject *ani = g_fp->_currentScenegetStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
+
+			if (!ani || !canInteractAny(g_fp->_aniMan, ani, cmd->_keyCode)) {
+				int picId = g_fp->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
+				PictureObject *pic = g_fp->_currentScene->getPictureObjectById(picId, 0);
+
+				if (!pic || !canInteractAny(g_fp->_aniMan, pic, cmd->_keyCode)) {
+					if ((g_fp->_sceneRect.right - cmd->_sceneClickX < 47 && g_fp->_sceneRect.right < g_fp->_sceneWidth - 1)
+						|| (cmd->_sceneClickX - g_fp->_sceneRect.left < 47 && g_fp->_sceneRect.left > 0)) {
+						g_fp->processArcade(cmd);
+
 						return 0;
 					}
 				}
