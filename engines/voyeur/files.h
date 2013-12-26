@@ -537,7 +537,6 @@ public:
 	 */
 	int doApt();
 
-	void doTapePlaying();
 	void checkForMurder();
 	void checkForIncriminate();
 
