@@ -2213,6 +2213,16 @@ keywords:
     helium_mode        bool     If true, people sound like they've inhaled
                                 Helium
 
+The Neverhood adds the following non-standard keywords:
+
+    originalsaveload   bool     If true, the original save/load screens are
+                                used instead of the enhanced ScummVM ones
+    skiphallofrecordsscenes     bool
+                                If true, allows the player to skip
+                                past the Hall of Records storyboard scenes
+    scalemakingofvideos  bool   If true, the making of videos are scaled, so that
+                                they use the whole screen
+
 The 7th Guest adds the following non-standard keyword:
 
     fast_movie_speed   bool     If true, movies are played at an increased
