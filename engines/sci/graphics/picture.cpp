@@ -783,7 +783,13 @@ void GfxPicture::drawVectorData(byte *data, int dataSize) {
 				case PIC_OPX_VGA_EMBEDDED_VIEW: // draw cel
 					vectorGetAbsCoordsNoMirror(data, curPos, x, y);
 					size = READ_LE_UINT16(data + curPos); curPos += 2;
-					_priority = pic_priority; // set global priority so the cel gets drawn using current priority as well
+					if (getSciVersion() <= SCI_VERSION_1_EARLY) {
+						// During SCI1Early sierra always used 0 as priority for cels inside picture resources
+						//  fixes Space Quest 4 orange ship lifting off (bug #6446)
+						_priority = 0;
+					} else {
+						_priority = pic_priority; // set global priority so the cel gets drawn using current priority as well
+					}
 					drawCelData(data, _resource->size, curPos, curPos + 8, 0, x, y, 0, 0);
 					curPos += size;
 					break;
@@ -919,32 +925,15 @@ void GfxPicture::vectorFloodFill(int16 x, int16 y, byte color, byte priority, by
 	}
 
 	// This logic was taken directly from sierra sci, floodfill will get aborted on various occations
-	if (!_addToFlag) {
-		if (screenMask & GFX_SCREEN_MASK_VISUAL) {
-			if ((color == _screen->getColorWhite()) || (searchColor != _screen->getColorWhite()))
-				return;
-		} else if (screenMask & GFX_SCREEN_MASK_PRIORITY) {
-			if ((priority == 0) || (searchPriority != 0))
-				return;
-		} else if (screenMask & GFX_SCREEN_MASK_CONTROL) {
-			if ((control == 0) || (searchControl != 0))
-				return;
-		}
-	} else {
-		// When adding a picture onto another picture, don't abort in case current pixel was already drawn previously
-		//  It seems Sierra SCI unpacks such pictures separately and then copies them over
-		//  We draw directly to the screen.
-		//  fixes Space Quest 4 orange ship lifting off (bug #6446)
-		if (screenMask & GFX_SCREEN_MASK_VISUAL) {
-			if (color == _screen->getColorWhite())
-				return;
-		} else if (screenMask & GFX_SCREEN_MASK_PRIORITY) {
-			if (priority == 0)
-				return;
-		} else if (screenMask & GFX_SCREEN_MASK_CONTROL) {
-			if (control == 0)
-				return;
-		}
+	if (screenMask & GFX_SCREEN_MASK_VISUAL) {
+		if ((color == _screen->getColorWhite()) || (searchColor != _screen->getColorWhite()))
+			return;
+	} else if (screenMask & GFX_SCREEN_MASK_PRIORITY) {
+		if ((priority == 0) || (searchPriority != 0))
+			return;
+	} else if (screenMask & GFX_SCREEN_MASK_CONTROL) {
+		if ((control == 0) || (searchControl != 0))
+			return;
 	}
 
 	// Now remove screens, that already got the right color/priority/control
