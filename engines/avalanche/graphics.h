@@ -77,18 +77,25 @@ public:
 	void drawChar(byte ander, int x, int y, Color color);
 	void drawDebugLines();
 
+	// For the mini-game "Nim".
+	void drawFilledRectangle(Common::Rect rect, Color color);
+	void drawRectangle(Common::Rect rect, Color color);
+	void nimLoad();
+	void nimDrawStone(int x, int y);
+	void nimDrawInitials();
+	void nimDrawLogo();
+	void nimFree();
+
 	void clearAlso();
 	void clearTextBar();
 	void setAlsoLine(int x1, int y1, int x2, int y2, Color color);
 	byte getAlsoColor(int x1, int y1, int x2, int y2);
 	byte getScreenColor(Common::Point pos);
 
-	// The caller has to .free() the returned Surfaces!!!
-	// Further information about these two: http://www.shikadi.net/moddingwiki/Raw_EGA_data
+	// Further information about this: http://www.shikadi.net/moddingwiki/Raw_EGA_data
 	Graphics::Surface loadPictureRaw(Common::File &file, uint16 width, uint16 height);
 
 	void drawSprite(AnimationType *sprite, byte picnum, int16 x, int16 y);
-	void drawPicture(Graphics::Surface &target, const Graphics::Surface picture, uint16 destX, uint16 destY);
 	void drawThinkPic(Common::String filename, int id);
 	void drawToolbar();
 	void drawCursor(byte pos);
@@ -125,12 +132,23 @@ private:
 	Graphics::Surface _screen; // Only used in refreshScreen() to make it more optimized. (No recreation of it at every call of the function.)
 	Graphics::Surface _scrolls;
 	Graphics::Surface _surface;
+
+	// For the mini-game "Nim".
+	Graphics::Surface _nimStone; 
+	Graphics::Surface _nimInitials[3];
+	Graphics::Surface _nimLogo;
+
 	byte _egaPalette[64][3];
 
 	AvalancheEngine *_vm;
 
+	// Further information about these two: http://www.shikadi.net/moddingwiki/Raw_EGA_data
 	Graphics::Surface loadPictureGraphic(Common::File &file); // Reads Graphic-planar EGA data.
+	Graphics::Surface loadPictureSign(Common::File &file, int xl, int yl); // Reads a tricky type of picture used for the "game over"/"about" scrolls and in the mini-game Nim.
+	
 	void drawText(Graphics::Surface &surface, const Common::String text, FontType font, byte fontHeight, int16 x, int16 y, Color color);
+	void drawPicture(Graphics::Surface &target, const Graphics::Surface picture, uint16 destX, uint16 destY);
+
 	// Taken from Free Pascal's Procedure InternalEllipseDefault. Used to replace Pascal's procedure arc.
 	// Returns the end point of the arc. (Needed in Clock.)
 	// TODO: Make it more accurate later.

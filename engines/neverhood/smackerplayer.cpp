@@ -204,7 +204,7 @@ void SmackerPlayer::update() {
 		} else if (!_keepLastFrame) {
 			// Inform the scene about the end of the video playback
 			if (_scene)
-				sendMessage(_scene, 0x3002, 0);
+				sendMessage(_scene, NM_ANIMATION_STOP, 0);
 			_videoDone = true;
 		} else {
 			rewind();

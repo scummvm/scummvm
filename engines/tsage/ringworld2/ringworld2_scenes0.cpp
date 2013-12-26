@@ -1541,7 +1541,7 @@ void Scene180::postInit(SceneObjectList *OwnerList) {
 }
 
 void Scene180::remove() {
-	_stripManager._field2E8 = -1;
+	_stripManager._currObj44Id = -1;
 //	_stripManager._field2EA = -1;
 	SceneExt::remove();
 
@@ -3556,7 +3556,7 @@ void Scene300::signal() {
 			break;
 		}
 
-		_stripManager._field2E8 = 0;
+		_stripManager._currObj44Id = 0;
 		switch (_stripId) {
 		case 400:
 			R2_GLOBALS._player.disableControl();

@@ -783,7 +783,13 @@ void GfxPicture::drawVectorData(byte *data, int dataSize) {
 				case PIC_OPX_VGA_EMBEDDED_VIEW: // draw cel
 					vectorGetAbsCoordsNoMirror(data, curPos, x, y);
 					size = READ_LE_UINT16(data + curPos); curPos += 2;
-					_priority = pic_priority; // set global priority so the cel gets drawn using current priority as well
+					if (getSciVersion() <= SCI_VERSION_1_EARLY) {
+						// During SCI1Early sierra always used 0 as priority for cels inside picture resources
+						//  fixes Space Quest 4 orange ship lifting off (bug #6446)
+						_priority = 0;
+					} else {
+						_priority = pic_priority; // set global priority so the cel gets drawn using current priority as well
+					}
 					drawCelData(data, _resource->size, curPos, curPos + 8, 0, x, y, 0, 0);
 					curPos += size;
 					break;
@@ -967,6 +973,12 @@ void GfxPicture::vectorFloodFill(int16 x, int16 y, byte color, byte priority, by
 			_screen->putPixel(--w, p.y, screenMask, color, priority, control);
 		while (e < r && (matchedMask = _screen->isFillMatch(e + 1, p.y, matchMask, searchColor, searchPriority, searchControl, isEGA)))
 			_screen->putPixel(++e, p.y, screenMask, color, priority, control);
+#if 0
+		// debug code for floodfill
+		_screen->copyToScreen();
+		g_system->updateScreen();
+		g_system->delayMillis(100);
+#endif
 		// checking lines above and below for possible flood targets
 		a_set = b_set = 0;
 		while (w <= e) {

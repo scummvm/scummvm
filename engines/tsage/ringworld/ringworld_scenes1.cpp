@@ -1623,7 +1623,7 @@ void Scene50::Action1::signal() {
 		scene->_stripManager.start(63, this);
 		break;
 	case 2:
-		if (scene->_stripManager._field2E8 != 107) {
+		if (scene->_stripManager._currObj44Id != 107) {
 			g_globals->_player.enableControl();
 			remove();
 		} else {
@@ -2498,7 +2498,7 @@ void Scene90::Action1::signal() {
 	case 5:
 		scene->_soundHandler2.play(58);
 
-		if (scene->_stripManager._field2E8 == 220)
+		if (scene->_stripManager._currObj44Id == 220)
 			scene->_stripManager.start(91, this, scene);
 		else {
 			scene->_stripManager.start(g_globals->getFlag(104) ? 93 : 92, this, scene);
@@ -2714,7 +2714,7 @@ void Scene90::signal() {
 		g_globals->_player.enableControl();
 		break;
 	case 97:
-		_stripManager._field2E8 = 0;
+		_stripManager._currObj44Id = 0;
 		_action1.setActionIndex(5);
 		_action1.setDelay(1);
 		break;
@@ -2939,7 +2939,7 @@ void Scene6100::Action3::signal() {
 	case 4:
 		g_globals->setFlag(76);
 		g_globals->_sceneManager.changeScene(
-			(scene->_stripManager._field2E8 == 135) ? 6100 : 2320);
+			(scene->_stripManager._currObj44Id == 135) ? 6100 : 2320);
 		remove();
 		break;
 	}

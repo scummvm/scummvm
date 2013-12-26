@@ -176,26 +176,40 @@ void Portrait::init() {
 	// last 4 bytes seem to be garbage
 }
 
+// use this to print out kPortrait debug data
+//#define DEBUG_PORTRAIT
+// use this to use sync resources instead of rave resources (rave resources are better though)
+//#define DEBUG_PORTRAIT_USE_SYNC_RESOURCES
+
 void Portrait::doit(Common::Point position, uint16 resourceId, uint16 noun, uint16 verb, uint16 cond, uint16 seq) {
 	_position = position;
 
 	// Now init audio and sync resource
 	uint32 audioNumber = ((noun & 0xff) << 24) | ((verb & 0xff) << 16) | ((cond & 0xff) << 8) | (seq & 0xff);
-	//ResourceId syncResourceId = ResourceId(kResourceTypeSync36, resourceId, noun, verb, cond, seq);
-	//Resource *syncResource = _resMan->findResource(syncResourceId, true);
+#ifndef DEBUG_PORTRAIT_USE_SYNC_RESOURCES
 	ResourceId raveResourceId = ResourceId(kResourceTypeRave, resourceId, noun, verb, cond, seq);
 	Resource *raveResource = _resMan->findResource(raveResourceId, true);
-	
-#if 0
+	uint raveOffset = 0;
+#else
+	ResourceId syncResourceId = ResourceId(kResourceTypeSync36, resourceId, noun, verb, cond, seq);
+	Resource *syncResource = _resMan->findResource(syncResourceId, true);
 	uint syncOffset = 0;
 #endif
+	
+#ifdef DEBUG_PORTRAIT
+	// prints out the current lip sync ASCII data
+	char debugPrint[4000];
+	if (raveResource->size < 4000) {
+		memcpy(debugPrint, raveResource->data, raveResource->size);
+		debugPrint[raveResource->size] = 0; // set terminating NUL
+		debug("kPortrait (noun %d, verb %d, cond %d, seq %d)", noun, verb, cond, seq);
+		debug("kPortrait: %s", debugPrint);
+	}
+#endif
 
-	// TODO: play through the game if this is 100% accurate
 	// TODO: maybe try to create the missing sync resources for low-res KQ6 out of the rave resources
 
-	uint raveOffset = 0;
-	
-#if 0
+#ifdef DEBUG_PORTRAIT_USE_SYNC_RESOURCES
 		// Dump the sync resources to disk
 		Common::DumpFile *outFile = new Common::DumpFile();
 		Common::String outName = syncResourceId.toPatchNameBase36() + ".sync36";
@@ -226,7 +240,8 @@ void Portrait::doit(Common::Point position, uint16 resourceId, uint16 noun, uint
 	// Start playing audio...
 	_audio->stopAudio();
 	_audio->startAudio(resourceId, audioNumber);
-	
+
+#ifndef DEBUG_PORTRAIT_USE_SYNC_RESOURCES
 	if (!raveResource) {
 		warning("kPortrait: no rave resource %d %X", resourceId, audioNumber);
 		return;
@@ -309,9 +324,7 @@ void Portrait::doit(Common::Point position, uint16 resourceId, uint16 noun, uint
 			}
 		}
 	}
-	
-// old sync resource code
-#if 0
+#else
 	if (!syncResource) {
 		// Getting the book in the book shop calls kPortrait where no sync exists
 		// TODO: find out what to do then
@@ -359,17 +372,17 @@ void Portrait::doit(Common::Point position, uint16 resourceId, uint16 noun, uint
 		}
 	}
 #endif
-
+	
+	// Reset the portrait bitmap to "closed mouth" state (rave.dll seems to do the same)
+	drawBitmap(0);
+	bitsShow();
 	if (userAbort) {
-		// Reset the portrait bitmap to "closed mouth" state, when skipping dialogs
-		drawBitmap(0);
-		bitsShow();
 		_audio->stopAudio();
 	}
 
+#ifndef DEBUG_PORTRAIT_USE_SYNC_RESOURCES
 	_resMan->unlockResource(raveResource);
-
-#if 0
+#else
 	_resMan->unlockResource(syncResource);
 #endif
 }

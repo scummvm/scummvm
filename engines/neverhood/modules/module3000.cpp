@@ -552,13 +552,13 @@ void Scene3009::update() {
 uint32 Scene3009::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x0001:
+	case NM_MOUSE_CLICK:
 		if ((param.asPoint().x <= 20 || param.asPoint().x >= 620) && !getGlobalVar(V_CANNON_RAISED)) {
 			setGlobalVar(V_CANNON_TARGET_STATUS, 0);
 			leaveScene(0);
 		}
 		break;
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		if (!getGlobalVar(V_CANNON_RAISED)) {
 			if (!getGlobalVar(V_WALL_BROKEN)) {
 				_cannonTargetStatus = kCTSBreakWall;
@@ -581,7 +581,7 @@ uint32 Scene3009::handleMessage(int messageNum, const MessageParam &param, Entit
 	case 0x2001:
 		_lockSymbolsPart1Countdown = 24;
 		break;
-	case 0x2002:
+	case NM_POSITION_CHANGE:
 		// Raise/lower the cannon
 		if (!getGlobalVar(V_CANNON_TURNED) && !_isTurning) {
 			if (getGlobalVar(V_CANNON_RAISED)) {
@@ -731,7 +731,7 @@ void Scene3010::update() {
 uint32 Scene3010::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x0001:
+	case NM_MOUSE_CLICK:
 		if ((param.asPoint().x <= 20 || param.asPoint().x >= 620) && _countdown == 0 && !_checkUnlocked) {
 			if (!_boltUnlocking[0] && !_boltUnlocking[1] && !_boltUnlocking[2]) {
 				showMouse(false);
@@ -749,7 +749,7 @@ uint32 Scene3010::handleMessage(int messageNum, const MessageParam &param, Entit
 			}
 		}
 		break;
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		if (!_boltUnlocked[param.asInteger()] && !_checkUnlocked && _countdown == 0) {
 			_asDeadBolts[param.asInteger()]->unlock(false);
 			_boltUnlocking[param.asInteger()] = true;
@@ -769,7 +769,7 @@ uint32 Scene3010::handleMessage(int messageNum, const MessageParam &param, Entit
 			_doorUnlocked = true;
 		}
 		break;
-	case 0x2002:
+	case NM_POSITION_CHANGE:
 		if (!_checkUnlocked && _countdown == 0) {
 			_asDeadBolts[param.asInteger()]->lock();
 		}
@@ -853,12 +853,12 @@ void Scene3011::update() {
 uint32 Scene3011::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x0001:
+	case NM_MOUSE_CLICK:
 		if (param.asPoint().x <= 20 || param.asPoint().x >= 620) {
 			leaveScene(0);
 		}
 		break;
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		_buttonClicked = true;
 		if (_countdown == 0)
 			_countdown = 1;

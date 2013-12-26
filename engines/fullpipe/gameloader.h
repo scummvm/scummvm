@@ -111,6 +111,7 @@ class GameLoader : public CObject {
 Inventory2 *getGameLoaderInventory();
 InteractionController *getGameLoaderInteractionController();
 MctlCompound *getSc2MctlCompoundBySceneId(int16 sceneId);
+MotionController *getCurrSceneSc2MotionController();
 
 } // End of namespace Fullpipe
 

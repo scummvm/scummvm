@@ -286,7 +286,7 @@ uint32 Scene1105::handleMessage(int messageNum, const MessageParam &param, Entit
 	uint32 messageResult = 0;
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x0001:
+	case NM_MOUSE_CLICK:
 		if (param.asPoint().x <= 20 || param.asPoint().x >= 620) {
 			if (!_isActionButtonClicked && _backgroundIndex == 0) {
 				if (_isPanelOpen) {
@@ -309,7 +309,7 @@ uint32 Scene1105::handleMessage(int messageNum, const MessageParam &param, Entit
 		_leaveResult = 1;
 		SetUpdateHandler(&Scene1105::upClosePanel);
 		break;
-	case 0x4807:
+	case NM_KLAYMEN_RAISE_LEVER:
 		if (sender == _ssActionButton) {
 			if (getSubVar(VA_GOOD_DICE_NUMBERS, 0) == getSubVar(VA_CURR_DICE_NUMBERS, 0) &&
 				getSubVar(VA_GOOD_DICE_NUMBERS, 1) == getSubVar(VA_CURR_DICE_NUMBERS, 1) &&
@@ -318,7 +318,7 @@ uint32 Scene1105::handleMessage(int messageNum, const MessageParam &param, Entit
 				playSound(2);
 				_doMoveTeddy = true;
 			} else {
-				sendMessage(_asTeddyBear, 0x2002, 0);
+				sendMessage(_asTeddyBear, NM_POSITION_CHANGE, 0);
 			}
 			showMouse(false);
 			_isActionButtonClicked = true;
@@ -460,7 +460,7 @@ void Scene1105::update() {
 	if (_isClosePanelDone && !isSoundPlaying(1))
 		leaveScene(_leaveResult);
 	if (_doMoveTeddy && !isSoundPlaying(2)) {
-		sendMessage(_asTeddyBear, 0x2002, 0);
+		sendMessage(_asTeddyBear, NM_POSITION_CHANGE, 0);
 		_doMoveTeddy = false;
 	}
 }
@@ -513,7 +513,7 @@ Scene1109::Scene1109(NeverhoodEngine *vm, Module *parentModule, int which)
 uint32 Scene1109::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		if (param.asInteger()) {
 			setRectList(0x004B63A8);
 			_klaymen->setKlaymenIdleTable3();

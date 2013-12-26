@@ -1608,8 +1608,6 @@ Scene5200::Scene5200() :
 void Scene5200::postInit(SceneObjectList *OwnerList) {
 	Scene::postInit();
 	setZoomPercents(0, 150, 199, 150);
-	_fieldA = 5600;
-	_fieldE = 5100;
 
 	_hotspot9._state = 0;
 	_hotspot10._state = 0;

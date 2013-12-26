@@ -33,14 +33,14 @@
 #include "fullpipe/behavior.h"
 #include "fullpipe/modal.h"
 #include "fullpipe/input.h"
+#include "fullpipe/motion.h"
 #include "fullpipe/scenes.h"
 #include "fullpipe/floaters.h"
-#include "fullpipe/motion.h"
 #include "fullpipe/console.h"
 
 namespace Fullpipe {
 
-FullpipeEngine *g_fullpipe = 0;
+FullpipeEngine *g_fp = 0;
 Vars *g_vars = 0;
 
 FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
@@ -148,9 +148,16 @@ FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_objectAtCursor = 0;
 	_objectIdAtCursor = 0;
 
+	_arcadeOverlay = 0;
+	_arcadeOverlayHelper = 0;
+	_arcadeOverlayX = 0;
+	_arcadeOverlayY = 0;
+	_arcadeOverlayMidX = 0;
+	_arcadeOverlayMidY = 0;
+
 	_isSaveAllowed = true;
 
-	g_fullpipe = this;
+	g_fp = this;
 	g_vars = new Vars;
 }
 

@@ -39,10 +39,10 @@ AsScene1001Door::AsScene1001Door(NeverhoodEngine *vm)
 uint32 AsScene1001Door::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		hammerHitsDoor();
 		break;
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		gotoNextState();
 		break;
 	}
@@ -118,13 +118,13 @@ AsScene1001Hammer::AsScene1001Hammer(NeverhoodEngine *vm, Sprite *asDoor)
 uint32 AsScene1001Hammer::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x00352100)
 			sendMessage(_asDoor, 0x2000, 0);
 		else if (param.asInteger() == 0x0A1A0109)
 			playSound(0, 0x66410886);
 		break;
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		startAnimation(0x022C90D4, 1, -1);
 		playSound(0, 0xE741020A);
 		_newStickFrameIndex = STICK_LAST_FRAME;
@@ -148,14 +148,14 @@ AsScene1001Window::AsScene1001Window(NeverhoodEngine *vm)
 uint32 AsScene1001Window::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x0E0A1410)
 			playSound(0, 0x60803F10);
 		break;
 	case 0x2001:
 		startAnimation(0xC68C2299, 0, -1);
 		break;
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		SetMessageHandler(NULL);
 		setGlobalVar(V_WINDOW_OPEN, 1);
 		setVisible(false);
@@ -180,9 +180,9 @@ AsScene1001Lever::AsScene1001Lever(NeverhoodEngine *vm, Scene *parentScene, int1
 uint32 AsScene1001Lever::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x00C0C444)
-			sendMessage(_parentScene, 0x480F, 0);
+			sendMessage(_parentScene, NM_KLAYMEN_LOWER_LEVER, 0);
 		else if (param.asInteger() == 0xC41A02C0)
 			playSound(0, 0x40581882);
 		break;
@@ -190,18 +190,18 @@ uint32 AsScene1001Lever::handleMessage(int messageNum, const MessageParam &param
 		sendMessage(_parentScene, 0x4826, 0);
 		messageResult = 1;
 		break;
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		startAnimation(0x04A98C36, 0, -1);
 		_newStickFrameIndex = 0;
 		break;
-	case 0x480F:
+	case NM_KLAYMEN_LOWER_LEVER:
 		startAnimation(0x04A98C36, 0, -1);
 		break;
-	case 0x482A:
-		sendMessage(_parentScene, 0x1022, 990);
+	case NM_MOVE_TO_BACK:
+		sendMessage(_parentScene, NM_PRIORITY_CHANGE, 990);
 		break;
-	case 0x482B:
-		sendMessage(_parentScene, 0x1022, 1010);
+	case NM_MOVE_TO_FRONT:
+		sendMessage(_parentScene, NM_PRIORITY_CHANGE, 1010);
 		break;
 	}
 	return messageResult;
@@ -272,23 +272,23 @@ void AsScene1002Ring::update() {
 uint32 AsScene1002Ring::hmRingIdle(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x4806:
+	case NM_KLAYMEN_USE_OBJECT:
 		setDoDeltaX(((Sprite*)sender)->isDoDeltaX() ? 1 : 0);
-		sendMessage(_parentScene, 0x4806, 0);
+		sendMessage(_parentScene, NM_KLAYMEN_USE_OBJECT, 0);
 		SetMessageHandler(&AsScene1002Ring::hmRingPulled1);
 		startAnimation(_isSpecial ? 0x87502558 : 0x80DD4010, 0, -1);
 		break;
-	case 0x480F:
+	case NM_KLAYMEN_LOWER_LEVER:
 		setDoDeltaX(((Sprite*)sender)->isDoDeltaX() ? 1 : 0);
-		sendMessage(_parentScene, 0x480F, 0);
+		sendMessage(_parentScene, NM_KLAYMEN_LOWER_LEVER, 0);
 		SetMessageHandler(&AsScene1002Ring::hmRingPulled2);
 		startAnimation(0x861A2020, 0, -1);
 		break;
-	case 0x482A:
-		sendMessage(_parentScene, 0x1022, 990);
+	case NM_MOVE_TO_BACK:
+		sendMessage(_parentScene, NM_PRIORITY_CHANGE, 990);
 		break;
-	case 0x482B:
-		sendMessage(_parentScene, 0x1022, 1010);
+	case NM_MOVE_TO_FRONT:
+		sendMessage(_parentScene, NM_PRIORITY_CHANGE, 1010);
 		break;
 	}
 	return messageResult;
@@ -297,21 +297,21 @@ uint32 AsScene1002Ring::hmRingIdle(int messageNum, const MessageParam &param, En
 uint32 AsScene1002Ring::hmRingPulled1(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		startAnimation(_isSpecial ? 0x78D0A812 : 0xB85D2A10, 0, -1);
 		SetMessageHandler(&AsScene1002Ring::hmRingHangingLow);
 		break;
-	case 0x4807:
-		sendMessage(_parentScene, 0x4807, 0);
+	case NM_KLAYMEN_RAISE_LEVER:
+		sendMessage(_parentScene, NM_KLAYMEN_RAISE_LEVER, 0);
 		setDoDeltaX(_vm->_rnd->getRandomNumber(1));
 		startAnimation(0x8258A030, 0, -1);
 		SetMessageHandler(&AsScene1002Ring::hmRingReleased);
 		break;
-	case 0x482A:
-		sendMessage(_parentScene, 0x1022, 990);
+	case NM_MOVE_TO_BACK:
+		sendMessage(_parentScene, NM_PRIORITY_CHANGE, 990);
 		break;
-	case 0x482B:
-		sendMessage(_parentScene, 0x1022, 1010);
+	case NM_MOVE_TO_FRONT:
+		sendMessage(_parentScene, NM_PRIORITY_CHANGE, 1010);
 		break;
 	}
 	return messageResult;
@@ -320,15 +320,15 @@ uint32 AsScene1002Ring::hmRingPulled1(int messageNum, const MessageParam &param,
 uint32 AsScene1002Ring::hmRingPulled2(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		startAnimation(0x04103090, 0, -1);
 		SetMessageHandler(&AsScene1002Ring::hmRingHangingLow);
 		break;
-	case 0x482A:
-		sendMessage(_parentScene, 0x1022, 990);
+	case NM_MOVE_TO_BACK:
+		sendMessage(_parentScene, NM_PRIORITY_CHANGE, 990);
 		break;
-	case 0x482B:
-		sendMessage(_parentScene, 0x1022, 1010);
+	case NM_MOVE_TO_FRONT:
+		sendMessage(_parentScene, NM_PRIORITY_CHANGE, 1010);
 		break;
 	}
 	return messageResult;
@@ -337,17 +337,17 @@ uint32 AsScene1002Ring::hmRingPulled2(int messageNum, const MessageParam &param,
 uint32 AsScene1002Ring::hmRingHangingLow(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x4807:
-		sendMessage(_parentScene, 0x4807, 0);
+	case NM_KLAYMEN_RAISE_LEVER:
+		sendMessage(_parentScene, NM_KLAYMEN_RAISE_LEVER, 0);
 		setDoDeltaX(_vm->_rnd->getRandomNumber(1));
 		startAnimation(0x8258A030, 0, -1);
 		SetMessageHandler(&AsScene1002Ring::hmRingReleased);
 		break;
-	case 0x482A:
-		sendMessage(_parentScene, 0x1022, 990);
+	case NM_MOVE_TO_BACK:
+		sendMessage(_parentScene, NM_PRIORITY_CHANGE, 990);
 		break;
-	case 0x482B:
-		sendMessage(_parentScene, 0x1022, 1010);
+	case NM_MOVE_TO_FRONT:
+		sendMessage(_parentScene, NM_PRIORITY_CHANGE, 1010);
 		break;
 	}
 	return messageResult;
@@ -356,18 +356,18 @@ uint32 AsScene1002Ring::hmRingHangingLow(int messageNum, const MessageParam &par
 uint32 AsScene1002Ring::hmRingReleased(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = hmRingIdle(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x05410F72)
 			playSound(0, 0x21EE40A9);
 		break;
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		startAnimation(0xA85C4011, 0, -1);
 		break;
-	case 0x482A:
-		sendMessage(_parentScene, 0x1022, 990);
+	case NM_MOVE_TO_BACK:
+		sendMessage(_parentScene, NM_PRIORITY_CHANGE, 990);
 		break;
-	case 0x482B:
-		sendMessage(_parentScene, 0x1022, 1010);
+	case NM_MOVE_TO_FRONT:
+		sendMessage(_parentScene, NM_PRIORITY_CHANGE, 1010);
 		break;
 	}
 	return messageResult;
@@ -391,11 +391,11 @@ void AsScene1002Door::update() {
 uint32 AsScene1002Door::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x4808:
+	case NM_KLAYMEN_OPEN_DOOR:
 		setGlobalVar(V_FLYTRAP_RING_DOOR, 1);
 		SetSpriteUpdate(&AsScene1002Door::suOpenDoor);
 		break;
-	case 0x4809:
+	case NM_KLAYMEN_CLOSE_DOOR:
 		setGlobalVar(V_FLYTRAP_RING_DOOR, 0);
 		SetSpriteUpdate(&AsScene1002Door::suCloseDoor);
 		break;
@@ -443,7 +443,7 @@ uint32 AsScene1002BoxingGloveHitEffect::handleMessage(int messageNum, const Mess
 		startAnimation(0x0422255A, 0, -1);
 		setVisible(true);
 		break;
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		stopAnimation();
 		setVisible(false);
 		break;
@@ -467,7 +467,7 @@ AsScene1002DoorSpy::AsScene1002DoorSpy(NeverhoodEngine *vm, NRect &clipRect, Sce
 uint32 AsScene1002DoorSpy::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0xA61CA1C2)
 			sendMessage(_asBoxingGloveHitEffect, 0x2004, 0);
 		else if (param.asInteger() == 0x14CE0620)
@@ -483,7 +483,7 @@ uint32 AsScene1002DoorSpy::handleMessage(int messageNum, const MessageParam &par
 uint32 AsScene1002DoorSpy::hmDoorSpyAnimation(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		gotoNextState();
 		break;
 	}
@@ -607,7 +607,7 @@ void AsScene1002VenusFlyTrap::upIdle() {
 uint32 AsScene1002VenusFlyTrap::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x000890C4)
 			playSound(0, 0xC21190D8);
 		else if (param.asInteger() == 0x522200A0)
@@ -660,11 +660,11 @@ uint32 AsScene1002VenusFlyTrap::handleMessage(int messageNum, const MessageParam
 	case 0x4810:
 		swallowKlaymen();
 		break;
-	case 0x482A:
-		sendMessage(_parentScene, 0x1022, 995);
+	case NM_MOVE_TO_BACK:
+		sendMessage(_parentScene, NM_PRIORITY_CHANGE, 995);
 		break;
-	case 0x482B:
-		sendMessage(_parentScene, 0x1022, 1015);
+	case NM_MOVE_TO_FRONT:
+		sendMessage(_parentScene, NM_PRIORITY_CHANGE, 1015);
 		break;
 	}
 	return messageResult;
@@ -673,7 +673,7 @@ uint32 AsScene1002VenusFlyTrap::handleMessage(int messageNum, const MessageParam
 uint32 AsScene1002VenusFlyTrap::hmAnimationSimple(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		gotoNextState();
 		break;
 	}
@@ -683,7 +683,7 @@ uint32 AsScene1002VenusFlyTrap::hmAnimationSimple(int messageNum, const MessageP
 uint32 AsScene1002VenusFlyTrap::hmAnimationExt(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x000890C4)
 			playSound(0, 0xC21190D8);
 		else if (param.asInteger() == 0x41881801) {
@@ -698,14 +698,14 @@ uint32 AsScene1002VenusFlyTrap::hmAnimationExt(int messageNum, const MessagePara
 		} else if (param.asInteger() == 0x522200A0)
 			playSound(0, 0x931080C8);
 		break;
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		gotoNextState();
 		break;
-	case 0x482A:
-		sendMessage(_parentScene, 0x1022, 995);
+	case NM_MOVE_TO_BACK:
+		sendMessage(_parentScene, NM_PRIORITY_CHANGE, 995);
 		break;
-	case 0x482B:
-		sendMessage(_parentScene, 0x1022, 1015);
+	case NM_MOVE_TO_FRONT:
+		sendMessage(_parentScene, NM_PRIORITY_CHANGE, 1015);
 		break;
 	}
 	return messageResult;
@@ -727,7 +727,7 @@ void AsScene1002VenusFlyTrap::stWalk() {
 }
 
 void AsScene1002VenusFlyTrap::stRelease() {
-	sendMessage(_parentScene, 0x4807, 0);
+	sendMessage(_parentScene, NM_KLAYMEN_RAISE_LEVER, 0);
 	startAnimation(0x82292851, 0, -1);
 	SetUpdateHandler(&AsScene1002VenusFlyTrap::update);
 	SetMessageHandler(&AsScene1002VenusFlyTrap::hmAnimationSimple);
@@ -833,11 +833,11 @@ void AsScene1002OutsideDoorBackground::update() {
 uint32 AsScene1002OutsideDoorBackground::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageResult) {
-	case 0x4808:
+	case NM_KLAYMEN_OPEN_DOOR:
 		_isDoorClosed = false;
 		_countdown = 2;
 		break;
-	case 0x4809:
+	case NM_KLAYMEN_CLOSE_DOOR:
 		_isDoorClosed = true;
 		_countdown = 2;
 		break;
@@ -848,7 +848,7 @@ uint32 AsScene1002OutsideDoorBackground::handleMessage(int messageNum, const Mes
 uint32 AsScene1002OutsideDoorBackground::hmAnimation(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = handleMessage(messageNum, param, sender);
 	switch (messageResult) {
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		gotoNextState();
 		break;
 	}
@@ -930,14 +930,14 @@ void AsScene1002KlaymenPeekHand::update() {
 uint32 AsScene1002KlaymenPeekHand::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x4AB28209) {
-			sendMessage(_parentScene, 0x1022, 1200);
+			sendMessage(_parentScene, NM_PRIORITY_CHANGE, 1200);
 			_isClipRectSaved = true;
 			_savedClipRect = _surface->getClipRect();
 			setClipRect(0, 0, 640, 480);
 		} else if (param.asInteger() == 0x88001184) {
-			sendMessage(_parentScene, 0x1022, 1000);
+			sendMessage(_parentScene, NM_PRIORITY_CHANGE, 1000);
 			if (_isClipRectSaved)
 				setClipRect(_savedClipRect);
 		}
@@ -960,15 +960,15 @@ AsScene1004TrashCan::AsScene1004TrashCan(NeverhoodEngine *vm)
 uint32 AsScene1004TrashCan::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x225A8587)
 			playSound(0, 0x109AFC4C);
 		break;
-	case 0x2002:
+	case NM_POSITION_CHANGE:
 		startAnimation(0xEB312C11, 0, -1);
 		setVisible(true);
 		break;
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		stopAnimation();
 		setVisible(false);
 		break;
@@ -991,7 +991,7 @@ uint32 KmScene1001::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4800:
 		startWalkToX(param.asPoint().x, false);
 		break;
-	case 0x4004:
+	case NM_KLAYMEN_STAND_IDLE:
 		GotoState(&Klaymen::stTryStandIdle);
 		break;
 	case 0x4804:
@@ -1001,10 +1001,10 @@ uint32 KmScene1001::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x480D:
 		GotoState(&KmScene1001::stPullHammerLever);
 		break;
-	case 0x4812:
+	case NM_KLAYMEN_PICKUP:
 		GotoState(&Klaymen::stPickUpGeneric);
 		break;
-	case 0x4816:
+	case NM_KLAYMEN_PRESS_BUTTON:
 		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stPressButton);
 		else if (param.asInteger() == 2)
@@ -1040,7 +1040,7 @@ uint32 KmScene1001::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x4836:
 		if (param.asInteger() == 1) {
-			sendMessage(_parentScene, 0x2002, 0);
+			sendMessage(_parentScene, NM_POSITION_CHANGE, 0);
 			GotoState(&KmScene1001::stWakeUp);
 		}
 		break;
@@ -1075,7 +1075,7 @@ void KmScene1001::stSleeping() {
 uint32 KmScene1001::hmSleeping(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = hmLowLevel(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x03060012) {
 			playSound(0, 0xC0238244);
 		}
@@ -1098,9 +1098,9 @@ void KmScene1001::stPullHammerLever() {
 uint32 KmScene1001::hmPullHammerLever(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Klaymen::hmLever(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x4AB28209)
-			sendMessage(_attachedSprite, 0x480F, 0);
+			sendMessage(_attachedSprite, NM_KLAYMEN_LOWER_LEVER, 0);
 		break;
 	}
 	return messageResult;
@@ -1129,14 +1129,14 @@ uint32 KmScene1002::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x2001:
 		GotoState(&Klaymen::stStandIdleSpecial);
 		break;
-	case 0x2007:
+	case NM_CAR_MOVE_TO_PREV_POINT:
 		_otherSprite = (Sprite*)param.asEntity();
 		break;
 	case 0x4001:
 	case 0x4800:
 		startWalkToX(param.asPoint().x, false);
 		break;
-	case 0x4004:
+	case NM_KLAYMEN_STAND_IDLE:
 		GotoState(&Klaymen::stTryStandIdle);
 		break;
 	case 0x4803:
@@ -1164,13 +1164,13 @@ uint32 KmScene1002::xHandleMessage(int messageNum, const MessageParam &param) {
 			break;
 		}
 		break;
-	case 0x480A:
+	case NM_KLAYMEN_MOVE_OBJECT:
 		GotoState(&KmScene1002::stMoveVenusFlyTrap);
 		break;
 	case 0x480D:
 		GotoState(&KmScene1002::stJumpToRingVenusFlyTrap);
 		break;
-	case 0x4816:
+	case NM_KLAYMEN_PRESS_BUTTON:
 		if (param.asInteger() == 0)
 			GotoState(&KmScene1002::stPressDoorButton);
 		break;
@@ -1182,21 +1182,21 @@ uint32 KmScene1002::xHandleMessage(int messageNum, const MessageParam &param) {
 		startWalkToAttachedSpriteXDistance(param.asInteger());
 		break;
 	case 0x4820:
-		sendMessage(_parentScene, 0x2005, 0);
+		sendMessage(_parentScene, NM_KLAYMEN_CLIMB_LADDER, 0);
 		GotoState(&Klaymen::stContinueClimbLadderUp);
 		break;
 	case 0x4821:
-		sendMessage(_parentScene, 0x2005, 0);
+		sendMessage(_parentScene, NM_KLAYMEN_CLIMB_LADDER, 0);
 		_destY = param.asInteger();
 		GotoState(&Klaymen::stStartClimbLadderDown);
 		break;
 	case 0x4822:
-		sendMessage(_parentScene, 0x2005, 0);
+		sendMessage(_parentScene, NM_KLAYMEN_CLIMB_LADDER, 0);
 		_destY = param.asInteger();
 		GotoState(&Klaymen::stStartClimbLadderUp);
 		break;
 	case 0x4823:
-		sendMessage(_parentScene, 0x2006, 0);
+		sendMessage(_parentScene, NM_KLAYMEN_STOP_CLIMBING, 0);
 		GotoState(&Klaymen::stClimbLadderHalf);
 		break;
 	case 0x482E:
@@ -1227,22 +1227,22 @@ void KmScene1002::setupJumpToRing() {
 	SetMessageHandler(&KmScene1002::hmJumpToRing);
 	SetSpriteUpdate(&Klaymen::suUpdateDestX);
 	NextState(&KmScene1002::stHangOnRing);
-	sendMessage(_attachedSprite, 0x482B, 0);
+	sendMessage(_attachedSprite, NM_MOVE_TO_FRONT, 0);
 }
 
 uint32 KmScene1002::hmJumpToRing(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = hmLowLevelAnimation(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x168050A0) {
-			sendMessage(_attachedSprite, 0x4806, 0);
+			sendMessage(_attachedSprite, NM_KLAYMEN_USE_OBJECT, 0);
 			_acceptInput = true;
 		} else if (param.asInteger() == 0x320AC306) {
 			playSound(0, 0x5860C640);
 		} else if (param.asInteger() == 0x4AB28209) {
-			sendMessage(_attachedSprite, 0x482A, 0);
+			sendMessage(_attachedSprite, NM_MOVE_TO_BACK, 0);
 		} else if (param.asInteger() == 0x88001184) {
-			sendMessage(_attachedSprite, 0x482B, 0);
+			sendMessage(_attachedSprite, NM_MOVE_TO_FRONT, 0);
 		}
 		break;
 	}
@@ -1283,22 +1283,22 @@ void KmScene1002::stJumpToRing3() {
 		SetSpriteUpdate(&Klaymen::suUpdateDestX);
 		SetMessageHandler(&KmScene1002::hmJumpToRing3);
 		NextState(&KmScene1002::stHoldRing3);
-		sendMessage(_attachedSprite, 0x482B, 0);
+		sendMessage(_attachedSprite, NM_MOVE_TO_FRONT, 0);
 	}
 }
 
 uint32 KmScene1002::hmJumpToRing3(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = hmLowLevelAnimation(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x168050A0) {
-			sendMessage(_attachedSprite, 0x4806, 0);
+			sendMessage(_attachedSprite, NM_KLAYMEN_USE_OBJECT, 0);
 		} else if (param.asInteger() == 0x320AC306) {
 			playSound(0, 0x5860C640);
 		} else if (param.asInteger() == 0x4AB28209) {
-			sendMessage(_attachedSprite, 0x482A, 0);
+			sendMessage(_attachedSprite, NM_MOVE_TO_BACK, 0);
 		} else if (param.asInteger() == 0x88001184) {
-			sendMessage(_attachedSprite, 0x482B, 0);
+			sendMessage(_attachedSprite, NM_MOVE_TO_FRONT, 0);
 		}
 		break;
 	}
@@ -1339,22 +1339,22 @@ void KmScene1002::stJumpToRingVenusFlyTrap() {
 		SetMessageHandler(&KmScene1002::hmJumpToRingVenusFlyTrap);
 		SetSpriteUpdate(&AnimatedSprite::updateDeltaXY);
 		NextState(&KmScene1002::stLandOnFeet);
-		sendMessage(_attachedSprite, 0x482B, 0);
+		sendMessage(_attachedSprite, NM_MOVE_TO_FRONT, 0);
 	}
 }
 
 uint32 KmScene1002::hmJumpToRingVenusFlyTrap(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = hmLowLevelAnimation(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x168050A0) {
-			sendMessage(_attachedSprite, 0x480F, 0);
+			sendMessage(_attachedSprite, NM_KLAYMEN_LOWER_LEVER, 0);
 		} else if (param.asInteger() == 0x586B0300) {
 			sendMessage(_otherSprite, 0x480E, 1);
 		} else if (param.asInteger() == 0x4AB28209) {
-			sendMessage(_attachedSprite, 0x482A, 0);
+			sendMessage(_attachedSprite, NM_MOVE_TO_BACK, 0);
 		} else if (param.asInteger() == 0x88001184) {
-			sendMessage(_attachedSprite, 0x482B, 0);
+			sendMessage(_attachedSprite, NM_MOVE_TO_FRONT, 0);
 		}
 		break;
 	}
@@ -1377,7 +1377,7 @@ void KmScene1002::stJumpAndFall() {
 void KmScene1002::stDropFromRing() {
 	if (_attachedSprite) {
 		_x = _attachedSprite->getX();
-		sendMessage(_attachedSprite, 0x4807, 0);
+		sendMessage(_attachedSprite, NM_KLAYMEN_RAISE_LEVER, 0);
 		_attachedSprite = NULL;
 	}
 	_busyStatus = 2;
@@ -1392,7 +1392,7 @@ void KmScene1002::stDropFromRing() {
 uint32 KmScene1002::hmJumpAndFall(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = hmLowLevel(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x1307050A) {
 			playSound(0, 0x40428A09);
 		}
@@ -1426,12 +1426,12 @@ void KmScene1002::stContinueMovingVenusFlyTrap() {
 }
 
 void KmScene1002::evMoveVenusFlyTrapDone() {
-	sendMessage(_attachedSprite, 0x482A, 0);
+	sendMessage(_attachedSprite, NM_MOVE_TO_BACK, 0);
 }
 
 uint32 KmScene1002::hmMoveVenusFlyTrap(int messageNum, const MessageParam &param, Entity *sender) {
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x01084280) {
 			sendMessage(_attachedSprite, 0x480B, (uint32)_doDeltaX);
 		} else if (param.asInteger() == 0x02421405) {
@@ -1442,16 +1442,16 @@ uint32 KmScene1002::hmMoveVenusFlyTrap(int messageNum, const MessageParam &param
 				SetMessageHandler(&KmScene1002::hmFirstMoveVenusFlyTrap);
 			}
 		} else if (param.asInteger() == 0x4AB28209) {
-			sendMessage(_attachedSprite, 0x482A, 0);
+			sendMessage(_attachedSprite, NM_MOVE_TO_BACK, 0);
 		} else if (param.asInteger() == 0x88001184) {
-			sendMessage(_attachedSprite, 0x482B, 0);
+			sendMessage(_attachedSprite, NM_MOVE_TO_FRONT, 0);
 		} else if (param.asInteger() == 0x32180101) {
 			playSound(0, 0x405002D8);
 		} else if (param.asInteger() == 0x0A2A9098) {
 			playSound(0, 0x0460E2FA);
 		}
 		break;
-	case 0x480A:
+	case NM_KLAYMEN_MOVE_OBJECT:
 		_isMoveObjectRequested = true;
 		return 0;
 	}
@@ -1461,11 +1461,11 @@ uint32 KmScene1002::hmMoveVenusFlyTrap(int messageNum, const MessageParam &param
 uint32 KmScene1002::hmFirstMoveVenusFlyTrap(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = hmLowLevelAnimation(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x4AB28209) {
-			sendMessage(_attachedSprite, 0x482A, 0);
+			sendMessage(_attachedSprite, NM_MOVE_TO_BACK, 0);
 		} else if (param.asInteger() == 0x88001184) {
-			sendMessage(_attachedSprite, 0x482B, 0);
+			sendMessage(_attachedSprite, NM_MOVE_TO_FRONT, 0);
 		} else if (param.asInteger() == 0x32180101) {
 			playSound(0, 0x405002D8);
 		} else if (param.asInteger() == 0x0A2A9098) {
@@ -1503,7 +1503,7 @@ void KmScene1002::evHitByBoxingGloveDone() {
 uint32 KmScene1002::hmPressDoorButton(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = hmLowLevelAnimation(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x942D2081) {
 			_acceptInput = false;
 			sendMessage(_attachedSprite, 0x2003, 0);
@@ -1530,7 +1530,7 @@ uint32 KmScene1002::hmHitByBoxingGlove(int messageNum, const MessageParam &param
 		}
 		messageResult = 0;
 		break;
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x1A1A0785) {
 			playSound(0, 0x40F0A342);
 		} else if (param.asInteger() == 0x60428026) {
@@ -1553,7 +1553,7 @@ uint32 KmScene1004::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4800:
 		startWalkToX(param.asPoint().x, false);
 		break;
-	case 0x4004:
+	case NM_KLAYMEN_STAND_IDLE:
 		GotoState(&Klaymen::stTryStandIdle);
 		break;
 	case 0x4817:
@@ -1563,7 +1563,7 @@ uint32 KmScene1004::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4818:
 		startWalkToX(_dataResource.getPoint(param.asInteger()).x, false);
 		break;
-	case 0x481E:
+	case NM_KLAYMEN_RETURN_FROM_USE:
 		GotoState(&KmScene1004::stReadNote);
 		break;
 	case 0x4820:
@@ -1610,10 +1610,10 @@ uint32 KmScene1004::xHandleMessage(int messageNum, const MessageParam &param) {
 uint32 KmScene1004::hmReadNote(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = hmLowLevelAnimation(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x04684052) {
 			_acceptInput = true;
-			sendMessage(_parentScene, 0x2002, 0);
+			sendMessage(_parentScene, NM_POSITION_CHANGE, 0);
 		}
 		break;
 	}

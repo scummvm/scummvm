@@ -26,6 +26,7 @@
 #include "fullpipe/constants.h"
 
 #include "fullpipe/gameloader.h"
+#include "fullpipe/motion.h"
 #include "fullpipe/scenes.h"
 #include "fullpipe/statics.h"
 
@@ -36,7 +37,7 @@
 namespace Fullpipe {
 
 void scene01_fixEntrance() {
-	GameVar *var = g_fullpipe->getGameLoaderGameVar()->getSubVarByName("OBJSTATES")->getSubVarByName("SAVEGAME");
+	GameVar *var = g_fp->getGameLoaderGameVar()->getSubVarByName("OBJSTATES")->getSubVarByName("SAVEGAME");
 	if (var->getSubVarAsInt("Entrance") == TrubaLeft)
 		var->setSubVarAsInt("Entrance", TrubaRight);
 }
@@ -48,7 +49,7 @@ void scene01_initScene(Scene *sc, int entrance) {
 	g_vars->scene01_picSc01Osk2 = sc->getPictureObjectById(PIC_SC1_OSK2, 0);
 	g_vars->scene01_picSc01Osk2->_flags &= 0xFFFB;
 
-	if (g_fullpipe->getObjectState(sO_EggCracker) == g_fullpipe->getObjectEnumState(sO_EggCracker, sO_DidNotCrackEgg)) {
+	if (g_fp->getObjectState(sO_EggCracker) == g_fp->getObjectEnumState(sO_EggCracker, sO_DidNotCrackEgg)) {
 		PictureObject *pic = sc->getPictureObjectById(PIC_SC1_KUCHKA, 0);
 		if (pic)
 			pic->_flags &= 0xFFFB;
@@ -60,7 +61,7 @@ void scene01_initScene(Scene *sc, int entrance) {
 			bootAnim->_flags &= ~0x04;
 	}
 
-	g_fullpipe->lift_setButton(sO_Level2, ST_LBN_2N);
+	g_fp->lift_setButton(sO_Level2, ST_LBN_2N);
 }
 
 int sceneHandler01(ExCommand *cmd) {
@@ -71,7 +72,7 @@ int sceneHandler01(ExCommand *cmd) {
 
 	if (cmd->_messageNum > MSG_SC1_SHOWOSK) {
 		if (cmd->_messageNum == MSG_SC1_UTRUBACLICK)
-			handleObjectInteraction(g_fullpipe->_aniMan, g_fullpipe->_currentScene->getPictureObjectById(PIC_SC1_LADDER, 0), 0);
+			handleObjectInteraction(g_fp->_aniMan, g_fp->_currentScene->getPictureObjectById(PIC_SC1_LADDER, 0), 0);
 
 		return 0;
 	}
@@ -97,19 +98,19 @@ int sceneHandler01(ExCommand *cmd) {
 		return 0;
 	}
 
-	if (g_fullpipe->_aniMan2) {
-		if (g_fullpipe->_aniMan2->_ox < g_fullpipe->_sceneRect.left + 200) {
-			g_fullpipe->_currentScene->_x = g_fullpipe->_aniMan2->_ox - g_fullpipe->_sceneRect.left - 300;
+	if (g_fp->_aniMan2) {
+		if (g_fp->_aniMan2->_ox < g_fp->_sceneRect.left + 200) {
+			g_fp->_currentScene->_x = g_fp->_aniMan2->_ox - g_fp->_sceneRect.left - 300;
 		}
 
-		if (g_fullpipe->_aniMan2->_ox > g_fullpipe->_sceneRect.right - 200)
-			g_fullpipe->_currentScene->_x = g_fullpipe->_aniMan2->_ox - g_fullpipe->_sceneRect.right + 300;
+		if (g_fp->_aniMan2->_ox > g_fp->_sceneRect.right - 200)
+			g_fp->_currentScene->_x = g_fp->_aniMan2->_ox - g_fp->_sceneRect.right + 300;
 
 		res = 1;
 	}
-	g_fullpipe->_behaviorManager->updateBehaviors();
+	g_fp->_behaviorManager->updateBehaviors();
 
-	g_fullpipe->startSceneTrack();
+	g_fp->startSceneTrack();
 
 	return res;
 }

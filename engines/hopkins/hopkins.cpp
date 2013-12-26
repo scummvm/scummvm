@@ -1923,7 +1923,6 @@ void HopkinsEngine::bombExplosion() {
 }
 
 void HopkinsEngine::restoreSystem() {
-	quitGame();
 	_events->refreshEvents();
 }
 

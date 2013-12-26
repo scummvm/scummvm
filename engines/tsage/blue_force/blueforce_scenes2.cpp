@@ -1748,7 +1748,7 @@ void Scene280::Action1::signal() {
 	case 1:
 		scene->_jake.setStrip(2);
 		scene->_jake.setFrame(1);
-		scene->_jake.animate(ANIM_MODE_8, NULL);
+		scene->_jake.animate(ANIM_MODE_8, 0, NULL);
 		scene->_jake._numFrames = 5;
 
 		scene->_stripManager.start(2800, this);

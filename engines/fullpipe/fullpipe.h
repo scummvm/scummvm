@@ -63,6 +63,7 @@ struct MessageHandler;
 struct MovTable;
 class MGM;
 class NGIArchive;
+class PictureObject;
 class Scene;
 class SoundList;
 class StaticANIObject;
@@ -148,9 +149,11 @@ public:
 	void stopAllSounds();
 	void toggleMute();
 	void playSound(int id, int flag);
+	void playTrack(GameVar *sceneVar, const char *name, bool delayed);
 	void startSceneTrack();
 	void stopSoundStream2();
 	void stopAllSoundStreams();
+	void stopAllSoundInstances(int id);
 
 	int _sfxVolume;
 
@@ -235,6 +238,7 @@ public:
 	Scene *accessScene(int sceneId);
 	void setSceneMusicParameters(GameVar *var);
 	int convertScene(int scene);
+	int getSceneFromTag(int tag);
 
 	NGIArchive *_currArchive;
 
@@ -242,9 +246,18 @@ public:
 	void openHelp();
 	void openMainMenu();
 
+	PictureObject *_arcadeOverlay;
+	PictureObject *_arcadeOverlayHelper;
+	int _arcadeOverlayX;
+	int _arcadeOverlayY;
+	int _arcadeOverlayMidX;
+	int _arcadeOverlayMidY;
+
 	void initArcadeKeys(const char *varname);
 	void processArcade(ExCommand *ex);
 	void winArcade();
+	void setArcadeOverlay(int picId);
+	int drawArcadeOverlay(int adjust);
 
 	void getAllInventory();
 
@@ -268,7 +281,7 @@ public:
 
 };
 
-extern FullpipeEngine *g_fullpipe;
+extern FullpipeEngine *g_fp;
 extern Vars *g_vars;
 
 } // End of namespace Fullpipe

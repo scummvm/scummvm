@@ -165,6 +165,13 @@ extern char const *const ACCESS_CODE_REQUIRED;
 extern char const *const INVALID_ACCESS_CODE;
 extern char const *const FOREIGN_OBJECT_EXTRACTED;
 
+// Scene 1330/7 Options dialog messages
+extern char const *const AUTO_PLAY_ON;
+extern char const *const AUTO_PLAY_OFF;
+extern char const *const START_NEW_CARD_GAME;
+extern char const *const QUIT_CARD_GAME;
+extern char const *const CONTINUE_CARD_GAME;
+
 // Dialog messages
 extern char const *const HELP_MSG;
 extern char const *const CHAR_TITLE;

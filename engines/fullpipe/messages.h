@@ -178,6 +178,7 @@ void updateGlobalMessageQueue(int id, int objid);
 void clearGlobalMessageQueueList1();
 
 bool chainQueue(int queueId, int flags);
+bool chainObjQueue(StaticANIObject *obj, int queueId, int flags);
 void postExCommand(int parentId, int keyCode, int x, int y, int f20, int f16);
 
 } // End of namespace Fullpipe

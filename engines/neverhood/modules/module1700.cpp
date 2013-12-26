@@ -215,7 +215,7 @@ void Scene1705::update() {
 uint32 Scene1705::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		if (param.asInteger()) {
 			setRectList(0x004B6B40);
 			_klaymen->setKlaymenIdleTable3();

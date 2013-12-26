@@ -213,6 +213,14 @@ char const *const ACCESS_CODE_REQUIRED = "access code required";
 char const *const INVALID_ACCESS_CODE = "invalid access code";
 char const *const FOREIGN_OBJECT_EXTRACTED = "foreign object extracted";
 
+// Scene 1330/7 Options dialog messages
+char const *const AUTO_PLAY_ON = "Auto-Play is On";
+char const *const AUTO_PLAY_OFF = "Auto-Play is Off";
+char const *const START_NEW_CARD_GAME = "Start a new game";
+char const *const QUIT_CARD_GAME = "Quit Outpost Alpha";
+char const *const CONTINUE_CARD_GAME = "Continue Outpost Alpha";
+
+//
 char const *const HELP_MSG = "\x1\rRETURN TO\r RINGWORLD\x14";
 char const *const CHAR_TITLE = "\x01Select Character:";
 char const *const CHAR_QUINN_MSG = "  Quinn  ";

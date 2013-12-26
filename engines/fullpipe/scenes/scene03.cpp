@@ -26,6 +26,7 @@
 #include "fullpipe/constants.h"
 
 #include "fullpipe/gameloader.h"
+#include "fullpipe/motion.h"
 #include "fullpipe/scenes.h"
 #include "fullpipe/statics.h"
 
@@ -50,34 +51,34 @@ void scene03_initScene(Scene *sc) {
 	g_vars->scene03_eggeater = sc->getStaticANIObject1ById(ANI_EGGEATER, -1);
 	g_vars->scene03_domino = sc->getStaticANIObject1ById(ANI_DOMINO_3, -1);
 
-	GameVar *v = g_fullpipe->_gameLoader->_gameVar->getSubVarByName("OBJSTATES")->getSubVarByName(sO_GulpedEggs);
+	GameVar *v = g_fp->_gameLoader->_gameVar->getSubVarByName("OBJSTATES")->getSubVarByName(sO_GulpedEggs);
 
 	g_vars->swallowedEgg1 = v->getSubVarByName(sO_Egg1);
 	g_vars->swallowedEgg2 = v->getSubVarByName(sO_Egg2);
 	g_vars->swallowedEgg3 = v->getSubVarByName(sO_Egg3);
 
-	g_fullpipe->lift_setButton(sO_Level2, ST_LBN_2N);
+	g_fp->lift_setButton(sO_Level2, ST_LBN_2N);
 
-	g_fullpipe->lift_sub5(sc, QU_SC3_ENTERLIFT, QU_SC3_EXITLIFT);
+	g_fp->lift_sub5(sc, QU_SC3_ENTERLIFT, QU_SC3_EXITLIFT);
 }
 
 void scene03_setEaterState() {
-	if (g_fullpipe->getObjectState(sO_EggGulperGaveCoin) == g_fullpipe->getObjectEnumState(sO_EggGulperGaveCoin, sO_Yes)) {
-		g_fullpipe->_behaviorManager->setBehaviorEnabled(g_vars->scene03_eggeater, ST_EGTR_SLIM, QU_EGTR_SLIMSHOW, 0);
-		g_fullpipe->_behaviorManager->setBehaviorEnabled(g_vars->scene03_eggeater, ST_EGTR_MID1, QU_EGTR_MD1_SHOW, 0);
-		g_fullpipe->_behaviorManager->setBehaviorEnabled(g_vars->scene03_eggeater, ST_EGTR_MID2, QU_EGTR_MD2_SHOW, 0);
+	if (g_fp->getObjectState(sO_EggGulperGaveCoin) == g_fp->getObjectEnumState(sO_EggGulperGaveCoin, sO_Yes)) {
+		g_fp->_behaviorManager->setBehaviorEnabled(g_vars->scene03_eggeater, ST_EGTR_SLIM, QU_EGTR_SLIMSHOW, 0);
+		g_fp->_behaviorManager->setBehaviorEnabled(g_vars->scene03_eggeater, ST_EGTR_MID1, QU_EGTR_MD1_SHOW, 0);
+		g_fp->_behaviorManager->setBehaviorEnabled(g_vars->scene03_eggeater, ST_EGTR_MID2, QU_EGTR_MD2_SHOW, 0);
 	}
 }
 
 int scene03_updateCursor() {
-	g_fullpipe->updateCursorCommon();
+	g_fp->updateCursorCommon();
 
-	if (g_fullpipe->_cursorId == PIC_CSR_DEFAULT && g_fullpipe->_objectIdAtCursor == PIC_SC3_DOMIN && g_vars->scene03_domino) {
+	if (g_fp->_cursorId == PIC_CSR_DEFAULT && g_fp->_objectIdAtCursor == PIC_SC3_DOMIN && g_vars->scene03_domino) {
 		if (g_vars->scene03_domino->_flags & 4)
-			g_fullpipe->_cursorId = PIC_CSR_ITN;
+			g_fp->_cursorId = PIC_CSR_ITN;
 	}
 
-	return g_fullpipe->_cursorId;
+	return g_fp->_cursorId;
 }
 
 void sceneHandler03_eaterFat() {
@@ -94,7 +95,7 @@ void sceneHandler03_swallowEgg(int item) {
 	} else if (!g_vars->swallowedEgg3->_value.intValue) {
 		g_vars->swallowedEgg3->_value.intValue = item;
 
-		g_fullpipe->setObjectState(sO_EggGulperGaveCoin, g_fullpipe->getObjectEnumState(sO_EggGulperGaveCoin, sO_Yes));
+		g_fp->setObjectState(sO_EggGulperGaveCoin, g_fp->getObjectEnumState(sO_EggGulperGaveCoin, sO_Yes));
 
 		scene03_setEaterState();
 	}
@@ -112,7 +113,7 @@ int sceneHandler03_swallowedEgg1State() {
 }
 
 void sceneHandler03_giveCoin(ExCommand *ex) {
-	MessageQueue *mq = g_fullpipe->_globalMessageQueueList->getMessageQueueById(ex->_parId);
+	MessageQueue *mq = g_fp->_globalMessageQueueList->getMessageQueueById(ex->_parId);
 
 	if (mq && mq->getCount() > 0) {
 		ExCommand *ex0 = mq->getExCommandByIndex(0);
@@ -136,7 +137,7 @@ void sceneHandler03_giveCoin(ExCommand *ex) {
 }
 
 void sceneHandler03_goLadder() {
-	handleObjectInteraction(g_fullpipe->_aniMan, g_fullpipe->_currentScene->getPictureObjectById(PIC_SC3_LADDER, 0), 0);
+	handleObjectInteraction(g_fp->_aniMan, g_fp->_currentScene->getPictureObjectById(PIC_SC3_LADDER, 0), 0);
 }
 
 void sceneHandler03_pushEggStack() {
@@ -158,7 +159,7 @@ void sceneHandler03_releaseEgg() {
 }
 
 void sceneHandler03_takeEgg(ExCommand *ex) {
-	MessageQueue *mq = g_fullpipe->_globalMessageQueueList->getMessageQueueById(ex->_parId);
+	MessageQueue *mq = g_fp->_globalMessageQueueList->getMessageQueueById(ex->_parId);
 
 	if (mq && mq->getCount() > 0) {
 		ExCommand *ex0 = mq->getExCommandByIndex(0);
@@ -179,7 +180,7 @@ void sceneHandler03_takeEgg(ExCommand *ex) {
 			if (ex1->_objtype == kObjTypeObjstateCommand) {
 				ObjstateCommand *com = (ObjstateCommand *)ex1;
 
-				com->_value = g_fullpipe->getObjectEnumState(sO_EggGulper, sO_WantsNothing);
+				com->_value = g_fp->getObjectEnumState(sO_EggGulper, sO_WantsNothing);
 			}
 		}
 	}
@@ -194,11 +195,11 @@ int sceneHandler03(ExCommand *ex) {
 
 	switch (ex->_messageNum) {
 	case MSG_LIFT_EXITLIFT:
-		g_fullpipe->lift_exitSeq(ex);
+		g_fp->lift_exitSeq(ex);
 		break;
 
 	case MSG_LIFT_CLOSEDOOR:
-		g_fullpipe->lift_closedoorSeq();
+		g_fp->lift_closedoorSeq();
 		break;
 
 	case MSG_SC3_ONTAKECOIN:
@@ -206,7 +207,7 @@ int sceneHandler03(ExCommand *ex) {
 		break;
 
 	case MSG_LIFT_STARTEXITQUEUE:
-		g_fullpipe->lift_startExitQueue();
+		g_fp->lift_startExitQueue();
 		break;
 
 	case MSG_SC3_RELEASEEGG:
@@ -214,7 +215,7 @@ int sceneHandler03(ExCommand *ex) {
 		break;
 
 	case MSG_LIFT_CLICKBUTTON:
-		g_fullpipe->lift_animation3();
+		g_fp->lift_animation3();
 		break;
 
 	case MSG_SC3_HIDEDOMINO:
@@ -226,7 +227,7 @@ int sceneHandler03(ExCommand *ex) {
 		break;
 
 	case MSG_LIFT_GO:
-		g_fullpipe->lift_goAnimation();
+		g_fp->lift_goAnimation();
 		break;
 
 	case MSG_SC3_UTRUBACLICK:
@@ -238,25 +239,25 @@ int sceneHandler03(ExCommand *ex) {
 		break;
 
 	case 64:
-		g_fullpipe->lift_sub05(ex);
+		g_fp->lift_sub05(ex);
 		break;
 
 	case 29:
 		{
-			StaticANIObject *ani = g_fullpipe->_currentScene->getStaticANIObjectAtPos(ex->_sceneClickX, ex->_sceneClickY);
+			StaticANIObject *ani = g_fp->_currentScene->getStaticANIObjectAtPos(ex->_sceneClickX, ex->_sceneClickY);
 			if (ani && ani->_id == ANI_LIFTBUTTON) {
-				g_fullpipe->lift_sub1(ani);
+				g_fp->lift_sub1(ani);
 				ex->_messageKind = 0;
 
 				return 0;
 			}
 
-			if (g_fullpipe->_currentScene->getPictureObjectIdAtPos(ex->_sceneClickX, ex->_sceneClickY) == PIC_SC3_DOMIN) {
+			if (g_fp->_currentScene->getPictureObjectIdAtPos(ex->_sceneClickX, ex->_sceneClickY) == PIC_SC3_DOMIN) {
 				if (g_vars->scene03_domino)
 					if (g_vars->scene03_domino->_flags & 4)
-						if (g_fullpipe->_aniMan->isIdle())
-							if (!(g_fullpipe->_aniMan->_flags & 0x100) && g_fullpipe->_msgObjectId2 != g_vars->scene03_domino->_id) {
-								handleObjectInteraction(g_fullpipe->_aniMan, g_vars->scene03_domino, ex->_keyCode);
+						if (g_fp->_aniMan->isIdle())
+							if (!(g_fp->_aniMan->_flags & 0x100) && g_fp->_msgObjectId2 != g_vars->scene03_domino->_id) {
+								handleObjectInteraction(g_fp->_aniMan, g_vars->scene03_domino, ex->_keyCode);
 								ex->_messageKind = 0;
 
 								return 0;
@@ -270,19 +271,19 @@ int sceneHandler03(ExCommand *ex) {
 		{
 			int res = 0;
 
-			if (g_fullpipe->_aniMan2) {
-				if (g_fullpipe->_aniMan2->_ox < g_fullpipe->_sceneRect.left + 200)
-					g_fullpipe->_currentScene->_x = g_fullpipe->_aniMan2->_ox - g_fullpipe->_sceneRect.left - 300;
+			if (g_fp->_aniMan2) {
+				if (g_fp->_aniMan2->_ox < g_fp->_sceneRect.left + 200)
+					g_fp->_currentScene->_x = g_fp->_aniMan2->_ox - g_fp->_sceneRect.left - 300;
 
-				if (g_fullpipe->_aniMan2->_ox > g_fullpipe->_sceneRect.right - 200)
-					g_fullpipe->_currentScene->_x = g_fullpipe->_aniMan2->_ox - g_fullpipe->_sceneRect.right + 300;
+				if (g_fp->_aniMan2->_ox > g_fp->_sceneRect.right - 200)
+					g_fp->_currentScene->_x = g_fp->_aniMan2->_ox - g_fp->_sceneRect.right + 300;
 
 				res = 1;
 			}
 
-			g_fullpipe->_behaviorManager->updateBehaviors();
+			g_fp->_behaviorManager->updateBehaviors();
 
-			g_fullpipe->startSceneTrack();
+			g_fp->startSceneTrack();
 
 			return res;
 		}

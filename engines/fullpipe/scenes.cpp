@@ -80,28 +80,119 @@ Vars::Vars() {
 	scene04_dudePosX = 0;
 	scene04_dudePosY = 0;
 
-	scene04_var02 = 0;
-	scene04_var04 = 0;
+	scene04_bottleIsTaken = false;
+	scene04_kozyawkaOnLadder = false;
 	scene04_walkingKozyawka = 0;
 	scene04_bottleWeight = 0;
-	scene04_var07 = 0;
-	scene04_var08 = 0;
-	scene04_var09 = 0;
-	scene04_var10 = 0;
-	scene04_var11 = 0;
-	scene04_var12 = 0;
-	scene04_var13 = 0;
-	scene04_var14 = 0;
-	scene04_var15 = 0;
+	scene04_var07 = false;
+	scene04_ladderClickable = false;
+	scene04_handIsDown = false;
+	scene04_dudeInBottle = false;
+	scene04_kozHeadRaised = false;
+	scene04_bottleIsDropped = false;
+	scene04_bigBallIn = false;
+	scene04_bigBallCounter = 0;
+	scene04_bigBallFromLeft = false;
 	scene04_speakerVariant = 0;
 	scene04_speakerPhase = 0;
-	scene04_var18 = 0;
-	scene04_var19 = 0;
-	scene04_var20 = 0;
-	scene04_var24 = 0;
-	scene04_var25 = 0;
+	scene04_clockCanGo = false;
+	scene04_objectIsTaken = false;
+	scene04_springOffset = 0;
+	scene04_lastKozyawka = 0;
+	scene04_springDelay = 0;
 	scene04_bottleY = 0;
 	scene04_ladderOffset = 0;
+
+	scene05_handle = 0;
+	scene05_wacko = 0;
+	scene05_bigHatch = 0;
+	scene05_wackoTicker = 0;
+	scene05_handleFlipper = 0;
+	scene05_floatersTicker = 0;
+
+	scene06_manX = 0;
+	scene06_manY = 0;
+	scene06_ballX = 0;
+	scene06_ballY = 0;
+	scene06_mumsy = 0;
+	scene06_someBall = 0;
+	scene06_invHandle = 0;
+	scene06_liftButton = 0;
+	scene06_ballDrop = 0;
+	scene06_arcadeEnabled = false;
+	scene06_aimingBall = false;
+	scene06_currentBall = 0;
+	scene06_ballInHands = 0;
+	scene06_flyingBall = 0;
+	scene06_numBallsGiven = 0;
+	scene06_mumsyNumBalls = 0;
+	scene06_eggieTimeout = 0;
+	scene06_eggieDirection = true;
+	scene06_mumsyGotBall = 0;
+	scene06_ballDeltaX = 0;
+	scene06_ballDeltaY = 0;
+	scene06_sceneClickX = 0;
+	scene06_sceneClickY = 0;
+	scene06_mumsyPos = 0;
+	scene06_mumsyJumpBk = 0;
+	scene06_mumsyJumpFw = 0;
+	scene06_mumsyJumpBkPercent = 0;
+	scene06_mumsyJumpFwPercent = 0;
+
+	scene07_lukeAnim = 0;
+	scene07_lukePercent = 0;
+	scene07_plusMinus = 0;
+
+	scene08_batuta = 0;
+	scene08_vmyats = 0;
+	scene08_clock = 0;
+	scene08_inAir = false;
+	scene08_flyingUp = false;
+	scene08_onBelly = false;
+	scene08_stairsOffset = -37;
+	scene08_snoringCountdown = -1;
+	scene08_inArcade = false;
+	scene08_stairsVisible = true;
+	scene08_manOffsetY = 0;
+
+	scene10_gum = 0;
+	scene10_packet = 0;
+	scene10_packet2 = 0;
+	scene10_inflater = 0;
+	scene10_ladder = 0;
+	scene10_hasGum = 0;
+
+	scene11_swingie = 0;
+	scene11_boots = 0;
+	scene11_dudeOnSwing = 0;
+	scene11_hint = 0;
+	scene11_var02 = 0;
+	scene11_var03 = 0;
+	scene11_var04 = 0;
+	scene11_var05 = 0;
+	scene11_var06 = 0;
+	scene11_var07 = 0;
+	scene11_var08 = 1.0;
+	scene11_var09 = 1.0;
+	scene11_var10 = 1.0;
+	scene11_var11 = 1.0;
+	scene11_var12 = 0.0;
+	scene11_var13 = 0;
+	scene11_var14 = 0;
+	scene11_var15 = 0;
+	scene11_var16 = 0;
+	scene11_var17 = 0;
+	scene11_var18 = 0;
+	scene11_var19 = 0;
+	scene11_var20 = 0;
+
+	scene12_fly = 0;
+	scene12_flyCountdown = 0;
+
+	scene15_chantingCountdown = 0;
+	scene15_plusminus = 0;
+	scene15_ladder = 0;
+	scene15_boot = 0;
 
 	selector = 0;
 }
@@ -121,6 +212,15 @@ int FullpipeEngine::convertScene(int scene) {
 		return SC_1;
 
 	return scenes[scene - 1];
+}
+
+int FullpipeEngine::getSceneFromTag(int tag) {
+	for (int i = 0; i < ARRAYSIZE(scenes); i++) {
+		if (scenes[i] == tag)
+			return i + 1;
+	}
+
+	return 1;
 }
 
 bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
@@ -265,7 +365,6 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 		_updateCursorCallback = scene04_updateCursor;
 		break;
 
-#if 0
 	case SC_5:
 		sceneVar = _gameLoader->_gameVar->getSubVarByName("SC_5");
 		scene->preloadMovements(sceneVar);
@@ -284,7 +383,7 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 		_behaviorManager->initBehavior(scene, sceneVar);
 		scene->initObjectCursors("SC_6");
 		setSceneMusicParameters(sceneVar);
-		sub_415300();
+		scene06_initMumsy();
 		insertMessageHandler(sceneHandler06, 2, 2);
 		_updateCursorCallback = scene06_updateCursor;
 		break;
@@ -307,11 +406,12 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 		_behaviorManager->initBehavior(scene, sceneVar);
 		scene->initObjectCursors("SC_8");
 		setSceneMusicParameters(sceneVar);
-		sub_416890();
+		scene08_setupMusic();
 		addMessageHandler(sceneHandler08, 2);
 		_updateCursorCallback = scene08_updateCursor;
 		break;
 
+#if 0
 	case SC_9:
 		sceneVar = _gameLoader->_gameVar->getSubVarByName("SC_9");
 		scene->preloadMovements(sceneVar);
@@ -322,6 +422,7 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 		insertMessageHandler(sceneHandler09, 2, 2);
 		_updateCursorCallback = scene09_updateCursor;
 		break;
+#endif
 
 	case SC_10:
 		sceneVar = _gameLoader->_gameVar->getSubVarByName("SC_10");
@@ -334,6 +435,7 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 		_updateCursorCallback = scene10_updateCursor;
 		break;
 
+#if 0
 	case SC_11:
 		sceneVar = _gameLoader->_gameVar->getSubVarByName("SC_11");
 		scene->preloadMovements(sceneVar);
@@ -342,9 +444,10 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 		scene->initObjectCursors("SC_11");
 		setSceneMusicParameters(sceneVar);
 		insertMessageHandler(sceneHandler11, 2, 2);
-		scene11_sub_41A980();
+		scene11_setupMusic();
 		_updateCursorCallback = scene11_updateCursor;
 		break;
+#endif
 
 	case SC_12:
 		sceneVar = _gameLoader->_gameVar->getSubVarByName("SC_12");
@@ -357,6 +460,7 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 		_updateCursorCallback = defaultUpdateCursor;
 		break;
 
+#if 0
 	case SC_13:
 		sceneVar = _gameLoader->_gameVar->getSubVarByName("SC_13");
 		scene->preloadMovements(sceneVar);
@@ -379,6 +483,7 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 		scene14_sub_41D2B0();
 		_updateCursorCallback = scene14_updateCursor;
 		break;
+#endif
 
 	case SC_15:
 		sceneVar = _gameLoader->_gameVar->getSubVarByName("SC_15");
@@ -391,6 +496,7 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 		_updateCursorCallback = scene15_updateCursor;
 		break;
 
+#if 0
 	case SC_16:
 		sceneVar = _gameLoader->_gameVar->getSubVarByName("SC_16");
 		scene->preloadMovements(sceneVar);
@@ -695,6 +801,8 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 
 	default:
 		_behaviorManager->initBehavior(0, 0);
+
+		error("Unknown scene %d", entrance->_sceneId);
 		break;
 	}
 
@@ -702,29 +810,9 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 }
 
 int defaultUpdateCursor() {
-	g_fullpipe->updateCursorCommon();
+	g_fp->updateCursorCommon();
 
-	return g_fullpipe->_cursorId;
-}
-
-void FullpipeEngine::initArcadeKeys(const char *varname) {
-	GameVar *var = getGameLoaderGameVar()->getSubVarByName(varname)->getSubVarByName("KEYPOS");
-
-	if (!var)
-		return;
-
-	int cnt = var->getSubVarsCount();
-
-	for (int i = 0; i < cnt; i++) {
-		Common::Point *point = new Common::Point;
-
-		GameVar *sub = var->getSubVarByIndex(i);
-
-		point->x = sub->getSubVarAsInt("X");
-		point->y = sub->getSubVarAsInt("Y");
-
-		_arcadeKeys.push_back(point);
-	}
+	return g_fp->_cursorId;
 }
 
 void FullpipeEngine::processArcade(ExCommand *ex) {

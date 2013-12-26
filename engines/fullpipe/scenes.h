@@ -25,8 +25,10 @@
 
 namespace Fullpipe {
 
+struct BehaviorEntryInfo;
 class StaticANIObject;
- class MctlLadder;
+class MctlLadder;
+class MGM;
 
 int defaultUpdateCursor();
 
@@ -49,6 +51,33 @@ int sceneHandler03(ExCommand *cmd);
 int scene04_updateCursor();
 void scene04_initScene(Scene *sc);
 int sceneHandler04(ExCommand *cmd);
+
+void scene05_initScene(Scene *sc);
+int sceneHandler05(ExCommand *cmd);
+
+void scene06_initScene(Scene *sc);
+void scene06_initMumsy();
+int sceneHandler06(ExCommand *cmd);
+int scene06_updateCursor();
+
+void scene07_initScene(Scene *sc);
+int sceneHandler07(ExCommand *cmd);
+
+void scene08_initScene(Scene *sc);
+void scene08_setupMusic();
+int sceneHandler08(ExCommand *cmd);
+int scene08_updateCursor();
+
+void scene10_initScene(Scene *sc);
+int sceneHandler10(ExCommand *cmd);
+int scene10_updateCursor();
+
+void scene12_initScene(Scene *sc);
+int sceneHandler12(ExCommand *ex);
+
+int scene15_updateCursor();
+void scene15_initScene(Scene *sc);
+int sceneHandler15(ExCommand *cmd);
 
 void sceneDbgMenu_initScene(Scene *sc);
 int sceneHandlerDbgMenu(ExCommand *cmd);
@@ -113,23 +142,116 @@ public:
 	int scene04_speakerVariant;
 	int scene04_speakerPhase;
 
-	int scene04_var02;
-	int scene04_var04;
+	bool scene04_bottleIsTaken;
+	bool scene04_kozyawkaOnLadder;
 	int scene04_bottleWeight;
-	int scene04_var07;
-	int scene04_var08;
-	int scene04_var09;
-	int scene04_var10;
-	int scene04_var11;
-	int scene04_var12;
-	int scene04_var13;
-	int scene04_var14;
-	int scene04_var15;
-	int scene04_var18;
-	int scene04_var19;
-	int scene04_var20;
-	StaticANIObject *scene04_var24;
-	int scene04_var25;
+	bool scene04_var07;
+	bool scene04_ladderClickable;
+	bool scene04_handIsDown;
+	bool scene04_dudeInBottle;
+	bool scene04_kozHeadRaised;
+	bool scene04_bottleIsDropped;
+	bool scene04_bigBallIn;
+	int scene04_bigBallCounter;
+	bool scene04_bigBallFromLeft;
+	bool scene04_clockCanGo;
+	bool scene04_objectIsTaken;
+	int scene04_springOffset;
+	StaticANIObject *scene04_lastKozyawka;
+	int scene04_springDelay;
+
+	StaticANIObject *scene05_handle;
+	StaticANIObject *scene05_wacko;
+	StaticANIObject *scene05_bigHatch;
+	int scene05_wackoTicker;
+	int scene05_handleFlipper;
+	int scene05_floatersTicker;
+
+	StaticANIObject *scene06_mumsy;
+	int scene06_manX;
+	int scene06_manY;
+	int scene06_ballX;
+	int scene06_ballY;
+	StaticANIObject *scene06_someBall;
+	StaticANIObject *scene06_invHandle;
+	StaticANIObject *scene06_liftButton;
+	StaticANIObject *scene06_ballDrop;
+	bool scene06_arcadeEnabled;
+	bool scene06_aimingBall;
+	StaticANIObject *scene06_currentBall;
+	StaticANIObject *scene06_ballInHands;
+	StaticANIObject *scene06_flyingBall;
+	Common::Array<StaticANIObject *> scene06_balls;
+	int scene06_numBallsGiven;
+	int scene06_mumsyNumBalls;
+	int scene06_eggieTimeout;
+	int scene06_eggieDirection;
+	int scene06_mumsyGotBall;
+	int scene06_ballDeltaX;
+	int scene06_ballDeltaY;
+	int scene06_sceneClickX;
+	int scene06_sceneClickY;
+	int scene06_mumsyPos;
+	BehaviorEntryInfo *scene06_mumsyJumpBk;
+	BehaviorEntryInfo *scene06_mumsyJumpFw;
+	int scene06_mumsyJumpBkPercent;
+	int scene06_mumsyJumpFwPercent;
+
+	BehaviorEntryInfo *scene07_lukeAnim;
+	int scene07_lukePercent;
+	StaticANIObject *scene07_plusMinus;
+
+	StaticANIObject *scene08_batuta;
+	StaticANIObject *scene08_vmyats;
+	StaticANIObject *scene08_clock;
+	bool scene08_inAir;
+	bool scene08_flyingUp;
+	int scene08_onBelly;
+	int scene08_stairsOffset;
+	int scene08_snoringCountdown;
+	bool scene08_inArcade;
+	bool scene08_stairsVisible;
+	int scene08_manOffsetY;
+
+	StaticANIObject *scene10_gum;
+	StaticANIObject *scene10_packet;
+	StaticANIObject *scene10_packet2;
+	StaticANIObject *scene10_inflater;
+	PictureObject *scene10_ladder;
+	int scene10_hasGum;
+
+	StaticANIObject *scene11_swingie;
+	StaticANIObject *scene11_boots;
+	StaticANIObject *scene11_dudeOnSwing;
+	PictureObject *scene11_hint;
+	MGM scene11_var01;
+	int scene11_var02;
+	int scene11_var03;
+	int scene11_var04;
+	int scene11_var05;
+	int scene11_var06;
+	int scene11_var07;
+	double scene11_var08;
+	double scene11_var09;
+	double scene11_var10;
+	double scene11_var11;
+	double scene11_var12;
+	int scene11_var13;
+	int scene11_var14;
+	int scene11_var15;
+	int scene11_var16;
+	int scene11_var17;
+	int scene11_var18;
+	int scene11_var19;
+	int scene11_var20;
+
+	int scene12_fly;
+	int scene12_flyCountdown;
+
+	int scene15_chantingCountdown;
+	StaticANIObject *scene15_plusminus;
+	PictureObject *scene15_ladder;
+	StaticANIObject *scene15_boot;
 
 	PictureObject *selector;
 };

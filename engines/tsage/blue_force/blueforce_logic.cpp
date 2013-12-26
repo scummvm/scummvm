@@ -875,7 +875,6 @@ void PalettedScene::synchronize(Serializer &s) {
 
 void PalettedScene::postInit(SceneObjectList *OwnerList) {
 	_hasFader = false;
-	_palette._field412 = 1;
 	SceneExt::postInit(OwnerList);
 }
 
@@ -890,8 +889,6 @@ void PalettedScene::remove() {
 		BF_GLOBALS._scenePalette.loadPalette(2);
 		BF_GLOBALS._sceneManager._hasPalette = true;
 	}
-
-	BF_GLOBALS._scenePalette._field412 = 0;
 }
 
 PaletteFader *PalettedScene::addFader(const byte *arrBufferRGB, int step, Action *action) {

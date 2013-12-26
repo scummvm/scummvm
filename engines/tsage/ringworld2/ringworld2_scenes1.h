@@ -183,6 +183,20 @@ public:
 };
 
 class Scene1337 : public SceneExt {
+	class OptionsDialog: public GfxDialog {
+	private:
+		GfxButton _autoplay;
+		GfxButton _restartGame;
+		GfxButton _quitGame;
+		GfxButton _continueGame;
+
+		OptionsDialog();
+		virtual ~OptionsDialog() {}
+		virtual GfxButton *execute(GfxButton *defaultButton);
+	public:
+		static void show();
+	};
+
 	class Card: public SceneHotspot {
 	public:
 		SceneObject _card;
@@ -270,16 +284,6 @@ class Scene1337 : public SceneExt {
 		void signal();
 	};
 public:
-	typedef void (Scene1337::*FunctionPtrType)();
-	FunctionPtrType _delayedFunction;
-
-	ASound _aSound1;
-	ASound _aSound2;
-	SceneActor _helpIcon;
-	bool _autoplay;
-	GameBoardSide _gameBoardSide[4];
-	SceneItem _item1;
-	SceneObject _currentPlayerArrow;
 	Action1 _action1;
 	Action2 _action2;
 	Action3 _action3;
@@ -293,34 +297,46 @@ public:
 	Action11 _action11;
 	Action12 _action12;
 	Action13 _action13;
-	Card _animatedCard;
-	Card _shuffleAnimation;
-	Card _item4;
-	SceneActor _stockPile;
-	int _cardsAvailableNumb;
+
+	typedef void (Scene1337::*FunctionPtrType)();
+	FunctionPtrType _delayedFunction;
+
+	bool _autoplay;
+	bool _shuffleEndedFl;
+	bool _showPlayerTurn;
+	bool _displayHelpFl;
+	bool _instructionsDisplayedFl;
 
 	// Discarded cards are put in the available cards pile, with an higher index so there no conflict
 	int _currentDiscardIndex;
 	int _availableCardsPile[100];
-	Card *_actionCard1;
-	Card *_actionCard2;
-	Card *_actionCard3;
-	Card _item5;
-	Card _selectedCard;
-	Card _discardPile;
-	Card _stockCard;
-	bool _shuffleEndedFl;
+	int _cardsAvailableNumb;
 	int _currentPlayerNumb;
 	int _actionIdx1;
 	int _actionIdx2;
-	bool _showPlayerTurn;
-	bool _displayHelpFl;
 	int _winnerId;
-	bool _instructionsDisplayedFl;
 	int _instructionsWaitCount;
 	int _cursorCurRes;
 	int _cursorCurStrip;
 	int _cursorCurFrame;
+
+	ASound _aSound1;
+	ASound _aSound2;
+	GameBoardSide _gameBoardSide[4];
+	SceneActor _helpIcon;
+	SceneActor _stockPile;
+	SceneItem _actionItem;
+	SceneObject _currentPlayerArrow;
+
+	Card *_actionCard1;
+	Card *_actionCard2;
+	Card *_actionCard3;
+	Card _animatedCard;
+	Card _shuffleAnimation;
+	Card _discardedPlatformCard;
+	Card _selectedCard;
+	Card _discardPile;
+	Card _stockCard;
 
 	SceneObject _upperDisplayCard[8];
 	SceneObject _lowerDisplayCard[8];
@@ -330,28 +346,27 @@ public:
 
 	void actionDisplay(int resNum, int lineNum, int x, int y, int keepOnScreen, int width, int textMode, int fontNum, int colFG, int colBGExt, int colFGExt);
 	void setAnimationInfo(Card *card);
-	void subC20E5();
 	void handleNextTurn();
-	void subC2586();
-	bool subC264B(int cardId);
-	bool subC2687(int cardId);
-	int  subC26CB(int playerId, int handCardId);
-	int  findNormalCardInHand(int playerId);
-	int  subC274D(int arg1);
-	int  subC2781(int arg1);
-	int  subC27B5(int arg1);
-	int  isSlowCard(int cardId);
-	void subC2835(int arg1);
+	void handlePlayerTurn();
+	bool isStationCard(int cardId);
+	bool isStopConstructionCard(int cardId);
+	int  getStationId(int playerId, int handCardId);
+	int  findPlatformCardInHand(int playerId);
+	int  findCard13InHand(int playerId);
+	int  checkThieftCard(int playerId);
+	int  isDelayCard(int cardId);
+	int  getStationCardId(int cardId);
+	void handlePlayer01Discard(int playerId);
 	void playThieftCard(int playerId, Card *card, int victimId);
-	int  subC3257(int arg1);
-	bool subC32B1(int arg1, int arg2);
-	int  subC331B(int arg1);
+	int  getPreventionCardId(int cardId);
+	bool isAttackPossible(int victimId, int cardId);
+	int  getPlayerWithOutpost(int playerId);
 	bool checkAntiDelayCard(int delayCardId, int cardId);
-	void subC33C0(Card *subObj1, Card *subObj2);
+	void playStationCard(Card *station, Card *platform);
 	void playDelayCard(Card *card, Card *dest);
-	void playCard(Card *card, Card *dest);
+	void playPlatformCard(Card *card, Card *dest);
 	void playAntiDelayCard(Card *card, Card *dest);
-	Card *subC34EC(int arg1);
+	Card *getStationCard(int arg1);
 	void playCounterTrickCard(Card *card, int playerId);
 	int  getFreeHandCard(int playerId);
 	void discardCard(Card *card);
@@ -364,13 +379,13 @@ public:
 	void suggestInstructions();
 	void shuffleCards();
 	void dealCards();
-	void subCD193();
+	void showOptionsDialog();
 	void handleClick(int arg1, Common::Point pt);
 	void handlePlayer0();
 	void handlePlayer1();
 	void handlePlayer2();
 	void handlePlayer3();
-	void subD02CA();
+	void handleAutoplayPlayer2();
 	void updateCursorId(int arg1, bool arg2);
 	void setCursorData(int resNum, int rlbNum, int frameNum);
 	void subD18F5();

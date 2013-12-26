@@ -105,7 +105,7 @@ void GameModule::handleMouseDown(int16 x, int16 y) {
 		mousePos.x = x;
 		mousePos.y = y;
 		debug(2, "GameModule::handleMouseDown(%d, %d)", x, y);
-		sendPointMessage(_childObject, 0x0001, mousePos);
+		sendPointMessage(_childObject, NM_MOUSE_CLICK, mousePos);
 	}
 }
 
@@ -122,7 +122,7 @@ void GameModule::handleMouseUp(int16 x, int16 y) {
 void GameModule::handleSpaceKey() {
 	if (_childObject) {
 		debug(2, "GameModule::handleSpaceKey()");
-		sendMessage(_childObject, 0x0009, 0);
+		sendMessage(_childObject, NM_KEYPRESS_SPACE, 0);
 	}
 }
 
@@ -150,7 +150,7 @@ void GameModule::handleEscapeKey() {
 	else if (!_prevChildObject && _canRequestMainMenu)
 		_mainMenuRequested = true;
 	else if (_childObject)
-		sendMessage(_childObject, 0x000C, 0);
+		sendMessage(_childObject, NM_KEYPRESS_ESC, 0);
 }
 
 void GameModule::initKeySlotsPuzzle() {
@@ -781,7 +781,7 @@ void GameModule::updateModule() {
 
 void GameModule::openMainMenu() {
 	if (_childObject) {
-		sendMessage(_childObject, 0x101D, 0);
+		sendMessage(_childObject, NM_MOUSE_HIDE, 0);
 		_childObject->draw();
 	} else {
 		// If there's no module, create one so there's something to return to
@@ -807,7 +807,7 @@ void GameModule::updateMenuModule() {
 	if (!updateChild()) {
 		_vm->_screen->restoreParams();
 		_childObject = _prevChildObject;
-		sendMessage(_childObject, 0x101E, 0);
+		sendMessage(_childObject, NM_MOUSE_SHOW, 0);
 		_prevChildObject = NULL;
 		_moduleNum = _prevModuleNum;
 		SetUpdateHandler(&GameModule::updateModule);

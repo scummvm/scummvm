@@ -372,7 +372,7 @@ void AnimatedSprite::updateFrameIndex() {
 		} else {
 			// Inform self about end of current animation
 			// The caller can then e.g. set a new animation fileHash
-			sendMessage(this, 0x3002, 0);
+			sendMessage(this, NM_ANIMATION_STOP, 0);
 			if (_newAnimFileHash == 0)
 				_currFrameIndex = 0;
 		}
@@ -380,7 +380,7 @@ void AnimatedSprite::updateFrameIndex() {
 		if (_currFrameIndex > 0) {
 			_currFrameIndex--;
 		} else {
-			sendMessage(this, 0x3002, 0);
+			sendMessage(this, NM_ANIMATION_STOP, 0);
 			if (_newAnimFileHash == 0)
 				_currFrameIndex = _lastFrameIndex;
 		}
@@ -399,7 +399,7 @@ void AnimatedSprite::updateFrameInfo() {
 	updateBounds();
 	_needRefresh = true;
 	if (frameInfo.frameHash != 0)
-		sendMessage(this, 0x100D, frameInfo.frameHash);
+		sendMessage(this, NM_ANIMATION_START, frameInfo.frameHash);
 }
 
 void AnimatedSprite::createSurface1(uint32 fileHash, int surfacePriority) {

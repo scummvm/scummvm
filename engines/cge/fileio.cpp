@@ -70,7 +70,7 @@ ResourceManager::ResourceManager() {
 	_catFile = new Common::File();
 	_catFile->open(kCatName);
 
-	if ((!_datFile) || (!_catFile))
+	if (!_datFile->isOpen() || !_catFile->isOpen())
 		error("Unable to open data files");
 
 	for (int i = 0; i < kBtLevel; i++) {

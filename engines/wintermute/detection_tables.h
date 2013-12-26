@@ -27,8 +27,9 @@ namespace Wintermute {
 static const PlainGameDescriptor wintermuteGames[] = {
 	{"5ld",             "Five Lethal Demons"},
 	{"5ma",             "Five Magical Amulets"},
-	{"bthreshold",      "Beyond the Threshold"},
 	{"actualdest",      "Actual Destination"},
+	{"bookofgron",      "Book of Gron Part One"},
+	{"bthreshold",      "Beyond the Threshold"},
 	{"carolreed4",      "Carol Reed 4 - East Side Story"},
 	{"carolreed5",      "Carol Reed 5 - The Colour of Murder"},
 	{"carolreed6",      "Carol Reed 6 - Black Circle"},
@@ -41,15 +42,19 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"dirtysplit",      "Dirty Split"},
 	{"dreamscape",      "Dreamscape"},
 	{"escapemansion",   "Escape from the Mansion"},
+	{"framed",          "Framed"},
 	{"ghostsheet",      "Ghost in the Sheet"},
 	{"hamlet",          "Hamlet or the last game without MMORPS features, shaders and product placement"},
 	{"helga",           "Helga Deep In Trouble"},
 	{"jamesperis",      "James Peris: No License Nor Control"},
+	{"kulivocko",       "Kulivocko"},
+	{"lonelyrobot",     "Project Lonely Robot"},
 	{"looky",           "Looky"},
 	{"julia",           "J.U.L.I.A."},
 	{"mirage",          "Mirage"},
 	{"paintaria",       "Paintaria"},
 	{"pigeons",         "Pigeons in the Park"},
+	{"projectdoom",     "Project: Doom"},
 	{"reversion1",      "Reversion: The Escape"},
 	{"reversion2",      "Reversion: The Meeting"},
 	{"rosemary",        "Rosemary"},
@@ -102,6 +107,16 @@ static const ADGameDescription gameDescriptions[] = {
 		"",
 		AD_ENTRY1s("data.dcp", "d49bf9ccb2e74507447c82d6ad3e2bc4", 12773712),
 		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	// Book of Gron Part One
+	{
+		"bookofgron",
+		"",
+		AD_ENTRY1s("data.dcp", "e61b2ebee044a82fa0f8ca0fce2c8946", 83129531),
+		Common::RU_RUS,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
 		GUIO0()
@@ -327,6 +342,16 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO0()
 	},
+	// Framed
+	{
+		"framed",
+		"",
+		AD_ENTRY1s("data.dcp",  "e7259fb36f2c6f9f28242291e0c3de98", 34690568),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
 	// Ghosts in the Sheet
 	{
 		"ghostsheet",
@@ -343,6 +368,20 @@ static const ADGameDescription gameDescriptions[] = {
 		"hamlet",
 		"",
 		AD_ENTRY1s("data.dcp", "f624add957a77c9930529fb28cc2450f", 88183022),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	// Helga Deep In Trouble (English)
+	{
+		"helga",
+		"",
+		{
+			{"english.dcp", 0, "bfa136b21bdbc7d8691c0770a6d40bc3", 135931},
+			{"data.dcp", 0, "25cb955a60b58326f2eeda1ce288fb37", 183251259},
+			AD_LISTEND
+		},
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
@@ -437,6 +476,27 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_DEMO,
 		GUIO0()
 	},
+	// Kulivocko (Czech)
+	{
+		"kulivocko",
+		"",
+		AD_ENTRY1s("data.dcp", "44306dc470e9b27474043932eccee02f", 155106392),
+		Common::CZ_CZE,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	// Kulivocko (Czech) (Demo)
+	{
+		"kulivocko",
+		"Demo",
+		AD_ENTRY1s("data.dcp", "63b164bdfadecbb0deb5da691afb8154", 48362234),
+		Common::CZ_CZE,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE |
+		ADGF_DEMO,
+		GUIO0()
+	},
 	// Looky Demo (English)
 	{
 		"looky",
@@ -509,6 +569,27 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	// Project: Doom
+	{
+		"projectdoom",
+		"",
+		AD_ENTRY1s("data.dcp", "d5894b65a40706845434b99870bcab92", 99223761),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	// Project Lonely Robot
+	{
+		"lonelyrobot",
+		"beta",
+		AD_ENTRY1s("data.dcp", "a0cf7ad5bab957416dcda454e9f28ef0", 3420120),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE |
+		ADGF_DEMO,
 		GUIO0()
 	},
 	// Reversion: The Escape Version 1.0

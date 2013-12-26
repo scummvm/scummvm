@@ -120,7 +120,7 @@ public:
 	bool _harrissonTalkFl;
 	bool _cuffedDriverFl;
 	bool _cuffedPassengerFl;
-	bool _field1FC0;
+	bool _getDriverFl;
 	bool _driverOutOfTruckFl, _harrisonMovedFl;
 
 	Scene410();

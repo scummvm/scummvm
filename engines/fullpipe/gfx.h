@@ -94,7 +94,7 @@ class Picture : public MemoryObject {
 	void init();
 	void getDibInfo();
 	Bitmap *getPixelData();
-	void draw(int x, int y, int style, int angle);
+	virtual void draw(int x, int y, int style, int angle);
 	void drawRotated(int x, int y, int angle);
 
 	byte getAlpha() { return (byte)_alpha; }
@@ -116,6 +116,7 @@ class BigPicture : public Picture {
   public:
 	BigPicture() {}
 	virtual bool load(MfcArchive &file);
+	virtual void draw(int x, int y, int style, int angle);
 };
 
 class GameObject : public CObject {

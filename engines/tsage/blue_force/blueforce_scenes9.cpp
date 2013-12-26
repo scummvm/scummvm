@@ -2977,7 +2977,6 @@ bool Scene920::Item8::startAction(CursorType action, Event &event) {
 		// On the other hand, it's not really important as just after the hero leaves the scene
 		// so the variable is no longer used.
 		// scene->_oldCoord = &scene;
-		_field10 = 1;
 	} else {
 		scene->_sceneMode = 9201;
 		scene->setAction(&scene->_sequenceManager1, scene, 9201, &BF_GLOBALS._player, NULL);

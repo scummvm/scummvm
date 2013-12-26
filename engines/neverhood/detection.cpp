@@ -130,6 +130,9 @@ static const NeverhoodGameDescription gameDescriptions[] = {
 		0,
 	},
 
+// FIXME: Disabled for now, as it has broken resources that corrupt the heap
+// (e.g. the menu header).
+#if 0
 	{
 		// Neverhood Russian version. Fargus
 		{
@@ -146,6 +149,7 @@ static const NeverhoodGameDescription gameDescriptions[] = {
 		0,
 		0,
 	},
+#endif
 
 	{ AD_TABLE_END_MARKER, 0, 0, 0, 0 }
 };

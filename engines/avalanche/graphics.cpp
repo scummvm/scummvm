@@ -451,6 +451,51 @@ void GraphicManager::drawDebugLines() {
 	}
 }
 
+void GraphicManager::drawFilledRectangle(Common::Rect rect, Color color) {
+	_surface.fillRect(rect, color);
+}
+
+void GraphicManager::drawRectangle(Common::Rect rect, Color color) {
+	_surface.frameRect(rect, color);
+}
+
+void GraphicManager::nimLoad() {
+	Common::File file;
+	Common::String filename = "nim.avd";
+
+	if (!file.open(filename))
+		error("AVALANCHE: Scrolls: File not found: %s", filename.c_str());
+
+	file.seek(41);
+
+	_nimStone = loadPictureSign(file, 7, 23);
+	for (int i = 0; i < 3; i++)
+		_nimInitials[i] = loadPictureSign(file, 7, 23);
+	_nimLogo = loadPictureSign(file, 30, 37);
+
+	file.close();
+}
+
+void GraphicManager::nimDrawStone(int x, int y) {
+	drawPicture(_surface, _nimStone, x, y);
+}
+
+void GraphicManager::nimDrawInitials() {
+	for (int i = 0; i < 3; i++)
+		drawPicture(_surface, _nimInitials[i], 0, 75 + i * 35);
+}
+
+void GraphicManager::nimDrawLogo() {
+	drawPicture(_surface, _nimLogo, 392, 5);
+}
+
+void GraphicManager::nimFree() {
+	_nimStone.free();
+	for (int i = 0; i < 3; i++)
+		_nimInitials[i].free();
+	_nimLogo.free();
+}
+
 /**
  * This function mimics Pascal's getimage().
  */
@@ -495,6 +540,31 @@ Graphics::Surface GraphicManager::loadPictureRaw(Common::File &file, uint16 widt
 				for (int i = 0; i < 8; i++) {
 					byte pixelBit = (pixel >> i) & 1;
 					*(byte *)picture.getBasePtr(x + 7 - i, y) += (pixelBit << plane);
+				}
+			}
+		}
+	}
+
+	return picture;
+}
+
+Graphics::Surface GraphicManager::loadPictureSign(Common::File &file, int xl, int yl) {
+	// I know it looks very similar to the other loadPicture methods, but in truth it's the combination of the two.
+	uint16 width = xl * 8;
+	uint16 height = yl;
+
+	Graphics::Surface picture; // We make a Surface object for the picture itself.
+	picture.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
+
+	// Produce the picture. We read it in row-by-row, and every row has 4 planes.
+	for (int yy = 0; yy < height; yy++) {
+		for (int8 plane = 0; plane < 4; plane++) { // The planes are in the "right" order.
+			for (uint16 xx = 0; xx < width; xx += 8) {
+				byte pixel = file.readByte();
+				for (int bit = 0; bit < 8; bit++) {
+					byte pixelBit = (pixel >> bit) & 1;
+					if (pixelBit != 0)
+						*(byte *)picture.getBasePtr(xx + 7 - bit, yy) += (pixelBit << plane);
 				}
 			}
 		}
@@ -603,28 +673,10 @@ void GraphicManager::drawSign(Common::String fn, int16 xl, int16 yl, int16 y) {
 	if (!file.open(filename))
 		error("AVALANCHE: Scrolls: File not found: %s", filename.c_str());
 
-	// I know it looks very similar to the loadPicture methods, but in truth it's the combination of the two.
-	uint16 width = xl * 8;
-	uint16 height = yl;
-
 	Graphics::Surface sign; // We make a Surface object for the picture itself.
-	sign.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
-
-	// Produce the picture. We read it in row-by-row, and every row has 4 planes.
-	for (int yy = 0; yy < height; yy++) {
-		for (int8 plane = 0; plane < 4; plane++) { // The planes are in the "right" order.
-			for (uint16 xx = 0; xx < width; xx += 8) {
-				byte pixel = file.readByte();
-				for (int bit = 0; bit < 8; bit++) {
-					byte pixelBit = (pixel >> bit) & 1;
-					if (pixelBit != 0)
-						*(byte *)sign.getBasePtr(xx + 7 - bit, yy) += (pixelBit << plane);
-				}
-			}
-		}
-	}
-
-	drawPicture(_scrolls, sign, kScreenWidth / 2 - width / 2, y);
+	sign = loadPictureSign(file, xl, yl);
+	uint16 width = xl * 8;
+	drawPicture(_scrolls, sign, kScreenWidth / 2 - width / 2, y); // x coord: center the picture.
 
 	file.close();
 }

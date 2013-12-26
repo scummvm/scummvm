@@ -258,7 +258,7 @@ Scene1608::Scene1608(NeverhoodEngine *vm, Module *parentModule, int which)
 		SetMessageHandler(&Scene1608::hmUpperFloor);
 		SetUpdateHandler(&Scene1608::upUpperFloor);
 		_asCar->setPathPoints(_roomPathPoints);
-		sendMessage(_asCar, 0x2002, _roomPathPoints->size() - 1);
+		sendMessage(_asCar, NM_POSITION_CHANGE, _roomPathPoints->size() - 1);
 		_sprite3 = insertStaticSprite(0xB47026B0, 1100);
 		_clipRect1.set(_sprite3->getDrawRect().x, _sprite3->getDrawRect().y, 640, _sprite2->getDrawRect().y2());
 		_clipRect3.set(_sprite2->getDrawRect().x, _sprite3->getDrawRect().y, 640, _sprite2->getDrawRect().y2());
@@ -299,8 +299,8 @@ Scene1608::Scene1608(NeverhoodEngine *vm, Module *parentModule, int which)
 		_asIdleCarLower->setVisible(false);
 		_asIdleCarFull->setVisible(false);
 		_asCar->setPathPoints(_roomPathPoints);
-		sendMessage(_asCar, 0x2002, 0);
-		sendMessage(_asCar, 0x2008, 90);
+		sendMessage(_asCar, NM_POSITION_CHANGE, 0);
+		sendMessage(_asCar, NM_CAR_MOVE_TO_NEXT_POINT, 90);
 		_sprite3 = insertStaticSprite(0xB47026B0, 1100);
 		_clipRect1.set(_sprite3->getDrawRect().x, _sprite3->getDrawRect().y, 640, _sprite2->getDrawRect().y2());
 		_clipRect3.set(_sprite2->getDrawRect().x, _sprite3->getDrawRect().y, 640, _sprite2->getDrawRect().y2());
@@ -349,7 +349,7 @@ void Scene1608::upUpperFloor() {
 		_asIdleCarLower->setVisible(false);
 		_asIdleCarFull->setVisible(false);
 		_asCar->setVisible(true);
-		sendMessage(_asCar, 0x2009, 0);
+		sendMessage(_asCar, NM_CAR_ENTER, 0);
 		_asCar->handleUpdate();
 		_klaymen = NULL;
 		_carStatus = 0;
@@ -361,7 +361,7 @@ void Scene1608::upCarAtHome() {
 	Scene::update();
 	if (_mouseClicked) {
 		if (_mouseClickPos.x <= 329 && _asCar->getX() == 375 && _asCar->getY() == 227) {
-			sendMessage(_asCar, 0x200A, 0);
+			sendMessage(_asCar, NM_CAR_LEAVE, 0);
 			SetUpdateHandler(&Scene1608::upGettingOutOfCar);
 		} else {
 			sendPointMessage(_asCar, 0x2004, _mouseClickPos);
@@ -406,7 +406,7 @@ void Scene1608::upRidingCar() {
 			_carClipFlag = false;
 			_asCar->setClipRect(_clipRect1);
 			if (!_asCar->isDoDeltaX())
-				sendMessage(_asCar, 0x200E, 0);
+				sendMessage(_asCar, NM_CAR_TURN, 0);
 		}
 	} else if (!_carClipFlag) {
 		_carClipFlag = true;
@@ -417,13 +417,13 @@ void Scene1608::upRidingCar() {
 uint32 Scene1608::hmLowerFloor(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x20250B1A) {
 			clearRectList();
 			_klaymen->setVisible(false);
 			showMouse(false);
 			_sprite1->setVisible(false);
-			//sendMessage(_asDoor, 0x4809, 0); // Play sound?
+			//sendMessage(_asDoor, NM_KLAYMEN_CLOSE_DOOR, 0); // Play sound?
 			_countdown1 = 28;
 		}
 		break;
@@ -444,7 +444,7 @@ uint32 Scene1608::hmLowerFloor(int messageNum, const MessageParam &param, Entity
 uint32 Scene1608::hmUpperFloor(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x60842040)
 			_carStatus = 1;
 		break;
@@ -464,13 +464,13 @@ uint32 Scene1608::hmUpperFloor(int messageNum, const MessageParam &param, Entity
 uint32 Scene1608::hmRidingCar(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x2005:
+	case NM_KLAYMEN_CLIMB_LADDER:
 		leaveScene(1);
 		break;
-	case 0x2006:
+	case NM_KLAYMEN_STOP_CLIMBING:
 		SetMessageHandler(&Scene1608::hmCarAtHome);
 		SetUpdateHandler(&Scene1608::upCarAtHome);
-		sendMessage(_asCar, 0x200F, 1);
+		sendMessage(_asCar, NM_CAR_AT_HOME, 1);
 		break;
 	case 0x200D:
 		sendMessage(_parentModule, 0x200D, 0);
@@ -482,7 +482,7 @@ uint32 Scene1608::hmRidingCar(int messageNum, const MessageParam &param, Entity 
 uint32 Scene1608::hmCarAtHome(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x200A:
+	case NM_CAR_LEAVE:
 		_carStatus = 2;
 		break;
 	case 0x200D:
@@ -544,11 +544,11 @@ void Scene1609::update() {
 uint32 Scene1609::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x0001:
+	case NM_MOUSE_CLICK:
 		if (param.asPoint().x <= 20 || param.asPoint().x >= 620)
 			leaveScene(0);
 		break;
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		if (!_isSolved) {
 			if (_changeCurrentSymbol)
 				_asSymbols[_symbolPosition]->change(_currentSymbolIndex + 12, false);

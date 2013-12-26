@@ -648,11 +648,11 @@ void StripManager::reset() {
 	_delayFrames = 0;
 	_owner = NULL;
 	_endHandler = NULL;
-	_field2E6 = false;
+	_uselessFl = false;
 	_stripNum = -1;
-	_obj44Index = 0;
-	_field2E8 = 0;
-	_field20 = 0;
+	_obj44ListIndex = 0;
+	_currObj44Id = 0;
+	_useless = 0;
 	_activeSpeaker = NULL;
 	_textShown = false;
 	_callbackObject = NULL;
@@ -696,14 +696,14 @@ void StripManager::synchronize(Serializer &s) {
 		Action::synchronize(s);
 
 	s.syncAsSint32LE(_stripNum);
-	s.syncAsSint32LE(_obj44Index);
-	s.syncAsSint32LE(_field20);
+	s.syncAsSint32LE(_obj44ListIndex);
+	s.syncAsSint32LE(_useless);
 	s.syncAsSint32LE(_sceneNumber);
 	_sceneBounds.synchronize(s);
 	SYNC_POINTER(_activeSpeaker);
 	s.syncAsByte(_textShown);
-	s.syncAsByte(_field2E6);
-	s.syncAsSint32LE(_field2E8);
+	s.syncAsByte(_uselessFl);
+	s.syncAsSint32LE(_currObj44Id);
 	if (g_vm->getGameID() == GType_Ringworld2)
 		s.syncAsSint16LE(_exitMode);
 
@@ -785,14 +785,14 @@ void StripManager::signal() {
 		_textShown = false;
 	}
 
-	if (_obj44Index < 0) {
+	if (_obj44ListIndex < 0) {
 		EventHandler *owner = _endHandler;
-		int stripNum = ABS(_obj44Index);
+		int stripNum = ABS(_obj44ListIndex);
 		remove();
 
 		start(stripNum, owner);
 		return;
-	} else if (_obj44Index == 10000) {
+	} else if (_obj44ListIndex == 10000) {
 		// Reached end of strip
 		EventHandler *endHandler = _endHandler;
 		remove();
@@ -809,7 +809,7 @@ void StripManager::signal() {
 		// Load the data for the strip
 		load();
 
-	Obj44 &obj44 = _obj44List[_obj44Index];
+	Obj44 &obj44 = _obj44List[_obj44ListIndex];
 
 	if (g_vm->getGameID() == GType_Ringworld2) {
 		// Return to Ringworld specific handling
@@ -831,7 +831,7 @@ void StripManager::signal() {
 		}
 	}
 
-	_field2E8 = obj44._id;
+	_currObj44Id = obj44._id;
 	Common::StringArray choiceList;
 
 	// Build up a list of script entries
@@ -925,7 +925,7 @@ void StripManager::signal() {
 		// Get the user to select a conversation option
 		strIndex = _choiceDialog.execute(choiceList);
 
-	if ((delayFlag || choiceList.size() != 1) && !_field2E6)
+	if ((delayFlag || choiceList.size() != 1) && !_uselessFl)
 		_delayFrames = 1;
 	else {
 		Speaker *speakerP = getSpeaker((const char *)&_script[0] + obj44._speakerOffset);
@@ -978,10 +978,10 @@ void StripManager::signal() {
 		}
 	}
 
-	_obj44Index = getNewIndex(obj44._list[strIndex]._id);
-	if (_obj44Index == 10001) {
+	_obj44ListIndex = getNewIndex(obj44._list[strIndex]._id);
+	if (_obj44ListIndex == 10001) {
 		MessageDialog::show("Strip Failure: Node not found", OK_BTN_STRING);
-		_obj44Index = 0;
+		_obj44ListIndex = 0;
 	}
 }
 
@@ -991,16 +991,16 @@ void StripManager::process(Event &event) {
 		return;
 
 	if ((event.eventType == EVENT_KEYPRESS) && (event.kbd.keycode == Common::KEYCODE_ESCAPE)) {
-		if (_obj44Index != 10000) {
-			int currIndex = _obj44Index;
-			while (!_obj44List[_obj44Index]._list[1]._id) {
-				_obj44Index = getNewIndex(_obj44List[_obj44Index]._list[0]._id);
-				if ((_obj44Index < 0) || (_obj44Index == 10000))
+		if (_obj44ListIndex != 10000) {
+			int currIndex = _obj44ListIndex;
+			while (!_obj44List[_obj44ListIndex]._list[1]._id) {
+				_obj44ListIndex = getNewIndex(_obj44List[_obj44ListIndex]._list[0]._id);
+				if ((_obj44ListIndex < 0) || (_obj44ListIndex == 10000))
 					break;
-				currIndex = _obj44Index;
+				currIndex = _obj44ListIndex;
 			}
 
-			_field2E8 = _obj44List[currIndex]._id;
+			_currObj44Id = _obj44List[currIndex]._id;
 		}
 
 		// Signal the end of the strip

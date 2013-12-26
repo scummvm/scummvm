@@ -656,7 +656,6 @@ class Scene4301 : public Scene {
 	class Action1 : public ActionExt {
 	public:
 		SceneObject _buttonList[6];
-		int _field34E;
 		int _indexList[6];
 
 		virtual void synchronize(Serializer &s);

@@ -25,6 +25,7 @@
 #include "fullpipe/constants.h"
 
 #include "fullpipe/gameloader.h"
+#include "fullpipe/motion.h"
 #include "fullpipe/scenes.h"
 #include "fullpipe/statics.h"
 #include "fullpipe/input.h"
@@ -40,9 +41,9 @@ void sceneDbgMenu_initScene(Scene *sc) {
 }
 
 GameObject *sceneHandlerDbgMenu_getObjectAtXY(int x, int y) {
-	if (g_fullpipe->_currentScene)
-		for (uint i = 0; i < g_fullpipe->_currentScene->_picObjList.size(); i++) {
-			PictureObject *pic = (PictureObject *)g_fullpipe->_currentScene->_picObjList[i];
+	if (g_fp->_currentScene)
+		for (uint i = 0; i < g_fp->_currentScene->_picObjList.size(); i++) {
+			PictureObject *pic = (PictureObject *)g_fp->_currentScene->_picObjList[i];
 
 			if (x >= pic->_ox && y >= pic->_oy) {
 				Common::Point point;
@@ -61,8 +62,8 @@ int sceneHandlerDbgMenu(ExCommand *ex) {
 	if (ex->_messageKind != 17)
 		return 0;
 
-	int mx = g_fullpipe->_mouseScreenPos.x + g_fullpipe->_sceneRect.left;
-	int my = g_fullpipe->_mouseScreenPos.y + g_fullpipe->_sceneRect.top;
+	int mx = g_fp->_mouseScreenPos.x + g_fp->_sceneRect.left;
+	int my = g_fp->_mouseScreenPos.y + g_fp->_sceneRect.top;
 
 	if (ex->_messageNum == 29) {
 		GameObject *obj = sceneHandlerDbgMenu_getObjectAtXY(mx, my);
@@ -74,18 +75,18 @@ int sceneHandlerDbgMenu(ExCommand *ex) {
 	}
 	if (ex->_messageNum != 33) {
 		if (ex->_messageNum == MSG_RESTARTGAME) {
-			g_fullpipe->_needRestart = true;
+			g_fp->_needRestart = true;
 			return 0;
 		}
 		return 0;
 	}
 
-	g_fullpipe->_cursorId = PIC_CSR_DEFAULT;
-	GameObject *obj = g_fullpipe->_currentScene->getStaticANIObjectAtPos(mx, my);
+	g_fp->_cursorId = PIC_CSR_DEFAULT;
+	GameObject *obj = g_fp->_currentScene->getStaticANIObjectAtPos(mx, my);
 	if (obj) {
 		if (canInteractAny(0, obj, -3)) {
-			g_fullpipe->_cursorId = PIC_CSR_DEFAULT;
-			g_fullpipe->setCursor(PIC_CSR_DEFAULT);
+			g_fp->_cursorId = PIC_CSR_DEFAULT;
+			g_fp->setCursor(PIC_CSR_DEFAULT);
 			return 0;
 		}
 	} else {
@@ -93,13 +94,13 @@ int sceneHandlerDbgMenu(ExCommand *ex) {
 		if (obj && canInteractAny(0, obj, -3) ) {
 			g_vars->selector->_flags |= 4;
 			g_vars->selector->setOXY(obj->_ox, obj->_oy);
-			g_fullpipe->_cursorId = PIC_CSR_DEFAULT;
-			g_fullpipe->setCursor(PIC_CSR_DEFAULT);
+			g_fp->_cursorId = PIC_CSR_DEFAULT;
+			g_fp->setCursor(PIC_CSR_DEFAULT);
 			return 0;
 		}
 		g_vars->selector->_flags &= 0xFFFB;
 	}
-	g_fullpipe->setCursor(g_fullpipe->_cursorId);
+	g_fp->setCursor(g_fp->_cursorId);
 
 	return 0;
 }

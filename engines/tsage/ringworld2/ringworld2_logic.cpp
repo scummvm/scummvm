@@ -368,7 +368,6 @@ void SceneExt::postInit(SceneObjectList *OwnerList) {
 
 	// Initialize fields
 	_action = NULL;
-	_field12 = 0;
 	_sceneMode = 0;
 
 	static_cast<SceneHandlerExt *>(R2_GLOBALS._sceneHandler)->setupPaletteMaps();

@@ -86,7 +86,7 @@ bool Sound::load(MfcArchive &file, NGIArchive *archive) {
 	_id = file.readUint32LE();
 	_description = file.readPascalString();
 
-	assert(g_fullpipe->_gameProjectVersion >= 6);
+	assert(g_fp->_gameProjectVersion >= 6);
 
 	_objectId = file.readUint16LE();
 
@@ -128,7 +128,11 @@ void FullpipeEngine::toggleMute() {
 }
 
 void FullpipeEngine::playSound(int id, int flag) {
-	warning("STUB: FullpipeEngine::playSounds(%d, %d)", id, flag);
+	warning("STUB: FullpipeEngine::playSound(%d, %d)", id, flag);
+}
+
+void FullpipeEngine::playTrack(GameVar *sceneVar, const char *name, bool delayed) {
+	warning("STUB: FullpipeEngine::playTrack(var, %s, %d)", name, delayed);
 }
 
 void global_messageHandler_handleSound(ExCommand *cmd) {
@@ -143,5 +147,8 @@ void FullpipeEngine::stopAllSoundStreams() {
 	warning("STUB: FullpipeEngine::stopAllSoundStreams()");
 }
 
+void FullpipeEngine::stopAllSoundInstances(int id) {
+	warning("STUB: FullpipeEngine::stopAllSoundInstances(%d)", id);
+}
 
 } // End of namespace Fullpipe

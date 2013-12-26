@@ -565,9 +565,8 @@ class Scene3500 : public SceneExt {
 	class Action1: public Action {
 	public:
 		int _direction;
-		bool _field20;
-		int _field22; // CHECKME: Useless field
-		bool _field24;
+		bool _headingRightFl;
+		bool _turningFl;
 
 		Action1();
 		virtual void synchronize(Serializer &s);
@@ -619,8 +618,8 @@ class Scene3500 : public SceneExt {
 
 	class MazeUI3500 : public MazeUI {
 	public:
-		int cellFromX(int arg1);
-		int cellFromY(int arg1);
+		int16 cellFromX(int arg1);
+		int16 cellFromY(int arg1);
 		int getCellFromMapXY(Common::Point pt);
 		bool setMazePosition2(Common::Point &p);
 	};
@@ -653,12 +652,12 @@ public:
 	PaletteRotation *_rotation;
 	int _mazeChangeAmount;
 	int _speed;
-	bool _field1272;
+	bool _updateIdxChangeFl;
 	int _mazeDirection;
 	int _nextMove;
 	Common::Point _mazePosition;
-	bool _field1282;
-	int _field1284;
+	bool _postFixupFl;
+	int _exitCounter;
 	bool _directionChangesEnabled;
 
 	Scene3500();
@@ -675,7 +674,7 @@ public:
 class Scene3600 : public SceneExt {
 	class Action3600: public ActionExt {
 	public:
-		bool _field1E;
+		bool _part2Fl;
 		int _fadePct;
 
 		Action3600();

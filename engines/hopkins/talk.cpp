@@ -825,7 +825,7 @@ void TalkManager::handleAnswer(int zone, int verb) {
 		int lastOpcodeResult = 1;
 		do {
 			int opcodeType = _vm->_script->handleOpcode(ptr + 20 * lastOpcodeResult);
-			if (_vm->shouldQuit())
+			if (opcodeType == -1 || _vm->shouldQuit())
 				return;
 
 			if (opcodeType == 2)

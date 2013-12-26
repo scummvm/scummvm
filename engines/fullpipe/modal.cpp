@@ -24,6 +24,7 @@
 #include "fullpipe/modal.h"
 #include "fullpipe/messages.h"
 #include "fullpipe/constants.h"
+#include "fullpipe/motion.h"
 #include "fullpipe/scenes.h"
 #include "fullpipe/gameloader.h"
 
@@ -40,17 +41,17 @@ ModalIntro::ModalIntro() {
 		_introFlags = 33;
 		_countDown = 150;
 
-		PictureObject *pict = g_fullpipe->accessScene(SC_INTRO1)->getPictureObjectById(PIC_IN1_PIPETITLE, 0);
+		PictureObject *pict = g_fp->accessScene(SC_INTRO1)->getPictureObjectById(PIC_IN1_PIPETITLE, 0);
 		pict->setFlags(pict->_flags & 0xFFFB);
 	}
 
 	g_vars->sceneIntro_skipIntro = false;
-	_sfxVolume = g_fullpipe->_sfxVolume;
+	_sfxVolume = g_fp->_sfxVolume;
 }
 
 ModalIntro::~ModalIntro() {
-	g_fullpipe->stopAllSounds();
-	g_fullpipe->_sfxVolume = _sfxVolume;
+	g_fp->stopAllSounds();
+	g_fp->_sfxVolume = _sfxVolume;
 }
 
 bool ModalIntro::handleMessage(ExCommand *message) {
@@ -84,7 +85,7 @@ bool ModalIntro::init(int counterdiff) {
 		}
 
 		if (_introFlags & 0x10)
-			g_fullpipe->_gameLoader->updateSystems(42);
+			g_fp->_gameLoader->updateSystems(42);
 
 		_introFlags |= 2;
 
@@ -94,7 +95,7 @@ bool ModalIntro::init(int counterdiff) {
 	if (_introFlags & 4) {
 		ModalVideoPlayer *player = new ModalVideoPlayer();
 
-		g_fullpipe->_modalObject = player;
+		g_fp->_modalObject = player;
 		player->_parentObj = this;
 		player->play("intro.avi");
 
@@ -118,7 +119,7 @@ bool ModalIntro::init(int counterdiff) {
 	if (_introFlags & 0x40) {
 		ModalVideoPlayer *player = new ModalVideoPlayer();
 
-		g_fullpipe->_modalObject = player;
+		g_fp->_modalObject = player;
 		player->_parentObj = this;
 		player->play("intro2.avi");
 
@@ -151,7 +152,7 @@ bool ModalIntro::init(int counterdiff) {
 
 		_countDown = 150;
 		_introFlags = (_introFlags & 0xf7) | 0x21;
-		g_fullpipe->accessScene(SC_INTRO1)->getPictureObjectById(PIC_IN1_PIPETITLE, 0)->_flags &= 0xfffb;
+		g_fp->accessScene(SC_INTRO1)->getPictureObjectById(PIC_IN1_PIPETITLE, 0)->_flags &= 0xfffb;
 	}
 
 	if (!(_introFlags & 0x20)) {
@@ -159,12 +160,12 @@ bool ModalIntro::init(int counterdiff) {
 			if (!_stillRunning) {
 				_introFlags |= 1;
 
-				g_fullpipe->accessScene(SC_INTRO1)->getPictureObjectById(PIC_IN1_PIPETITLE, 0)->_flags &= 0xfffb;
-				g_fullpipe->accessScene(SC_INTRO1)->getPictureObjectById(PIC_IN1_GAMETITLE, 0)->_flags &= 0xfffb;
+				g_fp->accessScene(SC_INTRO1)->getPictureObjectById(PIC_IN1_PIPETITLE, 0)->_flags &= 0xfffb;
+				g_fp->accessScene(SC_INTRO1)->getPictureObjectById(PIC_IN1_GAMETITLE, 0)->_flags &= 0xfffb;
 
 				chainQueue(QU_INTR_STARTINTRO, 1);
 			}
-			g_fullpipe->_gameLoader->updateSystems(42);
+			g_fp->_gameLoader->updateSystems(42);
 		}
 		return true;
 	}
@@ -180,7 +181,7 @@ bool ModalIntro::init(int counterdiff) {
 
 		_introFlags = (_introFlags & 0xdf) | 0x10;
 
-		g_fullpipe->accessScene(SC_INTRO1)->getPictureObjectById(PIC_IN1_GAMETITLE, 0)->_flags &= 0xfffb;
+		g_fp->accessScene(SC_INTRO1)->getPictureObjectById(PIC_IN1_GAMETITLE, 0)->_flags &= 0xfffb;
 
 		_stillRunning = 0;
 	}
@@ -189,14 +190,14 @@ bool ModalIntro::init(int counterdiff) {
 }
 
 void ModalIntro::update() {
-	if (g_fullpipe->_currentScene) {
+	if (g_fp->_currentScene) {
 		if (_introFlags & 1) {
 			//sceneFade(virt, g_currentScene, 1);
 			_stillRunning = 255;
 			_introFlags &= 0xfe;
 
 			if (_introFlags & 0x20)
-				g_fullpipe->playSound(SND_INTR_019, 0);
+				g_fp->playSound(SND_INTR_019, 0);
 		} else if (_introFlags & 2) {
 			if (g_vars->sceneIntro_needBlackout) {
 				//vrtRectangle(*(_DWORD *)virt, 0, 0, 0, 800, 600);
@@ -209,18 +210,18 @@ void ModalIntro::update() {
 				_introFlags &= 0xfd;
 			}
 		} else if (_stillRunning) {
-			g_fullpipe->_currentScene->draw();
+			g_fp->_currentScene->draw();
 		}
 	}
 }
 
 void ModalIntro::finish() {
-	g_fullpipe->_gameLoader->unloadScene(SC_INTRO2);
-	g_fullpipe->_currentScene = g_fullpipe->accessScene(SC_INTRO1);
-	g_fullpipe->_gameLoader->preloadScene(SC_INTRO1, TrubaDown);
+	g_fp->_gameLoader->unloadScene(SC_INTRO2);
+	g_fp->_currentScene = g_fp->accessScene(SC_INTRO1);
+	g_fp->_gameLoader->preloadScene(SC_INTRO1, TrubaDown);
 
-	if (g_fullpipe->_currentScene)
-		g_fullpipe->_gameLoader->updateSystems(42);
+	if (g_fp->_currentScene)
+		g_fp->_gameLoader->updateSystems(42);
 }
 
 void ModalVideoPlayer::play(const char *fname) {

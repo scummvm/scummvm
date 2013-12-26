@@ -20,12 +20,29 @@
  *
  */
 
+#include "fullpipe/constants.h"
 #include "fullpipe/fullpipe.h"
+#include "fullpipe/gameloader.h"
+#include "fullpipe/scene.h"
 
 namespace Fullpipe {
 
-Console::Console(FullpipeEngine *vm) : GUI::Debugger() {
-	_vm = vm;
+Console::Console(FullpipeEngine *vm) : GUI::Debugger(), _vm(vm) {
+	DCmd_Register("scene",			WRAP_METHOD(Console, Cmd_Scene));
+}
+
+bool Console::Cmd_Scene(int argc, const char **argv) {
+	if (argc != 2) {
+		int sceneTag = _vm->_currentScene->_sceneId;
+		DebugPrintf("Current scene: %d (scene tag: %d)\n", _vm->getSceneFromTag(sceneTag), sceneTag);
+		DebugPrintf("Use %s <scene> to change the current scene\n", argv[0]);
+		return true;
+	} else {
+		int scene = _vm->convertScene(atoi(argv[1]));
+		_vm->_gameLoader->loadScene(scene);
+		_vm->_gameLoader->gotoScene(scene, TrubaLeft);
+		return false;
+	}
 }
 
 } // End of namespace Fullpipe
