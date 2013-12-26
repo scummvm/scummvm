@@ -170,6 +170,14 @@ static const ExtraGuiOption neverhoodExtraGuiOption2 = {
 	false
 };
 
+static const ExtraGuiOption neverhoodExtraGuiOption3 = {
+	_s("Scale the making of videos to full screen"),
+	_s("Scale the making of videos, so that they use the whole screen"),
+	"scalemakingofvideos",
+	false
+};
+
+
 class NeverhoodMetaEngine : public AdvancedMetaEngine {
 public:
 	NeverhoodMetaEngine() : AdvancedMetaEngine(Neverhood::gameDescriptions, sizeof(Neverhood::NeverhoodGameDescription), neverhoodGames) {
@@ -225,6 +233,7 @@ const ExtraGuiOptions NeverhoodMetaEngine::getExtraGuiOptions(const Common::Stri
 	ExtraGuiOptions options;
 	options.push_back(neverhoodExtraGuiOption1);
 	options.push_back(neverhoodExtraGuiOption2);
+	options.push_back(neverhoodExtraGuiOption3);
 	return options;
 }
 

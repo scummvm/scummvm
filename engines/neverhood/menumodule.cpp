@@ -112,7 +112,7 @@ void MenuModule::createScene(int sceneNum, int which) {
 		_childObject = new CreditsScene(_vm, this, true);
 		break;
 	case MAKING_OF:
-		createSmackerScene(kMakingOfSmackerFileHashList, false, true, true);
+		createSmackerScene(kMakingOfSmackerFileHashList, ConfMan.getBool("scalemakingofvideos"), true, true);
 		break;
 	case LOAD_GAME_MENU:
 		createLoadGameMenu();
