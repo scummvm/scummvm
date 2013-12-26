@@ -132,7 +132,7 @@ void GfxPicture::drawSci11Vga() {
 		_palette->createFromData(inbuffer + palette_data_ptr, size - palette_data_ptr, &palette);
 		_palette->set(&palette, true);
 
-		drawCelData(inbuffer, size, cel_headerPos, cel_RlePos, cel_LiteralPos, 0, 0, 0, 0);
+		drawCelData(inbuffer, size, cel_headerPos, cel_RlePos, cel_LiteralPos, 0, 0, 0, 0, false);
 	}
 
 	// process vector data
@@ -224,14 +224,14 @@ void GfxPicture::drawSci32Vga(int16 celNo, int16 drawX, int16 drawY, int16 pictu
 	cel_RlePos = READ_SCI11ENDIAN_UINT32(inbuffer + cel_headerPos + 24);
 	cel_LiteralPos = READ_SCI11ENDIAN_UINT32(inbuffer + cel_headerPos + 28);
 
-	drawCelData(inbuffer, size, cel_headerPos, cel_RlePos, cel_LiteralPos, drawX, drawY, pictureX, pictureY);
+	drawCelData(inbuffer, size, cel_headerPos, cel_RlePos, cel_LiteralPos, drawX, drawY, pictureX, pictureY, false);
 	cel_headerPos += 42;
 }
 #endif
 
 extern void unpackCelData(byte *inBuffer, byte *celBitmap, byte clearColor, int pixelCount, int rlePos, int literalPos, ViewType viewType, uint16 width, bool isMacSci11ViewData);
 
-void GfxPicture::drawCelData(byte *inbuffer, int size, int headerPos, int rlePos, int literalPos, int16 drawX, int16 drawY, int16 pictureX, int16 pictureY) {
+void GfxPicture::drawCelData(byte *inbuffer, int size, int headerPos, int rlePos, int literalPos, int16 drawX, int16 drawY, int16 pictureX, int16 pictureY, bool isEGA) {
 	byte *celBitmap = NULL;
 	byte *ptr = NULL;
 	byte *headerPtr = inbuffer + headerPos;
@@ -239,13 +239,17 @@ void GfxPicture::drawCelData(byte *inbuffer, int size, int headerPos, int rlePos
 	// displaceX, displaceY fields are ignored, and may contain garbage
 	// (e.g. pic 261 in Dr. Brain 1 Spanish - bug #3614914)
 	//int16 displaceX, displaceY;
-	byte priority = _addToFlag ? _priority : 0;
+	byte priority = _priority;
 	byte clearColor;
 	bool compression = true;
 	byte curByte;
 	int16 y, lastY, x, leftX, rightX;
 	int pixelCount;
 	uint16 width, height;
+	
+	// if the picture is not an overlay and we are also not in EGA mode, use priority 0
+	if (!isEGA && !_addToFlag)
+		priority = 0;
 
 #ifdef ENABLE_SCI32
 	if (_resourceType != SCI_PICTURE_TYPE_SCI32) {
@@ -360,37 +364,78 @@ void GfxPicture::drawCelData(byte *inbuffer, int size, int headerPos, int rlePos
 		ptr = celBitmap;
 		ptr += skipCelBitmapPixels;
 		ptr += skipCelBitmapLines * width;
-		if (!_mirroredFlag) {
-			// Draw bitmap to screen
-			x = leftX;
-			while (y < lastY) {
-				curByte = *ptr++;
-				if ((curByte != clearColor) && (priority >= _screen->getPriority(x, y)))
-					_screen->putPixel(x, y, drawMask, curByte, priority, 0);
+		
+		if ((!isEGA) || (priority < 16)) {
+			// VGA + EGA, EGA only checks priority, when given priority is below 16
+			if (!_mirroredFlag) {
+				// Draw bitmap to screen
+				x = leftX;
+				while (y < lastY) {
+					curByte = *ptr++;
+					if ((curByte != clearColor) && (priority >= _screen->getPriority(x, y)))
+						_screen->putPixel(x, y, drawMask, curByte, priority, 0);
 
-				x++;
+					x++;
 
-				if (x >= rightX) {
-					ptr += sourcePixelSkipPerRow;
-					x = leftX;
-					y++;
+					if (x >= rightX) {
+						ptr += sourcePixelSkipPerRow;
+						x = leftX;
+						y++;
+					}
+				}
+			} else {
+				// Draw bitmap to screen (mirrored)
+				x = rightX - 1;
+				while (y < lastY) {
+					curByte = *ptr++;
+					if ((curByte != clearColor) && (priority >= _screen->getPriority(x, y)))
+						_screen->putPixel(x, y, drawMask, curByte, priority, 0);
+
+					if (x == leftX) {
+						ptr += sourcePixelSkipPerRow;
+						x = rightX;
+						y++;
+					}
+
+					x--;
 				}
 			}
 		} else {
-			// Draw bitmap to screen (mirrored)
-			x = rightX - 1;
-			while (y < lastY) {
-				curByte = *ptr++;
-				if ((curByte != clearColor) && (priority >= _screen->getPriority(x, y)))
-					_screen->putPixel(x, y, drawMask, curByte, priority, 0);
+			// EGA, when priority is above 15
+			//  we don't check priority and also won't set priority at all
+			//  fixes picture 48 of kq5 (island overview). Bug #5182
+			if (!_mirroredFlag) {
+				// EGA+priority>15: Draw bitmap to screen
+				x = leftX;
+				while (y < lastY) {
+					curByte = *ptr++;
+					if (curByte != clearColor)
+						_screen->putPixel(x, y, GFX_SCREEN_MASK_VISUAL, curByte, 0, 0);
 
-				if (x == leftX) {
-					ptr += sourcePixelSkipPerRow;
-					x = rightX;
-					y++;
+					x++;
+
+					if (x >= rightX) {
+						ptr += sourcePixelSkipPerRow;
+						x = leftX;
+						y++;
+					}
 				}
+			} else {
+				// EGA+priority>15: Draw bitmap to screen (mirrored)
+				x = rightX - 1;
+				while (y < lastY) {
+					curByte = *ptr++;
+					if (curByte != clearColor)
+						_screen->putPixel(x, y, GFX_SCREEN_MASK_VISUAL, curByte, 0, 0);
 
-				x--;
+					if (x == leftX) {
+						ptr += sourcePixelSkipPerRow;
+						x = rightX;
+						y++;
+					}
+
+					x--;
+				}
 			}
 		}
 	}
@@ -539,22 +584,6 @@ void GfxPicture::drawVectorData(byte *data, int dataSize) {
 			// would appear and get distracting.
 			if ((_screen->isUnditheringEnabled()) && ((_resourceId >= 53 && _resourceId <= 58) || (_resourceId == 61)))
 				icemanDrawFix = true;
-		}
-		if (g_sci->getGameId() == GID_KQ5) {
-			// WORKAROUND: ignore the seemingly broken priority of picture 48
-			// (island overview). Fixes bug #3041044.
-			if (_resourceId == 48)
-				ignoreBrokenPriority = true;
-		}
-		if (g_sci->getGameId() == GID_SQ4) {
-			// WORKAROUND: ignore the seemingly broken priority of pictures 546
-			// and 547 (Vohaul's head and Roger Jr trapped). Fixes bug #3046543.
-			if (_resourceId == 546 || _resourceId == 547)
-				ignoreBrokenPriority = true;
-			// WORKAROUND: ignore the seemingly broken priority of picture 631
-			// (SQ1 view from the cockpit). Fixes bug #3046513.
-			if (_resourceId == 631)
-				ignoreBrokenPriority = true;
 		}
 	}
 
@@ -740,8 +769,15 @@ void GfxPicture::drawVectorData(byte *data, int dataSize) {
 				case PIC_OPX_EGA_EMBEDDED_VIEW:
 					vectorGetAbsCoordsNoMirror(data, curPos, x, y);
 					size = READ_LE_UINT16(data + curPos); curPos += 2;
-					_priority = pic_priority; // set global priority so the cel gets drawn using current priority as well
-					drawCelData(data, _resource->size, curPos, curPos + 8, 0, x, y, 0, 0);
+					// hardcoded in SSCI, 16 for SCI1early excluding Space Quest 4, 0 for anything else
+					//  fixes sq4 pictures 546+547 (Vohaul's head and Roger Jr trapped). Bug #5250
+					//  fixes sq4 picture 631 (SQ1 view from cockpit). Bug 5249
+					if ((getSciVersion() <= SCI_VERSION_1_EARLY) && (g_sci->getGameId() != GID_SQ4)) {
+						_priority = 16;
+					} else {
+						_priority = 0;
+					}
+					drawCelData(data, _resource->size, curPos, curPos + 8, 0, x, y, 0, 0, true);
 					curPos += size;
 					break;
 				case PIC_OPX_EGA_SET_PRIORITY_TABLE:
@@ -790,7 +826,7 @@ void GfxPicture::drawVectorData(byte *data, int dataSize) {
 					} else {
 						_priority = pic_priority; // set global priority so the cel gets drawn using current priority as well
 					}
-					drawCelData(data, _resource->size, curPos, curPos + 8, 0, x, y, 0, 0);
+					drawCelData(data, _resource->size, curPos, curPos + 8, 0, x, y, 0, 0, false);
 					curPos += size;
 					break;
 				case PIC_OPX_VGA_PRIORITY_TABLE_EQDIST:
