@@ -1409,7 +1409,8 @@ int ThreadResource::doInterface() {
 	_vm->_eventsManager.setMousePos(Common::Point(_currentMouseX, _currentMouseY));
 	_vm->initIFace();
 
-	byte *dataP = _vm->_bVoy->memberAddr(_vm->_playStamp1);
+	Common::Array<Common::Rect> &hotspots = _vm->_bVoy->boltEntry(
+		_vm->_playStamp1)._rectResource->_entries;
 	_vm->_playStamp2 = 151 - _vm->getRandomNumber(5);
 	_vm->_voy._vocSecondsOffset = _vm->getRandomNumber(29);
 
@@ -1447,11 +1448,8 @@ int ThreadResource::doInterface() {
 		pt = _vm->_eventsManager.getMousePos() + Common::Point(120, 75);
 		regionIndex = -1;
 
-		for (int idx = 0; idx < READ_LE_UINT16(dataP); ++idx) {
-			if (READ_LE_UINT16(dataP + (idx * 8 + 2)) <= pt.x &&
-					READ_LE_UINT16(dataP + (idx * 8 + 6)) >= pt.x &&
-					READ_LE_UINT16(dataP + (idx * 8 + 4)) <= pt.y &&
-					READ_LE_UINT16(dataP + (idx * 8 + 8)) >= pt.y) {
+		for (int idx = 0; idx < (int)hotspots.size(); ++idx) {
+			if (hotspots[idx].contains(pt)) {
 				// Rect check done
 				for (int arrIndex = 0; arrIndex < 3; ++arrIndex) {
 					if (_vm->_voy._arr3[arrIndex][idx] <= _vm->_voy._RTVNum &&
@@ -1542,7 +1540,7 @@ int ThreadResource::doInterface() {
 				_vm->_eventsManager.setMousePos(Common::Point(_currentMouseX, _currentMouseY));
 				_vm->initIFace();
 				
-				dataP = _vm->_bVoy->memberAddr(_vm->_playStamp1 + 1);
+				hotspots = _vm->_bVoy->boltEntry(_vm->_playStamp1 + 1)._rectResource->_entries;
 				_vm->_eventsManager.getMouseInfo();
 				_vm->_eventsManager.setMousePos(Common::Point(_currentMouseX, _currentMouseY));
 
