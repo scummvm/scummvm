@@ -256,36 +256,6 @@ void sceneHandler11_sub12() {
 	warning("STUB: sceneHandler11_sub12()");
 }
 
-void sceneHandler11_sub10(double angle) {
-	warning("STUB: sceneHandler11_sub10()");
-}
-
-void sceneHandler11_sub11(double angle) {
-	warning("STUB: sceneHandler11_sub11()");
-}
-
-void sceneHandler11_swingLogic() {
-	if (g_vars->scene11_dudeOnSwing->_movement) {
-		int ph = g_vars->scene11_dudeOnSwing->_movement->_currDynamicPhaseIndex;
-		if (ph > 53 && ph < 90) {
-			if (ph < 70 && g_vars->scene11_var10 >= 22.0) {
-				sceneHandler11_sub10((double)ph * 0.01428571428571429);  // = 1 / 70
-			} else if (ph <= 80 && g_vars->scene11_var10 >= 22.0) {
-				sceneHandler11_sub08();
-			} else {
-				sceneHandler11_sub11((double)ph * g_vars->scene11_var10 * 0.0006493506493506494); // = 1/1540
-			}
-
-			g_vars->scene11_var02 = 0;
-			g_vars->scene11_hint->_flags &= 0xFFFB;
-			return;
-		}
-
-		if (ph > 38 && ph < 53 && fabs(g_vars->scene11_var10) <= 5.0)
-			sceneHandler11_sub12();
-	}
-}
-
 void sceneHandler11_swing0() {
 	g_vars->scene11_dudeOnSwing->_statics = g_vars->scene11_dudeOnSwing->getStaticsById(ST_MAN11_EMPTY);
 	g_vars->scene11_dudeOnSwing->_movement = 0;
@@ -322,18 +292,6 @@ void sceneHandler11_swing2() {
 	g_vars->scene11_var09 = fabs(g_vars->scene11_var08) * 0.075 + 0.12;
 }
 
-void sceneHandler11_sub05() {
-	warning("STUB: sceneHandler11_sub05()");
-}
-
-void sceneHandler11_sub06() {
-	warning("STUB: sceneHandler11_sub06()");
-}
-
-void sceneHandler11_sub07() {
-	warning("STUB: sceneHandler11_sub07()");
-}
-
 void sceneHandler11_sub09() {
 	if (g_vars->scene11_var17)
 		sceneHandler11_swing0();
@@ -347,6 +305,77 @@ void sceneHandler11_sub09() {
 	g_vars->scene11_dudeOnSwing->_movement->setDynamicPhaseIndex(g_vars->scene11_dudeOnSwing->_movement->_currDynamicPhaseIndex);
 
 	g_vars->scene11_var12 = 1.9881250;
+}
+
+void sceneHandler11_sub10(double angle) {
+	MGMInfo mgminfo;
+
+	sceneHandler11_sub09();
+
+	g_fp->_aniMan->show1(690 - (int)(sin(g_vars->scene11_var08) * -267.0), 215 - (int)(cos(g_vars->scene11_var08) * -267.0),
+						  MV_MAN11_JUMPOVER, 0);
+	g_fp->_aniMan->_priority = 0;
+
+	mgminfo.staticsId2 = ST_MAN_1PIX;
+	mgminfo.ani = g_fp->_aniMan;
+	mgminfo.x1 = 1163;
+	mgminfo.y1 = 837 - (int)(angle * 153.0);
+	mgminfo.field_1C = 0;
+	mgminfo.field_10 = 1;
+	mgminfo.flags = 78;
+	mgminfo.movementId = MV_MAN11_JUMPOVER;
+
+	MessageQueue *mq = g_vars->scene11_var01.genMovement(&mgminfo);
+
+	if (mq) {
+		g_vars->scene11_var07 = SND_11_022;
+
+		ExCommand *ex = new ExCommand(0, 17, MSG_SC11_RESTARTMAN, 0, 0, 0, 1, 0, 0, 0);
+		ex->_excFlags = 2;
+
+		mq->addExCommandToEnd(ex);
+
+		if (!mq->chain(g_fp->_aniMan) )
+			delete mq;
+	}
+}
+
+void sceneHandler11_sub11(double angle) {
+	warning("STUB: sceneHandler11_sub11()");
+}
+
+void sceneHandler11_swingLogic() {
+	if (g_vars->scene11_dudeOnSwing->_movement) {
+		int ph = g_vars->scene11_dudeOnSwing->_movement->_currDynamicPhaseIndex;
+		if (ph > 53 && ph < 90) {
+			if (ph < 70 && g_vars->scene11_var10 >= 22.0) {
+				sceneHandler11_sub10((double)ph * 0.01428571428571429);  // = 1 / 70
+			} else if (ph <= 80 && g_vars->scene11_var10 >= 22.0) {
+				sceneHandler11_sub08();
+			} else {
+				sceneHandler11_sub11((double)ph * g_vars->scene11_var10 * 0.0006493506493506494); // = 1/1540
+			}
+
+			g_vars->scene11_var02 = 0;
+			g_vars->scene11_hint->_flags &= 0xFFFB;
+			return;
+		}
+
+		if (ph > 38 && ph < 53 && fabs(g_vars->scene11_var10) <= 5.0)
+			sceneHandler11_sub12();
+	}
+}
+
+void sceneHandler11_sub05() {
+	warning("STUB: sceneHandler11_sub05()");
+}
+
+void sceneHandler11_sub06() {
+	warning("STUB: sceneHandler11_sub06()");
+}
+
+void sceneHandler11_sub07() {
+	warning("STUB: sceneHandler11_sub07()");
 }
 
 void sceneHandler11_winArcade() {
