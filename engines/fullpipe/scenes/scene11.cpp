@@ -248,10 +248,6 @@ void sceneHandler11_showSwing() {
 	g_vars->scene11_dudeOnSwing->_priority = 20;
 }
 
-void sceneHandler11_sub08() {
-	warning("STUB: sceneHandler11_sub08()");
-}
-
 void sceneHandler11_sub12() {
 	warning("STUB: sceneHandler11_sub12()");
 }
@@ -307,6 +303,51 @@ void sceneHandler11_sub09() {
 	g_vars->scene11_var12 = 1.9881250;
 }
 
+void sceneHandler11_sub08() {
+	MGMInfo mgminfo;
+
+	sceneHandler11_sub09();
+
+	g_fp->_aniMan->show1(690 - (int)(sin(g_vars->scene11_var08) * -267.0), 215 - (int)(cos(g_vars->scene11_var08) * -267.0),
+						  MV_MAN11_JUMPHIT, 0);
+	g_fp->_aniMan->_priority = 10;
+
+	mgminfo.field_1C = 10;
+	mgminfo.ani = g_fp->_aniMan;
+	mgminfo.staticsId2 = ST_MAN_1PIX;
+	mgminfo.x1 = 1400;
+	mgminfo.y1 = 0;
+	mgminfo.field_10 = 1;
+	mgminfo.flags = 66;
+	mgminfo.movementId = MV_MAN11_JUMPHIT;
+
+	MessageQueue *mq = g_vars->scene11_var01.genMovement(&mgminfo);
+
+	if (mq) {
+		g_vars->scene11_var07 = SND_11_024;
+		ExCommand *ex = new ExCommand(ANI_MAN, 2, 36, 0, 0, 0, 1, 0, 0, 0);
+		ex->_keyCode = -1;
+		ex->_excFlags = 2;
+
+		mq->addExCommandToEnd(ex);
+
+		ex = new ExCommand(SC_11, 17, 61, 0, 0, 0, 1, 0, 0, 0);
+		ex->_keyCode = TrubaRight;
+		ex->_excFlags = 3;
+
+		mq->addExCommandToEnd(ex);
+
+		if (!mq->chain(g_fp->_aniMan))
+			delete mq;
+
+
+		if (g_fp->getObjectState(sO_Swingie) == g_fp->getObjectEnumState(sO_Swingie, sO_IsStandingInCorner))
+			g_fp->setObjectState(sO_Swingie, g_fp->getObjectEnumState(sO_Swingie, sO_IsSitting));
+
+		g_fp->setObjectState(sO_DudeHasJumped, g_fp->getObjectEnumState(sO_DudeHasJumped, sO_Yes));
+	}
+}
+
 void sceneHandler11_sub10(double angle) {
 	MGMInfo mgminfo;
 
@@ -335,7 +376,7 @@ void sceneHandler11_sub10(double angle) {
 
 		mq->addExCommandToEnd(ex);
 
-		if (!mq->chain(g_fp->_aniMan) )
+		if (!mq->chain(g_fp->_aniMan))
 			delete mq;
 	}
 }
@@ -375,7 +416,7 @@ void sceneHandler11_sub11(double angle) {
 
 		mq->addExCommandToEnd(ex);
 
-		if (!mq->chain(g_fp->_aniMan) )
+		if (!mq->chain(g_fp->_aniMan))
 			delete mq;
 
 	}

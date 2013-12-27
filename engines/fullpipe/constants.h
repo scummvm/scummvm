@@ -514,6 +514,7 @@ namespace Fullpipe {
 #define QU_SC11_PUTBOOT2 2710
 #define QU_SC11_RESTARTMAN 1134
 #define SND_11_022 3706
+#define SND_11_024 3708
 #define ST_BTS11_2 2707
 #define ST_BTS11_ONE 2706
 #define ST_KCH_0 1096
