@@ -510,7 +510,7 @@ InputController *FullpipeEngine::getGameLoaderInputController() {
 		return 0;
 }
 
-MotionController *getCurrSceneSc2MotionController() {
+MctlCompound *getCurrSceneSc2MotionController() {
 	return getSc2MctlCompoundBySceneId(g_fp->_currentScene->_sceneId);
 }
 

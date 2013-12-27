@@ -150,7 +150,17 @@ void sceneHandler11_restartMan() {
 }
 
 void sceneHandler11_hitMan() {
-	warning("STUB: sceneHandler11_hitMan()");
+	if (g_fp->_aniMan->_ox > 345 && g_fp->_aniMan->_ox < 355) {
+		g_fp->_aniMan->changeStatics2(ST_MAN_RIGHT);
+
+		MessageQueue *mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC11_MANFALL), 0, 0);
+
+		mq->setFlags(mq->getFlags() | 1);
+		if (!mq->chain(g_fp->_aniMan))
+			delete mq;
+
+		getCurrSceneSc2MotionController()->replaceNodeX(353, 303);
+	}
 }
 
 void sceneHandler11_manToSwing() {

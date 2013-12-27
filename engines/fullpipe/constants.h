@@ -502,6 +502,7 @@ namespace Fullpipe {
 #define MSG_SC11_SHOWSWING 1124
 #define MSG_SC11_SITSWINGER 5198
 #define PIC_SC11_HINT 5170
+#define QU_SC11_MANFALL 3017
 #define ST_BTS11_2 2707
 #define ST_KCH_STATIC 1122
 #define ST_SWR_SIT 1147
