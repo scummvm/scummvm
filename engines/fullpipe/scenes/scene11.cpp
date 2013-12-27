@@ -163,6 +163,18 @@ void sceneHandler11_hitMan() {
 	}
 }
 
+int scene11_updateCursor() {
+	g_fp->updateCursorCommon();
+
+	if (g_vars->scene11_var02) {
+		if (g_fp->_cursorId != PIC_CSR_DEFAULT_INV && g_fp->_cursorId != PIC_CSR_ITN_INV)
+			g_fp->_cursorId = -1;
+	} else if (g_vars->scene11_swingie == g_fp->_objectAtCursor && g_fp->_inventory->getSelectedItemId() == ANI_INV_BOOT)
+		g_fp->_cursorId = PIC_CSR_ITN_INV;
+
+	return g_fp->_cursorId;
+}
+
 int sceneHandler11_updateScreenCallback() {
 	int res = g_fp->drawArcadeOverlay(g_vars->scene11_var02);
 
