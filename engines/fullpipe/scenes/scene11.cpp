@@ -252,11 +252,19 @@ void sceneHandler11_sub01() {
 	warning("STUB: sceneHandler11_sub01()");
 }
 
-void sceneHandler11_sub02() {
-	warning("STUB: sceneHandler11_sub02()");
+void sceneHandler11_swing0() {
+	g_vars->scene11_dudeOnSwing->_statics = g_vars->scene11_dudeOnSwing->getStaticsById(ST_MAN11_EMPTY);
+	g_vars->scene11_dudeOnSwing->_movement = 0;
+	g_vars->scene11_dudeOnSwing->show1(690, 215, MV_MAN11_SWING_0, 0);
+	g_vars->scene11_dudeOnSwing->startAnim(MV_MAN11_SWING_0, 0, -1);
+	g_vars->scene11_dudeOnSwing->_movement->setDynamicPhaseIndex(g_vars->scene11_dudeOnSwing->_movement->_currDynamicPhaseIndex);
+
+	g_vars->scene11_var17 = 0;
+	g_vars->scene11_var23 = 45;
+	g_vars->scene11_var09 = 1.0;
 }
 
-void sceneHandler11_sub03() {
+void sceneHandler11_swing1() {
 	g_vars->scene11_dudeOnSwing->_statics = g_vars->scene11_dudeOnSwing->getStaticsById(ST_MAN11_EMPTY);
 	g_vars->scene11_dudeOnSwing->_movement = 0;
 	g_vars->scene11_dudeOnSwing->show1(690, 215, MV_MAN11_SWING_1, 0);
@@ -268,8 +276,16 @@ void sceneHandler11_sub03() {
 	g_vars->scene11_var09 = -(fabs(g_vars->scene11_var08) * 0.075 + 0.12);
 }
 
-void sceneHandler11_sub04() {
-	warning("STUB: sceneHandler11_sub04()");
+void sceneHandler11_swing2() {
+	g_vars->scene11_dudeOnSwing->_statics = g_vars->scene11_dudeOnSwing->getStaticsById(ST_MAN11_EMPTY);
+	g_vars->scene11_dudeOnSwing->_movement = 0;
+	g_vars->scene11_dudeOnSwing->show1(690, 215, MV_MAN11_SWING_2, 0);
+	g_vars->scene11_dudeOnSwing->startAnim(MV_MAN11_SWING_2, 0, -1);
+	g_vars->scene11_dudeOnSwing->_movement->setDynamicPhaseIndex(g_vars->scene11_dudeOnSwing->_movement->_currDynamicPhaseIndex);
+
+	g_vars->scene11_var17 = 2;
+	g_vars->scene11_var23 = 48;
+	g_vars->scene11_var09 = fabs(g_vars->scene11_var08) * 0.075 + 0.12;
 }
 
 void sceneHandler11_sub05() {
@@ -401,7 +417,7 @@ int sceneHandler11(ExCommand *cmd) {
 
 				if (g_vars->scene11_var16 <= 0 || g_vars->scene11_var15 - g_vars->scene11_var16 <= 72) {
 				} else {
-					sceneHandler11_sub02();
+					sceneHandler11_swing0();
 					g_vars->scene11_var18 = 0;
 					g_vars->scene11_var16 = 0;
 				}
@@ -440,14 +456,14 @@ int sceneHandler11(ExCommand *cmd) {
 
 				if (g_vars->scene11_var18 == 1) {
 					if (!g_vars->scene11_var17)
-						sceneHandler11_sub03();
+						sceneHandler11_swing1();
 					else
-						sceneHandler11_sub02();
+						sceneHandler11_swing0();
 				} else if (g_vars->scene11_var18 == 2) {
 					if (!g_vars->scene11_var17)
-						sceneHandler11_sub04();
+						sceneHandler11_swing2();
 					else
-						sceneHandler11_sub02();
+						sceneHandler11_swing0();
 				}
 
 				g_vars->scene11_var16 = g_vars->scene11_var15;

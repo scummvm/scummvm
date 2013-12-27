@@ -504,6 +504,7 @@ namespace Fullpipe {
 #define MV_KCH_START 1121
 #define MV_MAN11_SWING_0 1109
 #define MV_MAN11_SWING_1 1111
+#define MV_MAN11_SWING_2 1112
 #define PIC_SC11_HINT 5170
 #define QU_SC11_MANFALL 3017
 #define QU_SC11_PUTBOOT1 2709
