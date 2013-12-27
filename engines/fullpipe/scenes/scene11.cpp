@@ -285,6 +285,7 @@ int sceneHandler11(ExCommand *cmd) {
 
 				if (g_vars->scene11_var21 < 910)
 					g_vars->scene11_var04 = 0;
+
 			LABEL_26:
 				res = 1;
 			LABEL_27:
@@ -310,7 +311,6 @@ int sceneHandler11(ExCommand *cmd) {
 				if (g_vars->scene11_var17 == g_vars->scene11_var18 || g_vars->scene11_var16 <= 0 || g_vars->scene11_var15 - g_vars->scene11_var16 <= 2) {
 				LABEL_49:
 					if (g_vars->scene11_var02) {
-					LABEL_61:
 						g_fp->_behaviorManager->updateBehaviors();
 						g_fp->startSceneTrack();
 						return res;
@@ -332,25 +332,25 @@ int sceneHandler11(ExCommand *cmd) {
 							g_vars->scene11_swingie->startAnim(MV_SWR_SWING, 0, -1);
 						}
 					}
-					goto LABEL_61;
+					g_fp->_behaviorManager->updateBehaviors();
+					g_fp->startSceneTrack();
+					return res;
 				}
+
 				if (g_vars->scene11_var18 == 1) {
-					if (!g_vars->scene11_var17) {
+					if (!g_vars->scene11_var17)
 						sceneHandler11_sub03();
-					LABEL_48:
-						g_vars->scene11_var16 = g_vars->scene11_var15;
-						goto LABEL_49;
-					}
-				} else {
-					if (g_vars->scene11_var18 != 2)
-						goto LABEL_48;
-					if (!g_vars->scene11_var17) {
+					else
+						sceneHandler11_sub02();
+				} else if (g_vars->scene11_var18 == 2) {
+					if (!g_vars->scene11_var17)
 						sceneHandler11_sub04();
-						goto LABEL_48;
-					}
+					else
+						sceneHandler11_sub02();
 				}
-				sceneHandler11_sub02();
-				goto LABEL_48;
+
+				g_vars->scene11_var16 = g_vars->scene11_var15;
+				goto LABEL_49;
 			}
 			if (x >= g_fp->_sceneRect.left + 200) {
 				if (x <= g_fp->_sceneRect.right - 200) {
