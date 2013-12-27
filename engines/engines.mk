@@ -26,6 +26,11 @@ DEFINES += -DENABLE_AGOS2
 endif
 endif
 
+ifdef ENABLE_BBVS
+DEFINES += -DENABLE_BBVS=$(ENABLE_BBVS)
+MODULES += engines/bbvs
+endif
+
 ifdef ENABLE_CGE
 DEFINES += -DENABLE_CGE=$(ENABLE_CGE)
 MODULES += engines/cge
