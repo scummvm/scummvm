@@ -141,10 +141,6 @@ void scene11_initScene(Scene *sc) {
 	g_fp->setArcadeOverlay(PIC_CSR_ARCADE5);
 }
 
-void sceneHandler11_winArcade() {
-	warning("STUB: sceneHandler11_winArcade()");
-}
-
 void sceneHandler11_restartMan() {
 	chainObjQueue(0, QU_SC11_RESTARTMAN, 1);
 
@@ -261,7 +257,15 @@ void sceneHandler11_sub02() {
 }
 
 void sceneHandler11_sub03() {
-	warning("STUB: sceneHandler11_sub03()");
+	g_vars->scene11_dudeOnSwing->_statics = g_vars->scene11_dudeOnSwing->getStaticsById(ST_MAN11_EMPTY);
+	g_vars->scene11_dudeOnSwing->_movement = 0;
+	g_vars->scene11_dudeOnSwing->show1(690, 215, MV_MAN11_SWING_1, 0);
+	g_vars->scene11_dudeOnSwing->startAnim(MV_MAN11_SWING_1, 0, -1);
+	g_vars->scene11_dudeOnSwing->_movement->setDynamicPhaseIndex(g_vars->scene11_dudeOnSwing->_movement->_currDynamicPhaseIndex);
+
+	g_vars->scene11_var17 = 1;
+	g_vars->scene11_var23 = 42;
+	g_vars->scene11_var09 = -(fabs(g_vars->scene11_var08) * 0.075 + 0.12);
 }
 
 void sceneHandler11_sub04() {
@@ -286,6 +290,16 @@ void sceneHandler11_sub08() {
 
 void sceneHandler11_sub09() {
 	warning("STUB: sceneHandler11_sub09()");
+}
+
+void sceneHandler11_winArcade() {
+	if (g_vars->scene11_var02) {
+		g_vars->scene11_var02 = 0;
+
+		sceneHandler11_sub09();
+
+		g_fp->_gameLoader->preloadScene(SC_11, TrubaRight);
+	}
 }
 
 void sceneHandler11_sub10() {

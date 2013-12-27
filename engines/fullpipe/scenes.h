@@ -251,6 +251,7 @@ public:
 	int scene11_var20;
 	int scene11_var21;
 	int scene11_var22;
+	int scene11_var23;
 
 	int scene12_fly;
 	int scene12_flyCountdown;
