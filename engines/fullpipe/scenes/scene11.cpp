@@ -341,7 +341,44 @@ void sceneHandler11_sub10(double angle) {
 }
 
 void sceneHandler11_sub11(double angle) {
-	warning("STUB: sceneHandler11_sub11()");
+	MGMInfo mgminfo;
+
+	sceneHandler11_sub09();
+
+	if (angle >= 0.0) {
+		if (angle > 1.0)
+			angle = 1.0;
+	} else {
+		angle = 0.0;
+	}
+
+	g_fp->_aniMan->show1(690 - (int)(sin(g_vars->scene11_var08) * -267.0), 215 - (int)(cos(g_vars->scene11_var08) * -267.0),
+						  MV_MAN11_JUMPOVER, 0);
+	g_fp->_aniMan->_priority = 0;
+
+	mgminfo.staticsId2 = ST_MAN_1PIX;
+	mgminfo.ani = g_fp->_aniMan;
+	mgminfo.x1 = 1017 - (int)(angle * -214.0);
+	mgminfo.y1 = 700;
+	mgminfo.field_1C = 0;
+	mgminfo.field_10 = 1;
+	mgminfo.flags = 78;
+	mgminfo.movementId = MV_MAN11_JUMPHIT;
+
+	MessageQueue *mq = g_vars->scene11_var01.genMovement(&mgminfo);
+
+	if (mq) {
+		g_vars->scene11_var07 = SND_11_022;
+
+		ExCommand *ex = new ExCommand(0, 17, MSG_SC11_RESTARTMAN, 0, 0, 0, 1, 0, 0, 0);
+		ex->_excFlags = 2;
+
+		mq->addExCommandToEnd(ex);
+
+		if (!mq->chain(g_fp->_aniMan) )
+			delete mq;
+
+	}
 }
 
 void sceneHandler11_swingLogic() {
