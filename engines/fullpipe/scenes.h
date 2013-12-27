@@ -244,6 +244,8 @@ public:
 	int scene11_var18;
 	int scene11_var19;
 	int scene11_var20;
+	int scene11_var21;
+	int scene11_var22;
 
 	int scene12_fly;
 	int scene12_flyCountdown;

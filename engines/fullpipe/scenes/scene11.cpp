@@ -141,8 +141,79 @@ void scene11_initScene(Scene *sc) {
 	g_fp->setArcadeOverlay(PIC_CSR_ARCADE5);
 }
 
+void sceneHandler11_winArcade() {
+	warning("STUB: sceneHandler11_winArcade()");
+}
+
+void sceneHandler11_restartMan() {
+	warning("STUB: sceneHandler11_restartMan()");
+}
+
+void sceneHandler11_hitMan() {
+	warning("STUB: sceneHandler11_hitMan()");
+}
+
+void sceneHandler11_manToSwing() {
+	warning("STUB: sceneHandler11_manToSwing()");
+}
+
+void sceneHandler11_putBoot() {
+	warning("STUB: sceneHandler11_putBoot()");
+}
+
+void sceneHandler11_showSwing() {
+	warning("STUB: sceneHandler11_showSwing()");
+}
+
+void sceneHandler11_sub01() {
+	warning("STUB: sceneHandler11_sub01()");
+}
+
+void sceneHandler11_sub02() {
+	warning("STUB: sceneHandler11_sub02()");
+}
+
+void sceneHandler11_sub03() {
+	warning("STUB: sceneHandler11_sub03()");
+}
+
+void sceneHandler11_sub04() {
+	warning("STUB: sceneHandler11_sub04()");
+}
+
+void sceneHandler11_sub05() {
+	warning("STUB: sceneHandler11_sub05()");
+}
+
+void sceneHandler11_sub06() {
+	warning("STUB: sceneHandler11_sub06()");
+}
+
+void sceneHandler11_sub07() {
+	warning("STUB: sceneHandler11_sub07()");
+}
+
+void sceneHandler11_sub08() {
+	warning("STUB: sceneHandler11_sub08()");
+}
+
+void sceneHandler11_sub09() {
+	warning("STUB: sceneHandler11_sub09()");
+}
+
+void sceneHandler11_sub10() {
+	warning("STUB: sceneHandler11_sub10()");
+}
+
+void sceneHandler11_sub11() {
+	warning("STUB: sceneHandler11_sub11()");
+}
+
+void sceneHandler11_sub12() {
+	warning("STUB: sceneHandler11_sub12()");
+}
+
 int sceneHandler11(ExCommand *cmd) {
-#if 0
 	if (cmd->_messageKind != 17)
 		return 0;
 
@@ -152,14 +223,15 @@ int sceneHandler11(ExCommand *cmd) {
 		break;
 
 	case MSG_SC11_SITSWINGER:
-		if (g_fp->getObjectState(sO_Swingie) == getObjectEnumState(sO_Swingie, sO_IsStandingInBoots)
+		if (g_fp->getObjectState(sO_Swingie) == g_fp->getObjectEnumState(sO_Swingie, sO_IsStandingInBoots)
 			    || g_fp->getObjectState(sO_Swingie) == g_fp->getObjectEnumState(sO_Swingie, sO_IsStandingInCorner)) {
 			g_fp->setObjectState(sO_Swingie, g_fp->getObjectEnumState(sO_Swingie, sO_IsSitting));
 		}
 		break;
 
 	case MSG_SC11_MANCRY:
-		playSound(g_vars->scene11_var07, 0);
+		g_fp->playSound(g_vars->scene11_var07, 0);
+
 		g_vars->scene11_var07 = 0;
 		break;
 
@@ -190,11 +262,14 @@ int sceneHandler11(ExCommand *cmd) {
 
 	case 33:
 		{
+			int res = 0;
+			int x, y;
+
 			if (!g_fp->_aniMan2)
 				goto LABEL_27;
 
-			int x = g_fp->_aniMan2->_ox;
-			int y = g_fp->_aniMan2->_oy;
+			x = g_fp->_aniMan2->_ox;
+			y = g_fp->_aniMan2->_oy;
 
 			g_vars->scene11_var21 = x;
 			g_vars->scene11_var22 = y;
@@ -211,7 +286,7 @@ int sceneHandler11(ExCommand *cmd) {
 				if (g_vars->scene11_var21 < 910)
 					g_vars->scene11_var04 = 0;
 			LABEL_26:
-				v2 = 1;
+				res = 1;
 			LABEL_27:
 				if (g_vars->scene11_var20) {
 					if (g_fp->_sceneRect.left >= 534 && g_vars->scene11_var06 < 534)
@@ -222,14 +297,9 @@ int sceneHandler11(ExCommand *cmd) {
 				if (!g_vars->scene11_var02)
 					goto LABEL_50;
 
-				v6 = g_vars->scene11_var16;
-
 				if (g_vars->scene11_var16 <= 0 || g_vars->scene11_var15 - g_vars->scene11_var16 <= 72) {
-					v7 = g_vars->scene11_var18;
 				} else {
 					sceneHandler11_sub02();
-					v7 = 0;
-					v6 = 0;
 					g_vars->scene11_var18 = 0;
 					g_vars->scene11_var16 = 0;
 				}
@@ -237,34 +307,34 @@ int sceneHandler11(ExCommand *cmd) {
 				if (!g_vars->scene11_var02)
 					goto LABEL_50;
 
-				if (g_vars->scene11_var17 == v7 || v6 <= 0 || g_vars->scene11_var15 - v6 <= 2) {
+				if (g_vars->scene11_var17 == g_vars->scene11_var18 || g_vars->scene11_var16 <= 0 || g_vars->scene11_var15 - g_vars->scene11_var16 <= 2) {
 				LABEL_49:
 					if (g_vars->scene11_var02) {
 					LABEL_61:
 						g_fp->_behaviorManager->updateBehaviors();
 						g_fp->startSceneTrack();
-						return v2;
+						return res;
 					}
 				LABEL_50:
 					if (g_vars->scene11_var19
-						|| 0.0 == g_vars->scene11_var10
-						&& (v8 = g_vars->scene11_dudeOnSwing->_movement) != 0
-						&& v8->_currDynamicPhaseIndex == 45
-						&& (g_vars->scene11_dudeOnSwing->changeStatics2(ST_KCH_STATIC), !g_vars->scene11_var02)
-						&& g_vars->scene11_var19) {
+						|| (0.0 == g_vars->scene11_var10
+							&& g_vars->scene11_dudeOnSwing->_movement != 0
+							&& g_vars->scene11_dudeOnSwing->_movement->_currDynamicPhaseIndex == 45
+							&& (g_vars->scene11_dudeOnSwing->changeStatics2(ST_KCH_STATIC), !g_vars->scene11_var02)
+							&& g_vars->scene11_var19)) {
 						if (!g_vars->scene11_swingie->_movement) {
 							if ((g_vars->scene11_boots->_flags & 4) && g_vars->scene11_boots->_statics->_staticsId == ST_BTS11_2) {
 								sceneHandler11_sub07();
 								g_fp->_behaviorManager->updateBehaviors();
-								startSceneTrack();
-								return v2;
+								g_fp->startSceneTrack();
+								return res;
 							}
 							g_vars->scene11_swingie->startAnim(MV_SWR_SWING, 0, -1);
 						}
 					}
 					goto LABEL_61;
 				}
-				if (v7 == 1) {
+				if (g_vars->scene11_var18 == 1) {
 					if (!g_vars->scene11_var17) {
 						sceneHandler11_sub03();
 					LABEL_48:
@@ -272,7 +342,7 @@ int sceneHandler11(ExCommand *cmd) {
 						goto LABEL_49;
 					}
 				} else {
-					if (v7 != 2)
+					if (g_vars->scene11_var18 != 2)
 						goto LABEL_48;
 					if (!g_vars->scene11_var17) {
 						sceneHandler11_sub04();
@@ -322,7 +392,7 @@ int sceneHandler11(ExCommand *cmd) {
 		}
 
 		if (!g_vars->scene11_var02) {
-			StaticANIObject *ani = g_fp->_currentScenegetStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
+			StaticANIObject *ani = g_fp->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
 
 			if (!ani || !canInteractAny(g_fp->_aniMan, ani, cmd->_keyCode)) {
 				int picId = g_fp->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
@@ -340,7 +410,6 @@ int sceneHandler11(ExCommand *cmd) {
 			return 0;
 		}
 	}
-#endif
 
 	return 0;
 }
