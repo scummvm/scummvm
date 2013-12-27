@@ -41,6 +41,7 @@ protected:
 	Graphics::Surface *_externalSurface;
 	int32 _frame;
 	bool _updateNeeded;
+	bool _showSubtitles;
 	float _movieTime;
 	int _channels;
 	int _freq;
@@ -66,7 +67,7 @@ public:
 	 * @see init
 	 * @see stop
 	 */
-	virtual bool play(const Common::String &filename, bool looping, int x, int y, bool start = true);
+	virtual bool play(const Common::String &filename, bool looping, int x, int y, bool start = true, bool showSubtitles = false);
 	virtual void stop();
 	virtual void pause(bool p);
 	virtual bool isPlaying() { return !_videoFinished; }

@@ -155,16 +155,25 @@ void Lua_V2::GetCPUSpeed() {
 // the only real difference from L1 is the lack of looping
 void Lua_V2::StartMovie() {
 	lua_Object name = lua_getparam(1);
+	lua_Object subtitlesObj = lua_getparam(2);
+
 	if (!lua_isstring(name)) {
 		lua_pushnil();
 		return;
 	}
 	Lua_V1::CleanBuffer();
 
+	bool showSubtitles = false;
+	if (lua_isnumber(subtitlesObj)) {
+		if ((int)lua_getnumber(subtitlesObj)) {
+			showSubtitles = true;
+		}
+	}
+
 	GrimEngine::EngineMode prevEngineMode = g_grim->getMode();
 	g_grim->setMode(GrimEngine::SmushMode);
 	g_grim->setMovieSubtitle(NULL);
-	bool result = g_movie->play(lua_getstring(name), false, 0, 0);
+	bool result = g_movie->play(lua_getstring(name), false, 0, 0, true, showSubtitles);
 	if (!result)
 		g_grim->setMode(prevEngineMode);
 	pushbool(result);
