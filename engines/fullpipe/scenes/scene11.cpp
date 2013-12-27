@@ -248,8 +248,42 @@ void sceneHandler11_showSwing() {
 	g_vars->scene11_dudeOnSwing->_priority = 20;
 }
 
-void sceneHandler11_sub01() {
-	warning("STUB: sceneHandler11_sub01()");
+void sceneHandler11_sub08() {
+	warning("STUB: sceneHandler11_sub08()");
+}
+
+void sceneHandler11_sub12() {
+	warning("STUB: sceneHandler11_sub12()");
+}
+
+void sceneHandler11_sub10(double angle) {
+	warning("STUB: sceneHandler11_sub10()");
+}
+
+void sceneHandler11_sub11(double angle) {
+	warning("STUB: sceneHandler11_sub11()");
+}
+
+void sceneHandler11_swingLogic() {
+	if (g_vars->scene11_dudeOnSwing->_movement) {
+		int ph = g_vars->scene11_dudeOnSwing->_movement->_currDynamicPhaseIndex;
+		if (ph > 53 && ph < 90) {
+			if (ph < 70 && g_vars->scene11_var10 >= 22.0) {
+				sceneHandler11_sub10((double)ph * 0.01428571428571429);  // = 1 / 70
+			} else if (ph <= 80 && g_vars->scene11_var10 >= 22.0) {
+				sceneHandler11_sub08();
+			} else {
+				sceneHandler11_sub11((double)ph * g_vars->scene11_var10 * 0.0006493506493506494); // = 1/1540
+			}
+
+			g_vars->scene11_var02 = 0;
+			g_vars->scene11_hint->_flags &= 0xFFFB;
+			return;
+		}
+
+		if (ph > 38 && ph < 53 && fabs(g_vars->scene11_var10) <= 5.0)
+			sceneHandler11_sub12();
+	}
 }
 
 void sceneHandler11_swing0() {
@@ -300,10 +334,6 @@ void sceneHandler11_sub07() {
 	warning("STUB: sceneHandler11_sub07()");
 }
 
-void sceneHandler11_sub08() {
-	warning("STUB: sceneHandler11_sub08()");
-}
-
 void sceneHandler11_sub09() {
 	if (g_vars->scene11_var17)
 		sceneHandler11_swing0();
@@ -327,18 +357,6 @@ void sceneHandler11_winArcade() {
 
 		g_fp->_gameLoader->preloadScene(SC_11, TrubaRight);
 	}
-}
-
-void sceneHandler11_sub10() {
-	warning("STUB: sceneHandler11_sub10()");
-}
-
-void sceneHandler11_sub11() {
-	warning("STUB: sceneHandler11_sub11()");
-}
-
-void sceneHandler11_sub12() {
-	warning("STUB: sceneHandler11_sub12()");
 }
 
 int sceneHandler11(ExCommand *cmd) {
@@ -385,7 +403,7 @@ int sceneHandler11(ExCommand *cmd) {
 
 	case 107:
 		if (g_vars->scene11_var02)
-			sceneHandler11_sub01();
+			sceneHandler11_swingLogic();
 		break;
 
 	case 33:
