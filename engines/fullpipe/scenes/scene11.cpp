@@ -163,8 +163,41 @@ void sceneHandler11_hitMan() {
 	}
 }
 
+int sceneHandler11_updateScreenCallback() {
+	int res = g_fp->drawArcadeOverlay(g_vars->scene11_var02);
+
+	if (!res)
+		g_fp->_updateScreenCallback = 0;
+
+	return res;
+}
+
 void sceneHandler11_manToSwing() {
-	warning("STUB: sceneHandler11_manToSwing()");
+	g_vars->scene11_var02 = 1;
+
+	getCurrSceneSc2MotionController()->clearEnabled();
+	getGameLoaderInteractionController()->disableFlag24();
+
+	g_fp->_aniMan2->hide();
+
+	g_vars->scene11_var15 = 0;
+	g_vars->scene11_var12 = 1.9849218;
+
+	g_vars->scene11_dudeOnSwing->_flags &= 0xFFFB;
+	g_vars->scene11_dudeOnSwing = g_fp->_currentScene->getStaticANIObject1ById(ANI_MAN11, -1);
+	g_vars->scene11_dudeOnSwing->_statics = g_vars->scene11_dudeOnSwing->getStaticsById(ST_MAN11_EMPTY);
+	g_vars->scene11_dudeOnSwing->_movement = 0;
+	g_vars->scene11_dudeOnSwing->show1(690, 215, MV_MAN11_SWING_0, 0);
+	g_vars->scene11_dudeOnSwing->_priority = 20;
+	g_vars->scene11_dudeOnSwing->startAnim(MV_MAN11_SWING_0, 0, -1);
+	g_vars->scene11_dudeOnSwing->_movement->setDynamicPhaseIndex(45);
+
+	g_vars->scene11_var01.addItem(g_fp->_aniMan->_id);
+
+	g_fp->_currentScene->_x = 1400 - g_fp->_sceneRect.right;
+
+	g_vars->scene11_var03 = 1;
+	g_fp->_updateScreenCallback = sceneHandler11_updateScreenCallback;
 }
 
 void sceneHandler11_putBoot() {
