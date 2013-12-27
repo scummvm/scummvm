@@ -501,6 +501,7 @@ namespace Fullpipe {
 #define MSG_SC11_RESTARTMAN 1133
 #define MSG_SC11_SHOWSWING 1124
 #define MSG_SC11_SITSWINGER 5198
+#define MV_KCH_MOVE2 1099
 #define MV_KCH_START 1121
 #define MV_MAN11_SWING_0 1109
 #define MV_MAN11_SWING_1 1111
@@ -513,6 +514,7 @@ namespace Fullpipe {
 #define ST_BTS11_2 2707
 #define ST_BTS11_ONE 2706
 #define ST_KCH_0 1096
+#define ST_KCH_EMPTY 1132
 #define ST_KCH_STATIC 1122
 #define ST_MAN11_EMPTY 1110
 #define ST_SWR_SIT 1147

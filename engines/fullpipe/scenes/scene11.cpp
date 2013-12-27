@@ -305,7 +305,18 @@ void sceneHandler11_sub08() {
 }
 
 void sceneHandler11_sub09() {
-	warning("STUB: sceneHandler11_sub09()");
+	if (g_vars->scene11_var17)
+		sceneHandler11_swing0();
+
+	g_vars->scene11_dudeOnSwing->stopAnim_maybe();
+	g_vars->scene11_dudeOnSwing->hide();
+	g_vars->scene11_dudeOnSwing = g_fp->_currentScene->getStaticANIObject1ById(ANI_KACHELI, -1);
+	g_vars->scene11_dudeOnSwing->show1(-1, -1, -1, 0);
+	g_vars->scene11_dudeOnSwing->changeStatics2(ST_KCH_EMPTY);
+	g_vars->scene11_dudeOnSwing->startAnim(MV_KCH_MOVE2, 0, -1);
+	g_vars->scene11_dudeOnSwing->_movement->setDynamicPhaseIndex(g_vars->scene11_dudeOnSwing->_movement->_currDynamicPhaseIndex);
+
+	g_vars->scene11_var12 = 1.9881250;
 }
 
 void sceneHandler11_winArcade() {
