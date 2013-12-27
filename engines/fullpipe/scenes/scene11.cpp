@@ -146,7 +146,12 @@ void sceneHandler11_winArcade() {
 }
 
 void sceneHandler11_restartMan() {
-	warning("STUB: sceneHandler11_restartMan()");
+	chainObjQueue(0, QU_SC11_RESTARTMAN, 1);
+
+	getGameLoaderInteractionController()->enableFlag24();
+	getCurrSceneSc2MotionController()->setEnabled();
+
+	g_vars->scene11_var03 = 0;
 }
 
 void sceneHandler11_hitMan() {
@@ -240,7 +245,11 @@ void sceneHandler11_putBoot() {
 }
 
 void sceneHandler11_showSwing() {
-	warning("STUB: sceneHandler11_showSwing()");
+	g_vars->scene11_dudeOnSwing = g_fp->_currentScene->getStaticANIObject1ById(ANI_KACHELI, -1);
+	g_vars->scene11_dudeOnSwing->_statics = g_vars->scene11_dudeOnSwing->getStaticsById(ST_KCH_0);
+	g_vars->scene11_dudeOnSwing->_movement = 0;
+	g_vars->scene11_dudeOnSwing->show1(691, 371, MV_KCH_START, 0);
+	g_vars->scene11_dudeOnSwing->_priority = 20;
 }
 
 void sceneHandler11_sub01() {
