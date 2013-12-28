@@ -1280,7 +1280,7 @@ void ThreadResource::doRoom() {
 			pic1 = vm._bVoy->boltEntry(vm._playStamp1 + 2)._picResource;
 			pic2 = vm._bVoy->boltEntry(vm._playStamp1 + 3)._picResource;
 			vm._graphicsManager._backColors = vm._bVoy->boltEntry(
-				vm._playStamp1 + 2)._cMapResource;
+				vm._playStamp1 + 1)._cMapResource;
 			vm._graphicsManager._backgroundPage = vm._bVoy->boltEntry(
 				vm._playStamp1)._picResource;
 

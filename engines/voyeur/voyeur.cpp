@@ -285,7 +285,7 @@ bool VoyeurEngine::doLock() {
 		
 		// Set up the cursor
 		_eventsManager.setCursor(cursorPic);
-		_eventsManager.mouseOn();
+		_eventsManager.showCursor();
 
 		_eventsManager._intPtr. field38 = 1;
 		_eventsManager._intPtr._hasPalette = true;
@@ -410,7 +410,7 @@ bool VoyeurEngine::doLock() {
 		_bVoy->freeBoltGroup(0x700);
 	}
 
-	_eventsManager.mouseOff();
+	_eventsManager.hideCursor();
 
 	delete[] buttonVoc;
 	delete[] wrongVoc;

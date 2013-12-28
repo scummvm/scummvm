@@ -718,7 +718,7 @@ void GraphicsManager::fadeUpICF1(int steps) {
 
 void GraphicsManager::fadeDownICF(int steps) {
 	if (steps > 0) {
-		_vm->_eventsManager.mouseOff();
+		_vm->_eventsManager.hideCursor();
 		int stepAmount1 = _vm->_voy._field4376 / steps;
 		int stepAmount2 = _vm->_voy._field4378 / steps;
 

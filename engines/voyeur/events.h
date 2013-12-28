@@ -217,8 +217,7 @@ public:
 	void setCursor(PictureResource *pic);
 	void setCursor(byte *cursorData, int width, int height);
 	void setCursorColor(int idx, int mode);
-	void mouseOn();
-	void mouseOff();
+	void showCursor();
 	void hideCursor();
 	Common::Point getMousePos() { return _mousePos; }
 	void getMouseInfo();

@@ -426,16 +426,12 @@ void EventsManager::setCursorColor(int idx, int mode) {
 	}
 }
 
-void EventsManager::mouseOn() {
+void EventsManager::showCursor() {
 	CursorMan.showMouse(true);
 }
 
-void EventsManager::mouseOff() {
-	CursorMan.showMouse(false);
-}
-
 void EventsManager::hideCursor() {
-	error("TODO: hideCursor");
+	CursorMan.showMouse(false);
 }
 
 void EventsManager::getMouseInfo() {
