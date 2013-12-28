@@ -625,7 +625,7 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 		scene->initObjectCursors("SC_24");
 		setSceneMusicParameters(sceneVar);
 		addMessageHandler(sceneHandler24, 2);
-		scene24_sub_423DD0();
+		scene24_setPoolState();
 		_updateCursorCallback = defaultUpdateCursor;
 		break;
 

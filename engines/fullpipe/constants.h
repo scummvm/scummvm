@@ -555,6 +555,12 @@ namespace Fullpipe {
 #define ANI_DROP_24 3505
 #define ANI_JET24 1837
 #define ANI_WATER24 1834
+#define QU_DRP24_TOFLOOR 3510
+#define QU_DRP24_TOWATER 3509
+#define QU_DRP24_TOWATER2 4046
+#define SND_24_006 4041
+#define SND_24_007 4042
+#define ST_DRP24_EMPTY 3507
 #define ST_WTR24_FLOWLOWER 1843
 
 } // End of namespace Fullpipe
