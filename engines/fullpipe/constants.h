@@ -551,6 +551,12 @@ namespace Fullpipe {
 #define ST_GMS_BOOT 1270
 #define ST_GMS_BOOTLESS2 3316
 
+// Scene 24
+#define ANI_DROP_24 3505
+#define ANI_JET24 1837
+#define ANI_WATER24 1834
+#define ST_WTR24_FLOWLOWER 1843
+
 } // End of namespace Fullpipe
 
 #endif /* FULLPIPE_CONSTANTS_H */

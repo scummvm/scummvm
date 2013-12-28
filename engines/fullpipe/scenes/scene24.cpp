@@ -71,11 +71,11 @@ void scene24_initScene(Scene *sc) {
 
 		g_vars->scene24_water->hide();
 
-		g_fp->setObjectState(sO_StairsDown_24, g_fp->getObjectEnumState(sO_StairsDown_24, sO_IsOpened))
+		g_fp->setObjectState(sO_StairsDown_24, g_fp->getObjectEnumState(sO_StairsDown_24, sO_IsOpened));
 	} else {
 		g_vars->scene24_var07 = 1;
 
-		g_fp->setObjectState(sO_StairsDown_24, g_fp->getObjectEnumState(sO_StairsDown_24, sO_IsClosed))
+		g_fp->setObjectState(sO_StairsDown_24, g_fp->getObjectEnumState(sO_StairsDown_24, sO_IsClosed));
 	}
 
 	g_fp->_currentScene = oldsc;
