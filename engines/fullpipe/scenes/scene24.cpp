@@ -37,11 +37,6 @@
 namespace Fullpipe {
 
 void scene24_initScene(Scene *sc) {
-	g_vars->scene24_var01 = 200;
-	g_vars->scene24_var02 = 200;
-	g_vars->scene24_var03 = 300;
-	g_vars->scene24_var04 = 300;
-
 	g_vars->scene24_water = sc->getStaticANIObject1ById(ANI_WATER24, -1);
 	g_vars->scene24_jet = sc->getStaticANIObject1ById(ANI_JET24, -1);
 	g_vars->scene24_drop = sc->getStaticANIObject1ById(ANI_DROP_24, -1);
@@ -101,6 +96,34 @@ void scene24_setPoolState() {
 		g_fp->_behaviorManager->setBehaviorEnabled(g_vars->scene24_drop, ST_DRP24_EMPTY, QU_DRP24_TOWATER, 0);
 		g_fp->_behaviorManager->setBehaviorEnabled(g_vars->scene24_drop, ST_DRP24_EMPTY, QU_DRP24_TOWATER2, 0);
 	}
+}
+
+int sceneHandler24(ExCommand *cmd) {
+	if (cmd->_messageKind == 17 && cmd->_messageNum == 33) {
+		if (g_fp->_aniMan2) {
+			int x = g_fp->_aniMan2->_ox;
+
+			if (x < g_fp->_sceneRect.left + 200) {
+				g_fp->_currentScene->_x = x - 300 - g_fp->_sceneRect.left;
+			}
+			if (x > g_fp->_sceneRect.right - 200)
+				g_fp->_currentScene->_x = x +  300 - g_fp->_sceneRect.right;
+		}
+
+		if (g_vars->scene24_var07 && !g_vars->scene24_water->_movement) {
+			if (g_vars->scene24_var06)
+				g_vars->scene24_water->startAnim(MV_WTR24_FLOWLOWER, 0, -1);
+			else
+				g_vars->scene24_water->startAnim(MV_WTR24_FLOW, 0, -1);
+		}
+
+		if (g_vars->scene24_var05 && !g_vars->scene24_jet->_movement)
+			g_vars->scene24_jet->startAnim(MV_JET24_FLOW, 0, -1);
+
+		g_fp->_behaviorManager->updateBehaviors();
+	}
+
+	return 0;
 }
 
 } // End of namespace Fullpipe

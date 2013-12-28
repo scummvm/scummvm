@@ -195,10 +195,6 @@ Vars::Vars() {
 	scene15_ladder = 0;
 	scene15_boot = 0;
 
-	scene24_var01 = 0;
-	scene24_var02 = 0;
-	scene24_var03 = 0;
-	scene24_var04 = 0;
 	scene24_var05 = 0;
 	scene24_var06 = 0;
 	scene24_var07 = 0;
