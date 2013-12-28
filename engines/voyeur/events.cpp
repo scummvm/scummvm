@@ -213,6 +213,18 @@ void EventsManager::delay(int cycles) {
 	}
 }
 
+void EventsManager::delayClick(int cycles) {
+	uint32 totalMilli = cycles * 1000 / GAME_FRAME_RATE;
+	uint32 delayEnd = g_system->getMillis() + totalMilli;
+
+	while (!_vm->shouldQuit() && g_system->getMillis() < delayEnd 
+			&& !_vm->_voy._incriminate) {
+		g_system->delayMillis(10);
+
+		pollEvents();
+	}
+}
+
 void EventsManager::pollEvents() {
 	checkForNextFrameCounter();
 
@@ -368,6 +380,10 @@ void EventsManager::vDoCycleInt() {
 
 void EventsManager::fadeIntFunc() {
 	warning("TODO");
+}
+
+void EventsManager::deleteIntNode(IntNode *node) {
+	_intNodes.remove(node);
 }
 
 void EventsManager::vInitColor() {
@@ -537,6 +553,10 @@ void EventsManager::addComputerEventEnd(int v) {
 	e._computerOff = v;
 	if (_vm->_voy._eventCount < (TOTAL_EVENTS - 1))
 		++_vm->_voy._eventCount;
+}
+
+void EventsManager::stopEvidDim() {
+	deleteIntNode(&_evIntNode);
 }
 
 Common::String EventsManager::getEvidString(int eventIndex) {

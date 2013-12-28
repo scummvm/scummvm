@@ -173,7 +173,7 @@ public:
 	void doScroll(const Common::Point &pt);
 
 	void checkPhoneCall();
-	void doEvidDisplay(int v1, int v2);
+	void doEvidDisplay(int evidId, int eventId);
 
 	/**
 	 * Flips the active page and waits until it's drawn

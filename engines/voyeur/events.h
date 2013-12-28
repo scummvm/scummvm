@@ -89,6 +89,8 @@ public:
 	int _field476;
 	int _field478;
 	int _field47A;
+	PictureResource *_evPicPtrs[6];
+	CMapResource *_evCmPtrs[6];
 	int _field4AC;
 	int _field4AE[5];
 	int _field4B8;
@@ -105,15 +107,7 @@ public:
 	int _timeStart;
 	int _duration;
 	int _vidStart;
-	int _doApt;
-	int _function;
-	int _anim;
-	int _level;
-	int _levelDone;
-	int _flags;
-	int _evGroup;
-	byte *_evPicPtrs[6];
-	byte *_evCmPtrs[6];
+
 	int _audioTime;
 	int _phones[5];
 	int _numPhonesUsed;
@@ -187,13 +181,14 @@ private:
 	void vDoFadeInt();
 	void vDoCycleInt();
 	void fadeIntFunc();
+	void deleteIntNode(IntNode *node);
 public:
 	IntData _gameData;
 	IntData &_intPtr;
 	IntNode _fadeIntNode;
 	IntNode _fade2IntNode;
 	IntNode _cycleIntNode;
-	IntNode _evintnode;
+	IntNode _evIntNode;
 	IntNode _mainIntNode;
 	int _cycleStatus;
 	int _fadeFirstCol, _fadeLastCol;
@@ -215,6 +210,7 @@ public:
 	void vInitColor();
 
 	void delay(int cycles);
+	void delayClick(int cycles);
 	void pollEvents();
 	void startFade(CMapResource *cMap);
 	void addIntNode(IntNode *node);
@@ -240,6 +236,8 @@ public:
 	void addEvidEventEnd(int dead);
 	void addComputerEventStart();
 	void addComputerEventEnd(int v);
+	void stopEvidDim();
+
 	Common::String getEvidString(int eventIndex);
 };
 

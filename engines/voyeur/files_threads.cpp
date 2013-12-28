@@ -408,7 +408,7 @@ void ThreadResource::parsePlayCommands() {
 
 					while (!_vm->shouldQuit() && !_vm->_voy._incriminate && 
 							_vm->_soundManager.getVOCStatus())
-							_vm->_eventsManager.delay(1);
+						_vm->_eventsManager.delayClick(1);
 
 					_vm->_voy._field478 |= 1;
 					_vm->_soundManager.stopVOCPlay();
@@ -517,7 +517,7 @@ void ThreadResource::parsePlayCommands() {
 
 					while (!_vm->shouldQuit() && !_vm->_voy._incriminate &&
 							_vm->_soundManager.getVOCStatus()) {
-						_vm->_eventsManager.delay(1);
+						_vm->_eventsManager.delayClick(1);
 						_vm->_eventsManager.getMouseInfo();
 					}
 
@@ -1272,7 +1272,7 @@ void ThreadResource::doRoom() {
 
 			voy._field478 &= ~0x10;
 			if (!voy._incriminate)
-				vm._eventsManager.delay(18000);
+				vm._eventsManager.delayClick(18000);
 
 			vm._bVoy->freeBoltGroup(vm._playStamp1);
 			vm._bVoy->getBoltGroup(vm._playStamp1);
@@ -1722,7 +1722,7 @@ void ThreadResource::doAptAnim(int mode) {
 			pal->startFade();
 
 			_vm->flipPageAndWait();
-			_vm->_eventsManager.delay(5);
+			_vm->_eventsManager.delayClick(5);
 		}
 
 		_vm->_bVoy->freeBoltGroup(id);

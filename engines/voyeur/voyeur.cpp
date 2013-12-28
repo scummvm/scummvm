@@ -187,7 +187,7 @@ bool VoyeurEngine::doHeadTitle() {
 	if (!_voy._incriminate) {
 //		doOpening();
 //		doTransitionCard("Saturday Afternoon", "Player's Apartment");
-		_eventsManager.delay(90);
+		_eventsManager.delayClick(90);
 	} else {
 		_voy._incriminate = false;
 	}
@@ -224,7 +224,7 @@ void VoyeurEngine::showConversionScreen() {
 	cMap->startFade();
 
 	// Wait briefly
-	_eventsManager.delay(150);
+	_eventsManager.delayClick(150);
 	if (shouldQuit())
 		return;
 
@@ -240,12 +240,10 @@ void VoyeurEngine::showConversionScreen() {
 	_eventsManager.sWaitFlip();
 
 	while (!shouldQuit() && (_eventsManager._fadeStatus & 1))
-		_eventsManager.delay(1);
+		_eventsManager.delayClick(1);
 
 	_graphicsManager.screenReset();
 	_bVoy->freeBoltGroup(0x500);
-
-
 }
 
 bool VoyeurEngine::doLock() {
@@ -450,7 +448,7 @@ void VoyeurEngine::showTitleScreen() {
 		cMap->startFade();
 
 		// Wait briefly
-		_eventsManager.delay(200);
+		_eventsManager.delayClick(200);
 		if (shouldQuit())
 			return;
 
@@ -469,7 +467,7 @@ void VoyeurEngine::showTitleScreen() {
 			return;
 
 		_graphicsManager.screenReset();
-		_eventsManager.delay(200);
+		_eventsManager.delayClick(200);
 
 		// Voyeur title
 		playRL2Video("a1100100.rl2");

@@ -571,7 +571,7 @@ void VoyeurEngine::doTapePlaying() {
 
 	_soundManager.startVOCPlay("vcr.voc");
 	while (!shouldQuit() && !_voy._incriminate && _soundManager.getVOCStatus()) {
-		_eventsManager.delay(2);
+		_eventsManager.delayClick(2);
 	}
 
 	_soundManager.stopVOCPlay();
@@ -1073,7 +1073,7 @@ void VoyeurEngine::checkPhoneCall() {
 	}
 }
 
-void VoyeurEngine::doEvidDisplay(int v1, int v2) {
+void VoyeurEngine::doEvidDisplay(int evidId, int eventId) {
 	_eventsManager.getMouseInfo();
 	flipPageAndWait();
 
@@ -1082,7 +1082,81 @@ void VoyeurEngine::doEvidDisplay(int v1, int v2) {
 		_soundManager.stopVOCPlay();
 	}
 
-	error("TODO: doEvidDisplay");
+	_bVoy->getBoltGroup(_voy._field47A);
+	PictureResource *pic = _bVoy->boltEntry(_voy._field47A + evidId * 2)._picResource;
+	_graphicsManager.sDrawPic(pic, *_graphicsManager._vPort, Common::Point(
+		384 - pic->_bounds.width() / 2, 240 - pic->_bounds.height() / 2));
+	_bVoy->freeBoltMember(_voy._field47A + evidId * 2);
+
+	CMapResource *pal = _bVoy->boltEntry(_voy._field47A + evidId * 2 + 1)._cMapResource;
+	pal->startFade();
+
+	while (!shouldQuit() && (_eventsManager._fadeStatus & 1))
+		_eventsManager.delay(1);
+	_bVoy->freeBoltMember(_voy._field47A + evidId * 2 + 1);
+
+	byte *dataP = _bVoy->memberAddr(_playStamp1 + 4);
+	int count = (int16)READ_LE_UINT16(dataP + evidId * 12 + 4);
+
+	if (count > 0) {
+		for (int idx = 1; idx <= count; ++idx) {
+			_voy._evPicPtrs[idx - 1] = _bVoy->boltEntry(_voy._field47A + 
+				(evidId + idx) * 2)._picResource;
+			_voy._evCmPtrs[idx - 1] = _bVoy->boltEntry(_voy._field47A + 
+				(evidId + idx) * 2 + 1)._cMapResource;
+		}
+	}
+
+	flipPageAndWait();
+	_eventsManager.stopEvidDim();
+
+	if (eventId == 999)
+		_eventsManager.addEvidEventStart(eventId);
+
+	_eventsManager.getMouseInfo();
+
+	int arrIndex = 0;
+	bool breakFlag = _voy._fadeFunc != NULL;
+	int evidIdx = evidId;
+
+	while (!shouldQuit() && !breakFlag) {
+		if (_playStamp2 != -1 && !_soundManager.getVOCStatus()) {
+			if (_voy._vocSecondsOffset > 60)
+				_voy._vocSecondsOffset = 0;
+
+			_soundManager.startVOCPlay(_playStamp2);
+		}
+
+		_eventsManager.delay(600);
+		if (_voy._fadeFunc)
+			break;
+		if (count == 0 || evidIdx >= eventId)
+			continue;
+		
+		PictureResource *pic = _voy._evPicPtrs[arrIndex];
+		_graphicsManager.sDrawPic(pic, *_graphicsManager._vPort,
+			Common::Point((384 - pic->_bounds.width()) / 2,
+			(240 - pic->_bounds.height()) / 2));
+		_voy._evCmPtrs[arrIndex]->startFade();
+		while (!shouldQuit() && (_eventsManager._fadeStatus & 1))
+			_eventsManager.delay(1);
+
+		flipPageAndWait();
+		_eventsManager.delay(6);
+
+		++evidIdx;
+		++arrIndex;
+		--count;
+	}
+
+	if (eventId != 999)
+		_eventsManager.addEvidEventEnd(evidIdx);
+
+	count = (int16)READ_LE_UINT16(dataP + evidId * 12 + 4);
+	for (int idx = 1; idx <= count; ++idx) {
+		_bVoy->freeBoltGroup(_voy._field47A + (evidId + idx) * 2);
+		_bVoy->freeBoltGroup(_voy._field47A + (evidId + idx) * 2 + 1);
+	}
 }
 
 } // End of namespace Voyeur
