@@ -125,15 +125,7 @@ public:
 	int _curICF0;
 	int _curICF1;
 	int _fadeICF0;
-	bool _leftClick, _rightClick;
-	bool _mouseClicked;
-	bool _mouseUnk;
 	int _policeEvent;
-
-	// Fields not originally in _voy, but I'm putting in for convenience
-	bool _newMouseClicked;
-	bool _newLeftClick, _newRightClick;
-	bool _newMouseUnk;
 };
 
 class IntData {
@@ -192,6 +184,13 @@ public:
 	int _fadeFirstCol, _fadeLastCol;
 	int _fadeCount;
 	int _fadeStatus;
+
+	bool _leftClick, _rightClick;
+	bool _mouseClicked;
+	bool _mouseUnk;
+	bool _newMouseClicked;
+	bool _newLeftClick, _newRightClick;
+	bool _newMouseUnk;
 
 	int _v2A0A2;
 	int _videoComputerBut4;

@@ -74,6 +74,11 @@ EventsManager::EventsManager(): _intPtr(_gameData),
 	_priorFrameTime = g_system->getMillis();
 	_joe = 0;
 	Common::fill(&_keyState[0], &_keyState[256], false);
+	
+	_leftClick = _rightClick = false;
+	_mouseClicked = _mouseUnk = false;
+	_newLeftClick = _newRightClick = false;;
+	_newMouseClicked = _newMouseUnk = false;
 
 	_v2A0A2 = 0;
 	_videoComputerBut4 = 0;
@@ -106,11 +111,6 @@ void EventsManager::vStopCycle() {
 }
 
 void EventsManager::sWaitFlip() {
-	while (_gameData._flipWait && !_vm->shouldQuit()) {
-		pollEvents();
-		g_system->delayMillis(10);
-	}
-
 	Common::Array<ViewPortResource *> &viewPorts = _vm->_graphicsManager._viewPortListPtr->_entries;
 	for (uint idx = 0; idx < viewPorts.size(); ++idx) {
 		ViewPortResource &viewPort = *viewPorts[idx];
@@ -127,6 +127,11 @@ void EventsManager::sWaitFlip() {
 			viewPort._rectListPtr[viewPort._pageIndex]->clear();
 			viewPort._flags &= ~DISPFLAG_40;
 		}
+	}
+
+	while (_gameData._flipWait && !_vm->shouldQuit()) {
+		pollEvents();
+		g_system->delayMillis(10);
 	}
 }
 
@@ -221,7 +226,7 @@ void EventsManager::delayClick(int cycles) {
 		g_system->delayMillis(10);
 		getMouseInfo();
 	} while (!_vm->shouldQuit() && g_system->getMillis() < delayEnd 
-			&& !_vm->_voy._mouseClicked);
+			&& !_vm->_eventsManager._mouseClicked);
 }
 
 void EventsManager::pollEvents() {
@@ -243,19 +248,19 @@ void EventsManager::pollEvents() {
 			return;
 		case Common::EVENT_LBUTTONDOWN:
 			_mouseButton = 1;
-			_vm->_voy._newLeftClick = true;
-			_vm->_voy._newMouseClicked = true;
+			_vm->_eventsManager._newLeftClick = true;
+			_vm->_eventsManager._newMouseClicked = true;
 			return;
 		case Common::EVENT_RBUTTONDOWN:
 			_mouseButton = 2;
-			_vm->_voy._newRightClick = true;
-			_vm->_voy._newMouseClicked = true;
+			_vm->_eventsManager._newRightClick = true;
+			_vm->_eventsManager._newMouseClicked = true;
 			return;
 		case Common::EVENT_LBUTTONUP:
 		case Common::EVENT_RBUTTONUP:
-			_vm->_voy._newMouseClicked = false;
-			_vm->_voy._newLeftClick = false;
-			_vm->_voy._newRightClick = false;
+			_vm->_eventsManager._newMouseClicked = false;
+			_vm->_eventsManager._newLeftClick = false;
+			_vm->_eventsManager._newRightClick = false;
 			_mouseButton = 0;
 			return;
 		case Common::EVENT_MOUSEMOVE:
@@ -453,15 +458,15 @@ void EventsManager::getMouseInfo() {
 		}
 	}
 
-	_vm->_voy._mouseClicked = _vm->_voy._newMouseClicked;
-	_vm->_voy._leftClick = _vm->_voy._newLeftClick;
-	_vm->_voy._rightClick = _vm->_voy._newRightClick;
-	_vm->_voy._mouseUnk = _vm->_voy._newMouseUnk;
+	_vm->_eventsManager._mouseClicked = _vm->_eventsManager._newMouseClicked;
+	_vm->_eventsManager._leftClick = _vm->_eventsManager._newLeftClick;
+	_vm->_eventsManager._rightClick = _vm->_eventsManager._newRightClick;
+	_vm->_eventsManager._mouseUnk = _vm->_eventsManager._newMouseUnk;
 
-	_vm->_voy._newMouseClicked = false;
-	_vm->_voy._newLeftClick = false;
-	_vm->_voy._newRightClick = false;
-	_vm->_voy._mouseUnk = false;
+	_vm->_eventsManager._newMouseClicked = false;
+	_vm->_eventsManager._newLeftClick = false;
+	_vm->_eventsManager._newRightClick = false;
+	_vm->_eventsManager._mouseUnk = false;
 }
 
 void EventsManager::checkForKey() {

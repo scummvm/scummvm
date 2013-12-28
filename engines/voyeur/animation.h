@@ -78,7 +78,7 @@ public:
 	const Common::List<Common::Rect> *getDirtyRects() const;
 	void clearDirtyRects();
 	void copyDirtyRectsToBuffer(uint8 *dst, uint pitch);
-
+	Graphics::Surface *getVideoSurface();
 private:
 	class RL2AudioTrack : public AudioTrack {
 	public:
@@ -112,6 +112,7 @@ private:
 
 		uint16 getWidth() const;
 		uint16 getHeight() const;
+		Graphics::Surface *getSurface() { return _surface; }
 		Graphics::PixelFormat getPixelFormat() const;
 		int getCurFrame() const { return _curFrame; }
 		int getFrameCount() const { return _header._numFrames; }

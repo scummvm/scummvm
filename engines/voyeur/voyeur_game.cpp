@@ -144,7 +144,7 @@ void VoyeurEngine::playStamp() {
 				_graphicsManager._backColors = _bVoy->boltEntry(_playStamp1 + 1)._cMapResource;
 
 				buttonId = getChooseButton();
-				if (_voy._rightClick)
+				if (_eventsManager._rightClick)
 					buttonId = 4;
 
 				_bVoy->freeBoltGroup(_playStamp1);
@@ -350,7 +350,7 @@ void VoyeurEngine::reviewTape() {
 				if ((tempPos.y - 31) % 15 >= 12 || (si + foundIndex) >= _voy._eventCount) {
 					_eventsManager.setCursorColor(128, 0);
 					foundIndex = 999;
-				} else if (!_voy._leftClick) {
+				} else if (!_eventsManager._leftClick) {
 					_eventsManager.setCursorColor(128, 2);
 					foundIndex = 999;
 				} else {
@@ -409,7 +409,7 @@ void VoyeurEngine::reviewTape() {
 			_eventsManager._intPtr.field38 = true;
 			_eventsManager._intPtr._hasPalette = true;
 
-			if (_voy._mouseClicked || _voy._mouseUnk) {
+			if (_eventsManager._mouseClicked || _eventsManager._mouseUnk) {
 				switch (foundIndex) {
 				case 2:
 					if (si > 0) {
@@ -456,17 +456,17 @@ void VoyeurEngine::reviewTape() {
 			}
 
 			pt = _eventsManager.getMousePos();
-			if (_voy._mouseClicked && _voy._viewBounds->left == pt.x &&
-					(_voy._field478 & 0x40) && _voy._rightClick) {
+			if (_eventsManager._mouseClicked && _voy._viewBounds->left == pt.x &&
+					(_voy._field478 & 0x40) && _eventsManager._rightClick) {
 				WRITE_LE_UINT32(_controlPtr->_ptr + 4, (pt.y / 60) + 1);
 				foundIndex = -1;
-				_voy._rightClick = 0;
+				_eventsManager._rightClick = 0;
 			}
 			
-			if (_voy._rightClick)
+			if (_eventsManager._rightClick)
 				foundIndex = 0;
 
-		} while (!shouldQuit() && (!_voy._mouseClicked || foundIndex == -1));
+		} while (!shouldQuit() && (!_eventsManager._mouseClicked || foundIndex == -1));
 
 
 
@@ -487,41 +487,49 @@ void VoyeurEngine::doGossip() {
 	if (!_bVoy->getBoltGroup(0x300))
 		return;
 
-	PictureResource *pic = _bVoy->boltEntry(0x300)._picResource;
-	(*_graphicsManager._vPort)->setupViewPort(pic);
-	CMapResource *pal = _bVoy->boltEntry(0x301)._cMapResource;
-	pal->startFade();
-
-	flipPageAndWaitForFade();
-
 	// Load the gossip animation
 	::Video::RL2Decoder decoder;
 	decoder.loadFile("a2050100.rl2");
+	decoder.start();
+
+	PictureResource *bgPic = _bVoy->boltEntry(0x300)._picResource;
+	CMapResource *pal = _bVoy->boltEntry(0x301)._cMapResource;
+	pal->startFade();
+
+	// Transfer initial background to video decoder
+	PictureResource videoFrame(decoder.getVideoSurface());
+	_graphicsManager.sDrawPic(bgPic, &videoFrame, Common::Point(-32, -20)); 
 
 	byte *frameNumsP = _bVoy->memberAddr(0x309);
-	byte *posP = _bVoy->memberAddr(0x30A);
+	byte *posP = _bVoy->boltEntry(0x30A)._data;
 
 	// Main playback loop
+
 	int picCtr = 0;
 	decoder.start();
-	while (!shouldQuit() && !decoder.endOfVideo() && !_voy._mouseClicked) {
+	while (!shouldQuit() && !decoder.endOfVideo() && !_eventsManager._mouseClicked) {
 		if (decoder.hasDirtyPalette()) {
 			const byte *palette = decoder.getPalette();
 			_graphicsManager.setPalette(palette, 0, 256);
 		}
 		
 		if (decoder.needsUpdate()) {
-			const Graphics::Surface *frame = decoder.decodeNextFrame();
+			// If reached a point where a new background is needed, load it
+			// and copy over to the video decoder
+			if (decoder.getCurFrame() >= READ_LE_UINT16(frameNumsP + picCtr * 4)) {
+				PictureResource *newBgPic = _bVoy->boltEntry(0x302 + picCtr)._picResource;
+				Common::Point pt(READ_LE_UINT16(posP + 4 * picCtr + 2), 
+					READ_LE_UINT16(posP + 4 * picCtr));
 
+				_graphicsManager.sDrawPic(newBgPic, &videoFrame, pt);
+				++picCtr;
+			}
+
+			// Decode the next frame and display
+			const Graphics::Surface *frame = decoder.decodeNextFrame();
 			Common::copy((const byte *)frame->getPixels(), (const byte *)frame->getPixels() + 320 * 200,
 				(byte *)_graphicsManager._screenSurface.getPixels());
 
-			if (decoder.getCurFrame() >= READ_LE_UINT16(frameNumsP + picCtr * 4)) {
-				PictureResource *pic = _bVoy->boltEntry(0x302 + picCtr)._picResource;
-				Common::Point pt(READ_LE_UINT16(posP + 4 * picCtr + 2), 
-					READ_LE_UINT16(posP + 4 * picCtr));
-				_graphicsManager.sDrawPic(pic, *_graphicsManager._vPort, pt);
-			}
 
 			flipPageAndWait();
 		}
@@ -533,7 +541,7 @@ void VoyeurEngine::doGossip() {
 	decoder.loadFile("a2110100.rl2");
 	decoder.start();
 
-	while (!shouldQuit() && !decoder.endOfVideo() && !_voy._mouseClicked) {
+	while (!shouldQuit() && !decoder.endOfVideo() && !_eventsManager._mouseClicked) {
 		if (decoder.hasDirtyPalette()) {
 			const byte *palette = decoder.getPalette();
 			_graphicsManager.setPalette(palette, 0, 256);
@@ -571,7 +579,7 @@ void VoyeurEngine::doTapePlaying() {
 	cycle->vStartCycle();
 
 	_soundManager.startVOCPlay("vcr.voc");
-	while (!shouldQuit() && !_voy._mouseClicked && _soundManager.getVOCStatus()) {
+	while (!shouldQuit() && !_eventsManager._mouseClicked && _soundManager.getVOCStatus()) {
 		_eventsManager.delayClick(2);
 	}
 
@@ -734,8 +742,8 @@ int VoyeurEngine::getChooseButton()  {
 				Common::Point(pt.x + 13, pt.y - 12));
 
 			flipPageAndWait();
-		} while (!shouldQuit() && !_voy._mouseClicked);
-	} while (!shouldQuit() && selectedIndex == -1 && !_voy._rightClick);
+		} while (!shouldQuit() && !_eventsManager._mouseClicked);
+	} while (!shouldQuit() && selectedIndex == -1 && !_eventsManager._rightClick);
 
 	return selectedIndex;
 }
@@ -992,7 +1000,7 @@ bool VoyeurEngine::doComputerText(int maxLen) {
 			_eventsManager.getMouseInfo();
 			++totalChars;
 
-		} while (!shouldQuit() && !_voy._mouseClicked && totalChars < maxLen);
+		} while (!shouldQuit() && !_eventsManager._mouseClicked && totalChars < maxLen);
 
 		_voy._field4EE = 0;
 	}
@@ -1119,7 +1127,7 @@ void VoyeurEngine::doEvidDisplay(int evidId, int eventId) {
 	int arrIndex = 0;
 	int evidIdx = evidId;
 
-	while (!shouldQuit() && !_voy._rightClick) {
+	while (!shouldQuit() && !_eventsManager._rightClick) {
 		if (_playStamp2 != -1 && !_soundManager.getVOCStatus()) {
 			if (_voy._vocSecondsOffset > 60)
 				_voy._vocSecondsOffset = 0;
@@ -1128,7 +1136,7 @@ void VoyeurEngine::doEvidDisplay(int evidId, int eventId) {
 		}
 
 		_eventsManager.delayClick(600);
-		if (_voy._rightClick)
+		if (_eventsManager._rightClick)
 			break;
 		if (count == 0 || evidIdx >= eventId)
 			continue;

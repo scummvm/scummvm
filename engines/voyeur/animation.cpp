@@ -67,7 +67,7 @@ bool RL2Decoder::loadStream(Common::SeekableReadStream *stream) {
 }
 
 const Common::List<Common::Rect> *RL2Decoder::getDirtyRects() const {
-	const Track *track = getTrack(0);
+	const Track *track = getTrack(1);
 
 	if (track)
 		return ((const RL2VideoTrack *)track)->getDirtyRects();
@@ -76,17 +76,24 @@ const Common::List<Common::Rect> *RL2Decoder::getDirtyRects() const {
 }
 
 void RL2Decoder::clearDirtyRects() {
-	Track *track = getTrack(0);
+	Track *track = getTrack(1);
 
 	if (track)
 		((RL2VideoTrack *)track)->clearDirtyRects();
 }
 
 void RL2Decoder::copyDirtyRectsToBuffer(uint8 *dst, uint pitch) {
-	Track *track = getTrack(0);
+	Track *track = getTrack(1);
 
 	if (track)
 		((RL2VideoTrack *)track)->copyDirtyRectsToBuffer(dst, pitch);
+}
+
+Graphics::Surface *RL2Decoder::getVideoSurface() {
+	Track *track = getTrack(1);
+	assert(track);
+
+	return ((RL2VideoTrack *)track)->getSurface();
 }
 
 /*------------------------------------------------------------------------*/
