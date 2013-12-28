@@ -251,11 +251,7 @@ void VoyeurEngine::reviewTape() {
 		(*_graphicsManager._vPort)->setupViewPort(_graphicsManager._backgroundPage);
 		_graphicsManager._backColors->startFade();
 
-		(*_graphicsManager._vPort)->_flags |= 8;
-		_graphicsManager.flipPage();
-		_eventsManager.sWaitFlip();
-		while (!shouldQuit() && (_eventsManager._fadeStatus & 1))
-			_eventsManager.delay(1);
+		flipPageAndWaitForFade();
 
 		_graphicsManager.setColor(1, 32, 32, 32);
 		_graphicsManager.setColor(2, 96, 96, 96);
@@ -292,9 +288,7 @@ void VoyeurEngine::reviewTape() {
 
 			if (var1E) {
 				var1E = false;
-				(*_graphicsManager._vPort)->_flags |= 8;
-				_graphicsManager.flipPage();
-				_eventsManager.sWaitFlip();
+				flipPageAndWait();
 
 				_graphicsManager._drawPtr->_penColor = 0;
 				_graphicsManager._drawPtr->_pos = Common::Point(tempRect.left, tempRect.top);
@@ -324,9 +318,7 @@ void VoyeurEngine::reviewTape() {
 
 				(*_graphicsManager._vPort)->addSaveRect(
 					(*_graphicsManager._vPort)->_lastPage, tempRect);
-				(*_graphicsManager._vPort)->_flags |= 8;
-				_graphicsManager.flipPage();
-				_eventsManager.sWaitFlip();
+				flipPageAndWait();
 
 				(*_graphicsManager._vPort)->addSaveRect(
 					(*_graphicsManager._vPort)->_lastPage, tempRect);
@@ -334,9 +326,7 @@ void VoyeurEngine::reviewTape() {
 
 			_graphicsManager.sDrawPic(cursor, *_graphicsManager._vPort,
 				_eventsManager.getMousePos());
-			(*_graphicsManager._vPort)->_flags |= 8;
-			_graphicsManager.flipPage();
-			_eventsManager.sWaitFlip();
+			flipPageAndWait();
 
 			_eventsManager.getMouseInfo();
 			foundIndex = -1;
@@ -366,9 +356,7 @@ void VoyeurEngine::reviewTape() {
 					_eventsManager.setCursorColor(128, 2);
 					var20 = foundIndex;
 
-					(*_graphicsManager._vPort)->_flags |= 8;
-					_graphicsManager.flipPage();
-					_eventsManager.sWaitFlip();
+					flipPageAndWait();
 
 					_graphicsManager._drawPtr->_penColor = 0;
 					_graphicsManager._drawPtr->_pos = Common::Point(tempRect.left, tempRect.top);
@@ -398,15 +386,11 @@ void VoyeurEngine::reviewTape() {
 
 					(*_graphicsManager._vPort)->addSaveRect(
 						(*_graphicsManager._vPort)->_lastPage, tempRect);
-					(*_graphicsManager._vPort)->_flags |= 8;
-					_graphicsManager.flipPage();
-					_eventsManager.sWaitFlip();
+					flipPageAndWait();
 
 					(*_graphicsManager._vPort)->addSaveRect(
 						(*_graphicsManager._vPort)->_lastPage, tempRect);
-					(*_graphicsManager._vPort)->_flags |= 8;
-					_graphicsManager.flipPage();
-					_eventsManager.sWaitFlip();
+					flipPageAndWait();
 
 					_eventsManager.getMouseInfo();
 					foundIndex = 999;
@@ -492,9 +476,7 @@ void VoyeurEngine::reviewTape() {
 	_bVoy->freeBoltGroup(0x900);
 
 	(*_graphicsManager._vPort)->fillPic(0);
-	(*_graphicsManager._vPort)->_flags |= 8;
-	_graphicsManager.flipPage();
-	_eventsManager.sWaitFlip();
+	flipPageAndWait();
 }
 
 void VoyeurEngine::doGossip() {
@@ -796,12 +778,7 @@ void VoyeurEngine::makeViewFinder() {
 	doTimeBar(true);
 	pal->startFade();
 
-	(*_graphicsManager._vPort)->_flags |= 8;
-	_graphicsManager.flipPage();
-	_eventsManager.sWaitFlip();
-
-	while (!shouldQuit() && (_eventsManager._fadeStatus & 1))
-		_eventsManager.delay(1);
+	flipPageAndWaitForFade();
 
 	_graphicsManager.setColor(241, 105, 105, 105);
 	_graphicsManager.setColor(242, 105, 105, 105);
@@ -1010,9 +987,7 @@ bool VoyeurEngine::doComputerText(int maxLen) {
 				_eventsManager.delay(4);
 			}
 
-			(*_graphicsManager._vPort)->_flags |= 8;
-			_graphicsManager.flipPage();
-			_eventsManager.sWaitFlip();
+			flipPageAndWait();
 			_eventsManager.getMouseInfo();
 			++totalChars;
 
@@ -1021,9 +996,7 @@ bool VoyeurEngine::doComputerText(int maxLen) {
 		_voy._field4EE = 0;
 	}
 
-	(*_graphicsManager._vPort)->_flags |= 8;
-	_graphicsManager.flipPage();
-	_eventsManager.sWaitFlip();
+	flipPageAndWait();
 
 	_graphicsManager._fontPtr->_curFont = _bVoy->boltEntry(0x101)._fontResource;
 	return totalChars;
@@ -1102,9 +1075,7 @@ void VoyeurEngine::checkPhoneCall() {
 
 void VoyeurEngine::doEvidDisplay(int v1, int v2) {
 	_eventsManager.getMouseInfo();
-	(*_graphicsManager._vPort)->_flags |= 8;
-	_graphicsManager.flipPage();
-	_eventsManager.sWaitFlip();
+	flipPageAndWait();
 
 	if (_playStamp2 != -1) {
 		_voy._vocSecondsOffset = _voy._RTVNum - _voy._field4AC;

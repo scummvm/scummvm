@@ -456,10 +456,7 @@ void ThreadResource::parsePlayCommands() {
 					if (_vm->_eventsManager._videoDead != -1) {
 						_vm->_bVoy->freeBoltGroup(0xE00);
 						_vm->_eventsManager._videoDead = -1;
-						(*_vm->_graphicsManager._vPort)->_flags |= 8;
-
-						_vm->_graphicsManager.flipPage();
-						_vm->_eventsManager.sWaitFlip();
+						_vm->flipPageAndWait();
 					}
 
 					_vm->_eventsManager._videoDead = -1;
@@ -1108,9 +1105,7 @@ int ThreadResource::doApt() {
 			_vm->_playStamp1 + 3)._picResource;
 		_vm->_graphicsManager.sDrawPic(pic, *_vm->_graphicsManager._vPort, pt);
 
-		(*_vm->_graphicsManager._vPort)->_flags |= 8;
-		_vm->_graphicsManager.flipPage();
-		_vm->_eventsManager.sWaitFlip();
+		_vm->flipPageAndWait();
 
 	} while (!_vm->shouldQuit() && (!_vm->_voy._mouseClicked || hotspotId == -1));
 
@@ -1250,9 +1245,7 @@ void ThreadResource::doRoom() {
 			vm._eventsManager.startCursorBlink();
 
 			if (i4e4 == 999) {
-				(*_vm->_graphicsManager._vPort)->_flags |= 8;
-				_vm->_graphicsManager.flipPage();
-				_vm->_eventsManager.sWaitFlip();
+				_vm->flipPageAndWait();
 
 				if (vm._playStamp2 != -1) {
 					voy._vocSecondsOffset = voy._RTVNum - 
@@ -1261,10 +1254,8 @@ void ThreadResource::doRoom() {
 				}
 
 				vm.getComputerBrush();
+				_vm->flipPageAndWait();
 
-				(*vm._graphicsManager._vPort)->_flags |= 8;
-				vm._graphicsManager.flipPage();
-				vm._eventsManager.sWaitFlip();
 				vm._eventsManager.addComputerEventStart();
 
 				voy._incriminate = false;
@@ -1294,9 +1285,7 @@ void ThreadResource::doRoom() {
 				vm._playStamp1)._picResource;
 
 			vm._graphicsManager._backColors->startFade();
-			(*vm._graphicsManager._vPort)->_flags |= 8;
-			vm._graphicsManager.flipPage();
-			vm._eventsManager.sWaitFlip();
+			_vm->flipPageAndWait();
 
 			while (!vm.shouldQuit() && (vm._eventsManager._fadeStatus & 1))
 				vm._eventsManager.delay(1);
@@ -1318,9 +1307,7 @@ void ThreadResource::doRoom() {
 				vm._eventsManager.delay(1);
 			}
 
-			(*vm._graphicsManager._vPort)->_flags |= 8;
-			vm._graphicsManager.flipPage();
-			vm._eventsManager.sWaitFlip();
+			_vm->flipPageAndWait();
 
 			vm._graphicsManager.fadeUpICF1(0);
 			voy._field478 &= 0x10;
@@ -1496,9 +1483,7 @@ int ThreadResource::doInterface() {
 		}
 
 		_vm->_voy._RTANum = 0;
-		(*_vm->_graphicsManager._vPort)->_flags |= 8;
-		_vm->_graphicsManager.flipPage();
-		_vm->_eventsManager.sWaitFlip();
+		_vm->flipPageAndWait();
 
 		pt = _vm->_eventsManager.getMousePos();
 		if ((_vm->_voy._field476 <= _vm->_voy._RTVNum) || ((_vm->_voy._field478 & 0x80) &&
@@ -1736,10 +1721,7 @@ void ThreadResource::doAptAnim(int mode) {
 			(*_vm->_graphicsManager._vPort)->setupViewPort(pic);
 			pal->startFade();
 
-			(*_vm->_graphicsManager._vPort)->_flags |= 8;
-			_vm->_graphicsManager.flipPage();
-			_vm->_eventsManager.sWaitFlip();
-
+			_vm->flipPageAndWait();
 			_vm->_eventsManager.delay(5);
 		}
 
