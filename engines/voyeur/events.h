@@ -125,17 +125,15 @@ public:
 	int _curICF0;
 	int _curICF1;
 	int _fadeICF0;
-	int _fadeICF1;
-	void (*_fadeFunc)();
+	bool _leftClick, _rightClick;
 	bool _mouseClicked;
-	int _incriminate;
+	bool _mouseUnk;
 	int _policeEvent;
 
 	// Fields not originally in _voy, but I'm putting in for convenience
-	int _newIncriminate;
 	bool _newMouseClicked;
-	int _newFadeICF1;
-	void (*_newFadeFunc)();
+	bool _newLeftClick, _newRightClick;
+	bool _newMouseUnk;
 };
 
 class IntData {

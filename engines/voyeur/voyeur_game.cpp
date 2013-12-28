@@ -143,7 +143,7 @@ void VoyeurEngine::playStamp() {
 				_graphicsManager._backColors = _bVoy->boltEntry(_playStamp1 + 1)._cMapResource;
 
 				buttonId = getChooseButton();
-				if (_voy._fadeFunc)
+				if (_voy._rightClick)
 					buttonId = 4;
 
 				_bVoy->freeBoltGroup(_playStamp1);
@@ -349,7 +349,7 @@ void VoyeurEngine::reviewTape() {
 				if ((tempPos.y - 31) % 15 >= 12 || (si + foundIndex) >= _voy._eventCount) {
 					_eventsManager.setCursorColor(128, 0);
 					foundIndex = 999;
-				} else if (!_voy._mouseClicked) {
+				} else if (!_voy._leftClick) {
 					_eventsManager.setCursorColor(128, 2);
 					foundIndex = 999;
 				} else {
@@ -408,7 +408,7 @@ void VoyeurEngine::reviewTape() {
 			_eventsManager._intPtr.field38 = true;
 			_eventsManager._intPtr._hasPalette = true;
 
-			if (_voy._incriminate || _voy._fadeICF1) {
+			if (_voy._mouseClicked || _voy._mouseUnk) {
 				switch (foundIndex) {
 				case 2:
 					if (si > 0) {
@@ -455,17 +455,17 @@ void VoyeurEngine::reviewTape() {
 			}
 
 			pt = _eventsManager.getMousePos();
-			if (_voy._incriminate && _voy._viewBounds->left == pt.x &&
-					(_voy._field478 & 0x40) && _voy._fadeFunc) {
+			if (_voy._mouseClicked && _voy._viewBounds->left == pt.x &&
+					(_voy._field478 & 0x40) && _voy._rightClick) {
 				WRITE_LE_UINT32(_controlPtr->_ptr + 4, (pt.y / 60) + 1);
 				foundIndex = -1;
-				_voy._fadeFunc = 0;
+				_voy._rightClick = 0;
 			}
 			
-			if (_voy._fadeFunc)
+			if (_voy._rightClick)
 				foundIndex = 0;
 
-		} while (!shouldQuit() && (!_voy._incriminate || foundIndex == -1));
+		} while (!shouldQuit() && (!_voy._mouseClicked || foundIndex == -1));
 
 
 
@@ -503,7 +503,7 @@ void VoyeurEngine::doGossip() {
 	// Main playback loop
 	int picCtr = 0;
 	decoder.start();
-	while (!shouldQuit() && !decoder.endOfVideo() && !_voy._incriminate) {
+	while (!shouldQuit() && !decoder.endOfVideo() && !_voy._mouseClicked) {
 		if (decoder.hasDirtyPalette()) {
 			const byte *palette = decoder.getPalette();
 			_graphicsManager.setPalette(palette, 0, 256);
@@ -532,7 +532,7 @@ void VoyeurEngine::doGossip() {
 	decoder.loadFile("a2110100.rl2");
 	decoder.start();
 
-	while (!shouldQuit() && !decoder.endOfVideo() && !_voy._incriminate) {
+	while (!shouldQuit() && !decoder.endOfVideo() && !_voy._mouseClicked) {
 		if (decoder.hasDirtyPalette()) {
 			const byte *palette = decoder.getPalette();
 			_graphicsManager.setPalette(palette, 0, 256);
@@ -570,7 +570,7 @@ void VoyeurEngine::doTapePlaying() {
 	cycle->vStartCycle();
 
 	_soundManager.startVOCPlay("vcr.voc");
-	while (!shouldQuit() && !_voy._incriminate && _soundManager.getVOCStatus()) {
+	while (!shouldQuit() && !_voy._mouseClicked && _soundManager.getVOCStatus()) {
 		_eventsManager.delayClick(2);
 	}
 
@@ -733,8 +733,8 @@ int VoyeurEngine::getChooseButton()  {
 				Common::Point(pt.x + 13, pt.y - 12));
 
 			flipPageAndWait();
-		} while (!shouldQuit() && !_voy._incriminate);
-	} while (!shouldQuit() && selectedIndex == -1 && !_voy._fadeFunc);
+		} while (!shouldQuit() && !_voy._mouseClicked);
+	} while (!shouldQuit() && selectedIndex == -1 && !_voy._rightClick);
 
 	return selectedIndex;
 }
@@ -991,7 +991,7 @@ bool VoyeurEngine::doComputerText(int maxLen) {
 			_eventsManager.getMouseInfo();
 			++totalChars;
 
-		} while (!shouldQuit() && !_voy._incriminate && totalChars < maxLen);
+		} while (!shouldQuit() && !_voy._mouseClicked && totalChars < maxLen);
 
 		_voy._field4EE = 0;
 	}
@@ -1116,10 +1116,9 @@ void VoyeurEngine::doEvidDisplay(int evidId, int eventId) {
 	_eventsManager.getMouseInfo();
 
 	int arrIndex = 0;
-	bool breakFlag = _voy._fadeFunc != NULL;
 	int evidIdx = evidId;
 
-	while (!shouldQuit() && !breakFlag) {
+	while (!shouldQuit() && !_voy._rightClick) {
 		if (_playStamp2 != -1 && !_soundManager.getVOCStatus()) {
 			if (_voy._vocSecondsOffset > 60)
 				_voy._vocSecondsOffset = 0;
@@ -1128,7 +1127,7 @@ void VoyeurEngine::doEvidDisplay(int evidId, int eventId) {
 		}
 
 		_eventsManager.delay(600);
-		if (_voy._fadeFunc)
+		if (_voy._rightClick)
 			break;
 		if (count == 0 || evidIdx >= eventId)
 			continue;

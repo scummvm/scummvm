@@ -406,7 +406,7 @@ void ThreadResource::parsePlayCommands() {
 					_vm->_voy._field478 |= 16;
 					_vm->_eventsManager.startCursorBlink();
 
-					while (!_vm->shouldQuit() && !_vm->_voy._incriminate && 
+					while (!_vm->shouldQuit() && !_vm->_voy._mouseClicked && 
 							_vm->_soundManager.getVOCStatus())
 						_vm->_eventsManager.delayClick(1);
 
@@ -460,7 +460,7 @@ void ThreadResource::parsePlayCommands() {
 					}
 
 					_vm->_eventsManager._videoDead = -1;
-					if (_field42 == 2 && _vm->_voy._incriminate == 0) {
+					if (_field42 == 2 && _vm->_voy._mouseClicked == 0) {
 						_vm->_voy._field470 = 132;
 						parseIndex = 999;
 					} else {
@@ -515,7 +515,7 @@ void ThreadResource::parsePlayCommands() {
 					Common::String file = Common::String::format("news%d.voc", i + 1);
 					_vm->_soundManager.startVOCPlay(file);
 
-					while (!_vm->shouldQuit() && !_vm->_voy._incriminate &&
+					while (!_vm->shouldQuit() && !_vm->_voy._mouseClicked &&
 							_vm->_soundManager.getVOCStatus()) {
 						_vm->_eventsManager.delayClick(1);
 						_vm->_eventsManager.getMouseInfo();
@@ -526,7 +526,7 @@ void ThreadResource::parsePlayCommands() {
 					if (i == (count - 1))
 						_vm->_eventsManager.delay(480);
 
-					if (_vm->shouldQuit() || _vm->_voy._incriminate)
+					if (_vm->shouldQuit() || _vm->_voy._mouseClicked)
 						break;
 				}
 
@@ -706,7 +706,7 @@ void ThreadResource::parsePlayCommands() {
 
 				Common::String fname = Common::String::format("news%d.voc", idx);
 
-				while (!_vm->shouldQuit() && !_vm->_voy._incriminate && 
+				while (!_vm->shouldQuit() && !_vm->_voy._mouseClicked && 
 						_vm->_soundManager.getVOCStatus())
 					_vm->_eventsManager.delay(1);
 
@@ -714,7 +714,7 @@ void ThreadResource::parsePlayCommands() {
 				if (idx == 3)
 					_vm->_eventsManager.delay(3);
 
-				if (_vm->shouldQuit() || _vm->_voy._incriminate)
+				if (_vm->shouldQuit() || _vm->_voy._mouseClicked)
 					break;
 			}
 
@@ -1107,7 +1107,7 @@ int ThreadResource::doApt() {
 
 		_vm->flipPageAndWait();
 
-	} while (!_vm->shouldQuit() && (!_vm->_voy._mouseClicked || hotspotId == -1));
+	} while (!_vm->shouldQuit() && (!_vm->_voy._leftClick || hotspotId == -1));
 
 	pt = _vm->_eventsManager.getMousePos();
 	_doAptPosX = pt.x;
@@ -1231,10 +1231,10 @@ void ThreadResource::doRoom() {
 			vm._eventsManager._intPtr._hasPalette = true;
 			vm._graphicsManager.flipPage();
 			vm._eventsManager.sWaitFlip();
-		} while (!vm.shouldQuit() && !voy._incriminate);
+		} while (!vm.shouldQuit() && !voy._mouseClicked);
 
-		if (!voy._mouseClicked || i4e4 == -1) {
-			if (voy._fadeFunc)
+		if (!voy._leftClick || i4e4 == -1) {
+			if (voy._rightClick)
 				breakFlag = true;
 
 			Common::Point pt = vm._eventsManager.getMousePos();
@@ -1258,7 +1258,7 @@ void ThreadResource::doRoom() {
 
 				vm._eventsManager.addComputerEventStart();
 
-				voy._incriminate = false;
+				voy._mouseClicked = false;
 				vm._eventsManager.startCursorBlink();
 
 				int v = vm.doComputerText(9999); 
@@ -1271,7 +1271,7 @@ void ThreadResource::doRoom() {
 			}
 
 			voy._field478 &= ~0x10;
-			if (!voy._incriminate)
+			if (!voy._mouseClicked)
 				vm._eventsManager.delayClick(18000);
 
 			vm._bVoy->freeBoltGroup(vm._playStamp1);
@@ -1487,7 +1487,7 @@ int ThreadResource::doInterface() {
 
 		pt = _vm->_eventsManager.getMousePos();
 		if ((_vm->_voy._field476 <= _vm->_voy._RTVNum) || ((_vm->_voy._field478 & 0x80) &&
-				(_vm->_voy._fadeFunc != NULL) && (pt.x == 0))) {
+				(_vm->_voy._rightClick != NULL) && (pt.x == 0))) {
 			_vm->_eventsManager.getMouseInfo();
 
 			if (_vm->_voy._transitionId == 15) {
@@ -1495,7 +1495,7 @@ int ThreadResource::doInterface() {
 				_vm->_voy._transitionId = 17;
 				_vm->_soundManager.stopVOCPlay();
 				_vm->checkTransition();
-				_vm->_voy._mouseClicked = true;
+				_vm->_voy._leftClick = true;
 			} else {
 				_vm->_voy._field478 = 1;
 				_currentMouseX = pt.x;
@@ -1518,15 +1518,15 @@ int ThreadResource::doInterface() {
 				_vm->_eventsManager._intPtr.field1A = 0;
 			}
 		}
-	} while (!_vm->_voy._fadeFunc && !_vm->shouldQuit() && 
-		(!_vm->_voy._mouseClicked || regionIndex == -1));
+	} while (!_vm->_voy._rightClick && !_vm->shouldQuit() && 
+		(!_vm->_voy._leftClick || regionIndex == -1));
 
 	_vm->_voy._field478 |= 1;
 	_vm->_bVoy->freeBoltGroup(_vm->_playStamp1);
 	if (_vm->_playStamp2 != -1)
 		_vm->_soundManager.stopVOCPlay();
 
-	return !_vm->_voy._fadeFunc ? regionIndex : -2;
+	return !_vm->_voy._rightClick ? regionIndex : -2;
 }
 
 bool ThreadResource::goToStateID(int stackId, int sceneId) {

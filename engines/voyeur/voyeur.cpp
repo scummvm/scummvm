@@ -184,12 +184,12 @@ bool VoyeurEngine::doHeadTitle() {
 //	showTitleScreen();
 
 	// Opening
-	if (!_voy._incriminate) {
+	if (!_voy._mouseClicked) {
 //		doOpening();
 //		doTransitionCard("Saturday Afternoon", "Player's Apartment");
 		_eventsManager.delayClick(90);
 	} else {
-		_voy._incriminate = false;
+		_voy._mouseClicked = false;
 	}
 
 	if (_voy._field478 & 0x80) {
@@ -341,8 +341,8 @@ bool VoyeurEngine::doLock() {
 					_eventsManager._intPtr._hasPalette = true;
 
 					_eventsManager.delay(1);
-				} while (!shouldQuit() && !_voy._incriminate);
-				_voy._incriminate = false;
+				} while (!shouldQuit() && !_voy._mouseClicked);
+				_voy._mouseClicked = false;
 			} while (!shouldQuit() && key == -1);
 
 			_soundManager.abortVOCMap();
@@ -493,7 +493,7 @@ void VoyeurEngine::doOpening() {
 	decoder.loadFile("a2300100.rl2");
 	decoder.start();
 
-	while (!shouldQuit() && !decoder.endOfVideo() && !_voy._incriminate) {
+	while (!shouldQuit() && !decoder.endOfVideo() && !_voy._mouseClicked) {
 		if (decoder.hasDirtyPalette()) {
 			const byte *palette = decoder.getPalette();
 			_graphicsManager.setPalette(palette, 0, 256);
@@ -517,7 +517,7 @@ void VoyeurEngine::playRL2Video(const Common::String &filename) {
 	decoder.loadFile(filename);
 	decoder.start();
 
-	while (!shouldQuit() && !decoder.endOfVideo() && !_voy._incriminate) {
+	while (!shouldQuit() && !decoder.endOfVideo() && !_voy._mouseClicked) {
 		if (decoder.hasDirtyPalette()) {
 			const byte *palette = decoder.getPalette();
 			_graphicsManager.setPalette(palette, 0, 256);
@@ -554,7 +554,7 @@ void VoyeurEngine::playAVideoDuration(int videoId, int duration) {
 	decoder.seek(Audio::Timestamp(_voy._vocSecondsOffset * 1000));
 	int endFrame = decoder.getCurFrame() + totalFrames; 
 
-	while (!shouldQuit() && !decoder.endOfVideo() && !_voy._incriminate &&
+	while (!shouldQuit() && !decoder.endOfVideo() && !_voy._mouseClicked &&
 			(decoder.getCurFrame() < endFrame)) {
 		if (decoder.hasDirtyPalette()) {
 			const byte *palette = decoder.getPalette();
