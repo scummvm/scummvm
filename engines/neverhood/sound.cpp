@@ -560,7 +560,7 @@ int NeverhoodAudioStream::readBuffer(int16 *buffer, const int numSamples) {
 			}
 		} else {
 			memcpy(buffer, _buffer, bytesRead);
-			buffer += bytesRead;
+			buffer += samplesRead;
 		}
 
 		if (bytesRead < bytesToRead || _stream->pos() >= _stream->size() || _stream->err() || _stream->eos()) {
