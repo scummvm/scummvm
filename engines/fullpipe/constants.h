@@ -504,6 +504,7 @@ namespace Fullpipe {
 #define MV_KCH_MOVE2 1099
 #define MV_KCH_START 1121
 #define MV_MAN11_JUMPHIT 1129
+#define MV_MAN11_JUMPFROMSWING 5209
 #define MV_MAN11_JUMPOVER 1131
 #define MV_MAN11_SWING_0 1109
 #define MV_MAN11_SWING_1 1111
@@ -522,6 +523,7 @@ namespace Fullpipe {
 #define ST_KCH_STATIC 1122
 #define ST_MAN_1PIX 518
 #define ST_MAN11_EMPTY 1110
+#define ST_MAN11_SWING 1127
 #define ST_SWR_SIT 1147
 #define ST_SWR_SITBALD 1153
 #define ST_SWR_STAND3 3014
