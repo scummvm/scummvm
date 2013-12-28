@@ -396,12 +396,7 @@ void ThreadResource::parsePlayCommands() {
 
 					(*_vm->_graphicsManager._vPort)->setupViewPort();
 					_vm->_graphicsManager._backColors->startFade();
-					(*_vm->_graphicsManager._vPort)->_flags |= 8;
-					_vm->_graphicsManager.flipPage();
-					_vm->_eventsManager.sWaitFlip();
-
-					while (!_vm->shouldQuit() && (_vm->_eventsManager._fadeStatus & 1))
-						_vm->_eventsManager.delay(1);
+					_vm->flipPageAndWaitForFade();
 
 					_vm->_voy._field478 = -2;
 					_vm->_soundManager.setVOCOffset(_vm->_voy._vocSecondsOffset * 11025);
@@ -692,13 +687,8 @@ void ThreadResource::parsePlayCommands() {
 
 			(*_vm->_graphicsManager._vPort)->setupViewPort(pic);
 			_cmd14Pal->startFade();
+			_vm->flipPageAndWaitForFade();
 
-			(*_vm->_graphicsManager._vPort)->_flags |= 8;
-			_vm->_graphicsManager.flipPage();
-			_vm->_eventsManager.sWaitFlip();
-
-			while (!_vm->shouldQuit() && (_vm->_eventsManager._fadeStatus & 1))
-				_vm->_eventsManager.delay(1);
 			_vm->_eventsManager.getMouseInfo();
 
 			for (int idx = 1; idx < 4; ++idx) {
@@ -712,13 +702,7 @@ void ThreadResource::parsePlayCommands() {
 
 				(*_vm->_graphicsManager._vPort)->setupViewPort(pic);
 				_cmd14Pal->startFade();
-
-				(*_vm->_graphicsManager._vPort)->_flags |= 8;
-				_vm->_graphicsManager.flipPage();
-				_vm->_eventsManager.sWaitFlip();
-
-				while (!_vm->shouldQuit() && (_vm->_eventsManager._fadeStatus & 1))
-					_vm->_eventsManager.delay(1);
+				_vm->flipPageAndWaitForFade();
 
 				_vm->_bVoy->freeBoltMember(_vm->_playStamp1 + (idx - 1) * 2);
 				_vm->_bVoy->freeBoltMember(_vm->_playStamp1 + (idx - 1) * 2 + 1);
@@ -1664,23 +1648,12 @@ void ThreadResource::loadTheApt() {
 	CMapResource *pal = _vm->_bVoy->boltEntry(_vm->_playStamp1 + 4)._cMapResource;
 	pal->_steps = 1; 
 	pal->startFade();
-
-	(*_vm->_graphicsManager._vPort)->_flags |= 8;
-	_vm->_graphicsManager.flipPage();
-	_vm->_eventsManager.sWaitFlip();
-
-	while (!_vm->shouldQuit() && (_vm->_eventsManager._fadeStatus & 1))
-		_vm->_eventsManager.delay(1);
+	_vm->flipPageAndWaitForFade();
 }
 
 void ThreadResource::freeTheApt() {
 	_vm->_graphicsManager.fadeDownICF1(5);
-	(*_vm->_graphicsManager._vPort)->_flags |= 8;
-	_vm->_graphicsManager.flipPage();
-	_vm->_eventsManager.sWaitFlip();
-
-	while (!_vm->shouldQuit() && (_vm->_eventsManager._fadeStatus & 1))
-		_vm->_eventsManager.delay(1);
+	_vm->flipPageAndWaitForFade();
 
 	_vm->_graphicsManager.fadeUpICF1(0);
 
