@@ -504,8 +504,23 @@ void sceneHandler11_sub06() {
 	}
 }
 
-void sceneHandler11_sub07() {
-	warning("STUB: sceneHandler11_sub07()");
+void sceneHandler11_swingerJumpDown() {
+    MessageQueue *mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SWR_JUMPDOWN), 0, 0);
+
+	mq->setFlags(mq->getFlags() | 1);
+
+	if (!mq->chain(g_vars->scene11_swingie))
+		delete mq;
+
+	g_vars->scene11_var19 = 0;
+	g_vars->scene11_var20 = 1;
+	g_vars->scene11_var06 = g_fp->_sceneRect.left;
+
+	getCurrSceneSc2MotionController()->enableLinks(sO_CloseThing1, 0);
+	getCurrSceneSc2MotionController()->enableLinks(sO_CloseThing2, 1);
+	getCurrSceneSc2MotionController()->enableLinks(sO_CloseThing3, 0);
+
+	getCurrSceneSc2MotionController()->replaceNodeX(905, 805);
 }
 
 void sceneHandler11_winArcade() {
@@ -629,7 +644,8 @@ int sceneHandler11(ExCommand *cmd) {
 							&& g_vars->scene11_var19)) {
 						if (!g_vars->scene11_swingie->_movement) {
 							if ((g_vars->scene11_boots->_flags & 4) && g_vars->scene11_boots->_statics->_staticsId == ST_BTS11_2) {
-								sceneHandler11_sub07();
+								sceneHandler11_swingerJumpDown();
+
 								g_fp->_behaviorManager->updateBehaviors();
 								g_fp->startSceneTrack();
 								return res;
