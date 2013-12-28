@@ -66,6 +66,12 @@ void SoundResource::play() {
 		soundItem->playSound(false);
 }
 
+void SoundResource::playLooping() {
+	AudioResourceManSoundItem *soundItem = getSoundItem();
+	if (soundItem)
+		soundItem->playSound(true);
+}
+
 void SoundResource::stop() {
 	AudioResourceManSoundItem *soundItem = getSoundItem();
 	if (soundItem)
@@ -244,7 +250,7 @@ void SoundItem::update() {
 		} else if (--_currCountdown == 0)
 			_soundResource->play();
 	} else if (_playLooping && !_soundResource->isPlaying())
-		_soundResource->play();
+		_soundResource->playLooping();
 }
 
 // SoundMan
@@ -558,10 +564,12 @@ int NeverhoodAudioStream::readBuffer(int16 *buffer, const int numSamples) {
 		}
 
 		if (bytesRead < bytesToRead || _stream->pos() >= _stream->size() || _stream->err() || _stream->eos()) {
-			if (_isLooping)
+			if (_isLooping) {
 				_stream->seek(0);
-			else
+				_prevValue = 0;
+			} else {
 				_endOfData = true;
+			}
 		}
 
 	}
@@ -609,7 +617,7 @@ void AudioResourceManSoundItem::playSound(bool looping) {
 	if (_data) {
 		const byte *shiftValue = _resourceHandle.extData();
 		Common::MemoryReadStream *stream = new Common::MemoryReadStream(_data, _resourceHandle.size(), DisposeAfterUse::NO);
-		NeverhoodAudioStream *audioStream = new NeverhoodAudioStream(22050, *shiftValue, false, DisposeAfterUse::YES, stream);
+		NeverhoodAudioStream *audioStream = new NeverhoodAudioStream(22050, *shiftValue, looping, DisposeAfterUse::YES, stream);
 		_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle,
 			audioStream, -1, VOLUME(_volume), PANNING(_panning));
 		debug(1, "playing sound %08X", _fileHash);
