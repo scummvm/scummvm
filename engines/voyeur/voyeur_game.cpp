@@ -101,6 +101,7 @@ void VoyeurEngine::playStamp() {
 
 		case 6:
 			threadP->doRoom();
+			flag = true;
 			break;
 
 		case 16:
