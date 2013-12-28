@@ -527,6 +527,8 @@ void BVoyBoltFile::initSoundMap() {
 void BVoyBoltFile::sInitRect() {
 	_state._curMemberPtr->_data = _state.decompress(NULL, _state._curMemberPtr->_size, 
 		_state._curMemberPtr->_mode);
+
+	if ((_state._curMemberPtr->_size % 8) == 0 || (_state._curMemberPtr->_size % 8) == 2)
 	_state._curMemberPtr->_rectResource = new RectResource(_state._curMemberPtr->_data,
 		_state._curMemberPtr->_size);
 }

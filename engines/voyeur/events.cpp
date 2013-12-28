@@ -233,6 +233,7 @@ void EventsManager::pollEvents() {
 		case Common::EVENT_LBUTTONDOWN:
 			_mouseButton = 1;
 			_vm->_voy._newMouseClicked = true;
+			_vm->_voy._newIncriminate = true;
 			return;
 		case Common::EVENT_RBUTTONDOWN:
 			_mouseButton = 2;
@@ -241,6 +242,7 @@ void EventsManager::pollEvents() {
 		case Common::EVENT_LBUTTONUP:
 		case Common::EVENT_RBUTTONUP:
 			_vm->_voy._newMouseClicked = false;
+			_vm->_voy._newIncriminate = false;
 			_mouseButton = 0;
 			return;
 		case Common::EVENT_MOUSEMOVE:

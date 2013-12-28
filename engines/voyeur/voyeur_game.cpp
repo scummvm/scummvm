@@ -891,7 +891,7 @@ void VoyeurEngine::doScroll(const Common::Point &pt) {
 		_graphicsManager.sDrawPic(pic, *_graphicsManager._vPort, Common::Point(784 - pt.x - 712, 150 - pt.y + 136));
 	}
 
-	(*_graphicsManager._vPort)->setupViewPort();
+	(*_graphicsManager._vPort)->setupViewPort(NULL);
 }
 
 void VoyeurEngine::checkTransition(){
