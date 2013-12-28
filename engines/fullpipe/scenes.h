@@ -84,6 +84,10 @@ int scene15_updateCursor();
 void scene15_initScene(Scene *sc);
 int sceneHandler15(ExCommand *cmd);
 
+void scene24_initScene(Scene *sc);
+void scene24_setPoolState();
+int sceneHandler24(ExCommand *cmd);
+
 void sceneDbgMenu_initScene(Scene *sc);
 int sceneHandlerDbgMenu(ExCommand *cmd);
 
@@ -259,9 +263,9 @@ public:
 	PictureObject *scene15_ladder;
 	StaticANIObject *scene15_boot;
 
-	int scene24_var05;
-	int scene24_var06;
-	int scene24_var07;
+	bool scene24_jetIsOn;
+	bool scene24_flowIsLow;
+	bool scene24_waterIsOn;
 	StaticANIObject *scene24_water;
 	StaticANIObject *scene24_jet;
 	StaticANIObject *scene24_drop;

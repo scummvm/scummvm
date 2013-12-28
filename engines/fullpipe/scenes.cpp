@@ -195,9 +195,9 @@ Vars::Vars() {
 	scene15_ladder = 0;
 	scene15_boot = 0;
 
-	scene24_var05 = 0;
-	scene24_var06 = 0;
-	scene24_var07 = 0;
+	scene24_jetIsOn = false;
+	scene24_flowIsLow = false;
+	scene24_waterIsOn = false;
 	scene24_water = 0;
 	scene24_jet = 0;
 	scene24_drop = 0;
@@ -612,6 +612,7 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 		scene23_sub_423B00();
 		_updateCursorCallback = scene23_updateCursor;
 		break;
+#endif
 
 	case SC_24:
 		sceneVar = _gameLoader->_gameVar->getSubVarByName("SC_24");
@@ -625,6 +626,7 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 		_updateCursorCallback = defaultUpdateCursor;
 		break;
 
+#if 0
 	case SC_25:
 		sceneVar = _gameLoader->_gameVar->getSubVarByName("SC_25");
 		scene->preloadMovements(sceneVar);

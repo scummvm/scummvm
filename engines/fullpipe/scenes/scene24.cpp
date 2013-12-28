@@ -49,26 +49,26 @@ void scene24_initScene(Scene *sc) {
 	g_fp->_currentScene = sc;
 
 	if (g_fp->getObjectState(sO_Pool) == g_fp->getObjectEnumState(sO_Pool, sO_Overfull)) {
-		g_vars->scene24_var05 = 1;
-		g_vars->scene24_var06 = 0;
+		g_vars->scene24_jetIsOn = true;
+		g_vars->scene24_flowIsLow = false;
 	} else {
 		g_vars->scene24_jet->hide();
 
-		g_vars->scene24_var05 = 0;
+		g_vars->scene24_jetIsOn = false;
 
 		g_vars->scene24_water->changeStatics2(ST_WTR24_FLOWLOWER);
 
-		g_vars->scene24_var06 = 1;
+		g_vars->scene24_flowIsLow = true;
 	}
 
 	if (g_fp->getObjectState(sO_Pool) < g_fp->getObjectEnumState(sO_Pool, sO_Full)) {
-		g_vars->scene24_var07 = 0;
+		g_vars->scene24_waterIsOn = false;
 
 		g_vars->scene24_water->hide();
 
 		g_fp->setObjectState(sO_StairsDown_24, g_fp->getObjectEnumState(sO_StairsDown_24, sO_IsOpened));
 	} else {
-		g_vars->scene24_var07 = 1;
+		g_vars->scene24_waterIsOn = true;
 
 		g_fp->setObjectState(sO_StairsDown_24, g_fp->getObjectEnumState(sO_StairsDown_24, sO_IsClosed));
 	}
@@ -110,14 +110,14 @@ int sceneHandler24(ExCommand *cmd) {
 				g_fp->_currentScene->_x = x +  300 - g_fp->_sceneRect.right;
 		}
 
-		if (g_vars->scene24_var07 && !g_vars->scene24_water->_movement) {
-			if (g_vars->scene24_var06)
+		if (g_vars->scene24_waterIsOn && !g_vars->scene24_water->_movement) {
+			if (g_vars->scene24_flowIsLow)
 				g_vars->scene24_water->startAnim(MV_WTR24_FLOWLOWER, 0, -1);
 			else
 				g_vars->scene24_water->startAnim(MV_WTR24_FLOW, 0, -1);
 		}
 
-		if (g_vars->scene24_var05 && !g_vars->scene24_jet->_movement)
+		if (g_vars->scene24_jetIsOn && !g_vars->scene24_jet->_movement)
 			g_vars->scene24_jet->startAnim(MV_JET24_FLOW, 0, -1);
 
 		g_fp->_behaviorManager->updateBehaviors();
