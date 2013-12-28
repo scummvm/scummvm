@@ -686,11 +686,8 @@ void GraphicsManager::screenReset() {
 	_backgroundPage = NULL;
 	(*_vPort)->setupViewPort();
 	fillPic(*_vPort, 0);	
-	(*_vPort)->_parent->_flags |= DISPFLAG_8;
 
-	// Flip
-	flipPage();
-	_vm->_eventsManager.sWaitFlip();
+	_vm->flipPageAndWait();
 }
 
 void GraphicsManager::fadeDownICF1(int steps) {

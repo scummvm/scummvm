@@ -212,10 +212,7 @@ bool VoyeurEngine::doHeadTitle() {
 void VoyeurEngine::showConversionScreen() {
 	_graphicsManager._backgroundPage = _bVoy->boltEntry(0x502)._picResource;
 	(*_graphicsManager._vPort)->setupViewPort();
-	(*_graphicsManager._vPort)->_flags |= DISPFLAG_8;
-
-	_graphicsManager.flipPage();
-	_eventsManager.sWaitFlip();
+	flipPageAndWait();
 
 	// Immediate palette load to show the initial screen
 	CMapResource *cMap = _bVoy->getCMapResource(0x503);
@@ -235,12 +232,7 @@ void VoyeurEngine::showConversionScreen() {
 	if (shouldQuit())
 		return;
 
-	(*_graphicsManager._vPort)->_flags |= DISPFLAG_8;
-	_graphicsManager.flipPage();
-	_eventsManager.sWaitFlip();
-
-	while (!shouldQuit() && (_eventsManager._fadeStatus & 1))
-		_eventsManager.delayClick(1);
+	flipPageAndWaitForFade();
 
 	_graphicsManager.screenReset();
 	_bVoy->freeBoltGroup(0x500);
@@ -309,9 +301,7 @@ bool VoyeurEngine::doLock() {
 		bool breakFlag = false;
 		while (!breakFlag && !shouldQuit()) {
 			(*_graphicsManager._vPort)->setupViewPort();
-			(*_graphicsManager._vPort)->_parent->_flags |= DISPFLAG_8;
-			_graphicsManager.flipPage();
-			_eventsManager.sWaitFlip();
+			flipPageAndWait();
 
 			// Display the last play time
 			_graphicsManager._fontPtr->_pos = Common::Point(0, 97);
@@ -320,9 +310,7 @@ bool VoyeurEngine::doLock() {
 			_graphicsManager._fontPtr->_justifyHeight = 97;
 
 			(*_graphicsManager._vPort)->drawText(displayString);
-			(*_graphicsManager._vPort)->_parent->_flags |= DISPFLAG_8;
-			_graphicsManager.flipPage();
-			_eventsManager.sWaitFlip();
+			flipPageAndWait();
 
 			if (firstLoop) {
 				firstLoop = false;
@@ -411,9 +399,7 @@ bool VoyeurEngine::doLock() {
 		}
 
 		_graphicsManager.fillPic(*_graphicsManager._vPort);
-		(*_graphicsManager._vPort)->_parent->_flags |= DISPFLAG_8;
-		_graphicsManager.flipPage();
-		_eventsManager.sWaitFlip();
+		flipPageAndWait();
 		_graphicsManager.resetPalette();
 
 		if (flag && result)
@@ -437,9 +423,7 @@ void VoyeurEngine::showTitleScreen() {
 		_graphicsManager._backgroundPage = _bVoy->getPictureResource(0x500);
 
 		(*_graphicsManager._vPort)->setupViewPort();
-		(*_graphicsManager._vPort)->_flags |= DISPFLAG_8;
-		_graphicsManager.flipPage();
-		_eventsManager.sWaitFlip();
+		flipPageAndWait();
 
 		// Immediate palette load to show the initial screen
 		CMapResource *cMap = _bVoy->getCMapResource(0x501);
@@ -457,12 +441,7 @@ void VoyeurEngine::showTitleScreen() {
 		cMap->_steps = 30;
 		cMap->startFade();
 
-		(*_graphicsManager._vPort)->_flags |= DISPFLAG_8;
-		_graphicsManager.flipPage();
-		_eventsManager.sWaitFlip();
-
-		while (!shouldQuit() && (_eventsManager._fadeStatus & 1))
-			_eventsManager.delay(1);
+		flipPageAndWaitForFade();
 		if (shouldQuit())
 			return;
 
@@ -508,9 +487,7 @@ void VoyeurEngine::doOpening() {
 	_eventsManager._intPtr.field38 = 1;
 	_eventsManager._intPtr._hasPalette = true;
 	(*_graphicsManager._vPort)->setupViewPort();
-	(*_graphicsManager._vPort)->_parent->_flags |= DISPFLAG_8;
-	_graphicsManager.flipPage();
-	_eventsManager.sWaitFlip();
+	flipPageAndWait();
 
 	::Video::RL2Decoder decoder;
 	decoder.loadFile("a2300100.rl2");
@@ -622,9 +599,7 @@ void VoyeurEngine::doTransitionCard(const Common::String &time, const Common::St
 	_graphicsManager.flipPage();
 	_eventsManager.sWaitFlip();
 
-	(*_graphicsManager._vPort)->_parent->_flags |= DISPFLAG_8;
-	_graphicsManager.flipPage();
-	_eventsManager.sWaitFlip();
+	flipPageAndWait();
 	(*_graphicsManager._vPort)->fillPic(128);
 
 	FontInfoResource &fi = *_graphicsManager._fontPtr;
@@ -647,9 +622,7 @@ void VoyeurEngine::doTransitionCard(const Common::String &time, const Common::St
 		(*_graphicsManager._vPort)->drawText(location);
 	}
 
-	(*_graphicsManager._vPort)->_parent->_flags |= DISPFLAG_8;
-	_graphicsManager.flipPage();
-	_eventsManager.sWaitFlip();
+	flipPageAndWait();
 }
 
 void VoyeurEngine::playAVideo(int id) {
@@ -665,7 +638,7 @@ void VoyeurEngine::saveLastInplay() {
 }
 
 void VoyeurEngine::flipPageAndWait() {
-	(*_graphicsManager._vPort)->_flags |= 8;
+	(*_graphicsManager._vPort)->_flags |= DISPFLAG_8;
 	_graphicsManager.flipPage();
 	_eventsManager.sWaitFlip();
 }
