@@ -480,11 +480,28 @@ void sceneHandler11_swingLogic() {
 }
 
 void sceneHandler11_sub05() {
-	warning("STUB: sceneHandler11_sub05()");
+	if (g_vars->scene11_var17 == 2)
+		g_vars->scene11_var18 = 1;
+	else if (g_vars->scene11_var17 == 1)
+		g_vars->scene11_var18 = 2;
+	else
+		g_vars->scene11_var18 = (g_vars->scene11_dudeOnSwing->_movement->_currDynamicPhaseIndex <= 45) + 1;
 }
 
 void sceneHandler11_sub06() {
-	warning("STUB: sceneHandler11_sub06()");
+	if (g_fp->getObjectState(sO_Swingie) == g_fp->getObjectEnumState(sO_Swingie, sO_IsStandingInBoots)) {
+		g_vars->scene11_var19 = 0;
+		g_vars->scene11_var20 = 0;
+
+		g_vars->scene11_swingie->changeStatics2(ST_SWR_SIT);
+		g_vars->scene11_swingie->setOXY(144, 389);
+
+		g_fp->setObjectState(sO_Swingie, g_fp->getObjectEnumState(sO_Swingie, sO_IsSitting));
+
+		getCurrSceneSc2MotionController()->enableLinks(sO_CloseThing1, 0);
+		getCurrSceneSc2MotionController()->enableLinks(sO_CloseThing2, 0);
+		getCurrSceneSc2MotionController()->enableLinks(sO_CloseThing3, 1);
+	}
 }
 
 void sceneHandler11_sub07() {
