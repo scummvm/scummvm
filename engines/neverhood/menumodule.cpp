@@ -195,6 +195,14 @@ void MenuModule::updateScene() {
 }
 
 uint32 MenuModule::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	switch(messageNum) {
+	case NM_KEYPRESS_ESC:
+		leaveModule(0);
+		break;
+	default:
+		break;
+	}
+
 	return Module::handleMessage(messageNum, param, sender);;
 }
 
