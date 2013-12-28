@@ -234,7 +234,7 @@ void EMICostume::saveState(SaveGame *state) const {
 	state->writeLESint32(_wearChore ? _wearChore->getChoreId() : -1);
 }
 
-bool EMICostume::restoreState(SaveGame *state) override {
+bool EMICostume::restoreState(SaveGame *state) {
 	bool ret = Costume::restoreState(state);
 	if (ret) {
 		Common::List<Material *>::const_iterator it = _materials.begin();
