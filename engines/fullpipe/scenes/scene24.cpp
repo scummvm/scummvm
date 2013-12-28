@@ -106,7 +106,7 @@ int sceneHandler24(ExCommand *cmd) {
 			if (x < g_fp->_sceneRect.left + 200) {
 				g_fp->_currentScene->_x = x - 300 - g_fp->_sceneRect.left;
 			}
-			if (x > g_fp->_sceneRect.right - 200 - 1)
+			if (x > g_fp->_sceneRect.right - 200)
 				g_fp->_currentScene->_x = x + 300 - g_fp->_sceneRect.right;
 		}
 
