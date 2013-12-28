@@ -1085,7 +1085,7 @@ void VoyeurEngine::doEvidDisplay(int evidId, int eventId) {
 	_bVoy->getBoltGroup(_voy._field47A);
 	PictureResource *pic = _bVoy->boltEntry(_voy._field47A + evidId * 2)._picResource;
 	_graphicsManager.sDrawPic(pic, *_graphicsManager._vPort, Common::Point(
-		384 - pic->_bounds.width() / 2, 240 - pic->_bounds.height() / 2));
+		(384 - pic->_bounds.width()) / 2, (240 - pic->_bounds.height()) / 2));
 	_bVoy->freeBoltMember(_voy._field47A + evidId * 2);
 
 	CMapResource *pal = _bVoy->boltEntry(_voy._field47A + evidId * 2 + 1)._cMapResource;
@@ -1126,7 +1126,7 @@ void VoyeurEngine::doEvidDisplay(int evidId, int eventId) {
 			_soundManager.startVOCPlay(_playStamp2);
 		}
 
-		_eventsManager.delay(600);
+		_eventsManager.delayClick(600);
 		if (_voy._rightClick)
 			break;
 		if (count == 0 || evidIdx >= eventId)

@@ -217,12 +217,11 @@ void EventsManager::delayClick(int cycles) {
 	uint32 totalMilli = cycles * 1000 / GAME_FRAME_RATE;
 	uint32 delayEnd = g_system->getMillis() + totalMilli;
 
-	while (!_vm->shouldQuit() && g_system->getMillis() < delayEnd 
-			&& !_vm->_voy._mouseClicked) {
+	do {
 		g_system->delayMillis(10);
-
-		pollEvents();
-	}
+		getMouseInfo();
+	} while (!_vm->shouldQuit() && g_system->getMillis() < delayEnd 
+			&& !_vm->_voy._mouseClicked);
 }
 
 void EventsManager::pollEvents() {
@@ -462,6 +461,11 @@ void EventsManager::getMouseInfo() {
 	_vm->_voy._leftClick = _vm->_voy._newLeftClick;
 	_vm->_voy._rightClick = _vm->_voy._newRightClick;
 	_vm->_voy._mouseUnk = _vm->_voy._newMouseUnk;
+
+	_vm->_voy._newMouseClicked = false;
+	_vm->_voy._newLeftClick = false;
+	_vm->_voy._newRightClick = false;
+	_vm->_voy._mouseUnk = false;
 }
 
 void EventsManager::checkForKey() {
