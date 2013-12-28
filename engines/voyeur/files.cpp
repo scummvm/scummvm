@@ -697,10 +697,12 @@ bool BoltEntry::hasResource() const {
 /*------------------------------------------------------------------------*/
 
 RectResource::RectResource(const byte *src, int size) {
-	int count = 1;
-	if (size != 8) {
+	int count;
+	if ((size % 8) == 2) {
 		count = READ_LE_UINT16(src);
 		src += 2;
+	} else {
+		count = size / 8;
 	}
 
 	for (int i = 0; i < count; ++i, src += 8) {
@@ -813,6 +815,19 @@ PictureResource::PictureResource(BoltFilesState &state, const byte *src) {
 			_imgData = state.decompress(NULL, nbytes, state._curMemberPtr->_mode);			
 		}
 	}
+}
+
+PictureResource::PictureResource(Graphics::Surface *surface) {
+	_flags = 0;
+	_select = 0;
+	_pick = 0;
+	_onOff = 0;
+	_depth = 0;
+	_maskData = 0;
+	_planeSize = 0;
+	
+	_bounds = Common::Rect(0, 0, surface->w, surface->h);
+	_imgData = (byte *)surface->getPixels();
 }
 
 PictureResource::PictureResource() {
@@ -967,7 +982,7 @@ void ViewPortResource::setupViewPort(PictureResource *page, Common::Rect *clipRe
 		if (yDiff > 0)
 			r.setHeight(yDiff <= r.height() ? r.height() - yDiff : 0);
 	}
-// clip = (0x20, 0x14, width: 0x140, height: 0C8h
+
 	_activePage = page;
 	_field18 = 0;
 	_clipRect = r;
