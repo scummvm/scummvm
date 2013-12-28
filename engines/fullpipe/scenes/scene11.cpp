@@ -37,7 +37,55 @@
 namespace Fullpipe {
 
 void scene11_dudeSwingCallback(int *arg) {
-	warning("STUB: scene11_dudeSwingCallback()");
+	int oldarg = *arg;
+
+	*arg = 45 - (int)(g_vars->scene11_var08 * -29.66666666666666);
+
+	if (*arg < 1)
+		*arg = 1;
+
+	if (*arg > 90)
+		*arg = 90;
+
+	g_vars->scene11_var11 = (g_vars->scene11_var08 - g_vars->scene11_var09) * -490.0000000000001;
+	g_vars->scene11_var10 = g_vars->scene11_var11 * 0.0042 + g_vars->scene11_var10 - g_vars->scene11_var12 * (g_vars->scene11_var11 * 0.0042 + g_vars->scene11_var10);
+	g_vars->scene11_var08 = g_vars->scene11_var10 * 0.0042 + g_vars->scene11_var08;
+
+	if (g_vars->scene11_var08 < -1.5) {
+		g_vars->scene11_var08 = 1.0004882812500000;
+		g_vars->scene11_var10 = 1.0;
+		g_vars->scene11_var11 = 1.0;
+	}
+
+	if (g_vars->scene11_var08 > 1.5) {
+		g_vars->scene11_var08 = 1.9990234375;
+		g_vars->scene11_var10 = 1.0;
+		g_vars->scene11_var11 = 1.0;
+	}
+
+	if (g_vars->scene11_var23 == *arg && 0.0 != g_vars->scene11_var10 && fabs(g_vars->scene11_var10) < 2.5) {
+		g_vars->scene11_var10 = 1.0;
+		g_vars->scene11_var11 = 1.0;
+		g_vars->scene11_var08 = g_vars->scene11_var09;
+	}
+
+	g_vars->scene11_var15++;
+
+	if (g_vars->scene11_var02) {
+		if (g_vars->scene11_var05 <= 720) {
+			g_vars->scene11_var05++;
+
+			if (g_vars->scene11_var05 == 720)
+				g_vars->scene11_hint->_flags |= 4;
+		}
+	}
+
+	if (oldarg - 45 >= 0 != *arg - 45 >= 0 && g_vars->scene11_var02) {
+		if (oldarg >= *arg)
+			g_fp->playSound(SND_11_031, 0);
+		else
+			g_fp->playSound(SND_11_020, 0);
+	}
 }
 
 void scene11_setupMusic() {
