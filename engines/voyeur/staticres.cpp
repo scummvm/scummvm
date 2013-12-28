@@ -117,7 +117,7 @@ const char *const END_OF_MESSAGE = "*** End of Message ***";
 const char *const EVENT_TYPE_STRINGS[4] = { "Video", "Audio" "Evidence", "Computer" };
 
 int DOT_LINE_START[9] = {
-	0E880, 0xE9C0, 0xEB00, 0xEC40, 0xED80, 0xEEC0, 0xF000, 0xF140, 0xF280
+	0xE880, 0xE9C0, 0xEB00, 0xEC40, 0xED80, 0xEEC0, 0xF000, 0xF140, 0xF280
 };
 int DOT_LINE_OFFSET[9] = {
 	144, 143, 142, 141, 141, 141, 142, 143, 144
