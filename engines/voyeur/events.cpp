@@ -451,7 +451,15 @@ void EventsManager::checkForKey() {
 }
 
 void EventsManager::startCursorBlink() {
-	error("TODO: startCursorBlink");
+	if (_vm->_voy._field478 & 0x10) {
+		_vm->_graphicsManager.setOneColor(128, 55, 5, 5);
+		_vm->_graphicsManager.setColor(128, 220, 20, 20);
+		_intPtr.field38 = true;
+		_intPtr._hasPalette = true;
+
+		_vm->_graphicsManager.drawDot();
+		//copySection();
+	}
 }
 
 void EventsManager::incrementTime(int amt) {

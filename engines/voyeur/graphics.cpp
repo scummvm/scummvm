@@ -22,6 +22,7 @@
 
 #include "voyeur/graphics.h"
 #include "voyeur/voyeur.h"
+#include "voyeur/staticres.h"
 #include "engines/util.h"
 #include "graphics/palette.h"
 #include "graphics/surface.h"
@@ -733,6 +734,13 @@ void GraphicsManager::fadeDownICF(int steps) {
 
 	_vm->_voy._field4376 = 0;
 	_vm->_voy._field4378 = 0;
+}
+
+void GraphicsManager::drawDot() {
+	for (int y = 0; y < 9; ++y) {
+		byte *pDest = (byte *)_screenSurface.getPixels() + DOT_LINE_START[y] + DOT_LINE_OFFSET[y];
+		Common::fill(pDest, pDest + DOT_LINE_LENGTH[y], 0x80);
+	}
 }
 
 } // End of namespace Voyeur

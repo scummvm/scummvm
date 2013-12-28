@@ -52,6 +52,10 @@ extern const char *const END_OF_MESSAGE;
 
 extern const char *const EVENT_TYPE_STRINGS[4];
 
+extern int DOT_LINE_START[9];
+extern int DOT_LINE_OFFSET[9];
+extern int DOT_LINE_LENGTH[9];
+
 } // End of namespace Voyeur
 
 #endif

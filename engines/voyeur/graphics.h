@@ -115,6 +115,7 @@ public:
 	void fadeDownICF1(int steps);
 	void fadeUpICF1(int steps);
 	void fadeDownICF(int steps);
+	void drawDot();
 };
 
 } // End of namespace Voyeur
