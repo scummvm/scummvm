@@ -39,8 +39,12 @@ bool Console::Cmd_Scene(int argc, const char **argv) {
 		return true;
 	} else {
 		int scene = _vm->convertScene(atoi(argv[1]));
-		_vm->_gameLoader->loadScene(scene);
-		_vm->_gameLoader->gotoScene(scene, TrubaLeft);
+		_vm->_gameLoader->loadScene(726);
+		_vm->_gameLoader->gotoScene(726, TrubaLeft);
+
+		if (scene != 726)
+			_vm->_gameLoader->preloadScene(726, _vm->getSceneEntrance(scene));
+
 		return false;
 	}
 }

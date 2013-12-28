@@ -82,8 +82,11 @@ bool FullpipeEngine::loadGam(const char *fname, int scene) {
 	setMusicAllowed(_gameLoader->_gameVar->getSubVarAsInt("MUSIC_ALLOWED"));
 
 	if (scene) {
-		_gameLoader->loadScene(scene);
-		_gameLoader->gotoScene(scene, TrubaLeft);
+		_gameLoader->loadScene(726);
+		_gameLoader->gotoScene(726, TrubaLeft);
+
+		if (scene != 726)
+			_gameLoader->preloadScene(726, getSceneEntrance(scene));
 	} else {
 		if (_flgPlayIntro) {
 			_gameLoader->loadScene(SC_INTRO1);

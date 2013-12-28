@@ -303,7 +303,6 @@ namespace Fullpipe {
 #define PIC_SC8_LADDERD 1106
 #define PIC_SC10_DTRUBA 974
 #define PIC_SC10_LADDER 995
-#define PIC_SCD_SEL 734
 #define QU_BALL_WALKL 4920
 #define QU_BALL_WALKR 4919
 #define QU_CST_CLOSELUKE 820
@@ -565,6 +564,48 @@ namespace Fullpipe {
 #define SND_24_007 4042
 #define ST_DRP24_EMPTY 3507
 #define ST_WTR24_FLOWLOWER 1843
+
+// Debug scene
+#define PIC_SCD_1 727
+#define PIC_SCD_2 728
+#define PIC_SCD_3 729
+#define PIC_SCD_4 730
+#define PIC_SCD_5 731
+#define PIC_SCD_6 732
+#define PIC_SCD_7 733
+#define PIC_SCD_8 756
+#define PIC_SCD_9 907
+#define PIC_SCD_10 981
+#define PIC_SCD_11 1098
+#define PIC_SCD_12 857
+#define PIC_SCD_13 1195
+#define PIC_SCD_14 1224
+#define PIC_SCD_15 1278
+#define PIC_SCD_16 1299
+#define PIC_SCD_17 1305
+#define PIC_SCD_18 1306
+#define PIC_SCD_19 1319
+#define PIC_SCD_20 1622
+#define PIC_SCD_21 1623
+#define PIC_SCD_22 1624
+#define PIC_SCD_23 1625
+#define PIC_SCD_24 1845
+#define PIC_SCD_25 1846
+#define PIC_SCD_26 1847
+#define PIC_SCD_27 1916
+#define PIC_SCD_28 2098
+#define PIC_SCD_29 2099
+#define PIC_SCD_30 2359
+#define PIC_SCD_31 2566
+#define PIC_SCD_32 2312
+#define PIC_SCD_33 2636
+#define PIC_SCD_34 2389
+#define PIC_SCD_35 2412
+#define PIC_SCD_36 2567
+#define PIC_SCD_37 2568
+#define PIC_SCD_38 2228
+#define PIC_SCD_FIN 5026
+#define PIC_SCD_SEL 734
 
 } // End of namespace Fullpipe
 

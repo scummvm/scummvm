@@ -42,7 +42,7 @@ void global_messageHandler_KickMetal() {
 }
 
 int global_messageHandler1(ExCommand *cmd) {
-	debug(0, "global_messageHandler1: %d %d", cmd->_messageKind, cmd->_messageNum);
+	debug(5, "global_messageHandler1: %d %d", cmd->_messageKind, cmd->_messageNum);
 
 	if (cmd->_excFlags & 0x10000) {
 		if (cmd->_messageNum == MV_MAN_TOLADDER)
@@ -306,6 +306,7 @@ int global_messageHandler3(ExCommand *cmd) {
 	case 17:
 		switch (cmd->_messageNum) {
 		case 61:
+			debug(0, "preload: { %d, %d },", cmd->_parentId, cmd->_keyCode);
 			return g_fp->_gameLoader->preloadScene(cmd->_parentId, cmd->_keyCode);
 		case 62:
 			return g_fp->_gameLoader->gotoScene(cmd->_parentId, cmd->_keyCode);
