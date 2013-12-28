@@ -150,7 +150,6 @@ void MenuModule::updateScene() {
 				leaveModule(0);
 				break;
 			case kMainMenuQuitGame:
-				leaveModule(0);
 				_vm->quitGame();
 				break;
 			case kMainMenuCredits:
