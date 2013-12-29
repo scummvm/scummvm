@@ -266,9 +266,8 @@ public:
 	StaticANIObject *scene13_handleR;
 	StaticANIObject *scene13_handleL;
 	StaticANIObject *scene13_bridge;
-	int scene13_var01;
-	int scene13_var02;
-	int scene13_var03;
+	bool scene13_guardDirection;
+	int scene13_dudeX;
 
 	int scene15_chantingCountdown;
 	StaticANIObject *scene15_plusminus;

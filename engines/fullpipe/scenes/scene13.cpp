@@ -42,8 +42,7 @@ void scene13_initScene(Scene *sc) {
 	g_vars->scene13_handleR = sc->getStaticANIObject1ById(ANI_HANDLE_R, -1);
 	g_vars->scene13_handleL = sc->getStaticANIObject1ById(ANI_HANDLE_L, -1);
 	g_vars->scene13_bridge = sc->getStaticANIObject1ById(ANI_BRIDGE, -1);
-	g_vars->scene13_var01 = 0;
-	g_vars->scene13_var02 = 1;
+	g_vars->scene13_guardDirection = true;
 
 	MovGraphLink *lnk = getSc2MctlCompoundBySceneId(sc->_sceneId)->getLinkByName(sO_Bridge);
 	Scene *oldsc = g_fp->_currentScene;
@@ -336,7 +335,7 @@ int sceneHandler13(ExCommand *cmd) {
 
 			if (g_fp->_aniMan2) {
 				x = g_fp->_aniMan2->_ox;
-				g_vars->scene13_var03 = x;
+				g_vars->scene13_dudeX = x;
 
 				if (x < g_fp->_sceneRect.left + 200)
 					g_fp->_currentScene->_x = x - g_fp->_sceneRect.left - 300;
@@ -346,15 +345,15 @@ int sceneHandler13(ExCommand *cmd) {
 
 				res = 1;
 			} else {
-				x = g_vars->scene13_var03;
+				x = g_vars->scene13_dudeX;
 			}
 
-			if (g_vars->scene13_var02) {
+			if (g_vars->scene13_guardDirection) {
 				if (x < 1022) {
 					sceneHandler13_walkForward(1);
 					sceneHandler13_walkBackward(0);
 
-					g_vars->scene13_var02 = 0;
+					g_vars->scene13_guardDirection = false;
 
 					g_fp->_behaviorManager->updateBehaviors();
 					g_fp->startSceneTrack();
@@ -365,7 +364,7 @@ int sceneHandler13(ExCommand *cmd) {
 				sceneHandler13_walkForward(0);
 				sceneHandler13_walkBackward(1);
 
-				g_vars->scene13_var02 = 1;
+				g_vars->scene13_guardDirection = true;
 			}
 
 			g_fp->_behaviorManager->updateBehaviors();

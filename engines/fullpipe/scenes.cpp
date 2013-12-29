@@ -195,9 +195,8 @@ Vars::Vars() {
 	scene13_handleR = 0;
 	scene13_handleL = 0;
 	scene13_bridge = 0;
-	scene13_var01 = 0;
-	scene13_var02 = 0;
-	scene13_var03 = 0;
+	scene13_guardDirection = false;
+	scene13_dudeX = 0;
 
 	scene15_chantingCountdown = 0;
 	scene15_plusminus = 0;
