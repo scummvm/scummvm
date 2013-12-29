@@ -546,9 +546,11 @@ void VoyeurEngine::playAVideoDuration(int videoId, int duration) {
 	if (videoId == -1)
 		return;
 
+	PictureResource *pic = NULL;
 	if (videoId == 42) {
 		_eventsManager._videoDead = 0;
-		dataP = _bVoy->memberAddr(0xE00);
+		pic = _bVoy->boltEntry(0xE00 + _eventsManager._videoDead)._picResource;
+		warning("%xh", pic);
 	}
 
 	::Video::RL2Decoder decoder;
@@ -583,14 +585,11 @@ void VoyeurEngine::playAVideoDuration(int videoId, int duration) {
 	_voy._field478 &= ~0x10;
 
 	if (_voy._field478 & 8) {
-		// TODO: Figure out resource type for the data resource
-		/*
+		assert(pic);
 		byte *imgData = (*_graphicsManager._vPort)->_currentPic->_imgData;
-		(*_graphicsManager._vPort)->_currentPic->_imgData = dataP[12 and 14];
-		imgData[12 and 14] = imgData;
+		(*_graphicsManager._vPort)->_currentPic->_imgData = pic->_imgData;
+		pic->_imgData = imgData;
 		_voy._field478 &= ~8;
-		*/
-		warning("TODO: playAVideoDuration - %x", dataP);
 	}
 }
 
