@@ -102,11 +102,30 @@ void sceneHandler13_openBridge() {
 }
 
 void sceneHandler13_testClose() {
-	warning("STUB: sceneHandler13_testClose()");
+	int id = g_vars->scene13_handleL->_statics->_staticsId;
+
+	if (id == ST_HDLL_UP)
+		chainQueue(QU_SC13_CLOSEFAIL, 1);
+	else if (id == ST_HDLL_FIRECAN || id == ST_HDLL_HAMMER)
+		chainQueue(QU_SC13_CLOSESUCCESS, 1);
 }
 
 void sceneHandler13_testOpen() {
-	warning("STUB: sceneHandler13_testOpen()");
+	switch (g_vars->scene13_handleR->_statics->_staticsId) {
+    case ST_HDLR_DOWN:
+		chainQueue(QU_SC13_OPENFAIL, 1);
+		break;
+
+    case ST_HDLR_DOWN_GUM:
+		chainQueue(QU_SC13_OPENSUCCESS, 1);
+		break;
+
+    case ST_HDLR_GUM:
+		g_vars->scene13_handleR->changeStatics2(ST_HDLR_DOWN_GUM);
+
+		chainQueue(QU_SC13_OPENSUCCESS, 1);
+		break;
+	}
 }
 
 void sceneHandler13_closeBridge() {

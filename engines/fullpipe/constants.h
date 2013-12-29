@@ -552,6 +552,10 @@ namespace Fullpipe {
 #define MV_BDG_CLOSE 1382
 #define MV_BDG_OPEN 1379
 #define MV_WHR13_SPIN 1384
+#define QU_SC13_CLOSEFAIL 3063
+#define QU_SC13_CLOSESUCCESS 3062
+#define QU_SC13_OPENFAIL 3042
+#define QU_SC13_OPENSUCCESS 3047
 #define QU_SC13_SHOWGUM 1216
 #define QU_STR_CHEW 1190
 #define SND_13_018 3763
@@ -560,6 +564,12 @@ namespace Fullpipe {
 #define SND_13_037 5335
 #define ST_BDG_CLOSED 1380
 #define ST_BDG_OPEN2 1381
+#define ST_HDLL_FIRECAN 1310
+#define ST_HDLL_HAMMER 3205
+#define ST_HDLL_UP 1211
+#define ST_HDLR_DOWN 1199
+#define ST_HDLR_DOWN_GUM 3044
+#define ST_HDLR_GUM 1201
 #define ST_STR_RIGHT 1174
 
 // Scene 15
