@@ -179,7 +179,18 @@ void sceneHandler13_openFast() {
 }
 
 void sceneHandler13_uneatGum() {
-	warning("STUB: sceneHandler13_uneatGum()");
+	BehaviorEntryInfo *beh = g_fp->_behaviorManager->getBehaviorEntryInfoByMessageQueueDataId(g_vars->scene13_guard, ST_STR_RIGHT, QU_STR_CHEW);
+
+	if (beh) {
+		beh->_percent = 0;
+		beh->_delay = 36;
+	}
+
+	beh = g_fp->_behaviorManager->getBehaviorEntryInfoByMessageQueueDataId(g_vars->scene13_guard, ST_STR_RIGHT, QU_STR_PLUU);
+	if (beh) {
+		beh->_percent = 0;
+		beh->_delay = 36;
+	}
 }
 
 void sceneHandler13_eatGum() {
@@ -192,7 +203,14 @@ void sceneHandler13_eatGum() {
 }
 
 void sceneHandler13_updateBridge() {
-	warning("STUB: sceneHandler13_updateBridge()");
+	MovGraphLink *lnk = getCurrSceneSc2MotionController()->getLinkByName(sO_Bridge);
+
+	if (lnk) {
+		if (g_fp->getObjectState(sO_Bridge) == g_fp->getObjectEnumState(sO_Bridge, sO_Convoluted))
+			lnk->_flags |= 0x20000000;
+		else
+			lnk->_flags &= 0xDFFFFFFF;
+	}
 }
 
 void sceneHandler13_showGum() {

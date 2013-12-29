@@ -558,6 +558,7 @@ namespace Fullpipe {
 #define QU_SC13_OPENSUCCESS 3047
 #define QU_SC13_SHOWGUM 1216
 #define QU_STR_CHEW 1190
+#define QU_STR_PLUU 1189
 #define SND_13_018 3763
 #define SND_13_033 4685
 #define SND_13_034 4686
