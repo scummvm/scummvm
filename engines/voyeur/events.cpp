@@ -74,6 +74,9 @@ EventsManager::EventsManager(): _intPtr(_gameData),
 	_priorFrameTime = g_system->getMillis();
 	_joe = 0;
 	Common::fill(&_keyState[0], &_keyState[256], false);
+	Common::fill(&_cycleTime[0], &_cycleTime[4], 0);
+	Common::fill(&_cycleNext[0], &_cycleNext[4], 0);
+	_cyclePtr = NULL;
 	
 	_leftClick = _rightClick = false;
 	_mouseClicked = _mouseUnk = false;

@@ -549,7 +549,7 @@ void BVoyBoltFile::vInitCMap() {
 void BVoyBoltFile::vInitCycl() {
 	initDefault();
 	_state._vm->_eventsManager.vStopCycle();
-	_state._curMemberPtr->_vInitCyclResource = new VInitCyclResource(
+	_state._curMemberPtr->_vInitCycleResource = new VInitCycleResource(
 		_state, _state._curMemberPtr->_data);
 }
 
@@ -647,11 +647,10 @@ BoltEntry::BoltEntry(Common::SeekableReadStream *f): _file(f) {
 	_fontResource = nullptr;
 	_fontInfoResource = nullptr;
 	_cMapResource = nullptr;
-	_vInitCyclResource = nullptr;
+	_vInitCycleResource = nullptr;
 	_ptrResource = nullptr;
 	_controlResource = nullptr;
-	_vInitCyclResource = nullptr;
-	_cycleResource = nullptr;
+	_vInitCycleResource = nullptr;
 	_threadResource = nullptr;
 
 	byte buffer[16];
@@ -673,8 +672,7 @@ BoltEntry::~BoltEntry() {
 	delete _fontResource;
 	delete _fontInfoResource;
 	delete _cMapResource;
-	delete _vInitCyclResource;
-	delete _cycleResource;
+	delete _vInitCycleResource;
 	delete _ptrResource;
 	delete _controlResource;
 }
@@ -690,7 +688,7 @@ void BoltEntry::load() {
 bool BoltEntry::hasResource() const {
 	return _rectResource ||  _picResource || _viewPortResource || _viewPortListResource
 		|| _fontResource || _fontInfoResource || _cMapResource 
-		|| _vInitCyclResource || _cycleResource
+		|| _vInitCycleResource 
 		|| _ptrResource || _controlResource || _threadResource;
 }
 
@@ -1410,10 +1408,18 @@ void CMapResource::startFade() {
 
 /*------------------------------------------------------------------------*/
 
-VInitCyclResource::VInitCyclResource(BoltFilesState &state, const byte *src) {
+VInitCycleResource::VInitCycleResource(BoltFilesState &state, const byte *src) {
 	for (int i = 0; i < 4; ++i) {
 		state._curLibPtr->resolveIt(READ_LE_UINT32(src + 8 + i * 4), &_ptr[i]);
 	}
+}
+
+void VInitCycleResource::vStartCycle() {
+	error("TODO");
+}
+
+void VInitCycleResource::vStopCycle() {
+	error("TODO: vStopCycle");
 }
 
 /*------------------------------------------------------------------------*/
@@ -1453,13 +1459,5 @@ ControlResource::ControlResource(BoltFilesState &state, const byte *src) {
 }
 
 /*------------------------------------------------------------------------*/
-
-void CycleResource::vStartCycle() {
-	error("TODO: vStartCycle");
-}
-
-void CycleResource::vStopCycle() {
-	error("TODO: vStopCycle");
-}
 
 } // End of namespace Voyeur

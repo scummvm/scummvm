@@ -540,7 +540,6 @@ void VoyeurEngine::playAVideo(int videoId) {
 }
 
 void VoyeurEngine::playAVideoDuration(int videoId, int duration) {
-	byte *dataP = NULL;
 	int totalFrames = duration * 10;
 
 	if (videoId == -1)
@@ -550,7 +549,6 @@ void VoyeurEngine::playAVideoDuration(int videoId, int duration) {
 	if (videoId == 42) {
 		_eventsManager._videoDead = 0;
 		pic = _bVoy->boltEntry(0xE00 + _eventsManager._videoDead)._picResource;
-		warning("%xh", pic);
 	}
 
 	::Video::RL2Decoder decoder;

@@ -578,7 +578,7 @@ void VoyeurEngine::doTapePlaying() {
 	_graphicsManager.sDrawPic(pic, *_graphicsManager._vPort, Common::Point(57, 30));
 	flipPageAndWaitForFade();
 
-	CycleResource *cycle = _bVoy->boltEntry(0xA05)._cycleResource;
+	VInitCycleResource *cycle = _bVoy->boltEntry(0xA05)._vInitCycleResource;
 	cycle->vStartCycle();
 
 	_soundManager.startVOCPlay("vcr.voc");

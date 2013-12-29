@@ -41,10 +41,9 @@ class ViewPortResource;
 class ViewPortListResource;
 class FontResource;
 class CMapResource;
-class VInitCyclResource;
+class VInitCycleResource;
 class PtrResource;
 class ControlResource;
-class CycleResource;
 class ThreadResource;
 
 #define DECOMPRESS_SIZE 0x7000
@@ -205,8 +204,7 @@ public:
 	FontResource *_fontResource;
 	FontInfoResource *_fontInfoResource;
 	CMapResource *_cMapResource;
-	VInitCyclResource *_vInitCyclResource;
-	CycleResource *_cycleResource;	// TODO: Dup with VInit?
+	VInitCycleResource *_vInitCycleResource;
 
 	// stampblt.blt resource types
 	PtrResource *_ptrResource;
@@ -405,12 +403,15 @@ public:
 	void startFade();
 };
 
-class VInitCyclResource {
+class VInitCycleResource {
 public:
 	byte *_ptr[4];
 public:
-	VInitCyclResource(BoltFilesState &state, const byte *src);
-	virtual ~VInitCyclResource() {}
+	VInitCycleResource(BoltFilesState &state, const byte *src);
+	virtual ~VInitCycleResource() {}
+
+	void vStartCycle();
+	void vStopCycle();
 };
 
 /* stampblt.blt resources */
@@ -431,15 +432,6 @@ public:
 
 	ControlResource(BoltFilesState &state, const byte *src);
 	virtual ~ControlResource() {}
-};
-
-class CycleResource {
-public:
-	CycleResource(BoltFilesState &state, const byte *src) {}
-	virtual ~CycleResource() {}
-
-	void vStartCycle();
-	void vStopCycle();
 };
 
 class ThreadResource {

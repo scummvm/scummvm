@@ -162,6 +162,9 @@ private:
 	int _mouseButton;
 	Common::List<IntNode *> _intNodes;
 	Common::Point _mousePos;
+	int _cycleTime[4];
+	int _cycleNext[4];
+	VInitCycleResource *_cyclePtr;
 
 	void mainVoyeurIntFunc();
 private:
