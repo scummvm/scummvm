@@ -934,6 +934,8 @@ void Lua_V2::DetachActor() {
 
 	warning("Lua_V2::DetachActor: detaching %s from parent actor", attached->getName().c_str());
 	attached->detach();
+
+	g_emi->invalidateSortOrder();
 }
 
 void Lua_V2::WalkActorToAvoiding() {
