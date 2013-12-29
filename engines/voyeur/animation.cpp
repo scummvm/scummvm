@@ -90,11 +90,11 @@ void RL2Decoder::copyDirtyRectsToBuffer(uint8 *dst, uint pitch) {
 		((RL2VideoTrack *)track)->copyDirtyRectsToBuffer(dst, pitch);
 }
 
-Graphics::Surface *RL2Decoder::getVideoSurface() {
+RL2Decoder::RL2VideoTrack *RL2Decoder::getVideoTrack() {
 	Track *track = getTrack(1);
 	assert(track);
 
-	return ((RL2VideoTrack *)track)->getSurface();
+	return (RL2VideoTrack *)track;
 }
 
 /*------------------------------------------------------------------------*/
@@ -162,12 +162,11 @@ RL2Decoder::RL2VideoTrack::RL2VideoTrack(const RL2FileHeader &header, RL2AudioTr
 
 	_surface = new Graphics::Surface();
 	_surface->create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
-	if (header._backSize == 0 || !strncmp((char *)&header._signature, "RLV3", 4)) {
-		_backSurface = NULL;
-	} else {
-		_backSurface = new Graphics::Surface();
-		_backSurface->create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
-	}
+
+	_backSurface = NULL;
+	_hasBackFrame = header._backSize != 0 && strncmp((char *)&header._signature, "RLV3", 4);
+	if (_hasBackFrame)
+		initBackSurface();
 
 	_videoBase = header._videoBase;
 	_dirtyPalette = true;
@@ -185,6 +184,11 @@ RL2Decoder::RL2VideoTrack::~RL2VideoTrack() {
 		_backSurface->free();
 		delete _backSurface;
 	}
+}
+
+void RL2Decoder::RL2VideoTrack::initBackSurface() {
+	_backSurface = new Graphics::Surface();
+	_backSurface->create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
 }
 
 bool RL2Decoder::RL2VideoTrack::endOfTrack() const {
@@ -211,7 +215,7 @@ Graphics::PixelFormat RL2Decoder::RL2VideoTrack::getPixelFormat() const {
 }
 
 const Graphics::Surface *RL2Decoder::RL2VideoTrack::decodeNextFrame() {
-	if (_curFrame == 0 && _backSurface) {
+	if (_curFrame == 0 && _hasBackFrame) {
 		// Read in the background frame
 		_fileStream->seek(0x324);
 		rl2DecodeFrameWithoutBackground(0);
@@ -228,7 +232,7 @@ const Graphics::Surface *RL2Decoder::RL2VideoTrack::decodeNextFrame() {
 	_fileStream->seek(_header._frameSoundSizes[_curFrame], SEEK_CUR);
 
 	// Decode the graphic data
-	if (_backSurface) {
+	if (_hasBackFrame) {
 		if (_curFrame > 0)
 			Common::copy((byte *)_backSurface->getPixels(), (byte *)_backSurface->getPixels() + (320 * 200), 
 				(byte *)_surface->getPixels());
@@ -266,22 +270,38 @@ void RL2Decoder::RL2VideoTrack::copyFrame(uint8 *data) {
 void RL2Decoder::RL2VideoTrack::rl2DecodeFrameWithoutBackground(int screenOffset) {
 	if (screenOffset == -1)
 		screenOffset = _videoBase;
-	byte *destP = (byte *)_surface->getPixels() + screenOffset;
+	const byte *srcP = !_backSurface ? NULL : (const byte *)_backSurface->getPixels();
+	byte *destP = (byte *)_surface->getPixels();
 	int frameSize = _surface->w * _surface->h - screenOffset;
 
+	// If a background was manually set, copy over the initial part remaining unchanged
+	if (srcP && screenOffset > 0) {
+		Common::copy(srcP, srcP + screenOffset, destP);
+		srcP += screenOffset;
+	}
+	destP += screenOffset;
+
+	// Main frame decode loop
 	while (frameSize > 0) {
 		byte nextByte = _fileStream->readByte();
 
 		if (nextByte < 0x80) {
 			*destP++ = nextByte;
 			--frameSize;
+			if (srcP)
+				++srcP;
 		} else if (nextByte == 0x80) {
 			int runLength = _fileStream->readByte();
 			if (runLength == 0)
 				return;
 
 			runLength = MIN(runLength, frameSize);
-			Common::fill(destP, destP + runLength, 0);
+			if (srcP) {
+				Common::copy(srcP, srcP + runLength, destP);
+				srcP += runLength;
+			} else {
+				Common::fill(destP, destP + runLength, 0);
+			}
 			destP += runLength;
 			frameSize -= runLength;
 		} else {
@@ -291,6 +311,8 @@ void RL2Decoder::RL2VideoTrack::rl2DecodeFrameWithoutBackground(int screenOffset
 			Common::fill(destP, destP + runLength, nextByte & 0x7f);
 			destP += runLength;
 			frameSize -= runLength;
+			if (srcP)
+				srcP += runLength;
 		}
 	}
 }
@@ -330,6 +352,16 @@ void RL2Decoder::RL2VideoTrack::rl2DecodeFrameWithBackground() {
 			frameSize -= runLength;
 		}
 	}
+}
+
+void RL2Decoder::RL2VideoTrack::setupBackSurface(Graphics::Surface *surface) {
+	if (!_backSurface)
+		initBackSurface();
+
+	assert(surface->w == _backSurface->w && surface->h == _backSurface->h);
+	const byte *srcP = (const byte *)surface->getPixels();
+	byte *destP = (byte *)_backSurface->getPixels();
+	Common::copy(srcP, srcP + surface->w * surface->h, destP);
 }
 
 /*------------------------------------------------------------------------*/

@@ -39,7 +39,7 @@ namespace Video {
  *  - voyeur
  */
 class RL2Decoder : public VideoDecoder {
-
+private:
 	class RL2FileHeader {
 	public:
 		uint32 _form;
@@ -65,21 +65,6 @@ class RL2Decoder : public VideoDecoder {
 		bool isValid() const;
 	};
 
-private:
-	Audio::Mixer::SoundType _soundType;
-	RL2FileHeader _header;
-public:
-	RL2Decoder(Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType);
-	virtual ~RL2Decoder();
-
-	bool loadStream(Common::SeekableReadStream *stream);
-	bool loadVideo(int videoId);
-
-	const Common::List<Common::Rect> *getDirtyRects() const;
-	void clearDirtyRects();
-	void copyDirtyRectsToBuffer(uint8 *dst, uint pitch);
-	Graphics::Surface *getVideoSurface();
-private:
 	class RL2AudioTrack : public AudioTrack {
 	public:
 		RL2AudioTrack(const RL2FileHeader &header, Common::SeekableReadStream *stream,
@@ -120,10 +105,10 @@ private:
 		const Graphics::Surface *decodeNextFrame();
 		const byte *getPalette() const { _dirtyPalette = false; return _header._palette; }
 		bool hasDirtyPalette() const { return _dirtyPalette; }
-
 		const Common::List<Common::Rect> *getDirtyRects() const { return &_dirtyRects; }
 		void clearDirtyRects() { _dirtyRects.clear(); }
 		void copyDirtyRectsToBuffer(uint8 *dst, uint pitch);
+		void setupBackSurface(Graphics::Surface *surface);
 
 	private:
 		Common::SeekableReadStream *_fileStream;
@@ -131,6 +116,7 @@ private:
 		RL2AudioTrack *_audioTrack;
 		Graphics::Surface *_surface;
 		Graphics::Surface *_backSurface;
+		bool _hasBackFrame;
 
 		mutable bool _dirtyPalette;
 
@@ -145,7 +131,23 @@ private:
 		void copyFrame(uint8 *data);
 		void rl2DecodeFrameWithBackground();
 		void rl2DecodeFrameWithoutBackground(int screenOffset = -1);
+		void initBackSurface();
 	};
+
+private:
+	Audio::Mixer::SoundType _soundType;
+	RL2FileHeader _header;
+public:
+	RL2Decoder(Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType);
+	virtual ~RL2Decoder();
+
+	bool loadStream(Common::SeekableReadStream *stream);
+	bool loadVideo(int videoId);
+
+	const Common::List<Common::Rect> *getDirtyRects() const;
+	void clearDirtyRects();
+	void copyDirtyRectsToBuffer(uint8 *dst, uint pitch);
+	RL2VideoTrack *getVideoTrack();
 };
 
 } // End of namespace Video

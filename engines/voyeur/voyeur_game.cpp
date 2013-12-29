@@ -497,8 +497,8 @@ void VoyeurEngine::doGossip() {
 	pal->startFade();
 
 	// Transfer initial background to video decoder
-	PictureResource videoFrame(decoder.getVideoSurface());
-	_graphicsManager.sDrawPic(bgPic, &videoFrame, Common::Point(-32, -20));
+	//PictureResource videoFrame(decoder.getVideoSurface());
+	//_graphicsManager.sDrawPic(bgPic, &videoFrame, Common::Point(-32, -20));
 
 	flipPageAndWait();
 

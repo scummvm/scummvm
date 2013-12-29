@@ -555,6 +555,8 @@ void VoyeurEngine::playAVideoDuration(int videoId, int duration) {
 	decoder.loadVideo(videoId);
 
 	decoder.start();
+	decoder.getVideoTrack()->setupBackSurface(&_graphicsManager._screenSurface);
+
 	decoder.seek(Audio::Timestamp(_voy._vocSecondsOffset * 1000));
 	int endFrame = decoder.getCurFrame() + totalFrames; 
 
