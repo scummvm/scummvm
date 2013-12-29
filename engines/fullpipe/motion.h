@@ -115,6 +115,9 @@ public:
 	void initMovGraph2();
 	MctlConnectionPoint *findClosestConnectionPoint(int ox, int oy, int destIndex, int connectionX, int connectionY, int sourceIndex, int *minDistancePtr);
 	void replaceNodeX(int from, int to);
+
+	uint getMotionControllerCount() { return _motionControllers.size(); }
+	MotionController *getMotionController(int num) { return _motionControllers[num]->_motionControllerObj; }
 };
 
 struct MGMSubItem {

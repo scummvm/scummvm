@@ -47,7 +47,39 @@ void MotionController::enableLinks(const char *linkName, bool enable) {
 }
 
 MovGraphLink *MotionController::getLinkByName(const char *name) {
-	warning("STUB: MotionController::getLinkByName()");
+	if (_objtype == kObjTypeMctlCompound) {
+		MctlCompound *obj = (MctlCompound *)this;
+
+		for (uint i = 0;  i < obj->getMotionControllerCount(); i++) {
+			MotionController *con = obj->getMotionController(i);
+
+			if (con->_objtype == kObjTypeMovGraph) {
+				MovGraph *gr = (MovGraph *)con;
+
+				for (ObList::iterator l = gr->_links.begin(); l != gr->_links.end(); ++l) {
+					assert(((CObject *)*l)->_objtype == kObjTypeMovGraphLink);
+
+					MovGraphLink *lnk = (MovGraphLink *)*l;
+
+					if (!strcmp(lnk->_name, name))
+						return lnk;
+				}
+			}
+		}
+	}
+
+	if (_objtype == kObjTypeMovGraph) {
+		MovGraph *gr = (MovGraph *)this;
+
+		for (ObList::iterator l = gr->_links.begin(); l != gr->_links.end(); ++l) {
+			assert(((CObject *)*l)->_objtype == kObjTypeMovGraphLink);
+
+			MovGraphLink *lnk = (MovGraphLink *)*l;
+
+			if (!strcmp(lnk->_name, name))
+				return lnk;
+		}
+	}
 
 	return 0;
 }
