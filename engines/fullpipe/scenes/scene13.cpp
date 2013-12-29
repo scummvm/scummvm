@@ -217,16 +217,32 @@ void sceneHandler13_showGum() {
 	chainQueue(QU_SC13_SHOWGUM, 0);
 }
 
+void sceneHandler13_setBehFlag(BehaviorEntryInfo *beh, bool flag) {
+	warning("STUB: sceneHandler13_sub03()");
+}
+
 void sceneHandler13_sub01(bool flag) {
-	warning("STUB: sceneHandler13_sub01()");
+	BehaviorEntryInfo *beh = g_fp->_behaviorManager->getBehaviorEntryInfoByMessageQueueDataId(g_vars->scene13_guard, ST_STR_RIGHT, QU_STR_RTOL);
+
+	sceneHandler13_setBehFlag(beh, flag);
+
+	beh = g_fp->_behaviorManager->getBehaviorEntryInfoByMessageQueueDataId(g_vars->scene13_guard, ST_STR_LEFT, QU_STR_TURNR);
+
+	sceneHandler13_setBehFlag(beh, flag);
+
+	beh->_flags &= 0xFE;
 }
 
 void sceneHandler13_sub02(bool flag) {
-	warning("STUB: sceneHandler13_sub02()");
-}
+	BehaviorEntryInfo *beh = g_fp->_behaviorManager->getBehaviorEntryInfoByMessageQueueDataId(g_vars->scene13_guard, ST_STR_RIGHT|0x4000, QU_STR_LTOR);
 
-void sceneHandler13_sub03(bool flag) {
-	warning("STUB: sceneHandler13_sub03()");
+	sceneHandler13_setBehFlag(beh, flag);
+
+	beh = g_fp->_behaviorManager->getBehaviorEntryInfoByMessageQueueDataId(g_vars->scene13_guard, ST_STR_LEFT|0x4000, QU_STR_TURNR_L);
+
+	sceneHandler13_setBehFlag(beh, flag);
+
+	beh->_flags &= 0xFE;
 }
 
 int sceneHandler13(ExCommand *cmd) {

@@ -558,7 +558,11 @@ namespace Fullpipe {
 #define QU_SC13_OPENSUCCESS 3047
 #define QU_SC13_SHOWGUM 1216
 #define QU_STR_CHEW 1190
+#define QU_STR_LTOR 3054
 #define QU_STR_PLUU 1189
+#define QU_STR_RTOL 3053
+#define QU_STR_TURNR 1186
+#define QU_STR_TURNR_L 3059
 #define SND_13_018 3763
 #define SND_13_033 4685
 #define SND_13_034 4686
@@ -571,6 +575,7 @@ namespace Fullpipe {
 #define ST_HDLR_DOWN 1199
 #define ST_HDLR_DOWN_GUM 3044
 #define ST_HDLR_GUM 1201
+#define ST_STR_LEFT 1175
 #define ST_STR_RIGHT 1174
 
 // Scene 15
