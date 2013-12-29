@@ -104,7 +104,7 @@ bool OSystem_NULL::pollEvent(Common::Event &event) {
 	return false;
 }
 
-uint32 OSystem_NULL::getMillis(bool skipRecord) {
+uint32 OSystem_NULL::getMillis() {
 	return 0;
 }
 
