@@ -115,6 +115,7 @@ void RL2Decoder::RL2FileHeader::load(Common::SeekableReadStream *stream) {
 	_form = stream->readUint32LE();
 	_backSize = stream->readUint32LE();
 	_signature = stream->readUint32LE();
+	_isRLV3 = !strncmp((const char *)&_signature, "RLV3", 4);
 
 	if (!isValid())
 		return;
@@ -163,8 +164,9 @@ RL2Decoder::RL2VideoTrack::RL2VideoTrack(const RL2FileHeader &header, RL2AudioTr
 	_surface = new Graphics::Surface();
 	_surface->create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
 
+	_hasBackFrame = header._backSize != 0 && !header._isRLV3;
+
 	_backSurface = NULL;
-	_hasBackFrame = header._backSize != 0 && strncmp((char *)&header._signature, "RLV3", 4);
 	if (_hasBackFrame)
 		initBackSurface();
 

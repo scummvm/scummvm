@@ -58,6 +58,7 @@ private:
 
 		uint32 *_frameOffsets;
 		int *_frameSoundSizes;
+		bool _isRLV3;
 	public:
 		RL2FileHeader();
 		~RL2FileHeader();
