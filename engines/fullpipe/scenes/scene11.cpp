@@ -80,7 +80,7 @@ void scene11_dudeSwingCallback(int *arg) {
 		}
 	}
 
-	if ((oldarg - 45 >= 0 != *arg - 45 >= 0) && g_vars->scene11_arcadeIsOn) {
+	if ((oldarg >= 45) != (*arg >= 45) && g_vars->scene11_arcadeIsOn) {
 		if (oldarg >= *arg)
 			g_fp->playSound(SND_11_031, 0);
 		else
