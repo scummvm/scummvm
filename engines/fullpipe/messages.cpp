@@ -234,6 +234,7 @@ MessageQueue::MessageQueue(MessageQueue *src, int parId, int field_38) {
 	_id = g_fp->_globalMessageQueueList->compact();
 	_dataId = src->_dataId;
 	_flags = src->_flags;
+	_queueName = 0;
 
 	g_fp->_globalMessageQueueList->addMessageQueue(this);
 
