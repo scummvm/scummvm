@@ -831,8 +831,6 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 		break;
 
 	default:
-		_behaviorManager->initBehavior(0, 0);
-
 		error("Unknown scene %d", entrance->_sceneId);
 		break;
 	}
