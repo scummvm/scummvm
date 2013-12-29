@@ -37,7 +37,8 @@ RL2Decoder::~RL2Decoder() {
 }
 
 bool RL2Decoder::loadVideo(int videoId) {
-	Common::String filename = Common::String::format("%s.rl2", ::Voyeur::SZ_FILENAMES[videoId]);
+	Common::String filename = Common::String::format("%s.rl2", 
+		::Voyeur::SZ_FILENAMES[videoId * 2]);
 	return loadFile(filename);
 }
 
@@ -161,7 +162,7 @@ RL2Decoder::RL2VideoTrack::RL2VideoTrack(const RL2FileHeader &header, RL2AudioTr
 
 	_surface = new Graphics::Surface();
 	_surface->create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
-	if (header._backSize == 0) {
+	if (header._backSize == 0 || !strncmp((char *)&header._signature, "RLV3", 4)) {
 		_backSurface = NULL;
 	} else {
 		_backSurface = new Graphics::Surface();

@@ -143,7 +143,7 @@ public:
 
 	void playRL2Video(const Common::String &filename);
 	void doTransitionCard(const Common::String &time, const Common::String &location);
-	void playAVideo(int id);
+	void playAVideo(int videoId);
 	void playAVideoDuration(int videoId, int duration);
 
 	/**

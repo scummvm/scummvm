@@ -535,14 +535,18 @@ void VoyeurEngine::playRL2Video(const Common::String &filename) {
 	}
 }
 
+void VoyeurEngine::playAVideo(int videoId) {
+	playAVideoDuration(videoId, 9999);
+}
+
 void VoyeurEngine::playAVideoDuration(int videoId, int duration) {
 	byte *dataP = NULL;
 	int totalFrames = duration * 10;
 
-	if (videoId != -1)
+	if (videoId == -1)
 		return;
 
-	if (videoId != 42) {
+	if (videoId == 42) {
 		_eventsManager._videoDead = 0;
 		dataP = _bVoy->memberAddr(0xE00);
 	}
@@ -623,10 +627,6 @@ void VoyeurEngine::doTransitionCard(const Common::String &time, const Common::St
 	}
 
 	flipPageAndWait();
-}
-
-void VoyeurEngine::playAVideo(int id) {
-	warning("TODO: playAVideo");
 }
 
 void VoyeurEngine::saveLastInplay() {

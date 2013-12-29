@@ -498,8 +498,11 @@ void VoyeurEngine::doGossip() {
 
 	// Transfer initial background to video decoder
 	PictureResource videoFrame(decoder.getVideoSurface());
-	_graphicsManager.sDrawPic(bgPic, &videoFrame, Common::Point(-32, -20)); 
+	_graphicsManager.sDrawPic(bgPic, &videoFrame, Common::Point(-32, -20));
 
+	flipPageAndWait();
+
+	/*
 	byte *frameNumsP = _bVoy->memberAddr(0x309);
 	byte *posP = _bVoy->boltEntry(0x30A)._data;
 
@@ -557,7 +560,7 @@ void VoyeurEngine::doGossip() {
 		_eventsManager.pollEvents();
 		g_system->delayMillis(10);
 	}
-
+	*/
 	_bVoy->freeBoltGroup(0x300);
 	_graphicsManager.screenReset();
 }
