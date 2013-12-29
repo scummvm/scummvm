@@ -530,6 +530,18 @@ namespace Fullpipe {
 #define ST_SWR_SITBALD 1153
 #define ST_SWR_STAND3 3014
 
+// Scene 13
+#define ANI_BRIDGE 1378
+#define ANI_HANDLE_L 1209
+#define ANI_HANDLE_R 1196
+#define ANI_STOROZH 1172
+#define ANI_WHIRLGIG_13 1383
+#define MV_WHR13_SPIN 1384
+#define SND_13_018 3763
+#define SND_13_037 5335
+#define ST_BDG_CLOSED 1380
+#define ST_BDG_OPEN2 1381
+
 // Scene 15
 #define ANI_BOOT_15 4779
 #define ANI_INV_BOOT 881

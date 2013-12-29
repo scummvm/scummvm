@@ -190,6 +190,14 @@ Vars::Vars() {
 	scene12_fly = 0;
 	scene12_flyCountdown = 0;
 
+	scene13_whirlgig = 0;
+	scene13_guard = 0;
+	scene13_handleR = 0;
+	scene13_handleL = 0;
+	scene13_bridge = 0;
+	scene13_var01 = 0;
+	scene13_var02 = 0;
+
 	scene15_chantingCountdown = 0;
 	scene15_plusminus = 0;
 	scene15_ladder = 0;

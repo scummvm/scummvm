@@ -258,6 +258,14 @@ public:
 	int scene12_fly;
 	int scene12_flyCountdown;
 
+	StaticANIObject *scene13_whirlgig;
+	StaticANIObject *scene13_guard;
+	StaticANIObject *scene13_handleR;
+	StaticANIObject *scene13_handleL;
+	StaticANIObject *scene13_bridge;
+	int scene13_var01;
+	int scene13_var02;
+
 	int scene15_chantingCountdown;
 	StaticANIObject *scene15_plusminus;
 	PictureObject *scene15_ladder;
