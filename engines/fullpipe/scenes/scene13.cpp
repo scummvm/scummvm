@@ -218,10 +218,18 @@ void sceneHandler13_showGum() {
 }
 
 void sceneHandler13_setBehFlag(BehaviorEntryInfo *beh, bool flag) {
-	warning("STUB: sceneHandler13_sub03()");
+	if (!flag) {
+		beh->_percent = 327;
+		beh->_flags |= 1;
+		beh->_delay = 36;
+	} else {
+		beh->_percent = 0x7FFF;
+		beh->_flags &= 0xFFFFFFFE;
+		beh->_delay = 0;
+	}
 }
 
-void sceneHandler13_sub01(bool flag) {
+void sceneHandler13_walkForward(bool flag) {
 	BehaviorEntryInfo *beh = g_fp->_behaviorManager->getBehaviorEntryInfoByMessageQueueDataId(g_vars->scene13_guard, ST_STR_RIGHT, QU_STR_RTOL);
 
 	sceneHandler13_setBehFlag(beh, flag);
@@ -233,7 +241,7 @@ void sceneHandler13_sub01(bool flag) {
 	beh->_flags &= 0xFE;
 }
 
-void sceneHandler13_sub02(bool flag) {
+void sceneHandler13_walkBackward(bool flag) {
 	BehaviorEntryInfo *beh = g_fp->_behaviorManager->getBehaviorEntryInfoByMessageQueueDataId(g_vars->scene13_guard, ST_STR_RIGHT|0x4000, QU_STR_LTOR);
 
 	sceneHandler13_setBehFlag(beh, flag);
@@ -343,8 +351,8 @@ int sceneHandler13(ExCommand *cmd) {
 
 			if (g_vars->scene13_var02) {
 				if (x < 1022) {
-					sceneHandler13_sub01(1);
-					sceneHandler13_sub02(0);
+					sceneHandler13_walkForward(1);
+					sceneHandler13_walkBackward(0);
 
 					g_vars->scene13_var02 = 0;
 
@@ -354,8 +362,8 @@ int sceneHandler13(ExCommand *cmd) {
 					return res;
 				}
 			} else if (x > 1022) {
-				sceneHandler13_sub01(0);
-				sceneHandler13_sub02(1);
+				sceneHandler13_walkForward(0);
+				sceneHandler13_walkBackward(1);
 
 				g_vars->scene13_var02 = 1;
 			}
