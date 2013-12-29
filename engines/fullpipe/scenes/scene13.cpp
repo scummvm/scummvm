@@ -80,4 +80,189 @@ void scene13_initScene(Scene *sc) {
 	g_fp->initArcadeKeys("SC_13");
 }
 
+void sceneHandler13_openBridge() {
+	warning("STUB: sceneHandler13_openBridge()");
+}
+
+void sceneHandler13_testClose() {
+	warning("STUB: sceneHandler13_testClose()");
+}
+
+void sceneHandler13_testOpen() {
+	warning("STUB: sceneHandler13_testOpen()");
+}
+
+void sceneHandler13_closeBridge() {
+	warning("STUB: sceneHandler13_closeBridge()");
+}
+
+void sceneHandler13_closeFast() {
+	warning("STUB: sceneHandler13_closeFast()");
+}
+
+void sceneHandler13_stopWhirlgig() {
+	warning("STUB: sceneHandler13_stopWhirlgig()");
+}
+
+void sceneHandler13_startWhirlgig() {
+	warning("STUB: sceneHandler13_startWhirlgig()");
+}
+
+void sceneHandler13_openFast() {
+	warning("STUB: sceneHandler13_openFast()");
+}
+
+void sceneHandler13_uneatGum() {
+	warning("STUB: sceneHandler13_uneatGum()");
+}
+
+void sceneHandler13_eatGum() {
+	warning("STUB: sceneHandler13_eatGum()");
+}
+
+void sceneHandler13_updateBridge() {
+	warning("STUB: sceneHandler13_updateBridge()");
+}
+
+void sceneHandler13_showGum() {
+	warning("STUB: sceneHandler13_showGum()");
+}
+
+void sceneHandler13_sub01(bool flag) {
+	warning("STUB: sceneHandler13_sub01()");
+}
+
+void sceneHandler13_sub02(bool flag) {
+	warning("STUB: sceneHandler13_sub02()");
+}
+
+void sceneHandler13_sub03(bool flag) {
+	warning("STUB: sceneHandler13_sub03()");
+}
+
+int sceneHandler13(ExCommand *cmd) {
+	if (cmd->_messageKind != 17)
+		return 0;
+
+	switch(cmd->_messageNum) {
+	case MSG_SC13_OPENBRIDGE:
+		sceneHandler13_openBridge();
+        break;
+
+	case MSG_SC13_TESTCLOSE:
+		sceneHandler13_testClose();
+		break;
+
+	case MSG_SC13_TESTOPEN:
+        sceneHandler13_testOpen();
+		break;
+
+	case MSG_SC13_CLOSEBRIDGE:
+		sceneHandler13_closeBridge();
+		break;
+
+	case MSG_SC13_CLOSEFAST:
+		sceneHandler13_closeFast();
+		break;
+
+	case MSG_SC13_STOPWHIRLGIG:
+		sceneHandler13_stopWhirlgig();
+		break;
+
+	case MSG_SC13_STARTWHIRLGIG:
+		sceneHandler13_startWhirlgig();
+		break;
+
+	case MSG_SC13_OPENFAST:
+		sceneHandler13_openFast();
+		break;
+
+	case MSG_SC13_UNEATGUM:
+		sceneHandler13_uneatGum();
+		break;
+
+	case MSG_SC13_EATGUM:
+		sceneHandler13_eatGum();
+		break;
+
+	case MSG_SC13_CHEW:
+		g_vars->scene13_guard->_flags &= 0xFF7Fu;
+		break;
+
+	case MSG_SC13_UPDATEBRIDGE:
+		sceneHandler13_updateBridge();
+		break;
+
+	case MSG_SC13_SHOWGUM:
+		sceneHandler13_showGum();
+		break;
+
+	case 29:
+		{
+			StaticANIObject *ani = g_fp->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
+
+			if (!ani || !canInteractAny(g_fp->_aniMan, ani, cmd->_keyCode)) {
+				int picId = g_fp->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
+				PictureObject *pic = g_fp->_currentScene->getPictureObjectById(picId, 0);
+
+				if (!pic || !canInteractAny(g_fp->_aniMan, pic, cmd->_keyCode)) {
+					if ((g_fp->_sceneRect.right - cmd->_sceneClickX < 47
+						 && g_fp->_sceneRect.right < g_fp->_sceneWidth - 1)
+						|| (cmd->_sceneClickX - g_fp->_sceneRect.left < 47 && g_fp->_sceneRect.left > 0)) {
+						g_fp->processArcade(cmd);
+					}
+				}
+			}
+			break;
+		}
+
+	case 33:
+		{
+			int res = 0;
+			int x;
+
+			if (g_fp->_aniMan2) {
+				x = g_fp->_aniMan2->_ox;
+				g_vars->scene13_var03 = x;
+
+				if (x < g_fp->_sceneRect.left + 200)
+					g_fp->_currentScene->_x = x - g_fp->_sceneRect.left - 300;
+
+				if (x > g_fp->_sceneRect.right - 200)
+					g_fp->_currentScene->_x = x - g_fp->_sceneRect.right + 300;
+
+				res = 1;
+			} else {
+				x = g_vars->scene13_var03;
+			}
+
+			if (g_vars->scene13_var02) {
+				if (x < 1022) {
+					sceneHandler13_sub01(1);
+					sceneHandler13_sub02(0);
+
+					g_vars->scene13_var02 = 0;
+
+					g_fp->_behaviorManager->updateBehaviors();
+					g_fp->startSceneTrack();
+
+					return res;
+				}
+			} else if (x > 1022) {
+				sceneHandler13_sub01(0);
+				sceneHandler13_sub02(1);
+
+				g_vars->scene13_var02 = 1;
+			}
+
+			g_fp->_behaviorManager->updateBehaviors();
+			g_fp->startSceneTrack();
+
+			return res;
+		}
+	}
+
+	return 0;
+}
+
 } // End of namespace Fullpipe
