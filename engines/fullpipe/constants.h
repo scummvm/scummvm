@@ -549,6 +549,8 @@ namespace Fullpipe {
 #define MSG_SC13_TESTOPEN 3048
 #define MSG_SC13_UNEATGUM 1218
 #define MSG_SC13_UPDATEBRIDGE 1217
+#define MV_BDG_CLOSE 1382
+#define MV_BDG_OPEN 1379
 #define MV_WHR13_SPIN 1384
 #define SND_13_018 3763
 #define SND_13_037 5335

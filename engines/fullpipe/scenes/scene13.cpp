@@ -93,7 +93,23 @@ void sceneHandler13_testOpen() {
 }
 
 void sceneHandler13_closeBridge() {
-	warning("STUB: sceneHandler13_closeBridge()");
+	if (g_vars->scene13_bridge->_movement && g_vars->scene13_bridge->_movement->_id == MV_BDG_OPEN) {
+		int sz;
+
+		if (g_vars->scene13_bridge->_movement->_currMovement)
+			sz = g_vars->scene13_bridge->_movement->_currMovement->_dynamicPhases.size();
+		else
+			sz = g_vars->scene13_bridge->_movement->_dynamicPhases.size();
+
+		int curIdx = g_vars->scene13_bridge->_movement->_currDynamicPhaseIndex;
+
+		g_vars->scene13_bridge->changeStatics2(ST_BDG_OPEN2);
+		g_vars->scene13_bridge->startAnim(MV_BDG_CLOSE, 0, -1);
+		g_vars->scene13_bridge->_movement->setDynamicPhaseIndex(sz - curIdx);
+	} else {
+		g_vars->scene13_bridge->changeStatics2(ST_BDG_OPEN2);
+		g_vars->scene13_bridge->startAnim(MV_BDG_CLOSE, 0, -1);
+	}
 }
 
 void sceneHandler13_closeFast() {
