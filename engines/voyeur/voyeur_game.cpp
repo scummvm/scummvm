@@ -65,19 +65,19 @@ void VoyeurEngine::playStamp() {
 					_voy._field472 = 140;
 					break;
 				case 1:
-					_voy._field478 = -2;
+					_voy._field478 &= ~1;
 					_voy._field46E = 1;
 					threadP->chooseSTAMPButton(22);
 					_voy._field472 = 143;
 					break;
 				case 2:
-					_voy._field478 = -2;
+					_voy._field478 &= ~1;
 					reviewTape();
 					_voy._field46E = 1;
 					_voy._field472 = 142;
 					break;
 				case 3:
-					_voy._field478 = -2;
+					_voy._field478 &= ~1;
 					threadP->chooseSTAMPButton(21);
 					break;
 				case 4:

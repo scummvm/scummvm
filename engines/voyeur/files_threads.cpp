@@ -489,7 +489,7 @@ void ThreadResource::parsePlayCommands() {
 			_vm->playAVideo(_vm->_eventsManager._videoComputerBut4);
 			_vm->_voy._field478 |= 1;
 
-			if (id != 2) {
+			if (id != 22) {
 				_vm->_eventsManager._videoComputerBut4 = -1;
 				parseIndex = 999;
 			} else {
