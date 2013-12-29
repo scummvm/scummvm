@@ -80,6 +80,9 @@ int scene11_updateCursor();
 void scene12_initScene(Scene *sc);
 int sceneHandler12(ExCommand *ex);
 
+void scene13_initScene(Scene *sc);
+int sceneHandler13(ExCommand *ex);
+
 int scene15_updateCursor();
 void scene15_initScene(Scene *sc);
 int sceneHandler15(ExCommand *cmd);
