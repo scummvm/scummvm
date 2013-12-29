@@ -552,10 +552,15 @@ namespace Fullpipe {
 #define MV_BDG_CLOSE 1382
 #define MV_BDG_OPEN 1379
 #define MV_WHR13_SPIN 1384
+#define QU_SC13_SHOWGUM 1216
+#define QU_STR_CHEW 1190
 #define SND_13_018 3763
+#define SND_13_033 4685
+#define SND_13_034 4686
 #define SND_13_037 5335
 #define ST_BDG_CLOSED 1380
 #define ST_BDG_OPEN2 1381
+#define ST_STR_RIGHT 1174
 
 // Scene 15
 #define ANI_BOOT_15 4779

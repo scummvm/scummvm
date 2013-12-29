@@ -113,19 +113,32 @@ void sceneHandler13_closeBridge() {
 }
 
 void sceneHandler13_closeFast() {
-	warning("STUB: sceneHandler13_closeFast()");
+	g_vars->scene13_bridge->changeStatics2(ST_BDG_OPEN2);
+	g_vars->scene13_bridge->startAnim(MV_BDG_CLOSE, 0, -1);
+	g_vars->scene13_bridge->_movement->setDynamicPhaseIndex(21);
 }
 
 void sceneHandler13_stopWhirlgig() {
-	warning("STUB: sceneHandler13_stopWhirlgig()");
+	g_vars->scene13_whirlgig->_callback2 = 0;
+
+	g_fp->stopAllSoundInstances(SND_13_018);
+	g_fp->playSound(SND_13_033, 0);
+	g_fp->playSound(SND_13_037, 1);
 }
 
 void sceneHandler13_startWhirlgig() {
-	warning("STUB: sceneHandler13_startWhirlgig()");
+	g_vars->scene13_whirlgig->_callback2 = 0;
+
+	g_fp->playSound(SND_13_018, 1);
+	g_fp->playSound(SND_13_034, 0);
+
+	g_fp->stopAllSoundInstances(SND_13_037);
 }
 
 void sceneHandler13_openFast() {
-	warning("STUB: sceneHandler13_openFast()");
+	g_vars->scene13_bridge->changeStatics2(ST_BDG_CLOSED);
+	g_vars->scene13_bridge->startAnim(MV_BDG_OPEN, 0, -1);
+	g_vars->scene13_bridge->_movement->setDynamicPhaseIndex(15);
 }
 
 void sceneHandler13_uneatGum() {
@@ -133,7 +146,12 @@ void sceneHandler13_uneatGum() {
 }
 
 void sceneHandler13_eatGum() {
-	warning("STUB: sceneHandler13_eatGum()");
+	BehaviorEntryInfo *beh = g_fp->_behaviorManager->getBehaviorEntryInfoByMessageQueueDataId(g_vars->scene13_guard, ST_STR_RIGHT, QU_STR_CHEW);
+
+	if (beh) {
+		beh->_percent = 10922;
+		beh->_delay = 0;
+	}
 }
 
 void sceneHandler13_updateBridge() {
@@ -141,7 +159,7 @@ void sceneHandler13_updateBridge() {
 }
 
 void sceneHandler13_showGum() {
-	warning("STUB: sceneHandler13_showGum()");
+	chainQueue(QU_SC13_SHOWGUM, 0);
 }
 
 void sceneHandler13_sub01(bool flag) {
