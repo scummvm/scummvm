@@ -546,6 +546,8 @@ void Actor::walkTo(const Math::Vector3d &p) {
 		_path.clear();
 
 		if (_followBoxes) {
+			bool pathFound = false;
+
 			Set *currSet = g_grim->getCurrSet();
 			currSet->findClosestSector(p, NULL, &_destPos);
 
@@ -598,6 +600,7 @@ void Actor::walkTo(const Math::Vector3d &p) {
 						n = n->parent;
 					}
 
+					pathFound = true;
 					break;
 				}
 
@@ -669,6 +672,14 @@ void Actor::walkTo(const Math::Vector3d &p) {
 			}
 			for (Common::List<PathNode *>::iterator j = openList.begin(); j != openList.end(); ++j) {
 				delete *j;
+			}
+
+			if (!pathFound) {
+				warning("Actor::walkTo(): No path found for %s", _name.c_str());
+				if (g_grim->getGameType() == GType_MONKEY4) {
+					_walking = false;
+					return;
+				}
 			}
 		}
 
