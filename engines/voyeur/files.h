@@ -404,13 +404,16 @@ public:
 };
 
 class VInitCycleResource {
+private:
+	BoltFilesState &_state;
 public:
+	int _v[4];
 	byte *_ptr[4];
 public:
 	VInitCycleResource(BoltFilesState &state, const byte *src);
 	virtual ~VInitCycleResource() {}
 
-	void vStartCycle();
+	void vStartCycle(int flags = 0);
 	void vStopCycle();
 };
 

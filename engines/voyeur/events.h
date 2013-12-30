@@ -162,9 +162,6 @@ private:
 	int _mouseButton;
 	Common::List<IntNode *> _intNodes;
 	Common::Point _mousePos;
-	int _cycleTime[4];
-	int _cycleNext[4];
-	VInitCycleResource *_cyclePtr;
 
 	void mainVoyeurIntFunc();
 private:
@@ -198,6 +195,9 @@ public:
 	int _v2A0A2;
 	int _videoComputerBut4;
 	int _videoDead;
+	int _cycleTime[4];
+	byte *_cycleNext[4];
+	VInitCycleResource *_cyclePtr;
 public:
 	EventsManager();
 	void setVm(VoyeurEngine *vm) { _vm = vm; }

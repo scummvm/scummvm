@@ -75,7 +75,7 @@ EventsManager::EventsManager(): _intPtr(_gameData),
 	_joe = 0;
 	Common::fill(&_keyState[0], &_keyState[256], false);
 	Common::fill(&_cycleTime[0], &_cycleTime[4], 0);
-	Common::fill(&_cycleNext[0], &_cycleNext[4], 0);
+	Common::fill(&_cycleNext[0], &_cycleNext[4], (byte *)nullptr);
 	_cyclePtr = NULL;
 	
 	_leftClick = _rightClick = false;
@@ -383,7 +383,83 @@ void EventsManager::vDoFadeInt() {
 }
 
 void EventsManager::vDoCycleInt() {
-	warning("TODO");
+	for (int idx = 3; idx >= 0; --idx) {
+		if (_cyclePtr->_v[idx] && --_cycleTime[idx] <= 0) {
+			byte *pSrc = _cycleNext[idx];
+			byte *pPal = _vm->_graphicsManager._VGAColors;
+
+			if (_cyclePtr->_v[idx] == 1) {
+				do {
+					int palIndex = READ_LE_UINT16(pSrc);
+					pPal[palIndex * 3] = pSrc[3];
+					pPal[palIndex * 3 + 1] = pSrc[4];
+					pPal[palIndex * 3 + 1] = pSrc[5];
+					pSrc += 6;
+
+					if ((int16)READ_LE_UINT16(pSrc) >= 0) {
+						// Resetting back to start of cycle data
+						pSrc = _cycleNext[idx];
+						break;
+					}
+				} while (*(pSrc + 2) == 0);
+
+				_cycleNext[idx] = pSrc;
+				_cycleTime[idx] = pSrc[2];
+			} else {
+				_cycleTime[idx] = pSrc[4];
+
+				if (pSrc[5] == 1) {
+					// Move palette entry to end of range
+					int start = READ_LE_UINT16(pSrc);
+					int end = READ_LE_UINT16(&pSrc[2]);
+					int len = end - start;
+
+					// Store the RGB of the first entry to be moved
+					byte r = pSrc[start * 3];
+					byte g = pSrc[start * 3 + 1];
+					byte b = pSrc[start * 3 + 2];
+
+					// Move the remainder of the range backwards one entry
+					// TODO: Is this allowing for overlap properly?
+					Common::copy(&pSrc[start * 3 + 3], &pSrc[end * 3], &pSrc[start * 3]);
+					
+					// Place the original saved entry at the end of the range
+					pSrc[end * 3 - 3] = r;
+					pSrc[end * 3 - 2] = g;
+					pSrc[end * 3 - 1] = b;
+					
+					if (_fadeStatus & 1) {
+						//dx = start, di = end
+						warning("TODO: Adjustment of ViewPortListResource");
+					}
+				} else {
+					// Move palette entry to end of range
+					int start = READ_LE_UINT16(pSrc);
+					int end = READ_LE_UINT16(&pSrc[2]);
+					int len = end - start;
+
+					// Store the RGB of the entry to be moved
+					byte r = pSrc[end * 3 - 3];
+					byte g = pSrc[end * 3 - 2];
+					byte b = pSrc[end * 3 - 1];
+
+					// Move the remainder of the range forwards one entry
+					// TODO: Does this allow for overlap range correctly?
+					Common::copy_backward(&pSrc[start * 3 + 3], &pSrc[end * 3], &pSrc[start * 3]);
+					
+					// Place the original saved entry at the end of the range
+					pSrc[start * 3] = r;
+					pSrc[start * 3] = g;
+					pSrc[start * 3] = b;
+					
+					if (_fadeStatus & 1) {
+						//dx = start, di = end
+						warning("TODO: Adjustment of ViewPortListResource");
+					}
+				}
+			}
+		}
+	}
 }
 
 

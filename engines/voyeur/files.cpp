@@ -1408,18 +1408,33 @@ void CMapResource::startFade() {
 
 /*------------------------------------------------------------------------*/
 
-VInitCycleResource::VInitCycleResource(BoltFilesState &state, const byte *src) {
+VInitCycleResource::VInitCycleResource(BoltFilesState &state, const byte *src):
+		_state(state) {
+	// Set up arrays
 	for (int i = 0; i < 4; ++i) {
+		_v[i] = READ_LE_UINT16(src + i * 2);
 		state._curLibPtr->resolveIt(READ_LE_UINT32(src + 8 + i * 4), &_ptr[i]);
 	}
 }
 
-void VInitCycleResource::vStartCycle() {
-	error("TODO");
+void VInitCycleResource::vStartCycle(int flags) {
+	EventsManager &evt = _state._vm->_eventsManager;
+	evt._cycleIntNode._flags |= 1;
+	evt._cyclePtr = this;
+
+	for (int i = 0; i < 4; ++i) {
+		evt._cycleNext[i] = _ptr[i];
+		evt._cycleTime[i] = 0;
+	}
+
+	evt._cycleStatus = flags | 1;
+	evt._cycleIntNode._flags &= ~1;
 }
 
 void VInitCycleResource::vStopCycle() {
-	error("TODO: vStopCycle");
+	EventsManager &evt = _state._vm->_eventsManager;
+	evt._cycleIntNode._flags |= 1;
+	evt._cycleStatus &= ~1;
 }
 
 /*------------------------------------------------------------------------*/
