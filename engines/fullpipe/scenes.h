@@ -83,6 +83,11 @@ int sceneHandler12(ExCommand *ex);
 void scene13_initScene(Scene *sc);
 int sceneHandler13(ExCommand *ex);
 
+void scene14_initScene(Scene *sc);
+void scene14_setupMusic();
+int sceneHandler14(ExCommand *cmd);
+int scene14_updateCursor();
+
 int scene15_updateCursor();
 void scene15_initScene(Scene *sc);
 int sceneHandler15(ExCommand *cmd);

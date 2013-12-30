@@ -521,7 +521,6 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 		_updateCursorCallback = defaultUpdateCursor;
 		break;
 
-#if 0
 	case SC_14:
 		sceneVar = _gameLoader->_gameVar->getSubVarByName("SC_14");
 		scene->preloadMovements(sceneVar);
@@ -530,10 +529,9 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 		scene->initObjectCursors("SC_14");
 		setSceneMusicParameters(sceneVar);
 		insertMessageHandler(sceneHandler14, 2, 2);
-		scene14_sub_41D2B0();
+		scene14_setupMusic();
 		_updateCursorCallback = scene14_updateCursor;
 		break;
-#endif
 
 	case SC_15:
 		sceneVar = _gameLoader->_gameVar->getSubVarByName("SC_15");
