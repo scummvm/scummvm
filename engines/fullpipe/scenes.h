@@ -283,6 +283,12 @@ public:
 	Common::List<StaticANIObject *> scene14_var11;
 	Common::List<StaticANIObject *> scene14_var12;
 	int scene14_var13;
+	int scene14_var14;
+	int scene14_var15;
+	int scene14_var16;
+	int scene14_var17;
+	int scene14_var18;
+	int scene14_var19;
 
 	int scene15_chantingCountdown;
 	StaticANIObject *scene15_plusminus;
