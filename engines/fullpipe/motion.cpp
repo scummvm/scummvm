@@ -2018,7 +2018,7 @@ void ReactParallel::createRegion() {
 	for (int i = 0; i < 4; i++)
 		_points[i] = new Common::Point;
 
-	double at = atan2((double)(_x1 - _x2), (double)(_y1 - _y2)) + 1.570796;
+	double at = atan2((double)(_x1 - _x2), (double)(_y1 - _y2)) + 1.570796; // pi/2
 	double sn = sin(at);
 	double cs = cos(at);
 

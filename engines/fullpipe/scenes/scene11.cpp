@@ -52,20 +52,20 @@ void scene11_dudeSwingCallback(int *arg) {
 	g_vars->scene11_swingAngle = g_vars->scene11_swingSpeed * 0.0042 + g_vars->scene11_swingAngle;
 
 	if (g_vars->scene11_swingAngle < -1.5) {
-		g_vars->scene11_swingAngle = 1.0004882812500000;
-		g_vars->scene11_swingSpeed = 1.0;
-		g_vars->scene11_swingAngleDiff = 1.0;
+		g_vars->scene11_swingAngle = -1.5; //1.0004882812500000;
+		g_vars->scene11_swingSpeed = 0.0;
+		g_vars->scene11_swingAngleDiff = 0.0;
 	}
 
 	if (g_vars->scene11_swingAngle > 1.5) {
-		g_vars->scene11_swingAngle = 1.9990234375;
-		g_vars->scene11_swingSpeed = 1.0;
-		g_vars->scene11_swingAngleDiff = 1.0;
+		g_vars->scene11_swingAngle = 1.5; //1.9990234375;
+		g_vars->scene11_swingSpeed = 0.0;
+		g_vars->scene11_swingAngleDiff = 0.0;
 	}
 
 	if (g_vars->scene11_swingMaxAngle == *arg && 0.0 != g_vars->scene11_swingSpeed && fabs(g_vars->scene11_swingSpeed) < 2.5) {
-		g_vars->scene11_swingSpeed = 1.0;
-		g_vars->scene11_swingAngleDiff = 1.0;
+		g_vars->scene11_swingSpeed = 0.0;
+		g_vars->scene11_swingAngleDiff = 0.0;
 		g_vars->scene11_swingAngle = g_vars->scene11_swingOldAngle;
 	}
 
@@ -110,11 +110,11 @@ void scene11_initScene(Scene *sc) {
 	g_vars->scene11_hintCounter = 0;
 	g_vars->scene11_swingieScreenEdge = 0;
 	g_vars->scene11_crySound = 0;
-	g_vars->scene11_swingAngle = 1.0;
-	g_vars->scene11_swingOldAngle = 1.0;
-	g_vars->scene11_swingSpeed = 1.0;
-	g_vars->scene11_swingAngleDiff = 1.0;
-	g_vars->scene11_swingInertia = 1.9849218750000000;
+	g_vars->scene11_swingAngle = 0.0;
+	g_vars->scene11_swingOldAngle = 0.0;
+	g_vars->scene11_swingSpeed = 0.0;
+	g_vars->scene11_swingAngleDiff = 0.0;
+	g_vars->scene11_swingInertia = 1.28; //1.9849218750000000;
 	g_vars->scene11_swingCounter = 0;
 	g_vars->scene11_swingCounterPrevTurn = 0;
 	g_vars->scene11_swingDirection = 0;
@@ -240,7 +240,7 @@ void sceneHandler11_manToSwing() {
 	g_fp->_aniMan2->hide();
 
 	g_vars->scene11_swingCounter = 0;
-	g_vars->scene11_swingInertia = 1.9849218;
+	g_vars->scene11_swingInertia = 1.28; //1.9849218;
 
 	g_vars->scene11_dudeOnSwing->_flags &= 0xFFFB;
 	g_vars->scene11_dudeOnSwing = g_fp->_currentScene->getStaticANIObject1ById(ANI_MAN11, -1);
@@ -302,10 +302,10 @@ void sceneHandler11_jumpFromSwing() {
 	getCurrSceneSc2MotionController()->setEnabled();
 	getGameLoaderInteractionController()->enableFlag24();
 
-	g_vars->scene11_swingOldAngle = 1.0;
-	g_vars->scene11_swingAngleDiff = 1.0;
-	g_vars->scene11_swingSpeed = 1.0;
-	g_vars->scene11_swingAngle = 1.0;
+	g_vars->scene11_swingOldAngle = 0.0;
+	g_vars->scene11_swingAngleDiff = 0.0;
+	g_vars->scene11_swingSpeed = 0.0;
+	g_vars->scene11_swingAngle = 0.0;
 
 	g_vars->scene11_dudeOnSwing = g_fp->_currentScene->getStaticANIObject1ById(ANI_MAN11, -1);
 	g_vars->scene11_dudeOnSwing->_flags &= 0xFFFB;
@@ -342,7 +342,7 @@ void sceneHandler11_swing0() {
 
 	g_vars->scene11_swingDirection = 0;
 	g_vars->scene11_swingMaxAngle = 45;
-	g_vars->scene11_swingOldAngle = 1.0;
+	g_vars->scene11_swingOldAngle = 0.0;
 }
 
 void sceneHandler11_swing1() {
@@ -381,7 +381,7 @@ void sceneHandler11_emptySwing() {
 	g_vars->scene11_dudeOnSwing->startAnim(MV_KCH_MOVE2, 0, -1);
 	g_vars->scene11_dudeOnSwing->_movement->setDynamicPhaseIndex(g_vars->scene11_dudeOnSwing->_movement->_currDynamicPhaseIndex);
 
-	g_vars->scene11_swingInertia = 1.9881250;
+	g_vars->scene11_swingInertia = 0.03; //1.9881250;
 }
 
 void sceneHandler11_jumpHitAndWin() {
