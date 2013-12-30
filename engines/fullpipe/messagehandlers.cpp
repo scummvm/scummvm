@@ -648,7 +648,7 @@ int global_messageHandler4(ExCommand *cmd) {
 				g_fp->_currentScene->_messageQueueId = cmd->_parId;
 			}
 		} else {
-			g_fp->_sceneRect.moveTo(offX, offY);
+			g_fp->_sceneRect.translate(offX - g_fp->_sceneRect.left, offY - g_fp->_sceneRect.top);
 
 			g_fp->_currentScene->_x = 0;
 			g_fp->_currentScene->_y = 0;
