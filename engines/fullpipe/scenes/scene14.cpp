@@ -81,4 +81,29 @@ void scene14_initScene(Scene *sc) {
 	g_fp->setArcadeOverlay(PIC_CSR_ARCADE6);
 }
 
+void scene14_setupMusic() {
+	if (!g_vars->scene14_var13)
+		g_fp->playTrack(g_fp->getGameLoaderGameVar()->getSubVarByName("SC_14"), "MUSIC2", 0);
+}
+
+int scene14_updateCursor() {
+	g_fp->updateCursorCommon();
+
+	if (g_vars->scene14_var03) {
+		if (g_vars->scene14_var04) {
+			g_fp->_cursorId = PIC_CSR_ARCADE2_D;
+		} else {
+			if (g_fp->_aniMan != g_fp->_objectAtCursor || g_fp->_aniMan->_movement || g_fp->_cursorId != PIC_CSR_DEFAULT) {
+				if (g_fp->_cursorId != PIC_CSR_DEFAULT_INV && g_fp->_cursorId != PIC_CSR_ITN_INV) {
+					g_fp->_cursorId = PIC_CSR_DEFAULT;
+				}
+			} else {
+				g_fp->_cursorId = PIC_CSR_ITN;
+			}
+		}
+	}
+
+	return g_fp->_cursorId;
+}
+
 } // End of namespace Fullpipe
