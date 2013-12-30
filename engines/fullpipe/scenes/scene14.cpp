@@ -106,6 +106,16 @@ int scene14_updateCursor() {
 	return g_fp->_cursorId;
 }
 
+int sceneHandler14_updateScreenCallback() {
+	int res;
+
+	res = g_fp->drawArcadeOverlay(g_vars->scene14_var03);
+	if (!res)
+		g_fp->_updateScreenCallback = 0;
+
+	return res;
+}
+
 void sceneHandler14_showBallGrandmaHit2() {
 	warning("STUB: sceneHandler14_showBallGrandmaHit2()");
 }
@@ -139,11 +149,18 @@ void sceneHandler14_winArcade() {
 }
 
 void sceneHandler14_showBallLast() {
-	warning("STUB: sceneHandler14_showBallLast()");
+	if (g_vars->scene14_pink) {
+		g_vars->scene14_pink->show1(693, 491, MV_BAL14_SPIN, 0);
+		g_vars->scene14_pink->_priority = 27;
+	}
 }
 
 void sceneHandler14_hideBallLast() {
-	warning("STUB: sceneHandler14_hideBallLast()");
+	if (g_vars->scene14_pink) {
+		g_vars->scene14_pink->hide();
+		g_vars->scene14_var11.push_back(g_vars->scene14_pink);
+		g_vars->scene14_pink = 0;
+	}
 }
 
 void sceneHandler14_startArcade() {
@@ -177,7 +194,8 @@ void sceneHandler14_sub05() {
 }
 
 void sceneHandler14_sub06() {
-	warning("STUB: sceneHandler14_sub06()");
+	g_fp->_aniMan->_callback2 = 0;
+	g_vars->scene14_var04 = 0;
 }
 
 void sceneHandler14_sub07() {
@@ -201,7 +219,13 @@ void sceneHandler14_sub11() {
 }
 
 void sceneHandler14_sub12() {
-	warning("STUB: sceneHandler14_sub12()");
+	g_fp->_aniMan->changeStatics2(ST_MAN_RIGHT|0x4000);
+	g_fp->_aniMan->startAnim(MV_MAN14_STEPFW, 0, -1);
+
+	g_vars->scene14_var18 -= 71;
+
+	g_fp->_currentScene->_x = -71;
+	g_fp->_aniMan2 = g_vars->scene14_grandma;
 }
 
 void sceneHandler14_sub13() {
