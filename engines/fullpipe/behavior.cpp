@@ -180,7 +180,15 @@ void BehaviorManager::updateStaticAniBehavior(StaticANIObject *ani, int delay, B
 }
 
 bool BehaviorManager::setBehaviorEnabled(StaticANIObject *obj, int aniId, int quId, int flag) {
-	warning("STUB: BehaviorManager::setBehaviorEnabled()");
+	BehaviorEntryInfo *entry = getBehaviorEntryInfoByMessageQueueDataId(obj, aniId, quId);
+
+	if (entry) {
+		if (flag)
+			entry->_flags &= 0xFFFFFFFE;
+		else
+			entry->_flags |= 1;
+	} else
+		return false;
 
 	return true;
 }
