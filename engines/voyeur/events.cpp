@@ -108,11 +108,6 @@ void EventsManager::mainVoyeurIntFunc() {
 	}
 }
 
-void EventsManager::vStopCycle() {
-	_cycleIntNode._flags = 1;
-	_cycleStatus &= 2;
-}
-
 void EventsManager::sWaitFlip() {
 	Common::Array<ViewPortResource *> &viewPorts = _vm->_graphicsManager._viewPortListPtr->_entries;
 	for (uint idx = 0; idx < viewPorts.size(); ++idx) {

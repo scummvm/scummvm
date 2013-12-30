@@ -548,9 +548,9 @@ void BVoyBoltFile::vInitCMap() {
 
 void BVoyBoltFile::vInitCycl() {
 	initDefault();
-	_state._vm->_eventsManager.vStopCycle();
 	_state._curMemberPtr->_vInitCycleResource = new VInitCycleResource(
 		_state, _state._curMemberPtr->_data);
+	_state._curMemberPtr->_vInitCycleResource->vStopCycle();
 }
 
 /*------------------------------------------------------------------------*/

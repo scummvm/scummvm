@@ -205,7 +205,6 @@ public:
 	void resetMouse();
 	void setMousePos(const Common::Point &p) { _mousePos = p; }
 	void startMainClockInt();
-	void vStopCycle();
 	void sWaitFlip();
 	void vInitColor();
 
