@@ -379,11 +379,12 @@ void EventsManager::vDoFadeInt() {
 
 void EventsManager::vDoCycleInt() {
 	for (int idx = 3; idx >= 0; --idx) {
-		if (_cyclePtr->_v[idx] && --_cycleTime[idx] <= 0) {
+		if (_cyclePtr->_type[idx] && --_cycleTime[idx] <= 0) {
 			byte *pSrc = _cycleNext[idx];
 			byte *pPal = _vm->_graphicsManager._VGAColors;
 
-			if (_cyclePtr->_v[idx] == 1) {
+			if (_cyclePtr->_type[idx] != 1) {
+				// New palette data being specified - loop to set entries
 				do {
 					int palIndex = READ_LE_UINT16(pSrc);
 					pPal[palIndex * 3] = pSrc[3];
@@ -401,51 +402,52 @@ void EventsManager::vDoCycleInt() {
 				_cycleNext[idx] = pSrc;
 				_cycleTime[idx] = pSrc[2];
 			} else {
+				// Palette rotation to be done
 				_cycleTime[idx] = pSrc[4];
 
 				if (pSrc[5] == 1) {
 					// Move palette entry to end of range
 					int start = READ_LE_UINT16(pSrc);
 					int end = READ_LE_UINT16(&pSrc[2]);
-					int len = end - start;
+					assert(start < 0x100 && end <= 0x100);
 
 					// Store the RGB of the first entry to be moved
-					byte r = pSrc[start * 3];
-					byte g = pSrc[start * 3 + 1];
-					byte b = pSrc[start * 3 + 2];
+					byte r = pPal[start * 3];
+					byte g = pPal[start * 3 + 1];
+					byte b = pPal[start * 3 + 2];
 
 					// Move the remainder of the range backwards one entry
 					// TODO: Is this allowing for overlap properly?
-					Common::copy(&pSrc[start * 3 + 3], &pSrc[end * 3], &pSrc[start * 3]);
+					Common::copy(&pPal[start * 3 + 3], &pPal[end * 3 + 3], &pPal[start * 3]);
 					
 					// Place the original saved entry at the end of the range
-					pSrc[end * 3 - 3] = r;
-					pSrc[end * 3 - 2] = g;
-					pSrc[end * 3 - 1] = b;
+					pPal[end * 3] = r;
+					pPal[end * 3 + 1] = g;
+					pPal[end * 3 + 2] = b;
 					
 					if (_fadeStatus & 1) {
 						//dx = start, di = end
 						warning("TODO: Adjustment of ViewPortListResource");
 					}
 				} else {
-					// Move palette entry to end of range
+					// Move palette entry to start of range
 					int start = READ_LE_UINT16(pSrc);
 					int end = READ_LE_UINT16(&pSrc[2]);
-					int len = end - start;
+					assert(start < 0x100 && end <= 0x100);
 
 					// Store the RGB of the entry to be moved
-					byte r = pSrc[end * 3 - 3];
-					byte g = pSrc[end * 3 - 2];
-					byte b = pSrc[end * 3 - 1];
+					byte r = pPal[end * 3];
+					byte g = pPal[end * 3 + 1];
+					byte b = pPal[end * 3 + 2];
 
 					// Move the remainder of the range forwards one entry
 					// TODO: Does this allow for overlap range correctly?
-					Common::copy_backward(&pSrc[start * 3 + 3], &pSrc[end * 3], &pSrc[start * 3]);
+					Common::copy_backward(&pPal[start * 3], &pPal[end * 3], &pPal[end * 3 + 3]);
 					
 					// Place the original saved entry at the end of the range
-					pSrc[start * 3] = r;
-					pSrc[start * 3] = g;
-					pSrc[start * 3] = b;
+					pPal[start * 3] = r;
+					pPal[start * 3 + 1] = g;
+					pPal[start * 3 + 2] = b;
 					
 					if (_fadeStatus & 1) {
 						//dx = start, di = end
@@ -453,6 +455,9 @@ void EventsManager::vDoCycleInt() {
 					}
 				}
 			}
+
+			_intPtr._hasPalette = true;
+			_intPtr.field38 = true;
 		}
 	}
 }

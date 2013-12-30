@@ -1412,7 +1412,7 @@ VInitCycleResource::VInitCycleResource(BoltFilesState &state, const byte *src):
 		_state(state) {
 	// Set up arrays
 	for (int i = 0; i < 4; ++i) {
-		_v[i] = READ_LE_UINT16(src + i * 2);
+		_type[i] = READ_LE_UINT16(src + i * 2);
 		state._curLibPtr->resolveIt(READ_LE_UINT32(src + 8 + i * 4), &_ptr[i]);
 	}
 }

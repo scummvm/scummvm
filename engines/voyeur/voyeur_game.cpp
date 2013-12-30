@@ -588,6 +588,7 @@ void VoyeurEngine::doTapePlaying() {
 	}
 
 	_soundManager.stopVOCPlay();
+	cycle->vStopCycle();
 	_bVoy->freeBoltGroup(0xA00);
 }
 

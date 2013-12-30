@@ -407,7 +407,7 @@ class VInitCycleResource {
 private:
 	BoltFilesState &_state;
 public:
-	int _v[4];
+	int _type[4];
 	byte *_ptr[4];
 public:
 	VInitCycleResource(BoltFilesState &state, const byte *src);
