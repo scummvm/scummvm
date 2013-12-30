@@ -578,6 +578,12 @@ namespace Fullpipe {
 #define ST_STR_LEFT 1175
 #define ST_STR_RIGHT 1174
 
+// Scene 14
+#define ANI_BALL14 1246
+#define ANI_GRANDMA 1227
+#define QU_SC14_ENTERLIFT 1225
+#define QU_SC14_EXITLIFT 1226
+
 // Scene 15
 #define ANI_BOOT_15 4779
 #define ANI_INV_BOOT 881

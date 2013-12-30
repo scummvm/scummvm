@@ -269,6 +269,21 @@ public:
 	bool scene13_guardDirection;
 	int scene13_dudeX;
 
+	StaticANIObject *scene14_grandma;
+	int scene14_var01;
+	int scene14_var02;
+	int scene14_var03;
+	int scene14_var04;
+	int scene14_var05;
+	int scene14_var06;
+	int scene14_var07;
+	int scene14_var08;
+	StaticANIObject *scene14_pink;
+	int scene14_var10;
+	Common::List<StaticANIObject *> scene14_var11;
+	Common::List<StaticANIObject *> scene14_var12;
+	int scene14_var13;
+
 	int scene15_chantingCountdown;
 	StaticANIObject *scene15_plusminus;
 	PictureObject *scene15_ladder;

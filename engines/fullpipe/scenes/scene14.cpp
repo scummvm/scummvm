@@ -37,7 +37,7 @@
 namespace Fullpipe {
 
 void scene14_initScene(Scene *sc) {
-	g_vars->scene14_grandma = Scene_getStaticANIObject1ById(sc, ANI_GRANDMA, -1);
+	g_vars->scene14_grandma = sc->getStaticANIObject1ById(ANI_GRANDMA, -1);
 	g_vars->scene14_var01 = 200;
 	g_vars->scene14_var02 = 200;
 	g_vars->scene14_var03 = 0;
