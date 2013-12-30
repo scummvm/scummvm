@@ -199,7 +199,18 @@ void BehaviorManager::setFlagByStaticAniObject(StaticANIObject *ani, int flag) {
 }
 
 BehaviorEntryInfo *BehaviorManager::getBehaviorEntryInfoByMessageQueueDataId(StaticANIObject *ani, int id1, int id2) {
-	warning("STUB: getBehaviorEntryInfoByMessageQueueDataId()");
+	for (uint i = 0; i < _behaviors.size(); i++) {
+		if (_behaviors[i]->_ani == ani) {
+			for (uint j = 0; j < _behaviors[i]->_bheItems.size(); j++) {
+				if (_behaviors[i]->_bheItems[j]->_staticsId == id1) {
+					for (uint k = 0; k < _behaviors[i]->_bheItems[j]->_itemsCount; k++) {
+						if (_behaviors[i]->_bheItems[j]->_items[k]->_messageQueue->_dataId == id2)
+							return _behaviors[i]->_bheItems[j]->_items[k];
+					}
+				}
+			}
+		}
+	}
 
 	return 0;
 }
