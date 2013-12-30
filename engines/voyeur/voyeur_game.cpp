@@ -573,12 +573,13 @@ void VoyeurEngine::doTapePlaying() {
 	_graphicsManager._backColors = _bVoy->boltEntry(0xA01)._cMapResource;
 	_graphicsManager._backgroundPage = _bVoy->boltEntry(0xA00)._picResource;
 	PictureResource *pic = _bVoy->boltEntry(0xA02)._picResource;
+	VInitCycleResource *cycle = _bVoy->boltEntry(0xA05)._vInitCycleResource;
 
 	(*_graphicsManager._vPort)->setupViewPort(_graphicsManager._backgroundPage);
 	_graphicsManager.sDrawPic(pic, *_graphicsManager._vPort, Common::Point(57, 30));
+	_graphicsManager._backColors->startFade();
 	flipPageAndWaitForFade();
 
-	VInitCycleResource *cycle = _bVoy->boltEntry(0xA05)._vInitCycleResource;
 	cycle->vStartCycle();
 
 	_soundManager.startVOCPlay("vcr.voc");
