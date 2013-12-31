@@ -164,7 +164,7 @@ RL2Decoder::RL2VideoTrack::RL2VideoTrack(const RL2FileHeader &header, RL2AudioTr
 	_surface = new Graphics::Surface();
 	_surface->create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
 
-	_hasBackFrame = header._backSize != 0 && !header._isRLV3;
+	_hasBackFrame = header._backSize != 0;
 
 	_backSurface = NULL;
 	if (_hasBackFrame)
@@ -218,10 +218,11 @@ Graphics::PixelFormat RL2Decoder::RL2VideoTrack::getPixelFormat() const {
 
 const Graphics::Surface *RL2Decoder::RL2VideoTrack::decodeNextFrame() {
 	if (_curFrame == 0 && _hasBackFrame) {
-		// Read in the background frame
+		// Read in the initial background frame
 		_fileStream->seek(0x324);
-		rl2DecodeFrameWithoutBackground(0);
+		rl2DecodeFrameWithoutTransparency(0);
 
+		initBackSurface();
 		Common::copy((byte *)_surface->getPixels(), (byte *)_surface->getPixels() + (320 * 200), 
 			(byte *)_backSurface->getPixels());
 		_dirtyRects.push_back(Common::Rect(0, 0, _surface->w, _surface->h));
@@ -233,15 +234,12 @@ const Graphics::Surface *RL2Decoder::RL2VideoTrack::decodeNextFrame() {
 	// If there's any sound data, pass it to the audio track
 	_fileStream->seek(_header._frameSoundSizes[_curFrame], SEEK_CUR);
 
-	// Decode the graphic data
+	// Decode the graphic data using the appropriate method depending on whether the animation
+	// has a background or just raw frames without any background transparency
 	if (_hasBackFrame) {
-		if (_curFrame > 0)
-			Common::copy((byte *)_backSurface->getPixels(), (byte *)_backSurface->getPixels() + (320 * 200), 
-				(byte *)_surface->getPixels());
-
-		rl2DecodeFrameWithBackground();
+		rl2DecodeFrameWithTransparency(_videoBase);
 	} else {
-		rl2DecodeFrameWithoutBackground();
+		rl2DecodeFrameWithoutTransparency(_videoBase);
 	}
 
 	_curFrame++;
@@ -269,71 +267,71 @@ void RL2Decoder::RL2VideoTrack::copyFrame(uint8 *data) {
 	_dirtyRects.push_back(Common::Rect(0, 0, getWidth(), getHeight()));
 }
 
-void RL2Decoder::RL2VideoTrack::rl2DecodeFrameWithoutBackground(int screenOffset) {
+void RL2Decoder::RL2VideoTrack::rl2DecodeFrameWithoutTransparency(int screenOffset) {
 	if (screenOffset == -1)
 		screenOffset = _videoBase;
-	const byte *srcP = !_backSurface ? NULL : (const byte *)_backSurface->getPixels();
-	byte *destP = (byte *)_surface->getPixels();
 	int frameSize = _surface->w * _surface->h - screenOffset;
-
-	// If a background was manually set, copy over the initial part remaining unchanged
-	if (srcP && screenOffset > 0) {
-		Common::copy(srcP, srcP + screenOffset, destP);
-		srcP += screenOffset;
-	}
-	destP += screenOffset;
+	byte *destP = (byte *)_surface->getPixels();
 
 	// Main frame decode loop
-	while (frameSize > 0) {
-		byte nextByte = _fileStream->readByte();
+	byte nextByte;
+	for (;;) {
+		nextByte = _fileStream->readByte();
 
 		if (nextByte < 0x80) {
+			// Simple byte to copy to output
+			assert(frameSize > 0);
 			*destP++ = nextByte;
 			--frameSize;
-			if (srcP)
-				++srcP;
-		} else if (nextByte == 0x80) {
-			int runLength = _fileStream->readByte();
-			if (runLength == 0)
-				return;
-
-			runLength = MIN(runLength, frameSize);
-			if (srcP) {
-				Common::copy(srcP, srcP + runLength, destP);
-				srcP += runLength;
-			} else {
-				Common::fill(destP, destP + runLength, 0);
-			}
-			destP += runLength;
-			frameSize -= runLength;
-		} else {
-			int runLength = _fileStream->readByte();
-			
-			runLength = MIN(runLength, frameSize);
+		} else if (nextByte > 0x80) {
+			// Lower 7 bits a run length for the following byte
+			byte runLength = _fileStream->readByte();
+			assert(frameSize >= runLength);
 			Common::fill(destP, destP + runLength, nextByte & 0x7f);
 			destP += runLength;
 			frameSize -= runLength;
-			if (srcP)
-				srcP += runLength;
+		} else {
+			// Follow byte run length for zeroes. If zero, indicates end of image
+			byte runLength = _fileStream->readByte();
+			if (runLength == 0)
+				break;
+
+			assert(frameSize >= runLength);
+			Common::fill(destP, destP + runLength, 0);
+			destP += runLength;
+			frameSize -= runLength;
 		}
 	}
+
+	// If there's any remaining screen area, zero it out
+	byte *endP = (byte *)_surface->getPixels() + _surface->w * _surface->h;
+	if (destP != endP)
+		Common::fill(destP, endP, 0);
 }
 
-void RL2Decoder::RL2VideoTrack::rl2DecodeFrameWithBackground() {
-	int screenOffset = _videoBase;
-	int frameSize = _surface->w * _surface->h - _videoBase;
-	byte *src = (byte *)_backSurface->getPixels();
-	byte *dest = (byte *)_surface->getPixels();
+void RL2Decoder::RL2VideoTrack::rl2DecodeFrameWithTransparency(int screenOffset) {
+	int frameSize = _surface->w * _surface->h;
+	byte *refP = (byte *)_backSurface->getPixels();
+	byte *destP = (byte *)_surface->getPixels();
 
-	while (frameSize > 0) {
+	// If there's a screen offset, copy unchanged initial pixels from reference surface
+	if (screenOffset > 0)
+		Common::copy(refP, refP + screenOffset, destP);
+
+	// Main decode loop
+	for (;;) {
 		byte nextByte = _fileStream->readByte();
 
 		if (nextByte == 0) {
-			dest[screenOffset] = src[screenOffset];
+			// Move one single byte from reference surface
+			assert(frameSize > 0);
+			destP[screenOffset] = refP[screenOffset];
 			++screenOffset;
 			--frameSize;
 		} else if (nextByte < 0x80) {
-			dest[screenOffset] = nextByte | 0x80;
+			// Raw byte to copy to output
+			assert(frameSize > 0);
+			destP[screenOffset] = nextByte;
 			++screenOffset;
 			--frameSize;
 		} else if (nextByte == 0x80) {
@@ -341,19 +339,25 @@ void RL2Decoder::RL2VideoTrack::rl2DecodeFrameWithBackground() {
 			if (runLength == 0)
 				return;
 
-			assert(runLength <= frameSize);
-			Common::copy(src + screenOffset, src + screenOffset + runLength, dest);
+			assert(frameSize >= runLength);
+			Common::copy(refP + screenOffset, refP + screenOffset + runLength, destP + screenOffset);
 			screenOffset += runLength;
 			frameSize -= runLength;
 		} else {
+			// Run length of a single pixel value
 			byte runLength = _fileStream->readByte();
-			
-			assert(runLength <= frameSize);
-			Common::fill(dest + screenOffset, dest + screenOffset + runLength, nextByte & 0x7f);
+			nextByte &= 0x7f;
+
+			assert(frameSize >= runLength);
+			Common::fill(destP + screenOffset, destP + screenOffset + runLength, nextByte);
 			screenOffset += runLength;
 			frameSize -= runLength;
 		}
 	}
+
+	// If there's a remaining section of the screen not covered, copy it from reference surface
+	if (screenOffset < (_surface->w * _surface->h))
+		Common::copy(refP + screenOffset, refP + (_surface->w * _surface->h), destP + screenOffset);
 }
 
 void RL2Decoder::RL2VideoTrack::setupBackSurface(Graphics::Surface *surface) {

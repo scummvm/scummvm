@@ -130,8 +130,8 @@ private:
 		Common::List<Common::Rect> _dirtyRects;
 
 		void copyFrame(uint8 *data);
-		void rl2DecodeFrameWithBackground();
-		void rl2DecodeFrameWithoutBackground(int screenOffset = -1);
+		void rl2DecodeFrameWithTransparency(int screenOffset);
+		void rl2DecodeFrameWithoutTransparency(int screenOffset = -1);
 		void initBackSurface();
 	};
 
