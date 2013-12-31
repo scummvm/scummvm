@@ -131,10 +131,13 @@ void VoyeurEngine::playStamp() {
 			if (!checkForMurder() && _voy._transitionId <= 15)
 				checkForIncriminate();
 
-			if (_voy._videoEventId != -1)
+			if (_voy._videoEventId != -1) {
 				playAVideoEvent(_voy._videoEventId);
-			_voy._field478 &= 0x10;
+				_voy._field478 &= ~0x10;
+			}
+
 			threadP->chooseSTAMPButton(0);
+			flag = true;
 			break;
 
 		case 130: {

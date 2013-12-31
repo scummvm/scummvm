@@ -409,7 +409,7 @@ void EventsManager::vDoCycleInt() {
 					// Move palette entry to end of range
 					int start = READ_LE_UINT16(pSrc);
 					int end = READ_LE_UINT16(&pSrc[2]);
-					assert(start < 0x100 && end <= 0x100);
+					assert(start < 0x100 && end < 0x100);
 
 					// Store the RGB of the first entry to be moved
 					byte r = pPal[start * 3];
@@ -433,7 +433,7 @@ void EventsManager::vDoCycleInt() {
 					// Move palette entry to start of range
 					int start = READ_LE_UINT16(pSrc);
 					int end = READ_LE_UINT16(&pSrc[2]);
-					assert(start < 0x100 && end <= 0x100);
+					assert(start < 0x100 && end < 0x100);
 
 					// Store the RGB of the entry to be moved
 					byte r = pPal[end * 3];
