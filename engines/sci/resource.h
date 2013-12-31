@@ -554,6 +554,7 @@ class SoundResource {
 public:
 	struct Channel {
 		byte number;
+		byte flags;
 		byte poly;
 		uint16 prio;
 		uint16 size;
