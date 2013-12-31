@@ -165,7 +165,42 @@ void sceneHandler14_manKickBall() {
 }
 
 void sceneHandler14_showBallFly() {
-	warning("STUB: sceneHandler14_showBallFly()");
+	if (g_vars->scene14_var11.size()) {
+		g_vars->scene14_var10 = g_vars->scene14_var11.front();
+		g_vars->scene14_var11.pop_front();
+	}
+
+	int x, y;
+
+	if (g_vars->scene14_grandma->_movement) {
+		x = g_vars->scene14_grandma->_movement->_ox;
+		g_vars->scene14_var22 = x;
+		y = g_vars->scene14_grandma->_movement->_oy;
+	} else {
+		x = g_vars->scene14_var16;
+		y = g_vars->scene14_var17;
+	}
+
+	x = x + 38;
+	y = y - 77;
+
+	g_vars->scene14_var20 = 32;
+
+	int dist = (g_vars->scene14_var14 - 16 - x) / 32;
+	int den = dist;
+
+	if (!dist)
+		den = 1;
+
+	g_vars->scene14_var22 = x + 32;
+	g_vars->scene14_var21 = (g_vars->scene14_var15 - 40 - dist * dist / 2 - y) / den;
+	g_vars->scene14_var23 = g_vars->scene14_var21 + y;
+
+	g_vars->scene14_var10->show1(x + 32, g_vars->scene14_var21 + y, MV_BAL14_SPIN, 0);
+	g_vars->scene14_var10->_priority = 5;
+	g_vars->scene14_var10->startAnim(MV_BAL14_SPIN, 0, -1);
+
+	g_vars->scene14_var05 = 1;
 }
 
 void sceneHandler14_grandmaJump() {
