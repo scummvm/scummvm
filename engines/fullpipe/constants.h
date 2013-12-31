@@ -599,6 +599,7 @@ namespace Fullpipe {
 #define MV_BAL14_FALL 1258
 #define MV_BAL14_SPIN 1247
 #define MV_BAL14_TOGMA 3214
+#define MV_GMA_JUMPFW 1230
 #define MV_GMA_THROW 1232
 #define MV_MAN14_DECLINE 1239
 #define MV_MAN14_FALL 1236

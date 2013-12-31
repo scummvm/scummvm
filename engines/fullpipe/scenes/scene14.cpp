@@ -449,7 +449,28 @@ void sceneHandler14_sub07() {
 }
 
 void sceneHandler14_sub10() {
-	warning("STUB: sceneHandler14_sub10()");
+	g_vars->scene14_grandma->changeStatics2(ST_GMA_SIT);
+
+	MessageQueue *mq = new MessageQueue;
+	ExCommand *ex = new ExCommand(ANI_GRANDMA, 2, 30, 0, 0, 0, 1, 0, 0, 0);
+
+	ex->_excFlags |= 2;
+	mq->addExCommandToEnd(ex);
+
+	ex = new ExCommand(ANI_GRANDMA, 1, MV_GMA_JUMPFW, 0, 0, 0, 1, 0, 0, 0);
+	ex->_excFlags |= 2;
+	mq->addExCommandToEnd(ex);
+
+	ex = new ExCommand(ANI_GRANDMA, 1, MV_GMA_THROW, 0, 0, 0, 1, 0, 0, 0);
+	ex->_excFlags |= 2;
+	mq->addExCommandToEnd(ex);
+
+	mq->chain(0);
+
+	g_vars->scene14_var18 += 71;
+	g_fp->_currentScene->_x = 71;
+
+	g_fp->_aniMan2 = g_fp->_aniMan;
 }
 
 void sceneHandler14_sub09() {
