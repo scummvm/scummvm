@@ -56,10 +56,8 @@ void scene14_initScene(Scene *sc) {
 
 		StaticANIObject *ball = sc->getStaticANIObject1ById(ANI_BALL14, -1);
 
-		if (ball) {
-			ball->_flags &= 0xFFFB;
-			g_vars->scene14_var11.push_back(ball);
-		}
+		ball->_flags &= 0xFFFB;
+		g_vars->scene14_var11.push_back(ball);
 		
 		for (uint i = 0; i < 3; i++) {
 			ball = new StaticANIObject(ball); // create a copy
