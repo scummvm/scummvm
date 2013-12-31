@@ -599,6 +599,8 @@ namespace Fullpipe {
 #define MV_BAL14_FALL 1258
 #define MV_BAL14_SPIN 1247
 #define MV_BAL14_TOGMA 3214
+#define MV_GMA_BACKOFF 1233
+#define MV_GMA_BACKOFF2 3217
 #define MV_GMA_JUMPFW 1230
 #define MV_GMA_THROW 1232
 #define MV_MAN14_DECLINE 1239
@@ -616,6 +618,7 @@ namespace Fullpipe {
 #define QU_SC14_ENTERLIFT 1225
 #define QU_SC14_EXITLIFT 1226
 #define QU_SC14_STARTARCADE 1390
+#define QU_SC14_WINARCADE 3247
 
 // Scene 15
 #define ANI_BOOT_15 4779

@@ -487,10 +487,6 @@ void sceneHandler14_sub09() {
 	++g_vars->scene14_var24;
 }
 
-void sceneHandler14_sub11() {
-	warning("STUB: sceneHandler14_sub11()");
-}
-
 void sceneHandler14_sub12() {
 	g_fp->_aniMan->changeStatics2(ST_MAN_RIGHT|0x4000);
 	g_fp->_aniMan->startAnim(MV_MAN14_STEPFW, 0, -1);
@@ -499,6 +495,60 @@ void sceneHandler14_sub12() {
 
 	g_fp->_currentScene->_x = -71;
 	g_fp->_aniMan2 = g_vars->scene14_grandma;
+}
+
+void sceneHandler14_sub11() {
+	g_vars->scene14_var10->stopAnim_maybe();
+	g_vars->scene14_var10->hide();
+
+	if (g_vars->scene14_var04)
+		sceneHandler14_sub06();
+
+	if (g_vars->scene14_var24 <= 1) {
+		setInputDisabled(1);
+
+		sceneHandler14_sub06();
+
+		g_vars->scene14_var06 = 0;
+		g_fp->_aniMan2 = 0;
+
+		chainQueue(QU_SC14_WINARCADE, 1);
+
+		--g_vars->scene14_var24;
+	} else {
+		ExCommand *ex;
+
+		g_vars->scene14_grandma->changeStatics2(ST_GMA_SIT);
+
+		if (g_vars->scene14_var24 != 3 || g_vars->scene14_pink) {
+			MessageQueue *mq = new MessageQueue(g_fp->_globalMessageQueueList->compact());
+
+			ex = new ExCommand(ANI_GRANDMA, 1, MV_GMA_BACKOFF, 0, 0, 0, 1, 0, 0, 0);
+			ex->_excFlags |= 2;
+			mq->addExCommandToEnd(ex);
+
+			ex = new ExCommand(ANI_GRANDMA, 1, MV_GMA_THROW, 0, 0, 0, 1, 0, 0, 0);
+			ex->_excFlags |= 2;
+			mq->addExCommandToEnd(ex);
+
+			mq->chain(0);
+		} else {
+			MessageQueue *mq = new MessageQueue(g_fp->_globalMessageQueueList->compact());
+
+			ex = new ExCommand(ANI_GRANDMA, 1, MV_GMA_BACKOFF2, 0, 0, 0, 1, 0, 0, 0);
+			ex->_excFlags |= 2;
+			mq->addExCommandToEnd(ex);
+
+			ex = new ExCommand(ANI_GRANDMA, 1, MV_GMA_THROW, 0, 0, 0, 1, 0, 0, 0);
+			ex->_excFlags |= 2;
+			mq->addExCommandToEnd(ex);
+
+			mq->chain(0);
+		}
+
+		sceneHandler14_sub12();
+		--g_vars->scene14_var24;
+	}
 }
 
 int sceneHandler14(ExCommand *cmd) {
