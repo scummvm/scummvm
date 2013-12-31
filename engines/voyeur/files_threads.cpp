@@ -787,6 +787,7 @@ const byte *ThreadResource::cardPerform(const byte *card) {
 	int v3;
 	byte bVal;
 	uint32 idx1, idx2;
+	debugC(DEBUG_BASIC, kDebugScripts, "cardPerform - %d", id);
 
 	switch (id) {
 	case 1:
@@ -888,17 +889,17 @@ const byte *ThreadResource::cardPerform(const byte *card) {
 		card += 2;
 		break;
 
-	case 22:
 	case 23:
-	case 26:
+	case 24:
 	case 27:
+	case 28:
 		varD -= 3;	
 		// Deliberate fall-through
 
-	case 20:
 	case 21:
-	case 24:
+	case 22:
 	case 25:
+	case 26:
 		bVal = card[varD];
 		if (bVal == 61) {
 			if (cardPerform2(card, id)) {
