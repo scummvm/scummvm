@@ -259,7 +259,7 @@ int FullpipeEngine::convertScene(int scene) {
 }
 
 int FullpipeEngine::getSceneEntrance(int scene) {
-	for (int i = 0; i < 41; i++)
+	for (int i = 0; i < 40; i++)
 		if (scenes[i] == scene)
 			return scenesD[i];
 
