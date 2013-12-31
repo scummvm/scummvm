@@ -380,10 +380,6 @@ void sceneHandler14_startArcade() {
 	g_fp->_updateScreenCallback = sceneHandler14_updateScreenCallback;
 }
 
-void sceneHandler14_sub01() {
-	warning("STUB: sceneHandler14_sub01()");
-}
-
 void sceneHandler14_sub06() {
 	g_fp->_aniMan->_callback2 = 0;
 	g_vars->scene14_var04 = 0;
@@ -623,6 +619,36 @@ void sceneHandler14_sub11() {
 
 		sceneHandler14_sub12();
 		--g_vars->scene14_var24;
+	}
+}
+
+void sceneHandler14_sub01() {
+	int x = g_vars->scene14_var20 + g_vars->scene14_var22;
+	int y = g_vars->scene14_var21 + g_vars->scene14_var23;
+
+	g_vars->scene14_var22 += g_vars->scene14_var20;
+	g_vars->scene14_var23 += g_vars->scene14_var21;
+
+	g_vars->scene14_var21++;
+
+	if (g_vars->scene14_var21 - 1 + g_vars->scene14_var23 > 517) {
+		if (x <= g_vars->scene14_var14 - 16 ) {
+			if ( g_vars->scene14_var20 >= 0 || x >= g_vars->scene14_var16 + 65 || x <= g_vars->scene14_var16 - 135 || y <= g_vars->scene14_var17 - 102 ) {
+				if (g_vars->scene14_var10->_movement)
+					g_vars->scene14_var10->_movement->setOXY(x, y);
+				else
+					g_vars->scene14_var10->setOXY(x, y);
+			} else {
+				sceneHandler14_sub11();
+				g_vars->scene14_var05 = 0;
+			}
+		} else {
+			sceneHandler14_sub09();
+			g_vars->scene14_var05 = 0;
+		}
+	} else {
+		sceneHandler14_sub07();
+		g_vars->scene14_var05 = 0;
 	}
 }
 
