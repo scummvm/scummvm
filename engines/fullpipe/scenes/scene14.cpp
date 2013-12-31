@@ -137,7 +137,27 @@ void sceneHandler14_showBallGrandmaDive() {
 }
 
 void sceneHandler14_showBallGrandmaHit() {
-	warning("STUB: sceneHandler14_showBallGrandmaHit()");
+	if (g_vars->scene14_var10) {
+		g_vars->scene14_var10->show1(g_vars->scene14_var16 + 190, g_vars->scene14_var17 + 56, MV_BAL14_TOGMA, 0);
+		g_vars->scene14_var10->_priority = 27;
+
+		MessageQueue *mq = new MessageQueue(g_fp->_globalMessageQueueList->compact());
+		ExCommand *ex = new ExCommand(ANI_BALL14, 1, MV_BAL14_TOGMA, 0, 0, 0, 1, 0, 0, 0);
+
+		ex->_keyCode = g_vars->scene14_var10->_okeyCode;
+		ex->_excFlags |= 2;
+		ex->_field_24 = 1;
+		mq->addExCommandToEnd(ex);
+
+		ex = new ExCommand(ANI_BALL14, 6, 0, 0, 0, 0, 1, 0, 0, 0);
+		ex->_keyCode = g_vars->scene14_var10->_okeyCode;
+		ex->_excFlags |= 3;
+		mq->addExCommandToEnd(ex);
+		mq->chain(0);
+
+		g_vars->scene14_var11.push_back(g_vars->scene14_var10);
+		g_vars->scene14_var10 = 0;
+	}
 }
 
 void sceneHandler14_showBallMan() {
