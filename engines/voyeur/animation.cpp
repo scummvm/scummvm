@@ -100,8 +100,8 @@ RL2Decoder::RL2VideoTrack *RL2Decoder::getVideoTrack() {
 /*------------------------------------------------------------------------*/
 
 RL2Decoder::RL2FileHeader::RL2FileHeader() {
-	_frameOffsets = NULL;
-	_frameSoundSizes = NULL;
+	_frameOffsets = nullptr;
+	_frameSoundSizes = nullptr;
 }
 
 RL2Decoder::RL2FileHeader::~RL2FileHeader() {
@@ -137,11 +137,13 @@ void RL2Decoder::RL2FileHeader::load(Common::SeekableReadStream *stream) {
 	stream->skip(_backSize + 4 * _numFrames);
 
 	// Load frame offsets
+	delete[] _frameOffsets;
 	_frameOffsets = new uint32[_numFrames];
 	for (int i = 0; i < _numFrames; ++i)
 		_frameOffsets[i] = stream->readUint32LE();
 
 	// Load the size of the sound portion of each frame
+	delete[] _frameSoundSizes;
 	_frameSoundSizes = new int[_numFrames];
 	for (int i = 0; i < _numFrames; ++i)
 		_frameSoundSizes[i] = stream->readUint32LE() & 0xffff;
