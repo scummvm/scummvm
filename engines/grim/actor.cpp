@@ -1019,6 +1019,12 @@ void Actor::setLastWearChore(int chore, Costume *cost) {
 	}
 }
 
+void Actor::stopAllChores() {
+	for (Common::List<Costume *>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i) {
+		(*i)->stopChores();
+	}
+}
+
 void Actor::turn(int dir) {
 	_walking = false;
 	float delta = g_grim->getPerSecond(_turnRate) * dir;
