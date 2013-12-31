@@ -298,6 +298,7 @@ public:
 	int scene14_var21;
 	int scene14_var22;
 	int scene14_var23;
+	int scene14_var24;
 
 	int scene15_chantingCountdown;
 	StaticANIObject *scene15_plusminus;

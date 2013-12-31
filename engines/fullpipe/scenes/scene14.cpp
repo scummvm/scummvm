@@ -201,7 +201,27 @@ void sceneHandler14_hideBallLast() {
 }
 
 void sceneHandler14_startArcade() {
-	warning("STUB: sceneHandler14_startArcade()");
+	g_vars->scene14_var03 = 1;
+	g_vars->scene14_var06 = 1;
+
+	if (g_fp->_aniMan->_movement) {
+		g_fp->_aniMan->changeStatics2(ST_MAN_RIGHT | 0x4000);
+		g_fp->_aniMan->setOXY(1237, 451);
+		g_fp->_aniMan->_priority = 25;
+	}
+
+	getCurrSceneSc2MotionController()->clearEnabled();
+	getGameLoaderInteractionController()->disableFlag24();
+
+	g_fp->_aniMan2 = 0;
+	g_vars->scene14_var01 = 50;
+	g_vars->scene14_var07 = 100;
+	g_vars->scene14_var24 = 4;
+	g_vars->scene14_pink = 0;
+
+	chainQueue(QU_SC14_STARTARCADE, 0);
+
+	g_fp->_updateScreenCallback = sceneHandler14_updateScreenCallback;
 }
 
 void sceneHandler14_endArcade() {

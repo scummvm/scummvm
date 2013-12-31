@@ -608,6 +608,7 @@ namespace Fullpipe {
 #define QU_SC14_ENDARCADE 1391
 #define QU_SC14_ENTERLIFT 1225
 #define QU_SC14_EXITLIFT 1226
+#define QU_SC14_STARTARCADE 1390
 
 // Scene 15
 #define ANI_BOOT_15 4779
