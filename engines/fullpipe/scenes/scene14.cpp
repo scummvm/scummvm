@@ -408,12 +408,32 @@ bool sceneHandler14_sub04(ExCommand *cmd) {
 	return false;
 }
 
-void sceneHandler14_sub07() {
-	warning("STUB: sceneHandler14_sub07()");
-}
-
 void sceneHandler14_sub08() {
 	warning("STUB: sceneHandler14_sub08()");
+}
+
+void sceneHandler14_sub07() {
+	g_vars->scene14_var10->stopAnim_maybe();
+	g_vars->scene14_var10->_priority = 27;
+
+	MessageQueue *mq = new MessageQueue(g_fp->_globalMessageQueueList->compact());
+	ExCommand *ex = new ExCommand(ANI_BALL14, 1, MV_BAL14_FALL, 0, 0, 0, 1, 0, 0, 0);
+
+	ex->_keyCode = g_vars->scene14_var10->_okeyCode;
+	ex->_excFlags |= 2;
+	ex->_field_24 = 1;
+	mq->addExCommandToEnd(ex);
+
+	ex = new ExCommand(ANI_BALL14, 6, 0, 0, 0, 0, 1, 0, 0, 0);
+	ex->_keyCode = g_vars->scene14_var10->_okeyCode;
+	ex->_excFlags |= 3;
+	mq->addExCommandToEnd(ex);
+	mq->chain(0);
+
+	g_vars->scene14_var11.push_back(g_vars->scene14_var10);
+	g_vars->scene14_var10 = 0;
+
+	sceneHandler14_sub08();
 }
 
 void sceneHandler14_sub09() {
