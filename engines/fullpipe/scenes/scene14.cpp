@@ -380,14 +380,14 @@ void sceneHandler14_startArcade() {
 	g_fp->_updateScreenCallback = sceneHandler14_updateScreenCallback;
 }
 
-void sceneHandler14_sub06() {
+void sceneHandler14_clearCallback() {
 	g_fp->_aniMan->_callback2 = 0;
 	g_vars->scene14_var04 = 0;
 }
 
 void sceneHandler14_kickAnimation() {
 	if (g_fp->_aniMan->_movement) {
-		sceneHandler14_sub06();
+		sceneHandler14_clearCallback();
 
 		if (g_vars->scene14_var10 && g_vars->scene14_var14 - g_vars->scene14_var10->_ox < 180) {
 			g_fp->_aniMan->changeStatics2(g_fp->_aniMan->_movement->_staticsObj2->_staticsId);
@@ -431,7 +431,7 @@ void sceneHandler14_dudeDecline() {
 	g_vars->scene14_var04 = 1;
 }
 
-bool sceneHandler14_sub04(ExCommand *cmd) {
+bool sceneHandler14_arcadeProcessClick(ExCommand *cmd) {
 	if (!getCurrSceneSc2MotionController()->_isEnabled)
 		return 0;
 
@@ -546,7 +546,7 @@ void sceneHandler14_grandmaJumpThrow() {
 
 void sceneHandler14_dudeFall() {
 	if (!g_fp->_aniMan->_movement || g_fp->_aniMan->_movement->_id != MV_MAN14_FALL) {
-		sceneHandler14_sub06();
+		sceneHandler14_clearCallback();
 
 		g_fp->_aniMan->changeStatics2(ST_MAN_RIGHT|0x4000);
 		g_fp->_aniMan->startAnim(MV_MAN14_FALL, 0, -1);
@@ -573,12 +573,12 @@ void sceneHandler14_arcadeLogic() {
 	g_vars->scene14_var10->hide();
 
 	if (g_vars->scene14_var04)
-		sceneHandler14_sub06();
+		sceneHandler14_clearCallback();
 
 	if (g_vars->scene14_var24 <= 1) {
 		setInputDisabled(1);
 
-		sceneHandler14_sub06();
+		sceneHandler14_clearCallback();
 
 		g_vars->scene14_var06 = 0;
 		g_fp->_aniMan2 = 0;
@@ -622,7 +622,7 @@ void sceneHandler14_arcadeLogic() {
 	}
 }
 
-void sceneHandler14_sub01() {
+void sceneHandler14_animateBall() {
 	int x = g_vars->scene14_var20 + g_vars->scene14_var22;
 	int y = g_vars->scene14_var21 + g_vars->scene14_var23;
 
@@ -792,7 +792,7 @@ int sceneHandler14(ExCommand *cmd) {
 			}
 
 			if (g_vars->scene14_var05)
-				sceneHandler14_sub01();
+				sceneHandler14_animateBall();
 
 			g_fp->_behaviorManager->updateBehaviors();
 			g_fp->startSceneTrack();
@@ -827,7 +827,7 @@ int sceneHandler14(ExCommand *cmd) {
 				break;
 			}
 
-			if (!sceneHandler14_sub04(cmd) && (!ani || !canInteractAny(g_fp->_aniMan, ani, cmd->_keyCode))) {
+			if (!sceneHandler14_arcadeProcessClick(cmd) && (!ani || !canInteractAny(g_fp->_aniMan, ani, cmd->_keyCode))) {
 				int picId = g_fp->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
 
 				PictureObject *pic = g_fp->_currentScene->getPictureObjectById(picId, 0);
@@ -836,7 +836,7 @@ int sceneHandler14(ExCommand *cmd) {
 					if ((g_fp->_sceneRect.right - cmd->_sceneClickX < 47 && g_fp->_sceneRect.right < g_fp->_sceneWidth - 1)
 						|| (cmd->_sceneClickX - g_fp->_sceneRect.left < 47 && g_fp->_sceneRect.left > 0)) {
 						g_fp->processArcade(cmd);
-						sceneHandler14_sub04(cmd);
+						sceneHandler14_arcadeProcessClick(cmd);
 						break;
 					}
 				}
