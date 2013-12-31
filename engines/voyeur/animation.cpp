@@ -180,8 +180,10 @@ RL2Decoder::RL2VideoTrack::RL2VideoTrack(const RL2FileHeader &header, RL2AudioTr
 }
 
 RL2Decoder::RL2VideoTrack::~RL2VideoTrack() {
+	// Free the file stream
 	delete _fileStream;
 
+	// Free surfaces
 	_surface->free();
 	delete _surface;
 	if (_backSurface) {
@@ -224,7 +226,6 @@ const Graphics::Surface *RL2Decoder::RL2VideoTrack::decodeNextFrame() {
 		_fileStream->seek(0x324);
 		rl2DecodeFrameWithoutTransparency(0);
 
-		initBackSurface();
 		Common::copy((byte *)_surface->getPixels(), (byte *)_surface->getPixels() + (320 * 200), 
 			(byte *)_backSurface->getPixels());
 		_dirtyRects.push_back(Common::Rect(0, 0, _surface->w, _surface->h));
@@ -312,7 +313,7 @@ void RL2Decoder::RL2VideoTrack::rl2DecodeFrameWithoutTransparency(int screenOffs
 }
 
 void RL2Decoder::RL2VideoTrack::rl2DecodeFrameWithTransparency(int screenOffset) {
-	int frameSize = _surface->w * _surface->h;
+	int frameSize = _surface->w * _surface->h - screenOffset;
 	byte *refP = (byte *)_backSurface->getPixels();
 	byte *destP = (byte *)_surface->getPixels();
 
@@ -321,12 +322,11 @@ void RL2Decoder::RL2VideoTrack::rl2DecodeFrameWithTransparency(int screenOffset)
 		Common::copy(refP, refP + screenOffset, destP);
 
 	// Main decode loop
-	for (;;) {
+	while (frameSize > 0) {
 		byte nextByte = _fileStream->readByte();
 
 		if (nextByte == 0) {
 			// Move one single byte from reference surface
-			assert(frameSize > 0);
 			destP[screenOffset] = refP[screenOffset];
 			++screenOffset;
 			--frameSize;
@@ -337,20 +337,21 @@ void RL2Decoder::RL2VideoTrack::rl2DecodeFrameWithTransparency(int screenOffset)
 			++screenOffset;
 			--frameSize;
 		} else if (nextByte == 0x80) {
-			byte runLength = _fileStream->readByte();
+			int runLength = _fileStream->readByte();
 			if (runLength == 0)
 				return;
 
-			assert(frameSize >= runLength);
+			// Run length of transparency (i.e. pixels to copy from reference frame)
+			runLength = MIN(runLength, frameSize);
 			Common::copy(refP + screenOffset, refP + screenOffset + runLength, destP + screenOffset);
 			screenOffset += runLength;
 			frameSize -= runLength;
 		} else {
 			// Run length of a single pixel value
-			byte runLength = _fileStream->readByte();
+			int runLength = _fileStream->readByte();
 			nextByte &= 0x7f;
 
-			assert(frameSize >= runLength);
+			runLength = MIN(runLength, frameSize);
 			Common::fill(destP + screenOffset, destP + screenOffset + runLength, nextByte);
 			screenOffset += runLength;
 			frameSize -= runLength;
