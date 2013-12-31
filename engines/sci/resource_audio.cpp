@@ -678,31 +678,34 @@ SoundResource::SoundResource(uint32 resourceNr, ResourceManager *resMan, SciVers
 					channel = &_tracks[trackNr].channels[channelNr];
 					channel->prio = READ_LE_UINT16(data);
 					uint dataOffset = READ_LE_UINT16(data + 2);
-					if (dataOffset < resource->size) {
-						channel->data = resource->data + dataOffset;
-						channel->size = READ_LE_UINT16(data + 4);
-						channel->curPos = 0;
-						// FIXME: number contains (low nibble) channel and (high nibble) flags
-						// 0x20 is set on rhythm channels to prevent remapping
-						channel->number = *channel->data;
-						channel->poly = *(channel->data + 1);
-						channel->time = channel->prev = 0;
-						channel->data += 2; // skip over header
-						channel->size -= 2; // remove header size
-						if (channel->number == 0xFE) { // Digital channel
-							_tracks[trackNr].digitalChannelNr = channelNr;
-							_tracks[trackNr].digitalSampleRate = READ_LE_UINT16(channel->data);
-							_tracks[trackNr].digitalSampleSize = READ_LE_UINT16(channel->data + 2);
-							_tracks[trackNr].digitalSampleStart = READ_LE_UINT16(channel->data + 4);
-							_tracks[trackNr].digitalSampleEnd = READ_LE_UINT16(channel->data + 6);
-							channel->data += 8; // Skip over header
-							channel->size -= 8;
-						}
-						_tracks[trackNr].channelCount++;
-						channelNr++;
-					} else {
+
+					if (dataOffset >= resource->size) {
 						warning("Invalid offset inside sound resource %d: track %d, channel %d", resourceNr, trackNr, channelNr);
+						data += 6;
+						continue;
 					}
+
+					channel->data = resource->data + dataOffset;
+					channel->size = READ_LE_UINT16(data + 4);
+					channel->curPos = 0;
+					// FIXME: number contains (low nibble) channel and (high nibble) flags
+					// 0x20 is set on rhythm channels to prevent remapping
+					channel->number = *channel->data;
+					channel->poly = *(channel->data + 1);
+					channel->time = channel->prev = 0;
+					channel->data += 2; // skip over header
+					channel->size -= 2; // remove header size
+					if (channel->number == 0xFE) { // Digital channel
+						_tracks[trackNr].digitalChannelNr = channelNr;
+						_tracks[trackNr].digitalSampleRate = READ_LE_UINT16(channel->data);
+						_tracks[trackNr].digitalSampleSize = READ_LE_UINT16(channel->data + 2);
+						_tracks[trackNr].digitalSampleStart = READ_LE_UINT16(channel->data + 4);
+						_tracks[trackNr].digitalSampleEnd = READ_LE_UINT16(channel->data + 6);
+						channel->data += 8; // Skip over header
+						channel->size -= 8;
+					}
+					_tracks[trackNr].channelCount++;
+					channelNr++;
 					data += 6;
 				}
 			} else {
