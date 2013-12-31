@@ -199,18 +199,17 @@ Vars::Vars() {
 	scene13_dudeX = 0;
 
 	scene14_grandma = 0;
-	scene14_var01 = 0;
-	scene14_var02 = 0;
-	scene14_var03 = 0;
-	scene14_var04 = 0;
-	scene14_var05 = 0;
-	scene14_var06 = 0;
-	scene14_var07 = 0;
-	scene14_var08 = 0;
+	scene14_sceneDeltaX = 0;
+	scene14_sceneDeltaY = 0;
+	scene14_arcadeIsOn = false;
+	scene14_dudeIsKicking = false;
+	scene14_ballIsFlying = false;
+	scene14_dudeCanKick = false;
+	scene14_sceneDiffX = 0;
+	scene14_sceneDiffY = 0;
 	scene14_pink = 0;
-	scene14_var10 = 0;
-	scene14_var11.clear();
-	scene14_var12.clear();
+	scene14_flyingBall = 0;
+	scene14_balls.clear();
 	scene14_var13 = 0;
 	scene14_var14 = 0;
 	scene14_var15 = 0;

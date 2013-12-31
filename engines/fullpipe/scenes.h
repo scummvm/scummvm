@@ -275,18 +275,17 @@ public:
 	int scene13_dudeX;
 
 	StaticANIObject *scene14_grandma;
-	int scene14_var01;
-	int scene14_var02;
-	int scene14_var03;
-	int scene14_var04;
-	int scene14_var05;
-	int scene14_var06;
-	int scene14_var07;
-	int scene14_var08;
+	int scene14_sceneDeltaX;
+	int scene14_sceneDeltaY;
+	bool scene14_arcadeIsOn;
+	bool scene14_dudeIsKicking;
+	bool scene14_ballIsFlying;
+	bool scene14_dudeCanKick;
+	int scene14_sceneDiffX;
+	int scene14_sceneDiffY;
 	StaticANIObject *scene14_pink;
-	StaticANIObject *scene14_var10;
-	Common::List<StaticANIObject *> scene14_var11;
-	Common::List<StaticANIObject *> scene14_var12;
+	StaticANIObject *scene14_flyingBall;
+	Common::List<StaticANIObject *> scene14_balls;
 	int scene14_var13;
 	int scene14_var14;
 	int scene14_var15;
