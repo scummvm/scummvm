@@ -160,7 +160,7 @@ void sceneHandler14_showBallGrandmaHit() {
 	}
 }
 
-void sceneHandler14_sub13() {
+void sceneHandler14_exitScene() {
 	g_vars->scene14_var03 = 0;
 
 	if (g_fp->_aniMan->_movement)
@@ -203,7 +203,7 @@ void sceneHandler14_showBallMan() {
 		g_vars->scene14_var10 = 0;
 
 		if (g_vars->scene14_var14 >= 1300)
-			sceneHandler14_sub13();
+			sceneHandler14_exitScene();
 	}
 }
 
@@ -385,7 +385,7 @@ void sceneHandler14_sub06() {
 	g_vars->scene14_var04 = 0;
 }
 
-void sceneHandler14_sub02() {
+void sceneHandler14_kickAnimation() {
 	if (g_fp->_aniMan->_movement) {
 		sceneHandler14_sub06();
 
@@ -404,7 +404,7 @@ void sceneHandler14_sub02() {
 	}
 }
 
-void sceneHandler14_sub05(int *arg) {
+void sceneHandler14_declineCallback(int *arg) {
 	Common::Point point;
 
 	if (g_vars->scene14_var04) {
@@ -420,11 +420,11 @@ void sceneHandler14_sub05(int *arg) {
 	}
 }
 
-void sceneHandler14_sub03() {
+void sceneHandler14_dudeDecline() {
 	g_vars->scene14_mouseCursorPos.x = g_fp->_mouseVirtX;
 	g_vars->scene14_mouseCursorPos.y = g_fp->_mouseVirtY;
 
-	g_fp->_aniMan->_callback2 = sceneHandler14_sub05;
+	g_fp->_aniMan->_callback2 = sceneHandler14_declineCallback;
 	g_fp->_aniMan->changeStatics2(ST_MAN_RIGHT|0x4000);
 	g_fp->_aniMan->startAnim(MV_MAN14_DECLINE, 0, -1);
 
@@ -479,7 +479,7 @@ bool sceneHandler14_sub04(ExCommand *cmd) {
 	return true;
 }
 
-void sceneHandler14_sub08() {
+void sceneHandler14_grandmaThrow() {
 	g_vars->scene14_grandma->changeStatics2(ST_GMA_SIT);
 
 	MessageQueue *mq = new MessageQueue;
@@ -495,7 +495,7 @@ void sceneHandler14_sub08() {
 	mq->chain(0);
 }
 
-void sceneHandler14_sub07() {
+void sceneHandler14_passToGrandma() {
 	g_vars->scene14_var10->stopAnim_maybe();
 	g_vars->scene14_var10->_priority = 27;
 
@@ -516,10 +516,10 @@ void sceneHandler14_sub07() {
 	g_vars->scene14_var11.push_back(g_vars->scene14_var10);
 	g_vars->scene14_var10 = 0;
 
-	sceneHandler14_sub08();
+	sceneHandler14_grandmaThrow();
 }
 
-void sceneHandler14_sub10() {
+void sceneHandler14_grandmaJumpThrow() {
 	g_vars->scene14_grandma->changeStatics2(ST_GMA_SIT);
 
 	MessageQueue *mq = new MessageQueue;
@@ -544,7 +544,7 @@ void sceneHandler14_sub10() {
 	g_fp->_aniMan2 = g_fp->_aniMan;
 }
 
-void sceneHandler14_sub09() {
+void sceneHandler14_dudeFall() {
 	if (!g_fp->_aniMan->_movement || g_fp->_aniMan->_movement->_id != MV_MAN14_FALL) {
 		sceneHandler14_sub06();
 
@@ -553,12 +553,12 @@ void sceneHandler14_sub09() {
 		g_vars->scene14_var10->stopAnim_maybe();
 		g_vars->scene14_var10->hide();
 
-		sceneHandler14_sub10();
+		sceneHandler14_grandmaJumpThrow();
 	}
 	++g_vars->scene14_var24;
 }
 
-void sceneHandler14_sub12() {
+void sceneHandler14_grandmaStepForward() {
 	g_fp->_aniMan->changeStatics2(ST_MAN_RIGHT|0x4000);
 	g_fp->_aniMan->startAnim(MV_MAN14_STEPFW, 0, -1);
 
@@ -568,7 +568,7 @@ void sceneHandler14_sub12() {
 	g_fp->_aniMan2 = g_vars->scene14_grandma;
 }
 
-void sceneHandler14_sub11() {
+void sceneHandler14_arcadeLogic() {
 	g_vars->scene14_var10->stopAnim_maybe();
 	g_vars->scene14_var10->hide();
 
@@ -617,7 +617,7 @@ void sceneHandler14_sub11() {
 			mq->chain(0);
 		}
 
-		sceneHandler14_sub12();
+		sceneHandler14_grandmaStepForward();
 		--g_vars->scene14_var24;
 	}
 }
@@ -639,15 +639,15 @@ void sceneHandler14_sub01() {
 				else
 					g_vars->scene14_var10->setOXY(x, y);
 			} else {
-				sceneHandler14_sub11();
+				sceneHandler14_arcadeLogic();
 				g_vars->scene14_var05 = 0;
 			}
 		} else {
-			sceneHandler14_sub09();
+			sceneHandler14_dudeFall();
 			g_vars->scene14_var05 = 0;
 		}
 	} else {
-		sceneHandler14_sub07();
+		sceneHandler14_passToGrandma();
 		g_vars->scene14_var05 = 0;
 	}
 }
@@ -801,7 +801,7 @@ int sceneHandler14(ExCommand *cmd) {
 
 	case 30:
 		if (g_vars->scene14_var04) {
-			sceneHandler14_sub02();
+			sceneHandler14_kickAnimation();
 			break;
 		}
 
@@ -815,7 +815,7 @@ int sceneHandler14(ExCommand *cmd) {
 			int pixel;
 
 			if (g_vars->scene14_var06 && g_fp->_aniMan->getPixelAtPos(cmd->_sceneClickX, cmd->_sceneClickY, &pixel) && !g_fp->_aniMan->_movement) {
-				sceneHandler14_sub03();
+				sceneHandler14_dudeDecline();
 				break;
 			}
         } else {
