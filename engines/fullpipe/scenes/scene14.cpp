@@ -139,7 +139,16 @@ void sceneHandler14_showBallFly() {
 }
 
 void sceneHandler14_grandmaJump() {
-	warning("STUB: sceneHandler14_grandmaJump()");
+	BehaviorEntryInfo *beh1 = g_fp->_behaviorManager->getBehaviorEntryInfoByMessageQueueDataId(g_vars->scene14_grandma, ST_GMA_SIT, QU_GMA_JUMPFW);
+	BehaviorEntryInfo *beh2 = g_fp->_behaviorManager->getBehaviorEntryInfoByMessageQueueDataId(g_vars->scene14_grandma, ST_GMA_SIT, QU_GMA_JUMPBK);
+
+	if (beh1) {
+		if (beh2) {
+			int p = beh1->_percent;
+			beh1->_percent = beh2->_percent;
+			beh2->_percent = p;
+		}
+	}
 }
 
 void sceneHandler14_winArcade() {

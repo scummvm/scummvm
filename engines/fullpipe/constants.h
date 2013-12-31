@@ -601,6 +601,8 @@ namespace Fullpipe {
 #define MV_MAN14_STEPFW 1240
 #define ST_GMA_SIT 1229
 #define QU_GMA_BLINK 1252
+#define QU_GMA_JUMPBK 1251
+#define QU_GMA_JUMPFW 1249
 #define QU_GMA_THROW 1255
 
 #define QU_SC14_ENTERLIFT 1225
