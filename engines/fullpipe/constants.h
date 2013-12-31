@@ -599,6 +599,10 @@ namespace Fullpipe {
 #define MV_BAL14_SPIN 1247
 #define MV_MAN14_KICK 1237
 #define MV_MAN14_STEPFW 1240
+#define ST_GMA_SIT 1229
+#define QU_GMA_BLINK 1252
+#define QU_GMA_THROW 1255
+
 #define QU_SC14_ENTERLIFT 1225
 #define QU_SC14_EXITLIFT 1226
 

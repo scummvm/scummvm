@@ -32,7 +32,7 @@
 
 #include "fullpipe/interaction.h"
 #include "fullpipe/behavior.h"
-
+#include "fullpipe/input.h"
 
 namespace Fullpipe {
 
@@ -168,7 +168,28 @@ void sceneHandler14_startArcade() {
 }
 
 void sceneHandler14_endArcade() {
-	warning("STUB: sceneHandler14_endArcade()");
+	g_vars->scene14_var03 = 0;
+
+	setInputDisabled(0);
+
+	getGameLoaderInteractionController()->enableFlag24();
+	getCurrSceneSc2MotionController()->setEnabled();
+
+	BehaviorEntryInfo *beh = g_fp->_behaviorManager->getBehaviorEntryInfoByMessageQueueDataId(g_vars->scene14_grandma, ST_GMA_SIT, QU_GMA_BLINK);
+	if (beh)
+		beh->_percent = 327;
+
+	beh = g_fp->_behaviorManager->getBehaviorEntryInfoByMessageQueueDataId(g_vars->scene14_grandma, ST_GMA_SIT, QU_GMA_THROW);
+	if (beh)
+		beh->_percent = 0;
+
+	g_vars->scene14_var01 = 200;
+	g_vars->scene14_var02 = 200;
+
+	g_fp->_aniMan2 = g_fp->_aniMan;
+
+	g_vars->scene14_var07 = 300;
+	g_vars->scene14_var08 = 300;
 }
 
 void sceneHandler14_sub01() {
