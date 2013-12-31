@@ -279,8 +279,66 @@ void sceneHandler14_grandmaJump() {
 	}
 }
 
+void sceneHandler14_endArcade() {
+	g_vars->scene14_var03 = 0;
+
+	setInputDisabled(0);
+
+	getGameLoaderInteractionController()->enableFlag24();
+	getCurrSceneSc2MotionController()->setEnabled();
+
+	BehaviorEntryInfo *beh = g_fp->_behaviorManager->getBehaviorEntryInfoByMessageQueueDataId(g_vars->scene14_grandma, ST_GMA_SIT, QU_GMA_BLINK);
+	if (beh)
+		beh->_percent = 327;
+
+	beh = g_fp->_behaviorManager->getBehaviorEntryInfoByMessageQueueDataId(g_vars->scene14_grandma, ST_GMA_SIT, QU_GMA_THROW);
+	if (beh)
+		beh->_percent = 0;
+
+	g_vars->scene14_var01 = 200;
+	g_vars->scene14_var02 = 200;
+
+	g_fp->_aniMan2 = g_fp->_aniMan;
+
+	g_vars->scene14_var07 = 300;
+	g_vars->scene14_var08 = 300;
+}
+
 void sceneHandler14_winArcade() {
-	warning("STUB: sceneHandler14_winArcade()");
+	if (g_vars->scene14_var03) {
+		if (g_vars->scene14_var04) {
+			g_fp->_aniMan->changeStatics2(ST_MAN_RIGHT|0x4000);
+
+			g_vars->scene14_var04 = 0;
+		}
+
+		if (g_vars->scene14_var10) {
+			g_vars->scene14_var11.push_back(g_vars->scene14_var10);
+
+			g_vars->scene14_var10->_flags &= 0xFFFB;
+			g_vars->scene14_var10 = 0;
+		}
+
+		g_vars->scene14_var05 = 0;
+
+		sceneHandler14_endArcade();
+
+		g_vars->scene14_var13 = 0;
+
+		if (g_fp->getObjectState(sO_Grandma) == g_fp->getObjectEnumState(sO_Grandma, sO_In_14)) {
+			g_fp->setObjectState(sO_Grandma, g_fp->getObjectEnumState(sO_Grandma, sO_In_15));
+			g_vars->scene14_grandma->changeStatics2(ST_GMA_SIT);
+			g_vars->scene14_grandma->_flags &= 0xFFFB;
+		}
+
+		if (g_fp->_currentScene->_messageQueueId) {
+			MessageQueue *mq = g_fp->_globalMessageQueueList->getMessageQueueById(g_fp->_currentScene->_messageQueueId);
+			if (mq)
+				delete mq;
+
+			g_fp->_currentScene->_messageQueueId = 0;
+		}
+	}
 }
 
 void sceneHandler14_showBallLast() {
@@ -320,31 +378,6 @@ void sceneHandler14_startArcade() {
 	chainQueue(QU_SC14_STARTARCADE, 0);
 
 	g_fp->_updateScreenCallback = sceneHandler14_updateScreenCallback;
-}
-
-void sceneHandler14_endArcade() {
-	g_vars->scene14_var03 = 0;
-
-	setInputDisabled(0);
-
-	getGameLoaderInteractionController()->enableFlag24();
-	getCurrSceneSc2MotionController()->setEnabled();
-
-	BehaviorEntryInfo *beh = g_fp->_behaviorManager->getBehaviorEntryInfoByMessageQueueDataId(g_vars->scene14_grandma, ST_GMA_SIT, QU_GMA_BLINK);
-	if (beh)
-		beh->_percent = 327;
-
-	beh = g_fp->_behaviorManager->getBehaviorEntryInfoByMessageQueueDataId(g_vars->scene14_grandma, ST_GMA_SIT, QU_GMA_THROW);
-	if (beh)
-		beh->_percent = 0;
-
-	g_vars->scene14_var01 = 200;
-	g_vars->scene14_var02 = 200;
-
-	g_fp->_aniMan2 = g_fp->_aniMan;
-
-	g_vars->scene14_var07 = 300;
-	g_vars->scene14_var08 = 300;
 }
 
 void sceneHandler14_sub01() {
