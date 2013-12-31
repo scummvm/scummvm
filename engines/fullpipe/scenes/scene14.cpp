@@ -287,7 +287,21 @@ void sceneHandler14_sub12() {
 }
 
 void sceneHandler14_sub13() {
-	warning("STUB: sceneHandler14_sub13()");
+	g_vars->scene14_var03 = 0;
+
+	if (g_fp->_aniMan->_movement)
+		g_fp->_aniMan->_movement->gotoLastFrame();
+
+	g_fp->_aniMan->stopAnim_maybe();
+
+	handleObjectInteraction(g_fp->_aniMan, g_fp->_currentScene->getPictureObjectById(PIC_SC14_RTRUBA, 0), 0);
+
+	g_vars->scene14_grandma->changeStatics2(ST_GMA_SIT);
+
+	chainQueue(QU_SC14_ENDARCADE, 0);
+
+	getGameLoaderInteractionController()->disableFlag24();
+	getCurrSceneSc2MotionController()->clearEnabled();
 }
 
 int sceneHandler14(ExCommand *cmd) {
