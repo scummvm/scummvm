@@ -299,6 +299,7 @@ public:
 	int scene14_var22;
 	int scene14_var23;
 	int scene14_var24;
+	Common::Point scene14_mouseCursorPos;
 
 	int scene15_chantingCountdown;
 	StaticANIObject *scene15_plusminus;

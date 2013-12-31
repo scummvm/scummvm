@@ -375,18 +375,37 @@ void sceneHandler14_sub02() {
 	}
 }
 
+void sceneHandler14_sub05(int *arg) {
+	Common::Point point;
+
+	if (g_vars->scene14_var04) {
+		*arg = (int)(sqrt((g_fp->_mouseVirtY - g_vars->scene14_mouseCursorPos.y)
+							 * (g_fp->_mouseVirtY - g_vars->scene14_mouseCursorPos.y)
+					+ (g_fp->_mouseVirtX - g_vars->scene14_mouseCursorPos.x)
+							 * (g_fp->_mouseVirtX - g_vars->scene14_mouseCursorPos.x)) * 0.1);
+
+		if (*arg > 11)
+			*arg = 11;
+	} else {
+		++*arg;
+	}
+}
+
 void sceneHandler14_sub03() {
-	warning("STUB: sceneHandler14_sub03()");
+	g_vars->scene14_mouseCursorPos.x = g_fp->_mouseVirtX;
+	g_vars->scene14_mouseCursorPos.y = g_fp->_mouseVirtY;
+
+	g_fp->_aniMan->_callback2 = sceneHandler14_sub05;
+	g_fp->_aniMan->changeStatics2(ST_MAN_RIGHT|0x4000);
+	g_fp->_aniMan->startAnim(MV_MAN14_DECLINE, 0, -1);
+
+	g_vars->scene14_var04 = 1;
 }
 
 bool sceneHandler14_sub04(ExCommand *cmd) {
 	warning("STUB: sceneHandler14_sub04()");
 
 	return false;
-}
-
-void sceneHandler14_sub05() {
-	warning("STUB: sceneHandler14_sub05()");
 }
 
 void sceneHandler14_sub07() {
