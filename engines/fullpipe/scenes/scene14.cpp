@@ -409,7 +409,19 @@ bool sceneHandler14_sub04(ExCommand *cmd) {
 }
 
 void sceneHandler14_sub08() {
-	warning("STUB: sceneHandler14_sub08()");
+	g_vars->scene14_grandma->changeStatics2(ST_GMA_SIT);
+
+	MessageQueue *mq = new MessageQueue;
+	ExCommand *ex = new ExCommand(ANI_GRANDMA, 2, 30, 0, 0, 0, 1, 0, 0, 0);
+
+	ex->_excFlags |= 2;
+	mq->addExCommandToEnd(ex);
+
+	ex = new ExCommand(ANI_GRANDMA, 1, MV_GMA_THROW, 0, 0, 0, 1, 0, 0, 0);
+	ex->_excFlags |= 2;
+	mq->addExCommandToEnd(ex);
+
+	mq->chain(0);
 }
 
 void sceneHandler14_sub07() {
@@ -436,12 +448,22 @@ void sceneHandler14_sub07() {
 	sceneHandler14_sub08();
 }
 
-void sceneHandler14_sub09() {
-	warning("STUB: sceneHandler14_sub09()");
-}
-
 void sceneHandler14_sub10() {
 	warning("STUB: sceneHandler14_sub10()");
+}
+
+void sceneHandler14_sub09() {
+	if (!g_fp->_aniMan->_movement || g_fp->_aniMan->_movement->_id != MV_MAN14_FALL) {
+		sceneHandler14_sub06();
+
+		g_fp->_aniMan->changeStatics2(ST_MAN_RIGHT|0x4000);
+		g_fp->_aniMan->startAnim(MV_MAN14_FALL, 0, -1);
+		g_vars->scene14_var10->stopAnim_maybe();
+		g_vars->scene14_var10->hide();
+
+		sceneHandler14_sub10();
+	}
+	++g_vars->scene14_var24;
 }
 
 void sceneHandler14_sub11() {
