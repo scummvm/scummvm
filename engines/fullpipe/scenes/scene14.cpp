@@ -131,7 +131,23 @@ void sceneHandler14_showBallMan() {
 }
 
 void sceneHandler14_manKickBall() {
-	warning("STUB: sceneHandler14_manKickBall()");
+	int val = (g_vars->scene14_var16 + 65 - (g_vars->scene14_var14 - 85)) / -32;
+	int den = val;
+
+	g_vars->scene14_var22 = g_vars->scene14_var14 - 85;
+	g_vars->scene14_var23 = g_vars->scene14_var15 - 76;
+	g_vars->scene14_var20 = -32;
+
+	if (!val)
+		den = 1;
+
+	g_vars->scene14_var21 = (g_vars->scene14_var17 - 102 - val * val / 2 - (g_vars->scene14_var15 - 76)) / den;
+
+	g_vars->scene14_var10->show1(g_vars->scene14_var14 - 85, g_vars->scene14_var15 - 76, -1, 0);
+	g_vars->scene14_var10->startAnim(MV_BAL14_SPIN, 0, -1);
+	g_vars->scene14_var10->_priority = 5;
+
+	g_vars->scene14_var05 = 1;
 }
 
 void sceneHandler14_showBallFly() {
