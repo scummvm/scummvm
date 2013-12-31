@@ -115,11 +115,25 @@ int sceneHandler14_updateScreenCallback() {
 }
 
 void sceneHandler14_showBallGrandmaHit2() {
-	warning("STUB: sceneHandler14_showBallGrandmaHit2()");
+	if (g_vars->scene14_var10) {
+		g_vars->scene14_var10->show1(g_vars->scene14_var16 + 223, g_vars->scene14_var17 + 35, MV_BAL14_SPIN, 0);
+		g_vars->scene14_var10->_priority = 27;
+
+		g_vars->scene14_pink = g_vars->scene14_var10;
+
+		g_vars->scene14_var10 = 0;
+	}
 }
 
 void sceneHandler14_showBallGrandmaDive() {
-	warning("STUB: sceneHandler14_showBallGrandmaDive()");
+	if (g_vars->scene14_var10) {
+		g_vars->scene14_var10->show1(g_vars->scene14_var16 + 506, g_vars->scene14_var17 - 29, -1, 0);
+
+		g_vars->scene14_var11.push_back(g_vars->scene14_var10);
+		g_vars->scene14_var10 = 0;
+	}
+
+	g_fp->_aniMan2 = g_fp->_aniMan;
 }
 
 void sceneHandler14_showBallGrandmaHit() {
