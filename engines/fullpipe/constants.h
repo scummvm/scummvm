@@ -599,6 +599,7 @@ namespace Fullpipe {
 #define MV_BAL14_SPIN 1247
 #define MV_BAL14_TOGMA 3214
 #define MV_MAN14_KICK 1237
+#define MV_MAN14_KICKAIR 1256
 #define MV_MAN14_STEPFW 1240
 #define PIC_SC14_RTRUBA 1221
 #define ST_GMA_SIT 1229

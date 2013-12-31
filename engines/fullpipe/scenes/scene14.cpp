@@ -351,8 +351,28 @@ void sceneHandler14_sub01() {
 	warning("STUB: sceneHandler14_sub01()");
 }
 
+void sceneHandler14_sub06() {
+	g_fp->_aniMan->_callback2 = 0;
+	g_vars->scene14_var04 = 0;
+}
+
 void sceneHandler14_sub02() {
-	warning("STUB: sceneHandler14_sub02()");
+	if (g_fp->_aniMan->_movement) {
+		sceneHandler14_sub06();
+
+		if (g_vars->scene14_var10 && g_vars->scene14_var14 - g_vars->scene14_var10->_ox < 180) {
+			g_fp->_aniMan->changeStatics2(g_fp->_aniMan->_movement->_staticsObj2->_staticsId);
+			g_fp->_aniMan->startAnim(MV_MAN14_KICK, 0, -1);
+
+			g_vars->scene14_var05 = 0;
+
+			g_vars->scene14_var10->stopAnim_maybe();
+			g_vars->scene14_var10->hide();
+		} else {
+			g_fp->_aniMan->changeStatics2(g_fp->_aniMan->_movement->_staticsObj2->_staticsId);
+			g_fp->_aniMan->startAnim(MV_MAN14_KICKAIR, 0, -1);
+		}
+	}
 }
 
 void sceneHandler14_sub03() {
@@ -367,11 +387,6 @@ bool sceneHandler14_sub04(ExCommand *cmd) {
 
 void sceneHandler14_sub05() {
 	warning("STUB: sceneHandler14_sub05()");
-}
-
-void sceneHandler14_sub06() {
-	g_fp->_aniMan->_callback2 = 0;
-	g_vars->scene14_var04 = 0;
 }
 
 void sceneHandler14_sub07() {
