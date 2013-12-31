@@ -160,8 +160,51 @@ void sceneHandler14_showBallGrandmaHit() {
 	}
 }
 
+void sceneHandler14_sub13() {
+	g_vars->scene14_var03 = 0;
+
+	if (g_fp->_aniMan->_movement)
+		g_fp->_aniMan->_movement->gotoLastFrame();
+
+	g_fp->_aniMan->stopAnim_maybe();
+
+	handleObjectInteraction(g_fp->_aniMan, g_fp->_currentScene->getPictureObjectById(PIC_SC14_RTRUBA, 0), 0);
+
+	g_vars->scene14_grandma->changeStatics2(ST_GMA_SIT);
+
+	chainQueue(QU_SC14_ENDARCADE, 0);
+
+	getGameLoaderInteractionController()->disableFlag24();
+	getCurrSceneSc2MotionController()->clearEnabled();
+}
+
 void sceneHandler14_showBallMan() {
-	warning("STUB: sceneHandler14_showBallMan()");
+	if (g_vars->scene14_var10) {
+		g_vars->scene14_var10->show1(g_vars->scene14_var14 - 166, g_vars->scene14_var15 + 40, MV_BAL14_TOGMA, 0);
+		g_vars->scene14_var10->_priority = 27;
+
+		MessageQueue *mq = new MessageQueue(g_fp->_globalMessageQueueList->compact());
+		ExCommand *ex = new ExCommand(ANI_BALL14, 1, MV_BAL14_TOGMA, 0, 0, 0, 1, 0, 0, 0);
+
+		ex->_keyCode = g_vars->scene14_var10->_okeyCode;
+		ex->_excFlags |= 2;
+		ex->_field_24 = 1;
+		mq->addExCommandToEnd(ex);
+
+		ex = new ExCommand(ANI_BALL14, 6, 0, 0, 0, 0, 1, 0, 0, 0);
+		ex->_keyCode = g_vars->scene14_var10->_okeyCode;
+		ex->_excFlags |= 3;
+		mq->addExCommandToEnd(ex);
+		mq->chain(0);
+
+		g_vars->scene14_var10->startAnim(MV_BAL14_TOGMA, 0, -1);
+
+		g_vars->scene14_var11.push_back(g_vars->scene14_var10);
+		g_vars->scene14_var10 = 0;
+
+		if (g_vars->scene14_var14 >= 1300)
+			sceneHandler14_sub13();
+	}
 }
 
 void sceneHandler14_manKickBall() {
@@ -359,24 +402,6 @@ void sceneHandler14_sub12() {
 
 	g_fp->_currentScene->_x = -71;
 	g_fp->_aniMan2 = g_vars->scene14_grandma;
-}
-
-void sceneHandler14_sub13() {
-	g_vars->scene14_var03 = 0;
-
-	if (g_fp->_aniMan->_movement)
-		g_fp->_aniMan->_movement->gotoLastFrame();
-
-	g_fp->_aniMan->stopAnim_maybe();
-
-	handleObjectInteraction(g_fp->_aniMan, g_fp->_currentScene->getPictureObjectById(PIC_SC14_RTRUBA, 0), 0);
-
-	g_vars->scene14_grandma->changeStatics2(ST_GMA_SIT);
-
-	chainQueue(QU_SC14_ENDARCADE, 0);
-
-	getGameLoaderInteractionController()->disableFlag24();
-	getCurrSceneSc2MotionController()->clearEnabled();
 }
 
 int sceneHandler14(ExCommand *cmd) {
