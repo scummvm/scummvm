@@ -162,8 +162,25 @@ void sceneHandler16_startLaugh() {
 	warning("STUB: sceneHandler16_startLaugh()");
 }
 
+void sceneHandler16_sub02() {
+	warning("STUB: sceneHandler16_sub02()");
+}
+
 void sceneHandler16_mugClick() {
-	warning("STUB: sceneHandler16_mugClick()");
+	if (abs(310 - g_fp->_aniMan->_ox) >= 1 || abs(449 - g_fp->_aniMan->_oy) >= 1
+		|| g_fp->_aniMan->_movement || g_fp->_aniMan->_statics->_staticsId != ST_MAN_RIGHT) {
+		MessageQueue *mq = getCurrSceneSc2MotionController()->method34(g_fp->_aniMan, 310, 449, 1, ST_MAN_RIGHT);
+
+		if (mq) {
+			ExCommand *ex = new ExCommand(0, 17, MSG_SC16_MUGCLICK, 0, 0, 0, 1, 0, 0, 0);
+			ex->_excFlags = 2;
+			mq->addExCommandToEnd(ex);
+
+			postExCommand(g_fp->_aniMan->_id, 2, 310, 449, 0, -1);
+		}
+	} else {
+		sceneHandler16_sub02();
+	}
 }
 
 void sceneHandler16_showMan() {
@@ -198,10 +215,6 @@ void sceneHandler16_showWire() {
 
 void sceneHandler16_sub01() {
 	warning("STUB: sceneHandler16_sub01()");
-}
-
-void sceneHandler16_sub02() {
-	warning("STUB: sceneHandler16_sub02()");
 }
 
 void sceneHandler16_girlROTFL() {
