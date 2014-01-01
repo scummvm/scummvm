@@ -690,6 +690,9 @@ namespace Fullpipe {
 
 // Scene 17
 #define ANI_HAND17 1446
+#define ANI_INV_SUGAR 1410
+#define ANI_JET_17 2746
+#define ANI_MUG_17 2737
 #define MSG_SC17_DROP 3414
 #define MSG_SC17_FILLBOTTLE 1436
 #define MSG_SC17_HIDESUGAR 1417
@@ -702,7 +705,13 @@ namespace Fullpipe {
 #define QU_HND17_ASK 1456
 #define QU_HND17_ATTRACT 1455
 #define QU_HND17_TOCYCLE 1454
+#define QU_JET17_DROP 3295
+#define QU_SC17_FILLMUG_DROP 3415
+#define QU_SC17_SHOWBOTTLE 1429
+#define QU_SC17_SHOWSUGAR 1415
+#define ST_HND17_ATTRACT 1451
 #define ST_HND17_EMPTY 1448
+#define ST_MUG17_EMPTY 2739
 
 // Scene 24
 #define ANI_DROP_24 3505
@@ -719,7 +728,6 @@ namespace Fullpipe {
 #define SND_24_006 4041
 #define SND_24_007 4042
 #define ST_DRP24_EMPTY 3507
-#define ST_HND17_ATTRACT 1451
 #define ST_WTR24_FLOWLOWER 1843
 
 // Debug scene

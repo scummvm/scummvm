@@ -49,7 +49,16 @@ void scene17_initScene(Scene *sc) {
 }
 
 void sceneHandler17_drop() {
-	warning("STUB: sceneHandler17_drop()");
+	StaticANIObject *mug = g_fp->_currentScene->getStaticANIObject1ById(ANI_MUG_17, -1);
+	StaticANIObject *jet = g_fp->_currentScene->getStaticANIObject1ById(ANI_JET_17, -1);
+
+	if (mug && mug->_flags & 4) {
+		mug->changeStatics2(ST_MUG17_EMPTY);
+		chainQueue(QU_SC17_FILLMUG_DROP, 0);
+	} else if (jet) {
+		jet->queueMessageQueue(0);
+		chainQueue(QU_JET17_DROP, 0);
+	}
 }
 
 void sceneHandler17_fillBottle() {
@@ -61,15 +70,20 @@ void sceneHandler17_testTruba() {
 }
 
 void sceneHandler17_showBottle() {
-	warning("STUB: sceneHandler17_showBottle()");
+	chainQueue(QU_SC17_SHOWBOTTLE, 0);
 }
 
 void sceneHandler17_hideSugar() {
-	warning("STUB: sceneHandler17_hideSugar()");
+	StaticANIObject *sugar = g_fp->_currentScene->getStaticANIObject1ById(ANI_INV_SUGAR, -1);
+
+	if (sugar)
+		sugar->hide();
 }
 
 void sceneHandler17_showSugar() {
-	warning("STUB: sceneHandler17_showSugar()");
+	chainQueue(QU_SC17_SHOWSUGAR, 0);
+
+	g_vars->scene17_var06 = 1;
 }
 
 void sceneHandler17_moonshineFill() {
