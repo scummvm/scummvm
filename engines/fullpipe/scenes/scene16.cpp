@@ -125,7 +125,25 @@ int scene16_updateCursor() {
 }
 
 void sceneHandler16_laughSound() {
-	warning("STUB: sceneHandler16_laughSound()");
+	int snd;
+
+	switch (g_vars->scene16_sound) {
+	case SND_16_034:
+		snd = SND_16_035;
+		break;
+
+	case SND_16_035:
+		snd = SND_16_037;
+		break;
+
+	case SND_16_037:
+		snd = SND_16_034;
+		break;
+	}
+
+	g_vars->scene16_sound = snd;
+
+	g_fp->playSound(snd, 0);
 }
 
 void sceneHandler16_showBearded() {

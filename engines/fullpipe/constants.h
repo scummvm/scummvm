@@ -665,6 +665,8 @@ namespace Fullpipe {
 #define PIC_SC16_TUMBA 1368
 #define QU_SC16_SHOWMUG 1361
 #define SND_16_034 3854
+#define SND_16_035 3855
+#define SND_16_037 3857
 #define ST_GRL_LAUGH 1342
 #define ST_MUG_EMPTY 1298
 #define ST_MUG_FULL 1360
