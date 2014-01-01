@@ -329,6 +329,8 @@ public:
 	int scene17_var07;
 	int scene17_var08;
 	StaticANIObject *scene17_hand;
+	int scene17_var09;
+	int scene17_var10;
 
 	bool scene24_jetIsOn;
 	bool scene24_flowIsLow;

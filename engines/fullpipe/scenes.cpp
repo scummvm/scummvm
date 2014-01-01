@@ -248,6 +248,8 @@ Vars::Vars() {
 	scene17_var07 = 0;
 	scene17_var08 = 0;
 	scene17_hand = 0;
+	scene17_var09 = 0;
+	scene17_var10 = 0;
 
 	scene24_jetIsOn = false;
 	scene24_flowIsLow = false;
