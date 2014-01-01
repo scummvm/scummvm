@@ -320,6 +320,16 @@ public:
 	int scene16_sound;
 	bool scene16_placeIsOccupied;
 
+	int scene17_var01;
+	int scene17_var02;
+	int scene17_var03;
+	int scene17_var04;
+	int scene17_var05;
+	int scene17_var06;
+	int scene17_var07;
+	int scene17_var08;
+	StaticANIObject *scene17_hand;
+
 	bool scene24_jetIsOn;
 	bool scene24_flowIsLow;
 	bool scene24_waterIsOn;

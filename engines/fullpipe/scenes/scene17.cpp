@@ -37,15 +37,15 @@
 namespace Fullpipe {
 
 void scene17_initScene(Scene *sc) {
-  g_vars->scene17_var01 = 200;
-  g_vars->scene17_var02 = 200;
-  g_vars->scene17_var03 = 300;
-  g_vars->scene17_var04 = 300;
-  g_vars->scene17_var05 = 1;
-  g_vars->scene17_var06 = 0;
-  g_vars->scene17_var07 = 0;
-  g_vars->scene17_var08 = 0;
-  g_vars->scene17_hand = sc->getStaticANIObject1ById(ANI_HAND17, -1);
+	g_vars->scene17_var01 = 200;
+	g_vars->scene17_var02 = 200;
+	g_vars->scene17_var03 = 300;
+	g_vars->scene17_var04 = 300;
+	g_vars->scene17_var05 = 1;
+	g_vars->scene17_var06 = 0;
+	g_vars->scene17_var07 = 0;
+	g_vars->scene17_var08 = 0;
+	g_vars->scene17_hand = sc->getStaticANIObject1ById(ANI_HAND17, -1);
 }
 
 } // End of namespace Fullpipe

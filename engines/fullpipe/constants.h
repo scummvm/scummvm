@@ -688,6 +688,9 @@ namespace Fullpipe {
 #define ST_MUG_EMPTY 1298
 #define ST_MUG_FULL 1360
 
+// Scene 17
+#define ANI_HAND17 1446
+
 // Scene 24
 #define ANI_DROP_24 3505
 #define ANI_JET24 1837
