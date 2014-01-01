@@ -70,6 +70,25 @@ void scene17_restoreState() {
 	g_fp->setObjectState(sO_Fly_17, g_vars->scene17_flyState - 1);
 }
 
+int scene17_updateCursor() {
+	g_fp->updateCursorCommon();
+
+	if (g_fp->_objectIdAtCursor != PIC_SC17_RTRUBA2 && g_fp->_objectIdAtCursor != PIC_SC17_RTRUBA)
+		return g_fp->_cursorId;
+
+	if (!g_vars->scene17_handPhase)
+		return g_fp->_cursorId;
+
+	int item = g_fp->_inventory->getSelectedItemId();
+
+	if ((g_fp->_cursorId != PIC_CSR_DEFAULT_INV || item != ANI_INV_COIN) && item != ANI_INV_BOOT && item != ANI_INV_HAMMER)
+		; // empty
+	else
+		g_fp->_cursorId = PIC_CSR_ITN_INV;
+
+	return g_fp->_cursorId;
+}
+
 void sceneHandler17_drop() {
 	StaticANIObject *mug = g_fp->_currentScene->getStaticANIObject1ById(ANI_MUG_17, -1);
 	StaticANIObject *jet = g_fp->_currentScene->getStaticANIObject1ById(ANI_JET_17, -1);
