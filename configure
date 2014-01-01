@@ -106,7 +106,7 @@ done
 #
 #ResidualVM defaults: mpeg2=auto, faad=no, opengles=no, vorbis=no, tremor=no
 # mt32emu=no, translation=no, flac=no, seq_midi=no, snd_io=no, timidity=no, png=no
-# theoradec=no, fluidsynth=no, opengles2=no, eventrec=no, jpeg=no
+# theoradec=no, fluidsynth=no, opengles2=no, eventrec=no, jpeg=auto
 #
 # Default lib behaviour yes/no/auto
 _vorbis=no
