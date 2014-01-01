@@ -216,11 +216,11 @@ Vars::Vars() {
 	scene14_grandmaX = 0;
 	scene14_grandmaY = 0;
 	scene14_dude2X = 0;
-	scene14_var20 = 0;
-	scene14_var21 = 0;
-	scene14_var22 = 0;
-	scene14_var23 = 0;
-	scene14_var24 = 0;
+	scene14_ballDeltaX = 0;
+	scene14_ballDeltaY = 0;
+	scene14_ballX = 0;
+	scene14_ballY = 0;
+	scene14_hitsLeft = 0;
 
 	scene15_chantingCountdown = 0;
 	scene15_plusminus = 0;

@@ -292,11 +292,11 @@ public:
 	int scene14_grandmaX;
 	int scene14_grandmaY;
 	int scene14_dude2X;
-	int scene14_var20;
-	int scene14_var21;
-	int scene14_var22;
-	int scene14_var23;
-	int scene14_var24;
+	int scene14_ballDeltaX;
+	int scene14_ballDeltaY;
+	int scene14_ballX;
+	int scene14_ballY;
+	int scene14_hitsLeft;
 	Common::Point scene14_mouseCursorPos;
 
 	int scene15_chantingCountdown;

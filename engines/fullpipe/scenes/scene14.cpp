@@ -210,14 +210,14 @@ void sceneHandler14_manKickBall() {
 	int val = (g_vars->scene14_grandmaX + 65 - (g_vars->scene14_dudeX - 85)) / -32;
 	int den = val;
 
-	g_vars->scene14_var22 = g_vars->scene14_dudeX - 85;
-	g_vars->scene14_var23 = g_vars->scene14_dudeY - 76;
-	g_vars->scene14_var20 = -32;
+	g_vars->scene14_ballX = g_vars->scene14_dudeX - 85;
+	g_vars->scene14_ballY = g_vars->scene14_dudeY - 76;
+	g_vars->scene14_ballDeltaX = -32;
 
 	if (!val)
 		den = 1;
 
-	g_vars->scene14_var21 = (g_vars->scene14_grandmaY - 102 - val * val / 2 - (g_vars->scene14_dudeY - 76)) / den;
+	g_vars->scene14_ballDeltaY = (g_vars->scene14_grandmaY - 102 - val * val / 2 - (g_vars->scene14_dudeY - 76)) / den;
 
 	g_vars->scene14_flyingBall->show1(g_vars->scene14_dudeX - 85, g_vars->scene14_dudeY - 76, -1, 0);
 	g_vars->scene14_flyingBall->startAnim(MV_BAL14_SPIN, 0, -1);
@@ -236,7 +236,7 @@ void sceneHandler14_showBallFly() {
 
 	if (g_vars->scene14_grandma->_movement) {
 		x = g_vars->scene14_grandma->_movement->_ox;
-		g_vars->scene14_var22 = x;
+		g_vars->scene14_ballX = x;
 		y = g_vars->scene14_grandma->_movement->_oy;
 	} else {
 		x = g_vars->scene14_grandmaX;
@@ -246,7 +246,7 @@ void sceneHandler14_showBallFly() {
 	x = x + 38;
 	y = y - 77;
 
-	g_vars->scene14_var20 = 32;
+	g_vars->scene14_ballDeltaX = 32;
 
 	int dist = (g_vars->scene14_dudeX - 16 - x) / 32;
 	int den = dist;
@@ -254,11 +254,11 @@ void sceneHandler14_showBallFly() {
 	if (!dist)
 		den = 1;
 
-	g_vars->scene14_var22 = x + 32;
-	g_vars->scene14_var21 = (g_vars->scene14_dudeY - 40 - dist * dist / 2 - y) / den;
-	g_vars->scene14_var23 = g_vars->scene14_var21 + y;
+	g_vars->scene14_ballX = x + 32;
+	g_vars->scene14_ballDeltaY = (g_vars->scene14_dudeY - 40 - dist * dist / 2 - y) / den;
+	g_vars->scene14_ballY = g_vars->scene14_ballDeltaY + y;
 
-	g_vars->scene14_flyingBall->show1(x + 32, g_vars->scene14_var21 + y, MV_BAL14_SPIN, 0);
+	g_vars->scene14_flyingBall->show1(x + 32, g_vars->scene14_ballDeltaY + y, MV_BAL14_SPIN, 0);
 	g_vars->scene14_flyingBall->_priority = 5;
 	g_vars->scene14_flyingBall->startAnim(MV_BAL14_SPIN, 0, -1);
 
@@ -371,7 +371,7 @@ void sceneHandler14_startArcade() {
 	g_fp->_aniMan2 = 0;
 	g_vars->scene14_sceneDeltaX = 50;
 	g_vars->scene14_sceneDiffX = 100;
-	g_vars->scene14_var24 = 4;
+	g_vars->scene14_hitsLeft = 4;
 	g_vars->scene14_pink = 0;
 
 	chainQueue(QU_SC14_STARTARCADE, 0);
@@ -554,7 +554,7 @@ void sceneHandler14_dudeFall() {
 
 		sceneHandler14_grandmaJumpThrow();
 	}
-	++g_vars->scene14_var24;
+	++g_vars->scene14_hitsLeft;
 }
 
 void sceneHandler14_grandmaStepForward() {
@@ -574,7 +574,7 @@ void sceneHandler14_arcadeLogic() {
 	if (g_vars->scene14_dudeIsKicking)
 		sceneHandler14_clearCallback();
 
-	if (g_vars->scene14_var24 <= 1) {
+	if (g_vars->scene14_hitsLeft <= 1) {
 		setInputDisabled(1);
 
 		sceneHandler14_clearCallback();
@@ -584,13 +584,13 @@ void sceneHandler14_arcadeLogic() {
 
 		chainQueue(QU_SC14_WINARCADE, 1);
 
-		--g_vars->scene14_var24;
+		--g_vars->scene14_hitsLeft;
 	} else {
 		ExCommand *ex;
 
 		g_vars->scene14_grandma->changeStatics2(ST_GMA_SIT);
 
-		if (g_vars->scene14_var24 != 3 || g_vars->scene14_pink) {
+		if (g_vars->scene14_hitsLeft != 3 || g_vars->scene14_pink) {
 			MessageQueue *mq = new MessageQueue(g_fp->_globalMessageQueueList->compact());
 
 			ex = new ExCommand(ANI_GRANDMA, 1, MV_GMA_BACKOFF, 0, 0, 0, 1, 0, 0, 0);
@@ -617,22 +617,22 @@ void sceneHandler14_arcadeLogic() {
 		}
 
 		sceneHandler14_grandmaStepForward();
-		--g_vars->scene14_var24;
+		--g_vars->scene14_hitsLeft;
 	}
 }
 
 void sceneHandler14_animateBall() {
-	int x = g_vars->scene14_var20 + g_vars->scene14_var22;
-	int y = g_vars->scene14_var21 + g_vars->scene14_var23;
+	int x = g_vars->scene14_ballDeltaX + g_vars->scene14_ballX;
+	int y = g_vars->scene14_ballDeltaY + g_vars->scene14_ballY;
 
-	g_vars->scene14_var22 += g_vars->scene14_var20;
-	g_vars->scene14_var23 += g_vars->scene14_var21;
+	g_vars->scene14_ballX += g_vars->scene14_ballDeltaX;
+	g_vars->scene14_ballY += g_vars->scene14_ballDeltaY;
 
-	g_vars->scene14_var21++;
+	g_vars->scene14_ballDeltaY++;
 
-	if (g_vars->scene14_var21 - 1 + g_vars->scene14_var23 > 517) {
+	if (g_vars->scene14_ballDeltaY - 1 + g_vars->scene14_ballY > 517) {
 		if (x <= g_vars->scene14_dudeX - 16 ) {
-			if ( g_vars->scene14_var20 >= 0 || x >= g_vars->scene14_grandmaX + 65 || x <= g_vars->scene14_grandmaX - 135 || y <= g_vars->scene14_grandmaY - 102 ) {
+			if ( g_vars->scene14_ballDeltaX >= 0 || x >= g_vars->scene14_grandmaX + 65 || x <= g_vars->scene14_grandmaX - 135 || y <= g_vars->scene14_grandmaY - 102 ) {
 				if (g_vars->scene14_flyingBall->_movement)
 					g_vars->scene14_flyingBall->_movement->setOXY(x, y);
 				else
