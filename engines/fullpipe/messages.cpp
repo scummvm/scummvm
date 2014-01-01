@@ -331,6 +331,10 @@ void MessageQueue::addExCommandToEnd(ExCommand *ex) {
 	_exCommands.push_back(ex);
 }
 
+void MessageQueue::insertExCommandAt(int pos, ExCommand *ex) {
+	warning("STUB: MessageQueue::insertExCommandAt()");
+}
+
 ExCommand *MessageQueue::getExCommandByIndex(uint idx) {
 	if (idx >= getCount())
 		return 0;

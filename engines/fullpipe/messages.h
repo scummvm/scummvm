@@ -124,6 +124,7 @@ class MessageQueue : public CObject {
 
 	void addExCommand(ExCommand *ex);
 	void addExCommandToEnd(ExCommand *ex);
+	void insertExCommandAt(int pos, ExCommand *ex);
 	ExCommand *getExCommandByIndex(uint idx);
 	void deleteExCommandByIndex(uint idx, bool doFree);
 

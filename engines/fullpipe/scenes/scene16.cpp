@@ -245,8 +245,58 @@ void sceneHandler16_startLaugh() {
 	g_vars->scene16_var09 = 1;
 }
 
-void sceneHandler16_sub02() {
-	warning("STUB: sceneHandler16_sub02()");
+void sceneHandler16_drink() {
+	if (g_vars->scene16_mug->_flags & 4) {
+		if (!g_vars->scene16_jettie->_movement) {
+			if (!g_vars->scene16_var06 || !g_vars->scene16_var06->_movement || g_vars->scene16_var06->_movement->_id != MV_BOY_DRINK) {
+				if (!g_vars->scene16_var07 || !g_vars->scene16_var07->_movement || g_vars->scene16_var07->_movement->_id != MV_GRL_DRINK) {
+					if (g_vars->scene16_mug->_statics->_staticsId == ST_MUG_FULL) {
+						MessageQueue *mq;
+						ExCommand *ex;
+
+						if (g_vars->scene16_var06) {
+							g_fp->_aniMan->_flags |= 0x180;
+
+							g_vars->scene16_var06->changeStatics2(ST_BOY_STAND);
+							g_vars->scene16_var06->queueMessageQueue(0);
+
+							mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC16_BOYKICK), 0, 1);
+
+							mq->replaceKeyCode(-1, g_vars->scene16_var06->_okeyCode);
+							
+							ex = new ExCommand(ANI_MAN, 34, 384, 0, 0, 0, 1, 0, 0, 0);
+							ex->_excFlags |= 3u;
+							ex->_field_14 = 384;
+							ex->_messageNum = 0;
+
+							mq->insertExCommandAt(2, ex);
+							mq->setFlags(mq->getFlags() | 1);
+							mq->chain(0);
+						} else {
+							g_fp->_aniMan->_flags |= 1;
+
+							mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC16_MANDRINK), 0, 1);
+
+							ex = new ExCommand(ANI_MAN, 34, 256, 0, 0, 0, 1, 0, 0, 0);
+							ex->_excFlags |= 3u;
+							ex->_field_14 = 256;
+							ex->_messageNum = 0;
+
+							mq->addExCommandToEnd(ex);
+							mq->setFlags(mq->getFlags() | 1);
+							mq->chain(0);
+
+							g_fp->_currentScene->getStaticANIObject1ById(ANI_GIRL, -1)->changeStatics2(ST_GRL_STAND);
+						}
+
+						g_fp->_currentScene->getStaticANIObject1ById(ANI_WIRE16, -1)->show1(-1, -1, -1, 0);
+					} else {
+						chainObjQueue(g_fp->_aniMan, QU_SC16_TAKEMUG, 1);
+					}
+				}
+			}
+		}
+	}
 }
 
 void sceneHandler16_mugClick() {
@@ -262,7 +312,7 @@ void sceneHandler16_mugClick() {
 			postExCommand(g_fp->_aniMan->_id, 2, 310, 449, 0, -1);
 		}
 	} else {
-		sceneHandler16_sub02();
+		sceneHandler16_drink();
 	}
 }
 
