@@ -732,10 +732,11 @@ void SmackerDecoder::SmackerVideoTrack::unpackPalette(Common::SeekableReadStream
 
 			assert(g < 0xc0 && b < 0xc0);
 
-			// upscale to full 8-bit color values by multiplying by 4
-			*pal++ = b * 4;
-			*pal++ = g * 4;
-			*pal++ = r * 4;
+			// upscale to full 8-bit color values. The Multimedia Wiki suggests
+			// a lookup table for this, but this should produce the same result.
+			*pal++ = (b * 4 + b / 16);
+			*pal++ = (g * 4 + g / 16);
+			*pal++ = (r * 4 + r / 16);
 		}
 	}
 
