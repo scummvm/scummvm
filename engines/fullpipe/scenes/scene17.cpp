@@ -77,7 +77,12 @@ void sceneHandler17_fillBottle() {
 }
 
 void sceneHandler17_testTruba() {
-	warning("STUB: sceneHandler17_testTruba()");
+	if (g_vars->scene17_hand->isIdle()) {
+		if (!g_vars->scene17_hand->_movement || g_vars->scene17_hand->_movement->_id != MV_HND17_FIGA) {
+			g_vars->scene17_hand->changeStatics2(ST_HND17_EMPTY);
+			g_vars->scene17_hand->startAnim(MV_HND17_FIGA, 0, -1);
+		}
+	}
 }
 
 void sceneHandler17_showBottle() {
@@ -109,7 +114,11 @@ void sceneHandler17_moonshineFill() {
 }
 
 void sceneHandler17_updateFlies() {
-	warning("STUB: sceneHandler17_updateFlies()");
+	g_fp->_floaters->genFlies(g_fp->_currentScene, 239, -50, 20, 4);
+
+	g_fp->_floaters->_array2[0]->countdown = g_fp->_rnd->getRandomNumber(5) + 6; // FIXME. Check
+	g_fp->_floaters->_array2[0]->val6 = 239;
+	g_fp->_floaters->_array2[0]->val7 = -50;
 }
 
 
