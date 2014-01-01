@@ -133,7 +133,7 @@ void sceneHandler16_showBearded() {
 }
 
 void sceneHandler16_showMugFull() {
-	warning("STUB: sceneHandler16_showMugFull()");
+	g_vars->scene16_mug->changeStatics2(ST_MUG_FULL);
 }
 
 void sceneHandler16_fillMug() {
@@ -149,27 +149,33 @@ void sceneHandler16_mugClick() {
 }
 
 void sceneHandler16_showMan() {
-	warning("STUB: sceneHandler16_showMan()");
+	g_fp->_aniMan->changeStatics2(ST_MAN_RIGHT);
+	g_fp->_aniMan->show1(-1, -1, -1, 0);
+
+	g_vars->scene16_mug->show1(-1, -1, -1, 0);
 }
 
 void sceneHandler16_showMug() {
-	warning("STUB: sceneHandler16_showMug()");
+	chainQueue(QU_SC16_SHOWMUG, 0);
 }
 
 void sceneHandler16_hideMan() {
-	warning("STUB: sceneHandler16_hideMan()");
+	g_fp->_aniMan->changeStatics2(ST_MAN_RIGHT);
+	g_fp->_aniMan->hide();
+
+	g_vars->scene16_mug->hide();
 }
 
 void sceneHandler16_hideMug() {
-	warning("STUB: sceneHandler16_hideMug()");
+	g_vars->scene16_mug->hide();
 }
 
 void sceneHandler16_hideWire() {
-	warning("STUB: sceneHandler16_hideWire()");
+	g_vars->scene16_wire->hide();
 }
 
 void sceneHandler16_showWire() {
-	warning("STUB: sceneHandler16_showWire()");
+	g_vars->scene16_wire->show1(-1, -1, -1, 0);
 }
 
 void sceneHandler16_sub01() {
@@ -180,8 +186,13 @@ void sceneHandler16_sub02() {
 	warning("STUB: sceneHandler16_sub02()");
 }
 
-void sceneHandler16_sub03() {
-	warning("STUB: sceneHandler16_sub03()");
+void sceneHandler16_girlROTFL() {
+	StaticANIObject *girl = g_fp->_currentScene->getStaticANIObject1ById(ANI_GIRL, -1);
+
+	girl->changeStatics2(ST_GRL_LAUGH);
+	girl->startAnim(MV_GRL_FALL, 0, -1);
+
+	g_vars->scene16_var09 = 0;
 }
 
 int sceneHandler16(ExCommand *cmd) {
@@ -271,7 +282,7 @@ int sceneHandler16(ExCommand *cmd) {
 		if (g_vars->scene16_var09) {
 			if (g_fp->_aniMan->_movement)
 				if (g_fp->_aniMan->_movement->_id == MV_MAN_TURN_RL)
-					sceneHandler16_sub03();
+					sceneHandler16_girlROTFL();
 		}
 
 		g_fp->_behaviorManager->updateBehaviors();
