@@ -1390,7 +1390,10 @@ void GfxManager::copyFrom(GfxSurface &src, const Rect &srcBounds, const Rect &de
 
 
 GfxFont::GfxFont() {
-	_fontNumber = (g_vm->getFeatures() & GF_DEMO) ? 0 : 50;
+	if ((g_vm->getGameID() == GType_Ringworld) && (g_vm->getFeatures() & GF_DEMO))
+		_fontNumber = 0;
+	else
+		_fontNumber = 50;
 	_numChars = 0;
 	_bpp = 0;
 	_fontData = NULL;

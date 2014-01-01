@@ -156,7 +156,7 @@ void EventsClass::setCursor(CursorType cursorType) {
 		// No cursor
 		g_globals->setFlag(122);
 
-		if ((g_vm->getFeatures() & GF_DEMO) || (g_vm->getGameID() != GType_Ringworld))  {
+		if ((g_vm->getGameID() != GType_Ringworld) || ((g_vm->getGameID() == GType_Ringworld) && (g_vm->getFeatures() & GF_DEMO)))  {
 			CursorMan.showMouse(false);
 			return;
 		}
