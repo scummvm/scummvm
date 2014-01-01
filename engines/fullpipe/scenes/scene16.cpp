@@ -124,4 +124,162 @@ int scene16_updateCursor() {
 	return g_fp->_cursorId;
 }
 
+void sceneHandler16_laughSound() {
+	warning("STUB: sceneHandler16_laughSound()");
+}
+
+void sceneHandler16_showBearded() {
+	warning("STUB: sceneHandler16_showBearded()");
+}
+
+void sceneHandler16_showMugFull() {
+	warning("STUB: sceneHandler16_showMugFull()");
+}
+
+void sceneHandler16_fillMug() {
+	warning("STUB: sceneHandler16_fillMug()");
+}
+
+void sceneHandler16_startLaugh() {
+	warning("STUB: sceneHandler16_startLaugh()");
+}
+
+void sceneHandler16_mugClick() {
+	warning("STUB: sceneHandler16_mugClick()");
+}
+
+void sceneHandler16_showMan() {
+	warning("STUB: sceneHandler16_showMan()");
+}
+
+void sceneHandler16_showMug() {
+	warning("STUB: sceneHandler16_showMug()");
+}
+
+void sceneHandler16_hideMan() {
+	warning("STUB: sceneHandler16_hideMan()");
+}
+
+void sceneHandler16_hideMug() {
+	warning("STUB: sceneHandler16_hideMug()");
+}
+
+void sceneHandler16_hideWire() {
+	warning("STUB: sceneHandler16_hideWire()");
+}
+
+void sceneHandler16_showWire() {
+	warning("STUB: sceneHandler16_showWire()");
+}
+
+void sceneHandler16_sub01() {
+	warning("STUB: sceneHandler16_sub01()");
+}
+
+void sceneHandler16_sub02() {
+	warning("STUB: sceneHandler16_sub02()");
+}
+
+void sceneHandler16_sub03() {
+	warning("STUB: sceneHandler16_sub03()");
+}
+
+int sceneHandler16(ExCommand *cmd) {
+	if (cmd->_messageKind != 17)
+		return 0;
+
+	switch(cmd->_messageNum) {
+	case MSG_SC16_LAUGHSOUND:
+		sceneHandler16_laughSound();
+		break;
+
+	case MSG_SC16_SHOWBEARDED:
+		sceneHandler16_showBearded();
+		break;
+
+	case MSG_SC16_SHOWMUGFULL:
+		sceneHandler16_showMugFull();
+		break;
+
+	case MSG_SC16_FILLMUG:
+		sceneHandler16_fillMug();
+		break;
+
+	case MSG_SC16_STARTLAUGH:
+		sceneHandler16_startLaugh();
+		break;
+
+	case MSG_SC16_MUGCLICK:
+		if (!g_fp->_aniMan->isIdle() || g_fp->_aniMan->_flags & 0x100)
+			cmd->_messageKind = 0;
+		else
+			sceneHandler16_mugClick();
+
+		break;
+
+	case MSG_SC16_SHOWMAN:
+		sceneHandler16_showMan();
+		break;
+
+	case MSG_SC16_SHOWMUG:
+		sceneHandler16_showMug();
+		break;
+
+	case MSG_SC16_HIDEMAN:
+		sceneHandler16_hideMan();
+		break;
+
+	case MSG_SC16_HIDEMUG:
+		sceneHandler16_hideMug();
+		break;
+
+	case MSG_SC16_HIDEWIRE:
+		sceneHandler16_hideWire();
+		break;
+
+	case MSG_SC16_SHOWWIRE:
+		sceneHandler16_showWire();
+		break;
+
+	case 33:
+		if (g_fp->_aniMan2) {
+			int x = g_fp->_aniMan2->_ox;
+
+			g_vars->scene16_var11 = x;
+			g_vars->scene16_var12 = g_fp->_aniMan2->_oy;
+
+			if (x < g_fp->_sceneRect.left + g_vars->scene16_var01) {
+				g_fp->_currentScene->_x = x - g_vars->scene16_var03 - g_fp->_sceneRect.left;
+
+				x = g_vars->scene16_var11;
+			}
+
+			if (x > g_fp->_sceneRect.right - g_vars->scene16_var01)
+				g_fp->_currentScene->_x = x + g_vars->scene16_var03 - g_fp->_sceneRect.right;
+		}
+
+		if (g_vars->scene16_var10) {
+			g_vars->scene16_var08++;
+
+			if (g_vars->scene16_var08 < 280) {
+				sceneHandler16_sub01();
+
+				g_vars->scene16_var08 = 0;
+			}
+		}
+
+		if (g_vars->scene16_var09) {
+			if (g_fp->_aniMan->_movement)
+				if (g_fp->_aniMan->_movement->_id == MV_MAN_TURN_RL)
+					sceneHandler16_sub03();
+		}
+
+		g_fp->_behaviorManager->updateBehaviors();
+		g_fp->startSceneTrack();
+
+	}
+
+	return 0;
+}
+
 } // End of namespace Fullpipe

@@ -319,6 +319,8 @@ public:
 	int scene16_var09;
 	int scene16_sound;
 	int scene16_var10;
+	int scene16_var11;
+	int scene16_var12;
 
 	bool scene24_jetIsOn;
 	bool scene24_flowIsLow;

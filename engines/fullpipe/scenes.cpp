@@ -242,6 +242,8 @@ Vars::Vars() {
 	scene16_var09 = 0;
 	scene16_sound = 0;
 	scene16_var10 = 0;
+	scene16_var11 = 0;
+	scene16_var12 = 0;
 
 	scene24_jetIsOn = false;
 	scene24_flowIsLow = false;
