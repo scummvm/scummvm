@@ -222,7 +222,7 @@ namespace Fullpipe {
 #define sO_Pedestal_17 "\xd2\xf3\xec\xe1\xe0_17"	// "Тумба_17"
 #define sO_Pedestal_33 "\xd2\xf3\xec\xe1\xe0_33"	// "Тумба_33"
 #define sO_NearDudesStairs "\xd3 \xc4\xff\xe4\xe8 \xed\xe0 \xeb\xe5\xf1\xf2\xed\xe8\xf6\xe5"	// "У Дяди на лестнице"
-#define sO_NearDude "\xd3 \xc4\xff\xe4\xe8"	// "У Дяди"
+#define sO_DudeHas "\xd3 \xc4\xff\xe4\xe8"	// "У Дяди"
 #define sO_NearPipeWithStool "\xd3 \xf2\xf0\xf3\xe1\xfb \xf1 \xf2\xe0\xe1\xf3\xf0\xe5\xf2\xea\xee\xe9"	// "У трубы с табуреткой"
 #define sO_NearPipe "\xd3 \xf2\xf0\xf3\xe1\xfb"	// "У трубы"
 #define sO_Janitors "\xd3\xe1\xee\xf0\xf9\xe8\xea\xe8"	// "Уборщики"

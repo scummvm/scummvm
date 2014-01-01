@@ -313,8 +313,8 @@ public:
 	int scene16_var03;
 	int scene16_var04;
 	Common::List<StaticANIObject *> scene16_var05;
-	int scene16_var06;
-	int scene16_var07;
+	StaticANIObject *scene16_var06;
+	StaticANIObject *scene16_var07;
 	int scene16_var08;
 	StaticANIObject *scene16_wire;
 	StaticANIObject *scene16_mug;

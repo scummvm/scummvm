@@ -160,7 +160,73 @@ void sceneHandler16_showMugFull() {
 }
 
 void sceneHandler16_fillMug() {
-	warning("STUB: sceneHandler16_fillMug()");
+	if (g_vars->scene16_mug->_flags & 4) {
+		g_vars->scene16_jettie->_priority = 2;
+		g_vars->scene16_jettie->startAnim(MV_JTI_FLOWIN, 0, -1);
+
+		if (g_fp->_aniMan->_movement) {
+			if (g_fp->_aniMan->_movement->_id == MV_MAN16_TAKEMUG) {
+				g_fp->_aniMan->changeStatics2(ST_MAN_RIGHT);
+
+				g_vars->scene16_mug->show1(-1, -1, -1, 0);
+
+				g_fp->setObjectState(sO_Cup, g_fp->getObjectEnumState(sO_Cup, sO_DudeHas));
+			}
+		}
+		return;
+	}
+
+	MessageQueue *mq;
+
+	if (!(g_vars->scene16_boot->_flags & 4)) {
+		g_vars->scene16_jettie->_priority = 15;
+		g_vars->scene16_jettie->startAnim(MV_JTI_FLOWBY, 0, -1);
+
+		if (g_vars->scene16_var06) {
+			mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC16_BOYOUT), 0, 1);
+
+			mq->replaceKeyCode(-1, g_vars->scene16_var06->_okeyCode);
+			if (mq->chain(g_vars->scene16_var06) || !mq)
+				return;
+		} else {
+			if (!g_vars->scene16_var07)
+				return;
+
+			mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC16_GIRLOUT), 0, 1);
+
+			mq->replaceKeyCode(-1, g_vars->scene16_var07->_okeyCode);
+			if (mq->chain(g_vars->scene16_var07) || !mq)
+				return;
+		}
+		delete mq;
+
+		return;
+	}
+
+	g_vars->scene16_jettie->_priority = 15;
+
+	g_vars->scene16_boot->startAnim(MV_BT16_FILL, 0, -1);
+
+	StaticANIObject *ani;
+
+	if (g_vars->scene16_var06) {
+		mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC16_BOYOUT), 0, 1);
+
+		mq->replaceKeyCode(-1, g_vars->scene16_var06->_okeyCode);
+
+		ani = g_vars->scene16_var06;
+	} else {
+		if (!g_vars->scene16_var07)
+			return;
+
+		mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC16_GIRLOUT), 0, 1);
+
+		mq->replaceKeyCode(-1, g_vars->scene16_var07->_okeyCode);
+		ani = g_vars->scene16_var07;
+	}
+
+	if (!mq->chain(ani))
+		delete mq;
 }
 
 void sceneHandler16_startLaugh() {
