@@ -671,6 +671,8 @@ namespace Fullpipe {
 #define QU_SC16_BOYOUT 1364
 #define QU_SC16_GIRLLAUGH 1375
 #define QU_SC16_GIRLOUT 1365
+#define QU_SC16_GOBOY 1347
+#define QU_SC16_GOGIRL 1348
 #define QU_SC16_SHOWMUG 1361
 #define SND_16_034 3854
 #define SND_16_035 3855

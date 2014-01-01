@@ -296,8 +296,42 @@ void sceneHandler16_showWire() {
 	g_vars->scene16_wire->show1(-1, -1, -1, 0);
 }
 
-void sceneHandler16_sub01() {
-	warning("STUB: sceneHandler16_sub01()");
+void sceneHandler16_putOnWheel() {
+	StaticANIObject *ani = g_vars->scene16_var06;
+
+	if (!ani)
+		ani = g_vars->scene16_var07;
+
+	if (ani)
+		g_vars->scene16_var05.push_back(ani);
+
+	ani = g_vars->scene16_var05.front();
+
+	g_vars->scene16_var05.pop_front();
+
+	if (ani) {
+		MessageQueue *mq;
+
+		if (ani->_id == ANI_BOY) {
+			mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC16_GOBOY), 0, 1);
+
+			mq->replaceKeyCode(-1, ani->_okeyCode);
+			mq->chain(0);
+
+			g_vars->scene16_var06 = ani;
+			g_vars->scene16_var07 = 0;
+		} else if (ani->_id == ANI_GIRL) {
+			if (g_fp->getObjectState(sO_Girl) == g_fp->getObjectEnumState(sO_Girl, sO_IsSwinging)) {
+				mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC16_GOGIRL), 0, 1);
+
+				mq->replaceKeyCode(-1, ani->_okeyCode);
+				mq->chain(0);
+
+				g_vars->scene16_var06 = 0;
+				g_vars->scene16_var07 = ani;
+			}
+		}
+	}
 }
 
 void sceneHandler16_girlROTFL() {
@@ -387,7 +421,7 @@ int sceneHandler16(ExCommand *cmd) {
 			g_vars->scene16_var08++;
 
 			if (g_vars->scene16_var08 < 280) {
-				sceneHandler16_sub01();
+				sceneHandler16_putOnWheel();
 
 				g_vars->scene16_var08 = 0;
 			}
