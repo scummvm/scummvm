@@ -55,41 +55,42 @@ void scene16_initScene(Scene *sc) {
 	if (g_fp->getObjectState(sO_Bridge) == g_fp->getObjectEnumState(sO_Bridge, sO_Convoluted)) {
 		g_vars->scene16_var10 = 1;
 
-		StaticANIObject *boy = sc->getStaticANIObject1ById(ANI_BOY, -1);
-		boy->loadMovementsPixelData();
+		StaticANIObject *boy[2];
+		boy[0] = sc->getStaticANIObject1ById(ANI_BOY, -1);
+		boy[0]->loadMovementsPixelData();
 
-		StaticANIObject *newboy = new StaticANIObject(boy);
-		sc->addStaticANIObject(boy, 1);
+		boy[1] = new StaticANIObject(boy[0]);
+		sc->addStaticANIObject(boy[1], 1);
 		
-		int phase = 0;
+		int idx = 0;
 		
 		for (int i = 0; i < 3; i++) {
-			g_vars->scene16_var05.push_back(*(&boy + phase));
+			g_vars->scene16_var05.push_back(boy[idx]);
 
-			phase++;
+			idx++;
 
-			if (phase >= 2)
-				phase = 0;
+			if (idx >= 2)
+				idx = 0;
 		}
 		
 		g_vars->scene16_var05.push_back(sc->getStaticANIObject1ById(ANI_GIRL, -1));
 
 		for (int i = 0; i < 4; i++) {
-			g_vars->scene16_var05.push_back(*(&boy + phase));
+			g_vars->scene16_var05.push_back(boy[idx]);
 
-			phase++;
+			idx++;
 
-			if (phase >= 2)
-				phase = 0;
+			if (idx >= 2)
+				idx = 0;
 		}
 	} else {
 		g_fp->setObjectState(sO_Girl, g_fp->getObjectEnumState(sO_Girl, sO_IsSwinging));
 
 		g_vars->scene16_var10 = 0;
 
-		StaticANIObject *ani = new StaticANIObject(accessScene(SC_COMMON)->getStaticANIObject1ById(ANI_BEARDED_CMN, -1));
+		StaticANIObject *ani = new StaticANIObject(g_fp->accessScene(SC_COMMON)->getStaticANIObject1ById(ANI_BEARDED_CMN, -1));
 		ani->_movement = 0;
-		ani->_statics = ani->_staticsList[0];
+		ani->_statics = (Statics *)ani->_staticsList[0];
 		sc->addStaticANIObject(ani, 1);
 	}
 

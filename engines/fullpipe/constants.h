@@ -640,6 +640,18 @@ namespace Fullpipe {
 #define ST_GMS_BOOT 1270
 #define ST_GMS_BOOTLESS2 3316
 
+// Scene 16
+#define ANI_BEARDED_CMN 3420
+#define ANI_BOOT_16 3285
+#define ANI_BOY 1327
+#define ANI_GIRL 1328
+#define ANI_JETTIE 1392
+#define ANI_MUG 1296
+#define ANI_WIRE16 1344
+#define MV_GRL_LAUGH_POPA 3278
+#define SND_16_034 3854
+#define ST_MUG_EMPTY 1298
+
 // Scene 24
 #define ANI_DROP_24 3505
 #define ANI_JET24 1837

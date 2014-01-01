@@ -227,6 +227,22 @@ Vars::Vars() {
 	scene15_ladder = 0;
 	scene15_boot = 0;
 
+	scene16_var01 = 0;
+	scene16_var02 = 0;
+	scene16_var03 = 0;
+	scene16_var04 = 0;
+	scene16_var05.clear();
+	scene16_var06 = 0;
+	scene16_var07 = 0;
+	scene16_var08 = 0;
+	scene16_wire = 0;
+	scene16_mug = 0;
+	scene16_jettie = 0;
+	scene16_boot = 0;
+	scene16_var09 = 0;
+	scene16_sound = 0;
+	scene16_var10 = 0;
+
 	scene24_jetIsOn = false;
 	scene24_flowIsLow = false;
 	scene24_waterIsOn = false;
