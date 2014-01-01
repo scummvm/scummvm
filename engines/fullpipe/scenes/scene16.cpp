@@ -37,13 +37,9 @@
 namespace Fullpipe {
 
 void scene16_initScene(Scene *sc) {
-	g_vars->scene16_var01 = 200;
-	g_vars->scene16_var02 = 200;
-	g_vars->scene16_var03 = 300;
-	g_vars->scene16_var04 = 300;
-	g_vars->scene16_var05.clear();
-	g_vars->scene16_var06 = 0;
-	g_vars->scene16_var07 = 0;
+	g_vars->scene16_figures.clear();
+	g_vars->scene16_walkingBoy = 0;
+	g_vars->scene16_walkingGirl = 0;
 	g_vars->scene16_var08 = 200;
 	g_vars->scene16_wire = sc->getStaticANIObject1ById(ANI_WIRE16, -1);
 	g_vars->scene16_mug = sc->getStaticANIObject1ById(ANI_MUG, -1);
@@ -65,7 +61,7 @@ void scene16_initScene(Scene *sc) {
 		int idx = 0;
 		
 		for (int i = 0; i < 3; i++) {
-			g_vars->scene16_var05.push_back(boy[idx]);
+			g_vars->scene16_figures.push_back(boy[idx]);
 
 			idx++;
 
@@ -73,10 +69,10 @@ void scene16_initScene(Scene *sc) {
 				idx = 0;
 		}
 		
-		g_vars->scene16_var05.push_back(sc->getStaticANIObject1ById(ANI_GIRL, -1));
+		g_vars->scene16_figures.push_back(sc->getStaticANIObject1ById(ANI_GIRL, -1));
 
 		for (int i = 0; i < 4; i++) {
-			g_vars->scene16_var05.push_back(boy[idx]);
+			g_vars->scene16_figures.push_back(boy[idx]);
 
 			idx++;
 
@@ -182,20 +178,20 @@ void sceneHandler16_fillMug() {
 		g_vars->scene16_jettie->_priority = 15;
 		g_vars->scene16_jettie->startAnim(MV_JTI_FLOWBY, 0, -1);
 
-		if (g_vars->scene16_var06) {
+		if (g_vars->scene16_walkingBoy) {
 			mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC16_BOYOUT), 0, 1);
 
-			mq->replaceKeyCode(-1, g_vars->scene16_var06->_okeyCode);
-			if (mq->chain(g_vars->scene16_var06) || !mq)
+			mq->replaceKeyCode(-1, g_vars->scene16_walkingBoy->_okeyCode);
+			if (mq->chain(g_vars->scene16_walkingBoy) || !mq)
 				return;
 		} else {
-			if (!g_vars->scene16_var07)
+			if (!g_vars->scene16_walkingGirl)
 				return;
 
 			mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC16_GIRLOUT), 0, 1);
 
-			mq->replaceKeyCode(-1, g_vars->scene16_var07->_okeyCode);
-			if (mq->chain(g_vars->scene16_var07) || !mq)
+			mq->replaceKeyCode(-1, g_vars->scene16_walkingGirl->_okeyCode);
+			if (mq->chain(g_vars->scene16_walkingGirl) || !mq)
 				return;
 		}
 		delete mq;
@@ -209,20 +205,20 @@ void sceneHandler16_fillMug() {
 
 	StaticANIObject *ani;
 
-	if (g_vars->scene16_var06) {
+	if (g_vars->scene16_walkingBoy) {
 		mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC16_BOYOUT), 0, 1);
 
-		mq->replaceKeyCode(-1, g_vars->scene16_var06->_okeyCode);
+		mq->replaceKeyCode(-1, g_vars->scene16_walkingBoy->_okeyCode);
 
-		ani = g_vars->scene16_var06;
+		ani = g_vars->scene16_walkingBoy;
 	} else {
-		if (!g_vars->scene16_var07)
+		if (!g_vars->scene16_walkingGirl)
 			return;
 
 		mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC16_GIRLOUT), 0, 1);
 
-		mq->replaceKeyCode(-1, g_vars->scene16_var07->_okeyCode);
-		ani = g_vars->scene16_var07;
+		mq->replaceKeyCode(-1, g_vars->scene16_walkingGirl->_okeyCode);
+		ani = g_vars->scene16_walkingGirl;
 	}
 
 	if (!mq->chain(ani))
@@ -248,21 +244,21 @@ void sceneHandler16_startLaugh() {
 void sceneHandler16_drink() {
 	if (g_vars->scene16_mug->_flags & 4) {
 		if (!g_vars->scene16_jettie->_movement) {
-			if (!g_vars->scene16_var06 || !g_vars->scene16_var06->_movement || g_vars->scene16_var06->_movement->_id != MV_BOY_DRINK) {
-				if (!g_vars->scene16_var07 || !g_vars->scene16_var07->_movement || g_vars->scene16_var07->_movement->_id != MV_GRL_DRINK) {
+			if (!g_vars->scene16_walkingBoy || !g_vars->scene16_walkingBoy->_movement || g_vars->scene16_walkingBoy->_movement->_id != MV_BOY_DRINK) {
+				if (!g_vars->scene16_walkingGirl || !g_vars->scene16_walkingGirl->_movement || g_vars->scene16_walkingGirl->_movement->_id != MV_GRL_DRINK) {
 					if (g_vars->scene16_mug->_statics->_staticsId == ST_MUG_FULL) {
 						MessageQueue *mq;
 						ExCommand *ex;
 
-						if (g_vars->scene16_var06) {
+						if (g_vars->scene16_walkingBoy) {
 							g_fp->_aniMan->_flags |= 0x180;
 
-							g_vars->scene16_var06->changeStatics2(ST_BOY_STAND);
-							g_vars->scene16_var06->queueMessageQueue(0);
+							g_vars->scene16_walkingBoy->changeStatics2(ST_BOY_STAND);
+							g_vars->scene16_walkingBoy->queueMessageQueue(0);
 
 							mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC16_BOYKICK), 0, 1);
 
-							mq->replaceKeyCode(-1, g_vars->scene16_var06->_okeyCode);
+							mq->replaceKeyCode(-1, g_vars->scene16_walkingBoy->_okeyCode);
 							
 							ex = new ExCommand(ANI_MAN, 34, 384, 0, 0, 0, 1, 0, 0, 0);
 							ex->_excFlags |= 3u;
@@ -347,17 +343,17 @@ void sceneHandler16_showWire() {
 }
 
 void sceneHandler16_putOnWheel() {
-	StaticANIObject *ani = g_vars->scene16_var06;
+	StaticANIObject *ani = g_vars->scene16_walkingBoy;
 
 	if (!ani)
-		ani = g_vars->scene16_var07;
+		ani = g_vars->scene16_walkingGirl;
 
 	if (ani)
-		g_vars->scene16_var05.push_back(ani);
+		g_vars->scene16_figures.push_back(ani);
 
-	ani = g_vars->scene16_var05.front();
+	ani = g_vars->scene16_figures.front();
 
-	g_vars->scene16_var05.pop_front();
+	g_vars->scene16_figures.pop_front();
 
 	if (ani) {
 		MessageQueue *mq;
@@ -368,8 +364,8 @@ void sceneHandler16_putOnWheel() {
 			mq->replaceKeyCode(-1, ani->_okeyCode);
 			mq->chain(0);
 
-			g_vars->scene16_var06 = ani;
-			g_vars->scene16_var07 = 0;
+			g_vars->scene16_walkingBoy = ani;
+			g_vars->scene16_walkingGirl = 0;
 		} else if (ani->_id == ANI_GIRL) {
 			if (g_fp->getObjectState(sO_Girl) == g_fp->getObjectEnumState(sO_Girl, sO_IsSwinging)) {
 				mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC16_GOGIRL), 0, 1);
@@ -377,8 +373,8 @@ void sceneHandler16_putOnWheel() {
 				mq->replaceKeyCode(-1, ani->_okeyCode);
 				mq->chain(0);
 
-				g_vars->scene16_var06 = 0;
-				g_vars->scene16_var07 = ani;
+				g_vars->scene16_walkingBoy = 0;
+				g_vars->scene16_walkingGirl = ani;
 			}
 		}
 	}
@@ -457,14 +453,14 @@ int sceneHandler16(ExCommand *cmd) {
 			g_vars->scene16_var11 = x;
 			g_vars->scene16_var12 = g_fp->_aniMan2->_oy;
 
-			if (x < g_fp->_sceneRect.left + g_vars->scene16_var01) {
-				g_fp->_currentScene->_x = x - g_vars->scene16_var03 - g_fp->_sceneRect.left;
+			if (x < g_fp->_sceneRect.left + 200) {
+				g_fp->_currentScene->_x = x - 300 - g_fp->_sceneRect.left;
 
 				x = g_vars->scene16_var11;
 			}
 
-			if (x > g_fp->_sceneRect.right - g_vars->scene16_var01)
-				g_fp->_currentScene->_x = x + g_vars->scene16_var03 - g_fp->_sceneRect.right;
+			if (x > g_fp->_sceneRect.right - 200)
+				g_fp->_currentScene->_x = x + 300 - g_fp->_sceneRect.right;
 		}
 
 		if (g_vars->scene16_var10) {

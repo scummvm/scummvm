@@ -227,13 +227,9 @@ Vars::Vars() {
 	scene15_ladder = 0;
 	scene15_boot = 0;
 
-	scene16_var01 = 0;
-	scene16_var02 = 0;
-	scene16_var03 = 0;
-	scene16_var04 = 0;
-	scene16_var05.clear();
-	scene16_var06 = 0;
-	scene16_var07 = 0;
+	scene16_figures.clear();
+	scene16_walkingBoy = 0;
+	scene16_walkingGirl = 0;
 	scene16_var08 = 0;
 	scene16_wire = 0;
 	scene16_mug = 0;

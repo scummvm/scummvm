@@ -308,13 +308,9 @@ public:
 	PictureObject *scene15_ladder;
 	StaticANIObject *scene15_boot;
 
-	int scene16_var01;
-	int scene16_var02;
-	int scene16_var03;
-	int scene16_var04;
-	Common::List<StaticANIObject *> scene16_var05;
-	StaticANIObject *scene16_var06;
-	StaticANIObject *scene16_var07;
+	Common::List<StaticANIObject *> scene16_figures;
+	StaticANIObject *scene16_walkingBoy;
+	StaticANIObject *scene16_walkingGirl;
 	int scene16_var08;
 	StaticANIObject *scene16_wire;
 	StaticANIObject *scene16_mug;
