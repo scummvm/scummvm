@@ -311,16 +311,14 @@ public:
 	Common::List<StaticANIObject *> scene16_figures;
 	StaticANIObject *scene16_walkingBoy;
 	StaticANIObject *scene16_walkingGirl;
-	int scene16_var08;
+	int scene16_walkingCount;
 	StaticANIObject *scene16_wire;
 	StaticANIObject *scene16_mug;
 	StaticANIObject *scene16_jettie;
 	StaticANIObject *scene16_boot;
-	int scene16_var09;
+	bool scene16_girlIsLaughing;
 	int scene16_sound;
-	int scene16_var10;
-	int scene16_var11;
-	int scene16_var12;
+	bool scene16_placeIsOccupied;
 
 	bool scene24_jetIsOn;
 	bool scene24_flowIsLow;

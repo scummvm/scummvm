@@ -230,16 +230,14 @@ Vars::Vars() {
 	scene16_figures.clear();
 	scene16_walkingBoy = 0;
 	scene16_walkingGirl = 0;
-	scene16_var08 = 0;
+	scene16_walkingCount = 0;
 	scene16_wire = 0;
 	scene16_mug = 0;
 	scene16_jettie = 0;
 	scene16_boot = 0;
-	scene16_var09 = 0;
+	scene16_girlIsLaughing = false;
 	scene16_sound = 0;
-	scene16_var10 = 0;
-	scene16_var11 = 0;
-	scene16_var12 = 0;
+	scene16_placeIsOccupied = false;
 
 	scene24_jetIsOn = false;
 	scene24_flowIsLow = false;

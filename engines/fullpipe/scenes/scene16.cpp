@@ -40,16 +40,16 @@ void scene16_initScene(Scene *sc) {
 	g_vars->scene16_figures.clear();
 	g_vars->scene16_walkingBoy = 0;
 	g_vars->scene16_walkingGirl = 0;
-	g_vars->scene16_var08 = 200;
+	g_vars->scene16_walkingCount = 200;
 	g_vars->scene16_wire = sc->getStaticANIObject1ById(ANI_WIRE16, -1);
 	g_vars->scene16_mug = sc->getStaticANIObject1ById(ANI_MUG, -1);
 	g_vars->scene16_jettie = sc->getStaticANIObject1ById(ANI_JETTIE, -1);
 	g_vars->scene16_boot = sc->getStaticANIObject1ById(ANI_BOOT_16, -1);
-	g_vars->scene16_var09 = 0;
+	g_vars->scene16_girlIsLaughing = false;
 	g_vars->scene16_sound = SND_16_034;
 
 	if (g_fp->getObjectState(sO_Bridge) == g_fp->getObjectEnumState(sO_Bridge, sO_Convoluted)) {
-		g_vars->scene16_var10 = 1;
+		g_vars->scene16_placeIsOccupied = true;
 
 		StaticANIObject *boy[2];
 		boy[0] = sc->getStaticANIObject1ById(ANI_BOY, -1);
@@ -82,7 +82,7 @@ void scene16_initScene(Scene *sc) {
 	} else {
 		g_fp->setObjectState(sO_Girl, g_fp->getObjectEnumState(sO_Girl, sO_IsSwinging));
 
-		g_vars->scene16_var10 = 0;
+		g_vars->scene16_placeIsOccupied = false;
 
 		StaticANIObject *ani = new StaticANIObject(g_fp->accessScene(SC_COMMON)->getStaticANIObject1ById(ANI_BEARDED_CMN, -1));
 		ani->_movement = 0;
@@ -238,7 +238,7 @@ void sceneHandler16_startLaugh() {
 
 	g_fp->getGameLoaderGameVar()->getSubVarByName("OBJSTATES")->setSubVarAsInt(sO_DudeSwinged, 0);
 
-	g_vars->scene16_var09 = 1;
+	g_vars->scene16_girlIsLaughing = true;
 }
 
 void sceneHandler16_drink() {
@@ -386,7 +386,7 @@ void sceneHandler16_girlROTFL() {
 	girl->changeStatics2(ST_GRL_LAUGH);
 	girl->startAnim(MV_GRL_FALL, 0, -1);
 
-	g_vars->scene16_var09 = 0;
+	g_vars->scene16_girlIsLaughing = false;
 }
 
 int sceneHandler16(ExCommand *cmd) {
@@ -450,30 +450,24 @@ int sceneHandler16(ExCommand *cmd) {
 		if (g_fp->_aniMan2) {
 			int x = g_fp->_aniMan2->_ox;
 
-			g_vars->scene16_var11 = x;
-			g_vars->scene16_var12 = g_fp->_aniMan2->_oy;
-
-			if (x < g_fp->_sceneRect.left + 200) {
+			if (x < g_fp->_sceneRect.left + 200)
 				g_fp->_currentScene->_x = x - 300 - g_fp->_sceneRect.left;
-
-				x = g_vars->scene16_var11;
-			}
 
 			if (x > g_fp->_sceneRect.right - 200)
 				g_fp->_currentScene->_x = x + 300 - g_fp->_sceneRect.right;
 		}
 
-		if (g_vars->scene16_var10) {
-			g_vars->scene16_var08++;
+		if (g_vars->scene16_placeIsOccupied) {
+			g_vars->scene16_walkingCount++;
 
-			if (g_vars->scene16_var08 < 280) {
+			if (g_vars->scene16_walkingCount < 280) {
 				sceneHandler16_putOnWheel();
 
-				g_vars->scene16_var08 = 0;
+				g_vars->scene16_walkingCount = 0;
 			}
 		}
 
-		if (g_vars->scene16_var09) {
+		if (g_vars->scene16_girlIsLaughing) {
 			if (g_fp->_aniMan->_movement)
 				if (g_fp->_aniMan->_movement->_id == MV_MAN_TURN_RL)
 					sceneHandler16_girlROTFL();
