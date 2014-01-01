@@ -649,8 +649,10 @@ namespace Fullpipe {
 #define ANI_MUG 1296
 #define ANI_WIRE16 1344
 #define MV_GRL_LAUGH_POPA 3278
+#define PIC_SC16_TUMBA 1368
 #define SND_16_034 3854
 #define ST_MUG_EMPTY 1298
+#define ST_MUG_FULL 1360
 
 // Scene 24
 #define ANI_DROP_24 3505

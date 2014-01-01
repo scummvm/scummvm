@@ -110,4 +110,18 @@ void scene16_initScene(Scene *sc) {
 	}
 }
 
+int scene16_updateCursor() {
+	g_fp->updateCursorCommon();
+
+	if (g_fp->_objectIdAtCursor == PIC_SC16_TUMBA) {
+		if (g_fp->_cursorId == PIC_CSR_DEFAULT)
+			g_fp->_cursorId = PIC_CSR_ITN;
+	} else {
+		if (g_fp->_objectIdAtCursor == ANI_MUG && g_fp->_cursorId == PIC_CSR_ITN && g_vars->scene16_mug->_statics->_staticsId == ST_MUG_FULL)
+			g_fp->_cursorId = PIC_CSR_ITN_GREEN;
+	}
+
+	return g_fp->_cursorId;
+}
+
 } // End of namespace Fullpipe
