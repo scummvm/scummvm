@@ -73,11 +73,13 @@ public:
 	bool loadStream(Common::SeekableReadStream *stream);
 	void close();
 // ResidualVM-specific:
-	bool seek(const Audio::Timestamp &time);
 	void setAudioTrack(uint32 track);
-	uint32 findKeyFrame(uint32 frame) const;
 protected:
 	void readNextPacket();
+
+	// ResidualVM-specific:
+	bool seekIntern(const Audio::Timestamp &time);
+	uint32 findKeyFrame(uint32 frame) const;
 
 private:
 	static const int kAudioChannelsMax  = 2;
@@ -154,7 +156,7 @@ private:
 		const Graphics::Surface *decodeNextFrame() { return &_surface; }
 // ResidualVM-specific:
 		bool isSeekable() const { return true; }
-		bool seek(const Audio::Timestamp &time);
+		bool seek(const Audio::Timestamp &time) { return true; }
 		void setCurFrame(uint32 frame) { _curFrame = frame; }
 // End of ResidualVM-specific
 

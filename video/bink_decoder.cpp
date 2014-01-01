@@ -332,11 +332,10 @@ void BinkDecoder::setAudioTrack(uint32 track) {
 }
 
 // ResidualVM-specific function
-bool BinkDecoder::seek(const Audio::Timestamp &time) {
-	VideoDecoder::seek(time);
-	uint32 frame = getCurFrame();
-
+bool BinkDecoder::seekIntern(const Audio::Timestamp &time) {
 	BinkVideoTrack *videoTrack = (BinkVideoTrack *)getTrack(0);
+
+	uint32 frame = videoTrack->getFrameAtTime(time);
 
 	// Track down the keyframe
 	uint32 keyFrame = findKeyFrame(frame);
@@ -371,12 +370,6 @@ uint32 BinkDecoder::findKeyFrame(uint32 frame) const {
 
 	// If none found, we'll assume the requested frame is a key frame
 	return frame;
-}
-
-// ResidualVM-specific function
-bool BinkDecoder::BinkVideoTrack::seek(const Audio::Timestamp &time) {
-	_curFrame = getFrameAtTime(time);
-	return true;
 }
 
 // ResidualVM-specific function
