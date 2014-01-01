@@ -320,17 +320,13 @@ public:
 	int scene16_sound;
 	bool scene16_placeIsOccupied;
 
-	int scene17_var01;
-	int scene17_var02;
-	int scene17_var03;
-	int scene17_var04;
-	int scene17_var05;
-	int scene17_var06;
+	int scene17_flyState;
+	bool scene17_sugarIsShown;
 	int scene17_var07;
-	int scene17_var08;
+	int scene17_flyCountdown;
 	StaticANIObject *scene17_hand;
-	int scene17_var09;
-	int scene17_var10;
+	bool scene17_handPhase;
+	int scene17_sceneEdgeX;
 
 	bool scene24_jetIsOn;
 	bool scene24_flowIsLow;

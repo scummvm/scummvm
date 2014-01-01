@@ -37,14 +37,10 @@
 namespace Fullpipe {
 
 void scene17_initScene(Scene *sc) {
-	g_vars->scene17_var01 = 200;
-	g_vars->scene17_var02 = 200;
-	g_vars->scene17_var03 = 300;
-	g_vars->scene17_var04 = 300;
-	g_vars->scene17_var05 = 1;
-	g_vars->scene17_var06 = 0;
+	g_vars->scene17_flyState = 1;
+	g_vars->scene17_sugarIsShown = false;
 	g_vars->scene17_var07 = 0;
-	g_vars->scene17_var08 = 0;
+	g_vars->scene17_flyCountdown = 0;
 	g_vars->scene17_hand = sc->getStaticANIObject1ById(ANI_HAND17, -1);
 }
 
@@ -99,7 +95,7 @@ void sceneHandler17_hideSugar() {
 void sceneHandler17_showSugar() {
 	chainQueue(QU_SC17_SHOWSUGAR, 0);
 
-	g_vars->scene17_var06 = 1;
+	g_vars->scene17_sugarIsShown = true;
 }
 
 void sceneHandler17_moonshineFill() {
@@ -109,7 +105,7 @@ void sceneHandler17_moonshineFill() {
 		moonshiner->changeStatics2(ST_SMG_SIT);
 		chainObjQueue(moonshiner, QU_SMG_FILLBOTTLE, 1);
 
-		g_vars->scene17_var06 = 0;
+		g_vars->scene17_sugarIsShown = false;
 	}
 }
 
@@ -136,12 +132,12 @@ int sceneHandler17(ExCommand *cmd) {
 			g_fp->_behaviorManager->setBehaviorEnabled(g_vars->scene17_hand, ST_HND17_EMPTY, QU_HND17_ASK, 0);
 			g_fp->_behaviorManager->setBehaviorEnabled(g_vars->scene17_hand, ST_HND17_EMPTY, QU_HND17_TOCYCLE, 0);
 
-			g_vars->scene17_var09 = 0;
+			g_vars->scene17_handPhase = false;
 		} else {
 			g_fp->_behaviorManager->setBehaviorEnabled(g_vars->scene17_hand, ST_HND17_EMPTY, QU_HND17_ASK, 0);
 			g_fp->_behaviorManager->setBehaviorEnabled(g_vars->scene17_hand, ST_HND17_EMPTY, QU_HND17_TOCYCLE, 1);
 
-			g_vars->scene17_var09 = 1;
+			g_vars->scene17_handPhase = true;
 		}
         break;
 
@@ -171,7 +167,7 @@ int sceneHandler17(ExCommand *cmd) {
 
 			if (pic == PIC_SC17_RTRUBA2 || pic == PIC_SC17_RTRUBA) {
 				if (cmd->_keyCode == ANI_INV_COIN || cmd->_keyCode == ANI_INV_BOOT || cmd->_keyCode == ANI_INV_HAMMER) {
-					if (g_vars->scene17_var09) {
+					if (g_vars->scene17_handPhase) {
 						if (g_fp->_aniMan->isIdle()) {
 							if (!(g_fp->_aniMan->_flags & 0x100)) {
 								handleObjectInteraction(g_fp->_aniMan, g_vars->scene17_hand, cmd->_keyCode);
@@ -186,32 +182,32 @@ int sceneHandler17(ExCommand *cmd) {
 
 	case 33:
 		{
-			int x = g_vars->scene17_var10;
-			g_vars->scene17_var07 = g_vars->scene17_var10;
+			int x = g_vars->scene17_sceneEdgeX;
+			g_vars->scene17_var07 = g_vars->scene17_sceneEdgeX;
 
 			if (g_fp->_aniMan2) {
 				x = g_fp->_aniMan2->_ox;
 
-				g_vars->scene17_var10 = x;
+				g_vars->scene17_sceneEdgeX = x;
 
-				if (x < g_fp->_sceneRect.left + g_vars->scene17_var01) {
-					g_fp->_currentScene->_x = x - g_vars->scene17_var03 - g_fp->_sceneRect.left;
+				if (x < g_fp->_sceneRect.left + 200) {
+					g_fp->_currentScene->_x = x - 300 - g_fp->_sceneRect.left;
 
-					x = g_vars->scene17_var10;
+					x = g_vars->scene17_sceneEdgeX;
 				}
 
-				if (x > g_fp->_sceneRect.right - g_vars->scene17_var01) {
-					g_fp->_currentScene->_x = x + g_vars->scene17_var03 - g_fp->_sceneRect.right;
-					x = g_vars->scene17_var10;
+				if (x > g_fp->_sceneRect.right - 200) {
+					g_fp->_currentScene->_x = x + 300 - g_fp->_sceneRect.right;
+					x = g_vars->scene17_sceneEdgeX;
 				}
 			}
 
-			if (g_vars->scene17_var06) {
+			if (g_vars->scene17_sugarIsShown) {
 				sceneHandler17_moonshineFill();
-				x = g_vars->scene17_var10;
+				x = g_vars->scene17_sceneEdgeX;
 			}
 
-			if (g_vars->scene17_var09) {
+			if (g_vars->scene17_handPhase) {
 				if (g_vars->scene17_var07 < 410 && x >= 410) {
 					g_fp->_behaviorManager->setBehaviorEnabled(g_vars->scene17_hand, ST_HND17_EMPTY, QU_HND17_TOCYCLE, 0);
 					g_fp->_behaviorManager->setBehaviorEnabled(g_vars->scene17_hand, ST_HND17_ATTRACT, QU_HND17_ATTRACT, 0);
@@ -223,9 +219,9 @@ int sceneHandler17(ExCommand *cmd) {
 				}
 			}
 
-			--g_vars->scene17_var08;
+			--g_vars->scene17_flyCountdown;
 
-			if (!g_vars->scene17_var08)
+			if (!g_vars->scene17_flyCountdown)
 				sceneHandler17_updateFlies();
 
 			g_fp->_floaters->update();

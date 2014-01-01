@@ -239,17 +239,13 @@ Vars::Vars() {
 	scene16_sound = 0;
 	scene16_placeIsOccupied = false;
 
-	scene17_var01 = 0;
-	scene17_var02 = 0;
-	scene17_var03 = 0;
-	scene17_var04 = 0;
-	scene17_var05 = 0;
-	scene17_var06 = 0;
+	scene17_flyState = 0;
+	scene17_sugarIsShown = false;
 	scene17_var07 = 0;
-	scene17_var08 = 0;
+	scene17_flyCountdown = 0;
 	scene17_hand = 0;
-	scene17_var09 = 0;
-	scene17_var10 = 0;
+	scene17_handPhase = false;
+	scene17_sceneEdgeX = 0;
 
 	scene24_jetIsOn = false;
 	scene24_flowIsLow = false;
