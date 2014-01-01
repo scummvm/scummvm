@@ -84,11 +84,44 @@ private:
 	void playStamp();
 	void initStamp();
 	void closeStamp();
+
+	/**
+	 * Shows the game ending title animation
+	 */
+	void doTailTitle();
+
+	/**
+	 * Shows the game ending credits
+	 */
+	void doClosingCredits();
+
+	/**
+	 * Shows the final anti-piracy message before exiting the game
+	 */
+	void doPiracy();
+
 	void reviewTape();
+
+	/**
+	 * Shows the TV gossip animation
+	 */
 	void doGossip();
+
+	/**
+	 * Shows the animation of the VCR tape during the 'Call the Police' sequence
+	 */
 	void doTapePlaying();
+
+	/**
+	 * Does a check as to whether a murder has been witnessed
+	 */
 	bool checkForMurder();
+
+	/**
+	 * Does a check for whether incriminating evidence has been revealed
+	 */
 	bool checkForIncriminate();
+
 	void playAVideoEvent(int eventIndex);
 	int getChooseButton();
 protected:

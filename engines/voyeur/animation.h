@@ -30,6 +30,12 @@
 #include "common/rect.h"
 #include "common/stream.h"
 
+namespace Voyeur {
+
+class VoyeurEngine;
+
+}
+
 namespace Video {
 
 /**
@@ -149,6 +155,7 @@ public:
 	void clearDirtyRects();
 	void copyDirtyRectsToBuffer(uint8 *dst, uint pitch);
 	RL2VideoTrack *getVideoTrack();
+	void play(::Voyeur::VoyeurEngine *vm);
 };
 
 } // End of namespace Video

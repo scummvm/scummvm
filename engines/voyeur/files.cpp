@@ -454,6 +454,7 @@ BVoyBoltFile::BVoyBoltFile(BoltFilesState &state): BoltFile("bvoy.blt", state) {
 void BVoyBoltFile::initResource(int resType) {
 	switch (resType) {
 	case 2:
+		// Also used for point list, and ending credits credit data
 		sInitRect();
 		break;
 	case 8:

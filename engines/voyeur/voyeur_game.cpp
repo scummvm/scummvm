@@ -225,6 +225,166 @@ void VoyeurEngine::closeStamp() {
 	ThreadResource::unloadAllStacks(this);
 }
 
+void VoyeurEngine::doTailTitle() {
+	_bVoy->freeBoltGroup(0x100);
+	(*_graphicsManager._vPort)->setupViewPort(NULL);
+	_graphicsManager.screenReset();
+	
+	if (_bVoy->getBoltGroup(0x600)) {
+		::Video::RL2Decoder decoder;
+		decoder.loadFile("a1100200.rl2");
+		decoder.start();
+		decoder.play(this);
+		
+		if (!shouldQuit() && !_eventsManager._mouseClicked) {
+			doClosingCredits();
+
+			if (!shouldQuit() && !_eventsManager._mouseClicked) {
+				_graphicsManager.screenReset();
+				
+				PictureResource *pic = _bVoy->boltEntry(0x602)._picResource;
+				CMapResource *pal = _bVoy->boltEntry(0x603)._cMapResource;
+
+				(*_graphicsManager._vPort)->setupViewPort(pic);
+				pal->startFade();
+				flipPageAndWaitForFade();
+				_eventsManager.delayClick(300);
+
+				pic = _bVoy->boltEntry(0x604)._picResource;
+				pal = _bVoy->boltEntry(0x605)._cMapResource;
+
+				(*_graphicsManager._vPort)->setupViewPort(pic);
+				pal->startFade();
+				flipPageAndWaitForFade();
+				_eventsManager.delayClick(120);
+
+				_soundManager.stopVOCPlay();
+			}
+		}
+
+		_bVoy->freeBoltGroup(0x600);
+	}
+
+	if (!shouldQuit()) {
+		_bVoy->getBoltGroup(0x100);
+		doPiracy();
+	}
+}
+
+void VoyeurEngine::doClosingCredits() {
+	if (!_bVoy->getBoltGroup(0x400))
+		return;
+
+	const char *msg = (const char *)_bVoy->memberAddr(0x404);
+	const byte *yList = (const byte *)_bVoy->memberAddr(0x405);
+
+	(*_graphicsManager._vPort)->setupViewPort(NULL);
+	_graphicsManager.setColor(1, 180, 180, 180);
+	_graphicsManager.setColor(2, 200, 200, 200);
+	_eventsManager._intPtr.field38 = true;
+	_eventsManager._intPtr._hasPalette = true;
+
+	_graphicsManager._fontPtr->_curFont = _bVoy->boltEntry(0x402)._fontResource;
+	_graphicsManager._fontPtr->_foreColor = 2;
+	_graphicsManager._fontPtr->_backColor = 2;
+	_graphicsManager._fontPtr->_fontSaveBack = false;
+	_graphicsManager._fontPtr->_fontFlags = 0;
+
+	_soundManager.startVOCPlay(152);
+	FontInfoResource &fi = *_graphicsManager._fontPtr;
+
+	for (int idx = 0; idx < 78; ++idx) {
+		byte *entry = yList + idx * 6;
+		int flags = READ_LE_UINT16(entry + 4);
+
+		if (flags & 0x10)
+			(*_graphicsManager->_vPort)->sFillPic();
+
+		if (flags & 1) {
+			fi._foreColor = 1;
+			fi._curFont = _bVoy->boltEntry(0x402)._fontResource;
+			fi.justify = true;
+			fi.justifyWidth = 384;
+			fi._justifyHeight = 240;
+			fi._pos = Common::Point(0, READ_LE_UINT16(entry));
+
+			(*_graphicsManager._vPort)->drawText(msg);
+			msg += strlen(msg) + 1;
+		}
+		
+		if (flags & 0x40) {
+			fi._foreColor = 2;
+			fi._curFont = _bVoy->boltEntry(0x400)._fontResource;
+			fi.justify = true;
+			fi.justifyWidth = 384;
+			fi._justifyHeight = 240;
+			fi._pos = Common::Point(0, READ_LE_UINT16(entry));
+
+			(*_graphicsManager._vPort)->drawText(msg);
+			msg += strlen(msg) + 1;
+		}
+
+		if (flags & 2) {
+			fi._foreColor = 1;
+			fi._curFont = _bVoy->boltEntry(0x400)._fontResource;
+			fi.justify = false;
+			fi.justifyWidth = 384;
+			fi._justifyHeight = 240;
+			fi._pos = Common::Point(38, READ_LE_UINT16(entry));
+
+			(*_graphicsManager._vPort)->drawText(msg);
+			msg += strlen(msg) + 1;
+
+			fi._foreColor = 2;
+			fi.justify = false;
+			fi.justifyWidth = 384;
+			fi._justifyHeight = 240;
+			fi._pos = Common::Point(198, READ_LE_UINT16(entry));
+
+			(*_graphicsManager._vPort)->drawText(msg);			
+			msg += strlen(msg) + 1;
+		}
+
+		if (flags & 4) {
+			fi._foreColor = 1;
+			fi._curFont = _bVoy->boltEntry(0x402)._fontResource;
+			fi.justify = true;
+			fi.justifyWidth = 384;
+			fi._justifyHeight = 240;
+			fi._pos = Common::Point(0, READ_LE_UINT16(entry));
+
+			(*_graphicsManager._vPort)->drawText(msg);
+			msg += strlen(msg) + 1;
+
+			fi._foreColor = 2;
+			fi._curFont = _bVoy->boltEntry(0x400)._fontResource;
+			fi.justify = true;
+			fi.justifyWidth = 384;
+			fi._justifyHeight = 240;
+			fi._pos = Common::Point(0, READ_LE_UINT16(entry) + 13);
+
+			(*_graphicsManager._vPort)->drawText(msg);
+			msg += strlen(msg) + 1;
+		}
+
+		if (flags & 0x20) {
+			flipPageAndWait();
+			_eventsManager.delayClick(READ_LE_UINT16(entry + 2) * 60);
+		}
+
+		if (shouldQuit() || _eventsManager._mouseClicked)
+			break;
+	}
+
+	_soundManager.stopVOCPlay();
+	_graphicsManager._fontPtr->_curFont = _bVoy->boltEntry(0x101)._fontResource;
+	_bVoy->freeBoltGroup(0x400);
+}
+
+void VoyeurEngine::doPiracy() {
+
+}
+
 void VoyeurEngine::reviewTape() {
 //	int var22 = 0;
 	int si = 0;

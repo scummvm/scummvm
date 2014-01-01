@@ -102,6 +102,8 @@ Common::Error VoyeurEngine::run() {
 			_voy._field478 |= 0x80;
 
 		playStamp();
+		if (!shouldQuit())
+			doTailTitle();
 	}
 
 	//doHeadTitle();

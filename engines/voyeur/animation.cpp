@@ -22,6 +22,7 @@
 
 #include "voyeur/animation.h"
 #include "voyeur/staticres.h"
+#include "voyeur/voyeur.h"
 #include "common/memstream.h"
 #include "common/system.h"
 #include "audio/decoders/raw.h"
@@ -95,6 +96,27 @@ RL2Decoder::RL2VideoTrack *RL2Decoder::getVideoTrack() {
 	assert(track);
 
 	return (RL2VideoTrack *)track;
+}
+
+void RL2Decoder::play(::Voyeur::VoyeurEngine *vm) {
+	vm->_eventsManager.getMouseInfo();
+
+	while (!vm->shouldQuit() && !endOfVideo() && !vm->_eventsManager._mouseClicked) {
+		if (hasDirtyPalette()) {
+			const byte *palette = getPalette();
+			vm->_graphicsManager.setPalette(palette, 0, 256);
+		}
+
+		if (needsUpdate()) {
+			const Graphics::Surface *frame = decodeNextFrame();
+
+			Common::copy((const byte *)frame->getPixels(), (const byte *)frame->getPixels() + 320 * 200,
+				(byte *)vm->_graphicsManager._screenSurface.getPixels());
+		}
+
+		vm->_eventsManager.getMouseInfo();
+		g_system->delayMillis(10);
+	}
 }
 
 /*------------------------------------------------------------------------*/
@@ -288,18 +310,19 @@ void RL2Decoder::RL2VideoTrack::rl2DecodeFrameWithoutTransparency(int screenOffs
 			--frameSize;
 		} else if (nextByte > 0x80) {
 			// Lower 7 bits a run length for the following byte
-			byte runLength = _fileStream->readByte();
-			assert(frameSize >= runLength);
+			int runLength = _fileStream->readByte();
+			runLength = MIN(runLength, frameSize);
+
 			Common::fill(destP, destP + runLength, nextByte & 0x7f);
 			destP += runLength;
 			frameSize -= runLength;
 		} else {
 			// Follow byte run length for zeroes. If zero, indicates end of image
-			byte runLength = _fileStream->readByte();
+			int runLength = _fileStream->readByte();
 			if (runLength == 0)
 				break;
 
-			assert(frameSize >= runLength);
+			runLength = MIN(runLength, frameSize);
 			Common::fill(destP, destP + runLength, 0);
 			destP += runLength;
 			frameSize -= runLength;
