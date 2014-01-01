@@ -126,4 +126,17 @@ int DOT_LINE_LENGTH[9] = {
 	5, 7, 9, 11, 11, 11, 9, 7, 5
 };
 
+const char *const PIRACY_MESSAGE[] = {
+	"It is illegal to make",
+	"unauthorized copies of",
+	"this software. Duplication",
+	"of this software for any",
+	"reason including sale,",
+	"loan, rental, or gift is a",
+	"crime. Penalties include",
+	"fines of up to $50,000",
+	"and jail terms up to",
+	"5 years."
+};
+
 } // End of namespace Voyeur

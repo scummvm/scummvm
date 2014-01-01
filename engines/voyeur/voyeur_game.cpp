@@ -226,7 +226,6 @@ void VoyeurEngine::closeStamp() {
 }
 
 void VoyeurEngine::doTailTitle() {
-	_bVoy->freeBoltGroup(0x100);
 	(*_graphicsManager._vPort)->setupViewPort(NULL);
 	_graphicsManager.screenReset();
 	
@@ -276,7 +275,7 @@ void VoyeurEngine::doClosingCredits() {
 		return;
 
 	const char *msg = (const char *)_bVoy->memberAddr(0x404);
-	const byte *yList = (const byte *)_bVoy->memberAddr(0x405);
+	const byte *creditList = (const byte *)_bVoy->memberAddr(0x405);
 
 	(*_graphicsManager._vPort)->setupViewPort(NULL);
 	_graphicsManager.setColor(1, 180, 180, 180);
@@ -294,17 +293,17 @@ void VoyeurEngine::doClosingCredits() {
 	FontInfoResource &fi = *_graphicsManager._fontPtr;
 
 	for (int idx = 0; idx < 78; ++idx) {
-		byte *entry = yList + idx * 6;
+		const byte *entry = creditList + idx * 6;
 		int flags = READ_LE_UINT16(entry + 4);
 
 		if (flags & 0x10)
-			(*_graphicsManager->_vPort)->sFillPic();
+			(*_graphicsManager._vPort)->fillPic();
 
 		if (flags & 1) {
 			fi._foreColor = 1;
 			fi._curFont = _bVoy->boltEntry(0x402)._fontResource;
-			fi.justify = true;
-			fi.justifyWidth = 384;
+			fi._justify = ALIGN_CENTRE;
+			fi._justifyWidth = 384;
 			fi._justifyHeight = 240;
 			fi._pos = Common::Point(0, READ_LE_UINT16(entry));
 
@@ -315,8 +314,8 @@ void VoyeurEngine::doClosingCredits() {
 		if (flags & 0x40) {
 			fi._foreColor = 2;
 			fi._curFont = _bVoy->boltEntry(0x400)._fontResource;
-			fi.justify = true;
-			fi.justifyWidth = 384;
+			fi._justify = ALIGN_CENTRE;
+			fi._justifyWidth = 384;
 			fi._justifyHeight = 240;
 			fi._pos = Common::Point(0, READ_LE_UINT16(entry));
 
@@ -327,8 +326,8 @@ void VoyeurEngine::doClosingCredits() {
 		if (flags & 2) {
 			fi._foreColor = 1;
 			fi._curFont = _bVoy->boltEntry(0x400)._fontResource;
-			fi.justify = false;
-			fi.justifyWidth = 384;
+			fi._justify = ALIGN_LEFT;
+			fi._justifyWidth = 384;
 			fi._justifyHeight = 240;
 			fi._pos = Common::Point(38, READ_LE_UINT16(entry));
 
@@ -336,8 +335,8 @@ void VoyeurEngine::doClosingCredits() {
 			msg += strlen(msg) + 1;
 
 			fi._foreColor = 2;
-			fi.justify = false;
-			fi.justifyWidth = 384;
+			fi._justify = ALIGN_LEFT;
+			fi._justifyWidth = 384;
 			fi._justifyHeight = 240;
 			fi._pos = Common::Point(198, READ_LE_UINT16(entry));
 
@@ -348,8 +347,8 @@ void VoyeurEngine::doClosingCredits() {
 		if (flags & 4) {
 			fi._foreColor = 1;
 			fi._curFont = _bVoy->boltEntry(0x402)._fontResource;
-			fi.justify = true;
-			fi.justifyWidth = 384;
+			fi._justify = ALIGN_CENTRE;
+			fi._justifyWidth = 384;
 			fi._justifyHeight = 240;
 			fi._pos = Common::Point(0, READ_LE_UINT16(entry));
 
@@ -358,8 +357,8 @@ void VoyeurEngine::doClosingCredits() {
 
 			fi._foreColor = 2;
 			fi._curFont = _bVoy->boltEntry(0x400)._fontResource;
-			fi.justify = true;
-			fi.justifyWidth = 384;
+			fi._justify = ALIGN_CENTRE;
+			fi._justifyWidth = 384;
 			fi._justifyHeight = 240;
 			fi._pos = Common::Point(0, READ_LE_UINT16(entry) + 13);
 
@@ -382,7 +381,36 @@ void VoyeurEngine::doClosingCredits() {
 }
 
 void VoyeurEngine::doPiracy() {
+	_graphicsManager.screenReset();
+	_graphicsManager.setColor(1, 0, 0, 0);
+	_graphicsManager.setColor(2, 255, 255, 255);
+	_eventsManager._intPtr.field38 = true;
+	_eventsManager._intPtr._hasPalette = true;
+	(*_graphicsManager._vPort)->setupViewPort(NULL);
+	(*_graphicsManager._vPort)->fillPic(1);
 
+	FontInfoResource &fi = *_graphicsManager._fontPtr;
+	fi._curFont = _bVoy->boltEntry(0x101)._fontResource;
+	fi._foreColor = 2;
+	fi._backColor = 2;
+	fi._fontSaveBack = false;
+	fi._fontFlags = 0;
+	fi._justify = ALIGN_CENTRE;
+	fi._justifyWidth = 384;
+	fi._justifyHeight = 230;
+
+	// Loop through the piracy message array to draw each line
+	int yp, idx;
+	for (idx = 0, yp = 33; idx < 10; ++idx) {
+		fi._pos = Common::Point(0, yp);
+		(*_graphicsManager._vPort)->drawText(PIRACY_MESSAGE[idx]);
+
+		yp += fi._curFont->_fontHeight + 4;
+	}
+
+	flipPageAndWait();
+	_eventsManager.getMouseInfo();
+	_eventsManager.delayClick(720);
 }
 
 void VoyeurEngine::reviewTape() {

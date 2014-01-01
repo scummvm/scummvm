@@ -56,6 +56,8 @@ extern int DOT_LINE_START[9];
 extern int DOT_LINE_OFFSET[9];
 extern int DOT_LINE_LENGTH[9];
 
+extern const char *const PIRACY_MESSAGE[];
+
 } // End of namespace Voyeur
 
 #endif
