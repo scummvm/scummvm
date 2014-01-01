@@ -194,10 +194,9 @@ void NeverhoodEngine::mainLoop() {
 			nextFrameTime = _screen->getNextFrameTime();
 		};
 
-		if (_updateSound) {
+		if (_updateSound)
 			_soundMan->update();
-			_audioResourceMan->updateMusic();
-		}
+		_audioResourceMan->updateMusic();
 
 		_system->updateScreen();
 		_system->delayMillis(10);
