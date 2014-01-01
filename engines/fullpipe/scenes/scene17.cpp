@@ -44,6 +44,32 @@ void scene17_initScene(Scene *sc) {
 	g_vars->scene17_hand = sc->getStaticANIObject1ById(ANI_HAND17, -1);
 }
 
+void scene17_restoreState() {
+	if (g_fp->getObjectState(sO_UsherHand) == g_fp->getObjectEnumState(sO_UsherHand, sO_WithCoin)) {
+		g_fp->_behaviorManager->setBehaviorEnabled(g_vars->scene17_hand, ST_HND17_EMPTY, QU_HND17_ASK, 0);
+		g_fp->_behaviorManager->setBehaviorEnabled(g_vars->scene17_hand, ST_HND17_EMPTY, QU_HND17_TOCYCLE, 0);
+
+		g_vars->scene17_handPhase = false;
+	} else {
+		g_fp->_behaviorManager->setBehaviorEnabled(g_vars->scene17_hand, ST_HND17_EMPTY, QU_HND17_ASK, 0);
+		g_fp->_behaviorManager->setBehaviorEnabled(g_vars->scene17_hand, ST_HND17_EMPTY, QU_HND17_TOCYCLE, 1);
+
+		g_vars->scene17_handPhase = true;
+	}
+
+	g_fp->_floaters->init(g_fp->getGameLoaderGameVar()->getSubVarByName("SC_17"));
+
+	g_vars->scene17_flyState = g_fp->getObjectState(sO_Fly_17);
+
+	if (g_vars->scene17_flyState <= 0 ) {
+		g_vars->scene17_flyCountdown = g_fp->_rnd->getRandomNumber(600) + 600; // FIXME. Check
+
+		g_vars->scene17_flyState = g_fp->_rnd->getRandomNumber(4) + 1; // FIXME. Check
+	}
+
+	g_fp->setObjectState(sO_Fly_17, g_vars->scene17_flyState - 1);
+}
+
 void sceneHandler17_drop() {
 	StaticANIObject *mug = g_fp->_currentScene->getStaticANIObject1ById(ANI_MUG_17, -1);
 	StaticANIObject *jet = g_fp->_currentScene->getStaticANIObject1ById(ANI_JET_17, -1);
