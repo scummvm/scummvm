@@ -39,7 +39,7 @@ namespace Fullpipe {
 void scene17_initScene(Scene *sc) {
 	g_vars->scene17_flyState = 1;
 	g_vars->scene17_sugarIsShown = false;
-	g_vars->scene17_var07 = 0;
+	g_vars->scene17_sceneOldEdgeX = 0;
 	g_vars->scene17_flyCountdown = 0;
 	g_vars->scene17_hand = sc->getStaticANIObject1ById(ANI_HAND17, -1);
 }
@@ -183,7 +183,7 @@ int sceneHandler17(ExCommand *cmd) {
 	case 33:
 		{
 			int x = g_vars->scene17_sceneEdgeX;
-			g_vars->scene17_var07 = g_vars->scene17_sceneEdgeX;
+			g_vars->scene17_sceneOldEdgeX = g_vars->scene17_sceneEdgeX;
 
 			if (g_fp->_aniMan2) {
 				x = g_fp->_aniMan2->_ox;
@@ -208,11 +208,11 @@ int sceneHandler17(ExCommand *cmd) {
 			}
 
 			if (g_vars->scene17_handPhase) {
-				if (g_vars->scene17_var07 < 410 && x >= 410) {
+				if (g_vars->scene17_sceneOldEdgeX < 410 && x >= 410) {
 					g_fp->_behaviorManager->setBehaviorEnabled(g_vars->scene17_hand, ST_HND17_EMPTY, QU_HND17_TOCYCLE, 0);
 					g_fp->_behaviorManager->setBehaviorEnabled(g_vars->scene17_hand, ST_HND17_ATTRACT, QU_HND17_ATTRACT, 0);
 					g_fp->_behaviorManager->setBehaviorEnabled(g_vars->scene17_hand, ST_HND17_EMPTY, QU_HND17_ASK, 1);
-				} else if (g_vars->scene17_var07 > 410 && x <= 410) {
+				} else if (g_vars->scene17_sceneOldEdgeX > 410 && x <= 410) {
 					g_fp->_behaviorManager->setBehaviorEnabled(g_vars->scene17_hand, ST_HND17_EMPTY, QU_HND17_TOCYCLE, 1);
 					g_fp->_behaviorManager->setBehaviorEnabled(g_vars->scene17_hand, ST_HND17_ATTRACT, QU_HND17_ATTRACT, 1);
 					g_fp->_behaviorManager->setBehaviorEnabled(g_vars->scene17_hand, ST_HND17_EMPTY, QU_HND17_ASK, 0);

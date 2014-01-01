@@ -322,7 +322,7 @@ public:
 
 	int scene17_flyState;
 	bool scene17_sugarIsShown;
-	int scene17_var07;
+	int scene17_sceneOldEdgeX;
 	int scene17_flyCountdown;
 	StaticANIObject *scene17_hand;
 	bool scene17_handPhase;

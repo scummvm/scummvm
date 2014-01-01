@@ -241,7 +241,7 @@ Vars::Vars() {
 
 	scene17_flyState = 0;
 	scene17_sugarIsShown = false;
-	scene17_var07 = 0;
+	scene17_sceneOldEdgeX = 0;
 	scene17_flyCountdown = 0;
 	scene17_hand = 0;
 	scene17_handPhase = false;
