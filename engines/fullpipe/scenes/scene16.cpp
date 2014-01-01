@@ -147,7 +147,12 @@ void sceneHandler16_laughSound() {
 }
 
 void sceneHandler16_showBearded() {
-	warning("STUB: sceneHandler16_showBearded()");
+	if (g_fp->getObjectState(sO_Bridge) == g_fp->getObjectEnumState(sO_Bridge, sO_Unconvoluted)) {
+		StaticANIObject *brd = g_fp->_currentScene->getStaticANIObject1ById(ANI_BEARDED_CMN, -1);
+
+		if (!brd || !(brd->_flags & 4))
+			chainQueue(QU_BRD16_STARTBEARDED, 0);
+	}
 }
 
 void sceneHandler16_showMugFull() {
