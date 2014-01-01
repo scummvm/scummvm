@@ -407,7 +407,7 @@ void sceneHandler14_declineCallback(int *arg) {
 	Common::Point point;
 
 	if (g_vars->scene14_dudeIsKicking) {
-		*arg = (int)(sqrt((g_fp->_mouseVirtY - g_vars->scene14_mouseCursorPos.y)
+		*arg = (int)(sqrt((double)(g_fp->_mouseVirtY - g_vars->scene14_mouseCursorPos.y)
 							 * (g_fp->_mouseVirtY - g_vars->scene14_mouseCursorPos.y)
 					+ (g_fp->_mouseVirtX - g_vars->scene14_mouseCursorPos.x)
 							 * (g_fp->_mouseVirtX - g_vars->scene14_mouseCursorPos.x)) * 0.1);
