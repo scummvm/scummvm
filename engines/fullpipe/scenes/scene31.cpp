@@ -37,11 +37,7 @@
 namespace Fullpipe {
 
 void scene31_initScene(Scene *sc) {
-	g_vars->scene31_var01 = 200;
-	g_vars->scene31_var02 = 200;
-	g_vars->scene31_var03 = 300;
-	g_vars->scene31_var04 = 300;
-	g_vars->scene31_var05 = 0;
+	g_vars->scene31_chantingCountdown = 0;
 	g_vars->scene31_cactus = sc->getStaticANIObject1ById(ANI_CACTUS_31, -1);
 
 	if (g_fp->getObjectState(sO_Cactus) == g_fp->getObjectEnumState(sO_Cactus, sO_HasGrown)) {
@@ -90,7 +86,7 @@ int sceneHandler31(ExCommand *cmd) {
 	case MSG_SC15_STOPCHANTING:
 		g_fp->stopAllSoundInstances(SND_31_001);
 
-		g_vars->scene31_var05 = 120;
+		g_vars->scene31_chantingCountdown = 120;
 		break;
 
 	case MSG_SC31_PULL:
@@ -105,17 +101,17 @@ int sceneHandler31(ExCommand *cmd) {
 		if (g_fp->_aniMan2) {
 			int x = g_fp->_aniMan2->_ox;
 
-			if (x < g_fp->_sceneRect.left + g_vars->scene31_var01)
-				g_fp->_currentScene->_x = x - g_vars->scene31_var03 - g_fp->_sceneRect.left;
+			if (x < g_fp->_sceneRect.left + 200)
+				g_fp->_currentScene->_x = x - 300 - g_fp->_sceneRect.left;
 
-			if (x > g_fp->_sceneRect.right - g_vars->scene31_var01)
-				g_fp->_currentScene->_x = x + g_vars->scene31_var03 - g_fp->_sceneRect.right;
+			if (x > g_fp->_sceneRect.right - 200)
+				g_fp->_currentScene->_x = x + 300 - g_fp->_sceneRect.right;
 		}
 
-		if (g_vars->scene31_var05 > 0) {
-			--g_vars->scene31_var05;
+		if (g_vars->scene31_chantingCountdown > 0) {
+			--g_vars->scene31_chantingCountdown;
 
-			if (!g_vars->scene31_var05)
+			if (!g_vars->scene31_chantingCountdown)
 				g_fp->playSound(SND_31_001, 1);
 		}
 

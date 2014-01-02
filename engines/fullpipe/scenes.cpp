@@ -261,11 +261,7 @@ Vars::Vars() {
 	scene24_jet = 0;
 	scene24_drop = 0;
 
-	scene31_var01 = 0;
-	scene31_var02 = 0;
-	scene31_var03 = 0;
-	scene31_var04 = 0;
-	scene31_var05 = 0;
+	scene31_chantingCountdown = 0;
 	scene31_cactus = 0;
 	scene31_plusMinus = 0;
 
