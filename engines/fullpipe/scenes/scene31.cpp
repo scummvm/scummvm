@@ -64,4 +64,57 @@ void scene31_initScene(Scene *sc) {
 		g_vars->scene31_plusMinus->_statics = g_vars->scene31_plusMinus->getStaticsById(ST_PMS_PLUS);
 }
 
+void sceneHandler31_testCactus(ExCommand *cmd) {
+	warning("STUB: sceneHandler31_testCactus");
+}
+
+int sceneHandler31(ExCommand *cmd) {
+	if (cmd->_messageKind != 17)
+		return 0;
+
+	switch (cmd->_messageNum) {
+	case MSG_SC31_TESTCACTUS:
+		sceneHandler31_testCactus(cmd);
+		break;
+
+	case MSG_SC15_STOPCHANTING:
+		g_fp->stopAllSoundInstances(SND_31_001);
+
+		g_vars->scene31_var05 = 120;
+		break;
+
+	case MSG_SC31_PULL:
+		if ( g_vars->scene31_plusMinus->_statics->_staticsId == ST_PMS_MINUS)
+			g_vars->scene31_plusMinus->_statics = g_vars->scene31_plusMinus->getStaticsById(ST_PMS_PLUS);
+		else
+			g_vars->scene31_plusMinus->_statics = g_vars->scene31_plusMinus->getStaticsById(ST_PMS_MINUS);
+
+		break;
+
+	case 33:
+		if (g_fp->_aniMan2) {
+			int x = g_fp->_aniMan2->_ox;
+
+			if (x < g_fp->_sceneRect.left + g_vars->scene31_var01)
+				g_fp->_currentScene->_x = x - g_vars->scene31_var03 - g_fp->_sceneRect.left;
+
+			if (x > g_fp->_sceneRect.right - g_vars->scene31_var01)
+				g_fp->_currentScene->_x = x + g_vars->scene31_var03 - g_fp->_sceneRect.right;
+		}
+
+		if (g_vars->scene31_var05 > 0) {
+			--g_vars->scene31_var05;
+
+			if (!g_vars->scene31_var05)
+				g_fp->playSound(SND_31_001, 1);
+		}
+
+		g_fp->_behaviorManager->updateBehaviors();
+
+		break;
+	}
+
+	return 0;
+}
+
 } // End of namespace Fullpipe

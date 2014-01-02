@@ -749,6 +749,9 @@ namespace Fullpipe {
 
 // Scene 31
 #define ANI_CACTUS_31 2456
+#define MSG_SC31_PULL 2944
+#define MSG_SC31_TESTCACTUS 5095
+#define SND_31_001 4377
 #define ST_CTS31_GROWN2 2472
 
 // Debug scene
