@@ -771,6 +771,8 @@ namespace Fullpipe {
 // Scene 36
 #define ANI_SCISSORS_36 2647
 #define ANI_ROTOHRUST 2360
+#define PIC_SC36_MASK 5221
+#define ST_RHT_OPEN 2362
 
 // Debug scene
 #define PIC_SCD_1 727

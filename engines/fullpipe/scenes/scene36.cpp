@@ -45,4 +45,16 @@ void scene36_initScene(Scene *sc) {
 	g_vars->scene36_scissors = sc->getStaticANIObject1ById(ANI_SCISSORS_36, -1);
 }
 
+int scene36_updateCursor() {
+	g_fp->updateCursorCommon();
+
+	if (g_fp->_cursorId != PIC_CSR_ITN || g_fp->_objectIdAtCursor != ANI_ROTOHRUST) {
+		if (g_fp->_objectIdAtCursor == PIC_SC36_MASK && g_fp->_cursorId == PIC_CSR_DEFAULT && (g_vars->scene36_scissors->_flags & 4))
+			g_fp->_cursorId = PIC_CSR_ITN;
+	} else if (g_vars->scene36_rotohrust->_statics->_staticsId == ST_RHT_OPEN)
+		g_fp->_cursorId = PIC_CSR_GOL;
+
+	return g_fp->_cursorId;
+}
+
 } // End of namespace Fullpipe
