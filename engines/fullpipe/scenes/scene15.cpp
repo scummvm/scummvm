@@ -82,7 +82,7 @@ void scene15_initScene(Scene *sc) {
  	g_vars->scene15_ladder = sc->getPictureObjectById(PIC_SC15_LADDER, 0);
 	g_vars->scene15_boot = sc->getStaticANIObject1ById(ANI_BOOT_15, -1);
 
-	if (g_fp->getObjectState(sO_Boot_15) != g_fp->getObjectEnumState(sO_Boot_15, sO_Available))
+	if (g_fp->getObjectState(sO_Boot_15) != g_fp->getObjectEnumState(sO_Boot_15, sO_IsPresent))
 		g_vars->scene15_boot->_flags &= 0xFFFB;
 
 	g_fp->_currentScene = oldsc;
