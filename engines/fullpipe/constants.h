@@ -747,6 +747,10 @@ namespace Fullpipe {
 #define ST_DRP24_EMPTY 3507
 #define ST_WTR24_FLOWLOWER 1843
 
+// Scene 31
+#define ANI_CACTUS_31 2456
+#define ST_CTS31_GROWN2 2472
+
 // Debug scene
 #define PIC_SCD_1 727
 #define PIC_SCD_2 728
