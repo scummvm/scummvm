@@ -163,8 +163,134 @@ void sceneHandler22_fromStool(ExCommand *cmd) {
 	}
 }
 
-void sceneHandler22_sub02(ExCommand *cmd) {
-	warning("STUB: sceneHandler22_sub02(cmd)");
+void sceneHandler22_stoolLogic(ExCommand *cmd) {
+	StaticANIObject *ani;
+	MessageQueue *mq;
+	int xpos;
+	int manId;
+
+	if (g_fp->_aniMan->isIdle() && !(g_fp->_aniMan->_flags & 0x100)) {
+		if (cmd->_keyCode == ANI_INV_STOOL) {
+			if (abs(841 - g_fp->_aniMan->_ox) <= 1) {
+				if (abs(449 - g_fp->_aniMan->_oy) <= 1) {
+					chainQueue(QU_SC22_PUTSTOOL, 1);
+					g_vars->scene22_var08 = 1;
+
+					return;
+				}
+			}
+			goto LABEL_13;
+		}
+
+		if (cmd->_keyCode == ANI_INV_BOX) {
+			ani = g_fp->_currentScene->getStaticANIObject1ById(ANI_TABURETTE, -1);
+			if (!ani || !(ani->_flags & 4)) {
+				if (abs(841 - g_fp->_aniMan->_ox) <= 1) {
+					if (abs(449 - g_fp->_aniMan->_oy) <= 1) {
+						chainObjQueue(g_fp->_aniMan, QU_SC22_TRYBOX, 1);
+						return;
+					}
+				}
+			LABEL_13:
+				xpos = 841;
+				manId = ST_MAN_RIGHT;
+			LABEL_31:
+				mq = getCurrSceneSc2MotionController()->method34(g_fp->_aniMan, xpos, 449, 1, manId);
+
+				if (!mq)
+					return;
+
+				mq->addExCommandToEnd(new ExCommand(cmd));
+
+				postExCommand(g_fp->_aniMan->_id, 2, 841, 449, 0, -1);
+				return;
+			}
+		} else {
+			if (cmd->_keyCode)
+				return;
+			if (g_vars->scene22_var07) {
+				if (g_fp->_aniMan->_movement)
+					return;
+
+				chainQueue(QU_SC22_HANDLEDOWN, 1);
+				g_vars->scene22_var08 = 1;
+				return;
+			}
+
+			ani = g_fp->_currentScene->getStaticANIObject1ById(ANI_TABURETTE, -1);
+			if (ani && (ani->_flags & 4)) {
+				int x = g_fp->_aniMan->_ox;
+				int y = g_fp->_aniMan->_ox;
+
+				if (sqrt((double)((841 - x) * (841 - x) + (449 - y) * (449 - y)))
+					< sqrt((double)((1075 - x) * (1075 - x) + (449 - y) * (449 - y)))) {
+					if (abs(841 - x) <= 1) {
+						if (abs(449 - y) <= 1) {
+							chainQueue(QU_SC22_TOSTOOL, 1);
+							g_vars->scene22_var08 = 1;
+							return;
+						}
+					}
+					goto LABEL_13;
+				}
+
+				if (abs(1075 - x) > 1 || abs(449 - y) > 1) {
+					xpos = 1075;
+					manId = ST_MAN_RIGHT | 0x4000;
+					goto LABEL_31;
+				}
+
+				MGM mgm;
+				MGMInfo mgminfo;
+
+				mgm.addItem(ANI_MAN);
+				mgminfo.ani = g_fp->_aniMan;
+				mgminfo.staticsId2 = ST_MAN_RIGHT;
+				mgminfo.x1 = 934;
+				mgminfo.y1 = 391;
+				mgminfo.field_1C = 10;
+				mgminfo.staticsId1 = 0x4145;
+				mgminfo.x2 = 981;
+				mgminfo.y2 = 390;
+				mgminfo.field_10 = 1;
+				mgminfo.flags = 127;
+				mgminfo.movementId = rMV_MAN_TURN_SRL;
+
+				mq = mgm.genMovement(&mgminfo);
+
+				ExCommand *ex = mq->getExCommandByIndex(0);
+
+				mq->deleteExCommandByIndex(0, 0);
+
+				if (mq)
+					delete mq;
+
+				mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC22_TOSTOOL_R), 0, 0);
+
+				mq->insertExCommandAt(2, ex);
+				mq->setFlags(mq->getFlags() | 1);
+				mq->chain(0);
+
+				g_vars->scene22_var08 = 1;
+			} else {
+				if (abs(1010 - g_fp->_aniMan->_ox) <= 1) {
+					if (abs(443 - g_fp->_aniMan->_oy) <= 1) {
+						chainQueue(QU_SC22_TRYHANDLE, 1);
+						return;
+					}
+				}
+
+				mq = getCurrSceneSc2MotionController()->method34(g_fp->_aniMan, 1010, 443, 1, ST_MAN_UP);
+
+				if (mq) {
+					mq->addExCommandToEnd(new ExCommand(cmd));
+
+					postExCommand(g_fp->_aniMan->_id, 2, 1010, 443, 0, -1);
+					return;
+				}
+			}
+		}
+	}
 }
 
 int sceneHandler22(ExCommand *cmd) {
@@ -213,7 +339,7 @@ int sceneHandler22(ExCommand *cmd) {
 			StaticANIObject *ani = g_fp->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
 
 			if (ani && ani->_id == ANI_HANDLE_L) {
-				sceneHandler22_sub02(cmd);
+				sceneHandler22_stoolLogic(cmd);
 				return 0;
 			}
 
@@ -254,7 +380,7 @@ int sceneHandler22(ExCommand *cmd) {
 				g_fp->_currentScene->_x = g_fp->_sceneWidth - x;
 			}
 
-			if (x > g_fp->_sceneRect.right - g_vars->scene22_var01 )
+			if (x > g_fp->_sceneRect.right - g_vars->scene22_var01)
 				g_fp->_currentScene->_x = x + g_vars->scene22_var03 - g_fp->_sceneRect.right;
 
 			g_fp->_behaviorManager->updateBehaviors();
