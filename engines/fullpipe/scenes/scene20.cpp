@@ -99,7 +99,25 @@ void scene20_initScene(Scene *sc) {
 }
 
 void sceneHandler20_updateFlies() {
-	warning("STUB: sceneHandler20_updateFlies()");
+	int sz = g_fp->_floaters->_array2.size();
+
+	if (sz < 3) {
+		g_fp->_floaters->genFlies(g_fp->_currentScene, 253, 650, 200, 0);
+		g_fp->_floaters->_array2[sz - 1]->val2 = 250;
+		g_fp->_floaters->_array2[sz - 1]->val3 = 200;
+	} else {
+		int idx = g_fp->_rnd->getRandomNumber(sz);
+
+		g_fp->_floaters->_array2[idx]->countdown = 0;
+		g_fp->_floaters->_array2[idx]->fflags |= 4u;
+		g_fp->_floaters->_array2[idx]->val2 = 250;
+		g_fp->_floaters->_array2[idx]->val3 = 200;
+		g_fp->_floaters->_array2[idx]->val6 = 253;
+		g_fp->_floaters->_array2[idx]->val7 = 650;
+		g_fp->_floaters->_array2[idx]->ani->_priority = 200;
+	}
+
+	g_vars->scene20_var05 = g_fp->_rnd->getRandomNumber(200) + 400;
 }
 
 int sceneHandler20(ExCommand *cmd) {
