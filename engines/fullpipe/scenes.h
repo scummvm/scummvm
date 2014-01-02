@@ -333,16 +333,12 @@ public:
 	bool scene17_handPhase;
 	int scene17_sceneEdgeX;
 
-	int scene21_var01;
-	int scene21_var02;
-	int scene21_var03;
-	int scene21_var04;
 	StaticANIObject *scene21_giraffeBottom;
 	int scene21_giraffeBottomX;
 	int scene21_giraffeBottomY;
-	int scene21_var05;
-	double scene21_var06;
-	int scene21_var07;
+	int scene21_pipeIsOpen;
+	double scene21_wigglePos;
+	bool scene21_wiggleTrigger;
 
 	bool scene24_jetIsOn;
 	bool scene24_flowIsLow;

@@ -37,11 +37,6 @@
 namespace Fullpipe {
 
 void scene21_initScene(Scene *sc) {
-	g_vars->scene21_var01 = 200;
-	g_vars->scene21_var02 = 200;
-	g_vars->scene21_var03 = 300;
-	g_vars->scene21_var04 = 300;
-
 	Scene *oldsc = g_fp->_currentScene;
 
 	g_vars->scene21_giraffeBottom = sc->getStaticANIObject1ById(ANI_GIRAFFE_BOTTOM, -1);
@@ -49,26 +44,26 @@ void scene21_initScene(Scene *sc) {
 
 	if (g_fp->getObjectState(sO_LowerPipe_21) == g_fp->getObjectEnumState(sO_LowerPipe_21, sO_IsOpened)) {
 		g_vars->scene21_giraffeBottom->changeStatics2(ST_GRFB_HANG);
-		g_vars->scene21_var05 = 1;
-		g_vars->scene21_var06 = 0.0;
+		g_vars->scene21_pipeIsOpen = true;
+		g_vars->scene21_wigglePos = 0.0;
 		g_vars->scene21_giraffeBottomX = g_vars->scene21_giraffeBottom->_ox;
 		g_vars->scene21_giraffeBottomY = g_vars->scene21_giraffeBottom->_oy;
-		g_vars->scene21_var07 = 0;
+		g_vars->scene21_wiggleTrigger = false;
 	} else {
-		g_vars->scene21_var05 = 0;
+		g_vars->scene21_pipeIsOpen = false;
 	}
 	g_fp->_currentScene = oldsc;
 	g_fp->initArcadeKeys("SC_21");
 }
 
 void sceneHandler21_doWiggle() {
-	g_vars->scene21_giraffeBottom->setOXY((int)(cos(g_vars->scene21_var06) * 4.0) + g_vars->scene21_giraffeBottom->_ox,
+	g_vars->scene21_giraffeBottom->setOXY((int)(cos(g_vars->scene21_wigglePos) * 4.0) + g_vars->scene21_giraffeBottom->_ox,
 										  g_vars->scene21_giraffeBottom->_oy);
 
-	g_vars->scene21_var06 += 0.19635;
+	g_vars->scene21_wigglePos += 0.19635;
 
-	if (g_vars->scene21_var06 > 6.2831853) {
-		g_vars->scene21_var06 = 0;
+	if (g_vars->scene21_wigglePos > 6.2831853) {
+		g_vars->scene21_wigglePos = 0;
 
 		if (!g_vars->scene21_giraffeBottom->_movement)
 			g_vars->scene21_giraffeBottom->setOXY(g_vars->scene21_giraffeBottomX, g_vars->scene21_giraffeBottomY);
@@ -86,7 +81,7 @@ int sceneHandler21(ExCommand *cmd) {
 			g_vars->scene21_giraffeBottom->setOXY(g_vars->scene21_giraffeBottomX, g_vars->scene21_giraffeBottomY);
 			g_vars->scene21_giraffeBottom->changeStatics2(ST_GRFB_SIT);
 
-			g_vars->scene21_var05 = 0;
+			g_vars->scene21_pipeIsOpen = false;
 
 			g_fp->setObjectState(sO_LowerPipe_21, g_fp->getObjectEnumState(sO_LowerPipe_21, sO_IsClosed));
 		}
@@ -116,20 +111,20 @@ int sceneHandler21(ExCommand *cmd) {
 			int x = g_fp->_aniMan2->_ox;
 
 			if (x <= g_fp->_sceneWidth - 460) {
-				if (x < g_fp->_sceneRect.left + g_vars->scene21_var01)
-					g_fp->_currentScene->_x = x - g_vars->scene21_var03 - g_fp->_sceneRect.left;
+				if (x < g_fp->_sceneRect.left + 200)
+					g_fp->_currentScene->_x = x - 300 - g_fp->_sceneRect.left;
 			} else {
 				g_fp->_currentScene->_x = g_fp->_sceneWidth - x;
 			}
 
-			if (x > g_fp->_sceneRect.right - g_vars->scene21_var01)
-				g_fp->_currentScene->_x = x + g_vars->scene21_var03 - g_fp->_sceneRect.right;
+			if (x > g_fp->_sceneRect.right - 200)
+				g_fp->_currentScene->_x = x + 300 - g_fp->_sceneRect.right;
 		}
 
-		if (g_vars->scene21_var05 && !g_vars->scene21_var07)
+		if (g_vars->scene21_pipeIsOpen && !g_vars->scene21_wiggleTrigger)
 			sceneHandler21_doWiggle();
 
-		g_vars->scene21_var07 = g_vars->scene21_var07 == 0;
+		g_vars->scene21_wiggleTrigger = !g_vars->scene21_wiggleTrigger;
 
 		g_fp->_behaviorManager->updateBehaviors();
 		g_fp->startSceneTrack();
