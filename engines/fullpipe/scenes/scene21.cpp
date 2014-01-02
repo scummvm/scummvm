@@ -56,6 +56,16 @@ void scene21_initScene(Scene *sc) {
 	g_fp->initArcadeKeys("SC_21");
 }
 
+int scene21_updateCursor() {
+	g_fp->updateCursorCommon();
+
+	if (g_fp->_cursorId == PIC_CSR_ITN && g_fp->_objectIdAtCursor == PIC_SC21_DTRUBA)
+
+		g_fp->_cursorId = PIC_CSR_GOD;
+
+	return g_fp->_cursorId;
+}
+
 void sceneHandler21_doWiggle() {
 	g_vars->scene21_giraffeBottom->setOXY((int)(cos(g_vars->scene21_wigglePos) * 4.0) + g_vars->scene21_giraffeBottom->_ox,
 										  g_vars->scene21_giraffeBottom->_oy);

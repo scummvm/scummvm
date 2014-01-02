@@ -726,6 +726,7 @@ namespace Fullpipe {
 // Scene 21
 #define ANI_GIRAFFE_BOTTOM 1633
 #define MSG_SC21_UPDATEASS 4211
+#define PIC_SC21_DTRUBA 1823
 #define ST_GRFB_SIT 1687
 #define ST_GRFB_HANG 1638
 
