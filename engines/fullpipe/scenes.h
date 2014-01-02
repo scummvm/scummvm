@@ -101,6 +101,10 @@ void scene17_restoreState();
 int sceneHandler17(ExCommand *cmd);
 int scene17_updateCursor();
 
+int scene21_updateCursor();
+void scene21_initScene(Scene *sc);
+int sceneHandler21(ExCommand *cmd);
+
 void scene24_initScene(Scene *sc);
 void scene24_setPoolState();
 int sceneHandler24(ExCommand *cmd);
