@@ -37,7 +37,25 @@
 namespace Fullpipe {
 
 void scene20_setExits(Scene *sc) {
-	warning("STUB: scene20_setExits()");
+	int thingpar;
+
+	if (g_fp->getObjectState(sO_Grandma) == g_fp->getObjectEnumState(sO_Grandma, sO_OnStool)
+		|| g_fp->getObjectState(sO_Grandma) == g_fp->getObjectEnumState(sO_Grandma, sO_OnTheFloor))
+		thingpar = 1;
+	else if (g_fp->getObjectState(sO_Grandma) == g_fp->getObjectEnumState(sO_Grandma, sO_NearPipe)
+			 || g_fp->getObjectState(sO_Grandma) == g_fp->getObjectEnumState(sO_Grandma, sO_NearPipeWithStool)) {
+		getSc2MctlCompoundBySceneId(sc->_sceneId)->enableLinks(sO_CloseThing, 1);
+		getSc2MctlCompoundBySceneId(sc->_sceneId)->enableLinks(sO_CloseThing2, 1);
+		getSc2MctlCompoundBySceneId(sc->_sceneId)->enableLinks(sO_CloseThing3, 0);
+
+		return;
+	} else {
+		thingpar = 0;
+	}
+
+	getSc2MctlCompoundBySceneId(sc->_sceneId)->enableLinks(sO_CloseThing, thingpar);
+	getSc2MctlCompoundBySceneId(sc->_sceneId)->enableLinks(sO_CloseThing2, 0);
+	getSc2MctlCompoundBySceneId(sc->_sceneId)->enableLinks(sO_CloseThing3, 1);
 }
 
 void scene20_initScene(Scene *sc) {
