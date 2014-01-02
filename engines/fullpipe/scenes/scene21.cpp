@@ -62,7 +62,17 @@ void scene21_initScene(Scene *sc) {
 }
 
 void sceneHandler21_doWiggle() {
-	warning("STUB: sceneHandler21_doWiggle()");
+	g_vars->scene21_giraffeBottom->setOXY((int)(cos(g_vars->scene21_var06) * 4.0) + g_vars->scene21_giraffeBottom->_ox,
+										  g_vars->scene21_giraffeBottom->_oy);
+
+	g_vars->scene21_var06 += 0.19635;
+
+	if (g_vars->scene21_var06 > 6.2831853) {
+		g_vars->scene21_var06 = 0;
+
+		if (!g_vars->scene21_giraffeBottom->_movement)
+			g_vars->scene21_giraffeBottom->setOXY(g_vars->scene21_giraffeBottomX, g_vars->scene21_giraffeBottomY);
+	}
 }
 
 int sceneHandler21(ExCommand *cmd) {
