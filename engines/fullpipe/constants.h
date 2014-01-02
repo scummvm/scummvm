@@ -725,6 +725,7 @@ namespace Fullpipe {
 
 // Scene 20
 #define ANI_GRANDMA_20 2427
+#define MSG_SC20_UPDATELOCKABLE 5217
 #define ST_GMA20_FLOOR 2429
 #define ST_GMA20_STAND 2436
 #define ST_GMA20_STOOL 2432

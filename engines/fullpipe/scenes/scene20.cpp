@@ -98,4 +98,45 @@ void scene20_initScene(Scene *sc) {
 	g_vars->scene20_var05 = g_fp->_rnd->getRandomNumber(200) + 400;
 }
 
+void sceneHandler20_updateFlies() {
+	warning("STUB: sceneHandler20_updateFlies()");
+}
+
+int sceneHandler20(ExCommand *cmd) {
+	if (cmd->_messageKind != 17)
+		return 0;
+
+	switch (cmd->_messageNum) {
+	case MSG_SC20_UPDATELOCKABLE:
+		scene20_setExits(g_fp->_currentScene);
+		break;
+
+	case 33:
+		if (g_fp->_aniMan2) {
+			int x = g_fp->_aniMan2->_ox;
+
+			if (x < g_fp->_sceneRect.left + g_vars->scene20_var01)
+				g_fp->_currentScene->_x = x - g_vars->scene20_var03 - g_fp->_sceneRect.left;
+
+			if (x > g_fp->_sceneRect.right - g_vars->scene20_var01)
+				g_fp->_currentScene->_x = x + g_vars->scene20_var03 - g_fp->_sceneRect.right;
+		}
+
+		--g_vars->scene20_var05;
+
+		if (g_vars->scene20_var05 <= 0)
+			sceneHandler20_updateFlies();
+
+		g_fp->_floaters->update();
+
+		g_fp->_behaviorManager->updateBehaviors();
+
+		g_fp->startSceneTrack();
+
+		break;
+	}
+
+	return 0;
+}
+
 } // End of namespace Fullpipe
