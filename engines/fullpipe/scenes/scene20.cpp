@@ -59,11 +59,6 @@ void scene20_setExits(Scene *sc) {
 }
 
 void scene20_initScene(Scene *sc) {
-	g_vars->scene20_var01 = 200;
-	g_vars->scene20_var02 = 200;
-	g_vars->scene20_var03 = 300;
-	g_vars->scene20_var04 = 300;
-
 	Scene *oldsc = g_fp->_currentScene;
 
 	g_vars->scene20_grandma = sc->getStaticANIObject1ById(ANI_GRANDMA_20, -1);
@@ -95,7 +90,7 @@ void scene20_initScene(Scene *sc) {
 
 	g_fp->_currentScene = oldsc;
 
-	g_vars->scene20_var05 = g_fp->_rnd->getRandomNumber(200) + 400;
+	g_vars->scene20_fliesCountdown = g_fp->_rnd->getRandomNumber(200) + 400;
 }
 
 void sceneHandler20_updateFlies() {
@@ -117,7 +112,7 @@ void sceneHandler20_updateFlies() {
 		g_fp->_floaters->_array2[idx]->ani->_priority = 200;
 	}
 
-	g_vars->scene20_var05 = g_fp->_rnd->getRandomNumber(200) + 400;
+	g_vars->scene20_fliesCountdown = g_fp->_rnd->getRandomNumber(200) + 400;
 }
 
 int sceneHandler20(ExCommand *cmd) {
@@ -133,16 +128,16 @@ int sceneHandler20(ExCommand *cmd) {
 		if (g_fp->_aniMan2) {
 			int x = g_fp->_aniMan2->_ox;
 
-			if (x < g_fp->_sceneRect.left + g_vars->scene20_var01)
-				g_fp->_currentScene->_x = x - g_vars->scene20_var03 - g_fp->_sceneRect.left;
+			if (x < g_fp->_sceneRect.left + 200)
+				g_fp->_currentScene->_x = x - 300 - g_fp->_sceneRect.left;
 
-			if (x > g_fp->_sceneRect.right - g_vars->scene20_var01)
-				g_fp->_currentScene->_x = x + g_vars->scene20_var03 - g_fp->_sceneRect.right;
+			if (x > g_fp->_sceneRect.right - 200)
+				g_fp->_currentScene->_x = x + 300 - g_fp->_sceneRect.right;
 		}
 
-		--g_vars->scene20_var05;
+		--g_vars->scene20_fliesCountdown;
 
-		if (g_vars->scene20_var05 <= 0)
+		if (g_vars->scene20_fliesCountdown <= 0)
 			sceneHandler20_updateFlies();
 
 		g_fp->_floaters->update();
