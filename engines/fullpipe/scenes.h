@@ -109,6 +109,9 @@ void scene24_initScene(Scene *sc);
 void scene24_setPoolState();
 int sceneHandler24(ExCommand *cmd);
 
+void scene31_initScene(Scene *sc);
+int sceneHandler31(ExCommand *ex);
+
 void sceneDbgMenu_initScene(Scene *sc);
 int sceneHandlerDbgMenu(ExCommand *cmd);
 
