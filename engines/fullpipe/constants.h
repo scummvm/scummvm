@@ -723,6 +723,10 @@ namespace Fullpipe {
 #define ST_MUG17_EMPTY 2739
 #define ST_SMG_SIT 1399
 
+// Scene 21
+#define ANI_GIRAFFE_BOTTOM 1633
+#define ST_GRFB_HANG 1638
+
 // Scene 24
 #define ANI_DROP_24 3505
 #define ANI_INV_HAMMER 884

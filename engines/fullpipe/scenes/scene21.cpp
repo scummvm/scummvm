@@ -47,7 +47,7 @@ void scene21_initScene(Scene *sc) {
 	g_vars->scene21_giraffeBottom = sc->getStaticANIObject1ById(ANI_GIRAFFE_BOTTOM, -1);
 	g_fp->_currentScene = sc;
 
-	if (g_fp->getObjectState(sO_LowerPipe_21) == g_fp->getObjectEnumState(sO_LowerPipe_21, sO_IsOpened )) {
+	if (g_fp->getObjectState(sO_LowerPipe_21) == g_fp->getObjectEnumState(sO_LowerPipe_21, sO_IsOpened)) {
 		g_vars->scene21_giraffeBottom->changeStatics2(ST_GRFB_HANG);
 		g_vars->scene21_var05 = 1;
 		g_vars->scene21_var06 = 0.0;

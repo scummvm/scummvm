@@ -247,6 +247,17 @@ Vars::Vars() {
 	scene17_handPhase = false;
 	scene17_sceneEdgeX = 0;
 
+	scene21_var01 = 0;
+	scene21_var02 = 0;
+	scene21_var03 = 0;
+	scene21_var04 = 0;
+	scene21_giraffeBottom = 0;
+	scene21_giraffeBottomX = 0;
+	scene21_giraffeBottomY = 0;
+	scene21_var05 = 0;
+	scene21_var06 = 0.0;
+	scene21_var07 = 0;
+
 	scene24_jetIsOn = false;
 	scene24_flowIsLow = false;
 	scene24_waterIsOn = false;
