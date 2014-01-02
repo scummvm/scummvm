@@ -747,7 +747,19 @@ namespace Fullpipe {
 #define ST_DRP24_EMPTY 3507
 #define ST_WTR24_FLOWLOWER 1843
 
+// Scene 30
+#define ANI_LEG 2322
+#define QU_SC30_ENTERLIFT 2823
+#define QU_SC30_EXITLIFT 2824
+#define ST_LEG_DOWN 2325
+#define ST_LEG_DOWN1 2330
+#define ST_LEG_DOWN2 2334
+#define ST_LEG_EMPTY 2338
+#define ST_LEG_UP 2324
+
 // Scene 31
+#define LiftDown 1058
+#define LiftUp 1057
 #define ANI_CACTUS_31 2456
 #define MSG_SC31_PULL 2944
 #define MSG_SC31_TESTCACTUS 5095

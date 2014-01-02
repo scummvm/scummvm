@@ -354,6 +354,13 @@ public:
 	StaticANIObject *scene24_jet;
 	StaticANIObject *scene24_drop;
 
+	int scene30_var01;
+	int scene30_var02;
+	int scene30_var03;
+	int scene30_var04;
+	StaticANIObject *scene30_leg;
+	int scene30_var05;
+
 	int scene31_chantingCountdown;
 	StaticANIObject *scene31_cactus;
 	StaticANIObject *scene31_plusMinus;
