@@ -65,7 +65,17 @@ void scene31_initScene(Scene *sc) {
 }
 
 void sceneHandler31_testCactus(ExCommand *cmd) {
-	warning("STUB: sceneHandler31_testCactus");
+	if ((g_vars->scene31_cactus->_flags & 4) && g_vars->scene31_cactus->_statics->_staticsId == ST_CTS31_GROWN2) {
+		MessageQueue *mq = g_fp->_globalMessageQueueList->getMessageQueueById(cmd->_parId);
+
+		if (mq) {
+			mq->getExCommandByIndex(0)->_messageKind = 0;
+			mq->getExCommandByIndex(0)->_excFlags |= 1;
+
+			mq->getExCommandByIndex(1)->_messageKind = 0;
+			mq->getExCommandByIndex(1)->_excFlags |= 1;
+		}
+	}
 }
 
 int sceneHandler31(ExCommand *cmd) {
