@@ -46,11 +46,6 @@ void scene30_enablePass(Scene *sc) {
 }
 
 void scene30_initScene(Scene *sc, int flag) {
-	g_vars->scene30_var01 = 200;
-	g_vars->scene30_var02 = 200;
-	g_vars->scene30_var03 = 300;
-	g_vars->scene30_var04 = 300;
-
 	Scene *oldsc = g_fp->_currentScene;
 
 	g_vars->scene30_leg = sc->getStaticANIObject1ById(ANI_LEG, -1);
@@ -72,9 +67,9 @@ void scene30_initScene(Scene *sc, int flag) {
 	scene30_enablePass(sc);
 
 	if (flag == LiftUp || flag == LiftDown)
-		g_vars->scene30_var05 = 0;
+		g_vars->scene30_liftFlag = 0;
 	else
-		g_vars->scene30_var05 = 1;
+		g_vars->scene30_liftFlag = 1;
 
 	g_fp->lift_setButton(sO_Level8, ST_LBN_8N);
 
@@ -139,11 +134,11 @@ int sceneHandler30(ExCommand *cmd) {
 		if (g_fp->_aniMan2) {
 			int x = g_fp->_aniMan2->_ox;
 
-			if (x < g_fp->_sceneRect.left + g_vars->scene30_var01)
-				g_fp->_currentScene->_x = x - g_vars->scene30_var03 - g_fp->_sceneRect.left;
+			if (x < g_fp->_sceneRect.left + 200)
+				g_fp->_currentScene->_x = x - 300 - g_fp->_sceneRect.left;
 
-			if (x > g_fp->_sceneRect.right - g_vars->scene30_var01)
-				g_fp->_currentScene->_x = x + g_vars->scene30_var03 - g_fp->_sceneRect.right;
+			if (x > g_fp->_sceneRect.right - 200)
+				g_fp->_currentScene->_x = x + 300 - g_fp->_sceneRect.right;
 		}
 
 		g_fp->_behaviorManager->updateBehaviors();
