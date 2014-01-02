@@ -74,4 +74,35 @@ void scene22_initScene(Scene *sc) {
 	g_fp->initArcadeKeys("SC_22");
 }
 
+int scene22_updateCursor() {
+	g_fp->updateCursorCommon();
+
+	if (g_fp->_objectIdAtCursor != ANI_HANDLE_L)
+		return g_fp->_cursorId;
+
+	int sel = g_fp->_inventory->getSelectedItemId();
+
+	if (!sel) {
+		g_fp->_cursorId = PIC_CSR_ITN;
+		return g_fp->_cursorId;
+	}
+
+	if (g_vars->scene22_var07 || (sel != ANI_INV_STOOL && sel != ANI_INV_BOX))
+		; //empty
+	else
+		g_fp->_cursorId = PIC_CSR_ITN_INV;
+
+	return g_fp->_cursorId;
+}
+
+void scene22_setBagState() {
+	if (g_vars->scene22_var10) {
+		g_fp->_behaviorManager->setBehaviorEnabled(g_vars->scene22_bag, ST_MSH_SIT, QU_MSH_CRANEOUT, 1);
+		g_fp->_behaviorManager->setBehaviorEnabled(g_vars->scene22_bag, ST_MSH_SIT, QU_MSH_MOVE, 0);
+	} else {
+		g_fp->_behaviorManager->setBehaviorEnabled(g_vars->scene22_bag, ST_MSH_SIT, QU_MSH_CRANEOUT, 0);
+		g_fp->_behaviorManager->setBehaviorEnabled(g_vars->scene22_bag, ST_MSH_SIT, QU_MSH_MOVE, 1);
+	}
+}
+
 } // End of namespace Fullpipe

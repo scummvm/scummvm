@@ -732,6 +732,8 @@ namespace Fullpipe {
 
 // Scene 21
 #define ANI_GIRAFFE_BOTTOM 1633
+#define ANI_INV_BOX 890
+#define ANI_INV_STOOL 1780
 #define MSG_SC21_UPDATEASS 4211
 #define PIC_SC21_DTRUBA 1823
 #define ST_GRFB_SIT 1687
@@ -740,8 +742,11 @@ namespace Fullpipe {
 // Scene 22
 #define ANI_GIRAFFE_MIDDLE 1981
 #define ANI_MESHOK 1754
+#define QU_MSH_CRANEOUT 1811
+#define QU_MSH_MOVE 1812
 #define ST_GRFM_AFTER 3472
 #define ST_GRFM_NORM 1983
+#define ST_MSH_SIT 1756
 
 // Scene 24
 #define ANI_DROP_24 3505
