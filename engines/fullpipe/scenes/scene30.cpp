@@ -37,7 +37,12 @@
 namespace Fullpipe {
 
 void scene30_enablePass(Scene *sc) {
-	warning("STUB: scene30_enablePass()");
+	MovGraphLink *lnk = getSc2MctlCompoundBySceneId(sc->_sceneId)->getLinkByName(sO_WayToPipe);
+
+	if (g_fp->getObjectState(sO_Leg) == g_fp->getObjectEnumState(sO_Leg, sO_WithAll))
+		lnk->_flags &= 0xDFFFFFFF;
+	else
+		lnk->_flags |= 0x20000000;
 }
 
 void scene30_initScene(Scene *sc, int flag) {
