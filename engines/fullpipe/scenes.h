@@ -116,6 +116,10 @@ int sceneHandler30(ExCommand *cmd);
 void scene31_initScene(Scene *sc);
 int sceneHandler31(ExCommand *ex);
 
+int scene36_updateCursor();
+void scene36_initScene(Scene *sc);
+int sceneHandler36(ExCommand *cmd);
+
 void sceneDbgMenu_initScene(Scene *sc);
 int sceneHandlerDbgMenu(ExCommand *cmd);
 
