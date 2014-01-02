@@ -90,4 +90,68 @@ int scene30_updateCursor() {
 	return g_fp->_cursorId;
 }
 
+int sceneHandler30(ExCommand *cmd) {
+	if (cmd->_messageKind != 17)
+		return 0;
+
+	switch(cmd->_messageNum) {
+	case MSG_LIFT_CLOSEDOOR:
+		g_fp->lift_closedoorSeq();
+		break;
+
+	case MSG_LIFT_EXITLIFT:
+		g_fp->lift_exitSeq(cmd);
+		break;
+
+	case MSG_LIFT_STARTEXITQUEUE:
+		g_fp->lift_startExitQueue();
+		break;
+
+	case MSG_LIFT_CLICKBUTTON:
+		g_fp->lift_animation3();
+		break;
+
+	case MSG_SC30_UPDATEPATH:
+		scene30_enablePass(g_fp->_currentScene);
+		break;
+
+	case 64:
+		g_fp->lift_sub05(cmd);
+		break;
+
+	case MSG_LIFT_GO:
+		g_fp->lift_goAnimation();
+		break;
+
+	case 29:
+		{
+			StaticANIObject *ani = g_fp->_currentScene->getStaticANIObjectAtPos(g_fp->_sceneRect.left + cmd->_x, g_fp->_sceneRect.top + cmd->_y);
+
+			if (ani && ani->_id == ANI_LIFTBUTTON) {
+				g_fp->lift_sub1(ani);
+
+				cmd->_messageKind = 0;
+			}
+			break;
+		}
+
+	case 33:
+		if (g_fp->_aniMan2) {
+			int x = g_fp->_aniMan2->_ox;
+
+			if (x < g_fp->_sceneRect.left + g_vars->scene30_var01)
+				g_fp->_currentScene->_x = x - g_vars->scene30_var03 - g_fp->_sceneRect.left;
+
+			if (x > g_fp->_sceneRect.right - g_vars->scene30_var01)
+				g_fp->_currentScene->_x = x + g_vars->scene30_var03 - g_fp->_sceneRect.right;
+		}
+
+		g_fp->_behaviorManager->updateBehaviors();
+
+		break;
+	}
+
+	return 0;
+}
+
 } // End of namespace Fullpipe
