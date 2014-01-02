@@ -37,30 +37,25 @@
 namespace Fullpipe {
 
 void scene22_initScene(Scene *sc) {
-	g_vars->scene22_var01 = 200;
-	g_vars->scene22_var02 = 200;
-	g_vars->scene22_var03 = 300;
-	g_vars->scene22_var04 = 300;
 	g_vars->scene22_bag = sc->getStaticANIObject1ById(ANI_MESHOK, -1);
 
 	Scene *oldsc = g_fp->_currentScene;
 	g_fp->_currentScene = sc;
 
 	g_vars->scene22_giraffeMiddle = sc->getStaticANIObject1ById(ANI_GIRAFFE_MIDDLE, -1);
-	g_vars->scene22_var07 = 0;
-	g_vars->scene22_var08 = 0;
-	g_vars->scene22_var09 = 0;
-	g_vars->scene22_var10 = 1;
+	g_vars->scene22_dudeIsOnStool = false;
+	g_vars->scene22_interactionIsDisabled = false;
+	g_vars->scene22_craneIsOut = true;
 
 	if (g_fp->getObjectState(sO_Bag_22) == g_fp->getObjectEnumState(sO_Bag_22, sO_NotFallen))
-		g_vars->scene22_var11 = 0;
+		g_vars->scene22_numBagFalls = 0;
 	else if (g_fp->getObjectState(sO_Bag_22) == g_fp->getObjectEnumState(sO_Bag_22, sO_FallenOnce))
-		g_vars->scene22_var11 = 1;
+		g_vars->scene22_numBagFalls = 1;
 	else if ( g_fp->getObjectState(sO_Bag_22) == g_fp->getObjectEnumState(sO_Bag_22, sO_FallenTwice))
-		g_vars->scene22_var11 = 2;
+		g_vars->scene22_numBagFalls = 2;
 	else {
-		g_vars->scene22_var11 = 3;
-        g_vars->scene22_var10 = 0;
+		g_vars->scene22_numBagFalls = 3;
+        g_vars->scene22_craneIsOut = false;
 	}
 
 
@@ -87,7 +82,7 @@ int scene22_updateCursor() {
 		return g_fp->_cursorId;
 	}
 
-	if (g_vars->scene22_var07 || (sel != ANI_INV_STOOL && sel != ANI_INV_BOX))
+	if (g_vars->scene22_dudeIsOnStool || (sel != ANI_INV_STOOL && sel != ANI_INV_BOX))
 		; //empty
 	else
 		g_fp->_cursorId = PIC_CSR_ITN_INV;
@@ -96,7 +91,7 @@ int scene22_updateCursor() {
 }
 
 void scene22_setBagState() {
-	if (g_vars->scene22_var10) {
+	if (g_vars->scene22_craneIsOut) {
 		g_fp->_behaviorManager->setBehaviorEnabled(g_vars->scene22_bag, ST_MSH_SIT, QU_MSH_CRANEOUT, 1);
 		g_fp->_behaviorManager->setBehaviorEnabled(g_vars->scene22_bag, ST_MSH_SIT, QU_MSH_MOVE, 0);
 	} else {
@@ -116,13 +111,13 @@ void sceneHandler22and23_hideStool() {
 void sceneHandler22_handleDown() {
 	if (g_vars->scene22_bag->_statics->_staticsId == ST_MSH_SIT) {
 		chainQueue(QU_MSH_CRANEOUT, 1);
-		g_vars->scene22_var08 = 0;
+		g_vars->scene22_interactionIsDisabled = false;
 	} else {
-		++g_vars->scene22_var11;
+		++g_vars->scene22_numBagFalls;
 
 		int qid;
 
-		if (g_vars->scene22_var11 == 3) {
+		if (g_vars->scene22_numBagFalls == 3) {
 			chainQueue(QU_SC22_FALLSACK_GMA, 1);
 			qid = QU_SC22_FALLBROOM;
 		} else {
@@ -133,10 +128,10 @@ void sceneHandler22_handleDown() {
 
 		int state;
 
-		if (g_vars->scene22_var11) {
-			if (g_vars->scene22_var11 == 1) {
+		if (g_vars->scene22_numBagFalls) {
+			if (g_vars->scene22_numBagFalls == 1) {
 				state = g_fp->getObjectEnumState(sO_Bag_22, sO_FallenOnce);
-			} else if (g_vars->scene22_var11 == 2) {
+			} else if (g_vars->scene22_numBagFalls == 2) {
 				state = g_fp->getObjectEnumState(sO_Bag_22, sO_FallenTwice);
 			} else {
 				state = g_fp->getObjectEnumState(sO_Bag_22, sO_BrushHasFallen);
@@ -147,7 +142,8 @@ void sceneHandler22_handleDown() {
 
 		g_fp->setObjectState(sO_Bag_22, state);
 	}
-	g_vars->scene22_var10 = 1;
+
+	g_vars->scene22_craneIsOut = true;
 
 	g_fp->_behaviorManager->setBehaviorEnabled(g_vars->scene22_bag, ST_MSH_SIT, QU_MSH_CRANEOUT, 1);
 	g_fp->_behaviorManager->setBehaviorEnabled(g_vars->scene22_bag, ST_MSH_SIT, QU_MSH_MOVE, 0);
@@ -174,7 +170,7 @@ void sceneHandler22_stoolLogic(ExCommand *cmd) {
 			if (abs(841 - g_fp->_aniMan->_ox) <= 1) {
 				if (abs(449 - g_fp->_aniMan->_oy) <= 1) {
 					chainQueue(QU_SC22_PUTSTOOL, 1);
-					g_vars->scene22_var08 = 1;
+					g_vars->scene22_interactionIsDisabled = true;
 
 					return;
 				}
@@ -208,12 +204,14 @@ void sceneHandler22_stoolLogic(ExCommand *cmd) {
 		} else {
 			if (cmd->_keyCode)
 				return;
-			if (g_vars->scene22_var07) {
+
+			if (g_vars->scene22_dudeIsOnStool) {
 				if (g_fp->_aniMan->_movement)
 					return;
 
 				chainQueue(QU_SC22_HANDLEDOWN, 1);
-				g_vars->scene22_var08 = 1;
+
+				g_vars->scene22_interactionIsDisabled = true;
 				return;
 			}
 
@@ -227,7 +225,8 @@ void sceneHandler22_stoolLogic(ExCommand *cmd) {
 					if (abs(841 - x) <= 1) {
 						if (abs(449 - y) <= 1) {
 							chainQueue(QU_SC22_TOSTOOL, 1);
-							g_vars->scene22_var08 = 1;
+
+							g_vars->scene22_interactionIsDisabled = true;
 							return;
 						}
 					}
@@ -271,7 +270,7 @@ void sceneHandler22_stoolLogic(ExCommand *cmd) {
 				mq->setFlags(mq->getFlags() | 1);
 				mq->chain(0);
 
-				g_vars->scene22_var08 = 1;
+				g_vars->scene22_interactionIsDisabled = true;
 			} else {
 				if (abs(1010 - g_fp->_aniMan->_ox) <= 1) {
 					if (abs(443 - g_fp->_aniMan->_oy) <= 1) {
@@ -317,15 +316,15 @@ int sceneHandler22(ExCommand *cmd) {
 		break;
 
 	case MSG_SC22_FROMSTOOL:
-		g_vars->scene22_var07 = 0;
-		g_vars->scene22_var08 = 0;
+		g_vars->scene22_dudeIsOnStool = false;
+		g_vars->scene22_interactionIsDisabled = false;
 
 		getCurrSceneSc2MotionController()->setEnabled();
 		g_fp->_behaviorManager->setFlagByStaticAniObject(g_fp->_aniMan, 1);
 		break;
 
 	case MSG_SC22_ONSTOOL:
-		g_vars->scene22_var07 = 1;
+		g_vars->scene22_dudeIsOnStool = true;
 		getCurrSceneSc2MotionController()->clearEnabled();
 		g_fp->_behaviorManager->setFlagByStaticAniObject(g_fp->_aniMan, 0);
 		break;
@@ -335,7 +334,7 @@ int sceneHandler22(ExCommand *cmd) {
 		break;
 
 	case 29:
-		if (!g_vars->scene22_var08) {
+		if (!g_vars->scene22_interactionIsDisabled) {
 			StaticANIObject *ani = g_fp->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
 
 			if (ani && ani->_id == ANI_HANDLE_L) {
@@ -343,7 +342,7 @@ int sceneHandler22(ExCommand *cmd) {
 				return 0;
 			}
 
-			if (!g_vars->scene22_var07) {
+			if (!g_vars->scene22_dudeIsOnStool) {
 				if (!ani || !canInteractAny(g_fp->_aniMan, ani, cmd->_keyCode)) {
 					int picId = g_fp->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
 					PictureObject *pic = g_fp->_currentScene->getPictureObjectById(picId, 0);
@@ -374,14 +373,14 @@ int sceneHandler22(ExCommand *cmd) {
 			int x = g_fp->_aniMan2->_ox;
 
 			if (x <= g_fp->_sceneWidth - 460) {
-				if (x < g_fp->_sceneRect.left + g_vars->scene22_var01)
-					g_fp->_currentScene->_x = x - g_vars->scene22_var03 - g_fp->_sceneRect.left;
+				if (x < g_fp->_sceneRect.left + 200)
+					g_fp->_currentScene->_x = x - 300 - g_fp->_sceneRect.left;
 			} else {
 				g_fp->_currentScene->_x = g_fp->_sceneWidth - x;
 			}
 
-			if (x > g_fp->_sceneRect.right - g_vars->scene22_var01)
-				g_fp->_currentScene->_x = x + g_vars->scene22_var03 - g_fp->_sceneRect.right;
+			if (x > g_fp->_sceneRect.right - 200)
+				g_fp->_currentScene->_x = x + 300 - g_fp->_sceneRect.right;
 
 			g_fp->_behaviorManager->updateBehaviors();
 

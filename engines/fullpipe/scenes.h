@@ -361,17 +361,12 @@ public:
 	double scene21_wigglePos;
 	bool scene21_wiggleTrigger;
 
-	int scene22_var01;
-	int scene22_var02;
-	int scene22_var03;
-	int scene22_var04;
 	StaticANIObject *scene22_bag;
 	StaticANIObject *scene22_giraffeMiddle;
-	int scene22_var07;
-	int scene22_var08;
-	int scene22_var09;
-	int scene22_var10;
-	int scene22_var11;
+	bool scene22_dudeIsOnStool;
+	bool scene22_interactionIsDisabled;
+	bool scene22_craneIsOut;
+	int scene22_numBagFalls;
 
 	bool scene24_jetIsOn;
 	bool scene24_flowIsLow;
