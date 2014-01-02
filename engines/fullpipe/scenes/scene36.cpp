@@ -37,10 +37,6 @@
 namespace Fullpipe {
 
 void scene36_initScene(Scene *sc) {
-	g_vars->scene36_var01 = 200;
-	g_vars->scene36_var02 = 200;
-	g_vars->scene36_var03 = 300;
-	g_vars->scene36_var04 = 300;
 	g_vars->scene36_rotohrust = sc->getStaticANIObject1ById(ANI_ROTOHRUST, -1);
 	g_vars->scene36_scissors = sc->getStaticANIObject1ById(ANI_SCISSORS_36, -1);
 }
@@ -79,11 +75,11 @@ int sceneHandler36(ExCommand *cmd) {
 		if (g_fp->_aniMan2) {
 			int x = g_fp->_aniMan2->_ox;
 
-			if (x < g_fp->_sceneRect.left + g_vars->scene36_var01)
-				g_fp->_currentScene->_x = x - g_vars->scene36_var03 - g_fp->_sceneRect.left;
+			if (x < g_fp->_sceneRect.left + 200)
+				g_fp->_currentScene->_x = x - 300 - g_fp->_sceneRect.left;
 
-			if (x > g_fp->_sceneRect.right - g_vars->scene36_var01)
-				g_fp->_currentScene->_x = x + g_vars->scene36_var03 - g_fp->_sceneRect.right;
+			if (x > g_fp->_sceneRect.right - 200)
+				g_fp->_currentScene->_x = x + 300 - g_fp->_sceneRect.right;
 		}
 
 		g_fp->_behaviorManager->updateBehaviors();
