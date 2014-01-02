@@ -230,7 +230,7 @@ namespace Fullpipe {
 #define sO_IsGone "\xd3\xe5\xf5\xe0\xeb\xe0"	// "Уехала"
 #define sO_FallenTwice "\xd3\xef\xe0\xeb \xe4\xe2\xe0"	// "Упал два"
 #define sO_FallenOnce "\xd3\xef\xe0\xeb \xf0\xe0\xe7"	// "Упал раз"
-#define sO_FallenBrush "\xd3\xef\xe0\xeb\xe0 \xf9\xe5\xf2\xea\xe0"	// "Упала щетка"
+#define sO_BrushHasFallen "\xd3\xef\xe0\xeb\xe0 \xf9\xe5\xf2\xea\xe0"	// "Упала щетка"
 #define sO_NotBroken "\xd6\xe5\xeb\xe0"	// "Цела"
 #define sO_IsScratchingBelly "\xd7\xe5\xf8\xe5\xf2 \xef\xf3\xe7\xee"	// "Чешет пузо"
 #define sO_Level0 "\xdd\xf2\xe0\xe6 0"	// "Этаж 0"

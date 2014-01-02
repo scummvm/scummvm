@@ -106,15 +106,51 @@ void scene22_setBagState() {
 }
 
 void sceneHandler22_showStool() {
-	warning("STUB: sceneHandler22_showStool()");
+	chainQueue(QU_SC22_SHOWSTOOL, 0);
 }
 
 void sceneHandler22and23_hideStool() {
-	warning("STUB: sceneHandler22and23_hideStool()");
+	g_fp->_currentScene->getStaticANIObject1ById(ANI_TABURETTE, -1)->hide();
 }
 
 void sceneHandler22_handleDown() {
-	warning("STUB: sceneHandler22_handleDown()");
+	if (g_vars->scene22_bag->_statics->_staticsId == ST_MSH_SIT) {
+		chainQueue(QU_MSH_CRANEOUT, 1);
+		g_vars->scene22_var08 = 0;
+	} else {
+		++g_vars->scene22_var11;
+
+		int qid;
+
+		if (g_vars->scene22_var11 == 3) {
+			chainQueue(QU_SC22_FALLSACK_GMA, 1);
+			qid = QU_SC22_FALLBROOM;
+		} else {
+			qid = QU_SC22_FALLSACK;
+		}
+
+		chainQueue(qid, 1);
+
+		int state;
+
+		if (g_vars->scene22_var11) {
+			if (g_vars->scene22_var11 == 1) {
+				state = g_fp->getObjectEnumState(sO_Bag_22, sO_FallenOnce);
+			} else if (g_vars->scene22_var11 == 2) {
+				state = g_fp->getObjectEnumState(sO_Bag_22, sO_FallenTwice);
+			} else {
+				state = g_fp->getObjectEnumState(sO_Bag_22, sO_BrushHasFallen);
+			}
+		} else {
+			state = g_fp->getObjectEnumState(sO_Bag_22, sO_NotFallen);
+		}
+
+		g_fp->setObjectState(sO_Bag_22, state);
+	}
+	g_vars->scene22_var10 = 1;
+
+	g_fp->_behaviorManager->setBehaviorEnabled(g_vars->scene22_bag, ST_MSH_SIT, QU_MSH_CRANEOUT, 1);
+	g_fp->_behaviorManager->setBehaviorEnabled(g_vars->scene22_bag, ST_MSH_SIT, QU_MSH_MOVE, 0);
 }
 
 void sceneHandler22_sub01(ExCommand *cmd) {
