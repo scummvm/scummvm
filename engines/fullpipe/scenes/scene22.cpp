@@ -153,14 +153,19 @@ void sceneHandler22_handleDown() {
 	g_fp->_behaviorManager->setBehaviorEnabled(g_vars->scene22_bag, ST_MSH_SIT, QU_MSH_MOVE, 0);
 }
 
-void sceneHandler22_sub01(ExCommand *cmd) {
-	warning("STUB: sceneHandler22_sub01(cmd)");
+void sceneHandler22_fromStool(ExCommand *cmd) {
+	if (g_fp->_aniMan->isIdle() && !(g_fp->_aniMan->_flags & 0x100)) {
+		MessageQueue *mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC22_FROMSTOOL), 0, 0);
+
+		mq->addExCommandToEnd(new ExCommand(cmd));
+		mq->setFlags(mq->getFlags() | 1);
+		mq->chain(0);
+	}
 }
 
 void sceneHandler22_sub02(ExCommand *cmd) {
 	warning("STUB: sceneHandler22_sub02(cmd)");
 }
-
 
 int sceneHandler22(ExCommand *cmd) {
 	if (cmd->_messageKind != 17)
@@ -206,10 +211,12 @@ int sceneHandler22(ExCommand *cmd) {
 	case 29:
 		if (!g_vars->scene22_var08) {
 			StaticANIObject *ani = g_fp->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
+
 			if (ani && ani->_id == ANI_HANDLE_L) {
 				sceneHandler22_sub02(cmd);
 				return 0;
 			}
+
 			if (!g_vars->scene22_var07) {
 				if (!ani || !canInteractAny(g_fp->_aniMan, ani, cmd->_keyCode)) {
 					int picId = g_fp->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
@@ -225,8 +232,9 @@ int sceneHandler22(ExCommand *cmd) {
 				}
 				return 0;
 			}
+
 			if (g_fp->_aniMan->_statics->_staticsId == ST_MAN_RIGHT && !g_fp->_aniMan->_movement) {
-				sceneHandler22_sub01(cmd);
+				sceneHandler22_fromStool(cmd);
 
 				return 0;
 			}
