@@ -365,6 +365,13 @@ public:
 	StaticANIObject *scene31_cactus;
 	StaticANIObject *scene31_plusMinus;
 
+	int scene36_var01;
+	int scene36_var02;
+	int scene36_var03;
+	int scene36_var04;
+	StaticANIObject *scene36_rotohrust;
+	StaticANIObject *scene36_scissors;
+
 	PictureObject *selector;
 };
 

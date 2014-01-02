@@ -268,6 +268,13 @@ Vars::Vars() {
 	scene31_cactus = 0;
 	scene31_plusMinus = 0;
 
+	scene36_var01 = 0;
+	scene36_var02 = 0;
+	scene36_var03 = 0;
+	scene36_var04 = 0;
+	scene36_rotohrust = 0;
+	scene36_scissors = 0;
+
 	selector = 0;
 }
 

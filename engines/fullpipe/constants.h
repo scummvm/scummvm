@@ -768,6 +768,10 @@ namespace Fullpipe {
 #define SND_31_001 4377
 #define ST_CTS31_GROWN2 2472
 
+// Scene 36
+#define ANI_SCISSORS_36 2647
+#define ANI_ROTOHRUST 2360
+
 // Debug scene
 #define PIC_SCD_1 727
 #define PIC_SCD_2 728
