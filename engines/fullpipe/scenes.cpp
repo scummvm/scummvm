@@ -247,6 +247,13 @@ Vars::Vars() {
 	scene17_handPhase = false;
 	scene17_sceneEdgeX = 0;
 
+	scene20_var01 = 0;
+	scene20_var02 = 0;
+	scene20_var03 = 0;
+	scene20_var04 = 0;
+	scene20_var05 = 0;
+	scene20_grandma = 0;
+
 	scene21_giraffeBottom = 0;
 	scene21_giraffeBottomX = 0;
 	scene21_giraffeBottomY = 0;

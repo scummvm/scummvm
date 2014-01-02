@@ -32,7 +32,7 @@
 
 #include "fullpipe/interaction.h"
 #include "fullpipe/behavior.h"
-
+#include "fullpipe/floaters.h"
 
 namespace Fullpipe {
 
@@ -56,19 +56,19 @@ void scene20_initScene(Scene *sc) {
 		g_fp->setObjectState(sO_Grandma, g_fp->getObjectEnumState(sO_Grandma, sO_NearPipe));
 
 	if (g_fp->getObjectState(sO_Grandma) == g_fp->getObjectEnumState(sO_Grandma, sO_OnStool)) {
-		StaticANIObject_changeStatics2(g_vars->scene20_grandma, ST_GMA20_STOOL);
+		g_vars->scene20_grandma->changeStatics2(ST_GMA20_STOOL);
 	} else if (g_fp->getObjectState(sO_Grandma) == g_fp->getObjectEnumState(sO_Grandma, sO_OnTheFloor)) {
-		StaticANIObject_changeStatics2(g_vars->scene20_grandma, ST_GMA20_FLOOR);
+		g_vars->scene20_grandma->changeStatics2(ST_GMA20_FLOOR);
 	} else if (g_fp->getObjectState(sO_Grandma) == g_fp->getObjectEnumState(sO_Grandma, sO_NearPipe)
 			   || g_fp->getObjectState(sO_Grandma) == g_fp->getObjectEnumState(sO_Grandma, sO_NearPipeWithStool)) {
-		StaticANIObject_changeStatics2(g_vars->scene20_grandma, ST_GMA20_STAND);
+		g_vars->scene20_grandma->changeStatics2(ST_GMA20_STAND);
 	} else {
-		StaticANIObject_hide(g_vars->scene20_grandma);
+		g_vars->scene20_grandma->hide();
 	}
 
 	scene20_setExits(sc);
 
-	g_fp->_floaters->init(getGameLoaderGameVar()->getSubVarByName("SC_20"));
+	g_fp->_floaters->init(g_fp->getGameLoaderGameVar()->getSubVarByName("SC_20"));
 
 	for (int i = 0; i < 3; i++) {
 		g_fp->_floaters->genFlies(sc, g_fp->_rnd->getRandomNumber(101) + 70, g_fp->_rnd->getRandomNumber(51) + 175, 100, 0);

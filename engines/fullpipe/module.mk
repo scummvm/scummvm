@@ -40,6 +40,7 @@ MODULE_OBJS = \
 	scenes/scene15.o \
 	scenes/scene16.o \
 	scenes/scene17.o \
+	scenes/scene20.o \
 	scenes/scene21.o \
 	scenes/scene24.o \
 	scenes/scene30.o \

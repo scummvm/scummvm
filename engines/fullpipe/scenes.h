@@ -348,6 +348,13 @@ public:
 	bool scene17_handPhase;
 	int scene17_sceneEdgeX;
 
+	int scene20_var01;
+	int scene20_var02;
+	int scene20_var03;
+	int scene20_var04;
+	int scene20_var05;
+	StaticANIObject *scene20_grandma;
+
 	StaticANIObject *scene21_giraffeBottom;
 	int scene21_giraffeBottomX;
 	int scene21_giraffeBottomY;
