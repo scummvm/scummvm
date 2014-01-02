@@ -442,8 +442,16 @@ bool Scene::compareObjPriority(const void *p1, const void *p2) {
 	return false;
 }
 
-void Scene::objectList_sortByPriority(PtrList &list) {
-	Common::sort(list.begin(), list.end(), Scene::compareObjPriority);
+void Scene::objectList_sortByPriority(PtrList &list, bool skipFirst) {
+	if (skipFirst) {
+		PtrList::iterator s = list.begin();
+
+		++s;
+
+		Common::sort(s, list.end(), Scene::compareObjPriority);
+	} else {
+		Common::sort(list.begin(), list.end(), Scene::compareObjPriority);
+	}
 }
 
 void Scene::draw() {
@@ -526,7 +534,6 @@ void Scene::updateScrolling2() {
 		((PictureObject *)_picObjList[0])->getDimensions(&point);
 
 		int flags = ((PictureObject *)_picObjList[0])->_flags;
-		warning("flags: %d %d %d %d", flags & 2, flags & 0x20, point.x, point.y);
 
 		if (g_fp->_sceneRect.left < 0 && !(flags & 2))
 			offsetX = -g_fp->_sceneRect.left;
@@ -609,7 +616,7 @@ void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
 	debug(8, "Scene::drawContent(>%d, <%d, %d)", minPri, maxPri, drawBg);
 
 	if (_picObjList.size() > 2) { // We need to z-sort them
-		objectList_sortByPriority(_picObjList);
+		objectList_sortByPriority(_picObjList, true);
 	}
 
 	if (minPri == -1 && _picObjList.size())

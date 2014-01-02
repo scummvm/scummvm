@@ -79,7 +79,7 @@ class Scene : public Background {
 
   private:
 	static bool compareObjPriority(const void *p1, const void *p2);
-	void objectList_sortByPriority(PtrList &list);
+	void objectList_sortByPriority(PtrList &list, bool skipFirst = false);
 };
 
 class SceneTag : public CObject {
