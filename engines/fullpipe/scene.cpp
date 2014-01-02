@@ -526,6 +526,7 @@ void Scene::updateScrolling2() {
 		((PictureObject *)_picObjList[0])->getDimensions(&point);
 
 		int flags = ((PictureObject *)_picObjList[0])->_flags;
+		warning("flags: %d %d %d %d", flags & 2, flags & 0x20, point.x, point.y);
 
 		if (g_fp->_sceneRect.left < 0 && !(flags & 2))
 			offsetX = -g_fp->_sceneRect.left;
