@@ -81,4 +81,13 @@ void scene30_initScene(Scene *sc, int flag) {
 	g_fp->lift_sub5(sc, QU_SC30_ENTERLIFT, QU_SC30_EXITLIFT);
 }
 
+int scene30_updateCursor() {
+	g_fp->updateCursorCommon();
+
+	if (g_fp->_cursorId == PIC_CSR_ITN && g_fp->_objectIdAtCursor == PIC_SC30_LTRUBA) {
+		g_fp->_cursorId = PIC_CSR_GOL;
+	}
+	return g_fp->_cursorId;
+}
+
 } // End of namespace Fullpipe

@@ -749,6 +749,7 @@ namespace Fullpipe {
 
 // Scene 30
 #define ANI_LEG 2322
+#define PIC_SC30_LTRUBA 2354
 #define QU_SC30_ENTERLIFT 2823
 #define QU_SC30_EXITLIFT 2824
 #define ST_LEG_DOWN 2325
