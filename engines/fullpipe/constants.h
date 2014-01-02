@@ -737,6 +737,12 @@ namespace Fullpipe {
 #define ST_GRFB_SIT 1687
 #define ST_GRFB_HANG 1638
 
+// Scene 22
+#define ANI_GIRAFFE_MIDDLE 1981
+#define ANI_MESHOK 1754
+#define ST_GRFM_AFTER 3472
+#define ST_GRFM_NORM 1983
+
 // Scene 24
 #define ANI_DROP_24 3505
 #define ANI_INV_HAMMER 884

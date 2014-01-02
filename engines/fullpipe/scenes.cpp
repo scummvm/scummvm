@@ -257,6 +257,18 @@ Vars::Vars() {
 	scene21_wigglePos = 0.0;
 	scene21_wiggleTrigger = 0;
 
+	scene22_var01 = 200;
+	scene22_var02 = 200;
+	scene22_var03 = 300;
+	scene22_var04 = 300;
+	scene22_bag = 0;
+	scene22_giraffeMiddle = 0;
+	scene22_var07 = 0;
+	scene22_var08 = 0;
+	scene22_var09 = 0;
+	scene22_var10 = 1;
+	scene22_var11 = 1;
+
 	scene24_jetIsOn = false;
 	scene24_flowIsLow = false;
 	scene24_waterIsOn = false;

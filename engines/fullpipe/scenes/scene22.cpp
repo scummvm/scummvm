@@ -41,12 +41,12 @@ void scene22_initScene(Scene *sc) {
 	g_vars->scene22_var02 = 200;
 	g_vars->scene22_var03 = 300;
 	g_vars->scene22_var04 = 300;
-	g_vars->scene22_var05 = Scene_getStaticANIObject1ById(sc, ANI_MESHOK, -1);
+	g_vars->scene22_bag = sc->getStaticANIObject1ById(ANI_MESHOK, -1);
 
 	Scene *oldsc = g_fp->_currentScene;
 	g_fp->_currentScene = sc;
 
-	g_vars->scene22_giraffeMiddle = sc->getStaticANIObject1ById(sc, ANI_GIRAFFE_MIDDLE, -1);
+	g_vars->scene22_giraffeMiddle = sc->getStaticANIObject1ById(ANI_GIRAFFE_MIDDLE, -1);
 	g_vars->scene22_var07 = 0;
 	g_vars->scene22_var08 = 0;
 	g_vars->scene22_var09 = 0;
