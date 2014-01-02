@@ -57,4 +57,42 @@ int scene36_updateCursor() {
 	return g_fp->_cursorId;
 }
 
+int sceneHandler36(ExCommand *cmd) {
+	if (cmd->_messageKind != 17)
+		return 0;
+
+	switch (cmd->_messageNum) {
+	case 29:
+		if (g_fp->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY) == PIC_SC36_MASK)
+			if (g_vars->scene36_scissors)
+				if (g_vars->scene36_scissors->_flags & 4)
+					if (g_fp->_aniMan->isIdle())
+						if (!(g_fp->_aniMan->_flags & 0x100) && g_fp->_msgObjectId2 != g_vars->scene36_scissors->_id ) {
+							handleObjectInteraction(g_fp->_aniMan, g_vars->scene36_scissors, cmd->_keyCode);
+
+							cmd->_messageKind = 0;
+						}
+
+		break;
+
+	case 33:
+		if (g_fp->_aniMan2) {
+			int x = g_fp->_aniMan2->_ox;
+
+			if (x < g_fp->_sceneRect.left + g_vars->scene36_var01)
+				g_fp->_currentScene->_x = x - g_vars->scene36_var03 - g_fp->_sceneRect.left;
+
+			if (x > g_fp->_sceneRect.right - g_vars->scene36_var01)
+				g_fp->_currentScene->_x = x + g_vars->scene36_var03 - g_fp->_sceneRect.right;
+		}
+
+		g_fp->_behaviorManager->updateBehaviors();
+		g_fp->startSceneTrack();
+
+		break;
+	}
+
+	return 0;
+}
+
 } // End of namespace Fullpipe
