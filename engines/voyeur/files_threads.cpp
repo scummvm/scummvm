@@ -1376,7 +1376,7 @@ int ThreadResource::doInterface() {
 	_vm->initIFace();
 
 	Common::Array<Common::Rect> &hotspots = _vm->_bVoy->boltEntry(
-		_vm->_playStamp1)._rectResource->_entries;
+		_vm->_playStamp1 + 1)._rectResource->_entries;
 	_vm->_playStamp2 = 151 - _vm->getRandomNumber(5);
 	_vm->_voy._vocSecondsOffset = _vm->getRandomNumber(29);
 
