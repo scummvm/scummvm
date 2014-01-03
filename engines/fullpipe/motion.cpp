@@ -2027,20 +2027,20 @@ void ReactParallel::createRegion() {
 	// GdiObject::Attach(_rgn, CreatePolygonRgn(_points, 4, 2);
 }
 
-void ReactParallel::method14() {
-	warning("STUB: ReactParallel::method14()");
+void ReactParallel::setCenter() {
+	warning("STUB: ReactParallel::setCenter()");
 }
 
 ReactPolygonal::ReactPolygonal() {
-	_field_C = 0;
-	_field_10 = 0;
+	_centerX = 0;
+	_centerY = 0;
 }
 
 bool ReactPolygonal::load(MfcArchive &file) {
 	debug(5, "ReactPolygonal::load()");
 
-	_field_C = file.readUint32LE();
-	_field_10 = file.readUint32LE();
+	_centerX = file.readUint32LE();
+	_centerY = file.readUint32LE();
 	_pointCount = file.readUint32LE();
 
 	if (_pointCount > 0) {
@@ -2067,8 +2067,8 @@ void ReactPolygonal::createRegion() {
 	}
 }
 
-void ReactPolygonal::method14() {
-	warning("STUB: ReactPolygonal::method14()");
+void ReactPolygonal::setCenter() {
+	warning("STUB: ReactPolygonal::setCenter()");
 }
 
 bool MovGraphReact::pointInRegion(int x, int y) {
