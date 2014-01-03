@@ -59,7 +59,7 @@ struct VoyeurEvent {
 	int _minute;
 	bool _isAM;
 	VoyeurEventType _type;
-	int _field8;
+	int _videoId;
 	int _computerOn;
 	int _computerOff;
 	int _dead;
@@ -193,7 +193,6 @@ public:
 	bool _newMouseUnk;
 
 	int _v2A0A2;
-	int _videoComputerBut4;
 	int _videoDead;
 	int _cycleTime[4];
 	byte *_cycleNext[4];

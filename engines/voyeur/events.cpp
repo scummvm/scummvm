@@ -84,7 +84,6 @@ EventsManager::EventsManager(): _intPtr(_gameData),
 	_newMouseClicked = _newMouseUnk = false;
 
 	_v2A0A2 = 0;
-	_videoComputerBut4 = 0;
 	_videoDead = 0;
 }
 
@@ -575,7 +574,7 @@ void EventsManager::addVideoEventStart() {
 	e._minute = _vm->_gameMinute;
 	e._isAM = _vm->_voy._isAM;
 	e._type = EVTYPE_VIDEO;
-	e._field8 = _vm->_eventsManager._videoComputerBut4;
+	e._videoId = _vm->_videoId;
 	e._computerOn = _vm->_voy._vocSecondsOffset;
 	e._dead = _vm->_eventsManager._videoDead;
 }
@@ -593,7 +592,7 @@ void EventsManager::addAudioEventStart() {
 	e._minute = _vm->_gameMinute;
 	e._isAM = _vm->_voy._isAM;
 	e._type = EVTYPE_AUDIO;
-	e._field8 = _vm->_eventsManager._videoComputerBut4;
+	e._videoId = _vm->_videoId;
 	e._computerOn = _vm->_voy._field47A;
 	e._dead = _vm->_eventsManager._videoDead;
 }
@@ -611,7 +610,7 @@ void EventsManager::addEvidEventStart(int v) {
 	e._minute = _vm->_gameMinute;
 	e._isAM = _vm->_voy._isAM;
 	e._type = EVTYPE_EVID;
-	e._field8 = _vm->_eventsManager._videoComputerBut4;
+	e._videoId = _vm->_videoId;
 	e._computerOn = _vm->_voy._vocSecondsOffset;
 	e._dead = _vm->_eventsManager._videoDead;
 
@@ -630,7 +629,7 @@ void EventsManager::addComputerEventStart() {
 	e._minute = _vm->_gameMinute;
 	e._isAM = _vm->_voy._isAM;
 	e._type = EVTYPE_COMPUTER;
-	e._field8 = _vm->_playStamp1;
+	e._videoId = _vm->_playStamp1;
 	e._computerOn = _vm->_voy._computerTextId;
 }
 

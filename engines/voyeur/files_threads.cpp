@@ -373,22 +373,22 @@ void ThreadResource::parsePlayCommands() {
 			v2 = READ_LE_UINT16(dataP);
 
 			if (v2 == 0 || READ_LE_UINT16(_vm->_controlPtr->_ptr + 4) == 0) {
-				_vm->_eventsManager._videoComputerBut4 = READ_LE_UINT16(dataP + 2);
+				_vm->_videoId = READ_LE_UINT16(dataP + 2);
 				_vm->_voy._field468 = READ_LE_UINT16(dataP + 4);
 				_vm->_voy._field46A = READ_LE_UINT16(dataP + 6);
 
 				if (_vm->_voy._RTVNum < _vm->_voy._field468 ||
 						(_vm->_voy._field468 + _vm->_voy._field46A)  < _vm->_voy._RTVNum) {
-					_vm->_eventsManager._videoComputerBut4 = -1;
+					_vm->_videoId = -1;
 				} else {
 					_vm->_voy._vocSecondsOffset = _vm->_voy._RTVNum - _vm->_voy._field468;
 					_vm->_eventsManager.addAudioEventStart();
 
-					assert(_vm->_eventsManager._videoComputerBut4 < 38);
+					assert(_vm->_videoId < 38);
 					_vm->_graphicsManager._backgroundPage = _vm->_bVoy->boltEntry(
-						0x7F00 + BLIND_TABLE[_vm->_eventsManager._videoComputerBut4])._picResource;
+						0x7F00 + BLIND_TABLE[_vm->_videoId])._picResource;
 					_vm->_graphicsManager._backColors = _vm->_bVoy->boltEntry(0x7F01 + 
-						BLIND_TABLE[_vm->_eventsManager._videoComputerBut4])._cMapResource;
+						BLIND_TABLE[_vm->_videoId])._cMapResource;
 
 					(*_vm->_graphicsManager._vPort)->setupViewPort();
 					_vm->_graphicsManager._backColors->startFade();
@@ -397,7 +397,7 @@ void ThreadResource::parsePlayCommands() {
 					_vm->_voy._field478 = -2;
 					_vm->_soundManager.setVOCOffset(_vm->_voy._vocSecondsOffset * 11025);
 					Common::String filename = _vm->_soundManager.getVOCFileName(
-						_vm->_eventsManager._videoComputerBut4 + 159);
+						_vm->_videoId + 159);
 					_vm->_soundManager.startVOCPlay(filename);
 					_vm->_voy._field478 |= 16;
 					_vm->_eventsManager.startCursorBlink();
@@ -414,7 +414,7 @@ void ThreadResource::parsePlayCommands() {
 
 					_vm->_bVoy->freeBoltGroup(0x7F00);
 					_vm->_voy._field478 = -17;
-					_vm->_eventsManager._videoComputerBut4 = -1;
+					_vm->_videoId = -1;
 					_vm->_voy._field470 = 129;
 					parseIndex = 999;
 				}				
@@ -427,26 +427,26 @@ void ThreadResource::parsePlayCommands() {
 			v2 = READ_LE_UINT16(dataP);
 
 			if (v2 == 0 || READ_LE_UINT16(_vm->_controlPtr->_ptr + 4) == 0) {
-				_vm->_eventsManager._videoComputerBut4 = READ_LE_UINT16(dataP + 2);
+				_vm->_videoId = READ_LE_UINT16(dataP + 2);
 				_vm->_voy._field468 = READ_LE_UINT16(dataP + 4);
 				_vm->_voy._field46A = READ_LE_UINT16(dataP + 6);
 
 				if (_vm->_voy._RTVNum < _vm->_voy._field468 ||
 						(_vm->_voy._field468 + _vm->_voy._field46A)  < _vm->_voy._RTVNum) {
-					_vm->_eventsManager._videoComputerBut4 = -1;
+					_vm->_videoId = -1;
 				} else {
 					_vm->_voy._vocSecondsOffset = _vm->_voy._RTVNum - _vm->_voy._field468;
 					_vm->_eventsManager.addAudioEventStart();
 					_vm->_voy._field478 &= ~1;
 					_vm->_voy._field478 |= 0x10;
-					_vm->playAVideo(_vm->_eventsManager._videoComputerBut4);
+					_vm->playAVideo(_vm->_videoId);
 
 					_vm->_voy._field478 &= ~0x10;
 					_vm->_voy._field478 |= 1;
 					_vm->_eventsManager.addVideoEventEnd();
 					_vm->_eventsManager.incrementTime(1);
 				
-					_vm->_eventsManager._videoComputerBut4 = -1;
+					_vm->_videoId = -1;
 					_vm->_playStamp1 = -1;
 
 					if (_vm->_eventsManager._videoDead != -1) {
@@ -470,7 +470,7 @@ void ThreadResource::parsePlayCommands() {
 
 		case 4:
 		case 22:
-			_vm->_eventsManager._videoComputerBut4 = READ_LE_UINT16(dataP) - 1;
+			_vm->_videoId = READ_LE_UINT16(dataP) - 1;
 			dataP += 2;
 
 			if (id == 22) {
@@ -482,11 +482,11 @@ void ThreadResource::parsePlayCommands() {
 			_vm->_voy._vocSecondsOffset = 0;
 			_vm->_voy._field468 = _vm->_voy._RTVNum;
 			_vm->_voy._field478 &= ~0x11;
-			_vm->playAVideo(_vm->_eventsManager._videoComputerBut4);
+			_vm->playAVideo(_vm->_videoId);
 			_vm->_voy._field478 |= 1;
 
 			if (id != 22) {
-				_vm->_eventsManager._videoComputerBut4 = -1;
+				_vm->_videoId = -1;
 				parseIndex = 999;
 			} else {
 				// TODO: Double-check this
@@ -528,7 +528,7 @@ void ThreadResource::parsePlayCommands() {
 
 				_vm->_bVoy->freeBoltGroup(_vm->_playStamp1);
 				_vm->_playStamp1 = -1;
-				_vm->_eventsManager._videoComputerBut4 = -1;
+				_vm->_videoId = -1;
 				parseIndex = 999;
 			}
 			break;			

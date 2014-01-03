@@ -159,6 +159,7 @@ public:
 	bool _bob;
 	int _playStamp1;
 	int _playStamp2;
+	int _videoId;
 	const int *_resolvePtr;
 	int _iForceDeath;
 	int _checkTransitionId;

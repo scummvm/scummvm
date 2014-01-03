@@ -44,6 +44,7 @@ VoyeurEngine::VoyeurEngine(OSystem *syst, const VoyeurGameDescription *gameDesc)
 	_controlPtr = NULL;
 	_bob = false;
 	_playStamp1 = _playStamp2 = 0;
+	_videoId = -1;
 	_checkTransitionId = -1;
 	_gameHour = 0;
 	_gameMinute = 0;
@@ -478,7 +479,7 @@ void VoyeurEngine::doOpening() {
 	_voy._field478 = 16;
 	_eventsManager._gameHour = 4;
 	_eventsManager._gameMinute  = 0;
-	_eventsManager._videoComputerBut4 = 1;
+	_videoId = 1;
 	_eventsManager._videoDead = -1;
 	addVideoEventStart();
 

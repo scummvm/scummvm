@@ -49,7 +49,7 @@ void VoyeurEngine::playStamp() {
 	while (!breakFlag && !shouldQuit()) {
 		_eventsManager.getMouseInfo();
 		_playStamp1 = _playStamp2 = -1;
-		_eventsManager._videoComputerBut4 = -1;
+		_videoId = -1;
 
 		threadP->parsePlayCommands();
 
@@ -179,7 +179,7 @@ void VoyeurEngine::playStamp() {
 					_playStamp2 = -1;
 				}
 
-				_eventsManager._videoComputerBut4 = -1;
+				_videoId = -1;
 
 				if (_voy._field47A != -1) {
 					_bVoy->freeBoltGroup(_voy._field47A);
@@ -787,28 +787,28 @@ bool VoyeurEngine::checkForMurder() {
 		if (evt._type == EVTYPE_VIDEO) {
 			switch (READ_LE_UINT32(_controlPtr->_ptr + 4)) {
 			case 1:
-				if (evt._field8 == 41 && evt._computerOn <= 15 &&
+				if (evt._videoId == 41 && evt._computerOn <= 15 &&
 						(evt._computerOff + evt._computerOn) >= 16) {
 					WRITE_LE_UINT32(_controlPtr->_ptr + 12, 1);
 				}
 				break;
 
 			case 2:
-				if (evt._field8 == 53 && evt._computerOn <= 19 &&
+				if (evt._videoId == 53 && evt._computerOn <= 19 &&
 						(evt._computerOff + evt._computerOn) >= 21) {
 					WRITE_LE_UINT32(_controlPtr->_ptr + 12, 2);
 				}
 				break;
 
 			case 3:
-				if (evt._field8 == 50 && evt._computerOn <= 28 &&
+				if (evt._videoId == 50 && evt._computerOn <= 28 &&
 						(evt._computerOff + evt._computerOn) >= 29) {
 					WRITE_LE_UINT32(_controlPtr->_ptr + 12, 3);
 				}
 				break;
 
 			case 4:
-				if (evt._field8 == 43 && evt._computerOn <= 10 &&
+				if (evt._videoId == 43 && evt._computerOn <= 10 &&
 						(evt._computerOff + evt._computerOn) >= 14) {
 					WRITE_LE_UINT32(_controlPtr->_ptr + 12, 4);
 				}
@@ -837,27 +837,27 @@ bool VoyeurEngine::checkForIncriminate() {
 		VoyeurEvent &evt = _voy._events[idx];
 		
 		if (evt._type == EVTYPE_VIDEO) {
-			if (evt._field8 == 44 && evt._computerOn <= 40 &&
+			if (evt._videoId == 44 && evt._computerOn <= 40 &&
 					(evt._computerOff + evt._computerOn) >= 70) {
 				_voy._field4382 = 1;
 			}
 
-			if (evt._field8 == 44 && evt._computerOn <= 79 &&
+			if (evt._videoId == 44 && evt._computerOn <= 79 &&
 					(evt._computerOff + evt._computerOn) >= 129) {
 				_voy._field4382 = 1;
 			}
 
-			if (evt._field8 == 20 && evt._computerOn <= 28 &&
+			if (evt._videoId == 20 && evt._computerOn <= 28 &&
 					(evt._computerOff + evt._computerOn) >= 45) {
 				_voy._field4382 = 2;
 			}
 
-			if (evt._field8 == 35 && evt._computerOn <= 17 &&
+			if (evt._videoId == 35 && evt._computerOn <= 17 &&
 					(evt._computerOff + evt._computerOn) >= 36) {
 				_voy._field4382 = 3;
 			}
 
-			if (evt._field8 == 30 && evt._computerOn <= 80 &&
+			if (evt._videoId == 30 && evt._computerOn <= 80 &&
 					(evt._computerOff + evt._computerOn) >= 139) {
 				_voy._field4382 = 4;
 			}
@@ -876,12 +876,12 @@ bool VoyeurEngine::checkForIncriminate() {
 
 void VoyeurEngine::playAVideoEvent(int eventIndex) {
 	VoyeurEvent &evt = _voy._events[eventIndex];
-	_eventsManager._videoComputerBut4 = evt._field8;
+	_videoId = evt._videoId;
 	_voy._vocSecondsOffset = evt._computerOn;
 	_eventsManager._videoDead = evt._dead;
 	_voy._field478 &= ~1;
 	
-	playAVideoDuration(_eventsManager._videoComputerBut4, evt._computerOff);
+	playAVideoDuration(_videoId, evt._computerOff);
 }
 
 int VoyeurEngine::getChooseButton()  {
