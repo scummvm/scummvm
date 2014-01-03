@@ -195,7 +195,7 @@ RL2Decoder::RL2VideoTrack::RL2VideoTrack(const RL2FileHeader &header, RL2AudioTr
 		initBackSurface();
 
 	_videoBase = header._videoBase;
-	_dirtyPalette = true;
+	_dirtyPalette = header._colorCount > 0;
 
 	_curFrame = 0;
 	_nextFrameStartTime = 0;
@@ -261,7 +261,7 @@ const Graphics::Surface *RL2Decoder::RL2VideoTrack::decodeNextFrame() {
 
 	// Decode the graphic data using the appropriate method depending on whether the animation
 	// has a background or just raw frames without any background transparency
-	if (_hasBackFrame) {
+	if (_backSurface) {
 		rl2DecodeFrameWithTransparency(_videoBase);
 	} else {
 		rl2DecodeFrameWithoutTransparency(_videoBase);
@@ -350,6 +350,7 @@ void RL2Decoder::RL2VideoTrack::rl2DecodeFrameWithTransparency(int screenOffset)
 
 		if (nextByte == 0) {
 			// Move one single byte from reference surface
+			assert(frameSize > 0);
 			destP[screenOffset] = refP[screenOffset];
 			++screenOffset;
 			--frameSize;
@@ -366,6 +367,7 @@ void RL2Decoder::RL2VideoTrack::rl2DecodeFrameWithTransparency(int screenOffset)
 
 			// Run length of transparency (i.e. pixels to copy from reference frame)
 			runLength = MIN(runLength, frameSize);
+
 			Common::copy(refP + screenOffset, refP + screenOffset + runLength, destP + screenOffset);
 			screenOffset += runLength;
 			frameSize -= runLength;
@@ -373,8 +375,8 @@ void RL2Decoder::RL2VideoTrack::rl2DecodeFrameWithTransparency(int screenOffset)
 			// Run length of a single pixel value
 			int runLength = _fileStream->readByte();
 			nextByte &= 0x7f;
-
 			runLength = MIN(runLength, frameSize);
+
 			Common::fill(destP + screenOffset, destP + screenOffset + runLength, nextByte);
 			screenOffset += runLength;
 			frameSize -= runLength;
@@ -386,14 +388,11 @@ void RL2Decoder::RL2VideoTrack::rl2DecodeFrameWithTransparency(int screenOffset)
 		Common::copy(refP + screenOffset, refP + (_surface->w * _surface->h), destP + screenOffset);
 }
 
-void RL2Decoder::RL2VideoTrack::setupBackSurface(Graphics::Surface *surface) {
+Graphics::Surface *RL2Decoder::RL2VideoTrack::getBackSurface() {
 	if (!_backSurface)
 		initBackSurface();
 
-	assert(surface->w == _backSurface->w && surface->h == _backSurface->h);
-	const byte *srcP = (const byte *)surface->getPixels();
-	byte *destP = (byte *)_backSurface->getPixels();
-	Common::copy(srcP, srcP + surface->w * surface->h, destP);
+	return _backSurface;
 }
 
 /*------------------------------------------------------------------------*/

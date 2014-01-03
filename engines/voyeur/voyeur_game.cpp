@@ -688,23 +688,21 @@ void VoyeurEngine::doGossip() {
 	pal->startFade();
 
 	// Transfer initial background to video decoder
-	//PictureResource videoFrame(decoder.getVideoSurface());
-	//_graphicsManager.sDrawPic(bgPic, &videoFrame, Common::Point(-32, -20));
+	PictureResource videoFrame(decoder.getVideoTrack()->getBackSurface());
+	bgPic->_bounds.moveTo(0, 0);
+	_graphicsManager.sDrawPic(bgPic, &videoFrame, Common::Point(0, 0));
 
 	flipPageAndWait();
 
-	/*
 	byte *frameNumsP = _bVoy->memberAddr(0x309);
 	byte *posP = _bVoy->boltEntry(0x30A)._data;
 
 	// Main playback loop
-
 	int picCtr = 0;
-	decoder.start();
 	while (!shouldQuit() && !decoder.endOfVideo() && !_eventsManager._mouseClicked) {
 		if (decoder.hasDirtyPalette()) {
 			const byte *palette = decoder.getPalette();
-			_graphicsManager.setPalette(palette, 0, 256);
+			_graphicsManager.setPalette(palette, 128, 128);
 		}
 		
 		if (decoder.needsUpdate()) {
@@ -723,15 +721,12 @@ void VoyeurEngine::doGossip() {
 			const Graphics::Surface *frame = decoder.decodeNextFrame();
 			Common::copy((const byte *)frame->getPixels(), (const byte *)frame->getPixels() + 320 * 200,
 				(byte *)_graphicsManager._screenSurface.getPixels());
-
-
-			flipPageAndWait();
 		}
-
-		_eventsManager.pollEvents();
+		
+		_eventsManager.getMouseInfo();
 		g_system->delayMillis(10);
 	}
-
+	/*
 	decoder.loadFile("a2110100.rl2");
 	decoder.start();
 

@@ -680,6 +680,18 @@ void GraphicsManager::setOneColor(int idx, byte r, byte g, byte b) {
 	g_system->getPaletteManager()->setPalette(&palEntry[0], idx, 1);
 }
 
+void GraphicsManager::setColors(int start, int count, const byte *pal) {
+	for (int i = 0; i < count; ++i) {
+		if ((i + start) != 128) {
+			const byte *rgb = pal + i * 3;
+			setColor(i + start, rgb[0], rgb[1], rgb[2]);
+		}
+	}
+
+	_vm->_eventsManager._intPtr.field38 = true;
+	_vm->_eventsManager._intPtr._hasPalette = true;
+}
+
 void GraphicsManager::screenReset() {
 	resetPalette();
 

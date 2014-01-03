@@ -111,6 +111,7 @@ public:
 	void resetPalette();
 	void setColor(int idx, byte r, byte g, byte b);
 	void setOneColor(int idx, byte r, byte g, byte b);
+	void setColors(int start, int count, const byte *pal);	
 	void screenReset();
 	void fadeDownICF1(int steps);
 	void fadeUpICF1(int steps);

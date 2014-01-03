@@ -105,17 +105,18 @@ private:
 		uint16 getWidth() const;
 		uint16 getHeight() const;
 		Graphics::Surface *getSurface() { return _surface; }
+		Graphics::Surface *getBackSurface();
 		Graphics::PixelFormat getPixelFormat() const;
 		int getCurFrame() const { return _curFrame; }
 		int getFrameCount() const { return _header._numFrames; }
 		uint32 getNextFrameStartTime() const { return _nextFrameStartTime; }
 		const Graphics::Surface *decodeNextFrame();
 		const byte *getPalette() const { _dirtyPalette = false; return _header._palette; }
+		int getPaletteCount() const { return _header._colorCount; }
 		bool hasDirtyPalette() const { return _dirtyPalette; }
 		const Common::List<Common::Rect> *getDirtyRects() const { return &_dirtyRects; }
 		void clearDirtyRects() { _dirtyRects.clear(); }
 		void copyDirtyRectsToBuffer(uint8 *dst, uint pitch);
-		void setupBackSurface(Graphics::Surface *surface);
 
 	private:
 		Common::SeekableReadStream *_fileStream;
