@@ -1478,7 +1478,10 @@ void AvalancheEngine::resetVariables() {
 	_givenPenToAyles = false;
 	_askedDogfoodAboutNim = false;
 	_startTime = getTimeInSeconds();
+}
 
+void AvalancheEngine::resetAllVariables() {
+	resetVariables();
 	_parser->resetVariables();
 	_nim->resetVariables();
 	_animation->resetVariables();
@@ -1500,7 +1503,7 @@ void AvalancheEngine::newGame() {
 	avvy->init(0, true);
 
 	_alive = true;
-	resetVariables();
+	resetAllVariables();
 
 	_dialogs->setBubbleStateNatural();
 

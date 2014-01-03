@@ -444,7 +444,7 @@ bool AvalancheEngine::loadGame(const int16 slot) {
 	t.tm_mon = f->readSint16LE();
 	t.tm_year = f->readSint16LE();
 
-	resetVariables();
+	resetAllVariables();
 
 	Common::Serializer sz(f, NULL);
 	synchronize(sz);

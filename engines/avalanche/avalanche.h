@@ -340,6 +340,7 @@ private:
 	void checkClick();
 	void fixFlashers();
 	void loadAlso(byte num);
+	void resetAllVariables();
 	void resetVariables();
 };
 
