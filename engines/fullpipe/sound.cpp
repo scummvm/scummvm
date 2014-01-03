@@ -23,8 +23,12 @@
 #include "fullpipe/fullpipe.h"
 
 #include "fullpipe/objects.h"
+#include "fullpipe/scene.h"
 #include "fullpipe/sound.h"
 #include "fullpipe/ngiarchive.h"
+#include "common/memstream.h"
+#include "audio/audiostream.h"
+#include "audio/decoders/wave.h"
 
 namespace Fullpipe {
 
@@ -120,7 +124,8 @@ void FullpipeEngine::startSceneTrack() {
 }
 
 void FullpipeEngine::stopAllSounds() {
-	warning("STUB: FullpipeEngine::stopAllSounds()");
+	// TODO: Differences from stopAllSoundStreams()
+	g_fp->_mixer->stopAll();
 }
 
 void FullpipeEngine::toggleMute() {
@@ -128,7 +133,18 @@ void FullpipeEngine::toggleMute() {
 }
 
 void FullpipeEngine::playSound(int id, int flag) {
-	warning("STUB: FullpipeEngine::playSound(%d, %d)", id, flag);
+	SoundList *soundList = g_fp->_currentScene->_soundList;
+	Sound *sound = soundList->getSoundById(id);
+	if (!sound) {
+		warning("playSound: Can't find sound with ID %d", id);
+		return;
+	}
+	byte *soundData = sound->loadData();
+	Common::MemoryReadStream *dataStream = new Common::MemoryReadStream(soundData, sound->getDataSize());
+	Audio::RewindableAudioStream *wav = Audio::makeWAVStream(dataStream, DisposeAfterUse::YES);
+	Audio::AudioStream *audioStream = new Audio::LoopingAudioStream(wav, (flag == 1) ? 0 : 1);
+	Audio::SoundHandle handle = sound->getHandle();
+	g_fp->_mixer->playStream(Audio::Mixer::kSFXSoundType, &handle, audioStream);
 }
 
 void FullpipeEngine::playTrack(GameVar *sceneVar, const char *name, bool delayed) {
@@ -144,11 +160,18 @@ void FullpipeEngine::stopSoundStream2() {
 }
 
 void FullpipeEngine::stopAllSoundStreams() {
-	warning("STUB: FullpipeEngine::stopAllSoundStreams()");
+	// TODO: Differences from stopAllSounds()
+	g_fp->_mixer->stopAll();
 }
 
 void FullpipeEngine::stopAllSoundInstances(int id) {
-	warning("STUB: FullpipeEngine::stopAllSoundInstances(%d)", id);
+	SoundList *soundList = g_fp->_currentScene->_soundList;
+	for (int i = 0; i < soundList->getCount(); i++) {
+		Sound *sound = soundList->getSoundByIndex(i);
+		if (sound->getId() == id) {
+			g_fp->_mixer->stopHandle(sound->getHandle());
+		}
+	}
 }
 
 } // End of namespace Fullpipe

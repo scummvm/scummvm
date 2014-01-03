@@ -115,6 +115,7 @@ class MemoryObject : CObject {
 	void load() { loadFile(_memfilename); }
 	byte *getData();
 	byte *loadData();
+	int getDataSize() const { return _dataSize; }
 
 	bool testFlags();
 

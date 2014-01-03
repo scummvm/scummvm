@@ -32,12 +32,15 @@ class Sound : public MemoryObject {
 	int _directSoundBuffer;
 	int _directSoundBuffers[7];
 	byte *_soundData;
+	Audio::SoundHandle _handle;
 
   public:
 	Sound();
 	virtual bool load(MfcArchive &file, NGIArchive *archive);
 	virtual bool load(MfcArchive &file) { assert(0); return false; } // Disable base class
 	void updateVolume();
+	int getId() const { return _id; }
+	Audio::SoundHandle getHandle() const { return _handle; }
 
 	void setPanAndVolumeByStaticAni();
 };
@@ -55,6 +58,13 @@ class SoundList : public CObject {
 
 	int getCount() { return _soundItemsCount; }
 	Sound *getSoundByIndex(int idx) { return _soundItems[idx]; }
+	Sound *getSoundById(int id) {
+		for (int i = 0; i < _soundItemsCount; i++) {
+			if (_soundItems[i]->getId() == id)
+				return _soundItems[i];
+		}
+		return NULL;
+	}
 };
 
 } // End of namespace Fullpipe
