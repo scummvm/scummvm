@@ -127,7 +127,15 @@ void Floaters::update() {
 }
 
 void Floaters::stopAll() {
-	warning("STUB: Floaters::stopAll()");
+	for (uint i = 0; i < _array2.size(); i++) {
+		g_fp->_currentScene->deleteStaticANIObject(_array2[i]->ani);
+
+		delete _array2[i]->ani;
+	}
+
+	_array2.clear();
+
+	g_fp->stopAllSoundInstances(SND_CMN_060);
 }
 
 
