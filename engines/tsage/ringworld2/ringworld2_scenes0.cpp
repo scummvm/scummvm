@@ -3550,7 +3550,11 @@ void Scene300::signal() {
 				R2_GLOBALS.setFlag(40);
 			break;
 		case 6:
-			R2_GLOBALS._sceneManager.changeScene(1000);
+			if (g_vm->getFeatures() & GF_DEMO) {
+				R2_GLOBALS.setFlag(85);
+				R2_GLOBALS._sceneManager.changeScene(205);
+			} else
+				R2_GLOBALS._sceneManager.changeScene(1000);
 			break;
 		default:
 			break;
@@ -3611,8 +3615,14 @@ void Scene300::signal() {
 
 	case 16:
 		if (_stripManager._exitMode == 1) {
-			R2_GLOBALS._player.setAction(NULL);
-			R2_GLOBALS._sceneManager.changeScene(1000);
+			if (g_vm->getFeatures() & GF_DEMO) {
+				R2_GLOBALS._player.setAction(NULL);
+				R2_GLOBALS.setFlag(85);
+				R2_GLOBALS._sceneManager.changeScene(205);
+			} else {
+				R2_GLOBALS._player.setAction(NULL);
+				R2_GLOBALS._sceneManager.changeScene(1000);
+			}
 		} else {
 			R2_GLOBALS._player.setAction(&_action1);
 			R2_GLOBALS._player.enableControl(CURSOR_TALK);
