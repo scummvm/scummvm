@@ -29,6 +29,7 @@ class Statics;
 class Movement;
 class MctlConnectionPoint;
 class MovGraphLink;
+class MessageQueue;
 
 int startWalkTo(int objId, int objKey, int x, int y, int a5);
 int doSomeAnimation(int objId, int objKey, int a3);

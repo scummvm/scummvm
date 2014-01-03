@@ -27,6 +27,7 @@ namespace Fullpipe {
 
 class StaticANIObject;
 class Scene;
+class ReactPolygonal;
 
 struct FloaterArray1 {
 	int val1;
@@ -52,10 +53,12 @@ struct FloaterArray2 {
 
 class Floaters {
 public:
-	//HRGN hRgn;
+	ReactPolygonal *_hRgn;
 	Common::Array<FloaterArray1 *> _array1;
 	Common::Array<FloaterArray2 *> _array2;
 
+	Floaters() { _hRgn = 0; }
+	~Floaters();
 	void init(GameVar *var);
 	void genFlies(Scene *sc, int x, int y, int a5, int a6);
 	void update();

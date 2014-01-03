@@ -22,11 +22,66 @@
 
 #include "fullpipe/fullpipe.h"
 #include "fullpipe/floaters.h"
+#include "fullpipe/utils.h"
+#include "fullpipe/objects.h"
+#include "fullpipe/motion.h"
+#include "fullpipe/objectnames.h"
 
 namespace Fullpipe {
 
+Floaters::~Floaters() {
+	delete _hRgn;
+}
+
 void Floaters::init(GameVar *var) {
-	warning("STUB: Floaters::init()");
+	_array1.clear();
+	_array2.clear();
+
+	GameVar *varFliers = var->getSubVarByName(sO_Fliers);
+
+	if (!varFliers)
+		return;
+
+	GameVar *sub = varFliers->getSubVarByName("flyIdleRegion");
+
+	if (sub) {
+		_hRgn = new ReactPolygonal();
+
+		_hRgn->_pointCount = sub->getSubVarsCount();
+		_hRgn->_points = (Common::Point **)malloc(sizeof(Common::Point *) * _hRgn->_pointCount);
+
+		sub = sub->_subVars;
+
+		int idx = 0;
+
+		while (sub) {
+			_hRgn->_points[idx] = new Common::Point;
+			_hRgn->_points[idx]->x = sub->_subVars->_value.intValue;
+			_hRgn->_points[idx]->y = sub->_subVars->_nextVarObj->_value.intValue;
+
+			idx++;
+			sub = sub->_nextVarObj;
+		}
+	}
+
+	sub = varFliers->getSubVarByName("flyIdlePath");
+
+	if (sub) {
+		_array1.reserve(sub->getSubVarsCount());
+
+		sub = sub->_subVars;
+
+		int idx = 0;
+
+		while (sub) {
+			_array1[idx]->val1 = sub->_subVars->_value.intValue;
+			_array1[idx]->val2 = sub->_subVars->_nextVarObj->_value.intValue;
+
+			idx++;
+			sub = sub->_nextVarObj;
+		}
+
+	}
 }
 
 void Floaters::genFlies(Scene *sc, int x, int y, int a5, int a6) {
