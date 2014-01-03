@@ -123,7 +123,116 @@ void Floaters::genFlies(Scene *sc, int x, int y, int priority, int flags) {
 }
 
 void Floaters::update() {
-	warning("STUB: Floaters::update()");
+	for (int i = 0; i < _array2.size(); ++i) {
+		if (_array2[i]->val13 <= 0) {
+			if (_array2[i]->val4 != _array2[i]->val2 || _array2[i]->val5 != _array2[i]->val3) {
+				if (_array2[i]->val9 < 2.0)
+					_array2[i]->val9 = 2.0;
+
+				int dy = _array2[i]->val3 - _array2[i]->val5;
+				int dx = _array2[i]->val2 - _array2[i]->val4;
+				double dst = sqrt((double)(dy * dy + dx * dx));
+				double at = atan2((double)dx, (double)dy);
+				int newX = (int)(cos(at) * _array2[i]->val9);
+				int newY = (int)(sin(at) * _array2[i]->val9);
+
+				if (dst < _array2[i]->val9) {
+					newX = _array2[i]->val2 - _array2[i]->val4;
+					newY = _array2[i]->val3 - _array2[i]->val5;
+				}
+				if (dst <= 30.0) {
+					if (dst < 30.0) {
+						_array2[i]->val9 = _array2[i]->val9 - _array2[i]->val9 * 0.5;
+
+						if (_array2[i]->val9 < 2.0)
+							_array2[i]->val9 = 2.0;
+					}
+				} else {
+					_array2[i]->val9 = _array2[i]->val9 * 0.5 + _array2[i]->val9;
+
+					if (_array2[i]->val9 > _array2[i]->val11)
+						_array2[i]->val9 = _array2[i]->val11;
+				}
+
+				_array2[i]->val4 += newX;
+				_array2[i]->val5 += newY;
+				_array2[i]->ani->setOXY(newX + _array2[i]->ani->_ox, newY + _array2[i]->ani->_oy);
+
+				if (_array2[i]->val4 == _array2[i]->val2 && _array2[i]->val5 == _array2[i]->val3) {
+					_array2[i]->val9 = 0.0;
+
+					_array2[i]->val13 = g_fp->_rnd->getRandomNumber(200) + 20;
+
+					if (_array2[i]->fflags & 1) {
+						g_fp->_currentScene->deleteStaticANIObject(_array2[i]->ani);
+
+						if (_array2[i]->ani)
+							delete _array2[i]->ani;
+
+						_array2.remove_at(i);
+
+						i--;
+
+						if (!_array2.size())
+							g_fp->stopAllSoundInstances(SND_CMN_060);
+
+						continue;
+					}
+				}
+			} else {
+				if ((_array2[i]->fflags & 4) && _array2[i]->countdown < 1) {
+					_array2[i]->fflags |= 1;
+					_array2[i]->val2 = _array2[i]->val6;
+					_array2[i]->val3 = _array2[i]->val7;
+				} else {
+					if (_array2[i]->fflags & 2) {
+						int idx1 = g_fp->_rnd->getRandomNumber(_array1.size());
+
+						_array2[i]->val2 = _array1[idx1]->val1;
+						_array2[i]->val3 = _array1[idx1]->val2;
+					} else {
+						Common::Rect rect;
+
+						if (!_hRgn)
+							error("Floaters::update(): empty fliers region");
+
+						_hRgn->getBBox(&rect);
+
+						int x2 = rect.left + g_fp->_rnd->getRandomNumber(rect.right - rect.left);
+						int y2 = rect.top + g_fp->_rnd->getRandomNumber(rect.bottom - rect.top);
+
+						if (_hRgn->pointInRegion(x2, y2)) {
+							int dx = _array2[i]->val2 - x2;
+							int dy = _array2[i]->val3 - y2;
+							double dst = sqrt((double)(dy * dy + dx * dx));
+
+							if (dst < 300.0 || !_hRgn->pointInRegion(_array2[i]->val4, _array2[i]->val5)) {
+								_array2[i]->val2 = x2;
+								_array2[i]->val3 = y2;
+							}
+						}
+					}
+
+					g_fp->playSound(SND_CMN_061, 0);
+
+					if (_array2[i]->fflags & 4)
+						_array2[i]->countdown--;
+				}
+			}
+		} else {
+			_array2[i]->val13--;
+		}
+
+		if (!_array2[i]->ani->_movement && _array2[i]->ani->_statics->_staticsId == ST_FLY_FLY) {
+			if (!_array2[i]->val15) {
+				g_fp->playSound(SND_CMN_060, 1);
+
+				_array2[i]->val15 = 1;
+			}
+
+			_array2[i]->ani->startAnim(MV_FLY_FLY, 0, -1);
+		}
+	}
 }
 
 void Floaters::stopAll() {

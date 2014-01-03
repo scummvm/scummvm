@@ -29,6 +29,7 @@ namespace Fullpipe {
 #define ANI_FLY 4916
 #define MV_FLY_FLY 4917
 #define SND_CMN_060 4921
+#define SND_CMN_061 4922
 #define ST_FLY_FLY 4918
 
 #define ANI_BALLDROP 2685

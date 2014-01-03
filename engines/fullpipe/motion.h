@@ -253,16 +253,20 @@ public:
 };
 
 class ReactPolygonal : public MovGraphReact {
-	//CRgn _rgn;
+	Common::Rect *_bbox;
 	int _centerX;
 	int _centerY;
 
 public:
 	ReactPolygonal();
+	~ReactPolygonal();
+
 	virtual bool load(MfcArchive &file);
 
 	virtual void setCenter(int x1, int y1, int x2, int y2);
 	virtual void createRegion();
+
+	void getBBox(Common::Rect *rect);
 };
 
 class MovGraphLink : public CObject {

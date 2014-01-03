@@ -2037,6 +2037,11 @@ void ReactParallel::setCenter(int x1, int y1, int x2, int y2) {
 ReactPolygonal::ReactPolygonal() {
 	_centerX = 0;
 	_centerY = 0;
+	_bbox = 0;
+}
+
+ReactPolygonal::~ReactPolygonal() {
+	delete _bbox;
 }
 
 bool ReactPolygonal::load(MfcArchive &file) {
@@ -2084,6 +2089,39 @@ void ReactPolygonal::setCenter(int x1, int y1, int x2, int y2) {
 	_centerX = cX;
 	_centerY = cY;
 }
+
+void ReactPolygonal::getBBox(Common::Rect *rect) {
+	if (!_pointCount)
+		return;
+
+	if (_bbox) {
+		*rect = *_bbox;
+		return;
+	}
+
+	rect->left = _points[0]->x;
+	rect->top = _points[0]->y;
+	rect->right = _points[0]->x;
+	rect->bottom = _points[0]->y;
+
+	for (int i = 1; i < _pointCount; i++) {
+		if (rect->left > _points[i]->x)
+			rect->left = _points[i]->x;
+
+		if (rect->top < _points[i]->y)
+			rect->top = _points[i]->y;
+
+		if (rect->right < _points[i]->x)
+			rect->right = _points[i]->x;
+
+		if (rect->bottom > _points[i]->y)
+			rect->bottom = _points[i]->y;
+	}
+
+	_bbox = new Common::Rect;
+	*_bbox = *rect;
+}
+
 
 bool MovGraphReact::pointInRegion(int x, int y) {
 	if (_pointCount < 3) {
