@@ -1410,7 +1410,6 @@ Common::String AvalancheEngine::intToStr(int32 num) {
 }
 
 void AvalancheEngine::resetVariables() {
-	_animation->setDirection(kDirUp);
 	_carryNum = 0;
 	for (int i = 0; i < kObjectNum; i++)
 		_objects[i] = false;
