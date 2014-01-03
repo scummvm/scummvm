@@ -25,6 +25,9 @@
 #include "fullpipe/utils.h"
 #include "fullpipe/objects.h"
 #include "fullpipe/motion.h"
+#include "fullpipe/statics.h"
+#include "fullpipe/scene.h"
+#include "fullpipe/constants.h"
 #include "fullpipe/objectnames.h"
 
 namespace Fullpipe {
@@ -84,8 +87,39 @@ void Floaters::init(GameVar *var) {
 	}
 }
 
-void Floaters::genFlies(Scene *sc, int x, int y, int a5, int a6) {
-	warning("STUB: Floaters::genFlies()");
+void Floaters::genFlies(Scene *sc, int x, int y, int priority, int flags) {
+	StaticANIObject *ani = new StaticANIObject(g_fp->accessScene(SC_COMMON)->getStaticANIObject1ById(ANI_FLY, -1));
+
+	ani->_statics = ani->getStaticsById(ST_FLY_FLY);
+	ani->_movement = 0;
+	ani->setOXY(x, y);
+	ani->_flags |= 4;
+	ani->_priority = priority;
+
+	sc->addStaticANIObject(ani, 1);
+
+	ani->startAnim(MV_FLY_FLY, 0, -1);
+
+	int nummoves;
+
+	if (ani->_movement->_currMovement)
+		nummoves = ani->_movement->_currMovement->_dynamicPhases.size();
+	else
+		nummoves = ani->_movement->_dynamicPhases.size();
+
+	ani->_movement->setDynamicPhaseIndex(g_fp->_rnd->getRandomNumber(nummoves));
+
+	FloaterArray2 *arr2 = new FloaterArray2;
+
+	arr2->ani = ani;
+	arr2->val11 = 15.0;
+	arr2->val3 = y;
+	arr2->val5 = y;
+	arr2->val2 = x;
+	arr2->val4 = x;
+	arr2->fflags = flags;
+
+	_array2.push_back(arr2);
 }
 
 void Floaters::update() {

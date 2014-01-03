@@ -25,6 +25,11 @@
 
 namespace Fullpipe {
 
+// Common
+#define ANI_FLY 4916
+#define MV_FLY_FLY 4917
+#define ST_FLY_FLY 4918
+
 #define ANI_BALLDROP 2685
 #define ANI_BATUTA 737
 #define ANI_BIGBALL 4923
