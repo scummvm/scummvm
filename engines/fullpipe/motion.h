@@ -74,7 +74,7 @@ public:
 	MovGraphReact() : _pointCount(0), _points(0) {}
 	~MovGraphReact() { free(_points); }
 
-	virtual void setCenter() {}
+	virtual void setCenter(int x1, int y1, int x2, int y2) {}
 	virtual void createRegion() {}
 	virtual bool pointInRegion(int x, int y);
 };
@@ -243,11 +243,11 @@ class ReactParallel : public MovGraphReact {
 	int _dx;
 	int _dy;
 
-  public:
+public:
 	ReactParallel();
 	virtual bool load(MfcArchive &file);
 
-	virtual void setCenter();
+	virtual void setCenter(int x1, int y1, int x2, int y2);
 	virtual void createRegion();
 };
 
@@ -256,11 +256,11 @@ class ReactPolygonal : public MovGraphReact {
 	int _centerX;
 	int _centerY;
 
-  public:
+public:
 	ReactPolygonal();
 	virtual bool load(MfcArchive &file);
 
-	virtual void setCenter();
+	virtual void setCenter(int x1, int y1, int x2, int y2);
 	virtual void createRegion();
 };
 

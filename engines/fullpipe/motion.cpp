@@ -2027,8 +2027,11 @@ void ReactParallel::createRegion() {
 	// GdiObject::Attach(_rgn, CreatePolygonRgn(_points, 4, 2);
 }
 
-void ReactParallel::setCenter() {
-	warning("STUB: ReactParallel::setCenter()");
+void ReactParallel::setCenter(int x1, int y1, int x2, int y2) {
+	_x1 = x1;
+	_y1 = y1;
+	_x2 = x2;
+	_y2 = y2;
 }
 
 ReactPolygonal::ReactPolygonal() {
@@ -2067,8 +2070,19 @@ void ReactPolygonal::createRegion() {
 	}
 }
 
-void ReactPolygonal::setCenter() {
-	warning("STUB: ReactPolygonal::setCenter()");
+void ReactPolygonal::setCenter(int x1, int y1, int x2, int y2) {
+	int cX = (x2 + x1) / 2;
+	int cY = (y2 + y1) / 2;
+
+	if (_points) {
+		for (int i = 0; i < _pointCount; i++) {
+			_points[i]->x += cX - _centerX;
+			_points[i]->y += cY - _centerY;
+		}
+	}
+
+	_centerX = cX;
+	_centerY = cY;
 }
 
 bool MovGraphReact::pointInRegion(int x, int y) {
