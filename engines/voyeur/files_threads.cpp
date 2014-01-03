@@ -1391,9 +1391,9 @@ int ThreadResource::doInterface() {
 
 	// Set the cusor 
 	PictureResource *crosshairsCursor = _vm->_bVoy->boltEntry(0x112)._picResource;
-	PictureResource *mangifyCursor = _vm->_bVoy->boltEntry(0x114)._picResource;
-	PictureResource *unk1Cursor = _vm->_bVoy->boltEntry(0x115)._picResource;
-	PictureResource *unk2Cursor = _vm->_bVoy->boltEntry(0x113)._picResource;
+	PictureResource *eyeCursor = _vm->_bVoy->boltEntry(0x113)._picResource;
+	PictureResource *listenCursor = _vm->_bVoy->boltEntry(0x114)._picResource;
+	PictureResource *mangifyCursor = _vm->_bVoy->boltEntry(0x115)._picResource;
 
 	_vm->_eventsManager.setCursor(crosshairsCursor);
 	_vm->_eventsManager.showCursor();
@@ -1435,14 +1435,14 @@ int ThreadResource::doInterface() {
 					if (_vm->_voy._arr3[arrIndex][idx] <= _vm->_voy._RTVNum &&
 							_vm->_voy._arr4[arrIndex][idx] > _vm->_voy._RTVNum) {
 						// Found a hotspot - switch to the magnifying glass cursor
-						_vm->_eventsManager.setCursor(mangifyCursor);
+						_vm->_eventsManager.setCursor(listenCursor);
 						regionIndex = idx;
 					}
 
 					if (_vm->_voy._arr5[arrIndex][idx] <= _vm->_voy._RTVNum &&
 							_vm->_voy._arr6[idx][idx] > _vm->_voy._RTVNum) {
 						// Set unk? cursor 
-						_vm->_eventsManager.setCursor(unk1Cursor);
+						_vm->_eventsManager.setCursor(mangifyCursor);
 						regionIndex = idx;
 					}
 				}
@@ -1451,7 +1451,7 @@ int ThreadResource::doInterface() {
 					if (_vm->_voy._arr1[arrIndex][idx] <= _vm->_voy._RTVNum &&
 							_vm->_voy._arr2[arrIndex][idx] > _vm->_voy._RTVNum) {
 						// Draw the picture
-						_vm->_eventsManager.setCursor(unk2Cursor);
+						_vm->_eventsManager.setCursor(eyeCursor);
 						regionIndex = idx;
 					}
 				}
