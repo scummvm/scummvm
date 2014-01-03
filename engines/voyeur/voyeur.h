@@ -52,7 +52,7 @@ namespace Voyeur {
 
 #define MAX_RESOLVE 1000
 
-// Maximum scroll x, y for viewing the mansion
+// Constants used for doInterface display of the mansion
 #define MANSION_MAX_X 784
 #define MANSION_MAX_Y 150
 #define MANSION_VIEW_X 40
@@ -60,9 +60,9 @@ namespace Voyeur {
 #define MANSION_VIEW_WIDTH 240
 #define MANSION_VIEW_HEIGHT 148
 #define MANSION_SCROLL_AREA_X 20
-#define MANSION_SCROLL_AREA_Y 10
+#define MANSION_SCROLL_AREA_Y 20
 #define MANSION_SCROLL_INC_X 4
-#define MANSION_SCROLL_INC_Y 2
+#define MANSION_SCROLL_INC_Y 4
 
 enum VoyeurDebugChannels {
 	kDebugPath      = 1 << 0,
