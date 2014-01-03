@@ -1397,41 +1397,37 @@ MessageQueue *MovGraph2::genMovement(MovInfo1 *info) {
 		my2 = _items2[info->field_0]->_subItems[info->subIndex].walk[2].my;
 	}
 
+	Common::Point point;
+
 	v13 = info->pt2.y - info->pt1.y - my2 - my1;
 	y = info->pt2.y - info->pt1.y - my2 - my1;
 	x = info->pt2.x - mx2 - mx1 - info->pt1.x;
 	v10 = x;
-	v16 = _mgm->calcLength(&point, _items2[info->field_0].subItems[info->subIndex].walk[1].mov, x, y, &v65, &a2, info->_flags & 1);
-	v17 = v16->x;
-	x1 = v16->x;
-	v18 = v16->y;
-	v19 = info->flags & 1;
+	_mgm->calcLength(&point, _items2[info->field_0].subItems[info->subIndex].walk[1].mov, x, y, &v65, &a2, info->_flags & 1);
+	v17 = point.x;
+	x1 = point.x;
+	v18 = point.y;
 	y1 = v18;
-	flag = v19;
-	if (!v19) {
-		v20 = info->subIndex;
-		if (v20 == 1 || !v20) {
-			v21 = 23 * v20;
-			v22 = 31 * info->field_0;
+
+	if (!(info->flags & 1)) {
+		if (info->subIndex == 1 || info->subIndex == 0) {
 			a2 = -1;
-			v17 = v65 * this->items2.m_pData[24 * v22 / 0x2E8u].subItems[8 * v21 / 0xB8u].walk[1].mx;
+			v17 = v65 * _items2[info->field_0].subItems[info->subIndex].walk[1].mx;
 			v10 = v17;
 			x1 = v17;
 			x = v17;
-			info->pt2.x = info->pt1.x + mx1 + v17 + mx2;
+			info->pt2.x = v17 + info->pt1.x + mx1 + mx2;
 		}
 	}
-	if (!flag) {
-		v23 = info->subIndex;
-		if (v23 == 2 || v23 == 3) {
-			v24 = 23 * v23;
-			v25 = 31 * info->field_0;
+
+	if (!(info->flags & 1)) {
+		if (info->subIndex == 2 || info->subIndex == 3) {
 			a2 = -1;
-			v18 = v65 * this->items2.m_pData[24 * v25 / 0x2E8u].subItems[8 * v24 / 0xB8u].walk[1].my;
-			v26 = v18 + info->pt1.y;
+			v18 = v65 * _items2.m_pData[info->field_0].subItems[info->subIndex].walk[1].my;
+			v26 = ;
 			y1 = v18;
 			v13 = v18;
-			info->pt2.y = my1 + my2 + v26;
+			info->pt2.y = v18 + info->pt1.y + my1 + my2;
 		}
 	}
 	cnt = 0;
@@ -1442,7 +1438,7 @@ MessageQueue *MovGraph2::genMovement(MovInfo1 *info) {
 		v18 = y1;
 		v17 = x1;
 		v10 = x;
-		v60 = (Message *)v27;
+		v60 = v27;
 	}
 	if (v65 > 1) {
 		v28 = Movement_countPhasesWithFlag(this->items2.m_pData[info->field_0].subItems[info->subIndex].walk[1].mov, -1, 1);
@@ -1450,7 +1446,7 @@ MessageQueue *MovGraph2::genMovement(MovInfo1 *info) {
 		v29 = Movement_countPhasesWithFlag(this->items2.m_pData[info->field_0].subItems[info->subIndex].walk[1].mov, -1, 2);
 		v17 = x1;
 		v10 = x;
-		v60 = (Message *)((char *)v60 + (v65 - 1) * v29);
+		v60 += (v65 - 1) * v29;
 		v18 = y1;
 	}
 	if (v65 > 0) {
@@ -1458,7 +1454,7 @@ MessageQueue *MovGraph2::genMovement(MovInfo1 *info) {
 		v30 = Movement_countPhasesWithFlag(this->items2.m_pData[info->field_0].subItems[info->subIndex].walk[1].mov, a2, 2);
 		v17 = x1;
 		v10 = x;
-		v60 = (Message *)((char *)v60 + v30);
+		v60 += v30;
 		v18 = y1;
 	}
 	if (!(info->flags & 4)) {
@@ -1466,7 +1462,7 @@ MessageQueue *MovGraph2::genMovement(MovInfo1 *info) {
 		v31 = Movement_countPhasesWithFlag(this->items2.m_pData[info->field_0].subItems[info->subIndex].walk[2].mov, -1, 2);
 		v17 = x1;
 		v10 = x;
-		v60 = (Message *)((char *)v60 + v31);
+		v60 += v31;
 		v18 = y1;
 	}
 	v32 = v10 - v17;
@@ -1478,11 +1474,11 @@ MessageQueue *MovGraph2::genMovement(MovInfo1 *info) {
 	else
 		x1 = 0;
 	if (v60)
-		y1 = (signed __int64)((double)v74 / (double)(signed int)v60);
+		y1 = (signed __int64)((double)v74 / (double)v60);
 	else
 		y1 = 0;
 	v34 = v32 - cnt * x1;
-	v35 = v33 - (_DWORD)v60 * y1;
+	v35 = v33 - v60 * y1;
 	y2 = v34;
 	v76 = v35;
 	if (v34)
@@ -1493,15 +1489,15 @@ MessageQueue *MovGraph2::genMovement(MovInfo1 *info) {
 		v72 = v35 / abs(v35);
 	else
 		v72 = 0;
-	v38 = GlobalMessageQueueList_compact(&g_globalMessageQueueList);
-	res = MessageQueue_ctor1(v36, v38);
-	mq = res;
-	v39 = info->flags & 2;
-	if ((_BYTE)v39) {
-		v45 = new ExCommand(
-							LOWORD(this->items2.m_pData[info->field_0].objectId),
+
+	MessageQueue *mq = new MessageQueue(g_fp->_globalMessageQueueList->compact());
+	ExCommand *ex;
+
+	if (info->flags & 2) {
+		ex = new ExCommand(
+							_items2.m_pData[info->field_0].objectId,
 							5,
-							this->items2.m_pData[info->field_0].subItems[info->subIndex].walk[1].movementId,
+							_items2.m_pData[info->field_0].subItems[info->subIndex].walk[1].movementId,
 							info->pt1.x,
 							info->pt1.y,
 							0,
@@ -1509,15 +1505,14 @@ MessageQueue *MovGraph2::genMovement(MovInfo1 *info) {
 							0,
 							0,
 							0);
-		v46 = info->distance1;
-		v45->msg._field_14 = v46;
-		v41 = (int)&res->exCommands.obj.vmt;
-		v47 = v45->_excFlags | 2;
-		v45->msg._keyCode = this->items2.m_pData[info->field_0].obj->go._okeyCode;
-		v45->msg._field_24 = 1;
-		v45->_excFlags = v47;
+
+		ex->_field_14 = info->distance1;
+
+		ex->_keyCode = _items2.m_pData[info->field_0].obj->_okeyCode;
+		ex->_field_24 = 1;
+		ex->_excFlags |= 2;
 	} else {
-		v40 = ExCommand_ctor(
+		ex = ExCommand_ctor(
 							 (ExCommand *)v61,
 							 LOWORD(this->items2.m_pData[info->field_0].objectId),
 							 5,
@@ -1529,30 +1524,27 @@ MessageQueue *MovGraph2::genMovement(MovInfo1 *info) {
 							 0,
 							 0,
 							 0);
-		v41 = (int)&res->exCommands.obj.vmt;
-		v40->msg._field_14 = info->distance1;
-		v42 = info->field_0;
-		v43 = info->field_0;
 
-		LOWORD(v43) = *(_WORD *)(*((_DWORD *)&this->items2.m_pData->obj + 6 * (32 * v43 - v42)) + 4);
-		v44 = v40->_excFlags;
-		v40->msg._keyCode = (unsigned __int16)v43;
-		v40->msg._field_24 = 1;
-		v40->_excFlags = v44 | 2;
-		CPtrList::AddTail(&res->exCommands, v40);
-		v45 = MGM_buildExCommand2(
-								  (MGM *)&this->movGraph.mgm,
-								  this->items2.m_pData[info->field_0].subItems[info->subIndex].walk[offsetof(MovGraph2Item, objectId)].mov,
-								  LOWORD(this->items2.m_pData[info->field_0].objectId),
+		ex->_field_14 = info->distance1;
+
+		ex->_keyCode = _items2[info->field_0].obj->_oKeyCode;
+		ex->_field_24 = 1;
+		ex->_excFlags |= 2;
+		mq->addExCommandToEnd(ex);
+
+		ex = _mgm->buildExCommand2(
+								  _items2.m_pData[info->field_0].subItems[info->subIndex].walk[offsetof(MovGraph2Item, objectId)].mov,
+								  _items2.m_pData[info->field_0].objectId,
 								  x1,
 								  y1,
 								  &x2,
 								  &y2,
 								  -1);
-		v45->_parId = res->_id;
-		v45->msg._keyCode = this->items2.m_pData[info->field_0].obj->go._okeyCode;
+		ex->_parId = mq->_id;
+		ex->_keyCode = _items2[info->field_0].obj->_okeyCode;
 	}
-	CPtrList::AddTail(v41, v45);
+
+	mq->addExCommandToEnd(ex);
 	v48 = v65;
 	v49 = 0;
 	for (i = 0; i < v65; ++i) {
@@ -1560,46 +1552,47 @@ MessageQueue *MovGraph2::genMovement(MovInfo1 *info) {
 			v50 = a2;
 		else
 			v50 = -1;
-		v51 = MGM_buildExCommand2(
-								  (MGM *)&this->movGraph.mgm,
-								  this->items2.m_pData[info->field_0].subItems[info->subIndex].walk[1].mov,
-								  LOWORD(this->items2.m_pData[info->field_0].objectId),
+		ex = _mgm->buildExCommand2(
+								  _items2.m_pData[info->field_0].subItems[info->subIndex].walk[1].mov,
+								  _items2.m_pData[info->field_0].objectId,
 								  x1,
 								  y1,
 								  &x2,
 								  &y2,
 								  v50);
-		res = mq;
-		v51->_parId = mq->_id;
-		v51->msg._keyCode = this->items2.m_pData[info->field_0].obj->go._okeyCode;
-		CPtrList::AddTail(v41, v51);
+		ex->_parId = mq->_id;
+		ex->_keyCode = _items2.m_pData[info->field_0].obj->_okeyCode;
+		mq->addExCommandToEnd(ex);
+
 		v48 = v65;
 		v49 = i + 1;
 	}
+
 	if (!(info->flags & 4)) {
-		v52 = MGM_buildExCommand2(
-								  (MGM *)&this->movGraph.mgm,
-								  this->items2.m_pData[info->field_0].subItems[info->subIndex].walk[2].mov,
-								  LOWORD(this->items2.m_pData[info->field_0].objectId),
+		ex = _mgm->buildExCommand2(
+								  _items2.m_pData[info->field_0].subItems[info->subIndex].walk[2].mov,
+								  _items2.m_pData[info->field_0].objectId,
 								  x1,
 								  y1,
 								  &x2,
 								  &y2,
 								  -1);
-		v52->_parId = res->_id;
-		v52->msg._keyCode = this->items2.m_pData[info->field_0].obj->go._okeyCode;
-		CPtrList::AddTail(v41, v52);
+		ex->_parId = mq->_id;
+		ex->_keyCode = _items2.m_pData[info->field_0].obj->_okeyCode;
+
+		mq->addExCommandToEnd(ex);
 	}
-    v54 = ExCommand_ctor(v53, LOWORD(this->items2.m_pData[info->field_0].objectId), 5, -1, info->pt2.x, info->pt2.y, 0, 1, 0, 0, 0);
-	v54->msg._field_14 = info->distance2;
-	v55 = info->field_0;
-	v56 = this->items2.m_pData;
-	v54->msg._keyCode = v56[v55].obj->go._okeyCode;
-	v57 = v54->_excFlags | 2;
-	v54->msg._field_24 = 0;
-	v54->_excFlags = v57;
-	CPtrList::AddTail(v41, v54);
-	return res;
+
+    ex = new ExCommand(_items2.m_pData[info->field_0].objectId, 5, -1, info->pt2.x, info->pt2.y, 0, 1, 0, 0, 0);
+	ex->_field_14 = info->distance2;
+
+	ex->_keyCode = _items[info->field_0].obj->_okeyCode;
+	ex->_field_24 = 0;
+	ex->_excFlags |= 2;
+
+	mq->addExCommandToEnd(ex);
+
+	return mq;
 #endif
 
 	return 0;
