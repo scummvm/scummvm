@@ -1356,8 +1356,8 @@ void VoyeurEngine::doEvidDisplay(int evidId, int eventId) {
 
 	count = (int16)READ_LE_UINT16(dataP + evidId * 12 + 4);
 	for (int idx = 1; idx <= count; ++idx) {
-		_bVoy->freeBoltGroup(_voy._field47A + (evidId + idx) * 2);
-		_bVoy->freeBoltGroup(_voy._field47A + (evidId + idx) * 2 + 1);
+		_bVoy->freeBoltMember(_voy._field47A + (evidId + idx) * 2);
+		_bVoy->freeBoltMember(_voy._field47A + (evidId + idx) * 2 + 1);
 	}
 }
 

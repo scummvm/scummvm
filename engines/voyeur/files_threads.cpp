@@ -1271,8 +1271,11 @@ void ThreadResource::doRoom() {
 			if (!vm._eventsManager._mouseClicked)
 				vm._eventsManager.delayClick(18000);
 
-			vm._bVoy->freeBoltGroup(vm._playStamp1);
-			vm._bVoy->getBoltGroup(vm._playStamp1);
+			// WORKAROUND: Done in original, but not now, since freeing and reloading
+			// the group would invalidate the _backgroundPage picture resource
+			//vm._bVoy->freeBoltGroup(vm._playStamp1);
+			//vm._bVoy->getBoltGroup(vm._playStamp1);
+
 			dataP = vm._bVoy->memberAddr(vm._playStamp1 + 4);
 			pic1 = vm._bVoy->boltEntry(vm._playStamp1 + 2)._picResource;
 			pic2 = vm._bVoy->boltEntry(vm._playStamp1 + 3)._picResource;
