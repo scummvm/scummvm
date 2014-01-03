@@ -1381,31 +1381,27 @@ int MovGraph2::findLink(Common::Array<MovGraphLink *> *linkList, int idx, Common
 
 MessageQueue *MovGraph2::genMovement(MovInfo1 *info) {
 #if 0
-	v69 = 0;
-	v70 = 0;
+	int mx1 = 0;
+	int my1 = 0;
 
 	if (!(info->_flags & 2)) {
-		v6 = sizeof(MovGraph2Item) * info->field_0 + 184 * info->subIndex;
-		v7 = this->items2.m_pData;
-		v69 = *(int *)((char *)&v7->subItems[0].walk[0].mx + v6);
-		v70 = *(int *)((char *)&v7->subItems[0].walk[0].my + v6);
+		mx1 = _items2[info->field_0]->_subItems[info->subIndex].walk[0].mx;
+		my1 = _items2[info->field_0]->_subItems[info->subIndex].walk[0].my;
 	}
-	v59 = 0;
-	v64 = 0;
+
+	int mx2 = 0;
+	int my2 = 0;
+
 	if (!(info->_flags & 4)) {
-		v8 = sizeof(MovGraph2Item) * info->field_0 + 184 * info->subIndex;
-		v9 = this->items2.m_pData;
-		v59 = *(Message **)((char *)&v9->subItems[0].walk[2].mx + v8);
-		v64 = *(int *)((char *)&v9->subItems[0].walk[2].my + v8);
+		mx2 = _items2[info->field_0]->_subItems[info->subIndex].walk[2].mx;
+		my2 = _items2[info->field_0]->_subItems[info->subIndex].walk[2].my;
 	}
-	v11 = info->_flags & 1;
-	v12 = info->subIndex;
-	v13 = info->pt2.y - info->pt1.y - v64 - v70;
-	v14 = info->field_0;
-	y = info->pt2.y - info->pt1.y - v64 - v70;
-	x = info->pt2.x - (_DWORD)v59 - v69 - info->pt1.x;
+
+	v13 = info->pt2.y - info->pt1.y - my2 - my1;
+	y = info->pt2.y - info->pt1.y - my2 - my1;
+	x = info->pt2.x - mx2 - mx1 - info->pt1.x;
 	v10 = x;
-	v16 = _mgm->calcLength(&point, _items2[v14].subItems[v12].walk[1].mov, x, y, &v65, &a2, v11);
+	v16 = _mgm->calcLength(&point, _items2[info->field_0].subItems[info->subIndex].walk[1].mov, x, y, &v65, &a2, info->_flags & 1);
 	v17 = v16->x;
 	x1 = v16->x;
 	v18 = v16->y;
@@ -1422,7 +1418,7 @@ MessageQueue *MovGraph2::genMovement(MovInfo1 *info) {
 			v10 = v17;
 			x1 = v17;
 			x = v17;
-			info->pt2.x = (int)((char *)&v59->obj.vmt + v17 + v69 + info->pt1.x);
+			info->pt2.x = info->pt1.x + mx1 + v17 + mx2;
 		}
 	}
 	if (!flag) {
@@ -1435,7 +1431,7 @@ MessageQueue *MovGraph2::genMovement(MovInfo1 *info) {
 			v26 = v18 + info->pt1.y;
 			y1 = v18;
 			v13 = v18;
-			info->pt2.y = v70 + v64 + v26;
+			info->pt2.y = my1 + my2 + v26;
 		}
 	}
 	cnt = 0;
