@@ -77,8 +77,12 @@ void Floaters::init(GameVar *var) {
 		int idx = 0;
 
 		while (sub) {
-			_array1[idx]->val1 = sub->_subVars->_value.intValue;
-			_array1[idx]->val2 = sub->_subVars->_nextVarObj->_value.intValue;
+			FloaterArray1 *f = new FloaterArray1;
+
+			f->val1 = sub->_subVars->_value.intValue;
+			f->val2 = sub->_subVars->_nextVarObj->_value.intValue;
+
+			_array1.push_back(f);
 
 			idx++;
 			sub = sub->_nextVarObj;
