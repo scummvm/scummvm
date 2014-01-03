@@ -488,7 +488,7 @@ void EventsManager::setCursor(PictureResource *pic) {
 }
 
 void EventsManager::setCursor(byte *cursorData, int width, int height) {
-	CursorMan.replaceCursor(cursorData, width, height, 0, 0, 0);
+	CursorMan.replaceCursor(cursorData, width, height, width / 2, height / 2, 0);
 }
 
 void EventsManager::setCursorColor(int idx, int mode) {

@@ -1021,7 +1021,10 @@ void VoyeurEngine::initIFace(){
 	CMapResource *pal = _bVoy->boltEntry(_playStamp1 + 2)._cMapResource;
 	pal->startFade();
 
-	doScroll(_eventsManager.getMousePos());
+	// Start the mansion off centered
+	_mansionViewPos = Common::Point((MANSION_MAX_X - MANSION_VIEW_WIDTH) / 2,
+		(MANSION_MAX_Y - MANSION_VIEW_HEIGHT) / 2);
+	doScroll(_mansionViewPos);
 	
 	_voy._viewBounds = _bVoy->boltEntry(_playStamp1)._rectResource;
 

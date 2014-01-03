@@ -52,6 +52,18 @@ namespace Voyeur {
 
 #define MAX_RESOLVE 1000
 
+// Maximum scroll x, y for viewing the mansion
+#define MANSION_MAX_X 784
+#define MANSION_MAX_Y 150
+#define MANSION_VIEW_X 40
+#define MANSION_VIEW_Y 27
+#define MANSION_VIEW_WIDTH 240
+#define MANSION_VIEW_HEIGHT 148
+#define MANSION_SCROLL_AREA_X 20
+#define MANSION_SCROLL_AREA_Y 10
+#define MANSION_SCROLL_INC_X 4
+#define MANSION_SCROLL_INC_Y 2
+
 enum VoyeurDebugChannels {
 	kDebugPath      = 1 << 0,
 	kDebugScripts	= 1 << 1
@@ -156,6 +168,8 @@ public:
 	bool _flashTimeFlag;
 	int _timeBarVal;
 	int _checkPhoneVal;
+	Common::Point _mansionViewPos;
+	int _mansionScrollCountdown;
 public:
 	VoyeurEngine(OSystem *syst, const VoyeurGameDescription *gameDesc);
 	virtual ~VoyeurEngine();

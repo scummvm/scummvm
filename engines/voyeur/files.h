@@ -445,8 +445,6 @@ public:
 	static CMapResource *_cmd14Pal;
 	static void initUseCount();
 	static void unloadAllStacks(VoyeurEngine *vm);
-	static int _currentMouseX;
-	static int _currentMouseY;
 	static int _doAptPosX;
 	static int _doAptPosY;
 
@@ -487,6 +485,12 @@ private:
 	 * Does any necessary animation at the start or end of showing the apartment.
 	 */
 	void doAptAnim(int mode);
+
+	/**
+	 * Updates the mansion scroll position if ncessary, and returns true if it
+	 * has been changed.
+	 */
+	bool checkMansionScroll();
 public:
 	VoyeurEngine *_vm;
 

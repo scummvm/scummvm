@@ -31,8 +31,6 @@ int ThreadResource::_stampFlags;
 int ThreadResource::_useCount[8];
 byte *ThreadResource::_threadDataPtr;
 CMapResource *ThreadResource::_cmd14Pal;
-int ThreadResource::_currentMouseX;
-int ThreadResource::_currentMouseY;
 int ThreadResource::_doAptPosX;
 int ThreadResource::_doAptPosY;
 
@@ -41,8 +39,6 @@ void ThreadResource::init() {
 	Common::fill(&_useCount[0], &_useCount[8], 0);
 	_threadDataPtr = nullptr;
 	_cmd14Pal = nullptr;
-	_currentMouseX = 392;
-	_currentMouseY = 57;
 	_doAptPosX = -1;
 	_doAptPosY = -1;
 }
@@ -1361,7 +1357,6 @@ int ThreadResource::doInterface() {
 		_vm->_voy._RTVNum = _vm->_voy._field476;
 		_vm->makeViewFinder();
 
-		_vm->_eventsManager.setMousePos(Common::Point(_currentMouseX, _currentMouseY));
 		_vm->initIFace();
 		_vm->_voy._RTVNum = _vm->_voy._field476 - 4;
 		_vm->_voy._field478 &= ~1;
@@ -1378,7 +1373,6 @@ int ThreadResource::doInterface() {
 	_vm->checkTransition();
 	_vm->makeViewFinder();
 	_vm->_eventsManager.getMouseInfo();
-	_vm->_eventsManager.setMousePos(Common::Point(_currentMouseX, _currentMouseY));
 	_vm->initIFace();
 
 	Common::Array<Common::Rect> &hotspots = _vm->_bVoy->boltEntry(
@@ -1389,26 +1383,34 @@ int ThreadResource::doInterface() {
 	Common::String fname = _vm->_soundManager.getVOCFileName(_vm->_playStamp2);
 	_vm->_soundManager.startVOCPlay(fname);
 	_vm->_eventsManager.getMouseInfo();
-	_vm->_eventsManager.setMousePos(Common::Point(_currentMouseX, _currentMouseY));
 	
 	_vm->_graphicsManager.setColor(240, 220, 220, 220);
 	_vm->_eventsManager._intPtr.field38 = true;
 	_vm->_eventsManager._intPtr._hasPalette = true;
 	_vm->_voy._field478 &= ~1;
 
+	// Set the cusor 
+	PictureResource *crosshairsCursor = _vm->_bVoy->boltEntry(0x112)._picResource;
+	PictureResource *mangifyCursor = _vm->_bVoy->boltEntry(0x114)._picResource;
+	PictureResource *unk1Cursor = _vm->_bVoy->boltEntry(0x115)._picResource;
+	PictureResource *unk2Cursor = _vm->_bVoy->boltEntry(0x113)._picResource;
+
+	_vm->_eventsManager.setCursor(crosshairsCursor);
+	_vm->_eventsManager.showCursor();
+
+	// Main loop
 	int priorRegionIndex = -1;
 	int regionIndex = 0;
+	Common::Rect mansionViewBounds(MANSION_VIEW_X, MANSION_VIEW_Y,
+		MANSION_VIEW_X + MANSION_VIEW_WIDTH, MANSION_VIEW_Y + MANSION_VIEW_HEIGHT);
+
 	do {
 		_vm->doTimeBar(true);
 		_vm->_eventsManager.getMouseInfo();
 
-		pt = _vm->_eventsManager.getMousePos();
-		if (pt.x != _currentMouseX || pt.y != _currentMouseY || regionIndex != priorRegionIndex) {
+		if (checkMansionScroll()) {
 			priorRegionIndex = regionIndex;
-			_vm->doScroll(pt);
-
-			_currentMouseX = pt.x;
-			_currentMouseY = pt.y;
+			_vm->doScroll(_vm->_mansionViewPos);
 		}
 
 		_vm->checkPhoneCall();
@@ -1417,7 +1419,13 @@ int ThreadResource::doInterface() {
 			_vm->_soundManager.startVOCPlay(_vm->_soundManager.getVOCFileName(_vm->_playStamp2));
 		}
 
-		pt = _vm->_eventsManager.getMousePos() + Common::Point(120, 75);
+		// Calculate the mouse position within the entire mansion
+		pt = _vm->_eventsManager.getMousePos();
+		if (!mansionViewBounds.contains(pt))
+			pt = Common::Point(-1, -1);
+		else
+			pt = _vm->_mansionViewPos + 
+				Common::Point(pt.x - MANSION_VIEW_X, pt.y - MANSION_VIEW_Y);
 		regionIndex = -1;
 
 		for (int idx = 0; idx < (int)hotspots.size(); ++idx) {
@@ -1426,19 +1434,15 @@ int ThreadResource::doInterface() {
 				for (int arrIndex = 0; arrIndex < 3; ++arrIndex) {
 					if (_vm->_voy._arr3[arrIndex][idx] <= _vm->_voy._RTVNum &&
 							_vm->_voy._arr4[arrIndex][idx] > _vm->_voy._RTVNum) {
-						// Draw the picture
-						pic = _vm->_bVoy->boltEntry(276)._picResource;
-						_vm->_graphicsManager.sDrawPic(pic, *_vm->_graphicsManager._vPort, 
-							Common::Point(178, 108));
+						// Found a hotspot - switch to the magnifying glass cursor
+						_vm->_eventsManager.setCursor(mangifyCursor);
 						regionIndex = idx;
 					}
 
 					if (_vm->_voy._arr5[arrIndex][idx] <= _vm->_voy._RTVNum &&
 							_vm->_voy._arr6[idx][idx] > _vm->_voy._RTVNum) {
-						// Draw the picture
-						pic = _vm->_bVoy->boltEntry(277)._picResource;
-						_vm->_graphicsManager.sDrawPic(pic, *_vm->_graphicsManager._vPort, 
-							Common::Point(178, 108));
+						// Set unk? cursor 
+						_vm->_eventsManager.setCursor(unk1Cursor);
 						regionIndex = idx;
 					}
 				}
@@ -1447,9 +1451,7 @@ int ThreadResource::doInterface() {
 					if (_vm->_voy._arr1[arrIndex][idx] <= _vm->_voy._RTVNum &&
 							_vm->_voy._arr2[arrIndex][idx] > _vm->_voy._RTVNum) {
 						// Draw the picture
-						pic = _vm->_bVoy->boltEntry(375)._picResource;
-						_vm->_graphicsManager.sDrawPic(pic, *_vm->_graphicsManager._vPort, 
-							Common::Point(178, 108));
+						_vm->_eventsManager.setCursor(unk2Cursor);
 						regionIndex = idx;
 					}
 				}
@@ -1457,10 +1459,8 @@ int ThreadResource::doInterface() {
 		}
 
 		if (regionIndex == -1) {
-			// Draw the crosshairs cursor in the center of the screen
-			pic = _vm->_bVoy->boltEntry(274)._picResource;
-			_vm->_graphicsManager.sDrawPic(pic, *_vm->_graphicsManager._vPort, 
-				Common::Point(178, 108));
+			// Reset back to the crosshairs cursor
+			_vm->_eventsManager.setCursor(crosshairsCursor);
 		}
 
 		// Regularly update the time display
@@ -1499,20 +1499,16 @@ int ThreadResource::doInterface() {
 				_vm->_eventsManager._leftClick = true;
 			} else {
 				_vm->_voy._field478 = 1;
-				_currentMouseX = pt.x;
-				_currentMouseY = pt.y;
 
 				chooseSTAMPButton(20);
 				parsePlayCommands();
 				_vm->checkTransition();
 				_vm->makeViewFinder();
 
-				_vm->_eventsManager.setMousePos(Common::Point(_currentMouseX, _currentMouseY));
 				_vm->initIFace();
 				
 				hotspots = _vm->_bVoy->boltEntry(_vm->_playStamp1 + 1)._rectResource->_entries;
 				_vm->_eventsManager.getMouseInfo();
-				_vm->_eventsManager.setMousePos(Common::Point(_currentMouseX, _currentMouseY));
 
 				_vm->_voy._field478 &= ~2;
 				_vm->_eventsManager._intPtr.field1E = 1;
@@ -1522,12 +1518,43 @@ int ThreadResource::doInterface() {
 	} while (!_vm->_eventsManager._rightClick && !_vm->shouldQuit() && 
 		(!_vm->_eventsManager._leftClick || regionIndex == -1));
 
+	_vm->_eventsManager.hideCursor();
 	_vm->_voy._field478 |= 1;
 	_vm->_bVoy->freeBoltGroup(_vm->_playStamp1);
 	if (_vm->_playStamp2 != -1)
 		_vm->_soundManager.stopVOCPlay();
 
 	return !_vm->_eventsManager._rightClick ? regionIndex : -2;
+}
+
+bool ThreadResource::checkMansionScroll() {
+	Common::Point pt = _vm->_eventsManager.getMousePos() -
+		Common::Point(MANSION_VIEW_X, MANSION_VIEW_Y);
+	Common::Point &viewPos = _vm->_mansionViewPos;
+	bool result = false;
+
+	// Scroll mansion view if close to any of the mansion edges
+	if (pt.x >= 0 && pt.x < MANSION_SCROLL_AREA_X && viewPos.x > 0) {
+		viewPos.x = MAX(viewPos.x - MANSION_SCROLL_INC_X, 0);
+		result = true;
+	}
+	if  (pt.x >= (MANSION_VIEW_WIDTH - MANSION_SCROLL_AREA_X) &&
+			pt.x < MANSION_VIEW_WIDTH && viewPos.x < MANSION_MAX_X) {
+		viewPos.x = MIN(viewPos.x + MANSION_SCROLL_INC_X, MANSION_MAX_X);
+		result = true;
+	}
+	if (pt.y >= 0 && pt.y < MANSION_SCROLL_AREA_Y && viewPos.y > 0) {
+		viewPos.y = MAX(viewPos.y - MANSION_SCROLL_INC_Y, 0);
+		result = true;
+	}
+	if  (pt.y >= (MANSION_VIEW_HEIGHT - MANSION_SCROLL_AREA_Y) &&
+			pt.y < MANSION_VIEW_HEIGHT && viewPos.y < MANSION_MAX_Y) {
+		viewPos.y = MIN(viewPos.y + MANSION_SCROLL_INC_Y, MANSION_MAX_Y);
+		result = true;
+	}
+
+	// Return whether mansion view area has changed
+	return result;
 }
 
 bool ThreadResource::goToStateID(int stackId, int sceneId) {
