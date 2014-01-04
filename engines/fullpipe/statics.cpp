@@ -1528,6 +1528,12 @@ int Movement::calcDuration() {
 	return res;
 }
 
+int Movement::countPhasesWithFlag(int maxidx, int flag) {
+	warning("STUB: Movement::countPhasesWithFlag()");
+
+	return 0;
+}
+
 void Movement::setDynamicPhaseIndex(int index) {
 	debug(7, "Movement::setDynamicPhaseIndex(%d)", index);
 	while (_currDynamicPhaseIndex < index)

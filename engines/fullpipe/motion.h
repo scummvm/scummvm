@@ -30,6 +30,7 @@ class Movement;
 class MctlConnectionPoint;
 class MovGraphLink;
 class MessageQueue;
+class ExCommand2;
 
 int startWalkTo(int objId, int objKey, int x, int y, int a5);
 int doSomeAnimation(int objId, int objKey, int a3);
@@ -174,6 +175,8 @@ public:
 	int getStaticsIndexById(int idx, int16 id);
 	void clearMovements2(int idx);
 	int recalcOffsets(int idx, int st1idx, int st2idx, bool flip, bool flop);
+	Common::Point *calcLength(Common::Point *point, Movement *mov, int x, int y, int *x1, int *y1, int flag);
+	ExCommand2 *buildExCommand2(Movement *mov, int objId, int x1, int y1, int *x2, int *y2, int len);
 };
 
 struct MctlLadderMovementVars {

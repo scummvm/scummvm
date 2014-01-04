@@ -153,6 +153,7 @@ class Movement : public GameObject {
 	DynamicPhase *getDynamicPhaseByIndex(int idx);
 
 	int calcDuration();
+	int countPhasesWithFlag(int maxidx, int flag);
 
 	void removeFirstPhase();
 	bool gotoNextFrame(void (*_callback1)(int, Common::Point *point, int, int), void (*callback2)(int *));
