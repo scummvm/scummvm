@@ -113,6 +113,11 @@ void scene22_setBagState();
 int sceneHandler22(ExCommand *cmd);
 int scene22_updateCursor();
 
+void scene23_initScene(Scene *sc);
+void scene23_setGiraffeState();
+int sceneHandler23(ExCommand *cmd);
+int scene23_updateCursor();
+
 void scene24_initScene(Scene *sc);
 void scene24_setPoolState();
 int sceneHandler24(ExCommand *cmd);

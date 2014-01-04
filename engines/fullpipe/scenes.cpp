@@ -708,7 +708,6 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 		_updateCursorCallback = scene22_updateCursor;
 		break;
 
-#if 0
 	case SC_23:
 		sceneVar = _gameLoader->_gameVar->getSubVarByName("SC_23");
 		scene->preloadMovements(sceneVar);
@@ -717,10 +716,9 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 		scene->initObjectCursors("SC_23");
 		setSceneMusicParameters(sceneVar);
 		insertMessageHandler(sceneHandler23, 2, 2);
-		scene23_sub_423B00();
+		scene23_setGiraffeState();
 		_updateCursorCallback = scene23_updateCursor;
 		break;
-#endif
 
 	case SC_24:
 		sceneVar = _gameLoader->_gameVar->getSubVarByName("SC_24");
