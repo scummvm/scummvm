@@ -1529,9 +1529,22 @@ int Movement::calcDuration() {
 }
 
 int Movement::countPhasesWithFlag(int maxidx, int flag) {
-	warning("STUB: Movement::countPhasesWithFlag()");
+	int res = 0;
+	int sz;
 
-	return 0;
+	if (_currMovement)
+		sz = _currMovement->_dynamicPhases.size();
+	else
+		sz = _dynamicPhases.size();
+
+	if (maxidx < 0)
+		maxidx = sz;
+
+	for (int i = 0; i < maxidx && i < sz; i++)
+		if (getDynamicPhaseByIndex(i)->_dynFlags & flag)
+			res++;
+
+	return res;
 }
 
 void Movement::setDynamicPhaseIndex(int index) {
