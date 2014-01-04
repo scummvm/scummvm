@@ -729,7 +729,7 @@ int sceneHandler11(ExCommand *cmd) {
 						x = g_vars->scene11_dudeX;
 					}
 					if (y > g_fp->_sceneRect.bottom - 300) {
-						//g_fp->_currentScene->_y = y - g_fp->_sceneRect.bottom + 300;  // FIXME. Causes flicker
+						g_fp->_currentScene->_y = y - g_fp->_sceneRect.bottom + 300;
 						x = g_vars->scene11_dudeX;
 					}
 					if (x >= 940)
