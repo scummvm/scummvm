@@ -1399,88 +1399,74 @@ MessageQueue *MovGraph2::genMovement(MovInfo1 *info) {
 
 	Common::Point point;
 
-	v13 = info->pt2.y - info->pt1.y - my2 - my1;
-	y = info->pt2.y - info->pt1.y - my2 - my1;
-	x = info->pt2.x - mx2 - mx1 - info->pt1.x;
-	v10 = x;
-	_mgm->calcLength(&point, _items2[info->field_0].subItems[info->subIndex].walk[1].mov, x, y, &v65, &a2, info->_flags & 1);
-	v17 = point.x;
-	x1 = point.x;
-	v18 = point.y;
-	y1 = v18;
+	int y = info->pt2.y - info->pt1.y - my2 - my1;
+	int x = info->pt2.x - info->pt1.x - mx2 - mx1;
+	int a2;
+
+	_mgm->calcLength(&point, _items2[info->field_0].subItems[info->subIndex].walk[1].mov, x, y, &mgmLen, &a2, info->_flags & 1);
+
+	int x1 = point.x;
+	int y1 = point.y;
 
 	if (!(info->flags & 1)) {
 		if (info->subIndex == 1 || info->subIndex == 0) {
 			a2 = -1;
-			v17 = v65 * _items2[info->field_0].subItems[info->subIndex].walk[1].mx;
-			v10 = v17;
-			x1 = v17;
-			x = v17;
-			info->pt2.x = v17 + info->pt1.x + mx1 + mx2;
+			x1 = mgmLen * _items2[info->field_0].subItems[info->subIndex].walk[1].mx;
+			x = x1;
+			info->pt2.x = x1 + info->pt1.x + mx1 + mx2;
 		}
 	}
 
 	if (!(info->flags & 1)) {
 		if (info->subIndex == 2 || info->subIndex == 3) {
 			a2 = -1;
-			v18 = v65 * _items2.m_pData[info->field_0].subItems[info->subIndex].walk[1].my;
-			v26 = ;
-			y1 = v18;
-			v13 = v18;
-			info->pt2.y = v18 + info->pt1.y + my1 + my2;
+			y1 = mgmLen * _items2[info->field_0].subItems[info->subIndex].walk[1].my;
+			y = y1;
+			info->pt2.y = y1 + info->pt1.y + my1 + my2;
 		}
 	}
-	cnt = 0;
-	v60 = 0;
+
+	int cntX = 0;
+	int cntY = 0;
+
 	if (!(info->flags & 2)) {
-		cnt = Movement_countPhasesWithFlag(this->items2.m_pData[info->field_0].subItems[info->subIndex].walk[offsetof(MovGraph2Item, objectId)].mov, -1, 1);
-		v27 = Movement_countPhasesWithFlag(this->items2.m_pData[info->field_0].subItems[info->subIndex].walk[offsetof(MovGraph2Item, objectId)].mov, -1, 2);
-		v18 = y1;
-		v17 = x1;
-		v10 = x;
-		v60 = v27;
+		cntX = Movement_countPhasesWithFlag(_items2[info->field_0].subItems[info->subIndex].walk[0].mov, -1, 1);
+		cntY = Movement_countPhasesWithFlag(_items2[info->field_0].subItems[info->subIndex].walk[0].mov, -1, 2);
 	}
-	if (v65 > 1) {
-		v28 = Movement_countPhasesWithFlag(this->items2.m_pData[info->field_0].subItems[info->subIndex].walk[1].mov, -1, 1);
-		cnt += (v65 - 1) * v28;
-		v29 = Movement_countPhasesWithFlag(this->items2.m_pData[info->field_0].subItems[info->subIndex].walk[1].mov, -1, 2);
-		v17 = x1;
-		v10 = x;
-		v60 += (v65 - 1) * v29;
-		v18 = y1;
+
+	if (mgmLen > 1) {
+		cntX += (mgmLen - 1) * Movement_countPhasesWithFlag(_items2[info->field_0].subItems[info->subIndex].walk[1].mov, -1, 1);
+		cntY += (mgmLen - 1) * Movement_countPhasesWithFlag(_items2[info->field_0].subItems[info->subIndex].walk[1].mov, -1, 2);
 	}
-	if (v65 > 0) {
-		cnt += Movement_countPhasesWithFlag(this->items2.m_pData[info->field_0].subItems[info->subIndex].walk[1].mov, a2, 1);
-		v30 = Movement_countPhasesWithFlag(this->items2.m_pData[info->field_0].subItems[info->subIndex].walk[1].mov, a2, 2);
-		v17 = x1;
-		v10 = x;
-		v60 += v30;
-		v18 = y1;
+
+	if (mgmLen > 0) {
+		cntX += Movement_countPhasesWithFlag(_items2[info->field_0].subItems[info->subIndex].walk[1].mov, a2, 1);
+		cntY += Movement_countPhasesWithFlag(_items2[info->field_0].subItems[info->subIndex].walk[1].mov, a2, 2);
 	}
+
 	if (!(info->flags & 4)) {
-		cnt += Movement_countPhasesWithFlag(this->items2.m_pData[info->field_0].subItems[info->subIndex].walk[2].mov, -1, 1);
-		v31 = Movement_countPhasesWithFlag(this->items2.m_pData[info->field_0].subItems[info->subIndex].walk[2].mov, -1, 2);
-		v17 = x1;
-		v10 = x;
-		v60 += v31;
-		v18 = y1;
+		cntX += Movement_countPhasesWithFlag(_items2[info->field_0].subItems[info->subIndex].walk[2].mov, -1, 1);
+		cntY += Movement_countPhasesWithFlag(_items2[info->field_0].subItems[info->subIndex].walk[2].mov, -1, 2);
 	}
-	v32 = v10 - v17;
-	v33 = v13 - v18;
-	x = v32;
-	v74 = v33;
-	if (cnt)
-		x1 = (signed __int64)((double)x / (double)cnt);
+
+	int dx1 = x - x1;
+	int dy1 = y - y1;
+
+	if (cntX)
+		x1 = (int)((double)dx1 / (double)cntX);
 	else
 		x1 = 0;
-	if (v60)
-		y1 = (signed __int64)((double)v74 / (double)v60);
+
+	if (cntY)
+		y1 = (int)((double)dy1 / (double)cntY);
 	else
 		y1 = 0;
-	v34 = v32 - cnt * x1;
-	v35 = v33 - v60 * y1;
+
+	int v34 = dx1 - cntX * x1;
+	int v35 = dy1 - cntY * y1;
+	int v72;
 	y2 = v34;
-	v76 = v35;
+
 	if (v34)
 		x2 = v34 / abs(v34);
 	else
@@ -1495,9 +1481,9 @@ MessageQueue *MovGraph2::genMovement(MovInfo1 *info) {
 
 	if (info->flags & 2) {
 		ex = new ExCommand(
-							_items2.m_pData[info->field_0].objectId,
+							_items2[info->field_0].objectId,
 							5,
-							_items2.m_pData[info->field_0].subItems[info->subIndex].walk[1].movementId,
+							_items2[info->field_0].subItems[info->subIndex].walk[1].movementId,
 							info->pt1.x,
 							info->pt1.y,
 							0,
@@ -1508,15 +1494,14 @@ MessageQueue *MovGraph2::genMovement(MovInfo1 *info) {
 
 		ex->_field_14 = info->distance1;
 
-		ex->_keyCode = _items2.m_pData[info->field_0].obj->_okeyCode;
+		ex->_keyCode = _items2[info->field_0].obj->_okeyCode;
 		ex->_field_24 = 1;
 		ex->_excFlags |= 2;
 	} else {
-		ex = ExCommand_ctor(
-							 (ExCommand *)v61,
-							 LOWORD(this->items2.m_pData[info->field_0].objectId),
+		ex = new ExCommand(
+							 _items2[info->field_0].objectId,
 							 5,
-							 this->items2.m_pData[info->field_0].subItems[info->subIndex].walk[offsetof(MovGraph2Item, objectId)].movementId,
+							 _items2[info->field_0].subItems[info->subIndex].walk[offsetof(MovGraph2Item, objectId)].movementId,
 							 info->pt1.x,
 							 info->pt1.y,
 							 0,
@@ -1533,8 +1518,44 @@ MessageQueue *MovGraph2::genMovement(MovInfo1 *info) {
 		mq->addExCommandToEnd(ex);
 
 		ex = _mgm->buildExCommand2(
-								  _items2.m_pData[info->field_0].subItems[info->subIndex].walk[offsetof(MovGraph2Item, objectId)].mov,
-								  _items2.m_pData[info->field_0].objectId,
+								  _items2[info->field_0].subItems[info->subIndex].walk[offsetof(MovGraph2Item, objectId)].mov,
+								  _items2[info->field_0].objectId,
+								  x1,
+								  y1,
+								  &x2,
+								  &y2,
+								  -1);
+		ex->_parId = mq->_id;
+		ex->_keyCode = _items2[info->field_0]->_okeyCode;
+	}
+
+	mq->addExCommandToEnd(ex);
+
+	for (i = 0; i < mgmLen; ++i) {
+		int par;
+
+		if (i == mgmLen - 1)
+			par = a2;
+		else
+			par = -1;
+
+		ex = _mgm->buildExCommand2(
+								  _items2[info->field_0].subItems[info->subIndex].walk[1].mov,
+								  _items2[info->field_0].objectId,
+								  x1,
+								  y1,
+								  &x2,
+								  &y2,
+								  par);
+		ex->_parId = mq->_id;
+		ex->_keyCode = _items2[info->field_0].obj->_okeyCode;
+		mq->addExCommandToEnd(ex);
+	}
+
+	if (!(info->flags & 4)) {
+		ex = _mgm->buildExCommand2(
+								  _items2[info->field_0].subItems[info->subIndex].walk[2].mov,
+								  _items2[info->field_0].objectId,
 								  x1,
 								  y1,
 								  &x2,
@@ -1542,48 +1563,11 @@ MessageQueue *MovGraph2::genMovement(MovInfo1 *info) {
 								  -1);
 		ex->_parId = mq->_id;
 		ex->_keyCode = _items2[info->field_0].obj->_okeyCode;
-	}
-
-	mq->addExCommandToEnd(ex);
-	v48 = v65;
-	v49 = 0;
-	for (i = 0; i < v65; ++i) {
-		if (v49 == v48 - 1)
-			v50 = a2;
-		else
-			v50 = -1;
-		ex = _mgm->buildExCommand2(
-								  _items2.m_pData[info->field_0].subItems[info->subIndex].walk[1].mov,
-								  _items2.m_pData[info->field_0].objectId,
-								  x1,
-								  y1,
-								  &x2,
-								  &y2,
-								  v50);
-		ex->_parId = mq->_id;
-		ex->_keyCode = _items2.m_pData[info->field_0].obj->_okeyCode;
-		mq->addExCommandToEnd(ex);
-
-		v48 = v65;
-		v49 = i + 1;
-	}
-
-	if (!(info->flags & 4)) {
-		ex = _mgm->buildExCommand2(
-								  _items2.m_pData[info->field_0].subItems[info->subIndex].walk[2].mov,
-								  _items2.m_pData[info->field_0].objectId,
-								  x1,
-								  y1,
-								  &x2,
-								  &y2,
-								  -1);
-		ex->_parId = mq->_id;
-		ex->_keyCode = _items2.m_pData[info->field_0].obj->_okeyCode;
 
 		mq->addExCommandToEnd(ex);
 	}
 
-    ex = new ExCommand(_items2.m_pData[info->field_0].objectId, 5, -1, info->pt2.x, info->pt2.y, 0, 1, 0, 0, 0);
+    ex = new ExCommand(_items2[info->field_0].objectId, 5, -1, info->pt2.x, info->pt2.y, 0, 1, 0, 0, 0);
 	ex->_field_14 = info->distance2;
 
 	ex->_keyCode = _items[info->field_0].obj->_okeyCode;
@@ -1594,6 +1578,8 @@ MessageQueue *MovGraph2::genMovement(MovInfo1 *info) {
 
 	return mq;
 #endif
+
+	warning("STUB: MovGraph2::genMovement()");
 
 	return 0;
 }
