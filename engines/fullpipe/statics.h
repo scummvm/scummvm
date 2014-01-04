@@ -215,6 +215,7 @@ class StaticANIObject : public GameObject {
 	void queueMessageQueue(MessageQueue *msg);
 	MessageQueue *getMessageQueue();
 	bool trySetMessageQueue(int msgNum, int qId);
+	void startMQIfIdle(int qId, int flag);
 
 	void initMovements();
 	void loadMovementsPixelData();

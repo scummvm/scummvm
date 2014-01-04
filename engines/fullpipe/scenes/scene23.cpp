@@ -160,7 +160,7 @@ int scene23_updateCursor() {
 }
 
 void sceneHandler23_showStool() {
-	warning("STUB: sceneHandler23_showStool()");
+	chainQueue(QU_SC23_SHOWSTOOL, 0);
 }
 
 void sceneHandler23_hideStool() {
@@ -191,12 +191,24 @@ void sceneHandler23_sendClick(StaticANIObject *ani) {
 	warning("STUB: sceneHandler23_sendClick(ani)");
 }
 
+void sceneHandler23_startKiss() {
+	g_vars->scene23_giraffeTop->changeStatics2(ST_GRFU_UP);
+	g_vars->scene23_giraffeTop->startMQIfIdle(QU_SC23_STARTKISS, 0);
+}
 void sceneHandler23_checkReachingTop() {
-	warning("STUB: sceneHandler23_checkReachingTop()");
+	if (g_fp->_aniMan->_movement || g_fp->_aniMan->_statics->_staticsId != ST_MAN_STANDLADDER
+		|| g_fp->_aniMan->_ox != 405 || g_fp->_aniMan->_oy != 220)
+		g_vars->scene23_var05 = 0;
+	else
+		g_vars->scene23_var05 = 1;
 }
 
 void sceneHandler23_exitCalendar() {
-	warning("STUB: sceneHandler23_exitCalendar()");
+	if (!g_fp->_aniMan->_movement && g_fp->_aniMan->_statics->_staticsId == ST_MAN_STANDLADDER
+		&& !g_fp->_aniMan->getMessageQueue() && !(g_fp->_aniMan->_flags & 0x100) ) {
+		chainQueue(QU_SC23_FROMCALENDAREXIT, 1);
+		g_vars->scene23_var07 = 2;
+	}
 }
 
 void sceneHandler23_lowerFromCalendar(ExCommand *cmd) {

@@ -302,6 +302,10 @@ bool StaticANIObject::trySetMessageQueue(int msgNum, int qId) {
 	return true;
 }
 
+void StaticANIObject::startMQIfIdle(int qId, int flag) {
+	warning("STUB: StaticANIObject::startMQIfIdle()");
+}
+
 bool StaticANIObject::isIdle() {
 	if (_messageQueueId) {
 		MessageQueue *m = g_fp->_globalMessageQueueList->getMessageQueueById(_messageQueueId);
