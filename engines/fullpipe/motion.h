@@ -176,7 +176,7 @@ public:
 	void clearMovements2(int idx);
 	int recalcOffsets(int idx, int st1idx, int st2idx, bool flip, bool flop);
 	Common::Point *calcLength(Common::Point *point, Movement *mov, int x, int y, int *x1, int *y1, int flag);
-	ExCommand2 *buildExCommand2(Movement *mov, int objId, int x1, int y1, int *x2, int *y2, int len);
+	ExCommand2 *buildExCommand2(Movement *mov, int objId, int x1, int y1, Common::Point *x2, Common::Point *y2, int len);
 };
 
 struct MctlLadderMovementVars {

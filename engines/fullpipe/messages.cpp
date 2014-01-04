@@ -145,7 +145,7 @@ void ExCommand::firef34() {
 	}
 }
 
-ExCommand2::ExCommand2(int messageKind, int parentId, const Common::Point **points, int pointsSize) : ExCommand(parentId, messageKind, 0, 0, 0, 0, 1, 0, 0, 0) {
+ExCommand2::ExCommand2(int messageKind, int parentId, Common::Point **points, int pointsSize) : ExCommand(parentId, messageKind, 0, 0, 0, 0, 1, 0, 0, 0) {
 	_objtype = kObjTypeExCommand2;
 
 	_pointsSize = pointsSize;

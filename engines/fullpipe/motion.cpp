@@ -1464,18 +1464,18 @@ MessageQueue *MovGraph2::genMovement(MovInfo1 *info) {
 
 	int v34 = dx1 - cntX * x1;
 	int v35 = dy1 - cntY * y1;
-	int v72;
-	int x2;
-	int y2 = v34;
+	Common::Point x2;
+	Common::Point y2(v34, v35);
 
 	if (v34)
-		x2 = v34 / abs(v34);
+		x2.x = v34 / abs(v34);
 	else
-		x2 = 0;
+		x2.x = 0;
+
 	if (v35)
-		v72 = v35 / abs(v35);
+		x2.y = v35 / abs(v35);
 	else
-		v72 = 0;
+		x2.y = 0;
 
 	MessageQueue *mq = new MessageQueue(g_fp->_globalMessageQueueList->compact());
 	ExCommand *ex;
@@ -1906,12 +1906,56 @@ Common::Point *MGM::calcLength(Common::Point *point, Movement *mov, int x, int y
 	return point;
 }
 
-ExCommand2 *MGM::buildExCommand2(Movement *mov, int objId, int x1, int y1, int *x2, int *y2, int len) {
-	ExCommand2 *ex2 = new ExCommand2(20, objId, 0, 0);
+ExCommand2 *MGM::buildExCommand2(Movement *mov, int objId, int x1, int y1, Common::Point *x2, Common::Point *y2, int len) {
+	uint cnt;
 
-	warning("STUB: MGM::buildExCommand2()");
+	if (mov->_currMovement)
+		cnt = mov->_currMovement->_dynamicPhases.size();
+	else
+		cnt = mov->_dynamicPhases.size();
 
-	return ex2;
+	if (len > 0 && cnt > len)
+		cnt = len;
+
+	Common::Point **points = (Common::Point **)malloc(sizeof(Common::Point *) * cnt);
+
+	for (uint i = 0; i < cnt; i++) {
+		int flags = mov->getDynamicPhaseByIndex(i)->getDynFlags();
+
+		points[i] = new Common::Point;
+
+		if (flags & 1) {
+			points[i]->x = x1 + x2->x;
+
+			y2->x -= x2->x;
+
+			if (!y2->x)
+				x2->x = 0;
+		}
+
+		if (flags & 2) {
+			points[i]->y = y1 + x2->y;
+
+			y2->y -= x2->y;
+
+			if ( !y2->y )
+				x2->y = 0;
+		}
+	}
+
+	ExCommand2 *ex = new ExCommand2(20, objId, points, cnt);
+	ex->_excFlags = 2;
+	ex->_messageNum = mov->_id;
+	ex->_field_14 = len;
+	ex->_field_24 = 1;
+	ex->_keyCode = -1;
+
+	for (int i = 0; i < cnt; i++)
+		delete points[i];
+
+	free(points);
+
+	return ex;
 }
 
 MovGraphLink::MovGraphLink() {
