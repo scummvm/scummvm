@@ -134,4 +134,22 @@ void scene23_initScene(Scene *sc) {
 	g_fp->_currentScene = oldsc;
 }
 
+int scene23_updateCursor() {
+	g_fp->updateCursorCommon();
+
+	if (g_fp->_objectIdAtCursor == PIC_SC23_LADDERU) {
+		if (g_vars->scene23_var05)
+			return g_fp->_cursorId;
+
+		g_fp->_cursorId = getGameLoaderInventory()->getSelectedItemId() ? PIC_CSR_GOU : PIC_CSR_ITN; // FIXME check
+	}
+
+	if (g_fp->_objectIdAtCursor == PIC_SC23_BTN1 || g_fp->_objectIdAtCursor == PIC_SC23_BTN2
+		|| g_fp->_objectIdAtCursor == PIC_SC23_BTN3 || g_fp->_objectIdAtCursor == PIC_SC23_BTN4
+		|| g_fp->_objectIdAtCursor == ANI_CALENDWHEEL)
+		g_fp->_cursorId = PIC_CSR_LIFT;
+
+	return g_fp->_cursorId;
+}
+
 } // End of namespace Fullpipe
