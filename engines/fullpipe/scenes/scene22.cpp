@@ -104,7 +104,7 @@ void sceneHandler22_showStool() {
 	chainQueue(QU_SC22_SHOWSTOOL, 0);
 }
 
-void sceneHandler22and23_hideStool() {
+void sceneHandler22_hideStool() {
 	g_fp->_currentScene->getStaticANIObject1ById(ANI_TABURETTE, -1)->hide();
 }
 
@@ -312,7 +312,7 @@ int sceneHandler22(ExCommand *cmd) {
 		break;
 
 	case MSG_SC22_HIDESTOOL:
-		sceneHandler22and23_hideStool();
+		sceneHandler22_hideStool();
 		break;
 
 	case MSG_SC22_FROMSTOOL:
