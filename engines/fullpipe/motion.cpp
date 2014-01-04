@@ -210,7 +210,7 @@ MessageQueue *MctlCompound::doWalkTo(StaticANIObject *subj, int xpos, int ypos, 
 
 	if (mq) {
 		for (uint i = 0; i < closestP->_messageQueueObj->getCount(); i++) {
-			ex = closestP->_messageQueueObj->getExCommandByIndex(i)->createClone()
+			ex = closestP->_messageQueueObj->getExCommandByIndex(i)->createClone();
 			ex->_excFlags |= 2;
 			mq->addExCommandToEnd(ex);
 		}

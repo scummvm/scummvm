@@ -196,7 +196,7 @@ void sceneHandler22_stoolLogic(ExCommand *cmd) {
 				if (!mq)
 					return;
 
-				mq->addExCommandToEnd(cmd->createClone));
+				mq->addExCommandToEnd(cmd->createClone());
 
 				postExCommand(g_fp->_aniMan->_id, 2, 841, 449, 0, -1);
 				return;
