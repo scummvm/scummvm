@@ -298,7 +298,7 @@ void sceneHandler04_walkClimbLadder(ExCommand *ex) {
 	ExCommand *ex3;
 
 	if (ex) {
-		ex3 = new ExCommand(ex);
+		ex3 = ex->createClone();
 	} else {
 		ex3 = new ExCommand(0, 17, MSG_SC4_CLICKLADDER, 0, 0, 0, 1, 0, 0, 0);
 		ex3->_excFlags |= 3;
@@ -498,7 +498,7 @@ void sceneHandler04_gotoLadder(ExCommand *ex) {
 		mq->addExCommandToEnd(ex3);
 
 		if (ex) {
-			ExCommand *ex4 = new ExCommand(ex);
+			ExCommand *ex4 = ex->createClone();
 
 			mq->addExCommandToEnd(ex4);
 		}
@@ -630,7 +630,7 @@ MessageQueue *sceneHandler04_kozFly5(StaticANIObject *ani, double phase) {
 	MessageQueue *mq2 = mgm.genMovement(&mgminfo);
 
 	if (mq1 && mq2) {
-		mq1->addExCommandToEnd(new ExCommand(mq2->getExCommandByIndex(0)));
+		mq1->addExCommandToEnd(mq2->getExCommandByIndex(0)->createClone());
 
 		delete mq2;
 
@@ -890,7 +890,7 @@ void sceneHandler04_animOutOfBottle(ExCommand *ex) {
 	MessageQueue *mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC4_MANFROMBOTTLE), 0, 0);
 
 	if (ex) {
-		ExCommand *newex = new ExCommand(ex);
+		ExCommand *newex = ex->createClone();
 
 		mq->addExCommandToEnd(newex);
 	  }
@@ -1066,7 +1066,7 @@ void sceneHandler04_leaveLadder(ExCommand *ex) {
 					MessageQueue *mq = g_vars->scene04_ladder->controllerWalkTo(g_fp->_aniMan, 0);
 
 					if (mq) {
-						mq->addExCommandToEnd(new ExCommand(ex));
+						mq->addExCommandToEnd(ex->createClone());
 
 						if (mq->chain(g_fp->_aniMan) )
 							ex->_messageKind = 0;
@@ -1099,7 +1099,7 @@ void sceneHandler04_leaveLadder(ExCommand *ex) {
 					ex1->_excFlags |= 2;
 					mq->addExCommandToEnd(ex1);
 
-					ex1 = new ExCommand(ex);
+					ex1 = ex->createClone();
 					mq->addExCommandToEnd(ex1);
 
 					mq->setFlags(mq->getFlags() | 1);

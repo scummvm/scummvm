@@ -69,7 +69,7 @@ class ExCommand : public Message {
 
 	virtual bool load(MfcArchive &file);
 
-	virtual ExCommand *createClone(ExCommand *src);
+	virtual ExCommand *createClone();
 
 	bool handleMessage();
 	void sendMessage();
@@ -89,7 +89,7 @@ class ExCommand2 : public ExCommand {
 	ExCommand2(ExCommand2 *src);
 	virtual ~ExCommand2();
 
-	virtual ExCommand *createClone(ExCommand *src);
+	virtual ExCommand2 *createClone();
 };
 
 class ObjstateCommand : public CObject {

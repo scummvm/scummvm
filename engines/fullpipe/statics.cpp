@@ -708,7 +708,7 @@ void StaticANIObject::update(int counterdiff) {
 
 				ex = dyn->getExCommand();
 				if (ex && ex->_messageKind != 35) {
-					newex = new ExCommand(ex);
+					newex = ex->createClone();
 					newex->_excFlags |= 2;
 					if (newex->_messageKind == 17) {
 						newex->_parentId = _id;
@@ -741,7 +741,7 @@ void StaticANIObject::update(int counterdiff) {
 					ex = dyn->getExCommand();
 					if (ex) {
 						if (ex->_messageKind == 35) {
-							newex = new ExCommand(ex);
+							newex = ex->createClone();
 							newex->_excFlags |= 2;
 							newex->sendMessage();
 						}
@@ -1048,7 +1048,7 @@ bool StaticANIObject::startAnim(int movementId, int messageQueueId, int dynPhase
 			ExCommand *ex = _movement->_currDynamicPhase->getExCommand();
 			if (ex) {
 				if (ex->_messageKind == 35) {
-					ExCommand *newex = new ExCommand(ex);
+					ExCommand *newex = ex->createClone();
 					newex->_excFlags |= 2;
 					newex->sendMessage();
 				}
@@ -1858,7 +1858,7 @@ DynamicPhase::DynamicPhase(DynamicPhase *src, bool reverse) {
 	_field_7C = src->_field_7C;
 
 	if (src->getExCommand())
-		_exCommand = new ExCommand(src->getExCommand());
+		_exCommand = src->getExCommand()->createClone();
 	else
 		_exCommand = 0;
 

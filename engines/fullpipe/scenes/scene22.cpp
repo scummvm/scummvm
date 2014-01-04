@@ -153,7 +153,7 @@ void sceneHandler22_fromStool(ExCommand *cmd) {
 	if (g_fp->_aniMan->isIdle() && !(g_fp->_aniMan->_flags & 0x100)) {
 		MessageQueue *mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC22_FROMSTOOL), 0, 0);
 
-		mq->addExCommandToEnd(new ExCommand(cmd));
+		mq->addExCommandToEnd(cmd->createClone());
 		mq->setFlags(mq->getFlags() | 1);
 		mq->chain(0);
 	}
@@ -196,7 +196,7 @@ void sceneHandler22_stoolLogic(ExCommand *cmd) {
 				if (!mq)
 					return;
 
-				mq->addExCommandToEnd(new ExCommand(cmd));
+				mq->addExCommandToEnd(cmd->createClone));
 
 				postExCommand(g_fp->_aniMan->_id, 2, 841, 449, 0, -1);
 				return;
@@ -282,7 +282,7 @@ void sceneHandler22_stoolLogic(ExCommand *cmd) {
 				mq = getCurrSceneSc2MotionController()->method34(g_fp->_aniMan, 1010, 443, 1, ST_MAN_UP);
 
 				if (mq) {
-					mq->addExCommandToEnd(new ExCommand(cmd));
+					mq->addExCommandToEnd(cmd->createClone());
 
 					postExCommand(g_fp->_aniMan->_id, 2, 1010, 443, 0, -1);
 					return;

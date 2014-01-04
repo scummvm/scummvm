@@ -43,8 +43,8 @@ ExCommand::ExCommand(ExCommand *src) : Message(src) {
 	_parId = src->_parId;
 }
 
-ExCommand *ExCommand::createClone(ExCommand *src) {
-	return new ExCommand(src);
+ExCommand *ExCommand::createClone() {
+	return new ExCommand(this);
 }
 
 ExCommand::ExCommand(int16 parentId, int messageKind, int messageNum, int x, int y, int a7, int a8, int sceneClickX, int sceneClickY, int a11) : 
@@ -176,13 +176,8 @@ ExCommand2::~ExCommand2() {
 	free(_points);
 }
 
-ExCommand *ExCommand2::createClone(ExCommand *src) {
-	if (_objtype == kObjTypeExCommand)
-		return new ExCommand(src);
-	else if (_objtype == kObjTypeExCommand2)
-		return new ExCommand2((ExCommand2 *)src);
-
-	error("ExCommand2::createClone(): Wrong object type: %d", _objtype);
+ExCommand2 *ExCommand2::createClone() {
+	return new ExCommand2(this);
 }
 
 Message::Message() {
@@ -284,7 +279,7 @@ MessageQueue::MessageQueue(MessageQueue *src, int parId, int field_38) {
 	_field_38 = (field_38 == 0);
 
 	for (Common::List<ExCommand *>::iterator it = src->_exCommands.begin(); it != src->_exCommands.end(); ++it) {
-		ExCommand *ex = new ExCommand(*it);
+		ExCommand *ex = (*it)->createClone();
 		ex->_excFlags |= 2;
 
 		_exCommands.push_back(ex);
