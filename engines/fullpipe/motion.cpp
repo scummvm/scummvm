@@ -2214,7 +2214,11 @@ int startWalkTo(int objId, int objKey, int x, int y, int a5) {
 }
 
 int doSomeAnimation(int objId, int objKey, int a3) {
-	warning("STUB: doSomeAnimation(%d, %d, %d)", objId, objKey, a3);
+	StaticANIObject *ani = g_fp->_currentScene->getStaticANIObject1ById(objId, objKey);
+	MctlCompound *cmp = getCurrSceneSc2MotionController();
+
+	if (ani && cmp)
+		return cmp->method3C(ani, a3);
 
 	return 0;
 }
