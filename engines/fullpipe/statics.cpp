@@ -1923,6 +1923,8 @@ bool StaticPhase::load(MfcArchive &file) {
 
 	assert (g_fp->_gameProjectVersion >= 12);
 
+	warning("StaticPhase::load(): Code continues here");
+
 	return true;
 }
 

@@ -1907,7 +1907,7 @@ Common::Point *MGM::calcLength(Common::Point *point, Movement *mov, int x, int y
 }
 
 ExCommand2 *MGM::buildExCommand2(Movement *mov, int objId, int x1, int y1, int *x2, int *y2, int len) {
-	ExCommand2 *ex2 = new ExCommand2;
+	ExCommand2 *ex2 = new ExCommand2(20, objId, 0, 0);
 
 	warning("STUB: MGM::buildExCommand2()");
 

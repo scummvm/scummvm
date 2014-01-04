@@ -41,7 +41,10 @@ ExCommand::ExCommand(ExCommand *src) : Message(src) {
 	_messageNum = src->_messageNum;
 	_excFlags = src->_excFlags;
 	_parId = src->_parId;
+}
 
+ExCommand *ExCommand::createClone(ExCommand *src) {
+	return new ExCommand(src);
 }
 
 ExCommand::ExCommand(int16 parentId, int messageKind, int messageNum, int x, int y, int a7, int a8, int sceneClickX, int sceneClickY, int a11) : 
@@ -77,6 +80,8 @@ bool ExCommand::load(MfcArchive &file) {
 		_excFlags = file.readUint32LE();
 		_parId = file.readUint32LE();
 	}
+
+	_objtype = kObjTypeExCommand;
 
 	return true;
 }
@@ -118,6 +123,50 @@ void ExCommand::handle() {
 	} else {
 		postMessage();
 	}
+}
+
+void ExCommand::setf3c(int val) {
+	if (val != -1)
+		_field_3C = val;
+
+	_field_34 = 1;
+}
+
+void ExCommand::firef34() {
+	if (_field_34) {
+		if (_field_3C >= _keyCode) {
+			_field_34 = 0;
+
+			sendMessage();
+
+			if (!_field_30 )
+				setf3c(_field_2C);
+		}
+	}
+}
+
+ExCommand2::ExCommand2(int messageKind, int parentId, const Common::Point *points, int pointsSize) : ExCommand(parentId, messageKind, 0, 0, 0, 0, 1, 0, 0, 0) {
+	_points = 0;
+	_objtype = kObjTypeExCommand2;
+
+	warning("STUB: ExCommand2::ExCommand2()");
+}
+
+ExCommand2::ExCommand2(ExCommand2 *src) : ExCommand(src) {
+	warning("STUB: ExCommand2::ExCommand2()");
+}
+
+ExCommand2::~ExCommand2() {
+	free(_points);
+}
+
+ExCommand *ExCommand2::createClone(ExCommand *src) {
+	if (_objtype == kObjTypeExCommand)
+		return new ExCommand(src);
+	else if (_objtype == kObjTypeExCommand2)
+		return new ExCommand2((ExCommand2 *)src);
+
+	error("ExCommand2::createClone(): Wrong object type: %d", _objtype);
 }
 
 Message::Message() {
