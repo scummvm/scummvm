@@ -34,6 +34,7 @@ public:
 
 protected:
 	virtual bool findCostume(lua_Object costumeObj, Actor *actor, Costume **costume);
+	void setChoreAndCostume(lua_Object choreObj, lua_Object costumeObj, Actor *actor, Costume *&costume, int &chore);
 
 	DECLARE_LUA_OPCODE(UndimAll);
 	DECLARE_LUA_OPCODE(SetActorLocalAlpha);

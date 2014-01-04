@@ -492,19 +492,7 @@ void Lua_V2::SetActorRestChore() {
 
 	Actor *actor = getactor(actorObj);
 
-	if (lua_isnil(choreObj)) {
-		chore = -1;
-	} else {
-		if (!findCostume(costumeObj, actor, &costume))
-			return;
-
-		if (!costume) {
-			costume = actor->getCurrentCostume();
-		}
-
-		const char *choreStr = lua_getstring(choreObj);
-		chore = costume->getChoreId(choreStr);
-	}
+	setChoreAndCostume(choreObj, costumeObj, actor, costume, chore);
 
 	actor->setRestChore(chore, costume);
 }
@@ -523,19 +511,7 @@ void Lua_V2::SetActorWalkChore() {
 
 	Actor *actor = getactor(actorObj);
 
-	if (lua_isnil(choreObj)) {
-		chore = -1;
-	} else {
-		if (!findCostume(costumeObj, actor, &costume))
-			return;
-
-		if (!costume) {
-			costume = actor->getCurrentCostume();
-		}
-
-		const char *choreStr = lua_getstring(choreObj);
-		chore = costume->getChoreId(choreStr);
-	}
+	setChoreAndCostume(choreObj, costumeObj, actor, costume, chore);
 
 	actor->setWalkChore(chore, costume);
 }
@@ -570,6 +546,8 @@ void Lua_V2::SetActorTurnChores() {
 	actor->setTurnChores(leftChore, rightChore, costume);
 }
 
+
+
 void Lua_V2::SetActorTalkChore() {
 	lua_Object actorObj = lua_getparam(1);
 	lua_Object indexObj = lua_getparam(2);
@@ -590,19 +568,7 @@ void Lua_V2::SetActorTalkChore() {
 
 	Actor *actor = getactor(actorObj);
 
-	if (lua_isnil(choreObj)) {
-		chore = -1;
-	} else {
-		if (!findCostume(costumeObj, actor, &costume))
-			return;
-
-		if (!costume) {
-			costume = actor->getCurrentCostume();
-		}
-
-		const char *choreStr = lua_getstring(choreObj);
-		chore = costume->getChoreId(choreStr);
-	}
+	setChoreAndCostume(choreObj, costumeObj, actor, costume, chore);
 
 	actor->setTalkChore(index, chore, costume);
 }
@@ -621,19 +587,7 @@ void Lua_V2::SetActorMumblechore() {
 
 	Actor *actor = getactor(actorObj);
 
-
-	if (lua_isnil(choreObj)) {
-		chore = -1;
-	} else {
-		if (!findCostume(costumeObj, actor, &costume))
-			return;
-
-		if (!costume) {
-			costume = actor->getCurrentCostume();
-		}
-		const char *choreStr = lua_getstring(choreObj);
-		chore = costume->getChoreId(choreStr);
-	}
+	setChoreAndCostume(choreObj, costumeObj, actor, costume, chore);
 
 	actor->setMumbleChore(chore, costume);
 }
@@ -1005,6 +959,22 @@ void Lua_V2::EnableActorPuck() {
 
 	// FIXME: Implement.
 	warning("Lua_V2::EnableActorPuck: stub, actor: %s enable: %s", actor->getName().c_str(), enable ? "TRUE" : "FALSE");
+}
+
+void Lua_V2::setChoreAndCostume(lua_Object choreObj, lua_Object costumeObj, Actor *actor, Costume *&costume, int &chore) {
+	if (lua_isnil(choreObj)) {
+		chore = -1;
+	} else {
+		if (!findCostume(costumeObj, actor, &costume))
+			return;
+
+		if (!costume) {
+			costume = actor->getCurrentCostume();
+		}
+
+		const char *choreStr = lua_getstring(choreObj);
+		chore = costume->getChoreId(choreStr);
+	}
 }
 
 } // end of namespace Grim
