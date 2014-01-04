@@ -32,11 +32,17 @@
 
 #include "fullpipe/interaction.h"
 #include "fullpipe/behavior.h"
-
+#include "fullpipe/floaters.h"
 
 namespace Fullpipe {
 
-void __thiscall scene23_initScene(Scene *sc) {
+bool sceneHandler23_testCalendar() {
+	warning("STUB: sceneHandler23_testCalendar()");
+
+	return false;
+}
+
+void scene23_initScene(Scene *sc) {
 	g_vars->scene23_var01 = 200;
 	g_vars->scene23_var02 = 200;
 	g_vars->scene23_var03 = 300;
@@ -51,7 +57,7 @@ void __thiscall scene23_initScene(Scene *sc) {
 	g_vars->scene23_giraffeTop = sc->getStaticANIObject1ById(ANI_GIRAFFE_TOP, -1);
 	g_vars->scene23_giraffee = sc->getStaticANIObject1ById(ANI_GIRAFFEE, -1);
 
-	g_fp->_floaters->init(getGameLoaderGameVar()->getSubVarByName("SC_23"));
+	g_fp->_floaters->init(g_fp->getGameLoaderGameVar()->getSubVarByName("SC_23"));
 
 	Scene *oldsc = g_fp->_currentScene;
 	g_fp->_currentScene = sc;
@@ -111,7 +117,7 @@ void __thiscall scene23_initScene(Scene *sc) {
 				g_vars->scene23_calend1->_statics = g_vars->scene23_calend1->getStaticsById(ST_CND_5);
 		}
 
-		sc->getStaticANIObject1ById(sc, ANI_LUK23_D, -1)->changeStatics2(ST_LUK23_OPEN);
+		sc->getStaticANIObject1ById(ANI_LUK23_D, -1)->changeStatics2(ST_LUK23_OPEN);
 
 		if (g_fp->getObjectState(sO_Lever_23) == g_fp->getObjectEnumState(sO_Lever_23, sO_Taken))
 			sc->getStaticANIObject1ById(ANI_INV_LEVERHANDLE, -1)->hide();
@@ -125,8 +131,6 @@ void __thiscall scene23_initScene(Scene *sc) {
 		sc->getStaticANIObject1ById(ANI_INV_LEVERHANDLE, -1)->hide();
 	}
 	
-	StaticANIObject_hide();
-
 	g_fp->_currentScene = oldsc;
 }
 

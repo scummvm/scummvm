@@ -264,6 +264,20 @@ Vars::Vars() {
 	scene22_craneIsOut = true;
 	scene22_numBagFalls = 1;
 
+	scene23_var01 = 0;
+	scene23_var02 = 0;
+	scene23_var03 = 0;
+	scene23_var04 = 0;
+	scene23_calend0 = 0;
+	scene23_calend1 = 0;
+	scene23_calend2 = 0;
+	scene23_calend3 = 0;
+	scene23_var05 = 0;
+	scene23_var06 = 0;
+	scene23_var07 = 0;
+	scene23_giraffeTop = 0;
+	scene23_giraffee = 0;
+
 	scene24_jetIsOn = false;
 	scene24_flowIsLow = false;
 	scene24_waterIsOn = false;
