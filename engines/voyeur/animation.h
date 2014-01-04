@@ -157,6 +157,7 @@ public:
 	void copyDirtyRectsToBuffer(uint8 *dst, uint pitch);
 	RL2VideoTrack *getVideoTrack();
 	void play(::Voyeur::VoyeurEngine *vm);
+	int getPaletteCount() const { return _header._colorCount; }
 };
 
 } // End of namespace Video

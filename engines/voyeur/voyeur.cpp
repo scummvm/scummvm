@@ -564,11 +564,6 @@ void VoyeurEngine::playAVideoDuration(int videoId, int duration) {
 
 	while (!shouldQuit() && !decoder.endOfVideo() && !_eventsManager._mouseClicked &&
 			(decoder.getCurFrame() < endFrame)) {
-		if (decoder.hasDirtyPalette()) {
-			const byte *palette = decoder.getPalette();
-			_graphicsManager.setPalette(palette, 0, 256);
-		}
-
 		if (decoder.needsUpdate()) {
 			const Graphics::Surface *frame = decoder.decodeNextFrame();
 
@@ -576,7 +571,13 @@ void VoyeurEngine::playAVideoDuration(int videoId, int duration) {
 				(byte *)_graphicsManager._screenSurface.getPixels());
 		}
 
-		_eventsManager.pollEvents();
+		if (decoder.hasDirtyPalette()) {
+			const byte *palette = decoder.getPalette();
+			_graphicsManager.setPalette(palette, 0, decoder.getPaletteCount());
+			_graphicsManager.setOneColor(128, 220, 20, 20);
+		}
+
+		_eventsManager.getMouseInfo();
 		g_system->delayMillis(10);
 	}
 

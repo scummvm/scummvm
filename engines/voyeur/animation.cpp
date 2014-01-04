@@ -355,9 +355,9 @@ void RL2Decoder::RL2VideoTrack::rl2DecodeFrameWithTransparency(int screenOffset)
 			++screenOffset;
 			--frameSize;
 		} else if (nextByte < 0x80) {
-			// Raw byte to copy to output
+			// Single 7-bit pixel to output (128-255)
 			assert(frameSize > 0);
-			destP[screenOffset] = nextByte;
+			destP[screenOffset] = nextByte | 0x80;
 			++screenOffset;
 			--frameSize;
 		} else if (nextByte == 0x80) {
@@ -374,7 +374,6 @@ void RL2Decoder::RL2VideoTrack::rl2DecodeFrameWithTransparency(int screenOffset)
 		} else {
 			// Run length of a single pixel value
 			int runLength = _fileStream->readByte();
-			nextByte &= 0x7f;
 			runLength = MIN(runLength, frameSize);
 
 			Common::fill(destP + screenOffset, destP + screenOffset + runLength, nextByte);
