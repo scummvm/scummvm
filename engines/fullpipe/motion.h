@@ -374,7 +374,7 @@ struct MovInfo1Sub {
 };
 
 struct MovInfo1 {
-	int field_0;
+	int index;
 	Common::Point pt1;
 	Common::Point pt2;
 	int distance1;
