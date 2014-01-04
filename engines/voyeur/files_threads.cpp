@@ -427,7 +427,7 @@ void ThreadResource::parsePlayCommands() {
 			v2 = READ_LE_UINT16(dataP);
 
 			if (v2 == 0 || READ_LE_UINT16(_vm->_controlPtr->_ptr + 4) == 0) {
-				_vm->_videoId = READ_LE_UINT16(dataP + 2);
+				_vm->_videoId = READ_LE_UINT16(dataP + 2) - 1;
 				_vm->_voy._field468 = READ_LE_UINT16(dataP + 4);
 				_vm->_voy._field46A = READ_LE_UINT16(dataP + 6);
 
