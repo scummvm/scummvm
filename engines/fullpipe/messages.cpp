@@ -145,18 +145,34 @@ void ExCommand::firef34() {
 	}
 }
 
-ExCommand2::ExCommand2(int messageKind, int parentId, const Common::Point *points, int pointsSize) : ExCommand(parentId, messageKind, 0, 0, 0, 0, 1, 0, 0, 0) {
-	_points = 0;
+ExCommand2::ExCommand2(int messageKind, int parentId, const Common::Point **points, int pointsSize) : ExCommand(parentId, messageKind, 0, 0, 0, 0, 1, 0, 0, 0) {
 	_objtype = kObjTypeExCommand2;
 
-	warning("STUB: ExCommand2::ExCommand2()");
+	_pointsSize = pointsSize;
+	_points = (Common::Point **)malloc(sizeof(Common::Point *) * pointsSize);
+
+	for (int i = 0; i < pointsSize; i++) {
+		_points[i] = new Common::Point;
+
+		*_points[i] = *points[i];
+	}
 }
 
 ExCommand2::ExCommand2(ExCommand2 *src) : ExCommand(src) {
-	warning("STUB: ExCommand2::ExCommand2()");
+	_pointsSize = src->_pointsSize;
+	_points = (Common::Point **)malloc(sizeof(Common::Point *) * _pointsSize);
+
+	for (int i = 0; i < _pointsSize; i++) {
+		_points[i] = new Common::Point;
+
+		*_points[i] = *src->_points[i];
+	}
 }
 
 ExCommand2::~ExCommand2() {
+	for (int i = 0; i < _pointsSize; i++)
+		delete _points[i];
+
 	free(_points);
 }
 

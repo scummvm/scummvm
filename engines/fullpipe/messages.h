@@ -85,7 +85,7 @@ class ExCommand2 : public ExCommand {
 	Common::Point **_points;
 	int _pointsSize;
 
-	ExCommand2(int messageKind, int parentId, const Common::Point *points, int pointsSize);
+	ExCommand2(int messageKind, int parentId, const Common::Point **points, int pointsSize);
 	ExCommand2(ExCommand2 *src);
 	virtual ~ExCommand2();
 
