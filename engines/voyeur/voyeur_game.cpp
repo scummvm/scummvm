@@ -1078,38 +1078,47 @@ void VoyeurEngine::checkTransition(){
 	Common::String time, day;
 
 	if (_voy._transitionId != _checkTransitionId) {
-		switch (_voy._transitionId) {
-		case 0:
-			break;
-		case 1:
-		case 2:
-		case 3:
-		case 4:
-			day = SATURDAY;
-			break;
-		case 17: 
-			day = MONDAY;
-			break;
-		default:
-			day = SUNDAY;
-			break;
-		}
+		// Get the day
+		day = getDayName();
 
+		// Only proceed if a valid day string was returned
 		if (!day.empty()) {
 			_graphicsManager.fadeDownICF(6);
 
-			if (_voy._transitionId != 17) {
-				const char *amPm = _voy._isAM ? AM : PM;
-				time = Common::String::format("%d:%02d%s",
-					_gameHour, _gameMinute, amPm);
-			}
+			// Get the time of day string
+			time = getTimeOfDay();
 
+			// Show a transition card with the day and time, and wait
 			doTransitionCard(day, time);
-			_eventsManager.delay(180);
+			_eventsManager.delayClick(180);
 		}
 
 		_checkTransitionId = _voy._transitionId;
 	}
+}
+
+Common::String VoyeurEngine::getDayName() {
+	switch (_voy._transitionId) {
+	case 0:
+		return "";
+	case 1:
+	case 2:
+	case 3:
+	case 4:
+		return SATURDAY;
+	case 17: 
+		return MONDAY;
+	default:
+		return SUNDAY;
+	}
+}
+
+Common::String VoyeurEngine::getTimeOfDay() {
+	if (_voy._transitionId == 17)
+		return "";
+
+	const char *amPm = _voy._isAM ? AM : PM;
+	return Common::String::format("%d:%02d%s", _gameHour, _gameMinute, amPm);
 }
 
 bool VoyeurEngine::doComputerText(int maxLen) {
@@ -1214,12 +1223,12 @@ void VoyeurEngine::getComputerBrush() {
 void VoyeurEngine::doTimeBar(bool force) {
 	flashTimeBar();
 
-	if ((force || _timeBarVal != _voy._RTVNum) && _voy._field476 > 0) {
-		if (_voy._RTVNum > _voy._field476 || _voy._RTVNum < 0)
-			_voy._RTVNum = _voy._field476 - 1;
+	if ((force || _timeBarVal != _voy._RTVNum) && _voy._RTVLimit > 0) {
+		if (_voy._RTVNum > _voy._RTVLimit || _voy._RTVNum < 0)
+			_voy._RTVNum = _voy._RTVLimit - 1;
 		
 		_timeBarVal = _voy._RTVNum;
-		int height = ((_voy._field476 - _voy._RTVNum) * 59) / _voy._field476;
+		int height = ((_voy._RTVLimit - _voy._RTVNum) * 59) / _voy._RTVLimit;
 		int fullHeight = MAX(151 - height, 93);
 
 		_graphicsManager._drawPtr->_penColor = 134;
@@ -1239,10 +1248,10 @@ void VoyeurEngine::doTimeBar(bool force) {
 }
 
 void VoyeurEngine::flashTimeBar(){
-	if (_voy._RTVNum >= 0 && (_voy._field476 - _voy._RTVNum) < 11 &&
+	if (_voy._RTVNum >= 0 && (_voy._RTVLimit - _voy._RTVNum) < 11 &&
 		(_eventsManager._intPtr.field1A >= (_flashTimeVal + 15) ||
 		_eventsManager._intPtr.field1A < _flashTimeVal)) {
-		// Within time range
+		// Within camera low power range
 		_flashTimeVal = _eventsManager._intPtr.field1A;
 
 		if (_flashTimeFlag)
@@ -1257,7 +1266,7 @@ void VoyeurEngine::flashTimeBar(){
 }
 
 void VoyeurEngine::checkPhoneCall() {
-	if ((_voy._field476 - _voy._RTVNum) >= 36 && _voy._field4B8 < 5 && 
+	if ((_voy._RTVLimit - _voy._RTVNum) >= 36 && _voy._field4B8 < 5 && 
 			_playStamp2 <= 151 && _playStamp2 > 146) {
 		if ((_voy._switchBGNum < _checkPhoneVal || _checkPhoneVal > 180) &&
 				!_soundManager.getVOCStatus()) {

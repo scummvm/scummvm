@@ -86,7 +86,7 @@ public:
 	int _field470;
 	int _field472;
 	int _transitionId;
-	int _field476;
+	int _RTVLimit;
 	int _field478;
 	int _field47A;
 	PictureResource *_evPicPtrs[6];

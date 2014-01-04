@@ -33,11 +33,20 @@ class VoyeurEngine;
 class Debugger : public GUI::Debugger {
 private:
 	VoyeurEngine *_vm;
+public:
+	/**
+	 * Specifies whether time should pass, and the video camera's batteries go down
+	 * @default true
+	 */
+	bool _isTimeActive;
+protected:
+	bool Cmd_Time(int argc, const char **argv);
 
 public:
 	Debugger();
 	virtual ~Debugger() {}
 	void setVm(VoyeurEngine *vm) { _vm = vm; }
+
 };
 
 } // End of namespace Voyeur

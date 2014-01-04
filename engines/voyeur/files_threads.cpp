@@ -538,7 +538,7 @@ void ThreadResource::parsePlayCommands() {
 			if (v2 == 0 || READ_LE_UINT16(_vm->_controlPtr->_ptr + 4) == 0) {
 				_vm->_voy._field470 = 5;
 				int count = READ_LE_UINT16(dataP + 2);
-				_vm->_voy._field476 = READ_LE_UINT16(dataP + 4);
+				_vm->_voy._RTVLimit = READ_LE_UINT16(dataP + 4);
 
 				if (_vm->_voy._transitionId != count) {
 					if (_vm->_voy._transitionId > 1)
@@ -552,7 +552,7 @@ void ThreadResource::parsePlayCommands() {
 					_vm->_voy._RTANum = 255;
 				}
 
-				_vm->_voy._isAM = (_vm->_voy._transitionId == 6) ? 1 : 0;
+				_vm->_voy._isAM = _vm->_voy._transitionId == 6;
 			}
 
 			dataP += 6;
@@ -1353,18 +1353,18 @@ int ThreadResource::doInterface() {
 	_vm->_eventsManager._intPtr.field1E = 1;
 	_vm->_eventsManager._intPtr.field1A = 0;
 
-	if (_vm->_voy._RTVNum >= _vm->_voy._field476 || _vm->_voy._RTVNum < 0)
-		_vm->_voy._RTVNum = _vm->_voy._field476 - 1;
+	if (_vm->_voy._RTVNum >= _vm->_voy._RTVLimit || _vm->_voy._RTVNum < 0)
+		_vm->_voy._RTVNum = _vm->_voy._RTVLimit - 1;
 
-	if (_vm->_voy._transitionId < 15 && (_vm->_voy._field476 - 3) < _vm->_voy._RTVNum) {
-		_vm->_voy._RTVNum = _vm->_voy._field476;
+	if (_vm->_voy._transitionId < 15 && (_vm->_voy._RTVLimit - 3) < _vm->_voy._RTVNum) {
+		_vm->_voy._RTVNum = _vm->_voy._RTVLimit;
 		_vm->makeViewFinder();
 
 		_vm->initIFace();
-		_vm->_voy._RTVNum = _vm->_voy._field476 - 4;
+		_vm->_voy._RTVNum = _vm->_voy._RTVLimit - 4;
 		_vm->_voy._field478 &= ~1;
 
-		while (!_vm->shouldQuit() && _vm->_voy._RTVNum < _vm->_voy._field476) {
+		while (!_vm->shouldQuit() && _vm->_voy._RTVNum < _vm->_voy._RTVLimit) {
 			_vm->flashTimeBar();
 		}
 
@@ -1490,8 +1490,9 @@ int ThreadResource::doInterface() {
 		_vm->flipPageAndWait();
 
 		pt = _vm->_eventsManager.getMousePos();
-		if ((_vm->_voy._field476 <= _vm->_voy._RTVNum) || ((_vm->_voy._field478 & 0x80) &&
-				(_vm->_eventsManager._rightClick != NULL) && (pt.x == 0))) {
+		if ((_vm->_voy._RTVNum >= _vm->_voy._RTVLimit) || ((_vm->_voy._field478 & 0x80) &&
+				_vm->_eventsManager._rightClick && (pt.x == 0))) {
+			// Time to transition to the next time period
 			_vm->_eventsManager.getMouseInfo();
 
 			if (_vm->_voy._transitionId == 15) {

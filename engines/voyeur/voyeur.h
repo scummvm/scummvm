@@ -232,6 +232,16 @@ public:
 	 * Flips the active page and waits until it's drawn and faded in
 	 */
 	void flipPageAndWaitForFade();
+
+	/**
+	 * Returns the string for the current in-game day of the week
+	 */
+	Common::String getDayName();
+
+	/**
+	 * Returns the string for the current in-game time of day
+	 */
+	Common::String getTimeOfDay();
 };
 
 } // End of namespace Voyeur

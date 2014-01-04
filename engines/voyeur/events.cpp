@@ -101,9 +101,14 @@ void EventsManager::startMainClockInt() {
 void EventsManager::mainVoyeurIntFunc() {
 	if (!(_vm->_voy._field478 & 1)) {
 		++_vm->_voy._switchBGNum;
-		++_vm->_voy._RTVNum;
-		if (_vm->_voy._RTVNum >= _vm->_voy._field4F2)
-			_vm->_voy._field4F0 = 1;
+
+		if (_vm->_debugger._isTimeActive) {
+			// Increase camera discharge
+			++_vm->_voy._RTVNum;
+
+			if (_vm->_voy._RTVNum >= _vm->_voy._field4F2)
+				_vm->_voy._field4F0 = 1;
+		}
 	}
 }
 
@@ -144,6 +149,9 @@ void EventsManager::checkForNextFrameCounter() {
 
 		if ((_gameCounter % GAME_FRAME_RATE) == 0)
 			mainVoyeurIntFunc();
+
+		// Give time to the debugger
+		_vm->_debugger.onFrame();
 
 		// Display the frame
 		g_system->copyRectToScreen((byte *)_vm->_graphicsManager._screenSurface.getPixels(), 
@@ -238,7 +246,14 @@ void EventsManager::pollEvents() {
 			return;
 
 		case Common::EVENT_KEYDOWN:
-			_keyState[(byte)toupper(event.kbd.ascii)] = true;
+			// Check for debugger
+			if (event.kbd.keycode == Common::KEYCODE_d && (event.kbd.flags & Common::KBD_CTRL)) {
+				// Attach to the debugger
+				_vm->_debugger.attach();
+				_vm->_debugger.onFrame();
+			} else {
+				_keyState[(byte)toupper(event.kbd.ascii)] = true;
+			}
 			return;
 		case Common::EVENT_KEYUP:
 			_keyState[(byte)toupper(event.kbd.ascii)] = false;
