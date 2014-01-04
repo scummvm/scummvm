@@ -167,8 +167,41 @@ void sceneHandler23_hideStool() {
 	g_fp->_currentScene->getStaticANIObject1ById(ANI_TABURETTE, -1)->hide();
 }
 
+void sceneHandler23_startKiss() {
+	g_vars->scene23_giraffeTop->changeStatics2(ST_GRFU_UP);
+	g_vars->scene23_giraffeTop->startMQIfIdle(QU_SC23_STARTKISS, 0);
+}
+
 void sceneHandler23_spinWheel1() {
-	warning("STUB: sceneHandler23_spinWheel1()");
+	int mv = 0;
+
+	switch (g_vars->scene23_calend0->_statics->_staticsId) {
+    case ST_CND_0:
+		mv = MV_CND_0_1;
+		break;
+
+    case ST_CND_1:
+		mv = MV_CND_1_2;
+		break;
+
+    case ST_CND_2:
+		mv = MV_CND_2_3;
+		break;
+
+    case ST_CND_3:
+		g_vars->scene23_calend0->changeStatics2(ST_CND_9);
+		mv = MV_CND_9_0;
+		break;
+
+    default:
+		break;
+	}
+
+	if (mv)
+		g_vars->scene23_calend0->startAnim(mv, 0, -1);
+
+	if (sceneHandler23_testCalendar())
+		sceneHandler23_startKiss();
 }
 
 void sceneHandler23_spinWheel2() {
@@ -188,13 +221,30 @@ void sceneHandler23_pushButton(ExCommand *cmd) {
 }
 
 void sceneHandler23_sendClick(StaticANIObject *ani) {
-	warning("STUB: sceneHandler23_sendClick(ani)");
+	int msg = 0;
+	switch (ani->_okeyCode) {
+    case 0:
+		msg = MSG_SC23_CLICKBTN1;
+		break;
+    case 1:
+		msg = MSG_SC23_CLICKBTN2;
+		break;
+    case 2:
+		msg = MSG_SC23_CLICKBTN3;
+		break;
+    case 3:
+		msg = MSG_SC23_CLICKBTN4;
+		break;
+    default:
+		break;
+	}
+
+	ExCommand *ex = new ExCommand(0, 17, msg, 0, 0, 0, 1, 0, 0, 0);
+	ex->_excFlags |= 3;
+
+	ex->postMessage();
 }
 
-void sceneHandler23_startKiss() {
-	g_vars->scene23_giraffeTop->changeStatics2(ST_GRFU_UP);
-	g_vars->scene23_giraffeTop->startMQIfIdle(QU_SC23_STARTKISS, 0);
-}
 void sceneHandler23_checkReachingTop() {
 	if (g_fp->_aniMan->_movement || g_fp->_aniMan->_statics->_staticsId != ST_MAN_STANDLADDER
 		|| g_fp->_aniMan->_ox != 405 || g_fp->_aniMan->_oy != 220)
