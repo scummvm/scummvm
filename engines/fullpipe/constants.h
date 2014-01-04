@@ -791,6 +791,8 @@ namespace Fullpipe {
 #define PIC_SC23_BTN3 1731
 #define PIC_SC23_BTN4 1732
 #define PIC_SC23_LADDERU 3411
+#define QU_GRFU_TURN_UD 1664
+#define QU_GRFU_TURN_UL 1662
 #define ST_CND_5 1713
 #define ST_GRFG_BALD 1675
 #define ST_GRFG_EMPTY 1674

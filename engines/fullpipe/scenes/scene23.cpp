@@ -134,6 +134,13 @@ void scene23_initScene(Scene *sc) {
 	g_fp->_currentScene = oldsc;
 }
 
+void scene23_setGiraffeState() {
+	if (g_fp->getObjectState(sO_UpperHatch_23) == g_fp->getObjectEnumState(sO_UpperHatch_23, sO_Opened)) {
+		g_fp->_behaviorManager->setBehaviorEnabled(g_vars->scene23_giraffeTop, ST_GRFU_UP, QU_GRFU_TURN_UL, 0);
+		g_fp->_behaviorManager->setBehaviorEnabled(g_vars->scene23_giraffeTop, ST_GRFU_UP, QU_GRFU_TURN_UD, 0);
+	}
+}
+
 int scene23_updateCursor() {
 	g_fp->updateCursorCommon();
 
