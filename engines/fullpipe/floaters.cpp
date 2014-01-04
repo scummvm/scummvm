@@ -127,7 +127,7 @@ void Floaters::genFlies(Scene *sc, int x, int y, int priority, int flags) {
 }
 
 void Floaters::update() {
-	for (int i = 0; i < _array2.size(); ++i) {
+	for (uint i = 0; i < _array2.size(); ++i) {
 		if (_array2[i]->val13 <= 0) {
 			if (_array2[i]->val4 != _array2[i]->val2 || _array2[i]->val5 != _array2[i]->val3) {
 				if (_array2[i]->val9 < 2.0)

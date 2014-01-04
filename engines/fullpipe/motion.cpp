@@ -1914,7 +1914,7 @@ ExCommand2 *MGM::buildExCommand2(Movement *mov, int objId, int x1, int y1, Commo
 	else
 		cnt = mov->_dynamicPhases.size();
 
-	if (len > 0 && cnt > len)
+	if (len > 0 && cnt > (uint)len)
 		cnt = len;
 
 	Common::Point **points = (Common::Point **)malloc(sizeof(Common::Point *) * cnt);
@@ -1950,7 +1950,7 @@ ExCommand2 *MGM::buildExCommand2(Movement *mov, int objId, int x1, int y1, Commo
 	ex->_field_24 = 1;
 	ex->_keyCode = -1;
 
-	for (int i = 0; i < cnt; i++)
+	for (uint i = 0; i < cnt; i++)
 		delete points[i];
 
 	free(points);
