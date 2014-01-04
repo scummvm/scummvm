@@ -204,16 +204,71 @@ void sceneHandler23_spinWheel1() {
 		sceneHandler23_startKiss();
 }
 
-void sceneHandler23_spinWheel2() {
-	warning("STUB: sceneHandler23_spinWheel2()");
+void sceneHandler23_spinWheel2and4(StaticANIObject *ani) {
+	int mv = 0;
+
+	switch (ani->_statics->_staticsId) {
+    case ST_CND_0:
+		mv = MV_CND_0_1;
+		break;
+
+    case ST_CND_1:
+		mv = MV_CND_1_2;
+		break;
+
+    case ST_CND_2:
+		mv = MV_CND_2_3;
+		break;
+
+    case ST_CND_3:
+		mv = MV_CND_3_4;
+		break;
+
+    case ST_CND_4:
+		mv = MV_CND_4_5;
+		break;
+
+    case ST_CND_5:
+		mv = MV_CND_5_6;
+		break;
+
+    case ST_CND_6:
+		mv = MV_CND_6_7;
+		break;
+
+    case ST_CND_7:
+		mv = MV_CND_7_8;
+		break;
+
+    case ST_CND_8:
+		mv = MV_CND_8_9;
+		break;
+
+    case ST_CND_9:
+		mv = MV_CND_9_0;
+		break;
+
+    default:
+		break;
+	}
+
+	if (mv)
+		ani->startAnim(mv, 0, -1);
+
+	if (sceneHandler23_testCalendar())
+		sceneHandler23_startKiss();
 }
 
 void sceneHandler23_spinWheel3() {
-	warning("STUB: sceneHandler23_spinWheel3()");
-}
+	if (g_vars->scene23_calend2->_statics->_staticsId == ST_CND_0) {
+		g_vars->scene23_calend2->startAnim(MV_CND_0_1, 0, -1);
+	} else if (g_vars->scene23_calend2->_statics->_staticsId == ST_CND_1) {
+		g_vars->scene23_calend2->changeStatics2(ST_CND_9);
+		g_vars->scene23_calend2->startAnim(MV_CND_9_0, 0, -1);
+	}
 
-void sceneHandler23_spinWheel4() {
-	warning("STUB: sceneHandler23_spinWheel4()");
+	if (sceneHandler23_testCalendar())
+		sceneHandler23_startKiss();
 }
 
 void sceneHandler23_pushButton(ExCommand *cmd) {
@@ -310,7 +365,7 @@ int sceneHandler23(ExCommand *cmd) {
 		break;
 
 	case MSG_SC23_SPINWHEEL2:
-		sceneHandler23_spinWheel2();
+		sceneHandler23_spinWheel2and4(g_vars->scene23_calend1);
 		break;
 
 	case MSG_SC23_SPINWHEEL3:
@@ -318,7 +373,7 @@ int sceneHandler23(ExCommand *cmd) {
 		break;
 
 	case MSG_SC23_SPINWHEEL4:
-		sceneHandler23_spinWheel4();
+		sceneHandler23_spinWheel2and4(g_vars->scene23_calend3);
 		break;
 
 	case MSG_SC23_CLICKBTN1:
