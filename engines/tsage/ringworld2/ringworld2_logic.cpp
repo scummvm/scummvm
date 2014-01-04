@@ -374,7 +374,16 @@ void SceneExt::postInit(SceneObjectList *OwnerList) {
 
 	int prevScene = R2_GLOBALS._sceneManager._previousScene;
 	int sceneNumber = R2_GLOBALS._sceneManager._sceneNumber;
-	if (((prevScene == -1) && (sceneNumber != 180) && (sceneNumber != 205) && (sceneNumber != 50))
+	if (g_vm->getFeatures() & GF_DEMO) {
+		if (((prevScene == -1) && (sceneNumber != 180) && (sceneNumber != 205) && (sceneNumber != 50))
+			|| (prevScene == 0) || (sceneNumber == 600)
+			|| ((prevScene == 205 || prevScene == 180) && (sceneNumber == 100))) {
+				R2_GLOBALS._uiElements._active = true;
+				R2_GLOBALS._uiElements.show();
+		} else {
+			R2_GLOBALS._uiElements.updateInventory();
+		}
+	} else if (((prevScene == -1) && (sceneNumber != 180) && (sceneNumber != 205) && (sceneNumber != 50))
 			|| (sceneNumber == 50)
 			|| ((sceneNumber == 100) && (prevScene == 0 || prevScene == 180 || prevScene == 205))) {
 		R2_GLOBALS._uiElements._active = true;
