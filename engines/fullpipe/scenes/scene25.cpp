@@ -220,7 +220,34 @@ void sceneHandler25_rowShovel() {
 }
 
 void sceneHandler25_rowHand() {
-	warning("STUB: sceneHandler25_rowHand()");
+	PicAniInfo info;
+
+	g_fp->_aniMan->getPicAniInfo(&info);
+	g_fp->_aniMan->_messageQueueId = 0;
+	g_fp->_aniMan->changeStatics2(g_fp->_aniMan->_statics->_staticsId);
+
+	int x = g_fp->_aniMan->_ox;
+	int y = g_fp->_aniMan->_oy;
+
+	g_fp->_aniMan->setPicAniInfo(&info);
+
+	int id = g_fp->_aniMan->_statics->_staticsId;
+	int qid = 0;
+
+	if (id == ST_MAN25_ONBOARD && x == 370 && y == 502) {
+		g_fp->_aniMan->changeStatics2(ST_MAN25_ONBOARD);
+
+		qid = QU_SC25_TRYROWHAND;
+	} else if (id == (ST_MAN25_ONBOARD|0x4000) && x == 632 && y == 502) {
+		g_fp->_aniMan->changeStatics2(ST_MAN25_ONBOARD|0x4000);
+
+		qid = QU_SC25_TRYROWHAND_R;
+	}
+
+	if (qid)
+		chainObjQueue(g_fp->_aniMan, qid, 1);
+
+	g_vars->scene25_var12 = 0;
 }
 
 void sceneHandler25_putBoard() {
