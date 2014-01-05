@@ -179,7 +179,7 @@ static const tSageGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("r2rw.rlb", "c8e1a82c67c3caf57368eadde13dc15f", 32384464),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			ADGF_CD | ADGF_UNSTABLE,
+			ADGF_CD | ADGF_TESTING,
 			GUIO0()
 		},
 		GType_Ringworld2,
