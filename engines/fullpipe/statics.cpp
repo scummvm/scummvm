@@ -282,7 +282,26 @@ void StaticANIObject::queueMessageQueue(MessageQueue *mq) {
 }
 
 void StaticANIObject::restartMessageQueue(MessageQueue *mq) {
-	warning("STUB: StaticANIObject::restartMessageQueue()");
+	ExCommand *ex = mq->getExCommandByIndex(0);
+	if (ex) {
+		while (ex->_messageKind != 1 || ex->_parentId != _id) {
+			ex->_parId = 0;
+			ex->_excFlags |= 2;
+			ex->handleMessage();
+
+			mq->deleteExCommandByIndex(0, 0);
+
+			ex = mq->getExCommandByIndex(0);
+
+			if (!ex)
+				return;
+		}
+
+		if (ex) {
+			startAnim(ex->_messageNum, mq->_id, -1);
+			mq->deleteExCommandByIndex(0, 1);
+		}
+	}
 }
 
 MessageQueue *StaticANIObject::getMessageQueue() {
