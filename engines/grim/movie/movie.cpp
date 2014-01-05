@@ -41,6 +41,7 @@ MoviePlayer::MoviePlayer() {
 	_videoLooping = false;
 	_videoPause = true;
 	_updateNeeded = false;
+	_showSubtitles = true;
 	_movieTime = 0;
 	_frame = -1;
 	_x = 0;
@@ -149,13 +150,14 @@ void MoviePlayer::deinit() {
 	_videoFinished = true;
 }
 
-bool MoviePlayer::play(const Common::String &filename, bool looping, int x, int y, bool start) {
+bool MoviePlayer::play(const Common::String &filename, bool looping, int x, int y, bool start, bool showSubtitles) {
 	Common::StackLock lock(_frameMutex);
 	deinit();
 	_x = x;
 	_y = y;
 	_fname = filename;
 	_videoLooping = looping;
+	_showSubtitles = showSubtitles;
 
 	if (!loadFile(_fname))
 		return false;

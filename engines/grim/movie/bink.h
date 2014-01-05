@@ -23,6 +23,8 @@
 #ifndef GRIM_BINK_PLAYER_H
 #define GRIM_BINK_PLAYER_H
 
+#include "common/list.h"
+
 #include "engines/grim/movie/movie.h"
 
 #ifdef USE_BINK
@@ -30,12 +32,24 @@
 namespace Grim {
 
 class BinkPlayer : public MoviePlayer {
+	struct Subtitle {
+		Subtitle(unsigned int startFrame, unsigned int endFrame, const char *textId) :
+			_startFrame(startFrame), _endFrame(endFrame), _textId(textId), active(false) { };
+		unsigned int _startFrame;
+		unsigned int _endFrame;
+		Common::String _textId;
+		bool active;
+	};
+
 public:
 	BinkPlayer(bool demo);
 private:
+	Common::List<Subtitle> _subtitles;
+	Common::List<Subtitle>::iterator _subtitleIndex;
 	bool loadFile(const Common::String &filename);
 	bool _demo;
 	bool bikCheck(Common::SeekableReadStream *stream, uint32 pos);
+	virtual void handleFrame();
 };
 
 } // end of namespace Grim
