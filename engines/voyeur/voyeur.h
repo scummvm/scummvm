@@ -158,8 +158,8 @@ public:
 	int _glGoStack;
 	bool _bob;
 	int _stampFlags;
-	int _playStamp1;
-	int _playStamp2;
+	int _playStampGroupId;
+	int _currentVocId;
 	int _videoId;
 	const int *_resolvePtr;
 	int _iForceDeath;

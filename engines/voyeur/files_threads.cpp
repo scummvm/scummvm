@@ -359,7 +359,7 @@ void ThreadResource::parsePlayCommands() {
 
 		switch (id) {
 		case 1:
-			_vm->_playStamp2 = READ_LE_UINT16(dataP);
+			_vm->_currentVocId = READ_LE_UINT16(dataP);
 			dataP += 2;
 			break;
 
@@ -441,7 +441,7 @@ void ThreadResource::parsePlayCommands() {
 					_vm->_eventsManager.incrementTime(1);
 				
 					_vm->_videoId = -1;
-					_vm->_playStamp1 = -1;
+					_vm->_playStampGroupId = -1;
 
 					if (_vm->_eventsManager._videoDead != -1) {
 						_vm->_bVoy->freeBoltGroup(0xE00);
@@ -470,7 +470,7 @@ void ThreadResource::parsePlayCommands() {
 			if (id == 22) {
 				int resolveIndex = READ_LE_UINT16(dataP);
 				dataP += 2;
-				_vm->_playStamp1 = _vm->_resolvePtr[resolveIndex];
+				_vm->_playStampGroupId = _vm->_resolvePtr[resolveIndex];
 			}
 
 			_vm->_voy._vocSecondsOffset = 0;
@@ -484,13 +484,13 @@ void ThreadResource::parsePlayCommands() {
 				parseIndex = 999;
 			} else {
 				// TODO: Double-check this
-				int count = _vm->_bVoy->getBoltGroup(_vm->_playStamp1)->_entries.size();
+				int count = _vm->_bVoy->getBoltGroup(_vm->_playStampGroupId)->_entries.size();
 				_vm->_soundManager.stopVOCPlay();
 				_vm->_eventsManager.getMouseInfo();
 
 				for (int i = 0; i < count; ++i) {
-					pic = _vm->_bVoy->boltEntry(_vm->_playStamp1 + i * 2)._picResource;
-					pal = _vm->_bVoy->boltEntry(_vm->_playStamp1 + i * 2 + 1)._cMapResource;
+					pic = _vm->_bVoy->boltEntry(_vm->_playStampGroupId + i * 2)._picResource;
+					pal = _vm->_bVoy->boltEntry(_vm->_playStampGroupId + i * 2 + 1)._cMapResource;
 
 					(*_vm->_graphicsManager._vPort)->setupViewPort(pic);
 					pal->startFade();
@@ -498,8 +498,8 @@ void ThreadResource::parsePlayCommands() {
 					_vm->flipPageAndWaitForFade();
 
 					if (i > 0) {
-						_vm->_bVoy->freeBoltMember(_vm->_playStamp1 + i * 2);
-						_vm->_bVoy->freeBoltMember(_vm->_playStamp1 + i * 2 + 1);
+						_vm->_bVoy->freeBoltMember(_vm->_playStampGroupId + i * 2);
+						_vm->_bVoy->freeBoltMember(_vm->_playStampGroupId + i * 2 + 1);
 					}
 
 					Common::String file = Common::String::format("news%d.voc", i + 1);
@@ -520,8 +520,8 @@ void ThreadResource::parsePlayCommands() {
 						break;
 				}
 
-				_vm->_bVoy->freeBoltGroup(_vm->_playStamp1);
-				_vm->_playStamp1 = -1;
+				_vm->_bVoy->freeBoltGroup(_vm->_playStampGroupId);
+				_vm->_playStampGroupId = -1;
 				_vm->_videoId = -1;
 				parseIndex = 999;
 			}
@@ -555,7 +555,7 @@ void ThreadResource::parsePlayCommands() {
 		case 6:
 			_vm->_voy._field470 = 6;
 			v2 = READ_LE_UINT16(dataP);
-			_vm->_playStamp1 = _vm->_resolvePtr[v2];
+			_vm->_playStampGroupId = _vm->_resolvePtr[v2];
 			dataP += 2;
 			break;
 
@@ -660,17 +660,17 @@ void ThreadResource::parsePlayCommands() {
 			break;
 
 		case 14:
-			_vm->_playStamp1 = 2048;
+			_vm->_playStampGroupId = 2048;
 			_vm->_voy._field470 = 130;
 			break;
 
 		case 15:
-			_vm->_playStamp1 = (_vm->_voy._field4382 - 1) * 8 + 0x7700;
+			_vm->_playStampGroupId = (_vm->_voy._field4382 - 1) * 8 + 0x7700;
 			_vm->_voy._field47A = ((READ_LE_UINT16(_vm->_controlPtr->_ptr + 4) 
 				- 1) << 8) + 0x7B00;
 
-			pic = _vm->_bVoy->boltEntry(_vm->_playStamp1)._picResource;
-			_cmd14Pal = _vm->_bVoy->boltEntry(_vm->_playStamp1 + 1)._cMapResource;
+			pic = _vm->_bVoy->boltEntry(_vm->_playStampGroupId)._picResource;
+			_cmd14Pal = _vm->_bVoy->boltEntry(_vm->_playStampGroupId + 1)._cMapResource;
 
 			(*_vm->_graphicsManager._vPort)->setupViewPort(pic);
 			_cmd14Pal->startFade();
@@ -683,16 +683,16 @@ void ThreadResource::parsePlayCommands() {
 					pic = _vm->_bVoy->boltEntry(_vm->_voy._field47A)._picResource;
 					_cmd14Pal = _vm->_bVoy->boltEntry(_vm->_voy._field47A + 1)._cMapResource;
 				} else {
-					pic = _vm->_bVoy->boltEntry(_vm->_playStamp1 + idx * 2)._picResource;
-					_cmd14Pal = _vm->_bVoy->boltEntry(_vm->_playStamp1 + idx * 2 + 1)._cMapResource;
+					pic = _vm->_bVoy->boltEntry(_vm->_playStampGroupId + idx * 2)._picResource;
+					_cmd14Pal = _vm->_bVoy->boltEntry(_vm->_playStampGroupId + idx * 2 + 1)._cMapResource;
 				}
 
 				(*_vm->_graphicsManager._vPort)->setupViewPort(pic);
 				_cmd14Pal->startFade();
 				_vm->flipPageAndWaitForFade();
 
-				_vm->_bVoy->freeBoltMember(_vm->_playStamp1 + (idx - 1) * 2);
-				_vm->_bVoy->freeBoltMember(_vm->_playStamp1 + (idx - 1) * 2 + 1);
+				_vm->_bVoy->freeBoltMember(_vm->_playStampGroupId + (idx - 1) * 2);
+				_vm->_bVoy->freeBoltMember(_vm->_playStampGroupId + (idx - 1) * 2 + 1);
 
 				Common::String fname = Common::String::format("news%d.voc", idx);
 
@@ -708,9 +708,9 @@ void ThreadResource::parsePlayCommands() {
 					break;
 			}
 
-			_vm->_bVoy->freeBoltGroup(_vm->_playStamp1);
+			_vm->_bVoy->freeBoltGroup(_vm->_playStampGroupId);
 			_vm->_bVoy->freeBoltGroup(_vm->_voy._field47A);
-			_vm->_playStamp1 = -1;
+			_vm->_playStampGroupId = -1;
 			_vm->_voy._field47A = -1;
 			break;
 
@@ -1024,16 +1024,16 @@ int ThreadResource::doApt() {
 	loadTheApt();
 
 	Common::Point aptPos(-1, -1);
-	_vm->_playStamp2 = 151;
-	_vm->_voy._viewBounds = _vm->_bVoy->boltEntry(_vm->_playStamp1)._rectResource; 
+	_vm->_currentVocId = 151;
+	_vm->_voy._viewBounds = _vm->_bVoy->boltEntry(_vm->_playStampGroupId)._rectResource; 
 	Common::Array<Common::Rect> &hotspots = _vm->_bVoy->boltEntry(
-		_vm->_playStamp1 + 1)._rectResource->_entries;
+		_vm->_playStampGroupId + 1)._rectResource->_entries;
 	_vm->_eventsManager.getMouseInfo();
 
 	if (aptPos.x == -1) {
 		aptPos.x = hotspots[2].left;
 		aptPos.y = hotspots[2].top;
-		_vm->_playStamp2 = 153;
+		_vm->_currentVocId = 153;
 	}
 
 	if (_vm->_voy._field470 == 16) {
@@ -1044,8 +1044,8 @@ int ThreadResource::doApt() {
 	}
 
 	_vm->_eventsManager.setMousePos(Common::Point(aptPos.x, aptPos.y));
-	_vm->_soundManager.startVOCPlay(_vm->_soundManager.getVOCFileName(_vm->_playStamp2));
-	_vm->_playStamp2 = 151;
+	_vm->_soundManager.startVOCPlay(_vm->_soundManager.getVOCFileName(_vm->_currentVocId));
+	_vm->_currentVocId = 151;
 
 	_vm->_graphicsManager.setColor(129, 82, 82, 82);
 	_vm->_graphicsManager.setColor(130, 112, 112, 112);
@@ -1064,8 +1064,8 @@ int ThreadResource::doApt() {
 		_vm->_eventsManager.getMouseInfo();
 		if (!_vm->_soundManager.getVOCStatus()) {
 			// Previous sound ended, so start up a new one
-			_vm->_playStamp2 = _vm->getRandomNumber(4) + 151;
-			_vm->_soundManager.startVOCPlay(_vm->_soundManager.getVOCFileName(_vm->_playStamp2));
+			_vm->_currentVocId = _vm->getRandomNumber(4) + 151;
+			_vm->_soundManager.startVOCPlay(_vm->_soundManager.getVOCFileName(_vm->_currentVocId));
 		}
 
 		// Loop through the hotspot list
@@ -1082,7 +1082,7 @@ int ThreadResource::doApt() {
 						hotspotId = 5;
 
 					// Draw the text description for the highlighted hotspot
-					pic = _vm->_bVoy->boltEntry(_vm->_playStamp1 + 
+					pic = _vm->_bVoy->boltEntry(_vm->_playStampGroupId + 
 						hotspotId + 6)._picResource;
 					_vm->_graphicsManager.sDrawPic(pic, *_vm->_graphicsManager._vPort,
 						Common::Point(106, 200));
@@ -1093,8 +1093,8 @@ int ThreadResource::doApt() {
 		}
 
 		// Draw either standard or highlighted eye cursor
-		pic = _vm->_bVoy->boltEntry((hotspotId == -1) ? _vm->_playStamp1 + 2 :
-			_vm->_playStamp1 + 3)._picResource;
+		pic = _vm->_bVoy->boltEntry((hotspotId == -1) ? _vm->_playStampGroupId + 2 :
+			_vm->_playStampGroupId + 3)._picResource;
 		_vm->_graphicsManager.sDrawPic(pic, *_vm->_graphicsManager._vPort, pt);
 
 		_vm->flipPageAndWait();
@@ -1139,11 +1139,11 @@ void ThreadResource::doRoom() {
 	vm.makeViewFinderP();
 	voy._field437E = 0;
 	
-	if (!vm._bVoy->getBoltGroup(vm._playStamp1, true))
+	if (!vm._bVoy->getBoltGroup(vm._playStampGroupId, true))
 		return;
 
-	vm._graphicsManager._backColors = vm._bVoy->boltEntry(vm._playStamp1 + 1)._cMapResource;
-	vm._graphicsManager._backgroundPage = vm._bVoy->boltEntry(vm._playStamp1)._picResource;
+	vm._graphicsManager._backColors = vm._bVoy->boltEntry(vm._playStampGroupId + 1)._cMapResource;
+	vm._graphicsManager._backgroundPage = vm._bVoy->boltEntry(vm._playStampGroupId)._picResource;
 	(*vm._graphicsManager._vPort)->setupViewPort(vm._graphicsManager._backgroundPage);
 	vm._graphicsManager._backColors->startFade();
 
@@ -1151,12 +1151,12 @@ void ThreadResource::doRoom() {
 	voy._field437C = 0;
 	voy._field437E = 1;
 	
-	byte *dataP = vm._bVoy->memberAddr(vm._playStamp1 + 4);
+	byte *dataP = vm._bVoy->memberAddr(vm._playStampGroupId + 4);
 	int count = READ_LE_UINT16(dataP);
 	int i4e4 = -1;
 
-	PictureResource *pic1 = vm._bVoy->boltEntry(vm._playStamp1 + 2)._picResource;
-	PictureResource *pic2 = vm._bVoy->boltEntry(vm._playStamp1 + 3)._picResource;
+	PictureResource *pic1 = vm._bVoy->boltEntry(vm._playStampGroupId + 2)._picResource;
+	PictureResource *pic2 = vm._bVoy->boltEntry(vm._playStampGroupId + 3)._picResource;
 
 	RectResource viewBounds(48, 38, 336, 202);
 	voy._viewBounds = &viewBounds;
@@ -1164,11 +1164,11 @@ void ThreadResource::doRoom() {
 	vm._eventsManager.getMouseInfo();
 	vm._eventsManager.setMousePos(Common::Point(192, 120));
 	voy._field437E = 0;
-	vm._playStamp2 = 146;
+	vm._currentVocId = 146;
 	voy._field4AC = voy._RTVNum;
 
 	voy._vocSecondsOffset = 0;
-	vm._soundManager.startVOCPlay(vm._playStamp2);
+	vm._soundManager.startVOCPlay(vm._currentVocId);
 	voy._field478 &= ~1;
 
 	bool breakFlag = false;
@@ -1178,10 +1178,10 @@ void ThreadResource::doRoom() {
 		vm._eventsManager._intPtr._hasPalette = true;
 
 		do {
-			if (vm._playStamp2 != -1 && !vm._soundManager.getVOCStatus()) {
+			if (vm._currentVocId != -1 && !vm._soundManager.getVOCStatus()) {
 				voy._field4AC = voy._RTVNum;
 				voy._vocSecondsOffset = 0;
-				vm._soundManager.startVOCPlay(vm._playStamp2);
+				vm._soundManager.startVOCPlay(vm._currentVocId);
 			}
 
 			vm._eventsManager.getMouseInfo();
@@ -1239,7 +1239,7 @@ void ThreadResource::doRoom() {
 			if (i4e4 == 999) {
 				_vm->flipPageAndWait();
 
-				if (vm._playStamp2 != -1) {
+				if (vm._currentVocId != -1) {
 					voy._vocSecondsOffset = voy._RTVNum - 
 						voy._field4AC;
 					vm._soundManager.stopVOCPlay();
@@ -1268,16 +1268,16 @@ void ThreadResource::doRoom() {
 
 			// WORKAROUND: Done in original, but not now, since freeing and reloading
 			// the group would invalidate the _backgroundPage picture resource
-			//vm._bVoy->freeBoltGroup(vm._playStamp1);
-			//vm._bVoy->getBoltGroup(vm._playStamp1);
+			//vm._bVoy->freeBoltGroup(vm._playStampGroupId);
+			//vm._bVoy->getBoltGroup(vm._playStampGroupId);
 
-			dataP = vm._bVoy->memberAddr(vm._playStamp1 + 4);
-			pic1 = vm._bVoy->boltEntry(vm._playStamp1 + 2)._picResource;
-			pic2 = vm._bVoy->boltEntry(vm._playStamp1 + 3)._picResource;
+			dataP = vm._bVoy->memberAddr(vm._playStampGroupId + 4);
+			pic1 = vm._bVoy->boltEntry(vm._playStampGroupId + 2)._picResource;
+			pic2 = vm._bVoy->boltEntry(vm._playStampGroupId + 3)._picResource;
 			vm._graphicsManager._backColors = vm._bVoy->boltEntry(
-				vm._playStamp1 + 1)._cMapResource;
+				vm._playStampGroupId + 1)._cMapResource;
 			vm._graphicsManager._backgroundPage = vm._bVoy->boltEntry(
-				vm._playStamp1)._picResource;
+				vm._playStampGroupId)._picResource;
 
 			vm._graphicsManager._backColors->startFade();
 			_vm->flipPageAndWait();
@@ -1320,14 +1320,14 @@ void ThreadResource::doRoom() {
 		voy._field47A = -1;
 	}
 
-	if (vm._playStamp1 != -1) {
-		vm._bVoy->freeBoltGroup(vm._playStamp1);
-		vm._playStamp1 = -1;
+	if (vm._playStampGroupId != -1) {
+		vm._bVoy->freeBoltGroup(vm._playStampGroupId);
+		vm._playStampGroupId = -1;
 	}
 
-	if (vm._playStamp2 != -1) {
+	if (vm._currentVocId != -1) {
 		vm._soundManager.stopVOCPlay();
-		vm._playStamp2 = -1;
+		vm._currentVocId = -1;
 	}
 
 	chooseSTAMPButton(0);
@@ -1344,7 +1344,7 @@ int ThreadResource::doInterface() {
 	}
 
 	_vm->_voy._field478 &= ~0x100;
-	_vm->_playStamp1 = -1;
+	_vm->_playStampGroupId = -1;
 	_vm->_eventsManager._intPtr.field1E = 1;
 	_vm->_eventsManager._intPtr.field1A = 0;
 
@@ -1374,11 +1374,11 @@ int ThreadResource::doInterface() {
 	_vm->initIFace();
 
 	Common::Array<Common::Rect> *hotspots = &_vm->_bVoy->boltEntry(
-		_vm->_playStamp1 + 1)._rectResource->_entries;
-	_vm->_playStamp2 = 151 - _vm->getRandomNumber(5);
+		_vm->_playStampGroupId + 1)._rectResource->_entries;
+	_vm->_currentVocId = 151 - _vm->getRandomNumber(5);
 	_vm->_voy._vocSecondsOffset = _vm->getRandomNumber(29);
 
-	Common::String fname = _vm->_soundManager.getVOCFileName(_vm->_playStamp2);
+	Common::String fname = _vm->_soundManager.getVOCFileName(_vm->_currentVocId);
 	_vm->_soundManager.startVOCPlay(fname);
 	_vm->_eventsManager.getMouseInfo();
 	
@@ -1412,8 +1412,8 @@ int ThreadResource::doInterface() {
 
 		_vm->checkPhoneCall();
 		if (!_vm->_soundManager.getVOCStatus()) {
-			_vm->_playStamp2 = 151 - _vm->getRandomNumber(5);
-			_vm->_soundManager.startVOCPlay(_vm->_soundManager.getVOCFileName(_vm->_playStamp2));
+			_vm->_currentVocId = 151 - _vm->getRandomNumber(5);
+			_vm->_soundManager.startVOCPlay(_vm->_soundManager.getVOCFileName(_vm->_currentVocId));
 		}
 
 		// Calculate the mouse position within the entire mansion
@@ -1505,7 +1505,7 @@ int ThreadResource::doInterface() {
 
 				_vm->initIFace();
 				
-				hotspots = &_vm->_bVoy->boltEntry(_vm->_playStamp1 + 1)._rectResource->_entries;
+				hotspots = &_vm->_bVoy->boltEntry(_vm->_playStampGroupId + 1)._rectResource->_entries;
 				_vm->_eventsManager.getMouseInfo();
 
 				_vm->_voy._field478 &= ~2;
@@ -1518,8 +1518,8 @@ int ThreadResource::doInterface() {
 
 	_vm->_eventsManager.hideCursor();
 	_vm->_voy._field478 |= 1;
-	_vm->_bVoy->freeBoltGroup(_vm->_playStamp1);
-	if (_vm->_playStamp2 != -1)
+	_vm->_bVoy->freeBoltGroup(_vm->_playStampGroupId);
+	if (_vm->_currentVocId != -1)
 		_vm->_soundManager.stopVOCPlay();
 
 	return !_vm->_eventsManager._rightClick ? regionIndex : -2;
@@ -1618,10 +1618,10 @@ void ThreadResource::loadTheApt() {
 	case 8:
 	case 9:
 	case 17:
-		_vm->_playStamp1 = 0x5700;
+		_vm->_playStampGroupId = 0x5700;
 		break;
 	case 3:
-		_vm->_playStamp1 = 0x5800;
+		_vm->_playStampGroupId = 0x5800;
 		break;
 	case 4:
 	case 10:
@@ -1631,7 +1631,7 @@ void ThreadResource::loadTheApt() {
 	case 14:
 	case 15:
 	case 16:
-		_vm->_playStamp1 = 0x5900;
+		_vm->_playStampGroupId = 0x5900;
 		break;
 	default:
 		break;
@@ -1642,21 +1642,21 @@ void ThreadResource::loadTheApt() {
 
 	if (_vm->_voy._field472  != -1) {
 		doAptAnim(1);
-		_vm->_bVoy->getBoltGroup(_vm->_playStamp1);
+		_vm->_bVoy->getBoltGroup(_vm->_playStampGroupId);
 		_vm->_voy._field472 = -1;
 		_vm->_graphicsManager._backgroundPage = _vm->_bVoy->boltEntry(
-			_vm->_playStamp1 + 5)._picResource;
+			_vm->_playStampGroupId + 5)._picResource;
 		(*_vm->_graphicsManager._vPort)->setupViewPort(
 			_vm->_graphicsManager._backgroundPage);
 	} else {
-		_vm->_bVoy->getBoltGroup(_vm->_playStamp1);
+		_vm->_bVoy->getBoltGroup(_vm->_playStampGroupId);
 		_vm->_graphicsManager._backgroundPage = _vm->_bVoy->boltEntry(
-			_vm->_playStamp1 + 5)._picResource;
+			_vm->_playStampGroupId + 5)._picResource;
 		(*_vm->_graphicsManager._vPort)->setupViewPort(
 			_vm->_graphicsManager._backgroundPage);
 	}
 
-	CMapResource *pal = _vm->_bVoy->boltEntry(_vm->_playStamp1 + 4)._cMapResource;
+	CMapResource *pal = _vm->_bVoy->boltEntry(_vm->_playStampGroupId + 4)._cMapResource;
 	pal->_steps = 1; 
 	pal->startFade();
 	_vm->flipPageAndWaitForFade();
@@ -1668,9 +1668,9 @@ void ThreadResource::freeTheApt() {
 
 	_vm->_graphicsManager.fadeUpICF1(0);
 
-	if (_vm->_playStamp2 != -1) {
+	if (_vm->_currentVocId != -1) {
 		_vm->_soundManager.stopVOCPlay();
-		_vm->_playStamp2 = -1;
+		_vm->_currentVocId = -1;
 	}
 
 	if (_vm->_voy._field472 == -1) {
@@ -1685,8 +1685,8 @@ void ThreadResource::freeTheApt() {
 	}
 
 	(*_vm->_graphicsManager._vPort)->setupViewPort(nullptr);
-	_vm->_bVoy->freeBoltGroup(_vm->_playStamp1);
-	_vm->_playStamp1 = -1;
+	_vm->_bVoy->freeBoltGroup(_vm->_playStampGroupId);
+	_vm->_playStampGroupId = -1;
 	_vm->_voy._viewBounds = nullptr;
 }
 

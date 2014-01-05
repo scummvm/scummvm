@@ -644,7 +644,7 @@ void EventsManager::addComputerEventStart() {
 	e._minute = _vm->_gameMinute;
 	e._isAM = _vm->_voy._isAM;
 	e._type = EVTYPE_COMPUTER;
-	e._videoId = _vm->_playStamp1;
+	e._videoId = _vm->_playStampGroupId;
 	e._computerOn = _vm->_voy._computerTextId;
 }
 

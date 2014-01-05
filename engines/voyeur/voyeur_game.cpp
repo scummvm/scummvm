@@ -48,7 +48,7 @@ void VoyeurEngine::playStamp() {
 	bool breakFlag = false;
 	while (!breakFlag && !shouldQuit()) {
 		_eventsManager.getMouseInfo();
-		_playStamp1 = _playStamp2 = -1;
+		_playStampGroupId = _currentVocId = -1;
 		_videoId = -1;
 
 		threadP->parsePlayCommands();
@@ -142,17 +142,17 @@ void VoyeurEngine::playStamp() {
 
 		case 130: {
 			//_tmflag = 1;
-			if (_bVoy->getBoltGroup(_playStamp1)) {
-				_graphicsManager._backgroundPage = _bVoy->boltEntry(_playStamp1)._picResource;
-				_graphicsManager._backColors = _bVoy->boltEntry(_playStamp1 + 1)._cMapResource;
+			if (_bVoy->getBoltGroup(_playStampGroupId)) {
+				_graphicsManager._backgroundPage = _bVoy->boltEntry(_playStampGroupId)._picResource;
+				_graphicsManager._backColors = _bVoy->boltEntry(_playStampGroupId + 1)._cMapResource;
 
 				buttonId = getChooseButton();
 				if (_eventsManager._rightClick)
 					buttonId = 4;
 
-				_bVoy->freeBoltGroup(_playStamp1);
+				_bVoy->freeBoltGroup(_playStampGroupId);
 				_graphicsManager.screenReset();
-				_playStamp1 = -1;
+				_playStampGroupId = -1;
 				flag = true;
 
 				if (buttonId == 4) {
@@ -174,9 +174,9 @@ void VoyeurEngine::playStamp() {
 
 		do {
 			if (flag) {
-				if (_playStamp2 != -1) {
+				if (_currentVocId != -1) {
 					_soundManager.stopVOCPlay();
-					_playStamp2 = -1;
+					_currentVocId = -1;
 				}
 
 				_videoId = -1;
@@ -186,9 +186,9 @@ void VoyeurEngine::playStamp() {
 					_voy._field47A = -1;
 				}
 
-				if (_playStamp1 != -1) {
-					_bVoy->freeBoltGroup(_playStamp1);
-					_playStamp1 = -1;
+				if (_playStampGroupId != -1) {
+					_bVoy->freeBoltGroup(_playStampGroupId);
+					_playStampGroupId = -1;
 				}
 
 				// Break out of loop
@@ -469,13 +469,13 @@ void VoyeurEngine::reviewTape() {
 			_eventsManager.setMousePos(Common::Point(newX, newY));
 		}
 
-		_playStamp2 = 151;
+		_currentVocId = 151;
 		_voy._vocSecondsOffset = 0;
 		bool var1E = true;
 		do {
-			if (_playStamp2 != -1 && !_soundManager.getVOCStatus()) {
+			if (_currentVocId != -1 && !_soundManager.getVOCStatus()) {
 				_voy._field4AC = _voy._RTVNum;
-				_soundManager.startVOCPlay(_playStamp2);
+				_soundManager.startVOCPlay(_currentVocId);
 			}
 
 			if (var1E) {
@@ -886,7 +886,7 @@ void VoyeurEngine::playAVideoEvent(int eventIndex) {
 
 int VoyeurEngine::getChooseButton()  {
 	int prevIndex = -2;
-	Common::Array<Common::Rect> &hotspots = _bVoy->boltEntry(_playStamp1 
+	Common::Array<Common::Rect> &hotspots = _bVoy->boltEntry(_playStampGroupId 
 		+ 6)._rectResource->_entries;
 	int selectedIndex = -1;
 
@@ -895,13 +895,13 @@ int VoyeurEngine::getChooseButton()  {
 	_graphicsManager._backColors->startFade();
 	flipPageAndWait();
 
-	_voy._viewBounds = _bVoy->boltEntry(_playStamp1 + 7)._rectResource;
-	PictureResource *cursorPic = _bVoy->boltEntry(_playStamp1 + 2)._picResource;
+	_voy._viewBounds = _bVoy->boltEntry(_playStampGroupId + 7)._rectResource;
+	PictureResource *cursorPic = _bVoy->boltEntry(_playStampGroupId + 2)._picResource;
 
 	do {
 		do {
-			if (_playStamp2 != -1 && !_soundManager.getVOCStatus())
-				_soundManager.startVOCPlay(_playStamp2);
+			if (_currentVocId != -1 && !_soundManager.getVOCStatus())
+				_soundManager.startVOCPlay(_currentVocId);
 
 			_eventsManager.getMouseInfo();
 			selectedIndex = -1;
@@ -912,19 +912,19 @@ int VoyeurEngine::getChooseButton()  {
 					if (!_voy._field4F0 || (idx + 1) != READ_LE_UINT32(_controlPtr->_ptr + 4)) {
 						selectedIndex = idx;
 						if (selectedIndex != prevIndex) {
-							PictureResource *btnPic = _bVoy->boltEntry(_playStamp1 + 8 + idx)._picResource;
+							PictureResource *btnPic = _bVoy->boltEntry(_playStampGroupId + 8 + idx)._picResource;
 							_graphicsManager.sDrawPic(btnPic, *_graphicsManager._vPort,
 								Common::Point(106, 200));
 
-							cursorPic = _bVoy->boltEntry(_playStamp1 + 4)._picResource;
+							cursorPic = _bVoy->boltEntry(_playStampGroupId + 4)._picResource;
 						}
 					}
 				}
 			}
 
 			if (selectedIndex == -1) {
-				cursorPic = _bVoy->boltEntry(_playStamp1 + 2)._picResource;
-				PictureResource *btnPic = _bVoy->boltEntry(_playStamp1 + 12)._picResource;
+				cursorPic = _bVoy->boltEntry(_playStampGroupId + 2)._picResource;
+				PictureResource *btnPic = _bVoy->boltEntry(_playStampGroupId + 12)._picResource;
 				_graphicsManager.sDrawPic(btnPic, *_graphicsManager._vPort,
 					Common::Point(106, 200));
 			}
@@ -994,7 +994,7 @@ void VoyeurEngine::makeViewFinderP() {
 }
 
 void VoyeurEngine::initIFace(){
-	int playStamp1 = _playStamp1;
+	int playStamp1 = _playStampGroupId;
 	switch (_voy._transitionId) {
 	case 0:
 		break;
@@ -1005,20 +1005,20 @@ void VoyeurEngine::initIFace(){
 	case 7:
 	case 8:
 	case 9:
-		_playStamp1 = 0xB00;
+		_playStampGroupId = 0xB00;
 		break;
 	case 3:
-		_playStamp1 = 0xC00;
+		_playStampGroupId = 0xC00;
 		break;
 	default:
-		_playStamp1 = 0xD00;
+		_playStampGroupId = 0xD00;
 		break;
 	}
 	if (playStamp1 != -1)
 		_bVoy->freeBoltGroup(playStamp1, true);
 
-	_bVoy->getBoltGroup(_playStamp1);
-	CMapResource *pal = _bVoy->boltEntry(_playStamp1 + 2)._cMapResource;
+	_bVoy->getBoltGroup(_playStampGroupId);
+	CMapResource *pal = _bVoy->boltEntry(_playStampGroupId + 2)._cMapResource;
 	pal->startFade();
 
 	// Start the mansion off centered
@@ -1026,7 +1026,7 @@ void VoyeurEngine::initIFace(){
 		(MANSION_MAX_Y - MANSION_VIEW_HEIGHT) / 2);
 	doScroll(_mansionViewPos);
 	
-	_voy._viewBounds = _bVoy->boltEntry(_playStamp1)._rectResource;
+	_voy._viewBounds = _bVoy->boltEntry(_playStampGroupId)._rectResource;
 
 	// Show the cursor using ScummVM functionality
 	_eventsManager.showCursor();
@@ -1136,16 +1136,16 @@ bool VoyeurEngine::doComputerText(int maxLen) {
 		_voy._vocSecondsOffset = 0;
 
 	if (_voy._RTVNum > _voy._field4EE && maxLen == 9999) {
-		if (_playStamp2 != -1)
-			_soundManager.startVOCPlay(_playStamp2);
+		if (_currentVocId != -1)
+			_soundManager.startVOCPlay(_currentVocId);
 		font._justify = ALIGN_LEFT;
 		font._justifyWidth = 384;
 		font._justifyHeight = 100;
 		font._pos = Common::Point(128, 100);
 		(*_graphicsManager._vPort)->drawText(END_OF_MESSAGE);
 	} else if (_voy._RTVNum < _voy._field4EC && maxLen == 9999) {
-		if (_playStamp2 != -1)
-			_soundManager.startVOCPlay(_playStamp2);
+		if (_currentVocId != -1)
+			_soundManager.startVOCPlay(_currentVocId);
 		font._justify = ALIGN_LEFT;
 		font._justifyWidth = 384;
 		font._justifyHeight = 100;
@@ -1158,10 +1158,10 @@ bool VoyeurEngine::doComputerText(int maxLen) {
 		bool showEnd = true;
 		int yp = 60;
 		do {
-			if (_playStamp2 != -1 && !_soundManager.getVOCStatus()) {
+			if (_currentVocId != -1 && !_soundManager.getVOCStatus()) {
 				if (_voy._vocSecondsOffset > 60)
 					_voy._vocSecondsOffset = 0;
-				_soundManager.startVOCPlay(_playStamp2);
+				_soundManager.startVOCPlay(_currentVocId);
 			}
 
 			char c = *msg++;
@@ -1270,17 +1270,17 @@ void VoyeurEngine::flashTimeBar(){
 
 void VoyeurEngine::checkPhoneCall() {
 	if ((_voy._RTVLimit - _voy._RTVNum) >= 36 && _voy._field4B8 < 5 && 
-			_playStamp2 <= 151 && _playStamp2 > 146) {
+			_currentVocId <= 151 && _currentVocId > 146) {
 		if ((_voy._switchBGNum < _checkPhoneVal || _checkPhoneVal > 180) &&
 				!_soundManager.getVOCStatus()) {
 			int soundIndex;
 			do {
 				soundIndex = getRandomNumber(4);
 			} while (_voy._field4AE[soundIndex]);
-			_playStamp2 = 154 + soundIndex;
+			_currentVocId = 154 + soundIndex;
 
 			_soundManager.stopVOCPlay();
-			_soundManager.startVOCPlay(_playStamp2);
+			_soundManager.startVOCPlay(_currentVocId);
 			_checkPhoneVal = _voy._switchBGNum;
 			++_voy._field4AE[soundIndex];
 			++_voy._field4B8;
@@ -1292,7 +1292,7 @@ void VoyeurEngine::doEvidDisplay(int evidId, int eventId) {
 	_eventsManager.getMouseInfo();
 	flipPageAndWait();
 
-	if (_playStamp2 != -1) {
+	if (_currentVocId != -1) {
 		_voy._vocSecondsOffset = _voy._RTVNum - _voy._field4AC;
 		_soundManager.stopVOCPlay();
 	}
@@ -1310,7 +1310,7 @@ void VoyeurEngine::doEvidDisplay(int evidId, int eventId) {
 		_eventsManager.delay(1);
 	_bVoy->freeBoltMember(_voy._field47A + evidId * 2 + 1);
 
-	byte *dataP = _bVoy->memberAddr(_playStamp1 + 4);
+	byte *dataP = _bVoy->memberAddr(_playStampGroupId + 4);
 	int count = (int16)READ_LE_UINT16(dataP + evidId * 12 + 4);
 
 	if (count > 0) {
@@ -1334,11 +1334,11 @@ void VoyeurEngine::doEvidDisplay(int evidId, int eventId) {
 	int evidIdx = evidId;
 
 	while (!shouldQuit() && !_eventsManager._rightClick) {
-		if (_playStamp2 != -1 && !_soundManager.getVOCStatus()) {
+		if (_currentVocId != -1 && !_soundManager.getVOCStatus()) {
 			if (_voy._vocSecondsOffset > 60)
 				_voy._vocSecondsOffset = 0;
 
-			_soundManager.startVOCPlay(_playStamp2);
+			_soundManager.startVOCPlay(_currentVocId);
 		}
 
 		_eventsManager.delayClick(600);
