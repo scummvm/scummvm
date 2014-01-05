@@ -137,7 +137,13 @@ void sceneHandler25_startBearders() {
 }
 
 void sceneHandler25_enterMan() {
-	warning("STUB: sceneHandler25_enterMan()");
+	if (g_vars->scene25_var06) {
+		chainQueue(QU_SC25_ENTERUP_WATER, 1);
+
+		getCurrSceneSc2MotionController()->clearEnabled();
+	} else {
+		chainQueue(QU_SC25_ENTERUP_FLOOR, 1);
+	}
 }
 
 void sceneHandler25_enterTruba() {
@@ -165,11 +171,26 @@ void sceneHandler25_rowHand() {
 }
 
 void sceneHandler25_putBoard() {
-	warning("STUB: sceneHandler25_putBoard()");
+	if (g_fp->_aniMan->_statics->_staticsId == ST_MAN_STANDLADDER
+		|| g_fp->_aniMan->_statics->_staticsId == ST_MAN_LADDERDOWN_R) {
+		g_fp->_aniMan->changeStatics2(ST_MAN_STANDLADDER);
+		g_fp->_aniMan->setOXY(281, 481);
+
+		chainQueue(QU_SC25_PUTBOARD, 1);
+
+		g_vars->scene25_var05 = 1;
+		g_vars->scene25_var12 = 0;
+		g_vars->scene25_var07 = 0;
+	}
 }
 
 void sceneHandler25_tryWater() {
-	warning("STUB: sceneHandler25_tryWater()");
+	if (g_fp->_aniMan->_statics->_staticsId == ST_MAN_STANDLADDER
+		|| g_fp->_aniMan->_statics->_staticsId == ST_MAN_LADDERDOWN_R) {
+		g_fp->_aniMan->changeStatics2(ST_MAN_STANDLADDER);
+
+		chainQueue(QU_SC25_TRYWATER, 1);
+	}
 }
 
 void sceneHandler25_tryRow(int code) {
@@ -177,11 +198,20 @@ void sceneHandler25_tryRow(int code) {
 }
 
 void sceneHandler25_ladderUp() {
-	warning("STUB: sceneHandler25_ladderUp()");
+	if (g_fp->_aniMan->_statics->_staticsId == ST_MAN_STANDLADDER
+		|| g_fp->_aniMan->_statics->_staticsId == ST_MAN_LADDERDOWN_R) {
+		g_fp->_aniMan->changeStatics2(ST_MAN_STANDLADDER);
+
+		chainQueue(QU_SC25_LADDERUP, 1);
+	}
 }
 
 void sceneHandler25_backToPipe() {
-	warning("STUB: sceneHandler25_backToPipe()");
+	if (!g_fp->_aniMan->_movement && g_fp->_aniMan->_statics->_staticsId == (ST_MAN_RIGHT|0x4000)) {
+		g_fp->_aniMan->changeStatics2(ST_MAN_RIGHT|0x4000);
+
+		chainQueue(QU_SC25_BACKTOTRUBA, 1);
+	}
 }
 
 void sceneHandler25_sub01() {
@@ -198,8 +228,8 @@ void sceneHandler25_sub03() {
 	warning("STUB: sceneHandler25_sub03()");
 }
 
-void sceneHandler25_sub04() {
-	warning("STUB: sceneHandler25_sub04()");
+void sceneHandler25_sub04(int value) {
+	g_fp->getGameLoaderGameVar()->getSubVarByName("OBJSTATES")->getSubVarByName("SAVEGAME")->setSubVarAsInt("Entrance", value);
 }
 
 int sceneHandler25(ExCommand *cmd) {
