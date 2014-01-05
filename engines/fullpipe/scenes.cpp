@@ -293,6 +293,9 @@ Vars::Vars() {
 	scene25_var07 = 0;
 	scene25_var08 = 0;
 	scene25_var09 = 0;
+	scene25_var10 = 0;
+	scene25_var11 = 0;
+	scene25_var12 = 0;
 
 	scene30_leg = 0;
 	scene30_liftFlag = 1;

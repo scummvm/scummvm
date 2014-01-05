@@ -128,4 +128,249 @@ void scene25_setupWater(Scene *a1, int entranceId) {
 	}
 }
 
+void sceneHandler25_stopBearders() {
+	warning("STUB: sceneHandler25_stopBearders()");
+}
+
+void sceneHandler25_startBearders() {
+	warning("STUB: sceneHandler25_startBearders()");
+}
+
+void sceneHandler25_enterMan() {
+	warning("STUB: sceneHandler25_enterMan()");
+}
+
+void sceneHandler25_enterTruba() {
+	warning("STUB: sceneHandler25_enterTruba()");
+}
+
+void sceneHandler25_toLadder() {
+	warning("STUB: sceneHandler25_toLadder()");
+}
+
+void sceneHandler25_animateBearders() {
+	warning("STUB: sceneHandler25_animateBearders()");
+}
+
+void sceneHandler25_sneeze() {
+	warning("STUB: sceneHandler25_sneeze()");
+}
+
+void sceneHandler25_rowShovel() {
+	warning("STUB: sceneHandler25_rowShovel()");
+}
+
+void sceneHandler25_rowHand() {
+	warning("STUB: sceneHandler25_rowHand()");
+}
+
+void sceneHandler25_putBoard() {
+	warning("STUB: sceneHandler25_putBoard()");
+}
+
+void sceneHandler25_tryWater() {
+	warning("STUB: sceneHandler25_tryWater()");
+}
+
+void sceneHandler25_tryRow(int code) {
+	warning("STUB: sceneHandler25_tryRow()");
+}
+
+void sceneHandler25_ladderUp() {
+	warning("STUB: sceneHandler25_ladderUp()");
+}
+
+void sceneHandler25_backToPipe() {
+	warning("STUB: sceneHandler25_backToPipe()");
+}
+
+void sceneHandler25_sub01() {
+	warning("STUB: sceneHandler25_sub01()");
+}
+
+bool sceneHandler25_sub02(ExCommand *cmd) {
+	warning("STUB: sceneHandler25_sub02()");
+
+	return false;
+}
+
+void sceneHandler25_sub03() {
+	warning("STUB: sceneHandler25_sub03()");
+}
+
+void sceneHandler25_sub04() {
+	warning("STUB: sceneHandler25_sub04()");
+}
+
+int sceneHandler25(ExCommand *cmd) {
+	if (cmd->_messageKind != 17)
+		return 0;
+
+	switch (cmd->_messageNum) {
+	case MSG_SC25_STOPBEARDEDS:
+		sceneHandler25_stopBearders();
+		break;
+
+	case MSG_SC25_STARTBEARDEDS:
+		sceneHandler25_startBearders();
+		break;
+
+	case MSG_SC25_ENTERMAN:
+		sceneHandler25_enterMan();
+		break;
+
+	case MSG_SC25_ENTERTRUBA:
+		sceneHandler25_enterTruba();
+		break;
+
+	case MSG_SC25_TOLADDER:
+		sceneHandler25_toLadder();
+		break;
+
+	case MSG_BRD_TURN:
+		switch (g_fp->_rnd->getRandomNumber(3)) {
+		case 0:
+			g_fp->playSound(SND_25_025, 0);
+			break;
+
+		case 1:
+			g_fp->playSound(SND_25_026, 0);
+			break;
+
+		default:
+			g_fp->playSound(SND_25_027, 0);
+			break;
+		}
+		break;
+
+	case 33:
+        if (g_fp->_aniMan2) {
+			int x = g_fp->_aniMan2->_ox;
+			int y = g_fp->_aniMan2->_oy;
+
+			if (x < g_fp->_sceneRect.left + g_vars->scene25_var01)
+				g_fp->_currentScene->_x = x - g_vars->scene25_var03 - g_fp->_sceneRect.left;
+
+			if (x > g_fp->_sceneRect.right - g_vars->scene25_var01)
+				g_fp->_currentScene->_x = x + g_vars->scene25_var03 - g_fp->_sceneRect.right;
+
+			if (!g_vars->scene25_var06) {
+				if (y < g_fp->_sceneRect.top + g_vars->scene25_var02)
+					g_fp->_currentScene->_y = y - g_vars->scene25_var04 - g_fp->_sceneRect.top;
+
+				if (y > g_fp->_sceneRect.bottom - g_vars->scene25_var02)
+					g_fp->_currentScene->_y = y + g_vars->scene25_var04 - g_fp->_sceneRect.bottom;
+			}
+        }
+
+        if (g_vars->scene25_var08) {
+			g_vars->scene25_var09++;
+
+			if (g_vars->scene25_var09 >= 120)
+				sceneHandler25_animateBearders();
+        }
+
+        g_fp->_behaviorManager->updateBehaviors();
+        g_fp->startSceneTrack();
+
+        if (g_vars->scene25_var06 && !g_vars->scene25_water->_movement)
+			g_vars->scene25_water->startAnim(MV_WTR25_FLOW, 0, -1);
+
+        if (g_vars->scene25_var05 && !g_fp->_aniMan->_movement && g_vars->scene25_var12)
+			sceneHandler25_sneeze();
+
+        g_vars->scene25_var12 = 1;
+
+        if (g_vars->scene25_board->_flags & 4) {
+			if (!g_vars->scene25_board->_movement) {
+				if (g_vars->scene25_board->_statics->_staticsId & 0x4000)
+					g_vars->scene25_board->startAnim(rMV_BRD25_RIGHT, 0, -1);
+				else
+					g_vars->scene25_board->startAnim(MV_BRD25_RIGHT, 0, -1);
+			}
+        }
+		break;
+
+	case 29:
+		{
+			int picId = g_fp->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
+
+			if (!g_vars->scene25_var06) {
+				if ((picId == PIC_SC25_LADDERUP || picId == PIC_SC25_LADDERDOWN) && sceneHandler25_sub02(cmd))
+					cmd->_messageKind = 0;
+
+				break;
+			}
+
+			StaticANIObject *ani = g_fp->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
+
+			if (ani) {
+				if (g_fp->_aniMan != ani) {
+					if (g_fp->_aniMan->isIdle()) {
+						if (!(g_fp->_aniMan->_flags & 0x100)) {
+							if (ani->_id == ANI_WATER25) {
+								if (g_vars->scene25_var05) {
+									if (cmd->_keyCode == ANI_INV_LOPAT)
+										sceneHandler25_rowShovel();
+
+									if (!cmd->_keyCode)
+										sceneHandler25_rowHand();
+								} else {
+									if (cmd->_keyCode == ANI_INV_BOARD)
+										sceneHandler25_putBoard();
+
+									if (!cmd->_keyCode)
+										sceneHandler25_tryWater();
+								}
+							} else if (ani->_id == ANI_BOARD25) {
+								sceneHandler25_tryRow(cmd->_keyCode);
+								break;
+							}
+							break;
+						}
+					}
+				}
+			}
+
+			if (picId == PIC_SC25_LADDERUP && sceneHandler25_sub02(cmd))
+				cmd->_messageKind = 0;
+
+			if (!g_fp->_aniMan->isIdle() || (g_fp->_aniMan->_flags & 0x100))
+				break;
+
+			if (g_vars->scene25_var05) {
+				if (picId == PIC_SC25_RTRUBA && !cmd->_keyCode) {
+					sceneHandler25_enterTruba();
+					break;
+				}
+			} else {
+				if (picId != PIC_SC25_RTRUBA) {
+					if (picId == PIC_SC25_LADDERUP && !cmd->_keyCode)
+						sceneHandler25_ladderUp();
+					break;
+				}
+
+				if (!cmd->_keyCode) {
+					sceneHandler25_backToPipe();
+					break;
+				}
+			}
+			if (g_vars->scene25_var05) {
+				if (picId != PIC_SC25_LADDERUP || cmd->_keyCode)
+					break;
+
+				sceneHandler25_toLadder();
+				break;
+			}
+
+			if (picId == PIC_SC25_LADDERUP && !cmd->_keyCode)
+				sceneHandler25_ladderUp();
+
+			break;
+		}
+	}
+
+	return 0;
+}
+
 } // End of namespace Fullpipe
