@@ -438,7 +438,7 @@ void sceneHandler25_backToPipe() {
 	}
 }
 
-void sceneHandler25_sub01(StaticANIObject *ani, Common::Point *pnt, MessageQueue *mq, int flag) {
+void sceneHandler25_walkOnLadder(StaticANIObject *ani, Common::Point *pnt, MessageQueue *mq, int flag) {
 	int aniY = ani->_oy;
 	int newx, newy;
 	Common::Point point;
@@ -521,7 +521,7 @@ void sceneHandler25_sub01(StaticANIObject *ani, Common::Point *pnt, MessageQueue
 	ani->_flags |= 1;
 }
 
-bool sceneHandler25_sub02(ExCommand *cmd) {
+bool sceneHandler25_isOnLadder(ExCommand *cmd) {
 	if ((g_fp->_aniMan->_movement && g_fp->_aniMan->_movement->_id == MV_MAN_GOLADDERDOWN)
 		|| g_fp->_aniMan->_statics->_staticsId == ST_MAN_GOLADDERD) {
 		Interaction *inter = getGameLoaderInteractionController()->getInteractionByObjectIds(PIC_SC25_LADDERDOWN, ANI_MAN, cmd->_keyCode);
@@ -538,7 +538,7 @@ bool sceneHandler25_sub02(ExCommand *cmd) {
 
 		mq->setFlags(mq->getFlags() | 1);
 
-		sceneHandler25_sub01(g_fp->_aniMan, &point, mq, 0);
+		sceneHandler25_walkOnLadder(g_fp->_aniMan, &point, mq, 0);
 
 		return true;
 	} else {
@@ -644,7 +644,7 @@ int sceneHandler25(ExCommand *cmd) {
 			int picId = g_fp->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
 
 			if (!g_vars->scene25_var06) {
-				if ((picId == PIC_SC25_LADDERUP || picId == PIC_SC25_LADDERDOWN) && sceneHandler25_sub02(cmd))
+				if ((picId == PIC_SC25_LADDERUP || picId == PIC_SC25_LADDERDOWN) && sceneHandler25_isOnLadder(cmd))
 					cmd->_messageKind = 0;
 
 				break;
@@ -680,7 +680,7 @@ int sceneHandler25(ExCommand *cmd) {
 				}
 			}
 
-			if (picId == PIC_SC25_LADDERUP && sceneHandler25_sub02(cmd))
+			if (picId == PIC_SC25_LADDERUP && sceneHandler25_isOnLadder(cmd))
 				cmd->_messageKind = 0;
 
 			if (!g_fp->_aniMan->isIdle() || (g_fp->_aniMan->_flags & 0x100))
