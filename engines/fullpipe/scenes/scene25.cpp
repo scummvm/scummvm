@@ -177,8 +177,43 @@ void sceneHandler25_enterTruba() {
 	}
 }
 
+void sceneHandler25_saveEntrance(int value) {
+	g_fp->getGameLoaderGameVar()->getSubVarByName("OBJSTATES")->getSubVarByName("SAVEGAME")->setSubVarAsInt("Entrance", value);
+}
+
 void sceneHandler25_toLadder() {
-	warning("STUB: sceneHandler25_toLadder()");
+	PicAniInfo info;
+
+	g_fp->_aniMan->getPicAniInfo(&info);
+	g_fp->_aniMan->_messageQueueId = 0;
+	g_fp->_aniMan->changeStatics2(g_fp->_aniMan->_statics->_staticsId);
+
+	int x = g_fp->_aniMan->_ox;
+	int y = g_fp->_aniMan->_oy;
+
+	g_fp->_aniMan->setPicAniInfo(&info);
+
+	int id = g_fp->_aniMan->_statics->_staticsId;
+	int qid = 0;
+
+	if (id == ST_MAN25_ONBOARD && x == 307 && y == 502) {
+		g_fp->_aniMan->changeStatics2(ST_MAN25_ONBOARD);
+
+		qid = QU_SC25_BACKTOLADDER;
+	} else if (id == (ST_MAN25_ONBOARD|0x4000) && x == 192 && y == 502) {
+		g_fp->_aniMan->changeStatics2(ST_MAN25_ONBOARD|0x4000);
+
+		qid = QU_SC25_BOARDTOLADDER;
+	}
+
+	if (qid) {
+		chainQueue(qid, 1);
+		g_vars->scene25_var05 = 0;
+		g_vars->scene25_var07 = 1;
+		g_vars->scene25_var12 = 0;
+
+		sceneHandler25_saveEntrance(TrubaUp);
+	}
 }
 
 void sceneHandler25_animateBearders() {
@@ -336,10 +371,6 @@ bool sceneHandler25_sub02(ExCommand *cmd) {
 
 void sceneHandler25_sub03() {
 	warning("STUB: sceneHandler25_sub03()");
-}
-
-void sceneHandler25_sub04(int value) {
-	g_fp->getGameLoaderGameVar()->getSubVarByName("OBJSTATES")->getSubVarByName("SAVEGAME")->setSubVarAsInt("Entrance", value);
 }
 
 int sceneHandler25(ExCommand *cmd) {
