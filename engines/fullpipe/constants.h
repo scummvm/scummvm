@@ -805,6 +805,10 @@ namespace Fullpipe {
 #define MV_CND_7_8 1718
 #define MV_CND_8_9 1720
 #define MV_CND_9_0 1722
+#define MV_MAN23_PUSH1 1724
+#define MV_MAN23_PUSH2 1725
+#define MV_MAN23_PUSH3 1726
+#define MV_MAN23_PUSH4 1727
 #define PIC_SC23_BOXCLOSED 1728
 #define PIC_SC23_BOXOPEN 1723
 #define PIC_SC23_BTN1 1729
@@ -820,6 +824,7 @@ namespace Fullpipe {
 #define QU_SC23_FROMSTOOL 3338
 #define QU_SC23_SHOWSTOOL 3335
 #define QU_SC23_STARTKISS 1822
+#define QU_SC23_TOCALENDAR 1733
 #define ST_CND_0 1704
 #define ST_CND_1 1705
 #define ST_CND_2 1707

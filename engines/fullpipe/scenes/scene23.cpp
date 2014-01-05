@@ -292,7 +292,65 @@ void sceneHandler23_spinWheel3() {
 }
 
 void sceneHandler23_pushButton(ExCommand *cmd) {
-	warning("STUB: sceneHandler23_pushButton(cmd)");
+	if (g_fp->_aniMan->isIdle() || !(g_fp->_aniMan->_flags & 0x100)) {
+		if (!g_vars->scene23_var05) {
+			if (g_fp->_aniMan->_ox != 405 || g_fp->_aniMan->_oy != 220) {
+				if (g_fp->_aniMan->_ox != 276 || g_fp->_aniMan->_oy != 438
+					|| g_fp->_aniMan->_movement || g_fp->_aniMan->_statics->_staticsId != ST_MAN_RIGHT) {
+					if (g_fp->_msgX == 276 && g_fp->_msgY == 438 )
+						return;
+
+					MessageQueue *mq = getCurrSceneSc2MotionController()->method34(g_fp->_aniMan, 276, 438, 1, ST_MAN_RIGHT);
+
+					if (mq) {
+						mq->addExCommandToEnd(cmd->createClone());;
+
+						postExCommand(g_fp->_aniMan->_id, 2, 276, 438, 0, -1);
+					}
+				} else {
+					MessageQueue *mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC23_TOCALENDAR), 0, 0);
+
+					mq->addExCommandToEnd(cmd->createClone());;
+					mq->setFlags(mq->getFlags() | 1);
+					mq->chain(0);
+				}
+
+				if (!g_vars->scene23_var05)
+					return;
+			} else {
+				g_vars->scene23_var05 = 1;
+			}
+		}
+
+		if (!g_fp->_aniMan->_movement && g_fp->_aniMan->_statics->_staticsId == ST_MAN_STANDLADDER) {
+			int mv = 0;
+
+			switch (cmd->_messageNum) {
+			case MSG_SC23_CLICKBTN1:
+				mv = MV_MAN23_PUSH1;
+				break;
+
+			case MSG_SC23_CLICKBTN2:
+				mv = MV_MAN23_PUSH2;
+				break;
+
+			case MSG_SC23_CLICKBTN3:
+				mv = MV_MAN23_PUSH3;
+				break;
+
+			case MSG_SC23_CLICKBTN4:
+				mv = MV_MAN23_PUSH4;
+				break;
+
+			default:
+				return;
+			}
+
+			if (mv)
+				g_fp->_aniMan->startAnim(mv, 0, -1);
+
+		}
+	}
 }
 
 void sceneHandler23_sendClick(StaticANIObject *ani) {
