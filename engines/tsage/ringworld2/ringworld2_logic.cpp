@@ -65,8 +65,12 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		// Deck #2 - By Lift
 		return new Scene200();
 	case 205:
-		// Star-field Credits
-		return new Scene205();
+		if (g_vm->getFeatures() & GF_DEMO)
+			// End of Demo
+			return new Scene205Demo();
+		else
+			// Star-field Credits
+			return new Scene205();
 	case 250:
 		// Lift
 		return new Scene250();

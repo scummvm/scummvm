@@ -304,6 +304,24 @@ public:
 	virtual void dispatch();
 };
 
+class Scene205Demo: public SceneExt {
+	/* Actions */
+	class Action1: public Action {
+	public:
+		virtual void signal();
+	};
+private:
+	void leaveScene();
+public:
+	VisualSpeaker _animationPlayer;
+	ASound _sound1;
+	Action1 _action1;
+public:
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void remove();
+	virtual void process(Event &event);
+};
+
 class Scene250: public SceneExt {
 	class Button: public SceneActor {
 	public:

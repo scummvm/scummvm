@@ -2519,6 +2519,77 @@ void Scene205::handleText() {
 }
 
 /*--------------------------------------------------------------------------
+ * Scene 205 Demo - End of Demo
+ *
+ *--------------------------------------------------------------------------*/
+
+void Scene205Demo::Action1::signal() {
+	Scene205Demo *scene = (Scene205Demo *)R2_GLOBALS._sceneManager._scene;
+
+	switch (_actionIndex++) {
+	case 0:
+		setDelay(2);
+		break;
+
+	case 1: {
+		Common::String mask = g_resourceManager->getMessage(206, 0, true);
+//		Common::String msg = sprintf(mask.c_str(), "1-800-482-3766");
+		MessageDialog::show2(mask, OK_BTN_STRING);
+		setDelay(1);
+		}
+		break;
+
+	case 2:
+		scene->leaveScene();
+		break;
+	default:
+		break;
+	}
+}
+
+/*--------------------------------------------------------------------------*/
+
+void Scene205Demo::leaveScene() {
+	if (g_globals->getFlag(85))
+		R2_GLOBALS._sceneManager.changeScene(160);
+	else
+		R2_GLOBALS._sceneManager.changeScene(R2_GLOBALS._sceneManager._previousScene);
+
+	BF_GLOBALS._scenePalette.loadPalette(0);
+	BF_GLOBALS._scenePalette.refresh();
+}
+
+void Scene205Demo::postInit(SceneObjectList *OwnerList) {
+	R2_GLOBALS._sceneManager._hasPalette = true;
+	R2_GLOBALS._scenePalette.loadPalette(0);
+
+	loadScene(1000);
+	R2_GLOBALS._uiElements._active = false;
+	R2_GLOBALS._player.enableControl();
+	
+	SceneExt::postInit();
+
+	_sound1.play(337);
+	_stripManager.addSpeaker(&_animationPlayer);
+
+	setAction(&_action1);
+}
+
+void Scene205Demo::remove() {
+	R2_GLOBALS._sound1.fadeOut2(NULL);
+	SceneExt::remove();
+}
+
+void Scene205Demo::process(Event &event) {
+	if ((event.eventType == EVENT_KEYPRESS) && (event.kbd.keycode == Common::KEYCODE_ESCAPE)) {
+		event.handled = true;
+		leaveScene();
+	} else {
+		Scene::process(event);
+	}
+}
+
+/*--------------------------------------------------------------------------
  * Scene 250 - Lift
  *
  *--------------------------------------------------------------------------*/
