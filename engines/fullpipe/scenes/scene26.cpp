@@ -120,12 +120,38 @@ void sceneHandler26_hideVent() {
 		g_vars->scene26_var05->hide();
 }
 
-void sceneHandler26_clickVent(StaticANIObject *ani, ExCommand *cmd) {
-	warning("STUB: sceneHandler26_clickVent(ani, cmd)");
+void sceneHandler26_sub01(StaticANIObject *ani) {
+	warning("STUB: sceneHandler26_sub01()");
 }
 
-void sceneHandler26_sub01() {
-	warning("STUB: sceneHandler26_sub01()");
+void sceneHandler26_clickVent(StaticANIObject *ani, ExCommand *cmd) {
+	if (ani->_okeyCode || g_fp->getObjectState(sO_Hatch_26) == g_fp->getObjectEnumState(sO_Hatch_26, sO_Opened)) {
+		if (g_fp->_aniMan->isIdle() && !(g_fp->_aniMan->_flags & 0x100)) {
+			g_vars->scene26_var05 = ani;
+
+			int x = ani->_ox - 20;
+			int y = ani->_oy + 61;
+
+			if (abs(x - g_fp->_aniMan->_ox) > 1 || abs(y - g_fp->_aniMan->_oy) > 1 || g_fp->_aniMan->_movement || g_fp->_aniMan->_statics->_staticsId != ST_MAN_UP) {
+				MessageQueue *mq = getCurrSceneSc2MotionController()->method34(g_fp->_aniMan, x, y, 1, ST_MAN_UP);
+
+				if (mq) {
+					ExCommand *ex = new ExCommand(0, 17, MSG_SC26_CLICKVENT, 0, 0, 0, 1, 0, 0, 0);
+
+					ex->_excFlags |= 3;
+					ex->_keyCode = ani->_okeyCode;
+
+					mq->addExCommandToEnd(ex);
+
+					postExCommand(g_fp->_aniMan->_id, 2, x, y, 0, -1);
+				}
+			} else {
+				sceneHandler26_sub01(ani);
+			}
+		}
+	}
+
+	cmd->_messageKind = 0;
 }
 
 int sceneHandler26(ExCommand *cmd) {
