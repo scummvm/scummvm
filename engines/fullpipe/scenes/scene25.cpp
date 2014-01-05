@@ -171,10 +171,10 @@ void sceneHandler25_enterTruba() {
 		qid = QU_SC25_MANTOTRUBA_R;
 	}
 
-	if (qid)
+	if (qid) {
 		chainQueue(qid, 1);
-
-	g_vars->scene25_var12 = 0;
+		g_vars->scene25_var12 = 0;
+	}
 }
 
 void sceneHandler25_toLadder() {
@@ -216,7 +216,37 @@ void sceneHandler25_sneeze() {
 }
 
 void sceneHandler25_rowShovel() {
-	warning("STUB: sceneHandler25_rowShovel()");
+	PicAniInfo info;
+
+	g_fp->_aniMan->getPicAniInfo(&info);
+	g_fp->_aniMan->_messageQueueId = 0;
+	g_fp->_aniMan->changeStatics2(g_fp->_aniMan->_statics->_staticsId);
+
+	int x = g_fp->_aniMan->_ox;
+	int y = g_fp->_aniMan->_oy;
+
+	g_fp->_aniMan->setPicAniInfo(&info);
+
+	int id = g_fp->_aniMan->_statics->_staticsId;
+	int qid = 0;
+
+	if (id == ST_MAN25_ONBOARD && x == 370 && y == 502) {
+		g_fp->_aniMan->changeStatics2(ST_MAN25_ONBOARD);
+
+		qid = QU_SC25_ROWTOTRUBA;
+	} else if (id == (ST_MAN25_ONBOARD|0x4000) && x == 632 && y == 502) {
+		g_fp->_aniMan->changeStatics2(ST_MAN25_ONBOARD|0x4000);
+
+		qid = QU_SC25_ROWTOLADDER;
+
+		g_fp->playSound(SND_25_030, 0);
+	}
+
+	if (qid) {
+		chainQueue(qid, 1);
+
+		g_vars->scene25_var12 = 0;
+	}
 }
 
 void sceneHandler25_rowHand() {
@@ -244,10 +274,10 @@ void sceneHandler25_rowHand() {
 		qid = QU_SC25_TRYROWHAND_R;
 	}
 
-	if (qid)
+	if (qid) {
 		chainObjQueue(g_fp->_aniMan, qid, 1);
-
-	g_vars->scene25_var12 = 0;
+		g_vars->scene25_var12 = 0;
+	}
 }
 
 void sceneHandler25_putBoard() {
