@@ -439,7 +439,86 @@ void sceneHandler25_backToPipe() {
 }
 
 void sceneHandler25_sub01(StaticANIObject *ani, Common::Point *pnt, MessageQueue *mq, int flag) {
-	warning("STUB: sceneHandler25_sub01()");
+	int aniY = ani->_oy;
+	int newx, newy;
+	Common::Point point;
+	ExCommand *ex;
+
+	if (flag) {
+		if (ani->_movement) {
+			ani->_movement->calcSomeXY(point, 0);
+			newx = point.x;
+			aniY = ani->_oy - point.y;
+		}
+	}
+
+	int pntx = pnt->x;
+	int pnty = pnt->y;
+	int numObsolete = -1;
+	int minDistance = 20000;
+	ExCommand *lastEx = 0;
+
+	for (int i = 0; i < mq->getCount(); i++) {
+		int curDistance = abs(pnty - aniY);
+
+		ex = mq->getExCommandByIndex(i);
+
+		if (ex->_messageKind == 1 && ani->_id == ex->_parentId) {
+			if (ex->_excFlags & 0x10000) {
+				if (ex->_messageNum == MV_MAN_TOLADDER)
+					ex->_messageNum = MV_MAN_TOLADDER2;
+				if (ex->_messageNum == MV_MAN_STARTLADDER)
+					ex->_messageNum = MV_MAN_STARTLADDER2;
+				if (ex->_messageNum == MV_MAN_GOLADDER)
+					ex->_messageNum = MV_MAN_GOLADDER2;
+				if (ex->_messageNum == MV_MAN_STOPLADDER)
+					ex->_messageNum = MV_MAN_STOPLADDER2;
+			}
+
+			if (curDistance < minDistance || numObsolete < 0) {
+				numObsolete = i;
+				minDistance = curDistance;
+				lastEx = ex;
+				newx = pntx;
+				newy = pnty;
+			}
+
+			ani->getMovementById(ex->_messageNum)->calcSomeXY(point, 0);
+			pntx += point.x;
+			pnty += point.y;
+		}
+	}
+
+	for (int i = 0; i < numObsolete; i++)
+		mq->deleteExCommandByIndex(0, 1);
+
+    ex = new ExCommand(ani->_id, 34, 256, 0, 0, 0, 1, 0, 0, 0);
+
+	ex->_field_14 = 256;
+	ex->_messageNum = 0;
+	ex->_excFlags |= 3;
+
+	mq->addExCommandToEnd(ex);
+
+	if (flag && ani->_movement && ani->_movement->_id == mq->getExCommandByIndex(0)->_messageNum) {
+		mq->deleteExCommandByIndex(0, 1);
+
+		int movId = ani->_movement->_id;
+		int idx = ani->_movement->_currDynamicPhaseIndex;
+
+		ani->changeStatics2(ani->_movement->_staticsObj1->_staticsId);
+		ani->setOXY(newx, newy);
+
+		ani->startAnim(movId, mq->_id, -1);
+
+		ani->_movement->setDynamicPhaseIndex(idx);
+	} else {
+		ani->changeStatics2(ani->getMovementById(lastEx->_messageNum)->_staticsObj1->_staticsId);
+		ani->setOXY(newx, newy);
+		ani->restartMessageQueue(mq);
+	}
+
+	ani->_flags |= 1;
 }
 
 bool sceneHandler25_sub02(ExCommand *cmd) {

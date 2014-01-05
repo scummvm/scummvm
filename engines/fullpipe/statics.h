@@ -213,6 +213,7 @@ class StaticANIObject : public GameObject {
 
 	void deleteFromGlobalMessageQueue();
 	void queueMessageQueue(MessageQueue *msg);
+	void restartMessageQueue(MessageQueue *msg);
 	MessageQueue *getMessageQueue();
 	bool trySetMessageQueue(int msgNum, int qId);
 	void startMQIfIdle(int qId, int flag);

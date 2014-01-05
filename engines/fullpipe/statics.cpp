@@ -281,6 +281,10 @@ void StaticANIObject::queueMessageQueue(MessageQueue *mq) {
 	}
 }
 
+void StaticANIObject::restartMessageQueue(MessageQueue *mq) {
+	warning("STUB: StaticANIObject::restartMessageQueue()");
+}
+
 MessageQueue *StaticANIObject::getMessageQueue() {
 	if (this->_messageQueueId <= 0)
 		return 0;
