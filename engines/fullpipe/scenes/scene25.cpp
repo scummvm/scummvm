@@ -129,7 +129,9 @@ void scene25_setupWater(Scene *a1, int entranceId) {
 }
 
 void sceneHandler25_stopBearders() {
-	warning("STUB: sceneHandler25_stopBearders()");
+	g_vars->scene25_var08 = 0;
+
+	g_vars->scene25_var10.clear();
 }
 
 void sceneHandler25_startBearders() {
@@ -247,7 +249,17 @@ void sceneHandler25_animateBearders() {
 }
 
 void sceneHandler25_sneeze() {
-	warning("STUB: sceneHandler25_sneeze()");
+	if (g_fp->_rnd->getRandomNumber(32767) % 10) {
+		if (g_fp->_aniMan->_statics->_staticsId == ST_MAN25_ONBOARD) {
+			g_fp->_aniMan->startAnim(MV_MAN25_ONBOARD, 0, -1);
+		} else if (g_fp->_aniMan->_statics->_staticsId == (ST_MAN25_ONBOARD|0x4000)) {
+			g_fp->_aniMan->startAnim(rMV_MAN25_ONBOARD, 0, -1);
+		}
+	} else if (g_fp->_aniMan->_statics->_staticsId == ST_MAN25_ONBOARD) {
+		g_fp->_aniMan->startAnim(MV_MAN25_CHIH, 0, -1);
+	} else if (g_fp->_aniMan->_statics->_staticsId == (ST_MAN25_ONBOARD|0x4000)) {
+		g_fp->_aniMan->startAnim(rMV_MAN25_CHIH, 0, -1);
+	}
 }
 
 void sceneHandler25_rowShovel() {
