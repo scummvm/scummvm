@@ -121,7 +121,58 @@ void sceneHandler26_hideChi() {
 }
 
 void sceneHandler26_testVent() {
-	warning("STUB: sceneHandler26_testVent()");
+	if (!g_vars->scene26_var05)
+		return;
+
+	if (g_vars->scene26_var05->_okeyCode == 0) {
+		if (g_fp->getObjectState(sO_Valve1_26) == g_fp->getObjectEnumState(sO_Valve1_26, sO_Opened))
+			g_fp->stopAllSoundInstances(SND_26_018);
+		else
+			g_fp->playSound(SND_26_018, 1);
+
+		if (g_fp->getObjectState(sO_Valve2_26) == g_fp->getObjectEnumState(sO_Valve2_26, sO_Opened)) {
+			chainQueue(QU_SC26_AUTOCLOSE2, 0);
+
+			g_fp->playSound(SND_26_020, 0);
+		}
+
+		if (g_fp->getObjectState(sO_Valve3_26) == g_fp->getObjectEnumState(sO_Valve3_26, sO_Opened)) {
+			chainQueue(QU_SC26_AUTOCLOSE3, 0);
+
+			g_fp->playSound(SND_26_020, 0);
+		}
+	} else if (g_vars->scene26_var05->_okeyCode == 1) {
+		if (g_fp->getObjectState(sO_Valve2_26) == g_fp->getObjectEnumState(sO_Valve2_26, sO_Opened))
+			g_fp->playSound(SND_26_020, 0);
+		else
+			g_fp->playSound(SND_26_019, 0);
+
+		if (g_fp->getObjectState(sO_Pool) == g_fp->getObjectEnumState(sO_Pool, sO_Overfull)
+			|| g_fp->getObjectState(sO_Pool) == g_fp->getObjectEnumState(sO_Pool, sO_Full))
+			g_fp->playSound(SND_26_003, 0);
+
+		if (g_fp->getObjectState(sO_Valve1_26) == g_fp->getObjectEnumState(sO_Valve1_26, sO_Opened)) {
+			g_fp->stopAllSoundInstances(SND_26_018);
+
+			chainQueue(QU_SC26_AUTOCLOSE1, 0);
+		}
+	} else if (g_vars->scene26_var05->_okeyCode == 2) {
+		if (g_fp->getObjectState(sO_Valve3_26) == g_fp->getObjectEnumState(sO_Valve3_26, sO_Opened))
+			g_fp->playSound(SND_26_020, 0);
+		else
+			g_fp->playSound(SND_26_019, 0);
+
+		if (g_fp->getObjectState(sO_Pool) == g_fp->getObjectEnumState(sO_Pool, sO_Overfull)
+			 || g_fp->getObjectState(sO_Pool) == g_fp->getObjectEnumState(sO_Pool, sO_Full)
+			 || g_fp->getObjectState(sO_Pool) == g_fp->getObjectEnumState(sO_Pool, sO_HalfFull))
+			g_fp->playSound(SND_26_003, 0);
+
+		if (g_fp->getObjectState(sO_Valve1_26) == g_fp->getObjectEnumState(sO_Valve1_26, sO_Opened)) {
+			g_fp->stopAllSoundInstances(SND_26_018);
+
+			chainQueue(QU_SC26_AUTOCLOSE1, 0);
+		}
+	}
 }
 
 void sceneHandler26_showVent() {
