@@ -1061,6 +1061,7 @@ int ThreadResource::doApt() {
 	Common::Point pt;
 	PictureResource *pic;
 	do {
+		_vm->_voyeurArea = AREA_APARTMENT;
 		_vm->_eventsManager.getMouseInfo();
 		if (!_vm->_soundManager.getVOCStatus()) {
 			// Previous sound ended, so start up a new one
@@ -1173,6 +1174,7 @@ void ThreadResource::doRoom() {
 
 	bool breakFlag = false;
 	while (!vm.shouldQuit() && !breakFlag) {
+		_vm->_voyeurArea = AREA_ROOM;
 		vm._graphicsManager.setColor(128, 0, 255, 0);
 		vm._eventsManager._intPtr.field38 = 1;
 		vm._eventsManager._intPtr._hasPalette = true;
@@ -1402,6 +1404,7 @@ int ThreadResource::doInterface() {
 		MANSION_VIEW_X + MANSION_VIEW_WIDTH, MANSION_VIEW_Y + MANSION_VIEW_HEIGHT);
 
 	do {
+		_vm->_voyeurArea = AREA_INTERFACE;
 		_vm->doTimeBar(true);
 		_vm->_eventsManager.getMouseInfo();
 

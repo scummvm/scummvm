@@ -47,6 +47,7 @@ void VoyeurEngine::playStamp() {
 	int buttonId;
 	bool breakFlag = false;
 	while (!breakFlag && !shouldQuit()) {
+		_voyeurArea = AREA_NONE;
 		_eventsManager.getMouseInfo();
 		_playStampGroupId = _currentVocId = -1;
 		_videoId = -1;
@@ -1334,6 +1335,8 @@ void VoyeurEngine::doEvidDisplay(int evidId, int eventId) {
 	int evidIdx = evidId;
 
 	while (!shouldQuit() && !_eventsManager._rightClick) {
+		_voyeurArea = AREA_EVIDENCE;
+
 		if (_currentVocId != -1 && !_soundManager.getVOCStatus()) {
 			if (_voy._vocSecondsOffset > 60)
 				_voy._vocSecondsOffset = 0;

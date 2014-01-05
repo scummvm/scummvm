@@ -69,6 +69,7 @@ enum VoyeurDebugChannels {
 	kDebugScripts	= 1 << 1
 };
 
+enum VoyeurArea { AREA_NONE, AREA_APARTMENT, AREA_INTERFACE, AREA_ROOM, AREA_EVIDENCE };
 
 struct VoyeurGameDescription;
 
@@ -171,7 +172,7 @@ public:
 	int _timeBarVal;
 	int _checkPhoneVal;
 	Common::Point _mansionViewPos;
-	int _mansionScrollCountdown;
+	VoyeurArea _voyeurArea;
 public:
 	VoyeurEngine(OSystem *syst, const VoyeurGameDescription *gameDesc);
 	virtual ~VoyeurEngine();

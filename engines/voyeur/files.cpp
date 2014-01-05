@@ -286,8 +286,8 @@ void BoltFile::freeBoltGroup(uint16 id, bool freeEntries) {
 }
 
 void BoltFile::freeBoltMember(uint32 id) {
-	// TODO: Determine whether this is needed
-	warning("TODO: BoltFile::freeBoltMember");
+	// TODO: Determine whether this is needed, given all group entries are automatically loaded
+//	warning("TODO: BoltFile::freeBoltMember");
 }
 
 BoltEntry &BoltFile::getBoltEntryFromLong(uint32 id) {
