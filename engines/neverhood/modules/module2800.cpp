@@ -203,7 +203,7 @@ void Module2800::createScene(int sceneNum, int which) {
 		break;
 	case 26:
 		_vm->gameState().sceneNum = 26;
-		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
+		_vm->_soundMan->stopMusic(0xD2FA4D14, 0, 2);
 		_childObject = new DiskplayerScene(_vm, this, 4);
 		break;
 	case 1001:
