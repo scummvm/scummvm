@@ -948,6 +948,8 @@ namespace Fullpipe {
 #define SND_26_018 5340
 #define ST_CHI_EMPTY 1959
 #define ST_CHI_NORM 1960
+#define ST_VNT26_RIGHT2 3348
+#define ST_VNT26_UP2 1948
 
 // Scene 30
 #define ANI_LEG 2322

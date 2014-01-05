@@ -112,7 +112,19 @@ void sceneHandler26_testVent() {
 }
 
 void sceneHandler26_showVent() {
-	warning("STUB: sceneHandler26_showVent()");
+	if (g_vars->scene26_var05) {
+		int id = g_vars->scene26_var05->_statics->_staticsId;
+
+		if (id == ST_VNT26_UP2) {
+			g_vars->scene26_var05->changeStatics2(ST_VNT26_RIGHT2);
+		} else {
+			if (id != ST_VNT26_RIGHT2)
+				return;
+
+			g_vars->scene26_var05->changeStatics2(ST_VNT26_UP2);
+		}
+		g_vars->scene26_var05->show1(-1, -1, -1, 0);
+	}
 }
 
 void sceneHandler26_hideVent() {
