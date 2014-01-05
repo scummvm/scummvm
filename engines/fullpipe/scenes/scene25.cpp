@@ -350,8 +350,60 @@ void sceneHandler25_tryWater() {
 	}
 }
 
-void sceneHandler25_tryRow(int code) {
-	warning("STUB: sceneHandler25_tryRow()");
+void sceneHandler25_tryRow(int obj) {
+	PicAniInfo info;
+
+	g_fp->_aniMan->getPicAniInfo(&info);
+	g_fp->_aniMan->_messageQueueId = 0;
+	g_fp->_aniMan->changeStatics2(ST_MAN_RIGHT|0x4000);
+
+	int x = g_fp->_aniMan->_ox;
+	int y = g_fp->_aniMan->_oy;
+
+	g_fp->_aniMan->setPicAniInfo(&info);
+
+	int qid = 0;
+
+	if (x == 788 && y == 468) {
+		if (g_vars->scene25_board->_statics->_staticsId == ST_BRD25_RIGHT2) {
+			if (obj == ANI_INV_BROOM) {
+				g_fp->_aniMan->changeStatics2(ST_MAN_RIGHT|0x4000);
+
+				qid = QU_SC25_TRYBROOM;
+			}
+			if (obj == ANI_INV_LOPAT) {
+				g_fp->_aniMan->changeStatics2(ST_MAN_RIGHT|0x4000);
+
+				qid = QU_SC25_TRYSPADE;
+			}
+
+			if (qid) {
+				chainQueue(qid, 1);
+
+				g_fp->playSound(SND_25_028, 0);
+
+				return;
+			}
+
+			if (obj == ANI_INV_SWAB) {
+				g_fp->_aniMan->changeStatics2(ST_MAN_RIGHT|0x4000);
+
+				chainQueue(QU_SC25_TRYSWAB, 1);
+			} else if (!obj) {
+				g_fp->_aniMan->changeStatics2(ST_MAN_RIGHT|0x4000);
+
+				chainObjQueue(g_fp->_aniMan, QU_SC25_TRYHAND, 1);
+
+				g_fp->playSound(SND_25_028, 0);
+			}
+		} else if (g_vars->scene25_board->_statics->_staticsId == (ST_MAN_RIGHT|0x4000) && !obj) {
+			g_fp->_aniMan->changeStatics2(ST_MAN_RIGHT|0x4000);
+
+			chainQueue(QU_SC25_TRUBATOBOARD, 1);
+
+			g_vars->scene25_var05 = 1;
+		}
+	}
 }
 
 void sceneHandler25_ladderUp() {
