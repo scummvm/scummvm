@@ -41,10 +41,6 @@ void scene26_initScene(Scene *sc) {
 	g_vars->scene26_drop = sc->getStaticANIObject1ById(ANI_DROP_26, -1);
 	g_vars->scene26_sockPic = sc->getPictureObjectById(PIC_SC26_SOCK, 0);
 	g_vars->scene26_sock = sc->getStaticANIObject1ById(ANI_SOCK_26, -1);
-	g_vars->scene26_var01 = 200;
-	g_vars->scene26_var02 = 200;
-	g_vars->scene26_var03 = 300;
-	g_vars->scene26_var04 = 300;
 
 	if (g_fp->getObjectState(sO_Hatch_26) == g_fp->getObjectEnumState(sO_Hatch_26, sO_WithSock)) {
 		g_fp->setObjectState(sO_Hatch_26, g_fp->getObjectEnumState(sO_Hatch_26, sO_Closed));
@@ -121,10 +117,10 @@ void sceneHandler26_hideChi() {
 }
 
 void sceneHandler26_testVent() {
-	if (!g_vars->scene26_var05)
+	if (!g_vars->scene26_activeVent)
 		return;
 
-	if (g_vars->scene26_var05->_okeyCode == 0) {
+	if (g_vars->scene26_activeVent->_okeyCode == 0) {
 		if (g_fp->getObjectState(sO_Valve1_26) == g_fp->getObjectEnumState(sO_Valve1_26, sO_Opened))
 			g_fp->stopAllSoundInstances(SND_26_018);
 		else
@@ -141,7 +137,7 @@ void sceneHandler26_testVent() {
 
 			g_fp->playSound(SND_26_020, 0);
 		}
-	} else if (g_vars->scene26_var05->_okeyCode == 1) {
+	} else if (g_vars->scene26_activeVent->_okeyCode == 1) {
 		if (g_fp->getObjectState(sO_Valve2_26) == g_fp->getObjectEnumState(sO_Valve2_26, sO_Opened))
 			g_fp->playSound(SND_26_020, 0);
 		else
@@ -156,7 +152,7 @@ void sceneHandler26_testVent() {
 
 			chainQueue(QU_SC26_AUTOCLOSE1, 0);
 		}
-	} else if (g_vars->scene26_var05->_okeyCode == 2) {
+	} else if (g_vars->scene26_activeVent->_okeyCode == 2) {
 		if (g_fp->getObjectState(sO_Valve3_26) == g_fp->getObjectEnumState(sO_Valve3_26, sO_Opened))
 			g_fp->playSound(SND_26_020, 0);
 		else
@@ -176,24 +172,24 @@ void sceneHandler26_testVent() {
 }
 
 void sceneHandler26_showVent() {
-	if (g_vars->scene26_var05) {
-		int id = g_vars->scene26_var05->_statics->_staticsId;
+	if (g_vars->scene26_activeVent) {
+		int id = g_vars->scene26_activeVent->_statics->_staticsId;
 
 		if (id == ST_VNT26_UP2) {
-			g_vars->scene26_var05->changeStatics2(ST_VNT26_RIGHT2);
+			g_vars->scene26_activeVent->changeStatics2(ST_VNT26_RIGHT2);
 		} else {
 			if (id != ST_VNT26_RIGHT2)
 				return;
 
-			g_vars->scene26_var05->changeStatics2(ST_VNT26_UP2);
+			g_vars->scene26_activeVent->changeStatics2(ST_VNT26_UP2);
 		}
-		g_vars->scene26_var05->show1(-1, -1, -1, 0);
+		g_vars->scene26_activeVent->show1(-1, -1, -1, 0);
 	}
 }
 
 void sceneHandler26_hideVent() {
-	if (g_vars->scene26_var05)
-		g_vars->scene26_var05->hide();
+	if (g_vars->scene26_activeVent)
+		g_vars->scene26_activeVent->hide();
 }
 
 void sceneHandler26_animateVents(StaticANIObject *ani) {
@@ -255,7 +251,7 @@ void sceneHandler26_animateVents(StaticANIObject *ani) {
 void sceneHandler26_clickVent(StaticANIObject *ani, ExCommand *cmd) {
 	if (ani->_okeyCode || g_fp->getObjectState(sO_Hatch_26) == g_fp->getObjectEnumState(sO_Hatch_26, sO_Opened)) {
 		if (g_fp->_aniMan->isIdle() && !(g_fp->_aniMan->_flags & 0x100)) {
-			g_vars->scene26_var05 = ani;
+			g_vars->scene26_activeVent = ani;
 
 			int x = ani->_ox - 20;
 			int y = ani->_oy + 61;
@@ -339,11 +335,11 @@ int sceneHandler26(ExCommand *cmd) {
 		if (g_fp->_aniMan2) {
 			int x = g_fp->_aniMan2->_ox;
 
-			if (x < g_fp->_sceneRect.left + g_vars->scene26_var01)
-				g_fp->_currentScene->_x = x - g_vars->scene26_var03 - g_fp->_sceneRect.left;
+			if (x < g_fp->_sceneRect.left + 200)
+				g_fp->_currentScene->_x = x - 300 - g_fp->_sceneRect.left;
 
-			if (x > g_fp->_sceneRect.right - g_vars->scene26_var01)
-				g_fp->_currentScene->_x = x + g_vars->scene26_var03 - g_fp->_sceneRect.right;
+			if (x > g_fp->_sceneRect.right - 200)
+				g_fp->_currentScene->_x = x + 300 - g_fp->_sceneRect.right;
 		}
 
 		g_fp->_behaviorManager->updateBehaviors();

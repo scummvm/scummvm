@@ -420,11 +420,7 @@ public:
 	StaticANIObject *scene26_drop;
 	PictureObject *scene26_sockPic;
 	StaticANIObject *scene26_sock;
-	int scene26_var01;
-	int scene26_var02;
-	int scene26_var03;
-	int scene26_var04;
-	StaticANIObject *scene26_var05;
+	StaticANIObject *scene26_activeVent;
 
 	StaticANIObject *scene30_leg;
 	int scene30_liftFlag;
