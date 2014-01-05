@@ -862,6 +862,7 @@ namespace Fullpipe {
 #define ST_WTR24_FLOWLOWER 1843
 
 // Scene 25
+#define ANI_BEARDED_CMN 3420
 #define ANI_BOARD25 1898
 #define ANI_DROP_25 3499
 #define ANI_INV_BOARD 1872
@@ -917,6 +918,7 @@ namespace Fullpipe {
 #define SND_25_029 5174
 #define SND_25_030 5175
 #define ST_BRD25_RIGHT2 1902
+#define ST_BRDCMN_EMPTY 3422
 #define ST_DRP25_EMPTY 3501
 #define ST_MAN_LADDERDOWN_R 3419
 #define ST_MAN25_ONBOARD 1879

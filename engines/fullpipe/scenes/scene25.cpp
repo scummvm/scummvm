@@ -135,7 +135,22 @@ void sceneHandler25_stopBearders() {
 }
 
 void sceneHandler25_startBearders() {
-	warning("STUB: sceneHandler25_startBearders()");
+	g_vars->scene25_var10.clear();
+	g_vars->scene25_var09 = 0;
+
+	StaticANIObject *bearded = g_fp->accessScene(SC_COMMON)->getStaticANIObject1ById(ANI_BEARDED_CMN, -1);
+
+	for (int i = 0; i < 3; i++) {
+		StaticANIObject *ani = new StaticANIObject(bearded);
+
+		g_vars->scene25_var10.push_back(ani);
+
+		ani->_statics = ani->getStaticsById(ST_BRDCMN_EMPTY);
+
+		g_fp->_currentScene->addStaticANIObject(ani, 1);
+	}
+
+	g_vars->scene25_var08 = 1;
 }
 
 void sceneHandler25_enterMan() {
