@@ -127,6 +127,11 @@ void scene25_setupWater(Scene *sc, int entrance);
 int sceneHandler25(ExCommand *cmd);
 int scene25_updateCursor();
 
+void scene26_initScene(Scene *sc);
+void scene26_setupDrop(Scene *sc);
+int sceneHandler26(ExCommand *cmd);
+int scene26_updateCursor();
+
 int scene30_updateCursor();
 void scene30_initScene(Scene *sc, int flag);
 int sceneHandler30(ExCommand *cmd);

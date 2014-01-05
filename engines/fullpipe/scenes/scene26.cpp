@@ -87,7 +87,7 @@ void sceneHandler26_updateDrop() {
 		g_fp->_behaviorManager->setFlagByStaticAniObject(g_vars->scene26_drop, 1);
 }
 
-void scene26_setupDrop() {
+void scene26_setupDrop(Scene *sc) {
 	sceneHandler26_updateDrop();
 }
 
