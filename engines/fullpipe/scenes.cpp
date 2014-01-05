@@ -284,10 +284,10 @@ Vars::Vars() {
 	scene25_water = 0;
 	scene25_board = 0;
 	scene25_drop = 0;
-	scene25_var05 = false;
-	scene25_var06 = false;
-	scene25_var07 = false;
-	scene25_var08 = false;
+	scene25_dudeIsOnBoard = false;
+	scene25_waterIsPresent = false;
+	scene25_boardIsSelectable = false;
+	scene25_beardersAreThere = false;
 	scene25_beardersCounter = 0;
 	scene25_bearders.clear();
 	scene25_sneezeFlipper = false;

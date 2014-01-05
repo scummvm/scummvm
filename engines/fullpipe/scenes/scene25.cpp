@@ -52,14 +52,14 @@ void scene25_initScene(Scene *sc, int entranceId) {
 	g_vars->scene25_drop = sc->getStaticANIObject1ById(ANI_DROP_25, -1);
 	g_vars->scene25_water->setAlpha(0xa0);
 	g_vars->scene25_drop->setAlpha(0xa0);
-	g_vars->scene25_var05 = false;
+	g_vars->scene25_dudeIsOnBoard = false;
 
 	if (g_fp->getObjectState(sO_Pool) < g_fp->getObjectEnumState(sO_Pool, sO_HalfFull)) {
-		g_vars->scene25_var06 = false;
+		g_vars->scene25_waterIsPresent = false;
 
 		g_vars->scene25_water->hide();
 	} else {
-		g_vars->scene25_var06 = true;
+		g_vars->scene25_waterIsPresent = true;
 
 		g_fp->playSound(SND_25_006, 1);
 	}
@@ -72,12 +72,12 @@ void scene25_initScene(Scene *sc, int entranceId) {
 
 			g_fp->playSound(SND_25_029, 0);
 
-			g_vars->scene25_var07 = false;
+			g_vars->scene25_boardIsSelectable = false;
 		} else {
 			if (boardState == g_fp->getObjectEnumState(sO_Board_25, sO_Nearby)
 				|| boardState == g_fp->getObjectEnumState(sO_Board_25, sO_WithDudeOnRight))
 				scene25_showBoardOnRightClose();
-			g_vars->scene25_var07 = false;
+			g_vars->scene25_boardIsSelectable = false;
 		}
 	} else {
 		if (boardState == g_fp->getObjectEnumState(sO_Board_25, sO_WithDudeOnLeft)) {
@@ -86,22 +86,22 @@ void scene25_initScene(Scene *sc, int entranceId) {
 				getGameLoaderInventory()->rebuildItemRects();
 			}
 		} else {
-			g_vars->scene25_var07 = true;
+			g_vars->scene25_boardIsSelectable = true;
 		}
 	}
 
-	g_vars->scene25_var08 = false;
+	g_vars->scene25_beardersAreThere = false;
 	g_vars->scene25_beardersCounter = 0;
 }
 
 int scene25_updateCursor() {
 	g_fp->updateCursorCommon();
 
-	if (g_vars->scene25_var06) {
+	if (g_vars->scene25_waterIsPresent) {
 		int inv = getGameLoaderInventory()->getSelectedItemId();
 
 		if (g_fp->_objectIdAtCursor == ANI_WATER25) {
-			if ((g_vars->scene25_var07 && (!inv || inv == ANI_INV_BOARD)) || (g_vars->scene25_var05 && (inv == ANI_INV_LOPAT || !inv)))
+			if ((g_vars->scene25_boardIsSelectable && (!inv || inv == ANI_INV_BOARD)) || (g_vars->scene25_dudeIsOnBoard && (inv == ANI_INV_LOPAT || !inv)))
 				g_fp->_cursorId = (g_fp->_cursorId != PIC_CSR_DEFAULT) ? PIC_CSR_ITN : PIC_CSR_ITN_INV; // FIXME check
 		} else if (g_fp->_objectIdAtCursor == ANI_BOARD25 && (!inv || inv == ANI_INV_SWAB || inv == ANI_INV_BROOM || inv == ANI_INV_LOPAT)) {
 			g_fp->_cursorId = (g_fp->_cursorId != PIC_CSR_DEFAULT) ? PIC_CSR_ITN : PIC_CSR_ITN_INV;
@@ -112,7 +112,7 @@ int scene25_updateCursor() {
 }
 
 void scene25_setupWater(Scene *a1, int entranceId) {
-	if (g_vars->scene25_var06) {
+	if (g_vars->scene25_waterIsPresent) {
 		g_fp->_behaviorManager->setBehaviorEnabled(g_vars->scene25_drop, ST_DRP25_EMPTY, QU_DRP25_TOFLOOR, 0);
 		g_fp->_behaviorManager->setBehaviorEnabled(g_vars->scene25_drop, ST_DRP25_EMPTY, QU_DRP25_TOWATER, 1);
 
@@ -125,7 +125,7 @@ void scene25_setupWater(Scene *a1, int entranceId) {
 }
 
 void sceneHandler25_stopBearders() {
-	g_vars->scene25_var08 = false;
+	g_vars->scene25_beardersAreThere = false;
 
 	g_vars->scene25_bearders.clear();
 }
@@ -146,11 +146,11 @@ void sceneHandler25_startBearders() {
 		g_fp->_currentScene->addStaticANIObject(ani, 1);
 	}
 
-	g_vars->scene25_var08 = true;
+	g_vars->scene25_beardersAreThere = true;
 }
 
 void sceneHandler25_enterMan() {
-	if (g_vars->scene25_var06) {
+	if (g_vars->scene25_waterIsPresent) {
 		chainQueue(QU_SC25_ENTERUP_WATER, 1);
 
 		getCurrSceneSc2MotionController()->clearEnabled();
@@ -221,8 +221,8 @@ void sceneHandler25_toLadder() {
 
 	if (qid) {
 		chainQueue(qid, 1);
-		g_vars->scene25_var05 = false;
-		g_vars->scene25_var07 = true;
+		g_vars->scene25_dudeIsOnBoard = false;
+		g_vars->scene25_boardIsSelectable = true;
 		g_vars->scene25_sneezeFlipper = false;
 
 		sceneHandler25_saveEntrance(TrubaUp);
@@ -346,9 +346,9 @@ void sceneHandler25_putBoard() {
 
 		chainQueue(QU_SC25_PUTBOARD, 1);
 
-		g_vars->scene25_var05 = true;
+		g_vars->scene25_dudeIsOnBoard = true;
 		g_vars->scene25_sneezeFlipper = false;
-		g_vars->scene25_var07 = false;
+		g_vars->scene25_boardIsSelectable = false;
 	}
 }
 
@@ -412,7 +412,7 @@ void sceneHandler25_tryRow(int obj) {
 
 			chainQueue(QU_SC25_TRUBATOBOARD, 1);
 
-			g_vars->scene25_var05 = true;
+			g_vars->scene25_dudeIsOnBoard = true;
 		}
 	}
 }
@@ -598,7 +598,7 @@ int sceneHandler25(ExCommand *cmd) {
 			if (x > g_fp->_sceneRect.right - 200)
 				g_fp->_currentScene->_x = x + 300 - g_fp->_sceneRect.right;
 
-			if (!g_vars->scene25_var06) {
+			if (!g_vars->scene25_waterIsPresent) {
 				if (y < g_fp->_sceneRect.top + 200)
 					g_fp->_currentScene->_y = y - 300 - g_fp->_sceneRect.top;
 
@@ -607,7 +607,7 @@ int sceneHandler25(ExCommand *cmd) {
 			}
         }
 
-        if (g_vars->scene25_var08) {
+        if (g_vars->scene25_beardersAreThere) {
 			g_vars->scene25_beardersCounter++;
 
 			if (g_vars->scene25_beardersCounter >= 120)
@@ -617,10 +617,10 @@ int sceneHandler25(ExCommand *cmd) {
         g_fp->_behaviorManager->updateBehaviors();
         g_fp->startSceneTrack();
 
-        if (g_vars->scene25_var06 && !g_vars->scene25_water->_movement)
+        if (g_vars->scene25_waterIsPresent && !g_vars->scene25_water->_movement)
 			g_vars->scene25_water->startAnim(MV_WTR25_FLOW, 0, -1);
 
-        if (g_vars->scene25_var05 && !g_fp->_aniMan->_movement && g_vars->scene25_sneezeFlipper)
+        if (g_vars->scene25_dudeIsOnBoard && !g_fp->_aniMan->_movement && g_vars->scene25_sneezeFlipper)
 			sceneHandler25_sneeze();
 
         g_vars->scene25_sneezeFlipper = true;
@@ -639,7 +639,7 @@ int sceneHandler25(ExCommand *cmd) {
 		{
 			int picId = g_fp->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
 
-			if (!g_vars->scene25_var06) {
+			if (!g_vars->scene25_waterIsPresent) {
 				if ((picId == PIC_SC25_LADDERUP || picId == PIC_SC25_LADDERDOWN) && sceneHandler25_isOnLadder(cmd))
 					cmd->_messageKind = 0;
 
@@ -653,7 +653,7 @@ int sceneHandler25(ExCommand *cmd) {
 					if (g_fp->_aniMan->isIdle()) {
 						if (!(g_fp->_aniMan->_flags & 0x100)) {
 							if (ani->_id == ANI_WATER25) {
-								if (g_vars->scene25_var05) {
+								if (g_vars->scene25_dudeIsOnBoard) {
 									if (cmd->_keyCode == ANI_INV_LOPAT)
 										sceneHandler25_rowShovel();
 
@@ -682,7 +682,7 @@ int sceneHandler25(ExCommand *cmd) {
 			if (!g_fp->_aniMan->isIdle() || (g_fp->_aniMan->_flags & 0x100))
 				break;
 
-			if (g_vars->scene25_var05) {
+			if (g_vars->scene25_dudeIsOnBoard) {
 				if (picId == PIC_SC25_RTRUBA && !cmd->_keyCode) {
 					sceneHandler25_enterTruba();
 					break;
@@ -699,7 +699,7 @@ int sceneHandler25(ExCommand *cmd) {
 					break;
 				}
 			}
-			if (g_vars->scene25_var05) {
+			if (g_vars->scene25_dudeIsOnBoard) {
 				if (picId != PIC_SC25_LADDERUP || cmd->_keyCode)
 					break;
 

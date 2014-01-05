@@ -403,10 +403,10 @@ public:
 	StaticANIObject *scene25_water;
 	StaticANIObject *scene25_board;
 	StaticANIObject *scene25_drop;
-	bool scene25_var05;
-	bool scene25_var06;
-	bool scene25_var07;
-	bool scene25_var08;
+	bool scene25_dudeIsOnBoard;
+	bool scene25_waterIsPresent;
+	bool scene25_boardIsSelectable;
+	bool scene25_beardersAreThere;
 	int scene25_beardersCounter;
 	Common::Array<StaticANIObject *> scene25_bearders;
 	bool scene25_sneezeFlipper;
