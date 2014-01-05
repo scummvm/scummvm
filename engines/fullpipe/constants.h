@@ -861,6 +861,14 @@ namespace Fullpipe {
 #define ST_DRP24_EMPTY 3507
 #define ST_WTR24_FLOWLOWER 1843
 
+// Scene 25
+#define ANI_BOARD25 1898
+#define ANI_DROP_25 3499
+#define ANI_INV_BOARD 1872
+#define ANI_WATER25 1856
+#define SND_25_006 4059
+#define SND_25_029 5174
+
 // Scene 30
 #define ANI_LEG 2322
 #define MSG_SC30_UPDATEPATH 2358

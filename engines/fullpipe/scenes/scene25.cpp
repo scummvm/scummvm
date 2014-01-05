@@ -36,14 +36,22 @@
 
 namespace Fullpipe {
 
+void scene25_showBoardOnRightFar() {
+	warning("STUB: scene25_showBoardOnRightFar()");
+}
+
+void scene25_showBoardOnRightClose() {
+	warning("STUB: scene25_showBoardOnRightClose()");
+}
+
 void scene25_initScene(Scene *sc, int entranceId) {
 	g_vars->scene25_var01 = 200;
 	g_vars->scene25_var02 = 200;
 	g_vars->scene25_var03 = 300;
 	g_vars->scene25_var04 = 300;
-	g_vars->scene25_water = Scene_getStaticANIObject1ById(sc, ANI_WATER25, -1);
-	g_vars->scene25_board = Scene_getStaticANIObject1ById(sc, ANI_BOARD25, -1);
-	g_vars->scene25_drop = Scene_getStaticANIObject1ById(sc, ANI_DROP_25, -1);
+	g_vars->scene25_water = sc->getStaticANIObject1ById(ANI_WATER25, -1);
+	g_vars->scene25_board = sc->getStaticANIObject1ById(ANI_BOARD25, -1);
+	g_vars->scene25_drop = sc->getStaticANIObject1ById(ANI_DROP_25, -1);
 	g_vars->scene25_water->setAlpha(0xa0);
 	g_vars->scene25_drop->setAlpha(0xa0);
 	g_vars->scene25_var05 = 0;
@@ -55,7 +63,7 @@ void scene25_initScene(Scene *sc, int entranceId) {
 	} else {
 		g_vars->scene25_var06 = 1;
 
-		playSound(SND_25_006, 1);
+		g_fp->playSound(SND_25_006, 1);
 	}
 
 	int boardState = g_fp->getObjectState(sO_Board_25);
@@ -64,7 +72,7 @@ void scene25_initScene(Scene *sc, int entranceId) {
 		if (boardState == g_fp->getObjectEnumState(sO_Board_25, sO_FarAway)) {
 			scene25_showBoardOnRightFar();
 
-			playSound(SND_25_029, 0);
+			g_fp->playSound(SND_25_029, 0);
 
 			g_vars->scene25_var07 = 0;
 		} else {

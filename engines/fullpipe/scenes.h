@@ -395,6 +395,19 @@ public:
 	StaticANIObject *scene24_jet;
 	StaticANIObject *scene24_drop;
 
+	int scene25_var01;
+	int scene25_var02;
+	int scene25_var03;
+	int scene25_var04;
+	StaticANIObject *scene25_water;
+	StaticANIObject *scene25_board;
+	StaticANIObject *scene25_drop;
+	int scene25_var05;
+	int scene25_var06;
+	int scene25_var07;
+	int scene25_var08;
+	int scene25_var09;
+
 	StaticANIObject *scene30_leg;
 	int scene30_liftFlag;
 
