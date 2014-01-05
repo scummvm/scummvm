@@ -411,6 +411,15 @@ public:
 	Common::Array<StaticANIObject *> scene25_bearders;
 	bool scene25_sneezeFlipper;
 
+	StaticANIObject *scene26_chhi;
+	StaticANIObject *scene26_drop;
+	PictureObject *scene26_sockPic;
+	StaticANIObject *scene26_sock;
+	int scene26_var01;
+	int scene26_var02;
+	int scene26_var03;
+	int scene26_var04;
+
 	StaticANIObject *scene30_leg;
 	int scene30_liftFlag;
 

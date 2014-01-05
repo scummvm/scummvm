@@ -292,6 +292,15 @@ Vars::Vars() {
 	scene25_bearders.clear();
 	scene25_sneezeFlipper = false;
 
+	scene26_chhi = 0;
+	scene26_drop = 0;
+	scene26_sockPic = 0;
+	scene26_sock = 0;
+	scene26_var01 = 0;
+	scene26_var02 = 0;
+	scene26_var03 = 0;
+	scene26_var04 = 0;
+
 	scene30_leg = 0;
 	scene30_liftFlag = 1;
 

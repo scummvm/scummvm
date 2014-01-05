@@ -925,6 +925,16 @@ namespace Fullpipe {
 #define ST_MAN_LADDERDOWN_R 3419
 #define ST_MAN25_ONBOARD 1879
 
+// Scene 26
+#define ANI_CHHI 1957
+#define ANI_DROP_26 3345
+#define ANI_INV_SOCK 1698
+#define ANI_INV_VENT 1968
+#define ANI_LUK26 1867
+#define ANI_SOCK_26 4553
+#define PIC_SC26_SOCK 5312
+#define SND_26_018 5340
+
 // Scene 30
 #define ANI_LEG 2322
 #define MSG_SC30_UPDATEPATH 2358
