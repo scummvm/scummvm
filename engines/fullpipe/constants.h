@@ -932,6 +932,8 @@ namespace Fullpipe {
 #define ANI_INV_VENT 1968
 #define ANI_LUK26 1867
 #define ANI_SOCK_26 4553
+#define ANI_VENT 1927
+#define PIC_SC26_LTRUBA 1864
 #define PIC_SC26_SOCK 5312
 #define SND_26_018 5340
 

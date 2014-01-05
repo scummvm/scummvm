@@ -67,4 +67,17 @@ void scene26_initScene(Scene *sc) {
 		g_fp->playSound(SND_26_018, 1);
 }
 
+int scene26_updateCursor() {
+	g_fp->updateCursorCommon();
+
+	if (g_fp->_objectIdAtCursor != ANI_VENT || g_fp->_cursorId != PIC_CSR_DEFAULT) {
+		if (g_fp->_cursorId == PIC_CSR_ITN && g_fp->_objectIdAtCursor == PIC_SC26_LTRUBA)
+			g_fp->_cursorId = PIC_CSR_GOL;
+	} else {
+		g_fp->_cursorId = PIC_CSR_ITN;
+	}
+
+  return g_fp->_cursorId;
+}
+
 } // End of namespace Fullpipe
