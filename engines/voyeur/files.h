@@ -445,8 +445,6 @@ public:
 	static CMapResource *_cmd14Pal;
 	static void initUseCount();
 	static void unloadAllStacks(VoyeurEngine *vm);
-	static int _doAptPosX;
-	static int _doAptPosY;
 
 	static void init();
 private:

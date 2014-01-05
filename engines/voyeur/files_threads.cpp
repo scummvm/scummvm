@@ -31,16 +31,12 @@ int ThreadResource::_stampFlags;
 int ThreadResource::_useCount[8];
 byte *ThreadResource::_threadDataPtr;
 CMapResource *ThreadResource::_cmd14Pal;
-int ThreadResource::_doAptPosX;
-int ThreadResource::_doAptPosY;
 
 void ThreadResource::init() {
 	_stampFlags = 0;
 	Common::fill(&_useCount[0], &_useCount[8], 0);
 	_threadDataPtr = nullptr;
 	_cmd14Pal = nullptr;
-	_doAptPosX = -1;
-	_doAptPosY = -1;
 }
 
 ThreadResource::ThreadResource(BoltFilesState &state, const byte *src):
@@ -1029,26 +1025,27 @@ bool ThreadResource::cardPerform2(const byte *pSrc, int cardCmdId) {
 int ThreadResource::doApt() {
 	loadTheApt();
 
+	Common::Point aptPos(-1, -1);
 	_vm->_playStamp2 = 151;
 	_vm->_voy._viewBounds = _vm->_bVoy->boltEntry(_vm->_playStamp1)._rectResource; 
 	Common::Array<Common::Rect> &hotspots = _vm->_bVoy->boltEntry(
 		_vm->_playStamp1 + 1)._rectResource->_entries;
 	_vm->_eventsManager.getMouseInfo();
 
-	if (_doAptPosX == -1) {
-		_doAptPosX = hotspots[2].left;
-		_doAptPosY = hotspots[2].top;
+	if (aptPos.x == -1) {
+		aptPos.x = hotspots[2].left;
+		aptPos.y = hotspots[2].top;
 		_vm->_playStamp2 = 153;
 	}
 
 	if (_vm->_voy._field470 == 16) {
 		hotspots[0].left = 999;
 		hotspots[3].left = 999;
-		_doAptPosX = hotspots[4].left + 28;
-		_doAptPosY = hotspots[4].top + 28;
+		aptPos.x = hotspots[4].left + 28;
+		aptPos.y = hotspots[4].top + 28;
 	}
 
-	_vm->_eventsManager.setMousePos(Common::Point(_doAptPosX, _doAptPosY));
+	_vm->_eventsManager.setMousePos(Common::Point(aptPos.x, aptPos.y));
 	_vm->_soundManager.startVOCPlay(_vm->_soundManager.getVOCFileName(_vm->_playStamp2));
 	_vm->_playStamp2 = 151;
 
@@ -1107,8 +1104,8 @@ int ThreadResource::doApt() {
 	} while (!_vm->shouldQuit() && (!_vm->_eventsManager._leftClick || hotspotId == -1));
 
 	pt = _vm->_eventsManager.getMousePos();
-	_doAptPosX = pt.x;
-	_doAptPosY = pt.y;
+	aptPos.x = pt.x;
+	aptPos.y = pt.y;
 
 	switch (hotspotId) {
 	case 0:
