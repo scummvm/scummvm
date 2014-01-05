@@ -2530,15 +2530,10 @@ void Scene205Demo::Action1::signal() {
 	case 0:
 		setDelay(2);
 		break;
-
-	case 1: {
-		Common::String mask = g_resourceManager->getMessage(206, 0, true);
-//		Common::String msg = sprintf(mask.c_str(), "1-800-482-3766");
-		MessageDialog::show2(mask, OK_BTN_STRING);
+	case 1:
+		MessageDialog::show2(BUY_FULL_GAME_MSG, OK_BTN_STRING);
 		setDelay(1);
-		}
 		break;
-
 	case 2:
 		scene->leaveScene();
 		break;

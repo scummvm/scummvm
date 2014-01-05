@@ -253,6 +253,8 @@ char const *const USE_INTERCEPTOR = "Do you want to use your interceptor card?";
 char const *const USE_DOUBLE_AGENT = "Do you want to use your double agent?";
 char const *const NEED_INSTRUCTIONS = "Do you want instructions?";
 char const *const WRONG_ANSWER_MSG = "Wrong respond value sent.";
+char const *const BUY_FULL_GAME_MSG = "To order the complete game, RETURN TO RINGWORLD, call 1-800-482-3766!";
+
 const byte scene1550JunkLocationsDefault[] = {
 	20, 7,  41, 6,
 	3,  6,  42, 11,
