@@ -122,8 +122,13 @@ void scene24_initScene(Scene *sc);
 void scene24_setPoolState();
 int sceneHandler24(ExCommand *cmd);
 
+void scene25_initScene(Scene *sc, int entrance);
+void scene25_setupWater(Scene *sc, int entrance);
+int sceneHandler25(ExCommand *cmd);
+int scene25_updateCursor();
+
 int scene30_updateCursor();
- void scene30_initScene(Scene *sc, int flag);
+void scene30_initScene(Scene *sc, int flag);
 int sceneHandler30(ExCommand *cmd);
 
 void scene31_initScene(Scene *sc);

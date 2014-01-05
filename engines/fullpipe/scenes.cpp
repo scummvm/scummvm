@@ -743,19 +743,19 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 		_updateCursorCallback = defaultUpdateCursor;
 		break;
 
-#if 0
 	case SC_25:
 		sceneVar = _gameLoader->_gameVar->getSubVarByName("SC_25");
 		scene->preloadMovements(sceneVar);
-		scene25_initScene(scene, entrance->field_4);
+		scene25_initScene(scene, entrance->_field_4);
 		_behaviorManager->initBehavior(scene, sceneVar);
 		scene->initObjectCursors("SC_25");
 		setSceneMusicParameters(sceneVar);
 		addMessageHandler(sceneHandler25, 2);
-		scene25_sub_4253B0(scene, entrance->field_4);
+		scene25_setupWater(scene, entrance->_field_4);
 		_updateCursorCallback = scene25_updateCursor;
 		break;
 
+#if 0
 	case SC_26:
 		sceneVar = _gameLoader->_gameVar->getSubVarByName("SC_26");
 		scene->preloadMovements(sceneVar);
