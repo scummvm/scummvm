@@ -80,4 +80,114 @@ int scene26_updateCursor() {
   return g_fp->_cursorId;
 }
 
+void sceneHandler26_updateDrop() {
+	warning("STUB: sceneHandler26_updateDrop()");
+}
+
+void sceneHandler26_showChi() {
+	warning("STUB: sceneHandler26_showChi()");
+}
+
+void sceneHandler26_updatePool() {
+	warning("STUB: sceneHandler26_updatePool()");
+}
+
+void sceneHandler26_hideChi() {
+	warning("STUB: sceneHandler26_hideChi()");
+}
+
+void sceneHandler26_testVent() {
+	warning("STUB: sceneHandler26_testVent()");
+}
+
+void sceneHandler26_showVent() {
+	warning("STUB: sceneHandler26_showVent()");
+}
+
+void sceneHandler26_hideVent() {
+	warning("STUB: sceneHandler26_hideVent()");
+}
+
+void sceneHandler26_clickVent(StaticANIObject *ani, ExCommand *cmd) {
+	warning("STUB: sceneHandler26_clickVent(ani, cmd)");
+}
+
+void sceneHandler26_sub01() {
+	warning("STUB: sceneHandler26_sub01()");
+}
+
+int sceneHandler26(ExCommand *cmd) {
+	if (cmd->_messageKind != 17)
+		return 0;
+
+	switch (cmd->_messageNum) {
+	case MSG_SC26_UPDATEDROP:
+		sceneHandler26_updateDrop();
+		break;
+
+	case MSG_SC26_SHOWCHI:
+		sceneHandler26_showChi();
+		break;
+
+	case MSG_SC26_UPDATEPOOL:
+		sceneHandler26_updatePool();
+		break;
+
+	case MSG_SC26_HIDECHI:
+		sceneHandler26_hideChi();
+		break;
+
+	case MSG_SC26_TESTVENT:
+		sceneHandler26_testVent();
+		break;
+
+	case MSG_SC26_SHOWVENT:
+		sceneHandler26_showVent();
+		break;
+
+	case MSG_SC26_CLICKVENT:
+		{
+			StaticANIObject *ani = g_fp->_currentScene->getStaticANIObject1ById(ANI_VENT, cmd->_keyCode);
+
+			if (ani && ani->_id == ANI_VENT)
+				sceneHandler26_clickVent(ani, cmd);
+
+			break;
+		}
+
+	case MSG_SC26_HIDEVENT:
+		sceneHandler26_hideVent();
+		break;
+
+	case 29:
+		{
+			StaticANIObject *ani = g_fp->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
+
+			if (ani && ani->_id == ANI_VENT)
+				sceneHandler26_clickVent(ani, cmd);
+
+			break;
+		}
+
+	case 33:
+		if (g_fp->_aniMan2) {
+			int x = g_fp->_aniMan2->_ox;
+
+			if (x < g_fp->_sceneRect.left + g_vars->scene26_var01)
+				g_fp->_currentScene->_x = x - g_vars->scene26_var03 - g_fp->_sceneRect.left;
+
+			if (x > g_fp->_sceneRect.right - g_vars->scene26_var01)
+				g_fp->_currentScene->_x = x + g_vars->scene26_var03 - g_fp->_sceneRect.right;
+		}
+
+		g_fp->_behaviorManager->updateBehaviors();
+
+		g_fp->startSceneTrack();
+
+		break;
+	}
+
+	return 0;
+}
+
 } // End of namespace Fullpipe
