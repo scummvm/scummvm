@@ -81,11 +81,20 @@ int scene26_updateCursor() {
 }
 
 void sceneHandler26_updateDrop() {
-	warning("STUB: sceneHandler26_updateDrop()");
+	if (g_fp->getObjectState(sO_Valve5_26) == g_fp->getObjectEnumState(sO_Valve5_26, sO_Closed))
+		g_fp->_behaviorManager->setFlagByStaticAniObject(g_vars->scene26_drop, 0);
+	else
+		g_fp->_behaviorManager->setFlagByStaticAniObject(g_vars->scene26_drop, 1);
+}
+
+void scene26_setupDrop() {
+	sceneHandler26_updateDrop();
 }
 
 void sceneHandler26_showChi() {
-	warning("STUB: sceneHandler26_showChi()");
+	g_vars->scene26_chhi->changeStatics2(ST_CHI_EMPTY);
+
+	chainQueue(QU_CHI_SHOW, 1);
 }
 
 void sceneHandler26_updatePool() {
@@ -93,7 +102,9 @@ void sceneHandler26_updatePool() {
 }
 
 void sceneHandler26_hideChi() {
-	warning("STUB: sceneHandler26_hideChi()");
+	g_vars->scene26_chhi->changeStatics2(ST_CHI_NORM);
+
+	chainQueue(QU_CHI_HIDE, 1);
 }
 
 void sceneHandler26_testVent() {
@@ -105,7 +116,8 @@ void sceneHandler26_showVent() {
 }
 
 void sceneHandler26_hideVent() {
-	warning("STUB: sceneHandler26_hideVent()");
+	if (g_vars->scene26_var05)
+		g_vars->scene26_var05->hide();
 }
 
 void sceneHandler26_clickVent(StaticANIObject *ani, ExCommand *cmd) {

@@ -943,7 +943,11 @@ namespace Fullpipe {
 #define MSG_SC26_UPDATEPOOL 1956
 #define PIC_SC26_LTRUBA 1864
 #define PIC_SC26_SOCK 5312
+#define QU_CHI_HIDE 1965
+#define QU_CHI_SHOW 1964
 #define SND_26_018 5340
+#define ST_CHI_EMPTY 1959
+#define ST_CHI_NORM 1960
 
 // Scene 30
 #define ANI_LEG 2322
