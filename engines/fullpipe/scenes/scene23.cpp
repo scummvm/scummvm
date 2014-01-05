@@ -330,18 +330,36 @@ void sceneHandler23_checkReachingTop() {
 
 void sceneHandler23_exitCalendar() {
 	if (!g_fp->_aniMan->_movement && g_fp->_aniMan->_statics->_staticsId == ST_MAN_STANDLADDER
-		&& !g_fp->_aniMan->getMessageQueue() && !(g_fp->_aniMan->_flags & 0x100) ) {
+		&& !g_fp->_aniMan->getMessageQueue() && !(g_fp->_aniMan->_flags & 0x100)) {
 		chainQueue(QU_SC23_FROMCALENDAREXIT, 1);
 		g_vars->scene23_var07 = 2;
 	}
 }
 
-void sceneHandler23_lowerFromCalendar(ExCommand *cmd) {
-	warning("STUB: sceneHandler23_lowerFromCalendar(cmd)");
+void sceneHandler23_fromCalendar(ExCommand *cmd) {
+	if (!g_fp->_aniMan->_movement && g_fp->_aniMan->_statics->_staticsId == ST_MAN_STANDLADDER
+		&& !g_fp->_aniMan->getMessageQueue() && !(g_fp->_aniMan->_flags & 0x100)) {
+		MessageQueue *mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC23_FROMCALENDAR), 0, 0);
+
+		mq->addExCommandToEnd(cmd->createClone());
+		mq->setFlags(mq->getFlags() | 1);
+		mq->chain(0);
+
+		g_vars->scene23_var05 = 0;
+		g_vars->scene23_var07 = 0;
+	}
 }
 
 void sceneHandler23_fromStool(ExCommand *cmd) {
-	warning("STUB: sceneHandler23_fromStool(cmd)");
+	if (!g_fp->_aniMan->getMessageQueue() && !(g_fp->_aniMan->_flags & 0x100)) {
+		MessageQueue *mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC23_FROMSTOOL), 0, 0);
+
+		mq->addExCommandToEnd(cmd->createClone());
+		mq->setFlags(mq->getFlags() | 1);
+		mq->chain(0);
+
+		cmd->_messageKind = 0;
+	}
 }
 
 int sceneHandler23(ExCommand *cmd) {
@@ -444,7 +462,7 @@ int sceneHandler23(ExCommand *cmd) {
 				}
 
 				if (cmd->_sceneClickY > 450) {
-					sceneHandler23_lowerFromCalendar(cmd);
+					sceneHandler23_fromCalendar(cmd);
 
 					cmd->_messageKind = 0;
 					break;
