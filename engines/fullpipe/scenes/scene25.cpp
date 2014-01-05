@@ -438,14 +438,33 @@ void sceneHandler25_backToPipe() {
 	}
 }
 
-void sceneHandler25_sub01() {
+void sceneHandler25_sub01(StaticANIObject *ani, Common::Point *pnt, MessageQueue *mq, int flag) {
 	warning("STUB: sceneHandler25_sub01()");
 }
 
 bool sceneHandler25_sub02(ExCommand *cmd) {
-	warning("STUB: sceneHandler25_sub02()");
+	if ((g_fp->_aniMan->_movement && g_fp->_aniMan->_movement->_id == MV_MAN_GOLADDERDOWN)
+		|| g_fp->_aniMan->_statics->_staticsId == ST_MAN_GOLADDERD) {
+		Interaction *inter = getGameLoaderInteractionController()->getInteractionByObjectIds(PIC_SC25_LADDERDOWN, ANI_MAN, cmd->_keyCode);
 
-	return false;
+		if (!inter)
+			return 0;
+
+		MessageQueue *mq = new MessageQueue(inter->_messageQueue, 0, 1);
+		PictureObject *pic = g_fp->_currentScene->getPictureObjectById(PIC_SC25_LADDERDOWN, 0);
+		Common::Point point;
+
+		point.x = inter->_xOffs + pic->_ox;
+		point.y = inter->_yOffs + pic->_oy;
+
+		mq->setFlags(mq->getFlags() | 1);
+
+		sceneHandler25_sub01(g_fp->_aniMan, &point, mq, 0);
+
+		return true;
+	} else {
+		return false;
+	}
 }
 
 void sceneHandler25_sub03() {
