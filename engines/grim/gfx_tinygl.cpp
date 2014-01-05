@@ -828,8 +828,8 @@ void GfxTinyGL::drawSprite(const Sprite *sprite) {
 	tglDisable(TGL_LIGHTING);
 
 	if (g_grim->getGameType() == GType_MONKEY4) {
-		float halfWidth = (sprite->_width / 2) * _scaleW;
-		float halfHeight = (sprite->_height / 2) * _scaleH;
+		float halfWidth = sprite->_width / 2;
+		float halfHeight = sprite->_height / 2;
 
 		tglBegin(TGL_POLYGON);
 		tglColor4f(1.0f, 1.0f, 1.0f, _alpha);
@@ -846,8 +846,8 @@ void GfxTinyGL::drawSprite(const Sprite *sprite) {
 	} else {
 		// In Grim, the bottom edge of the sprite is at y=0 and
 		// the texture is flipped along the X-axis.
-		float halfWidth = (sprite->_width / 2) * _scaleW;
-		float height = sprite->_height * _scaleH;
+		float halfWidth = sprite->_width / 2;
+		float height = sprite->_height;
 
 		tglBegin(TGL_POLYGON);
 		tglTexCoord2f(0.0f, 1.0f);
