@@ -890,6 +890,8 @@ namespace Fullpipe {
 #define QU_SC25_ENTERUP_FLOOR 1904
 #define QU_SC25_ENTERUP_WATER 1895
 #define QU_SC25_LADDERUP 1925
+#define QU_SC25_MANTOTRUBA 1905
+#define QU_SC25_MANTOTRUBA_R 4218
 #define QU_SC25_PUTBOARD 1896
 #define QU_SC25_TRYWATER 1906
 #define SND_25_006 4059
@@ -899,6 +901,7 @@ namespace Fullpipe {
 #define SND_25_029 5174
 #define ST_DRP25_EMPTY 3501
 #define ST_MAN_LADDERDOWN_R 3419
+#define ST_MAN25_ONBOARD 1879
 
 // Scene 30
 #define ANI_LEG 2322
