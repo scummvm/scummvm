@@ -281,20 +281,16 @@ Vars::Vars() {
 	scene24_jet = 0;
 	scene24_drop = 0;
 
-	scene25_var01 = 0;
-	scene25_var02 = 0;
-	scene25_var03 = 0;
-	scene25_var04 = 0;
 	scene25_water = 0;
 	scene25_board = 0;
 	scene25_drop = 0;
-	scene25_var05 = 0;
-	scene25_var06 = 0;
-	scene25_var07 = 0;
-	scene25_var08 = 0;
-	scene25_var09 = 0;
-	scene25_var10.clear();
-	scene25_var12 = 0;
+	scene25_var05 = false;
+	scene25_var06 = false;
+	scene25_var07 = false;
+	scene25_var08 = false;
+	scene25_beardersCounter = 0;
+	scene25_bearders.clear();
+	scene25_sneezeFlipper = false;
 
 	scene30_leg = 0;
 	scene30_liftFlag = 1;

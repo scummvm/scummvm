@@ -47,23 +47,19 @@ void scene25_showBoardOnRightClose() {
 }
 
 void scene25_initScene(Scene *sc, int entranceId) {
-	g_vars->scene25_var01 = 200;
-	g_vars->scene25_var02 = 200;
-	g_vars->scene25_var03 = 300;
-	g_vars->scene25_var04 = 300;
 	g_vars->scene25_water = sc->getStaticANIObject1ById(ANI_WATER25, -1);
 	g_vars->scene25_board = sc->getStaticANIObject1ById(ANI_BOARD25, -1);
 	g_vars->scene25_drop = sc->getStaticANIObject1ById(ANI_DROP_25, -1);
 	g_vars->scene25_water->setAlpha(0xa0);
 	g_vars->scene25_drop->setAlpha(0xa0);
-	g_vars->scene25_var05 = 0;
+	g_vars->scene25_var05 = false;
 
 	if (g_fp->getObjectState(sO_Pool) < g_fp->getObjectEnumState(sO_Pool, sO_HalfFull)) {
-		g_vars->scene25_var06 = 0;
+		g_vars->scene25_var06 = false;
 
 		g_vars->scene25_water->hide();
 	} else {
-		g_vars->scene25_var06 = 1;
+		g_vars->scene25_var06 = true;
 
 		g_fp->playSound(SND_25_006, 1);
 	}
@@ -76,12 +72,12 @@ void scene25_initScene(Scene *sc, int entranceId) {
 
 			g_fp->playSound(SND_25_029, 0);
 
-			g_vars->scene25_var07 = 0;
+			g_vars->scene25_var07 = false;
 		} else {
 			if (boardState == g_fp->getObjectEnumState(sO_Board_25, sO_Nearby)
 				|| boardState == g_fp->getObjectEnumState(sO_Board_25, sO_WithDudeOnRight))
 				scene25_showBoardOnRightClose();
-			g_vars->scene25_var07 = 0;
+			g_vars->scene25_var07 = false;
 		}
 	} else {
 		if (boardState == g_fp->getObjectEnumState(sO_Board_25, sO_WithDudeOnLeft)) {
@@ -90,12 +86,12 @@ void scene25_initScene(Scene *sc, int entranceId) {
 				getGameLoaderInventory()->rebuildItemRects();
 			}
 		} else {
-			g_vars->scene25_var07 = 1;
+			g_vars->scene25_var07 = true;
 		}
 	}
 
-	g_vars->scene25_var08 = 0;
-	g_vars->scene25_var09 = 0;
+	g_vars->scene25_var08 = false;
+	g_vars->scene25_beardersCounter = 0;
 }
 
 int scene25_updateCursor() {
@@ -129,28 +125,28 @@ void scene25_setupWater(Scene *a1, int entranceId) {
 }
 
 void sceneHandler25_stopBearders() {
-	g_vars->scene25_var08 = 0;
+	g_vars->scene25_var08 = false;
 
-	g_vars->scene25_var10.clear();
+	g_vars->scene25_bearders.clear();
 }
 
 void sceneHandler25_startBearders() {
-	g_vars->scene25_var10.clear();
-	g_vars->scene25_var09 = 0;
+	g_vars->scene25_bearders.clear();
+	g_vars->scene25_beardersCounter = 0;
 
 	StaticANIObject *bearded = g_fp->accessScene(SC_COMMON)->getStaticANIObject1ById(ANI_BEARDED_CMN, -1);
 
 	for (int i = 0; i < 3; i++) {
 		StaticANIObject *ani = new StaticANIObject(bearded);
 
-		g_vars->scene25_var10.push_back(ani);
+		g_vars->scene25_bearders.push_back(ani);
 
 		ani->_statics = ani->getStaticsById(ST_BRDCMN_EMPTY);
 
 		g_fp->_currentScene->addStaticANIObject(ani, 1);
 	}
 
-	g_vars->scene25_var08 = 1;
+	g_vars->scene25_var08 = true;
 }
 
 void sceneHandler25_enterMan() {
@@ -190,7 +186,7 @@ void sceneHandler25_enterTruba() {
 
 	if (qid) {
 		chainQueue(qid, 1);
-		g_vars->scene25_var12 = 0;
+		g_vars->scene25_sneezeFlipper = false;
 	}
 }
 
@@ -225,9 +221,9 @@ void sceneHandler25_toLadder() {
 
 	if (qid) {
 		chainQueue(qid, 1);
-		g_vars->scene25_var05 = 0;
-		g_vars->scene25_var07 = 1;
-		g_vars->scene25_var12 = 0;
+		g_vars->scene25_var05 = false;
+		g_vars->scene25_var07 = true;
+		g_vars->scene25_sneezeFlipper = false;
 
 		sceneHandler25_saveEntrance(TrubaUp);
 	}
@@ -239,23 +235,23 @@ void sceneHandler25_animateBearders() {
 
 		mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC25_BEARDED), 0, 1);
 
-		mq->replaceKeyCode(-1, g_vars->scene25_var10[0]->_okeyCode);
+		mq->replaceKeyCode(-1, g_vars->scene25_bearders[0]->_okeyCode);
 		mq->getExCommandByIndex(0)->_x = g_fp->_rnd->getRandomNumber(650) + 100;
 		mq->chain(0);
 
-		g_vars->scene25_var09 = 0;
+		g_vars->scene25_beardersCounter = 0;
 
 		if (g_fp->_rnd->getRandomNumber(32767) < 0x1FFF) {
 			mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC25_BEARDED2), 0, 1);
 
-			mq->replaceKeyCode(-1, g_vars->scene25_var10[1]->_okeyCode);
+			mq->replaceKeyCode(-1, g_vars->scene25_bearders[1]->_okeyCode);
 			mq->getExCommandByIndex(0)->_x = g_fp->_rnd->getRandomNumber(650) + 100;
 			mq->chain(0);
 
 			if (g_fp->_rnd->getRandomNumber(32767) < 8191) {
 				mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC25_BEARDED3), 0, 1);
 
-				mq->replaceKeyCode(-1, g_vars->scene25_var10[2]->_okeyCode);
+				mq->replaceKeyCode(-1, g_vars->scene25_bearders[2]->_okeyCode);
 				mq->getExCommandByIndex(0)->_x = g_fp->_rnd->getRandomNumber(650) + 100;
 				mq->chain(0);
 			}
@@ -307,7 +303,7 @@ void sceneHandler25_rowShovel() {
 	if (qid) {
 		chainQueue(qid, 1);
 
-		g_vars->scene25_var12 = 0;
+		g_vars->scene25_sneezeFlipper = false;
 	}
 }
 
@@ -338,7 +334,7 @@ void sceneHandler25_rowHand() {
 
 	if (qid) {
 		chainObjQueue(g_fp->_aniMan, qid, 1);
-		g_vars->scene25_var12 = 0;
+		g_vars->scene25_sneezeFlipper = false;
 	}
 }
 
@@ -350,9 +346,9 @@ void sceneHandler25_putBoard() {
 
 		chainQueue(QU_SC25_PUTBOARD, 1);
 
-		g_vars->scene25_var05 = 1;
-		g_vars->scene25_var12 = 0;
-		g_vars->scene25_var07 = 0;
+		g_vars->scene25_var05 = true;
+		g_vars->scene25_sneezeFlipper = false;
+		g_vars->scene25_var07 = false;
 	}
 }
 
@@ -416,7 +412,7 @@ void sceneHandler25_tryRow(int obj) {
 
 			chainQueue(QU_SC25_TRUBATOBOARD, 1);
 
-			g_vars->scene25_var05 = 1;
+			g_vars->scene25_var05 = true;
 		}
 	}
 }
@@ -596,25 +592,25 @@ int sceneHandler25(ExCommand *cmd) {
 			int x = g_fp->_aniMan2->_ox;
 			int y = g_fp->_aniMan2->_oy;
 
-			if (x < g_fp->_sceneRect.left + g_vars->scene25_var01)
-				g_fp->_currentScene->_x = x - g_vars->scene25_var03 - g_fp->_sceneRect.left;
+			if (x < g_fp->_sceneRect.left + 200)
+				g_fp->_currentScene->_x = x - 300 - g_fp->_sceneRect.left;
 
-			if (x > g_fp->_sceneRect.right - g_vars->scene25_var01)
-				g_fp->_currentScene->_x = x + g_vars->scene25_var03 - g_fp->_sceneRect.right;
+			if (x > g_fp->_sceneRect.right - 200)
+				g_fp->_currentScene->_x = x + 300 - g_fp->_sceneRect.right;
 
 			if (!g_vars->scene25_var06) {
-				if (y < g_fp->_sceneRect.top + g_vars->scene25_var02)
-					g_fp->_currentScene->_y = y - g_vars->scene25_var04 - g_fp->_sceneRect.top;
+				if (y < g_fp->_sceneRect.top + 200)
+					g_fp->_currentScene->_y = y - 300 - g_fp->_sceneRect.top;
 
-				if (y > g_fp->_sceneRect.bottom - g_vars->scene25_var02)
-					g_fp->_currentScene->_y = y + g_vars->scene25_var04 - g_fp->_sceneRect.bottom;
+				if (y > g_fp->_sceneRect.bottom - 200)
+					g_fp->_currentScene->_y = y + 300 - g_fp->_sceneRect.bottom;
 			}
         }
 
         if (g_vars->scene25_var08) {
-			g_vars->scene25_var09++;
+			g_vars->scene25_beardersCounter++;
 
-			if (g_vars->scene25_var09 >= 120)
+			if (g_vars->scene25_beardersCounter >= 120)
 				sceneHandler25_animateBearders();
         }
 
@@ -624,10 +620,10 @@ int sceneHandler25(ExCommand *cmd) {
         if (g_vars->scene25_var06 && !g_vars->scene25_water->_movement)
 			g_vars->scene25_water->startAnim(MV_WTR25_FLOW, 0, -1);
 
-        if (g_vars->scene25_var05 && !g_fp->_aniMan->_movement && g_vars->scene25_var12)
+        if (g_vars->scene25_var05 && !g_fp->_aniMan->_movement && g_vars->scene25_sneezeFlipper)
 			sceneHandler25_sneeze();
 
-        g_vars->scene25_var12 = 1;
+        g_vars->scene25_sneezeFlipper = true;
 
         if (g_vars->scene25_board->_flags & 4) {
 			if (!g_vars->scene25_board->_movement) {
