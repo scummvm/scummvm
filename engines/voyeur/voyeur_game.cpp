@@ -1028,6 +1028,9 @@ void VoyeurEngine::initIFace(){
 	
 	_voy._viewBounds = _bVoy->boltEntry(_playStamp1)._rectResource;
 
+	// Show the cursor using ScummVM functionality
+	_eventsManager.showCursor();
+
 	// Note: the original did two loops to preload members here, which is
 	// redundant for ScummVM, since computers are faster these days, and
 	// getting resources as needed will be fast enough.

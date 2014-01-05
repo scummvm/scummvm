@@ -63,6 +63,7 @@ bool Debugger::Cmd_Time(int argc, const char **argv) {
 				_vm->_gameMinute = LEVEL_M[timeId - 1];
 				_vm->_voy._isAM = timeId == 6;
 
+				// Camera back to full charge
 				_vm->_voy._RTVNum = 0;
 				_vm->_voy._RTANum = 255;
 

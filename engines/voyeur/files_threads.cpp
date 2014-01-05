@@ -1378,7 +1378,7 @@ int ThreadResource::doInterface() {
 	_vm->_eventsManager.getMouseInfo();
 	_vm->initIFace();
 
-	Common::Array<Common::Rect> &hotspots = _vm->_bVoy->boltEntry(
+	Common::Array<Common::Rect> *hotspots = &_vm->_bVoy->boltEntry(
 		_vm->_playStamp1 + 1)._rectResource->_entries;
 	_vm->_playStamp2 = 151 - _vm->getRandomNumber(5);
 	_vm->_voy._vocSecondsOffset = _vm->getRandomNumber(29);
@@ -1399,7 +1399,6 @@ int ThreadResource::doInterface() {
 	PictureResource *mangifyCursor = _vm->_bVoy->boltEntry(0x115)._picResource;
 
 	_vm->_eventsManager.setCursor(crosshairsCursor);
-	_vm->_eventsManager.showCursor();
 
 	// Main loop
 	int priorRegionIndex = -1;
@@ -1431,8 +1430,8 @@ int ThreadResource::doInterface() {
 				Common::Point(pt.x - MANSION_VIEW_X, pt.y - MANSION_VIEW_Y);
 		regionIndex = -1;
 
-		for (int idx = 0; idx < (int)hotspots.size(); ++idx) {
-			if (hotspots[idx].contains(pt)) {
+		for (int idx = 0; idx < (int)hotspots->size(); ++idx) {
+			if ((*hotspots)[idx].contains(pt)) {
 				// Rect check done
 				for (int arrIndex = 0; arrIndex < 3; ++arrIndex) {
 					if (_vm->_voy._arr3[arrIndex][idx] <= _vm->_voy._RTVNum &&
@@ -1511,7 +1510,7 @@ int ThreadResource::doInterface() {
 
 				_vm->initIFace();
 				
-				hotspots = _vm->_bVoy->boltEntry(_vm->_playStamp1 + 1)._rectResource->_entries;
+				hotspots = &_vm->_bVoy->boltEntry(_vm->_playStamp1 + 1)._rectResource->_entries;
 				_vm->_eventsManager.getMouseInfo();
 
 				_vm->_voy._field478 &= ~2;
