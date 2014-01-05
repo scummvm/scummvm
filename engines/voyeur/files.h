@@ -439,7 +439,6 @@ public:
 
 class ThreadResource {
 public:
-	static int _stampFlags;
 	static int _useCount[8];
 	static byte *_threadDataPtr;
 	static CMapResource *_cmd14Pal;

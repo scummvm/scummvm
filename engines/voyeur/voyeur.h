@@ -157,6 +157,7 @@ public:
 	int _glGoScene;
 	int _glGoStack;
 	bool _bob;
+	int _stampFlags;
 	int _playStamp1;
 	int _playStamp2;
 	int _videoId;

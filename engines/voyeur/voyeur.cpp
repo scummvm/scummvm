@@ -43,6 +43,7 @@ VoyeurEngine::VoyeurEngine(OSystem *syst, const VoyeurGameDescription *gameDesc)
 	_iForceDeath = -1;
 	_controlPtr = NULL;
 	_bob = false;
+	_stampFlags = 0;
 	_playStamp1 = _playStamp2 = 0;
 	_videoId = -1;
 	_checkTransitionId = -1;

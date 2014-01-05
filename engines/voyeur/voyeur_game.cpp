@@ -212,7 +212,7 @@ void VoyeurEngine::playStamp() {
 }
 
 void VoyeurEngine::initStamp() {
-	ThreadResource::_stampFlags &= ~1;
+	_stampFlags &= ~1;
 	_stackGroupPtr = _controlGroupPtr;
 
 	if (!_controlPtr->_entries[0])

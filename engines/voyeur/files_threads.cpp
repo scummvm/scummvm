@@ -27,13 +27,11 @@
 
 namespace Voyeur {
 
-int ThreadResource::_stampFlags;
 int ThreadResource::_useCount[8];
 byte *ThreadResource::_threadDataPtr;
 CMapResource *ThreadResource::_cmd14Pal;
 
 void ThreadResource::init() {
-	_stampFlags = 0;
 	Common::fill(&_useCount[0], &_useCount[8], 0);
 	_threadDataPtr = nullptr;
 	_cmd14Pal = nullptr;
@@ -58,7 +56,7 @@ void ThreadResource::initThreadStruct(int idx, int id) {
 }
 
 bool ThreadResource::loadAStack(int idx) {
-	if (_stampFlags & 1) {
+	if (_vm->_stampFlags & 1) {
 		unloadAStack(_controlIndex);
 		if  (!_useCount[idx]) {
 			BoltEntry &boltEntry = _vm->_stampLibPtr->boltEntry(_vm->_controlPtr->_memberIds[idx]);
@@ -76,7 +74,7 @@ bool ThreadResource::loadAStack(int idx) {
 }
 
 void ThreadResource::unloadAStack(int idx) {
-	if ((_stampFlags & 1) && _useCount[idx]) {
+	if ((_vm->_stampFlags & 1) && _useCount[idx]) {
 		if (--_useCount[idx] == 0) {
 			_vm->_stampLibPtr->freeBoltMember(_vm->_controlPtr->_memberIds[idx]);
 		}
@@ -186,7 +184,7 @@ void ThreadResource::getField1CE() {
 }
 
 void ThreadResource::unloadAllStacks(VoyeurEngine *vm) {
-	if (_stampFlags & 1) {
+	if (vm->_stampFlags & 1) {
 		for (int i = 0; i < 8; ++i) {
 			if (_useCount[i])
 				vm->_stampLibPtr->freeBoltMember(vm->_controlPtr->_memberIds[i]);
