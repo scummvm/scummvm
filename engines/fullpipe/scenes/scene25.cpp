@@ -37,11 +37,13 @@
 namespace Fullpipe {
 
 void scene25_showBoardOnRightFar() {
-	warning("STUB: scene25_showBoardOnRightFar()");
+	g_vars->scene25_board->show1(453, 557, MV_BRD25_RIGHT, 0);
+	g_vars->scene25_board->_priority = 28;
 }
 
 void scene25_showBoardOnRightClose() {
-	warning("STUB: scene25_showBoardOnRightClose()");
+	g_vars->scene25_board->show1(632, 557, rMV_BRD25_RIGHT, 0);
+	g_vars->scene25_board->_priority = 28;
 }
 
 void scene25_initScene(Scene *sc, int entranceId) {
@@ -94,6 +96,36 @@ void scene25_initScene(Scene *sc, int entranceId) {
 
 	g_vars->scene25_var08 = 0;
 	g_vars->scene25_var09 = 0;
+}
+
+int scene25_updateCursor() {
+	g_fp->updateCursorCommon();
+
+	if (g_vars->scene25_var06) {
+		int inv = getGameLoaderInventory()->getSelectedItemId();
+
+		if (g_fp->_objectIdAtCursor == ANI_WATER25) {
+			if ((g_vars->scene25_var07 && (!inv || inv == ANI_INV_BOARD)) || (g_vars->scene25_var05 && (inv == ANI_INV_LOPAT || !inv)))
+				g_fp->_cursorId = (g_fp->_cursorId != PIC_CSR_DEFAULT) ? PIC_CSR_ITN : PIC_CSR_ITN_INV; // FIXME check
+		} else if (g_fp->_objectIdAtCursor == ANI_BOARD25 && (!inv || inv == ANI_INV_SWAB || inv == ANI_INV_BROOM || inv == ANI_INV_LOPAT)) {
+			g_fp->_cursorId = (g_fp->_cursorId != PIC_CSR_DEFAULT) ? PIC_CSR_ITN : PIC_CSR_ITN_INV;
+		}
+	}
+
+	return g_fp->_cursorId;
+}
+
+void scene25_setupWater(Scene *a1, int entranceId) {
+	if (g_vars->scene25_var06) {
+		g_fp->_behaviorManager->setBehaviorEnabled(g_vars->scene25_drop, ST_DRP25_EMPTY, QU_DRP25_TOFLOOR, 0);
+		g_fp->_behaviorManager->setBehaviorEnabled(g_vars->scene25_drop, ST_DRP25_EMPTY, QU_DRP25_TOWATER, 1);
+
+		if (entranceId != TrubaRight)
+			g_fp->playTrack(g_fp->getGameLoaderGameVar()->getSubVarByName("SC_25"), "MUSIC2", 0);
+	} else {
+		g_fp->_behaviorManager->setBehaviorEnabled(g_vars->scene25_drop, ST_DRP25_EMPTY, QU_DRP25_TOFLOOR, 1);
+		g_fp->_behaviorManager->setBehaviorEnabled(g_vars->scene25_drop, ST_DRP25_EMPTY, QU_DRP25_TOWATER, 0);
+	}
 }
 
 } // End of namespace Fullpipe

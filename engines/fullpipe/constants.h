@@ -865,9 +865,17 @@ namespace Fullpipe {
 #define ANI_BOARD25 1898
 #define ANI_DROP_25 3499
 #define ANI_INV_BOARD 1872
+#define ANI_INV_BROOM 1774
+#define ANI_INV_LOPAT 1920
+#define ANI_INV_SWAB 1917
 #define ANI_WATER25 1856
+#define MV_BRD25_RIGHT 1899
+#define rMV_BRD25_RIGHT 1903
+#define QU_DRP25_TOFLOOR 3502
+#define QU_DRP25_TOWATER 3504
 #define SND_25_006 4059
 #define SND_25_029 5174
+#define ST_DRP25_EMPTY 3501
 
 // Scene 30
 #define ANI_LEG 2322
