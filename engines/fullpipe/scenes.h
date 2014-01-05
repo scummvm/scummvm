@@ -407,8 +407,7 @@ public:
 	int scene25_var07;
 	int scene25_var08;
 	int scene25_var09;
-	int scene25_var10;
-	int scene25_var11;
+	Common::Array<StaticANIObject *> scene25_var10;
 	int scene25_var12;
 
 	StaticANIObject *scene30_leg;
