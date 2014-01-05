@@ -378,17 +378,13 @@ public:
 	bool scene22_craneIsOut;
 	int scene22_numBagFalls;
 
-	int scene23_var01;
-	int scene23_var02;
-	int scene23_var03;
-	int scene23_var04;
 	StaticANIObject *scene23_calend0;
 	StaticANIObject *scene23_calend1;
 	StaticANIObject *scene23_calend2;
 	StaticANIObject *scene23_calend3;
-	int scene23_var05;
-	int scene23_var06;
-	int scene23_var07;
+	bool scene23_topReached;
+	bool scene23_isOnStool;
+	int scene23_someVar;
 	StaticANIObject *scene23_giraffeTop;
 	StaticANIObject *scene23_giraffee;
 

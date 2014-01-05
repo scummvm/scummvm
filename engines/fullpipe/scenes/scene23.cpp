@@ -63,17 +63,13 @@ bool sceneHandler23_testCalendar() {
 }
 
 void scene23_initScene(Scene *sc) {
-	g_vars->scene23_var01 = 200;
-	g_vars->scene23_var02 = 200;
-	g_vars->scene23_var03 = 300;
-	g_vars->scene23_var04 = 300;
 	g_vars->scene23_calend0 = sc->getStaticANIObject1ById(ANI_CALENDWHEEL, 0);
 	g_vars->scene23_calend1 = sc->getStaticANIObject1ById(ANI_CALENDWHEEL, 1);
 	g_vars->scene23_calend2 = sc->getStaticANIObject1ById(ANI_CALENDWHEEL, 2);
 	g_vars->scene23_calend3 = sc->getStaticANIObject1ById(ANI_CALENDWHEEL, 3);
-	g_vars->scene23_var05 = 0;
-	g_vars->scene23_var06 = 0;
-	g_vars->scene23_var07 = 0;
+	g_vars->scene23_topReached = false;
+	g_vars->scene23_isOnStool = false;
+	g_vars->scene23_someVar = 0;
 	g_vars->scene23_giraffeTop = sc->getStaticANIObject1ById(ANI_GIRAFFE_TOP, -1);
 	g_vars->scene23_giraffee = sc->getStaticANIObject1ById(ANI_GIRAFFEE, -1);
 
@@ -165,7 +161,7 @@ int scene23_updateCursor() {
 	g_fp->updateCursorCommon();
 
 	if (g_fp->_objectIdAtCursor == PIC_SC23_LADDERU) {
-		if (g_vars->scene23_var05)
+		if (g_vars->scene23_topReached)
 			return g_fp->_cursorId;
 
 		g_fp->_cursorId = getGameLoaderInventory()->getSelectedItemId() ? PIC_CSR_GOU : PIC_CSR_ITN; // FIXME check
@@ -293,7 +289,7 @@ void sceneHandler23_spinWheel3() {
 
 void sceneHandler23_pushButton(ExCommand *cmd) {
 	if (g_fp->_aniMan->isIdle() || !(g_fp->_aniMan->_flags & 0x100)) {
-		if (!g_vars->scene23_var05) {
+		if (!g_vars->scene23_topReached) {
 			if (g_fp->_aniMan->_ox != 405 || g_fp->_aniMan->_oy != 220) {
 				if (g_fp->_aniMan->_ox != 276 || g_fp->_aniMan->_oy != 438
 					|| g_fp->_aniMan->_movement || g_fp->_aniMan->_statics->_staticsId != ST_MAN_RIGHT) {
@@ -315,10 +311,10 @@ void sceneHandler23_pushButton(ExCommand *cmd) {
 					mq->chain(0);
 				}
 
-				if (!g_vars->scene23_var05)
+				if (!g_vars->scene23_topReached)
 					return;
 			} else {
-				g_vars->scene23_var05 = 1;
+				g_vars->scene23_topReached = true;
 			}
 		}
 
@@ -381,16 +377,16 @@ void sceneHandler23_sendClick(StaticANIObject *ani) {
 void sceneHandler23_checkReachingTop() {
 	if (g_fp->_aniMan->_movement || g_fp->_aniMan->_statics->_staticsId != ST_MAN_STANDLADDER
 		|| g_fp->_aniMan->_ox != 405 || g_fp->_aniMan->_oy != 220)
-		g_vars->scene23_var05 = 0;
+		g_vars->scene23_topReached = false;
 	else
-		g_vars->scene23_var05 = 1;
+		g_vars->scene23_topReached = true;
 }
 
 void sceneHandler23_exitCalendar() {
 	if (!g_fp->_aniMan->_movement && g_fp->_aniMan->_statics->_staticsId == ST_MAN_STANDLADDER
 		&& !g_fp->_aniMan->getMessageQueue() && !(g_fp->_aniMan->_flags & 0x100)) {
 		chainQueue(QU_SC23_FROMCALENDAREXIT, 1);
-		g_vars->scene23_var07 = 2;
+		g_vars->scene23_someVar = 2;
 	}
 }
 
@@ -403,8 +399,8 @@ void sceneHandler23_fromCalendar(ExCommand *cmd) {
 		mq->setFlags(mq->getFlags() | 1);
 		mq->chain(0);
 
-		g_vars->scene23_var05 = 0;
-		g_vars->scene23_var07 = 0;
+		g_vars->scene23_topReached = false;
+		g_vars->scene23_someVar = 0;
 	}
 }
 
@@ -426,7 +422,7 @@ int sceneHandler23(ExCommand *cmd) {
 
 	switch (cmd->_messageNum) {
 	case MSG_SC23_FROMSTOOL:
-		g_vars->scene23_var06 = 0;
+		g_vars->scene23_isOnStool = false;
 
 		getCurrSceneSc2MotionController()->setEnabled();
 		getGameLoaderInteractionController()->enableFlag24();
@@ -440,7 +436,7 @@ int sceneHandler23(ExCommand *cmd) {
 		break;
 
 	case MSG_SC23_ONSTOOL:
-		g_vars->scene23_var06 = 1;
+		g_vars->scene23_isOnStool = true;
 
 		getCurrSceneSc2MotionController()->clearEnabled();
 		getGameLoaderInteractionController()->disableFlag24();
@@ -483,11 +479,11 @@ int sceneHandler23(ExCommand *cmd) {
 		if (g_fp->_aniMan2) {
 			int x = g_fp->_aniMan2->_ox;
 
-			if (x < g_fp->_sceneRect.left + g_vars->scene23_var01)
-				g_fp->_currentScene->_x = x - g_vars->scene23_var03 - g_fp->_sceneRect.left;
+			if (x < g_fp->_sceneRect.left + 200)
+				g_fp->_currentScene->_x = x - 300 - g_fp->_sceneRect.left;
 
-			if (x > g_fp->_sceneRect.right - g_vars->scene23_var01)
-				g_fp->_currentScene->_x = x + g_vars->scene23_var03 - g_fp->_sceneRect.right;
+			if (x > g_fp->_sceneRect.right - 200)
+				g_fp->_currentScene->_x = x + 300 - g_fp->_sceneRect.right;
 		}
 
 		g_fp->_floaters->update();
@@ -509,7 +505,7 @@ int sceneHandler23(ExCommand *cmd) {
 
 			sceneHandler23_checkReachingTop();
 
-			if (g_vars->scene23_var05) {
+			if (g_vars->scene23_topReached) {
 				picId = g_fp->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
 
 				if (picId == PIC_SC23_LADDER) {
@@ -528,10 +524,10 @@ int sceneHandler23(ExCommand *cmd) {
 				break;
 			}
 
-			if (!g_vars->scene23_var06) {
+			if (!g_vars->scene23_isOnStool) {
 				picId = g_fp->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
 
-				if (picId == PIC_SC23_LADDERU && !g_vars->scene23_var05) {
+				if (picId == PIC_SC23_LADDERU && !g_vars->scene23_topReached) {
 					sceneHandler23_pushButton(cmd);
 
 					cmd->_messageKind = 0;
