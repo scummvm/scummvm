@@ -28,6 +28,9 @@
 #include "fullpipe/scenes.h"
 #include "fullpipe/gameloader.h"
 
+#include "graphics/palette.h"
+#include "video/avi_decoder.h"
+
 namespace Fullpipe {
 
 ModalIntro::ModalIntro() {
@@ -224,8 +227,41 @@ void ModalIntro::finish() {
 		g_fp->_gameLoader->updateSystems(42);
 }
 
-void ModalVideoPlayer::play(const char *fname) {
-	warning("STUB: ModalVideoPlayer::play(%s)", fname);
+void ModalVideoPlayer::play(const char *filename) {
+	// TODO: Videos are encoded using Intel Indeo 5 (IV50), which isn't supported yet
+
+	Video::AVIDecoder *aviDecoder = new Video::AVIDecoder();
+
+	if (!aviDecoder->loadFile(filename))
+		return;
+
+	uint16 x = (g_system->getWidth() - aviDecoder->getWidth()) / 2;
+	uint16 y = (g_system->getHeight() - aviDecoder->getHeight()) / 2;
+	bool skipVideo = false;
+
+	aviDecoder->start();
+
+	while (!g_fp->shouldQuit() && !aviDecoder->endOfVideo() && !skipVideo) {
+		if (aviDecoder->needsUpdate()) {
+			const Graphics::Surface *frame = aviDecoder->decodeNextFrame();
+			if (frame) {
+				g_fp->_system->copyRectToScreen(frame->getPixels(), frame->pitch, x, y, frame->w, frame->h);
+
+				if (aviDecoder->hasDirtyPalette())
+					g_fp->_system->getPaletteManager()->setPalette(aviDecoder->getPalette(), 0, 256);
+
+				g_fp->_system->updateScreen();
+			}
+		}
+
+		Common::Event event;
+		while (g_fp->_system->getEventManager()->pollEvent(event)) {
+			if ((event.type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_ESCAPE) || event.type == Common::EVENT_LBUTTONUP)
+				skipVideo = true;
+		}
+
+		g_fp->_system->delayMillis(aviDecoder->getTimeToNextFrame());
+	}
 }
 
 void FullpipeEngine::openMap() {
