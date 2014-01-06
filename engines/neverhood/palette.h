@@ -61,6 +61,7 @@ protected:
 	int _fadeStep;
 	void update();
 	void fadeColor(byte *rgb, byte toR, byte toG, byte toB);
+	int calculateFadeStep(int counter);
 };
 
 } // End of namespace Neverhood
