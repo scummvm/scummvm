@@ -401,7 +401,7 @@ void Scene1608::upRidingCar() {
 		sendPointMessage(_asCar, 0x2004, _mouseClickPos);
 		_mouseClicked = false;
 	}
-	if (_asCar->getX() < 300) {
+	if (_asCar->getY() < 330) {
 		if (_carClipFlag) {
 			_carClipFlag = false;
 			_asCar->setClipRect(_clipRect1);
