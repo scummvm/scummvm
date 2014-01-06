@@ -64,7 +64,12 @@ int scene28_updateCursor() {
 }
 
 void sceneHandler28_lift1ShowAfter() {
-	warning("STUB: sceneHandler28_lift1ShowAfter()");
+	StaticANIObject *ani = g_fp->_currentScene->getStaticANIObject1ById(ANI_MAN_28, -1);
+
+	g_fp->_aniMan->_statics = g_fp->_aniMan->getStaticsById(ST_MAN_SIT|0x4000);
+	g_fp->_aniMan->setOXY(ani->_ox + 7, ani->_oy);
+	g_fp->_aniMan->_priority = ani->_priority;
+	g_fp->_aniMan->show1(-1, -1, -1, 0);
 }
 
 void sceneHandler28_makeFaces(ExCommand *cmd) {

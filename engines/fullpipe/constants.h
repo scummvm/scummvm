@@ -980,6 +980,7 @@ namespace Fullpipe {
 // Scene 28
 #define ANI_LIFT 982
 #define ANI_LIFT_28 4238
+#define ANI_MAN_28 4247
 #define MSG_SC28_CLICKLIFT 4258
 #define MSG_SC28_ENDCABIN 3456
 #define MSG_SC28_ENDLIFT1 4259
