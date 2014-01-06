@@ -32,7 +32,7 @@
 
 #include "fullpipe/interaction.h"
 #include "fullpipe/behavior.h"
-
+#include "fullpipe/floaters.h"
 
 namespace Fullpipe {
 
@@ -49,7 +49,7 @@ void scene28_initScene() {
 	g_vars->scene28_var10 = 0;
 	g_vars->scene28_var11 = 0;
 
-	g_fp->_floaters->init(getGameLoaderGameVar()->getSubVarByName("SC_28"));
+	g_fp->_floaters->init(g_fp->getGameLoaderGameVar()->getSubVarByName("SC_28"));
 	
 	g_fp->initArcadeKeys("SC_28");
 }

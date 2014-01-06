@@ -422,6 +422,18 @@ public:
 	StaticANIObject *scene26_sock;
 	StaticANIObject *scene26_activeVent;
 
+	int scene28_var01;
+	int scene28_var02;
+	int scene28_var03;
+	int scene28_var04;
+	int scene28_var05;
+	int scene28_var06;
+	int scene28_var07;
+	int scene28_var08;
+	int scene28_var09;
+	int scene28_var10;
+	int scene28_var11;
+
 	StaticANIObject *scene30_leg;
 	int scene30_liftFlag;
 
