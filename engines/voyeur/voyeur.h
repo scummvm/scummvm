@@ -50,8 +50,6 @@ namespace Voyeur {
 #define DEBUG_INTERMEDIATE 2
 #define DEBUG_DETAILED 3
 
-#define MAX_RESOLVE 1000
-
 // Constants used for doInterface display of the mansion
 #define MANSION_MAX_X 784
 #define MANSION_MAX_Y 150
@@ -73,12 +71,10 @@ enum VoyeurArea { AREA_NONE, AREA_APARTMENT, AREA_INTERFACE, AREA_ROOM, AREA_EVI
 
 struct VoyeurGameDescription;
 
-
 class VoyeurEngine : public Engine {
 private:
 	const VoyeurGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
-	Common::Array<int> _resolves;
 	FontInfoResource _defaultFontInfo;
 
 	void ESP_Init();
