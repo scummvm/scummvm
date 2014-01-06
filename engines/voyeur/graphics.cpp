@@ -658,7 +658,7 @@ void GraphicsManager::resetPalette() {
 	for (int i = 0; i < 256; ++i)
 		setColor(i, 0, 0, 0);
 
-	_vm->_eventsManager._intPtr.field38 = 1;
+	_vm->_eventsManager._intPtr.field38 = true;
 	_vm->_eventsManager._intPtr._hasPalette = true;
 }
 

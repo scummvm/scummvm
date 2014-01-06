@@ -159,7 +159,7 @@ public:
 	int _currentVocId;
 	int _videoId;
 	const int *_resolvePtr;
-	int _iForceDeath;
+	int _iForceDeath; // CHECKME: The original initializes it in ESP_init()
 	int _checkTransitionId;
 	int _gameHour;
 	int _gameMinute;

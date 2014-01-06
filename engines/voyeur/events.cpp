@@ -56,7 +56,7 @@ IntData::IntData() {
 	field24 = 0;
 	field26 = 0;
 	field2A = 0;
-	field38 = 0;
+	field38 = false;
 	field3B = 0;
 	field3D = 0;
 	_palStartIndex = 0;
@@ -98,7 +98,6 @@ EventsManager::EventsManager(): _intPtr(_gameData),
 	_newLeftClick = _newRightClick = false;;
 	_newMouseClicked = _newMouseUnk = false;
 
-	_v2A0A2 = 0;
 	_videoDead = 0;
 }
 
@@ -188,7 +187,7 @@ void EventsManager::voyeurTimer() {
 
 	if (--_gameData.field26 <= 0) {
 		if (_gameData._flipWait) {
-			_gameData.field38 = 1;
+			_gameData.field38 = true;
 			_gameData._flipWait = false;
 			_gameData.field3B = 0;
 		}
@@ -353,7 +352,7 @@ void EventsManager::startFade(CMapResource *cMap) {
 
 		_intPtr._hasPalette = true;
 		if (!(cMap->_fadeStatus & 2))
-			_intPtr.field38 = 1;
+			_intPtr.field38 = true;
 	}
 
 	if (_cycleStatus & 1)
@@ -403,7 +402,7 @@ void EventsManager::vDoFadeInt() {
 		_intPtr._palEndIndex = _fadeLastCol;
 
 	_intPtr._hasPalette = true;
-	_intPtr.field38 = 1;
+	_intPtr.field38 = true;
 }
 
 void EventsManager::vDoCycleInt() {

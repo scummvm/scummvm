@@ -307,7 +307,7 @@ bool VoyeurEngine::doLock() {
 		_eventsManager.setCursor(cursorPic);
 		_eventsManager.showCursor();
 
-		_eventsManager._intPtr. field38 = 1;
+		_eventsManager._intPtr. field38 = true;
 		_eventsManager._intPtr._hasPalette = true;
 
 		_graphicsManager._fontPtr->_curFont = _bVoy->boltEntry(0x708)._fontResource;
@@ -357,7 +357,7 @@ bool VoyeurEngine::doLock() {
 					}
 
 					_eventsManager.setCursorColor(127, (key == -1) ? 0 : 1);
-					_eventsManager._intPtr.field38 = 1;
+					_eventsManager._intPtr.field38 = true;
 					_eventsManager._intPtr._hasPalette = true;
 
 					_eventsManager.delay(1);

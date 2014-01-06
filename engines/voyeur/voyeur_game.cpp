@@ -41,8 +41,7 @@ void VoyeurEngine::playStamp() {
 	_voy._isAM = false;
 	_gameHour = 9;
 	_gameMinute = 0;
-	_eventsManager._v2A0A2 = 0;
-	_voy._field46E = 1;
+	_voy._field46E = true;
 
 	int buttonId;
 	bool breakFlag = false;
@@ -67,14 +66,14 @@ void VoyeurEngine::playStamp() {
 					break;
 				case 1:
 					_voy._field478 &= ~1;
-					_voy._field46E = 1;
+					_voy._field46E = true;
 					threadP->chooseSTAMPButton(22);
 					_voy._field472 = 143;
 					break;
 				case 2:
 					_voy._field478 &= ~1;
 					reviewTape();
-					_voy._field46E = 1;
+					_voy._field46E = true;
 					_voy._field472 = 142;
 					break;
 				case 3:
@@ -86,7 +85,7 @@ void VoyeurEngine::playStamp() {
 					break;
 				case 5:
 					doGossip();
-					_voy._field46E = 1;
+					_voy._field46E = true;
 					_voy._field472 = 141;
 					_voy._field478 = -1;
 					break;
@@ -116,7 +115,7 @@ void VoyeurEngine::playStamp() {
 				break;
 			case 2:
 				reviewTape();
-				_voy._field46E = 1;
+				_voy._field46E = true;
 				break;
 			case 4:
 				flag = true;
@@ -163,7 +162,7 @@ void VoyeurEngine::playStamp() {
 					flag = true;
 				} else {
 					threadP->chooseSTAMPButton(buttonId);
-					_voy._field46E = 1;
+					_voy._field46E = true;
 				}
 			}
 			break;
@@ -456,7 +455,7 @@ void VoyeurEngine::reviewTape() {
 		_graphicsManager.setColor(12, 120, 248, 120);
 		_eventsManager.setCursorColor(128, 1);
 
-		_eventsManager._intPtr.field38 = 1;
+		_eventsManager._intPtr.field38 = true;
 		_eventsManager._intPtr._hasPalette = true;
 		_graphicsManager._fontPtr->_curFont = _bVoy->boltEntry(0x909)._fontResource;
 		_graphicsManager._fontPtr->_fontSaveBack = false;
@@ -986,7 +985,7 @@ void VoyeurEngine::makeViewFinder() {
 	_graphicsManager.setColor(243, 105, 105, 105);
 	_graphicsManager.setColor(palOffset + 241, 219, 235, 235);
 
-	_eventsManager._intPtr.field38 = 1;
+	_eventsManager._intPtr.field38 = true;
 	_eventsManager._intPtr._hasPalette = true;
 }
 
@@ -1240,7 +1239,7 @@ void VoyeurEngine::doTimeBar(bool force) {
 		(*_graphicsManager._vPort)->sFillBox(6, fullHeight - 92);
 		if (height > 0) {
 			_graphicsManager.setColor(215, 238, 238, 238);
-			_eventsManager._intPtr.field38 = 1;
+			_eventsManager._intPtr.field38 = true;
 			_eventsManager._intPtr._hasPalette = true;
 
 			_graphicsManager._drawPtr->_penColor = 215;
@@ -1262,7 +1261,7 @@ void VoyeurEngine::flashTimeBar(){
 		else
 			_graphicsManager.setColor(240, 220, 220, 220);
 		
-		_eventsManager._intPtr.field38 = 1;
+		_eventsManager._intPtr.field38 = true;
 		_eventsManager._intPtr._hasPalette = true;
 		_flashTimeFlag = !_flashTimeFlag;
 	}

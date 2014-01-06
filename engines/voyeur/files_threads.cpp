@@ -1176,7 +1176,7 @@ void ThreadResource::doRoom() {
 	while (!vm.shouldQuit() && !breakFlag) {
 		_vm->_voyeurArea = AREA_ROOM;
 		vm._graphicsManager.setColor(128, 0, 255, 0);
-		vm._eventsManager._intPtr.field38 = 1;
+		vm._eventsManager._intPtr.field38 = true;
 		vm._eventsManager._intPtr._hasPalette = true;
 
 		do {
@@ -1221,7 +1221,7 @@ void ThreadResource::doRoom() {
 				vm._eventsManager.setCursorColor(128, 2);
 			}
 
-			vm._eventsManager._intPtr.field38 = 1;
+			vm._eventsManager._intPtr.field38 = true;
 			vm._eventsManager._intPtr._hasPalette = true;
 			vm._graphicsManager.flipPage();
 			vm._eventsManager.sWaitFlip();
@@ -1341,7 +1341,7 @@ int ThreadResource::doInterface() {
 
 	_vm->_voy._field478 |= 1;
 	if (_vm->_voy._field46E) {
-		_vm->_voy._field46E = 0;
+		_vm->_voy._field46E = false;
 		return -2;
 	}
 

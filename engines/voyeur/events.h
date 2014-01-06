@@ -82,7 +82,7 @@ public:
 	int _field468;
 	int _field46A;
 	int _vocSecondsOffset;
-	int _field46E;
+	bool _field46E;
 	int _field470;
 	int _field472;
 	int _transitionId;
@@ -154,7 +154,7 @@ public:
 	int field26;
 	int field2A;
 	bool _hasPalette;
-	int field38;
+	bool field38;
 	int field3B;
 	int field3D;
 	int _palStartIndex;
@@ -206,7 +206,6 @@ public:
 	bool _newLeftClick, _newRightClick;
 	bool _newMouseUnk;
 
-	int _v2A0A2;
 	int _videoDead;
 	int _cycleTime[4];
 	byte *_cycleNext[4];
