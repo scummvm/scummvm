@@ -261,8 +261,7 @@ void sceneHandler22_stoolLogic(ExCommand *cmd) {
 
 				mq->deleteExCommandByIndex(0, 0);
 
-				if (mq)
-					delete mq;
+				delete mq;
 
 				mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC22_TOSTOOL_R), 0, 0);
 
