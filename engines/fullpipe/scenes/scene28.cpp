@@ -54,4 +54,13 @@ void scene28_initScene() {
 	g_fp->initArcadeKeys("SC_28");
 }
 
+int scene28_updateCursor() {
+	g_fp->updateCursorCommon();
+	if (g_fp->_objectIdAtCursor == ANI_LIFT || g_fp->_objectIdAtCursor == ANI_LIFT_28)
+		if (g_fp->_cursorId == PIC_CSR_DEFAULT)
+			g_fp->_cursorId = PIC_CSR_ITN;
+
+	return g_fp->_cursorId;
+}
+
 } // End of namespace Fullpipe

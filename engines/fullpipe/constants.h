@@ -967,6 +967,10 @@ namespace Fullpipe {
 #define ST_VNT26_RIGHT2 3348
 #define ST_VNT26_UP2 1948
 
+// Scene 28
+#define ANI_LIFT 982
+#define ANI_LIFT_28 4238
+
 // Scene 30
 #define ANI_LEG 2322
 #define MSG_SC30_UPDATEPATH 2358
