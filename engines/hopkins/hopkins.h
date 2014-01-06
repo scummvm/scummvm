@@ -60,10 +60,6 @@
  */
 namespace Hopkins {
 
-#define DEBUG_BASIC 1
-#define DEBUG_INTERMEDIATE 2
-#define DEBUG_DETAILED 3
-
 #define SCREEN_WIDTH 640
 #define SCREEN_HEIGHT 480
 

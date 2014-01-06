@@ -1083,7 +1083,7 @@ static const NRect kLoadGameMenuButtonCollisionBounds[] = {
 	{ 182, 358, 241, 433 }
 };
 
-static const NRect kLoadGameMenuListBoxRect = { 0, 0, 320, 271 };
+static const NRect kLoadGameMenuListBoxRect = { 0, 0, 320, 272 };
 static const NRect kLoadGameMenuTextEditRect = { 0, 0, 320, 17 };
 static const NRect kLoadGameMenuMouseRect = { 263, 48, 583, 65 };
 
@@ -1116,7 +1116,7 @@ static const NRect kDeleteGameMenuButtonCollisionBounds[] = {
 	{ 395, 278, 452, 372 }
 };
 
-static const NRect kDeleteGameMenuListBoxRect = { 0, 0, 320, 271 };
+static const NRect kDeleteGameMenuListBoxRect = { 0, 0, 320, 272 };
 static const NRect kDeleteGameMenuTextEditRect = { 0, 0, 320, 17 };
 
 DeleteGameMenu::DeleteGameMenu(NeverhoodEngine *vm, Module *parentModule, SavegameList *savegameList)

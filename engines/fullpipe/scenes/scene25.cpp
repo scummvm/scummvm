@@ -436,7 +436,7 @@ void sceneHandler25_backToPipe() {
 
 void sceneHandler25_walkOnLadder(StaticANIObject *ani, Common::Point *pnt, MessageQueue *mq, int flag) {
 	int aniY = ani->_oy;
-	int newx, newy;
+	int newx = 0, newy = 0;
 	Common::Point point;
 	ExCommand *ex;
 
@@ -488,7 +488,7 @@ void sceneHandler25_walkOnLadder(StaticANIObject *ani, Common::Point *pnt, Messa
 	for (int i = 0; i < numObsolete; i++)
 		mq->deleteExCommandByIndex(0, 1);
 
-    ex = new ExCommand(ani->_id, 34, 256, 0, 0, 0, 1, 0, 0, 0);
+	ex = new ExCommand(ani->_id, 34, 256, 0, 0, 0, 1, 0, 0, 0);
 
 	ex->_field_14 = 256;
 	ex->_messageNum = 0;
@@ -509,6 +509,9 @@ void sceneHandler25_walkOnLadder(StaticANIObject *ani, Common::Point *pnt, Messa
 
 		ani->_movement->setDynamicPhaseIndex(idx);
 	} else {
+		if (!lastEx)
+			error("sceneHandler25_walkOnLadder(): Incorrect state. Please report this to sev");
+
 		ani->changeStatics2(ani->getMovementById(lastEx->_messageNum)->_staticsObj1->_staticsId);
 		ani->setOXY(newx, newy);
 		ani->restartMessageQueue(mq);
@@ -588,7 +591,7 @@ int sceneHandler25(ExCommand *cmd) {
 		break;
 
 	case 33:
-        if (g_fp->_aniMan2) {
+		if (g_fp->_aniMan2) {
 			int x = g_fp->_aniMan2->_ox;
 			int y = g_fp->_aniMan2->_oy;
 

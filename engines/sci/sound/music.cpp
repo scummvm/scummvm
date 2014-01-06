@@ -1044,6 +1044,8 @@ void SciMusic::remapChannels() {
 		if (!_channelMap[i]._song)
 			resetDeviceChannel(i);
 	}
+
+	delete map;
 }
 
 
