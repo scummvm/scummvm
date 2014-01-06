@@ -171,44 +171,60 @@ void VoyeurEngine::initInput() {
 
 bool VoyeurEngine::doHeadTitle() {
 //	char dest[144];
-
+	
 	_eventsManager.startMainClockInt();
-
+	/*
 	// Show starting screen
-//	if (_bVoy->getBoltGroup(0x500))
-//		showConversionScreen();
-	if (shouldQuit())
-		return false;
+	if (_bVoy->getBoltGroup(0x500)) {
+		showConversionScreen();
+		_bVoy->freeBoltGroup(0x500);
+
+		if (shouldQuit())
+			return false;
+	}
 
 	if (ConfMan.getBool("copy_protection")) {
+		// Display lock screen
 		bool result = doLock();
 		if (!result || shouldQuit())
 			return false;
 	}
 
-//	showTitleScreen();
+	// Show the title screen
+	showTitleScreen();
+	if (shouldQuit())
+		return false;
 
 	// Opening
 	if (!_eventsManager._mouseClicked) {
-//		doOpening();
-//		doTransitionCard("Saturday Afternoon", "Player's Apartment");
+		doOpening();
+		doTransitionCard("Saturday Afternoon", "Player's Apartment");
 		_eventsManager.delayClick(90);
 	} else {
 		_eventsManager._mouseClicked = false;
 	}
-
+	*/
 	if (_voy._field478 & 0x80) {
-		// TODO: Check when these are called, and the two different loops.
-		// Also, comptuerNu isn't an array in IDB?
-		/*
-		if (_voy._evidence[19] == 0) {
-			Common::copy(&COMPUTER_DEFAULTS[0], &COMPUTER_DEFAULTS[9 * 8], &_voy._computerNum[0]);
-			_voy._evidence[19] = 9;
-		} else {
-			error("_computerNum loaded with uninitialized list here");
-		}
-		*/
-	}
+		// Add initial game event set
+		if (_voy._eventCount <= 1)
+			_voy.addEvent(18, 1, EVTYPE_VIDEO, 33, 0, 998, -1);
+		if (_voy._eventCount <= 2)
+			_voy.addEvent(18, 2, EVTYPE_VIDEO, 41, 0, 998, -1);
+		if (_voy._eventCount <= 3)
+			_voy.addEvent(18, 3, EVTYPE_VIDEO, 47, 0, 998, -1);
+		if (_voy._eventCount <= 4)
+			_voy.addEvent(18, 4, EVTYPE_VIDEO, 53, 0, 998, -1);
+		if (_voy._eventCount <= 5)
+			_voy.addEvent(18, 5, EVTYPE_VIDEO, 46, 0, 998, -1);
+		if (_voy._eventCount <= 6)
+			_voy.addEvent(18, 6, EVTYPE_VIDEO, 50, 0, 998, -1);
+		if (_voy._eventCount <= 7)
+			_voy.addEvent(18, 7, EVTYPE_VIDEO, 40, 0, 998, -1);
+		if (_voy._eventCount <= 8)
+			_voy.addEvent(18, 8, EVTYPE_VIDEO, 43, 0, 998, -1);
+		if (_voy._eventCount <= 9)
+			_voy.addEvent(19, 1, EVTYPE_AUDIO, 20, 0, 998, -1);
+	} 
 
 	_voy._field472 = 140;
 	return true;
@@ -240,7 +256,6 @@ void VoyeurEngine::showConversionScreen() {
 	flipPageAndWaitForFade();
 
 	_graphicsManager.screenReset();
-	_bVoy->freeBoltGroup(0x500);
 }
 
 bool VoyeurEngine::doLock() {
@@ -462,7 +477,7 @@ void VoyeurEngine::showTitleScreen() {
 }
 
 void VoyeurEngine::doOpening() {
-/*
+	/*
 	_graphicsManager.screenReset();
 
 	if (!_bVoy->getBoltGroup(0x200, true))
@@ -478,11 +493,11 @@ void VoyeurEngine::doOpening() {
 	_voy._RTVNum = 0;
 	_voy._field468 = _voy._RTVNum;
 	_voy._field478 = 16;
-	_eventsManager._gameHour = 4;
-	_eventsManager._gameMinute  = 0;
+	_gameHour = 4;
+	_gameMinute  = 0;
 	_videoId = 1;
 	_eventsManager._videoDead = -1;
-	addVideoEventStart();
+	_eventsManager.addVideoEventStart();
 
 	_voy._field478 &= ~1;
 
@@ -497,7 +512,7 @@ void VoyeurEngine::doOpening() {
 	::Video::RL2Decoder decoder;
 	decoder.loadFile("a2300100.rl2");
 	decoder.start();
-
+	decoder.play(this);
 	while (!shouldQuit() && !decoder.endOfVideo() && !_eventsManager._mouseClicked) {
 		if (decoder.hasDirtyPalette()) {
 			const byte *palette = decoder.getPalette();
@@ -514,6 +529,15 @@ void VoyeurEngine::doOpening() {
 		_eventsManager.pollEvents();
 		g_system->delayMillis(10);
 	}
+
+	if ((_voy._RTVNum - _voy._field468) < 2)
+		_eventsManager.delay(60);
+
+	_voy._field478 |= 1;
+	_eventsManager.addVideoEventEnd();
+	_voy._field478 &= 0x10;
+
+	_bVoy->freeBoltGroup(0x200);
 	*/
 }
 
@@ -535,7 +559,7 @@ void VoyeurEngine::playRL2Video(const Common::String &filename) {
 				(byte *)_graphicsManager._screenSurface.getPixels());
 		}
 
-		_eventsManager.pollEvents();
+		_eventsManager.getMouseInfo();
 		g_system->delayMillis(10);
 	}
 }

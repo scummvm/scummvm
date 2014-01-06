@@ -66,6 +66,21 @@ IntData::IntData() {
 
 /*------------------------------------------------------------------------*/
 
+void SVoy::addEvent(int hour, int minute, VoyeurEventType type, int videoId, 
+		int on, int off, int dead) {
+	VoyeurEvent &e = _events[_eventCount++];
+
+	e._hour = hour;
+	e._minute = minute;
+	e._isAM = hour < 12;
+	e._videoId = videoId;
+	e._computerOn = on;
+	e._computerOff = off;
+	e._dead = dead;
+}
+
+/*------------------------------------------------------------------------*/
+
 EventsManager::EventsManager(): _intPtr(_gameData),
 		_fadeIntNode(0, 0, 3), _cycleIntNode(0, 0, 3) {
 	_cycleStatus = 0;

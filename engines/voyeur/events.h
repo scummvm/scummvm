@@ -101,7 +101,15 @@ public:
 	int _field4EE;
 	int _field4F0;
 	int _field4F2;
+
+	/**
+	 * Total number of game events that have occurred
+	 */
 	int _eventCount;
+
+	/**
+	 * List of game events that have occurred
+	 */
 	VoyeurEvent _events[TOTAL_EVENTS];
 
 	int _timeStart;
@@ -126,6 +134,12 @@ public:
 	int _curICF1;
 	int _fadeICF0;
 	int _policeEvent;
+public:
+	/**
+	 * Add an event to the list of game events that have occurred
+	 */
+	void addEvent(int hour, int minute, VoyeurEventType type, int videoId, int on,
+		int off, int dead);
 };
 
 class IntData {
