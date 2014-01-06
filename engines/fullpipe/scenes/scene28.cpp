@@ -83,10 +83,6 @@ void sceneHandler28_startWork1() {
 	warning("STUB: sceneHandler28_startWork1()");
 }
 
-void sceneHandler28_clickLift(int keyCode) {
-	warning("STUB: sceneHandler28_clickLift()");
-}
-
 void sceneHandler28_lift0Start() {
 	chainQueue(QU_SC28_LIFT0_START, 1);
 }
@@ -115,6 +111,59 @@ void sceneHandler28_lift6Start() {
 	warning("STUB: sceneHandler28_lift6Start()");
 }
 
+void sceneHandler28_clickLift(int keycode) {
+	int x = 0;
+
+	switch (keycode) {
+	case 0: x = 600; break;
+	case 1: x = 824; break;
+	case 2: x = 1055; break;
+	case 3: x = 1286; break;
+	case 4: x = 1517; break;
+	case 5: x = 1748; break;
+	case 6: x = 1979; break;
+	}
+
+	if (abs(x - g_fp->_aniMan->_ox) > 1 || abs(472 - g_fp->_aniMan->_oy) > 1
+		|| g_fp->_aniMan->_movement
+		|| g_fp->_aniMan->_statics->_staticsId != ST_MAN_UP) {
+		MessageQueue *mq = getCurrSceneSc2MotionController()->method34(g_fp->_aniMan, x, 472, 1, ST_MAN_UP);
+		if (mq) {
+			ExCommand *ex = new ExCommand(0, 17, MSG_SC28_CLICKLIFT, 0, 0, 0, 1, 0, 0, 0);
+			ex->_excFlags |= 3;
+
+			mq->addExCommandToEnd(ex);
+
+			postExCommand(g_fp->_aniMan->_id, 2, x, 472, 0, -1);
+		}
+	} else {
+		switch (keycode) {
+		case 0:
+			sceneHandler28_lift0Start();
+			break;
+		case 1:
+			sceneHandler28_lift1Start();
+			break;
+		case 2:
+			sceneHandler28_lift2Start();
+			break;
+		case 3:
+			sceneHandler28_lift3Start();
+			break;
+		case 4:
+			sceneHandler28_lift4Start();
+			break;
+		case 5:
+			sceneHandler28_lift5Start();
+			break;
+		case 6:
+			sceneHandler28_lift6Start();
+			break;
+		default:
+			return;
+		}
+	}
+}
 
 int sceneHandler28(ExCommand *cmd) {
 	if (cmd->_messageKind != 17)
