@@ -454,7 +454,7 @@ void sceneHandler25_walkOnLadder(StaticANIObject *ani, Common::Point *pnt, Messa
 	int minDistance = 20000;
 	ExCommand *lastEx = 0;
 
-	for (int i = 0; i < mq->getCount(); i++) {
+	for (uint i = 0; i < mq->getCount(); i++) {
 		int curDistance = abs(pnty - aniY);
 
 		ex = mq->getExCommandByIndex(i);
