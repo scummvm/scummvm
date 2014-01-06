@@ -191,7 +191,7 @@ void sceneHandler16_fillMug() {
 			mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC16_GIRLOUT), 0, 1);
 
 			mq->replaceKeyCode(-1, g_vars->scene16_walkingGirl->_okeyCode);
-			if (mq->chain(g_vars->scene16_walkingGirl) || !mq)
+			if (mq->chain(g_vars->scene16_walkingGirl))
 				return;
 		}
 		delete mq;
