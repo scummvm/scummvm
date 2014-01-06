@@ -36,7 +36,7 @@
 
 namespace Fullpipe {
 
-void scene28_initScene() {
+void scene28_initScene(Scene *sc) {
 	g_vars->scene28_var01 = 200;
 	g_vars->scene28_var02 = 200;
 	g_vars->scene28_var03 = 300;
@@ -67,7 +67,7 @@ void sceneHandler28_lift1ShowAfter() {
 	warning("STUB: sceneHandler28_lift1ShowAfter()");
 }
 
-void sceneHandler28_makeFaces(ExCommand *cmd, int entranceId) {
+void sceneHandler28_makeFaces(ExCommand *cmd) {
 	warning("STUB: sceneHandler28_makeFaces()");
 }
 
@@ -88,7 +88,7 @@ void sceneHandler28_clickLift(int keyCode) {
 }
 
 void sceneHandler28_lift0Start() {
-	warning("STUB: sceneHandler28_lift0Start()");
+	chainQueue(QU_SC28_LIFT0_START, 1);
 }
 
 void sceneHandler28_lift1Start() {
@@ -96,11 +96,11 @@ void sceneHandler28_lift1Start() {
 }
 
 void sceneHandler28_lift2Start() {
-	warning("STUB: sceneHandler28_lift2Start()");
+	chainQueue(QU_SC28_LIFT2_START, 1);
 }
 
 void sceneHandler28_lift3Start() {
-	warning("STUB: sceneHandler28_lift3Start()");
+	chainQueue(QU_SC28_LIFT3_START, 1);
 }
 
 void sceneHandler28_lift4Start() {
@@ -108,7 +108,7 @@ void sceneHandler28_lift4Start() {
 }
 
 void sceneHandler28_lift5Start() {
-	warning("STUB: sceneHandler28_lift5Start()");
+	chainQueue(QU_SC28_LIFT5_START, 1);
 }
 
 void sceneHandler28_lift6Start() {
@@ -116,7 +116,7 @@ void sceneHandler28_lift6Start() {
 }
 
 
-int sceneHandler28(ExCommand *cmd, int entranceId) {
+int sceneHandler28(ExCommand *cmd) {
 	if (cmd->_messageKind != 17)
 		return 0;
 
@@ -134,7 +134,7 @@ int sceneHandler28(ExCommand *cmd, int entranceId) {
 		break;
 
 	case MSG_SC28_MAKEFACES:
-		sceneHandler28_makeFaces(cmd, entranceId);
+		sceneHandler28_makeFaces(cmd);
 		break;
 
 	case MSG_SC28_TRYVTORPERS:
