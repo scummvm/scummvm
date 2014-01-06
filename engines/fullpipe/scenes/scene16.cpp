@@ -121,7 +121,7 @@ int scene16_updateCursor() {
 }
 
 void sceneHandler16_laughSound() {
-	int snd;
+	int snd = SND_16_035;
 
 	switch (g_vars->scene16_sound) {
 	case SND_16_034:
