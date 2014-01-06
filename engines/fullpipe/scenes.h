@@ -428,8 +428,8 @@ public:
 	int scene28_var04;
 	int scene28_var05;
 	int scene28_var06;
-	int scene28_var07;
-	int scene28_var08;
+	PictureObject *scene28_var07;
+	PictureObject *scene28_var08;
 	int scene28_var09;
 	int scene28_var10;
 	int scene28_var11;
