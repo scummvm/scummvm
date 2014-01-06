@@ -509,6 +509,9 @@ void sceneHandler25_walkOnLadder(StaticANIObject *ani, Common::Point *pnt, Messa
 
 		ani->_movement->setDynamicPhaseIndex(idx);
 	} else {
+		if (!lastEx)
+			error("sceneHandler25_walkOnLadder(): Incorrect state. Please report this to sev");
+
 		ani->changeStatics2(ani->getMovementById(lastEx->_messageNum)->_staticsObj1->_staticsId);
 		ani->setOXY(newx, newy);
 		ani->restartMessageQueue(mq);
