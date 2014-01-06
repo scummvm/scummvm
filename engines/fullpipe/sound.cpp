@@ -28,6 +28,7 @@
 #include "fullpipe/ngiarchive.h"
 #include "common/memstream.h"
 #include "audio/audiostream.h"
+#include "audio/decoders/vorbis.h"
 #include "audio/decoders/wave.h"
 
 namespace Fullpipe {
@@ -117,10 +118,31 @@ void Sound::setPanAndVolumeByStaticAni() {
 
 void FullpipeEngine::setSceneMusicParameters(GameVar *var) {
 	warning("STUB: FullpipeEngine::setSceneMusicParameters()");
+	// TODO: Finish this (MINDELAY, MAXDELAY, LOCAL, SEQUENCE, STARTDELAY etc)
+	stopAllSoundStreams();
+	_musicGameVar = var;
 }
 
 void FullpipeEngine::startSceneTrack() {
-	debug(3, "STUB: FullpipeEngine::startSceneTrack()");
+	// TODO: Finish this
+#ifdef USE_VORBIS
+	if (g_fp->_mixer->isSoundHandleActive(_sceneTrackHandle))
+		return;
+
+	GameVar *musicTrackVar = _musicGameVar->getSubVarByName("MUSIC")->getSubVarByName("TRACKS")->_subVars;
+	if (!musicTrackVar)
+		return;
+
+	char *trackName = musicTrackVar->_varName;
+	Common::File *track = new Common::File();
+	if (!track->open(trackName)) {
+		warning("Could not open %s", trackName);
+		delete track;
+		return;
+	}
+	Audio::RewindableAudioStream *ogg = Audio::makeVorbisStream(track, DisposeAfterUse::YES);
+	g_fp->_mixer->playStream(Audio::Mixer::kMusicSoundType, &_sceneTrackHandle, ogg);
+#endif
 }
 
 void FullpipeEngine::stopAllSounds() {

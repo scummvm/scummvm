@@ -273,6 +273,8 @@ public:
 	void lift_startExitQueue();
 	void lift_sub05(ExCommand *ex);
 
+	GameVar *_musicGameVar;
+	Audio::SoundHandle _sceneTrackHandle;
 public:
 
 	bool _isSaveAllowed;
