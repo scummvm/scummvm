@@ -161,7 +161,7 @@ void SmackerPlayer::close() {
 void SmackerPlayer::gotoFrame(int frameNumber) {
 	if (_smackerDecoder) {
 		_smackerDecoder->forceSeekToFrame(frameNumber);
-		_smackerDecoder->decodeNextFrame();
+		updateFrame();
 	}
 }
 
