@@ -38,7 +38,7 @@ void VoyeurEngine::playStamp() {
 	ThreadResource *threadP = threadsList->_entries[0]->_threadResource;
 	threadP->initThreadStruct(0, 0);
 
-	_voy._isAM = 0;
+	_voy._isAM = false;
 	_gameHour = 9;
 	_gameMinute = 0;
 	_eventsManager._v2A0A2 = 0;
@@ -1121,8 +1121,7 @@ Common::String VoyeurEngine::getTimeOfDay() {
 	if (_voy._transitionId == 17)
 		return "";
 
-	const char *amPm = _voy._isAM ? AM : PM;
-	return Common::String::format("%d:%02d%s", _gameHour, _gameMinute, amPm);
+	return Common::String::format("%d:%02d%s", _gameHour, _gameMinute, _voy._isAM ? AM : PM);
 }
 
 bool VoyeurEngine::doComputerText(int maxLen) {

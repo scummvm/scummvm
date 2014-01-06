@@ -67,7 +67,7 @@ struct VoyeurEvent {
 
 class SVoy {
 public:
-	int _isAM;
+	bool _isAM;
 	int _RTANum;
 	int _RTVNum;
 	int _switchBGNum;

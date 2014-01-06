@@ -546,7 +546,7 @@ void ThreadResource::parsePlayCommands() {
 					_vm->_voy._RTANum = 255;
 				}
 
-				_vm->_voy._isAM = _vm->_voy._transitionId == 6;
+				_vm->_voy._isAM = (_vm->_voy._transitionId == 6);
 			}
 
 			dataP += 6;
