@@ -119,6 +119,18 @@ void GameModule::handleMouseUp(int16 x, int16 y) {
 	}
 }
 
+void GameModule::handleWheelUp() {
+	if (_childObject) {
+		sendMessage(_childObject, NM_MOUSE_WHEELUP, 0);
+	}
+}
+
+void GameModule::handleWheelDown() {
+	if (_childObject) {
+		sendMessage(_childObject, NM_MOUSE_WHEELDOWN, 0);
+	}
+}
+
 void GameModule::handleSpaceKey() {
 	if (_childObject) {
 		debug(2, "GameModule::handleSpaceKey()");

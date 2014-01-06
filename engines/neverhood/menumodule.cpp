@@ -1025,6 +1025,12 @@ uint32 GameStateMenu::handleMessage(int messageNum, const MessageParam &param, E
 			break;
 		}
 		break;
+	case NM_MOUSE_WHEELUP:
+		_listBox->scrollUp();
+		break;
+	case NM_MOUSE_WHEELDOWN:
+		_listBox->scrollDown();
+		break;
 	}
 	return 0;
 }

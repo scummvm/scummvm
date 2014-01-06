@@ -65,7 +65,11 @@ enum NeverhoodMessage {
 	NM_KLAYMEN_RELEASE_LEVER    = 0x4827,
 
 	NM_MOVE_TO_BACK             = 0x482A,
-	NM_MOVE_TO_FRONT            = 0x482B
+	NM_MOVE_TO_FRONT            = 0x482B,
+
+	// New to ScummVM
+	NM_MOUSE_WHEELUP            = 0xF000,
+	NM_MOUSE_WHEELDOWN          = 0xF001
 };
 
 } // End of namespace Neverhood

@@ -178,6 +178,12 @@ void NeverhoodEngine::mainLoop() {
 			case Common::EVENT_RBUTTONUP:
 				_gameModule->handleMouseUp(event.mouse.x, event.mouse.y);
 				break;
+			case Common::EVENT_WHEELUP:
+				_gameModule->handleWheelUp();
+				break;
+			case Common::EVENT_WHEELDOWN:
+				_gameModule->handleWheelDown();
+				break;
 			case Common::EVENT_QUIT:
 				_system->quit();
 				break;
