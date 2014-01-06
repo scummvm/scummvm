@@ -79,7 +79,7 @@ GameModule::GameModule(NeverhoodEngine *vm)
 	_mainMenuRequested(false) {
 
 	// Other initializations moved to actual engine class
-	_vm->_soundMan->playSoundThree(0x002D0031, 0x8861079);
+	_vm->_soundMan->playSoundThree(0x002D0031, 0x08861079);
 	SetMessageHandler(&GameModule::handleMessage);
 }
 
@@ -427,6 +427,8 @@ void GameModule::checkRequests() {
 		_vm->_audioResourceMan->stopAllSounds();
 		_vm->_soundMan->stopAllMusic();
 		_vm->_soundMan->stopAllSounds();
+		// Reinsert turning sound because SoundMan::stopAllSounds() removes it
+		_vm->_soundMan->playSoundThree(0x002D0031, 0x08861079);
 		delete _childObject;
 		delete _prevChildObject;
 		_childObject = NULL;

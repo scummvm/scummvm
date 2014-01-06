@@ -197,11 +197,11 @@ void NeverhoodEngine::mainLoop() {
 			_gameModule->draw();
 			_console->onFrame();
 			_screen->update();
+			if (_updateSound)
+				_soundMan->update();
 			nextFrameTime = _screen->getNextFrameTime();
 		};
 
-		if (_updateSound)
-			_soundMan->update();
 		_audioResourceMan->updateMusic();
 
 		_system->updateScreen();
