@@ -574,7 +574,7 @@ uint32 Scene2802::handleMessage(int messageNum, const MessageParam &param, Entit
 			}
 		}
 		break;
-	case 0x0002:
+	case NM_MOUSE_RELEASE:
 		if (_countdown1 == 0)
 			_currTuneStatus = 0;
 		else {

@@ -95,7 +95,7 @@ void GameModule::handleMouseMove(int16 x, int16 y) {
 		mousePos.x = x;
 		mousePos.y = y;
 		debug(2, "GameModule::handleMouseMove(%d, %d)", x, y);
-		sendPointMessage(_childObject, 0, mousePos);
+		sendPointMessage(_childObject, NM_MOUSE_MOVE, mousePos);
 	}
 }
 
@@ -115,7 +115,7 @@ void GameModule::handleMouseUp(int16 x, int16 y) {
 		mousePos.x = x;
 		mousePos.y = y;
 		debug(2, "GameModule::handleMouseUp(%d, %d)", x, y);
-		sendPointMessage(_childObject, 0x0002, mousePos);
+		sendPointMessage(_childObject, NM_MOUSE_RELEASE, mousePos);
 	}
 }
 
