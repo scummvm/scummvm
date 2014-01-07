@@ -105,7 +105,19 @@ void sceneHandler28_trySecondaryPers() {
 }
 
 void sceneHandler28_turnOn2() {
-	warning("STUB: sceneHandler28_turnOn2()");
+	if (g_vars->scene28_var05) {
+		g_fp->_floaters->genFlies(g_fp->_currentScene, 1013, 329, 60, 4);
+
+		g_fp->_floaters->_array2[g_fp->_floaters->_array2.size() - 1]->val15 = 30;
+		g_fp->_floaters->_array2[g_fp->_floaters->_array2.size() - 1]->countdown = g_fp->_rnd->getRandomNumber(12) + 12;
+
+		g_fp->_floaters->genFlies(g_fp->_currentScene, 1074, 311, 60, 4);
+
+		g_fp->_floaters->_array2[g_fp->_floaters->_array2.size() - 1]->val15 = 30;
+		g_fp->_floaters->_array2[g_fp->_floaters->_array2.size() - 1]->countdown = g_fp->_rnd->getRandomNumber(12) + 12;
+	}
+
+	g_vars->scene28_var05 = 0;
 }
 
 void sceneHandler28_startWork1() {
