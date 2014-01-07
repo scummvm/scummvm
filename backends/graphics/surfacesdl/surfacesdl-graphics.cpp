@@ -267,7 +267,11 @@ const OSystem::GraphicsMode *SurfaceSdlGraphicsManager::getSupportedGraphicsMode
 }
 
 int SurfaceSdlGraphicsManager::getDefaultGraphicsMode() const {
+#ifdef USE_SCALERS
 	return GFX_DOUBLESIZE;
+#else
+	return GFX_NORMAL;
+#endif
 }
 
 void SurfaceSdlGraphicsManager::resetGraphicsScale() {
