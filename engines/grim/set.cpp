@@ -51,7 +51,10 @@ Set::Set(const Common::String &sceneName, Common::SeekableReadStream *data) :
 }
 
 Set::Set() :
-		_cmaps(NULL) {
+		_cmaps(NULL), _locked(false), _enableLights(false), _numSetups(0),
+		_numLights(0), _numSectors(0), _numObjectStates(0), _minVolume(0),
+		_maxVolume(0), _numCmaps(0), _currSetup(NULL), _setups(NULL),
+		_lights(NULL), _sectors(NULL) {
 
 }
 
