@@ -112,7 +112,8 @@ int scene32_updateCursor() {
 }
 
 void sceneHandler32_tryCube() {
-	warning("STUB: sceneHandler32_tryCube()");
+	if (g_fp->getObjectState(sO_Cube) == g_fp->getObjectEnumState(sO_Cube, sO_In_33))
+		chainQueue(QU_KBK32_GO, 0);
 }
 
 void sceneHandler32_startCactus() {
@@ -124,11 +125,17 @@ void sceneHandler32_spin(ExCommand *cmd) {
 }
 
 void sceneHandler32_startFlagLeft() {
-	warning("STUB: sceneHandler32_startFlagLeft()");
+	g_vars->scene32_flag->changeStatics2(ST_FLG_NORM);
+	g_vars->scene32_flag->startAnim(MV_FLG_STARTL, 0, -1);
+
+	g_vars->scene32_var05 = 1;
 }
 
 void sceneHandler32_startFlagRight() {
-	warning("STUB: sceneHandler32_startFlagRight()");
+	g_vars->scene32_flag->changeStatics2(ST_FLG_NORM);
+	g_vars->scene32_flag->startAnim(MV_FLG_STARTR, 0, -1);
+
+	g_vars->scene32_var05 = 1;
 }
 
 void sceneHandler32_trySit(ExCommand *cmd) {
