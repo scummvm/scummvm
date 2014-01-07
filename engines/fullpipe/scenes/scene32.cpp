@@ -144,7 +144,15 @@ void sceneHandler32_trySit(ExCommand *cmd) {
 }
 
 void sceneHandler32_buttonPush() {
-	warning("STUB: sceneHandler32_buttonPush()");
+	if (g_fp->getObjectState(sO_ClockHandle) == g_fp->getObjectEnumState(sO_ClockHandle, sO_In_32_Sticks)) {
+		StaticANIObject *ani = g_fp->_currentScene->getStaticANIObject1ById(ANI_INV_HANDLE, -1);
+		if (ani)
+			ani->changeStatics2(ST_HDL_PLUGGED);
+
+		chainQueue(QU_SC32_FALLHANDLE, 1);
+
+		g_vars->scene32_button->changeStatics2(ST_BTN32_OFF);
+	}
 }
 
 void sceneHandler32_installHandle() {
