@@ -85,7 +85,16 @@ void sceneHandler28_turnOn2() {
 }
 
 void sceneHandler28_startWork1() {
-	warning("STUB: sceneHandler28_startWork1()");
+	g_fp->_aniMan->hide();
+
+	StaticANIObject *man = g_fp->_currentScene->getStaticANIObject1ById(ANI_MAN_28, -1);
+
+	man->_statics = man->getStaticsById(ST_MAN28_RIGHT);
+	man->setOXY(g_fp->_aniMan->_ox, g_fp->_aniMan->_oy);
+	man->_priority = g_fp->_aniMan->_priority;
+	man->show1(-1, -1, -1, 0);
+
+	chainQueue(QU_SC28_LIFT1_WORK, 1);
 }
 
 void sceneHandler28_lift0Start() {
