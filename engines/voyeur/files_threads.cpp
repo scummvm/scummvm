@@ -1398,11 +1398,11 @@ int ThreadResource::doInterface() {
 	_vm->_eventsManager.setCursor(crosshairsCursor);
 
 	// Main loop
-	int priorRegionIndex = -1;
 	int regionIndex = 0;
 	Common::Rect mansionViewBounds(MANSION_VIEW_X, MANSION_VIEW_Y,
 		MANSION_VIEW_X + MANSION_VIEW_WIDTH, MANSION_VIEW_Y + MANSION_VIEW_HEIGHT);
 
+	int priorRegionIndex = -1;
 	do {
 		_vm->_voyeurArea = AREA_INTERFACE;
 		_vm->doTimeBar(true);

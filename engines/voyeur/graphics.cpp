@@ -135,8 +135,7 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 	Common::Rect backBounds;
 	int var24;
 	bool isClipped = false;
-	int var52;
-	int var20, var22;
+	int var22;
 	int var26;
 	byte pixel = 0;
 
@@ -182,8 +181,7 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 
 		var24 = offset.y - newBounds.top;
 		if (var24 < 0) {
-			var52 = width2;
-			srcOffset -= var24 * var52;
+			srcOffset -= var24 * width2;
 			height1 += var24;
 			offset.y = newBounds.top;
 			
@@ -193,7 +191,7 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 			isClipped = true;
 		}
 
-		var20 = newBounds.bottom - (offset.y + height1);
+		int var20 = newBounds.bottom - (offset.y + height1);
 		if (var20 < 0) {
 			height1 += var20;
 			if (height1 <= 0)

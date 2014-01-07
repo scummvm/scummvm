@@ -1040,7 +1040,6 @@ void VoyeurEngine::doScroll(const Common::Point &pt) {
 	Common::Rect clipRect(72, 47, 72 + 240, 47 + 148);
 	(*_graphicsManager._vPort)->setupViewPort(NULL, &clipRect);
 
-	PictureResource *pic;
 	int base = 0;
 	switch (_voy._transitionId) {
 	case 0:
@@ -1062,7 +1061,7 @@ void VoyeurEngine::doScroll(const Common::Point &pt) {
 	}
 
 	if (base) {
-		pic = _bVoy->boltEntry(base + 3)._picResource;
+		PictureResource *pic = _bVoy->boltEntry(base + 3)._picResource;
  		_graphicsManager.sDrawPic(pic, *_graphicsManager._vPort, Common::Point(784 - pt.x - 712, 150 - pt.y - 104));
 		pic = _bVoy->boltEntry(base + 4)._picResource;
 		_graphicsManager.sDrawPic(pic, *_graphicsManager._vPort, Common::Point(784 - pt.x - 712, 150 - pt.y - 44));

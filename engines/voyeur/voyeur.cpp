@@ -265,10 +265,6 @@ bool VoyeurEngine::doLock() {
 	byte *buttonVoc = _filesManager.fload("button.voc", &buttonVocSize);
 	byte *wrongVoc = _filesManager.fload("wrong.voc", &wrongVocSize);
 	LockClass lock;
-	PictureResource *cursorPic;
-	byte *keyData;
-	int keyCount;
-	int key;
 
 	if (_bVoy->getBoltGroup(0x700)) {
 		lock.getSysDate();
@@ -278,12 +274,12 @@ bool VoyeurEngine::doLock() {
 		_voy._viewBounds = _bVoy->boltEntry(0x704)._rectResource;
 
 		Common::String password = lock._password;
-		cursorPic = _bVoy->getPictureResource(0x702);
+		PictureResource *cursorPic = _bVoy->getPictureResource(0x702);
 		assert(cursorPic);
 
 		// Get the mappings of keys on the keypad
-		keyData = _bVoy->memberAddr(0x705);
-		keyCount = READ_LE_UINT16(keyData);
+		byte *keyData = _bVoy->memberAddr(0x705);
+		int keyCount = READ_LE_UINT16(keyData);
 
 		_graphicsManager._backColors = _bVoy->getCMapResource(0x7010000);
 		_graphicsManager._backgroundPage = _bVoy->getPictureResource(0x700);
@@ -338,6 +334,7 @@ bool VoyeurEngine::doLock() {
 			}
 
 			// Loop for getting key presses
+			int key;
 			do {
 				do {
 					// Scan through the list of key rects to check if a keypad key is highlighted
