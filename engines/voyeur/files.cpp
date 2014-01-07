@@ -743,9 +743,9 @@ PictureResource::PictureResource(BoltFilesState &state, const byte *src) {
 	int nbytes = _bounds.width() * _bounds.height();
 	if (_flags & PICFLAG_20) {
 		if (_flags & (PICFLAG_80 | PICFLAG_40)) {
-			error("TODO: sInitPic");
+			error("TODO: sInitPic - Case 40 | 80");
 		} else {
-			error("TODO: sInitPic");
+			error("TODO: sInitPic - Case !(40 | 80)");
 		}
 	} else if (_flags & PICFLAG_8) {
 		int mode = 0;
@@ -781,8 +781,10 @@ PictureResource::PictureResource(BoltFilesState &state, const byte *src) {
 		if (_flags & PICFLAG_10) {
 			// TODO: Figure out what it's doing. Looks like a direct clearing
 			// of the screen directly
+			error("TODO: sInitPic - Case 10");
 		} else {
 			// TODO: Figure out direct screen loading
+			error("TODO: sInitPic - Case !10");
 		}
 	} else {
 		if (_flags & PICFLAG_1000) {
