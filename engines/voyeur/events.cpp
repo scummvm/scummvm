@@ -57,8 +57,8 @@ IntData::IntData() {
 	field26 = 0;
 	field2A = 0;
 	field38 = false;
-	field3B = 0;
-	field3D = 0;
+	field3B = false;
+	field3D = false;
 	_palStartIndex = 0;
 	_palEndIndex = 0;
 	_palette = NULL;
@@ -168,13 +168,13 @@ void EventsManager::voyeurTimer() {
 	// _gameData.field1C += _gameData._timerFn; *** WHY INC field by a function pointer?!
 
 	_gameData.field16 = 0;
-	_gameData.field3D = 1;
+	_gameData.field3D = true;
 
 	if (--_gameData.field26 <= 0) {
 		if (_gameData._flipWait) {
 			_gameData.field38 = true;
 			_gameData._flipWait = false;
-			_gameData.field3B = 0;
+			_gameData.field3B = false;
 		}
 
 		_gameData.field26 >>= 8;
@@ -317,7 +317,7 @@ void EventsManager::startFade(CMapResource *cMap) {
 		}
 
 		if (cMap->_fadeStatus & 2)
-			_intPtr.field3B = 1;
+			_intPtr.field3B = true;
 		_fadeIntNode._flags &= ~1;
 	} else {
 		byte *vgaP = &_vm->_graphicsManager._VGAColors[_fadeFirstCol * 3];
@@ -359,7 +359,7 @@ void EventsManager::addFadeInt() {
 }
 
 void EventsManager::vDoFadeInt() {
-	if (_intPtr.field3B & 1)
+	if (_intPtr.field3B)
 		return;
 	if (--_fadeCount == 0) {
 		_fadeIntNode._flags |= 1;
