@@ -153,12 +153,11 @@ bool SmushDecoder::readHeader() {
 	uint32 tag = _file->readUint32BE();
 	size = _file->readUint32BE();
 	pos = _file->pos();
-	uint32 version = 0;
 
 	assert(tag == expectedTag);
 
 	if (tag == MKTAG('A', 'H', 'D', 'R')) { // Demo
-		version = _file->readUint16LE();
+		uint32 version = _file->readUint16LE();
 		uint16 nbFrames = _file->readUint16LE();
 		_file->readUint16BE(); // unknown
 
