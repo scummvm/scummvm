@@ -426,17 +426,13 @@ public:
 	StaticANIObject *scene26_sock;
 	StaticANIObject *scene26_activeVent;
 
-	int scene28_var01;
-	int scene28_var02;
-	int scene28_var03;
-	int scene28_var04;
-	int scene28_var05;
-	int scene28_var06;
-	PictureObject *scene28_var07;
-	PictureObject *scene28_var08;
-	int scene28_var09;
-	int scene28_var10;
-	int scene28_var11;
+	bool scene28_fliesArePresent;
+	bool scene28_beardedDirection;
+	PictureObject *scene28_darkeningObject;
+	PictureObject *scene28_lighteningObject;
+	bool scene28_headDirection;
+	bool scene28_headBeardedFlipper;
+	bool scene28_lift6inside;
 
 	StaticANIObject *scene30_leg;
 	int scene30_liftFlag;

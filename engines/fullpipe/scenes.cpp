@@ -298,17 +298,13 @@ Vars::Vars() {
 	scene26_sock = 0;
 	scene26_activeVent = 0;
 
-	scene28_var01 = 0;
-	scene28_var02 = 0;
-	scene28_var03 = 0;
-	scene28_var04 = 0;
-	scene28_var05 = 1;
-	scene28_var06 = 1;
-	scene28_var07 = 0;
-	scene28_var08 = 0;
-	scene28_var09 = 0;
-	scene28_var10 = 0;
-	scene28_var11 = 0;
+	scene28_fliesArePresent = true;
+	scene28_beardedDirection = true;
+	scene28_darkeningObject = 0;
+	scene28_lighteningObject = 0;
+	scene28_headDirection = false;
+	scene28_headBeardedFlipper = false;
+	scene28_lift6inside = false;
 
 	scene30_leg = 0;
 	scene30_liftFlag = 1;
