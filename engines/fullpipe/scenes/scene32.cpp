@@ -122,7 +122,40 @@ void sceneHandler32_startCactus() {
 }
 
 void sceneHandler32_spin(ExCommand *cmd) {
-	warning("STUB: sceneHandler32_spin(cmd)");
+	MessageQueue *mq = g_fp->_globalMessageQueueList->getMessageQueueById(cmd->_parId);
+
+	if (!mq || !mq->getCount() <= 0)
+		return;
+
+	ExCommand *ex = mq->getExCommandByIndex(0);
+	ExCommand *newex;
+
+	if ((g_vars->scene32_cactus->_movement && g_vars->scene32_cactus->_movement->_id == MV_CTS_DEFAULT)
+		|| g_vars->scene32_cactus->_statics->_staticsId == ST_CTS_GROWUP) {
+		for (int i = 0; i < 12; i++) {
+			newex = ex->createClone();
+			newex->_excFlags |= 2;
+			mq->insertExCommandAt(1, newex);
+		}
+
+		g_vars->scene32_cactus->changeStatics2(ST_CTS_GROWUP);
+
+		chainQueue(QU_CTS_BACK, 1);
+
+		g_vars->scene32_var10 = 0;
+
+		return;
+	}
+
+	if (g_vars->scene32_cactus->_statics->_staticsId == ST_CTS_EMPTY && g_vars->scene32_var08 < 0) {
+		for (int i = 0; i < 2; i++) {
+			newex = ex->createClone();
+			newex->_excFlags |= 2;
+			mq->insertExCommandAt(1, newex);
+		}
+
+		chainQueue(QU_KDK_DRIZZLE, 0);
+	}
 }
 
 void sceneHandler32_startFlagLeft() {
