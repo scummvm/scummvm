@@ -101,7 +101,75 @@ void sceneHandler28_makeFaces(ExCommand *cmd) {
 }
 
 void sceneHandler28_trySecondaryPers() {
-	warning("STUB: sceneHandler28_trySecondaryPers()");
+	MessageQueue *mq;
+	int x;
+
+	if (g_vars->scene28_var10) {
+		if (g_vars->scene28_var06) {
+			mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_BRD28_GOR), 0, 1);
+
+			mq->getExCommandByIndex(0)->_x = g_fp->_sceneRect.left - 20;
+			mq->getExCommandByIndex(0)->_keyCode = 1;
+			mq->replaceKeyCode(-1, 1);
+			mq->chain(0);
+
+			mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_BRD28_GOR), 0, 1);
+
+			mq->getExCommandByIndex(0)->_x = g_fp->_sceneRect.left - 40;
+			mq->getExCommandByIndex(0)->_y += 20;
+			mq->getExCommandByIndex(0)->_keyCode = 2;
+			mq->replaceKeyCode(-1, 2);
+			mq->chain(0);
+
+			mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_BRD28_GOR), 0, 1);
+
+			x = g_fp->_sceneRect.left - 60;
+		} else {
+			mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_BRD28_GOL), 0, 1);
+
+			mq->getExCommandByIndex(0)->_x = g_fp->_sceneRect.right + 20;
+			mq->getExCommandByIndex(0)->_keyCode = 1;
+			mq->replaceKeyCode(-1, 1);
+			mq->chain(0);
+
+			mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_BRD28_GOL), 0, 1);
+
+			mq->getExCommandByIndex(0)->_x = g_fp->_sceneRect.right + 40;
+			mq->getExCommandByIndex(0)->_y += 20;
+			mq->getExCommandByIndex(0)->_keyCode = 2;
+			mq->replaceKeyCode(-1, 2);
+			mq->chain(0);
+
+			mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_BRD28_GOL), 0, 1);
+
+			x = g_fp->_sceneRect.right + 60;
+		}
+
+		mq->getExCommandByIndex(0)->_x = x;
+		mq->getExCommandByIndex(0)->_y += 40;
+		mq->getExCommandByIndex(0)->_keyCode = 3;
+		mq->replaceKeyCode(-1, 3);
+		mq->chain( 0);
+
+		g_vars->scene28_var06 = !g_vars->scene28_var06;
+	} else {
+		if (g_vars->scene28_var09) {
+			mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_GLV28_GOR), 0, 1);
+
+			x = g_fp->_sceneRect.left - 40;
+		} else {
+			mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_GLV28_GOL), 0, 1);
+
+			x = g_fp->_sceneRect.right + 40;
+		}
+
+		mq->getExCommandByIndex(0)->_x = x;
+		mq->chain(0);
+
+		g_vars->scene28_var09 = !g_vars->scene28_var09;
+	}
+
+	g_vars->scene28_var10 = !g_vars->scene28_var10;
 }
 
 void sceneHandler28_turnOn2() {
