@@ -446,12 +446,8 @@ public:
 	StaticANIObject *scene31_cactus;
 	StaticANIObject *scene31_plusMinus;
 
-	int scene32_var01;
-	int scene32_var02;
-	int scene32_var03;
-	int scene32_var04;
-	int scene32_var05;
-	int scene32_var06;
+	bool scene32_flagIsWaving;
+	bool scene32_flagNeedsStopping;
 	int scene32_var07;
 	int scene32_var08;
 	int scene32_var09;

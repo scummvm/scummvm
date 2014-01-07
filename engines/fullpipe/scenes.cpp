@@ -313,12 +313,8 @@ Vars::Vars() {
 	scene31_cactus = 0;
 	scene31_plusMinus = 0;
 
-	scene32_var01 = 0;
-	scene32_var02 = 0;
-	scene32_var03 = 0;
-	scene32_var04 = 0;
-	scene32_var05 = 0;
-	scene32_var06 = 0;
+	scene32_flagIsWaving = false;
+	scene32_flagNeedsStopping = false;
 	scene32_var07 = 0;
 	scene32_var08 = -1;
 	scene32_var09 = 0;

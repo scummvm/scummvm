@@ -37,12 +37,8 @@
 namespace Fullpipe {
 
 void scene32_initScene(Scene *sc) {
-	g_vars->scene32_var01 = 200;
-	g_vars->scene32_var02 = 200;
-	g_vars->scene32_var03 = 300;
-	g_vars->scene32_var04 = 300;
-	g_vars->scene32_var05 = 0;
-	g_vars->scene32_var06 = 0;
+	g_vars->scene32_flagIsWaving = false;
+	g_vars->scene32_flagNeedsStopping = false;
 	g_vars->scene32_var07 = 0;
 	g_vars->scene32_var08 = -1;
 	g_vars->scene32_var09 = 0;
@@ -162,14 +158,14 @@ void sceneHandler32_startFlagLeft() {
 	g_vars->scene32_flag->changeStatics2(ST_FLG_NORM);
 	g_vars->scene32_flag->startAnim(MV_FLG_STARTL, 0, -1);
 
-	g_vars->scene32_var05 = 1;
+	g_vars->scene32_flagIsWaving = true;
 }
 
 void sceneHandler32_startFlagRight() {
 	g_vars->scene32_flag->changeStatics2(ST_FLG_NORM);
 	g_vars->scene32_flag->startAnim(MV_FLG_STARTR, 0, -1);
 
-	g_vars->scene32_var05 = 1;
+	g_vars->scene32_flagIsWaving = true;
 }
 
 void sceneHandler32_trySit(ExCommand *cmd) {
@@ -307,8 +303,8 @@ int sceneHandler32(ExCommand *cmd) {
 		break;
 
 	case MSG_SC32_STOPFLAG:
-		g_vars->scene32_var05 = 0;
-		g_vars->scene32_var06 = 1;
+		g_vars->scene32_flagIsWaving = false;
+		g_vars->scene32_flagNeedsStopping = true;
 		break;
 
 	case MSG_SC32_SPIN:
@@ -354,28 +350,28 @@ int sceneHandler32(ExCommand *cmd) {
 		if (g_fp->_aniMan2) {
 			int x = g_fp->_aniMan2->_ox;
 
-			if (x < g_fp->_sceneRect.left + g_vars->scene32_var01)
-				g_fp->_currentScene->_x = x - g_vars->scene32_var03 - g_fp->_sceneRect.left;
+			if (x < g_fp->_sceneRect.left + 200)
+				g_fp->_currentScene->_x = x - 300 - g_fp->_sceneRect.left;
 
-			if (x > g_fp->_sceneRect.right - g_vars->scene32_var01)
-				g_fp->_currentScene->_x = x + g_vars->scene32_var03 - g_fp->_sceneRect.right;
+			if (x > g_fp->_sceneRect.right - 200)
+				g_fp->_currentScene->_x = x + 300 - g_fp->_sceneRect.right;
 		}
 
 		if (!g_vars->scene32_flag->_movement) {
-			if (g_vars->scene32_var05) {
+			if (g_vars->scene32_flagIsWaving) {
 				if (g_vars->scene32_flag->_statics->_staticsId == ST_FLG_RIGHT)
 					g_vars->scene32_flag->startAnim(MV_FLG_CYCLER, 0, -1);
 				else if (g_vars->scene32_flag->_statics->_staticsId == ST_FLG_LEFT)
 					g_vars->scene32_flag->startAnim(MV_FLG_CYCLEL, 0, -1);
 			}
 
-			if (g_vars->scene32_var06 && !g_vars->scene32_var05) {
+			if (g_vars->scene32_flagNeedsStopping && !g_vars->scene32_flagIsWaving) {
 				if (g_vars->scene32_flag->_statics->_staticsId == ST_FLG_RIGHT)
 					g_vars->scene32_flag->startAnim(MV_FLG_STOPR, 0, -1);
 				else if (g_vars->scene32_flag->_statics->_staticsId == ST_FLG_LEFT)
 					g_vars->scene32_flag->startAnim(MV_FLG_STOPL, 0, -1);
 
-				g_vars->scene32_var06 = 0;
+				g_vars->scene32_flagNeedsStopping = false;
 			}
 		}
 
