@@ -63,15 +63,15 @@ private:
 	Common::SeekableReadStream *_ctrl, *_diff, *_extra;
 
 	// Current instruction
-	uint32 diffCopy, extraCopy;
-	int32 jump;
-	int32 instrLeft;
+	uint32 _diffCopy, _extraCopy;
+	int32 _jump;
+	int32 _instrLeft;
 	bool readNextInst();
 
 	int32 _pos;
 	uint32 _flags, _newSize;
 
-	uint8 *diffBuffer;
+	uint8 *_diffBuffer;
 
 	Common::String _patchName;
 };
@@ -84,13 +84,13 @@ const uint32 PatchedFile::_kMd5size = 5000;
 
 PatchedFile::PatchedFile():
 		_file(NULL), _ctrl(NULL), _diff(NULL), _extra(NULL), _pos(0),
-		instrLeft(0), jump(0), _newSize(0), _flags(0), extraCopy(0),
-		diffCopy(0) {
-	diffBuffer = new uint8[_kDiffBufferSize];
+		_instrLeft(0), _jump(0), _newSize(0), _flags(0), _extraCopy(0),
+		_diffCopy(0) {
+	_diffBuffer = new uint8[_kDiffBufferSize];
 }
 
 PatchedFile::~PatchedFile() {
-	delete[] diffBuffer;
+	delete[] _diffBuffer;
 
 	delete _file;
 
@@ -168,7 +168,7 @@ bool PatchedFile::load(Common::SeekableReadStream *file, const Common::String &p
 		return false;
 	}
 
-	instrLeft = _ctrl->size() / (3 * sizeof(uint32));
+	_instrLeft = _ctrl->size() / (3 * sizeof(uint32));
 
 	tmp = new Common::File;
 	tmp->open(_patchName);
@@ -198,32 +198,32 @@ uint32 PatchedFile::read(void *dataPtr, uint32 dataSize) {
 	toRead = dataSize;
 	while (toRead > 0) {
 		// Read data from original file and apply the differences
-		if (diffCopy > 0) {
-			readSize = MIN(toRead, diffCopy);
+		if (_diffCopy > 0) {
+			readSize = MIN(toRead, _diffCopy);
 			rd = _file->read(data, readSize);
 			if (_file->err() || rd != readSize)
 				error("%s: Corrupted patchfile", _patchName.c_str());
 
 			toRead -= readSize;
-			diffCopy -= readSize;
+			_diffCopy -= readSize;
 
 			//Read data from diff as blocks of size _kDiffBufferSize,
 			// then xor original data with them in groups of 4 or 8
 			// bytes, depending on the architecture
 			while (readSize > 0) {
 				diffRead = MIN(readSize, _kDiffBufferSize);
-				rd = _diff->read(diffBuffer, diffRead);
+				rd = _diff->read(_diffBuffer, diffRead);
 				if (_diff->err() || rd != diffRead)
 					error("%s: Corrupted patchfile", _patchName.c_str());
 
 #ifdef SCUMM_64BITS
 				for (uint32 i = 0; i < diffRead / 8; ++i)
-					*((uint64 *)data + i) ^= *((uint64 *)diffBuffer + i);
+					*((uint64 *)data + i) ^= *((uint64 *)_diffBuffer + i);
 				for (uint32 i = diffRead - diffRead % 8; i < diffRead; ++i)
-					data[i] ^= diffBuffer[i];
+					data[i] ^= _diffBuffer[i];
 #else
 				for (uint32 i = 0; i < diffRead / 4; ++i)
-					*((uint32 *)data + i) ^= *((uint32 *)diffBuffer + i);
+					*((uint32 *)data + i) ^= *((uint32 *)_diffBuffer + i);
 				for (uint32 i = diffRead - diffRead % 4; i < diffRead; ++i)
 					data[i] ^= diffBuffer[i];
 #endif
@@ -237,21 +237,21 @@ uint32 PatchedFile::read(void *dataPtr, uint32 dataSize) {
 			break;
 
 		// Read data from extra
-		if (extraCopy > 0) {
-			readSize = MIN(toRead, extraCopy);
+		if (_extraCopy > 0) {
+			readSize = MIN(toRead, _extraCopy);
 			rd = _extra->read(data, readSize);
 			if (_extra->err() || rd != readSize)
 				error("%s: Corrupted patchfile", _patchName.c_str());
 
 			data += readSize;
 			toRead -= readSize;
-			extraCopy -= readSize;
+			_extraCopy -= readSize;
 		}
 
 		// Jump and read next instructions
-		if (diffCopy == 0 && extraCopy == 0) {
-			if (jump != 0)
-				_file->seek(jump, SEEK_CUR);
+		if (_diffCopy == 0 && _extraCopy == 0) {
+			if (_jump != 0)
+				_file->seek(_jump, SEEK_CUR);
 
 			//If there aren't new instructions, breaks here
 			if (!readNextInst())
@@ -264,26 +264,26 @@ uint32 PatchedFile::read(void *dataPtr, uint32 dataSize) {
 }
 
 bool PatchedFile::readNextInst() {
-	if (instrLeft == 0) {
-		diffCopy = 0;
-		extraCopy = 0;
-		jump = 0;
+	if (_instrLeft == 0) {
+		_diffCopy = 0;
+		_extraCopy = 0;
+		_jump = 0;
 		return false;
 	}
 
-	diffCopy = _ctrl->readUint32LE();
-	extraCopy = _ctrl->readUint32LE();
-	jump = _ctrl->readSint32LE();
+	_diffCopy = _ctrl->readUint32LE();
+	_extraCopy = _ctrl->readUint32LE();
+	_jump = _ctrl->readSint32LE();
 
 	//Sanity checks
 	if (_ctrl->err() ||
-			(int32(diffCopy) > _file->size() - _file->pos()) ||
-			(int32(diffCopy) > _diff->size() - _diff->pos()) ||
-			(int32(extraCopy) > _extra->size() - _extra->pos()) ||
-			(jump > _file->size() - _file->pos()))
-		error("%s: Corrupted patchfile. istrleft = %d", _patchName.c_str(), instrLeft);
+			(int32(_diffCopy) > _file->size() - _file->pos()) ||
+			(int32(_diffCopy) > _diff->size() - _diff->pos()) ||
+			(int32(_extraCopy) > _extra->size() - _extra->pos()) ||
+			(_jump > _file->size() - _file->pos()))
+		error("%s: Corrupted patchfile. istrleft = %d", _patchName.c_str(), _instrLeft);
 
-	--instrLeft;
+	--_instrLeft;
 	return true;
 }
 
@@ -332,7 +332,7 @@ bool PatchedFile::seek(int32 offset, int whence) {
 		_file->seek(0, SEEK_SET);
 		_ctrl->seek(0, SEEK_SET);
 		_extra->seek(0, SEEK_SET);
-		instrLeft = _ctrl->size() / (3 * sizeof(uint32));
+		_instrLeft = _ctrl->size() / (3 * sizeof(uint32));
 		readNextInst();
 		int p = pos() + relOffset;
 		_pos = 0;
@@ -340,9 +340,9 @@ bool PatchedFile::seek(int32 offset, int whence) {
 	}
 
 	while (relOffset > 0) {
-		if (diffCopy > 0) {
-			skipSize = MIN(diffCopy, (uint32)relOffset);
-			diffCopy -= skipSize;
+		if (_diffCopy > 0) {
+			skipSize = MIN(_diffCopy, (uint32)relOffset);
+			_diffCopy -= skipSize;
 			relOffset -= skipSize;
 			skipDiff += skipSize;
 			totJump += skipSize;
@@ -350,15 +350,15 @@ bool PatchedFile::seek(int32 offset, int whence) {
 		if (relOffset == 0)
 			break;
 
-		if (extraCopy > 0) {
-			skipSize = MIN(extraCopy, (uint32)relOffset);
-			extraCopy -= skipSize;
+		if (_extraCopy > 0) {
+			skipSize = MIN(_extraCopy, (uint32)relOffset);
+			_extraCopy -= skipSize;
 			relOffset -= skipSize;
 			skipExtra += skipSize;
 		}
 
-		if (diffCopy == 0 && extraCopy == 0) {
-			totJump += jump;
+		if (_diffCopy == 0 && _extraCopy == 0) {
+			totJump += _jump;
 			readNextInst();
 		}
 	}
