@@ -97,4 +97,18 @@ void scene32_initScene(Scene *sc) {
 	g_fp->initArcadeKeys("SC_32");
 }
 
+void scene32_setupMusic() {
+	if (g_fp->lift_checkButton(sO_Level6))
+		g_fp->playTrack(g_fp->getGameLoaderGameVar()->getSubVarByName("SC_32"), "MUSIC2", 1);
+}
+
+int scene32_updateCursor() {
+	g_fp->updateCursorCommon();
+
+	if (g_fp->_objectIdAtCursor == PIC_SC32_LADDER && g_fp->_cursorId == PIC_CSR_ITN)
+		g_fp->_cursorId = g_vars->scene32_var09 ? PIC_CSR_GOD : PIC_CSR_GOU; // TODO FIXME doublecheck
+
+	return g_fp->_cursorId;
+}
+
 } // End of namespace Fullpipe
