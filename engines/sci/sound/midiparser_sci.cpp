@@ -58,6 +58,10 @@ MidiParser_SCI::MidiParser_SCI(SciVersion soundVersion, SciMusic *music) :
 
 	_resetOnPause = false;
 	_pSnd = 0;
+
+	_mainThreadCalled = false;
+
+	resetStateTracking();
 }
 
 MidiParser_SCI::~MidiParser_SCI() {
@@ -68,10 +72,12 @@ MidiParser_SCI::~MidiParser_SCI() {
 }
 
 void MidiParser_SCI::mainThreadBegin() {
+	assert(!_mainThreadCalled);
 	_mainThreadCalled = true;
 }
 
 void MidiParser_SCI::mainThreadEnd() {
+	assert(_mainThreadCalled);
 	_mainThreadCalled = false;
 }
 
@@ -83,12 +89,21 @@ bool MidiParser_SCI::loadMusic(SoundResource::Track *track, MusicEntry *psnd, in
 
 	for (int i = 0; i < 16; i++) {
 		_channelUsed[i] = false;
-		_channelRemap[i] = -1;
 		_channelMuted[i] = false;
 		_channelVolume[i] = 127;
+
+		if (_soundVersion <= SCI_VERSION_0_LATE)
+			_channelRemap[i] = i;
+		else
+			_channelRemap[i] = -1;
 	}
-	_channelRemap[9] = 9; // never map channel 9, because that's used for percussion
-	_channelRemap[15] = 15; // never map channel 15, because thats used by sierra internally
+
+	// FIXME: SSCI does not always start playing a track at the first byte.
+	// By default it skips 10 (or 13?) bytes containing prio/voices, patch,
+	// volume, pan commands in fixed locations, and possibly a signal
+	// in channel 15. We should initialize state tracking to those values
+	// so that they automatically get set up properly when the channels get
+	// mapped. See also the related FIXME in MidiParser_SCI::processEvent.
 
 	if (channelFilterMask) {
 		// SCI0 only has 1 data stream, but we need to filter out channels depending on music hardware selection
@@ -314,31 +329,26 @@ byte *MidiParser_SCI::midiFilterChannels(int channelMask) {
 	return _mixedData;
 }
 
-// This will get called right before actual playing and will try to own the used channels
-void MidiParser_SCI::tryToOwnChannels() {
-	// We don't have SciMusic in case debug command show_instruments is used
-	if (!_music)
-		return;
-	for (int curChannel = 0; curChannel < 15; curChannel++) {
-		if (_channelUsed[curChannel]) {
-			if (_channelRemap[curChannel] == -1) {
-				_channelRemap[curChannel] = _music->tryToOwnChannel(_pSnd, curChannel);
-			}
-		}
+void MidiParser_SCI::resetStateTracking() {
+	for (int i = 0; i < 16; ++i) {
+		ChannelState &s = _channelState[i];
+		s._modWheel = 0;
+		s._pan = 64;
+		s._patch = 0; // TODO: Initialize properly (from data in LoadMusic?)
+		s._note = -1;
+		s._sustain = false;
+		s._pitchWheel = 0x2000;
+		s._voices = 0;
+
+		_channelVolume[i] = 127;
 	}
 }
 
-void MidiParser_SCI::lostChannels() {
-	for (int curChannel = 0; curChannel < 15; curChannel++)
-		if ((_channelUsed[curChannel]) && (curChannel != 9))
-			_channelRemap[curChannel] = -1;
-}
-
 void MidiParser_SCI::sendInitCommands() {
-	// reset our "global" volume and channel volumes
+	resetStateTracking();
+
+	// reset our "global" volume
 	_volume = 127;
-	for (int i = 0; i < 16; i++)
-		_channelVolume[i] = 127;
 
 	// Set initial voice count
 	if (_pSnd) {
@@ -390,51 +400,117 @@ void MidiParser_SCI::sendFromScriptToDriver(uint32 midi) {
 		//  this happens for cmdSendMidi at least in sq1vga right at the start, it's a script issue
 		return;
 	}
-	if (_channelRemap[midiChannel] == -1) {
-		// trying to send to an unmapped channel
-		//  this happens for cmdSendMidi at least in sq1vga right at the start, scripts are pausing the sound
-		//  and then sending manually. it's a script issue
-		return;
-	}
 	sendToDriver(midi);
 }
 
 void MidiParser_SCI::sendToDriver(uint32 midi) {
-	byte midiChannel = midi & 0xf;
+	// State tracking
+	trackState(midi);
 
-	if ((midi & 0xFFF0) == 0x4EB0) {
-		// this is channel mute only for sci1
-		// it's velocity control for sci0
-		if (_soundVersion >= SCI_VERSION_1_EARLY) {
-			_channelMuted[midiChannel] = midi & 0xFF0000 ? true : false;
-			return; // don't send this to driver at all
-		}
-	}
-
-	// Is channel muted? if so, don't send command
-	if (_channelMuted[midiChannel])
+	if ((midi & 0xFFF0) == 0x4EB0 && _soundVersion >= SCI_VERSION_1_EARLY) {
+		// Mute. Handled in trackState().
+		// CHECKME: Should we send this on to the driver?
 		return;
+	}
 
 	if ((midi & 0xFFF0) == 0x07B0) {
 		// someone trying to set channel volume?
 		int channelVolume = (midi >> 16) & 0xFF;
-		// Remember, if we need to set it ourselves
-		_channelVolume[midiChannel] = channelVolume;
 		// Adjust volume accordingly to current local volume
 		channelVolume = channelVolume * _volume / 127;
-		midi = (midi & 0xFFF0) | ((channelVolume & 0xFF) << 16);
+		midi = (midi & 0xFFFF) | ((channelVolume & 0xFF) << 16);
 	}
 
+
 	// Channel remapping
+	byte midiChannel = midi & 0xf;
 	int16 realChannel = _channelRemap[midiChannel];
 	if (realChannel == -1)
 		return;
 
 	midi = (midi & 0xFFFFFFF0) | realChannel;
+	sendToDriver_raw(midi);
+}
+
+void MidiParser_SCI::sendToDriver_raw(uint32 midi) {
 	if (_mainThreadCalled)
 		_music->putMidiCommandInQueue(midi);
 	else
 		_driver->send(midi);
+}
+
+void MidiParser_SCI::trackState(uint32 b) {
+	// We keep track of most of the state of a midi channel, so we can
+	// at any time reset the device to the current state, even if the
+	// channel has been temporarily disabled due to remapping.
+
+	byte command = b & 0xf0;
+	byte channel = b & 0xf;
+	byte op1 = (b >> 8) & 0x7f;
+	byte op2 = (b >> 16) & 0x7f;
+
+	ChannelState &s = _channelState[channel];
+
+	switch (command) {
+	case 0x90:
+		if (op2 != 0) {
+			// note on
+			s._note = op1;
+			break;
+		}
+		// else, fall-through
+	case 0x80:
+		// note off
+		if (s._note == op1)
+			s._note = -1;
+		break;
+	case 0xB0:
+		// control change
+		switch (op1) {
+		case 0x01: // mod wheel
+			s._modWheel = op2;
+			break;
+		case 0x07: // channel volume
+			_channelVolume[channel] = op2;
+			break;
+		case 0x0A: // pan
+			s._pan = op2;
+			break;
+		case 0x40: // sustain
+			s._sustain = (op2 != 0);
+			break;
+		case 0x4B: // voices
+			s._voices = op2;
+			_pSnd->_chan[channel]._voices = op2; // Also sync our MusicEntry
+			break;
+		case 0x4E: // mute
+			// This is channel mute only for sci1.
+			// (It's velocity control for sci0, but we don't need state in sci0)
+			if (_soundVersion >= SCI_VERSION_1_EARLY) {
+				// FIXME: mute is a level, not a bool, in some SCI versions
+				bool m = op2;
+				if (_pSnd->_chan[channel]._mute != m) {
+					_pSnd->_chan[channel]._mute = m;
+					// TODO: If muting/unmuting a channel, remap channels.
+					warning("Mute change without immediate remapping (mainThread = %d)", _mainThreadCalled);
+				}
+			}
+			break;
+		default:
+			break;
+		}
+		break;
+	case 0xC0:
+		// program change
+		s._patch = op1;
+		break;
+	case 0xE0:
+		// pitchwheel
+		s._pitchWheel = (op2 << 7) | op1;
+		break;
+	default:
+		break;
+	}
 }
 
 void MidiParser_SCI::parseNextEvent(EventInfo &info) {
@@ -477,8 +553,10 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 	case 0xE:
 		info.basic.param1 = *(_position._playPos++);
 		info.basic.param2 = *(_position._playPos++);
-		if (info.command() == 0x9 && info.basic.param2 == 0)
+		if (info.command() == 0x9 && info.basic.param2 == 0) {
+			// NoteOn with param2==0 is a NoteOff
 			info.event = info.channel() | 0x80;
+		}
 		info.length = 0;
 		break;
 
@@ -807,6 +885,46 @@ void MidiParser_SCI::setVolume(byte volume) {
 	default:
 		error("MidiParser_SCI::setVolume: Unsupported soundVersion");
 	}
+}
+
+void MidiParser_SCI::remapChannel(int channel, int devChannel) {
+	if (_channelRemap[channel] == devChannel)
+		return;
+
+	_channelRemap[channel] = devChannel;
+
+	if (devChannel == -1)
+		return;
+
+//	debug("  restoring state: channel %d on devChannel %d", channel, devChannel);
+
+	// restore state
+	ChannelState &s = _channelState[channel];
+
+	int channelVolume = _channelVolume[channel];
+	channelVolume = (channelVolume * _volume / 127) & 0xFF;
+	byte pitch1 = s._pitchWheel & 0x7F;
+	byte pitch2 = (s._pitchWheel >> 7) & 0x7F;
+
+	sendToDriver_raw(0x0040B0 | devChannel); // sustain off
+	sendToDriver_raw(0x004BB0 | devChannel | (s._voices << 16));
+	sendToDriver_raw(0x0000C0 | devChannel | (s._patch << 8));
+	sendToDriver_raw(0x0007B0 | devChannel | (channelVolume << 16));
+	sendToDriver_raw(0x000AB0 | devChannel | (s._pan << 16));
+	sendToDriver_raw(0x0001B0 | devChannel | (s._modWheel << 16));
+	sendToDriver_raw(0x0040B0 | devChannel | (s._sustain ? 0x7F0000 : 0));
+	sendToDriver_raw(0x0000E0 | devChannel | (pitch1 << 8) | (pitch2 << 16));
+
+	// CHECKME: Some SSCI version send a control change 0x4E with s._note as
+	// parameter.
+	// We need to investigate how (and if) drivers should act on this.
+	// Related: controller 0x4E is used for 'mute' in the midiparser.
+	// This could be a bug in SSCI that went unnoticed because few (or no?)
+	// drivers implement controller 0x4E
+
+	// NB: The line below is _not_ valid since s._note can be 0xFF.
+	// SSCI handles this out of band in the driver interface.
+	// sendToDriver_raw(0x004EB0 | devChannel | (s._note << 16);
 }
 
 } // End of namespace Sci

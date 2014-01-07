@@ -153,6 +153,7 @@ class Movement : public GameObject {
 	DynamicPhase *getDynamicPhaseByIndex(int idx);
 
 	int calcDuration();
+	int countPhasesWithFlag(int maxidx, int flag);
 
 	void removeFirstPhase();
 	bool gotoNextFrame(void (*_callback1)(int, Common::Point *point, int, int), void (*callback2)(int *));
@@ -212,8 +213,10 @@ class StaticANIObject : public GameObject {
 
 	void deleteFromGlobalMessageQueue();
 	void queueMessageQueue(MessageQueue *msg);
+	void restartMessageQueue(MessageQueue *msg);
 	MessageQueue *getMessageQueue();
 	bool trySetMessageQueue(int msgNum, int qId);
+	void startMQIfIdle(int qId, int flag);
 
 	void initMovements();
 	void loadMovementsPixelData();

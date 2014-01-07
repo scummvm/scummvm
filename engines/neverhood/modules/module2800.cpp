@@ -59,154 +59,123 @@ Module2800::~Module2800() {
 	_vm->_soundMan->deleteGroup(0x64210814);
 }
 
+#define statueCloseup(backgroundFileHash, cursorFileHash)	\
+		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);	\
+		createStaticScene(backgroundFileHash, cursorFileHash)
+
 void Module2800::createScene(int sceneNum, int which) {
 	debug(1, "Module2800::createScene(%d, %d)", sceneNum, which);
 	_sceneNum = sceneNum;
+
+	if (_sceneNum != 1001)
+		_vm->gameState().sceneNum = _sceneNum;
+
 	switch (_sceneNum) {
-	case 0:
-		_vm->gameState().sceneNum = 0;
+	case 0:	// in front of radio
 		_vm->_soundMan->stopMusic(0xD2FA4D14, 0, 0);
 		_childObject = new Scene2801(_vm, this, which);
 		break;
-	case 1:
-		_vm->gameState().sceneNum = 1;
+	case 1:	// radio
 		_vm->_soundMan->stopMusic(0xD2FA4D14, 0, 0);
 		if (getGlobalVar(V_RADIO_ENABLED))
 			_childObject = new Scene2802(_vm, this, which);
 		else
 			createStaticScene(0x000C6444, 0xC6440008);
 		break;
-	case 2:
-		_vm->gameState().sceneNum = 2;
+	case 2:	// outside shrink machine
 		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
 		if (getGlobalVar(V_KLAYMEN_SMALL))
 			_childObject = new Scene2803Small(_vm, this, which);
 		else
 			_childObject = new Scene2803(_vm, this, which);
 		break;
-	case 3:
-		_vm->gameState().sceneNum = 3;
+	case 3:	// glass cylinder with diamonds
 		_childObject = new Scene2804(_vm, this, which);
 		break;
-	case 4:
-		_vm->gameState().sceneNum = 4;
+	case 4:	// outside the transporter
 		_vm->_soundMan->stopMusic(0xD2FA4D14, 0, 2);
 		_childObject = new Scene2805(_vm, this, which);
 		break;
-	case 5:
-		_vm->gameState().sceneNum = 5;
+	case 5:	// left test tube room
 		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
 		_childObject = new Scene2806(_vm, this, which);
 		break;
-	case 6:
-		_vm->gameState().sceneNum = 6;
+	case 6:	// the three test tubes next to the window
 		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
 		_childObject = new Scene2807(_vm, this, which);
 		break;
-	case 7:
-		_vm->gameState().sceneNum = 7;
+	case 7:	// left test tube room closeup
 		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
 		_childObject = new Scene2808(_vm, this, 0);
 		break;
-	case 8:
-		_vm->gameState().sceneNum = 8;
+	case 8:	// right test tube room
 		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
 		_childObject = new Scene2809(_vm, this, which);
 		break;
-	case 9:
-		_vm->gameState().sceneNum = 9;
+	case 9:	// statue room
 		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
 		_childObject = new Scene2810(_vm, this, which);
 		break;
-	case 10:
-		_vm->gameState().sceneNum = 10;
+	case 10:	// right test tube room closeup
 		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
 		_childObject = new Scene2808(_vm, this, 1);
 		break;
-	case 11:
-		_vm->gameState().sceneNum = 11;
+	case 11:	// disk player room (above the statue room)
 		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
 		_childObject = new Scene2812(_vm, this, which);
 		break;
 	case 12:
-		_vm->gameState().sceneNum = 12;
-		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
-		createStaticScene(0x0000A245, 0x0A241008);
+		statueCloseup(0x0000A245, 0x0A241008);
 		break;
 	case 13:
-		_vm->gameState().sceneNum = 13;
-		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
-		createStaticScene(0x81C60635, 0x60631814);
+		statueCloseup(0x81C60635, 0x60631814);
 		break;
 	case 14:
-		_vm->gameState().sceneNum = 14;
-		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
-		createStaticScene(0xCA811204, 0x11200CA0);
+		statueCloseup(0xCA811204, 0x11200CA0);
 		break;
 	case 15:
-		_vm->gameState().sceneNum = 15;
-		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
-		createStaticScene(0x2D438A00, 0x38A042DC);
+		statueCloseup(0x2D438A00, 0x38A042DC);
 		break;
 	case 16:
-		_vm->gameState().sceneNum = 16;
-		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
-		createStaticScene(0x0A806204, 0x062000A0);
+		statueCloseup(0x0A806204, 0x062000A0);
 		break;
 	case 17:
-		_vm->gameState().sceneNum = 17;
-		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
-		createStaticScene(0x010F9284, 0xF9280018);
+		statueCloseup(0x010F9284, 0xF9280018);
 		break;
 	case 18:
-		_vm->gameState().sceneNum = 18;
-		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
-		createStaticScene(0x0100022B, 0x0022F018);
+		statueCloseup(0x0100022B, 0x0022F018);
 		break;
 	case 19:
-		_vm->gameState().sceneNum = 19;
-		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
-		createStaticScene(0x10866205, 0x66201100);
+		statueCloseup(0x10866205, 0x66201100);
 		break;
 	case 20:
-		_vm->gameState().sceneNum = 20;
-		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
-		createStaticScene(0x01C58000, 0x58004014);
+		statueCloseup(0x01C58000, 0x58004014);
 		break;
-	case 21:
-		_vm->gameState().sceneNum = 21;
+	case 21:	// statue with ladder down button
 		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
 		_childObject = new Scene2822(_vm, this, which);
 		break;
 	case 22:
-		_vm->gameState().sceneNum = 22;
-		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
-		createStaticScene(0x9408121E, 0x8121A948);
+		statueCloseup(0x9408121E, 0x8121A948);
 		break;
 	case 23:
-		_vm->gameState().sceneNum = 23;
-		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
-		createStaticScene(0x048C0600, 0xC0604040);
+		statueCloseup(0x048C0600, 0xC0604040);
 		break;
 	case 24:
-		_vm->gameState().sceneNum = 24;
-		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
-		createStaticScene(0x04270A94, 0x70A9004A);
+		statueCloseup(0x04270A94, 0x70A9004A);
 		break;
-	case 25:
-		_vm->gameState().sceneNum = 25;
+	case 25:	// window
 		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
 		if (getGlobalVar(V_SHRINK_LIGHTS_ON))
 			createStaticScene(0x01600204, 0x0020001E);
 		else
 			createStaticScene(0x08611204, 0x1120008E);
 		break;
-	case 26:
-		_vm->gameState().sceneNum = 26;
-		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
+	case 26:	// disk player
+		_vm->_soundMan->stopMusic(0xD2FA4D14, 0, 2);
 		_childObject = new DiskplayerScene(_vm, this, 4);
 		break;
-	case 1001:
+	case 1001:	// tower rotation video
 		_vm->_soundMan->stopMusic(0xD2FA4D14, 0, 0);
 		_musicResource->stop(0);
 		_currentMusicFileHash = 0;
@@ -216,6 +185,8 @@ void Module2800::createScene(int sceneNum, int which) {
 	SetUpdateHandler(&Module2800::updateScene);
 	_childObject->handleUpdate();
 }
+
+#undef statueCloseup
 
 void Module2800::updateScene() {
 	if (!updateChild()) {
@@ -603,7 +574,7 @@ uint32 Scene2802::handleMessage(int messageNum, const MessageParam &param, Entit
 			}
 		}
 		break;
-	case 0x0002:
+	case NM_MOUSE_RELEASE:
 		if (_countdown1 == 0)
 			_currTuneStatus = 0;
 		else {

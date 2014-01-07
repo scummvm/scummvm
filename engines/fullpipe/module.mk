@@ -24,6 +24,7 @@ MODULE_OBJS = \
 	stateloader.o \
 	statics.o \
 	utils.o \
+	scenes/sceneIntro.o \
 	scenes/scene01.o \
 	scenes/scene02.o \
 	scenes/scene03.o \
@@ -35,9 +36,23 @@ MODULE_OBJS = \
 	scenes/scene10.o \
 	scenes/scene11.o \
 	scenes/scene12.o \
+	scenes/scene13.o \
+	scenes/scene14.o \
 	scenes/scene15.o \
-	scenes/sceneDbg.o \
-	scenes/sceneIntro.o
+	scenes/scene16.o \
+	scenes/scene17.o \
+	scenes/scene20.o \
+	scenes/scene21.o \
+	scenes/scene22.o \
+	scenes/scene23.o \
+	scenes/scene24.o \
+	scenes/scene25.o \
+	scenes/scene26.o \
+	scenes/scene28.o \
+	scenes/scene30.o \
+	scenes/scene31.o \
+	scenes/scene36.o \
+	scenes/sceneDbg.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_FULLPIPE), DYNAMIC_PLUGIN)

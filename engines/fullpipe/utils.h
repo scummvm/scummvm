@@ -66,6 +66,8 @@ class MfcArchive : public Common::SeekableReadStream {
 
 enum ObjType {
 	kObjTypeDefault,
+	kObjTypeExCommand,
+	kObjTypeExCommand2,
 	kObjTypeMovGraph,
 	kObjTypeMovGraphLink,
 	kObjTypeMovGraphNode,
@@ -115,6 +117,7 @@ class MemoryObject : CObject {
 	void load() { loadFile(_memfilename); }
 	byte *getData();
 	byte *loadData();
+	int getDataSize() const { return _dataSize; }
 
 	bool testFlags();
 

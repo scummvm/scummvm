@@ -11491,16 +11491,7 @@ void Scene1800::signal() {
 		R2_GLOBALS._walkRegions.disableRegion(10);
 		R2_GLOBALS._walkRegions.disableRegion(11);
 		R2_GLOBALS.setFlag(63);
-
-		// The following check is completely dumb.
-		// Either an original bug, or dead code.
-		if (R2_GLOBALS.getFlag(63)) {
-			R2_GLOBALS._player.enableControl(CURSOR_WALK);
-		} else {
-			_sceneMode = 10;
-			R2_GLOBALS._events.setCursor(CURSOR_CROSSHAIRS);
-			_stripManager.start(545, this);
-		}
+		R2_GLOBALS._player.enableControl(CURSOR_WALK);
 		break;
 	case 1802:
 		R2_GLOBALS.clearFlag(14);

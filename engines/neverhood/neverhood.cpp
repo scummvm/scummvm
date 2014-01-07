@@ -178,6 +178,12 @@ void NeverhoodEngine::mainLoop() {
 			case Common::EVENT_RBUTTONUP:
 				_gameModule->handleMouseUp(event.mouse.x, event.mouse.y);
 				break;
+			case Common::EVENT_WHEELUP:
+				_gameModule->handleWheelUp();
+				break;
+			case Common::EVENT_WHEELDOWN:
+				_gameModule->handleWheelDown();
+				break;
 			case Common::EVENT_QUIT:
 				_system->quit();
 				break;
@@ -191,13 +197,12 @@ void NeverhoodEngine::mainLoop() {
 			_gameModule->draw();
 			_console->onFrame();
 			_screen->update();
+			if (_updateSound)
+				_soundMan->update();
 			nextFrameTime = _screen->getNextFrameTime();
 		};
 
-		if (_updateSound) {
-			_soundMan->update();
-			_audioResourceMan->updateMusic();
-		}
+		_audioResourceMan->updateMusic();
 
 		_system->updateScreen();
 		_system->delayMillis(10);

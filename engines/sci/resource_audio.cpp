@@ -599,6 +599,7 @@ SoundResource::SoundResource(uint32 resourceNr, ResourceManager *resMan, SciVers
 		_tracks->channels = new Channel[_tracks->channelCount];
 		memset(_tracks->channels, 0, sizeof(Channel) * _tracks->channelCount);
 		channel = &_tracks->channels[0];
+		channel->flags |= 2; // don't remap (SCI0 doesn't have remapping)
 		if (_soundVersion == SCI_VERSION_0_EARLY) {
 			channel->data = resource->data + 0x11;
 			channel->size = resource->size - 0x11;
@@ -676,33 +677,52 @@ SoundResource::SoundResource(uint32 resourceNr, ResourceManager *resMan, SciVers
 				channelNr = 0;
 				while (channelCount--) {
 					channel = &_tracks[trackNr].channels[channelNr];
-					channel->prio = READ_LE_UINT16(data);
 					uint dataOffset = READ_LE_UINT16(data + 2);
-					if (dataOffset < resource->size) {
-						channel->data = resource->data + dataOffset;
-						channel->size = READ_LE_UINT16(data + 4);
-						channel->curPos = 0;
-						// FIXME: number contains (low nibble) channel and (high nibble) flags
-						// 0x20 is set on rhythm channels to prevent remapping
-						channel->number = *channel->data;
-						channel->poly = *(channel->data + 1);
-						channel->time = channel->prev = 0;
-						channel->data += 2; // skip over header
-						channel->size -= 2; // remove header size
-						if (channel->number == 0xFE) { // Digital channel
-							_tracks[trackNr].digitalChannelNr = channelNr;
-							_tracks[trackNr].digitalSampleRate = READ_LE_UINT16(channel->data);
-							_tracks[trackNr].digitalSampleSize = READ_LE_UINT16(channel->data + 2);
-							_tracks[trackNr].digitalSampleStart = READ_LE_UINT16(channel->data + 4);
-							_tracks[trackNr].digitalSampleEnd = READ_LE_UINT16(channel->data + 6);
-							channel->data += 8; // Skip over header
-							channel->size -= 8;
-						}
-						_tracks[trackNr].channelCount++;
-						channelNr++;
-					} else {
+
+					if (dataOffset >= resource->size) {
 						warning("Invalid offset inside sound resource %d: track %d, channel %d", resourceNr, trackNr, channelNr);
+						data += 6;
+						continue;
 					}
+
+					channel->data = resource->data + dataOffset;
+					channel->size = READ_LE_UINT16(data + 4);
+					channel->curPos = 0;
+					channel->number = *channel->data;
+
+					channel->poly = *(channel->data + 1) & 0x0F;
+					channel->prio = *(channel->data + 1) >> 4;
+					channel->time = channel->prev = 0;
+					channel->data += 2; // skip over header
+					channel->size -= 2; // remove header size
+					if (channel->number == 0xFE) { // Digital channel
+						_tracks[trackNr].digitalChannelNr = channelNr;
+						_tracks[trackNr].digitalSampleRate = READ_LE_UINT16(channel->data);
+						_tracks[trackNr].digitalSampleSize = READ_LE_UINT16(channel->data + 2);
+						_tracks[trackNr].digitalSampleStart = READ_LE_UINT16(channel->data + 4);
+						_tracks[trackNr].digitalSampleEnd = READ_LE_UINT16(channel->data + 6);
+						channel->data += 8; // Skip over header
+						channel->size -= 8;
+						channel->flags = 0;
+					} else {
+						channel->flags = channel->number >> 4;
+						channel->number = channel->number & 0x0F;
+
+						// 0x20 is set on rhythm channels to prevent remapping
+						// CHECKME: Which SCI versions need that set manually?
+						channel->flags = (*channel->data) >> 4;
+						if (channel->number == 9)
+							channel->flags |= 2;
+						// Note: flag 1: channel start offset is 0 instead of 10
+						//               (currently: everything 0)
+						//               also: don't map the channel to device
+						//       flag 2: don't remap
+						//       flag 4: start muted
+						// QfG2 lacks flags 2 and 4, and uses (flags >= 1) as
+						// the condition for starting offset 0, without the "don't map"
+					}
+					_tracks[trackNr].channelCount++;
+					channelNr++;
 					data += 6;
 				}
 			} else {

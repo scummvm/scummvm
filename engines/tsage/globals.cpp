@@ -64,17 +64,39 @@ Globals::Globals() : _dialogCenter(160, 140), _gfxManagerInstance(_screenSurface
 	_stripNum = 0;
 	_gfxEdgeAdjust = 3;
 
-	if (g_vm->getFeatures() & GF_DEMO) {
-		_gfxFontNumber = 0;
-		_gfxColors.background = 6;
-		_gfxColors.foreground = 0;
-		_fontColors.background = 255;
-		_fontColors.foreground = 6;
-		_dialogCenter.y = 80;
-		// Workaround in order to use later version of the engine
-		_color1 = _gfxColors.foreground;
-		_color2 = _gfxColors.foreground;
-		_color3 = _gfxColors.foreground;
+	if (g_vm->getGameID() == GType_Ringworld) {
+		if (g_vm->getFeatures() & GF_DEMO) {
+			_gfxFontNumber = 0;
+			_gfxColors.background = 6;
+			_gfxColors.foreground = 0;
+			_fontColors.background = 255;
+			_fontColors.foreground = 6;
+			_dialogCenter.y = 80;
+			// Workaround in order to use later version of the engine
+			_color1 = _gfxColors.foreground;
+			_color2 = _gfxColors.foreground;
+			_color3 = _gfxColors.foreground;
+		} else if (g_vm->getFeatures() & GF_CD) {
+			_gfxFontNumber = 50;
+			_gfxColors.background = 53;
+			_gfxColors.foreground = 0;
+			_fontColors.background = 51;
+			_fontColors.foreground = 54;
+			_color1 = 18;
+			_color2 = 18;
+			_color3 = 18;
+		} else {
+		// Floppy version
+			_gfxFontNumber = 50;
+			_gfxColors.background = 53;
+			_gfxColors.foreground = 18;
+			_fontColors.background = 51;
+			_fontColors.foreground = 54;
+			// Workaround in order to use later version of the engine
+			_color1 = _gfxColors.foreground;
+			_color2 = _gfxColors.foreground;
+			_color3 = _gfxColors.foreground;
+		}
 	} else if (g_vm->getGameID() == GType_BlueForce) {
 		// Blue Force
 		_gfxFontNumber = 0;
@@ -94,26 +116,6 @@ Globals::Globals() : _dialogCenter(160, 140), _gfxManagerInstance(_screenSurface
 		_color2 = 15;
 		_color3 = 4;
 		_dialogCenter.y = 100;
-	} else if ((g_vm->getGameID() == GType_Ringworld) &&  (g_vm->getFeatures() & GF_CD)) {
-		_gfxFontNumber = 50;
-		_gfxColors.background = 53;
-		_gfxColors.foreground = 0;
-		_fontColors.background = 51;
-		_fontColors.foreground = 54;
-		_color1 = 18;
-		_color2 = 18;
-		_color3 = 18;
-	} else {
-		// Ringworld
-		_gfxFontNumber = 50;
-		_gfxColors.background = 53;
-		_gfxColors.foreground = 18;
-		_fontColors.background = 51;
-		_fontColors.foreground = 54;
-		// Workaround in order to use later version of the engine
-		_color1 = _gfxColors.foreground;
-		_color2 = _gfxColors.foreground;
-		_color3 = _gfxColors.foreground;
 	}
 	_screenSurface.setScreenSurface();
 	_gfxManagers.push_back(&_gfxManagerInstance);

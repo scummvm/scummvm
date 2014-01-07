@@ -238,6 +238,7 @@ public:
 	Scene *accessScene(int sceneId);
 	void setSceneMusicParameters(GameVar *var);
 	int convertScene(int scene);
+	int getSceneEntrance(int scene);
 	int getSceneFromTag(int tag);
 
 	NGIArchive *_currArchive;
@@ -272,6 +273,8 @@ public:
 	void lift_startExitQueue();
 	void lift_sub05(ExCommand *ex);
 
+	GameVar *_musicGameVar;
+	Audio::SoundHandle _sceneTrackHandle;
 public:
 
 	bool _isSaveAllowed;

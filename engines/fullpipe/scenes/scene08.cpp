@@ -282,7 +282,7 @@ void sceneHandler08_finishArcade() {
 void sceneHandler08_jumpOff(ExCommand *cmd) {
 	MessageQueue *mq = new MessageQueue(g_fp->_globalMessageQueueList->compact());
 
-	mq->addExCommandToEnd(new ExCommand(cmd));
+	mq->addExCommandToEnd(cmd->createClone());
 	mq->setFlags(mq->getFlags() | 1);
 
 	g_fp->_globalMessageQueueList->addMessageQueue(mq);

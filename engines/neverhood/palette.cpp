@@ -119,7 +119,7 @@ void Palette::startFadeToBlack(int counter) {
 	_fadeToG = 0;
 	_fadeToB = 0;
 	_palCounter = counter;
-	_fadeStep = 255 / counter;
+	_fadeStep = calculateFadeStep(counter);
 	_status = 1;
 }
 
@@ -131,7 +131,7 @@ void Palette::startFadeToWhite(int counter) {
 	_fadeToG = 255;
 	_fadeToB = 255;
 	_palCounter = counter;
-	_fadeStep = 255 / counter;
+	_fadeStep = calculateFadeStep(counter);
 	_status = 1;
 }
 
@@ -140,7 +140,7 @@ void Palette::startFadeToPalette(int counter) {
 	if (counter == 0)
 		counter = 1;
 	_palCounter = counter;
-	_fadeStep = 255 / counter;
+	_fadeStep = calculateFadeStep(counter);
 	_status = 2;
 }
 
@@ -201,6 +201,13 @@ void Palette::fadeColor(byte *rgb, byte toR, byte toG, byte toB) {
 	FADE(rgb[1], toG);
 	FADE(rgb[2], toB);
 	#undef FADE
+}
+
+int Palette::calculateFadeStep(int counter) {
+	int fadeStep = 255 / counter;
+	if (255 % counter)
+		fadeStep++;
+	return fadeStep;
 }
 
 } // End of namespace Neverhood

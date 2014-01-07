@@ -2519,6 +2519,72 @@ void Scene205::handleText() {
 }
 
 /*--------------------------------------------------------------------------
+ * Scene 205 Demo - End of Demo
+ *
+ *--------------------------------------------------------------------------*/
+
+void Scene205Demo::Action1::signal() {
+	Scene205Demo *scene = (Scene205Demo *)R2_GLOBALS._sceneManager._scene;
+
+	switch (_actionIndex++) {
+	case 0:
+		setDelay(2);
+		break;
+	case 1:
+		MessageDialog::show2(BUY_FULL_GAME_MSG, OK_BTN_STRING);
+		setDelay(1);
+		break;
+	case 2:
+		scene->leaveScene();
+		break;
+	default:
+		break;
+	}
+}
+
+/*--------------------------------------------------------------------------*/
+
+void Scene205Demo::leaveScene() {
+	if (g_globals->getFlag(85))
+		R2_GLOBALS._sceneManager.changeScene(160);
+	else
+		R2_GLOBALS._sceneManager.changeScene(R2_GLOBALS._sceneManager._previousScene);
+
+	BF_GLOBALS._scenePalette.loadPalette(0);
+	BF_GLOBALS._scenePalette.refresh();
+}
+
+void Scene205Demo::postInit(SceneObjectList *OwnerList) {
+	R2_GLOBALS._sceneManager._hasPalette = true;
+	R2_GLOBALS._scenePalette.loadPalette(0);
+
+	loadScene(1000);
+	R2_GLOBALS._uiElements._active = false;
+	R2_GLOBALS._player.enableControl();
+	
+	SceneExt::postInit();
+
+	_sound1.play(337);
+	_stripManager.addSpeaker(&_animationPlayer);
+
+	setAction(&_action1);
+}
+
+void Scene205Demo::remove() {
+	R2_GLOBALS._sound1.fadeOut2(NULL);
+	SceneExt::remove();
+}
+
+void Scene205Demo::process(Event &event) {
+	if ((event.eventType == EVENT_KEYPRESS) && (event.kbd.keycode == Common::KEYCODE_ESCAPE)) {
+		event.handled = true;
+		leaveScene();
+	} else {
+		Scene::process(event);
+	}
+}
+
+/*--------------------------------------------------------------------------
  * Scene 250 - Lift
  *
  *--------------------------------------------------------------------------*/
@@ -3550,7 +3616,11 @@ void Scene300::signal() {
 				R2_GLOBALS.setFlag(40);
 			break;
 		case 6:
-			R2_GLOBALS._sceneManager.changeScene(1000);
+			if (g_vm->getFeatures() & GF_DEMO) {
+				R2_GLOBALS.setFlag(85);
+				R2_GLOBALS._sceneManager.changeScene(205);
+			} else
+				R2_GLOBALS._sceneManager.changeScene(1000);
 			break;
 		default:
 			break;
@@ -3611,8 +3681,14 @@ void Scene300::signal() {
 
 	case 16:
 		if (_stripManager._exitMode == 1) {
-			R2_GLOBALS._player.setAction(NULL);
-			R2_GLOBALS._sceneManager.changeScene(1000);
+			if (g_vm->getFeatures() & GF_DEMO) {
+				R2_GLOBALS._player.setAction(NULL);
+				R2_GLOBALS.setFlag(85);
+				R2_GLOBALS._sceneManager.changeScene(205);
+			} else {
+				R2_GLOBALS._player.setAction(NULL);
+				R2_GLOBALS._sceneManager.changeScene(1000);
+			}
 		} else {
 			R2_GLOBALS._player.setAction(&_action1);
 			R2_GLOBALS._player.enableControl(CURSOR_TALK);

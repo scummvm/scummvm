@@ -21,6 +21,7 @@
  */
 
 #include "graphics/palette.h"
+#include "neverhood/gamemodule.h"
 #include "neverhood/smackerplayer.h"
 #include "neverhood/palette.h"
 #include "neverhood/resourceman.h"
@@ -160,7 +161,7 @@ void SmackerPlayer::close() {
 void SmackerPlayer::gotoFrame(int frameNumber) {
 	if (_smackerDecoder) {
 		_smackerDecoder->forceSeekToFrame(frameNumber);
-		_smackerDecoder->decodeNextFrame();
+		updateFrame();
 	}
 }
 
@@ -251,6 +252,15 @@ void SmackerPlayer::updatePalette() {
 		tempPalette[i * 4 + 1] = smackerPalette[i * 3 + 1];
 		tempPalette[i * 4 + 2] = smackerPalette[i * 3 + 2];
 	}
+
+	// WORKAROUND: Scene 3, module 3000 defines a black color 255 instead of
+	// white, which results in the mouse cursor showing black. I'm not sure if
+	// color 255 is always supposed to be white. It's not feasible to check
+	// all scenes for a glitch that only seems to manifest in one, therefore
+	// we define color 255 to be white only for that scene.
+	if (_vm->_gameModule->getCurrentModuleNum() == 3000 && _vm->_gameState.sceneNum == 3)
+			tempPalette[255 * 4 + 0] = tempPalette[255 * 4 + 1] = tempPalette[255 * 4 + 2] = 0xFF;
+
 	_palette->copyPalette(tempPalette, 0, 256, 0);
 }
 

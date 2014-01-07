@@ -206,6 +206,7 @@ extern char const *const USE_DOUBLE_AGENT;
 extern char const *const NEED_INSTRUCTIONS;
 extern char const *const WRONG_ANSWER_MSG;
 
+extern char const *const BUY_FULL_GAME_MSG;
 // Scene 1550 arrays of constants
 extern const byte scene1550JunkLocationsDefault[];
 extern const byte scene1550AreaMap[];

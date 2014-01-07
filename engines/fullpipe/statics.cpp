@@ -281,6 +281,29 @@ void StaticANIObject::queueMessageQueue(MessageQueue *mq) {
 	}
 }
 
+void StaticANIObject::restartMessageQueue(MessageQueue *mq) {
+	ExCommand *ex = mq->getExCommandByIndex(0);
+	if (ex) {
+		while (ex->_messageKind != 1 || ex->_parentId != _id) {
+			ex->_parId = 0;
+			ex->_excFlags |= 2;
+			ex->handleMessage();
+
+			mq->deleteExCommandByIndex(0, 0);
+
+			ex = mq->getExCommandByIndex(0);
+
+			if (!ex)
+				return;
+		}
+
+		if (ex) {
+			startAnim(ex->_messageNum, mq->_id, -1);
+			mq->deleteExCommandByIndex(0, 1);
+		}
+	}
+}
+
 MessageQueue *StaticANIObject::getMessageQueue() {
 	if (this->_messageQueueId <= 0)
 		return 0;
@@ -300,6 +323,10 @@ bool StaticANIObject::trySetMessageQueue(int msgNum, int qId) {
 	_messageQueueId = qId;
 
 	return true;
+}
+
+void StaticANIObject::startMQIfIdle(int qId, int flag) {
+	warning("STUB: StaticANIObject::startMQIfIdle()");
 }
 
 bool StaticANIObject::isIdle() {
@@ -708,7 +735,7 @@ void StaticANIObject::update(int counterdiff) {
 
 				ex = dyn->getExCommand();
 				if (ex && ex->_messageKind != 35) {
-					newex = new ExCommand(ex);
+					newex = ex->createClone();
 					newex->_excFlags |= 2;
 					if (newex->_messageKind == 17) {
 						newex->_parentId = _id;
@@ -741,7 +768,7 @@ void StaticANIObject::update(int counterdiff) {
 					ex = dyn->getExCommand();
 					if (ex) {
 						if (ex->_messageKind == 35) {
-							newex = new ExCommand(ex);
+							newex = ex->createClone();
 							newex->_excFlags |= 2;
 							newex->sendMessage();
 						}
@@ -1048,7 +1075,7 @@ bool StaticANIObject::startAnim(int movementId, int messageQueueId, int dynPhase
 			ExCommand *ex = _movement->_currDynamicPhase->getExCommand();
 			if (ex) {
 				if (ex->_messageKind == 35) {
-					ExCommand *newex = new ExCommand(ex);
+					ExCommand *newex = ex->createClone();
 					newex->_excFlags |= 2;
 					newex->sendMessage();
 				}
@@ -1528,6 +1555,25 @@ int Movement::calcDuration() {
 	return res;
 }
 
+int Movement::countPhasesWithFlag(int maxidx, int flag) {
+	int res = 0;
+	int sz;
+
+	if (_currMovement)
+		sz = _currMovement->_dynamicPhases.size();
+	else
+		sz = _dynamicPhases.size();
+
+	if (maxidx < 0)
+		maxidx = sz;
+
+	for (int i = 0; i < maxidx && i < sz; i++)
+		if (getDynamicPhaseByIndex(i)->_dynFlags & flag)
+			res++;
+
+	return res;
+}
+
 void Movement::setDynamicPhaseIndex(int index) {
 	debug(7, "Movement::setDynamicPhaseIndex(%d)", index);
 	while (_currDynamicPhaseIndex < index)
@@ -1852,7 +1898,7 @@ DynamicPhase::DynamicPhase(DynamicPhase *src, bool reverse) {
 	_field_7C = src->_field_7C;
 
 	if (src->getExCommand())
-		_exCommand = new ExCommand(src->getExCommand());
+		_exCommand = src->getExCommand()->createClone();
 	else
 		_exCommand = 0;
 
@@ -1916,6 +1962,8 @@ bool StaticPhase::load(MfcArchive &file) {
 	}
 
 	assert (g_fp->_gameProjectVersion >= 12);
+
+	warning("StaticPhase::load(): Code continues here");
 
 	return true;
 }

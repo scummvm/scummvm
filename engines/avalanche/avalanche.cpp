@@ -144,30 +144,7 @@ void AvalancheEngine::initVariables() {
 	_currentMouse = 177;
 	_holdLeftMouse = false;
 
-	_jumpStatus = 0;
-	_mushroomGrowing = false;
-	_crapulusWillTell = false;
-	_enterCatacombsFromLustiesRoom = false;
-	_teetotal = false;
-	_malagauche = 0;
-	_drinking = '\0';
-	_enteredLustiesRoomAsMonk = false;
-	_catacombX = 0;
-	_catacombY = 0;
-	_avvysInTheCupboard = false;
-	_geidaFollows = false;
-	_givenPotionToGeida = false;
-	_lustieIsAsleep = false;
-	_beenTiedUp = false;
-	_sittingInPub = false;
-	_spurgeTalkCount = 0;
-	_metAvaroid = false;
-	_takenMushroom = false;
-	_givenPenToAyles = false;
-	_askedDogfoodAboutNim = false;
-	_spludwickAtHome = false;
-	_passedCwytalotInHerts = false;
-	_lastRoom = _lastRoomNotMap = kRoomDummy;
+	resetVariables();
 }
 
 Common::ErrorCode AvalancheEngine::initialize() {
@@ -444,7 +421,7 @@ bool AvalancheEngine::loadGame(const int16 slot) {
 	t.tm_mon = f->readSint16LE();
 	t.tm_year = f->readSint16LE();
 
-	resetVariables();
+	resetAllVariables();
 
 	Common::Serializer sz(f, NULL);
 	synchronize(sz);

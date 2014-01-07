@@ -84,7 +84,7 @@ void FullpipeEngine::initObjectStates() {
 	setObjectState(sO_Lever_23, getObjectEnumState(sO_Lever_23, sO_NotTaken));
 	setObjectState(sO_LeverHandle_23, getObjectEnumState(sO_LeverHandle_23, sO_WithoutStool));
 	setObjectState(sO_LowerPipe_21, getObjectEnumState(sO_LowerPipe_21, sO_IsClosed));
-	setObjectState(sO_StarsDown_24, getObjectEnumState(sO_StarsDown_24, sO_IsOpened));
+	setObjectState(sO_StairsDown_24, getObjectEnumState(sO_StairsDown_24, sO_IsOpened));
 	setObjectState(sO_Hatch_26, getObjectEnumState(sO_Hatch_26, sO_Closed));
 	setObjectState(sO_Sock_26, getObjectEnumState(sO_Sock_26, sO_NotHanging));
 	setObjectState(sO_LeftPipe_26, getObjectEnumState(sO_LeftPipe_26, sO_IsClosed));
@@ -94,7 +94,7 @@ void FullpipeEngine::initObjectStates() {
 	setObjectState(sO_Valve4_26, getObjectEnumState(sO_Valve4_26, sO_Closed));
 	setObjectState(sO_Valve5_26, getObjectEnumState(sO_Valve5_26, sO_Opened));
 	setObjectState(sO_Pool, getObjectEnumState(sO_Pool, sO_Overfull));
-	setObjectState(sO_Plank_25, getObjectEnumState(sO_Plank_25, sO_NearDudesStairs));
+	setObjectState(sO_Board_25, getObjectEnumState(sO_Board_25, sO_NearDudesStairs));
 	setObjectState(sO_Driver, getObjectEnumState(sO_Driver, sO_WithSteering));
 	setObjectState(sO_Janitress, getObjectEnumState(sO_Janitress, sO_WithMop));
 	setObjectState(sO_LeftPipe_29, getObjectEnumState(sO_LeftPipe_29, sO_IsClosed));

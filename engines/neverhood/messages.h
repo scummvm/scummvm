@@ -28,6 +28,7 @@ namespace Neverhood {
 enum NeverhoodMessage {
 	NM_MOUSE_MOVE               = 0x0000,
 	NM_MOUSE_CLICK              = 0x0001,
+	NM_MOUSE_RELEASE            = 0x0002,
 	NM_MOUSE_HIDE               = 0x101D,
 	NM_MOUSE_SHOW               = 0x101E,
 	NM_KEYPRESS_SPACE           = 0x0009,
@@ -56,15 +57,19 @@ enum NeverhoodMessage {
 	NM_KLAYMEN_CLOSE_DOOR       = 0x4809,
 	NM_KLAYMEN_MOVE_OBJECT      = 0x480A,
 	NM_KLAYMEN_LOWER_LEVER      = 0x480F,
-	NM_KLAYMEN_PICKUP			= 0x4812,
-	NM_KLAYMEN_PRESS_BUTTON		= 0x4816,
-	NM_KLAYMEN_INSERT_DISK		= 0x481A,
+	NM_KLAYMEN_PICKUP           = 0x4812,
+	NM_KLAYMEN_PRESS_BUTTON     = 0x4816,
+	NM_KLAYMEN_INSERT_DISK      = 0x481A,
 	NM_KLAYMEN_TURN_TO_USE      = 0x481D,
 	NM_KLAYMEN_RETURN_FROM_USE  = 0x481E,
-	NM_KLAYMEN_RELEASE_LEVER	= 0x4827,
+	NM_KLAYMEN_RELEASE_LEVER    = 0x4827,
 
 	NM_MOVE_TO_BACK             = 0x482A,
-	NM_MOVE_TO_FRONT            = 0x482B
+	NM_MOVE_TO_FRONT            = 0x482B,
+
+	// New to ScummVM
+	NM_MOUSE_WHEELUP            = 0xF000,
+	NM_MOUSE_WHEELDOWN          = 0xF001
 };
 
 } // End of namespace Neverhood

@@ -41,7 +41,10 @@ ExCommand::ExCommand(ExCommand *src) : Message(src) {
 	_messageNum = src->_messageNum;
 	_excFlags = src->_excFlags;
 	_parId = src->_parId;
+}
 
+ExCommand *ExCommand::createClone() {
+	return new ExCommand(this);
 }
 
 ExCommand::ExCommand(int16 parentId, int messageKind, int messageNum, int x, int y, int a7, int a8, int sceneClickX, int sceneClickY, int a11) : 
@@ -77,6 +80,8 @@ bool ExCommand::load(MfcArchive &file) {
 		_excFlags = file.readUint32LE();
 		_parId = file.readUint32LE();
 	}
+
+	_objtype = kObjTypeExCommand;
 
 	return true;
 }
@@ -118,6 +123,61 @@ void ExCommand::handle() {
 	} else {
 		postMessage();
 	}
+}
+
+void ExCommand::setf3c(int val) {
+	if (val != -1)
+		_field_3C = val;
+
+	_field_34 = 1;
+}
+
+void ExCommand::firef34() {
+	if (_field_34) {
+		if (_field_3C >= _keyCode) {
+			_field_34 = 0;
+
+			sendMessage();
+
+			if (!_field_30 )
+				setf3c(_field_2C);
+		}
+	}
+}
+
+ExCommand2::ExCommand2(int messageKind, int parentId, Common::Point **points, int pointsSize) : ExCommand(parentId, messageKind, 0, 0, 0, 0, 1, 0, 0, 0) {
+	_objtype = kObjTypeExCommand2;
+
+	_pointsSize = pointsSize;
+	_points = (Common::Point **)malloc(sizeof(Common::Point *) * pointsSize);
+
+	for (int i = 0; i < pointsSize; i++) {
+		_points[i] = new Common::Point;
+
+		*_points[i] = *points[i];
+	}
+}
+
+ExCommand2::ExCommand2(ExCommand2 *src) : ExCommand(src) {
+	_pointsSize = src->_pointsSize;
+	_points = (Common::Point **)malloc(sizeof(Common::Point *) * _pointsSize);
+
+	for (int i = 0; i < _pointsSize; i++) {
+		_points[i] = new Common::Point;
+
+		*_points[i] = *src->_points[i];
+	}
+}
+
+ExCommand2::~ExCommand2() {
+	for (int i = 0; i < _pointsSize; i++)
+		delete _points[i];
+
+	free(_points);
+}
+
+ExCommand2 *ExCommand2::createClone() {
+	return new ExCommand2(this);
 }
 
 Message::Message() {
@@ -219,7 +279,7 @@ MessageQueue::MessageQueue(MessageQueue *src, int parId, int field_38) {
 	_field_38 = (field_38 == 0);
 
 	for (Common::List<ExCommand *>::iterator it = src->_exCommands.begin(); it != src->_exCommands.end(); ++it) {
-		ExCommand *ex = new ExCommand(*it);
+		ExCommand *ex = (*it)->createClone();
 		ex->_excFlags |= 2;
 
 		_exCommands.push_back(ex);
@@ -234,6 +294,7 @@ MessageQueue::MessageQueue(MessageQueue *src, int parId, int field_38) {
 	_id = g_fp->_globalMessageQueueList->compact();
 	_dataId = src->_dataId;
 	_flags = src->_flags;
+	_queueName = 0;
 
 	g_fp->_globalMessageQueueList->addMessageQueue(this);
 
@@ -328,6 +389,10 @@ void MessageQueue::addExCommand(ExCommand *ex) {
 
 void MessageQueue::addExCommandToEnd(ExCommand *ex) {
 	_exCommands.push_back(ex);
+}
+
+void MessageQueue::insertExCommandAt(int pos, ExCommand *ex) {
+	warning("STUB: MessageQueue::insertExCommandAt()");
 }
 
 ExCommand *MessageQueue::getExCommandByIndex(uint idx) {

@@ -2964,8 +2964,9 @@ void SceneObjectList::draw() {
 				g_globals->_sceneManager._sceneBgOffset.y);
 		}
 
-		// Set up the flag mask
-		uint32 flagMask = (paneNum == 0) ? OBJFLAG_PANE_0 : OBJFLAG_PANE_1;
+		// Set up the flag mask. Currently, paneNum is always set to 0, so the check is meaningless
+		// uint32 flagMask = (paneNum == 0) ? OBJFLAG_PANE_0 : OBJFLAG_PANE_1;
+		uint32 flagMask = OBJFLAG_PANE_0;
 
 		// Initial loop to set up object list and update object position, priority, and flags
 		for (SynchronizedList<SceneObject *>::iterator i = g_globals->_sceneObjects->begin();

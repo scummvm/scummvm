@@ -1433,6 +1433,7 @@ int Animation::getAvvyClothes() {
 }
 
 void Animation::resetVariables() {
+	setDirection(kDirUp);
 	_geidaSpin = 0;
 	_geidaTime = 0;
 	_arrowTriggered = false;

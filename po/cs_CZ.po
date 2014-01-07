@@ -1,5 +1,5 @@
 # Czech translation for ScummVM.
-# Copyright (C) 2001-2013 ScummVM Team
+# Copyright (C) 2001-2014 ScummVM Team
 # This file is distributed under the same license as the ScummVM package.
 # Zbynìk Schwarz <zbynek.schwarz@gmail.com>, 2011-2013.
 #

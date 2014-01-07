@@ -94,6 +94,7 @@ FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_isProcessingMessages = false;
 
 	_musicAllowed = -1;
+	_musicGameVar = 0;
 
 	_aniMan = 0;
 	_aniMan2 = 0;

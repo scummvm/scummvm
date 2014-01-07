@@ -42,7 +42,7 @@ void scene12_initScene(Scene *sc) {
 	g_vars->scene12_fly = g_fp->getObjectState(sO_Fly_12);
 
 	if (g_vars->scene12_fly)
-		g_vars->scene12_flyCountdown = 600 * g_fp->_rnd->getRandomNumber(32767) / 0x7fff + 600;
+		g_vars->scene12_flyCountdown = g_fp->_rnd->getRandomNumber(600) + 600;
 
 	g_fp->setObjectState(sO_Fly_12, g_fp->_rnd->getRandomNumber(1));
 }

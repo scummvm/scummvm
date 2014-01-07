@@ -129,8 +129,8 @@ void Background::addPictureObject(PictureObject *pct) {
 		pct->renumPictures(&_picObjList);
 
 	bool inserted = false;
-	for (uint i = 0; i < _picObjList.size(); i++) {
-		if (((PictureObject *)_picObjList[i])->_priority == pct->_priority) {
+	for (uint i = 1; i < _picObjList.size(); i++) {
+		if (((PictureObject *)_picObjList[i])->_priority <= pct->_priority) {
 			_picObjList.insert_at(i, pct);
 			inserted = true;
 			break;
@@ -329,8 +329,8 @@ void GameObject::renumPictures(PtrList *lst) {
 	int *buf = (int *)calloc(lst->size() + 2, sizeof(int));
 
 	for (uint i = 0; i < lst->size(); i++) {
-		if (_id == ((PictureObject *)((*lst)[i]))->_id)
-			buf[((PictureObject *)((*lst)[i]))->_okeyCode] = 1;
+		if (_id == ((GameObject *)((*lst)[i]))->_id)
+			buf[((GameObject *)((*lst)[i]))->_okeyCode] = 1;
 	}
 
 	if (buf[_okeyCode]) {

@@ -3667,6 +3667,25 @@ fi
 if test "$_readline" = yes ; then
 	LIBS="$LIBS $READLINE_LIBS $_READLINE_LIBS"
 	INCLUDES="$INCLUDES $READLINE_CFLAGS"
+
+	#
+	# Check the type of rl_completion_entry_function.
+	# It can be int(*)(const char *, int) or char *(*)(const char *, int).
+	#
+	cat > $TMPC << EOF
+#include <stdio.h>
+#include <readline/readline.h>
+#include <readline/history.h>
+
+int readline_completionFunction(const char *, int);
+
+int main(void) {
+	char *x = readline("");
+	rl_completion_entry_function = &readline_completionFunction;
+}
+EOF
+	cc_check -c && add_line_to_config_h '#define USE_READLINE_INT_COMPLETION'
+
 fi
 define_in_config_h_if_yes "$_readline" 'USE_READLINE'
 

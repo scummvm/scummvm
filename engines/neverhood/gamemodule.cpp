@@ -79,7 +79,7 @@ GameModule::GameModule(NeverhoodEngine *vm)
 	_mainMenuRequested(false) {
 
 	// Other initializations moved to actual engine class
-	_vm->_soundMan->playSoundThree(0x002D0031, 0x8861079);
+	_vm->_soundMan->playSoundThree(0x002D0031, 0x08861079);
 	SetMessageHandler(&GameModule::handleMessage);
 }
 
@@ -95,7 +95,7 @@ void GameModule::handleMouseMove(int16 x, int16 y) {
 		mousePos.x = x;
 		mousePos.y = y;
 		debug(2, "GameModule::handleMouseMove(%d, %d)", x, y);
-		sendPointMessage(_childObject, 0, mousePos);
+		sendPointMessage(_childObject, NM_MOUSE_MOVE, mousePos);
 	}
 }
 
@@ -115,7 +115,19 @@ void GameModule::handleMouseUp(int16 x, int16 y) {
 		mousePos.x = x;
 		mousePos.y = y;
 		debug(2, "GameModule::handleMouseUp(%d, %d)", x, y);
-		sendPointMessage(_childObject, 0x0002, mousePos);
+		sendPointMessage(_childObject, NM_MOUSE_RELEASE, mousePos);
+	}
+}
+
+void GameModule::handleWheelUp() {
+	if (_childObject) {
+		sendMessage(_childObject, NM_MOUSE_WHEELUP, 0);
+	}
+}
+
+void GameModule::handleWheelDown() {
+	if (_childObject) {
+		sendMessage(_childObject, NM_MOUSE_WHEELDOWN, 0);
 	}
 }
 
@@ -415,6 +427,8 @@ void GameModule::checkRequests() {
 		_vm->_audioResourceMan->stopAllSounds();
 		_vm->_soundMan->stopAllMusic();
 		_vm->_soundMan->stopAllSounds();
+		// Reinsert turning sound because SoundMan::stopAllSounds() removes it
+		_vm->_soundMan->playSoundThree(0x002D0031, 0x08861079);
 		delete _childObject;
 		delete _prevChildObject;
 		_childObject = NULL;

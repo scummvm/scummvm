@@ -33,7 +33,7 @@
 #include "sci/sound/midiparser_sci.h"
 #include "sci/sound/music.h"
 
-//#define DISABLE_REMAPPING
+//#define DEBUG_REMAP
 
 namespace Sci {
 
@@ -47,6 +47,8 @@ SciMusic::SciMusic(SciVersion soundVersion, bool useDigitalSFX)
 	for (int i = 0; i < 16; i++) {
 		_usedChannel[i] = 0;
 		_channelRemap[i] = -1;
+		_channelMap[i]._song = 0;
+		_channelMap[i]._channel = -1;
 	}
 
 	_queuedCommands.reserve(1000);
@@ -291,6 +293,15 @@ void SciMusic::sortPlayList() {
 }
 
 void SciMusic::soundInitSnd(MusicEntry *pSnd) {
+	// Remove all currently mapped channels of this MusicEntry first,
+	// since they will no longer be valid.
+	for (int i = 0; i < 16; ++i) {
+		if (_channelMap[i]._song == pSnd) {
+			_channelMap[i]._song = 0;
+			_channelMap[i]._channel = -1;
+		}
+	}
+
 	int channelFilterMask = 0;
 	SoundResource::Track *track = pSnd->soundRes->getTrackByType(_pMidiDrv->getPlayId());
 
@@ -337,6 +348,27 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 			// Find out what channels to filter for SCI0
 			channelFilterMask = pSnd->soundRes->getChannelFilterMask(_pMidiDrv->getPlayId(), _pMidiDrv->hasRhythmChannel());
 
+			for (int i = 0; i < 16; ++i)
+				pSnd->_usedChannels[i] = 0xFF;
+			for (int i = 0; i < track->channelCount; ++i) {
+				SoundResource::Channel &chan = track->channels[i];
+
+				pSnd->_usedChannels[i] = chan.number;
+				pSnd->_chan[chan.number]._dontRemap = (chan.flags & 2);
+				pSnd->_chan[chan.number]._prio = chan.prio;
+				pSnd->_chan[chan.number]._voices = chan.poly;
+
+				// CHECKME: Some SCI versions use chan.flags & 1 for this:
+				pSnd->_chan[chan.number]._dontMap = false;
+
+				// FIXME: Most MIDI tracks use the first 10 bytes for
+				// fixed MIDI commands. SSCI skips those the first iteration,
+				// but _does_ update channel state (including volume) with
+				// them. Specifically, prio/voices, patch, volume, pan.
+				// This should probably be implemented in
+				// MidiParser_SCI::loadMusic.
+			}
+
 			pSnd->pMidiParser->mainThreadBegin();
 			// loadMusic() below calls jumpToTick.
 			// Disable sound looping and hold before jumpToTick is called,
@@ -356,64 +388,6 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 			pSnd->pMidiParser->mainThreadEnd();
 		}
 	}
-}
-
-// This one checks, if requested channel is available -> in that case give
-// caller that channel. Otherwise look for an unused one
-int16 SciMusic::tryToOwnChannel(MusicEntry *caller, int16 bestChannel) {
-#ifdef DISABLE_REMAPPING
-	return bestChannel;
-#endif
-
-	// Don't even try this for SCI0
-	if (_soundVersion <= SCI_VERSION_0_LATE)
-		return bestChannel;
-	if (!_usedChannel[bestChannel]) {
-		// currently unused, so give it to caller directly
-		_usedChannel[bestChannel] = caller;
-		_channelRemap[bestChannel] = bestChannel;
-		return bestChannel;
-	}
-	// otherwise look for unused channel
-	for (int channelNr = _driverFirstChannel; channelNr < 15; channelNr++) {
-		if (channelNr == 9) // never map to channel 9 (percussion)
-			continue;
-		if (!_usedChannel[channelNr]) {
-			_usedChannel[channelNr] = caller;
-			_channelRemap[bestChannel] = channelNr;
-			return channelNr;
-		}
-	}
-	// nothing found, don't map channel at all
-	//  sierra did this as well, although i'm not sure if we act exactly the same way
-	//  maybe they removed channels from previous playing music
-	return -1;
-}
-
-void SciMusic::freeChannels(MusicEntry *caller) {
-	// Remove used channels
-	for (int i = 0; i < 15; i++) {
-		if (_usedChannel[i] == caller) {
-			if (_channelRemap[i] != -1) {
-				// athrxx: The original handles this differently. It seems to be checking for (and effecting) necessary
-				// remaps / resets etc. more or less all the time. There are several more tables to keep track of everything.
-				// I don't know whether all of that is needed and to which SCI versions it applies, though.
-				// At least it is necessary to release the allocated channels inside the driver. Otherwise these channels
-				// won't be available any more (e.g. after half of the KQ5 FM-Towns intro there will be no more music
-				// since the driver can't pick up any more channels). The channels also have to be reset to
-				// default values, since the original does the same (although in a different manny) and the music will be wrong
-				// otherwise (at least KQ5 FM-Towns).
-
-				sendMidiCommand(0x4000e0 | _channelRemap[i]);	// Reset pitch wheel
-				sendMidiCommand(0x0040b0 | _channelRemap[i]);	// Release pedal
-				sendMidiCommand(0x004bb0 | _channelRemap[i]);	// Release assigned driver channels
-			}
-			_usedChannel[i] = 0;
-			_channelRemap[i] = -1;
-		}
-	}
-	// Also tell midiparser, that he lost ownership
-	caller->pMidiParser->lostChannels();
 }
 
 void SciMusic::soundPlay(MusicEntry *pSnd) {
@@ -481,28 +455,6 @@ void SciMusic::soundPlay(MusicEntry *pSnd) {
 			Common::StackLock lock(_mutex);
 			pSnd->pMidiParser->mainThreadBegin();
 
-			if (pSnd->status != kSoundPaused) {
-				// Stop any in progress music fading, as that will reset the
-				// volume of the sound channels that the faded song occupies..
-				// Fixes bug #3266480 and partially fixes bug #3041738.
-				// CHECKME: Is this the right thing to do? Are these
-				// overlapping channels not a deeper underlying problem?
-				for (uint i = 0; i < playListCount; i++) {
-					// Is another MIDI song being faded down? If yes, stop it
-					// immediately instead
-					if (_playList[i]->fadeStep < 0 && _playList[i]->pMidiParser) {
-						_playList[i]->status = kSoundStopped;
-						if (_soundVersion <= SCI_VERSION_0_LATE)
-							_playList[i]->isQueued = false;
-						_playList[i]->pMidiParser->stop();
-						freeChannels(_playList[i]);
-						_playList[i]->fadeStep = 0;
-						_playList[i]->fadeCompleted = true;
-					}
-				}
-			}
-
-			pSnd->pMidiParser->tryToOwnChannels();
 			if (pSnd->status != kSoundPaused)
 				pSnd->pMidiParser->sendInitCommands();
 			pSnd->pMidiParser->setVolume(pSnd->volume);
@@ -532,6 +484,10 @@ void SciMusic::soundPlay(MusicEntry *pSnd) {
 	}
 
 	pSnd->status = kSoundPlaying;
+
+	_mutex.lock();
+	remapChannels();
+	_mutex.unlock();
 }
 
 void SciMusic::soundStop(MusicEntry *pSnd) {
@@ -549,8 +505,8 @@ void SciMusic::soundStop(MusicEntry *pSnd) {
 		// allNotesOff() again
 		if (previousStatus == kSoundPlaying)
 			pSnd->pMidiParser->stop();
-		freeChannels(pSnd);
 		pSnd->pMidiParser->mainThreadEnd();
+		remapChannels();
 	}
 
 	pSnd->fadeStep = 0; // end fading, if fading was in progress
@@ -586,14 +542,18 @@ void SciMusic::soundSetPriority(MusicEntry *pSnd, byte prio) {
 void SciMusic::soundKill(MusicEntry *pSnd) {
 	pSnd->status = kSoundStopped;
 
+	_mutex.lock();
+	remapChannels();
+
 	if (pSnd->pMidiParser) {
-		Common::StackLock lock(_mutex);
 		pSnd->pMidiParser->mainThreadBegin();
 		pSnd->pMidiParser->unloadMusic();
 		pSnd->pMidiParser->mainThreadEnd();
 		delete pSnd->pMidiParser;
 		pSnd->pMidiParser = NULL;
 	}
+
+	_mutex.unlock();
 
 	if (pSnd->pStreamAud) {
 		_pMixer->stopHandle(pSnd->hCurrentAud);
@@ -603,7 +563,7 @@ void SciMusic::soundKill(MusicEntry *pSnd) {
 		pSnd->pLoopStream = 0;
 	}
 
-	Common::StackLock lock(_mutex);
+	_mutex.lock();
 	uint sz = _playList.size(), i;
 	// Remove sound from playlist
 	for (i = 0; i < sz; i++) {
@@ -614,6 +574,7 @@ void SciMusic::soundKill(MusicEntry *pSnd) {
 			break;
 		}
 	}
+	_mutex.unlock();
 }
 
 void SciMusic::soundPause(MusicEntry *pSnd) {
@@ -639,8 +600,8 @@ void SciMusic::soundPause(MusicEntry *pSnd) {
 			Common::StackLock lock(_mutex);
 			pSnd->pMidiParser->mainThreadBegin();
 			pSnd->pMidiParser->pause();
-			freeChannels(pSnd);
 			pSnd->pMidiParser->mainThreadEnd();
+			remapChannels();
 		}
 	}
 }
@@ -789,6 +750,14 @@ MusicEntry::MusicEntry() {
 	pStreamAud = 0;
 	pLoopStream = 0;
 	pMidiParser = 0;
+
+	for (int i = 0; i < 16; ++i) {
+		_usedChannels[i] = 0xFF;
+		_chan[i]._prio = 127;
+		_chan[i]._voices = 0;
+		_chan[i]._dontRemap = false;
+		_chan[i]._mute = false;
+	}
 }
 
 MusicEntry::~MusicEntry() {
@@ -856,5 +825,448 @@ void MusicEntry::setSignal(int newSignal) {
 		signal = newSignal;
 	}
 }
+
+
+void ChannelRemapping::swap(int i, int j) {
+	DeviceChannelUsage t1;
+	int t2;
+	bool t3;
+
+	t1 = _map[i]; _map[i] = _map[j]; _map[j] = t1;
+	t2 = _prio[i]; _prio[i] = _prio[j]; _prio[j] = t2;
+	t2 = _voices[i]; _voices[i] = _voices[j]; _voices[j] = t2;
+	t3 = _dontRemap[i]; _dontRemap[i] = _dontRemap[j]; _dontRemap[j] = t3;
+}
+
+void ChannelRemapping::evict(int i) {
+	_freeVoices += _voices[i];
+
+	_map[i]._song = 0;
+	_map[i]._channel = -1;
+	_prio[i] = 0;
+	_voices[i] = 0;
+	_dontRemap[i] = false;
+}
+
+void ChannelRemapping::clear() {
+	for (int i = 0; i < 16; ++i) {
+		_map[i]._song = 0;
+		_map[i]._channel = -1;
+		_prio[i] = 0;
+		_voices[i] = 0;
+		_dontRemap[i] = false;
+	}
+}
+
+ChannelRemapping& ChannelRemapping::operator=(ChannelRemapping& other) {
+	for (int i = 0; i < 16; ++i) {
+		_map[i] = other._map[i];
+		_prio[i] = other._prio[i];
+		_voices[i] = other._voices[i];
+		_dontRemap[i] = other._dontRemap[i];
+	}
+	_freeVoices = other._freeVoices;
+
+	return *this;
+}
+
+int ChannelRemapping::lowestPrio() const {
+	int max = 0;
+	int channel = -1;
+	for (int i = 0; i < 16; ++i) {
+		if (_prio[i] > max) {
+			max = _prio[i];
+			channel = i;
+		}
+	}
+	return channel;
+}
+
+
+void SciMusic::remapChannels() {
+	if (_soundVersion <= SCI_VERSION_0_LATE)
+		return;
+
+	// NB: This function should only be called from the main thread,
+	// with _mutex locked
+
+
+	ChannelRemapping *map = determineChannelMap();
+
+	DeviceChannelUsage currentMap[16];
+
+#ifdef DEBUG_REMAP
+	debug("Remap results:");
+#endif
+
+	// Save current map, and then start from an empty map
+	for (int i = 0; i < 16; ++i) {
+		currentMap[i] = _channelMap[i];
+		_channelMap[i]._song = 0;
+		_channelMap[i]._channel = -1;
+	}
+
+	// Inform MidiParsers of any unmapped channels
+	const MusicList::iterator end = _playList.end();
+	int songIndex = -1;
+	for (MusicList::iterator i = _playList.begin(); i != end; ++i) {
+		MusicEntry *song = *i;
+		songIndex++;
+
+		if (!song || !song->pMidiParser)
+			continue;
+
+		bool channelMapped[16];
+#ifdef DEBUG_REMAP
+		bool channelUsed[16];
+#endif
+		for (int j = 0; j < 16; ++j) {
+			channelMapped[j] = false;
+#ifdef DEBUG_REMAP
+			channelUsed[j] = false;
+#endif
+		}
+
+		for (int j = 0; j < 16; ++j) {
+			if (map->_map[j]._song == song) {
+				int channel = map->_map[j]._channel;
+				assert(channel >= 0 && channel <= 0x0F);
+				channelMapped[channel] = true;
+			}
+#ifdef DEBUG_REMAP
+			if (song->_usedChannels[j] <= 0x0F)
+				channelUsed[song->_usedChannels[j]] = true;
+#endif
+		}
+
+		for (int j = 0; j < 16; ++j) {
+			if (!channelMapped[j]) {
+				song->pMidiParser->mainThreadBegin();
+				song->pMidiParser->remapChannel(j, -1);
+				song->pMidiParser->mainThreadEnd();
+#ifdef DEBUG_REMAP
+				if (channelUsed[j])
+					debug(" Unmapping song %d, channel %d", songIndex, j);
+#endif
+			}
+		}
+	}
+
+	// Now reshuffle the channels on the device.
+
+	// First, set up any dontRemap channels
+	for (int i = 0; i < 16; ++i) {
+
+		if (!map->_map[i]._song || !map->_map[i]._song->pMidiParser || !map->_dontRemap[i])
+			continue;
+
+		songIndex = -1;
+		for (MusicList::iterator iter = _playList.begin(); iter != end; ++iter) {
+			songIndex++;
+			if (map->_map[i]._song == *iter)
+				break;
+		}
+
+		_channelMap[i] = map->_map[i];
+		map->_map[i]._song = 0; // mark as done
+
+		// If this channel was not yet mapped to the device, reset it
+		if (currentMap[i] != _channelMap[i]) {
+#ifdef DEBUG_REMAP
+			debug(" Mapping (dontRemap) song %d, channel %d to device channel %d", songIndex, _channelMap[i]._channel, i);
+#endif
+			_channelMap[i]._song->pMidiParser->mainThreadBegin();
+			_channelMap[i]._song->pMidiParser->remapChannel(_channelMap[i]._channel, i);
+			_channelMap[i]._song->pMidiParser->mainThreadEnd();
+		}
+
+	}
+
+	// Next, we look for channels which were already playing.
+	// We keep those on the same device channel as before.
+	for (int i = 0; i < 16; ++i) {
+
+		if (!map->_map[i]._song)
+			continue;
+
+		songIndex = -1;
+		for (MusicList::iterator iter = _playList.begin(); iter != end; ++iter) {
+			songIndex++;
+			if (map->_map[i]._song == *iter)
+				break;
+		}
+
+
+		for (int j = 0; j < 16; ++j) {
+			if (map->_map[i] == currentMap[j]) {
+				// found it
+				_channelMap[j] = map->_map[i];
+				map->_map[i]._song = 0; // mark as done
+#ifdef DEBUG_REMAP
+				debug(" Keeping song %d, channel %d on device channel %d", songIndex, _channelMap[j]._channel, j);
+#endif
+				break;
+			}
+		}
+	}
+
+	// Then, remap the rest.
+	for (int i = 0; i < 16; ++i) {
+
+		if (!map->_map[i]._song || !map->_map[i]._song->pMidiParser)
+			continue;
+
+		songIndex = -1;
+		for (MusicList::iterator iter = _playList.begin(); iter != end; ++iter) {
+			songIndex++;
+			if (map->_map[i]._song == *iter)
+				break;
+		}
+
+		for (int j = _driverLastChannel; j >= _driverFirstChannel; --j) {
+			if (_channelMap[j]._song == 0) {
+				_channelMap[j] = map->_map[i];
+				map->_map[i]._song = 0;
+#ifdef DEBUG_REMAP
+				debug(" Mapping song %d, channel %d to device channel %d", songIndex, _channelMap[j]._channel, j);
+#endif
+				_channelMap[j]._song->pMidiParser->mainThreadBegin();
+				_channelMap[j]._song->pMidiParser->remapChannel(_channelMap[j]._channel, j);
+				_channelMap[j]._song->pMidiParser->mainThreadEnd();
+				break;
+			}
+		}
+
+	}
+
+	// And finally, stop any empty channels
+	for (int i = _driverFirstChannel; i <= _driverLastChannel; ++i) {
+		if (!_channelMap[i]._song)
+			resetDeviceChannel(i);
+	}
+
+	delete map;
+}
+
+
+ChannelRemapping *SciMusic::determineChannelMap() {
+#ifdef DEBUG_REMAP
+	debug("Remap: avail chans: %d-%d", _driverFirstChannel, _driverLastChannel);
+#endif
+
+	ChannelRemapping *map = new ChannelRemapping;
+	ChannelRemapping backupMap;
+	map->clear();
+	map->_freeVoices = _pMidiDrv->getPolyphony();
+
+	if (_playList.empty())
+		return map;
+
+	// TODO: set reverb, either from first song, or from global???
+
+	MusicList::iterator songIter;
+	int songIndex = -1;
+	for (songIter = _playList.begin(); songIter != _playList.end(); ++songIter) {
+		songIndex++;
+		MusicEntry *song = *songIter;
+		if (song->status != kSoundPlaying)
+			continue;
+
+		// If song is digital, skip.
+		// CHECKME: Is this condition correct?
+		if (!song->pMidiParser) {
+#ifdef DEBUG_REMAP
+			debug(" Song %d (%p), digital?", songIndex, (void*)song);
+#endif
+			continue;
+		}
+
+
+#ifdef DEBUG_REMAP
+		debug(" Song %d (%p), prio %d", songIndex, (void*)song, song->priority);
+#endif
+
+		// Store backup. If we fail to map this song, we will revert to this.
+		backupMap = *map;
+
+		bool songMapped = true;
+
+		for (int i = 0; i < 16; ++i) {
+			int c = song->_usedChannels[i];
+			if (c == 0xFF || c == 0xFE || c == 0x0F)
+				continue;
+			const MusicEntryChannel &channel = song->_chan[c];
+			if (channel._dontMap)
+				continue;
+			if (channel._mute)
+				continue;
+
+#ifdef DEBUG_REMAP
+			debug("  Channel %d: prio %d, %d voice%s%s", c, channel._prio, channel._voices, channel._voices == 1 ? "" : "s", channel._dontRemap ? ", dontRemap" : "" );
+#endif
+
+			DeviceChannelUsage dc = { song, c };
+
+			// our target
+			int devChannel = -1;
+
+			if (channel._dontRemap && map->_map[c]._song == 0) {
+				// unremappable channel, with channel still free
+				devChannel = c;
+			}
+
+			// try to find a free channel
+			if (devChannel == -1) {
+				for (int j = 0; j < 16; ++j) {
+					if (map->_map[j] == dc) {
+						// already mapped?! (Can this happen?)
+						devChannel = j;
+						break;
+					}
+					if (map->_map[j]._song)
+						continue;
+
+					if (j >= _driverFirstChannel && j <= _driverLastChannel)
+						devChannel = j;
+				}
+			}
+
+			int prio = channel._prio;
+			if (prio > 0) {
+				// prio > 0 means non-essential
+				prio = (16 - prio) + 16*songIndex;
+			}
+
+			if (devChannel == -1 && prio > 0) {
+				// no empty channel, but this isn't an essential channel,
+				// so we just skip it.
+#ifdef DEBUG_REMAP
+				debug("   skipping non-essential");
+#endif
+				continue;
+			}
+
+			// try to empty a previous channel if this is an essential channel
+			if (devChannel == -1) {
+				devChannel = map->lowestPrio();
+				if (devChannel != -1)
+					map->evict(devChannel);
+			}
+
+			if (devChannel == -1) {
+				// failed to map this song.
+#ifdef DEBUG_REMAP
+				debug("   no free (or lower priority) channel found");
+#endif
+				songMapped = false;
+				break;
+			}
+
+			if (map->_map[devChannel] == dc) {
+				// already mapped?! (Can this happen?)
+				continue;
+			}
+
+			int neededVoices = channel._voices;
+			// do we have enough free voices?
+			// We only care for essential channels
+			if (map->_freeVoices < neededVoices && prio > 0) {
+				do {
+					int j = map->lowestPrio();
+					if (j == -1) {
+#ifdef DEBUG_REMAP
+						debug("   not enough voices; need %d, have %d", neededVoices, map->_freeVoices);
+#endif
+						// failed to free enough voices.
+						songMapped = false;
+						break;
+					}
+#ifdef DEBUG_REMAP
+					debug("   creating room for voices; evict %d", j);
+#endif
+					map->evict(j);
+				} while (map->_freeVoices < neededVoices);
+
+				if (!songMapped) {
+					// failed to map this song.
+					break;
+				}
+			}
+
+			// We have a channel and enough free voices now.
+#ifdef DEBUG_REMAP
+			debug("   trying to map to %d", devChannel);
+#endif
+
+			map->_map[devChannel] = dc;
+			map->_voices[devChannel] = neededVoices;
+			map->_prio[devChannel] = prio;
+			map->_dontRemap[devChannel] = channel._dontRemap;
+			map->_freeVoices -= neededVoices;
+
+			if (!channel._dontRemap || devChannel == c) {
+				// If this channel fits here, we're done.
+#ifdef DEBUG_REMAP
+				debug("    OK");
+#endif
+				continue;
+			}
+
+			// If this channel can't be remapped, we need to move it or fail.
+
+			if (!map->_dontRemap[c]) {
+				// Target channel can be remapped, so just swap
+				map->swap(devChannel, c);
+				continue;
+			}
+#ifdef DEBUG_REMAP
+			debug("    but %d is already dontRemap", c);
+#endif
+
+			if (prio > 0) {
+				// Channel collision, but this channel is non-essential,
+				// so drop it.
+				// TODO: Maybe we should have checked this before making room?
+				map->evict(devChannel);
+				continue;
+			}
+
+			if (map->_prio[c] > 0) {
+				// Channel collision, but the other channel is non-essential,
+				// so we take its place.
+				map->evict(c);
+				map->swap(devChannel, c);
+				continue;
+			}
+
+			// Otherwise, we have two essential channels claiming the same
+			// device channel.
+			songMapped = false;
+			break;
+		}
+
+		if (!songMapped) {
+			// We failed to map this song, so unmap all its channels.
+#ifdef DEBUG_REMAP
+			debug(" Failed song");
+#endif
+			*map = backupMap;
+		}
+	}
+
+	return map;
+}
+
+void SciMusic::resetDeviceChannel(int devChannel) {
+	// NB: This function should only be called from the main thread
+
+	assert(devChannel >= 0 && devChannel <= 0x0F);
+
+	putMidiCommandInQueue(0x0040B0 | devChannel); // sustain off
+	putMidiCommandInQueue(0x007BB0 | devChannel); // notes off
+	putMidiCommandInQueue(0x004BB0 | devChannel); // release voices
+}
+
+
 
 } // End of namespace Sci

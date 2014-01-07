@@ -307,7 +307,7 @@ Scene1608::Scene1608(NeverhoodEngine *vm, Module *parentModule, int which)
 		_clipRect2 = _clipRect1;
 		_clipRect2.y2 = 215;
 		_kmScene1608->setClipRect(_clipRect1);
-		_asCar->setClipRect(_clipRect1);
+		_asCar->setClipRect(_clipRect3);
 		_asIdleCarLower->setClipRect(_clipRect1);
 		_asIdleCarFull->setClipRect(_clipRect1);
 		_asTape = insertSprite<AsScene1201Tape>(this, 13, 1100, 412, 443, 0x9148A011);
@@ -401,7 +401,7 @@ void Scene1608::upRidingCar() {
 		sendPointMessage(_asCar, 0x2004, _mouseClickPos);
 		_mouseClicked = false;
 	}
-	if (_asCar->getX() < 300) {
+	if (_asCar->getY() < 330) {
 		if (_carClipFlag) {
 			_carClipFlag = false;
 			_asCar->setClipRect(_clipRect1);
