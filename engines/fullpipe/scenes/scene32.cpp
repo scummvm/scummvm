@@ -111,4 +111,211 @@ int scene32_updateCursor() {
 	return g_fp->_cursorId;
 }
 
+void sceneHandler32_tryCube() {
+	warning("STUB: sceneHandler32_tryCube()");
+}
+
+void sceneHandler32_startCactus() {
+	warning("STUB: sceneHandler32_startCactus()");
+}
+
+void sceneHandler32_spin(ExCommand *cmd) {
+	warning("STUB: sceneHandler32_spin(cmd)");
+}
+
+void sceneHandler32_startFlagLeft() {
+	warning("STUB: sceneHandler32_startFlagLeft()");
+}
+
+void sceneHandler32_startFlagRight() {
+	warning("STUB: sceneHandler32_startFlagRight()");
+}
+
+void sceneHandler32_trySit(ExCommand *cmd) {
+	warning("STUB: sceneHandler32_trySit(cmd)");
+}
+
+void sceneHandler32_buttonPush() {
+	warning("STUB: sceneHandler32_buttonPush()");
+}
+
+void sceneHandler32_installHandle() {
+	warning("STUB: sceneHandler32_installHandle()");
+}
+
+void sceneHandler32_animateCactus() {
+	warning("STUB: sceneHandler32_animateCactus()");
+}
+
+void sceneHandler32_ladderLogic(ExCommand *cmd) {
+	warning("STUB: sceneHandler32_ladderLogic(cmd)");
+}
+
+void sceneHandler32_potLogic(ExCommand *cmd) {
+	warning("STUB: sceneHandler32_potLogic(cmd)");
+}
+
+int sceneHandler32(ExCommand *cmd) {
+	if (cmd->_messageKind != 17)
+		return 0;
+
+	switch (cmd->_messageNum) {
+	case MSG_LIFT_CLOSEDOOR:
+		g_fp->lift_closedoorSeq();
+		break;
+
+	case MSG_LIFT_EXITLIFT:
+		g_fp->lift_exitSeq(cmd);
+		break;
+
+	case MSG_LIFT_STARTEXITQUEUE:
+		g_fp->lift_startExitQueue();
+		break;
+
+	case MSG_SC32_TRUBATOBACK:
+		g_fp->_currentScene->getPictureObjectById(PIC_SC32_RTRUBA, 0)->_priority = 20;
+		break;
+
+	case MSG_SC32_TRUBATOFRONT:
+		g_fp->_currentScene->getPictureObjectById(PIC_SC32_RTRUBA, 0)->_priority = 0;
+		break;
+
+	case MSG_LIFT_CLICKBUTTON:
+		g_fp->lift_animation3();
+		break;
+
+	case MSG_SC33_TRYKUBIK:
+		sceneHandler32_tryCube();
+		break;
+
+	case MSG_SC32_STARTCACTUS:
+		sceneHandler32_startCactus();
+		break;
+
+	case MSG_SC32_STOPFLAG:
+		g_vars->scene32_var05 = 0;
+		g_vars->scene32_var06 = 1;
+		break;
+
+	case MSG_SC32_SPIN:
+		sceneHandler32_spin(cmd);
+		break;
+
+	case MSG_SC32_STARTFLAGLEFT :
+		sceneHandler32_startFlagLeft();
+		break;
+
+	case MSG_SC32_STARTFLAGRIGHT:
+		sceneHandler32_startFlagRight();
+		break;
+
+	case MSG_SC32_TRYSIT:
+		sceneHandler32_trySit(cmd);
+		break;
+
+	case MSG_LIFT_GO:
+		g_fp->lift_goAnimation();
+		break;
+
+	case MSG_SC32_ONLADDER:
+		g_vars->scene32_var09 = 1;
+
+		getCurrSceneSc2MotionController()->clearEnabled();
+		getGameLoaderInteractionController()->disableFlag24();
+		break;
+
+	case MSG_SC6_BTNPUSH:
+		sceneHandler32_buttonPush();
+		break;
+
+	case 64:
+		g_fp->lift_sub05(cmd);
+		break;
+
+	case MSG_SC6_INSTHANDLE:
+		sceneHandler32_installHandle();
+		break;
+
+	case 33:
+		if (g_fp->_aniMan2) {
+			int x = g_fp->_aniMan2->_ox;
+
+			if (x < g_fp->_sceneRect.left + g_vars->scene32_var01)
+				g_fp->_currentScene->_x = x - g_vars->scene32_var03 - g_fp->_sceneRect.left;
+
+			if (x > g_fp->_sceneRect.right - g_vars->scene32_var01)
+				g_fp->_currentScene->_x = x + g_vars->scene32_var03 - g_fp->_sceneRect.right;
+		}
+
+		if (!g_vars->scene32_flag->_movement) {
+			if (g_vars->scene32_var05) {
+				if (g_vars->scene32_flag->_statics->_staticsId == ST_FLG_RIGHT)
+					g_vars->scene32_flag->startAnim(MV_FLG_CYCLER, 0, -1);
+				else if (g_vars->scene32_flag->_statics->_staticsId == ST_FLG_LEFT)
+					g_vars->scene32_flag->startAnim(MV_FLG_CYCLEL, 0, -1);
+			}
+
+			if (g_vars->scene32_var06 && !g_vars->scene32_var05) {
+				if (g_vars->scene32_flag->_statics->_staticsId == ST_FLG_RIGHT)
+					g_vars->scene32_flag->startAnim(MV_FLG_STOPR, 0, -1);
+				else if (g_vars->scene32_flag->_statics->_staticsId == ST_FLG_LEFT)
+					g_vars->scene32_flag->startAnim(MV_FLG_STOPL, 0, -1);
+
+				g_vars->scene32_var06 = 0;
+			}
+		}
+
+		if (g_vars->scene32_var08) {
+			if (g_vars->scene32_var08 > 0)
+				--g_vars->scene32_var08;
+
+			g_fp->_behaviorManager->updateBehaviors();
+
+			g_fp->startSceneTrack();
+		} else {
+			sceneHandler32_animateCactus();
+
+			g_fp->_behaviorManager->updateBehaviors();
+
+			g_fp->startSceneTrack();
+
+		}
+		break;
+
+	case 29:
+		if (g_vars->scene32_var09) {
+			sceneHandler32_ladderLogic(cmd);
+			cmd->_messageKind = 0;
+			break;
+		}
+
+		if (!g_vars->scene32_var07 || g_fp->_aniMan->_movement) {
+			StaticANIObject *ani = g_fp->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
+
+			if (ani && ani->_id == ANI_LIFTBUTTON) {
+				g_fp->lift_sub1(ani);
+
+				cmd->_messageKind = 0;
+				break;
+			}
+
+			if (g_fp->_cursorId == PIC_CSR_GOFAR_R || g_fp->_cursorId == PIC_CSR_GOFAR_L) {
+				if ((g_fp->_sceneRect.right - cmd->_sceneClickX < 47 && g_fp->_sceneRect.right < g_fp->_sceneWidth - 1)
+					|| (cmd->_sceneClickX - g_fp->_sceneRect.left < 47 && g_fp->_sceneRect.left > 0))
+					g_fp->processArcade(cmd);
+			}
+			break;
+		}
+
+		if (!g_vars->scene32_var10)
+			sceneHandler32_potLogic(cmd);
+
+		cmd->_messageKind = 0;
+
+		break;
+	}
+
+	return 0;
+}
+
 } // End of namespace Fullpipe
