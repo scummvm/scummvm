@@ -119,9 +119,9 @@ void loadTGA(Common::SeekableReadStream *data, Texture *t) {
 
 void MaterialData::initEMI(Common::SeekableReadStream *data) {
 	Common::Array<Common::String> texFileNames;
-	char readFileName[64];
 
 	if (_fname.hasSuffix(".sur")) {  // This expects that we want all the materials in the sur-file
+		char readFileName[64];
 		TextSplitter *ts = new TextSplitter(_fname, data);
 		ts->setLineNumber(2); // Skip copyright-line
 		ts->expectString("version\t1.0");
@@ -133,10 +133,9 @@ void MaterialData::initEMI(Common::SeekableReadStream *data) {
 			Common::String mFileName(readFileName);
 			texFileNames.push_back(ResourceLoader::fixFilename(mFileName, false));
 		}
-		Common::SeekableReadStream *texData;
 		_textures = new Texture[texFileNames.size()];
 		for (uint i = 0; i < texFileNames.size(); i++) {
-			texData = g_resourceloader->openNewStreamFile(texFileNames[i].c_str(), true);
+			Common::SeekableReadStream *texData = g_resourceloader->openNewStreamFile(texFileNames[i].c_str(), true);
 			if (!texData) {
 				warning("Couldn't find tex-file: %s", texFileNames[i].c_str());
 				_textures[i]._width = 0;
