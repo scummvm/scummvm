@@ -117,7 +117,8 @@ void sceneHandler32_tryCube() {
 }
 
 void sceneHandler32_startCactus() {
-	warning("STUB: sceneHandler32_startCactus()");
+	g_vars->scene32_var08 = 48;
+	g_vars->scene32_var10 = 0;
 }
 
 void sceneHandler32_spin(ExCommand *cmd) {
@@ -147,11 +148,19 @@ void sceneHandler32_buttonPush() {
 }
 
 void sceneHandler32_installHandle() {
-	warning("STUB: sceneHandler32_installHandle()");
+	chainQueue(QU_SC32_SHOWHANDLE, 0);
+
+	g_vars->scene32_button->changeStatics2(ST_BTN32_ON);
 }
 
 void sceneHandler32_animateCactus() {
-	warning("STUB: sceneHandler32_animateCactus()");
+	if (g_fp->_aniMan->_statics->_staticsId != ST_MAN32_SIT)
+		chainQueue(QU_CTS_GROW, 1);
+	else
+		chainQueue(QU_CTS_GROWMAN, 1);
+
+	g_vars->scene32_var08 = -1;
+	g_vars->scene32_var10 = 1;
 }
 
 void sceneHandler32_ladderLogic(ExCommand *cmd) {
