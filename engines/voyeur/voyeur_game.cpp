@@ -1325,7 +1325,7 @@ void VoyeurEngine::doEvidDisplay(int evidId, int eventId) {
 	_eventsManager.stopEvidDim();
 
 	if (eventId == 999)
-		_eventsManager.addEvidEventStart(eventId);
+		_voy.addEvidEventStart(eventId);
 
 	_eventsManager.getMouseInfo();
 
@@ -1365,7 +1365,7 @@ void VoyeurEngine::doEvidDisplay(int evidId, int eventId) {
 	}
 
 	if (eventId != 999)
-		_eventsManager.addEvidEventEnd(evidIdx);
+		_voy.addEvidEventEnd(evidIdx);
 
 	count = (int16)READ_LE_UINT16(dataP + evidId * 12 + 4);
 	for (int idx = 1; idx <= count; ++idx) {

@@ -125,7 +125,7 @@ void VoyeurEngine::initialiseManagers() {
 	_filesManager.setVm(this);
 	_graphicsManager.setVm(this);
 	_soundManager.setVm(this);
-
+	_voy.setVm(this);
 }
 
 void VoyeurEngine::ESP_Init() {

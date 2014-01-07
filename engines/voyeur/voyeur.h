@@ -24,6 +24,7 @@
 #define VOYEUR_VOYEUR_H
 
 #include "voyeur/debugger.h"
+#include "voyeur/data.h"
 #include "voyeur/events.h"
 #include "voyeur/files.h"
 #include "voyeur/graphics.h"

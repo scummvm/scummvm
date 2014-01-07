@@ -376,7 +376,7 @@ void ThreadResource::parsePlayCommands() {
 					_vm->_videoId = -1;
 				} else {
 					_vm->_voy._vocSecondsOffset = _vm->_voy._RTVNum - _vm->_voy._field468;
-					_vm->_eventsManager.addAudioEventStart();
+					_vm->_voy.addAudioEventStart();
 
 					assert(_vm->_videoId < 38);
 					_vm->_graphicsManager._backgroundPage = _vm->_bVoy->boltEntry(
@@ -402,7 +402,7 @@ void ThreadResource::parsePlayCommands() {
 
 					_vm->_voy._field478 |= 1;
 					_vm->_soundManager.stopVOCPlay();
-					_vm->_eventsManager.addAudioEventEnd();
+					_vm->_voy.addAudioEventEnd();
 					_vm->_eventsManager.incrementTime(1);
 					_vm->_eventsManager.incrementTime(1);
 
@@ -430,14 +430,14 @@ void ThreadResource::parsePlayCommands() {
 					_vm->_videoId = -1;
 				} else {
 					_vm->_voy._vocSecondsOffset = _vm->_voy._RTVNum - _vm->_voy._field468;
-					_vm->_eventsManager.addAudioEventStart();
+					_vm->_voy.addAudioEventStart();
 					_vm->_voy._field478 &= ~1;
 					_vm->_voy._field478 |= 0x10;
 					_vm->playAVideo(_vm->_videoId);
 
 					_vm->_voy._field478 &= ~0x10;
 					_vm->_voy._field478 |= 1;
-					_vm->_eventsManager.addVideoEventEnd();
+					_vm->_voy.addVideoEventEnd();
 					_vm->_eventsManager.incrementTime(1);
 				
 					_vm->_videoId = -1;
@@ -1250,14 +1250,14 @@ void ThreadResource::doRoom() {
 				vm.getComputerBrush();
 				_vm->flipPageAndWait();
 
-				vm._eventsManager.addComputerEventStart();
+				vm._voy.addComputerEventStart();
 
 				vm._eventsManager._mouseClicked = false;
 				vm._eventsManager.startCursorBlink();
 
 				int v = vm.doComputerText(9999); 
 				if (v)
-					vm._eventsManager.addComputerEventEnd(v);
+					vm._voy.addComputerEventEnd(v);
 
 				vm._bVoy->freeBoltGroup(0x4900);
 			} else {

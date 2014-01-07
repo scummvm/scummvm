@@ -2,6 +2,7 @@ MODULE := engines/voyeur
 
 MODULE_OBJS := \
 	animation.o \
+	data.o \
 	debugger.o \
 	detection.o \
 	events.o \
