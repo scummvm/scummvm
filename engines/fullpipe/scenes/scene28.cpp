@@ -73,7 +73,31 @@ void sceneHandler28_lift1ShowAfter() {
 }
 
 void sceneHandler28_makeFaces(ExCommand *cmd) {
-	warning("STUB: sceneHandler28_makeFaces()");
+	g_fp->_currentScene->getPictureObjectById(PIC_SC28_DARK4, 0)->_flags &= 0xFFFB;
+
+	g_vars->scene28_var08 = 0;
+
+	MessageQueue *mq = g_fp->_globalMessageQueueList->getMessageQueueById(cmd->_parId);
+	if (mq) {
+		int frames[5];
+
+		frames[0] = MV_WMN28_IN_1;
+		frames[1] = MV_WMN28_IN_2;
+		frames[2] = MV_WMN28_IN_3;
+		frames[3] = MV_WMN28_IN_4;
+		frames[4] = MV_WMN28_IN_5;
+
+		for (int i = 0; i < 5; i++) {
+			int pos;
+
+			while (frames[pos = g_fp->_rnd->getRandomNumber(4)] == 0)
+				;
+
+			mq->getExCommandByIndex(i)->_messageNum = frames[pos];
+
+			frames[pos] = 0;
+		}
+	}
 }
 
 void sceneHandler28_trySecondaryPers() {
