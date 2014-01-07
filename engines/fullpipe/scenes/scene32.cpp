@@ -172,7 +172,21 @@ void sceneHandler32_animateCactus() {
 }
 
 void sceneHandler32_ladderLogic(ExCommand *cmd) {
-	warning("STUB: sceneHandler32_ladderLogic(cmd)");
+	MessageQueue *mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC32_FROMLADDER), 0, 0);
+
+	if (g_fp->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY) != PIC_SC32_LADDER)
+		mq->addExCommandToEnd(cmd->createClone());
+
+	mq->setFlags(mq->getFlags() | 1);
+
+	g_fp->_aniMan->changeStatics2(ST_MAN_STANDLADDER);
+	if (!mq->chain(g_fp->_aniMan))
+		delete mq;
+
+	g_vars->scene32_var09 = 0;
+
+	getCurrSceneSc2MotionController()->setEnabled();
+	getGameLoaderInteractionController()->enableFlag24();
 }
 
 void sceneHandler32_potLogic(ExCommand *cmd) {
