@@ -83,7 +83,9 @@ const uint32 PatchedFile::_kHeaderSize = 48;
 const uint32 PatchedFile::_kMd5size = 5000;
 
 PatchedFile::PatchedFile():
-		_file(NULL), _ctrl(NULL), _diff(NULL), _extra(NULL), _pos(0) {
+		_file(NULL), _ctrl(NULL), _diff(NULL), _extra(NULL), _pos(0),
+		instrLeft(0), jump(0), _newSize(0), _flags(0), extraCopy(0),
+		diffCopy(0) {
 	diffBuffer = new uint8[_kDiffBufferSize];
 }
 
