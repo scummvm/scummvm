@@ -63,7 +63,8 @@ ZVision::ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc)
 	  _stringManager(nullptr),
 	  _cursorManager(nullptr),
 	  _aud_id(0),
-	  _rendDelay(2) {
+	  _rendDelay(2),
+	  _velocity(0) {
 
 	debug(1, "ZVision::ZVision");
 }
@@ -147,13 +148,16 @@ Common::Error ZVision::run() {
 		_cursorManager->setItemID(_scriptManager->getStateValue(StateKey_InventoryItem));
 
 		processEvents();
+		updateRotation();
 
 		// Call _renderManager->update() first so the background renders
 		// before anything that puzzles/controls will render
-		_renderManager->update(deltaTime);
 		_scriptManager->update(deltaTime);
 
 		// Render the backBuffer to the screen
+		_renderManager->prepareBkg();
+		_renderManager->renderMenuToScreen();
+		_renderManager->renderSubsToScreen();
 		_renderManager->renderBackbufferToScreen();
 
 		// Update the screen
@@ -203,6 +207,48 @@ void ZVision::setRenderDelay(uint delay) {
 
 bool ZVision::canRender() {
 	return _rendDelay <= 0;
+}
+
+void ZVision::updateRotation() {
+	if (_velocity) {
+		RenderTable::RenderState renderState = _renderManager->getRenderTable()->getRenderState();
+		if (renderState == RenderTable::PANORAMA) {
+			int16 st_pos = _scriptManager->getStateValue(StateKey_ViewPos);
+
+			int16 new_pos = st_pos + _velocity * (1 - 2 * 0);
+
+			int16 zero_point = 0;
+			if (st_pos >= zero_point && new_pos < zero_point)
+				_scriptManager->setStateValue(StateKey_Rounds, _scriptManager->getStateValue(StateKey_Rounds) - 1);
+			if (st_pos <= zero_point && new_pos > zero_point)
+				_scriptManager->setStateValue(StateKey_Rounds, _scriptManager->getStateValue(StateKey_Rounds) + 1);
+
+			int16 scr_width = _renderManager->getBkgSize().x;
+			if (scr_width)
+				new_pos %= scr_width;
+
+			if (new_pos < 0)
+				new_pos += scr_width;
+
+			_scriptManager->setStateValue(StateKey_ViewPos, new_pos);
+			_renderManager->setBackgroundPosition(new_pos);
+		} else if (renderState == RenderTable::TILT) {
+			int16 st_pos = _scriptManager->getStateValue(StateKey_ViewPos);
+
+			int16 new_pos = st_pos + _velocity * (1 - 2 * 0);
+
+			int16 scr_height = _renderManager->getBkgSize().y;
+			int16 tilt_gap = _workingWindow.height() / 2;
+
+			if (new_pos >= (scr_height - tilt_gap))
+				new_pos = scr_height - tilt_gap;
+			if (new_pos <= tilt_gap)
+				new_pos = tilt_gap;
+
+			_scriptManager->setStateValue(StateKey_ViewPos, new_pos);
+			_renderManager->setBackgroundPosition(new_pos);
+		}
+	}
 }
 
 } // End of namespace ZVision

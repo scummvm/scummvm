@@ -516,10 +516,10 @@ void ScriptManager::do_changeLocation() {
 	_engine->getCursorManager()->changeCursor(CursorIndex_Idle);
 
 	// Reset the background velocity
-	_engine->getRenderManager()->setBackgroundVelocity(0);
+	//_engine->getRenderManager()->setBackgroundVelocity(0);
 
 	// Remove any alphaEntries
-	_engine->getRenderManager()->clearAlphaEntries();
+	//_engine->getRenderManager()->clearAlphaEntries();
 
 	// Change the background position
 	_engine->getRenderManager()->setBackgroundPosition(_nextLocation.offset);

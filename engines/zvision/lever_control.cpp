@@ -375,26 +375,20 @@ void LeverControl::renderFrame(uint frameNumber) {
 		_lastRenderedFrame = frameNumber;
 	}
 
-	const uint16 *frameData;
+	const Graphics::Surface *frameData;
 	int x = _animationCoords.left;
 	int y = _animationCoords.top;
-	int width;
-	int height;
 
 	if (_fileType == RLF) {
 		// getFrameData() will automatically optimize to getNextFrame() / getPreviousFrame() if it can
-		frameData = (const uint16 *)_animation.rlf->getFrameData(frameNumber)->getPixels();
-		width = _animation.rlf->width(); // Use the animation width instead of _animationCoords.width()
-		height = _animation.rlf->height(); // Use the animation height instead of _animationCoords.height()
+		frameData = _animation.rlf->getFrameData(frameNumber);
 	} else if (_fileType == AVI) {
 		_animation.avi->seekToFrame(frameNumber);
 		const Graphics::Surface *surface = _animation.avi->decodeNextFrame();
-		frameData = (const uint16 *)surface->getPixels();
-		width = surface->w;
-		height = surface->h;
+		frameData = surface;
 	}
 
-	_engine->getRenderManager()->copyRectToWorkingWindow(frameData, x, y, width, width, height);
+	_engine->getRenderManager()->blitSurfaceToBkg(*frameData, x, y);
 }
 
 } // End of namespace ZVision

@@ -123,6 +123,28 @@ void RenderTable::mutateImage(uint16 *sourceBuffer, uint16 *destBuffer, uint32 d
 	}
 }
 
+void RenderTable::mutateImage(Graphics::Surface *dstBuf, Graphics::Surface *srcBuf) {
+	uint32 destOffset = 0;
+
+	uint16 *sourceBuffer = (uint16 *)srcBuf->getPixels();
+	uint16 *destBuffer = (uint16 *)dstBuf->getPixels();
+
+	for (int16 y = 0; y < srcBuf->h; ++y) {
+		uint32 sourceOffset = y * _numColumns;
+
+		for (int16 x = 0; x < srcBuf->w; ++x) {
+			uint32 index = sourceOffset + x;
+
+			// RenderTable only stores offsets from the original coordinates
+			uint32 sourceYIndex = y + _internalBuffer[index].y;
+			uint32 sourceXIndex = x + _internalBuffer[index].x;
+
+			destBuffer[destOffset] = sourceBuffer[sourceYIndex * _numColumns + sourceXIndex];
+			destOffset++;
+		}
+	}
+}
+
 void RenderTable::generateRenderTable() {
 	switch (_renderState) {
 	case ZVision::RenderTable::PANORAMA:

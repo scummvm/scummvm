@@ -111,6 +111,7 @@ private:
 	const Common::Rect _workingWindow_ZNM;
 
 	int _rendDelay;
+	int16 _velocity;
 public:
 	uint32 getFeatures() const;
 	Common::Language getLanguage() const;
@@ -170,6 +171,7 @@ private:
 	void onMouseDown(const Common::Point &pos);
 	void onMouseUp(const Common::Point &pos);
 	void onMouseMove(const Common::Point &pos);
+	void updateRotation();
 };
 
 } // End of namespace ZVision

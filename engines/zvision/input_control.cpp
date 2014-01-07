@@ -129,9 +129,9 @@ bool InputControl::process(uint32 deltaTimeInMillis) {
 	// First see if we need to render the text
 	if (_textChanged) {
 		// Blit the text using the RenderManager
-		Common::Rect destRect = _engine->getRenderManager()->renderTextToWorkingWindow(_key, _currentInputText, _textStyle.font, _textRectangle.left, _textRectangle.top, _textStyle.color, _textRectangle.width());
+		//Common::Rect destRect = _engine->getRenderManager()->renderTextToWorkingWindow(_key, _currentInputText, _textStyle.font, _textRectangle.left, _textRectangle.top, _textStyle.color, _textRectangle.width());
 
-		_cursorOffset = destRect.left - _textRectangle.left;
+		//_cursorOffset = destRect.left - _textRectangle.left;
 	}
 
 	// Render the next frame of the animation

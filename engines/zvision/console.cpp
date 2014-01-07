@@ -60,12 +60,12 @@ Console::Console(ZVision *engine) : GUI::Debugger(), _engine(engine) {
 }
 
 bool Console::cmdLoadImage(int argc, const char **argv) {
-	if (argc == 4)
-		_engine->getRenderManager()->renderImageToScreen(argv[1], atoi(argv[2]), atoi(argv[3]));
-	else {
-		DebugPrintf("Use loadimage <fileName> <destinationX> <destinationY> to load an image to the screen\n");
-		return true;
-	}
+//	if (argc == 4)
+//		_engine->getRenderManager()->renderImageToScreen(argv[1], atoi(argv[2]), atoi(argv[3]));
+//	else {
+//		DebugPrintf("Use loadimage <fileName> <destinationX> <destinationY> to load an image to the screen\n");
+//		return true;
+//	}
 
 	return true;
 }
@@ -208,8 +208,8 @@ bool Console::cmdRenderText(int argc, const char **argv) {
 		return true;
 	}
 
-	StringManager::TextStyle style = _engine->getStringManager()->getTextStyle(atoi(argv[2]));
-	_engine->getRenderManager()->renderTextToWorkingWindow(333, Common::String(argv[1]), style.font, atoi(argv[3]), atoi(argv[4]), style.color, atoi(argv[5]), -1, Graphics::kTextAlignLeft, atoi(argv[6]) == 0 ? false : true);
+	//StringManager::TextStyle style = _engine->getStringManager()->getTextStyle(atoi(argv[2]));
+	//_engine->getRenderManager()->renderTextToWorkingWindow(333, Common::String(argv[1]), style.font, atoi(argv[3]), atoi(argv[4]), style.color, atoi(argv[5]), -1, Graphics::kTextAlignLeft, atoi(argv[6]) == 0 ? false : true);
 
 	return true;
 }

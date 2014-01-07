@@ -24,6 +24,7 @@
 #define ZVISION_RENDER_TABLE_H
 
 #include "common/rect.h"
+#include "graphics/surface.h"
 
 
 namespace ZVision {
@@ -67,6 +68,7 @@ public:
 	const Common::Point convertWarpedCoordToFlatCoord(const Common::Point &point);
 
 	void mutateImage(uint16 *sourceBuffer, uint16 *destBuffer, uint32 destWidth, const Common::Rect &subRect);
+	void mutateImage(Graphics::Surface *dstBuf, Graphics::Surface *srcBuf);
 	void generateRenderTable();
 
 	void setPanoramaFoV(float fov);
