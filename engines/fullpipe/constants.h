@@ -1078,6 +1078,7 @@ namespace Fullpipe {
 #define MV_FLG_STARTR 2263
 #define MV_FLG_STOPL 2261
 #define MV_FLG_STOPR 2265
+#define MV_MAN32_SITDOWN 2276
 #define MV_MAN32_STANDUP 2313
 #define MV_TSTG_FLOW 2663
 #define MV_TSTO_FLOW 2657

@@ -173,7 +173,29 @@ void sceneHandler32_startFlagRight() {
 }
 
 void sceneHandler32_trySit(ExCommand *cmd) {
-	warning("STUB: sceneHandler32_trySit(cmd)");
+	MessageQueue *mq = g_fp->_globalMessageQueueList->getMessageQueueById(cmd->_parId);
+
+	if (!mq || !mq->getCount() <= 0)
+		return;
+
+	ExCommand *ex = mq->getExCommandByIndex(0);
+
+	if (g_vars->scene32_var10 || g_vars->scene32_cactus->_movement
+		|| g_vars->scene32_cactus->_statics->_staticsId != ST_CTS_EMPTY
+		|| (g_vars->scene32_var08 >= 0 && g_vars->scene32_var08 <= 20)) {
+		ex->_messageKind = 0;
+		ex->_excFlags |= 1;
+	} else {
+		ex->_parentId = ANI_MAN;
+		ex->_messageKind = 1;
+		ex->_messageNum = MV_MAN32_SITDOWN;
+		ex->_keyCode = g_fp->_aniMan->_okeyCode;
+
+		g_vars->scene32_var07 = 1;
+
+		getCurrSceneSc2MotionController()->clearEnabled();
+		getGameLoaderInteractionController()->disableFlag24();
+	}
 }
 
 void sceneHandler32_buttonPush() {
