@@ -84,9 +84,10 @@ bool Line3d::intersectLine2d(const Line3d &other, Math::Vector3d *pos, bool useX
 	return true;
 }
 
-void Line3d::operator=(const Line3d &other) {
+Line3d& Line3d::operator=(const Line3d &other) {
 	_begin = other._begin;
 	_end = other._end;
+	return *this;
 }
 
 }

@@ -42,7 +42,7 @@ public:
 
 	bool intersectLine2d(const Line3d &other, Math::Vector3d *pos, bool useXZ);
 
-	void operator=(const Line3d &other);
+	Line3d& operator=(const Line3d &other);
 
 private:
 	Math::Vector3d _begin, _end;
