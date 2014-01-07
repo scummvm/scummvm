@@ -441,6 +441,23 @@ public:
 	StaticANIObject *scene31_cactus;
 	StaticANIObject *scene31_plusMinus;
 
+	int scene32_var01;
+	int scene32_var02;
+	int scene32_var03;
+	int scene32_var04;
+	int scene32_var05;
+	int scene32_var06;
+	int scene32_var07;
+	int scene32_var08;
+	int scene32_var09;
+	int scene32_var10;
+	StaticANIObject *scene32_flag;
+	StaticANIObject *scene32_cactus;
+	StaticANIObject *scene32_massOrange;
+	StaticANIObject *scene32_massBlue;
+	StaticANIObject *scene32_massGreen;
+	StaticANIObject *scene32_button;
+
 	StaticANIObject *scene36_rotohrust;
 	StaticANIObject *scene36_scissors;
 

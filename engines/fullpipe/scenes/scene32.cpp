@@ -63,7 +63,7 @@ void scene32_initScene(Scene *sc) {
 	Scene *oldsc = g_fp->_currentScene;
 	StaticANIObject *ani;
 
-	if (getObjectState(sO_ClockHandle) == getObjectEnumState(sO_ClockHandle, sO_In_32_Lies)) {
+	if (g_fp->getObjectState(sO_ClockHandle) == g_fp->getObjectEnumState(sO_ClockHandle, sO_In_32_Lies)) {
 		ani = sc->getStaticANIObject1ById(ANI_INV_HANDLE, -1);
 		if (ani) {
 			g_fp->_currentScene = sc;
@@ -71,7 +71,7 @@ void scene32_initScene(Scene *sc) {
 			ani->changeStatics2(ST_HDL_LAID);
 		}
 	} else {
-		if (getObjectState(sO_ClockHandle) == getObjectEnumState(sO_ClockHandle, sO_In_32_Sticks)) {
+		if (g_fp->getObjectState(sO_ClockHandle) == g_fp->getObjectEnumState(sO_ClockHandle, sO_In_32_Sticks)) {
 			ani = sc->getStaticANIObject1ById(ANI_INV_HANDLE, -1);
 
 			g_fp->_currentScene = sc;
@@ -85,8 +85,8 @@ void scene32_initScene(Scene *sc) {
 
 	g_fp->_currentScene = oldsc;
 
-	if (getObjectState(sO_Cube) == getObjectEnumState(sO_Cube, sO_In_32)) {
-		MessageQueue *mq = new Message(sc->getMessageQueueById(QU_KBK32_START), 0, 0);
+	if (g_fp->getObjectState(sO_Cube) == g_fp->getObjectEnumState(sO_Cube, sO_In_32)) {
+		MessageQueue *mq = new MessageQueue(sc->getMessageQueueById(QU_KBK32_START), 0, 0);
 
 		mq->sendNextCommand();
 	}
