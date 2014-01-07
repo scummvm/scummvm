@@ -448,10 +448,10 @@ public:
 
 	bool scene32_flagIsWaving;
 	bool scene32_flagNeedsStopping;
-	int scene32_var07;
-	int scene32_var08;
-	int scene32_var09;
-	int scene32_var10;
+	bool scene32_dudeIsSitting;
+	int scene32_cactusCounter;
+	bool scene32_dudeOnLadder;
+	bool scene32_cactusIsGrowing;
 	StaticANIObject *scene32_flag;
 	StaticANIObject *scene32_cactus;
 	StaticANIObject *scene32_massOrange;

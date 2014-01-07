@@ -315,10 +315,10 @@ Vars::Vars() {
 
 	scene32_flagIsWaving = false;
 	scene32_flagNeedsStopping = false;
-	scene32_var07 = 0;
-	scene32_var08 = -1;
-	scene32_var09 = 0;
-	scene32_var10 = 0;
+	scene32_dudeIsSitting = false;
+	scene32_cactusCounter = -1;
+	scene32_dudeOnLadder = false;
+	scene32_cactusIsGrowing = false;
 	scene32_flag = 0;
 	scene32_cactus = 0;
 	scene32_massOrange = 0;
