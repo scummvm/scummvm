@@ -93,7 +93,11 @@ void sceneHandler28_lift0Start() {
 }
 
 void sceneHandler28_lift1Start() {
-	warning("STUB: sceneHandler28_lift1Start()");
+	g_fp->_aniMan->_flags |= 1;
+
+	g_fp->_behaviorManager->setFlagByStaticAniObject(g_fp->_aniMan, 0);
+
+	chainQueue(QU_SC28_LIFT1_START, 1);
 }
 
 void sceneHandler28_lift2Start() {
@@ -105,7 +109,11 @@ void sceneHandler28_lift3Start() {
 }
 
 void sceneHandler28_lift4Start() {
-	warning("STUB: sceneHandler28_lift4Start()");
+	g_fp->_aniMan->_flags |= 1;
+
+	g_fp->_behaviorManager->setFlagByStaticAniObject(g_fp->_aniMan, 0);
+
+	chainQueue(QU_SC28_WMN_START, 1);
 }
 
 void sceneHandler28_lift5Start() {
@@ -113,7 +121,16 @@ void sceneHandler28_lift5Start() {
 }
 
 void sceneHandler28_lift6Start() {
-	warning("STUB: sceneHandler28_lift6Start()");
+	g_fp->_aniMan->_flags |= 1;
+
+	g_fp->_behaviorManager->setFlagByStaticAniObject(g_fp->_aniMan, 0);
+
+	StaticANIObject *woman = g_fp->_currentScene->getStaticANIObject1ById(ANI_TIOTIA, -1);
+
+	if (woman && (woman->_flags & 4))
+		chainQueue(QU_SC28_LIFT6_START2, 1);
+	else
+		chainQueue(QU_SC28_LIFT6_START, 1);
 }
 
 void sceneHandler28_clickLift(int keycode) {

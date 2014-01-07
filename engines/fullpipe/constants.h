@@ -981,6 +981,7 @@ namespace Fullpipe {
 #define ANI_LIFT 982
 #define ANI_LIFT_28 4238
 #define ANI_MAN_28 4247
+#define ANI_TIOTIA 4286
 #define MSG_SC28_CLICKLIFT 4258
 #define MSG_SC28_ENDCABIN 3456
 #define MSG_SC28_ENDLIFT1 4259
@@ -1018,6 +1019,8 @@ namespace Fullpipe {
 #define QU_SC28_LIFT5_START 4674
 #define QU_SC28_LIFT6_END 3563
 #define QU_SC28_LIFT6_START 4243
+#define QU_SC28_LIFT6_START2 4295
+#define QU_SC28_WMN_START 3452
 
 // Scene 30
 #define ANI_LEG 2322
