@@ -1058,6 +1058,7 @@ namespace Fullpipe {
 #define ANI_BUTTON_32 5347
 #define ANI_CACTUS 2267
 #define ANI_FLAG 2257
+#define ANI_KADKA 2670
 #define ANI_TESTO_BLUE 2659
 #define ANI_TESTO_GREEN 2662
 #define ANI_TESTO_ORANGE 2656
@@ -1076,6 +1077,7 @@ namespace Fullpipe {
 #define MV_FLG_STARTR 2263
 #define MV_FLG_STOPL 2261
 #define MV_FLG_STOPR 2265
+#define MV_MAN32_STANDUP 2313
 #define MV_TSTG_FLOW 2663
 #define MV_TSTO_FLOW 2657
 #define PIC_SC32_LADDER 4296
