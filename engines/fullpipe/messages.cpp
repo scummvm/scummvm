@@ -392,7 +392,12 @@ void MessageQueue::addExCommandToEnd(ExCommand *ex) {
 }
 
 void MessageQueue::insertExCommandAt(int pos, ExCommand *ex) {
-	warning("STUB: MessageQueue::insertExCommandAt()");
+	Common::List<ExCommand *>::iterator it = _exCommands.begin();
+
+	for (int i = pos; i > 0; i--)
+		++it;
+
+	_exCommands.insert(it, ex);
 }
 
 ExCommand *MessageQueue::getExCommandByIndex(uint idx) {
