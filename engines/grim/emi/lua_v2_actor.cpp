@@ -482,7 +482,7 @@ void Lua_V2::SetActorRestChore() {
 	lua_Object actorObj = lua_getparam(1);
 	lua_Object choreObj = lua_getparam(2);
 	lua_Object costumeObj = lua_getparam(3);
-	Costume *costume;
+	Costume *costume = NULL;
 	int chore;
 
 	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R') ||
@@ -492,19 +492,7 @@ void Lua_V2::SetActorRestChore() {
 
 	Actor *actor = getactor(actorObj);
 
-	if (!findCostume(costumeObj, actor, &costume))
-		return;
-
-	if (!costume) {
-		costume = actor->getCurrentCostume();
-	}
-
-	if (lua_isnil(choreObj)) {
-		chore = -1;
-	} else {
-		const char *choreStr = lua_getstring(choreObj);
-		chore = costume->getChoreId(choreStr);
-	}
+	setChoreAndCostume(choreObj, costumeObj, actor, costume, chore);
 
 	actor->setRestChore(chore, costume);
 }
@@ -513,7 +501,7 @@ void Lua_V2::SetActorWalkChore() {
 	lua_Object actorObj = lua_getparam(1);
 	lua_Object choreObj = lua_getparam(2);
 	lua_Object costumeObj = lua_getparam(3);
-	Costume *costume;
+	Costume *costume = NULL;
 	int chore;
 
 	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R') ||
@@ -523,19 +511,7 @@ void Lua_V2::SetActorWalkChore() {
 
 	Actor *actor = getactor(actorObj);
 
-	if (!findCostume(costumeObj, actor, &costume))
-		return;
-
-	if (!costume) {
-		costume = actor->getCurrentCostume();
-	}
-
-	if (lua_isnil(choreObj)) {
-		chore = -1;
-	} else {
-		const char *choreStr = lua_getstring(choreObj);
-		chore = costume->getChoreId(choreStr);
-	}
+	setChoreAndCostume(choreObj, costumeObj, actor, costume, chore);
 
 	actor->setWalkChore(chore, costume);
 }
@@ -570,12 +546,14 @@ void Lua_V2::SetActorTurnChores() {
 	actor->setTurnChores(leftChore, rightChore, costume);
 }
 
+
+
 void Lua_V2::SetActorTalkChore() {
 	lua_Object actorObj = lua_getparam(1);
 	lua_Object indexObj = lua_getparam(2);
 	lua_Object choreObj = lua_getparam(3);
 	lua_Object costumeObj = lua_getparam(4);
-	Costume *costume;
+	Costume *costume = NULL;
 	int chore;
 
 	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R') ||
@@ -590,19 +568,7 @@ void Lua_V2::SetActorTalkChore() {
 
 	Actor *actor = getactor(actorObj);
 
-	if (!findCostume(costumeObj, actor, &costume))
-		return;
-
-	if (!costume) {
-		costume = actor->getCurrentCostume();
-	}
-
-	if (lua_isnil(choreObj)) {
-		chore = -1;
-	} else {
-		const char *choreStr = lua_getstring(choreObj);
-		chore = costume->getChoreId(choreStr);
-	}
+	setChoreAndCostume(choreObj, costumeObj, actor, costume, chore);
 
 	actor->setTalkChore(index, chore, costume);
 }
@@ -611,7 +577,7 @@ void Lua_V2::SetActorMumblechore() {
 	lua_Object actorObj = lua_getparam(1);
 	lua_Object choreObj = lua_getparam(2);
 	lua_Object costumeObj = lua_getparam(3);
-	Costume *costume;
+	Costume *costume = NULL;
 	int chore;
 
 	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R') ||
@@ -621,19 +587,7 @@ void Lua_V2::SetActorMumblechore() {
 
 	Actor *actor = getactor(actorObj);
 
-	if (!findCostume(costumeObj, actor, &costume))
-		return;
-
-	if (!costume) {
-		costume = actor->getCurrentCostume();
-	}
-
-	if (lua_isnil(choreObj)) {
-		chore = -1;
-	} else {
-		const char *choreStr = lua_getstring(choreObj);
-		chore = costume->getChoreId(choreStr);
-	}
+	setChoreAndCostume(choreObj, costumeObj, actor, costume, chore);
 
 	actor->setMumbleChore(chore, costume);
 }
@@ -715,7 +669,30 @@ void Lua_V2::PlayActorChore() {
 
 	const char *choreName = lua_getstring(choreObj);
 
+	const char *costumeName = lua_getstring(costumeObj);
 	Costume *costume;
+	// If a new wear chore is set and it uses a different costume than the
+	// current one and neither of them is the shadow costume stop all active
+	// chores and remove the old costume before setting the new one.
+	//
+	// This is necessary, because always the last costume on the stack, even
+	// if it is not active, is returned by getCurrentCostume(). This would
+	// cause an issue if the costumes would have different joints and the lua
+	// code would consider a different costume active than the C code.
+	if (0 == strncmp("wear_", choreName, 5)) {
+		if (0 != strncmp("fx/dumbshadow.cos", costumeName, 17)) {
+			if (actor->getCurrentCostume() != NULL &&
+			    actor->getCurrentCostume()->getFilename() != "fx/dumbshadow.cos" &&
+			    actor->getCurrentCostume() != costume) {
+				actor->stopAllChores();
+				actor->setRestChore(-1, NULL);
+				actor->setWalkChore(-1, NULL);
+				actor->setTurnChores(-1, -1, NULL);
+				actor->setMumbleChore(-1, NULL);
+				actor->popCostume();
+			}
+		}
+	}
 	if (!findCostume(costumeObj, actor, &costume))
 		return;
 
@@ -750,10 +727,8 @@ void Lua_V2::StopActorChores() {
 
 	//FIXME: What does the second param actually do
 //	bool p = lua_isnil(paramObj) != 0;
-	Costume *costume = actor->getCurrentCostume();
-	if (costume) {
-		costume->stopChores();
-	}
+
+	actor->stopAllChores();
 }
 
 void Lua_V2::SetActorLighting() {
@@ -984,6 +959,22 @@ void Lua_V2::EnableActorPuck() {
 
 	// FIXME: Implement.
 	warning("Lua_V2::EnableActorPuck: stub, actor: %s enable: %s", actor->getName().c_str(), enable ? "TRUE" : "FALSE");
+}
+
+void Lua_V2::setChoreAndCostume(lua_Object choreObj, lua_Object costumeObj, Actor *actor, Costume *&costume, int &chore) {
+	if (lua_isnil(choreObj)) {
+		chore = -1;
+	} else {
+		if (!findCostume(costumeObj, actor, &costume))
+			return;
+
+		if (!costume) {
+			costume = actor->getCurrentCostume();
+		}
+
+		const char *choreStr = lua_getstring(choreObj);
+		chore = costume->getChoreId(choreStr);
+	}
 }
 
 } // end of namespace Grim

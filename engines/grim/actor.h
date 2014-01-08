@@ -444,7 +444,7 @@ public:
 	void setMumbleChore(int choreNumber, Costume *cost);
 	bool playLastWearChore();
 	void setLastWearChore(int choreNumber, Costume *cost);
-
+	void stopAllChores();
 	void setColormap(const char *map);
 	void pushCostume(const char *name);
 	void setCostume(const char *name);
