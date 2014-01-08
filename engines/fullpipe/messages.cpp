@@ -234,6 +234,13 @@ ObjstateCommand::ObjstateCommand() {
 	_objCommandName = 0;
 }
 
+ObjstateCommand::ObjstateCommand(ObjstateCommand *src) : ExCommand(src) {
+	_value = src->_value;
+	_objCommandName = (char *)calloc(strlen(src->_objCommandName) + 1, 1);
+
+	strncpy(_objCommandName, src->_objCommandName, strlen(src->_objCommandName));
+}
+
 ObjstateCommand::~ObjstateCommand() {
 	free(_objCommandName);
 }
@@ -253,9 +260,7 @@ bool ObjstateCommand::load(MfcArchive &file) {
 }
 
 ObjstateCommand *ObjstateCommand::createClone() {
-	warning("STUB: ObjstateCommand::createClone()");
-
-	return this;
+	return new ObjstateCommand(this);
 }
 
 MessageQueue::MessageQueue() {

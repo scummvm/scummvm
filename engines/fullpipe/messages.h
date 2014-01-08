@@ -99,6 +99,7 @@ class ObjstateCommand : public ExCommand {
 
  public:
 	ObjstateCommand();
+	ObjstateCommand(ObjstateCommand *src);
 	virtual ~ObjstateCommand();
 
 	virtual bool load(MfcArchive &file);
