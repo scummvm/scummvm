@@ -326,6 +326,8 @@ public:
 
 public:
 	MovGraph();
+	virtual ~MovGraph();
+
 	virtual bool load(MfcArchive &file);
 
 	virtual void addObject(StaticANIObject *obj);

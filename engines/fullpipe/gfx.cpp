@@ -156,6 +156,10 @@ PictureObject::PictureObject() {
 	_objtype = kObjTypePictureObject;
 }
 
+PictureObject::~PictureObject() {
+	warning("STUB: PictureObject::~PictureObject()");
+}
+
 PictureObject::PictureObject(PictureObject *src) : GameObject(src) {
 	_picture = src->_picture;
 	_ox2 = _ox;

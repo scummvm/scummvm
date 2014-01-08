@@ -132,6 +132,8 @@ class Movement : public GameObject {
 
   public:
 	Movement();
+	virtual ~Movement();
+
 	Movement(Movement *src, StaticANIObject *ani);
 	Movement(Movement *src, int *flag1, int flag2, StaticANIObject *ani);
 
@@ -187,11 +189,12 @@ class StaticANIObject : public GameObject {
 	int _counter;
 	int _someDynamicPhaseIndex;
 
-  public:
+public:
 	int16 _sceneId;
 
-  public:
+public:
 	StaticANIObject();
+	virtual ~StaticANIObject();
 	StaticANIObject(StaticANIObject *src);
 
 	virtual bool load(MfcArchive &file);

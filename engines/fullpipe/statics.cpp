@@ -127,6 +127,10 @@ StaticANIObject::StaticANIObject() {
 	_objtype = kObjTypeStaticANIObject;
 }
 
+StaticANIObject::~StaticANIObject() {
+	warning("STUB: StaticANIObject::~StaticANIObject()");
+}
+
 StaticANIObject::StaticANIObject(StaticANIObject *src) : GameObject(src) {
 	_shadowsOn = src->_shadowsOn;
 	_field_30 = src->_field_30;
@@ -1208,6 +1212,10 @@ Movement::Movement() {
 
 	_somePoint.x = 0;
 	_somePoint.y = 0;
+}
+
+Movement::~Movement() {
+	warning("STUB: Movement::~Movement()");
 }
 
 Movement::Movement(Movement *src, StaticANIObject *ani) {

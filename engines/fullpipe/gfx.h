@@ -158,7 +158,9 @@ class PictureObject : public GameObject {
 
   public:
 	PictureObject();
+
 	PictureObject(PictureObject *src);
+	virtual ~PictureObject();
 
 	virtual bool load(MfcArchive &file, bool bigPicture);
 	virtual bool load(MfcArchive &file) { assert(0); return false; } // Disable base class

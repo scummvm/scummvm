@@ -34,8 +34,10 @@ class Sound : public MemoryObject {
 	byte *_soundData;
 	Audio::SoundHandle _handle;
 
-  public:
+public:
 	Sound();
+	virtual ~Sound();
+
 	virtual bool load(MfcArchive &file, NGIArchive *archive);
 	virtual bool load(MfcArchive &file) { assert(0); return false; } // Disable base class
 	void updateVolume();

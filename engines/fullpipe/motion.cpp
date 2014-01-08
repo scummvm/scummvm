@@ -463,6 +463,10 @@ MovGraph::MovGraph() {
 	_objtype = kObjTypeMovGraph;
 }
 
+MovGraph::~MovGraph() {
+	warning("STUB: MovGraph::~MovGraph()");
+}
+
 bool MovGraph::load(MfcArchive &file) {
 	debug(5, "MovGraph::load()");
 
