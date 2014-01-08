@@ -174,8 +174,7 @@ bool BitmapData::loadGrimBm(Common::SeekableReadStream *data) {
 	return true;
 }
 
-BitmapData::BitmapData(const Graphics::PixelBuffer &buf, int w, int h, const char *fname) {
-	_fname = fname;
+BitmapData::BitmapData(const Graphics::PixelBuffer &buf, int w, int h, const char *fname) : _fname(fname) {
 	_refCount = 1;
 	Debug::debug(Debug::Bitmaps, "New bitmap loaded: %s\n", fname);
 	_numImages = 1;

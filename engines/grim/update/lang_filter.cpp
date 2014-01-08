@@ -88,7 +88,7 @@ int LangFilter::listMembers(Common::ArchiveMemberList &list) const {
 
 	int num = 0;
 	//Search only files with the right language and create a list with their basenames
-	for (Common::ArchiveMemberList::const_iterator it = orgList.begin(); it != orgList.end(); it++) {
+	for (Common::ArchiveMemberList::const_iterator it = orgList.begin(); it != orgList.end(); ++it) {
 		orgName = (*it)->getName();
 		if (orgName.hasPrefix(kLanguages1[_lang]) || orgName.hasPrefix(kLanguages1[kCommon]))
 			name = Common::String(orgName.c_str() + 3);
@@ -125,7 +125,7 @@ Common::SeekableReadStream *LangFilter::createReadStreamForMember(const Common::
 	namesToTry.push_front(kLanguages1[kCommon] + name);
 	namesToTry.push_front(kLanguages2[_lang] + name);
 	namesToTry.push_front(kLanguages2[kCommon] + name);
-	for (Common::List<Common::String>::const_iterator it = namesToTry.begin(); it != namesToTry.end(); it++)
+	for (Common::List<Common::String>::const_iterator it = namesToTry.begin(); it != namesToTry.end(); ++it)
 		if (_arc->hasFile(*it)) {
 			fullName = *it;
 			break;

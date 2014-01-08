@@ -322,7 +322,7 @@ void PoolObject<T>::Pool::restoreObjects(SaveGame *state) {
 		tempMap[id] = t;
 		t->restoreState(state);
 	}
-	for (iterator i = begin(); i != end(); i++) {
+	for (iterator i = begin(); i != end(); ++i) {
 		delete *i;
 	}
 	_map = tempMap;

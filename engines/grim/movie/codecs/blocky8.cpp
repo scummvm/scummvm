@@ -555,6 +555,17 @@ Blocky8::Blocky8() {
 	_deltaBuf = NULL;
 	_width = -1;
 	_height = -1;
+	_frameSize = 0;
+	_offset1 = 0;
+	_offset2 = 0;
+	_prevSeqNb = 0;
+	_lastTableWidth = 0;
+	_deltaBufs[0] = NULL;
+	_deltaBufs[1] = NULL;
+	_curBuf = NULL;
+	_d_pitch = 0;
+	_d_src = NULL;
+	_paramPtr = NULL;
 }
 
 void Blocky8::init(int width, int height) {

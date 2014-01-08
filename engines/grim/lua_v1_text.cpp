@@ -53,11 +53,10 @@ void Lua_V1::KillTextObject() {
  * in the table in the LUA parameter 2.
  */
 void Lua_V1::ChangeTextObject() {
-	const char *line;
 	lua_Object textObj = lua_getparam(1);
-	int paramId = 2;
 	if (lua_isuserdata(textObj) && lua_tag(textObj) == MKTAG('T', 'E', 'X', 'T')) {
 		TextObject *textObject = gettextobject(textObj);
+		int paramId = 2;
 		for (;;) {
 			lua_Object paramObj = lua_getparam(paramId++);
 			if (!paramObj)
@@ -69,7 +68,7 @@ void Lua_V1::ChangeTextObject() {
 				textObject->reposition();
 				textObject->destroy();
 			} else {
-				line = lua_getstring(paramObj);
+				const char *line = lua_getstring(paramObj);
 				textObject->setText(line);
 				lua_getstring(paramObj);
 

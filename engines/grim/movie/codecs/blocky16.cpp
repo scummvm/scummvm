@@ -644,6 +644,19 @@ Blocky16::Blocky16() {
 	memset(_tableBig, 0, 99328);
 	memset(_tableSmall, 0, 32768);
 	_deltaBuf = NULL;
+	_deltaBufs[0] = NULL;
+	_deltaBufs[1] = NULL;
+	_curBuf = NULL;
+	_prevSeqNb = 0;
+	_lastTableWidth = 0;
+	_d_src = NULL;
+	_paramPtr = NULL;
+	_param6_7Ptr = NULL;
+	_blocksHeight = _blocksWidth = 0;
+	_height = _width = 0;
+	_offset = _offset1 = _offset2 = 0;
+	_frameSize = 0;
+	_d_pitch = 0;
 }
 
 void Blocky16::deinit() {

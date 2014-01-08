@@ -107,9 +107,9 @@ namespace Grim {
 // along setKey requests to the actual bitmap object.
 
 Costume::Costume(const Common::String &fname, Costume *prevCost) :
-		Object(), _head(new Head()), _chores(NULL) {
+		Object(), _head(new Head()), _chores(NULL), _components(NULL),
+		_numComponents(0), _numChores(0), _fname(fname) {
 
-	_fname = fname;
 	_lookAtRate = 200;
 	_prevCostume = prevCost;
 }

@@ -33,8 +33,9 @@ namespace Grim {
 
 Font::Font() :
 		_userData(NULL),
-		_fontData(NULL), _charHeaders(NULL), _charIndex(NULL)
-{
+		_fontData(NULL), _charHeaders(NULL), _charIndex(NULL),
+		_numChars(0), _dataSize(0), _height(0), _baseOffsetY(0),
+		_firstChar(0), _lastChar(0) {
 
 }
 

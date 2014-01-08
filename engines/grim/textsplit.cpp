@@ -244,8 +244,7 @@ static void parse(const char *line, const char *fmt, int field_count, va_list va
 }
 
 
-TextSplitter::TextSplitter(const Common::String &fname, Common::SeekableReadStream *data) {
-	_fname = fname;
+TextSplitter::TextSplitter(const Common::String &fname, Common::SeekableReadStream *data) : _fname(fname) {
 	char *line;
 	int i;
 	uint32 len = data->size();

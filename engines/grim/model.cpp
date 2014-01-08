@@ -41,8 +41,7 @@ namespace Grim {
  * @class Model
  */
 Model::Model(const Common::String &filename, Common::SeekableReadStream *data, CMap *cmap, Model *parent) :
-		Object(), _parent(parent), _numMaterials(0), _numGeosets(0), _cmap(cmap) {
-	_fname = filename;
+		Object(), _parent(parent), _numMaterials(0), _numGeosets(0), _cmap(cmap), _fname(filename) {
 
 	if (data->readUint32BE() == MKTAG('L','D','O','M'))
 		loadBinary(data);

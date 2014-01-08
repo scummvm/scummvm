@@ -205,7 +205,8 @@ Common::SeekableReadStream *MsCabinet::createReadStreamForMember(const Common::S
 }
 
 MsCabinet::Decompressor::Decompressor(const MsCabinet::FolderEntry *folder, Common::SeekableReadStream *data) :
-	_curFolder(folder), _data(data), _curBlock(-1), _compressedBlock(0), _decompressedBlock(0), _fileBuf(0) {
+	_curFolder(folder), _data(data), _curBlock(-1), _compressedBlock(0), _decompressedBlock(0), _fileBuf(0),
+	_inBlockEnd(0), _inBlockStart(0), _endBlock(0), _startBlock(0) {
 
 	//Alloc the decompression buffers
 	_compressedBlock = new byte[kCabInputmax];
