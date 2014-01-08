@@ -115,6 +115,8 @@ class Picture : public MemoryObject {
 class BigPicture : public Picture {
   public:
 	BigPicture() {}
+	virtual ~BigPicture() {}
+
 	virtual bool load(MfcArchive &file);
 	virtual void draw(int x, int y, int style, int angle);
 };
@@ -168,6 +170,7 @@ class PictureObject : public GameObject {
 	bool setPicAniInfo(PicAniInfo *picAniInfo);
 	bool isPointInside(int x, int y);
 	bool isPixelHitAtPos(int x, int y);
+	void setOXY2();
 };
 
 class Background : public CObject {
@@ -185,6 +188,8 @@ class Background : public CObject {
 
   public:
 	Background();
+	virtual ~Background();
+
 	virtual bool load(MfcArchive &file);
 	void addPictureObject(PictureObject *pct);
 

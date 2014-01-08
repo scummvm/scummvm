@@ -92,6 +92,9 @@ bool SceneTag::load(MfcArchive &file) {
 
 SceneTag::~SceneTag() {
 	free(_tag);
+
+	delete _scene;
+	delete _field_4;
 }
 
 void SceneTag::loadScene() {
@@ -127,6 +130,10 @@ Scene::Scene() {
 	_soundList = 0;
 	_libHandle = 0;
 	_sceneName = 0;
+}
+
+Scene::~Scene() {
+	warning("STUB: Scene::~Scene()");
 }
 
 bool Scene::load(MfcArchive &file) {

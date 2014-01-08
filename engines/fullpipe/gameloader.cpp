@@ -79,6 +79,8 @@ GameLoader::~GameLoader() {
 	delete _gameProject;
 	delete _interactionController;
 	delete _inputController;
+
+	warning("STUB: GameLoader::~GameLoader()");
 }
 
 bool GameLoader::load(MfcArchive &file) {

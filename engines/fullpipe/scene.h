@@ -44,6 +44,7 @@ class Scene : public Background {
 
   public:
 	Scene();
+	virtual ~Scene();
 
 	virtual bool load(MfcArchive &file);
 
@@ -84,7 +85,7 @@ class Scene : public Background {
 
 class SceneTag : public CObject {
  public:
-	int _field_4;
+	CObject *_field_4;
 	char *_tag;
 	Scene *_scene;
 	int16 _sceneId;

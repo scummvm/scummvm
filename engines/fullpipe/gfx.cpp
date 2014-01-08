@@ -87,6 +87,10 @@ Background::Background() {
 	_palette = 0;
 }
 
+Background::~Background() {
+	warning("STUB: Background::~Background()");
+}
+
 bool Background::load(MfcArchive &file) {
 	debug(5, "Background::load()");
 	_bgname = file.readPascalString();
@@ -267,6 +271,11 @@ bool PictureObject::isPixelHitAtPos(int x, int y) {
 	_picture->_y = oldy;
 
 	return res;
+}
+
+void PictureObject::setOXY2() {
+	_ox2 = _ox;
+	_oy2 = _oy;
 }
 
 GameObject::GameObject() {

@@ -30,6 +30,10 @@
 
 namespace Fullpipe {
 
+Inventory::~Inventory() {
+	warning("STUB: Inventory::~Inventory()");
+}
+
 bool Inventory::load(MfcArchive &file) {
 	debug(5, "Inventory::load()");
 
@@ -83,6 +87,10 @@ Inventory2::Inventory2() {
 	_isInventoryOut = false;
 	_isLocked = 0;
 	_topOffset = -65;
+}
+
+Inventory2::~Inventory2() {
+	warning("STUB: Inventory2::~Inventory2()");
 }
 
 bool Inventory2::loadPartial(MfcArchive &file) { // Inventory2_SerializePartially

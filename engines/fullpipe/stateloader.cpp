@@ -146,6 +146,8 @@ bool GameProject::load(MfcArchive &file) {
 
 GameProject::~GameProject() {
 	free(_headerFilename);
+
+	delete _sceneTagList;
 }
 
 GameVar::GameVar() {
@@ -157,6 +159,10 @@ GameVar::GameVar() {
 	_varType = 0;
 	_value.floatValue = 0;
 	_varName = 0;
+}
+
+GameVar::~GameVar() {
+	warning("STUB: GameVar::~GameVar()");
 }
 
 bool GameVar::load(MfcArchive &file) {
