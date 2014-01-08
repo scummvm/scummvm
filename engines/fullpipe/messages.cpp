@@ -234,18 +234,28 @@ ObjstateCommand::ObjstateCommand() {
 	_objCommandName = 0;
 }
 
+ObjstateCommand::~ObjstateCommand() {
+	free(_objCommandName);
+}
+
 bool ObjstateCommand::load(MfcArchive &file) {
 	debug(5, "ObjStateCommand::load()");
 
 	_objtype = kObjTypeObjstateCommand;
 
-	_cmd.load(file);
+	ExCommand::load(file);
 
 	_value = file.readUint32LE();
 
 	_objCommandName = file.readPascalString();
 
 	return true;
+}
+
+ObjstateCommand *ObjstateCommand::createClone() {
+	warning("STUB: ObjstateCommand::createClone()");
+
+	return this;
 }
 
 MessageQueue::MessageQueue() {

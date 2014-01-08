@@ -92,15 +92,18 @@ class ExCommand2 : public ExCommand {
 	virtual ExCommand2 *createClone();
 };
 
-class ObjstateCommand : public CObject {
+class ObjstateCommand : public ExCommand {
  public:
-	ExCommand _cmd;
 	char *_objCommandName;
 	int _value;
 
  public:
 	ObjstateCommand();
+	virtual ~ObjstateCommand();
+
 	virtual bool load(MfcArchive &file);
+
+	virtual ObjstateCommand *createClone();
 };
 
 class MessageQueue : public CObject {
