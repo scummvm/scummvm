@@ -1882,8 +1882,23 @@ Common::Point *MGM::getPoint(Common::Point *point, int objectId, int staticsId1,
 }
 
 int MGM::getStaticsIndexById(int idx, int16 id) {
+	if (!_items[idx]->statics.size())
+		return -1;
+
 	for (uint i = 0; i < _items[idx]->statics.size(); i++) {
 		if (_items[idx]->statics[i]->_staticsId == id)
+			return i;
+	}
+
+	return 0;
+}
+
+int MGM::getStaticsIndex(int idx, Statics *st) {
+	if (!_items[idx]->statics.size())
+		return -1;
+
+	for (uint i = 0; i < _items[idx]->statics.size(); i++) {
+		if (_items[idx]->statics[i] == st)
 			return i;
 	}
 
