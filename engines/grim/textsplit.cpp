@@ -284,12 +284,15 @@ TextSplitter::~TextSplitter() {
 bool TextSplitter::checkString(const char *needle) {
 	// checkString also needs to check for extremely optional
 	// components like "object_art" which can be missing entirely
-	if (!getCurrentLine())
+	if (!getCurrentLine()) {
 		return false;
-	else if (strstr(getCurrentLine(), needle))
-		return true;
-	else
-		return false;
+	} else {
+		Common::String haystack(getCurrentLine());
+		Common::String needleStr(needle);
+		haystack.toLowercase();
+		needleStr.toLowercase();
+		return haystack.contains(needleStr);
+	}
 }
 
 void TextSplitter::expectString(const char *expected) {
