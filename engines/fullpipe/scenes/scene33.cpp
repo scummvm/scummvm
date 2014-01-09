@@ -88,7 +88,18 @@ void sceneHandler33_processVents() {
 }
 
 void sceneHandler33_switchVent(StaticANIObject *ani) {
-	warning("STUB: sceneHandler33_switchVent(");
+	int mv = 0;
+
+	if (ani->_statics->_staticsId == ST_VNT33_DOWN)
+		mv = MV_VNT33_TURNR;
+
+	if (ani->_statics->_staticsId == ST_VNT33_RIGHT)
+		mv = MV_VNT33_TURND;
+
+	if (mv)
+		ani->startAnim(mv, 0, -1);
+
+	g_vars->scene33_ventsState[ani->_okeyCode] = !g_vars->scene33_ventsState[ani->_okeyCode];
 }
 
 void sceneHandler33_tryCube() {
