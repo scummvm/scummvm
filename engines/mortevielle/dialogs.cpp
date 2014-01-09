@@ -298,7 +298,7 @@ bool DialogManager::showKnowledgeCheck() {
 		int dialogHeight = 23;
 		_vm->_screenSurface.fillRect(15, Common::Rect(0, 14, 630, dialogHeight));
 		Common::String tmpStr = _vm->getString(textIndexArr[indx]);
-		_vm->_text.displayStr(tmpStr, 20, 15, 100, 2, 0);
+		_vm->_text->displayStr(tmpStr, 20, 15, 100, 2, 0);
 
 		int firstOption;
 		int lastOption;
@@ -318,7 +318,7 @@ bool DialogManager::showKnowledgeCheck() {
 			tmpStr = _vm->getString(j);
 			if ((int) tmpStr.size() > maxLength)
 				maxLength = tmpStr.size();
-			_vm->_text.displayStr(tmpStr, 100, optionPosY, 100, 1, 0);
+			_vm->_text->displayStr(tmpStr, 100, optionPosY, 100, 1, 0);
 			choiceArray[prevChoice] = tmpStr;
 			optionPosY += 8;
 		}
@@ -352,16 +352,16 @@ bool DialogManager::showKnowledgeCheck() {
 			if (coor[currChoice]._enabled) {
 				if ((prevChoice != 0) && (prevChoice != currChoice)) {
 					tmpStr = choiceArray[prevChoice] + '$';
-					_vm->_text.displayStr(tmpStr, 100, 27 + (prevChoice * 8), 100, 1, 0);
+					_vm->_text->displayStr(tmpStr, 100, 27 + (prevChoice * 8), 100, 1, 0);
 				}
 				if (prevChoice != currChoice) {
 					tmpStr = choiceArray[currChoice] + '$';
-					_vm->_text.displayStr(tmpStr, 100, 27 + (currChoice * 8), 100, 1, 1);
+					_vm->_text->displayStr(tmpStr, 100, 27 + (currChoice * 8), 100, 1, 1);
 					prevChoice = currChoice;
 				}
 			} else if (prevChoice != 0) {
 				tmpStr = choiceArray[prevChoice] + '$';
-				_vm->_text.displayStr(tmpStr, 100, 27 + (prevChoice * 8), 100, 1, 0);
+				_vm->_text->displayStr(tmpStr, 100, 27 + (prevChoice * 8), 100, 1, 0);
 				prevChoice = 0;
 			}
 		} while (!((prevChoice != 0) && _vm->getMouseClick()));
@@ -412,7 +412,7 @@ void DialogManager::drawF3F8() {
 void DialogManager::checkForF8(int SpeechNum, bool drawFrame2Fl) {
 	_vm->testKeyboard();
 	do {
-		_vm->_soundManager.startSpeech(SpeechNum, 0, 0);
+		_vm->_soundManager->startSpeech(SpeechNum, 0, 0);
 		_vm->_key = waitForF3F8();
 		if (_vm->shouldQuit())
 			return;
@@ -442,7 +442,7 @@ int DialogManager::waitForF3F8() {
 void DialogManager::displayIntroScreen(bool drawFrame2Fl) {
 	_vm->_caff = 50;
 	_vm->_maff = 0;
-	_vm->_text.taffich();
+	_vm->_text->taffich();
 	_vm->draw(63, 12);
 	if (drawFrame2Fl)
 		displayIntroFrame2();

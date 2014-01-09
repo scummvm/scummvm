@@ -47,15 +47,14 @@ namespace Mortevielle {
 MortevielleEngine *g_vm;
 
 MortevielleEngine::MortevielleEngine(OSystem *system, const MortevielleGameDescription *gameDesc):
-		Engine(system), _gameDescription(gameDesc), _randomSource("mortevielle"),
-		_soundManager(_mixer) {
+		Engine(system), _gameDescription(gameDesc), _randomSource("mortevielle") {
 	g_vm = this;
 	_debugger.setParent(this);
 	_dialogManager.setParent(this);
 	_screenSurface.setParent(this);
 	_mouse = new MouseHandler(this);
-	_text.setParent(this);
-	_soundManager.setParent(this);
+	_text = new TextHandler(this);
+	_soundManager = new SoundManager(this, _mixer);
 	_savegameManager.setParent(this);
 	_menu = new Menu(this);
 
@@ -106,6 +105,8 @@ MortevielleEngine::MortevielleEngine(OSystem *system, const MortevielleGameDescr
 
 MortevielleEngine::~MortevielleEngine() {
 	delete _menu;
+	delete _soundManager;
+	delete _text;
 	delete _mouse;
 
 	free(_curPict);
@@ -238,8 +239,8 @@ Common::ErrorCode MortevielleEngine::initialize() {
 	testKeyboard();
 	clearScreen();
 
-	_soundManager.loadNoise();
-	_soundManager.loadAmbiantSounds();
+	_soundManager->loadNoise();
+	_soundManager->loadAmbiantSounds();
 
 	return Common::kNoError;
 }
@@ -372,7 +373,7 @@ Common::Error MortevielleEngine::run() {
 		showIntroduction();
 	else {
 		_caff = 51;
-		_text.taffich();
+		_text->taffich();
 	}
 
 	// Either load the initial game state savegame, or the specified savegame number
@@ -386,7 +387,7 @@ Common::Error MortevielleEngine::run() {
 
 	// Cleanup (allocated in initialize())
 	_screenSurface.free();
-	free(_soundManager._cfiphBuffer);
+	free(_soundManager->_cfiphBuffer);
 	free(_cfiecBuffer);
 
 	return Common::kNoError;

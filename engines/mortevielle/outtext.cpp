@@ -35,6 +35,10 @@
 
 namespace Mortevielle {
 
+TextHandler::TextHandler(MortevielleEngine *vm) {
+	_vm = vm;
+}
+
 /**
  * Next word
  * @remarks	Originally called 'l_motsuiv'
@@ -299,10 +303,6 @@ void TextHandler::taffich() {
 			_vm->getPresence(_vm->_coreVar._currPlace);
 		_vm->_savedBitIndex =  0;
 	}
-}
-
-void TextHandler::setParent(MortevielleEngine *vm) {
-	_vm = vm;
 }
 
 } // End of namespace Mortevielle

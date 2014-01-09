@@ -663,11 +663,11 @@ void MortevielleEngine::fctOpen() {
 				  || (_coreVar._currPlace == PURPLE_ROOM)
 				  || (_coreVar._currPlace == BLUE_ROOM)) {
 					if (getRandomNumber(1, 4) == 3)
-						_soundManager.startSpeech(7, 9, 1);
+						_soundManager->startSpeech(7, 9, 1);
 				}
 				_openObjects[i] = _num;
 				displayAnimFrame(1, _num);
-				_soundManager.waitSpeech();
+				_soundManager->waitSpeech();
 			}
 			int tmpPlace = _coreVar._currPlace;
 			if (_coreVar._currPlace == CRYPT)
@@ -731,7 +731,7 @@ void MortevielleEngine::fctPlace() {
 					displayAnimFrame(1, 1);
 					handleDescriptionText(2, 165);
 					displayEmptyHand();
-					_soundManager.startSpeech(6, -9, 1);
+					_soundManager->startSpeech(6, -9, 1);
 
 					// Do you want to enter the hidden passage?
 					int answer = _dialogManager.show(getEngineString(S_YES_NO));
@@ -832,7 +832,7 @@ void MortevielleEngine::fctTurn() {
 		_crep = 997;
 		if ((_coreVar._currPlace == ATTIC) && (_coreVar._atticRodHoleObjectId == 159) && (_coreVar._atticBallHoleObjectId == 141)) {
 			handleDescriptionText(2, 167);
-			_soundManager.startSpeech(7, 9, 1);
+			_soundManager->startSpeech(7, 9, 1);
 			int answer = _dialogManager.show(getEngineString(S_YES_NO));
 			if (answer == 1)
 				_endGame = true;
@@ -842,7 +842,7 @@ void MortevielleEngine::fctTurn() {
 		if ((_coreVar._currPlace == SECRET_PASSAGE) && (_coreVar._secretPassageObjectId == 143)) {
 			handleDescriptionText(2, 175);
 			clearVerbBar();
-			_soundManager.startSpeech(6, -9, 1);
+			_soundManager->startSpeech(6, -9, 1);
 			int answer = _dialogManager.show(getEngineString(S_YES_NO));
 			if (answer == 1) {
 				_coreVar._currPlace = CRYPT;
@@ -967,7 +967,7 @@ void MortevielleEngine::fctKnock() {
 
 	if (_coreVar._currPlace == ROOM26) {
 		int rand = (getRandomNumber(0, 8)) - 4;
-		_soundManager.startSpeech(11, rand, 1);
+		_soundManager->startSpeech(11, rand, 1);
 		int pres = getPresenceStats(rand, _coreVar._faithScore, _roomDoorId);
 		if (_roomDoorId != OWN_ROOM) {
 			if (pres != -500) {
@@ -1185,9 +1185,9 @@ void MortevielleEngine::fctEnter() {
 				_crep = 179;
 			else {
 				int randVal = (getRandomNumber(0, 10)) - 5;
-				_soundManager.startSpeech(7, randVal, 1);
+				_soundManager->startSpeech(7, randVal, 1);
 				displayAnimFrame(1, 1);
-				_soundManager.waitSpeech();
+				_soundManager->waitSpeech();
 
 				int charIndex = convertBitIndexToCharacterIndex(pres);
 				++_coreVar._faithScore;
@@ -1207,9 +1207,9 @@ void MortevielleEngine::fctEnter() {
 			}
 		} else {
 			int randVal = (getRandomNumber(0, 10)) - 5;
-			_soundManager.startSpeech(7, randVal, 1);
+			_soundManager->startSpeech(7, randVal, 1);
 			displayAnimFrame(1, 1);
-			_soundManager.waitSpeech();
+			_soundManager->waitSpeech();
 
 			_coreVar._currPlace = _roomDoorId;
 			prepareDisplayText();
@@ -1627,7 +1627,7 @@ void MortevielleEngine::endGame() {
 	testKey(false);
 	_mouse->hideMouse();
 	_caff = 70;
-	_text.taffich();
+	_text->taffich();
 	clearScreen();
 	drawDiscussionBox();
 	startDialog(141);

@@ -432,11 +432,11 @@ public:
 	PaletteManager _paletteManager;
 	GfxSurface _backgroundSurface;
 	Common::RandomSource _randomSource;
-	SoundManager _soundManager;
+	SoundManager *_soundManager;
 	SavegameManager _savegameManager;
 	Menu *_menu;
 	MouseHandler *_mouse;
-	TextHandler _text;
+	TextHandler *_text;
 	DialogManager _dialogManager;
 
 	MortevielleEngine(OSystem *system, const MortevielleGameDescription *gameDesc);
