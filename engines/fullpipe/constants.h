@@ -1106,7 +1106,11 @@ namespace Fullpipe {
 #define ST_MAN32_SIT 2277
 
 // Scene 33
+#define ANI_JETTIE_FLOW 2627
+#define ANI_MUG_33 2623
+#define ANI_VENT_33 2637
 #define MSG_SC33_TRYKUBIK 4980
+#define QU_KBK33_START 4983
 
 // Scene 36
 #define ANI_SCISSORS_36 2647

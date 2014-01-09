@@ -459,6 +459,18 @@ public:
 	StaticANIObject *scene32_massGreen;
 	StaticANIObject *scene32_button;
 
+	int scene33_var01;
+	int scene33_var02;
+	int scene33_var03;
+	int scene33_var04;
+	StaticANIObject *scene33_mug;
+	StaticANIObject *scene33_jettie;
+	int scene33_var07;
+	int scene33_var08;
+	int scene33_var09;
+	int scene33_ventsX[9];
+	int scene33_ventsState[9];
+
 	StaticANIObject *scene36_rotohrust;
 	StaticANIObject *scene36_scissors;
 

@@ -326,6 +326,21 @@ Vars::Vars() {
 	scene32_massGreen = 0;
 	scene32_button = 0;
 
+	scene33_var01 = 0;
+	scene33_var02 = 0;
+	scene33_var03 = 0;
+	scene33_var04 = 0;
+	scene33_mug = 0;
+	scene33_jettie = 0;
+	scene33_var07 = 0;
+	scene33_var08 = -1;
+	scene33_var09 = 0;
+
+	for (int i = 0; i < 9; i++) {
+		scene33_ventsX[i] = 0;
+		scene33_ventsState[i] = 0;
+	}
+
 	scene36_rotohrust = 0;
 	scene36_scissors = 0;
 

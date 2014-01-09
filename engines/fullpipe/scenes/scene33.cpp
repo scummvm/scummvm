@@ -36,31 +36,33 @@
 
 namespace Fullpipe {
 
+const int ventsInit[9] = { 0, 0, 1, 0, 0, 1, 0, 0, 1 };
+
 void scene33_initScene(Scene *sc) {
 	g_vars->scene33_var01 = 200;
 	g_vars->scene33_var02 = 200;
 	g_vars->scene33_var03 = 300;
 	g_vars->scene33_var04 = 300;
-	g_vars->scene33_mug = Scene_getStaticANIObject1ById(sc, ANI_MUG_33, -1);
-
-	memcpy(g_vars->scene33_ventsState, g_vars->scene33_var06, 36u);
-
-	g_vars->scene33_jettie = Scene_getStaticANIObject1ById(sc, ANI_JETTIE_FLOW, -1);
+	g_vars->scene33_mug = sc->getStaticANIObject1ById(ANI_MUG_33, -1);
+	g_vars->scene33_jettie = sc->getStaticANIObject1ById(ANI_JETTIE_FLOW, -1);
 	g_vars->scene33_var07 = 0;
 	g_vars->scene33_var08 = -1;
 	g_vars->scene33_var09 = 0;
 
-	if (getObjectState("Кубик") == getObjectEnumState("Кубик", "В_33")) {
+	if (g_fp->getObjectState(sO_Cube) == g_fp->getObjectEnumState(sO_Cube, sO_In_33)) {
 		MessageQueue *mq = new MessageQueue(sc->getMessageQueueById(QU_KBK33_START), 0, 0);
 
 		mq->sendNextCommand();
 	}
 
 
-	for (i = 0; i < 9; i++)
-		g_vars->scene33_ventsX[i] = sc->getStaticANIObject1ById(sc, ANI_VENT_33, i)->_ox;
+	for (int i = 0; i < 9; i++) {
+		g_vars->scene33_ventsX[i] = sc->getStaticANIObject1ById(ANI_VENT_33, i)->_ox;
 
-	initArcadeKeys("SC_33");
+		g_vars->scene33_ventsState[i] = ventsInit[i];
+	}
+
+	g_fp->initArcadeKeys("SC_33");
 }
 
 } // End of namespace Fullpipe
