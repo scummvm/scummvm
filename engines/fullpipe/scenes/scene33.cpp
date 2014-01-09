@@ -103,7 +103,8 @@ void sceneHandler33_switchVent(StaticANIObject *ani) {
 }
 
 void sceneHandler33_tryCube() {
-	warning("STUB: sceneHandler33_tryCube(");
+	if (g_fp->getObjectState(sO_Cube) == g_fp->getObjectEnumState(sO_Cube, sO_In_32))
+		chainQueue(QU_KBK33_GO, 0);
 }
 
 void sceneHandler33_pour() {
@@ -111,7 +112,11 @@ void sceneHandler33_pour() {
 }
 
 void sceneHandler33_handleDown() {
-	warning("STUB: sceneHandler33_handleDown(");
+  if (!g_vars->scene33_var09 && !g_vars->scene33_jettie->_movement && !g_vars->scene33_jettie->getMessageQueue() ) {
+	  chainQueue(QU_SC33_STARTWATER, 0);
+
+	  g_vars->scene33_var09 = 1;
+  }
 }
 
 void sceneHandler33_zoneClickProcess(StaticANIObject *ani) {
