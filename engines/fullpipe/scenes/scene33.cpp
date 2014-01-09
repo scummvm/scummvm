@@ -80,7 +80,23 @@ int scene33_updateCursor() {
 }
 
 void sceneHandler33_processJettie(ExCommand *cmd) {
-	warning("STUB: sceneHandler33_processJettie(cmd");
+	MessageQueue *mq = g_fp->_globalMessageQueueList->getMessageQueueById(cmd->_parId);
+
+	if (mq && g_vars->scene33_jettie->_movement) {
+		ExCommand *ex = mq->getExCommandByIndex(0);
+
+		if (ex) {
+			ex->_messageKind = 0;
+			ex->_excFlags |= 1;
+		}
+
+		ex = mq->getExCommandByIndex(1);
+
+		if (ex) {
+			ex->_messageKind = 0;
+			ex->_excFlags |= 1;
+		}
+	}
 }
 
 void sceneHandler33_processVents() {
