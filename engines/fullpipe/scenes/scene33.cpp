@@ -103,8 +103,31 @@ void sceneHandler33_handleDown() {
 	warning("STUB: sceneHandler33_handleDown(");
 }
 
+void sceneHandler33_zoneClickProcess(StaticANIObject *ani) {
+	warning("STUB: sceneHandler33_zoneClickProcess()");
+}
+
 void sceneHandler33_clickZones(ExCommand *cmd) {
-	warning("STUB: sceneHandler33_clickZones(cmd)");
+	StaticANIObject *closest = 0;
+	double mindist = 1e10;
+
+	for (uint i = 0; i < g_fp->_currentScene->_staticANIObjectList1.size(); i++) {
+		StaticANIObject *ani = (StaticANIObject *)g_fp->_currentScene->_staticANIObjectList1[i];
+
+		if (ani->_id == ANI_VENT_33) {
+			int dx = ani->_ox - cmd->_sceneClickX;
+			int dy = ani->_oy - cmd->_sceneClickY;
+			double dist = sqrt((double)(dx * dx + dy * dy));
+
+			if (dist < mindist) {
+				mindist = dist;
+				closest = ani;
+			}
+		}
+	}
+
+	if (closest)
+		sceneHandler33_zoneClickProcess(closest);
 }
 
 int sceneHandler33(ExCommand *cmd) {
