@@ -337,6 +337,7 @@ Vars::Vars() {
 	scene33_var09 = 0;
 
 	for (int i = 0; i < 9; i++) {
+		scene33_var06[i] = 0;
 		scene33_ventsX[i] = 0;
 		scene33_ventsState[i] = 0;
 	}

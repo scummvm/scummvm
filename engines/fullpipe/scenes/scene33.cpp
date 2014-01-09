@@ -108,7 +108,33 @@ void sceneHandler33_tryCube() {
 }
 
 void sceneHandler33_pour() {
-	warning("STUB: sceneHandler33_pour(");
+	bool solved = true;
+
+	for (int i = 0; i < 9; i++)
+		if (g_vars->scene33_ventsState[i] != g_vars->scene33_var06[i])
+			solved = false;
+
+	if (solved) {
+		if ((g_vars->scene33_mug->_flags & 4) && g_vars->scene33_mug->_statics->_staticsId == ST_MUG33_EMPTY) {
+			g_vars->scene33_jettie->startAnim(MV_JTI33_POUR, 0, -1);
+
+			g_vars->scene33_var09 = 0;
+
+			return;
+		}
+
+		if ((g_vars->scene33_mug->_flags & 4) && g_vars->scene33_mug->_statics->_staticsId == ST_MUG33_FULL) {
+			g_vars->scene33_jettie->startAnim(MV_JTI33_POURFULL, 0, -1);
+
+			g_vars->scene33_var09 = 0;
+
+			return;
+		}
+
+		g_vars->scene33_jettie->startAnim(MV_JTI33_FLOW, 0, -1);
+	}
+
+	g_vars->scene33_var09 = 0;
 }
 
 void sceneHandler33_handleDown() {

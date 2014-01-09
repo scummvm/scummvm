@@ -471,6 +471,7 @@ public:
 	StaticANIObject *scene33_mug;
 	StaticANIObject *scene33_jettie;
 	StaticANIObject *scene33_var07;
+	int scene33_var06[9];
 	int scene33_var08;
 	int scene33_var09;
 	int scene33_ventsX[9];
