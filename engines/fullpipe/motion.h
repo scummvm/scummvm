@@ -289,6 +289,8 @@ class MovGraphLink : public CObject {
 
   public:
 	MovGraphLink();
+	virtual ~MovGraphLink();
+
 	virtual bool load(MfcArchive &file);
 
 	void calcNodeDistanceAndAngle();

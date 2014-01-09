@@ -1991,6 +1991,11 @@ MovGraphLink::MovGraphLink() {
 	_objtype = kObjTypeMovGraphLink;
 }
 
+MovGraphLink::~MovGraphLink() {
+	warning("STUB: MovGraphLink::~MovGraphLink()");
+}
+
+
 bool MovGraphLink::load(MfcArchive &file) {
 	debug(5, "MovGraphLink::load()");
 
