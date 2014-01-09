@@ -65,4 +65,18 @@ void scene33_initScene(Scene *sc) {
 	g_fp->initArcadeKeys("SC_33");
 }
 
+void scene33_setupMusic() {
+	if (g_fp->lift_checkButton(sO_Level6))
+		g_fp->playTrack(g_fp->getGameLoaderGameVar()->getSubVarByName("SC_33"), "MUSIC2", 1);
+}
+
+int scene33_updateCursor() {
+	g_fp->updateCursorCommon();
+
+	if (g_fp->_objectIdAtCursor == PIC_SC33_ZONES && g_fp->_cursorId == PIC_CSR_DEFAULT)
+		g_fp->_cursorId = PIC_CSR_ITN;
+
+	return g_fp->_cursorId;
+}
+
 } // End of namespace Fullpipe
