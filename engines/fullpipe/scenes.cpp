@@ -326,18 +326,13 @@ Vars::Vars() {
 	scene32_massGreen = 0;
 	scene32_button = 0;
 
-	scene33_var01 = 0;
-	scene33_var02 = 0;
-	scene33_var03 = 0;
-	scene33_var04 = 0;
 	scene33_mug = 0;
 	scene33_jettie = 0;
-	scene33_var07 = 0;
-	scene33_var08 = -1;
-	scene33_var09 = 0;
+	scene33_cube = 0;
+	scene33_cubeX = -1;
+	scene33_handleIsDown = false;
 
 	for (int i = 0; i < 9; i++) {
-		scene33_var06[i] = 0;
 		scene33_ventsX[i] = 0;
 		scene33_ventsState[i] = 0;
 	}

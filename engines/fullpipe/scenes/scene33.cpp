@@ -39,15 +39,11 @@ namespace Fullpipe {
 const int ventsInit[9] = { 0, 0, 1, 0, 0, 1, 0, 0, 1 };
 
 void scene33_initScene(Scene *sc) {
-	g_vars->scene33_var01 = 200;
-	g_vars->scene33_var02 = 200;
-	g_vars->scene33_var03 = 300;
-	g_vars->scene33_var04 = 300;
 	g_vars->scene33_mug = sc->getStaticANIObject1ById(ANI_MUG_33, -1);
 	g_vars->scene33_jettie = sc->getStaticANIObject1ById(ANI_JETTIE_FLOW, -1);
-	g_vars->scene33_var07 = 0;
-	g_vars->scene33_var08 = -1;
-	g_vars->scene33_var09 = 0;
+	g_vars->scene33_cube = 0;
+	g_vars->scene33_cubeX = -1;
+	g_vars->scene33_handleIsDown = false;
 
 	if (g_fp->getObjectState(sO_Cube) == g_fp->getObjectEnumState(sO_Cube, sO_In_33)) {
 		MessageQueue *mq = new MessageQueue(sc->getMessageQueueById(QU_KBK33_START), 0, 0);
@@ -116,11 +112,11 @@ void sceneHandler33_switchVent(StaticANIObject *ani) {
 
 void sceneHandler33_processVents() {
 	for (int i = 0; i < 9; i++)
-		if ((g_vars->scene33_var08 - g_vars->scene33_ventsX[i] < 0 != g_vars->scene33_var07->_ox - g_vars->scene33_ventsX[i] < 0)
-			&& g_vars->scene33_ventsState[i] != g_vars->scene33_var06[i])
+		if ((g_vars->scene33_cubeX - g_vars->scene33_ventsX[i] < 0 != g_vars->scene33_cube->_ox - g_vars->scene33_ventsX[i] < 0)
+			&& g_vars->scene33_ventsState[i] != ventsInit[i])
 				sceneHandler33_switchVent(g_fp->_currentScene->getStaticANIObject1ById(ANI_VENT_33, i));
 
-	g_vars->scene33_var08 = g_vars->scene33_var07->_ox;
+	g_vars->scene33_cubeX = g_vars->scene33_cube->_ox;
 }
 
 void sceneHandler33_tryCube() {
@@ -132,14 +128,14 @@ void sceneHandler33_pour() {
 	bool solved = true;
 
 	for (int i = 0; i < 9; i++)
-		if (g_vars->scene33_ventsState[i] != g_vars->scene33_var06[i])
+		if (g_vars->scene33_ventsState[i] != ventsInit[i])
 			solved = false;
 
 	if (solved) {
 		if ((g_vars->scene33_mug->_flags & 4) && g_vars->scene33_mug->_statics->_staticsId == ST_MUG33_EMPTY) {
 			g_vars->scene33_jettie->startAnim(MV_JTI33_POUR, 0, -1);
 
-			g_vars->scene33_var09 = 0;
+			g_vars->scene33_handleIsDown = false;
 
 			return;
 		}
@@ -147,7 +143,7 @@ void sceneHandler33_pour() {
 		if ((g_vars->scene33_mug->_flags & 4) && g_vars->scene33_mug->_statics->_staticsId == ST_MUG33_FULL) {
 			g_vars->scene33_jettie->startAnim(MV_JTI33_POURFULL, 0, -1);
 
-			g_vars->scene33_var09 = 0;
+			g_vars->scene33_handleIsDown = false;
 
 			return;
 		}
@@ -155,14 +151,14 @@ void sceneHandler33_pour() {
 		g_vars->scene33_jettie->startAnim(MV_JTI33_FLOW, 0, -1);
 	}
 
-	g_vars->scene33_var09 = 0;
+	g_vars->scene33_handleIsDown = false;
 }
 
 void sceneHandler33_handleDown() {
-  if (!g_vars->scene33_var09 && !g_vars->scene33_jettie->_movement && !g_vars->scene33_jettie->getMessageQueue() ) {
+  if (!g_vars->scene33_handleIsDown && !g_vars->scene33_jettie->_movement && !g_vars->scene33_jettie->getMessageQueue() ) {
 	  chainQueue(QU_SC33_STARTWATER, 0);
 
-	  g_vars->scene33_var09 = 1;
+	  g_vars->scene33_handleIsDown = true;
   }
 }
 
@@ -251,10 +247,10 @@ int sceneHandler33(ExCommand *cmd) {
 		break;
 
 	case MSG_SC33_UPDATEKUBIK:
-		g_vars->scene33_var07 = g_fp->_currentScene->getStaticANIObject1ById(ANI_KUBIK, -1);
+		g_vars->scene33_cube = g_fp->_currentScene->getStaticANIObject1ById(ANI_KUBIK, -1);
 
-		if (g_vars->scene33_var07)
-			g_vars->scene33_var08 = g_vars->scene33_var07->_ox;
+		if (g_vars->scene33_cube)
+			g_vars->scene33_cubeX = g_vars->scene33_cube->_ox;
 
 		break;
 
@@ -295,14 +291,14 @@ int sceneHandler33(ExCommand *cmd) {
 		if (g_fp->_aniMan2) {
 			int x = g_fp->_aniMan2->_ox;
 
-			if (x < g_fp->_sceneRect.left + g_vars->scene33_var01)
-				g_fp->_currentScene->_x = x - g_vars->scene33_var03 - g_fp->_sceneRect.left;
+			if (x < g_fp->_sceneRect.left + 200)
+				g_fp->_currentScene->_x = x - 300 - g_fp->_sceneRect.left;
 
-			if (x > g_fp->_sceneRect.right - g_vars->scene33_var01)
-				g_fp->_currentScene->_x = x + g_vars->scene33_var03 - g_fp->_sceneRect.right;
+			if (x > g_fp->_sceneRect.right - 200)
+				g_fp->_currentScene->_x = x + 300 - g_fp->_sceneRect.right;
 		}
 
-		if (g_vars->scene33_var07)
+		if (g_vars->scene33_cube)
 			sceneHandler33_processVents();
 
 		g_fp->_behaviorManager->updateBehaviors();
