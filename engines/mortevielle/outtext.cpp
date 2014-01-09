@@ -218,7 +218,7 @@ void TextHandler::taffich() {
 	}
 
 	_vm->_destinationOk = true;
-	_vm->_mouse.hideMouse();
+	_vm->_mouse->hideMouse();
 	drawingStartPos = 0;
 	Common::String filename, altFilename;
 
@@ -291,8 +291,8 @@ void TextHandler::taffich() {
 		}
 		loadAniFile(filename, drawingStartPos, drawingSize);
 	}
-	_vm->_mouse.showMouse();
-	if ((a < COAT_ARMS) && ((_vm->_maff < COAT_ARMS) || (_vm->_coreVar._currPlace == LANDING)) && (_vm->_currAction != _vm->_menu._opcodeEnter)) {
+	_vm->_mouse->showMouse();
+	if ((a < COAT_ARMS) && ((_vm->_maff < COAT_ARMS) || (_vm->_coreVar._currPlace == LANDING)) && (_vm->_currAction != _vm->_menu->_opcodeEnter)) {
 		if ((a == ATTIC) || (a == CELLAR))
 			_vm->displayAloneText();
 		else if (!_vm->_blo)

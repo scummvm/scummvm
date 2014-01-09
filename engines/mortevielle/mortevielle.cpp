@@ -53,11 +53,11 @@ MortevielleEngine::MortevielleEngine(OSystem *system, const MortevielleGameDescr
 	_debugger.setParent(this);
 	_dialogManager.setParent(this);
 	_screenSurface.setParent(this);
-	_mouse.setParent(this);
+	_mouse = new MouseHandler(this);
 	_text.setParent(this);
 	_soundManager.setParent(this);
 	_savegameManager.setParent(this);
-	_menu.setParent(this);
+	_menu = new Menu(this);
 
 	_lastGameFrame = 0;
 	_mouseClick = false;
@@ -105,6 +105,9 @@ MortevielleEngine::MortevielleEngine(OSystem *system, const MortevielleGameDescr
 }
 
 MortevielleEngine::~MortevielleEngine() {
+	delete _menu;
+	delete _mouse;
+
 	free(_curPict);
 	free(_curAnim);
 	free(_rightFramePict);
@@ -284,7 +287,7 @@ Common::ErrorCode MortevielleEngine::loadMortDat() {
 		} else if ((!strncmp(dataType, "GSTR", 4)) && (!_txxFileFl)) {
 			readStaticStrings(f, dataSize, kGameStrings);
 		} else if (!strncmp(dataType, "VERB", 4)) {
-			_menu.readVerbNums(f, dataSize);
+			_menu->readVerbNums(f, dataSize);
 		} else {
 			// Unknown section
 			f.skip(dataSize);
@@ -419,13 +422,13 @@ void MortevielleEngine::mainGame() {
 	for (_crep = 1; _crep <= _x26KeyCount; ++_crep)
 		decodeNumber(&_cfiecBuffer[161 * 16], (_cfiecBufferSize - (161 * 16)) / 64);
 
-	_menu.initMenu();
+	_menu->initMenu();
 
 	charToHour();
 	initGame();
 	clearScreen();
 	drawRightFrame();
-	_mouse.showMouse();
+	_mouse->showMouse();
 
 	// Loop to play the game
 	do {

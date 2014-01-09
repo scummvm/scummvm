@@ -38,8 +38,8 @@ private:
 	MortevielleEngine *_vm;
 public:
 	Common::Point _pos;
+	MouseHandler(MortevielleEngine *vm);
 
-	void setParent(MortevielleEngine *vm);
 	void initMouse();
 	void hideMouse();
 	void showMouse();

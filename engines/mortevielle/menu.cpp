@@ -48,7 +48,8 @@ const byte menuConstants[8][4] = {
 	{62, 46, 13, 10}
 };
 
-Menu::Menu() {
+Menu::Menu(MortevielleEngine *vm) {
+	_vm = vm;
 	_opcodeAttach = _opcodeWait = _opcodeForce = _opcodeSleep = OPCODE_NONE;
 	_opcodeListen = _opcodeEnter = _opcodeClose = _opcodeSearch = OPCODE_NONE;
 	_opcodeKnock = _opcodeScratch = _opcodeRead = _opcodeEat = OPCODE_NONE;
@@ -295,7 +296,7 @@ void Menu::enableMenuItem(MenuItem item) {
 }
 
 void Menu::displayMenu() {
-	_vm->_mouse.hideMouse();
+	_vm->_mouse->hideMouse();
 	_vm->_screenSurface.fillRect(7, Common::Rect(0, 0, 639, 10));
 
 	int col = 28 * kResolutionScaler;
@@ -322,7 +323,7 @@ void Menu::displayMenu() {
 		}
 		col += 48 * kResolutionScaler;
 	}
-	_vm->_mouse.showMouse();
+	_vm->_mouse->showMouse();
 }
 
 /**
@@ -424,7 +425,7 @@ void Menu::menuDown(int ii) {
 	// Draw the menu
 	int minX = menuConstants[ii - 1][0] << 3;
 	int lineNum = menuConstants[ii - 1][3];
-	_vm->_mouse.hideMouse();
+	_vm->_mouse->hideMouse();
 	int deltaX = 6;
 	int maxX = minX + (menuConstants[ii - 1][2] * deltaX) + 6;
 	if ((ii == 4) && (_vm->getLanguage() == Common::EN_ANY))
@@ -483,7 +484,7 @@ void Menu::menuDown(int ii) {
 		_vm->_screenSurface.putxy(minX, _vm->_screenSurface._textPos.y + 8);
 	}
 	_multiTitle = true;
-	_vm->_mouse.showMouse();
+	_vm->_mouse->showMouse();
 }
 
 /**
@@ -523,7 +524,7 @@ void Menu::updateMenu() {
 	if (!_menuActive)
 		return;
 
-	Common::Point curPos = _vm->_mouse._pos;
+	Common::Point curPos = _vm->_mouse->_pos;
 	if (!_vm->getMouseClick()) {
 		if (curPos == _vm->_prevPos)
 			return;
@@ -588,10 +589,6 @@ void Menu::updateMenu() {
 			_vm->setMouseClick(false);
 		}
 	}
-}
-
-void Menu::setParent(MortevielleEngine *vm) {
-	_vm = vm;
 }
 
 void Menu::initMenu() {

@@ -434,8 +434,8 @@ public:
 	Common::RandomSource _randomSource;
 	SoundManager _soundManager;
 	SavegameManager _savegameManager;
-	Menu _menu;
-	MouseHandler _mouse;
+	Menu *_menu;
+	MouseHandler *_mouse;
 	TextHandler _text;
 	DialogManager _dialogManager;
 

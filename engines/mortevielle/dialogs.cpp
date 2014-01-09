@@ -43,7 +43,7 @@ int DialogManager::show(const Common::String &msg) {
 	// Make a copy of the current screen surface for later restore
 	_vm->_backgroundSurface.copyFrom(_vm->_screenSurface);
 
-	_vm->_mouse.hideMouse();
+	_vm->_mouse->hideMouse();
 	while (_vm->keyPressed())
 		_vm->getChar();
 
@@ -99,17 +99,17 @@ int DialogManager::show(const Common::String &msg) {
 		limit[2][1] = ((uint)(320 + ((uint)esp >> 1)) / 2) * kResolutionScaler;
 		limit[2][2] = (limit[2][1]) + 40;
 	}
-	_vm->_mouse.showMouse();
+	_vm->_mouse->showMouse();
 	int id = 0;
 	bool dummyFl = false;
 	bool test3;
 	do {
 		char dummyKey = '\377';
-		_vm->_mouse.moveMouse(dummyFl, dummyKey);
+		_vm->_mouse->moveMouse(dummyFl, dummyKey);
 		if (_vm->shouldQuit())
 			return 0;
 
-		curPos = _vm->_mouse._pos;
+		curPos = _vm->_mouse->_pos;
 		bool newaff = false;
 		if ((curPos.y > 95) && (curPos.y < 105)) {
 			bool test1 = (curPos.x > limit[1][1]) && (curPos.x < limit[1][2]);
@@ -125,7 +125,7 @@ int DialogManager::show(const Common::String &msg) {
 				else
 					ix = 2;
 				if (ix != id) {
-					_vm->_mouse.hideMouse();
+					_vm->_mouse->hideMouse();
 					if (id != 0) {
 						setPosition(id, coldep, esp);
 
@@ -142,12 +142,12 @@ int DialogManager::show(const Common::String &msg) {
 					_vm->_screenSurface.drawString(tmp2, 1);
 
 					id = ix;
-					_vm->_mouse.showMouse();
+					_vm->_mouse->showMouse();
 				}
 			}
 		}
 		if ((id != 0) && !newaff) {
-			_vm->_mouse.hideMouse();
+			_vm->_mouse->hideMouse();
 			setPosition(id, coldep, esp);
 
 			Common::String tmp3(" ");
@@ -156,13 +156,13 @@ int DialogManager::show(const Common::String &msg) {
 			_vm->_screenSurface.drawString(tmp3, 0);
 
 			id = 0;
-			_vm->_mouse.showMouse();
+			_vm->_mouse->showMouse();
 		}
 		test3 = (curPos.y > 95) && (curPos.y < 105) && (((curPos.x > limit[1][1]) && (curPos.x < limit[1][2]))
 		                                    || ((curPos.x > limit[2][1]) && (curPos.x < limit[2][2])));
 	} while (!_vm->getMouseClick());
 	_vm->setMouseClick(false);
-	_vm->_mouse.hideMouse();
+	_vm->_mouse->hideMouse();
 	if (!test3)  {
 		id = 1;
 		setPosition(1, coldep, esp);
@@ -171,7 +171,7 @@ int DialogManager::show(const Common::String &msg) {
 		tmp4 += " ";
 		_vm->_screenSurface.drawString(tmp4, 1);
 	}
-	_vm->_mouse.showMouse();
+	_vm->_mouse->showMouse();
 
 	/* Restore the background area */
 	_vm->_screenSurface.copyFrom(_vm->_backgroundSurface, 0, 0);
@@ -292,9 +292,9 @@ bool DialogManager::showKnowledgeCheck() {
 	int correctCount = 0;
 
 	for (int indx = 0; indx < 10; ++indx) {
-		_vm->_mouse.hideMouse();
+		_vm->_mouse->hideMouse();
 		_vm->clearScreen();
-		_vm->_mouse.showMouse();
+		_vm->_mouse->showMouse();
 		int dialogHeight = 23;
 		_vm->_screenSurface.fillRect(15, Common::Rect(0, 14, 630, dialogHeight));
 		Common::String tmpStr = _vm->getString(textIndexArr[indx]);
@@ -342,12 +342,12 @@ bool DialogManager::showKnowledgeCheck() {
 			_vm->setMouseClick(false);
 			bool flag;
 			char key;
-			_vm->_mouse.moveMouse(flag, key);
+			_vm->_mouse->moveMouse(flag, key);
 			if (_vm->shouldQuit())
 				return false;
 
 			currChoice = 1;
-			while (coor[currChoice]._enabled && !_vm->_mouse.isMouseIn(coor[currChoice]._rect))
+			while (coor[currChoice]._enabled && !_vm->_mouse->isMouseIn(coor[currChoice]._rect))
 				++currChoice;
 			if (coor[currChoice]._enabled) {
 				if ((prevChoice != 0) && (prevChoice != currChoice)) {
