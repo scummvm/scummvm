@@ -28,6 +28,9 @@
 #include "common/scummsys.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
+#include "graphics/palette.h"
+#include "graphics/scaler.h"
+#include "graphics/thumbnail.h"
 
 namespace Voyeur {
 
@@ -37,8 +40,6 @@ VoyeurEngine::VoyeurEngine(OSystem *syst, const VoyeurGameDescription *gameDesc)
 		_gameDescription(gameDesc), _randomSource("Voyeur"), _soundManager(_mixer),
 		_defaultFontInfo(3, 0xff, 0xff, 0, 0, ALIGN_LEFT, 0, Common::Point(), 1, 1, 
 			Common::Point(1, 1), 1, 0, 0) {
-	DebugMan.addDebugChannel(kDebugPath, "Path", "Pathfinding debug level");
-	DebugMan.addDebugChannel(kDebugScripts, "scripts", "Game scripts");
 	_bVoy = NULL;
 	_iForceDeath = -1;
 	_controlPtr = NULL;
@@ -54,45 +55,13 @@ VoyeurEngine::VoyeurEngine(OSystem *syst, const VoyeurGameDescription *gameDesc)
 	_timeBarVal = -1;
 	_checkPhoneVal = 0;
 	_voyeurArea = AREA_NONE;
+	_loadGameSlot = -1;
 
 	initialiseManagers();
 }
 
 VoyeurEngine::~VoyeurEngine() {
 	delete _bVoy;
-}
-
-Common::String VoyeurEngine::generateSaveName(int slot) {
-	return Common::String::format("%s.%03d", _targetName.c_str(), slot);
-}
-
-/**
- * Returns true if it is currently okay to restore a game
- */
-bool VoyeurEngine::canLoadGameStateCurrently() {
-	return true;
-}
-
-/**
- * Returns true if it is currently okay to save the game
- */
-bool VoyeurEngine::canSaveGameStateCurrently() {
-	return true;
-}
-
-/**
- * Load the savegame at the specified slot index
- */
-Common::Error VoyeurEngine::loadGameState(int slot) {
-	return Common::kNoError;
-}
-
-/**
- * Save the game to the given slot index, and with the given name
- */
-Common::Error VoyeurEngine::saveGameState(int slot, const Common::String &desc) {
-	//TODO
-	return Common::kNoError;
 }
 
 Common::Error VoyeurEngine::run() {
@@ -130,6 +99,12 @@ void VoyeurEngine::initialiseManagers() {
 
 void VoyeurEngine::ESP_Init() {
 	ThreadResource::init();
+
+	DebugMan.addDebugChannel(kDebugPath, "Path", "Pathfinding debug level");
+	DebugMan.addDebugChannel(kDebugScripts, "scripts", "Game scripts");
+
+	if (ConfMan.hasKey("save_slot"))
+		_loadGameSlot = ConfMan.getInt("save_slot");
 }
 
 void VoyeurEngine::globalInitBolt() {
@@ -173,58 +148,61 @@ bool VoyeurEngine::doHeadTitle() {
 //	char dest[144];
 	
 	_eventsManager.startMainClockInt();
-	/*
-	// Show starting screen
-	if (_bVoy->getBoltGroup(0x500)) {
-		showConversionScreen();
-		_bVoy->freeBoltGroup(0x500);
 
+	if (_loadGameSlot == -1) {
+	/*
+		// Show starting screen
+		if (_bVoy->getBoltGroup(0x500)) {
+			showConversionScreen();
+			_bVoy->freeBoltGroup(0x500);
+
+			if (shouldQuit())
+				return false;
+		}
+
+		if (ConfMan.getBool("copy_protection")) {
+			// Display lock screen
+			bool result = doLock();
+			if (!result || shouldQuit())
+				return false;
+		}
+
+		// Show the title screen
+		showTitleScreen();
 		if (shouldQuit())
 			return false;
-	}
 
-	if (ConfMan.getBool("copy_protection")) {
-		// Display lock screen
-		bool result = doLock();
-		if (!result || shouldQuit())
-			return false;
-	}
-
-	// Show the title screen
-	showTitleScreen();
-	if (shouldQuit())
-		return false;
-
-	// Opening
-	if (!_eventsManager._mouseClicked) {
-		doOpening();
-		doTransitionCard("Saturday Afternoon", "Player's Apartment");
-		_eventsManager.delayClick(90);
-	} else {
-		_eventsManager._mouseClicked = false;
-	}
+		// Opening
+		if (!_eventsManager._mouseClicked) {
+			doOpening();
+			doTransitionCard("Saturday Afternoon", "Player's Apartment");
+			_eventsManager.delayClick(90);
+		} else {
+			_eventsManager._mouseClicked = false;
+		}
 	*/
-	if (_voy._field478 & 0x80) {
-		// Add initial game event set
-		if (_voy._eventCount <= 1)
-			_voy.addEvent(18, 1, EVTYPE_VIDEO, 33, 0, 998, -1);
-		if (_voy._eventCount <= 2)
-			_voy.addEvent(18, 2, EVTYPE_VIDEO, 41, 0, 998, -1);
-		if (_voy._eventCount <= 3)
-			_voy.addEvent(18, 3, EVTYPE_VIDEO, 47, 0, 998, -1);
-		if (_voy._eventCount <= 4)
-			_voy.addEvent(18, 4, EVTYPE_VIDEO, 53, 0, 998, -1);
-		if (_voy._eventCount <= 5)
-			_voy.addEvent(18, 5, EVTYPE_VIDEO, 46, 0, 998, -1);
-		if (_voy._eventCount <= 6)
-			_voy.addEvent(18, 6, EVTYPE_VIDEO, 50, 0, 998, -1);
-		if (_voy._eventCount <= 7)
-			_voy.addEvent(18, 7, EVTYPE_VIDEO, 40, 0, 998, -1);
-		if (_voy._eventCount <= 8)
-			_voy.addEvent(18, 8, EVTYPE_VIDEO, 43, 0, 998, -1);
-		if (_voy._eventCount <= 9)
-			_voy.addEvent(19, 1, EVTYPE_AUDIO, 20, 0, 998, -1);
-	} 
+		if (_voy._field478 & 0x80) {
+			// Add initial game event set
+			if (_voy._eventCount <= 1)
+				_voy.addEvent(18, 1, EVTYPE_VIDEO, 33, 0, 998, -1);
+			if (_voy._eventCount <= 2)
+				_voy.addEvent(18, 2, EVTYPE_VIDEO, 41, 0, 998, -1);
+			if (_voy._eventCount <= 3)
+				_voy.addEvent(18, 3, EVTYPE_VIDEO, 47, 0, 998, -1);
+			if (_voy._eventCount <= 4)
+				_voy.addEvent(18, 4, EVTYPE_VIDEO, 53, 0, 998, -1);
+			if (_voy._eventCount <= 5)
+				_voy.addEvent(18, 5, EVTYPE_VIDEO, 46, 0, 998, -1);
+			if (_voy._eventCount <= 6)
+				_voy.addEvent(18, 6, EVTYPE_VIDEO, 50, 0, 998, -1);
+			if (_voy._eventCount <= 7)
+				_voy.addEvent(18, 7, EVTYPE_VIDEO, 40, 0, 998, -1);
+			if (_voy._eventCount <= 8)
+				_voy.addEvent(18, 8, EVTYPE_VIDEO, 43, 0, 998, -1);
+			if (_voy._eventCount <= 9)
+				_voy.addEvent(19, 1, EVTYPE_AUDIO, 20, 0, 998, -1);
+		} 
+	}
 
 	_voy._field472 = 140;
 	return true;
@@ -672,6 +650,171 @@ void VoyeurEngine::flipPageAndWaitForFade() {
 
 	while (!shouldQuit() && (_eventsManager._fadeStatus & 1))
 		_eventsManager.delay(1);
+}
+
+/*------------------------------------------------------------------------*/
+
+Common::String VoyeurEngine::generateSaveName(int slot) {
+	return Common::String::format("%s.%03d", _targetName.c_str(), slot);
+}
+
+/**
+ * Returns true if it is currently okay to restore a game
+ */
+bool VoyeurEngine::canLoadGameStateCurrently() {
+	return _voyeurArea == AREA_APARTMENT;
+}
+
+/**
+ * Returns true if it is currently okay to save the game
+ */
+bool VoyeurEngine::canSaveGameStateCurrently() {
+	return _voyeurArea == AREA_APARTMENT;
+}
+
+/**
+ * Load the savegame at the specified slot index
+ */
+Common::Error VoyeurEngine::loadGameState(int slot) {
+	_loadGameSlot = slot;
+	return Common::kNoError;
+}
+
+void VoyeurEngine::loadGame(int slot) {
+	// Open up the save file
+	Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(g_vm->generateSaveName(slot));
+	if (!saveFile)
+		return;
+
+	Common::Serializer serializer(saveFile, NULL);
+
+	// Read in the savegame header
+	VoyeurSavegameHeader header;
+	if (!header.read(saveFile))
+		return;
+	if (header._thumbnail)
+		header._thumbnail->free();
+	delete header._thumbnail;
+
+	serializer.syncVersion(header._version);
+	synchronize(serializer);
+
+	delete saveFile;
+}
+
+/**
+ * Save the game to the given slot index, and with the given name
+ */
+Common::Error VoyeurEngine::saveGameState(int slot, const Common::String &desc) {
+	// Open the save file for writing
+	Common::OutSaveFile *saveFile = g_system->getSavefileManager()->openForSaving(generateSaveName(slot));
+	if (!saveFile)
+		return Common::kCreatingFileFailed;
+
+	// Write out the header
+	VoyeurSavegameHeader header;
+	header.write(saveFile, this, desc);
+
+	// Set up a serializer
+	Common::Serializer serializer(NULL, saveFile);
+
+	// Synchronise the data
+	synchronize(serializer);
+
+	saveFile->finalize();
+	delete saveFile;
+
+	return Common::kNoError;
+}
+
+void VoyeurEngine::synchronize(Common::Serializer &s) {
+	s.syncAsSint16LE(_glGoScene);
+	s.syncAsSint16LE(_glGoStack);
+	s.syncAsSint16LE(_bob);
+	s.syncAsSint16LE(_stampFlags);
+	s.syncAsSint16LE(_playStampGroupId);
+	s.syncAsSint16LE(_currentVocId);
+	s.syncAsSint16LE(_videoId);
+
+	s.syncAsSint16LE(_iForceDeath);
+	s.syncAsSint16LE(_checkTransitionId);
+	s.syncAsSint16LE(_gameHour);
+	s.syncAsSint16LE(_gameMinute);
+	s.syncAsSint16LE(_flashTimeVal);
+	s.syncAsSint16LE(_flashTimeFlag);
+	s.syncAsSint16LE(_timeBarVal);
+	s.syncAsSint16LE(_checkPhoneVal);
+
+	// Sub-systems
+	_voy.synchronize(s);
+	_graphicsManager.synchronize(s);
+	_mainThread->synchronize(s);
+}
+
+/*------------------------------------------------------------------------*/
+
+bool VoyeurSavegameHeader::read(Common::InSaveFile *f) {
+	char id[4];
+	_thumbnail = NULL;
+
+	f->read(&id[0], 4);
+	if (strncmp(id, "VOYR", 4)) {
+		warning("Invalid savegame");
+		return false;
+	}
+
+	_version = f->readByte();
+	if (_version > VOYEUR_SAVEGAME_VERSION)
+		return false;
+
+	char c;
+	while ((c = f->readByte()) != 0)
+		_saveName += c;
+
+	// Get the thumbnail
+	_thumbnail = Graphics::loadThumbnail(*f);
+	if (!_thumbnail)
+		return false;
+
+	// Read in the save datet/ime
+	_saveYear = f->readSint16LE();
+	_saveMonth = f->readSint16LE();
+	_saveDay = f->readSint16LE();
+	_saveHour = f->readSint16LE();
+	_saveMinutes = f->readSint16LE();
+	_totalFrames = f->readUint32LE();
+
+	return true;
+}
+
+void VoyeurSavegameHeader::write(Common::OutSaveFile *f, VoyeurEngine *vm, const Common::String &saveName) {
+	// Write ident string
+	f->write("VOYR", 4);
+
+	// Write out savegame version
+	f->writeByte(VOYEUR_SAVEGAME_VERSION);
+
+	// Write out savegame name
+	f->write(saveName.c_str(), saveName.size());
+	f->writeByte(0);
+
+	// Create a thumbnail and save it
+	Graphics::Surface *thumb = new Graphics::Surface();
+	::createThumbnail(thumb, (byte *)vm->_graphicsManager._screenSurface.getPixels(), 
+		SCREEN_WIDTH, SCREEN_HEIGHT, vm->_graphicsManager._VGAColors);
+	Graphics::saveThumbnail(*f, *thumb);
+	thumb->free();
+	delete thumb;
+
+	// Write the save datet/ime
+	TimeDate td;
+	g_system->getTimeAndDate(td);
+	f->writeSint16LE(td.tm_year + 1900);
+	f->writeSint16LE(td.tm_mon + 1);
+	f->writeSint16LE(td.tm_mday);
+	f->writeSint16LE(td.tm_hour);
+	f->writeSint16LE(td.tm_min);
+	f->writeUint32LE(vm->_eventsManager.getGameCounter());
 }
 
 } // End of namespace Voyeur

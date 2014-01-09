@@ -26,6 +26,7 @@
 #include "common/scummsys.h"
 #include "common/array.h"
 #include "common/rect.h"
+#include "common/serializer.h"
 #include "graphics/surface.h"
 
 namespace Voyeur {
@@ -117,6 +118,11 @@ public:
 	void fadeUpICF1(int steps);
 	void fadeDownICF(int steps);
 	void drawDot();
+
+	/**
+	 * Synchronizes the game data
+	 */
+	void synchronize(Common::Serializer &s);
 };
 
 } // End of namespace Voyeur

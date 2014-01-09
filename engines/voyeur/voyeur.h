@@ -33,6 +33,8 @@
 #include "common/system.h"
 #include "common/error.h"
 #include "common/random.h"
+#include "common/savefile.h"
+#include "common/serializer.h"
 #include "common/util.h"
 #include "engines/engine.h"
 #include "graphics/surface.h"
@@ -134,6 +136,11 @@ private:
 
 	void playAVideoEvent(int eventIndex);
 	int getChooseButton();
+
+	/**
+	 * Synchronizes the game data
+	 */
+	void synchronize(Common::Serializer &s);
 protected:
 	// Engine APIs
 	virtual Common::Error run();
@@ -169,7 +176,9 @@ public:
 	int _timeBarVal;
 	int _checkPhoneVal;
 	Common::Point _mansionViewPos;
+	ThreadResource *_mainThread;
 	VoyeurArea _voyeurArea;
+	int _loadGameSlot;
 public:
 	VoyeurEngine(OSystem *syst, const VoyeurGameDescription *gameDesc);
 	virtual ~VoyeurEngine();
@@ -187,6 +196,7 @@ public:
 	virtual bool canSaveGameStateCurrently();
 	virtual Common::Error loadGameState(int slot);
 	virtual Common::Error saveGameState(int slot, const Common::String &desc);
+	void loadGame(int slot);
 
 	void playRL2Video(const Common::String &filename);
 	void doTransitionCard(const Common::String &time, const Common::String &location);
@@ -241,6 +251,20 @@ public:
 	 * Returns the string for the current in-game time of day
 	 */
 	Common::String getTimeOfDay();
+};
+
+#define VOYEUR_SAVEGAME_VERSION 1
+
+struct VoyeurSavegameHeader {
+	uint8 _version;
+	Common::String _saveName;
+	Graphics::Surface *_thumbnail;
+	int _saveYear, _saveMonth, _saveDay;
+	int _saveHour, _saveMinutes;
+	int _totalFrames;
+
+	bool read(Common::InSaveFile *f);
+	void write(Common::OutSaveFile *f, VoyeurEngine *vm, const Common::String &saveName);
 };
 
 } // End of namespace Voyeur

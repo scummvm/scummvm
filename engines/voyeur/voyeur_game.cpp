@@ -35,8 +35,8 @@ void VoyeurEngine::playStamp() {
 	initStamp();
 
 	PtrResource *threadsList = _stampLibPtr->boltEntry(3)._ptrResource;
-	ThreadResource *threadP = threadsList->_entries[0]->_threadResource;
-	threadP->initThreadStruct(0, 0);
+	_mainThread = threadsList->_entries[0]->_threadResource;
+	_mainThread->initThreadStruct(0, 0);
 
 	_voy._isAM = false;
 	_gameHour = 9;
@@ -51,23 +51,23 @@ void VoyeurEngine::playStamp() {
 		_playStampGroupId = _currentVocId = -1;
 		_videoId = -1;
 
-		threadP->parsePlayCommands();
+		_mainThread->parsePlayCommands();
 
 		bool flag = breakFlag = (_voy._field478 & 2) != 0;
 		 
 		switch (_voy._field470) {
 		case 5:
-			buttonId = threadP->doInterface();
+			buttonId = _mainThread->doInterface();
 			
 			if (buttonId == -2) {
-				switch (threadP->doApt()) {
+				switch (_mainThread->doApt()) {
 				case 0:
 					_voy._field472 = 140;
 					break;
 				case 1:
 					_voy._field478 &= ~1;
 					_voy._field46E = true;
-					threadP->chooseSTAMPButton(22);
+					_mainThread->chooseSTAMPButton(22);
 					_voy._field472 = 143;
 					break;
 				case 2:
@@ -78,7 +78,7 @@ void VoyeurEngine::playStamp() {
 					break;
 				case 3:
 					_voy._field478 &= ~1;
-					threadP->chooseSTAMPButton(21);
+					_mainThread->chooseSTAMPButton(21);
 					break;
 				case 4:
 					breakFlag = true;
@@ -93,24 +93,24 @@ void VoyeurEngine::playStamp() {
 					break;
 				}
 			} else {
-				threadP->chooseSTAMPButton(buttonId);
+				_mainThread->chooseSTAMPButton(buttonId);
 			}
 
 			flag = true;
 			break;
 
 		case 6:
-			threadP->doRoom();
+			_mainThread->doRoom();
 			flag = true;
 			break;
 
 		case 16:
 			_voy._transitionId = 17;
-			buttonId = threadP->doApt();
+			buttonId = _mainThread->doApt();
 			
 			switch (buttonId) {
 			case 1:
-				threadP->chooseSTAMPButton(22);
+				_mainThread->chooseSTAMPButton(22);
 				flag = true;
 				break;
 			case 2:
@@ -136,7 +136,7 @@ void VoyeurEngine::playStamp() {
 				_voy._field478 &= ~0x10;
 			}
 
-			threadP->chooseSTAMPButton(0);
+			_mainThread->chooseSTAMPButton(0);
 			flag = true;
 			break;
 
@@ -158,10 +158,10 @@ void VoyeurEngine::playStamp() {
 				if (buttonId == 4) {
 					_voy._field470 = 131;
 					_eventsManager.checkForKey();
-					threadP->chooseSTAMPButton(buttonId);
+					_mainThread->chooseSTAMPButton(buttonId);
 					flag = true;
 				} else {
-					threadP->chooseSTAMPButton(buttonId);
+					_mainThread->chooseSTAMPButton(buttonId);
 					_voy._field46E = true;
 				}
 			}
@@ -194,12 +194,12 @@ void VoyeurEngine::playStamp() {
 				// Break out of loop
 				flag = false;
 
-			} else if (threadP->_field40 & 2) {
+			} else if (_mainThread->_field40 & 2) {
 				_eventsManager.getMouseInfo();
-				threadP->chooseSTAMPButton(0);
+				_mainThread->chooseSTAMPButton(0);
 				flag = true;
 			} else {
-				threadP->chooseSTAMPButton(0);
+				_mainThread->chooseSTAMPButton(0);
 				flag = true;
 			}
 		} while (flag);

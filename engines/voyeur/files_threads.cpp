@@ -1062,6 +1062,13 @@ int ThreadResource::doApt() {
 	PictureResource *pic;
 	do {
 		_vm->_voyeurArea = AREA_APARTMENT;
+
+		if (_vm->_loadGameSlot != -1) {
+			// Load a savegame
+			_vm->loadGame(_vm->_loadGameSlot);
+			_vm->_loadGameSlot = -1;
+		}
+
 		_vm->_eventsManager.getMouseInfo();
 		if (!_vm->_soundManager.getVOCStatus()) {
 			// Previous sound ended, so start up a new one
@@ -1758,6 +1765,10 @@ void ThreadResource::doAptAnim(int mode) {
 	}
 
 	_vm->_bVoy->getBoltGroup(0x100);
+}
+
+void ThreadResource::synchronize(Common::Serializer &s) {
+	warning("TODO: ThreadResource::synchronize");
 }
 
 } // End of namespace Voyeur

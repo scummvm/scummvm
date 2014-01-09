@@ -750,4 +750,8 @@ void GraphicsManager::drawDot() {
 	}
 }
 
+void GraphicsManager::synchronize(Common::Serializer &s) {
+	warning("TODO: GraphicsManager::synchronize");
+}
+
 } // End of namespace Voyeur

@@ -141,6 +141,7 @@ public:
 	void showCursor();
 	void hideCursor();
 	Common::Point getMousePos() { return _mousePos; }
+	uint32 getGameCounter() const { return _gameCounter; }
 	void getMouseInfo();
 	void checkForKey();
 	void startCursorBlink();

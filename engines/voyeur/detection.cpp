@@ -121,6 +121,8 @@ SaveStateList VoyeurMetaEngine::listSaves(const char *target) const {
 	sort(filenames.begin(), filenames.end());   // Sort to get the files in numerical order
 
 	SaveStateList saveList;
+	Voyeur::VoyeurSavegameHeader header;
+
 	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
 		const char *ext = strrchr(file->c_str(), '.');
 		int slot = ext ? atoi(ext + 1) : -1;
@@ -129,6 +131,10 @@ SaveStateList VoyeurMetaEngine::listSaves(const char *target) const {
 			Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(*file);
 
 			if (in) {
+				if (header.read(in)) {
+					saveList.push_back(SaveStateDescriptor(slot, header._saveName));
+					header._thumbnail->free();
+				}
 				delete in;
 			}
 		}
@@ -151,10 +157,16 @@ SaveStateDescriptor VoyeurMetaEngine::querySaveMetaInfos(const char *target, int
 	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(filename);
 
 	if (f) {
+		Voyeur::VoyeurSavegameHeader header;
+		header.read(f);
 		delete f;
 
 		// Create the return descriptor
-		SaveStateDescriptor desc(slot, "");
+		SaveStateDescriptor desc(slot, header._saveName);
+		desc.setThumbnail(header._thumbnail);
+		desc.setSaveDate(header._saveYear, header._saveMonth, header._saveDay);
+		desc.setSaveTime(header._saveHour, header._saveMinutes);
+		desc.setPlayTime(header._totalFrames * GAME_FRAME_TIME);
 
 		return desc;
 	}

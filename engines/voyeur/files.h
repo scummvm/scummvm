@@ -537,6 +537,10 @@ public:
 	void checkForMurder();
 	void checkForIncriminate();
 
+	/**
+	 * Synchronizes the game data
+	 */
+	void synchronize(Common::Serializer &s);
 };
 
 } // End of namespace Voyeur
