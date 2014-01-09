@@ -87,7 +87,7 @@ void sceneHandler33_processVents() {
 	warning("STUB: sceneHandler33_processVents(");
 }
 
-void sceneHandler33_switchVent() {
+void sceneHandler33_switchVent(StaticANIObject *ani) {
 	warning("STUB: sceneHandler33_switchVent(");
 }
 
@@ -104,7 +104,47 @@ void sceneHandler33_handleDown() {
 }
 
 void sceneHandler33_zoneClickProcess(StaticANIObject *ani) {
-	warning("STUB: sceneHandler33_zoneClickProcess()");
+	if (!ani->_movement) {
+		sceneHandler33_switchVent(ani);
+
+		StaticANIObject *vent1 = 0;
+		StaticANIObject *vent2 = 0;
+
+		switch (ani->_okeyCode) {
+		case 0:
+			vent1 = g_fp->_currentScene->getStaticANIObject1ById(ANI_VENT_33, 2);
+			vent2 = g_fp->_currentScene->getStaticANIObject1ById(ANI_VENT_33, 3);
+			break;
+
+		case 1:
+			vent1 = g_fp->_currentScene->getStaticANIObject1ById(ANI_VENT_33, 3);
+			vent2 = g_fp->_currentScene->getStaticANIObject1ById(ANI_VENT_33, 4);
+			break;
+
+		case 2:
+			vent1 = g_fp->_currentScene->getStaticANIObject1ById(ANI_VENT_33, 4);
+			vent2 = g_fp->_currentScene->getStaticANIObject1ById(ANI_VENT_33, 0);
+			break;
+
+		case 3:
+			vent1 = g_fp->_currentScene->getStaticANIObject1ById(ANI_VENT_33, 0);
+			vent2 = g_fp->_currentScene->getStaticANIObject1ById(ANI_VENT_33, 1);
+			break;
+
+		case 4:
+			vent1 = g_fp->_currentScene->getStaticANIObject1ById(ANI_VENT_33, 1);
+			vent2 = g_fp->_currentScene->getStaticANIObject1ById(ANI_VENT_33, 2);
+			break;
+
+		default:
+			return;
+		}
+
+		if (vent1) {
+			sceneHandler33_switchVent(vent1);
+			sceneHandler33_switchVent(vent2);
+		}
+	}
 }
 
 void sceneHandler33_clickZones(ExCommand *cmd) {
