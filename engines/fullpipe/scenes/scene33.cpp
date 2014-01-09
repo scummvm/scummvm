@@ -99,10 +99,6 @@ void sceneHandler33_processJettie(ExCommand *cmd) {
 	}
 }
 
-void sceneHandler33_processVents() {
-	warning("STUB: sceneHandler33_processVents(");
-}
-
 void sceneHandler33_switchVent(StaticANIObject *ani) {
 	int mv = 0;
 
@@ -116,6 +112,15 @@ void sceneHandler33_switchVent(StaticANIObject *ani) {
 		ani->startAnim(mv, 0, -1);
 
 	g_vars->scene33_ventsState[ani->_okeyCode] = !g_vars->scene33_ventsState[ani->_okeyCode];
+}
+
+void sceneHandler33_processVents() {
+	for (int i = 0; i < 9; i++)
+		if ((g_vars->scene33_var08 - g_vars->scene33_ventsX[i] < 0 != g_vars->scene33_var07->_ox - g_vars->scene33_ventsX[i] < 0)
+			&& g_vars->scene33_ventsState[i] != g_vars->scene33_var06[i])
+				sceneHandler33_switchVent(g_fp->_currentScene->getStaticANIObject1ById(ANI_VENT_33, i));
+
+	g_vars->scene33_var08 = g_vars->scene33_var07->_ox;
 }
 
 void sceneHandler33_tryCube() {
