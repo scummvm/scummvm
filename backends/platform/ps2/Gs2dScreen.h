@@ -45,7 +45,7 @@ public:
 	Gs2dScreen(uint16 width, uint16 height, TVMode mode);
 	~Gs2dScreen(void);
 	void newScreenSize(uint16 width, uint16 height);
-	uint8 tvMode(void);
+	// uint8 tvMode(void);
 	uint16 getWidth(void);
 	uint16 getHeight(void);
 
