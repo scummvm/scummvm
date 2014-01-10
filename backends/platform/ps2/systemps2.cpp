@@ -184,7 +184,7 @@ void systemSoundThread(OSystem_PS2 *system) {
 }
 
 void gluePowerOffCallback(void *system) {
-	((OSystem_PS2*)system)->powerOffCallback();
+	((OSystem_PS2 *)system)->powerOffCallback();
 }
 
 void OSystem_PS2::startIrxModules(int numModules, IrxReference *modules) {
@@ -491,7 +491,7 @@ void OSystem_PS2::soundThreadCallback(void) {
 			// and feed it into the SPU
 			// non-blocking call, the function will return before the buffer's content
 			// was transferred.
-			SjPCM_Enqueue((short int*)soundBufL, (short int*)soundBufR, SMP_PER_BLOCK, 0);
+			SjPCM_Enqueue((short int *)soundBufL, (short int *)soundBufR, SMP_PER_BLOCK, 0);
 			bufferedSamples += SMP_PER_BLOCK;
 		}
 	}
@@ -555,7 +555,7 @@ void OSystem_PS2::grabPalette(byte *colors, uint start, uint num) {
 }
 
 void OSystem_PS2::copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) {
-	_screen->copyScreenRect((const uint8*)buf, pitch, x, y, w, h);
+	_screen->copyScreenRect((const uint8 *)buf, pitch, x, y, w, h);
 }
 
 void OSystem_PS2::updateScreen(void) {
