@@ -105,8 +105,14 @@ void OSystem_PS2::readRtcTime(void) {
 		g_day, g_month, g_year + 2000);
 }
 
-void OSystem_PS2::getTimeAndDate(TimeDate &t) const {
+// Tomohiko Sakamoto's 1993 algorithm for any Gregorian date
+static int dayOfWeek(int y, int m, int d) {
+	static const int t[] = { 0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4 };
+	y -= m < 3;
+	return (y + y / 4 - y / 100 + y / 400 + t[m - 1] + d) % 7;
+}
 
+void OSystem_PS2::getTimeAndDate(TimeDate &t) const {
 	uint32 currentSecs = g_timeSecs + (msecCount - g_lastTimeCheck) / 1000;
 	if (currentSecs >= SECONDS_PER_DAY) {
 		buildNewDate(+1);
@@ -120,4 +126,5 @@ void OSystem_PS2::getTimeAndDate(TimeDate &t) const {
 	t.tm_year = g_year + 100;
 	t.tm_mday = g_day;
 	t.tm_mon  = g_month - 1;
+	t.tm_wday = dayOfWeek(t.tm_year, t.tm_mon, t.tm_mday);
 }
