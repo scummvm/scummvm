@@ -112,7 +112,7 @@ void sceneHandler33_switchVent(StaticANIObject *ani) {
 
 void sceneHandler33_processVents() {
 	for (int i = 0; i < 9; i++)
-		if ((g_vars->scene33_cubeX - g_vars->scene33_ventsX[i] < 0 != g_vars->scene33_cube->_ox - g_vars->scene33_ventsX[i] < 0)
+		if (((g_vars->scene33_cubeX < g_vars->scene33_ventsX[i]) != (g_vars->scene33_cube->_ox < g_vars->scene33_ventsX[i]))
 			&& g_vars->scene33_ventsState[i] != ventsInit[i])
 				sceneHandler33_switchVent(g_fp->_currentScene->getStaticANIObject1ById(ANI_VENT_33, i));
 
