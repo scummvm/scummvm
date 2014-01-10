@@ -166,10 +166,10 @@ Common::OutSaveFile *Ps2SaveFileManager::openForSaving(const Common::String &fil
 			sprintf(path, "mc0:ScummVM/indy4/iq-points");
 		}
 		// FIXME : hack for bs1 saved games
-        else if (filename == "SAVEGAME.INF") {
-            mcCheck("mc0:ScummVM/sword1");
-            sprintf(path, "mc0:ScummVM/sword1/SAVEGAME.INF");
-        }
+		else if (filename == "SAVEGAME.INF") {
+			mcCheck("mc0:ScummVM/sword1");
+			sprintf(path, "mc0:ScummVM/sword1/SAVEGAME.INF");
+		}
 		else {
 			char temp[32];
 			strcpy(temp, filename.c_str());

@@ -63,7 +63,7 @@ int AsyncFio::open(const char *name, int ioMode, int mode) {
 	fileXioWaitAsync(FXIO_WAIT, &res);
 	SignalSema(_ioSema);
 	// dbg_printf("FIO: open ext(%s, %d, %d) => %d", name, ioMode, mode, res);
-    return res;
+	return res;
 }
 
 void AsyncFio::close(int handle) {
