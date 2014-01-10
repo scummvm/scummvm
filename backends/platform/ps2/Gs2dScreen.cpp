@@ -660,7 +660,7 @@ void Gs2dScreen::wantAnim(bool runIt) {
 #define V 1000
 #define Z_TRANSL 65
 
-void Gs2dScreen::animThread(void) {
+void Gs2dScreen::playAnim(void) {
 	// animate zeros and ones while game accesses memory card, etc.
 	g_RunAnim = false;
 	float yPos   = 0.0;
@@ -768,7 +768,7 @@ void Gs2dScreen::animThread(void) {
 }
 
 void runAnimThread(Gs2dScreen *param) {
-	param->animThread();
+	param->playAnim();
 }
 
 // data for the animated zeros and ones...
