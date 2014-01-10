@@ -23,6 +23,10 @@
 #include "backends/plugins/elf/version.h"
 
 #ifdef USE_ELF_LOADER
-const char *gScummVMPluginBuildDate __attribute__((visibility("hidden"))) =
-	__DATE__ " " __TIME__ ;
+	#ifdef __PLAYSTATION2__
+	const char *gScummVMPluginBuildDate = "2013-05-31"; /* ScummVM 1.6.0 Release */
+	#else
+	const char *gScummVMPluginBuildDate __attribute__((visibility("hidden"))) =
+		__DATE__ " " __TIME__ ;
+	#endif
 #endif
