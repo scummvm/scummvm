@@ -1808,6 +1808,10 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		displayMessage(dsAddr_uninterestingHaystackMsg); // "I don't see anything interesting about this haystack"
 		break;
 
+	case 0x6663:
+		displayMessage(dsAddr_uninterestingHaystackMsg); // "I don't see anything interesting about this haystack"
+		break;
+
 	case 0x666a:
 		displayMessage(dsAddr_moreComplicatedMsg); // "It's more complicated than that"
 		break;
