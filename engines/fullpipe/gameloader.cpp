@@ -231,6 +231,104 @@ bool GameLoader::gotoScene(int sceneId, int entranceId) {
 }
 
 bool preloadCallback(const PreloadItem &pre, int flag) {
+#if 0
+	if (flag) {
+		if (flag == 50)
+			g_fp->_aniMan->preloadMovements(g_fp->_movTable);
+
+		StaticANIObject *pbar = g_fp->_loaderScene->getStaticANIObject1ById(ANI_PBAR, -1);
+
+		if (pbar) {
+			int sz;
+
+			if (pbar->_movement->_currMovement)
+				sz = pbar->_movement->_currMovement->_dynamicPhases.size();
+			else
+				sz = pbar->_movement->_dynamicPhases.size();
+
+			pbar->_movement->setDynamicPhaseIndex(flag * (sz - 1) / 100);
+		}
+
+		updateMap(pre);
+
+		g_fp->_currentScene = g_fp->_loaderScene;
+
+		g_fp->_loaderScene->draw();
+
+		_system->updateScreen();
+	} else {
+		if (g_fp->_scene2) {
+			g_fp->_aniMan = g_fp->_scene2->getAniMan();
+			g_fp->_scene2 = 0;
+			setInputDisabled(1);
+		}
+
+		g_fp->_floaters->stopAll();
+
+		if (g_fp->_soundEnabled) {
+			g_fp->_currSoundListCount = 1;
+			g_fp->_currSoundList1 = accessScene(SC_COMMON)->soundList;
+		}
+
+		g_vars->scene18_var01 = 0;
+
+		v4 = ;
+
+		if ((pre->preloadId1 != SC_18 || pre->sceneId != SC_19) && (pre->preloadId1 != SC_19 || (v5 = pre->sceneId, v5 != SC_18) && v5 != SC_19)) {
+			if (g_fp->_scene3) {
+				if (pre->preloadId1 != SC_18)
+					v9 = getGameLoader()->unloadScene(SC_18);
+
+				g_fp->_scene3 = 0;
+			}
+		} else {
+			scene19_preload(accessScene(pre->preloadId1), pre->_keyCode);
+
+			g_vars->scene18_var01 = 1;
+
+			if (pre->preloadId1 == SC_18) {
+				getGameLoader()->saveScenePicAniInfos(SC_18);
+
+				scene18_preload();
+			}
+		}
+
+		if (((pre->sceneId == SC_19 && pre->keyCode == TrubaRight) || pre->sceneId == SC_18 && pre->keyCode == TrubaRight) && !pre->preloadId2) {
+			pre->sceneId = SC_18;
+			pre->keyCode = TrubaLeft;
+		}
+
+		if (!g_fp->_loaderScene) {
+			getGameLoader()->loadScene(SC_LDR);
+			g_fp->_loaderScene = accessScene(SC_LDR);;
+		}
+
+		StaticANIObject *pbar = g_fp->_loaderScene->getStaticANIObject1ById(ANI_PBAR, -1);
+
+		if (pbar) {
+			pbar->show1(ST_EGTR_SLIMSORROW, ST_MAN_GOU, MV_PBAR_RUN, 0);
+			pbar->startAnim(MV_PBAR_RUN, 0, -1);
+		}
+
+		g_fp->_inventoryScene = 0;
+		g_fp->_updateCursorCallback = 0;
+
+		g_fp->_sceneRect.trans(-g_sceneRect.left, -g_sceneRect.top);
+
+		_system->delayMillis(10);
+
+		Scene *oldsc = g_fp->_currentScene;
+
+		g_fp->_currentScene = g_fp->_loaderScene;
+
+		g_fp->_loaderScene->draw();
+
+		_system->updateScreen();
+
+		g_fp->_currentScene = oldsc;
+	}
+#endif
+
 	warning("STUB: preloadCallback");
 
 	return true;
