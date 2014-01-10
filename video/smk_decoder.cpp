@@ -369,8 +369,7 @@ bool SmackerDecoder::loadStream(Common::SeekableReadStream *stream) {
 			if (_header.audioInfo[i].compression == kCompressionRDFT || _header.audioInfo[i].compression == kCompressionDCT)
 				warning("Unhandled Smacker v2 audio compression");
 
-			if (i == 0)
-				addTrack(new SmackerAudioTrack(_header.audioInfo[i], _soundType));
+			addTrack(new SmackerAudioTrack(_header.audioInfo[i], _soundType));
 		}
 	}
 
@@ -477,7 +476,10 @@ void SmackerDecoder::readNextPacket() {
 }
 
 void SmackerDecoder::handleAudioTrack(byte track, uint32 chunkSize, uint32 unpackedSize) {
-	if (_header.audioInfo[track].hasAudio && chunkSize > 0 && track == 0) {
+	if (chunkSize == 0)
+		return;
+
+	if (_header.audioInfo[track].hasAudio) {
 		// Get the audio track, which start at offset 1 (first track is video)
 		SmackerAudioTrack *audioTrack = (SmackerAudioTrack *)getTrack(track + 1);
 
@@ -501,12 +503,19 @@ void SmackerDecoder::handleAudioTrack(byte track, uint32 chunkSize, uint32 unpac
 			audioTrack->queuePCM(soundBuffer, chunkSize);
 		}
 	} else {
-		// Ignore the rest of the audio tracks, if they exist
-		// TODO: Are there any Smacker videos with more than one audio stream?
-		// If yes, we should play the rest of the audio streams as well
-		if (chunkSize > 0)
-			_fileStream->skip(chunkSize);
+		// Ignore possibly unused data
+		_fileStream->skip(chunkSize);
 	}
+}
+
+VideoDecoder::AudioTrack *SmackerDecoder::getAudioTrack(int index) {
+	// Smacker audio track indexes are relative to the first audio track
+	Track *track = getTrack(index + 1);
+
+	if (!track || track->getTrackType() != Track::kTrackTypeAudio)
+		return 0;
+
+	return (AudioTrack *)track;
 }
 
 SmackerDecoder::SmackerVideoTrack::SmackerVideoTrack(uint32 width, uint32 height, uint32 frameCount, const Common::Rational &frameRate, uint32 flags, uint32 signature) {
