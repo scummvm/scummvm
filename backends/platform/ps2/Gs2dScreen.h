@@ -75,7 +75,7 @@ public:
 	void setMouseXy(int16 x, int16 y);
 	void setShakePos(int shake);
 
-	void animThread(void);
+	void playAnim(void);
 	void wantAnim(bool runIt);
 
 	void quit(void);
