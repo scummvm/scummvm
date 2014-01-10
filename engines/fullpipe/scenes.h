@@ -101,6 +101,9 @@ void scene17_restoreState();
 int sceneHandler17(ExCommand *cmd);
 int scene17_updateCursor();
 
+void scene18_preload();
+void scene19_preload(Scene *sc, int key);
+
 void scene20_initScene(Scene *sc);
 int sceneHandler20(ExCommand *ex);
 
@@ -384,6 +387,8 @@ public:
 	StaticANIObject *scene17_hand;
 	bool scene17_handPhase;
 	int scene17_sceneEdgeX;
+
+	int scene18_var01;
 
 	int scene20_fliesCountdown;
 	StaticANIObject *scene20_grandma;

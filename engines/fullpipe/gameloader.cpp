@@ -28,6 +28,9 @@
 #include "fullpipe/statics.h"
 #include "fullpipe/interaction.h"
 #include "fullpipe/motion.h"
+#include "fullpipe/constants.h"
+#include "fullpipe/scenes.h"
+#include "fullpipe/floaters.h"
 
 namespace Fullpipe {
 
@@ -230,8 +233,7 @@ bool GameLoader::gotoScene(int sceneId, int entranceId) {
 	return true;
 }
 
-bool preloadCallback(const PreloadItem &pre, int flag) {
-#if 0
+bool preloadCallback(PreloadItem &pre, int flag) {
 	if (flag) {
 		if (flag == 50)
 			g_fp->_aniMan->preloadMovements(g_fp->_movTable);
@@ -249,13 +251,13 @@ bool preloadCallback(const PreloadItem &pre, int flag) {
 			pbar->_movement->setDynamicPhaseIndex(flag * (sz - 1) / 100);
 		}
 
-		updateMap(pre);
+		g_fp->updateMap(&pre);
 
 		g_fp->_currentScene = g_fp->_loaderScene;
 
 		g_fp->_loaderScene->draw();
 
-		_system->updateScreen();
+		g_fp->_system->updateScreen();
 	} else {
 		if (g_fp->_scene2) {
 			g_fp->_aniMan = g_fp->_scene2->getAniMan();
@@ -267,40 +269,38 @@ bool preloadCallback(const PreloadItem &pre, int flag) {
 
 		if (g_fp->_soundEnabled) {
 			g_fp->_currSoundListCount = 1;
-			g_fp->_currSoundList1 = accessScene(SC_COMMON)->soundList;
+			g_fp->_currSoundList1[0] = g_fp->accessScene(SC_COMMON)->_soundList;
 		}
 
 		g_vars->scene18_var01 = 0;
 
-		v4 = ;
-
-		if ((pre->preloadId1 != SC_18 || pre->sceneId != SC_19) && (pre->preloadId1 != SC_19 || (v5 = pre->sceneId, v5 != SC_18) && v5 != SC_19)) {
+		if ((pre.preloadId1 != SC_18 || pre.sceneId != SC_19) && (pre.preloadId1 != SC_19 || (pre.sceneId != SC_18 && pre.sceneId != SC_19))) {
 			if (g_fp->_scene3) {
-				if (pre->preloadId1 != SC_18)
-					v9 = getGameLoader()->unloadScene(SC_18);
+				if (pre.preloadId1 != SC_18)
+					g_fp->_gameLoader->unloadScene(SC_18);
 
 				g_fp->_scene3 = 0;
 			}
 		} else {
-			scene19_preload(accessScene(pre->preloadId1), pre->_keyCode);
+			scene19_preload(g_fp->accessScene(pre.preloadId1), pre.keyCode);
 
 			g_vars->scene18_var01 = 1;
 
-			if (pre->preloadId1 == SC_18) {
-				getGameLoader()->saveScenePicAniInfos(SC_18);
+			if (pre.preloadId1 == SC_18) {
+				g_fp->_gameLoader->saveScenePicAniInfos(SC_18);
 
 				scene18_preload();
 			}
 		}
 
-		if (((pre->sceneId == SC_19 && pre->keyCode == TrubaRight) || pre->sceneId == SC_18 && pre->keyCode == TrubaRight) && !pre->preloadId2) {
-			pre->sceneId = SC_18;
-			pre->keyCode = TrubaLeft;
+		if (((pre.sceneId == SC_19 && pre.keyCode == TrubaRight) || (pre.sceneId == SC_18 && pre.keyCode == TrubaRight)) && !pre.preloadId2) {
+			pre.sceneId = SC_18;
+			pre.keyCode = TrubaLeft;
 		}
 
 		if (!g_fp->_loaderScene) {
-			getGameLoader()->loadScene(SC_LDR);
-			g_fp->_loaderScene = accessScene(SC_LDR);;
+			g_fp->_gameLoader->loadScene(SC_LDR);
+			g_fp->_loaderScene = g_fp->accessScene(SC_LDR);;
 		}
 
 		StaticANIObject *pbar = g_fp->_loaderScene->getStaticANIObject1ById(ANI_PBAR, -1);
@@ -313,9 +313,9 @@ bool preloadCallback(const PreloadItem &pre, int flag) {
 		g_fp->_inventoryScene = 0;
 		g_fp->_updateCursorCallback = 0;
 
-		g_fp->_sceneRect.trans(-g_sceneRect.left, -g_sceneRect.top);
+		g_fp->_sceneRect.translate(-g_fp->_sceneRect.left, -g_fp->_sceneRect.top);
 
-		_system->delayMillis(10);
+		g_fp->_system->delayMillis(10);
 
 		Scene *oldsc = g_fp->_currentScene;
 
@@ -323,13 +323,10 @@ bool preloadCallback(const PreloadItem &pre, int flag) {
 
 		g_fp->_loaderScene->draw();
 
-		_system->updateScreen();
+		g_fp->_system->updateScreen();
 
 		g_fp->_currentScene = oldsc;
 	}
-#endif
-
-	warning("STUB: preloadCallback");
 
 	return true;
 }

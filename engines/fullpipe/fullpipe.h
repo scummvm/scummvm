@@ -64,6 +64,7 @@ struct MovTable;
 class MGM;
 class NGIArchive;
 class PictureObject;
+struct PreloadItem;
 class Scene;
 class SoundList;
 class StaticANIObject;
@@ -128,7 +129,9 @@ public:
 	int _sceneWidth;
 	int _sceneHeight;
 	Scene *_currentScene;
+	Scene *_loaderScene;
 	Scene *_scene2;
+	Scene *_scene3;
 	StaticANIObject *_aniMan;
 	StaticANIObject *_aniMan2;
 	byte *_globalPalette;
@@ -182,6 +185,7 @@ public:
 	Common::Array<Common::Point *> _arcadeKeys;
 
 	void initMap();
+	void updateMap(PreloadItem *pre);
 	void updateMapPiece(int mapId, int update);
 	void updateScreen();
 

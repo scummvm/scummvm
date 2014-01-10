@@ -663,6 +663,10 @@ void StaticANIObject::initMovements() {
 		((Movement *)_movements[i])->removeFirstPhase();
 }
 
+void StaticANIObject::preloadMovements(MovTable *mt) {
+	warning("STUB: StaticANIObject::preloadMovements()");
+}
+
 Common::Point *StaticANIObject::getCurrDimensions(Common::Point &p) {
 	Picture *pic;
 

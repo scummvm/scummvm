@@ -31,6 +31,7 @@
 #include "fullpipe/scene.h"
 #include "fullpipe/statics.h"
 #include "fullpipe/interaction.h"
+#include "fullpipe/gameloader.h"
 
 #include "fullpipe/constants.h"
 
@@ -325,6 +326,10 @@ bool PicAniInfo::load(MfcArchive &file) {
 	someDynamicPhaseIndex = file.readUint32LE();
 
 	return true;
+}
+
+void FullpipeEngine::updateMap(PreloadItem *pre) {
+	warning("STUB: FullpipeEngine::updateMap()");
 }
 
 } // End of namespace Fullpipe

@@ -247,6 +247,8 @@ Vars::Vars() {
 	scene17_handPhase = false;
 	scene17_sceneEdgeX = 0;
 
+	scene18_var01 = 0;
+
 	scene20_fliesCountdown = 0;
 	scene20_grandma = 0;
 

@@ -30,6 +30,7 @@ namespace Fullpipe {
 #define ANI_INV_MAP 5321
 #define ANI_LIFTBUTTON 2751
 #define ANI_MAN 322
+#define ANI_PBAR 896
 #define MSG_CMN_WINARCADE 4778
 #define MSG_DISABLESAVES 5201
 #define MSG_ENABLESAVES 5202
@@ -49,6 +50,7 @@ namespace Fullpipe {
 #define MV_MAN_STOPLADDER 454
 #define MV_MAN_STOPLADDER2 2845
 #define MV_MAN_TURN_LU 486
+#define MV_PBAR_RUN 897
 #define PIC_CSR_DEFAULT 4891
 #define PIC_CSR_DEFAULT_INV 4892
 #define PIC_CSR_ITN 4893
@@ -127,6 +129,7 @@ namespace Fullpipe {
 #define SC_38 2072
 #define SC_COMMON 321
 #define SC_DBGMENU 726
+#define SC_LDR 635
 #define SC_FINAL1 4999
 #define SC_FINAL2 5000
 #define SC_FINAL3 5001
@@ -139,6 +142,7 @@ namespace Fullpipe {
 #define SND_CMN_061 4922
 #define SND_CMN_070 5199
 #define SND_INTR_019 5220
+#define ST_EGTR_SLIMSORROW 340
 #define ST_FLY_FLY 4918
 #define ST_LBN_0N 2832
 #define ST_LBN_0P 2833
@@ -161,6 +165,7 @@ namespace Fullpipe {
 #define ST_LBN_9N 2777
 #define ST_LBN_9P 2778
 #define ST_MAN_EMPTY 476
+#define ST_MAN_GOU 459
 #define ST_MAN_RIGHT 325
 #define TrubaDown 697
 #define TrubaLeft 474

@@ -65,7 +65,7 @@ struct PreloadItem {
 	int keyCode;
 };
 
-bool preloadCallback(const PreloadItem &pre, int flag);
+bool preloadCallback(PreloadItem &pre, int flag);
 
 class PreloadItems : public Common::Array<PreloadItem *>, public CObject {
  public:
@@ -95,7 +95,7 @@ class GameLoader : public CObject {
 	Inventory2 _inventory;
 	Sc2Array _sc2array;
 	void *_sceneSwitcher;
-	bool (*_preloadCallback)(const PreloadItem &pre, int flag);
+	bool (*_preloadCallback)(PreloadItem &pre, int flag);
 	void *_readSavegameCallback;
 	int16 _field_F8;
 	int16 _field_FA;
