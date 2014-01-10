@@ -184,7 +184,7 @@ void systemSoundThread(OSystem_PS2 *system) {
 }
 
 void gluePowerOffCallback(void *system) {
-	((OSystem_PS2*)system)->powerOffCallback();
+	((OSystem_PS2 *)system)->powerOffCallback();
 }
 
 void OSystem_PS2::startIrxModules(int numModules, IrxReference *modules) {
@@ -384,8 +384,8 @@ void OSystem_PS2::initTimer(void) {
 	ee_thread_t timerThread, soundThread, thisThread;
 	ReferThreadStatus(GetThreadId(), &thisThread);
 
-	_timerStack = (uint8*)malloc(TIMER_STACK_SIZE);
-	_soundStack = (uint8*)malloc(SOUND_STACK_SIZE);
+	_timerStack = (uint8 *)malloc(TIMER_STACK_SIZE);
+	_soundStack = (uint8 *)malloc(SOUND_STACK_SIZE);
 
 	// give timer thread a higher priority than main thread
 	timerThread.initial_priority = thisThread.current_priority - 1;
@@ -435,7 +435,7 @@ void OSystem_PS2::timerThreadCallback(void) {
 }
 
 void OSystem_PS2::soundThreadCallback(void) {
-	int16 *soundBufL = (int16*)memalign(64, SMP_PER_BLOCK * sizeof(int16) * 2);
+	int16 *soundBufL = (int16 *)memalign(64, SMP_PER_BLOCK * sizeof(int16) * 2);
 	int16 *soundBufR = soundBufL + SMP_PER_BLOCK;
 
 	int bufferedSamples = 0;
@@ -453,9 +453,9 @@ void OSystem_PS2::soundThreadCallback(void) {
 		if (bufferedSamples <= 8 * SMP_PER_BLOCK) {
 			// we have to produce more samples, call sound mixer
 			// the scratchpad at 0x70000000 is used as temporary soundbuffer
-			//_scummSoundProc(_scummSoundParam, (uint8*)0x70000000, SMP_PER_BLOCK * 2 * sizeof(int16));
-			// Audio::Mixer::mixCallback(_scummMixer, (byte*)0x70000000, SMP_PER_BLOCK * 2 * sizeof(int16));
-			_scummMixer->mixCallback((byte*)0x70000000, SMP_PER_BLOCK * 2 * sizeof(int16));
+			//_scummSoundProc(_scummSoundParam, (uint8 *)0x70000000, SMP_PER_BLOCK * 2 * sizeof(int16));
+			// Audio::Mixer::mixCallback(_scummMixer, (byte *)0x70000000, SMP_PER_BLOCK * 2 * sizeof(int16));
+			_scummMixer->mixCallback((byte *)0x70000000, SMP_PER_BLOCK * 2 * sizeof(int16));
 
 			// demux data into 2 buffers, L and R
 			 __asm__ (
@@ -491,7 +491,7 @@ void OSystem_PS2::soundThreadCallback(void) {
 			// and feed it into the SPU
 			// non-blocking call, the function will return before the buffer's content
 			// was transferred.
-			SjPCM_Enqueue((short int*)soundBufL, (short int*)soundBufR, SMP_PER_BLOCK, 0);
+			SjPCM_Enqueue((short int *)soundBufL, (short int *)soundBufR, SMP_PER_BLOCK, 0);
 			bufferedSamples += SMP_PER_BLOCK;
 		}
 	}
@@ -555,7 +555,7 @@ void OSystem_PS2::grabPalette(byte *colors, uint start, uint num) {
 }
 
 void OSystem_PS2::copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h) {
-	_screen->copyScreenRect((const uint8*)buf, pitch, x, y, w, h);
+	_screen->copyScreenRect((const uint8 *)buf, pitch, x, y, w, h);
 }
 
 bool OSystem_PS2::grabRawScreen(Graphics::Surface *surf) {
@@ -640,11 +640,11 @@ void OSystem_PS2::clearOverlay(void) {
 }
 
 void OSystem_PS2::grabOverlay(OverlayColor *buf, int pitch) {
-	_screen->grabOverlay((uint16*)buf, (uint16)pitch);
+	_screen->grabOverlay((uint16 *)buf, (uint16)pitch);
 }
 
 void OSystem_PS2::copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h) {
-	_screen->copyOverlayRect((const uint16*)buf, (uint16)pitch, (uint16)x, (uint16)y, (uint16)w, (uint16)h);
+	_screen->copyOverlayRect((const uint16 *)buf, (uint16)pitch, (uint16)x, (uint16)y, (uint16)w, (uint16)h);
 }
 
 Graphics::PixelFormat OSystem_PS2::getOverlayFormat(void) const {
@@ -743,12 +743,12 @@ void OSystem_PS2::msgPrintf(int millis, const char *format, ...) {
         lnSta = lnEnd + 1;
 	}
 
-	uint8 *scrBuf = (uint8*)memalign(64, 320 * 200);
+	uint8 *scrBuf = (uint8 *)memalign(64, 320 * 200);
 	memset(scrBuf, 4, 320 * 200);
 
 	uint8 *dstPos = scrBuf + ((200 - posY) >> 1) * 320 + (320 - maxWidth) / 2;
 	for (int y = 0; y < posY; y++) {
-		uint8 *srcPos = (uint8*)surf.getBasePtr((300 - maxWidth) / 2, y);
+		uint8 *srcPos = (uint8 *)surf.getBasePtr((300 - maxWidth) / 2, y);
 		for (int x = 0; x < maxWidth; x++)
 			dstPos[x] = srcPos[x] + 5;
 		dstPos += 320;

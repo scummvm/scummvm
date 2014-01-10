@@ -79,7 +79,7 @@ int cacheEnterDir(ISODirectoryRecord *dir) {
 
 int initRootCache(void) {
 	CdRMode rmode = { 16, 0, CdSect2048, 0 };
-	ISODirectoryRecord *root = (ISODirectoryRecord*)cacheBuf;
+	ISODirectoryRecord *root = (ISODirectoryRecord *)cacheBuf;
 
 	if (cdReadSectors(fsRootLba, 1, cacheBuf, &rmode) == 0) {
 		cachedDir[0] = '\0';
@@ -107,7 +107,7 @@ ISODirectoryRecord *findEntryInCache(const char *name, int nameLen) {
             cachedDirOfs = i;
 		}
 
-		while (entry->len_dr && ((uint8*)entry < cacheBuf + SECTOR_SIZE)) {
+		while (entry->len_dr && ((uint8 *)entry < cacheBuf + SECTOR_SIZE)) {
 			if ((entry->len_fi > 2) && (entry->name[entry->len_fi - 2] == ';') && (entry->name[entry->len_fi - 1] == '1')) {
 				if ((nameLen == entry->len_fi - 2) && (strnicmp(name, entry->name, entry->len_fi - 2) == 0))
 					return entry;
@@ -115,7 +115,7 @@ ISODirectoryRecord *findEntryInCache(const char *name, int nameLen) {
 				if ((nameLen == entry->len_fi) && (strnicmp(name, entry->name, entry->len_fi) == 0))
 					return entry;
 			}
-			entry = (ISODirectoryRecord *)( (uint8*)entry + entry->len_dr );
+			entry = (ISODirectoryRecord *)( (uint8 *)entry + entry->len_dr );
 		}
 	}
     return NULL;
@@ -225,12 +225,12 @@ int initDisc(void) {
 					case 1:
 						discType = DISC_MODE1;
 						printf("Disc: Mode1\n");
-						pvd = (ISOPvd*)(cacheBuf + 4);
+						pvd = (ISOPvd *)(cacheBuf + 4);
 						break;
 					case 2:
 						discType = DISC_MODE2;
 						printf("Disc: Mode2\n");
-						pvd = (ISOPvd*)(cacheBuf + 12);
+						pvd = (ISOPvd *)(cacheBuf + 12);
 						break;
 					default:
 						DBG_PRINTF("Unknown Sector Type %02X\n", cacheBuf[3]);

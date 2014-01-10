@@ -104,7 +104,7 @@ int cd_open(iop_file_t *handle, const char *name, int mode) {
 	fd->pos = 0;
 	fd->cachedLba = 0;
 
-	handle->privdata = (void*)fdSlot;
+	handle->privdata = (void *)fdSlot;
 	return 0;
 }
 
@@ -135,7 +135,7 @@ int cd_read(iop_file_t *handle, void *dest, int length) {
 	FioHandle *fd = fioHandles + (int)handle->privdata;
 	CdRMode rmode = { 16, 0, CdSect2048, 0 };
 	int readLba, readPos, bytesLeft;
-	uint8 *destPos = (uint8*)dest;
+	uint8 *destPos = (uint8 *)dest;
 	int doCopy;
 	int numLba;
 	readLba = fd->lba + (fd->pos >> 11);
@@ -177,7 +177,7 @@ int cd_read(iop_file_t *handle, void *dest, int length) {
 			bytesLeft &= 0x7FF;
 		}
 	}
-    return destPos - (uint8*)dest;
+    return destPos - (uint8 *)dest;
 }
 
 int cd_close(iop_file_t *handle) {
@@ -219,7 +219,7 @@ int cd_dopen(iop_file_t *handle, const char *path) {
 	}
 	dioHandles[fdSlot].curOfs = 0;
 	dioHandles[fdSlot].lbaOfs = 0;
-	handle->privdata = (void*)fdSlot;
+	handle->privdata = (void *)fdSlot;
 	return fdSlot;
 }
 
