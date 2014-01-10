@@ -648,11 +648,11 @@ void Gs2dScreen::setMouseXy(int16 x, int16 y) {
 	_mouseX = x;
 	_mouseY = y;
 }
-
+/*
 uint8 Gs2dScreen::tvMode(void) {
 	return _tvMode;
 }
-
+*/
 uint16 Gs2dScreen::getWidth(void) {
 	return _width;
 }
