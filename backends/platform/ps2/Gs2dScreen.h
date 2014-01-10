@@ -105,18 +105,18 @@ private:
 	Graphics::Surface _framebuffer;
 
 	/* TODO : check if we do need this */
-    struct VideoState {
-        bool setup;
+	struct VideoState {
+		bool setup;
 
-        bool fullscreen;
-        bool aspectRatio;
+		bool fullscreen;
+		bool aspectRatio;
 
-        int mode;
-        int scaleFactor;
+		int mode;
+		int scaleFactor;
 
-        int screenWidth, screenHeight;
-        int overlayWidth, overlayHeight;
-    };
+		int screenWidth, screenHeight;
+		int overlayWidth, overlayHeight;
+	};
 
 	VideoState _videoMode;
 	/* */

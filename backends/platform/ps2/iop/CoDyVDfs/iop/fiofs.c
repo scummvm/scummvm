@@ -171,13 +171,13 @@ int cd_read(iop_file_t *handle, void *dest, int length) {
 			numLba = bytesLeft >> 11;
 			if (cdReadSectors(readLba, numLba, destPos, &rmode) != 0)
 				break;
-            readLba += numLba;
+			readLba += numLba;
 			fd->pos += numLba << 11;
 			destPos += numLba << 11;
 			bytesLeft &= 0x7FF;
 		}
 	}
-    return destPos - (uint8 *)dest;
+	return destPos - (uint8 *)dest;
 }
 
 int cd_close(iop_file_t *handle) {
@@ -252,7 +252,7 @@ int cd_dread(iop_file_t *handle, iox_dirent_t *buf) {
 			}
 		}
 	}
-    return 0;
+	return 0;
 }
 
 int cd_dclose(iop_file_t *handle) {

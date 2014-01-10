@@ -34,7 +34,7 @@ Ps2Pad::Ps2Pad(OSystem_PS2 *system) {
 	_padStatus = STAT_NONE;
 
 	padInit(0); // initialize library
-	_port = _slot = 0;	// first controller, no multitap
+	_port = _slot = 0; // first controller, no multitap
 	initPad();
 }
 
