@@ -691,8 +691,7 @@ darkenFill(PixelType *ptr, PixelType *end) {
 		// assuming at least 3 alpha bits
 
 		mask |= 3 << _format.aShift;
-		PixelType addA = (PixelType)(255 >> _format.aLoss) << _format.aShift;
-		addA -= (addA >> 2);
+		PixelType addA = (PixelType)(3 << (_format.aShift + 6 - _format.aLoss));
 
 		while (ptr != end) {
 			// Darken the colour, and increase the alpha
