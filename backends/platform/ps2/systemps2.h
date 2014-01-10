@@ -138,26 +138,26 @@ private:
 	bool _mouseVisible;
 	bool _useMouse, _useKbd, _useHdd, _usbMassLoaded, _useNet;
 
-	Gs2dScreen	*_screen;
-	Ps2Input	*_input;
-	uint16		_oldMouseX, _oldMouseY;
-	uint32		_msgClearTime;
-	uint16		_printY;
+	Gs2dScreen *_screen;
+	Ps2Input *_input;
+	uint16 _oldMouseX, _oldMouseY;
+	uint32 _msgClearTime;
+	uint16 _printY;
 	bool _modeChanged;
 	int _screenChangeCount;
 
-	int			_mutexSema;
-	Ps2Mutex	_mutex[MAX_MUTEXES];
+	int _mutexSema;
+	Ps2Mutex _mutex[MAX_MUTEXES];
 
-	uint8		*_timerStack, *_soundStack;
-	int			_timerTid, _soundTid;
-	int			_intrId;
+	uint8 *_timerStack, *_soundStack;
+	int _timerTid, _soundTid;
+	int _intrId;
 	volatile bool _systemQuit;
 	static const GraphicsMode _graphicsMode;
 
-	int			_bootDevice;
-	char		*_bootPath;
-	char		*_configFile;
+	int _bootDevice;
+	char *_bootPath;
+	char *_configFile;
 };
 
 #endif // SYSTEMPS2_H
