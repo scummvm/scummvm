@@ -32,6 +32,7 @@
 #include "DmaPipe.h"
 #include "GsDefs.h"
 #include "graphics/surface.h"
+#include "graphics/colormasks.h"
 #include "backends/platform/ps2/ps2debug.h"
 
 extern void *_gp;
@@ -202,12 +203,12 @@ Gs2dScreen::Gs2dScreen(uint16 width, uint16 height, TVMode mode) {
 	_overlayFormat.rLoss = 3;
 	_overlayFormat.gLoss = 3;
 	_overlayFormat.bLoss = 3;
-	_overlayFormat.aLoss = 7;
+	_overlayFormat.aLoss = 7; // 8
 
 	_overlayFormat.rShift = 0;
 	_overlayFormat.gShift = 5;
 	_overlayFormat.bShift = 10;
-	_overlayFormat.aShift = 15;
+	_overlayFormat.aShift = 15; // 0
 
 	// setup hardware now.
 	GS_CSR = CSR_RESET; // Reset GS
@@ -530,7 +531,8 @@ void Gs2dScreen::hideOverlay(void) {
 }
 
 Graphics::PixelFormat Gs2dScreen::getOverlayFormat(void) {
-	return _overlayFormat;
+	// return _overlayFormat;
+	return Graphics::createPixelFormat<1555>();
 }
 
 int16 Gs2dScreen::getOverlayWidth(void) {
