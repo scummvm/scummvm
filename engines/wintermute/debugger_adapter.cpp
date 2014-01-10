@@ -35,6 +35,104 @@
 
 namespace Wintermute {
 
+Error::Error(int errorLevel, int errorCode, int errorArea, Common::String errorExtraString) {
+	this->errorLevel = errorLevel;
+	this->errorCode = errorCode;
+	this->errorArea = errorArea;
+	this->errorExtraString = errorExtraString;
+}
+
+Error::Error(int errorLevel, int errorCode, int errorArea, int errorExtraInt) {
+	this->errorLevel = errorLevel;
+	this->errorCode = errorCode;
+	this->errorArea = errorArea;
+	this->errorExtraInt = errorExtraInt;
+}
+
+Error::Error(int errorLevel, int errorCode, int errorArea) {
+	this->errorLevel = errorLevel;
+	this->errorCode = errorCode;
+	this->errorArea = errorArea;
+}
+
+Error::Error(int errorLevel, int errorCode, int errorArea, Common::String errorExtraString, int errorExtraInt) {
+	this->errorExtraInt = errorExtraInt;
+	this->errorExtraString = errorExtraString;
+	this->errorLevel = errorLevel;
+	this->errorCode = errorCode;
+	this->errorArea = errorArea;
+}
+
+Common::String Error::getErrorLevelStr() {
+	switch(this->errorLevel) {
+		case SUCCESS:
+			return "SUCCESS";
+			break;
+		case NOTICE:
+			return "NOTICE";
+			break;
+		case WARNING:
+			return "WARNING";
+			break;
+		case ERROR:
+			return "ERROR";
+			break;
+	}
+	return "SUCCESS";
+}
+
+Common::String Error::getErrorDisplayStr() {
+
+	Common::String errorStr;
+
+	switch (this->errorLevel) {
+		case SUCCESS:
+			errorStr += "OK!";
+			break;
+		case WARNING:
+			errorStr += "WARNING: ";
+			break;
+		case ERROR:
+			errorStr += "ERROR: ";
+			break;
+		default:
+			assert(false);
+			// We should never ever get here.
+			break;
+	}
+
+	switch(this->errorCode) {
+		case OK:
+			break;
+		case NOT_ALLOWED:
+			errorStr += "Could not execute requested operation. This is allowed only after a break.";
+			break;
+		case NO_SUCH_SOURCE:
+			errorStr += Common::String::format("Can't find source for %s. Double check you source path.", this->errorExtraString.c_str());
+			break;
+		case NO_SUCH_BYTECODE:
+			errorStr += Common::String::format("No such script: %s. Can't find bytecode; double check the script path.", this->errorExtraString.c_str());
+			break;
+		case IS_BLANK:
+			errorStr += Common::String::format("Line %d in script %s is blank.", this->errorExtraInt, this->errorExtraString.c_str()); // Or non-existing? Will have to check.
+			break;
+		case SOURCE_PATH_NOT_SET:
+			errorStr += Common::String("Source path not set. Source won't be displayed. Try 'sourcepath somepath' first.");
+			break;
+		case NO_SUCH_BREAKPOINT:
+			errorStr += Common::String::format("No such breakpoint %d.", this->errorExtraInt);
+			break;
+		case WRONG_TYPE:
+			errorStr += Common::String::format("Incompatible type: %s.", this->errorExtraString.c_str());
+			break;
+		default:
+			errorStr += Common::String::format("Unknown condition %d", this->errorCode);
+			break;
+	}
+
+	return errorStr;
+}
+
 SourceFile::SourceFile(const Common::String &filename, const Common::String &sourcePath) {
 
 	_err = 0;
@@ -117,7 +215,14 @@ Common::Array<Common::String> SourceFile::getSurroundingLines(int center, int be
 	int start = MAX(center - before, 1);
 	int finish = MIN(center + after, getLength()); // Line numbers start from 1
 	BaseArray<Common::String> ret;
+
+	if (_err) {
+		*error = NO_SUCH_SOURCE;
+		return ret;
+	}
+
 	Common::String temp;
+
 	for (int i = start; i <= finish && *error == 0; i++) {
 		temp = Common::String::format("%d", i);
 		temp += " ";
@@ -147,137 +252,116 @@ bool DebuggerAdapter::compiledExists(Common::String filename) {
 	}
 }
 
-int DebuggerAdapter::isBreakpointLegal(const char *filename, int line) {
+Error DebuggerAdapter::isBreakpointLegal(const char *filename, int line) {
 
 	// First of all: does the compiled even exist?
 	// Otherwise, well... it's very much not legal.
 
 	if (!compiledExists(filename)) {
-		return NO_SUCH_SCRIPT;
+		// This is the only critical condition.
+		return Error (ERROR, NO_SUCH_BYTECODE, 0, filename);
 	}
 
 	int error = OK;
 	if (_sourcePath == Common::String("")) {
 		// So... source path not set. 
 		error = SOURCE_PATH_NOT_SET;
-		return error;
 	} else {
 		SourceFile sf(filename, _sourcePath);
 		sf.getLine(line, &error);
-
-
-		if (!error) {
-			if (sf.isBlank(line)) {
-				return IS_BLANK;
-			} else {
-				return OK;
-			}
-		} else if (error == SOURCE_PATH_NOT_SET) {
-			return SOURCE_PATH_NOT_SET;
-		} else if (error == SourceFile::NO_SUCH_SOURCE || error == SourceFile::COULD_NOT_OPEN) {
-			// Okay, this does not tell us much, except that we don't have the SOURCE file.
-			// TODO: Check if the bytecode is there, at least
-			return NO_SUCH_SOURCE;
-		} else if (error == NO_SUCH_LINE) {
-			return NO_SUCH_LINE; // There is apparently no such line in the SOURCE file.
-		} else {
-			return error;
+		if (!error && sf.isBlank(line)) {
+				error = IS_BLANK;
 		}
 	}
-}
 
-int DebuggerAdapter::addBreakpoint(const char *filename, int line) {
-	assert(SCENGINE);
-	if (!compiledExists(filename)) {
-		return NO_SUCH_SCRIPT;
-	}
-	int isLegal = isBreakpointLegal(filename, line);
-	if (isLegal == OK) {
-		SCENGINE->addBreakpoint(filename, line);
-		return OK;
-	} else if (isLegal == SourceFile::IS_BLANK) {
-		// We don't have the SOURCE. A warning will do.
-		SCENGINE->addBreakpoint(filename, line);
-		return IS_BLANK;
-	} else if (isLegal == SourceFile::NO_SUCH_SOURCE) {
-		// We don't have the SOURCE. A warning will do.
-		SCENGINE->addBreakpoint(filename, line);
-		return NO_SUCH_SOURCE;
-	} else if (isLegal == SourceFile::NO_SUCH_LINE) {
-		// No line in the source A warning will do.
-		SCENGINE->addBreakpoint(filename, line);
-		return NO_SUCH_LINE;
+	if (error == OK) {
+		return Error(SUCCESS, OK, 0);
 	} else {
-		// Something weird? Don't do anything.
-		return isLegal;
+		// If we got here, we are dealing with a non-critical condition.
+		// A warning will do.
+		return Error(WARNING, error, 0, filename, line);
 	}
+
 }
 
-int DebuggerAdapter::removeBreakpoint(int id) {
+Error DebuggerAdapter::addBreakpoint(const char *filename, int line) {
+	assert(SCENGINE);
+	Error error = isBreakpointLegal(filename, line);
+	if (error.errorLevel == SUCCESS) {
+		SCENGINE->addBreakpoint(filename, line);
+		return error;
+	} else if (error.errorLevel == WARNING){
+		// These are all non-critical conditions.
+		SCENGINE->addBreakpoint(filename, line);
+		return error;
+	}
+	return error;
+}
+
+Error DebuggerAdapter::removeBreakpoint(int id) {
 	assert(SCENGINE);
 
 	if (SCENGINE->removeBreakpoint(id)) {
-		return OK;
+		return Error(SUCCESS, OK, 0);
 	} else {
-		return NO_SUCH_BREAKPOINT;
+		return Error(ERROR, NO_SUCH_BREAKPOINT, 0, id);
 	}
 }
 
-int DebuggerAdapter::disableBreakpoint(int id) {
+Error DebuggerAdapter::disableBreakpoint(int id) {
 	assert(SCENGINE);
 
 	if (SCENGINE->disableBreakpoint(id)) {
-		return OK;
+		return Error(SUCCESS, OK, 0);
 	} else {
-		return NO_SUCH_BREAKPOINT;
+		return Error(ERROR, NO_SUCH_BREAKPOINT, 0, id);
 	}
 }
 
-int DebuggerAdapter::enableBreakpoint(int id) {
+Error DebuggerAdapter::enableBreakpoint(int id) {
 	assert(SCENGINE);
 	if (SCENGINE->enableBreakpoint(id)) {
-		return OK;
+		return Error(SUCCESS, OK, 0);
 	} else {
-		return NO_SUCH_BREAKPOINT;
+		return Error(ERROR, NO_SUCH_BREAKPOINT, 0, id);
 	}
 }
 
-int DebuggerAdapter::removeWatchpoint(int id) {
+Error DebuggerAdapter::removeWatchpoint(int id) {
 	assert(SCENGINE);
-
 	if (SCENGINE->removeWatchpoint(id)) {
-		return OK;
+		return Error(SUCCESS, OK, 0);
 	} else {
-		return NO_SUCH_BREAKPOINT;
+		return Error(ERROR, NO_SUCH_BREAKPOINT, 0, id);
 	}
 }
 
 
-int DebuggerAdapter::disableWatchpoint(int id) {
+Error DebuggerAdapter::disableWatchpoint(int id) {
 	assert(SCENGINE);
 
 	if (SCENGINE->disableWatchpoint(id)) {
-		return OK;
+		return Error(SUCCESS, OK, 0);
 	} else {
-		return NO_SUCH_BREAKPOINT;
+		return Error(ERROR, NO_SUCH_BREAKPOINT, 0, id);
 	}
 }
 
-int DebuggerAdapter::enableWatchpoint(int id) {
+Error DebuggerAdapter::enableWatchpoint(int id) {
 	assert(SCENGINE);
 	if (SCENGINE->enableWatchpoint(id)) {
-		return OK;
+		return Error(SUCCESS, OK, 0);
 	} else {
-		return NO_SUCH_BREAKPOINT;
+		return Error(ERROR, NO_SUCH_BREAKPOINT, 0, id);
 	}
 }
 
-int DebuggerAdapter::addWatch(const char *filename, const char *symbol) {
+Error DebuggerAdapter::addWatch(const char *filename, const char *symbol) {
 	assert(SCENGINE);
 	if (!compiledExists(filename)) {
-		return NO_SUCH_SCRIPT;
-	}	
-	
+		return Error(ERROR, NO_SUCH_BYTECODE, 0, filename);
+	}
+
 	/* In this case there's not a lot we can check for.
 	 * We don't have a symbol table, we can only either hit it
 	 * at runtime or... not.
@@ -289,7 +373,7 @@ int DebuggerAdapter::addWatch(const char *filename, const char *symbol) {
 	 */
 
 	SCENGINE->addWatchpoint(filename, symbol);
-	return OK;
+	return Error(SUCCESS, OK, 0, "Watchpoint added");
 }
 
 bool DebuggerAdapter::triggerBreakpoint(ScScript *script) {
@@ -322,40 +406,40 @@ bool DebuggerAdapter::triggerWatch(ScScript *script, const char *symbol) {
 	return 1;
 }
 
-int DebuggerAdapter::stepOver() {
+Error DebuggerAdapter::stepOver() {
 	if (!_lastScript) {
-		return NOT_ALLOWED;
+		return Error(ERROR, NOT_ALLOWED, 0);
 	}
 	_lastScript->_step = _lastDepth;
 	reset();
-	return OK;
+	return Error(SUCCESS, OK, 0);
 }
 
-int DebuggerAdapter::stepInto() {
+Error DebuggerAdapter::stepInto() {
 	if (!_lastScript) {
-		return NOT_ALLOWED;
+		return Error(ERROR, NOT_ALLOWED, 0);
 	}
 	_lastScript->_step = _lastDepth + 1;
 	reset();
-	return OK;
+	return Error(SUCCESS, OK, 0);
 }
 
-int DebuggerAdapter::stepContinue() {
+Error DebuggerAdapter::stepContinue() {
 	if (!_lastScript) {
-		return NOT_ALLOWED;
+		return Error(ERROR, NOT_ALLOWED, 0);
 	}
 	_lastScript->_step = -2;
-	return OK;
+	return Error(SUCCESS, OK, 0);
 }
 
-int DebuggerAdapter::stepFinish() {
+Error DebuggerAdapter::stepFinish() {
 	if (!_lastScript) {
-		return NOT_ALLOWED;
+		return Error(ERROR, NOT_ALLOWED, 0);
 	}
 	_lastScript->_step = _lastDepth - 1;
 	// Reset
 	reset();
-	return OK;
+	return Error(SUCCESS, OK, 0);
 }
 
 void DebuggerAdapter::reset() {
@@ -364,17 +448,17 @@ void DebuggerAdapter::reset() {
 	_lastDepth = kDefaultStep;
 }
 
-Common::String DebuggerAdapter::readValue(const char *name, int *error) {
+Common::String DebuggerAdapter::readValue(const char *name, Error *error) {
 	if (!_lastScript) {
-		*error = NOT_ALLOWED;
+		*error = Error(ERROR, NOT_ALLOWED, 0);
 		return Common::String();
 	}
 	return _lastScript->getVar(name)->getString();
 }
 
-Common::String DebuggerAdapter::readRes(const Common::String &name, int *error) { // Hack
+Common::String DebuggerAdapter::readRes(const Common::String &name, Error *error) { // Hack
 	if (!_lastScript) {
-		*error = NOT_ALLOWED;
+		*error = Error(ERROR, NOT_ALLOWED, 0);
 		return nullptr;
 	}
 
@@ -387,13 +471,13 @@ Common::String DebuggerAdapter::readRes(const Common::String &name, int *error) 
 	ScValue *result = _lastScript->getVar(mainObjectName.c_str());
 
 	if (!result) {
-		*error = NOT_ALLOWED; // TODO: Better one
+		*error = Error(ERROR, NOT_ALLOWED, 0); // TODO: Better one
 		return nullptr;
 	}
 
 
 	if (!result->isNative()) {
-		*error = WRONG_TYPE; // TODO: Better one
+		*error = Error(ERROR, WRONG_TYPE, 0, result->getTypeStr()); // TODO: Better one
 		return nullptr;
 	}
 
@@ -406,7 +490,7 @@ Common::String DebuggerAdapter::readRes(const Common::String &name, int *error) 
 	while (!st.empty() && result) {
 		pos = result->getNative();
 		if (!result->isNative()) {
-			*error = WRONG_TYPE; // TODO: Better one
+			*error = Error(ERROR, WRONG_TYPE, 0); // TODO: Better one
 			return nullptr;
 		}
 
@@ -426,7 +510,7 @@ Common::String DebuggerAdapter::readRes(const Common::String &name, int *error) 
 				// OK
 			} else {
 				// WTF? This should not happen.
-				*error = PARSE_ERROR;
+				*error = Error(ERROR, PARSE_ERROR, 0);
 				return nullptr;
 			}
 			// Split args here:
@@ -493,48 +577,47 @@ Common::String DebuggerAdapter::readRes(const Common::String &name, int *error) 
 }
 
 
-int DebuggerAdapter::setType(const Common::String &name, Common::String &type) {
+Error DebuggerAdapter::setType(const Common::String &name, Common::String &type) {
 
 	type.trim();
 
 	if (!_lastScript) {
-		return NOT_ALLOWED;
+		return Error(ERROR, NOT_ALLOWED, 0);
 	}
 
 	ScValue *var = _lastScript->getVar(name.c_str());
 
 	if (type == "VAL_NULL") {
 		var->setType(VAL_NULL);
-		return OK;
+		return Error(SUCCESS, OK, 0);
 	} else if (type == "VAL_STRING") {
 		var->setType(VAL_STRING);
-		return OK;
+		return Error(SUCCESS, OK, 0);
 	} else if (type == "VAL_INT") {
 		var->setType(VAL_INT);
-		return OK;
+		return Error(SUCCESS, OK, 0);
 	} else if (type == "VAL_BOOL") {
 		var->setType(VAL_BOOL);
-		return OK;
+		return Error(SUCCESS, OK, 0);
 	} else if (type == "VAL_FLOAT") {
 		var->setType(VAL_FLOAT);
-		return OK;
+		return Error(SUCCESS, OK, 0);
 	} else if (type == "VAL_OBJECT") {
 		var->setType(VAL_OBJECT);
-		return OK;
+		return Error(SUCCESS, OK, 0);
 	} else if (type == "VAL_NATIVE") {
 		var->setType(VAL_NATIVE);
-		return OK;
+		return Error(SUCCESS, OK, 0);
 	} else if (type == "VAL_VARIABLE_REF") {
 		var->setType(VAL_VARIABLE_REF);
-		return OK;
+		return Error(SUCCESS, OK, 0);
 	}
-
-	return PARSE_ERROR;
+	return Error(ERROR, PARSE_ERROR, 0);
 }
 
-int DebuggerAdapter::setValue(Common::String name, Common::String value, ScValue *&var) {
+Error DebuggerAdapter::setValue(Common::String name, Common::String value, ScValue *&var) {
 	if (!_lastScript) {
-		return NOT_ALLOWED;
+		return Error(ERROR, NOT_ALLOWED, 0);
 	}
 
 	value.trim();
@@ -544,25 +627,25 @@ int DebuggerAdapter::setValue(Common::String name, Common::String value, ScValue
 		char *endptr;
 		int res = strtol(value.c_str(), &endptr, 10); // TODO: Hex too?
 		if (endptr == value.c_str()) {
-			return PARSE_ERROR;
+			return Error(ERROR, PARSE_ERROR, 0);
 		} else if (endptr == value.c_str() + value.size()) {
 			// We've parsed all of it, have we?
 			var->setInt(res);
 		} else {
 			assert(false);
-			return PARSE_ERROR;
+			return Error(ERROR, PARSE_ERROR, 0);
 			// Something funny happened here.
 		}
 	} else if (var->_type == VAL_FLOAT) {
 		char *endptr;
 		float res = (float)strtod(value.c_str(), &endptr);
 		if (endptr == value.c_str()) {
-			return PARSE_ERROR;
+			return Error(ERROR, PARSE_ERROR, 0);
 		} else if (endptr == value.c_str() + value.size()) {
 			// We've parsed all of it, have we?
 			var->setFloat(res);
 		} else {
-			return PARSE_ERROR;
+			return Error(ERROR, PARSE_ERROR, 0);
 			assert(false);
 			// Something funny happened here.
 		}
@@ -572,14 +655,14 @@ int DebuggerAdapter::setValue(Common::String name, Common::String value, ScValue
 		if (Common::parseBool(value, valAsBool)) {
 			var->setBool(valAsBool);
 		} else {
-			return PARSE_ERROR;
+			return Error(ERROR, PARSE_ERROR, 0);
 		}
 	} else if (var->_type == VAL_STRING) {
 		var->setString(value);
 	} else {
-		return NOT_YET_IMPLEMENTED;
+		return Error(ERROR, NOT_YET_IMPLEMENTED, 0);
 	}
-	return 0;
+	return Error(SUCCESS, OK, 0);
 }
 
 void DebuggerAdapter::showFps(bool show) {

@@ -27,8 +27,52 @@
 #include "engines/wintermute/coll_templ.h"
 #include "engines/wintermute/wintermute.h"
 
-
 namespace Wintermute {
+
+enum ErrorLevel {
+	SUCCESS,
+    NOTICE,
+	WARNING,
+	ERROR
+};
+
+enum ErrorCode {
+	OK,
+	NO_SUCH_SOURCE,
+	COULD_NOT_OPEN,
+	NO_SUCH_LINE,
+	NOT_ALLOWED,
+	IS_BLANK, // Is blank or comment-only, actually
+	NO_SUCH_BYTECODE,
+	DUPLICATE_BREAKPOINT,
+	NO_SUCH_BREAKPOINT,
+	WRONG_TYPE,
+	PARSE_ERROR,
+	NOT_YET_IMPLEMENTED,
+	SOURCE_PATH_NOT_SET, // Or "" which is illegal
+	UNKNOWN_ERROR
+};
+
+enum ErrorArea {
+	UNSPECIFIED
+};
+
+class Error {
+public:
+	int errorLevel;
+	int errorCode;
+	int errorArea;
+	int errorExtraInt;
+	Common::String errorExtraString;
+	Error(int errorLevel, int errorCode, int errorArea);
+	Error(int errorLevel, int errorCode, int errorArea, int errorExtraInt);
+	Error(int errorLevel, int errorCode, int errorArea, Common::String errorExtraString);
+	Error(int errorLevel, int errorCode, int errorArea, Common::String errorExtraString, int errorExtraInt);
+	Common::String getErrorLevelStr();
+	Common::String getErrorDisplayStr();
+};
+
+
 class ScScript;
 class ScValue;
 
@@ -39,16 +83,6 @@ private:
 	bool _err;
 
 public:
-	enum ErrorCode {
-		OK,
-		NO_SUCH_SOURCE,
-		COULD_NOT_OPEN,
-		NO_SUCH_LINE,
-		NOT_ALLOWED,
-		IS_BLANK, // Is blank or comment-only, actually
-		NO_SUCH_SCRIPT,
-		SOURCE_PATH_NOT_SET // Or "" which is illegal
-	};
 	SourceFile(const Common::String &filename, const Common::String &sourcePath);
 
 	/**
@@ -100,22 +134,6 @@ class DebuggerAdapter {
  * hiding one from another.
  */
 public:
-	enum ErrorCode {
-		OK,
-		NO_SUCH_SOURCE,
-		COULD_NOT_OPEN,
-		NO_SUCH_LINE,
-		NOT_ALLOWED,
-		IS_BLANK, // Is blank or comment-only, actually
-		NO_SUCH_SCRIPT,
-		DUPLICATE_BREAKPOINT,
-		NO_SUCH_BREAKPOINT,
-		WRONG_TYPE,
-		PARSE_ERROR,
-		NOT_YET_IMPLEMENTED,
-		SOURCE_PATH_NOT_SET // Or "" which is illegal
-	};
-
 	DebuggerAdapter(WintermuteEngine *vm);
 	~DebuggerAdapter();
 	// Called by Script (=~Model)
@@ -132,50 +150,50 @@ public:
 	 */
 	bool triggerWatch(ScScript *script, const char *symbol);
 	// Called by Console (~=View)
-	int addWatch(const char *filename, const char *symbol);
-	int addBreakpoint(const char *filename, int line);
-	int isBreakpointLegal(const char *filename, int line);
-	int removeWatchpoint(int id);
-	int removeBreakpoint(int id);
-	int disableBreakpoint(int id);
-	int enableBreakpoint(int id);
-	int disableWatchpoint(int id);
-	int enableWatchpoint(int id);
+	Error addWatch(const char *filename, const char *symbol);
+	Error addBreakpoint(const char *filename, int line);
+	Error isBreakpointLegal(const char *filename, int line);
+	Error removeWatchpoint(int id);
+	Error removeBreakpoint(int id);
+	Error disableBreakpoint(int id);
+	Error enableBreakpoint(int id);
+	Error disableWatchpoint(int id);
+	Error enableWatchpoint(int id);
 	Common::Array<BreakpointInfo> getBreakpoints();
 	Common::Array<WatchInfo> getWatchlist();
 	/** 
 	 * @brief step to the next line in the current block
 	 */
-	int stepOver();
+	Error stepOver();
 	/**
 	 * @brief step at the next line entering any function encountered
 	 */
-	int stepInto();
+	Error stepInto();
 	/**
 	 * @brief continue and don't step until next breakpoint
 	 */
-	int stepContinue();
+	Error stepContinue();
 	/**
 	 * @brief finish current block, step to the next line of the caller
 	 */
-	int stepFinish();
+	Error stepFinish();
 	int32 getLastLine();
 	/** 
 	 * @brief read value for a variable accessible from within the current scope.
 	 */
-	Common::String readValue(const char *name, int *error);
+	Common::String readValue(const char *name, Error *error);
 	/** 
 	 * @brief set value for a variable accessible from within the current scope.
 	 */
-	int setValue(Common::String name, Common::String value, ScValue * &var);
-	int setType(const Common::String &name, Common::String &type);
+	Error setValue(Common::String name, Common::String value, ScValue * &var);
+	Error setType(const Common::String &name, Common::String &type);
 	/** 
 	 * @brief Dump *engine* debug info about a variable accessible from within the current scope.
 	 * While readValue(somestring) will simply return its value (e.g. "foo") 
 	 * this will give you the output of the relevant ScValue or Entity's debuggetToString() 
 	 * method, which can include engine information inaccessible from the scripting environment.
 	 */
-	Common::String readRes(const Common::String &name, int *error);
+	Common::String readRes(const Common::String &name, Error *error);
 	void showFps(bool show);
 	SourceFile *_lastSource;
 	int setSourcePath(Common::String sourcePath);

@@ -64,25 +64,8 @@ bool Console::Cmd_AddBreakpoint(int argc, const char **argv) {
 	 * Add a breakpoint
 	 */
 	if (argc == 3) {
-		int error = ADAPTER->addBreakpoint(argv[1], atoi(argv[2]));
-		if (!error) {
-			DebugPrintf("%s: OK\n", argv[0]);
-		} else if (error == DebuggerAdapter::NO_SUCH_SCRIPT) {
-			Common::String msg = Common::String::format("no such script: %s, breakpoint NOT created\n", argv[1]);
-			debugWarning(argv[0], ERROR, msg);
-		} else if (error == DebuggerAdapter::NO_SUCH_SOURCE) {
-			Common::String msg = Common::String::format("no such source file: %s\n", argv[1]);
-			debugWarning(argv[0], WARNING, msg);
-		} else if (error == DebuggerAdapter::NO_SUCH_LINE) {
-			Common::String msg = Common::String::format("source %s has no line %d\n", argv[1], atoi(argv[2]));
-			debugWarning(argv[0], WARNING, msg);
-		} else if (error == DebuggerAdapter::IS_BLANK) {
-			Common::String msg = Common::String::format("%s:%d looks like a comment/blank line.\n", argv[1], atoi(argv[2]));
-			debugWarning(argv[0], WARNING, msg);
-		} else {
-			Common::String msg = Common::String::format("Error code %d", error);
-			debugWarning(argv[0], WARNING, msg);
-		}
+		Wintermute::Error error = ADAPTER->addBreakpoint(argv[1], atoi(argv[2]));
+		DebugPrintf("%s: %s\n", argv[0], error.getErrorDisplayStr().c_str());
 	} else {
 		DebugPrintf("Usage: %s <file path> <line> to break at line <line> of file <file path>\n", argv[0]);
 	}
@@ -91,13 +74,8 @@ bool Console::Cmd_AddBreakpoint(int argc, const char **argv) {
 
 bool Console::Cmd_RemoveBreakpoint(int argc, const char **argv) {
 	if (argc == 2) {
-		int error = ADAPTER->removeBreakpoint(atoi(argv[1]));
-		if (!error) {
-			DebugPrintf("%s: OK\n", argv[0]);
-		} else if (error == DebuggerAdapter::NO_SUCH_BREAKPOINT) {
-			Common::String msg = Common::String::format("no such breakpoint %d\n", atoi(argv[1]));
-			debugWarning(argv[0], ERROR, msg);
-		}
+		Error error = ADAPTER->removeBreakpoint(atoi(argv[1]));
+		DebugPrintf("%s: %s\n", argv[0], error.getErrorDisplayStr().c_str());
 	} else {
 		DebugPrintf("Usage: %s <file path> <line> to break at line <line> of file <file path>\n", argv[0]);
 	}
@@ -107,13 +85,8 @@ bool Console::Cmd_RemoveBreakpoint(int argc, const char **argv) {
 
 bool Console::Cmd_EnableBreakpoint(int argc, const char **argv) {
 	if (argc == 2) {
-		int error = ADAPTER->enableBreakpoint(atoi(argv[1]));
-		if (!error) {
-			DebugPrintf("%s: OK\n", argv[0]);
-		} else if (error == DebuggerAdapter::NO_SUCH_BREAKPOINT) {
-			Common::String msg = Common::String::format("no such breakpoint %d\n", atoi(argv[1]));
-			debugWarning(argv[0], ERROR, msg);
-		}
+		Error error = ADAPTER->enableBreakpoint(atoi(argv[1]));
+		DebugPrintf ("%s: %s", argv[0], error.getErrorDisplayStr().c_str());
 	} else {
 		DebugPrintf("Usage: %s <id> to enable\n", argv[0]);
 	}
@@ -122,13 +95,8 @@ bool Console::Cmd_EnableBreakpoint(int argc, const char **argv) {
 
 bool Console::Cmd_DisableBreakpoint(int argc, const char **argv) {
 	if (argc == 2) {
-		int error = ADAPTER->disableBreakpoint(atoi(argv[1]));
-		if (!error) {
-			DebugPrintf("%s: OK\n", argv[0]);
-		} else if (error == DebuggerAdapter::NO_SUCH_BREAKPOINT) {
-			Common::String msg = Common::String::format("no such breakpoint %d\n", atoi(argv[1]));
-			debugWarning(argv[0], ERROR, msg);
-		}
+		Error error = ADAPTER->disableBreakpoint(atoi(argv[1]));
+		DebugPrintf ("%s: %s", argv[0], error.getErrorDisplayStr().c_str());
 	} else {
 		DebugPrintf("Usage: %s <id> to disable\n", argv[0]);
 	}
@@ -137,13 +105,8 @@ bool Console::Cmd_DisableBreakpoint(int argc, const char **argv) {
 
 bool Console::Cmd_RemoveWatchpoint(int argc, const char **argv) {
 	if (argc == 2) {
-		int error = ADAPTER->removeWatchpoint(atoi(argv[1]));
-		if (!error) {
-			DebugPrintf("%s: OK\n", argv[0]);
-		} else if (error == DebuggerAdapter::NO_SUCH_BREAKPOINT) {
-			Common::String msg = Common::String::format("no such breakpoint %d\n", atoi(argv[1]));
-			debugWarning(argv[0], ERROR, msg);
-		}
+		Error error = ADAPTER->removeWatchpoint(atoi(argv[1]));
+		DebugPrintf("%s: %s\n", argv[0], error.getErrorDisplayStr().c_str());
 	} else {
 		DebugPrintf("Usage: %s <file path> <line> to break at line <line> of file <file path>\n", argv[0]);
 	}
@@ -153,28 +116,19 @@ bool Console::Cmd_RemoveWatchpoint(int argc, const char **argv) {
 
 bool Console::Cmd_EnableWatchpoint(int argc, const char **argv) {
 	if (argc == 2) {
-		int error = ADAPTER->enableWatchpoint(atoi(argv[1]));
-		if (!error) {
-			DebugPrintf("%s: OK\n", argv[0]);
-		} else if (error == DebuggerAdapter::NO_SUCH_BREAKPOINT) {
-			Common::String msg = Common::String::format("no such watchpoint %d\n", atoi(argv[1]));
-			debugWarning(argv[0], ERROR, msg);
-		}
+		Error error = ADAPTER->enableWatchpoint(atoi(argv[1]));
+		DebugPrintf ("%s: %s", argv[0], error.getErrorDisplayStr().c_str());
 	} else {
 		DebugPrintf("Usage: %s <id> to enable\n", argv[0]);
 	}
 	return true;
 }
 
+
 bool Console::Cmd_DisableWatchpoint(int argc, const char **argv) {
 	if (argc == 2) {
-		int error = ADAPTER->disableWatchpoint(atoi(argv[1]));
-		if (!error) {
-			DebugPrintf("%s: OK\n", argv[0]);
-		} else if (error == DebuggerAdapter::NO_SUCH_BREAKPOINT) {
-			Common::String msg = Common::String::format("no such watchpoint %d\n", atoi(argv[1]));
-			debugWarning(argv[0], ERROR, msg);
-		}
+		Error error = ADAPTER->disableWatchpoint(atoi(argv[1]));
+		DebugPrintf ("%s: %s", argv[0], error.getErrorDisplayStr().c_str());
 	} else {
 		DebugPrintf("Usage: %s <id> to disable\n", argv[0]);
 	}
@@ -200,13 +154,8 @@ bool Console::Cmd_Watch(int argc, const char **argv) {
 	 */
 
 	if (argc == 3) {
-		int error = ADAPTER->addWatch(argv[1], argv[2]);
-		if (!error) {
-			DebugPrintf("%s: OK\n", argv[0]);
-		} else if (error == DebuggerAdapter::NO_SUCH_SCRIPT) {
-			Common::String msg = Common::String::format("no such file %s\n", argv[1]);
-			debugWarning(argv[0], ERROR, msg);
-		}
+		Error error = ADAPTER->addWatch(argv[1], argv[2]);
+		DebugPrintf("%s: %s\n", argv[0], error.getErrorDisplayStr().c_str());
 	} else {
 		DebugPrintf("Usage: %s <file path> <name> to watch for <name> in file <file path>\n", argv[0]);
 	}
@@ -236,8 +185,8 @@ bool Console::Cmd_Info(int argc, const char **argv) {
 
 bool Console::Cmd_StepOver(int argc, const char **argv) {
 	if (argc == 1) {
-		int error = ADAPTER->stepOver();
-		return printError(error, Common::String(argv[0]));
+		Error error = ADAPTER->stepOver();
+		DebugPrintf("%s", error.getErrorDisplayStr().c_str());
 	} else {
 		DebugPrintf("Usage: %s to continue\n", argv[0]);
 		return true;
@@ -246,8 +195,8 @@ bool Console::Cmd_StepOver(int argc, const char **argv) {
 
 bool Console::Cmd_StepInto(int argc, const char **argv) {
 	if (argc == 1) {
-		int error = ADAPTER->stepInto();
-		return printError(error, Common::String(argv[0]));
+		Error error = ADAPTER->stepInto();
+		DebugPrintf("%s", error.getErrorDisplayStr().c_str());
 	} else {
 		DebugPrintf("Usage: %s to continue\n", argv[0]);
 		return true;
@@ -256,8 +205,8 @@ bool Console::Cmd_StepInto(int argc, const char **argv) {
 
 bool Console::Cmd_Continue(int argc, const char **argv) {
 	if (argc == 1) {
-		int error = ADAPTER->stepContinue();
-		return printError(error, Common::String(argv[0]));
+		Error error = ADAPTER->stepContinue();
+		DebugPrintf("%s", error.getErrorDisplayStr().c_str());
 	} else {
 		DebugPrintf("Usage: %s to continue\n", argv[0]);
 		return true;
@@ -266,8 +215,8 @@ bool Console::Cmd_Continue(int argc, const char **argv) {
 
 bool Console::Cmd_Finish(int argc, const char **argv) {
 	if (argc == 1) {
-		int error = ADAPTER->stepFinish();
-		return printError(error, Common::String(argv[0]));
+		Error error = ADAPTER->stepFinish();
+		DebugPrintf("%s", error.getErrorDisplayStr().c_str());
 	} else {
 		DebugPrintf("Usage: %s to continue\n", argv[0]);
 		return true;
@@ -275,22 +224,23 @@ bool Console::Cmd_Finish(int argc, const char **argv) {
 }
 
 bool Console::Cmd_List(int argc, const char **argv) {
-	int error = printSource();
-	if (error) {
-		printError(error, Common::String(argv[0]));
+	Error error = printSource();
+	if (error.errorLevel != SUCCESS) {
+		DebugPrintf(error.getErrorDisplayStr().c_str());
 	}
 	return true;
 }
 
 bool Console::Cmd_Print(int argc, const char **argv) {
 	if (argc == 2) {
-		int error = 0;
+		Error error = Error(SUCCESS, OK, 0);
 		Common::String temp = ADAPTER->readValue(argv[1], &error);
-		if (!error) {
+		if (error.errorLevel == SUCCESS) {
 			DebugPrintf("%s = %s \n", argv[1], temp.c_str());
 			return true;
 		} else {
-			return printError(error, Common::String(argv[0]));
+			DebugPrintf("%s, %s:", argv[0], error.getErrorDisplayStr().c_str());
+			return true;
 		}
 	} else {
 		DebugPrintf("Usage: %s <name> to print value of <name>\n", argv[0]);
@@ -302,14 +252,12 @@ bool Console::Cmd_Print(int argc, const char **argv) {
 bool Console::Cmd_Set(int argc, const char **argv) {
 	if (argc == 4 && !strncmp("=", argv[2], 1)) {
 		ScValue *val = nullptr;
-		int error = ADAPTER->setValue(argv[1], argv[3], val);
-		if (!error) {
+		Error error = ADAPTER->setValue(argv[1], argv[3], val);
+		if (error.errorLevel == SUCCESS) {
 			assert(val);
 			DebugPrintf("%s = %s\n", argv[1], val->getString());
-		} else if (error == DebuggerAdapter::NOT_ALLOWED) {
-			debugWarning(argv[0], ERROR, "Not allowed here. Perhaps did not break?\n");
 		} else {
-			debugWarning(argv[0], ERROR, "Unrecognized error\n");
+			DebugPrintf("%s", error.getErrorDisplayStr().c_str());
 		}
 	} else {
 		DebugPrintf("Usage: %s <name> = <value> to set <name> to <value>\n", argv[0]);
@@ -320,15 +268,11 @@ bool Console::Cmd_Set(int argc, const char **argv) {
 bool Console::Cmd_SetType(int argc, const char **argv) {
 	if (argc == 3) {
 		Common::String type = Common::String(argv[2]);
-		int error = ADAPTER->setType(Common::String(argv[1]), type);
-		if (error == DebuggerAdapter::OK) {
+		Error error = ADAPTER->setType(Common::String(argv[1]), type);
+		if (error.errorLevel == SUCCESS) {
 			DebugPrintf("%s: OK\n", argv[0]);
-		} else if (error == DebuggerAdapter::NOT_ALLOWED) {
-			debugWarning(argv[0], ERROR, "Not allowed here. Perhaps did not break?\n");
-		} else if (error == DebuggerAdapter::PARSE_ERROR) {
-			debugWarning(argv[0], ERROR, "Couldn't parse type\n");
 		} else {
-			debugWarning(argv[0], ERROR, "Unrecognized error\n");
+			DebugPrintf("%s", error.getErrorDisplayStr().c_str());
 		}
 	} else {
 		DebugPrintf("Usage: %s <name> <value> to set type of <name>", argv[0]);
@@ -353,18 +297,12 @@ bool Console::Cmd_ShowFps(int argc, const char **argv) {
 
 bool Console::Cmd_DumpRes(int argc, const char **argv) {
 	if (argc == 2) {
-		int error = 0;
+		Error error = Error(SUCCESS, OK, 0);
 		Common::String res = ADAPTER->readRes(Common::String(argv[1]), &error);
-		if (error == DebuggerAdapter::OK) {
+		if (error.errorLevel == SUCCESS) {
 			DebugPrintf("%s = %s \n", argv[1], res.c_str());
-		} else if (error == DebuggerAdapter::NOT_ALLOWED) {
-			debugWarning(argv[0], ERROR, "Not allowed here. Perhaps did not break?\n");
-		} else if (error == DebuggerAdapter::WRONG_TYPE) {
-			debugWarning(argv[0], ERROR, "Wrong type. Perhaps not a native?\n");
-		} else if (error == DebuggerAdapter::PARSE_ERROR) {
-			debugWarning(argv[0], ERROR, "Could not parse input\n");
 		} else {
-			debugWarning(argv[0], ERROR, "Unrecognized error\n");
+			DebugPrintf("%s: %s", argv[0], error.getErrorDisplayStr().c_str());
 		}
 	} else {
 		DebugPrintf("Usage: %s [true|false]\n", argv[0]);
@@ -415,7 +353,7 @@ bool Console::Cmd_SourcePath(int argc, const char **argv) {
 		DebugPrintf("Usage: %s <source path>\n", argv[0]);
 		return true;
 	} else {
-		if (ADAPTER->setSourcePath(Common::String(argv[1])) == DebuggerAdapter::OK) {
+		if (ADAPTER->setSourcePath(Common::String(argv[1])) == OK) {
 	   		DebugPrintf("Source path set to '%s'\n", ADAPTER->getSourcePath().c_str());
 		} else {
 			DebugPrintf("Error setting source path. Note that \"\" is illegal.");
@@ -448,17 +386,19 @@ void Console::notifyWatch(const char *filename, const char *symbol, const char *
 	onFrame();
 }
 
-int Console::printSource(int n) {
+Error Console::printSource(int n) {
 	int error = 0;
 	int *perror = &error;
 
 	if (!ADAPTER->_lastSource) {
-		error = DebuggerAdapter::NOT_ALLOWED;
+		return Error (ERROR, NOT_ALLOWED, 0);
+	} else if (!ADAPTER->getSourcePath().compareTo("")) {
+		return Error (ERROR, SOURCE_PATH_NOT_SET, 0);
 	} else {
 		assert(ADAPTER->_lastSource);
 		Common::Array<Common::String> strings = ADAPTER->_lastSource->getSurroundingLines(ADAPTER->getLastLine(), n, perror);
 		if (error != 0) {
-			DebugPrintf("Error retrieving source file\n");
+			return Error (ERROR, NO_SUCH_SOURCE, 0);
 		}
 		for (uint i = 0; i < strings.size(); i++) {
 			DebugPrintf("%s", strings[i].c_str());
@@ -466,7 +406,7 @@ int Console::printSource(int n) {
 		}
 	}
 
-	return error;
+	return Error(SUCCESS, OK, 0);
 }
 
 void Console::debugWarning(const Common::String &command, int warning_level, const Common::String &message) {
@@ -480,19 +420,9 @@ void Console::debugWarning(const Common::String &command, int warning_level, con
 		break;
 	default:
 		level = Common::String("ERROR");
+		break;
 	}
 	DebugPrintf("%s %s: %s", level.c_str(), command.c_str(), message.c_str());
 }
 
-bool Console::printError(int error, Common::String command) {
-		if (error == DebuggerAdapter::OK) {
-			return false;
-		} else if (error == DebuggerAdapter::NOT_ALLOWED) {
-			debugWarning(command.c_str(), ERROR, "Not allowed here. Perhaps did not break?\n");
-			return true;
-		} else {
-			debugWarning(command.c_str(), ERROR, "Unrecognized error\n");
-			return true;
-		}
-}
 } // end of namespace Wintermute

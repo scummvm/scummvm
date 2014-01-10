@@ -85,6 +85,7 @@ public:
 	ScValue *getProp(const char *name);
 	BaseScriptable *_valNative;
 	ScValue *_valRef;
+	Common::String getTypeStr();
 private:
 	bool _valBool;
 	int32 _valInt;

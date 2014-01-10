@@ -24,17 +24,13 @@
 #define WINTERMUTE_DEBUGGER_H
 
 #include "gui/debugger.h"
+#include "engines/wintermute/debugger_adapter.h"
 #include "engines/wintermute/base/scriptables/script.h"
 #define DEFAULT_SOURCE_PADDING 5
 
 namespace Wintermute {
 class WintermuteEngine;
 class Adapter;
-enum WarningLevel {
-	NOTICE,
-	WARNING,
-	ERROR
-};
 
 class Console : public GUI::Debugger {
 public:
@@ -86,7 +82,7 @@ public:
 	 */
 	bool Cmd_SourcePath(int argc, const char **argv);
 
-	int printSource(int n = DEFAULT_SOURCE_PADDING);
+	Error printSource(int n = DEFAULT_SOURCE_PADDING);
 	void debugWarning(const Common::String &command, int warning_level, const Common::String &message);
 	// For use by the Adapter
 	void notifyBreakpoint(const char *filename, int line);
@@ -94,7 +90,6 @@ public:
 	void notifyWatch(const char *filename, const char *symbol, const char *newValue);
 
 private:
-	bool printError(int error, Common::String command);
 	WintermuteEngine *_engineRef;
 };
 
