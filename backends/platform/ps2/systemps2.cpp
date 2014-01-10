@@ -392,14 +392,14 @@ void OSystem_PS2::initTimer(void) {
 	timerThread.stack            = _timerStack;
 	timerThread.stack_size       = TIMER_STACK_SIZE;
 	timerThread.func             = (void *)systemTimerThread;
-	timerThread.gp_reg			 = &_gp;
+	timerThread.gp_reg           = &_gp;
 
 	// soundthread's priority is higher than main- and timerthread
 	soundThread.initial_priority = thisThread.current_priority - 2;
 	soundThread.stack            = _soundStack;
 	soundThread.stack_size       = SOUND_STACK_SIZE;
 	soundThread.func             = (void *)systemSoundThread;
-	soundThread.gp_reg			 = &_gp;
+	soundThread.gp_reg           = &_gp;
 
 	_timerTid = CreateThread(&timerThread);
 	_soundTid = CreateThread(&soundThread);
@@ -459,33 +459,33 @@ void OSystem_PS2::soundThreadCallback(void) {
 
 			// demux data into 2 buffers, L and R
 			 __asm__ (
-				"move  $t2, %1\n\t"			// dest buffer right
-				"move  $t3, %0\n\t"			// dest buffer left
-				"lui   $t8, 0x7000\n\t"		// muxed buffer, fixed at 0x70000000
-				"addiu $t9, $0, 100\n\t"	// number of loops
-				"mtsab $0, 2\n\t"			// set qword shift = 2 byte
+				"move  $t2, %1\n\t"             // dest buffer right
+				"move  $t3, %0\n\t"             // dest buffer left
+				"lui   $t8, 0x7000\n\t"         // muxed buffer, fixed at 0x70000000
+				"addiu $t9, $0, 100\n\t"        // number of loops
+				"mtsab $0, 2\n\t"               // set qword shift = 2 byte
 
 				"loop:\n\t"
-				"  lq $t4,  0($t8)\n\t"		// load 8 muxed samples
-				"  lq $t5, 16($t8)\n\t"		// load 8 more muxed samples
+				"  lq $t4,  0($t8)\n\t"         // load 8 muxed samples
+				"  lq $t5, 16($t8)\n\t"         // load 8 more muxed samples
 
-				"  qfsrv $t6, $0, $t4\n\t"	// shift right for second
-				"  qfsrv $t7, $0, $t5\n\t"	// packing step (right channel)
+				"  qfsrv $t6, $0, $t4\n\t"      // shift right for second
+				"  qfsrv $t7, $0, $t5\n\t"      // packing step (right channel)
 
-				"  ppach $t4, $t5, $t4\n\t"	// combine left channel data
-				"  ppach $t6, $t7, $t6\n\t"	// right channel data
+				"  ppach $t4, $t5, $t4\n\t"     // combine left channel data
+				"  ppach $t6, $t7, $t6\n\t"     // right channel data
 
-				"  sq $t4, 0($t3)\n\t"		// write back
-				"  sq $t6, 0($t2)\n\t"		//
+				"  sq $t4, 0($t3)\n\t"          // write back
+				"  sq $t6, 0($t2)\n\t"          //
 
-				"  addiu $t9, -1\n\t"		// decrement loop counter
-				"  addiu $t2, 16\n\t"		// increment pointers
+				"  addiu $t9, -1\n\t"           // decrement loop counter
+				"  addiu $t2, 16\n\t"           // increment pointers
 				"  addiu $t3, 16\n\t"
 				"  addiu $t8, 32\n\t"
-				"  bnez  $t9, loop\n\t"		// loop
+				"  bnez  $t9, loop\n\t"         // loop
 					:  // outputs
 			 		: "r"(soundBufL), "r"(soundBufR)  // inputs
-				//  : "$t2", "$t3", "$t4", "$t5", "$t6", "$t7", "$t8", "$t9"  // destroyed
+				    //  : "$t2", "$t3", "$t4", "$t5", "$t6", "$t7", "$t8", "$t9"  // destroyed
 					: "$10", "$11", "$12", "$13", "$14", "$15", "$24", "$25"  // destroyed
 			);
 			// and feed it into the SPU
@@ -671,7 +671,7 @@ void OSystem_PS2::unlockScreen(void) {
 const OSystem::GraphicsMode OSystem_PS2::_graphicsMode = { NULL, NULL, 0 };
 
 const OSystem::GraphicsMode *OSystem_PS2::getSupportedGraphicsModes(void) const {
-    return &_graphicsMode;
+	return &_graphicsMode;
 }
 
 bool OSystem_PS2::setGraphicsMode(int mode) {
@@ -740,7 +740,7 @@ void OSystem_PS2::msgPrintf(int millis, const char *format, ...) {
 		Graphics::g_sysfont.drawString(&surf, str, posX, posY, 300 - posX, 1);
 		posY += 14;
 
-        lnSta = lnEnd + 1;
+		lnSta = lnEnd + 1;
 	}
 
 	uint8 *scrBuf = (uint8 *)memalign(64, 320 * 200);
@@ -916,7 +916,7 @@ bool OSystem_PS2::prepMC() {
 }
 
 void OSystem_PS2::makeConfigPath() {
-    FILE *src, *dst;
+	FILE *src, *dst;
 	char path[128], *buf;
 	int32 size;
 

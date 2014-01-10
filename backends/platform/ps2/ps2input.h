@@ -44,7 +44,7 @@ private:
 	int mapKey(int key, int mod);
 	bool getKeyEvent(Common::Event *event, uint16 buttonCode, bool down);
 	OSystem_PS2 *_system;
-	Ps2Pad		*_pad;
+	Ps2Pad *_pad;
 
 	uint16 _minx, _maxx, _miny, _maxy;
 

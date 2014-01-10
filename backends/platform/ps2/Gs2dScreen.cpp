@@ -77,7 +77,7 @@ void runAnimThread(Gs2dScreen *param);
 
 int vblankStartHandler(int cause) {
 	// start of VBlank period
-	if (g_VblankCmd) {			  // is there a new image waiting?
+	if (g_VblankCmd) {                // is there a new image waiting?
 		GS_DISPFB1 = g_VblankCmd; // show it.
 		g_VblankCmd = 0;
 		iSignalSema(g_VblankSema);
@@ -87,8 +87,8 @@ int vblankStartHandler(int cause) {
 
 int dmacHandler(int channel) {
 	if (g_DmacCmd && (channel == 2)) { // GS DMA transfer finished,
-		g_VblankCmd = g_DmacCmd;	   // we want to show the image
-		g_DmacCmd = 0;				   // when the next vblank occurs
+		g_VblankCmd = g_DmacCmd;   // we want to show the image
+		g_DmacCmd = 0;             // when the next vblank occurs
 		iSignalSema(g_DmacSema);
 	}
 	return 0;
@@ -118,7 +118,7 @@ Gs2dScreen::Gs2dScreen(uint16 width, uint16 height, TVMode tvMode) {
 
 	_vblankStartId = AddIntcHandler(INT_VBLANK_START, vblankStartHandler, 0);
 	_vblankEndId   = AddIntcHandler(INT_VBLANK_END, vblankEndHandler, 0);
-	_dmacId		   = AddDmacHandler(2, dmacHandler, 0);
+	_dmacId        = AddDmacHandler(2, dmacHandler, 0);
 
 	_dmaPipe = new DmaPipe(0x2000);
 
@@ -162,7 +162,7 @@ Gs2dScreen::Gs2dScreen(uint16 width, uint16 height, TVMode tvMode) {
 	// _tvMode = TV_NTSC;
 	printf("Setting up %s mode\n", (_tvMode == TV_PAL) ? "PAL" : "NTSC");
 
-    // set screen size, 640x512 for pal, 640x448 for ntsc
+	// set screen size, 640x512 for pal, 640x448 for ntsc
 	_tvWidth = 640;
 	_tvHeight = ((_tvMode == TV_PAL) ? 512 /*544*/ : 448);
 	kFullScreen[0].z = kFullScreen[1].z = 0;
@@ -186,7 +186,7 @@ Gs2dScreen::Gs2dScreen(uint16 width, uint16 height, TVMode tvMode) {
 	_clutPtrs[MOUSE]  = _clutPtrs[SCREEN] + 0x1000; // the cluts in PSMCT32 take up half a memory page each
 	_clutPtrs[TEXT]   = _clutPtrs[SCREEN] + 0x2000;
 	_texPtrs[SCREEN]  = _clutPtrs[SCREEN] + 0x3000;
-	_texPtrs[TEXT]    = 0;						  // these buffers are stored in the alpha gaps of the frame buffers
+	_texPtrs[TEXT]    = 0;                          // these buffers are stored in the alpha gaps of the frame buffers
 	_texPtrs[MOUSE]	  = 128 * 256 * 4;
 	_texPtrs[PRINTF]  = _texPtrs[MOUSE] + M_SIZE * M_SIZE * 4;
 
@@ -201,14 +201,14 @@ Gs2dScreen::Gs2dScreen(uint16 width, uint16 height, TVMode tvMode) {
 	_overlayFormat.bytesPerPixel = 2;
 
 	_overlayFormat.rLoss = 3;
-    _overlayFormat.gLoss = 3;
-    _overlayFormat.bLoss = 3;
-    _overlayFormat.aLoss = 7;
+	_overlayFormat.gLoss = 3;
+	_overlayFormat.bLoss = 3;
+	_overlayFormat.aLoss = 7;
 
-    _overlayFormat.rShift = 0;
-    _overlayFormat.gShift = 5;
-    _overlayFormat.bShift = 10;
-    _overlayFormat.aShift = 15;
+	_overlayFormat.rShift = 0;
+	_overlayFormat.gShift = 5;
+	_overlayFormat.bShift = 10;
+	_overlayFormat.aShift = 15;
 
 	// setup hardware now.
 	GS_CSR = CSR_RESET; // Reset GS
@@ -255,10 +255,10 @@ Gs2dScreen::Gs2dScreen(uint16 width, uint16 height, TVMode tvMode) {
 
 	_animStack = malloc(ANIM_STACK_SIZE);
 	animThread.initial_priority = thisThread.current_priority - 3;
-	animThread.stack	  = _animStack;
+	animThread.stack      = _animStack;
 	animThread.stack_size = ANIM_STACK_SIZE;
-	animThread.func		  = (void *)runAnimThread;
-	animThread.gp_reg	  = &_gp;
+	animThread.func       = (void *)runAnimThread;
+	animThread.gp_reg     = &_gp;
 
 	_animTid = CreateThread(&animThread);
 	assert(_animTid >= 0);
@@ -303,9 +303,9 @@ void Gs2dScreen::createAnimTextures(void) {
 			destPos++;
 		}
 		if (!(i & 1))
-			_dmaPipe->uploadTex( vramDest, 128, 0, 0,  GS_PSMT4HH, buf, 128, 16);
+			_dmaPipe->uploadTex( vramDest, 128, 0, 0, GS_PSMT4HH, buf, 128, 16);
 		else {
-			_dmaPipe->uploadTex( vramDest, 128, 0, 0,  GS_PSMT4HL, buf, 128, 16);
+			_dmaPipe->uploadTex( vramDest, 128, 0, 0, GS_PSMT4HL, buf, 128, 16);
 			vramDest += 128 * 16 * 4;
 		}
 		_dmaPipe->flush();
@@ -614,7 +614,7 @@ void Gs2dScreen::grabOverlay(uint16 *buf, uint16 pitch) {
 	for (uint32 cnt = 0; cnt < _height; cnt++) {
 		memcpy(buf, src, _width * 2);
 		buf += pitch;
-        src += _width;
+		src += _width;
 	}
 }
 
