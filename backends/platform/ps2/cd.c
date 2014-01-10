@@ -31,7 +31,7 @@ int cdvdInit(int mode)
     cdvdCd.server = NULL;
 
     do {
-        if ((ret = SifBindRpc(&cdvdCd, CDVD_INIT_BIND_RPC, 0)) < 0) {
+        if ((ret = SifBindRpc(&cdvdCd, (signed)CDVD_INIT_BIND_RPC, 0)) < 0) {
             return -1;
         }
         if (!cdvdCd.server) {
@@ -40,7 +40,7 @@ int cdvdInit(int mode)
     }
 	while(!cdvdCd.server);
 
-    pkt = sendBuffer;
+    pkt = (unsigned char *)sendBuffer;
     PUSHDATA( int, pkt, mode, i);
     pkt += i; len += i;
 
