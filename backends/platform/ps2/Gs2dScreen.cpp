@@ -77,7 +77,7 @@ void runAnimThread(Gs2dScreen *param);
 
 int vblankStartHandler(int cause) {
 	// start of VBlank period
-	if (g_VblankCmd) {			  // is there a new image waiting?
+	if (g_VblankCmd) {                // is there a new image waiting?
 		GS_DISPFB1 = g_VblankCmd; // show it.
 		g_VblankCmd = 0;
 		iSignalSema(g_VblankSema);
@@ -87,8 +87,8 @@ int vblankStartHandler(int cause) {
 
 int dmacHandler(int channel) {
 	if (g_DmacCmd && (channel == 2)) { // GS DMA transfer finished,
-		g_VblankCmd = g_DmacCmd;	   // we want to show the image
-		g_DmacCmd = 0;				   // when the next vblank occurs
+		g_VblankCmd = g_DmacCmd;   // we want to show the image
+		g_DmacCmd = 0;             // when the next vblank occurs
 		iSignalSema(g_DmacSema);
 	}
 	return 0;
@@ -186,7 +186,7 @@ Gs2dScreen::Gs2dScreen(uint16 width, uint16 height, TVMode mode) {
 	_clutPtrs[TEXT]   = _clutPtrs[SCREEN] + 0x2000;
 	_texPtrs[SCREEN]  = _clutPtrs[SCREEN] + 0x3000;
 	_texPtrs[TEXT]    = 0;                          // these buffers are stored in the alpha gaps of the frame buffers
-	_texPtrs[MOUSE]   = 128 * 256 * 4;
+	_texPtrs[MOUSE]	  = 128 * 256 * 4;
 	_texPtrs[PRINTF]  = _texPtrs[MOUSE] + M_SIZE * M_SIZE * 4;
 
 	_showOverlay = false;
@@ -249,17 +249,17 @@ Gs2dScreen::Gs2dScreen(uint16 width, uint16 height, TVMode mode) {
 	createAnimTextures();
 
 	// create animation thread
-	ee_thread_t animationThread, thisThread;
+	ee_thread_t animThread, thisThread;
 	ReferThreadStatus(GetThreadId(), &thisThread);
 
 	_animStack = malloc(ANIM_STACK_SIZE);
-	animationThread.initial_priority = thisThread.current_priority - 3;
-	animationThread.stack      = _animStack;
-	animationThread.stack_size = ANIM_STACK_SIZE;
-	animationThread.func       = (void *)runAnimThread;
-	animationThread.gp_reg     = &_gp;
+	animThread.initial_priority = thisThread.current_priority - 3;
+	animThread.stack      = _animStack;
+	animThread.stack_size = ANIM_STACK_SIZE;
+	animThread.func       = (void *)runAnimThread;
+	animThread.gp_reg     = &_gp;
 
-	_animTid = CreateThread(&animationThread);
+	_animTid = CreateThread(&animThread);
 	assert(_animTid >= 0);
 	StartThread(_animTid, this);
 }
@@ -302,9 +302,9 @@ void Gs2dScreen::createAnimTextures(void) {
 			destPos++;
 		}
 		if (!(i & 1))
-			_dmaPipe->uploadTex( vramDest, 128, 0, 0,  GS_PSMT4HH, buf, 128, 16);
+			_dmaPipe->uploadTex( vramDest, 128, 0, 0, GS_PSMT4HH, buf, 128, 16);
 		else {
-			_dmaPipe->uploadTex( vramDest, 128, 0, 0,  GS_PSMT4HL, buf, 128, 16);
+			_dmaPipe->uploadTex( vramDest, 128, 0, 0, GS_PSMT4HL, buf, 128, 16);
 			vramDest += 128 * 16 * 4;
 		}
 		_dmaPipe->flush();

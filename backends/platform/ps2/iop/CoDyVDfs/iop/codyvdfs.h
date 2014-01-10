@@ -51,20 +51,20 @@ enum ReadModes {
 };
 
 enum {
-    CdDiskNone = 0x00,
-    CdDiskDetect, // 0x01
-    CdDiskDetectCD, // 0x02
-    CdDiskDetectDVD, // 0x03
-    CdDiskDetectUnk = 0x05,
-    CdDiskCDPS1 = 0x10,
-    CdDiskCDDAPS1 = 0x11,
-    CdDiskCDPS2 = 0x12,
-    CdDiskCDDAPS2 = 0x13,
-    CdDiskDVDPS2 = 0x14,
-    CdDiskDVDV2 = 0xFC,
-    CdDiskCDDA = 0xFD,
-    CdDiskDVDV = 0xFE,
-    CdDiskIllegal = 0xFF
+	CdDiskNone = 0x00,
+	CdDiskDetect, // 0x01
+	CdDiskDetectCD, // 0x02
+	CdDiskDetectDVD, // 0x03
+	CdDiskDetectUnk = 0x05,
+	CdDiskCDPS1 = 0x10,
+	CdDiskCDDAPS1 = 0x11,
+	CdDiskCDPS2 = 0x12,
+	CdDiskCDDAPS2 = 0x13,
+	CdDiskDVDPS2 = 0x14,
+	CdDiskDVDV2 = 0xFC,
+	CdDiskCDDA = 0xFD,
+	CdDiskDVDV = 0xFE,
+	CdDiskIllegal = 0xFF
 };
 
 #define DISC_NOT_READY(type) ((type > CdDiskNone) && (type < CdDiskCDPS1) && (type != CdDiskDetectUnk))
