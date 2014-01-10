@@ -101,7 +101,8 @@ void Ps2Pad::initPad(void) {
 					_padStatus = STAT_OKAY;
 					break;
 				case STAT_OKAY:
-					// pad is already initialized
+				case STAT_NONE:
+					// pad is already initialized (or not there)
 					break;
 			}
 		} else {
