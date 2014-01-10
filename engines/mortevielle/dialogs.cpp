@@ -35,13 +35,17 @@
 
 namespace Mortevielle {
 
+DialogManager::DialogManager(MortevielleEngine *vm) {
+	_vm = vm;
+}
+
 /**
  * Alert function - Show
  * @remarks	Originally called 'do_alert'
  */
 int DialogManager::show(const Common::String &msg) {
 	// Make a copy of the current screen surface for later restore
-	_vm->_backgroundSurface.copyFrom(_vm->_screenSurface);
+	_vm->_backgroundSurface.copyFrom(*_vm->_screenSurface);
 
 	_vm->_mouse->hideMouse();
 	while (_vm->keyPressed())
@@ -63,7 +67,7 @@ int DialogManager::show(const Common::String &msg) {
 	} else {
 		drawAlertBox(8, 7, colNumb);
 		int i = 0;
-		_vm->_screenSurface._textPos.y = 70;
+		_vm->_screenSurface->_textPos.y = 70;
 		do {
 			curPos.x = 320;
 			Common::String displayStr = "";
@@ -72,9 +76,9 @@ int DialogManager::show(const Common::String &msg) {
 				displayStr += alertStr[i];
 				curPos.x -= 3;
 			}
-			_vm->_screenSurface.putxy(curPos.x, _vm->_screenSurface._textPos.y);
-			_vm->_screenSurface._textPos.y += 6;
-			_vm->_screenSurface.drawString(displayStr, 4);
+			_vm->_screenSurface->putxy(curPos.x, _vm->_screenSurface->_textPos.y);
+			_vm->_screenSurface->_textPos.y += 6;
+			_vm->_screenSurface->drawString(displayStr, 4);
 			++i;
 		} while (alertStr[i] != ']');
 	}
@@ -132,14 +136,14 @@ int DialogManager::show(const Common::String &msg) {
 						Common::String tmpStr(" ");
 						tmpStr += buttonStr[id];
 						tmpStr += " ";
-						_vm->_screenSurface.drawString(tmpStr, 0);
+						_vm->_screenSurface->drawString(tmpStr, 0);
 					}
 					setPosition(ix, coldep, esp);
 
 					Common::String tmp2 = " ";
 					tmp2 += buttonStr[ix];
 					tmp2 += " ";
-					_vm->_screenSurface.drawString(tmp2, 1);
+					_vm->_screenSurface->drawString(tmp2, 1);
 
 					id = ix;
 					_vm->_mouse->showMouse();
@@ -153,7 +157,7 @@ int DialogManager::show(const Common::String &msg) {
 			Common::String tmp3(" ");
 			tmp3 += buttonStr[id];
 			tmp3 += " ";
-			_vm->_screenSurface.drawString(tmp3, 0);
+			_vm->_screenSurface->drawString(tmp3, 0);
 
 			id = 0;
 			_vm->_mouse->showMouse();
@@ -169,12 +173,12 @@ int DialogManager::show(const Common::String &msg) {
 		Common::String tmp4(" ");
 		tmp4 += buttonStr[1];
 		tmp4 += " ";
-		_vm->_screenSurface.drawString(tmp4, 1);
+		_vm->_screenSurface->drawString(tmp4, 1);
 	}
 	_vm->_mouse->showMouse();
 
 	/* Restore the background area */
-	_vm->_screenSurface.copyFrom(_vm->_backgroundSurface, 0, 0);
+	_vm->_screenSurface->copyFrom(_vm->_backgroundSurface, 0, 0);
 
 	return id;
 }
@@ -221,7 +225,7 @@ void DialogManager::decodeAlertDetails(Common::String inputStr, int &choiceNumb,
 }
 
 void DialogManager::setPosition(int ji, int coldep, int esp) {
-	_vm->_screenSurface.putxy(coldep + (40 + esp) * (ji - 1), 98);
+	_vm->_screenSurface->putxy(coldep + (40 + esp) * (ji - 1), 98);
 }
 
 /**
@@ -235,9 +239,9 @@ void DialogManager::drawAlertBox(int firstLine, int lineNum, int width) {
 	int y = (firstLine - 1) * 8;
 	int xx = x + width;
 	int yy = y + (lineNum * 8);
-	_vm->_screenSurface.fillRect(15, Common::Rect(x, y, xx, yy));
-	_vm->_screenSurface.fillRect(0, Common::Rect(x, y + 2, xx, y + 4));
-	_vm->_screenSurface.fillRect(0, Common::Rect(x, yy - 4, xx, yy - 2));
+	_vm->_screenSurface->fillRect(15, Common::Rect(x, y, xx, yy));
+	_vm->_screenSurface->fillRect(0, Common::Rect(x, y + 2, xx, y + 4));
+	_vm->_screenSurface->fillRect(0, Common::Rect(x, yy - 4, xx, yy - 2));
 }
 
 /**
@@ -259,13 +263,13 @@ void DialogManager::setButtonText(Common::String c, int coldep, int nbcase, Comm
 		while (str[l].size() < 3)
 			str[l] += ' ';
 
-		_vm->_screenSurface.putxy(x, 98);
+		_vm->_screenSurface->putxy(x, 98);
 
 		Common::String tmp(" ");
 		tmp += str[l];
 		tmp += " ";
 
-		_vm->_screenSurface.drawString(tmp, 0);
+		_vm->_screenSurface->drawString(tmp, 0);
 		x += esp + 40;
 	}
 }
@@ -296,7 +300,7 @@ bool DialogManager::showKnowledgeCheck() {
 		_vm->clearScreen();
 		_vm->_mouse->showMouse();
 		int dialogHeight = 23;
-		_vm->_screenSurface.fillRect(15, Common::Rect(0, 14, 630, dialogHeight));
+		_vm->_screenSurface->fillRect(15, Common::Rect(0, 14, 630, dialogHeight));
 		Common::String tmpStr = _vm->getString(textIndexArr[indx]);
 		_vm->_text->displayStr(tmpStr, 20, 15, 100, 2, 0);
 
@@ -333,7 +337,7 @@ bool DialogManager::showKnowledgeCheck() {
 		}
 		coor[lastOption - firstOption + 2]._enabled = false;
 		int rep = 6;
-		_vm->_screenSurface.drawBox(80, 33, 40 + (maxLength * rep), (lastOption - firstOption) * 8 + 16, 15);
+		_vm->_screenSurface->drawBox(80, 33, 40 + (maxLength * rep), (lastOption - firstOption) * 8 + 16, 15);
 		rep = 0;
 
 		prevChoice = 0;
@@ -391,17 +395,17 @@ void DialogManager::drawF3F8() {
 	Common::String f8 = _vm->getEngineString(S_F8);
 
 	// Write the F3 and F8 text strings
-	_vm->_screenSurface.putxy(3, 44);
-	_vm->_screenSurface.drawString(f3, 5);
-	_vm->_screenSurface._textPos.y = 51;
-	_vm->_screenSurface.drawString(f8, 5);
+	_vm->_screenSurface->putxy(3, 44);
+	_vm->_screenSurface->drawString(f3, 5);
+	_vm->_screenSurface->_textPos.y = 51;
+	_vm->_screenSurface->drawString(f8, 5);
 
 	// Get the width of the written text strings
-	int f3Width = _vm->_screenSurface.getStringWidth(f3);
-	int f8Width = _vm->_screenSurface.getStringWidth(f8);
+	int f3Width = _vm->_screenSurface->getStringWidth(f3);
+	int f8Width = _vm->_screenSurface->getStringWidth(f8);
 
 	// Write out the bounding box
-	_vm->_screenSurface.drawBox(0, 42, MAX(f3Width, f8Width) + 6, 18, 7);
+	_vm->_screenSurface->drawBox(0, 42, MAX(f3Width, f8Width) + 6, 18, 7);
 }
 
 /**
@@ -466,7 +470,4 @@ void DialogManager::displayIntroFrame2() {
 	_vm->handleDescriptionText(2, kDialogStringIndex + 143);
 }
 
-void DialogManager::setParent(MortevielleEngine *vm) {
-	_vm = vm;
-}
 } // End of namespace Mortevielle

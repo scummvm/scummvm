@@ -37,7 +37,7 @@ namespace Mortevielle {
 
 static const char SAVEGAME_ID[4] = { 'M', 'O', 'R', 'T' };
 
-void SavegameManager::setParent(MortevielleEngine *vm) {
+SavegameManager::SavegameManager(MortevielleEngine *vm) {
 	_vm = vm;
 }
 
@@ -191,7 +191,7 @@ void SavegameManager::writeSavegameHeader(Common::OutSaveFile *out, const Common
 
 	// Create a thumbnail and save it
 	Graphics::Surface *thumb = new Graphics::Surface();
-	Graphics::Surface s = g_vm->_screenSurface.lockArea(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
+	Graphics::Surface s = g_vm->_screenSurface->lockArea(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
 
 	::createThumbnail(thumb, (const byte *)s.getPixels(), SCREEN_WIDTH, SCREEN_HEIGHT, thumbPalette);
 	Graphics::saveThumbnail(*out, *thumb);

@@ -49,13 +49,13 @@ MortevielleEngine *g_vm;
 MortevielleEngine::MortevielleEngine(OSystem *system, const MortevielleGameDescription *gameDesc):
 		Engine(system), _gameDescription(gameDesc), _randomSource("mortevielle") {
 	g_vm = this;
-	_debugger.setParent(this);
-	_dialogManager.setParent(this);
-	_screenSurface.setParent(this);
+	_debugger = new Debugger(this);
+	_dialogManager = new DialogManager(this);
+	_screenSurface = new ScreenSurface(this);
 	_mouse = new MouseHandler(this);
 	_text = new TextHandler(this);
 	_soundManager = new SoundManager(this, _mixer);
-	_savegameManager.setParent(this);
+	_savegameManager = new SavegameManager(this);
 	_menu = new Menu(this);
 
 	_lastGameFrame = 0;
@@ -105,9 +105,13 @@ MortevielleEngine::MortevielleEngine(OSystem *system, const MortevielleGameDescr
 
 MortevielleEngine::~MortevielleEngine() {
 	delete _menu;
+	delete _savegameManager;
 	delete _soundManager;
 	delete _text;
 	delete _mouse;
+	delete _screenSurface;
+	delete _dialogManager;
+	delete _debugger;
 
 	free(_curPict);
 	free(_curAnim);
@@ -144,7 +148,7 @@ bool MortevielleEngine::canSaveGameStateCurrently() {
  * Load in a savegame at the specified slot number
  */
 Common::Error MortevielleEngine::loadGameState(int slot) {
-	return _savegameManager.loadGame(slot);
+	return _savegameManager->loadGame(slot);
 }
 
 /**
@@ -154,7 +158,7 @@ Common::Error MortevielleEngine::saveGameState(int slot, const Common::String &d
 	if (slot == 0)
 		return Common::kWritingFailed;
 
-	return _savegameManager.saveGame(slot, desc);
+	return _savegameManager->saveGame(slot, desc);
 }
 
 /**
@@ -200,7 +204,7 @@ Common::ErrorCode MortevielleEngine::initialize() {
 	DebugMan.addDebugChannel(kMortevielleGraphics, "graphics", "Graphics debugging");
 
 	// Set up an intermediate screen surface
-	_screenSurface.create(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
+	_screenSurface->create(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
 
 	_txxFileFl = false;
 	// Load texts from TXX files
@@ -209,7 +213,7 @@ Common::ErrorCode MortevielleEngine::initialize() {
 	// Load the mort.dat resource
 	Common::ErrorCode result = loadMortDat();
 	if (result != Common::kNoError) {
-		_screenSurface.free();
+		_screenSurface->free();
 		return result;
 	}
 
@@ -282,7 +286,7 @@ Common::ErrorCode MortevielleEngine::loadMortDat() {
 
 		if (!strncmp(dataType, "FONT", 4)) {
 			// Font resource
-			_screenSurface.readFontData(f, dataSize);
+			_screenSurface->readFontData(f, dataSize);
 		} else if (!strncmp(dataType, "SSTR", 4)) {
 			readStaticStrings(f, dataSize, kStaticStrings);
 		} else if ((!strncmp(dataType, "GSTR", 4)) && (!_txxFileFl)) {
@@ -380,13 +384,13 @@ Common::Error MortevielleEngine::run() {
 	adzon();
 	resetVariables();
 	if (loadSlot != 0)
-		_savegameManager.loadSavegame(generateSaveFilename(loadSlot));
+		_savegameManager->loadSavegame(generateSaveFilename(loadSlot));
 
 	// Run the main game loop
 	mainGame();
 
 	// Cleanup (allocated in initialize())
-	_screenSurface.free();
+	_screenSurface->free();
 	free(_soundManager->_cfiphBuffer);
 	free(_cfiecBuffer);
 
@@ -397,13 +401,13 @@ Common::Error MortevielleEngine::run() {
  * Show the game introduction
  */
 void MortevielleEngine::showIntroduction() {
-	_dialogManager.displayIntroScreen(false);
-	_dialogManager.checkForF8(142, false);
+	_dialogManager->displayIntroScreen(false);
+	_dialogManager->checkForF8(142, false);
 	if (shouldQuit())
 		return;
 
-	_dialogManager.displayIntroFrame2();
-	_dialogManager.checkForF8(143, true);
+	_dialogManager->displayIntroFrame2();
+	_dialogManager->checkForF8(143, true);
 	if (shouldQuit())
 		return;
 
