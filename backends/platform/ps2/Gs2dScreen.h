@@ -49,7 +49,7 @@ public:
 	uint16 getWidth(void);
 	uint16 getHeight(void);
 
-	void copyPrintfOverlay(const uint8* buf);
+	void copyPrintfOverlay(const uint8 *buf);
 	void clearPrintfOverlay(void);
 
 	Graphics::Surface *lockScreen();

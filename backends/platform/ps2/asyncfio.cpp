@@ -90,7 +90,7 @@ void AsyncFio::read(int fd, void *dest, unsigned int len) {
 	checkSync();
 	assert(fd < MAX_HANDLES);
 	_runningOp = _ioSlots + fd;
-	fileXioRead(fd, (unsigned char*)dest, len);
+	fileXioRead(fd, (unsigned char *)dest, len);
 	SignalSema(_ioSema);
 }
 
@@ -99,7 +99,7 @@ void AsyncFio::write(int fd, const void *src, unsigned int len) {
 	checkSync();
 	assert(fd < MAX_HANDLES);
 	_runningOp = _ioSlots + fd;
-	fileXioWrite(fd, (unsigned char*)src, len);
+	fileXioWrite(fd, (unsigned char *)src, len);
 	SignalSema(_ioSema);
 }
 

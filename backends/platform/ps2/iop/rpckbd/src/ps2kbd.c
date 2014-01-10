@@ -1089,7 +1089,7 @@ void *ps2kbd_rpc_server(int fno, void *data, int size) {
 		ps2kbd_rpc_flushbuffer();
 		break;
 	case KBD_RPC_SETLEDS:
-		ps2kbd_rpc_setleds(*(u8*) data);
+		ps2kbd_rpc_setleds(*(u8 *) data);
 		break;
 	case KBD_RPC_RESETKEYMAP:
 		ps2kbd_rpc_resetkeymap();
@@ -1129,7 +1129,7 @@ int ps2kbd_init_rpc(void) {
 	int th;
 
 	param.attr         = 0x02000000;
-	param.thread       = (void*)ps2kbd_start_rpc;
+	param.thread       = (void *)ps2kbd_start_rpc;
 	param.priority 	  = 40;
 	param.stacksize    = 0x800;
 	param.option      = 0;
