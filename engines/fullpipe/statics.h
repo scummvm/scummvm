@@ -257,6 +257,9 @@ public:
 struct MovTable {
 	int count;
 	int16 *movs;
+
+	MovTable() { count = 0; movs = 0; }
+	~MovTable() { free(movs); }
 };
 
 } // End of namespace Fullpipe
