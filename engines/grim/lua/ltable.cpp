@@ -3,9 +3,6 @@
 ** See Copyright Notice in lua.h
 */
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_setjmp
-#define FORBIDDEN_SYMBOL_EXCEPTION_longjmp
-
 #include "engines/grim/lua/lauxlib.h"
 #include "engines/grim/lua/lmem.h"
 #include "engines/grim/lua/lobject.h"

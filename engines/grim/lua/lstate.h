@@ -8,8 +8,6 @@
 
 #include "engines/grim/lua/lobject.h"
 
-#include <setjmp.h>
-
 namespace Grim {
 
 #define MAX_C_BLOCKS 10
@@ -98,7 +96,7 @@ struct LState {
 	C_Lua_Stack Cstack;  // C2lua struct
 	struct FuncState *mainState, *currState;  // point to local structs in yacc
 	struct LexState *lexstate;  // point to local struct in yacc
-	jmp_buf *errorJmp;  // current error recover point
+	bool errorJmp;  // current error recover point
 	lua_Task *task; // handle to task
 	lua_Task *some_task;
 	uint32 id; // current id of task

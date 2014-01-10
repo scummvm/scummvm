@@ -1,5 +1,3 @@
-#define FORBIDDEN_SYMBOL_EXCEPTION_setjmp
-#define FORBIDDEN_SYMBOL_EXCEPTION_longjmp
 
 #include "common/endian.h"
 #include "common/debug.h"
