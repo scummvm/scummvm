@@ -57,7 +57,7 @@
  */
 const char *gScummVMVersion = SCUMMVM_VERSION;
 #ifdef __PLAYSTATION2__
-const char *gScummVMBuildDate = "2013-05-31"; /* ScummVM 1.6.0 Release */
+const char *gScummVMBuildDate = "Git Master"; /* ScummVM Git Master */
 const char *gScummVMVersionDate = SCUMMVM_VERSION " - PlayStation2";
 const char *gScummVMFullVersion = "ScummVM " SCUMMVM_VERSION " - PlayStation2";
 #else
