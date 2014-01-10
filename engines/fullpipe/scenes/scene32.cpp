@@ -120,7 +120,7 @@ void sceneHandler32_startCactus() {
 void sceneHandler32_spin(ExCommand *cmd) {
 	MessageQueue *mq = g_fp->_globalMessageQueueList->getMessageQueueById(cmd->_parId);
 
-	if (!mq || mq->getCount() <= 0)
+	if (!mq || mq->getCount() == 0)
 		return;
 
 	ExCommand *ex = mq->getExCommandByIndex(0);
@@ -171,7 +171,7 @@ void sceneHandler32_startFlagRight() {
 void sceneHandler32_trySit(ExCommand *cmd) {
 	MessageQueue *mq = g_fp->_globalMessageQueueList->getMessageQueueById(cmd->_parId);
 
-	if (!mq || !mq->getCount() <= 0)
+	if (!mq || mq->getCount() == 0)
 		return;
 
 	ExCommand *ex = mq->getExCommandByIndex(0);
