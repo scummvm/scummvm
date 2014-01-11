@@ -838,6 +838,44 @@ void StaticANIObject::updateStepPos() {
 	setOXY(ox + x, oy + y);
 }
 
+Common::Point *StaticANIObject::calcNextStep(Common::Point *pRes) {
+	if (!_movement) {
+		pRes->x = 0;
+		pRes->y = 0;
+
+		return pRes;
+	}
+
+	Common::Point point;
+
+	_movement->calcSomeXY(point, 1);
+
+	int resX = point.x;
+	int resY = point.y;
+
+	int pointN, offset;
+
+	if (_someDynamicPhaseIndex <= 0) {
+		pointN = _stepArray.getCurrPointIndex();
+		offset = _stepArray.getPointsCount() - _stepArray.getCurrPointIndex();
+	} else {
+		pointN = _stepArray.getCurrPointIndex();
+		offset = 1 - _movement->_currDynamicPhaseIndex + _someDynamicPhaseIndex;
+	}
+
+	if (pointN >= 0) {
+		_stepArray.getPoint(&point, pointN, offset);
+
+		resX += point.x;
+		resY += point.y;
+	}
+
+	pRes->x = resX;
+	pRes->y = resY;
+
+	return pRes;
+}
+
 void StaticANIObject::stopAnim_maybe() {
 	debug(6, "StaticANIObject::stopAnim_maybe()");
 
