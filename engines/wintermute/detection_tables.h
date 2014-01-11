@@ -282,6 +282,19 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO0()
 	},
+	// Dirty Split (Czech)
+	{
+		"dirtysplit",
+		"",
+		{
+			{"czech.dcp", 0, "08a71446467cf8f9444cfea446b46ad6", 127697934},
+			{"data.dcp", 0, "8b4b81b718bf65f30a67fc0b1e329eb5", 88577623},
+		},
+		Common::CZ_CZE,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
 	// Dirty Split (English)
 	{
 		"dirtysplit",
@@ -292,12 +305,52 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO0()
 	},
+	// Dirty Split (French)
+	{
+		"dirtysplit",
+		"",
+		{
+			{"french.dcp", 0, "a0508dedebd0fe478d0158fa4c2a1136", 125534323},
+			{"data.dcp", 0, "e6d70c7f5d181b761cfcf974adf9186a", 88577623},
+			AD_LISTEND
+		},
+		Common::FR_FRA,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
 	// Dirty Split (German)
 	{
 		"dirtysplit",
 		"",
 		AD_ENTRY1s("data.dcp", "139d8a25579e969f8b37d20e6e3de5f9", 92668291),
 		Common::DE_DEU,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	// Dirty Split (Italian)
+	{
+		"dirtysplit",
+		"",
+		{
+			{"italian.dcp", 0, "8108807fbd8af70be1ec452d0fd1131b", 125513726},
+			{"data.dcp", 0, "35a150e22af274185883fdbb142c6fb1", 88577623},
+		},
+		Common::IT_ITA,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	// Dirty Split (Spanish)
+	{
+		"dirtysplit",
+		"",
+		{
+			{"spanish.dcp", 0, "b3982c0a5e85b42e1e38240fef004aa4", 164428596},
+			{"data.dcp", 0, "63766d6c68b9f00b632ea1736fc8a95c", 88577621},
+		},
+		Common::ES_ESP,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
 		GUIO0()
