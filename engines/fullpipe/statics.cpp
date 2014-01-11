@@ -944,7 +944,24 @@ void StaticANIObject::stopAnim_maybe() {
 }
 
 void StaticANIObject::adjustSomeXY() {
-	warning("STUB: StaticANIObject::adjustSomeXY()");
+	if (_movement) {
+		Common::Point point;
+
+		_movement->calcSomeXY(point, 0);
+
+		int diff = abs(point.y) - abs(point.x);
+
+		_movement->calcSomeXY(point, 1);
+
+		if (diff > 0)
+			_ox += point.x;
+		else
+			_oy += point.y;
+
+		_statics = _movement->_staticsObj2;
+		_movement = 0;
+		_someDynamicPhaseIndex = -1;
+	}
 }
 
 MessageQueue *StaticANIObject::changeStatics1(int msgNum) {
