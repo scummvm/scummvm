@@ -214,7 +214,7 @@ void SoundItem::setSoundParams(bool playOnceAfterRandomCountdown, int16 minCount
 		_minCountdown = minCountdown;
 	if (maxCountdown > 0)
 		_maxCountdown = maxCountdown;
-	if (firstMinCountdown >= firstMaxCountdown)
+	if (firstMinCountdown > firstMaxCountdown)
 		_currCountdown = firstMinCountdown;
 	else if (firstMinCountdown > 0 && firstMaxCountdown > 0 && firstMinCountdown < firstMaxCountdown)
 		_currCountdown = _vm->_rnd->getRandomNumberRng(firstMinCountdown, firstMaxCountdown);
