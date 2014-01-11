@@ -664,7 +664,16 @@ void StaticANIObject::initMovements() {
 }
 
 void StaticANIObject::preloadMovements(MovTable *mt) {
-	warning("STUB: StaticANIObject::preloadMovements()");
+	if ( mt ) {
+		for (uint i = 0; i < _movements.size(); i++) {
+			Movement *mov = (Movement *)_movements[i];
+
+			if (mt->movs[i] == 1)
+				mov->loadPixelData();
+			else if (mt->movs[i] == 2)
+				mov->freePixelData();
+		}
+	}
 }
 
 Common::Point *StaticANIObject::getCurrDimensions(Common::Point &p) {
@@ -1678,6 +1687,10 @@ void Movement::loadPixelData() {
 
 	if (!(mov->_staticsObj1->_staticsId & 0x4000))
 		mov->_staticsObj1->getPixelData();
+}
+
+void Movement::freePixelData() {
+	warning("STUB: Movement::freePixelData()");
 }
 
 void Movement::removeFirstPhase() {

@@ -164,6 +164,7 @@ class Movement : public GameObject {
 	void gotoLastFrame();
 
 	void loadPixelData();
+	void freePixelData();
 
 	void draw(bool flipFlag, int angle);
 };
