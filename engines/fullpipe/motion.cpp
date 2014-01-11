@@ -1920,6 +1920,110 @@ int MGM::recalcOffsets(int idx, int st1idx, int st2idx, bool flip, bool flop) {
 }
 
 Common::Point *MGM::calcLength(Common::Point *point, Movement *mov, int x, int y, int *x1, int *y1, int flag) {
+#if 0
+	Common::Point point1;
+	Common::Point point2;
+
+	v9 = mov->calcSomeXY(mov, &point1, 0);
+	v10 = v9->x;
+	v36 = v9->x;
+	v37 = v9->y;
+	v11 = abs(v9->x);
+	v12 = abs(v37);
+	v13 = v12 > v11;
+	v35 = v12 > v11;
+	v17 = 0;
+	if (v12 > v11) {
+		if (mov->calcSomeXY(&point2, 0)->y) {
+			COERCE_DOUBLE(point1.x) = (double)y;
+			v16 = mov->calcSomeXY(&point2, 0);
+			v17 = (int)((double)point1.x / v16->y);
+		}
+	} else if (mov->calcSomeXY(&point1, 0)->x) {
+		COERCE_DOUBLE(point1.x) = (double)x;
+		v14 = mov->calcSomeXY(mov, &point2, 0);
+		v17 = (int)((double)point1.x / v14->y);
+	}
+
+	if (v17 < 0)
+		v17 = 0;
+
+	*x1 = v17;
+	if (flag) {
+		if (v13) {
+			v24 = abs(y);
+			v1 = 1;
+			if (abs(v37 * v17 + mov->calcSomeXY((POINT *)&x, 0)->y) >= v24) {
+			LABEL_24:
+				v23 = v1;
+			} else {
+				while (1) {
+					v25 = mov->_currMovement;
+					v26 = v25 ? v25->_dynamicPhases.size() : mov->_dynamicPhases.size();
+					v23 = v1;
+					if (v1 >= v26)
+						break;
+					++v1;
+					if (abs(v37 * v17 + mov->calcSomeXY((POINT *)&x, 0)->y) >= v24)
+						goto LABEL_24;
+				}
+			}
+		} else {
+			v19 = v10 * v17;
+			v2 = 1;
+			v20 = abs(x);
+			if (abs(v19 + mov->calcSomeXY((POINT *)&x, 0)->x) >= v20) {
+			LABEL_17:
+				v23 = v2;
+			} else {
+				while (1) {
+					v21 = mov->_currMovement;
+					v22 = v21 ? v21->_dynamicPhases.size() : mov->_dynamicPhases.size();
+					v23 = v2;
+					if (v2 >= v22)
+						break;
+					++v2;
+					if (abs(v19 + mov->calcSomeXY((POINT *)&x, 0)->x) >= v20)
+						goto LABEL_17;
+				}
+			}
+		}
+		v10 = v36;
+		v27 = v23 - 1;
+		v18 = y1;
+		*y1 = v27;
+	} else {
+		v18 = y1;
+		*y1 = -1;
+	}
+
+	v28 = 0;
+	v29 = 0;
+	v30 = *v18 == 0;
+	v31 = *v18 < 0;
+
+	if (!*v18) {
+		*v18 = -1;
+		v30 = *v18 == 0;
+		v31 = *v18 < 0;
+	}
+
+	if (!v31 && !v30) {
+		++*x1;
+		v32 = *v18;
+		v33 = mov->calcSomeXY((POINT *)&x, 0);
+		v28 = v33->x;
+		v29 = v33->y;
+
+		if (v35)
+			v28 = v10;
+		else
+			v29 = v37;
+	}
+
+	point->x = v28 + v10 * v17;
+	point->y = v29 + v37 * v17;
+#endif
 	warning("STUB: MGM::calcLength()");
 
 	return point;
@@ -1957,7 +2061,7 @@ ExCommand2 *MGM::buildExCommand2(Movement *mov, int objId, int x1, int y1, Commo
 
 			y2->y -= x2->y;
 
-			if ( !y2->y )
+			if (!y2->y)
 				x2->y = 0;
 		}
 	}
