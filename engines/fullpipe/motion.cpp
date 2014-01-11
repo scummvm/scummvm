@@ -1919,114 +1919,86 @@ int MGM::recalcOffsets(int idx, int st1idx, int st2idx, bool flip, bool flop) {
 	return 0;
 }
 
-Common::Point *MGM::calcLength(Common::Point *point, Movement *mov, int x, int y, int *x1, int *y1, int flag) {
-#if 0
-	Common::Point point1;
-	Common::Point point2;
+Common::Point *MGM::calcLength(Common::Point *pRes, Movement *mov, int x, int y, int *x1, int *y1, int flag) {
+	Common::Point point;
 
-	v9 = mov->calcSomeXY(mov, &point1, 0);
-	v10 = v9->x;
-	v36 = v9->x;
-	v37 = v9->y;
-	v11 = abs(v9->x);
-	v12 = abs(v37);
-	v13 = v12 > v11;
-	v35 = v12 > v11;
-	v17 = 0;
-	if (v12 > v11) {
-		if (mov->calcSomeXY(&point2, 0)->y) {
-			COERCE_DOUBLE(point1.x) = (double)y;
-			v16 = mov->calcSomeXY(&point2, 0);
-			v17 = (int)((double)point1.x / v16->y);
-		}
-	} else if (mov->calcSomeXY(&point1, 0)->x) {
-		COERCE_DOUBLE(point1.x) = (double)x;
-		v14 = mov->calcSomeXY(mov, &point2, 0);
-		v17 = (int)((double)point1.x / v14->y);
+	mov->calcSomeXY(point, 0);
+	int p1x = point.x;
+	int p1y = point.y;
+
+	int newx1 = 0;
+	int oldy1 = *y1;
+
+	if (abs(p1y) > abs(p1x)) {
+		if (mov->calcSomeXY(point, 0)->y)
+			newx1 = (int)((double)y / point.y);
+	} else if (mov->calcSomeXY(point, 0)->x) {
+		newx1 = (int)((double)x / point.y);
 	}
 
-	if (v17 < 0)
-		v17 = 0;
+	if (newx1 < 0)
+		newx1 = 0;
 
-	*x1 = v17;
+	*x1 = newx1;
+
+	int phase = 1;
+	int sz;
+
 	if (flag) {
-		if (v13) {
-			v24 = abs(y);
-			v1 = 1;
-			if (abs(v37 * v17 + mov->calcSomeXY((POINT *)&x, 0)->y) >= v24) {
-			LABEL_24:
-				v23 = v1;
-			} else {
-				while (1) {
-					v25 = mov->_currMovement;
-					v26 = v25 ? v25->_dynamicPhases.size() : mov->_dynamicPhases.size();
-					v23 = v1;
-					if (v1 >= v26)
-						break;
-					++v1;
-					if (abs(v37 * v17 + mov->calcSomeXY((POINT *)&x, 0)->y) >= v24)
-						goto LABEL_24;
+		if (abs(p1y) > abs(p1x)) {
+			while (abs(p1y * newx1 + mov->calcSomeXY(point, 0)->y) < abs(y)) {
+				sz = mov->_currMovement ? mov->_currMovement->_dynamicPhases.size() : mov->_dynamicPhases.size();
+
+				if (phase >= sz) {
+					phase--;
+
+					break;
 				}
+
+				phase++;
 			}
 		} else {
-			v19 = v10 * v17;
-			v2 = 1;
-			v20 = abs(x);
-			if (abs(v19 + mov->calcSomeXY((POINT *)&x, 0)->x) >= v20) {
-			LABEL_17:
-				v23 = v2;
-			} else {
-				while (1) {
-					v21 = mov->_currMovement;
-					v22 = v21 ? v21->_dynamicPhases.size() : mov->_dynamicPhases.size();
-					v23 = v2;
-					if (v2 >= v22)
-						break;
-					++v2;
-					if (abs(v19 + mov->calcSomeXY((POINT *)&x, 0)->x) >= v20)
-						goto LABEL_17;
+			while (abs(p1x * newx1 + mov->calcSomeXY(point, 0)->x) < abs(x)) {
+				sz = mov->_currMovement ? mov->_currMovement->_dynamicPhases.size() : mov->_dynamicPhases.size();
+
+				if (phase >= sz) {
+					phase--;
+
+					break;
 				}
+
+				phase++;
 			}
 		}
-		v10 = v36;
-		v27 = v23 - 1;
-		v18 = y1;
-		*y1 = v27;
+
+		*y1 = phase - 1;
 	} else {
-		v18 = y1;
 		*y1 = -1;
 	}
 
-	v28 = 0;
-	v29 = 0;
-	v30 = *v18 == 0;
-	v31 = *v18 < 0;
+	int p2x = 0;
+	int p2y = 0;
 
-	if (!*v18) {
-		*v18 = -1;
-		v30 = *v18 == 0;
-		v31 = *v18 < 0;
-	}
+	if (!oldy1)
+		oldy1 = -1;
 
-	if (!v31 && !v30) {
+	if (oldy1 > 0) {
 		++*x1;
-		v32 = *v18;
-		v33 = mov->calcSomeXY((POINT *)&x, 0);
-		v28 = v33->x;
-		v29 = v33->y;
 
-		if (v35)
-			v28 = v10;
+		mov->calcSomeXY(point, 0);
+		p2x = point.x;
+		p2y = point.y;
+
+		if (abs(p1y) > abs(p1x))
+			p2x = p1x;
 		else
-			v29 = v37;
+			p2y = p1y;
 	}
 
-	point->x = v28 + v10 * v17;
-	point->y = v29 + v37 * v17;
-#endif
-	warning("STUB: MGM::calcLength()");
+	pRes->x = p2x + p1x * newx1;
+	pRes->y = p2y + p1y * newx1;
 
-	return point;
+	return pRes;
 }
 
 ExCommand2 *MGM::buildExCommand2(Movement *mov, int objId, int x1, int y1, Common::Point *x2, Common::Point *y2, int len) {
