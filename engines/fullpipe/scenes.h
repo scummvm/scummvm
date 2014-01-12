@@ -156,6 +156,11 @@ void scene33_setupMusic();
 int sceneHandler33(ExCommand *cmd);
 int scene33_updateCursor();
 
+void scene34_initScene(Scene *sc);
+void scene34_initBeh();
+int sceneHandler34(ExCommand *cmd);
+int scene34_updateCursor();
+
 int scene36_updateCursor();
 void scene36_initScene(Scene *sc);
 int sceneHandler36(ExCommand *cmd);
