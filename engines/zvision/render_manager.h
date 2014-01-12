@@ -242,8 +242,11 @@ public:
 	Graphics::Surface *getBkgRect(Common::Rect &rect);
 	Graphics::Surface *loadImage(const char *file);
 	Graphics::Surface *loadImage(Common::String &file);
+	Graphics::Surface *loadImage(const char *file, bool transposed);
+	Graphics::Surface *loadImage(Common::String &file, bool transposed);
 
 	void clearMenuSurface();
+	void clearMenuSurface(const Common::Rect &r);
 	void renderMenuToScreen();
 
 	void prepareBkg();
@@ -259,6 +262,7 @@ public:
 	 * @param destination    A reference to the Surface to store the pixel data in
 	 */
 	void readImageToSurface(const Common::String &fileName, Graphics::Surface &destination);
+	void readImageToSurface(const Common::String &fileName, Graphics::Surface &destination, bool transposed);
 };
 
 } // End of namespace ZVision

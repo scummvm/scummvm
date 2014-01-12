@@ -204,6 +204,99 @@ void RenderManager::readImageToSurface(const Common::String &fileName, Graphics:
 	destination.convertToInPlace(_pixelFormat);
 }
 
+void RenderManager::readImageToSurface(const Common::String &fileName, Graphics::Surface &destination, bool transposed) {
+	Common::File file;
+
+	if (!file.open(fileName)) {
+		warning("Could not open file %s", fileName.c_str());
+		return;
+	}
+
+	// Read the magic number
+	// Some files are true TGA, while others are TGZ
+	uint32 fileType = file.readUint32BE();
+
+	uint32 imageWidth;
+	uint32 imageHeight;
+	Graphics::TGADecoder tga;
+	uint16 *buffer;
+	// All ZVision images are in RGB 555
+	Graphics::PixelFormat pixelFormat555 = Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
+	destination.format = pixelFormat555;
+
+	bool isTGZ;
+
+	// Check for TGZ files
+	if (fileType == MKTAG('T', 'G', 'Z', '\0')) {
+		isTGZ = true;
+
+		// TGZ files have a header and then Bitmap data that is compressed with LZSS
+		uint32 decompressedSize = file.readSint32LE();
+		imageWidth = file.readSint32LE();
+		imageHeight = file.readSint32LE();
+
+		LzssReadStream lzssStream(&file);
+		buffer = (uint16 *)(new uint16[decompressedSize]);
+		lzssStream.read(buffer, decompressedSize);
+	} else {
+		isTGZ = false;
+
+		// Reset the cursor
+		file.seek(0);
+
+		// Decode
+		if (!tga.loadStream(file)) {
+			warning("Error while reading TGA image");
+			return;
+		}
+
+		Graphics::Surface tgaSurface = *(tga.getSurface());
+		imageWidth = tgaSurface.w;
+		imageHeight = tgaSurface.h;
+
+		buffer = (uint16 *)tgaSurface.getPixels();
+	}
+
+	// Flip the width and height if transposed
+	if (transposed) {
+		uint16 temp = imageHeight;
+		imageHeight = imageWidth;
+		imageWidth = temp;
+	}
+
+	// If the destination internal buffer is the same size as what we're copying into it,
+	// there is no need to free() and re-create
+	if (imageWidth != destination.w || imageHeight != destination.h) {
+		destination.create(imageWidth, imageHeight, pixelFormat555);
+	}
+
+	// If transposed, 'un-transpose' the data while copying it to the destination
+	// Otherwise, just do a simple copy
+	if (transposed) {
+		uint16 *dest = (uint16 *)destination.getPixels();
+
+		for (uint32 y = 0; y < imageHeight; ++y) {
+			uint32 columnIndex = y * imageWidth;
+
+			for (uint32 x = 0; x < imageWidth; ++x) {
+				dest[columnIndex + x] = buffer[x * imageHeight + y];
+			}
+		}
+	} else {
+		memcpy(destination.getPixels(), buffer, imageWidth * imageHeight * _pixelFormat.bytesPerPixel);
+	}
+
+	// Cleanup
+	if (isTGZ) {
+		delete[] buffer;
+	} else {
+		tga.destroy();
+	}
+
+	// Convert in place to RGB 565 from RGB 555
+	destination.convertToInPlace(_pixelFormat);
+}
+
 const Common::Point RenderManager::screenSpaceToImageSpace(const Common::Point &point) {
 	if (_workingWindow.contains(point)) {
 		// Convert from screen space to working window space
@@ -517,6 +610,17 @@ Graphics::Surface *RenderManager::loadImage(const char *file) {
 	return loadImage(str);
 }
 
+Graphics::Surface *RenderManager::loadImage(Common::String &file, bool transposed) {
+	Graphics::Surface *tmp = new Graphics::Surface;
+	readImageToSurface(file, *tmp, transposed);
+	return tmp;
+}
+
+Graphics::Surface *RenderManager::loadImage(const char *file, bool transposed) {
+	Common::String str = Common::String(file);
+	return loadImage(str, transposed);
+}
+
 void RenderManager::prepareBkg() {
 	_bkgDirtyRect.clip(_bkgWidth, _bkgHeight);
 	RenderTable::RenderState state = _renderTable.getRenderState();
@@ -587,15 +691,23 @@ void RenderManager::clearMenuSurface() {
 	_menuWnd.fillRect(_menuWndDirtyRect, 0);
 }
 
+void RenderManager::clearMenuSurface(const Common::Rect &r) {
+	if (_menuWndDirtyRect.isEmpty())
+		_menuWndDirtyRect = r;
+	else
+		_menuWndDirtyRect.extend(r);
+	_menuWnd.fillRect(r, 0);
+}
+
 void RenderManager::renderMenuToScreen() {
 	if (!_menuWndDirtyRect.isEmpty()) {
 		_menuWndDirtyRect.clip(Common::Rect(_menuWnd.w, _menuWnd.h));
-
-		_system->copyRectToScreen(_menuWnd.getBasePtr(_menuWndDirtyRect.left, _menuWndDirtyRect.top), _menuWnd.pitch,
-		                          _menuWndDirtyRect.left + _menuWndRect.left,
-		                          _menuWndDirtyRect.top + _menuWndRect.top,
-		                          _menuWndDirtyRect.width(),
-		                          _menuWndDirtyRect.height());
+		if (!_menuWndDirtyRect.isEmpty())
+			_system->copyRectToScreen(_menuWnd.getBasePtr(_menuWndDirtyRect.left, _menuWndDirtyRect.top), _menuWnd.pitch,
+			                          _menuWndDirtyRect.left + _menuWndRect.left,
+			                          _menuWndDirtyRect.top + _menuWndRect.top,
+			                          _menuWndDirtyRect.width(),
+			                          _menuWndDirtyRect.height());
 		_menuWndDirtyRect = Common::Rect();
 	}
 }
