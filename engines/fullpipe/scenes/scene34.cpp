@@ -34,7 +34,6 @@
 #include "fullpipe/behavior.h"
 #include "fullpipe/floaters.h"
 
-
 namespace Fullpipe {
 
 void sceneHandler34_setExits() {
@@ -82,6 +81,25 @@ void scene34_initScene(Scene *sc) {
 	g_fp->lift_sub5(sc, QU_SC34_ENTERLIFT, QU_SC34_EXITLIFT);
 
 	g_fp->initArcadeKeys("SC_34");
+}
+
+void scene34_initBeh() {
+	g_fp->_behaviorManager->setBehaviorEnabled(g_vars->scene34_cactus, ST_CTS34_GROWNEMPTY2, QU_CTS34_FALLEFT, 0);
+	g_fp->_behaviorManager->setBehaviorEnabled(g_vars->scene34_cactus, ST_CTS34_GROWNEMPTY2, QU_CTS34_FALLRIGHT, 0);
+}
+
+int scene34_updateCursor() {
+#if 0
+	g_fp->updateCursorCommon();
+
+	if ((g_fp->_objectIdAtCursor != ANI_STOOL_34 || g_fp->getGameLoaderInventory()->getSelectedItemId() != ANI_INV_BOX)
+		 && (g_fp->_objectIdAtCursor != ANI_BOX_34 || g_fp->getGameLoaderInventory()->getSelectedItemId() != ANI_INV_STOOL))
+		; // emtpy
+	else
+		g_fp->_cursorId = PIC_CSR_ITN_INV;
+
+#endif
+	return g_fp->_cursorId;
 }
 
 } // End of namespace Fullpipe
