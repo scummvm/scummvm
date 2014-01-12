@@ -124,8 +124,29 @@ void sceneHandler34_sub04() {
 	warning("STUB: sceneHandler34_sub04()");
 }
 
-void sceneHandler34_sub03(ExCommand *cmd) {
-	warning("STUB: sceneHandler34_sub03(cmd)");
+void sceneHandler34_fromCactus(ExCommand *cmd) {
+	if (g_fp->_aniMan->_movement || g_vars->scene34_cactus->_movement || (g_fp->_aniMan->_flags & 0x100)) {
+		cmd->_messageKind = 0;
+
+		return;
+	}
+
+	MessageQueue *mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC34_FROMCACTUS), 0, 0);
+
+	ExCommand *ex = new ExCommand(ANI_MAN, 34, 256, 0, 0, 0, 1, 0, 0, 0);
+
+	ex->_messageNum = 0;
+	ex->_excFlags |= 3;
+	ex->_field_14 = 256;
+	mq->addExCommandToEnd(ex);
+
+	ex = cmd->createClone();
+	mq->addExCommandToEnd(ex);
+
+	mq->setFlags(mq->getFlags() | 1);
+	mq->chain(0);
+
+	g_fp->_aniMan->_flags |= 1;
 }
 
 void sceneHandler34_sub02(ExCommand *cmd) {
@@ -269,7 +290,7 @@ int sceneHandler34(ExCommand *cmd) {
 			}
 
 			if (g_vars->scene34_var07) {
-				sceneHandler34_sub03(cmd);
+				sceneHandler34_fromCactus(cmd);
 				break;
 			}
 
