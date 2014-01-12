@@ -999,9 +999,7 @@ void GfxTinyGL::blit(const Graphics::PixelFormat &format, BlitImage *image, byte
 }
 
 void GfxTinyGL::blit(const Graphics::PixelFormat &format, BlitImage *image, byte *dst, byte *src, int dstX, int dstY, int srcX, int srcY, int width, int height, int srcWidth, int srcHeight, bool trans) {
-	if (_dimLevel >= 1.0f) {
-		return;
-	} else if (_dimLevel > 0.0f) {
+	if (_dimLevel > 0.0f && _dimLevel < 1.0f) {
 		warning("TinyGL doesn't implement partial screen-dimming yet");
 	}
 
@@ -1071,7 +1069,7 @@ void GfxTinyGL::drawBitmap(const Bitmap *bitmap, int x, int y, uint32 layer) {
 	// PS2 EMI uses a TGA for it's splash-screen, avoid using the following
 	// code for drawing that (as it has no tiles).
 	if (g_grim->getGameType() == GType_MONKEY4 && bitmap->_data->_numImages > 1) {
-		// tglColor3f(1.0f - _dimLevel, 1.0f - _dimLevel, 1.0f  - _dimLevel);
+		tglColor3f(1.0f - _dimLevel, 1.0f - _dimLevel, 1.0f  - _dimLevel);
 
 		BitmapData *data = bitmap->_data;
 		float *texc = data->_texc;
