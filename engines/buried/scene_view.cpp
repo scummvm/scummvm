@@ -1475,7 +1475,9 @@ bool SceneViewWindow::playSynchronousAnimation(int animationID) {
 	if (!animationMovie->openVideo(fileName))
 		error("Failed to open video '%s'", fileName.c_str());
 
-	// TODO: Try switching to the second audio stream if translation is enabled
+	// Switch to the second audio stream if translation is enabled
+	if (_globalFlags.bcTranslateEnabled == 1 && animDatabase[i].audioStreamCount > 1)
+		animationMovie->setAudioTrack(2);
 
 	if (_currentScene && _currentScene->movieCallback(this, animationMovie, animationID, MOVIE_START) == SC_FALSE) {
 		// FIXME: Nah, why bother to free the movie
@@ -1594,7 +1596,9 @@ bool SceneViewWindow::playPlacedSynchronousAnimation(int animationID, int left, 
 
 	animationMovie->setWindowPos(kWindowPosTopMost, left, top, 0, 0, kWindowPosNoSize | kWindowPosNoActivate | kWindowPosNoZOrder);
 
-	// TODO: Try switching to the second audio stream if translation is enabled
+	// Switch to the second audio stream if translation is enabled
+	if (_globalFlags.bcTranslateEnabled == 1 && animDatabase[i].audioStreamCount > 1)
+		animationMovie->setAudioTrack(2);
 
 	if (_currentScene && _currentScene->movieCallback(this, animationMovie, animationID, MOVIE_START) == SC_FALSE) {
 		// FIXME: Nah, why bother to free the movie
@@ -1669,7 +1673,9 @@ bool SceneViewWindow::playClippedSynchronousAnimation(int animationID, int left,
 	animationMovie->setSourceRect(Common::Rect(left, top, right, bottom));
 	animationMovie->setDestRect(Common::Rect(0, 0, right - left, bottom - top));
 
-	// TODO: Try switching to the second audio stream if translation is enabled
+	// Switch to the second audio stream if translation is enabled
+	if (_globalFlags.bcTranslateEnabled == 1 && animDatabase[i].audioStreamCount > 1)
+		animationMovie->setAudioTrack(2);
 
 	if (_currentScene && _currentScene->movieCallback(this, animationMovie, animationID, MOVIE_START) == SC_FALSE) {
 		// FIXME: Nah, why bother to free the movie
