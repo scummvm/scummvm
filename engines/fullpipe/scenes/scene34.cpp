@@ -100,4 +100,237 @@ int scene34_updateCursor() {
 	return g_fp->_cursorId;
 }
 
+void sceneHandler34_leaveBoard() {
+	warning("STUB: sceneHandler34_leaveBoard()");
+}
+
+void sceneHandler34_onBoard() {
+	warning("STUB: sceneHandler34_onBoard()");
+}
+
+void sceneHandler34_testVent() {
+	warning("STUB: sceneHandler34_testVent()");
+}
+
+void sceneHandler34_hideStool() {
+	warning("STUB: sceneHandler34_hideStool()");
+}
+
+void sceneHandler34_climb() {
+	warning("STUB: sceneHandler34_climb()");
+}
+
+void sceneHandler34_sub04() {
+	warning("STUB: sceneHandler34_sub04()");
+}
+
+void sceneHandler34_sub03(ExCommand *cmd) {
+	warning("STUB: sceneHandler34_sub03(cmd)");
+}
+
+void sceneHandler34_sub02(ExCommand *cmd) {
+	warning("STUB: sceneHandler34_sub02(cmd)");
+}
+
+void sceneHandler34_sub01(ExCommand *cmd) {
+	warning("STUB: sceneHandler34_sub01(cmd)");
+}
+
+void sceneHandler34_showVent() {
+	warning("STUB: sceneHandler34_showVent()");
+}
+
+void sceneHandler34_showBox() {
+	warning("STUB: sceneHandler34_showBox()");
+}
+
+void sceneHandler34_showStool() {
+	warning("STUB: sceneHandler34_showStool()");
+}
+
+void sceneHandler34_unclimb() {
+	warning("STUB: sceneHandler34_unclimb()");
+}
+
+int sceneHandler34(ExCommand *cmd) {
+	if (cmd->_messageKind != 17)
+		return 0;
+
+	switch (cmd->_messageNum) {
+	case MSG_SC4_HIDEBOOT:
+		g_vars->scene34_boot->_flags &= 0xFFFB;
+		break;
+
+	case MSG_SC34_LEAVEBOARD:
+		sceneHandler34_leaveBoard();
+		break;
+
+	case MSG_SC34_ONBOARD:
+		sceneHandler34_onBoard();
+		break;
+
+	case MSG_SC34_TESTVENT:
+		sceneHandler34_testVent();
+		break;
+
+	case MSG_LIFT_CLICKBUTTON:
+		g_fp->lift_animation3();
+		break;
+
+	case MSG_SC34_FROMCACTUS:
+		g_vars->scene34_var07 = 0;
+
+		getCurrSceneSc2MotionController()->setEnabled();
+		getGameLoaderInteractionController()->enableFlag24();
+
+		g_fp->_behaviorManager->setFlagByStaticAniObject(g_fp->_aniMan, 1);
+
+		break;
+
+	case MSG_SC34_RETRYVENT:
+		if (!g_fp->_aniMan->isIdle())
+			break;
+
+		g_fp->_aniMan->changeStatics2(ST_MAN_RIGHT);
+		g_fp->_aniMan->_flags &= 0xFEFF;
+
+		getGameLoaderInteractionController()->handleInteraction(g_fp->_aniMan, g_vars->scene34_vent, cmd->_keyCode);
+
+		break;
+
+	case MSG_SC34_ONBUMP:
+		g_fp->_behaviorManager->setBehaviorEnabled(g_vars->scene34_cactus, ST_CTS34_GROWNEMPTY2, QU_CTS34_FALLEFT, 1);
+		g_fp->_behaviorManager->setBehaviorEnabled(g_vars->scene34_cactus, ST_CTS34_GROWNEMPTY2, QU_CTS34_FALLRIGHT, 1);
+		break;
+
+	case MSG_LIFT_CLOSEDOOR:
+		g_fp->lift_closedoorSeq();
+		break;
+
+	case MSG_LIFT_EXITLIFT:
+		g_fp->lift_exitSeq(cmd);
+		break;
+
+	case MSG_LIFT_STARTEXITQUEUE:
+		g_fp->lift_startExitQueue();
+		break;
+
+	case MSG_SC22_HIDESTOOL:
+		sceneHandler34_hideStool();
+		break;
+
+	case MSG_SC34_CLIMB:
+		sceneHandler34_climb();
+		break;
+
+	case MSG_SC34_UNCLIMB:
+		sceneHandler34_unclimb();
+		break;
+
+	case MSG_SC22_SHOWSTOOL:
+		sceneHandler34_showStool();
+		break;
+
+	case MSG_SC34_SHOWBOX:
+		sceneHandler34_showBox();
+		break;
+
+	case MSG_SC34_ONCACTUS:
+		g_vars->scene34_var07 = 1;
+
+		getCurrSceneSc2MotionController()->clearEnabled();
+		getGameLoaderInteractionController()->disableFlag24();
+
+		g_fp->_behaviorManager->setFlagByStaticAniObject(g_fp->_aniMan, 0);
+		break;
+
+	case MSG_SC34_SHOWVENT:
+		sceneHandler34_showVent();
+		break;
+
+	case 64:
+		g_fp->lift_sub05(cmd);
+		break;
+
+	case MSG_LIFT_GO:
+		g_fp->lift_goAnimation();
+		break;
+
+	case 29:
+		{
+			if (g_vars->scene34_var05) {
+				sceneHandler34_sub01(cmd);
+				break;
+			}
+
+			if (g_vars->scene34_var06) {
+				sceneHandler34_sub02(cmd);
+				break;
+			}
+
+			if (g_vars->scene34_var07) {
+				sceneHandler34_sub03(cmd);
+				break;
+			}
+
+			StaticANIObject *ani = g_fp->_currentScene->getStaticANIObjectAtPos(g_fp->_sceneRect.left + cmd->_x, g_fp->_sceneRect.top + cmd->_y);
+
+			if (ani) {
+				if ((ani->_id == ANI_STOOL_34 && cmd->_keyCode == ANI_INV_BOX) || (ani->_id == ANI_BOX_34 && cmd->_keyCode == ANI_INV_STOOL)) {
+					getGameLoaderInteractionController()->handleInteraction(g_fp->_aniMan, g_vars->scene34_vent, cmd->_keyCode);
+
+					cmd->_messageKind = 0;
+				}
+
+				if (ani->_id == ANI_LIFTBUTTON) {
+					g_fp->lift_sub1(ani);
+
+					cmd->_messageKind = 0;
+
+					break;
+				}
+			}
+
+			if (!ani || !canInteractAny(g_fp->_aniMan, ani, cmd->_keyCode)) {
+				int picId = g_fp->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
+				PictureObject *pic = g_fp->_currentScene->getPictureObjectById(picId, 0);
+
+				if (!pic || !canInteractAny(g_fp->_aniMan, pic, cmd->_keyCode)) {
+					if ((g_fp->_sceneRect.right - cmd->_sceneClickX < 47 && g_fp->_sceneRect.right < g_fp->_sceneWidth - 1) || (cmd->_sceneClickX - g_fp->_sceneRect.left < 47 && g_fp->_sceneRect.left > 0)) {
+						g_fp->processArcade(cmd);
+						break;
+					}
+				}
+			}
+			break;
+		}
+
+	case 33:
+		if (g_fp->_aniMan2) {
+			int x = g_fp->_aniMan2->_ox;
+
+			if (x < g_fp->_sceneRect.left + g_vars->scene34_var01)
+				g_fp->_currentScene->_x = x - g_vars->scene34_var03 - g_fp->_sceneRect.left;
+
+			if (x > g_fp->_sceneRect.right - g_vars->scene34_var01)
+				g_fp->_currentScene->_x = x + g_vars->scene34_var03 - g_fp->_sceneRect.right;
+		}
+
+		--g_vars->scene34_var08;
+
+		if (!g_vars->scene34_var08)
+			sceneHandler34_sub04();
+
+		g_fp->_floaters->update();
+
+		g_fp->_behaviorManager->updateBehaviors();
+
+		g_fp->startSceneTrack();
+
+		break;
+	}
+
+	return 0;
+}
+
 } // End of namespace Fullpipe
