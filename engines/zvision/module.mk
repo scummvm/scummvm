@@ -33,7 +33,8 @@ MODULE_OBJS := \
 	sidefx.o \
 	music_node.o \
 	inventory_manager.o \
-	slot_control.o
+	slot_control.o \
+	menu.o
  
 MODULE_DIRS += \
 	engines/zvision

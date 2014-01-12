@@ -51,6 +51,7 @@ class CursorManager;
 class StringManager;
 class SaveManager;
 class RlfAnimation;
+class menuHandler;
 
 class ZVision : public Engine {
 public:
@@ -97,6 +98,7 @@ private:
 	CursorManager *_cursorManager;
 	SaveManager *_saveManager;
 	StringManager *_stringManager;
+	menuHandler *_menu;
 
 	// Clock
 	Clock _clock;

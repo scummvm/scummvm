@@ -29,6 +29,7 @@
 #include "zvision/render_manager.h"
 #include "zvision/script_manager.h"
 #include "zvision/rlf_animation.h"
+#include "zvision/menu.h"
 
 #include "common/events.h"
 #include "common/system.h"
@@ -98,16 +99,21 @@ void ZVision::processEvents() {
 }
 
 void ZVision::onMouseDown(const Common::Point &pos) {
+	_menu->onMouseDown(pos);
+
 	Common::Point imageCoord(_renderManager->screenSpaceToImageSpace(pos));
 	_scriptManager->onMouseDown(pos, imageCoord);
 }
 
 void ZVision::onMouseUp(const Common::Point &pos) {
+	_menu->onMouseUp(pos);
+
 	Common::Point imageCoord(_renderManager->screenSpaceToImageSpace(pos));
 	_scriptManager->onMouseUp(pos, imageCoord);
 }
 
 void ZVision::onMouseMove(const Common::Point &pos) {
+	_menu->onMouseMove(pos);
 	Common::Point imageCoord(_renderManager->screenSpaceToImageSpace(pos));
 
 	bool cursorWasChanged = false;

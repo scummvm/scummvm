@@ -32,6 +32,7 @@
 #include "zvision/string_manager.h"
 #include "zvision/zfs_archive.h"
 #include "zvision/detection.h"
+#include "zvision/menu.h"
 
 #include "common/config-manager.h"
 #include "common/debug.h"
@@ -127,6 +128,11 @@ void ZVision::initialize() {
 	_stringManager = new StringManager(this);
 	_cursorManager = new CursorManager(this, &_pixelFormat);
 
+	if (_gameDescription->gameId == GID_GRANDINQUISITOR)
+		_menu = new menuZgi(this);
+	else
+		_menu = new menuNem(this);
+
 	// Initialize the managers
 	_cursorManager->initialize();
 	_scriptManager->initialize();
@@ -153,6 +159,7 @@ Common::Error ZVision::run() {
 		// Call _renderManager->update() first so the background renders
 		// before anything that puzzles/controls will render
 		_scriptManager->update(deltaTime);
+		_menu->process(deltaTime);
 
 		// Render the backBuffer to the screen
 		_renderManager->prepareBkg();
