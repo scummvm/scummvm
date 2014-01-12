@@ -95,6 +95,7 @@ static const Myst3GameDescription gameDescriptions[] = {
 	MYST3ENTRY(Common::kPlatformWindows, Common::EN_ANY, 0,     "M3.exe", "314f4d2a3c9d22787719219419dcd480", &v120sd ) // 1.2
 	MYST3ENTRY(Common::kPlatformWindows, Common::FR_FRA, 0,     "M3.exe", "3510a29ba7db40fa7310e15aac807e8e", &v120sd ) // 1.2
 	MYST3ENTRY(Common::kPlatformWindows, Common::JA_JPN, 0,     "M3.exe", "89f4ceb295420c01116bc4bee7bcd9c4", &v120sd ) // 1.2
+	MYST3ENTRY(Common::kPlatformWindows, Common::NL_NLD, 0,     "M3.exe", "fe3429350ce30e2a828c888ae5a39f8b", &v120sd ) // 1.2
 	MYST3ENTRY(Common::kPlatformWindows, Common::EN_ANY, 0,     "M3.exe", "7a4eaea5f19f621e05e732d657c15fe3", &v12xwin) // 1.2
 	MYST3ENTRY(Common::kPlatformWindows, Common::RU_RUS, 0,     "M3R.exe","4ce43b84c1d0869a84b5f361f8914a9f", &v120rus) // 1.2
 	MYST3ENTRY(Common::kPlatformWindows, Common::EN_ANY, 0,     "M3.exe", "6dbe2eed529684c7fb64f0801462b89c", &v12xwin) // 1.21
