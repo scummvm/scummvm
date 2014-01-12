@@ -110,7 +110,7 @@ void ZVision::onMouseUp(const Common::Point &pos) {
 void ZVision::onMouseMove(const Common::Point &pos) {
 	Common::Point imageCoord(_renderManager->screenSpaceToImageSpace(pos));
 
-	bool cursorWasChanged = _scriptManager->onMouseMove(pos, imageCoord);
+	bool cursorWasChanged = false;
 
 	// Graph of the function governing rotation velocity:
 	//
@@ -143,6 +143,8 @@ void ZVision::onMouseMove(const Common::Point &pos) {
 	//               ^
 
 	if (_workingWindow.contains(pos)) {
+		cursorWasChanged = _scriptManager->onMouseMove(pos, imageCoord);
+
 		RenderTable::RenderState renderState = _renderManager->getRenderTable()->getRenderState();
 		if (renderState == RenderTable::PANORAMA) {
 			if (pos.x >= _workingWindow.left && pos.x < _workingWindow.left + ROTATION_SCREEN_EDGE_OFFSET) {
