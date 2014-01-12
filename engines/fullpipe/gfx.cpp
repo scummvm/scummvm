@@ -58,6 +58,8 @@ Bitmap::Bitmap(Bitmap *src) {
 Bitmap::~Bitmap() {
 	if (_pixels)
 		free(_pixels);
+
+	_pixels = 0;
 }
 
 void Bitmap::load(Common::ReadStream *s) {
@@ -230,7 +232,7 @@ void PictureObject::drawAt(int x, int y) {
 
 bool PictureObject::setPicAniInfo(PicAniInfo *picAniInfo) {
 	if (!(picAniInfo->type & 2) || (picAniInfo->type & 1)) {
-		error("Picture::setPicAniInfo(): Wrong type: %d", picAniInfo->type);
+		error("PictureObject::setPicAniInfo(): Wrong type: %d", picAniInfo->type);
 
 		return false;
 	}
@@ -482,7 +484,7 @@ void Picture::freePicture() {
 	if (_bitmap) {
 		if (testFlags() && !_field_54) {
 			freeData();
-			delete _bitmap;
+			free(_bitmap);
 			_bitmap = 0;
 		}
 	}
@@ -497,6 +499,11 @@ void Picture::freePicture() {
 		delete _convertedBitmap;
 		_convertedBitmap = 0;
 	}
+}
+
+void Picture::freePixelData() {
+	freePicture();
+	freeData();
 }
 
 bool Picture::load(MfcArchive &file) {

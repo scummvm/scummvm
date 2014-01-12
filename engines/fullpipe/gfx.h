@@ -88,6 +88,7 @@ class Picture : public MemoryObject {
 	virtual ~Picture();
 
 	void freePicture();
+	void freePixelData();
 
 	virtual bool load(MfcArchive &file);
 	void setAOIDs();

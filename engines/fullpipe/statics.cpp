@@ -1690,7 +1690,12 @@ void Movement::loadPixelData() {
 }
 
 void Movement::freePixelData() {
-	warning("STUB: Movement::freePixelData()");
+	if (!_currMovement)
+		for (uint i = 0; i < _dynamicPhases.size(); i++)
+			((DynamicPhase *)_dynamicPhases[i])->freePixelData();
+
+	if (_staticsObj1)
+		_staticsObj1->freePixelData();
 }
 
 void Movement::removeFirstPhase() {
