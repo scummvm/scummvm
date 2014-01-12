@@ -683,7 +683,20 @@ void GlobalMessageQueueList::addMessageQueue(MessageQueue *msg) {
 }
 
 void clearGlobalMessageQueueList1() {
-	warning("STUB: clearGlobalMessageQueueList1()");
+	clearMessages();
+
+	g_fp->_globalMessageQueueList->clear();
+}
+
+void clearMessages() {
+	while (g_fp->_exCommandList.size()) {
+		ExCommand *ex = g_fp->_exCommandList.front();
+
+		g_fp->_exCommandList.pop_front();
+
+		if (ex->_excFlags & 2)
+			delete ex;
+	}
 }
 
 bool removeMessageHandler(int16 id, int pos) {
