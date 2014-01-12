@@ -191,15 +191,7 @@ void Lua_V1::MakeSectorActive() {
 
 	bool visible = !lua_isnil(lua_getparam(2));
 
-	if (lua_isstring(sectorObj)) {
-		const char *name = lua_getstring(sectorObj);
-		// a search by name here is needed for set bv, since it calls MakeSectorActive with sectors
-		// "bw_gone" and "bw_gone2", and a substring search would return "bw_gone2" for both.
-		Sector *sector = g_grim->getCurrSet()->getSectorByName(name);
-		if (sector) {
-			sector->setVisible(visible);
-		}
-	} else if (lua_isnumber(sectorObj)) {
+	if (lua_isnumber(sectorObj)) {
 		int numSectors = g_grim->getCurrSet()->getSectorCount();
 		int id = (int)lua_getnumber(sectorObj);
 		for (int i = 0; i < numSectors; i++) {
@@ -208,6 +200,14 @@ void Lua_V1::MakeSectorActive() {
 				sector->setVisible(visible);
 				return;
 			}
+		}
+	} else if (lua_isstring(sectorObj)) {
+		const char *name = lua_getstring(sectorObj);
+		// a search by name here is needed for set bv, since it calls MakeSectorActive with sectors
+		// "bw_gone" and "bw_gone2", and a substring search would return "bw_gone2" for both.
+		Sector *sector = g_grim->getCurrSet()->getSectorByName(name);
+		if (sector) {
+			sector->setVisible(visible);
 		}
 	}
 }
