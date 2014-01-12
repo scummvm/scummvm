@@ -5357,7 +5357,7 @@ void Scene500::PanelDialog::Button::doButtonPress() {
 					&scene->_suit, &scene->_transparentDoor, NULL);
 			} else {
 				scene->_sound1.play(127);
-				scene->_suits.animate(ANIM_MODE_6, scene);
+				scene->_suits.animate(ANIM_MODE_5, scene);
 			}
 			break;
 
