@@ -665,23 +665,23 @@ void GfxOpenGL::drawSprite(const Sprite *sprite) {
 	glLoadIdentity();
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
-	glTranslatef(sprite->_pos.x(), sprite->_pos.y(), sprite->_pos.z());
-
-	GLdouble modelview[16];
-	glGetDoublev(GL_MODELVIEW_MATRIX, modelview);
 
 	if (g_grim->getGameType() == GType_MONKEY4) {
-		const Math::Quaternion quat =
-			_currentActor->isInOverworld()
-			? Math::Quaternion::fromEuler(0, 0, _currentActor->getYaw())
-			: Math::Quaternion::fromEuler(0, 0, _currentActor->getRoll());
+		GLdouble modelview[16];
+		glGetDoublev(GL_MODELVIEW_MATRIX, modelview);
+		const Math::Quaternion quat = Math::Quaternion::fromEuler(0, 0, _currentActor->getYaw());
 		Math::Matrix4 act = quat.toMatrix();
 		act.transpose();
 		act(3,0) = modelview[12];
 		act(3,1) = modelview[13];
 		act(3,2) = modelview[14];
 		glLoadMatrixf(act.getData());
+		glTranslatef(sprite->_pos.x(), sprite->_pos.y(), sprite->_pos.z());
 	} else {
+		glTranslatef(sprite->_pos.x(), sprite->_pos.y(), sprite->_pos.z());
+		GLdouble modelview[16];
+		glGetDoublev(GL_MODELVIEW_MATRIX, modelview);
+
 		// We want screen-aligned sprites so reset the rotation part of the matrix.
 		for (int i = 0; i < 3; i++) {
 			for (int j = 0; j < 3; j++) {
