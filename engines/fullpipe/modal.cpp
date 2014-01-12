@@ -256,7 +256,10 @@ void ModalVideoPlayer::play(const char *filename) {
 
 		Common::Event event;
 		while (g_fp->_system->getEventManager()->pollEvent(event)) {
-			if ((event.type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_ESCAPE) || event.type == Common::EVENT_LBUTTONUP)
+			if ((event.type == Common::EVENT_KEYDOWN && (event.kbd.keycode == Common::KEYCODE_ESCAPE ||
+														 event.kbd.keycode == Common::KEYCODE_RETURN ||
+														 event.kbd.keycode == Common::KEYCODE_SPACE))
+				 || event.type == Common::EVENT_LBUTTONUP)
 				skipVideo = true;
 		}
 
