@@ -89,16 +89,14 @@ void scene34_initBeh() {
 }
 
 int scene34_updateCursor() {
-#if 0
 	g_fp->updateCursorCommon();
 
-	if ((g_fp->_objectIdAtCursor != ANI_STOOL_34 || g_fp->getGameLoaderInventory()->getSelectedItemId() != ANI_INV_BOX)
-		 && (g_fp->_objectIdAtCursor != ANI_BOX_34 || g_fp->getGameLoaderInventory()->getSelectedItemId() != ANI_INV_STOOL))
+	if ((g_fp->_objectIdAtCursor != ANI_STOOL_34 || getGameLoaderInventory()->getSelectedItemId() != ANI_INV_BOX)
+		 && (g_fp->_objectIdAtCursor != ANI_BOX_34 || getGameLoaderInventory()->getSelectedItemId() != ANI_INV_STOOL))
 		; // emtpy
 	else
 		g_fp->_cursorId = PIC_CSR_ITN_INV;
 
-#endif
 	return g_fp->_cursorId;
 }
 

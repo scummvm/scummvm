@@ -1137,8 +1137,10 @@ namespace Fullpipe {
 
 // Scene 34
 #define ANI_BOOT_34 4560
+#define ANI_BOX_34 2498
 #define ANI_CACTUS_34 2381
 #define ANI_LUK_34 2541
+#define ANI_STOOL_34 2486
 #define ANI_VENT_34 2473
 #define QU_SC34_ENTERLIFT 2819
 #define QU_SC34_EXITLIFT 2820
