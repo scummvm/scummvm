@@ -2089,6 +2089,10 @@ Math::Vector3d Actor::getWorldPos() const {
 	EMICostume *cost = static_cast<EMICostume *>(attachedActor->getCurrentCostume());
 	if (cost && cost->_emiSkel && cost->_emiSkel->_obj) {
 		Joint *j = cost->_emiSkel->_obj->getJointNamed(_attachedJoint);
+		if (!j) {
+			warning("Actor::getRotationQuat: joint \"%s\" not found", _attachedJoint.c_str());
+			j = cost->_emiSkel->_obj->getJointNamed("");
+		}
 		const Math::Matrix4 &jointToAttached = j->_finalMatrix;
 		attachedToWorld = attachedToWorld * jointToAttached;
 	}
@@ -2111,6 +2115,10 @@ Math::Quaternion Actor::getRotationQuat() const {
 			EMICostume *cost = static_cast<EMICostume *>(attachedActor->getCurrentCostume());
 			if (cost && cost->_emiSkel && cost->_emiSkel->_obj) {
 				Joint *j = cost->_emiSkel->_obj->getJointNamed(_attachedJoint);
+				if (!j) {
+					warning("Actor::getRotationQuat: joint \"%s\" not found", _attachedJoint.c_str());
+					j = cost->_emiSkel->_obj->getJointNamed("");
+				}
 				const Math::Quaternion &jointQuat = j->_finalQuat;
 				ret = ret * jointQuat * attachedQuat;
 			} else {

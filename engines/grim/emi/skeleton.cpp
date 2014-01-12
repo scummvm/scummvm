@@ -121,7 +121,7 @@ Joint *Skeleton::getJointNamed(const Common::String &name) const {
 		return & _joints[0];
 	} else if (idx == -1) {
 		warning("Skeleton has no joint named '%s'!", name.c_str());
-		return & _joints[0];
+		return NULL;
 	} else {
 		return & _joints[idx];
 	}
