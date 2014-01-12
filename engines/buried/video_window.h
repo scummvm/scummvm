@@ -54,6 +54,7 @@ public:
 	int getFrameCount(); // MCIWndGetLength
 	void setSourceRect(const Common::Rect &srcRect); // MCIWndPutSource
 	void setDestRect(const Common::Rect &dstRect); // MCIWndPutDest
+	void setAudioTrack(int track); // MCIWndSendString + "setaudio stream to %d"
 
 	bool openVideo(const Common::String &fileName); // MCIWndOpen
 	void closeVideo(); // MCIWndClose
