@@ -38,6 +38,11 @@ end
 
 --Overwrite stock loadprefs function
 system_prefs.loadprefs = function(table, filename)
+	--avoid installing tag methods repeatedly when starting a new game
+	if system_prefs.defaults_cfg ~= nil then
+		return
+	end
+
 	PrintDebug("Function system_prefs.loadprefs modified for ResidualVM loaded")
 
 	--save old cfg table as default values
