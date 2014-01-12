@@ -267,7 +267,11 @@ const OSystem::GraphicsMode *SurfaceSdlGraphicsManager::getSupportedGraphicsMode
 }
 
 int SurfaceSdlGraphicsManager::getDefaultGraphicsMode() const {
+#ifdef USE_SCALERS
 	return GFX_DOUBLESIZE;
+#else
+	return GFX_NORMAL;
+#endif
 }
 
 void SurfaceSdlGraphicsManager::resetGraphicsScale() {
@@ -1076,7 +1080,9 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 		for (r = _dirtyRectList; r != lastRect; ++r) {
 			register int dst_y = r->y + _currentShakePos;
 			register int dst_h = 0;
+#ifdef USE_SCALERS
 			register int orig_dst_y = 0;
+#endif
 			register int rx1 = r->x * scale1;
 
 			if (dst_y < height) {
@@ -1084,7 +1090,9 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 				if (dst_h > height - dst_y)
 					dst_h = height - dst_y;
 
+#ifdef USE_SCALERS
 				orig_dst_y = dst_y;
+#endif
 				dst_y = dst_y * scale1;
 
 				if (_videoMode.aspectRatioCorrection && !_overlayVisible)

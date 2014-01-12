@@ -92,15 +92,19 @@ class ExCommand2 : public ExCommand {
 	virtual ExCommand2 *createClone();
 };
 
-class ObjstateCommand : public CObject {
+class ObjstateCommand : public ExCommand {
  public:
-	ExCommand _cmd;
 	char *_objCommandName;
 	int _value;
 
  public:
 	ObjstateCommand();
+	ObjstateCommand(ObjstateCommand *src);
+	virtual ~ObjstateCommand();
+
 	virtual bool load(MfcArchive &file);
+
+	virtual ObjstateCommand *createClone();
 };
 
 class MessageQueue : public CObject {
@@ -186,6 +190,7 @@ bool insertMessageHandler(int (*callback)(ExCommand *), int index, int16 id);
 void clearMessageHandlers();
 void processMessages();
 void updateGlobalMessageQueue(int id, int objid);
+void clearMessages();
 void clearGlobalMessageQueueList1();
 
 bool chainQueue(int queueId, int flags);

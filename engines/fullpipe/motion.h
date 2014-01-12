@@ -173,6 +173,7 @@ public:
 	void updateAnimStatics(StaticANIObject *ani, int staticsId);
 	Common::Point *getPoint(Common::Point *point, int aniId, int staticsId1, int staticsId2);
 	int getStaticsIndexById(int idx, int16 id);
+	int getStaticsIndex(int idx, Statics *st);
 	void clearMovements2(int idx);
 	int recalcOffsets(int idx, int st1idx, int st2idx, bool flip, bool flop);
 	Common::Point *calcLength(Common::Point *point, Movement *mov, int x, int y, int *x1, int *y1, int flag);
@@ -288,6 +289,8 @@ class MovGraphLink : public CObject {
 
   public:
 	MovGraphLink();
+	virtual ~MovGraphLink();
+
 	virtual bool load(MfcArchive &file);
 
 	void calcNodeDistanceAndAngle();
@@ -325,6 +328,8 @@ public:
 
 public:
 	MovGraph();
+	virtual ~MovGraph();
+
 	virtual bool load(MfcArchive &file);
 
 	virtual void addObject(StaticANIObject *obj);

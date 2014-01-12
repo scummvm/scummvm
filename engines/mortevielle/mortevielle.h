@@ -427,17 +427,18 @@ public:
 	byte *_curAnim;
 	byte *_rightFramePict;
 	
-	Debugger _debugger;
-	ScreenSurface _screenSurface;
 	PaletteManager _paletteManager;
 	GfxSurface _backgroundSurface;
 	Common::RandomSource _randomSource;
-	SoundManager _soundManager;
-	SavegameManager _savegameManager;
-	Menu _menu;
-	MouseHandler _mouse;
-	TextHandler _text;
-	DialogManager _dialogManager;
+
+	Debugger *_debugger;
+	ScreenSurface *_screenSurface;
+	SoundManager *_soundManager;
+	SavegameManager *_savegameManager;
+	Menu *_menu;
+	MouseHandler *_mouse;
+	TextHandler *_text;
+	DialogManager *_dialogManager;
 
 	MortevielleEngine(OSystem *system, const MortevielleGameDescription *gameDesc);
 	~MortevielleEngine();
@@ -448,7 +449,7 @@ public:
 	virtual Common::Error saveGameState(int slot, const Common::String &desc);
 	virtual Common::Error run();
 	virtual void pauseEngineIntern(bool pause);
-	virtual GUI::Debugger *getDebugger() {return &_debugger;}
+	virtual GUI::Debugger *getDebugger() {return _debugger;}
 	uint32 getGameFlags() const;
 	Common::Language getLanguage() const;
 	Common::Language getOriginalLanguage() const;

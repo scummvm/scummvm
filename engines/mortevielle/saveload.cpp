@@ -37,7 +37,7 @@ namespace Mortevielle {
 
 static const char SAVEGAME_ID[4] = { 'M', 'O', 'R', 'T' };
 
-void SavegameManager::setParent(MortevielleEngine *vm) {
+SavegameManager::SavegameManager(MortevielleEngine *vm) {
 	_vm = vm;
 }
 
@@ -116,14 +116,14 @@ bool SavegameManager::loadSavegame(const Common::String &filename) {
  * Load a saved game
  */
 Common::Error SavegameManager::loadGame(const Common::String &filename) {
-	g_vm->_mouse.hideMouse();
+	g_vm->_mouse->hideMouse();
 	g_vm->displayEmptyHand();
 	if (loadSavegame(filename)) {
 		/* Initialization */
 		g_vm->charToHour();
 		g_vm->initGame();
 		g_vm->gameLoaded();
-		g_vm->_mouse.showMouse();
+		g_vm->_mouse->showMouse();
 		return Common::kNoError;
 	} else 
 		return Common::kUnknownError;
@@ -136,7 +136,7 @@ Common::Error SavegameManager::saveGame(int n, const Common::String &saveName) {
 	Common::OutSaveFile *f;
 	int i;
 
-	g_vm->_mouse.hideMouse();
+	g_vm->_mouse->hideMouse();
 	g_vm->hourToChar();
 
 	for (i = 0; i <= 389; ++i)
@@ -165,7 +165,7 @@ Common::Error SavegameManager::saveGame(int n, const Common::String &saveName) {
 
 	// Skipped: dialog asking to swap floppy
 
-	g_vm->_mouse.showMouse();
+	g_vm->_mouse->showMouse();
 	return Common::kNoError;
 }
 
@@ -191,7 +191,7 @@ void SavegameManager::writeSavegameHeader(Common::OutSaveFile *out, const Common
 
 	// Create a thumbnail and save it
 	Graphics::Surface *thumb = new Graphics::Surface();
-	Graphics::Surface s = g_vm->_screenSurface.lockArea(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
+	Graphics::Surface s = g_vm->_screenSurface->lockArea(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
 
 	::createThumbnail(thumb, (const byte *)s.getPixels(), SCREEN_WIDTH, SCREEN_HEIGHT, thumbPalette);
 	Graphics::saveThumbnail(*out, *thumb);

@@ -55,6 +55,10 @@ bool canInteractAny(GameObject *obj1, GameObject *obj2, int invId) {
 	return false;
 }
 
+InteractionController::~InteractionController() {
+	warning("STUB: InteractionController::~InteractionController()");
+}
+
 bool InteractionController::load(MfcArchive &file) {
 	debug(5, "InteractionController::load()");
 
@@ -420,6 +424,10 @@ Interaction::Interaction() {
 	_field_28 = 0;
 	_sceneId = -1;
 	_actionName = 0;
+}
+
+Interaction::~Interaction() {
+	warning("STUB: Interaction::~Interaction()");
 }
 
 bool Interaction::load(MfcArchive &file) {

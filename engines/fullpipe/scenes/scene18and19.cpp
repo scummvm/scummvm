@@ -20,31 +20,30 @@
  *
  */
 
-#ifndef DC_SOFTKBD_H
-#define DC_SOFTKBD_H
+#include "fullpipe/fullpipe.h"
 
-#include "label.h"
+#include "fullpipe/objectnames.h"
+#include "fullpipe/constants.h"
 
-#define SK_NUM_KEYS 61
+#include "fullpipe/gameloader.h"
+#include "fullpipe/motion.h"
+#include "fullpipe/scenes.h"
+#include "fullpipe/statics.h"
 
-class OSystem_Dreamcast;
+#include "fullpipe/interaction.h"
+#include "fullpipe/behavior.h"
 
-class SoftKeyboard : public Interactive
-{
- private:
 
-  const OSystem_Dreamcast *os;
-  Label labels[2][SK_NUM_KEYS];
-  byte shiftState;
-  int8 keySel;
+namespace Fullpipe {
 
- public:
-  SoftKeyboard(const OSystem_Dreamcast *os);
-  virtual ~SoftKeyboard() {}
+void scene18_preload() {
+	warning("WARNING: scene18_preload()");
+}
 
-  void draw(float x, float y, int transp = 0);
-  int key(int k, byte &shiftFlags);
-  void mouse(int x, int y);
-};
+void scene19_preload(Scene *sc, int key) {
+	warning("WARNING: scene19_preload()");
+}
 
-#endif /* DC_SOFTKBD_H */
+
+
+} // End of namespace Fullpipe

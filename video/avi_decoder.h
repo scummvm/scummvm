@@ -72,8 +72,11 @@ public:
 	bool isSeekable() const;
 
 protected:
-	 void readNextPacket();
-	 bool seekIntern(const Audio::Timestamp &time);
+	// VideoDecoder API
+	void readNextPacket();
+	bool seekIntern(const Audio::Timestamp &time);
+	bool supportsAudioTrackSwitching() const { return true; }
+	AudioTrack *getAudioTrack(int index);
 
 	struct BitmapInfoHeader {
 		uint32 size;

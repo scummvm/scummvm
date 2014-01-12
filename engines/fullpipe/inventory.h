@@ -49,6 +49,8 @@ class Inventory : public CObject {
 
  public:
 	Inventory() { _sceneId = 0; }
+	virtual ~Inventory();
+
 	virtual bool load(MfcArchive &file);
 
 	int getInventoryPoolItemIndexById(int itemId);
@@ -96,6 +98,8 @@ class Inventory2 : public Inventory {
 
  public:
 	Inventory2();
+	virtual ~Inventory2();
+
 	bool loadPartial(MfcArchive &file);
 	void addItem(int itemId, int count);
 	void addItem2(StaticANIObject *obj);

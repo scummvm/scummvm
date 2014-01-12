@@ -28,6 +28,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"5ld",             "Five Lethal Demons"},
 	{"5ma",             "Five Magical Amulets"},
 	{"actualdest",      "Actual Destination"},
+	{"bickadoodle",     "Bickadoodle"},
 	{"bookofgron",      "Book of Gron Part One"},
 	{"bthreshold",      "Beyond the Threshold"},
 	{"carolreed4",      "Carol Reed 4 - East Side Story"},
@@ -58,6 +59,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"reversion1",      "Reversion: The Escape"},
 	{"reversion2",      "Reversion: The Meeting"},
 	{"rosemary",        "Rosemary"},
+	{"securanote",      "Securanote"},
 	{"shaban",          "Shaban"},
 	{"shinestar",       "The Shine of a Star"},
 	{"spaceinvaders",   "Space Invaders"},
@@ -67,6 +69,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"tradestory",      "The Trader of Stories"},
 	{"twc",             "the white chamber"},
 	{"wintermute",      "Wintermute engine game"},
+	{"wtetris",         "Wilma Tetris"},
 	{0, 0}
 };
 
@@ -106,6 +109,16 @@ static const ADGameDescription gameDescriptions[] = {
 		"bthreshold",
 		"",
 		AD_ENTRY1s("data.dcp", "d49bf9ccb2e74507447c82d6ad3e2bc4", 12773712),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	// Bickadoodle
+	{
+		"bickadoodle",
+		"",
+		AD_ENTRY1s("data.dcp", "84db4d1594cac95e25614985775d10a8", 35303844),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
@@ -282,6 +295,19 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO0()
 	},
+	// Dirty Split (Czech)
+	{
+		"dirtysplit",
+		"",
+		{
+			{"czech.dcp", 0, "08a71446467cf8f9444cfea446b46ad6", 127697934},
+			{"data.dcp", 0, "8b4b81b718bf65f30a67fc0b1e329eb5", 88577623},
+		},
+		Common::CZ_CZE,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
 	// Dirty Split (English)
 	{
 		"dirtysplit",
@@ -292,12 +318,52 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO0()
 	},
+	// Dirty Split (French)
+	{
+		"dirtysplit",
+		"",
+		{
+			{"french.dcp", 0, "a0508dedebd0fe478d0158fa4c2a1136", 125534323},
+			{"data.dcp", 0, "e6d70c7f5d181b761cfcf974adf9186a", 88577623},
+			AD_LISTEND
+		},
+		Common::FR_FRA,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
 	// Dirty Split (German)
 	{
 		"dirtysplit",
 		"",
 		AD_ENTRY1s("data.dcp", "139d8a25579e969f8b37d20e6e3de5f9", 92668291),
 		Common::DE_DEU,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	// Dirty Split (Italian)
+	{
+		"dirtysplit",
+		"",
+		{
+			{"italian.dcp", 0, "8108807fbd8af70be1ec452d0fd1131b", 125513726},
+			{"data.dcp", 0, "35a150e22af274185883fdbb142c6fb1", 88577623},
+		},
+		Common::IT_ITA,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	// Dirty Split (Spanish)
+	{
+		"dirtysplit",
+		"",
+		{
+			{"spanish.dcp", 0, "b3982c0a5e85b42e1e38240fef004aa4", 164428596},
+			{"data.dcp", 0, "63766d6c68b9f00b632ea1736fc8a95c", 88577621},
+		},
+		Common::ES_ESP,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
 		GUIO0()
@@ -337,6 +403,16 @@ static const ADGameDescription gameDescriptions[] = {
 		"escapemansion",
 		"Beta 2",
 		AD_ENTRY1s("data.dcp",  "ded5fa6c5f2afdaf2cafb53e52cd3dd8", 21455763),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	// Escape from the Mansion
+	{
+		"escapemansion",
+		"1.3",
+		AD_ENTRY1s("data.dcp",  "1e5d231b56c8a228cd15cb690f50253e", 29261972),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
@@ -930,6 +1006,16 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO0()
 	},
+	// Securanote
+	{
+		"securanote",
+		"",
+		AD_ENTRY1s("data.dcp",  "5213d3e59b9e95b7fbd5c56f7de5341a", 2625554),
+		Common::EN_ANY,
+		Common::kPlatformIOS,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
 	// Shaban
 	{
 		"shaban",
@@ -1008,6 +1094,16 @@ static const ADGameDescription gameDescriptions[] = {
 		"",
 		AD_ENTRY1s("data.dcp", "0011d01142547c61e51ba24dc42b579e", 186451273),
 		Common::UNK_LANG,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	// Wilma Tetris
+	{
+		"wtetris",
+		"",
+		AD_ENTRY1s("data.dcp", "946e3a0496e6c12fb344c9ed861ff015", 2780093),
+		Common::EN_ANY,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
 		GUIO0()

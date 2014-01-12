@@ -2423,6 +2423,8 @@ if test -n "$_host"; then
 			CXXFLAGS="$CXXFLAGS -fschedule-insns2"
 			CXXFLAGS="$CXXFLAGS -fomit-frame-pointer"
 			CXXFLAGS="$CXXFLAGS -fdelete-null-pointer-checks"
+			# no-delayed-branch is a workaround for GCC bug #42841 - "SH: Assembler complains pcrel too far."
+			CXXFLAGS="$CXXFLAGS -fno-delayed-branch"
 			_backend="dc"
 			_build_scalers=no
 			_mad=yes

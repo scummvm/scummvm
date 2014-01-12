@@ -58,6 +58,8 @@ Bitmap::Bitmap(Bitmap *src) {
 Bitmap::~Bitmap() {
 	if (_pixels)
 		free(_pixels);
+
+	_pixels = 0;
 }
 
 void Bitmap::load(Common::ReadStream *s) {
@@ -85,6 +87,10 @@ Background::Background() {
 	_bigPictureArray = 0;
 	_bgname = 0;
 	_palette = 0;
+}
+
+Background::~Background() {
+	warning("STUB: Background::~Background()");
 }
 
 bool Background::load(MfcArchive &file) {
@@ -150,6 +156,10 @@ PictureObject::PictureObject() {
 	_oy2 = 0;
 	_pictureObject2List = 0;
 	_objtype = kObjTypePictureObject;
+}
+
+PictureObject::~PictureObject() {
+	warning("STUB: PictureObject::~PictureObject()");
 }
 
 PictureObject::PictureObject(PictureObject *src) : GameObject(src) {
@@ -222,7 +232,7 @@ void PictureObject::drawAt(int x, int y) {
 
 bool PictureObject::setPicAniInfo(PicAniInfo *picAniInfo) {
 	if (!(picAniInfo->type & 2) || (picAniInfo->type & 1)) {
-		error("Picture::setPicAniInfo(): Wrong type: %d", picAniInfo->type);
+		error("PictureObject::setPicAniInfo(): Wrong type: %d", picAniInfo->type);
 
 		return false;
 	}
@@ -267,6 +277,11 @@ bool PictureObject::isPixelHitAtPos(int x, int y) {
 	_picture->_y = oldy;
 
 	return res;
+}
+
+void PictureObject::setOXY2() {
+	_ox2 = _ox;
+	_oy2 = _oy;
 }
 
 GameObject::GameObject() {
@@ -469,7 +484,7 @@ void Picture::freePicture() {
 	if (_bitmap) {
 		if (testFlags() && !_field_54) {
 			freeData();
-			delete _bitmap;
+			free(_bitmap);
 			_bitmap = 0;
 		}
 	}
@@ -484,6 +499,11 @@ void Picture::freePicture() {
 		delete _convertedBitmap;
 		_convertedBitmap = 0;
 	}
+}
+
+void Picture::freePixelData() {
+	freePicture();
+	freeData();
 }
 
 bool Picture::load(MfcArchive &file) {

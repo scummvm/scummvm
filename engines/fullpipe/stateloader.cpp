@@ -31,6 +31,7 @@
 #include "fullpipe/scene.h"
 #include "fullpipe/statics.h"
 #include "fullpipe/interaction.h"
+#include "fullpipe/gameloader.h"
 
 #include "fullpipe/constants.h"
 
@@ -146,6 +147,8 @@ bool GameProject::load(MfcArchive &file) {
 
 GameProject::~GameProject() {
 	free(_headerFilename);
+
+	delete _sceneTagList;
 }
 
 GameVar::GameVar() {
@@ -157,6 +160,10 @@ GameVar::GameVar() {
 	_varType = 0;
 	_value.floatValue = 0;
 	_varName = 0;
+}
+
+GameVar::~GameVar() {
+	warning("STUB: GameVar::~GameVar()");
 }
 
 bool GameVar::load(MfcArchive &file) {
@@ -319,6 +326,10 @@ bool PicAniInfo::load(MfcArchive &file) {
 	someDynamicPhaseIndex = file.readUint32LE();
 
 	return true;
+}
+
+void FullpipeEngine::updateMap(PreloadItem *pre) {
+	warning("STUB: FullpipeEngine::updateMap()");
 }
 
 } // End of namespace Fullpipe

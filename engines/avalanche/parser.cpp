@@ -1040,6 +1040,8 @@ bool Parser::isHolding() {
 	// Also object
 	if ((51 <= _thing) && (_thing <= 99))
 		return true;
+	if (_thing == 0)
+		return false;
 
 	bool holdingResult = false;
 

@@ -441,12 +441,10 @@ bool AVIDecoder::seekIntern(const Audio::Timestamp &time) {
 	if (time > getDuration())
 		return false;
 
-	// Track down our video track (optionally audio too).
-	// We only support seeking with one track right now.
+	// Track down our video track.
+	// We only support seeking with one video track right now.
 	AVIVideoTrack *videoTrack = 0;
-	AVIAudioTrack *audioTrack = 0;
 	int videoIndex = -1;
-	int audioIndex = -1;
 	uint trackID = 0;
 
 	for (TrackListIterator it = getTrackListBegin(); it != getTrackListEnd(); it++, trackID++) {
@@ -459,15 +457,6 @@ bool AVIDecoder::seekIntern(const Audio::Timestamp &time) {
 
 			videoTrack = (AVIVideoTrack *)*it;
 			videoIndex = trackID;
-		} else if ((*it)->getTrackType() == Track::kTrackTypeAudio) {
-			if (audioTrack) {
-				// Already have one
-				// -> Not supported
-				return false;
-			}
-
-			audioTrack = (AVIAudioTrack *)*it;
-			audioIndex = trackID;
 		}
 	}
 
@@ -480,8 +469,9 @@ bool AVIDecoder::seekIntern(const Audio::Timestamp &time) {
 	if (time == getDuration()) {
 		videoTrack->setCurFrame(videoTrack->getFrameCount() - 1);
 
-		if (audioTrack)
-			audioTrack->resetStream();
+		for (TrackListIterator it = getTrackListBegin(); it != getTrackListEnd(); it++)
+			if ((*it)->getTrackType() == Track::kTrackTypeAudio)
+				((AVIAudioTrack *)*it)->resetStream();
 
 		return true;
 	}
@@ -542,7 +532,15 @@ bool AVIDecoder::seekIntern(const Audio::Timestamp &time) {
 	if (frameIndex < 0) // This shouldn't happen.
 		return false;
 
-	if (audioTrack) {
+	// Update all the audio tracks
+	uint audioIndex = 0;
+
+	for (TrackListIterator it = getTrackListBegin(); it != getTrackListEnd(); it++, audioIndex++) {
+		if ((*it)->getTrackType() != Track::kTrackTypeAudio)
+			continue;
+
+		AVIAudioTrack *audioTrack = (AVIAudioTrack *)*it;
+
 		// We need to find where the start of audio should be.
 		// Which is exactly 'initialFrames' audio chunks back from where
 		// our found frame is.
@@ -681,6 +679,16 @@ void AVIDecoder::forceVideoEnd() {
 	for (TrackListIterator it = getTrackListBegin(); it != getTrackListEnd(); it++)
 		if ((*it)->getTrackType() == Track::kTrackTypeVideo)
 			((AVIVideoTrack *)*it)->forceTrackEnd();
+}
+
+VideoDecoder::AudioTrack *AVIDecoder::getAudioTrack(int index) {
+	// AVI audio track indexes are relative to the first track
+	Track *track = getTrack(index);
+
+	if (!track || track->getTrackType() != Track::kTrackTypeAudio)
+		return 0;
+
+	return (AudioTrack *)track;
 }
 
 AVIDecoder::AVIVideoTrack::AVIVideoTrack(int frameCount, const AVIStreamHeader &streamHeader, const BitmapInfoHeader &bitmapInfoHeader, byte *initialPalette)

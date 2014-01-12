@@ -132,6 +132,8 @@ class Movement : public GameObject {
 
   public:
 	Movement();
+	virtual ~Movement();
+
 	Movement(Movement *src, StaticANIObject *ani);
 	Movement(Movement *src, int *flag1, int flag2, StaticANIObject *ani);
 
@@ -162,6 +164,7 @@ class Movement : public GameObject {
 	void gotoLastFrame();
 
 	void loadPixelData();
+	void freePixelData();
 
 	void draw(bool flipFlag, int angle);
 };
@@ -187,11 +190,12 @@ class StaticANIObject : public GameObject {
 	int _counter;
 	int _someDynamicPhaseIndex;
 
-  public:
+public:
 	int16 _sceneId;
 
-  public:
+public:
 	StaticANIObject();
+	virtual ~StaticANIObject();
 	StaticANIObject(StaticANIObject *src);
 
 	virtual bool load(MfcArchive &file);
@@ -220,6 +224,7 @@ class StaticANIObject : public GameObject {
 
 	void initMovements();
 	void loadMovementsPixelData();
+	void preloadMovements(MovTable *mt);
 
 	void setSomeDynamicPhaseIndex(int val) { _someDynamicPhaseIndex = val; }
 	void adjustSomeXY();
@@ -243,6 +248,7 @@ class StaticANIObject : public GameObject {
 
 	void updateStepPos();
 	void stopAnim_maybe();
+	Common::Point *calcNextStep(Common::Point *point);
 
 	MessageQueue *changeStatics1(int msgNum);
 	void changeStatics2(int objId);
@@ -253,6 +259,9 @@ class StaticANIObject : public GameObject {
 struct MovTable {
 	int count;
 	int16 *movs;
+
+	MovTable() { count = 0; movs = 0; }
+	~MovTable() { free(movs); }
 };
 
 } // End of namespace Fullpipe

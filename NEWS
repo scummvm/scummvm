@@ -4,13 +4,12 @@ For a more comprehensive changelog of the latest experimental code, see:
 1.7.0 (????-??-??)
  New Games:
    - Added support for Return to Ringworld.
+   - Added support for The Neverhood.
 
  General:
-   - Updated MT-32 emulation code to version 1.3.0.
-   - Switched from our custom JPEG decoder to libjpeg-turbo, which is faster
-     and can handle all kinds of exotic JPEG images :)
-   - Switched from our custom PNG decoder to libpng, which is faster and can
-     handle all kinds of exotic PNG images :)
+   - Updated Munt MT-32 emulation code to version 1.3.0.
+   - Switched from our custom JPEG and PNG decoders to libjpeg(-turbo) and
+     libpng, which are faster and can handle more images.
      (NOTE: The change to libpng was done in version 1.6.0, but it was not
      added to the NEWS file).
 

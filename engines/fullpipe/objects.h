@@ -82,6 +82,8 @@ class GameVar : public CObject {
 
  public:
 	GameVar();
+	virtual ~GameVar();
+
 	virtual bool load(MfcArchive &file);
 	GameVar *getSubVarByName(const char *name);
 	bool setSubVarAsInt(const char *name, int value);

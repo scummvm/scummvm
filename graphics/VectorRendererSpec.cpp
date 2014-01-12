@@ -620,7 +620,10 @@ applyScreenShading(GUI::ThemeEngine::ShadingStyle shadingStyle) {
 template<typename PixelType>
 inline void VectorRendererSpec<PixelType>::
 blendPixelPtr(PixelType *ptr, PixelType color, uint8 alpha) {
-	if (sizeof(PixelType) == 4) {
+	if (alpha == 0xff) {
+		// fully opaque pixel, don't blend
+		*ptr = color | _alphaMask;
+	} else if (sizeof(PixelType) == 4) {
 		const byte sR = (color & _redMask) >> _format.rShift;
 		const byte sG = (color & _greenMask) >> _format.gShift;
 		const byte sB = (color & _blueMask) >> _format.bShift;
@@ -628,15 +631,17 @@ blendPixelPtr(PixelType *ptr, PixelType color, uint8 alpha) {
 		byte dR = (*ptr & _redMask) >> _format.rShift;
 		byte dG = (*ptr & _greenMask) >> _format.gShift;
 		byte dB = (*ptr & _blueMask) >> _format.bShift;
+		byte dA = (*ptr & _alphaMask) >> _format.aShift;
 
 		dR += ((sR - dR) * alpha) >> 8;
 		dG += ((sG - dG) * alpha) >> 8;
 		dB += ((sB - dB) * alpha) >> 8;
+		dA += ((0xff - dA) * alpha) >> 8;
 
 		*ptr = ((dR << _format.rShift) & _redMask)
 		     | ((dG << _format.gShift) & _greenMask)
 		     | ((dB << _format.bShift) & _blueMask)
-		     | (*ptr & _alphaMask);
+		     | ((dA << _format.aShift) & _alphaMask);
 	} else if (sizeof(PixelType) == 2) {
 		int idst = *ptr;
 		int isrc = color;
@@ -651,7 +656,9 @@ blendPixelPtr(PixelType *ptr, PixelType color, uint8 alpha) {
 			(_blueMask & ((idst & _blueMask) +
 			((int)(((int)(isrc & _blueMask) -
 			(int)(idst & _blueMask)) * alpha) >> 8))) |
-			(idst & _alphaMask));
+			(_alphaMask & ((idst & _alphaMask) +
+			((int)(((int)(_alphaMask) -
+			(int)(idst & _alphaMask)) * alpha) >> 8))));
 	} else {
 		error("Unsupported BPP format: %u", (uint)sizeof(PixelType));
 	}
@@ -691,8 +698,7 @@ darkenFill(PixelType *ptr, PixelType *end) {
 		// assuming at least 3 alpha bits
 
 		mask |= 3 << _format.aShift;
-		PixelType addA = (PixelType)(255 >> _format.aLoss) << _format.aShift;
-		addA -= (addA >> 2);
+		PixelType addA = (PixelType)(3 << (_format.aShift + 6 - _format.aLoss));
 
 		while (ptr != end) {
 			// Darken the colour, and increase the alpha

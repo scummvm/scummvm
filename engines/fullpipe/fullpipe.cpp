@@ -99,7 +99,9 @@ FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_aniMan = 0;
 	_aniMan2 = 0;
 	_currentScene = 0;
+	_loaderScene = 0;
 	_scene2 = 0;
+	_scene3 = 0;
 	_movTable = 0;
 	_floaters = 0;
 	_mgm = 0;

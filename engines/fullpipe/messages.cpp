@@ -234,18 +234,33 @@ ObjstateCommand::ObjstateCommand() {
 	_objCommandName = 0;
 }
 
+ObjstateCommand::ObjstateCommand(ObjstateCommand *src) : ExCommand(src) {
+	_value = src->_value;
+	_objCommandName = (char *)calloc(strlen(src->_objCommandName) + 1, 1);
+
+	strncpy(_objCommandName, src->_objCommandName, strlen(src->_objCommandName));
+}
+
+ObjstateCommand::~ObjstateCommand() {
+	free(_objCommandName);
+}
+
 bool ObjstateCommand::load(MfcArchive &file) {
 	debug(5, "ObjStateCommand::load()");
 
 	_objtype = kObjTypeObjstateCommand;
 
-	_cmd.load(file);
+	ExCommand::load(file);
 
 	_value = file.readUint32LE();
 
 	_objCommandName = file.readPascalString();
 
 	return true;
+}
+
+ObjstateCommand *ObjstateCommand::createClone() {
+	return new ObjstateCommand(this);
 }
 
 MessageQueue::MessageQueue() {
@@ -392,7 +407,12 @@ void MessageQueue::addExCommandToEnd(ExCommand *ex) {
 }
 
 void MessageQueue::insertExCommandAt(int pos, ExCommand *ex) {
-	warning("STUB: MessageQueue::insertExCommandAt()");
+	Common::List<ExCommand *>::iterator it = _exCommands.begin();
+
+	for (int i = pos; i > 0; i--)
+		++it;
+
+	_exCommands.insert(it, ex);
 }
 
 ExCommand *MessageQueue::getExCommandByIndex(uint idx) {
@@ -663,7 +683,20 @@ void GlobalMessageQueueList::addMessageQueue(MessageQueue *msg) {
 }
 
 void clearGlobalMessageQueueList1() {
-	warning("STUB: clearGlobalMessageQueueList1()");
+	clearMessages();
+
+	g_fp->_globalMessageQueueList->clear();
+}
+
+void clearMessages() {
+	while (g_fp->_exCommandList.size()) {
+		ExCommand *ex = g_fp->_exCommandList.front();
+
+		g_fp->_exCommandList.pop_front();
+
+		if (ex->_excFlags & 2)
+			delete ex;
+	}
 }
 
 bool removeMessageHandler(int16 id, int pos) {

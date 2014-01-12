@@ -101,6 +101,9 @@ void scene17_restoreState();
 int sceneHandler17(ExCommand *cmd);
 int scene17_updateCursor();
 
+void scene18_preload();
+void scene19_preload(Scene *sc, int key);
+
 void scene20_initScene(Scene *sc);
 int sceneHandler20(ExCommand *ex);
 
@@ -142,6 +145,16 @@ int sceneHandler30(ExCommand *cmd);
 
 void scene31_initScene(Scene *sc);
 int sceneHandler31(ExCommand *ex);
+
+void scene32_initScene(Scene *sc);
+void scene32_setupMusic();
+int sceneHandler32(ExCommand *cmd);
+int scene32_updateCursor();
+
+void scene33_initScene(Scene *sc);
+void scene33_setupMusic();
+int sceneHandler33(ExCommand *cmd);
+int scene33_updateCursor();
 
 int scene36_updateCursor();
 void scene36_initScene(Scene *sc);
@@ -375,6 +388,8 @@ public:
 	bool scene17_handPhase;
 	int scene17_sceneEdgeX;
 
+	int scene18_var01;
+
 	int scene20_fliesCountdown;
 	StaticANIObject *scene20_grandma;
 
@@ -426,17 +441,13 @@ public:
 	StaticANIObject *scene26_sock;
 	StaticANIObject *scene26_activeVent;
 
-	int scene28_var01;
-	int scene28_var02;
-	int scene28_var03;
-	int scene28_var04;
-	int scene28_var05;
-	int scene28_var06;
-	PictureObject *scene28_var07;
-	PictureObject *scene28_var08;
-	int scene28_var09;
-	int scene28_var10;
-	int scene28_var11;
+	bool scene28_fliesArePresent;
+	bool scene28_beardedDirection;
+	PictureObject *scene28_darkeningObject;
+	PictureObject *scene28_lighteningObject;
+	bool scene28_headDirection;
+	bool scene28_headBeardedFlipper;
+	bool scene28_lift6inside;
 
 	StaticANIObject *scene30_leg;
 	int scene30_liftFlag;
@@ -444,6 +455,40 @@ public:
 	int scene31_chantingCountdown;
 	StaticANIObject *scene31_cactus;
 	StaticANIObject *scene31_plusMinus;
+
+	bool scene32_flagIsWaving;
+	bool scene32_flagNeedsStopping;
+	bool scene32_dudeIsSitting;
+	int scene32_cactusCounter;
+	bool scene32_dudeOnLadder;
+	bool scene32_cactusIsGrowing;
+	StaticANIObject *scene32_flag;
+	StaticANIObject *scene32_cactus;
+	StaticANIObject *scene32_massOrange;
+	StaticANIObject *scene32_massBlue;
+	StaticANIObject *scene32_massGreen;
+	StaticANIObject *scene32_button;
+
+	StaticANIObject *scene33_mug;
+	StaticANIObject *scene33_jettie;
+	StaticANIObject *scene33_cube;
+	int scene33_cubeX;
+	bool scene33_handleIsDown;
+	int scene33_ventsX[9];
+	int scene33_ventsState[9];
+
+	int scene34_var01;
+	int scene34_var02;
+	int scene34_var03;
+	int scene34_var04;
+	StaticANIObject *scene34_cactus;
+	StaticANIObject *scene34_vent;
+	StaticANIObject *scene34_hatch;
+	StaticANIObject *scene34_boot;
+	int scene34_var05;
+	int scene34_var06;
+	int scene34_var07;
+	int scene34_var08;
 
 	StaticANIObject *scene36_rotohrust;
 	StaticANIObject *scene36_scissors;

@@ -91,6 +91,8 @@ private:
 	byte _fontData[FONT_NUM_CHARS * FONT_HEIGHT];
 
 public:
+	ScreenSurface(MortevielleEngine *vm);
+
 	Common::Point _textPos;		// Original called xwhere/ywhere
 	void readFontData(Common::File &f, int dataSize);
 	Graphics::Surface lockArea(const Common::Rect &bounds);
@@ -106,7 +108,6 @@ public:
 	int  getStringWidth(const Common::String &s);
 	void drawLine(int x, int y, int xx, int yy, int coul);
 	void drawRectangle(int x, int y, int dx, int dy);
-	void setParent(MortevielleEngine *vm);
 
 	// TODO: Refactor code to remove this method, for increased performance
 	void setPixel(const Common::Point &pt, int palIndex);

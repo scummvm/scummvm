@@ -463,6 +463,10 @@ MovGraph::MovGraph() {
 	_objtype = kObjTypeMovGraph;
 }
 
+MovGraph::~MovGraph() {
+	warning("STUB: MovGraph::~MovGraph()");
+}
+
 bool MovGraph::load(MfcArchive &file) {
 	debug(5, "MovGraph::load()");
 
@@ -1882,8 +1886,23 @@ Common::Point *MGM::getPoint(Common::Point *point, int objectId, int staticsId1,
 }
 
 int MGM::getStaticsIndexById(int idx, int16 id) {
+	if (!_items[idx]->statics.size())
+		return -1;
+
 	for (uint i = 0; i < _items[idx]->statics.size(); i++) {
 		if (_items[idx]->statics[i]->_staticsId == id)
+			return i;
+	}
+
+	return 0;
+}
+
+int MGM::getStaticsIndex(int idx, Statics *st) {
+	if (!_items[idx]->statics.size())
+		return -1;
+
+	for (uint i = 0; i < _items[idx]->statics.size(); i++) {
+		if (_items[idx]->statics[i] == st)
 			return i;
 	}
 
@@ -1900,10 +1919,86 @@ int MGM::recalcOffsets(int idx, int st1idx, int st2idx, bool flip, bool flop) {
 	return 0;
 }
 
-Common::Point *MGM::calcLength(Common::Point *point, Movement *mov, int x, int y, int *x1, int *y1, int flag) {
-	warning("STUB: MGM::calcLength()");
+Common::Point *MGM::calcLength(Common::Point *pRes, Movement *mov, int x, int y, int *x1, int *y1, int flag) {
+	Common::Point point;
 
-	return point;
+	mov->calcSomeXY(point, 0);
+	int p1x = point.x;
+	int p1y = point.y;
+
+	int newx1 = 0;
+	int oldy1 = *y1;
+
+	if (abs(p1y) > abs(p1x)) {
+		if (mov->calcSomeXY(point, 0)->y)
+			newx1 = (int)((double)y / point.y);
+	} else if (mov->calcSomeXY(point, 0)->x) {
+		newx1 = (int)((double)x / point.y);
+	}
+
+	if (newx1 < 0)
+		newx1 = 0;
+
+	*x1 = newx1;
+
+	int phase = 1;
+	int sz;
+
+	if (flag) {
+		if (abs(p1y) > abs(p1x)) {
+			while (abs(p1y * newx1 + mov->calcSomeXY(point, 0)->y) < abs(y)) {
+				sz = mov->_currMovement ? mov->_currMovement->_dynamicPhases.size() : mov->_dynamicPhases.size();
+
+				if (phase >= sz) {
+					phase--;
+
+					break;
+				}
+
+				phase++;
+			}
+		} else {
+			while (abs(p1x * newx1 + mov->calcSomeXY(point, 0)->x) < abs(x)) {
+				sz = mov->_currMovement ? mov->_currMovement->_dynamicPhases.size() : mov->_dynamicPhases.size();
+
+				if (phase >= sz) {
+					phase--;
+
+					break;
+				}
+
+				phase++;
+			}
+		}
+
+		*y1 = phase - 1;
+	} else {
+		*y1 = -1;
+	}
+
+	int p2x = 0;
+	int p2y = 0;
+
+	if (!oldy1)
+		oldy1 = -1;
+
+	if (oldy1 > 0) {
+		++*x1;
+
+		mov->calcSomeXY(point, 0);
+		p2x = point.x;
+		p2y = point.y;
+
+		if (abs(p1y) > abs(p1x))
+			p2x = p1x;
+		else
+			p2y = p1y;
+	}
+
+	pRes->x = p2x + p1x * newx1;
+	pRes->y = p2y + p1y * newx1;
+
+	return pRes;
 }
 
 ExCommand2 *MGM::buildExCommand2(Movement *mov, int objId, int x1, int y1, Common::Point *x2, Common::Point *y2, int len) {
@@ -1938,7 +2033,7 @@ ExCommand2 *MGM::buildExCommand2(Movement *mov, int objId, int x1, int y1, Commo
 
 			y2->y -= x2->y;
 
-			if ( !y2->y )
+			if (!y2->y)
 				x2->y = 0;
 		}
 	}
@@ -1971,6 +2066,11 @@ MovGraphLink::MovGraphLink() {
 
 	_objtype = kObjTypeMovGraphLink;
 }
+
+MovGraphLink::~MovGraphLink() {
+	warning("STUB: MovGraphLink::~MovGraphLink()");
+}
+
 
 bool MovGraphLink::load(MfcArchive &file) {
 	debug(5, "MovGraphLink::load()");

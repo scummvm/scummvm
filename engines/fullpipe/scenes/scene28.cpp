@@ -37,17 +37,13 @@
 namespace Fullpipe {
 
 void scene28_initScene(Scene *sc) {
-	g_vars->scene28_var01 = 200;
-	g_vars->scene28_var02 = 200;
-	g_vars->scene28_var03 = 300;
-	g_vars->scene28_var04 = 300;
-	g_vars->scene28_var05 = 1;
-	g_vars->scene28_var06 = 1;
-	g_vars->scene28_var07 = 0;
-	g_vars->scene28_var08 = 0;
-	g_vars->scene28_var09 = 0;
-	g_vars->scene28_var10 = 0;
-	g_vars->scene28_var11 = 0;
+	g_vars->scene28_fliesArePresent = true;
+	g_vars->scene28_beardedDirection = true;
+	g_vars->scene28_darkeningObject = 0;
+	g_vars->scene28_lighteningObject = 0;
+	g_vars->scene28_headDirection = false;
+	g_vars->scene28_headBeardedFlipper = false;
+	g_vars->scene28_lift6inside = false;
 
 	g_fp->_floaters->init(g_fp->getGameLoaderGameVar()->getSubVarByName("SC_28"));
 	
@@ -64,27 +60,141 @@ int scene28_updateCursor() {
 }
 
 void sceneHandler28_lift1ShowAfter() {
-	warning("STUB: sceneHandler28_lift1ShowAfter()");
+	StaticANIObject *ani = g_fp->_currentScene->getStaticANIObject1ById(ANI_MAN_28, -1);
+
+	g_fp->_aniMan->_statics = g_fp->_aniMan->getStaticsById(ST_MAN_SIT|0x4000);
+	g_fp->_aniMan->setOXY(ani->_ox + 7, ani->_oy);
+	g_fp->_aniMan->_priority = ani->_priority;
+	g_fp->_aniMan->show1(-1, -1, -1, 0);
 }
 
 void sceneHandler28_makeFaces(ExCommand *cmd) {
-	warning("STUB: sceneHandler28_makeFaces()");
+	g_fp->_currentScene->getPictureObjectById(PIC_SC28_DARK4, 0)->_flags &= 0xFFFB;
+
+	g_vars->scene28_lighteningObject = 0;
+
+	MessageQueue *mq = g_fp->_globalMessageQueueList->getMessageQueueById(cmd->_parId);
+	if (mq) {
+		int frames[5];
+
+		frames[0] = MV_WMN28_IN_1;
+		frames[1] = MV_WMN28_IN_2;
+		frames[2] = MV_WMN28_IN_3;
+		frames[3] = MV_WMN28_IN_4;
+		frames[4] = MV_WMN28_IN_5;
+
+		for (int i = 0; i < 5; i++) {
+			int pos;
+
+			while (frames[pos = g_fp->_rnd->getRandomNumber(4)] == 0)
+				;
+
+			mq->getExCommandByIndex(i)->_messageNum = frames[pos];
+
+			frames[pos] = 0;
+		}
+	}
 }
 
 void sceneHandler28_trySecondaryPers() {
-	warning("STUB: sceneHandler28_trySecondaryPers()");
+	MessageQueue *mq;
+	int x;
+
+	if (g_vars->scene28_headBeardedFlipper) {
+		if (g_vars->scene28_beardedDirection) {
+			mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_BRD28_GOR), 0, 1);
+
+			mq->getExCommandByIndex(0)->_x = g_fp->_sceneRect.left - 20;
+			mq->getExCommandByIndex(0)->_keyCode = 1;
+			mq->replaceKeyCode(-1, 1);
+			mq->chain(0);
+
+			mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_BRD28_GOR), 0, 1);
+
+			mq->getExCommandByIndex(0)->_x = g_fp->_sceneRect.left - 40;
+			mq->getExCommandByIndex(0)->_y += 20;
+			mq->getExCommandByIndex(0)->_keyCode = 2;
+			mq->replaceKeyCode(-1, 2);
+			mq->chain(0);
+
+			mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_BRD28_GOR), 0, 1);
+
+			x = g_fp->_sceneRect.left - 60;
+		} else {
+			mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_BRD28_GOL), 0, 1);
+
+			mq->getExCommandByIndex(0)->_x = g_fp->_sceneRect.right + 20;
+			mq->getExCommandByIndex(0)->_keyCode = 1;
+			mq->replaceKeyCode(-1, 1);
+			mq->chain(0);
+
+			mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_BRD28_GOL), 0, 1);
+
+			mq->getExCommandByIndex(0)->_x = g_fp->_sceneRect.right + 40;
+			mq->getExCommandByIndex(0)->_y += 20;
+			mq->getExCommandByIndex(0)->_keyCode = 2;
+			mq->replaceKeyCode(-1, 2);
+			mq->chain(0);
+
+			mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_BRD28_GOL), 0, 1);
+
+			x = g_fp->_sceneRect.right + 60;
+		}
+
+		mq->getExCommandByIndex(0)->_x = x;
+		mq->getExCommandByIndex(0)->_y += 40;
+		mq->getExCommandByIndex(0)->_keyCode = 3;
+		mq->replaceKeyCode(-1, 3);
+		mq->chain( 0);
+
+		g_vars->scene28_beardedDirection = !g_vars->scene28_beardedDirection;
+	} else {
+		if (g_vars->scene28_headDirection) {
+			mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_GLV28_GOR), 0, 1);
+
+			x = g_fp->_sceneRect.left - 40;
+		} else {
+			mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_GLV28_GOL), 0, 1);
+
+			x = g_fp->_sceneRect.right + 40;
+		}
+
+		mq->getExCommandByIndex(0)->_x = x;
+		mq->chain(0);
+
+		g_vars->scene28_headDirection = !g_vars->scene28_headDirection;
+	}
+
+	g_vars->scene28_headBeardedFlipper = !g_vars->scene28_headBeardedFlipper;
 }
 
 void sceneHandler28_turnOn2() {
-	warning("STUB: sceneHandler28_turnOn2()");
+	if (g_vars->scene28_fliesArePresent) {
+		g_fp->_floaters->genFlies(g_fp->_currentScene, 1013, 329, 60, 4);
+
+		g_fp->_floaters->_array2[g_fp->_floaters->_array2.size() - 1]->val15 = 30;
+		g_fp->_floaters->_array2[g_fp->_floaters->_array2.size() - 1]->countdown = g_fp->_rnd->getRandomNumber(12) + 12;
+
+		g_fp->_floaters->genFlies(g_fp->_currentScene, 1074, 311, 60, 4);
+
+		g_fp->_floaters->_array2[g_fp->_floaters->_array2.size() - 1]->val15 = 30;
+		g_fp->_floaters->_array2[g_fp->_floaters->_array2.size() - 1]->countdown = g_fp->_rnd->getRandomNumber(12) + 12;
+	}
+
+	g_vars->scene28_fliesArePresent = false;
 }
 
 void sceneHandler28_startWork1() {
-	warning("STUB: sceneHandler28_startWork1()");
-}
+	g_fp->_aniMan->hide();
 
-void sceneHandler28_clickLift(int keyCode) {
-	warning("STUB: sceneHandler28_clickLift()");
+	StaticANIObject *man = g_fp->_currentScene->getStaticANIObject1ById(ANI_MAN_28, -1);
+
+	man->_statics = man->getStaticsById(ST_MAN28_RIGHT);
+	man->setOXY(g_fp->_aniMan->_ox, g_fp->_aniMan->_oy);
+	man->_priority = g_fp->_aniMan->_priority;
+	man->show1(-1, -1, -1, 0);
+
+	chainQueue(QU_SC28_LIFT1_WORK, 1);
 }
 
 void sceneHandler28_lift0Start() {
@@ -92,7 +202,11 @@ void sceneHandler28_lift0Start() {
 }
 
 void sceneHandler28_lift1Start() {
-	warning("STUB: sceneHandler28_lift1Start()");
+	g_fp->_aniMan->_flags |= 1;
+
+	g_fp->_behaviorManager->setFlagByStaticAniObject(g_fp->_aniMan, 0);
+
+	chainQueue(QU_SC28_LIFT1_START, 1);
 }
 
 void sceneHandler28_lift2Start() {
@@ -104,7 +218,11 @@ void sceneHandler28_lift3Start() {
 }
 
 void sceneHandler28_lift4Start() {
-	warning("STUB: sceneHandler28_lift4Start()");
+	g_fp->_aniMan->_flags |= 1;
+
+	g_fp->_behaviorManager->setFlagByStaticAniObject(g_fp->_aniMan, 0);
+
+	chainQueue(QU_SC28_WMN_START, 1);
 }
 
 void sceneHandler28_lift5Start() {
@@ -112,9 +230,71 @@ void sceneHandler28_lift5Start() {
 }
 
 void sceneHandler28_lift6Start() {
-	warning("STUB: sceneHandler28_lift6Start()");
+	g_fp->_aniMan->_flags |= 1;
+
+	g_fp->_behaviorManager->setFlagByStaticAniObject(g_fp->_aniMan, 0);
+
+	StaticANIObject *woman = g_fp->_currentScene->getStaticANIObject1ById(ANI_TIOTIA, -1);
+
+	if (woman && (woman->_flags & 4))
+		chainQueue(QU_SC28_LIFT6_START2, 1);
+	else
+		chainQueue(QU_SC28_LIFT6_START, 1);
 }
 
+void sceneHandler28_clickLift(int keycode) {
+	int x = 0;
+
+	switch (keycode) {
+	case 0: x = 600; break;
+	case 1: x = 824; break;
+	case 2: x = 1055; break;
+	case 3: x = 1286; break;
+	case 4: x = 1517; break;
+	case 5: x = 1748; break;
+	case 6: x = 1979; break;
+	}
+
+	if (abs(x - g_fp->_aniMan->_ox) > 1 || abs(472 - g_fp->_aniMan->_oy) > 1
+		|| g_fp->_aniMan->_movement
+		|| g_fp->_aniMan->_statics->_staticsId != ST_MAN_UP) {
+		MessageQueue *mq = getCurrSceneSc2MotionController()->method34(g_fp->_aniMan, x, 472, 1, ST_MAN_UP);
+		if (mq) {
+			ExCommand *ex = new ExCommand(0, 17, MSG_SC28_CLICKLIFT, 0, 0, 0, 1, 0, 0, 0);
+			ex->_excFlags |= 3;
+
+			mq->addExCommandToEnd(ex);
+
+			postExCommand(g_fp->_aniMan->_id, 2, x, 472, 0, -1);
+		}
+	} else {
+		switch (keycode) {
+		case 0:
+			sceneHandler28_lift0Start();
+			break;
+		case 1:
+			sceneHandler28_lift1Start();
+			break;
+		case 2:
+			sceneHandler28_lift2Start();
+			break;
+		case 3:
+			sceneHandler28_lift3Start();
+			break;
+		case 4:
+			sceneHandler28_lift4Start();
+			break;
+		case 5:
+			sceneHandler28_lift5Start();
+			break;
+		case 6:
+			sceneHandler28_lift6Start();
+			break;
+		default:
+			return;
+		}
+	}
+}
 
 int sceneHandler28(ExCommand *cmd) {
 	if (cmd->_messageKind != 17)
@@ -126,7 +306,7 @@ int sceneHandler28(ExCommand *cmd) {
 		break;
 
 	case MSG_SC28_LIFT6INSIDE:
-		g_vars->scene28_var11 = 1;
+		g_vars->scene28_lift6inside = true;
 		break;
 
 	case MSG_SC28_LIFT1_SHOWAFTER:
@@ -142,58 +322,58 @@ int sceneHandler28(ExCommand *cmd) {
 		break;
 
 	case MSG_SC28_TURNOFF_0:
-		g_vars->scene28_var08 = g_fp->_currentScene->getPictureObjectById(PIC_SC28_DARK0, 0);
-		g_vars->scene28_var08->_flags |= 4;
+		g_vars->scene28_lighteningObject = g_fp->_currentScene->getPictureObjectById(PIC_SC28_DARK0, 0);
+		g_vars->scene28_lighteningObject->_flags |= 4;
 		break;
 
 	case MSG_SC28_TURNON_0:
-		g_vars->scene28_var07 = g_fp->_currentScene->getPictureObjectById(PIC_SC28_DARK0, 0);
+		g_vars->scene28_darkeningObject = g_fp->_currentScene->getPictureObjectById(PIC_SC28_DARK0, 0);
 		break;
 
 	case MSG_SC28_TURNON_1:
-		g_vars->scene28_var07 = g_fp->_currentScene->getPictureObjectById(PIC_SC28_DARK1, 0);
+		g_vars->scene28_darkeningObject = g_fp->_currentScene->getPictureObjectById(PIC_SC28_DARK1, 0);
 		break;
 
 	case MSG_SC28_TURNOFF_1:
-		g_vars->scene28_var08 = g_fp->_currentScene->getPictureObjectById(PIC_SC28_DARK1, 0);
-		g_vars->scene28_var08->_flags |= 4;
+		g_vars->scene28_lighteningObject = g_fp->_currentScene->getPictureObjectById(PIC_SC28_DARK1, 0);
+		g_vars->scene28_lighteningObject->_flags |= 4;
 		break;
 
 	case MSG_SC28_TURNON_2:
-		g_vars->scene28_var07 = g_fp->_currentScene->getPictureObjectById(PIC_SC28_DARK2, 0);
+		g_vars->scene28_darkeningObject = g_fp->_currentScene->getPictureObjectById(PIC_SC28_DARK2, 0);
 		sceneHandler28_turnOn2();
 		break;
 
 	case MSG_SC28_TURNOFF_2:
-		g_vars->scene28_var08 = g_fp->_currentScene->getPictureObjectById(PIC_SC28_DARK2, 0);
-		g_vars->scene28_var08->_flags |= 4;
+		g_vars->scene28_lighteningObject = g_fp->_currentScene->getPictureObjectById(PIC_SC28_DARK2, 0);
+		g_vars->scene28_lighteningObject->_flags |= 4;
 		break;
 
 	case MSG_SC28_TURNON_3:
-		g_vars->scene28_var07 = g_fp->_currentScene->getPictureObjectById(PIC_SC28_DARK3, 0);
+		g_vars->scene28_darkeningObject = g_fp->_currentScene->getPictureObjectById(PIC_SC28_DARK3, 0);
 		break;
 
 	case MSG_SC28_TURNOFF_3:
-		g_vars->scene28_var08 = g_fp->_currentScene->getPictureObjectById(PIC_SC28_DARK3, 0);
-		g_vars->scene28_var08->_flags |= 4;
+		g_vars->scene28_lighteningObject = g_fp->_currentScene->getPictureObjectById(PIC_SC28_DARK3, 0);
+		g_vars->scene28_lighteningObject->_flags |= 4;
 		break;
 
 	case MSG_SC28_TURNON_4:
-		g_vars->scene28_var07 = g_fp->_currentScene->getPictureObjectById(PIC_SC28_DARK4, 0);
+		g_vars->scene28_darkeningObject = g_fp->_currentScene->getPictureObjectById(PIC_SC28_DARK4, 0);
 		break;
 
 	case MSG_SC28_TURNOFF_4:
-		g_vars->scene28_var08 = g_fp->_currentScene->getPictureObjectById(PIC_SC28_DARK4, 0);
-		g_vars->scene28_var08->_flags |= 4;
+		g_vars->scene28_lighteningObject = g_fp->_currentScene->getPictureObjectById(PIC_SC28_DARK4, 0);
+		g_vars->scene28_lighteningObject->_flags |= 4;
 		break;
 
 	case MSG_SC28_TURNON_6:
-		g_vars->scene28_var07 = g_fp->_currentScene->getPictureObjectById(PIC_SC28_DARK6, 0);
+		g_vars->scene28_darkeningObject = g_fp->_currentScene->getPictureObjectById(PIC_SC28_DARK6, 0);
 		break;
 
 	case MSG_SC28_TURNOFF_6:
-		g_vars->scene28_var08 = g_fp->_currentScene->getPictureObjectById(PIC_SC28_DARK6, 0);
-		g_vars->scene28_var08->_flags |= 4;
+		g_vars->scene28_lighteningObject = g_fp->_currentScene->getPictureObjectById(PIC_SC28_DARK6, 0);
+		g_vars->scene28_lighteningObject->_flags |= 4;
 		break;
 
 	case MSG_SC28_STARTWORK1:
@@ -213,12 +393,12 @@ int sceneHandler28(ExCommand *cmd) {
 
 	case 29:
 		{
-			if (g_vars->scene28_var11) {
+			if (g_vars->scene28_lift6inside) {
 				chainObjQueue(g_fp->_aniMan, QU_SC28_LIFT6_END, 1);
 
 				g_fp->playTrack(g_fp->getGameLoaderGameVar()->getSubVarByName("SC_28"), "MUSIC", 1);
 
-				g_vars->scene28_var11 = 0;
+				g_vars->scene28_lift6inside = false;
 			}
 
 			StaticANIObject *ani = g_fp->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
@@ -248,30 +428,30 @@ int sceneHandler28(ExCommand *cmd) {
 		if (g_fp->_aniMan2) {
 			int x = g_fp->_aniMan2->_ox;
 
-			if (x < g_fp->_sceneRect.left + g_vars->scene28_var01)
-				g_fp->_currentScene->_x = x - g_vars->scene28_var03 - g_fp->_sceneRect.left;
+			if (x < g_fp->_sceneRect.left + 200)
+				g_fp->_currentScene->_x = x - 300 - g_fp->_sceneRect.left;
 
-			if (x > g_fp->_sceneRect.right - g_vars->scene28_var01)
-				g_fp->_currentScene->_x = x + g_vars->scene28_var03 - g_fp->_sceneRect.right;
+			if (x > g_fp->_sceneRect.right - 200)
+				g_fp->_currentScene->_x = x + 300 - g_fp->_sceneRect.right;
 		}
 
-		if (g_vars->scene28_var07) {
-			if (g_vars->scene28_var07->_picture->getAlpha() > 10) {
-				g_vars->scene28_var07->_picture->setAlpha(g_vars->scene28_var07->_picture->getAlpha() - 10);
+		if (g_vars->scene28_darkeningObject) {
+			if (g_vars->scene28_darkeningObject->_picture->getAlpha() > 10) {
+				g_vars->scene28_darkeningObject->_picture->setAlpha(g_vars->scene28_darkeningObject->_picture->getAlpha() - 10);
 			} else {
-				g_vars->scene28_var07->_flags &= 0xFFFB;
+				g_vars->scene28_darkeningObject->_flags &= 0xFFFB;
 
-				g_vars->scene28_var07 = 0;
+				g_vars->scene28_darkeningObject = 0;
 			}
 		}
 
-		if (g_vars->scene28_var08) {
-			if (g_vars->scene28_var08->_picture->getAlpha() < 0xF9u ) {
-				g_vars->scene28_var08->_picture->setAlpha(g_vars->scene28_var08->_picture->getAlpha() + 6);
+		if (g_vars->scene28_lighteningObject) {
+			if (g_vars->scene28_lighteningObject->_picture->getAlpha() < 0xF9u) {
+				g_vars->scene28_lighteningObject->_picture->setAlpha(g_vars->scene28_lighteningObject->_picture->getAlpha() + 6);
 			} else {
-				g_vars->scene28_var08->_picture->setAlpha(0xff);
+				g_vars->scene28_lighteningObject->_picture->setAlpha(0xff);
 
-				g_vars->scene28_var08 = 0;
+				g_vars->scene28_lighteningObject = 0;
 			}
 		}
 
