@@ -894,7 +894,7 @@ Optional Features:
   --enable-verbose-build   enable regular echoing of commands during build
                            process
   --disable-bink           don't build with Bink video support
-  --enable-safedisk        enable SafeDisc decryption for Myst III
+  --enable-safedisc        enable SafeDisc decryption for Myst III
 
 Optional Libraries:
   --with-alsa-prefix=DIR   Prefix where alsa is installed (optional)
