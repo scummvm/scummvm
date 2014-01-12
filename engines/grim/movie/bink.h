@@ -49,6 +49,7 @@ private:
 	bool loadFile(const Common::String &filename);
 	bool _demo;
 	bool bikCheck(Common::SeekableReadStream *stream, uint32 pos);
+	virtual void deinit() override;
 	virtual void handleFrame();
 };
 

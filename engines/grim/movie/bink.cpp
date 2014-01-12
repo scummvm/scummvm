@@ -52,6 +52,11 @@ bool BinkPlayer::bikCheck(Common::SeekableReadStream *stream, uint32 pos) {
 	return (tag & 0xFFFFFF00) == MKTAG('B', 'I', 'K', 0);
 }
 
+void BinkPlayer::deinit() {
+	g_grim->setMovieSubtitle(NULL);
+	MoviePlayer::deinit();
+}
+
 void BinkPlayer::handleFrame() {
 	MoviePlayer::handleFrame();
 
