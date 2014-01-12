@@ -54,6 +54,7 @@ MODULE_OBJS = \
 	scenes/scene31.o \
 	scenes/scene32.o \
 	scenes/scene33.o \
+	scenes/scene34.o \
 	scenes/scene36.o \
 	scenes/sceneDbg.o
 

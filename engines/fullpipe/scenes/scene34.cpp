@@ -32,9 +32,14 @@
 
 #include "fullpipe/interaction.h"
 #include "fullpipe/behavior.h"
+#include "fullpipe/floaters.h"
 
 
 namespace Fullpipe {
+
+void sceneHandler34_setExits() {
+	warning("STUB: sceneHandler34_setExits()");
+}
 
 void scene34_initScene(Scene *sc) {
 	g_vars->scene34_var01 = 200;
@@ -46,7 +51,7 @@ void scene34_initScene(Scene *sc) {
 	g_vars->scene34_hatch = sc->getStaticANIObject1ById(ANI_LUK_34, -1);
 	g_vars->scene34_boot = sc->getStaticANIObject1ById(ANI_BOOT_34, -1);
 
-	if (getObjectState(sO_Cactus) == getObjectEnumState(sO_Cactus, sO_HasGrown)) {
+	if (g_fp->getObjectState(sO_Cactus) == g_fp->getObjectEnumState(sO_Cactus, sO_HasGrown)) {
 		Scene *oldsc = g_fp->_currentScene;
 
 		g_fp->_currentScene = sc;
@@ -73,10 +78,10 @@ void scene34_initScene(Scene *sc) {
 
 	g_fp->_floaters->init(g_fp->getGameLoaderGameVar()->getSubVarByName("SC_34"));
 
-	g_fp->lift_setButton("Этаж 7", ST_LBN_7N);
+	g_fp->lift_setButton(sO_Level7, ST_LBN_7N);
 	g_fp->lift_sub5(sc, QU_SC34_ENTERLIFT, QU_SC34_EXITLIFT);
 
-	initArcadeKeys("SC_34");
+	g_fp->initArcadeKeys("SC_34");
 }
 
 } // End of namespace Fullpipe

@@ -1135,6 +1135,16 @@ namespace Fullpipe {
 #define ST_VNT33_DOWN 2640
 #define ST_VNT33_RIGHT 2639
 
+// Scene 34
+#define ANI_BOOT_34 4560
+#define ANI_CACTUS_34 2381
+#define ANI_LUK_34 2541
+#define ANI_VENT_34 2473
+#define QU_SC34_ENTERLIFT 2819
+#define QU_SC34_EXITLIFT 2820
+#define ST_CTS34_EMPTY 2383
+#define ST_CTS34_GROWNEMPTY2 2475
+
 // Scene 36
 #define ANI_SCISSORS_36 2647
 #define ANI_ROTOHRUST 2360

@@ -477,6 +477,19 @@ public:
 	int scene33_ventsX[9];
 	int scene33_ventsState[9];
 
+	int scene34_var01;
+	int scene34_var02;
+	int scene34_var03;
+	int scene34_var04;
+	StaticANIObject *scene34_cactus;
+	StaticANIObject *scene34_vent;
+	StaticANIObject *scene34_hatch;
+	StaticANIObject *scene34_boot;
+	int scene34_var05;
+	int scene34_var06;
+	int scene34_var07;
+	int scene34_var08;
+
 	StaticANIObject *scene36_rotohrust;
 	StaticANIObject *scene36_scissors;
 
