@@ -199,6 +199,11 @@ void VideoWindow::setDestRect(const Common::Rect &dstRect) {
 	_dstRect = dstRect;
 }
 
+void VideoWindow::setAudioTrack(int track) {
+	if (_video)
+		_video->setAudioTrack(track);
+}
+
 void VideoWindow::pauseVideo() {
 	if (_video)
 		_video->pauseVideo(true);
