@@ -31,6 +31,8 @@
 #include "common/rect.h"
 #include "common/textconsole.h"
 
+#if !defined(USE_GLES2) && !defined(USE_OPENGL_SHADERS)
+
 #include "graphics/colormasks.h"
 #include "graphics/surface.h"
 
@@ -453,3 +455,5 @@ void Renderer::screenPosToDirection(const Common::Point screen, float &pitch, fl
 }
 
 } // end of namespace Myst3
+
+#endif

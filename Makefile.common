@@ -260,6 +260,9 @@ ifdef USE_OPENGL_SHADERS
 ifdef ENABLE_GRIM
 DIST_FILES_SHADERS+=$(wildcard $(srcdir)/engines/grim/shaders/*)
 endif
+ifdef ENABLE_MYST3
+DIST_FILES_SHADERS+=$(wildcard $(srcdir)/engines/myst3/shaders/*)
+endif
 endif
 
 

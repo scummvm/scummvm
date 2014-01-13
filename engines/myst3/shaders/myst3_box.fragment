@@ -1,0 +1,14 @@
+in vec2 Texcoord;
+
+OUTPUT
+
+uniform bool textured;
+uniform vec4 color;
+uniform sampler2D tex;
+
+void main()
+{
+	outColor = color;
+	if (textured)
+		outColor = outColor * texture(tex, Texcoord);
+}
