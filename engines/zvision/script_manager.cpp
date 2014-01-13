@@ -381,7 +381,7 @@ void ScriptManager::killSideFxType(SideFX::SideFXType type) {
 		if ((*iter)->getType() & type) {
 			(*iter)->kill();
 			delete(*iter);
-			_activeSideFx.erase(iter);
+			iter = _activeSideFx.erase(iter);
 		} else {
 			++iter;
 		}
