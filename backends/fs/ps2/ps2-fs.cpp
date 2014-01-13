@@ -333,7 +333,8 @@ bool Ps2FilesystemNode::getChildren(AbstractFSList &list, ListMode mode, bool hi
 		return false;
 
 	if (_isRoot) {
-		list.push_back(new Ps2FilesystemNode("cdfs:"));
+		if (g_systemPs2->cdPresent())
+			list.push_back(new Ps2FilesystemNode("cdfs:"));
 
 		if (g_systemPs2->hddPresent())
 			list.push_back(new Ps2FilesystemNode("pfs0:"));
@@ -341,7 +342,7 @@ bool Ps2FilesystemNode::getChildren(AbstractFSList &list, ListMode mode, bool hi
 		if (g_systemPs2->usbMassPresent())
 			list.push_back(new Ps2FilesystemNode("mass:"));
 
-		if (g_systemPs2->getBootDevice()==HOST_DEV || g_systemPs2->netPresent())
+		if (g_systemPs2->netPresent())
 			list.push_back(new Ps2FilesystemNode("host:"));
 
 		if (g_systemPs2->mcPresent())
