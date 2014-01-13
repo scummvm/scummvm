@@ -113,11 +113,16 @@ void sceneHandler34_testVent() {
 }
 
 void sceneHandler34_hideStool() {
-	warning("STUB: sceneHandler34_hideStool()");
+	g_fp->_currentScene->getStaticANIObject1ById(ANI_STOOL_34, -1)->hide();
 }
 
 void sceneHandler34_climb() {
-	warning("STUB: sceneHandler34_climb()");
+	getCurrSceneSc2MotionController()->clearEnabled();
+	getGameLoaderInteractionController()->disableFlag24();
+
+	g_fp->_behaviorManager->setFlagByStaticAniObject(g_fp->_aniMan, 0);
+
+	g_vars->scene34_var05 = 1;
 }
 
 void sceneHandler34_sub04() {
@@ -162,11 +167,11 @@ void sceneHandler34_showVent() {
 }
 
 void sceneHandler34_showBox() {
-	warning("STUB: sceneHandler34_showBox()");
+	g_fp->_currentScene->getStaticANIObject1ById(ANI_STOOL_34, -1)->changeStatics2(ST_STL34_BOX2);
 }
 
 void sceneHandler34_showStool() {
-	warning("STUB: sceneHandler34_showStool()");
+	chainQueue(QU_SC34_SHOWSTOOL, 0);
 }
 
 void sceneHandler34_unclimb() {
