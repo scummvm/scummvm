@@ -59,10 +59,6 @@ void sceneHandler34_setExits() {
 }
 
 void scene34_initScene(Scene *sc) {
-	g_vars->scene34_var01 = 200;
-	g_vars->scene34_var02 = 200;
-	g_vars->scene34_var03 = 300;
-	g_vars->scene34_var04 = 300;
 	g_vars->scene34_cactus = sc->getStaticANIObject1ById(ANI_CACTUS_34, -1);
 	g_vars->scene34_vent = sc->getStaticANIObject1ById(ANI_VENT_34, -1);
 	g_vars->scene34_hatch = sc->getStaticANIObject1ById(ANI_LUK_34, -1);
@@ -88,10 +84,10 @@ void scene34_initScene(Scene *sc) {
 
 	sceneHandler34_setExits();
 
-	g_vars->scene34_var05 = 0;
-	g_vars->scene34_var06 = 0;
-	g_vars->scene34_var07 = 0;
-	g_vars->scene34_var08 = g_fp->_rnd->getRandomNumber(500) + 500;
+	g_vars->scene34_dudeClimbed = false;
+	g_vars->scene34_dudeOnBoard = false;
+	g_vars->scene34_dudeOnCactus = false;
+	g_vars->scene34_fliesCountdown = g_fp->_rnd->getRandomNumber(500) + 500;
 
 	g_fp->_floaters->init(g_fp->getGameLoaderGameVar()->getSubVarByName("SC_34"));
 
@@ -124,7 +120,7 @@ void sceneHandler34_leaveBoard() {
 
 	g_fp->_behaviorManager->setFlagByStaticAniObject(g_fp->_aniMan, 1);
 
-	g_vars->scene34_var06 = 0;
+	g_vars->scene34_dudeOnBoard = false;
 }
 
 void sceneHandler34_onBoard() {
@@ -133,7 +129,7 @@ void sceneHandler34_onBoard() {
 
 	g_fp->_behaviorManager->setFlagByStaticAniObject(g_fp->_aniMan, 0);
 
-	g_vars->scene34_var06 = 1;
+	g_vars->scene34_dudeOnBoard = true;
 }
 
 void sceneHandler34_testVent() {
@@ -158,7 +154,7 @@ void sceneHandler34_climb() {
 
 	g_fp->_behaviorManager->setFlagByStaticAniObject(g_fp->_aniMan, 0);
 
-	g_vars->scene34_var05 = 1;
+	g_vars->scene34_dudeClimbed = true;
 }
 
 void sceneHandler34_genFlies() {
@@ -168,7 +164,7 @@ void sceneHandler34_genFlies() {
 	g_fp->_floaters->_array2[g_fp->_floaters->_array2.size() - 1]->val6 = 1072;
 	g_fp->_floaters->_array2[g_fp->_floaters->_array2.size() - 1]->val7 = -50;
 
-	g_vars->scene34_var08 = g_fp->_rnd->getRandomNumber(500) + 500;
+	g_vars->scene34_fliesCountdown = g_fp->_rnd->getRandomNumber(500) + 500;
 }
 
 void sceneHandler34_fromCactus(ExCommand *cmd) {
@@ -296,7 +292,7 @@ void sceneHandler34_unclimb() {
 
 	g_fp->_behaviorManager->setFlagByStaticAniObject(g_fp->_aniMan, 1);
 
-	g_vars->scene34_var05 = 0;
+	g_vars->scene34_dudeClimbed = false;
 }
 
 int sceneHandler34(ExCommand *cmd) {
@@ -325,7 +321,7 @@ int sceneHandler34(ExCommand *cmd) {
 		break;
 
 	case MSG_SC34_FROMCACTUS:
-		g_vars->scene34_var07 = 0;
+		g_vars->scene34_dudeOnCactus = false;
 
 		getCurrSceneSc2MotionController()->setEnabled();
 		getGameLoaderInteractionController()->enableFlag24();
@@ -383,7 +379,7 @@ int sceneHandler34(ExCommand *cmd) {
 		break;
 
 	case MSG_SC34_ONCACTUS:
-		g_vars->scene34_var07 = 1;
+		g_vars->scene34_dudeOnCactus = true;
 
 		getCurrSceneSc2MotionController()->clearEnabled();
 		getGameLoaderInteractionController()->disableFlag24();
@@ -405,17 +401,17 @@ int sceneHandler34(ExCommand *cmd) {
 
 	case 29:
 		{
-			if (g_vars->scene34_var05) {
+			if (g_vars->scene34_dudeClimbed) {
 				sceneHandler34_animateAction(cmd);
 				break;
 			}
 
-			if (g_vars->scene34_var06) {
+			if (g_vars->scene34_dudeOnBoard) {
 				sceneHandler34_animateLeaveBoard(cmd);
 				break;
 			}
 
-			if (g_vars->scene34_var07) {
+			if (g_vars->scene34_dudeOnCactus) {
 				sceneHandler34_fromCactus(cmd);
 				break;
 			}
@@ -456,16 +452,16 @@ int sceneHandler34(ExCommand *cmd) {
 		if (g_fp->_aniMan2) {
 			int x = g_fp->_aniMan2->_ox;
 
-			if (x < g_fp->_sceneRect.left + g_vars->scene34_var01)
-				g_fp->_currentScene->_x = x - g_vars->scene34_var03 - g_fp->_sceneRect.left;
+			if (x < g_fp->_sceneRect.left + 200)
+				g_fp->_currentScene->_x = x - 300 - g_fp->_sceneRect.left;
 
-			if (x > g_fp->_sceneRect.right - g_vars->scene34_var01)
-				g_fp->_currentScene->_x = x + g_vars->scene34_var03 - g_fp->_sceneRect.right;
+			if (x > g_fp->_sceneRect.right - 200)
+				g_fp->_currentScene->_x = x + 300 - g_fp->_sceneRect.right;
 		}
 
-		--g_vars->scene34_var08;
+		--g_vars->scene34_fliesCountdown;
 
-		if (!g_vars->scene34_var08)
+		if (!g_vars->scene34_fliesCountdown)
 			sceneHandler34_genFlies();
 
 		g_fp->_floaters->update();

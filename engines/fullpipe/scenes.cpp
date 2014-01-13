@@ -339,18 +339,14 @@ Vars::Vars() {
 		scene33_ventsState[i] = 0;
 	}
 
-	scene34_var01 = 0;
-	scene34_var02 = 0;
-	scene34_var03 = 0;
-	scene34_var04 = 0;
 	scene34_cactus = 0;
 	scene34_vent = 0;
 	scene34_hatch = 0;
 	scene34_boot = 0;
-	scene34_var05 = 0;
-	scene34_var06 = 0;
-	scene34_var07 = 0;
-	scene34_var08 = 0;
+	scene34_dudeClimbed = false;
+	scene34_dudeOnBoard = false;
+	scene34_dudeOnCactus = false;
+	scene34_fliesCountdown = 0;
 
 	scene36_rotohrust = 0;
 	scene36_scissors = 0;
