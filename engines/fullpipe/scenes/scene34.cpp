@@ -194,8 +194,69 @@ void sceneHandler34_sub02(ExCommand *cmd) {
 	warning("STUB: sceneHandler34_sub02(cmd)");
 }
 
-void sceneHandler34_sub01(ExCommand *cmd) {
-	warning("STUB: sceneHandler34_sub01(cmd)");
+void sceneHandler34_animateAction(ExCommand *cmd) {
+	if (g_fp->_aniMan->_movement)
+		return;
+
+	int ox = g_fp->_aniMan->_ox;
+	int oy = g_fp->_aniMan->_oy;
+	StaticANIObject *ani = g_fp->_currentScene->getStaticANIObjectAtPos(g_fp->_sceneRect.left + cmd->_x, g_fp->_sceneRect.top + cmd->_y);
+
+	if (!ani || ani->_id != ANI_VENT_34) {
+		int qId = 0;
+
+		if (ox == 887) {
+			if (oy != 370) 
+				return;
+
+			qId = QU_SC34_FROMSTOOL;
+		} else {
+			if (ox != 916)
+				return;
+
+			if (oy == 286) {
+				MessageQueue *mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC34_FROMBOX), 0, 0);
+
+				mq->addExCommandToEnd(cmd->createClone());
+				mq->chain(0);
+
+				sceneHandler34_setExits();
+
+				return;
+			}
+
+			if (oy != 345)
+				return;
+
+			qId = QU_SC34_FROMBOX_FLOOR;
+		}
+
+		if (qId) {
+			MessageQueue *mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(qId), 0, 0);
+
+			mq->addExCommandToEnd(cmd->createClone());
+			mq->chain(0);
+		}
+
+		return;
+	}
+
+	if (ox == 887) {
+		if (oy == 370)
+			g_fp->_aniMan->startAnim(MV_MAN34_TRYTABUR, 0, -1);
+
+	} else if (ox == 916) {
+		if (oy == 286) {
+			int id = g_vars->scene34_vent->_statics->_staticsId;
+			if (id == ST_VNT34_UP2) {
+				g_fp->_aniMan->startAnim(MV_MAN34_TURNVENT_R, 0, -1);
+			} else if (id == ST_VNT34_RIGHT3) {
+				g_fp->_aniMan->startAnim(MV_MAN34_TURNVENT_L, 0, -1);
+			}
+		} else if (oy == 345) {
+			g_fp->_aniMan->startAnim(MV_MAN34_TRY, 0, -1);
+		}
+	}
 }
 
 void sceneHandler34_showVent() {
@@ -331,7 +392,7 @@ int sceneHandler34(ExCommand *cmd) {
 	case 29:
 		{
 			if (g_vars->scene34_var05) {
-				sceneHandler34_sub01(cmd);
+				sceneHandler34_animateAction(cmd);
 				break;
 			}
 
