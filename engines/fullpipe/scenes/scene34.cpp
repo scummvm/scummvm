@@ -161,8 +161,14 @@ void sceneHandler34_climb() {
 	g_vars->scene34_var05 = 1;
 }
 
-void sceneHandler34_sub04() {
-	warning("STUB: sceneHandler34_sub04()");
+void sceneHandler34_genFlies() {
+	g_fp->_floaters->genFlies(g_fp->_currentScene, 1072, -50, 100, 4);
+
+	g_fp->_floaters->_array2[g_fp->_floaters->_array2.size() - 1]->countdown = 1;
+	g_fp->_floaters->_array2[g_fp->_floaters->_array2.size() - 1]->val6 = 1072;
+	g_fp->_floaters->_array2[g_fp->_floaters->_array2.size() - 1]->val7 = -50;
+
+	g_vars->scene34_var08 = g_fp->_rnd->getRandomNumber(500) + 500;
 }
 
 void sceneHandler34_fromCactus(ExCommand *cmd) {
@@ -460,7 +466,7 @@ int sceneHandler34(ExCommand *cmd) {
 		--g_vars->scene34_var08;
 
 		if (!g_vars->scene34_var08)
-			sceneHandler34_sub04();
+			sceneHandler34_genFlies();
 
 		g_fp->_floaters->update();
 
