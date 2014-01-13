@@ -137,7 +137,15 @@ void sceneHandler34_onBoard() {
 }
 
 void sceneHandler34_testVent() {
-	warning("STUB: sceneHandler34_testVent()");
+	if (g_fp->_aniMan->_movement->_id == MV_MAN34_TURNVENT_R) {
+		g_vars->scene34_hatch->changeStatics2(ST_LUK34_CLOSED);
+
+		chainQueue(QU_LUK34_OPEN, 0);
+	} else if (g_fp->_aniMan->_movement->_id == MV_MAN34_TURNVENT_L) {
+		g_vars->scene34_hatch->changeStatics2(ST_LUK34_OPEN);
+
+		chainQueue(QU_LUK34_CLOSE, 0);
+	}
 }
 
 void sceneHandler34_hideStool() {
@@ -191,7 +199,12 @@ void sceneHandler34_sub01(ExCommand *cmd) {
 }
 
 void sceneHandler34_showVent() {
-	warning("STUB: sceneHandler34_showVent()");
+	if (g_vars->scene34_vent->_statics->_staticsId == ST_VNT34_UP2)
+		g_vars->scene34_vent->changeStatics2(ST_VNT34_RIGHT3);
+	else if (g_vars->scene34_vent->_statics->_staticsId == ST_VNT34_RIGHT3)
+		g_vars->scene34_vent->changeStatics2(ST_VNT34_UP2);
+
+	g_vars->scene34_vent->show1(-1, -1, -1, 0);
 }
 
 void sceneHandler34_showBox() {
