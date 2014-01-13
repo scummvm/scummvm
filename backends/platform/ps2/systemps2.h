@@ -25,6 +25,7 @@
 
 #include "common/system.h"
 #include "backends/base-backend.h"
+#include "backends/platform/ps2/irxboot.h"
 #include "graphics/palette.h"
 
 class Gs2dScreen;
@@ -120,6 +121,7 @@ public:
 	void powerOffCallback(void);
 
 	bool mcPresent(void);
+	bool cdPresent(void);
 	bool hddPresent(void);
 	bool usbMassPresent(void);
 	bool netPresent(void);
@@ -128,6 +130,7 @@ public:
 	int getBootDevice() { return _bootDevice; }
 
 private:
+	bool loadDrivers(IrxType type);
 	void startIrxModules(int numModules, IrxReference *modules);
 
 	void initMutexes(void);
@@ -137,7 +140,7 @@ private:
 	Audio::MixerImpl *_scummMixer;
 
 	bool _mouseVisible;
-	bool _useMouse, _useKbd, _useHdd, _usbMassLoaded, _useNet;
+	bool _useMouse, _useKbd, _useCd, _useHdd, _usbMassLoaded, _useNet;
 
 	Gs2dScreen *_screen;
 	Ps2Input *_input;
