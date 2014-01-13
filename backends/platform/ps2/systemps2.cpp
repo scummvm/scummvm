@@ -50,7 +50,6 @@
 #include "backends/platform/ps2/cd.h"
 #include "backends/platform/ps2/fileio.h"
 #include "backends/platform/ps2/Gs2dScreen.h"
-#include "backends/platform/ps2/irxboot.h"
 #include "backends/platform/ps2/ps2debug.h"
 #include "backends/platform/ps2/ps2input.h"
 #include "backends/platform/ps2/savefilemgr.h"
@@ -189,8 +188,6 @@ void gluePowerOffCallback(void *system) {
 
 void OSystem_PS2::startIrxModules(int numModules, IrxReference *modules) {
 
-	_usbMassLoaded = _useMouse = _useKbd = _useHdd = _useNet = false;
-
 	int res = 0, rv = 0;
 	for (int i = 0; i < numModules; i++) {
 		if (modules[i].loc == IRX_FILE) {
@@ -215,6 +212,9 @@ void OSystem_PS2::startIrxModules(int numModules, IrxReference *modules) {
 							break;
 						case KBD_DRIVER:
 							_useKbd = true;
+							break;
+						case CD_DRIVER:
+							_useCd = true;
 							break;
 						case HDD_DRIVER:
 							_useHdd = true;
@@ -252,7 +252,65 @@ void OSystem_PS2::startIrxModules(int numModules, IrxReference *modules) {
 	sioprintf("UsbMass: %sloaded\n", _usbMassLoaded ? "" : "not ");
 	sioprintf("Mouse:   %sloaded\n", _useMouse ? "" : "not ");
 	sioprintf("Kbd:     %sloaded\n", _useKbd ? "" : "not ");
+	sioprintf("Cd:      %sloaded\n", _useCd ? "" : "not ");
 	sioprintf("Hdd:     %sloaded\n", _useHdd ? "" : "not ");
+}
+
+bool OSystem_PS2::loadDrivers(IrxType type)
+{
+	IrxReference *modules;
+	int numModules;
+	int res;
+
+	numModules = loadIrxModules(_bootDevice, _bootPath, &modules, type);
+	startIrxModules(numModules, modules);
+
+	switch (type) {
+	case IRX_CORE:
+		/* Init I/O */
+		if ((res = fileXioInit()) < 0) {
+			msgPrintf(FOREVER, "FXIO init failed: %d", res);
+			quit();
+		}
+		/* Init sound */
+		if ((res = SjPCM_Init(0)) < 0) {
+			msgPrintf(FOREVER, "SjPCM bind failed: %d\n", res);
+			quit();
+		}
+	break;
+
+	case IRX_CDROM:
+		/* Init CDROM & RTC Clock */
+		if ((res = initCdvdFs()) < 0) {
+			msgPrintf(FOREVER, "CoDyVDfs bind failed: %d", res);
+			quit();
+		}
+		sioprintf("Reading RTC\n");
+		readRtcTime(); /* depends on CDROM driver! */
+	break;
+
+	case IRX_HDD:
+		/* Check HD is available and formatted */
+		if ((hddCheckPresent() < 0) || (hddCheckFormatted() < 0)) {
+			_useHdd = false;
+		}
+		else {
+			poweroffInit();
+			poweroffSetCallback(gluePowerOffCallback, this);
+		
+			if (fio.mount("pfs0:", "hdd0:+ScummVM", 0) >= 0)
+				printf("Successfully mounted!\n");
+			else
+				_useHdd = false;
+		}
+	break;
+
+	default:
+		/* zzz */
+	break;
+	}
+
+	return true;
 }
 
 OSystem_PS2::OSystem_PS2(const char *elfPath) {
@@ -262,6 +320,7 @@ OSystem_PS2::OSystem_PS2(const char *elfPath) {
 	_systemQuit = false;
 	_modeChanged = false;
 	_screenChangeCount = 0;
+	_mouseVisible = false;
 
 	_screen = new Gs2dScreen(320, 200, TV_DONT_CARE);
 
@@ -272,10 +331,8 @@ OSystem_PS2::OSystem_PS2(const char *elfPath) {
 	_bootPath = (char *)malloc(128);
 	_bootDevice = detectBootPath(elfPath, _bootPath);
 
-	IrxReference *modules;
-	int numModules = loadIrxModules(_bootDevice, _bootPath, &modules);
-
 	if (_bootDevice != HOST_DEV) {
+		// TODO: reset funx
 		sioprintf("Resetting IOP.\n");
 		cdvdInit(CDVD_EXIT);
 		cdvdExit();
@@ -298,50 +355,20 @@ OSystem_PS2::OSystem_PS2(const char *elfPath) {
 		// TODO: ps2link 1.46 will stall on "poweroff" init / cb
 	}
 
-	startIrxModules(numModules, modules);
+	_usbMassLoaded = _useMouse = _useKbd = _useCd = _useHdd = _useNet = false;
 
-	int res;
-	if ((res = fileXioInit()) < 0) {
-		msgPrintf(FOREVER, "FXIO Init failed: %d", res);
-		quit();
-	}
-
-	if ((res = initCdvdFs()) < 0) {
-		msgPrintf(FOREVER, "CoDyVDfs bind failed: %d", res);
-		quit();
-	}
-
-	if ((res = SjPCM_Init(0)) < 0) {
-		msgPrintf(FOREVER, "SjPCM Bind failed: %d\n", res);
-		quit();
-	}
-
-	if (_useHdd) {
-		if ((hddCheckPresent() < 0) || (hddCheckFormatted() < 0))
-			_useHdd = false;
-
-		//hddPreparePoweroff();
-		poweroffInit();
-
-		//hddSetUserPoweroffCallback(gluePowerOffCallback, this);
-		poweroffSetCallback(gluePowerOffCallback, this);
-	}
+	loadDrivers(IRX_CORE);
+	loadDrivers(IRX_CDROM);
+	// loadDrivers(IRX_USB); // why they only load correctly post HDD ?
+	// loadDrivers(IRX_INPUT);
+	#ifndef NO_ADAPTOR
+	loadDrivers(IRX_HDD);
+	loadDrivers(IRX_NET);
+	#endif
+	loadDrivers(IRX_USB);
+        loadDrivers(IRX_INPUT);
 
 	fileXioSetBlockMode(FXIO_NOWAIT);
-
-	_mouseVisible = false;
-
-	sioprintf("reading RTC\n");
-	readRtcTime();
-
-	if (_useHdd) {
-		// TODO : make partition path configurable
-		if (fio.mount("pfs0:", "hdd0:+ScummVM", 0) >= 0)
-			printf("Successfully mounted!\n");
-		else
-			_useHdd = false;
-	}
-
 	initMutexes();
 }
 
@@ -510,6 +537,10 @@ bool OSystem_PS2::mcPresent(void) {
 	return false;
 }
 
+bool OSystem_PS2::cdPresent(void) {
+	return _useCd;
+}
+
 bool OSystem_PS2::hddPresent(void) {
 	return _useHdd;
 }
@@ -528,7 +559,11 @@ bool OSystem_PS2::usbMassPresent(void) {
 }
 
 bool OSystem_PS2::netPresent(void) {
-	return _useNet;
+	if (_bootDevice == HOST_DEV || _useNet) {
+		return true;
+	}
+
+	return false;
 }
 
 void OSystem_PS2::initSize(uint width, uint height, const Graphics::PixelFormat *format) {
@@ -829,7 +864,7 @@ void OSystem_PS2::quit(void) {
 			"   li $3, 0x04;"
 			"   syscall;"
 			"   nop;"
-        );
+		);
 */
 
 /*
