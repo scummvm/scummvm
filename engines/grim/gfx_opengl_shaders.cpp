@@ -80,8 +80,6 @@ static float textured_quad_centered[] = {
 	+0.5f, -0.5f, 0.0f, 1.0f, 1.0f,
 };
 
-static unsigned short quad_indices[] = { 0, 1, 2, 0, 2, 3};
-
 static float zero_texVerts[] = { 0.0, 0.0 };
 
 struct GrimVertex {
@@ -212,7 +210,7 @@ void GfxOpenGLS::setupZBuffer() {
 	_zBufTexCrop = Math::Vector2d(width / nextHigher2((int)width), height / nextHigher2((int)height));
 }
 
-void GfxOpenGLS::setupBigEBO() {
+void GfxOpenGLS::setupQuadEBO() {
 	// FIXME: Probably way too big...
 	unsigned short quad_indices[6 * 1000];
 
@@ -224,10 +222,6 @@ void GfxOpenGLS::setupBigEBO() {
 		p[5] = start++;
 	}
 
-	_bigQuadEBO = Graphics::Shader::createBuffer(GL_ELEMENT_ARRAY_BUFFER, sizeof(quad_indices), quad_indices, GL_STATIC_DRAW);
-}
-
-void GfxOpenGLS::setupQuadEBO() {
 	_quadEBO = Graphics::Shader::createBuffer(GL_ELEMENT_ARRAY_BUFFER, sizeof(quad_indices), quad_indices, GL_STATIC_DRAW);
 }
 
@@ -285,7 +279,6 @@ void GfxOpenGLS::setupShaders() {
 	static const char* primAttributes[] = {"position", NULL};
 	_primitiveProgram = Graphics::Shader::fromFiles("grim_primitive", primAttributes);
 
-	setupBigEBO();
 	setupQuadEBO();
 	setupTexturedQuad();
 	setupTexturedCenteredQuad();
@@ -832,7 +825,7 @@ void GfxOpenGLS::drawBitmap(const Bitmap *bitmap, int dx, int dy, uint32 layer) 
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		shader->use();
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _bigQuadEBO);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _quadEBO);
 		uint32 offset = data->_layers[layer]._offset;
 		for (uint32 i = offset; i < offset + data->_layers[layer]._numImages; ++i) {
 			glBindTexture(GL_TEXTURE_2D, textures[data->_verts[i]._texid]);
@@ -1098,7 +1091,7 @@ void GfxOpenGLS::drawTextObject(const TextObject *text) {
 	                      float(td->color.getBlue()) / 255.0f);
 	_textProgram->setUniform("color", colors);
 	glBindTexture(GL_TEXTURE_2D, td->texture);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _bigQuadEBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _quadEBO);
 	glDrawElements(GL_TRIANGLES, td->characters * 6, GL_UNSIGNED_SHORT, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	glEnable(GL_DEPTH_TEST);

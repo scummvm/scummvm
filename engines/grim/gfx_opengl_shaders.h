@@ -214,7 +214,7 @@ private:
 	Graphics::Shader* _actorProgram;
 	Graphics::Shader* _spriteProgram;
 	Graphics::Shader* _smushProgram;
-	GLuint _smushVBO, _quadEBO, _bigQuadEBO;
+	GLuint _smushVBO, _quadEBO;
 	Graphics::Shader* _textProgram;
 	Graphics::Shader* _primitiveProgram;
 
@@ -223,7 +223,7 @@ private:
 	GLuint _smushTexId;
 	bool _smushSwizzle;
 	void setupTexturedQuad();
-	void setupBigEBO();
+	void setupQuadEBO();
 
 	void setupZBuffer();
 	void drawDepthBitmap(int x, int y, int w, int h, char *data);
@@ -236,7 +236,6 @@ private:
 	Math::Matrix4 _mvpMatrix;
 
 	void setupTexturedCenteredQuad();
-	void setupQuadEBO();
 
 	GLuint _spriteVBO;
 
