@@ -101,11 +101,21 @@ int scene34_updateCursor() {
 }
 
 void sceneHandler34_leaveBoard() {
-	warning("STUB: sceneHandler34_leaveBoard()");
+	getCurrSceneSc2MotionController()->setEnabled();
+	getGameLoaderInteractionController()->enableFlag24();
+
+	g_fp->_behaviorManager->setFlagByStaticAniObject(g_fp->_aniMan, 1);
+
+	g_vars->scene34_var06 = 0;
 }
 
 void sceneHandler34_onBoard() {
-	warning("STUB: sceneHandler34_onBoard()");
+	getCurrSceneSc2MotionController()->clearEnabled();
+	getGameLoaderInteractionController()->disableFlag24();
+
+	g_fp->_behaviorManager->setFlagByStaticAniObject(g_fp->_aniMan, 0);
+
+	g_vars->scene34_var06 = 1;
 }
 
 void sceneHandler34_testVent() {
@@ -175,7 +185,12 @@ void sceneHandler34_showStool() {
 }
 
 void sceneHandler34_unclimb() {
-	warning("STUB: sceneHandler34_unclimb()");
+	getCurrSceneSc2MotionController()->setEnabled();
+	getGameLoaderInteractionController()->enableFlag24();
+
+	g_fp->_behaviorManager->setFlagByStaticAniObject(g_fp->_aniMan, 1);
+
+	g_vars->scene34_var05 = 0;
 }
 
 int sceneHandler34(ExCommand *cmd) {
