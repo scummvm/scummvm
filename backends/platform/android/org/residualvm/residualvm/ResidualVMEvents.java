@@ -5,6 +5,7 @@ import android.os.Message;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.content.Context;
+import android.view.InputDevice;
 import android.view.KeyEvent;
 import android.view.KeyCharacterMap;
 import android.view.MotionEvent;
@@ -13,8 +14,11 @@ import android.view.ViewConfiguration;
 import android.view.GestureDetector;
 import android.view.inputmethod.InputMethodManager;
 
+import tv.ouya.console.api.OuyaController;
+
 public class ResidualVMEvents implements
 		android.view.View.OnKeyListener,
+		android.view.View.OnGenericMotionListener,
 		android.view.GestureDetector.OnGestureListener,
 		android.view.GestureDetector.OnDoubleTapListener {
 
@@ -257,5 +261,28 @@ public class ResidualVMEvents implements
 		_residualvm.pushEvent(JE_TAP, (int)e.getX(), (int)e.getY(),
 				(int)(e.getEventTime() - e.getDownTime()), 0, 0, 0);
 		return true;
+	}
+
+	private static boolean rightJoystickHeld = false;
+	private static int rightJoystickKeyCode = -1;
+
+	public boolean onGenericMotion(View v, final MotionEvent event) {
+		if ((event.getSource() & InputDevice.SOURCE_CLASS_JOYSTICK) != 0) {
+			float RS_Y = event.getAxisValue(OuyaController.AXIS_RS_Y);
+			if (Math.abs(RS_Y) > OuyaController.STICK_DEADZONE && !rightJoystickHeld) {
+				rightJoystickHeld = true;
+				rightJoystickKeyCode = RS_Y > 0 ? KeyEvent.KEYCODE_PAGE_DOWN : KeyEvent.KEYCODE_PAGE_UP;
+				_residualvm.pushEvent(JE_KEY, KeyEvent.ACTION_DOWN, rightJoystickKeyCode, 0, 0, 0, 0);
+				return true;
+			} else if (Math.abs(RS_Y) <= OuyaController.STICK_DEADZONE && rightJoystickHeld) {
+				rightJoystickHeld = false;
+				_residualvm.pushEvent(JE_KEY, KeyEvent.ACTION_UP, rightJoystickKeyCode, 0, 0, 0, 0);
+				rightJoystickKeyCode = -1;
+				return true;
+			} else {
+				return false;
+			}
+		}
+		return false;
 	}
 }

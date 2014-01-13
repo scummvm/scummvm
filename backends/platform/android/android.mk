@@ -24,6 +24,8 @@ RESOURCES = \
 	$(PATH_BUILD_RES)/drawable/residualvm.png \
 	$(PATH_BUILD_RES)/drawable/residualvm_big.png
 
+JAVA_EXTRA_LIBS = \
+	$(PATH_BUILD)/libs/ouya-sdk.jar
 
 DIST_ANDROID_MK = $(PATH_DIST)/jni/Android.mk
 DIST_BUILD_XML = $(PATH_DIST)/build.xml
@@ -69,7 +71,7 @@ $(PATH_BUILD_LIBRESIDUALVM): libresidualvm.so | $(PATH_BUILD)
 
 $(PATH_BUILD_RES): $(RESOURCES) | $(PATH_BUILD)
 
-$(APK_MAIN): $(FILE_MANIFEST) $(PATH_BUILD_RES) $(PATH_BUILD_ASSETS) $(PATH_BUILD_LIBRESIDUALVM) | $(PATH_BUILD)
+$(APK_MAIN): $(FILE_MANIFEST) $(PATH_BUILD_RES) $(PATH_BUILD_ASSETS) $(JAVA_EXTRA_LIBS) $(PATH_BUILD_LIBRESIDUALVM) | $(PATH_BUILD) 
 	$(SDK_ANDROID) update project -p $(PATH_BUILD) -t android-$(ANDROID_TARGET_VERSION) -n ResidualVM
 	(cd $(PATH_BUILD); ant debug -Dsource.dir="$(realpath $(DIST_JAVA_SRC_DIR))")
 	$(CP) $(PATH_BUILD)/bin/ResidualVM-debug.apk $@

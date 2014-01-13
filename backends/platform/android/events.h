@@ -198,7 +198,22 @@ static const Common::KeyCode jkeymap[] = {
 	Common::KEYCODE_INVALID, // KEYCODE_MEDIA_FAST_FORWARD
 	Common::KEYCODE_INVALID, // KEYCODE_MUTE
 	Common::KEYCODE_PAGEUP, // KEYCODE_PAGE_UP
-	Common::KEYCODE_PAGEDOWN // KEYCODE_PAGE_DOWN
+	Common::KEYCODE_PAGEDOWN, // KEYCODE_PAGE_DOWN
+	Common::KEYCODE_INVALID,
+	Common::KEYCODE_INVALID,
+	// 96 and up: OUYA buttons.
+	Common::KEYCODE_RETURN, // 96: OUYA O
+	Common::KEYCODE_p, // 97: OUYA A
+	Common::KEYCODE_INVALID,
+	Common::KEYCODE_u, // 99: OUYA U
+	Common::KEYCODE_i, // 100: OUYA Y
+	Common::KEYCODE_INVALID,
+	Common::KEYCODE_PAGEUP, // 102: OUYA L1
+	Common::KEYCODE_PAGEDOWN, // 103: OUYA R1
+	Common::KEYCODE_LSHIFT, // 104: OUYA L2
+	Common::KEYCODE_LSHIFT, // 105: OUYA R2
+	Common::KEYCODE_ESCAPE, // 106: Press left stick
+	Common::KEYCODE_DELETE, // 107: Press right stick
 };
 
 #endif
