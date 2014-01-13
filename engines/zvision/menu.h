@@ -32,12 +32,12 @@
 namespace ZVision {
 
 enum menuBar {
-	menuBar_Exit = 0x1,
-	menuBar_Settings = 0x2,
-	menuBar_Restore = 0x4,
-	menuBar_Save = 0x8,
-	menuBar_Items = 0x100,
-	menuBar_Magic = 0x200
+    menuBar_Exit = 0x1,
+    menuBar_Settings = 0x2,
+    menuBar_Restore = 0x4,
+    menuBar_Save = 0x8,
+    menuBar_Items = 0x100,
+    menuBar_Magic = 0x200
 };
 
 class menuHandler {
@@ -80,9 +80,9 @@ private:
 	float scrollPos[3];
 
 	enum {
-		menu_ITEM = 0,
-		menu_MAGIC = 1,
-		menu_MAIN = 2
+	    menu_ITEM = 0,
+	    menu_MAGIC = 1,
+	    menu_MAIN = 2
 	};
 
 	bool clean;

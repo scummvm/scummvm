@@ -30,17 +30,17 @@
 namespace ZVision {
 
 enum {
-	SLOT_START_SLOT = 151,
-	SLOT_SPELL_1 = 191,
-	SLOT_USER_CHOSE_THIS_SPELL = 205,
-	SLOT_REVERSED_SPELLBOOK = 206
+    SLOT_START_SLOT = 151,
+    SLOT_SPELL_1 = 191,
+    SLOT_USER_CHOSE_THIS_SPELL = 205,
+    SLOT_REVERSED_SPELLBOOK = 206
 };
 
 enum {
-	menu_MAIN_SAVE = 0,
-	menu_MAIN_REST = 1,
-	menu_MAIN_PREF = 2,
-	menu_MAIN_EXIT = 3
+    menu_MAIN_SAVE = 0,
+    menu_MAIN_REST = 1,
+    menu_MAIN_PREF = 2,
+    menu_MAIN_EXIT = 3
 };
 
 menuHandler::menuHandler(ZVision *engine) {

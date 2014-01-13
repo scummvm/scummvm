@@ -191,11 +191,11 @@ void AnimationNode::addPlayNode(int32 slot, int x, int y, int x2, int y2, int st
 	nod.start = start_frame;
 	nod.stop = end_frame;
 	if (_fileType == RLF) {
-        if (nod.stop >= (int)_animation.rlf->frameCount())
-            nod.stop = _animation.rlf->frameCount() - 1;
+		if (nod.stop >= (int)_animation.rlf->frameCount())
+			nod.stop = _animation.rlf->frameCount() - 1;
 	} else if (_fileType == AVI) {
-	    if (nod.stop > (int)_animation.avi->getFrameCount())
-            nod.stop = _animation.avi->getFrameCount();
+		if (nod.stop > (int)_animation.avi->getFrameCount())
+			nod.stop = _animation.avi->getFrameCount();
 	}
 	nod.slot = slot;
 	nod._cur_frm = -1;
