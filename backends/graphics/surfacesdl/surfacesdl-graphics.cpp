@@ -318,6 +318,7 @@ Graphics::PixelBuffer SurfaceSdlGraphicsManager::setupScreen(int screenW, int sc
 void SurfaceSdlGraphicsManager::updateScreen() {
 #ifdef USE_OPENGL
 	if (_opengl) {
+#ifndef USE_OPENGL_SHADERS
 		if (_overlayVisible) {
 			if (_overlayDirty) {
 				// remove if already exist
@@ -412,6 +413,7 @@ void SurfaceSdlGraphicsManager::updateScreen() {
 
 			glPopAttrib();
 		}
+#endif
 		SDL_GL_SwapBuffers();
 	} else
 #endif
