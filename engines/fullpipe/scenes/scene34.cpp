@@ -37,7 +37,25 @@
 namespace Fullpipe {
 
 void sceneHandler34_setExits() {
-	warning("STUB: sceneHandler34_setExits()");
+	int state;
+
+	if (g_fp->getObjectState(sO_Grandma) == g_fp->getObjectEnumState(sO_Grandma, sO_NearPipeWithStool)) {
+		if (g_fp->getObjectState(sO_Hatch_34) == g_fp->getObjectEnumState(sO_Hatch_34, sO_Closed))
+			state = g_fp->getObjectEnumState(sO_Plank_34, sO_ClosedWithBoot);
+		else
+			state = g_fp->getObjectEnumState(sO_Plank_34, sO_OpenedWithBoot);
+	} else {
+		if (g_fp->getObjectState(sO_Grandma) == g_fp->getObjectEnumState(sO_Grandma, sO_OnStool)) {
+			if (g_fp->getObjectState(sO_Hatch_34) == g_fp->getObjectEnumState(sO_Hatch_34, sO_Closed))
+				state = g_fp->getObjectEnumState(sO_Plank_34, sO_IsClosed);
+			else
+				state = g_fp->getObjectEnumState(sO_Plank_34, sO_IsOpened);
+		} else {
+			state = g_fp->getObjectEnumState(sO_Plank_34, sO_Passive);
+		}
+	}
+
+	g_fp->setObjectState(sO_Plank_34, state);
 }
 
 void scene34_initScene(Scene *sc) {
