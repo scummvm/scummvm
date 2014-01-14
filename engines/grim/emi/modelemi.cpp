@@ -99,7 +99,10 @@ void EMIModel::loadMesh(Common::SeekableReadStream *data) {
 
 	Common::String nameString = readLAString(data);
 
-	_sphereData->readFromStream(data);
+	char f[4];
+	data->read(f, 4);
+	_radius = get_float(f);
+	_center->readFromStream(data);
 
 	_boxData->readFromStream(data);
 	_boxData2->readFromStream(data);
@@ -293,7 +296,8 @@ EMIModel::EMIModel(const Common::String &filename, Common::SeekableReadStream *d
 	_vertexBoneInfo = NULL;
 	_vertexBone = NULL;
 	_skeleton = NULL;
-	_sphereData = new Math::Vector4d();
+	_radius = 0;
+	_center = new Math::Vector3d();
 	_boxData = new Math::Vector3d();
 	_boxData2 = new Math::Vector3d();
 	_numTexSets = 0;
@@ -317,7 +321,7 @@ EMIModel::~EMIModel() {
 	delete[] _vertexBone;
 	delete[] _vertexBoneInfo;
 	delete[] _boneNames;
-	delete _sphereData;
+	delete _center;
 	delete _boxData;
 	delete _boxData2;
 }
