@@ -110,7 +110,7 @@ public:
 	void waitForInput();
 
 	Graphics::PixelFormat _pixelFormat;
-	bool _mode8bit;
+	bool _spookyMode;
 	Script *_script;
 	ResMan *_resMan;
 	GrvCursorMan *_grvCursorMan;

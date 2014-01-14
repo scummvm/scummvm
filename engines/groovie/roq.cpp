@@ -50,19 +50,6 @@ ROQPlayer::ROQPlayer(GroovieEngine *vm) :
 	// Create the work surfaces
 	_currBuf = new Graphics::Surface();
 	_prevBuf = new Graphics::Surface();
-
-	if (_vm->_mode8bit) {
-		byte pal[256 * 3];
-
-		// Set a grayscale palette
-		for (int i = 0; i < 256; i++) {
-			pal[(i * 3) + 0] = i;
-			pal[(i * 3) + 1] = i;
-			pal[(i * 3) + 2] = i;
-		}
-
-		_syst->getPaletteManager()->setPalette(pal, 0, 256);
-	}
 }
 
 ROQPlayer::~ROQPlayer() {
@@ -118,18 +105,11 @@ void ROQPlayer::buildShowBuf() {
 		byte *out = (byte *)_bg->getBasePtr(0, line);
 		byte *in = (byte *)_currBuf->getBasePtr(0, line / _scaleY);
 		for (int x = 0; x < _bg->w; x++) {
-			if (_vm->_mode8bit) {
-				// Just use the luminancy component
-				*out = *in;
-#ifdef USE_RGB_COLOR
-			} else {
-				// Do the format conversion (YUV -> RGB -> Screen format)
-				byte r, g, b;
-				Graphics::YUV2RGB(*in, *(in + 1), *(in + 2), r, g, b);
-				// FIXME: this is fixed to 16bit
-				*(uint16 *)out = (uint16)_vm->_pixelFormat.RGBToColor(r, g, b);
-#endif // USE_RGB_COLOR
-			}
+			// Do the format conversion (YUV -> RGB -> Screen format)
+			byte r, g, b;
+			Graphics::YUV2RGB(*in, *(in + 1), *(in + 2), r, g, b);
+			// FIXME: this is fixed to 16bit
+			*(uint16 *)out = _vm->_pixelFormat.RGBToColor(r, g, b);
 
 			// Skip to the next pixel
 			out += _vm->_pixelFormat.bytesPerPixel;

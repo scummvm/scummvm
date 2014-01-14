@@ -50,7 +50,8 @@ namespace Groovie {
 GroovieEngine::GroovieEngine(OSystem *syst, const GroovieGameDescription *gd) :
 	Engine(syst), _gameDescription(gd), _debugger(NULL), _script(NULL),
 	_resMan(NULL), _grvCursorMan(NULL), _videoPlayer(NULL), _musicPlayer(NULL),
-	_graphicsMan(NULL), _macResFork(NULL), _waitingForInput(false), _font(NULL) {
+	_graphicsMan(NULL), _macResFork(NULL), _waitingForInput(false), _font(NULL),
+	_spookyMode(false) {
 
 	// Adding the default directories
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
@@ -107,9 +108,13 @@ Common::Error GroovieEngine::run() {
 		// Request the mode with the highest precision available
 		initGraphics(640, 480, true, NULL);
 
-		// Save the enabled mode as it can be both an RGB mode or CLUT8
+		// Save the enabled mode
 		_pixelFormat = _system->getScreenFormat();
-		_mode8bit = (_pixelFormat == Graphics::PixelFormat::createFormatCLUT8());
+
+		// TODO: Eventually drop 16bpp mode
+		if (_pixelFormat.bytesPerPixel == 1)
+			return Common::kUnsupportedColorMode;
+
 		break;
 	case kGroovieT7G:
 		initGraphics(640, 480, true);
