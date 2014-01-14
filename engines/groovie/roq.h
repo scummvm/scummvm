@@ -71,7 +71,7 @@ private:
 	// Codebooks
 	uint16 _num2blocks;
 	uint16 _num4blocks;
-	byte _codebook2[256 * 10];
+	uint32 _codebook2[256 * 4];
 	byte _codebook4[256 * 4];
 
 	// Buffers
