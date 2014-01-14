@@ -1010,6 +1010,227 @@ void FullpipeEngine::updateMapPiece(int mapId, int update) {
 
 void FullpipeEngine::updateMap(PreloadItem *pre) {
 	switch (pre->sceneId) {
+	case SC_1:
+		updateMapPiece(PIC_MAP_S01, 1);
+
+		if (pre->keyCode == TrubaUp)
+			updateMapPiece(PIC_MAP_P01, 1);
+
+		if (pre->keyCode == TrubaLeft)
+			updateMapPiece(PIC_MAP_A13, 1);
+		break;
+
+	case SC_2:
+		updateMapPiece(PIC_MAP_S02, 1);
+
+		if (pre->keyCode == TrubaLeft)
+			updateMapPiece(PIC_MAP_P01, 1);
+
+		break;
+
+	case SC_3:
+		updateMapPiece(PIC_MAP_S03, 1);
+		break;
+
+	case SC_4:
+		updateMapPiece(PIC_MAP_S04, 1);
+
+		if (pre->keyCode == TrubaRight)
+			updateMapPiece(PIC_MAP_P04, 1);
+
+		break;
+
+	case SC_5:
+		updateMapPiece(PIC_MAP_S05, 1);
+
+		if (pre->keyCode == TrubaLeft) {
+			updateMapPiece(PIC_MAP_P04, 1);
+	    }
+
+		if (pre->keyCode == TrubaUp) {
+			updateMapPiece(PIC_MAP_P05, 1);
+			updateMapPiece(PIC_MAP_A11, 1);
+	    }
+
+		break;
+
+	case SC_6:
+		updateMapPiece(PIC_MAP_S06, 1);
+
+		if (pre->keyCode == TrubaUp)
+			updateMapPiece(PIC_MAP_A12, 1);
+
+		break;
+
+	case SC_7:
+		updateMapPiece(PIC_MAP_S07, 1);
+
+		if (pre->keyCode == TrubaLeft)
+			updateMapPiece(PIC_MAP_P18, 1);
+
+		break;
+
+	case SC_8:
+		updateMapPiece(PIC_MAP_S08, 1);
+
+		if (pre->keyCode == TrubaUp)
+			updateMapPiece(PIC_MAP_P11, 1);
+
+		if (pre->keyCode == TrubaRight)
+			updateMapPiece(PIC_MAP_P18, 1);
+
+		return;
+
+	case SC_9:
+		updateMapPiece(PIC_MAP_S09, 1);
+
+		if (pre->keyCode == TrubaDown)
+			updateMapPiece(PIC_MAP_P11, 1);
+
+		return;
+
+	case SC_10:
+		updateMapPiece(PIC_MAP_S10, 1);
+
+		if (pre->keyCode == TrubaRight)
+			updateMapPiece(PIC_MAP_P02, 1);
+
+		break;
+
+	case SC_11:
+		updateMapPiece(PIC_MAP_S11, 1);
+
+		if (pre->keyCode == TrubaLeft)
+			updateMapPiece(PIC_MAP_P02, 1);
+
+		break;
+
+	case SC_12:
+		updateMapPiece(PIC_MAP_S12, 1);
+		break;
+
+	case SC_13:
+		updateMapPiece(PIC_MAP_S13, 1);
+
+		if (pre->keyCode == TrubaUp) {
+			updateMapPiece(PIC_MAP_P06, 1);
+			updateMapPiece(PIC_MAP_A10, 1);
+		}
+		break;
+
+	case SC_14:
+		updateMapPiece(PIC_MAP_S14, 1);
+		break;
+
+	case SC_15:
+		updateMapPiece(PIC_MAP_S15, 1);
+
+		if (pre->keyCode == TrubaUp) {
+			updateMapPiece(PIC_MAP_P08, 1);
+			updateMapPiece(PIC_MAP_A14, 1);
+		}
+
+		break;
+
+	case SC_16:
+		updateMapPiece(PIC_MAP_S16, 1);
+		break;
+
+	case SC_17:
+		updateMapPiece(PIC_MAP_S17, 1);
+		break;
+
+	case SC_18:
+		updateMapPiece(PIC_MAP_S1819, 1);
+
+		if (pre->keyCode == PIC_SC18_RTRUBA)
+			updateMapPiece(PIC_MAP_P14, 1);
+
+		break;
+
+	case SC_19:
+		updateMapPiece(PIC_MAP_S1819, 1);
+
+		if (pre->keyCode == PIC_SC19_RTRUBA3) {
+			updateMapPiece(PIC_MAP_P15, 1);
+			updateMapPiece(PIC_MAP_A09, 1);
+		}
+
+		break;
+
+	case SC_20:
+		updateMapPiece(PIC_MAP_S20, 1);
+		break;
+
+	case SC_21:
+		updateMapPiece(PIC_MAP_S21, 1);
+
+		if (pre->keyCode == TrubaLeft) {
+			updateMapPiece(PIC_MAP_P15, 1);
+			updateMapPiece(PIC_MAP_A09, 1);
+		}
+
+		if (pre->keyCode == TrubaDown)
+			updateMapPiece(PIC_MAP_A08, 1);
+
+		break;
+
+	case SC_22:
+		updateMapPiece(PIC_MAP_S22, 1);
+		break;
+
+	case SC_23:
+		if (getObjectState("Верхний люк_23") == getObjectEnumState("Верхний люк_23", "Открыт")) {
+			updateMapPiece(PIC_MAP_S23_1, 0);
+			updateMapPiece(PIC_MAP_S23_2, 1);
+			updateMapPiece(PIC_MAP_P07, 1);
+		} else {
+			updateMapPiece(PIC_MAP_S23_1, 1);
+			updateMapPiece(PIC_MAP_S23_2, 0);
+		}
+		break;
+
+	case SC_24:
+		updateMapPiece(PIC_MAP_S24, 1);
+
+		if (pre->keyCode == TrubaUp)
+			updateMapPiece(PIC_MAP_A08, 1);
+
+		if (pre->keyCode == TrubaDown) {
+			updateMapPiece(PIC_MAP_P13, 1);
+			updateMapPiece(PIC_MAP_A07, 1);
+		}
+		break;
+
+	case SC_25:
+		updateMapPiece(PIC_MAP_S25, 1);
+		break;
+
+	case SC_26:
+		updateMapPiece(PIC_MAP_S26, 1);
+
+		if (pre->keyCode == TrubaLeft)
+			updateMapPiece(PIC_MAP_A06, 1);
+
+		if (pre->keyCode == TrubaUp) {
+			updateMapPiece(PIC_MAP_P13, 1);
+			updateMapPiece(PIC_MAP_A07, 1);
+		}
+
+		break;
+
+	case SC_27:
+		updateMapPiece(PIC_MAP_S27, 1);
+		break;
+
+	case SC_28:
+		updateMapPiece(PIC_MAP_S28, 1);
+
+		if (pre->keyCode == TrubaRight)
+			updateMapPiece(PIC_MAP_A06, 1);
+
+		break;
+
 	case SC_29:
 		updateMapPiece(PIC_MAP_S29, 1);
 
@@ -1101,225 +1322,6 @@ void FullpipeEngine::updateMap(PreloadItem *pre) {
 			break;
 		}
 		break;
-
-	case SC_28:
-		updateMapPiece(PIC_MAP_S28, 1);
-
-		if (pre->keyCode == TrubaRight)
-			updateMapPiece(PIC_MAP_A06, 1);
-
-		break;
-
-	case SC_22:
-		updateMapPiece(PIC_MAP_S22, 1);
-		break;
-
-	case SC_23:
-		if (getObjectState("Верхний люк_23") == getObjectEnumState("Верхний люк_23", "Открыт")) {
-			updateMapPiece(PIC_MAP_S23_1, 0);
-			updateMapPiece(PIC_MAP_S23_2, 1);
-			updateMapPiece(PIC_MAP_P07, 1);
-		} else {
-			updateMapPiece(PIC_MAP_S23_1, 1);
-			updateMapPiece(PIC_MAP_S23_2, 0);
-		}
-		break;
-
-	case SC_24:
-		updateMapPiece(PIC_MAP_S24, 1);
-
-		if (pre->keyCode == TrubaUp)
-			updateMapPiece(PIC_MAP_A08, 1);
-
-		if (pre->keyCode == TrubaDown) {
-			updateMapPiece(PIC_MAP_P13, 1);
-			updateMapPiece(PIC_MAP_A07, 1);
-		}
-		break;
-
-	case SC_25:
-		updateMapPiece(PIC_MAP_S25, 1);
-		break;
-
-	case SC_26:
-		updateMapPiece(PIC_MAP_S26, 1);
-
-		if (pre->keyCode == TrubaLeft)
-			updateMapPiece(PIC_MAP_A06, 1);
-
-		if (pre->keyCode == TrubaUp) {
-			updateMapPiece(PIC_MAP_P13, 1);
-			updateMapPiece(PIC_MAP_A07, 1);
-		}
-
-		break;
-
-	case SC_27:
-		updateMapPiece(PIC_MAP_S27, 1);
-		break;
-
-	case SC_21:
-		updateMapPiece(PIC_MAP_S21, 1);
-
-		if (pre->keyCode == TrubaLeft) {
-			updateMapPiece(PIC_MAP_P15, 1);
-			updateMapPiece(PIC_MAP_A09, 1);
-		}
-
-		if (pre->keyCode == TrubaDown)
-			updateMapPiece(PIC_MAP_A08, 1);
-
-		break;
-
-	case SC_14:
-		updateMapPiece(PIC_MAP_S14, 1);
-		break;
-
-	case SC_15:
-		updateMapPiece(PIC_MAP_S15, 1);
-
-		if (pre->keyCode == TrubaUp) {
-			updateMapPiece(PIC_MAP_P08, 1);
-			updateMapPiece(PIC_MAP_A14, 1);
-		}
-
-		break;
-
-	case SC_16:
-		updateMapPiece(PIC_MAP_S16, 1);
-		break;
-
-	case SC_17:
-		updateMapPiece(PIC_MAP_S17, 1);
-		break;
-
-	case SC_18:
-		updateMapPiece(PIC_MAP_S1819, 1);
-
-		if (pre->keyCode == PIC_SC18_RTRUBA)
-			updateMapPiece(PIC_MAP_P14, 1);
-
-		break;
-
-	case SC_19:
-		updateMapPiece(PIC_MAP_S1819, 1);
-
-		if (pre->keyCode == PIC_SC19_RTRUBA3) {
-			updateMapPiece(PIC_MAP_P15, 1);
-			updateMapPiece(PIC_MAP_A09, 1);
-		}
-
-		break;
-
-	case SC_20:
-		updateMapPiece(PIC_MAP_S20, 1);
-		break;
-
-	case SC_13:
-		updateMapPiece(PIC_MAP_S13, 1);
-
-		if (pre->keyCode == TrubaUp) {
-			updateMapPiece(PIC_MAP_P06, 1);
-			updateMapPiece(PIC_MAP_A10, 1);
-		}
-		break;
-
-	case SC_7:
-		updateMapPiece(PIC_MAP_S07, 1);
-
-		if (pre->keyCode == TrubaLeft)
-			updateMapPiece(PIC_MAP_P18, 1);
-
-		break;
-
-	case SC_8:
-		updateMapPiece(PIC_MAP_S08, 1);
-
-		if (pre->keyCode == TrubaUp)
-			updateMapPiece(PIC_MAP_P11, 1);
-
-		if (pre->keyCode == TrubaRight)
-			updateMapPiece(PIC_MAP_P18, 1);
-
-		return;
-
-	case SC_9:
-		updateMapPiece(PIC_MAP_S09, 1);
-
-		if (pre->keyCode == TrubaDown)
-			updateMapPiece(PIC_MAP_P11, 1);
-
-		return;
-
-	case SC_10:
-		updateMapPiece(PIC_MAP_S10, 1);
-
-		if (pre->keyCode == TrubaRight)
-			updateMapPiece(PIC_MAP_P02, 1);
-
-		break;
-
-	case SC_11:
-		updateMapPiece(PIC_MAP_S11, 1);
-
-		if (pre->keyCode == TrubaLeft)
-			updateMapPiece(PIC_MAP_P02, 1);
-
-		break;
-
-	case SC_12:
-		updateMapPiece(PIC_MAP_S12, 1);
-		break;
-
-	case SC_6:
-		updateMapPiece(PIC_MAP_S06, 1);
-
-		if (pre->keyCode == TrubaUp)
-			updateMapPiece(PIC_MAP_A12, 1);
-
-		break;
-
-	case SC_1:
-		updateMapPiece(PIC_MAP_S01, 1);
-
-		if (pre->keyCode == TrubaUp)
-			updateMapPiece(PIC_MAP_P01, 1);
-
-		if (pre->keyCode == TrubaLeft)
-			updateMapPiece(PIC_MAP_A13, 1);
-		break;
-
-	case SC_2:
-		updateMapPiece(PIC_MAP_S02, 1);
-
-		if (pre->keyCode == TrubaLeft)
-			updateMapPiece(PIC_MAP_P01, 1);
-
-		break;
-
-	case SC_3:
-		updateMapPiece(PIC_MAP_S03, 1);
-		break;
-
-	case SC_4:
-		updateMapPiece(PIC_MAP_S04, 1);
-
-		if (pre->keyCode == TrubaRight)
-			updateMapPiece(PIC_MAP_P04, 1);
-
-		break;
-
-	case SC_5:
-		updateMapPiece(PIC_MAP_S05, 1);
-
-		if (pre->keyCode == TrubaLeft) {
-			updateMapPiece(PIC_MAP_P04, 1);
-	    }
-
-		if (pre->keyCode == TrubaUp) {
-			updateMapPiece(PIC_MAP_P05, 1);
-			updateMapPiece(PIC_MAP_A11, 1);
-	    }
     }
 }
 
