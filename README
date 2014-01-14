@@ -81,6 +81,9 @@ and you are good to go.
 If you want to play with software-rendering, see the configuration-section below.
 (or use the ingame settings to disable 3D Acceleration)
 
+When launching the game for the first time, ResidualVM will perform a full integrity
+check of your game data files. This can take a bit of time, but it will 
+not happen again on successive runs. 
 
 -----------------------------
 4 - Default Keyboard-settings
