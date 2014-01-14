@@ -683,7 +683,7 @@ void Lua_V2::PlayActorChore() {
 		if (0 != strncmp("fx/dumbshadow.cos", costumeName, 17)) {
 			if (actor->getCurrentCostume() != NULL &&
 			    actor->getCurrentCostume()->getFilename() != "fx/dumbshadow.cos" &&
-			    actor->getCurrentCostume() != costume) {
+			    actor->getCurrentCostume()->getFilename().compareToIgnoreCase(costumeName) != 0) {
 				actor->stopAllChores();
 				actor->setRestChore(-1, NULL);
 				actor->setWalkChore(-1, NULL);
