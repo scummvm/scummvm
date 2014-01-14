@@ -451,21 +451,6 @@ void FullpipeEngine::setObjectState(const char *name, int state) {
 	var->setSubVarAsInt(name, state);
 }
 
-void FullpipeEngine::updateMapPiece(int mapId, int update) {
-	for (int i = 0; i < 200; i++) {
-		int hiWord = (_mapTable[i] >> 16) & 0xffff;
-
-		if (hiWord == mapId) {
-			_mapTable[i] |= update;
-			return;
-		}
-		if (!hiWord) {
-			_mapTable[i] = (mapId << 16) | update;
-			return;
-		}
-	}
-}
-
 void FullpipeEngine::disableSaves(ExCommand *ex) {
 	warning("STUB: FullpipeEngine::disableSaves()");
 }

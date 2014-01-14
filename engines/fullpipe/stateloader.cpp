@@ -328,8 +328,4 @@ bool PicAniInfo::load(MfcArchive &file) {
 	return true;
 }
 
-void FullpipeEngine::updateMap(PreloadItem *pre) {
-	warning("STUB: FullpipeEngine::updateMap()");
-}
-
 } // End of namespace Fullpipe
