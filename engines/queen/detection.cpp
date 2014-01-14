@@ -122,6 +122,7 @@ static const QueenGameDescription gameDescriptions[] = {
 		},
 	},
 
+#if 0
 	// Amiga Floppy - English
 	{
 		{
@@ -134,6 +135,7 @@ static const QueenGameDescription gameDescriptions[] = {
 			GUIO0()
 		},
 	},
+#endif
 
 	// DOS Floppy - English
 	{
@@ -161,6 +163,7 @@ static const QueenGameDescription gameDescriptions[] = {
 		},
 	},
 
+#if 0
 	// DOS Floppy - French
 	{
 		{
@@ -173,7 +176,9 @@ static const QueenGameDescription gameDescriptions[] = {
 			GUIO0()
 		},
 	},
+#endif
 
+#if 0
 	// DOS CD - French
 	{
 		{
@@ -186,7 +191,9 @@ static const QueenGameDescription gameDescriptions[] = {
 			GUIO0()
 		},
 	},
+#endif
 
+#if 0
 	// DOS Floppy - German
 	{
 		{
@@ -199,7 +206,9 @@ static const QueenGameDescription gameDescriptions[] = {
 			GUIO0()
 		},
 	},
+#endif
 
+#if 0
 	// DOS CD - German
 	{
 		{
@@ -212,7 +221,9 @@ static const QueenGameDescription gameDescriptions[] = {
 			GUIO0()
 		},
 	},
+#endif
 
+#if 0
 	// DOS CD - Hebrew
 	{
 		{
@@ -225,7 +236,9 @@ static const QueenGameDescription gameDescriptions[] = {
 			GUIO0()
 		},
 	},
+#endif
 
+#if 0
 	// DOS Floppy - Italian
 	{
 		{
@@ -238,6 +251,7 @@ static const QueenGameDescription gameDescriptions[] = {
 			GUIO0()
 		},
 	},
+#endif
 
 	// DOS CD - Italian
 	{
@@ -252,6 +266,7 @@ static const QueenGameDescription gameDescriptions[] = {
 		},
 	},
 
+#if 0
 	// DOS CD - Spanish
 	{
 		{
@@ -264,7 +279,7 @@ static const QueenGameDescription gameDescriptions[] = {
 			GUIO0()
 		},
 	},
-
+#endif
 
 	// DOS CD - English (Compressed Freeware Release v1.0)
 	{
