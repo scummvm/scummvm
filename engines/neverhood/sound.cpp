@@ -558,8 +558,10 @@ int NeverhoodAudioStream::readBuffer(int16 *buffer, const int numSamples) {
 				*buffer++ = _prevValue << _shiftValue;
 			}
 		} else {
-			memcpy(buffer, _buffer, bytesRead);
-			buffer += samplesRead;
+			while (samplesRead--) {
+				*buffer++ = READ_LE_UINT16(src);
+				src += 2;				
+			}
 		}
 
 		if (bytesRead < bytesToRead || _stream->pos() >= _stream->size() || _stream->err() || _stream->eos()) {
