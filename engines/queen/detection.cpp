@@ -127,7 +127,7 @@ static const QueenGameDescription gameDescriptions[] = {
 		{
 			"queen",
 			"Floppy",
-			AD_ENTRY1s("queen.1", "00000000000000000000000000000000", 351775), // TODO: Fill in correct MD5
+			AD_ENTRY1s("queen.1", NULL, 351775), // TODO: Fill in correct MD5
 			Common::EN_ANY,
 			Common::kPlatformAmiga,
 			ADGF_NO_FLAGS,
@@ -166,7 +166,7 @@ static const QueenGameDescription gameDescriptions[] = {
 		{
 			"queen",
 			"Floppy",
-			AD_ENTRY1s("queen.1", "00000000000000000000000000000000", 22157304), // TODO: Fill in correct MD5
+			AD_ENTRY1s("queen.1", NULL, 22157304), // TODO: Fill in correct MD5
 			Common::FR_FRA,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
@@ -179,7 +179,7 @@ static const QueenGameDescription gameDescriptions[] = {
 		{
 			"queen",
 			"Talkie",
-			AD_ENTRY1s("queen.1", "00000000000000000000000000000000", 186689095), // TODO: Fill in correct MD5
+			AD_ENTRY1s("queen.1", NULL, 186689095), // TODO: Fill in correct MD5
 			Common::FR_FRA,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
@@ -192,7 +192,7 @@ static const QueenGameDescription gameDescriptions[] = {
 		{
 			"queen",
 			"Floppy",
-			AD_ENTRY1s("queen.1", "00000000000000000000000000000000", 22240013), // TODO: Fill in correct MD5
+			AD_ENTRY1s("queen.1", NULL, 22240013), // TODO: Fill in correct MD5
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
@@ -205,7 +205,7 @@ static const QueenGameDescription gameDescriptions[] = {
 		{
 			"queen",
 			"Talkie",
-			AD_ENTRY1s("queen.1", "00000000000000000000000000000000", 217648975), // TODO: Fill in correct MD5
+			AD_ENTRY1s("queen.1", NULL, 217648975), // TODO: Fill in correct MD5
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
@@ -218,7 +218,7 @@ static const QueenGameDescription gameDescriptions[] = {
 		{
 			"queen",
 			"Talkie",
-			AD_ENTRY1s("queen.1", "00000000000000000000000000000000", 190705558), // TODO: Fill in correct MD5
+			AD_ENTRY1s("queen.1", NULL, 190705558), // TODO: Fill in correct MD5
 			Common::HE_ISR,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
@@ -231,7 +231,7 @@ static const QueenGameDescription gameDescriptions[] = {
 		{
 			"queen",
 			"Floppy",
-			AD_ENTRY1s("queen.1", "00000000000000000000000000000000", 22461366), // TODO: Fill in correct MD5
+			AD_ENTRY1s("queen.1", NULL, 22461366), // TODO: Fill in correct MD5
 			Common::IT_ITA,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
@@ -257,7 +257,7 @@ static const QueenGameDescription gameDescriptions[] = {
 		{
 			"queen",
 			"Talkie",
-			AD_ENTRY1s("queen.1", "00000000000000000000000000000000", 190730602), // TODO: Fill in correct MD5
+			AD_ENTRY1s("queen.1", NULL, 190730602), // TODO: Fill in correct MD5
 			Common::ES_ESP,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
