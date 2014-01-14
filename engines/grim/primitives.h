@@ -37,6 +37,13 @@ public:
 	PrimitiveObject();
 	~PrimitiveObject();
 
+	enum PrimType {
+		RectangleType = 1,
+		LineType      = 2,
+		PolygonType   = 3,
+		InvalidType   = 4
+	};
+
 	static int32 getStaticTag() { return MKTAG('P', 'R', 'I', 'M'); }
 
 	void createRectangle(const Common::Point &p1, const Common::Point &p2, const Color &color, bool filled);
@@ -49,19 +56,13 @@ public:
 	void setPos(int x, int y);
 	void setColor(const Color &color) { _color = color; }
 	Color getColor() const { return _color; }
+	PrimType getType() const { return _type; }
 	bool isFilled() const { return _filled; }
 	void draw() const;
 	void saveState(SaveGame *state) const;
 	bool restoreState(SaveGame *state);
 
 private:
-	enum PrimType {
-		RectangleType = 1,
-		LineType      = 2,
-		PolygonType   = 3,
-		InvalidType   = 4
-	};
-
 	Common::Point _p1, _p2, _p3, _p4;
 	Color _color;
 	bool _filled;

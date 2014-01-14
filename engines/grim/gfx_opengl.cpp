@@ -30,6 +30,8 @@
 #include "common/system.h"
 #include "common/config-manager.h"
 
+#if defined(USE_OPENGL) && !defined(USE_OPENGL_SHADERS)
+
 #include "graphics/surface.h"
 #include "graphics/pixelbuffer.h"
 
@@ -47,7 +49,6 @@
 #include "engines/grim/emi/modelemi.h"
 #include "engines/grim/registry.h"
 
-#ifdef USE_OPENGL
 
 #if defined (SDL_BACKEND) && defined(GL_ARB_fragment_program)
 

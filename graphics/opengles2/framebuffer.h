@@ -20,38 +20,30 @@
  *
  */
 
-#include "common/scummsys.h"
+#ifndef GRAPHICS_FRAMEBUFFER_H
+#define GRAPHICS_FRAMEBUFFER_H
 
-#if defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
+#include "graphics/opengles2/system_headers.h"
 
 namespace Graphics {
-namespace BuiltinShaders {
 
-const char *compatVertex =
-	"#ifdef GL_ES\n"
-	"mediump float round(in mediump float x) {\n"
-	"	return sign(x) * floor(abs(x) + .5);\n"
-	"}\n"
-	"#define in attribute\n"
-	"#define out varying\n"
-	"#endif\n";
+class FrameBuffer {
+public:
+	FrameBuffer(GLuint texture_name, uint width, uint height);
+	~FrameBuffer();
 
-const char *compatFragment =
-	"#ifdef GL_ES\n"
-		"#define in varying\n"
-		"#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
-			"precision highp float;\n"
-		"#else\n"
-			"precision mediump float;\n"
-		"#endif\n"
-		"#define OUTPUT\n"
-		"#define outColor gl_FragColor\n"
-		"#define texture texture2D\n"
-	"#else\n"
-		"#define OUTPUT out vec4 outColor;\n"
-	"#endif\n";
+	void attach();
+	void detach();
 
-}
+	GLuint getColorTextureName() const { return _colorTexture; }
+
+private:
+	GLuint _colorTexture;
+	GLuint _depthRenderBuffer;
+	GLuint _frameBuffer;
+	uint _width, _height;
+};
+
 }
 
 #endif

@@ -22,7 +22,7 @@
 
 #include "common/scummsys.h"
 
-#ifdef USE_GLES2
+#if defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
 
 #include "graphics/opengles2/shader.h"
 
@@ -63,7 +63,11 @@ static GLuint createCompatShader(const char *shaderSource, GLenum shaderType, co
 	const GLchar *compatSource =
 			shaderType == GL_VERTEX_SHADER ? Graphics::BuiltinShaders::compatVertex : Graphics::BuiltinShaders::compatFragment;
 	const GLchar *shaderSources[] = {
+#ifdef USE_GLES2
 		"#version 100\n",
+#else
+		"#version 130\n",
+#endif
 		compatSource,
 		shaderSource
 	};
@@ -126,9 +130,9 @@ Shader *Shader::fromFiles(const char *vertex, const char *fragment, const char *
 	return new Shader(name, vertexShader, fragmentShader, attributes);
 }
 
-void Shader::use() {
+void Shader::use(bool forceReload) {
 	static Shader *previousShader = NULL;
-	if (this == previousShader)
+	if (this == previousShader && !forceReload)
 		return;
 	previousShader = this;
 

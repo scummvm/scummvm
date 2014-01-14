@@ -48,6 +48,7 @@ private:
 	jmethodID MID_list;
 
 	jobject _am;
+	mutable Common::ArchiveMemberList *_cachedMembers;
 };
 
 #endif

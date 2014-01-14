@@ -121,6 +121,7 @@ public:
 
 // private:
 	Graphics::PixelBuffer *_data;
+	void *_userData;
 };
 
 class Bitmap : public PoolObject<Bitmap> {

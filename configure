@@ -129,6 +129,7 @@ _fluidsynth=no
 _opengl=auto
 _opengles=no
 _opengles2=no
+_opengl_shaders=no
 _readline=auto
 _freetype2=auto
 _taskbar=yes
@@ -920,6 +921,7 @@ Optional Libraries:
   --enable-mpeg2           enable mpeg2 codec for cutscenes [autodetect]
 
   --disable-opengl         disable OpenGL (ES) support [autodetect]
+  --enable-opengl-shaders  enable use of modern OpenGL with shaders
 
   --with-jpeg-prefix=DIR   Prefix where libjpeg is installed (optional)
   --disable-jpeg           disable JPEG decoder [autodetect]
@@ -1025,6 +1027,8 @@ for ac_option in $@; do
 	--disable-libunity)       _libunity=no    ;;
 	--enable-opengl)          _opengl=yes     ;;
 	--disable-opengl)         _opengl=no      ;;
+	--enable-opengl-shaders)  _opengl_shaders=yes     ;; #ResidualVM specific option
+	--disable-opengl-shaders) _opengl_shaders=no      ;; #ResidualVM specific option
 	--enable-bink)            _bink=yes       ;;
 	--disable-bink)           _bink=no        ;;
 	--enable-safedisc)        _safedisc=yes   ;; #ResidualVM specific option
@@ -3752,6 +3756,7 @@ echo "$_freetype2"
 
 define_in_config_if_yes "$_freetype2" "USE_FREETYPE2"
 
+
 #
 # Check for OpenGL (ES)
 #
@@ -3844,6 +3849,15 @@ EOF
 	if test "$_opengl" = yes ; then
 		LIBS="$LIBS $OPENGL_LIBS"
 		INCLUDES="$INCLUDES $OPENGL_CFLAGS"
+# ResidualVM specific:
+		if test "$_opengl_shaders" = yes ; then
+			if test "$_opengles2" = no ; then
+				LIBS="$LIBS `pkg-config --libs glew`"
+				INCLUDES="$INCLUDES `pkg-config --cflags glew`"
+			fi
+		fi
+	else
+		_opengl_shaders="no"
 	fi
 fi
 
@@ -3854,6 +3868,7 @@ case $_host_os in
 		_opengles=yes
 		;;
 	android) # ResidualVM specific case:
+		_opengl=yes
 		_opengles2=yes
 		LDFLAGS="$LDFLAGS -Landroid-toolchain/sysroot/usr/lib"
 		LDFLAGS="$LDFLAGS -lGLESv2"
@@ -3873,6 +3888,7 @@ define_in_config_if_yes "$_opengl" "USE_OPENGL"
 define_in_config_if_yes "$_opengles" "USE_GLES"
 # ResidualVM specific:
 define_in_config_if_yes "$_opengles2" "USE_GLES2"
+define_in_config_if_yes "$_opengl_shaders" "USE_OPENGL_SHADERS"
 
 
 #

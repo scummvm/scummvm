@@ -64,7 +64,7 @@ public:
 		return new Shader(*this);
 	}
 
-	void use();
+	void use(bool forceReload = false);
 
 	void setUniform(const char *uniform, const Math::Matrix4 &m) {
 		GLint pos = getUniformLocation(uniform);

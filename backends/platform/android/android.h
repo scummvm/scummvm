@@ -31,6 +31,7 @@
 #include "graphics/palette.h"
 #include "graphics/surface.h"
 #include "graphics/pixelbuffer.h"
+#include "graphics/opengles2/framebuffer.h"
 #include "backends/base-backend.h"
 #include "backends/plugins/posix/posix-provider.h"
 #include "backends/fs/posix/posix-fs-factory.h"
@@ -124,6 +125,7 @@ private:
 	// Game layer
 	GLESBaseTexture *_game_texture;
 	Graphics::PixelBuffer _game_pbuf;
+	Graphics::FrameBuffer *_frame_buffer;
 
 	int _shake_offset;
 	Common::Rect _focus_rect;

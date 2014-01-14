@@ -18,6 +18,8 @@ import android.view.MotionEvent;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
+import tv.ouya.console.api.OuyaController;
+
 import java.io.File;
 
 public class ResidualVMActivity extends Activity {
@@ -107,6 +109,7 @@ public class ResidualVMActivity extends Activity {
 		setVolumeControlStream(AudioManager.STREAM_MUSIC);
 
 		setContentView(R.layout.main);
+		OuyaController.init(this);
 		takeKeyEvents(true);
 
 		// This is a common enough error that we should warn about it
@@ -158,6 +161,7 @@ public class ResidualVMActivity extends Activity {
 		_events = new ResidualVMEvents(this, _residualvm);
 
 		main_surface.setOnKeyListener(_events);
+		main_surface.setOnGenericMotionListener(_events);
 
 		_residualvm_thread = new Thread(_residualvm, "ResidualVM");
 		_residualvm_thread.start();
