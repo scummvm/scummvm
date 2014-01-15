@@ -25,7 +25,7 @@
 
 namespace Fullpipe {
 
-class Picture;
+class PictureObject;
 
 class BaseModalObject {
  public:
@@ -79,7 +79,7 @@ public:
 
 class ModalMap : public BaseModalObject {
 	Scene *_mapScene;
-	Picture *_pic;
+	PictureObject *_pic;
 	bool _isRunning;
 	Common::Rect _rect1;
 	int _x;
