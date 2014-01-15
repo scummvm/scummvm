@@ -371,7 +371,56 @@ bool ModalMap::handleMessage(ExCommand *cmd) {
 }
 
 void ModalMap::initMap() {
-	warning("STUB: ModalMap::initMap()");
+	_isRunning = 1;
+
+	_mapScene = g_fp->accessScene(SC_MAP);
+
+	if (!_mapScene)
+		error("ModalMap::initMap(): error accessing scene SC_MAP");
+
+	PictureObject *pic;
+
+	for (int i = 0; i < 200; i++) {
+		if (!g_fp->_mapTable[i] >> 16)
+			break;
+
+		pic = _mapScene->getPictureObjectById(g_fp->_mapTable[i] >> 16, 0);
+
+		if ((g_fp->_mapTable[i] & 0xffff) == 1)
+			pic->_flags |= 4;
+		else
+			pic->_flags &= 0xfffb;
+	}
+
+	pic = getScenePicture();
+
+	Common::Point point;
+	Common::Point point2;
+
+	if (pic) {
+		pic->getDimensions(&point);
+
+		_rect2.left = point.x / 2 + pic->_ox - 400;
+		_rect2.top = point.y / 2 + pic->_oy - 300;
+		_rect2.right = _rect2.left + 800;
+		_rect2.bottom = _rect2.top + 600;
+
+		_mapScene->updateScrolling2();
+
+		_pic = _mapScene->getPictureObjectById(PIC_MAP_I02, 0);
+		_pic->getDimensions(&point2);
+
+		_pic->setOXY(pic->_ox + point.x / 2 - point2.x / 2, point.y - point2.y / 2 + pic->_oy - 24);
+		_pic->_flags |= 4;
+
+		_pic = _mapScene->getPictureObjectById(PIC_MAP_I01, 0);
+		_pic->getDimensions(&point2);
+
+		_pic->setOXY(pic->_ox + point.x / 2 - point2.x / 2, point.y - point2.y / 2 + pic->_oy - 25);
+		_pic->_flags |= 4;
+	}
+
+	g_fp->setArcadeOverlay(PIC_CSR_MAP);
 }
 
 PictureObject *ModalMap::getScenePicture() {

@@ -100,6 +100,8 @@ namespace Fullpipe {
 #define PIC_MAP_A12 5274
 #define PIC_MAP_A13 5275
 #define PIC_MAP_A14 5276
+#define PIC_MAP_I01 5295
+#define PIC_MAP_I02 5296
 #define PIC_MAP_P01 5277
 #define PIC_MAP_P02 5278
 #define PIC_MAP_P03 5279
