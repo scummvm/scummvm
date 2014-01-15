@@ -199,7 +199,6 @@ namespace Fullpipe {
 #define SC_38 2072
 #define SC_COMMON 321
 #define SC_DBGMENU 726
-#define SC_LDR 635
 #define SC_FINAL1 4999
 #define SC_FINAL2 5000
 #define SC_FINAL3 5001
@@ -207,6 +206,8 @@ namespace Fullpipe {
 #define SC_INTRO1 3896
 #define SC_INTRO2 3907
 #define SC_INV 858
+#define SC_LDR 635
+#define SC_MAP 5222
 #define SND_CMN_031 3516
 #define SND_CMN_060 4921
 #define SND_CMN_061 4922

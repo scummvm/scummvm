@@ -28,6 +28,8 @@
 #include "fullpipe/scenes.h"
 #include "fullpipe/gameloader.h"
 
+#include "fullpipe/constants.h"
+
 #include "graphics/palette.h"
 #include "video/avi_decoder.h"
 
@@ -287,6 +289,12 @@ ModalMap::ModalMap() {
 }
 
 ModalMap::~ModalMap() {
+	g_fp->_gameLoader->unloadScene(SC_MAP);
+
+	g_fp->_sceneRect = _rect1;
+
+	g_fp->_currentScene->_x = _x;
+	g_fp->_currentScene->_y = _y;
 }
 
 bool ModalMap::init(int counterdiff) {
@@ -296,7 +304,11 @@ bool ModalMap::init(int counterdiff) {
 }
 
 void ModalMap::update() {
-	warning("STUB: ModalMap::update()");
+	g_fp->_sceneRect = _rect2;
+
+	_mapScene->draw();
+
+	g_fp->drawArcadeOverlay(1);
 }
 
 bool ModalMap::handleMessage(ExCommand *cmd) {
