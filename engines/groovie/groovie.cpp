@@ -104,18 +104,18 @@ Common::Error GroovieEngine::run() {
 
 	// Initialize the graphics
 	switch (_gameDescription->version) {
-	case kGroovieV2:
+	case kGroovieV2: {
 		// Request the mode with the highest precision available
-		initGraphics(640, 480, true, NULL);
+		Graphics::PixelFormat format(4, 8, 8, 8, 8, 24, 16, 8, 0);
+		initGraphics(640, 480, true, &format);
 
-		// Save the enabled mode
-		_pixelFormat = _system->getScreenFormat();
-
-		// TODO: Eventually drop 16bpp mode
-		if (_pixelFormat.bytesPerPixel == 1)
+		if (_system->getScreenFormat() != format)
 			return Common::kUnsupportedColorMode;
 
+		// Save the enabled mode
+		_pixelFormat = format;
 		break;
+	}
 	case kGroovieT7G:
 		initGraphics(640, 480, true);
 		_pixelFormat = Graphics::PixelFormat::createFormatCLUT8();

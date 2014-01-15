@@ -260,7 +260,7 @@ Cursor_v2::Cursor_v2(Common::File &file) {
 	_width = file.readUint16LE();
 	_height = file.readUint16LE();
 
-	_img = new byte[_width * _height * _numFrames * 2];
+	_img = new byte[_width * _height * _numFrames * 4];
 
 	debugC(1, kGroovieDebugCursor | kGroovieDebugAll, "Groovie::Cursor: width: %d, height: %d, frames:%d", _width, _height, _numFrames);
 
@@ -285,7 +285,7 @@ Cursor_v2::Cursor_v2(Common::File &file) {
 
 		byte *data = new byte[tmp32];
 		file.read(data, tmp32);
-		decodeFrame(pal, data, _img + (f * _width * _height * 2));
+		decodeFrame(pal, data, _img + (f * _width * _height * 4));
 
 		delete[] data;
 	}
@@ -364,16 +364,16 @@ void Cursor_v2::decodeFrame(byte *pal, byte *data, byte *dest) {
 	}
 
 	// Convert to screen format
-	// NOTE: Currently locked to 16bit
+	// NOTE: Currently locked to 32bpp
 	ptr = tmp;
 	for (int y = 0; y < _height; y++) {
 		for (int x = 0; x < _width; x++) {
 			if (*ptr == 1) {
-				*(uint16 *)dest = (uint16)_format.RGBToColor(*(ptr + 1), *(ptr + 2), *(ptr + 3));
+				*(uint32 *)dest = _format.RGBToColor(*(ptr + 1), *(ptr + 2), *(ptr + 3));
 			} else {
-				*(uint16 *)dest = 0;
+				*(uint32 *)dest = 0;
 			}
-			dest += 2;
+			dest += 4;
 			ptr += 4;
 		}
 	}
@@ -385,7 +385,7 @@ void Cursor_v2::enable() {
 }
 
 void Cursor_v2::showFrame(uint16 frame) {
-	int offset = _width * _height * frame * 2;
+	int offset = _width * _height * frame * 4;
 	CursorMan.replaceCursor((const byte *)(_img + offset), _width, _height, _width >> 1, _height >> 1, 0, false, &_format);
 }
 

@@ -107,17 +107,16 @@ uint16 ROQPlayer::loadInternal() {
 
 void ROQPlayer::buildShowBuf() {
 	for (int line = 0; line < _bg->h; line++) {
-		byte *out = (byte *)_bg->getBasePtr(0, line);
-		byte *in = (byte *)_currBuf->getBasePtr(0, line / _scaleY);
+		uint32 *out = (uint32 *)_bg->getBasePtr(0, line);
+		uint32 *in = (uint32 *)_currBuf->getBasePtr(0, line / _scaleY);
 
 		for (int x = 0; x < _bg->w; x++) {
 			// Copy a pixel
-			memcpy(out, in, _vm->_pixelFormat.bytesPerPixel);
+			*out++ = *in;
 
 			// Skip to the next pixel
-			out += _vm->_pixelFormat.bytesPerPixel;
 			if (!(x % _scaleX))
-				in += _currBuf->format.bytesPerPixel;
+				in++;
 		}
 	}
 
@@ -561,17 +560,13 @@ void ROQPlayer::paint2(byte i, int destx, int desty) {
 	}
 
 	uint32 *block = _codebook2 + i * 4;
+	uint32 *ptr = (uint32 *)_currBuf->getBasePtr(destx, desty);
+	uint32 pitch = _currBuf->pitch / 4;
 
-	for (int y = 0; y < 2; y++) {
-		for (int x = 0; x < 2; x++) {
-			if (_vm->_pixelFormat.bytesPerPixel == 2)
-				*((uint16 *)_currBuf->getBasePtr(destx + x, desty + y)) = *block;
-			else
-				*((uint32 *)_currBuf->getBasePtr(destx + x, desty + y)) = *block;
-
-			block++;
-		}
-	}
+	ptr[0] = block[0];
+	ptr[1] = block[1];
+	ptr[pitch] = block[2];
+	ptr[pitch + 1] = block[3];
 }
 
 void ROQPlayer::paint4(byte i, int destx, int desty) {
@@ -600,16 +595,10 @@ void ROQPlayer::paint8(byte i, int destx, int desty) {
 
 			for (int y2 = 0; y2 < 2; y2++) {
 				for (int x2 = 0; x2 < 2; x2++) {
-					for (int repy = 0; repy < 2; repy++) {
-						for (int repx = 0; repx < 2; repx++) {
-							if (_vm->_pixelFormat.bytesPerPixel == 2)
-								*((uint16 *)_currBuf->getBasePtr(destx + x4 * 4 + x2 * 2 + repx, desty + y4 * 4 + y2 * 2 + repy)) = *block2;
-							else
-								*((uint32 *)_currBuf->getBasePtr(destx + x4 * 4 + x2 * 2 + repx, desty + y4 * 4 + y2 * 2 + repy)) = *block2;
-						}
-					}
-
-					block2++;
+					uint32 *ptr = (uint32 *)_currBuf->getBasePtr(destx + x4 * 4 + x2 * 2, desty + y4 * 4 + y2 * 2);
+					uint32 pitch = _currBuf->pitch / 4;
+					uint32 color = *block2++;
+					ptr[0] = ptr[1] = ptr[pitch] = ptr[pitch + 1] = color;
 				}
 			}
 		}
