@@ -742,8 +742,17 @@ PictureResource::PictureResource(BoltFilesState &state, const byte *src) {
 
 	int nbytes = _bounds.width() * _bounds.height();
 	if (_flags & PICFLAG_20) {
-		if (_flags & (PICFLAG_80 | PICFLAG_40)) {
-			error("TODO: sInitPic - Case 40 | 80");
+		if (_flags & (PICFLAG_VFLIP | PICFLAG_HFLIP)) {
+			// Get the raw data for the picture from another resource
+			uint32 id = READ_LE_UINT32(&src[18]);
+			const byte *srcData = state._curLibPtr->boltEntry(id)._data;
+			_imgData = new byte[nbytes];
+
+			// Flip the image data either horizontally or vertically
+			if (_flags & PICFLAG_HFLIP)
+				flipHorizontal(srcData);
+			else
+				flipVertical(srcData);
 		} else {
 			error("TODO: sInitPic - Case !(40 | 80)");
 		}
@@ -859,6 +868,30 @@ PictureResource::PictureResource(int flags, int select, int pick, int onOff,
 
 PictureResource::~PictureResource() {
 	delete[] _imgData;
+}
+
+void PictureResource::flipHorizontal(const byte *data) {
+	const byte *srcP = data + 18;
+	byte *destP = _imgData + _bounds.width() - 1;
+
+	for (int y = 0; y < _bounds.height(); ++y) {
+		for (int x = 0; x < _bounds.width(); ++x, ++srcP, --destP)
+			*destP = *srcP;
+
+		srcP += _bounds.width();
+		destP += _bounds.width();
+	}
+}
+
+void PictureResource::flipVertical(const byte *data) {
+	const byte *srcP = data + 18;
+	byte *destP = _imgData + _bounds.width() * (_bounds.height() - 1);
+
+	for (int y = 0; y < _bounds.height(); ++y) {
+		Common::copy(srcP, srcP + _bounds.width(), destP);
+		srcP += _bounds.width();
+		destP -= _bounds.width();	
+	}
 }
 
 /*------------------------------------------------------------------------*/

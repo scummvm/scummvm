@@ -255,9 +255,19 @@ public:
 /* bvoy.blt resource types */
 
 enum PictureFlag { PICFLAG_8 = 8, PICFLAG_10 = 0x10, PICFLAG_20 = 0x20, 
-	PICFLAG_40 = 0x40, PICFLAG_80 = 0x80, PICFLAG_1000 = 0x1000 };
+	PICFLAG_HFLIP = 0x40, PICFLAG_VFLIP = 0x80, PICFLAG_1000 = 0x1000 };
 
 class PictureResource: public DisplayResource {
+private:
+	/**
+	 * Flip the image data horizontally
+	 */
+	void flipHorizontal(const byte *data);
+
+	/**
+	 * Flip the image data vertically
+	 */
+	void flipVertical(const byte *data);
 public:
 	byte _select;
 	byte _pick;
