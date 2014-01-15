@@ -384,6 +384,8 @@ void HelpDialog::show() {
 	// If a action button was selected, dispatch to handle it
 	if (evt.kbd.keycode != Common::KEYCODE_INVALID)
 		R2_GLOBALS._game->processEvent(evt);
+	else
+		R2_GLOBALS._events.setCursorFromFlag();
 }
 
 HelpDialog::HelpDialog() {
