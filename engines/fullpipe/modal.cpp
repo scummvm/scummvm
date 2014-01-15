@@ -312,7 +312,38 @@ void ModalMap::update() {
 }
 
 bool ModalMap::handleMessage(ExCommand *cmd) {
-	warning("STUB: ModalMap::handleMessage()");
+	if (cmd->_messageKind != 17)
+		return false;
+
+	switch (cmd->_messageNum) {
+	case 29:
+		_flag = 1;
+		_mouseX = g_fp->_mouseScreenPos.x;
+		_mouseY = g_fp->_mouseScreenPos.x;
+
+		_field_3C = _rect2.top;
+		_field_38 = _rect2.left;
+
+		break;
+
+	case 30:
+		_flag = 0;
+		break;
+
+	case 36:
+		if (cmd->_keyCode != 9 && cmd->_keyCode != 27 )
+			return false;
+
+		break;
+
+	case 107:
+		break;
+
+	default:
+		return false;
+	}
+
+	_isRunning = 0;
 
 	return true;
 }
