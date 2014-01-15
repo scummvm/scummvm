@@ -391,6 +391,7 @@ private:
 	void prepareNextObject();
 	void putObject();
 	void resetObjectPlace();
+	void resetCoreVar();
 	void drawDiscussionBox();
 	void displayNarrativePicture(int af, int ob);
 	void menuUp();

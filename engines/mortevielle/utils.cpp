@@ -1888,24 +1888,18 @@ void MortevielleEngine::resetObjectPlace() {
 		_tabdon[i] = _tabdon[i + 390];
 }
 
-/**
- * Engine function - When restarting the game, reset the main variables used by the engine
- * @remarks	Originally called 'inzon'
- */
-void MortevielleEngine::resetVariables() {
-	resetObjectPlace();
-
-	_coreVar._alreadyEnteredManor = false;
-	_coreVar._selectedObjectId = 0;
-	_coreVar._cellarObjectId = 0;
-	_coreVar._atticBallHoleObjectId = 0;
-	_coreVar._atticRodHoleObjectId = 0;
-	_coreVar._wellObjectId = 0;
-	_coreVar._secretPassageObjectId = 0;
-	_coreVar._purpleRoomObjectId = 136;
-	_coreVar._cryptObjectId = 141;
-	_coreVar._faithScore = getRandomNumber(4, 10);
-	_coreVar._currPlace = MANOR_FRONT;
+void MortevielleEngine::resetCoreVar() {
+	_saveStruct._alreadyEnteredManor = _coreVar._alreadyEnteredManor = false;
+	_saveStruct._selectedObjectId = _coreVar._selectedObjectId = 0;
+	_saveStruct._cellarObjectId = _coreVar._cellarObjectId = 0;
+	_saveStruct._atticBallHoleObjectId = _coreVar._atticBallHoleObjectId = 0;
+	_saveStruct._atticRodHoleObjectId = _coreVar._atticRodHoleObjectId = 0;
+	_saveStruct._wellObjectId = _coreVar._wellObjectId = 0;
+	_saveStruct._secretPassageObjectId = _coreVar._secretPassageObjectId = 0;
+	_saveStruct._purpleRoomObjectId = _coreVar._purpleRoomObjectId = 136;
+	_saveStruct._cryptObjectId = _coreVar._cryptObjectId = 141;
+	_saveStruct._faithScore = _coreVar._faithScore = getRandomNumber(4, 10);
+	_saveStruct._currPlace = _coreVar._currPlace = MANOR_FRONT;
 
 	for (int i = 2; i <= 6; ++i)
 		_coreVar._inventory[i] = 0;
@@ -1913,7 +1907,7 @@ void MortevielleEngine::resetVariables() {
 	// Only object in inventory: a gun
 	_coreVar._inventory[1] = 113;
 
-	_coreVar._fullHour = (unsigned char)20;
+	_saveStruct._fullHour = _coreVar._fullHour = (unsigned char)20;
 
 	for (int i = 1; i <= 10; ++i)
 		_coreVar._pctHintFound[i] = ' ';
@@ -1931,6 +1925,14 @@ void MortevielleEngine::resetVariables() {
 		_coreVar._availableQuestion[i] = ' ';
 
 	_coreVar._availableQuestion[33] = '*';
+}
+/**
+ * Engine function - When restarting the game, reset the main variables used by the engine
+ * @remarks	Originally called 'inzon'
+ */
+void MortevielleEngine::resetVariables() {
+	resetObjectPlace();
+	resetCoreVar();
 
 	for (int i = 1; i <= 8; ++i)
 		_charAnswerCount[i] = 0;

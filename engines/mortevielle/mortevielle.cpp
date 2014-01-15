@@ -101,6 +101,11 @@ MortevielleEngine::MortevielleEngine(OSystem *system, const MortevielleGameDescr
 	_curPict = nullptr;
 	_curAnim = nullptr;
 	_rightFramePict = nullptr;
+
+	resetCoreVar();
+
+	_maff = 0;
+	_crep = 0;
 }
 
 MortevielleEngine::~MortevielleEngine() {
