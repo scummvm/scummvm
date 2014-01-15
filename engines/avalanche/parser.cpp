@@ -1144,7 +1144,7 @@ void Parser::swallow() {
 				return;
 			}
 			_vm->_dialogs->displayScrollChain('U', 1);
-			_vm->_pingo->wobble();
+			_vm->_animation->wobble();
 			_vm->_dialogs->displayScrollChain('U', 2);
 			_vm->_objects[kObjectWine - 1] = false;
 			_vm->refreshObjectList();

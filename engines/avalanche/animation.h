@@ -129,6 +129,8 @@ public:
 	void drawLightning(int16 x1, int16 y1, int16 x2, int16 y2);
 	void thunder();
 
+	void wobble();
+
 	void setDirection(Direction dir);
 	void setOldDirection(Direction dir);
 	Direction getDirection();

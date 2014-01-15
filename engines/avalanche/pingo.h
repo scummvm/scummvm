@@ -43,7 +43,6 @@ public:
 	void copy02();
 	void copy03();
 	void copyPage(byte frp, byte top);
-	void wobble();
 	void winningPic();
 
 private:

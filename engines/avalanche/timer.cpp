@@ -492,7 +492,7 @@ void Timer::buyDrinks() {
 	_vm->_malagauche = 0;
 
 	_vm->_dialogs->displayScrollChain('D', _vm->_drinking); // Display message about it.
-	_vm->_pingo->wobble(); // Do the special effects.
+	_vm->_animation->wobble(); // Do the special effects.
 	_vm->_dialogs->displayScrollChain('D', 1); // That'll be thruppence.
 	if (_vm->decreaseMoney(3)) // Pay 3d.
 		_vm->_dialogs->displayScrollChain('D', 3); // Tell 'em you paid up.

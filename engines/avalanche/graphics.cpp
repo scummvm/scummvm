@@ -577,6 +577,16 @@ Graphics::Surface GraphicManager::loadPictureSign(Common::File &file, int xl, in
 	return picture;
 }
 
+/**
+* Shifts the whole screen down by one line and fills the gap with black.
+*/
+void GraphicManager::shiftScreen() {
+	for (uint16 y = _surface.h - 1; y > 1; y--)
+		memcpy(_surface.getBasePtr(0, y), _surface.getBasePtr(0, y - 1), _surface.w);
+
+	_surface.drawLine(0, 0, _surface.w, 0, kColorBlack);
+}
+
 void GraphicManager::clearAlso() {
 	_magics.fillRect(Common::Rect(0, 0, 640, 200), 0);
 	_magics.frameRect(Common::Rect(0, 45, 640, 161), 15);

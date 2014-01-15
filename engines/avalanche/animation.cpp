@@ -1443,6 +1443,25 @@ void Animation::thunder() {
 	_vm->_graphics->setBackgroundColor(kColorBlack);
 }
 
+/**
+* Makes the screen wobble.
+*/
+void Animation::wobble() {
+	_vm->_graphics->saveScreen();
+
+	for (int i = 0; i < 26; i++) {
+		_vm->_graphics->shiftScreen();
+		_vm->_graphics->refreshScreen();
+		_vm->_system->delayMillis(i * 7);
+
+		_vm->_graphics->restoreScreen();
+		_vm->_system->delayMillis(i * 7);
+	}
+
+	_vm->_graphics->restoreScreen();
+	_vm->_graphics->removeBackup();
+}
+
 void Animation::setDirection(Direction dir) {
 	_direction = dir;
 }
