@@ -2108,7 +2108,7 @@ void Parser::doThat() {
 			}
 			break;
 		default: {
-			_vm->_pingo->zonk();
+			_vm->_animation->thunder();
 			Common::String tmpStr = Common::String::format("A crack of lightning shoots from the sky, and fries you." \
 				"%c%c(`Such is the anger of the gods, Avvy!\")", kControlNewLine, kControlNewLine);
 			_vm->_dialogs->displayText(tmpStr);

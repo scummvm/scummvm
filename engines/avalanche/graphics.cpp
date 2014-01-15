@@ -281,6 +281,10 @@ Common::Point GraphicManager::drawArc(Graphics::Surface &surface, int16 x, int16
 	return endPoint;
 }
 
+void GraphicManager::drawLine(int x1, int y1, int x2, int y2, int penX, int penY, Color color) {
+	_surface.drawThickLine(x1, y1, x2, y2, penX, penY, color);
+}
+
 Common::Point GraphicManager::drawScreenArc(int16 x, int16 y, int16 stAngle, int16 endAngle, uint16 radius, Color color) {
 	return drawArc(_surface, x, y, stAngle, endAngle, radius, color);
 }
