@@ -424,9 +424,130 @@ void ModalMap::initMap() {
 }
 
 PictureObject *ModalMap::getScenePicture() {
-	warning("STUB: ModalMap::getScenePicture()");
+	int picId = 0;
 
-	return 0;
+	switch (g_fp->_currentScene->_sceneId) {
+	case SC_1:
+        picId = PIC_MAP_S01;
+        break;
+	case SC_2:
+        picId = PIC_MAP_S02;
+        break;
+	case SC_3:
+        picId = PIC_MAP_S03;
+        break;
+	case SC_4:
+        picId = PIC_MAP_S04;
+        break;
+	case SC_5:
+        picId = PIC_MAP_S05;
+        break;
+	case SC_6:
+		picId = PIC_MAP_S06;
+		break;
+	case SC_7:
+		picId = PIC_MAP_S07;
+		break;
+	case SC_8:
+		picId = PIC_MAP_S08;
+		break;
+	case SC_9:
+		picId = PIC_MAP_S09;
+		break;
+	case SC_10:
+		picId = PIC_MAP_S10;
+		break;
+	case SC_11:
+		picId = PIC_MAP_S11;
+		break;
+	case SC_12:
+		picId = PIC_MAP_S12;
+		break;
+	case SC_13:
+		picId = PIC_MAP_S13;
+		break;
+	case SC_14:
+		picId = PIC_MAP_S14;
+		break;
+	case SC_15:
+		picId = PIC_MAP_S15;
+		break;
+	case SC_16:
+		picId = PIC_MAP_S16;
+		break;
+	case SC_17:
+		picId = PIC_MAP_S17;
+		break;
+	case SC_18:
+	case SC_19:
+		picId = PIC_MAP_S1819;
+		break;
+	case SC_20:
+		picId = PIC_MAP_S20;
+		break;
+	case SC_21:
+        picId = PIC_MAP_S21;
+		break;
+	case SC_22:
+		picId = PIC_MAP_S22;
+		break;
+	case SC_23:
+		picId = PIC_MAP_S23_1;
+		break;
+	case SC_24:
+		picId = PIC_MAP_S24;
+		break;
+	case SC_25:
+		picId = PIC_MAP_S25;
+		break;
+	case SC_26:
+		picId = PIC_MAP_S26;
+		break;
+	case SC_27:
+		picId = PIC_MAP_S27;
+		break;
+	case SC_28:
+		picId = PIC_MAP_S28;
+		break;
+	case SC_29:
+		picId = PIC_MAP_S29;
+		break;
+	case SC_30:
+		picId = PIC_MAP_S30;
+		break;
+	case SC_31:
+		picId = PIC_MAP_S31_1;
+		break;
+	case SC_32:
+		picId = PIC_MAP_S32_1;
+		break;
+	case SC_33:
+		picId = PIC_MAP_S33;
+		break;
+	case SC_34:
+		picId = PIC_MAP_S34;
+		break;
+	case SC_35:
+		picId = PIC_MAP_S35;
+		break;
+	case SC_36:
+		picId = PIC_MAP_S36;
+		break;
+	case SC_37:
+		picId = PIC_MAP_S37;
+		break;
+	case SC_38:
+		picId = PIC_MAP_S38;
+		break;
+	case SC_FINAL1:
+		picId = PIC_MAP_S38;
+		break;
+	}
+
+	if (picId)
+		return _mapScene->getPictureObjectById(picId, 0);
+
+	error("ModalMap::getScenePicture(): Unknown scene id: %d", g_fp->_currentScene->_sceneId);
 }
 
 void FullpipeEngine::openMap() {
