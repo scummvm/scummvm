@@ -25,6 +25,8 @@
 
 namespace Fullpipe {
 
+class PictureObject;
+
 class BaseModalObject {
  public:
 
@@ -73,6 +75,35 @@ public:
 	virtual void saveload() {}
 
 	void play(const char *fname);
+};
+
+class ModalMap : public BaseModalObject {
+	Scene *_mapScene;
+	PictureObject *_pic;
+	bool _isRunning;
+	Common::Rect _rect1;
+	int _x;
+	int _y;
+	int _flag;
+	int _mouseX;
+	int _mouseY;
+	int _field_38;
+	int _field_3C;
+	int _field_40;
+	Common::Rect _rect2;
+
+ public:
+	ModalMap();
+	virtual ~ModalMap();
+
+	virtual bool pollEvent() { return true; }
+	virtual bool handleMessage(ExCommand *message);
+	virtual bool init(int counterdiff);
+	virtual void update();
+	virtual void saveload() {}
+
+	void initMap();
+	PictureObject *getScenePicture();
 };
 
 } // End of namespace Fullpipe

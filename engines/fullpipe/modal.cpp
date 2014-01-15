@@ -28,6 +28,8 @@
 #include "fullpipe/scenes.h"
 #include "fullpipe/gameloader.h"
 
+#include "fullpipe/constants.h"
+
 #include "graphics/palette.h"
 #include "video/avi_decoder.h"
 
@@ -267,8 +269,295 @@ void ModalVideoPlayer::play(const char *filename) {
 	}
 }
 
+ModalMap::ModalMap() {
+	_mapScene = 0;
+	_pic = 0;
+	_isRunning = false;
+	_rect1 = g_fp->_sceneRect;
+	_x = g_fp->_currentScene->_x;
+	_y = g_fp->_currentScene->_y;
+	_flag = 0;
+	_mouseX = 0;
+	_mouseY = 0;
+	_field_38 = 0;
+	_field_3C = 0;
+	_field_40 = 12;
+	_rect2.top = 0;
+	_rect2.left = 0;
+	_rect2.bottom = 600;
+	_rect2.right = 800;
+}
+
+ModalMap::~ModalMap() {
+	g_fp->_gameLoader->unloadScene(SC_MAP);
+
+	g_fp->_sceneRect = _rect1;
+
+	g_fp->_currentScene->_x = _x;
+	g_fp->_currentScene->_y = _y;
+}
+
+bool ModalMap::init(int counterdiff) {
+	g_fp->setCursor(PIC_CSR_ITN);
+
+	if (_flag) {
+		_rect2.left = _mouseX + _field_38 - g_fp->_mouseScreenPos.x;
+		_rect2.top = _mouseY + _field_3C - g_fp->_mouseScreenPos.y;;
+		_rect2.right = _rect2.left + 800;
+		_rect2.bottom = _rect2.top + 600;
+
+		g_fp->_sceneRect =_rect2;
+
+		_mapScene->updateScrolling2();
+
+		_rect2 = g_fp->_sceneRect;
+	}
+
+	_field_40--;
+
+	if (_field_40 <= 0) {
+		_field_40 = 12;
+
+		if (_pic)
+			_pic->_flags ^= 4;
+	}
+
+	return _isRunning;
+}
+
+void ModalMap::update() {
+	g_fp->_sceneRect = _rect2;
+
+	_mapScene->draw();
+
+	g_fp->drawArcadeOverlay(1);
+}
+
+bool ModalMap::handleMessage(ExCommand *cmd) {
+	if (cmd->_messageKind != 17)
+		return false;
+
+	switch (cmd->_messageNum) {
+	case 29:
+		_flag = 1;
+		_mouseX = g_fp->_mouseScreenPos.x;
+		_mouseY = g_fp->_mouseScreenPos.x;
+
+		_field_3C = _rect2.top;
+		_field_38 = _rect2.left;
+
+		break;
+
+	case 30:
+		_flag = 0;
+		break;
+
+	case 36:
+		if (cmd->_keyCode != 9 && cmd->_keyCode != 27 )
+			return false;
+
+		break;
+
+	case 107:
+		break;
+
+	default:
+		return false;
+	}
+
+	_isRunning = 0;
+
+	return true;
+}
+
+void ModalMap::initMap() {
+	_isRunning = 1;
+
+	_mapScene = g_fp->accessScene(SC_MAP);
+
+	if (!_mapScene)
+		error("ModalMap::initMap(): error accessing scene SC_MAP");
+
+	PictureObject *pic;
+
+	for (int i = 0; i < 200; i++) {
+		if (!g_fp->_mapTable[i] >> 16)
+			break;
+
+		pic = _mapScene->getPictureObjectById(g_fp->_mapTable[i] >> 16, 0);
+
+		if ((g_fp->_mapTable[i] & 0xffff) == 1)
+			pic->_flags |= 4;
+		else
+			pic->_flags &= 0xfffb;
+	}
+
+	pic = getScenePicture();
+
+	Common::Point point;
+	Common::Point point2;
+
+	if (pic) {
+		pic->getDimensions(&point);
+
+		_rect2.left = point.x / 2 + pic->_ox - 400;
+		_rect2.top = point.y / 2 + pic->_oy - 300;
+		_rect2.right = _rect2.left + 800;
+		_rect2.bottom = _rect2.top + 600;
+
+		_mapScene->updateScrolling2();
+
+		_pic = _mapScene->getPictureObjectById(PIC_MAP_I02, 0);
+		_pic->getDimensions(&point2);
+
+		_pic->setOXY(pic->_ox + point.x / 2 - point2.x / 2, point.y - point2.y / 2 + pic->_oy - 24);
+		_pic->_flags |= 4;
+
+		_pic = _mapScene->getPictureObjectById(PIC_MAP_I01, 0);
+		_pic->getDimensions(&point2);
+
+		_pic->setOXY(pic->_ox + point.x / 2 - point2.x / 2, point.y - point2.y / 2 + pic->_oy - 25);
+		_pic->_flags |= 4;
+	}
+
+	g_fp->setArcadeOverlay(PIC_CSR_MAP);
+}
+
+PictureObject *ModalMap::getScenePicture() {
+	int picId = 0;
+
+	switch (g_fp->_currentScene->_sceneId) {
+	case SC_1:
+        picId = PIC_MAP_S01;
+        break;
+	case SC_2:
+        picId = PIC_MAP_S02;
+        break;
+	case SC_3:
+        picId = PIC_MAP_S03;
+        break;
+	case SC_4:
+        picId = PIC_MAP_S04;
+        break;
+	case SC_5:
+        picId = PIC_MAP_S05;
+        break;
+	case SC_6:
+		picId = PIC_MAP_S06;
+		break;
+	case SC_7:
+		picId = PIC_MAP_S07;
+		break;
+	case SC_8:
+		picId = PIC_MAP_S08;
+		break;
+	case SC_9:
+		picId = PIC_MAP_S09;
+		break;
+	case SC_10:
+		picId = PIC_MAP_S10;
+		break;
+	case SC_11:
+		picId = PIC_MAP_S11;
+		break;
+	case SC_12:
+		picId = PIC_MAP_S12;
+		break;
+	case SC_13:
+		picId = PIC_MAP_S13;
+		break;
+	case SC_14:
+		picId = PIC_MAP_S14;
+		break;
+	case SC_15:
+		picId = PIC_MAP_S15;
+		break;
+	case SC_16:
+		picId = PIC_MAP_S16;
+		break;
+	case SC_17:
+		picId = PIC_MAP_S17;
+		break;
+	case SC_18:
+	case SC_19:
+		picId = PIC_MAP_S1819;
+		break;
+	case SC_20:
+		picId = PIC_MAP_S20;
+		break;
+	case SC_21:
+        picId = PIC_MAP_S21;
+		break;
+	case SC_22:
+		picId = PIC_MAP_S22;
+		break;
+	case SC_23:
+		picId = PIC_MAP_S23_1;
+		break;
+	case SC_24:
+		picId = PIC_MAP_S24;
+		break;
+	case SC_25:
+		picId = PIC_MAP_S25;
+		break;
+	case SC_26:
+		picId = PIC_MAP_S26;
+		break;
+	case SC_27:
+		picId = PIC_MAP_S27;
+		break;
+	case SC_28:
+		picId = PIC_MAP_S28;
+		break;
+	case SC_29:
+		picId = PIC_MAP_S29;
+		break;
+	case SC_30:
+		picId = PIC_MAP_S30;
+		break;
+	case SC_31:
+		picId = PIC_MAP_S31_1;
+		break;
+	case SC_32:
+		picId = PIC_MAP_S32_1;
+		break;
+	case SC_33:
+		picId = PIC_MAP_S33;
+		break;
+	case SC_34:
+		picId = PIC_MAP_S34;
+		break;
+	case SC_35:
+		picId = PIC_MAP_S35;
+		break;
+	case SC_36:
+		picId = PIC_MAP_S36;
+		break;
+	case SC_37:
+		picId = PIC_MAP_S37;
+		break;
+	case SC_38:
+		picId = PIC_MAP_S38;
+		break;
+	case SC_FINAL1:
+		picId = PIC_MAP_S38;
+		break;
+	}
+
+	if (picId)
+		return _mapScene->getPictureObjectById(picId, 0);
+
+	error("ModalMap::getScenePicture(): Unknown scene id: %d", g_fp->_currentScene->_sceneId);
+}
+
 void FullpipeEngine::openMap() {
-	warning("STUB: FullpipeEngine::openMap()");
+	if (!_modalObject) {
+		ModalMap *map = new ModalMap;
+
+		_modalObject = map;
+
+		map->initMap();
+	}
 }
 
 void FullpipeEngine::openHelp() {

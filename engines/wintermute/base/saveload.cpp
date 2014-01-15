@@ -48,6 +48,7 @@ bool SaveLoad::loadGame(const Common::String &filename, BaseGame *gameRef) {
 
 	bool ret;
 
+	gameRef->stopVideo();
 	gameRef->_renderer->initSaveLoad(false);
 
 	gameRef->_loadInProgress = true;

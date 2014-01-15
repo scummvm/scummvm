@@ -100,6 +100,8 @@ namespace Fullpipe {
 #define PIC_MAP_A12 5274
 #define PIC_MAP_A13 5275
 #define PIC_MAP_A14 5276
+#define PIC_MAP_I01 5295
+#define PIC_MAP_I02 5296
 #define PIC_MAP_P01 5277
 #define PIC_MAP_P02 5278
 #define PIC_MAP_P03 5279
@@ -199,7 +201,6 @@ namespace Fullpipe {
 #define SC_38 2072
 #define SC_COMMON 321
 #define SC_DBGMENU 726
-#define SC_LDR 635
 #define SC_FINAL1 4999
 #define SC_FINAL2 5000
 #define SC_FINAL3 5001
@@ -207,6 +208,8 @@ namespace Fullpipe {
 #define SC_INTRO1 3896
 #define SC_INTRO2 3907
 #define SC_INV 858
+#define SC_LDR 635
+#define SC_MAP 5222
 #define SND_CMN_031 3516
 #define SND_CMN_060 4921
 #define SND_CMN_061 4922
