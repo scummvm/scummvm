@@ -46,7 +46,8 @@ namespace Groovie {
 
 ROQPlayer::ROQPlayer(GroovieEngine *vm) :
 	VideoPlayer(vm), _codingTypeCount(0),
-	_bg(&_vm->_graphicsMan->_background) {
+	_bg(&_vm->_graphicsMan->_background),
+	_firstFrame(true) {
 
 	// Create the work surfaces
 	_currBuf = new Graphics::Surface();
@@ -83,6 +84,9 @@ uint16 ROQPlayer::loadInternal() {
 	_num2blocks = 0;
 	_num4blocks = 0;
 
+	// Reset the first frame flag
+	_firstFrame = true;
+
 	if ((blockHeader.size == 0) && (blockHeader.param == 0)) {
 		// Set the offset scaling to 2
 		_offScale = 2;
@@ -115,6 +119,12 @@ void ROQPlayer::buildShowBuf() {
 			if (!(x % _scaleX))
 				in += _currBuf->format.bytesPerPixel;
 		}
+	}
+
+	// On the first frame, copy from the current buffer to the prev buffer
+	if (_firstFrame) {
+		_prevBuf->copyFrom(*_currBuf);
+		_firstFrame = false;
 	}
 
 	// Swap buffers
@@ -236,6 +246,9 @@ bool ROQPlayer::processBlockInfo(ROQBlockHeader &blockHeader) {
 		warning("Groovie::ROQ: BlockInfo size=%d param=%d", blockHeader.size, blockHeader.param);
 		return false;
 	}
+
+	// Reset the first frame flag
+	_firstFrame = true;
 
 	// Save the alpha channel size
 	_alpha = blockHeader.param;
@@ -411,8 +424,6 @@ void ROQPlayer::processBlockQuadVectorBlockSub(int baseX, int baseY, int8 Mx, in
 
 bool ROQPlayer::processBlockStill(ROQBlockHeader &blockHeader) {
 	debugC(5, kGroovieDebugVideo | kGroovieDebugAll, "Groovie::ROQ: Processing still (JPEG) block");
-
-	warning("Groovie::ROQ: JPEG frame (unfinished)");
 
 	Image::JPEGDecoder jpg;
 

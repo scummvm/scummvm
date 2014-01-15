@@ -82,7 +82,7 @@ private:
 	byte _offScale;
 	bool _dirty;
 	byte _alpha;
-
+	bool _firstFrame;
 };
 
 } // End of Groovie namespace
