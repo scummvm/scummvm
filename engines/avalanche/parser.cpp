@@ -1702,7 +1702,7 @@ void Parser::doThat() {
 				"Try restarting, or restoring a saved game!");
 			return;
 		}
-		if (!_vm->_avvyIsAwake  && (_verb != kVerbCodeDie) && (_verb != kVerbCodeExpletive) && (_verb != kVerbCodeWake)) {
+		if (!_vm->_avvyIsAwake && (_verb != kVerbCodeWake)) {
 			_vm->_dialogs->displayText("Talking in your sleep? Try waking up!");
 			return;
 		}
