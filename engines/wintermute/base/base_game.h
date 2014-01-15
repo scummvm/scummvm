@@ -251,6 +251,8 @@ public:
 	void addMem(int32 bytes);
 	bool _touchInterface;
 	bool _constrainedMemory;
+
+	bool stopVideo();
 protected:
 	BaseFont *_systemFont;
 	BaseFont *_videoFont;
@@ -319,7 +321,6 @@ private:
 	BaseGameMusic *_musicSystem;
 
 	bool isVideoPlaying();
-	bool stopVideo();
 
 	BaseArray<BaseQuickMsg *> _quickMessages;
 	BaseArray<UIWindow *> _windows;
