@@ -42,6 +42,7 @@
 #include "avalanche/closing.h"
 #include "avalanche/sound.h"
 #include "avalanche/nim.h"
+#include "avalanche/clock.h"
 
 #include "common/serializer.h"
 

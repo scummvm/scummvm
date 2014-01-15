@@ -35,27 +35,6 @@
 namespace Avalanche {
 class AvalancheEngine;
 
-class Clock {
-public:
-	Clock(AvalancheEngine *vm);
-
-	void update();
-
-private:
-	static const int kCenterX = 510;
-	static const int kCenterY = 183;
-
-	AvalancheEngine *_vm;
-
-	uint16 _hour, _minute, _second, _hourAngle, _oldHour, _oldMinute, _oldHourAngle;
-	Common::Point _clockHandHour, _clockHandMinute;
-
-	Common::Point calcHand(uint16 angle, uint16 length, Color color);
-	void drawHand(const Common::Point &endPoint, Color color);
-	void plotHands();
-	void chime();
-};
-
 static const byte kObjectNum = 18; // always preface with a #
 static const int16 kCarryLimit = 12;  // carry limit
 

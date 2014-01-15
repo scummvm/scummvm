@@ -16,7 +16,8 @@ MODULE_OBJS = \
 	sequence.o \
 	sound.o \
 	timer.o \
-	nim.o
+	nim.o \
+	clock.o
 	
 # This module can be built as a plugin
 ifeq ($(ENABLE_AVALANCHE), DYNAMIC_PLUGIN)
