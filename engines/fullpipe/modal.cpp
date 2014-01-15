@@ -267,8 +267,62 @@ void ModalVideoPlayer::play(const char *filename) {
 	}
 }
 
+ModalMap::ModalMap() {
+	_mapScene = 0;
+	_pic = 0;
+	_isRunning = false;
+	_rect1 = g_fp->_sceneRect;
+	_x = g_fp->_currentScene->_x;
+	_y = g_fp->_currentScene->_y;
+	_flag = 0;
+	_mouseX = 0;
+	_mouseY = 0;
+	_field_38 = 0;
+	_field_3C = 0;
+	_field_40 = 12;
+	_rect2.top = 0;
+	_rect2.left = 0;
+	_rect2.bottom = 600;
+	_rect2.right = 800;
+}
+
+ModalMap::~ModalMap() {
+}
+
+bool ModalMap::init(int counterdiff) {
+	warning("STUB: ModalMap::init()");
+
+	return false;
+}
+
+void ModalMap::update() {
+	warning("STUB: ModalMap::update()");
+}
+
+bool ModalMap::handleMessage(ExCommand *cmd) {
+	warning("STUB: ModalMap::handleMessage()");
+
+	return true;
+}
+
+void ModalMap::initMap() {
+	warning("STUB: ModalMap::initMap()");
+}
+
+PictureObject *ModalMap::getScenePicture() {
+	warning("STUB: ModalMap::getScenePicture()");
+
+	return 0;
+}
+
 void FullpipeEngine::openMap() {
-	warning("STUB: FullpipeEngine::openMap()");
+	if (!_modalObject) {
+		ModalMap *map = new ModalMap;
+
+		_modalObject = map;
+
+		map->initMap();
+	}
 }
 
 void FullpipeEngine::openHelp() {
