@@ -469,11 +469,6 @@ private:
 	void clearButtonFlag(int idx, byte bits);
 
 	/**
-	 * Loads data needed for displaying the initial apartment screen
-	 */
-	void loadTheApt();
-
-	/**
 	 * Frees the apartment screen data
 	 */
 	void freeTheApt();
@@ -533,6 +528,11 @@ public:
 	 * Shows the apartment screen
 	 */
 	int doApt();
+
+	/**
+	 * Loads data needed for displaying the initial apartment screen
+	 */
+	void loadTheApt();
 
 	void checkForMurder();
 	void checkForIncriminate();

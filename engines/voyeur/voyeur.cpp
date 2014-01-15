@@ -687,6 +687,7 @@ void VoyeurEngine::loadGame(int slot) {
 		return;
 
 	Common::Serializer serializer(saveFile, NULL);
+	_checkTransitionId = _voy._transitionId;
 
 	// Read in the savegame header
 	VoyeurSavegameHeader header;
@@ -700,6 +701,12 @@ void VoyeurEngine::loadGame(int slot) {
 	synchronize(serializer);
 
 	delete saveFile;
+
+	// Show a transition card if the time index has changed
+	checkTransition();
+
+	// Load the apartment
+	_mainThread->loadTheApt();
 }
 
 /**
