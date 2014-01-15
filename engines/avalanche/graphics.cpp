@@ -811,9 +811,12 @@ void GraphicManager::setDialogColor(Color bg, Color text) {
 	_talkFontColor = text;
 }
 
-// Original name background()
-void GraphicManager::setBackgroundColor(Color x) {
-	warning("STUB: setBackgroundColor()");
+/**
+* Changes the black color of the palette to the selected one.
+* @remarks	Originally called 'background'
+*/
+void GraphicManager::setBackgroundColor(Color newColor) {
+	g_system->getPaletteManager()->setPalette(_egaPalette[kEgaPaletteIndex[newColor]], kColorBlack, 1);
 }
 
 } // End of namespace Avalanche

@@ -107,7 +107,7 @@ public:
 	void refreshScreen();
 	void loadBackground(Common::File &file);
 	void refreshBackground();
-	void setBackgroundColor(Color x);
+	void setBackgroundColor(Color newColor);
 	void setDialogColor(Color bg, Color text);
 
 	void zoomOut(int16 x, int16 y);
