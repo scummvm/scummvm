@@ -363,7 +363,7 @@ Mesh::Mesh() :
 		_numFaces(0), _radius(0.0f), _shadow(0), _geometryMode(0),
 		_lightingMode(0), _textureMode(0), _numVertices(0), _materialid(NULL),
 		_vertices(NULL), _verticesI(NULL), _vertNormals(NULL),
-		_numTextureVerts(0), _textureVerts(NULL), _faces(NULL) {
+		_numTextureVerts(0), _textureVerts(NULL), _faces(NULL), _userData(NULL) {
 	_name[0] = '\0';
 
 }

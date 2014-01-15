@@ -82,6 +82,8 @@ BitmapData::BitmapData(const Common::String &fname) {
 	_numCoords = 0;
 	_numVerts = 0;
 	_numLayers = 0;
+
+	_userData = NULL;
 }
 
 void BitmapData::load() {
@@ -194,6 +196,8 @@ BitmapData::BitmapData(const Graphics::PixelBuffer &buf, int w, int h, const cha
 	_loaded = true;
 	_keepData = true;
 
+	_userData = NULL;
+
 	g_driver->createBitmap(this);
 }
 
@@ -201,7 +205,7 @@ BitmapData::BitmapData() :
 		_numImages(0), _width(0), _height(0), _x(0), _y(0), _format(0), _numTex(0),
 		_bpp(0), _colorFormat(0), _texIds(0), _hasTransparency(false), _data(NULL),
 		_refCount(1), _loaded(false), _keepData(false), _texc(NULL), _verts(NULL),
-		_layers(NULL), _numCoords(0), _numVerts(0), _numLayers(0) {
+		_layers(NULL), _numCoords(0), _numVerts(0), _numLayers(0), _userData(NULL) {
 }
 
 BitmapData::~BitmapData() {
