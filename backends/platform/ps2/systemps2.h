@@ -52,6 +52,7 @@ public:
 	virtual void initSize(uint width, uint height, const Graphics::PixelFormat *format);
 
 	void init(void);
+	void config(void);
 
 	virtual int16 getHeight(void);
 	virtual int16 getWidth(void);
@@ -124,6 +125,7 @@ public:
 	bool hddPresent(void);
 	bool usbMassPresent(void);
 	bool netPresent(void);
+	bool hddMount(const char *partition);
 
 	bool runningFromHost(void);
 	int getBootDevice() { return _bootDevice; }
