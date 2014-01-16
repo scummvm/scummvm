@@ -52,6 +52,10 @@ private:
 	void drawBitmap(uint16 bitmapNr);
 	void bitsShow();
 
+	int16 raveGetTicks(Resource *resource, uint *offset);
+	uint16 raveGetID(Resource *resource, uint *offset);
+	byte *raveGetLipSyncData(uint16 raveID);
+
 	ResourceManager *_resMan;
 	EventManager *_event;
 	GfxPalette *_palette;
@@ -68,6 +72,13 @@ private:
 	Common::String _resourceName;
 
 	byte *_fileData;
+	
+	uint32 _lipSyncIDCount;
+	byte *_lipSyncIDTable;
+
+	byte *_lipSyncData;
+	uint16 *_lipSyncDataOffsetTable;
+	byte *_lipSyncDataOffsetTableEnd;
 
 	Common::Point _position;
 };

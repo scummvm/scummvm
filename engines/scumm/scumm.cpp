@@ -45,25 +45,26 @@
 #include "scumm/imuse_digi/dimuse.h"
 #include "scumm/smush/smush_mixer.h"
 #include "scumm/smush/smush_player.h"
-#include "scumm/player_towns.h"
+#include "scumm/players/player_towns.h"
 #include "scumm/insane/insane.h"
 #include "scumm/he/animation_he.h"
 #include "scumm/he/intern_he.h"
 #include "scumm/he/logic_he.h"
 #include "scumm/he/sound_he.h"
 #include "scumm/object.h"
-#include "scumm/player_nes.h"
-#include "scumm/player_sid.h"
-#include "scumm/player_pce.h"
-#include "scumm/player_apple2.h"
-#include "scumm/player_v1.h"
-#include "scumm/player_v2.h"
-#include "scumm/player_v2cms.h"
-#include "scumm/player_v2a.h"
-#include "scumm/player_v3a.h"
-#include "scumm/player_v3m.h"
-#include "scumm/player_v4a.h"
-#include "scumm/player_v5m.h"
+#include "scumm/players/player_ad.h"
+#include "scumm/players/player_nes.h"
+#include "scumm/players/player_sid.h"
+#include "scumm/players/player_pce.h"
+#include "scumm/players/player_apple2.h"
+#include "scumm/players/player_v1.h"
+#include "scumm/players/player_v2.h"
+#include "scumm/players/player_v2cms.h"
+#include "scumm/players/player_v2a.h"
+#include "scumm/players/player_v3a.h"
+#include "scumm/players/player_v3m.h"
+#include "scumm/players/player_v4a.h"
+#include "scumm/players/player_v5m.h"
 #include "scumm/resource.h"
 #include "scumm/he/resource_he.h"
 #include "scumm/scumm_v0.h"
@@ -1841,6 +1842,15 @@ void ScummEngine::setupMusic(int midi) {
 		_musicEngine = _townsPlayer = new Player_Towns_v1(this, _mixer);
 		if (!_townsPlayer->init())
 			error("Failed to initialize FM-Towns audio driver");
+	} else if (_game.platform == Common::kPlatformDOS && (_sound->_musicType == MDT_ADLIB) && (_game.id == GID_LOOM || _game.id == GID_INDY3)) {
+		// For Indy3 DOS and Loom DOS we use an implementation of the original
+		// AD player when AdLib is selected. This fixes sound effects in those
+		// games (see for example bug #2027877 "INDY3: Non-Looping Sound
+		// Effects"). The player itself is also used in Monkey Island DOS
+		// EGA/VGA. However, we support multi MIDI for that game and we cannot
+		// support this with the Player_AD code at the moment. The reason here
+		// is that multi MIDI is supported internally by our iMuse output.
+		_musicEngine = new Player_AD(this, _mixer);
 	} else if (_game.version >= 3 && _game.heversion <= 62) {
 		MidiDriver *nativeMidiDriver = 0;
 		MidiDriver *adlibMidiDriver = 0;

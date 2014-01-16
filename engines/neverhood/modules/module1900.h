@@ -26,7 +26,6 @@
 #include "neverhood/neverhood.h"
 #include "neverhood/module.h"
 #include "neverhood/scene.h"
-#include "neverhood/modules/module1200.h"
 
 namespace Neverhood {
 
@@ -41,80 +40,14 @@ protected:
 	void updateScene();
 };
 
-// Scene1901
-
 class Scene1901 : public Scene {
 public:
 	Scene1901(NeverhoodEngine *vm, Module *parentModule, int which);
 };
 
-// Scene1907
-
-class Scene1907;
-
-class AsScene1907Symbol : public AnimatedSprite {
-public:
-	AsScene1907Symbol(NeverhoodEngine *vm, Scene1907 *parentScene, int elementIndex, int positionIndex);
-	void moveUp();
-	void moveDown();
-	void fallOff(int newPositionIndex, int fallOffDelay);
-	bool isPluggedIn() { return _isPluggedIn; }
-	bool isMoving() { return _isMoving; }
-protected:
-	Scene1907 *_parentScene;
-	int _elementIndex;
-	int _currPositionIndex;
-	int _newPositionIndex;
-	bool _isPluggedIn;
-	bool _isMoving;
-	int _someX, _someY;
-	int _xBreak;
-	int _currStep;
-	int _yAccel;
-	int _yIncr;
-	int _fallOffDelay;
-	int _deltaX, _smallDeltaX;
-	int _deltaY, _smallDeltaY;
-	// Dumb, change if possible
-	static bool _plugInFailed;
-	static int _plugInTryCount;
-	void update();
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 hmTryToPlugIn(int messageNum, const MessageParam &param, Entity *sender);
-	void suTryToPlugIn();
-	void suFallOff();
-	void suFallOffHitGround();
-	void suMoveDown();
-	void suMoveUp();
-	void tryToPlugIn();
-	void stFallOffHitGround();
-	void cbFallOffHitGroundEvent();
-	void stPlugIn();
-	void stPlugInFail();
-};
-
-class AsScene1907WaterHint : public AnimatedSprite {
-public:
-	AsScene1907WaterHint(NeverhoodEngine *vm);
-	void show();
-protected:
-	void update();
-	uint32 hmShowing(int messageNum, const MessageParam &param, Entity *sender);
-	void hide();
-};
-
-class SsScene1907UpDownButton : public StaticSprite {
-public:
-	SsScene1907UpDownButton(NeverhoodEngine *vm, Scene1907 *parentScene, AsScene1907Symbol *asScene1907Symbol);
-	void setToUpPosition();
-	void setToDownPosition();
-protected:
-	Scene1907 *_parentScene;
-	AsScene1907Symbol *_asScene1907Symbol;
-	int _countdown1;
-	void update();
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-};
+class AsScene1907Symbol;
+class SsScene1907UpDownButton;
+class AsScene1907WaterHint;
 
 class Scene1907 : public Scene {
 public:

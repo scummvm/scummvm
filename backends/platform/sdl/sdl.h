@@ -30,6 +30,8 @@
 #include "backends/events/sdl/sdl-events.h"
 #include "backends/log/log.h"
 
+#include "common/array.h"
+
 /**
  * Base OSystem class for all SDL ports.
  */
@@ -106,15 +108,20 @@ protected:
 	Backends::Log::Log *_logger;
 
 #ifdef USE_OPENGL
-	OSystem::GraphicsMode *_graphicsModes;
+	int _desktopWidth, _desktopHeight;
+
+	typedef Common::Array<GraphicsMode> GraphicsModeArray;
+	GraphicsModeArray _graphicsModes;
+	Common::Array<int> _graphicsModeIds;
 	int _graphicsMode;
-	int _sdlModesCount;
-	int _glModesCount;
+	int _firstGLMode;
+	int _defaultSDLMode;
+	int _defaultGLMode;
 
 	/**
 	 * Creates the merged graphics modes list
 	 */
-	virtual void setupGraphicsModes();
+	void setupGraphicsModes();
 
 	virtual const OSystem::GraphicsMode *getSupportedGraphicsModes() const;
 	virtual int getDefaultGraphicsMode() const;

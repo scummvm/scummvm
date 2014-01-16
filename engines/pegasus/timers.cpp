@@ -333,6 +333,7 @@ void TimeBaseCallBack::releaseCallBack() {
 
 void TimeBaseCallBack::disposeCallBack() {
 	_timeBase = 0;
+	_trigger = kTriggerNone;
 	_hasBeenTriggered = false;
 }
 

@@ -29,8 +29,6 @@
 
 namespace Neverhood {
 
-// Module1100
-
 class Module1100 : public Module {
 public:
 	Module1100(NeverhoodEngine *vm, Module *parentModule, int which);
@@ -42,52 +40,9 @@ protected:
 	void updateScene();
 };
 
-class SsScene1105Button : public StaticSprite {
-public:
-	SsScene1105Button(NeverhoodEngine *vm, Scene *parentScene, uint32 fileHash, NRect &collisionBounds);
-protected:
-	Scene *_parentScene;
-	int _countdown;
-	void update();
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-};
-
-class SsScene1105Symbol : public StaticSprite {
-public:
-	SsScene1105Symbol(NeverhoodEngine *vm, uint32 fileHash, int16 x, int16 y);
-	void hide();
-};
-
-class SsScene1105SymbolDie : public StaticSprite {
-public:
-	SsScene1105SymbolDie(NeverhoodEngine *vm, uint dieIndex, int16 x, int16 y);
-	void hide();
-protected:
-	uint _dieIndex;
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	void loadSymbolSprite();
-};
-
-class AsScene1105TeddyBear : public AnimatedSprite {
-public:
-	AsScene1105TeddyBear(NeverhoodEngine *vm, Scene *parentScene);
-	void show();
-	void hide();
-protected:
-	Scene *_parentScene;
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-};
-
-class SsScene1105OpenButton : public StaticSprite {
-public:
-	SsScene1105OpenButton(NeverhoodEngine *vm, Scene *parentScene);
-protected:
-	Scene *_parentScene;
-	int _countdown;
-	bool _isClicked;
-	void update();
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-};
+class AsScene1105TeddyBear;
+class SsScene1105Symbol;
+class SsScene1105SymbolDie;
 
 class Scene1105 : public Scene {
 public:

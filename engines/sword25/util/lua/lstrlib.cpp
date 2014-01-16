@@ -7,12 +7,6 @@
 
 #define FORBIDDEN_SYMBOL_EXCEPTION_ctype_h
 
-#include <ctype.h>
-#include <stddef.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
 #define lstrlib_c
 #define LUA_LIB
 

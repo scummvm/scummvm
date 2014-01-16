@@ -207,6 +207,7 @@ public:
 
 	void play(Common::SeekableReadStream *stream);
 	virtual void pause(bool p);
+	virtual void pause() { assert(0); } // overridden
 	virtual void setVolume(int volume);
 	virtual void onTimer();
 

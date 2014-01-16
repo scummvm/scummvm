@@ -25,12 +25,13 @@
 
 #include "common/str.h"
 #include "sci/engine/segment.h"
+#include "sci/engine/script_patches.h"
 
 namespace Sci {
 
 struct EngineState;
 class ResourceManager;
-struct SciScriptSignature;
+struct SciScriptPatcherEntry;
 
 enum ScriptObjectTypes {
 	SCI_OBJ_TERMINATOR,
@@ -96,11 +97,7 @@ public:
 	~Script();
 
 	void freeScript();
-	void load(int script_nr, ResourceManager *resMan);
-
-	void matchSignatureAndPatch(uint16 scriptNr, byte *scriptData, const uint32 scriptSize);
-	int32 findSignature(const SciScriptSignature *signature, const byte *scriptData, const uint32 scriptSize);
-	void applyPatch(const uint16 *patch, byte *scriptData, const uint32 scriptSize, int32 signatureOffset);
+	void load(int script_nr, ResourceManager *resMan, ScriptPatcher *scriptPatcher);
 
 	virtual bool isValidOffset(uint16 offset) const;
 	virtual SegmentRef dereference(reg_t pointer);

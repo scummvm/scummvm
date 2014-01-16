@@ -91,8 +91,8 @@ void DrasculaEngine::gotoObject(int pointX, int pointY) {
 	updateRoom();
 	updateScreen();
 
-	// roomNumber -2 is end credits. Do not show cursor there
-	if (cursorVisible && roomNumber != -2)
+	// _roomNumber -2 is end credits. Do not show cursor there
+	if (cursorVisible && _roomNumber != -2)
 		showCursor();
 }
 
@@ -100,8 +100,8 @@ void DrasculaEngine::checkObjects() {
 	int l, veo = 0;
 
 	for (l = 0; l < numRoomObjs; l++) {
-		if (mouseX > _objectX1[l] && mouseY > _objectY1[l]
-				&& mouseX < _objectX2[l] && mouseY < _objectY2[l]
+		if (_mouseX > _objectX1[l] && _mouseY > _objectY1[l]
+				&& _mouseX < _objectX2[l] && _mouseY < _objectY2[l]
 				&& visible[l] == 1 && isDoor[l] == 0) {
 			strcpy(textName, objName[l]);
 			_hasName = true;
@@ -109,8 +109,8 @@ void DrasculaEngine::checkObjects() {
 		}
 	}
 
-	if (mouseX > curX + 2 && mouseY > curY + 2
-			&& mouseX < curX + curWidth - 2 && mouseY < curY + curHeight - 2) {
+	if (_mouseX > curX + 2 && _mouseY > curY + 2
+			&& _mouseX < curX + curWidth - 2 && _mouseY < curY + curHeight - 2) {
 		if (currentChapter == 2 || veo == 0) {
 			strcpy(textName, "hacker");
 			_hasName = true;
@@ -223,9 +223,9 @@ int DrasculaEngine::whichObject() {
 	int n;
 
 	for (n = 1; n < ARRAYSIZE(inventoryObjects); n++) {
-		if (mouseX > _itemLocations[n].x && mouseY > _itemLocations[n].y &&
-			mouseX < _itemLocations[n].x + OBJWIDTH &&
-			mouseY < _itemLocations[n].y + OBJHEIGHT) {
+		if (_mouseX > _itemLocations[n].x && _mouseY > _itemLocations[n].y &&
+			_mouseX < _itemLocations[n].x + OBJWIDTH &&
+			_mouseY < _itemLocations[n].y + OBJHEIGHT) {
 			return n;
 		}
 	}
@@ -237,69 +237,70 @@ void DrasculaEngine::updateVisible() {
 	if (currentChapter == 1) {
 		// nothing
 	} else if (currentChapter == 2) {
-		if (roomNumber == 2 && flags[40] == 0)
+		if (_roomNumber == 2 && flags[40] == 0)
 			visible[3] = 0;
-		else if (roomNumber == 3 && flags[3] == 1)
+		else if (_roomNumber == 3 && flags[3] == 1)
 			visible[8] = 0;
-		else if (roomNumber == 6 && flags[1] == 1 && flags[10] == 0) {
+		else if (_roomNumber == 6 && flags[1] == 1 && flags[10] == 0) {
 			visible[2] = 0;
 			visible[4] = 1;
-		} else if (roomNumber == 7 && flags[35] == 1)
+		} else if (_roomNumber == 7 && flags[35] == 1)
 			visible[3] = 0;
-		else if (roomNumber == 14 && flags[5] == 1)
+		else if (_roomNumber == 14 && flags[5] == 1)
 			visible[4] = 0;
-		else if (roomNumber == 18 && flags[28] == 1)
+		else if (_roomNumber == 18 && flags[28] == 1)
 			visible[2] = 0;
 	} else if (currentChapter == 3) {
 		// nothing
 	} else if (currentChapter == 4) {
-		if (roomNumber == 23 && flags[0] == 0 && flags[11] == 0)
+		if (_roomNumber == 23 && flags[0] == 0 && flags[11] == 0)
 			visible[2] = 1;
-		if (roomNumber == 23 && flags[0] == 1 && flags[11] == 0)
+		if (_roomNumber == 23 && flags[0] == 1 && flags[11] == 0)
 			visible[2] = 0;
-		if (roomNumber == 21 && flags[10] == 1)
+		if (_roomNumber == 21 && flags[10] == 1)
 			visible[2] = 0;
-		if (roomNumber == 22 && flags[26] == 1) {
+		if (_roomNumber == 22 && flags[26] == 1) {
 			visible[2] = 0;
 			visible[1] = 1;
 		}
-		if (roomNumber == 22 && flags[27] == 1)
+		if (_roomNumber == 22 && flags[27] == 1)
 			visible[3] = 0;
-		if (roomNumber == 26 && flags[21] == 0)
-			strcpy(objName[2], _textmisc[0]);
-		if (roomNumber == 26 && flags[18] == 1)
+		if (_roomNumber == 26 && flags[21] == 0) {
+			Common::strlcpy(objName[2], _textmisc[0], 20);
+		}
+		if (_roomNumber == 26 && flags[18] == 1)
 			visible[2] = 0;
-		if (roomNumber == 26 && flags[12] == 1)
+		if (_roomNumber == 26 && flags[12] == 1)
 			visible[1] = 0;
-		if (roomNumber == 35 && flags[14] == 1)
+		if (_roomNumber == 35 && flags[14] == 1)
 			visible[2] = 0;
-		if (roomNumber == 35 && flags[17] == 1)
+		if (_roomNumber == 35 && flags[17] == 1)
 			visible[3] = 1;
-		if (roomNumber == 35 && flags[15] == 1)
+		if (_roomNumber == 35 && flags[15] == 1)
 			visible[1] = 0;
 	} else if (currentChapter == 5) {
-		if (roomNumber == 49 && flags[6] == 1)
+		if (_roomNumber == 49 && flags[6] == 1)
 			visible[2] = 0;
-		if (roomNumber == 49 && flags[6] == 0)
+		if (_roomNumber == 49 && flags[6] == 0)
 			visible[1] = 0;
-		if (roomNumber == 49 && flags[6] == 1)
+		if (_roomNumber == 49 && flags[6] == 1)
 			visible[1] = 1;
-		if (roomNumber == 45 && flags[6] == 1)
+		if (_roomNumber == 45 && flags[6] == 1)
 			visible[3] = 1;
-		if (roomNumber == 53 && flags[2] == 1)
+		if (_roomNumber == 53 && flags[2] == 1)
 			visible[3] = 0;
-		if (roomNumber == 54 && flags[13] == 1)
+		if (_roomNumber == 54 && flags[13] == 1)
 			visible[3] = 0;
-		if (roomNumber == 55 && flags[8] == 1)
+		if (_roomNumber == 55 && flags[8] == 1)
 			visible[1] = 0;
 	} else if (currentChapter == 6) {
-		if (roomNumber == 58 && flags[8] == 0)
+		if (_roomNumber == 58 && flags[8] == 0)
 			isDoor[1] = 0;
-		if (roomNumber == 58 && flags[8] == 1)
+		if (_roomNumber == 58 && flags[8] == 1)
 			isDoor[1] = 1;
-		if (roomNumber == 59)
+		if (_roomNumber == 59)
 			isDoor[1] = 0;
-		if (roomNumber == 60) {
+		if (_roomNumber == 60) {
 			trackDrascula = 0;
 			drasculaX = 155;
 			drasculaY = 69;

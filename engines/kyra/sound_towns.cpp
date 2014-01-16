@@ -225,6 +225,7 @@ void SoundTowns::playSoundEffect(uint8 track, uint8) {
 	_driver->chanPanPos(_sfxChannel, 0x40);
 	_driver->chanPitch(_sfxChannel, 0);
 	_driver->playSoundEffect(_sfxChannel, note, 127, sfxPlaybackBuffer);
+	delete[] sfxPlaybackBuffer;
 }
 
 void SoundTowns::updateVolumeSettings() {

@@ -56,8 +56,9 @@ private:
 
 	void sync_save(Common::Serializer &sz);
 public:
-	void setParent(MortevielleEngine *vm);
-	void loadSavegame(const Common::String &filename);
+	SavegameManager(MortevielleEngine *vm);
+
+	bool loadSavegame(const Common::String &filename);
 	Common::Error loadGame(const Common::String &filename);
 	Common::Error saveGame(int n, const Common::String &saveName);
 	Common::Error loadGame(int slot);

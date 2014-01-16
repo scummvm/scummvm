@@ -68,6 +68,7 @@ static char s_fallbackGameIdBuf[256];
 
 static const char *directoryGlobs[] = {
 	"language", // To detect the various languages
+	"languages", // To detect the various languages
 	0
 };
 

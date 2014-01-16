@@ -65,6 +65,7 @@ Character::Character(ToonEngine *vm) : _vm(vm) {
 	_numPixelToWalk = 0;
 	_nextIdleTime = _vm->_system->getMillis() + (_vm->randRange(0, 600) + 300) * _vm->getTickLength();
 	_lineToSayId = 0;
+	_time = 0;
 }
 
 Character::~Character(void) {

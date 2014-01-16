@@ -35,15 +35,19 @@
 
 namespace Mortevielle {
 
+DialogManager::DialogManager(MortevielleEngine *vm) {
+	_vm = vm;
+}
+
 /**
  * Alert function - Show
  * @remarks	Originally called 'do_alert'
  */
-int DialogManager::show(const Common::String &msg, int n) {
+int DialogManager::show(const Common::String &msg) {
 	// Make a copy of the current screen surface for later restore
-	_vm->_backgroundSurface.copyFrom(_vm->_screenSurface);
+	_vm->_backgroundSurface.copyFrom(*_vm->_screenSurface);
 
-	_vm->_mouse.hideMouse();
+	_vm->_mouse->hideMouse();
 	while (_vm->keyPressed())
 		_vm->getChar();
 
@@ -57,28 +61,24 @@ int DialogManager::show(const Common::String &msg, int n) {
 
 	decodeAlertDetails(msg, caseNumb, lignNumb, colNumb, alertStr, caseStr);
 
-	int i = 0;
 	Common::Point curPos;
 	if (alertStr == "") {
 		drawAlertBox(10, 5, colNumb);
 	} else {
 		drawAlertBox(8, 7, colNumb);
-		i = 0;
-		_vm->_screenSurface._textPos.y = 70;
+		int i = 0;
+		_vm->_screenSurface->_textPos.y = 70;
 		do {
 			curPos.x = 320;
 			Common::String displayStr = "";
 			while ((alertStr[i + 1] != '\174') && (alertStr[i + 1] != '\135')) {
 				++i;
 				displayStr += alertStr[i];
-				if (_vm->_resolutionScaler == 2)
-					curPos.x -= 3;
-				else
-					curPos.x -= 5;
+				curPos.x -= 3;
 			}
-			_vm->_screenSurface.putxy(curPos.x, _vm->_screenSurface._textPos.y);
-			_vm->_screenSurface._textPos.y += 6;
-			_vm->_screenSurface.drawString(displayStr, 4);
+			_vm->_screenSurface->putxy(curPos.x, _vm->_screenSurface->_textPos.y);
+			_vm->_screenSurface->_textPos.y += 6;
+			_vm->_screenSurface->drawString(displayStr, 4);
 			++i;
 		} while (alertStr[i] != ']');
 	}
@@ -95,25 +95,25 @@ int DialogManager::show(const Common::String &msg, int n) {
 	int limit[3][3];
 	memset(&limit[0][0], 0, sizeof(int) * 3 * 3);
 
-	limit[1][1] = ((uint)(coldep) / 2) * _vm->_resolutionScaler;
+	limit[1][1] = ((uint)(coldep) / 2) * kResolutionScaler;
 	limit[1][2] = limit[1][1] + 40;
 	if (caseNumb == 1) {
 		limit[2][1] = limit[2][2];
 	} else {
-		limit[2][1] = ((uint)(320 + ((uint)esp >> 1)) / 2) * _vm->_resolutionScaler;
+		limit[2][1] = ((uint)(320 + ((uint)esp >> 1)) / 2) * kResolutionScaler;
 		limit[2][2] = (limit[2][1]) + 40;
 	}
-	_vm->_mouse.showMouse();
+	_vm->_mouse->showMouse();
 	int id = 0;
 	bool dummyFl = false;
 	bool test3;
 	do {
 		char dummyKey = '\377';
-		_vm->_mouse.moveMouse(dummyFl, dummyKey);
+		_vm->_mouse->moveMouse(dummyFl, dummyKey);
 		if (_vm->shouldQuit())
 			return 0;
 
-		curPos = _vm->_mouse._pos;
+		curPos = _vm->_mouse->_pos;
 		bool newaff = false;
 		if ((curPos.y > 95) && (curPos.y < 105)) {
 			bool test1 = (curPos.x > limit[1][1]) && (curPos.x < limit[1][2]);
@@ -129,56 +129,56 @@ int DialogManager::show(const Common::String &msg, int n) {
 				else
 					ix = 2;
 				if (ix != id) {
-					_vm->_mouse.hideMouse();
+					_vm->_mouse->hideMouse();
 					if (id != 0) {
 						setPosition(id, coldep, esp);
 
 						Common::String tmpStr(" ");
 						tmpStr += buttonStr[id];
 						tmpStr += " ";
-						_vm->_screenSurface.drawString(tmpStr, 0);
+						_vm->_screenSurface->drawString(tmpStr, 0);
 					}
 					setPosition(ix, coldep, esp);
 
 					Common::String tmp2 = " ";
 					tmp2 += buttonStr[ix];
 					tmp2 += " ";
-					_vm->_screenSurface.drawString(tmp2, 1);
+					_vm->_screenSurface->drawString(tmp2, 1);
 
 					id = ix;
-					_vm->_mouse.showMouse();
+					_vm->_mouse->showMouse();
 				}
 			}
 		}
 		if ((id != 0) && !newaff) {
-			_vm->_mouse.hideMouse();
+			_vm->_mouse->hideMouse();
 			setPosition(id, coldep, esp);
 
 			Common::String tmp3(" ");
 			tmp3 += buttonStr[id];
 			tmp3 += " ";
-			_vm->_screenSurface.drawString(tmp3, 0);
+			_vm->_screenSurface->drawString(tmp3, 0);
 
 			id = 0;
-			_vm->_mouse.showMouse();
+			_vm->_mouse->showMouse();
 		}
 		test3 = (curPos.y > 95) && (curPos.y < 105) && (((curPos.x > limit[1][1]) && (curPos.x < limit[1][2]))
 		                                    || ((curPos.x > limit[2][1]) && (curPos.x < limit[2][2])));
 	} while (!_vm->getMouseClick());
 	_vm->setMouseClick(false);
-	_vm->_mouse.hideMouse();
+	_vm->_mouse->hideMouse();
 	if (!test3)  {
-		id = n;
-		setPosition(n, coldep, esp);
+		id = 1;
+		setPosition(1, coldep, esp);
 		Common::String tmp4(" ");
-		tmp4 += buttonStr[n];
+		tmp4 += buttonStr[1];
 		tmp4 += " ";
-		_vm->_screenSurface.drawString(tmp4, 1);
+		_vm->_screenSurface->drawString(tmp4, 1);
 	}
-	_vm->_mouse.showMouse();
+	_vm->_mouse->showMouse();
 
 	/* Restore the background area */
-	_vm->_screenSurface.copyFrom(_vm->_backgroundSurface, 0, 0);
+	_vm->_screenSurface->copyFrom(_vm->_backgroundSurface, 0, 0);
 
 	return id;
 }
@@ -221,30 +221,27 @@ void DialogManager::decodeAlertDetails(Common::String inputStr, int &choiceNumb,
 	}
 
 	choiceListStr = Common::String(inputStr.c_str() + i);
-	if (_vm->_resolutionScaler == 2)
-		col *= 6;
-	else
-		col *= 10;
+	col *= 6;
 }
 
 void DialogManager::setPosition(int ji, int coldep, int esp) {
-	_vm->_screenSurface.putxy(coldep + (40 + esp) * (ji - 1), 98);
+	_vm->_screenSurface->putxy(coldep + (40 + esp) * (ji - 1), 98);
 }
 
 /**
  * Alert function - Draw Alert Box
  * @remarks	Originally called 'fait_boite'
  */
-void DialogManager::drawAlertBox(int lidep, int nli, int tx) {
-	if (tx > 640)
-		tx = 640;
-	int x = 320 - ((uint)tx / 2);
-	int y = (lidep - 1) * 8;
-	int xx = x + tx;
-	int yy = y + (nli * 8);
-	_vm->_screenSurface.fillRect(15, Common::Rect(x, y, xx, yy));
-	_vm->_screenSurface.fillRect(0, Common::Rect(x, y + 2, xx, y + 4));
-	_vm->_screenSurface.fillRect(0, Common::Rect(x, yy - 4, xx, yy - 2));
+void DialogManager::drawAlertBox(int firstLine, int lineNum, int width) {
+	if (width > 640)
+		width = 640;
+	int x = 320 - ((uint)width / 2);
+	int y = (firstLine - 1) * 8;
+	int xx = x + width;
+	int yy = y + (lineNum * 8);
+	_vm->_screenSurface->fillRect(15, Common::Rect(x, y, xx, yy));
+	_vm->_screenSurface->fillRect(0, Common::Rect(x, y + 2, xx, y + 4));
+	_vm->_screenSurface->fillRect(0, Common::Rect(x, yy - 4, xx, yy - 2));
 }
 
 /**
@@ -266,13 +263,13 @@ void DialogManager::setButtonText(Common::String c, int coldep, int nbcase, Comm
 		while (str[l].size() < 3)
 			str[l] += ' ';
 
-		_vm->_screenSurface.putxy(x, 98);
+		_vm->_screenSurface->putxy(x, 98);
 
 		Common::String tmp(" ");
 		tmp += str[l];
 		tmp += " ";
 
-		_vm->_screenSurface.drawString(tmp, 0);
+		_vm->_screenSurface->drawString(tmp, 0);
 		x += esp + 40;
 	}
 }
@@ -299,17 +296,13 @@ bool DialogManager::showKnowledgeCheck() {
 	int correctCount = 0;
 
 	for (int indx = 0; indx < 10; ++indx) {
-		_vm->_mouse.hideMouse();
+		_vm->_mouse->hideMouse();
 		_vm->clearScreen();
-		_vm->_mouse.showMouse();
-		int dialogHeight;
-		if (_vm->_resolutionScaler == 1)
-			dialogHeight = 29;
-		else
-			dialogHeight = 23;
-		_vm->_screenSurface.fillRect(15, Common::Rect(0, 14, 630, dialogHeight));
+		_vm->_mouse->showMouse();
+		int dialogHeight = 23;
+		_vm->_screenSurface->fillRect(15, Common::Rect(0, 14, 630, dialogHeight));
 		Common::String tmpStr = _vm->getString(textIndexArr[indx]);
-		_vm->_text.displayStr(tmpStr, 20, 15, 100, 2, 0);
+		_vm->_text->displayStr(tmpStr, 20, 15, 100, 2, 0);
 
 		int firstOption;
 		int lastOption;
@@ -329,13 +322,13 @@ bool DialogManager::showKnowledgeCheck() {
 			tmpStr = _vm->getString(j);
 			if ((int) tmpStr.size() > maxLength)
 				maxLength = tmpStr.size();
-			_vm->_text.displayStr(tmpStr, 100, optionPosY, 100, 1, 0);
+			_vm->_text->displayStr(tmpStr, 100, optionPosY, 100, 1, 0);
 			choiceArray[prevChoice] = tmpStr;
 			optionPosY += 8;
 		}
 
 		for (int j = 1; j <= lastOption - firstOption + 1; ++j) {
-			coor[j]._rect = Common::Rect(45 * _vm->_resolutionScaler, 27 + j * 8, (maxLength * 3 + 55) * _vm->_resolutionScaler, 34 + j * 8);
+			coor[j]._rect = Common::Rect(45 * kResolutionScaler, 27 + j * 8, (maxLength * 3 + 55) * kResolutionScaler, 34 + j * 8);
 			coor[j]._enabled = true;
 
 			while ((int)choiceArray[j].size() < maxLength) {
@@ -343,12 +336,8 @@ bool DialogManager::showKnowledgeCheck() {
 			}
 		}
 		coor[lastOption - firstOption + 2]._enabled = false;
-		int rep;
-		if (_vm->_resolutionScaler == 1)
-			rep = 10;
-		else
-			rep = 6;
-		_vm->_screenSurface.drawBox(80, 33, 40 + (maxLength * rep), (lastOption - firstOption) * 8 + 16, 15);
+		int rep = 6;
+		_vm->_screenSurface->drawBox(80, 33, 40 + (maxLength * rep), (lastOption - firstOption) * 8 + 16, 15);
 		rep = 0;
 
 		prevChoice = 0;
@@ -357,26 +346,26 @@ bool DialogManager::showKnowledgeCheck() {
 			_vm->setMouseClick(false);
 			bool flag;
 			char key;
-			_vm->_mouse.moveMouse(flag, key);
+			_vm->_mouse->moveMouse(flag, key);
 			if (_vm->shouldQuit())
 				return false;
 
 			currChoice = 1;
-			while (coor[currChoice]._enabled && !_vm->_mouse.isMouseIn(coor[currChoice]._rect))
+			while (coor[currChoice]._enabled && !_vm->_mouse->isMouseIn(coor[currChoice]._rect))
 				++currChoice;
 			if (coor[currChoice]._enabled) {
 				if ((prevChoice != 0) && (prevChoice != currChoice)) {
 					tmpStr = choiceArray[prevChoice] + '$';
-					_vm->_text.displayStr(tmpStr, 100, 27 + (prevChoice * 8), 100, 1, 0);
+					_vm->_text->displayStr(tmpStr, 100, 27 + (prevChoice * 8), 100, 1, 0);
 				}
 				if (prevChoice != currChoice) {
 					tmpStr = choiceArray[currChoice] + '$';
-					_vm->_text.displayStr(tmpStr, 100, 27 + (currChoice * 8), 100, 1, 1);
+					_vm->_text->displayStr(tmpStr, 100, 27 + (currChoice * 8), 100, 1, 1);
 					prevChoice = currChoice;
 				}
 			} else if (prevChoice != 0) {
 				tmpStr = choiceArray[prevChoice] + '$';
-				_vm->_text.displayStr(tmpStr, 100, 27 + (prevChoice * 8), 100, 1, 0);
+				_vm->_text->displayStr(tmpStr, 100, 27 + (prevChoice * 8), 100, 1, 0);
 				prevChoice = 0;
 			}
 		} while (!((prevChoice != 0) && _vm->getMouseClick()));
@@ -406,17 +395,17 @@ void DialogManager::drawF3F8() {
 	Common::String f8 = _vm->getEngineString(S_F8);
 
 	// Write the F3 and F8 text strings
-	_vm->_screenSurface.putxy(3, 44);
-	_vm->_screenSurface.drawString(f3, 5);
-	_vm->_screenSurface._textPos.y = 51;
-	_vm->_screenSurface.drawString(f8, 5);
+	_vm->_screenSurface->putxy(3, 44);
+	_vm->_screenSurface->drawString(f3, 5);
+	_vm->_screenSurface->_textPos.y = 51;
+	_vm->_screenSurface->drawString(f8, 5);
 
 	// Get the width of the written text strings
-	int f3Width = _vm->_screenSurface.getStringWidth(f3);
-	int f8Width = _vm->_screenSurface.getStringWidth(f8);
+	int f3Width = _vm->_screenSurface->getStringWidth(f3);
+	int f8Width = _vm->_screenSurface->getStringWidth(f8);
 
 	// Write out the bounding box
-	_vm->_screenSurface.drawBox(0, 42, MAX(f3Width, f8Width) + 6, 18, 7);
+	_vm->_screenSurface->drawBox(0, 42, MAX(f3Width, f8Width) + 6, 18, 7);
 }
 
 /**
@@ -427,16 +416,10 @@ void DialogManager::drawF3F8() {
 void DialogManager::checkForF8(int SpeechNum, bool drawFrame2Fl) {
 	_vm->testKeyboard();
 	do {
-		_vm->_soundManager.startSpeech(SpeechNum, 0, 0);
+		_vm->_soundManager->startSpeech(SpeechNum, 0, 0);
 		_vm->_key = waitForF3F8();
 		if (_vm->shouldQuit())
 			return;
-
-		if (_vm->_newGraphicalDevice != _vm->_currGraphicalDevice) {
-			_vm->_currGraphicalDevice = _vm->_newGraphicalDevice;
-			_vm->clearScreen();
-			displayIntroScreen(drawFrame2Fl);
-		}
 	} while (_vm->_key != 66); // keycode for F8
 }
 
@@ -463,7 +446,7 @@ int DialogManager::waitForF3F8() {
 void DialogManager::displayIntroScreen(bool drawFrame2Fl) {
 	_vm->_caff = 50;
 	_vm->_maff = 0;
-	_vm->_text.taffich();
+	_vm->_text->taffich();
 	_vm->draw(63, 12);
 	if (drawFrame2Fl)
 		displayIntroFrame2();
@@ -483,11 +466,8 @@ void DialogManager::displayIntroFrame2() {
 	_vm->displayPicture(&_vm->_curAnim[_vm->_crep], 63, 12);
 	_vm->_crep = _vm->getAnimOffset(2, 1);
 	_vm->displayPicture(&_vm->_curAnim[_vm->_crep], 63, 12);
-	_vm->_largestClearScreen = (_vm->_resolutionScaler == 1);
+	_vm->_largestClearScreen = false;
 	_vm->handleDescriptionText(2, kDialogStringIndex + 143);
 }
 
-void DialogManager::setParent(MortevielleEngine *vm) {
-	_vm = vm;
-}
 } // End of namespace Mortevielle

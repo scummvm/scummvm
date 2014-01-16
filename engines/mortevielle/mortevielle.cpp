@@ -47,22 +47,22 @@ namespace Mortevielle {
 MortevielleEngine *g_vm;
 
 MortevielleEngine::MortevielleEngine(OSystem *system, const MortevielleGameDescription *gameDesc):
-		Engine(system), _gameDescription(gameDesc), _randomSource("mortevielle"),
-		_soundManager(_mixer) {
+		Engine(system), _gameDescription(gameDesc), _randomSource("mortevielle") {
 	g_vm = this;
-	_debugger.setParent(this);
-	_dialogManager.setParent(this);
-	_screenSurface.setParent(this);
-	_mouse.setParent(this);
-	_text.setParent(this);
-	_soundManager.setParent(this);
-	_savegameManager.setParent(this);
-	_menu.setParent(this);
+	_debugger = new Debugger(this);
+	_dialogManager = new DialogManager(this);
+	_screenSurface = new ScreenSurface(this);
+	_mouse = new MouseHandler(this);
+	_text = new TextHandler(this);
+	_soundManager = new SoundManager(this, _mixer);
+	_savegameManager = new SavegameManager(this);
+	_menu = new Menu(this);
 
 	_lastGameFrame = 0;
 	_mouseClick = false;
 	_inMainGameLoop = false;
 	_quitGame = false;
+	_pauseStartTime = -1;
 
 	_roomPresenceLuc = false;
 	_roomPresenceIda = false;
@@ -92,8 +92,6 @@ MortevielleEngine::MortevielleEngine(OSystem *system, const MortevielleGameDescr
 	_uptodatePresence = false;
 
 	_textColor = 0;
-	_currGraphicalDevice = -1;
-	_newGraphicalDevice = -1;
 	_place = -1;
 
 	_x26KeyCount = -1;
@@ -103,9 +101,23 @@ MortevielleEngine::MortevielleEngine(OSystem *system, const MortevielleGameDescr
 	_curPict = nullptr;
 	_curAnim = nullptr;
 	_rightFramePict = nullptr;
+
+	resetCoreVar();
+
+	_maff = 0;
+	_crep = 0;
 }
 
 MortevielleEngine::~MortevielleEngine() {
+	delete _menu;
+	delete _savegameManager;
+	delete _soundManager;
+	delete _text;
+	delete _mouse;
+	delete _screenSurface;
+	delete _dialogManager;
+	delete _debugger;
+
 	free(_curPict);
 	free(_curAnim);
 	free(_rightFramePict);
@@ -141,7 +153,7 @@ bool MortevielleEngine::canSaveGameStateCurrently() {
  * Load in a savegame at the specified slot number
  */
 Common::Error MortevielleEngine::loadGameState(int slot) {
-	return _savegameManager.loadGame(slot);
+	return _savegameManager->loadGame(slot);
 }
 
 /**
@@ -151,7 +163,7 @@ Common::Error MortevielleEngine::saveGameState(int slot, const Common::String &d
 	if (slot == 0)
 		return Common::kWritingFailed;
 
-	return _savegameManager.saveGame(slot, desc);
+	return _savegameManager->saveGame(slot, desc);
 }
 
 /**
@@ -167,6 +179,25 @@ Common::String MortevielleEngine::generateSaveFilename(const Common::String &tar
 }
 
 /**
+ * Pause the game.
+ */
+void MortevielleEngine::pauseEngineIntern(bool pause) {
+	Engine::pauseEngineIntern(pause);
+	if (pause) {
+		if (_pauseStartTime == -1)
+			_pauseStartTime = readclock();
+	} else {
+		if (_pauseStartTime != -1) {
+			int pauseEndTime = readclock();
+			_currentTime += (pauseEndTime - _pauseStartTime);
+			if (_uptodatePresence)
+				_startTime += (pauseEndTime - _pauseStartTime);
+		}
+		_pauseStartTime = -1;
+	}
+}
+
+/**
  * Initialize the game state
  */
 Common::ErrorCode MortevielleEngine::initialize() {
@@ -178,11 +209,7 @@ Common::ErrorCode MortevielleEngine::initialize() {
 	DebugMan.addDebugChannel(kMortevielleGraphics, "graphics", "Graphics debugging");
 
 	// Set up an intermediate screen surface
-	_screenSurface.create(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
-
-	// Set the screen mode
-	_currGraphicalDevice = MODE_EGA;
-	_resolutionScaler = 2;
+	_screenSurface->create(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
 
 	_txxFileFl = false;
 	// Load texts from TXX files
@@ -191,7 +218,7 @@ Common::ErrorCode MortevielleEngine::initialize() {
 	// Load the mort.dat resource
 	Common::ErrorCode result = loadMortDat();
 	if (result != Common::kNoError) {
-		_screenSurface.free();
+		_screenSurface->free();
 		return result;
 	}
 
@@ -204,8 +231,6 @@ Common::ErrorCode MortevielleEngine::initialize() {
 	// Setup the mouse cursor
 	initMouse();
 
-	_currGraphicalDevice = MODE_EGA;
-	_newGraphicalDevice = _currGraphicalDevice;
 	loadPalette();
 	loadCFIPH();
 	loadCFIEC();
@@ -220,14 +245,11 @@ Common::ErrorCode MortevielleEngine::initialize() {
 
 	testKeyboard();
 	showConfigScreen();
-	_newGraphicalDevice = _currGraphicalDevice;
 	testKeyboard();
-	if (_newGraphicalDevice != _currGraphicalDevice)
-		_currGraphicalDevice = _newGraphicalDevice;
 	clearScreen();
 
-	_soundManager.loadNoise();
-	_soundManager.loadAmbiantSounds();
+	_soundManager->loadNoise();
+	_soundManager->loadAmbiantSounds();
 
 	return Common::kNoError;
 }
@@ -269,13 +291,13 @@ Common::ErrorCode MortevielleEngine::loadMortDat() {
 
 		if (!strncmp(dataType, "FONT", 4)) {
 			// Font resource
-			_screenSurface.readFontData(f, dataSize);
+			_screenSurface->readFontData(f, dataSize);
 		} else if (!strncmp(dataType, "SSTR", 4)) {
 			readStaticStrings(f, dataSize, kStaticStrings);
 		} else if ((!strncmp(dataType, "GSTR", 4)) && (!_txxFileFl)) {
 			readStaticStrings(f, dataSize, kGameStrings);
 		} else if (!strncmp(dataType, "VERB", 4)) {
-			_menu.readVerbNums(f, dataSize);
+			_menu->readVerbNums(f, dataSize);
 		} else {
 			// Unknown section
 			f.skip(dataSize);
@@ -358,17 +380,23 @@ Common::Error MortevielleEngine::run() {
 	if (loadSlot == 0)
 		// Show the game introduction
 		showIntroduction();
+	else {
+		_caff = 51;
+		_text->taffich();
+	}
 
 	// Either load the initial game state savegame, or the specified savegame number
 	adzon();
-	_savegameManager.loadSavegame(generateSaveFilename(loadSlot));
+	resetVariables();
+	if (loadSlot != 0)
+		_savegameManager->loadSavegame(generateSaveFilename(loadSlot));
 
 	// Run the main game loop
 	mainGame();
 
 	// Cleanup (allocated in initialize())
-	_screenSurface.free();
-	free(_soundManager._cfiphBuffer);
+	_screenSurface->free();
+	free(_soundManager->_cfiphBuffer);
 	free(_cfiecBuffer);
 
 	return Common::kNoError;
@@ -378,13 +406,13 @@ Common::Error MortevielleEngine::run() {
  * Show the game introduction
  */
 void MortevielleEngine::showIntroduction() {
-	_dialogManager.displayIntroScreen(false);
-	_dialogManager.checkForF8(142, false);
+	_dialogManager->displayIntroScreen(false);
+	_dialogManager->checkForF8(142, false);
 	if (shouldQuit())
 		return;
 
-	_dialogManager.displayIntroFrame2();
-	_dialogManager.checkForF8(143, true);
+	_dialogManager->displayIntroFrame2();
+	_dialogManager->checkForF8(143, true);
 	if (shouldQuit())
 		return;
 
@@ -404,13 +432,13 @@ void MortevielleEngine::mainGame() {
 	for (_crep = 1; _crep <= _x26KeyCount; ++_crep)
 		decodeNumber(&_cfiecBuffer[161 * 16], (_cfiecBufferSize - (161 * 16)) / 64);
 
-	_menu.initMenu();
+	_menu->initMenu();
 
 	charToHour();
 	initGame();
 	clearScreen();
 	drawRightFrame();
-	_mouse.showMouse();
+	_mouse->showMouse();
 
 	// Loop to play the game
 	do {

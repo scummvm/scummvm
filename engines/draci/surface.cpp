@@ -82,7 +82,7 @@ void Surface::markClean() {
 void Surface::fill(uint color) {
 	byte *ptr = (byte *)getPixels();
 
-	memset(ptr, color, w * h);
+	memset(ptr, color, (uint)(w * h));
 }
 
 /**

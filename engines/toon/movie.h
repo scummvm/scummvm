@@ -53,9 +53,8 @@ public:
 	bool isPlaying() { return _playing; }
 
 protected:
-	bool playVideo(bool isFirstIntroVideo);
+	void playVideo(bool isFirstIntroVideo);
 	ToonEngine *_vm;
-	Audio::Mixer *_mixer;
 	ToonstruckSmackerDecoder *_decoder;
 	bool _playing;
 };

@@ -42,9 +42,8 @@ public:
 	static Scene *createScene(int sceneNumber);
 };
 
-class SceneArea: public EventHandler {
+class SceneArea: public SceneItem {
 public:
-	Rect _bounds;
 	bool _enabled;
 	bool _insideArea;
 	CursorType _cursorNum;
@@ -54,9 +53,12 @@ public:
 	SceneArea();
 	void setDetails(const Rect &bounds, CursorType cursor);
 
+	virtual Common::String getClassName() { return "SceneArea"; }
 	virtual void synchronize(Serializer &s);
 	virtual void remove();
 	virtual void process(Event &event);
+	virtual bool startAction(CursorType action, Event &event) { return false; }
+	virtual void doAction(int action) {}
 };
 
 class SceneExit: public SceneArea {
@@ -79,27 +81,23 @@ private:
 	static void startStrip();
 	static void endStrip();
 public:
-	byte _field312[256];
-	int _field372;
+	byte _shadowPaletteMap[256];
 	bool _savedPlayerEnabled;
 	bool _savedUiEnabled;
 	bool _savedCanWalk;
-	int _field37A;
+	bool _preventSaving;
 
-	SceneObject *_focusObject;
 	Visage _cursorVisage;
 	SynchronizedList<EventHandler *> _sceneAreas;
-
-	Rect _v51C34;
 public:
 	SceneExt();
 
 	virtual Common::String getClassName() { return "SceneExt"; }
+	virtual void synchronize(Serializer &s);
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void remove();
 	virtual void process(Event &event);
 	virtual void dispatch();
-	virtual void loadScene(int sceneNum);
 	virtual void refreshBackground(int xAmount, int yAmount);
 	virtual void saveCharacter(int characterIndex);
 	virtual void restore() {}
@@ -166,58 +164,58 @@ private:
 	static void selectDefault(int obectNumber);
 public:
 	InvObject _none;
-	InvObject _inv1;
-	InvObject _inv2;
+	InvObject _optoDisk;
+	InvObject _reader;
 	InvObject _negatorGun;
 	InvObject _steppingDisks;
-	InvObject _inv5;
-	InvObject _inv6;
-	InvObject _inv7;
-	InvObject _inv8;
-	InvObject _inv9;
-	InvObject _inv10;
-	InvObject _inv11;
-	InvObject _inv12;
-	InvObject _inv13;
-	InvObject _inv14;
-	InvObject _inv15;
-	InvObject _inv16;
-	InvObject _inv17;
-	InvObject _inv18;
-	InvObject _inv19;
-	InvObject _inv20;
-	InvObject _inv21;
-	InvObject _inv22;
-	InvObject _inv23;
-	InvObject _inv24;
-	InvObject _inv25;
-	InvObject _inv26;
-	InvObject _inv27;
-	InvObject _inv28;
-	InvObject _inv29;
-	InvObject _inv30;
-	InvObject _inv31;
-	InvObject _inv32;
-	InvObject _inv33;
-	InvObject _inv34;
-	InvObject _inv35;
-	InvObject _inv36;
-	InvObject _inv37;
-	InvObject _inv38;
-	InvObject _inv39;
-	InvObject _inv40;
-	InvObject _inv41;
-	InvObject _inv42;
-	InvObject _inv43;
-	InvObject _inv44;
-	InvObject _inv45;
-	InvObject _inv46;
-	InvObject _inv47;
-	InvObject _inv48;
-	InvObject _inv49;
-	InvObject _inv50;
-	InvObject _inv51;
-	InvObject _inv52;
+	InvObject _attractorUnit;
+	InvObject _sensorProbe;
+	InvObject _sonicStunner;
+	InvObject _cableHarness;
+	InvObject _comScanner;
+	InvObject _spentPowerCapsule;	// 10
+	InvObject _chargedPowerCapsule;
+	InvObject _aerosol;
+	InvObject _remoteControl;
+	InvObject _opticalFibre;
+	InvObject _clamp;
+	InvObject _attractorHarness;
+	InvObject _fuelCell;
+	InvObject _gyroscope;
+	InvObject _airbag;
+	InvObject _rebreatherTank;		// 20
+	InvObject _reserveTank;
+	InvObject _guidanceModule;
+	InvObject _thrusterValve;
+	InvObject _balloonBackpack;
+	InvObject _radarMechanism;
+	InvObject _joystick;
+	InvObject _ignitor;
+	InvObject _diagnosticsDisplay;
+	InvObject _glassDome;
+	InvObject _wickLamp;			// 30
+	InvObject _scrithKey;
+	InvObject _tannerMask;
+	InvObject _pureGrainAlcohol;
+	InvObject _blueSapphire;
+	InvObject _ancientScrolls;
+	InvObject _flute;
+	InvObject _gunpowder;
+	InvObject _unused;
+	InvObject _comScanner2;
+	InvObject _superconductorWire;	// 40
+	InvObject _pillow;
+	InvObject _foodTray;
+	InvObject _laserHacksaw;
+	InvObject _photonStunner;
+	InvObject _battery;
+	InvObject _soakedFaceMask;
+	InvObject _lightBulb;
+	InvObject _alcoholLamp1;
+	InvObject _alcoholLamp2;
+	InvObject _alocholLamp3;		// 50
+	InvObject _brokenDisplay;
+	InvObject _toolbox;
 
 	Ringworld2InvObjectList();
 	void reset();
@@ -231,6 +229,7 @@ public:
 class Ringworld2Game: public Game {
 public:
 	virtual void start();
+	virtual void restartGame();
 	virtual void restart();
 	virtual void endGame(int resNum, int lineNum);
 
@@ -308,7 +307,6 @@ public:
 	int _frameCount;
 	int _resCount;
 	int _mapImagePitch;
-	int _unused;
 public:
 	MazeUI();
 	virtual ~MazeUI();
@@ -408,11 +406,11 @@ public:
 	AnimationData *_sliceNext;
 	Common::File _resourceFile;
 	Rect _rect1, _screenBounds;
-	int _field38;
-	int _field3A;
+	bool _animLoaded;
+	bool _canSkip;
 	AnimationPaletteMode _paletteMode;
 	AnimationObjectMode _objectMode;
-	int _field58, _sliceHeight;
+	int _sliceHeight;
 	byte _palIndexes[256];
 	ScenePalette _palette;
 	AnimationPlayerSubData _subData;
@@ -444,7 +442,7 @@ public:
 
 class AnimationPlayerExt: public AnimationPlayer {
 public:
-	int _v;
+	bool _isActive;
 public:
 	AnimationPlayerExt();
 
@@ -454,7 +452,7 @@ public:
 class ModalWindow: public SceneArea {
 public:
 	SceneActor _object1;
-	byte _field20;
+	int _insetCount;
 public:
 	ModalWindow();
 
@@ -462,8 +460,8 @@ public:
 	virtual void synchronize(Serializer &s);
 	virtual Common::String getClassName() { return "ModalWindow"; }
 	virtual void process(Event &event);
-	virtual void proc12(int visage, int stripFrameNum, int frameNum, int posX, int posY);
-	virtual void proc13(int resNum, int lookLineNum, int talkLineNum, int useLineNum);
+	virtual void setup2(int visage, int stripFrameNum, int frameNum, int posX, int posY);
+	virtual void setup3(int resNum, int lookLineNum, int talkLineNum, int useLineNum);
 };
 
 class ScannerDialog: public ModalWindow {
@@ -516,7 +514,7 @@ public:
 
 	virtual Common::String getClassName() { return "ScannerDialog"; }
 	virtual void remove();
-	void proc12(int visage, int stripFrameNum, int frameNum, int posX, int posY);
+	virtual void setup2(int visage, int stripFrameNum, int frameNum, int posX, int posY);
 };
 
 } // End of namespace Ringworld2

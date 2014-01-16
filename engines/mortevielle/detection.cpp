@@ -30,11 +30,16 @@ namespace Mortevielle {
 struct MortevielleGameDescription {
 	ADGameDescription desc;
 	Common::Language originalLanguage;
+	uint8 dataFeature;
 };
 
 uint32 MortevielleEngine::getGameFlags() const { return _gameDescription->desc.flags; }
 
 Common::Language MortevielleEngine::getLanguage() const { return _gameDescription->desc.language; }
+
+Common::Language MortevielleEngine::getOriginalLanguage() const { return _gameDescription->originalLanguage; }
+
+bool MortevielleEngine::useOriginalData() const { return _gameDescription->dataFeature == kUseOriginalData; }
 
 }
 
@@ -51,6 +56,9 @@ public:
 		MortevielleGame) {
 		_md5Bytes = 512;
 		_singleid = "mortevielle";
+		// Use kADFlagUseExtraAsHint to distinguish between original and improved versions
+		// (i.e. use or not of the game data file).
+		_flags = kADFlagUseExtraAsHint;
 	}
 	virtual const char *getName() const {
 		return "Mortevielle";

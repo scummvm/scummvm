@@ -1485,7 +1485,7 @@ void ScummEngine::playActorSounds() {
 	int sound;
 
 	for (i = 1; i < _numActors; i++) {
-		if (_actors[i]->_cost.soundCounter && _actors[i]->isInCurrentRoom() && _actors[i]->_sound) {
+		if (_actors[i]->_cost.soundCounter && _actors[i]->isInCurrentRoom()) {
 			_currentScript = 0xFF;
 			if (_game.version == 0) {
 				sound = v0ActorSounds[i - 1] & 0x3F;

@@ -57,6 +57,30 @@ Screen::Screen(OSystem *system, ResMan *pResMan, ObjectMan *pObjMan) {
 	_psxCache.extPlxCache = NULL;
 	_oldScrollX = 0;
 	_oldScrollY = 0;
+
+	_textMan = 0;
+
+	for (int i = 0; i < 4; i++)
+		_layerGrid[i] = 0;
+
+	for (int i = 0; i < 4; i++)
+		_layerBlocks[i] = 0;
+
+	_parallax[0] = 0;
+	_parallax[1] = 0;
+
+	_fullRefresh = 0;
+
+	for (int i = 0; i < MAX_SORT; i++) {
+		_sortList[i].id = 0;
+		_sortList[i].y = 0;
+	}
+	_scrnSizeX = 0;
+	_scrnSizeY = 0;
+	_gridSizeX = 0;
+	_gridSizeY = 0;
+	_fadingDirection = 0;
+	_isBlack = 0;
 }
 
 Screen::~Screen() {

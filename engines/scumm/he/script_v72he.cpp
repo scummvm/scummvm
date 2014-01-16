@@ -158,7 +158,7 @@ int ScummEngine_v72he::readArray(int array, int idx2, int idx1) {
 
 	ArrayHeader *ah = (ArrayHeader *)getResourceAddress(rtString, readVar(array));
 
-	if (ah == NULL || ah->data == NULL)
+	if (!ah)
 		error("readArray: invalid array %d (%d)", array, readVar(array));
 
 	if (idx2 < (int)FROM_LE_32(ah->dim2start) || idx2 > (int)FROM_LE_32(ah->dim2end) ||

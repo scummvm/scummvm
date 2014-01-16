@@ -43,7 +43,9 @@ class Interactive
  public:
   virtual int key(int k, byte &shiftFlags) = 0;
   virtual void mouse(int x, int y) = 0;
+  virtual ~Interactive() = 0;
 };
+inline Interactive::~Interactive() { }
 
 #include "softkbd.h"
 

@@ -881,6 +881,10 @@ GfxSurface::~GfxSurface() {
  * Screen surface
  *-------------------------------------------------------------------------*/
 
+ScreenSurface::ScreenSurface(MortevielleEngine *vm) {
+	_vm = vm;
+}
+
 /**
  * Called to populate the font data from the passed file
  */
@@ -1015,11 +1019,6 @@ void ScreenSurface::writeCharacter(const Common::Point &pt, unsigned char ch, in
  *		simulate the original 640x400 surface, all Y values have to be doubled
  */
 void ScreenSurface::drawBox(int x, int y, int dx, int dy, int col) {
-	if (_vm->_resolutionScaler == 1) {
-		x = (uint)x >> 1;
-		dx = (uint)dx >> 1;
-	}
-
 	Graphics::Surface destSurface = lockArea(Common::Rect(x, y * 2, x + dx, (y + dy) * 2));
 
 	destSurface.hLine(0, 0, dx, col);
@@ -1075,14 +1074,10 @@ void ScreenSurface::drawString(const Common::String &l, int command) {
 	if (l == "")
 		return;
 
-	_vm->_mouse.hideMouse();
+	_vm->_mouse->hideMouse();
 	Common::Point pt = _textPos;
 
-	int charWidth;
-	if (_vm->_resolutionScaler == 2)
-		charWidth = 6;
-	else
-		charWidth = 10;
+	int charWidth = 6;
 
 	int x = pt.x + charWidth * l.size();
 	int color = 0;
@@ -1091,11 +1086,11 @@ void ScreenSurface::drawString(const Common::String &l, int command) {
 	case 0:
 	case 2:
 		color = 15;
-		_vm->_screenSurface.fillRect(0, Common::Rect(pt.x, pt.y, x, pt.y + 7));
+		_vm->_screenSurface->fillRect(0, Common::Rect(pt.x, pt.y, x, pt.y + 7));
 		break;
 	case 1:
 	case 3:
-		_vm->_screenSurface.fillRect(15, Common::Rect(pt.x, pt.y, x, pt.y + 7));
+		_vm->_screenSurface->fillRect(15, Common::Rect(pt.x, pt.y, x, pt.y + 7));
 		break;
 	case 5:
 		color = 15;
@@ -1108,17 +1103,17 @@ void ScreenSurface::drawString(const Common::String &l, int command) {
 	pt.x += 1;
 	pt.y += 1;
 	for (x = 1; (x <= (int)l.size()) && (l[x - 1] != 0); ++x) {
-		_vm->_screenSurface.writeCharacter(Common::Point(pt.x, pt.y), l[x - 1], color);
+		_vm->_screenSurface->writeCharacter(Common::Point(pt.x, pt.y), l[x - 1], color);
 		pt.x += charWidth;
 	}
-	_vm->_mouse.showMouse();
+	_vm->_mouse->showMouse();
 }
 
 /**
  * Gets the width in pixels of the specified string
  */
 int ScreenSurface::getStringWidth(const Common::String &s) {
-	int charWidth = (_vm->_resolutionScaler == 2) ? 6 : 10;
+	int charWidth = 6;
 
 	return s.size() * charWidth;
 }
@@ -1142,7 +1137,7 @@ void ScreenSurface::drawLine(int x, int y, int xx, int yy, int coul) {
 		else
 			step = 1;
 		do {
-			_vm->_screenSurface.setPixel(Common::Point(abs((int)(a * i + b)), i), coul);
+			_vm->_screenSurface->setPixel(Common::Point(abs((int)(a * i + b)), i), coul);
 			i += step;
 		} while (i != yy);
 	} else {
@@ -1154,7 +1149,7 @@ void ScreenSurface::drawLine(int x, int y, int xx, int yy, int coul) {
 		else
 			step = 1;
 		do {
-			_vm->_screenSurface.setPixel(Common::Point(i, abs((int)(a * i + b))), coul);
+			_vm->_screenSurface->setPixel(Common::Point(i, abs((int)(a * i + b))), coul);
 			i = i + step;
 		} while (i != xx);
 	}
@@ -1165,18 +1160,7 @@ void ScreenSurface::drawLine(int x, int y, int xx, int yy, int coul) {
  * @remarks	Originally called 'paint_rect'
  */
 void ScreenSurface::drawRectangle(int x, int y, int dx, int dy) {
-	int co;
-
-	if (_vm->_currGraphicalDevice == MODE_CGA)
-		co = 3;
-	else
-		co = 11;
-	_vm->_screenSurface.fillRect(co, Common::Rect(x, y, x + dx, y + dy));
+	_vm->_screenSurface->fillRect(11, Common::Rect(x, y, x + dx, y + dy));
 }
-
-void ScreenSurface::setParent(MortevielleEngine *vm) {
-	_vm = vm;
-}
-
 
 } // End of namespace Mortevielle

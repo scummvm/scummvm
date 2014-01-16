@@ -249,7 +249,7 @@ private:
 	Common::List<TimeBase *> _timeBases;
 
 	// Save/Load
-	bool loadFromStream(Common::ReadStream *stream);
+	bool loadFromStream(Common::SeekableReadStream *stream);
 	bool writeToStream(Common::WriteStream *stream, int saveType);
 	void loadFromContinuePoint();
 	void writeContinueStream(Common::WriteStream *stream);

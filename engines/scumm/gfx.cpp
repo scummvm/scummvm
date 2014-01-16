@@ -1769,11 +1769,8 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, const int y, const 
 	// Check whether lights are turned on or not
 	const bool lightsOn = _vm->isLightOn();
 
-	if (_vm->_game.features & GF_SMALL_HEADER) {
+	if ((_vm->_game.features & GF_SMALL_HEADER) || _vm->_game.version == 8) {
 		smap_ptr = ptr;
-	} else if (_vm->_game.version == 8) {
-		// Skip to the BSTR->WRAP->OFFS chunk
-		smap_ptr = ptr + 24;
 	} else {
 		smap_ptr = _vm->findResource(MKTAG('S','M','A','P'), ptr);
 		assert(smap_ptr);
@@ -1887,8 +1884,14 @@ bool Gdi::drawStrip(byte *dstPtr, VirtScreen *vs, int x, int y, const int width,
 		smapLen = READ_LE_UINT32(smap_ptr);
 		if (stripnr * 4 + 4 < smapLen)
 			offset = READ_LE_UINT32(smap_ptr + stripnr * 4 + 4);
+	} else if (_vm->_game.version == 8) {
+		smapLen = READ_BE_UINT32(smap_ptr + 4);
+		// Skip to the BSTR->WRAP->OFFS chunk
+		smap_ptr += 24;
+		if (stripnr * 4 + 8 < smapLen)
+			offset = READ_LE_UINT32(smap_ptr + stripnr * 4 + 8);
 	} else {
-		smapLen = READ_BE_UINT32(smap_ptr);
+		smapLen = READ_BE_UINT32(smap_ptr + 4);
 		if (stripnr * 4 + 8 < smapLen)
 			offset = READ_LE_UINT32(smap_ptr + stripnr * 4 + 8);
 	}

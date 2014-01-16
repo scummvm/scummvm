@@ -74,10 +74,14 @@ bool Resource::reset() {
 
 			loadProtectedFiles(list);
 		} else {
+			// We only search in the game path to avoid any invalid PAK or
+			// APK files from being picked up. This might happen, for example,
+			// when the user has an Android package file in the CWD.
+			Common::FSDirectory gameDir(dir);
 			Common::ArchiveMemberList files;
 
-			_files.listMatchingMembers(files, "*.PAK");
-			_files.listMatchingMembers(files, "*.APK");
+			gameDir.listMatchingMembers(files, "*.PAK");
+			gameDir.listMatchingMembers(files, "*.APK");
 
 			for (Common::ArchiveMemberList::const_iterator i = files.begin(); i != files.end(); ++i) {
 				Common::String name = (*i)->getName();

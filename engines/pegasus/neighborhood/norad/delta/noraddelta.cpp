@@ -565,6 +565,11 @@ void NoradDelta::activateHotspots() {
 	} else if (GameState.getCurrentRoomAndView() == MakeRoomView(kNorad59, kWest)) {
 		if (GameState.isCurrentDoorOpen())
 			_vm->getAllHotspots().deactivateOneHotspot(kNorad59WestSpotID);
+	} else if (GameState.getCurrentRoomAndView() == MakeRoomView(kNorad68, kWest)) {
+		// WORKAROUND: Make sure the retinal hotspot is disabled after the door opens.
+		// Fixes a bug in the original.
+		if (GameState.isCurrentDoorOpen())
+			_vm->getAllHotspots().deactivateOneHotspot(kNorad68WestSpotID);
 	}
 }
 

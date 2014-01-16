@@ -39,9 +39,8 @@ protected:
 	bool Cmd_resetParano(int argc, const char **argv);
 
 public:
-	Debugger();
+	Debugger(MortevielleEngine *vm);
 	virtual ~Debugger() {}
-	void setParent(MortevielleEngine *vm);
 };
 
 } // End of namespace Mortevielle

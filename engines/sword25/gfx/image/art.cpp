@@ -424,8 +424,7 @@ static void art_vpath_render_bez(ArtVpath **p_vpath, int *pn, int *pn_max,
 		                     x_m, y_m, xb1, yb1, xb2, yb2, x3, y3, flatness);
 	} else {
 		// don't subdivide
-		art_vpath_add_point(p_vpath, pn, pn_max,
-	           	         ART_LINETO, x3, y3);
+		art_vpath_add_point(p_vpath, pn, pn_max, ART_LINETO, x3, y3);
 	}
 }
 

@@ -120,10 +120,10 @@ public:
 	BaseArray<AdObject *> _objects;
 
 	virtual bool loadFile(const char *filename);
-	virtual bool loadBuffer(byte *buffer, bool complete = true);
+	virtual bool loadBuffer(char *buffer, bool complete = true);
 
 	bool loadItemsFile(const char *filename, bool merge = false);
-	bool loadItemsBuffer(byte *buffer, bool merge = false);
+	bool loadItemsBuffer(char *buffer, bool merge = false);
 
 	// scripting interface
 	virtual ScValue *scGetProperty(const Common::String &name) override;

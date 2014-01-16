@@ -47,6 +47,8 @@ SavedObject::~SavedObject() {
 Saver::Saver() {
 	_macroSaveFlag = false;
 	_macroRestoreFlag = false;
+
+	_factoryPtr = nullptr;
 }
 
 Saver::~Saver() {
@@ -127,7 +129,6 @@ Common::Error Saver::save(int slot, const Common::String &saveName) {
 
 	// Set fields
 	_macroSaveFlag = true;
-	_saveSlot = slot;
 
 	// Try and create the save file
 	Common::OutSaveFile *saveFile = g_system->getSavefileManager()->openForSaving(g_vm->generateSaveName(slot));
@@ -151,8 +152,9 @@ Common::Error Saver::save(int slot, const Common::String &saveName) {
 
 	// Save each registered SaveObject descendant object into the savegame file
 	for (SynchronizedList<SavedObject *>::iterator i = _objList.begin(); i != _objList.end(); ++i) {
-		serializer.validate((*i)->getClassName());
-		(*i)->synchronize(serializer);
+		SavedObject *so = *i;
+		serializer.validate(so->getClassName());
+		so->synchronize(serializer);
 	}
 
 	// Save file complete
@@ -176,7 +178,6 @@ Common::Error Saver::restore(int slot) {
 
 	// Set fields
 	_macroRestoreFlag = true;
-	_saveSlot = slot;
 	_unresolvedPtrs.clear();
 
 	// Set up the serializer

@@ -71,7 +71,7 @@ bool EventsClass::pollEvent() {
 		break;
 
 	default:
- 		break;
+		break;
 	}
 
 	return true;
@@ -113,7 +113,7 @@ bool EventsClass::getEvent(Event &evt, int eventMask) {
 		case Common::EVENT_RBUTTONUP:
 		case Common::EVENT_MBUTTONUP:
 			evt.eventType = EVENT_BUTTON_UP;
-			evt.btnState = 0;
+			evt.btnState = BTNSHIFT_LEFT;
 			break;
 		case Common::EVENT_KEYDOWN:
 			evt.eventType = EVENT_KEYPRESS;
@@ -156,7 +156,7 @@ void EventsClass::setCursor(CursorType cursorType) {
 		// No cursor
 		g_globals->setFlag(122);
 
-		if ((g_vm->getFeatures() & GF_DEMO) || (g_vm->getGameID() != GType_Ringworld))  {
+		if ((g_vm->getGameID() != GType_Ringworld) || ((g_vm->getGameID() == GType_Ringworld) && (g_vm->getFeatures() & GF_DEMO)))  {
 			CursorMan.showMouse(false);
 			return;
 		}
@@ -270,6 +270,11 @@ void EventsClass::setCursor(CursorType cursorType) {
 	case SHADECURSOR_HAND:
 		_currentCursor = cursorType;
 		cursor = g_resourceManager->getSubResource(5, 1, cursorType - R2CURSORS_START, &size);
+		break;
+
+	case R2_CURSOR_ROPE:
+		_currentCursor = cursorType;
+		cursor = g_resourceManager->getSubResource(5, 4, 1, &size);
 		break;
 	}
 

@@ -49,11 +49,11 @@ public:
 	bool _removeObject;
 	uint32 _frameNumber;
 	int _numFrames;
-	int _delayAmount2;
-	uint32 _frameNumber2;
+	int _voiceDelayAmount;
+	uint32 _voiceFrameNumber;
 private:
 	void setFrame(int numFrames);
-	void setFrame2(int numFrames);
+	void setVoiceFrame(int numFrames);
 public:
 	VisualSpeaker();
 
@@ -63,8 +63,8 @@ public:
 	virtual void signal();
 	virtual void dispatch();
 	virtual void setText(const Common::String &msg);
-	virtual void proc15() {}
-	virtual void proc16();
+	virtual void animateSpeaker() {}
+	virtual void stopSpeaking();
 
 	void setDelay(int delay);
 };
@@ -83,7 +83,7 @@ public:
 	SpeakerCaptain3210();
 
 	virtual Common::String getClassName() { return "SpeakerCaptain3210"; }
-	virtual void proc15();
+	virtual void animateSpeaker();
 };
 
 // Classes related to Caretaker
@@ -102,7 +102,7 @@ public:
 	SpeakerChief1100();
 
 	virtual Common::String getClassName() { return "SpeakerChief1100"; }
-	virtual void proc15();
+	virtual void animateSpeaker();
 };
 
 // Classes related to Guard
@@ -116,7 +116,7 @@ public:
 class SpeakerGuard2800 : public SpeakerGuard {
 public:
 	virtual Common::String getClassName() { return "SpeakerGuard2800"; }
-	virtual void proc15();
+	virtual void animateSpeaker();
 };
 
 // Classes related to Jocko
@@ -130,19 +130,19 @@ public:
 class SpeakerJocko3200 : public SpeakerJocko {
 public:
 	virtual Common::String getClassName() { return "SpeakerJocko3200"; }
-	virtual void proc15();
+	virtual void animateSpeaker();
 };
 
 class SpeakerJocko3220 : public SpeakerJocko {
 public:
 	virtual Common::String getClassName() { return "SpeakerJocko3220"; }
-	virtual void proc15();
+	virtual void animateSpeaker();
 };
 
 class SpeakerJocko3230 : public SpeakerJocko {
 public:
 	virtual Common::String getClassName() { return "SpeakerJocko3230"; }
-	virtual void proc15();
+	virtual void animateSpeaker();
 };
 
 // Classes related to Miranda
@@ -156,55 +156,55 @@ public:
 class SpeakerMiranda300 : public SpeakerMiranda {
 public:
 	virtual Common::String getClassName() { return "SpeakerMiranda300"; }
-	virtual void proc15();
+	virtual void animateSpeaker();
 };
 
 class SpeakerMiranda1625 : public SpeakerMiranda {
 public:
 	virtual Common::String getClassName() { return "SpeakerMiranda1625"; }
-	virtual void proc15();
+	virtual void animateSpeaker();
 };
 
 class SpeakerMiranda3255 : public SpeakerMiranda {
 public:
 	virtual Common::String getClassName() { return "SpeakerMiranda3255"; }
-	virtual void proc15();
+	virtual void animateSpeaker();
 };
 
 class SpeakerMiranda3375 : public SpeakerMiranda {
 public:
 	virtual Common::String getClassName() { return "SpeakerMiranda3375"; }
-	virtual void proc15();
+	virtual void animateSpeaker();
 };
 
 class SpeakerMiranda3385 : public SpeakerMiranda {
 public:
 	virtual Common::String getClassName() { return "SpeakerMiranda3385"; }
-	virtual void proc15();
+	virtual void animateSpeaker();
 };
 
 class SpeakerMiranda3395 : public SpeakerMiranda {
 public:
 	virtual Common::String getClassName() { return "SpeakerMiranda3395"; }
-	virtual void proc15();
+	virtual void animateSpeaker();
 };
 
 class SpeakerMiranda3400 : public SpeakerMiranda {
 public:
 	virtual Common::String getClassName() { return "SpeakerMiranda3400"; }
-	virtual void proc15();
+	virtual void animateSpeaker();
 };
 
 class SpeakerMiranda3600 : public SpeakerMiranda {
 public:
 	virtual Common::String getClassName() { return "SpeakerMiranda3600"; }
-	virtual void proc15();
+	virtual void animateSpeaker();
 };
 
 class SpeakerMiranda3700 : public SpeakerMiranda {
 public:
 	virtual Common::String getClassName() { return "SpeakerMiranda3700"; }
-	virtual void proc15();
+	virtual void animateSpeaker();
 };
 
 // Classes related to Nej
@@ -218,19 +218,19 @@ public:
 class SpeakerNej2700 : public SpeakerNej {
 public:
 	virtual Common::String getClassName() { return "SpeakerNej2700"; }
-	virtual void proc15();
+	virtual void animateSpeaker();
 };
 
 class SpeakerNej2750 : public SpeakerNej {
 public:
 	virtual Common::String getClassName() { return "SpeakerNej2750"; }
-	virtual void proc15();
+	virtual void animateSpeaker();
 };
 
 class SpeakerNej2800 : public SpeakerNej {
 public:
 	virtual Common::String getClassName() { return "SpeakerNej2800"; }
-	virtual void proc15();
+	virtual void animateSpeaker();
 };
 
 // Classes related to Pharisha
@@ -245,7 +245,7 @@ public:
 class SpeakerPharisha2435 : public SpeakerPharisha {
 public:
 	virtual Common::String getClassName() { return "SpeakerPharisha2435"; }
-	virtual void proc15();
+	virtual void animateSpeaker();
 };
 
 // Classes related to Private
@@ -255,7 +255,7 @@ public:
 	SpeakerPrivate3210();
 
 	virtual Common::String getClassName() { return "SpeakerPrivate3210"; }
-	virtual void proc15();
+	virtual void animateSpeaker();
 };
 
 // Classes related to Protector
@@ -265,7 +265,7 @@ public:
 	SpeakerProtector3600();
 
 	virtual Common::String getClassName() { return "SpeakerProtector3600"; }
-	virtual void proc15();
+	virtual void animateSpeaker();
 };
 
 // Classes related to Quinn
@@ -279,91 +279,97 @@ public:
 class SpeakerQuinn300 : public SpeakerQuinn {
 public:
 	virtual Common::String getClassName() { return "SpeakerQuinn300"; }
-	virtual void proc15();
+	virtual void animateSpeaker();
+};
+
+class SpeakerQuinn500 : public SpeakerQuinn {
+public:
+	virtual Common::String getClassName() { return "SpeakerQuinn500"; }
+	virtual void animateSpeaker();
 };
 
 class SpeakerQuinn1100 : public SpeakerQuinn {
 public:
 	virtual Common::String getClassName() { return "SpeakerQuinn1100"; }
-	virtual void proc15();
+	virtual void animateSpeaker();
 };
 
 class SpeakerQuinn2435 : public SpeakerQuinn {
 public:
 	virtual Common::String getClassName() { return "SpeakerQuinn2435"; }
-	virtual void proc15();
+	virtual void animateSpeaker();
 };
 
 class SpeakerQuinn2450 : public SpeakerQuinn {
 public:
 	virtual Common::String getClassName() { return "SpeakerQuinn2450"; }
-	virtual void proc15();
+	virtual void animateSpeaker();
 };
 
 class SpeakerQuinn2700 : public SpeakerQuinn {
 public:
 	virtual Common::String getClassName() { return "SpeakerQuinn2700"; }
-	virtual void proc15();
+	virtual void animateSpeaker();
 };
 
 class SpeakerQuinn2750 : public SpeakerQuinn {
 public:
 	virtual Common::String getClassName() { return "SpeakerQuinn2750"; }
-	virtual void proc15();
+	virtual void animateSpeaker();
 };
 
 class SpeakerQuinn2800 : public SpeakerQuinn {
 public:
 	virtual Common::String getClassName() { return "SpeakerQuinn2800"; }
-	virtual void proc15();
+	virtual void animateSpeaker();
 };
 
 class SpeakerQuinn3255 : public SpeakerQuinn {
 public:
 	virtual Common::String getClassName() { return "SpeakerQuinn3255"; }
-	virtual void proc15();
+	virtual void animateSpeaker();
 };
 
 class SpeakerQuinn3375 : public SpeakerQuinn {
 public:
 	virtual Common::String getClassName() { return "SpeakerQuinn3375"; }
-	virtual void proc15();
+	virtual void animateSpeaker();
 };
 
 class SpeakerQuinn3385 : public SpeakerQuinn {
 public:
 	virtual Common::String getClassName() { return "SpeakerQuinn3385"; }
-	virtual void proc15();
+	virtual void animateSpeaker();
 };
 
 class SpeakerQuinn3395 : public SpeakerQuinn {
 public:
 	virtual Common::String getClassName() { return "SpeakerQuinn3395"; }
-	virtual void proc15();
+	virtual void animateSpeaker();
 };
 
 class SpeakerQuinn3400 : public SpeakerQuinn {
 public:
 	virtual Common::String getClassName() { return "SpeakerQuinn3400"; }
-	virtual void proc15();
+	virtual void animateSpeaker();
 };
 
 class SpeakerQuinn3600 : public SpeakerQuinn {
 public:
 	virtual Common::String getClassName() { return "SpeakerQuinn3600"; }
-	virtual void proc15();
+	virtual void animateSpeaker();
 };
 
 class SpeakerQuinn3700 : public SpeakerQuinn {
 public:
 	virtual Common::String getClassName() { return "SpeakerQuinn3700"; }
 	virtual void setText(const Common::String &msg);
-	virtual void proc15();
+	virtual void animateSpeaker();
 };
 
 // Classes related to QuinnL
 
-class SpeakerQuinnL : public VisualSpeaker {
+class SpeakerQuinnL : public SpeakerQuinn {
 public:
 	SpeakerQuinnL();
 
@@ -377,7 +383,7 @@ public:
 	SpeakerRalf3245();
 
 	virtual Common::String getClassName() { return "SpeakerRalf3245"; }
-	virtual void proc15();
+	virtual void animateSpeaker();
 };
 
 // Classes related to Rocko
@@ -391,19 +397,19 @@ public:
 class SpeakerRocko3200 : public SpeakerRocko {
 public:
 	virtual Common::String getClassName() { return "SpeakerRocko3200"; }
-	virtual void proc15();
+	virtual void animateSpeaker();
 };
 
 class SpeakerRocko3220 : public SpeakerRocko {
 public:
 	virtual Common::String getClassName() { return "SpeakerRocko3220"; }
-	virtual void proc15();
+	virtual void animateSpeaker();
 };
 
 class SpeakerRocko3230 : public SpeakerRocko {
 public:
 	virtual Common::String getClassName() { return "SpeakerRocko3230"; }
-	virtual void proc15();
+	virtual void animateSpeaker();
 };
 
 // Classes related to Seeker
@@ -417,73 +423,79 @@ public:
 class SpeakerSeeker300 : public SpeakerSeeker {
 public:
 	virtual Common::String getClassName() { return "SpeakerSeeker300"; }
-	virtual void proc15();
+	virtual void animateSpeaker();
+};
+
+class SpeakerSeeker500 : public SpeakerSeeker {
+public:
+	virtual Common::String getClassName() { return "SpeakerSeeker500"; }
+	virtual void animateSpeaker();
 };
 
 class SpeakerSeeker1100 : public SpeakerSeeker {
 public:
 	virtual Common::String getClassName() { return "SpeakerSeeker1100"; }
-	virtual void proc15();
+	virtual void animateSpeaker();
 };
 
 class SpeakerSeeker1900 : public SpeakerSeeker {
 public:
 	virtual Common::String getClassName() { return "SpeakerSeeker1900"; }
-	virtual void proc15();
+	virtual void animateSpeaker();
 };
 
 class SpeakerSeeker2435 : public SpeakerSeeker {
 public:
 	virtual Common::String getClassName() { return "SpeakerSeeker2435"; }
-	virtual void proc15();
+	virtual void animateSpeaker();
 };
 
 class SpeakerSeeker2450 : public SpeakerSeeker {
 public:
 	virtual Common::String getClassName() { return "SpeakerSeeker2450"; }
-	virtual void proc15();
+	virtual void animateSpeaker();
 };
 
 class SpeakerSeeker3375 : public SpeakerSeeker {
 public:
 	virtual Common::String getClassName() { return "SpeakerSeeker3375"; }
-	virtual void proc15();
+	virtual void animateSpeaker();
 };
 
 class SpeakerSeeker3385 : public SpeakerSeeker {
 public:
 	virtual Common::String getClassName() { return "SpeakerSeeker3385"; }
-	virtual void proc15();
+	virtual void animateSpeaker();
 };
 
 class SpeakerSeeker3395 : public SpeakerSeeker {
 public:
 	virtual Common::String getClassName() { return "SpeakerSeeker3395"; }
-	virtual void proc15();
+	virtual void animateSpeaker();
 };
 
 class SpeakerSeeker3400 : public SpeakerSeeker {
 public:
 	virtual Common::String getClassName() { return "SpeakerSeeker3400"; }
-	virtual void proc15();
+	virtual void animateSpeaker();
 };
 
 class SpeakerSeeker3600 : public SpeakerSeeker {
 public:
 	virtual Common::String getClassName() { return "SpeakerSeeker3600"; }
-	virtual void proc15();
+	virtual void animateSpeaker();
 };
 
 class SpeakerSeeker3700 : public SpeakerSeeker {
 public:
 	virtual Common::String getClassName() { return "SpeakerSeeker3700"; }
 	virtual void setText(const Common::String &msg);
-	virtual void proc15();
+	virtual void animateSpeaker();
 };
 
 // Classes related to SeekerL
 
-class SpeakerSeekerL : public VisualSpeaker {
+class SpeakerSeekerL : public SpeakerSeeker {
 public:
 	SpeakerSeekerL();
 
@@ -497,14 +509,14 @@ public:
 	SpeakerSocko3200();
 
 	virtual Common::String getClassName() { return "SpeakerSocko3200"; }
-	virtual void proc15();
+	virtual void animateSpeaker();
 };
 
 // Classes related to Soldier
 
 class SpeakerSoldier : public VisualSpeaker {
 public:
-	SpeakerSoldier(int colour);
+	SpeakerSoldier(int color);
 	virtual Common::String getClassName() { return "SpeakerSoldier"; }
 };
 
@@ -512,7 +524,7 @@ class SpeakerSoldier300 : public SpeakerSoldier {
 public:
 	SpeakerSoldier300() : SpeakerSoldier(60) {}
 	virtual Common::String getClassName() { return "SpeakerSoldier300"; }
-	virtual void proc15();
+	virtual void animateSpeaker();
 };
 
 class SpeakerSoldier1625 : public SpeakerSoldier {
@@ -535,34 +547,40 @@ public:
 	virtual Common::String getClassName() { return "SpeakerTealMode7"; }
 };
 
+class SpeakerTeal180 : public SpeakerTeal {
+public:
+	virtual Common::String getClassName() { return "SpeakerTeal180"; }
+	virtual void animateSpeaker();
+};
+
 class SpeakerTeal300 : public SpeakerTeal {
 public:
 	virtual Common::String getClassName() { return "SpeakerTeal300"; }
-	virtual void proc15();
+	virtual void animateSpeaker();
 };
 
 class SpeakerTeal1625 : public SpeakerTeal {
 public:
 	virtual Common::String getClassName() { return "SpeakerTeal1625"; }
-	virtual void proc15();
+	virtual void animateSpeaker();
 };
 
 class SpeakerTeal3240 : public SpeakerTeal {
 public:
 	virtual Common::String getClassName() { return "SpeakerTeal3240"; }
-	virtual void proc15();
+	virtual void animateSpeaker();
 };
 
 class SpeakerTeal3400 : public SpeakerTeal {
 public:
 	virtual Common::String getClassName() { return "SpeakerTeal3400"; }
-	virtual void proc15();
+	virtual void animateSpeaker();
 };
 
 class SpeakerTeal3600 : public SpeakerTealMode7 {
 public:
 	virtual Common::String getClassName() { return "SpeakerTeal3600"; }
-	virtual void proc15();
+	virtual void animateSpeaker();
 };
 
 // Classes related to Tomko
@@ -572,15 +590,22 @@ public:
 	SpeakerTomko3245();
 
 	virtual Common::String getClassName() { return "SpeakerTomko3245"; }
-	virtual void proc15();
+	virtual void animateSpeaker();
 };
 
 // Classes related to Webbster
 
 class SpeakerWebbster : public VisualSpeaker {
 public:
-	SpeakerWebbster(int colour);
+	SpeakerWebbster(int color);
 	virtual Common::String getClassName() { return "SpeakerWebbster"; }
+};
+
+class SpeakerWebbster180 : public SpeakerWebbster {
+public:
+	SpeakerWebbster180() : SpeakerWebbster(27) {}
+	virtual Common::String getClassName() { return "SpeakerWebbster180"; }
+	virtual void animateSpeaker();
 };
 
 class SpeakerWebbster2500 : public SpeakerWebbster {
@@ -594,7 +619,7 @@ public:
 	SpeakerWebbster3240() : SpeakerWebbster(10) {}
 
 	virtual Common::String getClassName() { return "SpeakerWebbster3240"; }
-	virtual void proc15();
+	virtual void animateSpeaker();
 };
 
 class SpeakerWebbster3375 : public SpeakerWebbster {
@@ -602,7 +627,7 @@ public:
 	SpeakerWebbster3375() : SpeakerWebbster(60) {}
 
 	virtual Common::String getClassName() { return "SpeakerWebbster3375"; }
-	virtual void proc15();
+	virtual void animateSpeaker();
 };
 
 class SpeakerWebbster3385 : public SpeakerWebbster {
@@ -610,7 +635,7 @@ public:
 	SpeakerWebbster3385() : SpeakerWebbster(60) {}
 
 	virtual Common::String getClassName() { return "SpeakerWebbster3385"; }
-	virtual void proc15();
+	virtual void animateSpeaker();
 };
 
 class SpeakerWebbster3395 : public SpeakerWebbster {
@@ -618,7 +643,7 @@ public:
 	SpeakerWebbster3395() : SpeakerWebbster(60) {}
 
 	virtual Common::String getClassName() { return "SpeakerWebbster3395"; }
-	virtual void proc15();
+	virtual void animateSpeaker();
 };
 
 class SpeakerWebbster3400 : public SpeakerWebbster {
@@ -626,15 +651,15 @@ public:
 	SpeakerWebbster3400() : SpeakerWebbster(27) {}
 
 	virtual Common::String getClassName() { return "SpeakerWebbster3400"; }
-	virtual void proc15();
+	virtual void animateSpeaker();
 };
 
-class SpeakerDutyOfficer: public VisualSpeaker {
+class SpeakerDutyOfficer180: public VisualSpeaker {
 public:
-	SpeakerDutyOfficer();
+	SpeakerDutyOfficer180();
 
 	virtual Common::String getClassName() { return "SpeakerDutyOfficer"; }
-	virtual void proc15();
+	virtual void animateSpeaker();
 };
 
 } // End of namespace Ringworld2

@@ -102,11 +102,11 @@ void Scene1501::update() {
 	Scene::update();
 	if (_countdown1 != 0) {
 		_countdown1--;
-		if (_countdown1 == 0) {
+		if (_countdown1 == 0 || _skip) {
 			_vm->_screen->clear();
 			leaveScene(0);
 		}
-	} else if ((_countdown2 != 0 && (--_countdown2 == 0)) || (_countdown2 == 0 && !isSoundPlaying(0))) {
+	} else if ((_countdown2 != 0 && (--_countdown2 == 0)) || (_countdown2 == 0 && !isSoundPlaying(0)) || _skip) {
 		_countdown1 = 12;
 		_palette->startFadeToBlack(11);
 	}
@@ -124,7 +124,7 @@ void Scene1501::update() {
 uint32 Scene1501::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x0009:
+	case NM_KEYPRESS_SPACE:
 		_skip = true;
 		break;
 	}

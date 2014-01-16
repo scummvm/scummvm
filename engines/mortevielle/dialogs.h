@@ -48,11 +48,12 @@ private:
 
 	void decodeAlertDetails(Common::String inputStr, int &choiceNumb, int &lineNumb, int &col, Common::String &choiceStr, Common::String &choiceListStr);
 	void setPosition(int ji, int coldep, int esp);
-	void drawAlertBox(int lidep, int nli, int tx);
+	void drawAlertBox(int firstLine, int lineNum, int width);
 	void setButtonText(Common::String c, int coldep, int nbcase, Common::String *str, int esp);
 public:
-	void setParent(MortevielleEngine *vm);
-	int show(const Common::String &msg, int n);
+	DialogManager(MortevielleEngine *vm);
+
+	int show(const Common::String &msg);
 	void drawF3F8();
 	void checkForF8(int SpeechNum, bool drawFrame2Fl);
 	int waitForF3F8();

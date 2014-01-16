@@ -40,7 +40,7 @@ namespace Tony {
 \****************************************************************************/
 
 RMWindow::RMWindow() {
-	_showDirtyRects = false;
+	reset();
 }
 
 RMWindow::~RMWindow() {
@@ -55,11 +55,21 @@ RMWindow::~RMWindow() {
 void RMWindow::init() {
 	Graphics::PixelFormat pixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
 	initGraphics(RM_SX, RM_SY, true, &pixelFormat);
+	
+	reset();
+}
 
+/**
+ * Reset the variables
+ */
+void RMWindow::reset() {
+	_showDirtyRects = false;
 	_bGrabScreenshot = false;
 	_bGrabThumbnail = false;
 	_bGrabMovie = false;
 	_wiping = false;
+
+	_wThumbBuf = nullptr;
 }
 
 void RMWindow::copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h) {

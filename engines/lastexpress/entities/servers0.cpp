@@ -115,7 +115,7 @@ IMPLEMENT_FUNCTION_NOSETUP(5, Servers0, callbackActionOnDirection)
 
 	case kActionExitCompartment:
 		callbackAction();
- 		break;
+		break;
 
 	case kActionExcuseMeCath:
 		if (!params->param1) {
@@ -445,7 +445,7 @@ IMPLEMENT_FUNCTION(24, Servers0, chapter2Handler)
 
 		HANDLE_TABLE(1, 3, 1, setup_function25);
 		HANDLE_TABLE(1, 4, 2, setup_function26);
- 		break;
+		break;
 
 	case kActionCallback:
 		if (getCallback() == 1)

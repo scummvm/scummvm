@@ -67,10 +67,10 @@ inline void outputConfiguration(std::ostream &project, const std::string &config
 	           "\t\t</ProjectConfiguration>\n";
 }
 
-inline void outputConfigurationType(const BuildSetup &setup, std::ostream &project, const std::string &name, const std::string &config, int version) {
+inline void outputConfigurationType(const BuildSetup &setup, std::ostream &project, const std::string &name, const std::string &config, std::string toolset) {
 	project << "\t<PropertyGroup Condition=\"'$(Configuration)|$(Platform)'=='" << config << "'\" Label=\"Configuration\">\n"
 	           "\t\t<ConfigurationType>" << ((name == setup.projectName || setup.devTools || setup.tests) ? "Application" : "StaticLibrary") << "</ConfigurationType>\n"
-	           "\t\t<PlatformToolset>v" << version << "0</PlatformToolset>\n"
+	           "\t\t<PlatformToolset>" << toolset << "</PlatformToolset>\n"
 	           "\t</PropertyGroup>\n";
 }
 
@@ -98,6 +98,8 @@ void MSBuildProvider::createProjectFile(const std::string &name, const std::stri
 	outputConfiguration(project, "Debug", "x64");
 	outputConfiguration(project, "Analysis", "Win32");
 	outputConfiguration(project, "Analysis", "x64");
+	outputConfiguration(project, "LLVM", "Win32");
+	outputConfiguration(project, "LLVM", "x64");
 	outputConfiguration(project, "Release", "Win32");
 	outputConfiguration(project, "Release", "x64");
 
@@ -108,18 +110,23 @@ void MSBuildProvider::createProjectFile(const std::string &name, const std::stri
 	           "\t\t<ProjectGuid>{" << uuid << "}</ProjectGuid>\n"
 	           "\t\t<RootNamespace>" << name << "</RootNamespace>\n"
 	           "\t\t<Keyword>Win32Proj</Keyword>\n"
-			   "\t\t<VCTargetsPath Condition=\"'$(VCTargetsPath" << _version << ")' != '' and '$(VSVersion)' == '' and $(VisualStudioVersion) == ''\">$(VCTargetsPath" << _version << ")</VCTargetsPath>\n"
+	           "\t\t<VCTargetsPath Condition=\"'$(VCTargetsPath" << _version << ")' != '' and '$(VSVersion)' == '' and $(VisualStudioVersion) == ''\">$(VCTargetsPath" << _version << ")</VCTargetsPath>\n"
 	           "\t</PropertyGroup>\n";
 
 	// Shared configuration
 	project << "\t<Import Project=\"$(VCTargetsPath)\\Microsoft.Cpp.Default.props\" />\n";
 
-	outputConfigurationType(setup, project, name, "Release|Win32", _version);
-	outputConfigurationType(setup, project, name, "Analysis|Win32", _version);
-	outputConfigurationType(setup, project, name, "Debug|Win32", _version);
-	outputConfigurationType(setup, project, name, "Release|x64", _version);
-	outputConfigurationType(setup, project, name, "Analysis|x64", _version);
-	outputConfigurationType(setup, project, name, "Debug|x64", _version);
+    std::string version = "v" + toString(_version) + "0";
+	std::string llvm = "LLVM-vs" + toString(getVisualStudioVersion());
+
+	outputConfigurationType(setup, project, name, "Release|Win32", version);
+	outputConfigurationType(setup, project, name, "Analysis|Win32", version);
+	outputConfigurationType(setup, project, name, "LLVM|Win32", llvm);
+	outputConfigurationType(setup, project, name, "Debug|Win32", version);
+	outputConfigurationType(setup, project, name, "Release|x64", version);
+	outputConfigurationType(setup, project, name, "LLVM|x64", llvm);
+	outputConfigurationType(setup, project, name, "Analysis|x64", version);
+	outputConfigurationType(setup, project, name, "Debug|x64", version);
 
 	project << "\t<Import Project=\"$(VCTargetsPath)\\Microsoft.Cpp.props\" />\n"
 	           "\t<ImportGroup Label=\"ExtensionSettings\">\n"
@@ -127,20 +134,24 @@ void MSBuildProvider::createProjectFile(const std::string &name, const std::stri
 
 	outputProperties(project, "Release|Win32",  setup.projectDescription + "_Release.props");
 	outputProperties(project, "Analysis|Win32", setup.projectDescription + "_Analysis.props");
+	outputProperties(project, "LLVM|Win32",     setup.projectDescription + "_LLVM.props");
 	outputProperties(project, "Debug|Win32",    setup.projectDescription + "_Debug.props");
 	outputProperties(project, "Release|x64",    setup.projectDescription + "_Release64.props");
 	outputProperties(project, "Analysis|x64",   setup.projectDescription + "_Analysis64.props");
+	outputProperties(project, "LLVM|x64",       setup.projectDescription + "_LLVM64.props");
 	outputProperties(project, "Debug|x64",      setup.projectDescription + "_Debug64.props");
 
 	project << "\t<PropertyGroup Label=\"UserMacros\" />\n";
 
 	// Project-specific settings (analysis uses debug properties)
-	outputProjectSettings(project, name, setup, false, true, false);
-	outputProjectSettings(project, name, setup, false, true, true);
-	outputProjectSettings(project, name, setup, true, true, false);
-	outputProjectSettings(project, name, setup, false, false, false);
-	outputProjectSettings(project, name, setup, false, false, true);
-	outputProjectSettings(project, name, setup, true, false, false);
+	outputProjectSettings(project, name, setup, false, true, "Debug");
+	outputProjectSettings(project, name, setup, false, true, "Analysis");
+	outputProjectSettings(project, name, setup, false, true, "LLVM");
+	outputProjectSettings(project, name, setup, true, true, "Release");
+	outputProjectSettings(project, name, setup, false, false, "Debug");
+	outputProjectSettings(project, name, setup, false, false, "Analysis");
+	outputProjectSettings(project, name, setup, false, false, "LLVM");
+	outputProjectSettings(project, name, setup, true, false, "Release");
 
 	// Files
 	std::string modulePath;
@@ -255,9 +266,7 @@ void MSBuildProvider::writeReferences(const BuildSetup &setup, std::ofstream &ou
 	output << "\t</ItemGroup>\n";
 }
 
-void MSBuildProvider::outputProjectSettings(std::ofstream &project, const std::string &name, const BuildSetup &setup, bool isRelease, bool isWin32, bool enableAnalysis) {
-	const std::string configuration = (enableAnalysis ? "Analysis" : (isRelease ? "Release" : "Debug"));
-
+void MSBuildProvider::outputProjectSettings(std::ofstream &project, const std::string &name, const BuildSetup &setup, bool isRelease, bool isWin32, std::string configuration) {
 	// Check for project-specific warnings:
 	std::map<std::string, StringList>::iterator warningsIterator = _projectWarnings.find(name);
 	bool enableLanguageExtensions = find(_enableLanguageExtensions.begin(), _enableLanguageExtensions.end(), name) != _enableLanguageExtensions.end();
@@ -351,7 +360,7 @@ void MSBuildProvider::outputGlobalPropFile(const BuildSetup &setup, std::ofstrea
 	              "\t\t<ClCompile>\n"
 	              "\t\t\t<DisableLanguageExtensions>true</DisableLanguageExtensions>\n"
 	              "\t\t\t<DisableSpecificWarnings>" << warnings << ";%(DisableSpecificWarnings)</DisableSpecificWarnings>\n"
-	              "\t\t\t<AdditionalIncludeDirectories>$(" << LIBS_DEFINE << ")\\include;" << prefix << ";" << prefix << "\\engines;" << (setup.tests ? prefix + "\\test\\cxxtest;" : "") << "$(TargetDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>\n"
+	              "\t\t\t<AdditionalIncludeDirectories>$(" << LIBS_DEFINE << ")\\include;.;" << prefix << ";" << prefix << "\\engines;" << (setup.tests ? prefix + "\\test\\cxxtest;" : "") << "$(TargetDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>\n"
 	              "\t\t\t<PreprocessorDefinitions>" << definesList << "%(PreprocessorDefinitions)</PreprocessorDefinitions>\n"
 	              "\t\t\t<ExceptionHandling>" << ((setup.devTools || setup.tests) ? "Sync" : "") << "</ExceptionHandling>\n";
 
@@ -382,13 +391,12 @@ void MSBuildProvider::outputGlobalPropFile(const BuildSetup &setup, std::ofstrea
 	properties.flush();
 }
 
-void MSBuildProvider::createBuildProp(const BuildSetup &setup, bool isRelease, bool isWin32, bool enableAnalysis) {
-	const std::string outputType = (enableAnalysis ? "Analysis" : (isRelease ? "Release" : "Debug"));
+void MSBuildProvider::createBuildProp(const BuildSetup &setup, bool isRelease, bool isWin32, std::string configuration) {
 	const std::string outputBitness = (isWin32 ? "32" : "64");
 
-	std::ofstream properties((setup.outputDir + '/' + setup.projectDescription + "_" + outputType + (isWin32 ? "" : "64") + getPropertiesExtension()).c_str());
+	std::ofstream properties((setup.outputDir + '/' + setup.projectDescription + "_" + configuration + (isWin32 ? "" : "64") + getPropertiesExtension()).c_str());
 	if (!properties)
-		error("Could not open \"" + setup.outputDir + '/' + setup.projectDescription + "_" + outputType + (isWin32 ? "" : "64") + getPropertiesExtension() + "\" for writing");
+		error("Could not open \"" + setup.outputDir + '/' + setup.projectDescription + "_" + configuration + (isWin32 ? "" : "64") + getPropertiesExtension() + "\" for writing");
 
 	properties << "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
 	              "<Project DefaultTargets=\"Build\" ToolsVersion=\"" << (_version >= 12 ? _version : 4) << ".0\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">\n"
@@ -396,7 +404,7 @@ void MSBuildProvider::createBuildProp(const BuildSetup &setup, bool isRelease, b
 	              "\t\t<Import Project=\"" << setup.projectDescription << "_Global" << (isWin32 ? "" : "64") << ".props\" />\n"
 	              "\t</ImportGroup>\n"
 	              "\t<PropertyGroup>\n"
-	              "\t\t<_PropertySheetDisplayName>" << setup.projectDescription << "_" << outputType << outputBitness << "</_PropertySheetDisplayName>\n"
+	              "\t\t<_PropertySheetDisplayName>" << setup.projectDescription << "_" << configuration << outputBitness << "</_PropertySheetDisplayName>\n"
 	              "\t\t<LinkIncremental>" << (isRelease ? "false" : "true") << "</LinkIncremental>\n"
 	              "\t</PropertyGroup>\n"
 	              "\t<ItemDefinitionGroup>\n"
@@ -410,22 +418,29 @@ void MSBuildProvider::createBuildProp(const BuildSetup &setup, bool isRelease, b
 		              "\t\t\t<BufferSecurityCheck>false</BufferSecurityCheck>\n"
 		              "\t\t\t<DebugInformationFormat></DebugInformationFormat>\n"
 		              "\t\t\t<RuntimeLibrary>MultiThreaded</RuntimeLibrary>\n"
-		              "\t\t\t<EnablePREfast>" << (enableAnalysis ? "true" : "false") << "</EnablePREfast>\n"
+		              "\t\t\t<EnablePREfast>" << (configuration == "Analysis" ? "true" : "false") << "</EnablePREfast>\n"
 		              "\t\t</ClCompile>\n"
 		              "\t\t<Link>\n"
 		              "\t\t\t<IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>\n"
 		              "\t\t\t<SetChecksum>true</SetChecksum>\n";
 	} else {
 		properties << "\t\t\t<Optimization>Disabled</Optimization>\n"
-		              "\t\t\t<PreprocessorDefinitions>WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>\n"
+		              "\t\t\t<PreprocessorDefinitions>WIN32;" << (configuration == "LLVM" ? "_CRT_SECURE_NO_WARNINGS;" : "") << "%(PreprocessorDefinitions)</PreprocessorDefinitions>\n"
 		              "\t\t\t<MinimalRebuild>true</MinimalRebuild>\n"
 		              "\t\t\t<BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>\n"
 		              "\t\t\t<RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>\n"
 		              "\t\t\t<FunctionLevelLinking>true</FunctionLevelLinking>\n"
 		              "\t\t\t<TreatWarningAsError>false</TreatWarningAsError>\n"
 		              "\t\t\t<DebugInformationFormat>" << (isWin32 ? "EditAndContinue" : "ProgramDatabase") << "</DebugInformationFormat>\n" // For x64 format Edit and continue is not supported, thus we default to Program Database
-		              "\t\t\t<EnablePREfast>" << (enableAnalysis ? "true" : "false") << "</EnablePREfast>\n"
-		              "\t\t</ClCompile>\n"
+		              "\t\t\t<EnablePREfast>" << (configuration == "Analysis" ? "true" : "false") << "</EnablePREfast>\n";
+
+		if (configuration == "LLVM") {
+			// FIXME The LLVM cl wrapper does not seem to work properly with the $(TargetDir) path so we hard-code the build folder until the issue is resolved
+			properties << "\t\t\t<AdditionalIncludeDirectories>" << configuration << outputBitness <<";%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>\n"
+		                  "\t\t\t<AdditionalOptions>-Wno-microsoft -Wno-long-long -Wno-multichar -Wno-unknown-pragmas -Wno-reorder -Wpointer-arith -Wcast-qual -Wshadow -Wnon-virtual-dtor -Wwrite-strings -Wno-conversion -Wno-shorten-64-to-32 -Wno-sign-compare -Wno-four-char-constants -Wno-nested-anon-types -Qunused-arguments %(AdditionalOptions)</AdditionalOptions>\n";
+		}
+
+		properties << "\t\t</ClCompile>\n"
 		              "\t\t<Link>\n"
 		              "\t\t\t<GenerateDebugInformation>true</GenerateDebugInformation>\n"
 		              "\t\t\t<ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>\n"
@@ -481,7 +496,7 @@ void MSBuildProvider::writeFileListToProject(const FileNode &dir, std::ofstream 
 			// Deal with duplicated file names
 			if (isDuplicate) {
 				projectFile << "\t\t<ClCompile Include=\"" << (*entry).path << "\">\n"
-				               "\t\t\t<ObjectFileName>$(IntDir)" << (*entry).prefix << "%(Filename).obj</ObjectFileName>\n";
+							   "\t\t\t<ObjectFileName>$(IntDir)" << (*entry).prefix << "%(Filename).obj</ObjectFileName>\n";
 
 				projectFile << "\t\t</ClCompile>\n";
 			} else {
@@ -509,6 +524,7 @@ void MSBuildProvider::writeFileListToProject(const FileNode &dir, std::ofstream 
 			outputNasmCommand(projectFile, "Debug", (isDuplicate ? (*entry).prefix : ""));
 			outputNasmCommand(projectFile, "Analysis", (isDuplicate ? (*entry).prefix : ""));
 			outputNasmCommand(projectFile, "Release", (isDuplicate ? (*entry).prefix : ""));
+			outputNasmCommand(projectFile, "LLVM", (isDuplicate ? (*entry).prefix : ""));
 
 			projectFile << "\t\t</CustomBuild>\n";
 		}

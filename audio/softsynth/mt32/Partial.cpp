@@ -24,15 +24,10 @@
 
 namespace MT32Emu {
 
-#ifdef INACCURATE_SMOOTH_PAN
-// Mok wanted an option for smoother panning, and we love Mok.
-static const float PAN_NUMERATOR_NORMAL[] = {0.0f, 0.5f, 1.0f, 1.5f, 2.0f, 2.5f, 3.0f, 3.5f, 4.0f, 4.5f, 5.0f, 5.5f, 6.0f, 6.5f, 7.0f};
-#else
-// CONFIRMED by Mok: These NUMERATOR values (as bytes, not floats, obviously) are sent exactly like this to the LA32.
-static const float PAN_NUMERATOR_NORMAL[] = {0.0f, 0.0f, 1.0f, 1.0f, 2.0f, 2.0f, 3.0f, 3.0f, 4.0f, 4.0f, 5.0f, 5.0f, 6.0f, 6.0f, 7.0f};
-#endif
-static const float PAN_NUMERATOR_MASTER[] = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f};
-static const float PAN_NUMERATOR_SLAVE[]  = {0.0f, 1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 7.0f, 7.0f, 7.0f, 7.0f, 7.0f, 7.0f, 7.0f};
+static const Bit8u PAN_NUMERATOR_MASTER[] = {0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7};
+static const Bit8u PAN_NUMERATOR_SLAVE[]  = {0, 1, 2, 3, 4, 5, 6, 7, 7, 7, 7, 7, 7, 7, 7};
+
+static const Bit32s PAN_FACTORS[] = {0, 18, 37, 55, 73, 91, 110, 128, 146, 165, 183, 201, 219, 238, 256};
 
 Partial::Partial(Synth *useSynth, int useDebugPartialNum) :
 	synth(useSynth), debugPartialNum(useDebugPartialNum), sampleNum(0) {
@@ -116,23 +111,30 @@ void Partial::startPartial(const Part *part, Poly *usePoly, const PatchCache *us
 	structurePosition = patchCache->structurePosition;
 
 	Bit8u panSetting = rhythmTemp != NULL ? rhythmTemp->panpot : part->getPatchTemp()->panpot;
-	float panVal;
 	if (mixType == 3) {
 		if (structurePosition == 0) {
-			panVal = PAN_NUMERATOR_MASTER[panSetting];
+			panSetting = PAN_NUMERATOR_MASTER[panSetting] << 1;
 		} else {
-			panVal = PAN_NUMERATOR_SLAVE[panSetting];
+			panSetting = PAN_NUMERATOR_SLAVE[panSetting] << 1;
 		}
 		// Do a normal mix independent of any pair partial.
 		mixType = 0;
 		pairPartial = NULL;
 	} else {
-		panVal = PAN_NUMERATOR_NORMAL[panSetting];
+		// Mok wanted an option for smoother panning, and we love Mok.
+#ifndef INACCURATE_SMOOTH_PAN
+		// CONFIRMED by Mok: exactly bytes like this (right shifted?) are sent to the LA32.
+		panSetting &= 0x0E;
+#endif
 	}
 
-	// FIXME: Sample analysis suggests that the use of panVal is linear, but there are some some quirks that still need to be resolved.
-	stereoVolume.leftVol = panVal / 7.0f;
-	stereoVolume.rightVol = 1.0f - stereoVolume.leftVol;
+	leftPanValue = synth->reversedStereoEnabled ? 14 - panSetting : panSetting;
+	rightPanValue = 14 - leftPanValue;
+
+#if !MT32EMU_USE_FLOAT_SAMPLES
+	leftPanValue = PAN_FACTORS[leftPanValue];
+	rightPanValue = PAN_FACTORS[rightPanValue];
+#endif
 
 	// SEMI-CONFIRMED: From sample analysis:
 	// Found that timbres with 3 or 4 partials (i.e. one using two partial pairs) are mixed in two different ways.
@@ -149,8 +151,8 @@ void Partial::startPartial(const Part *part, Poly *usePoly, const PatchCache *us
 	// For my personal taste, this behaviour rather enriches the sounding and should be emulated.
 	// Also, the current partial allocator model probably needs to be refined.
 	if (debugPartialNum & 8) {
-		stereoVolume.leftVol = -stereoVolume.leftVol;
-		stereoVolume.rightVol = -stereoVolume.rightVol;
+		leftPanValue = -leftPanValue;
+		rightPanValue = -rightPanValue;
 	}
 
 	if (patchCache->PCMPartial) {
@@ -198,9 +200,6 @@ void Partial::startPartial(const Part *part, Poly *usePoly, const PatchCache *us
 	if (!hasRingModulatingSlave()) {
 		la32Pair.deactivate(LA32PartialPair::SLAVE);
 	}
-	// Temporary integration hack
-	stereoVolume.leftVol /= 8192.0f;
-	stereoVolume.rightVol /= 8192.0f;
 }
 
 Bit32u Partial::getAmpValue() {
@@ -232,39 +231,6 @@ Bit32u Partial::getCutoffValue() {
 	return (tvf->getBaseCutoff() << 18) + cutoffModifierRampVal;
 }
 
-unsigned long Partial::generateSamples(Bit16s *partialBuf, unsigned long length) {
-	if (!isActive() || alreadyOutputed) {
-		return 0;
-	}
-	if (poly == NULL) {
-		synth->printDebug("[Partial %d] *** ERROR: poly is NULL at Partial::generateSamples()!", debugPartialNum);
-		return 0;
-	}
-	alreadyOutputed = true;
-
-	for (sampleNum = 0; sampleNum < length; sampleNum++) {
-		if (!tva->isPlaying() || !la32Pair.isActive(LA32PartialPair::MASTER)) {
-			deactivate();
-			break;
-		}
-		la32Pair.generateNextSample(LA32PartialPair::MASTER, getAmpValue(), tvp->nextPitch(), getCutoffValue());
-		if (hasRingModulatingSlave()) {
-			la32Pair.generateNextSample(LA32PartialPair::SLAVE, pair->getAmpValue(), pair->tvp->nextPitch(), pair->getCutoffValue());
-			if (!pair->tva->isPlaying() || !la32Pair.isActive(LA32PartialPair::SLAVE)) {
-				pair->deactivate();
-				if (mixType == 2) {
-					deactivate();
-					break;
-				}
-			}
-		}
-		*partialBuf++ = la32Pair.nextOutSample();
-	}
-	unsigned long renderedSamples = sampleNum;
-	sampleNum = 0;
-	return renderedSamples;
-}
-
 bool Partial::hasRingModulatingSlave() const {
 	return pair != NULL && structurePosition == 0 && (mixType == 1 || mixType == 2);
 }
@@ -288,7 +254,18 @@ Synth *Partial::getSynth() const {
 	return synth;
 }
 
-bool Partial::produceOutput(float *leftBuf, float *rightBuf, unsigned long length) {
+TVA *Partial::getTVA() const {
+	return tva;
+}
+
+void Partial::backupCache(const PatchCache &cache) {
+	if (patchCache == &cache) {
+		cachebackup = cache;
+		patchCache = &cachebackup;
+	}
+}
+
+bool Partial::produceOutput(Sample *leftBuf, Sample *rightBuf, unsigned long length) {
 	if (!isActive() || alreadyOutputed || isRingModulatingSlave()) {
 		return false;
 	}
@@ -296,15 +273,52 @@ bool Partial::produceOutput(float *leftBuf, float *rightBuf, unsigned long lengt
 		synth->printDebug("[Partial %d] *** ERROR: poly is NULL at Partial::produceOutput()!", debugPartialNum);
 		return false;
 	}
-	unsigned long numGenerated = generateSamples(myBuffer, length);
-	for (unsigned int i = 0; i < numGenerated; i++) {
-		*leftBuf++ = myBuffer[i] * stereoVolume.leftVol;
-		*rightBuf++ = myBuffer[i] * stereoVolume.rightVol;
+	alreadyOutputed = true;
+
+	for (sampleNum = 0; sampleNum < length; sampleNum++) {
+		if (!tva->isPlaying() || !la32Pair.isActive(LA32PartialPair::MASTER)) {
+			deactivate();
+			break;
+		}
+		la32Pair.generateNextSample(LA32PartialPair::MASTER, getAmpValue(), tvp->nextPitch(), getCutoffValue());
+		if (hasRingModulatingSlave()) {
+			la32Pair.generateNextSample(LA32PartialPair::SLAVE, pair->getAmpValue(), pair->tvp->nextPitch(), pair->getCutoffValue());
+			if (!pair->tva->isPlaying() || !la32Pair.isActive(LA32PartialPair::SLAVE)) {
+				pair->deactivate();
+				if (mixType == 2) {
+					deactivate();
+					break;
+				}
+			}
+		}
+
+		// Although, LA32 applies panning itself, we assume here it is applied in the mixer, not within a pair.
+		// Applying the pan value in the log-space looks like a waste of unlog resources. Though, it needs clarification.
+		Sample sample = la32Pair.nextOutSample();
+
+		// FIXME: Sample analysis suggests that the use of panVal is linear, but there are some quirks that still need to be resolved.
+#if MT32EMU_USE_FLOAT_SAMPLES
+		Sample leftOut = (sample * (float)leftPanValue) / 14.0f;
+		Sample rightOut = (sample * (float)rightPanValue) / 14.0f;
+		*(leftBuf++) += leftOut;
+		*(rightBuf++) += rightOut;
+#else
+		// FIXME: Dividing by 7 (or by 14 in a Mok-friendly way) looks of course pointless. Need clarification.
+		// FIXME2: LA32 may produce distorted sound in case if the absolute value of maximal amplitude of the input exceeds 8191
+		// when the panning value is non-zero. Most probably the distortion occurs in the same way it does with ring modulation,
+		// and it seems to be caused by limited precision of the common multiplication circuit.
+		// From analysis of this overflow, it is obvious that the right channel output is actually found
+		// by subtraction of the left channel output from the input.
+		// Though, it is unknown whether this overflow is exploited somewhere.
+		Sample leftOut = Sample((sample * leftPanValue) >> 8);
+		Sample rightOut = Sample((sample * rightPanValue) >> 8);
+		*leftBuf = Synth::clipBit16s((Bit32s)*leftBuf + (Bit32s)leftOut);
+		*rightBuf = Synth::clipBit16s((Bit32s)*rightBuf + (Bit32s)rightOut);
+		leftBuf++;
+		rightBuf++;
+#endif
 	}
-	for (; numGenerated < length; numGenerated++) {
-		*leftBuf++ = 0.0f;
-		*rightBuf++ = 0.0f;
-	}
+	sampleNum = 0;
 	return true;
 }
 

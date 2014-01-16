@@ -21,8 +21,7 @@
  */
 
 #include "neverhood/modules/module2000.h"
-#include "neverhood/gamemodule.h"
-#include "neverhood/navigationscene.h"
+#include "neverhood/modules/module2000_sprites.h"
 
 namespace Neverhood {
 
@@ -145,7 +144,7 @@ Scene2001::Scene2001(NeverhoodEngine *vm, Module *parentModule, int which)
 uint32 Scene2001::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		if (param.asInteger()) {
 			setRectList(0x004B3680);
 			_klaymen->setKlaymenIdleTable3();

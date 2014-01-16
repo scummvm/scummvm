@@ -407,6 +407,21 @@ public:
 	 */
 	bool addStreamFileTrack(const Common::String &baseName);
 
+	/**
+	 * Set the internal audio track.
+	 *
+	 * Has no effect if the container does not support this.
+	 * @see supportsAudioTrackSwitching()
+	 *
+	 * @param index The index of the track, whose meaning is dependent on the container
+	 */
+	bool setAudioTrack(int index);
+
+	/**
+	 * Get the number of internal audio tracks.
+	 */
+	uint getAudioTrackCount() const;
+
 protected:
 	/**
 	 * An abstract representation of a track in a movie. Since tracks here are designed
@@ -594,17 +609,17 @@ protected:
 		virtual Audio::Timestamp getDuration() const;
 		Audio::Timestamp getFrameTime(uint frame) const;
 
-	protected:
-		/**
-		 * Get the rate at which this track is played.
-		 */
-		virtual Common::Rational getFrameRate() const = 0;
-
 		/**
 		 * Get the frame that should be displaying at the given time. This is
 		 * helpful for someone implementing seek().
 		 */
 		uint getFrameAtTime(const Audio::Timestamp &time) const;
+
+	protected:
+		/**
+		 * Get the rate at which this track is played.
+		 */
+		virtual Common::Rational getFrameRate() const = 0;
 	};
 
 	/**
@@ -612,7 +627,7 @@ protected:
 	 */
 	class AudioTrack : public Track {
 	public:
-		AudioTrack() {}
+		AudioTrack();
 		virtual ~AudioTrack() {}
 
 		TrackType getTrackType() const { return kTrackTypeAudio; }
@@ -662,6 +677,11 @@ protected:
 		 */
 		virtual Audio::Mixer::SoundType getSoundType() const { return Audio::Mixer::kPlainSoundType; }
 
+		/**
+		 * Mute the track
+		 */
+		void setMute(bool mute);
+
 	protected:
 		void pauseIntern(bool shouldPause);
 
@@ -674,6 +694,7 @@ protected:
 		Audio::SoundHandle _handle;
 		byte _volume;
 		int8 _balance;
+		bool _muted;
 	};
 
 	/**
@@ -761,8 +782,11 @@ protected:
 	 * Define a track to be used by this class.
 	 *
 	 * The pointer is then owned by this base class.
+	 *
+	 * @param track The track to add
+	 * @param isExternal Is this an external track not found by loadStream()?
 	 */
-	void addTrack(Track *track);
+	void addTrack(Track *track, bool isExternal = false);
 
 	/**
 	 * Whether or not getTime() will sync with a playing audio track.
@@ -814,12 +838,12 @@ protected:
 	/**
 	 * Get the begin iterator of the tracks
 	 */
-	TrackListIterator getTrackListBegin() { return _tracks.begin(); }
+	TrackListIterator getTrackListBegin() { return _internalTracks.begin(); }
 
 	/**
 	 * Get the end iterator of the tracks
 	 */
-	TrackListIterator getTrackListEnd() { return _tracks.end(); }
+	TrackListIterator getTrackListEnd() { return _internalTracks.end(); }
 
 	/**
 	 * The internal seek function that does the actual seeking.
@@ -830,9 +854,30 @@ protected:
 	 */
 	virtual bool seekIntern(const Audio::Timestamp &time);
 
+	/**
+	 * Does this video format support switching between audio tracks?
+	 *
+	 * Returning true implies this format supports multiple audio tracks,
+	 * can switch tracks, and defaults to playing the first found audio
+	 * track.
+	 */
+	virtual bool supportsAudioTrackSwitching() const { return false; }
+
+	/**
+	 * Get the audio track for the given index.
+	 *
+	 * This is used only if supportsAudioTrackSwitching() returns true.
+	 *
+	 * @param index The index of the track, whose meaning is dependent on the container
+	 * @return The audio track for the index, or 0 if not found
+	 */
+	virtual AudioTrack *getAudioTrack(int index) { return 0; }
+
 private:
 	// Tracks owned by this VideoDecoder
 	TrackList _tracks;
+	TrackList _internalTracks;
+	TrackList _externalTracks;
 
 	// Current playback status
 	bool _needsUpdate;
@@ -860,6 +905,8 @@ private:
 	uint32 _pauseStartTime;
 	byte _audioVolume;
 	int8 _audioBalance;
+
+	AudioTrack *_mainAudioTrack;
 };
 
 } // End of namespace Video

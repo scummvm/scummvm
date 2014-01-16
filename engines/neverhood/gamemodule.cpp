@@ -79,7 +79,7 @@ GameModule::GameModule(NeverhoodEngine *vm)
 	_mainMenuRequested(false) {
 
 	// Other initializations moved to actual engine class
-	_vm->_soundMan->playSoundThree(0x002D0031, 0x8861079);
+	_vm->_soundMan->playSoundThree(0x002D0031, 0x08861079);
 	SetMessageHandler(&GameModule::handleMessage);
 }
 
@@ -95,7 +95,7 @@ void GameModule::handleMouseMove(int16 x, int16 y) {
 		mousePos.x = x;
 		mousePos.y = y;
 		debug(2, "GameModule::handleMouseMove(%d, %d)", x, y);
-		sendPointMessage(_childObject, 0, mousePos);
+		sendPointMessage(_childObject, NM_MOUSE_MOVE, mousePos);
 	}
 }
 
@@ -105,7 +105,7 @@ void GameModule::handleMouseDown(int16 x, int16 y) {
 		mousePos.x = x;
 		mousePos.y = y;
 		debug(2, "GameModule::handleMouseDown(%d, %d)", x, y);
-		sendPointMessage(_childObject, 0x0001, mousePos);
+		sendPointMessage(_childObject, NM_MOUSE_CLICK, mousePos);
 	}
 }
 
@@ -115,14 +115,26 @@ void GameModule::handleMouseUp(int16 x, int16 y) {
 		mousePos.x = x;
 		mousePos.y = y;
 		debug(2, "GameModule::handleMouseUp(%d, %d)", x, y);
-		sendPointMessage(_childObject, 0x0002, mousePos);
+		sendPointMessage(_childObject, NM_MOUSE_RELEASE, mousePos);
+	}
+}
+
+void GameModule::handleWheelUp() {
+	if (_childObject) {
+		sendMessage(_childObject, NM_MOUSE_WHEELUP, 0);
+	}
+}
+
+void GameModule::handleWheelDown() {
+	if (_childObject) {
+		sendMessage(_childObject, NM_MOUSE_WHEELDOWN, 0);
 	}
 }
 
 void GameModule::handleSpaceKey() {
 	if (_childObject) {
 		debug(2, "GameModule::handleSpaceKey()");
-		sendMessage(_childObject, 0x0009, 0);
+		sendMessage(_childObject, NM_KEYPRESS_SPACE, 0);
 	}
 }
 
@@ -150,7 +162,7 @@ void GameModule::handleEscapeKey() {
 	else if (!_prevChildObject && _canRequestMainMenu)
 		_mainMenuRequested = true;
 	else if (_childObject)
-		sendMessage(_childObject, 0x000C, 0);
+		sendMessage(_childObject, NM_KEYPRESS_ESC, 0);
 }
 
 void GameModule::initKeySlotsPuzzle() {
@@ -216,7 +228,7 @@ void GameModule::initRadioPuzzle() {
 		setGlobalVar(V_RADIO_ROOM_LEFT_DOOR, 1);
 		setGlobalVar(V_RADIO_ROOM_RIGHT_DOOR, 0);
 		setSubVar(VA_IS_PUZZLE_INIT, 0x08C80800, 1);
-  	}
+	}
 }
 
 void GameModule::initTestTubes1Puzzle() {
@@ -411,8 +423,12 @@ void GameModule::checkRequests() {
 	}
 	if (_restoreGameRequested) {
 		_restoreGameRequested = false;
+		_vm->_audioResourceMan->stopAllMusic();
 		_vm->_audioResourceMan->stopAllSounds();
+		_vm->_soundMan->stopAllMusic();
 		_vm->_soundMan->stopAllSounds();
+		// Reinsert turning sound because SoundMan::stopAllSounds() removes it
+		_vm->_soundMan->playSoundThree(0x002D0031, 0x08861079);
 		delete _childObject;
 		delete _prevChildObject;
 		_childObject = NULL;
@@ -779,7 +795,7 @@ void GameModule::updateModule() {
 
 void GameModule::openMainMenu() {
 	if (_childObject) {
-		sendMessage(_childObject, 0x101D, 0);
+		sendMessage(_childObject, NM_MOUSE_HIDE, 0);
 		_childObject->draw();
 	} else {
 		// If there's no module, create one so there's something to return to
@@ -805,7 +821,7 @@ void GameModule::updateMenuModule() {
 	if (!updateChild()) {
 		_vm->_screen->restoreParams();
 		_childObject = _prevChildObject;
-		sendMessage(_childObject, 0x101E, 0);
+		sendMessage(_childObject, NM_MOUSE_SHOW, 0);
 		_prevChildObject = NULL;
 		_moduleNum = _prevModuleNum;
 		SetUpdateHandler(&GameModule::updateModule);

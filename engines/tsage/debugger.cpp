@@ -30,18 +30,19 @@
 namespace TsAGE {
 
 Debugger::Debugger() : GUI::Debugger() {
-	DCmd_Register("continue",		WRAP_METHOD(Debugger, Cmd_Exit));
-	DCmd_Register("scene",			WRAP_METHOD(Debugger, Cmd_Scene));
-	DCmd_Register("walk_regions",	WRAP_METHOD(Debugger, Cmd_WalkRegions));
-	DCmd_Register("priority_regions",	WRAP_METHOD(Debugger, Cmd_PriorityRegions));
-	DCmd_Register("scene_regions",	WRAP_METHOD(Debugger, Cmd_SceneRegions));
-	DCmd_Register("setflag",		WRAP_METHOD(Debugger, Cmd_SetFlag));
-	DCmd_Register("getflag",		WRAP_METHOD(Debugger, Cmd_GetFlag));
-	DCmd_Register("clearflag",		WRAP_METHOD(Debugger, Cmd_ClearFlag));
-	DCmd_Register("listobjects",	WRAP_METHOD(Debugger, Cmd_ListObjects));
-	DCmd_Register("moveobject",		WRAP_METHOD(Debugger, Cmd_MoveObject));
-	DCmd_Register("hotspots",		WRAP_METHOD(Debugger, Cmd_Hotspots));
-	DCmd_Register("sound",			WRAP_METHOD(Debugger, Cmd_Sound));
+	DCmd_Register("continue",         WRAP_METHOD(Debugger, Cmd_Exit));
+	DCmd_Register("scene",            WRAP_METHOD(Debugger, Cmd_Scene));
+	DCmd_Register("walk_regions",     WRAP_METHOD(Debugger, Cmd_WalkRegions));
+	DCmd_Register("priority_regions", WRAP_METHOD(Debugger, Cmd_PriorityRegions));
+	DCmd_Register("scene_regions",    WRAP_METHOD(Debugger, Cmd_SceneRegions));
+	DCmd_Register("setflag",          WRAP_METHOD(Debugger, Cmd_SetFlag));
+	DCmd_Register("getflag",          WRAP_METHOD(Debugger, Cmd_GetFlag));
+	DCmd_Register("clearflag",        WRAP_METHOD(Debugger, Cmd_ClearFlag));
+	DCmd_Register("listobjects",      WRAP_METHOD(Debugger, Cmd_ListObjects));
+	DCmd_Register("moveobject",       WRAP_METHOD(Debugger, Cmd_MoveObject));
+	DCmd_Register("hotspots",         WRAP_METHOD(Debugger, Cmd_Hotspots));
+	DCmd_Register("sound",            WRAP_METHOD(Debugger, Cmd_Sound));
+	DCmd_Register("setdebug",         WRAP_METHOD(Debugger, Cmd_SetDebug));
 }
 
 static int strToInt(const char *s) {
@@ -340,6 +341,14 @@ bool Debugger::Cmd_Sound(int argc, const char **argv) {
 	return false;
 }
 
+/**
+ * Activate internal debugger, when available
+ */
+bool Debugger::Cmd_SetDebug(int argc, const char **argv) {
+	DebugPrintf("Not available in this game\n");
+	return true;
+}
+
 /*
  * This command lists the objects available, and their ID
  */
@@ -632,57 +641,57 @@ bool Ringworld2Debugger::Cmd_ListObjects(int argc, const char **argv) {
 
 	DebugPrintf("Available objects for this game are:\n");
 	DebugPrintf("1  - R2_OPTO_DISK\n");
-	DebugPrintf("2  - R2_2\n");
+	DebugPrintf("2  - R2_READER\n");
 	DebugPrintf("3  - R2_NEGATOR_GUN\n");
 	DebugPrintf("4  - R2_STEPPING_DISKS\n");
-	DebugPrintf("5  - R2_5\n");
-	DebugPrintf("6  - R2_6\n");
-	DebugPrintf("7  - R2_7\n");
-	DebugPrintf("8  - R2_8\n");
-	DebugPrintf("9  - R2_9\n");
-	DebugPrintf("10 - R2_10\n");
-	DebugPrintf("11 - R2_11\n");
-	DebugPrintf("12 - R2_12\n");
-	DebugPrintf("13 - R2_13\n");
-	DebugPrintf("14 - R2_14\n");
-	DebugPrintf("15 - R2_15\n");
-	DebugPrintf("16 - R2_16\n");
-	DebugPrintf("17 - R2_17\n");
-	DebugPrintf("18 - R2_18\n");
-	DebugPrintf("19 - R2_19\n");
-	DebugPrintf("20 - R2_20\n");
-	DebugPrintf("21 - R2_21\n");
-	DebugPrintf("22 - R2_22\n");
-	DebugPrintf("23 - R2_23\n");
-	DebugPrintf("24 - R2_24\n");
-	DebugPrintf("25 - R2_25\n");
-	DebugPrintf("26 - R2_26\n");
-	DebugPrintf("27 - R2_27\n");
-	DebugPrintf("28 - R2_28\n");
-	DebugPrintf("29 - R2_29\n");
-	DebugPrintf("30 - R2_30\n");
-	DebugPrintf("31 - R2_31\n");
-	DebugPrintf("32 - R2_32\n");
-	DebugPrintf("33 - R2_33\n");
-	DebugPrintf("34 - R2_34\n");
-	DebugPrintf("35 - R2_35\n");
-	DebugPrintf("36 - R2_36\n");
-	DebugPrintf("37 - R2_37\n");
-	DebugPrintf("38 - R2_38\n");
-	DebugPrintf("39 - R2_39\n");
-	DebugPrintf("40 - R2_40\n");
-	DebugPrintf("41 - R2_41\n");
-	DebugPrintf("42 - R2_42\n");
-	DebugPrintf("43 - R2_43\n");
-	DebugPrintf("44 - R2_44\n");
-	DebugPrintf("45 - R2_45\n");
-	DebugPrintf("46 - R2_46\n");
-	DebugPrintf("47 - R2_47\n");
-	DebugPrintf("48 - R2_48\n");
-	DebugPrintf("49 - R2_49\n");
-	DebugPrintf("50 - R2_50\n");
-	DebugPrintf("51 - R2_51\n");
-	DebugPrintf("52 - R2_52\n");
+	DebugPrintf("5  - R2_ATTRACTOR_UNIT\n");
+	DebugPrintf("6  - R2_SENSOR_PROBE\n");
+	DebugPrintf("7  - R2_SONIC_STUNNER\n");
+	DebugPrintf("8  - R2_CABLE_HARNESS\n");
+	DebugPrintf("9  - R2_COM_SCANNER\n");
+	DebugPrintf("10 - R2_SPENT_POWER_CAPSULE\n");
+	DebugPrintf("11 - R2_CHARGED_POWER_CAPSULE\n");
+	DebugPrintf("12 - R2_AEROSOL\n");
+	DebugPrintf("13 - R2_REMOTE_CONTROL\n");
+	DebugPrintf("14 - R2_OPTICAL_FIBRE\n");
+	DebugPrintf("15 - R2_CLAMP\n");
+	DebugPrintf("16 - R2_ATTRACTOR_CABLE_HARNESS\n");
+	DebugPrintf("17 - R2_FUEL_CELL\n");
+	DebugPrintf("18 - R2_GYROSCOPE\n");
+	DebugPrintf("19 - R2_AIRBAG\n");
+	DebugPrintf("20 - R2_REBREATHER_TANK\n");
+	DebugPrintf("21 - R2_RESERVE_REBREATHER_TANK\n");
+	DebugPrintf("22 - R2_GUIDANCE_MODULE\n");
+	DebugPrintf("23 - R2_THRUSTER_VALVE\n");
+	DebugPrintf("24 - R2_BALLOON_BACKPACK\n");
+	DebugPrintf("25 - R2_RADAR_MECHANISM\n");
+	DebugPrintf("26 - R2_JOYSTICK\n");
+	DebugPrintf("27 - R2_IGNITOR\n");
+	DebugPrintf("28 - R2_DIAGNOSTICS_DISPLAY\n");
+	DebugPrintf("29 - R2_GLASS_DOME\n");
+	DebugPrintf("30 - R2_WICK_LAMP\n");
+	DebugPrintf("31 - R2_SCRITH_KEY\n");
+	DebugPrintf("32 - R2_TANNER_MASK\n");
+	DebugPrintf("33 - R2_PURE_GRAIN_ALCOHOL\n");
+	DebugPrintf("34 - R2_SAPPHIRE_BLUE\n");
+	DebugPrintf("35 - R2_ANCIENT_SCROLLS\n");
+	DebugPrintf("36 - R2_FLUTE\n");
+	DebugPrintf("37 - R2_GUNPOWDER\n");
+	DebugPrintf("38 - R2_NONAME\n");
+	DebugPrintf("39 - R2_COM_SCANNER_2\n");
+	DebugPrintf("40 - R2_SUPERCONDUCTOR_WIRE\n");
+	DebugPrintf("41 - R2_PILLOW\n");
+	DebugPrintf("42 - R2_FOOD_TRAY\n");
+	DebugPrintf("43 - R2_LASER_HACKSAW\n");
+	DebugPrintf("44 - R2_PHOTON_STUNNER\n");
+	DebugPrintf("45 - R2_BATTERY\n");
+	DebugPrintf("46 - R2_SOAKED_FACEMASK\n");
+	DebugPrintf("47 - R2_LIGHT_BULB\n");
+	DebugPrintf("48 - R2_ALCOHOL_LAMP\n");
+	DebugPrintf("49 - R2_ALCOHOL_LAMP_2\n");
+	DebugPrintf("50 - R2_ALCOHOL_LAMP_3\n");
+	DebugPrintf("51 - R2_BROKEN_DISPLAY\n");
+	DebugPrintf("52 - R2_TOOLBOX\n");
 
 	return true;
 }
@@ -705,6 +714,21 @@ bool Ringworld2Debugger::Cmd_MoveObject(int argc, const char **argv) {
 	else
 		DebugPrintf("Invalid object Id %s\n", argv[1]);
 
+	return true;
+}
+
+/**
+ * Activate internal debugger, when available
+ */
+bool Ringworld2Debugger::Cmd_SetDebug(int argc, const char **argv) {
+	if (argc != 1) {
+		DebugPrintf("Usage: %s\n", argv[0]);
+		return true;
+	}
+
+	// Set the internal debugger flag(s?) to true
+	// _debugCardGame is reset by scene1337::subPostInit()
+	R2_GLOBALS._debugCardGame = true;
 	return true;
 }
 } // End of namespace TsAGE

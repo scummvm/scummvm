@@ -92,6 +92,7 @@ void VisualStudioProvider::createProjectFile(const std::string &name, const std:
 		// Win32
 		outputConfiguration(project, setup, libraries, "Debug", "Win32", "", true);
 		outputConfiguration(project, setup, libraries, "Analysis", "Win32", "", true);
+		outputConfiguration(project, setup, libraries, "LLVM", "Win32", "", true);
 		outputConfiguration(project, setup, libraries, "Release", "Win32", "", true);
 
 		// x64
@@ -100,6 +101,7 @@ void VisualStudioProvider::createProjectFile(const std::string &name, const std:
 		// libraries list created for IA-32. If that changes in the future, we need to adjust this part!
 		outputConfiguration(project, setup, libraries, "Debug", "x64", "64", false);
 		outputConfiguration(project, setup, libraries, "Analysis", "x64", "64", false);
+		outputConfiguration(project, setup, libraries, "LLVM", "Win32", "64", false);
 		outputConfiguration(project, setup, libraries, "Release", "x64", "64", false);
 
 	} else {
@@ -119,9 +121,11 @@ void VisualStudioProvider::createProjectFile(const std::string &name, const std:
 		// Win32
 		outputConfiguration(setup, project, toolConfig, "Debug", "Win32", "");
 		outputConfiguration(setup, project, toolConfig, "Analysis", "Win32", "");
+		outputConfiguration(setup, project, toolConfig, "LLVM", "Win32", "");
 		outputConfiguration(setup, project, toolConfig, "Release", "Win32", "");
 		outputConfiguration(setup, project, toolConfig, "Debug", "x64", "64");
 		outputConfiguration(setup, project, toolConfig, "Analysis", "x64", "64");
+		outputConfiguration(setup, project, toolConfig, "LLVM", "x64", "64");
 		outputConfiguration(setup, project, toolConfig, "Release", "x64", "64");
 	}
 
@@ -228,7 +232,7 @@ void VisualStudioProvider::outputGlobalPropFile(const BuildSetup &setup, std::of
 	              "\t\tName=\"VCCLCompilerTool\"\n"
 	              "\t\tDisableLanguageExtensions=\"" << (setup.devTools ? "false" : "true") << "\"\n"
 	              "\t\tDisableSpecificWarnings=\"" << warnings << "\"\n"
-	              "\t\tAdditionalIncludeDirectories=\"" << prefix << ";" << prefix << "\\engines;$(" << LIBS_DEFINE << ")\\include;" << (setup.tests ? prefix + "\\test\\cxxtest;" : "") << "$(TargetDir)\"\n"
+	              "\t\tAdditionalIncludeDirectories=\".\\;" << prefix << ";" << prefix << "\\engines;$(" << LIBS_DEFINE << ")\\include;" << (setup.tests ? prefix + "\\test\\cxxtest;" : "") << "$(TargetDir)\"\n"
 	              "\t\tPreprocessorDefinitions=\"" << definesList << "\"\n"
 	              "\t\tExceptionHandling=\"" << ((setup.devTools || setup.tests) ? "1" : "0") << "\"\n";
 
@@ -265,19 +269,18 @@ void VisualStudioProvider::outputGlobalPropFile(const BuildSetup &setup, std::of
 	properties.flush();
 }
 
-void VisualStudioProvider::createBuildProp(const BuildSetup &setup, bool isRelease, bool isWin32, bool enableAnalysis) {
-	const std::string outputType = (enableAnalysis ? "Analysis" : (isRelease ? "Release" : "Debug"));
+void VisualStudioProvider::createBuildProp(const BuildSetup &setup, bool isRelease, bool isWin32, std::string configuration) {
 	const std::string outputBitness = (isWin32 ? "32" : "64");
 
-	std::ofstream properties((setup.outputDir + '/' + setup.projectDescription + "_" + outputType + (isWin32 ? "" : "64") + getPropertiesExtension()).c_str());
+	std::ofstream properties((setup.outputDir + '/' + setup.projectDescription + "_" + configuration + (isWin32 ? "" : "64") + getPropertiesExtension()).c_str());
 	if (!properties)
-		error("Could not open \"" + setup.outputDir + '/' + setup.projectDescription + "_" + outputType + (isWin32 ? "" : "64") + getPropertiesExtension() + "\" for writing");
+		error("Could not open \"" + setup.outputDir + '/' + setup.projectDescription + "_" + configuration + (isWin32 ? "" : "64") + getPropertiesExtension() + "\" for writing");
 
 	properties << "<?xml version=\"1.0\" encoding=\"Windows-1252\"?>\n"
 	              "<VisualStudioPropertySheet\n"
 	              "\tProjectType=\"Visual C++\"\n"
 	              "\tVersion=\"8.00\"\n"
-	              "\tName=\"" << setup.projectDescription << "_" << outputType << outputBitness << "\"\n"
+	              "\tName=\"" << setup.projectDescription << "_" << configuration << outputBitness << "\"\n"
 	              "\tInheritedPropertySheets=\".\\" << setup.projectDescription << "_Global" << (isWin32 ? "" : "64") << ".vsprops\"\n"
 	              "\t>\n"
 	              "\t<Tool\n"
@@ -291,7 +294,7 @@ void VisualStudioProvider::createBuildProp(const BuildSetup &setup, bool isRelea
 		              "\t\tBufferSecurityCheck=\"false\"\n"
 		              "\t\tDebugInformationFormat=\"0\"\n"
 		              "\t\tRuntimeLibrary=\"0\"\n"
-		              "\t\tAdditionalOption=\"" << (enableAnalysis ? "/analyze" : "") << "\"\n"
+		              "\t\tAdditionalOption=\"" << (configuration == "Analysis" ? "/analyze" : "") << "\"\n"
 		              "\t/>\n"
 		              "\t<Tool\n"
 		              "\t\tName=\"VCLinkerTool\"\n"
@@ -307,7 +310,7 @@ void VisualStudioProvider::createBuildProp(const BuildSetup &setup, bool isRelea
 		              "\t\tEnableFunctionLevelLinking=\"true\"\n"
 		              "\t\tWarnAsError=\"false\"\n"
 		              "\t\tDebugInformationFormat=\"" << (isWin32 ? "4" : "3") << "\"\n" // For x64 format "4" (Edit and continue) is not supported, thus we default to "3"
-		              "\t\tAdditionalOption=\"" << (enableAnalysis ? "/analyze" : "") << "\"\n"
+		              "\t\tAdditionalOption=\"" << (configuration == "Analysis" ? "/analyze" : "") << "\"\n"
 		              "\t/>\n"
 		              "\t<Tool\n"
 		              "\t\tName=\"VCLinkerTool\"\n"
@@ -354,9 +357,9 @@ void VisualStudioProvider::writeFileListToProject(const FileNode &dir, std::ofst
 					            << indentString << "\t<FileConfiguration Name=\"Debug|Win32\">\n"
 					            << toolLine
 					            << indentString << "\t</FileConfiguration>\n"
-								<< indentString << "\t<FileConfiguration Name=\"Analysis|Win32\">\n"
-								<< toolLine
-								<< indentString << "\t</FileConfiguration>\n"
+					            << indentString << "\t<FileConfiguration Name=\"Analysis|Win32\">\n"
+					            << toolLine
+					            << indentString << "\t</FileConfiguration>\n"
 					            << indentString << "\t<FileConfiguration Name=\"Release|Win32\">\n"
 					            << toolLine
 					            << indentString << "\t</FileConfiguration>\n"
@@ -369,18 +372,18 @@ void VisualStudioProvider::writeFileListToProject(const FileNode &dir, std::ofst
 						            << indentString << "\t<FileConfiguration Name=\"Debug|Win32\">\n"
 						            << toolLine
 						            << indentString << "\t</FileConfiguration>\n"
-									<< indentString << "\t<FileConfiguration Name=\"Analysis|Win32\">\n"
-									<< toolLine
-									<< indentString << "\t</FileConfiguration>\n"
+						            << indentString << "\t<FileConfiguration Name=\"Analysis|Win32\">\n"
+						            << toolLine
+						            << indentString << "\t</FileConfiguration>\n"
 						            << indentString << "\t<FileConfiguration Name=\"Release|Win32\">\n"
 						            << toolLine
 						            << indentString << "\t</FileConfiguration>\n"
-									<< indentString << "\t<FileConfiguration Name=\"Debug|x64\">\n"
-									<< toolLine
-									<< indentString << "\t</FileConfiguration>\n"
-									<< indentString << "\t<FileConfiguration Name=\"Analysis|x64\">\n"
-									<< toolLine
-									<< indentString << "\t</FileConfiguration>\n"
+						            << indentString << "\t<FileConfiguration Name=\"Debug|x64\">\n"
+						            << toolLine
+						            << indentString << "\t</FileConfiguration>\n"
+						            << indentString << "\t<FileConfiguration Name=\"Analysis|x64\">\n"
+						            << toolLine
+						            << indentString << "\t</FileConfiguration>\n"
 						            << indentString << "\t<FileConfiguration Name=\"Release|x64\">\n"
 						            << toolLine
 						            << indentString << "\t</FileConfiguration>\n"

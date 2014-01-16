@@ -26,6 +26,7 @@
 /*
  * TGA decoder used in engines:
  *  - wintermute
+ *  - zvision
  */
 
 #ifndef GRAPHICS_DECODERS_TGA_H

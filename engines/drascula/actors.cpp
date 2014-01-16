@@ -135,7 +135,7 @@ void DrasculaEngine::startWalking() {
 		else
 			characterMoved = 0;
 	}
-	startTime = getTime();
+	_startTime = getTime();
 }
 
 void DrasculaEngine::moveCharacters() {
@@ -239,7 +239,7 @@ void DrasculaEngine::moveCharacters() {
 									factor_red[curY + curHeight], frontSurface, screenSurface);
 		}
 	} else if (characterMoved == 1) {
-		curPos[0] = _frameX[num_frame];
+		curPos[0] = _frameX[_characterFrame];
 		curPos[1] = frame_y + DIF_MASK_HARE;
 		curPos[2] = curX;
 		curPos[3] = curY;
@@ -369,13 +369,11 @@ void DrasculaEngine::quadrant_4() {
 }
 
 void DrasculaEngine::increaseFrameNum() {
-	timeDiff = getTime() - startTime;
-
-	if (timeDiff >= 6) {
-		startTime = getTime();
-		num_frame++;
-		if (num_frame == 6)
-			num_frame = 0;
+	if (getTime() - _startTime >= 6) {
+		_startTime = getTime();
+		_characterFrame++;
+		if (_characterFrame == 6)
+			_characterFrame = 0;
 
 		if (curDirection == kDirectionUp) {
 			curX -= stepX;

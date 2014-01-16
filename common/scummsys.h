@@ -23,6 +23,10 @@
 #ifndef COMMON_SCUMMSYS_H
 #define COMMON_SCUMMSYS_H
 
+#ifndef __has_feature         // Optional of course.
+  #define __has_feature(x) 0  // Compatibility with non-clang compilers.
+#endif
+
 // This is a convenience macro to test whether the compiler used is a GCC
 // version, which is at least major.minor.
 #define GCC_ATLEAST(major, minor) (defined(__GNUC__) && (__GNUC__ > (major) || (__GNUC__ == (major) && __GNUC_MINOR__ >= (minor))))
@@ -401,6 +405,8 @@
 	typedef unsigned int uint32;
 	typedef signed int int32;
 	typedef unsigned int uint;
+	typedef signed long long int64;
+	typedef unsigned long long uint64;
 #endif
 
 

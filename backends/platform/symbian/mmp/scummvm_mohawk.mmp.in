@@ -2,7 +2,7 @@
  * Copyright (C) 2003-2005 Andreas 'Sprawl' Karlsson - Original EPOC port, ESDL
  * Copyright (C) 2003-2005 Lars 'AnotherGuest' Persson - Original EPOC port, Audio System
  * Copyright (C) 2005 Jurgen 'SumthinWicked' Braam - EPOC/CVS maintainer
- * Copyright (C) 2005-2013 The ScummVM project
+ * Copyright (C) 2005-2014 The ScummVM Team
  *
  * ScummVM is the legal property of its developers, whose names
  * are too numerous to list here. Please refer to the COPYRIGHT
@@ -52,6 +52,25 @@ SOURCEPATH ..\..\..\..\engines\mohawk
 	// empty base file, will be updated by Perl build scripts
 
 //STOP_AUTO_OBJECTS_MOHAWK_//
+
+
+//START_AUTO_OBJECTS_MOHAWK_ENABLE_MYST//
+
+	// empty base file, will be updated by Perl build scripts
+
+//STOP_AUTO_OBJECTS_MOHAWK_ENABLE_MYST//
+
+//START_AUTO_OBJECTS_MOHAWK_ENABLE_RIVEN//
+
+	// empty base file, will be updated by Perl build scripts
+
+//STOP_AUTO_OBJECTS_MOHAWK_ENABLE_RIVEN//
+
+//START_AUTO_OBJECTS_MOHAWK_ENABLE_CSTIME//
+
+	// empty base file, will be updated by Perl build scripts
+
+//STOP_AUTO_OBJECTS_MOHAWK_ENABLE_CSTIME//
 
 // *** Include paths
 

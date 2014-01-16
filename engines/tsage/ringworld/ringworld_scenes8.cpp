@@ -30,6 +30,10 @@ namespace TsAGE {
 
 namespace Ringworld {
 
+NamedHotspotMult::NamedHotspotMult() : SceneHotspot() {
+	_useLineNum = _lookLineNum = 0;
+}
+
 void NamedHotspotMult::synchronize(Serializer &s) {
 	SceneHotspot::synchronize(s);
 	s.syncAsSint16LE(_useLineNum);
@@ -2533,6 +2537,10 @@ Scene7700::Scene7700() {
 	_object5._state = 0;
 	_object6._state = 0;
 	_prof._state = 0;
+
+	_seatCountLeft1 = 0;
+	_seatCountLeft2 = 0;
+	_seatCountRight = 0;
 }
 
 void Scene7700::synchronize(Serializer &s) {

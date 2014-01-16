@@ -31,6 +31,7 @@
 
 
 #include "common/str.h"
+#include "common/ustr.h"
 #include "common/list.h"
 #include "common/array.h"
 
@@ -41,7 +42,7 @@ namespace Wintermute {
 //typedef std::wstring WideString;
 typedef Common::String AnsiString;
 typedef Common::String Utf8String;
-typedef Common::String WideString; // NB: Not actually true I presume.
+typedef Common::U32String WideString;
 
 typedef Common::List<WideString> WideStringList;
 typedef Common::List<AnsiString> AnsiStringList;

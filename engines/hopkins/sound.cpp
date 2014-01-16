@@ -520,12 +520,19 @@ bool SoundManager::mixVoice(int voiceId, int voiceMode, bool dispTxtFl) {
 		if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
 			filename = "ENG_VOI.RES";
 		// Win95 and Linux versions uses another set of names
-		else if (_vm->_globals->_language == LANG_FR)
-			filename = "RES_VFR.RES";
-		else if (_vm->_globals->_language == LANG_EN)
-			filename = "RES_VAN.RES";
-		else if (_vm->_globals->_language == LANG_SP)
-			filename = "RES_VES.RES";
+		else {
+			switch (_vm->_globals->_language) {
+			case LANG_FR:
+				filename = "RES_VFR.RES";
+				break;
+			case LANG_EN:
+				filename = "RES_VAN.RES";
+				break;
+			case LANG_SP:
+				filename = "RES_VES.RES";
+				break;
+			}
+		}
 
 		catPos = _vm->_fileIO->_catalogPos;
 		catLen = _vm->_fileIO->_catalogSize;
@@ -535,12 +542,19 @@ bool SoundManager::mixVoice(int voiceId, int voiceMode, bool dispTxtFl) {
 			if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
 				filename = "ENG_VOI.RES";
 			// Win95 and Linux versions uses another set of names
-			else if (_vm->_globals->_language == LANG_FR)
-				filename = "RES_VFR.RES";
-			else if (_vm->_globals->_language == LANG_EN)
-				filename = "RES_VAN.RES";
-			else if (_vm->_globals->_language == LANG_SP)
-				filename = "RES_VES.RES";
+			else {
+				switch (_vm->_globals->_language) {
+				case LANG_FR:
+					filename = "RES_VFR.RES";
+					break;
+				case LANG_EN:
+					filename = "RES_VAN.RES";
+					break;
+				case LANG_SP:
+					filename = "RES_VES.RES";
+					break;
+				}
+			}
 
 			catPos = _vm->_fileIO->_catalogPos;
 			catLen = _vm->_fileIO->_catalogSize;
@@ -550,12 +564,19 @@ bool SoundManager::mixVoice(int voiceId, int voiceMode, bool dispTxtFl) {
 				if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
 					filename = "ENG_VOI.RES";
 				// Win95 and Linux versions uses another set of names
-				else if (_vm->_globals->_language == LANG_FR)
-					filename = "RES_VFR.RES";
-				else if (_vm->_globals->_language == LANG_EN)
-					filename = "RES_VAN.RES";
-				else if (_vm->_globals->_language == LANG_SP)
-					filename = "RES_VES.RES";
+				else {
+					switch (_vm->_globals->_language) {
+					case LANG_FR:
+						filename = "RES_VFR.RES";
+						break;
+					case LANG_EN:
+						filename = "RES_VAN.RES";
+						break;
+					case LANG_SP:
+						filename = "RES_VES.RES";
+						break;
+					}
+				}
 
 				catPos = _vm->_fileIO->_catalogPos;
 				catLen = _vm->_fileIO->_catalogSize;

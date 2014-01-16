@@ -240,14 +240,6 @@ bool RenderedImage::blit(int posX, int posY, int flipping, Common::Rect *pPartRe
 	int cg = (color >> 8) & 0xff;
 	int cb = (color >> 0) & 0xff;
 
-	// Compensate for transparency. Since we're coming
-	// down to 255 alpha, we just compensate for the colors here
-	if (ca != 255) {
-		cr = cr * ca >> 8;
-		cg = cg * ca >> 8;
-		cb = cb * ca >> 8;
-	}
-
 	// Create an encapsulating surface for the data
 	Graphics::Surface srcImage;
 	// TODO: Is the data really in the screen format?
@@ -400,52 +392,52 @@ bool RenderedImage::blit(int posX, int posY, int flipping, Common::Rect *pPartRe
 						} else {
 #if defined(SCUMM_LITTLE_ENDIAN)
 							pix = *(uint32 *)out;
-							int outb = (pix >> 0) & 0xff;
-							int outg = (pix >> 8) & 0xff;
-							int outr = (pix >> 16) & 0xff;
+							int outb = ((pix >> 0) & 0xff) * (255 - a);
+							int outg = ((pix >> 8) & 0xff) * (255 - a);
+							int outr = ((pix >> 16) & 0xff) * (255 - a);
 							if (cb == 0)
-								outb = 0;
+								outb = outb >> 8;
 							else if (cb != 255)
-								outb += ((b - outb) * a * cb) >> 16;
+								outb = ((outb << 8) + b * a * cb) >> 16;
 							else
-								outb += ((b - outb) * a) >> 8;
+								outb = (outb + b * a) >> 8;
 							if (cg == 0)
-								outg = 0;
+								outg = outg >> 8;
 							else if (cg != 255)
-								outg += ((g - outg) * a * cg) >> 16;
+								outg = ((outg << 8) + g * a * cg) >> 16;
 							else
-								outg += ((g - outg) * a) >> 8;
+								outg = (outg + g * a) >> 8;
 							if (cr == 0)
-								outr = 0;
+								outr = outr >> 8;
 							else if (cr != 255)
-								outr += ((r - outr) * a * cr) >> 16;
+								outr = ((outr << 8) + r * a * cr) >> 16;
 							else
-								outr += ((r - outr) * a) >> 8;
+								outr = (outr + r * a) >> 8;
 							*(uint32 *)out = (255 << 24) | (outr << 16) | (outg << 8) | outb;
 							out += 4;
 #else
 							*out = 255;
 							out++;
 							if (cr == 0)
-								*out = 0;
+								*out = (*out * (255-a)) >> 8;
 							else if (cr != 255)
-								*out += ((r - *out) * a * cr) >> 16;
+								*out = (((*out * (255-a)) << 8) + r * a * cr) >> 16;
 							else
-								*out += ((r - *out) * a) >> 8;
+								*out = ((*out * (255-a)) + r * a) >> 8;
 							out++;
 							if (cg == 0)
-								*out = 0;
+								*out = (*out * (255-a)) >> 8;
 							else if (cg != 255)
-								*out += ((g - *out) * a * cg) >> 16;
+								*out = (((*out * (255-a)) << 8) + g * a * cg) >> 16;
 							else
-								*out += ((g - *out) * a) >> 8;
+								*out = ((*out * (255-a)) + g * a) >> 8;
 							out++;
 							if (cb == 0)
-								*out = 0;
+								*out = (*out * (255-a)) >> 8;
 							else if (cb != 255)
-								*out += ((b - *out) * a * cb) >> 16;
+								*out = (((*out * (255-a)) << 8) + b * a * cb) >> 16;
 							else
-								*out += ((b - *out) * a) >> 8;
+								*out = ((*out * (255-a)) + b * a) >> 8;
 							out++;
 #endif
 						}

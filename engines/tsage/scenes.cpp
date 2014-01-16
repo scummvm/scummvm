@@ -43,6 +43,7 @@ SceneManager::SceneManager() {
 	g_saver->addListener(this);
 	_objectCount = 0;
 	_loadMode = 0;
+	_sceneLoadCount = 0;
 }
 
 SceneManager::~SceneManager() {
@@ -56,8 +57,13 @@ void SceneManager::setNewScene(int sceneNumber) {
 
 void SceneManager::checkScene() {
 	if (_nextSceneNumber != -1) {
+		int nextSceneNumber = _nextSceneNumber;
+
 		sceneChange();
-		_nextSceneNumber = -1;
+
+		// Unless we've already switched to yet another scene, reset
+		if (_nextSceneNumber == nextSceneNumber)
+			_nextSceneNumber = -1;
 	}
 
 	g_globals->dispatchSounds();
@@ -247,6 +253,14 @@ void SceneManager::listenerSynchronize(Serializer &s) {
 		}
 	}
 
+	// Walk regions loading
+	if (g_vm->getGameID() == GType_Ringworld2) {
+		int walkRegionsId = GLOBALS._walkRegions._resNum;
+		s.syncAsSint16LE(walkRegionsId);
+		if (s.isLoading())
+			GLOBALS._walkRegions.load(walkRegionsId);
+	}
+
 	g_globals->_sceneManager._scrollerRect.synchronize(s);
 	SYNC_POINTER(g_globals->_scrollFollower);
 	s.syncAsSint16LE(_loadMode);
@@ -260,6 +274,8 @@ Scene::Scene() : _sceneBounds(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT),
 	_activeScreenNumber = 0;
 	_oldSceneBounds = Rect(4000, 4000, 4100, 4100);
 	Common::fill(&_zoomPercents[0], &_zoomPercents[256], 0);
+
+	_screenNumber = 0;
 }
 
 Scene::~Scene() {
@@ -269,15 +285,23 @@ void Scene::synchronize(Serializer &s) {
 	if (s.getVersion() >= 2)
 		StripCallback::synchronize(s);
 
-	s.syncAsSint32LE(_field12);
+	if (s.getVersion() < 14) {
+		int useless = 0;
+		s.syncAsSint32LE(useless);
+	}
+
 	s.syncAsSint32LE(_screenNumber);
 	s.syncAsSint32LE(_activeScreenNumber);
 	s.syncAsSint32LE(_sceneMode);
 	_backgroundBounds.synchronize(s);
 	_sceneBounds.synchronize(s);
 	_oldSceneBounds.synchronize(s);
-	s.syncAsSint16LE(_fieldA);
-	s.syncAsSint16LE(_fieldE);
+
+	if (s.getVersion() < 14) {
+		int useless = 0;
+		s.syncAsSint16LE(useless);
+		s.syncAsSint16LE(useless);
+	}
 
 	for (int i = 0; i < 256; ++i)
 		s.syncAsUint16LE(_enabledSections[i]);
@@ -290,7 +314,6 @@ void Scene::synchronize(Serializer &s) {
 
 void Scene::postInit(SceneObjectList *OwnerList) {
 	_action = NULL;
-	_field12 = 0;
 	_sceneMode = 0;
 }
 

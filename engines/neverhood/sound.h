@@ -50,6 +50,7 @@ public:
 	void unload();
 	void play(uint32 fileHash);
 	void play();
+	void playLooping();
 	void stop();
 	void setVolume(int16 volume);
 	void setPan(int16 pan);
@@ -129,6 +130,7 @@ public:
 	SoundMan(NeverhoodEngine *vm);
 	~SoundMan();
 
+	void stopAllMusic();
 	void stopAllSounds();
 
 	// Music
@@ -264,6 +266,7 @@ public:
 	AudioResourceMan(NeverhoodEngine *vm);
 	~AudioResourceMan();
 
+	void stopAllMusic();
 	void stopAllSounds();
 
 	int16 addSound(uint32 fileHash);

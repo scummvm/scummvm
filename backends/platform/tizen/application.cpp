@@ -31,7 +31,7 @@ Application *TizenScummVM::createInstance() {
 	return new TizenScummVM();
 }
 
-TizenScummVM::TizenScummVM() : _appForm(0) {
+TizenScummVM::TizenScummVM() : _appForm(NULL) {
 	logEntered();
 }
 
@@ -41,7 +41,7 @@ TizenScummVM::~TizenScummVM() {
 		TizenSystem *system = (TizenSystem *)g_system;
 		system->destroyBackend();
 		delete system;
-		g_system = 0;
+		g_system = NULL;
 	}
 }
 
@@ -68,17 +68,19 @@ bool TizenScummVM::OnAppTerminating(AppRegistry &appRegistry, bool forcedTermina
 }
 
 void TizenScummVM::OnUserEventReceivedN(RequestId requestId, IList *args) {
+	logEntered();
 	MessageBox messageBox;
 	int modalResult;
+	String *message;
 
-	logEntered();
-
-	if (requestId == USER_MESSAGE_EXIT) {
+	switch (requestId) {
+	case USER_MESSAGE_EXIT:
 		// normal program termination
 		Terminate();
-	} else if (requestId == USER_MESSAGE_EXIT_ERR) {
+		break;
+
+	case USER_MESSAGE_EXIT_ERR:
 		// assertion failure termination
-		String *message = NULL;
 		if (args) {
 			message = (String *)args->GetAt(0);
 		}
@@ -88,12 +90,15 @@ void TizenScummVM::OnUserEventReceivedN(RequestId requestId, IList *args) {
 		messageBox.Construct(L"Oops...", *message, MSGBOX_STYLE_OK);
 		messageBox.ShowAndWait(modalResult);
 		Terminate();
-	} else if (requestId == USER_MESSAGE_EXIT_ERR_CONFIG) {
+		break;
+
+	case USER_MESSAGE_EXIT_ERR_CONFIG:
 		// the config file was corrupted
 		messageBox.Construct(L"Config file corrupted",
 				L"Settings have been reverted, please restart.", MSGBOX_STYLE_OK);
 		messageBox.ShowAndWait(modalResult);
 		Terminate();
+		break;
 	}
 }
 
@@ -132,7 +137,6 @@ void TizenScummVM::pauseGame(bool pause) {
 		if (pause && g_engine && !g_engine->isPaused()) {
 			_appForm->pushKey(Common::KEYCODE_SPACE);
 		}
-
 		if (g_system) {
 			((TizenSystem *)g_system)->setMute(pause);
 		}

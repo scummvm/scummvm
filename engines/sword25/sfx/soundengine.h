@@ -67,13 +67,13 @@ struct SndHandle {
 	uint32 id;
 
 	Common::String fileName;
-	int sndType;
+	int32 sndType;
 	float volume;
 	float pan;
 	bool loop;
-	int loopStart;
-	int loopEnd;
-	uint layer;
+	int32 loopStart;
+	int32 loopEnd;
+	uint32 layer;
 };
 
 

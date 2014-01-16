@@ -850,7 +850,7 @@ void MickeyEngine::drawRoomAnimation() {
 }
 
 void MickeyEngine::drawRoom() {
-	uint8 buffer[256];
+	uint8 buffer[512];
 	int pBuf = 0;
 	int nObjs;
 

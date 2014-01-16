@@ -71,6 +71,8 @@ public:
 	LineSlice(int xStart, int xEnd) { xs = xStart; xe = xEnd; }
 };
 
+enum FrameFlag { FRAME_FLIP_CENTROID_X = 4, FRAME_FLIP_CENTROID_Y = 8 };
+
 class GfxSurface {
 private:
 	Graphics::Surface *_customSurface;
@@ -88,6 +90,8 @@ private:
 public:
 	Common::Point _centroid;
 	int _transColor;
+	Rect _clipRect;
+	byte _flags;
 public:
 	GfxSurface();
 	GfxSurface(const GfxSurface &s);
@@ -104,7 +108,8 @@ public:
 	void setBounds(const Rect &bounds) { _bounds = bounds; }
 	const Rect &getBounds() const { return _bounds; }
 
-	void copyFrom(GfxSurface &src, Rect srcBounds, Rect destBounds, Region *priorityRegion = NULL);
+	void copyFrom(GfxSurface &src, Rect srcBounds, Rect destBounds,
+		Region *priorityRegion = NULL, const byte *shadowMap = NULL);
 	void copyFrom(GfxSurface &src, Rect destBounds, Region *priorityRegion = NULL) {
 		copyFrom(src, src.getBounds(), destBounds, priorityRegion);
 	}

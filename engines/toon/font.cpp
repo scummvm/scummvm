@@ -32,6 +32,8 @@ FontRenderer::FontRenderer(ToonEngine *vm) : _vm(vm) {
 	_currentFontColor[1] = 0xc8;
 	_currentFontColor[2] = 0xcb;
 	_currentFontColor[3] = 0xce;
+
+	_currentFont = nullptr;
 }
 
 FontRenderer::~FontRenderer() {
@@ -195,8 +197,7 @@ void FontRenderer::renderMultiLineText(int16 x, int16 y, const Common::String &o
 	// divide the text in several lines
 	// based on number of characters or size of lines.
 	byte text[1024];
-	strncpy((char *)text, origText.c_str(), 1023);
-	text[1023] = 0;
+	Common::strlcpy((char *)text, origText.c_str(), 1024);
 
 	byte *lines[16];
 	int32 lineSize[16];

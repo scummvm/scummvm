@@ -53,7 +53,7 @@ public:
 	bool applyEvent(const char *eventName, bool unbreakable = false);
 	void setFilename(const char *filename);
 	const char *getFilename() { return _filename; }
-	bool parseProperty(byte *buffer, bool complete = true);
+	bool parseProperty(char *buffer, bool complete = true);
 	bool _freezable;
 	bool _ready;
 

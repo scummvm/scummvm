@@ -20,8 +20,8 @@
  *
  */
 
-#include "neverhood/modules/module2300.h"
 #include "neverhood/navigationscene.h"
+#include "neverhood/modules/module2300.h"
 
 namespace Neverhood {
 

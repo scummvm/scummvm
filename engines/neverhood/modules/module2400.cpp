@@ -20,7 +20,13 @@
  *
  */
 
+#include "neverhood/modules/module1000_sprites.h"
+#include "neverhood/modules/module1200_sprites.h"
 #include "neverhood/modules/module2400.h"
+#include "neverhood/modules/module2100_sprites.h"
+#include "neverhood/modules/module2200_sprites.h"
+#include "neverhood/modules/module2400_sprites.h"
+#include "neverhood/modules/module2800_sprites.h"
 
 namespace Neverhood {
 
@@ -175,198 +181,6 @@ static const NRect kScene2401Rects[] = {
 	{ 465, 331, 491, 389 }
 };
 
-static const uint32 kAsScene2401WaterSpitFileHashes2[] = {
-	0x5C044690, 0x5C644690, 0x5CA44690,
-	0x5D244690, 0x5E244690
-};
-
-static const uint32 kAsScene2401WaterSpitFileHashes1[] = {
-	0xF4418408, 0xF4418808, 0xF4419008,
-	0xF441A008, 0xCD4F8411
-};
-
-AsScene2401WaterSpit::AsScene2401WaterSpit(NeverhoodEngine *vm)
-	: AnimatedSprite(vm, 1200) {
-
-	_x = 240;
-	_y = 447;
-	createSurface(100, 146, 74);
-	setVisible(false);
-	SetUpdateHandler(&AnimatedSprite::update);
-	SetMessageHandler(&AsScene2401WaterSpit::handleMessage);
-	SetSpriteUpdate(&AnimatedSprite::updateDeltaXY);
-}
-
-uint32 AsScene2401WaterSpit::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
-	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
-	switch (messageNum) {
-	case 0x100D:
-		if (param.asInteger() == 0x120A0013)
-			playSound(0, kAsScene2401WaterSpitFileHashes1[_soundIndex]);
-		break;
-	case 0x2000:
-		_x = 240;
-		_y = 447;
-		_soundIndex = getSubVar(VA_CURR_WATER_PIPES_LEVEL, param.asInteger());
-		startAnimation(kAsScene2401WaterSpitFileHashes2[param.asInteger()], 0, -1);
-		setVisible(true);
-		playSound(0, 0x48640244);
-		break;
-	case 0x3002:
-		stopAnimation();
-		setVisible(false);
-		break;
-	}
-	return messageResult;
-}
-
-AsScene2401FlowingWater::AsScene2401FlowingWater(NeverhoodEngine *vm)
-	: AnimatedSprite(vm, 1200), _isWaterFlowing(false) {
-
-	_x = 88;
-	_y = 421;
-	createSurface1(0x10203116, 100);
-	setVisible(false);
-	SetUpdateHandler(&AnimatedSprite::update);
-	SetMessageHandler(&AsScene2401FlowingWater::handleMessage);
-}
-
-AsScene2401FlowingWater::~AsScene2401FlowingWater() {
-	_vm->_soundMan->deleteSoundGroup(0x40F11C09);
-}
-
-uint32 AsScene2401FlowingWater::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
-	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
-	switch (messageNum) {
-	case 0x100D:
-		if (_isWaterFlowing && param.asInteger() == 0x02421405)
-			startAnimationByHash(0x10203116, 0x01084280, 0);
-		break;
-	case 0x2002:
-		if (!_isWaterFlowing) {
-			_vm->_soundMan->addSound(0x40F11C09, 0x980C1420);
-			_vm->_soundMan->playSoundLooping(0x980C1420);
-			startAnimation(0x10203116, 0, -1);
-			setVisible(true);
-			_isWaterFlowing = true;
-		}
-		break;
-	case 0x2003:
-		_vm->_soundMan->deleteSound(0x980C1420);
-		_isWaterFlowing = false;
-		break;
-	case 0x3002:
-		stopAnimation();
-		setVisible(false);
-		break;
-	}
-	return messageResult;
-}
-
-AsScene2401WaterFlushing::AsScene2401WaterFlushing(NeverhoodEngine *vm, int16 x, int16 y)
-	: AnimatedSprite(vm, 1200), _countdown(0), _flushLoopCount(0) {
-
-	_x = x;
-	_y = y;
-	createSurface1(0xB8596884, 100);
-	setVisible(false);
-	SetUpdateHandler(&AsScene2401WaterFlushing::update);
-	SetMessageHandler(&AsScene2401WaterFlushing::handleMessage);
-}
-
-void AsScene2401WaterFlushing::update() {
-	if (_countdown != 0 && (--_countdown) == 0) {
-		setDoDeltaX(_vm->_rnd->getRandomNumber(1));
-		startAnimation(0xB8596884, 0, -1);
-		setVisible(true);
-	}
-	AnimatedSprite::update();
-}
-
-uint32 AsScene2401WaterFlushing::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
-	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
-	switch (messageNum) {
-	case 0x100D:
-		if (_flushLoopCount > 0 && param.asInteger() == 0x02421405) {
-			startAnimationByHash(0xB8596884, 0x01084280, 0);
-			_flushLoopCount--;
-		}
-		break;
-	case 0x2002:
-		if (param.asInteger() > 0) {
-			_flushLoopCount = param.asInteger() - 1;
-			_countdown = _vm->_rnd->getRandomNumber(3) + 1;
-		}
-		break;
-	case 0x3002:
-		stopAnimation();
-		setVisible(false);
-		break;
-	}
-	return messageResult;
-}
-
-AsScene2401Door::AsScene2401Door(NeverhoodEngine *vm, bool isOpen)
-	: AnimatedSprite(vm, 1100), _countdown(0), _isOpen(isOpen) {
-
-	_x = 320;
-	_y = 240;
-	createSurface1(0x44687810, 100);
-	_newStickFrameIndex = STICK_LAST_FRAME;
-	if (_isOpen) {
-		stopAnimation();
-		setVisible(false);
-		_countdown = 48;
-	} else {
-		startAnimation(0x44687810, 0, -1);
-		_newStickFrameIndex = 0;
-	}
-	SetUpdateHandler(&AsScene2401Door::update);
-	SetMessageHandler(&AsScene2401Door::handleMessage);
-}
-
-void AsScene2401Door::update() {
-	if (_isOpen && _countdown != 0 && (--_countdown) == 0) {
-		_isOpen = false;
-		setVisible(true);
-		startAnimation(0x44687810, -1, -1);
-		_newStickFrameIndex = 0;
-		_playBackwards = true;
-		playSound(0, calcHash("fxDoorClose38"));
-	}
-	AnimatedSprite::update();
-}
-
-uint32 AsScene2401Door::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
-	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
-	switch (messageNum) {
-	case 0x2004:
-		if (_isOpen)
-			_countdown = 168;
-		messageResult = _isOpen ? 1 : 0;
-		break;
-	case 0x3002:
-		gotoNextState();
-		break;
-	case 0x4808:
-		if (!_isOpen) {
-			_countdown = 168;
-			_isOpen = true;
-			setVisible(true);
-			startAnimation(0x44687810, 0, -1);
-			playSound(0, calcHash("fxDoorOpen38"));
-			NextState(&AsScene2401Door::stDoorOpenFinished);
-		}
-		break;
-	}
-	return messageResult;
-}
-
-void AsScene2401Door::stDoorOpenFinished() {
-	stopAnimation();
-	setVisible(false);
-}
-
 Scene2401::Scene2401(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule), _countdown1(0), _countdown2(0), _unkFlag(false),
 	_soundToggle(false), _asWaterSpitIndex(0) {
@@ -439,11 +253,11 @@ void Scene2401::update() {
 			if (puzzleSolved) {
 				setGlobalVar(V_NOTES_DOOR_UNLOCKED, 1);
 				setGlobalVar(V_NOTES_PUZZLE_SOLVED, 1);
-				sendMessage(_asDoor, 0x4808, 0);
+				sendMessage(_asDoor, NM_KLAYMEN_OPEN_DOOR, 0);
 			} else if (waterInside) {
 				playPipeSound(0xD0431020);
 				for (uint i = 0; i < 5; i++) {
-					sendMessage(_asWaterFlushing[i], 0x2002, getSubVar(VA_CURR_WATER_PIPES_LEVEL, i));
+					sendMessage(_asWaterFlushing[i], NM_POSITION_CHANGE, getSubVar(VA_CURR_WATER_PIPES_LEVEL, i));
 					setSubVar(VA_CURR_WATER_PIPES_LEVEL, i, 0);
 				}
 			}
@@ -469,7 +283,7 @@ void Scene2401::update() {
 uint32 Scene2401::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x402064D8)
 			sendEntityMessage(_klaymen, 0x1014, _ssButton);
 		else if (param.asInteger() == 0x02144CB1)
@@ -499,7 +313,7 @@ uint32 Scene2401::handleMessage(int messageNum, const MessageParam &param, Entit
 		} else if (param.asInteger() == 0x09C4B40A && _countdown2 > 12)
 			_countdown2 = 12;
 		break;
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		messageResult = 0;
 		for (uint32 i = 0; i < 5; i++)
 			if (kScene2401Rects[i].contains(_mouseClickPos.x, _mouseClickPos.y)) {
@@ -520,15 +334,15 @@ uint32 Scene2401::handleMessage(int messageNum, const MessageParam &param, Entit
 			_countdown1 = 8;
 		} else if (sender == _ssFloorButton && getGlobalVar(V_WATER_RUNNING)) {
 			_countdown2 = 144;
-			sendMessage(_asFlowingWater, 0x2002, 0);
+			sendMessage(_asFlowingWater, NM_POSITION_CHANGE, 0);
 			playSound(0, 0xE1130324);
 		}
 		break;
-	case 0x482A:
+	case NM_MOVE_TO_BACK:
 		_palette->addBasePalette(0xB103B604, 0, 65, 0);
 		_palette->startFadeToPalette(12);
 		break;
-	case 0x482B:
+	case NM_MOVE_TO_FRONT:
 		_palette->addBasePalette(0x91D3A391, 0, 65, 0);
 		_palette->startFadeToPalette(12);
 		break;
@@ -545,143 +359,6 @@ static const uint32 kScene2402FileHashes[] = {
 	0xD0910020, 0xD0910038, 0xD0910008,
 	0xD0910068, 0xD09100A8
 };
-
-AsScene2402Door::AsScene2402Door(NeverhoodEngine *vm, Scene *parentScene, bool isOpen)
-	: AnimatedSprite(vm, 1100), _parentScene(parentScene), _isOpen(isOpen), _countdown(0) {
-
-	_x = 320;
-	_y = 240;
-	createSurface1(0x80495831, 100);
-	if (_isOpen) {
-		startAnimation(0x80495831, -1, -1);
-		_newStickFrameIndex = STICK_LAST_FRAME;
-		_countdown = 48;
-	} else {
-		stopAnimation();
-		setVisible(false);
-	}
-	SetUpdateHandler(&AsScene2402Door::update);
-	SetMessageHandler(&AsScene2402Door::handleMessage);
-}
-
-void AsScene2402Door::update() {
-	if (_isOpen && _countdown != 0 && (--_countdown) == 0) {
-		_isOpen = false;
-		setVisible(true);
-		startAnimation(0x80495831, -1, -1);
-		_playBackwards = true;
-		playSound(0, calcHash("fxDoorClose38"));
-		NextState(&AsScene2402Door::stDoorClosingFinished);
-	}
-	AnimatedSprite::update();
-}
-
-uint32 AsScene2402Door::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
-	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
-	switch (messageNum) {
-	case 0x2000:
-		if (_isOpen)
-			_countdown = 144;
-		messageResult = _isOpen ? 1 : 0;
-		break;
-	case 0x3002:
-		gotoNextState();
-		break;
-	case 0x4808:
-		_countdown = 144;
-		_isOpen = true;
-		setVisible(true);
-		startAnimation(0x80495831, 0, -1);
-		_newStickFrameIndex = STICK_LAST_FRAME;
-		playSound(0, calcHash("fxDoorOpen38"));
-		break;
-	}
-	return messageResult;
-}
-
-void AsScene2402Door::stDoorClosingFinished() {
-	sendMessage(_parentScene, 0x2001, 0);
-	setVisible(false);
-}
-
-AsScene2402TV::AsScene2402TV(NeverhoodEngine *vm, Klaymen *klaymen)
-	: AnimatedSprite(vm, 1100), _klaymen(klaymen), _countdown1(0), _countdown2(0) {
-
-	_x = 260;
-	_y = 210;
-	createSurface(100, 127, 90);
-	setDoDeltaX(1);
-	SetMessageHandler(&Sprite::handleMessage);
-	if (!getGlobalVar(V_TV_JOKE_TOLD)) {
-		loadSound(0, 0x58208810);
-		_countdown1 = 48;
-		startAnimation(0x4919397A, 0, -1);
-		_newStickFrameIndex = 0;
-		SetUpdateHandler(&AsScene2402TV::upWait);
-	} else {
-		int16 frameIndex;
-		if (_klaymen->getX() > 320)
-			_currFrameIndex = 29;
-		frameIndex = CLIP<int16>((_klaymen->getX() - _x + 150) / 10, 0, 29);
-		startAnimation(0x050A0103, frameIndex, -1);
-		_newStickFrameIndex = frameIndex;
-		_countdown1 = 0;
-		SetUpdateHandler(&AsScene2402TV::upFocusKlaymen);
-	}
-}
-
-AsScene2402TV::~AsScene2402TV() {
-	_vm->_soundMan->deleteSoundGroup(0x01520123);
-}
-
-void AsScene2402TV::upWait() {
-	if (_countdown1 != 0 && (--_countdown1) == 0) {
-		startAnimation(0x4919397A, 0, -1);
-		SetMessageHandler(&AsScene2402TV::hmJoke);
-		NextState(&AsScene2402TV::stJokeFinished);
-	}
-	AnimatedSprite::update();
-}
-
-void AsScene2402TV::upFocusKlaymen() {
-	int16 frameIndex = CLIP<int16>((_klaymen->getX() - _x + 150) / 10, 0, 29);
-	if (frameIndex != _currFrameIndex) {
-		if (frameIndex > _currFrameIndex)
-			_currFrameIndex++;
-		else if (frameIndex < _currFrameIndex)
-			_currFrameIndex--;
-		startAnimation(0x050A0103, _currFrameIndex, -1);
-		_newStickFrameIndex = _currFrameIndex;
-		if (_countdown2 == 0) {
-			_vm->_soundMan->addSound(0x01520123, 0xC42D4528);
-			_vm->_soundMan->playSoundLooping(0xC42D4528);
-		}
-		_countdown2 = 5;
-	} else if (_countdown2 != 0 && (--_countdown2 == 0))
-		_vm->_soundMan->deleteSound(0xC42D4528);
-	AnimatedSprite::update();
-}
-
-void AsScene2402TV::stJokeFinished() {
-	setGlobalVar(V_TV_JOKE_TOLD, 1);
-	startAnimation(0x050A0103, 0, -1);
-	_newStickFrameIndex = 0;
-	SetUpdateHandler(&AsScene2402TV::upFocusKlaymen);
-}
-
-uint32 AsScene2402TV::hmJoke(int messageNum, const MessageParam &param, Entity *sender) {
-	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
-	switch (messageNum) {
-	case 0x100D:
-		if (param.asInteger() == 0x431EA0B0)
-			playSound(0);
-		break;
-	case 0x3002:
-		gotoNextState();
-		break;
-	}
-	return messageResult;
-}
 
 Scene2402::Scene2402(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule), _countdown(0), _soundToggle(false) {
@@ -734,7 +411,7 @@ Scene2402::~Scene2402() {
 void Scene2402::update() {
 	if (_countdown != 0 && (--_countdown) == 0) {
 		if (_pipeStatus >= 10) {
-			sendMessage(_asDoor, 0x4808, 0);
+			sendMessage(_asDoor, NM_KLAYMEN_OPEN_DOOR, 0);
 			_ssDoorFrame->loadSprite(0x00B415E0, kSLFDefDrawOffset | kSLFDefPosition);
 		} else if (_pipeStatus >= 5) {
 			_countdown = 8;
@@ -751,7 +428,7 @@ void Scene2402::update() {
 uint32 Scene2402::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x402064D8)
 			sendEntityMessage(_klaymen, 0x1014, _ssButton);
 		else if (param.asInteger() == 0x01C66840) {
@@ -839,13 +516,13 @@ Scene2403::Scene2403(NeverhoodEngine *vm, Module *parentModule, int which)
 uint32 Scene2403::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x040424D0)
 			sendEntityMessage(_klaymen, 0x1014, _ssButton);
 		else if (param.asInteger() == 0x180CE614)
 			sendEntityMessage(_klaymen, 0x1014, _asLightCord);
 		break;
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		_isClimbingLadder = true;
 		setRectList(0x004B5E28);
 		break;
@@ -864,7 +541,7 @@ uint32 Scene2403::handleMessage(int messageNum, const MessageParam &param, Entit
 			}
 		}
 		break;
-	case 0x480F:
+	case NM_KLAYMEN_LOWER_LEVER:
 		if (sender == _asLightCord)
 			leaveScene(2);
 		break;
@@ -960,7 +637,7 @@ Scene2406::Scene2406(NeverhoodEngine *vm, Module *parentModule, int which)
 uint32 Scene2406::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x41062804) {
 			if (getGlobalVar(V_SPIKES_RETRACTED))
 				setMessageList(0x004B7758);
@@ -968,7 +645,7 @@ uint32 Scene2406::handleMessage(int messageNum, const MessageParam &param, Entit
 				setMessageList(0x004B7738);
 		}
 		break;
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		_isClimbingLadder = true;
 		setRectList(0x004B78D8);
 		break;

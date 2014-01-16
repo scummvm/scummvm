@@ -29,6 +29,8 @@
 #include <FBase.h>
 #include <FUiITouchEventListener.h>
 #include <FUiITextEventListener.h>
+#include <FUiCtrlIFormBackEventListener.h>
+#include <FUiCtrlIFormMenuEventListener.h>
 
 #include "config.h"
 #include "common/scummsys.h"
@@ -40,6 +42,7 @@
 using namespace Tizen::Ui;
 using namespace Tizen::Graphics;
 using namespace Tizen::Base::Runtime;
+using namespace Tizen::Ui::Controls;
 
 //
 // TizenAppForm
@@ -48,7 +51,9 @@ class TizenAppForm :
 	public Controls::Form,
 	public IRunnable,
 	public IOrientationEventListener,
-	public ITouchEventListener {
+	public ITouchEventListener,
+	public IFormBackEventListener,
+	public IFormMenuEventListener {
 
 public:
 	TizenAppForm();
@@ -89,6 +94,8 @@ private:
 	void OnTouchReleased(const Control &source,
 			const Point &currentPosition,
 			const TouchEventInfo &touchInfo);
+	void OnFormBackRequested(Form &source);
+	void OnFormMenuRequested(Form &source);
 
 	void pushEvent(Common::EventType type, const Point &currentPosition);
 	void terminate();

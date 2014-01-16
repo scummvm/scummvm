@@ -83,6 +83,7 @@ class Scene;
 class SceneHotspot {
 public:
 	enum Action {
+		kActionNone = 0,
 		kActionInventory = 1,
 		kActionSavePoint = 2,
 		kActionPlaySound = 3,
@@ -152,8 +153,19 @@ public:
 	byte cursor;
 	uint32 next;
 
-	SceneHotspot() {}
+	SceneHotspot() {
+		coordsOffset = 0;
+		scene = kSceneNone;
+		location = 0;
+		action = kActionNone;
+		param1 = 0;
+		param2 = 0;
+		param3 = 0;
+		cursor = 0;
+		next = 0;
+	}
 	~SceneHotspot();
+
 	static SceneHotspot *load(Common::SeekableReadStream *stream);
 
 	bool isInside(const Common::Point &point);

@@ -56,7 +56,7 @@ enum {
 
 static const char *copyright_text[] = {
 "",
-"C0""Copyright (C) 2001-2013 The ScummVM project",
+"C0""Copyright (C) 2001-2014 The ScummVM Team",
 "C0""http://www.scummvm.org",
 "",
 "C0""ScummVM is the legal property of its developers, whose names are too numerous to list here. Please refer to the COPYRIGHT file distributed with this binary.",
@@ -180,8 +180,9 @@ void AboutDialog::close() {
 }
 
 void AboutDialog::drawDialog() {
-//	g_gui.theme()->setDrawArea(Common::Rect(_x, _y, _x+_w, _y+_h));
 	Dialog::drawDialog();
+
+	setTextDrawableArea(Common::Rect(_x, _y, _x + _w, _y + _h));
 
 	// Draw text
 	// TODO: Add a "fade" effect for the top/bottom text lines
@@ -239,8 +240,8 @@ void AboutDialog::drawDialog() {
 			while (*str && *str == ' ')
 				str++;
 
-		if (*str && y > _y && y + g_gui.theme()->getFontHeight() < _y + _h)
-			g_gui.theme()->drawText(Common::Rect(_x + _xOff, y, _x + _w - _xOff, y + g_gui.theme()->getFontHeight()), str, state, align, ThemeEngine::kTextInversionNone, 0, false);
+		if (*str) 
+			g_gui.theme()->drawText(Common::Rect(_x + _xOff, y, _x + _w - _xOff, y + g_gui.theme()->getFontHeight()), str, state, align, ThemeEngine::kTextInversionNone, 0, false, ThemeEngine::kFontStyleBold, ThemeEngine::kFontColorNormal, true, _textDrawableArea);
 		y += _lineHeight;
 	}
 }

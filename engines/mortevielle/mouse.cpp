@@ -33,14 +33,16 @@
 
 namespace Mortevielle {
 
+MouseHandler::MouseHandler(MortevielleEngine *vm) {
+	_vm = vm;
+}
+
 /**
  * Initialize the mouse
  * @remarks	Originally called 'init_mouse'
  */
 void MouseHandler::initMouse() {
-	_counter = 0;
 	_pos = Common::Point(0, 0);
-
 	_vm->setMouseClick(false);
 }
 
@@ -65,8 +67,8 @@ void MouseHandler::showMouse() {
  * @remarks	Originally called 'pos_mouse'
  */
 void MouseHandler::setMousePosition(Common::Point newPos) {
-	if (newPos.x > 314 * _vm->_resolutionScaler)
-		newPos.x = 314 * _vm->_resolutionScaler;
+	if (newPos.x > 314 * kResolutionScaler)
+		newPos.x = 314 * kResolutionScaler;
 	else if (newPos.x < 0)
 		newPos.x = 0;
 	if (newPos.y > 199)
@@ -138,16 +140,16 @@ void MouseHandler::moveMouse(bool &funct, char &key) {
 			cy = 190;
 			break;
 		case '9':
-			cx = 315 * _vm->_resolutionScaler;
+			cx = 315 * kResolutionScaler;
 			cy = 1;
 			break;
 		case '3':
 			cy = 190;
-			cx = 315 * _vm->_resolutionScaler;
+			cx = 315 * kResolutionScaler;
 			break;
 		case '5':
 			cy = 100;
-			cx = 155 * _vm->_resolutionScaler;
+			cx = 155 * kResolutionScaler;
 			break;
 		case ' ':
 		case '\15':
@@ -201,27 +203,27 @@ void MouseHandler::moveMouse(bool &funct, char &key) {
 			}
 			break;
 		case 'I':
-			cx = _vm->_resolutionScaler * 32;
+			cx = kResolutionScaler * 32;
 			cy = 8;
 			break;
 		case 'D':
-			cx = 80 * _vm->_resolutionScaler;
+			cx = 80 * kResolutionScaler;
 			cy = 8;
 			break;
 		case 'A':
-			cx = 126 * _vm->_resolutionScaler;
+			cx = 126 * kResolutionScaler;
 			cy = 8;
 			break;
 		case 'S':
-			cx = 174 * _vm->_resolutionScaler;
+			cx = 174 * kResolutionScaler;
 			cy = 8;
 			break;
 		case 'P':
-			cx = 222 * _vm->_resolutionScaler;
+			cx = 222 * kResolutionScaler;
 			cy = 8;
 			break;
 		case 'F':
-			cx = _vm->_resolutionScaler * 270;
+			cx = kResolutionScaler * 270;
 			cy = 8;
 			break;
 		case '\23':
@@ -264,10 +266,6 @@ bool MouseHandler::isMouseIn(Common::Rect r) {
 		return true;
 
 	return false;
-}
-
-void MouseHandler::setParent(MortevielleEngine *vm) {
-	_vm = vm;
 }
 
 } // End of namespace Mortevielle

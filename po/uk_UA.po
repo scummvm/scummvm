@@ -1,5 +1,5 @@
 # Ukrainian translation for ScummVM.
-# Copyright (C) 2010-2013 ScummVM Team
+# Copyright (C) 2010-2014 ScummVM Team
 # This file is distributed under the same license as the ScummVM package.
 # Lubomyr Lisen, 2010.
 #

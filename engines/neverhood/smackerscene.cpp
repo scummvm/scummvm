@@ -104,15 +104,15 @@ void SmackerScene::update() {
 uint32 SmackerScene::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x0009:
+	case NM_KEYPRESS_SPACE:
 		if ((_videoPlayedBefore && _canSkip) || (_canAbort && _canSkip))
 			_playNextVideoFlag = true;
 		break;
-	case 0x000C:
+	case NM_KEYPRESS_ESC:
 		if (_canAbort)
 			sendMessage(_parentModule, 0x1009, 0);
 		break;
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		_playNextVideoFlag = true;
 		break;
 	}
