@@ -86,7 +86,7 @@ bool Console::Cmd_RemoveBreakpoint(int argc, const char **argv) {
 bool Console::Cmd_EnableBreakpoint(int argc, const char **argv) {
 	if (argc == 2) {
 		Error error = ADAPTER->enableBreakpoint(atoi(argv[1]));
-		DebugPrintf ("%s: %s", argv[0], error.getErrorDisplayStr().c_str());
+		DebugPrintf("%s: %s\n", argv[0], error.getErrorDisplayStr().c_str());
 	} else {
 		DebugPrintf("Usage: %s <id> to enable\n", argv[0]);
 	}
@@ -96,7 +96,7 @@ bool Console::Cmd_EnableBreakpoint(int argc, const char **argv) {
 bool Console::Cmd_DisableBreakpoint(int argc, const char **argv) {
 	if (argc == 2) {
 		Error error = ADAPTER->disableBreakpoint(atoi(argv[1]));
-		DebugPrintf ("%s: %s", argv[0], error.getErrorDisplayStr().c_str());
+		DebugPrintf("%s: %s\n", argv[0], error.getErrorDisplayStr().c_str());
 	} else {
 		DebugPrintf("Usage: %s <id> to disable\n", argv[0]);
 	}
@@ -117,7 +117,7 @@ bool Console::Cmd_RemoveWatchpoint(int argc, const char **argv) {
 bool Console::Cmd_EnableWatchpoint(int argc, const char **argv) {
 	if (argc == 2) {
 		Error error = ADAPTER->enableWatchpoint(atoi(argv[1]));
-		DebugPrintf ("%s: %s", argv[0], error.getErrorDisplayStr().c_str());
+		DebugPrintf("%s: %s", argv[0], error.getErrorDisplayStr().c_str());
 	} else {
 		DebugPrintf("Usage: %s <id> to enable\n", argv[0]);
 	}
@@ -128,7 +128,7 @@ bool Console::Cmd_EnableWatchpoint(int argc, const char **argv) {
 bool Console::Cmd_DisableWatchpoint(int argc, const char **argv) {
 	if (argc == 2) {
 		Error error = ADAPTER->disableWatchpoint(atoi(argv[1]));
-		DebugPrintf ("%s: %s", argv[0], error.getErrorDisplayStr().c_str());
+		DebugPrintf("%s: %s\n", argv[0], error.getErrorDisplayStr().c_str());
 	} else {
 		DebugPrintf("Usage: %s <id> to disable\n", argv[0]);
 	}
@@ -186,7 +186,7 @@ bool Console::Cmd_Info(int argc, const char **argv) {
 bool Console::Cmd_StepOver(int argc, const char **argv) {
 	if (argc == 1) {
 		Error error = ADAPTER->stepOver();
-		DebugPrintf("%s", error.getErrorDisplayStr().c_str());
+		DebugPrintf("%s: %s\n", error.getErrorDisplayStr().c_str());
 	} else {
 		DebugPrintf("Usage: %s to continue\n", argv[0]);
 		return true;
@@ -196,7 +196,7 @@ bool Console::Cmd_StepOver(int argc, const char **argv) {
 bool Console::Cmd_StepInto(int argc, const char **argv) {
 	if (argc == 1) {
 		Error error = ADAPTER->stepInto();
-		DebugPrintf("%s", error.getErrorDisplayStr().c_str());
+		DebugPrintf("%s: %s\n", error.getErrorDisplayStr().c_str());
 	} else {
 		DebugPrintf("Usage: %s to continue\n", argv[0]);
 		return true;
@@ -206,7 +206,7 @@ bool Console::Cmd_StepInto(int argc, const char **argv) {
 bool Console::Cmd_Continue(int argc, const char **argv) {
 	if (argc == 1) {
 		Error error = ADAPTER->stepContinue();
-		DebugPrintf("%s", error.getErrorDisplayStr().c_str());
+		DebugPrintf("%s: %s\n", error.getErrorDisplayStr().c_str());
 	} else {
 		DebugPrintf("Usage: %s to continue\n", argv[0]);
 		return true;
@@ -216,7 +216,7 @@ bool Console::Cmd_Continue(int argc, const char **argv) {
 bool Console::Cmd_Finish(int argc, const char **argv) {
 	if (argc == 1) {
 		Error error = ADAPTER->stepFinish();
-		DebugPrintf("%s", error.getErrorDisplayStr().c_str());
+		DebugPrintf("%s: %s\n", error.getErrorDisplayStr().c_str());
 	} else {
 		DebugPrintf("Usage: %s to continue\n", argv[0]);
 		return true;
@@ -239,7 +239,7 @@ bool Console::Cmd_Print(int argc, const char **argv) {
 			DebugPrintf("%s = %s \n", argv[1], temp.c_str());
 			return true;
 		} else {
-			DebugPrintf("%s, %s:", argv[0], error.getErrorDisplayStr().c_str());
+			DebugPrintf("%s: %s\n", argv[0], error.getErrorDisplayStr().c_str());
 			return true;
 		}
 	} else {
@@ -257,7 +257,7 @@ bool Console::Cmd_Set(int argc, const char **argv) {
 			assert(val);
 			DebugPrintf("%s = %s\n", argv[1], val->getString());
 		} else {
-			DebugPrintf("%s", error.getErrorDisplayStr().c_str());
+			DebugPrintf("%s: %s\n", error.getErrorDisplayStr().c_str());
 		}
 	} else {
 		DebugPrintf("Usage: %s <name> = <value> to set <name> to <value>\n", argv[0]);
@@ -272,7 +272,7 @@ bool Console::Cmd_SetType(int argc, const char **argv) {
 		if (error.errorLevel == SUCCESS) {
 			DebugPrintf("%s: OK\n", argv[0]);
 		} else {
-			DebugPrintf("%s", error.getErrorDisplayStr().c_str());
+			DebugPrintf("%s: %s\n", error.getErrorDisplayStr().c_str());
 		}
 	} else {
 		DebugPrintf("Usage: %s <name> <value> to set type of <name>", argv[0]);
@@ -302,7 +302,7 @@ bool Console::Cmd_DumpRes(int argc, const char **argv) {
 		if (error.errorLevel == SUCCESS) {
 			DebugPrintf("%s = %s \n", argv[1], res.c_str());
 		} else {
-			DebugPrintf("%s: %s", argv[0], error.getErrorDisplayStr().c_str());
+			DebugPrintf("%s: %s\n", argv[0], error.getErrorDisplayStr().c_str());
 		}
 	} else {
 		DebugPrintf("Usage: %s [true|false]\n", argv[0]);
