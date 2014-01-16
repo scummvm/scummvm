@@ -963,7 +963,7 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 
 					// Ok, we can perform the action. For convenience, we do it in a new process
 					_ctx->newItem = (LpMpalItem)globalAlloc(GMEM_FIXED | GMEM_ZEROINIT, sizeof(MpalItem));
-					if (_ctx->newItem == false) {
+					if (!_ctx->newItem) {
 						globalDestroy(_ctx->myThreads);
 						globalDestroy(_ctx->myActions);
 
