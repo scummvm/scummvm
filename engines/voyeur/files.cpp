@@ -739,6 +739,7 @@ PictureResource::PictureResource(BoltFilesState &state, const byte *src) {
 	_planeSize = READ_LE_UINT16(&src[22]);
 
 	_imgData = NULL;
+	_freeImgData = DisposeAfterUse::YES;
 
 	int nbytes = _bounds.width() * _bounds.height();
 	if (_flags & PICFLAG_20) {
@@ -754,9 +755,18 @@ PictureResource::PictureResource(BoltFilesState &state, const byte *src) {
 			else
 				flipVertical(srcData);
 		} else {
-			error("TODO: sInitPic - Case !(40 | 80)");
+			uint32 id = READ_LE_UINT32(&src[18]) >> 16;
+			byte *imgData = state._curLibPtr->boltEntry(id)._picResource->_imgData;
+			_freeImgData = DisposeAfterUse::NO;
+
+			if (_flags & PICFLAG_PIC_OFFSET) {
+				_imgData = imgData + (READ_LE_UINT32(&src[18]) & 0xffff);
+			} else {
+				warning("TODO: Double-check if this is correct");
+				_imgData = imgData + (READ_LE_UINT32(&src[18]) & 0xffff);
+			}
 		}
-	} else if (_flags & PICFLAG_8) {
+	} else if (_flags & PICFLAG_PIC_OFFSET) {
 		int mode = 0;
 		if (_bounds.width() == 320) {
 			mode = 147;
@@ -786,18 +796,23 @@ PictureResource::PictureResource(BoltFilesState &state, const byte *src) {
 			state._vm->_graphicsManager.clearPalette();			
 		}
 
-//		byte *imgData = _imgData;
-		if (_flags & PICFLAG_10) {
-			// TODO: Figure out what it's doing. Looks like a direct clearing
-			// of the screen directly
-			error("TODO: sInitPic - Case 10");
+		int screenOffset = READ_LE_UINT32(&src[18]) & 0xffff;
+		assert(screenOffset == 0);
+
+		if (_flags & PICFLAG_CLEAR_SCREEN) {
+			// Clear screen picture. That's right. This game actually has a picture
+			// resource flag to clear the screen! Bizarre.
+			Graphics::Surface &s = state._vm->_graphicsManager._screenSurface;
+			s.fillRect(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 0);
 		} else {
-			// TODO: Figure out direct screen loading
-			error("TODO: sInitPic - Case !10");
+			// Direct sceren loading picture. In this case, the raw data of the resource
+			// is directly decompressed into the screen surface. Again, bizarre.
+			byte *pDest = (byte *)state._vm->_graphicsManager._screenSurface.getPixels();
+			state.decompress(pDest, SCREEN_WIDTH * SCREEN_HEIGHT, state._curMemberPtr->_mode);
 		}
 	} else {
-		if (_flags & PICFLAG_1000) {
-			if (!(_flags & PICFLAG_10))
+		if (_flags & PICFLAG_CLEAR_SCREEN00) {
+			if (!(_flags & PICFLAG_CLEAR_SCREEN))
 				nbytes = state._curMemberPtr->_size - 24;
 
 			int mask = (nbytes + 0x3FFF) >> 14;
@@ -818,7 +833,7 @@ PictureResource::PictureResource(BoltFilesState &state, const byte *src) {
 			}
 		}
 
-		if (_flags & PICFLAG_10) {
+		if (_flags & PICFLAG_CLEAR_SCREEN) {
 			_imgData = new byte[nbytes];
 			Common::fill(_imgData, _imgData + nbytes, 0);
 		} else {
@@ -838,6 +853,7 @@ PictureResource::PictureResource(Graphics::Surface *surface) {
 	
 	_bounds = Common::Rect(0, 0, surface->w, surface->h);
 	_imgData = (byte *)surface->getPixels();
+	_freeImgData = DisposeAfterUse::NO;
 }
 
 PictureResource::PictureResource() {
@@ -850,6 +866,7 @@ PictureResource::PictureResource() {
 	_planeSize = 0;
 
 	_imgData = NULL;
+	_freeImgData = DisposeAfterUse::NO;
 }
 
 PictureResource::PictureResource(int flags, int select, int pick, int onOff, 
@@ -867,7 +884,8 @@ PictureResource::PictureResource(int flags, int select, int pick, int onOff,
 }
 
 PictureResource::~PictureResource() {
-	delete[] _imgData;
+	if (_freeImgData == DisposeAfterUse::YES)
+		delete[] _imgData;
 }
 
 void PictureResource::flipHorizontal(const byte *data) {

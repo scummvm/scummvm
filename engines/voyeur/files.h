@@ -254,8 +254,8 @@ public:
 
 /* bvoy.blt resource types */
 
-enum PictureFlag { PICFLAG_8 = 8, PICFLAG_10 = 0x10, PICFLAG_20 = 0x20, 
-	PICFLAG_HFLIP = 0x40, PICFLAG_VFLIP = 0x80, PICFLAG_1000 = 0x1000 };
+enum PictureFlag { PICFLAG_PIC_OFFSET = 8, PICFLAG_CLEAR_SCREEN = 0x10, PICFLAG_20 = 0x20, 
+	PICFLAG_HFLIP = 0x40, PICFLAG_VFLIP = 0x80, PICFLAG_CLEAR_SCREEN00 = 0x1000 };
 
 class PictureResource: public DisplayResource {
 private:
@@ -277,7 +277,15 @@ public:
 	uint32 _maskData;
 	uint _planeSize;
 
+	/**
+	 * Image data for the picture
+	 */
 	byte *_imgData;
+
+	/**
+	 * Flag to indicate whether to free the image data
+	 */
+	DisposeAfterUse::Flag _freeImgData;
 public:
 	PictureResource(BoltFilesState &state, const byte *src);
 	PictureResource(int flags, int select, int pick, int onOff, int depth, 
