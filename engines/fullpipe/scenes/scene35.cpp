@@ -76,11 +76,13 @@ void scene35_initScene(Scene *sc) {
 }
 
 void sceneHandler35_stopFlow() {
-	warning("STUB: sceneHandler35_stopFlow()");
+	g_fp->setObjectState(sO_Valve_35, g_fp->getObjectEnumState(sO_Valve_35, sO_TurnedOff));
+	g_fp->stopAllSoundInstances(SND_35_011);
+	g_fp->playSound(SND_35_026, 0);
 }
 
 void sceneHandler35_shrink() {
-	warning("STUB: sceneHandler35_shrink()");
+	getCurrSceneSc2MotionController()->enableLinks(sO_CloseThing, 0);
 }
 
 void sceneHandler35_startFlow() {

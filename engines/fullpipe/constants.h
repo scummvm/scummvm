@@ -1270,6 +1270,7 @@ namespace Fullpipe {
 #define QU_SC35_EXITLIFT 2816
 #define SND_35_011 4509
 #define SND_35_012 4510
+#define SND_35_026 4863
 #define ST_HZE_NORM 2426
 #define ST_PDV_LARGE 2421
 #define ST_PDV_SMALL 2420
