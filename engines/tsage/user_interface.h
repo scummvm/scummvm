@@ -37,7 +37,6 @@ public:
 
 class UIElement: public BackgroundSceneObject {
 public:
-	int _field88;
 	bool _enabled;
 	int _frameNum;
 
@@ -95,6 +94,8 @@ public:
 };
 
 class UICollection: public EventHandler {
+private:
+	void r2rDrawFrame();
 protected:
 	void erase();
 public:

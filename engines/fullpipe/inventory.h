@@ -42,13 +42,15 @@ struct InventoryPoolItem {
 
 typedef Common::Array<InventoryPoolItem *> InventoryPoolItems;
 
-class CInventory : public CObject {
+class Inventory : public CObject {
  protected:
 	int16 _sceneId;
 	InventoryPoolItems _itemsPool;
 
  public:
-	CInventory() { _sceneId = 0; }
+	Inventory() { _sceneId = 0; }
+	virtual ~Inventory();
+
 	virtual bool load(MfcArchive &file);
 
 	int getInventoryPoolItemIndexById(int itemId);
@@ -83,7 +85,7 @@ struct InventoryIcon {
 
 typedef Common::Array<InventoryIcon *> InventoryIcons;
 
-class CInventory2 : public CInventory {
+class Inventory2 : public Inventory {
 	InventoryItems _inventoryItems;
 	InventoryIcons _inventoryIcons;
 	int _selectedId;
@@ -95,7 +97,9 @@ class CInventory2 : public CInventory {
 	BigPicture *_picture;
 
  public:
-	CInventory2();
+	Inventory2();
+	virtual ~Inventory2();
+
 	bool loadPartial(MfcArchive &file);
 	void addItem(int itemId, int count);
 	void addItem2(StaticANIObject *obj);

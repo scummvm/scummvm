@@ -75,13 +75,13 @@ static const byte stdMouseCursor[] = {
 
 
 Screen::Screen(HugoEngine *vm) : _vm(vm) {
-	_mainPalette = 0;
-	_curPalette = 0;
+	_mainPalette = nullptr;
+	_curPalette = nullptr;
 	_dlAddIndex = 0;
 	_dlRestoreIndex = 0;
 
 	for (int i = 0; i < kNumFonts; i++) {
-		_arrayFont[i] = 0;
+		_arrayFont[i] = nullptr;
 		fontLoadedFl[i] = false;
 	}
 	for (int i = 0; i < kBlitListSize; i++) {
@@ -100,6 +100,8 @@ Screen::Screen(HugoEngine *vm) : _vm(vm) {
 		_dlRestoreList[i]._dx = 0;
 		_dlRestoreList[i]._dy = 0;
 	}
+	_fnt = 0;
+	_paletteSize = 0;
 }
 
 Screen::~Screen() {

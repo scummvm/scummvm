@@ -33,11 +33,14 @@
 #include "fullpipe/behavior.h"
 #include "fullpipe/modal.h"
 #include "fullpipe/input.h"
+#include "fullpipe/motion.h"
 #include "fullpipe/scenes.h"
+#include "fullpipe/floaters.h"
+#include "fullpipe/console.h"
 
 namespace Fullpipe {
 
-FullpipeEngine *g_fullpipe = 0;
+FullpipeEngine *g_fp = 0;
 Vars *g_vars = 0;
 
 FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
@@ -50,6 +53,7 @@ FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
 
 	_rnd = new Common::RandomSource("fullpipe");
+	_console = 0;
 
 	_gameProjectVersion = 0;
 	_pictureScale = 8;
@@ -80,7 +84,7 @@ FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc)
 
 	_gameContinue = true;
 	_needRestart = false;
-	_flgPlayIntro = false;
+	_flgPlayIntro = true;
 	_gamePaused = false;
 	_inputArFlag = false;
 	_recordEvents = false;
@@ -90,12 +94,17 @@ FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_isProcessingMessages = false;
 
 	_musicAllowed = -1;
+	_musicGameVar = 0;
 
 	_aniMan = 0;
 	_aniMan2 = 0;
 	_currentScene = 0;
+	_loaderScene = 0;
 	_scene2 = 0;
+	_scene3 = 0;
 	_movTable = 0;
+	_floaters = 0;
+	_mgm = 0;
 
 	_globalMessageQueueList = 0;
 	_messageHandlers = 0;
@@ -142,14 +151,22 @@ FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_objectAtCursor = 0;
 	_objectIdAtCursor = 0;
 
+	_arcadeOverlay = 0;
+	_arcadeOverlayHelper = 0;
+	_arcadeOverlayX = 0;
+	_arcadeOverlayY = 0;
+	_arcadeOverlayMidX = 0;
+	_arcadeOverlayMidY = 0;
+
 	_isSaveAllowed = true;
 
-	g_fullpipe = this;
+	g_fp = this;
 	g_vars = new Vars;
 }
 
 FullpipeEngine::~FullpipeEngine() {
 	delete _rnd;
+	delete _console;
 	delete _globalMessageQueueList;
 }
 
@@ -161,6 +178,9 @@ void FullpipeEngine::initialize() {
 	_sceneRect.top = 0;
 	_sceneRect.right = 799;
 	_sceneRect.bottom = 599;
+
+	_floaters = new Floaters;
+	_mgm = new MGM;
 }
 
 Common::Error FullpipeEngine::run() {
@@ -170,13 +190,15 @@ Common::Error FullpipeEngine::run() {
 
 	_backgroundSurface.create(800, 600, format);
 
+	_console = new Console(this);
+
 	initialize();
 
 	_isSaveAllowed = false;
 
 	int scene = 0;
 	if (ConfMan.hasKey("boot_param"))
-		scene = ConfMan.getInt("boot_param");
+		scene = convertScene(ConfMan.getInt("boot_param"));
 
 	if (!loadGam("fullpipe.gam", scene))
 		return Common::kNoGameDataFoundError;
@@ -236,7 +258,7 @@ void FullpipeEngine::updateEvents() {
 							_modalObject->update();
 						} else {
 							_modalObject->saveload();
-							CBaseModalObject *obj = _modalObject->_parentObj;
+							BaseModalObject *obj = _modalObject->_parentObj;
 							if (obj)
 								delete _modalObject;
 							_modalObject = obj;
@@ -268,6 +290,11 @@ void FullpipeEngine::updateEvents() {
 				return;
 				break;
 			default:
+				if (event.kbd.keycode == Common::KEYCODE_d && event.kbd.hasFlags(Common::KBD_CTRL)) {
+					// Start the debugger
+					getDebugger()->attach();
+					getDebugger()->onFrame();
+				}
 				ex = new ExCommand(0, 17, 36, 0, 0, 0, 1, 0, 0, 0);
 				ex->_keyCode = event.kbd.keycode;
 				ex->_excFlags |= 3;
@@ -360,7 +387,7 @@ void FullpipeEngine::updateScreen() {
 				_modalObject->update();
 			} else {
 				_modalObject->saveload();
-				CBaseModalObject *tmp = _modalObject->_parentObj;
+				BaseModalObject *tmp = _modalObject->_parentObj;
 
 				delete _modalObject;
 
@@ -389,7 +416,7 @@ void FullpipeEngine::updateScreen() {
 }
 
 int FullpipeEngine::getObjectEnumState(const char *name, const char *state) {
-	CGameVar *var = _gameLoader->_gameVar->getSubVarByName("OBJSTATES");
+	GameVar *var = _gameLoader->_gameVar->getSubVarByName("OBJSTATES");
 
 	if (!var) {
 		var = _gameLoader->_gameVar->addSubVarAsInt("OBJSTATES", 0);
@@ -406,7 +433,7 @@ int FullpipeEngine::getObjectEnumState(const char *name, const char *state) {
 }
 
 int FullpipeEngine::getObjectState(const char *objname) {
-	CGameVar *var = _gameLoader->_gameVar->getSubVarByName("OBJSTATES");
+	GameVar *var = _gameLoader->_gameVar->getSubVarByName("OBJSTATES");
 
 	if (var)
 		return var->getSubVarAsInt(objname);
@@ -415,28 +442,13 @@ int FullpipeEngine::getObjectState(const char *objname) {
 }
 
 void FullpipeEngine::setObjectState(const char *name, int state) {
-	CGameVar *var = _gameLoader->_gameVar->getSubVarByName("OBJSTATES");
+	GameVar *var = _gameLoader->_gameVar->getSubVarByName("OBJSTATES");
 
 	if (!var) {
 		var = _gameLoader->_gameVar->addSubVarAsInt("OBJSTATES", 0);
 	}
 
 	var->setSubVarAsInt(name, state);
-}
-
-void FullpipeEngine::updateMapPiece(int mapId, int update) {
-	for (int i = 0; i < 200; i++) {
-		int hiWord = (_mapTable[i] >> 16) & 0xffff;
-
-		if (hiWord == mapId) {
-			_mapTable[i] |= update;
-			return;
-		}
-		if (!hiWord) {
-			_mapTable[i] = (mapId << 16) | update;
-			return;
-		}
-	}
 }
 
 void FullpipeEngine::disableSaves(ExCommand *ex) {

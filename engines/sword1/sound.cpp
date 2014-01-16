@@ -269,9 +269,8 @@ void Sound::playSample(QueueElement *elem) {
 				uint8 volume = (volR + volL) / 2;
 
 				if (SwordEngine::isPsx()) {
-					// We ignore FX_LOOP as XA has its own looping mechanism
 					uint32 size = READ_LE_UINT32(sampleData);
-					Audio::AudioStream *audStream = Audio::makeXAStream(new Common::MemoryReadStream(sampleData + 4, size - 4), 11025);
+					Audio::AudioStream *audStream = Audio::makeLoopingAudioStream(Audio::makeXAStream(new Common::MemoryReadStream(sampleData + 4, size - 4), 11025), (_fxList[elem->id].type == FX_LOOP) ? 0 : 1);
 					_mixer->playStream(Audio::Mixer::kSFXSoundType, &elem->handle, audStream, elem->id, volume, pan);
 				} else {
 					uint32 size = READ_LE_UINT32(sampleData + 0x28);

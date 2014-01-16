@@ -491,7 +491,7 @@ Animator_LoK::AnimObject *Animator_LoK::objectAddHead(AnimObject *queue, AnimObj
 }
 
 Animator_LoK::AnimObject *Animator_LoK::objectQueue(AnimObject *queue, AnimObject *add) {
-	if (add->drawY <= queue->drawY || !queue) {
+	if (!queue || add->drawY <= queue->drawY) {
 		add->nextAnimObject = queue;
 		return add;
 	}

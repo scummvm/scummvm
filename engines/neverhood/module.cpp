@@ -48,7 +48,7 @@ void Module::draw() {
 uint32 Module::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	switch (messageNum) {
 	case 0x0008:
-		sendMessage(_parentModule, 8, 0);
+		sendMessage(_parentModule, 0x0008, 0);
 		return 0;
 	case 0x1009:
 		_moduleResult = param.asInteger();

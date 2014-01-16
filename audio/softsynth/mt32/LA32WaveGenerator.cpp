@@ -370,18 +370,12 @@ void LA32PartialPair::generateNextSample(const PairType useMaster, const Bit32u 
 	}
 }
 
-Bit16s LA32PartialPair::unlogAndMixWGOutput(const LA32WaveGenerator &wg, const LogSample * const ringModulatingLogSample) {
-	if (!wg.isActive() || ((ringModulatingLogSample != NULL) && (ringModulatingLogSample->logValue == SILENCE.logValue))) {
+Bit16s LA32PartialPair::unlogAndMixWGOutput(const LA32WaveGenerator &wg) {
+	if (!wg.isActive()) {
 		return 0;
 	}
-	LogSample firstLogSample = wg.getOutputLogSample(true);
-	LogSample secondLogSample = wg.getOutputLogSample(false);
-	if (ringModulatingLogSample != NULL) {
-		LA32Utilites::addLogSamples(firstLogSample, *ringModulatingLogSample);
-		LA32Utilites::addLogSamples(secondLogSample, *ringModulatingLogSample);
-	}
-	Bit16s firstSample = LA32Utilites::unlog(firstLogSample);
-	Bit16s secondSample = LA32Utilites::unlog(secondLogSample);
+	Bit16s firstSample = LA32Utilites::unlog(wg.getOutputLogSample(true));
+	Bit16s secondSample = LA32Utilites::unlog(wg.getOutputLogSample(false));
 	if (wg.isPCMWave()) {
 		return Bit16s(firstSample + ((Bit32s(secondSample - firstSample) * wg.getPCMInterpolationFactor()) >> 7));
 	}
@@ -389,19 +383,32 @@ Bit16s LA32PartialPair::unlogAndMixWGOutput(const LA32WaveGenerator &wg, const L
 }
 
 Bit16s LA32PartialPair::nextOutSample() {
-	if (ringModulated) {
-		LogSample slaveFirstLogSample = slave.getOutputLogSample(true);
-		LogSample slaveSecondLogSample = slave.getOutputLogSample(false);
-		Bit16s sample = unlogAndMixWGOutput(master, &slaveFirstLogSample);
-		if (!slave.isPCMWave()) {
-			sample += unlogAndMixWGOutput(master, &slaveSecondLogSample);
-		}
-		if (mixed) {
-			sample += unlogAndMixWGOutput(master, NULL);
-		}
-		return sample;
+	if (!ringModulated) {
+		return unlogAndMixWGOutput(master) + unlogAndMixWGOutput(slave);
 	}
-	return unlogAndMixWGOutput(master, NULL) + unlogAndMixWGOutput(slave, NULL);
+
+	/*
+	 * SEMI-CONFIRMED: Ring modulation model derived from sample analysis of specially constructed patches which exploit distortion.
+	 * LA32 ring modulator found to produce distorted output in case if the absolute value of maximal amplitude of one of the input partials exceeds 8191.
+	 * This is easy to reproduce using synth partials with resonance values close to the maximum. It looks like an integer overflow happens in this case.
+	 * As the distortion is strictly bound to the amplitude of the complete mixed square + resonance wave in the linear space,
+	 * it is reasonable to assume the ring modulation is performed also in the linear space by sample multiplication.
+	 * Most probably the overflow is caused by limited precision of the multiplication circuit as the very similar distortion occurs with panning.
+	 */
+	Bit16s nonOverdrivenMasterSample = unlogAndMixWGOutput(master); // Store master partial sample for further mixing
+	Bit16s masterSample = nonOverdrivenMasterSample << 2;
+	masterSample >>= 2;
+
+	/* SEMI-CONFIRMED from sample analysis:
+	 * We observe that for partial structures with ring modulation the interpolation is not applied to the slave PCM partial.
+	 * It's assumed that the multiplication circuitry intended to perform the interpolation on the slave PCM partial
+	 * is borrowed by the ring modulation circuit (or the LA32 chip has a similar lack of resources assigned to each partial pair).
+	 */
+	Bit16s slaveSample = slave.isPCMWave() ? LA32Utilites::unlog(slave.getOutputLogSample(true)) : unlogAndMixWGOutput(slave);
+	slaveSample <<= 2;
+	slaveSample >>= 2;
+	Bit16s ringModulatedSample = Bit16s(((Bit32s)masterSample * (Bit32s)slaveSample) >> 13);
+	return mixed ? nonOverdrivenMasterSample + ringModulatedSample : ringModulatedSample;
 }
 
 void LA32PartialPair::deactivate(const PairType useMaster) {

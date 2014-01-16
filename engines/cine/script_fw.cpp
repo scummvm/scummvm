@@ -380,8 +380,7 @@ RawScript::RawScript(const FWScriptInfo &info, const byte *data, uint16 s) :
  * Copy constructor
  */
 RawScript::RawScript(const RawScript &src) : _size(src._size),
-	_data(new byte[_size + 1]), _labels(src._labels) {
-
+	_data(new byte[src._size + 1]), _labels(src._labels) {
 	assert(_data);
 	memcpy(_data, src._data, _size + 1);
 }

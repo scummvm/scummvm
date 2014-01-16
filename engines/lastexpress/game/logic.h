@@ -54,7 +54,7 @@ public:
 	void playFinalSequence() const;
 	void updateCursor(bool redraw = true) const;
 
-	Action 	   *getGameAction()   { return _action; }
+	Action     *getGameAction()   { return _action; }
 	Beetle     *getGameBeetle()   { return _beetle; }
 	Entities   *getGameEntities() { return _entities; }
 	Fight      *getGameFight()    { return _fight; }

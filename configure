@@ -97,7 +97,9 @@ add_feature() {
 _srcdir=`dirname $0`
 
 # Read list of engines
-. $_srcdir/engines/configure.engines
+for i in $_srcdir/engines/*/configure.engine; do
+	. "$i"
+done
 
 #
 # Default settings
@@ -167,7 +169,7 @@ _windres=windres
 _stagingpath="staging"
 _win32path="c:/scummvm"
 _aos4path="Games:ScummVM"
-_staticlibpath=/sw
+_staticlibpath=
 _sdlconfig=sdl-config
 _freetypeconfig=freetype-config
 _sdlpath="$PATH"
@@ -864,6 +866,7 @@ Special configuration feature:
                                            motomagx for MotoMAGX
                                            n64 for Nintendo 64
                                            openpandora for OpenPandora
+                                           ouya for OUYA
                                            ps2 for PlayStation 2
                                            ps3 for PlayStation 3
                                            psp for PlayStation Portable
@@ -1268,7 +1271,7 @@ get_system_exe_extension $guessed_host
 NATIVEEXEEXT=$_exeext
 
 case $_host in
-android | android-v7a)
+android | android-v7a | ouya)
 	_host_os=android
 	_host_cpu=arm
 	_host_alias=arm-linux-androideabi
@@ -2050,6 +2053,12 @@ case $_host_os in
 				CXXFLAGS="$CXXFLAGS -mfpu=vfp"
 				LDFLAGS="$LDFLAGS -Wl,--fix-cortex-a8"
 				;;
+			ouya)
+				CXXFLAGS="$CXXFLAGS -march=armv7-a"
+				CXXFLAGS="$CXXFLAGS -mtune=cortex-a9"
+				CXXFLAGS="$CXXFLAGS -mfloat-abi=softfp"
+				CXXFLAGS="$CXXFLAGS -mfpu=neon"
+				;;
 		esac
 		CXXFLAGS="$CXXFLAGS --sysroot=$ANDROID_NDK/platforms/android-4/arch-arm"
 		CXXFLAGS="$CXXFLAGS -fpic"
@@ -2115,6 +2124,24 @@ case $_host_os in
 
 			LDFLAGS="-L${macport_prefix}/lib $LDFLAGS"
 			CXXFLAGS="-I${macport_prefix}/include $CXXFLAGS"
+			
+			if test -z "$_staticlibpath"; then
+				_staticlibpath=${macport_prefix}
+				echo "Set staticlib-prefix to ${_staticlibpath}"
+			fi
+		fi
+		# If _staticlibpath is not set yet try first /sw (fink) then /usr/local
+		# (the macports case is handled above).
+		if test -z "$_staticlibpath"; then
+			if test -d "/sw"; then
+				_staticlibpath=/sw
+				echo "Set staticlib-prefix to ${_staticlibpath}"
+			elif test -d "/usr/local"; then
+				_staticlibpath=/usr/local
+				echo "Set staticlib-prefix to ${_staticlibpath}"
+			else
+				echo "Could not determine prefix for static libraries"
+			fi
 		fi
 		;;
 	dreamcast)
@@ -2320,7 +2347,7 @@ if test -n "$_host"; then
 	# Cross-compiling mode - add your target here if needed
 	echo "Cross-compiling to $_host"
 	case "$_host" in
-		android | android-v7a)
+		android | android-v7a | ouya)
 			# we link a .so as default
 			LDFLAGS="$LDFLAGS -shared"
 			LDFLAGS="$LDFLAGS -Wl,-Bsymbolic,--no-undefined"
@@ -2396,6 +2423,8 @@ if test -n "$_host"; then
 			CXXFLAGS="$CXXFLAGS -fschedule-insns2"
 			CXXFLAGS="$CXXFLAGS -fomit-frame-pointer"
 			CXXFLAGS="$CXXFLAGS -fdelete-null-pointer-checks"
+			# no-delayed-branch is a workaround for GCC bug #42841 - "SH: Assembler complains pcrel too far."
+			CXXFLAGS="$CXXFLAGS -fno-delayed-branch"
 			_backend="dc"
 			_build_scalers=no
 			_mad=yes
@@ -3392,10 +3421,10 @@ int main(void) {
   return 0;
 }
 EOF
-	cc_check $PNG_CFLAGS $PNG_LIBS -lpng && _png=yes
+	cc_check $PNG_CFLAGS $PNG_LIBS -lpng -lz && _png=yes
 fi
 if test "$_png" = yes ; then
-	LIBS="$LIBS $PNG_LIBS -lpng"
+	LIBS="$LIBS $PNG_LIBS -lpng -lz"
 	INCLUDES="$INCLUDES $PNG_CFLAGS"
 fi
 define_in_config_if_yes "$_png" 'USE_PNG'
@@ -3640,6 +3669,25 @@ fi
 if test "$_readline" = yes ; then
 	LIBS="$LIBS $READLINE_LIBS $_READLINE_LIBS"
 	INCLUDES="$INCLUDES $READLINE_CFLAGS"
+
+	#
+	# Check the type of rl_completion_entry_function.
+	# It can be int(*)(const char *, int) or char *(*)(const char *, int).
+	#
+	cat > $TMPC << EOF
+#include <stdio.h>
+#include <readline/readline.h>
+#include <readline/history.h>
+
+int readline_completionFunction(const char *, int);
+
+int main(void) {
+	char *x = readline("");
+	rl_completion_entry_function = &readline_completionFunction;
+}
+EOF
+	cc_check -c && add_line_to_config_h '#define USE_READLINE_INT_COMPLETION'
+
 fi
 define_in_config_h_if_yes "$_readline" 'USE_READLINE'
 
@@ -4172,8 +4220,18 @@ for engine in $_engines; do
 	fi
 done
 
-# Prepare the information to be shown
+# Sort engines to place our headline engine at start...
+# No technical reason, just historical convention
+headline_engine=scumm
+_sorted_engines="${headline_engine}"
 for engine in $_engines; do
+	if test "${engine}" != "${headline_engine}" ; then
+		_sorted_engines="${_sorted_engines} ${engine}"
+	fi
+done
+
+# Prepare the information to be shown
+for engine in $_sorted_engines; do
 	if test "`get_engine_sub $engine`" = "no" ; then
 		# It's a main engine
 		prepare_engine_build_strings $engine
@@ -4355,3 +4413,59 @@ include \$(srcdir)/Makefile
 EOF
 
 fi
+
+# Ensure engines folder exists prior to trying to generate
+# files into it (used for out-of-tree-builds)
+mkdir -p engines
+
+echo "Creating engines/engines.mk"
+cat > engines/engines.mk << EOF
+# This file is automatically generated by configure
+# DO NOT EDIT MANUALLY
+# This file is being included by "Makefile.common"
+EOF
+
+for engine in $_sorted_engines; do
+	j=`echo $engine | tr '[:lower:]' '[:upper:]'`
+	if test "`get_engine_sub $engine`" = "no" ; then
+		# main engine
+		cat >> engines/engines.mk << EOF
+
+ifdef ENABLE_$j
+DEFINES += -DENABLE_$j=\$(ENABLE_$j)
+MODULES += engines/$engine
+EOF
+
+	for subeng in `get_engine_subengines $engine` ; do
+		k=`echo $subeng | tr '[:lower:]' '[:upper:]'`
+		cat >> engines/engines.mk << EOF
+
+ifdef ENABLE_$k
+DEFINES += -DENABLE_$k
+endif
+EOF
+	done
+
+	cat >> engines/engines.mk << EOF
+endif
+EOF
+	fi
+done
+
+echo "Creating engines/plugins_table.h"
+cat > engines/plugins_table.h << EOF
+/* This file is automatically generated by configure */
+/* DO NOT EDIT MANUALLY */
+// This file is being included by "base/plugins.cpp"
+EOF
+
+for engine in $_sorted_engines; do
+	if test "`get_engine_sub $engine`" = "no" ; then
+		j=`echo $engine | tr '[:lower:]' '[:upper:]'`
+		cat >> engines/plugins_table.h << EOF
+#if PLUGIN_ENABLED_STATIC($j)
+LINK_PLUGIN($j)
+#endif
+EOF
+	fi
+done

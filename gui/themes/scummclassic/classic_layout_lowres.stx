@@ -687,50 +687,51 @@
 	</dialog>
 	
 	<dialog name = 'GlobalMenu' overlays = 'screen_center'>
-		<layout type = 'vertical' padding = '2, 2, 4, 6' center = 'true' spacing='6'>
+		<layout type = 'vertical' padding = '2, 2, 2, 6' center = 'true' spacing='0'>
 			<widget name = 'Title'
 					width = '160'
-					height = '4'
+					height = '12'
 			/>
 			<widget name = 'Version'
 					width = '160'
-					height = '4'
+					height = '14'
 			/>
-			<space size = '1'/>
-			<widget name = 'Load'
-					width = '120'
-					height = '12'
-			/>
-			<widget name = 'Save'
-					width = '120'
-					height = '12'
-			/>
-			<space size = '1'/>
-			<widget name = 'Options'
-					width = '120'
-					height = '12'
-			/>
-			<widget name = 'Help'
-					width = '120'
-					height = '12'
-			/>
-			<widget name = 'About'
-					width = '120'
-					height = '12'
-			/>
-			<space size = '1'/>
-			<widget name = 'Resume'
-					width = '120'
-					height = '12'
-			/>
-			<widget name = 'RTL'
-					width = '120'
-					height = '12'
-			/>
-			<widget name = 'Quit'
-					width = '120'
-					height = '12'
-			/>
+			<layout type = 'vertical' padding = '0, 0, 3, 0' center = 'true' spacing='6'>
+				<widget name = 'Load'
+						width = '120'
+						height = '12'
+				/>
+				<widget name = 'Save'
+						width = '120'
+						height = '12'
+				/>
+				<space size = '1'/>
+				<widget name = 'Options'
+						width = '120'
+						height = '12'
+				/>
+				<widget name = 'Help'
+						width = '120'
+						height = '12'
+				/>
+				<widget name = 'About'
+						width = '120'
+						height = '12'
+				/>
+				<space size = '1'/>
+				<widget name = 'Resume'
+						width = '120'
+						height = '12'
+				/>
+				<widget name = 'RTL'
+						width = '120'
+						height = '12'
+				/>
+				<widget name = 'Quit'
+						width = '120'
+						height = '12'
+				/>
+			</layout>
 		</layout>
 	</dialog>
 

@@ -17,7 +17,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *
+ * The bottom part of this is file is adapted from SDL_rotozoom.c. The
+ * relevant copyright notice for those specific functions can be found at the
+ * top of that section.
+ *
  */
+
+
 
 #include "common/algorithm.h"
 #include "common/endian.h"
@@ -29,116 +37,244 @@
 #include "engines/wintermute/graphics/transparent_surface.h"
 #include "engines/wintermute/graphics/transform_tools.h"
 
+//#define ENABLE_BILINEAR
+
 namespace Wintermute {
 
+void doBlitOpaqueFast(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep);
+void doBlitBinaryFast(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep);
 
-#if ENABLE_BILINEAR
-void TransparentSurface::copyPixelBilinear(float projX, float projY, int dstX, int dstY, const Common::Rect &srcRect, const Common::Rect &dstRect, const TransparentSurface *src, TransparentSurface *dst) {
-	int srcW = srcRect.width();
-	int srcH = srcRect.height();
-	int dstW = dstRect.width();
-	int dstH = dstRect.height();
+// These gather together various blendPixel functions for use with templates.
 
-	assert(dstX >= 0 && dstX < dstW);
-	assert(dstY >= 0 && dstY < dstH);
+class BlenderAdditive {
+public:
+	inline void blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb);
+	inline void blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb, byte *ca, byte *cr, byte *cg, byte *cb);
+	inline void blendPixel(byte *in, byte *out);
+	inline void blendPixel(byte *in, byte *out, int colorMod);
+};
 
-	float x1 = floor(projX);
-	float x2 = ceil(projX);
-	float y1 = floor(projY);
-	float y2 = ceil(projY);
+class BlenderSubtractive {
+public:
+	inline void blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb);
+	inline void blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb, byte *ca, byte *cr, byte *cg, byte *cb);
+	inline void blendPixel(byte *in, byte *out);
+	inline void blendPixel(byte *in, byte *out, int colorMod);
+};
 
-	uint32 Q11, Q12, Q21, Q22;
+class BlenderNormal {
+public:
+	inline void blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb);
+	inline void blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb, byte *ca, byte *cr, byte *cg, byte *cb);
+	inline void blendPixel(byte *in, byte *out);
+	inline void blendPixel(byte *in, byte *out, int colorMod);
+};
 
-	if (x1 >= srcW || x1 < 0 || y1 >= srcH || y1 < 0) {
-		Q11 = 0;
-	} else {
-		Q11 = READ_UINT32((const byte *)src->getBasePtr((int)(x1 + srcRect.left), (int)(y1 + srcRect.top)));
+/**
+ * Perform additive blending of a pixel, applying beforehand a given colormod.
+ * @param ina, inr, ing, inb: the input pixel, split into its components.
+ * @param *outa, *outr, *outg, *outb pointer to the output pixel.
+ * @param *outa, *outr, *outg, *outb pointer to the colormod components.
+ */
+void BlenderAdditive::blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb, byte *ca, byte *cr, byte *cg, byte *cb) {
+	if (*ca != 255) {
+		ina = (ina) * (*ca) >> 8;
 	}
 
-	if (x1 >= srcW || x1 < 0 || y2 >= srcH || y2 < 0) {
-		Q12 = 0;
+	if (ina == 0) {
+		return;
 	} else {
-		Q12 = READ_UINT32((const byte *)src->getBasePtr((int)(x1 + srcRect.left), (int)(y2 + srcRect.top)));
+		if (*cb != 255)
+			*outb = MIN(*outb + ((inb * (*cb) * ina) >> 16), 255);
+		else
+			*outb = MIN(*outb + (inb * ina >> 8), 255);
+
+		if (*cg != 255)
+			*outg = MIN(*outg + ((ing * (*cg) * ina) >> 16), 255);
+		else
+			*outg = MIN(*outg + (ing * ina >> 8), 255);
+
+		if (*cr != 255)
+			*outr = MIN(*outr + ((inr * (*cr) * ina) >> 16), 255);
+		else
+			*outr = MIN(*outr + (inr * ina >> 8), 255);
 	}
-
-	if (x2 >= srcW || x2 < 0 || y1 >= srcH || y1 < 0) {
-		Q21 = 0;
-	} else {
-		Q21 = READ_UINT32((const byte *)src->getBasePtr((int)(x2 + srcRect.left), (int)(y1 + srcRect.top)));
-	}
-
-	if (x2 >= srcW || x2 < 0 || y2 >= srcH || y2 < 0) {
-		Q22 = 0;
-	} else {
-		Q22 = READ_UINT32((const byte *)src->getBasePtr((int)(x2 + srcRect.left), (int)(y2 + srcRect.top)));
-	}
-
-	byte *Q11s = (byte *)&Q11;
-	byte *Q12s = (byte *)&Q12;
-	byte *Q21s = (byte *)&Q21;
-	byte *Q22s = (byte *)&Q22;
-
-	uint32 color;
-	byte *dest = (byte *)&color;
-
-	float q11x = (x2 - projX);
-	float q11y = (y2 - projY);
-	float q21x = (projX - x1);
-	float q21y = (y2 - projY);
-	float q12x = (x2 - projX);
-	float q12y = (projY - y1);
-
-	if (x1 == x2 && y1 == y2) {
-		for (int c = 0; c < 4; c++) {
-			dest[c] = ((float)Q11s[c]);
-		}
-	} else {
-
-		if (x1 == x2) {
-			q11x = 0.5;
-			q12x = 0.5;
-			q21x = 0.5;
-		} else if (y1 == y2) {
-			q11y = 0.5;
-			q12y = 0.5;
-			q21y = 0.5;
-		}
-
-		for (int c = 0; c < 4; c++) {
-			dest[c] = (byte)(
-						  ((float)Q11s[c]) * q11x * q11y +
-						  ((float)Q21s[c]) * q21x * q21y +
-						  ((float)Q12s[c]) * q12x * q12y +
-						  ((float)Q22s[c]) * (1.0 -
-											  q11x * q11y -
-											  q21x * q21y -
-											  q12x * q12y)
-					  );
-		}
-	}
-	WRITE_UINT32((byte *)dst->getBasePtr(dstX + dstRect.left, dstY + dstRect.top), color);
 }
-#else
-void TransparentSurface::copyPixelNearestNeighbor(float projX, float projY, int dstX, int dstY, const Common::Rect &srcRect, const Common::Rect &dstRect, const TransparentSurface *src, TransparentSurface *dst) {
-	int srcW = srcRect.width();
-	int srcH = srcRect.height();
-	int dstW = dstRect.width();
-	int dstH = dstRect.height();
 
-	assert(dstX >= 0 && dstX < dstW);
-	assert(dstY >= 0 && dstY < dstH);
+/**
+ * Perform subtractive blending of a pixel, applying beforehand a given colormod.
+ * @param ina, inr, ing, inb: the input pixel, split into its components.
+ * @param *outa, *outr, *outg, *outb pointer to the output pixel.
+ * @param *outa, *outr, *outg, *outb pointer to the colormod components.
+ */
+void BlenderSubtractive::blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb, byte *ca, byte *cr, byte *cg, byte *cb) {
+	//if (*ca != 255) {
+	//	ina = ina * (*ca) >> 8;
+	// }
 
-	uint32 color;
+	// As weird as it is, evidence suggests that alphamod is ignored when doing
+	// subtractive...
 
-	if (projX >= srcW || projX < 0 || projY >= srcH || projY < 0) {
-		color = 0;
+	// TODO if ina == 255 fast version
+
+	if (ina == 0) {
+		return;
 	} else {
-		color = READ_UINT32((const byte *)src->getBasePtr((int)projX, (int)projY));
+		if (*cb != 255)
+			*outb = MAX(*outb - ((inb * (*cb)  * (*outb) * ina) >> 24), 0);
+		else
+			*outb = MAX(*outb - (inb * (*outb) * ina >> 16), 0);
+
+		if (*cg != 255)
+			*outg = MAX(*outg - ((ing * (*cg)  * (*outg) * ina) >> 24), 0);
+		else
+			*outg = MAX(*outg - (ing * (*outg) * ina >> 16), 0);
+
+		if (*cr != 255)
+			*outr = MAX(*outr - ((inr * (*cr) *  (*outr) * ina) >> 24), 0);
+		else
+			*outr = MAX(*outr - (inr * (*outr) * ina >> 16), 0);
+	}
+}
+
+/**
+ * Perform "regular" alphablending of a pixel, applying beforehand a given colormod.
+ * @param ina, inr, ing, inb: the input pixel, split into its components.
+ * @param *outa, *outr, *outg, *outb pointer to the output pixel.
+ * @param *outa, *outr, *outg, *outb pointer to the colormod components.
+ */
+
+void BlenderNormal::blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb, byte *ca, byte *cr, byte *cg, byte *cb) {
+	if (*ca != 255) {
+		ina = ina * (*ca) >> 8;
 	}
 
-	WRITE_UINT32((byte *)dst->getBasePtr(dstX, dstY), color);
+	if (ina == 0) {
+		return;
+	} else if (ina == 255) {
+		if (*cb != 255)
+			*outb = (inb * (*cb)) >> 8;
+		else
+			*outb = inb;
+
+		if (*cr != 255)
+			*outr = (inr * (*cr)) >> 8;
+		else
+			*outr = inr;
+
+		if (*cg != 255)
+			*outg = (ing * (*cg)) >> 8;
+		else
+			*outg = ing;
+
+		*outa = ina;
+
+		return;
+
+	} else {
+
+		*outa = 255;
+		*outb = (*outb * (255 - ina) >> 8);
+		*outr = (*outr * (255 - ina) >> 8);
+		*outg = (*outg * (255 - ina) >> 8);
+
+		if (*cb == 0)
+			*outb = *outb;
+		else if (*cb != 255)
+			*outb = *outb + (inb * ina * (*cb) >> 16);
+		else
+			*outb = *outb + (inb * ina >> 8);
+
+		if (*cr == 0)
+			*outr = *outr;
+		else if (*cr != 255)
+			*outr = *outr + (inr * ina * (*cr) >> 16);
+		else
+			*outr = *outr + (inr * ina >> 8);
+
+		if (*cg == 0)
+			*outg = *outg;
+		else if (*cg != 255)
+			*outg = *outg + (ing * ina * (*cg) >> 16);
+		else
+			*outg = *outg + (ing * ina >> 8);
+
+		return;
+	}
 }
-#endif
+
+/**
+ * Perform "regular" alphablending of a pixel.
+ * @param ina, inr, ing, inb: the input pixel, split into its components.
+ * @param *outa, *outr, *outg, *outb pointer to the output pixel.
+ */
+
+void BlenderNormal::blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb) {
+
+	if (ina == 0) {
+		return;
+	} else if (ina == 255) {
+		*outb = inb;
+		*outg = ing;
+		*outr = inr;
+		*outa = ina;
+		return;
+	} else {
+		*outa = 255;
+		*outb = ((inb * ina) + *outb * (255 - ina)) >> 8;
+		*outg = ((ing * ina) + *outg * (255 - ina)) >> 8;
+		*outr = ((inr * ina) + *outr * (255 - ina)) >> 8;
+	}
+}
+
+/**
+ * Perform subtractive blending of a pixel.
+ * @param ina, inr, ing, inb: the input pixel, split into its components.
+ * @param *outa, *outr, *outg, *outb pointer to the output pixel.
+ */
+void BlenderSubtractive::blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb) {
+
+	if (ina == 0) {
+		return;
+	} else if (ina == 255) {
+		*outa = *outa;
+		*outr = *outr - (inr * (*outr) >> 8);
+		*outg = *outg - (ing * (*outg) >> 8);
+		*outb = *outb - (inb * (*outb) >> 8);
+		return;
+	} else {
+		*outa = *outa;
+		*outb = MAX(*outb - ((inb * (*outb)) * ina >> 16), 0);
+		*outg = MAX(*outg - ((ing * (*outg)) * ina >> 16), 0);
+		*outr = MAX(*outr - ((inr * (*outr)) * ina >> 16), 0);
+		return;
+	}
+}
+
+/**
+ * Perform additive blending of a pixel.
+ * @param ina, inr, ing, inb: the input pixel, split into its components.
+ * @param *outa, *outr, *outg, *outb pointer to the output pixel.
+ */
+void BlenderAdditive::blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb) {
+
+	if (ina == 0) {
+		return;
+	} else if (ina == 255) {
+		*outa = *outa;
+		*outr = MIN(*outr + inr, 255);
+		*outg = MIN(*outg + ing, 255);
+		*outb = MIN(*outb + inb, 255);
+		return;
+	} else {
+		*outa = *outa;
+		*outb = MIN((inb * ina >> 8) + *outb, 255);
+		*outg = MIN((ing * ina >> 8) + *outg, 255);
+		*outr = MIN((inr * ina >> 8) + *outr, 255);
+		return;
+	}
+}
+
 
 TransparentSurface::TransparentSurface() : Surface(), _alphaMode(ALPHA_FULL) {}
 
@@ -157,21 +293,20 @@ TransparentSurface::TransparentSurface(const Surface &surf, bool copyData) : Sur
 	}
 }
 
-void doBlitOpaque(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep) {
-	byte *in, *out;
+/**
+ * Optimized version of doBlit to be used w/opaque blitting (no alpha).
+ */
+void doBlitOpaqueFast(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep) {
 
-#ifdef SCUMM_LITTLE_ENDIAN
-	const int aIndex = 0;
-#else
-	const int aIndex = 3;
-#endif
+	byte *in;
+	byte *out;
 
 	for (uint32 i = 0; i < height; i++) {
 		out = outo;
 		in = ino;
 		memcpy(out, in, width * 4);
 		for (uint32 j = 0; j < width; j++) {
-			out[aIndex] = 0xFF;
+			out[TransparentSurface::kAIndex] = 0xFF;
 			out += 4;
 		}
 		outo += pitch;
@@ -179,112 +314,110 @@ void doBlitOpaque(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pit
 	}
 }
 
-void doBlitBinary(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep) {
-	byte *in, *out;
-	
-#ifdef SCUMM_LITTLE_ENDIAN
-	const int aIndex = 0;
-#else
-	const int aIndex = 3;
-#endif
-	const int aShift = 0;//img->format.aShift;
+/**
+ * Optimized version of doBlit to be used w/binary blitting (blit or no-blit, no blending).
+ */
+void doBlitBinaryFast(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep) {
+
+	byte *in;
+	byte *out;
 
 	for (uint32 i = 0; i < height; i++) {
 		out = outo;
 		in = ino;
 		for (uint32 j = 0; j < width; j++) {
 			uint32 pix = *(uint32 *)in;
-			int a = (pix >> aShift) & 0xff;
-			in += inStep;
+			int a = (pix >> TransparentSurface::kAShift) & 0xff;
 
 			if (a == 0) { // Full transparency
-				out += 4;
 			} else { // Full opacity (Any value not exactly 0 is Opaque here)
 				*(uint32 *)out = pix;
-				out[aIndex] = 0xFF;
+				out[TransparentSurface::kAIndex] = 0xFF;
+			}
+			out += 4;
+			in += inStep;
+		}
+		outo += pitch;
+		ino += inoStep;
+	}
+}
+
+/**
+ * What we have here is a template method that calls blendPixel() from a different
+ * class - the one we call it with - thus performing a different type of blending.
+ *
+ * @param ino a pointer to the input surface
+ * @param outo a pointer to the output surface
+ * @param width width of the input surface
+ * @param height height of the input surface
+ * @param pitch pitch of the output surface - that is, width in bytes of every row, usually bpp * width of the TARGET surface (the area we are blitting to might be smaller, do the math)
+ * @inStep size in bytes to skip to address each pixel, usually bpp of the source surface
+ * @inoStep width in bytes of every row on the *input* surface / kind of like pitch
+ * @color colormod in 0xAARRGGBB format - 0xFFFFFFFF for no colormod
+ */
+
+template<class Blender> 
+void doBlit(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep, uint32 color) {
+	Blender b;
+	byte *in;
+	byte *out;
+
+	if (color == 0xffffffff) {
+
+		for (uint32 i = 0; i < height; i++) {
+			out = outo;
+			in = ino;
+			for (uint32 j = 0; j < width; j++) {
+
+				byte *outa = &out[TransparentSurface::kAIndex];
+				byte *outr = &out[TransparentSurface::kRIndex];
+				byte *outg = &out[TransparentSurface::kGIndex];
+				byte *outb = &out[TransparentSurface::kBIndex];
+
+				b.blendPixel(in[TransparentSurface::kAIndex],
+					in[TransparentSurface::kRIndex],
+					in[TransparentSurface::kGIndex],
+					in[TransparentSurface::kBIndex],
+					outa, outr, outg, outb);
+
+				in += inStep;
 				out += 4;
 			}
+			outo += pitch;
+			ino += inoStep;
 		}
-		outo += pitch;
-		ino += inoStep;
-	}
-}
+	} else {
 
-void doBlitAlpha(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep) {
-	byte *in, *out;
+		byte ca = (color >> TransparentSurface::kAModShift) & 0xFF;
+		byte cr = (color >> TransparentSurface::kRModShift) & 0xFF;
+		byte cg = (color >> TransparentSurface::kGModShift) & 0xFF;
+		byte cb = (color >> TransparentSurface::kBModShift) & 0xFF;
 
-#ifdef SCUMM_LITTLE_ENDIAN
-	const int aIndex = 0;
-	const int bIndex = 1;
-	const int gIndex = 2;
-	const int rIndex = 3;
-#else
-	const int aIndex = 3;
-	const int bIndex = 2;
-	const int gIndex = 1;
-	const int rIndex = 0;
-#endif
+		for (uint32 i = 0; i < height; i++) {
+			out = outo;
+			in = ino;
+			for (uint32 j = 0; j < width; j++) {
 
-	const int bShift = 8;//img->format.bShift;
-	const int gShift = 16;//img->format.gShift;
-	const int rShift = 24;//img->format.rShift;
-	const int aShift = 0;//img->format.aShift;
+				byte *outa = &out[TransparentSurface::kAIndex];
+				byte *outr = &out[TransparentSurface::kRIndex];
+				byte *outg = &out[TransparentSurface::kGIndex];
+				byte *outb = &out[TransparentSurface::kBIndex];
 
-	const int bShiftTarget = 8;//target.format.bShift;
-	const int gShiftTarget = 16;//target.format.gShift;
-	const int rShiftTarget = 24;//target.format.rShift;
-
-	for (uint32 i = 0; i < height; i++) {
-		out = outo;
-		in = ino;
-		for (uint32 j = 0; j < width; j++) {
-			uint32 pix = *(uint32 *)in;
-			uint32 oPix = *(uint32 *) out;
-			int b = (pix >> bShift) & 0xff;
-			int g = (pix >> gShift) & 0xff;
-			int r = (pix >> rShift) & 0xff;
-			int a = (pix >> aShift) & 0xff;
-			int outb, outg, outr, outa;
-			in += inStep;
-
-			switch (a) {
-				case 0: // Full transparency
-					out += 4;
-					break;
-				case 255: // Full opacity
-					outb = b;
-					outg = g;
-					outr = r;
-					outa = a;
-
-					out[aIndex] = outa;
-					out[bIndex] = outb;
-					out[gIndex] = outg;
-					out[rIndex] = outr;
-					out += 4;
-					break;
-
-				default: // alpha blending
-					outa = 255;
-					outb = ((b * a) + ((oPix >> bShiftTarget) & 0xff) * (255-a)) >> 8;
-					outg = ((g * a) + ((oPix >> gShiftTarget) & 0xff) * (255-a)) >> 8;
-					outr = ((r * a) + ((oPix >> rShiftTarget) & 0xff) * (255-a)) >> 8;
-
-					out[aIndex] = outa;
-					out[bIndex] = outb;
-					out[gIndex] = outg;
-					out[rIndex] = outr;
-					out += 4;
+				b.blendPixel(in[TransparentSurface::kAIndex],
+					in[TransparentSurface::kRIndex],
+					in[TransparentSurface::kGIndex],
+					in[TransparentSurface::kBIndex],
+					outa, outr, outg, outb, &ca, &cr, &cg, &cb);
+				in += inStep;
+				out += 4;
 			}
+			outo += pitch;
+			ino += inoStep;
 		}
-		outo += pitch;
-		ino += inoStep;
 	}
 }
 
-
-Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int posY, int flipping, Common::Rect *pPartRect, uint color, int width, int height) {
-	int ca = (color >> 24) & 0xff;
+Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int posY, int flipping, Common::Rect *pPartRect, uint color, int width, int height, TSpriteBlendMode blendMode) {
 
 	Common::Rect retSize;
 	retSize.top = 0;
@@ -292,12 +425,10 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 	retSize.setWidth(0);
 	retSize.setHeight(0);
 	// Check if we need to draw anything at all
+	int ca = (color >> 24) & 0xff;
+
 	if (ca == 0)
 		return retSize;
-
-	int cr = (color >> 16) & 0xff;
-	int cg = (color >> 8) & 0xff;
-	int cb = (color >> 0) & 0xff;
 
 	// Create an encapsulating surface for the data
 	TransparentSurface srcImage(*this, false);
@@ -325,11 +456,11 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 		srcImage.h = pPartRect->height();
 
 		debug(6, "Blit(%d, %d, %d, [%d, %d, %d, %d], %08x, %d, %d)", posX, posY, flipping,
-			  pPartRect->left,  pPartRect->top, pPartRect->width(), pPartRect->height(), color, width, height);
+		      pPartRect->left,  pPartRect->top, pPartRect->width(), pPartRect->height(), color, width, height);
 	} else {
 
 		debug(6, "Blit(%d, %d, %d, [%d, %d, %d, %d], %08x, %d, %d)", posX, posY, flipping, 0, 0,
-			  srcImage.w, srcImage.h, color, width, height);
+		      srcImage.w, srcImage.h, color, width, height);
 	}
 
 	if (width == -1)
@@ -385,117 +516,24 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 			yp = img->h - 1;
 		}
 
-		byte *ino = (byte *)img->getBasePtr(xp, yp);
+		byte *ino= (byte *)img->getBasePtr(xp, yp);
 		byte *outo = (byte *)target.getBasePtr(posX, posY);
-		byte *in, *out;
 
-#ifdef SCUMM_LITTLE_ENDIAN
-		const int aIndex = 0;
-		const int bIndex = 1;
-		const int gIndex = 2;
-		const int rIndex = 3;
-#else
-		const int aIndex = 3;
-		const int bIndex = 2;
-		const int gIndex = 1;
-		const int rIndex = 0;
-#endif
-
-		const int bShift = 8;//img->format.bShift;
-		const int gShift = 16;//img->format.gShift;
-		const int rShift = 24;//img->format.rShift;
-		const int aShift = 0;//img->format.aShift;
-
-		const int bShiftTarget = 8;//target.format.bShift;
-		const int gShiftTarget = 16;//target.format.gShift;
-		const int rShiftTarget = 24;//target.format.rShift;
-
-		if (ca == 255 && cb == 255 && cg == 255 && cr == 255) {
-			if (_alphaMode == ALPHA_FULL) {
-				doBlitAlpha(ino, outo, img->w, img->h, target.pitch, inStep, inoStep);
-			} else if (_alphaMode == ALPHA_BINARY) {
-				doBlitBinary(ino, outo, img->w, img->h, target.pitch, inStep, inoStep);
-			} else if (_alphaMode == ALPHA_OPAQUE) {
-				doBlitOpaque(ino, outo, img->w, img->h, target.pitch, inStep, inoStep);
-			}
+		if (color == 0xFFFFFF && blendMode == BLEND_NORMAL && _alphaMode == ALPHA_OPAQUE) {
+			doBlitOpaqueFast(ino, outo, img->w, img->h, target.pitch, inStep, inoStep);
+		} else if (color == 0xFFFFFF && blendMode == BLEND_NORMAL && _alphaMode == ALPHA_BINARY) {
+			doBlitBinaryFast(ino, outo, img->w, img->h, target.pitch, inStep, inoStep);
 		} else {
-			for (int i = 0; i < img->h; i++) {
-				out = outo;
-				in = ino;
-				for (int j = 0; j < img->w; j++) {
-					uint32 pix = *(uint32 *)in;
-					uint32 o_pix = *(uint32 *) out;
-					int b = (pix >> bShift) & 0xff;
-					int g = (pix >> gShift) & 0xff;
-					int r = (pix >> rShift) & 0xff;
-					int a = (pix >> aShift) & 0xff;
-					int outb, outg, outr, outa;
-					in += inStep;
-
-					if (ca != 255) {
-						a = a * ca >> 8;
-					}
-					switch (a) {
-					case 0: // Full transparency
-						out += 4;
-						break;
-					case 255: // Full opacity
-						if (cb != 255)
-							outb = (b * cb) >> 8;
-						else
-							outb = b;
-
-						if (cg != 255)
-							outg = (g * cg) >> 8;
-						else
-							outg = g;
-
-						if (cr != 255)
-							outr = (r * cr) >> 8;
-						else
-							outr = r;
-						outa = a;
-						out[aIndex] = outa;
-						out[bIndex] = outb;
-						out[gIndex] = outg;
-						out[rIndex] = outr;
-						out += 4;
-						break;
-
-					default: // alpha blending
-						outa = 255;
-						outb = ((o_pix >> bShiftTarget) & 0xff) * (255 - a);
-						outg = ((o_pix >> gShiftTarget) & 0xff) * (255 - a);
-						outr = ((o_pix >> rShiftTarget) & 0xff) * (255 - a);
-						if (cb == 0)
-							outb = outb >> 8;
-						else if (cb != 255)
-							outb = ((outb<<8) + b * a * cb) >> 16;
-						else
-							outb = (outb + b * a) >> 8;
-						if (cg == 0)
-							outg = outg >> 8;
-						else if (cg != 255)
-							outg = ((outg<<8) + g * a * cg) >> 16;
-						else
-							outg = (outg + g * a) >> 8;
-						if (cr == 0)
-							outr = outr >> 8;
-						else if (cr != 255)
-							outr = ((outr<<8) + r * a * cr) >> 16;
-						else
-							outr = (outr + r * a) >> 8;
-						out[aIndex] = outa;
-						out[bIndex] = outb;
-						out[gIndex] = outg;
-						out[rIndex] = outr;
-						out += 4;
-					}
-				}
-				outo += target.pitch;
-				ino += inoStep;
+			if (blendMode == BLEND_ADDITIVE) {
+				doBlit<BlenderAdditive>(ino, outo, img->w, img->h, target.pitch, inStep, inoStep, color);
+			} else if (blendMode == BLEND_SUBTRACTIVE) {
+				doBlit<BlenderSubtractive>(ino, outo, img->w, img->h, target.pitch, inStep, inoStep, color);
+			} else {
+				assert(blendMode == BLEND_NORMAL);
+				doBlit<BlenderNormal>(ino, outo, img->w, img->h, target.pitch, inStep, inoStep, color);
 			}
 		}
+
 	}
 
 	retSize.setWidth(img->w);
@@ -508,83 +546,6 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 	}
 
 	return retSize;
-}
-
-TransparentSurface *TransparentSurface::rotoscale(const TransformStruct &transform) const {
-
-	assert(transform._angle != 0); // This would not be ideal; rotoscale() should never be called in conditional branches where angle = 0 anyway.
-
-	Point32 newHotspot;
-	Common::Rect srcRect(0, 0, (int16)w, (int16)h);
-	Rect32 rect = TransformTools::newRect(Rect32(srcRect), transform, &newHotspot);
-	Common::Rect dstRect(0, 0, (int16)(rect.right - rect.left), (int16)(rect.bottom - rect.top));
-
-	TransparentSurface *target = new TransparentSurface();
-	assert(format.bytesPerPixel == 4);
-
-	int dstW = dstRect.width();
-	int dstH = dstRect.height();
-
-	target->create((uint16)dstW, (uint16)dstH, this->format);
-
-	uint32 invAngle = 360 - (transform._angle % 360);
-	float invCos = cos(invAngle * M_PI / 180.0);
-	float invSin = sin(invAngle * M_PI / 180.0);
-	float targX;
-	float targY;
-
-	for (int y = 0; y < dstH; y++) {
-		for (int x = 0; x < dstW; x++) {
-			int x1 = x - newHotspot.x;
-			int y1 = y - newHotspot.y;
-
-			targX = ((x1 * invCos - y1 * invSin)) * kDefaultZoomX / transform._zoom.x + srcRect.left;
-			targY = ((x1 * invSin + y1 * invCos)) * kDefaultZoomY / transform._zoom.y + srcRect.top;
-
-			targX += transform._hotspot.x;
-			targY += transform._hotspot.y;
-
-#if ENABLE_BILINEAR
-			copyPixelBilinear(targX, targY, x, y, srcRect, dstRect, this, target);
-#else
-			copyPixelNearestNeighbor(targX, targY, x, y, srcRect, dstRect, this, target);
-#endif
-		}
-	}
-	return target;
-}
-
-TransparentSurface *TransparentSurface::scale(uint16 newWidth, uint16 newHeight) const {
-	Common::Rect srcRect(0, 0, (int16)w, (int16)h);
-	Common::Rect dstRect(0, 0, (int16)newWidth, (int16)newHeight);
-
-	TransparentSurface *target = new TransparentSurface();
-
-	assert(format.bytesPerPixel == 4);
-
-	int srcW = srcRect.width();
-	int srcH = srcRect.height();
-	int dstW = dstRect.width();
-	int dstH = dstRect.height();
-
-	target->create((uint16)dstW, (uint16)dstH, this->format);
-
-
-	float projX;
-	float projY;
-	for (int y = 0; y < dstH; y++) {
-		for (int x = 0; x < dstW; x++) {
-			projX = x / (float)dstW * srcW;
-			projY = y / (float)dstH * srcH;
-#if ENABLE_BILINEAR
-			copyPixelBilinear(projX, projY, x, y, srcRect, dstRect, this, target);
-#else
-			copyPixelNearestNeighbor(projX, projY, x, y, srcRect, dstRect, this, target);
-#endif
-		}
-	}
-	return target;
-
 }
 
 /**
@@ -610,6 +571,353 @@ void TransparentSurface::applyColorKey(uint8 rKey, uint8 gKey, uint8 bKey, bool 
 			}
 		}
 	}
+}
+
+TransparentSurface::AlphaType TransparentSurface::getAlphaMode() const {
+	return _alphaMode;
+}
+
+void TransparentSurface::setAlphaMode(TransparentSurface::AlphaType mode) {
+	_alphaMode = mode;
+}
+
+
+
+
+
+
+/*
+
+The below two functions are adapted from SDL_rotozoom.c,
+taken from SDL_gfx-2.0.18.
+
+Its copyright notice:
+
+=============================================================================
+SDL_rotozoom.c: rotozoomer, zoomer and shrinker for 32bit or 8bit surfaces
+
+Copyright (C) 2001-2012  Andreas Schiffler
+
+This software is provided 'as-is', without any express or implied
+warranty. In no event will the authors be held liable for any damages
+arising from the use of this software.
+
+Permission is granted to anyone to use this software for any purpose,
+including commercial applications, and to alter it and redistribute it
+freely, subject to the following restrictions:
+
+1. The origin of this software must not be misrepresented; you must not
+claim that you wrote the original software. If you use this software
+in a product, an acknowledgment in the product documentation would be
+appreciated but is not required.
+
+2. Altered source versions must be plainly marked as such, and must not be
+misrepresented as being the original software.
+
+3. This notice may not be removed or altered from any source
+distribution.
+
+Andreas Schiffler -- aschiffler at ferzkopp dot net
+=============================================================================
+
+
+The functions have been adapted for different structures and coordinate
+systems.
+
+*/
+
+
+
+
+
+TransparentSurface *TransparentSurface::rotoscale(const TransformStruct &transform) const {
+
+	assert(transform._angle != 0); // This would not be ideal; rotoscale() should never be called in conditional branches where angle = 0 anyway.
+
+	Point32 newHotspot;
+	Common::Rect srcRect(0, 0, (int16)w, (int16)h);
+	Rect32 rect = TransformTools::newRect(Rect32(srcRect), transform, &newHotspot);
+	Common::Rect dstRect(0, 0, (int16)(rect.right - rect.left), (int16)(rect.bottom - rect.top));
+
+	TransparentSurface *target = new TransparentSurface();
+	assert(format.bytesPerPixel == 4);
+
+	int srcW = w;
+	int srcH = h;
+	int dstW = dstRect.width();
+	int dstH = dstRect.height();
+
+	target->create((uint16)dstW, (uint16)dstH, this->format);
+
+	if (transform._zoom.x == 0 || transform._zoom.y == 0)
+		return target;
+
+	uint32 invAngle = 360 - (transform._angle % 360);
+	float invCos = cos(invAngle * M_PI / 180.0);
+	float invSin = sin(invAngle * M_PI / 180.0);
+
+	struct tColorRGBA { byte r; byte g; byte b; byte a; };
+	int icosx = (int)(invCos * (65536.0f * kDefaultZoomX / transform._zoom.x));
+	int isinx = (int)(invSin * (65536.0f * kDefaultZoomX / transform._zoom.x));
+	int icosy = (int)(invCos * (65536.0f * kDefaultZoomY / transform._zoom.y));
+	int isiny = (int)(invSin * (65536.0f * kDefaultZoomY / transform._zoom.y));
+
+
+	bool flipx = false, flipy = false; // TODO: See mirroring comment in RenderTicket ctor
+
+	int xd = (srcRect.left + transform._hotspot.x) << 16;
+	int yd = (srcRect.top + transform._hotspot.y) << 16;
+	int cx = newHotspot.x;
+	int cy = newHotspot.y;
+
+	int ax = -icosx * cx;
+	int ay = -isiny * cx;
+	int sw = srcW - 1;
+	int sh = srcH - 1;
+
+	tColorRGBA *pc = (tColorRGBA*)target->getBasePtr(0, 0);
+
+	for (int y = 0; y < dstH; y++) {
+		int t = cy - y;
+		int sdx = ax + (isinx * t) + xd;
+		int sdy = ay - (icosy * t) + yd;
+		for (int x = 0; x < dstW; x++) {
+			int dx = (sdx >> 16);
+			int dy = (sdy >> 16);
+			if (flipx) dx = sw - dx;
+			if (flipy) dy = sh - dy;
+
+#ifdef ENABLE_BILINEAR
+			if ((dx > -1) && (dy > -1) && (dx < sw) && (dy < sh)) {
+				const tColorRGBA *sp = (const tColorRGBA *)getBasePtr(dx, dy);
+				tColorRGBA c00, c01, c10, c11, cswap;
+				c00 = *sp;
+				sp += 1;
+				c01 = *sp;
+				sp += (this->pitch/4);
+				c11 = *sp;
+				sp -= 1;
+				c10 = *sp;
+				if (flipx) {
+					cswap = c00; c00=c01; c01=cswap;
+					cswap = c10; c10=c11; c11=cswap;
+				}
+				if (flipy) {
+					cswap = c00; c00=c10; c10=cswap;
+					cswap = c01; c01=c11; c11=cswap;
+				}
+				/*
+				* Interpolate colors
+				*/
+				int ex = (sdx & 0xffff);
+				int ey = (sdy & 0xffff);
+				int t1, t2;
+				t1 = ((((c01.r - c00.r) * ex) >> 16) + c00.r) & 0xff;
+				t2 = ((((c11.r - c10.r) * ex) >> 16) + c10.r) & 0xff;
+				pc->r = (((t2 - t1) * ey) >> 16) + t1;
+				t1 = ((((c01.g - c00.g) * ex) >> 16) + c00.g) & 0xff;
+				t2 = ((((c11.g - c10.g) * ex) >> 16) + c10.g) & 0xff;
+				pc->g = (((t2 - t1) * ey) >> 16) + t1;
+				t1 = ((((c01.b - c00.b) * ex) >> 16) + c00.b) & 0xff;
+				t2 = ((((c11.b - c10.b) * ex) >> 16) + c10.b) & 0xff;
+				pc->b = (((t2 - t1) * ey) >> 16) + t1;
+				t1 = ((((c01.a - c00.a) * ex) >> 16) + c00.a) & 0xff;
+				t2 = ((((c11.a - c10.a) * ex) >> 16) + c10.a) & 0xff;
+				pc->a = (((t2 - t1) * ey) >> 16) + t1;
+			}
+#else
+			if ((dx >= 0) && (dy >= 0) && (dx < srcW) && (dy < srcH)) {
+				const tColorRGBA *sp = (const tColorRGBA *)getBasePtr(dx, dy);
+				*pc = *sp;
+			}
+#endif
+			sdx += icosx;
+			sdy += isiny;
+			pc++;
+		}
+	}
+	return target;
+}
+
+TransparentSurface *TransparentSurface::scale(uint16 newWidth, uint16 newHeight) const {
+
+	Common::Rect srcRect(0, 0, (int16)w, (int16)h);
+	Common::Rect dstRect(0, 0, (int16)newWidth, (int16)newHeight);
+
+	TransparentSurface *target = new TransparentSurface();
+
+	assert(format.bytesPerPixel == 4);
+
+	int srcW = srcRect.width();
+	int srcH = srcRect.height();
+	int dstW = dstRect.width();
+	int dstH = dstRect.height();
+
+	target->create((uint16)dstW, (uint16)dstH, this->format);
+
+#ifdef ENABLE_BILINEAR
+
+	// NB: The actual order of these bytes may not be correct, but
+	// since all values are treated equal, that does not matter.
+	struct tColorRGBA { byte r; byte g; byte b; byte a; };
+
+	bool flipx = false, flipy = false; // TODO: See mirroring comment in RenderTicket ctor
+
+
+	int *sax = new int[dstW+1];
+	int *say = new int[dstH+1];
+	assert(sax && say);
+
+	/*
+	* Precalculate row increments 
+	*/
+	int spixelw = (srcW - 1);
+	int spixelh = (srcH - 1);
+	int sx = (int) (65536.0f * (float) spixelw / (float) (dstW - 1));
+	int sy = (int) (65536.0f * (float) spixelh / (float) (dstH - 1));
+
+	/* Maximum scaled source size */
+	int ssx = (srcW << 16) - 1;
+	int ssy = (srcH << 16) - 1;
+
+	/* Precalculate horizontal row increments */
+	int csx = 0;
+	int *csax = sax;
+	for (int x = 0; x <= dstW; x++) {
+		*csax = csx;
+		csax++;
+		csx += sx;
+
+		/* Guard from overflows */
+		if (csx > ssx) { 
+			csx = ssx; 
+		}
+	}
+
+	/* Precalculate vertical row increments */
+	int csy = 0;
+	int *csay = say;
+	for (int y = 0; y <= dstH; y++) {
+		*csay = csy;
+		csay++;
+		csy += sy;
+
+		/* Guard from overflows */
+		if (csy > ssy) {
+			csy = ssy;
+		}
+	}
+
+	const tColorRGBA *sp = (const tColorRGBA *) getBasePtr(0,0);
+	tColorRGBA *dp = (tColorRGBA *) target->getBasePtr(0,0);
+	int spixelgap = srcW;
+
+	if (flipx)
+		sp += spixelw;
+	if (flipy)
+		sp += spixelgap * spixelh;
+
+	csay = say;
+	for (int y = 0; y < dstH; y++) {
+		const tColorRGBA *csp = sp;
+		csax = sax;
+		for (int x = 0; x < dstW; x++) {
+			/*
+			* Setup color source pointers
+			*/
+			int ex = (*csax & 0xffff);
+			int ey = (*csay & 0xffff);
+			int cx = (*csax >> 16);
+			int cy = (*csay >> 16);
+
+			const tColorRGBA *c00, *c01, *c10, *c11;
+			c00 = sp;
+			c01 = sp;
+			c10 = sp;
+			if (cy < spixelh) {
+				if (flipy)
+					c10 -= spixelgap;
+				else
+					c10 += spixelgap;
+			}
+			c11 = c10;
+			if (cx < spixelw) {
+				if (flipx) {
+					c01--;
+					c11--;
+				} else {
+					c01++;
+					c11++;
+				}
+			}
+
+			/*
+			* Draw and interpolate colors
+			*/
+			int t1, t2;
+			t1 = ((((c01->r - c00->r) * ex) >> 16) + c00->r) & 0xff;
+			t2 = ((((c11->r - c10->r) * ex) >> 16) + c10->r) & 0xff;
+			dp->r = (((t2 - t1) * ey) >> 16) + t1;
+			t1 = ((((c01->g - c00->g) * ex) >> 16) + c00->g) & 0xff;
+			t2 = ((((c11->g - c10->g) * ex) >> 16) + c10->g) & 0xff;
+			dp->g = (((t2 - t1) * ey) >> 16) + t1;
+			t1 = ((((c01->b - c00->b) * ex) >> 16) + c00->b) & 0xff;
+			t2 = ((((c11->b - c10->b) * ex) >> 16) + c10->b) & 0xff;
+			dp->b = (((t2 - t1) * ey) >> 16) + t1;
+			t1 = ((((c01->a - c00->a) * ex) >> 16) + c00->a) & 0xff;
+			t2 = ((((c11->a - c10->a) * ex) >> 16) + c10->a) & 0xff;
+			dp->a = (((t2 - t1) * ey) >> 16) + t1;
+
+			/*
+			* Advance source pointer x
+			*/
+			int *salastx = csax;
+			csax++;
+			int sstepx = (*csax >> 16) - (*salastx >> 16);
+			if (flipx)
+				sp -= sstepx;
+			else
+				sp += sstepx;
+
+			/*
+			* Advance destination pointer x
+			*/
+			dp++;
+		}
+		/*
+		* Advance source pointer y
+		*/
+		int *salasty = csay;
+		csay++;
+		int sstepy = (*csay >> 16) - (*salasty >> 16);
+		sstepy *= spixelgap;
+		if (flipy)
+			sp = csp - sstepy;
+		else
+			sp = csp + sstepy;
+	}
+
+	delete[] sax;
+	delete[] say;
+
+#else
+
+	int *scaleCacheX = new int[dstW];
+	for (int x = 0; x < dstW; x++)
+		scaleCacheX[x] = (x * srcW) / dstW;
+
+	for (int y = 0; y < dstH; y++) {
+		uint32 *destP = (uint32 *)target->getBasePtr(0, y);
+		const uint32 *srcP = (const uint32 *)getBasePtr(0, (y * srcH) / dstH);
+		for (int x = 0; x < dstW; x++)
+			*destP++ = srcP[scaleCacheX[x]];
+	}
+	delete[] scaleCacheX;
+
+#endif
+
+	return target;
+
 }
 
 } // End of namespace Wintermute

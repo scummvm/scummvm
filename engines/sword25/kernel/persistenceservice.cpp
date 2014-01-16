@@ -59,7 +59,7 @@ static const int   VERSIONNUM = 2;
 char gameTarget[MAX_SAVEGAME_SIZE];
 
 void setGameTarget(const char *target) {
-	strncpy(gameTarget, target, MAX_SAVEGAME_SIZE);
+	strncpy(gameTarget, target, MAX_SAVEGAME_SIZE - 1);
 }
 
 static Common::String generateSavegameFilename(uint slotID) {

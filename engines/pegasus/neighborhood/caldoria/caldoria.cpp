@@ -386,54 +386,72 @@ void Caldoria::startSpotOnceOnly(TimeValue startTime, TimeValue stopTime) {
 		if (!_privateFlags.getFlag(kCaldoriaPrivateSeen13CarFlag) && _vm->getRandomBit() == 0) {
 			_privateFlags.setFlag(kCaldoriaPrivateSeen13CarFlag, true);
 			Neighborhood::startSpotOnceOnly(startTime, stopTime);
+		} else {
+			showViewFrame(getViewTime(GameState.getCurrentRoom(), GameState.getCurrentDirection()));
 		}
 		break;
 	case MakeRoomView(kCaldoria14, kEast):
 		if (!_privateFlags.getFlag(kCaldoriaPrivateSeen14CarFlag) && _vm->getRandomBit() == 0) {
 			_privateFlags.setFlag(kCaldoriaPrivateSeen14CarFlag, true);
 			Neighborhood::startSpotOnceOnly(startTime, stopTime);
+		} else {
+			showViewFrame(getViewTime(GameState.getCurrentRoom(), GameState.getCurrentDirection()));
 		}
 		break;
 	case MakeRoomView(kCaldoria18, kWest):
 		if (!_privateFlags.getFlag(kCaldoriaPrivateSeen18CarFlag) && _vm->getRandomBit() == 0) {
 			_privateFlags.setFlag(kCaldoriaPrivateSeen18CarFlag, true);
 			Neighborhood::startSpotOnceOnly(startTime, stopTime);
+		} else {
+			showViewFrame(getViewTime(GameState.getCurrentRoom(), GameState.getCurrentDirection()));
 		}
 		break;
 	case MakeRoomView(kCaldoria23, kSouth):
 		if (!_privateFlags.getFlag(kCaldoriaPrivateSeen23CarFlag) && _vm->getRandomBit() == 0) {
 			_privateFlags.setFlag(kCaldoriaPrivateSeen23CarFlag, true);
 			Neighborhood::startSpotOnceOnly(startTime, stopTime);
+		} else {
+			showViewFrame(getViewTime(GameState.getCurrentRoom(), GameState.getCurrentDirection()));
 		}
 		break;
 	case MakeRoomView(kCaldoria33, kSouth):
 		if (!_privateFlags.getFlag(kCaldoriaPrivateSeen33CarFlag) && _vm->getRandomBit() == 0) {
 			_privateFlags.setFlag(kCaldoriaPrivateSeen33CarFlag, true);
 			Neighborhood::startSpotOnceOnly(startTime, stopTime);
+		} else {
+			showViewFrame(getViewTime(GameState.getCurrentRoom(), GameState.getCurrentDirection()));
 		}
 		break;
 	case MakeRoomView(kCaldoria36, kNorth):
 		if (!_privateFlags.getFlag(kCaldoriaPrivateSeen36CarFlag) && _vm->getRandomBit() == 0) {
 			_privateFlags.setFlag(kCaldoriaPrivateSeen36CarFlag, true);
 			Neighborhood::startSpotOnceOnly(startTime, stopTime);
+		} else {
+			showViewFrame(getViewTime(GameState.getCurrentRoom(), GameState.getCurrentDirection()));
 		}
 		break;
 	case MakeRoomView(kCaldoria41, kNorth):
 		if (!_privateFlags.getFlag(kCaldoriaPrivateSeen41NorthCarFlag) && _vm->getRandomBit() == 0) {
 			_privateFlags.setFlag(kCaldoriaPrivateSeen41NorthCarFlag, true);
 			Neighborhood::startSpotOnceOnly(startTime, stopTime);
+		} else {
+			showViewFrame(getViewTime(GameState.getCurrentRoom(), GameState.getCurrentDirection()));
 		}
 		break;
 	case MakeRoomView(kCaldoria41, kEast):
 		if (!_privateFlags.getFlag(kCaldoriaPrivateSeen41EastCarFlag) && _vm->getRandomBit() == 0) {
 			_privateFlags.setFlag(kCaldoriaPrivateSeen41EastCarFlag, true);
 			Neighborhood::startSpotOnceOnly(startTime, stopTime);
+		} else {
+			showViewFrame(getViewTime(GameState.getCurrentRoom(), GameState.getCurrentDirection()));
 		}
 		break;
 	case MakeRoomView(kCaldoria41, kWest):
 		if (!_privateFlags.getFlag(kCaldoriaPrivateSeen41WestCarFlag) && _vm->getRandomBit() == 0) {
 			_privateFlags.setFlag(kCaldoriaPrivateSeen41WestCarFlag, true);
 			Neighborhood::startSpotOnceOnly(startTime, stopTime);
+		} else {
+			showViewFrame(getViewTime(GameState.getCurrentRoom(), GameState.getCurrentDirection()));
 		}
 		break;
 	default:

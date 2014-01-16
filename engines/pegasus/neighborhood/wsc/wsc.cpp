@@ -2336,13 +2336,16 @@ Hotspot *WSC::getItemScreenSpot(Item *item, DisplayElement *element) {
 void WSC::pickedUpItem(Item *item) {
 	switch (item->getObjectID()) {
 	case kAntidote:
+		// WORKAROUND: Make sure the poison is cleared separately from deactivating
+		// the synthesizer video.
+		GameState.setWSCPoisoned(false);
+		GameState.setWSCRemovedDart(false);
+		_privateFlags.setFlag(kWSCDraggingAntidoteFlag, false);
+		playSpotSoundSync(kDrinkAntidoteIn, kDrinkAntidoteOut);
+		setUpPoison();
+
 		if (!GameState.getWSCPickedUpAntidote()) {
-			GameState.setWSCPoisoned(false);
-			GameState.setWSCRemovedDart(false);
 			GameState.setWSCPickedUpAntidote(true);
-			_privateFlags.setFlag(kWSCDraggingAntidoteFlag, false);
-			playSpotSoundSync(kDrinkAntidoteIn, kDrinkAntidoteOut);
-			setUpPoison();
 			startExtraSequence(kW03SouthDeactivate, kExtraCompletedFlag, kFilterNoInput);
 		}
 		break;

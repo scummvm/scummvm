@@ -1249,15 +1249,15 @@ bool ScScript::persist(BasePersistenceManager *persistMgr) {
 	// buffer
 	if (persistMgr->getIsSaving()) {
 		if (_state != SCRIPT_PERSISTENT && _state != SCRIPT_FINISHED && _state != SCRIPT_THREAD_FINISHED) {
-			persistMgr->transfer(TMEMBER(_bufferSize));
+			persistMgr->transferUint32(TMEMBER(_bufferSize));
 			persistMgr->putBytes(_buffer, _bufferSize);
 		} else {
 			// don't save idle/finished scripts
 			int32 bufferSize = 0;
-			persistMgr->transfer(TMEMBER(bufferSize));
+			persistMgr->transferSint32(TMEMBER(bufferSize));
 		}
 	} else {
-		persistMgr->transfer(TMEMBER(_bufferSize));
+		persistMgr->transferUint32(TMEMBER(_bufferSize));
 		if (_bufferSize > 0) {
 			_buffer = new byte[_bufferSize];
 			persistMgr->getBytes(_buffer, _bufferSize);
@@ -1270,31 +1270,31 @@ bool ScScript::persist(BasePersistenceManager *persistMgr) {
 	}
 
 	persistMgr->transferPtr(TMEMBER_PTR(_callStack));
-	persistMgr->transfer(TMEMBER(_currentLine));
+	persistMgr->transferSint32(TMEMBER(_currentLine));
 	persistMgr->transferPtr(TMEMBER_PTR(_engine));
-	persistMgr->transfer(TMEMBER(_filename));
-	persistMgr->transfer(TMEMBER(_freezable));
+	persistMgr->transferCharPtr(TMEMBER(_filename));
+	persistMgr->transferBool(TMEMBER(_freezable));
 	persistMgr->transferPtr(TMEMBER_PTR(_globals));
-	persistMgr->transfer(TMEMBER(_iP));
+	persistMgr->transferUint32(TMEMBER(_iP));
 	persistMgr->transferPtr(TMEMBER_PTR(_scopeStack));
 	persistMgr->transferPtr(TMEMBER_PTR(_stack));
-	persistMgr->transfer(TMEMBER_INT(_state));
+	persistMgr->transferSint32(TMEMBER_INT(_state));
 	persistMgr->transferPtr(TMEMBER_PTR(_operand));
-	persistMgr->transfer(TMEMBER_INT(_origState));
+	persistMgr->transferSint32(TMEMBER_INT(_origState));
 	persistMgr->transferPtr(TMEMBER_PTR(_owner));
 	persistMgr->transferPtr(TMEMBER_PTR(_reg1));
-	persistMgr->transfer(TMEMBER(_thread));
-	persistMgr->transfer(TMEMBER(_threadEvent));
+	persistMgr->transferBool(TMEMBER(_thread));
+	persistMgr->transferCharPtr(TMEMBER(_threadEvent));
 	persistMgr->transferPtr(TMEMBER_PTR(_thisStack));
-	persistMgr->transfer(TMEMBER(_timeSlice));
+	persistMgr->transferUint32(TMEMBER(_timeSlice));
 	persistMgr->transferPtr(TMEMBER_PTR(_waitObject));
 	persistMgr->transferPtr(TMEMBER_PTR(_waitScript));
-	persistMgr->transfer(TMEMBER(_waitTime));
-	persistMgr->transfer(TMEMBER(_waitFrozen));
+	persistMgr->transferUint32(TMEMBER(_waitTime));
+	persistMgr->transferBool(TMEMBER(_waitFrozen));
 
-	persistMgr->transfer(TMEMBER(_methodThread));
-	persistMgr->transfer(TMEMBER(_methodThread));
-	persistMgr->transfer(TMEMBER(_unbreakable));
+	persistMgr->transferBool(TMEMBER(_methodThread));
+	persistMgr->transferBool(TMEMBER(_methodThread)); // TODO-SAVE: Deduplicate.
+	persistMgr->transferBool(TMEMBER(_unbreakable));
 	persistMgr->transferPtr(TMEMBER_PTR(_parentScript));
 
 	if (!persistMgr->getIsSaving()) {

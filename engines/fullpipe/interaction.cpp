@@ -36,12 +36,12 @@ int handleObjectInteraction(StaticANIObject *subject, GameObject *object, int in
 bool canInteractAny(GameObject *obj1, GameObject *obj2, int invId) {
 	int sceneId = 0;
 
-	if (g_fullpipe->_currentScene)
-		sceneId = g_fullpipe->_currentScene->_sceneId;
+	if (g_fp->_currentScene)
+		sceneId = g_fp->_currentScene->_sceneId;
 
-	CInteractionController *intC = getGameLoaderInteractionController();
-	for (CObList::iterator i = intC->_interactions.begin(); i != intC->_interactions.end(); ++i) {
-		CInteraction *intr = (CInteraction *)*i;
+	InteractionController *intC = getGameLoaderInteractionController();
+	for (ObList::iterator i = intC->_interactions.begin(); i != intC->_interactions.end(); ++i) {
+		Interaction *intr = (Interaction *)*i;
 
 		if (intr->_sceneId > 0 && intr->_sceneId != sceneId)
 			break;
@@ -55,17 +55,21 @@ bool canInteractAny(GameObject *obj1, GameObject *obj2, int invId) {
 	return false;
 }
 
-bool CInteractionController::load(MfcArchive &file) {
-	debug(5, "CInteractionController::load()");
+InteractionController::~InteractionController() {
+	warning("STUB: InteractionController::~InteractionController()");
+}
+
+bool InteractionController::load(MfcArchive &file) {
+	debug(5, "InteractionController::load()");
 
 	return _interactions.load(file);
 }
 
 int static_compSceneId = 0;
 
-bool CInteractionController::compareInteractions(const void *p1, const void *p2) {
-	const CInteraction *i1 = (const CInteraction *)p1;
-	const CInteraction *i2 = (const CInteraction *)p2;
+bool InteractionController::compareInteractions(const void *p1, const void *p2) {
+	const Interaction *i1 = (const Interaction *)p1;
+	const Interaction *i2 = (const Interaction *)p2;
 
 	if (i2->_sceneId < i1->_sceneId) {
 		if (i1->_sceneId != static_compSceneId)
@@ -89,13 +93,13 @@ bool CInteractionController::compareInteractions(const void *p1, const void *p2)
 	return true;
 }
 
-void CInteractionController::sortInteractions(int sceneId) {
+void InteractionController::sortInteractions(int sceneId) {
 	static_compSceneId = sceneId;
 
-	Common::sort(_interactions.begin(), _interactions.end(), CInteractionController::compareInteractions);
+	Common::sort(_interactions.begin(), _interactions.end(), InteractionController::compareInteractions);
 }
 
-bool CInteractionController::handleInteraction(StaticANIObject *subj, GameObject *obj, int invId) {
+bool InteractionController::handleInteraction(StaticANIObject *subj, GameObject *obj, int invId) {
 	if (subj) {
 		if (!subj->isIdle() || (subj->_flags & 0x100))
 			return false;
@@ -104,16 +108,16 @@ bool CInteractionController::handleInteraction(StaticANIObject *subj, GameObject
 	if (!_interactions.size())
 		return false;
 
-	CInteraction *inter = 0;
-	CInteraction *previnter = 0;
+	Interaction *inter = 0;
+	Interaction *previnter = 0;
 	int dur = 0;
 	int mindur = 0xFFFF;
 
 	MessageQueue *mq;
 	ExCommand *ex;
 
-	for (CObList::iterator i = _interactions.begin(); i != _interactions.end(); ++i) {
-		CInteraction *cinter = (CInteraction *)*i;
+	for (ObList::iterator i = _interactions.begin(); i != _interactions.end(); ++i) {
+		Interaction *cinter = (Interaction *)*i;
 
 		if (!cinter->canInteract(subj, obj, invId))
 			continue;
@@ -137,7 +141,7 @@ bool CInteractionController::handleInteraction(StaticANIObject *subj, GameObject
 			obj->setPicAniInfo(&aniInfo);
 
 			if (abs(xpos - subj->_ox) > 1 || abs(ypos - subj->_oy) > 1) {
-				mq = getSc2MctlCompoundBySceneId(g_fullpipe->_currentScene->_sceneId)->method4C(subj, xpos, ypos, 1, cinter->_staticsId2);
+				mq = getSc2MctlCompoundBySceneId(g_fp->_currentScene->_sceneId)->doWalkTo(subj, xpos, ypos, 1, cinter->_staticsId2);
 				if (mq) {
 					dur = mq->calcDuration(subj);
 					delete mq;
@@ -186,7 +190,7 @@ bool CInteractionController::handleInteraction(StaticANIObject *subj, GameObject
 			ex->_excFlags = 3;
 			ex->_field_14 = (obj->_objtype != kObjTypePictureObject);
 			ex->_field_20 = invId;
-			mq->_exCommands.push_back(ex);
+			mq->addExCommandToEnd(ex);
 
 			if (mq->_isFinished) {
 				mq->_isFinished = 0;
@@ -255,7 +259,7 @@ LABEL_38:
 			ex->_field_14 = 0x100;
 			ex->_messageNum = 0;
 			ex->_excFlags = 3;
-			mq->_exCommands.push_back(ex);
+			mq->addExCommandToEnd(ex);
 		}
 
 		ex = new ExCommand(obj->_id, 34, 0x100, 0, 0, 0, 1, 0, 0, 0);
@@ -263,19 +267,19 @@ LABEL_38:
 		ex->_field_14 = 0x100;
 		ex->_messageNum = 0;
 		ex->_excFlags = 3;
-		mq->_exCommands.push_back(ex);
+		mq->addExCommandToEnd(ex);
 
 		ex = new ExCommand(subj->_id, 34, 0x100, 0, 0, 0, 1, 0, 0, 0);
 		ex->_keyCode = subj->_okeyCode;
 		ex->_field_14 = 0x100;
 		ex->_messageNum = 0;
 		ex->_excFlags = 3;
-		mq->_exCommands.push_back(ex);
+		mq->addExCommandToEnd(ex);
 
 		ex = new ExCommand(subj->_id, 17, 0x40, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 3;
 		ex->_keyCode = 0;
-		mq->_exCommands.push_back(ex);
+		mq->addExCommandToEnd(ex);
 
 		if (!mq->chain(subj)) {
 			delete mq;
@@ -305,7 +309,7 @@ LABEL_38:
 
 		if (abs(xpos - subj->_ox) > 1 || abs(ypos - subj->_oy) > 1
 				|| (inter->_staticsId2 != 0 && (subj->_statics == 0 || subj->_statics->_staticsId != inter->_staticsId2))) {
-			mq = getSc2MctlCompoundBySceneId(g_fullpipe->_currentScene->_sceneId)->method34(subj, xpos, ypos, 1, inter->_staticsId2);
+			mq = getSc2MctlCompoundBySceneId(g_fp->_currentScene->_sceneId)->method34(subj, xpos, ypos, 1, inter->_staticsId2);
 
 			if (!mq)
 				return false;
@@ -317,7 +321,7 @@ LABEL_38:
 			ex->_excFlags = 3;
 			ex->_field_20 = invId;
 			ex->_field_14 = (obj->_objtype != kObjTypePictureObject);
-			mq->_exCommands.push_back(ex);
+			mq->addExCommandToEnd(ex);
 
 			someFlag = true;
 
@@ -357,14 +361,14 @@ LABEL_38:
 						ex->_field_14 = 0x80;
 						ex->_keyCode = ani->_okeyCode;
 						ex->_excFlags = 3;
-						mq->_exCommands.push_back(ex);
+						mq->addExCommandToEnd(ex);
 					}
 				}
 				ex = new ExCommand(ani->_id, 34, 0x100, 0, 0, 0, 1, 0, 0, 0);
 				ex->_keyCode = ani->_okeyCode;
 				ex->_field_14 = 0x100;
 				ex->_excFlags = 3;
-				mq->_exCommands.push_back(ex);
+				mq->addExCommandToEnd(ex);
 			} else {
 				ex = new ExCommand(subj->_id, 55, 0, 0, 0, 0, 1, 0, 0, 0);
 				ex->_x = ani->_id;
@@ -373,7 +377,7 @@ LABEL_38:
 				ex->_excFlags = 2;
 				ex->_field_14 = (obj->_objtype != kObjTypePictureObject);
 				ex->_field_20 = invId;
-				mq->_exCommands.push_back(ex);
+				mq->addExCommandToEnd(ex);
 
 				if (!mq->_isFinished)
 					return true;
@@ -394,7 +398,18 @@ LABEL_38:
 	return true;
 }
 
-CInteraction::CInteraction() {
+Interaction *InteractionController::getInteractionByObjectIds(int obId, int obId2, int obId3) {
+	for (ObList::iterator i = _interactions.begin(); i != _interactions.end(); ++i) {
+		Interaction *intr = (Interaction *)*i;
+
+		if (intr->_objectId1 == obId && intr->_objectId2 == obId2 && intr->_objectId3 == obId3)
+			return intr;
+	}
+
+	return 0;
+}
+
+Interaction::Interaction() {
 	_objectId1 = 0;
 	_objectId2 = 0;
 	_staticsId1 = 0;
@@ -411,8 +426,12 @@ CInteraction::CInteraction() {
 	_actionName = 0;
 }
 
-bool CInteraction::load(MfcArchive &file) {
-	debug(5, "CInteraction::load()");
+Interaction::~Interaction() {
+	warning("STUB: Interaction::~Interaction()");
+}
+
+bool Interaction::load(MfcArchive &file) {
+	debug(5, "Interaction::load()");
 
 	_objectId1 = file.readUint16LE();
 	_objectId2 = file.readUint16LE();
@@ -432,8 +451,8 @@ bool CInteraction::load(MfcArchive &file) {
 	return true;
 }
 
-bool CInteraction::canInteract(GameObject *obj1, GameObject *obj2, int invId) {
-	if (_sceneId > 0 && g_fullpipe->_currentScene && g_fullpipe->_currentScene->_sceneId != _sceneId)
+bool Interaction::canInteract(GameObject *obj1, GameObject *obj2, int invId) {
+	if (_sceneId > 0 && g_fp->_currentScene && g_fp->_currentScene->_sceneId != _sceneId)
 		return false;
 
 	if (_flags & 0x20000)
@@ -465,20 +484,20 @@ bool CInteraction::canInteract(GameObject *obj1, GameObject *obj2, int invId) {
 
 	if (_objectState1) {
 		if (_flags & 0x10) {
-			if ((g_fullpipe->getObjectState(obj1->getName()) & _objectState1) == 0)
+			if ((g_fp->getObjectState(obj1->getName()) & _objectState1) == 0)
 				return false;
 		} else {
-			if (g_fullpipe->getObjectState(obj1->getName()) != _objectState1)
+			if (g_fp->getObjectState(obj1->getName()) != _objectState1)
 				return false;
 		}
 	}
 
 	if (_objectState2) {
 		if (_flags & 0x10) {
-			if ((g_fullpipe->getObjectState(obj2->getName()) & _objectState2) == 0)
+			if ((g_fp->getObjectState(obj2->getName()) & _objectState2) == 0)
 				return false;
 		} else {
-			if (g_fullpipe->getObjectState(obj2->getName()) != _objectState2)
+			if (g_fp->getObjectState(obj2->getName()) != _objectState2)
 				return false;
 		}
 	}
@@ -489,7 +508,7 @@ bool CInteraction::canInteract(GameObject *obj1, GameObject *obj2, int invId) {
 	return true;
 }
 
-bool CInteraction::isOverlapping(StaticANIObject *subj, GameObject *obj) {
+bool Interaction::isOverlapping(StaticANIObject *subj, GameObject *obj) {
 	StaticANIObject *ani = (StaticANIObject *)obj;
 
 	if (abs(_xOffs + obj->_ox - subj->_ox) <= 1

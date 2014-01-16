@@ -1359,7 +1359,7 @@ void GraphicsManager::drawCompressedSprite(byte *surface, const byte *srcData, i
 	_posYClipped = 0;
 	_clipX1 = 0;
 	_clipY1 = 0;
-	if ((xp300 <= _minX) || (yp300 <= _minY) || (xp300 >= _maxX + 300) || 	(yp300 >= _maxY + 300))
+	if ((xp300 <= _minX) || (yp300 <= _minY) || (xp300 >= _maxX + 300) || (yp300 >= _maxY + 300))
 		return;
 
 	// Clipped values are greater or equal to zero, thanks to the previous test
@@ -1781,7 +1781,7 @@ void GraphicsManager::initScreen(const Common::String &file, int mode, bool init
 
 		do {
 			int dataVal1 = _vm->_script->handleOpcode(ptr + 20 * dataOffset);
-			if (_vm->shouldQuit())
+			if (dataVal1 == -1 || _vm->shouldQuit())
 				return;
 
 			if (dataVal1 == 2)

@@ -38,8 +38,6 @@ namespace TsAGE {
 namespace Ringworld2 {
 
 Scene *Ringworld2Game::createScene(int sceneNumber) {
-	warning("Switching to scene %d", sceneNumber);
-
 	switch (sceneNumber) {
 	/* Scene group #0 */
 	case 50:
@@ -67,8 +65,12 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		// Deck #2 - By Lift
 		return new Scene200();
 	case 205:
-		// Star-field Credits
-		return new Scene205();
+		if (g_vm->getFeatures() & GF_DEMO)
+			// End of Demo
+			return new Scene205Demo();
+		else
+			// Star-field Credits
+			return new Scene205();
 	case 250:
 		// Lift
 		return new Scene250();
@@ -114,10 +116,13 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		// Cutscene - trip in space
 		return new Scene1010();
 	case 1020:
+		// Cutscene - trip in space 2
 		return new Scene1020();
 	case 1100:
+		// Canyon
 		return new Scene1100();
 	case 1200:
+		// ARM Base - Air Ducts Maze
 		return new Scene1200();
 	case 1337:
 	case 1330:
@@ -130,12 +135,13 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		// Cutscene - Ship
 		return new Scene1525();
 	case 1530:
-		// Cutscene - Elevator
+		// Cutscene - Crashing on Rimwall
 		return new Scene1530();
 	case 1550:
 		// Spaceport
 		return new Scene1550();
 	case 1575:
+		// Spaceport - unused ship scene
 		return new Scene1575();
 	case 1580:
 		// Inside wreck
@@ -162,13 +168,15 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		// Spill Mountains Elevator Exit
 		return new Scene1900();
 	case 1925:
+		// Spill Mountains Elevator Shaft
 		return new Scene1925();
 	case 1945:
+		// Spill Mountains Shaft Bottom
 		return new Scene1945();
 	case 1950:
+		// Flup Tube Corridor Maze
 		return new Scene1950();
 	/* Scene group #2 */
-	//
 	case 2000:
 		// Spill Mountains
 		return new Scene2000();
@@ -176,7 +184,7 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		// Spill Mountains: Balloon Launch Platform
 		return new Scene2350();
 	case 2400:
-		// Spill Mountains: Large empty room
+		// Spill Mountains: Unused large empty room
 		return new Scene2400();
 	case 2425:
 		// Spill Mountains: The Hall of Records
@@ -200,7 +208,7 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		// Spill Mountains: Inside crevasse
 		return new Scene2455();
 	case 2500:
-		// Spill Mountains: Large Cave
+		// Spill Mountains: Large Ledge
 		return new Scene2500();
 	case 2525:
 		// Spill Mountains: Furnace room
@@ -262,18 +270,19 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		// Room with large stasis field negator
 		return new Scene3250();
 	case 3255:
+		// Guard Post
 		return new Scene3255();
 	case 3260:
-		// Computer room
+		// ARM Base - Computer room
 		return new Scene3260();
 	case 3275:
-		// Hall
+		// ARM Base - Hall
 		return new Scene3275();
 	case 3350:
 		// Cutscene - Ship landing
 		return new Scene3350();
 	case 3375:
-		// Outer walkway
+		// Circular Walkway
 		return new Scene3375();
 	case 3385:
 		// Corridor
@@ -285,7 +294,7 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		// Confrontation
 		return new Scene3400();
 	case 3500:
-		// Maze action sequencec
+		// Flub tube maze 
 		return new Scene3500();
 	case 3600:
 		// Cutscene - walking at gunpoint
@@ -317,8 +326,11 @@ bool Ringworld2Game::canLoadGameStateCurrently() {
  * Returns true if it is currently okay to save the game
  */
 bool Ringworld2Game::canSaveGameStateCurrently() {
-	// Don't allow a game to be saved if a dialog is active
-	return g_globals->_gfxManagers.size() == 1;
+	// Don't allow a game to be saved if a dialog is active, or if an animation
+	// is playing, or if an active scene prevents it
+	return g_globals->_gfxManagers.size() == 1 && R2_GLOBALS._animationCtr == 0 &&
+		(!R2_GLOBALS._sceneManager._scene ||
+		!((SceneExt *)R2_GLOBALS._sceneManager._scene)->_preventSaving);
 }
 
 /*--------------------------------------------------------------------------*/
@@ -328,11 +340,15 @@ SceneExt::SceneExt(): Scene() {
 	_stripManager._onEnd = SceneExt::endStrip;
 
 	for (int i = 0; i < 256; i++)
-		_field312[i] = 0;
+		_shadowPaletteMap[i] = 0;
 
 	_savedPlayerEnabled = false;
 	_savedUiEnabled = false;
 	_savedCanWalk = false;
+	_preventSaving = false;
+
+	// Reset screen clipping area
+	R2_GLOBALS._screenSurface._clipRect = Rect();
 
 	// WORKAROUND: In the original, playing animations don't reset the global _animationCtr
 	// counter as scene changes unless the playing animation explicitly finishes. For now,
@@ -344,7 +360,7 @@ SceneExt::SceneExt(): Scene() {
 void SceneExt::synchronize(Serializer &s) {
 	Scene::synchronize(s);
 
-	s.syncBytes(&_field312[0], 256);
+	s.syncBytes(&_shadowPaletteMap[0], 256);
 	_sceneAreas.synchronize(s);
 }
 
@@ -356,15 +372,24 @@ void SceneExt::postInit(SceneObjectList *OwnerList) {
 
 	// Initialize fields
 	_action = NULL;
-	_field12 = 0;
 	_sceneMode = 0;
+
+	static_cast<SceneHandlerExt *>(R2_GLOBALS._sceneHandler)->setupPaletteMaps();
 
 	int prevScene = R2_GLOBALS._sceneManager._previousScene;
 	int sceneNumber = R2_GLOBALS._sceneManager._sceneNumber;
-	if (((prevScene == -1) && (sceneNumber != 180) && (sceneNumber != 205) && (sceneNumber != 50))
+	if (g_vm->getFeatures() & GF_DEMO) {
+		if (((prevScene == -1) && (sceneNumber != 180) && (sceneNumber != 205) && (sceneNumber != 50))
+			|| (prevScene == 0) || (sceneNumber == 600)
+			|| ((prevScene == 205 || prevScene == 180) && (sceneNumber == 100))) {
+				R2_GLOBALS._uiElements._active = true;
+				R2_GLOBALS._uiElements.show();
+		} else {
+			R2_GLOBALS._uiElements.updateInventory();
+		}
+	} else if (((prevScene == -1) && (sceneNumber != 180) && (sceneNumber != 205) && (sceneNumber != 50))
 			|| (sceneNumber == 50)
 			|| ((sceneNumber == 100) && (prevScene == 0 || prevScene == 180 || prevScene == 205))) {
-		static_cast<SceneHandlerExt *>(R2_GLOBALS._sceneHandler)->setupPaletteMaps();
 		R2_GLOBALS._uiElements._active = true;
 		R2_GLOBALS._uiElements.show();
 	} else {
@@ -376,6 +401,10 @@ void SceneExt::remove() {
 	_sceneAreas.clear();
 	Scene::remove();
 	R2_GLOBALS._uiElements._active = true;
+
+	if (R2_GLOBALS._events.getCursor() >= EXITCURSOR_N &&
+			R2_GLOBALS._events.getCursor() <= SHADECURSOR_DOWN)
+		R2_GLOBALS._events.setCursor(CURSOR_WALK);
 }
 
 void SceneExt::process(Event &event) {
@@ -384,19 +413,6 @@ void SceneExt::process(Event &event) {
 }
 
 void SceneExt::dispatch() {
-/*
-	_timerList.dispatch();
-
-	if (_field37A) {
-		if ((--_field37A == 0) && R2_GLOBALS._dayNumber) {
-			if (R2_GLOBALS._uiElements._active && R2_GLOBALS._player._enabled) {
-				R2_GLOBALS._uiElements.show();
-			}
-
-			_field37A = 0;
-		}
-	}
-*/
 	Scene::dispatch();
 }
 
@@ -421,9 +437,9 @@ bool SceneExt::display(CursorType action, Event &event) {
 			SceneItem::display2(5, 0);
 		break;
 	case R2_SONIC_STUNNER:
-		if ((R2_GLOBALS._scannerFrequencies[R2_QUINN] == 2) 
+		if ((R2_GLOBALS._scannerFrequencies[R2_QUINN] == 2)
 			|| ((R2_GLOBALS._scannerFrequencies[R2_QUINN] == 1) &&
-				(R2_GLOBALS._scannerFrequencies[R2_SEEKER] == 2) && 
+				(R2_GLOBALS._scannerFrequencies[R2_SEEKER] == 2) &&
 				(R2_GLOBALS._sceneManager._previousScene == 300))) {
 			R2_GLOBALS._sound4.stop();
 			R2_GLOBALS._sound3.play(46);
@@ -569,7 +585,7 @@ void SceneExt::scalePalette(int RFactor, int GFactor, int BFactor) {
 			varC = tmp;
 			varD = j;
 		}
-		this->_field312[i] = varD;
+		this->_shadowPaletteMap[i] = varD;
 	}
 }
 
@@ -584,6 +600,9 @@ void SceneExt::loadBlankScene() {
 
 void SceneHandlerExt::postInit(SceneObjectList *OwnerList) {
 	SceneHandler::postInit(OwnerList);
+
+	if (!R2_GLOBALS._playStream.setFile("SND4K.RES"))
+		warning("Could not find SND4K.RES voice file");
 }
 
 void SceneHandlerExt::process(Event &event) {
@@ -607,9 +626,8 @@ void SceneHandlerExt::process(Event &event) {
 }
 
 void SceneHandlerExt::postLoad(int priorSceneBeforeLoad, int currentSceneBeforeLoad) {
-	if (priorSceneBeforeLoad == -1 || priorSceneBeforeLoad == 50
-			|| priorSceneBeforeLoad == 180 || priorSceneBeforeLoad == 205)
-		setupPaletteMaps();
+	// Set up the shading maps used for showing the player in shadows
+	setupPaletteMaps();
 
 	if (currentSceneBeforeLoad == 2900) {
 		R2_GLOBALS._gfxFontNumber = 50;
@@ -778,116 +796,115 @@ bool DisplayObject::performAction(int action) {
 
 Ringworld2InvObjectList::Ringworld2InvObjectList():
 		_none(1, 1),
-		_inv1(1, 2),
-		_inv2(1, 3),
+		_optoDisk(1, 2),
+		_reader(1, 3),
 		_negatorGun(1, 4),
 		_steppingDisks(1, 5),
-		_inv5(1, 6),
-		_inv6(1, 7),
-		_inv7(1, 8),
-		_inv8(1, 9),
-		_inv9(1, 10),
-		_inv10(1, 11),
-		_inv11(1, 12),
-		_inv12(1, 13),
-		_inv13(1, 14),
-		_inv14(1, 15),
-		_inv15(1, 16),
-		_inv16(1, 17),
-		_inv17(2, 2),
-		_inv18(2, 3),
-		_inv19(2, 4),
-		_inv20(2, 5),
-		_inv21(2, 5),
-		_inv22(2, 6),
-		_inv23(2, 7),
-		_inv24(2, 8),
-		_inv25(2, 9),
-		_inv26(2, 10),
-		_inv27(2, 11),
-		_inv28(2, 12),
-		_inv29(2, 13),
-		_inv30(2, 14),
-		_inv31(2, 15),
-		_inv32(2, 16),
-		_inv33(3, 2),
-		_inv34(3, 3),
-		_inv35(3, 4),
-		_inv36(3, 5),
-		_inv37(3, 6),
-		_inv38(3, 7),
-		_inv39(1, 10),
-		_inv40(3, 8),
-		_inv41(3, 9),
-		_inv42(3, 10),
-		_inv43(3, 11),
-		_inv44(3, 12),
-		_inv45(3, 13),
-		_inv46(3, 17),
-		_inv47(3, 14),
-		_inv48(3, 14),
-		_inv49(3, 15),
-		_inv50(3, 15),
-		_inv51(3, 17),
-		_inv52(4, 2) {
+		_attractorUnit(1, 6),
+		_sensorProbe(1, 7),
+		_sonicStunner(1, 8),
+		_cableHarness(1, 9),
+		_comScanner(1, 10),
+		_spentPowerCapsule(1, 11),		// 10
+		_chargedPowerCapsule(1, 12),
+		_aerosol(1, 13),
+		_remoteControl(1, 14),
+		_opticalFibre(1, 15),
+		_clamp(1, 16),
+		_attractorHarness(1, 17),
+		_fuelCell(2, 2),
+		_gyroscope(2, 3),
+		_airbag(2, 4),
+		_rebreatherTank(2, 5),			// 20
+		_reserveTank(2, 5),
+		_guidanceModule(2, 6),
+		_thrusterValve(2, 7),
+		_balloonBackpack(2, 8),
+		_radarMechanism(2, 9),
+		_joystick(2, 10),
+		_ignitor(2, 11),
+		_diagnosticsDisplay(2, 12),
+		_glassDome(2, 13),
+		_wickLamp(2, 14),				// 30
+		_scrithKey(2, 15),
+		_tannerMask(2, 16),
+		_pureGrainAlcohol(3, 2),
+		_blueSapphire(3, 3),
+		_ancientScrolls(3, 4),
+		_flute(3, 5),
+		_gunpowder(3, 6),
+		_unused(3, 7),
+		_comScanner2(1, 10),
+		_superconductorWire(3, 8),		// 40
+		_pillow(3, 9),
+		_foodTray(3, 10),
+		_laserHacksaw(3, 11),
+		_photonStunner(3, 12),
+		_battery(3, 13),
+		_soakedFaceMask(2, 17),
+		_lightBulb(3, 14),
+		_alcoholLamp1(2, 14),
+		_alcoholLamp2(3, 15),
+		_alocholLamp3(3, 15),			// 50
+		_brokenDisplay(3, 17),
+		_toolbox(4, 2) {
 
 	// Add the items to the list
 	_itemList.push_back(&_none);
-	_itemList.push_back(&_inv1);
-	_itemList.push_back(&_inv2);
+	_itemList.push_back(&_optoDisk);
+	_itemList.push_back(&_reader);
 	_itemList.push_back(&_negatorGun);
 	_itemList.push_back(&_steppingDisks);
-	_itemList.push_back(&_inv5);
-	_itemList.push_back(&_inv6);
-	_itemList.push_back(&_inv7);
-	_itemList.push_back(&_inv8);
-	_itemList.push_back(&_inv9);
-	_itemList.push_back(&_inv10);
-	_itemList.push_back(&_inv11);
-	_itemList.push_back(&_inv12);
-	_itemList.push_back(&_inv13);
-	_itemList.push_back(&_inv14);
-	_itemList.push_back(&_inv15);
-	_itemList.push_back(&_inv16);
-	_itemList.push_back(&_inv17);
-	_itemList.push_back(&_inv18);
-	_itemList.push_back(&_inv19);
-	_itemList.push_back(&_inv20);
-	_itemList.push_back(&_inv21);
-	_itemList.push_back(&_inv22);
-	_itemList.push_back(&_inv23);
-	_itemList.push_back(&_inv24);
-	_itemList.push_back(&_inv25);
-	_itemList.push_back(&_inv26);
-	_itemList.push_back(&_inv27);
-	_itemList.push_back(&_inv28);
-	_itemList.push_back(&_inv29);
-	_itemList.push_back(&_inv30);
-	_itemList.push_back(&_inv31);
-	_itemList.push_back(&_inv32);
-	_itemList.push_back(&_inv33);
-	_itemList.push_back(&_inv34);
-	_itemList.push_back(&_inv35);
-	_itemList.push_back(&_inv36);
-	_itemList.push_back(&_inv37);
-	_itemList.push_back(&_inv38);
-	_itemList.push_back(&_inv39);
-	_itemList.push_back(&_inv40);
-	_itemList.push_back(&_inv41);
-	_itemList.push_back(&_inv42);
-	_itemList.push_back(&_inv43);
-	_itemList.push_back(&_inv44);
-	_itemList.push_back(&_inv45);
-	_itemList.push_back(&_inv46);
-	_itemList.push_back(&_inv47);
-	_itemList.push_back(&_inv48);
-	_itemList.push_back(&_inv49);
-	_itemList.push_back(&_inv50);
-	_itemList.push_back(&_inv51);
-	_itemList.push_back(&_inv52);
+	_itemList.push_back(&_attractorUnit);
+	_itemList.push_back(&_sensorProbe);
+	_itemList.push_back(&_sonicStunner);
+	_itemList.push_back(&_cableHarness);
+	_itemList.push_back(&_comScanner);
+	_itemList.push_back(&_spentPowerCapsule);	// 10
+	_itemList.push_back(&_chargedPowerCapsule);
+	_itemList.push_back(&_aerosol);
+	_itemList.push_back(&_remoteControl);
+	_itemList.push_back(&_opticalFibre);
+	_itemList.push_back(&_clamp);
+	_itemList.push_back(&_attractorHarness);
+	_itemList.push_back(&_fuelCell);
+	_itemList.push_back(&_gyroscope);
+	_itemList.push_back(&_airbag);
+	_itemList.push_back(&_rebreatherTank);		// 20
+	_itemList.push_back(&_reserveTank);
+	_itemList.push_back(&_guidanceModule);
+	_itemList.push_back(&_thrusterValve);
+	_itemList.push_back(&_balloonBackpack);
+	_itemList.push_back(&_radarMechanism);
+	_itemList.push_back(&_joystick);
+	_itemList.push_back(&_ignitor);
+	_itemList.push_back(&_diagnosticsDisplay);
+	_itemList.push_back(&_glassDome);
+	_itemList.push_back(&_wickLamp);			// 30
+	_itemList.push_back(&_scrithKey);
+	_itemList.push_back(&_tannerMask);
+	_itemList.push_back(&_pureGrainAlcohol);
+	_itemList.push_back(&_blueSapphire);
+	_itemList.push_back(&_ancientScrolls);
+	_itemList.push_back(&_flute);
+	_itemList.push_back(&_gunpowder);
+	_itemList.push_back(&_unused);
+	_itemList.push_back(&_comScanner2);
+	_itemList.push_back(&_superconductorWire);	// 40
+	_itemList.push_back(&_pillow);
+	_itemList.push_back(&_foodTray);
+	_itemList.push_back(&_laserHacksaw);
+	_itemList.push_back(&_photonStunner);
+	_itemList.push_back(&_battery);
+	_itemList.push_back(&_soakedFaceMask);
+	_itemList.push_back(&_lightBulb);
+	_itemList.push_back(&_alcoholLamp1);
+	_itemList.push_back(&_alcoholLamp2);
+	_itemList.push_back(&_alocholLamp3);		// 50
+	_itemList.push_back(&_brokenDisplay);
+	_itemList.push_back(&_toolbox);
 
 	_selectedItem = NULL;
-
 }
 
 void Ringworld2InvObjectList::reset() {
@@ -1061,7 +1078,7 @@ bool Ringworld2InvObjectList::SelectItem(int objectNumber) {
 				currentItem == R2_PURE_GRAIN_ALCOHOL) {
 			R2_INVENTORY.setObjectScene(R2_TANNER_MASK, 0);
 			R2_INVENTORY.setObjectScene(R2_PURE_GRAIN_ALCOHOL, 0);
-			R2_INVENTORY.setObjectScene(R2_SOAKED_FACEMASK, 1);
+			R2_INVENTORY.setObjectScene(R2_SOAKED_FACEMASK, R2_SEEKER);
 		} else {
 			selectDefault(objectNumber);
 		}
@@ -1082,7 +1099,7 @@ void Ringworld2InvObjectList::selectDefault(int objectNumber) {
 	Common::String line = Common::String::format("%.5s%.5s%.5s%.5s%s %s %s %s.",
 		msg1.c_str(), msg2.c_str(), msg3.c_str(), msg4.c_str(),
 		msg1.c_str() + 5, msg2.c_str() + 5, msg3.c_str() + 5, msg4.c_str() + 5);
-		
+
 	SceneItem::display(-1, -1, line.c_str(),
 		SET_WIDTH, 280,
 		SET_X, 160,
@@ -1110,18 +1127,29 @@ void Ringworld2Game::start() {
 	if (slot >= 0)
 		R2_GLOBALS._sceneHandler->_loadGameSlot = slot;
 	else {
-		// Switch to the first game scene
-		R2_GLOBALS._events.setCursor(CURSOR_WALK);
+		// Switch to the first title screen
 		R2_GLOBALS._uiElements._active = true;
-		R2_GLOBALS._sceneManager.setNewScene(100);
+		R2_GLOBALS._sceneManager.setNewScene(180);
 	}
 
 	g_globals->_events.showCursor();
 }
 
+void Ringworld2Game::restartGame() {
+	if (MessageDialog::show(Ringworld2::R2_RESTART_MSG, CANCEL_BTN_STRING, YES_MSG) == 1)
+		restart();
+}
+
 void Ringworld2Game::restart() {
 	g_globals->_scenePalette.clearListeners();
 	g_globals->_soundHandler.stop();
+
+	// Reset the globals
+	g_globals->reset();
+
+	// Clear save/load slots
+	g_globals->_sceneHandler->_saveGameSlot = -1;
+	g_globals->_sceneHandler->_loadGameSlot = -1;
 
 	// Change to the first game scene
 	g_globals->_sceneManager.changeScene(100);
@@ -1179,25 +1207,25 @@ void Ringworld2Game::processEvent(Event &event) {
 		case Common::KEYCODE_F4:
 			// F4 - Restart
 			restartGame();
-			g_globals->_events.setCursorFromFlag();
+			R2_GLOBALS._events.setCursorFromFlag();
 			break;
 
 		case Common::KEYCODE_F7:
 			// F7 - Restore
 			restoreGame();
-			g_globals->_events.setCursorFromFlag();
+			R2_GLOBALS._events.setCursorFromFlag();
 			break;
 
 		case Common::KEYCODE_F8:
 			// F8 - Credits
-			warning("TODO: Show Credits");
+			R2_GLOBALS._sceneManager.changeScene(205);
 			break;
 
 		case Common::KEYCODE_F10:
 			// F10 - Pause
 			GfxDialog::setPalette();
 			MessageDialog::show(GAME_PAUSED_MSG, OK_BTN_STRING);
-			g_globals->_events.setCursorFromFlag();
+			R2_GLOBALS._events.setCursorFromFlag();
 			break;
 
 		default:
@@ -1208,8 +1236,13 @@ void Ringworld2Game::processEvent(Event &event) {
 
 void Ringworld2Game::rightClick() {
 	RightClickDialog *dlg = new RightClickDialog();
-	dlg->execute();
+	int option = dlg->execute();
 	delete dlg;
+
+	if (option == 0)
+		CharacterDialog::show();
+	else if (option == 1)
+		HelpDialog::show();
 }
 
 /*--------------------------------------------------------------------------*/
@@ -1256,7 +1289,7 @@ void SceneActor::postInit(SceneObjectList *OwnerList) {
 
 void SceneActor::remove() {
 	R2_GLOBALS._sceneItems.remove(this);
-	_field9C = NULL;
+	_shadowMap = NULL;
 	_linkedActor = NULL;
 
 	SceneObject::remove();
@@ -1297,26 +1330,6 @@ bool SceneActor::startAction(CursorType action, Event &event) {
 GfxSurface SceneActor::getFrame() {
 	GfxSurface frame = SceneObject::getFrame();
 
-	// TODO: Proper effects handling
-	switch (_effect) {
-	case 0:
-	case 5:
-		// TODO: Figure out purpose of setting image flags to 64, and getting
-		// scene priorities -1 or _shade
-		break;
-	case 1:
-		// TODO: Transposing using R2_GLOBALS._pixelArrayMap
-		break;
-	case 2:
-		// No effect
-		break;
-	case 4:
-		break;
-	default:
-		// TODO: Default effect
-		break;
-	}
-
 	return frame;
 }
 
@@ -1327,6 +1340,7 @@ SceneArea::SceneArea(): SceneItem() {
 	_insideArea = false;
 	_savedCursorNum = CURSOR_NONE;
 	_cursorState = 0;
+	_cursorNum = CURSOR_NONE;
 }
 
 void SceneArea::synchronize(Serializer &s) {
@@ -1345,10 +1359,13 @@ void SceneArea::remove() {
 }
 
 void SceneArea::process(Event &event) {
+	Common::Point mousePos = event.mousePos;
+	mousePos.x += R2_GLOBALS._sceneManager._scene->_sceneBounds.left;
+
 	if (!R2_GLOBALS._insetUp && _enabled && R2_GLOBALS._events.isCursorVisible()) {
 		CursorType cursor = R2_GLOBALS._events.getCursor();
 
-		if (_bounds.contains(event.mousePos)) {
+		if (_bounds.contains(mousePos)) {
 			// Cursor moving in bounded area
 			if (cursor != _cursorNum) {
 				_savedCursorNum = cursor;
@@ -1356,7 +1373,7 @@ void SceneArea::process(Event &event) {
 				R2_GLOBALS._events.setCursor(_cursorNum);
 			}
 			_insideArea = true;
-		} else if ((event.mousePos.y < 171) && _insideArea && (_cursorNum == cursor) &&
+		} else if ((mousePos.y < 171) && _insideArea && (_cursorNum == cursor) &&
 				(_savedCursorNum != CURSOR_NONE)) {
 			// Cursor moved outside bounded area
 			R2_GLOBALS._events.setCursor(_savedCursorNum);
@@ -1376,6 +1393,8 @@ void SceneArea::setDetails(const Rect &bounds, CursorType cursor) {
 SceneExit::SceneExit(): SceneArea() {
 	_moving = false;
 	_destPos = Common::Point(-1, -1);
+
+	_sceneNumber = 0;
 }
 
 void SceneExit::synchronize(Serializer &s) {
@@ -1396,20 +1415,23 @@ void SceneExit::changeScene() {
 }
 
 void SceneExit::process(Event &event) {
+	Common::Point mousePos = event.mousePos;
+	mousePos.x += R2_GLOBALS._sceneManager._scene->_sceneBounds.left;
+
 	if (!R2_GLOBALS._insetUp) {
 		SceneArea::process(event);
 
 		if (_enabled) {
 			if (event.eventType == EVENT_BUTTON_DOWN) {
-				if (!_bounds.contains(event.mousePos))
+				if (!_bounds.contains(mousePos))
 					_moving = false;
 				else if (!R2_GLOBALS._player._canWalk) {
 					_moving = false;
 					changeScene();
 					event.handled = true;
 				} else {
-					Common::Point dest((_destPos.x == -1) ? event.mousePos.x : _destPos.x,
-						(_destPos.y == -1) ? event.mousePos.y : _destPos.y);
+					Common::Point dest((_destPos.x == -1) ? mousePos.x : _destPos.x,
+						(_destPos.y == -1) ? mousePos.y : _destPos.y);
 					ADD_PLAYER_MOVER(dest.x, dest.y);
 
 					_moving = true;
@@ -1447,7 +1469,7 @@ void SceneAreaObject::process(Event &event) {
 				_savedCursorNum = R2_GLOBALS._events.getCursor();
 				R2_GLOBALS._events.setCursor(CURSOR_INVALID);
 			}
-				
+
 			if (event.eventType == EVENT_BUTTON_DOWN) {
 				event.handled = true;
 				R2_GLOBALS._events.setCursor(_savedCursorNum);
@@ -1484,7 +1506,7 @@ MazeUI::MazeUI() {
 	_cellSize.x = _cellSize.y = 0;
 	_mapOffset.x = _mapOffset.y = 0;
 	_resNum = _cellsResNum = 0;
-	_frameCount = _resCount = _mapImagePitch = _unused = 0;
+	_frameCount = _resCount = _mapImagePitch = 0;
 }
 
 MazeUI::~MazeUI() {
@@ -1492,7 +1514,7 @@ MazeUI::~MazeUI() {
 }
 
 void MazeUI::synchronize(Serializer &s) {
-	SavedObject::synchronize(s);
+	SceneObject::synchronize(s);
 
 	s.syncAsSint16LE(_resNum);
 	if (s.isLoading())
@@ -1500,11 +1522,12 @@ void MazeUI::synchronize(Serializer &s) {
 
 	s.syncAsSint16LE(_mapOffset.x);
 	s.syncAsSint16LE(_mapOffset.y);
-	s.syncAsSint16LE(_unused);
+
+	int dummy = 0;
+	s.syncAsSint16LE(dummy);
 }
 
 void MazeUI::load(int resNum) {
-	postInit();
 	clear();
 	_resNum = resNum;
 
@@ -1586,12 +1609,13 @@ void MazeUI::draw() {
 		(_cellSize.y - 1)) / _cellSize.y;
 
 	// Loop to handle the cell rows of the visible display area one at a time
-	for (int yCtr = 0; yCtr < _cellsVisible.y; ++yCtr, yPos += ySize) {
+	for (int yCtr = 0; yCtr <= _cellsVisible.y; ++yCtr, yPos += ySize) {
 		int cellY = _mapOffset.y / _cellSize.y + yCtr;
 
 		// Loop to iterate through the horizontal visible cells to build up
-		// an entire cell high horizontal slice of the map
-		for (int xCtr = 0; xCtr < _cellsVisible.x; ++xCtr) {
+		// an entire cell high horizontal slice of the map, plus one extra cell
+		// to allow for partial cell scrolling on-screen on the left/right sides
+		for (int xCtr = 0; xCtr <= _cellsVisible.x; ++xCtr) {
 			int cellX = _mapOffset.x / _cellSize.x + xCtr;
 
 			// Get the type of content to display in the cell
@@ -1691,6 +1715,12 @@ void AnimationSlice::load(Common::File &f) {
 
 AnimationSlices::AnimationSlices() {
 	_pixelData = NULL;
+
+	_dataSize = 0;
+	_dataSize2 = 0;
+	_slices->_sliceOffset = 0;
+	_slices->_drawMode = 0;
+	_slices->_secondaryIndex = 0;
 }
 
 AnimationSlices::~AnimationSlices() {
@@ -1752,10 +1782,21 @@ AnimationPlayer::AnimationPlayer(): EventHandler() {
 	_screenBounds = R2_GLOBALS._gfxManagerInstance._bounds;
 	_rect1 = R2_GLOBALS._gfxManagerInstance._bounds;
 	_paletteMode = ANIMPALMODE_REPLACE_PALETTE;
-	_field3A = 1;
+	_canSkip = true;
 	_sliceHeight = 1;
-	_field58 = 1;
 	_endAction = NULL;
+
+	_sliceCurrent = nullptr;
+	_sliceNext = nullptr;
+	_animLoaded = false;
+	_objectMode = ANIMOBJMODE_1;
+	_dataNeeded = 0;
+	_playbackTick = 0;
+	_playbackTickPrior = 0;
+	_position = 0;
+	_nextSlicesPosition = 0;
+	_frameDelay = 0;
+	_gameFrame = 0;
 }
 
 AnimationPlayer::~AnimationPlayer() {
@@ -1765,7 +1806,9 @@ AnimationPlayer::~AnimationPlayer() {
 
 void AnimationPlayer::synchronize(Serializer &s) {
 	EventHandler::synchronize(s);
-	warning("TODO AnimationPlayer::synchronize");
+
+	// TODO: Implement saving for animation player state. Currently, I disable saving
+	// when an animation is active, so saving it's state would a "nice to have".
 }
 
 void AnimationPlayer::remove() {
@@ -1776,8 +1819,7 @@ void AnimationPlayer::remove() {
 }
 
 void AnimationPlayer::process(Event &event) {
-	if ((event.eventType == EVENT_KEYPRESS) && (event.kbd.keycode == Common::KEYCODE_ESCAPE) &&
-			(_field3A)) {
+	if ((event.eventType == EVENT_KEYPRESS) && (event.kbd.keycode == Common::KEYCODE_ESCAPE) && _canSkip) {
 		// Move the current position to the end
 		_position = _subData._duration;
 	}
@@ -1823,10 +1865,12 @@ bool AnimationPlayer::load(int animId, Action *endAction) {
 	_playbackTickPrior = -1;
 	_playbackTick = 0;
 
-	// The final multiplication is used to deliberately slow down playback, since the original
-	// was slowed down by the amount of time spent to decode and display the frames
-	_frameDelay = (60 / _subData._frameRate) * 8;
+	_frameDelay = (60 / _subData._frameRate);
 	_gameFrame = R2_GLOBALS._events.getFrameNumber();
+
+	// WORKAROUND: Slow down the title sequences to better match the original
+	if (animId <= 4 || animId == 15)
+		_frameDelay *= 8;
 
 	if (_subData._totalSize) {
 		_dataNeeded = _subData._totalSize;
@@ -1896,7 +1940,7 @@ bool AnimationPlayer::load(int animId, Action *endAction) {
 	}
 
 	++R2_GLOBALS._animationCtr;
-	_field38 = 1;
+	_animLoaded = true;
 	return true;
 }
 
@@ -1993,7 +2037,7 @@ void AnimationPlayer::drawFrame(int sliceIndex) {
 	// Unlock the screen surface
 	R2_GLOBALS._screenSurface.unlockSurface();
 
-	if (_objectMode == 42) {
+	if (_objectMode == ANIMOBJMODE_42) {
 		_screenBounds.expandPanes();
 
 		// Copy the drawn frame to the back surface
@@ -2043,7 +2087,7 @@ bool AnimationPlayer::isCompleted() {
 }
 
 void AnimationPlayer::close() {
-	if (_field38) {
+	if (_animLoaded) {
 		switch (_paletteMode) {
 		case 0:
 			R2_GLOBALS._scenePalette.replace(&_palette);
@@ -2062,7 +2106,7 @@ void AnimationPlayer::close() {
 	// Close the resource file
 	_resourceFile.close();
 
-	if (_objectMode != 42) {
+	if (_objectMode != ANIMOBJMODE_42) {
 		// flip screen in original
 	}
 
@@ -2072,9 +2116,9 @@ void AnimationPlayer::close() {
 	_animData1 = NULL;
 	_animData2 = NULL;
 
-	_field38 = 0;
+	_animLoaded = false;
 	if (g_globals != NULL)
-		R2_GLOBALS._animationCtr = MAX(R2_GLOBALS._animationCtr, 0);
+		R2_GLOBALS._animationCtr = MAX(R2_GLOBALS._animationCtr - 1, 0);
 }
 
 void AnimationPlayer::rleDecode(const byte *pSrc, byte *pDest, int size) {
@@ -2120,19 +2164,19 @@ void AnimationPlayer::getSlices() {
 /*--------------------------------------------------------------------------*/
 
 AnimationPlayerExt::AnimationPlayerExt(): AnimationPlayer() {
-	_v = 0;
-	_field3A = 0;
+	_isActive = false;
+	_canSkip = false;
 }
 
 void AnimationPlayerExt::synchronize(Serializer &s) {
 	AnimationPlayer::synchronize(s);
-	s.syncAsSint16LE(_v);
+	s.syncAsSint16LE(_isActive);
 }
 
 /*--------------------------------------------------------------------------*/
 
 ModalWindow::ModalWindow() {
-	_field20 = 0;
+	_insetCount = 0;
 }
 
 void ModalWindow::remove() {
@@ -2147,11 +2191,11 @@ void ModalWindow::remove() {
 void ModalWindow::synchronize(Serializer &s) {
 	SceneArea::synchronize(s);
 
-	s.syncAsByte(_field20);
+	s.syncAsByte(_insetCount);
 }
 
 void ModalWindow::process(Event &event) {
-	if (_field20 != R2_GLOBALS._insetUp)
+	if (_insetCount != R2_GLOBALS._insetUp)
 		return;
 
 	CursorType cursor = R2_GLOBALS._events.getCursor();
@@ -2173,7 +2217,7 @@ void ModalWindow::process(Event &event) {
 	}
 }
 
-void ModalWindow::proc12(int visage, int stripFrameNum, int frameNum, int posX, int posY) {
+void ModalWindow::setup2(int visage, int stripFrameNum, int frameNum, int posX, int posY) {
 	Scene1200 *scene = (Scene1200 *)R2_GLOBALS._sceneManager._scene;
 
 	_object1.postInit();
@@ -2183,10 +2227,10 @@ void ModalWindow::proc12(int visage, int stripFrameNum, int frameNum, int posX, 
 	_cursorNum = CURSOR_INVALID;
 	scene->_sceneAreas.push_front(this);
 	++R2_GLOBALS._insetUp;
-	_field20 = R2_GLOBALS._insetUp;
+	_insetCount = R2_GLOBALS._insetUp;
 }
 
-void ModalWindow::proc13(int resNum, int lookLineNum, int talkLineNum, int useLineNum) {
+void ModalWindow::setup3(int resNum, int lookLineNum, int talkLineNum, int useLineNum) {
 	_object1.setDetails(resNum, lookLineNum, talkLineNum, useLineNum, 2, (SceneItem *) NULL);
 }
 
@@ -2230,7 +2274,7 @@ void ScannerDialog::Button::process(Event &event) {
 		setFrame(2);
 		_buttonDown = false;
 		event.handled = true;
-		
+
 		reset();
 	}
 }
@@ -2445,15 +2489,15 @@ void ScannerDialog::remove() {
 	ModalWindow::remove();
 }
 
-void ScannerDialog::proc12(int visage, int stripFrameNum, int frameNum, int posX, int posY) {
+void ScannerDialog::setup2(int visage, int stripFrameNum, int frameNum, int posX, int posY) {
 	// Stop player moving if currently doing so
 	if (R2_GLOBALS._player._mover)
 		R2_GLOBALS._player.addMover(NULL);
 
 	R2_GLOBALS._events.setCursor(CURSOR_USE);
-	ModalWindow::proc12(visage, stripFrameNum, frameNum, posX, posY);
+	ModalWindow::setup2(visage, stripFrameNum, frameNum, posX, posY);
 
-	proc13(100, -1, -1, -1);
+	setup3(100, -1, -1, -1);
 	_talkButton.setup(1);
 	_scanButton.setup(2);
 	_slider.setup(R2_GLOBALS._scannerFrequencies[R2_GLOBALS._player._characterIndex], 142, 124, 35, 5);

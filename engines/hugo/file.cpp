@@ -246,13 +246,13 @@ SoundPtr FileManager::getSound(const int16 sound, uint16 *size) {
 
 	// No more to do if SILENCE (called for cleanup purposes)
 	if (sound == _vm->_soundSilence)
-		return 0;
+		return nullptr;
 
 	// Open sounds file
 	Common::File fp;                                // Handle to SOUND_FILE
 	if (!fp.open(getSoundFilename())) {
 		warning("Hugo Error: File not found %s", getSoundFilename());
-		return 0;
+		return nullptr;
 	}
 
 	if (!_hasReadHeader) {
@@ -519,6 +519,7 @@ void FileManager::readBootFile() {
 	ofp.read(_vm->_boot._pbswitch, sizeof(_vm->_boot._pbswitch));
 	ofp.read(_vm->_boot._distrib, sizeof(_vm->_boot._distrib));
 	_vm->_boot._exitLen = ofp.readUint16LE();
+	ofp.close();
 
 	byte *p = (byte *)&_vm->_boot;
 
@@ -527,7 +528,6 @@ void FileManager::readBootFile() {
 		checksum ^= p[i];
 		p[i] ^= s_bootCypher[i % s_bootCypherLen];
 	}
-	ofp.close();
 
 	if (checksum) {
 		Utils::notifyBox(Common::String::format("Corrupted startup file '%s'", getBootFilename()));

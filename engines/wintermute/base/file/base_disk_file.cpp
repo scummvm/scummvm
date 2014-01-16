@@ -117,6 +117,8 @@ Common::SeekableReadStream *openDiskFile(const Common::String &filename) {
 	if (fixedFilename.contains(':')) {
 		if (fixedFilename.hasPrefix("c:/windows/fonts/")) { // East Side Story refers to "c:\windows\fonts\framd.ttf"
 			fixedFilename = filename.c_str() + 14;
+		} else if (fixedFilename.hasPrefix("c:/carol6/svn/data/")) {	// Carol Reed 6: Black Circle refers to "c:\carol6\svn\data\sprites\system\help.png"
+			fixedFilename = fixedFilename.c_str() + 19;
 		} else {
 			error("openDiskFile::Absolute path or invalid filename used in %s", filename.c_str());
 		}
@@ -149,7 +151,8 @@ Common::SeekableReadStream *openDiskFile(const Common::String &filename) {
 		}
 
 		if (compressed) {
-			uint32 dataOffset, compSize, uncompSize;
+			uint32 dataOffset, compSize;
+			unsigned long uncompSize;
 			dataOffset = file->readUint32LE();
 			compSize = file->readUint32LE();
 			uncompSize = file->readUint32LE();
@@ -171,7 +174,7 @@ Common::SeekableReadStream *openDiskFile(const Common::String &filename) {
 			file->seek(dataOffset + prefixSize, SEEK_SET);
 			file->read(compBuffer, compSize);
 
-			if (Common::uncompress(data, (unsigned long *)&uncompSize, compBuffer, compSize) != true) {
+			if (Common::uncompress(data, &uncompSize, compBuffer, compSize) != true) {
 				error("Error uncompressing file '%s'", filename.c_str());
 				delete[] compBuffer;
 				delete file;

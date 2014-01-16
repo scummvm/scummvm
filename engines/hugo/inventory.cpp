@@ -44,7 +44,8 @@ namespace Hugo {
 
 static const int kMaxDisp = (kXPix / kInvDx);       // Max icons displayable
 
-InventoryHandler::InventoryHandler(HugoEngine *vm) : _vm(vm), _invent(0) {
+InventoryHandler::InventoryHandler(HugoEngine *vm) : _vm(vm) {
+	_invent = nullptr;
 	_firstIconId = 0;
 	_inventoryState  = kInventoryOff;               // Inventory icon bar state
 	_inventoryHeight = 0;                           // Inventory icon bar pos
@@ -62,6 +63,7 @@ void InventoryHandler::setInventoryState(Istate state) {
 
 void InventoryHandler::freeInvent() {
 	free(_invent);
+	_invent = nullptr;
 }
 
 int16 InventoryHandler::getInventoryObjId() const {

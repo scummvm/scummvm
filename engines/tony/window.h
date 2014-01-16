@@ -72,6 +72,7 @@ public:
 	 * Initialization
 	 */
 	void init();
+	void reset();
 	void close();
 
 	/**

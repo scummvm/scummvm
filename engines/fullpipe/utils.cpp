@@ -44,14 +44,14 @@ bool CObject::loadFile(const char *fname) {
 	return load(archive);
 }
 
-bool CObList::load(MfcArchive &file) {
-	debug(5, "CObList::load()");
+bool ObList::load(MfcArchive &file) {
+	debug(5, "ObList::load()");
 	int count = file.readCount();
 
-	debug(9, "CObList::count: %d:", count);
+	debug(9, "ObList::count: %d:", count);
 
 	for (int i = 0; i < count; i++) {
-		debug(9, "CObList::[%d]", i);
+		debug(9, "ObList::[%d]", i);
 		CObject *t = file.readClass();
 
 		push_back(t);
@@ -60,8 +60,8 @@ bool CObList::load(MfcArchive &file) {
 	return true;
 }
 
-bool CObArray::load(MfcArchive &file) {
-	debug(5, "CObArray::load()");
+bool ObArray::load(MfcArchive &file) {
+	debug(5, "ObArray::load()");
 	int count = file.readCount();
 
 	resize(count);
@@ -75,11 +75,11 @@ bool CObArray::load(MfcArchive &file) {
 	return true;
 }
 
-bool CDWordArray::load(MfcArchive &file) {
-	debug(5, "CWordArray::load()");
+bool DWordArray::load(MfcArchive &file) {
+	debug(5, "DWordArray::load()");
 	int count = file.readCount();
 
-	debug(9, "CDWordArray::count: %d", count);
+	debug(9, "DWordArray::count: %d", count);
 
 	resize(count);
 
@@ -138,9 +138,9 @@ bool MemoryObject::load(MfcArchive &file) {
 		}
 	}
 
-	if (g_fullpipe->_currArchive) {
+	if (g_fp->_currArchive) {
 		_mfield_14 = 0;
-		_libHandle = g_fullpipe->_currArchive;
+		_libHandle = g_fp->_currArchive;
 	}
 
 	return true;
@@ -148,8 +148,17 @@ bool MemoryObject::load(MfcArchive &file) {
 
 void MemoryObject::loadFile(char *filename) {
 	debug(5, "MemoryObject::loadFile(<%s>)", filename);
+
+	if (!*filename)
+		return;
+
 	if (!_data) {
-		Common::SeekableReadStream *s = g_fullpipe->_currArchive->createReadStreamForMember(filename);
+		NGIArchive *arr = g_fp->_currArchive;
+
+		if (g_fp->_currArchive != _libHandle && _libHandle)
+			g_fp->_currArchive = _libHandle;
+
+		Common::SeekableReadStream *s = g_fp->_currArchive->createReadStreamForMember(filename);
 
 		if (s) {
 			assert(s->size() > 0);
@@ -161,7 +170,11 @@ void MemoryObject::loadFile(char *filename) {
 			s->read(_data, _dataSize);
 
 			delete s;
+		} else {
+			warning("MemoryObject::loadFile(): reading failure");
 		}
+
+		g_fp->_currArchive = arr;
 	}
 }
 
@@ -181,6 +194,8 @@ byte *MemoryObject::loadData() {
 }
 
 void MemoryObject::freeData() {
+	debug(8, "MemoryObject::freeData(): file: %s", _memfilename);
+
 	if (_data)
 		free(_data);
 
@@ -262,34 +277,34 @@ double MfcArchive::readDouble() {
 
 enum {
 	kNullObject,
-	kCInteraction,
+	kInteraction,
 	kMessageQueue,
 	kExCommand,
-	kCObjstateCommand,
-	kCGameVar,
-	kCMctlCompound,
-	kCMovGraph,
-	kCMovGraphLink,
-	kCMovGraphNode,
-	kCReactParallel,
-	kCReactPolygonal
+	kObjstateCommand,
+	kGameVar,
+	kMctlCompound,
+	kMovGraph,
+	kMovGraphLink,
+	kMovGraphNode,
+	kReactParallel,
+	kReactPolygonal
 };
 
 const struct {
 	const char *name;
 	int id;
 } classMap[] = {
-	{ "CInteraction",	kCInteraction },
+	{ "CInteraction",	kInteraction },
 	{ "MessageQueue",	kMessageQueue },
 	{ "ExCommand",		kExCommand },
-	{ "CObjstateCommand", kCObjstateCommand },
-	{ "CGameVar",		kCGameVar },
-	{ "CMctlCompound",	kCMctlCompound },
-	{ "CMovGraph",		kCMovGraph },
-	{ "CMovGraphLink",	kCMovGraphLink },
-	{ "CMovGraphNode",	kCMovGraphNode },
-	{ "CReactParallel", kCReactParallel },
-	{ "CReactPolygonal", kCReactPolygonal },
+	{ "CObjstateCommand", kObjstateCommand },
+	{ "CGameVar",		kGameVar },
+	{ "CMctlCompound",	kMctlCompound },
+	{ "CMovGraph",		kMovGraph },
+	{ "CMovGraphLink",	kMovGraphLink },
+	{ "CMovGraphNode",	kMovGraphNode },
+	{ "CReactParallel",	kReactParallel },
+	{ "CReactPolygonal", kReactPolygonal },
 	{ 0, 0 }
 };
 
@@ -306,28 +321,28 @@ static CObject *createObject(int objectId) {
 	switch (objectId) {
 	case kNullObject:
 		return 0;
-	case kCInteraction:
-		return new CInteraction();
+	case kInteraction:
+		return new Interaction();
 	case kMessageQueue:
 		return new MessageQueue();
 	case kExCommand:
 		return new ExCommand();
-	case kCObjstateCommand:
-		return new CObjstateCommand();
-	case kCGameVar:
-		return new CGameVar();
-	case kCMctlCompound:
-		return new CMctlCompound();
-	case kCMovGraph:
-		return new CMovGraph();
-	case kCMovGraphLink:
-		return new CMovGraphLink();
-	case kCMovGraphNode:
-		return new CMovGraphNode();
-	case kCReactParallel:
-		return new CReactParallel();
-	case kCReactPolygonal:
-		return new CReactPolygonal();
+	case kObjstateCommand:
+		return new ObjstateCommand();
+	case kGameVar:
+		return new GameVar();
+	case kMctlCompound:
+		return new MctlCompound();
+	case kMovGraph:
+		return new MovGraph();
+	case kMovGraphLink:
+		return new MovGraphLink();
+	case kMovGraphNode:
+		return new MovGraphNode();
+	case kReactParallel:
+		return new ReactParallel();
+	case kReactPolygonal:
+		return new ReactPolygonal();
 	default:
 		error("Unknown objectId: %d", objectId);
 	}
@@ -396,6 +411,8 @@ CObject *MfcArchive::parseClass(bool *isCopyReturned) {
 		if (_objectMap.size() < obTag) {
 			error("Object index too big: %d  at 0x%08x", obTag, pos() - 2);
 		}
+		debug(7, "parseClass::obTag <%s>", lookupObjectId(_objectIdMap[obTag]));
+
 		res = _objectMap[obTag];
 
 		*isCopyReturned = true;

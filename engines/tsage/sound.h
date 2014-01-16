@@ -63,8 +63,6 @@ public:
 
 struct GroupData {
 	uint32 _groupMask;
-	byte _v1;
-	byte _v2;
 	const byte *_pData;
 };
 
@@ -98,7 +96,7 @@ public:
 	virtual const GroupData *getGroupData() { return NULL; }	// Method #3
 	virtual void installPatch(const byte *data, int size) {}	// Method #4
 	virtual void poll() {}										// Method #5
-	virtual void proc12() {}									// Method #6
+	virtual void method6() {}									// Method #6
 	virtual int setMasterVolume(int volume) { return 0; }		// Method #7
 	virtual void proc16() {}									// Method #8
 	virtual void proc18(int al, VoiceType voiceType) {}			// Method #9
@@ -259,6 +257,7 @@ public:
 class Sound: public EventHandler {
 private:
 	void _prime(int soundResID, bool dontQueue);
+	void _primeBuffer(const byte *soundData);
 	void _unPrime();
 public:
 	bool _stoppedAsynchronously;
@@ -365,7 +364,7 @@ public:
 class ASound: public EventHandler {
 public:
 	Sound _sound;
-	EventHandler *_action;
+	EventHandler *_endAction;
 	int _cueValue;
 
 	ASound();
@@ -373,7 +372,7 @@ public:
 	virtual void synchronize(Serializer &s);
 	virtual void dispatch();
 
-	void play(int soundNum, EventHandler *action = NULL, int volume = 127);
+	void play(int soundNum, EventHandler *endAction = NULL, int volume = 127);
 	void stop();
 	void prime(int soundNum, Action *action = NULL);
 	void unPrime();
@@ -385,7 +384,7 @@ public:
 	bool isMuted() const { return _sound.isMuted(); }
 	void pause(bool flag) { _sound.pause(flag); }
 	void mute(bool flag) { _sound.mute(flag); }
-	void fade(int fadeDest, int fadeSteps, int fadeTicks, bool stopAfterFadeFlag, EventHandler *action);
+	void fade(int fadeDest, int fadeSteps, int fadeTicks, bool stopAfterFadeFlag, EventHandler *endAction);
 	void fadeIn() { fade(127, 5, 10, false, NULL); }
 	void fadeOut(Action *action) { fade(0, 5, 10, true, action); }
 	void setTimeIndex(uint32 timeIndex) { _sound.setTimeIndex(timeIndex); }
@@ -406,7 +405,7 @@ public:
 	int _soundNum;
 
 	ASoundExt();
-	void fadeOut2(EventHandler *action);
+	void fadeOut2(EventHandler *endAction);
 	void changeSound(int soundNum);
 
 	virtual Common::String getClassName() { return "ASoundExt"; }
@@ -414,15 +413,36 @@ public:
 	virtual void signal();
 };
 
-class PlayStream {
-public:
-	Sound _sound;
+class PlayStream: public EventHandler {
+	class ResFileData {
+	public:
+		int _fileChunkSize;
+		uint _indexSize;
+		uint _chunkSize;
 
-	void setFile(const Common::String &filename) {}
-	bool play(int soundNum, EventHandler *endAction) { return false; }
-	void stop() {}
-	void proc1() {}
-	bool isPlaying() const { return false; }
+		void load(Common::SeekableReadStream &stream);
+	};
+private:
+	Common::File _file;
+	ResFileData _resData;
+	Audio::QueuingAudioStream *_audioStream;
+	Audio::SoundHandle _soundHandle;
+	uint16 *_index;
+	EventHandler *_endAction;
+	int _voiceNum;
+
+	static uint32 getFileOffset(const uint16 *data, int count, int voiceNum);
+public:
+	PlayStream();
+	virtual ~PlayStream();
+
+	bool setFile(const Common::String &filename);
+	bool play(int voiceNum, EventHandler *endAction);
+	void stop();
+	bool isPlaying() const;
+
+	virtual void remove();
+	virtual void dispatch();
 };
 
 #define ADLIB_CHANNEL_COUNT 9

@@ -168,19 +168,19 @@ void DrasculaEngine::converse(int index) {
 	// delete stream;
 
 	if (currentChapter == 2 && !strcmp(fileName, "op_5.cal") && flags[38] == 1 && flags[33] == 1) {
-		strcpy(phrase3, _text[405]);
+		Common::strlcpy(phrase3, _text[405], 128);
 		strcpy(sound3, "405.als");
 		answer3 = 31;
 	}
 
 	if (currentChapter == 6 && !strcmp(fileName, "op_12.cal") && flags[7] == 1) {
-		strcpy(phrase3, _text[273]);
+		Common::strlcpy(phrase3, _text[273], 128);
 		strcpy(sound3, "273.als");
 		answer3 = 14;
 	}
 
 	if (currentChapter == 6 && !strcmp(fileName, "op_12.cal") && flags[10] == 1) {
-		strcpy(phrase3, _text[274]);
+		Common::strlcpy(phrase3, _text[274], 128);
 		strcpy(sound3, "274.als");
 		answer3 = 15;
 	}

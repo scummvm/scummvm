@@ -1645,10 +1645,10 @@ void DrasculaEngine::animation_9_6() {
 
 	int v_cd;
 
-	animate("fin.bin", 14);
+	(void)animate("fin.bin", 14);
 	playMusic(13);
 	flags[5] = 1;
-	animate("drf.bin", 16);
+	(void)animate("drf.bin", 16);
 	fadeToBlack(0);
 	clearRoom();
 	curX = -1;

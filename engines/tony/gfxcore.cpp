@@ -117,6 +117,7 @@ RMGfxBuffer::operator void *() {
 }
 
 RMGfxBuffer::RMGfxBuffer(int dimx, int dimy, int nBpp) {
+	_origBuf = _buf = NULL;
 	create(dimx, dimy, nBpp);
 }
 

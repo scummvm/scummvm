@@ -74,6 +74,8 @@ public:
 
 protected:
 	void readNextPacket();
+	bool supportsAudioTrackSwitching() const { return true; }
+	AudioTrack *getAudioTrack(int index);
 
 private:
 	static const int kAudioChannelsMax  = 2;

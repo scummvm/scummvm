@@ -32,6 +32,8 @@
 #include "common/system.h"
 #include "audio/mixer.h"
 #include "engines/engine.h"
+#include "gui/debugger.h"
+#include "neverhood/console.h"
 #include "neverhood/messages.h"
 
 namespace Neverhood {
@@ -48,7 +50,6 @@ class Screen;
 class SoundMan;
 class AudioResourceMan;
 class StaticData;
-class Console;
 struct NPoint;
 
 struct GameState {
@@ -72,8 +73,10 @@ public:
 	uint32 getFeatures() const;
 	uint16 getVersion() const;
 	Common::Platform getPlatform() const;
+	Common::Language getLanguage() const;
 	bool hasFeature(EngineFeature f) const;
 	bool isDemo() const;
+	bool applyResourceFixes() const;
 	Common::String getTargetName() { return _targetName; };
 
 	Common::RandomSource *_rnd;
@@ -88,6 +91,7 @@ public:
 	GameModule *_gameModule;
 	StaticData *_staticData;
 	Console *_console;
+	GUI::Debugger *getDebugger() { return _console; }
 
 	SoundMan *_soundMan;
 	AudioResourceMan *_audioResourceMan;

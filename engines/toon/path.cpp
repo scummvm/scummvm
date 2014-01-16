@@ -152,6 +152,8 @@ PathFinding::PathFinding() {
 	_heap = new PathFindingHeap();
 	_sq = NULL;
 	_numBlockingRects = 0;
+
+	_currentMask = nullptr;
 }
 
 PathFinding::~PathFinding(void) {

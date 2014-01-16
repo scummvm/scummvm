@@ -51,6 +51,28 @@ ToucheEngine::ToucheEngine(OSystem *system, Common::Language language)
 	_saveLoadCurrentSlot = 0;
 	_hideInventoryTexts = false;
 
+	_numOpcodes = 0;
+	_compressedSpeechData = 0;
+	_textData = 0;
+	_backdropBuffer = 0;
+	_menuKitData = 0;
+	_convKitData = 0;
+
+	for (int i = 0; i < NUM_SEQUENCES; i++)
+		_sequenceDataTable[i] = 0;
+
+	_programData = 0;
+	_programDataSize = 0;
+	_mouseData = 0;
+	_iconData = 0;
+	_currentBitmapWidth = 0;
+	_currentBitmapHeight = 0;
+	_currentImageWidth = 0;
+	_currentImageHeight = 0;
+	_roomWidth = 0;
+	_programTextDataPtr = 0;
+	_offscreenBuffer = 0;
+
 	_screenRect = Common::Rect(kScreenWidth, kScreenHeight);
 	_roomAreaRect = Common::Rect(kScreenWidth, kRoomHeight);
 
@@ -88,6 +110,63 @@ ToucheEngine::ToucheEngine(OSystem *system, Common::Language language)
 	DebugMan.addDebugChannel(kDebugCharset,  "Charset",   "Charset debug level");
 
 	_console = new ToucheConsole(this);
+
+	_newEpisodeNum = 0;
+	_currentEpisodeNum = 0;
+	_currentAmountOfMoney = 0;
+	_giveItemToKeyCharNum = 0;
+	_giveItemToObjectNum = 0;
+	_giveItemToCounter = 0;
+	_currentRoomNum = 0;
+	_waitingSetKeyCharNum1 = 0;
+	_waitingSetKeyCharNum2 = 0;
+	_waitingSetKeyCharNum3 = 0;
+	_script.opcodeNum = 0;
+	_script.dataOffset = 0;
+	_script.keyCharNum = 0;
+	_script.dataPtr = 0;
+	_script.stackDataPtr = 0;
+	_script.stackDataBasePtr = 0;
+	_script.quitFlag = 0;
+	_opcodesTable = 0;
+
+	for (uint i = 0; i < NUM_SPRITES; i++)
+		memset(&_spritesTable[i], 0, sizeof(SpriteData));
+
+	for (uint i = 0; i < NUM_SEQUENCES; i++)
+		memset(&_sequenceEntryTable[i], 0, sizeof(SequenceEntry));
+
+	_talkListEnd = 0;
+	_talkListCurrent = 0;
+	_talkTextRectDefined = 0;
+	_talkTextDisplayed = 0;
+	_talkTextInitialized = 0;
+	_skipTalkText = 0;
+	_talkTextSpeed = 0;
+	_keyCharTalkCounter = 0;
+	_talkTableLastTalkingKeyChar = 0;
+	_talkTableLastOtherKeyChar = 0;
+	_talkTableLastStringNum = 0;
+
+	for (uint i = 0; i < NUM_TALK_ENTRIES; i++)
+		memset(&_talkTable[i], 0, sizeof(TalkEntry));
+
+	_conversationChoicesUpdated = 0;
+	_conversationReplyNum = 0;
+	_conversationEnded = 0;
+	_conversationNum = 0;
+	_scrollConversationChoiceOffset = 0;
+	_currentConversation = 0;
+	_disableConversationScript = 0;
+	_conversationAreaCleared = 0;
+
+	for (uint i = 0; i < NUM_CONVERSATION_CHOICES; i++)
+		memset(&_conversationChoicesTable[i], 0, sizeof(ConversationChoice));
+
+	for (uint i = 0; i < NUM_KEYCHARS; i++)
+		_sortedKeyCharsTable[i] = 0;
+
+	_currentKeyCharNum = 0;
 }
 
 ToucheEngine::~ToucheEngine() {

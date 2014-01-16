@@ -54,8 +54,8 @@ BasePoint::BasePoint(int initX, int initY) {
 //////////////////////////////////////////////////////////////////////////
 bool BasePoint::persist(BasePersistenceManager *persistMgr) {
 
-	persistMgr->transfer(TMEMBER(x));
-	persistMgr->transfer(TMEMBER(y));
+	persistMgr->transferSint32(TMEMBER(x));
+	persistMgr->transferSint32(TMEMBER(y));
 
 	return STATUS_OK;
 }

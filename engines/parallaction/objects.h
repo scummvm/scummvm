@@ -147,7 +147,7 @@ typedef Common::List<CommandPtr> CommandList;
 struct Answer {
 	Common::String	_text;
 	uint16			_mood;
-	Common::String 	_followingName;
+	Common::String	_followingName;
 
 	CommandList	_commands;
 	uint32		_noFlags;
@@ -188,7 +188,7 @@ struct Dialogue {
 	~Dialogue();
 };
 
-#define MAX_WALKPOINT_LISTS 	20
+#define MAX_WALKPOINT_LISTS	20
 #define FREE_HEAR_CHANNEL		-1
 #define MUSIC_HEAR_CHANNEL		-2
 
@@ -452,7 +452,7 @@ struct Program {
 	uint16		_numLocals;
 
 	uint32				_ip;
-	uint32 				_loopStart;
+	uint32				_loopStart;
 	InstructionList		_instructions;
 
 	uint32	_status;

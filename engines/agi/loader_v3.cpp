@@ -257,7 +257,7 @@ int AgiLoader_v3::loadResource(int t, int n) {
 	int ec = errOK;
 	uint8 *data = NULL;
 
-	if (n > MAX_DIRS)
+	if (n >= MAX_DIRS)
 		return errBadResource;
 
 	switch (t) {

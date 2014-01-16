@@ -30,6 +30,10 @@ namespace Graphics {
 IFFDecoder::IFFDecoder() {
 	_surface = 0;
 	_palette = 0;
+	
+	// these 2 properties are not reset by destroy(), so the default is set here.
+	_numRelevantPlanes = 8;
+	_pixelPacking = false;
 
 	destroy();
 }
@@ -54,8 +58,6 @@ void IFFDecoder::destroy() {
 	_paletteRanges.clear();
 	_type = TYPE_UNKNOWN;
 	_paletteColorCount = 0;
-	_numRelevantPlanes = 8;
-	_pixelPacking = false;
 }
 
 bool IFFDecoder::loadStream(Common::SeekableReadStream &stream) {

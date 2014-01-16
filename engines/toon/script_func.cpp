@@ -1060,9 +1060,9 @@ int32 ScriptFunc::sys_Cmd_Set_Location_Data(EMCState *state) {
 	// initial setup of locations
 	int32 locationId = stackPos(0);
 	debugC(0, 0, "setlocationdata(%d) %s %x %s %s %d %d", locationId, GetText(1, state), stackPos(2), GetText(3, state), GetText(4, state), stackPos(5), stackPos(6));
-	strcpy(_vm->state()->_locations[locationId]._name, GetText(1, state));
-	strcpy(_vm->state()->_locations[locationId]._music, GetText(3, state));
-	strcpy(_vm->state()->_locations[locationId]._cutaway, GetText(4, state));
+	Common::strlcpy(_vm->state()->_locations[locationId]._name, GetText(1, state), 64);
+	Common::strlcpy(_vm->state()->_locations[locationId]._music, GetText(3, state), 64);
+	Common::strlcpy(_vm->state()->_locations[locationId]._cutaway, GetText(4, state), 64);
 	_vm->state()->_locations[locationId]._flags = stackPos(2);
 	_vm->state()->_locations[locationId]._visited = false;
 	_vm->state()->_locations[locationId]._numSceneAnimations = stackPos(5);

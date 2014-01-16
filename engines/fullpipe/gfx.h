@@ -88,13 +88,14 @@ class Picture : public MemoryObject {
 	virtual ~Picture();
 
 	void freePicture();
+	void freePixelData();
 
 	virtual bool load(MfcArchive &file);
 	void setAOIDs();
 	void init();
 	void getDibInfo();
 	Bitmap *getPixelData();
-	void draw(int x, int y, int style, int angle);
+	virtual void draw(int x, int y, int style, int angle);
 	void drawRotated(int x, int y, int angle);
 
 	byte getAlpha() { return (byte)_alpha; }
@@ -115,7 +116,10 @@ class Picture : public MemoryObject {
 class BigPicture : public Picture {
   public:
 	BigPicture() {}
+	virtual ~BigPicture() {}
+
 	virtual bool load(MfcArchive &file);
+	virtual void draw(int x, int y, int style, int angle);
 };
 
 class GameObject : public CObject {
@@ -137,7 +141,7 @@ class GameObject : public CObject {
 
 	virtual bool load(MfcArchive &file);
 	void setOXY(int x, int y);
-	void renumPictures(CPtrList *lst);
+	void renumPictures(PtrList *lst);
 	void setFlags(int16 flags) { _flags = flags; }
 	void clearFlags() { _flags = 0; }
 	const char *getName() { return _objectName; }
@@ -149,15 +153,19 @@ class GameObject : public CObject {
 class PictureObject : public GameObject {
   public:
 	Picture *_picture;
-	CPtrList *_pictureObject2List;
+	PtrList *_pictureObject2List;
 	int _ox2;
 	int _oy2;
 
   public:
 	PictureObject();
-	PictureObject(PictureObject *src);
 
-	bool load(MfcArchive &file, bool bigPicture);
+	PictureObject(PictureObject *src);
+	virtual ~PictureObject();
+
+	virtual bool load(MfcArchive &file, bool bigPicture);
+	virtual bool load(MfcArchive &file) { assert(0); return false; } // Disable base class
+
 	Common::Point *getDimensions(Common::Point *p);
 	void draw();
 	void drawAt(int x, int y);
@@ -165,11 +173,12 @@ class PictureObject : public GameObject {
 	bool setPicAniInfo(PicAniInfo *picAniInfo);
 	bool isPointInside(int x, int y);
 	bool isPixelHitAtPos(int x, int y);
+	void setOXY2();
 };
 
 class Background : public CObject {
   public:
-	CPtrList _picObjList;
+	PtrList _picObjList;
 
 	char *_bgname;
 	int _x;
@@ -182,6 +191,8 @@ class Background : public CObject {
 
   public:
 	Background();
+	virtual ~Background();
+
 	virtual bool load(MfcArchive &file);
 	void addPictureObject(PictureObject *pct);
 

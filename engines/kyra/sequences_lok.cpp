@@ -1722,9 +1722,10 @@ int KyraEngine_LoK::handleBeadState() {
 			_screen->addBitBlitRect(_beadState1.x, _beadState1.y, _beadState1.width2, _beadState1.height);
 
 			++_beadState1.tableIndex;
-			if (_beadState1.tableIndex > 24)
+			if (_beadState1.tableIndex > 24) {
 				_beadState1.tableIndex = 0;
 				_unkEndSeqVar4 = 1;
+			}
 			if (_system->getMillis() > _beadStateTimer2 && _malcolmFlag == 7 && !_unkAmuletVar && !_text->printed()) {
 				snd_playSoundEffect(0x0B);
 				if (_currentCharacter->x1 > 233 && _currentCharacter->x1 < 305 && _currentCharacter->y1 > 85 && _currentCharacter->y1 < 105 &&

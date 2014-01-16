@@ -31,7 +31,7 @@ struct BehaviorEntryInfo {
 	uint32 _percent;
 	int _flags;
 
-	BehaviorEntryInfo(CGameVar *subvar, Scene *sc, int *delay);
+	BehaviorEntryInfo(GameVar *subvar, Scene *sc, int *delay);
 };
 
 struct BehaviorEntry {
@@ -41,7 +41,7 @@ struct BehaviorEntry {
 	BehaviorEntryInfo **_items;
 
 	BehaviorEntry();
-	BehaviorEntry(CGameVar *var, Scene *sc, StaticANIObject *ani, int *minDelay);
+	BehaviorEntry(GameVar *var, Scene *sc, StaticANIObject *ani, int *minDelay);
 };
 
 struct BehaviorInfo {
@@ -57,8 +57,8 @@ struct BehaviorInfo {
 	BehaviorInfo() { clear(); }
 
 	void clear();
-	void initAmbientBehavior(CGameVar *var, Scene *sc);
-	void initObjectBehavior(CGameVar *var, Scene *sc, StaticANIObject *ani);
+	void initAmbientBehavior(GameVar *var, Scene *sc);
+	void initObjectBehavior(GameVar *var, Scene *sc, StaticANIObject *ani);
 };
 
 class BehaviorManager : public CObject {
@@ -72,11 +72,17 @@ class BehaviorManager : public CObject {
 
 	void clear();
 
-	void initBehavior(Scene *scene, CGameVar *var);
+	void initBehavior(Scene *scene, GameVar *var);
 
 	void updateBehaviors();
 	void updateBehavior(BehaviorInfo *behaviorInfo, BehaviorEntry *entry);
 	void updateStaticAniBehavior(StaticANIObject *ani, int delay, BehaviorEntry *beh);
+
+	bool setBehaviorEnabled(StaticANIObject *obj, int aniId, int quId, int flag);
+
+	void setFlagByStaticAniObject(StaticANIObject *ani, int flag);
+
+	BehaviorEntryInfo *getBehaviorEntryInfoByMessageQueueDataId(StaticANIObject *ani, int id1, int id2);
 };
 
 } // End of namespace Fullpipe

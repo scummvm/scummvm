@@ -27,12 +27,6 @@
 #include "neverhood/module.h"
 #include "neverhood/scene.h"
 #include "neverhood/gamemodule.h"
-#include "neverhood/modules/module1000.h"
-#include "neverhood/modules/module1100.h"
-#include "neverhood/modules/module1200.h"
-#include "neverhood/modules/module2100.h"
-#include "neverhood/modules/module2200.h"
-#include "neverhood/modules/module2800.h"
 #include "neverhood/diskplayerscene.h"
 
 namespace Neverhood {
@@ -48,44 +42,6 @@ protected:
 	void createScene(int sceneNum, int which);
 	void updateScene();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-};
-
-class AsScene2401WaterSpit : public AnimatedSprite {
-public:
-	AsScene2401WaterSpit(NeverhoodEngine *vm);
-protected:
-	int _soundIndex;
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-};
-
-class AsScene2401FlowingWater : public AnimatedSprite {
-public:
-	AsScene2401FlowingWater(NeverhoodEngine *vm);
-	virtual ~AsScene2401FlowingWater();
-protected:
-	bool _isWaterFlowing;
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-};
-
-class AsScene2401WaterFlushing : public AnimatedSprite {
-public:
-	AsScene2401WaterFlushing(NeverhoodEngine *vm, int16 x, int16 y);
-protected:
-	int _countdown;
-	int _flushLoopCount;
-	void update();
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-};
-
-class AsScene2401Door : public AnimatedSprite {
-public:
-	AsScene2401Door(NeverhoodEngine *vm, bool isOpen);
-protected:
-	int _countdown;
-	bool _isOpen;
-	void update();
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	void stDoorOpenFinished();
 };
 
 class Scene2401 : public Scene {
@@ -109,32 +65,6 @@ protected:
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	void playPipeSound(uint32 fileHash);
-};
-
-class AsScene2402Door : public AnimatedSprite {
-public:
-	AsScene2402Door(NeverhoodEngine *vm, Scene *parentScene, bool isOpen);
-protected:
-	Scene *_parentScene;
-	int _countdown;
-	bool _isOpen;
-	void update();
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	void stDoorClosingFinished();
-};
-
-class AsScene2402TV : public AnimatedSprite {
-public:
-	AsScene2402TV(NeverhoodEngine *vm, Klaymen *klaymen);
-	virtual ~AsScene2402TV();
-protected:
-	Klaymen *_klaymen;
-	int _countdown1;
-	int _countdown2;
-	void upWait();
-	void upFocusKlaymen();
-	void stJokeFinished();
-	uint32 hmJoke(int messageNum, const MessageParam &param, Entity *sender);
 };
 
 class Scene2402 : public Scene {

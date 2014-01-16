@@ -20,6 +20,10 @@
  *
  */
 
+#ifndef __has_feature         // Optional of course.
+  #define __has_feature(x) 0  // Compatibility with non-clang compilers.
+#endif
+
 #include <fstream>
 #include <string>
 #include <stdio.h>

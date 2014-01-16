@@ -553,15 +553,15 @@ bool Animation::persist(OutputPersistenceBlock &writer) {
 	writer.write(_currentFrameTime);
 	writer.write(_running);
 	writer.write(_finished);
-	writer.write(static_cast<uint>(_direction));
+	writer.write(static_cast<uint32>(_direction));
 
 	// Je nach Animationstyp entweder das Template oder die Ressource speichern.
 	if (_animationResourcePtr) {
-		uint marker = 0;
+		uint32 marker = 0;
 		writer.write(marker);
 		writer.writeString(_animationResourcePtr->getFileName());
 	} else if (_animationTemplateHandle) {
-		uint marker = 1;
+		uint32 marker = 1;
 		writer.write(marker);
 		writer.write(_animationTemplateHandle);
 	} else {
@@ -574,13 +574,13 @@ bool Animation::persist(OutputPersistenceBlock &writer) {
 
 	// The following is only there to for compatibility with older saves
 	// resp. the original engine.
-	writer.write((uint)1);
+	writer.write((uint32)1);
 	writer.writeString("LuaLoopPointCB");
 	writer.write(getHandle());
-	writer.write((uint)1);
+	writer.write((uint32)1);
 	writer.writeString("LuaActionCB");
 	writer.write(getHandle());
-	writer.write((uint)1);
+	writer.write((uint32)1);
 	writer.writeString("LuaDeleteCB");
 	writer.write(getHandle());
 
@@ -605,12 +605,12 @@ bool Animation::unpersist(InputPersistenceBlock &reader) {
 	reader.read(_currentFrameTime);
 	reader.read(_running);
 	reader.read(_finished);
-	uint direction;
+	uint32 direction;
 	reader.read(direction);
 	_direction = static_cast<Direction>(direction);
 
 	// Animationstyp einlesen.
-	uint marker;
+	uint32 marker;
 	reader.read(marker);
 	if (marker == 0) {
 		Common::String resourceFilename;
@@ -629,9 +629,9 @@ bool Animation::unpersist(InputPersistenceBlock &reader) {
 
 	// The following is only there to for compatibility with older saves
 	// resp. the original engine.
-	uint callbackCount;
+	uint32 callbackCount;
 	Common::String callbackFunctionName;
-	uint callbackData;
+	uint32 callbackData;
 
 	// loop point callback
 	reader.read(callbackCount);

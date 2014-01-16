@@ -38,6 +38,8 @@ ConfigParams::ConfigParams() {
 	_isInteractive = true;
 	_isGameDataFound = true;
 	_rerunTests = false;
+
+	_testbedConfMan = 0;
 }
 
 void ConfigParams::initLogging(const char *dirname, const char *filename, bool enable) {

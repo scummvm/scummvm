@@ -83,11 +83,10 @@ struct keycodeToChar {
 
 char EventTests::keystrokeToChar() {
 	Common::EventManager *eventMan = g_system->getEventManager();
-	bool quitLoop = false;
 	Common::Event event;
 
 	// handle all keybd events
-	while (!quitLoop) {
+	while (true) {
 		while (eventMan->pollEvent(event)) {
 			// Quit if explicitly requested!
 			if (Engine::shouldQuit()) {
@@ -110,8 +109,6 @@ char EventTests::keystrokeToChar() {
 			}
 		}
 	}
-
-	return 0;
 }
 
 Common::Rect EventTests::drawFinishZone() {

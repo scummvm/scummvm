@@ -165,13 +165,26 @@ static const tSageGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("r2rw.rlb", "df6c25622387007788ca36d99362c1f0", 47586928),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			ADGF_CD | ADGF_UNSTABLE,
+			ADGF_CD | ADGF_TESTING,
 			GUIO0()
 		},
 		GType_Ringworld2,
 		GF_CD | GF_ALT_REGIONS
 	},
-
+	// Return to Ringworld - Demo
+	{
+		{
+			"ringworld2",
+			"CD Demo",
+			AD_ENTRY1s("r2rw.rlb", "c8e1a82c67c3caf57368eadde13dc15f", 32384464),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_CD | ADGF_TESTING,
+			GUIO0()
+		},
+		GType_Ringworld2,
+		GF_CD | GF_ALT_REGIONS | GF_DEMO
+	},
 	{ AD_TABLE_END_MARKER, 0, 0 }
 };
 

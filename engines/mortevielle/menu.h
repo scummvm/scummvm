@@ -60,7 +60,7 @@ private:
 	void menuDown(int ii);
 
 public:
-	Menu();
+	Menu(MortevielleEngine *vm);
 
 	bool _menuActive;
 	bool _menuSelected;
@@ -103,7 +103,6 @@ public:
 	int _opcodeSLook;
 	MenuItem _actionMenu[12];
 
-	void setParent(MortevielleEngine *vm);
 	void readVerbNums(Common::File &f, int dataSize);
 	void setText(MenuItem item, Common::String name);
 	void setDestinationText(int roomId);

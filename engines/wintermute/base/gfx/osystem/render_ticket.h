@@ -52,7 +52,7 @@ class BaseSurfaceOSystem;
 class RenderTicket {
 public:
 	RenderTicket(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRest, TransformStruct transform); 
-	RenderTicket() : _isValid(true), _wantsDraw(false), _drawNum(0), _transform(TransformStruct()) {}
+	RenderTicket() : _isValid(true), _wantsDraw(false), _transform(TransformStruct()) {}
 	~RenderTicket();
 	const Graphics::Surface *getSurface() const { return _surface; }
 	// Non-dirty-rects:
@@ -61,11 +61,9 @@ public:
 	void drawToSurface(Graphics::Surface *_targetSurface, Common::Rect *dstRect, Common::Rect *clipRect) const;
 
 	Common::Rect _dstRect;
-	uint32 _batchNum;
 
 	bool _isValid;
 	bool _wantsDraw;
-	uint32 _drawNum;
 
 	TransformStruct _transform; 
 	

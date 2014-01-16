@@ -33,10 +33,6 @@
 #undef main
 #endif // main
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
 #include "common/endian.h"
 #include "create_mortdat.h"
 #include "enginetext.h"
@@ -214,7 +210,7 @@ void writeMenuData(const char *menuData, int languageId) {
 	outputFile.writeByte(languageId);
 	// Write each 8-characters block as a byte (one bit per character)
 	// ' ' -> 0, anything else -> 1
-	byte value;
+	byte value = 0;
 	int valueCpt = 0;
 	const char* str = menuData;
 	while (*str != 0) {

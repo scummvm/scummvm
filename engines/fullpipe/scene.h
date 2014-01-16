@@ -31,10 +31,10 @@ class MessageQueue;
 
 class Scene : public Background {
  public:
-	CPtrList _staticANIObjectList1;
-	CPtrList _staticANIObjectList2;
-	CPtrList _messageQueueList;
-	CPtrList _faObjectList;
+	PtrList _staticANIObjectList1;
+	PtrList _staticANIObjectList2;
+	PtrList _messageQueueList;
+	PtrList _faObjectList;
 	Shadows *_shadows;
 	SoundList *_soundList;
 	int16 _sceneId;
@@ -44,6 +44,7 @@ class Scene : public Background {
 
   public:
 	Scene();
+	virtual ~Scene();
 
 	virtual bool load(MfcArchive &file);
 
@@ -69,7 +70,7 @@ class Scene : public Background {
 	PictureObject *getPictureObjectById(int objId, int flags);
 	PictureObject *getPictureObjectByName(const char *name, int keyCode);
 	void deletePictureObject(PictureObject *obj);
-	void preloadMovements(CGameVar *var);
+	void preloadMovements(GameVar *var);
 
 	StaticANIObject *getStaticANIObjectAtPos(int x, int y);
 	PictureObject *getPictureObjectAtPos(int x, int y);
@@ -79,16 +80,15 @@ class Scene : public Background {
 
   private:
 	static bool compareObjPriority(const void *p1, const void *p2);
-	void objectList_sortByPriority(CPtrList &list);
+	void objectList_sortByPriority(PtrList &list, bool skipFirst = false);
 };
 
 class SceneTag : public CObject {
  public:
-	int _field_4;
+	CObject *_field_4;
 	char *_tag;
 	Scene *_scene;
 	int16 _sceneId;
-	int16 _field_12;
 
  public:
 	SceneTag();

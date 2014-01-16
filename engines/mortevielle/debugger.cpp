@@ -25,7 +25,8 @@
 
 namespace Mortevielle {
 
-Debugger::Debugger() : GUI::Debugger() {
+Debugger::Debugger(MortevielleEngine *vm) : GUI::Debugger() {
+	_vm = vm;
 	DCmd_Register("continue", WRAP_METHOD(Debugger, Cmd_Exit));
 	DCmd_Register("show_questions", WRAP_METHOD(Debugger, Cmd_showAllQuestions));
 	DCmd_Register("reset_parano", WRAP_METHOD(Debugger, Cmd_resetParano));
@@ -50,10 +51,6 @@ bool Debugger::Cmd_resetParano(int argc, const char **argv) {
 	_vm->_coreVar._faithScore = 0;
 
 	return true;
-}
-
-void Debugger::setParent(MortevielleEngine *vm) {
-	_vm = vm;
 }
 
 } // End of namespace Mortevielle

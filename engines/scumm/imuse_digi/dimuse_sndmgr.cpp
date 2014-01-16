@@ -443,11 +443,13 @@ ImuseDigiSndMgr::SoundDesc *ImuseDigiSndMgr::openSound(int32 soundId, const char
 		} else if (soundName[0] == 0) {
 			if (sound->bundle->decompressSampleByIndex(soundId, 0, 0x2000, &ptr, 0, header_outside) == 0 || ptr == NULL) {
 				closeSound(sound);
+				free(ptr);
 				return NULL;
 			}
 		} else {
 			if (sound->bundle->decompressSampleByName(soundName, 0, 0x2000, &ptr, header_outside) == 0 || ptr == NULL) {
 				closeSound(sound);
+				free(ptr);
 				return NULL;
 			}
 		}
@@ -667,15 +669,18 @@ int32 ImuseDigiSndMgr::getDataFromRegion(SoundDesc *soundDesc, int region, byte 
 		if (scumm_stricmp(fileName, soundDesc->lastFileName) != 0) {
 			int32 offs = 0, len = 0;
 			Common::SeekableReadStream *cmpFile;
+#if defined(USE_FLAC) || defined(USE_VORBIS) || defined(USE_MAD)
 			uint8 soundMode = 0;
+#endif
 
 			sprintf(fileName, "%s_reg%03d.fla", soundDesc->name, region);
 			cmpFile = soundDesc->bundle->getFile(fileName, offs, len);
 			if (len) {
 #ifndef USE_FLAC
 				error("FLAC library compiled support needed");
-#endif
+#else
 				soundMode = 3;
+#endif
 			}
 			if (!len) {
 				sprintf(fileName, "%s_reg%03d.ogg", soundDesc->name, region);
@@ -683,8 +688,9 @@ int32 ImuseDigiSndMgr::getDataFromRegion(SoundDesc *soundDesc, int region, byte 
 				if (len) {
 #ifndef USE_VORBIS
 					error("Vorbis library compiled support needed");
-#endif
+#else
 					soundMode = 2;
+#endif
 				}
 			}
 			if (!len) {
@@ -693,8 +699,9 @@ int32 ImuseDigiSndMgr::getDataFromRegion(SoundDesc *soundDesc, int region, byte 
 				if (len) {
 #ifndef USE_MAD
 					error("Mad library compiled support needed");
-#endif
+#else
 					soundMode = 1;
+#endif
 				}
 			}
 			assert(len);

@@ -66,13 +66,19 @@ class MfcArchive : public Common::SeekableReadStream {
 
 enum ObjType {
 	kObjTypeDefault,
+	kObjTypeExCommand,
+	kObjTypeExCommand2,
+	kObjTypeMovGraph,
+	kObjTypeMovGraphLink,
+	kObjTypeMovGraphNode,
+	kObjTypeMctlCompound,
 	kObjTypeObjstateCommand,
-	kObjTypeStaticANIObject,
-	kObjTypePictureObject
+	kObjTypePictureObject,
+	kObjTypeStaticANIObject
 };
 
 class CObject {
- public:
+public:
 	ObjType _objtype;
 
 	CObject() : _objtype(kObjTypeDefault) {}
@@ -82,7 +88,7 @@ class CObject {
 	bool loadFile(const char *fname);
 };
 
-class CObList : public Common::List<CObject *>, public CObject {
+class ObList : public Common::List<CObject *>, public CObject {
  public:
 	virtual bool load(MfcArchive &file);
 };
@@ -97,9 +103,6 @@ class MemoryObject : CObject {
 	int _mfield_C;
 	int _mfield_10;
 	char _mfield_14;
-	char _mfield_15;
-	char _mfield_16;
-	char _mfield_17;
 	byte *_data;
 	int _dataSize;
 	int _mflags;
@@ -114,6 +117,7 @@ class MemoryObject : CObject {
 	void load() { loadFile(_memfilename); }
 	byte *getData();
 	byte *loadData();
+	int getDataSize() const { return _dataSize; }
 
 	bool testFlags();
 
@@ -134,17 +138,17 @@ class MemoryObject2 : public MemoryObject {
 	void copyData(byte *src, int dataSize);
 };
 
-class CObArray : public Common::Array<CObject>, public CObject {
+class ObArray : public Common::Array<CObject>, public CObject {
  public:
 	virtual bool load(MfcArchive &file);
 };
 
-class CDWordArray : public Common::Array<int32>, public CObject {
+class DWordArray : public Common::Array<int32>, public CObject {
  public:
 	virtual bool load(MfcArchive &file);
 };
 
-typedef Common::Array<void *> CPtrList;
+typedef Common::Array<void *> PtrList;
 
 char *genFileName(int superId, int sceneId, const char *ext);
 byte *transCyrillic(byte *s);

@@ -38,6 +38,8 @@
 
 #include "engines/savestate.h"
 
+#include "drascula/console.h"
+
 #include "audio/mixer.h"
 
 #include "engines/engine.h"
@@ -312,8 +314,6 @@ static const int interf_x[] = { 1, 65, 129, 193, 1, 65, 129 };
 static const int interf_y[] = { 51, 51, 51, 51, 83, 83, 83 };
 
 struct RoomHandlers;
-
-class Console;
 
 class DrasculaEngine : public Engine {
 protected:
@@ -724,10 +724,11 @@ public:
 	void update_62_pre();
 	void update_102();
 
+	Console *_console;
+	GUI::Debugger *getDebugger() { return _console; }
+
 private:
 	int _lang;
-
-	Console *_console;
 
 	CharInfo *_charMap;
 	int _charMapSize;

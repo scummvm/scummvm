@@ -33,8 +33,8 @@
 
 namespace Fullpipe {
 
-CInputController::CInputController() {
-	g_fullpipe->_inputController = this;
+InputController::InputController() {
+	g_fp->_inputController = this;
 
 	_flag = 0;
 	_cursorHandle = 0;
@@ -52,22 +52,22 @@ CInputController::CInputController() {
 	_cursorItemPicture = 0;
 }
 
-CInputController::~CInputController() {
+InputController::~InputController() {
 	removeMessageHandler(126, -1);
 
-	g_fullpipe->_inputController = 0;
+	g_fp->_inputController = 0;
 }
 
-void CInputController::setInputDisabled(bool state) {
+void InputController::setInputDisabled(bool state) {
 	_flag = state;
-	g_fullpipe->_inputDisabled = state;
+	g_fp->_inputDisabled = state;
 }
 
 void setInputDisabled(bool state) {
-	g_fullpipe->_inputController->setInputDisabled(state);
+	g_fp->_inputController->setInputDisabled(state);
 }
 
-void CInputController::addCursor(CursorInfo *cursor) {
+void InputController::addCursor(CursorInfo *cursor) {
 	CursorInfo *newc = new CursorInfo(cursor);
 	Common::Point p;
 	
@@ -82,19 +82,19 @@ void CInputController::addCursor(CursorInfo *cursor) {
 	_cursorsArray.push_back(newc);
 }
 
-void CInputController::setCursorMode(bool enabled) {
+void InputController::setCursorMode(bool enabled) {
 	if (enabled)
 		_inputFlags |= 1;
 	else
 		_inputFlags &= ~1;
 }
 
-void CInputController::drawCursor(int x, int y) {
+void InputController::drawCursor(int x, int y) {
 	if (_cursorIndex == -1)
 		return;
 
-	_cursorBounds.left = g_fullpipe->_sceneRect.left + x - _cursorsArray[_cursorIndex]->hotspotX;
-	_cursorBounds.top = g_fullpipe->_sceneRect.top + y - _cursorsArray[_cursorIndex]->hotspotY;
+	_cursorBounds.left = g_fp->_sceneRect.left + x - _cursorsArray[_cursorIndex]->hotspotX;
+	_cursorBounds.top = g_fp->_sceneRect.top + y - _cursorsArray[_cursorIndex]->hotspotY;
 	_cursorBounds.right = _cursorBounds.left + _cursorsArray[_cursorIndex]->width;
 	_cursorBounds.bottom = _cursorBounds.top + _cursorsArray[_cursorIndex]->height;
 
@@ -105,7 +105,7 @@ void CInputController::drawCursor(int x, int y) {
 								 _cursorBounds.top + _cursorsArray[_cursorIndex]->itemPictureOffsY, 0, 0);
 }
 
-void CInputController::setCursor(int cursorId) {
+void InputController::setCursor(int cursorId) {
 	if (_cursorIndex == -1 || _cursorsArray[_cursorIndex]->pictureId != cursorId) {
 		_cursorIndex = -1;
 
@@ -172,7 +172,6 @@ void FullpipeEngine::defHandleKeyDown(int key) {
 	}
 
 	_currentCheatPos++;
-	warning("%d %d", _currentCheat, _currentCheatPos);
 
 	if (!input_cheats[_currentCheat][_currentCheatPos]) {
 		switch (_currentCheat) {
@@ -212,7 +211,7 @@ void FullpipeEngine::winArcade() {
 
 }
 
-void FullpipeEngine::updateCursorsCommon() {
+void FullpipeEngine::updateCursorCommon() {
 	GameObject *ani = _currentScene->getStaticANIObjectAtPos(_mouseVirtX, _mouseVirtY);
 
 	GameObject *pic = _currentScene->getPictureObjectAtPos(_mouseVirtX, _mouseVirtY);
@@ -273,6 +272,72 @@ void FullpipeEngine::updateCursorsCommon() {
 	}
 
 	_cursorId = PIC_CSR_DEFAULT;
+}
+
+void FullpipeEngine::initArcadeKeys(const char *varname) {
+	GameVar *var = getGameLoaderGameVar()->getSubVarByName(varname)->getSubVarByName("KEYPOS");
+
+	if (!var)
+		return;
+
+	int cnt = var->getSubVarsCount();
+
+	for (int i = 0; i < cnt; i++) {
+		Common::Point *point = new Common::Point;
+
+		GameVar *sub = var->getSubVarByIndex(i);
+
+		point->x = sub->getSubVarAsInt("X");
+		point->y = sub->getSubVarAsInt("Y");
+
+		_arcadeKeys.push_back(point);
+	}
+}
+
+void FullpipeEngine::setArcadeOverlay(int picId) {
+	Common::Point point;
+	Common::Point point2;
+
+	_arcadeOverlayX = 800;
+	_arcadeOverlayY = 545;
+
+	_arcadeOverlayHelper = accessScene(SC_INV)->getPictureObjectById(PIC_CSR_HELPERBGR, 0);
+	_arcadeOverlay = accessScene(SC_INV)->getPictureObjectById(picId, 0);
+
+	_arcadeOverlay->getDimensions(&point);
+	_arcadeOverlayHelper->getDimensions(&point2);
+
+	_arcadeOverlayMidX = (point2.x - point.x) / 2;
+	_arcadeOverlayMidY = abs(point2.y - point.y) / 2;
+}
+
+int FullpipeEngine::drawArcadeOverlay(int adjust) {
+	_arcadeOverlayHelper->drawAt(_sceneRect.left + _arcadeOverlayX, _sceneRect.top + _arcadeOverlayY);
+	_arcadeOverlay->drawAt(_sceneRect.left + _arcadeOverlayX + _arcadeOverlayMidX, _sceneRect.top + _arcadeOverlayY + _arcadeOverlayMidY);
+
+	if (adjust) {
+		if (_arcadeOverlayX > 745) {
+			_arcadeOverlayX -= 15;
+
+			if (_arcadeOverlayX < 745)
+				_arcadeOverlayX = 745;
+		}
+
+		return 1;
+	}
+
+	if (_arcadeOverlayX >= 800) {
+		return 0;
+	} else {
+		_arcadeOverlayX += 15;
+
+		if (_arcadeOverlayX <= 800)
+			return 1;
+
+		_arcadeOverlayX = 800;
+	}
+
+	return 1;
 }
 
 } // End of namespace Fullpipe

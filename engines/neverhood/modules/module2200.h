@@ -31,8 +31,6 @@
 
 namespace Neverhood {
 
-// Module2200
-
 class Module2200 : public Module {
 public:
 	Module2200(NeverhoodEngine *vm, Module *parentModule, int which);
@@ -42,43 +40,6 @@ protected:
 	void createScene(int sceneNum, int which);
 	void updateScene();
 	void createHallOfRecordsScene(int which, uint32 hallOfRecordsInfoId);
-};
-
-// Scene2201
-
-static const NPoint kSsScene2201PuzzleCubePoints[] = {
-	{305, 305},	{321, 305},	{336, 305},	{305, 319},
-	{321, 319},	{336, 319},	{305, 332},	{321, 332},
-	{336, 333}
-};
-
-static const uint32 kSsScene2201PuzzleCubeFileHashes[] = {
-	0x88134A44,	0xAA124340,	0xB8124602,	0xA902464C,
-	0x890A4244,	0xA8124642,	0xB812C204,	0x381A4A4C
-};
-
-class AsScene2201CeilingFan : public AnimatedSprite {
-public:
-	AsScene2201CeilingFan(NeverhoodEngine *vm);
-};
-
-class AsScene2201Door : public AnimatedSprite {
-public:
-	AsScene2201Door(NeverhoodEngine *vm, Klaymen *klaymen, Sprite *ssDoorLight, bool isOpen);
-protected:
-	Klaymen *_klaymen;
-	Sprite *_ssDoorLight;
-	bool _isOpen;
-	int _countdown;
-	void update();
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	void stOpenDoor();
-	void stCloseDoor();
-};
-
-class SsScene2201PuzzleCube : public StaticSprite {
-public:
-	SsScene2201PuzzleCube(NeverhoodEngine *vm, uint32 positionIndex, uint32 cubeIndex);
 };
 
 class Scene2201 : public Scene {
@@ -94,30 +55,6 @@ protected:
 	bool _isSoundPlaying;
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-};
-
-class SsScene2202PuzzleCube : public StaticSprite {
-public:
-	SsScene2202PuzzleCube(NeverhoodEngine *vm, Scene *parentScene, int16 cubePosition, int16 cubeSymbol);
-protected:
-	Scene *_parentScene;
-	int16 _cubeSymbol;
-	int16 _cubePosition;
-	int16 _newX, _newY;
-	int16 _xDelta, _yDelta;
-	int16 _xIncr;
-	int16 _yIncr;
-	int16 _errValue;
-	int16 _counter;
-	int16 _xFlagPos;
-	bool _counterDirection;
-	bool _isMoving;
-	void update();
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	void suMoveCubeX();
-	void suMoveCubeY();
-	void moveCube(int16 newCubePosition);
-	void stopMoving();
 };
 
 class Scene2202 : public Scene {
@@ -138,27 +75,6 @@ protected:
 	bool testIsSolved();
 };
 
-class AsCommonKey : public AnimatedSprite {
-public:
-	AsCommonKey(NeverhoodEngine *vm, Scene *parentScene, int keyIndex, int surfacePriority, int16 x, int16 y);
-protected:
-	Scene *_parentScene;
-	int _keyIndex;
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-};
-
-class AsScene2203Door : public AnimatedSprite {
-public:
-	AsScene2203Door(NeverhoodEngine *vm, Scene *parentScene, uint doorIndex);
-protected:
-	Scene *_parentScene;
-	Sprite *_otherDoor;
-	uint _doorIndex;
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	void openDoor();
-	void closeDoor();
-};
-
 class Scene2203 : public Scene {
 public:
 	Scene2203(NeverhoodEngine *vm, Module *parentModule, int which);
@@ -175,12 +91,7 @@ protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
-class SsScene2205DoorFrame : public StaticSprite {
-public:
-	SsScene2205DoorFrame(NeverhoodEngine *vm);
-protected:
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-};
+class SsCommonPressButton;
 
 class Scene2205 : public Scene {
 public:
@@ -191,35 +102,6 @@ protected:
 	bool _isKlaymenInLight;
 	bool _isLightOn;
 	void update();
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-};
-
-class AsScene2206DoorSpikes : public StaticSprite {
-public:
-	AsScene2206DoorSpikes(NeverhoodEngine *vm, uint32 fileHash);
-protected:
-	int _deltaIndex;
-	void update();
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	void suOpen();
-	void suClose();
-};
-
-class AsScene2206Platform : public StaticSprite {
-public:
-	AsScene2206Platform(NeverhoodEngine *vm, uint32 fileHash);
-protected:
-	int16 _yDelta;
-	void update();
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	void suMoveDown();
-};
-
-class SsScene2206TestTube : public StaticSprite {
-public:
-	SsScene2206TestTube(NeverhoodEngine *vm, Scene *parentScene, int surfacePriority, uint32 fileHash);
-protected:
-	Scene *_parentScene;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
@@ -239,62 +121,6 @@ protected:
 	void klaymenInFrontSpikes();
 	void klaymenBehindSpikes();
 	void readClickedColumn();
-};
-
-class AsScene2207Elevator : public AnimatedSprite {
-public:
-	AsScene2207Elevator(NeverhoodEngine *vm, Scene *parentScene);
-	~AsScene2207Elevator();
-protected:
-	Scene *_parentScene;
-	NPointArray *_pointArray;
-	int16 _pointIndex;
-	int16 _destPointIndex, _destPointIndexDelta;
-	bool _isMoving;
-	void update();
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	void suSetPosition();
-	void moveToY(int16 y);
-};
-
-class AsScene2207Lever : public AnimatedSprite {
-public:
-	AsScene2207Lever(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y, int doDeltaX);
-protected:
-	Scene *_parentScene;
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	void stLeverDown();
-	void stLeverDownEvent();
-	void stLeverUp();
-	void stLeverUpEvent();
-};
-
-class AsScene2207WallRobotAnimation : public AnimatedSprite {
-public:
-	AsScene2207WallRobotAnimation(NeverhoodEngine *vm, Scene *parentScene);
-	~AsScene2207WallRobotAnimation();
-protected:
-	bool _idle;
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	void stStartAnimation();
-	void stStopAnimation();
-	void cbStopAnimation();
-};
-
-class AsScene2207WallCannonAnimation : public AnimatedSprite {
-public:
-	AsScene2207WallCannonAnimation(NeverhoodEngine *vm);
-protected:
-	bool _idle;
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	void stStartAnimation();
-	void stStopAnimation();
-	void cbStopAnimation();
-};
-
-class SsScene2207Symbol : public StaticSprite {
-public:
-	SsScene2207Symbol(NeverhoodEngine *vm, uint32 fileHash, int index);
 };
 
 class Scene2207 : public Scene {

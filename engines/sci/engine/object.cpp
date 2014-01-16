@@ -175,6 +175,7 @@ bool Object::initBaseObject(SegManager *segMan, reg_t addr, bool doInitSuperClas
 			_variables.resize(baseObj->getVarCount());
 		// Copy base from species class, as we need its selector IDs
 		_baseObj = baseObj->_baseObj;
+		assert(_baseObj);
 		if (doInitSuperClass)
 			initSuperClass(segMan, addr);
 

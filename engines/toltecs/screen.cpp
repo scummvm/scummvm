@@ -599,7 +599,7 @@ int16 Screen::drawString(int16 x, int16 y, byte color, uint fontResIndex, const 
 	if (ywobble)
 		yadd = *ywobble;
 
- 	while (len--) {
+	while (len--) {
 		byte ch = *text++;
 		if (ch <= 0x20) {
 			x += font.getWidth();
@@ -634,7 +634,7 @@ void Screen::drawChar(const Font &font, byte *dest, int16 x, int16 y, byte ch, b
 			byte flags = charData[0] & 0xF0;
 			charData++;
 			if ((flags & 0x80) == 0) {
- 				if (flags & 0x10) {
+				if (flags & 0x10) {
 					memset(dest, color, count);
 				} else if (outline) {
 					memset(dest, 0, count);

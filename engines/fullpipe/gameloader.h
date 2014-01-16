@@ -30,17 +30,17 @@
 namespace Fullpipe {
 
 class SceneTag;
-class CMctlCompound;
-class CInputController;
-class CInteractionController;
-class CMotionController;
+class MctlCompound;
+class InputController;
+class InteractionController;
+class MotionController;
 
 class Sc2 : public CObject {
  public:
 	int16 _sceneId;
 	int16 _field_2;
 	Scene *_scene;
-	CMotionController *_motionController;
+	MotionController *_motionController;
 	int32 *_data1; // FIXME, could be a struct
 	int _count1;
 	PicAniInfo **_defPicAniInfos;
@@ -65,17 +65,17 @@ struct PreloadItem {
 	int keyCode;
 };
 
-bool preloadCallback(const PreloadItem &pre, int flag);
+bool preloadCallback(PreloadItem &pre, int flag);
 
 class PreloadItems : public Common::Array<PreloadItem *>, public CObject {
  public:
 	virtual bool load(MfcArchive &file);
 };
 
-class CGameLoader : public CObject {
+class GameLoader : public CObject {
  public:
-	CGameLoader();
-	virtual ~CGameLoader();
+	GameLoader();
+	virtual ~GameLoader();
 
 	virtual bool load(MfcArchive &file);
 	bool loadScene(int sceneId);
@@ -90,17 +90,17 @@ class CGameLoader : public CObject {
 	void saveScenePicAniInfos(int sceneId);
 
 	GameProject *_gameProject;
-	CInteractionController *_interactionController;
-	CInputController *_inputController;
-	CInventory2 _inventory;
+	InteractionController *_interactionController;
+	InputController *_inputController;
+	Inventory2 _inventory;
 	Sc2Array _sc2array;
 	void *_sceneSwitcher;
-	bool (*_preloadCallback)(const PreloadItem &pre, int flag);
+	bool (*_preloadCallback)(PreloadItem &pre, int flag);
 	void *_readSavegameCallback;
 	int16 _field_F8;
 	int16 _field_FA;
 	PreloadItems _preloadItems;
-	CGameVar *_gameVar;
+	GameVar *_gameVar;
 	char *_gameName;
 	ExCommand _exCommand;
 	int _updateCounter;
@@ -108,9 +108,10 @@ class CGameLoader : public CObject {
 	int _preloadEntranceId;
 };
 
-CInventory2 *getGameLoaderInventory();
-CInteractionController *getGameLoaderInteractionController();
-CMctlCompound *getSc2MctlCompoundBySceneId(int16 sceneId);
+Inventory2 *getGameLoaderInventory();
+InteractionController *getGameLoaderInteractionController();
+MctlCompound *getSc2MctlCompoundBySceneId(int16 sceneId);
+MctlCompound *getCurrSceneSc2MotionController();
 
 } // End of namespace Fullpipe
 

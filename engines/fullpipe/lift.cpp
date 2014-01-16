@@ -22,6 +22,8 @@
 
 #include "fullpipe/fullpipe.h"
 
+#include "fullpipe/objects.h"
+#include "fullpipe/objectnames.h"
 #include "fullpipe/constants.h"
 
 namespace Fullpipe {
@@ -62,6 +64,51 @@ int FullpipeEngine::lift_getButtonIdP(int objid) {
 		return 0;
 		break;
 	}
+}
+
+void FullpipeEngine::lift_setButton(const char *name, int state) {
+	GameVar *var = g_fp->getGameLoaderGameVar()->getSubVarByName("OBJSTATES")->getSubVarByName(sO_LiftButtons);
+
+	if (var)
+		var->setSubVarAsInt(name, state);
+}
+
+void FullpipeEngine::lift_sub5(Scene *sc, int qu1, int qu2) {
+	warning("STUB: FullpipeEngine::lift_sub5()");
+}
+
+void FullpipeEngine::lift_exitSeq(ExCommand *ex) {
+	warning("STUB: FullpipeEngine::lift_exitSeq()");
+}
+
+void FullpipeEngine::lift_closedoorSeq() {
+	warning("STUB: FullpipeEngine::lift_closedoorSeq()");
+}
+
+void FullpipeEngine::lift_animation3() {
+	warning("STUB: FullpipeEngine::lift_animation3()");
+}
+
+void FullpipeEngine::lift_goAnimation() {
+	warning("STUB: FullpipeEngine::lift_goAnimation()");
+}
+
+void FullpipeEngine::lift_sub1(StaticANIObject *ani) {
+	warning("STUB: FullpipeEngine::lift_sub1()");
+}
+
+void FullpipeEngine::lift_startExitQueue() {
+	warning("STUB: FullpipeEngine::lift_startExitQueue()");
+}
+
+void FullpipeEngine::lift_sub05(ExCommand *ex) {
+	warning("STUB: FullpipeEngine::lift_sub05()");
+}
+
+bool FullpipeEngine::lift_checkButton(const char *varname) {
+	warning("STUB: FullpipeEngine::lift_checkButton(%s)", varname);
+
+	return false;
 }
 
 } // End of namespace Fullpipe

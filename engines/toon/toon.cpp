@@ -922,6 +922,48 @@ ToonEngine::ToonEngine(OSystem *syst, const ADGameDescription *gameDescription)
 		_gameVariant = 0;
 		break;
 	}
+
+	for (int i = 0; i < 64; i++) {
+		_sceneAnimationScripts[i]._lastTimer = 0;
+		_sceneAnimationScripts[i]._frozen = false;
+		_sceneAnimationScripts[i]._frozenForConversation = false;
+		_sceneAnimationScripts[i]._active = false;
+	}
+
+	_lastProcessedSceneScript = 0;
+	_animationSceneScriptRunFlag = false;
+	_updatingSceneScriptRunFlag = false;
+	_dirtyAll = false;
+	_cursorOffsetX = 0;
+	_cursorOffsetY = 0;
+	_currentTextLine = 0;
+	_currentTextLineId = 0;
+	_currentTextLineX = 0;
+	_currentTextLineY = 0;
+	_currentTextLineCharacterId = -1;
+	_oldScrollValue = 0;
+	_drew = nullptr;
+	_flux = nullptr;
+	_currentHotspotItem = 0;
+	_shouldQuit = false;
+	_scriptStep = 0;
+	_oldTimer = 0;
+	_oldTimer2 = 0;
+	_lastRenderTime = 0;
+	_firstFrame = false;
+	_needPaletteFlush = true;
+
+	_numVariant = 0;
+	_currentCutaway = nullptr;
+	for (int i = 0; i < 4; i++) {
+		_scriptState[i].ip = nullptr;
+		_scriptState[i].dataPtr = nullptr;
+		_scriptState[i].retValue = 0;
+		_scriptState[i].bp = 0;
+		_scriptState[i].sp = 0;
+		_scriptState[i].running = false;
+	}
+	_currentScriptRegion = 0;
 }
 
 ToonEngine::~ToonEngine() {

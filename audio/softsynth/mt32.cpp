@@ -230,7 +230,7 @@ int MidiDriver_MT32::open() {
 
 	g_system->updateScreen();
 
-	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_mixerSoundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
+	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_mixerSoundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 
 	return 0;
 }
@@ -460,9 +460,6 @@ bool MT32EmuMusicPlugin::checkDevice(MidiDriver::DeviceHandle) const {
 }
 
 Common::Error MT32EmuMusicPlugin::createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle) const {
-	if (ConfMan.hasKey("extrapath"))
-		SearchMan.addDirectory("extrapath", ConfMan.get("extrapath"));
-
 	*mididriver = new MidiDriver_MT32(g_system->getMixer());
 
 	return Common::kNoError;

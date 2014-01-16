@@ -65,7 +65,7 @@ private:
 	void initData(GuiResourceId resourceId);
 	void reset();
 	void drawSci11Vga();
-	void drawCelData(byte *inbuffer, int size, int headerPos, int rlePos, int literalPos, int16 drawX, int16 drawY, int16 pictureX, int16 pictureY);
+	void drawCelData(byte *inbuffer, int size, int headerPos, int rlePos, int literalPos, int16 drawX, int16 drawY, int16 pictureX, int16 pictureY, bool isEGA);
 	void drawVectorData(byte *data, int size);
 	bool vectorIsNonOpcode(byte pixel);
 	void vectorGetAbsCoords(byte *data, int &curPos, int16 &x, int16 &y);

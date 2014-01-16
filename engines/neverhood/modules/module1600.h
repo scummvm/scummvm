@@ -26,12 +26,8 @@
 #include "neverhood/neverhood.h"
 #include "neverhood/module.h"
 #include "neverhood/scene.h"
-#include "neverhood/console.h"
-#include "neverhood/modules/module3000.h"
 
 namespace Neverhood {
-
-// Module1600
 
 class Module1600 : public Module {
 public:
@@ -43,90 +39,7 @@ protected:
 	void updateScene();
 };
 
-class AsCommonCar : public AnimatedSprite {
-public:
-	AsCommonCar(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
-	~AsCommonCar();
-	void setPathPoints(NPointArray *pathPoints);
-protected:
-	Scene *_parentScene;
-	NPointArray *_pathPoints;
-	int _newMoveDirection;
-	int _currMoveDirection;
-	int _exitDirection;
-	int _currPointIndex;
-	bool _hasAgainDestPoint;
-	NPoint _againDestPoint;
-	bool _hasAgainDestPointIndex;
-	int _againDestPointIndex;
-	bool _inMainArea;
-	bool _isBraking;
-	bool _isBusy;
-	bool _isIdle;
-	bool _isMoving;
-	bool _rectFlag;
-	int _idleCounter;
-	int _idleCounterMax;
-	int _steps;
-	int _stepError;
-	int _lastDistance;
-	int _yMoveTotalSteps;
-	int _ySteps;
-	int _newDeltaXType;
-	int _soundCounter;
-	int _turnMoveStatus;
-	int16 _destX, _destY;
-	NPoint pathPoint(uint index) { return (*_pathPoints)[index]; }
-	void update();
-	void upIdle();
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 hmAnimation(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 hmLeaveCar(int messageNum, const MessageParam &param, Entity *sender);
-	void stCarAtHome();
-	void updateTurnMovement();
-	void updateMovement();
-	void stEnterCar();
-	void stLeaveCar();
-	void stLeanForwardIdle();
-	void evIdleDone();
-	void stIdleBlink();
-	void stUpdateMoveDirection();
-	void stTurnCar();
-	void moveToNextPoint();
-	void stBrakeMoveToNextPoint();
-	void stTurnCarMoveToNextPoint();
-	void moveToPrevPoint();
-	void stBrakeMoveToPrevPoint();
-	void stTurnCarMoveToPrevPoint();
-	void evTurnCarDone();
-	void suMoveToNextPoint();
-	void suMoveToPrevPoint();
-	void updateSound();
-};
-
-class AsCommonIdleCarLower : public AnimatedSprite {
-public:
-	AsCommonIdleCarLower(NeverhoodEngine *vm, int16 x, int16 y);
-};
-
-class AsCommonIdleCarFull : public AnimatedSprite {
-public:
-	AsCommonIdleCarFull(NeverhoodEngine *vm, int16 x, int16 y);
-};
-
-class AsCommonCarConnector : public AnimatedSprite {
-public:
-	AsCommonCarConnector(NeverhoodEngine *vm, AsCommonCar *asCar);
-protected:
-	AsCommonCar *_asCar;
-	void update();
-};
-
-class Tracks : public Common::Array<TrackInfo*> {
-public:
-	void findTrackPoint(NPoint pt, int &minMatchTrackIndex, int &minMatchDistance,
-		DataResource &dataResource);
-};
+class AsCommonCar;
 
 class Scene1608 : public Scene {
 public:
@@ -161,6 +74,8 @@ protected:
 	uint32 hmCarAtHome(int messageNum, const MessageParam &param, Entity *sender);
 	void updateKlaymenCliprect();
 };
+
+class AsScene3011Symbol;
 
 class Scene1609 : public Scene {
 	friend class Console;

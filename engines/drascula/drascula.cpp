@@ -89,6 +89,85 @@ DrasculaEngine::DrasculaEngine(OSystem *syst, const DrasculaGameDescription *gam
 	_talkSequences = 0;
 	_currentSaveSlot = 0;
 
+	bjX = 0;
+	bjY = 0;
+	trackBJ = 0;
+    framesWithoutAction = 0;
+	term_int = 0;
+	currentChapter = 0;
+	_loadedDifferentChapter = 0;
+	musicStopped = 0;
+	FrameSSN = 0;
+	globalSpeed = 0;
+	LastFrame = 0;
+	flag_tv = 0;
+	_charMapSize = 0;
+	_itemLocationsSize = 0;
+	_polXSize = 0;
+	_verbBarXSize = 0;
+	_x1dMenuSize = 0;
+	_frameXSize = 0;
+	_candleXSize = 0;
+	_pianistXSize = 0;
+	_drunkXSize = 0;
+	_roomPreUpdatesSize = 0;
+	_roomUpdatesSize = 0;
+	_roomActionsSize = 0;
+	_talkSequencesSize = 0;
+	_numLangs = 0;
+	feetHeight = 0;
+	floorX1 = 0;
+	floorY1 = 0;
+	floorX2 = 0;
+	floorY2 = 0;
+	lowerLimit = 0;
+	upperLimit = 0;
+	trackFinal = 0;
+	walkToObject = 0;
+	objExit = 0;
+	_startTime = 0;
+	hasAnswer = 0;
+	savedTime = 0;
+	breakOut = 0;
+	vonBraunX = 0;
+	trackVonBraun = 0;
+	vonBraunHasMoved = 0;
+	newHeight = 0;
+	newWidth = 0;
+	color_solo = 0;
+	igorX = 0;
+	igorY = 0;
+	trackIgor = 0;
+	drasculaX = 0;
+	drasculaY = 0;
+	trackDrascula = 0;
+	_roomNumber = 0;
+	numRoomObjs = 0;
+	takeObject = 0;
+	pickedObject = 0;
+	_subtitlesDisabled = 0;
+	_menuBar = 0;
+	_menuScreen = 0;
+	_hasName = 0;
+	curExcuseLook = 0;
+	curExcuseAction = 0;
+	frame_y = 0;
+	curX = 0;
+	curY = 0;
+	characterMoved = 0;
+	curDirection = 0;
+	trackProtagonist = 0;
+	_characterFrame = 0;
+	hare_se_ve = 0;
+	roomX = 0;
+	roomY = 0;
+	checkFlags = 0;
+	doBreak = 0;
+	stepX = 0;
+	stepY = 0;
+	curHeight = 0;
+	curWidth = 0;
+
 	_color = 0;
 	blinking = 0;
 	_mouseX = 0;
@@ -96,6 +175,20 @@ DrasculaEngine::DrasculaEngine(OSystem *syst, const DrasculaGameDescription *gam
 	_leftMouseButton = 0;
 	_rightMouseButton = 0;
 	*textName = 0;
+
+	crosshairCursor = 0;
+	mouseCursor = 0;
+	bgSurface = 0;
+	backSurface = 0;
+	cursorSurface = 0;
+	drawSurface3 = 0;
+	drawSurface2 = 0;
+	tableSurface = 0;
+	extraSurface = 0;
+	screenSurface = 0;
+	frontSurface = 0;
+	previousMusic = 0;
+	roomMusic = 0;
 
 	_rnd = new Common::RandomSource("drascula");
 
@@ -297,7 +390,7 @@ Common::Error DrasculaEngine::run() {
 		memset(iconName, 0, sizeof(iconName));
 
 		for (i = 0; i < 6; i++)
-			strcpy(iconName[i + 1], _textverbs[i]);
+			Common::strlcpy(iconName[i + 1], _textverbs[i], 13);
 
 		assignPalette(defaultPalette);
 
@@ -771,6 +864,11 @@ void DrasculaEngine::updateEvents() {
 #endif
 		switch (event.type) {
 		case Common::EVENT_KEYDOWN:
+			if (event.kbd.keycode == Common::KEYCODE_d && event.kbd.hasFlags(Common::KBD_CTRL)) {
+				// Start the debugger
+				getDebugger()->attach();
+				getDebugger()->onFrame();
+			}
 			addKeyToBuffer(event.kbd);
 			break;
 		case Common::EVENT_KEYUP:

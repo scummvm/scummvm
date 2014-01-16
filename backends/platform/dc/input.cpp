@@ -50,10 +50,10 @@ int handleInput(struct mapledev *pad, int &mouse_x, int &mouse_y,
       else if (!(buttons & 512)) newkey = ' ';
       else if (!(buttons & 1024)) newkey = numpadmap[(buttons>>4)&15];
 
-      if (!(buttons & 128)) if (inter) newkey = 1001; else mouse_x++;
-      if (!(buttons & 64)) if (inter) newkey = 1002; else mouse_x--;
-      if (!(buttons & 32)) if (inter) newkey = 1003; else mouse_y++;
-      if (!(buttons & 16)) if (inter) newkey = 1004; else mouse_y--;
+      if (!(buttons & 128)) { if (inter) newkey = 1001; else mouse_x++; }
+      if (!(buttons & 64)) { if (inter) newkey = 1002; else mouse_x--; }
+      if (!(buttons & 32)) { if (inter) newkey = 1003; else mouse_y++; }
+      if (!(buttons & 16)) { if (inter) newkey = 1004; else mouse_y--; }
 
       mouse_x += ((int)pad->cond.controller.joyx-128)>>4;
       mouse_y += ((int)pad->cond.controller.joyy-128)>>4;
@@ -157,7 +157,7 @@ int handleInput(struct mapledev *pad, int &mouse_x, int &mouse_y,
     return -Common::EVENT_RBUTTONUP;
   }
 
-  if (mouse_wheel != lastwheel)
+  if (mouse_wheel != lastwheel) {
     if (((int8)(mouse_wheel - lastwheel)) > 0) {
       lastwheel++;
       return -Common::EVENT_WHEELDOWN;
@@ -165,6 +165,7 @@ int handleInput(struct mapledev *pad, int &mouse_x, int &mouse_y,
       --lastwheel;
       return -Common::EVENT_WHEELUP;
     }
+  }
 
   if (newkey && inter && newkey != lastkey) {
     int transkey = inter->key(newkey, shiftFlags);

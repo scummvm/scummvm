@@ -50,6 +50,7 @@ public:
 	void unload();
 	void play(uint32 fileHash);
 	void play();
+	void playLooping();
 	void stop();
 	void setVolume(int16 volume);
 	void setPan(int16 pan);

@@ -75,7 +75,6 @@ class TSageMetaEngine : public AdvancedMetaEngine {
 public:
 	TSageMetaEngine() : AdvancedMetaEngine(TsAGE::gameDescriptions, sizeof(TsAGE::tSageGameDescription), tSageGameTitles) {
 		_singleid = "tsage";
-		_guioptions = GUIO1(GUIO_NOSPEECH);
 	}
 
 	virtual const char *getName() const {

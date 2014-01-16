@@ -93,6 +93,7 @@ private:
 	bool _streamed;
 	Common::SeekableReadStream *_file;
 	int32 _volume;
+	int8 _pan;
 };
 
 } // End of namespace Wintermute

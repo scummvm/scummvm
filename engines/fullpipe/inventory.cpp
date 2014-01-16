@@ -30,8 +30,12 @@
 
 namespace Fullpipe {
 
-bool CInventory::load(MfcArchive &file) {
-	debug(5, "CInventory::load()");
+Inventory::~Inventory() {
+	warning("STUB: Inventory::~Inventory()");
+}
+
+bool Inventory::load(MfcArchive &file) {
+	debug(5, "Inventory::load()");
 
 	_sceneId = file.readUint16LE();
 	int numInvs = file.readUint32LE();
@@ -52,7 +56,7 @@ bool CInventory::load(MfcArchive &file) {
 	return true;
 }
 
-int CInventory::getInventoryPoolItemIndexById(int itemId) {
+int Inventory::getInventoryPoolItemIndexById(int itemId) {
 	if (_itemsPool.size() <= 0)
 		return -1;
 
@@ -64,7 +68,7 @@ int CInventory::getInventoryPoolItemIndexById(int itemId) {
 	return 0;
 }
 
-bool CInventory::setItemFlags(int itemId, int flags) {
+bool Inventory::setItemFlags(int itemId, int flags) {
 	int idx = getInventoryPoolItemIndexById(itemId);
 
 	if (idx < 0)
@@ -75,7 +79,7 @@ bool CInventory::setItemFlags(int itemId, int flags) {
 	return true;
 }
 
-CInventory2::CInventory2() {
+Inventory2::Inventory2() {
 	_selectedId = -1;
 	_field_48 = -1;
 	_scene = 0;
@@ -85,7 +89,11 @@ CInventory2::CInventory2() {
 	_topOffset = -65;
 }
 
-bool CInventory2::loadPartial(MfcArchive &file) { // CInventory2_SerializePartially
+Inventory2::~Inventory2() {
+	warning("STUB: Inventory2::~Inventory2()");
+}
+
+bool Inventory2::loadPartial(MfcArchive &file) { // Inventory2_SerializePartially
 	int numInvs = file.readUint32LE();
 
 	for (int i = 0; i < numInvs; i++) {
@@ -98,27 +106,27 @@ bool CInventory2::loadPartial(MfcArchive &file) { // CInventory2_SerializePartia
 	return true;
 }
 
-void CInventory2::addItem(int itemId, int count) {
+void Inventory2::addItem(int itemId, int count) {
 	if (getInventoryPoolItemIndexById(itemId) >= 0)
 		_inventoryItems.push_back(new InventoryItem(itemId, count));
 }
 
-void CInventory2::addItem2(StaticANIObject *obj) {
+void Inventory2::addItem2(StaticANIObject *obj) {
 	if (getInventoryPoolItemIndexById(obj->_id) >= 0 && getInventoryPoolItemFieldCById(obj->_id) != 2) {
 		addItem(obj->_id, 1);
 		obj->hide();
 	}
 }
 
-void CInventory2::removeItem(int itemId, int count) {
-	warning("STUB: CInventory2::removeItem(%d, %d)", itemId, count);
+void Inventory2::removeItem(int itemId, int count) {
+	warning("STUB: Inventory2::removeItem(%d, %d)", itemId, count);
 }
 
-void CInventory2::removeItem2(Scene *sceneObj, int itemId, int x, int y, int priority) {
+void Inventory2::removeItem2(Scene *sceneObj, int itemId, int x, int y, int priority) {
 	warning("STUB: void removeItem2(sc, %d, %d, %d, %d)", itemId, x, y, priority);
 }
 
-int CInventory2::getCountItemsWithId(int itemId) {
+int Inventory2::getCountItemsWithId(int itemId) {
 	int res = 0;
 
 	for (uint i = 0; i < _inventoryItems.size(); i++) {
@@ -129,7 +137,7 @@ int CInventory2::getCountItemsWithId(int itemId) {
 	return res;
 }
 
-int CInventory2::getInventoryItemIndexById(int itemId) {
+int Inventory2::getInventoryItemIndexById(int itemId) {
 	for (uint i = 0; i < _inventoryItems.size(); i++) {
 		if (_inventoryItems[i]->itemId == itemId)
 			return i;
@@ -138,11 +146,11 @@ int CInventory2::getInventoryItemIndexById(int itemId) {
 	return -1;
 }
 
-int CInventory2::getInventoryPoolItemIdAtIndex(int itemId) {
+int Inventory2::getInventoryPoolItemIdAtIndex(int itemId) {
 	return _itemsPool[itemId]->id;
 }
 
-int CInventory2::getInventoryPoolItemFieldCById(int itemId) {
+int Inventory2::getInventoryPoolItemFieldCById(int itemId) {
 	for (uint i = 0; i < _itemsPool.size(); i++) {
 		if (_itemsPool[i]->id == itemId)
 			return _itemsPool[i]->field_C;
@@ -151,7 +159,7 @@ int CInventory2::getInventoryPoolItemFieldCById(int itemId) {
 	return 0;
 }
 
-int CInventory2::getItemFlags(int itemId) {
+int Inventory2::getItemFlags(int itemId) {
 	int idx = getInventoryPoolItemIndexById(itemId);
 
 	if (idx < 0)
@@ -160,8 +168,8 @@ int CInventory2::getItemFlags(int itemId) {
 	return _itemsPool[idx]->flags;
 }
 
-void CInventory2::rebuildItemRects() {
-	_scene = g_fullpipe->accessScene(_sceneId);
+void Inventory2::rebuildItemRects() {
+	_scene = g_fp->accessScene(_sceneId);
 
 	if (!_scene)
 		return;
@@ -222,15 +230,15 @@ void CInventory2::rebuildItemRects() {
 	}
 }
 
-void CInventory2::draw() {
+void Inventory2::draw() {
 	if (!_scene)
 		return;
 
-	int oldScLeft = g_fullpipe->_sceneRect.left;
-	int oldScTop = g_fullpipe->_sceneRect.top;
+	int oldScLeft = g_fp->_sceneRect.left;
+	int oldScTop = g_fp->_sceneRect.top;
 
-	g_fullpipe->_sceneRect.top = -_topOffset;
-	g_fullpipe->_sceneRect.left = 0;
+	g_fp->_sceneRect.top = -_topOffset;
+	g_fp->_sceneRect.left = 0;
 
 	_picture->draw(-1, -1, 0, 0);
 
@@ -290,12 +298,12 @@ LABEL_25:
 
 reset:
 
-	g_fullpipe->_sceneRect.top = oldScTop;
-	g_fullpipe->_sceneRect.left = oldScLeft;
+	g_fp->_sceneRect.top = oldScTop;
+	g_fp->_sceneRect.left = oldScLeft;
 
 }
 
-void CInventory2::slideIn() {
+void Inventory2::slideIn() {
 	_isInventoryOut = false;
 
 	ExCommand *ex = new ExCommand(0, 17, 65, 0, 0, 0, 1, 0, 0, 0);
@@ -307,7 +315,7 @@ void CInventory2::slideIn() {
 	ex->postMessage();
 }
 
-void CInventory2::slideOut() {
+void Inventory2::slideOut() {
 	_isInventoryOut = true;
 
 	ExCommand *ex = new ExCommand(0, 17, 65, 0, 0, 0, 1, 0, 0, 0);
@@ -319,7 +327,7 @@ void CInventory2::slideOut() {
 	ex->postMessage();
 }
 
-bool CInventory2::handleLeftClick(ExCommand *cmd) {
+bool Inventory2::handleLeftClick(ExCommand *cmd) {
 	if (!_isInventoryOut)
 		return false;
 
@@ -353,7 +361,7 @@ bool CInventory2::handleLeftClick(ExCommand *cmd) {
 	return res;
 }
 
-int CInventory2::selectItem(int itemId) {
+int Inventory2::selectItem(int itemId) {
 	if (getInventoryItemIndexById(itemId) < 0)
 		return -1;
 
@@ -365,13 +373,13 @@ int CInventory2::selectItem(int itemId) {
 		int idx = getInventoryPoolItemIndexById(itemId);
 
 		Picture *pic = _scene->getPictureObjectById(_itemsPool[idx]->pictureObjectId1, 0)->_picture;
-		g_fullpipe->getGameLoaderInputController()->setCursorItemPicture(pic);
+		g_fp->getGameLoaderInputController()->setCursorItemPicture(pic);
 	}
 
 	return _selectedId;
 }
 
-bool CInventory2::unselectItem(bool flag) {
+bool Inventory2::unselectItem(bool flag) {
 	if (_selectedId < 0)
 		return false;
 
@@ -382,12 +390,12 @@ bool CInventory2::unselectItem(bool flag) {
 			_inventoryIcons[i]->isSelected = false;
    }
 
-	g_fullpipe->getGameLoaderInputController()->setCursorItemPicture(0);
+	g_fp->getGameLoaderInputController()->setCursorItemPicture(0);
 
 	return true;
 }
 
-int CInventory2::getHoveredItem(Common::Point *point) {
+int Inventory2::getHoveredItem(Common::Point *point) {
 	int selId = getSelectedItemId();
 
 	if (point->y <= 20 && !_isInventoryOut && !_isLocked)
@@ -422,7 +430,7 @@ int CInventory2::getHoveredItem(Common::Point *point) {
 }
 
 void FullpipeEngine::getAllInventory() {
-	CInventory2 *inv = getGameLoaderInventory();
+	Inventory2 *inv = getGameLoaderInventory();
 
 	for (uint i = 0; i < inv->getItemsPoolCount(); ++i ) {
 		int id = inv->getInventoryPoolItemIdAtIndex(i);
