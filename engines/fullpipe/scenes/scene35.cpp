@@ -33,6 +33,7 @@
 #include "fullpipe/interaction.h"
 #include "fullpipe/behavior.h"
 
+#include "fullpipe/floaters.h"
 
 namespace Fullpipe {
 
@@ -41,8 +42,8 @@ void scene35_initScene(Scene *sc) {
 	g_vars->scene35_var02 = 200;
 	g_vars->scene35_var03 = 300;
 	g_vars->scene35_var04 = 300;
-	g_vars->scene35_hose = Scene_getStaticANIObject1ById(sc, ANI_HOSE, -1);
-	g_vars->scene35_bellyInflater = Scene_getStaticANIObject1ById(sc, ANI_PUZODUV, -1);
+	g_vars->scene35_hose = sc->getStaticANIObject1ById(ANI_HOSE, -1);
+	g_vars->scene35_bellyInflater = sc->getStaticANIObject1ById(ANI_PUZODUV, -1);
 	g_vars->scene35_var05 = 0;
 	g_vars->scene35_var06 = 0;
 
@@ -55,7 +56,7 @@ void scene35_initScene(Scene *sc) {
 
 	int sndId = 0;
 
-	if (getObjectState(sO_Valve_35) == getObjectEnumState(sO_Valve_35, sO_TurnedOn)) {
+	if (g_fp->getObjectState(sO_Valve_35) == g_fp->getObjectEnumState(sO_Valve_35, sO_TurnedOn)) {
 		if ((g_vars->scene35_hose->_flags & 4) && g_vars->scene35_hose->_statics->_staticsId == ST_HZE_NORM) {
 			sndId = SND_35_012;
 		} else if (g_vars->scene35_bellyInflater->_statics->_staticsId == ST_PDV_SMALL) {
@@ -71,7 +72,7 @@ void scene35_initScene(Scene *sc) {
 
 	g_fp->initArcadeKeys("SC_35");
 
-	g_fp->_floaters->init(getGameLoaderGameVar()->getSubVarByName("SC_35"));
+	g_fp->_floaters->init(g_fp->getGameLoaderGameVar()->getSubVarByName("SC_35"));
 }
 
 } // End of namespace Fullpipe

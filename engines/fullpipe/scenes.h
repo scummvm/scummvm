@@ -491,6 +491,15 @@ public:
 	bool scene34_dudeOnCactus;
 	int scene34_fliesCountdown;
 
+	int scene35_var01;
+	int scene35_var02;
+	int scene35_var03;
+	int scene35_var04;
+	StaticANIObject *scene35_hose;
+	StaticANIObject *scene35_bellyInflater;
+	int scene35_var05;
+	int scene35_var06;
+
 	StaticANIObject *scene36_rotohrust;
 	StaticANIObject *scene36_scissors;
 

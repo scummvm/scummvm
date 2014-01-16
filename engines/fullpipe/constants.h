@@ -1257,6 +1257,17 @@ namespace Fullpipe {
 #define ST_VNT34_RIGHT3 4318
 #define ST_VNT34_UP2 4310
 
+// Scene 35
+#define ANI_HOSE 2424
+#define ANI_PUZODUV 2418
+#define QU_SC35_ENTERLIFT 2815
+#define QU_SC35_EXITLIFT 2816
+#define SND_35_011 4509
+#define SND_35_012 4510
+#define ST_HZE_NORM 2426
+#define ST_PDV_LARGE 2421
+#define ST_PDV_SMALL 2420
+
 // Scene 36
 #define ANI_SCISSORS_36 2647
 #define ANI_ROTOHRUST 2360
