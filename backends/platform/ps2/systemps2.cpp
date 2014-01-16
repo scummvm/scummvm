@@ -263,6 +263,7 @@ bool OSystem_PS2::loadDrivers(IrxType type)
 	int res;
 
 	numModules = loadIrxModules(_bootDevice, _bootPath, &modules, type);
+	// TODO: for IRX_NET allows override IP addr
 	startIrxModules(numModules, modules);
 
 	switch (type) {
@@ -297,12 +298,12 @@ bool OSystem_PS2::loadDrivers(IrxType type)
 		else {
 			poweroffInit();
 			poweroffSetCallback(gluePowerOffCallback, this);
-		
-			if (fio.mount("pfs0:", "hdd0:+ScummVM", 0) >= 0)
-				printf("Successfully mounted!\n");
-			else
-				_useHdd = false;
 		}
+	break;
+
+	case IRX_NET:
+		if (_bootDevice == HOST_DEV) // net is pre-loaded on host
+			_useNet = true;      // so we need to set by hand
 	break;
 
 	default:
@@ -358,15 +359,7 @@ OSystem_PS2::OSystem_PS2(const char *elfPath) {
 	_usbMassLoaded = _useMouse = _useKbd = _useCd = _useHdd = _useNet = false;
 
 	loadDrivers(IRX_CORE);
-	loadDrivers(IRX_CDROM);
-	// loadDrivers(IRX_USB); // why they only load correctly post HDD ?
-	// loadDrivers(IRX_INPUT);
-	#ifndef NO_ADAPTOR
-	loadDrivers(IRX_HDD);
-	loadDrivers(IRX_NET);
-	#endif
-	loadDrivers(IRX_USB);
-        loadDrivers(IRX_INPUT);
+	loadDrivers(IRX_CDROM); // consider CDROM as "core", as RTC depends on it
 
 	fileXioSetBlockMode(FXIO_NOWAIT);
 	initMutexes();
@@ -391,6 +384,58 @@ void OSystem_PS2::init(void) {
 
 	_screen->wantAnim(false);
 	fillScreen(0);
+}
+
+void OSystem_PS2::config(void) {
+	#ifndef NO_ADAPTOR
+	if (ConfMan.hasKey("hdd_part", "PlayStation2")) { // "hdd" ?
+		const char *hdd = ConfMan.get("hdd_part", "PlayStation2").c_str();
+
+		if ( !strcmp(hdd, "0") || !strcmp(hdd, "no") || !strcmp(hdd, "disable") ) {
+			_useHdd = false;
+		}
+		else {
+			loadDrivers(IRX_HDD);
+			hddMount(hdd);
+		}
+	}
+	else { // check for HDD and assume partition is +ScummVM
+		loadDrivers(IRX_HDD);
+		hddMount("ScummVM");
+	}
+
+	if (ConfMan.hasKey("net_addr", "PlayStation2")) { // "net" ?
+		const char *net = ConfMan.get("net_addr", "PlayStation2").c_str();
+
+		if ( !strcmp(net, "0") || !strcmp(net, "no") || !strcmp(net, "disable") ) {
+			_useNet = false;
+		}
+		else {
+			loadDrivers(IRX_NET);
+			// TODO: netInit("xxx.xxx.xxx.xxx");
+		}
+	}
+	else { // setup net - IP hardcoded 192.168.1.20
+		loadDrivers(IRX_NET);
+	}
+	#endif
+
+	// why USB drivers only load correctly post HDD ?
+	if (ConfMan.hasKey("usb_mass", "PlayStation2")) { // "usb" ?
+		const char *usb = ConfMan.get("usb_mass", "PlayStation2").c_str();
+
+		if ( !strcmp(usb, "0") || !strcmp(usb, "no") || !strcmp(usb, "disable") ) {
+			_usbMassLoaded = false;
+		}
+		else {
+			loadDrivers(IRX_USB);
+			loadDrivers(IRX_INPUT);
+		}
+	}
+	else { // load USB drivers (mass & input(
+		loadDrivers(IRX_USB);
+		loadDrivers(IRX_INPUT);
+	}
 }
 
 OSystem_PS2::~OSystem_PS2(void) {
@@ -559,15 +604,37 @@ bool OSystem_PS2::usbMassPresent(void) {
 }
 
 bool OSystem_PS2::netPresent(void) {
-	if (_bootDevice == HOST_DEV || _useNet) {
+	if (_useNet) 
 		return true;
-	}
 
 	return false;
 }
 
+bool OSystem_PS2::hddMount(const char *partition) {
+	char name[64] = "hdd0:+ScummVM";
+
+	if (partition)
+		strcpy(name+6, partition);
+
+	if (fio.mount("pfs0:", name, 0) >= 0) {
+		printf("Successfully mounted (%s)!\n", name);
+		return true;
+	}
+	else {
+		printf("Failed to mount (%s).\n", name);
+		_useHdd = false;
+		return false;
+	}
+}
+
 void OSystem_PS2::initSize(uint width, uint height, const Graphics::PixelFormat *format) {
 	printf("initializing new size: (%d/%d)...", width, height);
+
+	/* ugly hack: we know we can parse ScummVM.ini now */
+	if (!_screenChangeCount) { // first round
+		config();
+	}
+
 	_screen->newScreenSize(width, height);
 	_screen->setMouseXy(width / 2, height / 2);
 	_input->newRange(0, 0, width - 1, height - 1);
