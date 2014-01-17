@@ -1178,7 +1178,7 @@ void MortevielleEngine::fctEnter() {
 		_coreVar._availableQuestion[8] = '*';
 	} else {
 		int pres = 0;
-		if (!_blo)
+		if (!_outsideOnlyFl)
 			pres = getPresence(_roomDoorId);
 		if (pres != 0) {
 			if ((_roomDoorId == TOILETS) || (_roomDoorId == BATHROOM))
@@ -1337,7 +1337,7 @@ void MortevielleEngine::fctWait() {
 	do {
 		++_currentHourCount;
 		prepareRoom();
-		if (!_blo)
+		if (!_outsideOnlyFl)
 			getPresence(_coreVar._currPlace);
 		if ((_currBitIndex != 0) && (_savedBitIndex == 0)) {
 			_crep = 998;

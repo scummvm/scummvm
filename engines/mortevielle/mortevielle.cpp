@@ -83,7 +83,7 @@ MortevielleEngine::MortevielleEngine(OSystem *system, const MortevielleGameDescr
 	_keyPressedEsc = false;
 	_reloadCFIEC = false;
 
-	_blo = false;
+	_outsideOnlyFl = true;
 	_col = false;
 	_syn = false;
 	_obpart = false;

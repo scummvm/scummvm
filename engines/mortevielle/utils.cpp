@@ -466,7 +466,7 @@ int MortevielleEngine::convertBitIndexToCharacterIndex(int bitIndex) {
  */
 void MortevielleEngine::resetPresenceInRooms(int roomId) {
 	if (roomId == DINING_ROOM)
-		_blo = false;
+		_outsideOnlyFl = false;
 
 	if (roomId != GREEN_ROOM) {
 		_roomPresenceLuc = false;
@@ -1080,7 +1080,7 @@ void MortevielleEngine::initGame() {
 	_place = MANOR_FRONT;
 	_currentHourCount = 0;
 	if (!_coreVar._alreadyEnteredManor)
-		_blo = true;
+		_outsideOnlyFl = true;
 	_inGameHourDuration = kTime1;
 	_currentTime = readclock();
 }
@@ -1285,7 +1285,7 @@ void MortevielleEngine::loseGame() {
 	_roomDoorId = OWN_ROOM;
 	_curSearchObjId = 0;
 	_menu->unsetSearchMenu();
-	if (!_blo)
+	if (!_outsideOnlyFl)
 		getPresence(MANOR_FRONT);
 
 	_loseGame = true;
@@ -1393,7 +1393,7 @@ void MortevielleEngine::gotoDiningRoom() {
 		_coreVar._currPlace = OWN_ROOM;
 		prepareDisplayText();
 		resetPresenceInRooms(DINING_ROOM);
-		if (!_blo)
+		if (!_outsideOnlyFl)
 			getPresence(OWN_ROOM);
 		_currBitIndex = 0;
 		_savedBitIndex = 0;
@@ -2210,7 +2210,7 @@ void MortevielleEngine::prepareRoom() {
 	if (_mouse->_pos.y < 12)
 		return;
 
-	if (!_blo) {
+	if (!_outsideOnlyFl) {
 		if ((hour == 12) || ((hour > 18) && (hour < 21)) || ((hour >= 0) && (hour < 7)))
 			_inGameHourDuration = kTime2;
 		else

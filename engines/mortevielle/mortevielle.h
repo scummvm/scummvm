@@ -402,7 +402,7 @@ public:
 	int  _charAnswerMax[9];
 	byte _tabdon[4001];
 	bool _soundOff;
-	bool _blo;
+	bool _outsideOnlyFl;
 	bool _destinationOk;
 	bool _largestClearScreen;
 	float _addFix;
