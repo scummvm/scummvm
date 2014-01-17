@@ -101,6 +101,7 @@ public:
 
 	void setIsSpeech() { _isSpeech = true; }
 	void setBlastDraw() { _blastDraw = true; }
+	bool isBlastDraw() { return _blastDraw; }
 
 	const void *getUserData() const { return _userData; }
 	void setUserData(void *data) { _userData = data; }
