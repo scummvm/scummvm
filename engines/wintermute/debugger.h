@@ -40,7 +40,7 @@ public:
 	/*
 	 * Debug commands 
 	 */
-
+	bool Cmd_Help(int argc, const char **argv);
 	bool Cmd_ShowFps(int argc, const char **argv);
 	bool Cmd_DumpFile(int argc, const char **argv);
 	bool Cmd_StepInto(int argc, const char **argv);
@@ -85,7 +85,6 @@ public:
 	bool Cmd_SourcePath(int argc, const char **argv);
 
 	Error printSource(int n = DEFAULT_SOURCE_PADDING);
-	void debugWarning(const Common::String &command, int warning_level, const Common::String &message);
 	// For use by the Adapter
 	void notifyBreakpoint(const char *filename, int line);
 	void notifyStep(const char *filename, int line);
@@ -93,6 +92,8 @@ public:
 
 private:
 	WintermuteEngine *_engineRef;
+	void printError(const Common::String &command, Error error);
+	void printUsage(const Common::String &command);
 };
 
 

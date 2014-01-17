@@ -50,13 +50,62 @@ Console::Console(WintermuteEngine *vm) : GUI::Debugger() {
 	DCmd_Register("enablew", WRAP_METHOD(Console, Cmd_EnableWatchpoint));
 	DCmd_Register("print", WRAP_METHOD(Console, Cmd_Print));
 	DCmd_Register("set", WRAP_METHOD(Console, Cmd_Set));
-	DCmd_Register("set-type", WRAP_METHOD(Console, Cmd_SetType));
+	DCmd_Register("set_type", WRAP_METHOD(Console, Cmd_SetType));
 	DCmd_Register("info", WRAP_METHOD(Console, Cmd_Info));
 	DCmd_Register("dumpres", WRAP_METHOD(Console, Cmd_DumpRes));
 	DCmd_Register("sourcepath", WRAP_METHOD(Console, Cmd_SourcePath));
+	DCmd_Register("help", WRAP_METHOD(Console, Cmd_Help));
 }
 
 Console::~Console(void) {
+}
+
+bool Console::Cmd_Help(int argc, const char **argv) {
+	if (argc == 1) {
+		Debugger::Cmd_Help(argc, argv);
+		DebugPrintf("\nType help somecommand to get specific help.\n");
+	} else {
+		printUsage(argv[1]);
+	}
+	return true;
+}
+void Console::printUsage(const Common::String &command) {
+	// TODO: This is horrible and would probably benefit from a map or something.
+	if (command.equals("break")) {
+		DebugPrintf("Usage: %s <file path> <line> to break at line <line> of file <file path>\n", command.c_str());
+	} else if (command.equals("del")) {
+		DebugPrintf("Usage: %s <id> to remove breakpoint #id\n", command.c_str());
+	} else if (command.equals("enable")) {
+		DebugPrintf("Usage: %s <id> to enable breakpoint #id\n", command.c_str());
+	} else if (command.equals("disable")) {
+		DebugPrintf("Usage: %s <id> to disable breakpoint #id\n", command.c_str());
+	} else if (command.equals("delw")) {
+		DebugPrintf("Usage: %s <id> to remove watchpoint #id\n", command.c_str());
+	} else if (command.equals("enablew")) {
+		DebugPrintf("Usage: %s <id> to enable watchpoint #id\n", command.c_str());
+	} else if (command.equals("disablew")) {
+		DebugPrintf("Usage: %s <id> to disable watchpoint #id\n", command.c_str());
+	} else if (command.equals("info")) {
+		DebugPrintf("Usage: %s [watch|breakpoints]\n", command.c_str());
+	} else if (command.equals("watch")) {
+		DebugPrintf("Usage: %s <file path> <name> to watch for <name> in file <file path>\n", command.c_str());
+	} else if (command.equals("next")) {
+		DebugPrintf("Usage: %s to step over\n", command.c_str());
+	} else if (command.equals("step")) {
+		DebugPrintf("Usage: %s to step into\n", command.c_str());
+	} else if (command.equals("continue")) {
+		DebugPrintf("Usage: %s to continue\n", command.c_str());
+	} else if (command.equals("finish")) {
+		DebugPrintf("Usage: %s to finish\n", command.c_str());
+	} else if (command.equals("print")) {
+		DebugPrintf("Usage: %s <name> to print value of <name>\n", command.c_str());
+	} else if (command.equals("set")) {
+		DebugPrintf("Usage: %s <name> = <value> to set <name> to <value>\n", command.c_str());
+	} else if (command.equals("set_type")) {
+		DebugPrintf("Usage: %s <name> <value> to set type of <name>", command.c_str());
+	} else {
+		DebugPrintf("No help about this command, sorry.");
+	}
 }
 
 bool Console::Cmd_AddBreakpoint(int argc, const char **argv) {
@@ -65,9 +114,9 @@ bool Console::Cmd_AddBreakpoint(int argc, const char **argv) {
 	 */
 	if (argc == 3) {
 		Wintermute::Error error = ADAPTER->addBreakpoint(argv[1], atoi(argv[2]));
-		DebugPrintf("%s: %s\n", argv[0], error.getErrorDisplayStr().c_str());
+		printError(argv[0], error);
 	} else {
-		DebugPrintf("Usage: %s <file path> <line> to break at line <line> of file <file path>\n", argv[0]);
+		printUsage(argv[0]);
 	}
 	return true;
 }
@@ -75,9 +124,9 @@ bool Console::Cmd_AddBreakpoint(int argc, const char **argv) {
 bool Console::Cmd_RemoveBreakpoint(int argc, const char **argv) {
 	if (argc == 2) {
 		Error error = ADAPTER->removeBreakpoint(atoi(argv[1]));
-		DebugPrintf("%s: %s\n", argv[0], error.getErrorDisplayStr().c_str());
+		printError(argv[0], error);
 	} else {
-		DebugPrintf("Usage: %s <file path> <line> to break at line <line> of file <file path>\n", argv[0]);
+		printUsage(argv[0]);
 	}
 
 	return true;
@@ -86,9 +135,9 @@ bool Console::Cmd_RemoveBreakpoint(int argc, const char **argv) {
 bool Console::Cmd_EnableBreakpoint(int argc, const char **argv) {
 	if (argc == 2) {
 		Error error = ADAPTER->enableBreakpoint(atoi(argv[1]));
-		DebugPrintf("%s: %s\n", argv[0], error.getErrorDisplayStr().c_str());
+		printError(argv[0], error);
 	} else {
-		DebugPrintf("Usage: %s <id> to enable\n", argv[0]);
+		printUsage(argv[0]);
 	}
 	return true;
 }
@@ -98,7 +147,7 @@ bool Console::Cmd_DisableBreakpoint(int argc, const char **argv) {
 		Error error = ADAPTER->disableBreakpoint(atoi(argv[1]));
 		DebugPrintf("%s: %s\n", argv[0], error.getErrorDisplayStr().c_str());
 	} else {
-		DebugPrintf("Usage: %s <id> to disable\n", argv[0]);
+		printUsage(argv[0]);
 	}
 	return true;
 }
@@ -106,9 +155,9 @@ bool Console::Cmd_DisableBreakpoint(int argc, const char **argv) {
 bool Console::Cmd_RemoveWatchpoint(int argc, const char **argv) {
 	if (argc == 2) {
 		Error error = ADAPTER->removeWatchpoint(atoi(argv[1]));
-		DebugPrintf("%s: %s\n", argv[0], error.getErrorDisplayStr().c_str());
+		printError(argv[0], error);
 	} else {
-		DebugPrintf("Usage: %s <file path> <line> to break at line <line> of file <file path>\n", argv[0]);
+		printUsage(argv[0]);
 	}
 
 	return true;
@@ -117,9 +166,9 @@ bool Console::Cmd_RemoveWatchpoint(int argc, const char **argv) {
 bool Console::Cmd_EnableWatchpoint(int argc, const char **argv) {
 	if (argc == 2) {
 		Error error = ADAPTER->enableWatchpoint(atoi(argv[1]));
-		DebugPrintf("%s: %s", argv[0], error.getErrorDisplayStr().c_str());
+		printError(argv[0], error);
 	} else {
-		DebugPrintf("Usage: %s <id> to enable\n", argv[0]);
+		printUsage(argv[0]);
 	}
 	return true;
 }
@@ -128,9 +177,9 @@ bool Console::Cmd_EnableWatchpoint(int argc, const char **argv) {
 bool Console::Cmd_DisableWatchpoint(int argc, const char **argv) {
 	if (argc == 2) {
 		Error error = ADAPTER->disableWatchpoint(atoi(argv[1]));
-		DebugPrintf("%s: %s\n", argv[0], error.getErrorDisplayStr().c_str());
+		printError(argv[0], error);
 	} else {
-		DebugPrintf("Usage: %s <id> to disable\n", argv[0]);
+		printUsage(argv[0]);
 	}
 	return true;
 }
@@ -155,9 +204,9 @@ bool Console::Cmd_Watch(int argc, const char **argv) {
 
 	if (argc == 3) {
 		Error error = ADAPTER->addWatch(argv[1], argv[2]);
-		DebugPrintf("%s: %s\n", argv[0], error.getErrorDisplayStr().c_str());
+		printError(argv[0], error);
 	} else {
-		DebugPrintf("Usage: %s <file path> <name> to watch for <name> in file <file path>\n", argv[0]);
+		printUsage(argv[0]);
 	}
 	return true;
 }
@@ -177,7 +226,7 @@ bool Console::Cmd_Info(int argc, const char **argv) {
 		}
 		return 1;
 	} else {
-		DebugPrintf("Usage: %s [watch|breakpoints]\n", argv[0]);
+		printUsage(argv[0]);
 		return 1;
 	}
 }
@@ -189,11 +238,11 @@ bool Console::Cmd_StepOver(int argc, const char **argv) {
 		if (error.errorLevel == SUCCESS) {
 			return false;
 		} else {
-			DebugPrintf("%s: %s\n", argv[0], error.getErrorDisplayStr().c_str());
+			printError(argv[0], error);
 			return true;
 		}
 	} else {
-		DebugPrintf("Usage: %s to step over\n", argv[0]);
+		printUsage(argv[0]);
 		return true;
 	}
 }
@@ -204,11 +253,11 @@ bool Console::Cmd_StepInto(int argc, const char **argv) {
 		if (error.errorLevel == SUCCESS) {
 			return false;
 		} else {
-			DebugPrintf("%s: %s\n", argv[0], error.getErrorDisplayStr().c_str());
+			printError(argv[0], error);
 			return true;
 		}
 	} else {
-		DebugPrintf("Usage: %s to step into\n", argv[0]);
+		printUsage(argv[0]);
 		return true;
 	}
 }
@@ -219,11 +268,11 @@ bool Console::Cmd_Continue(int argc, const char **argv) {
 		if (error.errorLevel == SUCCESS) {
 			return false;
 		} else {
-			DebugPrintf("%s: %s\n", argv[0], error.getErrorDisplayStr().c_str());
+			printError(argv[0], error);
 			return true;
 		}
 	} else {
-		DebugPrintf("Usage: %s to continue\n", argv[0]);
+		printUsage(argv[0]);
 		return true;
 	}
 }
@@ -231,10 +280,10 @@ bool Console::Cmd_Continue(int argc, const char **argv) {
 bool Console::Cmd_Finish(int argc, const char **argv) {
 	if (argc == 1) {
 		Error error = ADAPTER->stepFinish();
-		DebugPrintf("%s: %s\n", argv[0], error.getErrorDisplayStr().c_str());
+		printError(argv[0], error);
 		return false;
 	} else {
-		DebugPrintf("Usage: %s to continue\n", argv[0]);
+		printUsage(argv[0]);
 		return true;
 	}
 }
@@ -242,7 +291,7 @@ bool Console::Cmd_Finish(int argc, const char **argv) {
 bool Console::Cmd_List(int argc, const char **argv) {
 	Error error = printSource();
 	if (error.errorLevel != SUCCESS) {
-		DebugPrintf("%s: %s\n", argv[0], error.getErrorDisplayStr().c_str());
+		printError(argv[0], error);
 	}
 	return true;
 }
@@ -255,11 +304,11 @@ bool Console::Cmd_Print(int argc, const char **argv) {
 			DebugPrintf("%s = %s \n", argv[1], temp.c_str());
 			return true;
 		} else {
-			DebugPrintf("%s: %s\n", argv[0], error.getErrorDisplayStr().c_str());
+			printError(argv[0], error);
 			return true;
 		}
 	} else {
-		DebugPrintf("Usage: %s <name> to print value of <name>\n", argv[0]);
+		printUsage(argv[0]);
 		return true;
 	}
 }
@@ -273,10 +322,10 @@ bool Console::Cmd_Set(int argc, const char **argv) {
 			assert(val);
 			DebugPrintf("%s = %s\n", argv[1], val->getString());
 		} else {
-			DebugPrintf("%s: %s\n", argv[0], error.getErrorDisplayStr().c_str());
+			printError(argv[0], error);
 		}
 	} else {
-		DebugPrintf("Usage: %s <name> = <value> to set <name> to <value>\n", argv[0]);
+		printUsage(argv[0]);
 	}
 	return true;
 }
@@ -288,10 +337,10 @@ bool Console::Cmd_SetType(int argc, const char **argv) {
 		if (error.errorLevel == SUCCESS) {
 			DebugPrintf("%s: OK\n", argv[0]);
 		} else {
-			DebugPrintf("%s: %s\n", argv[0], error.getErrorDisplayStr().c_str());
+			printError(argv[0], error);
 		}
 	} else {
-		DebugPrintf("Usage: %s <name> <value> to set type of <name>", argv[0]);
+		printUsage(argv[0]);
 	}
 
 	return 1;
@@ -424,21 +473,8 @@ Error Console::printSource(int n) {
 	return Error(SUCCESS, OK, 0);
 }
 
-void Console::debugWarning(const Common::String &command, int warning_level, const Common::String &message) {
-	Common::String level;
-	switch (warning_level) {
-	case NOTICE:
-		level = Common::String("NOTICE");
-		break;
-	case WARNING:
-		level = Common::String("WARNING");
-		break;
-	default:
-		level = Common::String("ERROR");
-		break;
-	}
-	DebugPrintf("%s %s: %s", level.c_str(), command.c_str(), message.c_str());
+void Console::printError(const Common::String &command, Error error) {
+	DebugPrintf("%s: %s\n", command.c_str(), error.getErrorDisplayStr().c_str());
 }
-
 } // end of namespace Wintermute
 
