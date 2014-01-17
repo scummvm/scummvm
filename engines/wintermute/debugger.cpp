@@ -186,9 +186,14 @@ bool Console::Cmd_Info(int argc, const char **argv) {
 bool Console::Cmd_StepOver(int argc, const char **argv) {
 	if (argc == 1) {
 		Error error = ADAPTER->stepOver();
-		DebugPrintf("%s: %s\n", error.getErrorDisplayStr().c_str());
+		if (error.errorLevel == SUCCESS) {
+			return false;
+		} else {
+			DebugPrintf("%s: %s\n", argv[0], error.getErrorDisplayStr().c_str());
+			return true;
+		}
 	} else {
-		DebugPrintf("Usage: %s to continue\n", argv[0]);
+		DebugPrintf("Usage: %s to step over\n", argv[0]);
 		return true;
 	}
 }
@@ -196,9 +201,14 @@ bool Console::Cmd_StepOver(int argc, const char **argv) {
 bool Console::Cmd_StepInto(int argc, const char **argv) {
 	if (argc == 1) {
 		Error error = ADAPTER->stepInto();
-		DebugPrintf("%s: %s\n", error.getErrorDisplayStr().c_str());
+		if (error.errorLevel == SUCCESS) {
+			return false;
+		} else {
+			DebugPrintf("%s: %s\n", argv[0], error.getErrorDisplayStr().c_str());
+			return true;
+		}
 	} else {
-		DebugPrintf("Usage: %s to continue\n", argv[0]);
+		DebugPrintf("Usage: %s to step into\n", argv[0]);
 		return true;
 	}
 }
