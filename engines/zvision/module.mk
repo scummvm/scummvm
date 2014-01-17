@@ -34,7 +34,8 @@ MODULE_OBJS := \
 	music_node.o \
 	inventory_manager.o \
 	slot_control.o \
-	menu.o
+	menu.o \
+	meta_animation.o
  
 MODULE_DIRS += \
 	engines/zvision
