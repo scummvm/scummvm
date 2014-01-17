@@ -231,7 +231,8 @@ bool Console::Cmd_Continue(int argc, const char **argv) {
 bool Console::Cmd_Finish(int argc, const char **argv) {
 	if (argc == 1) {
 		Error error = ADAPTER->stepFinish();
-		DebugPrintf("%s: %s\n", error.getErrorDisplayStr().c_str());
+		DebugPrintf("%s: %s\n", argv[0], error.getErrorDisplayStr().c_str());
+		return false;
 	} else {
 		DebugPrintf("Usage: %s to continue\n", argv[0]);
 		return true;
@@ -241,7 +242,7 @@ bool Console::Cmd_Finish(int argc, const char **argv) {
 bool Console::Cmd_List(int argc, const char **argv) {
 	Error error = printSource();
 	if (error.errorLevel != SUCCESS) {
-		DebugPrintf(error.getErrorDisplayStr().c_str());
+		DebugPrintf("%s: %s\n", argv[0], error.getErrorDisplayStr().c_str());
 	}
 	return true;
 }
@@ -272,7 +273,7 @@ bool Console::Cmd_Set(int argc, const char **argv) {
 			assert(val);
 			DebugPrintf("%s = %s\n", argv[1], val->getString());
 		} else {
-			DebugPrintf("%s: %s\n", error.getErrorDisplayStr().c_str());
+			DebugPrintf("%s: %s\n", argv[0], error.getErrorDisplayStr().c_str());
 		}
 	} else {
 		DebugPrintf("Usage: %s <name> = <value> to set <name> to <value>\n", argv[0]);
@@ -287,7 +288,7 @@ bool Console::Cmd_SetType(int argc, const char **argv) {
 		if (error.errorLevel == SUCCESS) {
 			DebugPrintf("%s: OK\n", argv[0]);
 		} else {
-			DebugPrintf("%s: %s\n", error.getErrorDisplayStr().c_str());
+			DebugPrintf("%s: %s\n", argv[0], error.getErrorDisplayStr().c_str());
 		}
 	} else {
 		DebugPrintf("Usage: %s <name> <value> to set type of <name>", argv[0]);
