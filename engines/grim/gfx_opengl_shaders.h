@@ -261,6 +261,7 @@ private:
 	uint32 _currentPrimitive;
 	void drawGenericPrimitive(const float *vertices, uint32 numVertices, const PrimitiveObject *primitive);
 	GLuint _irisVBO;
+	GLuint _blastVBO;
 };
 }
 #endif

@@ -291,6 +291,8 @@ void GfxOpenGLS::setupShaders() {
 	setupTexturedQuad();
 	setupTexturedCenteredQuad();
 	setupPrimitives();
+
+	_blastVBO = Graphics::Shader::createBuffer(GL_ARRAY_BUFFER, 128 * 16 * sizeof(float), NULL, GL_DYNAMIC_DRAW);
 }
 
 byte *GfxOpenGLS::setupScreen(int screenW, int screenH, bool fullscreen) {
@@ -1069,8 +1071,14 @@ void GfxOpenGLS::createTextObject(TextObject *text) {
 			x += font->getCharWidth(character);
 		}
 	}
-
-	GLuint vbo = Graphics::Shader::createBuffer(GL_ARRAY_BUFFER, numCharacters * 16 * sizeof(float), bufData, GL_STATIC_DRAW);
+	GLuint vbo;
+	if (text->isBlastDraw()) {
+		vbo = _blastVBO;
+		glBindBuffer(GL_ARRAY_BUFFER, vbo);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, numCharacters * 16 * sizeof(float), bufData);
+	} else {
+		vbo = Graphics::Shader::createBuffer(GL_ARRAY_BUFFER, numCharacters * 16 * sizeof(float), bufData, GL_STATIC_DRAW);
+	}
 
 	Graphics::Shader * textShader = _textProgram->clone();
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
@@ -1107,7 +1115,9 @@ void GfxOpenGLS::drawTextObject(const TextObject *text) {
 
 void GfxOpenGLS::destroyTextObject(TextObject *text) {
 	const TextUserData * td = (const TextUserData *) text->getUserData();
-	glDeleteBuffers(1, &td->shader->getAttributeAt(0)._vbo);
+	if (!text->isBlastDraw()) {
+		glDeleteBuffers(1, &td->shader->getAttributeAt(0)._vbo);
+	}
 	text->setUserData(NULL);
 	delete td;
 }
