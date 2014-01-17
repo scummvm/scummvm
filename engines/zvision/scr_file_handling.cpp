@@ -214,7 +214,7 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 				} else if (act.matchString("animunload", true)) {
 					//actionList.push_back(new ActionUnloadAnimation(_engine, slot, args));
 				} else if (act.matchString("attenuate", true)) {
-					// TODO: Implement ActionAttenuate
+					actionList.push_back(new ActionAttenuate(_engine, slot, args));
 				} else if (act.matchString("assign", true)) {
 					actionList.push_back(new ActionAssign(_engine, slot, args));
 				} else if (act.matchString("change_location", true)) {

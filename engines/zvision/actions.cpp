@@ -88,7 +88,11 @@ ActionAttenuate::ActionAttenuate(ZVision *engine, int32 slotkey, const Common::S
 }
 
 bool ActionAttenuate::execute() {
-	// TODO: Implement
+	SideFX *fx = _engine->getScriptManager()->getSideFX(_key);
+	if (fx && fx->getType() == SideFX::SIDEFX_AUDIO) {
+		MusicNode *mus = (MusicNode *)fx;
+		mus->setVolume(255 - (abs(_attenuation) >> 7));
+	}
 	return true;
 }
 

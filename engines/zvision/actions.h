@@ -116,7 +116,7 @@ public:
 
 private:
 	uint32 _key;
-	int _attenuation;
+	int32 _attenuation;
 };
 
 class ActionChangeLocation : public ResultAction {
