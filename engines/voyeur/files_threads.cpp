@@ -1072,7 +1072,7 @@ int ThreadResource::doApt() {
 		_vm->_eventsManager.getMouseInfo();
 		if (!_vm->_soundManager.getVOCStatus()) {
 			// Previous sound ended, so start up a new one
-			_vm->_currentVocId = _vm->getRandomNumber(4) + 151;
+			_vm->_currentVocId = 151 - _vm->getRandomNumber(4);
 			_vm->_soundManager.startVOCPlay(_vm->_soundManager.getVOCFileName(_vm->_currentVocId));
 		}
 
