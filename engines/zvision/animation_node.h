@@ -32,10 +32,6 @@ namespace Common {
 class String;
 }
 
-namespace Video {
-class VideoDecoder;
-}
-
 namespace Graphics {
 struct Surface;
 }
@@ -43,7 +39,7 @@ struct Surface;
 namespace ZVision {
 
 class ZVision;
-class RlfAnimation;
+class MetaAnimation;
 
 class AnimationNode : public SideFX {
 public:
@@ -62,25 +58,15 @@ public:
 	};
 
 private:
-	enum FileType {
-	    RLF = 1,
-	    AVI = 2
-	};
-
-private:
 	typedef Common::List<playnode> PlayNodes;
 
 	PlayNodes _playList;
 
-	union {
-		RlfAnimation *rlf;
-		Video::VideoDecoder *avi;
-	} _animation;
-
-	FileType _fileType;
-	int32 _frmDelay;
 	int32 _mask;
 	bool _DisposeAfterUse;
+
+	MetaAnimation *_animation;
+	int32 _frmDelay;
 
 public:
 	bool process(uint32 deltaTimeInMillis);

@@ -27,10 +27,7 @@
 #include "zvision/zvision.h"
 #include "zvision/render_manager.h"
 #include "zvision/script_manager.h"
-#include "zvision/rlf_animation.h"
-#include "zvision/zork_avi_decoder.h"
-
-#include "video/video_decoder.h"
+#include "zvision/meta_animation.h"
 
 #include "graphics/surface.h"
 
@@ -39,18 +36,13 @@ namespace ZVision {
 
 AnimationNode::AnimationNode(ZVision *engine, uint32 controlKey, const Common::String &fileName, int32 mask, int32 frate, bool DisposeAfterUse)
 	: SideFX(engine, controlKey, SIDEFX_ANIM),
-	  _fileType(RLF),
 	  _DisposeAfterUse(DisposeAfterUse),
-	  _mask(mask) {
-	if (fileName.hasSuffix(".rlf")) {
-		_fileType = RLF;
-		_animation.rlf = new RlfAnimation(fileName, false);
-		_frmDelay = _animation.rlf->frameTime();
-	} else if (fileName.hasSuffix(".avi")) {
-		_fileType = AVI;
-		_animation.avi = new ZorkAVIDecoder();
-		_animation.avi->loadFile(fileName);
-		_frmDelay = 1000.0 / _animation.avi->getDuration().framerate();
+	  _mask(mask),
+	  _animation(NULL) {
+
+	if (fileName.hasSuffix(".rlf") || fileName.hasSuffix(".avi")) {
+		_animation = new MetaAnimation(fileName);
+		_frmDelay = _animation->frameTime();
 	} else {
 		warning("Unrecognized animation file type: %s", fileName.c_str());
 	}
@@ -60,11 +52,8 @@ AnimationNode::AnimationNode(ZVision *engine, uint32 controlKey, const Common::S
 }
 
 AnimationNode::~AnimationNode() {
-	if (_fileType == RLF) {
-		delete _animation.rlf;
-	} else if (_fileType == AVI) {
-		delete _animation.avi;
-	}
+	if (_animation)
+		delete _animation;
 
 	_engine->getScriptManager()->setStateValue(_key, 2);
 
@@ -92,13 +81,9 @@ bool AnimationNode::process(uint32 deltaTimeInMillis) {
 
 			if (nod->_cur_frm == -1) { // Start of new playlist node
 				nod->_cur_frm = nod->start;
-				if (_fileType == RLF) {
-					_animation.rlf->seekToFrame(nod->_cur_frm);
-					frame = _animation.rlf->decodeNextFrame();
-				} else if (_fileType == AVI) {
-					_animation.avi->seekToFrame(nod->_cur_frm);
-					frame = _animation.avi->decodeNextFrame();
-				}
+
+				_animation->seekToFrame(nod->_cur_frm);
+				frame = _animation->decodeNextFrame();
 
 				nod->_delay = _frmDelay;
 				if (nod->slot)
@@ -119,19 +104,10 @@ bool AnimationNode::process(uint32 deltaTimeInMillis) {
 					}
 
 					nod->_cur_frm = nod->start;
-					if (_fileType == RLF) {
-						_animation.rlf->seekToFrame(nod->_cur_frm);
-						frame = _animation.rlf->decodeNextFrame();
-					} else if (_fileType == AVI) {
-						_animation.avi->seekToFrame(nod->_cur_frm);
-						frame = _animation.avi->decodeNextFrame();
-					}
-				} else {
-					if (_fileType == RLF)
-						frame = _animation.rlf->decodeNextFrame();
-					else if (_fileType == AVI)
-						frame = _animation.avi->decodeNextFrame();
+					_animation->seekToFrame(nod->_cur_frm);
 				}
+
+				frame = _animation->decodeNextFrame();
 			}
 
 			if (frame) {
@@ -190,13 +166,10 @@ void AnimationNode::addPlayNode(int32 slot, int x, int y, int x2, int y2, int st
 	nod.pos = Common::Rect(x, y, x2 + 1, y2 + 1);
 	nod.start = start_frame;
 	nod.stop = end_frame;
-	if (_fileType == RLF) {
-		if (nod.stop >= (int)_animation.rlf->frameCount())
-			nod.stop = _animation.rlf->frameCount() - 1;
-	} else if (_fileType == AVI) {
-		if (nod.stop > (int)_animation.avi->getFrameCount())
-			nod.stop = _animation.avi->getFrameCount();
-	}
+
+	if (nod.stop >= (int)_animation->frameCount())
+		nod.stop = _animation->frameCount() - 1;
+
 	nod.slot = slot;
 	nod._cur_frm = -1;
 	nod._delay = 0;
