@@ -348,14 +348,10 @@ Vars::Vars() {
 	scene34_dudeOnCactus = false;
 	scene34_fliesCountdown = 0;
 
-	scene35_var01 = 0;
-	scene35_var02 = 0;
-	scene35_var03 = 0;
-	scene35_var04 = 0;
 	scene35_hose = 0;
 	scene35_bellyInflater = 0;
-	scene35_var05 = 0;
-	scene35_var06 = 0;
+	scene35_flowCounter = 0;
+	scene35_fliesCounter = 0;
 
 	scene36_rotohrust = 0;
 	scene36_scissors = 0;

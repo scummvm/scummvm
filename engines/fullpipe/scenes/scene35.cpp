@@ -38,14 +38,10 @@
 namespace Fullpipe {
 
 void scene35_initScene(Scene *sc) {
-	g_vars->scene35_var01 = 200;
-	g_vars->scene35_var02 = 200;
-	g_vars->scene35_var03 = 300;
-	g_vars->scene35_var04 = 300;
 	g_vars->scene35_hose = sc->getStaticANIObject1ById(ANI_HOSE, -1);
 	g_vars->scene35_bellyInflater = sc->getStaticANIObject1ById(ANI_PUZODUV, -1);
-	g_vars->scene35_var05 = 0;
-	g_vars->scene35_var06 = 0;
+	g_vars->scene35_flowCounter = 0;
+	g_vars->scene35_fliesCounter = 0;
 
 	MovGraphLink *lnk = getSc2MctlCompoundBySceneId(sc->_sceneId)->getLinkByName(sO_CloseThing);
 
@@ -115,8 +111,8 @@ void sceneHandler35_startFlow() {
 
 			g_fp->playSound(SND_35_012, 1);
 		} else {
-			if (!g_vars->scene35_var05)
-				g_vars->scene35_var05 = 98;
+			if (!g_vars->scene35_flowCounter)
+				g_vars->scene35_flowCounter = 98;
 
 			g_fp->playSound(SND_35_011, 1);
 		}
@@ -150,7 +146,7 @@ void sceneHandler35_genFlies() {
 			g_fp->_floaters->_array2[g_fp->_floaters->_array2.size() - 1]->val11 = 8.0;
 		}
 
-		g_vars->scene35_var06 = 0;
+		g_vars->scene35_fliesCounter = 0;
 	}
 }
 
@@ -184,7 +180,7 @@ int sceneHandler35(ExCommand *cmd) {
 			g_fp->stopAllSoundInstances(SND_35_011);
 			g_fp->playSound(SND_35_012, 1);
 
-			g_vars->scene35_var05 = 0;
+			g_vars->scene35_flowCounter = 0;
 			break;
 		}
 		break;
@@ -235,23 +231,23 @@ int sceneHandler35(ExCommand *cmd) {
 		if (g_fp->_aniMan2) {
 			int x = g_fp->_aniMan2->_ox;
 
-			if (x < g_fp->_sceneRect.left + g_vars->scene35_var01)
-				g_fp->_currentScene->_x = x - g_vars->scene35_var03 - g_fp->_sceneRect.left;
+			if (x < g_fp->_sceneRect.left + 200)
+				g_fp->_currentScene->_x = x - 300 - g_fp->_sceneRect.left;
 
-			if (x > g_fp->_sceneRect.right - g_vars->scene35_var01)
-				g_fp->_currentScene->_x = x + g_vars->scene35_var03 - g_fp->_sceneRect.right;
+			if (x > g_fp->_sceneRect.right - 200)
+				g_fp->_currentScene->_x = x + 300 - g_fp->_sceneRect.right;
 		}
 
-		if (g_vars->scene35_var05 > 0) {
-			--g_vars->scene35_var05;
+		if (g_vars->scene35_flowCounter > 0) {
+			--g_vars->scene35_flowCounter;
 
-			if (!g_vars->scene35_var05)
+			if (!g_vars->scene35_flowCounter)
 				sceneHandler35_stopFlow();
 		}
 
-		g_vars->scene35_var06++;
+		g_vars->scene35_fliesCounter++;
 
-		if (g_vars->scene35_var06 >= 160)
+		if (g_vars->scene35_fliesCounter >= 160)
 			sceneHandler35_genFlies();
 
 		g_fp->_floaters->update();
