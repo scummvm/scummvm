@@ -323,11 +323,11 @@ OSystem_PS2::OSystem_PS2(const char *elfPath) {
 	_screenChangeCount = 0;
 	_mouseVisible = false;
 
-	_screen = new Gs2dScreen(320, 200, TV_DONT_CARE);
+	// _screen = new Gs2dScreen(320, 200, TV_DONT_CARE); // moved to ::initSize
 
 	sioprintf("Initializing system...\n");
 
-	_screen->wantAnim(true);
+	// _screen->wantAnim(true);
 
 	_bootPath = (char *)malloc(128);
 	_bootDevice = detectBootPath(elfPath, _bootPath);
@@ -382,8 +382,8 @@ void OSystem_PS2::init(void) {
 	prepMC();
 	makeConfigPath();
 
-	_screen->wantAnim(false);
-	fillScreen(0);
+	// _screen->wantAnim(false);
+	// fillScreen(0);
 }
 
 void OSystem_PS2::config(void) {
@@ -633,6 +633,8 @@ void OSystem_PS2::initSize(uint width, uint height, const Graphics::PixelFormat 
 	/* ugly hack: we know we can parse ScummVM.ini now */
 	if (!_screenChangeCount) { // first round
 		config();
+		_screen = new Gs2dScreen(width, height);
+		fillScreen(0);
 	}
 
 	_screen->newScreenSize(width, height);

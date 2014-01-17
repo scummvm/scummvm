@@ -35,6 +35,13 @@
 #define GS_DISPLAY1      *((volatile uint64 *)0x12000080)
 #define GS_BGCOLOUR      *((volatile uint64 *)0x120000E0)
 
+#define GS_SMODE1        *((volatile uint64 *)0x12000010)
+#define GS_SMODE2        *((volatile uint64 *)0x12000020)
+#define GS_SYNCH1        *((volatile uint64 *)0x12000040)
+#define GS_SYNCH2        *((volatile uint64 *)0x12000050)
+#define GS_SYNCV         *((volatile uint64 *)0x12000060)
+#define GS_SRFSH         *((volatile uint64 *)0x12000030)
+
 enum GS_CSR_FIELDS {
 	CSR_SIGNAL = 1 << 0,
 	CSR_FINISH = 1 << 1,
@@ -44,6 +51,19 @@ enum GS_CSR_FIELDS {
 	CSR_RESET  = 1 << 9
 };
 
+typedef struct {
+	u16 w;
+	u16 h;
+	u16 interlaced;
+	u16 pitch;
+	u16 mode;
+	u16 vclk;
+	u16 magh;
+	u16 magv;
+	u16 dx;
+	u16 dy;
+} ps2_mode_t;
+
 #define GS_SET_PMODE(readC1, readC2, alphaSel, alphaOut, alphaBlend, alphaFixed) \
 	((readC1) | ((readC2) << 1) | ((alphaSel) << 5) | ((alphaOut) << 6) | ((alphaBlend) << 7) | ((alphaFixed) << 8))
 
@@ -51,6 +71,10 @@ enum GS_CSR_FIELDS {
 	(((uint64)(height - 1) << 44) | ((uint64)0x9FF << 32) | \
 	((((2560 + (width - 1)) / width) - 1)<<23) | \
 	(ypos << 12) | (xpos * (2560 / width)))
+
+#define GS_SET_DISPLAY_MODE(mode) \
+	(((uint64)(mode.h - 1) << 44) | ((uint64)(mode.vclk - 1) << 32) | \
+	((mode.magh - 1) << 23) | (mode.dy << 12) | (mode.dx << 2))
 
 #define GS_SET_DISPFB(frameBufPtr, frameBufWidth, psm) \
 	(((frameBufPtr) / 8192) | (((frameBufWidth) / 64) << 9) | ((psm) << 15))
