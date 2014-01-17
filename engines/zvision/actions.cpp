@@ -121,12 +121,32 @@ bool ActionChangeLocation::execute() {
 ActionCrossfade::ActionCrossfade(ZVision *engine, int32 slotkey, const Common::String &line) :
 	ResultAction(engine, slotkey) {
 	sscanf(line.c_str(),
-	       "%u %u %u %u %u %u %u",
+	       "%u %u %d %d %d %d %d",
 	       &_keyOne, &_keyTwo, &_oneStartVolume, &_twoStartVolume, &_oneEndVolume, &_twoEndVolume, &_timeInMillis);
 }
 
 bool ActionCrossfade::execute() {
-	// TODO: Implement
+	if (_keyOne) {
+		SideFX *fx = _engine->getScriptManager()->getSideFX(_keyOne);
+		if (fx && fx->getType() == SideFX::SIDEFX_AUDIO) {
+			MusicNode *mus = (MusicNode *)fx;
+			if (_oneStartVolume >= 0)
+				mus->setVolume((_oneStartVolume * 255) / 100);
+
+			mus->setFade(_timeInMillis, (_oneEndVolume * 255) / 100);
+		}
+	}
+
+	if (_keyTwo) {
+		SideFX *fx = _engine->getScriptManager()->getSideFX(_keyTwo);
+		if (fx && fx->getType() == SideFX::SIDEFX_AUDIO) {
+			MusicNode *mus = (MusicNode *)fx;
+			if (_twoStartVolume >= 0)
+				mus->setVolume((_twoStartVolume * 255) / 100);
+
+			mus->setFade(_timeInMillis, (_twoEndVolume * 255) / 100);
+		}
+	}
 	return true;
 }
 

@@ -49,6 +49,9 @@ public:
 
 	void setPanTrack(int16 pos);
 	void unsetPanTrack();
+
+	void setFade(int32 time, uint8 target);
+
 private:
 	int32 _timeLeft;
 	bool _pantrack;

@@ -220,7 +220,7 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 				} else if (act.matchString("change_location", true)) {
 					actionList.push_back(new ActionChangeLocation(_engine, slot, args));
 				} else if (act.matchString("crossfade", true)) {
-					// TODO: Implement ActionCrossfade
+					actionList.push_back(new ActionCrossfade(_engine, slot, args));
 				} else if (act.matchString("debug", true)) {
 					// TODO: Implement ActionDebug
 				} else if (act.matchString("delay_render", true)) {

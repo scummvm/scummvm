@@ -91,11 +91,30 @@ void MusicNode::unsetPanTrack() {
 	setVolume(_volume);
 }
 
+void MusicNode::setFade(int32 time, uint8 target) {
+	_crossfade_target = target;
+	_crossfade_time = time;
+	_crossfade = true;
+}
+
 bool MusicNode::process(uint32 deltaTimeInMillis) {
 	if (! _engine->_mixer->isSoundHandleActive(_handle))
 		return stop();
 	else {
 		uint8 _newvol = _volume;
+
+		if (_crossfade) {
+			if (_crossfade_time > 0) {
+				if ((int32)deltaTimeInMillis > _crossfade_time)
+					deltaTimeInMillis = _crossfade_time;
+				_newvol += floor(((float)(_crossfade_target - _newvol) / (float)_crossfade_time)) * (float)deltaTimeInMillis;
+				_crossfade_time -= deltaTimeInMillis;
+			}
+			else {
+				_crossfade = false;
+				_newvol = _crossfade_target;
+			}
+		}
 
 		if (_pantrack || _volume != _newvol)
 			setVolume(_newvol);

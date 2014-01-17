@@ -140,11 +140,11 @@ public:
 private:
 	uint32 _keyOne;
 	uint32 _keyTwo;
-	uint _oneStartVolume;
-	uint _twoStartVolume;
-	uint _oneEndVolume;
-	uint _twoEndVolume;
-	uint _timeInMillis;
+	int32 _oneStartVolume;
+	int32 _twoStartVolume;
+	int32 _oneEndVolume;
+	int32 _twoEndVolume;
+	int32 _timeInMillis;
 };
 
 class ActionDebug : public ResultAction {
