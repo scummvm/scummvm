@@ -153,8 +153,6 @@ public:
 	 */
 	void playVideo(Video::VideoDecoder &videoDecoder, const Common::Rect &destRect = Common::Rect(0, 0, 0, 0), bool skippable = true);
 
-	int getAudioId();
-
 	Common::String generateSaveFileName(uint slot);
 	Common::String generateAutoSaveFileName();
 

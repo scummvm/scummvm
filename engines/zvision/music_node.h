@@ -23,6 +23,7 @@
 #ifndef ZVISION_MUSIC_NODE_H
 #define ZVISION_MUSIC_NODE_H
 
+#include "audio/mixer.h"
 #include "zvision/sidefx.h"
 
 namespace Common {
@@ -55,6 +56,7 @@ private:
 	bool _crossfade;
 	int32 _crossfade_delta;
 	int32 _crossfade_time;
+	Audio::SoundHandle _handle;
 };
 
 } // End of namespace ZVision

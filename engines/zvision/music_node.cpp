@@ -57,13 +57,12 @@ MusicNode::MusicNode(ZVision *engine, uint32 key, Common::String &filename, bool
 		audioStream = makeRawZorkStream(filename, _engine);
 	}
 
-	_id = _engine->getAudioId();
 
 	if (_loop) {
 		Audio::LoopingAudioStream *loopingAudioStream = new Audio::LoopingAudioStream(audioStream, 0, DisposeAfterUse::YES);
-		_engine->_mixer->playStream(Audio::Mixer::kPlainSoundType, 0, loopingAudioStream, _id, _volume);
+		_engine->_mixer->playStream(Audio::Mixer::kPlainSoundType, &_handle, loopingAudioStream, -1, _volume);
 	} else {
-		_engine->_mixer->playStream(Audio::Mixer::kPlainSoundType, 0, audioStream, _id, _volume);
+		_engine->_mixer->playStream(Audio::Mixer::kPlainSoundType, &_handle, audioStream, -1, _volume);
 	}
 
 	if (_key != StateKey_NotSet)
@@ -71,14 +70,14 @@ MusicNode::MusicNode(ZVision *engine, uint32 key, Common::String &filename, bool
 }
 
 MusicNode::~MusicNode() {
-	_engine->_mixer->stopID(_id);
+	_engine->_mixer->stopHandle(_handle);
 	if (_key != StateKey_NotSet)
 		_engine->getScriptManager()->setStateValue(_key, 2);
 	debug(1, "MusicNode: %d destroyed\n", _key);
 }
 
 bool MusicNode::process(uint32 deltaTimeInMillis) {
-	if (! _engine->_mixer->isSoundIDActive(_id))
+	if (! _engine->_mixer->isSoundHandleActive(_handle))
 		return stop();
 	return false;
 }

@@ -201,13 +201,6 @@ Common::String ZVision::generateAutoSaveFileName() {
 	return Common::String::format("%s.auto", _targetName.c_str());
 }
 
-int ZVision::getAudioId() {
-	_aud_id++;
-	if (_aud_id < 0)
-		_aud_id = 0;
-	return _aud_id;
-}
-
 void ZVision::setRenderDelay(uint delay) {
 	_rendDelay = delay;
 }
