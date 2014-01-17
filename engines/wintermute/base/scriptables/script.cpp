@@ -1117,6 +1117,7 @@ bool ScScript::executeInstruction() {
 			if (ScValue::compare(resolveName(_watchlist[i]._symbol.c_str()), _watchlist[i]._lastValue) &&
 			    _watchlist[i]._enabled) {
 				_adapter->triggerWatch(this, _watchlist[i]._symbol.c_str());
+				// TODO: What happens if you remove the watch with the console opened above? Boom.
 				_watchlist[i]._lastValue->copy(resolveName(_watchlist[i]._symbol.c_str()));
 			}
 		}
