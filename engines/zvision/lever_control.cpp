@@ -28,8 +28,7 @@
 #include "zvision/script_manager.h"
 #include "zvision/render_manager.h"
 #include "zvision/cursor_manager.h"
-#include "zvision/rlf_animation.h"
-#include "zvision/zork_avi_decoder.h"
+#include "zvision/meta_animation.h"
 #include "zvision/utility.h"
 
 #include "common/stream.h"
@@ -79,11 +78,8 @@ LeverControl::LeverControl(ZVision *engine, uint32 key, Common::SeekableReadStre
 }
 
 LeverControl::~LeverControl() {
-	if (_fileType == AVI) {
-		delete _animation.avi;
-	} else if (_fileType == RLF) {
-		delete _animation.rlf;
-	}
+	if (_animation)
+		delete _animation;
 
 	delete[] _frameInfo;
 }
@@ -106,14 +102,9 @@ void LeverControl::parseLevFile(const Common::String &fileName) {
 
 			Common::String animationFileName(fileNameBuffer);
 
-			if (animationFileName.hasSuffix(".avi")) {
-				_animation.avi = new ZorkAVIDecoder();
-				_animation.avi->loadFile(animationFileName);
-				_fileType = AVI;
-			} else if (animationFileName.hasSuffix(".rlf")) {
-				_animation.rlf = new RlfAnimation(animationFileName, false);
-				_fileType = RLF;
-			}
+			if (animationFileName.hasSuffix(".avi") || animationFileName.hasSuffix(".rlf"))
+				_animation = new MetaAnimation(animationFileName);
+
 		} else if (line.matchString("*skipcolor*", true)) {
 			// Not used
 		} else if (line.matchString("*anim_coords*", true)) {
@@ -379,16 +370,9 @@ void LeverControl::renderFrame(uint frameNumber) {
 	int x = _animationCoords.left;
 	int y = _animationCoords.top;
 
-	if (_fileType == RLF) {
-		// getFrameData() will automatically optimize to getNextFrame() / getPreviousFrame() if it can
-		frameData = _animation.rlf->getFrameData(frameNumber);
-	} else if (_fileType == AVI) {
-		_animation.avi->seekToFrame(frameNumber);
-		const Graphics::Surface *surface = _animation.avi->decodeNextFrame();
-		frameData = surface;
-	}
-
-	_engine->getRenderManager()->blitSurfaceToBkg(*frameData, x, y);
+	frameData = _animation->getFrameData(frameNumber);
+	if (frameData)
+		_engine->getRenderManager()->blitSurfaceToBkg(*frameData, x, y);
 }
 
 } // End of namespace ZVision

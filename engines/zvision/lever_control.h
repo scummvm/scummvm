@@ -32,7 +32,7 @@
 namespace ZVision {
 
 class ZorkAVIDecoder;
-class RlfAnimation;
+class MetaAnimation;
 
 class LeverControl : public Control {
 public:
@@ -40,10 +40,6 @@ public:
 	~LeverControl();
 
 private:
-	enum FileType {
-	    RLF = 1,
-	    AVI = 2
-	};
 
 	struct Direction {
 		Direction(uint a, uint t) : angle(a), toFrame(t) {}
@@ -64,11 +60,7 @@ private:
 	};
 
 private:
-	union {
-		RlfAnimation *rlf;
-		ZorkAVIDecoder *avi;
-	} _animation;
-	FileType _fileType;
+	MetaAnimation *_animation;
 
 	Common::String _cursorName;
 	Common::Rect _animationCoords;
