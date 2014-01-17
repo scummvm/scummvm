@@ -248,7 +248,7 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 				} else if (act.matchString("music", true)) {
 					actionList.push_back(new ActionMusic(_engine, slot, args, false));
 				} else if (act.matchString("pan_track", true)) {
-					// TODO: Implement ActionPanTrack
+					actionList.push_back(new ActionPanTrack(_engine, slot, args));
 				} else if (act.matchString("playpreload", true)) {
 					actionList.push_back(new ActionPlayPreloadAnimation(_engine, slot, args));
 				} else if (act.matchString("preferences", true)) {

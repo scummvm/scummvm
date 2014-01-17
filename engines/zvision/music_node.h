@@ -45,18 +45,31 @@ public:
 	 */
 	bool process(uint32 deltaTimeInMillis);
 
+	void setVolume(uint8 volume);
+
+	void setPanTrack(int16 pos);
+	void unsetPanTrack();
 private:
 	int32 _timeLeft;
 	bool _pantrack;
 	int32 _pantrack_X;
 	int32 _attenuate;
-	int8 _volume;
-	int32 _id;
+	uint8 _volume;
 	bool _loop;
 	bool _crossfade;
-	int32 _crossfade_delta;
+	uint8 _crossfade_target;
 	int32 _crossfade_time;
+	bool _stereo;
 	Audio::SoundHandle _handle;
+};
+
+class PanTrackNode : public SideFX {
+public:
+	PanTrackNode(ZVision *engine, uint32 key, uint32 slot, int16 pos);
+	~PanTrackNode();
+
+private:
+	uint32 _slot;
 };
 
 } // End of namespace ZVision

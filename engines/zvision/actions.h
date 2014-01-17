@@ -247,6 +247,17 @@ private:
 	bool _universe;
 };
 
+class ActionPanTrack : public ResultAction {
+public:
+	ActionPanTrack(ZVision *engine, int32 slotkey, const Common::String &line);
+	~ActionPanTrack();
+	bool execute();
+
+private:
+	int32 _pos;
+	uint32 _mus_slot;
+};
+
 class ActionPlayAnimation : public ResultAction {
 public:
 	ActionPlayAnimation(ZVision *engine, int32 slotkey, const Common::String &line);

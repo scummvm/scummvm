@@ -313,6 +313,30 @@ bool ActionMusic::execute() {
 	return true;
 }
 
+//////////////////////////////////////////////////////////////////////////////
+// ActionPanTrack
+//////////////////////////////////////////////////////////////////////////////
+
+ActionPanTrack::ActionPanTrack(ZVision *engine, int32 slotkey, const Common::String &line) :
+	ResultAction(engine, slotkey),
+	_pos(0),
+	_mus_slot(0) {
+
+	sscanf(line.c_str(), "%u %d", &_mus_slot, &_pos);
+}
+
+ActionPanTrack::~ActionPanTrack() {
+	_engine->getScriptManager()->killSideFx(_slotkey);
+}
+
+bool ActionPanTrack::execute() {
+	if (_engine->getScriptManager()->getSideFX(_slotkey))
+		return true;
+
+	_engine->getScriptManager()->addSideFX(new PanTrackNode(_engine, _slotkey, _mus_slot, _pos));
+
+	return true;
+}
 
 //////////////////////////////////////////////////////////////////////////////
 // ActionPreloadAnimation
