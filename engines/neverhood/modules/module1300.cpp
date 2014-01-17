@@ -20,16 +20,15 @@
  *
  */
 
-#include "neverhood/modules/module1300.h"
-#include "neverhood/modules/module1000.h"
-#include "neverhood/modules/module1200.h"
-#include "neverhood/modules/module1400.h"
-#include "neverhood/modules/module2200.h"
-#include "neverhood/gamemodule.h"
 #include "neverhood/diskplayerscene.h"
+#include "neverhood/gamemodule.h"
 #include "neverhood/menumodule.h"
-#include "neverhood/navigationscene.h"
-#include "neverhood/smackerscene.h"
+#include "neverhood/modules/module1000_sprites.h"
+#include "neverhood/modules/module1200_sprites.h"
+#include "neverhood/modules/module1300.h"
+#include "neverhood/modules/module1300_sprites.h"
+#include "neverhood/modules/module1400_sprites.h"
+#include "neverhood/modules/module2200_sprites.h"
 
 namespace Neverhood {
 
@@ -45,7 +44,7 @@ static const uint32 kModule1300SoundList[] = {
 
 Module1300::Module1300(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Module(vm, parentModule) {
-	
+
 	_vm->_soundMan->addMusic(0x61C090, 0x00203197);
 	_vm->_soundMan->addSoundList(0x61C090, kModule1300SoundList);
 	_vm->_soundMan->setSoundListParams(kModule1300SoundList, false, 50, 600, 20, 150);
@@ -56,7 +55,7 @@ Module1300::Module1300(NeverhoodEngine *vm, Module *parentModule, int which)
 	if (which < 0) {
 		if (_vm->gameState().sceneNum >= 1 && _vm->gameState().sceneNum <= 17)
 			createScene(_vm->gameState().sceneNum, -1);
-		else			
+		else
 			createScene(11, 0);
 	} else {
 		switch (which) {
@@ -101,7 +100,7 @@ Module1300::Module1300(NeverhoodEngine *vm, Module *parentModule, int which)
 			break;
 		}
 	}
-	
+
 }
 
 Module1300::~Module1300() {
@@ -218,7 +217,7 @@ void Module1300::createScene(int sceneNum, int which) {
 	SetUpdateHandler(&Module1300::updateScene);
 	_childObject->handleUpdate();
 }
-			
+
 void Module1300::updateScene() {
 	if (!updateChild()) {
 		switch (_sceneNum) {
@@ -274,7 +273,7 @@ void Module1300::updateScene() {
 				createScene(11, 1);
 			break;
 		case 12:
-			if (_moduleResult == 0) 
+			if (_moduleResult == 0)
 				createScene(14, 1);
 			else if (_moduleResult == 1)
 				createScene(15, 1);
@@ -308,113 +307,6 @@ void Module1300::updateScene() {
 			leaveModule(1);
 			break;
 		}
-	}
-}
-
-AsScene1302Bridge::AsScene1302Bridge(NeverhoodEngine *vm, Scene *parentScene)
-	: AnimatedSprite(vm, 1100), _parentScene(parentScene) {
-
-	_x = 320;
-	_y = 240;
-	createSurface1(0x88148150, 500);
-	if (!getGlobalVar(V_FLYTRAP_RING_BRIDGE)) {
-		startAnimation(0x88148150, 0, -1);
-		_newStickFrameIndex = 0;
-	} else {
-		startAnimation(0x88148150, -1, -1);
-		_newStickFrameIndex = STICK_LAST_FRAME;
-	}
-	loadSound(0, 0x68895082);
-	loadSound(1, 0x689BD0C1);
-	SetUpdateHandler(&AnimatedSprite::update);
-	SetMessageHandler(&AsScene1302Bridge::handleMessage);
-}
-
-uint32 AsScene1302Bridge::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
-	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
-	switch (messageNum) {
-	case 0x3002:
-		gotoNextState();
-		break;
-	case 0x4808:
-		stLowerBridge();
-		break;
-	case 0x4809:
-		stRaiseBridge();
-		break;
-	}
-	return messageResult;
-}
-
-void AsScene1302Bridge::stLowerBridge() {
-	startAnimation(0x88148150, 0, -1);
-	playSound(1);
-	NextState(&AsScene1302Bridge::cbLowerBridgeEvent);
-}
-
-void AsScene1302Bridge::stRaiseBridge() {
-	startAnimation(0x88148150, 7, -1);
-	_playBackwards = true;
-	_newStickFrameIndex = 0;
-	playSound(0);
-}
-
-void AsScene1302Bridge::cbLowerBridgeEvent() {
-	sendMessage(_parentScene, 0x2032, 0);
-	startAnimation(0x88148150, -1, -1);
-	_newStickFrameIndex = STICK_LAST_FRAME;
-}
-
-SsScene1302Fence::SsScene1302Fence(NeverhoodEngine *vm)
-	: StaticSprite(vm, 0x11122122, 200) {
-	
-	_firstY = _y;
-	if (getGlobalVar(V_FLYTRAP_RING_FENCE))
-		_y += 152;
-	loadSound(0, 0x7A00400C);
-	loadSound(1, 0x78184098);
-	SetUpdateHandler(&SsScene1302Fence::update);
-	SetMessageHandler(&SsScene1302Fence::handleMessage);
-	SetSpriteUpdate(NULL);
-}
-
-void SsScene1302Fence::update() {
-	handleSpriteUpdate();
-	updatePosition();
-}
-
-uint32 SsScene1302Fence::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
-	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
-	switch (messageNum) {
-	case 0x4808:
-		playSound(0);
-		SetMessageHandler(NULL);
-		SetSpriteUpdate(&SsScene1302Fence::suMoveDown);
-		break;
-	case 0x4809:
-		playSound(1);
-		SetMessageHandler(NULL);
-		SetSpriteUpdate(&SsScene1302Fence::suMoveUp);
-		break;
-	}
-	return messageResult;
-}
-
-void SsScene1302Fence::suMoveDown() {
-	if (_y < _firstY + 152)
-		_y += 8;
-	else {
-		SetMessageHandler(&SsScene1302Fence::handleMessage);
-		SetSpriteUpdate(NULL);
-	}
-}
-
-void SsScene1302Fence::suMoveUp() {
-	if (_y > _firstY)
-		_y -= 8;
-	else {
-		SetMessageHandler(&SsScene1302Fence::handleMessage);
-		SetSpriteUpdate(NULL);
 	}
 }
 
@@ -458,18 +350,18 @@ Scene1302::Scene1302(NeverhoodEngine *vm, Module *parentModule, int which)
 	_asVenusFlyTrap = insertSprite<AsScene1002VenusFlyTrap>(this, _klaymen, true);
 	addCollisionSprite(_asVenusFlyTrap);
 
-	sendEntityMessage(_klaymen, 0x2007, _asVenusFlyTrap);
-	
+	sendEntityMessage(_klaymen, NM_CAR_MOVE_TO_PREV_POINT, _asVenusFlyTrap);
+
 }
 
 uint32 Scene1302::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = 0;
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
-		if (param.asInteger() == 0x4A845A00)
+	case NM_ANIMATION_START:
+		if (param.asInteger() == 0x4A845A00) {
 			sendEntityMessage(_klaymen, 0x1014, _asRing1);
-		else if (param.asInteger() == 0x43807801) {
+		} else if (param.asInteger() == 0x43807801) {
 			if (!getGlobalVar(V_FLYTRAP_RING_BRIDGE)) {
 				sendEntityMessage(_klaymen, 0x1014, _asRing2);
 				if (_asVenusFlyTrap->getX() - 10 < 218 + 32 && _asVenusFlyTrap->getX() + 10 > 218 + 32)
@@ -479,9 +371,9 @@ uint32 Scene1302::handleMessage(int messageNum, const MessageParam &param, Entit
 			} else
 				setMessageList(0x004B0950);
 			messageResult = 1;
-		} else if (param.asInteger() == 0x46C26A01)
+		} else if (param.asInteger() == 0x46C26A01) {
 			sendEntityMessage(_klaymen, 0x1014, _asRing3);
-		else if (param.asInteger() == 0x468C7B11) {
+		} else if (param.asInteger() == 0x468C7B11) {
 			if (!getGlobalVar(V_FLYTRAP_RING_FENCE)) {
 				sendEntityMessage(_klaymen, 0x1014, _asRing4);
 				if (_asVenusFlyTrap->getX() - 10 < 218 + 32 + 32 + 32 && _asVenusFlyTrap->getX() + 10 > 218 + 32 + 32 + 32)
@@ -491,9 +383,9 @@ uint32 Scene1302::handleMessage(int messageNum, const MessageParam &param, Entit
 			} else
 				setMessageList(0x004B0950);
 			messageResult = 1;
-		} else if (param.asInteger() == 0x42845B19)
+		} else if (param.asInteger() == 0x42845B19) {
 			sendEntityMessage(_klaymen, 0x1014, _asRing5);
-		else if (param.asInteger() == 0x430A6060) {
+		} else if (param.asInteger() == 0x430A6060) {
 			if (getGlobalVar(V_FLYTRAP_RING_BRIDGE))
 				setMessageList2(0x004B0910);
 			else
@@ -510,66 +402,66 @@ uint32 Scene1302::handleMessage(int messageNum, const MessageParam &param, Entit
 				setMessageList(0x004B0978);
 		}
 		break;
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		if (_klaymen->getY() > 360) {
 			sendEntityMessage(_klaymen, 0x1014, _asVenusFlyTrap);
-			setMessageList2(0x004B08F0);	
+			setMessageList2(0x004B08F0);
 		} else
 			setMessageList2(0x004B0920);
 		break;
-	case 0x2002:
+	case NM_POSITION_CHANGE:
 		if (_klaymen->getX() > 545)
 			leaveScene(1);
 		break;
 	case 0x2032:
 		_sprite2->setVisible(true);
 		break;
-	case 0x4806:
+	case NM_KLAYMEN_USE_OBJECT:
 		sendMessage(_parentModule, 0x1024, 2);
 		if (sender == _asRing1)
 			playSound(0, 0x665198C0);
 		else if (sender == _asRing2) {
-			sendMessage(_asBridge, 0x4808, 0);
+			sendMessage(_asBridge, NM_KLAYMEN_OPEN_DOOR, 0);
 			setGlobalVar(V_FLYTRAP_RING_BRIDGE, 1);
-		} else if (sender == _asRing3)
+		} else if (sender == _asRing3) {
 			playSound(0, 0xE2D389C0);
-		else if (sender == _asRing4) {
-			sendMessage(_ssFence, 0x4808, 0);
+		} else if (sender == _asRing4) {
+			sendMessage(_ssFence, NM_KLAYMEN_OPEN_DOOR, 0);
 			setGlobalVar(V_FLYTRAP_RING_FENCE, 1);
 		} else if (sender == _asRing5)
 			playSound(0, 0x40428A09);
 		break;
-	case 0x4807:
+	case NM_KLAYMEN_RAISE_LEVER:
 		if (sender == _asRing2) {
-			sendMessage(_asBridge, 0x4809, 0);
+			sendMessage(_asBridge, NM_KLAYMEN_CLOSE_DOOR, 0);
 			setGlobalVar(V_FLYTRAP_RING_BRIDGE, 0);
 			_sprite2->setVisible(false);
 		} else if (sender == _asRing4) {
-			sendMessage(_ssFence, 0x4809, 0);
+			sendMessage(_ssFence, NM_KLAYMEN_CLOSE_DOOR, 0);
 			setGlobalVar(V_FLYTRAP_RING_FENCE, 0);
 		} else if (sender == _asVenusFlyTrap) {
 			if (getGlobalVar(V_FLYTRAP_RING_BRIDGE))
-				sendMessage(_asRing2, 0x4807, 0);
+				sendMessage(_asRing2, NM_KLAYMEN_RAISE_LEVER, 0);
 			else
-				sendMessage(_asRing4, 0x4807, 0);
+				sendMessage(_asRing4, NM_KLAYMEN_RAISE_LEVER, 0);
 		}
 		break;
-	case 0x480F:
+	case NM_KLAYMEN_LOWER_LEVER:
 		if (sender == _asRing2) {
 			playSound(0, 0x60755842);
-			sendMessage(_asBridge, 0x4808, 0);
+			sendMessage(_asBridge, NM_KLAYMEN_OPEN_DOOR, 0);
 			setGlobalVar(V_FLYTRAP_RING_BRIDGE, 1);
 		} else if (sender == _asRing4) {
 			playSound(0, 0x60755842);
-			sendMessage(_ssFence, 0x4808, 0);
+			sendMessage(_ssFence, NM_KLAYMEN_OPEN_DOOR, 0);
 			setGlobalVar(V_FLYTRAP_RING_FENCE, 1);
 		}
 		break;
-	case 0x482A:
-		sendMessage(_asVenusFlyTrap, 0x482B, 0);
+	case NM_MOVE_TO_BACK:
+		sendMessage(_asVenusFlyTrap, NM_MOVE_TO_FRONT, 0);
 		break;
-	case 0x482B:
-		sendMessage(_asVenusFlyTrap, 0x482A, 0);
+	case NM_MOVE_TO_FRONT:
+		sendMessage(_asVenusFlyTrap, NM_MOVE_TO_BACK, 0);
 		break;
 	case 0x8000:
 		setSpriteSurfacePriority(_class595, 995);
@@ -581,56 +473,8 @@ uint32 Scene1302::handleMessage(int messageNum, const MessageParam &param, Entit
 	return messageResult;
 }
 
-AsScene1303Balloon::AsScene1303Balloon(NeverhoodEngine *vm, Scene *parentScene)
-	: AnimatedSprite(vm, 1100), _parentScene(parentScene) {
-	
-	createSurface(200, 128, 315);
-	_x = 289;
-	_y = 390;
-	startAnimation(0x800278D2, 0, -1);
-	SetUpdateHandler(&AnimatedSprite::update);
-	SetMessageHandler(&AsScene1303Balloon::handleMessage);
-	SetSpriteUpdate(&AnimatedSprite::updateDeltaXY);
-}
-
-uint32 AsScene1303Balloon::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
-	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
-	switch (messageNum) {
-	case 0x1011:
-		sendMessage(_parentScene, 0x4826, 0);
-		messageResult = 1;
-		break;
-	case 0x2000:
-		stPopBalloon();
-		break;
-	}
-	return messageResult;
-}
-
-uint32 AsScene1303Balloon::hmBalloonPopped(int messageNum, const MessageParam &param, Entity *sender) {
-	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
-	switch (messageNum) {
-	case 0x100D:
-		if (param.asInteger() == 0x020B0003)
-			playSound(0, 0x742B0055);
-		break;
-	case 0x3002:
-		playSound(0, 0x470007EE);
-		stopAnimation();
-		setVisible(false);
-		SetMessageHandler(NULL);
-		break;
-	}
-	return messageResult;
-}
-
-void AsScene1303Balloon::stPopBalloon() {
-	startAnimation(0xAC004CD0, 0, -1);
-	SetMessageHandler(&AsScene1303Balloon::hmBalloonPopped);
-}
-
 Scene1303::Scene1303(NeverhoodEngine *vm, Module *parentModule)
-	: Scene(vm, parentModule) {
+	: Scene(vm, parentModule), _asBalloon(NULL) {
 
 	SetMessageHandler(&Scene1303::handleMessage);
 
@@ -643,7 +487,7 @@ Scene1303::Scene1303(NeverhoodEngine *vm, Module *parentModule)
 		_asBalloon = insertSprite<AsScene1303Balloon>(this);
 		addCollisionSprite(_asBalloon);
 	}
-	
+
 	_sprite1 = insertStaticSprite(0xA014216B, 1100);
 
 	insertKlaymen<KmScene1303>(207, 332);
@@ -656,7 +500,7 @@ Scene1303::Scene1303(NeverhoodEngine *vm, Module *parentModule)
 uint32 Scene1303::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		setGlobalVar(V_BALLOON_POPPED, 1);
 		sendMessage(_asBalloon, 0x2000, 0);
 		break;
@@ -668,39 +512,16 @@ uint32 Scene1303::handleMessage(int messageNum, const MessageParam &param, Entit
 	return 0;
 }
 
-AsScene1304Needle::AsScene1304Needle(NeverhoodEngine *vm, Scene *parentScene, int surfacePriority, int16 x, int16 y)
-	: AnimatedSprite(vm, 0x548E9411, surfacePriority, x, y), _parentScene(parentScene) {
-
-	// NOTE: Skipped check if Klaymen already has the needle since that's done in the scene itself	
-	SetMessageHandler(&AsScene1304Needle::handleMessage);
-}
-
-uint32 AsScene1304Needle::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
-	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
-	switch (messageNum) {
-	case 0x1011:
-		sendMessage(_parentScene, 0x4826, 0);
-		messageResult = 1;
-		break;
-	case 0x4806:
-		setGlobalVar(V_HAS_NEEDLE, 1);
-		setVisible(false);
-		SetMessageHandler(NULL);
-		break;
-	}
-	return messageResult;
-}
-
 Scene1304::Scene1304(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule), _asNeedle(NULL) {
-	
+
 	SetMessageHandler(&Scene1304::handleMessage);
 
 	setRectList(0x004B91A8);
 	setBackground(0x062C0214);
 	setPalette(0x062C0214);
 	insertScreenMouse(0xC021006A);
-	
+
 	if (getGlobalVar(V_BALLOON_POPPED)) {
 		_asKey = insertSprite<AsCommonKey>(this, 0, 1100, 278, 347);
 		addCollisionSprite(_asKey);
@@ -734,7 +555,7 @@ Scene1304::Scene1304(NeverhoodEngine *vm, Module *parentModule, int which)
 uint32 Scene1304::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x415634A4) {
 			if (getGlobalVar(V_BALLOON_POPPED))
 				cancelMessageList();
@@ -774,104 +595,19 @@ Scene1305::Scene1305(NeverhoodEngine *vm, Module *parentModule, int which)
 		insertKlaymen<KmScene1305>(212, 441);
 		setMessageList(0x004B6E48);
 	}
-	
+
 }
 
 uint32 Scene1305::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	return Scene::handleMessage(messageNum, param, sender);
 }
 
-AsScene1306Elevator::AsScene1306Elevator(NeverhoodEngine *vm, Scene *parentScene, AnimatedSprite *asElevatorDoor)
-	: AnimatedSprite(vm, 1100), _parentScene(parentScene), _asElevatorDoor(asElevatorDoor), _isUp(false), _isDown(true),
-	_countdown(0) {
-
-	_x = 320;
-	_y = 240;
-	createSurface1(0x043B0270, 100);
-	startAnimation(0x043B0270, 0, -1);
-	_newStickFrameIndex = 0;
-	loadSound(0, 0x1C100E83);
-	loadSound(1, 0x1C08CEC5);
-	loadSound(2, 0x5D011E87);
-	SetMessageHandler(&AsScene1306Elevator::handleMessage);
-}
-
-void AsScene1306Elevator::update() {
-	if (_isUp && _countdown != 0 && (--_countdown == 0))
-		stGoingDown();
-	AnimatedSprite::update();
-	if (_currFrameIndex == 7) {
-		playSound(1);
-		_asElevatorDoor->setVisible(false);
-	}
-}
-
-void AsScene1306Elevator::upGoingDown() {
-	AnimatedSprite::update();
-	if (_currFrameIndex == 5)
-		_asElevatorDoor->setVisible(true);
-}
-
-uint32 AsScene1306Elevator::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
-	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
-	switch (messageNum) {
-	case 0x2001:
-		if (_isUp)
-			_countdown = 144;
-		messageResult = _isUp ? 1 : 0;
-		break;
-	case 0x3002:
-		gotoNextState();
-		break;
-	case 0x4808:
-		if (_isDown)
-			stGoingUp();
-		break;
-	}
-	return messageResult;
-}
-
-void AsScene1306Elevator::stGoingUp() {
-	setVisible(true);
-	_isDown = false;
-	startAnimation(0x043B0270, 0, -1);
-	playSound(0);
-	SetUpdateHandler(&AsScene1306Elevator::update);
-	NextState(&AsScene1306Elevator::cbGoingUpEvent);
-}
-
-void AsScene1306Elevator::cbGoingUpEvent() {
-	sendMessage(_parentScene, 0x4808, 0);
-	_isUp = true;
-	_countdown = 144;
-	stopAnimation();
-	setVisible(false);
-	SetUpdateHandler(&AsScene1306Elevator::update);
-}
-
-void AsScene1306Elevator::stGoingDown() {
-	_isUp = false;
-	setVisible(true);
-	startAnimation(0x043B0270, -1, -1);
-	_playBackwards = true;
-	playSound(1);
-	SetUpdateHandler(&AsScene1306Elevator::upGoingDown);
-	NextState(&AsScene1306Elevator::cbGoingDownEvent);
-}
-
-void AsScene1306Elevator::cbGoingDownEvent() {
-	_isDown = true;
-	sendMessage(_parentScene, 0x4809, 0);
-	stopAnimation();
-	SetUpdateHandler(&AsScene1306Elevator::update);
-}
-
 Scene1306::Scene1306(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule) {
-	
+
 	if (getGlobalVar(V_HAS_FINAL_KEY) && getGlobalVar(V_KEY3_LOCATION) == 0)
 		setGlobalVar(V_KEY3_LOCATION, 4);
-	
+
 	SetMessageHandler(&Scene1306::handleMessage);
 
 	setBackground(0x05303114);
@@ -893,7 +629,7 @@ Scene1306::Scene1306(NeverhoodEngine *vm, Module *parentModule, int which)
 	insertStaticSprite(0x00042313, 1100);
 
 	if (which < 0) {
-		// Resoring game
+		// Restoring game
 		insertKlaymen<KmScene1306>(380, 440);
 		setMessageList(0x004AFAD0);
 		sendMessage(this, 0x2000, 0);
@@ -945,11 +681,11 @@ Scene1306::Scene1306(NeverhoodEngine *vm, Module *parentModule, int which)
 		sendMessage(this, 0x2000, 0);
 		SetMessageHandler(&Scene1306::handleMessage416EB0);
 		clearRectList();
-		sendMessage(_asElevator, 0x4808, 0);
+		sendMessage(_asElevator, NM_KLAYMEN_OPEN_DOOR, 0);
 	}
 
 }
-	
+
 Scene1306::~Scene1306() {
 	setGlobalVar(V_KLAYMEN_IS_DELTA_X, _klaymen->isDoDeltaX() ? 1 : 0);
 }
@@ -957,7 +693,7 @@ Scene1306::~Scene1306() {
 uint32 Scene1306::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x402064D8)
 			sendEntityMessage(_klaymen, 0x1014, _ssButton);
 		else if (param.asInteger() == 0x01C66840) {
@@ -971,7 +707,7 @@ uint32 Scene1306::handleMessage(int messageNum, const MessageParam &param, Entit
 			SetMessageHandler(&Scene1306::handleMessage416EB0);
 		}
 		break;
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		if (param.asInteger() != 0) {
 			setRectList(0x004AFD28);
 			_klaymen->setKlaymenIdleTable3();
@@ -982,7 +718,7 @@ uint32 Scene1306::handleMessage(int messageNum, const MessageParam &param, Entit
 		break;
 	case 0x480B:
 		if (sender == _ssButton)
-			sendMessage(_asElevator, 0x4808, 0);
+			sendMessage(_asElevator, NM_KLAYMEN_OPEN_DOOR, 0);
 		break;
 	case 0x4826:
 		if (sender == _asKey) {
@@ -997,12 +733,12 @@ uint32 Scene1306::handleMessage(int messageNum, const MessageParam &param, Entit
 			}
 		}
 		break;
-	case 0x482A:
+	case NM_MOVE_TO_BACK:
 		setSurfacePriority(_asElevator->getSurface(), 1100);
 		setSurfacePriority(_asElevatorDoor->getSurface(), 1090);
 		setSurfacePriority(_sprite1->getSurface(), 1080);
 		break;
-	case 0x482B:
+	case NM_MOVE_TO_FRONT:
 		setSurfacePriority(_asElevator->getSurface(), 100);
 		setSurfacePriority(_asElevatorDoor->getSurface(), 90);
 		setSurfacePriority(_sprite1->getSurface(), 80);
@@ -1016,19 +752,19 @@ uint32 Scene1306::handleMessage(int messageNum, const MessageParam &param, Entit
 uint32 Scene1306::handleMessage416EB0(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x4808:
+	case NM_KLAYMEN_OPEN_DOOR:
 		setMessageList(0x004AFBD0);
 		SetMessageHandler(&Scene1306::handleMessage);
 		break;
-	case 0x4809:
+	case NM_KLAYMEN_CLOSE_DOOR:
 		leaveScene(1);
 		break;
-	case 0x482A:
+	case NM_MOVE_TO_BACK:
 		setSurfacePriority(_asElevator->getSurface(), 1100);
 		setSurfacePriority(_asElevatorDoor->getSurface(), 1090);
 		setSurfacePriority(_sprite1->getSurface(), 1080);
 		break;
-	case 0x482B:
+	case NM_MOVE_TO_FRONT:
 		setSurfacePriority(_asElevator->getSurface(), 100);
 		setSurfacePriority(_asElevatorDoor->getSurface(), 90);
 		setSurfacePriority(_sprite1->getSurface(), 80);
@@ -1039,196 +775,14 @@ uint32 Scene1306::handleMessage416EB0(int messageNum, const MessageParam &param,
 	return 0;
 }
 
-static const uint32 kAsScene1307KeyResourceList1[] = {
-	0x0438069C, 0x45B0023C, 0x05700217
-};
-
-static const uint32 kAsScene1307KeyResourceList2[] = {
-	0x04441334, 0x061433F0, 0x06019390
-};
-
-static const uint32 kAsScene1307KeyResourceList3[] = {
-	0x11A80030, 0x178812B1, 0x1488121C
-};
-
-static const uint32 *kAsScene1307KeyResourceLists[] = {
-	kAsScene1307KeyResourceList1,
-	kAsScene1307KeyResourceList2,
-	kAsScene1307KeyResourceList3
-};
-
-static const int kAsScene1307KeySurfacePriorities[] = {
-	700, 500, 300, 100
-};
-
-const uint kAsScene1307KeyPointsCount = 12;
-
-static const NPoint kAsScene1307KeyPoints[] = {
-	{-2,  0}, {-5,  0}, { 5,  0},
-	{12,  0}, {17,  0}, {25,  0},
-	{16, -2}, {10, -6}, { 0, -7},
-	{-7, -3}, {-3,  4}, { 2,  2}
-};
-
-const uint kAsScene1307KeyFrameIndicesCount = 20;
-
-static const int16 kAsScene1307KeyFrameIndices[] = {
-	 1,  4,  8, 11, 15, 16, 17, 17, 17, 16, 
-	15, 14, 12, 10,  9,  7,  5,  3,  2,  1
-};
-
-const int kAsScene1307KeyDivValue = 200;
-const int16 kAsScene1307KeyXDelta = 70;
-const int16 kAsScene1307KeyYDelta = -12;
-
-AsScene1307Key::AsScene1307Key(NeverhoodEngine *vm, Scene *parentScene, uint keyIndex, NRect *clipRects)
-	: AnimatedSprite(vm, 1100), _parentScene(parentScene), _keyIndex(keyIndex), _clipRects(clipRects),
-	_isClickable(true) {
-	
-	NPoint pt;
-	const uint32 *fileHashes = kAsScene1307KeyResourceLists[_keyIndex]; 
-	
-	_dataResource.load(0x22102142);
-	_pointList = _dataResource.getPointArray(0xAC849240);
-	pt = (*_pointList)[getSubVar(VA_CURR_KEY_SLOT_NUMBERS, _keyIndex)];
-	_x = pt.x;
-	_y = pt.y;
-	createSurface(kAsScene1307KeySurfacePriorities[getSubVar(VA_CURR_KEY_SLOT_NUMBERS, _keyIndex) % 4], 190, 148);
-	startAnimation(fileHashes[0], 0, -1);
-	loadSound(0, 0xDC4A1280);
-	loadSound(1, 0xCC021233);
-	loadSound(2, 0xC4C23844);
-	loadSound(3, 0xC4523208);
-	SetUpdateHandler(&AnimatedSprite::update);
-	SetMessageHandler(&AsScene1307Key::handleMessage);
-}
-
-uint32 AsScene1307Key::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
-	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
-	switch (messageNum) {
-	case 0x1011:
-		if (_isClickable) {
-			sendMessage(_parentScene, 0x4826, 0);
-			stRemoveKey();
-			messageResult = 1;
-		}
-		break;
-	case 0x2000:
-		_isClickable = param.asInteger() != 0;
-		break;
-	case 0x2001:
-		setSubVar(VA_CURR_KEY_SLOT_NUMBERS, _keyIndex, param.asInteger());
-		stMoveKey();
-		break;
-	case 0x2003:
-		playSound(3);
-		stUnlock();
-		break;
-	case 0x2004:
-		playSound(2);
-		stInsert();
-		break;
-	}
-	return messageResult;
-}
-
-void AsScene1307Key::suRemoveKey() {
-	if (_pointIndex < kAsScene1307KeyPointsCount) {
-		_x += kAsScene1307KeyPoints[_pointIndex].x;
-		_y += kAsScene1307KeyPoints[_pointIndex].y;
-		updateBounds();
-		_pointIndex++;
-	} else {
-		SetSpriteUpdate(NULL);
-	}
-}
-
-void AsScene1307Key::suInsertKey() {
-	if (_pointIndex < kAsScene1307KeyPointsCount) {
-		_x -= kAsScene1307KeyPoints[kAsScene1307KeyPointsCount - _pointIndex - 1].x;
-		_y -= kAsScene1307KeyPoints[kAsScene1307KeyPointsCount - _pointIndex - 1].y;
-		updateBounds();
-		_pointIndex++;
-		if (_pointIndex == 7)
-			playSound(0);
-	} else {
-		SetSpriteUpdate(NULL);
-		sendMessage(_parentScene, 0x2002, 0);
-	}
-}
-
-void AsScene1307Key::suMoveKey() {
-	if (_pointIndex < kAsScene1307KeyFrameIndicesCount) {
-		_frameIndex += kAsScene1307KeyFrameIndices[_pointIndex];
-		_x = _prevX + (_deltaX * _frameIndex) / kAsScene1307KeyDivValue;
-		_y = _prevY + (_deltaY * _frameIndex) / kAsScene1307KeyDivValue;
-		updateBounds();
-		_pointIndex++;
-	} else {
-		NPoint pt = (*_pointList)[getSubVar(VA_CURR_KEY_SLOT_NUMBERS, _keyIndex)];
-		_x = pt.x + kAsScene1307KeyXDelta;
-		_y = pt.y + kAsScene1307KeyYDelta;
-		stInsertKey();
-	}
-}
-
-void AsScene1307Key::stRemoveKey() {
-	const uint32 *fileHashes = kAsScene1307KeyResourceLists[_keyIndex]; 
-	_pointIndex = 0;
-	startAnimation(fileHashes[0], 0, -1);
-	playSound(1);
-	SetSpriteUpdate(&AsScene1307Key::suRemoveKey);
-}
-
-void AsScene1307Key::stInsertKey() {
-	_pointIndex = 0;
-	sendMessage(_parentScene, 0x1022, kAsScene1307KeySurfacePriorities[getSubVar(VA_CURR_KEY_SLOT_NUMBERS, _keyIndex) % 4]);
-	setClipRect(_clipRects[getSubVar(VA_CURR_KEY_SLOT_NUMBERS, _keyIndex) % 4]);
-	_newStickFrameIndex = STICK_LAST_FRAME;
-	SetSpriteUpdate(&AsScene1307Key::suInsertKey);
-}
-
-void AsScene1307Key::stMoveKey() {
-	NPoint pt = (*_pointList)[getSubVar(VA_CURR_KEY_SLOT_NUMBERS, _keyIndex)];
-	int16 newX = pt.x + kAsScene1307KeyXDelta;
-	int16 newY = pt.y + kAsScene1307KeyYDelta;
-	sendMessage(_parentScene, 0x1022, 1000);
-	setClipRect(0, 0, 640, 480);
-	_prevX = _x;
-	_prevY = _y;
-	if (newX == _x && newY == _y) {
-		stInsertKey();
-	} else {
-		const uint32 *fileHashes = kAsScene1307KeyResourceLists[_keyIndex]; 
-		_pointIndex = 0;
-		_frameIndex = 0;
-		_deltaX = newX - _x;
-		_deltaY = newY - _y;
-		startAnimation(fileHashes[0], 0, -1);
-		SetSpriteUpdate(&AsScene1307Key::suMoveKey);
-	}
-}
-
-void AsScene1307Key::stUnlock() {
-	const uint32 *fileHashes = kAsScene1307KeyResourceLists[_keyIndex]; 
-	startAnimation(fileHashes[1], 0, -1);
-	_newStickFrameIndex = STICK_LAST_FRAME;
-}
-
-void AsScene1307Key::stInsert() {
-	const uint32 *fileHashes = kAsScene1307KeyResourceLists[_keyIndex]; 
-	startAnimation(fileHashes[2], 0, -1);
-	_newStickFrameIndex = STICK_LAST_FRAME;
-}
-
 Scene1307::Scene1307(NeverhoodEngine *vm, Module *parentModule)
 	: Scene(vm, parentModule), _countdown(0), _asCurrKey(NULL),
 	_isInsertingKey(false), _doLeaveScene(false), _isPuzzleSolved(false) {
 
 	Sprite *tempSprite;
-	
+
 	_vm->gameModule()->initKeySlotsPuzzle();
-	
+
 	_dataResource.load(0x22102142);
 	_keyHolePoints = _dataResource.getPointArray(0xAC849240);
 
@@ -1279,14 +833,14 @@ void Scene1307::update() {
 	if (_doLeaveScene && !isSoundPlaying(0)) {
 		leaveScene(1);
 		setGlobalVar(V_KEYDOOR_UNLOCKED, 1);
-	} 
+	}
 }
 
 uint32 Scene1307::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = 0;
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x0001:
+	case NM_MOUSE_CLICK:
 		if (!_isPuzzleSolved) {
 			if (param.asPoint().x > 20 && param.asPoint().x < 620) {
 				if (_asCurrKey && !_isInsertingKey) {
@@ -1294,7 +848,7 @@ uint32 Scene1307::handleMessage(int messageNum, const MessageParam &param, Entit
 					int16 mouseY = param.asPoint().y;
 					uint clickedKeyHoleIndex;
 					for (clickedKeyHoleIndex = 0; clickedKeyHoleIndex < 16; clickedKeyHoleIndex++) {
-						if (mouseX >= _keyHoleRects[clickedKeyHoleIndex].x1 && mouseX <= _keyHoleRects[clickedKeyHoleIndex].x2 && 
+						if (mouseX >= _keyHoleRects[clickedKeyHoleIndex].x1 && mouseX <= _keyHoleRects[clickedKeyHoleIndex].x2 &&
 							mouseY >= _keyHoleRects[clickedKeyHoleIndex].y1 && mouseY <= _keyHoleRects[clickedKeyHoleIndex].y2)
 							break;
 					}
@@ -1319,7 +873,7 @@ uint32 Scene1307::handleMessage(int messageNum, const MessageParam &param, Entit
 				leaveScene(0);
 		}
 		break;
-	case 0x2002:
+	case NM_POSITION_CHANGE:
 		// Check if all keys are in the correct keyholes
 		if (getSubVar(VA_IS_KEY_INSERTED, 0) && getSubVar(VA_CURR_KEY_SLOT_NUMBERS, 0) == getSubVar(VA_GOOD_KEY_SLOT_NUMBERS, 0) &&
 			getSubVar(VA_IS_KEY_INSERTED, 1) && getSubVar(VA_CURR_KEY_SLOT_NUMBERS, 1) == getSubVar(VA_GOOD_KEY_SLOT_NUMBERS, 1) &&
@@ -1360,171 +914,13 @@ static const uint32 kScene1308NumberFileHashes[] = {
 	0x00306322
 };
 
-AsScene1308JaggyDoor::AsScene1308JaggyDoor(NeverhoodEngine *vm, Scene *parentScene)
-	: AnimatedSprite(vm, 0xBA0AE050, 1100, 320, 240), _parentScene(parentScene) {
-	
-	setVisible(false);
-	stopAnimation();
-	SetMessageHandler(&AsScene1308JaggyDoor::handleMessage);
-}
-
-uint32 AsScene1308JaggyDoor::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
-	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
-	switch (messageNum) {
-	case 0x3002:
-		gotoNextState();
-		break;
-	case 0x4808:
-		stOpenDoor();
-		break;
-	case 0x4809:
-		stCloseDoor();
-		break;
-	}
-	return messageResult;
-}
-
-void AsScene1308JaggyDoor::stOpenDoor() {
-	startAnimation(0xBA0AE050, 0, -1);
-	setVisible(true);
-	playSound(0, calcHash("fxDoorOpen38"));
-	NextState(&AsScene1308JaggyDoor::stOpenDoorDone);
-}
-
-void AsScene1308JaggyDoor::stOpenDoorDone() {
-	sendMessage(_parentScene, 0x2000, 0);
-	stopAnimation();
-	setVisible(false);
-}
-
-void AsScene1308JaggyDoor::stCloseDoor() {
-	startAnimation(0xBA0AE050, -1, -1);
-	_playBackwards = true;
-	setVisible(true);
-	playSound(0, calcHash("fxDoorClose38"));
-	NextState(&AsScene1308JaggyDoor::stCloseDoorDone);
-}
-
-void AsScene1308JaggyDoor::stCloseDoorDone() {
-	sendMessage(_parentScene, 0x2001, 0);
-	stopAnimation();
-}
-
-AsScene1308KeyboardDoor::AsScene1308KeyboardDoor(NeverhoodEngine *vm, Scene *parentScene)
-	: AnimatedSprite(vm, 0xA08A0851, 1100, 320, 240), _parentScene(parentScene) {
-	
-	playSound(0, 0x51456049);
-	SetMessageHandler(&AsScene1308KeyboardDoor::handleMessage);
-	NextState(&AsScene1308KeyboardDoor::stFallingKeys);
-}
- 
-uint32 AsScene1308KeyboardDoor::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
-	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
-	switch (messageNum) {
-	case 0x3002:
-		gotoNextState();
-		break;
-	}
-	return messageResult;
-}
-
-void AsScene1308KeyboardDoor::stFallingKeys() {
-	startAnimation(0x6238B191, 0, -1);
-	_x = 580;
-	_y = 383;
-	NextState(&AsScene1308KeyboardDoor::stFallingKeysDone);
-}
-
-void AsScene1308KeyboardDoor::stFallingKeysDone() {
-	sendMessage(_parentScene, 0x2004, 0);
-	stopAnimation();
-	setVisible(false);
-}
-
-AsScene1308LightWallSymbols::AsScene1308LightWallSymbols(NeverhoodEngine *vm, Scene *parentScene)
-	: AnimatedSprite(vm, 0x80180A10, 100, 320, 240), _parentScene(parentScene) {
-	
-	setVisible(false);
-	stopAnimation();
-	Entity::_priority = 1200;
-	SetMessageHandler(&AsScene1308LightWallSymbols::handleMessage);
-}
-
-uint32 AsScene1308LightWallSymbols::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
-	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
-	switch (messageNum) {
-	case 0x2002:
-		stFadeIn();
-		break;
-	case 0x2003:
-		stFadeOut();
-		break;
-	case 0x3002:
-		gotoNextState();
-		break;
-	}
-	return messageResult;
-}
-
-void AsScene1308LightWallSymbols::stFadeIn() {
-	startAnimation(0x80180A10, 0, -1);
-	setVisible(true);
-	_newStickFrameIndex = STICK_LAST_FRAME;
-}
-
-void AsScene1308LightWallSymbols::stFadeOut() {
-	startAnimation(0x80180A10, -1, -1);
-	_playBackwards = true;
-	NextState(&AsScene1308LightWallSymbols::stFadeOutDone);
-}
-
-void AsScene1308LightWallSymbols::stFadeOutDone() {
-	sendMessage(_parentScene, 0x2003, 0);
-	stopAnimation();
-	setVisible(false);
-}
-
-SsScene1308Number::SsScene1308Number(NeverhoodEngine *vm, uint32 fileHash, int index)
-	: StaticSprite(vm, fileHash, 100) {
-	
-	setVisible(false);
-	_x = _spriteResource.getPosition().x + index * 20;
-	updatePosition();
-}
-
-AsScene1308Mouse::AsScene1308Mouse(NeverhoodEngine *vm)
-	: AnimatedSprite(vm, 1100) {
-
-	_x = 286;
-	_y = 429;
-	createSurface1(0xA282C472, 100);
-	startAnimation(0xA282C472, 0, -1);
-	SetUpdateHandler(&AnimatedSprite::update);
-	SetMessageHandler(&AsScene1308Mouse::handleMessage);
-}
-
-uint32 AsScene1308Mouse::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
-	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
-	switch (messageNum) {
-	case 0x100D:
-		if (param.asInteger() == 0x66382026)
-			playSound(0, 0x0CD84468);
-		else if (param.asInteger() == 0x6E28061C)
-			playSound(0, 0x78C8402C);
-		else if (param.asInteger() == 0x462F0410)
-			playSound(0, 0x60984E28);
-		break;
-	}
-	return messageResult;
-}
-
 Scene1308::Scene1308(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule), _isProjecting(false), _asProjector(NULL) {
-	
+
 	_vm->gameModule()->initKeySlotsPuzzle();
 
 	SetMessageHandler(&Scene1308::handleMessage);
-	
+
 	setBackground(0x41024202);
 	setPalette(0x41024202);
 	insertScreenMouse(0x24206418);
@@ -1536,7 +932,7 @@ Scene1308::Scene1308(NeverhoodEngine *vm, Module *parentModule, int which)
 		insertSprite<AsScene1308Mouse>();
 		insertSprite<AnimatedSprite>(0x461A1490, 200, 235, 429);
 	}
-	
+
 	_sprite1 = insertStaticSprite(0x0A042060, 1100);
 	_asJaggyDoor = insertSprite<AsScene1308JaggyDoor>(this);
 	_asLightWallSymbols = insertSprite<AsScene1308LightWallSymbols>(this);
@@ -1546,7 +942,7 @@ Scene1308::Scene1308(NeverhoodEngine *vm, Module *parentModule, int which)
 	_sprite2 = insertStaticSprite(0x40043120, 995);
 	_sprite3 = insertStaticSprite(0x43003100, 995);
 	_sprite4 = NULL;
-	
+
 	if (which < 0) {
 		// Restoring game
 		insertKlaymen<KmScene1308>(380, 440);
@@ -1585,7 +981,7 @@ Scene1308::Scene1308(NeverhoodEngine *vm, Module *parentModule, int which)
 		// Klaymen entering from the left
 		insertKlaymen<KmScene1308>(41, 440);
 		setMessageList(0x004B57D0);
-		sendMessage(_asJaggyDoor, 0x4808, 0);
+		sendMessage(_asJaggyDoor, NM_KLAYMEN_OPEN_DOOR, 0);
 		_sprite1->setVisible(false);
 		if (getGlobalVar(V_KEYDOOR_UNLOCKED)) {
 			_sprite4 = insertStaticSprite(0x0101A624, 1100);
@@ -1613,7 +1009,7 @@ Scene1308::Scene1308(NeverhoodEngine *vm, Module *parentModule, int which)
 uint32 Scene1308::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x88C11390) {
 			setRectList(0x004B59A0);
 			_isProjecting = true;
@@ -1626,12 +1022,12 @@ uint32 Scene1308::handleMessage(int messageNum, const MessageParam &param, Entit
 			_isProjecting = false;
 		} else if (param.asInteger() == 0x4AC68808) {
 			clearRectList();
-			sendMessage(_asJaggyDoor, 0x4809, 0);
+			sendMessage(_asJaggyDoor, NM_KLAYMEN_CLOSE_DOOR, 0);
 			_sprite1->setVisible(false);
 			_klaymen->setVisible(false);
 		}
 		break;
-	case 0x1022:
+	case NM_PRIORITY_CHANGE:
 		if (sender == _asProjector) {
 			if (param.asInteger() >= 1000)
 				setSurfacePriority(_sprite3->getSurface(), 1100);
@@ -1639,7 +1035,7 @@ uint32 Scene1308::handleMessage(int messageNum, const MessageParam &param, Entit
 				setSurfacePriority(_sprite3->getSurface(), 995);
 		}
 		break;
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		if (getGlobalVar(V_KEYDOOR_UNLOCKED))
 			setRectList(0x004B5990);
 		else
@@ -1660,11 +1056,11 @@ uint32 Scene1308::handleMessage(int messageNum, const MessageParam &param, Entit
 		_sprite4->setVisible(true);
 		setRectList(0x004B5990);
 		break;
-	case 0x4807:
+	case NM_KLAYMEN_RAISE_LEVER:
 		sendMessage(_asLightWallSymbols, 0x2003, 0);
 		break;
-	case 0x480F:
-		sendMessage(_asLightWallSymbols, 0x2002, 0);
+	case NM_KLAYMEN_LOWER_LEVER:
+		sendMessage(_asLightWallSymbols, NM_POSITION_CHANGE, 0);
 		_ssNumber1->setVisible(true);
 		_ssNumber2->setVisible(true);
 		_ssNumber3->setVisible(true);
@@ -1698,7 +1094,7 @@ uint32 Scene1308::handleMessage(int messageNum, const MessageParam &param, Entit
 
 Scene1317::Scene1317(NeverhoodEngine *vm, Module *parentModule)
 	: Scene(vm, parentModule) {
-	
+
 	SetMessageHandler(&Scene1317::handleMessage);
 	_smackerPlayer = addSmackerPlayer(new SmackerPlayer(_vm, this, 0x08982841, true, false));
 	_vm->_screen->setSmackerDecoder(_smackerPlayer->getSmackerDecoder());
@@ -1720,7 +1116,7 @@ void Scene1317::update() {
 void Scene1317::upChooseKing() {
 	if (!_klaymenBlinks && _klaymenBlinkCountdown != 0 && (--_klaymenBlinkCountdown == 0))
 		_klaymenBlinks = true;
-		
+
 	if (!_klaymenBlinks && _smackerPlayer->getFrameNumber() + 1 >= 2) {
 		_smackerPlayer->rewind();
 	} else if (_klaymenBlinks && _smackerPlayer->getFrameNumber() + 1 >= 6) {
@@ -1731,7 +1127,7 @@ void Scene1317::upChooseKing() {
 
 	if (!_klaymenBlinks && _decisionCountdown != 0 && (--_decisionCountdown == 0))
 		stNoDecisionYet();
-			
+
 	if (_smackerFileHash) {
 		_smackerPlayer->open(_smackerFileHash, _keepLastSmackerFrame);
 		_vm->_screen->setSmackerDecoder(_smackerPlayer->getSmackerDecoder());
@@ -1739,23 +1135,23 @@ void Scene1317::upChooseKing() {
 	}
 
 	Scene::update();
-	
+
 }
 
 uint32 Scene1317::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		stChooseKing();
 		break;
 	}
 	return messageResult;
 }
-	
+
 uint32 Scene1317::hmChooseKing(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x0001:
+	case NM_MOUSE_CLICK:
 		if (param.asPoint().x >= 21 && param.asPoint().y >= 24 &&
 			param.asPoint().x <= 261 && param.asPoint().y <= 280) {
 			stHoborgAsKing();
@@ -1774,7 +1170,7 @@ uint32 Scene1317::hmChooseKing(int messageNum, const MessageParam &param, Entity
 uint32 Scene1317::hmHoborgAsKing(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		stEndMovie();
 		break;
 	}
@@ -1784,7 +1180,7 @@ uint32 Scene1317::hmHoborgAsKing(int messageNum, const MessageParam &param, Enti
 uint32 Scene1317::hmEndMovie(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		leaveScene(0);
 		break;
 	}

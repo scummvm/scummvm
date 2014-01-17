@@ -47,7 +47,7 @@ class AdActor : public AdTalkHolder {
 public:
 	TDirection angleToDirection(int angle);
 	DECLARE_PERSISTENT(AdActor, AdTalkHolder)
-	virtual int getHeight();
+	virtual int32 getHeight() override;
 	BaseSprite *getTalkStance(const char *stance);
 	virtual void goTo(int x, int y, TDirection afterWalkDir = DI_NONE);
 	BasePoint *_targetPoint;
@@ -57,7 +57,7 @@ public:
 	AdActor(BaseGame *inGame/*=nullptr*/);
 	virtual ~AdActor();
 	bool loadFile(const char *filename);
-	bool loadBuffer(byte *buffer, bool complete = true);
+	bool loadBuffer(char *buffer, bool complete = true);
 
 
 private:
@@ -103,6 +103,6 @@ private:
 	int32 _pFCount;
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

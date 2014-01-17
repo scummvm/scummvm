@@ -258,4 +258,4 @@ float BaseUtils::Hue2RGB(float v1, float v2, float vH) {
 	return (v1);
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

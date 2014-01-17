@@ -79,19 +79,23 @@ public:
 	const byte *getMixedData() const { return _mixedData; }
 	byte getSongReverb();
 
-	void tryToOwnChannels();
-	void lostChannels();
 	void sendFromScriptToDriver(uint32 midi);
 	void sendToDriver(uint32 midi);
 	void sendToDriver(byte status, byte firstOp, byte secondOp) {
 		sendToDriver(status | ((uint32)firstOp << 8) | ((uint32)secondOp << 16));
 	}
 
+	void remapChannel(int channel, int devChannel);
+
 protected:
 	void parseNextEvent(EventInfo &info);
+	void processEvent(const EventInfo &info, bool fireEvents = true);
 	byte *midiMixChannels();
 	byte *midiFilterChannels(int channelMask);
 	byte midiGetNextChannel(long ticker);
+	void resetStateTracking();
+	void trackState(uint32 midi);
+	void sendToDriver_raw(uint32 midi);
 
 	SciMusic *_music;
 
@@ -106,16 +110,25 @@ protected:
 	byte _masterVolume; // the overall master volume (same for all tracks)
 	byte _volume; // the global volume of the current track
 
-	bool _signalSet;
-	int16 _signalToSet;
-	bool _dataincAdd;
-	int16 _dataincToAdd;
 	bool _resetOnPause;
 
 	bool _channelUsed[16];
 	int16 _channelRemap[16];
 	bool _channelMuted[16];
 	byte _channelVolume[16];
+
+	struct ChannelState {
+		int8 _modWheel;
+		int8 _pan;
+		int8 _patch;
+		int8 _note;
+		bool _sustain;
+		int16 _pitchWheel;
+		int8 _voices;
+	};
+
+	ChannelState _channelState[16];
+
 };
 
 } // End of namespace Sci

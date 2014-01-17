@@ -2629,7 +2629,7 @@ void ObjectsManager::loadObjectIniFile() {
 
 	for (;;) {
 		int opcodeType = _vm->_script->handleOpcode(data + 20 * lastOpcodeResult);
-		if (_vm->shouldQuit())
+		if (opcodeType == -1 || _vm->shouldQuit())
 			return;
 
 		if (opcodeType == 2)

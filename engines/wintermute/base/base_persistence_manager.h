@@ -52,7 +52,7 @@ public:
 	void putDWORD(uint32 val);
 	char *getString();
 	Common::String getStringObj();
-	void putString(const Common::String &val);
+	void putString(const char *val);
 	float getFloat();
 	void putFloat(float val);
 	double getDouble();
@@ -74,19 +74,18 @@ public:
 	byte *_richBuffer;
 
 	bool transferPtr(const char *name, void *val);
-	bool transfer(const char *name, int32 *val);
-	bool transfer(const char *name, uint32 *val);
-	bool transfer(const char *name, float *val);
-	bool transfer(const char *name, double *val);
-	bool transfer(const char *name, bool *val);
-	bool transfer(const char *name, byte *val);
-	bool transfer(const char *name, Rect32 *val);
-	bool transfer(const char *name, Point32 *val);
-	bool transfer(const char *name, const char **val);
-	bool transfer(const char *name, char **val);
-	bool transfer(const char *name, Common::String *val);
-	bool transfer(const char *name, Vector2 *val);
-	bool transfer(const char *name, AnsiStringArray &Val);
+	bool transferSint32(const char *name, int32 *val);
+	bool transferUint32(const char *name, uint32 *val);
+	bool transferFloat(const char *name, float *val);
+	bool transferDouble(const char *name, double *val);
+	bool transferBool(const char *name, bool *val);
+	bool transferByte(const char *name, byte *val);
+	bool transferRect32(const char *name, Rect32 *val);
+	bool transferPoint32(const char *name, Point32 *val);
+	bool transferConstChar(const char *name, const char **val);
+	bool transferCharPtr(const char *name, char **val);
+	bool transferString(const char *name, Common::String *val);
+	bool transferVector2(const char *name, Vector2 *val);
 	BasePersistenceManager(const char *savePrefix = nullptr, bool deleteSingleton = false);
 	virtual ~BasePersistenceManager();
 	bool checkVersion(byte  verMajor, byte verMinor, byte verBuild);
@@ -115,6 +114,6 @@ private:
 	BaseGame *_gameRef;
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

@@ -234,4 +234,4 @@ crc crc_finalize(crc remainder) {
 	return (REFLECT_REMAINDER(remainder) ^ FINAL_XOR_VALUE);
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

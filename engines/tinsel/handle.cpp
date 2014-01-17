@@ -300,7 +300,7 @@ void LoadFile(MEMHANDLE *pH) {
 
 		// discardable - unlock the memory
 		MemoryUnlock(pH->_node);
-		
+
 		// set the loaded flag
 		pH->filesize |= fLoaded;
 

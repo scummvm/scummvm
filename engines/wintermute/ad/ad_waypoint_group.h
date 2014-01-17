@@ -41,7 +41,7 @@ public:
 	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
 	AdWaypointGroup(BaseGame *inGame);
 	bool loadFile(const char *filename);
-	bool loadBuffer(byte *buffer, bool complete = true);
+	bool loadBuffer(char *buffer, bool complete = true);
 	virtual ~AdWaypointGroup();
 
 	bool _active;
@@ -56,6 +56,6 @@ private:
 	int32 _lastMimicY;
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

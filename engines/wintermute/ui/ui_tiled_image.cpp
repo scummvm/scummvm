@@ -44,15 +44,15 @@ IMPLEMENT_PERSISTENT(UITiledImage, false)
 UITiledImage::UITiledImage(BaseGame *inGame) : BaseObject(inGame) {
 	_image = nullptr;
 
-	BasePlatform::setRectEmpty(&_upLeft);
-	BasePlatform::setRectEmpty(&_upMiddle);
-	BasePlatform::setRectEmpty(&_upRight);
-	BasePlatform::setRectEmpty(&_middleLeft);
-	BasePlatform::setRectEmpty(&_middleMiddle);
-	BasePlatform::setRectEmpty(&_middleRight);
-	BasePlatform::setRectEmpty(&_downLeft);
-	BasePlatform::setRectEmpty(&_downMiddle);
-	BasePlatform::setRectEmpty(&_downRight);
+	_upLeft.setEmpty();
+	_upMiddle.setEmpty();
+	_upRight.setEmpty();
+	_middleLeft.setEmpty();
+	_middleMiddle.setEmpty();
+	_middleRight.setEmpty();
+	_downLeft.setEmpty();
+	_downMiddle.setEmpty();
+	_downRight.setEmpty();
 }
 
 
@@ -75,8 +75,6 @@ bool UITiledImage::display(int x, int y, int width, int height) {
 	int nuColumns = (width - (_middleLeft.right - _middleLeft.left) - (_middleRight.right - _middleRight.left)) / tileWidth;
 	int nuRows = (height - (_upMiddle.bottom - _upMiddle.top) - (_downMiddle.bottom - _downMiddle.top)) / tileHeight;
 
-	int col, row;
-
 	_gameRef->_renderer->startSpriteBatch();
 
 	// top left/right
@@ -88,27 +86,24 @@ bool UITiledImage::display(int x, int y, int width, int height) {
 	_image->_surface->displayTrans(x + (_upLeft.right - _upLeft.left) + nuColumns * tileWidth, y + (_upMiddle.bottom - _upMiddle.top) + nuRows * tileHeight, _downRight);
 
 	// left/right
-	int yyy = y + (_upMiddle.bottom - _upMiddle.top);
-	for (row = 0; row < nuRows; row++) {
-		_image->_surface->displayTrans(x,                                                       yyy, _middleLeft);
-		_image->_surface->displayTrans(x + (_middleLeft.right - _middleLeft.left) + nuColumns * tileWidth, yyy, _middleRight);
-		yyy += tileWidth;
+	if (nuRows > 0) {
+		int yyy = y + (_upMiddle.bottom - _upMiddle.top);
+		_image->_surface->displayTiled(x, yyy, _middleLeft, 1, nuRows);
+		_image->_surface->displayTiled(x + (_middleLeft.right - _middleLeft.left) + nuColumns * tileWidth, yyy, _middleRight, 1, nuRows);
 	}
 
 	// top/bottom
-	int xxx = x + (_upLeft.right - _upLeft.left);
-	for (col = 0; col < nuColumns; col++) {
-		_image->_surface->displayTrans(xxx, y, _upMiddle);
-		_image->_surface->displayTrans(xxx, y + (_upMiddle.bottom - _upMiddle.top) + nuRows * tileHeight, _downMiddle);
-		xxx += tileWidth;
+	if (nuColumns > 0) {
+		int xxx = x + (_upLeft.right - _upLeft.left);
+		_image->_surface->displayTiled(xxx, y, _upMiddle, nuColumns, 1);
+		_image->_surface->displayTiled(xxx, y + (_upMiddle.bottom - _upMiddle.top) + nuRows * tileHeight, _downMiddle, nuColumns, 1);
 	}
 
 	// tiles
 	if (nuRows > 0 && nuColumns > 0) {
-		yyy = y + (_upMiddle.bottom - _upMiddle.top);
-		xxx = x + (_upLeft.right - _upLeft.left);
-		_image->_surface->displayTrans(xxx, yyy, _middleMiddle);
-		_image->_surface->repeatLastDisplayOp(tileWidth, tileWidth, nuColumns, nuRows);
+		int yyy = y + (_upMiddle.bottom - _upMiddle.top);
+		int xxx = x + (_upLeft.right - _upLeft.left);
+		_image->_surface->displayTiled(xxx, yyy, _middleMiddle, nuColumns, nuRows);
 	}
 
 	_gameRef->_renderer->endSpriteBatch();
@@ -119,7 +114,7 @@ bool UITiledImage::display(int x, int y, int width, int height) {
 
 //////////////////////////////////////////////////////////////////////////
 bool UITiledImage::loadFile(const char *filename) {
-	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
+	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
 		_gameRef->LOG(0, "UITiledImage::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
@@ -158,7 +153,7 @@ TOKEN_DEF(HORIZONTAL_TILES)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-bool UITiledImage::loadBuffer(byte *buffer, bool complete) {
+bool UITiledImage::loadBuffer(char *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(TILED_IMAGE)
 	TOKEN_TABLE(TEMPLATE)
@@ -177,7 +172,7 @@ bool UITiledImage::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE(EDITOR_PROPERTY)
 	TOKEN_TABLE_END
 
-	byte *params;
+	char *params;
 	int cmd;
 	BaseParser parser;
 	bool hTiles = false, vTiles = false;
@@ -185,17 +180,17 @@ bool UITiledImage::loadBuffer(byte *buffer, bool complete) {
 	int v1 = 0, v2 = 0, v3 = 0;
 
 	if (complete) {
-		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_TILED_IMAGE) {
+		if (parser.getCommand(&buffer, commands, &params) != TOKEN_TILED_IMAGE) {
 			_gameRef->LOG(0, "'TILED_IMAGE' keyword expected.");
 			return STATUS_FAILED;
 		}
 		buffer = params;
 	}
 
-	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
+	while ((cmd = parser.getCommand(&buffer, commands, &params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
-			if (DID_FAIL(loadFile((char *)params))) {
+			if (DID_FAIL(loadFile(params))) {
 				cmd = PARSERR_GENERIC;
 			}
 			break;
@@ -203,7 +198,7 @@ bool UITiledImage::loadBuffer(byte *buffer, bool complete) {
 		case TOKEN_IMAGE:
 			delete _image;
 			_image = new BaseSubFrame(_gameRef);
-			if (!_image || DID_FAIL(_image->setSurface((char *)params))) {
+			if (!_image || DID_FAIL(_image->setSurface(params))) {
 				delete _image;
 				_image = nullptr;
 				cmd = PARSERR_GENERIC;
@@ -211,48 +206,48 @@ bool UITiledImage::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_UP_LEFT:
-			parser.scanStr((char *)params, "%d,%d,%d,%d", &_upLeft.left, &_upLeft.top, &_upLeft.right, &_upLeft.bottom);
+			parser.scanStr(params, "%d,%d,%d,%d", &_upLeft.left, &_upLeft.top, &_upLeft.right, &_upLeft.bottom);
 			break;
 
 		case TOKEN_UP_RIGHT:
-			parser.scanStr((char *)params, "%d,%d,%d,%d", &_upRight.left, &_upRight.top, &_upRight.right, &_upRight.bottom);
+			parser.scanStr(params, "%d,%d,%d,%d", &_upRight.left, &_upRight.top, &_upRight.right, &_upRight.bottom);
 			break;
 
 		case TOKEN_UP_MIDDLE:
-			parser.scanStr((char *)params, "%d,%d,%d,%d", &_upMiddle.left, &_upMiddle.top, &_upMiddle.right, &_upMiddle.bottom);
+			parser.scanStr(params, "%d,%d,%d,%d", &_upMiddle.left, &_upMiddle.top, &_upMiddle.right, &_upMiddle.bottom);
 			break;
 
 		case TOKEN_DOWN_LEFT:
-			parser.scanStr((char *)params, "%d,%d,%d,%d", &_downLeft.left, &_downLeft.top, &_downLeft.right, &_downLeft.bottom);
+			parser.scanStr(params, "%d,%d,%d,%d", &_downLeft.left, &_downLeft.top, &_downLeft.right, &_downLeft.bottom);
 			break;
 
 		case TOKEN_DOWN_RIGHT:
-			parser.scanStr((char *)params, "%d,%d,%d,%d", &_downRight.left, &_downRight.top, &_downRight.right, &_downRight.bottom);
+			parser.scanStr(params, "%d,%d,%d,%d", &_downRight.left, &_downRight.top, &_downRight.right, &_downRight.bottom);
 			break;
 
 		case TOKEN_DOWN_MIDDLE:
-			parser.scanStr((char *)params, "%d,%d,%d,%d", &_downMiddle.left, &_downMiddle.top, &_downMiddle.right, &_downMiddle.bottom);
+			parser.scanStr(params, "%d,%d,%d,%d", &_downMiddle.left, &_downMiddle.top, &_downMiddle.right, &_downMiddle.bottom);
 			break;
 
 		case TOKEN_MIDDLE_LEFT:
-			parser.scanStr((char *)params, "%d,%d,%d,%d", &_middleLeft.left, &_middleLeft.top, &_middleLeft.right, &_middleLeft.bottom);
+			parser.scanStr(params, "%d,%d,%d,%d", &_middleLeft.left, &_middleLeft.top, &_middleLeft.right, &_middleLeft.bottom);
 			break;
 
 		case TOKEN_MIDDLE_RIGHT:
-			parser.scanStr((char *)params, "%d,%d,%d,%d", &_middleRight.left, &_middleRight.top, &_middleRight.right, &_middleRight.bottom);
+			parser.scanStr(params, "%d,%d,%d,%d", &_middleRight.left, &_middleRight.top, &_middleRight.right, &_middleRight.bottom);
 			break;
 
 		case TOKEN_MIDDLE_MIDDLE:
-			parser.scanStr((char *)params, "%d,%d,%d,%d", &_middleMiddle.left, &_middleMiddle.top, &_middleMiddle.right, &_middleMiddle.bottom);
+			parser.scanStr(params, "%d,%d,%d,%d", &_middleMiddle.left, &_middleMiddle.top, &_middleMiddle.right, &_middleMiddle.bottom);
 			break;
 
 		case TOKEN_HORIZONTAL_TILES:
-			parser.scanStr((char *)params, "%d,%d,%d", &h1, &h2, &h3);
+			parser.scanStr(params, "%d,%d,%d", &h1, &h2, &h3);
 			hTiles = true;
 			break;
 
 		case TOKEN_VERTICAL_TILES:
-			parser.scanStr((char *)params, "%d,%d,%d", &v1, &v2, &v3);
+			parser.scanStr(params, "%d,%d,%d", &v1, &v2, &v3);
 			vTiles = true;
 			break;
 
@@ -272,19 +267,19 @@ bool UITiledImage::loadBuffer(byte *buffer, bool complete) {
 
 	if (vTiles && hTiles) {
 		// up row
-		BasePlatform::setRect(&_upLeft,   0,     0, h1,       v1);
-		BasePlatform::setRect(&_upMiddle, h1,    0, h1 + h2,    v1);
-		BasePlatform::setRect(&_upRight,  h1 + h2, 0, h1 + h2 + h3, v1);
+		_upLeft.setRect(0, 0, h1, v1);
+		_upMiddle.setRect(h1, 0, h1 + h2, v1);
+		_upRight.setRect(h1 + h2, 0, h1 + h2 + h3, v1);
 
 		// middle row
-		BasePlatform::setRect(&_middleLeft,   0,     v1, h1,       v1 + v2);
-		BasePlatform::setRect(&_middleMiddle, h1,    v1, h1 + h2,    v1 + v2);
-		BasePlatform::setRect(&_middleRight,  h1 + h2, v1, h1 + h2 + h3, v1 + v2);
+		_middleLeft.setRect(0, v1, h1, v1 + v2);
+		_middleMiddle.setRect(h1, v1, h1 + h2, v1 + v2);
+		_middleRight.setRect(h1 + h2, v1, h1 + h2 + h3, v1 + v2);
 
 		// down row
-		BasePlatform::setRect(&_downLeft,   0,     v1 + v2, h1,       v1 + v2 + v3);
-		BasePlatform::setRect(&_downMiddle, h1,    v1 + v2, h1 + h2,    v1 + v2 + v3);
-		BasePlatform::setRect(&_downRight,  h1 + h2, v1 + v2, h1 + h2 + h3, v1 + v2 + v3);
+		_downLeft.setRect(0, v1 + v2, h1, v1 + v2 + v3);
+		_downMiddle.setRect(h1, v1 + v2, h1 + h2, v1 + v2 + v3);
+		_downRight.setRect(h1 + h2, v1 + v2, h1 + h2 + h3, v1 + v2 + v3);
 	}
 
 	// default
@@ -292,34 +287,34 @@ bool UITiledImage::loadBuffer(byte *buffer, bool complete) {
 		int width = _image->_surface->getWidth() / 3;
 		int height = _image->_surface->getHeight() / 3;
 
-		if (BasePlatform::isRectEmpty(&_upLeft)) {
-			BasePlatform::setRect(&_upLeft,   0,       0, width,   height);
+		if (_upLeft.isRectEmpty()) {
+			_upLeft.setRect(0, 0, width, height);
 		}
-		if (BasePlatform::isRectEmpty(&_upMiddle)) {
-			BasePlatform::setRect(&_upMiddle, width,   0, 2 * width, height);
+		if (_upMiddle.isRectEmpty()) {
+			_upMiddle.setRect(width, 0, 2 * width, height);
 		}
-		if (BasePlatform::isRectEmpty(&_upRight)) {
-			BasePlatform::setRect(&_upRight,  2 * width, 0, 3 * width, height);
-		}
-
-		if (BasePlatform::isRectEmpty(&_middleLeft)) {
-			BasePlatform::setRect(&_middleLeft,   0,       height, width,   2 * height);
-		}
-		if (BasePlatform::isRectEmpty(&_middleMiddle)) {
-			BasePlatform::setRect(&_middleMiddle, width,   height, 2 * width, 2 * height);
-		}
-		if (BasePlatform::isRectEmpty(&_middleRight)) {
-			BasePlatform::setRect(&_middleRight,  2 * width, height, 3 * width, 2 * height);
+		if (_upRight.isRectEmpty()) {
+			_upRight.setRect(2 * width, 0, 3 * width, height);
 		}
 
-		if (BasePlatform::isRectEmpty(&_downLeft)) {
-			BasePlatform::setRect(&_downLeft,   0,       2 * height, width,   3 * height);
+		if (_middleLeft.isRectEmpty()) {
+			_middleLeft.setRect(0, height, width, 2 * height);
 		}
-		if (BasePlatform::isRectEmpty(&_downMiddle)) {
-			BasePlatform::setRect(&_downMiddle, width,   2 * height, 2 * width, 3 * height);
+		if (_middleMiddle.isRectEmpty()) {
+			_middleMiddle.setRect(width, height, 2 * width, 2 * height);
 		}
-		if (BasePlatform::isRectEmpty(&_downRight)) {
-			BasePlatform::setRect(&_downRight,  2 * width, 2 * height, 3 * width, 3 * height);
+		if (_middleRight.isRectEmpty()) {
+			_middleRight.setRect(2 * width, height, 3 * width, 2 * height);
+		}
+
+		if (_downLeft.isRectEmpty()) {
+			_downLeft.setRect(0, 2 * height, width, 3 * height);
+		}
+		if (_downMiddle.isRectEmpty()) {
+			_downMiddle.setRect(width, 2 * height, 2 * width, 3 * height);
+		}
+		if (_downRight.isRectEmpty()) {
+			_downRight.setRect(2 * width, 2 * height, 3 * width, 3 * height);
 		}
 	}
 
@@ -374,18 +369,18 @@ void UITiledImage::correctSize(int32 *width, int32 *height) {
 bool UITiledImage::persist(BasePersistenceManager *persistMgr) {
 	BaseObject::persist(persistMgr);
 
-	persistMgr->transfer(TMEMBER(_downLeft));
-	persistMgr->transfer(TMEMBER(_downMiddle));
-	persistMgr->transfer(TMEMBER(_downRight));
+	persistMgr->transferRect32(TMEMBER(_downLeft));
+	persistMgr->transferRect32(TMEMBER(_downMiddle));
+	persistMgr->transferRect32(TMEMBER(_downRight));
 	persistMgr->transferPtr(TMEMBER_PTR(_image));
-	persistMgr->transfer(TMEMBER(_middleLeft));
-	persistMgr->transfer(TMEMBER(_middleMiddle));
-	persistMgr->transfer(TMEMBER(_middleRight));
-	persistMgr->transfer(TMEMBER(_upLeft));
-	persistMgr->transfer(TMEMBER(_upMiddle));
-	persistMgr->transfer(TMEMBER(_upRight));
+	persistMgr->transferRect32(TMEMBER(_middleLeft));
+	persistMgr->transferRect32(TMEMBER(_middleMiddle));
+	persistMgr->transferRect32(TMEMBER(_middleRight));
+	persistMgr->transferRect32(TMEMBER(_upLeft));
+	persistMgr->transferRect32(TMEMBER(_upMiddle));
+	persistMgr->transferRect32(TMEMBER(_upRight));
 
 	return STATUS_OK;
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

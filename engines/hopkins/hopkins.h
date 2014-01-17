@@ -48,6 +48,7 @@
 #include "common/util.h"
 #include "engines/engine.h"
 #include "graphics/surface.h"
+#include "gui/debugger.h"
 
 /**
  * This is the namespace of the Hopkins engine.
@@ -58,10 +59,6 @@
  * - Hopkins FBI
  */
 namespace Hopkins {
-
-#define DEBUG_BASIC 1
-#define DEBUG_INTERMEDIATE 2
-#define DEBUG_DETAILED 3
 
 #define SCREEN_WIDTH 640
 #define SCREEN_HEIGHT 480
@@ -136,6 +133,8 @@ protected:
 	virtual Common::Error run();
 	virtual bool hasFeature(EngineFeature f) const;
 
+	GUI::Debugger *getDebugger() { return _debug; }
+
 public:
 	AnimationManager *_animMan;
 	ComputerManager *_computer;
@@ -164,6 +163,7 @@ public:
 	Common::Platform getPlatform() const;
 	uint16 getVersion() const;
 	bool getIsDemo() const;
+	const Common::String &getTargetName() const;
 
 	int getRandomNumber(int maxNumber);
 	Common::String generateSaveName(int slotNumber);

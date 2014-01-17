@@ -38,13 +38,15 @@ void StripProxy::process(Event &event) {
 
 void UIElement::synchronize(Serializer &s) {
 	BackgroundSceneObject::synchronize(s);
-	s.syncAsSint16LE(_field88);
+	if (s.getVersion() < 15) {
+		int useless = 0;
+		s.syncAsSint16LE(useless);
+	}
 	s.syncAsSint16LE(_enabled);
 	s.syncAsSint16LE(_frameNum);
 }
 
 void UIElement::setup(int visage, int stripNum, int frameNum, int posX, int posY, int priority) {
-	_field88 = 0;
 	_frameNum = frameNum;
 	_enabled = true;
 
@@ -84,7 +86,10 @@ void UIQuestion::showDescription(CursorType cursor) {
 	case GType_Ringworld2:
 		if ((cursor == R2_COM_SCANNER) || (cursor == R2_COM_SCANNER_2)) {
 			// Show communicator
-			warning("TODO: Communicator");
+			Ringworld2::SceneExt *scene = static_cast<Ringworld2::SceneExt *>
+				(R2_GLOBALS._sceneManager._scene);
+			if (!scene->_sceneAreas.contains(R2_GLOBALS._scannerDialog))
+				R2_GLOBALS._scannerDialog->setup2(4, 1, 1, 160, 125);
 		} else {
 			// Show object description
 			SceneItem::display2(3, (int)cursor);
@@ -273,9 +278,27 @@ void UICollection::draw() {
 			Rect(0, UI_INTERFACE_Y, SCREEN_WIDTH, SCREEN_HEIGHT),
 			Rect(0, UI_INTERFACE_Y, SCREEN_WIDTH, SCREEN_HEIGHT));
 
+		if (g_vm->getGameID() == GType_Ringworld2)
+			r2rDrawFrame();
+
 		_clearScreen = 1;
 		g_globals->_sceneManager._scene->_sceneBounds = savedBounds;
 	}
+}
+
+void UICollection::r2rDrawFrame() {
+	Visage visage;
+	visage.setVisage(2, 1);
+	GfxSurface vertLine = visage.getFrame(1);
+	GfxSurface horizLine = visage.getFrame(2);
+
+	GLOBALS._screenSurface.copyFrom(horizLine, 0, 0);
+	GLOBALS._screenSurface.copyFrom(vertLine, 0, 3);
+	GLOBALS._screenSurface.copyFrom(vertLine, SCREEN_WIDTH - 4, 3);
+
+	// Restrict drawing area to exclude the borders at the edge of the screen
+	R2_GLOBALS._screenSurface._clipRect = Rect(4, 4, SCREEN_WIDTH - 4,
+		SCREEN_HEIGHT - 4);
 }
 
 /*--------------------------------------------------------------------------*/
@@ -286,6 +309,10 @@ UIElements::UIElements(): UICollection() {
 	else
 		_cursorVisage.setVisage(1, 5);
 	g_saver->addLoadNotifier(&UIElements::loadNotifierProc);
+
+	_slotStart = 0;
+	_scoreValue = 0;
+	_active = false;
 }
 
 void UIElements::synchronize(Serializer &s) {
@@ -399,7 +426,7 @@ void UIElements::setup(const Common::Point &pt) {
 	}
 
 	// Setup bottom-right hand buttons
-	xp += 62;
+	xp = (g_vm->getGameID() == GType_Ringworld2) ? 255 : 253;
 	int yp = (g_vm->getGameID() == GType_BlueForce) ? 16 : 17;
 	_question.setup(1, 4, 7, xp, yp, 255);
 	_question.setEnabled(false);
@@ -410,7 +437,7 @@ void UIElements::setup(const Common::Point &pt) {
 	add(&_scrollLeft);
 	_scrollLeft._isLeft = true;
 
-	xp += 22;
+	xp += (g_vm->getGameID() == GType_Ringworld2) ? 21 : 22;
 	_scrollRight.setup(1, 4, 4, xp, yp, 255);
 	add(&_scrollRight);
 	_scrollRight._isLeft = false;
@@ -451,7 +478,7 @@ void UIElements::add(UIElement *obj) {
 /**
  * Handles updating the visual inventory in the user interface
  */
-void UIElements::updateInventory() {
+void UIElements::updateInventory(int objectNumber) {
 	switch (g_vm->getGameID()) {
 	case GType_BlueForce:
 		// Update the score
@@ -479,6 +506,17 @@ void UIElements::updateInventory() {
 		_slotStart = lastPage - 1;
 	else if (_slotStart > (lastPage - 1))
 		_slotStart = 0;
+
+	// Handle changing the page, if necessary, to ensure an optionally supplied
+	// object number will be on-screen
+	if (objectNumber != 0) {
+		for (uint idx = 0; idx < _itemList.size(); ++idx) {
+			if (_itemList[idx] == objectNumber) {
+				_slotStart = idx / 4;
+				break;
+			}
+		}
+	}
 
 	// Handle refreshing slot graphics
 	UIInventorySlot *slotList[4] = { &_slot1, &_slot2, &_slot3, &_slot4 };

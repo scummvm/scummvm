@@ -63,6 +63,13 @@ create_lure (dreammaster)
     the lure.dat file.
 
 
+create_mort (Strangerke)
+-----------
+    Gathers several information found in the original DOS executable:
+    - Font data
+    - French, German and fan-made English translation
+
+
 create_project (LordHoto, Littleboy)
 --------------
     Creates project files for Visual Studio 2005, 2008, 2010, 2012, Xcode and

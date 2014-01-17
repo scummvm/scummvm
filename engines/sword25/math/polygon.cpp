@@ -364,20 +364,20 @@ bool Polygon::isPointInPolygon(const Vertex &point, bool edgesBelongToPolygon) c
 bool Polygon::persist(OutputPersistenceBlock &writer) {
 	writer.write(vertexCount);
 	for (int i = 0; i < vertexCount; ++i) {
-		writer.write(vertices[i].x);
-		writer.write(vertices[i].y);
+		writer.write((int32)vertices[i].x);
+		writer.write((int32)vertices[i].y);
 	}
 
 	return true;
 }
 
 bool Polygon::unpersist(InputPersistenceBlock &reader) {
-	int storedvertexCount;
+	int32 storedvertexCount;
 	reader.read(storedvertexCount);
 
 	Common::Array<Vertex> storedvertices;
 	for (int i = 0; i < storedvertexCount; ++i) {
-		int x, y;
+		int32 x, y;
 		reader.read(x);
 		reader.read(y);
 		storedvertices.push_back(Vertex(x, y));

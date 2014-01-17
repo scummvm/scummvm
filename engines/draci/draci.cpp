@@ -92,6 +92,32 @@ DraciEngine::DraciEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	DebugMan.addDebugChannel(kDraciWalkingDebugLevel, "walking", "Walking debug info");
 
 	_console = new DraciConsole(this);
+
+	_screen = 0;
+	_mouse = 0;
+	_game = 0;
+	_script = 0;
+	_anims = 0;
+	_sound = 0;
+	_music = 0;
+	_smallFont = 0;
+	_bigFont = 0;
+	_iconsArchive = 0;
+	_objectsArchive = 0;
+	_spritesArchive = 0;
+	_paletteArchive = 0;
+	_roomsArchive = 0;
+	_overlaysArchive = 0;
+	_animationsArchive = 0;
+	_walkingMapsArchive = 0;
+	_itemsArchive = 0;
+	_itemImagesArchive = 0;
+	_initArchive = 0;
+	_stringsArchive = 0;
+	_soundsArchive = 0;
+	_dubbingArchive = 0;
+	_showWalkingMap = 0;
+	_pauseStartTime = 0;
 }
 
 bool DraciEngine::hasFeature(EngineFeature f) const {

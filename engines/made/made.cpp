@@ -85,7 +85,7 @@ MadeEngine::MadeEngine(OSystem *syst, const MadeGameDescription *gameDesc) : Eng
 
 	_script = new ScriptInterpreter(this);
 
-	_music = new MusicPlayer();
+	_music = nullptr;
 
 	// Set default sound frequency
 	switch (getGameID()) {
@@ -102,8 +102,6 @@ MadeEngine::MadeEngine(OSystem *syst, const MadeGameDescription *gameDesc) : Eng
 		// Return to Zork sets it itself via a script funtion
 		break;
 	}
-
-	syncSoundSettings();
 }
 
 MadeEngine::~MadeEngine() {
@@ -277,6 +275,8 @@ void MadeEngine::handleEvents() {
 }
 
 Common::Error MadeEngine::run() {
+	_music = new MusicPlayer();
+	syncSoundSettings();
 
 	// Initialize backend
 	initGraphics(320, 200, false);

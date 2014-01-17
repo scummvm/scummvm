@@ -219,25 +219,30 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 
 	syncArray<Class>(s, _classTable);
 
-	// Now that all scripts are loaded, init their objects
-	for (uint i = 0; i < _heap.size(); i++) {
-		if (!_heap[i] ||  _heap[i]->getType() != SEG_TYPE_SCRIPT)
-			continue;
+	// Now that all scripts are loaded, init their objects.
+	// Just like in Script::initializeObjectsSci0, we do two passes
+	// in case an object is loaded before its base.
+	int passes = getSciVersion() < SCI_VERSION_1_1 ? 2 : 1;
+	for (int pass = 1; pass <= passes; ++pass) {
+		for (uint i = 0; i < _heap.size(); i++) {
+			if (!_heap[i] ||  _heap[i]->getType() != SEG_TYPE_SCRIPT)
+				continue;
 
-		Script *scr = (Script *)_heap[i];
-		scr->syncLocalsBlock(this);
+			Script *scr = (Script *)_heap[i];
+			scr->syncLocalsBlock(this);
 
-		ObjMap objects = scr->getObjectMap();
-		for (ObjMap::iterator it = objects.begin(); it != objects.end(); ++it) {
-			reg_t addr = it->_value.getPos();
-			Object *obj = scr->scriptObjInit(addr, false);
+			ObjMap objects = scr->getObjectMap();
+			for (ObjMap::iterator it = objects.begin(); it != objects.end(); ++it) {
+				reg_t addr = it->_value.getPos();
+				Object *obj = scr->scriptObjInit(addr, false);
 
-			if (getSciVersion() < SCI_VERSION_1_1) {
-				if (!obj->initBaseObject(this, addr, false)) {
-					// TODO/FIXME: This should not be happening at all. It might indicate a possible issue
-					// with the garbage collector. It happens for example in LSL5 (German, perhaps English too).
-					warning("Failed to locate base object for object at %04X:%04X; skipping", PRINT_REG(addr));
-					objects.erase(addr.toUint16());
+				if (pass == 2) {
+					if (!obj->initBaseObject(this, addr, false)) {
+						// TODO/FIXME: This should not be happening at all. It might indicate a possible issue
+						// with the garbage collector. It happens for example in LSL5 (German, perhaps English too).
+						warning("Failed to locate base object for object at %04X:%04X; skipping", PRINT_REG(addr));
+						objects.erase(addr.toUint16());
+					}
 				}
 			}
 		}
@@ -465,7 +470,7 @@ void Script::syncStringHeap(Common::Serializer &s) {
 				break;
 		} while (1);
 
- 	} else if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1){
+	} else if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1){
 		// Strings in SCI1.1 come after the object instances
 		byte *buf = _heapStart + 4 + READ_SCI11ENDIAN_UINT16(_heapStart + 2) * 2;
 
@@ -484,7 +489,7 @@ void Script::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsSint32LE(_nr);
 
 	if (s.isLoading())
-		load(_nr, g_sci->getResMan());
+		load(_nr, g_sci->getResMan(), g_sci->getScriptPatcher());
 	s.skip(4, VER(14), VER(22));		// OBSOLETE: Used to be _bufSize
 	s.skip(4, VER(14), VER(22));		// OBSOLETE: Used to be _scriptSize
 	s.skip(4, VER(14), VER(22));		// OBSOLETE: Used to be _heapSize
@@ -600,7 +605,10 @@ void MusicEntry::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsSint16LE(dataInc);
 	s.syncAsSint16LE(ticker);
 	s.syncAsSint16LE(signal, VER(17));
-	s.syncAsByte(priority);
+	if (s.getVersion() >= 31) // FE sound/music.h -> priority
+		s.syncAsSint16LE(priority);
+	else
+		s.syncAsByte(priority);
 	s.syncAsSint16LE(loop, VER(17));
 	s.syncAsByte(volume);
 	s.syncAsByte(hold, VER(17));

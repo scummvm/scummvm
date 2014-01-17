@@ -47,7 +47,7 @@ GfxSurface *surfaceGetArea(GfxSurface &src, const Rect &bounds) {
 	Graphics::Surface destSurface = dest->lockSurface();
 
 	byte *srcP = (byte *)srcSurface.getBasePtr(bounds.left, bounds.top);
-	byte *destP = (byte *)destSurface.getBasePtr(0, 0);
+	byte *destP = (byte *)destSurface.getPixels();
 
 	for (int y = bounds.top; y < bounds.bottom; ++y, srcP += srcSurface.pitch, destP += destSurface.pitch)
 		Common::copy(srcP, srcP + destSurface.pitch, destP);
@@ -68,15 +68,20 @@ GfxSurface surfaceFromRes(const byte *imgData) {
 	Rect r(0, 0, READ_LE_UINT16(imgData), READ_LE_UINT16(imgData + 2));
 	GfxSurface s;
 	s.create(r.width(), r.height());
-	s._centroid.x = READ_LE_UINT16(imgData + 4);
-	s._centroid.y = READ_LE_UINT16(imgData + 6);
 	s._transColor = *(imgData + 8);
 
-	bool rleEncoded = (imgData[9] & 2) != 0;
+	byte flags = imgData[9];
+	s._flags = (g_vm->getGameID() != GType_Ringworld) ? flags : 0;
+
+	bool rleEncoded = (flags & 2) != 0;
+
+	// Figure out the centroid
+	s._centroid.x = READ_LE_UINT16(imgData + 4);
+	s._centroid.y = READ_LE_UINT16(imgData + 6);
 
 	const byte *srcP = imgData + 10;
 	Graphics::Surface destSurface = s.lockSurface();
-	byte *destP = (byte *)destSurface.getBasePtr(0, 0);
+	byte *destP = (byte *)destSurface.getPixels();
 
 	if (!rleEncoded) {
 		Common::copy(srcP, srcP + (r.width() * r.height()), destP);
@@ -184,8 +189,9 @@ void Rect::contain(const Rect &r) {
  * @percent Scaling percentage
  */
 void Rect::resize(const GfxSurface &surface, int xp, int yp, int percent) {
-	int xe = surface.getBounds().width() * percent / 100;
-	int ye = surface.getBounds().height() * percent / 100;
+	const Rect &bounds = surface.getBounds();
+	int xe = bounds.width() * percent / 100;
+	int ye = bounds.height() * percent / 100;
 	this->set(0, 0, xe, ye);
 
 	if (!right) ++right;
@@ -193,8 +199,13 @@ void Rect::resize(const GfxSurface &surface, int xp, int yp, int percent) {
 
 	this->moveTo(xp, yp);
 
-	int xd = surface._centroid.x * percent / 100;
-	int yd = surface._centroid.y * percent / 100;
+	int xa = (surface._flags & FRAME_FLIP_CENTROID_X) == 0 ? surface._centroid.x : 
+		bounds.width() - (surface._centroid.x + 1);
+	int ya = (surface._flags & FRAME_FLIP_CENTROID_Y) == 0 ? surface._centroid.y : 
+		bounds.height() - (surface._centroid.y + 1);
+
+	int xd = xa * percent / 100;
+	int yd = ya * percent / 100;
 	this->translate(-xd, -yd);
 }
 
@@ -224,6 +235,7 @@ GfxSurface::GfxSurface() : _bounds(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT) {
 	_customSurface = NULL;
 	_transColor = -1;
 	_trackDirtyRects = false;
+	_flags = 0;
 }
 
 GfxSurface::GfxSurface(const GfxSurface &s) {
@@ -234,9 +246,14 @@ GfxSurface::GfxSurface(const GfxSurface &s) {
 }
 
 GfxSurface::~GfxSurface() {
+	clear();
+}
+
+void GfxSurface::clear() {
 	if (_customSurface) {
 		_customSurface->free();
 		delete _customSurface;
+		_customSurface = NULL;
 	}
 }
 
@@ -289,8 +306,11 @@ void GfxSurface::addDirtyRect(const Rect &r) {
 		r2.translate(_bounds.left, _bounds.top);
 
 		// Add to the dirty rect list
-		_dirtyRects.push_back(Rect(r2.left, r2.top,
-		MIN(r2.right + 1, SCREEN_WIDTH), MIN(r2.bottom + 1, SCREEN_HEIGHT)));
+		r2.right = MIN(r2.right + 1, SCREEN_WIDTH);
+		r2.bottom = MIN(r2.bottom + 1, SCREEN_HEIGHT);
+
+		if (r2.isValidRect())
+			_dirtyRects.push_back(r2);
 	}
 }
 
@@ -308,7 +328,7 @@ void GfxSurface::create(int width, int height) {
 	}
 	_customSurface = new Graphics::Surface();
 	_customSurface->create(width, height, Graphics::PixelFormat::createFormatCLUT8());
-	Common::fill((byte *)_customSurface->pixels, (byte *)_customSurface->pixels + (width * height), 0);
+	Common::fill((byte *)_customSurface->getPixels(), (byte *)_customSurface->getBasePtr(0, height), 0);
 	_bounds = Rect(0, 0, width, height);
 }
 
@@ -324,12 +344,7 @@ Graphics::Surface GfxSurface::lockSurface() {
 	// Setup the returned surface either as one pointing to the same pixels as the source, or
 	// as a subset of the source one based on the currently set bounds
 	Graphics::Surface result;
-	result.w = _bounds.width();
-	result.h = _bounds.height();
-	result.pitch = src->pitch;
-	result.format = src->format;
-	result.pixels = src->getBasePtr(_bounds.left, _bounds.top);
-
+	result.init(_bounds.width(), _bounds.height(), src->pitch, src->getBasePtr(_bounds.left, _bounds.top), src->format);
 	return result;
 }
 
@@ -355,7 +370,7 @@ void GfxSurface::synchronize(Serializer &s) {
 		if (_customSurface) {
 			s.syncAsSint16LE(_customSurface->w);
 			s.syncAsSint16LE(_customSurface->h);
-			s.syncBytes((byte *)_customSurface->pixels, _customSurface->w * _customSurface->h);
+			s.syncBytes((byte *)_customSurface->getPixels(), _customSurface->w * _customSurface->h);
 		} else {
 			int zero = 0;
 			s.syncAsSint16LE(zero);
@@ -372,7 +387,7 @@ void GfxSurface::synchronize(Serializer &s) {
 			_customSurface = NULL;
 		} else {
 			create(w, h);
-			s.syncBytes((byte *)_customSurface->pixels, w * h);
+			s.syncBytes((byte *)_customSurface->getPixels(), w * h);
 		}
 	}
 }
@@ -404,13 +419,14 @@ GfxSurface &GfxSurface::operator=(const GfxSurface &s) {
 	_bounds = s._bounds;
 	_centroid = s._centroid;
 	_transColor = s._transColor;
+	_flags = s._flags;
 
 	if (_customSurface) {
 		// Surface owns the internal data, so replicate it so new surface owns it's own
 		_customSurface = new Graphics::Surface();
 		_customSurface->create(s._customSurface->w, s._customSurface->h, Graphics::PixelFormat::createFormatCLUT8());
-		const byte *srcP = (const byte *)s._customSurface->getBasePtr(0, 0);
-		byte *destP = (byte *)_customSurface->getBasePtr(0, 0);
+		const byte *srcP = (const byte *)s._customSurface->getPixels();
+		byte *destP = (byte *)_customSurface->getPixels();
 
 		Common::copy(srcP, srcP + (_bounds.width() * _bounds.height()), destP);
 	}
@@ -556,9 +572,11 @@ static GfxSurface ResizeSurface(GfxSurface &src, int xSize, int ySize, int trans
 }
 
 /**
- * Copys an area from one GfxSurface to another
+ * Copys an area from one GfxSurface to another.
+ *
  */
-void GfxSurface::copyFrom(GfxSurface &src, Rect srcBounds, Rect destBounds, Region *priorityRegion) {
+void GfxSurface::copyFrom(GfxSurface &src, Rect srcBounds, Rect destBounds,
+		Region *priorityRegion, const byte *shadowMap) {
 	GfxSurface srcImage;
 	if (srcBounds.isEmpty())
 		return;
@@ -573,7 +591,7 @@ void GfxSurface::copyFrom(GfxSurface &src, Rect srcBounds, Rect destBounds, Regi
 		Graphics::Surface destSurface = srcImage.lockSurface();
 
 		const byte *srcP = (const byte *)srcSurface.getBasePtr(srcBounds.left, srcBounds.top);
-		byte *destP = (byte *)destSurface.pixels;
+		byte *destP = (byte *)destSurface.getPixels();
 		for (int yp = srcBounds.top; yp < srcBounds.bottom; ++yp, srcP += srcSurface.pitch, destP += destSurface.pitch) {
 			Common::copy(srcP, srcP + srcBounds.width(), destP);
 		}
@@ -588,20 +606,24 @@ void GfxSurface::copyFrom(GfxSurface &src, Rect srcBounds, Rect destBounds, Regi
 	Graphics::Surface srcSurface = srcImage.lockSurface();
 	Graphics::Surface destSurface = lockSurface();
 
+	// Get clipping area
+	Rect clipRect = !_clipRect.isEmpty() ? _clipRect :
+		Rect(0, 0, destSurface.w, destSurface.h);
+
 	// Adjust bounds to ensure destination will be on-screen
 	int srcX = 0, srcY = 0;
-	if (destBounds.left < 0) {
-		srcX = -destBounds.left;
-		destBounds.left = 0;
+	if (destBounds.left < clipRect.left) {
+		srcX = clipRect.left - destBounds.left;
+		destBounds.left = clipRect.left;
 	}
-	if (destBounds.top < 0) {
-		srcY = -destBounds.top;
-		destBounds.top = 0;
+	if (destBounds.top < clipRect.top) {
+		srcY = clipRect.top - destBounds.top;
+		destBounds.top = clipRect.top;
 	}
-	if (destBounds.right > destSurface.w)
-		destBounds.right = destSurface.w;
-	if (destBounds.bottom > destSurface.h)
-		destBounds.bottom = destSurface.h;
+	if (destBounds.right > clipRect.right)
+		destBounds.right = clipRect.right;
+	if (destBounds.bottom > clipRect.bottom)
+		destBounds.bottom = clipRect.bottom;
 
 	if (destBounds.isValidRect() && !((destBounds.right < 0) || (destBounds.bottom < 0)
 		|| (destBounds.left >= destSurface.w) || (destBounds.top >= destSurface.h))) {
@@ -624,8 +646,15 @@ void GfxSurface::copyFrom(GfxSurface &src, Rect srcBounds, Rect destBounds, Regi
 					if (!priorityRegion || !priorityRegion->contains(Common::Point(
 							xp + g_globals->_sceneManager._scene->_sceneBounds.left,
 							destBounds.top + y + g_globals->_sceneManager._scene->_sceneBounds.top))) {
-						if (*tempSrc != src._transColor)
-							*tempDest = *tempSrc;
+						if (*tempSrc != src._transColor) {
+							if (shadowMap) {
+								// Using a shadow map, so translate the dest pixel using the mapping array
+								*tempDest = shadowMap[*tempDest];
+							} else {
+								// Otherwise, it's a standard pixel copy
+								*tempDest = *tempSrc;
+							}
+						}
 					}
 					++tempSrc;
 					++tempDest;
@@ -703,6 +732,11 @@ GfxElement::GfxElement() {
 	_owner = NULL;
 	_keycode = 0;
 	_flags = 0;
+
+	_fontNumber = 0;
+	_color1 = 0;
+	_color2 = 0;
+	_color3 = 0;
 }
 
 void GfxElement::setDefaults() {
@@ -790,35 +824,58 @@ void GfxElement::drawFrame() {
 				lineP++;
 			}
 		}
+
+		// Draw the edge frame
+		// Outer frame border
+		surface.hLine(tempRect.left + 2, tempRect.top, tempRect.right - 2, 0);
+		surface.hLine(tempRect.left + 2, tempRect.bottom, tempRect.right - 2, 0);
+		surface.vLine(tempRect.left, tempRect.top + 2, tempRect.bottom - 2, 0);
+		surface.vLine(tempRect.right, tempRect.top + 2, tempRect.bottom - 2, 0);
+		*((byte *)surface.getBasePtr(tempRect.left + 1, tempRect.top + 1)) = 0;
+		*((byte *)surface.getBasePtr(tempRect.right - 1, tempRect.top + 1)) = 0;
+		*((byte *)surface.getBasePtr(tempRect.left + 1, tempRect.bottom - 1)) = 0;
+		*((byte *)surface.getBasePtr(tempRect.right - 1, tempRect.bottom - 1)) = 0;
+
+		// Inner frame border
+		surface.hLine(tempRect.left + 2, tempRect.top + 1, tempRect.right - 2, R2_GLOBALS._frameEdgeColor);
+		surface.hLine(tempRect.left + 2, tempRect.bottom - 1, tempRect.right - 2, R2_GLOBALS._frameEdgeColor);
+		surface.vLine(tempRect.left + 1, tempRect.top + 2, tempRect.bottom - 2, R2_GLOBALS._frameEdgeColor);
+		surface.vLine(tempRect.right - 1, tempRect.top + 2, tempRect.bottom - 2, R2_GLOBALS._frameEdgeColor);
+		*((byte *)surface.getBasePtr(tempRect.left + 2, tempRect.top + 2)) = R2_GLOBALS._frameEdgeColor;
+		*((byte *)surface.getBasePtr(tempRect.right - 2, tempRect.top + 2)) = R2_GLOBALS._frameEdgeColor;
+		*((byte *)surface.getBasePtr(tempRect.left + 2, tempRect.bottom - 2)) = R2_GLOBALS._frameEdgeColor;
+		*((byte *)surface.getBasePtr(tempRect.right - 2, tempRect.bottom - 2)) = R2_GLOBALS._frameEdgeColor;
+
 		gfxManager.unlockSurface();
+		gfxManager.getSurface().addDirtyRect(tempRect);
 
 	} else {
-		// Fill dialog content with specified background colour
+		// Fill dialog content with specified background color
 		gfxManager.fillRect(tempRect, _colors.background);
+
+		--tempRect.bottom; --tempRect.right;
+		gfxManager.fillArea(tempRect.left, tempRect.top, bgColor);
+		gfxManager.fillArea(tempRect.left, tempRect.bottom, fgColor);
+		gfxManager.fillArea(tempRect.right, tempRect.top, fgColor);
+		gfxManager.fillArea(tempRect.right, tempRect.bottom, fgColor);
+
+		tempRect.collapse(-1, -1);
+		gfxManager.fillRect2(tempRect.left + 1, tempRect.top, tempRect.width() - 1, 1, bgColor);
+		gfxManager.fillRect2(tempRect.left, tempRect.top + 1, 1, tempRect.height() - 1, bgColor);
+		gfxManager.fillRect2(tempRect.left + 1, tempRect.bottom, tempRect.width() - 1, 1, fgColor);
+		gfxManager.fillRect2(tempRect.right, tempRect.top + 1, 1, tempRect.height() - 1, fgColor);
+
+		gfxManager.fillArea(tempRect.left, tempRect.top, 0);
+		gfxManager.fillArea(tempRect.left, tempRect.bottom, 0);
+		gfxManager.fillArea(tempRect.right, tempRect.top, 0);
+		gfxManager.fillArea(tempRect.right, tempRect.bottom, 0);
+
+		tempRect.collapse(-1, -1);
+		gfxManager.fillRect2(tempRect.left + 2, tempRect.top, tempRect.width() - 3, 1, 0);
+		gfxManager.fillRect2(tempRect.left, tempRect.top + 2, 1, tempRect.height() - 3, 0);
+		gfxManager.fillRect2(tempRect.left + 2, tempRect.bottom, tempRect.width() - 3, 1, 0);
+		gfxManager.fillRect2(tempRect.right, tempRect.top + 2, 1, tempRect.height() - 3, 0);
 	}
-
-	--tempRect.bottom; --tempRect.right;
-	gfxManager.fillArea(tempRect.left, tempRect.top, bgColor);
-	gfxManager.fillArea(tempRect.left, tempRect.bottom, fgColor);
-	gfxManager.fillArea(tempRect.right, tempRect.top, fgColor);
-	gfxManager.fillArea(tempRect.right, tempRect.bottom, fgColor);
-
-	tempRect.collapse(-1, -1);
-	gfxManager.fillRect2(tempRect.left + 1, tempRect.top, tempRect.width() - 1, 1, bgColor);
-	gfxManager.fillRect2(tempRect.left, tempRect.top + 1, 1, tempRect.height() - 1, bgColor);
-	gfxManager.fillRect2(tempRect.left + 1, tempRect.bottom, tempRect.width() - 1, 1, fgColor);
-	gfxManager.fillRect2(tempRect.right, tempRect.top + 1, 1, tempRect.height() - 1, fgColor);
-
-	gfxManager.fillArea(tempRect.left, tempRect.top, 0);
-	gfxManager.fillArea(tempRect.left, tempRect.bottom, 0);
-	gfxManager.fillArea(tempRect.right, tempRect.top, 0);
-	gfxManager.fillArea(tempRect.right, tempRect.bottom, 0);
-
-	tempRect.collapse(-1, -1);
-	gfxManager.fillRect2(tempRect.left + 2, tempRect.top, tempRect.width() - 3, 1, 0);
-	gfxManager.fillRect2(tempRect.left, tempRect.top + 2, 1, tempRect.height() - 3, 0);
-	gfxManager.fillRect2(tempRect.left + 2, tempRect.bottom, tempRect.width() - 3, 1, 0);
-	gfxManager.fillRect2(tempRect.right, tempRect.top + 2, 1, tempRect.height() - 3, 0);
 
 	gfxManager.unlockSurface();
 }
@@ -1188,8 +1245,9 @@ GfxButton *GfxDialog::execute(GfxButton *defaultButton) {
 }
 
 void GfxDialog::setPalette() {
-	if (g_vm->getGameID() == GType_BlueForce) {
-		g_globals->_scenePalette.loadPalette(2);
+	if (g_vm->getGameID() != GType_Ringworld) {
+		if (g_vm->getGameID() == GType_BlueForce)
+			g_globals->_scenePalette.loadPalette(2);
 		g_globals->_scenePalette.setPalette(0, 1);
 		g_globals->_scenePalette.setPalette(g_globals->_gfxColors.background, 1);
 		g_globals->_scenePalette.setPalette(g_globals->_gfxColors.foreground, 1);
@@ -1322,15 +1380,26 @@ void GfxManager::copyFrom(GfxSurface &src, int destX, int destY) {
 	_surface.copyFrom(src, destX, destY);
 }
 
+void GfxManager::copyFrom(GfxSurface &src, const Rect &srcBounds, const Rect &destBounds) {
+	_surface.setBounds(_bounds);
+
+	_surface.copyFrom(src, srcBounds, destBounds);
+}
+
 /*--------------------------------------------------------------------------*/
 
 
 GfxFont::GfxFont() {
-	_fontNumber = (g_vm->getFeatures() & GF_DEMO) ? 0 : 50;
+	if ((g_vm->getGameID() == GType_Ringworld) && (g_vm->getFeatures() & GF_DEMO))
+		_fontNumber = 0;
+	else
+		_fontNumber = 50;
 	_numChars = 0;
 	_bpp = 0;
 	_fontData = NULL;
 	_fillFlag = false;
+
+	_gfxManager = nullptr;
 }
 
 GfxFont::~GfxFont() {

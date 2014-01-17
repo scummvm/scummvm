@@ -1483,7 +1483,7 @@ void IMuseInternal::initMT32(MidiDriver *midi) {
 }
 
 void IMuseInternal::initGM(MidiDriver *midi) {
-	byte buffer[11];
+	byte buffer[12];
 	int i;
 
 	// General MIDI System On message
@@ -1509,7 +1509,7 @@ void IMuseInternal::initGM(MidiDriver *midi) {
 		midi->sysEx(buffer, 9);
 		debug(2, "GS SysEx: GS Reset");
 		_system->delayMillis(200);
-		
+
 		// Set global Master Tune to 442.0kHz, as on the MT-32
 		memcpy(&buffer[4], "\x40\x00\x00\x00\x04\x04\x0F\x29", 8);
 		midi->sysEx(buffer, 12);
@@ -1540,7 +1540,7 @@ void IMuseInternal::initGM(MidiDriver *midi) {
 		// Set Channels 1-16 Reverb to 64, which is the
 		// equivalent of MT-32 default Reverb Level 5
 		for (i = 0; i < 16; ++i)
-			midi->send((64   << 16) | (91 << 8) | (0xB0 | i));
+			midi->send((64 << 16) | (91 << 8) | (0xB0 | i));
 		debug(2, "GM Controller 91 Change: Channels 1-16 Reverb Level is 64");
 
 		// Set Channels 1-16 Pitch Bend Sensitivity to

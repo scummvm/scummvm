@@ -89,7 +89,7 @@ public:
 	virtual bool handleMouseWheel(int delta);
 	virtual bool handleMouse(TMouseEvent event, TMouseButton button);
 	virtual bool handleKeypress(Common::Event *event, bool printable = false);
-	virtual int getHeight();
+	virtual int32 getHeight();
 	bool setCursor(const char *filename);
 	bool setActiveCursor(const char *filename);
 	bool cleanup();
@@ -142,6 +142,6 @@ public:
 	virtual const char *scToString() override;
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

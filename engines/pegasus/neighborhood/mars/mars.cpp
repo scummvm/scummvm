@@ -2011,7 +2011,7 @@ void Mars::dropItemIntoRoom(Item *item, Hotspot *dropSpot) {
 
 void Mars::robotTiredOfWaiting() {
 	if (GameState.getCurrentRoomAndView() == MakeRoomView(kMars48, kEast)) {
-		if (_attackingItem) {
+		if (!_attackingItem) {
 			startExtraSequence(kMars48RobotKillsPlayer, kExtraCompletedFlag, kFilterNoInput);
 			loadLoopSound2("");
 		} else {

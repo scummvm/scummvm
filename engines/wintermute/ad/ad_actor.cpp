@@ -119,7 +119,7 @@ AdActor::~AdActor() {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdActor::loadFile(const char *filename) {
-	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
+	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
 		_gameRef->LOG(0, "AdActor::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
@@ -179,7 +179,7 @@ TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF(ANIMATION)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-bool AdActor::loadBuffer(byte *buffer, bool complete) {
+bool AdActor::loadBuffer(char *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(ACTOR)
 	TOKEN_TABLE(X)
@@ -219,12 +219,12 @@ bool AdActor::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE(ANIMATION)
 	TOKEN_TABLE_END
 
-	byte *params;
+	char *params;
 	int cmd;
 	BaseParser parser;
 
 	if (complete) {
-		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_ACTOR) {
+		if (parser.getCommand(&buffer, commands, &params) != TOKEN_ACTOR) {
 			_gameRef->LOG(0, "'ACTOR' keyword expected.");
 			return STATUS_FAILED;
 		}
@@ -234,55 +234,55 @@ bool AdActor::loadBuffer(byte *buffer, bool complete) {
 	AdGame *adGame = (AdGame *)_gameRef;
 	AdSpriteSet *spr = nullptr;
 	int ar = 0, ag = 0, ab = 0, alpha = 0;
-	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
+	while ((cmd = parser.getCommand(&buffer, commands, &params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
-			if (DID_FAIL(loadFile((char *)params))) {
+			if (DID_FAIL(loadFile(params))) {
 				cmd = PARSERR_GENERIC;
 			}
 			break;
 
 		case TOKEN_X:
-			parser.scanStr((char *)params, "%d", &_posX);
+			parser.scanStr(params, "%d", &_posX);
 			break;
 
 		case TOKEN_Y:
-			parser.scanStr((char *)params, "%d", &_posY);
+			parser.scanStr(params, "%d", &_posY);
 			break;
 
 		case TOKEN_NAME:
-			setName((char *)params);
+			setName(params);
 			break;
 
 		case TOKEN_CAPTION:
-			setCaption((char *)params);
+			setCaption(params);
 			break;
 
 		case TOKEN_FONT:
-			setFont((char *)params);
+			setFont(params);
 			break;
 
 		case TOKEN_SCALABLE:
-			parser.scanStr((char *)params, "%b", &_zoomable);
+			parser.scanStr(params, "%b", &_zoomable);
 			break;
 
 		case TOKEN_ROTABLE:
 		case TOKEN_ROTATABLE:
-			parser.scanStr((char *)params, "%b", &_rotatable);
+			parser.scanStr(params, "%b", &_rotatable);
 			break;
 
 		case TOKEN_REGISTRABLE:
 		case TOKEN_INTERACTIVE:
-			parser.scanStr((char *)params, "%b", &_registrable);
+			parser.scanStr(params, "%b", &_registrable);
 			break;
 
 		case TOKEN_SHADOWABLE:
 		case TOKEN_COLORABLE:
-			parser.scanStr((char *)params, "%b", &_shadowable);
+			parser.scanStr(params, "%b", &_shadowable);
 			break;
 
 		case TOKEN_ACTIVE:
-			parser.scanStr((char *)params, "%b", &_active);
+			parser.scanStr(params, "%b", &_active);
 			break;
 
 		case TOKEN_WALK:
@@ -348,7 +348,7 @@ bool AdActor::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_SCRIPT:
-			addScript((char *)params);
+			addScript(params);
 			break;
 
 		case TOKEN_CURSOR:
@@ -362,12 +362,12 @@ bool AdActor::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_SOUND_VOLUME:
-			parser.scanStr((char *)params, "%d", &_sFXVolume);
+			parser.scanStr(params, "%d", &_sFXVolume);
 			break;
 
 		case TOKEN_SCALE: {
 			int s;
-			parser.scanStr((char *)params, "%d", &s);
+			parser.scanStr(params, "%d", &s);
 			_scale = (float)s;
 
 		}
@@ -375,14 +375,14 @@ bool AdActor::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_RELATIVE_SCALE: {
 			int s;
-			parser.scanStr((char *)params, "%d", &s);
+			parser.scanStr(params, "%d", &s);
 			_relativeScale = (float)s;
 
 		}
 		break;
 
 		case TOKEN_SOUND_PANNING:
-			parser.scanStr((char *)params, "%b", &_autoSoundPanning);
+			parser.scanStr(params, "%b", &_autoSoundPanning);
 			break;
 
 		case TOKEN_PROPERTY:
@@ -432,15 +432,15 @@ bool AdActor::loadBuffer(byte *buffer, bool complete) {
 		break;
 
 		case TOKEN_IGNORE_ITEMS:
-			parser.scanStr((char *)params, "%b", &_ignoreItems);
+			parser.scanStr(params, "%b", &_ignoreItems);
 			break;
 
 		case TOKEN_ALPHA_COLOR:
-			parser.scanStr((char *)params, "%d,%d,%d", &ar, &ag, &ab);
+			parser.scanStr(params, "%d,%d,%d", &ar, &ag, &ab);
 			break;
 
 		case TOKEN_ALPHA:
-			parser.scanStr((char *)params, "%d", &alpha);
+			parser.scanStr(params, "%d", &alpha);
 			break;
 
 		case TOKEN_EDITOR_PROPERTY:
@@ -1319,29 +1319,29 @@ BaseSprite *AdActor::getTalkStanceOld(const char *stance) {
 bool AdActor::persist(BasePersistenceManager *persistMgr) {
 	AdTalkHolder::persist(persistMgr);
 
-	persistMgr->transfer(TMEMBER_INT(_dir));
+	persistMgr->transferSint32(TMEMBER_INT(_dir));
 	persistMgr->transferPtr(TMEMBER_PTR(_path));
-	persistMgr->transfer(TMEMBER(_pFCount));
-	persistMgr->transfer(TMEMBER(_pFStepX));
-	persistMgr->transfer(TMEMBER(_pFStepY));
-	persistMgr->transfer(TMEMBER(_pFX));
-	persistMgr->transfer(TMEMBER(_pFY));
+	persistMgr->transferSint32(TMEMBER(_pFCount));
+	persistMgr->transferDouble(TMEMBER(_pFStepX));
+	persistMgr->transferDouble(TMEMBER(_pFStepY));
+	persistMgr->transferDouble(TMEMBER(_pFX));
+	persistMgr->transferDouble(TMEMBER(_pFY));
 	persistMgr->transferPtr(TMEMBER_PTR(_standSprite));
 	_talkSprites.persist(persistMgr);
 	_talkSpritesEx.persist(persistMgr);
-	persistMgr->transfer(TMEMBER_INT(_targetDir));
-	persistMgr->transfer(TMEMBER_INT(_afterWalkDir));
+	persistMgr->transferSint32(TMEMBER_INT(_targetDir));
+	persistMgr->transferSint32(TMEMBER_INT(_afterWalkDir));
 	persistMgr->transferPtr(TMEMBER_PTR(_targetPoint));
 	persistMgr->transferPtr(TMEMBER_PTR(_turnLeftSprite));
 	persistMgr->transferPtr(TMEMBER_PTR(_turnRightSprite));
 	persistMgr->transferPtr(TMEMBER_PTR(_walkSprite));
 
 	persistMgr->transferPtr(TMEMBER_PTR(_animSprite2));
-	persistMgr->transfer(TMEMBER(_talkAnimName));
-	persistMgr->transfer(TMEMBER(_idleAnimName));
-	persistMgr->transfer(TMEMBER(_walkAnimName));
-	persistMgr->transfer(TMEMBER(_turnLeftAnimName));
-	persistMgr->transfer(TMEMBER(_turnRightAnimName));
+	persistMgr->transferString(TMEMBER(_talkAnimName));
+	persistMgr->transferString(TMEMBER(_idleAnimName));
+	persistMgr->transferString(TMEMBER(_walkAnimName));
+	persistMgr->transferString(TMEMBER(_turnLeftAnimName));
+	persistMgr->transferString(TMEMBER(_turnRightAnimName));
 
 	_anims.persist(persistMgr);
 
@@ -1376,7 +1376,7 @@ TDirection AdActor::angleToDirection(int angle) {
 
 
 //////////////////////////////////////////////////////////////////////////
-int AdActor::getHeight() {
+int32 AdActor::getHeight() {
 	// if no current sprite is set, set some
 	if (_currentSprite == nullptr) {
 		if (_standSprite) {
@@ -1410,20 +1410,20 @@ bool AdActor::mergeAnims(const char *animsFilename) {
 	TOKEN_TABLE_END
 
 
-	byte *fileBuffer = BaseFileManager::getEngineInstance()->readWholeFile(animsFilename);
+	char *fileBuffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(animsFilename);
 	if (fileBuffer == nullptr) {
 		_gameRef->LOG(0, "AdActor::MergeAnims failed for file '%s'", animsFilename);
 		return STATUS_FAILED;
 	}
 
-	byte *buffer = fileBuffer;
-	byte *params;
+	char *buffer = fileBuffer;
+	char *params;
 	int cmd;
 	BaseParser parser;
 
 	bool ret = STATUS_OK;
 
-	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
+	while ((cmd = parser.getCommand(&buffer, commands, &params)) > 0) {
 		switch (cmd) {
 		case TOKEN_ANIMATION: {
 			AdSpriteSet *anim = new AdSpriteSet(_gameRef, this);
@@ -1457,4 +1457,4 @@ bool AdActor::playAnim(const char *filename) {
 	return AdTalkHolder::playAnim(filename);
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

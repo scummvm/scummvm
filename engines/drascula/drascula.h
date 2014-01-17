@@ -38,6 +38,8 @@
 
 #include "engines/savestate.h"
 
+#include "drascula/console.h"
+
 #include "audio/mixer.h"
 
 #include "engines/engine.h"
@@ -313,8 +315,6 @@ static const int interf_y[] = { 51, 51, 51, 51, 83, 83, 83 };
 
 struct RoomHandlers;
 
-class Console;
-
 class DrasculaEngine : public Engine {
 protected:
 	// Engine APIs
@@ -403,7 +403,7 @@ public:
 	int actorFrames[8];
 
 	int previousMusic, roomMusic;
-	int roomNumber;
+	int _roomNumber;
 	char roomDisk[20];
 	char currentData[20];
 	int numRoomObjs;
@@ -428,18 +428,17 @@ public:
 	int flags[NUM_FLAGS];
 
 	int frame_y;
-	int curX, curY, characterMoved, curDirection, trackProtagonist, num_frame;
+	int curX, curY, characterMoved, curDirection, trackProtagonist, _characterFrame;
 	int hare_se_ve;		// TODO: what is this for?
 	int roomX, roomY, checkFlags;
 	int doBreak;
 	int stepX, stepY;
 	int curHeight, curWidth, feetHeight;
-	int talkHeight, talkWidth;
 	int floorX1, floorY1, floorX2, floorY2;
 	int lowerLimit, upperLimit;
 	int trackFinal, walkToObject;
 	int objExit;
-	int timeDiff, startTime;
+	int _startTime;
 	int hasAnswer;
 	int savedTime;
 	int breakOut;
@@ -454,14 +453,11 @@ public:
 	int framesWithoutAction;
 	int term_int;
 	int currentChapter;
-	int loadedDifferentChapter;
+	bool _loadedDifferentChapter;
 	int _currentSaveSlot;
 	int _color;
 	int musicStopped;
-	int mouseX;
-	int mouseY;
-	int leftMouseButton;
-	int rightMouseButton;
+	int _mouseX, _mouseY, _leftMouseButton, _rightMouseButton;
 
 	Common::KeyState _keyBuffer[KEYBUFSIZE];
 	int _keyBufferHead;
@@ -661,7 +657,7 @@ public:
 	void animation_3_1();		// John talks with the bartender to book a room
 	void animation_4_1();		// John talks with the pianist
 	//
-	void animation_2_2();		// John enters the chapel via the window 
+	void animation_2_2();		// John enters the chapel via the window
 	void animation_4_2();		// John talks with the blind man (closeup)
 	void animation_5_2();		// John breaks the chapel window with the pike
 	void animation_6_2();		// The blind man (closeup) thanks John for giving him money and hands him the sickle
@@ -728,10 +724,11 @@ public:
 	void update_62_pre();
 	void update_102();
 
+	Console *_console;
+	GUI::Debugger *getDebugger() { return _console; }
+
 private:
 	int _lang;
-
-	Console *_console;
 
 	CharInfo *_charMap;
 	int _charMapSize;

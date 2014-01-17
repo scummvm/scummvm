@@ -104,8 +104,6 @@ public:
 		return true;
 	}
 
-	static Graphics::Surface *scale(const Graphics::Surface &srcImage, int xSize, int ySize);
-
 	void setIsTransparent(bool isTransparent) { _isTransparent = isTransparent; }
 	virtual bool isSolid() const { return !_isTransparent; }
 
@@ -119,7 +117,6 @@ private:
 	Graphics::Surface *_backSurface;
 
 	void checkForTransparency();
-	static int *scaleLine(int size, int srcSize);
 };
 
 } // End of namespace Sword25

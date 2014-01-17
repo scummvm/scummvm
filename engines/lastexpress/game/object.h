@@ -37,17 +37,17 @@ public:
 
 	struct Object : Common::Serializable {                         // All fields should be saved as bytes
 		EntityIndex entity;
-		ObjectLocation location;
-		CursorStyle cursor;
-		CursorStyle cursor2;
-		ObjectLocation location2;
+		ObjectLocation status;
+		CursorStyle windowCursor;
+		CursorStyle handleCursor;
+		ObjectModel model;
 
 		Object() {
 			entity = kEntityPlayer;
-			location = kObjectLocationNone;
-			cursor = kCursorHandKnock;
-			cursor2 = kCursorHandKnock;
-			location2 = kObjectLocationNone;
+			status = kObjectLocationNone;
+			windowCursor = kCursorHandKnock;
+			handleCursor = kCursorHandKnock;
+			model = kObjectModelNone;
 		}
 
 		Common::String toString();
@@ -55,18 +55,18 @@ public:
 		// Serializable
 		void saveLoadWithSerializer(Common::Serializer &s) {
 			s.syncAsByte(entity);
-			s.syncAsByte(location);
-			s.syncAsByte(cursor);
-			s.syncAsByte(cursor2);
-			s.syncAsByte(location2);
+			s.syncAsByte(status);
+			s.syncAsByte(windowCursor);
+			s.syncAsByte(handleCursor);
+			s.syncAsByte(model);
 		}
 	};
 
 	Objects(LastExpressEngine *engine);
 
 	const Object get(ObjectIndex index) const;
-	void update(ObjectIndex index, EntityIndex entity, ObjectLocation location, CursorStyle cursor, CursorStyle cursor2);
-	void updateLocation2(ObjectIndex index, ObjectLocation location2);
+	void update(ObjectIndex index, EntityIndex entity, ObjectLocation status, CursorStyle cursor, CursorStyle cursor2);
+	void updateModel(ObjectIndex index, ObjectModel model);
 
 	// Serializable
 	void saveLoadWithSerializer(Common::Serializer &s);

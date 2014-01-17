@@ -166,16 +166,16 @@ bool BaseSound::persist(BasePersistenceManager *persistMgr) {
 
 	persistMgr->transferPtr(TMEMBER_PTR(_gameRef));
 
-	persistMgr->transfer(TMEMBER(_soundFilename));
-	persistMgr->transfer(TMEMBER(_soundLooping));
-	persistMgr->transfer(TMEMBER(_soundPaused));
-	persistMgr->transfer(TMEMBER(_soundFreezePaused));
-	persistMgr->transfer(TMEMBER(_soundPlaying));
-	persistMgr->transfer(TMEMBER(_soundPosition));
-	persistMgr->transfer(TMEMBER(_soundPrivateVolume));
-	persistMgr->transfer(TMEMBER(_soundStreamed));
-	persistMgr->transfer(TMEMBER_INT(_soundType));
-	persistMgr->transfer(TMEMBER(_soundLoopStart));
+	persistMgr->transferString(TMEMBER(_soundFilename));
+	persistMgr->transferBool(TMEMBER(_soundLooping));
+	persistMgr->transferBool(TMEMBER(_soundPaused));
+	persistMgr->transferBool(TMEMBER(_soundFreezePaused));
+	persistMgr->transferBool(TMEMBER(_soundPlaying));
+	persistMgr->transferUint32(TMEMBER(_soundPosition));
+	persistMgr->transferSint32(TMEMBER(_soundPrivateVolume));
+	persistMgr->transferBool(TMEMBER(_soundStreamed));
+	persistMgr->transferSint32(TMEMBER_INT(_soundType));
+	persistMgr->transferUint32(TMEMBER(_soundLoopStart));
 
 	return STATUS_OK;
 }
@@ -289,4 +289,4 @@ bool BaseSound::applyFX(TSFXType type, float param1, float param2, float param3,
 	return STATUS_OK;
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

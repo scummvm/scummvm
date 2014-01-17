@@ -240,6 +240,14 @@ public class ScummVMActivity extends Activity {
 		return false;
 	}
 
+	@Override
+	public boolean onGenericMotionEvent(final MotionEvent e) {
+		if (_events != null)
+			return _events.onGenericMotionEvent(e);
+
+		return false;
+	}
+
 	private void showKeyboard(boolean show) {
 		SurfaceView main_surface = (SurfaceView)findViewById(R.id.main_surface);
 		InputMethodManager imm = (InputMethodManager)

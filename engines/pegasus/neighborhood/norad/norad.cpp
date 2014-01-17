@@ -241,7 +241,9 @@ void Norad::setUpAirMask() {
 }
 
 void Norad::checkAirMask() {
-	if (g_airMask && g_airMask->isAirFilterOn()) {
+	// WORKAROUND: The original game forgot to handle the case where the canister would
+	// be removed, leading to the timer remaining active.
+	if (!GameState.getNoradGassed() || (g_airMask && g_airMask->isAirFilterOn())) {
 		_airMaskTimer.stop();
 	} else if (GameState.getNoradGassed() && !_airMaskTimer.isRunning()) {
 		_airMaskTimer.setTime(0);

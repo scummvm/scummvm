@@ -129,7 +129,7 @@ void GfxMacIconBar::drawIcon(uint16 iconIndex, bool selected) {
 
 void GfxMacIconBar::drawEnabledImage(Graphics::Surface *surface, const Common::Rect &rect) {
 	if (surface)
-		g_system->copyRectToScreen(surface->pixels, surface->pitch, rect.left, rect.top, rect.width(), rect.height());
+		g_system->copyRectToScreen(surface->getPixels(), surface->pitch, rect.left, rect.top, rect.width(), rect.height());
 }
 
 void GfxMacIconBar::drawDisabledImage(Graphics::Surface *surface, const Common::Rect &rect) {
@@ -153,7 +153,7 @@ void GfxMacIconBar::drawDisabledImage(Graphics::Surface *surface, const Common::
 			*((byte *)newSurf.getBasePtr(j, i)) = 0;
 	}
 
-	g_system->copyRectToScreen(newSurf.pixels, newSurf.pitch, rect.left, rect.top, rect.width(), rect.height());
+	g_system->copyRectToScreen(newSurf.getPixels(), newSurf.pitch, rect.left, rect.top, rect.width(), rect.height());
 	newSurf.free();
 }
 
@@ -224,7 +224,7 @@ Graphics::Surface *GfxMacIconBar::createImage(uint32 iconIndex, bool isSelected)
 }
 
 void GfxMacIconBar::remapColors(Graphics::Surface *surf, const byte *palette) {
-	byte *pixels = (byte *)surf->pixels;
+	byte *pixels = (byte *)surf->getPixels();
 
 	// Remap to the screen palette
 	for (uint16 i = 0; i < surf->w * surf->h; i++) {

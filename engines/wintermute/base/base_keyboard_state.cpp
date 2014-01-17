@@ -221,12 +221,12 @@ bool BaseKeyboardState::persist(BasePersistenceManager *persistMgr) {
 	//if (!persistMgr->getIsSaving()) cleanup();
 	BaseScriptable::persist(persistMgr);
 
-	persistMgr->transfer(TMEMBER(_currentAlt));
-	persistMgr->transfer(TMEMBER(_currentCharCode));
-	persistMgr->transfer(TMEMBER(_currentControl));
-	persistMgr->transfer(TMEMBER(_currentKeyData));
-	persistMgr->transfer(TMEMBER(_currentPrintable));
-	persistMgr->transfer(TMEMBER(_currentShift));
+	persistMgr->transferBool(TMEMBER(_currentAlt));
+	persistMgr->transferUint32(TMEMBER(_currentCharCode));
+	persistMgr->transferBool(TMEMBER(_currentControl));
+	persistMgr->transferUint32(TMEMBER(_currentKeyData));
+	persistMgr->transferBool(TMEMBER(_currentPrintable));
+	persistMgr->transferBool(TMEMBER(_currentShift));
 
 	if (!persistMgr->getIsSaving()) {
 		_keyStates = new uint8[323]; // Hardcoded size for the common/keyboard.h enum
@@ -276,17 +276,21 @@ uint32 BaseKeyboardState::keyCodeToVKey(Common::Event *event) {
 }
 
 enum VKeyCodes {
-	kVkSpace = 32,
-	kVkLeft  = 37,
-	kVkUp    = 38,
-	kVkRight = 39,
-	kVkDown  = 40
+	kVkEscape = 27,
+	kVkSpace  = 32,
+	kVkLeft   = 37,
+	kVkUp     = 38,
+	kVkRight  = 39,
+	kVkDown   = 40
 };
 
 //////////////////////////////////////////////////////////////////////////
 Common::KeyCode BaseKeyboardState::vKeyToKeyCode(uint32 vkey) {
 	// todo
 	switch (vkey) {
+	case kVkEscape:
+		return Common::KEYCODE_ESCAPE;
+		break;
 	case kVkSpace:
 		return Common::KEYCODE_SPACE;
 		break;
@@ -310,4 +314,4 @@ Common::KeyCode BaseKeyboardState::vKeyToKeyCode(uint32 vkey) {
 
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

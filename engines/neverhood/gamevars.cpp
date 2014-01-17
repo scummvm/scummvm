@@ -75,7 +75,7 @@ uint32 GameVars::getSubVar(uint32 nameHash, uint32 subNameHash) {
 		int16 subVarIndex = findSubVarIndex(varIndex, subNameHash);
 		if (subVarIndex != -1)
 			value = _vars[subVarIndex].value;
-	} 
+	}
 	return value;
 }
 

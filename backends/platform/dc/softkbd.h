@@ -40,6 +40,7 @@ class SoftKeyboard : public Interactive
 
  public:
   SoftKeyboard(const OSystem_Dreamcast *os);
+  virtual ~SoftKeyboard() {}
 
   void draw(float x, float y, int transp = 0);
   int key(int k, byte &shiftFlags);

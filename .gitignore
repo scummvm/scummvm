@@ -93,6 +93,7 @@ project.xcworkspace
 /dists/msvc*/*.SAV
 /dists/msvc*/*.dat
 /dists/msvc*/*.dll
+/dists/msvc*/test_runner.cpp
 
 /doc/*.aux
 /doc/*.dvi
@@ -103,6 +104,9 @@ project.xcworkspace
 /doc/*.toc
 
 /plugins
+
+/engines/plugins_table.h
+/engines/engines.mk
 
 /test/runner
 /test/runner.cpp
@@ -116,12 +120,14 @@ project.xcworkspace
 /devtools/create_kyradat/create_kyradat
 /devtools/create_lure/create_lure
 /devtools/create_mads/create_mads
+/devtools/create_mortdat/create_mortdat
 /devtools/create_neverhood/create_neverhood
 /devtools/create_project/create_project
 /devtools/create_teenagent/create_teenagent
 /devtools/create_tony/create_tony
 /devtools/create_toon/create_toon
 /devtools/create_translations/create_translations
+/devtools/extract_mort/extract_mort
 /devtools/qtable/qtable
 /devtools/skycpt/skycpt
 
@@ -165,6 +171,8 @@ ipch/
 [Rr]elease32/
 [Dd]ebug64/
 [Rr]elease64/
+LLVM32/
+LLVM64/
 
 #Ignore Qt Creator project files
 ScummVM.config
@@ -174,3 +182,10 @@ ScummVM.includes
 
 #Ignore Komodo IDE/Edit project files
 *.komodoproject
+
+#Ignore Mac DS_Store files
+.DS_Store
+
+#Ignore MS Visual C++ temporary files/subdirectories (except create_project.bat)
+dists/msvc*/**
+!dists/msvc*/create_project.bat

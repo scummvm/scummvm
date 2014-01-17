@@ -16,7 +16,7 @@ all: $(EXECUTABLE) plugins
 PLUGINS :=
 MODULES := test devtools base $(MODULES)
 
--include $(srcdir)/engines/engines.mk
+-include engines/engines.mk
 
 # After the game specific modules follow the shared modules
 MODULES += \
@@ -79,7 +79,7 @@ $(EXECUTABLE): $(OBJS)
 	$(QUIET_LINK)$(LD) $(LDFLAGS) $(PRE_OBJS_FLAGS) $+ $(POST_OBJS_FLAGS) $(LIBS) -o $@
 
 distclean: clean clean-devtools
-	$(RM) config.h config.mk config.log
+	$(RM) config.h config.mk config.log engines/engines.mk engines/plugins_table.h
 
 clean:
 	$(RM_REC) $(DEPDIRS)
@@ -147,7 +147,7 @@ endif
 # recreate them (which it can't), and in particular from looking for potential
 # source files. This can save quite a bit of disk access time.
 .PHONY: $(wildcard $(addsuffix /*.d,$(DEPDIRS))) $(addprefix $(srcdir)/, $(addsuffix /module.mk,$(MODULES))) \
-	$(srcdir)/$(port_mk) $(srcdir)/rules.mk $(srcdir)/engines/engines.mk
+	$(srcdir)/$(port_mk) $(srcdir)/rules.mk
 
 ######################################################################
 # Get the current version information
@@ -252,6 +252,9 @@ DIST_FILES_ENGINEDATA+=kyra.dat
 endif
 ifdef ENABLE_LURE
 DIST_FILES_ENGINEDATA+=lure.dat
+endif
+ifdef ENABLE_MORTEVIELLE
+DIST_FILES_ENGINEDATA+=mort.dat
 endif
 ifdef ENABLE_NEVERHOOD
 DIST_FILES_ENGINEDATA+=neverhood.dat

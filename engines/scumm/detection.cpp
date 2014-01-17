@@ -1223,8 +1223,8 @@ const char *ScummMetaEngine::getOriginalCopyright() const {
 }
 
 namespace Scumm {
-	extern bool getSavegameName(Common::InSaveFile *in, Common::String &desc, int heversion);
-}
+bool getSavegameName(Common::InSaveFile *in, Common::String &desc, int heversion);
+} // End of namespace Scumm
 
 int ScummMetaEngine::getMaximumSaveSlot() const { return 99; }
 
@@ -1262,25 +1262,21 @@ void ScummMetaEngine::removeSaveState(const char *target, int slot) const {
 }
 
 SaveStateDescriptor ScummMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
-	Common::String filename = ScummEngine::makeSavegameName(target, slot, false);
-	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(filename);
-
-	if (!in)
-		return SaveStateDescriptor();
-
 	Common::String saveDesc;
-	Scumm::getSavegameName(in, saveDesc, 0);	// FIXME: heversion?!?
-	delete in;
+	Graphics::Surface *thumbnail = nullptr;
+	SaveStateMetaInfos infos;
+	memset(&infos, 0, sizeof(infos));
+	SaveStateMetaInfos *infoPtr = &infos;
 
-	// TODO: Cleanup
-	Graphics::Surface *thumbnail = ScummEngine::loadThumbnailFromSlot(target, slot);
+	// FIXME: heversion?!?
+	if (!ScummEngine::querySaveMetaInfos(target, slot, 0, saveDesc, thumbnail, infoPtr)) {
+		return SaveStateDescriptor();
+	}
 
 	SaveStateDescriptor desc(slot, saveDesc);
 	desc.setThumbnail(thumbnail);
 
-	SaveStateMetaInfos infos;
-	memset(&infos, 0, sizeof(infos));
-	if (ScummEngine::loadInfosFromSlot(target, slot, &infos)) {
+	if (infoPtr) {
 		int day = (infos.date >> 24) & 0xFF;
 		int month = (infos.date >> 16) & 0xFF;
 		int year = infos.date & 0xFFFF;

@@ -106,7 +106,9 @@ void SdlEventSource::processMouseEvent(Common::Event &event, int x, int y) {
 }
 
 void SdlEventSource::handleKbdMouse() {
-	uint32 curTime = g_system->getMillis();
+	// Skip recording of these events
+	uint32 curTime = g_system->getMillis(true);
+
 	if (curTime >= _km.last_time + _km.delay_time) {
 		_km.last_time = curTime;
 		if (_km.x_down_count == 1) {
@@ -389,8 +391,17 @@ bool SdlEventSource::dispatchSDLEvent(SDL_Event &ev, Common::Event &event) {
 		return false;
 
 	case SDL_VIDEORESIZE:
-		if (_graphicsManager)
+		if (_graphicsManager) {
 			_graphicsManager->notifyResize(ev.resize.w, ev.resize.h);
+
+			// If the screen changed, send an Common::EVENT_SCREEN_CHANGED
+			int screenID = ((OSystem_SDL *)g_system)->getGraphicsManager()->getScreenChangeID();
+			if (screenID != _lastScreenID) {
+				_lastScreenID = screenID;
+				event.type = Common::EVENT_SCREEN_CHANGED;
+				return true;
+			}
+		}
 		return false;
 
 	case SDL_QUIT:

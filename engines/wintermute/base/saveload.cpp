@@ -48,6 +48,7 @@ bool SaveLoad::loadGame(const Common::String &filename, BaseGame *gameRef) {
 
 	bool ret;
 
+	gameRef->stopVideo();
 	gameRef->_renderer->initSaveLoad(false);
 
 	gameRef->_loadInProgress = true;
@@ -201,4 +202,4 @@ bool SaveLoad::emptySaveSlot(int slot) {
 }
 
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

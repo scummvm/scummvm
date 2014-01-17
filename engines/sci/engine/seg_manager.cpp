@@ -28,7 +28,8 @@
 namespace Sci {
 
 
-SegManager::SegManager(ResourceManager *resMan) {
+SegManager::SegManager(ResourceManager *resMan, ScriptPatcher *scriptPatcher)
+	: _resMan(resMan), _scriptPatcher(scriptPatcher) {
 	_heap.push_back(0);
 
 	_clonesSegId = 0;
@@ -43,8 +44,6 @@ SegManager::SegManager(ResourceManager *resMan) {
 	_arraysSegId = 0;
 	_stringSegId = 0;
 #endif
-
-	_resMan = resMan;
 
 	createClassTable();
 }
@@ -262,8 +261,14 @@ const char *SegManager::getObjectName(reg_t pos) {
 	const char *name = 0;
 	if (nameReg.getSegment())
 		name  = derefString(nameReg);
-	if (!name)
-		return "<invalid name>";
+	if (!name) {
+		// Crazy Nick Laura Bow is missing some object names needed for the static
+		// selector vocabulary
+		if (g_sci->getGameId() == GID_CNICK_LAURABOW && pos == make_reg(1, 0x2267))
+			return "Character";
+		else
+			return "<invalid name>";
+	}
 
 	return name;
 }
@@ -977,7 +982,7 @@ int SegManager::instantiateScript(int scriptNum) {
 		scr = allocateScript(scriptNum, &segmentId);
 	}
 
-	scr->load(scriptNum, _resMan);
+	scr->load(scriptNum, _resMan, _scriptPatcher);
 	scr->initializeLocals(this);
 	scr->initializeClasses(this);
 	scr->initializeObjects(this, segmentId);

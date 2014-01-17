@@ -233,7 +233,7 @@ void OSystem_Android::initViewport() {
 	GLCALL(glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST));
 
 	GLCALL(glEnable(GL_BLEND));
-	GLCALL(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+	GLCALL(glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA));
 
 	GLCALL(glEnableClientState(GL_VERTEX_ARRAY));
 	GLCALL(glEnableClientState(GL_TEXTURE_COORD_ARRAY));
@@ -552,7 +552,7 @@ Graphics::Surface *OSystem_Android::lockScreen() {
 	GLTHREADCHECK;
 
 	Graphics::Surface *surface = _game_texture->surface();
-	assert(surface->pixels);
+	assert(surface->getPixels());
 
 	return surface;
 }
@@ -645,7 +645,7 @@ void OSystem_Android::grabOverlay(void *buf, int pitch) {
 	assert(surface->format.bytesPerPixel == sizeof(uint16));
 
 	byte *dst = (byte *)buf;
-	const byte *src = (const byte *)surface->pixels;
+	const byte *src = (const byte *)surface->getPixels();
 	uint h = surface->h;
 
 	do {
@@ -726,7 +726,7 @@ void OSystem_Android::setMouseCursor(const void *buf, uint w, uint h,
 		_mouse_keycolor = keycolor;
 
 		p = _mouse_texture_palette->palette() + _mouse_keycolor * 2;
-		WRITE_UINT16(p, READ_UINT16(p) & ~1);
+		WRITE_UINT16(p, 0);
 	}
 
 	if (w == 0 || h == 0)
@@ -779,7 +779,7 @@ void OSystem_Android::setCursorPaletteInternal(const byte *colors,
 		WRITE_UINT16(p, pf.RGBToColor(colors[0], colors[1], colors[2]));
 
 	p = _mouse_texture_palette->palette() + _mouse_keycolor * 2;
-	WRITE_UINT16(p, READ_UINT16(p) & ~1);
+	WRITE_UINT16(p, 0);
 }
 
 void OSystem_Android::setCursorPalette(const byte *colors,
@@ -821,7 +821,7 @@ void OSystem_Android::disableCursorPalette() {
 		}
 
 		byte *p = _mouse_texture_palette->palette() + _mouse_keycolor * 2;
-		WRITE_UINT16(p, READ_UINT16(p) & ~1);
+		WRITE_UINT16(p, 0);
 	}
 }
 

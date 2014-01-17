@@ -61,7 +61,7 @@ private:
 	bool _currentPrintable;
 	uint32 _currentKeyData;
 	uint32 _currentCharCode;
-	
+
 	bool _currentShift;
 	bool _currentAlt;
 	bool _currentControl;
@@ -71,6 +71,6 @@ private:
 	Common::KeyCode vKeyToKeyCode(uint32 vkey); //TODO, reimplement using ScummVM-backend
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

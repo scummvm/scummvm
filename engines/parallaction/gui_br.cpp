@@ -196,6 +196,11 @@ class MainMenuInputState_BR : public MenuInputState {
 public:
 	MainMenuInputState_BR(Parallaction_br *vm, MenuInputHelper *helper) : MenuInputState("mainmenu", helper), _vm(vm)  {
 	    memset(_lines, 0, sizeof(_lines));
+
+		_menuStrings = 0;
+		_options = 0;
+		_availItems = 0;
+		_selection = 0;
 	}
 
 	~MainMenuInputState_BR() {

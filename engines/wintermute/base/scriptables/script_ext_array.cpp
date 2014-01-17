@@ -214,7 +214,7 @@ bool SXArray::scSetProperty(const char *name, ScValue *value) {
 bool SXArray::persist(BasePersistenceManager *persistMgr) {
 	BaseScriptable::persist(persistMgr);
 
-	persistMgr->transfer(TMEMBER(_length));
+	persistMgr->transferSint32(TMEMBER(_length));
 	persistMgr->transferPtr(TMEMBER_PTR(_values));
 
 	return STATUS_OK;
@@ -249,4 +249,4 @@ bool SXArray::push(ScValue *val) {
 	return STATUS_OK;
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

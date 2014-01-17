@@ -84,7 +84,7 @@ public:
 	 * @param a the alpha component to fade too.
 	 * @param rect the portion of the screen to fade (if nullptr, the entire screen will be faded).
 	 */
-	virtual void fadeToColor(byte r, byte g, byte b, byte a, Common::Rect *rect = nullptr) = 0;
+	virtual void fadeToColor(byte r, byte g, byte b, byte a) = 0;
 
 	virtual bool drawLine(int x1, int y1, int x2, int y2, uint32 color); 	// Unused outside indicator-display
 	virtual bool drawRect(int x1, int y1, int x2, int y2, uint32 color, int width = 1); 	// Unused outside indicator-display
@@ -228,6 +228,6 @@ private:
 
 BaseRenderer *makeOSystemRenderer(BaseGame *inGame); // Implemented in BRenderSDL.cpp
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

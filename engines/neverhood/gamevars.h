@@ -160,7 +160,7 @@ enum {
 	VA_HAS_KEY					= 0x0090EA95,
 	VA_IS_KEY_INSERTED			= 0x08D0AB11,
 	VA_LOCKS_DISABLED			= 0x14800353,
-	V_END_	
+	V_END_
 };
 
 struct GameVar {

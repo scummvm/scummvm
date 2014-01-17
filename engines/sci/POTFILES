@@ -1,0 +1,2 @@
+engines/sci/detection.cpp
+engines/sci/engine/kfile.cpp

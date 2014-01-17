@@ -305,7 +305,7 @@ int MidiDriver_EAS::open() {
 		warning("error opening EAS dump file");
 #endif
 
-	g_system->getMixer()->playStream(Audio::Mixer::kMusicSoundType,
+	g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType,
 										&_soundHandle, this, -1,
 										Audio::Mixer::kMaxChannelVolume, 0,
 										DisposeAfterUse::NO, true);

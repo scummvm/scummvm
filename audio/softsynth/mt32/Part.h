@@ -51,13 +51,11 @@ private:
 
 	unsigned int activePartialCount;
 	PatchCache patchCache[4];
-	PolyList freePolys;
 	PolyList activePolys;
 
 	void setPatch(const PatchParam *patch);
 	unsigned int midiKeyToKey(unsigned int midiKey);
 
-	void abortPoly(Poly *poly);
 	bool abortFirstPoly(unsigned int key);
 
 protected:
@@ -110,8 +108,10 @@ public:
 	virtual void setTimbre(TimbreParam *timbre);
 	virtual unsigned int getAbsTimbreNum() const;
 	const char *getCurrentInstr() const;
+	const Poly *getFirstActivePoly() const;
 	unsigned int getActivePartialCount() const;
 	unsigned int getActiveNonReleasingPartialCount() const;
+	Synth *getSynth() const;
 
 	const MemParams::PatchTemp *getPatchTemp() const;
 

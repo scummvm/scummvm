@@ -28,7 +28,7 @@ namespace Neverhood {
 Scene::Scene(NeverhoodEngine *vm, Module *parentModule)
 	: Entity(vm, 0), _parentModule(parentModule), _dataResource(vm), _hitRects(NULL),
 	_mouseCursorWasVisible(true) {
-	
+
 	_isKlaymenBusy = false;
 	_doConvertMessages = false;
 	_messageList = NULL;
@@ -50,10 +50,15 @@ Scene::Scene(NeverhoodEngine *vm, Module *parentModule)
 	_smackerPlayer = NULL;
 	_isMessageListBusy = false;
 	_messageValue = -1;
-	
+	_messageListStatus = 0;
+	_messageListCount = 0;
+	_messageListIndex = 0;
+
+	_backgroundFileHash = _cursorFileHash = 0;
+
 	SetUpdateHandler(&Scene::update);
 	SetMessageHandler(&Scene::handleMessage);
-	
+
 	_vm->_screen->clearRenderQueue();
 }
 
@@ -71,7 +76,7 @@ Scene::~Scene() {
 		delete *iter;
 
 	// Don't delete surfaces since they always belong to an entity
-	
+
 	// Purge the resources after each scene
 	_vm->_res->purgeResources();
 
@@ -84,7 +89,7 @@ void Scene::draw() {
 	} else {
 		for (Common::Array<BaseSurface*>::iterator iter = _surfaces.begin(); iter != _surfaces.end(); iter++)
 			(*iter)->draw();
-	}	
+	}
 }
 
 void Scene::addEntity(Entity *entity) {
@@ -99,7 +104,7 @@ void Scene::addEntity(Entity *entity) {
 	if (insertIndex >= 0)
 		_entities.insert_at(insertIndex, entity);
 	else
-		_entities.push_back(entity);		
+		_entities.push_back(entity);
 }
 
 bool Scene::removeEntity(Entity *entity) {
@@ -108,7 +113,7 @@ bool Scene::removeEntity(Entity *entity) {
 			_entities.remove_at(index);
 			return true;
 		}
-	return false; 
+	return false;
 }
 
 void Scene::addSurface(BaseSurface *surface) {
@@ -124,7 +129,7 @@ void Scene::addSurface(BaseSurface *surface) {
 		if (insertIndex >= 0)
 			_surfaces.insert_at(insertIndex, surface);
 		else
-			_surfaces.push_back(surface);		
+			_surfaces.push_back(surface);
 	}
 }
 
@@ -135,7 +140,7 @@ bool Scene::removeSurface(BaseSurface *surface) {
 			return true;
 		}
 	}
-	return false; 
+	return false;
 }
 
 void Scene::printSurfaces(Console *con) {
@@ -188,6 +193,7 @@ Background *Scene::addBackground(Background *background) {
 
 void Scene::setBackground(uint32 fileHash) {
 	_background = addBackground(new Background(_vm, fileHash, 0, 0));
+	_backgroundFileHash = fileHash;
 }
 
 void Scene::changeBackground(uint32 fileHash) {
@@ -212,18 +218,21 @@ Sprite *Scene::insertStaticSprite(uint32 fileHash, int surfacePriority) {
 }
 
 void Scene::insertScreenMouse(uint32 fileHash, const NRect *mouseRect) {
-	NRect rect(-1, -1, -1, -1);
+	NRect rect = NRect::make(-1, -1, -1, -1);
 	if (mouseRect)
 		rect = *mouseRect;
 	insertMouse(new Mouse(_vm, fileHash, rect));
+	_cursorFileHash = fileHash;
 }
 
 void Scene::insertPuzzleMouse(uint32 fileHash, int16 x1, int16 x2) {
 	insertMouse(new Mouse(_vm, fileHash, x1, x2));
+	_cursorFileHash = fileHash;
 }
 
 void Scene::insertNavigationMouse(uint32 fileHash, int type) {
 	insertMouse(new Mouse(_vm, fileHash, type));
+	_cursorFileHash = fileHash;
 }
 
 void Scene::showMouse(bool visible) {
@@ -246,12 +255,12 @@ void Scene::update() {
 	if (_mouseClicked) {
 		if (_klaymen) {
 			if (_canAcceptInput &&
-				_klaymen->hasMessageHandler() && 
+				_klaymen->hasMessageHandler() &&
 				sendMessage(_klaymen, 0x1008, 0) != 0 &&
 				queryPositionSprite(_mouseClickPos.x, _mouseClickPos.y)) {
 				_mouseClicked = false;
 			} else if (_canAcceptInput &&
-				_klaymen->hasMessageHandler() && 
+				_klaymen->hasMessageHandler() &&
 				sendMessage(_klaymen, 0x1008, 0) != 0) {
 				_mouseClicked = !queryPositionRectList(_mouseClickPos.x, _mouseClickPos.y);
 			}
@@ -262,7 +271,7 @@ void Scene::update() {
 
 	processMessageList();
 
-	// Update all entities		
+	// Update all entities
 	for (Common::Array<Entity*>::iterator iter = _entities.begin(); iter != _entities.end(); iter++)
 		(*iter)->handleUpdate();
 
@@ -274,16 +283,16 @@ void Scene::leaveScene(uint32 result) {
 
 uint32 Scene::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	switch (messageNum) {
-	case 0x0000: // mouse moved
+	case NM_MOUSE_MOVE:
 		if (_mouseCursor && _mouseCursor->hasMessageHandler())
 			sendMessage(_mouseCursor, 0x4002, param);
 		break;
-	case 0x0001: // mouse clicked
+	case NM_MOUSE_CLICK:
 		_mouseClicked = true;
 		_mouseClickPos = param.asPoint();
 		break;
 	case 0x0006:
-		sendMessage(_parentModule, 0x1009, param);		
+		sendMessage(_parentModule, 0x1009, param);
 		break;
 	case 0x1006:
 		// Sent by Klaymen when its animation sequence has finished
@@ -292,7 +301,7 @@ uint32 Scene::handleMessage(int messageNum, const MessageParam &param, Entity *s
 			if (_messageListIndex == _messageListCount) {
 				// If the current message list was processed completely,
 				// sent Klaymen into the idle state.
-				sendMessage(_klaymen, 0x4004, 0);
+				sendMessage(_klaymen, NM_KLAYMEN_STAND_IDLE, 0);
 			} else {
 				// Else continue with the next message in the current message list
 				processMessageList();
@@ -305,23 +314,21 @@ uint32 Scene::handleMessage(int messageNum, const MessageParam &param, Entity *s
 		if (_isKlaymenBusy) {
 			_isKlaymenBusy = false;
 			_messageList = NULL;
-			sendMessage(_klaymen, 0x4004, 0);
+			sendMessage(_klaymen, NM_KLAYMEN_STAND_IDLE, 0);
 		}
 		break;
-	case 0x101D:
-		// Hide the mouse cursor
+	case NM_MOUSE_HIDE:
 		if (_mouseCursor) {
 			_mouseCursorWasVisible = _mouseCursor->getSurface()->getVisible();
 			_mouseCursor->getSurface()->setVisible(false);
 		}
 		break;
-	case 0x101E:
-		// Show the mouse cursor
+	case NM_MOUSE_SHOW:
 		if (_mouseCursorWasVisible && _mouseCursor) {
 			_mouseCursor->getSurface()->setVisible(true);
 		}
 		break;
-	case 0x1022:
+	case NM_PRIORITY_CHANGE:
 		// Set the sender's surface priority
 		setSurfacePriority(((Sprite*)sender)->getSurface(), param.asInteger());
 		break;
@@ -332,7 +339,7 @@ uint32 Scene::handleMessage(int messageNum, const MessageParam &param, Entity *s
 bool Scene::queryPositionSprite(int16 mouseX, int16 mouseY) {
 	for (uint i = 0; i < _collisionSprites.size(); i++) {
 		Sprite *sprite = _collisionSprites[i];
-		if (sprite->hasMessageHandler() && sprite->isPointInside(mouseX, mouseY) && 
+		if (sprite->hasMessageHandler() && sprite->isPointInside(mouseX, mouseY) &&
 			sendPointMessage(sprite, 0x1011, _mouseClickPos) != 0) {
 			return true;
 		}
@@ -412,8 +419,8 @@ void Scene::processMessageList() {
 		_messageList2 = NULL;
 		_messageListStatus = 0;
 	}
-	
-	if (_messageList && _klaymen) {	
+
+	if (_messageList && _klaymen) {
 
 #if 0
 		debug("MessageList: %p, %d", (void*)_messageList, _messageList->size());
@@ -423,11 +430,11 @@ void Scene::processMessageList() {
 		}
 		debug("--------------------------------");
 #endif
-	
+
 		while (_messageList && _messageListIndex < _messageListCount && !_isKlaymenBusy) {
 			uint32 messageNum = (*_messageList)[_messageListIndex].messageNum;
 			uint32 messageParam = (*_messageList)[_messageListIndex].messageValue;
-			
+
 			++_messageListIndex;
 			if (_messageListIndex == _messageListCount)
 				sendMessage(_klaymen, 0x1021, 0);
@@ -442,7 +449,7 @@ void Scene::processMessageList() {
 				_isKlaymenBusy = true;
 				sendPointMessage(_klaymen, 0x4001, _mouseClickPos);
 			} else if (messageNum == 0x100D) {
-				if (this->hasMessageHandler() && sendMessage(this, 0x100D, messageParam) != 0)
+				if (this->hasMessageHandler() && sendMessage(this, NM_ANIMATION_START, messageParam) != 0)
 					continue;
 			} else if (messageNum == 0x101A) {
 				_messageListStatus = 0;
@@ -460,7 +467,7 @@ void Scene::processMessageList() {
 				if (_klaymen->hasMessageHandler() && sendMessage(_klaymen, messageNum, messageParam) != 0) {
 					_isKlaymenBusy = false;
 				}
-			} 
+			}
 			if (_messageListIndex == _messageListCount) {
 				_canAcceptInput = true;
 				_messageList = NULL;
@@ -469,14 +476,14 @@ void Scene::processMessageList() {
 	}
 
 	_isMessageListBusy = false;
-	
+
 }
 
 void Scene::cancelMessageList() {
 	_isKlaymenBusy = false;
 	_messageList = NULL;
 	_canAcceptInput = true;
-	sendMessage(_klaymen, 0x4004, 0);
+	sendMessage(_klaymen, NM_KLAYMEN_STAND_IDLE, 0);
 }
 
 void Scene::setRectList(uint32 id) {
@@ -531,7 +538,7 @@ uint16 Scene::convertMessageNum(uint32 messageNum) {
 	case 0x42002200:
 		return 0x4004;
 	case 0x428D4894:
-		return 0x101A;	
+		return 0x101A;
 	}
 	return 0x1000;
 }
@@ -546,7 +553,7 @@ HitRect *Scene::findHitRectAtPos(int16 x, int16 y) {
 		for (HitRectList::iterator it = _hitRects->begin(); it != _hitRects->end(); it++)
 			if ((*it).rect.contains(x, y))
 				return &(*it);
-	return &kDefaultHitRect; 
+	return &kDefaultHitRect;
 }
 
 void Scene::addCollisionSprite(Sprite *sprite) {
@@ -561,7 +568,7 @@ void Scene::addCollisionSprite(Sprite *sprite) {
 	if (insertIndex >= 0)
 		_collisionSprites.insert_at(insertIndex, sprite);
 	else
-		_collisionSprites.push_back(sprite);		
+		_collisionSprites.push_back(sprite);
 }
 
 void Scene::removeCollisionSprite(Sprite *sprite) {
@@ -583,7 +590,7 @@ void Scene::checkCollision(Sprite *sprite, uint16 flags, int messageNum, uint32 
 		if ((sprite->getFlags() & flags) && collSprite->checkCollision(sprite->getCollisionBounds())) {
 			sprite->sendMessage(collSprite, messageNum, messageParam);
 		}
-	}	
+	}
 }
 
 void Scene::insertMouse(Mouse *mouseCursor) {
@@ -591,6 +598,29 @@ void Scene::insertMouse(Mouse *mouseCursor) {
 		deleteSprite((Sprite**)&_mouseCursor);
 	_mouseCursor = mouseCursor;
 	addEntity(_mouseCursor);
+}
+
+// StaticScene
+
+StaticScene::StaticScene(NeverhoodEngine *vm, Module *parentModule, uint32 backgroundFileHash, uint32 cursorFileHash)
+	: Scene(vm, parentModule) {
+
+	SetMessageHandler(&StaticScene::handleMessage);
+
+	setBackground(backgroundFileHash);
+	setPalette(backgroundFileHash);
+	insertPuzzleMouse(cursorFileHash, 20, 620);
+}
+
+uint32 StaticScene::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	Scene::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case NM_MOUSE_CLICK:
+		if (param.asPoint().x <= 20 || param.asPoint().x >= 620)
+			leaveScene(0);
+		break;
+	}
+	return 0;
 }
 
 } // End of namespace Neverhood

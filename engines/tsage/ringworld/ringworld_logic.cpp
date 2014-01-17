@@ -270,6 +270,11 @@ bool DisplayObject::performAction(int action) {
 SceneArea::SceneArea() {
 	_savedArea = NULL;
 	_pt.x = _pt.y = 0;
+
+	_resNum = 0;
+	_rlbNum = 0;
+	_subNum = 0;
+	_actionId = 0;
 }
 
 SceneArea::~SceneArea() {

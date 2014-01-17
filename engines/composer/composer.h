@@ -23,7 +23,7 @@
 #ifndef COMPOSER_H
 #define COMPOSER_H
 
-#include "common/config-file.h"
+#include "common/ini-file.h"
 #include "common/random.h"
 #include "common/system.h"
 #include "common/debug.h"
@@ -34,11 +34,14 @@
 #include "engines/engine.h"
 #include "engines/util.h"
 
+#include "gui/debugger.h"
+
 #include "graphics/surface.h"
 
 #include "audio/mixer.h"
 
 #include "composer/resource.h"
+#include "composer/console.h"
 
 namespace Audio {
 	class QueuingAudioStream;
@@ -159,6 +162,9 @@ public:
 
 	const ComposerGameDescription *_gameDescription;
 
+	Console *_console;
+	GUI::Debugger *getDebugger() { return _console; }
+
 private:
 	Common::RandomSource *_rnd;
 
@@ -174,7 +180,7 @@ private:
 	Common::List<Sprite> _sprites;
 
 	uint _directoriesToStrip;
-	Common::ConfigFile _bookIni;
+	Common::INIFile _bookIni;
 	Common::String _bookGroup;
 	Common::List<Library> _libraries;
 	Common::Array<PendingPageChange> _pendingPageChanges;

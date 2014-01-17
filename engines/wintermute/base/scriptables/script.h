@@ -176,6 +176,6 @@ public:
 	virtual const char *dbgGetFilename();
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

@@ -115,7 +115,7 @@ void TimeBase::stop() {
 void TimeBase::pause() {
 	if (isRunning() && !_paused) {
 		_pausedRate = getRate();
-		stop();
+		_rate = 0;
 		_paused = true;
 		_pauseStart = g_system->getMillis();
 	}
@@ -123,7 +123,7 @@ void TimeBase::pause() {
 
 void TimeBase::resume() {
 	if (_paused) {
-		setRate(_pausedRate);
+		_rate = _pausedRate;
 		_paused = false;
 
 		if (isRunning())
@@ -333,6 +333,7 @@ void TimeBaseCallBack::releaseCallBack() {
 
 void TimeBaseCallBack::disposeCallBack() {
 	_timeBase = 0;
+	_trigger = kTriggerNone;
 	_hasBeenTriggered = false;
 }
 

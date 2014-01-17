@@ -480,6 +480,8 @@ bool ScEngine::tick() {
 
 //////////////////////////////////////////////////////////////////////////
 bool ScEngine::tickUnbreakable() {
+	ScScript *oldScript = _currentScript;
+
 	// execute unbreakable scripts
 	for (uint32 i = 0; i < _scripts.size(); i++) {
 		if (!_scripts[i]->_unbreakable) {
@@ -491,9 +493,12 @@ bool ScEngine::tickUnbreakable() {
 			_scripts[i]->executeInstruction();
 		}
 		_scripts[i]->finish();
-		_currentScript = nullptr;
+		_currentScript = oldScript;
 	}
-	removeFinishedScripts();
+
+	// NB: Don't remove finished scripts here since we could be recursively
+	// executing scripts. Doing so could invalidate the outer iteration in
+	// ::tick() over _scripts.
 
 	return STATUS_OK;
 }
@@ -723,4 +728,4 @@ void ScEngine::dumpStats() {
 	    }*/
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

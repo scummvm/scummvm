@@ -34,6 +34,7 @@ class String;
 enum Language {
 	ZH_CNA,
 	ZH_TWN,
+	HR_HRV,
 	CZ_CZE,
 	NL_NLD,
 	EN_ANY,     // Generic English (when only one game version exist)
@@ -43,11 +44,11 @@ enum Language {
 	DE_DEU,
 	GR_GRE,
 	HE_ISR,
-	HR_HRV,
 	HU_HUN,
 	IT_ITA,
 	JA_JPN,
 	KO_KOR,
+	LV_LAT,
 	NB_NOR,
 	PL_POL,
 	PT_BRA,

@@ -48,13 +48,7 @@ public:
 	// Win32 API bindings
 	static bool getCursorPos(Point32 *lpPoint);
 	static bool setCursorPos(int x, int y);
-	static bool showWindow(int nCmdShow);
 
-	static void setCapture();
-	static bool releaseCapture();
-
-	static bool setRectEmpty(Rect32 *lprc);
-	static bool isRectEmpty(const Rect32 *lprc);
 	static bool ptInRect(Rect32 *lprc, Point32 p);
 	static bool setRect(Rect32 *lprc, int left, int top, int right, int bottom);
 	static bool intersectRect(Rect32 *lprcDst, const Rect32 *lprcSrc1, const Rect32 *lprcSrc2);
@@ -70,6 +64,6 @@ private:
 	static WintermuteEngine *_engineRef;
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

@@ -48,7 +48,6 @@ Scene::Scene(TeenAgentEngine *vm) : _vm(vm), intro(false), _id(0), ons(0),
 	onEnabled = true;
 
 	memset(palette, 0, sizeof(palette));
-	background.pixels = 0;
 
 	FilePack varia;
 	varia.open("varia.res");
@@ -74,8 +73,7 @@ Scene::Scene(TeenAgentEngine *vm) : _vm(vm), intro(false), _id(0), ons(0),
 }
 
 Scene::~Scene() {
-	if (background.pixels)
-		background.free();
+	background.free();
 
 	delete[] ons;
 	ons = 0;
@@ -372,7 +370,7 @@ void Scene::init(int id, const Common::Point &pos) {
 	for (byte i = 0; i < 4; ++i)
 		customAnimation[i].free();
 
-	if (background.pixels == NULL)
+	if (background.getPixels() == NULL)
 		background.create(kScreenWidth, kScreenHeight, Graphics::PixelFormat::createFormatCLUT8());
 
 	warp(pos);
@@ -416,7 +414,7 @@ void Scene::init(int id, const Common::Point &pos) {
 	if (nowPlaying != _vm->res->dseg.get_byte(dsAddr_currentMusic))
 		_vm->music->load(_vm->res->dseg.get_byte(dsAddr_currentMusic));
 
-	_vm->_system->copyRectToScreen(background.pixels, background.pitch, 0, 0, background.w, background.h);
+	_vm->_system->copyRectToScreen(background.getPixels(), background.pitch, 0, 0, background.w, background.h);
 	setPalette(0);
 }
 
@@ -642,8 +640,8 @@ bool Scene::render(bool tickGame, bool tickMark, uint32 messageDelta) {
 			return true;
 		}
 
-		if (background.pixels && debugFeatures.feature[DebugFeatures::kShowBack]) {
-			_vm->_system->copyRectToScreen(background.pixels, background.pitch, 0, 0, background.w, background.h);
+		if (background.getPixels() && debugFeatures.feature[DebugFeatures::kShowBack]) {
+			_vm->_system->copyRectToScreen(background.getPixels(), background.pitch, 0, 0, background.w, background.h);
 		} else
 			_vm->_system->fillScreen(0);
 

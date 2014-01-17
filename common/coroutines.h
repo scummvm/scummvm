@@ -128,7 +128,7 @@ public:
  */
 #define CORO_BEGIN_CONTEXT  \
 	struct CoroContextTag : Common::CoroBaseContext { \
-		CoroContextTag() : CoroBaseContext(SCUMMVM_CURRENT_FUNCTION) {} \
+ CoroContextTag() : CoroBaseContext(SCUMMVM_CURRENT_FUNCTION) { DUMMY = 0; } \
 		int DUMMY
 
 /**
@@ -146,6 +146,7 @@ public:
 #define CORO_BEGIN_CODE(x) \
 	if (&coroParam == &Common::nullContext) assert(!Common::nullContext); \
 	if (!x) { coroParam = x = new CoroContextTag(); } \
+	x->DUMMY = 0; \
 	Common::CoroContextHolder tmpHolder(coroParam); \
 	switch (coroParam->_line) { case 0:;
 

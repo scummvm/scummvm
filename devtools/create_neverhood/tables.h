@@ -122,7 +122,7 @@ static const uint32 rectListOffsets[] = {
 	// Scene2406
 	1, 0x004B78C8,
 	1, 0x004B78D8,
-	// Scene2501	
+	// Scene2501
 	1, 0x004B2608,
 	// Scene2732
 	1, 0x004AE360,

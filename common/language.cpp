@@ -28,6 +28,7 @@ namespace Common {
 const LanguageDescription g_languages[] = {
 	{ "zh-cn", "zh_CN", "Chinese (China)", ZH_CNA },
 	{    "zh", "zh_TW", "Chinese (Taiwan)", ZH_TWN },
+	{    "hr", "hr_HR", "Croatian", HR_HRV },
 	{    "cz", "cs_CZ", "Czech", CZ_CZE },
 	{    "nl", "nl_NL", "Dutch", NL_NLD },
 	{    "en",    "en", "English", EN_ANY }, // Generic English (when only one game version exist)
@@ -38,11 +39,11 @@ const LanguageDescription g_languages[] = {
 	{    "gr", "el_GR", "Greek", GR_GRE },
 	{    "he", "he_IL", "Hebrew", HE_ISR },
 	{    "hb", "he_IL", "Hebrew", HE_ISR }, // Deprecated
-	{    "hr", "hr_HR", "Croatian", HR_HRV },
 	{    "hu", "hu_HU", "Hungarian", HU_HUN },
 	{    "it", "it_IT", "Italian", IT_ITA },
 	{    "jp", "ja_JP", "Japanese", JA_JPN },
 	{    "kr", "ko_KR", "Korean", KO_KOR },
+	{    "lv", "lv_LV", "Latvian", LV_LAT },
 	{    "nb", "nb_NO", "Norwegian Bokm\xE5l", NB_NOR }, // TODO Someone should verify the unix locale
 	{    "pl", "pl_PL", "Polish", PL_POL },
 	{    "br", "pt_BR", "Portuguese", PT_BRA },

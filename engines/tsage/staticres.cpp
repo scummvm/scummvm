@@ -162,7 +162,7 @@ char const *const BIKINI_HUT = "Bikini Hut";
 char const *const RADIO_BTN_LIST[8] = { "10-2 ", "10-4 ", "10-13", "10-15", "10-27", "10-35", "10-97", "10-98" };
 
 // Scene 570 computer messageS
-char const *const SCENE570_PASSWORD = "PASSWORD -> ";
+char const *const SCENE570_PASSWORD = "PASSWORD - }, ";
 char const *const SCENE570_C_DRIVE = "C:\\";
 char const *const SCENE570_RING = "RING";
 char const *const SCENE570_PROTO = "PROTO";
@@ -213,6 +213,14 @@ char const *const ACCESS_CODE_REQUIRED = "access code required";
 char const *const INVALID_ACCESS_CODE = "invalid access code";
 char const *const FOREIGN_OBJECT_EXTRACTED = "foreign object extracted";
 
+// Scene 1330/7 Options dialog messages
+char const *const AUTO_PLAY_ON = "Auto-Play is On";
+char const *const AUTO_PLAY_OFF = "Auto-Play is Off";
+char const *const START_NEW_CARD_GAME = "Start a new game";
+char const *const QUIT_CARD_GAME = "Quit Outpost Alpha";
+char const *const CONTINUE_CARD_GAME = "Continue Outpost Alpha";
+
+//
 char const *const HELP_MSG = "\x1\rRETURN TO\r RINGWORLD\x14";
 char const *const CHAR_TITLE = "\x01Select Character:";
 char const *const CHAR_QUINN_MSG = "  Quinn  ";
@@ -229,6 +237,7 @@ char const *const RESTORE_GAME = "Restore game";
 char const *const SHOW_CREDITS = "Show credits";
 char const *const PAUSE_GAME = "Pause game";
 char const *const RESUME_PLAY = "  Resume play  ";
+char const *const R2_RESTART_MSG = "Go to the beginning of game?";
 char const *const F2 = "F2";
 char const *const F3 = "F3";
 char const *const F4 = "F4";
@@ -244,7 +253,9 @@ char const *const USE_INTERCEPTOR = "Do you want to use your interceptor card?";
 char const *const USE_DOUBLE_AGENT = "Do you want to use your double agent?";
 char const *const NEED_INSTRUCTIONS = "Do you want instructions?";
 char const *const WRONG_ANSWER_MSG = "Wrong respond value sent.";
-const byte k562CC[] = {
+char const *const BUY_FULL_GAME_MSG = "To order the complete game, RETURN TO RINGWORLD, call 1-800-482-3766!";
+
+const byte scene1550JunkLocationsDefault[] = {
 	20, 7,  41, 6,
 	3,  6,  42, 11,
 	10, 15, 43, 6,
@@ -374,7 +385,7 @@ const byte k562CC[] = {
 	28, 18, 21, 1
 };
 
-const byte k5A4D6[] = {
+const byte scene1550AreaMap[] = {
 	2,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  3,
 	16, 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  18,
 	17, 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  19,
@@ -397,8 +408,8 @@ const byte k5A4D6[] = {
 	13, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 14
 };
 
-const byte k5A72E[] = {0,  98, 135, 183, 229, 81, 133, 185, 235, 75, 131, 187, 241, 70,  129, 190, 247};
-const byte k5A73F[] = {0,  42, 42,  42,  42,  67, 67,  67,  67,  92, 92,  92,  92,  116, 116, 116, 116};
+const byte scene1550JunkX[] = {0,  98, 135, 183, 229, 81, 133, 185, 235, 75, 131, 187, 241, 70,  129, 190, 247};
+const byte scene1550JunkY[] = {0,  42, 42,  42,  42,  67, 67,  67,  67,  92, 92,  92,  92,  116, 116, 116, 116};
 const byte k5A750[] = {
 	9, 10, 7, 13, 7, 8, 9,  7, 9, 10,
 	2, 3,  3, 2,  2, 2, 4,  3, 3, 4,
@@ -409,8 +420,8 @@ const byte k5A76D[] = {
 	3, 3,  3, 7,  3, 7, 3,  3, 3, 3,
 	3, 3,  3, 3,  3, 3, 3,  3, 3
 };
-const byte k5A78A[] = {0,  8,  15,  16,  12,  7,  18,  17,  13,  6,  19,  20,  14,  5,   11,  10,  9};
-const byte k5A79B[] = {
+const byte scene1550JunkRegions[] = {0,  8,  15,  16,  12,  7,  18,  17,  13,  6,  19,  20,  14,  5,   11,  10,  9};
+const byte scene1550SpecialAreas[] = {
 	23, 3,  1,
 	23, 4,  1,
 	26, 3,  1,
@@ -446,6 +457,201 @@ const byte k5A7F6[] = {
 	14, 8,  9,
 	15, 16, 1,
 	15, 10, 11
+};
+
+const BalloonRecord balloonData[] = {
+	{ 0, -2, 0 },
+	{ -2, 0, 0 },
+	{ -2, 0, 0 },
+	{ -2, 0, 0 },
+	{ -2, 0, 0 },
+	{ -2, 0, 0 },
+	{ -2, 0, 0 },
+	{ -2, 0, 0 },
+	{ 0, -2, 0 },
+	{ 0, 2, 0 },
+	{ 0, 2, 0 },
+	{ 0, 2, 0 },
+	{ 0, -2, 0 },
+	{ 0, -2, 0 },
+	{ 0, -2, 0 },
+	{ 0, 2, 0 },
+	{ 0, -2, 0 },
+	{ 0, 2, 0 },
+	{ 0, 2, 0 },
+	{ 0, 2, 0 },
+	{ 0, -2, 0 },
+	{ 0, -2, 0 },
+	{ 0, -2, 0 },
+	{ 0, 2, 0 },
+	{ 0, -2, 0 },
+	{ 0, 2, 0 },
+	{ 0, 2, 0 },
+	{ 0, 2, 0 },
+	{ 0, -2, 0 },
+	{ 0, -2, 0 },
+	{ 0, -2, 0 },
+	{ 0, 2, 0 },
+	{ 0, -2, 0 },
+	{ 0, 2, 0 },
+	{ 0, 2, 0 },
+	{ 0, 0, 1 },
+	{ 0, 0, 1 },
+	{ 0, -2, 0 },
+	{ 0, -2, 0 },
+	{ 0, 2, 0 },
+	{ 2, 0, 0 },
+	{ 2, 0, 0 },
+	{ 2, 0, 0 },
+	{ 2, 0, 0 },
+	{ 2, 0, 0 },
+	{ 2, 0, 0 },
+	{ 2, 0, 0 },
+	{ 0, 2, 0 },
+	{ 2, 0, 0 },
+	{ 2, 0, 0 },
+	{ 2, 0, 0 },
+	{ 2, 0, 0 },
+	{ 2, 0, 0 },
+	{ 2, 0, 0 },
+	{ 2, 0, 0 },
+	{ 0, 0, -1 },
+	{ 0, 2, 0 },
+	{ 0, -2, 0 },
+	{ 2, 0, 0 },
+	{ 0, -2, 0 },
+	{ 0, 2, 0 },
+	{ 0, 2, 0 },
+	{ 0, 2, 0 },
+	{ 0, 2, 0 },
+	{ 0, 2, 0 },
+	{ 0, -2, 0 },
+	{ 0, -2, 0 },
+	{ 0, 0, -1 },
+	{ 0, 0, 0 },
+	{ 0, 2, 0 },
+	{ 0, 2, 0 },
+	{ 0, 2, 0 },
+	{ 0, 2, 0 },
+	{ 0, -2, 0 },
+	{ 0, -2, 0 },
+	{ 0, 0, 0 },
+	{ 0, 0, -1 },
+	{ -2, 0, 0 },
+	{ 0, 2, 0 },
+	{ 0, 2, 0 },
+	{ 0, 2, 0 },
+	{ 0, -2, 0 },
+	{ 0, -2, 0 },
+	{ 0, -2, 0 },
+	{ 0, 2, 0 },
+	{ 0, 2, 0 },
+	{ 0, 2, 0 },
+	{ 0, 2, 0 },
+	{ 0, 2, 0 },
+	{ -2, 0, 0 },
+	{ -2, 0, 0 },
+	{ -2, 0, 0 },
+	{ -2, 0, 0 },
+	{ -2, 0, 0 },
+	{ -2, 0, 0 },
+	{ 0, 2, 0 },
+	{ 2, 0, 0 },
+	{ 0, 0, -1 },
+	{ -2, 0, 0 },
+	{ 0, 0, -1 },
+	{ -2, 0, 0 },
+	{ 0, 0, -1 },
+	{ 2, 0, 0 },
+	{ 0, 0, -1 },
+	{ 0, 2, 0 },
+	{ 0, -2, 0 },
+	{ 2, 0, 0 },
+	{ 0, 2, 0 },
+	{ 2, 0, 0 },
+	{ 2, 0, 0 },
+	{ 0, -2, 0 },
+	{ 0, 2, 0 },
+	{ 0, 2, 0 },
+	{ 0, -2, 0 },
+	{ 0, -2, 0 },
+	{ 0, 2, 0 },
+	{ 0, 2, 0 },
+	{ 0, 0, 0 },
+	{ 0, -2, 0 },
+	{ 0, 2, 0 },
+	{ 0, 2, 0 },
+	{ 0, 0, 1 },
+	{ 0, -2, 0 },
+	{ 0, 2, 0 },
+	{ 0, 2, 0 },
+	{ -2, 0, 0 },
+	{ -2, 0, 0 },
+	{ 0, 2, 0 },
+	{ 0, 2, 0 },
+	{ 0, 2, 0 },
+	{ 0, 0, 1 },
+	{ -2, 0, 0 },
+	{ 0, 2, 0 },
+	{ 0, -2, 0 },
+	{ 0, -2, 0 },
+	{ 0, 2, 0 },
+	{ 0, 2, 0 },
+	{ -2, 0, 0 },
+	{ 0, 2, 0 },
+	{ 0, 2, 0 },
+	{ -2, 0, 0 },
+	{ -2, 0, 0 },
+	{ -2, 0, 0 },
+	{ 0, 2, 0 },
+	{ 2, 0, 0 },
+	{ 2, 0, 0 },
+	{ 2, 0, 0 },
+	{ 2, 0, 0 },
+	{ 2, 0, 0 },
+	{ 2, 0, 0 },
+	{ 2, 0, 0 },
+	{ 0, -2, 0 },
+	{ 0, 2, 0 },
+	{ -2, 0, 0 },
+	{ 0, -2, 0 },
+	{ 0, -2, 0 },
+	{ -2, 0, 0 },
+	{ -2, 0, 0 },
+	{ -2, 0, 0 },
+	{ 0, 0, -1 },
+	{ 0, 2, 0 },
+	{ -2, 0, 0 },
+	{ 0, -2, 0 },
+	{ 0, -2, 0 },
+	{ 0, 0, -1 },
+	{ -2, 0, 0 },
+	{ 0, 2, 0 },
+	{ 0, -2, 0 },
+	{ 0, 2, 0 },
+	{ -2, 0, 0 },
+	{ 0, -2, 0 },
+	{ 2, 0, 0 },
+	{ 0, -2, 0 },
+	{ 0, 2, 0 },
+	{ 0, 2, 0 },
+	{ 0, -2, 0 },
+	{ 0, 2, 0 },
+	{ -2, 0, 0 },
+	{ -2, 0, 0 },
+	{ 0, 0, 0 },
+	{ 2, 0, 0 },
+	{ 0, -2, 0 },
+	{ 0, 2, 0 },
+	{ 0, -2, 0 },
+	{ 0, 2, 0 },
+	{ -2, 0, 0 },
+	{ -2, 0, 0 },
+	{ -2, 0, 0 },
+	{ -2, 0, 0 },
+	{ 0, -2, 0 },
+	{ 0, 2, 0 },
+	{ -2, 0, 0 }
 };
 
 } // End of namespace Ringworld2

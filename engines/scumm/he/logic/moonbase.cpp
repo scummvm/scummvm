@@ -39,6 +39,8 @@ public:
 int LogicHEmoonbase::versionID() {
 	if (_vm->_game.features & GF_DEMO)
 		return -100;
+	else if (strcmp(_vm->_game.variant, "1.1") == 0)
+		return 110;
 	else
 		return 100;
 }

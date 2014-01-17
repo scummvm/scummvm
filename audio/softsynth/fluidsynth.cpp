@@ -163,7 +163,7 @@ int MidiDriver_FluidSynth::open() {
 
 	Common::String interpolation = ConfMan.get("fluidsynth_misc_interpolation");
 	int interpMethod = FLUID_INTERP_4THORDER;
-	
+
 	if (interpolation == "none") {
 		interpMethod = FLUID_INTERP_NONE;
 	} else if (interpolation == "linear") {
@@ -184,8 +184,7 @@ int MidiDriver_FluidSynth::open() {
 
 	MidiDriver_Emulated::open();
 
-	// The MT-32 emulator uses kSFXSoundType here. I don't know why.
-	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_mixerSoundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
+	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_mixerSoundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 	return 0;
 }
 

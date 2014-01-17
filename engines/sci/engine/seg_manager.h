@@ -49,7 +49,7 @@ public:
 	/**
 	 * Initialize the segment manager.
 	 */
-	SegManager(ResourceManager *resMan);
+	SegManager(ResourceManager *resMan, ScriptPatcher *scriptPatcher);
 
 	/**
 	 * Deallocate all memory associated with the segment manager.
@@ -224,7 +224,7 @@ public:
 	 * Allocate a fresh chunk of the hunk
 	 * @param[in] size		Number of bytes to allocate for the hunk entry
 	 * @param[in] hunk_type	A descriptive string for the hunk entry, for
-	 *	 					debugging purposes
+	 *						debugging purposes
 	 * @return				The offset of the freshly allocated hunk entry
 	 */
 	reg_t allocateHunkEntry(const char *hunk_type, int size);
@@ -448,6 +448,7 @@ private:
 	Common::HashMap<int, SegmentId> _scriptSegMap;
 
 	ResourceManager *_resMan;
+	ScriptPatcher *_scriptPatcher;
 
 	SegmentId _clonesSegId; ///< ID of the (a) clones segment
 	SegmentId _listsSegId; ///< ID of the (a) list segment

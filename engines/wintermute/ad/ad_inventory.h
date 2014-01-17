@@ -47,6 +47,6 @@ public:
 	int32 _scrollOffset;
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

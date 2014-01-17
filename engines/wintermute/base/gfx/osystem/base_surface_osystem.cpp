@@ -37,6 +37,7 @@
 #include "graphics/decoders/jpeg.h"
 #include "graphics/decoders/tga.h"
 #include "engines/wintermute/graphics/transparent_surface.h"
+#include "engines/wintermute/graphics/transform_tools.h"
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
 #include "common/stream.h"
@@ -48,10 +49,11 @@ namespace Wintermute {
 BaseSurfaceOSystem::BaseSurfaceOSystem(BaseGame *inGame) : BaseSurface(inGame) {
 	_surface = new Graphics::Surface();
 	_alphaMask = nullptr;
-	_hasAlpha = true;
+	_alphaType = TransparentSurface::ALPHA_FULL;
 	_lockPixels = nullptr;
 	_lockPitch = 0;
 	_loaded = false;
+	_rotation = 0;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -70,22 +72,37 @@ BaseSurfaceOSystem::~BaseSurfaceOSystem() {
 	renderer->invalidateTicketsFromSurface(this);
 }
 
-bool hasTransparency(Graphics::Surface *surf) {
+TransparentSurface::AlphaType hasTransparencyType(const Graphics::Surface *surf) {
 	if (surf->format.bytesPerPixel != 4) {
-		warning("hasTransparency:: non 32 bpp surface passed as argument");
-		return false;
+		warning("hasTransparencyType:: non 32 bpp surface passed as argument");
+		return TransparentSurface::ALPHA_OPAQUE;
 	}
 	uint8 r, g, b, a;
+	bool seenAlpha = false;
+	bool seenFullAlpha = false;
 	for (int i = 0; i < surf->h; i++) {
+		if (seenFullAlpha) {
+			break;
+		}
 		for (int j = 0; j < surf->w; j++) {
-			uint32 pix = *(uint32 *)surf->getBasePtr(j, i);
+			uint32 pix = *(const uint32 *)surf->getBasePtr(j, i);
 			surf->format.colorToARGB(pix, a, r, g, b);
 			if (a != 255) {
-				return true;
+				seenAlpha = true;
+				if (a != 0) {
+					seenFullAlpha = true;
+					break;
+				}
 			}
 		}
 	}
-	return false;
+	if (seenFullAlpha) {
+		return TransparentSurface::ALPHA_FULL;
+	} else if (seenAlpha) {
+		return TransparentSurface::ALPHA_BINARY;
+	} else {
+		return TransparentSurface::ALPHA_OPAQUE;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -127,49 +144,46 @@ bool BaseSurfaceOSystem::finishLoad() {
 	_width = image->getSurface()->w;
 	_height = image->getSurface()->h;
 
-	bool isSaveGameGrayscale = scumm_strnicmp(_filename.c_str(), "savegame:", 9) == 0 && (_filename.c_str()[_filename.size() - 1] == 'g' || _filename.c_str()[_filename.size() - 1] == 'G');
+	bool isSaveGameGrayscale = _filename.matchString("savegame:*g", true);
 	if (isSaveGameGrayscale) {
 		warning("grayscaleConversion not yet implemented");
 		// FIBITMAP *newImg = FreeImage_ConvertToGreyscale(img); TODO
 	}
 
-	// no alpha, set color key
-	/*  if (surface->format.bytesPerPixel != 4)
-	        SDL_SetColorKey(surf, SDL_TRUE, SDL_MapRGB(surf->format, ck_red, ck_green, ck_blue));*/
-
-	// convert 32-bit BMPs to 24-bit or they appear totally transparent (does any app actually write alpha in BMP properly?)
-	// Well, actually, we don't convert via 24-bit as the color-key application overwrites the Alpha-channel anyhow.
 	_surface->free();
 	delete _surface;
 
 	bool needsColorKey = false;
 	bool replaceAlpha = true;
-	if (_filename.hasSuffix(".bmp") && image->getSurface()->format.bytesPerPixel == 4) {
-		_surface = image->getSurface()->convertTo(g_system->getScreenFormat(), image->getPalette());
-		needsColorKey = true;
-		replaceAlpha = false;
-	} else if (image->getSurface()->format.bytesPerPixel == 1 && image->getPalette()) {
-		_surface = image->getSurface()->convertTo(g_system->getScreenFormat(), image->getPalette());
-		needsColorKey = true;
-	} else if (image->getSurface()->format.bytesPerPixel >= 3 && image->getSurface()->format != g_system->getScreenFormat()) {
-		_surface = image->getSurface()->convertTo(g_system->getScreenFormat());
-		if (image->getSurface()->format.bytesPerPixel == 3) {
-			needsColorKey = true;
+	if (image->getSurface()->format.bytesPerPixel == 1) {
+		if (!image->getPalette()) {
+			error("Missing palette while loading 8bit image %s", _filename.c_str());
 		}
+		_surface = image->getSurface()->convertTo(g_system->getScreenFormat(), image->getPalette());
+		needsColorKey = true;
 	} else {
-		_surface = new Graphics::Surface();
-		_surface->copyFrom(*image->getSurface());
-		if (_surface->format.aBits() == 0) {
+		if (image->getSurface()->format != g_system->getScreenFormat()) {
+			_surface = image->getSurface()->convertTo(g_system->getScreenFormat());
+		} else {
+			_surface = new Graphics::Surface();
+			_surface->copyFrom(*image->getSurface());
+		}
+
+		if (_filename.hasSuffix(".bmp") && image->getSurface()->format.bytesPerPixel == 4) {
+			// 32 bpp BMPs have nothing useful in their alpha-channel -> color-key
+			needsColorKey = true;
+			replaceAlpha = false;
+		} else if (image->getSurface()->format.aBits() == 0) {
 			needsColorKey = true;
 		}
 	}
-	
+
 	if (needsColorKey) {
 		TransparentSurface trans(*_surface);
 		trans.applyColorKey(_ckRed, _ckGreen, _ckBlue, replaceAlpha);
 	}
 
-	_hasAlpha = hasTransparency(_surface);
+	_alphaType = hasTransparencyType(_surface);
 	_valid = true;
 
 	_gameRef->addMem(_width * _height * 4);
@@ -233,7 +247,7 @@ uint32 BaseSurfaceOSystem::getPixelAt(Graphics::Surface *surface, int x, int y) 
 	warning("BaseSurfaceOSystem::GetPixel - Not ported yet");
 	int bpp = surface->format.bytesPerPixel;
 	/* Here p is the address to the pixel we want to retrieve */
-	uint8 *p = (uint8 *)surface->pixels + y * surface->pitch + x * bpp;
+	uint8 *p = (uint8 *)surface->getBasePtr(x, y);
 
 	switch (bpp) {
 	case 1:
@@ -319,39 +333,64 @@ bool BaseSurfaceOSystem::endPixelOp() {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSurfaceOSystem::display(int x, int y, Rect32 rect, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
-	return drawSprite(x, y, &rect, 100, 100, 0xFFFFFFFF, true, blendMode, mirrorX, mirrorY);
+	_rotation = 0;
+	return drawSprite(x, y, &rect, nullptr, TransformStruct(kDefaultZoomX, kDefaultZoomY,  mirrorX, mirrorY));
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSurfaceOSystem::displayTrans(int x, int y, Rect32 rect, uint32 alpha, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
-	return drawSprite(x, y, &rect, 100, 100, alpha, false, blendMode, mirrorX, mirrorY);
+	_rotation = 0;
+	return drawSprite(x, y, &rect, nullptr, TransformStruct(kDefaultZoomX, kDefaultZoomY, blendMode, alpha, mirrorX, mirrorY)); 
 }
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSurfaceOSystem::displayTransOffset(int x, int y, Rect32 rect, uint32 alpha, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY, int offsetX, int offsetY) {
-	return drawSprite(x, y, &rect, 100, 100, alpha, false, blendMode, mirrorX, mirrorY, offsetX, offsetY);
+	_rotation = 0;
+	return drawSprite(x, y, &rect, nullptr,  TransformStruct(kDefaultZoomX, kDefaultZoomY, kDefaultAngle, kDefaultHotspotX, kDefaultHotspotY, blendMode, alpha, mirrorX, mirrorY, offsetX, offsetY));
 }
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSurfaceOSystem::displayTransZoom(int x, int y, Rect32 rect, float zoomX, float zoomY, uint32 alpha, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
-	return drawSprite(x, y, &rect, zoomX, zoomY, alpha, false, blendMode, mirrorX, mirrorY);
+	_rotation = 0;
+	return drawSprite(x, y, &rect, nullptr, TransformStruct((int32)zoomX, (int32)zoomY, blendMode, alpha, mirrorX, mirrorY));
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSurfaceOSystem::displayZoom(int x, int y, Rect32 rect, float zoomX, float zoomY, uint32 alpha, bool transparent, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
-	return drawSprite(x, y, &rect, zoomX, zoomY, alpha, !transparent, blendMode, mirrorX, mirrorY);
+	_rotation = 0;
+	TransformStruct transform;
+	if (transparent) {
+		transform = TransformStruct((int32)zoomX, (int32)zoomY, kDefaultAngle, kDefaultHotspotX, kDefaultHotspotY, blendMode, alpha,  mirrorX, mirrorY);
+	} else {
+		transform = TransformStruct((int32)zoomX, (int32)zoomY, mirrorX, mirrorY);
+	}
+	return drawSprite(x, y, &rect, nullptr, transform);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseSurfaceOSystem::displayTransform(int x, int y, int hotX, int hotY, Rect32 rect, float zoomX, float zoomY, uint32 alpha, float rotate, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
-	return drawSprite(x, y, &rect, zoomX, zoomY, alpha, false, blendMode, mirrorX, mirrorY);
+bool BaseSurfaceOSystem::displayTransform(int x, int y, Rect32 rect, Rect32 newRect, const TransformStruct &transform) {
+	_rotation = (uint32)transform._angle;
+	if (transform._angle < 0.0f) {
+		warning("Negative rotation: %d %d", transform._angle, _rotation);
+		_rotation = (uint32)(360.0f + transform._angle);
+		warning("Negative post rotation: %d %d", transform._angle, _rotation);
+	}
+	return drawSprite(x, y, &rect, &newRect, transform);
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseSurfaceOSystem::drawSprite(int x, int y, Rect32 *rect, float zoomX, float zoomY, uint32 alpha, bool alphaDisable, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY, int offsetX, int offsetY) {
+bool BaseSurfaceOSystem::displayTiled(int x, int y, Rect32 rect, int numTimesX, int numTimesY) {
+	assert(numTimesX > 0 && numTimesY > 0);
+	TransformStruct transform(numTimesX, numTimesY);
+	return drawSprite(x, y, &rect, nullptr, transform);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+bool BaseSurfaceOSystem::drawSprite(int x, int y, Rect32 *rect, Rect32 *newRect, TransformStruct transform) {
 	BaseRenderOSystem *renderer = static_cast<BaseRenderOSystem *>(_gameRef->_renderer);
 
 	if (!_loaded) {
@@ -359,24 +398,9 @@ bool BaseSurfaceOSystem::drawSprite(int x, int y, Rect32 *rect, float zoomX, flo
 	}
 
 	if (renderer->_forceAlphaColor != 0) {
-		alpha = renderer->_forceAlphaColor;
+		transform._rgbaMod = renderer->_forceAlphaColor;
 	}
 
-	byte r = RGBCOLGetR(alpha);
-	byte g = RGBCOLGetG(alpha);
-	byte b = RGBCOLGetB(alpha);
-	byte a = RGBCOLGetA(alpha);
-
-	renderer->setAlphaMod(a);
-	renderer->setColorMod(r, g, b);
-
-#if 0 // These are kept for reference if BlendMode is reimplemented at some point.
-	if (alphaDisable) {
-		SDL_SetTextureBlendMode(_texture, SDL_BLENDMODE_NONE);
-	} else {
-		SDL_SetTextureBlendMode(_texture, SDL_BLENDMODE_BLEND);
-	}
-#endif
 	// TODO: This _might_ miss the intended behaviour by 1 in each direction
 	// But I think it fits the model used in Wintermute.
 	Common::Rect srcRect;
@@ -386,47 +410,38 @@ bool BaseSurfaceOSystem::drawSprite(int x, int y, Rect32 *rect, float zoomX, flo
 	srcRect.setHeight(rect->bottom - rect->top);
 
 	Common::Rect position;
-	position.left = x + offsetX;
-	position.top = y + offsetY;
 
-	// Crop off-by-ones:
-	if (position.left == -1) {
-		position.left = 0; // TODO: Something is wrong
+	if (newRect) {
+		position.top = y;
+		position.left = x;
+		position.setWidth(newRect->width());
+		position.setHeight(newRect->height());
+	} else {
+
+		Rect32 r;
+		r.top = 0;
+		r.left = 0;
+		r.setWidth(rect->width());
+		r.setHeight(rect->height());
+
+		r = TransformTools::newRect(r, transform, 0);
+
+		position.top = r.top + y + transform._offset.y;
+		position.left = r.left + x + transform._offset.x;
+		position.setWidth(r.width() * transform._numTimesX);
+		position.setHeight(r.height() * transform._numTimesY);
 	}
-	if (position.top == -1) {
-		position.top = 0; // TODO: Something is wrong
-	}
-
-	position.setWidth((int16)((float)srcRect.width() * zoomX / 100.f));
-	position.setHeight((int16)((float)srcRect.height() * zoomX / 100.f));
-
 	renderer->modTargetRect(&position);
-
-	/*  position.left += offsetX;
-	    position.top += offsetY;*/
 
 	// TODO: This actually requires us to have the SAME source-offsets every time,
 	// But no checking is in place for that yet.
 
-	// TODO: Optimize by not doing alpha-blits if we lack or disable alpha
-	bool hasAlpha;
-	if (_hasAlpha && !alphaDisable) {
-		hasAlpha = true;
-	} else {
-		hasAlpha = false;
-	}
-	if (alphaDisable) {
-		warning("BaseSurfaceOSystem::drawSprite - AlphaDisable ignored");
+	// Optimize by not doing alpha-blits if we lack alpha
+	if (_alphaType == TransparentSurface::ALPHA_OPAQUE && !transform._alphaDisable) {
+		transform._alphaDisable = true;
 	}
 
-	renderer->drawSurface(this, _surface, &srcRect, &position, mirrorX, mirrorY, !hasAlpha);
-
-	return STATUS_OK;
-}
-
-bool BaseSurfaceOSystem::repeatLastDisplayOp(int offsetX, int offsetY, int numTimesX, int numTimesY) {
-	BaseRenderOSystem *renderer = static_cast<BaseRenderOSystem *>(_gameRef->_renderer);
-	renderer->repeatLastDraw(offsetX, offsetY, numTimesX, numTimesY);
+	renderer->drawSurface(this, _surface, &srcRect, &position, transform); 
 	return STATUS_OK;
 }
 
@@ -434,11 +449,15 @@ bool BaseSurfaceOSystem::putSurface(const Graphics::Surface &surface, bool hasAl
 	_loaded = true;
 	_surface->free();
 	_surface->copyFrom(surface);
-	_hasAlpha = hasAlpha;
+	if (hasAlpha) {
+		_alphaType = TransparentSurface::ALPHA_FULL;
+	} else {
+		_alphaType = TransparentSurface::ALPHA_OPAQUE;
+	}
 	BaseRenderOSystem *renderer = static_cast<BaseRenderOSystem *>(_gameRef->_renderer);
 	renderer->invalidateTicketsFromSurface(this);
 
 	return STATUS_OK;
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

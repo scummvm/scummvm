@@ -110,11 +110,11 @@ bool AdPath::persist(BasePersistenceManager *persistMgr) {
 
 	persistMgr->transferPtr(TMEMBER_PTR(_gameRef));
 
-	persistMgr->transfer(TMEMBER(_currIndex));
+	persistMgr->transferSint32(TMEMBER(_currIndex));
 	_points.persist(persistMgr);
-	persistMgr->transfer(TMEMBER(_ready));
+	persistMgr->transferBool(TMEMBER(_ready));
 
 	return STATUS_OK;
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

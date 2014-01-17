@@ -64,7 +64,7 @@ protected:
 	virtual bool doRender(RectangleList *updateRects);
 
 private:
-	uint _color;
+	uint32 _color;
 };
 
 } // End of namespace Sword25

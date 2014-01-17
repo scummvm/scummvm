@@ -890,8 +890,14 @@ public:
 	/** @name Events and Time */
 	//@{
 
-	/** Get the number of milliseconds since the program was started. */
-	virtual uint32 getMillis() = 0;
+	/** Get the number of milliseconds since the program was started.
+
+	    @param skipRecord   Skip recording of this value by event recorder.
+	    			This could be needed particularly when we are in
+				an on-screen GUI loop where player can pause
+				the recording.
+	*/
+	virtual uint32 getMillis(bool skipRecord = false) = 0;
 
 	/** Delay/sleep for the specified amount of milliseconds. */
 	virtual void delayMillis(uint msecs) = 0;
@@ -907,9 +913,7 @@ public:
 	 * Return the timer manager singleton. For more information, refer
 	 * to the TimerManager documentation.
 	 */
-	inline Common::TimerManager *getTimerManager() {
-		return _timerManager;
-	}
+	virtual Common::TimerManager *getTimerManager();
 
 	/**
 	 * Return the event manager singleton. For more information, refer
@@ -1086,9 +1090,7 @@ public:
 	 * and other modifiable persistent game data. For more information,
 	 * refer to the SaveFileManager documentation.
 	 */
-	inline Common::SaveFileManager *getSavefileManager() {
-		return _savefileManager;
-	}
+	Common::SaveFileManager *getSavefileManager();
 
 #if defined(USE_TASKBAR)
 	/**

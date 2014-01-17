@@ -27,7 +27,9 @@
 
 #include <ronin/cdfs.h>
 #include <stdio.h>
+#define usleep usleep_unistd
 #include <unistd.h>
+#undef usleep
 
 /**
  * Implementation of the ScummVM file system API based on Ronin.

@@ -165,7 +165,7 @@ void ScreenEffects::flash(int flashCount, byte *palette, int colorCount) {
 		_screen->setRGBPalette(_fxPalette, 0, colorCount);
 		_screen->updateScreenAndWait(20);
 		_screen->setRGBPalette(palette, 0, colorCount);
- 		_screen->updateScreenAndWait(20);
+		_screen->updateScreenAndWait(20);
 	}
 }
 
@@ -368,7 +368,7 @@ void ScreenEffects::vfx07(Graphics::Surface *surface, byte *palette, byte *newPa
 // "Screen slide in" right to left
 void ScreenEffects::vfx08(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount) {
 	for (int x = 8; x <= 320; x += 8) {
-		_screen->copyRectToScreen(surface->getBasePtr(0, 0), surface->pitch, 320 - x, 0, x, 200);
+		_screen->copyRectToScreen(surface->getPixels(), surface->pitch, 320 - x, 0, x, 200);
 		_screen->updateScreenAndWait(25);
 	}
 	setPalette(palette);
@@ -529,7 +529,7 @@ void ScreenEffects::vfx19(Graphics::Surface *surface, byte *palette, byte *newPa
 // "Screen slide in" bottom to top
 void ScreenEffects::vfx20(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount) {
 	for (int y = 4; y <= 200; y += 4) {
-		_screen->copyRectToScreen(surface->getBasePtr(0, 0), surface->pitch, 0, 200 - y, 320, y);
+		_screen->copyRectToScreen(surface->getPixels(), surface->pitch, 0, 200 - y, 320, y);
 		_screen->updateScreenAndWait(25);
 	}
 

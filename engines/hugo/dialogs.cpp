@@ -34,8 +34,10 @@
 
 namespace Hugo {
 
-TopMenu::TopMenu(HugoEngine *vm) : Dialog(0, 0, kMenuWidth, kMenuHeight), _arrayBmp(0), _arraySize(0),
-	_vm(vm) {
+TopMenu::TopMenu(HugoEngine *vm) : Dialog(0, 0, kMenuWidth, kMenuHeight), _vm(vm) {
+	_arrayBmp = nullptr;
+	_arraySize = 0;
+
 	init();
 }
 
@@ -140,12 +142,10 @@ void TopMenu::loadBmpArr(Common::SeekableReadStream &in) {
 		_arrayBmp[i * 2] = bitmapSrc->convertTo(g_system->getOverlayFormat());
 		_arrayBmp[i * 2 + 1] = new Graphics::Surface();
 		_arrayBmp[i * 2 + 1]->create(_arrayBmp[i * 2]->w * 2, _arrayBmp[i * 2]->h * 2, g_system->getOverlayFormat());
-		byte *src = (byte *)_arrayBmp[i * 2]->pixels;
-		byte *dst = (byte *)_arrayBmp[i * 2 + 1]->pixels;
 
 		for (int j = 0; j < _arrayBmp[i * 2]->h; j++) {
-			src = (byte *)_arrayBmp[i * 2]->getBasePtr(0, j);
-			dst = (byte *)_arrayBmp[i * 2 + 1]->getBasePtr(0, j * 2);
+			byte *src = (byte *)_arrayBmp[i * 2]->getBasePtr(0, j);
+			byte *dst = (byte *)_arrayBmp[i * 2 + 1]->getBasePtr(0, j * 2);
 			for (int k = _arrayBmp[i * 2]->w; k > 0; k--) {
 				for (int m = _arrayBmp[i * 2]->format.bytesPerPixel; m > 0; m--) {
 					*dst++ = *src++;

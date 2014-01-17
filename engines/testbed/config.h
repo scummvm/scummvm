@@ -24,7 +24,7 @@
 
 
 #include "common/array.h"
-#include "common/config-file.h"
+#include "common/ini-file.h"
 #include "common/str-array.h"
 #include "common/tokenizer.h"
 
@@ -62,7 +62,7 @@ public:
 private:
 	Common::Array<Testsuite *> &_testsuiteList;
 	Common::String	_configFileName;
-	Common::ConfigFile	_configFileInterface;
+	Common::INIFile	_configFileInterface;
 	void parseConfigFile();
 };
 
@@ -113,7 +113,7 @@ private:
 
 class TestbedInteractionDialog : public GUI::Dialog {
 public:
-	TestbedInteractionDialog(uint x, uint y, uint w, uint h) : GUI::Dialog(x, y, w, h) {}
+	TestbedInteractionDialog(uint x, uint y, uint w, uint h) : GUI::Dialog(x, y, w, h), _xOffset(0), _yOffset(0) {}
 	~TestbedInteractionDialog() {}
 	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
 	void addButton(uint w, uint h, const Common::String name, uint32 cmd, uint xOffset = 0, uint yPadding = 8);

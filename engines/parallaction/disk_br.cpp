@@ -225,7 +225,7 @@ void DosDisk_br::loadBitmap(Common::SeekableReadStream &stream, Graphics::Surfac
 	}
 
 	surf.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
-	stream.read(surf.pixels, width * height);
+	stream.read(surf.getPixels(), width * height);
 }
 
 Frames* DosDisk_br::loadPointer(const char *name) {
@@ -449,7 +449,7 @@ void AmigaDisk_br::init() {
 
 void AmigaDisk_br::adjustForPalette(Graphics::Surface &surf, int transparentColor) {
 	uint size = surf.w * surf.h;
-	byte *data = (byte *)surf.pixels;
+	byte *data = (byte *)surf.getPixels();
 	for (uint i = 0; i < size; i++, data++) {
 		if (transparentColor == -1 || transparentColor != *data)
 			*data += 16;
@@ -552,7 +552,7 @@ MaskBuffer *AmigaDisk_br::loadMask(const char *name, uint32 w, uint32 h) {
 	MaskBuffer *buffer = new MaskBuffer;
 	// surface width was shrunk to 1/4th of the bitmap width due to the pixel packing
 	buffer->create(decoder.getSurface()->w * 4, decoder.getSurface()->h);
-	memcpy(buffer->data, decoder.getSurface()->pixels, buffer->size);
+	memcpy(buffer->data, decoder.getSurface()->getPixels(), buffer->size);
 	buffer->bigEndian = true;
 	finalpass(buffer->data, buffer->size);
 	return buffer;
@@ -612,7 +612,7 @@ GfxObj* AmigaDisk_br::loadStatic(const char* name) {
 		stream->read(shadow, shadowSize);
 		for (int32 i = 0; i < surf->h; ++i) {
 			byte *src = shadow + shadowWidth * i;
-			byte *dst = (byte *)surf->pixels + surf->pitch * i;
+			byte *dst = (byte *)surf->getPixels() + surf->pitch * i;
 
 			for (int32 j = 0; j < surf->w; ++j, ++dst) {
 				byte bit = src[j/8] & (1 << (7 - (j & 7)));

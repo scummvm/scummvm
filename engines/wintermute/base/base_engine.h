@@ -44,17 +44,19 @@ class BaseRenderer;
 class SystemClassRegistry;
 class Timer;
 class BaseEngine : public Common::Singleton<Wintermute::BaseEngine> {
-	void init(Common::Language lang);
+	void init();
 	BaseFileManager *_fileManager;
 	Common::String _gameId;
+	Common::String _targetName;
 	BaseGame *_gameRef;
 	// We need random numbers
 	Common::RandomSource *_rnd;
 	SystemClassRegistry *_classReg;
+	Common::Language _language;
 public:
 	BaseEngine();
 	~BaseEngine();
-	static void createInstance(const Common::String &gameid, Common::Language lang);
+	static void createInstance(const Common::String &targetName, const Common::String &gameId, Common::Language lang);
 	void setGameRef(BaseGame *gameRef) { _gameRef = gameRef; }
 
 	Common::RandomSource *getRandomSource() { return _rnd; }
@@ -68,9 +70,11 @@ public:
 	static const Timer *getTimer();
 	static const Timer *getLiveTimer();
 	static void LOG(bool res, const char *fmt, ...);
-	const char *getGameId() { return _gameId.c_str(); }
+	const char *getGameTargetName() const { return _targetName.c_str(); }
+	Common::String getGameId() const { return _gameId; }
+	Common::Language getLanguage() const { return _language; }
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

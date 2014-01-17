@@ -714,6 +714,12 @@ void ScummEngine_v99he::resetScummVars() {
 		VAR(140) = 0;
 #endif
 	}
+	
+	if (_game.id == GID_PUTTZOO && _game.heversion == 100 && _game.platform == Common::kPlatformWindows) {
+		// Specific to Nimbus Games version.
+		VAR(156) = 1;
+		VAR(157) = 0;
+	}
 }
 #endif
 

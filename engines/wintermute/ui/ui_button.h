@@ -37,35 +37,18 @@ namespace Wintermute {
 
 class UIButton : public UIObject {
 public:
-	bool _pixelPerfect;
-	bool _stayPressed;
-	bool _centerImage;
-	bool _oneTimePress;
-	uint32 _oneTimePressTime;
+
 	DECLARE_PERSISTENT(UIButton, UIObject)
 	void press();
 	virtual bool display() { return display(0, 0); }
 	virtual bool display(int offsetX, int offsetY);
-	bool _press;
-	bool _hover;
+
 	void correctSize();
-	TTextAlign _align;
-	BaseSprite *_imageHover;
-	BaseSprite *_imagePress;
-	BaseSprite *_imageDisable;
-	BaseSprite *_imageFocus;
-	BaseFont *_fontDisable;
-	BaseFont *_fontPress;
-	BaseFont *_fontHover;
-	BaseFont *_fontFocus;
-	UITiledImage *_backPress;
-	UITiledImage *_backHover;
-	UITiledImage *_backDisable;
-	UITiledImage *_backFocus;
+
 	UIButton(BaseGame *inGame = nullptr);
 	virtual ~UIButton();
 	bool loadFile(const char *filename);
-	bool loadBuffer(byte *buffer, bool complete = true);
+	bool loadBuffer(char *buffer, bool complete = true);
 	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
 
 	// scripting interface
@@ -73,8 +56,41 @@ public:
 	virtual bool scSetProperty(const char *name, ScValue *value) override;
 	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
 	virtual const char *scToString() override;
+
+
+	void setFontHover(BaseFont *font);
+	BaseFont *getFontHover();
+	void setFontPress(BaseFont *font);
+
+	void setTextAlign(TTextAlign align);
+
+	void setImageHover(BaseSprite *sprite);
+	void setImagePress(BaseSprite *sprite);
+
+private:
+	bool _pixelPerfect;
+	bool _stayPressed;
+	bool _centerImage;
+	bool _oneTimePress;
+	UITiledImage *_backPress;
+	UITiledImage *_backHover;
+	UITiledImage *_backDisable;
+	UITiledImage *_backFocus;
+	bool _press;
+	bool _hover;
+	BaseFont *_fontDisable;
+	BaseFont *_fontPress;
+	BaseFont *_fontHover;
+	BaseFont *_fontFocus;
+	BaseSprite *_imageHover;
+	BaseSprite *_imagePress;
+	BaseSprite *_imageDisable;
+	BaseSprite *_imageFocus;
+	uint32 _oneTimePressTime;
+	TTextAlign _align;
+
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

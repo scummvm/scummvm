@@ -240,6 +240,7 @@ enum ScummGameId {
 	GID_FBEAR,
 	GID_PUTTMOON,
 	GID_FUNPACK,
+	GID_PUTTZOO,
 	GID_FREDDI3,
 	GID_BIRTHDAYRED,
 	GID_BIRTHDAYYELLOW,
@@ -619,15 +620,10 @@ public:
 
 // thumbnail + info stuff
 public:
-	Graphics::Surface *loadThumbnailFromSlot(int slot) {
-		return loadThumbnailFromSlot(_targetName.c_str(), slot);
-	}
-	static Graphics::Surface *loadThumbnailFromSlot(const char *target, int slot);
-
-	static bool loadInfosFromSlot(const char *target, int slot, SaveStateMetaInfos *stuff);
+	static bool querySaveMetaInfos(const char *target, int slot, int heversion, Common::String &desc, Graphics::Surface *&thumbnail, SaveStateMetaInfos *&timeInfos);
 
 protected:
-	void saveInfos(Common::WriteStream* file);
+	void saveInfos(Common::WriteStream *file);
 	static bool loadInfos(Common::SeekableReadStream *file, SaveStateMetaInfos *stuff);
 
 protected:

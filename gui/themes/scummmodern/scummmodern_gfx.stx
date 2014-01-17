@@ -38,6 +38,14 @@
 				rgb = '203, 126, 107'
 		/>
 
+		<color name = 'brightredborder'
+				rgb = '238, 213, 207'
+		/>
+
+		<color name = 'darkredborder'
+				rgb = '30, 7, 1'
+		/>
+
 		<!-- Disabled button/slider -->
 		<color name = 'darkeneddarkred'
 				rgb = '120, 28, 0'
@@ -73,7 +81,7 @@
 				rgb = '255, 255, 255'
 		/>
 		<color name = 'shadowcolor'
-				rgb = '63, 60, 17'
+				rgb = '105, 101, 86'
 		/>
 		<color name = 'darkgray'
 				rgb = '176, 168, 144'
@@ -103,6 +111,14 @@
 		<bitmap filename = 'delbtn.bmp'/>
 		<bitmap filename = 'list.bmp'/>
 		<bitmap filename = 'grid.bmp'/>
+		<bitmap filename = 'stopbtn.bmp'/>
+		<bitmap filename = 'editbtn.bmp'/>
+		<bitmap filename = 'switchbtn.bmp'/>
+		<bitmap filename = 'fastreplay.bmp'/>
+		<bitmap filename = 'stopbtn_small.bmp'/>
+		<bitmap filename = 'editbtn_small.bmp'/>
+		<bitmap filename = 'switchbtn_small.bmp'/>
+		<bitmap filename = 'fastreplay_small.bmp'/>
 	</bitmaps>
 
 	<fonts>
@@ -162,6 +178,10 @@
 				color = '128, 128, 128'
 		/>
 
+		<text_color	id = 'color_button_hover'
+				color = 'white'
+		/>
+	
 		<text_color	id = 'color_alternative_inverted'
 				color = 'white'
 		/>
@@ -176,10 +196,6 @@
 
 		<text_color	id = 'color_button'
 				color = 'white'
-		/>
-
-		<text_color	id = 'color_button_hover'
-				color = '255, 214, 84'
 		/>
 
 		<text_color	id = 'color_button_disabled'
@@ -224,7 +240,7 @@
 					stroke = '0'
 					gradient_start = 'darkorange'
 					gradient_end = 'brightorange'
-					shadow = '3'
+					shadow = '7'
 					gradient_factor = '3'
 		/>
 	</drawdata>
@@ -458,7 +474,7 @@
 					fg_color = 'lightgray2'
 					fill = 'background'
 					bg_color = 'xtrabrightred'
-					shadow = '2'
+					shadow = '1'
 		/>
 	
 		<drawstep	func = 'triangle'
@@ -497,7 +513,7 @@
 					fg_color = 'lightgray2'
 					fill = 'background'
 					bg_color = 'xtrabrightred'
-					shadow = '2'
+					shadow = '1'
 		/>
 	
 		<drawstep	func = 'triangle'
@@ -655,7 +671,7 @@
 					fg_color = 'lightgray2'
 					fill = 'background'
 					bg_color = 'xtrabrightred'
-					shadow = '2'
+					shadow = '1'
 		/>
 	
 		<drawstep	func = 'triangle'
@@ -708,7 +724,7 @@
 					gradient_start = 'blandyellow'
 					gradient_end = 'xtrabrightred'
 					fill = 'gradient'
-					shadow = '3'
+					shadow = '7'
 		/>
 	</drawdata>
 
@@ -729,7 +745,7 @@
 					gradient_start = 'blandyellow'
 					gradient_end = 'xtrabrightred'
 					gradient_factor = '4'
-					shadow = '3'
+					shadow = '7'
 		/>
 	</drawdata>
 
@@ -775,18 +791,18 @@
 					stroke = '1'
 					fill = 'gradient'
 					shadow = '0'
-					fg_color = 'shadowcolor'
+					fg_color = 'darkredborder'
 					gradient_start = 'brightred'
 					gradient_end = 'darkred'
 					bevel = '1'
-					bevel_color = '237, 169, 72'
+					bevel_color = 'brightredborder'
 		/>
 	</drawdata>
 
 	<!-- Hovered button -->
 	<drawdata id = 'button_hover' cache = 'false'>
 		<text	font = 'text_button'
-				text_color = 'color_button_hover'
+				text_color = 'color_button'
 				vertical_align = 'center'
 				horizontal_align = 'center'
 		/>
@@ -795,11 +811,11 @@
 					stroke = '1'
 					fill = 'gradient'
 					shadow = '0'
-					fg_color = 'shadowcolor'
+					fg_color = 'darkredborder'
 					gradient_start = 'brightpink'
 					gradient_end = 'darkpink'
 					bevel = '1'
-					bevel_color = 'xtrabrightred'
+					bevel_color = 'brightredborder'
 		/>
 	</drawdata>
 
@@ -907,7 +923,7 @@
 					gradient_factor = '6'
 					fill = 'gradient'
 					bg_color = 'xtrabrightred'
-					shadow = '3'
+					shadow = '7'
 		/>
 	</drawdata>
 

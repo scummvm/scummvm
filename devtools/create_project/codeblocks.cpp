@@ -64,6 +64,11 @@ std::string processLibraryName(std::string name) {
 	if (pos != std::string::npos)
 		return name.replace(pos, 7, "");
 
+	// Remove "-static" in lib name
+	pos = name.find("-static");
+	if (pos != std::string::npos)
+		return name.replace(pos, 7, "");
+
 	// Replace "zlib" by "libz"
 	if (name == "zlib")
 		return "libz";
@@ -115,6 +120,7 @@ void CodeBlocksProvider::createProjectFile(const std::string &name, const std::s
 		           "\t\t\t\t\t<Add directory=\"..\\..\\engines\" />\n"
 		           "\t\t\t\t\t<Add directory=\"..\\..\\common\" />\n"
 		           "\t\t\t\t\t<Add directory=\"..\\..\" />\n"
+		           "\t\t\t\t\t<Add directory=\".\\\" />\n"
 		           "\t\t\t\t</Compiler>\n";
 
 		//////////////////////////////////////////////////////////////////////////

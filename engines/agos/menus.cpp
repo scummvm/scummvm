@@ -164,7 +164,7 @@ void AGOSEngine::unlightMenuStrip() {
 	mouseOff();
 
 	Graphics::Surface *screen = _system->lockScreen();
-	src = (byte *)screen->pixels + 8 * screen->pitch + 272;
+	src = (byte *)screen->getBasePtr(272, 8);
 	w = 48;
 	h = 82;
 
@@ -192,7 +192,7 @@ void AGOSEngine::lightMenuBox(uint hitarea) {
 	mouseOff();
 
 	Graphics::Surface *screen = _system->lockScreen();
-	src = (byte *)screen->pixels + ha->y * screen->pitch + ha->x;
+	src = (byte *)screen->getBasePtr(ha->x, ha->y);
 	w = ha->width;
 	h = ha->height;
 

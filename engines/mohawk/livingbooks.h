@@ -28,7 +28,7 @@
 #include "mohawk/livingbooks_graphics.h"
 #include "mohawk/sound.h"
 
-#include "common/config-file.h"
+#include "common/ini-file.h"
 #include "common/rect.h"
 #include "common/queue.h"
 #include "common/random.h"
@@ -759,7 +759,7 @@ public:
 
 private:
 	LivingBooksConsole *_console;
-	Common::ConfigFile _bookInfoFile;
+	Common::INIFile _bookInfoFile;
 
 	Common::String getBookInfoFileName() const;
 	void loadBookInfo(const Common::String &filename);

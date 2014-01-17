@@ -43,7 +43,9 @@ class Interactive
  public:
   virtual int key(int k, byte &shiftFlags) = 0;
   virtual void mouse(int x, int y) = 0;
+  virtual ~Interactive() = 0;
 };
+inline Interactive::~Interactive() { }
 
 #include "softkbd.h"
 
@@ -151,7 +153,7 @@ public:
   void setShakePos(int shake_pos);
 
   // Get the number of milliseconds since the program was started.
-  uint32 getMillis();
+  uint32 getMillis(bool skipRecord = false);
 
   // Delay for a specified amount of milliseconds
   void delayMillis(uint msecs);

@@ -47,8 +47,8 @@ void Icon::create_vmicon(void *buffer)
 
 void Icon::create_texture()
 {
-  static char tt[16] = { 0, 1, 4, 5, 16, 17, 20, 21,
-			 64, 65, 68, 69, 80, 81, 84, 85 };
+  static unsigned char tt[16] = { 0, 1, 4, 5, 16, 17, 20, 21,
+				  64, 65, 68, 69, 80, 81, 84, 85 };
   unsigned short *tex = (unsigned short *)ta_txalloc(512);
   unsigned short *linebase;
   unsigned char *src = bitmap+sizeof(bitmap)-17;

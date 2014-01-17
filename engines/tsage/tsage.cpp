@@ -38,10 +38,13 @@ TSageEngine::TSageEngine(OSystem *system, const tSageGameDescription *gameDesc) 
 		_gameDescription(gameDesc) {
 	g_vm = this;
 	DebugMan.addDebugChannel(kRingDebugScripts, "scripts", "Scripts debugging");
-	if (g_vm->getFeatures() & GF_DEMO)
-		_debugger = new DemoDebugger();
-	else if (g_vm->getGameID() == GType_Ringworld)
-		_debugger = new RingworldDebugger();
+	_debugger = nullptr;
+	if (g_vm->getGameID() == GType_Ringworld) {
+		if (g_vm->getFeatures() & GF_DEMO)
+			_debugger = new DemoDebugger();
+		else
+			_debugger = new RingworldDebugger();
+	}
 	else if (g_vm->getGameID() == GType_BlueForce)
 		_debugger = new BlueForceDebugger();
 	else if (g_vm->getGameID() == GType_Ringworld2)
@@ -75,16 +78,16 @@ void TSageEngine::initialize() {
 
 	// Set up the resource manager
 	g_resourceManager = new ResourceManager();
-	if (g_vm->getFeatures() & GF_DEMO) {
-		// Add the single library file associated with the demo
-		g_resourceManager->addLib(getPrimaryFilename());
-		g_globals = new Globals();
-
-	} else if (g_vm->getGameID() == GType_Ringworld) {
-		g_resourceManager->addLib("RING.RLB");
-		g_resourceManager->addLib("TSAGE.RLB");
-		g_globals = new Globals();
-
+	if (g_vm->getGameID() == GType_Ringworld) {
+		if (g_vm->getFeatures() & GF_DEMO) {
+			// Add the single library file associated with the demo
+			g_resourceManager->addLib(getPrimaryFilename());
+			g_globals = new Globals();
+		} else {
+			g_resourceManager->addLib("RING.RLB");
+			g_resourceManager->addLib("TSAGE.RLB");
+			g_globals = new Globals();
+		}
 	} else if (g_vm->getGameID() == GType_BlueForce) {
 		g_resourceManager->addLib("BLUE.RLB");
 		if (g_vm->getFeatures() & GF_FLOPPY) {
@@ -103,7 +106,7 @@ void TSageEngine::initialize() {
 		g_globals = new Ringworld2::Ringworld2Globals();
 
 		// Setup the user interface
-		T2_GLOBALS._uiElements.setup(Common::Point(0, UI_INTERFACE_Y - 2));
+		T2_GLOBALS._uiElements.setup(Common::Point(0, UI_INTERFACE_Y));
 
 		// Reset all global variables
 		R2_GLOBALS.reset();
@@ -124,7 +127,7 @@ void TSageEngine::deinitialize() {
 }
 
 Common::Error TSageEngine::run() {
-	// Basic initialisation
+	// Basic initialization
 	initialize();
 
 	g_globals->_sceneHandler->registerHandler();
@@ -174,10 +177,6 @@ void TSageEngine::syncSoundSettings() {
 	Engine::syncSoundSettings();
 
 	g_globals->_soundManager.syncSounds();
-}
-
-bool TSageEngine::shouldQuit() {
-	return getEventManager()->shouldQuit() || getEventManager()->shouldRTL();
 }
 
 } // End of namespace TsAGE

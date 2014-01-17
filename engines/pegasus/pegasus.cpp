@@ -313,7 +313,7 @@ void PegasusEngine::runIntro() {
 				const Graphics::Surface *frame = video->decodeNextFrame();
 
 				if (frame) {
-					_system->copyRectToScreen((byte *)frame->pixels, frame->pitch, 0, 0, frame->w, frame->h);
+					_system->copyRectToScreen((const byte *)frame->getPixels(), frame->pitch, 0, 0, frame->w, frame->h);
 					_system->updateScreen();
 				}
 			}
@@ -429,7 +429,7 @@ void PegasusEngine::removeTimeBase(TimeBase *timeBase) {
 	_timeBases.remove(timeBase);
 }
 
-bool PegasusEngine::loadFromStream(Common::ReadStream *stream) {
+bool PegasusEngine::loadFromStream(Common::SeekableReadStream *stream) {
 	// Dispose currently running stuff
 	useMenu(0);
 	useNeighborhood(0);
@@ -520,8 +520,36 @@ bool PegasusEngine::loadFromStream(Common::ReadStream *stream) {
 	performJump(GameState.getCurrentNeighborhood());
 
 	// AI rules
-	if (g_AIArea)
-		g_AIArea->readAIRules(stream);
+	if (g_AIArea) {
+		// HACK: clone2727 accidentally changed some Prehistoric code to output some bad saves
+		// at one point. That's fixed now, but I don't want to leave the other users high
+		// and dry.
+		if (GameState.getCurrentNeighborhood() == kPrehistoricID && !isDemo()) {
+			uint32 pos = stream->pos();
+			stream->seek(0x208);
+			uint32 roomView = stream->readUint32BE();
+			stream->seek(pos);
+
+			if (roomView == 0x30019) {
+				// This is a bad save -> Let's fix the data
+				// One byte should be put at the end instead
+				uint32 size = stream->size() - pos;
+				byte *data = (byte *)malloc(size);
+				data[0] = stream->readByte();
+				data[1] = stream->readByte();
+				data[2] = stream->readByte();
+				byte wrongData = stream->readByte();
+				stream->read(data + 3, size - 4);
+				data[size - 1] = wrongData;
+				Common::MemoryReadStream tempStream(data, size, DisposeAfterUse::YES);
+				g_AIArea->readAIRules(&tempStream);
+			} else {
+				g_AIArea->readAIRules(stream);
+			}
+		} else {
+			g_AIArea->readAIRules(stream);
+		}
+	}
 
 	startNeighborhood();
 
@@ -1367,7 +1395,7 @@ bool PegasusEngine::playMovieScaled(Video::VideoDecoder *video, uint16 x, uint16
 				if (frame->w <= 320 && frame->h <= 240) {
 					drawScaledFrame(frame, x, y);
 				} else {
-					_system->copyRectToScreen((byte *)frame->pixels, frame->pitch, x, y, frame->w, frame->h);
+					_system->copyRectToScreen((const byte *)frame->getPixels(), frame->pitch, x, y, frame->w, frame->h);
 					_system->updateScreen();
 				}
 			}
@@ -2270,11 +2298,11 @@ void PegasusEngine::drawScaledFrame(const Graphics::Surface *frame, uint16 x, ui
 	scaledFrame.create(frame->w * 2, frame->h * 2, frame->format);
 
 	if (frame->format.bytesPerPixel == 2)
-		scaleFrame<uint16>((uint16 *)frame->pixels, (uint16 *)scaledFrame.pixels, frame->w, frame->h, frame->pitch);
+		scaleFrame<uint16>((const uint16 *)frame->getPixels(), (uint16 *)scaledFrame.getPixels(), frame->w, frame->h, frame->pitch);
 	else
-		scaleFrame<uint32>((uint32 *)frame->pixels, (uint32 *)scaledFrame.pixels, frame->w, frame->h, frame->pitch);
+		scaleFrame<uint32>((const uint32 *)frame->getPixels(), (uint32 *)scaledFrame.getPixels(), frame->w, frame->h, frame->pitch);
 
-	_system->copyRectToScreen((byte *)scaledFrame.pixels, scaledFrame.pitch, x, y, scaledFrame.w, scaledFrame.h);
+	_system->copyRectToScreen((byte *)scaledFrame.getPixels(), scaledFrame.pitch, x, y, scaledFrame.w, scaledFrame.h);
 	_system->updateScreen();
 	scaledFrame.free();
 }

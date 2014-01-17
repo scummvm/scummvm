@@ -36,9 +36,11 @@ class Console : public GUI::Debugger {
 public:
 	Console(WintermuteEngine *vm);
 	virtual ~Console();
+
 	/*
 	 * Debug commands 
 	 */
+
 	bool Cmd_ShowFps(int argc, const char **argv);
 	bool Cmd_DumpFile(int argc, const char **argv);
 	bool Cmd_StepInto(int argc, const char **argv);

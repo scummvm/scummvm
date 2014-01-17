@@ -217,4 +217,4 @@ void SystemClass::instanceCallback(SYS_INSTANCE_CALLBACK lpCallback, void *lpDat
 	}
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

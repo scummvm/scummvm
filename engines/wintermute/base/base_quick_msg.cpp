@@ -52,4 +52,4 @@ uint32 BaseQuickMsg::getStartTime() const {
 	return _startTime;
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

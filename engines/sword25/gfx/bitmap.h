@@ -176,9 +176,9 @@ protected:
 	bool  _flipV;
 	float _scaleFactorX;
 	float _scaleFactorY;
-	uint  _modulationColor;
-	int   _originalWidth;
-	int   _originalHeight;
+	uint32  _modulationColor;
+	int32   _originalWidth;
+	int32   _originalHeight;
 };
 
 } // End of namespace Sword25

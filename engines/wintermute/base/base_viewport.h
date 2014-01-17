@@ -55,6 +55,6 @@ private:
 	Rect32 _rect;
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

@@ -78,7 +78,7 @@ public:
 	const ResourceFileEntry& getEntry(uint index) { return _entries[index]; }
 	uint getEntryCount() { return _entries.size(); }
 	void queryResource(uint32 fileHash, ResourceHandle &resourceHandle);
-	void loadResource(ResourceHandle &resourceHandle);
+	void loadResource(ResourceHandle &resourceHandle, bool applyResourceFixes);
 	void unloadResource(ResourceHandle &resourceHandle);
 	void purgeResources();
 protected:

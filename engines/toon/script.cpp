@@ -59,6 +59,8 @@ EMCInterpreter::EMCInterpreter(ToonEngine *vm) : _vm(vm), _scriptData(0), _filen
 	};
 	_opcodes = opcodes;
 #undef OPCODE
+
+	_parameter = 0;
 }
 
 EMCInterpreter::~EMCInterpreter() {
@@ -132,8 +134,7 @@ bool EMCInterpreter::load(const char *filename, EMCData *scriptData, const Commo
 
 	_scriptData->sysFuncs = opcodes;
 
-	strncpy(_scriptData->filename, filename, 13);
-	_scriptData->filename[12] = 0;
+	Common::strlcpy(_scriptData->filename, filename, 13);
 
 	_scriptData = 0;
 	_filename = 0;

@@ -201,7 +201,7 @@ public:
 	// Whenever it gets called, the corresponding caller must take care
 	// to add the corresponding dirty rectangle itself
 	byte *getBackBufferPixels() {
-		return (byte *)_backBuffer.pixels;
+		return (byte *)_backBuffer.getPixels();
 	}
 
 	uint16 getBackBufferWidth() {

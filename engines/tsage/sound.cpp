@@ -22,6 +22,8 @@
 
 #include "audio/decoders/raw.h"
 #include "common/config-manager.h"
+#include "audio/decoders/raw.h"
+#include "audio/audiostream.h"
 #include "tsage/core.h"
 #include "tsage/globals.h"
 #include "tsage/debugger.h"
@@ -118,17 +120,31 @@ void SoundManager::syncSounds() {
 	bool mute = false;
 	if (ConfMan.hasKey("mute"))
 		mute = ConfMan.getBool("mute");
+	bool subtitles = ConfMan.hasKey("subtitles") ? ConfMan.getBool("subtitles") : true;
 
 	bool music_mute = mute;
+	bool voice_mute = mute;
 
 	if (!mute) {
 		music_mute = ConfMan.getBool("music_mute");
+		voice_mute = ConfMan.getBool("speech_mute");
 	}
 
 	// Get the new music volume
 	int musicVolume = music_mute ? 0 : MIN(255, ConfMan.getInt("music_volume"));
 
 	this->setMasterVol(musicVolume / 2);
+
+	// Return to Ringworld voice settings
+	if (g_vm->getGameID() == GType_Ringworld2) {
+		// If we don't have voice, then ensure that text is turned on
+		if (voice_mute)
+			subtitles = true;
+
+		R2_GLOBALS._speechSubtitles =
+			(voice_mute ? 0 : SPEECH_VOICE) |
+			(!subtitles ? 0 : SPEECH_TEXT);
+	}
 }
 
 void SoundManager::update() {
@@ -953,7 +969,7 @@ void SoundManager::sfRethinkVoiceTypes() {
 					int entryIndex = -1;
 					for (uint idx = 0; idx < vtStruct->_entries.size(); ++idx) {
 						if (vtStruct->_entries[idx]._voiceNum == foundIndex) {
-							foundIndex = true;
+							foundMatch = true;
 							if (!vtStruct->_entries[idx]._type0._sound2) {
 								entryIndex = idx;
 								break;
@@ -992,7 +1008,7 @@ void SoundManager::sfRethinkVoiceTypes() {
 
 						if (vtStruct->_entries[idx]._type0._priority2 > maxPriority) {
 							maxPriority = vtStruct->_entries[idx]._type0._priority2;
-							entryIndex = -1;
+							entryIndex = idx;
 						}
 					}
 
@@ -1720,7 +1736,7 @@ uint32 Sound::getTimeIndex() const {
 }
 
 int Sound::getCueValue() const {
-	return _cueValue;
+	return _cueValue == 0xff ? -1 : _cueValue;
 }
 
 void Sound::setCueValue(int cueValue) {
@@ -2395,7 +2411,7 @@ int Sound::soFindSound(VoiceTypeStruct *vtStruct, int channelNum) {
 /*--------------------------------------------------------------------------*/
 
 ASound::ASound(): EventHandler() {
-	_action = NULL;
+	_endAction = NULL;
 	_cueValue = -1;
 	if (g_globals)
 		g_globals->_sounds.push_back(this);
@@ -2422,23 +2438,23 @@ void ASound::dispatch() {
 		_cueValue = cueValue;
 		_sound.setCueValue(-1);
 
-		if (_action)
-			_action->signal();
+		if (_endAction)
+			_endAction->signal();
 	}
 
 	if (_cueValue != -1) {
 		if (!_sound.isPrimed()) {
 			_cueValue = -1;
-			if (_action) {
-				_action->signal();
-				_action = NULL;
+			if (_endAction) {
+				_endAction->signal();
+				_endAction = NULL;
 			}
 		}
 	}
 }
 
-void ASound::play(int soundNum, EventHandler *action, int volume) {
-	_action = action;
+void ASound::play(int soundNum, EventHandler *endAction, int volume) {
+	_endAction = endAction;
 	_cueValue = 0;
 
 	setVol(volume);
@@ -2461,9 +2477,9 @@ void ASound::unPrime() {
 	_action = NULL;
 }
 
-void ASound::fade(int fadeDest, int fadeSteps, int fadeTicks, bool stopAfterFadeFlag, EventHandler *action) {
-	if (action)
-		_action = action;
+void ASound::fade(int fadeDest, int fadeSteps, int fadeTicks, bool stopAfterFadeFlag, EventHandler *endAction) {
+	if (endAction)
+		_endAction = endAction;
 
 	_sound.fade(fadeDest, fadeSteps, fadeTicks, stopAfterFadeFlag);
 }
@@ -2490,8 +2506,8 @@ void ASoundExt::signal() {
 	}
 }
 
-void ASoundExt::fadeOut2(EventHandler *action) {
-	fade(0, 10, 10, true, action);
+void ASoundExt::fadeOut2(EventHandler *endAction) {
+	fade(0, 10, 10, true, endAction);
 }
 
 void ASoundExt::changeSound(int soundNum) {
@@ -2501,6 +2517,183 @@ void ASoundExt::changeSound(int soundNum) {
 	} else {
 		fadeSound(soundNum);
 	}
+}
+
+/*--------------------------------------------------------------------------*/
+
+void PlayStream::ResFileData::load(Common::SeekableReadStream &stream) {
+	// Validate that it's the correct data file
+	char header[4];
+	stream.read(&header[0], 4);
+	if (strncmp(header, "SPAM", 4))
+		error("Invalid voice resource data");
+
+	_fileChunkSize = stream.readUint32LE();
+	stream.skip(2);
+	_indexSize = stream.readUint16LE();
+	_chunkSize = stream.readUint16LE();
+
+	stream.skip(18);
+}
+
+PlayStream::PlayStream(): EventHandler() {
+	_index = NULL;
+	_endAction = NULL;
+	_audioStream = NULL;
+
+	_resData._fileChunkSize = 0;
+	_resData._indexSize = 0;
+	_resData._chunkSize = 0;
+	_voiceNum = 0;
+}
+
+PlayStream::~PlayStream() {
+	remove();
+}
+
+bool PlayStream::setFile(const Common::String &filename) {
+	remove();
+
+	// Open the resource file for access
+	if (!_file.open(filename))
+		return false;
+
+	// Load header
+	_resData.load(_file);
+
+	// Load the index
+	_index = new uint16[_resData._indexSize / 2];
+	for (uint i = 0; i < (_resData._indexSize / 2); ++i)
+		_index[i] = _file.readUint16LE();
+
+	return true;
+}
+
+bool PlayStream::play(int voiceNum, EventHandler *endAction) {
+	uint32 offset = getFileOffset(_index, _resData._fileChunkSize, voiceNum);
+	if (offset) {
+		stop();
+		_voiceNum = 0;
+
+		// Move to the offset for the start of the voice
+		_file.seek(offset);
+
+		// Read in the header and validate it
+		char header[4];
+		_file.read(&header[0], 4);
+		if (strncmp(header, "FEED", 4))
+			error("Invalid stream data");
+
+		// Get basic details of first sound chunk
+		uint chunkSize = _file.readUint16LE() - 16;
+		_file.skip(4);
+		int rate = _file.readUint16LE();
+		_file.skip(4);
+
+		// Create the stream
+		_audioStream = Audio::makeQueuingAudioStream(rate, false);
+
+		// Load in the first chunk
+		byte *data = (byte *)malloc(chunkSize);
+		_file.read(data, chunkSize);
+		_audioStream->queueBuffer(data, chunkSize, DisposeAfterUse::YES, Audio::FLAG_UNSIGNED);
+
+		// If necessary, load further chunks of the voice in
+		while (chunkSize == (_resData._chunkSize - 16)) {
+			// Ensure the next chunk has the 'MORE' header
+			_file.read(&header[0], 4);
+			if (!strncmp(header, "FEED", 4))
+				// Reached start of next voice sample, so stop
+				break;
+			if (strncmp(header, "MORE", 4))
+				// Not more remaining, so break
+				break;
+
+			// Get the size of the chunk
+			chunkSize  = _file.readUint16LE() - 16;
+			_file.skip(10);
+
+			// Read in the data for this next chunk and queue it
+			data = (byte *)malloc(chunkSize);
+			_file.read(data, chunkSize);
+			_audioStream->queueBuffer(data, chunkSize, DisposeAfterUse::YES, Audio::FLAG_UNSIGNED);
+		}
+
+		g_vm->_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_soundHandle,
+			_audioStream, DisposeAfterUse::YES);
+		_voiceNum = voiceNum;
+		_endAction = endAction;
+		return true;
+	}
+
+	// If it reaches this point, no valid voice data found
+	return false;
+}
+
+void PlayStream::stop() {
+	if (_audioStream) {
+		g_vm->_mixer->stopHandle(_soundHandle);
+	}
+
+	_audioStream = NULL;
+	_voiceNum = 0;
+	_endAction = NULL;
+}
+
+bool PlayStream::isPlaying() const {
+	return _audioStream != NULL && !_audioStream->endOfData();
+}
+
+void PlayStream::remove() {
+	stop();
+	_file.close();
+
+	// Free index
+	delete[] _index;
+	_index = NULL;
+
+	_endAction = NULL;
+	_voiceNum = 0;
+}
+
+void PlayStream::dispatch() {
+	if (_voiceNum != 0 && !isPlaying()) {
+		// If voice has finished playing, reset fields
+		EventHandler *endAction = _endAction;
+		_endAction = NULL;
+		_voiceNum = 0;
+
+		if (endAction)
+			// Signal given end action
+			endAction->signal();
+	}
+}
+
+uint32 PlayStream::getFileOffset(const uint16 *data, int count, int voiceNum) {
+	if (!data)
+		return 0;	// no valid voice data found
+
+	int bitsIndex = voiceNum & 7;
+	int byteIndex = voiceNum >> 3;
+	int shiftAmount = bitsIndex * 2;
+	int bitMask = 3 << shiftAmount;
+	int v = (data[byteIndex] & bitMask) >> shiftAmount;
+	uint32 offset = 0;
+
+	if (!v)
+		return 0;
+
+	// Loop to figure out offsets from index words skipped over
+	for (int i = 0; i < (voiceNum >> 3); ++i) {
+		for (int bit = 0; bit < 16; bit += 2)
+			offset += ((data[i] >> bit) & 3) * count;
+	}
+
+	// Bit index loop
+	for (int i = 0; i < bitsIndex; ++i)
+		offset += ((data[byteIndex] >> (i * 2)) & 3) * count;
+
+	return offset;
 }
 
 /*--------------------------------------------------------------------------*/
@@ -2516,13 +2709,8 @@ SoundDriver::SoundDriver() {
 
 const byte adlib_group_data[] = { 1, 1, 9, 1, 0xff };
 
-const byte v440B0[9] = { 0, 1, 2, 6, 7, 8, 12, 13, 14 };
-
-const byte v440B9[9] = { 3, 4, 5, 9, 10, 11, 15, 16, 17 };
-
-const byte v440C2[18] = {
-	0, 1, 2, 3, 4, 5, 8, 9, 10, 11, 12, 13, 16, 17, 18, 19, 20, 21
-};
+const byte adlib_operator1_offset[] = { 0, 1, 2, 8, 9, 10, 16, 17, 18 };
+const byte adlib_operator2_offset[] = { 3, 4, 5, 11, 12, 13, 19, 20, 21 };
 
 const byte v44134[64] = {
 	0, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32,
@@ -2546,8 +2734,6 @@ AdlibSoundDriver::AdlibSoundDriver(): SoundDriver() {
 	_masterVolume = 0;
 
 	_groupData._groupMask = 9;
-	_groupData._v1 = 0x46;
-	_groupData._v2 = 0;
 	_groupData._pData = &adlib_group_data[0];
 
 	_mixer = g_vm->_mixer;
@@ -2653,10 +2839,10 @@ void AdlibSoundDriver::playSound(const byte *channelData, int dataOffset, int pr
 				_v4409E[channel] = dataP + offset - _patchData;
 
 				// Set sustain/release
-				int portNum = v440C2[v440B0[channel]] + 0x80;
+				int portNum = adlib_operator1_offset[channel] + 0x80;
 				write(portNum, (_portContents[portNum] & 0xF0) | 0xF);
 
-				portNum = v440C2[v440B9[channel]] + 0x80;
+				portNum = adlib_operator2_offset[channel] + 0x80;
 				write(portNum, (_portContents[portNum] & 0xF0) | 0xF);
 
 				if (_channelVoiced[channel])
@@ -2713,10 +2899,10 @@ void AdlibSoundDriver::updateChannelVolume(int channelNum) {
 	int level1 = !_v44082[channelNum] ? 63 - _v44070[channelNum] :
 		63 - v44134[volume * _v44070[channelNum] / 63];
 
-	int portNum = v440C2[v440B0[channelNum]] + 0x40;
+	int portNum = adlib_operator1_offset[channelNum] + 0x40;
 	write(portNum, (_portContents[portNum] & 0x80) | level1);
 
-	portNum = v440C2[v440B9[channelNum]] + 0x40;
+	portNum = adlib_operator2_offset[channelNum] + 0x40;
 	write(portNum, (_portContents[portNum] & 0x80) | level2);
 }
 
@@ -2733,7 +2919,7 @@ void AdlibSoundDriver::clearVoice(int channel) {
 
 void AdlibSoundDriver::updateChannel(int channel) {
 	const byte *dataP = _patchData + _v4409E[channel];
-	int portOffset = v440C2[v440B0[channel]];
+	int portOffset = adlib_operator1_offset[channel];
 
 	int portNum = portOffset + 0x20;
 	int portValue = 0;
@@ -2756,7 +2942,7 @@ void AdlibSoundDriver::updateChannel(int channel) {
 	write(0x80 + portOffset, *(dataP + 14) | (*(dataP + 13) << 4));
 	write(0xE0 + portOffset, (_portContents[0xE0 + portOffset] & 0xFC) | *(dataP + 15));
 
-	portOffset = v440C2[v440B9[channel]];
+	portOffset = adlib_operator2_offset[channel];
 	portNum = portOffset + 0x20;
 	portValue = 0;
 	if (*(dataP + 17))
@@ -2865,8 +3051,6 @@ SoundBlasterDriver::SoundBlasterDriver(): SoundDriver() {
 	_masterVolume = 0;
 
 	_groupData._groupMask = 1;
-	_groupData._v1 = 0x3E;
-	_groupData._v2 = 0;
 	static byte const group_data[] = { 3, 1, 1, 0, 0xff };
 	_groupData._pData = group_data;
 
@@ -2914,10 +3098,12 @@ void SoundBlasterDriver::playSound(const byte *channelData, int dataOffset, int 
 		updateVoice(channel);
 
 	// Set the new channel data
-	_channelData = channelData + dataOffset;
+	_channelData = channelData + dataOffset + 18;
 
 	// Make a copy of the buffer
 	int dataSize = g_vm->_memoryManager.getSize(channelData);
+	dataSize -= 18;
+
 	byte *soundData = (byte *)malloc(dataSize - dataOffset);
 	Common::copy(_channelData, _channelData + (dataSize - dataOffset), soundData);
 

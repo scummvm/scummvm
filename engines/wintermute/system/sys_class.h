@@ -125,6 +125,6 @@ private:
 	InstanceMap _instanceMap;
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

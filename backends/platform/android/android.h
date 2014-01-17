@@ -231,6 +231,7 @@ private:
 	int _touchpad_scale;
 	int _trackball_scale;
 	int _dpad_scale;
+	int _joystick_scale;
 	int _fingersDown;
 
 	void clipMouse(Common::Point &p);
@@ -274,7 +275,7 @@ public:
 	virtual void setCursorPalette(const byte *colors, uint start, uint num);
 
 	virtual bool pollEvent(Common::Event &event);
-	virtual uint32 getMillis();
+	virtual uint32 getMillis(bool skipRecord = false);
 	virtual void delayMillis(uint msecs);
 
 	virtual MutexRef createMutex(void);

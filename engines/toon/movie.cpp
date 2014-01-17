@@ -85,7 +85,8 @@ void Movie::play(const Common::String &video, int32 flags) {
 	_playing = true;
 	if (flags & 1)
 		_vm->getAudioManager()->setMusicVolume(0);
-	_decoder->loadFile(video.c_str());
+	if (!_decoder->loadFile(video.c_str()))
+		error("Unable to play video %s", video.c_str());
 	playVideo(isFirstIntroVideo);
 	_vm->flushPalette(true);
 	if (flags & 1)
@@ -94,7 +95,7 @@ void Movie::play(const Common::String &video, int32 flags) {
 	_playing = false;
 }
 
-bool Movie::playVideo(bool isFirstIntroVideo) {
+void Movie::playVideo(bool isFirstIntroVideo) {
 	debugC(1, kDebugMovie, "playVideo(isFirstIntroVideo: %d)", isFirstIntroVideo);
 
 	_decoder->start();
@@ -112,7 +113,7 @@ bool Movie::playVideo(bool isFirstIntroVideo) {
 					}
 					_vm->_system->unlockScreen();
 				} else {
-					_vm->_system->copyRectToScreen(frame->pixels, frame->pitch, 0, 0, frame->w, frame->h);
+					_vm->_system->copyRectToScreen(frame->getPixels(), frame->pitch, 0, 0, frame->w, frame->h);
 
 					// WORKAROUND: There is an encoding glitch in the first intro video. This hides this using the adjacent pixels.
 					if (isFirstIntroVideo) {
@@ -135,13 +136,13 @@ bool Movie::playVideo(bool isFirstIntroVideo) {
 		while (_vm->_system->getEventManager()->pollEvent(event))
 			if ((event.type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_ESCAPE)) {
 				_vm->dirtyAllScreen();
-				return false;
+				return;
 			}
 
 		_vm->_system->delayMillis(10);
 	}
 	_vm->dirtyAllScreen();
-	return !_vm->shouldQuit();
+	return;
 }
 
 } // End of namespace Toon

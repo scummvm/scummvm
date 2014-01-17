@@ -176,7 +176,6 @@ void Scene100::postInit(SceneObjectList *OwnerList) {
 		loadScene(101);
 	}
 	BF_GLOBALS._scenePalette.loadPalette(2);
-	BF_GLOBALS._v51C44 = 1;
 	BF_GLOBALS._interfaceY = SCREEN_HEIGHT;
 
 	g_globals->_player.postInit();
@@ -232,7 +231,6 @@ void Scene109::Action1::signal() {
 		scene->_text.setup(BF_19840515, this);
 		break;
 	case 3:
-		BF_GLOBALS._v51C44 = 1;
 		scene->loadScene(115);
 
 		scene->_protaginist2.show();
@@ -246,7 +244,6 @@ void Scene109::Action1::signal() {
 		scene->_beerSign.show();
 		scene->_beerSign.setAction(&scene->_action2);
 
-		BF_GLOBALS._v501FC = 170;
 		setDelay(60);
 		break;
 	case 4:
@@ -401,12 +398,10 @@ void Scene110::Action1::signal() {
 		scene->_object6.show();
 		scene->_object9.show();
 		scene->_object10.show();
-		BF_GLOBALS._v51C44 = 1;
 		scene->loadScene(110);
 		setDelay(10);
 		break;
 	case 2:
-		BF_GLOBALS._v51C44 = 1;
 		scene->_object1.animate(ANIM_MODE_5, this);
 		break;
 	case 3: {
@@ -1833,8 +1828,6 @@ void Scene125::Action2::signal() {
 		setDelay(20);
 		break;
 	case 2: {
-		BF_GLOBALS._v501FA = 10;
-		BF_GLOBALS._v51C44 = 1;
 		Common::Point destPos(202, 94);
 		NpcMover *mover = new NpcMover();
 		BF_GLOBALS._player.addMover(mover, &destPos, this);
@@ -2311,7 +2304,6 @@ void Scene140::Action1::signal() {
 		setDelay(60);
 	// No break on purpose
 	case 13:
-		BF_GLOBALS._v51C44 = 1;
 		BF_GLOBALS._sceneManager.changeScene(150);
 	default:
 		break;
@@ -2337,9 +2329,6 @@ void Scene140::postInit(SceneObjectList *OwnerList) {
 	_object1.changeZoom(100);
 	_object1.hide();
 
-	BF_GLOBALS._v5020C = 0;
-	BF_GLOBALS._v501F8 = 300;
-	BF_GLOBALS._v501FC = 90;
 	BF_GLOBALS._sound1.play(7);
 
 	_object2.setAction(&_action1);
@@ -2640,7 +2629,6 @@ void Scene160::Action2::signal() {
 		BF_GLOBALS._sound1.stop();
 // End of hack
 
-		BF_GLOBALS._v51C44 = 1;
 		BF_GLOBALS._sceneManager.changeScene(200);
 		break;
 	default:
@@ -2649,7 +2637,7 @@ void Scene160::Action2::signal() {
 }
 
 void Scene160::Action2::process(Event &event) {
-	if ((event.handled) || (event.eventType == 5))
+	if ((event.handled) || ((event.eventType != EVENT_BUTTON_DOWN) && (event.eventType != EVENT_KEYPRESS)))
 		return;
 
 	if (_actionIndex == 25) {
@@ -2788,9 +2776,6 @@ void Scene180::postInit(SceneObjectList *OwnerList) {
 	setZoomPercents(121, 60, 125, 70);
 
 	if ((BF_GLOBALS._bookmark == bLyleStoppedBy) && (BF_GLOBALS._dayNumber == 1)) {
-		BF_GLOBALS._v501FC = 87;
-		BF_GLOBALS._v501FA = _sceneBounds.left + 10;
-		// CHECKME: BF_GLOBALS._v50206 = 18; ??
 		_sceneMessage.setup(THE_NEXT_DAY);
 		_sceneMode = 6;
 		setAction(&_sceneMessage, this);
@@ -2799,9 +2784,6 @@ void Scene180::postInit(SceneObjectList *OwnerList) {
 		BF_GLOBALS._mapLocationId = 4;
 	} else if (((BF_GLOBALS._bookmark == bDroppedOffLyle) && (BF_GLOBALS._dayNumber == 3)) ||
 			((BF_GLOBALS._bookmark == bDoneAtLyles) && (BF_GLOBALS._dayNumber == 4))) {
-		BF_GLOBALS._v501FC = 87;
-		BF_GLOBALS._v501FA = _sceneBounds.left + 10;
-		// CHECKME: BF_GLOBALS._v50206 = 18; ??
 		_sceneMessage.setup(THE_NEXT_DAY);
 		_sceneMode = 6;
 		setAction(&_sceneMessage, this);
@@ -3237,7 +3219,7 @@ void Scene190::postInit(SceneObjectList *OwnerList) {
 	BF_GLOBALS._player.postInit();
 	BF_GLOBALS._player.disableControl();
 
-	// Initialise objects
+	// Initialize objects
 	_door.postInit();
 	_door.setVisage(190);
 	_door.setStrip(1);

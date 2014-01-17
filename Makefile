@@ -32,8 +32,10 @@ ifeq "$(HAVE_GCC)" "1"
 	# being helpful.
 	#CXXFLAGS+= -Wmissing-format-attribute
 
-	# Disable RTTI and exceptions
+ifneq "$(BACKEND)" "tizen"
+	# Disable RTTI and exceptions. These settings cause tizen apps to crash
 	CXXFLAGS+= -fno-rtti -fno-exceptions
+endif
 
 ifneq "$(HAVE_CLANG)" "1"
 	# enable checking of pointers returned by "new", but only when we do not
@@ -44,6 +46,11 @@ endif
 
 ifeq "$(HAVE_CLANG)" "1"
 	CXXFLAGS+= -Wno-conversion -Wno-shorten-64-to-32 -Wno-sign-compare -Wno-four-char-constants
+	# We use a anonymous nested type declaration in an anonymous union in
+	# common/str.h. This is no standard construct and clang warns about it.
+	# It works for all our target systems though, thus we simply disable that
+	# warning.
+	CXXFLAGS+= -Wno-nested-anon-types
 endif
 
 ifeq "$(HAVE_ICC)" "1"
@@ -75,7 +82,8 @@ EXECUTABLE  := $(EXEPRE)scummvm$(EXEEXT)
 include $(srcdir)/Makefile.common
 
 # check if configure has been run or has been changed since last run
-config.h config.mk: $(srcdir)/configure $(srcdir)/engines/configure.engines
+ENGINE_SUBDIRS_CONFIGURE := $(wildcard $(srcdir)/engines/*/configure.engine)
+config.h: $(srcdir)/configure $(ENGINE_SUBDIRS_CONFIGURE)
 ifeq "$(findstring config.mk,$(MAKEFILE_LIST))" "config.mk"
 	@echo "Running $(srcdir)/configure with the last specified parameters"
 	@sleep 2
@@ -86,6 +94,14 @@ ifeq "$(findstring config.mk,$(MAKEFILE_LIST))" "config.mk"
 else
 	$(error You need to run $(srcdir)/configure before you can run make. Check $(srcdir)/configure --help for a list of parameters)
 endif
+
+config.mk engines/plugins_table.h engines/engines.mk: config.h
+	@if test -f $@; then \
+		touch $@; \
+	else \
+		rm -f config.h; \
+		$(MAKE) config.h; \
+	fi
 
 ifneq ($(origin port_mk), undefined)
 include $(srcdir)/$(port_mk)

@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- 
+
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- 
+
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -47,7 +47,7 @@ BaseGameSettings::BaseGameSettings(BaseGame *gameRef) {
 	_allowAccessTab = true;
 	_allowAboutTab = true;
 	_allowDesktopRes = false;
-	
+
 	_compressedSavegames = true;
 	_richSavedGames = false;
 	_savedGameExt = "dsv";
@@ -101,90 +101,90 @@ bool BaseGameSettings::loadSettings(const char *filename) {
 	TOKEN_TABLE(SAVED_GAME_EXT)
 	TOKEN_TABLE(GUID)
 	TOKEN_TABLE_END
-	
-	
-	byte *origBuffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
+
+
+	char *origBuffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (origBuffer == nullptr) {
 		BaseEngine::LOG(0, "BaseGame::LoadSettings failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
-	
+
 	bool ret = STATUS_OK;
-	
-	byte *buffer = origBuffer;
-	byte *params;
+
+	char *buffer = origBuffer;
+	char *params;
 	int cmd;
 	BaseParser parser;
-	
-	if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_SETTINGS) {
+
+	if (parser.getCommand(&buffer, commands, &params) != TOKEN_SETTINGS) {
 		BaseEngine::LOG(0, "'SETTINGS' keyword expected in game settings file.");
 		return STATUS_FAILED;
 	}
 	buffer = params;
-	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
+	while ((cmd = parser.getCommand(&buffer, commands, &params)) > 0) {
 		switch (cmd) {
 			case TOKEN_GAME:
 				delete[] _gameFile;
-				_gameFile = new char[strlen((char *)params) + 1];
+				_gameFile = new char[strlen(params) + 1];
 				if (_gameFile) {
-					strcpy(_gameFile, (char *)params);
+					strcpy(_gameFile, params);
 				}
 				break;
-				
+
 			case TOKEN_STRING_TABLE:
-				if (DID_FAIL(_stringTable->loadFile((char *)params))) {
+				if (DID_FAIL(_stringTable->loadFile(params))) {
 					cmd = PARSERR_GENERIC;
 				}
 				break;
-				
+
 			case TOKEN_RESOLUTION:
-				parser.scanStr((char *)params, "%d,%d", &_resWidth, &_resHeight);
+				parser.scanStr(params, "%d,%d", &_resWidth, &_resHeight);
 				break;
-				
+
 			case TOKEN_REQUIRE_3D_ACCELERATION:
-				parser.scanStr((char *)params, "%b", &_requireAcceleration);
+				parser.scanStr(params, "%b", &_requireAcceleration);
 				break;
-				
+
 			case TOKEN_REQUIRE_SOUND:
-				parser.scanStr((char *)params, "%b", &_requireSound);
+				parser.scanStr(params, "%b", &_requireSound);
 				break;
-				
+
 			case TOKEN_HWTL_MODE:
-				parser.scanStr((char *)params, "%d", &_TLMode);
+				parser.scanStr(params, "%d", &_TLMode);
 				break;
-				
+
 			case TOKEN_ALLOW_WINDOWED_MODE:
-				parser.scanStr((char *)params, "%b", &_allowWindowed);
+				parser.scanStr(params, "%b", &_allowWindowed);
 				break;
-				
+
 			case TOKEN_ALLOW_DESKTOP_RES:
-				parser.scanStr((char *)params, "%b", &_allowDesktopRes);
+				parser.scanStr(params, "%b", &_allowDesktopRes);
 				break;
-				
+
 			case TOKEN_ALLOW_ADVANCED:
-				parser.scanStr((char *)params, "%b", &_allowAdvanced);
+				parser.scanStr(params, "%b", &_allowAdvanced);
 				break;
-				
+
 			case TOKEN_ALLOW_ACCESSIBILITY_TAB:
-				parser.scanStr((char *)params, "%b", &_allowAccessTab);
+				parser.scanStr(params, "%b", &_allowAccessTab);
 				break;
-				
+
 			case TOKEN_ALLOW_ABOUT_TAB:
-				parser.scanStr((char *)params, "%b", &_allowAboutTab);
+				parser.scanStr(params, "%b", &_allowAboutTab);
 				break;
-				
+
 			case TOKEN_REGISTRY_PATH:
-				//BaseEngine::instance().getRegistry()->setBasePath((char *)params);
+				//BaseEngine::instance().getRegistry()->setBasePath(params);
 				break;
-				
+
 			case TOKEN_RICH_SAVED_GAMES:
-				parser.scanStr((char *)params, "%b", &_richSavedGames);
+				parser.scanStr(params, "%b", &_richSavedGames);
 				break;
-				
+
 			case TOKEN_SAVED_GAME_EXT:
-				_savedGameExt = (char *)params;
+				_savedGameExt = params;
 				break;
-				
+
 			case TOKEN_GUID:
 				break;
 		}
@@ -197,12 +197,12 @@ bool BaseGameSettings::loadSettings(const char *filename) {
 		BaseEngine::LOG(0, "Error loading game settings '%s'", filename);
 		ret = STATUS_FAILED;
 	}
-	
+
 	_allowWindowed = true; // TODO: These two settings should probably be cleaned out altogether.
 	_compressedSavegames = true;
-	
+
 	delete[] origBuffer;
-	
+
 	return ret;
 }
 
@@ -219,4 +219,4 @@ char *BaseGameSettings::getKeyFromStringTable(const char *str) const {
 	return _stringTable->getKey(str);
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

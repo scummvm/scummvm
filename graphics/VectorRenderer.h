@@ -73,6 +73,8 @@ struct DrawStep {
 	uint8 shadow, stroke, factor, radius, bevel; /**< Misc options... */
 
 	uint8 fillMode; /**< active fill mode */
+	uint8 shadowFillMode; /**< fill mode of the shadow used */
+
 	uint32 extraData; /**< Generic parameter for extra options (orientation/bevel) */
 
 	uint32 scale; /**< scale of all the coordinates in FIXED POINT with 16 bits mantissa */
@@ -103,7 +105,7 @@ VectorRenderer *createRenderer(int mode);
  */
 class VectorRenderer {
 public:
-	VectorRenderer() : _activeSurface(NULL), _fillMode(kFillDisabled), _shadowOffset(0),
+	VectorRenderer() : _activeSurface(NULL), _fillMode(kFillDisabled), _shadowOffset(0), _shadowFillMode(kShadowExponential), 
 		_disableShadows(false), _strokeWidth(1), _gradientFactor(1) {
 
 	}
@@ -124,6 +126,11 @@ public:
 		kTriangleDown,
 		kTriangleLeft,
 		kTriangleRight
+	};
+
+	enum ShadowFillMode {
+		kShadowLinear = 0,
+		kShadowExponential = 1
 	};
 
 	/**
@@ -278,7 +285,7 @@ public:
 	 * Clears the active surface.
 	 */
 	virtual void clearSurface() {
-		byte *src = (byte *)_activeSurface->pixels;
+		byte *src = (byte *)_activeSurface->getPixels();
 		memset(src, 0, _activeSurface->pitch * _activeSurface->h);
 	}
 
@@ -290,6 +297,10 @@ public:
 	 */
 	virtual void setFillMode(FillMode mode) {
 		_fillMode = mode;
+	}
+
+	virtual void setShadowFillMode(ShadowFillMode mode) {
+		_shadowFillMode = mode;
 	}
 
 	/**
@@ -466,7 +477,7 @@ public:
 	 */
 	virtual void drawString(const Graphics::Font *font, const Common::String &text,
 	                        const Common::Rect &area, Graphics::TextAlign alignH,
-	                        GUI::ThemeEngine::TextAlignVertical alignV, int deltax, bool useEllipsis) = 0;
+	                        GUI::ThemeEngine::TextAlignVertical alignV, int deltax, bool useEllipsis, const Common::Rect &textDrawableArea) = 0;
 
 	/**
 	 * Allows to temporarily enable/disable all shadows drawing.
@@ -485,6 +496,7 @@ protected:
 	Surface *_activeSurface; /**< Pointer to the surface currently being drawn */
 
 	FillMode _fillMode; /**< Defines in which way (if any) are filled the drawn shapes */
+	ShadowFillMode _shadowFillMode;
 
 	int _shadowOffset; /**< offset for drawn shadows */
 	int _bevel; /**< amount of fake bevel */

@@ -1323,7 +1323,7 @@ void SoundManager::playLoopingSound(int param) {
 							break;
 						if (getEntities()->isInsideCompartment(kEntityPlayer, getEntityData(kEntityPlayer)->car, positions[pos])) {
 							numLoops[0] = 1;
-							partNumber = (getObjects()->get((ObjectIndex)objNum).location - 2) < 1 ? 6 : 1;
+							partNumber = (getObjects()->get((ObjectIndex)objNum).status - 2) < 1 ? 6 : 1;
 						}
 						objNum++;
 					}

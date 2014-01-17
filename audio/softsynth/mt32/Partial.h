@@ -25,26 +25,22 @@ class Part;
 class TVA;
 struct ControlROMPCMStruct;
 
-struct StereoVolume {
-	float leftVol;
-	float rightVol;
-};
-
 // A partial represents one of up to four waveform generators currently playing within a poly.
 class Partial {
 private:
 	Synth *synth;
 	const int debugPartialNum; // Only used for debugging
-	// Number of the sample currently being rendered by generateSamples(), or 0 if no run is in progress
+	// Number of the sample currently being rendered by produceOutput(), or 0 if no run is in progress
 	// This is only kept available for debugging purposes.
 	unsigned long sampleNum;
+
+	// Actually, this is a 4-bit register but we abuse this to emulate inverted mixing.
+	// Also we double the value to enable INACCURATE_SMOOTH_PAN, with respect to MoK.
+	Bit32s leftPanValue, rightPanValue;
 
 	int ownerPart; // -1 if unassigned
 	int mixType;
 	int structurePosition; // 0 or 1 of a structure pair
-	StereoVolume stereoVolume;
-
-	Bit16s myBuffer[MAX_SAMPLES_PER_RUN];
 
 	// Only used for PCM partials
 	int pcmNum;
@@ -56,6 +52,11 @@ private:
 	int pulseWidthVal;
 
 	Poly *poly;
+	Partial *pair;
+
+	TVA *tva;
+	TVP *tvp;
+	TVF *tvf;
 
 	LA32Ramp ampRamp;
 	LA32Ramp cutoffModifierRamp;
@@ -63,18 +64,13 @@ private:
 	// TODO: This should be owned by PartialPair
 	LA32PartialPair la32Pair;
 
+	const PatchCache *patchCache;
+	PatchCache cachebackup;
+
 	Bit32u getAmpValue();
 	Bit32u getCutoffValue();
 
 public:
-	const PatchCache *patchCache;
-	TVA *tva;
-	TVP *tvp;
-	TVF *tvf;
-
-	PatchCache cachebackup;
-
-	Partial *pair;
 	bool alreadyOutputed;
 
 	Partial(Synth *synth, int debugPartialNum);
@@ -97,14 +93,14 @@ public:
 	bool isPCM() const;
 	const ControlROMPCMStruct *getControlROMPCMStruct() const;
 	Synth *getSynth() const;
+	TVA *getTVA() const;
+
+	void backupCache(const PatchCache &cache);
 
 	// Returns true only if data written to buffer
 	// This function (unlike the one below it) returns processed stereo samples
 	// made from combining this single partial with its pair, if it has one.
-	bool produceOutput(float *leftBuf, float *rightBuf, unsigned long length);
-
-	// This function writes mono sample output to the provided buffer, and returns the number of samples written
-	unsigned long generateSamples(Bit16s *partialBuf, unsigned long length);
+	bool produceOutput(Sample *leftBuf, Sample *rightBuf, unsigned long length);
 };
 
 }

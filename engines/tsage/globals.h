@@ -110,7 +110,7 @@ public:
 	int _interfaceY;
 	ASoundExt _inventorySound;
 
-	TsAGE2Globals() { _onSelectItem = NULL; }
+	TsAGE2Globals();
 	virtual void reset();
 	virtual void synchronize(Serializer &s);
 };
@@ -194,33 +194,25 @@ public:
 	int _safeCombination;
 	int _gateStatus;
 	int _greenDay5TalkCtr;
-	int _v4CEC4;
 	int _v4CEC8;
 	int _v4CECA;
 	int _v4CECC;
 	int8 _breakerBoxStatusArr[18];
 	int _hiddenDoorStatus;
 	int _nico910State;
-	int _v4CEE4;
-	int _v4CEE6;
-	int _v4CEE8;
+	int _stuart910State;
+	int _nico910Talk;
+	int _stuart910Talk;
 	int _deziTopic;
 	int _deathReason;
 	int _driveFromScene;
 	int _driveToScene;
-	int _v501F8;
-	int _v501FA;
-	int _v501FC;
-	int _v5020C;
-	int _v50696;
 	uint8 _subFlagBitArr1;
 	uint8 _subFlagBitArr2;
-	int _v50CC2;
-	int _v50CC4;
-	int _v50CC6;
-	int _v50CC8;
-	int _v51C42;
-	int _v51C44;
+	bool _scene410HarrisonTalkFl;
+	int _scene410Action1Count;
+	int _scene410TalkCount;
+	bool _scene410HarrisonMovedFl;
 	Bookmark _bookmark;
 	int _mapLocationId;
 	int _clip1Bullets, _clip2Bullets;
@@ -242,69 +234,70 @@ namespace Ringworld2 {
 #define SPEECH_TEXT 1
 #define SPEECH_VOICE 2
 
-#define k5A78C 15
-#define k5A78D 16
-#define k5A790 18
-#define k5A791 17
+class ScannerDialog;
+
+struct VampireData {
+	bool _isAlive;
+	int _shotsRequired;
+	Common::Point _position;
+};
 
 class Ringworld2Globals: public TsAGE2Globals {
 public:
 	ASoundExt _sound1, _sound2, _sound3, _sound4;
 	PlayStream _playStream;
 	StripProxy _stripProxy;
-	bool _v1000Flag;
-	byte _v1000[0x1000];
-	byte _palIndexList[10][256];
+	bool _fadePaletteFlag;
+	byte _fadePaletteMap[10][256];
+	byte _paletteMap[4096];
 	int _insetUp;
-	int _frameEdgeColour;	// _v421e
-	Rect _v5589E;
-	Rect _v558B6;
-	int _v558C2;
+	int _frameEdgeColor;
 	int _animationCtr;
-	int _v565E1;
-	int _v565E3;
-	int _v565E5;
-	int _v565E7;
-	int _v565E9;
-	int _v565EB;
-	int _v565F5;
-	int _v565F6;
-	int _v565FA;
-	int _v5657C;
-	byte _v565AE;
-	byte _v56605[14];
-	int _v56613[76];
-	byte _v566A4;
-	byte _v566A5;
-	int _v566A6;
-	byte _v566A3;
-	byte _v566A8;
-	byte _v566A9;
-	byte _v566AA;
-	byte _v566AB[1000];
-	int _v56A93;
-	byte _v56A99;
+	int _electromagnetChangeAmount;
+	int _electromagnetZoom;
+	bool _tractorField;
+	bool _cableAttached;
+	int _foodCount;
+	int _rimLocation;
+	int _rimTransportLocation;
+	byte _stripModifier;
+	byte _spillLocation[14];
+	VampireData _vampireData[18];
+	byte _flubMazeArea;
+	byte _flubMazeEntryDirection;
+	int _maze3800SceneNumb;
+	byte _landerSuitNumber;
+	byte _desertStepsRemaining;
+	byte _desertCorrectDirection;
+	byte _desertPreviousDirection;
+	byte _desertMovements[1000];
+	int _desertWrongDirCtr;
+	byte _balloonAltitude;
 	int _scene1925CurrLevel; //_v56A9C
-	int _v56A9E;
-	byte _v56AA0;
-	byte _v56AA1;
-	int _v56AA2;
-	int _v56AA4;
-	byte _v56AA6;
-	byte _v56AA7;
-	byte _v56AA8;
-	int _v56AAB;
+	int _walkwaySceneNumber;
+	byte _mirandaJailState;
+	byte _scientistConvIndex;
+	Common::Point _ventCellPos;
+	byte _ductMazePanel1State;
+	byte _ductMazePanel2State;
+	byte _ductMazePanel3State;
 	int _scene180Mode;	// _v575f7
 	int _v57709;
 	int _v5780C;
-	int _v5780E;
+	int _mouseCursorId;
 	int _v57810;
-	int _v57C2C;
 	int _speechSubtitles;
-	byte _v565EC[5];
-	byte _v565F1[4];
+	Common::Point _s1550PlayerArea[3]; // only used for Quinn and Seeker
+	byte _scannerFrequencies[4];
 	byte _stripManager_lookupList[12];
+	byte _scene1550JunkLocations[508];
+	Common::Point _balloonPosition;
+	bool _debugCardGame;               // moved from scene 1337 so it can be easily set in the debugger
 
+	ScannerDialog *_scannerDialog;
+
+	Ringworld2Globals();
+	virtual ~Ringworld2Globals();
 	virtual void reset();
 	virtual void synchronize(Serializer &s);
 };

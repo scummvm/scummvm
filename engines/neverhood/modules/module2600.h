@@ -41,24 +41,6 @@ protected:
 	void updateScene();
 };
 
-class SsScene2609Button : public StaticSprite {
-public:
-	SsScene2609Button(NeverhoodEngine *vm, Scene *parentScene);
-protected:
-	Scene *_parentScene;
-	int _countdown;
-	void update();
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-};
-
-class AsScene2609Water : public AnimatedSprite {
-public:
-	AsScene2609Water(NeverhoodEngine *vm);
-	virtual ~AsScene2609Water();
-protected:
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-};
-
 class Scene2609 : public Scene {
 public:
 	Scene2609(NeverhoodEngine *vm, Module *parentModule, int which);

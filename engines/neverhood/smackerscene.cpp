@@ -31,16 +31,16 @@ SmackerScene::SmackerScene(NeverhoodEngine *vm, Module *parentModule, bool doubl
 	debug(0, "SmackerScene::SmackerScene(%d, %d, %d)", doubleSurface, canSkip, canAbort);
 
 	// NOTE: Merged from SmackerScene::init, maybe split again if needed (incl. parameter flags)
-	
+
 	if (getGlobalVar(V_SMACKER_CAN_ABORT)) {
 		_canSkip = true;
 		_canAbort = true;
 	}
-	
+
 	if (!_doubleSurface)
 		_vm->_screen->clear();
 
-	_fileHash[0] = 0; 
+	_fileHash[0] = 0;
 	_fileHash[1] = 0;
 
 	SetUpdateHandler(&SmackerScene::update);
@@ -67,7 +67,7 @@ void SmackerScene::nextVideo() {
 	debug(0, "SmackerScene::nextVideo()");
 
 	_fileHashListIndex++;
-	
+
 	if (_fileHashList && _fileHashList[_fileHashListIndex] != 0) {
 		uint32 smackerFileHash = _fileHashList[_fileHashListIndex];
 		ResourceHandle resourceHandle;
@@ -104,15 +104,15 @@ void SmackerScene::update() {
 uint32 SmackerScene::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x0009:
+	case NM_KEYPRESS_SPACE:
 		if ((_videoPlayedBefore && _canSkip) || (_canAbort && _canSkip))
 			_playNextVideoFlag = true;
 		break;
-	case 0x000C:
+	case NM_KEYPRESS_ESC:
 		if (_canAbort)
 			sendMessage(_parentModule, 0x1009, 0);
 		break;
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		_playNextVideoFlag = true;
 		break;
 	}

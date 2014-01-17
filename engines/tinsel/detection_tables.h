@@ -319,7 +319,7 @@ static const TinselGameDescription gameDescriptions[] = {
 			},
 			Common::DE_DEU,
 			Common::kPlatformDOS,
-			ADGF_DROPLANGUAGE,
+			ADGF_DROPLANGUAGE | ADGF_CD,
 			GUIO0()
 		},
 		GID_DW1,
@@ -477,6 +477,26 @@ static const TinselGameDescription gameDescriptions[] = {
 		TINSEL_V1,
 	},
 #endif
+
+	{	// Mac English CD, see tracker #3614864
+		{
+			"dw",
+			"CD",
+			{
+				{"dw.scn", 0, "114643df0d1f1530a0a9c5d4e38917bc", 1268553},
+				{"english.smp", 0, NULL, -1},
+				{NULL, 0, NULL, 0}
+			},
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_CD,
+			GUIO0()
+		},
+		GID_DW1,
+		0,
+		GF_SCNFILES | GF_ENHANCED_AUDIO_SUPPORT,
+		TINSEL_V1,
+	},
 
 	{	// Mac multilanguage CD
 		{

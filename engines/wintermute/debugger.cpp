@@ -206,7 +206,9 @@ bool Console::Cmd_StepInto(int argc, const char **argv) {
 bool Console::Cmd_Continue(int argc, const char **argv) {
 	if (argc == 1) {
 		Error error = ADAPTER->stepContinue();
-		DebugPrintf("%s: %s\n", error.getErrorDisplayStr().c_str());
+		if (error.errorLevel = SUCCESS) {
+			return false;
+		}
 	} else {
 		DebugPrintf("Usage: %s to continue\n", argv[0]);
 		return true;
@@ -343,7 +345,6 @@ bool Console::Cmd_DumpFile(int argc, const char **argv) {
 	return true;
 }
 
-
 bool Console::Cmd_SourcePath(int argc, const char **argv) {
 	/*
 	 * Set source path for debugging
@@ -426,3 +427,4 @@ void Console::debugWarning(const Common::String &command, int warning_level, con
 }
 
 } // end of namespace Wintermute
+

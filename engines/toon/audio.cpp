@@ -228,6 +228,7 @@ void AudioManager::stopMusic() {
 AudioStreamInstance::AudioStreamInstance(AudioManager *man, Audio::Mixer *mixer, Common::SeekableReadStream *stream , bool looping, bool deleteFileStreamAtEnd) {
 	_compBufferSize = 0;
 	_buffer = NULL;
+	_bufferSize = 0;
 	_bufferMaxSize = 0;
 	_mixer = mixer;
 	_compBuffer = NULL;
@@ -255,6 +256,8 @@ AudioStreamInstance::AudioStreamInstance(AudioManager *man, Audio::Mixer *mixer,
 	} else {
 		stopNow();
 	}
+
+	_soundType = Audio::Mixer::kPlainSoundType;
 }
 
 AudioStreamInstance::~AudioStreamInstance() {

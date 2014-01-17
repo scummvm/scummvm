@@ -250,10 +250,10 @@ Common::String BaseParser::getToken(char **buf) {
 		*t++ = 0;
 	} else if (*b == 0) {
 		*buf = b;
-		return nullptr;
+		return Common::String();
 	} else {
 		// Error.
-		return nullptr;
+		return Common::String();
 	}
 
 	*buf = b;
@@ -464,4 +464,4 @@ int32 BaseParser::scanStr(const char *in, const char *format, ...) {
 	return num;
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

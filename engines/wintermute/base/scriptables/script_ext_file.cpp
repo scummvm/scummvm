@@ -766,16 +766,16 @@ bool SXFile::persist(BasePersistenceManager *persistMgr) {
 
 	BaseScriptable::persist(persistMgr);
 
-	persistMgr->transfer(TMEMBER(_filename));
-	persistMgr->transfer(TMEMBER(_mode));
-	persistMgr->transfer(TMEMBER(_textMode));
+	persistMgr->transferCharPtr(TMEMBER(_filename));
+	persistMgr->transferSint32(TMEMBER(_mode));
+	persistMgr->transferBool(TMEMBER(_textMode));
 
 	uint32 pos = 0;
 	if (persistMgr->getIsSaving()) {
 		pos = getPos();
-		persistMgr->transfer(TMEMBER(pos));
+		persistMgr->transferUint32(TMEMBER(pos));
 	} else {
-		persistMgr->transfer(TMEMBER(pos));
+		persistMgr->transferUint32(TMEMBER(pos));
 
 		// try to re-open file if needed
 		_writeFile = nullptr;
@@ -825,4 +825,4 @@ Common::WriteStream *SXFile::openForAppend(const Common::String &filename, bool 
 	error("SXFile::openForAppend - WriteFiles not supported");
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

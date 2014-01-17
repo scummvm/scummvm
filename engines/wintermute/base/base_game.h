@@ -140,7 +140,7 @@ public:
 	bool initialize2();
 	bool initialize3();
 	BaseTransitionMgr *_transMgr;
-	
+
 	// String Table
 	void expandStringByStringTable(char **str) const;
 	char *getKeyFromStringTable(const char *str) const;
@@ -153,14 +153,14 @@ public:
 	BaseScriptable *_mathClass;
 	BaseSurfaceStorage *_surfaceStorage;
 	BaseFontStorage *_fontStorage;
-	BaseGame(const Common::String &gameId);
+	BaseGame(const Common::String &targetName);
 	virtual ~BaseGame();
 
 	bool _debugDebugMode;
 
 	int32 _sequence;
 	virtual bool loadFile(const char *filename);
-	virtual bool loadBuffer(byte *buffer, bool complete = true);
+	virtual bool loadBuffer(char *buffer, bool complete = true);
 
 	int32 _viewportSP;
 
@@ -176,8 +176,8 @@ public:
 	// compatibility bits
 	bool _compatKillMethodThreads;
 
-	const char* getGameId() const { return _gameId.c_str(); }
-	void setGameId(const Common::String& gameId) { _gameId = gameId; }
+	const char* getGameTargetName() const { return _targetName.c_str(); }
+	void setGameTargetName(const Common::String& targetName) { _targetName = targetName; }
 	uint32 _surfaceGCCycleTime;
 	bool _smartCache; // RO
 	bool _subtitles; // RO
@@ -254,6 +254,8 @@ public:
 	void addMem(int32 bytes);
 	bool _touchInterface;
 	bool _constrainedMemory;
+
+	bool stopVideo();
 protected:
 	BaseFont *_systemFont;
 	BaseFont *_videoFont;
@@ -278,7 +280,7 @@ private:
 
 	bool _mouseRightDown;
 	bool _mouseMidlleDown;
-	
+
 	BaseGameSettings *_settings;
 
 	int32 _soundBufferSizeSec;
@@ -298,7 +300,7 @@ private:
 	uint32 _lastTime;
 	uint32 _fpsTime;
 	uint32 _framesRendered;
-	Common::String _gameId;
+	Common::String _targetName;
 
 	void setEngineLogCallback(ENGINE_LOG_CALLBACK callback = nullptr, void *data = nullptr);
 	ENGINE_LOG_CALLBACK _engineLogCallback;
@@ -322,7 +324,6 @@ private:
 	BaseGameMusic *_musicSystem;
 
 	bool isVideoPlaying();
-	bool stopVideo();
 
 	BaseArray<BaseQuickMsg *> _quickMessages;
 	BaseArray<UIWindow *> _windows;
@@ -346,6 +347,8 @@ private:
 	bool isDoubleClick(int32 buttonIndex);
 	uint32 _usedMem;
 
+// TODO: This should be expanded into a proper class eventually:
+	Common::String readRegistryString(const Common::String &key, const Common::String &initValue) const;
 
 
 protected:
@@ -359,6 +362,6 @@ public:
 
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

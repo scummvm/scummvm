@@ -187,7 +187,7 @@ uint32 NEResources::getResourceTableOffset() {
 static const char *s_resTypeNames[] = {
 	"", "cursor", "bitmap", "icon", "menu", "dialog", "string",
 	"font_dir", "font", "accelerator", "rc_data", "msg_table",
-	"group_cursor", "group_icon", "", "", "version", "dlg_include",
+	"group_cursor", "", "group_icon", "", "version", "dlg_include",
 	"", "plug_play", "vxd", "ani_cursor", "ani_icon", "html",
 	"manifest"
 };
@@ -231,7 +231,7 @@ bool NEResources::readResourceTable(uint32 offset) {
 			if (id & 0x8000)
 				res.id = id & 0x7FFF;
 			else
-				res.id = getResourceString(*_exe, offset + id);				
+				res.id = getResourceString(*_exe, offset + id);
 
 			if (typeID & 0x8000 && ((typeID & 0x7FFF) < ARRAYSIZE(s_resTypeNames)) && s_resTypeNames[typeID & 0x7FFF][0] != 0)
 				debug(2, "Found resource %s %s", s_resTypeNames[typeID & 0x7FFF], res.id.toString().c_str());

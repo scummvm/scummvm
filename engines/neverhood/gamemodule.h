@@ -40,6 +40,8 @@ public:
 	void handleMouseMove(int16 x, int16 y);
 	void handleMouseDown(int16 x, int16 y);
 	void handleMouseUp(int16 x, int16 y);
+	void handleWheelUp();
+	void handleWheelDown();
 	void handleSpaceKey();
 	void handleAsciiKey(char key);
 	void handleKeyDown(Common::KeyCode keyCode);
@@ -49,7 +51,7 @@ public:
 	void initWaterPipesPuzzle();
 	void initRadioPuzzle();
 	void initTestTubes1Puzzle();
-	void initTestTubes2Puzzle();	
+	void initTestTubes2Puzzle();
 	void initCannonSymbolsPuzzle();
 	void initCodeSymbolsPuzzle();
 	void initCubeSymbolsPuzzle();

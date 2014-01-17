@@ -48,6 +48,9 @@ bool CursorManager::isVisible() {
 bool CursorManager::showMouse(bool visible) {
 	if (_cursorStack.empty())
 		return false;
+	if (_locked) {
+		return false;
+	}
 
 	_cursorStack.top()->_visible = visible;
 
@@ -225,6 +228,10 @@ void CursorManager::replaceCursorPalette(const byte *colors, uint start, uint nu
 	}
 }
 
+void CursorManager::lock(bool locked) {
+	_locked = locked;
+}
+
 CursorManager::Cursor::Cursor(const void *data, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format) {
 #ifdef USE_RGB_COLOR
 	if (!format)
@@ -246,6 +253,7 @@ CursorManager::Cursor::Cursor(const void *data, uint w, uint h, int hotspotX, in
 	_hotspotX = hotspotX;
 	_hotspotY = hotspotY;
 	_dontScale = dontScale;
+	_visible = false;
 }
 
 CursorManager::Cursor::~Cursor() {

@@ -73,6 +73,20 @@ static const ToltecsGameDescription gameDescriptions[] = {
 	},
 
 	{
+		// 3 Skulls of the Toltecs English version (alternate)
+		// From bug #3614933
+		{
+			"toltecs",
+			0,
+			AD_ENTRY1s("WESTERN", "a9c9cfef9d05b8f7a5573b626fa4ea87", 337643527),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NONE)
+		},
+	},
+
+	{
 		// 3 Skulls of the Toltecs Russian version
 		{
 			"toltecs",

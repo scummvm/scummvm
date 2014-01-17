@@ -325,7 +325,7 @@ void GraphicsManager::loadPCX640(byte *surface, const Common::String &file, byte
 
 	// Copy out the dimensions and pixels of the decoded surface
 	_largeScreenFl = s->w > SCREEN_WIDTH;
-	Common::copy((byte *)s->pixels, (byte *)s->pixels + (s->pitch * s->h), surface);
+	Common::copy((const byte *)s->getPixels(), (const byte *)s->getBasePtr(0, s->h), surface);
 
 	// Copy out the palette
 	const byte *palSrc = pcxDecoder.getPalette();
@@ -1179,7 +1179,7 @@ void GraphicsManager::displayZones() {
 			Common::Rect r(_vm->_objectsMan->_bob[bobId]._oldX, _vm->_objectsMan->_bob[bobId]._oldY,
 				_vm->_objectsMan->_bob[bobId]._oldX + _vm->_objectsMan->_bob[bobId]._oldWidth,
 				_vm->_objectsMan->_bob[bobId]._oldY + _vm->_objectsMan->_bob[bobId]._oldHeight);
-				
+
 			displayDebugRect(screenSurface, r, 0xff0000);
 		}
 	}
@@ -1202,15 +1202,13 @@ void GraphicsManager::displayZones() {
 void GraphicsManager::displayLines() {
 	Graphics::Surface *screenSurface = g_system->lockScreen();
 
-	uint16* pixels = (uint16*)screenSurface->pixels;
-
-	for (int lineIndex = 0; lineIndex < _vm->_linesMan->_linesNumb; lineIndex++) {	
+	for (int lineIndex = 0; lineIndex < _vm->_linesMan->_linesNumb; lineIndex++) {
 		int i = 0;
 		do {
 			int x = _vm->_linesMan->_lineItem[lineIndex]._lineData[i] - _scrollPosX;
 			int y = _vm->_linesMan->_lineItem[lineIndex]._lineData[i+1];
 			if (x >= 0 && x < SCREEN_WIDTH && y >= 0 && y < SCREEN_HEIGHT) {
-				pixels[ y * screenSurface->w + x ] = 0xffff;
+				WRITE_UINT16(screenSurface->getBasePtr(x, y), 0xffff);
 			}
 			i += 2;
 		}
@@ -1230,7 +1228,7 @@ void GraphicsManager::displayDebugRect(Graphics::Surface *surface, const Common:
 	r.top = MAX(r.top, (int16)0);
 	r.right = MIN(r.right, (int16)SCREEN_WIDTH);
 	r.bottom = MIN(r.bottom, (int16)SCREEN_HEIGHT);
-				
+
 	// If there's an on-screen portion, display it
 	if (r.isValidRect())
 		surface->frameRect(r, color);
@@ -1361,7 +1359,7 @@ void GraphicsManager::drawCompressedSprite(byte *surface, const byte *srcData, i
 	_posYClipped = 0;
 	_clipX1 = 0;
 	_clipY1 = 0;
-	if ((xp300 <= _minX) || (yp300 <= _minY) || (xp300 >= _maxX + 300) || 	(yp300 >= _maxY + 300))
+	if ((xp300 <= _minX) || (yp300 <= _minY) || (xp300 >= _maxX + 300) || (yp300 >= _maxY + 300))
 		return;
 
 	// Clipped values are greater or equal to zero, thanks to the previous test
@@ -1783,7 +1781,7 @@ void GraphicsManager::initScreen(const Common::String &file, int mode, bool init
 
 		do {
 			int dataVal1 = _vm->_script->handleOpcode(ptr + 20 * dataOffset);
-			if (_vm->shouldQuit())
+			if (dataVal1 == -1 || _vm->shouldQuit())
 				return;
 
 			if (dataVal1 == 2)

@@ -36,7 +36,7 @@ class AsDiskplayerSceneKey : public AnimatedSprite {
 public:
 	AsDiskplayerSceneKey(NeverhoodEngine *vm);
 	void stDropKey();
-protected:	
+protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	void stDropKeyDone();
 };
@@ -47,7 +47,7 @@ public:
 	void press();
 	void release();
 protected:
-	DiskplayerScene *_diskplayerScene;	
+	DiskplayerScene *_diskplayerScene;
 	bool _isPlaying;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
@@ -69,7 +69,7 @@ protected:
 	int _blinkCountdown;
 	bool _isLocked;
 	bool _isBlinking;
-	void update();	
+	void update();
 };
 
 enum {

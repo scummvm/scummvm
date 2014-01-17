@@ -413,8 +413,8 @@ void Logic::resetState() {
 /**
  * Handle game over
  *
- * @param type 		 The savegame type.
- * @param value 	 The value (event, time, index, ...)
+ * @param type       The savegame type.
+ * @param value      The value (event, time, index, ...)
  * @param sceneIndex Index of the scene to show.
  * @param showScene  true to show a scene, false to return to menu directly
  */
@@ -468,7 +468,7 @@ void Logic::switchChapter() const {
 
 	case kChapter3:
 		getInventory()->get(kItemFirebird)->location = kObjectLocation4;
-		getInventory()->get(kItemFirebird)->isPresent = false;
+		getInventory()->get(kItemFirebird)->inPocket = false;
 		getInventory()->get(kItem11)->location = kObjectLocation1;
 		getInventory()->addItem(kItemWhistle);
 		getInventory()->addItem(kItemKey);

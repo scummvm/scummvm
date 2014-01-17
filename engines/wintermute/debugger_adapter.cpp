@@ -120,7 +120,7 @@ Common::String Error::getErrorDisplayStr() {
 			errorStr += Common::String("Source path not set. Source won't be displayed. Try 'sourcepath somepath' first.");
 			break;
 		case NO_SUCH_BREAKPOINT:
-			errorStr += Common::String::format("No such breakpoint %d.", this->errorExtraInt);
+			errorStr += Common::String::format("No such watch/breakpoint %d.", this->errorExtraInt);
 			break;
 		case WRONG_TYPE:
 			errorStr += Common::String::format("Incompatible type: %s.", this->errorExtraString.c_str());
@@ -373,6 +373,11 @@ Error DebuggerAdapter::addWatch(const char *filename, const char *symbol) {
 	 */
 
 	SCENGINE->addWatchpoint(filename, symbol);
+
+	if (_sourcePath == Common::String("")) {
+		return Error(WARNING, SOURCE_PATH_NOT_SET, 0, filename);
+	}
+
 	return Error(SUCCESS, OK, 0, "Watchpoint added");
 }
 

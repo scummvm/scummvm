@@ -116,7 +116,10 @@ void SoundCommandParser::processInitSound(reg_t obj) {
 	newSound->resourceId = resourceId;
 	newSound->soundObj = obj;
 	newSound->loop = readSelectorValue(_segMan, obj, SELECTOR(loop));
-	newSound->priority = readSelectorValue(_segMan, obj, SELECTOR(priority)) & 0xFF;
+	if (_soundVersion <= SCI_VERSION_0_LATE)
+		newSound->priority = readSelectorValue(_segMan, obj, SELECTOR(priority));
+	else
+		newSound->priority = readSelectorValue(_segMan, obj, SELECTOR(priority)) & 0xFF;
 	if (_soundVersion >= SCI_VERSION_1_EARLY)
 		newSound->volume = CLIP<int>(readSelectorValue(_segMan, obj, SELECTOR(vol)), 0, MUSIC_VOLUME_MAX);
 	newSound->reverb = -1;	// initialize to SCI invalid, it'll be set correctly in soundInitSnd() below
@@ -428,7 +431,7 @@ reg_t SoundCommandParser::kDoSoundUpdate(int argc, reg_t *argv, reg_t acc) {
 	int16 objVol = CLIP<int>(readSelectorValue(_segMan, obj, SELECTOR(vol)), 0, 255);
 	if (objVol != musicSlot->volume)
 		_music->soundSetVolume(musicSlot, objVol);
-	uint32 objPrio = readSelectorValue(_segMan, obj, SELECTOR(priority));
+	int16 objPrio = readSelectorValue(_segMan, obj, SELECTOR(priority));
 	if (objPrio != musicSlot->priority)
 		_music->soundSetPriority(musicSlot, objPrio);
 	return acc;
@@ -505,9 +508,19 @@ void SoundCommandParser::processUpdateCues(reg_t obj) {
 		// fireworks).
 		// It is also needed in other games, e.g. LSL6 when talking to the
 		// receptionist (bug #3192166).
-		// CHECKME: At least kq5cd/win and kq6 set signal to 0xFE here, but
-		// kq5cd/dos does not set signal at all. Needs more investigation.
-		writeSelectorValue(_segMan, obj, SELECTOR(signal), SIGNAL_OFFSET);
+		// TODO: More thorougly check the different SCI version:
+		// * SCI1late sets signal to 0xFE here. (With signal 0xFF
+		//       duplicate music plays in LauraBow2CD - bug #6462)
+		//   SCI1middle LSL1 1.000.510 does not have the 0xFE;
+		//   SCI1late CastleDrBrain demo 1.000.005 does have the 0xFE.
+		// * Other SCI1 games seem to rely on processStopSound to set the signal
+		// * Need to check SCI0 behaviour.
+		uint16 sig;
+		if (getSciVersion() >= SCI_VERSION_1_LATE)
+			sig = 0xFFFE;
+		else
+			sig = SIGNAL_OFFSET;
+		writeSelectorValue(_segMan, obj, SELECTOR(signal), sig);
 		if (_soundVersion <= SCI_VERSION_0_LATE) {
 			processStopSound(obj, false);
 		} else {

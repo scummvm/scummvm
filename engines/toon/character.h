@@ -143,6 +143,7 @@ protected:
 	Common::Array<Common::Point> _currentPath;
 	uint32 _currentPathNode;
 	int32 _currentWalkStamp;
+	int32 _currentFacingStamp;
 };
 
 } // End of namespace Toon

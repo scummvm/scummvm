@@ -271,7 +271,7 @@ void EventsManager::pollEvents() {
 			_mouseButton = 0;
 			return;
 		default:
- 			break;
+			break;
 		}
 	}
 

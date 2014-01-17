@@ -84,12 +84,17 @@ void DialogsManager::showOptionsDialog() {
 	if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
 		filename = "OPTION.SPR";
 	else {
-		if (_vm->_globals->_language == LANG_FR)
+		switch (_vm->_globals->_language) {
+		case LANG_FR:
 			filename = "OPTIFR.SPR";
-		else if (_vm->_globals->_language == LANG_EN)
+			break;
+		case LANG_EN:
 			filename = "OPTIAN.SPR";
-		else if (_vm->_globals->_language == LANG_SP)
+			break;
+		case LANG_SP:
 			filename = "OPTIES.SPR";
+			break;
+		}
 	}
 
 	_vm->_globals->_optionDialogSpr = _vm->_fileIO->loadFile(filename);
@@ -505,7 +510,7 @@ void DialogsManager::inventAnim() {
 		return;
 
 	if (_vm->_objectsMan->_eraseVisibleCounter && !_vm->_objectsMan->_visibleFl) {
-		_vm->_graphicsMan->copySurface(_vm->_graphicsMan->_backBuffer, _oldInventX, 27, 48, 38, 
+		_vm->_graphicsMan->copySurface(_vm->_graphicsMan->_backBuffer, _oldInventX, 27, 48, 38,
 			_vm->_graphicsMan->_frontBuffer, _oldInventX, 27);
 		_vm->_graphicsMan->addDirtyRect(_oldInventX, 27, _oldInventX + 48, 65);
 		--_vm->_objectsMan->_eraseVisibleCounter;
@@ -691,7 +696,7 @@ void DialogsManager::showSaveLoad(SaveLoadMode mode) {
 			Graphics::Surface thumb8;
 			_vm->_saveLoad->convertThumb16To8(header._thumbnail, &thumb8);
 
-			byte *thumb = (byte *)thumb8.pixels;
+			byte *thumb = (byte *)thumb8.getPixels();
 
 			int16 startPosX_ = _vm->_events->_startPos.x;
 			switch (slotNumber) {

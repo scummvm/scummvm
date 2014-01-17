@@ -298,21 +298,13 @@ bool SXString::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 
 		uint32 start = 0;
 		for(uint32 i = 0; i < str.size() + 1; i++) {
-			char ch = str.c_str()[i];
-			if(ch=='\0' || delims.contains(ch))
-			{
-				char *part = new char[i - start + 1];
-				if(i != start) {
-					Common::strlcpy(part, str.c_str() + start, i - start + 1);
-					part[i - start] = '\0';
+			uint32 ch = str[i];
+			if (ch =='\0' || delims.contains(ch)) {
+				if (i != start) {
+					parts.push_back(WideString(str.c_str() + start, i - start + 1));
 				} else {
-					part[0] = '\0';
+					parts.push_back(WideString());
 				}
-				val = new ScValue(_gameRef, part);
-				array->push(val);
-				delete[] part;
-				delete val;
-				val = nullptr;
 				start = i + 1;
 			}
 		}
@@ -406,7 +398,7 @@ bool SXString::persist(BasePersistenceManager *persistMgr) {
 
 	BaseScriptable::persist(persistMgr);
 
-	persistMgr->transfer(TMEMBER(_capacity));
+	persistMgr->transferSint32(TMEMBER(_capacity));
 
 	if (persistMgr->getIsSaving()) {
 		if (_capacity > 0) {
@@ -430,4 +422,4 @@ int SXString::scCompare(BaseScriptable *val) {
 	return strcmp(_string, ((SXString *)val)->_string);
 }
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute

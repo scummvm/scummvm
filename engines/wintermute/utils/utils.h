@@ -59,6 +59,6 @@ private:
 	static float Hue2RGB(float v1, float v2, float vH);
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

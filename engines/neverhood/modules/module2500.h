@@ -26,13 +26,9 @@
 #include "neverhood/neverhood.h"
 #include "neverhood/module.h"
 #include "neverhood/scene.h"
-#include "neverhood/modules/module1000.h"
-#include "neverhood/modules/module1600.h"
-#include "neverhood/modules/module2700.h"
+#include "neverhood/modules/module1600_sprites.h"	// for Tracks
 
 namespace Neverhood {
-
-// Module2500
 
 class Module2500 : public Module {
 public:
@@ -46,6 +42,8 @@ protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	void createScene2704(int which, uint32 sceneInfoId, int16 value, const uint32 *staticSprites = NULL, const NRect *clipRect = NULL);
 };
+
+class AsCommonCar;
 
 class Scene2501 : public Scene {
 public:
@@ -77,16 +75,6 @@ protected:
 	void moveCarToPoint(NPoint &pt);
 	void changeTrack();
 	void updateKlaymenClipRect();
-};
-
-class SsScene2504Button : public StaticSprite {
-public:
-	SsScene2504Button(NeverhoodEngine *vm);
-protected:
-	int _countdown;
-	bool _isSoundPlaying;
-	void update();
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
 class Scene2504 : public Scene {

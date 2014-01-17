@@ -63,8 +63,8 @@ void VisualSpeaker::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_offsetPos.y);
 }
 
-void VisualSpeaker::proc12(Action *action) {
-	Speaker::proc12(action);
+void VisualSpeaker::startSpeaking(Action *action) {
+	Speaker::startSpeaking(action);
 	_textPos = Common::Point(_offsetPos.x + BF_GLOBALS._sceneManager._scene->_sceneBounds.left,
 		_offsetPos.y + BF_GLOBALS._sceneManager._scene->_sceneBounds.top);
 	_numFrames = 0;

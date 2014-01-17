@@ -598,6 +598,7 @@ catalog	Humongous Interactive Catalog
 	a56e8d9d4281c53c3f63c9bd22a59e21	10978342	en	All	HE CUP	Preview	George Kormendi
 	74da3494fbe1a7d20213b0afe0954755	10841544	fr	All	HE CUP	Preview	-	George Kormendi
 	4c4820518e16e1a0e3616a3b021a04f3	10927456	de	All	HE CUP	Preview	-	Kirben
+	288fb75b24389733c29fa107fe8d44e8	10795148	us	All	HE CUP	Preview	-	Kirben
 
 airport	Let's Explore the Airport with Buzzy
 	d6334a5a9b61afe18c368540fdf522ca	-1	en	Mac	-	-	-	Joachim Eberhard
@@ -626,7 +627,8 @@ jungle	Let's Explore the Jungle with Buzzy
 	8801fb4a1200b347f7a38523339526dd	-1	en	Windows	-	-	-	Kirben
 
 moonbase	Moonbase Commander
-	cf400d20769fb70eb21766582f4924f7	-1	en	Windows	-	-	-	Kirben
+	cf400d20769fb70eb21766582f4924f7	-1	en	Windows	1.0	1.0	-	Kirben
+	e1c9998826ce7fa8bde5cc3a5023edec	-1	en	Windows	1.1	1.1	-	fuzzie
 	ef71a322b6530ac45b1a070f7c0795f7	-1	en	Windows	Demo	Demo	-	Kirben
 
 pajama	Pajama Sam 1: No Need to Hide When It's Dark Outside
@@ -654,6 +656,7 @@ pajama2	Pajama Sam 2: Thunder and Lightning Aren't so Frightening
 	e5563c8358443c4352fcddf7402a5e0a	-1	fr	Windows	HE 98.5	-	-	gist974
 	c6907d44f1166941d982864cd42cdc89	-1	de	All	HE 99	-	-	nachbarnebenan
 	f8be685007a8b425ba2a455da732f59f	-1	fr	Mac	HE 99	-	-	alamaz
+	7477bc23d0383516c5e310cd8771dcc9	-1	fr	Windows	HE 99	-	-	Strangerke
 	32709cbeeb3044b34129950860a83f14	-1	ru	Windows	HE 99	-	-	sev
 	1af4eb581a33d808707d66d50e084dca	-1	he	Windows	HE 99	-	-	Matan Bareket
 
@@ -773,6 +776,7 @@ puttzoo	Putt-Putt Saves the Zoo
 	3a3e592b074f595489f7f11e150c398d	-1	us	Windows	HE 99	Updated	-	Adrian
 	c5cc7cba02a2fbd539c4439e775b0536	43470	de	Windows	HE 99	Updated	-	Lightkey
 	5c9cecbd2952ccec14c9ecebf5822a34	-1	en	iOS	HE 100	-	-	clone2727
+	7b4ee071eecadc2d8cd0c3509110825c	-1	en	Windows	HE 100	Remastered	-	Kirben
 
 	3486ede0f904789267d4bcc5537a46d4	14337	en	Mac	-	Demo	-	khalek
 	d220d154aafbfa12bd6f3ab1b2dae420	-1	de	Mac	-	Demo	-	Joachim Eberhard

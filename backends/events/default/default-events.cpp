@@ -54,6 +54,8 @@ DefaultEventManager::DefaultEventManager(Common::EventSource *boss) :
 	_currentKeyDown.ascii = 0;
 	_currentKeyDown.flags = 0;
 
+	_keyRepeatTime = 0;
+
 #ifdef ENABLE_VKEYBD
 	_vk = new Common::VirtualKeyboard();
 #endif
@@ -84,7 +86,8 @@ void DefaultEventManager::init() {
 }
 
 bool DefaultEventManager::pollEvent(Common::Event &event) {
-	uint32 time = g_system->getMillis();
+	// Skip recording of these events
+	uint32 time = g_system->getMillis(true);
 	bool result = false;
 
 	_dispatcher.dispatch();

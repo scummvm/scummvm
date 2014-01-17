@@ -20,8 +20,12 @@
  *
  */
 
+#include "neverhood/modules/module1600.h"	// for Scene1608
+#include "neverhood/modules/module1600_sprites.h"
 #include "neverhood/modules/module2500.h"
-#include "neverhood/modules/module1600.h"
+#include "neverhood/modules/module2500_sprites.h"
+#include "neverhood/modules/module2700.h"	// for Scene2704
+#include "neverhood/modules/module2700_sprites.h"
 
 namespace Neverhood {
 
@@ -29,29 +33,29 @@ static const uint32 kScene2505StaticSprites[] = {
 	0x4000A226, 0
 };
 
-static const NRect kScene2505ClipRect = NRect(0, 0, 564, 480);
+static const NRect kScene2505ClipRect = { 0, 0, 564, 480 };
 
 static const uint32 kScene2506StaticSprites[] = {
 	0x4027AF02, 0
 };
 
-static const NRect kScene2506ClipRect = NRect(0, 0, 640, 441);
+static const NRect kScene2506ClipRect = { 0, 0, 640, 441 };
 
 static const uint32 kScene2508StaticSprites1[] = {
 	0x2F08E610, 0xD844E6A0, 0
 };
 
-static const NRect kScene2508ClipRect1 = NRect(0, 0, 594, 448);
+static const NRect kScene2508ClipRect1 = { 0, 0, 594, 448 };
 
 static const uint32 kScene2508StaticSprites2[] = {
 	0x2F08E610, 0
 };
 
-static const NRect kScene2508ClipRect2 = NRect(0, 0, 594, 448);
+static const NRect kScene2508ClipRect2 = { 0, 0, 594, 448 };
 
 Module2500::Module2500(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Module(vm, parentModule), _soundIndex(0) {
-	
+
 	_vm->_soundMan->addMusic(0x29220120, 0x05343184);
 	_vm->_soundMan->startMusic(0x05343184, 0, 0);
 	SetMessageHandler(&Module2500::handleMessage);
@@ -212,14 +216,14 @@ uint32 Module2500::handleMessage(int messageNum, const MessageParam &param, Enti
 	}
 	return messageResult;
 }
-			
+
 void Module2500::createScene2704(int which, uint32 sceneInfoId, int16 value, const uint32 *staticSprites, const NRect *clipRect) {
 	_childObject = new Scene2704(_vm, this, which, sceneInfoId, value, staticSprites, clipRect);
 }
 
 Scene2501::Scene2501(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule) {
-	
+
 	_tracks.push_back(_vm->_staticData->getTrackInfo(0x004B2628));
 	_tracks.push_back(_vm->_staticData->getTrackInfo(0x004B264C));
 	_tracks.push_back(_vm->_staticData->getTrackInfo(0x004B2670));
@@ -248,7 +252,7 @@ Scene2501::Scene2501(NeverhoodEngine *vm, Module *parentModule, int which)
 		setRectList(0x004B2608);
 		SetMessageHandler(&Scene2501::handleMessage);
 		SetUpdateHandler(&Scene2501::update);
-		sendMessage(_asCar, 0x2009, 0);
+		sendMessage(_asCar, NM_CAR_ENTER, 0);
 		_asCar->setVisible(false);
 		_currTrackIndex = 0;
 	} else if (which == 1 || which == 2) {
@@ -273,7 +277,7 @@ Scene2501::Scene2501(NeverhoodEngine *vm, Module *parentModule, int which)
 		setRectList(0x004B2608);
 		SetMessageHandler(&Scene2501::handleMessage);
 		SetUpdateHandler(&Scene2501::update);
-		sendMessage(_asCar, 0x2009, 0);
+		sendMessage(_asCar, NM_CAR_ENTER, 0);
 		_asCar->setVisible(false);
 		_currTrackIndex = 0;
 	}
@@ -282,7 +286,7 @@ Scene2501::Scene2501(NeverhoodEngine *vm, Module *parentModule, int which)
 	_asCarTrackShadow = insertSprite<AsCommonCarTrackShadow>(_asCar, _ssTrackShadowBackground->getSurface(), 4);
 	_asCarConnectorShadow = insertSprite<AsCommonCarConnectorShadow>(_asCar, _ssTrackShadowBackground->getSurface(), 4);
 	insertSprite<AsCommonCarConnector>(_asCar);
-	
+
 	_newTrackIndex = -1;
 	_dataResource.load(calcHash("Ashooded"));
 
@@ -291,18 +295,18 @@ Scene2501::Scene2501(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	if (which >= 0 && _tracks[_currTrackIndex]->which2 == which) {
 		NPoint testPoint = (*_trackPoints)[_trackPoints->size() - 1];
-		sendMessage(_asCar, 0x2002, _trackPoints->size() - 1);
+		sendMessage(_asCar, NM_POSITION_CHANGE, _trackPoints->size() - 1);
 		if (testPoint.x < 0 || testPoint.x >= 640 || testPoint.y < 0 || testPoint.y >= 480)
-			sendMessage(_asCar, 0x2007, 150);
+			sendMessage(_asCar, NM_CAR_MOVE_TO_PREV_POINT, 150);
 	} else {
 		NPoint testPoint = (*_trackPoints)[0];
-		sendMessage(_asCar, 0x2002, 0);
+		sendMessage(_asCar, NM_POSITION_CHANGE, 0);
 		if (testPoint.x < 0 || testPoint.x >= 640 || testPoint.y < 0 || testPoint.y >= 480)
-			sendMessage(_asCar, 0x2008, 150);
+			sendMessage(_asCar, NM_CAR_MOVE_TO_NEXT_POINT, 150);
 	}
-	
+
 	_carStatus = 0;
-	
+
 }
 
 Scene2501::~Scene2501() {
@@ -325,7 +329,7 @@ void Scene2501::update() {
 		_asIdleCarLower->setVisible(false);
 		_asIdleCarFull->setVisible(false);
 		_asCar->setVisible(true);
-		sendMessage(_asCar, 0x2009, 0);
+		sendMessage(_asCar, NM_CAR_ENTER, 0);
 		_asCar->handleUpdate();
 		_klaymen = NULL;
 		_carStatus = 0;
@@ -337,7 +341,7 @@ void Scene2501::upCarAtHome() {
 	Scene::update();
 	if (_mouseClicked) {
 		if (_mouseClickPos.x <= 210 && _asCar->getX() == 211 && _asCar->getY() == 400) {
-			sendMessage(_asCar, 0x200A, 0);
+			sendMessage(_asCar, NM_CAR_LEAVE, 0);
 			SetUpdateHandler(&Scene2501::upGettingOutOfCar);
 		} else {
 			moveCarToPoint(_mouseClickPos);
@@ -381,7 +385,7 @@ void Scene2501::upRidingCar() {
 uint32 Scene2501::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x60842040)
 			_carStatus = 1;
 		break;
@@ -391,27 +395,27 @@ uint32 Scene2501::handleMessage(int messageNum, const MessageParam &param, Entit
 	}
 	return messageResult;
 }
-		
+
 uint32 Scene2501::hmRidingCar(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x2005:
+	case NM_KLAYMEN_CLIMB_LADDER:
 		if (_tracks[_currTrackIndex]->which1 < 0 && _newTrackIndex >= 0)
 			changeTrack();
 		else if (_tracks[_currTrackIndex]->which1 == 0) {
 			SetMessageHandler(&Scene2501::hmCarAtHome);
 			SetUpdateHandler(&Scene2501::upCarAtHome);
-			sendMessage(_asCar, 0x200F, 1);
+			sendMessage(_asCar, NM_CAR_AT_HOME, 1);
 		} else if (_tracks[_currTrackIndex]->which1 > 0)
 			leaveScene(_tracks[_currTrackIndex]->which1);
 		break;
-	case 0x2006:
+	case NM_KLAYMEN_STOP_CLIMBING:
 		if (_tracks[_currTrackIndex]->which2 < 0 && _newTrackIndex >= 0)
 			changeTrack();
 		else if (_tracks[_currTrackIndex]->which2 == 0) {
 			SetMessageHandler(&Scene2501::hmCarAtHome);
 			SetUpdateHandler(&Scene2501::upCarAtHome);
-			sendMessage(_asCar, 0x200F, 1);
+			sendMessage(_asCar, NM_CAR_AT_HOME, 1);
 		} else if (_tracks[_currTrackIndex]->which2 > 0)
 			leaveScene(_tracks[_currTrackIndex]->which2);
 		break;
@@ -425,7 +429,7 @@ uint32 Scene2501::hmRidingCar(int messageNum, const MessageParam &param, Entity 
 uint32 Scene2501::hmCarAtHome(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x200A:
+	case NM_CAR_LEAVE:
 		_carStatus = 2;
 		break;
 	case 0x200D:
@@ -434,7 +438,7 @@ uint32 Scene2501::hmCarAtHome(int messageNum, const MessageParam &param, Entity 
 	}
 	return messageResult;
 }
-	
+
 void Scene2501::moveCarToPoint(NPoint &pt) {
 	int minMatchTrackIndex, minMatchDistance;
 	_tracks.findTrackPoint(pt, minMatchTrackIndex, minMatchDistance, _dataResource);
@@ -456,9 +460,9 @@ void Scene2501::changeTrack() {
 	_trackPoints = _dataResource.getPointArray(_tracks[_currTrackIndex]->trackPointsName);
 	_asCar->setPathPoints(_trackPoints);
 	if (_currTrackIndex == 0)
-		sendMessage(_asCar, 0x2002, _trackPoints->size() - 1);
+		sendMessage(_asCar, NM_POSITION_CHANGE, _trackPoints->size() - 1);
 	else
-		sendMessage(_asCar, 0x2002, 0);
+		sendMessage(_asCar, NM_POSITION_CHANGE, 0);
 	sendPointMessage(_asCar, 0x2004, _clickPoint);
 	_newTrackIndex = -1;
 }
@@ -470,59 +474,11 @@ void Scene2501::updateKlaymenClipRect() {
 		_kmScene2501->setClipRect(0, 0, 640, 388);
 }
 
-SsScene2504Button::SsScene2504Button(NeverhoodEngine *vm)
-	: StaticSprite(vm, 1400), _countdown(0), _isSoundPlaying(false) {
-	
-	loadSprite(0x070220D9, kSLFDefDrawOffset | kSLFDefPosition | kSLFDefCollisionBoundsOffset, 400);
-	setVisible(false);
-	loadSound(0, 0x4600204C);
-	loadSound(1, 0x408C0034);
-	loadSound(2, 0x44043000);
-	loadSound(3, 0x44045000);
-	SetMessageHandler(&SsScene2504Button::handleMessage);
-	SetUpdateHandler(&SsScene2504Button::update);
-}
-
-void SsScene2504Button::update() {
-	updatePosition();
-	if (_isSoundPlaying && !isSoundPlaying(0) && !isSoundPlaying(1)) {
-		playSound(3);
-		setVisible(false);
-		_isSoundPlaying = false;
-	}
-	if (_countdown != 0 && (--_countdown) == 0) {
-		if (getSubVar(VA_LOCKS_DISABLED, 0x01180951))
-			playSound(0);
-		else
-			playSound(1);
-		_isSoundPlaying = true;
-	}
-}
-
-uint32 SsScene2504Button::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
-	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
-	switch (messageNum) {
-	case 0x1011:
-		if (_countdown == 0 && !_isSoundPlaying) {
-			setVisible(true);
-			_countdown = 2;
-			if (getSubVar(VA_LOCKS_DISABLED, 0x01180951))
-				setSubVar(VA_LOCKS_DISABLED, 0x01180951, 0);
-			else
-				setSubVar(VA_LOCKS_DISABLED, 0x01180951, 1);
-			playSound(2);
-		}
-		messageResult = 1;
-		break;
-	}
-	return messageResult;
-}
-
 Scene2504::Scene2504(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule) {
-	
+
 	Sprite *ssButton;
-	
+
 	setBackground(0x90791B80);
 	setPalette(0x90791B80);
 	ssButton = insertSprite<SsScene2504Button>();
@@ -535,7 +491,7 @@ Scene2504::Scene2504(NeverhoodEngine *vm, Module *parentModule, int which)
 uint32 Scene2504::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x0001:
+	case NM_MOUSE_CLICK:
 		if (param.asPoint().x <= 20 || param.asPoint().x >= 620)
 			leaveScene(0);
 		break;

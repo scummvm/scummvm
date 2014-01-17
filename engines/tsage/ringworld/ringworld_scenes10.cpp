@@ -1870,7 +1870,7 @@ void Scene9900::signal() {
 		setAction(&_sequenceManager, this, 9908, &_object1, &_object2, &_object3, &_object4, &_object5, &_object6);
 		break;
 	case 162:
-		warning("TBC: shutdown();");
+		// shutdown();
 		g_globals->_game->quitGame();
 		break;
 	case 9901:

@@ -188,7 +188,7 @@ bool AnimationResource::parserCallback_frame(ParserNode *node) {
 
 	Common::String flipHString = node->values["fliph"];
 	if (!flipHString.empty()) {
-		if (!parseBooleanKey(flipVString, frame.flipV)) {
+		if (!parseBooleanKey(flipHString, frame.flipH)) {
 			warning("Illegal fliph value (\"%s\") in <frame> tag in \"%s\". Assuming default (\"false\").",
 			                 flipHString.c_str(), getFileName().c_str());
 			frame.flipH = false;

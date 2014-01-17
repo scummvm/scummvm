@@ -110,6 +110,6 @@ public:
 	bool setProperty(const char *propName);
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

@@ -42,9 +42,9 @@ public:
 	float getRotation() const { return _rotation; }
 	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
 	bool loadFile(const char *filename);
-	bool loadBuffer(byte *buffer, bool complete = true);
+	bool loadBuffer(char *buffer, bool complete = true);
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

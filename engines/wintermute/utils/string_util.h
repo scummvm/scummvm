@@ -49,8 +49,11 @@ public:
 	static Common::String decodeSetting(const Common::String &str);
 
 	static AnsiString toString(int val);
+
+private:
+	static uint32 _ansiToUTF32[32];
 };
 
-} // end of namespace Wintermute
+} // End of namespace Wintermute
 
 #endif

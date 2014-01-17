@@ -556,9 +556,15 @@ bool WalkingState::alignHeroToEdge(const Common::Point &p1, const Common::Point 
 	}
 	bool reachedEnd;
 	if (movement == kMoveLeft || movement == kMoveRight) {
+		if (p2Diff.x == 0) {
+			error("Wrong value for horizontal movement");
+		}
 		reachedEnd = movement == kMoveLeft ? hero->x <= p2.x : hero->x >= p2.x;
 		hero->y += hero->x * p2Diff.y / p2Diff.x - prevHero.x * p2Diff.y / p2Diff.x;
 	} else {
+		if (p2Diff.y == 0) {
+			error("Wrong value for vertical movement");
+		}
 		reachedEnd = movement == kMoveUp ? hero->y <= p2.y : hero->y >= p2.y;
 		hero->x += hero->y * p2Diff.x / p2Diff.y - prevHero.y * p2Diff.x / p2Diff.y;
 	}
