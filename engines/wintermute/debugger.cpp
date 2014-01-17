@@ -206,8 +206,11 @@ bool Console::Cmd_StepInto(int argc, const char **argv) {
 bool Console::Cmd_Continue(int argc, const char **argv) {
 	if (argc == 1) {
 		Error error = ADAPTER->stepContinue();
-		if (error.errorLevel = SUCCESS) {
+		if (error.errorLevel == SUCCESS) {
 			return false;
+		} else {
+			DebugPrintf("%s: %s\n", argv[0], error.getErrorDisplayStr().c_str());
+			return true;
 		}
 	} else {
 		DebugPrintf("Usage: %s to continue\n", argv[0]);
