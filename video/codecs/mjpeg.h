@@ -21,7 +21,7 @@
  */
 
 #ifndef VIDEO_CODECS_MJPEG_H
-#define VIDEO_CODECS_JPEG_H
+#define VIDEO_CODECS_MJPEG_H
 
 #include "video/codecs/codec.h"
 #include "graphics/pixelformat.h"
