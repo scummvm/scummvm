@@ -87,7 +87,7 @@ void VoyeurEngine::playStamp() {
 					doGossip();
 					_voy._field46E = true;
 					_voy._field472 = 141;
-					_voy._field478 = -1;
+					_voy._field478 &= ~0x100;
 					break;
 				default:
 					break;

@@ -388,7 +388,7 @@ void ThreadResource::parsePlayCommands() {
 					_vm->_graphicsManager._backColors->startFade();
 					_vm->flipPageAndWaitForFade();
 
-					_vm->_voy._field478 = -2;
+					_vm->_voy._field478 &= ~1;
 					_vm->_soundManager.setVOCOffset(_vm->_voy._vocSecondsOffset * 11025);
 					Common::String filename = _vm->_soundManager.getVOCFileName(
 						_vm->_videoId + 159);
@@ -407,7 +407,7 @@ void ThreadResource::parsePlayCommands() {
 					_vm->_eventsManager.incrementTime(1);
 
 					_vm->_bVoy->freeBoltGroup(0x7F00);
-					_vm->_voy._field478 = -17;
+					_vm->_voy._field478 &= ~0x10;
 					_vm->_videoId = -1;
 					_vm->_voy._field470 = 129;
 					parseIndex = 999;
@@ -628,7 +628,7 @@ void ThreadResource::parsePlayCommands() {
 			break;
 
 		case 11:
-			_vm->_voy._field478 = 2;
+			_vm->_voy._field478 |= 2;
 			break;
 
 		case 12:
@@ -1085,7 +1085,7 @@ int ThreadResource::doApt() {
 				// Cursor is within hotspot area
 				hotspotId = idx;
 
-				if (idx != prevHotspotId) {
+				if (hotspotId != prevHotspotId) {
 					// Check for whether to replace hotspot Id for "Watch TV" for
 					// "Review the Tape" if player has already watched the TV
 					if ((_vm->_voy._field478 & 0x100) && (hotspotId == 2))
