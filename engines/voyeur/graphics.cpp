@@ -58,6 +58,7 @@ GraphicsManager::GraphicsManager():
 	_vPort = NULL;
 	_fontPtr = NULL;
 	Common::fill(&_VGAColors[0], &_VGAColors[PALETTE_SIZE], 0);
+	_fontChar = new PictureResource(0, 0xff, 0xff, 0, 0, Common::Rect(), 0, NULL, 0);
 }
 
 void GraphicsManager::sInitGraphics() {
@@ -70,6 +71,7 @@ void GraphicsManager::sInitGraphics() {
 
 GraphicsManager::~GraphicsManager() {
 	_screenSurface.free();
+	delete _fontChar;
 }
 
 void GraphicsManager::setupMCGASaveRect(ViewPortResource *viewPort) {

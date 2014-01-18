@@ -81,6 +81,7 @@ public:
 	Graphics::Surface _screenSurface;
 	CMapResource *_backColors;
 	FontInfoResource *_fontPtr;
+	PictureResource *_fontChar;
 	DrawInfo *_drawPtr;
 	DrawInfo _defaultDrawInfo;
 	bool _drawTextPermFlag;

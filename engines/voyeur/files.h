@@ -261,6 +261,19 @@ public:
 	 */
 	void sFillBox(int width, int height);
 
+	/**
+	 * Draw text at the current pen position
+	 */
+	int drawText(const Common::String &msg);
+
+	/**
+	 * Return the width of a given text in the current font
+	 */
+	int textWidth(const Common::String &msg);
+
+	/**
+	 * Clip the given rectangle by the currently viewable area
+	 */
 	bool clipRect(Common::Rect &rect);
 };
 
@@ -339,7 +352,6 @@ public:
 	ViewPortSetupPtr _setupFn;
 	ViewPortAddPtr _addFn;
 	ViewPortRestorePtr _restoreFn;
-	PictureResource _fontChar;
 	Common::Rect _fontRect;
 public:
 	ViewPortResource(BoltFilesState &state, const byte *src);
@@ -347,8 +359,6 @@ public:
 
 	void setupViewPort();
 	void setupViewPort(PictureResource *pic, Common::Rect *clipRect = NULL);
-	int drawText(const Common::String &msg);
-	int textWidth(const Common::String &msg);
 	void addSaveRect(int pageIndex, const Common::Rect &r);
 	void fillPic(byte onOff = 0);
 	void drawIfaceTime();
