@@ -937,7 +937,7 @@ uint16 PS2Icon::decompressData(uint16 **data) {
 	uint16 inPos = 1;
 	const uint16 *rleData = (const uint16 *)_rleIcoData;
 	uint16 resSize = rleData[0];
-	uint16 *resData = (uint16 *)malloc(resSize * sizeof(uint16));
+	uint16 *resData = (uint16 *)memalign(64, resSize * sizeof(uint16));
 	uint16 outPos = 0;
 
 	while (outPos < resSize) {
