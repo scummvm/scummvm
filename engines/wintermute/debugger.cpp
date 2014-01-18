@@ -36,7 +36,7 @@ Console::Console(WintermuteEngine *vm) : GUI::Debugger() {
 	DCmd_Register("show_fps", WRAP_METHOD(Console, Cmd_ShowFps));
 	DCmd_Register("dump_file", WRAP_METHOD(Console, Cmd_DumpFile));
 	DCmd_Register("help", WRAP_METHOD(Console, Cmd_Help));
-
+	// Actual (script) debugger commands
 	DCmd_Register(STEP_OVER_CMD, WRAP_METHOD(Console, Cmd_StepOver));
 	DCmd_Register(STEP_INTO_CMD, WRAP_METHOD(Console, Cmd_StepInto));
 	DCmd_Register(CONTINUE_CMD, WRAP_METHOD(Console, Cmd_Continue));
@@ -70,6 +70,7 @@ bool Console::Cmd_Help(int argc, const char **argv) {
 	}
 	return true;
 }
+
 void Console::printUsage(const Common::String &command) {
 	// TODO: This is horrible and would probably benefit from a map or something.
 	if (command.equals(BREAK_CMD)) {
@@ -110,9 +111,6 @@ void Console::printUsage(const Common::String &command) {
 }
 
 bool Console::Cmd_AddBreakpoint(int argc, const char **argv) {
-	/**
-	 * Add a breakpoint
-	 */
 	if (argc == 3) {
 		Wintermute::Error error = ADAPTER->addBreakpoint(argv[1], atoi(argv[2]));
 		printError(argv[0], error);
@@ -129,7 +127,6 @@ bool Console::Cmd_RemoveBreakpoint(int argc, const char **argv) {
 	} else {
 		printUsage(argv[0]);
 	}
-
 	return true;
 }
 
@@ -174,7 +171,6 @@ bool Console::Cmd_EnableWatchpoint(int argc, const char **argv) {
 	return true;
 }
 
-
 bool Console::Cmd_DisableWatchpoint(int argc, const char **argv) {
 	if (argc == 2) {
 		Error error = ADAPTER->disableWatchpoint(atoi(argv[1]));
@@ -186,23 +182,6 @@ bool Console::Cmd_DisableWatchpoint(int argc, const char **argv) {
 }
 
 bool Console::Cmd_Watch(int argc, const char **argv) {
-	/**
-	 * Add a watch.
-	 *
-	 * The big, fat disclaimer: this works in a slightly 
-	 * different fashion than your usual gdb-style debugger.
-	 * 
-	 * It monitors the value of some variable x against its 
-	 * last known state the last time the execution unit
-	 * went over this specific script (NOT instance - ANY
-	 * instance of the script will do) and it breaks if it
-	 * has changed since.
-	 *
-	 * It is admittedly not awesome and can lead to false
-	 * positives, but it's better than nothing.
-	 * 
-	 */
-
 	if (argc == 3) {
 		Error error = ADAPTER->addWatch(argv[1], argv[2]);
 		printError(argv[0], error);
@@ -211,7 +190,6 @@ bool Console::Cmd_Watch(int argc, const char **argv) {
 	}
 	return true;
 }
-
 
 bool Console::Cmd_Info(int argc, const char **argv) {
 	if (argc == 2 && !strncmp(argv[1], "breakpoints", 10)) {
@@ -231,7 +209,6 @@ bool Console::Cmd_Info(int argc, const char **argv) {
 		return 1;
 	}
 }
-
 
 bool Console::Cmd_StepOver(int argc, const char **argv) {
 	if (argc == 1) {
@@ -346,6 +323,7 @@ bool Console::Cmd_SetType(int argc, const char **argv) {
 
 	return 1;
 }
+
 bool Console::Cmd_ShowFps(int argc, const char **argv) {
 	if (argc == 2) {
 		if (Common::String(argv[1]) == "true") {
@@ -410,10 +388,6 @@ bool Console::Cmd_DumpFile(int argc, const char **argv) {
 }
 
 bool Console::Cmd_SourcePath(int argc, const char **argv) {
-	/*
-	 * Set source path for debugging
-	 */
-
 	if (argc != 2) {
 		DebugPrintf("Usage: %s <source path>\n", argv[0]);
 		return true;
@@ -426,9 +400,6 @@ bool Console::Cmd_SourcePath(int argc, const char **argv) {
 		return true;
 	}
 }
-
-
-
 
 void Console::notifyBreakpoint(const char *filename, int line) {
 	DebugPrintf("Breakpoint hit %s: %d\n", filename, line);
