@@ -160,8 +160,44 @@ int scene37_updateCursor() {
 	return g_fp->_cursorId;
 }
 
-void sceneHandler37_updateRing(int num) {
-	warning("STUB: sceneHandler37_updateRing()");
+void sceneHandler37_updateRing(int ringNum) {
+	g_vars->scene37_var05[ringNum]->ani->changeStatics2(ST_GRD37_STAND);
+	g_vars->scene37_var05[ringNum]->ani->startAnim(MV_GRD37_PULL, 0, -1);
+	g_vars->scene37_var05[ringNum]->state = !g_vars->scene37_var05[ringNum]->state;
+
+	StaticANIObject *ani;
+
+	for (int i = 0; i < g_vars->scene37_var05[ringNum]->numSubRings; i++) {
+		ani = g_fp->_currentScene->getStaticANIObject1ById(ANI_RING, g_vars->scene37_var05[ringNum]->subRings[i]);
+
+		if ((ani->_movement && ani->_movement->_id != MV_RNG_CLOSE) || ani->_statics->_staticsId != ST_RNG_CLOSED2) {
+			ani->changeStatics2(ST_RNG_OPEN);
+			ani->startAnim(MV_RNG_CLOSE, 0, -1);
+		} else {
+			ani->changeStatics2(ST_RNG_CLOSED2);
+			ani->startAnim(MV_RNG_OPEN, 0, -1);
+		}
+	}
+
+	g_vars->scene37_var07 = 1;
+
+	for (int j = 0; j < g_vars->scene37_var05.size(); j++) {
+		for (int i = 0; i < g_vars->scene37_var05[ringNum]->numSubRings; i++) {
+			ani = g_fp->_currentScene->getStaticANIObject1ById(ANI_RING, g_vars->scene37_var05[j]->subRings[i]);
+
+			if ((ani->_movement && ani->_movement->_id != MV_RNG_CLOSE) || ani->_statics->_staticsId != ST_RNG_CLOSED2)
+				g_vars->scene37_var07 = 0;
+		}
+	}
+
+	int state;
+
+	if (g_vars->scene37_var07)
+		state = g_fp->getObjectEnumState(sO_LeftPipe_37, sO_IsOpened);
+	else
+		state = g_fp->getObjectEnumState(sO_LeftPipe_37, sO_IsClosed);
+
+	g_fp->setObjectState(sO_LeftPipe_37, state);
 }
 
 void sceneHandler37_setRingsState() {

@@ -1290,8 +1290,11 @@ namespace Fullpipe {
 #define MSG_SC37_EXITLEFT 5006
 #define MSG_SC37_PULL 2945
 #define MV_GRD37_PULL 2589
+#define MV_RNG_CLOSE 2605
+#define MV_RNG_OPEN 4612
 #define PIC_SC37_MASK 2608
 #define SND_37_007 4547
+#define ST_GRD37_STAND 2590
 #define ST_RNG_CLOSED2 4865
 #define ST_RNG_OPEN 2606
 
