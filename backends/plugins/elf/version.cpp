@@ -24,7 +24,7 @@
 
 #ifdef USE_ELF_LOADER
 	#ifdef __PLAYSTATION2__
-	const char *gScummVMPluginBuildDate = "2011-11-11"; /* ScummVM 1.4.0 Release */
+	const char *gScummVMPluginBuildDate = "2012-01-27"; /* ScummVM 1.4.1 Release */
 	#else
 	const char *gScummVMPluginBuildDate __attribute__((visibility("hidden"))) =
 		__DATE__ " " __TIME__ ;
