@@ -362,7 +362,7 @@ void KyraEngine_MR::uninitMainMenu() {
 }
 
 void KyraEngine_MR::playVQA(const char *name) {
-	VQAMovie vqa(this, _system);
+	VqaMovie vqa(this, _system);
 
 	Common::String filename = Common::String::format("%s%d.VQA", name, _configVQAQuality);
 
@@ -378,7 +378,6 @@ void KyraEngine_MR::playVQA(const char *name) {
 		_screen->fadeToBlack(60);
 		_screen->clearPage(0);
 
-		vqa.setDrawPage(0);
 		vqa.play();
 		vqa.close();
 

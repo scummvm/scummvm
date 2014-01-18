@@ -23,9 +23,9 @@
 #ifndef KYRA_VQA_H
 #define KYRA_VQA_H
 
-#include "common/scummsys.h"
-
-#include "audio/mixer.h"
+#include "video/video_decoder.h"
+#include "common/file.h"
+#include "common/rational.h"
 
 class OSystem;
 
@@ -33,42 +33,26 @@ namespace Audio {
 class QueuingAudioStream;
 } // End of namespace Audio
 
-namespace Common {
-class SeekableReadStream;
-} // End of namespace Common
-
 namespace Kyra {
 
 class KyraEngine_v1;
 class Screen;
 
-class VQAMovie {
+class VqaDecoder : public Video::VideoDecoder {
 public:
-	VQAMovie(KyraEngine_v1 *vm, OSystem *system);
-	~VQAMovie();
+	VqaDecoder();
+	virtual ~VqaDecoder();
 
-	bool opened() { return _opened; }
-	int frames() { return _opened ? _header.numFrames : -1; }
+	bool loadStream(Common::SeekableReadStream *stream);
+	void readNextPacket();
 
-	// It's unlikely that we ever want to change the movie position from
-	// its default.
+private:
+	Common::SeekableReadStream *_fileStream;
 
-	void setDrawPage(int page) { _drawPage = page; }
+	void handleVQHD(Common::SeekableReadStream *stream);
+	void handleFINF(Common::SeekableReadStream *stream);
 
-	bool open(const char *filename);
-	void close();
-	void play();
-
-protected:
-	OSystem *_system;
-	KyraEngine_v1 *_vm;
-	Screen *_screen;
-
-	bool _opened;
-	int _x, _y;
-	int _drawPage;
-
-	struct VQAHeader {
+	struct VqaHeader {
 		uint16 version;
 		uint16 flags;
 		uint16 numFrames;
@@ -91,40 +75,85 @@ protected:
 		uint32 unk5;
 	};
 
-	struct Buffer {
-		uint8 *data;
-		uint32 size;
+	VqaHeader _header;
+	uint32 *_frameInfo;
+
+	class VqaAudioTrack : public AudioTrack {
+	public:
+		VqaAudioTrack(const VqaHeader *header);
+		~VqaAudioTrack();
+
+		void handleSND0(Common::SeekableReadStream *stream);
+		void handleSND1(Common::SeekableReadStream *stream);
+		void handleSND2(Common::SeekableReadStream *stream);
+
+	protected:
+		Audio::AudioStream *getAudioStream() const;
+
+	private:
+		Audio::QueuingAudioStream *_audioStream;
 	};
 
-	Buffer _buffers[2];
+	class VqaVideoTrack : public FixedRateVideoTrack {
+	public:
+		VqaVideoTrack(const VqaHeader *header);
+		~VqaVideoTrack();
 
-	void initBuffers();
-	void *allocBuffer(int num, uint32 size);
-	void freeBuffers();
+		uint16 getWidth() const;
+		uint16 getHeight() const;
+		Graphics::PixelFormat getPixelFormat() const;
+		int getCurFrame() const;
+		int getFrameCount() const;
+		const Graphics::Surface *decodeNextFrame();
 
-	void decodeSND1(byte *inbuf, uint32 insize, byte *outbuf, uint32 outsize);
+		void setHasDirtyPalette();
+		bool hasDirtyPalette() const;
+		const byte *getPalette() const;
 
-	void displayFrame(uint frameNum);
+		void handleVQFR(Common::SeekableReadStream *stream);
 
-	Common::SeekableReadStream *_file;
+	protected:
+		Common::Rational getFrameRate() const;
 
-	VQAHeader _header;
-	uint32 *_frameInfo;
-	uint32 _codeBookSize;
-	byte *_codeBook;
-	byte *_partialCodeBook;
-	bool _compressedCodeBook;
-	int _partialCodeBookSize;
-	int _numPartialCodeBooks;
-	uint32 _numVectorPointers;
-	uint16 *_vectorPointers;
+	private:
+		Graphics::Surface *_surface;
+		byte _palette[3 * 256];
+		mutable bool _dirtyPalette;
 
-	byte *_frame;
+		bool _newFrame;
 
-	Audio::QueuingAudioStream *_stream;
-	Audio::SoundHandle _sound;
+		uint16 _width, _height;
+		uint8 _blockW, _blockH;
+		uint8 _cbParts;
+		int _frameCount;
+		int _curFrame;
+		byte _frameRate;
 
-	uint32 readTag();
+		uint32 _codeBookSize;
+		bool _compressedCodeBook;
+		byte *_codeBook;
+		int _partialCodeBookSize;
+		int _numPartialCodeBooks;
+		byte *_partialCodeBook;
+		uint32 _numVectorPointers;
+		uint16 *_vectorPointers;
+	};
+};
+
+class VqaMovie {
+public:
+	VqaMovie(KyraEngine_v1 *vm, OSystem *system);
+	~VqaMovie();
+
+	bool open(const char *filename);
+	void close();
+	void play();
+private:
+	OSystem *_system;
+	KyraEngine_v1 *_vm;
+	Screen *_screen;
+	VqaDecoder *_decoder;
+	Common::File _file;
 };
 
 } // End of namespace Kyra
