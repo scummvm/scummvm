@@ -23,6 +23,7 @@
 #include "voyeur/animation.h"
 #include "voyeur/staticres.h"
 #include "voyeur/voyeur.h"
+#include "common/endian.h"
 #include "common/memstream.h"
 #include "common/system.h"
 #include "audio/decoders/raw.h"
@@ -96,27 +97,6 @@ RL2Decoder::RL2VideoTrack *RL2Decoder::getVideoTrack() {
 	assert(track);
 
 	return (RL2VideoTrack *)track;
-}
-
-void RL2Decoder::play(::Voyeur::VoyeurEngine *vm) {
-	vm->_eventsManager.getMouseInfo();
-
-	while (!vm->shouldQuit() && !endOfVideo() && !vm->_eventsManager._mouseClicked) {
-		if (hasDirtyPalette()) {
-			const byte *palette = getPalette();
-			vm->_graphicsManager.setPalette(palette, 0, 256);
-		}
-
-		if (needsUpdate()) {
-			const Graphics::Surface *frame = decodeNextFrame();
-
-			Common::copy((const byte *)frame->getPixels(), (const byte *)frame->getPixels() + 320 * 200,
-				(byte *)vm->_graphicsManager._screenSurface.getPixels());
-		}
-
-		vm->_eventsManager.getMouseInfo();
-		g_system->delayMillis(10);
-	}
 }
 
 /*------------------------------------------------------------------------*/
@@ -443,6 +423,48 @@ Audio::AudioStream *RL2Decoder::RL2AudioTrack::getAudioStream() const {
 
 Audio::QueuingAudioStream *RL2Decoder::RL2AudioTrack::createAudioStream() {
 	return Audio::makeQueuingAudioStream(_header._rate, _header._channels == 2);
+}
+
+} // End of namespace Video
+
+/*------------------------------------------------------------------------*/
+
+namespace Voyeur {
+
+void VoyeurRL2Decoder::play(VoyeurEngine *vm, int resourceOffset, byte *frames, byte *imgPos) {
+	vm->flipPageAndWait();
+
+	PictureResource videoFrame(getVideoTrack()->getBackSurface());
+	int picCtr = 0;
+	while (!vm->shouldQuit() && !endOfVideo() && !vm->_eventsManager._mouseClicked) {
+		if (hasDirtyPalette()) {
+			const byte *palette = getPalette();
+			vm->_graphicsManager.setPalette(palette, 128, 128);
+		}
+		
+		if (needsUpdate()) {
+			if (frames) {
+				// If reached a point where a new background is needed, load it
+				// and copy over to the video decoder
+				if (getCurFrame() >= READ_LE_UINT16(frames + picCtr * 4)) {
+					PictureResource *newPic = vm->_bVoy->boltEntry(0x302 + picCtr)._picResource;
+					Common::Point pt(READ_LE_UINT16(imgPos + 4 * picCtr) - 32, 
+						READ_LE_UINT16(imgPos + 4 * picCtr + 2) - 20);
+
+					vm->_graphicsManager.sDrawPic(newPic, &videoFrame, pt);
+					++picCtr;
+				}
+
+				// Decode the next frame and display
+				const Graphics::Surface *frame = decodeNextFrame();
+				Common::copy((const byte *)frame->getPixels(), (const byte *)frame->getPixels() + 320 * 200,
+					(byte *)vm->_graphicsManager._screenSurface.getPixels());
+			}
+		}
+		
+		vm->_eventsManager.getMouseInfo();
+		g_system->delayMillis(10);
+	}
 }
 
 } // End of namespace Video

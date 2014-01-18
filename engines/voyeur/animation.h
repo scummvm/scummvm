@@ -29,6 +29,7 @@
 #include "common/list.h"
 #include "common/rect.h"
 #include "common/stream.h"
+#include "voyeur/files.h"
 
 namespace Voyeur {
 
@@ -156,10 +157,25 @@ public:
 	void clearDirtyRects();
 	void copyDirtyRectsToBuffer(uint8 *dst, uint pitch);
 	RL2VideoTrack *getVideoTrack();
-	void play(::Voyeur::VoyeurEngine *vm);
 	int getPaletteCount() const { return _header._colorCount; }
 };
 
 } // End of namespace Video
+
+namespace Voyeur {
+
+class VoyeurRL2Decoder: public Video::RL2Decoder {
+public:
+	/**
+	 * Play back a given Voyeur RL2 video
+	 * @param vm			Engine reference
+	 * @param resourceOffset Starting resource to use for frame pictures
+	 * @param frames		Optional frame numbers resource for when to apply image data
+	 * @param imgPos		Position to draw image data
+	 */
+	void play(VoyeurEngine *vm, int resourceOffset = 0, byte *frames = NULL, byte *imgPos = NULL);
+};
+
+}
 
 #endif /* VOYEUR_ANIMATION_H */

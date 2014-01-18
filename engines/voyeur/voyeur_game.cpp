@@ -230,7 +230,7 @@ void VoyeurEngine::doTailTitle() {
 	_graphicsManager.screenReset();
 	
 	if (_bVoy->getBoltGroup(0x600)) {
-		::Video::RL2Decoder decoder;
+		VoyeurRL2Decoder decoder;
 		decoder.loadFile("a1100200.rl2");
 		decoder.start();
 		decoder.play(this);
@@ -679,10 +679,11 @@ void VoyeurEngine::doGossip() {
 		return;
 
 	// Load the gossip animation
-	::Video::RL2Decoder decoder;
+	VoyeurRL2Decoder decoder;
 	decoder.loadFile("a2050100.rl2");
 	decoder.start();
 
+	// Get the resource data for the first gossip video
 	PictureResource *bgPic = _bVoy->boltEntry(0x300)._picResource;
 	CMapResource *pal = _bVoy->boltEntry(0x301)._cMapResource;
 	pal->startFade();
@@ -692,61 +693,20 @@ void VoyeurEngine::doGossip() {
 	bgPic->_bounds.moveTo(0, 0);
 	_graphicsManager.sDrawPic(bgPic, &videoFrame, Common::Point(0, 0));
 
-	flipPageAndWait();
-
 	byte *frameNumsP = _bVoy->memberAddr(0x309);
 	byte *posP = _bVoy->boltEntry(0x30A)._data;
 
-	// Main playback loop
-	int picCtr = 0;
-	while (!shouldQuit() && !decoder.endOfVideo() && !_eventsManager._mouseClicked) {
-		if (decoder.hasDirtyPalette()) {
-			const byte *palette = decoder.getPalette();
-			_graphicsManager.setPalette(palette, 128, 128);
-		}
-		
-		if (decoder.needsUpdate()) {
-			// If reached a point where a new background is needed, load it
-			// and copy over to the video decoder
-			if (decoder.getCurFrame() >= READ_LE_UINT16(frameNumsP + picCtr * 4)) {
-				PictureResource *newBgPic = _bVoy->boltEntry(0x302 + picCtr)._picResource;
-				Common::Point pt(READ_LE_UINT16(posP + 4 * picCtr + 2), 
-					READ_LE_UINT16(posP + 4 * picCtr));
+	// Play the initial gossip video
+	decoder.play(this, 0x302, frameNumsP, posP);
 
-				_graphicsManager.sDrawPic(newBgPic, &videoFrame, pt);
-				++picCtr;
-			}
+	if (!_eventsManager._mouseClicked) {
+		// Play further interview
+		decoder.loadFile("a2110100.rl2");
+		decoder.start();
 
-			// Decode the next frame and display
-			const Graphics::Surface *frame = decoder.decodeNextFrame();
-			Common::copy((const byte *)frame->getPixels(), (const byte *)frame->getPixels() + 320 * 200,
-				(byte *)_graphicsManager._screenSurface.getPixels());
-		}
-		
-		_eventsManager.getMouseInfo();
-		g_system->delayMillis(10);
+		decoder.play(this);
 	}
-	/*
-	decoder.loadFile("a2110100.rl2");
-	decoder.start();
 
-	while (!shouldQuit() && !decoder.endOfVideo() && !_eventsManager._mouseClicked) {
-		if (decoder.hasDirtyPalette()) {
-			const byte *palette = decoder.getPalette();
-			_graphicsManager.setPalette(palette, 0, 256);
-		}
-
-		if (decoder.needsUpdate()) {
-			const Graphics::Surface *frame = decoder.decodeNextFrame();
-
-			Common::copy((const byte *)frame->getPixels(), (const byte *)frame->getPixels() + 320 * 200,
-				(byte *)_graphicsManager._screenSurface.getPixels());
-		}
-
-		_eventsManager.pollEvents();
-		g_system->delayMillis(10);
-	}
-	*/
 	_bVoy->freeBoltGroup(0x300);
 	_graphicsManager.screenReset();
 }
