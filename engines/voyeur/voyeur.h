@@ -112,6 +112,9 @@ private:
 	 */
 	void doPiracy();
 
+	/**
+	 * Review previous tape recordings on the TV
+	 */
 	void reviewTape();
 
 	/**

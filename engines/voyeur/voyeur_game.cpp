@@ -433,11 +433,11 @@ void VoyeurEngine::reviewTape() {
 	if ((si + _voy._eventCount) <= 7)
 		var20 = si + _voy._eventCount - 1;
 
+	_voy._viewBounds = _bVoy->boltEntry(0x907)._rectResource;
+	Common::Array<Common::Rect> &hotspots = _bVoy->boltEntry(0x906)._rectResource->_entries;
+
 	bool breakFlag = false;
 	while (!shouldQuit() && !breakFlag) {
-		_voy._viewBounds = _bVoy->boltEntry(0x907)._rectResource;
-		byte *dataP = _bVoy->memberAddr(0x906);
-		int varA = READ_LE_UINT16(dataP);
 		_graphicsManager._backColors = _bVoy->boltEntry(0x902)._cMapResource;
 		_graphicsManager._backgroundPage = _bVoy->boltEntry(0x901)._picResource;
 		(*_graphicsManager._vPort)->setupViewPort(_graphicsManager._backgroundPage);
@@ -463,8 +463,7 @@ void VoyeurEngine::reviewTape() {
 
 		_eventsManager.getMouseInfo();
 		if (newX == -1) {
-			_eventsManager.setMousePos(Common::Point((int16)READ_LE_UINT16(dataP + 10) + 12,
-				(int16)READ_LE_UINT16(dataP + 12) + 6));
+			_eventsManager.setMousePos(Common::Point(hotspots[1].left + 12, hotspots[1].top + 6));
 		} else {
 			_eventsManager.setMousePos(Common::Point(newX, newY));
 		}
@@ -523,11 +522,8 @@ void VoyeurEngine::reviewTape() {
 			_eventsManager.getMouseInfo();
 			foundIndex = -1;
 			Common::Point tempPos = _eventsManager.getMousePos() + Common::Point(14, 7);
-			for (int idx = 0; idx < varA; ++idx) {
-				if (READ_LE_UINT16(dataP + idx * 8 + 2) <= tempPos.x &&
-					READ_LE_UINT16(dataP + idx * 8 + 6) >= tempPos.x &&
-					READ_LE_UINT16(dataP + idx * 8 + 4) <= tempPos.y &&
-					READ_LE_UINT16(dataP + idx * 8 + 4) <= tempPos.y) {
+			for (uint idx = 0; idx < hotspots.size(); ++idx) {
+				if (hotspots[idx].contains(tempPos)) {
 					// Found hotspot area
 					foundIndex = idx;
 					break;
@@ -552,6 +548,7 @@ void VoyeurEngine::reviewTape() {
 
 					_graphicsManager._drawPtr->_penColor = 0;
 					_graphicsManager._drawPtr->_pos = Common::Point(tempRect.left, tempRect.top);
+					
 					// TODO: Does sFillBox need to work on picture resources?
 					((ViewPortResource *)_graphicsManager._backgroundPage)->sFillBox(tempRect.width(), tempRect.height());
 
