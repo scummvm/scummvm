@@ -1287,7 +1287,11 @@ namespace Fullpipe {
 // Scene 37
 #define ANI_GUARD_37 2588
 #define ANI_RING 2604
+#define MSG_SC37_EXITLEFT 5006
+#define MSG_SC37_PULL 2945
+#define MV_GRD37_PULL 2589
 #define PIC_SC37_MASK 2608
+#define SND_37_007 4547
 #define ST_RNG_CLOSED2 4865
 #define ST_RNG_OPEN 2606
 

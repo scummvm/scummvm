@@ -366,6 +366,9 @@ Vars::Vars() {
 	scene37_plusMinus1 = 0;
 	scene37_plusMinus2 = 0;
 	scene37_plusMinus3 = 0;
+	scene37_var07 = 0;
+	scene37_var09 = 0;
+	scene37_var10 = 0;
 
 	selector = 0;
 }

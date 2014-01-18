@@ -513,7 +513,8 @@ public:
 	StaticANIObject *scene37_plusMinus1;
 	StaticANIObject *scene37_plusMinus2;
 	StaticANIObject *scene37_plusMinus3;
-
+	int scene37_var09;
+	int scene37_var10;
 
 	PictureObject *selector;
 };
