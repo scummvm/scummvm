@@ -35,32 +35,32 @@
 
 namespace Wintermute {
 
-Error::Error(int errorLevel, int errorCode, int errorArea, Common::String errorExtraString) {
-	this->errorLevel = errorLevel;
-	this->errorCode = errorCode;
-	this->errorArea = errorArea;
-	this->errorExtraString = errorExtraString;
+Error::Error(int setErrorLevel, int setErrorCode, int setErrorArea, Common::String setErrorExtraString) {
+	this->errorLevel = setErrorLevel;
+	this->errorCode = setErrorCode;
+	this->errorArea = setErrorArea;
+	this->errorExtraString = setErrorExtraString;
 }
 
-Error::Error(int errorLevel, int errorCode, int errorArea, int errorExtraInt) {
-	this->errorLevel = errorLevel;
-	this->errorCode = errorCode;
-	this->errorArea = errorArea;
-	this->errorExtraInt = errorExtraInt;
+Error::Error(int setErrorLevel, int setErrorCode, int setErrorArea, int setErrorExtraInt) {
+	this->errorLevel = setErrorLevel;
+	this->errorCode = setErrorCode;
+	this->errorArea = setErrorArea;
+	this->errorExtraInt = setErrorExtraInt;
 }
 
-Error::Error(int errorLevel, int errorCode, int errorArea) {
-	this->errorLevel = errorLevel;
-	this->errorCode = errorCode;
-	this->errorArea = errorArea;
+Error::Error(int setErrorLevel, int setErrorCode, int setErrorArea) {
+	this->errorLevel = setErrorLevel;
+	this->errorCode = setErrorCode;
+	this->errorArea = setErrorArea;
 }
 
-Error::Error(int errorLevel, int errorCode, int errorArea, Common::String errorExtraString, int errorExtraInt) {
-	this->errorExtraInt = errorExtraInt;
-	this->errorExtraString = errorExtraString;
-	this->errorLevel = errorLevel;
-	this->errorCode = errorCode;
-	this->errorArea = errorArea;
+Error::Error(int setErrorLevel, int setErrorCode, int setErrorArea, Common::String setErrorExtraString, int setErrorExtraInt) {
+	this->errorExtraInt = setErrorExtraInt;
+	this->errorExtraString = setErrorExtraString;
+	this->errorLevel = setErrorLevel;
+	this->errorCode = setErrorCode;
+	this->errorArea = setErrorArea;
 }
 
 Common::String Error::getErrorLevelStr() {
@@ -142,7 +142,7 @@ SourceFile::SourceFile(const Common::String &filename, const Common::String &sou
 	if (sourcePath == Common::String("")) {
 		_err = 1;
 	};
-	// TODO: Make sure source path is correctly set or bail out.
+
 	dst = sourcePath + Common::String("\\") + filename;
 
 	Common::SeekableReadStream *file = BaseFileManager::getEngineInstance()->openFile(dst);
