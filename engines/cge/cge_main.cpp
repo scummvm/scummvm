@@ -539,14 +539,12 @@ void CGEEngine::setMapBrick(int x, int z) {
 	debugC(1, kCGEDebugEngine, "CGEEngine::setMapBrick(%d, %d)", x, z);
 
 	Square *s = new Square(this);
-	if (s) {
-		char n[6];
-		s->gotoxy(x * kMapGridX, kMapTop + z * kMapGridZ);
-		sprintf(n, "%02d:%02d", x, z);
-		_clusterMap[z][x] = 1;
-		s->setName(n);
-		_vga->_showQ->insert(s, _vga->_showQ->first());
-	}
+	char n[6];
+	s->gotoxy(x * kMapGridX, kMapTop + z * kMapGridZ);
+	sprintf(n, "%02d:%02d", x, z);
+	_clusterMap[z][x] = 1;
+	s->setName(n);
+	_vga->_showQ->insert(s, _vga->_showQ->first());
 }
 
 void CGEEngine::keyClick() {

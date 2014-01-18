@@ -300,11 +300,6 @@ Window *GfxPorts::addWindow(const Common::Rect &dims, const Common::Rect *restor
 	Window *pwnd = new Window(id);
 	Common::Rect r;
 
-	if (!pwnd) {
-		error("Can't open window");
-		return 0;
-	}
-
 	_windowsById[id] = pwnd;
 
 	// KQ1sci, KQ4, iceman, QfG2 always add windows to the back of the list.
