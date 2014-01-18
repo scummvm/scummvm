@@ -91,7 +91,7 @@ void ScummEngine_v60he::setupOpcodes() {
 }
 
 Common::String ScummEngine_v60he::convertFilePath(const byte *src) {
-	debug(2, "convertFilePath in: '%s'", (char *)src);
+	debug(2, "convertFilePath in: '%s'", (const char *)src);
 
 	int srcSize = resStrLen(src);
 	int start = 0;
@@ -140,7 +140,7 @@ Common::String ScummEngine_v60he::convertFilePath(const byte *src) {
 }
 
 Common::String ScummEngine_v60he::convertSavePath(const byte *src) {
-	debug(2, "convertSavePath in: '%s'", (char *)src);
+	debug(2, "convertSavePath in: '%s'", (const char *)src);
 
 	Common::String filePath = convertFilePath(src);
 
@@ -174,17 +174,17 @@ Common::String ScummEngine_v60he::convertSavePathOld(const byte *src) {
 	if (src[0] == 'u' && src[1] == 's') {
 		// Save Game Path (Moonbase Commander)
 		// The default save path is 'user/'
-		return (char *)src + 5;
+		return (const char *)src + 5;
 	} else if (src[0] == '*' && (src[1] == '\\' || src[1] == ':')) {
 		// Save Game Path (HE72 - HE100)
 		// The default save game path is set to '*\\' by ScummVM for Windows
 		// and '*:' for Macintosh
-		return (char *)src + 2;
+		return (const char *)src + 2;
 	} else if (src[0] == 'c' && src[1] == ':') {
 		// The default save path is game path (DOS) or 'c:\\hegames\\' (Windows)
 		for (int i = srcSize; i > 0; i--)
 			if (src[i] == '\\')
-				return (char *)src + i + 1;
+				return (const char *)src + i + 1;
 	}
 
 	// Can't reach here
@@ -256,7 +256,7 @@ Common::WriteStream *ScummEngine_v60he::openSaveFileForAppending(const byte *fil
 
 	if (!output) {
 		delete[] initialData;
-		return false;
+		return nullptr;
 	}
 
 	if (initialData) {
