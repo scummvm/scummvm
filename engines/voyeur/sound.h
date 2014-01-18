@@ -50,6 +50,7 @@ public:
 	void startVOCPlay(const Common::String &filename);
 	void startVOCPlay(int soundId);
 	int getVOCStatus();
+	uint32 getVOCFrame();
 };
 
 } // End of namespace Voyeur

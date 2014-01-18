@@ -133,6 +133,8 @@ public:
 	void addEvidEventEnd(int dead);
 	void addComputerEventStart();
 	void addComputerEventEnd(int v);
+	void reviewAnEvidEvent(int eventIndex);
+	void reviewComputerEvent(int eventIndex);
 };
 
 } // End of namespace Voyeur

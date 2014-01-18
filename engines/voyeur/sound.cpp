@@ -83,4 +83,8 @@ int SoundManager::getVOCStatus() {
 	return _mixer->isSoundHandleActive(_soundHandle);
 }
 
+uint32 SoundManager::getVOCFrame() {
+	error("TODO: getVOCFrame");
+}
+
 } // End of namespace Voyeur

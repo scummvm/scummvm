@@ -452,7 +452,6 @@ void VoyeurEngine::showTitleScreen() {
 }
 
 void VoyeurEngine::doOpening() {
-	/*
 	_graphicsManager.screenReset();
 
 	if (!_bVoy->getBoltGroup(0x200, true))
@@ -461,8 +460,9 @@ void VoyeurEngine::doOpening() {
 	byte *frameTable = _bVoy->memberAddr(0x215);
 	byte *xyTable = _bVoy->memberAddr(0x216);
 	byte *whTable = _bVoy->memberAddr(0x217);
-	int frmaeIndex = 0;
+	int frameIndex = 0;
 	int creditShow = 1;
+	warning("TODO: %x %x %x %d %d", frameTable, xyTable, whTable, creditShow, frameIndex);
 
 	_voy._vocSecondsOffset = 0;
 	_voy._RTVNum = 0;
@@ -472,7 +472,7 @@ void VoyeurEngine::doOpening() {
 	_gameMinute  = 0;
 	_videoId = 1;
 	_eventsManager._videoDead = -1;
-	_eventsManager.addVideoEventStart();
+	_voy.addVideoEventStart();
 
 	_voy._field478 &= ~1;
 
@@ -483,7 +483,7 @@ void VoyeurEngine::doOpening() {
 	_eventsManager._intPtr._hasPalette = true;
 	(*_graphicsManager._vPort)->setupViewPort();
 	flipPageAndWait();
-
+	/*
 	::Video::RL2Decoder decoder;
 	decoder.loadFile("a2300100.rl2");
 	decoder.start();
@@ -504,16 +504,16 @@ void VoyeurEngine::doOpening() {
 		_eventsManager.pollEvents();
 		g_system->delayMillis(10);
 	}
+	*/
 
 	if ((_voy._RTVNum - _voy._field468) < 2)
 		_eventsManager.delay(60);
 
 	_voy._field478 |= 1;
-	_eventsManager.addVideoEventEnd();
+	_voy.addVideoEventEnd();
 	_voy._field478 &= 0x10;
 
 	_bVoy->freeBoltGroup(0x200);
-	*/
 }
 
 void VoyeurEngine::playRL2Video(const Common::String &filename) {

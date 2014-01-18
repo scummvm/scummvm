@@ -189,4 +189,49 @@ void SVoy::addComputerEventEnd(int v) {
 		++_eventCount;
 }
 
+void SVoy::reviewAnEvidEvent(int eventIndex) {
+	VoyeurEvent &e = _events[eventIndex];
+	_vm->_playStampGroupId = e._videoId;
+	_field47A = e._computerOn;
+	int frameOff = e._computerOff;
+
+	if (_vm->_bVoy->getBoltGroup(_vm->_playStampGroupId)) {
+		_vm->_graphicsManager._backColors = _vm->_bVoy->boltEntry(_vm->_playStampGroupId + 1)._cMapResource;
+		_vm->_graphicsManager._backgroundPage = _vm->_bVoy->boltEntry(_vm->_playStampGroupId)._picResource;
+		(*_vm->_graphicsManager._vPort)->setupViewPort(_vm->_graphicsManager._backgroundPage);
+		_vm->_graphicsManager._backColors->startFade();
+
+		_vm->doEvidDisplay(frameOff, e._dead);
+		_vm->_bVoy->freeBoltGroup(_vm->_playStampGroupId);
+		_vm->_playStampGroupId = -1;
+
+		if (_field47A != -1) {
+			_vm->_bVoy->freeBoltGroup(_field47A);
+			_field47A = -1;
+		}
+	}
+}
+
+void SVoy::reviewComputerEvent(int eventIndex) {
+	VoyeurEvent &e = _events[eventIndex];
+	_vm->_playStampGroupId = e._videoId;
+	_computerTextId = e._computerOn;
+
+	if (_vm->_bVoy->getBoltGroup(_vm->_playStampGroupId)) {
+		_vm->_graphicsManager._backColors = _vm->_bVoy->boltEntry(_vm->_playStampGroupId + 1)._cMapResource;
+		_vm->_graphicsManager._backgroundPage = _vm->_bVoy->boltEntry(_vm->_playStampGroupId)._picResource;
+		(*_vm->_graphicsManager._vPort)->setupViewPort(_vm->_graphicsManager._backgroundPage);
+		_vm->_graphicsManager._backColors->startFade();
+		_vm->flipPageAndWaitForFade();
+
+		_vm->getComputerBrush();
+		_vm->flipPageAndWait();
+		_vm->doComputerText(e._computerOff);
+
+		_vm->_bVoy->freeBoltGroup(0x4900);
+		_vm->_bVoy->freeBoltGroup(_vm->_playStampGroupId);
+		_vm->_playStampGroupId = -1;
+	}
+}
+
 } // End of namespace Voyeur

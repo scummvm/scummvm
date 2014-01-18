@@ -415,10 +415,10 @@ void VoyeurEngine::doPiracy() {
 
 void VoyeurEngine::reviewTape() {
 //	int var22 = 0;
-	int si = 0;
+	int eventStart = 0;
 	int newX = -1;
 	int newY = -1;
-	int var20 = 7;
+	int eventLine = 7;
 	Common::Rect tempRect(58, 30, 58 + 223, 30 + 124);
 	Common::Point pt;
 	int evtIndex = 0;
@@ -428,10 +428,10 @@ void VoyeurEngine::reviewTape() {
 	PictureResource *cursor = _bVoy->boltEntry(0x903)._picResource;
 
 	if ((_voy._eventCount - 8) != 0)
-		si = MAX(_voy._eventCount - 8, 0);
+		eventStart = MAX(_voy._eventCount - 8, 0);
 
-	if ((si + _voy._eventCount) <= 7)
-		var20 = si + _voy._eventCount - 1;
+	if ((eventStart + _voy._eventCount) <= 7)
+		eventLine = eventStart + _voy._eventCount - 1;
 
 	_voy._viewBounds = _bVoy->boltEntry(0x907)._rectResource;
 	Common::Array<Common::Rect> &hotspots = _bVoy->boltEntry(0x906)._rectResource->_entries;
@@ -485,22 +485,20 @@ void VoyeurEngine::reviewTape() {
 				_graphicsManager._drawPtr->_pos = Common::Point(tempRect.left, tempRect.top);
 				_graphicsManager._backgroundPage->sFillBox(tempRect.width(), tempRect.height());
 
-				newX = si;
 				int yp = 45;
-				evtIndex = si;
-				for (int idx = 0; idx < 8 && evtIndex < _voy._eventCount; ++idx) {
+				evtIndex = eventStart;
+				for (int lineNum = 0; lineNum < 8 && evtIndex < _voy._eventCount; ++lineNum) {
 					_graphicsManager._fontPtr->_picFlags = 0;
 					_graphicsManager._fontPtr->_picSelect = 0xff;
 					_graphicsManager._fontPtr->_picPick = 7;
-					_graphicsManager._fontPtr->_picOnOff = (idx == var20) ? 8 : 0;
+					_graphicsManager._fontPtr->_picOnOff = (lineNum == eventLine) ? 8 : 0;
 					_graphicsManager._fontPtr->_pos = Common::Point(68, yp);
 					_graphicsManager._fontPtr->_justify = ALIGN_LEFT;
 					_graphicsManager._fontPtr->_justifyWidth = 0;
 					_graphicsManager._fontPtr->_justifyHeight = 0;
 
 					Common::String msg = _eventsManager.getEvidString(evtIndex);
-					// TODO: Does drawText need to work on picture resources?
-					((ViewPortResource *)_graphicsManager._backgroundPage)->drawText(msg);
+					_graphicsManager._backgroundPage->drawText(msg);
 					
 					yp += 15;
 					++evtIndex;
@@ -533,7 +531,7 @@ void VoyeurEngine::reviewTape() {
 			if (tempPos.x >= 68 && tempPos.x <= 277 && tempPos.y >= 31 && tempPos.y <= 154) {
 				tempPos.y -= 2;
 				foundIndex = (tempPos.y - 31) / 15;
-				if ((tempPos.y - 31) % 15 >= 12 || (si + foundIndex) >= _voy._eventCount) {
+				if ((tempPos.y - 31) % 15 >= 12 || (eventStart + foundIndex) >= _voy._eventCount) {
 					_eventsManager.setCursorColor(128, 0);
 					foundIndex = 999;
 				} else if (!_eventsManager._leftClick) {
@@ -541,7 +539,7 @@ void VoyeurEngine::reviewTape() {
 					foundIndex = 999;
 				} else {
 					_eventsManager.setCursorColor(128, 2);
-					var20 = foundIndex;
+					eventLine = foundIndex;
 
 					flipPageAndWait();
 
@@ -549,22 +547,21 @@ void VoyeurEngine::reviewTape() {
 					_graphicsManager._drawPtr->_pos = Common::Point(tempRect.left, tempRect.top);				
 					_graphicsManager._backgroundPage->sFillBox(tempRect.width(), tempRect.height());
 
-					evtIndex = si;
+					evtIndex = eventStart;
 					int yp = 45;
 					
 					for (int idx = 0; idx < 8 && evtIndex < _voy._eventCount; ++idx) {
 						_graphicsManager._fontPtr->_picFlags = 0;
 						_graphicsManager._fontPtr->_picSelect = 0xff;
 						_graphicsManager._fontPtr->_picPick = 7;
-						_graphicsManager._fontPtr->_picOnOff = (idx == var20) ? 8 : 0;
+						_graphicsManager._fontPtr->_picOnOff = (idx == eventLine) ? 8 : 0;
 						_graphicsManager._fontPtr->_pos = Common::Point(68, yp);
 						_graphicsManager._fontPtr->_justify = ALIGN_LEFT;
 						_graphicsManager._fontPtr->_justifyWidth = 0;
 						_graphicsManager._fontPtr->_justifyHeight = 0;
 
 						Common::String msg = _eventsManager.getEvidString(evtIndex);
-						// TODO: Does sFillBox need to work on picture resources?
-						((ViewPortResource *)_graphicsManager._backgroundPage)->drawText(msg);
+						_graphicsManager._backgroundPage->drawText(msg);
 
 						yp += 115;
 						++evtIndex;
@@ -597,36 +594,36 @@ void VoyeurEngine::reviewTape() {
 			if (_eventsManager._mouseClicked || _eventsManager._mouseUnk) {
 				switch (foundIndex) {
 				case 2:
-					if (si > 0) {
-						--si;
+					if (eventStart > 0) {
+						--eventStart;
 						var1E = true;
 					}
 					foundIndex = -1;
 					break;
 
 				case 3:
-					if (si > 0) {
-						si -= 8;
-						if (si < 0)
-							si = 0;
+					if (eventStart > 0) {
+						eventStart -= 8;
+						if (eventStart < 0)
+							eventStart = 0;
 						var1E = true;
 					}
 					foundIndex = -1;
 					break;
 
 				case 4:
-					if ((_voy._eventCount - 8) > si) {
-						++si;
+					if ((_voy._eventCount - 8) > eventStart) {
+						++eventStart;
 						var1E = true;
 					}
 					foundIndex = -1;
 					break;
 
 				case 5:
-					if (_voy._eventCount >= 8 && (_voy._eventCount - 8) != si) {
-						si += 8;
-						if ((_voy._eventCount - 8) < si)
-							si = _voy._eventCount - 8;
+					if (_voy._eventCount >= 8 && (_voy._eventCount - 8) != eventStart) {
+						eventStart += 8;
+						if ((_voy._eventCount - 8) < eventStart)
+							eventStart = _voy._eventCount - 8;
 						var1E = true;
 					}
 					foundIndex = -1;
@@ -636,8 +633,8 @@ void VoyeurEngine::reviewTape() {
 					break;
 				}
 
-				while (var20 > 0 && (var20 + si) >= _voy._eventCount)
-					--var20;
+				while (eventLine > 0 && (eventLine + eventStart) >= _voy._eventCount)
+					--eventLine;
 			}
 
 			pt = _eventsManager.getMousePos();
@@ -653,16 +650,88 @@ void VoyeurEngine::reviewTape() {
 
 		} while (!shouldQuit() && (!_eventsManager._mouseClicked || foundIndex == -1));
 
+		newY = _eventsManager.getMousePos().y;
+		_voy._field437E = 0;
+		_voy._viewBounds = nullptr;
+		(*_graphicsManager._vPort)->setupViewPort(NULL);
+			
+		if (_currentVocId != -1) {
+			_voy._vocSecondsOffset = _voy._RTVNum - _voy._field4AC;
+			_soundManager.stopVOCPlay();
+		}
 
+		// Break out if the exit button was pressed
+		if (!foundIndex)
+			break;
 
-		warning("TODO");
+		int eventIndex = eventStart + eventLine;
+		VoyeurEvent &e = _voy._events[eventIndex];
+		switch (e._type) {
+		case EVTYPE_VIDEO:
+			playAVideoEvent(eventIndex);
+			break;
+
+		case EVTYPE_AUDIO: {
+			_videoId = e._videoId;
+			_voy._vocSecondsOffset = e._computerOn;
+			_graphicsManager._backgroundPage = _bVoy->boltEntry(0x7F00 +
+				BLIND_TABLE[_videoId])._picResource;
+			_graphicsManager._backColors = _bVoy->boltEntry(0x7F01 +
+				BLIND_TABLE[_videoId])._cMapResource;
+
+			(*_graphicsManager._vPort)->setupViewPort(_graphicsManager._backgroundPage);
+			_graphicsManager._backColors->startFade();
+			flipPageAndWaitForFade();
+
+			_eventsManager._intPtr.field1E = 1;
+			_eventsManager._intPtr.field1A = 0;
+			_voy._field478 &= ~1;
+
+			// Play suond for the given duration
+			_soundManager.setVOCOffset(_voy._vocSecondsOffset * 11025);
+			_soundManager.startVOCPlay(_videoId + 159);
+			uint32 offFrame = e._computerOff;
+
+			while (!_eventsManager._mouseClicked && _soundManager.getVOCStatus() && 
+					_soundManager.getVOCFrame() < offFrame) {
+				_eventsManager.getMouseInfo();
+				_eventsManager.delay(10);
+			}
+
+			_voy._field478 |= 1;
+			_soundManager.stopVOCPlay();
+			_bVoy->freeBoltGroup(0x7F00);
+			break;
+		}
+
+		case EVTYPE_EVID:
+			_bVoy->freeBoltGroup(0x900);
+			_voy.reviewAnEvidEvent(evtIndex);
+			
+			_voy._vocSecondsOffset = _voy._RTVNum - _voy._field4AC;
+			_soundManager.stopVOCPlay();
+			_bVoy->getBoltGroup(0x900);
+			break;
+
+		case EVTYPE_COMPUTER:
+			_bVoy->freeBoltGroup(0x900);
+			_voy.reviewComputerEvent(evtIndex);
+			
+			_voy._vocSecondsOffset = _voy._RTVNum - _voy._field4AC;
+			_soundManager.stopVOCPlay();
+			_bVoy->getBoltGroup(0x900);
+			break;
+
+		default:
+			break;
+		}
 	}
 
 	_graphicsManager._fontPtr->_curFont = _bVoy->boltEntry(0x101)._fontResource;
-	_bVoy->freeBoltGroup(0x900);
 
 	(*_graphicsManager._vPort)->fillPic(0);
 	flipPageAndWait();
+	_bVoy->freeBoltGroup(0x900);
 }
 
 void VoyeurEngine::doGossip() {
@@ -835,6 +904,21 @@ void VoyeurEngine::playAVideoEvent(int eventIndex) {
 	_voy._field478 &= ~1;
 	
 	playAVideoDuration(_videoId, evt._computerOff);
+
+	_voy._field478 |= 1;
+	if (_eventsManager._videoDead != -1) {
+		_bVoy->freeBoltGroup(0xE00);
+		_eventsManager._videoDead = -1;
+		flipPageAndWait();
+		_eventsManager._videoDead = -1;
+	}
+
+	_videoId = -1;
+	if (_eventsManager._videoDead != -1) {
+		_bVoy->freeBoltGroup(0xE00);
+		_eventsManager._videoDead = -1;
+		flipPageAndWait();
+	}
 }
 
 int VoyeurEngine::getChooseButton()  {
