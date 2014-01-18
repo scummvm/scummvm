@@ -505,6 +505,17 @@ public:
 	PictureObject *selector;
 };
 
+struct Ring {
+	StaticANIObject *ani;
+	int x;
+	int y;
+	int numSubRings;
+	int subRing[10];
+	bool state;
+
+	Ring();
+};
+
 } // End of namespace Fullpipe
 
 #endif /* FULLPIPE_SCENES_H */
