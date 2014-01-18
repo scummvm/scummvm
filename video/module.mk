@@ -12,7 +12,7 @@ MODULE_OBJS := \
 	codecs/cdtoons.o \
 	codecs/cinepak.o \
 	codecs/indeo3.o \
-	codecs/mjpeg.o \
+	codecs/jpeg.o \
 	codecs/msrle.o \
 	codecs/msvideo1.o \
 	codecs/qtrle.o \

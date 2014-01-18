@@ -40,7 +40,7 @@
 
 // Video codecs
 #include "video/codecs/cinepak.h"
-#include "video/codecs/mjpeg.h"
+#include "video/codecs/jpeg.h"
 #include "video/codecs/qtrle.h"
 #include "video/codecs/rpza.h"
 #include "video/codecs/smc.h"
@@ -296,7 +296,7 @@ void QuickTimeDecoder::VideoSampleDesc::initCodec() {
 		warning("Sorenson Video 3 not yet supported");
 		break;
 	case MKTAG('j','p','e','g'):
-		// Motion JPEG: Used by some Myst ME 10th Anniversary videos.
+		// JPEG: Used by some Myst ME 10th Anniversary videos.
 		_videoCodec = new JPEGDecoder();
 		break;
 	case MKTAG('Q','k','B','k'):
