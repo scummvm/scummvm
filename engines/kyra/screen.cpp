@@ -977,10 +977,6 @@ void Screen::copyPage(uint8 srcPage, uint8 dstPage) {
 }
 
 void Screen::copyBlockToPage(int pageNum, int x, int y, int w, int h, const uint8 *src) {
-	copyBlockToPage(pageNum, w, x, y, w, h, src);
-}
-
-void Screen::copyBlockToPage(int pageNum, int pitch, int x, int y, int w, int h, const uint8 *src) {
 	if (y < 0) {
 		src += (-y) * w;
 		h += y;
@@ -1010,7 +1006,7 @@ void Screen::copyBlockToPage(int pageNum, int pitch, int x, int y, int w, int h,
 	while (h--) {
 		memcpy(dst, src, w);
 		dst += SCREEN_W;
-		src += pitch;
+		src += w;
 	}
 }
 
