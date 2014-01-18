@@ -23,9 +23,9 @@
 #ifndef KYRA_VQA_H
 #define KYRA_VQA_H
 
-#include "common/scummsys.h"
-
-#include "audio/mixer.h"
+#include "video/video_decoder.h"
+#include "common/file.h"
+#include "common/rational.h"
 
 class OSystem;
 
@@ -33,98 +33,125 @@ namespace Audio {
 class QueuingAudioStream;
 } // End of namespace Audio
 
-namespace Common {
-class SeekableReadStream;
-} // End of namespace Common
-
 namespace Kyra {
 
 class KyraEngine_v1;
 class Screen;
+
+class VQADecoder : public Video::VideoDecoder {
+public:
+	VQADecoder();
+	virtual ~VQADecoder();
+
+	bool loadStream(Common::SeekableReadStream *stream);
+
+private:
+	class VQAAudioTrack : public AudioTrack {
+	public:
+		VQAAudioTrack(Common::SeekableReadStream *stream, int freq);
+		~VQAAudioTrack();
+
+		void handleSND0();
+		void handleSND1();
+		void handleSND2();
+
+	protected:
+		Audio::AudioStream *getAudioStream() const;
+
+	private:
+		Audio::QueuingAudioStream *_audioStream;
+		Common::SeekableReadStream *_fileStream;
+	};
+
+	class VQAVideoTrack : public FixedRateVideoTrack {
+	public:
+		VQAVideoTrack(Common::SeekableReadStream *stream);
+		~VQAVideoTrack();
+
+		uint16 getWidth() const;
+		uint16 getHeight() const;
+		Graphics::PixelFormat getPixelFormat() const;
+		int getCurFrame() const;
+		int getFrameCount() const;
+		const Graphics::Surface *decodeNextFrame();
+
+		bool hasSound() const;
+		int getAudioFreq() const;
+		bool hasDirtyPalette() const;
+		const byte *getPalette() const;
+
+		void setAudioTrack(VQAAudioTrack *audioTrack);
+
+		void handleVQHD();
+		void handleFINF();
+		void handleVQFR();
+
+	protected:
+		Common::Rational getFrameRate() const;
+
+	private:
+		Common::SeekableReadStream *_fileStream;
+		Graphics::Surface *_surface;
+		byte _palette[3 * 256];
+		mutable bool _dirtyPalette;
+		VQAAudioTrack *_audioTrack;
+
+		int _curFrame;
+
+		struct VQAHeader {
+			uint16 version;
+			uint16 flags;
+			uint16 numFrames;
+			uint16 width;
+			uint16 height;
+			uint8 blockW;
+			uint8 blockH;
+			uint8 frameRate;
+			uint8 cbParts;
+			uint16 colors;
+			uint16 maxBlocks;
+			uint32 unk1;
+			uint16 unk2;
+			uint16 freq;
+			uint8 channels;
+			uint8 bits;
+			uint32 unk3;
+			uint16 unk4;
+			uint32 maxCBFZSize;
+			uint32 unk5;
+		};
+
+		VQAHeader _header;
+		uint32 *_frameInfo;
+		uint32 _codeBookSize;
+		bool _compressedCodeBook;
+		byte *_codeBook;
+		int _partialCodeBookSize;
+		int _numPartialCodeBooks;
+		byte *_partialCodeBook;
+		uint32 _numVectorPointers;
+		uint16 *_vectorPointers;
+	};
+};
 
 class VQAMovie {
 public:
 	VQAMovie(KyraEngine_v1 *vm, OSystem *system);
 	~VQAMovie();
 
-	bool opened() { return _opened; }
-	int frames() { return _opened ? _header.numFrames : -1; }
-
-	// It's unlikely that we ever want to change the movie position from
-	// its default.
-
-	void setDrawPage(int page) { _drawPage = page; }
+	void setDrawPage(int page);
 
 	bool open(const char *filename);
 	void close();
 	void play();
-
-protected:
+private:
 	OSystem *_system;
 	KyraEngine_v1 *_vm;
 	Screen *_screen;
+	VQADecoder *_decoder;
+	Common::File _file;
 
-	bool _opened;
-	int _x, _y;
 	int _drawPage;
-
-	struct VQAHeader {
-		uint16 version;
-		uint16 flags;
-		uint16 numFrames;
-		uint16 width;
-		uint16 height;
-		uint8 blockW;
-		uint8 blockH;
-		uint8 frameRate;
-		uint8 cbParts;
-		uint16 colors;
-		uint16 maxBlocks;
-		uint32 unk1;
-		uint16 unk2;
-		uint16 freq;
-		uint8 channels;
-		uint8 bits;
-		uint32 unk3;
-		uint16 unk4;
-		uint32 maxCBFZSize;
-		uint32 unk5;
-	};
-
-	struct Buffer {
-		uint8 *data;
-		uint32 size;
-	};
-
-	Buffer _buffers[2];
-
-	void initBuffers();
-	void *allocBuffer(int num, uint32 size);
-	void freeBuffers();
-
-	void decodeSND1(byte *inbuf, uint32 insize, byte *outbuf, uint32 outsize);
-
-	void displayFrame(uint frameNum);
-
-	Common::SeekableReadStream *_file;
-
-	VQAHeader _header;
-	uint32 *_frameInfo;
-	uint32 _codeBookSize;
-	byte *_codeBook;
-	byte *_partialCodeBook;
-	bool _compressedCodeBook;
-	int _partialCodeBookSize;
-	int _numPartialCodeBooks;
-	uint32 _numVectorPointers;
-	uint16 *_vectorPointers;
-
-	byte *_frame;
-
-	Audio::QueuingAudioStream *_stream;
-	Audio::SoundHandle _sound;
-
-	uint32 readTag();
 };
 
 } // End of namespace Kyra
