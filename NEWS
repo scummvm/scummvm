@@ -13,6 +13,12 @@ For a more comprehensive changelog of the latest experimental code, see:
      (NOTE: The change to libpng was done in version 1.6.0, but it was not
      added to the NEWS file).
 
+ Broken Sword 1:
+   - Added back support for MPEG-2 videos.
+
+ Broken Sword 2:
+   - Added back support for MPEG-2 videos.
+
  Gob:
    - Improved video quality in Urban Runner.
 
@@ -28,12 +34,6 @@ For a more comprehensive changelog of the latest experimental code, see:
      KQ6, LB2, LSL2, LSL5, Pharkas, PQ1VGA, SQ4, SQ5.
    - Improved the MIDI parser so that music event processing is done more
      properly.
-
- Broken Sword 1:
-   - Added back support for MPEG-2 videos.
-
- Broken Sword 2:
-   - Added back support for MPEG-2 videos.
 
  SCUMM:
    - Changed the saved game naming scheme of HE games to always contain
