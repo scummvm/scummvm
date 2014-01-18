@@ -454,12 +454,12 @@ void VoyeurRL2Decoder::play(VoyeurEngine *vm, int resourceOffset, byte *frames, 
 					vm->_graphicsManager.sDrawPic(newPic, &videoFrame, pt);
 					++picCtr;
 				}
-
-				// Decode the next frame and display
-				const Graphics::Surface *frame = decodeNextFrame();
-				Common::copy((const byte *)frame->getPixels(), (const byte *)frame->getPixels() + 320 * 200,
-					(byte *)vm->_graphicsManager._screenSurface.getPixels());
 			}
+
+			// Decode the next frame and display
+			const Graphics::Surface *frame = decodeNextFrame();
+			Common::copy((const byte *)frame->getPixels(), (const byte *)frame->getPixels() + 320 * 200,
+				(byte *)vm->_graphicsManager._screenSurface.getPixels());
 		}
 		
 		vm->_eventsManager.getMouseInfo();

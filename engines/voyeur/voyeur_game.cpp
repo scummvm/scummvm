@@ -699,13 +699,12 @@ void VoyeurEngine::doGossip() {
 	// Play the initial gossip video
 	decoder.play(this, 0x302, frameNumsP, posP);
 
-	if (!_eventsManager._mouseClicked) {
-		// Play further interview
-		decoder.loadFile("a2110100.rl2");
-		decoder.start();
+	// Play interview video
+	decoder.loadFile("a2110100.rl2");
+	decoder.start();
 
-		decoder.play(this);
-	}
+	_eventsManager.getMouseInfo();
+	decoder.play(this);
 
 	_bVoy->freeBoltGroup(0x300);
 	_graphicsManager.screenReset();

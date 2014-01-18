@@ -1086,6 +1086,8 @@ int ThreadResource::doApt() {
 				hotspotId = idx;
 
 				if (idx != prevHotspotId) {
+					// Check for whether to replace hotspot Id for "Watch TV" for
+					// "Review the Tape" if player has already watched the TV
 					if ((_vm->_voy._field478 & 0x100) && (hotspotId == 2))
 						hotspotId = 5;
 
