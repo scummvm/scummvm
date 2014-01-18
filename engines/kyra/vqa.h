@@ -80,7 +80,7 @@ private:
 
 	class VQAAudioTrack : public AudioTrack {
 	public:
-		VQAAudioTrack(VQAHeader *header);
+		VQAAudioTrack(const VQAHeader *header);
 		~VQAAudioTrack();
 
 		void handleSND0(Common::SeekableReadStream *stream);
@@ -96,7 +96,7 @@ private:
 
 	class VQAVideoTrack : public FixedRateVideoTrack {
 	public:
-		VQAVideoTrack(VQAHeader *header);
+		VQAVideoTrack(const VQAHeader *header);
 		~VQAVideoTrack();
 
 		uint16 getWidth() const;
