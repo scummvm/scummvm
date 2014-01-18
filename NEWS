@@ -35,6 +35,11 @@ For a more comprehensive changelog of the latest experimental code, see:
  Broken Sword 2:
    - Added back support for MPEG-2 videos.
 
+ SCUMM:
+   - Changed the saved game naming scheme of HE games to always contain
+     the target name.
+   - Fixed having multiple coaches in Backyard Football.
+
  Tinsel:
    - Discworld 1 and 2 no longer crash on big-endian systems.
 
