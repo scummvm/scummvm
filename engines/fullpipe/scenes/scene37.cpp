@@ -177,7 +177,7 @@ void sceneHandler37_updateRing(int ringNum) {
 
 	g_vars->scene37_cursorIsLocked = true;
 
-	for (int j = 0; j < g_vars->scene37_rings.size(); j++) {
+	for (uint j = 0; j < g_vars->scene37_rings.size(); j++) {
 		for (int i = 0; i < g_vars->scene37_rings[ringNum]->numSubRings; i++) {
 			ani = g_fp->_currentScene->getStaticANIObject1ById(ANI_RING, g_vars->scene37_rings[j]->subRings[i]);
 
@@ -200,7 +200,7 @@ void sceneHandler37_setRingsState() {
 	if (g_vars->scene37_lastDudeX == -1) {
 		g_vars->scene37_lastDudeX = g_vars->scene37_dudeX;
 	} else {
-		for (int i = 0; i < g_vars->scene37_rings.size(); i++) {
+		for (uint i = 0; i < g_vars->scene37_rings.size(); i++) {
 			int x = g_vars->scene37_rings[i]->x;
 
 			if (g_vars->scene37_lastDudeX > x && g_vars->scene37_dudeX <= x && !g_vars->scene37_rings[i]->state)
