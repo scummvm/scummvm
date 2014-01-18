@@ -433,11 +433,11 @@ void VoyeurEngine::reviewTape() {
 	if ((eventStart + _voy._eventCount) <= 7)
 		eventLine = eventStart + _voy._eventCount - 1;
 
-	_voy._viewBounds = _bVoy->boltEntry(0x907)._rectResource;
-	Common::Array<Common::Rect> &hotspots = _bVoy->boltEntry(0x906)._rectResource->_entries;
-
 	bool breakFlag = false;
 	while (!shouldQuit() && !breakFlag) {
+		_voy._viewBounds = _bVoy->boltEntry(0x907)._rectResource;
+		Common::Array<Common::Rect> &hotspots = _bVoy->boltEntry(0x906)._rectResource->_entries;
+
 		_graphicsManager._backColors = _bVoy->boltEntry(0x902)._cMapResource;
 		_graphicsManager._backgroundPage = _bVoy->boltEntry(0x901)._picResource;
 		(*_graphicsManager._vPort)->setupViewPort(_graphicsManager._backgroundPage);

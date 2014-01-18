@@ -72,6 +72,7 @@ EventsManager::EventsManager(): _intPtr(_gameData),
 	_mouseButton = 0;
 	_fadeStatus = 0;
 	_priorFrameTime = g_system->getMillis();
+	_gameCounter = 0;
 	_joe = 0;
 	Common::fill(&_keyState[0], &_keyState[256], false);
 	Common::fill(&_cycleTime[0], &_cycleTime[4], 0);
