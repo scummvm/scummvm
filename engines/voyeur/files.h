@@ -248,8 +248,15 @@ enum DisplayFlag { DISPFLAG_1 = 1, DISPFLAG_2 = 2, DISPFLAG_4 = 4, DISPFLAG_8 = 
 	DISPFLAG_4000 = 0x4000, DISPFLAG_VIEWPORT = 0x8000, DISPFLAG_CURSOR = 0x10000 };
 
 class DisplayResource {
+private:
+	VoyeurEngine *_vm;
 public:
 	uint32 _flags;
+public:
+	DisplayResource();
+	DisplayResource(VoyeurEngine *vm);
+
+	void sFillBox(int width, int height);
 };
 
 /* bvoy.blt resource types */
@@ -338,7 +345,6 @@ public:
 	int drawText(const Common::String &msg);
 	int textWidth(const Common::String &msg);
 	void addSaveRect(int pageIndex, const Common::Rect &r);
-	void sFillBox(int width, int height);
 	void fillPic(byte onOff = 0);
 	void drawIfaceTime();
 };

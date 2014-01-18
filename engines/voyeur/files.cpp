@@ -724,7 +724,34 @@ RectResource::RectResource(int x1, int y1, int x2, int y2) {
 
 /*------------------------------------------------------------------------*/
 
-PictureResource::PictureResource(BoltFilesState &state, const byte *src) {
+DisplayResource::DisplayResource() {
+	_vm = NULL;
+}
+
+DisplayResource::DisplayResource(VoyeurEngine *vm) {
+	_vm = vm;
+}
+
+void DisplayResource::sFillBox(int width, int height) {
+	assert(_vm);
+	bool saveBack = _vm->_graphicsManager._saveBack;
+	_vm->_graphicsManager._saveBack = false;
+
+	PictureResource pr;
+	pr._flags = 1;
+	pr._select = 0xff;
+	pr._pick = 0;
+	pr._onOff = _vm->_graphicsManager._drawPtr->_penColor;
+	pr._bounds = Common::Rect(0, 0, width, height);
+
+	_vm->_graphicsManager.sDrawPic(&pr, this, _vm->_graphicsManager._drawPtr->_pos);
+	_vm->_graphicsManager._saveBack = saveBack;
+}
+
+/*------------------------------------------------------------------------*/
+
+PictureResource::PictureResource(BoltFilesState &state, const byte *src):
+		DisplayResource(state._vm) {
 	_flags = READ_LE_UINT16(src);
 	_select = src[2];
 	_pick = src[3];
@@ -915,7 +942,8 @@ void PictureResource::flipVertical(const byte *data) {
 /*------------------------------------------------------------------------*/
 
 ViewPortResource::ViewPortResource(BoltFilesState &state, const byte *src):
-		_fontChar(0, 0xff, 0xff, 0, 0, Common::Rect(), 0, NULL, 0), _state(state) {
+		_fontChar(0, 0xff, 0xff, 0, 0, Common::Rect(), 0, NULL, 0), 
+		_state(state), DisplayResource(state._vm) {
 	_flags = READ_LE_UINT16(src);
 	_parent = NULL;
 	_pageCount = READ_LE_UINT16(src + 6);
@@ -1271,23 +1299,7 @@ int ViewPortResource::textWidth(const Common::String &msg) {
 
 void ViewPortResource::addSaveRect(int pageIndex, const Common::Rect &r) {
 	// TODO
-	warning("TODO: addSaveRect");
-}
-
-void ViewPortResource::sFillBox(int width, int height) {
-	bool saveBack = _state._vm->_graphicsManager._saveBack;
-	_state._vm->_graphicsManager._saveBack = false;
-
-	PictureResource pr;
-	pr._flags = 1;
-	pr._select = 0xff;
-	pr._pick = 0;
-	pr._onOff = _state._vm->_graphicsManager._drawPtr->_penColor;
-	pr._bounds = Common::Rect(0, 0, width, height);
-
-	_state._vm->_graphicsManager.sDrawPic(&pr, this, 
-		_state._vm->_graphicsManager._drawPtr->_pos);
-	_state._vm->_graphicsManager._saveBack = saveBack;
+	error("TODO: addSaveRect");
 }
 
 void ViewPortResource::fillPic(byte onOff) {

@@ -483,8 +483,7 @@ void VoyeurEngine::reviewTape() {
 
 				_graphicsManager._drawPtr->_penColor = 0;
 				_graphicsManager._drawPtr->_pos = Common::Point(tempRect.left, tempRect.top);
-				// TODO: Check - does drawText need to work on PictureResources?
-				((ViewPortResource *)_graphicsManager._backgroundPage)->sFillBox(tempRect.width(), tempRect.height());
+				_graphicsManager._backgroundPage->sFillBox(tempRect.width(), tempRect.height());
 
 				newX = si;
 				int yp = 45;
@@ -549,8 +548,7 @@ void VoyeurEngine::reviewTape() {
 					_graphicsManager._drawPtr->_penColor = 0;
 					_graphicsManager._drawPtr->_pos = Common::Point(tempRect.left, tempRect.top);
 					
-					// TODO: Does sFillBox need to work on picture resources?
-					((ViewPortResource *)_graphicsManager._backgroundPage)->sFillBox(tempRect.width(), tempRect.height());
+					_graphicsManager._backgroundPage->sFillBox(tempRect.width(), tempRect.height());
 
 					evtIndex = si;
 					int yp = 45;
