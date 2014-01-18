@@ -165,7 +165,25 @@ void sceneHandler37_updateRing(int num) {
 }
 
 void sceneHandler37_setRingsState() {
-	warning("STUB: sceneHandler37_setRingsState()");
+	if (g_vars->scene37_var06 == -1) {
+		g_vars->scene37_var06 = g_vars->scene37_var10;
+	} else {
+		for (int i = 0; i < g_vars->scene37_var05.size(); i++) {
+			int x = g_vars->scene37_var05[i]->x;
+
+			if (g_vars->scene37_var06 > x && g_vars->scene37_var10 <= x && !g_vars->scene37_var05[i]->state)
+				sceneHandler37_updateRing(i);
+
+			x = g_vars->scene37_var05[i]->y;
+
+			if (g_vars->scene37_var06 < x && g_vars->scene37_var10 >= x) {
+				if (g_vars->scene37_var05[i]->state)
+					sceneHandler37_updateRing(i);
+			}
+		}
+
+		g_vars->scene37_var06 = g_vars->scene37_var10;
+	}
 }
 
 int sceneHandler37(ExCommand *cmd) {
