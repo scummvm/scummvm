@@ -748,6 +748,43 @@ void DisplayResource::sFillBox(int width, int height) {
 	_vm->_graphicsManager._saveBack = saveBack;
 }
 
+bool DisplayResource::clipRect(Common::Rect &rect) {
+	Common::Rect clipRect;
+	if (_vm->_graphicsManager._clipPtr) {
+		clipRect = *_vm->_graphicsManager._clipPtr;
+	} else if (_flags & DISPFLAG_VIEWPORT) {
+		clipRect = ((ViewPortResource *)this)->_clipRect;
+	} else {
+		clipRect = ((PictureResource *)this)->_bounds;
+	}
+
+	Common::Rect r = rect;
+	if (r.left < clipRect.left) {
+		if (r.right <= clipRect.left)
+			return false;
+		r.setWidth(r.right - clipRect.left);
+	}
+	if (r.right >= clipRect.right) {
+		if (r.left >= clipRect.left)
+			return false;
+		r.setWidth(clipRect.right - r.left);
+	}
+
+	if (r.top < clipRect.top) {
+		if (r.bottom <= clipRect.top)
+			return false;
+		r.setHeight(r.bottom - clipRect.top);
+	}
+	if (r.bottom >= clipRect.bottom) {
+		if (r.top >= clipRect.top)
+			return false;
+		r.setWidth(clipRect.bottom - r.top);
+	}
+
+	rect = r;
+	return true;
+}
+
 /*------------------------------------------------------------------------*/
 
 PictureResource::PictureResource(BoltFilesState &state, const byte *src):
@@ -1299,7 +1336,15 @@ int ViewPortResource::textWidth(const Common::String &msg) {
 
 void ViewPortResource::addSaveRect(int pageIndex, const Common::Rect &r) {
 	// TODO
-	error("TODO: addSaveRect");
+	Common::Rect rect = r;
+	
+	if (clipRect(rect)) {
+		if (_addFn) {
+			(_state._vm->_graphicsManager.*_addFn)(this, pageIndex, rect);
+		} else if (_rectListCount[pageIndex] != -1) {
+			_rectListPtr[pageIndex]->push_back(rect);
+		}
+	}
 }
 
 void ViewPortResource::fillPic(byte onOff) {

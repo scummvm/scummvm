@@ -256,7 +256,12 @@ public:
 	DisplayResource();
 	DisplayResource(VoyeurEngine *vm);
 
+	/** 
+	 * Fill a box of the given size at the current _drawPtr location
+	 */
 	void sFillBox(int width, int height);
+
+	bool clipRect(Common::Rect &rect);
 };
 
 /* bvoy.blt resource types */

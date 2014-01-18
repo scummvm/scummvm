@@ -546,8 +546,7 @@ void VoyeurEngine::reviewTape() {
 					flipPageAndWait();
 
 					_graphicsManager._drawPtr->_penColor = 0;
-					_graphicsManager._drawPtr->_pos = Common::Point(tempRect.left, tempRect.top);
-					
+					_graphicsManager._drawPtr->_pos = Common::Point(tempRect.left, tempRect.top);				
 					_graphicsManager._backgroundPage->sFillBox(tempRect.width(), tempRect.height());
 
 					evtIndex = si;
