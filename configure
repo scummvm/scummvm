@@ -2427,6 +2427,7 @@ if test -n "$_host"; then
 			CXXFLAGS="$CXXFLAGS -fno-delayed-branch"
 			_backend="dc"
 			_build_scalers=no
+			_taskbar=no
 			_mad=yes
 			_zlib=yes
 			add_line_to_config_mk 'ronindir = /usr/local/ronin'
