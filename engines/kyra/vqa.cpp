@@ -224,7 +224,7 @@ void VQADecoder::handleFINF(Common::SeekableReadStream *stream) {
 	_frameInfo[_header.numFrames] = 0x7FFFFFFF;
 }
 
-void  VQADecoder::readNextPacket() {
+void VQADecoder::readNextPacket() {
 	VQAVideoTrack *videoTrack = (VQAVideoTrack *)getTrack(0);
 	VQAAudioTrack *audioTrack = (VQAAudioTrack *)getTrack(1);
 
