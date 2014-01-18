@@ -507,18 +507,14 @@ public:
 	StaticANIObject *scene36_rotohrust;
 	StaticANIObject *scene36_scissors;
 
-	int scene37_var01;
-	int scene37_var02;
-	int scene37_var03;
-	int scene37_var04;
-	Common::Array<Ring *> scene37_var05;
-	int scene37_var06;
-	int scene37_var07;
+	Common::Array<Ring *> scene37_rings;
+	int scene37_lastDudeX;
+	bool scene37_cursorIsLocked;
 	StaticANIObject *scene37_plusMinus1;
 	StaticANIObject *scene37_plusMinus2;
 	StaticANIObject *scene37_plusMinus3;
-	int scene37_var09;
-	int scene37_var10;
+	int scene37_soundFlipper;
+	int scene37_dudeX;
 
 	PictureObject *selector;
 };

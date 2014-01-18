@@ -356,19 +356,14 @@ Vars::Vars() {
 	scene36_rotohrust = 0;
 	scene36_scissors = 0;
 
-	scene37_var01 = 0;
-	scene37_var02 = 0;
-	scene37_var03 = 0;
-	scene37_var04 = 0;
-	scene37_var05.clear();
-	scene37_var06 = 0;
-	scene37_var07 = 0;
+	scene37_rings.clear();
+	scene37_lastDudeX = -1;
+	scene37_cursorIsLocked = 0;
 	scene37_plusMinus1 = 0;
 	scene37_plusMinus2 = 0;
 	scene37_plusMinus3 = 0;
-	scene37_var07 = 0;
-	scene37_var09 = 0;
-	scene37_var10 = 0;
+	scene37_soundFlipper = 0;
+	scene37_dudeX = 0;
 
 	selector = 0;
 }
