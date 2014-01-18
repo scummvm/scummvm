@@ -35,26 +35,27 @@ Console::Console(WintermuteEngine *vm) : GUI::Debugger() {
 
 	DCmd_Register("show_fps", WRAP_METHOD(Console, Cmd_ShowFps));
 	DCmd_Register("dump_file", WRAP_METHOD(Console, Cmd_DumpFile));
-	DCmd_Register("next", WRAP_METHOD(Console, Cmd_StepOver));
-	DCmd_Register("step", WRAP_METHOD(Console, Cmd_StepInto));
-	DCmd_Register("continue", WRAP_METHOD(Console, Cmd_Continue));
-	DCmd_Register("finish", WRAP_METHOD(Console, Cmd_Finish));
-	DCmd_Register("watch", WRAP_METHOD(Console, Cmd_Watch));
-	DCmd_Register("break", WRAP_METHOD(Console, Cmd_AddBreakpoint));
-	DCmd_Register("list", WRAP_METHOD(Console, Cmd_List));
-	DCmd_Register("del", WRAP_METHOD(Console, Cmd_RemoveBreakpoint));
-	DCmd_Register("disable", WRAP_METHOD(Console, Cmd_DisableBreakpoint));
-	DCmd_Register("enable", WRAP_METHOD(Console, Cmd_EnableBreakpoint));
-	DCmd_Register("delw", WRAP_METHOD(Console, Cmd_RemoveWatchpoint));	
-	DCmd_Register("disablew", WRAP_METHOD(Console, Cmd_DisableWatchpoint));
-	DCmd_Register("enablew", WRAP_METHOD(Console, Cmd_EnableWatchpoint));
-	DCmd_Register("print", WRAP_METHOD(Console, Cmd_Print));
-	DCmd_Register("set", WRAP_METHOD(Console, Cmd_Set));
-	DCmd_Register("set_type", WRAP_METHOD(Console, Cmd_SetType));
-	DCmd_Register("info", WRAP_METHOD(Console, Cmd_Info));
-	DCmd_Register("dumpres", WRAP_METHOD(Console, Cmd_DumpRes));
-	DCmd_Register("sourcepath", WRAP_METHOD(Console, Cmd_SourcePath));
 	DCmd_Register("help", WRAP_METHOD(Console, Cmd_Help));
+
+	DCmd_Register(STEP_OVER_CMD, WRAP_METHOD(Console, Cmd_StepOver));
+	DCmd_Register(STEP_INTO_CMD, WRAP_METHOD(Console, Cmd_StepInto));
+	DCmd_Register(CONTINUE_CMD, WRAP_METHOD(Console, Cmd_Continue));
+	DCmd_Register(FINISH_CMD, WRAP_METHOD(Console, Cmd_Finish));
+	DCmd_Register(WATCH_CMD, WRAP_METHOD(Console, Cmd_Watch));
+	DCmd_Register(BREAK_CMD, WRAP_METHOD(Console, Cmd_AddBreakpoint));
+	DCmd_Register(LIST_CMD, WRAP_METHOD(Console, Cmd_List));
+	DCmd_Register(REMOVE_BREAKPOINT_CMD, WRAP_METHOD(Console, Cmd_RemoveBreakpoint));
+	DCmd_Register(DISABLE_BREAKPOINT_CMD, WRAP_METHOD(Console, Cmd_DisableBreakpoint));
+	DCmd_Register(ENABLE_BREAKPOINT_CMD, WRAP_METHOD(Console, Cmd_EnableBreakpoint));
+	DCmd_Register(REMOVE_WATCHPOINT_CMD, WRAP_METHOD(Console, Cmd_RemoveWatchpoint));
+	DCmd_Register(DISABLE_WATCHPOINT_CMD, WRAP_METHOD(Console, Cmd_DisableWatchpoint));
+	DCmd_Register(ENABLE_WATCHPOINT_CMD, WRAP_METHOD(Console, Cmd_EnableWatchpoint));
+	DCmd_Register(PRINT_CMD, WRAP_METHOD(Console, Cmd_Print));
+	DCmd_Register(SET_CMD, WRAP_METHOD(Console, Cmd_Set));
+	DCmd_Register(SET_TYPE_CMD, WRAP_METHOD(Console, Cmd_SetType));
+	DCmd_Register(INFO_CMD, WRAP_METHOD(Console, Cmd_Info));
+	DCmd_Register(DUMP_RES_CMD, WRAP_METHOD(Console, Cmd_DumpRes));
+	DCmd_Register(SET_PATH_CMD, WRAP_METHOD(Console, Cmd_SourcePath));
 }
 
 Console::~Console(void) {
@@ -71,37 +72,37 @@ bool Console::Cmd_Help(int argc, const char **argv) {
 }
 void Console::printUsage(const Common::String &command) {
 	// TODO: This is horrible and would probably benefit from a map or something.
-	if (command.equals("break")) {
+	if (command.equals(BREAK_CMD)) {
 		DebugPrintf("Usage: %s <file path> <line> to break at line <line> of file <file path>\n", command.c_str());
-	} else if (command.equals("del")) {
+	} else if (command.equals(REMOVE_BREAKPOINT_CMD)) {
 		DebugPrintf("Usage: %s <id> to remove breakpoint #id\n", command.c_str());
-	} else if (command.equals("enable")) {
+	} else if (command.equals(ENABLE_BREAKPOINT_CMD)) {
 		DebugPrintf("Usage: %s <id> to enable breakpoint #id\n", command.c_str());
-	} else if (command.equals("disable")) {
+	} else if (command.equals(DISABLE_BREAKPOINT_CMD)) {
 		DebugPrintf("Usage: %s <id> to disable breakpoint #id\n", command.c_str());
-	} else if (command.equals("delw")) {
+	} else if (command.equals(REMOVE_WATCHPOINT_CMD)) {
 		DebugPrintf("Usage: %s <id> to remove watchpoint #id\n", command.c_str());
-	} else if (command.equals("enablew")) {
+	} else if (command.equals(ENABLE_WATCHPOINT_CMD)) {
 		DebugPrintf("Usage: %s <id> to enable watchpoint #id\n", command.c_str());
-	} else if (command.equals("disablew")) {
+	} else if (command.equals(DISABLE_WATCHPOINT_CMD)) {
 		DebugPrintf("Usage: %s <id> to disable watchpoint #id\n", command.c_str());
-	} else if (command.equals("info")) {
+	} else if (command.equals(INFO_CMD)) {
 		DebugPrintf("Usage: %s [watch|breakpoints]\n", command.c_str());
-	} else if (command.equals("watch")) {
+	} else if (command.equals(WATCH_CMD)) {
 		DebugPrintf("Usage: %s <file path> <name> to watch for <name> in file <file path>\n", command.c_str());
-	} else if (command.equals("next")) {
+	} else if (command.equals(STEP_OVER_CMD)) {
 		DebugPrintf("Usage: %s to step over\n", command.c_str());
-	} else if (command.equals("step")) {
+	} else if (command.equals(STEP_INTO_CMD)) {
 		DebugPrintf("Usage: %s to step into\n", command.c_str());
-	} else if (command.equals("continue")) {
+	} else if (command.equals(CONTINUE_CMD)) {
 		DebugPrintf("Usage: %s to continue\n", command.c_str());
-	} else if (command.equals("finish")) {
+	} else if (command.equals(FINISH_CMD)) {
 		DebugPrintf("Usage: %s to finish\n", command.c_str());
-	} else if (command.equals("print")) {
+	} else if (command.equals(PRINT_CMD)) {
 		DebugPrintf("Usage: %s <name> to print value of <name>\n", command.c_str());
-	} else if (command.equals("set")) {
+	} else if (command.equals(SET_CMD)) {
 		DebugPrintf("Usage: %s <name> = <value> to set <name> to <value>\n", command.c_str());
-	} else if (command.equals("set_type")) {
+	} else if (command.equals(SET_TYPE_CMD)) {
 		DebugPrintf("Usage: %s <name> <value> to set type of <name>", command.c_str());
 	} else {
 		DebugPrintf("No help about this command, sorry.");
@@ -219,7 +220,7 @@ bool Console::Cmd_Info(int argc, const char **argv) {
 			DebugPrintf("%d %s:%d x%d, enabled: %d \n", i, breakpoints[i]._filename.c_str(), breakpoints[i]._line, breakpoints[i]._hits, breakpoints[i]._enabled);
 		}
 		return 1;
-	} else if (argc == 2 && !strncmp(argv[1], "watch", 5)) {
+	} else if (argc == 2 && !strncmp(argv[1], WATCH_CMD, 5)) {
 		Common::Array<WatchInfo>watchlist = ADAPTER->getWatchlist();
 		for (uint i = 0; i < watchlist.size(); i++) {
 			DebugPrintf("%d %s:%s x%d \n", i, watchlist[i]._filename.c_str(), watchlist[i]._symbol.c_str(), watchlist[i]._hits);

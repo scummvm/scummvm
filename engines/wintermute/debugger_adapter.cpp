@@ -117,7 +117,7 @@ Common::String Error::getErrorDisplayStr() {
 			errorStr += Common::String::format("Line %d in script %s is blank.", this->errorExtraInt, this->errorExtraString.c_str()); // Or non-existing? Will have to check.
 			break;
 		case SOURCE_PATH_NOT_SET:
-			errorStr += Common::String("Source path not set. Source won't be displayed. Try 'sourcepath somepath' first.");
+			errorStr += Common::String("Source path not set. Source won't be displayed. Try 'help "+ Common::String(SET_PATH_CMD) + "'.");
 			break;
 		case NO_SUCH_BREAKPOINT:
 			errorStr += Common::String::format("No such watch/breakpoint %d.", this->errorExtraInt);

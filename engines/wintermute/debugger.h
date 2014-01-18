@@ -28,6 +28,26 @@
 #include "engines/wintermute/base/scriptables/script.h"
 #define DEFAULT_SOURCE_PADDING 5
 
+#define STEP_INTO_CMD "step"
+#define STEP_OVER_CMD "next"
+#define CONTINUE_CMD "next"
+#define FINISH_CMD "finish"
+#define WATCH_CMD "watch"
+#define BREAK_CMD "break"
+#define LIST_CMD "list"
+#define REMOVE_BREAKPOINT_CMD "del"
+#define DISABLE_BREAKPOINT_CMD "disable"
+#define ENABLE_BREAKPOINT_CMD "enable"
+#define REMOVE_WATCHPOINT_CMD "delw"
+#define DISABLE_WATCHPOINT_CMD "disablew"
+#define ENABLE_WATCHPOINT_CMD "enablew"
+#define INFO_CMD "info"
+#define SET_CMD "set"
+#define SET_TYPE_CMD "set_type"
+#define PRINT_CMD "print"
+#define DUMP_RES_CMD "dump_res"
+#define SET_PATH_CMD "set_path"
+
 namespace Wintermute {
 class WintermuteEngine;
 class Adapter;
