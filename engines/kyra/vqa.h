@@ -44,28 +44,59 @@ public:
 	virtual ~VQADecoder();
 
 	bool loadStream(Common::SeekableReadStream *stream);
+	void readNextPacket();
 
 private:
+	Common::SeekableReadStream *_fileStream;
+
+	void handleVQHD(Common::SeekableReadStream *stream);
+	void handleFINF(Common::SeekableReadStream *stream);
+
+	struct VQAHeader {
+		uint16 version;
+		uint16 flags;
+		uint16 numFrames;
+		uint16 width;
+		uint16 height;
+		uint8 blockW;
+		uint8 blockH;
+		uint8 frameRate;
+		uint8 cbParts;
+		uint16 colors;
+		uint16 maxBlocks;
+		uint32 unk1;
+		uint16 unk2;
+		uint16 freq;
+		uint8 channels;
+		uint8 bits;
+		uint32 unk3;
+		uint16 unk4;
+		uint32 maxCBFZSize;
+		uint32 unk5;
+	};
+
+	VQAHeader _header;
+	uint32 *_frameInfo;
+
 	class VQAAudioTrack : public AudioTrack {
 	public:
-		VQAAudioTrack(Common::SeekableReadStream *stream, int freq);
+		VQAAudioTrack(VQAHeader *header);
 		~VQAAudioTrack();
 
-		void handleSND0();
-		void handleSND1();
-		void handleSND2();
+		void handleSND0(Common::SeekableReadStream *stream);
+		void handleSND1(Common::SeekableReadStream *stream);
+		void handleSND2(Common::SeekableReadStream *stream);
 
 	protected:
 		Audio::AudioStream *getAudioStream() const;
 
 	private:
 		Audio::QueuingAudioStream *_audioStream;
-		Common::SeekableReadStream *_fileStream;
 	};
 
 	class VQAVideoTrack : public FixedRateVideoTrack {
 	public:
-		VQAVideoTrack(Common::SeekableReadStream *stream);
+		VQAVideoTrack(VQAHeader *header);
 		~VQAVideoTrack();
 
 		uint16 getWidth() const;
@@ -75,54 +106,29 @@ private:
 		int getFrameCount() const;
 		const Graphics::Surface *decodeNextFrame();
 
-		bool hasSound() const;
-		int getAudioFreq() const;
+		void setHasDirtyPalette();
 		bool hasDirtyPalette() const;
 		const byte *getPalette() const;
 
-		void setAudioTrack(VQAAudioTrack *audioTrack);
-
-		void handleVQHD();
-		void handleFINF();
-		void handleVQFR();
+		void handleVQFR(Common::SeekableReadStream *stream);
 
 	protected:
 		Common::Rational getFrameRate() const;
 
 	private:
-		Common::SeekableReadStream *_fileStream;
 		Graphics::Surface *_surface;
 		byte _palette[3 * 256];
 		mutable bool _dirtyPalette;
-		VQAAudioTrack *_audioTrack;
 
+		bool _newFrame;
+
+		uint16 _width, _height;
+		uint8 _blockW, _blockH;
+		uint8 _cbParts;
+		int _frameCount;
 		int _curFrame;
+		byte _frameRate;
 
-		struct VQAHeader {
-			uint16 version;
-			uint16 flags;
-			uint16 numFrames;
-			uint16 width;
-			uint16 height;
-			uint8 blockW;
-			uint8 blockH;
-			uint8 frameRate;
-			uint8 cbParts;
-			uint16 colors;
-			uint16 maxBlocks;
-			uint32 unk1;
-			uint16 unk2;
-			uint16 freq;
-			uint8 channels;
-			uint8 bits;
-			uint32 unk3;
-			uint16 unk4;
-			uint32 maxCBFZSize;
-			uint32 unk5;
-		};
-
-		VQAHeader _header;
-		uint32 *_frameInfo;
 		uint32 _codeBookSize;
 		bool _compressedCodeBook;
 		byte *_codeBook;
