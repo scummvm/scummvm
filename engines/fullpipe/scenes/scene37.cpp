@@ -149,4 +149,15 @@ void scene37_initScene(Scene *sc) {
 	g_fp->initArcadeKeys("SC_37");
 }
 
+int scene37_updateCursor() {
+	g_fp->updateCursorCommon();
+
+	if (g_fp->_cursorId == PIC_CSR_ITN && g_fp->_objectIdAtCursor == PIC_SC37_MASK) {
+		if (g_vars->scene37_var07)
+			g_fp->_cursorId = PIC_CSR_GOL;
+	}
+
+	return g_fp->_cursorId;
+}
+
 } // End of namespace Fullpipe
