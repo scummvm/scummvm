@@ -150,7 +150,7 @@ int loadIrxModules(int device, const char *irxPath, IrxReference **modules, IrxT
 
 	irxFiles = irxType[type];
 	numFiles = numIrx[type];
-	resModules = (IrxReference *)malloc(numFiles * sizeof(IrxReference));
+	resModules = (IrxReference *)memalign(64, numFiles * sizeof(IrxReference));
 	curModule = resModules;	
 
 	for (int i = 0; i < numFiles; i++) {
@@ -160,7 +160,7 @@ int loadIrxModules(int device, const char *irxPath, IrxReference **modules, IrxT
 
 		if ((irxFiles[i].flags & TYPEMASK) == BIOS) {
 			curModule->loc = IRX_FILE;
-			curModule->path = (char *)malloc(32);
+			curModule->path = (char *)memalign(64, 32);
 			sprintf(curModule->path, "rom0:%s", irxFiles[i].name);
 			curModule->buffer = NULL;
 			curModule->size = 0;
@@ -169,7 +169,7 @@ int loadIrxModules(int device, const char *irxPath, IrxReference **modules, IrxT
 			curModule->errorCode = 0;
 		} else {
 			curModule->loc = IRX_BUFFER;
-			curModule->path = (char *)malloc(256);
+			curModule->path = (char *)memalign(64, 256);
 
 			sprintf(curModule->path, "%s%s%s", irxPath, irxFiles[i].name, (device == CD_DEV) ? ";1" : "");
 			int fd = fioOpen(curModule->path, O_RDONLY);

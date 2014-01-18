@@ -378,7 +378,7 @@ Gs2dScreen::Gs2dScreen(uint16 width, uint16 height) {
 	ee_thread_t animThread, thisThread;
 	ReferThreadStatus(GetThreadId(), &thisThread);
 
-	_animStack = malloc(ANIM_STACK_SIZE);
+	_animStack = memalign(64, ANIM_STACK_SIZE);
 	animThread.initial_priority = thisThread.current_priority - 3;
 	animThread.stack      = _animStack;
 	animThread.stack_size = ANIM_STACK_SIZE;

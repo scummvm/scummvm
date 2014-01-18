@@ -329,7 +329,7 @@ OSystem_PS2::OSystem_PS2(const char *elfPath) {
 
 	// _screen->wantAnim(true);
 
-	_bootPath = (char *)malloc(128);
+	_bootPath = (char *)memalign(64, 128);
 	_bootDevice = detectBootPath(elfPath, _bootPath);
 
 	if (_bootDevice != HOST_DEV) {
@@ -456,8 +456,8 @@ void OSystem_PS2::initTimer(void) {
 	ee_thread_t timerThread, soundThread, thisThread;
 	ReferThreadStatus(GetThreadId(), &thisThread);
 
-	_timerStack = (uint8 *)malloc(TIMER_STACK_SIZE);
-	_soundStack = (uint8 *)malloc(SOUND_STACK_SIZE);
+	_timerStack = (uint8 *)memalign(64, TIMER_STACK_SIZE);
+	_soundStack = (uint8 *)memalign(64, SOUND_STACK_SIZE);
 
 	// give timer thread a higher priority than main thread
 	timerThread.initial_priority = thisThread.current_priority - 1;
@@ -1030,7 +1030,7 @@ void OSystem_PS2::makeConfigPath() {
 			src = ps2_fopen("cdfs:ScummVM.ini", "r");
 			if (src) {
 				size = ((Ps2File *)src)->size();
-				buf = (char *)malloc(size);
+				buf = (char *)memalign(64, size);
 				ps2_fread(buf, size, 1, src);
 				ps2_fclose(src);
 
