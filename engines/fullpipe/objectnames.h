@@ -217,7 +217,7 @@ namespace Fullpipe {
 #define sO_IsStandingInCorner "\xd1\xf2\xee\xe8\xf2 \xe2 \xf3\xe3\xeb\xf3"	// "Стоит в углу"
 #define sO_Guardian "\xd1\xf2\xee\xf0\xee\xe6"	// "Сторож"
 #define sO_Guard_1 "\xd1\xf2\xf0\xe0\xe6 1"	// "Страж 1"
-#define sO_Gurad_2 "\xd1\xf2\xf0\xe0\xe6 2"	// "Страж 2"
+#define sO_Guard_2 "\xd1\xf2\xf0\xe0\xe6 2"	// "Страж 2"
 #define sO_Guard_3 "\xd1\xf2\xf0\xe0\xe6 3"	// "Страж 3"
 #define sO_Stool_34 "\xd2\xe0\xe1\xf3\xf0\xe5\xf2_34"	// "Табурет_34"
 #define sO_Pipe_9 "\xd2\xf0\xf3\xe1\xe0_9"	// "Труба_9"

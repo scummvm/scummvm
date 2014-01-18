@@ -43,7 +43,7 @@ Ring::Ring() {
 	numSubRings = 0;
 
 	for (int i = 0; i < 10; i++)
-		subRing[i] = 0;
+		subRings[i] = 0;
 
 	state = false;
 }
@@ -64,9 +64,9 @@ void scene37_initScene(Scene *sc) {
 	ring->x = ani->_ox - 40;
 	ring->y = ani->_ox + 40;
 	ring->numSubRings = 3;
-	ring->subRing[0] = 1;
-	ring->subRing[1] = 4;
-	ring->subRing[2] = 8;
+	ring->subRings[0] = 1;
+	ring->subRings[1] = 4;
+	ring->subRings[2] = 8;
 	ring->state = false;
 	g_vars->scene37_var05.push_back(ring);
 
@@ -76,9 +76,9 @@ void scene37_initScene(Scene *sc) {
 	ring->x = ani->_ox - 40;
 	ring->y = ani->_ox + 40;
 	ring->numSubRings = 3;
-	ring->subRing[0] = 2;
-	ring->subRing[1] = 5;
-	ring->subRing[2] = 9;
+	ring->subRings[0] = 2;
+	ring->subRings[1] = 5;
+	ring->subRings[2] = 9;
 	ring->state = false;
 	g_vars->scene37_var05.push_back(ring);
 
@@ -88,9 +88,9 @@ void scene37_initScene(Scene *sc) {
 	ring->x = ani->_ox - 40;
 	ring->y = ani->_ox + 40;
 	ring->numSubRings = 3;
-	ring->subRing[0] = 3;
-	ring->subRing[1] = 7;
-	ring->subRing[2] = 11;
+	ring->subRings[0] = 3;
+	ring->subRings[1] = 7;
+	ring->subRings[2] = 11;
 	ring->state = false;
 	g_vars->scene37_var05.push_back(ring);
 

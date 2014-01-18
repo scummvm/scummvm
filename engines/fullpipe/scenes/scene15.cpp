@@ -74,7 +74,7 @@ void scene15_initScene(Scene *sc) {
 	
 	g_vars->scene15_plusminus = sc->getStaticANIObject1ById(ANI_PLUSMINUS, -1);
 
-	if (g_fp->getObjectState(sO_Gurad_2) == g_fp->getObjectEnumState(sO_Gurad_2, sO_Off))
+	if (g_fp->getObjectState(sO_Guard_2) == g_fp->getObjectEnumState(sO_Guard_2, sO_Off))
 		g_vars->scene15_plusminus->_statics = g_vars->scene15_plusminus->getStaticsById(ST_PMS_MINUS);
 	else
 		g_vars->scene15_plusminus->_statics = g_vars->scene15_plusminus->getStaticsById(ST_PMS_PLUS);

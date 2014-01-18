@@ -57,6 +57,7 @@ MODULE_OBJS = \
 	scenes/scene34.o \
 	scenes/scene35.o \
 	scenes/scene36.o \
+	scenes/scene37.o \
 	scenes/sceneDbg.o
 
 # This module can be built as a plugin

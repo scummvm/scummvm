@@ -1284,6 +1284,12 @@ namespace Fullpipe {
 #define PIC_SC36_MASK 5221
 #define ST_RHT_OPEN 2362
 
+// Scene 37
+#define ANI_GUARD_37 2588
+#define ANI_RING 2604
+#define ST_RNG_CLOSED2 4865
+#define ST_RNG_OPEN 2606
+
 // Debug scene
 #define MSG_RESTARTGAME 4767
 #define PIC_SCD_1 727

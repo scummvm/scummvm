@@ -26,9 +26,10 @@
 namespace Fullpipe {
 
 struct BehaviorEntryInfo;
-class StaticANIObject;
-class MctlLadder;
 class MGM;
+class MctlLadder;
+struct Ring;
+class StaticANIObject;
 
 int defaultUpdateCursor();
 
@@ -502,6 +503,18 @@ public:
 	StaticANIObject *scene36_rotohrust;
 	StaticANIObject *scene36_scissors;
 
+	int scene37_var01;
+	int scene37_var02;
+	int scene37_var03;
+	int scene37_var04;
+	Common::Array<Ring *> scene37_var05;
+	int scene37_var06;
+	int scene37_var07;
+	StaticANIObject *scene37_plusMinus1;
+	StaticANIObject *scene37_plusMinus2;
+	StaticANIObject *scene37_plusMinus3;
+
+
 	PictureObject *selector;
 };
 
@@ -510,7 +523,7 @@ struct Ring {
 	int x;
 	int y;
 	int numSubRings;
-	int subRing[10];
+	int subRings[10];
 	bool state;
 
 	Ring();
