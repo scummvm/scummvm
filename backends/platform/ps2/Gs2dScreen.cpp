@@ -164,6 +164,9 @@ Gs2dScreen::Gs2dScreen(uint16 width, uint16 height) {
 	EnableIntc(INT_VBLANK_END);
 	EnableDmac(2);
 
+	_tvMode = 0; // force detection
+	_gfxMode = 0;
+
 	_width = width;
 	_height = height;
 	_pitch = (width + 127) & ~127;
