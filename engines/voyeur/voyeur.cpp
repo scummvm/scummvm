@@ -682,7 +682,7 @@ Common::Error VoyeurEngine::loadGameState(int slot) {
 
 void VoyeurEngine::loadGame(int slot) {
 	// Open up the save file
-	Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(g_vm->generateSaveName(slot));
+	Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(generateSaveName(slot));
 	if (!saveFile)
 		return;
 

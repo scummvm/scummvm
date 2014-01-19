@@ -41,6 +41,7 @@ ThreadResource::ThreadResource(BoltFilesState &state, const byte *src):
 		_vm(state._vm) {
 	_flags = src[8];
 	_ctlPtr = nullptr;
+	_aptPos = Common::Point(-1, -1);
 }
 
 void ThreadResource::initThreadStruct(int idx, int id) {
@@ -1023,27 +1024,27 @@ bool ThreadResource::cardPerform2(const byte *pSrc, int cardCmdId) {
 int ThreadResource::doApt() {
 	loadTheApt();
 
-	Common::Point aptPos(-1, -1);
 	_vm->_currentVocId = 151;
 	_vm->_voy._viewBounds = _vm->_bVoy->boltEntry(_vm->_playStampGroupId)._rectResource; 
 	Common::Array<Common::Rect> &hotspots = _vm->_bVoy->boltEntry(
 		_vm->_playStampGroupId + 1)._rectResource->_entries;
 	_vm->_eventsManager.getMouseInfo();
 
-	if (aptPos.x == -1) {
-		aptPos.x = hotspots[2].left;
-		aptPos.y = hotspots[2].top;
+	// Very first time apartment is shown, start the phone message
+	if (_aptPos.x == -1) {
+		_aptPos.x = hotspots[2].left;
+		_aptPos.y = hotspots[2].top;
 		_vm->_currentVocId = 153;
 	}
 
 	if (_vm->_voy._field470 == 16) {
 		hotspots[0].left = 999;
 		hotspots[3].left = 999;
-		aptPos.x = hotspots[4].left + 28;
-		aptPos.y = hotspots[4].top + 28;
+		_aptPos.x = hotspots[4].left + 28;
+		_aptPos.y = hotspots[4].top + 28;
 	}
 
-	_vm->_eventsManager.setMousePos(Common::Point(aptPos.x, aptPos.y));
+	_vm->_eventsManager.setMousePos(Common::Point(_aptPos.x, _aptPos.y));
 	_vm->_soundManager.startVOCPlay(_vm->_soundManager.getVOCFileName(_vm->_currentVocId));
 	_vm->_currentVocId = 151;
 
@@ -1112,8 +1113,8 @@ int ThreadResource::doApt() {
 	} while (!_vm->shouldQuit() && (!_vm->_eventsManager._leftClick || hotspotId == -1));
 
 	pt = _vm->_eventsManager.getMousePos();
-	aptPos.x = pt.x;
-	aptPos.y = pt.y;
+	_aptPos.x = pt.x;
+	_aptPos.y = pt.y;
 
 	switch (hotspotId) {
 	case 0:
@@ -1770,7 +1771,8 @@ void ThreadResource::doAptAnim(int mode) {
 }
 
 void ThreadResource::synchronize(Common::Serializer &s) {
-	warning("TODO: ThreadResource::synchronize");
+	s.syncAsSint16LE(_aptPos.x);
+	s.syncAsSint16LE(_aptPos.y);
 }
 
 } // End of namespace Voyeur

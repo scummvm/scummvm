@@ -486,6 +486,9 @@ public:
 
 	static void init();
 private:
+	VoyeurEngine *_vm;
+	Common::Point _aptPos;
+private:
 	bool getStateInfo();
 	byte *getDataOffset();
 	void getButtonsText();
@@ -523,8 +526,6 @@ private:
 	 */
 	bool checkMansionScroll();
 public:
-	VoyeurEngine *_vm;
-
 	int _threadId;
 	int _controlIndex;
 	int _field4, _field6;
