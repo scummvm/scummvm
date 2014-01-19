@@ -65,7 +65,7 @@ void scene38_initScene(Scene *sc) {
 	scene38_setBottleState(sc);
 
 	if (g_fp->getObjectState(sO_Boss) == g_fp->getObjectEnumState(sO_Boss, sO_IsSleeping)) {
-		g_vars->scene38_shorty->flags &= 0xFFFB;
+		g_vars->scene38_shorty->_flags &= 0xFFFB;
 
 		g_vars->scene38_tally->stopAnim_maybe();
 		g_vars->scene38_tally->_flags &= 0xFFFB;

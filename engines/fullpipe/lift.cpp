@@ -111,4 +111,9 @@ bool FullpipeEngine::lift_checkButton(const char *varname) {
 	return false;
 }
 
+void FullpipeEngine::lift_sub7(Scene *sc, int buttonId) {
+	warning("STUB: lift_sub7()");
+}
+
+
 } // End of namespace Fullpipe

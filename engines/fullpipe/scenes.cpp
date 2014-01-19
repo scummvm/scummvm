@@ -365,6 +365,27 @@ Vars::Vars() {
 	scene37_soundFlipper = 0;
 	scene37_dudeX = 0;
 
+	scene38_var01 = 0;
+	scene38_var02 = 0;
+	scene38_var03 = 0;
+	scene38_var04 = 0;
+	scene38_boss = 0;
+	scene38_tally = 0;
+	scene38_shorty = 0;
+	scene38_domino0 = 0;
+	scene38_dominos = 0;
+	scene38_domino1 = 0;
+	scene38_bottle = 0;
+	scene38_var05 = 0;
+	scene38_var06 = 0;
+	scene38_var07 = 0;
+	scene38_var08 = 0;
+	scene38_var09 = 0;
+	scene38_var10 = 0;
+	scene38_var11 = 0;
+	scene38_var12 = 0;
+	scene38_var13 = 0;
+
 	selector = 0;
 }
 

@@ -1298,6 +1298,16 @@ namespace Fullpipe {
 #define ST_RNG_CLOSED2 4865
 #define ST_RNG_OPEN 2606
 
+// Scene 38
+#define ANI_BOTTLE38 2188
+#define ANI_DOMINO38 2200
+#define ANI_DOMINOS 3317
+#define ANI_DYLDA 2169
+#define ANI_GLAVAR 2154
+#define ANI_MALYSH 2165
+#define QU_SC38_ENTERLIFT 2836
+#define QU_SC38_EXITLIFT 2837
+
 // Debug scene
 #define MSG_RESTARTGAME 4767
 #define PIC_SCD_1 727
