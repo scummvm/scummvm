@@ -379,18 +379,22 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 				           existing->right <= candidate->right &&
 				           existing->top <= candidate->top &&
 				           existing->bottom >= candidate->bottom) {
-					Common::Rect *leftSlice = new Common::Rect(*candidate);
-					_cleanMe.insert_at(_cleanMe.size(), leftSlice);
-					leftSlice->right = existing->left;
-					if (leftSlice->height() > 0 && leftSlice->width() > 0)
-						queue.insert_at(queue.size(), leftSlice);
 
 					Common::Rect *rightSlice = new Common::Rect(*candidate);
+					Common::Rect *leftSlice = new Common::Rect(*candidate);
+					_cleanMe.insert_at(_cleanMe.size(), leftSlice);
 					_cleanMe.insert_at(_cleanMe.size(), rightSlice);
 
-					rightSlice->right = existing->left;
-					if (rightSlice->height() > 0 && rightSlice->width() > 0)
+					rightSlice->left = existing->right;
+					leftSlice->right = existing->left;
+
+					if (rightSlice->height() > 0 && rightSlice->width() > 0) {
 						queue.insert_at(queue.size(), rightSlice);
+					}
+
+					if (leftSlice->height() > 0 && leftSlice->width() > 0) {
+						queue.insert_at(queue.size(), leftSlice);
+					}
 
 					discard = true;
 					continue;
