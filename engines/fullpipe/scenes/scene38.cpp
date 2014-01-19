@@ -37,7 +37,18 @@
 namespace Fullpipe {
 
 void scene38_setBottleState(Scene *sc) {
-	warning("STUB: scene38_setBottleState()");
+	ExCommand *ex = sc->getMessageQueueById(QU_SC38_SHOWBOTTLE_ONTABLE)->getExCommandByIndex(0);
+
+	if (g_vars->scene38_bottle->_ox == ex->_x && g_vars->scene38_bottle->_oy == ex->_y) {
+		if (g_fp->lift_checkButton(sO_Level5) ) {
+			ex = sc->getMessageQueueById(QU_SC38_SHOWBOTTLE)->getExCommandByIndex(0);
+
+			g_vars->scene38_bottle->setOXY(ex->_x, ex->_y);
+			g_vars->scene38_bottle->_priority = ex->_field_14;
+
+			g_fp->setObjectState(sO_Bottle_38, g_fp->getObjectEnumState(sO_Bottle_38, sO_Blocked));
+		}
+	}
 }
 
 void scene38_initScene(Scene *sc) {
