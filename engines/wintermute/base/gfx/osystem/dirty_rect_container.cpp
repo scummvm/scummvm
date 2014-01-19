@@ -136,290 +136,681 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 	Common::Array<Common::Rect *> queue;
 
 	for (uint i = 0; i < _rectArray.size(); i++) {
+		assert(_clipRect->contains(*_rectArray[i]));
 		queue.insert_at(queue.size(), _rectArray[i]);
 	}
 
-	uint j = 0;
-	while (j < queue.size()) {
+	int targetPixels = _clipRect->width() *_clipRect->height();
+	int filledPixels = 0;
 
-		Common::Rect *candidate = queue[j];
-
-		if (candidate->width() == 0 || candidate->height() == 0) {
-			// We have no use for this
-			queue.remove_at(j);
-			continue;
-		}
-
-		if (ret.size() > kMaxOutputRects) {
+	while (queue.size()) {
+		assert(queue.size() <= RECT_QUEUE_LIMIT);
+		assert(ret.size() <= RECT_LIMIT);
+		assert(_cleanMe.size() <= 10*(RECT_LIMIT + RECT_QUEUE_LIMIT));
+		if (0 && filledPixels * 100 >= (targetPixels * 85)) {
+			// We have filled almost everything, let's just bail out.
+			warning("Bailing out of dirty rect, filled %d pixels out of %d", filledPixels, targetPixels);
 			_disableDirtyRects = true;
 			return getFallback();
 		}
+		Common::Rect *candidate = queue[0];
+		assert(_clipRect->contains(*candidate));
 
 		bool discard = false;
 
-		// See if it's contained or containes
+		assert (candidate->width() != 0 || candidate->height() != 0);
+		assert (candidate->isValidRect());
+
 		for (uint i = 0; i < ret.size() && !discard; i++) {
-			assert(!discard);
 
 			Common::Rect *existing = ret[i];
-
+			assert(_clipRect->contains(*existing));
 			assert(existing->width() != 0 && existing->height() != 0);
-			// We don't want to put useless garbage in here.
-			/* These are the 'simple' contains/contained cases, like:
-			*     A A A A 
-			 *    A A A A 
-			 *    A A B B 
-			 *    A A B B 
-			 *     
-			 *    B B B B 
-			 *    B A A B
-			 *    B B B B 
-			 * In these cases we simply discard the "contained".
-			 */
-
-			if (existing->contains(*candidate)) {
-				discard = true;
+			Common::Rect intersecting = existing->findIntersectingRect(*candidate);
+			if ((intersecting.width() == 0) && (intersecting.height() == 0)) {
 				continue;
 			}
-
-			if (candidate->contains(*(existing))) {
+			if (existing->contains(*candidate)) {
+				discard = true;
+			} else if (candidate->contains(*(existing))) {
 				// Contains an existing one.
-			
+
 				Common::Rect *nSlice = new Common::Rect(*candidate);
-				_cleanMe.insert_at(_cleanMe.size(), nSlice);
 				nSlice->bottom = existing->top;
 				if (nSlice->width() != 0 && nSlice->height() != 0) {
 					queue.insert_at(queue.size(), nSlice);
+					_cleanMe.insert_at(_cleanMe.size(), nSlice);
+				} else {
+					delete nSlice;
 				}
-				
+
 				Common::Rect *sSlice = new Common::Rect(*candidate);
-				_cleanMe.insert_at(_cleanMe.size(), sSlice);
 				sSlice->top = existing->bottom;
 				if (sSlice->width() != 0 && sSlice->height() != 0) {
 					queue.insert_at(queue.size(), sSlice);
+					_cleanMe.insert_at(_cleanMe.size(), sSlice);
+				} else {
+					delete sSlice;
 				}
 
 				Common::Rect *eSlice = new Common::Rect(*candidate);
-				_cleanMe.insert_at(_cleanMe.size(), eSlice);
 				eSlice->bottom = existing->bottom;
 				eSlice->top = existing->top;
 				eSlice->left = existing->right;
 				if (eSlice->width() != 0 && eSlice->height() != 0) {
 					queue.insert_at(queue.size(), eSlice);
+					_cleanMe.insert_at(_cleanMe.size(), eSlice);
+				} else {
+					delete eSlice;
 				}
 
 				Common::Rect *wSlice = new Common::Rect(*candidate);
-				_cleanMe.insert_at(_cleanMe.size(), wSlice);
 				wSlice->bottom = existing->bottom;
 				wSlice->top = existing->top;
 				wSlice->right = existing->left;
 				if (wSlice->width() != 0 && wSlice->height() != 0) {
 					queue.insert_at(queue.size(), wSlice);
+					_cleanMe.insert_at(_cleanMe.size(), wSlice);
+				} else {
+					delete wSlice;
 				}
 
 				discard = true;
-				continue;
-			}
+			} else if (existing->left <= candidate->left &&
+				   existing->right >= candidate->right &&
+				   existing->top >= candidate->top &&
+				   existing->bottom <= candidate->bottom) { // Cross shaped intersections
+				/*
+								 * e, f: cross-shaped intersections like:
+								 *
+								 *    AA
+								 *    AA
+								 * BB BA BB
+								 *    AA
+								 *    AA
+								 *
+								 * and the other way around.
+								 * We split like:
+								 *
+								 *    A1
+								 *    A1
+								 * BB BB BB
+								 *    A2
+								 *    A2
+								 *
+								 * We keep B and enqueue A1, A2
+								 *
+								 */
 
-			/* 
-			 * Okay, now we work on intersections.
-			 * We want to minimize the number of pixels shared by more than one rect.
-			 * We are interested in the following cases:
-			 * a. SE
-			 *    A A A A 
-			 *    A A A A 
-			 *    A A B B B
-			 *    A A B B B
-			 *        B B B 
-			 * In this case we keep B as it is and split A:
-			 *
-			 *
-			 *    A1 A1 A1 A1
-			 *    A1 A1 A1 A1
-			 *    A2 A2  B  B  B
-			 *    A2 A2  B  B  B
-			 *           B  B  B
-			 *
-			 * A is then deleted and 
-			 * A1, A2 are enqueued for processing as new rects.
-			 *
-			 * b, c, d: SW, NW, NE, same but with different corners.
-			 *
-			 * e, f: cross-shaped intersections like:
-			 *
-			 *    AA 
-			 *    AA
-			 * BB BA BB
-			 *    AA
-			 *    AA
-			 * 
-			 * and the other way around.
-			 * We split like:
-			 *
-			 *    A1
-			 *    A1
-			 * BB BB BB 
-			 *    A2
-			 *    A2
-			 *
-			 * We keep B and enqueue A1, A2
-			 *
-			 */
-			Common::Rect intersecting = existing->findIntersectingRect(*candidate);
 
-			if (intersecting.width() >= kMaxSplicingX &&
-			        intersecting.height() >= kMaxSplicingY
-			   ) {
-				if (intersecting.top >= candidate->top &&
-				        intersecting.left >= candidate->left &&
-				        intersecting.bottom == candidate->bottom &&
-				        intersecting.right == candidate->right
-				   ) { // SE case
-					Common::Rect *neSlice = new Common::Rect(*candidate);
-					_cleanMe.insert_at(_cleanMe.size(), neSlice);
+				Common::Rect *topSlice = new Common::Rect(*candidate);
+				Common::Rect *bottomSlice = new Common::Rect(*candidate);
 
-					neSlice->bottom = intersecting.top;
-					neSlice->left = intersecting.left;
-					assert(neSlice->isValidRect());
-					if (neSlice->width() != 0 && neSlice->height() != 0) {
-						queue.insert_at(queue.size(), neSlice);
-					}
-					candidate->right = intersecting.left;
-					assert(neSlice->isValidRect());
-					if (candidate->width() == 0) {
-						discard = true;
-					}
-					assert(candidate->height() != 0);
-					assert(candidate->isValidRect());
-				} else if (intersecting.top == candidate->top &&
-				           intersecting.left >= candidate->left &&
-				           intersecting.bottom <= candidate->bottom &&
-				           intersecting.right == candidate->right
-				          ) { // NE
-					Common::Rect *seSlice = new Common::Rect(*candidate);
-					_cleanMe.insert_at(_cleanMe.size(), seSlice);
-					seSlice->top = intersecting.bottom;
-					seSlice->left = intersecting.left;
-					assert(seSlice->isValidRect());
-					assert(seSlice->width() != 0 && seSlice->height() != 0);
-					if (seSlice->width() != 0 && seSlice->height() != 0) {
-						queue.insert_at(queue.size(), seSlice);
-					}
-					candidate->right = intersecting.left;
-					if (candidate->width() == 0) {
-						discard = true;
-					}
-					assert(candidate->height() != 0);
+								topSlice->bottom = existing->top;
+				bottomSlice->top = existing->bottom;
 
-					assert(candidate->isValidRect());
-				} else if (intersecting.top == candidate->top &&
-				           intersecting.left == candidate->left &&
-				           intersecting.bottom <= candidate->bottom &&
-				           intersecting.right <= candidate->right
-				          ) {     // NW
-					Common::Rect *swSlice = new Common::Rect(*candidate);
-					_cleanMe.insert_at(_cleanMe.size(), swSlice);
-					swSlice->top = intersecting.bottom;
-					swSlice->right = intersecting.right;
-					assert(swSlice->isValidRect());
-					assert(candidate->isValidRect());
-					if (swSlice->width() != 0 && swSlice->height() != 0) {
-						queue.insert_at(queue.size(), swSlice);
-					}
-					candidate->left = intersecting.right;
-					if (candidate->width() == 0) {
-						discard = true;
-					}
-					assert(candidate->height() != 0);
-					assert(candidate->isValidRect());
-				} else if (intersecting.top >= candidate->top &&
-				           intersecting.left == candidate->left &&
-				           intersecting.bottom == candidate->bottom &&
-				           intersecting.right <= candidate->right
-				          ) { // SW
-					Common::Rect *nwSlice = new Common::Rect(*candidate);
-					_cleanMe.insert_at(_cleanMe.size(), nwSlice);
-					nwSlice->bottom = intersecting.top;
-					nwSlice->right = intersecting.right;
-					assert(nwSlice->isValidRect());
-					assert(candidate->isValidRect());
-					if (nwSlice->width() != 0 && nwSlice->height() != 0) {
-						queue.insert_at(queue.size(), nwSlice);
-					}
-					candidate->left = intersecting.right;
-					assert(candidate->isValidRect());
-					if (candidate->width() == 0) {
-						discard = true;
-					}
-					assert(candidate->height() != 0);
-				} else if (existing->left <= candidate->left &&
-				           existing->right >= candidate->right &&
-				           existing->top >= candidate->top &&
-				           existing->bottom <= candidate->bottom) { // Cross shaped intersections
-					Common::Rect *topSlice = new Common::Rect(*candidate);
-					Common::Rect *bottomSlice = new Common::Rect(*candidate);
+				if (topSlice->height() > 0 && topSlice->width() > 0) {
+					queue.insert_at(queue.size(), topSlice);
 					_cleanMe.insert_at(_cleanMe.size(), topSlice);
-					_cleanMe.insert_at(_cleanMe.size(), bottomSlice);
-					topSlice->bottom = existing->top;
-					bottomSlice->top = existing->bottom;
-
-					if (topSlice->height() > 0 && topSlice->width() > 0) {
-						queue.insert_at(queue.size(), topSlice);
-					}
-
-					if (bottomSlice->height() > 0 && bottomSlice->width() > 0) {
-						queue.insert_at(queue.size(), bottomSlice);
-					}
-
-					discard = true;
-					continue;
-
-
-				} else if (existing->left >= candidate->left &&
-				           existing->right <= candidate->right &&
-				           existing->top <= candidate->top &&
-				           existing->bottom >= candidate->bottom) {
-
-					Common::Rect *rightSlice = new Common::Rect(*candidate);
-					Common::Rect *leftSlice = new Common::Rect(*candidate);
-					_cleanMe.insert_at(_cleanMe.size(), leftSlice);
-					_cleanMe.insert_at(_cleanMe.size(), rightSlice);
-
-					rightSlice->left = existing->right;
-					leftSlice->right = existing->left;
-
-					if (rightSlice->height() > 0 && rightSlice->width() > 0) {
-						queue.insert_at(queue.size(), rightSlice);
-					}
-
-					if (leftSlice->height() > 0 && leftSlice->width() > 0) {
-						queue.insert_at(queue.size(), leftSlice);
-					}
-
-					discard = true;
-					continue;
+				} else {
+					delete topSlice;
 				}
-			} // End of intersecting test
+
+
+				if (bottomSlice->height() > 0 && bottomSlice->width() > 0) {
+					queue.insert_at(queue.size(), bottomSlice);
+					_cleanMe.insert_at(_cleanMe.size(), bottomSlice);
+				} else {
+					delete bottomSlice;
+				}
+
+				discard = true;
+			} else if (existing->left >= candidate->left &&
+					   existing->right <= candidate->right &&
+					   existing->top <= candidate->top &&
+					   existing->bottom >= candidate->bottom) {
+
+				Common::Rect *rightSlice = new Common::Rect(*candidate);
+				Common::Rect *leftSlice = new Common::Rect(*candidate);
+
+				rightSlice->left = existing->right;
+				leftSlice->right = existing->left;
+
+				if (rightSlice->height() > 0 && rightSlice->width() > 0) {
+					queue.insert_at(queue.size(), rightSlice);
+					_cleanMe.insert_at(_cleanMe.size(), rightSlice);
+				} else {
+					delete rightSlice;
+				}
+
+				if (leftSlice->height() > 0 && leftSlice->width() > 0) {
+					queue.insert_at(queue.size(), leftSlice);
+					_cleanMe.insert_at(_cleanMe.size(), leftSlice);
+				} else {
+					delete leftSlice;
+				}
+
+				discard = true;
+
+
+
+
+			} else if (candidate->right <= existing->right &&
+					candidate->top >= existing->top &&
+					candidate->bottom <= existing->bottom &&
+					candidate->left <= existing->left) {
+				/*
+				 *      B B
+				 *  A A A B
+				 *  A A A B
+				 *      B B
+				 */
+				Common::Rect *wSlice = new Common::Rect(*candidate);
+				wSlice->right = existing->left;
+				if (wSlice->width() != 0 && wSlice->height() != 0) {
+					assert(wSlice->isValidRect());
+					queue.insert_at(queue.size(), wSlice);
+					_cleanMe.insert_at(_cleanMe.size(), wSlice);
+				} else {
+					delete wSlice;
+				}
+				discard = true;
+			} else if (candidate->right >= existing->right &&
+					candidate->top >= existing->top &&
+					candidate->bottom <= existing->bottom &&
+					candidate->left >= existing->left) {
+				/*
+				 *  B B
+				 *  B A A A A
+				 *  B A A A A
+				 *  B B
+				 */
+				Common::Rect *eSlice = new Common::Rect(*candidate);
+				eSlice->left = existing->right;
+				if (eSlice->width() != 0 && eSlice->height() != 0) {
+					assert(eSlice->isValidRect());
+					queue.insert_at(queue.size(), eSlice);
+					_cleanMe.insert_at(_cleanMe.size(), eSlice);
+				} else {
+					delete eSlice;
+				}
+				discard = true;
+			} else if (candidate->right <= existing->right &&
+					candidate->top <= existing->top &&
+					candidate->bottom <= existing->bottom &&
+					candidate->left >= existing->left) {
+				/*
+				 *    A A
+				 *    A A
+				 *  B A A B
+				 *  B B B B
+				 */
+				Common::Rect *nSlice = new Common::Rect(*candidate);
+				nSlice->bottom = existing->top;
+				if (nSlice->width() != 0 && nSlice->height() != 0) {
+					assert(nSlice->isValidRect());
+					queue.insert_at(queue.size(), nSlice);
+					_cleanMe.insert_at(_cleanMe.size(), nSlice);
+				} else {
+					delete nSlice;
+				}
+				discard = true;
+			} else if (candidate->right <= existing->right &&
+					candidate->top >= existing->top &&
+					candidate->bottom >= existing->bottom &&
+					candidate->left >= existing->left) {
+				/*
+				 *  B B B B
+				 *  B A A B
+				 *    A A
+				 *    A A
+				 */
+				Common::Rect *sSlice = new Common::Rect(*candidate);
+				sSlice->top = existing->bottom;
+				if (sSlice->width() != 0 && sSlice->height() != 0) {
+					assert(sSlice->isValidRect());
+					queue.insert_at(queue.size(), sSlice);
+					_cleanMe.insert_at(_cleanMe.size(), sSlice);
+				} else {
+					delete sSlice;
+				}
+				discard = true;
+			} else if (candidate->right >= existing->right &&
+					candidate->top >= existing->top &&
+					candidate->bottom >= existing->bottom &&
+					candidate->left <= existing->left) {
+				/*
+				 *    B B
+				 *  A B B A
+				 *  A A A A
+				 *  A A A A
+				 */
+				Common::Rect *nwSlice = new Common::Rect(*candidate);
+				Common::Rect *neSlice = new Common::Rect(*candidate);
+				Common::Rect *sSlice = new Common::Rect(*candidate);
+
+				sSlice->top = existing->bottom;
+
+				nwSlice->bottom = existing->bottom;
+				nwSlice->right = existing->left;
+
+				neSlice->bottom = existing->bottom;
+				neSlice->left= existing->right;
+
+				if (sSlice->width() != 0 && sSlice->height() != 0) {
+					assert(sSlice->isValidRect());
+					queue.insert_at(queue.size(), sSlice);
+					_cleanMe.insert_at(_cleanMe.size(), sSlice);
+				} else {
+					delete sSlice;
+				}
+
+				if (nwSlice->width() != 0 && nwSlice->height() != 0) {
+					assert(nwSlice->isValidRect());
+					queue.insert_at(queue.size(), nwSlice);
+					_cleanMe.insert_at(_cleanMe.size(), nwSlice);
+				} else {
+					delete nwSlice;
+				}
+
+				if (neSlice->width() != 0 && neSlice->height() != 0) {
+					assert(neSlice->isValidRect());
+					queue.insert_at(queue.size(), neSlice);
+					_cleanMe.insert_at(_cleanMe.size(), neSlice);
+				} else {
+					delete neSlice;
+				}
+
+				discard = true;
+
+			} else if (candidate->right >= existing->right &&
+					candidate->top >= existing->top &&
+					candidate->bottom >= existing->bottom &&
+					candidate->left <= existing->left) {
+				/*
+				 *
+				 *  A A A A
+				 *  A A A A
+				 *  A B B A
+				 *    B B
+				 *
+				 */
+				Common::Rect *swSlice = new Common::Rect(*candidate);
+				Common::Rect *seSlice = new Common::Rect(*candidate);
+				Common::Rect *nSlice = new Common::Rect(*candidate);
+
+				nSlice->bottom = existing->bottom;
+
+				swSlice->top = existing->top;
+				swSlice->right = existing->left;
+
+				seSlice->top = existing->top;
+				seSlice->left= existing->right;
+
+				if (nSlice->width() != 0 && nSlice->height() != 0) {
+					assert(nSlice->isValidRect());
+					queue.insert_at(queue.size(), nSlice);
+					_cleanMe.insert_at(_cleanMe.size(), nSlice);
+				} else {
+					delete nSlice;
+				}
+
+				if (swSlice->width() != 0 && swSlice->height() != 0) {
+					assert(swSlice->isValidRect());
+					queue.insert_at(queue.size(), swSlice);
+					_cleanMe.insert_at(_cleanMe.size(), swSlice);
+				} else {
+					delete swSlice;
+				}
+
+				if (seSlice->width() != 0 && seSlice->height() != 0) {
+					assert(seSlice->isValidRect());
+					queue.insert_at(queue.size(), seSlice);
+					_cleanMe.insert_at(_cleanMe.size(), seSlice);
+				} else {
+					delete seSlice;
+				}
+
+				discard = true;
+			} else if (candidate->top <= existing->top &&
+					candidate->right >= existing->right &&
+					candidate->left >= existing->left &&
+					candidate->bottom >= existing->bottom) {
+				/*
+				 *   A A A A
+				 * B B A A A
+				 * B B A A A
+				 *   A A A A
+				 */
+				Common::Rect *nwSlice = new Common::Rect(*candidate);
+				Common::Rect *swSlice = new Common::Rect(*candidate);
+				Common::Rect *eSlice = new Common::Rect(*candidate);
+
+				eSlice->left = existing->right;
+
+				nwSlice->bottom = existing->top;
+				nwSlice->right = existing->right;
+
+				swSlice->top = existing->bottom;
+				swSlice->right = existing->right;
+
+				if (eSlice->width() != 0 && eSlice->height() != 0) {
+					assert(eSlice->isValidRect());
+					queue.insert_at(queue.size(), eSlice);
+					_cleanMe.insert_at(_cleanMe.size(), eSlice);
+				} else {
+					delete eSlice;
+				}
+
+				if (nwSlice->width() != 0 && nwSlice->height() != 0) {
+					assert(nwSlice->isValidRect());
+					queue.insert_at(queue.size(), nwSlice);
+					_cleanMe.insert_at(_cleanMe.size(), nwSlice);
+				} else {
+					delete nwSlice;
+				}
+
+				if (swSlice->width() != 0 && swSlice->height() != 0) {
+					assert(swSlice->isValidRect());
+					queue.insert_at(queue.size(), swSlice);
+					_cleanMe.insert_at(_cleanMe.size(), swSlice);
+				} else {
+					delete swSlice;
+				}
+
+				discard = true;
+
+			} else if (candidate->top <= existing->top &&
+					candidate->right >= existing->right &&
+					candidate->left >= existing->left &&
+					candidate->bottom >= existing->bottom) {
+				/*
+				 * A A A A
+				 * A A B B B
+				 * A A B B B
+				 * A A A A
+				 */
+				Common::Rect *neSlice = new Common::Rect(*candidate);
+				Common::Rect *seSlice = new Common::Rect(*candidate);
+				Common::Rect *wSlice = new Common::Rect(*candidate);
+
+				wSlice->right = existing->left;
+
+				neSlice->bottom = existing->top;
+				neSlice->left = existing->left;
+
+				seSlice->top = existing->bottom;
+				seSlice->left = existing->left;
+
+				if (wSlice->width() != 0 && wSlice->height() != 0) {
+					assert(wSlice->isValidRect());
+					queue.insert_at(queue.size(), wSlice);
+					_cleanMe.insert_at(_cleanMe.size(), wSlice);
+				} else {
+					delete wSlice;
+				}
+
+				if (neSlice->width() != 0 && neSlice->height() != 0) {
+					assert(neSlice->isValidRect());
+					queue.insert_at(queue.size(), neSlice);
+					_cleanMe.insert_at(_cleanMe.size(), neSlice);
+				} else {
+					delete neSlice;
+				}
+
+				if (seSlice->width() != 0 && seSlice->height() != 0) {
+					assert(seSlice->isValidRect());
+					queue.insert_at(queue.size(), seSlice);
+					_cleanMe.insert_at(_cleanMe.size(), seSlice);
+				} else {
+					delete seSlice;
+				}
+
+				discard = true;
+
+			} else if (intersecting.top >= candidate->top &&
+					intersecting.left >= candidate->left &&
+					intersecting.bottom == candidate->bottom &&
+					intersecting.right == candidate->right
+			   ) { // SE case
+
+				/*
+				 *  A A A      A = candidate
+				 *  A A A
+				 *  A A I B B  B = existing
+				 *      B B B
+				 *      B B B
+				 *
+				 */
+				assert (
+						!(intersecting.left == candidate->left &&
+						 intersecting.right == candidate->right &&
+						 intersecting.top == candidate->top &&
+						 intersecting.bottom == candidate->bottom)
+				);
+				assert ((intersecting.width() != 0) && (intersecting.height() != 0));
+
+				Common::Rect *nSlice = new Common::Rect(*candidate);
+				Common::Rect *swSlice = new Common::Rect(*candidate);
+
+				nSlice->bottom = intersecting.top;
+
+				assert(nSlice->isValidRect());
+
+				if (nSlice->width() != 0 && nSlice->height() != 0) {
+					queue.insert_at(queue.size(), nSlice);
+					_cleanMe.insert_at(_cleanMe.size(), nSlice);
+				} else {
+					delete nSlice;
+				}
+
+				swSlice->right = intersecting.left;
+				swSlice->top = intersecting.top;
+
+				assert (intersecting.findIntersectingRect(*swSlice).width() == 0 ||
+						intersecting.findIntersectingRect(*swSlice).height() == 0);
+
+				assert (intersecting.findIntersectingRect(*nSlice).width() == 0 ||
+						intersecting.findIntersectingRect(*nSlice).height() == 0);
+
+				assert(swSlice->isValidRect());
+
+				if (swSlice->width() != 0 && swSlice->height() != 0) {
+					queue.insert_at(queue.size(), swSlice);
+					_cleanMe.insert_at(_cleanMe.size(), swSlice);
+				} else {
+					delete swSlice;
+				}
+
+				discard = true;
+
+			} else if (intersecting.top >= candidate->top &&
+					intersecting.left == candidate->left &&
+					intersecting.bottom == candidate->bottom &&
+					intersecting.right <= candidate->right
+			   ) { // SW case
+
+				/*
+				 *      A A A  A = candidate
+				 *      A A A
+				 *  B B I A A  B = existing
+				 *  B B B
+				 *  B B B
+				 *
+				 */
+				assert (
+						!(intersecting.left == candidate->left &&
+						 intersecting.right == candidate->right &&
+						 intersecting.top == candidate->top &&
+						 intersecting.bottom == candidate->bottom)
+				);
+				assert ((intersecting.width() != 0) && (intersecting.height() != 0));
+
+				Common::Rect *nSlice = new Common::Rect(*candidate);
+				Common::Rect *seSlice = new Common::Rect(*candidate);
+
+				nSlice->bottom = intersecting.top;
+
+				assert(nSlice->isValidRect());
+
+				if (nSlice->width() != 0 && nSlice->height() != 0) {
+					queue.insert_at(queue.size(), nSlice);
+					_cleanMe.insert_at(_cleanMe.size(), nSlice);
+				} else {
+					delete nSlice;
+				}
+
+				seSlice->left = intersecting.right;
+				seSlice->top = intersecting.top;
+
+				assert (intersecting.findIntersectingRect(*seSlice).width() == 0 ||
+						intersecting.findIntersectingRect(*seSlice).height() == 0);
+
+				assert (intersecting.findIntersectingRect(*nSlice).width() == 0 ||
+						intersecting.findIntersectingRect(*nSlice).height() == 0);
+
+				assert(seSlice->isValidRect());
+
+				if (seSlice->width() != 0 && seSlice->height() != 0) {
+					queue.insert_at(queue.size(), seSlice);
+					_cleanMe.insert_at(_cleanMe.size(), seSlice);
+				} else {
+					delete seSlice;
+				}
+
+				discard = true;
+
+			} else if (intersecting.top == candidate->top &&
+					intersecting.left == candidate->left &&
+					intersecting.bottom <= candidate->bottom &&
+					intersecting.right <= candidate->right
+			   ) { // NW case
+
+				/*
+				 *
+				 *  B B B
+				 *  B B B
+				 *  B B I A A  A = candidate
+				 *      A A A
+				 *      A A A  B = existing
+				 *
+				 */
+				assert (
+						!(intersecting.left == candidate->left &&
+						 intersecting.right == candidate->right &&
+						 intersecting.top == candidate->top &&
+						 intersecting.bottom == candidate->bottom)
+				);
+				assert ((intersecting.width() != 0) && (intersecting.height() != 0));
+
+				Common::Rect *sSlice = new Common::Rect(*candidate);
+				Common::Rect *neSlice = new Common::Rect(*candidate);
+
+				sSlice->top = intersecting.bottom;
+
+				assert(sSlice->isValidRect());
+
+				if (sSlice->width() != 0 && sSlice->height() != 0) {
+					queue.insert_at(queue.size(), sSlice);
+					_cleanMe.insert_at(_cleanMe.size(), sSlice);
+				} else {
+					delete sSlice;
+				}
+
+				neSlice->left = intersecting.right;
+				neSlice->bottom = intersecting.bottom;
+
+				assert (intersecting.findIntersectingRect(*neSlice).width() == 0 ||
+						intersecting.findIntersectingRect(*neSlice).height() == 0);
+
+				assert (intersecting.findIntersectingRect(*sSlice).width() == 0 ||
+						intersecting.findIntersectingRect(*sSlice).height() == 0);
+
+				assert(neSlice->isValidRect());
+
+				if (neSlice->width() != 0 && neSlice->height() != 0) {
+					queue.insert_at(queue.size(), neSlice);
+					_cleanMe.insert_at(_cleanMe.size(), neSlice);
+				} else {
+					delete neSlice;
+				}
+
+				discard = true;
+
+			} else if (intersecting.top == candidate->top &&
+					intersecting.left >= candidate->left &&
+					intersecting.bottom <= candidate->bottom &&
+					intersecting.right == candidate->right) { // NE case
+
+				/*
+				 *
+				 *      B B B
+				 *      B B B
+				 *  A A I B B   A = candidate
+				 *  A A A
+				 *  A A A       B = existing
+				 *
+				 */
+				assert (
+						!(intersecting.left == candidate->left &&
+						 intersecting.right == candidate->right &&
+						 intersecting.top == candidate->top &&
+						 intersecting.bottom == candidate->bottom)
+				);
+				assert ((intersecting.width() != 0) && (intersecting.height() != 0));
+
+				Common::Rect *sSlice = new Common::Rect(*candidate);
+				Common::Rect *nwSlice = new Common::Rect(*candidate);
+
+				sSlice->top = intersecting.bottom;
+
+				assert(sSlice->isValidRect());
+
+				if (sSlice->width() != 0 && sSlice->height() != 0) {
+					queue.insert_at(queue.size(), sSlice);
+					_cleanMe.insert_at(_cleanMe.size(), sSlice);
+				} else {
+					delete sSlice;
+				}
+
+				nwSlice->right = intersecting.left;
+				nwSlice->bottom = intersecting.bottom;
+
+				assert (intersecting.findIntersectingRect(*nwSlice).width() == 0 ||
+						intersecting.findIntersectingRect(*nwSlice).height() == 0);
+
+				assert (intersecting.findIntersectingRect(*sSlice).width() == 0 ||
+						intersecting.findIntersectingRect(*sSlice).height() == 0);
+
+				assert(nwSlice->isValidRect());
+
+				if (nwSlice->width() != 0 && nwSlice->height() != 0) {
+					queue.insert_at(queue.size(), nwSlice);
+					_cleanMe.insert_at(_cleanMe.size(), nwSlice);
+				} else {
+					delete nwSlice;
+				}
+
+				discard = true;
+
+			}
 
 		} // End loop
-		if (discard) {
-			queue.remove_at(j);
-		} else {
+
+		if (!discard) {
 			assert(candidate->width() > 0 && candidate->height() > 0);
-			if (isHuge(candidate)) {
-				_disableDirtyRects = true;
-				return getFallback();
-			}
 			ret.insert_at(ret.size(), candidate);
-			j++;
+			filledPixels += candidate->width() * candidate->height();
 		}
-	} // End loop
+
+		queue.remove_at(0);
+	} // End while loop
 
 #if CONSISTENCY_CHECK == DO_CHECK
 	assert (_disableDirtyRects == false);
 	consistencyCheck(ret);
 #endif
-
+	warning ("%d from %d px, %d from %d rects", filledPixels, targetPixels, queue.size(), ret.size());
 	return ret;
 }
 

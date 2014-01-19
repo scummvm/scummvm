@@ -36,6 +36,8 @@
 #define NO_CHECK 0
 #define DO_CHECK 1
 #define CONSISTENCY_CHECK DO_CHECK
+#define RECT_QUEUE_LIMIT 2048
+#define RECT_LIMIT 2048
 
 namespace Wintermute {
 class DirtyRectContainer {

@@ -37,7 +37,7 @@
 #define NO_DEBUG_RECTS 0
 #define DEBUG_RECTS_OUTLINE 1
 #define DEBUG_RECTS_BLACKOUT 2
-#define DEBUG_RECTS NO_DEBUG_RECTS
+#define DEBUG_RECTS DEBUG_RECTS_OUTLINE
 
 
 namespace Wintermute {
