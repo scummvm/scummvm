@@ -111,7 +111,16 @@ void sceneHandler38_hammerKick() {
 }
 
 void sceneHandler38_drink() {
-	warning("STUB: sceneHandler38_drink()");
+	if (!g_vars->scene38_shorty->_movement) {
+		if (g_vars->scene38_shorty->_flags & 4) {
+			if (!(g_vars->scene38_shorty->_flags & 2) && g_vars->scene38_var11 > 0
+				&& g_vars->scene38_shorty->_statics->_staticsId == ST_MLS_LEFT2
+				&& g_fp->_rnd->getRandomNumber(32767) < 3276) {
+				chainQueue(QU_MLS_TURNR, 0);
+				g_vars->scene38_var11 = 0;
+			}
+		}
+	}
 }
 
 void sceneHandler38_animateAlcoholics() {
