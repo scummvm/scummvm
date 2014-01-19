@@ -113,6 +113,9 @@ static int getfield (lua_State *L, const char *key, int d) {
 
 
 static int os_date (lua_State *L) {
+  #ifdef __PLAYSTATION2__ // missing: gmtime & strftime
+  lua_pushnil(L);
+  #else
   const char *s = luaL_optstring(L, 1, "%c");
   // FIXME: Rewrite the code below to use OSystem::getTimeAndDate
   // Alternatively, remove it, if sword25 does not use it.
@@ -160,6 +163,7 @@ static int os_date (lua_State *L) {
     }
     luaL_pushresult(&b);
   }
+  #endif
   return 1;
 }
 
@@ -167,6 +171,9 @@ static int os_date (lua_State *L) {
 static int os_time (lua_State *L) {
   // FIXME: Rewrite the code below to use OSystem::getTimeAndDate.
   // Alternatively, remove it, if sword25 does not use it.
+  #ifdef __PLAYSTATION2__ // missing: mktime
+  lua_pushnil(L);
+  #else
   time_t t;
   if (lua_isnoneornil(L, 1))  /* called without args? */
     t = time(NULL);  /* get current time */
@@ -187,6 +194,7 @@ static int os_time (lua_State *L) {
     lua_pushnil(L);
   else
     lua_pushnumber(L, (lua_Number)t);
+  #endif
   return 1;
 }
 
@@ -195,8 +203,10 @@ static int os_difftime (lua_State *L) {
   // FIXME: difftime is not portable, unfortunately.
   // So we either have to replace this code, or just remove it,
   // depending on whether sword25 actually uses it.
+  #ifndef __PLAYSTATION2__ // missing: difftime
   lua_pushnumber(L, difftime((time_t)(luaL_checknumber(L, 1)),
                              (time_t)(luaL_optnumber(L, 2, 0))));
+  #endif
   return 1;
 }
 
