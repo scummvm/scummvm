@@ -91,11 +91,14 @@ void scene38_initScene(Scene *sc) {
 }
 
 void sceneHandler38_tryTakeBottle() {
-	warning("STUB: sceneHandler38_tryTakeBottle()");
+	g_vars->scene38_boss->changeStatics2(ST_GLV_NOHAMMER);
+	g_vars->scene38_boss->startAnim(MV_GLV_LOOKMAN, 0, -1);
+
+	g_vars->scene38_var05 = 0;
 }
 
 void sceneHandler38_postHammerKick() {
-	warning("STUB: sceneHandler38_postHammerKick()");
+	g_vars->scene38_domino1->setOXY(g_vars->scene38_domino1->_ox, g_vars->scene38_domino1->_oy + 2);
 }
 
 void sceneHandler38_propose() {
