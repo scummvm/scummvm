@@ -411,7 +411,77 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 		}
 	} // End loop
 
+#if CONSISTENCY_CHECK == DO_CHECK
+	assert (_disableDirtyRects == false);
+	consistencyCheck(ret);
+#endif
+
 	return ret;
 }
+
+#if CONSISTENCY_CHECK == DO_CHECK
+#define SENTINEL -255
+void DirtyRectContainer::consistencyCheck(Common::Array<Common::Rect *> &optimized) {
+	Common::Array<Common::Array<int> > diff;
+
+	for (int x = _clipRect->left; x < _clipRect->right; x++) {
+		Common::Array<int> col;
+		for (int y = _clipRect->top; y < _clipRect->bottom; y++) {
+			col.insert_at(y, SENTINEL);
+		}
+		diff.insert_at(x, col);
+	}
+
+	int dirtied = 0;
+	int cleaned = 0;
+
+	for (int x = _clipRect->left; x < _clipRect->right; x++) {
+		for (int y = _clipRect->top; y < _clipRect->bottom; y++) {
+
+			bool is_dirty = false;
+
+			for (uint i = 0; i < _rectArray.size(); i++) {
+				Common::Rect *rect = _rectArray[i];
+				if (rect->width() != 0 && rect->height() != 0) {
+					if(rect->contains(Common::Point(x,y))) {
+						is_dirty = true;
+					}
+				}
+			}
+
+			bool stays_dirty = false;
+
+			for (uint i = 0; i < optimized.size(); i++) {
+				Common::Rect *rect = optimized[i];
+				if(rect->contains(Common::Point(x,y))) {
+					stays_dirty = true;
+				}
+			}
+
+			assert (diff[x][y] == SENTINEL);
+			diff[x][y] = (int)stays_dirty - (int)is_dirty;
+
+			assert (diff[x][y] >= 0);
+
+			if (diff[x][y] == 1)
+				dirtied++;
+
+			if (diff[x][y] == -1)
+				cleaned++;
+		}
+	}
+
+	assert (cleaned == 0);
+
+	if (cleaned) {
+		warning("%d pixels have been cleaned", cleaned);
+	}
+
+	if (dirtied) {
+		warning("%d pixels have been dirtied", dirtied);
+	}
+}
+#endif
+
 } // End of namespace Wintermute
 

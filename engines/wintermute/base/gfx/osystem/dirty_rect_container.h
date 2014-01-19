@@ -33,6 +33,10 @@
 #include "common/array.h"
 #include <limits.h>
 
+#define NO_CHECK 0
+#define DO_CHECK 1
+#define CONSISTENCY_CHECK DO_CHECK
+
 namespace Wintermute {
 class DirtyRectContainer {
 public:
@@ -100,6 +104,8 @@ private:
 	 */
 	bool _disableDirtyRects;
 	Common::Rect *getRect(int id);
+
+	void consistencyCheck(Common::Array<Common::Rect *> &optimized);
 };
 } // End of namespace Wintermute
 
