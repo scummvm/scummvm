@@ -439,7 +439,7 @@ void VoyeurRL2Decoder::play(VoyeurEngine *vm, int resourceOffset, byte *frames, 
 	while (!vm->shouldQuit() && !endOfVideo() && !vm->_eventsManager._mouseClicked) {
 		if (hasDirtyPalette()) {
 			const byte *palette = getPalette();
-			vm->_graphicsManager.setPalette(palette, 128, 128);
+			vm->_graphicsManager.setPalette(palette + 3, 129, 127);
 		}
 		
 		if (needsUpdate()) {
