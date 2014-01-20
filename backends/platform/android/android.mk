@@ -38,7 +38,8 @@ PATH_BUILD_LIBRESIDUALVM = $(PATH_BUILD)/libs/armeabi/libresidualvm.so
 FILE_MANIFEST_SRC = $(srcdir)/dists/android/AndroidManifest.xml
 FILE_MANIFEST = $(PATH_BUILD)/AndroidManifest.xml
 
-APK_MAIN = residualvm.apk
+APK_MAIN = ResidualVM-debug.apk
+APK_MAIN_RELEASE = ResidualVM-release-unsigned.apk
 APK_PLUGINS = $(patsubst plugins/lib%.so, residualvm-engine-%.apk, $(PLUGINS))
 
 $(FILE_MANIFEST): $(FILE_MANIFEST_SRC) | $(PATH_BUILD)
@@ -75,11 +76,16 @@ $(PATH_BUILD_LIBRESIDUALVM): libresidualvm.so | $(PATH_BUILD)
 
 $(PATH_BUILD_RES): $(RESOURCES) | $(PATH_BUILD)
 
-$(APK_MAIN): $(FILE_MANIFEST) $(PATH_BUILD_RES) $(PATH_BUILD_ASSETS) $(JAVA_EXTRA_LIBS) $(PATH_BUILD_LIBRESIDUALVM) | $(PATH_BUILD) 
+setupapk: $(FILE_MANIFEST) $(PATH_BUILD_RES) $(PATH_BUILD_ASSETS) $(JAVA_EXTRA_LIBS) $(PATH_BUILD_LIBRESIDUALVM) | $(PATH_BUILD) 
 	$(SDK_ANDROID) update project -p $(PATH_BUILD) -t android-$(ANDROID_TARGET_VERSION) -n ResidualVM
+
+$(APK_MAIN): setupapk | $(PATH_BUILD) 
 	(cd $(PATH_BUILD); ant debug -Dsource.dir="$(realpath $(DIST_JAVA_SRC_DIR))")
 	$(CP) $(PATH_BUILD)/bin/ResidualVM-debug.apk $@
 
+$(APK_MAIN_RELEASE): setupapk | $(PATH_BUILD) 
+	(cd $(PATH_BUILD); ant release -Dsource.dir="$(realpath $(DIST_JAVA_SRC_DIR))")
+	$(CP) $(PATH_BUILD)/bin/ResidualVM-release-unsigned.apk $@
 
 all: $(APK_MAIN)
 
@@ -88,7 +94,7 @@ clean: androidclean
 androidclean:
 	@$(RM) -rf $(PATH_BUILD) *.apk release
 
-androidrelease: $(addprefix release/, $(APK_MAIN) $(APK_PLUGINS))
+androidrelease: $(APK_MAIN_RELEASE)
 
 androidtestmain: $(APK_MAIN)
 	$(ADB) install -r $(APK_MAIN)
