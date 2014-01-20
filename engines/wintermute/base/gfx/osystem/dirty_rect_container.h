@@ -33,9 +33,9 @@
 #include "common/array.h"
 #include <limits.h>
 
-#define QUEUE_HARD_LIMIT 128
-#define RETURN_HARD_LIMIT 128
-#define CLEAN_HARD_LIMIT 128
+#define QUEUE_HARD_LIMIT 512
+#define RETURN_HARD_LIMIT 512
+#define CLEAN_HARD_LIMIT 1024
 #define PIXEL_BAILOUT_LIMIT 112
 #define QUEUE_BAILOUT_LIMIT 64
 #define CONSISTENCY_CHECK false
