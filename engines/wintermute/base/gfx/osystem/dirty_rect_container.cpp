@@ -102,6 +102,9 @@ Common::Rect *DirtyRectContainer::getRect(int id) {
 }
 
 Common::Array<Common::Rect *> DirtyRectContainer::getFallback() {
+#if ENABLE_BAILOUT == false
+	assert(false);
+#endif
 	Common::Array<Common::Rect *> singleret;
 	if (_clipRect == nullptr) {
 		return singleret;
