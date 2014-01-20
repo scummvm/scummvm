@@ -33,11 +33,12 @@
 #include "common/array.h"
 #include <limits.h>
 
-#define NO_CHECK 0
-#define DO_CHECK 1
-#define CONSISTENCY_CHECK DO_CHECK
-#define RECT_QUEUE_LIMIT 2048
-#define RECT_LIMIT 2048
+#define QUEUE_HARD_LIMIT 128
+#define RETURN_HARD_LIMIT 128
+#define CLEAN_HARD_LIMIT 128
+#define PIXEL_BAILOUT_LIMIT 112
+#define QUEUE_BAILOUT_LIMIT 64
+#define CONSISTENCY_CHECK false
 
 namespace Wintermute {
 class DirtyRectContainer {
@@ -107,7 +108,7 @@ private:
 	bool _disableDirtyRects;
 	Common::Rect *getRect(int id);
 
-#if CONSISTENCY_CHECK == DO_CHECK
+#if CONSISTENCY_CHECK
 	int consistencyCheck(Common::Array<Common::Rect *> &optimized);
 #endif
 

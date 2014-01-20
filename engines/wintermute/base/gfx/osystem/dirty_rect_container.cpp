@@ -148,21 +148,30 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 		queue.insert_at(queue.size(), _rectArray[i]);
 	}
 
-#if CONSISTENCY_CHECK == DO_CHECK
+#if CONSISTENCY_CHECK
 	int targetPixels = _clipRect->width() *_clipRect->height();
 	int filledPixels = 0;
 #endif
 
 	while (queue.size()) {
-		assert(queue.size() <= RECT_QUEUE_LIMIT);
-		assert(ret.size() <= RECT_LIMIT);
-		assert(_cleanMe.size() <= 10*(RECT_LIMIT + RECT_QUEUE_LIMIT));
-		if (0 && filledPixels * 100 >= (targetPixels * 85)) {
+		assert(queue.size() <= QUEUE_HARD_LIMIT);
+		assert(ret.size() <= RETURN_HARD_LIMIT);
+		assert(_cleanMe.size() <= CLEAN_HARD_LIMIT);
+
+#if ENABLE_BAILOUT
+		if (
+				(filledPixels * 128 >= (targetPixels * PIXEL_BAILOUT_LIMIT)) ||
+				(queue.size() >= QUEUE_BAILOUT_LIMIT)
+			) {
 			// We have filled almost everything, let's just bail out.
-			warning("Bailing out of dirty rect, filled %d pixels out of %d", filledPixels, targetPixels);
+#if CONSISTENCY_CHECK
+			warning("Bailing out of dirty rect, filled %d pixels out of %d, queue size: %d", filledPixels, targetPixels, queue.size());
+#endif
 			_disableDirtyRects = true;
 			return getFallback();
 		}
+#endif
+
 		Common::Rect *candidate = queue[0];
 		assert(_clipRect->contains(*candidate));
 
@@ -608,7 +617,7 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 			assert(candidate->isValidRect());
 			if (candidate->width() > 0 && candidate->height() > 0) {
 				ret.insert_at(ret.size(), candidate);
-#if CONSISTENCY_CHECK == DO_CHECK
+#if CONSISTENCY_CHECK
 				filledPixels += candidate->width() * candidate->height();
 #endif
 			}
@@ -617,7 +626,7 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 		queue.remove_at(0);
 	} // End while loop
 
-#if CONSISTENCY_CHECK == DO_CHECK
+#if CONSISTENCY_CHECK
 	assert (_disableDirtyRects == false);
 	int naivePx = consistencyCheck(ret);
 	int gain = (((filledPixels * 128) / (naivePx)) * 100 ) / 128;
@@ -626,7 +635,7 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 	return ret;
 }
 
-#if CONSISTENCY_CHECK == DO_CHECK
+#if CONSISTENCY_CHECK
 #define SENTINEL -255
 int DirtyRectContainer::consistencyCheck(Common::Array<Common::Rect *> &optimized) {
 	Common::Array<Common::Array<int> > diff;
