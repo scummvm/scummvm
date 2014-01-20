@@ -110,7 +110,23 @@ void sceneHandler38_point() {
 }
 
 void sceneHandler38_hammerKick() {
-	warning("STUB: sceneHandler38_hammerKick()");
+	if (!g_vars->scene38_shorty->_movement) {
+		if (g_vars->scene38_shorty->_flags & 4) {
+			if (!(g_vars->scene38_shorty->_flags & 2) && g_vars->scene38_var11 > 1
+				&& g_vars->scene38_shorty->_statics->_staticsId == ST_MLS_LEFT2
+				&& g_fp->_rnd->getRandomNumber(32767) < 3276) {
+				chainQueue(QU_MLS_TURNR, 0);
+				g_vars->scene38_var11 = 0;
+			}
+		}
+	}
+
+	g_vars->scene38_domino1->setOXY(g_vars->scene38_domino1->_ox, g_vars->scene38_domino1->_oy - 2);
+
+	if (g_vars->scene38_dominos->_statics->_staticsId == ST_DMS_3)
+		g_vars->scene38_dominos->startAnim(MV_DMS_THREE, 0, -1);
+	else if (g_vars->scene38_dominos->_statics->_staticsId == ST_DMS_4)
+		g_vars->scene38_dominos->startAnim(MV_DMS_FOUR, 0, -1);
 }
 
 void sceneHandler38_drink() {
