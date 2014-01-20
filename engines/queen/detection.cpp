@@ -66,7 +66,7 @@ static const QueenGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformAmiga,
 			ADGF_DEMO,
-			GUIO0()
+			GUIO1(GUIO_NOSPEECH)
 		},
 	},
 
@@ -79,7 +79,7 @@ static const QueenGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformAmiga,
 			ADGF_DEMO,
-			GUIO0()
+			GUIO1(GUIO_NOSPEECH)
 		},
 	},
 
@@ -92,7 +92,7 @@ static const QueenGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_DEMO,
-			GUIO0()
+			GUIO1(GUIO_NOSPEECH)
 		},
 	},
 
@@ -105,7 +105,7 @@ static const QueenGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_DEMO,
-			GUIO0()
+			GUIO1(GUIO_NOSPEECH)
 		},
 	},
 
@@ -118,7 +118,7 @@ static const QueenGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_DEMO,
-			GUIO0()
+			GUIO1(GUIO_NOSPEECH)
 		},
 	},
 
@@ -132,7 +132,7 @@ static const QueenGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformAmiga,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GUIO_NOSPEECH)
 		},
 	},
 #endif
@@ -146,7 +146,7 @@ static const QueenGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GUIO_NOSPEECH)
 		},
 	},
 
@@ -173,7 +173,7 @@ static const QueenGameDescription gameDescriptions[] = {
 			Common::FR_FRA,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GUIO_NOSPEECH)
 		},
 	},
 #endif
@@ -203,7 +203,7 @@ static const QueenGameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GUIO_NOSPEECH)
 		},
 	},
 #endif
@@ -248,7 +248,7 @@ static const QueenGameDescription gameDescriptions[] = {
 			Common::IT_ITA,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GUIO_NOSPEECH)
 		},
 	},
 #endif
@@ -360,6 +360,20 @@ static const QueenGameDescription gameDescriptions[] = {
 	},
 
 	// TODO: Freeware Release for Spanish DOS CD is missing.
+#if 0
+	// DOS CD - Spanish (Compressed Freeware Release v1.0)
+	{
+		{
+			"queen",
+			"Talkie",
+			AD_ENTRY1s("queen.1c", NULL, ?),
+			Common::ES_ESP,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+	},
+#endif
 
 	{ AD_TABLE_END_MARKER }
 };
