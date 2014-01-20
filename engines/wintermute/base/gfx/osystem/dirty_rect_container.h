@@ -40,6 +40,7 @@
 #define QUEUE_BAILOUT_LIMIT 64
 #define CONSISTENCY_CHECK false
 #define ENABLE_BAILOUT false
+#define INPUT_RECTS_HARD_LIMIT 1024
 
 namespace Wintermute {
 class DirtyRectContainer {

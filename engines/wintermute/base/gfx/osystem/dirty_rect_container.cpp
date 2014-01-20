@@ -63,6 +63,7 @@ void DirtyRectContainer::addDirtyRect(const Common::Rect &rect, const Common::Re
 
 	uint target = getSize();
 
+	assert(getSize() < INPUT_RECTS_HARD_LIMIT);
 	if (target > kMaxInputRects) {
 		_disableDirtyRects = true;
 		warning ("Too many rects, disabling dirty rects for this frame.");
@@ -104,7 +105,7 @@ Common::Rect *DirtyRectContainer::getRect(int id) {
 
 Common::Array<Common::Rect *> DirtyRectContainer::getFallback() {
 #if ENABLE_BAILOUT == false
-	assert(false);
+	assert(_disableDirtyRects || false);
 #endif
 	Common::Array<Common::Rect *> singleret;
 	if (_clipRect == nullptr) {
