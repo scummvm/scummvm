@@ -1319,6 +1319,7 @@ namespace Fullpipe {
 #define ST_GLV_HAMMER 2156
 #define ST_GLV_NOHAMMER 2159
 #define ST_MLS_LEFT2 2291
+#define QU_DLD_DENY 2218
 #define QU_GLV_TOSMALL 2208
 #define QU_GLV_TOSMALL_NOHMR 2209
 #define QU_MLS_TURNR 2221

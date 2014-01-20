@@ -102,7 +102,15 @@ void sceneHandler38_postHammerKick() {
 }
 
 void sceneHandler38_propose() {
-	warning("STUB: sceneHandler38_propose()");
+	if (!g_vars->scene38_tally->_movement) {
+		if (g_vars->scene38_tally->_flags & 4) {
+			if (!(g_vars->scene38_tally->_flags & 2) && g_vars->scene38_var08 > 0
+				&& g_fp->_rnd->getRandomNumber(32767) < 32767) {
+				chainQueue(QU_DLD_DENY, 0);
+				g_vars->scene38_var08 = 0;
+			}
+		}
+	}
 }
 
 void sceneHandler38_point() {
