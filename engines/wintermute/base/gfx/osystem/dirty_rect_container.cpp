@@ -272,10 +272,8 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 				 *  A A A B
 				 *      B B
 				 */
-				Common::Rect *wSlice = new Common::Rect(*candidate);
-				wSlice->right = existing->left;
-				SAFE_ENQUEUE(wSlice);
-				discard = true;
+
+				candidate->right = existing->left;
 
 			} else if (candidate->right >= existing->right &&
 					candidate->top >= existing->top &&
@@ -287,10 +285,8 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 				 *  B A A A A
 				 *  B B
 				 */
-				Common::Rect *eSlice = new Common::Rect(*candidate);
-				eSlice->left = existing->right;
-				SAFE_ENQUEUE(eSlice);
-				discard = true;
+
+				candidate->left = existing->right;
 
 			} else if (candidate->right <= existing->right &&
 					candidate->top <= existing->top &&
@@ -302,10 +298,8 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 				 *  B A A B
 				 *  B B B B
 				 */
-				Common::Rect *nSlice = new Common::Rect(*candidate);
-				nSlice->bottom = existing->top;
-				SAFE_ENQUEUE(nSlice);
-				discard = true;
+
+				candidate->bottom = existing->top;
 
 			} else if (candidate->right <= existing->right &&
 					candidate->top >= existing->top &&
@@ -317,10 +311,9 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 				 *    A A
 				 *    A A
 				 */
-				Common::Rect *sSlice = new Common::Rect(*candidate);
-				sSlice->top = existing->bottom;
-				SAFE_ENQUEUE(sSlice);
-				discard = true;
+
+				candidate->top = existing->bottom;
+
 			} else if (candidate->right >= existing->right &&
 					candidate->top >= existing->top &&
 					candidate->bottom >= existing->bottom &&
