@@ -45,7 +45,6 @@
 		android:protectionLevel="signature"/>
 
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-	<uses-permission android:name="android.permission.INTERNET"/>
 
 	<!-- Always needs some sort of qwerty keyboard.
 			Can work with a D-pad / trackball -->
