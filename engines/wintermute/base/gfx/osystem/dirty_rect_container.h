@@ -95,7 +95,6 @@ private:
 	// List of temporary rects created by the class to be delete()d
 	// when the renderer is done with them.
 	Common::Rect *_clipRect;
-	bool isHuge(const Common::Rect *rect);
 	/**
 	 * How big has the DirtyRect input list grown?
 	 */

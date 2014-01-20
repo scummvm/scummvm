@@ -112,27 +112,6 @@ Common::Array<Common::Rect *> DirtyRectContainer::getFallback() {
 	return singleret;
 }
 
-bool DirtyRectContainer::isHuge(const Common::Rect *rect) {
-	// It's huge if it exceeds kHuge[Height|Width]Fixed
-	// or is within kHuge[Width|Height]PErcent of the cliprect
-
-	assert(rect != nullptr);
-	assert(_clipRect);
-
-	if (rect->width() > kHugeWidthFixed && rect->height() > kHugeHeightFixed) {
-		return true;
-	}
-
-	int wThreshold = _clipRect->width() * (kHugeWidthPercent) / 100;
-	int hThreshold = _clipRect->height() * (kHugeHeigthPercent) / 100;
-
-	if (rect->width() > wThreshold && rect->height() > hThreshold) {
-		return true;
-	}
-
-	return false;
-}
-
 Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 	if (_disableDirtyRects) {
 		return getFallback();
