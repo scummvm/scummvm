@@ -62,19 +62,19 @@ void VoyeurEngine::playStamp() {
 			if (buttonId == -2) {
 				switch (_mainThread->doApt()) {
 				case 0:
-					_voy._field472 = 140;
+					_voy._aptLoadMode = 140;
 					break;
 				case 1:
 					_voy._field478 &= ~1;
 					_voy._field46E = true;
 					_mainThread->chooseSTAMPButton(22);
-					_voy._field472 = 143;
+					_voy._aptLoadMode = 143;
 					break;
 				case 2:
 					_voy._field478 &= ~1;
 					reviewTape();
 					_voy._field46E = true;
-					_voy._field472 = 142;
+					_voy._aptLoadMode = 142;
 					break;
 				case 3:
 					_voy._field478 &= ~1;
@@ -86,7 +86,7 @@ void VoyeurEngine::playStamp() {
 				case 5:
 					doGossip();
 					_voy._field46E = true;
-					_voy._field472 = 141;
+					_voy._aptLoadMode = 141;
 					_voy._field478 &= ~0x100;
 					break;
 				default:

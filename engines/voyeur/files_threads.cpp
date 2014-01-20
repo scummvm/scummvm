@@ -734,31 +734,31 @@ void ThreadResource::parsePlayCommands() {
 			break;
 
 		case 19:
-			_vm->_voy._field472 = 140;
+			_vm->_voy._aptLoadMode = 140;
 			loadTheApt();
-			_vm->_voy._field472 = 141;
+			_vm->_voy._aptLoadMode = 141;
 			freeTheApt();
 			break;
 
 		case 20:
-			_vm->_voy._field472 = -1;
+			_vm->_voy._aptLoadMode = -1;
 			loadTheApt();
-			_vm->_voy._field472 = 141;
+			_vm->_voy._aptLoadMode = 141;
 			freeTheApt();
 			break;
 
 		case 21:
-			_vm->_voy._field472 = -1;
+			_vm->_voy._aptLoadMode = -1;
 			loadTheApt();
-			_vm->_voy._field472 = 140;
+			_vm->_voy._aptLoadMode = 140;
 			freeTheApt();
 			break;
 
 		case 23:
 			_vm->_voy._transitionId = 17;
-			_vm->_voy._field472 = -1;
+			_vm->_voy._aptLoadMode = -1;
 			loadTheApt();
-			_vm->_voy._field472 = 144;
+			_vm->_voy._aptLoadMode = 144;
 			freeTheApt();
 			break;
 
@@ -1118,18 +1118,18 @@ int ThreadResource::doApt() {
 
 	switch (hotspotId) {
 	case 0:
-		_vm->_voy._field472 = 140;
+		_vm->_voy._aptLoadMode = 140;
 		break;
 	case 1:
-		_vm->_voy._field472 = 143;
+		_vm->_voy._aptLoadMode = 143;
 		break;
 	case 2:
-		_vm->_voy._field472 = 142;
+		_vm->_voy._aptLoadMode = 142;
 	case 5:
-		_vm->_voy._field472 = 141;
+		_vm->_voy._aptLoadMode = 141;
 		break;
 	default:
-		_vm->_voy._field472 = -1;
+		_vm->_voy._aptLoadMode = -1;
 		break;
 	}
 
@@ -1650,13 +1650,13 @@ void ThreadResource::loadTheApt() {
 		break;
 	}
 
-	if (_vm->_voy._field472 == 143)
-		_vm->_voy._field472 = -1;
+	if (_vm->_voy._aptLoadMode == 143)
+		_vm->_voy._aptLoadMode = -1;
 
-	if (_vm->_voy._field472  != -1) {
+	if (_vm->_voy._aptLoadMode  != -1) {
 		doAptAnim(1);
 		_vm->_bVoy->getBoltGroup(_vm->_playStampGroupId);
-		_vm->_voy._field472 = -1;
+		_vm->_voy._aptLoadMode = -1;
 		_vm->_graphicsManager._backgroundPage = _vm->_bVoy->boltEntry(
 			_vm->_playStampGroupId + 5)._picResource;
 		(*_vm->_graphicsManager._vPort)->setupViewPort(
@@ -1686,13 +1686,13 @@ void ThreadResource::freeTheApt() {
 		_vm->_currentVocId = -1;
 	}
 
-	if (_vm->_voy._field472 == -1) {
+	if (_vm->_voy._aptLoadMode == -1) {
 		_vm->_graphicsManager.fadeDownICF(6);
 	} else {
 		doAptAnim(2);
 	}
 
-	if (_vm->_voy._field472 == 140) {
+	if (_vm->_voy._aptLoadMode == 140) {
 		_vm->_graphicsManager.screenReset();
 		_vm->_graphicsManager.resetPalette();
 	}
@@ -1708,7 +1708,7 @@ void ThreadResource::doAptAnim(int mode) {
 
 	// Figure out the resource to use
 	int id = 0;
-	switch (_vm->_voy._field472) {
+	switch (_vm->_voy._aptLoadMode) {
 	case 140:
 		id = 0x5A00;
 		break;

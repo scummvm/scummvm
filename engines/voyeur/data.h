@@ -70,7 +70,7 @@ public:
 	int _vocSecondsOffset;
 	bool _field46E;
 	int _field470;
-	int _field472;
+	int _aptLoadMode;
 	int _transitionId;
 	int _RTVLimit;
 	int _field478;

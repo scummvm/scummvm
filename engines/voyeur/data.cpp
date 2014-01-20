@@ -88,7 +88,12 @@ void SVoy::synchronize(Common::Serializer &s) {
 	s.syncAsSint16LE(_vocSecondsOffset);
 	s.syncAsSint16LE(_field46E);
 	s.syncAsSint16LE(_field470);
-	s.syncAsSint16LE(_field472);
+	
+	s.syncAsSint16LE(_aptLoadMode);
+	if (s.isLoading())
+		// Reset apartment loading mode to initial game value
+		_aptLoadMode = 140;
+
 	s.syncAsSint16LE(_transitionId);
 	s.syncAsSint16LE(_RTVLimit);
 	s.syncAsSint16LE(_field478);

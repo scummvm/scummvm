@@ -123,7 +123,7 @@ void VoyeurEngine::globalInitBolt() {
 	_voy._field478 = 1;
 	_voy._field4376 = _voy._field4378 = 127;
 	_voy._field4F2 = 9999;
-	_voy._field472 = -1;
+	_voy._aptLoadMode = -1;
 	_voy._field478 = 256;
 	
 	_voy._curICF0 = _graphicsManager._palFlag ? 0xFFFFA5E0 : 0x5F90; 
@@ -204,7 +204,7 @@ bool VoyeurEngine::doHeadTitle() {
 		} 
 	}
 
-	_voy._field472 = 140;
+	_voy._aptLoadMode = 140;
 	return true;
 }
 
@@ -687,7 +687,12 @@ void VoyeurEngine::loadGame(int slot) {
 		return;
 
 	Common::Serializer serializer(saveFile, NULL);
+
+	// Store the current time index before the game is loaded
 	_checkTransitionId = _voy._transitionId;
+
+	// Stop any playing sound
+	_soundManager.stopVOCPlay();
 
 	// Read in the savegame header
 	VoyeurSavegameHeader header;
