@@ -39,6 +39,7 @@
 #define PIXEL_BAILOUT_LIMIT 112
 #define QUEUE_BAILOUT_LIMIT 64
 #define CONSISTENCY_CHECK false
+#define ENABLE_BAILOUT false
 
 namespace Wintermute {
 class DirtyRectContainer {
