@@ -40,7 +40,7 @@
 namespace Wintermute {
 
 DirtyRectContainer::DirtyRectContainer() {
-	_disableDirtyRects = true;
+	_disableDirtyRects = false;
 	_clipRect = nullptr;
 }
 
@@ -89,7 +89,7 @@ void DirtyRectContainer::reset() {
 		_cleanMe.remove_at(i);
 	}
 
-	_disableDirtyRects = true;
+	_disableDirtyRects = false;
 	delete _clipRect;
 	_clipRect = nullptr;
 }
