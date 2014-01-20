@@ -106,7 +106,19 @@ void sceneHandler38_propose() {
 }
 
 void sceneHandler38_point() {
-	warning("STUB: sceneHandler38_point()");
+	if ((!g_vars->scene38_boss->_movement && ((g_vars->scene38_boss->_flags & 4) || !(g_vars->scene38_boss->_flags & 2)))
+		&& g_vars->scene38_var05 > 0
+		&& g_fp->_rnd->getRandomNumber(32767) < 32767) {
+		if (g_vars->scene38_boss->_statics->_staticsId == ST_GLV_HAMMER) {
+			chainQueue(QU_GLV_TOSMALL, 0);
+			g_vars->scene38_var05 = 0;
+		} else {
+			if (g_vars->scene38_boss->_statics->_staticsId == ST_GLV_NOHAMMER)
+				chainQueue(QU_GLV_TOSMALL_NOHMR, 0);
+
+			g_vars->scene38_var05 = 0;
+		}
+	}
 }
 
 void sceneHandler38_hammerKick() {
