@@ -743,7 +743,7 @@ void VoyeurEngine::doGossip() {
 
 	// Load the gossip animation
 	VoyeurRL2Decoder decoder;
-	decoder.loadFile("a2050100.rl2");
+	decoder.loadFile("a2050100.rl2", false);
 	decoder.start();
 
 	// Get the resource data for the first gossip video
@@ -762,8 +762,12 @@ void VoyeurEngine::doGossip() {
 	// Play the initial gossip video
 	decoder.play(this, 0x302, frameNumsP, posP);
 
+	// Reset the palette and clear the screen
+	_graphicsManager.resetPalette();
+	_graphicsManager.screenReset();
+
 	// Play interview video
-	decoder.loadFile("a2110100.rl2");
+	decoder.loadFile("a2110100.rl2", true);
 	decoder.start();
 
 	_eventsManager.getMouseInfo();

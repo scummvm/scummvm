@@ -32,6 +32,7 @@
 namespace Video {
 
 RL2Decoder::RL2Decoder(Audio::Mixer::SoundType soundType) : _soundType(soundType) {
+	_paletteStart = 0;
 }
 
 RL2Decoder::~RL2Decoder() {
@@ -44,11 +45,18 @@ bool RL2Decoder::loadVideo(int videoId) {
 	return loadFile(filename);
 }
 
+bool RL2Decoder::loadFile(const Common::String &file, bool palFlag) {
+	bool result = VideoDecoder::loadFile(file);
+	_paletteStart = palFlag ? 0 : 128;
+	return result;
+}
+
 bool RL2Decoder::loadStream(Common::SeekableReadStream *stream) {
 	close();
 
 	// Load basic file information
 	_header.load(stream);
+	_paletteStart = 0;
 
 	// Check RL2 magic number
 	if (!_header.isValid()) {
@@ -431,15 +439,19 @@ Audio::QueuingAudioStream *RL2Decoder::RL2AudioTrack::createAudioStream() {
 
 namespace Voyeur {
 
-void VoyeurRL2Decoder::play(VoyeurEngine *vm, int resourceOffset, byte *frames, byte *imgPos) {
+void VoyeurRL2Decoder::play(VoyeurEngine *vm, int resourceOffset, 
+		byte *frames, byte *imgPos) {
 	vm->flipPageAndWait();
+	int paletteStart = getPaletteStart();
+	int paletteCount = getPaletteCount();
 
 	PictureResource videoFrame(getVideoTrack()->getBackSurface());
 	int picCtr = 0;
 	while (!vm->shouldQuit() && !endOfVideo() && !vm->_eventsManager._mouseClicked) {
 		if (hasDirtyPalette()) {
 			const byte *palette = getPalette();
-			vm->_graphicsManager.setPalette(palette + 3, 129, 127);
+
+			vm->_graphicsManager.setPalette128(palette, paletteStart, paletteCount);
 		}
 		
 		if (needsUpdate()) {

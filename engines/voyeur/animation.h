@@ -146,17 +146,20 @@ private:
 private:
 	Audio::Mixer::SoundType _soundType;
 	RL2FileHeader _header;
+	int _paletteStart;
 public:
 	RL2Decoder(Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType);
 	virtual ~RL2Decoder();
 
 	bool loadStream(Common::SeekableReadStream *stream);
+	bool loadFile(const Common::String &file, bool palFlag = false);
 	bool loadVideo(int videoId);
 
 	const Common::List<Common::Rect> *getDirtyRects() const;
 	void clearDirtyRects();
 	void copyDirtyRectsToBuffer(uint8 *dst, uint pitch);
 	RL2VideoTrack *getVideoTrack();
+	int getPaletteStart() const { return _paletteStart; }
 	int getPaletteCount() const { return _header._colorCount; }
 };
 

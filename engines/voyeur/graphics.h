@@ -110,6 +110,7 @@ public:
 	void flipPage();
 	void clearPalette();
 	void setPalette(const byte *palette, int start, int count);
+	void setPalette128(const byte *palette, int start, int count);
 	void resetPalette();
 	void setColor(int idx, byte r, byte g, byte b);
 	void setOneColor(int idx, byte r, byte g, byte b);
