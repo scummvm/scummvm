@@ -119,7 +119,6 @@ void VoyeurEngine::globalInitBolt() {
 	assert(_graphicsManager._fontPtr->_curFont);
 
 	// Setup default flags
-	Common::fill((byte *)&_voy, (byte *)&_voy + sizeof(SVoy), 0);
 	_voy._field478 = 1;
 	_voy._field4376 = _voy._field4378 = 127;
 	_voy._field4F2 = 9999;

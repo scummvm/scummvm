@@ -112,6 +112,7 @@ public:
 	int _fadeICF0;
 	int _policeEvent;
 public:
+	SVoy();
 	void setVm(VoyeurEngine *vm);
 
 	/**

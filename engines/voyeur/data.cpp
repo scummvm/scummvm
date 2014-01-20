@@ -38,6 +38,11 @@ void VoyeurEvent::synchronize(Common::Serializer &s) {
 
 /*------------------------------------------------------------------------*/
 
+SVoy::SVoy() {
+	// Initialise all the data fields of SVoy to empty values
+	Common::fill((byte *)this, (byte *)this + sizeof(SVoy), 0);
+}
+
 void SVoy::setVm(VoyeurEngine *vm) {
 	_vm = vm;
 }
