@@ -702,7 +702,6 @@ void VoyeurEngine::loadGame(int slot) {
 		header._thumbnail->free();
 	delete header._thumbnail;
 
-	serializer.syncVersion(header._version);
 	synchronize(serializer);
 
 	delete saveFile;
@@ -749,7 +748,6 @@ void VoyeurEngine::synchronize(Common::Serializer &s) {
 	s.syncAsSint16LE(_videoId);
 
 	s.syncAsSint16LE(_iForceDeath);
-	s.syncAsSint16LE(_checkTransitionId);
 	s.syncAsSint16LE(_gameHour);
 	s.syncAsSint16LE(_gameMinute);
 	s.syncAsSint16LE(_flashTimeVal);
