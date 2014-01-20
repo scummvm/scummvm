@@ -651,6 +651,7 @@ int DirtyRectContainer::consistencyCheck(Common::Array<Common::Rect *> &optimize
 	int dirtied = 0;
 	int cleaned = 0;
 	int totalPx = 0;
+	int duplicatePx = 0;
 
 	for (int x = _clipRect->left; x < _clipRect->right; x++) {
 		for (int y = _clipRect->top; y < _clipRect->bottom; y++) {
@@ -661,6 +662,9 @@ int DirtyRectContainer::consistencyCheck(Common::Array<Common::Rect *> &optimize
 				Common::Rect *rect = _rectArray[i];
 				if (rect->width() != 0 && rect->height() != 0) {
 					if(rect->contains(Common::Point(x,y))) {
+						if (is_dirty) {
+							duplicatePx++;
+						}
 						is_dirty = true;
 						totalPx++;
 					}
