@@ -148,8 +148,10 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 		queue.insert_at(queue.size(), _rectArray[i]);
 	}
 
+#if CONSISTENCY_CHECK == DO_CHECK
 	int targetPixels = _clipRect->width() *_clipRect->height();
 	int filledPixels = 0;
+#endif
 
 	while (queue.size()) {
 		assert(queue.size() <= RECT_QUEUE_LIMIT);
@@ -603,9 +605,13 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 		} // End loop
 
 		if (!discard) {
-			assert(candidate->width() > 0 && candidate->height() > 0);
-			ret.insert_at(ret.size(), candidate);
-			filledPixels += candidate->width() * candidate->height();
+			assert(candidate->isValidRect());
+			if (candidate->width() > 0 && candidate->height() > 0) {
+				ret.insert_at(ret.size(), candidate);
+#if CONSISTENCY_CHECK == DO_CHECK
+				filledPixels += candidate->width() * candidate->height();
+#endif
+			}
 		}
 
 		queue.remove_at(0);
@@ -613,15 +619,16 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 
 #if CONSISTENCY_CHECK == DO_CHECK
 	assert (_disableDirtyRects == false);
-	consistencyCheck(ret);
+	int naivePx = consistencyCheck(ret);
+	int gain = (((filledPixels * 128) / (naivePx)) * 100 ) / 128;
+	warning ("%d/%d/%dpx filled (%d percent), %d/%d rects", filledPixels, naivePx, targetPixels, gain, _rectArray.size(), ret.size());
 #endif
-	warning ("%d from %d px, %d from %d rects", filledPixels, targetPixels, queue.size(), ret.size());
 	return ret;
 }
 
 #if CONSISTENCY_CHECK == DO_CHECK
 #define SENTINEL -255
-void DirtyRectContainer::consistencyCheck(Common::Array<Common::Rect *> &optimized) {
+int DirtyRectContainer::consistencyCheck(Common::Array<Common::Rect *> &optimized) {
 	Common::Array<Common::Array<int> > diff;
 
 	for (int x = _clipRect->left; x < _clipRect->right; x++) {
@@ -634,6 +641,7 @@ void DirtyRectContainer::consistencyCheck(Common::Array<Common::Rect *> &optimiz
 
 	int dirtied = 0;
 	int cleaned = 0;
+	int totalPx = 0;
 
 	for (int x = _clipRect->left; x < _clipRect->right; x++) {
 		for (int y = _clipRect->top; y < _clipRect->bottom; y++) {
@@ -645,6 +653,7 @@ void DirtyRectContainer::consistencyCheck(Common::Array<Common::Rect *> &optimiz
 				if (rect->width() != 0 && rect->height() != 0) {
 					if(rect->contains(Common::Point(x,y))) {
 						is_dirty = true;
+						totalPx++;
 					}
 				}
 			}
@@ -680,6 +689,8 @@ void DirtyRectContainer::consistencyCheck(Common::Array<Common::Rect *> &optimiz
 	if (dirtied) {
 		warning("%d pixels have been dirtied", dirtied);
 	}
+
+	return totalPx;
 }
 #endif
 

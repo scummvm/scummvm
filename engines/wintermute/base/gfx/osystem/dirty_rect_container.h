@@ -107,7 +107,10 @@ private:
 	bool _disableDirtyRects;
 	Common::Rect *getRect(int id);
 
-	void consistencyCheck(Common::Array<Common::Rect *> &optimized);
+#if CONSISTENCY_CHECK == DO_CHECK
+	int consistencyCheck(Common::Array<Common::Rect *> &optimized);
+#endif
+
 };
 } // End of namespace Wintermute
 
