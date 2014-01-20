@@ -65,6 +65,7 @@ void DirtyRectContainer::addDirtyRect(const Common::Rect &rect, const Common::Re
 
 	if (target > kMaxInputRects) {
 		_disableDirtyRects = true;
+		warning ("Too many rects, disabling dirty rects for this frame.");
 		return;
 	} else if (rect.width() == 0 || rect.height() == 0) {
 		return;
