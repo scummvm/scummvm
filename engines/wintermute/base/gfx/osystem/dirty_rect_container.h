@@ -81,16 +81,11 @@ private:
 	// when the renderer is done with them.
 	Common::Rect *_clipRect;
 	/**
-	 * How big has the DirtyRect input list grown?
-	 */
-	int getSize();
-	/**
 	 * True if DR are temporarily disabled.
 	 * Only the DirtyRectContainer, single point of handling of all matters dirtyrect,
 	 * may decide to do so.
 	 */
 	bool _disableDirtyRects;
-	Common::Rect *getRect(int id);
 
 #if CONSISTENCY_CHECK
 	int consistencyCheck(Common::Array<Common::Rect *> &optimized);

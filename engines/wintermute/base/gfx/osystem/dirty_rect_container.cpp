@@ -50,6 +50,9 @@ DirtyRectContainer::~DirtyRectContainer() {
 }
 
 void DirtyRectContainer::addDirtyRect(const Common::Rect &rect, const Common::Rect &clipRect) {
+	// We get the clipping rect information along with rects for legacy reasons.
+	// We assume it does not change mid-frame and, if we don't have  one, we store it.
+	// This is later relevant if getOptimized gets called without being fed rects first;
 
 	if (_clipRect == nullptr) {
 		_clipRect = new Common::Rect(clipRect);
@@ -91,14 +94,6 @@ void DirtyRectContainer::reset() {
 	_disableDirtyRects = true;
 	delete _clipRect;
 	_clipRect = nullptr;
-}
-
-int DirtyRectContainer::getSize() {
-	return _rectArray.size();
-}
-
-Common::Rect *DirtyRectContainer::getRect(int id) {
-	return _rectArray[id];
 }
 
 Common::Array<Common::Rect *> DirtyRectContainer::getFallback() {
