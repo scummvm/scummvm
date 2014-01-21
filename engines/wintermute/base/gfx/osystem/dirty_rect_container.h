@@ -49,26 +49,46 @@ public:
 	~DirtyRectContainer();
 	/**
 	 * @brief Add a dirty rect. To be called by the outside world.
-	 * Doesn't necessarily result in a new dirty rect, it just informs the 
-	 * DR container that an area is to be considered dirty.
-	 * The DirtyRectContainer may then do what's optimal, which includes
-	 * ignoring the rect altoegether (e.g. if a subset of an existing one)
-	 * or disabling dirtyrects altogether.
+	 * For historical reasons the dirty rect is to be accompained by
+	 * the clipping rect (aka "the viewport").
+	 * If getOptimized() is called /before/ a single rect (and
+	 * the clipping rect) is added, you get an empty list.
+	 *
+	 * The clipping rect is supposed to stay the same until the frame is
+	 * rendered (or, for our purpouses: until reset() is called)
 	 */
 	void addDirtyRect(const Common::Rect &rect, const Common::Rect &clipRect);
 	/** 
-	 * resets the DirtyRectContainer
+	 * @brief Resets the DirtyRectContainer, frees memory and gets ready
+	 * for a new frame.
+	 * Call this once you've done everything and have rendered your frame
+	 * (or at least you've got your list of dirty rects for this frame)
+	 * and are ready to start fresh.
+	 *
+	 * PAY ATTENTION to the fact that addDirtyRect takes aliases.
+	 * When you call this, it's gonna delete your rects, so not
+	 * a good move if you still need them.
 	 */
 	void reset();
 	/**
-	 * @brief returns on optimized list of rects where duplicates and intersections are eschewed.
+	 * @brief Returns on optimized list of rects where duplicates and
+	 * intersections are eschewed.
+	 * The returned rect list is (unless BAIL_OUT is enabled, see above)
+	 * supposed to contain only and all of the pixels contained in the input
+	 * rects.
+	 *
+	 * Profiling shows this to be insignificant in comparison
+	 * to the actual blitting, but if blitting gets a significant boost in the
+	 * future (eg hardware acceleration) this may benefit from optimization
+	 * (or for an appropriate degree of sloppiness in computation).
 	 */
 	Common::Array<Common::Rect *> getOptimized();
-	/**
-	 * @brief returns the most naive but cheap solution - the whole viewport
-	 */
-	Common::Array<Common::Rect *> getFallback();
 private:
+	Common::Array<Common::Rect *> getFallback();
+	/**
+	 * @brief Returns the whole clipping_Rect.
+	 * Usually this is not to be used, unless bailout is enabled.
+	 */
 	static const uint kMaxOutputRects = UINT_MAX;
 	/* We have convened that we are not worried about lotsa rects
 	 * anymore thanks to wjp's patch... but overflow is still a remote risk.
@@ -82,16 +102,18 @@ private:
 	 * as long as we have realistic inputs we want to save pixels, not rects.
 	 */
 	Common::Array<Common::Rect *> _rectArray;
+	/**
+	 * List of temporary rects created by the class to be delete()d
+	 * when the renderer is done with them (not before!).
+	 * This is performed by reset()
+	 */
 	Common::Array<Common::Rect *> _cleanMe;
-	// List of temporary rects created by the class to be delete()d
-	// when the renderer is done with them.
 	Common::Rect *_clipRect;
 	/**
 	 * True if DR are temporarily disabled.
 	 * Only the DirtyRectContainer, single point of handling of all matters dirtyrect,
 	 * may decide to do so.
 	 */
-
 	bool _tempDisableDRects;
 
 #if CONSISTENCY_CHECK
