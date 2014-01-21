@@ -151,13 +151,9 @@ private:
 
 	bool _disableDirtyRects;
 
-	bool _spriteBatch;
-	uint32 _batchNum;
-
 	float _ratioX;
 	float _ratioY;
 	uint32 _clearColor;
-	uint32 _colorMod;
 
 	bool _skipThisFrame;
 
