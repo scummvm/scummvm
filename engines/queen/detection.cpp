@@ -475,7 +475,7 @@ SaveStateList QueenMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
 	char saveDesc[32];
-	Common::String pattern = target + ".s??";
+	Common::String pattern("queen.s??");
 
 	filenames = saveFileMan->listSavefiles(pattern);
 	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
@@ -501,8 +501,7 @@ SaveStateList QueenMetaEngine::listSaves(const char *target) const {
 }
 
 void QueenMetaEngine::removeSaveState(const char *target, int slot) const {
-	Common::String filename = target;
-	filename += Common::String::format(".s%02d", slot);
+	Common::String filename = Common::String::format("queen.s%02d", slot);
 
 	g_system->getSavefileManager()->removeSavefile(filename);
 }
