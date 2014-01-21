@@ -102,11 +102,24 @@ Common::Array<Common::Rect *> DirtyRectContainer::getFallback() {
 #endif
 	Common::Array<Common::Rect *> singleret;
 	if (_clipRect == nullptr) {
+		/* This is the reasonable case;
+		 * We have been fed no dirty rects, therefore we have no clip rect,
+		 * we return a 0-rect, which means '0 pixels dirtied'.
+		 */
 		return singleret;
+	} else {
+		/*
+		 * This is the actual fallback case for when we temporarily disable
+		 * dirty rects somewhere.
+		 * We return one giant rect that's as big as the clipRect.
+		 * This should not really happen except in extreme cases.
+		 */
+		assert(_disableDirtyRects);
+		warning ("Drawing to whole cliprect!");
+		Common::Rect *temp = new Common::Rect(*_clipRect);
+		singleret.insert_at(0, temp);
+		_cleanMe.insert_at(_cleanMe.size(), temp);
 	}
-	Common::Rect *temp = new Common::Rect(*_clipRect);
-	singleret.insert_at(0, temp);
-	_cleanMe.insert_at(_cleanMe.size(), temp);
 	return singleret;
 }
 
