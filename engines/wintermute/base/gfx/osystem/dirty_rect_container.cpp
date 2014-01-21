@@ -50,9 +50,6 @@ DirtyRectContainer::~DirtyRectContainer() {
 }
 
 void DirtyRectContainer::addDirtyRect(const Common::Rect &rect, const Common::Rect &clipRect) {
-	// TODO: Ignore 0-size rects?
-	// TODO: Maybe check if really big (like == viewport)
-	// and avoid the whole dance altogether.
 
 	if (_clipRect == nullptr) {
 		_clipRect = new Common::Rect(clipRect);
