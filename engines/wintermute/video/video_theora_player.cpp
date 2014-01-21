@@ -305,8 +305,15 @@ bool VideoTheoraPlayer::update() {
 			if (!_theoraDecoder->endOfVideo() && _theoraDecoder->getTimeToNextFrame() == 0) {
 				const Graphics::Surface *decodedFrame = _theoraDecoder->decodeNextFrame();
 				if (decodedFrame) {
-					_surface.free();
-					_surface.copyFrom(*decodedFrame);
+					if (decodedFrame->format == _surface.format && decodedFrame->w == _surface.w && decodedFrame->h == _surface.h) {
+						const byte *src = (const byte*) decodedFrame->getBasePtr(0, 0);
+						byte *dst = (byte*) _surface.getBasePtr(0, 0);
+						memcpy(dst, src, _surface.pitch * _surface.h);
+					} else {
+						_surface.free();
+						_surface.copyFrom(*decodedFrame);
+					}
+
 					if (_texture) {
 						writeVideo();
 					}
