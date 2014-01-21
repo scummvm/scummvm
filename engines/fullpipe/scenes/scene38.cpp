@@ -163,9 +163,6 @@ void sceneHandler38_drink() {
 }
 
 void sceneHandler38_animateAlcoholics() {
-	warning("STUB: sceneHandler38_animateAlcoholics()");
-
-#if 0
 	MessageQueue *mq;
 
 	if (g_vars->scene38_boss->_movement || !(g_vars->scene38_boss->_flags & 4) || (g_vars->scene38_boss->_flags & 2)) {
@@ -323,7 +320,6 @@ void sceneHandler38_animateAlcoholics() {
 
 		g_vars->scene38_var11 = 0;
 	}
-#endif
 }
 
 int sceneHandler38(ExCommand *cmd) {
