@@ -41,7 +41,7 @@
 namespace Wintermute {
 
 DirtyRectContainer::DirtyRectContainer() {
-	_disableDirtyRects = true;
+	_tempDisableDRects = false;
 	_clipRect = nullptr;
 }
 
@@ -68,13 +68,12 @@ void DirtyRectContainer::addDirtyRect(const Common::Rect &rect, const Common::Re
 		// but there is a possibility of being flooded with rects.
 		// At which point, we bail out.
 		// This is, basically, the 'unrealistic' case, something went wrong.
-		_disableDirtyRects = true;
+		_tempDisableDRects = true;
 		warning ("Too many rects, disabling dirty rects for this frame.");
 	} else {
 		Common::Rect *tmp = new Common::Rect(rect);
 		tmp->clip(clipRect);
 		if (tmp->width() != 0 && tmp->height() != 0) {
-			_disableDirtyRects = false;
 			_rectArray.push_back(tmp);
 		}
 	}
@@ -91,52 +90,52 @@ void DirtyRectContainer::reset() {
 		delete _cleanMe[i];
 		_cleanMe.remove_at(i);
 	}
-
-	_disableDirtyRects = true;
+	_tempDisableDRects = false;
 	delete _clipRect;
 	_clipRect = nullptr;
 }
 
 Common::Array<Common::Rect *> DirtyRectContainer::getFallback() {
-#if ENABLE_BAILOUT == false
-	assert(_disableDirtyRects || false);
-#endif
+	/*
+	 * Fallback case for when we temporarily disable
+	 * dirty rects somewhere.
+	 * We return one giant rect that's as big as the clipRect.
+	 * This should not really happen except in extreme cases.
+	 */
+	assert(_tempDisableDRects);
+	assert(_clipRect != nullptr);
 	Common::Array<Common::Rect *> singleret;
-	if (_clipRect == nullptr) {
-		/* This is the reasonable case;
-		 * We have been fed no dirty rects, therefore we have no clip rect,
-		 * we return a 0-rect, which means '0 pixels dirtied'.
-		 */
-		return singleret;
-	} else {
-		/*
-		 * This is the actual fallback case for when we temporarily disable
-		 * dirty rects somewhere.
-		 * We return one giant rect that's as big as the clipRect.
-		 * This should not really happen except in extreme cases.
-		 */
-		assert(_disableDirtyRects);
-		warning ("Drawing to whole cliprect!");
-		Common::Rect *temp = new Common::Rect(*_clipRect);
-		singleret.push_back(temp);
-		_cleanMe.push_back(temp);
-	}
+	warning ("Drawing to whole cliprect!");
+	Common::Rect *temp = new Common::Rect(*_clipRect);
+	singleret.push_back(temp);
+	_cleanMe.push_back(temp);
+
 	return singleret;
 }
 
 Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
-	if (_disableDirtyRects) {
-#if not ENABLE_BAILOUT
+#if ENABLE_BAILOUT
+	if (_tempDisableDRects) {
 		// If we have not enabled bailout, this should be really the only reason
 		assert(_clipRect == nullptr);
-#endif
 		return getFallback();
 	}
+#endif
 
 	assert(_cleanMe.size() == 0);
 
 	Common::Array<Common::Rect *> ret;
 	Common::Array<Common::Rect *> queue;
+
+	if (_clipRect == nullptr) {
+		/*
+		 * We get clipRect together with the rects for historical reasons.
+		 * No cliprect means no rects, which means nothing was dirtied.
+		 * We return an empty list with a clear conscience.
+		 */
+		assert(_rectArray.size() == 0);
+		return ret;
+	}
 
 	for (uint i = 0; i < _rectArray.size(); i++) {
 		assert(_clipRect->contains(*_rectArray[i]));
@@ -168,7 +167,7 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 				(queue.size() >= QUEUE_BAILOUT_LIMIT)
 			) {
 			warning("Bailing out of dirty rect, filled %d pixels out of %d, queue size: %d", filledPixels, targetPixels, queue.size());
-			_disableDirtyRects = true;
+			_tempDisableDRects = true;
 			return getFallback();
 		}
 #endif
@@ -654,8 +653,10 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 	} // End while loop
 
 #if CONSISTENCY_CHECK
-	assert (_disableDirtyRects == false);
+	assert (_tempDisableDRects == false);
+	assert (_clipRect != nullptr);
 	int naivePx = consistencyCheck(ret);
+	// How many pixels we would have drawn if overlaps were not treated
 	int gain = (((filledPixels * 128) / (naivePx)) * 100 ) / 128;
 	warning ("%d/%d/%dpx filled (%d percent), %d/%d rects", filledPixels, naivePx, targetPixels, gain, _rectArray.size(), ret.size());
 #endif

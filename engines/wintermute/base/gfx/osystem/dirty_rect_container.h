@@ -91,7 +91,8 @@ private:
 	 * Only the DirtyRectContainer, single point of handling of all matters dirtyrect,
 	 * may decide to do so.
 	 */
-	bool _disableDirtyRects;
+
+	bool _tempDisableDRects;
 
 #if CONSISTENCY_CHECK
 	int consistencyCheck(Common::Array<Common::Rect *> &optimized);
