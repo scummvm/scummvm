@@ -138,6 +138,11 @@ private:
 	bool checkForIncriminate();
 
 	void playAVideoEvent(int eventIndex);
+
+	/**
+	 * Shows the user a screen to select one of four characters to send the
+	 * video tape to
+	 */
 	int getChooseButton();
 
 	/**

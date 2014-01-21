@@ -39,6 +39,10 @@ void ThreadResource::init() {
 
 ThreadResource::ThreadResource(BoltFilesState &state, const byte *src):
 		_vm(state._vm) {
+	_threadId = READ_LE_UINT16(&src[0]);
+	_controlIndex = READ_LE_UINT16(&src[0]);
+	_field4 = READ_LE_UINT16(&src[0]);
+	_field6 = READ_LE_UINT16(&src[0]);
 	_flags = src[8];
 	_ctlPtr = nullptr;
 	_aptPos = Common::Point(-1, -1);
@@ -71,6 +75,7 @@ bool ThreadResource::loadAStack(int idx) {
 	}
 
 	_ctlPtr = _vm->_controlPtr->_entries[idx];
+	_controlIndex = idx;
 	return true;
 }
 
