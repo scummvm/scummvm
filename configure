@@ -3727,7 +3727,7 @@ if test "$_libunity" = yes ; then
 	LIBS="$LIBS $LIBUNITY_LIBS"
 	INCLUDES="$INCLUDES $LIBUNITY_CFLAGS"
 fi
-define_in_config_h_if_yes "$_libunity" 'USE_TASKBAR_UNITY'
+define_in_config_h_if_yes "$_libunity" 'USE_UNITY'
 fi
 echo "$_libunity"
 
