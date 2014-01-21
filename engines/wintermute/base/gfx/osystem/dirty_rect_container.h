@@ -95,6 +95,11 @@ private:
 	bool _tempDisableDRects;
 
 #if CONSISTENCY_CHECK
+	/**
+	 * Double-checks consistency of output pixel by pixel.
+	 * Returns the number of pixels that would have been drawn
+	 * if overlaps were not treated, including duplicates.
+	 */
 	int consistencyCheck(Common::Array<Common::Rect *> &optimized);
 #endif
 
