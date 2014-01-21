@@ -57,7 +57,6 @@ BaseRenderOSystem::BaseRenderOSystem(BaseGame *inGame) : BaseRenderer(inGame) {
 	_borderLeft = _borderRight = _borderTop = _borderBottom = 0;
 	_ratioX = _ratioY = 1.0f;
 
-	_colorMod = kDefaultRgbaMod;
 	_dirtyRects = new DirtyRectContainer();
 
 	_disableDirtyRects = false;
