@@ -28,6 +28,7 @@
 
 
 #include "engines/wintermute/base/gfx/osystem/dirty_rect_container.h"
+
 #define SAFE_ENQUEUE(slice)\
 				if (slice->width() != 0 && slice->height() != 0) {\
 					assert(slice->isValidRect());\
