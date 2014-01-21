@@ -70,11 +70,17 @@ public:
 	Common::Array<Common::Rect *> getFallback();
 private:
 	static const uint kMaxOutputRects = UINT_MAX;
-	// We have convened that we are not worried about lotsa rects
-	// anymore thanks to wjp's patch... but overflow is still a remote risk.
-	static const uint kMaxInputRects = 512;
-	// Max input rects before we fall back to a single giant rect.
-
+	/* We have convened that we are not worried about lotsa rects
+	 * anymore thanks to wjp's patch... but overflow is still a remote risk.
+	 */
+	static const uint kMaxInputRects = 256;
+	/* Max input rects before we fall back to a single giant rect.
+	 * We assume this to be an unrealistic case, if we get here something wrong has
+	 * probably happened somewhere.
+	 * Profiling shows that for 'reasonable' input sizes the getOptimized algorithm,
+	 * which is quadratic, is irrelevant in comparison to the actual blitting, so
+	 * as long as we have realistic inputs we want to save pixels, not rects.
+	 */
 	Common::Array<Common::Rect *> _rectArray;
 	Common::Array<Common::Rect *> _cleanMe;
 	// List of temporary rects created by the class to be delete()d

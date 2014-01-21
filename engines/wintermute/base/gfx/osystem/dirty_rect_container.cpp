@@ -193,12 +193,29 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 			assert(existing->width() != 0 && existing->height() != 0);
 			Common::Rect intersecting = existing->findIntersectingRect(*candidate);
 			if ((intersecting.width() == 0) && (intersecting.height() == 0)) {
-				continue;
-			}
-			if (existing->contains(*candidate)) {
+				// Wonderful. candidate has no intersection with existing.
+				// We can move on and compare it with the next existing one.
+			} else if (existing->contains(*candidate)) {
+				// candidate is entirely contained in an existing rect.
+				// We throw it away.
 				discard = true;
 			} else if (candidate->contains(*(existing))) {
-				// Contains an existing one.
+				/*
+				 * This is the other way around, it looks like
+				 *
+				 *  C C C C C C   (C = candidate, X = eXisting)
+				 *  C X X X X C
+				 *  C C C C C C
+				 *
+				 * We slice it to
+				 *
+				 *    n n n n n
+				 *  w X X X X X e
+				 *    s s s s s
+				 *
+				 * And put n,s,w,e back in the queue.
+				 *
+				 */
 
 				Common::Rect *nSlice = new Common::Rect(*candidate);
 				nSlice->bottom = existing->top;
@@ -227,26 +244,26 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 				   existing->top >= candidate->top &&
 				   existing->bottom <= candidate->bottom) { // Cross shaped intersections
 				/*
-								 * e, f: cross-shaped intersections like:
-								 *
-								 *    AA
-								 *    AA
-								 * BB BA BB
-								 *    AA
-								 *    AA
-								 *
-								 * and the other way around.
-								 * We split like:
-								 *
-								 *    A1
-								 *    A1
-								 * BB BB BB
-								 *    A2
-								 *    A2
-								 *
-								 * We keep B and enqueue A1, A2
-								 *
-								 */
+				 * Cross-shaped intersections like:
+				 *
+				 *     C C
+				 *     C C
+				 * X X X X X X
+				 *     C C
+				 *     C C
+				 *
+				 * and the other way around.
+				 * We split them like:
+				 *
+				 *     C C
+				 *     C C
+				 * X X X X X X
+				 *     X X
+				 *     X X
+				 *
+				 * We hold on to C and enqueue b for later processing.
+				 *
+				 */
 
 
 				Common::Rect *topSlice = new Common::Rect(*candidate);
@@ -265,6 +282,9 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 					   existing->top <= candidate->top &&
 					   existing->bottom >= candidate->bottom) {
 
+				/*
+				 * Inverse version of the above
+				 */
 				Common::Rect *rightSlice = new Common::Rect(*candidate);
 				Common::Rect *leftSlice = new Common::Rect(*candidate);
 
@@ -284,10 +304,10 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 					candidate->bottom <= existing->bottom &&
 					candidate->left <= existing->left) {
 				/*
-				 *      B B
-				 *  A A A B
-				 *  A A A B
-				 *      B B
+				 *      X X
+				 *  C C C X
+				 *  C C C X
+				 *      X X
 				 */
 
 				candidate->right = existing->left;
@@ -297,10 +317,10 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 					candidate->bottom <= existing->bottom &&
 					candidate->left >= existing->left) {
 				/*
-				 *  B B
-				 *  B A A A A
-				 *  B A A A A
-				 *  B B
+				 *  X X
+				 *  X C C C C
+				 *  X C C C C
+				 *  X X
 				 */
 
 				candidate->left = existing->right;
@@ -310,10 +330,10 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 					candidate->bottom <= existing->bottom &&
 					candidate->left >= existing->left) {
 				/*
-				 *    A A
-				 *    A A
-				 *  B A A B
-				 *  B B B B
+				 *    C C
+				 *    C C
+				 *  X C C X
+				 *  X X X X
 				 */
 
 				candidate->bottom = existing->top;
@@ -323,10 +343,10 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 					candidate->bottom >= existing->bottom &&
 					candidate->left >= existing->left) {
 				/*
-				 *  B B B B
-				 *  B A A B
-				 *    A A
-				 *    A A
+				 *  X X X X
+				 *  X C C X
+				 *    C C
+				 *    C C
 				 */
 
 				candidate->top = existing->bottom;
@@ -336,10 +356,10 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 					candidate->bottom >= existing->bottom &&
 					candidate->left <= existing->left) {
 				/*
-				 *    B B
-				 *  A B B A
-				 *  A A A A
-				 *  A A A A
+				 *    X X
+				 *  C X X C
+				 *  C C C C
+				 *  C C C C
 				 */
 				Common::Rect *nwSlice = new Common::Rect(*candidate);
 				Common::Rect *neSlice = new Common::Rect(*candidate);
@@ -365,10 +385,10 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 					candidate->left <= existing->left) {
 				/*
 				 *
-				 *  A A A A
-				 *  A A A A
-				 *  A B B A
-				 *    B B
+				 *  C C C C
+				 *  C C C C
+				 *  C X X C
+				 *    X X
 				 *
 				 */
 				Common::Rect *swSlice = new Common::Rect(*candidate);
@@ -394,10 +414,10 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 					candidate->left >= existing->left &&
 					candidate->bottom >= existing->bottom) {
 				/*
-				 *   A A A A
-				 * B B A A A
-				 * B B A A A
-				 *   A A A A
+				 *   C C C C
+				 * X X C C C
+				 * X X C C C
+				 *   C C C C
 				 */
 				Common::Rect *nwSlice = new Common::Rect(*candidate);
 				Common::Rect *swSlice = new Common::Rect(*candidate);
@@ -422,10 +442,10 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 					candidate->left >= existing->left &&
 					candidate->bottom >= existing->bottom) {
 				/*
-				 * A A A A
-				 * A A B B B
-				 * A A B B B
-				 * A A A A
+				 * C C C C
+				 * C C X X X
+				 * C C X X X
+				 * C C C C
 				 */
 				Common::Rect *neSlice = new Common::Rect(*candidate);
 				Common::Rect *seSlice = new Common::Rect(*candidate);
@@ -452,11 +472,11 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 			   ) { // SE case
 
 				/*
-				 *  A A A      A = candidate
-				 *  A A A
-				 *  A A I B B  B = existing
-				 *      B B B
-				 *      B B B
+				 *  C C C
+				 *  C C C
+				 *  C C I X X
+				 *      X X X
+				 *      X X X
 				 *
 				 */
 				assert (
@@ -495,11 +515,11 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 			   ) { // SW case
 
 				/*
-				 *      A A A  A = candidate
-				 *      A A A
-				 *  B B I A A  B = existing
-				 *  B B B
-				 *  B B B
+				 *      C C C
+				 *      C C C
+				 *  X X I C C
+				 *  X X X
+				 *  X X X
 				 *
 				 */
 				assert (
@@ -538,11 +558,11 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 
 				/*
 				 *
-				 *  B B B
-				 *  B B B
-				 *  B B I A A  A = candidate
-				 *      A A A
-				 *      A A A  B = existing
+				 *  X X X
+				 *  X X X
+				 *  X X I C C
+				 *      C C C
+				 *      C C C
 				 *
 				 */
 				assert (
@@ -580,11 +600,11 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 
 				/*
 				 *
-				 *      B B B
-				 *      B B B
-				 *  A A I B B   A = candidate
-				 *  A A A
-				 *  A A A       B = existing
+				 *      X X X
+				 *      X X X
+				 *  C C I X X
+				 *  C C C
+				 *  C C C
 				 *
 				 */
 				assert (
