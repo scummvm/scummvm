@@ -251,7 +251,7 @@ bool MoviePlayerDXA::load() {
 	}
 
 	Common::String videoName = Common::String::format("%s.dxa", baseName);
-	Common::SeekableReadStream *videoStream = _vm->_archives.createReadStreamForMember(videoName);
+	Common::SeekableReadStream *videoStream = SearchMan.createReadStreamForMember(videoName);
 	if (!videoStream)
 		error("Failed to load video file %s", videoName.c_str());
 	if (!loadStream(videoStream))
@@ -421,7 +421,7 @@ MoviePlayerSMK::MoviePlayerSMK(AGOSEngine_Feeble *vm, const char *name)
 bool MoviePlayerSMK::load() {
 	Common::String videoName = Common::String::format("%s.smk", baseName);
 
-	Common::SeekableReadStream *videoStream = _vm->_archives.createReadStreamForMember(videoName);
+	Common::SeekableReadStream *videoStream = SearchMan.createReadStreamForMember(videoName);
 	if (!videoStream)
 		error("Failed to load video file %s", videoName.c_str());
 	if (!loadStream(videoStream))
@@ -532,25 +532,25 @@ MoviePlayer *makeMoviePlayer(AGOSEngine_Feeble *vm, const char *name) {
 		memcpy(shortName, baseName, 6);
 
 		sprintf(filename, "%s~1.dxa", shortName);
-		if (vm->_archives.hasFile(filename)) {
+		if (SearchMan.hasFile(filename)) {
 			memset(baseName, 0, sizeof(baseName));
 			memcpy(baseName, filename, 8);
 		}
 
 		sprintf(filename, "%s~1.smk", shortName);
-		if (vm->_archives.hasFile(filename)) {
+		if (SearchMan.hasFile(filename)) {
 			memset(baseName, 0, sizeof(baseName));
 			memcpy(baseName, filename, 8);
 		}
 	}
 
 	sprintf(filename, "%s.dxa", baseName);
-	if (vm->_archives.hasFile(filename)) {
+	if (SearchMan.hasFile(filename)) {
 		return new MoviePlayerDXA(vm, baseName);
 	}
 
 	sprintf(filename, "%s.smk", baseName);
-	if (vm->_archives.hasFile(filename)) {
+	if (SearchMan.hasFile(filename)) {
 		return new MoviePlayerSMK(vm, baseName);
 	}
 

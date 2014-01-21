@@ -1031,7 +1031,7 @@ bool AGOSEngine::loadGame(const Common::String &filename, bool restartMode) {
 
 	if (restartMode) {
 		// Load restart state
-		f = _archives.createReadStreamForMember(filename);
+		f = SearchMan.createReadStreamForMember(filename);
 	} else {
 		f = _saveFileMan->openForLoading(filename);
 	}
@@ -1205,7 +1205,7 @@ bool AGOSEngine_Elvira2::loadGame(const Common::String &filename, bool restartMo
 
 	if (restartMode) {
 		// Load restart state
-		f = _archives.createReadStreamForMember(filename);
+		f = SearchMan.createReadStreamForMember(filename);
 	} else {
 		f = _saveFileMan->openForLoading(filename);
 	}

@@ -25,7 +25,6 @@
 
 #include "engines/engine.h"
 
-#include "common/archive.h"
 #include "common/array.h"
 #include "common/error.h"
 #include "common/keyboard.h"
@@ -186,22 +185,6 @@ class Debugger;
 #else
 #	define _OPCODE(ver, x)	{ &ver::x, "" }
 #endif
-
-class ArchiveMan : public Common::SearchSet {
-public:
-	ArchiveMan();
-
-#ifdef ENABLE_AGOS2
-	void registerArchive(const Common::String &filename, int priority);
-#endif
-
-	virtual bool hasFile(const Common::String &name) const;
-	virtual int listMatchingMembers(Common::ArchiveMemberList &list, const Common::String &pattern) const;
-	virtual int listMembers(Common::ArchiveMemberList &list) const;
-
-	virtual const Common::ArchiveMemberPtr getMember(const Common::String &name) const;
-	virtual Common::SeekableReadStream *createReadStreamForMember(const Common::String &filename) const;
-};
 
 class AGOSEngine : public Engine {
 protected:
@@ -616,8 +599,6 @@ protected:
 public:
 	AGOSEngine(OSystem *system, const AGOSGameDescription *gd);
 	virtual ~AGOSEngine();
-
-	ArchiveMan _archives;
 
 	byte *_curSfxFile;
 	uint32 _curSfxFileSize;

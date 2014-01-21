@@ -24,7 +24,6 @@
 
 
 #include "common/archive.h"
-#include "common/installshield_cab.h"
 #include "common/file.h"
 #include "common/memstream.h"
 #include "common/textconsole.h"
@@ -37,51 +36,6 @@
 #include "common/zlib.h"
 
 namespace AGOS {
-
-ArchiveMan::ArchiveMan() {
-}
-
-#ifdef ENABLE_AGOS2
-void ArchiveMan::registerArchive(const Common::String &filename, int priority) {
-	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(filename);
-
-	if (stream)
-		add(filename, makeInstallShieldArchive(stream, DisposeAfterUse::YES), priority);
-}
-#endif
-
-bool ArchiveMan::hasFile(const Common::String &name) const {
-	if (SearchMan.hasFile(name))
-		return true;
-
-	return Common::SearchSet::hasFile(name);
-}
-
-int ArchiveMan::listMatchingMembers(Common::ArchiveMemberList &list, const Common::String &pattern) const {
-	const int matches = SearchMan.listMatchingMembers(list, pattern);
-	return matches + Common::SearchSet::listMatchingMembers(list, pattern);
-}
-
-int ArchiveMan::listMembers(Common::ArchiveMemberList &list) const {
-	const int matches = SearchMan.listMembers(list);
-	return matches + Common::SearchSet::listMembers(list);
-}
-
-const Common::ArchiveMemberPtr ArchiveMan::getMember(const Common::String &name) const {
-	Common::ArchiveMemberPtr ptr = SearchMan.getMember(name);
-	if (ptr)
-		return ptr;
-
-	return Common::SearchSet::getMember(name);
-}
-
-Common::SeekableReadStream *ArchiveMan::createReadStreamForMember(const Common::String &filename) const {
-	if (SearchMan.hasFile(filename)) {
-		return SearchMan.createReadStreamForMember(filename);
-	}
-
-	return Common::SearchSet::createReadStreamForMember(filename);
-}
 
 #ifdef ENABLE_AGOS2
 uint16 AGOSEngine_Feeble::to16Wrapper(uint value) {
@@ -201,7 +155,7 @@ void AGOSEngine_PN::loadGamePcFile() {
 
 	if (getFileName(GAME_BASEFILE) != NULL) {
 		// Read dataBase
-		in = _archives.createReadStreamForMember(getFileName(GAME_BASEFILE));
+		in = SearchMan.createReadStreamForMember(getFileName(GAME_BASEFILE));
 		if (!in) {
 			error("loadGamePcFile: Can't load database file '%s'", getFileName(GAME_BASEFILE));
 		}
@@ -219,7 +173,7 @@ void AGOSEngine_PN::loadGamePcFile() {
 
 	if (getFileName(GAME_TEXTFILE) != NULL) {
 		// Read textBase
-		in = _archives.createReadStreamForMember(getFileName(GAME_TEXTFILE));
+		in = SearchMan.createReadStreamForMember(getFileName(GAME_TEXTFILE));
 		if (!in) {
 			error("loadGamePcFile: Can't load textbase file '%s'", getFileName(GAME_TEXTFILE));
 		}
@@ -242,7 +196,7 @@ void AGOSEngine::loadGamePcFile() {
 
 	if (getFileName(GAME_BASEFILE) != NULL) {
 		/* Read main gamexx file */
-		in = _archives.createReadStreamForMember(getFileName(GAME_BASEFILE));
+		in = SearchMan.createReadStreamForMember(getFileName(GAME_BASEFILE));
 		if (!in) {
 			error("loadGamePcFile: Can't load gamexx file '%s'", getFileName(GAME_BASEFILE));
 		}
@@ -268,7 +222,7 @@ void AGOSEngine::loadGamePcFile() {
 
 	if (getFileName(GAME_TBLFILE) != NULL) {
 		/* Read list of TABLE resources */
-		in = _archives.createReadStreamForMember(getFileName(GAME_TBLFILE));
+		in = SearchMan.createReadStreamForMember(getFileName(GAME_TBLFILE));
 		if (!in) {
 			error("loadGamePcFile: Can't load table resources file '%s'", getFileName(GAME_TBLFILE));
 		}
@@ -289,7 +243,7 @@ void AGOSEngine::loadGamePcFile() {
 
 	if (getFileName(GAME_STRFILE) != NULL) {
 		/* Read list of TEXT resources */
-		in = _archives.createReadStreamForMember(getFileName(GAME_STRFILE));
+		in = SearchMan.createReadStreamForMember(getFileName(GAME_STRFILE));
 		if (!in)
 			error("loadGamePcFile: Can't load text resources file '%s'", getFileName(GAME_STRFILE));
 
@@ -303,7 +257,7 @@ void AGOSEngine::loadGamePcFile() {
 
 	if (getFileName(GAME_STATFILE) != NULL) {
 		/* Read list of ROOM STATE resources */
-		in = _archives.createReadStreamForMember(getFileName(GAME_STATFILE));
+		in = SearchMan.createReadStreamForMember(getFileName(GAME_STATFILE));
 		if (!in) {
 			error("loadGamePcFile: Can't load state resources file '%s'", getFileName(GAME_STATFILE));
 		}
@@ -326,7 +280,7 @@ void AGOSEngine::loadGamePcFile() {
 
 	if (getFileName(GAME_RMSLFILE) != NULL) {
 		/* Read list of ROOM ITEMS resources */
-		in = _archives.createReadStreamForMember(getFileName(GAME_RMSLFILE));
+		in = SearchMan.createReadStreamForMember(getFileName(GAME_RMSLFILE));
 		if (!in) {
 			error("loadGamePcFile: Can't load room resources file '%s'", getFileName(GAME_RMSLFILE));
 		}
@@ -342,7 +296,7 @@ void AGOSEngine::loadGamePcFile() {
 
 	if (getFileName(GAME_XTBLFILE) != NULL) {
 		/* Read list of XTABLE resources */
-		in = _archives.createReadStreamForMember(getFileName(GAME_XTBLFILE));
+		in = SearchMan.createReadStreamForMember(getFileName(GAME_XTBLFILE));
 		if (!in) {
 			error("loadGamePcFile: Can't load xtable resources file '%s'", getFileName(GAME_XTBLFILE));
 		}
@@ -843,7 +797,7 @@ void AGOSEngine::loadVGABeardFile(uint16 id) {
 			sprintf(filename, "0%d.VGA", id);
 		}
 
-		in = _archives.createReadStreamForMember(filename);
+		in = SearchMan.createReadStreamForMember(filename);
 		if (!in)
 			error("loadSimonVGAFile: Can't load %s", filename);
 
@@ -921,7 +875,7 @@ void AGOSEngine::loadVGAVideoFile(uint16 id, uint8 type, bool useError) {
 			}
 		}
 
-		in = _archives.createReadStreamForMember(filename);
+		in = SearchMan.createReadStreamForMember(filename);
 		if (!in) {
 			if (useError)
 				error("loadVGAVideoFile: Can't load %s", filename);
