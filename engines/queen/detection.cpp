@@ -475,7 +475,7 @@ SaveStateList QueenMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
 	char saveDesc[32];
-	Common::String pattern("queen.s??");
+	Common::String pattern = target + ".s??";
 
 	filenames = saveFileMan->listSavefiles(pattern);
 	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
