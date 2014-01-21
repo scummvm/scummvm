@@ -664,6 +664,9 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 #if CONSISTENCY_CHECK
 #define SENTINEL -255
 int DirtyRectContainer::consistencyCheck(Common::Array<Common::Rect *> &optimized) {
+
+	assert (_clipRect != nullptr);
+
 	Common::Array<Common::Array<int> > diff;
 
 	for (int x = _clipRect->left; x < _clipRect->right; x++) {
