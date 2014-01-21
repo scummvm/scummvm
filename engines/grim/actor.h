@@ -59,6 +59,7 @@ struct Shadow {
 	int shadowMaskSize;
 	bool active;
 	bool dontNegate;
+	void *userData;
 };
 
 /**

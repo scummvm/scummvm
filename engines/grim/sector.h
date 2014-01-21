@@ -87,8 +87,8 @@ public:
 	int getNumSortplanes() { return _numSortplanes; }
 	int getSortplane(int setup) { return _sortplanes[setup]; }
 	int getNumVertices() { return _numVertices; }
-	Math::Vector3d *getVertices() { return _vertices; }
-	Math::Vector3d getNormal() { return _normal; }
+	Math::Vector3d *getVertices() const { return _vertices; }
+	Math::Vector3d getNormal() const { return _normal; }
 
 	Sector &operator=(const Sector &other);
 	bool operator==(const Sector &other) const;

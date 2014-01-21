@@ -218,6 +218,7 @@ private:
 	Graphics::Shader* _textProgram;
 	Graphics::Shader* _primitiveProgram;
 	Graphics::Shader* _irisProgram;
+	Graphics::Shader* _shadowPlaneProgram;
 
 	int _smushWidth;
 	int _smushHeight;
