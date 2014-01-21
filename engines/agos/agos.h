@@ -191,8 +191,6 @@ class ArchiveMan : public Common::SearchSet {
 public:
 	ArchiveMan();
 
-	void enableFallback(bool val) { _fallBack = val; }
-
 #ifdef ENABLE_AGOS2
 	void registerArchive(const Common::String &filename, int priority);
 #endif
@@ -203,9 +201,6 @@ public:
 
 	virtual const Common::ArchiveMemberPtr getMember(const Common::String &name) const;
 	virtual Common::SeekableReadStream *createReadStreamForMember(const Common::String &filename) const;
-
-private:
-	bool _fallBack;
 };
 
 class AGOSEngine : public Engine {

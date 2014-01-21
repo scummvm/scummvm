@@ -39,7 +39,6 @@
 namespace AGOS {
 
 ArchiveMan::ArchiveMan() {
-	_fallBack = true;
 }
 
 #ifdef ENABLE_AGOS2
@@ -52,24 +51,24 @@ void ArchiveMan::registerArchive(const Common::String &filename, int priority) {
 #endif
 
 bool ArchiveMan::hasFile(const Common::String &name) const {
-	if (_fallBack && SearchMan.hasFile(name))
+	if (SearchMan.hasFile(name))
 		return true;
 
 	return Common::SearchSet::hasFile(name);
 }
 
 int ArchiveMan::listMatchingMembers(Common::ArchiveMemberList &list, const Common::String &pattern) const {
-	const int matches = _fallBack ? SearchMan.listMatchingMembers(list, pattern) : 0;
+	const int matches = SearchMan.listMatchingMembers(list, pattern);
 	return matches + Common::SearchSet::listMatchingMembers(list, pattern);
 }
 
 int ArchiveMan::listMembers(Common::ArchiveMemberList &list) const {
-	const int matches = _fallBack ? SearchMan.listMembers(list) : 0;
+	const int matches = SearchMan.listMembers(list);
 	return matches + Common::SearchSet::listMembers(list);
 }
 
 const Common::ArchiveMemberPtr ArchiveMan::getMember(const Common::String &name) const {
-	Common::ArchiveMemberPtr ptr = _fallBack ? SearchMan.getMember(name) : Common::ArchiveMemberPtr();
+	Common::ArchiveMemberPtr ptr = SearchMan.getMember(name);
 	if (ptr)
 		return ptr;
 
@@ -77,7 +76,7 @@ const Common::ArchiveMemberPtr ArchiveMan::getMember(const Common::String &name)
 }
 
 Common::SeekableReadStream *ArchiveMan::createReadStreamForMember(const Common::String &filename) const {
-	if (_fallBack && SearchMan.hasFile(filename)) {
+	if (SearchMan.hasFile(filename)) {
 		return SearchMan.createReadStreamForMember(filename);
 	}
 
