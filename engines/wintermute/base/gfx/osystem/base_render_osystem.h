@@ -150,7 +150,6 @@ private:
 	int _borderBottom;
 
 	bool _disableDirtyRects;
-
 	float _ratioX;
 	float _ratioY;
 	uint32 _clearColor;
@@ -164,7 +163,6 @@ private:
 
 
 	int _lastScreenChangeID; // previous value of OSystem::getScreenChangeID()
-	// from master
 };
 
 } // End of namespace Wintermute
