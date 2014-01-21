@@ -153,6 +153,15 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 		assert(_cleanMe.size() <= CLEAN_HARD_LIMIT);
 
 #if ENABLE_BAILOUT
+		/*
+		 * This is where we temporarily disable/bail out of dirty rects for this frame
+		 * because either we have too many of them, or we already covered a significant
+		 * portion of the screen (say 95%) and any further processing would take more time
+		 * than actually drawing those few extra pixels.
+		 * This is disabled by default because profiling seems to suggest that in real-world usage
+		 * (which deliberately excludes J.U.L.I.A., especially b/c of the particle system)
+		 * actual blitting vastly overshadows any time spend in here.
+		 */
 		if (
 				(filledPixels * 128 >= (targetPixels * PIXEL_BAILOUT_LIMIT)) ||
 				(queue.size() >= QUEUE_BAILOUT_LIMIT)
@@ -162,6 +171,12 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 			return getFallback();
 		}
 #endif
+
+		/* We iterate through the rect list and we see what to do with them.
+		 * We take the one at the bottom and compare it with the existing rects.
+		 * If we are really lucky, there is no overlap.
+		 * Otherwise, we will end up in one of the cases in the giant if.
+		 */
 
 		Common::Rect *candidate = queue[0];
 		assert(_clipRect->contains(*candidate));
