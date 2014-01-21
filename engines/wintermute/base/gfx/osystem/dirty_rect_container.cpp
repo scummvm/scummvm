@@ -57,21 +57,22 @@ void DirtyRectContainer::addDirtyRect(const Common::Rect &rect, const Common::Re
 		assert(clipRect.equals(*_clipRect));
 	}
 
+	assert(_rectArray.size() < INPUT_RECTS_HARD_LIMIT);
 
-	uint target = getSize();
-
-	assert(getSize() < INPUT_RECTS_HARD_LIMIT);
-	if (target > kMaxInputRects) {
+	if (_rectArray.size() > kMaxInputRects) {
+		// This should not really happen in real world usage,
+		// but there is a possibility of being flooded with rects.
+		// At which point, we bail out.
+		// This is, basically, the 'unrealistic' case, something went wrong.
 		_disableDirtyRects = true;
 		warning ("Too many rects, disabling dirty rects for this frame.");
-		return;
-	} else if (rect.width() == 0 || rect.height() == 0) {
-		return;
 	} else {
 		Common::Rect *tmp = new Common::Rect(rect);
-		_disableDirtyRects = false;
-		_rectArray.insert_at(target, tmp);
-		_rectArray[target]->clip(clipRect);
+		tmp->clip(clipRect);
+		if (tmp->width() != 0 && tmp->height() != 0) {
+			_disableDirtyRects = false;
+			_rectArray.push_back(tmp);
+		}
 	}
 
 }
