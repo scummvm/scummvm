@@ -106,6 +106,9 @@ Common::Array<Common::Rect *> DirtyRectContainer::getFallback() {
 	assert(_clipRect != nullptr);
 	Common::Array<Common::Rect *> singleret;
 	warning ("Drawing to whole cliprect!");
+
+	// We return a 1-rect list where the rect is the whole cliprect.
+
 	Common::Rect *temp = new Common::Rect(*_clipRect);
 	singleret.push_back(temp);
 	_cleanMe.push_back(temp);
@@ -639,8 +642,25 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 
 		} // End loop
 
+		/*
+		 * At this point we should have taken out of candidate all bits that
+		 * overlap with existing rects and/or bits that we have decided to
+		 * push back in the queue for later processing.
+		 * We assert that whatever's left of candidate has no overlap with
+		 * anything in the return list.
+		 *
+		 * If marked for discard we ignore it altogether (consider
+		 * marking for discard the equivalent of replacing it with a 0x0 rect after
+		 * having verified each pixel is contained elsewhere and/or having sliced
+		 * off and enqueued the 'useful' parts).
+		 *
+		 */
+
 		if (!discard) {
 			assert(candidate->isValidRect());
+			// There should not be anything that makes the rect invalid
+			// (worse that can happen, 0x0), so this is probably worth
+			// investigating if it ever happens.
 			if (candidate->width() > 0 && candidate->height() > 0) {
 				ret.push_back(candidate);
 #if CONSISTENCY_CHECK
