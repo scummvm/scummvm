@@ -32,8 +32,8 @@
 #define SAFE_ENQUEUE(slice)\
 				if (slice->width() != 0 && slice->height() != 0) {\
 					assert(slice->isValidRect());\
-					queue.insert_at(queue.size(), slice);\
-					_cleanMe.insert_at(_cleanMe.size(), slice);\
+					queue.push_back(slice);\
+					_cleanMe.push_back(slice);\
 				} else {\
 					delete slice;\
 				}\
@@ -118,8 +118,8 @@ Common::Array<Common::Rect *> DirtyRectContainer::getFallback() {
 		assert(_disableDirtyRects);
 		warning ("Drawing to whole cliprect!");
 		Common::Rect *temp = new Common::Rect(*_clipRect);
-		singleret.insert_at(0, temp);
-		_cleanMe.insert_at(_cleanMe.size(), temp);
+		singleret.push_back(temp);
+		_cleanMe.push_back(temp);
 	}
 	return singleret;
 }
@@ -140,7 +140,7 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 
 	for (uint i = 0; i < _rectArray.size(); i++) {
 		assert(_clipRect->contains(*_rectArray[i]));
-		queue.insert_at(queue.size(), _rectArray[i]);
+		queue.push_back(_rectArray[i]);
 	}
 
 #if CONSISTENCY_CHECK
@@ -643,7 +643,7 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 		if (!discard) {
 			assert(candidate->isValidRect());
 			if (candidate->width() > 0 && candidate->height() > 0) {
-				ret.insert_at(ret.size(), candidate);
+				ret.push_back(candidate);
 #if CONSISTENCY_CHECK
 				filledPixels += candidate->width() * candidate->height();
 #endif
