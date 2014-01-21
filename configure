@@ -2707,7 +2707,6 @@ if test -n "$_host"; then
 			_backend="wii"
 			_build_scalers=no
 			_vkeybd=yes
-			_taskbar=no
 			_port_mk="backends/platform/wii/wii.mk"
 			add_line_to_config_mk 'GAMECUBE = 0'
 			add_line_to_config_h '#define AUDIO_REVERSE_STEREO'
