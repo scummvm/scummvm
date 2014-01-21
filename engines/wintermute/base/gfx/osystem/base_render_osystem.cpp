@@ -297,7 +297,6 @@ void BaseRenderOSystem::drawSurface(BaseSurfaceOSystem *owner, const Graphics::S
 		for (; it != endIterator; ++it) {
 			compareTicket = *it;
 			if (*(compareTicket) == compare && compareTicket->_isValid) {
-				compareTicket->_transform._rgbaMod = transform._rgbaMod;
 				if (_disableDirtyRects) {
 					drawFromSurface(compareTicket);
 				} else {
