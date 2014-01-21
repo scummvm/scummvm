@@ -153,10 +153,7 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 				(filledPixels * 128 >= (targetPixels * PIXEL_BAILOUT_LIMIT)) ||
 				(queue.size() >= QUEUE_BAILOUT_LIMIT)
 			) {
-			// We have filled almost everything, let's just bail out.
-#if CONSISTENCY_CHECK
 			warning("Bailing out of dirty rect, filled %d pixels out of %d, queue size: %d", filledPixels, targetPixels, queue.size());
-#endif
 			_disableDirtyRects = true;
 			return getFallback();
 		}
