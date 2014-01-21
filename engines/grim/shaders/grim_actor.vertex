@@ -12,9 +12,10 @@ in vec2 texcoord;
 in vec4 color;
 in vec3 normal;
 
+uniform highp mat4 modelMatrix;
+uniform highp mat4 viewMatrix;
 uniform highp mat4 projMatrix;
 uniform highp mat4 extraMatrix;
-uniform highp mat4 mvpMatrix;
 uniform highp vec2 texScale;
 uniform bool textured;
 uniform light lights[maxLights];
@@ -26,11 +27,12 @@ out vec4 Color;
 void main()
 {
 	vec4 pos = vec4(position, 1.0);
-	pos = mvpMatrix *
+
+	pos = modelMatrix *
 	      extraMatrix *
 	      pos;
 
-	gl_Position = projMatrix * pos;
+	gl_Position = projMatrix * viewMatrix * pos;
 
 	if (textured) {
 		Texcoord = vec2(0.0, 1.0) + (texcoord / texScale);

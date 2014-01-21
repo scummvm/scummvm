@@ -386,6 +386,7 @@ void GfxOpenGLS::positionCamera(const Math::Vector3d &pos, const Math::Vector3d 
 		Math::Matrix4 lookMatrix = makeLookMatrix(pos, interest, up_vec);
 
 		_viewMatrix = viewMatrix * lookMatrix;
+		_viewMatrix.transpose();
 	}
 }
 
@@ -440,6 +441,7 @@ void GfxOpenGLS::startActorDraw(const Actor *actor) {
 
 		modelMatrix.transpose();
 		modelMatrix.setPosition(pos);
+		modelMatrix.transpose();
 		_mvpMatrix = _viewMatrix * modelMatrix;
 		_mvpMatrix.transpose();
 
@@ -536,7 +538,7 @@ void GfxOpenGLS::drawShadowPlanes() {
 	const ShadowUserData *sud = (ShadowUserData *)_currentShadowArray->userData;
 	_shadowPlaneProgram->use();
 	_shadowPlaneProgram->setUniform("projMatrix", _projMatrix);
-	_shadowPlaneProgram->setUniform("viewMatrix", viewMatrix);
+	_shadowPlaneProgram->setUniform("viewMatrix", _viewMatrix);
 
 	glBindBuffer(GL_ARRAY_BUFFER, sud->_verticesVBO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, sud->_indicesVBO);
