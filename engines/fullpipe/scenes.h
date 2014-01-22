@@ -516,10 +516,6 @@ public:
 	int scene37_soundFlipper;
 	int scene37_dudeX;
 
-	int scene38_var01;
-	int scene38_var02;
-	int scene38_var03;
-	int scene38_var04;
 	StaticANIObject *scene38_boss;
 	StaticANIObject *scene38_tally;
 	StaticANIObject *scene38_shorty;
@@ -527,10 +523,10 @@ public:
 	StaticANIObject *scene38_dominos;
 	StaticANIObject *scene38_domino1;
 	StaticANIObject *scene38_bottle;
-	int scene38_var05;
-	int scene38_var06;
-	int scene38_var07;
-	int scene38_var08;
+	int scene38_bossCounter;
+	int scene38_lastBossAnim;
+	int scene38_bossAnimCounter;
+	int scene38_tallyCounter;
 	int scene38_var09;
 	int scene38_var10;
 	int scene38_var11;
