@@ -306,12 +306,6 @@ bool AmigaOSFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, b
 AbstractFSNode *AmigaOSFilesystemNode::getParent() const {
 	ENTER();
 
-	if (!_bIsDirectory) {
-		debug(6, "Not a directory");
-		LEAVE();
-		return 0;
-	}
-
 	if (_pFileLock == 0) {
 		debug(6, "Root node");
 		LEAVE();
