@@ -1275,7 +1275,7 @@ void AvalancheEngine::minorRedraw() {
 }
 
 void AvalancheEngine::majorRedraw() {
-	warning("STUB: major_redraw()");
+	_graphics->refreshScreen();
 }
 
 uint16 AvalancheEngine::bearing(byte whichPed) {
