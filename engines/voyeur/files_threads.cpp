@@ -53,8 +53,8 @@ void ThreadResource::initThreadStruct(int idx, int id) {
 	if (loadAStack(idx)) {
 		_field4 = _field6 = -1;
 		_threadId = id;
-		_field3A = -1;
-		_field3E = -1;
+		_newSceneId = -1;
+		_newStackId = -1;
 
 		doState();
 	}
@@ -100,8 +100,8 @@ bool ThreadResource::doState() {
 	_vm->_glGoStack = -1;
 
 	performOpenCard();
-	if (_field40 & 1) {
-		return chooseSTAMPButton(_vm->getRandomNumber(_field42 - 1));
+	if (_stateFlags & 1) {
+		return chooseSTAMPButton(_vm->getRandomNumber(_stateCount - 1));
 	} else {
 		return true;
 	}
@@ -121,14 +121,14 @@ bool ThreadResource::getStateInfo() {
 		
 		fld = READ_LE_UINT32(_ctlPtr + fld);
 		byte *baseP = _ctlPtr + fld;
-		_field42 = READ_LE_UINT16(baseP);
-		_field40 = READ_LE_UINT16(baseP + 2);
+		_stateCount = READ_LE_UINT16(baseP);
+		_stateFlags = READ_LE_UINT16(baseP + 2);
 		_parseCount = READ_LE_UINT16(baseP + 4);
 
-		_field28E = getDataOffset();
-		_field28E += (READ_LE_UINT32(baseP + 6) / 2) << 1;
+		_playCommandsPtr = getDataOffset();
+		_playCommandsPtr += (READ_LE_UINT32(baseP + 6) / 2) << 1;
 
-		_field4A = baseP + 10;
+		_threadInfoPtr = baseP + 10;
 		
 		getButtonsText();
 		return true;
@@ -144,7 +144,7 @@ byte *ThreadResource::getDataOffset() {
 void ThreadResource::getButtonsText() {
 	int idx = 0;
 	
-	for (const byte *p = _field4A; *p != 0x49; p = getNextRecord(p)) {
+	for (const byte *p = _threadInfoPtr; *p != 0x49; p = getNextRecord(p)) {
 		if (*p == 0xC0) {
 			++p;
 			if (*p++ & 0x80) {
@@ -162,10 +162,10 @@ void ThreadResource::getButtonsText() {
 void ThreadResource::getButtonsFlags() {
 	int idx = 0;
 	
-	for (const byte *p = _field4A; *p != 0x49; p = getNextRecord(p)) {
+	for (const byte *p = _threadInfoPtr; *p != 0x49; p = getNextRecord(p)) {
 		if (*p == 0xC0) {
 			if (*++p & 0x20)
-				_field40 |= 2;
+				_stateFlags |= 2;
 
 			_buttonFlags[idx] = *p++;
 			_field18E[idx] = *p++;
@@ -181,7 +181,7 @@ void ThreadResource::getButtonsFlags() {
 void ThreadResource::getField1CE() {
 	int idx = 0;
 	
-	for (const byte *p = _field4A; *p++ != 0x49; p = getNextRecord(p)) {
+	for (const byte *p = _threadInfoPtr; *p++ != 0x49; p = getNextRecord(p)) {
 		assert(idx < 47);
 		_field1CE[idx++] = getRecordOffset(p);
 		_field1CE[idx] = NULL;
@@ -199,7 +199,7 @@ void ThreadResource::unloadAllStacks(VoyeurEngine *vm) {
 }
 
 void ThreadResource::performOpenCard() {
-	for (const byte *p = _field4A; *p != 0x49; p = getNextRecord(p)) {
+	for (const byte *p = _threadInfoPtr; *p != 0x49; p = getNextRecord(p)) {
 		if (*p == 0x47) {
 			cardAction(p + 1);
 			return;
@@ -265,7 +265,7 @@ const byte *ThreadResource::getSTAMPCard(int cardId) {
 	const byte *p;
 	int count = 0;
 
-	for (p = _field4A; count <= cardId && *p != 0x49; p = getNextRecord(p)) {
+	for (p = _threadInfoPtr; count <= cardId && *p != 0x49; p = getNextRecord(p)) {
 		if (*p == 0xC0)
 			++count;
 	}
@@ -291,7 +291,7 @@ uint32 ThreadResource::getSID(int sid) {
 }
 
 void ThreadResource::doSTAMPCardAction() {
-	for (const byte *p = _field4A; *p != 0x49; p = getNextRecord(p)) {
+	for (const byte *p = _threadInfoPtr; *p != 0x49; p = getNextRecord(p)) {
 		if (*p == 0x48) {
 			cardAction(p + 1);
 			return;
@@ -312,7 +312,7 @@ void ThreadResource::cardAction(const byte *card) {
 bool ThreadResource::chooseSTAMPButton(int buttonId) {
 	_flags &= ~1;
 
-	for (int idx = 0; idx < _field42; ++idx) {
+	for (int idx = 0; idx < _stateCount; ++idx) {
 		if (_field18E[idx] == buttonId) {
 			const byte *card = getSTAMPCard(idx);
 			cardAction(card);
@@ -352,7 +352,7 @@ void ThreadResource::parsePlayCommands() {
 	Common::fill(&_vm->_voy._arr6[0][0], &_vm->_voy._arr6[3][20], 0);
 	Common::fill(&_vm->_voy._arr7[0], &_vm->_voy._arr7[20], 0);
 
-	byte *dataP = _field28E;
+	byte *dataP = _playCommandsPtr;
 	int v2, v3;
 	PictureResource *pic;
 	CMapResource *pal;
@@ -456,7 +456,7 @@ void ThreadResource::parsePlayCommands() {
 					}
 
 					_vm->_eventsManager._videoDead = -1;
-					if (_field42 == 2 && _vm->_eventsManager._mouseClicked == 0) {
+					if (_stateCount == 2 && _vm->_eventsManager._mouseClicked == 0) {
 						_vm->_voy._field470 = 132;
 						parseIndex = 999;
 					} else {
@@ -953,15 +953,15 @@ const byte *ThreadResource::cardPerform(const byte *card) {
 		card += 2;
 	
 	case 45:
-		_field3A = _field46;
-		_field3E = _controlIndex;
+		_newSceneId = _field46;
+		_newStackId = _controlIndex;
 		break;
 
 	case 46:
-		_vm->_glGoScene = _field3A;
-		_vm->_glGoStack = _field3E;
-		_field3A = -1;
-		_field3E = -1;
+		_vm->_glGoScene = _newSceneId;
+		_vm->_glGoStack = _newStackId;
+		_newSceneId = -1;
+		_newStackId = -1;
 		break;
 
 	case 51:
@@ -1257,8 +1257,7 @@ void ThreadResource::doRoom() {
 				_vm->flipPageAndWait();
 
 				if (vm._currentVocId != -1) {
-					voy._vocSecondsOffset = voy._RTVNum - 
-						voy._field4AC;
+					voy._vocSecondsOffset = voy._RTVNum - voy._field4AC;
 					vm._soundManager.stopVOCPlay();
 				}
 

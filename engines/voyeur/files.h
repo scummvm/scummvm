@@ -533,19 +533,19 @@ public:
 	int _field9;
 	int _fieldA[8];
 	int _field2A[8];
-	int _field3A;
-	int _field3E;
-	int _field40;
-	int _field42;
+	int _newSceneId;
+	int _newStackId;
+	int _stateFlags;
+	int _stateCount;
 	int _parseCount;
 	uint32 _field46;
-	byte *_field4A;
+	byte *_threadInfoPtr;
 	byte _buttonFlags[64];
 	const byte *_field8E[64];
 	byte _field18E[64];
 	const byte *_field1CE[48];
 	byte *_ctlPtr;
-	byte *_field28E;
+	byte *_playCommandsPtr;
 public:
 	ThreadResource(BoltFilesState &state, const byte *src);
 	virtual ~ThreadResource() {}
