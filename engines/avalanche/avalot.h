@@ -38,9 +38,6 @@ class AvalancheEngine;
 static const byte kObjectNum = 18; // always preface with a #
 static const int16 kCarryLimit = 12;  // carry limit
 
-static const int16 kNumlockCode = 32;  // Code for Num Lock
-static const int16 kMouseSize = 134;
-
 struct PedType {
 	int16 _x, _y;
 	Direction _direction;
