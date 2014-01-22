@@ -456,6 +456,26 @@ void GfxOpenGLS::startActorDraw(const Actor *actor) {
 		_actorProgram->setUniform("texcropZBuf", _zBufTexCrop);
 		_actorProgram->setUniform("screenSize", Math::Vector2d(_screenWidth, _screenHeight));
 
+		if (_currentShadowArray) {
+			const Sector *shadowSector = _currentShadowArray->planeList.front().sector;
+			const Math::Vector3d color = Math::Vector3d(_shadowColorR, _shadowColorG, _shadowColorB) / 255.f;
+			Math::Vector3d normal = shadowSector->getNormal();
+			if (!_currentShadowArray->dontNegate)
+				normal = -normal;
+
+			_actorProgram->setUniform("shadow._active", true);
+			_actorProgram->setUniform("shadow._color", color);
+			_actorProgram->setUniform("shadow._light", _currentShadowArray->pos);
+			_actorProgram->setUniform("shadow._point", shadowSector->getVertices()[0]);
+			_actorProgram->setUniform("shadow._normal", normal);
+
+			glDisable(GL_DEPTH_TEST);
+			glDisable(GL_BLEND);
+			glEnable(GL_POLYGON_OFFSET_FILL);
+		} else {
+			_actorProgram->setUniform("shadow._active", false);
+		}
+
 		_actorProgram->setUniform("lightsEnabled", _lightsEnabled);
 		if (_lightsEnabled) {
 			for (int i = 0; i < _maxLights; ++i) {
@@ -482,6 +502,7 @@ void GfxOpenGLS::startActorDraw(const Actor *actor) {
 
 void GfxOpenGLS::finishActorDraw() {
 	_currentActor = NULL;
+	glDisable(GL_POLYGON_OFFSET_FILL);
 }
 
 void GfxOpenGLS::setShadow(Shadow *shadow) {
@@ -654,7 +675,8 @@ void GfxOpenGLS::drawMesh(const Mesh *mesh) {
 			faces += 3 * (mesh->_faces[i]._numVertices - 2);
 		}
 
-		actorShader->setUniform("textured", face->_texVertices ? GL_TRUE : GL_FALSE);
+		bool textured = face->_texVertices && ! _currentShadowArray;
+		actorShader->setUniform("textured", textured ? GL_TRUE : GL_FALSE);
 		actorShader->setUniform("texScale", Math::Vector2d(_selectedTexture->_width, _selectedTexture->_height));
 
 		glDrawArrays(GL_TRIANGLES, *(int *)face->_userData, faces);
