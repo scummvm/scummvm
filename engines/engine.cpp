@@ -154,6 +154,10 @@ Engine::~Engine() {
 	CursorMan.popCursorPalette();
 }
 
+void Engine::initializePath(const Common::FSNode &gamePath) {
+	SearchMan.addDirectory(gamePath.getPath(), gamePath, 0, 4);
+}
+
 void initCommonGFX(bool defaultTo1XScaler) {
 	const Common::ConfigManager::Domain *transientDomain = ConfMan.getDomain(Common::ConfigManager::kTransientDomain);
 	const Common::ConfigManager::Domain *gameDomain = ConfMan.getActiveDomain();

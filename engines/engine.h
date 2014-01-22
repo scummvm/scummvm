@@ -37,6 +37,7 @@ class Error;
 class EventManager;
 class SaveFileManager;
 class TimerManager;
+class FSNode;
 }
 namespace GUI {
 class Debugger;
@@ -140,6 +141,16 @@ public:
 
 	Engine(OSystem *syst);
 	virtual ~Engine();
+
+	/**
+	 * Init SearchMan according to the game path.
+	 *
+	 * By default it adds the directory in non-flat mode with a depth of 4 as
+	 * priority 0 to SearchMan.
+	 *
+	 * @param gamePath The base directory of the game data.
+	 */
+	virtual void initializePath(const Common::FSNode &gamePath);
 
 	/**
 	 * Init the engine and start its main loop.
