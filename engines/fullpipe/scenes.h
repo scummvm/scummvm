@@ -527,11 +527,11 @@ public:
 	int scene38_lastBossAnim;
 	int scene38_bossAnimCounter;
 	int scene38_tallyCounter;
-	int scene38_var09;
-	int scene38_var10;
-	int scene38_var11;
-	int scene38_var12;
-	int scene38_var13;
+	int scene38_lastTallyAnim;
+	int scene38_tallyAnimCounter;
+	int scene38_shortyCounter;
+	int scene38_lastShortyAnim;
+	int scene38_shortyAnimCounter;
 
 	PictureObject *selector;
 };

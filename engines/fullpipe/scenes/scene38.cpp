@@ -63,11 +63,11 @@ void scene38_initScene(Scene *sc) {
 	g_vars->scene38_lastBossAnim = 0;
 	g_vars->scene38_bossAnimCounter = 0;
 	g_vars->scene38_tallyCounter = 15;
-	g_vars->scene38_var09 = 0;
-	g_vars->scene38_var10 = 0;
-	g_vars->scene38_var11 = 30;
-	g_vars->scene38_var12 = 0;
-	g_vars->scene38_var13 = 0;
+	g_vars->scene38_lastTallyAnim = 0;
+	g_vars->scene38_tallyAnimCounter = 0;
+	g_vars->scene38_shortyCounter = 30;
+	g_vars->scene38_lastShortyAnim = 0;
+	g_vars->scene38_shortyAnimCounter = 0;
 
 	scene38_setBottleState(sc);
 
@@ -128,11 +128,11 @@ void sceneHandler38_point() {
 void sceneHandler38_hammerKick() {
 	if (!g_vars->scene38_shorty->_movement) {
 		if (g_vars->scene38_shorty->_flags & 4) {
-			if (!(g_vars->scene38_shorty->_flags & 2) && g_vars->scene38_var11 > 1
+			if (!(g_vars->scene38_shorty->_flags & 2) && g_vars->scene38_shortyCounter > 1
 				&& g_vars->scene38_shorty->_statics->_staticsId == ST_MLS_LEFT2
 				&& g_fp->_rnd->getRandomNumber(32767) < 3276) {
 				chainQueue(QU_MLS_TURNR, 0);
-				g_vars->scene38_var11 = 0;
+				g_vars->scene38_shortyCounter = 0;
 			}
 		}
 	}
@@ -148,11 +148,11 @@ void sceneHandler38_hammerKick() {
 void sceneHandler38_drink() {
 	if (!g_vars->scene38_shorty->_movement) {
 		if (g_vars->scene38_shorty->_flags & 4) {
-			if (!(g_vars->scene38_shorty->_flags & 2) && g_vars->scene38_var11 > 0
+			if (!(g_vars->scene38_shorty->_flags & 2) && g_vars->scene38_shortyCounter > 0
 				&& g_vars->scene38_shorty->_statics->_staticsId == ST_MLS_LEFT2
 				&& g_fp->_rnd->getRandomNumber(32767) < 3276) {
 				chainQueue(QU_MLS_TURNR, 0);
-				g_vars->scene38_var11 = 0;
+				g_vars->scene38_shortyCounter = 0;
 			}
 		}
 	}
@@ -256,14 +256,14 @@ void sceneHandler38_animateAlcoholics() {
 			}
 		}
 
-		if (g_vars->scene38_var09 == tallyAnim) {
-			g_vars->scene38_var10++;
+		if (g_vars->scene38_lastTallyAnim == tallyAnim) {
+			g_vars->scene38_tallyAnimCounter++;
 
-			if (g_vars->scene38_var10++ > 2)
+			if (g_vars->scene38_tallyAnimCounter++ > 2)
 				tallyAnim = 0;
 		} else {
-			g_vars->scene38_var09 = tallyAnim;
-			g_vars->scene38_var10 = 1;
+			g_vars->scene38_lastTallyAnim = tallyAnim;
+			g_vars->scene38_tallyAnimCounter = 1;
 		}
 		if (tallyAnim > 0) {
 			mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(tallyAnim), 0, 0);
@@ -274,13 +274,13 @@ void sceneHandler38_animateAlcoholics() {
 	}
 
 	if (g_vars->scene38_shorty->_movement || !(g_vars->scene38_shorty->_flags & 4) || (g_vars->scene38_shorty->_flags & 2)) {
-		g_vars->scene38_var11 = 0;
+		g_vars->scene38_shortyCounter = 0;
 		return;
 	}
 
-	g_vars->scene38_var11++;
+	g_vars->scene38_shortyCounter++;
 
-	if (g_vars->scene38_var11 < 50)
+	if (g_vars->scene38_shortyCounter < 50)
 		return;
 
 	int shortyAnim = 0;
@@ -300,13 +300,13 @@ void sceneHandler38_animateAlcoholics() {
 		}
 	}
 
-	if (g_vars->scene38_var12 == shortyAnim) {
-		g_vars->scene38_var13++;
-		if (g_vars->scene38_var13 > 2)
+	if (g_vars->scene38_lastShortyAnim == shortyAnim) {
+		g_vars->scene38_shortyAnimCounter++;
+		if (g_vars->scene38_shortyAnimCounter > 2)
 			return;
 	} else {
-		g_vars->scene38_var12 = shortyAnim;
-		g_vars->scene38_var13 = 1;
+		g_vars->scene38_lastShortyAnim = shortyAnim;
+		g_vars->scene38_shortyAnimCounter = 1;
 	}
 
 	if (shortyAnim > 0) {
@@ -314,7 +314,7 @@ void sceneHandler38_animateAlcoholics() {
 
 		mq->chain(0);
 
-		g_vars->scene38_var11 = 0;
+		g_vars->scene38_shortyCounter = 0;
 	}
 }
 

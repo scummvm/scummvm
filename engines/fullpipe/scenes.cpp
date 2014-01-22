@@ -376,11 +376,11 @@ Vars::Vars() {
 	scene38_lastBossAnim = 0;
 	scene38_bossAnimCounter = 0;
 	scene38_tallyCounter = 0;
-	scene38_var09 = 0;
-	scene38_var10 = 0;
-	scene38_var11 = 0;
-	scene38_var12 = 0;
-	scene38_var13 = 0;
+	scene38_lastTallyAnim = 0;
+	scene38_tallyAnimCounter = 0;
+	scene38_shortyCounter = 0;
+	scene38_lastShortyAnim = 0;
+	scene38_shortyAnimCounter = 0;
 
 	selector = 0;
 }
