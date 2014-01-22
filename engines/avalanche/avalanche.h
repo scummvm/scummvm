@@ -173,7 +173,6 @@ public:
 	static const char kSpludwicksOrder[3];
 
 	static const uint16 kNotes[12];
-	static const TuneType kTune;
 
 	bool _holdLeftMouse;
 

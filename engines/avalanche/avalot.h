@@ -59,8 +59,6 @@ struct LineType : public FieldType {
 	Color _color;
 };
 
-typedef int8 TuneType[31];
-
 struct QuasipedType {
 	byte   _whichPed;
 	Color  _textColor;
