@@ -67,15 +67,6 @@ struct QuasipedType {
 	People _who;
 };
 
-#if 0
-struct Sundry { // Things which must be saved over a backtobootstrap, outside DNA.
-	Common::String _qEnidFilename;
-	bool _qSoundFx;
-	byte _qThinks;
-	bool _qThinkThing;
-};
-#endif
-
 } // End of namespace Avalanche
 
 #endif // AVALANCHE_AVALOT_H
