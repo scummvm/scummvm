@@ -1509,7 +1509,7 @@ android)
 	# ResidualVM specific start ->
 	if test ! -d android-toolchain; then
 		echo "Installing Android toolchain to build directory..."
-		"$ANDROID_NDK/build/tools/make-standalone-toolchain.sh" --platform=android-8 --install-dir=android-toolchain
+		"$ANDROID_NDK/build/tools/make-standalone-toolchain.sh" --platform=android-15 --install-dir=android-toolchain
 	else
 		echo "Android toolchain already installed."
 	fi
