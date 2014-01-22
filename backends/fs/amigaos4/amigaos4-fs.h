@@ -43,7 +43,13 @@
  */
 class AmigaOSFilesystemNode : public AbstractFSNode {
 protected:
+	/**
+	 * The main file lock.
+	 * If this is NULL but _bIsValid is true, then this Node references
+	 * the virtual filesystem root.
+	 */
 	BPTR _pFileLock;
+
 	Common::String _sDisplayName;
 	Common::String _sPath;
 	bool _bIsDirectory;
