@@ -29,15 +29,6 @@
 
 #include "engines/wintermute/base/gfx/osystem/dirty_rect_container.h"
 
-#define SAFE_ENQUEUE(slice)\
-				if (slice->width() != 0 && slice->height() != 0) {\
-					assert(slice->isValidRect());\
-					queue.push_back(slice);\
-					_cleanMe.push_back(slice);\
-				} else {\
-					delete slice;\
-				}\
-
 namespace Wintermute {
 
 DirtyRectContainer::DirtyRectContainer() {
@@ -48,6 +39,16 @@ DirtyRectContainer::DirtyRectContainer() {
 DirtyRectContainer::~DirtyRectContainer() {
 	reset();
 	delete _clipRect;
+}
+
+void DirtyRectContainer::safeEnqueue (Common::Rect *slice, Common::Array<Common::Rect *> *queue) {
+				if (slice->width() != 0 && slice->height() != 0) {
+					assert(slice->isValidRect());
+					queue->push_back(slice);
+					_cleanMe.push_back(slice);
+				} else {
+					delete slice;
+				}
 }
 
 void DirtyRectContainer::addDirtyRect(const Common::Rect &rect, const Common::Rect &clipRect) {
@@ -222,23 +223,23 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 
 				Common::Rect *nSlice = new Common::Rect(*candidate);
 				nSlice->bottom = existing->top;
-				SAFE_ENQUEUE(nSlice);
+				safeEnqueue(nSlice, &queue);
 
 				Common::Rect *sSlice = new Common::Rect(*candidate);
 				sSlice->top = existing->bottom;
-				SAFE_ENQUEUE(sSlice);
+				safeEnqueue(sSlice, &queue);
 
 				Common::Rect *eSlice = new Common::Rect(*candidate);
 				eSlice->bottom = existing->bottom;
 				eSlice->top = existing->top;
 				eSlice->left = existing->right;
-				SAFE_ENQUEUE(eSlice);
+				safeEnqueue(eSlice, &queue);
 
 				Common::Rect *wSlice = new Common::Rect(*candidate);
 				wSlice->bottom = existing->bottom;
 				wSlice->top = existing->top;
 				wSlice->right = existing->left;
-				SAFE_ENQUEUE(wSlice);
+				safeEnqueue(wSlice, &queue);
 
 				discard = true;
 
@@ -275,8 +276,8 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 				topSlice->bottom = existing->top;
 				bottomSlice->top = existing->bottom;
 
-				SAFE_ENQUEUE(topSlice);
-				SAFE_ENQUEUE(bottomSlice);
+				safeEnqueue(topSlice, &queue);
+				safeEnqueue(bottomSlice, &queue);
 
 				discard = true;
 
@@ -294,8 +295,8 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 				rightSlice->left = existing->right;
 				leftSlice->right = existing->left;
 
-				SAFE_ENQUEUE(rightSlice);
-				SAFE_ENQUEUE(leftSlice);
+				safeEnqueue(rightSlice, &queue);
+				safeEnqueue(leftSlice, &queue);
 
 				discard = true;
 
@@ -376,9 +377,9 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 				neSlice->bottom = existing->bottom;
 				neSlice->left= existing->right;
 
-				SAFE_ENQUEUE(sSlice);
-				SAFE_ENQUEUE(nwSlice);
-				SAFE_ENQUEUE(neSlice);
+				safeEnqueue(sSlice, &queue);
+				safeEnqueue(nwSlice, &queue);
+				safeEnqueue(neSlice, &queue);
 
 				discard = true;
 
@@ -406,9 +407,9 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 				seSlice->top = existing->top;
 				seSlice->left= existing->right;
 
-				SAFE_ENQUEUE(nSlice);
-				SAFE_ENQUEUE(swSlice);
-				SAFE_ENQUEUE(seSlice);
+				safeEnqueue(nSlice, &queue);
+				safeEnqueue(swSlice, &queue);
+				safeEnqueue(seSlice, &queue);
 
 				discard = true;
 
@@ -434,9 +435,9 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 				swSlice->top = existing->bottom;
 				swSlice->right = existing->right;
 
-				SAFE_ENQUEUE(eSlice);
-				SAFE_ENQUEUE(nwSlice);
-				SAFE_ENQUEUE(swSlice);
+				safeEnqueue(eSlice, &queue);
+				safeEnqueue(nwSlice, &queue);
+				safeEnqueue(swSlice, &queue);
 
 				discard = true;
 
@@ -462,9 +463,9 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 				seSlice->top = existing->bottom;
 				seSlice->left = existing->left;
 
-				SAFE_ENQUEUE(wSlice);
-				SAFE_ENQUEUE(neSlice);
-				SAFE_ENQUEUE(seSlice);
+				safeEnqueue(wSlice, &queue);
+				safeEnqueue(neSlice, &queue);
+				safeEnqueue(seSlice, &queue);
 
 				discard = true;
 
@@ -495,7 +496,7 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 
 				nSlice->bottom = intersecting.top;
 
-				SAFE_ENQUEUE(nSlice);
+				safeEnqueue(nSlice, &queue);
 
 				swSlice->right = intersecting.left;
 				swSlice->top = intersecting.top;
@@ -507,7 +508,7 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 						intersecting.findIntersectingRect(*nSlice).height() == 0);
 
 
-				SAFE_ENQUEUE(swSlice);
+				safeEnqueue(swSlice, &queue);
 
 				discard = true;
 
@@ -538,7 +539,7 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 
 				nSlice->bottom = intersecting.top;
 
-				SAFE_ENQUEUE(nSlice);
+				safeEnqueue(nSlice, &queue);
 
 				seSlice->left = intersecting.right;
 				seSlice->top = intersecting.top;
@@ -549,7 +550,7 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 				assert (intersecting.findIntersectingRect(*nSlice).width() == 0 ||
 						intersecting.findIntersectingRect(*nSlice).height() == 0);
 
-				SAFE_ENQUEUE(seSlice);
+				safeEnqueue(seSlice, &queue);
 
 				discard = true;
 
@@ -581,7 +582,7 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 
 				sSlice->top = intersecting.bottom;
 
-				SAFE_ENQUEUE(sSlice);
+				safeEnqueue(sSlice, &queue);
 
 				neSlice->left = intersecting.right;
 				neSlice->bottom = intersecting.bottom;
@@ -592,7 +593,7 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 				assert (intersecting.findIntersectingRect(*sSlice).width() == 0 ||
 						intersecting.findIntersectingRect(*sSlice).height() == 0);
 
-				SAFE_ENQUEUE(neSlice);
+				safeEnqueue(neSlice, &queue);
 
 				discard = true;
 
@@ -623,7 +624,7 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 
 				sSlice->top = intersecting.bottom;
 
-				SAFE_ENQUEUE(sSlice);
+				safeEnqueue(sSlice, &queue);
 
 				nwSlice->right = intersecting.left;
 				nwSlice->bottom = intersecting.bottom;
@@ -634,7 +635,7 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 				assert (intersecting.findIntersectingRect(*sSlice).width() == 0 ||
 						intersecting.findIntersectingRect(*sSlice).height() == 0);
 
-				SAFE_ENQUEUE(nwSlice);
+				safeEnqueue(nwSlice, &queue);
 
 				discard = true;
 

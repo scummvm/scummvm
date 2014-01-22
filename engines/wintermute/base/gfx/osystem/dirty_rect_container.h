@@ -108,6 +108,11 @@ private:
 	 * This is performed by reset()
 	 */
 	Common::Array<Common::Rect *> _cleanMe;
+	/**
+	 * Safe enqueue utility.
+	 * Good for leaks, good for readability.
+	 */
+	void safeEnqueue (Common::Rect *slice, Common::Array<Common::Rect *> *queue);
 	Common::Rect *_clipRect;
 	/**
 	 * True if DR are temporarily disabled.
