@@ -1031,7 +1031,12 @@ bool AGOSEngine::loadGame(const Common::String &filename, bool restartMode) {
 
 	if (restartMode) {
 		// Load restart state
-		f = _archives.createReadStreamForMember(filename);
+		Common::File *file = new Common::File();
+		if (!file->open(filename)) {
+			delete file;
+			file = nullptr;
+		}
+		f = file;
 	} else {
 		f = _saveFileMan->openForLoading(filename);
 	}
@@ -1205,7 +1210,12 @@ bool AGOSEngine_Elvira2::loadGame(const Common::String &filename, bool restartMo
 
 	if (restartMode) {
 		// Load restart state
-		f = _archives.createReadStreamForMember(filename);
+		Common::File *file = new Common::File();
+		if (!file->open(filename)) {
+			delete file;
+			file = nullptr;
+		}
+		f = file;
 	} else {
 		f = _saveFileMan->openForLoading(filename);
 	}
