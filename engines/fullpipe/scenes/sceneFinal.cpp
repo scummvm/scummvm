@@ -64,4 +64,83 @@ int sceneFinal_updateCursor() {
 	return g_fp->_cursorId;
 }
 
+void sceneHandlerFinal_endFinal() {
+	warning("STUB: sceneHandlerFinal_endFinal()");
+}
+
+void sceneHandlerFinal_startMusic(const char *track) {
+	warning("STUB: sceneHandlerFinal_startMusic()");
+}
+
+void sceneHandlerFinal_goto4() {
+	warning("STUB: sceneHandlerFinal_goto4()");
+}
+
+void sceneHandlerFinal_goto3() {
+	warning("STUB: sceneHandlerFinal_goto3()");
+}
+
+void sceneHandlerFinal_goto2() {
+	warning("STUB: sceneHandlerFinal_goto2()");
+}
+
+void sceneHandlerFinal_startFinal() {
+	warning("STUB: sceneHandlerFinal_startFinal()");
+}
+
+void sceneHandlerFinal_fallCoin() {
+	warning("STUB: sceneHandlerFinal_fallCoin()");
+}
+
+int sceneHandlerFinal(ExCommand *cmd) {
+	if (cmd->_messageKind != 17)
+		return 0;
+
+	switch (cmd->_messageNum) {
+	case MSG_FIN_ENDFINAL:
+		sceneHandlerFinal_endFinal();
+		break;
+
+	case MSG_FN4_STARTMUSIC:
+		sceneHandlerFinal_startMusic("track16.ogg");
+		break;
+
+	case MSG_FIN_GOTO4:
+		sceneHandlerFinal_goto4();
+
+		g_fp->playTrack(g_fp->getGameLoaderGameVar()->getSubVarByName("SC_FINAL1"), "MUSIC3", 1);
+		break;
+
+	case MSG_FIN_GOTO3:
+		sceneHandlerFinal_goto3();
+		break;
+
+	case MSG_FIN_GOTO2:
+		sceneHandlerFinal_goto2();
+		break;
+
+	case MSG_FIN_STARTFINAL:
+		sceneHandlerFinal_startFinal();
+		break;
+
+	case 33:
+		if (g_fp->_aniMan2) {
+			g_vars->sceneFinal_var03 = g_fp->_aniMan2->_ox;
+
+			if (g_vars->sceneFinal_var03 < 450 && g_vars->sceneFinal_var02 >= 450 )
+				sceneHandlerFinal_fallCoin();
+
+			g_vars->sceneFinal_var02 = g_vars->sceneFinal_var03;
+		}
+
+		g_fp->_behaviorManager->updateBehaviors();
+
+		g_fp->startSceneTrack();
+
+		break;
+	}
+
+	return 0;
+}
+
 } // End of namespace Fullpipe

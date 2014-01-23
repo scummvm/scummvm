@@ -1350,6 +1350,14 @@ namespace Fullpipe {
 #define QU_SC38_ENTERLIFT 2836
 #define QU_SC38_EXITLIFT 2837
 
+// Final scene
+#define MSG_FIN_ENDFINAL 5109
+#define MSG_FIN_GOTO2 5024
+#define MSG_FIN_GOTO3 5071
+#define MSG_FIN_GOTO4 5075
+#define MSG_FIN_STARTFINAL 5025
+#define MSG_FN4_STARTMUSIC 5356
+
 // Debug scene
 #define MSG_RESTARTGAME 4767
 #define PIC_SCD_1 727
