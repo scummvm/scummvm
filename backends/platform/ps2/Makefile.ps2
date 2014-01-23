@@ -140,19 +140,19 @@ endif
 
 # Test for debug
 ifeq ($(ENABLE_DEBUG),1)
-FLAGS += -G2 -g
 DEFINES += -D__PS2_DEBUG__
+FLAGS += -G2 -g
 LIBS += -lps2gdbStub -lps2ip -ldebug
 else
-FLAGS += -G2 -O2 -s -Wuninitialized
 DEFINES += -DRELEASE_BUILD
+FLAGS += -G2 -O2 -s -Wuninitialized
 # LDFLAGS += -s
 endif
 
 # Test for profiling
 ifeq ($(ENABLE_PROFILING),1)
 DEFINES += -DENABLE_PROFILING
-CXXFLAGS += -pg -g
+FLAGS += -G2 -pg -g
 LDFLAGS += -pg
 endif
 
