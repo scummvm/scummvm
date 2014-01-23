@@ -117,6 +117,13 @@ struct ModelUserData {
 	uint32 _meshInfoVBO;
 };
 
+struct ShadowUserData {
+	uint32 _verticesVBO;
+	uint32 _indicesVBO;
+	uint32 _numTriangles;
+};
+
+
 // taken from glm
 Math::Matrix4 makeLookMatrix(const Math::Vector3d& pos, const Math::Vector3d& interest, const Math::Vector3d& up) {
 	Math::Vector3d f = (interest - pos).getNormalized();
@@ -283,16 +290,23 @@ void GfxOpenGLS::setupShaders() {
 	_actorProgram = Graphics::Shader::fromFiles(isEMI ? "emi_actor" : "grim_actor", actorAttributes);
 	_spriteProgram = _actorProgram->clone();
 
-	static const char* primAttributes[] = {"position", NULL};
-	_primitiveProgram = Graphics::Shader::fromFiles("grim_primitive", primAttributes);
-	_irisProgram = _primitiveProgram->clone();
+	if (!isEMI) {
+		static const char* primAttributes[] = {"position", NULL};
+		_primitiveProgram = Graphics::Shader::fromFiles("grim_primitive", primAttributes);
+		_irisProgram = _primitiveProgram->clone();
+
+		_shadowPlaneProgram = Graphics::Shader::fromFiles("grim_shadowplane", primAttributes);
+	}
 
 	setupQuadEBO();
 	setupTexturedQuad();
 	setupTexturedCenteredQuad();
-	setupPrimitives();
 
-	_blastVBO = Graphics::Shader::createBuffer(GL_ARRAY_BUFFER, 128 * 16 * sizeof(float), NULL, GL_DYNAMIC_DRAW);
+	if (!isEMI) {
+		setupPrimitives();
+
+		_blastVBO = Graphics::Shader::createBuffer(GL_ARRAY_BUFFER, 128 * 16 * sizeof(float), NULL, GL_DYNAMIC_DRAW);
+	}
 }
 
 byte *GfxOpenGLS::setupScreen(int screenW, int screenH, bool fullscreen) {
@@ -372,6 +386,7 @@ void GfxOpenGLS::positionCamera(const Math::Vector3d &pos, const Math::Vector3d 
 		Math::Matrix4 lookMatrix = makeLookMatrix(pos, interest, up_vec);
 
 		_viewMatrix = viewMatrix * lookMatrix;
+		_viewMatrix.transpose();
 	}
 }
 
@@ -426,6 +441,7 @@ void GfxOpenGLS::startActorDraw(const Actor *actor) {
 
 		modelMatrix.transpose();
 		modelMatrix.setPosition(pos);
+		modelMatrix.transpose();
 		_mvpMatrix = _viewMatrix * modelMatrix;
 		_mvpMatrix.transpose();
 
@@ -439,6 +455,26 @@ void GfxOpenGLS::startActorDraw(const Actor *actor) {
 		_actorProgram->setUniform("hasZBuffer", hasZBuffer);
 		_actorProgram->setUniform("texcropZBuf", _zBufTexCrop);
 		_actorProgram->setUniform("screenSize", Math::Vector2d(_screenWidth, _screenHeight));
+
+		if (_currentShadowArray) {
+			const Sector *shadowSector = _currentShadowArray->planeList.front().sector;
+			const Math::Vector3d color = Math::Vector3d(_shadowColorR, _shadowColorG, _shadowColorB) / 255.f;
+			Math::Vector3d normal = shadowSector->getNormal();
+			if (!_currentShadowArray->dontNegate)
+				normal = -normal;
+
+			_actorProgram->setUniform("shadow._active", true);
+			_actorProgram->setUniform("shadow._color", color);
+			_actorProgram->setUniform("shadow._light", _currentShadowArray->pos);
+			_actorProgram->setUniform("shadow._point", shadowSector->getVertices()[0]);
+			_actorProgram->setUniform("shadow._normal", normal);
+
+			glDisable(GL_DEPTH_TEST);
+			glDisable(GL_BLEND);
+			glEnable(GL_POLYGON_OFFSET_FILL);
+		} else {
+			_actorProgram->setUniform("shadow._active", false);
+		}
 
 		_actorProgram->setUniform("lightsEnabled", _lightsEnabled);
 		if (_lightsEnabled) {
@@ -466,22 +502,87 @@ void GfxOpenGLS::startActorDraw(const Actor *actor) {
 
 void GfxOpenGLS::finishActorDraw() {
 	_currentActor = NULL;
+	glDisable(GL_POLYGON_OFFSET_FILL);
 }
 
 void GfxOpenGLS::setShadow(Shadow *shadow) {
-
+	_currentShadowArray = shadow;
 }
 
 void GfxOpenGLS::drawShadowPlanes() {
+	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+	glDepthMask(GL_FALSE);
+	glClearStencil(~0);
+	glClear(GL_STENCIL_BUFFER_BIT);
 
+	glEnable(GL_STENCIL_TEST);
+	glStencilFunc(GL_ALWAYS, 1, (GLuint)~0);
+	glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
+	glDisable(GL_TEXTURE_2D);
+
+	if (!_currentShadowArray->userData) {
+		uint32 numVertices = 0;
+		uint32 numTriangles = 0;
+		for (SectorListType::iterator i = _currentShadowArray->planeList.begin(); i != _currentShadowArray->planeList.end(); ++i) {
+			numVertices += i->sector->getNumVertices();
+			numTriangles += i->sector->getNumVertices() - 2;
+		}
+
+		float *vertBuf = new float[3 * numVertices];
+		uint16 *idxBuf = new uint16[3 * numTriangles];
+
+		float *vert = vertBuf;
+		uint16 *idx = idxBuf;
+
+		for (SectorListType::iterator i = _currentShadowArray->planeList.begin(); i != _currentShadowArray->planeList.end(); ++i) {
+			Sector *shadowSector = i->sector;
+			memcpy(vert, shadowSector->getVertices(), 3 * shadowSector->getNumVertices() * sizeof(float));
+			uint16 first = (vert - vertBuf) / 3;
+			for (uint16 j = 2; j < shadowSector->getNumVertices(); ++j) {
+				*idx++ = first;
+				*idx++ = first + j - 1;
+				*idx++ = first + j;
+			}
+			vert += 3 * shadowSector->getNumVertices();
+		}
+
+		ShadowUserData *sud = new ShadowUserData;
+		_currentShadowArray->userData = sud;
+		sud->_numTriangles = numTriangles;
+		sud->_verticesVBO = Graphics::Shader::createBuffer(GL_ARRAY_BUFFER, 3 * numVertices * sizeof(float), vertBuf, GL_STATIC_DRAW);
+		sud->_indicesVBO = Graphics::Shader::createBuffer(GL_ELEMENT_ARRAY_BUFFER, 3 * numTriangles * sizeof(uint16), idxBuf, GL_STATIC_DRAW);
+
+		delete[] vertBuf;
+		delete[] idxBuf;
+	}
+
+	const ShadowUserData *sud = (ShadowUserData *)_currentShadowArray->userData;
+	_shadowPlaneProgram->use();
+	_shadowPlaneProgram->setUniform("projMatrix", _projMatrix);
+	_shadowPlaneProgram->setUniform("viewMatrix", _viewMatrix);
+
+	glBindBuffer(GL_ARRAY_BUFFER, sud->_verticesVBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, sud->_indicesVBO);
+	const uint32 attribPos = _shadowPlaneProgram->getAttribute("position")._idx;
+	glEnableVertexAttribArray(attribPos);
+	glVertexAttribPointer(attribPos, 3, GL_FLOAT, GL_TRUE, 3 * sizeof(float), 0);
+	glDrawElements(GL_TRIANGLES, 3 * sud->_numTriangles, GL_UNSIGNED_SHORT, 0);
+
+	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+
+	glStencilFunc(GL_EQUAL, 1, (GLuint)~0);
+	glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
 }
 
 void GfxOpenGLS::setShadowMode() {
-
+	GfxBase::setShadowMode();
 }
 
 void GfxOpenGLS::clearShadowMode() {
+	GfxBase::clearShadowMode();
 
+	glDisable(GL_STENCIL_TEST);
+	glDepthMask(GL_TRUE);
 }
 
 bool GfxOpenGLS::isShadowModeActive() {
@@ -489,11 +590,15 @@ bool GfxOpenGLS::isShadowModeActive() {
 }
 
 void GfxOpenGLS::setShadowColor(byte r, byte g, byte b) {
-
+	_shadowColorR = r;
+	_shadowColorG = g;
+	_shadowColorB = b;
 }
 
 void GfxOpenGLS::getShadowColor(byte *r, byte *g, byte *b) {
-
+	*r = _shadowColorR;
+	*g = _shadowColorG;
+	*b = _shadowColorB;
 }
 
 
@@ -570,7 +675,8 @@ void GfxOpenGLS::drawMesh(const Mesh *mesh) {
 			faces += 3 * (mesh->_faces[i]._numVertices - 2);
 		}
 
-		actorShader->setUniform("textured", face->_texVertices ? GL_TRUE : GL_FALSE);
+		bool textured = face->_texVertices && ! _currentShadowArray;
+		actorShader->setUniform("textured", textured ? GL_TRUE : GL_FALSE);
 		actorShader->setUniform("texScale", Math::Vector2d(_selectedTexture->_width, _selectedTexture->_height));
 
 		glDrawArrays(GL_TRIANGLES, *(int *)face->_userData, faces);

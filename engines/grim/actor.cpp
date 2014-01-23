@@ -48,7 +48,7 @@
 namespace Grim {
 
 Shadow::Shadow() :
-		shadowMask(NULL), shadowMaskSize(0), active(false), dontNegate(false) {
+		shadowMask(NULL), shadowMaskSize(0), active(false), dontNegate(false), userData(NULL) {
 }
 
 static int animTurn(float turnAmt, const Math::Angle &dest, Math::Angle *cur) {

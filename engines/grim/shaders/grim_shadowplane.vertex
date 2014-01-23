@@ -1,0 +1,10 @@
+in vec3 position;
+
+uniform highp mat4 projMatrix;
+uniform highp mat4 viewMatrix;
+
+void main()
+{
+	vec4 pos = vec4(position, 1.0);
+	gl_Position = projMatrix * viewMatrix * pos;
+}
