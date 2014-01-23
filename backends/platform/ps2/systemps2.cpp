@@ -150,6 +150,10 @@ extern "C" int main(int argc, char *argv[]) {
 
 	g_systemPs2->quit();
 
+#ifdef ENABLE_PROFILING
+	// make sure we can flush "gmon.out"
+	fileXioSetBlockMode(FXIO_WAIT);
+#endif
 	// control never gets here
 	return res;
 }
@@ -467,15 +471,25 @@ void OSystem_PS2::initTimer(void) {
 	_timerStack = (uint8 *)memalign(64, TIMER_STACK_SIZE);
 	_soundStack = (uint8 *)memalign(64, SOUND_STACK_SIZE);
 
+	// gprof doesn't cope with higher thread priority too well
+	#ifdef ENABLE_PROFILING
+	timerThread.initial_priority = thisThread.current_priority;
+	#else
 	// give timer thread a higher priority than main thread
 	timerThread.initial_priority = thisThread.current_priority - 1;
+	#endif
 	timerThread.stack            = _timerStack;
 	timerThread.stack_size       = TIMER_STACK_SIZE;
 	timerThread.func             = (void *)systemTimerThread;
 	timerThread.gp_reg           = &_gp;
 
+	// gprof doesn't cope with higher thread priority too well
+	#ifdef ENABLE_PROFILING
+	soundThread.initial_priority = thisThread.current_priority;
+	#else
 	// soundthread's priority is higher than main- and timerthread
 	soundThread.initial_priority = thisThread.current_priority - 2;
+	#endif
 	soundThread.stack            = _soundStack;
 	soundThread.stack_size       = SOUND_STACK_SIZE;
 	soundThread.func             = (void *)systemSoundThread;
@@ -888,7 +902,10 @@ void OSystem_PS2::quit(void) {
 	printf("OSystem_PS2::quit called\n");
 	if (_bootDevice == HOST_DEV) {
 		printf("OSystem_PS2::quit (HOST)\n");
+		#ifndef ENABLE_PROFILING
 		SleepThread();
+		#endif
+		// exit(0);
 	} else {
 		printf("OSystem_PS2::quit (bootdev=%d)\n", _bootDevice);
 		if (_useHdd) {
