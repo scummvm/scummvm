@@ -378,7 +378,12 @@ Gs2dScreen::Gs2dScreen(uint16 width, uint16 height) {
 	createAnimTextures();
 
 	// create animation thread
+	#ifdef __NEW_PS2SDK__
+	ee_thread_t animThread;
+	ee_thread_status_t thisThread;
+	#else
 	ee_thread_t animThread, thisThread;
+	#endif
 	ReferThreadStatus(GetThreadId(), &thisThread);
 
 	_animStack = memalign(64, ANIM_STACK_SIZE);
@@ -395,7 +400,11 @@ Gs2dScreen::Gs2dScreen(uint16 width, uint16 height) {
 
 void Gs2dScreen::quit(void) {
 	_systemQuit = true;
+	#ifdef __NEW_PS2SDK__
+	ee_thread_status_t statAnim;
+	#else
 	ee_thread_t statAnim;
+	#endif
 	do { // wait until thread called ExitThread()
 		SignalSema(g_AnimSema);
 		ReferThreadStatus(_animTid, &statAnim);
