@@ -128,43 +128,6 @@ private:
 	AvalancheConsole *_console;
 	Common::Platform _platform;
 
-#if 0
-	struct {
-		byte _operation;
-		uint16 _skellern;
-		byte _contents[1000];
-	} _storage;
-
-	static const int16 kRunShootemup = 1, kRunDosshell = 2, kRunGhostroom = 3, kRunGolden = 4;
-	static const int16 kReset = 0;
-
-	static const bool kJsb = true, kNoJsb = false, kBflight = true, kNoBflight = false;
-
-	// From bootstrp:
-	enum Elm {kNormal, kMusical, kElmpoyten, kRegi};
-
-	Common::String _argsWithNoFilename;
-	byte _originalMode;
-	byte *_old1c;
-	Common::String _segofs;
-	int32 _soundcard, _speed, _baseaddr, _irq, _dma;
-	bool _zoomy;
-
-	void run(Common::String what, bool withJsb, bool withBflight, Elm how);
-	void bFlightOn();
-	void bFlightOff();
-	Common::String elmToStr(Elm how);
-	bool keyPressed();
-	void flushBuffer();
-	void dosShell();
-	void bFlight();
-	Common::String commandCom();
-	void explain(byte error);
-	void cursorOff();
-	void cursorOn();
-	void quit();
-#endif
-
 public:
 	// For Thinkabout:
 	static const bool kThing = true;
@@ -173,7 +136,6 @@ public:
 	static const char kSpludwicksOrder[3];
 
 	static const uint16 kNotes[12];
-	static const TuneType kTune;
 
 	bool _holdLeftMouse;
 

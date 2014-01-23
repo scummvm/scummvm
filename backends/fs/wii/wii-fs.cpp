@@ -80,9 +80,9 @@ void WiiFilesystemNode::clearFlags() {
 
 void WiiFilesystemNode::setFlags(const struct stat *st) {
 	_exists = true;
-	_isDirectory = S_ISDIR(st->st_mode);
-	_isReadable = (st->st_mode & S_IRUSR) > 0;
-	_isWritable = (st->st_mode & S_IWUSR) > 0;
+	_isDirectory = ( (st->st_mode & S_IFDIR) != 0 );
+	_isReadable = ( (st->st_mode & S_IRUSR) != 0 );
+	_isWritable = ( (st->st_mode & S_IWUSR) != 0 );
 }
 
 WiiFilesystemNode::WiiFilesystemNode() {
@@ -106,7 +106,7 @@ WiiFilesystemNode::WiiFilesystemNode(const Common::String &p) {
 	_displayName = lastPathComponent(_path, '/');
 
 	struct stat st;
-	if (!stat(_path.c_str(), &st))
+	if(stat(_path.c_str(), &st) != -1)
 		setFlags(&st);
 	else
 		clearFlags();
@@ -152,33 +152,45 @@ bool WiiFilesystemNode::getChildren(AbstractFSList &list, ListMode mode, bool hi
 	if (_path.empty())
 		return getDevopChildren(list, mode, hidden);
 
-	DIR_ITER* dp = diropen (_path.c_str());
+	DIR* dp = opendir (_path.c_str());
+	DIR* tmpdir;
 
 	if (dp == NULL)
 		return false;
 
-	char filename[MAXPATHLEN];
-	struct stat st;
+	struct dirent *pent;
 
-	while (dirnext(dp, filename, &st) == 0) {
-		if (strcmp(filename, ".") == 0 || strcmp(filename, "..") == 0)
+	while ((pent = readdir(dp)) != NULL) {
+		if (strcmp(pent->d_name, ".") == 0 || strcmp(pent->d_name, "..") == 0)
 			continue;
 
 		Common::String newPath(_path);
 		if (newPath.lastChar() != '/')
-			newPath += '/';
-		newPath += filename;
-
-		bool isDir = S_ISDIR(st.st_mode);
-
+		  newPath += '/';
+		newPath += pent->d_name;
+	  
+		bool isDir = false;
+		tmpdir = opendir(newPath.c_str());
+		if(tmpdir)
+		{
+			isDir = true;
+			closedir(tmpdir);
+		}
+		
 		if ((mode == Common::FSNode::kListFilesOnly && isDir) ||
 			(mode == Common::FSNode::kListDirectoriesOnly && !isDir))
 			continue;
-
+		
+		struct stat st;
+		st.st_mode = 0;
+		st.st_mode |= ( isDir ? S_IFDIR : 0 );
+		st.st_mode |= S_IRUSR;
+		st.st_mode |= S_IWUSR;
+			
 		list.push_back(new WiiFilesystemNode(newPath, &st));
 	}
 
-	dirclose(dp);
+	closedir(dp);
 
 	return true;
 }

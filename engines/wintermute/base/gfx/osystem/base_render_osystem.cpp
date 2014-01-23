@@ -399,10 +399,23 @@ void BaseRenderOSystem::drawTickets() {
 		return;
 	}
 
-	// Apply the clear-color to the dirty rect.
-	_renderSurface->fillRect(*_dirtyRect, _clearColor);
+	it = _renderQueue.begin();
 	_lastFrameIter = _renderQueue.end();
-	for (it = _renderQueue.begin(); it != _renderQueue.end(); ++it) {
+	// A special case: If the screen has one giant OPAQUE rect to be drawn, then we skip filling
+	// the background colour. Typical use-case: Fullscreen FMVs.
+	// Caveat: The FPS-counter will invalidate this.
+	if (it != _lastFrameIter && _renderQueue.front() == _renderQueue.back() && (*it)->_transform._alphaDisable == true) {
+		// If our single opaque rect fills the dirty rect, we can skip filling.
+		if (*_dirtyRect != (*it)->_dstRect) {
+			// Apply the clear-color to the dirty rect.
+			_renderSurface->fillRect(*_dirtyRect, _clearColor);
+		}
+		// Otherwise Do NOT fill.
+	} else {
+		// Apply the clear-color to the dirty rect.
+		_renderSurface->fillRect(*_dirtyRect, _clearColor);
+	}
+	for (; it != _renderQueue.end(); ++it) {
 		RenderTicket *ticket = *it;
 		if (ticket->_dstRect.intersects(*_dirtyRect)) {
 			// dstClip is the area we want redrawn.

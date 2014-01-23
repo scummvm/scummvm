@@ -123,6 +123,7 @@ public:
 	void removeBackup();
 
 private:
+	static const int16 kMouseSize = 134;
 	static const uint16 kBackgroundWidth = kScreenWidth;
 	static const byte kEgaPaletteIndex[16];
 	static const byte kBackgroundHeight = 8 * 12080 / kScreenWidth; // With 640 width it's 151.

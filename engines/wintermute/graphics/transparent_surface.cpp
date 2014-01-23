@@ -519,9 +519,9 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 		byte *ino= (byte *)img->getBasePtr(xp, yp);
 		byte *outo = (byte *)target.getBasePtr(posX, posY);
 
-		if (color == 0xFFFFFF && blendMode == BLEND_NORMAL && _alphaMode == ALPHA_OPAQUE) {
+		if (color == 0xFFFFFFFF && blendMode == BLEND_NORMAL && _alphaMode == ALPHA_OPAQUE) {
 			doBlitOpaqueFast(ino, outo, img->w, img->h, target.pitch, inStep, inoStep);
-		} else if (color == 0xFFFFFF && blendMode == BLEND_NORMAL && _alphaMode == ALPHA_BINARY) {
+		} else if (color == 0xFFFFFFFF && blendMode == BLEND_NORMAL && _alphaMode == ALPHA_BINARY) {
 			doBlitBinaryFast(ino, outo, img->w, img->h, target.pitch, inStep, inoStep);
 		} else {
 			if (blendMode == BLEND_ADDITIVE) {
