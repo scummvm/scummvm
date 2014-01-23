@@ -816,6 +816,7 @@ public:
 	void scene32_run();
 	void scene32_updateAnimations();
 	
+	// Scene 33
 	int _s33_currChickenSequenceId, _s33_nextChickenSequenceId;
 	int scene33_init();
 	void scene33_updateHotspots();
