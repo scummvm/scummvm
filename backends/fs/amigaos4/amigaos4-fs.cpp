@@ -81,6 +81,7 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode(const Common::String &p) {
 	_sDisplayName = ::lastPathComponent(_sPath);
 	_pFileLock = 0;
 	_bIsDirectory = false;
+	_bIsValid = false;
 
 	// Check whether the node exists and if it is a directory
 	struct ExamineData * pExd = IDOS->ExamineObjectTags(EX_StringNameInput,_sPath.c_str(),TAG_END);
@@ -305,12 +306,6 @@ bool AmigaOSFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, b
 AbstractFSNode *AmigaOSFilesystemNode::getParent() const {
 	ENTER();
 
-	if (!_bIsDirectory) {
-		debug(6, "Not a directory");
-		LEAVE();
-		return 0;
-	}
-
 	if (_pFileLock == 0) {
 		debug(6, "Root node");
 		LEAVE();
@@ -332,6 +327,9 @@ AbstractFSNode *AmigaOSFilesystemNode::getParent() const {
 }
 
 bool AmigaOSFilesystemNode::isReadable() const {
+	if (!_bIsValid)
+		return false;
+
 	// Regular RWED protection flags are low-active or inverted, thus the negation.
 	// moreover pseudo root filesystem (null _pFileLock) is readable whatever the
 	// protection says
@@ -341,6 +339,9 @@ bool AmigaOSFilesystemNode::isReadable() const {
 }
 
 bool AmigaOSFilesystemNode::isWritable() const {
+	if (!_bIsValid)
+		return false;
+
 	// Regular RWED protection flags are low-active or inverted, thus the negation.
 	// moreover pseudo root filesystem (null _pFileLock) is never writable whatever
 	// the protection says (because of the pseudo nature)
