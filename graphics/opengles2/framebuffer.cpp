@@ -28,12 +28,12 @@
 
 namespace Graphics {
 
-FrameBuffer::FrameBuffer(GLuint texture_name, uint width, uint height) : _colorTexture(texture_name), _width(width), _height(height) {
+FrameBuffer::FrameBuffer(GLuint texture_name, uint width, uint height, uint texture_width, uint texture_height) : _colorTexture(texture_name), _width(width), _height(height) {
 	glGenFramebuffers(1, &_frameBuffer);
 	glGenRenderbuffers(1, &_depthRenderBuffer);
 
 	glBindRenderbuffer(GL_RENDERBUFFER, _depthRenderBuffer);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, width, height);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, texture_width, texture_height);
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer);

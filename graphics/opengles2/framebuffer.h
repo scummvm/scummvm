@@ -29,7 +29,7 @@ namespace Graphics {
 
 class FrameBuffer {
 public:
-	FrameBuffer(GLuint texture_name, uint width, uint height);
+	FrameBuffer(GLuint texture_name, uint width, uint height, uint texture_width, uint texture_height);
 	~FrameBuffer();
 
 	void attach();
