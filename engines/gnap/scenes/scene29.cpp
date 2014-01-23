@@ -36,6 +36,11 @@ enum {
 	kHSWalkArea1		= 6
 };
 
+enum {
+	kASUseBananaWithMonkey		= 0,
+	kASLeaveScene				= 2
+};
+
 int GnapEngine::scene29_init() {
 	return 0xF6;
 }
@@ -60,13 +65,13 @@ void GnapEngine::scene29_run() {
 	queueInsertDeviceIcon();
 
 	if (invHas(kItemHorn)) {
-		_s29_dword_47EA74 = 0xE8;
-		_s29_dword_47EA78 = -1;
+		_s28_currMonkeySequenceId = 0xE8;
+		_s28_nextMonkeySequenceId = -1;
 		_gameSys->setAnimation(0xE8, 159, 4);
-		_gameSys->insertSequence(_s29_dword_47EA74, 159, 0, 0, kSeqNone, 0, 0, 0);
+		_gameSys->insertSequence(_s28_currMonkeySequenceId, 159, 0, 0, kSeqNone, 0, 0, 0);
 		_gameSys->insertSequence(0xED, 39, 0, 0, kSeqNone, 0, 0, 0);
-		_s29_dword_47EA7C = 0xED;
-		_s29_dword_47EA80 = -1;
+		_s28_currManSequenceId = 0xED;
+		_s28_nextManSequenceId = -1;
 		_gameSys->setAnimation(0xED, 39, 3);
 		_timers[4] = getRandom(20) + 60;
 	} else {
@@ -141,9 +146,9 @@ void GnapEngine::scene29_run() {
 				if (_grabCursorSpriteIndex == kItemBanana) {
 					_gnapIdleFacing = 1;
 					gnapWalkTo(_hotspotsWalkPos[kHSMonkey].x, _hotspotsWalkPos[kHSMonkey].y, 0, getGnapSequenceId(gskIdle, 0, 0) | 0x10000, 1);
-					_gnapActionStatus = 0;
+					_gnapActionStatus = kASUseBananaWithMonkey;
 					_newSceneNum = 51;
-					_isLeavingScene = 1;
+					_isLeavingScene = true;
 					setGrabCursorSprite(-1);
 				} else if (_grabCursorSpriteIndex >= 0) {
 					playGnapShowCurrItem(_hotspotsWalkPos[kHSMonkey].x, _hotspotsWalkPos[kHSMonkey].y, 5, 6);
@@ -166,20 +171,20 @@ void GnapEngine::scene29_run() {
 
 		case kHSExitCircus:
 			if (_gnapActionStatus < 0) {
-				_isLeavingScene = 1;
+				_isLeavingScene = true;
 				_newSceneNum = 26;
 				gnapWalkTo(_hotspotsWalkPos[kHSExitCircus].x, _hotspotsWalkPos[kHSExitCircus].y, 0, 0x107AE, 1);
-				_gnapActionStatus = 2;
+				_gnapActionStatus = kASLeaveScene;
 				platypusWalkTo(_hotspotsWalkPos[kHSExitCircus].x + 1, _hotspotsWalkPos[kHSExitCircus].y, -1, -1, 1);
 			}
 			break;
 
 		case kHSExitOutsideClown:
 			if (_gnapActionStatus < 0) {
-				_isLeavingScene = 1;
+				_isLeavingScene = true;
 				_newSceneNum = 27;
 				gnapWalkTo(_hotspotsWalkPos[kHSExitOutsideClown].x, _hotspotsWalkPos[kHSExitOutsideClown].y, 0, 0x107AB, 1);
-				_gnapActionStatus = 2;
+				_gnapActionStatus = kASLeaveScene;
 				platypusWalkTo(_hotspotsWalkPos[kHSExitOutsideClown].x, _hotspotsWalkPos[kHSExitOutsideClown].y - 1, -1, 0x107CD, 1);
 			}
 			break;
@@ -188,11 +193,11 @@ void GnapEngine::scene29_run() {
 			if (_gnapActionStatus < 0) {
 				if (_grabCursorSpriteIndex == kItemDiceQuarterHole) {
 					setGrabCursorSprite(-1);
-					_isLeavingScene = 1;
+					_isLeavingScene = true;
 					_newSceneNum = 52;
 					gnapWalkTo(_hotspotsWalkPos[kHSAracde].x, _hotspotsWalkPos[kHSAracde].y, 0, -1, 1);
 					playGnapIdle(_hotspotsWalkPos[kHSAracde].x, _hotspotsWalkPos[kHSAracde].y);
-					_gnapActionStatus = 2;
+					_gnapActionStatus = kASLeaveScene;
 				} else if (_grabCursorSpriteIndex >= 0) {
 					playGnapShowCurrItem(_hotspotsWalkPos[kHSAracde].x, _hotspotsWalkPos[kHSAracde].y, 2, 3);
 				} else {
@@ -239,19 +244,19 @@ void GnapEngine::scene29_run() {
 					if (_gnapActionStatus < 0) {
 						switch (getRandom(5)) {
 						case 0:
-							_s29_dword_47EA80 = 0xED;
+							_s28_nextManSequenceId = 0xED;
 							break;
 						case 1:
-							_s29_dword_47EA80 = 0xEE;
+							_s28_nextManSequenceId = 0xEE;
 							break;
 						case 2:
-							_s29_dword_47EA80 = 0xEF;
+							_s28_nextManSequenceId = 0xEF;
 							break;
 						case 3:
-							_s29_dword_47EA80 = 0xF0;
+							_s28_nextManSequenceId = 0xF0;
 							break;
 						case 4:
-							_s29_dword_47EA80 = 0xF1;
+							_s28_nextManSequenceId = 0xF1;
 							break;
 						}
 					}
@@ -279,71 +284,70 @@ void GnapEngine::scene29_updateAnimations() {
 	if (_gameSys->getAnimationStatus(0) == 2) {
 		_gameSys->setAnimation(0, 0, 0);
 		switch (_gnapActionStatus) {
-		case 0:
-			_s29_dword_47EA78 = 0xE5;
+		case kASUseBananaWithMonkey:
+			_s28_nextMonkeySequenceId = 0xE5;
 			break;
-		case 1:
-		case 2:
+		case kASLeaveScene:
 			_sceneDone = true;
 			break;
 		}
 	}
 
-	if (_gameSys->getAnimationStatus(3) == 2 && _s29_dword_47EA80 != -1) {
-		_gameSys->insertSequence(_s29_dword_47EA80, 39, _s29_dword_47EA7C, 39, kSeqSyncWait, 0, 0, 0);
-		_gameSys->setAnimation(_s29_dword_47EA80, 39, 3);
-		_s29_dword_47EA7C = _s29_dword_47EA80;
-		_s29_dword_47EA80 = -1;
+	if (_gameSys->getAnimationStatus(3) == 2 && _s28_nextManSequenceId != -1) {
+		_gameSys->insertSequence(_s28_nextManSequenceId, 39, _s28_currManSequenceId, 39, kSeqSyncWait, 0, 0, 0);
+		_gameSys->setAnimation(_s28_nextManSequenceId, 39, 3);
+		_s28_currManSequenceId = _s28_nextManSequenceId;
+		_s28_nextManSequenceId = -1;
 	}
 
 	if (_gameSys->getAnimationStatus(4) == 2) {
-		if (_s29_dword_47EA78 == 0xE5) {
+		if (_s28_nextMonkeySequenceId == 0xE5) {
 			_gameSys->insertSequence(0xF2, _gnapId, makeRid(_gnapSequenceDatNum, _gnapSequenceId), _gnapId, kSeqSyncWait, 0, 0, 0);
 			_gnapSequenceDatNum = 0;
 			_gnapSequenceId = 0xF2;
 			_gameSys->setAnimation(0xE6, 159, 0);
 			_gameSys->setAnimation(0, 159, 4);
-			_gameSys->insertSequence(_s29_dword_47EA78, 159, _s29_dword_47EA74, 159, kSeqSyncWait, 0, 0, 0);
-			_gameSys->insertSequence(0xE6, 159, _s29_dword_47EA78, 159, kSeqSyncWait, 0, 0, 0);
-			_gnapActionStatus = 1;
-			_s29_dword_47EA74 = 0xE6;
-			_s29_dword_47EA78 = -1;
+			_gameSys->insertSequence(_s28_nextMonkeySequenceId, 159, _s28_currMonkeySequenceId, 159, kSeqSyncWait, 0, 0, 0);
+			_gameSys->insertSequence(0xE6, 159, _s28_nextMonkeySequenceId, 159, kSeqSyncWait, 0, 0, 0);
+			_gnapActionStatus = kASLeaveScene;
+			_s28_currMonkeySequenceId = 0xE6;
+			_s28_nextMonkeySequenceId = -1;
 			_timers[5] = 30;
 			while (_timers[5])
 				gameUpdateTick();
 			platypusWalkTo(0, 8, 1, 0x107CF, 1);
 			while (_gameSys->getAnimationStatus(1) != 2)
 				gameUpdateTick();
-		} else if (_s29_dword_47EA78 == -1) {
+		} else if (_s28_nextMonkeySequenceId == -1) {
 			switch (getRandom(6)) {
 			case 0:
-				_s29_dword_47EA78 = 0xE8;
+				_s28_nextMonkeySequenceId = 0xE8;
 				break;
 			case 1:
-				_s29_dword_47EA78 = 0xE9;
+				_s28_nextMonkeySequenceId = 0xE9;
 				break;
 			case 2:
-				_s29_dword_47EA78 = 0xEA;
+				_s28_nextMonkeySequenceId = 0xEA;
 				break;
 			case 3:
-				_s29_dword_47EA78 = 0xEB;
+				_s28_nextMonkeySequenceId = 0xEB;
 				break;
 			case 4:
-				_s29_dword_47EA78 = 0xEC;
+				_s28_nextMonkeySequenceId = 0xEC;
 				break;
 			case 5:
-				_s29_dword_47EA78 = 0xE7;
+				_s28_nextMonkeySequenceId = 0xE7;
 				break;
 			}
-			_gameSys->insertSequence(_s29_dword_47EA78, 159, _s29_dword_47EA74, 159, kSeqSyncWait, 0, 0, 0);
-			_gameSys->setAnimation(_s29_dword_47EA78, 159, 4);
-			_s29_dword_47EA74 = _s29_dword_47EA78;
-			_s29_dword_47EA78 = -1;
+			_gameSys->insertSequence(_s28_nextMonkeySequenceId, 159, _s28_currMonkeySequenceId, 159, kSeqSyncWait, 0, 0, 0);
+			_gameSys->setAnimation(_s28_nextMonkeySequenceId, 159, 4);
+			_s28_currMonkeySequenceId = _s28_nextMonkeySequenceId;
+			_s28_nextMonkeySequenceId = -1;
 		} else {
-			_gameSys->insertSequence(_s29_dword_47EA78, 159, _s29_dword_47EA74, 159, kSeqSyncWait, 0, 0, 0);
-			_gameSys->setAnimation(_s29_dword_47EA78, 159, 4);
-			_s29_dword_47EA74 = _s29_dword_47EA78;
-			_s29_dword_47EA78 = -1;
+			_gameSys->insertSequence(_s28_nextMonkeySequenceId, 159, _s28_currMonkeySequenceId, 159, kSeqSyncWait, 0, 0, 0);
+			_gameSys->setAnimation(_s28_nextMonkeySequenceId, 159, 4);
+			_s28_currMonkeySequenceId = _s28_nextMonkeySequenceId;
+			_s28_nextMonkeySequenceId = -1;
 		}
 	}
 	
