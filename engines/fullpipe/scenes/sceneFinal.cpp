@@ -97,7 +97,12 @@ void sceneHandlerFinal_startFinal() {
 }
 
 void sceneHandlerFinal_fallCoin() {
-	warning("STUB: sceneHandlerFinal_fallCoin()");
+	StaticANIObject *coin = g_fp->_currentScene->getStaticANIObject1ById(ANI_FIN_COIN, -1);
+
+	if (!coin->_movement) {
+		if (!coin->_statics || coin->_statics->_staticsId != ST_FCN_NORM)
+			chainQueue(QU_FIN1_FALLCOIN, 1);
+	}
 }
 
 int sceneHandlerFinal(ExCommand *cmd) {

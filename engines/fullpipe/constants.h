@@ -1351,15 +1351,18 @@ namespace Fullpipe {
 #define QU_SC38_EXITLIFT 2837
 
 // Final scene
+#define ANI_FIN_COIN 5014
 #define MSG_FIN_ENDFINAL 5109
 #define MSG_FIN_GOTO2 5024
 #define MSG_FIN_GOTO3 5071
 #define MSG_FIN_GOTO4 5075
 #define MSG_FIN_STARTFINAL 5025
 #define MSG_FN4_STARTMUSIC 5356
+#define QU_FIN1_FALLCOIN 5018
 #define QU_FN2_DOFINAL 5066
 #define QU_FN3_DOFINAL 5072
 #define QU_FN4_DOFINAL 5108
+#define ST_FCN_NORM 5017
 
 // Debug scene
 #define MSG_RESTARTGAME 4767
