@@ -55,4 +55,13 @@ void sceneFinal_initScene() {
 	g_vars->sceneFinal_var03 = 0;
 }
 
+int sceneFinal_updateCursor() {
+	if (g_vars->sceneFinal_var01)
+		g_fp->_cursorId = 0;
+	else
+		g_fp->updateCursorCommon();
+
+	return g_fp->_cursorId;
+}
+
 } // End of namespace Fullpipe
