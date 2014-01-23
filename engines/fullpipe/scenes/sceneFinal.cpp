@@ -33,6 +33,8 @@
 #include "fullpipe/interaction.h"
 #include "fullpipe/behavior.h"
 
+#include "fullpipe/modal.h"
+
 
 namespace Fullpipe {
 
@@ -93,7 +95,20 @@ void sceneHandlerFinal_goto2() {
 }
 
 void sceneHandlerFinal_startFinal() {
-	warning("STUB: sceneHandlerFinal_startFinal()");
+	g_vars->sceneFinal_var01 = 1;
+
+	getCurrSceneSc2MotionController()->clearEnabled();
+	getGameLoaderInteractionController()->disableFlag24();
+
+	g_fp->_aniMan2 = 0;
+
+	g_fp->_aniMan->_flags &= 0xFFFB;
+
+	chainQueue(QU_FIN1_TAKECOIN, 1);
+
+	g_fp->playTrack(g_fp->getGameLoaderGameVar()->getSubVarByName("SC_FINAL1"), "MUSIC2", 1);
+
+	g_fp->_modalObject = new ModalFinal;
 }
 
 void sceneHandlerFinal_fallCoin() {

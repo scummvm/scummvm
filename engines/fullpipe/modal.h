@@ -106,6 +106,18 @@ class ModalMap : public BaseModalObject {
 	PictureObject *getScenePicture();
 };
 
+class ModalFinal : public BaseModalObject {
+ public:
+	ModalFinal() {}
+	virtual ~ModalFinal() {}
+
+	virtual bool pollEvent() { return true; }
+	virtual bool handleMessage(ExCommand *message) { return false; }
+	virtual bool init(int counterdiff) { return true; }
+	virtual void update() {}
+	virtual void saveload() {}
+};
+
 } // End of namespace Fullpipe
 
 #endif /* FULLPIPE_MODAL_H */
