@@ -409,7 +409,10 @@ uint32 Ps2File::read(void *dest, uint32 len) {
 				break; // EOF
 		}
 	}
+#ifndef ENABLE_PROFILING
+	// doesn't play nice with -pg
 	cacheReadAhead();
+#endif
 #ifdef __PS2_FILE_SEMA__
 	SignalSema(_sema);
 #endif
