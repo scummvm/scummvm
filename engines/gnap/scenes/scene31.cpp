@@ -36,6 +36,15 @@ enum {
 	kHSWalkArea1		= 6
 };
 
+enum {
+	kASUseBeerBarrel				= 1,
+	kASFillEmptyBucketWithBeer		= 2,
+	kASFillEmptyBucketWithBeerDone	= 3,
+	kASPlatMeasuringClown			= 4,
+	kASUseMeasuringClown			= 5,
+	kASLeaveScene					= 6
+};
+
 int GnapEngine::scene31_init() {
 	return 0x105;
 }
@@ -61,8 +70,8 @@ void GnapEngine::scene31_run() {
 	_s31_beerGuyDistracted = false;
 	_gameSys->insertSequence(0xFB, 39, 0, 0, kSeqNone, 0, 0, 0);
 
-	_s31_dword_47EAA8 = 0xFB;
-	_s31_dword_47EAAC = -1;
+	_s28_currClerkSequenceId = 0xFB;
+	_s28_nextClerkSequenceId = -1;
 
 	_gameSys->setAnimation(0xFB, 39, 3);
 
@@ -94,7 +103,7 @@ void GnapEngine::scene31_run() {
 		switch (_sceneClickedHotspot) {
 
 		case kHSDevice:
-			if (_gnapActionStatus < 0 || _gnapActionStatus == 4) {
+			if (_gnapActionStatus < 0 || _gnapActionStatus == kASPlatMeasuringClown) {
 				runMenu();
 				scene31_updateHotspots();
 			}
@@ -127,8 +136,8 @@ void GnapEngine::scene31_run() {
 			break;
 
 		case kHSMeasuringClown:
-			if (_gnapActionStatus < 0 || _gnapActionStatus == 4) {
-				if (_gnapActionStatus == 4) {
+			if (_gnapActionStatus < 0 || _gnapActionStatus == kASPlatMeasuringClown) {
+				if (_gnapActionStatus == kASPlatMeasuringClown) {
 					if (_verbCursor == LOOK_CURSOR)
 						playGnapScratchingHead(2, 2);
 					else
@@ -145,7 +154,7 @@ void GnapEngine::scene31_run() {
 						_hotspots[kHSWalkArea1].flags |= SF_WALKABLE;
 						gnapWalkTo(_hotspotsWalkPos[kHSMeasuringClown].x, _hotspotsWalkPos[kHSMeasuringClown].y, 0, 0x107B9, 1);
 						_hotspots[kHSWalkArea1].flags &= ~SF_WALKABLE;
-						_gnapActionStatus = 5;
+						_gnapActionStatus = kASUseMeasuringClown;
 						_timers[4] = 300;
 						break;
 					case TALK_CURSOR:
@@ -158,8 +167,8 @@ void GnapEngine::scene31_run() {
 							_hotspots[kHSWalkArea1].flags |= SF_WALKABLE;
 							platypusWalkTo(_hotspotsWalkPos[kHSMeasuringClown].x, _hotspotsWalkPos[kHSMeasuringClown].y, 1, 0x107C2, 1);
 							_hotspots[kHSWalkArea1].flags &= ~SF_WALKABLE;
-							_beaverActionStatus = 4;
-							_gnapActionStatus = 4;
+							_beaverActionStatus = kASPlatMeasuringClown;
+							_gnapActionStatus = kASPlatMeasuringClown;
 							_timers[4] = 300;
 						} else
 							playGnapImpossible(0, 0);
@@ -170,16 +179,16 @@ void GnapEngine::scene31_run() {
 			break;
 
 		case kHSBeerBarrel:
-			if (_gnapActionStatus < 0 || _gnapActionStatus == 4) {
+			if (_gnapActionStatus < 0 || _gnapActionStatus == kASPlatMeasuringClown) {
 				if (_grabCursorSpriteIndex == kItemEmptyBucket && _s31_beerGuyDistracted) {
 					setGrabCursorSprite(-1);
 					gnapWalkTo(_gnapX, _gnapY, -1, getGnapSequenceId(gskIdle, _hotspotsWalkPos[kHSBeerBarrel].x, _hotspotsWalkPos[kHSBeerBarrel].y) | 0x10000, 1);
-					_s31_dword_474940 += 5;
+					_s31_clerkMeasureMaxCtr += 5;
 					_gameSys->insertSequence(0xF8, 59, 0, 0, kSeqNone, 0, 0, 0);
 					playGnapPullOutDevice(6, 8);
 					playGnapUseDevice(0, 0);
 					gnapWalkTo(_hotspotsWalkPos[kHSBeerBarrel].x, _hotspotsWalkPos[kHSBeerBarrel].y, 0, 0x107BC, 1);
-					_gnapActionStatus = 2;
+					_gnapActionStatus = kASFillEmptyBucketWithBeer;
 					_timers[4] = 300;
 				} else if (_grabCursorSpriteIndex >= 0) {
 					playGnapShowCurrItem(_hotspotsWalkPos[kHSBeerBarrel].x, _hotspotsWalkPos[kHSBeerBarrel].y, 6, 2);
@@ -193,7 +202,7 @@ void GnapEngine::scene31_run() {
 							playGnapScratchingHead(6, 2);
 						} else {
 							gnapWalkTo(_hotspotsWalkPos[kHSBeerBarrel].x, _hotspotsWalkPos[kHSBeerBarrel].y, 0, 0x107BC, 1);
-							_gnapActionStatus = 1;
+							_gnapActionStatus = kASUseBeerBarrel;
 							_gnapIdleFacing = 5;
 						}
 						break;
@@ -211,7 +220,7 @@ void GnapEngine::scene31_run() {
 				_isLeavingScene = 1;
 				_newSceneNum = 26;
 				gnapWalkTo(-1, _hotspotsWalkPos[kHSExitCircus].y, 0, 0x107AE, 1);
-				_gnapActionStatus = 6;
+				_gnapActionStatus = kASLeaveScene;
 				platypusWalkTo(_hotspotsWalkPos[kHSExitCircus].x + 1, _hotspotsWalkPos[kHSExitCircus].y, -1, -1, 1);
 			}
 			break;
@@ -221,7 +230,7 @@ void GnapEngine::scene31_run() {
 				_isLeavingScene = 1;
 				_newSceneNum = 27;
 				gnapWalkTo(-1, _hotspotsWalkPos[kHSExitOutsideClown].y, 0, 0x107AF, 1);
-				_gnapActionStatus = 6;
+				_gnapActionStatus = kASLeaveScene;
 				platypusWalkTo(_hotspotsWalkPos[kHSExitOutsideClown].x, _hotspotsWalkPos[kHSExitOutsideClown].y + 1, -1, 0x107CF, 1);
 			}
 			break;
@@ -251,19 +260,19 @@ void GnapEngine::scene31_run() {
 				updateGnapIdleSequence();
 			if (!_timers[4]) {
 				_timers[4] = getRandom(20) + 60;
-				if (_gnapActionStatus < 0 && _s31_dword_47EAAC == -1) {
+				if (_gnapActionStatus < 0 && _s28_nextClerkSequenceId == -1) {
 					switch (getRandom(6)){
 					case 0:
-						_s31_dword_47EAAC = 0xFF;
+						_s28_nextClerkSequenceId = 0xFF;
 						break;
 					case 1:
-						_s31_dword_47EAAC = 0x100;
+						_s28_nextClerkSequenceId = 0x100;
 						break;
 					case 2:
-						_s31_dword_47EAAC = 0x101;
+						_s28_nextClerkSequenceId = 0x101;
 						break;
 					default:
-						_s31_dword_47EAAC = 0xFB;
+						_s28_nextClerkSequenceId = 0xFB;
 						break;
 					}
 				}
@@ -272,10 +281,9 @@ void GnapEngine::scene31_run() {
 				_timers[5] = getRandom(50) + 180;
 				if (_gnapActionStatus < 0) {
 					if (getRandom(2) != 0)
-						_s31_dword_47EAB4 = 0x104;
+						_gameSys->insertSequence(0x104, 20, 0, 0, kSeqNone, 0, 0, 0);
 					else
-						_s31_dword_47EAB4 = 0x103;
-					_gameSys->insertSequence(_s31_dword_47EAB4, 20, 0, 0, kSeqNone, 0, 0, 0);
+						_gameSys->insertSequence(0x103, 20, 0, 0, kSeqNone, 0, 0, 0);
 				}
 			}
 			playSoundB();
@@ -300,10 +308,10 @@ void GnapEngine::scene31_updateAnimations() {
 	if (_gameSys->getAnimationStatus(0) == 2) {
 		_gameSys->setAnimation(0, 0, 0);
 		switch (_gnapActionStatus) {
-		case 1:
-			_s31_dword_47EAAC = 0xFE;
+		case kASUseBeerBarrel:
+			_s28_nextClerkSequenceId = 0xFE;
 			break;
-		case 2:
+		case kASFillEmptyBucketWithBeer:
 			_gameSys->setAnimation(0x102, 59, 0);
 			_gameSys->insertSequence(0x102, 59, makeRid(_gnapSequenceDatNum, _gnapSequenceId), _gnapId, kSeqSyncWait, 0, 0, 0);
 			_gnapX = 5;
@@ -311,9 +319,9 @@ void GnapEngine::scene31_updateAnimations() {
 			_gnapSequenceDatNum = 0;
 			_gnapSequenceId = 0x102;
 			_gnapId = 59;
-			_gnapActionStatus = 3;
+			_gnapActionStatus = kASFillEmptyBucketWithBeerDone;
 			break;
-		case 3:
+		case kASFillEmptyBucketWithBeerDone:
 			_gnapIdleFacing = 3;
 			playGnapPullOutDevice(0, 0);
 			playGnapUseDevice(0, 0);
@@ -323,11 +331,11 @@ void GnapEngine::scene31_updateAnimations() {
 			invRemove(kItemEmptyBucket);
 			setGrabCursorSprite(kItemBucketWithBeer);
 			break;
-		case 5:
-			_s31_dword_47EAAC = 0xFA;
-			_s31_dword_474940 = 1;
+		case kASUseMeasuringClown:
+			_s28_nextClerkSequenceId = 0xFA;
+			_s31_clerkMeasureMaxCtr = 1;
 			break;
-		case 6:
+		case kASLeaveScene:
 			_sceneDone = true;
 			_gnapActionStatus = -1;
 			break;
@@ -336,58 +344,58 @@ void GnapEngine::scene31_updateAnimations() {
 
 	if (_gameSys->getAnimationStatus(1) == 2) {
 		_gameSys->setAnimation(0, 0, 1);
-		if (_beaverActionStatus == 4) {
-			_sceneWaiting = 1;
+		if (_beaverActionStatus == kASPlatMeasuringClown) {
+			_sceneWaiting = true;
 			_s31_beerGuyDistracted = true;
-			_s31_dword_47EAAC = 0xFA;
+			_s28_nextClerkSequenceId = 0xFA;
 		}
 	}
 
 	if (_gameSys->getAnimationStatus(3) == 2) {
-		switch (_s31_dword_47EAAC) {
+		switch (_s28_nextClerkSequenceId) {
 		case 0xFA:
-			_gameSys->insertSequence(_s31_dword_47EAAC, 39, _s31_dword_47EAA8, 39, kSeqSyncWait, 0, 0, 0);
-			_gameSys->insertSequence(0xFC, 39, _s31_dword_47EAAC, 39, kSeqSyncWait, 0, 0, 0);
+			_gameSys->insertSequence(_s28_nextClerkSequenceId, 39, _s28_currClerkSequenceId, 39, kSeqSyncWait, 0, 0, 0);
+			_gameSys->insertSequence(0xFC, 39, _s28_nextClerkSequenceId, 39, kSeqSyncWait, 0, 0, 0);
 			_gameSys->setAnimation(0xFC, 39, 3);
-			_s31_dword_47EAA8 = 0xFC;
-			_s31_dword_47EAAC = 0xFC;
-			_s31_dword_47EAB0 = 0;
+			_s28_currClerkSequenceId = 0xFC;
+			_s28_nextClerkSequenceId = 0xFC;
+			_s31_clerkMeasureCtr = 0;
 			break;
 		case 0xFC:
-			++_s31_dword_47EAB0;
-			if (_s31_dword_47EAB0 >= _s31_dword_474940) {
+			++_s31_clerkMeasureCtr;
+			if (_s31_clerkMeasureCtr >= _s31_clerkMeasureMaxCtr) {
 				if (_gnapActionStatus != 5)
 					_beaverActionStatus = -1;
 				_timers[0] = 40;
-				_gameSys->insertSequence(0xFD, 39, _s31_dword_47EAA8, 39, kSeqSyncWait, 0, 0, 0);
-				_s31_dword_47EAA8 = 0xFD;
-				_s31_dword_47EAAC = -1;
-				if (_gnapActionStatus != 3 && _gnapActionStatus != 2)
+				_gameSys->insertSequence(0xFD, 39, _s28_currClerkSequenceId, 39, kSeqSyncWait, 0, 0, 0);
+				_s28_currClerkSequenceId = 0xFD;
+				_s28_nextClerkSequenceId = -1;
+				if (_gnapActionStatus != kASFillEmptyBucketWithBeerDone && _gnapActionStatus != kASFillEmptyBucketWithBeer)
 					_gnapActionStatus = -1;
 				_s31_beerGuyDistracted = false;
-				_s31_dword_474940 = 3;
+				_s31_clerkMeasureMaxCtr = 3;
 				_gameSys->setAnimation(0xFD, 39, 3);
-				_sceneWaiting = 0;
+				_sceneWaiting = false;
 			} else {
-				_gameSys->insertSequence(_s31_dword_47EAAC, 39, _s31_dword_47EAA8, 39, kSeqSyncWait, 0, 0, 0);
-				_s31_dword_47EAA8 = _s31_dword_47EAAC;
-				_s31_dword_47EAAC = 0xFC;
+				_gameSys->insertSequence(_s28_nextClerkSequenceId, 39, _s28_currClerkSequenceId, 39, kSeqSyncWait, 0, 0, 0);
+				_s28_currClerkSequenceId = _s28_nextClerkSequenceId;
+				_s28_nextClerkSequenceId = 0xFC;
 				_gameSys->setAnimation(0xFC, 39, 3);
 			}
 			break;
 		case 0xFE:
-			_gameSys->insertSequence(_s31_dword_47EAAC, 39, _s31_dword_47EAA8, 39, kSeqSyncWait, 0, 0, 0);
-			_gameSys->setAnimation(_s31_dword_47EAAC, 39, 3);
-			_s31_dword_47EAA8 = _s31_dword_47EAAC;
-			_s31_dword_47EAAC = -1;
+			_gameSys->insertSequence(_s28_nextClerkSequenceId, 39, _s28_currClerkSequenceId, 39, kSeqSyncWait, 0, 0, 0);
+			_gameSys->setAnimation(_s28_nextClerkSequenceId, 39, 3);
+			_s28_currClerkSequenceId = _s28_nextClerkSequenceId;
+			_s28_nextClerkSequenceId = -1;
 			_gnapActionStatus = -1;
 			break;
 		default:
-			if (_s31_dword_47EAAC != -1) {
-				_gameSys->insertSequence(_s31_dword_47EAAC, 39, _s31_dword_47EAA8, 39, kSeqSyncWait, 0, 0, 0);
-				_gameSys->setAnimation(_s31_dword_47EAAC, 39, 3);
-				_s31_dword_47EAA8 = _s31_dword_47EAAC;
-				_s31_dword_47EAAC = -1;
+			if (_s28_nextClerkSequenceId != -1) {
+				_gameSys->insertSequence(_s28_nextClerkSequenceId, 39, _s28_currClerkSequenceId, 39, kSeqSyncWait, 0, 0, 0);
+				_gameSys->setAnimation(_s28_nextClerkSequenceId, 39, 3);
+				_s28_currClerkSequenceId = _s28_nextClerkSequenceId;
+				_s28_nextClerkSequenceId = -1;
 			}
 			break;
 		}

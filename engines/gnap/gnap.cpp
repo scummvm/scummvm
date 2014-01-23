@@ -158,14 +158,14 @@ Common::Error GnapEngine::run() {
 	//testBack->fillRect(Common::Rect(0, 0, 800, 600), 0xFFFFFFFF);
 	testBack->fillRect(Common::Rect(0, 0, 800, 600), 0xFF000000);
 	
-	_currentSceneNum = 30;
+	_currentSceneNum = 31;
 
     Common::String datFilename = Common::String::format("%s_n.dat", kSceneNames[_currentSceneNum]);
 	_dat->open(0, datFilename.c_str());
 	
 	_gameSys->setBackgroundSurface(testBack, 0, 500, 1, 1000);
 
-	_gameSys->insertSequence(0xff, 100, -1, -1, 0, 0, 0, 0);
+	_gameSys->insertSequence(0xfe, 100, -1, -1, 0, 0, 0, 0);
 
 	CursorMan.showMouse(true);
 	
@@ -719,7 +719,7 @@ void GnapEngine::initGameFlags(int num) {
 	//invAdd(kItemTongs);
 	invAdd(kItemDiceQuarterHole);
 	//invAdd(kItemPill);
-	invAdd(kItemBucketWithBeer);
+	//invAdd(kItemBucketWithBeer);
 	invAdd(kItemChickenBucket);
 	invAdd(kItemBanana);
 	invAdd(kItemHorn);
@@ -751,7 +751,7 @@ void GnapEngine::mainLoop() {
 
 	// > DEBUG BEGIN
 	_currentSceneNum = 53;
-	_newSceneNum = 30;
+	_newSceneNum = 31;
 	_newCursorValue = 3;
 	// < DEBUG END
 
@@ -2087,6 +2087,10 @@ void GnapEngine::initGlobalSceneVars() {
 	// Scene 22
 	_s22_caughtBefore = false;
 	_s22_cashierCtr = 3;
+	
+	// Scene 31
+	_s31_beerGuyDistracted = false;
+	_s31_clerkMeasureMaxCtr = 3;
 
 	// Scene 50
 	_s50_timesPlayed = 0;

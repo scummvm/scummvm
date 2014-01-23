@@ -802,12 +802,9 @@ public:
 	void scene30_updateAnimations();
 	
 	// Scene 31
-	int _s31_dword_47EAA8;
-	int _s31_dword_47EAAC;
-	int _s31_dword_47EAB0;
+	int _s28_currClerkSequenceId, _s28_nextClerkSequenceId;
 	bool _s31_beerGuyDistracted;
-	int _s31_dword_474940;
-	int _s31_dword_47EAB4;
+	int _s31_clerkMeasureCtr, _s31_clerkMeasureMaxCtr;
 	int scene31_init();
 	void scene31_updateHotspots();
 	void scene31_run();
