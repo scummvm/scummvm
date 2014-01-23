@@ -41,7 +41,7 @@ void sceneFinal_initScene() {
 	g_fp->accessScene(SC_FINAL2)->setPictureObjectsFlag4();
 	g_fp->_gameLoader->loadScene(SC_FINAL3);
 	g_fp->accessScene(SC_FINAL3)->setPictureObjectsFlag4();
-	g_fp->_gameLoader->loadScene(v4, SC_FINAL4);
+	g_fp->_gameLoader->loadScene(SC_FINAL4);
 	g_fp->accessScene(SC_FINAL4)->setPictureObjectsFlag4();
 
 	getGameLoaderInventory()->setIsLocked(0);

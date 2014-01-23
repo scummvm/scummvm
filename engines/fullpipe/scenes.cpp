@@ -382,6 +382,10 @@ Vars::Vars() {
 	scene38_lastShortyAnim = 0;
 	scene38_shortyAnimCounter = 0;
 
+	sceneFinal_var01 = 0;
+	sceneFinal_var02 = 0;
+	sceneFinal_var03 = 0;
+
 	selector = 0;
 }
 

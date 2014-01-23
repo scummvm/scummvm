@@ -536,6 +536,10 @@ public:
 	int scene38_lastShortyAnim;
 	int scene38_shortyAnimCounter;
 
+	int sceneFinal_var01;
+	int sceneFinal_var02;
+	int sceneFinal_var03;
+
 	PictureObject *selector;
 };
 
