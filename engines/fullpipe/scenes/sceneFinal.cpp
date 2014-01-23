@@ -65,7 +65,7 @@ int sceneFinal_updateCursor() {
 }
 
 void sceneHandlerFinal_endFinal() {
-	warning("STUB: sceneHandlerFinal_endFinal()");
+	g_vars->sceneFinal_var01 = 0;
 }
 
 void sceneHandlerFinal_startMusic(const char *track) {
@@ -73,15 +73,23 @@ void sceneHandlerFinal_startMusic(const char *track) {
 }
 
 void sceneHandlerFinal_goto4() {
-	warning("STUB: sceneHandlerFinal_goto4()");
+	g_fp->_currentScene = g_fp->accessScene(SC_FINAL4);
+
+	g_fp->_gameLoader->loadScene(SC_FINAL4);
+
+	chainQueue(QU_FN4_DOFINAL, 1);
 }
 
 void sceneHandlerFinal_goto3() {
-	warning("STUB: sceneHandlerFinal_goto3()");
+	g_fp->_currentScene = g_fp->accessScene(SC_FINAL3);
+
+	chainQueue(QU_FN3_DOFINAL, 1);
 }
 
 void sceneHandlerFinal_goto2() {
-	warning("STUB: sceneHandlerFinal_goto2()");
+	g_fp->_currentScene = g_fp->accessScene(SC_FINAL2);
+
+	chainQueue(QU_FN2_DOFINAL, 1);
 }
 
 void sceneHandlerFinal_startFinal() {

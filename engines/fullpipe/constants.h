@@ -1357,6 +1357,9 @@ namespace Fullpipe {
 #define MSG_FIN_GOTO4 5075
 #define MSG_FIN_STARTFINAL 5025
 #define MSG_FN4_STARTMUSIC 5356
+#define QU_FN2_DOFINAL 5066
+#define QU_FN3_DOFINAL 5072
+#define QU_FN4_DOFINAL 5108
 
 // Debug scene
 #define MSG_RESTARTGAME 4767
