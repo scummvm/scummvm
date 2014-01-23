@@ -40,6 +40,10 @@ enum {
 	kHSWalkArea8	= 10
 };
 
+enum {
+	kASLeaveScene					= 0
+};
+
 int GnapEngine::scene32_init() {
 	_gameSys->setAnimation(0, 0, 0);
 	return isFlag(26) ? 0xF : 0x10;
@@ -65,7 +69,6 @@ void GnapEngine::scene32_run() {
 	playSound(0x1091C, 1);
 	startSoundTimerC(5);
 	queueInsertDeviceIcon();
-	_s32_dword_47EADC = -1;
 	_timers[4] = getRandom(100) + 300;
 
 	if (_prevSceneNum == 33) {
@@ -124,10 +127,10 @@ void GnapEngine::scene32_run() {
 
 		case kHSExitTruck:
 			if (_gnapActionStatus < 0) {
-				_isLeavingScene = 1;
+				_isLeavingScene = true;
 				setGrabCursorSprite(-1);
 				gnapWalkTo(_hotspotsWalkPos[kHSExitTruck].x, _hotspotsWalkPos[kHSExitTruck].y, 0, 0x107AB, 1);
-				_gnapActionStatus = 0;
+				_gnapActionStatus = kASLeaveScene;
 				platypusWalkTo(_hotspotsWalkPos[kHSExitTruck].x, _hotspotsWalkPos[kHSExitTruck].y + 1, -1, 0x107CD, 1);
 				_newSceneNum = 33;
 			}
@@ -165,10 +168,9 @@ void GnapEngine::scene32_run() {
 			if (!_timers[4]) {
 				_timers[4] = getRandom(100) + 300;
 				if (getRandom(2) != 0)
-					_s32_dword_47EADC = 14;
+					_gameSys->insertSequence(0x0E, 180, 0, 0, kSeqNone, 0, 0, 0);
 				else
-					_s32_dword_47EADC = 13;
-				_gameSys->insertSequence(_s32_dword_47EADC, 180, 0, 0, kSeqNone, 0, 0, 0);
+					_gameSys->insertSequence(0x0D, 180, 0, 0, kSeqNone, 0, 0, 0);
 			}
 			playSoundC();
 		}
@@ -191,7 +193,7 @@ void GnapEngine::scene32_updateAnimations() {
 
 	if (_gameSys->getAnimationStatus(0) == 2) {
 		_gameSys->setAnimation(0, 0, 0);
-		if (_gnapActionStatus == 0)
+		if (_gnapActionStatus == kASLeaveScene)
 			_sceneDone = true;
 	}
 

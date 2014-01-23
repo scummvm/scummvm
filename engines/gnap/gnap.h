@@ -811,7 +811,6 @@ public:
 	void scene31_updateAnimations();
 
 	// Scene 32
-	int _s32_dword_47EADC;
 	int scene32_init();
 	void scene32_updateHotspots();
 	void scene32_run();

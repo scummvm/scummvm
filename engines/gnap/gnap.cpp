@@ -751,7 +751,7 @@ void GnapEngine::mainLoop() {
 
 	// > DEBUG BEGIN
 	_currentSceneNum = 53;
-	_newSceneNum = 31;
+	_newSceneNum = 32;
 	_newCursorValue = 3;
 	// < DEBUG END
 
