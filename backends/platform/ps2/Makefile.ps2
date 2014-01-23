@@ -89,7 +89,7 @@ FLAGS += -Wno-long-long -Wno-multichar -Wno-unknown-pragmas -Wno-unused-paramete
 CFLAGS = $(FLAGS) -std=c99
 CXXFLAGS = $(FLAGS) -Wnon-virtual-dtor -Wno-reorder -fno-exceptions -fno-rtti
 
-DEFINES  = -D_EE -D__PLAYSTATION2__ -DUSE_ZLIB -DFORCE_RTL -DDATA_PATH=\"host:data\"
+DEFINES  = -D_EE -D__PLAYSTATION2__ -D__NEW_PS2SDK__ -DUSE_ZLIB -DFORCE_RTL -DDATA_PATH=\"host:data\"
 DEFINES += -DDISABLE_SAVEGAME_SORTING -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE -DDISABLE_DOSBOX_OPL -DDISABLE_SID -DDISABLE_NES_APU
 
 INCDIR   := $(PS2SDK)/ee/include $(PS2SDK)/common/include $(PS2SDK)/ports/include . $(srcdir) $(srcdir)/engines
