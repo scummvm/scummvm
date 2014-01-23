@@ -47,6 +47,10 @@
 
 namespace Grim {
 
+Shadow::Shadow() :
+		shadowMask(NULL), shadowMaskSize(0), active(false), dontNegate(false) {
+}
+
 static int animTurn(float turnAmt, const Math::Angle &dest, Math::Angle *cur) {
 	Math::Angle d = dest - *cur;
 	d.normalize(-180);
@@ -104,12 +108,6 @@ Actor::Actor() :
 
 	_activeShadowSlot = -1;
 	_shadowArray = new Shadow[5];
-	for (int i = 0; i < MAX_SHADOWS; i++) {
-		_shadowArray[i].active = false;
-		_shadowArray[i].dontNegate = false;
-		_shadowArray[i].shadowMask = NULL;
-		_shadowArray[i].shadowMaskSize = 0;
-	}
 }
 
 Actor::~Actor() {
