@@ -384,9 +384,6 @@ void OSystem_PS2::init(void) {
 	sioprintf("Starting SavefileManager\n");
 	_savefileManager = new Ps2SaveFileManager(this, _screen);
 
-	sioprintf("Initializing ps2Input\n");
-	_input = new Ps2Input(this, _useMouse, _useKbd);
-
 	prepMC();
 	makeConfigPath();
 
@@ -438,11 +435,15 @@ void OSystem_PS2::config(void) {
 		else {
 			loadDrivers(IRX_USB);
 			loadDrivers(IRX_INPUT);
+			sioprintf("Initializing ps2Input\n");
+			_input = new Ps2Input(this, _useMouse, _useKbd);
 		}
 	}
 	else { // load USB drivers (mass & input(
 		loadDrivers(IRX_USB);
 		loadDrivers(IRX_INPUT);
+		sioprintf("Initializing ps2Input\n");
+		_input = new Ps2Input(this, _useMouse, _useKbd);
 	}
 }
 
