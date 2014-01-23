@@ -34,6 +34,15 @@ enum {
 	kHSWalkArea1	= 4
 };
 
+enum {
+	kASLeaveScene				= 0,
+	kASUsePillMachine			= 1,
+	kASUsePillMachine2			= 2,
+	kASLookPillMachine			= 3,
+	kASUsePillMachine3			= 4,
+	kASUsePillMachine4			= 5
+};
+
 int GnapEngine::scene30_init() {
 	return isFlag(23) ? 0x10B : 0x10A;
 }
@@ -65,7 +74,7 @@ void GnapEngine::scene30_run() {
 	_gameSys->insertSequence(0x101, 40, 0, 0, kSeqNone, 0, 0, 0);
 	_timers[4] = getRandom(100) + 300;
 
-	_s30_dword_47EA88 = 0x101;
+	_s30_kidSequenceId = 0x101;
 	initGnapPos(7, 12, 1);
 	initBeaverPos(6, 12, 0);
 	endSceneInit();
@@ -121,7 +130,7 @@ void GnapEngine::scene30_run() {
 					_hotspots[kHSWalkArea1].flags |= SF_WALKABLE;
 					gnapWalkTo(_hotspotsWalkPos[kHSPillMachine].x, _hotspotsWalkPos[kHSPillMachine].y, 0, 0x107BC, 1);
 					_hotspots[kHSWalkArea1].flags &= ~SF_WALKABLE;
-					_gnapActionStatus = 1;
+					_gnapActionStatus = kASUsePillMachine;
 					hasTakenPill = true;
 				} else if (_grabCursorSpriteIndex >= 0) {
 					playGnapShowCurrItem(_hotspotsWalkPos[kHSPillMachine].x, _hotspotsWalkPos[kHSPillMachine].y, 8, 5);
@@ -129,7 +138,7 @@ void GnapEngine::scene30_run() {
 					switch (_verbCursor) {
 					case LOOK_CURSOR:
 						gnapWalkTo(9, 8, 0, 0x107BC, 1);
-						_gnapActionStatus = 3;
+						_gnapActionStatus = kASLookPillMachine;
 						break;
 					case GRAB_CURSOR:
 						playGnapScratchingHead(8, 5);
@@ -151,7 +160,7 @@ void GnapEngine::scene30_run() {
 				else
 					_newSceneNum = 26;
 				gnapWalkTo(-1, _hotspotsWalkPos[kHSExitCircus].y, 0, 0x107AE, 1);
-				_gnapActionStatus = 0;
+				_gnapActionStatus = kASLeaveScene;
 				platypusWalkTo(_hotspotsWalkPos[kHSExitCircus].x + 1, _hotspotsWalkPos[kHSExitCircus].y, -1, 0x107C2, 1);
 			}
 			break;
@@ -184,8 +193,8 @@ void GnapEngine::scene30_run() {
 				if (_gnapActionStatus < 0) {
 					if (getRandom(5) == 1) {
 						_gameSys->insertSequence(0xFF, 40, 0, 0, kSeqNone, 0, 0, 0);
-						_gameSys->insertSequence(0x100, 40, _s30_dword_47EA88, 40, kSeqSyncWait, 0, 0, 0);
-						_s30_dword_47EA88 = 0x100;
+						_gameSys->insertSequence(0x100, 40, _s30_kidSequenceId, 40, kSeqSyncWait, 0, 0, 0);
+						_s30_kidSequenceId = 0x100;
 					} else {
 						_gameSys->insertSequence(0xFE, 40, 0, 0, kSeqNone, 0, 0, 0);
 					}
@@ -195,10 +204,9 @@ void GnapEngine::scene30_run() {
 				_timers[5] = getRandom(50) + 180;
 				if (_gnapActionStatus < 0) {
 					if (!isFlag(23) || hasTakenPill)
-						_s30_dword_47EA8C = 0x109;
+						_gameSys->insertSequence(0x109, 20, 0, 0, kSeqNone, 0, 0, 0);
 					else
-						_s30_dword_47EA8C = 0x108;
-					_gameSys->insertSequence(_s30_dword_47EA8C, 20, 0, 0, kSeqNone, 0, 0, 0);
+						_gameSys->insertSequence(0x108, 20, 0, 0, kSeqNone, 0, 0, 0);
 				}
 			}
 			playSoundB();
@@ -223,54 +231,52 @@ void GnapEngine::scene30_updateAnimations() {
 	if (_gameSys->getAnimationStatus(0) == 2) {
 		_gameSys->setAnimation(0, 0, 0);
 		switch (_gnapActionStatus) {
-		case 0:
+		case kASLeaveScene:
 			_sceneDone = true;
 			break;
-		case 1:
+		case kASUsePillMachine:
 			setGrabCursorSprite(-1);
 			_gameSys->setAnimation(0x105, _gnapId, 0);
 			_gameSys->insertSequence(0x105, _gnapId, makeRid(_gnapSequenceDatNum, _gnapSequenceId), _gnapId, kSeqSyncWait, 0, 0, 0);
 			_gnapSequenceId = 0x105;
 			_gnapSequenceDatNum = 0;
-			_gnapActionStatus = 2;
+			_gnapActionStatus = kASUsePillMachine2;
 			break;
-		case 2:
+		case kASUsePillMachine2:
 			hideCursor();
 			setGrabCursorSprite(-1);
 			addFullScreenSprite(0x3F, 255);
 			_gameSys->removeSequence(0x105, _gnapId, 1);
 			_gameSys->setAnimation(0x102, 256, 0);
 			_gameSys->insertSequence(0x102, 256, 0, 0, kSeqNone, 0, 0, 0);
-			while (_gameSys->getAnimationStatus(0) != 2) {
-				// checkGameAppStatus();
+			while (_gameSys->getAnimationStatus(0) != 2)
 				gameUpdateTick();
-			}
 			_gameSys->setAnimation(0x103, _gnapId, 0);
 			_gameSys->insertSequence(0x103, _gnapId, 0, 0, kSeqNone, 0, 0, 0);
 			removeFullScreenSprite();
 			showCursor();
-			_gnapActionStatus = 4;
+			_gnapActionStatus = kASUsePillMachine3;
 			invAdd(kItemPill);
 			setFlag(23);
 			break;
-		case 3:
-			if (isFlag(23))
-				showFullScreenSprite(0xE3);
-			else
-				showFullScreenSprite(0xE2);
-			_gnapActionStatus = -1;
-			break;
-		case 4:
+		case kASUsePillMachine3:
 			_gameSys->setAnimation(0x104, _gnapId, 0);
 			_gameSys->insertSequence(0x104, _gnapId, makeRid(_gnapSequenceDatNum, 0x103), _gnapId, kSeqSyncWait, 0, 0, 0);
 			_gnapSequenceId = 0x104;
 			_gnapSequenceDatNum = 0;
-			_gnapActionStatus = 5;
+			_gnapActionStatus = kASUsePillMachine4;
 			setGrabCursorSprite(kItemDiceQuarterHole);
 			break;
-		case 5:
+		case kASUsePillMachine4:
 			_gameSys->insertSequence(0x106, 1, 0, 0, kSeqNone, 0, 0, 0);
 			gnapWalkTo(_hotspotsWalkPos[kHSPillMachine].x, _hotspotsWalkPos[kHSPillMachine].y + 1, -1, 0x107BC, 1);
+			_gnapActionStatus = -1;
+			break;
+		case kASLookPillMachine:
+			if (isFlag(23))
+				showFullScreenSprite(0xE3);
+			else
+				showFullScreenSprite(0xE2);
 			_gnapActionStatus = -1;
 			break;
 		}

@@ -795,8 +795,7 @@ public:
 	void scene29_updateAnimations();
 
 	// Scene 30
-	int _s30_dword_47EA88;
-	int _s30_dword_47EA8C;
+	int _s30_kidSequenceId;
 	int scene30_init();
 	void scene30_updateHotspots();
 	void scene30_run();
