@@ -111,7 +111,11 @@ extern "C" int scummvm_main(int argc, char *argv[]);
 
 extern "C" int main(int argc, char *argv[]) {
 	SifInitRpc(0);
+	#ifdef __NEW_PS2SDK__
+	ee_thread_status_t thisThread;
+	#else
 	ee_thread_t thisThread;
+	#endif
 	int tid = GetThreadId();
 	ReferThreadStatus(tid, &thisThread);
 
@@ -452,8 +456,12 @@ void OSystem_PS2::initTimer(void) {
 	g_TimerThreadSema = CreateSema(&threadSema);
 	g_SoundThreadSema = CreateSema(&threadSema);
 	assert((g_TimerThreadSema >= 0) && (g_SoundThreadSema >= 0));
-
+	#ifdef __NEW_PS2SDK__
+	ee_thread_t timerThread, soundThread;
+	ee_thread_status_t thisThread;
+	#else
 	ee_thread_t timerThread, soundThread, thisThread;
+	#endif
 	ReferThreadStatus(GetThreadId(), &thisThread);
 
 	_timerStack = (uint8 *)memalign(64, TIMER_STACK_SIZE);
@@ -885,7 +893,11 @@ void OSystem_PS2::quit(void) {
 		//setTimerCallback(NULL, 0);
 		_screen->wantAnim(false);
 		_systemQuit = true;
+		#ifdef __NEW_PS2SDK__
+		ee_thread_status_t statSound, statTimer;
+		#else
 		ee_thread_t statSound, statTimer;
+		#endif
 		printf("Waiting for timer and sound thread to end\n");
 		do {	// wait until both threads called ExitThread()
 			ReferThreadStatus(_timerTid, &statTimer);
