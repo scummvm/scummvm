@@ -816,9 +816,7 @@ public:
 	void scene32_run();
 	void scene32_updateAnimations();
 	
-	int _s33_dword_47EAE4;
-	int _s33_dword_47EAE8;
-	int _s33_dword_47EAEC;
+	int _s33_currChickenSequenceId, _s33_nextChickenSequenceId;
 	int scene33_init();
 	void scene33_updateHotspots();
 	void scene33_run();
