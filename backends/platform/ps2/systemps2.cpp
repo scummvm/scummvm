@@ -245,13 +245,13 @@ void OSystem_PS2::startIrxModules(int numModules, IrxReference *modules) {
 			}
 
 			if (modules[i].buffer)
-				free(modules[i].buffer);
+				; // free(modules[i].buffer);
 		} else {
 			sioprintf("module %d of %d damaged, loc %d, path %s\n", i, numModules, modules[i].loc, modules[i].path);
 		}
-		free(modules[i].path);
+		// free(modules[i].path);
 	}
-	free(modules);
+	// free(modules);
 	sioprintf("done\n");
 	sioprintf("UsbMass: %sloaded\n", _usbMassLoaded ? "" : "not ");
 	sioprintf("Mouse:   %sloaded\n", _useMouse ? "" : "not ");
