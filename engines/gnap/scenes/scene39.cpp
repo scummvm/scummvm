@@ -36,6 +36,10 @@ enum {
 	kHSWalkArea2		= 6
 };
 
+enum {
+	kASLeaveScene				= 0
+};
+
 int GnapEngine::scene39_init() {
 	_gameSys->setAnimation(0, 0, 0);
 	_gameSys->setAnimation(0, 0, 1);
@@ -54,15 +58,17 @@ void GnapEngine::scene39_updateHotspots() {
 }
 
 void GnapEngine::scene39_run() {
+
+	_timers[5] = 0; // Bug in the original? Timer was never intiailized.
 	
 	queueInsertDeviceIcon();
-	_s39_dword_47EAF8 = 0x33;
+	_s39_currGuySequenceId = 0x33;
 
 	_gameSys->setAnimation(0x33, 21, 3);
-	_gameSys->insertSequence(_s39_dword_47EAF8, 21, 0, 0, kSeqNone, 0, 0, 0);
+	_gameSys->insertSequence(_s39_currGuySequenceId, 21, 0, 0, kSeqNone, 0, 0, 0);
 	_gameSys->insertSequence(0x34, 21, 0, 0, kSeqLoop, 0, 0, 0);
 
-	_s39_dword_47EAFC = -1;
+	_s39_nextGuySequenceId = -1;
 	if (_prevSceneNum == 38) {
 		initGnapPos(3, 7, 7);
 		initBeaverPos(2, 7, 5);
@@ -79,7 +85,7 @@ void GnapEngine::scene39_run() {
 			playSound(0x1094B, 1);
 			setSoundVolume(0x1094B, 60);
 		}
-
+		
 		updateMouseCursor();
 		updateCursorByHotspot();
 	
@@ -122,10 +128,10 @@ void GnapEngine::scene39_run() {
 	
 		case kHSExitUfoParty:
 			if (_gnapActionStatus < 0) {
-				_isLeavingScene = 1;
+				_isLeavingScene = true;
 				_sceneDone = true;
 				gnapWalkTo(_gnapX, _gnapY, 0, 0x107AB, 1);
-				_gnapActionStatus = 0;
+				_gnapActionStatus = kASLeaveScene;
 				_newSceneNum = 40;
 			}
 			break;
@@ -154,7 +160,7 @@ void GnapEngine::scene39_run() {
 		case kHSExitInsideHouse:
 			if (_gnapActionStatus < 0) {
 				_sceneDone = true;
-				_isLeavingScene = 1;
+				_isLeavingScene = true;
 				_newSceneNum = 38;
 			}
 			break;
@@ -185,16 +191,16 @@ void GnapEngine::scene39_run() {
 				_timers[5] = getRandom(20) + 50;
 				switch (getRandom(4)) {
 				case 0:
-					_s39_dword_47EAFC = 0x30;
+					_s39_nextGuySequenceId = 0x30;
 					break;
 				case 1:
-					_s39_dword_47EAFC = 0x31;
+					_s39_nextGuySequenceId = 0x31;
 					break;
 				case 2:
-					_s39_dword_47EAFC = 0x32;
+					_s39_nextGuySequenceId = 0x32;
 					break;
 				case 3:
-					_s39_dword_47EAFC = 0x33;
+					_s39_nextGuySequenceId = 0x33;
 					break;
 				}
 			}
@@ -219,17 +225,17 @@ void GnapEngine::scene39_updateAnimations() {
 	
 	if (_gameSys->getAnimationStatus(0) == 2) {
 		_gameSys->setAnimation(0, 0, 0);
-		if (_gnapActionStatus == 0)
+		if (_gnapActionStatus == kASLeaveScene)
 			_sceneDone = true;
 		else
 			_gnapActionStatus = -1;
 	}
 	
-	if (_gameSys->getAnimationStatus(3) == 2 && _s39_dword_47EAFC != -1) {
-		_gameSys->setAnimation(_s39_dword_47EAFC, 21, 3);
-		_gameSys->insertSequence(_s39_dword_47EAFC, 21, _s39_dword_47EAF8, 21, kSeqSyncWait, 0, 0, 0);
-		_s39_dword_47EAF8 = _s39_dword_47EAFC;
-		_s39_dword_47EAFC = -1;
+	if (_gameSys->getAnimationStatus(3) == 2 && _s39_nextGuySequenceId != -1) {
+		_gameSys->setAnimation(_s39_nextGuySequenceId, 21, 3);
+		_gameSys->insertSequence(_s39_nextGuySequenceId, 21, _s39_currGuySequenceId, 21, kSeqSyncWait, 0, 0, 0);
+		_s39_currGuySequenceId = _s39_nextGuySequenceId;
+		_s39_nextGuySequenceId = -1;
 	}
 
 }
