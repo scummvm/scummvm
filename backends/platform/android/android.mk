@@ -13,7 +13,7 @@ PATH_RESOURCES = $(PATH_DIST)/res
 
 PORT_DISTFILES = $(PATH_DIST)/README.Android
 DIST_ANDROID_CONTROLS = $(PATH_DIST)/assets/arrows.tga
-DIST_JAVA_SRC_DIR = $(srcdir)/backends/platform/android
+DIST_JAVA_SRC_DIR = $(srcdir)/backends/platform/android/org
 
 RESOURCES = \
 	$(PATH_BUILD_RES)/values/strings.xml \
