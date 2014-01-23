@@ -23,6 +23,9 @@
 #define MAX_HANDLES 32
 #include <sys/stat.h>
 
+#undef chdir // we define our own
+#undef mkdir
+
 class AsyncFio {
 public:
 	AsyncFio(void);
