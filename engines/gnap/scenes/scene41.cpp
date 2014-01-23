@@ -45,6 +45,19 @@ enum {
 	kHSUfoWalkArea1	= 4
 };
 
+enum {
+	kASLeaveScene				= 0,
+	kASUseQuarterWithToyVendor	= 1,
+	kASTalkToyVendor			= 2,
+	kASUseGumWithToyUfo			= 3,
+	kASUseChickenBucketWithKid	= 4,
+	kASGrabKid					= 5,
+	kASGiveBackToyUfo			= 6,
+	kASToyUfoLeaveScene			= 7,
+	kASToyUfoRefresh			= 8,
+	kASUfoGumAttached			= 9
+};
+
 int GnapEngine::scene41_init() {
 	_gameSys->setAnimation(0, 0, 0);
 	_gameSys->setAnimation(0, 0, 1);
@@ -83,7 +96,7 @@ void GnapEngine::scene41_run() {
 		if (_toyUfoY < 0 || _toyUfoY > 300)
 			_toyUfoY = 150;
 		if (!_timers[9])
-			_gnapActionStatus = 6;
+			_gnapActionStatus = kASGiveBackToyUfo;
 	} else {
 		if (!isFlag(16) && !isFlag(17) && !isFlag(18) && !isFlag(19))
 			toyUfoSetStatus(16);
@@ -101,20 +114,20 @@ void GnapEngine::scene41_run() {
 	_gameSys->insertSequence(0x128, 0, 0, 0, kSeqLoop, 0, 0, 0);
 	
 	if (isFlag(12))
-		_s41_dword_47F2C4 = 0x11B;
+		_s41_currKidSequenceId = 0x11B;
 	else
-		_s41_dword_47F2C4 = 0x11D;
+		_s41_currKidSequenceId = 0x11D;
 	
-	_s41_dword_47F2C0 = -1;
+	_s41_nextKidSequenceId = -1;
 	
-	_gameSys->setAnimation(_s41_dword_47F2C4, 1, 4);
-	_gameSys->insertSequence(_s41_dword_47F2C4, 1, 0, 0, kSeqNone, 0, 0, 0);
+	_gameSys->setAnimation(_s41_currKidSequenceId, 1, 4);
+	_gameSys->insertSequence(_s41_currKidSequenceId, 1, 0, 0, kSeqNone, 0, 0, 0);
 	
-	_s41_dword_47F2CC = 0x118;
-	_s41_dword_47F2C8 = -1;
+	_s41_currToyVendorSequenceId = 0x118;
+	_s41_nextToyVendorSequenceId = -1;
 	
 	_gameSys->setAnimation(0x118, 1, 3);
-	_gameSys->insertSequence(_s41_dword_47F2CC, 1, 0, 0, kSeqNone, 0, 0, 0);
+	_gameSys->insertSequence(_s41_currToyVendorSequenceId, 1, 0, 0, kSeqNone, 0, 0, 0);
 	_gameSys->insertSequence(0x127, 2, 0, 0, kSeqNone, 0, 0, 0);
 	
 	if (isFlag(12)) {
@@ -175,8 +188,8 @@ void GnapEngine::scene41_run() {
 
 			case kHSUfoExitLeft:
 				if (_toyUfoActionStatus < 0) {
-					_isLeavingScene = 1;
-					_toyUfoActionStatus = 7;
+					_isLeavingScene = true;
+					_toyUfoActionStatus = kASToyUfoLeaveScene;
 					_newSceneNum = 45;
 					toyUfoFlyTo(-35, -1, -35, 799, 0, 300, 2);
 				}
@@ -184,8 +197,8 @@ void GnapEngine::scene41_run() {
 	
 			case kHSUfoExitRight:
 				if (_toyUfoActionStatus < 0) {
-					_isLeavingScene = 1;
-					_toyUfoActionStatus = 7;
+					_isLeavingScene = true;
+					_toyUfoActionStatus = kASToyUfoLeaveScene;
 					_newSceneNum = 42;
 					toyUfoFlyTo(835, -1, 0, 835, 0, 300, 2);
 				}
@@ -236,31 +249,31 @@ void GnapEngine::scene41_run() {
 				break;
 	
 			case kHSExitCave:
-				_isLeavingScene = 1;
+				_isLeavingScene = true;
 				gnapWalkTo(_hotspotsWalkPos[kHSExitCave].x, _hotspotsWalkPos[kHSExitCave].y, 0, 0x107AE, 1);
-				_gnapActionStatus = 0;
+				_gnapActionStatus = kASLeaveScene;
 				_newSceneNum = 40;
 				break;
 	
 			case kHSExit:
-				_isLeavingScene = 1;
+				_isLeavingScene = true;
 				gnapWalkTo(_hotspotsWalkPos[kHSExit].x, -1, 0, 0x107AF, 1);
-				_gnapActionStatus = 0;
+				_gnapActionStatus = kASLeaveScene;
 				platypusWalkTo(_hotspotsWalkPos[kHSExit].x, -1, -1, 0x107CF, 1);
 				_newSceneNum = 45;
 				break;
 	
 			case kHSExitBBQ:
-				_isLeavingScene = 1;
+				_isLeavingScene = true;
 				gnapWalkTo(_hotspotsWalkPos[kHSExitBBQ].x, -1, 0, 0x107AB, 1);
-				_gnapActionStatus = 0;
+				_gnapActionStatus = kASLeaveScene;
 				platypusWalkTo(_hotspotsWalkPos[kHSExitBBQ].x, -1, -1, 0x107CD, 1);
 				_newSceneNum = 42;
 				break;
 	
 			case kHSToyVendor:
 				if (_grabCursorSpriteIndex == kItemDiceQuarterHole) {
-					_gnapActionStatus = 1;
+					_gnapActionStatus = kASUseQuarterWithToyVendor;
 					gnapWalkTo(4, 7, 0, 0x107BB, 9);
 					playGnapShowItem(_grabCursorSpriteIndex, 5, 0);
 				} else if (_grabCursorSpriteIndex >= 0) {
@@ -276,7 +289,7 @@ void GnapEngine::scene41_run() {
 					case TALK_CURSOR:
 						_gnapIdleFacing = 7;
 						gnapWalkTo(4, 7, 0, getGnapSequenceId(gskBrainPulsating, 0, 0) | 0x10000, 1);
-						_gnapActionStatus = 2;
+						_gnapActionStatus = kASTalkToyVendor;
 						break;
 					case PLAT_CURSOR:
 						playGnapImpossible(0, 0);
@@ -289,7 +302,7 @@ void GnapEngine::scene41_run() {
 				if (_grabCursorSpriteIndex == kItemChickenBucket) {
 					gnapWalkTo(7, 7, 0, 0x107BB, 1);
 					_gnapIdleFacing = 7;
-					_gnapActionStatus = 4;
+					_gnapActionStatus = kASUseChickenBucketWithKid;
 				} else if (_grabCursorSpriteIndex >= 0) {
 					playGnapShowCurrItem(7, 7, 8, 0);
 				} else {
@@ -300,7 +313,7 @@ void GnapEngine::scene41_run() {
 					case GRAB_CURSOR:
 						gnapWalkTo(7, 7, 0, 0x107BB, 1);
 						_gnapIdleFacing = 7;
-						_gnapActionStatus = 5;
+						_gnapActionStatus = kASGrabKid;
 						break;
 					case TALK_CURSOR:
 						_gnapIdleFacing = 7;
@@ -317,7 +330,7 @@ void GnapEngine::scene41_run() {
 				if (_grabCursorSpriteIndex == kItemGum) {
 					playGnapPullOutDevice(9, 0);
 					_gameSys->setAnimation(makeRid(_gnapSequenceDatNum, _gnapSequenceId), _gnapId, 0);
-					_gnapActionStatus = 3;
+					_gnapActionStatus = kASUseGumWithToyUfo;
 				}
 				break;
 	
@@ -331,7 +344,7 @@ void GnapEngine::scene41_run() {
 	
 		if (isFlag(12)) {
 			if (!_timers[9] && _gnapActionStatus < 0) {
-				_gnapActionStatus = 6;
+				_gnapActionStatus = kASGiveBackToyUfo;
 				if (_gnapSequenceId == 0x121 || _gnapSequenceId == 0x122) {
 					_gameSys->insertSequence(0x123, _gnapId, makeRid(_gnapSequenceDatNum, _gnapSequenceId), _gnapId, kSeqSyncWait, 0, 0, 0);
 					_gnapSequenceId = 0x123;
@@ -364,7 +377,7 @@ void GnapEngine::scene41_run() {
 				_gnapSequenceId = sequenceId;
 				_gnapSequenceDatNum = 0;
 				_gameSys->setAnimation(sequenceId, _gnapId, 0);
-				_toyUfoActionStatus = 8;
+				_toyUfoActionStatus = kASToyUfoRefresh;
 				toyUfoFlyTo(-1, -1, 0, 799, 0, 300, 2);
 			} else {
 				gnapWalkTo(-1, -1, -1, -1, 1);
@@ -380,32 +393,32 @@ void GnapEngine::scene41_run() {
 				updateGnapIdleSequence();
 			if (!_timers[4]) {
 				_timers[4] = getRandom(100) + 100;
-				if (_gnapActionStatus < 0 && _beaverActionStatus < 0 && _toyUfoActionStatus == -1 && _s41_dword_47F2C8 == -1) {
+				if (_gnapActionStatus < 0 && _beaverActionStatus < 0 && _toyUfoActionStatus == -1 && _s41_nextToyVendorSequenceId == -1) {
 					_gnapRandomValue = getRandom(3);
 					switch (_gnapRandomValue) {
 					case 0:
-						_s41_dword_47F2C8 = 0x113;
+						_s41_nextToyVendorSequenceId = 0x113;
 						break;
 					case 1:
-						_s41_dword_47F2C8 = 0x117;
+						_s41_nextToyVendorSequenceId = 0x117;
 						break;
 					case 2:
-						_s41_dword_47F2C8 = 0x119;
+						_s41_nextToyVendorSequenceId = 0x119;
 						break;
 					}
-					if (_s41_dword_47F2C8 == _s41_dword_47F2CC)
-						_s41_dword_47F2C8 = -1;
+					if (_s41_nextToyVendorSequenceId == _s41_currToyVendorSequenceId)
+						_s41_nextToyVendorSequenceId = -1;
 				}
 			}
 			if (!_timers[5]) {
 				_timers[5] = getRandom(30) + 20;
-				if (_gnapActionStatus < 0 && _beaverActionStatus < 0 && _toyUfoActionStatus == -1 && _s41_dword_47F2C0 == -1) {
+				if (_gnapActionStatus < 0 && _beaverActionStatus < 0 && _toyUfoActionStatus == -1 && _s41_nextKidSequenceId == -1) {
 					if (isFlag(12))
-						_s41_dword_47F2C0 = 0x11B;
+						_s41_nextKidSequenceId = 0x11B;
 					else if (getRandom(3) != 0)
-						_s41_dword_47F2C0 = 0x11D;
+						_s41_nextKidSequenceId = 0x11D;
 					else
-						_s41_dword_47F2C0 = 0x11E;
+						_s41_nextKidSequenceId = 0x11E;
 				}
 			}
 		}
@@ -430,30 +443,30 @@ void GnapEngine::scene41_updateAnimations() {
 
 	if (_gameSys->getAnimationStatus(0) == 2) {
 		switch (_gnapActionStatus) {
-		case 0:
+		case kASLeaveScene:
 			_gameSys->setAnimation(0, 0, 0);
 			_sceneDone = true;
 			_gnapActionStatus = -1;
 			break;
-		case 1:
+		case kASUseQuarterWithToyVendor:
 			_gameSys->setAnimation(0, 0, 0);
-			_s41_dword_47F2C8 = 0x114;
+			_s41_nextToyVendorSequenceId = 0x114;
 			_gnapActionStatus = -1;
 			break;
-		case 2:
+		case kASTalkToyVendor:
 			_gameSys->setAnimation(0, 0, 0);
-			_s41_dword_47F2C8 = 0x116;
+			_s41_nextToyVendorSequenceId = 0x116;
 			_gnapActionStatus = -1;
 			break;
-		case 3:
+		case kASUseGumWithToyUfo:
 			_gameSys->setAnimation(0, 0, 0);
 			playGnapUseDevice(9, 0);
 			_gnapActionStatus = -1;
 			setGrabCursorSprite(-1);
 			invRemove(kItemGum);
-			_toyUfoActionStatus = 9;
+			_toyUfoActionStatus = kASUfoGumAttached;
 			break;
-		case 4:
+		case kASUseChickenBucketWithKid:
 			if (_gameSys->getAnimationStatus(4) == 2) {
 				_timers[2] = getRandom(30) + 20;
 				_timers[3] = getRandom(50) + 200;
@@ -462,11 +475,11 @@ void GnapEngine::scene41_updateAnimations() {
 				_gnapSequenceId = 0x11F;
 				_gnapSequenceDatNum = 0;
 				_gameSys->setAnimation(0x11F, _gnapId, 0);
-				_s41_dword_47F2C0 = 0x11A;
-				_gameSys->insertSequence(0x11A, 1, _s41_dword_47F2C4, 1, kSeqSyncWait, 0, 0, 0);
-				_gameSys->setAnimation(_s41_dword_47F2C0, 1, 4);
-				_s41_dword_47F2C4 = _s41_dword_47F2C0;
-				_s41_dword_47F2C0 = 0x11B;
+				_s41_nextKidSequenceId = 0x11A;
+				_gameSys->insertSequence(0x11A, 1, _s41_currKidSequenceId, 1, kSeqSyncWait, 0, 0, 0);
+				_gameSys->setAnimation(_s41_nextKidSequenceId, 1, 4);
+				_s41_currKidSequenceId = _s41_nextKidSequenceId;
+				_s41_nextKidSequenceId = 0x11B;
 				_timers[5] = getRandom(30) + 20;
 				_gnapActionStatus = -1;
 				setFlag(12);
@@ -474,7 +487,7 @@ void GnapEngine::scene41_updateAnimations() {
 				_timers[9] = 600;
 			}
 			break;
-		case 5:
+		case kASGrabKid:
 			if (_gameSys->getAnimationStatus(3) == 2 && _gameSys->getAnimationStatus(4) == 2) {
 				_timers[2] = getRandom(30) + 20;
 				_timers[3] = getRandom(50) + 200;
@@ -482,22 +495,22 @@ void GnapEngine::scene41_updateAnimations() {
 				_gnapSequenceId = 0x110;
 				_gnapSequenceDatNum = 0;
 				_gameSys->setAnimation(0x110, _gnapId, 0);
-				_s41_dword_47F2C8 = 0x111;
-				_gameSys->insertSequence(0x111, 1, _s41_dword_47F2CC, 1, kSeqSyncWait, 0, 0, 0);
-				_gameSys->setAnimation(_s41_dword_47F2C8, 1, 3);
-				_s41_dword_47F2CC = _s41_dword_47F2C8;
-				_s41_dword_47F2C8 = -1;
+				_s41_nextToyVendorSequenceId = 0x111;
+				_gameSys->insertSequence(0x111, 1, _s41_currToyVendorSequenceId, 1, kSeqSyncWait, 0, 0, 0);
+				_gameSys->setAnimation(_s41_nextToyVendorSequenceId, 1, 3);
+				_s41_currToyVendorSequenceId = _s41_nextToyVendorSequenceId;
+				_s41_nextToyVendorSequenceId = -1;
 				_timers[4] = getRandom(100) + 100;
-				_s41_dword_47F2C0 = 0x10F;
-				_gameSys->insertSequence(0x10F, 1, _s41_dword_47F2C4, 1, kSeqSyncWait, 0, 0, 0);
-				_gameSys->setAnimation(_s41_dword_47F2C0, 1, 4);
-				_s41_dword_47F2C4 = _s41_dword_47F2C0;
-				_s41_dword_47F2C0 = -1;
+				_s41_nextKidSequenceId = 0x10F;
+				_gameSys->insertSequence(0x10F, 1, _s41_currKidSequenceId, 1, kSeqSyncWait, 0, 0, 0);
+				_gameSys->setAnimation(_s41_nextKidSequenceId, 1, 4);
+				_s41_currKidSequenceId = _s41_nextKidSequenceId;
+				_s41_nextKidSequenceId = -1;
 				_timers[5] = getRandom(30) + 20;
 				_gnapActionStatus = -1;
 			}
 			break;
-		case 6:
+		case kASGiveBackToyUfo:
 			if (_gameSys->getAnimationStatus(3) == 2 && _gameSys->getAnimationStatus(4) == 2) {
 				_timers[2] = getRandom(30) + 20;
 				_timers[3] = getRandom(50) + 200;
@@ -507,17 +520,17 @@ void GnapEngine::scene41_updateAnimations() {
 				_gnapSequenceId = 0x124;
 				_gnapSequenceDatNum = 0;
 				_gameSys->setAnimation(0x124, _gnapId, 0);
-				_s41_dword_47F2C8 = 0x112;
-				_gameSys->insertSequence(0x112, 1, _s41_dword_47F2CC, 1, kSeqSyncWait, 0, 0, 0);
-				_gameSys->setAnimation(_s41_dword_47F2C8, 1, 3);
-				_s41_dword_47F2CC = _s41_dword_47F2C8;
-				_s41_dword_47F2C8 = -1;
+				_s41_nextToyVendorSequenceId = 0x112;
+				_gameSys->insertSequence(0x112, 1, _s41_currToyVendorSequenceId, 1, kSeqSyncWait, 0, 0, 0);
+				_gameSys->setAnimation(_s41_nextToyVendorSequenceId, 1, 3);
+				_s41_currToyVendorSequenceId = _s41_nextToyVendorSequenceId;
+				_s41_nextToyVendorSequenceId = -1;
 				_timers[4] = getRandom(100) + 100;
-				_s41_dword_47F2C0 = 0x11C;
-				_gameSys->insertSequence(0x11C, 1, _s41_dword_47F2C4, 1, kSeqSyncWait, 0, 0, 0);
-				_gameSys->setAnimation(_s41_dword_47F2C0, 1, 4);
-				_s41_dword_47F2C4 = _s41_dword_47F2C0;
-				_s41_dword_47F2C0 = -1;
+				_s41_nextKidSequenceId = 0x11C;
+				_gameSys->insertSequence(0x11C, 1, _s41_currKidSequenceId, 1, kSeqSyncWait, 0, 0, 0);
+				_gameSys->setAnimation(_s41_nextKidSequenceId, 1, 4);
+				_s41_currKidSequenceId = _s41_nextKidSequenceId;
+				_s41_nextKidSequenceId = -1;
 				_timers[5] = getRandom(30) + 20;
 				_gnapActionStatus = -1;
 				clearFlag(12);
@@ -529,10 +542,10 @@ void GnapEngine::scene41_updateAnimations() {
 	
 	if (_gameSys->getAnimationStatus(2) == 2) {
 		switch (_toyUfoActionStatus) {
-		case 7:
+		case kASToyUfoLeaveScene:
 			_sceneDone = true;
 			break;
-		case 9:
+		case kASUfoGumAttached:
 			_toyUfoNextSequenceId = 0x873;
 			_gameSys->insertSequence(0x10873, _toyUfoId, _toyUfoSequenceId | 0x10000, _toyUfoId,
 				kSeqSyncWait, 0, _toyUfoX - 365, _toyUfoY - 128);
@@ -552,22 +565,22 @@ void GnapEngine::scene41_updateAnimations() {
 		_toyUfoActionStatus = -1;
 	}
 	
-	if (_gameSys->getAnimationStatus(3) == 2 && _s41_dword_47F2C8 != -1) {
-		_gameSys->insertSequence(_s41_dword_47F2C8, 1, _s41_dword_47F2CC, 1, kSeqSyncWait, 0, 0, 0);
-		_gameSys->setAnimation(_s41_dword_47F2C8, 1, 3);
-		_s41_dword_47F2CC = _s41_dword_47F2C8;
-		_s41_dword_47F2C8 = -1;
+	if (_gameSys->getAnimationStatus(3) == 2 && _s41_nextToyVendorSequenceId != -1) {
+		_gameSys->insertSequence(_s41_nextToyVendorSequenceId, 1, _s41_currToyVendorSequenceId, 1, kSeqSyncWait, 0, 0, 0);
+		_gameSys->setAnimation(_s41_nextToyVendorSequenceId, 1, 3);
+		_s41_currToyVendorSequenceId = _s41_nextToyVendorSequenceId;
+		_s41_nextToyVendorSequenceId = -1;
 		_timers[4] = getRandom(100) + 100;
 	}
 	
-	if (_gameSys->getAnimationStatus(4) == 2 && _s41_dword_47F2C0 != -1) {
-		_gameSys->insertSequence(_s41_dword_47F2C0, 1, _s41_dword_47F2C4, 1, kSeqSyncWait, 0, 0, 0);
-		_gameSys->setAnimation(_s41_dword_47F2C0, 1, 4);
-		_s41_dword_47F2C4 = _s41_dword_47F2C0;
-		_s41_dword_47F2C0 = -1;
+	if (_gameSys->getAnimationStatus(4) == 2 && _s41_nextKidSequenceId != -1) {
+		_gameSys->insertSequence(_s41_nextKidSequenceId, 1, _s41_currKidSequenceId, 1, kSeqSyncWait, 0, 0, 0);
+		_gameSys->setAnimation(_s41_nextKidSequenceId, 1, 4);
+		_s41_currKidSequenceId = _s41_nextKidSequenceId;
+		_s41_nextKidSequenceId = -1;
 		_timers[5] = getRandom(30) + 20;
-		if (_s41_dword_47F2C4 == 0x11E) {
-			_toyUfoActionStatus = 8;
+		if (_s41_currKidSequenceId == 0x11E) {
+			_toyUfoActionStatus = kASToyUfoRefresh;
 			toyUfoFlyTo(getRandom(300) + 500, getRandom(225) + 75, 0, 799, 0, 300, 2);
 		}
 	}

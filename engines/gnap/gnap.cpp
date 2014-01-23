@@ -158,14 +158,14 @@ Common::Error GnapEngine::run() {
 	//testBack->fillRect(Common::Rect(0, 0, 800, 600), 0xFFFFFFFF);
 	testBack->fillRect(Common::Rect(0, 0, 800, 600), 0xFF000000);
 	
-	_currentSceneNum = 39;
+	_currentSceneNum = 41;
 
     Common::String datFilename = Common::String::format("%s_n.dat", kSceneNames[_currentSceneNum]);
 	_dat->open(0, datFilename.c_str());
 	
 	_gameSys->setBackgroundSurface(testBack, 0, 500, 1, 1000);
 
-	_gameSys->insertSequence(0x33, 100, -1, -1, 0, 0, 0, 0);
+	_gameSys->insertSequence(0x11b, 100, -1, -1, 0, 0, 0, 0);
 
 	CursorMan.showMouse(true);
 	
@@ -751,7 +751,7 @@ void GnapEngine::mainLoop() {
 
 	// > DEBUG BEGIN
 	_currentSceneNum = 53;
-	_newSceneNum = 39;
+	_newSceneNum = 41;
 	_newCursorValue = 3;
 	// < DEBUG END
 

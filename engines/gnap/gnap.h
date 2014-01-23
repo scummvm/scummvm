@@ -849,10 +849,8 @@ public:
 	void toyUfoFlyTo(int destX, int destY, int a3, int a4, int a5, int a6, int animationIndex);
 
 	// Scene 41
-	int _s41_dword_47F2C0;
-	int _s41_dword_47F2C4;
-	int _s41_dword_47F2C8;
-	int _s41_dword_47F2CC;
+	int _s41_currKidSequenceId, _s41_nextKidSequenceId;
+	int _s41_currToyVendorSequenceId, _s41_nextToyVendorSequenceId;
 	int scene41_init();
 	void scene41_updateHotspots();
 	void scene41_run();
