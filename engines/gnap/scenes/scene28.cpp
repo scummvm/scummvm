@@ -31,10 +31,24 @@ enum {
 	kHSHorn				= 1,
 	kHSClown			= 2,
 	kHSExitOutsideClown	= 3,
-	kHSUnknown			= 4,
+	kHSEmptyBucket		= 4,
 	kHSDevice			= 5,
 	kHSWalkArea1		= 6,
 	kHSWalkArea2		= 7
+};
+
+enum {
+	kASUseBeerBucketWithClown	= 0,
+	kASUsePillBucketWithClown	= 1,
+	kASGrabHornFails			= 2,
+	kASGrabEmptyBucket			= 3,
+	kASGrabHornSuccess			= 4,
+	kASGrabHornSuccessDone		= 5,
+	kASGrabEmptyBucketDone		= 6,
+	kASGrabHornFailsDone		= 7,
+	kASTalkClown				= 8,
+	kASGnapWaiting				= 9,
+	kASLeaveScene				= 10
 };
 
 int GnapEngine::scene28_init() {
@@ -46,21 +60,21 @@ void GnapEngine::scene28_updateHotspots() {
 	setHotspot(kHSHorn, 148, 352, 215, 383, SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR, 1, 7);
 	setHotspot(kHSClown, 130, 250, 285, 413, SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR, 3, 5);
 	setHotspot(kHSExitOutsideClown, 660, 190, 799, 400, SF_EXIT_R_CURSOR, 9, 6);
-	setHotspot(kHSUnknown, 582, 421, 643, 478, SF_WALKABLE | SF_DISABLED, 9, 7);
+	setHotspot(kHSEmptyBucket, 582, 421, 643, 478, SF_WALKABLE | SF_DISABLED, 9, 7);
 	setHotspot(kHSWalkArea1, 0, 0, 799, 523);
 	setHotspot(kHSWalkArea2, 0, 0, 0, 0, 7, SF_DISABLED);
 	setDeviceHotspot(kHSDevice, -1, -1, -1, -1);
 	if (invHas(kItemHorn))
 		_hotspots[kHSHorn].flags = SF_DISABLED;
 	if (isFlag(22))
-		_hotspots[kHSUnknown].flags = SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR;
+		_hotspots[kHSEmptyBucket].flags = SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR;
 	_hotspotsCount = 8;
 }
 
 void GnapEngine::scene28_run() {
 
 	playSound(0x1093C, 1);
-	_s28_dword_47EA60 = -1;
+	_s28_nextClownSequenceId = -1;
 	queueInsertDeviceIcon();
 	_gameSys->insertSequence(0x124, 255, 0, 0, kSeqNone, 0, 0, 0);
 
@@ -73,11 +87,11 @@ void GnapEngine::scene28_run() {
 			_gameSys->insertSequence(0x11C, 39, 0, 0, kSeqNone, 0, 0, 0);
 			if (!invHas(kItemHorn))
 				_gameSys->insertSequence(0x118, 59, 0, 0, kSeqNone, 0, 0, 0);
-			_s28_dword_47EA5C = 0x11C;
+			_s28_currClownSequenceId = 0x11C;
 		} else {
-			_s28_dword_47EA5C = 0x11B;
+			_s28_currClownSequenceId = 0x11B;
 			_gameSys->setAnimation(0x11B, 39, 3);
-			_gameSys->insertSequence(_s28_dword_47EA5C, 39, 0, 0, kSeqNone, 0, 0, 0);
+			_gameSys->insertSequence(_s28_currClownSequenceId, 39, 0, 0, kSeqNone, 0, 0, 0);
 			_timers[4] = getRandom(20) + 80;
 		}
 		initGnapPos(8, 8, 3);
@@ -89,13 +103,13 @@ void GnapEngine::scene28_run() {
 		initBeaverPos(9, 8, 4);
 		endSceneInit();
 		playSequences(0xF7, 0x121, 0x122, 0x123);
-		_s28_dword_47EA5C = 0x115;
+		_s28_currClownSequenceId = 0x115;
 		setFlag(1);
 		_gameSys->setAnimation(0x115, 39, 3);
-		_gameSys->insertSequence(_s28_dword_47EA5C, 39, 283, 39, kSeqSyncWait, 0, 0, 0);
-		_s28_dword_47EA60 = -1;
+		_gameSys->insertSequence(_s28_currClownSequenceId, 39, 0x11B, 39, kSeqSyncWait, 0, 0, 0);
+		_s28_nextClownSequenceId = -1;
 		_timers[4] = getRandom(20) + 80;
-		_gnapActionStatus = 9;
+		_gnapActionStatus = kASGnapWaiting;
 		while (_gameSys->getAnimationStatus(3) != 2) {
 			gameUpdateTick();
 			updateMouseCursor();
@@ -159,7 +173,7 @@ void GnapEngine::scene28_run() {
 						if (isFlag(21)) {
 							if (!invHas(kItemHorn)) {
 								gnapWalkTo(_gnapX, _gnapY, 0, getGnapSequenceId(gskIdle, _hotspotsWalkPos[kHSHorn].x, _hotspotsWalkPos[kHSHorn].y) | 0x10000, 1);
-								_gnapActionStatus = 4;
+								_gnapActionStatus = kASGrabHornSuccess;
 							}
 						} else {
 							_gnapIdleFacing = 5;
@@ -167,7 +181,7 @@ void GnapEngine::scene28_run() {
 							_hotspots[kHSWalkArea1].flags |= SF_WALKABLE;
 							gnapWalkTo(_hotspotsWalkPos[kHSHorn].x, _hotspotsWalkPos[kHSHorn].y, 0, 0x107BB, 1);
 							_hotspots[kHSWalkArea1].flags &= ~SF_WALKABLE;
-							_gnapActionStatus = 2;
+							_gnapActionStatus = kASGrabHornFails;
 						}
 						break;
 					case TALK_CURSOR:
@@ -191,13 +205,13 @@ void GnapEngine::scene28_run() {
 					gnapWalkTo(_hotspotsWalkPos[kHSClown].x, _hotspotsWalkPos[kHSClown].y, 0, 0x107BC, 1);
 					playGnapPullOutDevice(0, 0);
 					playGnapUseDevice(0, 0);
-					_gnapActionStatus = 0;
+					_gnapActionStatus = kASUseBeerBucketWithClown;
 				} else if (_grabCursorSpriteIndex == kItemBucketWithPill) {
 					_gnapIdleFacing = 5;
 					gnapWalkTo(_hotspotsWalkPos[kHSClown].x, _hotspotsWalkPos[kHSClown].y, 0, 0x107BC, 1);
 					playGnapPullOutDevice(0, 0);
 					playGnapUseDevice(0, 0);
-					_gnapActionStatus = 1;
+					_gnapActionStatus = kASUsePillBucketWithClown;
 				} else if (_grabCursorSpriteIndex >= 0) {
 					playGnapShowCurrItem(_hotspotsWalkPos[kHSClown].x, _hotspotsWalkPos[kHSClown].y, 2, 4);
 				} else {
@@ -208,7 +222,7 @@ void GnapEngine::scene28_run() {
 					case TALK_CURSOR:
 						_gnapIdleFacing = 5;
 						gnapWalkTo(5, 8, 0, getGnapSequenceId(gskBrainPulsating, 0, 0) | 0x10000, 1);
-						_gnapActionStatus = 8;
+						_gnapActionStatus = kASTalkClown;
 						break;
 					case GRAB_CURSOR:
 					case PLAT_CURSOR:
@@ -225,13 +239,13 @@ void GnapEngine::scene28_run() {
 				_newSceneNum = 27;
 				_hotspots[kHSWalkArea1].flags |= SF_WALKABLE;
 				gnapWalkTo(_hotspotsWalkPos[kHSExitOutsideClown].x, _hotspotsWalkPos[kHSExitOutsideClown].y, 0, 0x107BF, 1);
-				_gnapActionStatus = 10;
+				_gnapActionStatus = kASLeaveScene;
 				_hotspots[kHSWalkArea1].flags &= ~SF_WALKABLE;
 				platypusWalkTo(_hotspotsWalkPos[kHSExitOutsideClown].x - 1, _hotspotsWalkPos[kHSExitOutsideClown].y, -1, 0x107C2, 1);
 			}
 			break;
 
-		case kHSUnknown:
+		case kHSEmptyBucket:
 			if (_gnapActionStatus < 0) {
 				if (_grabCursorSpriteIndex >= 0) {
 					playGnapShowItem(_grabCursorSpriteIndex, 8, 6);
@@ -243,8 +257,8 @@ void GnapEngine::scene28_run() {
 						playGnapScratchingHead(8, 6);
 						break;
 					case GRAB_CURSOR:
-						gnapWalkTo(_gnapX, _gnapY, 0, getGnapSequenceId(gskIdle, _hotspotsWalkPos[kHSUnknown].x, _hotspotsWalkPos[kHSUnknown].y) | 0x10000, 1);
-						_gnapActionStatus = 3;
+						gnapWalkTo(_gnapX, _gnapY, 0, getGnapSequenceId(gskIdle, _hotspotsWalkPos[kHSEmptyBucket].x, _hotspotsWalkPos[kHSEmptyBucket].y) | 0x10000, 1);
+						_gnapActionStatus = kASGrabEmptyBucket;
 						break;
 					case TALK_CURSOR:
 					case PLAT_CURSOR:
@@ -281,7 +295,7 @@ void GnapEngine::scene28_run() {
 			if (!_timers[4]) {
 				_timers[4] = getRandom(20) + 80;
 				if (_gnapActionStatus < 0 && !isFlag(21))
-					_s28_dword_47EA60 = 0x114;
+					_s28_nextClownSequenceId = 0x114;
 			}
 		}
 
@@ -304,37 +318,30 @@ void GnapEngine::scene28_updateAnimations() {
 	if (_gameSys->getAnimationStatus(0) == 2) {
 		_gameSys->setAnimation(0, 0, 0);
 		switch (_gnapActionStatus) {
-		case 0:
+		case kASUseBeerBucketWithClown:
 			setFlag(22);
-			_s28_dword_47EA60 = 275;
+			_s28_nextClownSequenceId = 0x113;
 			invRemove(kItemBucketWithBeer);
 			scene28_updateHotspots();
 			break;
-		case 1:
-			_s28_dword_47EA60 = 0x116;
+		case kASUsePillBucketWithClown:
+			_s28_nextClownSequenceId = 0x116;
 			invRemove(kItemBucketWithPill);
 			setFlag(22);
 			setFlag(21);
 			scene28_updateHotspots();
 			break;
-		case 2:
-			_s28_dword_47EA60 = 0x119;
+		case kASGrabHornFails:
+			_s28_nextClownSequenceId = 0x119;
 			break;
-		case 3:
-			playGnapPullOutDevice(0, 0);
-			playGnapUseDevice(0, 0);
-			_gameSys->setAnimation(0x111, 99, 0);
-			_gameSys->insertSequence(0x111, 99, 274, 99, kSeqSyncWait, 0, 0, 0);
-			_gnapActionStatus = 6;
-			break;
-		case 4:
+		case kASGrabHornSuccess:
 			playGnapPullOutDevice(0, 0);
 			playGnapUseDevice(0, 0);
 			_gameSys->setAnimation(0x117, 59, 0);
 			_gameSys->insertSequence(0x117, 59, 280, 59, kSeqSyncWait, 0, 0, 0);
-			_gnapActionStatus = 5;
+			_gnapActionStatus = kASGrabHornSuccessDone;
 			break;
-		case 5:
+		case kASGrabHornSuccessDone:
 			hideCursor();
 			setGrabCursorSprite(-1);
 			addFullScreenSprite(0xF6, 255);
@@ -349,63 +356,70 @@ void GnapEngine::scene28_updateAnimations() {
 			scene28_updateHotspots();
 			_gnapActionStatus = -1;
 			break;
-		case 6:
+		case kASGrabEmptyBucket:
+			playGnapPullOutDevice(0, 0);
+			playGnapUseDevice(0, 0);
+			_gameSys->setAnimation(0x111, 99, 0);
+			_gameSys->insertSequence(0x111, 99, 274, 99, kSeqSyncWait, 0, 0, 0);
+			_gnapActionStatus = kASGrabEmptyBucketDone;
+			break;
+		case kASGrabEmptyBucketDone:
 			setGrabCursorSprite(kItemEmptyBucket);
 			clearFlag(22);;
 			scene28_updateHotspots();
 			invAdd(kItemEmptyBucket);
 			_gnapActionStatus = -1;
 			break;
-		case 7:
+		case kASGrabHornFailsDone:
 			_gameSys->insertSequence(0x107B5, _gnapId, 281, 39, kSeqSyncWait, 0, 75 * _gnapX - _gnapGridX, 48 * _gnapY - _gnapGridY);
 			_gnapSequenceId = 0x7B5;
 			_gnapSequenceDatNum = 1;
 			_gameSys->insertSequence(0x11B, 39, 0, 0, kSeqNone, 0, 0, 0);
-			_s28_dword_47EA5C = 0x11B;
-			_s28_dword_47EA60 = -1;
+			_s28_currClownSequenceId = 0x11B;
+			_s28_nextClownSequenceId = -1;
 			_gnapActionStatus = -1;
 			gnapWalkTo(2, 8, -1, 0x107BB, 1);
 			break;
-		case 8:
-			_s28_dword_474938 = (_s28_dword_474938 + 1) % 2;
-			if (_s28_dword_474938 == 0)
-				_s28_dword_47EA60 = 0x11D;
-			else if (_s28_dword_474938 == 1)
-				_s28_dword_47EA60 = 0x11E;
-			else if (_s28_dword_474938 == 2)
-				_s28_dword_47EA60 = 0x11F; // NOTE CHECKME Never set, bug in the original?
+		case kASTalkClown:
+			_s28_clownTalkCtr = (_s28_clownTalkCtr + 1) % 2;
+			if (_s28_clownTalkCtr == 0)
+				_s28_nextClownSequenceId = 0x11D;
+			else if (_s28_clownTalkCtr == 1)
+				_s28_nextClownSequenceId = 0x11E;
+			else if (_s28_clownTalkCtr == 2)
+				_s28_nextClownSequenceId = 0x11F; // NOTE CHECKME Never set, bug in the original?
 			break;
-		case 9:
+		case kASGnapWaiting:
 			_gnapActionStatus = -1;
 			break;
-		case 10:
+		case kASLeaveScene:
 			_sceneDone = true;
 			break;
 		}
 	}
 
 	if (_gameSys->getAnimationStatus(3) == 2) {
-		switch (_s28_dword_47EA60) {
+		switch (_s28_nextClownSequenceId) {
 		case 0x113:
 			setGrabCursorSprite(-1);
-			_gameSys->setAnimation(_s28_dword_47EA60, 39, 0);
-			_gameSys->insertSequence(0x112, 99, 0, 0, kSeqNone, getSequenceTotalDuration(_s28_dword_47EA60), 0, 0);
-			_gameSys->insertSequence(_s28_dword_47EA60, 39, _s28_dword_47EA5C, 39, kSeqSyncWait, 0, 0, 0);
-			_gameSys->insertSequence(0x11B, 39, _s28_dword_47EA60, 39, kSeqSyncWait, 0, 0, 0);
-			_s28_dword_47EA5C = 0x11B;
-			_s28_dword_47EA60 = -1;
-			_gnapActionStatus = 9;
+			_gameSys->setAnimation(_s28_nextClownSequenceId, 39, 0);
+			_gameSys->insertSequence(0x112, 99, 0, 0, kSeqNone, getSequenceTotalDuration(_s28_nextClownSequenceId), 0, 0);
+			_gameSys->insertSequence(_s28_nextClownSequenceId, 39, _s28_currClownSequenceId, 39, kSeqSyncWait, 0, 0, 0);
+			_gameSys->insertSequence(0x11B, 39, _s28_nextClownSequenceId, 39, kSeqSyncWait, 0, 0, 0);
+			_s28_currClownSequenceId = 0x11B;
+			_s28_nextClownSequenceId = -1;
+			_gnapActionStatus = kASGnapWaiting;
 			break;
 		case 0x116:
 			setGrabCursorSprite(-1);
-			_gameSys->setAnimation(_s28_dword_47EA60, 39, 0);
-			_gameSys->insertSequence(0x112, 99, 0, 0, kSeqNone, getSequenceTotalDuration(_s28_dword_47EA60), 0, 0);
-			_gameSys->insertSequence(_s28_dword_47EA60, 39, _s28_dword_47EA5C, 39, kSeqSyncWait, 0, 0, 0);
-			_gameSys->insertSequence(0x11C, 39, _s28_dword_47EA60, 39, kSeqSyncWait, 0, 0, 0);
-			_gameSys->insertSequence(0x118, 59, 0, 0, kSeqNone, getSequenceTotalDuration(_s28_dword_47EA60), 0, 0);
-			_s28_dword_47EA5C = _s28_dword_47EA60;
-			_s28_dword_47EA60 = -1;
-			_gnapActionStatus = 9;
+			_gameSys->setAnimation(_s28_nextClownSequenceId, 39, 0);
+			_gameSys->insertSequence(0x112, 99, 0, 0, kSeqNone, getSequenceTotalDuration(_s28_nextClownSequenceId), 0, 0);
+			_gameSys->insertSequence(_s28_nextClownSequenceId, 39, _s28_currClownSequenceId, 39, kSeqSyncWait, 0, 0, 0);
+			_gameSys->insertSequence(0x11C, 39, _s28_nextClownSequenceId, 39, kSeqSyncWait, 0, 0, 0);
+			_gameSys->insertSequence(0x118, 59, 0, 0, kSeqNone, getSequenceTotalDuration(_s28_nextClownSequenceId), 0, 0);
+			_s28_currClownSequenceId = _s28_nextClownSequenceId;
+			_s28_nextClownSequenceId = -1;
+			_gnapActionStatus = kASGnapWaiting;
 			break;
 		case 0x11D:
 		case 0x11E:
@@ -413,20 +427,20 @@ void GnapEngine::scene28_updateAnimations() {
 			_gnapActionStatus = -1;
 			break;
 		case 0x119:
-			_gameSys->insertSequence(_s28_dword_47EA60, 39, makeRid(_gnapSequenceDatNum, _gnapSequenceId), _gnapId, kSeqSyncWait, 0, 0, 0);
-			_gameSys->setAnimation(_s28_dword_47EA60, 39, 0);
-			_gameSys->removeSequence(_s28_dword_47EA5C, 39, 1);
-			_gnapActionStatus = 7;
-			_gnapSequenceId = _s28_dword_47EA60;
+			_gameSys->insertSequence(_s28_nextClownSequenceId, 39, makeRid(_gnapSequenceDatNum, _gnapSequenceId), _gnapId, kSeqSyncWait, 0, 0, 0);
+			_gameSys->setAnimation(_s28_nextClownSequenceId, 39, 0);
+			_gameSys->removeSequence(_s28_currClownSequenceId, 39, 1);
+			_gnapActionStatus = kASGrabHornFailsDone;
+			_gnapSequenceId = _s28_nextClownSequenceId;
 			_gnapSequenceDatNum = 0;
-			_s28_dword_47EA60 = -1;
+			_s28_nextClownSequenceId = -1;
 			break;
 		}
-		if (_s28_dword_47EA60 != -1) {
-			_gameSys->insertSequence(_s28_dword_47EA60, 39, _s28_dword_47EA5C, 39, kSeqSyncWait, 0, 0, 0);
-			_gameSys->setAnimation(_s28_dword_47EA60, 39, 3);
-			_s28_dword_47EA5C = _s28_dword_47EA60;
-			_s28_dword_47EA60 = -1;
+		if (_s28_nextClownSequenceId != -1) {
+			_gameSys->insertSequence(_s28_nextClownSequenceId, 39, _s28_currClownSequenceId, 39, kSeqSyncWait, 0, 0, 0);
+			_gameSys->setAnimation(_s28_nextClownSequenceId, 39, 3);
+			_s28_currClownSequenceId = _s28_nextClownSequenceId;
+			_s28_nextClownSequenceId = -1;
 		}
 	}
 	

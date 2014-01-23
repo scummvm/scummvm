@@ -779,9 +779,8 @@ public:
 	void scene27_updateAnimations();
 		
 	// Scene 28
-	int _s28_dword_47EA5C;
-	int _s28_dword_47EA60;
-	int _s28_dword_474938;
+	int _s28_currClownSequenceId, _s28_nextClownSequenceId;
+	int _s28_clownTalkCtr;
 	int scene28_init();
 	void scene28_updateHotspots();
 	void scene28_run();
