@@ -20,8 +20,9 @@
  *
  */
 
-// Disable symbol overrides so that we can use system headers.
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
+// Disable symbol overrides so that we can use "FILE"
+#define FORBIDDEN_SYMBOL_EXCEPTION_FILE
+#define FORBIDDEN_SYMBOL_EXCEPTION_printf
 
 #include <kernel.h>
 #include <stdio.h>
@@ -640,18 +641,18 @@ bool OSystem_PS2::hddMount(const char *partition) {
 		strcpy(name+6, partition);
 
 	if (fio.mount("pfs0:", name, 0) >= 0) {
-		printf("Successfully mounted (%s)!\n", name);
+		dbg_printf("Successfully mounted (%s)!\n", name);
 		return true;
 	}
 	else {
-		printf("Failed to mount (%s).\n", name);
+		dbg_printf("Failed to mount (%s).\n", name);
 		_useHdd = false;
 		return false;
 	}
 }
 
 void OSystem_PS2::initSize(uint width, uint height, const Graphics::PixelFormat *format) {
-	printf("initializing new size: (%d/%d)...", width, height);
+	dbg_printf("initializing new size: (%d/%d)...", width, height);
 
 	/* ugly hack: we know we can parse ScummVM.ini now */
 	if (!_screenChangeCount) { // first round
@@ -670,7 +671,7 @@ void OSystem_PS2::initSize(uint width, uint height, const Graphics::PixelFormat 
 
 	_modeChanged = true;
 	_screenChangeCount++;
-	printf("done\n");
+	dbg_printf("done\n");
 }
 
 void OSystem_PS2::setPalette(const byte *colors, uint start, uint num) {
@@ -700,7 +701,7 @@ void OSystem_PS2::updateScreen(void) {
 
 void OSystem_PS2::displayMessageOnOSD(const char *msg) {
 	/* TODO : check */
-	printf("displayMessageOnOSD: %s\n", msg);
+	dbg_printf("displayMessageOnOSD: %s\n", msg);
 }
 
 uint32 OSystem_PS2::getMillis(void) {
@@ -900,15 +901,14 @@ void OSystem_PS2::powerOffCallback(void) {
 }
 
 void OSystem_PS2::quit(void) {
-	printf("OSystem_PS2::quit called\n");
+	dbg_printf("OSystem_PS2::quit called\n");
 	if (_bootDevice == HOST_DEV) {
-		printf("OSystem_PS2::quit (HOST)\n");
+		dbg_printf("OSystem_PS2::quit (HOST)\n");
 		#ifndef ENABLE_PROFILING
 		SleepThread();
 		#endif
-		// exit(0);
 	} else {
-		printf("OSystem_PS2::quit (bootdev=%d)\n", _bootDevice);
+		dbg_printf("OSystem_PS2::quit (bootdev=%d)\n", _bootDevice);
 		if (_useHdd) {
 			driveStandby();
 			fio.umount("pfs0:");
@@ -921,17 +921,17 @@ void OSystem_PS2::quit(void) {
 		#else
 		ee_thread_t statSound, statTimer;
 		#endif
-		printf("Waiting for timer and sound thread to end\n");
+		dbg_printf("Waiting for timer and sound thread to end\n");
 		do {	// wait until both threads called ExitThread()
 			ReferThreadStatus(_timerTid, &statTimer);
 			ReferThreadStatus(_soundTid, &statSound);
 		} while ((statSound.status != 0x10) || (statTimer.status != 0x10));
-		printf("Done\n");
+		dbg_printf("Done\n");
 		DeleteThread(_timerTid);
 		DeleteThread(_soundTid);
 		free(_timerStack);
 		free(_soundStack);
-		printf("Stopping timer\n");
+		dbg_printf("Stopping timer\n");
 		DisableIntc(INT_TIMER0);
 		RemoveIntcHandler(INT_TIMER0, _intrId);
 
@@ -940,7 +940,7 @@ void OSystem_PS2::quit(void) {
 
 		padEnd(); // stop pad library
 		cdvdInit(CDVD_EXIT);
-		printf("resetting iop\n");
+		dbg_printf("resetting iop\n");
 		SifIopReset(NULL, 0);
 		SifExitRpc();
 		while (!SifIopSync());
@@ -978,7 +978,7 @@ void OSystem_PS2::quit(void) {
 */
 		#else
 		// reset + load ELF from CD
-		printf("Restarting ScummVM\n");
+		dbg_printf("Restarting ScummVM\n");
 		LoadExecPS2("cdrom0:\\SCUMMVM.ELF", 0, NULL);
 		#endif
 	}
@@ -995,12 +995,12 @@ bool OSystem_PS2::prepMC() {
 	if (!mcPresent())
 		return prep;
 
-	printf("prepMC 0\n");
+	dbg_printf("prepMC 0\n");
 	// Common::String str("mc0:ScummVM/")
 	// Common::FSNode scumDir(str);
 	Common::FSNode scumDir("mc0:ScummVM/");
 
-	printf("prepMC 00\n");
+	dbg_printf("prepMC 00\n");
 
 	if (!scumDir.exists()) {
 		uint16 *data, size;
@@ -1008,11 +1008,11 @@ bool OSystem_PS2::prepMC() {
 		PS2Icon _ico;
 		mcIcon icon;
 
-		printf("prepMC I\n");
+		dbg_printf("prepMC I\n");
 
 		size = _ico.decompressData(&data);
 
-		printf("prepMC II\n");
+		dbg_printf("prepMC II\n");
 
 		_ico.setup(&icon);
 
@@ -1027,21 +1027,21 @@ bool OSystem_PS2::prepMC() {
 		fio.mkdir("mc0:ScummVM");
 		f = ps2_fopen("mc0:ScummVM/scummvm.icn", "w");
 
-		printf("f = %p\n", (const void *)f);
+		dbg_printf("f = %p\n", (const void *)f);
 
 		ps2_fwrite(data, size, 2, f);
 		ps2_fclose(f);
 
 		f = ps2_fopen("mc0:ScummVM/icon.sys", "w");
 
-		printf("f = %p\n", (const void *)f);
+		dbg_printf("f = %p\n", (const void *)f);
 
 		ps2_fwrite(&icon, sizeof(icon), 1, f);
 		ps2_fclose(f);
 #endif
 		free(data);
 
-		printf("prepMC II\n");
+		dbg_printf("prepMC II\n");
 
 		prep = true;
 	}
@@ -1109,6 +1109,5 @@ Common::String OSystem_PS2::getDefaultConfigFileName() {
 }
 
 void OSystem_PS2::logMessage(LogMessageType::Type type, const char *message) {
-	printf("%s", message);
-	sioprintf("%s", message);
+	dbg_printf("%s", message);
 }
