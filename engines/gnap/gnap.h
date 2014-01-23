@@ -857,8 +857,7 @@ public:
 	void scene41_updateAnimations();
 
 	// Scene 42
-	int _s42_dword_47F2B8;
-	int _s42_dword_47F2BC;
+	int _s42_currBBQVendorSequenceId, _s42_nextBBQVendorSequenceId;
 	int scene42_init();
 	void scene42_updateHotspots();
 	void scene42_run();
