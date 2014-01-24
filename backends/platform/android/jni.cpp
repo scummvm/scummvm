@@ -79,7 +79,6 @@ jmethodID JNI::_MID_displayMessageOnOSD = 0;
 jmethodID JNI::_MID_setWindowCaption = 0;
 jmethodID JNI::_MID_showVirtualKeyboard = 0;
 jmethodID JNI::_MID_getSysArchives = 0;
-jmethodID JNI::_MID_getPluginDirectories = 0;
 jmethodID JNI::_MID_initSurface = 0;
 jmethodID JNI::_MID_deinitSurface = 0;
 
@@ -293,46 +292,6 @@ void JNI::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
 	}
 }
 
-void JNI::getPluginDirectories(Common::FSList &dirs) {
-	JNIEnv *env = JNI::getEnv();
-
-	jobjectArray array =
-		(jobjectArray)env->CallObjectMethod(_jobj, _MID_getPluginDirectories);
-
-	if (env->ExceptionCheck()) {
-		LOGE("Error finding plugin directories");
-
-		env->ExceptionDescribe();
-		env->ExceptionClear();
-
-		return;
-	}
-
-	jsize size = env->GetArrayLength(array);
-	for (jsize i = 0; i < size; ++i) {
-		jstring path_obj = (jstring)env->GetObjectArrayElement(array, i);
-
-		if (path_obj == 0)
-			continue;
-
-		const char *path = env->GetStringUTFChars(path_obj, 0);
-
-		if (path == 0) {
-			LOGE("Error getting string characters from plugin directory");
-
-			env->ExceptionClear();
-			env->DeleteLocalRef(path_obj);
-
-			continue;
-		}
-
-		dirs.push_back(Common::FSNode(path));
-
-		env->ReleaseStringUTFChars(path_obj, path);
-		env->DeleteLocalRef(path_obj);
-	}
-}
-
 bool JNI::initSurface() {
 	JNIEnv *env = JNI::getEnv();
 
@@ -454,7 +413,6 @@ void JNI::create(JNIEnv *env, jobject self, jobject asset_manager,
 	FIND_METHOD(, displayMessageOnOSD, "(Ljava/lang/String;)V");
 	FIND_METHOD(, showVirtualKeyboard, "(Z)V");
 	FIND_METHOD(, getSysArchives, "()[Ljava/lang/String;");
-	FIND_METHOD(, getPluginDirectories, "()[Ljava/lang/String;");
 	FIND_METHOD(, initSurface, "()Ljavax/microedition/khronos/egl/EGLSurface;");
 	FIND_METHOD(, deinitSurface, "()V");
 
@@ -542,10 +500,6 @@ jint JNI::main(JNIEnv *env, jobject self, jobjectArray args) {
 
 		env->DeleteLocalRef(arg);
 	}
-
-#ifdef DYNAMIC_MODULES
-	PluginManager::instance().addPluginProvider(new AndroidPluginProvider());
-#endif
 
 	LOGI("Entering scummvm_main with %d args", argc);
 

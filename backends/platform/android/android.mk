@@ -19,8 +19,6 @@ RESOURCES = \
 	$(PATH_BUILD_RES)/values/strings.xml \
 	$(PATH_BUILD_RES)/menu/game_menu.xml \
 	$(PATH_BUILD_RES)/layout/main.xml \
-	$(PATH_BUILD_RES)/layout/splash.xml \
-	$(PATH_BUILD_RES)/drawable/gradient.xml \
 	$(PATH_BUILD_RES)/drawable/residualvm.png \
 	$(PATH_BUILD_RES)/drawable/residualvm_big.png
 
