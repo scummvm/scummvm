@@ -157,6 +157,7 @@ public:
 	void stopSoundStream2();
 	void stopAllSoundStreams();
 	void stopAllSoundInstances(int id);
+	void updateSoundVolume();
 
 	int _sfxVolume;
 
@@ -223,6 +224,8 @@ public:
 
 	int (*_updateScreenCallback)();
 	int (*_updateCursorCallback)();
+
+	void drawAlphaRectangle(int x1, int y1, int x2, int y2, int alpha);
 
 	int _cursorId;
 	int _minCursorId;

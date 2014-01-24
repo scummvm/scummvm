@@ -560,6 +560,103 @@ void FullpipeEngine::openMap() {
 	}
 }
 
+ModalFinal::ModalFinal() {
+	_flags = 0;
+	_counter = 255;
+	_sfxVolume = g_fp->_sfxVolume;
+}
+
+ModalFinal::~ModalFinal() {
+	if (g_vars->sceneFinal_var01) {
+		g_fp->_gameLoader->unloadScene(SC_FINAL2);
+		g_fp->_gameLoader->unloadScene(SC_FINAL3);
+		g_fp->_gameLoader->unloadScene(SC_FINAL4);
+
+		g_fp->_currentScene = g_fp->accessScene(SC_FINAL1);
+
+		g_fp->stopAllSounds();
+
+		g_vars->sceneFinal_var01 = 0;
+	}
+
+	g_fp->_sfxVolume = _sfxVolume;
+}
+
+bool ModalFinal::init(int counterdiff) {
+	if (g_vars->sceneFinal_var01) {
+		g_fp->_gameLoader->updateSystems(42);
+
+		return true;
+	}
+
+	if (_counter > 0) {
+		_flags |= 2u;
+
+		g_fp->_gameLoader->updateSystems(42);
+
+		return true;
+	}
+
+	unloadScenes();
+
+	g_fp->_modalObject = new ModalCredits();
+
+	return true;
+}
+
+void ModalFinal::unloadScenes() {
+	g_fp->_gameLoader->unloadScene(SC_FINAL2);
+	g_fp->_gameLoader->unloadScene(SC_FINAL3);
+	g_fp->_gameLoader->unloadScene(SC_FINAL4);
+
+	g_fp->_currentScene = g_fp->accessScene(SC_FINAL1);
+
+	g_fp->stopAllSounds();
+}
+
+bool ModalFinal::handleMessage(ExCommand *cmd) {
+	if (cmd->_messageKind == 17 && cmd->_messageNum == 36 && cmd->_keyCode == 27) {
+		g_fp->_modalObject = new ModalMainMenu();
+		g_fp->_modalObject->_parentObj = this;
+
+		return true;
+	}
+
+	return false;
+}
+
+void ModalFinal::update() {
+	if (g_fp->_currentScene) {
+		g_fp->_currentScene->draw();
+
+		if (_flags & 1) {
+			g_fp->drawAlphaRectangle(0, 0, 800, 600, 0xff - _counter);
+
+			_counter += 10;
+
+			if (_counter >= 255) {
+				_counter = 255;
+				_flags &= 0xfe;
+			}
+		} else {
+			if (!(_flags & 2))
+				return;
+
+			g_fp->drawAlphaRectangle(0, 0, 800, 600, 0xff - _counter);
+			_counter -= 10;
+
+			if (_counter <= 0) {
+				_counter = 0;
+				_flags &= 0xFD;
+			}
+		}
+
+		g_fp->_sfxVolume = _counter * (_sfxVolume + 3000) / 255 - 3000;
+
+		g_fp->updateSoundVolume();
+	}
+}
+
 void FullpipeEngine::openHelp() {
 	warning("STUB: FullpipeEngine::openHelp()");
 }

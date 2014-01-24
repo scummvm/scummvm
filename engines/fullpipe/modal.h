@@ -107,9 +107,27 @@ class ModalMap : public BaseModalObject {
 };
 
 class ModalFinal : public BaseModalObject {
+	int _flags;
+	int _counter;
+	int _sfxVolume;
+
  public:
-	ModalFinal() {}
-	virtual ~ModalFinal() {}
+	ModalFinal();
+	virtual ~ModalFinal();
+
+	virtual bool pollEvent() { return true; }
+	virtual bool handleMessage(ExCommand *message);
+	virtual bool init(int counterdiff);
+	virtual void update();
+	virtual void saveload() {}
+
+	void unloadScenes();
+};
+
+class ModalCredits : public BaseModalObject {
+ public:
+	ModalCredits() {}
+	virtual ~ModalCredits() {}
 
 	virtual bool pollEvent() { return true; }
 	virtual bool handleMessage(ExCommand *message) { return false; }
@@ -117,6 +135,19 @@ class ModalFinal : public BaseModalObject {
 	virtual void update() {}
 	virtual void saveload() {}
 };
+
+class ModalMainMenu : public BaseModalObject {
+ public:
+	ModalMainMenu() {}
+	virtual ~ModalMainMenu() {}
+
+	virtual bool pollEvent() { return true; }
+	virtual bool handleMessage(ExCommand *message) { return false; }
+	virtual bool init(int counterdiff) { return true; }
+	virtual void update() {}
+	virtual void saveload() {}
+};
+
 
 } // End of namespace Fullpipe
 
