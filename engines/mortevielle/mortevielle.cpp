@@ -106,6 +106,35 @@ MortevielleEngine::MortevielleEngine(OSystem *system, const MortevielleGameDescr
 
 	_maff = 0;
 	_crep = 0;
+
+	_minute = 0;
+	_curSearchObjId = 0;
+	_controlMenu = 0;
+	_startTime = 0;
+	_endTime = 0;
+	_roomDoorId = OWN_ROOM;
+	_openObjCount = 0;
+	_takeObjCount = 0;
+	_num = 0;
+	_searchCount = 0;
+	_introSpeechPlayed = false;
+	_inGameHourDuration = 0;
+	_x = 0;
+	_y = 0;
+	_currentHourCount = 0;
+	_currentTime = 0;
+	_cfiecBuffer = nullptr;
+	_cfiecBufferSize = 0;
+	for (int i = 0; i < 601; i++) {
+		_dialogHintArray[i]._hintId = 0;
+		_dialogHintArray[i]._point = 0;
+	}
+	_currMenu = OPCODE_NONE;
+	_currAction = OPCODE_NONE;
+	_addFix = 0;
+	_savedBitIndex = 0;
+	_numpal = 0;
+	_key = 0;
 }
 
 MortevielleEngine::~MortevielleEngine() {
