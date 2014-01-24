@@ -140,15 +140,18 @@ class ModalCredits : public BaseModalObject {
 	virtual ~ModalCredits();
 
 	virtual bool pollEvent() { return true; }
-	virtual bool handleMessage(ExCommand *message) { return false; }
-	virtual bool init(int counterdiff) { return true; }
-	virtual void update() {}
+	virtual bool handleMessage(ExCommand *message);
+	virtual bool init(int counterdiff);
+	virtual void update();
 	virtual void saveload() {}
 };
 
 class ModalMainMenu : public BaseModalObject {
- public:
-	ModalMainMenu() {}
+public:
+	int _field_34;
+
+public:
+	ModalMainMenu();
 	virtual ~ModalMainMenu() {}
 
 	virtual bool pollEvent() { return true; }

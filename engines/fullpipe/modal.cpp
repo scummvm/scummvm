@@ -195,6 +195,8 @@ bool ModalIntro::init(int counterdiff) {
 }
 
 void ModalIntro::update() {
+	warning("STUB: ModalIntro::update()");
+
 	if (g_fp->_currentScene) {
 		if (_introFlags & 1) {
 			//sceneFade(virt, g_currentScene, 1);
@@ -685,6 +687,72 @@ ModalCredits::~ModalCredits() {
 	g_fp->_gameLoader->unloadScene(SC_TITLES);
 
 	g_fp->_sfxVolume = _sfxVolume;
+}
+
+bool ModalCredits::handleMessage(ExCommand *cmd) {
+	if (cmd->_messageKind == 17 && cmd->_messageNum == 36 && cmd->_keyCode == 27) {
+		_fadeIn = false;
+
+		return true;
+	}
+
+	return false;
+}
+
+bool ModalCredits::init(int counterdiff) {
+	if (_fadeIn || _fadeOut) {
+		_countdown--;
+
+		if (_countdown < 0)
+			_fadeIn = false;
+
+		_creditsPic->setOXY(_currX, _currY);
+
+		if (_currY > _maxY)
+			_currY -= 2;
+	} else {
+		if (_parentObj)
+			return 0;
+
+		ModalMainMenu *menu = new ModalMainMenu;
+
+		g_fp->_modalObject = menu;
+
+		menu->_field_34 = 1;
+	}
+
+	return true;
+}
+
+void ModalCredits::update() {
+	warning("STUB: ModalCredits::update()");
+
+	if (_fadeOut) {
+		if (_fadeIn) {
+			_sceneTitles->draw();
+
+			return;
+		}
+	} else if (_fadeIn) {
+		//sceneFade(virt, this->_sceneTitles, 1); // TODO
+		_fadeOut = 1;
+
+		return;
+	}
+
+	if (_fadeOut) {
+		//sceneFade(virt, this->_sceneTitles, 0); // TODO
+		_fadeOut = 0;
+		return;
+	}
+
+	_sceneTitles->draw();
+}
+
+ModalMainMenu::ModalMainMenu() {
+	warning("STUB: ModalMainMenu::ModalMainMenu()");
+
+	_field_34 = 0;
 }
 
 void FullpipeEngine::openHelp() {
