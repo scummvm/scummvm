@@ -1994,6 +1994,7 @@ case $_host_os in
 		CXXFLAGS="$CXXFLAGS -G2"
 		DEFINES="$DEFINES -D_EE"
 		DEFINES="$DEFINES -D__PLAYSTATION2__"
+		DEFINES="$DEFINES -D__NEW_PS2SDK__"
 		;;
 	ps3)
 		# Force use of SDL from the ps3 toolchain
