@@ -160,6 +160,7 @@ namespace Fullpipe {
 #define PIC_MAP_S36 5260
 #define PIC_MAP_S37 5261
 #define PIC_MAP_S38 5262
+#define PIC_TTL_CREDITS 5172
 #define QU_INTR_STARTINTRO 5133
 #define SC_1 301
 #define SC_2 302
@@ -210,6 +211,7 @@ namespace Fullpipe {
 #define SC_INV 858
 #define SC_LDR 635
 #define SC_MAP 5222
+#define SC_TITLES 5166
 #define SND_CMN_031 3516
 #define SND_CMN_060 4921
 #define SND_CMN_061 4922

@@ -125,9 +125,19 @@ class ModalFinal : public BaseModalObject {
 };
 
 class ModalCredits : public BaseModalObject {
+	Scene *_sceneTitles;
+	PictureObject *_creditsPic;
+	bool _fadeIn;
+	bool _fadeOut;
+	int _countdown;
+	int _sfxVolume;
+	int _currX;
+	int _currY;
+	int _maxY;
+
  public:
-	ModalCredits() {}
-	virtual ~ModalCredits() {}
+	ModalCredits();
+	virtual ~ModalCredits();
 
 	virtual bool pollEvent() { return true; }
 	virtual bool handleMessage(ExCommand *message) { return false; }

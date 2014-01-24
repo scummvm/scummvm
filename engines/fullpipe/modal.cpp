@@ -657,6 +657,36 @@ void ModalFinal::update() {
 	}
 }
 
+ModalCredits::ModalCredits() {
+	Common::Point point;
+
+	_sceneTitles = g_fp->accessScene(SC_TITLES);
+
+	_creditsPic = _sceneTitles->getPictureObjectById(PIC_TTL_CREDITS, 0);
+	_creditsPic->_flags |= 4;
+
+	_fadeIn = true;
+	_fadeOut = false;
+
+	_creditsPic->getDimensions(&point);
+
+	_countdown = point.y / 2 + 470;
+	_sfxVolume = g_fp->_sfxVolume;
+
+	_currY = 630;
+	_maxY = -1000 - point.y;
+
+	_currX = 400 - point.x / 2;
+
+	_creditsPic->setOXY(_currX, _currY);
+}
+
+ModalCredits::~ModalCredits() {
+	g_fp->_gameLoader->unloadScene(SC_TITLES);
+
+	g_fp->_sfxVolume = _sfxVolume;
+}
+
 void FullpipeEngine::openHelp() {
 	warning("STUB: FullpipeEngine::openHelp()");
 }
