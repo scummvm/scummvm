@@ -26,6 +26,7 @@
 #include "engines/grim/pool.h"
 #include "engines/grim/object.h"
 #include "engines/grim/color.h"
+#include "engines/grim/costume/chore.h"
 #include "math/vector3d.h"
 #include "math/angle.h"
 #include "math/quat.h"
@@ -597,10 +598,15 @@ private:
 	Math::Vector3d _destPos;
 
 	// chores
+	// FIXME: there is another Chore class defined in engines/grim/costume/chore.h
+	// both Chore classes should be either merged or one of them renamed
+	//
+	// since the choreType is defined in the other Chore class it is necessary to
+	// use Grim::Chore::ChoreType as type in this class
 	class Chore {
 	public:
 		Chore();
-		Chore(Costume *cost, int chore);
+		Chore(Costume *cost, int chore, Grim::Chore::ChoreType choreType = Grim::Chore::CHORE_OTHER);
 
 		void play(bool fade = false, unsigned int time = fadeTime);
 		void playLooping(bool fade = false, unsigned int time = fadeTime);
@@ -614,8 +620,7 @@ private:
 		}
 
 		void saveState(SaveGame *state) const;
-		void restoreState(SaveGame *state, Actor *actor);
-
+		void restoreState(SaveGame *state, Actor *actor, Grim::Chore::ChoreType choreType = Grim::Chore::CHORE_OTHER);
 
 		Costume *_costume;
 		int _chore;

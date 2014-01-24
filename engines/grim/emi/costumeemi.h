@@ -55,11 +55,29 @@ public:
 	Material *loadMaterial(const Common::String &name);
 	Material *findMaterial(const Common::String &name);
 
+	template<typename T, class StrictWeakOrdering>
+	void stableBubbleSort(T first, T last, StrictWeakOrdering comp) {
+		bool swapped = true;
+		while (first != last && swapped) {
+			last--;
+			swapped = false;
+			for (T i = first; i != last; i++) {
+				T j = i;
+				j++;
+				if (comp(*j, *i)) {
+					SWAP(*i, *j);
+					swapped = true;
+				}
+			}
+		}
+	}
 public:
 	EMIChore *_wearChore;
 	EMISkelComponent *_emiSkel;
 	Common::List<Material *> _materials;
 private:
+	static bool compareChores(const Chore *c1, const Chore *c2);
+	virtual void sortPlayingChores();
 	Component *loadEMIComponent(Component *parent, int parentID, const char *name, Component *prevComponent);
 	void setWearChore(EMIChore *chore);
 

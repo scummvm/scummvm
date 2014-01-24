@@ -284,6 +284,10 @@ void Costume::setChoreLooping(int num, bool val) {
 	_chores[num]->setLooping(val);
 }
 
+void Costume::setChoreType(int num, Chore::ChoreType choreType) {
+	_chores[num]->setChoreType(choreType);
+}
+
 void Costume::playChoreLooping(const char *name) {
 	for (int i = 0; i < _numChores; ++i) {
 		if (strcmp(_chores[i]->getName(), name) == 0) {
@@ -301,8 +305,10 @@ void Costume::playChoreLooping(int num) {
 		return;
 	}
 	_chores[num]->playLooping();
-	if (Common::find(_playingChores.begin(), _playingChores.end(), _chores[num]) == _playingChores.end())
+	if (Common::find(_playingChores.begin(), _playingChores.end(), _chores[num]) == _playingChores.end()) {
 		_playingChores.push_back(_chores[num]);
+		sortPlayingChores();
+	}
 }
 
 Chore *Costume::getChore(const char *name) {
@@ -343,8 +349,10 @@ void Costume::playChore(int num) {
 		return;
 	}
 	_chores[num]->play();
-	if (Common::find(_playingChores.begin(), _playingChores.end(), _chores[num]) == _playingChores.end())
+	if (Common::find(_playingChores.begin(), _playingChores.end(), _chores[num]) == _playingChores.end()) {
 		_playingChores.push_back(_chores[num]);
+		sortPlayingChores();
+	}
 }
 
 void Costume::stopChore(int num) {
@@ -380,8 +388,10 @@ void Costume::fadeChoreIn(int chore, int msecs) {
 		return;
 	}
 	_chores[chore]->fadeIn(msecs);
-	if (Common::find(_playingChores.begin(), _playingChores.end(), _chores[chore]) == _playingChores.end())
+	if (Common::find(_playingChores.begin(), _playingChores.end(), _chores[chore]) == _playingChores.end()) {
 		_playingChores.push_back(_chores[chore]);
+		sortPlayingChores();
+	}
 }
 
 void Costume::fadeChoreOut(int chore, int msecs) {
@@ -565,6 +575,7 @@ bool Costume::restoreState(SaveGame *state) {
 		int id = state->readLESint32();
 		_playingChores.push_back(_chores[id]);
 	}
+	sortPlayingChores();
 
 	_lookAtRate = state->readFloat();
 	_head->restoreState(state);
