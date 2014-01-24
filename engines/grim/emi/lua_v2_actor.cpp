@@ -717,7 +717,8 @@ void Lua_V2::PlayActorChore() {
 
 void Lua_V2::StopActorChores() {
 	lua_Object actorObj = lua_getparam(1);
-	/*lua_Object paramObj = */lua_getparam(2);
+	// Guesswork for boolean parameter
+	bool ignoreLoopingChores = getbool(2);
 
 	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R'))
 		return;
@@ -726,10 +727,7 @@ void Lua_V2::StopActorChores() {
 	if (!actor)
 		return;
 
-	//FIXME: What does the second param actually do
-//	bool p = lua_isnil(paramObj) != 0;
-
-	actor->stopAllChores();
+	actor->stopAllChores(ignoreLoopingChores);
 }
 
 void Lua_V2::SetActorLighting() {

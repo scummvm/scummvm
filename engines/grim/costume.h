@@ -64,7 +64,7 @@ public:
 	ModelNode *getModelNodes();
 	Model *getModel();
 	void setColormap(const Common::String &map);
-	void stopChores();
+	void stopChores(bool ignoreLoopingChores = false);
 	int isChoring(const char *name, bool excludeLooping);
 	int isChoring(int num, bool excludeLooping);
 	int isChoring(bool excludeLooping);

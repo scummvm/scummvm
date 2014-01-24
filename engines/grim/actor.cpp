@@ -1018,9 +1018,9 @@ void Actor::setLastWearChore(int chore, Costume *cost) {
 	}
 }
 
-void Actor::stopAllChores() {
+void Actor::stopAllChores(bool ignoreLoopingChores) {
 	for (Common::List<Costume *>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i) {
-		(*i)->stopChores();
+		(*i)->stopChores(ignoreLoopingChores);
 	}
 }
 

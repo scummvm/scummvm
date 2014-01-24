@@ -375,8 +375,11 @@ void Costume::setColormap(const Common::String &map) {
 			_components[i]->setColormap(NULL);
 }
 
-void Costume::stopChores() {
+void Costume::stopChores(bool ignoreLoopingChores) {
 	for (int i = 0; i < _numChores; i++) {
+		if (ignoreLoopingChores && _chores[i]->isLooping()) {
+			continue;
+		}
 		_chores[i]->stop();
 		_playingChores.remove(_chores[i]);
 	}
