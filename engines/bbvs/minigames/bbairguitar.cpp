@@ -732,7 +732,7 @@ void MinigameBbAirGuitar::updateObjs() {
 	}
 }
 
-int MinigameBbAirGuitar::run(uint flags) {
+int MinigameBbAirGuitar::run(bool fromMainGame) {
 
 	memset(_objects, 0, sizeof(_objects));
 
@@ -762,9 +762,7 @@ int MinigameBbAirGuitar::run(uint flags) {
 	_backgroundSpriteIndex = 97;
 	_titleScreenSpriteIndex = 98;
 
-	_fromMainGame = false;
-	if (flags & 1)
-		_fromMainGame = true;
+	_fromMainGame = fromMainGame;
 
 	_gameState = 0;
 	_gameTicks = 0;

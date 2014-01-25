@@ -1185,7 +1185,7 @@ void MinigameBbAnt::updateObjs(uint mouseButtons) {
 
 }
 
-int MinigameBbAnt::run(uint flags) {
+int MinigameBbAnt::run(bool fromMainGame) {
 
 	memset(_objects, 0, sizeof(_objects));
 	
@@ -1194,9 +1194,7 @@ int MinigameBbAnt::run(uint flags) {
 	_backgroundSpriteIndex = 303;
 	_titleScreenSpriteIndex = 304;
 
-	_fromMainGame = false;
-	if (flags & 1)
-		_fromMainGame = true;
+	_fromMainGame = fromMainGame;
 
 	_hiScore = 0;
 	_gameState = 0;

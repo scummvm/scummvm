@@ -30,6 +30,13 @@
 
 namespace Bbvs {
 
+enum {
+	kMinigameBbloogie		= 0,
+	kMinigameBbTennis		= 1,
+	kMinigameBbAnt			= 2,
+	kMinigameBbAirGuitar	= 3
+};
+
 struct ObjAnimation {
 	int frameCount;
 	const int *frameIndices;
@@ -41,7 +48,7 @@ class Minigame {
 public:
 	Minigame(BbvsEngine *vm);
 	virtual ~Minigame();
-	virtual int run(uint flags) = 0;
+	virtual int run(bool fromMainGame) = 0;
 public:
 	BbvsEngine *_vm;	
 	SpriteModule *_spriteModule;

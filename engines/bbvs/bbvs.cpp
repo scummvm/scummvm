@@ -26,6 +26,7 @@
 #include "bbvs/graphics.h"
 #include "bbvs/sound.h"
 #include "bbvs/spritemodule.h"
+#include "bbvs/minigames/minigame.h"
 #include "bbvs/minigames/bbairguitar.h"
 #include "bbvs/minigames/bbant.h"
 #include "bbvs/minigames/bbloogie.h"
@@ -2145,26 +2146,23 @@ void BbvsEngine::stopSounds() {
 bool BbvsEngine::runMinigame(int minigameNum) {
 	debug("BbvsEngine::runMinigame() minigameNum: %d", minigameNum);
 	
-	int callFlags = 0;
+	bool fromMainGame = _currSceneNum != kMainMenu;
 	
-	if (_currSceneNum != kMainMenu)
-		callFlags = 1;
-		
 	_sound->unloadSounds();
 		
 	Minigame *minigame = 0;
 	
 	switch (minigameNum) {
-	case 0:
+	case kMinigameBbloogie:
 		minigame = new MinigameBbloogie(this);
 		break;
-	case 1:
+	case kMinigameBbTennis:
 		minigame = new MinigameBbTennis(this);
 		break;
-	case 2:
+	case kMinigameBbAnt:
 		minigame = new MinigameBbAnt(this);
 		break;
-	case 3:
+	case kMinigameBbAirGuitar:
 		minigame = new MinigameBbAirGuitar(this);
 		break;
 	default:
@@ -2172,7 +2170,7 @@ bool BbvsEngine::runMinigame(int minigameNum) {
 		break;
 	}
 	
-	int minigameResult = minigame->run(callFlags);
+	int minigameResult = minigame->run(fromMainGame);
 	
 	delete minigame;
 
@@ -2180,9 +2178,11 @@ bool BbvsEngine::runMinigame(int minigameNum) {
 	if (minigameNum == 0 && minigameResult == 1)
 		_gameVars[42] = 1;
 
+#if 0
 	//DEBUG Fake it :)
 	if (minigameNum == 0)
 		_gameVars[42] = 1;
+#endif
 
 	return true;
 }

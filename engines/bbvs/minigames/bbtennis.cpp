@@ -1181,7 +1181,7 @@ void MinigameBbTennis::hitSomething() {
 	++_score;
 }
 
-int MinigameBbTennis::run(uint flags) {
+int MinigameBbTennis::run(bool fromMainGame) {
 
 	memset(_objects, 0, sizeof(_objects));
 	
@@ -1190,9 +1190,7 @@ int MinigameBbTennis::run(uint flags) {
 	_backgroundSpriteIndex = 272;
 	_titleScreenSpriteIndex = 273;
 
-	_fromMainGame = false;
-	if (flags & 1)
-		_fromMainGame = true;
+	_fromMainGame = fromMainGame;
 
 	_hiScore = 0;
 	if (!_fromMainGame) {

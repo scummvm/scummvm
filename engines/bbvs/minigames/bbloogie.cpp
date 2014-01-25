@@ -1264,7 +1264,7 @@ void MinigameBbloogie::playRndSound() {
 		playSound(_playerSounds1[_vm->getRandom(_playerSounds1Count)]);
 }
 
-int MinigameBbloogie::run(uint flags) {
+int MinigameBbloogie::run(bool fromMainGame) {
 
 	memset(_objects, 0, sizeof(_objects));
 
@@ -1273,9 +1273,7 @@ int MinigameBbloogie::run(uint flags) {
 	_backgroundSpriteIndex = 210;
 	_titleScreenSpriteIndex = 211;
 
-	_fromMainGame = false;
-	if (flags & 1)
-		_fromMainGame = true;
+	_fromMainGame = fromMainGame;
 
 	_hiScore = 0;
 	if (!_fromMainGame) {
