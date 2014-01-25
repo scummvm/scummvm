@@ -823,6 +823,8 @@ void MinigameBbAirGuitar::update() {
 	
 	drawSprites();
 		
+	_vm->_system->delayMillis(10);
+
 }
 
 void MinigameBbAirGuitar::play() {

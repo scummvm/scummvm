@@ -1250,6 +1250,8 @@ void MinigameBbAnt::update() {
 	
 	drawSprites();
 		
+	_vm->_system->delayMillis(10);
+
 }
 
 void MinigameBbAnt::scale2x(int x, int y) {

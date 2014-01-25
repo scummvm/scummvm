@@ -309,6 +309,8 @@ void BbvsEngine::updateGame() {
 		_screen->drawDrawList(drawList, _spriteModule);
 		drawScreen();
 	}
+	
+	_system->delayMillis(10);
 
 }
 
