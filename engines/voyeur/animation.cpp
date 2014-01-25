@@ -31,8 +31,13 @@
 
 namespace Video {
 
+// Number of audio frames to keep audio track topped up when playing back video
+#define SOUND_FRAMES_READAHEAD 3
+
 RL2Decoder::RL2Decoder(Audio::Mixer::SoundType soundType) : _soundType(soundType) {
 	_paletteStart = 0;
+	_fileStream = nullptr;
+	_soundFrameNumber = -1;
 }
 
 RL2Decoder::~RL2Decoder() {
@@ -55,6 +60,7 @@ bool RL2Decoder::loadStream(Common::SeekableReadStream *stream) {
 	close();
 
 	// Load basic file information
+	_fileStream = stream;
 	_header.load(stream);
 	_paletteStart = 0;
 
@@ -73,6 +79,15 @@ bool RL2Decoder::loadStream(Common::SeekableReadStream *stream) {
 
 	// Create a video track
 	addTrack(new RL2VideoTrack(_header, audioTrack, stream));
+
+	// Load the offset/sizes of the video's audio data
+	//_soundFrames.reserve(header._numFrames);
+	for (int frameNumber = 0; frameNumber < _header._numFrames; ++frameNumber) {
+		int offset = _header._frameOffsets[frameNumber];
+		int size = _header._frameSoundSizes[frameNumber];
+
+		_soundFrames.push_back(SoundFrame(offset, size));
+	}
 
 	return true;
 }
@@ -105,6 +120,43 @@ RL2Decoder::RL2VideoTrack *RL2Decoder::getVideoTrack() {
 	assert(track);
 
 	return (RL2VideoTrack *)track;
+}
+
+RL2Decoder::RL2AudioTrack *RL2Decoder::getAudioTrack() {
+	Track *track = getTrack(0);
+	assert(track);
+
+	return (RL2AudioTrack *)track;
+}
+
+void RL2Decoder::readNextPacket() {
+	int frameNumber = getCurFrame();
+	RL2AudioTrack *audioTrack = getAudioTrack();
+
+	// Handle queueing sound data
+	if (_soundFrameNumber == -1)
+		_soundFrameNumber = frameNumber;
+
+	while (audioTrack->numQueuedStreams() < SOUND_FRAMES_READAHEAD && 
+			(_soundFrameNumber < (int)_soundFrames.size())) {
+		_fileStream->seek(_soundFrames[_soundFrameNumber]._offset);
+		audioTrack->queueSound(_fileStream, _soundFrames[_soundFrameNumber]._size);
+		++_soundFrameNumber;
+	}
+}
+
+void RL2Decoder::close() {
+	VideoDecoder::close();
+	delete _fileStream;
+	_fileStream = nullptr;
+	_soundFrameNumber = -1;
+}
+
+/*------------------------------------------------------------------------*/
+
+RL2Decoder::SoundFrame::SoundFrame(int offset, int size) {
+	_offset = offset;
+	_size = size;
 }
 
 /*------------------------------------------------------------------------*/
@@ -173,6 +225,7 @@ RL2Decoder::RL2VideoTrack::RL2VideoTrack(const RL2FileHeader &header, RL2AudioTr
 	int fps = (header._soundRate > 0) ? header._rate / header._defSoundSize : 11025 / 1103;
 	_frameDelay = 1000 / fps;
 
+	// Set up surfaces
 	_surface = new Graphics::Surface();
 	_surface->create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
 
@@ -190,9 +243,6 @@ RL2Decoder::RL2VideoTrack::RL2VideoTrack(const RL2FileHeader &header, RL2AudioTr
 }
 
 RL2Decoder::RL2VideoTrack::~RL2VideoTrack() {
-	// Free the file stream
-	delete _fileStream;
-
 	// Free surfaces
 	_surface->free();
 	delete _surface;
@@ -386,22 +436,8 @@ Graphics::Surface *RL2Decoder::RL2VideoTrack::getBackSurface() {
 
 RL2Decoder::RL2AudioTrack::RL2AudioTrack(const RL2FileHeader &header, Common::SeekableReadStream *stream, Audio::Mixer::SoundType soundType): 
 		_header(header), _soundType(soundType) {
-	_audStream = createAudioStream();
-
-	// Add all the sound data for all the frames at once to avoid stuttering
-	for (int frameNumber = 0; frameNumber < header._numFrames; ++frameNumber) {
-		int offset = _header._frameOffsets[frameNumber];
-		int size = _header._frameSoundSizes[frameNumber];
-
-		byte *data = (byte *)malloc(size);
-		stream->seek(offset);
-		stream->read(data, size);
-		Common::MemoryReadStream *memoryStream = new Common::MemoryReadStream(data, size,
-			DisposeAfterUse::YES);
-
-		_audStream->queueAudioStream(Audio::makeRawStream(memoryStream, _header._rate, 
-			Audio::FLAG_UNSIGNED, DisposeAfterUse::YES), DisposeAfterUse::YES);
-	}
+	// Create audio straem for the audio track
+	_audStream = Audio::makeQueuingAudioStream(_header._rate, _header._channels == 2);
 }
 
 RL2Decoder::RL2AudioTrack::~RL2AudioTrack() {
@@ -409,28 +445,18 @@ RL2Decoder::RL2AudioTrack::~RL2AudioTrack() {
 }
 
 void RL2Decoder::RL2AudioTrack::queueSound(Common::SeekableReadStream *stream, int size) {
-	if (_audStream) {
-		// Queue the sound data
-		byte *data = (byte *)malloc(size);
-		stream->read(data, size);
-		Common::MemoryReadStream *memoryStream = new Common::MemoryReadStream(data, size,
-			DisposeAfterUse::YES);
+	// Queue the sound data
+	byte *data = (byte *)malloc(size);
+	stream->read(data, size);
+	Common::MemoryReadStream *memoryStream = new Common::MemoryReadStream(data, size,
+		DisposeAfterUse::YES);
 
-		_audStream->queueAudioStream(Audio::makeRawStream(memoryStream, _header._rate, 
-			Audio::FLAG_UNSIGNED, DisposeAfterUse::YES), DisposeAfterUse::YES);
-		//		_audioTrack->queueSound(_fileStream, _header._frameSoundSizes[_curFrame]);
-
-	} else {
-		delete stream;
-	}
+	_audStream->queueAudioStream(Audio::makeRawStream(memoryStream, _header._rate, 
+		Audio::FLAG_UNSIGNED, DisposeAfterUse::YES), DisposeAfterUse::YES);
 }
 
 Audio::AudioStream *RL2Decoder::RL2AudioTrack::getAudioStream() const {
 	return _audStream;
-}
-
-Audio::QueuingAudioStream *RL2Decoder::RL2AudioTrack::createAudioStream() {
-	return Audio::makeQueuingAudioStream(_header._rate, _header._channels == 2);
 }
 
 } // End of namespace Video

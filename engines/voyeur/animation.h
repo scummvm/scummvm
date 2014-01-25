@@ -26,6 +26,7 @@
 #include "video/video_decoder.h"
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
+#include "common/array.h"
 #include "common/list.h"
 #include "common/rect.h"
 #include "common/stream.h"
@@ -73,24 +74,30 @@ private:
 		bool isValid() const;
 	};
 
+	class SoundFrame {
+	public:
+		int _offset;
+		int _size;
+
+		SoundFrame(int  offset, int size);
+	};
+
 	class RL2AudioTrack : public AudioTrack {
+	private:
+		Audio::Mixer::SoundType _soundType;
+		const RL2FileHeader &_header;
+		Audio::QueuingAudioStream *_audStream;
+	protected:
+		Audio::AudioStream *getAudioStream() const;
 	public:
 		RL2AudioTrack(const RL2FileHeader &header, Common::SeekableReadStream *stream,
 			Audio::Mixer::SoundType soundType);
 		~RL2AudioTrack();
 
-		void queueSound(Common::SeekableReadStream *stream, int size);
 		Audio::Mixer::SoundType getSoundType() const { return _soundType; }
+		int numQueuedStreams() const { return _audStream->numQueuedStreams(); }
 
-	protected:
-		Audio::AudioStream *getAudioStream() const;
-
-	private:
-		Audio::Mixer::SoundType _soundType;
-		const RL2FileHeader &_header;
-
-		Audio::QueuingAudioStream *_audStream;
-		Audio::QueuingAudioStream *createAudioStream();
+		void queueSound(Common::SeekableReadStream *stream, int size);
 	};
 
 	class RL2VideoTrack : public VideoTrack {
@@ -144,9 +151,12 @@ private:
 	};
 
 private:
+	Common::SeekableReadStream *_fileStream;
 	Audio::Mixer::SoundType _soundType;
 	RL2FileHeader _header;
 	int _paletteStart;
+	Common::Array<SoundFrame> _soundFrames;
+	int _soundFrameNumber;
 public:
 	RL2Decoder(Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType);
 	virtual ~RL2Decoder();
@@ -155,10 +165,14 @@ public:
 	bool loadFile(const Common::String &file, bool palFlag = false);
 	bool loadVideo(int videoId);
 
+	virtual void readNextPacket();
+	virtual void close();
+
 	const Common::List<Common::Rect> *getDirtyRects() const;
 	void clearDirtyRects();
 	void copyDirtyRectsToBuffer(uint8 *dst, uint pitch);
 	RL2VideoTrack *getVideoTrack();
+	RL2AudioTrack *getAudioTrack();
 	int getPaletteStart() const { return _paletteStart; }
 	int getPaletteCount() const { return _header._colorCount; }
 };
