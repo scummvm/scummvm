@@ -1294,7 +1294,7 @@ ds)
 gamecube)
 	_host_os=gamecube
 	_host_cpu=ppc
-	_host_alias=powerpc-gekko
+	_host_alias=powerpc-eabi
 	;;
 gp2x)
 	_host_os=gph-linux
