@@ -760,7 +760,9 @@ void FullpipeEngine::openHelp() {
 }
 
 void FullpipeEngine::openMainMenu() {
-	warning("STUB: FullpipeEngine::openMainMenu()");
+	ModalMainMenu *menu = new ModalMainMenu;
+
+	menu->_parentObj = g_fp->_modalObject;
 }
 
 } // End of namespace Fullpipe
