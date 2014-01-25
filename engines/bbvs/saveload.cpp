@@ -165,14 +165,6 @@ void BbvsEngine::loadgame(const char *filename) {
 		obj->walkDestPt.x = in->readUint16LE();
 		obj->walkDestPt.y = in->readUint16LE();
 		obj->anim = obj->animIndex > 0 ? _gameModule->getAnimation(obj->animIndex) : 0;
-#if 0
-		debug("obj(%d) [%s]:", i, obj->sceneObjectDef->name);
-		debug("\tx: %d; y: %d; animIndex: %d", obj->x, obj->y, obj->animIndex);
-		debug("\tframeIndex: %d; frameTicks: %d", obj->frameIndex, obj->frameTicks);
-		debug("\twalkCount: %d; xIncr: %d; yIncr: %d", obj->walkCount, obj->xIncr, obj->yIncr);
-		debug("\tturnValue: %d; turnValue: %d; turnTicks: %d", obj->turnValue, obj->turnCount, obj->turnTicks);
-		debug("\twalkDestPt.x: %d; walkDestPt.y: %d", obj->walkDestPt.x, obj->walkDestPt.y);
-#endif
 	}
 	
 	updateWalkableRects();

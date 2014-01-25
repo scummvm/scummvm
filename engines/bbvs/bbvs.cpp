@@ -541,7 +541,7 @@ void BbvsEngine::updateBackgroundSounds() {
 } 
 
 void BbvsEngine::loadScene(int sceneNum) {
-	debug("BbvsEngine::loadScene() sceneNum: %d", sceneNum);
+	debug(0, "BbvsEngine::loadScene() sceneNum: %d", sceneNum);
 	
 	Common::String sprFilename = Common::String::format("vnm/vspr%04d.vnm", sceneNum);
 	Common::String gamFilename = Common::String::format("vnm/game%04d.vnm", sceneNum);
@@ -2144,7 +2144,7 @@ void BbvsEngine::stopSounds() {
 }
 
 bool BbvsEngine::runMinigame(int minigameNum) {
-	debug("BbvsEngine::runMinigame() minigameNum: %d", minigameNum);
+	debug(0, "BbvsEngine::runMinigame() minigameNum: %d", minigameNum);
 	
 	bool fromMainGame = _currSceneNum != kMainMenu;
 	
