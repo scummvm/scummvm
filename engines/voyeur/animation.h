@@ -26,6 +26,7 @@
 #include "video/video_decoder.h"
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
+#include "audio/timestamp.h"
 #include "common/array.h"
 #include "common/list.h"
 #include "common/rect.h"
@@ -72,6 +73,7 @@ private:
 		~RL2FileHeader();
 		void load(Common::SeekableReadStream *stream);
 		bool isValid() const;
+		double getFrameRate() const;
 	};
 
 	class SoundFrame {
@@ -96,19 +98,19 @@ private:
 
 		Audio::Mixer::SoundType getSoundType() const { return _soundType; }
 		int numQueuedStreams() const { return _audStream->numQueuedStreams(); }
+		virtual bool isSeekable() const { return true; }
+		virtual bool seek(const Audio::Timestamp &time) { return true; }
 
 		void queueSound(Common::SeekableReadStream *stream, int size);
 	};
 
-	class RL2VideoTrack : public VideoTrack {
+	class RL2VideoTrack : public FixedRateVideoTrack {
 	public:
 		RL2VideoTrack(const RL2FileHeader &header, RL2AudioTrack *audioTrack, 
 			Common::SeekableReadStream *stream);
 		~RL2VideoTrack();
 
 		bool endOfTrack() const;
-		bool isRewindable() const { return true; }
-		bool rewind();
 
 		uint16 getWidth() const;
 		uint16 getHeight() const;
@@ -117,7 +119,6 @@ private:
 		Graphics::PixelFormat getPixelFormat() const;
 		int getCurFrame() const { return _curFrame; }
 		int getFrameCount() const { return _header._numFrames; }
-		uint32 getNextFrameStartTime() const { return _nextFrameStartTime; }
 		const Graphics::Surface *decodeNextFrame();
 		const byte *getPalette() const { _dirtyPalette = false; return _header._palette; }
 		int getPaletteCount() const { return _header._colorCount; }
@@ -126,6 +127,9 @@ private:
 		void clearDirtyRects() { _dirtyRects.clear(); }
 		void copyDirtyRectsToBuffer(uint8 *dst, uint pitch);
 
+		virtual Common::Rational getFrameRate() const { return _header.getFrameRate(); }
+		virtual bool isSeekable() const { return true; }
+		virtual bool seek(const Audio::Timestamp &time);
 	private:
 		Common::SeekableReadStream *_fileStream;
 		const RL2FileHeader &_header;
@@ -136,11 +140,10 @@ private:
 
 		mutable bool _dirtyPalette;
 
+		bool _initialFrame;
 		int _curFrame;
 		uint32 _videoBase;
 		uint32 *_frameOffsets;
-		uint32 _frameDelay;
-		uint32 _nextFrameStartTime;
 
 		Common::List<Common::Rect> _dirtyRects;
 
@@ -167,6 +170,7 @@ public:
 
 	virtual void readNextPacket();
 	virtual void close();
+	virtual bool seek(const Audio::Timestamp &where);
 
 	const Common::List<Common::Rect> *getDirtyRects() const;
 	void clearDirtyRects();
@@ -175,6 +179,7 @@ public:
 	RL2AudioTrack *getAudioTrack();
 	int getPaletteStart() const { return _paletteStart; }
 	int getPaletteCount() const { return _header._colorCount; }
+	const RL2FileHeader &getHeader() { return _header; }
 };
 
 } // End of namespace Video

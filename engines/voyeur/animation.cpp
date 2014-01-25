@@ -81,7 +81,7 @@ bool RL2Decoder::loadStream(Common::SeekableReadStream *stream) {
 	addTrack(new RL2VideoTrack(_header, audioTrack, stream));
 
 	// Load the offset/sizes of the video's audio data
-	//_soundFrames.reserve(header._numFrames);
+	_soundFrames.reserve(_header._numFrames);
 	for (int frameNumber = 0; frameNumber < _header._numFrames; ++frameNumber) {
 		int offset = _header._frameOffsets[frameNumber];
 		int size = _header._frameSoundSizes[frameNumber];
@@ -143,6 +143,15 @@ void RL2Decoder::readNextPacket() {
 		audioTrack->queueSound(_fileStream, _soundFrames[_soundFrameNumber]._size);
 		++_soundFrameNumber;
 	}
+}
+
+bool RL2Decoder::seek(const Audio::Timestamp &where) {
+	// TODO: Ideally, I need a way to clear the audio track's QueuingAudioStream when
+	// a seek is done. Otherwise, as current, seeking can only be done correctly when
+	// the video is first loaded.
+
+	_soundFrameNumber = -1;
+	return VideoDecoder::seek(where);
 }
 
 void RL2Decoder::close() {
@@ -215,15 +224,15 @@ bool RL2Decoder::RL2FileHeader::isValid() const {
 	return _signature == MKTAG('R','L','V','2') || _signature != MKTAG('R','L','V','3');
 }
 
+double RL2Decoder::RL2FileHeader::getFrameRate() const {
+	return (_soundRate > 0) ? _rate / _defSoundSize : 11025 / 1103;
+}
+
 /*------------------------------------------------------------------------*/
 
 RL2Decoder::RL2VideoTrack::RL2VideoTrack(const RL2FileHeader &header, RL2AudioTrack *audioTrack, 
 		Common::SeekableReadStream *stream): 
 		_header(header), _audioTrack(audioTrack), _fileStream(stream) {
-
-	// Calculate the frame rate
-	int fps = (header._soundRate > 0) ? header._rate / header._defSoundSize : 11025 / 1103;
-	_frameDelay = 1000 / fps;
 
 	// Set up surfaces
 	_surface = new Graphics::Surface();
@@ -239,7 +248,7 @@ RL2Decoder::RL2VideoTrack::RL2VideoTrack(const RL2FileHeader &header, RL2AudioTr
 	_dirtyPalette = header._colorCount > 0;
 
 	_curFrame = 0;
-	_nextFrameStartTime = 0;
+	_initialFrame = true;
 }
 
 RL2Decoder::RL2VideoTrack::~RL2VideoTrack() {
@@ -261,10 +270,13 @@ bool RL2Decoder::RL2VideoTrack::endOfTrack() const {
 	return getCurFrame() >= getFrameCount();
 }
 
-bool RL2Decoder::RL2VideoTrack::rewind() {
-	_curFrame = 0;
-	_nextFrameStartTime = 0;
+bool RL2Decoder::RL2VideoTrack::seek(const Audio::Timestamp &time) {
+	int frame = time.totalNumberOfFrames();
 
+	if (frame < 0 || frame >= _header._numFrames)
+		return false;
+
+	_curFrame = frame;
 	return true;
 }
 
@@ -281,7 +293,7 @@ Graphics::PixelFormat RL2Decoder::RL2VideoTrack::getPixelFormat() const {
 }
 
 const Graphics::Surface *RL2Decoder::RL2VideoTrack::decodeNextFrame() {
-	if (_curFrame == 0 && _hasBackFrame) {
+	if (_initialFrame && _hasBackFrame) {
 		// Read in the initial background frame
 		_fileStream->seek(0x324);
 		rl2DecodeFrameWithoutTransparency(0);
@@ -289,6 +301,7 @@ const Graphics::Surface *RL2Decoder::RL2VideoTrack::decodeNextFrame() {
 		Common::copy((byte *)_surface->getPixels(), (byte *)_surface->getPixels() + (320 * 200), 
 			(byte *)_backSurface->getPixels());
 		_dirtyRects.push_back(Common::Rect(0, 0, _surface->w, _surface->h));
+		_initialFrame = false;
 	}
 
 	// Move to the next frame data
@@ -306,7 +319,6 @@ const Graphics::Surface *RL2Decoder::RL2VideoTrack::decodeNextFrame() {
 	}
 
 	_curFrame++;
-	_nextFrameStartTime += _frameDelay;
 
 	return _surface;
 }
