@@ -17,7 +17,7 @@
 #include <string.h>
 #include "backends/platform/ps2/rpckbd.h"
 
-static int curr_readmode = PS2KBD_READMODE_NORMAL;
+static unsigned int curr_readmode = PS2KBD_READMODE_NORMAL;
 static int kbdRpcSema = -1;
 static int kbdInitialized = 0;
 

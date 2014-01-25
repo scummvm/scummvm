@@ -30,11 +30,11 @@
 
 Ps2Pad::Ps2Pad(OSystem_PS2 *system) {
 	_system = system;
-	_padBuf = (uint8*)memalign(64, 256);
+	_padBuf = (uint8 *)memalign(64, 256);
 	_padStatus = STAT_NONE;
 
 	padInit(0); // initialize library
-	_port = _slot = 0;	// first controller, no multitap
+	_port = _slot = 0; // first controller, no multitap
 	initPad();
 }
 
@@ -101,7 +101,8 @@ void Ps2Pad::initPad(void) {
 					_padStatus = STAT_OKAY;
 					break;
 				case STAT_OKAY:
-					// pad is already initialized
+				case STAT_NONE:
+					// pad is already initialized (or not there)
 					break;
 			}
 		} else {

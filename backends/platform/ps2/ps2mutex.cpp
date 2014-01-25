@@ -57,7 +57,7 @@ OSystem::MutexRef OSystem_PS2::createMutex(void) {
 
 void OSystem_PS2::lockMutex(MutexRef mutex) {
 	WaitSema(_mutexSema);
-	Ps2Mutex *sysMutex = (Ps2Mutex*)mutex;
+	Ps2Mutex *sysMutex = (Ps2Mutex *)mutex;
 	int tid = GetThreadId();
 
 	assert(tid != 0);
@@ -75,7 +75,7 @@ void OSystem_PS2::lockMutex(MutexRef mutex) {
 
 void OSystem_PS2::unlockMutex(MutexRef mutex) {
 	WaitSema(_mutexSema);
-	Ps2Mutex *sysMutex = (Ps2Mutex*)mutex;
+	Ps2Mutex *sysMutex = (Ps2Mutex *)mutex;
 	int tid = GetThreadId();
 
 	if (sysMutex->owner && sysMutex->count && (sysMutex->owner == tid))
@@ -90,7 +90,7 @@ void OSystem_PS2::unlockMutex(MutexRef mutex) {
 
 void OSystem_PS2::deleteMutex(MutexRef mutex) {
 	WaitSema(_mutexSema);
-	Ps2Mutex *sysMutex = (Ps2Mutex*)mutex;
+	Ps2Mutex *sysMutex = (Ps2Mutex *)mutex;
 	if (sysMutex->owner || sysMutex->count)
 		printf("WARNING: Deleting LOCKED mutex!\n");
 	DeleteSema(sysMutex->sema);
