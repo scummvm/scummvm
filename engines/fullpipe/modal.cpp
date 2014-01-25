@@ -383,7 +383,7 @@ void ModalMap::initMap() {
 	PictureObject *pic;
 
 	for (int i = 0; i < 200; i++) {
-		if (!g_fp->_mapTable[i] >> 16)
+		if (!(g_fp->_mapTable[i] >> 16))
 			break;
 
 		pic = _mapScene->getPictureObjectById(g_fp->_mapTable[i] >> 16, 0);
