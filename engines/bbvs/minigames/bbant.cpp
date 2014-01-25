@@ -1316,25 +1316,4 @@ void MinigameBbAnt::loadSounds() {
 	}
 }
 
-void MinigameBbAnt::playSound(uint index, bool loop) {
-	if (index > 0)
-		_vm->_sound->playSound(index - 1, loop);
-}
-
-void MinigameBbAnt::stopSound(uint index) {
-	if (index > 0)
-		_vm->_sound->stopSound(index - 1);
-}
-
-bool MinigameBbAnt::isSoundPlaying(uint index) {
-	return index > 0 && _vm->_sound->isSoundPlaying(index - 1);
-}
-
-bool MinigameBbAnt::isAnySoundPlaying(const uint *indices, uint count) {
-	for (uint i = 0; i < count; ++i)
-		if (isSoundPlaying(indices[i]))
-			return true;
-	return false;
-}
-
 } // End of namespace Bbvs

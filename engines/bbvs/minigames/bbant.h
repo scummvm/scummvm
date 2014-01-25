@@ -165,10 +165,6 @@ public:
 	void scale2x(int x, int y);
 
 	void loadSounds();
-	void playSound(uint index, bool loop = false);
-	void stopSound(uint index);
-	bool isSoundPlaying(uint index);
-	bool isAnySoundPlaying(const uint *indices, uint count);
 
 };
 
