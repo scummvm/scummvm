@@ -44,43 +44,43 @@ public View.OnClickListener optionsBtnOnClickListener = new View.OnClickListener
         }
     };
 
+    private void emulateKeyPress(int keyCode){
+		_residualvm.pushEvent(ResidualVMEvents.JE_KEY, KeyEvent.ACTION_DOWN, keyCode, 0, 0, 0, 0);
+		_residualvm.pushEvent(ResidualVMEvents.JE_KEY, KeyEvent.ACTION_UP, keyCode, 0, 0, 0, 0);
+    }
+
 public View.OnClickListener menuBtnOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-		_residualvm.pushEvent(ResidualVMEvents.JE_KEY, KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_F1, 0, 0, 0, 0);
-		_residualvm.pushEvent(ResidualVMEvents.JE_KEY, KeyEvent.ACTION_UP, KeyEvent.KEYCODE_F1, 0, 0, 0, 0);	
+        	emulateKeyPress(KeyEvent.KEYCODE_F1);
         }
     };
 
 public View.OnClickListener inventoryBtnOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-		_residualvm.pushEvent(ResidualVMEvents.JE_KEY, KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_I, 0, 0, 0, 0);
-		_residualvm.pushEvent(ResidualVMEvents.JE_KEY, KeyEvent.ACTION_UP, KeyEvent.KEYCODE_I, 0, 0, 0, 0);	
+        	emulateKeyPress(KeyEvent.KEYCODE_I);
         }
     };
 
 public View.OnClickListener lookAtBtnOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-		_residualvm.pushEvent(ResidualVMEvents.JE_KEY, KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_E, 0, 0, 0, 0);
-		_residualvm.pushEvent(ResidualVMEvents.JE_KEY, KeyEvent.ACTION_UP, KeyEvent.KEYCODE_E, 0, 0, 0, 0);	
+        	emulateKeyPress(KeyEvent.KEYCODE_E);
         }
     };
 
 public View.OnClickListener useBtnOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-		_residualvm.pushEvent(ResidualVMEvents.JE_KEY, KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_ENTER, 0, 0, 0, 0);	
-		_residualvm.pushEvent(ResidualVMEvents.JE_KEY, KeyEvent.ACTION_UP, KeyEvent.KEYCODE_ENTER, 0, 0, 0, 0);	
+        	emulateKeyPress(KeyEvent.KEYCODE_ENTER);
         }
     };
 
 public View.OnClickListener pickUpBtnOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-		_residualvm.pushEvent(ResidualVMEvents.JE_KEY, KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_P, 0, 0, 0, 0);
-		_residualvm.pushEvent(ResidualVMEvents.JE_KEY, KeyEvent.ACTION_UP, KeyEvent.KEYCODE_P, 0, 0, 0, 0);	
+        	emulateKeyPress(KeyEvent.KEYCODE_P);
         }
     };
 
