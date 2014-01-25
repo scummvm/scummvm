@@ -24,7 +24,7 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_time_h
 #include "common/scummsys.h"
 
-#if defined(POSIX) && defined(USE_TASKBAR) && defined(USE_TASKBAR_UNITY)
+#if defined(POSIX) && defined(USE_TASKBAR) && defined(USE_UNITY)
 
 #include "backends/taskbar/unity/unity-taskbar.h"
 

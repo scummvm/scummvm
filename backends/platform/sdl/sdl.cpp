@@ -78,7 +78,7 @@ OSystem_SDL::~OSystem_SDL() {
 	delete _savefileManager;
 	_savefileManager = 0;
 	if (_graphicsManager) {
-		_graphicsManager->deactivateManager();
+		dynamic_cast<SdlGraphicsManager *>(_graphicsManager)->deactivateManager();
 	}
 	delete _graphicsManager;
 	_graphicsManager = 0;
@@ -195,7 +195,7 @@ void OSystem_SDL::initBackend() {
 	// so the virtual keyboard can be initialized, but we have to add the
 	// graphics manager as an event observer after initializing the event
 	// manager.
-	_graphicsManager->activateManager();
+	dynamic_cast<SdlGraphicsManager *>(_graphicsManager)->activateManager();
 }
 
 #if defined(USE_TASKBAR)

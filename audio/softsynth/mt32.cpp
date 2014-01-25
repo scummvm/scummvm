@@ -80,15 +80,6 @@ protected:
 	void showLCDMessage(const char *message) {
 		g_system->displayMessageOnOSD(message);
 	}
-	void onDeviceReset() {}
-	void onDeviceReconfig() {}
-	void onNewReverbMode(Bit8u /* mode */) {}
-	void onNewReverbTime(Bit8u /* time */) {}
-	void onNewReverbLevel(Bit8u /* level */) {}
-	void onPartStateChanged(int /* partNum */, bool /* isActive */) {}
-	void onPolyStateChanged(int /* partNum */) {}
-	void onPartialStateChanged(int /* partialNum */, int /* oldPartialPhase */, int /* newPartialPhase */) {}
-	void onProgramChanged(int /* partNum */, char * /* patchName */) {}
 };
 
 }	// end of namespace MT32Emu
@@ -230,7 +221,7 @@ int MidiDriver_MT32::open() {
 
 	g_system->updateScreen();
 
-	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_mixerSoundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
+	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_mixerSoundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 
 	return 0;
 }

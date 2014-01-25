@@ -360,7 +360,7 @@ void MSBuildProvider::outputGlobalPropFile(const BuildSetup &setup, std::ofstrea
 	              "\t\t<ClCompile>\n"
 	              "\t\t\t<DisableLanguageExtensions>true</DisableLanguageExtensions>\n"
 	              "\t\t\t<DisableSpecificWarnings>" << warnings << ";%(DisableSpecificWarnings)</DisableSpecificWarnings>\n"
-	              "\t\t\t<AdditionalIncludeDirectories>$(" << LIBS_DEFINE << ")\\include;.\\;" << prefix << ";" << prefix << "\\engines;" << (setup.tests ? prefix + "\\test\\cxxtest;" : "") << "$(TargetDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>\n"
+	              "\t\t\t<AdditionalIncludeDirectories>$(" << LIBS_DEFINE << ")\\include;.;" << prefix << ";" << prefix << "\\engines;" << (setup.tests ? prefix + "\\test\\cxxtest;" : "") << "$(TargetDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>\n"
 	              "\t\t\t<PreprocessorDefinitions>" << definesList << "%(PreprocessorDefinitions)</PreprocessorDefinitions>\n"
 	              "\t\t\t<ExceptionHandling>" << ((setup.devTools || setup.tests) ? "Sync" : "") << "</ExceptionHandling>\n";
 
@@ -434,8 +434,11 @@ void MSBuildProvider::createBuildProp(const BuildSetup &setup, bool isRelease, b
 		              "\t\t\t<DebugInformationFormat>" << (isWin32 ? "EditAndContinue" : "ProgramDatabase") << "</DebugInformationFormat>\n" // For x64 format Edit and continue is not supported, thus we default to Program Database
 		              "\t\t\t<EnablePREfast>" << (configuration == "Analysis" ? "true" : "false") << "</EnablePREfast>\n";
 
-		if (configuration == "LLVM")
-		    properties << "\t\t\t<AdditionalOptions>-Wno-microsoft -Wno-long-long -Wno-multichar -Wno-unknown-pragmas -Wno-reorder -Wpointer-arith -Wcast-qual -Wshadow -Wnon-virtual-dtor -Wwrite-strings -Wno-conversion -Wno-shorten-64-to-32 -Wno-sign-compare -Wno-four-char-constants -Wno-nested-anon-types %(AdditionalOptions)</AdditionalOptions>\n";
+		if (configuration == "LLVM") {
+			// FIXME The LLVM cl wrapper does not seem to work properly with the $(TargetDir) path so we hard-code the build folder until the issue is resolved
+			properties << "\t\t\t<AdditionalIncludeDirectories>" << configuration << outputBitness <<";%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>\n"
+		                  "\t\t\t<AdditionalOptions>-Wno-microsoft -Wno-long-long -Wno-multichar -Wno-unknown-pragmas -Wno-reorder -Wpointer-arith -Wcast-qual -Wshadow -Wnon-virtual-dtor -Wwrite-strings -Wno-conversion -Wno-shorten-64-to-32 -Wno-sign-compare -Wno-four-char-constants -Wno-nested-anon-types -Qunused-arguments %(AdditionalOptions)</AdditionalOptions>\n";
+		}
 
 		properties << "\t\t</ClCompile>\n"
 		              "\t\t<Link>\n"
@@ -521,6 +524,7 @@ void MSBuildProvider::writeFileListToProject(const FileNode &dir, std::ofstream 
 			outputNasmCommand(projectFile, "Debug", (isDuplicate ? (*entry).prefix : ""));
 			outputNasmCommand(projectFile, "Analysis", (isDuplicate ? (*entry).prefix : ""));
 			outputNasmCommand(projectFile, "Release", (isDuplicate ? (*entry).prefix : ""));
+			outputNasmCommand(projectFile, "LLVM", (isDuplicate ? (*entry).prefix : ""));
 
 			projectFile << "\t\t</CustomBuild>\n";
 		}

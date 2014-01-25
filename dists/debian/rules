@@ -4,7 +4,7 @@
 	dh $@
 
 override_dh_auto_configure:
-	./configure --prefix=/usr --bindir=/usr/games --datadir=/usr/share/games/residualvm --enable-release
+	./configure --prefix=/usr --bindir=/usr/games --datadir=/usr/share/games/residualvm --enable-release --enable-opengl-shaders
 
 override_dh_auto_build:
 	$(MAKE)

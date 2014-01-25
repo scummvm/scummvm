@@ -133,6 +133,14 @@ Debugger *g_readline_debugger;
 char *readline_completionFunction(const char *text, int state) {
 	return g_readline_debugger->readlineComplete(text, state);
 }
+
+#ifdef USE_READLINE_INT_COMPLETION
+typedef int RLCompFunc_t(const char *, int);
+#else
+typedef char *RLCompFunc_t(const char *, int);
+#endif
+
+
 } // end of anonymous namespace
 #endif
 
@@ -162,7 +170,7 @@ void Debugger::enter() {
 	// TODO: add support for saving/loading history?
 
 	g_readline_debugger = this;
-	rl_completion_entry_function = &readline_completionFunction;
+	rl_completion_entry_function = (RLCompFunc_t *)&readline_completionFunction;
 
 	char *line_read = 0;
 	do {

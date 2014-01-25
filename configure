@@ -132,7 +132,7 @@ _opengles2=no
 _opengl_shaders=no
 _readline=auto
 _freetype2=auto
-_taskbar=yes
+_taskbar=auto
 _updates=no
 _libunity=auto
 # Default option behavior yes/no
@@ -1293,7 +1293,7 @@ ds)
 gamecube)
 	_host_os=gamecube
 	_host_cpu=ppc
-	_host_alias=powerpc-gekko
+	_host_alias=powerpc-eabi
 	;;
 gp2x)
 	_host_os=gph-linux
@@ -1416,7 +1416,7 @@ webos)
 wii)
 	_host_os=wii
 	_host_cpu=ppc
-	_host_alias=powerpc-gekko
+	_host_alias=powerpc-eabi
 	;;
 wince)
 	_host_os=wince
@@ -2044,18 +2044,21 @@ case $_host_os in
 				CXXFLAGS="$CXXFLAGS -march=armv5te"
 				CXXFLAGS="$CXXFLAGS -mtune=xscale"
 				CXXFLAGS="$CXXFLAGS -msoft-float"
+				ABI="armeabi"
 				;;
 			android-v7a)
 				CXXFLAGS="$CXXFLAGS -march=armv7-a"
 				CXXFLAGS="$CXXFLAGS -mfloat-abi=softfp"
 				CXXFLAGS="$CXXFLAGS -mfpu=vfp"
 				LDFLAGS="$LDFLAGS -Wl,--fix-cortex-a8"
+				ABI="armeabi-v7a"
 				;;
 			ouya)
 				CXXFLAGS="$CXXFLAGS -march=armv7-a"
 				CXXFLAGS="$CXXFLAGS -mtune=cortex-a9"
 				CXXFLAGS="$CXXFLAGS -mfloat-abi=softfp"
 				CXXFLAGS="$CXXFLAGS -mfpu=neon"
+				ABI="armeabi-v7a"
 				;;
 		esac
 		# ResidualVM use newer NDK
@@ -2083,6 +2086,8 @@ case $_host_os in
 		# ResidualVM use newer NDK
 		LDFLAGS="$LDFLAGS --sysroot=$ANDROID_NDK/platforms/android-8/arch-arm"
 		LDFLAGS="$LDFLAGS -mthumb-interwork"
+		LDFLAGS="$LDFLAGS -L$ANDROID_NDK/sources/cxx-stl/gnu-libstdc++/`$CXX -dumpversion`/libs/$ABI/"
+		LIBS="$LIBS -lsupc++"
 		add_line_to_config_mk "ANDROID_SDK = $ANDROID_SDK"
 		_seq_midi=no
 		;;
@@ -2423,6 +2428,8 @@ if test -n "$_host"; then
 			CXXFLAGS="$CXXFLAGS -fschedule-insns2"
 			CXXFLAGS="$CXXFLAGS -fomit-frame-pointer"
 			CXXFLAGS="$CXXFLAGS -fdelete-null-pointer-checks"
+			# no-delayed-branch is a workaround for GCC bug #42841 - "SH: Assembler complains pcrel too far."
+			CXXFLAGS="$CXXFLAGS -fno-delayed-branch"
 			_backend="dc"
 			_build_scalers=no
 			_mad=yes
@@ -2683,7 +2690,6 @@ if test -n "$_host"; then
 			_backend="tizen"
 			_port_mk="backends/platform/tizen/tizen.mk"
 			_arm_asm=yes
-			_taskbar=no
 			_build_scalers=no
 			_seq_midi=no
 			_mt32emu=no
@@ -3670,6 +3676,25 @@ fi
 if test "$_readline" = yes ; then
 	LIBS="$LIBS $READLINE_LIBS $_READLINE_LIBS"
 	INCLUDES="$INCLUDES $READLINE_CFLAGS"
+
+	#
+	# Check the type of rl_completion_entry_function.
+	# It can be int(*)(const char *, int) or char *(*)(const char *, int).
+	#
+	cat > $TMPC << EOF
+#include <stdio.h>
+#include <readline/readline.h>
+#include <readline/history.h>
+
+int readline_completionFunction(const char *, int);
+
+int main(void) {
+	char *x = readline("");
+	rl_completion_entry_function = &readline_completionFunction;
+}
+EOF
+	cc_check -c && add_line_to_config_h '#define USE_READLINE_INT_COMPLETION'
+
 fi
 define_in_config_h_if_yes "$_readline" 'USE_READLINE'
 
@@ -3708,7 +3733,7 @@ if test "$_libunity" = yes ; then
 	LIBS="$LIBS $LIBUNITY_LIBS"
 	INCLUDES="$INCLUDES $LIBUNITY_CFLAGS"
 fi
-define_in_config_h_if_yes "$_libunity" 'USE_TASKBAR_UNITY'
+define_in_config_h_if_yes "$_libunity" 'USE_UNITY'
 fi
 echo "$_libunity"
 
@@ -3996,24 +4021,27 @@ fi
 # Check whether to build taskbar integration support
 #
 echo_n "Building taskbar integration support... "
-define_in_config_if_yes $_taskbar 'USE_TASKBAR'
-if test "$_taskbar" = yes; then
+if test "$_taskbar" = "no"; then
+	echo "no"
+else
 	case $_host_os in
 	mingw*)
 		LIBS="$LIBS -lole32 -luuid"
 		echo "win32"
+		_taskbar=yes
 		;;
 	*)
 		if test "$_libunity" = yes; then
 			echo "unity"
+			_taskbar=yes
 		else
-			echo "$_taskbar"
+			echo "no"
+			_taskbar=no
 		fi
 		;;
 	esac
-else
-	echo "$_taskbar"
 fi
+define_in_config_if_yes $_taskbar 'USE_TASKBAR'
 
 #
 # Check whether to build Bink video support

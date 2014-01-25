@@ -66,8 +66,7 @@ SurfaceSdlGraphicsManager::~SurfaceSdlGraphicsManager() {
 }
 
 void SurfaceSdlGraphicsManager::activateManager() {
-	GraphicsManager::activateManager();
-	initEventSource();
+	SdlGraphicsManager::activateManager();
 
 	// Register the graphics manager as a event observer
 	g_system->getEventManager()->getEventDispatcher()->registerObserver(this, 10, false);
@@ -79,8 +78,7 @@ void SurfaceSdlGraphicsManager::deactivateManager() {
 		g_system->getEventManager()->getEventDispatcher()->unregisterObserver(this);
 	}
 
-	deinitEventSource();
-	GraphicsManager::deactivateManager();
+	SdlGraphicsManager::deactivateManager();
 }
 
 void SurfaceSdlGraphicsManager::resetGraphicsScale() {

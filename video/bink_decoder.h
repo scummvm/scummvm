@@ -76,6 +76,8 @@ public:
 	void setAudioTrack(uint32 track);
 protected:
 	void readNextPacket();
+	bool supportsAudioTrackSwitching() const { return true; }
+	AudioTrack *getAudioTrack(int index);
 
 	// ResidualVM-specific:
 	bool seekIntern(const Audio::Timestamp &time);
