@@ -126,7 +126,11 @@ bool WiiFilesystemFactory::failedToMount(FileSystemType type) {
 }
 
 #ifdef USE_WII_DI
-const DISC_INTERFACE* dvd = &__io_wiidvd;
+#ifndef GAMECUBE
+  const DISC_INTERFACE* dvd = &__io_wiidvd;
+#else
+  const DISC_INTERFACE* dvd = &__io_gcdvd;
+#endif
 #endif
 
 void WiiFilesystemFactory::mount(FileSystemType type) {
