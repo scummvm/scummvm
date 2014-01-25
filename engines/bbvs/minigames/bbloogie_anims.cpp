@@ -131,7 +131,7 @@ static const ObjAnimation kAnimations[] = {
 	{2, kAnim25FrameIndices, kAnim25FrameTicks, kAnim25FrameRects}
 };
 
-const ObjAnimation *MinigameBbloogie::getAnimation(int animIndex) {
+const ObjAnimation *MinigameBbLoogie::getAnimation(int animIndex) {
 	return &kAnimations[animIndex];
 }
 

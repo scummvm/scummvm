@@ -31,10 +31,11 @@
 namespace Bbvs {
 
 enum {
-	kMinigameBbloogie		= 0,
+	kMinigameBbLoogie		= 0,
 	kMinigameBbTennis		= 1,
 	kMinigameBbAnt			= 2,
-	kMinigameBbAirGuitar	= 3
+	kMinigameBbAirGuitar	= 3,
+	kMinigameCount
 };
 
 struct ObjAnimation {
@@ -49,7 +50,7 @@ public:
 	Minigame(BbvsEngine *vm);
 	virtual ~Minigame();
 	virtual int run(bool fromMainGame) = 0;
-public:
+protected:
 	BbvsEngine *_vm;	
 	SpriteModule *_spriteModule;
 	
@@ -58,6 +59,7 @@ public:
 	int _gameResult;
 	bool _gameDone;
 	bool _fromMainGame;
+	int _hiScoreTable[kMinigameCount];
 	
 	int _backgroundSpriteIndex, _titleScreenSpriteIndex;
 	
@@ -69,7 +71,10 @@ public:
 	void stopSound(uint index);
 	bool isSoundPlaying(uint index);
 	bool isAnySoundPlaying(const uint *indices, uint count);
-
+	
+	void saveHiscore(int minigameNum, int score);
+	int loadHiscore(int minigameNum);
+	
 };
 
 } // End of namespace Bbvs

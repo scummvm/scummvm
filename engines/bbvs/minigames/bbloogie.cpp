@@ -88,7 +88,7 @@ static const char *kSoundFilenames[] = {
 
 static const uint kSoundFilenamesCount = ARRAYSIZE(kSoundFilenames);
 
-void MinigameBbloogie::buildDrawList(DrawList &drawList) {
+void MinigameBbLoogie::buildDrawList(DrawList &drawList) {
 	switch (_gameState) {
 	case kGSTitleScreen:
 		buildDrawList0(drawList);
@@ -105,7 +105,7 @@ void MinigameBbloogie::buildDrawList(DrawList &drawList) {
 	}
 }
 
-void MinigameBbloogie::buildDrawList0(DrawList &drawList) {
+void MinigameBbLoogie::buildDrawList0(DrawList &drawList) {
 	drawList.add(_objects[0].anim->frameIndices[_objects[0].frameIndex], _objects[0].x, _objects[0].y, 2000);
 	for (int i = 1; i < kMaxObjectsCount; ++i) {
 		Obj *obj = &_objects[i];
@@ -116,7 +116,7 @@ void MinigameBbloogie::buildDrawList0(DrawList &drawList) {
 		drawList.add(_titleScreenSpriteIndex, 0, 0, 0);
 }
 
-void MinigameBbloogie::buildDrawList1(DrawList &drawList) {
+void MinigameBbLoogie::buildDrawList1(DrawList &drawList) {
 	
 	for (int i = 0; i < kMaxObjectsCount; ++i) {
 		Obj *obj = &_objects[i];
@@ -162,7 +162,7 @@ void MinigameBbloogie::buildDrawList1(DrawList &drawList) {
 
 }
 
-void MinigameBbloogie::buildDrawList2(DrawList &drawList) {
+void MinigameBbLoogie::buildDrawList2(DrawList &drawList) {
 	
 	buildDrawList1(drawList);
 
@@ -179,7 +179,7 @@ void MinigameBbloogie::buildDrawList2(DrawList &drawList) {
 
 }
 
-void MinigameBbloogie::buildDrawList3(DrawList &drawList) {
+void MinigameBbLoogie::buildDrawList3(DrawList &drawList) {
 	
 	for (int i = 0; i < kMaxObjectsCount; ++i) {
 		Obj *obj = &_objects[i];
@@ -209,33 +209,33 @@ void MinigameBbloogie::buildDrawList3(DrawList &drawList) {
 
 }
 
-void MinigameBbloogie::drawSprites() {
+void MinigameBbLoogie::drawSprites() {
 	DrawList drawList;
 	buildDrawList(drawList);
 	_vm->_screen->drawDrawList(drawList, _spriteModule);
 	_vm->_screen->copyToScreen();
 }
 
-void MinigameBbloogie::initObjs() {
+void MinigameBbLoogie::initObjs() {
 	for (int i = 0; i < kMaxObjectsCount; ++i)
 		_objects[i].kind = 0;
 }
 
-MinigameBbloogie::Obj *MinigameBbloogie::getFreeObject() {
+MinigameBbLoogie::Obj *MinigameBbLoogie::getFreeObject() {
 	for (int i = 0; i < kMaxObjectsCount; ++i)
 		if (_objects[i].kind == 0)
 			return &_objects[i];
 	return 0;
 }
 
-MinigameBbloogie::Obj *MinigameBbloogie::findLoogieObj(int startObjIndex) {
+MinigameBbLoogie::Obj *MinigameBbLoogie::findLoogieObj(int startObjIndex) {
 	for (int i = startObjIndex; i < kMaxObjectsCount; ++i)
 		if (_objects[i].kind == 3)
 			return &_objects[i];
 	return 0;
 }
 
-bool MinigameBbloogie::isHit(Obj *obj1, Obj *obj2) {
+bool MinigameBbLoogie::isHit(Obj *obj1, Obj *obj2) {
 	const BBRect &frameRect1 = obj1->anim->frameRects[obj1->frameIndex];
 	const BBRect &frameRect2 = obj2->anim->frameRects[obj2->frameIndex];
 	const int obj1X1 = obj1->x + frameRect1.x;
@@ -249,11 +249,11 @@ bool MinigameBbloogie::isHit(Obj *obj1, Obj *obj2) {
 	return obj1X1 <= obj2X2 && obj1X2 >= obj2X1 && obj1Y1 <= obj2Y2 && obj1Y2 >= obj2Y1;
 }
 
-bool MinigameBbloogie::isCursorAtObj(int objIndex) {
+bool MinigameBbLoogie::isCursorAtObj(int objIndex) {
 	return isHit(&_objects[0], &_objects[objIndex]);
 }
 
-void MinigameBbloogie::initObjects() {
+void MinigameBbLoogie::initObjects() {
 	switch (_gameState) {
 	case kGSTitleScreen:
 		initObjects0();
@@ -270,7 +270,7 @@ void MinigameBbloogie::initObjects() {
 	}
 }
 
-void MinigameBbloogie::initObjects0() {
+void MinigameBbLoogie::initObjects0() {
 	initObjs();
 	_objects[0].anim = getAnimation(25);
 	_objects[0].frameIndex = 0;
@@ -304,7 +304,7 @@ void MinigameBbloogie::initObjects0() {
 	_objects[4].kind = 0;
 }
 
-void MinigameBbloogie::initObjects1() {
+void MinigameBbLoogie::initObjects1() {
 	initObjs();
 	_objects[0].anim = _playerAnim;
 	_objects[0].frameIndex = 0;
@@ -321,7 +321,7 @@ void MinigameBbloogie::initObjects1() {
 	_objects[1].kind = 2;
 }
 
-void MinigameBbloogie::initObjects3() {
+void MinigameBbLoogie::initObjects3() {
 	initObjs();
 	_objects[0].anim = _playerAnim;
 	_objects[0].frameIndex = 0;
@@ -336,7 +336,7 @@ void MinigameBbloogie::initObjects3() {
 	_objects[1].kind = 2;
 }
 
-void MinigameBbloogie::initVars() {
+void MinigameBbLoogie::initVars() {
 	switch (_gameState) {
 	case kGSTitleScreen:
 		initVars0();
@@ -353,7 +353,7 @@ void MinigameBbloogie::initVars() {
 	}
 }
 
-void MinigameBbloogie::initVars0() {
+void MinigameBbLoogie::initVars0() {
 	_carDelay = 120;
 	_bikeDelay = 250;
 	_squirrelDelay = 40;
@@ -370,7 +370,7 @@ void MinigameBbloogie::initVars0() {
 	_dispLevelScore = 0;
 }
 
-void MinigameBbloogie::initVars1() {
+void MinigameBbLoogie::initVars1() {
 	_carDelay = 120;
 	_bikeDelay = 250;
 	_squirrelDelay = 40;
@@ -381,7 +381,7 @@ void MinigameBbloogie::initVars1() {
 	_megaLoogieCount = 0;
 }
 
-void MinigameBbloogie::initVars2() {
+void MinigameBbLoogie::initVars2() {
 	_timeBonusCtr = _levelTimeLeft;
 	_levelTimeDelay = 58;
 	_bonusDisplayDelay1 = 60;
@@ -391,7 +391,7 @@ void MinigameBbloogie::initVars2() {
 	_bonusDisplayDelay3 = 0;
 }
 
-void MinigameBbloogie::initVars3() {
+void MinigameBbLoogie::initVars3() {
 	if (_currScore > _hiScore)
 		_hiScore = _currScore;
 	if (_playerKind) {
@@ -401,7 +401,7 @@ void MinigameBbloogie::initVars3() {
 	}
 }
 
-bool MinigameBbloogie::updateStatus(int mouseX, int mouseY, uint mouseButtons) {
+bool MinigameBbLoogie::updateStatus(int mouseX, int mouseY, uint mouseButtons) {
 	switch (_gameState) {
 	case kGSTitleScreen:
 		return updateStatus0(mouseX, mouseY, mouseButtons);
@@ -415,7 +415,7 @@ bool MinigameBbloogie::updateStatus(int mouseX, int mouseY, uint mouseButtons) {
 	return false;
 }
 
-bool MinigameBbloogie::updateStatus0(int mouseX, int mouseY, uint mouseButtons) {
+bool MinigameBbLoogie::updateStatus0(int mouseX, int mouseY, uint mouseButtons) {
 	
 	_objects[0].x = mouseX;
 	_objects[0].y = mouseY;
@@ -481,9 +481,7 @@ bool MinigameBbloogie::updateStatus0(int mouseX, int mouseY, uint mouseButtons) 
 			playSound(23);
 			while (isSoundPlaying(23)) { }
 		}
-		_gameState = kGSMainGame;
-		if (!_fromMainGame)
-			_gameState = kGSStandaloneGame;
+		_gameState = _fromMainGame ? kGSMainGame : kGSStandaloneGame;
 		initObjects1();
 		initObjects();
 		initVars();
@@ -493,7 +491,7 @@ bool MinigameBbloogie::updateStatus0(int mouseX, int mouseY, uint mouseButtons) 
 	return true;
 }
 
-bool MinigameBbloogie::updateStatus1(int mouseX, int mouseY, uint mouseButtons) {
+bool MinigameBbLoogie::updateStatus1(int mouseX, int mouseY, uint mouseButtons) {
 	
 	if (--_levelTimeDelay == 0) {
 		_levelTimeDelay = 58;
@@ -539,7 +537,7 @@ bool MinigameBbloogie::updateStatus1(int mouseX, int mouseY, uint mouseButtons) 
 	return true;
 }
 
-bool MinigameBbloogie::updateStatus2(int mouseX, int mouseY, uint mouseButtons) {
+bool MinigameBbLoogie::updateStatus2(int mouseX, int mouseY, uint mouseButtons) {
 
 	_objects[0].x = mouseX;
 
@@ -569,7 +567,7 @@ bool MinigameBbloogie::updateStatus2(int mouseX, int mouseY, uint mouseButtons) 
 	return true;
 }
 
-bool MinigameBbloogie::updateStatus3(int mouseX, int mouseY, uint mouseButtons) {
+bool MinigameBbLoogie::updateStatus3(int mouseX, int mouseY, uint mouseButtons) {
 	
 	_objects[0].x = mouseX;
 		
@@ -588,7 +586,7 @@ bool MinigameBbloogie::updateStatus3(int mouseX, int mouseY, uint mouseButtons) 
 	return true;
 }
 
-void MinigameBbloogie::updateObjs(uint mouseButtons) {
+void MinigameBbLoogie::updateObjs(uint mouseButtons) {
 
 	for (int i = 0; i < kMaxObjectsCount; ++i) {
 		Obj *obj = &_objects[i];
@@ -708,7 +706,7 @@ void MinigameBbloogie::updateObjs(uint mouseButtons) {
 	
 }
 
-void MinigameBbloogie::updatePlayer(int objIndex, uint mouseButtons) {
+void MinigameBbLoogie::updatePlayer(int objIndex, uint mouseButtons) {
 
 	Obj *obj = &_objects[0];
 	
@@ -798,7 +796,7 @@ void MinigameBbloogie::updatePlayer(int objIndex, uint mouseButtons) {
 
 }
 
-void MinigameBbloogie::updateObjKind2(int objIndex) {
+void MinigameBbLoogie::updateObjKind2(int objIndex) {
 
 	Obj *obj = &_objects[objIndex];
 
@@ -812,7 +810,7 @@ void MinigameBbloogie::updateObjKind2(int objIndex) {
 
 }
 
-void MinigameBbloogie::updateLoogie(int objIndex) {
+void MinigameBbLoogie::updateLoogie(int objIndex) {
 	Obj *obj = &_objects[objIndex];
 
 	if (obj->unk2 > 0) {
@@ -832,7 +830,7 @@ void MinigameBbloogie::updateLoogie(int objIndex) {
 
 }
 
-void MinigameBbloogie::updateCar(int objIndex) {
+void MinigameBbLoogie::updateCar(int objIndex) {
 	Obj *obj = &_objects[objIndex];
 	
 	obj->x += obj->xIncr;
@@ -867,7 +865,7 @@ void MinigameBbloogie::updateCar(int objIndex) {
 
 }
 
-void MinigameBbloogie::updateBike(int objIndex) {
+void MinigameBbLoogie::updateBike(int objIndex) {
 	Obj *obj = &_objects[objIndex];
 	
 	obj->x += obj->xIncr;
@@ -902,7 +900,7 @@ void MinigameBbloogie::updateBike(int objIndex) {
 
 }
 
-void MinigameBbloogie::updateSquirrel(int objIndex) {
+void MinigameBbLoogie::updateSquirrel(int objIndex) {
 	Obj *obj = &_objects[objIndex];
 
 	if (obj->ticks-- == 0) {
@@ -937,7 +935,7 @@ void MinigameBbloogie::updateSquirrel(int objIndex) {
 
 }
 
-void MinigameBbloogie::updatePaperPlane(int objIndex) {
+void MinigameBbLoogie::updatePaperPlane(int objIndex) {
 	Obj *obj = &_objects[objIndex];
 
 	obj->x += obj->xIncr;
@@ -970,7 +968,7 @@ void MinigameBbloogie::updatePaperPlane(int objIndex) {
 	
 }
 
-void MinigameBbloogie::updateIndicator(int objIndex) {
+void MinigameBbLoogie::updateIndicator(int objIndex) {
 	Obj *obj = &_objects[objIndex];
 	Obj *loogieObj = &_objects[0];
 
@@ -1002,7 +1000,7 @@ void MinigameBbloogie::updateIndicator(int objIndex) {
 	
 }
 
-void MinigameBbloogie::updatePrincipal(int objIndex) {
+void MinigameBbLoogie::updatePrincipal(int objIndex) {
 	Obj *obj = &_objects[objIndex];
 
 	switch (obj->status) {
@@ -1241,7 +1239,7 @@ void MinigameBbloogie::updatePrincipal(int objIndex) {
 
 }
 
-void MinigameBbloogie::incNumberOfHits() {
+void MinigameBbLoogie::incNumberOfHits() {
 	++_numberOfHits;
 	if (_numberOfHits == 1000)
 		_numberOfHits = 0;
@@ -1252,19 +1250,19 @@ void MinigameBbloogie::incNumberOfHits() {
 	}
 }
 
-void MinigameBbloogie::incScore(int incrAmount) {
+void MinigameBbLoogie::incScore(int incrAmount) {
 	if (_doubleScore)
 		_currScore += 2 * incrAmount;
 	else
 		_currScore += incrAmount;
 }
 
-void MinigameBbloogie::playRndSound() {
+void MinigameBbLoogie::playRndSound() {
 	if (!isAnySoundPlaying(_playerSounds2, _playerSounds2Count))
 		playSound(_playerSounds1[_vm->getRandom(_playerSounds1Count)]);
 }
 
-int MinigameBbloogie::run(bool fromMainGame) {
+int MinigameBbLoogie::run(bool fromMainGame) {
 
 	memset(_objects, 0, sizeof(_objects));
 
@@ -1276,9 +1274,8 @@ int MinigameBbloogie::run(bool fromMainGame) {
 	_fromMainGame = fromMainGame;
 
 	_hiScore = 0;
-	if (!_fromMainGame) {
-		// TODO Load LoogieHiScore
-	}
+	if (!_fromMainGame)
+		_hiScore = loadHiscore(kMinigameBbLoogie);
 
 	_gameState = kGSTitleScreen;
 	_gameTicks = 0;
@@ -1293,7 +1290,6 @@ int MinigameBbloogie::run(bool fromMainGame) {
 	Palette palette = _spriteModule->getPalette();
 	_vm->_screen->setPalette(palette);
 	
-	// Load sounds
 	loadSounds();
 
 	playSound(32, true);
@@ -1303,19 +1299,17 @@ int MinigameBbloogie::run(bool fromMainGame) {
 		update();
 	}
 	
-	// Unload sounds
 	_vm->_sound->unloadSounds();
 
-	if (!_fromMainGame) {
-		// TODO Save LoogieHiScore
-	}
+	if (!_fromMainGame)
+		saveHiscore(kMinigameBbLoogie, _hiScore);
 
 	delete _spriteModule;
 
 	return _gameResult;
 }
 
-void MinigameBbloogie::update() {
+void MinigameBbLoogie::update() {
 
 	int currTicks, inputTicks;
 
@@ -1349,7 +1343,7 @@ void MinigameBbloogie::update() {
 		
 }
 
-void MinigameBbloogie::loadSounds() {
+void MinigameBbLoogie::loadSounds() {
 	for (uint i = 0; i < kSoundFilenamesCount; ++i) {
 		Common::String filename = Common::String::format("bbloogie/%s", kSoundFilenames[i]);
 		_vm->_sound->loadSound(filename.c_str());

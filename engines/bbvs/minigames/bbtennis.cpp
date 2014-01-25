@@ -1193,9 +1193,8 @@ int MinigameBbTennis::run(bool fromMainGame) {
 	_fromMainGame = fromMainGame;
 
 	_hiScore = 0;
-	if (!_fromMainGame) {
-		// TODO Load HiScore
-	}
+	if (!_fromMainGame)
+		_hiScore = loadHiscore(kMinigameBbTennis);
 
 	_gameState = 0;
 	_gameResult = 0;
@@ -1209,7 +1208,6 @@ int MinigameBbTennis::run(bool fromMainGame) {
 	Palette palette = _spriteModule->getPalette();
 	_vm->_screen->setPalette(palette);
 	
-	// Load sounds
 	loadSounds();
 
 	_gameTicks = 0;
@@ -1220,12 +1218,10 @@ int MinigameBbTennis::run(bool fromMainGame) {
 		update();
 	}
 	
-	// Unload sounds
 	_vm->_sound->unloadSounds();
 
-	if (!_fromMainGame) {
-		// TODO Save HiScore
-	}
+	if (!_fromMainGame)
+		saveHiscore(kMinigameBbTennis, _hiScore);
 
 	delete _spriteModule;
 

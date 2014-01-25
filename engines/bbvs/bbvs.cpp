@@ -2153,8 +2153,8 @@ bool BbvsEngine::runMinigame(int minigameNum) {
 	Minigame *minigame = 0;
 	
 	switch (minigameNum) {
-	case kMinigameBbloogie:
-		minigame = new MinigameBbloogie(this);
+	case kMinigameBbLoogie:
+		minigame = new MinigameBbLoogie(this);
 		break;
 	case kMinigameBbTennis:
 		minigame = new MinigameBbTennis(this);

@@ -27,9 +27,9 @@
 
 namespace Bbvs {
 
-class MinigameBbloogie : public Minigame {
+class MinigameBbLoogie : public Minigame {
 public:
-	MinigameBbloogie(BbvsEngine *vm) : Minigame(vm) {};
+	MinigameBbLoogie(BbvsEngine *vm) : Minigame(vm) {};
 	int run(bool fromMainGame);
 public:
 	

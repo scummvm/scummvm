@@ -736,6 +736,7 @@ int MinigameBbAirGuitar::run(bool fromMainGame) {
 
 	memset(_objects, 0, sizeof(_objects));
 
+    _modified = false;
 	_currPatchNum = -1;
 	_btn3KindToggle = 0;
 	_currButtonNum = 27;
@@ -783,7 +784,6 @@ int MinigameBbAirGuitar::run(bool fromMainGame) {
 		update();
 	}
 	
-	// Unload sounds
 	_vm->_sound->unloadSounds();
 
 	delete _spriteModule;
@@ -923,7 +923,7 @@ void MinigameBbAirGuitar::afterButtonReleased() {
 			break;
 		case 4:
 			*_currFrameIndex = 1;
-			// TODO PostMessageA(hWndParent, WM_COMMAND, 0x9C6Du, 0);
+			// TODO Run load dialog
 			break;
 		case 5:
 			_objects[3].kind = 0;
@@ -948,7 +948,7 @@ void MinigameBbAirGuitar::afterButtonReleased() {
 			break;
 		case 12:
 			*_currFrameIndex = 1;
-			// TODO PostMessageA(hWndParent, WM_COMMAND, 0x9C6Eu, 0);
+			// TODO Run save dialog
 			break;
 		case 13:
 			_objects[4].kind = 0;

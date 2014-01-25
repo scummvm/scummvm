@@ -387,8 +387,7 @@ bool MinigameBbAnt::updateStatus0(int mouseX, int mouseY, uint mouseButtons) {
 }
 
 bool MinigameBbAnt::updateStatus1(int mouseX, int mouseY, uint mouseButtons) {
-	//const int kMaxBugsCount = 52;
-	const int kMaxBugsCount = 1;//DEBUG
+	const int kMaxBugsCount = 52;
 
 	--_levelTimeDelay;
 	if (!_levelTimeDelay) {
@@ -424,7 +423,6 @@ bool MinigameBbAnt::updateStatus1(int mouseX, int mouseY, uint mouseButtons) {
 		return true;
 	}
 
-debug(0, "updateStatus1 #2");
 	if ((mouseButtons & kRightButtonClicked) && (_stompCount > 0|| _hasLastStompObj) && !_objects[2].status) {
 		if (_hasLastStompObj)
 			removeStompObj(_lastStompObj);
@@ -432,14 +430,12 @@ debug(0, "updateStatus1 #2");
 		_objects[2].status = 1;
 	}
 
-debug(0, "updateStatus1 #3");
 	if ((mouseButtons & kLeftButtonClicked) && _objects[2].status == 0 && isMagGlassAtBeavisLeg(2)) {
 		if (_vm->getRandom(10) == 1 && !isAnySoundPlaying(kSoundTbl4, 10))
 			playSound(16);
 		insertSmokeObj(_objects[0].x << 16, _objects[0].y << 16);
 	}
 
-debug(0, "updateStatus1 #4");
 	if (_skullBugCtr > 0) {
 		if (--_skullBugCtr == 0) {
 			_skullBugCtr = _vm->getRandom(150) + 500;
@@ -450,18 +446,15 @@ debug(0, "updateStatus1 #4");
 	if (_stompCounter2 > 0)
 		--_stompCounter2;
 
-debug(0, "updateStatus1 #5");
 	if (_totalBugsCount < kMaxBugsCount && _vm->getRandom(_stompCounter2) == 0) {
 		int testTbl[4];
 		int maxKindCount = 0, objKind = 0;
 
 		_stompCounter2 = _stompCounter1;
 		
-debug(0, "updateStatus1 #6");
 		for (int i = 0; i < 4; ++i)
 			testTbl[i] = _vm->getRandom(_bugsChanceByKind[i] - _bugsCountByKind[i]);
 
-debug(0, "updateStatus1 #7");
 		for (int i = 0; i < 4; ++i) {
 			if (testTbl[i] >= maxKindCount) {
 				maxKindCount = testTbl[i];
@@ -469,15 +462,12 @@ debug(0, "updateStatus1 #7");
 			}
 		}
 
-debug(0, "updateStatus1 #8");
 		if (objKind)
 			insertRandomBugObj(objKind);
 
 	}
 
-debug(0, "updateStatus1 #9");
 	updateObjs(mouseButtons);
-debug(0, "updateStatus1 #10");
 	updateFootObj(2);
 
 	if (--_countdown10 == 0) {
@@ -486,7 +476,6 @@ debug(0, "updateStatus1 #10");
 			--_stompCounter1;
 	}
 	
-debug(0, "updateStatus1 #XXX");
 	return true;
 }
 
@@ -643,7 +632,6 @@ void MinigameBbAnt::insertStompObj(int x, int y) {
 		obj->xIncr = (0x1E0000 * _stompCount - x + 0x140000) / 15;
 		obj->yIncr = (0xE60000 - y) / 15;
 		obj->anim = getAnimation(130);
-		debug("obj->anim(130): %d", obj->anim->frameIndices[0]);
 		obj->frameIndex = 0;
 		obj->ticks = 15;
 		_lastStompObj = obj;
@@ -1131,7 +1119,6 @@ void MinigameBbAnt::updateObjs(uint mouseButtons) {
 				int candyObjIndex;
 				if (isBugAtCandy(i, candyObjIndex)) {
 					obj->status = 3;
-					debug("bug %d has candy %d", i, candyObjIndex);
 					obj->otherObjIndex = candyObjIndex;
 					_objects[candyObjIndex].otherObjIndex = i;
 					_objects[candyObjIndex].status = 10;
@@ -1145,7 +1132,6 @@ void MinigameBbAnt::updateObjs(uint mouseButtons) {
 			}
 
 			if (testObj5(i)) {
-			debug("yes");
 				updateObjAnim2(i);
 			}
 
@@ -1197,6 +1183,9 @@ int MinigameBbAnt::run(bool fromMainGame) {
 	_fromMainGame = fromMainGame;
 
 	_hiScore = 0;
+	if (!_fromMainGame)
+		_hiScore = loadHiscore(kMinigameBbAnt);
+
 	_gameState = 0;
 	_gameResult = 0;
 	_gameDone = false;
@@ -1209,7 +1198,6 @@ int MinigameBbAnt::run(bool fromMainGame) {
 	Palette palette = _spriteModule->getPalette();
 	_vm->_screen->setPalette(palette);
 	
-	// Load sounds
 	loadSounds();
 
 	_gameTicks = 0;
@@ -1220,8 +1208,10 @@ int MinigameBbAnt::run(bool fromMainGame) {
 		update();
 	}
 	
-	// Unload sounds
 	_vm->_sound->unloadSounds();
+
+	if (!_fromMainGame)
+		saveHiscore(kMinigameBbAnt, _hiScore);
 
 	delete _spriteModule;
 
@@ -1240,15 +1230,15 @@ void MinigameBbAnt::update() {
 		inputTicks = 1;
 		_gameTicks = _vm->_system->getMillis();
 	}
-	
+
 	if (_vm->_keyCode == Common::KEYCODE_ESCAPE) {
 		_gameDone = true;
 		return;
 	}
-	
+
 	if (inputTicks == 0)
 		return;
-		
+
 	bool done;
 
 	do {
@@ -1277,7 +1267,13 @@ void MinigameBbAnt::scale2x(int x, int y) {
 		srcH += srcY;
 		srcY = 0;
 	}
-
+	
+	if (srcX + srcW >= 320)
+		srcW = 320 - srcX - 1;
+	
+	if (srcY + srcH >= 240)
+		srcH = 240 - srcY - 1;
+	
 	for (int yc = 0; yc < srcH; ++yc) {
 		byte *src = (byte*)surface->getBasePtr(srcX, srcY + yc);
 		memcpy(&_scaleBuf[yc * kScaleDim], src, srcW);
@@ -1296,10 +1292,16 @@ void MinigameBbAnt::scale2x(int x, int y) {
 		dstY = 0;
 	}
 	
+	if (dstX + dstW >= 320)
+		dstW = 320 - dstX - 1;
+	
+	if (dstY + dstH >= 240)
+		dstH = 240 - dstY - 1;
+	
 	int w = MIN(srcW * 2, dstW), h = MIN(srcH * 2, dstH);
 	
 	for (int yc = 0; yc < h; ++yc) {
-		byte *src = _scaleBuf + + kScaleDim * (yc / 2);
+		byte *src = _scaleBuf + kScaleDim * (yc / 2);
 		byte *dst = (byte*)surface->getBasePtr(dstX, dstY + yc);
 		for (int xc = 0; xc < w; ++xc)
 			dst[xc] = src[xc / 2];
