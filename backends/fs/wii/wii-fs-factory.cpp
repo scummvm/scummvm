@@ -125,7 +125,9 @@ bool WiiFilesystemFactory::failedToMount(FileSystemType type) {
 	return false;
 }
 
+#ifdef USE_WII_DI
 const DISC_INTERFACE* dvd = &__io_wiidvd;
+#endif
 
 void WiiFilesystemFactory::mount(FileSystemType type) {
 	switch (type) {
