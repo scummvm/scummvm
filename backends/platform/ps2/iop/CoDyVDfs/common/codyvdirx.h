@@ -26,13 +26,13 @@
 #define CDVDFS_IRX_ID 0xD004352
 
 // commands:
-#define READ_RTC		0
-#define SET_READ_SPEED	1
-#define DRIVE_STOP		2
-#define DRIVE_STANDBY	3
+#define READ_RTC        0
+#define SET_READ_SPEED  1
+#define DRIVE_STOP      2
+#define DRIVE_STANDBY   3
 
-#define CdTrayOpen		0
-#define CdTrayClose		1
-#define CdTrayCheck		2
+#define CdTrayOpen      0
+#define CdTrayClose     1
+#define CdTrayCheck     2
 
 #endif // CDVDFS_COMMON_H

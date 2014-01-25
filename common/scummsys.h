@@ -405,8 +405,13 @@
 	typedef unsigned int uint32;
 	typedef signed int int32;
 	typedef unsigned int uint;
+	#ifdef __PLAYSTATION2__
+	typedef signed long int64;
+	typedef unsigned long uint64;
+	#else
 	typedef signed long long int64;
 	typedef unsigned long long uint64;
+	#endif
 #endif
 
 

@@ -34,7 +34,7 @@ Ps2Pad::Ps2Pad(OSystem_PS2 *system) {
 	_padStatus = STAT_NONE;
 
 	padInit(0); // initialize library
-	_port = _slot = 0;	// first controller, no multitap
+	_port = _slot = 0; // first controller, no multitap
 	initPad();
 }
 
@@ -51,9 +51,6 @@ void Ps2Pad::initPad(void) {
 	} else {
 		if (checkPadReady(_port, _slot)) {
 			switch (_padStatus) {
-				case STAT_NONE:
-					printf("Pad Status is None. Shouldn't happen\n");
-					break;
 				case STAT_OPEN:
 					_padStatus = STAT_DETECT;
 					break;
@@ -104,7 +101,8 @@ void Ps2Pad::initPad(void) {
 					_padStatus = STAT_OKAY;
 					break;
 				case STAT_OKAY:
-					// pad is already initialized
+				case STAT_NONE:
+					// pad is already initialized (or not there)
 					break;
 			}
 		} else {
