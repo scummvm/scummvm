@@ -214,21 +214,6 @@ void MidiParser::onTimer() {
 				activeNote(info.channel(), info.basic.param1, true);
 		}
 
-		if (info.event == 0xFF && info.ext.type == 0x2F) {
-			// End of Track must be processed by us, as well as sending it to the output device.
-			// It must be processed here instead of inside processEvent() to avoid invalid mem access,
-			// since Player::metaEvent() in SCUMM will delete the parser object.
-			if (_autoLoop) {
-				jumpToTick(0);
-				parseNextEvent(_nextEvent);
-			} else {
-				stopPlaying();
-				_driver->metaEvent(info.ext.type, info.ext.data, (uint16)info.length);
-			}
-			return;
-			
-		}
-
 		processEvent(info);
 
 		if (_abortParse)
@@ -255,7 +240,21 @@ void MidiParser::processEvent(const EventInfo &info, bool fireEvents) {
 				_driver->sysEx(info.ext.data, (uint16)info.length);
 		}
 	} else if (info.event == 0xFF) {
-		if (info.ext.type == 0x51) {
+		// META event
+		if (info.ext.type == 0x2F) {
+			// End of Track must be processed by us,
+			// as well as sending it to the output device.
+			if (_autoLoop) {
+				jumpToTick(0);
+				parseNextEvent(_nextEvent);
+			} else {
+				stopPlaying();
+				if (fireEvents)
+					_driver->metaEvent(info.ext.type, info.ext.data, (uint16)info.length);
+			}
+			_abortParse = true;
+			return;
+		} else if (info.ext.type == 0x51) {
 			if (info.length >= 3) {
 				setTempo(info.ext.data[0] << 16 | info.ext.data[1] << 8 | info.ext.data[2]);
 			}
