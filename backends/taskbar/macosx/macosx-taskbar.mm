@@ -27,8 +27,7 @@
 #if defined(MACOSX) && defined(USE_TASKBAR)
 
 // NSDockTile was introduced with Mac OS X 10.5.
-// Should we make sure that it is present here or do we trust that
-// configure will skip it when compiling on older systems?
+// Try provide backward compatibility by avoiding NSDockTile symbols.
 
 // TODO: Implement recent list, maybe as a custom menu on dock tile when app is not running
 // See Dock Tile plug-in at https://developer.apple.com/library/mac/documentation/Carbon/Conceptual/customizing_docktile/CreatingaDockTilePlug-in/CreatingaDockTilePlug-in.html
@@ -40,13 +39,11 @@
 #include <AppKit/NSApplication.h>
 #include <AppKit/NSImage.h>
 #include <Foundation/NSString.h>
-#include <AppKit/NSDockTile.h>
 #include <AppKit/NSImageView.h>
-#include <AppKit/NSProgressIndicator.h>
 #include <AppKit/NSColor.h>
 #include <AppKit/NSBezierPath.h>
 
-NSDockTile *_dockTile;
+id _dockTile;
 NSImageView *_applicationIconView;
 NSImageView *_overlayIconView;
 
@@ -55,7 +52,8 @@ NSImageView *_overlayIconView;
 // manually, which is a bit more work :(
 
 MacOSXTaskbarManager::MacOSXTaskbarManager() : _progress(-1.0) {
-	_dockTile = [NSApp dockTile];
+	if ([NSApp respondsToSelector:@selector(dockTile)])
+		_dockTile = [NSApp dockTile];
 	_applicationIconView = nil;
 	_overlayIconView = nil;
 }
@@ -65,24 +63,31 @@ MacOSXTaskbarManager::~MacOSXTaskbarManager() {
 }
 
 void MacOSXTaskbarManager::initApplicationIconView() {
+	if (_dockTile == nil)
+		return;
 	if (_applicationIconView == nil) {
 		_applicationIconView = [[NSImageView alloc] init];
 		[_applicationIconView setImage:[NSApp applicationIconImage]];
-		[_dockTile setContentView:_applicationIconView];
+		[_dockTile performSelector:@selector(setContentView:) withObject:_applicationIconView];
 	}
 }
 
 void MacOSXTaskbarManager::clearApplicationIconView() {
-	[_dockTile setContentView:nil];
+	if (_dockTile == nil)
+		return;
+	[_dockTile performSelector:@selector(setContentView:) withObject:nil];
 	[_applicationIconView release];
 	_applicationIconView = nil;
 }
 
 void MacOSXTaskbarManager::initOverlayIconView() {
+	if (_dockTile == nil)
+		return;
 	if (_overlayIconView == nil) {
 		const double overlaySize = 0.75;
 		initApplicationIconView();
-		_overlayIconView = [[NSImageView alloc] initWithFrame:NSMakeRect(_dockTile.size.width * (1.0-overlaySize), 0.0f, _dockTile.size.width * overlaySize, _dockTile.size.height * overlaySize)];
+		NSSize size = _applicationIconView.frame.size;
+		_overlayIconView = [[NSImageView alloc] initWithFrame:NSMakeRect(size.width * (1.0-overlaySize), 0.0f, size.width * overlaySize, size.height * overlaySize)];
 		[_overlayIconView setImageAlignment:NSImageAlignBottomRight];
 		[_applicationIconView addSubview:_overlayIconView];
 		[_overlayIconView release];
@@ -98,9 +103,12 @@ void MacOSXTaskbarManager::clearOverlayIconView() {
 }
 
 void MacOSXTaskbarManager::setOverlayIcon(const Common::String &name, const Common::String &description) {
+	if (_dockTile == nil)
+		return;
+
     if (name.empty()) {
 		clearOverlayIconView();
-		[_dockTile display];
+		[_dockTile performSelector:@selector(display)];
 		return;
 	}
 	
@@ -116,10 +124,13 @@ void MacOSXTaskbarManager::setOverlayIcon(const Common::String &name, const Comm
 	[image release];
 	CFRelease(imageFile);
 
-	[_dockTile display];
+	[_dockTile performSelector:@selector(display)];
 }
 
 void MacOSXTaskbarManager::setProgressValue(int completed, int total) {
+	if (_dockTile == nil)
+		return;
+
 	if (total > 0)
 		_progress = (double)completed / (double)total;
 	else if (_progress < 0)
@@ -139,10 +150,13 @@ void MacOSXTaskbarManager::setProgressValue(int completed, int total) {
 	[_applicationIconView setImage:mainIcon];
 	[mainIcon release];
 	
-	[_dockTile display];
+	[_dockTile performSelector:@selector(display)];
 }
 
 void MacOSXTaskbarManager::setProgressState(TaskbarProgressState state) {
+	if (_dockTile == nil)
+		return;
+
 	// Only support two states: visible and not visible.
 	if (state == kTaskbarNoProgress) {
 		_progress = -1.0;
@@ -157,21 +171,30 @@ void MacOSXTaskbarManager::setProgressState(TaskbarProgressState state) {
 }
 
 void MacOSXTaskbarManager::setCount(int count) {
+	if (_dockTile == nil)
+		return;
+
 	if (count > 0)
-		[_dockTile setBadgeLabel:[NSString stringWithFormat:@"%d", count]];
+		[_dockTile performSelector:@selector(setBadgeLabel:) withObject:[NSString stringWithFormat:@"%d", count]];
 	else
-		[_dockTile setBadgeLabel:nil];
+		[_dockTile performSelector:@selector(setBadgeLabel:) withObject:nil];
 }
 
 void MacOSXTaskbarManager::notifyError() {
+	if (_dockTile == nil)
+		return;
+
     initOverlayIconView();
 	[_overlayIconView setImage:[NSImage imageNamed:NSImageNameCaution]];
-	[_dockTile display];
+	[_dockTile performSelector:@selector(display)];
 }
 
 void MacOSXTaskbarManager::clearError() {
+	if (_dockTile == nil)
+		return;
+
     clearOverlayIconView();
-	[_dockTile display];
+	[_dockTile performSelector:@selector(display)];
 	return;
 }
 
