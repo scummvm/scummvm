@@ -3996,6 +3996,15 @@ else
 		echo "win32"
 		_taskbar=yes
 		;;
+	darwin*)
+		if test "$_taskbar" = "auto"; then
+			echo "no"
+			_taskbar=no
+		else
+			echo "osx"
+			_taskbar=yes
+		fi
+		;;
 	*)
 		if test "$_libunity" = yes; then
 			echo "unity"

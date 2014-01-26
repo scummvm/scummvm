@@ -31,6 +31,7 @@
 #include "backends/mixer/doublebuffersdl/doublebuffersdl-mixer.h"
 #include "backends/platform/sdl/macosx/appmenu_osx.h"
 #include "backends/updates/macosx/macosx-updates.h"
+#include "backends/taskbar/macosx/macosx-taskbar.h"
 
 #include "common/archive.h"
 #include "common/config-manager.h"
@@ -43,6 +44,16 @@
 OSystem_MacOSX::OSystem_MacOSX()
 	:
 	OSystem_POSIX("Library/Preferences/ScummVM Preferences") {
+}
+
+void OSystem_MacOSX::init() {
+#if defined(USE_TASKBAR)
+	// Initialize taskbar manager
+	_taskbarManager = new MacOSXTaskbarManager();
+#endif
+	
+	// Invoke parent implementation of this method
+	OSystem_POSIX::init();
 }
 
 void OSystem_MacOSX::initBackend() {
