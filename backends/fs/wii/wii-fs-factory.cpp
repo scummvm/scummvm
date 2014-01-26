@@ -33,6 +33,9 @@
 #ifdef USE_WII_DI
 #include <di/di.h>
 #include <iso9660.h>
+#ifdef GAMECUBE
+#include <ogc/dvd.h>
+#endif
 #endif
 
 #ifdef USE_WII_SMB
