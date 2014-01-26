@@ -763,6 +763,8 @@ void FullpipeEngine::openMainMenu() {
 	ModalMainMenu *menu = new ModalMainMenu;
 
 	menu->_parentObj = g_fp->_modalObject;
+
+	g_fp->_modalObject = menu;
 }
 
 } // End of namespace Fullpipe
