@@ -25,6 +25,8 @@
 #include "fullpipe/objects.h"
 #include "fullpipe/objectnames.h"
 #include "fullpipe/constants.h"
+#include "fullpipe/scene.h"
+#include "fullpipe/statics.h"
 
 namespace Fullpipe {
 
@@ -209,8 +211,17 @@ bool FullpipeEngine::lift_checkButton(const char *varname) {
 	return false;
 }
 
-void FullpipeEngine::lift_sub7(Scene *sc, int buttonId) {
-	warning("STUB: lift_sub7()");
+void FullpipeEngine::lift_setButtonStatics(Scene *sc, int buttonId) {
+	for (uint i = 0; i < sc->_staticANIObjectList1.size(); i++) {
+		StaticANIObject *ani = (StaticANIObject *)sc->_staticANIObjectList1[i];
+
+		if (ani->_id == ANI_LIFTBUTTON) {
+			int id = lift_getButtonIdN(ani->_statics->_staticsId);
+
+			if (id == buttonId)
+				ani->_statics = ani->getStaticsById(id);
+		}
+	}
 }
 
 

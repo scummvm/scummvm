@@ -83,7 +83,7 @@ void scene38_initScene(Scene *sc) {
 	}
 
 	g_fp->lift_sub5(sc, QU_SC38_ENTERLIFT, QU_SC38_EXITLIFT);
-	g_fp->lift_sub7(sc, ST_LBN_0N);
+	g_fp->lift_setButtonStatics(sc, ST_LBN_0N);
 }
 
 void sceneHandler38_tryTakeBottle() {

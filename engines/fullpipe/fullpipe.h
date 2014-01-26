@@ -276,7 +276,7 @@ public:
 	int lift_getButtonIdN(int objid);
 	void lift_setButton(const char *name, int state);
 	void lift_sub5(Scene *sc, int qu1, int qu2);
-	void lift_sub7(Scene *sc, int buttonId);
+	void lift_setButtonStatics(Scene *sc, int buttonId);
 	void lift_exitSeq(ExCommand *ex);
 	void lift_closedoorSeq();
 	void lift_clickButton();
