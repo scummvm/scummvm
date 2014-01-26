@@ -72,8 +72,6 @@ public:
 
 	bool loadStream(Common::SeekableReadStream *stream);
 	void close();
-// ResidualVM-specific:
-	void setAudioTrack(uint32 track);
 protected:
 	void readNextPacket();
 	bool supportsAudioTrackSwitching() const { return true; }
@@ -367,8 +365,6 @@ private:
 	Common::Array<VideoFrame> _frames;      ///< All video frames.
 
 	void initAudioTrack(AudioInfo &audio);
-	// ResidualVM-specific:
-	uint32 _selectedAudioTrack;
 };
 
 } // End of namespace Video
