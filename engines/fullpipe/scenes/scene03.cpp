@@ -59,7 +59,7 @@ void scene03_initScene(Scene *sc) {
 
 	g_fp->lift_setButton(sO_Level2, ST_LBN_2N);
 
-	g_fp->lift_sub5(sc, QU_SC3_ENTERLIFT, QU_SC3_EXITLIFT);
+	g_fp->lift_init(sc, QU_SC3_ENTERLIFT, QU_SC3_EXITLIFT);
 }
 
 void scene03_setEaterState() {

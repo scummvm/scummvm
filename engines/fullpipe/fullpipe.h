@@ -60,6 +60,7 @@ class GameProject;
 class GameObject;
 class GlobalMessageQueueList;
 struct MessageHandler;
+class MessageQueue;
 struct MovTable;
 class MGM;
 class NGIArchive;
@@ -270,12 +271,17 @@ public:
 	void getAllInventory();
 
 	StaticANIObject *_lastLiftButton;
+	MessageQueue *_liftEnterMQ;
+	MessageQueue *_liftExitMQ;
+	StaticANIObject *_lift;
+	int _liftX;
+	int _liftY;
 
 	int lift_getButtonIdP(int objid);
 	int lift_getButtonIdH(int objid);
 	int lift_getButtonIdN(int objid);
 	void lift_setButton(const char *name, int state);
-	void lift_sub5(Scene *sc, int qu1, int qu2);
+	void lift_init(Scene *sc, int qu1, int qu2);
 	void lift_setButtonStatics(Scene *sc, int buttonId);
 	void lift_exitSeq(ExCommand *ex);
 	void lift_closedoorSeq();

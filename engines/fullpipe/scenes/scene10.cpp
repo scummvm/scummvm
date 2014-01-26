@@ -43,7 +43,7 @@ void scene10_initScene(Scene *sc) {
 	g_vars->scene10_ladder = sc->getPictureObjectById(PIC_SC10_LADDER, 0);
 
 	g_fp->lift_setButton(sO_Level1, ST_LBN_1N);
-	g_fp->lift_sub5(sc, QU_SC10_ENTERLIFT, QU_SC10_EXITLIFT);
+	g_fp->lift_init(sc, QU_SC10_ENTERLIFT, QU_SC10_EXITLIFT);
 
 	if (g_fp->getObjectState(sO_Inflater) == g_fp->getObjectEnumState(sO_Inflater, sO_WithGum)) {
 		g_vars->scene10_hasGum = 1;

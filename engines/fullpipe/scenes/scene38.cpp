@@ -82,7 +82,7 @@ void scene38_initScene(Scene *sc) {
 		g_vars->scene38_domino1->_flags &= 0xFFFB;
 	}
 
-	g_fp->lift_sub5(sc, QU_SC38_ENTERLIFT, QU_SC38_EXITLIFT);
+	g_fp->lift_init(sc, QU_SC38_ENTERLIFT, QU_SC38_EXITLIFT);
 	g_fp->lift_setButtonStatics(sc, ST_LBN_0N);
 }
 

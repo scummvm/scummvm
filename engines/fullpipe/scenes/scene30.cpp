@@ -73,7 +73,7 @@ void scene30_initScene(Scene *sc, int flag) {
 
 	g_fp->lift_setButton(sO_Level8, ST_LBN_8N);
 
-	g_fp->lift_sub5(sc, QU_SC30_ENTERLIFT, QU_SC30_EXITLIFT);
+	g_fp->lift_init(sc, QU_SC30_ENTERLIFT, QU_SC30_EXITLIFT);
 }
 
 int scene30_updateCursor() {
