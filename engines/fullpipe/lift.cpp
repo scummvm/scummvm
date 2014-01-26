@@ -102,6 +102,63 @@ int FullpipeEngine::lift_getButtonIdH(int objid) {
 	}
 }
 
+int FullpipeEngine::lift_getButtonIdN(int objid) {
+	switch (objid) {
+	case ST_LBN_0H:
+	case ST_LBN_0N:
+	case ST_LBN_0P:
+		return ST_LBN_0N;
+
+	case ST_LBN_1H:
+	case ST_LBN_1N:
+	case ST_LBN_1P:
+		return ST_LBN_1N;
+
+	case ST_LBN_2H:
+	case ST_LBN_2N:
+	case ST_LBN_2P:
+		return ST_LBN_2N;
+
+	case ST_LBN_3H:
+	case ST_LBN_3N:
+	case ST_LBN_3P:
+		return ST_LBN_3N;
+
+	case ST_LBN_4H:
+	case ST_LBN_4N:
+	case ST_LBN_4P:
+		return ST_LBN_4N;
+
+	case ST_LBN_5H:
+	case ST_LBN_5N:
+	case ST_LBN_5P:
+		return ST_LBN_5N;
+
+	case ST_LBN_6H:
+	case ST_LBN_6N:
+	case ST_LBN_6P:
+		return ST_LBN_6N;
+
+	case ST_LBN_7H:
+	case ST_LBN_7N:
+	case ST_LBN_7P:
+		return ST_LBN_7N;
+
+	case ST_LBN_8H:
+	case ST_LBN_8N:
+	case ST_LBN_8P:
+		return ST_LBN_8N;
+
+	case ST_LBN_9H:
+	case ST_LBN_9N:
+	case ST_LBN_9P:
+		return ST_LBN_9N;
+
+	default:
+		return 0;
+	}
+}
+
 void FullpipeEngine::lift_setButton(const char *name, int state) {
 	GameVar *var = g_fp->getGameLoaderGameVar()->getSubVarByName("OBJSTATES")->getSubVarByName(sO_LiftButtons);
 

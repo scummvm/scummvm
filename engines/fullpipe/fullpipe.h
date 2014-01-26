@@ -273,6 +273,7 @@ public:
 
 	int lift_getButtonIdP(int objid);
 	int lift_getButtonIdH(int objid);
+	int lift_getButtonIdN(int objid);
 	void lift_setButton(const char *name, int state);
 	void lift_sub5(Scene *sc, int qu1, int qu2);
 	void lift_sub7(Scene *sc, int buttonId);
