@@ -279,8 +279,10 @@ public:
 
 /* bvoy.blt resource types */
 
-enum PictureFlag { PICFLAG_PIC_OFFSET = 8, PICFLAG_CLEAR_SCREEN = 0x10, PICFLAG_20 = 0x20, 
-	PICFLAG_HFLIP = 0x40, PICFLAG_VFLIP = 0x80, PICFLAG_CLEAR_SCREEN00 = 0x1000 };
+enum PictureFlag { PICFLAG_2 = 2, PICFLAG_PIC_OFFSET = 8, PICFLAG_CLEAR_SCREEN = 0x10, 
+	PICFLAG_20 = 0x20, PICFLAG_HFLIP = 0x40, PICFLAG_VFLIP = 0x80, PICFLAG_100 = 0x100,
+	PICFLAG_CLEAR_SCREEN00 = 0x1000 
+};
 
 class PictureResource: public DisplayResource {
 private:

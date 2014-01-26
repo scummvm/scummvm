@@ -135,9 +135,9 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 	ViewPortResource *destViewPort = NULL;
 	Common::Rect newBounds;
 	Common::Rect backBounds;
-	int var24;
+	int var22 = 0;
+	int var24 = 0;
 	bool isClipped = false;
-	int var22;
 	int var26;
 	byte pixel = 0;
 
@@ -544,7 +544,299 @@ error("TODO: var22/var24/var2C not initialised before use?");
 
 		} else {
 			// loc_26673
-			// TODO
+			int pick = srcPic->_pick;
+			int onOff = srcPic->_onOff;
+
+			if (!(srcFlags & PICFLAG_PIC_OFFSET)) {
+				srcP = srcImgData += srcOffset;
+				int pixel = 0;
+
+				if (destFlags & PICFLAG_PIC_OFFSET) {
+					destP = destImgData + screenOffset;
+					if (srcFlags & PICFLAG_2) {
+						if (srcFlags & PICFLAG_100) {
+							if (isClipped) {
+								// loc_266E3
+								destP = (byte *)_screenSurface.getPixels() + screenOffset;
+								var22 = (var22 < 0) ? -var22 : 0;
+								var26 = var22 + width2;
+								var24 = (var24 < 0) ? -var24 : 0;
+								pick = 0x7F;
+								width2 = srcPic->_bounds.width();
+								height1 = var24 + height1;
+
+								for (int yp = 0; yp < height1; ++yp) {
+									int byteVal2 = 0;
+									for (int xp = 0; xp < width2; ++xp, --byteVal2) {
+										if (byteVal2 <= 0) {
+											pixel = *srcP++;
+											if (pixel & 0x80) {
+												pixel &= 0x7F;
+												byteVal2 = *srcP++;
+												if (!byteVal2)
+													byteVal2 = width2;
+											}
+										}
+
+										if (yp >= var24 && xp >= var22 && xp < var26) {
+											if (pixel) {
+												*destP = (pixel & pick) ^ onOff;
+											}
+											++destP;
+										}
+									}
+									if (yp >= var24)
+										destP += widthDiff2;
+								}
+							} else {
+								// loc_26815
+								destP = (byte *)_screenSurface.getPixels() + screenOffset;
+
+								for (int yp = 0; yp < height1; ++yp) {
+									for (int xp = 0; xp < width2; ++xp, ++destP) {
+										byteVal2 = 0;
+										for (int xp = 0; xp < width2; ++xp, ++destP, --byteVal2) {
+											if (!byteVal2) {
+												pixel = *srcP++;
+												if (pixel & 0x80) {
+													pixel &= 0x7F;
+													byteVal2 = *srcP++;
+													if (!byteVal2) {
+														byteVal2 = width2;
+													}
+												}
+											}
+
+											if (pixel)
+												*destP = (pixel & pick) ^ onOff;
+										}
+									}
+
+									destP += widthDiff2;
+								}
+							}
+						} else {
+							// Direct screen write
+							destP = (byte *)_screenSurface.getPixels() + screenOffset;
+
+							for (int yp = 0; yp < height1; ++yp) {
+								for (int xp = 0; xp < width2; ++xp, ++srcP, ++destP) {
+									if (*srcP)
+										*destP = (*srcP & pick) ^ onOff;
+								}
+								destP += widthDiff2;
+								srcP += widthDiff;
+							}
+						}
+					} else if (srcFlags & PICFLAG_100) {
+						srcP = srcImgData;
+						if (isClipped) {
+							// loc_269FD
+							var22 = (var22 < 0) ? -var22 : 0;
+							var26 = var22 + width2;
+							var24 = (var24 < 0) ? -var24 : 0;
+							width2 = srcPic->_bounds.width();
+							height1 = var24 + height1;
+
+							for (int yp = 0; yp < height1; ++yp) {
+								byteVal2 = 0;
+								for (int xp = 0; xp < width2; ++xp) {
+									if (!byteVal2) {
+										pixel = *srcP++;
+										if (pixel & 0x80) {
+											pixel = 0x7F;
+											byteVal2 = *srcP++;
+
+											if (!byteVal2)
+												byteVal2 = width2;
+										}
+									}
+
+									if (yp >= var24 && xp >= var22 && xp < var26) {
+										*destP++ = (pixel & 0x80) ^ onOff;
+									}
+								}
+							}
+						} else {
+							// loc_26BD5
+							destP = (byte *)_screenSurface.getPixels() + screenOffset;
+
+							for (int yp = 0; yp < height1; ++yp) {
+								byteVal2 = 0;
+
+								for (int xp = 0; xp < width2; ++xp, ++destP) {
+									if (!byteVal2) {
+										pixel = *srcP++;
+										if (pixel & 0x80) {
+											pixel &= 0x7F;
+											byteVal2 = *srcP++;
+											if (!byteVal2)
+												byteVal2 = width2;
+										}
+									}
+
+									*destP = (pixel & pick) ^ onOff;
+								}
+
+								destP += widthDiff2;
+							}
+						}
+					} else {
+						// loc_26C9A
+						destP = (byte *)_screenSurface.getPixels() + screenOffset;
+
+						for (int yp = 0; yp < height1; ++yp) {
+							for (int xp = 0; xp < width2; ++xp, ++srcP, ++destP) {
+								*destP = (*srcP & pick) ^ onOff;
+							}
+							destP += widthDiff2;
+							srcP += widthDiff;
+						}
+					}
+				} else {
+					// loc_26D2F
+					destP = destImgData + screenOffset;
+
+					if (srcFlags & PICFLAG_2) {
+						// loc_26D4F
+						if (srcFlags & PICFLAG_100) {
+							srcP = srcImgData;
+
+							if (isClipped) {
+								// loc_26D6A
+								var22 = (var22 < 0) ? -var22 : 0;
+								var26 = var22 + width2;
+								var24 = (var24 < 0) ? -var24 : 0;
+								width2 = srcPic->_bounds.width();
+								height1 = var24 + height1;
+
+								for (int yp = 0; yp < height1; ++yp) {
+									byteVal2 = 0;
+
+									for (int xp = 0; xp < width2; ++xp, --byteVal2) {
+										if (!byteVal2) {
+											pixel = *srcP++;
+											if (pixel & 0x80) {
+												pixel &= 0x7F;
+												byteVal2 = *srcP++;
+												if (!byteVal2)
+													byteVal2 = width2;
+											}
+										}
+
+										if (yp >= var24 && xp >= var22 && xp < var26) {
+											if (pixel)
+												*destP = (pixel & pick) ^ onOff;
+
+											++destP;
+										}
+									}
+
+									if (yp >= var24)
+										destP += widthDiff2;
+								}
+							} else {
+								// loc_26E95
+								for (int yp = 0; yp < height1; ++yp) {
+									byteVal2 = 0;
+									for (int xp = 0; xp < width2; ++xp, ++destP, --byteVal2) {
+										if (!byteVal2) {
+											pixel = *srcP++;
+											if (pixel & 0x80) {
+												pixel &= 0x7F;
+												byteVal2 = *srcP++;
+												if (!byteVal2)
+													byteVal2 = width2;
+											}
+										}
+
+										if (pixel)
+											*destP = (pixel & pick) ^ onOff;
+									}
+
+									destP += widthDiff2;
+								}
+							}
+						} else {
+							// loc_26F5D
+							for (int yp = 0; yp < height1; ++yp) {
+								for (int xp = 0; xp < width2; ++xp, ++srcP, ++destP) {
+									if (*srcP)
+										*destP = (*srcP & pick) ^ onOff;
+								}
+								destP += widthDiff2;
+								srcP += widthDiff;
+							}
+						}
+					} else {
+						// loc_26FEF
+						if (srcFlags & PICFLAG_100) {
+							// loc_26FF9
+							for (int yp = 0; yp < height1; ++yp) {
+								for (int xp = 0; xp < width2; ++xp, ++srcP, ++destP) {
+									*destP = (*srcP & pick) ^ onOff;
+								}
+								destP += widthDiff2;
+								srcP += widthDiff;
+							}
+						} else {
+							// loc_271F0
+							srcP = srcImgData;
+							
+							if (isClipped) {
+								// loc_2700A
+								var22 = (var22 < 0) ? -var22 : 0;
+								var26 = var22 + width2;
+								var24 = (var24 < 0) ? -var24 : 0;
+								width2 = srcPic->_bounds.width();
+								height1 = var24 + height1;
+
+								for (int yp = 0; yp < height1; ++yp) {
+									byteVal2 = 0;
+
+									for (int xp = 0; xp < width2; ++xp, --byteVal2) {
+										if (!byteVal2) {
+											pixel = *srcP++;
+											if (pixel & 0x80) {
+												pixel &= 0x7F;
+												byteVal2 = *srcP++;
+												if (!byteVal2)
+													byteVal2 = width2;
+											}
+										}
+
+										if (yp >= var24 && xp >= var22 && xp < var26) {
+											*destP++ = (pixel & pick) ^ onOff;
+										}
+									}
+
+									if (yp >= var24)
+										destP += widthDiff2;
+								}
+							} else {
+								// loc_2712F
+								for (int yp = 0; yp < height1; ++yp) {
+									byteVal2 = 0;
+									for (int xp = 0; xp < width2; ++xp, ++destP, --byteVal2) {
+										if (!byteVal2) {
+											pixel = *srcP++;
+											if (pixel & 0x80) {
+												pixel &= 0x7F;
+												byteVal2 = *srcP++;
+												if (!byteVal2)
+													byteVal2 = width2;
+											}
+										}
+
+										*destP = (*srcP & pick) ^ onOff;
+									}
+									destP += widthDiff2;
+								}
+							}
+						}
+					}
+				}
+			}
 		}
 	}
 
