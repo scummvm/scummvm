@@ -55,7 +55,6 @@ public:
 
 	static void setReadyForEvents(bool ready);
 
-	static void getPluginDirectories(Common::FSList &dirs);
 	static void setWindowCaption(const char *caption);
 	static void getDPI(float *values);
 	static void displayMessageOnOSD(const char *msg);
@@ -93,7 +92,6 @@ private:
 	static jmethodID _MID_setWindowCaption;
 	static jmethodID _MID_showVirtualKeyboard;
 	static jmethodID _MID_getSysArchives;
-	static jmethodID _MID_getPluginDirectories;
 	static jmethodID _MID_initSurface;
 	static jmethodID _MID_deinitSurface;
 

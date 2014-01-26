@@ -54,7 +54,6 @@ public abstract class ResidualVM implements SurfaceHolder.Callback, Runnable {
 	abstract protected void getDPI(float[] values);
 	abstract protected void displayMessageOnOSD(String msg);
 	abstract protected void setWindowCaption(String caption);
-	abstract protected String[] getPluginDirectories();
 	abstract protected void showVirtualKeyboard(boolean enable);
 	abstract protected String[] getSysArchives();
 
@@ -449,10 +448,6 @@ public abstract class ResidualVM implements SurfaceHolder.Callback, Runnable {
 			}
 		}
 
-		File cache_dir = ResidualVMApplication.getLastCacheDir();
-		String libname = System.mapLibraryName("residualvm");
-		File libpath = new File(cache_dir, libname);
-
-		System.load(libpath.getPath());
+		System.load("libresidualvm.so");
 	}
 }

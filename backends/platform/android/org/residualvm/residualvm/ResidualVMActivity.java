@@ -76,13 +76,6 @@ public class ResidualVMActivity extends Activity {
 		}
 
 		@Override
-		protected String[] getPluginDirectories() {
-			String[] dirs = new String[1];
-			dirs[0] = ResidualVMApplication.getLastCacheDir().getPath();
-			return dirs;
-		}
-
-		@Override
 		protected void showVirtualKeyboard(final boolean enable) {
 			runOnUiThread(new Runnable() {
 					public void run() {
