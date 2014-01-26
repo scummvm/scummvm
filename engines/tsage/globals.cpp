@@ -63,6 +63,7 @@ Globals::Globals() : _dialogCenter(160, 140), _gfxManagerInstance(_screenSurface
 	reset();
 	_stripNum = 0;
 	_gfxEdgeAdjust = 3;
+	_gfxFontNumber = 0;
 
 	if (g_vm->getGameID() == GType_Ringworld) {
 		if (g_vm->getFeatures() & GF_DEMO) {
