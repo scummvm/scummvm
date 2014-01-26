@@ -294,7 +294,7 @@ protected:
 	virtual void resetTracking();
 	virtual void allNotesOff();
 	virtual void parseNextEvent(EventInfo &info) = 0;
-	virtual void processEvent(const EventInfo &info, bool fireEvents = true);
+	virtual bool processEvent(const EventInfo &info, bool fireEvents = true);
 
 	void activeNote(byte channel, byte note, bool active);
 	void hangingNote(byte channel, byte note, uint32 ticksLeft, bool recycle = true);
