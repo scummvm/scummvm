@@ -33,12 +33,13 @@ FrameBuffer::FrameBuffer(GLuint texture_name, uint width, uint height, uint text
 	glGenRenderbuffers(1, &_depthRenderBuffer);
 
 	glBindRenderbuffer(GL_RENDERBUFFER, _depthRenderBuffer);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, texture_width, texture_height);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, texture_width, texture_height);
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture_name, 0);
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _depthRenderBuffer);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, _depthRenderBuffer);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer);
 	GLenum status=glCheckFramebufferStatus(GL_FRAMEBUFFER);
