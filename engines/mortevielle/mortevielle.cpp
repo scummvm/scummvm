@@ -131,10 +131,20 @@ MortevielleEngine::MortevielleEngine(OSystem *system, const MortevielleGameDescr
 	}
 	_currMenu = OPCODE_NONE;
 	_currAction = OPCODE_NONE;
+	_menuOpcode = OPCODE_NONE;
 	_addFix = 0;
-	_savedBitIndex = 0;
-	_numpal = 0;
+	_currBitIndex = 0;
+	_currDay = 0;
+	_currHour = 10;
+	_currHalfHour = 0;
+	_hour = 10;
 	_key = 0;
+	_manorDistance = 0;
+	_numpal = 0;
+	_savedBitIndex = 0;
+	_endGame = false;
+	_loseGame = false;
+	_txxFileFl = false;
 }
 
 MortevielleEngine::~MortevielleEngine() {
