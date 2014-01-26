@@ -198,7 +198,7 @@ void GraphicManager::drawToolbar() {
 
 Common::Point GraphicManager::drawArc(Graphics::Surface &surface, int16 x, int16 y, int16 stAngle, int16 endAngle, uint16 radius, Color color) {
 	Common::Point endPoint;
-	const float convfac = M_PI / 180.0;
+	const double convfac = M_PI / 180.0;
 
 	int32 xRadius = radius;
 	int32 yRadius = radius * kScreenWidth / (8 * kScreenHeight); // Just don't ask why...
