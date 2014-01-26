@@ -1509,7 +1509,7 @@ android)
 	# ResidualVM specific start ->
 	if test ! -d android-toolchain; then
 		echo "Installing Android toolchain to build directory..."
-		"$ANDROID_NDK/build/tools/make-standalone-toolchain.sh" --platform=android-15 --install-dir=android-toolchain
+		"$ANDROID_NDK/build/tools/make-standalone-toolchain.sh" --platform=android-9 --install-dir=android-toolchain
 	else
 		echo "Android toolchain already installed."
 	fi
@@ -2062,7 +2062,7 @@ case $_host_os in
 				;;
 		esac
 		# ResidualVM use newer NDK
-		CXXFLAGS="$CXXFLAGS --sysroot=$ANDROID_NDK/platforms/android-8/arch-arm"
+		CXXFLAGS="$CXXFLAGS --sysroot=$ANDROID_NDK/platforms/android-9/arch-arm"
 		CXXFLAGS="$CXXFLAGS -fpic"
 		CXXFLAGS="$CXXFLAGS -ffunction-sections"
 		CXXFLAGS="$CXXFLAGS -funwind-tables"
@@ -2084,7 +2084,7 @@ case $_host_os in
 		# supress 'mangling of 'va_list' has changed in GCC 4.4'
 		CXXFLAGS="$CXXFLAGS -Wno-psabi"
 		# ResidualVM use newer NDK
-		LDFLAGS="$LDFLAGS --sysroot=$ANDROID_NDK/platforms/android-8/arch-arm"
+		LDFLAGS="$LDFLAGS --sysroot=$ANDROID_NDK/platforms/android-9/arch-arm"
 		LDFLAGS="$LDFLAGS -mthumb-interwork"
 		LDFLAGS="$LDFLAGS -L$ANDROID_NDK/sources/cxx-stl/gnu-libstdc++/`$CXX -dumpversion`/libs/$ABI/"
 		LIBS="$LIBS -lsupc++"
@@ -4214,7 +4214,7 @@ case $_backend in
 		# -lgcc is carefully placed here - we want to catch
 		# all toolchain symbols in *our* libraries rather
 		# than pick up anything unhygenic from the Android libs.
-		LIBS="-Wl,-Bstatic $static_libs -Wl,-Bdynamic -lgcc $system_libs -llog"
+		LIBS="-Wl,-Bstatic $static_libs -Wl,-Bdynamic -lgcc $system_libs -llog -landroid"
 		# ResidualVM specific if:
 		if test "$_opengles2" != "yes" ; then
 			LIBS="$LIBS -lGLESv1_CM"
