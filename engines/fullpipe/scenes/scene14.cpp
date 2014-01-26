@@ -665,7 +665,7 @@ int sceneHandler14(ExCommand *cmd) {
 		break;
 
 	case MSG_LIFT_CLICKBUTTON:
-		g_fp->lift_animation3();
+		g_fp->lift_clickButton();
 		break;
 
 	case MSG_SC14_SHOWBALLGMAHIT:

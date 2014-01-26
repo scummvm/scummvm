@@ -85,8 +85,13 @@ void FullpipeEngine::lift_closedoorSeq() {
 	warning("STUB: FullpipeEngine::lift_closedoorSeq()");
 }
 
-void FullpipeEngine::lift_animation3() {
-	warning("STUB: FullpipeEngine::lift_animation3()");
+void FullpipeEngine::lift_walkAndGo() {
+	warning("STUB: FullpipeEngine::lift_walkAndGo()");
+}
+
+void FullpipeEngine::lift_clickButton() {
+	if (_lastLiftButton)
+		lift_walkAndGo();
 }
 
 void FullpipeEngine::lift_goAnimation() {

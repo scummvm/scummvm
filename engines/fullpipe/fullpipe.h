@@ -269,13 +269,16 @@ public:
 
 	void getAllInventory();
 
+	StaticANIObject *_lastLiftButton;
+
 	int lift_getButtonIdP(int objid);
 	void lift_setButton(const char *name, int state);
 	void lift_sub5(Scene *sc, int qu1, int qu2);
 	void lift_sub7(Scene *sc, int buttonId);
 	void lift_exitSeq(ExCommand *ex);
 	void lift_closedoorSeq();
-	void lift_animation3();
+	void lift_clickButton();
+	void lift_walkAndGo();
 	void lift_goAnimation();
 	void lift_sub1(StaticANIObject *ani);
 	void lift_startExitQueue();
