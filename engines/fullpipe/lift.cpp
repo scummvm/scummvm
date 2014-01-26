@@ -32,37 +32,73 @@ int FullpipeEngine::lift_getButtonIdP(int objid) {
 	switch (objid) {
 	case ST_LBN_0N:
 		return ST_LBN_0P;
-		break;
+
 	case ST_LBN_1N:
 		return ST_LBN_1P;
-		break;
+
 	case ST_LBN_2N:
 		return ST_LBN_2P;
-		break;
+
 	case ST_LBN_3N:
 		return ST_LBN_3P;
-		break;
+
 	case ST_LBN_4N:
 		return ST_LBN_4P;
-		break;
+
 	case ST_LBN_5N:
 		return ST_LBN_5P;
-		break;
+
 	case ST_LBN_6N:
 		return ST_LBN_6P;
-		break;
+
 	case ST_LBN_7N:
 		return ST_LBN_7P;
-		break;
+
 	case ST_LBN_8N:
 		return ST_LBN_8P;
-		break;
+
 	case ST_LBN_9N:
 		return ST_LBN_9P;
-		break;
+
 	default:
 		return 0;
-		break;
+	}
+}
+
+int FullpipeEngine::lift_getButtonIdH(int objid) {
+	switch (objid) {
+	case ST_LBN_0P:
+		return ST_LBN_0H;
+
+	case ST_LBN_1P:
+		return ST_LBN_1H;
+
+	case ST_LBN_2P:
+		return ST_LBN_2H;
+
+	case ST_LBN_3P:
+		return ST_LBN_3H;
+
+	case ST_LBN_4P:
+		return ST_LBN_4H;
+
+	case ST_LBN_5P:
+		return ST_LBN_5H;
+
+	case ST_LBN_6P:
+		return ST_LBN_6H;
+
+	case ST_LBN_7P:
+		return ST_LBN_7H;
+
+	case ST_LBN_8P:
+		return ST_LBN_8H;
+
+	case ST_LBN_9P:
+		return ST_LBN_9H;
+
+	default:
+		return 0;
 	}
 }
 
