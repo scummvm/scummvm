@@ -26,7 +26,7 @@ JAVA_EXTRA_LIBS = \
 	$(PATH_BUILD)/libs/ouya-sdk.jar
 
 DIST_ANDROID_MK = $(PATH_DIST)/jni/Android.mk
-DIST_BUILD_XML = $(PATH_DIST)/build.xml
+DIST_BUILD_XML = $(PATH_DIST)/custom_rules.xml
 
 PATH_BUILD = ./build.tmp
 PATH_BUILD_ASSETS = $(PATH_BUILD)/assets
