@@ -339,21 +339,52 @@ Vars::Vars() {
 		scene33_ventsState[i] = 0;
 	}
 
-	scene34_var01 = 0;
-	scene34_var02 = 0;
-	scene34_var03 = 0;
-	scene34_var04 = 0;
 	scene34_cactus = 0;
 	scene34_vent = 0;
 	scene34_hatch = 0;
 	scene34_boot = 0;
-	scene34_var05 = 0;
-	scene34_var06 = 0;
-	scene34_var07 = 0;
-	scene34_var08 = 0;
+	scene34_dudeClimbed = false;
+	scene34_dudeOnBoard = false;
+	scene34_dudeOnCactus = false;
+	scene34_fliesCountdown = 0;
+
+	scene35_hose = 0;
+	scene35_bellyInflater = 0;
+	scene35_flowCounter = 0;
+	scene35_fliesCounter = 0;
 
 	scene36_rotohrust = 0;
 	scene36_scissors = 0;
+
+	scene37_rings.clear();
+	scene37_lastDudeX = -1;
+	scene37_cursorIsLocked = 0;
+	scene37_plusMinus1 = 0;
+	scene37_plusMinus2 = 0;
+	scene37_plusMinus3 = 0;
+	scene37_soundFlipper = 0;
+	scene37_dudeX = 0;
+
+	scene38_boss = 0;
+	scene38_tally = 0;
+	scene38_shorty = 0;
+	scene38_domino0 = 0;
+	scene38_dominos = 0;
+	scene38_domino1 = 0;
+	scene38_bottle = 0;
+	scene38_bossCounter = 0;
+	scene38_lastBossAnim = 0;
+	scene38_bossAnimCounter = 0;
+	scene38_tallyCounter = 0;
+	scene38_lastTallyAnim = 0;
+	scene38_tallyAnimCounter = 0;
+	scene38_shortyCounter = 0;
+	scene38_lastShortyAnim = 0;
+	scene38_shortyAnimCounter = 0;
+
+	sceneFinal_var01 = 0;
+	sceneFinal_var02 = 0;
+	sceneFinal_var03 = 0;
 
 	selector = 0;
 }
@@ -899,7 +930,6 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 		_updateCursorCallback = scene33_updateCursor;
 		break;
 
-#if 0
 	case SC_34:
 		sceneVar = _gameLoader->_gameVar->getSubVarByName("SC_34");
 		scene->preloadMovements(sceneVar);
@@ -908,7 +938,7 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 		scene->initObjectCursors("SC_34");
 		setSceneMusicParameters(sceneVar);
 		insertMessageHandler(sceneHandler34, 2, 2);
-		scene34_sub_42DEE0();
+		scene34_initBeh();
 		_updateCursorCallback = scene34_updateCursor;
 		break;
 
@@ -922,7 +952,6 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 		insertMessageHandler(sceneHandler35, 2, 2);
 		_updateCursorCallback = defaultUpdateCursor;
 		break;
-#endif
 
 	case SC_36:
 		sceneVar = _gameLoader->_gameVar->getSubVarByName("SC_36");
@@ -935,7 +964,6 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 		_updateCursorCallback = scene36_updateCursor;
 		break;
 
-#if 0
 	case SC_37:
 		sceneVar = _gameLoader->_gameVar->getSubVarByName("SC_37");
 		scene->preloadMovements(sceneVar);
@@ -961,14 +989,13 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 	case SC_FINAL1:
 		sceneVar = _gameLoader->_gameVar->getSubVarByName("SC_FINAL1");
 		scene->preloadMovements(sceneVar);
-		sceneFinal1_initScene();
+		sceneFinal_initScene();
 		_behaviorManager->initBehavior(scene, sceneVar);
 		scene->initObjectCursors("SC_FINAL1");
 		setSceneMusicParameters(sceneVar);
-		addMessageHandler(sceneHandlerFinal1, 2);
-		_updateCursorCallback = sceneFinal1_updateCursor;
+		addMessageHandler(sceneHandlerFinal, 2);
+		_updateCursorCallback = sceneFinal_updateCursor;
 		break;
-#endif
 
 	case SC_DBGMENU:
 		sceneVar = _gameLoader->_gameVar->getSubVarByName("SC_DBGMENU");
@@ -997,6 +1024,337 @@ void FullpipeEngine::processArcade(ExCommand *ex) {
 	warning("STUB: FullpipeEngine::processArcade()");
 }
 
+void FullpipeEngine::updateMapPiece(int mapId, int update) {
+	for (int i = 0; i < 200; i++) {
+		int hiWord = (_mapTable[i] >> 16) & 0xffff;
+
+		if (hiWord == mapId) {
+			_mapTable[i] |= update;
+			return;
+		}
+		if (!hiWord) {
+			_mapTable[i] = (mapId << 16) | update;
+			return;
+		}
+	}
+}
+
+void FullpipeEngine::updateMap(PreloadItem *pre) {
+	switch (pre->sceneId) {
+	case SC_1:
+		updateMapPiece(PIC_MAP_S01, 1);
+
+		if (pre->keyCode == TrubaUp)
+			updateMapPiece(PIC_MAP_P01, 1);
+
+		if (pre->keyCode == TrubaLeft)
+			updateMapPiece(PIC_MAP_A13, 1);
+		break;
+
+	case SC_2:
+		updateMapPiece(PIC_MAP_S02, 1);
+
+		if (pre->keyCode == TrubaLeft)
+			updateMapPiece(PIC_MAP_P01, 1);
+
+		break;
+
+	case SC_3:
+		updateMapPiece(PIC_MAP_S03, 1);
+		break;
+
+	case SC_4:
+		updateMapPiece(PIC_MAP_S04, 1);
+
+		if (pre->keyCode == TrubaRight)
+			updateMapPiece(PIC_MAP_P04, 1);
+
+		break;
+
+	case SC_5:
+		updateMapPiece(PIC_MAP_S05, 1);
+
+		if (pre->keyCode == TrubaLeft) {
+			updateMapPiece(PIC_MAP_P04, 1);
+	    }
+
+		if (pre->keyCode == TrubaUp) {
+			updateMapPiece(PIC_MAP_P05, 1);
+			updateMapPiece(PIC_MAP_A11, 1);
+	    }
+
+		break;
+
+	case SC_6:
+		updateMapPiece(PIC_MAP_S06, 1);
+
+		if (pre->keyCode == TrubaUp)
+			updateMapPiece(PIC_MAP_A12, 1);
+
+		break;
+
+	case SC_7:
+		updateMapPiece(PIC_MAP_S07, 1);
+
+		if (pre->keyCode == TrubaLeft)
+			updateMapPiece(PIC_MAP_P18, 1);
+
+		break;
+
+	case SC_8:
+		updateMapPiece(PIC_MAP_S08, 1);
+
+		if (pre->keyCode == TrubaUp)
+			updateMapPiece(PIC_MAP_P11, 1);
+
+		if (pre->keyCode == TrubaRight)
+			updateMapPiece(PIC_MAP_P18, 1);
+
+		return;
+
+	case SC_9:
+		updateMapPiece(PIC_MAP_S09, 1);
+
+		if (pre->keyCode == TrubaDown)
+			updateMapPiece(PIC_MAP_P11, 1);
+
+		return;
+
+	case SC_10:
+		updateMapPiece(PIC_MAP_S10, 1);
+
+		if (pre->keyCode == TrubaRight)
+			updateMapPiece(PIC_MAP_P02, 1);
+
+		break;
+
+	case SC_11:
+		updateMapPiece(PIC_MAP_S11, 1);
+
+		if (pre->keyCode == TrubaLeft)
+			updateMapPiece(PIC_MAP_P02, 1);
+
+		break;
+
+	case SC_12:
+		updateMapPiece(PIC_MAP_S12, 1);
+		break;
+
+	case SC_13:
+		updateMapPiece(PIC_MAP_S13, 1);
+
+		if (pre->keyCode == TrubaUp) {
+			updateMapPiece(PIC_MAP_P06, 1);
+			updateMapPiece(PIC_MAP_A10, 1);
+		}
+		break;
+
+	case SC_14:
+		updateMapPiece(PIC_MAP_S14, 1);
+		break;
+
+	case SC_15:
+		updateMapPiece(PIC_MAP_S15, 1);
+
+		if (pre->keyCode == TrubaUp) {
+			updateMapPiece(PIC_MAP_P08, 1);
+			updateMapPiece(PIC_MAP_A14, 1);
+		}
+
+		break;
+
+	case SC_16:
+		updateMapPiece(PIC_MAP_S16, 1);
+		break;
+
+	case SC_17:
+		updateMapPiece(PIC_MAP_S17, 1);
+		break;
+
+	case SC_18:
+		updateMapPiece(PIC_MAP_S1819, 1);
+
+		if (pre->keyCode == PIC_SC18_RTRUBA)
+			updateMapPiece(PIC_MAP_P14, 1);
+
+		break;
+
+	case SC_19:
+		updateMapPiece(PIC_MAP_S1819, 1);
+
+		if (pre->keyCode == PIC_SC19_RTRUBA3) {
+			updateMapPiece(PIC_MAP_P15, 1);
+			updateMapPiece(PIC_MAP_A09, 1);
+		}
+
+		break;
+
+	case SC_20:
+		updateMapPiece(PIC_MAP_S20, 1);
+		break;
+
+	case SC_21:
+		updateMapPiece(PIC_MAP_S21, 1);
+
+		if (pre->keyCode == TrubaLeft) {
+			updateMapPiece(PIC_MAP_P15, 1);
+			updateMapPiece(PIC_MAP_A09, 1);
+		}
+
+		if (pre->keyCode == TrubaDown)
+			updateMapPiece(PIC_MAP_A08, 1);
+
+		break;
+
+	case SC_22:
+		updateMapPiece(PIC_MAP_S22, 1);
+		break;
+
+	case SC_23:
+		if (getObjectState("Верхний люк_23") == getObjectEnumState("Верхний люк_23", "Открыт")) {
+			updateMapPiece(PIC_MAP_S23_1, 0);
+			updateMapPiece(PIC_MAP_S23_2, 1);
+			updateMapPiece(PIC_MAP_P07, 1);
+		} else {
+			updateMapPiece(PIC_MAP_S23_1, 1);
+			updateMapPiece(PIC_MAP_S23_2, 0);
+		}
+		break;
+
+	case SC_24:
+		updateMapPiece(PIC_MAP_S24, 1);
+
+		if (pre->keyCode == TrubaUp)
+			updateMapPiece(PIC_MAP_A08, 1);
+
+		if (pre->keyCode == TrubaDown) {
+			updateMapPiece(PIC_MAP_P13, 1);
+			updateMapPiece(PIC_MAP_A07, 1);
+		}
+		break;
+
+	case SC_25:
+		updateMapPiece(PIC_MAP_S25, 1);
+		break;
+
+	case SC_26:
+		updateMapPiece(PIC_MAP_S26, 1);
+
+		if (pre->keyCode == TrubaLeft)
+			updateMapPiece(PIC_MAP_A06, 1);
+
+		if (pre->keyCode == TrubaUp) {
+			updateMapPiece(PIC_MAP_P13, 1);
+			updateMapPiece(PIC_MAP_A07, 1);
+		}
+
+		break;
+
+	case SC_27:
+		updateMapPiece(PIC_MAP_S27, 1);
+		break;
+
+	case SC_28:
+		updateMapPiece(PIC_MAP_S28, 1);
+
+		if (pre->keyCode == TrubaRight)
+			updateMapPiece(PIC_MAP_A06, 1);
+
+		break;
+
+	case SC_29:
+		updateMapPiece(PIC_MAP_S29, 1);
+
+		if (pre->keyCode == TrubaUp)
+			updateMapPiece(PIC_MAP_A05, 1);
+
+		break;
+
+	case SC_30:
+		updateMapPiece(PIC_MAP_S30, 1);
+
+		if (pre->keyCode == TrubaLeft)
+			updateMapPiece(PIC_MAP_P09, 1);
+
+		if (pre->keyCode == TrubaRight)
+			updateMapPiece(PIC_MAP_A04, 1);
+
+		break;
+
+	case SC_31:
+		updateMapPiece(PIC_MAP_S31_2, 1);
+
+		if (getObjectState("Кактус") == getObjectEnumState("Кактус", "Вырос"))
+			updateMapPiece(PIC_MAP_S31_1, 1);
+
+		if (pre->keyCode == TrubaRight)
+			updateMapPiece(PIC_MAP_P09, 1);
+
+		break;
+
+	case SC_32:
+		updateMapPiece(PIC_MAP_S32_2, 1);
+
+		if (getObjectState("Кактус") == getObjectEnumState("Кактус", "Вырос"))
+			updateMapPiece(PIC_MAP_S32_1, 1);
+
+		break;
+
+	case SC_33:
+		updateMapPiece(PIC_MAP_S33, 1);
+		break;
+
+	case SC_34:
+		updateMapPiece(PIC_MAP_S34, 1);
+
+		if (pre->keyCode == TrubaUp)
+			updateMapPiece(PIC_MAP_A03, 1);
+
+		break;
+
+	case SC_35:
+		updateMapPiece(PIC_MAP_S35, 1);
+
+		if (pre->keyCode == TrubaLeft)
+			updateMapPiece(PIC_MAP_A02, 1);
+
+		if (pre->keyCode == TrubaDown)
+			updateMapPiece(PIC_MAP_A03, 1);
+
+		break;
+
+	case SC_36:
+		updateMapPiece(PIC_MAP_S36, 1);
+		break;
+
+	case SC_37:
+		updateMapPiece(PIC_MAP_S37, 1);
+		updateMapPiece(PIC_MAP_A01, 1);
+		break;
+
+	case SC_38:
+		updateMapPiece(PIC_MAP_S38, 1);
+
+		switch (pre->preloadId1) {
+		case SC_15:
+			updateMapPiece(PIC_MAP_P16, 1);
+			break;
+
+		case SC_1:
+			updateMapPiece(PIC_MAP_P10, 1);
+			break;
+
+		case SC_10:
+			updateMapPiece(PIC_MAP_P17, 1);
+			break;
+
+		case SC_19:
+			updateMapPiece(PIC_MAP_P12, 1);
+			break;
+		}
+		break;
+    }
+}
 
 
 } // End of namespace Fullpipe

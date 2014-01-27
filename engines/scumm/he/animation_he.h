@@ -25,8 +25,12 @@
 
 #include "audio/mixer.h"
 
+namespace Common {
+class String;
+}
+
 namespace Video {
-	class VideoDecoder;
+class VideoDecoder;
 }
 
 namespace Scumm {
@@ -39,7 +43,7 @@ public:
 	~MoviePlayer();
 
 	int getImageNum();
-	int load(const char *filename, int flags, int image = 0);
+	int load(const Common::String &filename, int flags, int image = 0);
 
 	void copyFrameToBuffer(byte *dst, int dstType, uint x, uint y, uint pitch);
 	void handleNextFrame();

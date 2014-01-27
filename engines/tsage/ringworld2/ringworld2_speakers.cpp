@@ -335,7 +335,8 @@ void SpeakerCaptain3210::animateSpeaker() {
 	if (v == 0) {
 		_object1.animate(ANIM_MODE_2, NULL);
 	} else {
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		_object1.setup(4060, (_object2->_strip * 2) - 1, 1);
 		_object1.animate(ANIM_MODE_5, this);
 	}
@@ -393,18 +394,21 @@ void SpeakerChief1100::animateSpeaker() {
 		_object1.animate(ANIM_MODE_2, NULL);
 		break;
 	case 1:
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		_object1.setup(4080, 1, 1);
 		_object1.animate(ANIM_MODE_5, this);
 		break;
 	case 2:
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		_object1.setup(4080, 3, 1);
 		_object1.animate(ANIM_MODE_5, this);
 		break;
 	case 100:
 		_numFrames = 0;
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		_object1.setStrip(_object1._strip - 1);
 		_object1.setFrame(_object1.getFrameCount());
 		_object1.animate(ANIM_MODE_6, this);
@@ -448,7 +452,8 @@ void SpeakerGuard2800::animateSpeaker() {
 	if (v == 0) {
 		_object1.animate(ANIM_MODE_2, NULL);
 	} else {
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		_object1.setZoom(75);
 		_object1.setup(4060, 3, 1);
 		_object1.animate(ANIM_MODE_5, this);
@@ -488,7 +493,8 @@ void SpeakerJocko3200::animateSpeaker() {
 	if (v == 0) {
 		_object1.animate(ANIM_MODE_2, NULL);
 	} else {
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		_object1.setup(4060, (_object2->_strip * 2) - 1, 1);
 		_object1.animate(ANIM_MODE_5, this);
 	}
@@ -511,7 +517,8 @@ void SpeakerJocko3220::animateSpeaker() {
 	if (v == 0) {
 		_object1.animate(ANIM_MODE_2, NULL);
 	} else {
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		_object1.setup(4060, (_object2->_strip * 2) - 1, 1);
 		_object1.animate(ANIM_MODE_5, this);
 	}
@@ -534,7 +541,8 @@ void SpeakerJocko3230::animateSpeaker() {
 	if (v == 0) {
 		_object1.animate(ANIM_MODE_2, NULL);
 	} else {
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		_object1.setup(4060, (_object2->_strip * 2) - 1, 1);
 		_object1.animate(ANIM_MODE_5, this);
 	}
@@ -579,13 +587,13 @@ void SpeakerMiranda300::animateSpeaker() {
 		_object1.animate(ANIM_MODE_2, NULL);
 	} else if (v == 100) {
 		_numFrames = 0;
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
 
 		_object1.setStrip(_object1._strip - 1);
 		_object1.setFrame(_object1.getFrameCount());
 		_object1.animate(ANIM_MODE_6, this);
 	} else {
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
 
 		if (v == 4) {
 			_object1.setup(304, 5, 1);
@@ -613,7 +621,8 @@ void SpeakerMiranda1625::animateSpeaker() {
 	if (v == 0) {
 		_object1.animate(ANIM_MODE_2, NULL);
 	} else {
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		_object1.setup(1627, 3, 1);
 		_object1.animate(ANIM_MODE_5, this);
 	}
@@ -634,7 +643,8 @@ void SpeakerMiranda3255::animateSpeaker() {
 	if (v == 0) {
 		_object1.animate(ANIM_MODE_2, NULL);
 	} else {
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		_object1.setup(3257, 5, 1);
 		_object1.animate(ANIM_MODE_5, this);
 	}
@@ -680,7 +690,8 @@ void SpeakerMiranda3375::animateSpeaker() {
 		_object1.animate(ANIM_MODE_2, NULL);
 		break;
 	case 1:
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		_object1.setup(4051, 5, 1);
 		_object1.animate(ANIM_MODE_5, this);
 		break;
@@ -729,7 +740,8 @@ void SpeakerMiranda3385::animateSpeaker() {
 		_object1.animate(ANIM_MODE_2, NULL);
 		break;
 	case 1:
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		_object1.setup(4051, 5, 1);
 		_object1.animate(ANIM_MODE_5, this);
 		break;
@@ -779,7 +791,8 @@ void SpeakerMiranda3395::animateSpeaker() {
 		_object1.animate(ANIM_MODE_2, NULL);
 		break;
 	case 1:
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		_object1.setup(4051, 5, 1);
 		_object1.animate(ANIM_MODE_5, this);
 		break;
@@ -818,12 +831,14 @@ void SpeakerMiranda3400::animateSpeaker() {
 		_object1.animate(ANIM_MODE_2, NULL);
 		break;
 	case 1:
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		_object1.setup(4051, 5, 1);
 		_object1.animate(ANIM_MODE_5, this);
 		break;
 	case 2:
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		_object1.setup(4050, 3, 1);
 		_object1.animate(ANIM_MODE_5, this);
 		break;
@@ -864,12 +879,14 @@ void SpeakerMiranda3600::animateSpeaker() {
 		_object1.animate(ANIM_MODE_2, NULL);
 		break;
 	case 1:
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		_object1.setup(4051, 1, 1);
 		_object1.animate(ANIM_MODE_5, this);
 		break;
 	case 2:
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		_object1.setup(4050, 1, 1);
 		_object1.animate(ANIM_MODE_5, this);
 		break;
@@ -904,7 +921,8 @@ void SpeakerMiranda3700::animateSpeaker() {
 		_object1.animate(ANIM_MODE_2, NULL);
 		break;
 	case 1:
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		scene->_quinn.setup(10, 6, 1);
 		scene->_seeker.setup(20, 5, 1);
 		_object2->setup(30, 1, 1);
@@ -913,13 +931,15 @@ void SpeakerMiranda3700::animateSpeaker() {
 		_object1.animate(ANIM_MODE_5, this);
 		break;
 	case 2:
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		scene->_miranda.setup(30, 8, 1);
 		_object1.setup(4052, 3, 1);
 		_object1.animate(ANIM_MODE_5, this);
 		break;
 	case 3:
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		scene->_seeker.setup(20, 1, 1);
 		scene->_miranda.setup(30, 1, 1);
 		_object1.setup(4051, 7, 1);
@@ -964,7 +984,8 @@ void SpeakerNej2700::animateSpeaker() {
 	if (v == 0) {
 		_object1.animate(ANIM_MODE_2, NULL);
 	} else {
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		switch (_object2->_visage) {
 		case 2701:
 			_object1.setup(4022, 3, 1);
@@ -999,7 +1020,8 @@ void SpeakerNej2750::animateSpeaker() {
 	if (v == 0) {
 		_object1.animate(ANIM_MODE_2, NULL);
 	} else {
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		switch (_object2->_visage) {
 		case 2705:
 			_object1.setup(4022, 7, 1);
@@ -1031,7 +1053,8 @@ void SpeakerNej2800::animateSpeaker() {
 	if (v == 0) {
 		_object1.animate(ANIM_MODE_2, NULL);
 	} else {
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		_object1.setup(4023, 3, 1);
 		if (_object2->_visage == 2801)
 			_object1.setPosition(Common::Point(R2_GLOBALS._player._position.x - 12, R2_GLOBALS._player._position.y));
@@ -1069,7 +1092,8 @@ void SpeakerPharisha2435::animateSpeaker() {
 	if (v == 0) {
 		_object1.animate(ANIM_MODE_2, NULL);
 	} else {
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		_object1.setup(4098, 5, 1);
 		_object1.animate(ANIM_MODE_5, this);
 	}
@@ -1108,7 +1132,8 @@ void SpeakerPrivate3210::animateSpeaker() {
 	if (v == 0) {
 		_object1.animate(ANIM_MODE_2, NULL);
 	} else {
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		_object1.setup(4060, (_object2->_strip * 2) - 1, 1);
 		_object1.animate(ANIM_MODE_5, this);
 	}
@@ -1157,7 +1182,8 @@ void SpeakerProtector3600::animateSpeaker() {
 		_object1.animate(ANIM_MODE_2, NULL);
 		break;
 	case 1:
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		if (scene->_sceneMode != 3324) {
 			_object1.setup(4125, 3, 1);
 			_object1.animate(ANIM_MODE_5, this);
@@ -1212,13 +1238,13 @@ void SpeakerQuinn300::animateSpeaker() {
 		_object1.animate(ANIM_MODE_2, NULL);
 	} else if (v == 100) {
 		_numFrames = 0;
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
 
 		_object1.setStrip(_object1._strip - 1);
 		_object1.setFrame(_object1.getFrameCount());
 		_object1.animate(ANIM_MODE_6, this);
 	} else {
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
 
 		switch (_object2->_visage) {
 		case 10:
@@ -1264,7 +1290,7 @@ void SpeakerQuinn500::animateSpeaker() {
 	if (v == 0) {
 		_object1.animate(ANIM_MODE_2, NULL);
 	} else {
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
 
 		switch (_object2->_visage) {
 		case 10:
@@ -1312,17 +1338,20 @@ void SpeakerQuinn1100::animateSpeaker() {
 		_object1.animate(ANIM_MODE_2, NULL);
 		break;
 	case 1:
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		_object1.setup(1108, 7, 1);
 		_object1.animate(ANIM_MODE_5, this);
 		break;
 	case 2:
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		_object1.setup(1109, 1, 1);
 		_object1.animate(ANIM_MODE_5, this);
 		break;
 	case 3:
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		_object1.setup(1109, 5, 1);
 		_object1.animate(ANIM_MODE_5, this);
 		break;
@@ -1352,7 +1381,8 @@ void SpeakerQuinn2435::animateSpeaker() {
 	if (v == 0) {
 		_object1.animate(ANIM_MODE_2, NULL);
 	} else {
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		_object2->setStrip(7);
 		_object1.setup(2020, 5, 1);
 		_object1.animate(ANIM_MODE_5, this);
@@ -1379,7 +1409,8 @@ void SpeakerQuinn2450::animateSpeaker() {
 	if (v == 0) {
 		_object1.animate(ANIM_MODE_2, NULL);
 	} else {
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		if (R2_GLOBALS.getFlag(61))
 			_object1.setup(2020, 3, 1);
 		else
@@ -1404,7 +1435,8 @@ void SpeakerQuinn2700::animateSpeaker() {
 	if (v == 0) {
 		_object1.animate(ANIM_MODE_2, NULL);
 	} else {
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		switch (_object2->_visage) {
 		case 19:
 			_object1.setup(4022, 5, 1);
@@ -1435,7 +1467,8 @@ void SpeakerQuinn2750::animateSpeaker() {
 	if (v == 0) {
 		_object1.animate(ANIM_MODE_2, NULL);
 	} else {
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		switch (_object2->_visage) {
 		case 19:
 			_object1.setup(4022, 5, 1);
@@ -1466,7 +1499,8 @@ void SpeakerQuinn2800::animateSpeaker() {
 	if (v == 0) {
 		_object1.animate(ANIM_MODE_2, NULL);
 	} else {
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		switch (_object2->_visage) {
 		case 16:
 			_object1.setZoom(75);
@@ -1506,7 +1540,8 @@ void SpeakerQuinn3255::animateSpeaker() {
 	if (v == 0) {
 		_object1.animate(ANIM_MODE_2, NULL);
 	} else {
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		_object1.setup(3257, 3, 1);
 		_object1.animate(ANIM_MODE_5, this);
 	}
@@ -1547,13 +1582,13 @@ void SpeakerQuinn3375::animateSpeaker() {
 			_object2->addMover(NULL);
 	}
 
-
 	switch (v) {
 	case 0:
 		_object1.animate(ANIM_MODE_2, NULL);
 		break;
 	case 1:
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		_object1.setup(4010, 5, 1);
 		_object1.animate(ANIM_MODE_5, this);
 		break;
@@ -1598,13 +1633,13 @@ void SpeakerQuinn3385::animateSpeaker() {
 			_object2->addMover(NULL);
 	}
 
-
 	switch (v) {
 	case 0:
 		_object1.animate(ANIM_MODE_2, NULL);
 		break;
 	case 1:
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		if (R2_GLOBALS._player._characterIndex == R2_SEEKER)
 			_object1.setup(4010, 3, 1);
 		else
@@ -1653,13 +1688,13 @@ void SpeakerQuinn3395::animateSpeaker() {
 			_object2->addMover(NULL);
 	}
 
-
 	switch (v) {
 	case 0:
 		_object1.animate(ANIM_MODE_2, NULL);
 		break;
 	case 1:
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		if (R2_GLOBALS._player._characterIndex == R2_SEEKER)
 			_object1.setup(4010, 3, 1);
 		else
@@ -1702,17 +1737,20 @@ void SpeakerQuinn3400::animateSpeaker() {
 		_object1.animate(ANIM_MODE_2, NULL);
 		break;
 	case 1:
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		_object1.setup(4010, 5, 1);
 		_object1.animate(ANIM_MODE_5, NULL);
 		break;
 	case 2:
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		_object1.setup(4010, 3, 1);
 		_object1.animate(ANIM_MODE_5, this);
 		break;
 	case 3:
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		_object1.setup(4012, 3, 1);
 		_object1.animate(ANIM_MODE_5, this);
 		break;
@@ -1750,17 +1788,20 @@ void SpeakerQuinn3600::animateSpeaker() {
 		_object1.animate(ANIM_MODE_2, NULL);
 		break;
 	case 1:
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		_object1.setup(4021, 7, 1);
 		_object1.animate(ANIM_MODE_5, this);
 		break;
 	case 2:
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		_object1.setup(4010, 1, 1);
 		_object1.animate(ANIM_MODE_5, this);
 		break;
 	case 3:
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		_object1.setup(4012, 1, 1);
 		_object1.animate(ANIM_MODE_5, this);
 		break;
@@ -1813,7 +1854,8 @@ void SpeakerQuinn3700::animateSpeaker() {
 		_object1.animate(ANIM_MODE_2, NULL);
 		break;
 	case 1:
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		R2_GLOBALS._sound2.stop();
 		scene->_quinn.setup(10, 4, 1);
 		scene->_miranda.setup(30, 7, 1);
@@ -1821,14 +1863,16 @@ void SpeakerQuinn3700::animateSpeaker() {
 		_object1.animate(ANIM_MODE_5, this);
 		break;
 	case 2:
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		scene->_seeker.setup(20, 1, 1);
 		scene->_miranda.setup(30, 1, 1);
 		_object1.setup(3702, 1, 1);
 		_object1.animate(ANIM_MODE_5, this);
 		break;
 	case 3:
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		scene->_quinn.setup(10, 2, 1);
 		scene->_miranda.setup(30, 1, 1);
 		_object1.setup(4011, 1, 1);
@@ -1881,7 +1925,8 @@ void SpeakerRalf3245::animateSpeaker() {
 	if (v == 0) {
 		_object1.animate(ANIM_MODE_2, NULL);
 	} else {
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		switch (_object2->_visage) {
 		case 3100:
 			_object1.setup(4105, (_object2->_strip * 2) - 1, 1);
@@ -1933,7 +1978,8 @@ void SpeakerRocko3200::animateSpeaker() {
 	if (v == 0) {
 		_object1.animate(ANIM_MODE_2, NULL);
 	} else {
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		_object1.setup(4060, (_object2->_strip * 2) - 1, 1);
 		_object1.animate(ANIM_MODE_5, this);
 	}
@@ -1956,7 +2002,8 @@ void SpeakerRocko3220::animateSpeaker() {
 	if (v == 0) {
 		_object1.animate(ANIM_MODE_2, NULL);
 	} else {
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		_object1.setup(4060, (_object2->_strip * 2) - 1, 1);
 		_object1.animate(ANIM_MODE_5, this);
 	}
@@ -1979,7 +2026,8 @@ void SpeakerRocko3230::animateSpeaker() {
 	if (v == 0) {
 		_object1.animate(ANIM_MODE_2, NULL);
 	} else {
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		_object1.setup(4111, (_object2->_strip * 2) - 1, 1);
 		_object1.animate(ANIM_MODE_5, this);
 	}
@@ -2025,13 +2073,14 @@ void SpeakerSeeker300::animateSpeaker() {
 		_object1.animate(ANIM_MODE_2, NULL);
 	} else if (v == 100) {
 		_numFrames = 0;
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
 
 		_object1.setStrip(_object1._strip - 1);
 		_object1.setFrame(_object1.getFrameCount());
 		_object1.animate(ANIM_MODE_6, this);
 	} else {
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		_object1.setup(306, v * 2 - 1, 1);
 		_object1.animate(ANIM_MODE_5, this);
 	}
@@ -2063,7 +2112,7 @@ void SpeakerSeeker500::animateSpeaker() {
 	if (v == 0) {
 		_object1.animate(ANIM_MODE_2, NULL);
 	} else {
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
 
 		if (v == 1)
 			_object1.setup(4041, 3, 1);
@@ -2103,28 +2152,33 @@ void SpeakerSeeker1100::animateSpeaker() {
 		_object1.animate(ANIM_MODE_2, NULL);
 		break;
 	case 1:
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		_object1.setup(1108, 1, 1);
 		_object1.animate(ANIM_MODE_5, this);
 		break;
 	case 2:
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		_object1.setup(1108, 3, 1);
 		_object1.animate(ANIM_MODE_5, this);
 		break;
 	case 3:
 		_object1.setPosition(Common::Point(197, 134));
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		_object1.setup(1108, 5, 1);
 		_object1.animate(ANIM_MODE_5, this);
 		break;
 	case 4:
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		_object1.setup(1109, 7, 1);
 		_object1.animate(ANIM_MODE_5, this);
 		break;
 	case 5:
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		_object1.setup(1109, 3, 1);
 		_object1.animate(ANIM_MODE_5, this);
 		break;
@@ -2185,7 +2239,8 @@ void SpeakerSeeker2435::animateSpeaker() {
 	if (v == 0) {
 		_object1.animate(ANIM_MODE_2, NULL);
 	} else {
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		_object2->setStrip(7);
 		_object1.setup(4099, 1, 1);
 		_object1.animate(ANIM_MODE_5, this);
@@ -2212,7 +2267,8 @@ void SpeakerSeeker2450::animateSpeaker() {
 	if (v == 0) {
 		_object1.animate(ANIM_MODE_2, NULL);
 	} else {
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		_object1.setup(4099, 3, 1);
 		_object1.animate(ANIM_MODE_5, this);
 	}
@@ -2251,13 +2307,13 @@ void SpeakerSeeker3375::animateSpeaker() {
 			_object2->addMover(NULL);
 	}
 
-
 	switch (v) {
 	case 0:
 		_object1.animate(ANIM_MODE_2, NULL);
 		break;
 	case 1:
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		_object1.setup(4031, 1, 1);
 		_object1.animate(ANIM_MODE_5, this);
 		break;
@@ -2306,7 +2362,8 @@ void SpeakerSeeker3385::animateSpeaker() {
 		_object1.animate(ANIM_MODE_2, NULL);
 		break;
 	case 1:
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		_object1.setup(4031, 3, 1);
 		_object1.animate(ANIM_MODE_5, this);
 		break;
@@ -2349,13 +2406,13 @@ void SpeakerSeeker3395::animateSpeaker() {
 			_object2->addMover(NULL);
 	}
 
-
 	switch (v) {
 	case 0:
 		_object1.animate(ANIM_MODE_2, NULL);
 		break;
 	case 1:
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		_object1.setup(4031, 3, 1);
 		_object1.animate(ANIM_MODE_5, this);
 		break;
@@ -2394,27 +2451,32 @@ void SpeakerSeeker3400::animateSpeaker() {
 		_object1.animate(ANIM_MODE_2, NULL);
 		break;
 	case 1:
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		_object1.setup(4031, 1, 1);
 		_object1.animate(ANIM_MODE_5, this);
 		break;
 	case 2:
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		_object1.setup(4031, 3, 1);
 		_object1.animate(ANIM_MODE_5, this);
 		break;
 	case 3:
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		_object1.setup(4030, 3, 1);
 		_object1.animate(ANIM_MODE_5, this);
 		break;
 	case 4:
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		_object1.setup(4031, 7, 1);
 		_object1.animate(ANIM_MODE_5, this);
 		break;
 	case 5:
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		_object1.setup(4033, 1, 1);
 		_object1.animate(ANIM_MODE_5, this);
 		break;
@@ -2456,12 +2518,14 @@ void SpeakerSeeker3600::animateSpeaker() {
 		_object1.animate(ANIM_MODE_2, NULL);
 		break;
 	case 1:
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		_object1.setup(4031, 5, 1);
 		_object1.animate(ANIM_MODE_5, this);
 		break;
 	case 2:
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		_object1.setup(4030, 1, 1);
 		_object1.animate(ANIM_MODE_5, this);
 		break;
@@ -2509,7 +2573,8 @@ void SpeakerSeeker3700::animateSpeaker() {
 		_object1.animate(ANIM_MODE_2, NULL);
 		break;
 	case 1:
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		R2_GLOBALS._sound2.stop();
 		scene->_quinn.setup(10, 8, 1);
 		scene->_seeker.setup(20, 7, 1);
@@ -2518,7 +2583,8 @@ void SpeakerSeeker3700::animateSpeaker() {
 		_object1.animate(ANIM_MODE_5, this);
 		break;
 	case 2:
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		scene->_quinn.setup(10, 2, 1);
 		scene->_seeker.setup(20, 1, 1);
 		scene->_miranda.setup(30, 1, 1);
@@ -2572,7 +2638,8 @@ void SpeakerSocko3200::animateSpeaker() {
 	if (v == 0) {
 		_object1.animate(ANIM_MODE_2, NULL);
 	} else {
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		_object1.setup(4060, (_object2->_strip * 2) - 1, 1);
 		_object1.animate(ANIM_MODE_5, this);
 	}
@@ -2612,7 +2679,8 @@ void SpeakerSoldier300::animateSpeaker() {
 	if (v == 0) {
 		_object1.animate(ANIM_MODE_2, NULL);
 	} else {
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		_object1.setup(303, 3, 1);
 		_object1.animate(ANIM_MODE_5, this);
 	}
@@ -2658,12 +2726,14 @@ void SpeakerTeal180::animateSpeaker() {
 		_object1.animate(ANIM_MODE_2, NULL);
 		break;
 	case 1:
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		_object1.setup(75, 5, 1);
 		_object1.animate(ANIM_MODE_5, this);
 		break;
 	case 2:
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		_object1.setup(77, 1, 1);
 		_object1.animate(ANIM_MODE_5, this);
 		break;
@@ -2691,7 +2761,8 @@ void SpeakerTeal300::animateSpeaker() {
 	if (v == 0) {
 		_object1.animate(ANIM_MODE_2, NULL);
 	} else {
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		_object1.setup(303, 1, 1);
 		_object1.animate(ANIM_MODE_5, this);
 	}
@@ -2715,7 +2786,8 @@ void SpeakerTeal1625::animateSpeaker() {
 	if (v == 0) {
 		_object1.animate(ANIM_MODE_2, NULL);
 	} else {
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		_object1.setup(1627, 1, 1);
 		_object1.animate(ANIM_MODE_5, this);
 	}
@@ -2738,7 +2810,8 @@ void SpeakerTeal3240::animateSpeaker() {
 	if (v == 0) {
 		_object1.animate(ANIM_MODE_2, NULL);
 	} else {
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		_object1.setup(4070, (_object2->_strip * 2) - 1, 1);
 		_object1.animate(ANIM_MODE_5, this);
 	}
@@ -2776,22 +2849,26 @@ void SpeakerTeal3400::animateSpeaker() {
 		_object1.animate(ANIM_MODE_2, NULL);
 		break;
 	case 1:
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		_object1.setup(4107, 5, 1);
 		_object1.animate(ANIM_MODE_5, this);
 		break;
 	case 2:
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		_object1.setup(4107, 1, 1);
 		_object1.animate(ANIM_MODE_5, this);
 		break;
 	case 3:
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		_object1.setup(4107, 7, 1);
 		_object1.animate(ANIM_MODE_5, this);
 		break;
 	case 4:
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		_object1.setup(4107, 3, 1);
 		_object1.animate(ANIM_MODE_5, this);
 		break;
@@ -2832,22 +2909,26 @@ void SpeakerTeal3600::animateSpeaker() {
 		_object1.animate(ANIM_MODE_2, NULL);
 		break;
 	case 1:
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		_object1.setup(4107, 5, 1);
 		_object1.animate(ANIM_MODE_5, this);
 		break;
 	case 2:
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		_object1.setup(4107, 1, 1);
 		_object1.animate(ANIM_MODE_5, this);
 		break;
 	case 3:
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		_object1.setup(4107, 7, 1);
 		_object1.animate(ANIM_MODE_5, this);
 		break;
 	case 4:
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		_object1.setup(4107, 3, 1);
 		_object1.animate(ANIM_MODE_5, this);
 		break;
@@ -2890,7 +2971,8 @@ void SpeakerTomko3245::animateSpeaker() {
 	if (v == 0) {
 		_object1.animate(ANIM_MODE_2, NULL);
 	} else {
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		switch (_object2->_visage) {
 		case 3100:
 			_object1.setup(4105, (_object2->_strip * 2) - 1, 1);
@@ -2946,17 +3028,20 @@ void SpeakerWebbster180::animateSpeaker() {
 		_object1.animate(ANIM_MODE_2, NULL);
 		break;
 	case 1:
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		_object1.setup(75, 7, 1);
 		_object1.animate(ANIM_MODE_5, this);
 		break;
 	case 2:
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		_object1.setup(76, 4, 1);
 		_object1.animate(ANIM_MODE_5, this);
 		break;
 	case 3:
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		_object1.setup(76, 6, 1);
 		_object1.animate(ANIM_MODE_5, this);
 		break;
@@ -2983,7 +3068,8 @@ void SpeakerWebbster3240::animateSpeaker() {
 	if (v == 0) {
 		_object1.animate(ANIM_MODE_2, NULL);
 	} else {
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		_object1.setup(4110, 5, 1);
 		_object1.animate(ANIM_MODE_5, this);
 	}
@@ -3023,7 +3109,8 @@ void SpeakerWebbster3375::animateSpeaker() {
 		_object1.animate(ANIM_MODE_2, NULL);
 		break;
 	case 1:
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		_object1.setup(4110, 5, 1);
 		_object1.animate(ANIM_MODE_5, this);
 		break;
@@ -3067,7 +3154,8 @@ void SpeakerWebbster3385::animateSpeaker() {
 		_object1.animate(ANIM_MODE_2, NULL);
 		break;
 	case 1:
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		_object1.setup(4110, 5, 1);
 		_object1.animate(ANIM_MODE_5, this);
 		break;
@@ -3111,7 +3199,8 @@ void SpeakerWebbster3395::animateSpeaker() {
 		_object1.animate(ANIM_MODE_2, NULL);
 		break;
 	case 1:
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		_object1.setup(4110, 5, 1);
 		_object1.animate(ANIM_MODE_5, this);
 		break;
@@ -3146,17 +3235,20 @@ void SpeakerWebbster3400::animateSpeaker() {
 		_object1.animate(ANIM_MODE_2, NULL);
 		break;
 	case 1:
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		_object1.setup(4110, 5, 1);
 		_object1.animate(ANIM_MODE_5, this);
 		break;
 	case 2:
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		_object1.setup(4110, 7, 1);
 		_object1.animate(ANIM_MODE_5, this);
 		break;
 	case 3:
-		((SceneItem *)_action)->_sceneRegionId = 0;
+		((StripManager *)_action)->_useless = 0;
+
 		_object1.setup(4110, 3, 1);
 		_object1.animate(ANIM_MODE_5, this);
 		break;
@@ -3209,7 +3301,6 @@ void SpeakerDutyOfficer180::animateSpeaker() {
 		break;
 	}
 }
-
 
 } // End of namespace Ringworld2
 } // End of namespace TsAGE

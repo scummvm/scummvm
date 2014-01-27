@@ -1128,7 +1128,6 @@ void Ringworld2Game::start() {
 		R2_GLOBALS._sceneHandler->_loadGameSlot = slot;
 	else {
 		// Switch to the first title screen
-		R2_GLOBALS._events.setCursor(CURSOR_WALK);
 		R2_GLOBALS._uiElements._active = true;
 		R2_GLOBALS._sceneManager.setNewScene(180);
 	}

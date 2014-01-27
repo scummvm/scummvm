@@ -136,15 +136,20 @@ void Module1100::updateScene() {
 		switch (_sceneNum) {
 		case 0:
 			_countdown = 0;
-			_vm->_soundMan->playTwoSounds(0x0002C818, 0x48498E46, 0x50399F64, 0);
 			_vm->_soundMan->setSoundVolume(0x48498E46, 65);
 			_vm->_soundMan->setSoundVolume(0x50399F64, 65);
-			if (_moduleResult == 0)
+			if (_moduleResult == 0) {
+				_vm->_soundMan->playTwoSounds(0x0002C818, 0x48498E46, 0x50399F64, 0);
 				createScene(1, 0);
-			else if (_moduleResult == 1)
+			} else if (_moduleResult == 1) {
+				/* NOTE This fixes a bug in the original where the "tunnel" footstep 
+					sounds are played instead of the correct footsteps. */
+				_vm->_soundMan->playTwoSounds(0x0002C818, 0x41861371, 0x43A2507F, 0);
 				createScene(8, 0);
+			}
 			break;
 		case 1:
+			_countdown = 0;
 			_vm->_soundMan->playTwoSounds(0x0002C818, 0x41861371, 0x43A2507F, 0);
 			if (getGlobalVar(V_ROBOT_HIT)) {
 				if (_moduleResult == 0)

@@ -559,7 +559,7 @@ SeekableAudioStream *makeVOCStream(Common::SeekableReadStream *stream, byte flag
 
 	SeekableAudioStream *audioStream = new VocStream(stream, (flags & Audio::FLAG_UNSIGNED) != 0, disposeAfterUse);
 
-	if (audioStream && audioStream->endOfData()) {
+	if (audioStream->endOfData()) {
 		delete audioStream;
 		return 0;
 	} else {

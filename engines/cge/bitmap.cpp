@@ -72,16 +72,16 @@ Bitmap::Bitmap(CGEEngine *vm, uint16 w, uint16 h, uint8 fill)
 	                                                // + room for wash table
 	assert(v != NULL);
 
-	*(uint16 *) v = TO_LE_16(kBmpCPY | dsiz);                 // data chunk hader
+	WRITE_LE_UINT16(v, (kBmpCPY | dsiz));                 // data chunk hader
 	memset(v + 2, fill, dsiz);                      // data bytes
-	*(uint16 *)(v + lsiz - 2) = TO_LE_16(kBmpSKP | ((kScrWidth / 4) - dsiz));  // gap
+	WRITE_LE_UINT16(v + lsiz - 2, (kBmpSKP | ((kScrWidth / 4) - dsiz)));  // gap
 
 	// Replicate lines
 	byte *destP;
 	for (destP = v + lsiz; destP < (v + psiz); destP += lsiz)
 		Common::copy(v, v + lsiz, destP);
 
-	*(uint16 *)(v + psiz - 2) = TO_LE_16(kBmpEOI);            // plane trailer uint16
+	WRITE_LE_UINT16(v + psiz - 2, kBmpEOI);            // plane trailer uint16
 
 	// Replicate planes
 	for (destP = v + psiz; destP < (v + 4 * psiz); destP += psiz)

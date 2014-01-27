@@ -58,6 +58,7 @@ public:
 	void loadDigits();
 	void loadMouse(byte which);
 
+	void drawLine(int x1, int y1, int x2, int y2, int penX, int penY, Color color);
 	Common::Point drawScreenArc(int16 x, int16 y, int16 stAngle, int16 endAngle, uint16 radius, Color color);
 	void drawPieSlice(int16 x, int16 y, int16 stAngle, int16 endAngle, uint16 radius, Color color);
 	void drawTriangle(Common::Point *p, Color color);
@@ -86,6 +87,9 @@ public:
 	void nimDrawLogo();
 	void nimFree();
 
+	// Used in wobble()
+	void shiftScreen();
+
 	void clearAlso();
 	void clearTextBar();
 	void setAlsoLine(int x1, int y1, int x2, int y2, Color color);
@@ -107,7 +111,7 @@ public:
 	void refreshScreen();
 	void loadBackground(Common::File &file);
 	void refreshBackground();
-	void setBackgroundColor(Color x);
+	void setBackgroundColor(Color newColor);
 	void setDialogColor(Color bg, Color text);
 
 	void zoomOut(int16 x, int16 y);
@@ -115,10 +119,11 @@ public:
 	void getNaturalPicture(SpriteType &sprite);
 
 	void saveScreen();
-	void removeBackup();
 	void restoreScreen();
+	void removeBackup();
 
 private:
+	static const int16 kMouseSize = 134;
 	static const uint16 kBackgroundWidth = kScreenWidth;
 	static const byte kEgaPaletteIndex[16];
 	static const byte kBackgroundHeight = 8 * 12080 / kScreenWidth; // With 640 width it's 151.

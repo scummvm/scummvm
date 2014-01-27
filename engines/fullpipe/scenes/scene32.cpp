@@ -88,7 +88,7 @@ void scene32_initScene(Scene *sc) {
 	}
 
 	g_fp->lift_setButton(sO_Level9, ST_LBN_9N);
-	g_fp->lift_sub5(sc, QU_SC32_ENTERLIFT, QU_SC32_EXITLIFT);
+	g_fp->lift_init(sc, QU_SC32_ENTERLIFT, QU_SC32_EXITLIFT);
 
 	g_fp->initArcadeKeys("SC_32");
 }
@@ -291,7 +291,7 @@ int sceneHandler32(ExCommand *cmd) {
 		break;
 
 	case MSG_LIFT_CLICKBUTTON:
-		g_fp->lift_animation3();
+		g_fp->lift_clickButton();
 		break;
 
 	case MSG_SC33_TRYKUBIK:

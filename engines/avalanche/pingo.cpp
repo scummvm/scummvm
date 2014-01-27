@@ -56,18 +56,6 @@ void Pingo::copyPage(byte frp, byte top) { // taken from Copy02 (above)
 	warning("STUB: Pingo::copyPage()");
 }
 
-void Pingo::wobble() {
-	warning("STUB: Pingo::wobble()");
-}
-
-void Pingo::zl(int16 x1, int16 y1, int16 x2, int16 y2) {
-	warning("STUB: Pingo::zl()");
-}
-
-void Pingo::zonk() {
-	warning("STUB: Pingo::zonk()");
-}
-
 void Pingo::winningPic() {
 	Common::File f;
 	_vm->fadeOut();

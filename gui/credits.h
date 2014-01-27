@@ -77,7 +77,7 @@ static const char *credits[] = {
 "C0""Ludvig Strigeus",
 "C2""(retired)",
 "",
-"C1""AVALANCHE",
+"C1""Avalanche",
 "A0""Peter Bozso",
 "C0""Peter Bozs\363",
 "A0""Arnaud Boutonne",

@@ -26,9 +26,10 @@
 namespace Fullpipe {
 
 struct BehaviorEntryInfo;
-class StaticANIObject;
-class MctlLadder;
 class MGM;
+class MctlLadder;
+struct Ring;
+class StaticANIObject;
 
 int defaultUpdateCursor();
 
@@ -156,9 +157,28 @@ void scene33_setupMusic();
 int sceneHandler33(ExCommand *cmd);
 int scene33_updateCursor();
 
+void scene34_initScene(Scene *sc);
+void scene34_initBeh();
+int sceneHandler34(ExCommand *cmd);
+int scene34_updateCursor();
+
+void scene35_initScene(Scene *sc);
+int sceneHandler35(ExCommand *cmd);
+
 int scene36_updateCursor();
 void scene36_initScene(Scene *sc);
 int sceneHandler36(ExCommand *cmd);
+
+void scene37_initScene(Scene *sc);
+int sceneHandler37(ExCommand *ex);
+int scene37_updateCursor();
+
+void scene38_initScene(Scene *sc);
+int sceneHandler38(ExCommand *ex);
+
+int sceneFinal_updateCursor();
+void sceneFinal_initScene();
+int sceneHandlerFinal(ExCommand *cmd);
 
 void sceneDbgMenu_initScene(Scene *sc);
 int sceneHandlerDbgMenu(ExCommand *cmd);
@@ -477,23 +497,65 @@ public:
 	int scene33_ventsX[9];
 	int scene33_ventsState[9];
 
-	int scene34_var01;
-	int scene34_var02;
-	int scene34_var03;
-	int scene34_var04;
 	StaticANIObject *scene34_cactus;
 	StaticANIObject *scene34_vent;
 	StaticANIObject *scene34_hatch;
 	StaticANIObject *scene34_boot;
-	int scene34_var05;
-	int scene34_var06;
-	int scene34_var07;
-	int scene34_var08;
+	bool scene34_dudeClimbed;
+	bool scene34_dudeOnBoard;
+	bool scene34_dudeOnCactus;
+	int scene34_fliesCountdown;
+
+	StaticANIObject *scene35_hose;
+	StaticANIObject *scene35_bellyInflater;
+	int scene35_flowCounter;
+	int scene35_fliesCounter;
 
 	StaticANIObject *scene36_rotohrust;
 	StaticANIObject *scene36_scissors;
 
+	Common::Array<Ring *> scene37_rings;
+	int scene37_lastDudeX;
+	bool scene37_cursorIsLocked;
+	StaticANIObject *scene37_plusMinus1;
+	StaticANIObject *scene37_plusMinus2;
+	StaticANIObject *scene37_plusMinus3;
+	int scene37_soundFlipper;
+	int scene37_dudeX;
+
+	StaticANIObject *scene38_boss;
+	StaticANIObject *scene38_tally;
+	StaticANIObject *scene38_shorty;
+	StaticANIObject *scene38_domino0;
+	StaticANIObject *scene38_dominos;
+	StaticANIObject *scene38_domino1;
+	StaticANIObject *scene38_bottle;
+	int scene38_bossCounter;
+	int scene38_lastBossAnim;
+	int scene38_bossAnimCounter;
+	int scene38_tallyCounter;
+	int scene38_lastTallyAnim;
+	int scene38_tallyAnimCounter;
+	int scene38_shortyCounter;
+	int scene38_lastShortyAnim;
+	int scene38_shortyAnimCounter;
+
+	int sceneFinal_var01;
+	int sceneFinal_var02;
+	int sceneFinal_var03;
+
 	PictureObject *selector;
+};
+
+struct Ring {
+	StaticANIObject *ani;
+	int x;
+	int y;
+	int numSubRings;
+	int subRings[10];
+	bool state;
+
+	Ring();
 };
 
 } // End of namespace Fullpipe

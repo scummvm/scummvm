@@ -198,8 +198,7 @@ SurfaceSdlGraphicsManager::~SurfaceSdlGraphicsManager() {
 }
 
 void SurfaceSdlGraphicsManager::activateManager() {
-	GraphicsManager::activateManager();
-	initEventSource();
+	SdlGraphicsManager::activateManager();
 
 	// Register the graphics manager as a event observer
 	g_system->getEventManager()->getEventDispatcher()->registerObserver(this, 10, false);
@@ -211,8 +210,7 @@ void SurfaceSdlGraphicsManager::deactivateManager() {
 		g_system->getEventManager()->getEventDispatcher()->unregisterObserver(this);
 	}
 
-	deinitEventSource();
-	GraphicsManager::deactivateManager();
+	SdlGraphicsManager::deactivateManager();
 }
 
 bool SurfaceSdlGraphicsManager::hasFeature(OSystem::Feature f) {
@@ -746,6 +744,8 @@ bool SurfaceSdlGraphicsManager::loadGFXMode() {
 	if (_screen == NULL)
 		error("allocating _screen failed");
 
+	// Avoid having SDL_SRCALPHA set even if we supplied an alpha-channel in the format.
+	SDL_SetAlpha(_screen, 0, 255);
 #else
 	_screen = SDL_CreateRGBSurface(SDL_SWSURFACE, _videoMode.screenWidth, _videoMode.screenHeight, 8, 0, 0, 0, 0);
 	if (_screen == NULL)

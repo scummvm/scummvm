@@ -1399,6 +1399,69 @@ void Animation::handleMoveKey(const Common::Event &event) {
 	}
 }
 
+/**
+* Draws a part of the lightning bolt for thunder().
+* @remarks	Originally called 'zl'
+*/
+void Animation::drawLightning(int16 x1, int16 y1, int16 x2, int16 y2) {
+	_vm->_graphics->drawLine(x1, y1 - 1, x2, y2 - 1, 1, 3, kColorBlue);
+	_vm->_graphics->drawLine(x1, y1, x2, y2, 1, 1, kColorLightcyan);
+}
+
+/**
+* Plays the actual thunder animation when Avvy (the player) swears too much.
+* @remarks	Originally called 'zonk'
+*/
+void Animation::thunder() {
+	_vm->_graphics->setBackgroundColor(kColorYellow);
+
+	_vm->_graphics->saveScreen();
+
+	int x = _vm->_animation->_sprites[0]->_x + _vm->_animation->_sprites[0]->_xLength / 2;
+	int y = _vm->_animation->_sprites[0]->_y;
+
+	for (int i = 0; i < 256; i++) {
+		_vm->_sound->playNote(270 - i, 1);
+
+		drawLightning(640, 0, 0, y / 4);
+		drawLightning(0, y / 4, 640, y / 2);
+		drawLightning(640, y / 2, x, y);
+		_vm->_graphics->refreshScreen();
+
+		_vm->_sound->playNote(2700 - 10 * i, 5);
+		_vm->_system->delayMillis(5);
+		_vm->_sound->playNote(270 - i, 1);
+
+		_vm->_graphics->restoreScreen();
+		_vm->_sound->playNote(2700 - 10 * i, 5);
+		_vm->_system->delayMillis(5);
+	}
+
+	_vm->_graphics->restoreScreen();
+	_vm->_graphics->removeBackup();
+
+	_vm->_graphics->setBackgroundColor(kColorBlack);
+}
+
+/**
+* Makes the screen wobble.
+*/
+void Animation::wobble() {
+	_vm->_graphics->saveScreen();
+
+	for (int i = 0; i < 26; i++) {
+		_vm->_graphics->shiftScreen();
+		_vm->_graphics->refreshScreen();
+		_vm->_system->delayMillis(i * 7);
+
+		_vm->_graphics->restoreScreen();
+		_vm->_system->delayMillis(i * 7);
+	}
+
+	_vm->_graphics->restoreScreen();
+	_vm->_graphics->removeBackup();
+}
+
 void Animation::setDirection(Direction dir) {
 	_direction = dir;
 }

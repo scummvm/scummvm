@@ -236,7 +236,7 @@ CEActionsPocket::~CEActionsPocket() {
 bool CEActionsPocket::perform(GUI::ActionType action, bool pushed) {
 	static bool keydialogrunning = false, quitdialog = false;
 
-	_graphicsMan = ((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager());
+	_graphicsMan = dynamic_cast<WINCESdlGraphicsManager *>(((OSystem_SDL *)g_system)->getGraphicsManager());
 
 	if (!pushed) {
 		switch (action) {

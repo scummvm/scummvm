@@ -56,7 +56,26 @@ Menu::Menu(MortevielleEngine *vm) {
 	_opcodePlace = _opcodeOpen = _opcodeTake = _opcodeLook = OPCODE_NONE;
 	_opcodeSmell = _opcodeSound = _opcodeLeave = _opcodeLift = OPCODE_NONE;
 	_opcodeTurn = _opcodeSHide = _opcodeSSearch = _opcodeSRead = OPCODE_NONE;
-	_opcodeSPut = _opcodeSLook = OPCODE_NONE;
+	_opcodeSPut = _opcodeSLook = _msg3 = _msg4 = OPCODE_NONE;
+
+	_menuActive = false;
+	_menuSelected = false;
+	_multiTitle = false;
+	_menuDisplayed = false;
+	for (int i = 0; i < 9; i++) {
+		_discussMenu[i]._menuId = MENU_NONE;
+		_discussMenu[i]._actionId = 0;
+		_inventoryMenu[i]._menuId = MENU_NONE;
+		_inventoryMenu[i]._actionId = 0;
+	}
+	for (int i = 0; i < 8; i++) {
+		_moveMenu[i]._menuId = MENU_NONE;
+		_moveMenu[i]._actionId = 0;
+	}
+	for (int i = 0; i < 12; i++) {
+		_actionMenu[i]._menuId = MENU_NONE;
+		_actionMenu[i]._actionId = 0;
+	}
 }
 
 void Menu::readVerbNums(Common::File &f, int dataSize) {

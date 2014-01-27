@@ -203,13 +203,13 @@ void CharacterDialog::show() {
 	GfxButton *btn = NULL;
 	int oldCharacter = R2_GLOBALS._player._characterIndex;
 	switch (oldCharacter) {
-	case 1:
+	case R2_QUINN:
 		btn = &dlg->_btnQuinn;
 		break;
-	case 2:
+	case R2_SEEKER:
 		btn = &dlg->_btnSeeker;
 		break;
-	case 3:
+	case R2_MIRANDA:
 		btn = &dlg->_btnMiranda;
 		break;
 	default:
@@ -384,6 +384,8 @@ void HelpDialog::show() {
 	// If a action button was selected, dispatch to handle it
 	if (evt.kbd.keycode != Common::KEYCODE_INVALID)
 		R2_GLOBALS._game->processEvent(evt);
+	else
+		R2_GLOBALS._events.setCursorFromFlag();
 }
 
 HelpDialog::HelpDialog() {

@@ -148,7 +148,17 @@ void ScummEngine::requestLoad(int slot) {
 	_saveLoadFlag = 2;		// 2 for load
 }
 
-static bool saveSaveGameHeader(Common::OutSaveFile *out, SaveGameHeader &hdr) {
+Common::SeekableReadStream *ScummEngine::openSaveFileForReading(int slot, bool compat, Common::String &fileName) {
+	fileName = makeSavegameName(slot, compat);
+	return _saveFileMan->openForLoading(fileName);
+}
+
+Common::WriteStream *ScummEngine::openSaveFileForWriting(int slot, bool compat, Common::String &fileName) {
+	fileName = makeSavegameName(slot, compat);
+	return _saveFileMan->openForSaving(fileName);
+}
+
+static bool saveSaveGameHeader(Common::WriteStream *out, SaveGameHeader &hdr) {
 	hdr.type = MKTAG('S','C','V','M');
 	hdr.size = 0;
 	hdr.ver = CURRENT_VER;
@@ -160,7 +170,7 @@ static bool saveSaveGameHeader(Common::OutSaveFile *out, SaveGameHeader &hdr) {
 	return true;
 }
 
-bool ScummEngine::saveState(Common::OutSaveFile *out, bool writeHeader) {
+bool ScummEngine::saveState(Common::WriteStream *out, bool writeHeader) {
 	SaveGameHeader hdr;
 
 	if (writeHeader) {
@@ -177,20 +187,13 @@ bool ScummEngine::saveState(Common::OutSaveFile *out, bool writeHeader) {
 	return true;
 }
 
-bool ScummEngine::saveState(int slot, bool compat) {
+bool ScummEngine::saveState(int slot, bool compat, Common::String &filename) {
 	bool saveFailed;
-	Common::String filename;
-	Common::OutSaveFile *out;
 
 	pauseEngine(true);
 
-	if (_saveLoadSlot == 255) {
-		// Allow custom filenames for save game system in HE Games
-		filename = _saveLoadFileName;
-	} else {
-		filename = makeSavegameName(slot, compat);
-	}
-	if (!(out = _saveFileMan->openForSaving(filename)))
+	Common::WriteStream *out = openSaveFileForWriting(slot, compat, filename);
+	if (!out)
 		return false;
 
 	saveFailed = false;
@@ -307,18 +310,17 @@ static bool loadSaveGameHeader(Common::SeekableReadStream *in, SaveGameHeader &h
 }
 
 bool ScummEngine::loadState(int slot, bool compat) {
+	// Wrapper around the other variant
 	Common::String filename;
-	Common::SeekableReadStream *in;
+	return loadState(slot, compat, filename);
+}
+
+bool ScummEngine::loadState(int slot, bool compat, Common::String &filename) {
 	SaveGameHeader hdr;
 	int sb, sh;
 
-	if (_saveLoadSlot == 255) {
-		// Allow custom filenames for save game system in HE Games
-		filename = _saveLoadFileName;
-	} else {
-		filename = makeSavegameName(slot, compat);
-	}
-	if (!(in = _saveFileMan->openForLoading(filename)))
+	Common::SeekableReadStream *in = openSaveFileForReading(slot, compat, filename);
+	if (!in)
 		return false;
 
 	if (!loadSaveGameHeader(in, hdr)) {

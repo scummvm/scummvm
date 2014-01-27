@@ -72,7 +72,7 @@ void scene14_initScene(Scene *sc) {
 	}
 
 	g_fp->lift_setButton(sO_Level4, ST_LBN_4N);
-	g_fp->lift_sub5(sc, QU_SC14_ENTERLIFT, QU_SC14_EXITLIFT);
+	g_fp->lift_init(sc, QU_SC14_ENTERLIFT, QU_SC14_EXITLIFT);
 
 	g_fp->initArcadeKeys("SC_14");
 	g_fp->setArcadeOverlay(PIC_CSR_ARCADE6);
@@ -665,7 +665,7 @@ int sceneHandler14(ExCommand *cmd) {
 		break;
 
 	case MSG_LIFT_CLICKBUTTON:
-		g_fp->lift_animation3();
+		g_fp->lift_clickButton();
 		break;
 
 	case MSG_SC14_SHOWBALLGMAHIT:

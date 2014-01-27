@@ -73,6 +73,8 @@ SoundManager::SoundManager(MortevielleEngine *vm, Audio::Mixer *mixer) {
 		_queue[i]._rep = 0;
 	}
 	_buildingSentence = false;
+	_ptr_oct = 0;
+	_cfiphBuffer = nullptr;
 }
 
 SoundManager::~SoundManager() {

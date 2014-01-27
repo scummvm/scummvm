@@ -199,4 +199,8 @@ void FullpipeEngine::stopAllSoundInstances(int id) {
 	}
 }
 
+void FullpipeEngine::updateSoundVolume() {
+	debug(3, "STUB FullpipeEngine::updateSoundVolume()");
+}
+
 } // End of namespace Fullpipe

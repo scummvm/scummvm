@@ -835,14 +835,6 @@ TinselEngine::TinselEngine(OSystem *syst, const TinselGameDescription *gameDesc)
 	// Setup mixer
 	syncSoundSettings();
 
-	// Add DW2 subfolder to search path in case user is running directly from the CDs
-	const Common::FSNode gameDataDir(ConfMan.get("path"));
-	SearchMan.addSubDirectoryMatching(gameDataDir, "dw2");
-
-	// Add subfolders needed for psx versions of Discworld 1
-	if (TinselV1PSX)
-		SearchMan.addDirectory(gameDataDir.getPath(), gameDataDir, 0, 3, true);
-
 	const GameSettings *g;
 
 	const char *gameid = ConfMan.get("gameid").c_str();
@@ -890,6 +882,17 @@ TinselEngine::~TinselEngine() {
 
 Common::String TinselEngine::getSavegameFilename(int16 saveNum) const {
 	return Common::String::format("%s.%03d", getTargetName().c_str(), saveNum);
+}
+
+void TinselEngine::initializePath(const Common::FSNode &gamePath) {
+	if (TinselV1PSX) {
+		// Add subfolders needed for psx versions of Discworld 1
+		SearchMan.addDirectory(gamePath.getPath(), gamePath, 0, 3, true);
+	} else {
+		// Add DW2 subfolder to search path in case user is running directly from the CDs
+		SearchMan.addSubDirectoryMatching(gamePath, "dw2");
+		Engine::initializePath(gamePath);
+	}
 }
 
 Common::Error TinselEngine::run() {

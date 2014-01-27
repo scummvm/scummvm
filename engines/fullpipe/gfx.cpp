@@ -1295,4 +1295,8 @@ DynamicPhase *Shadows::findSize(int width, int height) {
 	return _items[idx].dynPhase;
 }
 
+void FullpipeEngine::drawAlphaRectangle(int x1, int y1, int x2, int y2, int alpha) {
+	warning("STUB: FullpipeEngine::drawAlphaRectangle()");
+}
+
 } // End of namespace Fullpipe

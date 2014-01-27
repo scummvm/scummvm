@@ -299,7 +299,7 @@ void TextHandler::taffich() {
 	if ((a < COAT_ARMS) && ((_vm->_maff < COAT_ARMS) || (_vm->_coreVar._currPlace == LANDING)) && (_vm->_currAction != _vm->_menu->_opcodeEnter)) {
 		if ((a == ATTIC) || (a == CELLAR))
 			_vm->displayAloneText();
-		else if (!_vm->_blo)
+		else if (!_vm->_outsideOnlyFl)
 			_vm->getPresence(_vm->_coreVar._currPlace);
 		_vm->_savedBitIndex =  0;
 	}

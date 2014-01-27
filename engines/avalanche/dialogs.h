@@ -70,6 +70,9 @@ private:
 		kFontStyleItalic
 	};
 
+	typedef int8 TuneType[31];
+
+	static const TuneType kTune;
 	static const int16 kHalfIconWidth = 19;
 	static const QuasipedType kQuasipeds[16];
 

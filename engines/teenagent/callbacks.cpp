@@ -2386,6 +2386,10 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		fnEgoDefaultPosition();
 		break;
 
+	case 0x5634:
+		displayMessage(dsAddr_pullObjMsg2); // "I can't reach it"
+		break;
+
 	case 0x563b:
 		playSound(5, 10);
 		setOns(1, 0);
@@ -3324,6 +3328,10 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 		inventory->remove(kInvItemGrapplingHook);
 		fnMansionIntrusionAttempt();
+		break;
+
+	case 0x830b:
+		displayMessage(dsAddr_noChainsawFuelMsg); // "There's no fuel in the chainsaw"
 		break;
 
 	case 0x8312: // hedgehog + plastic apple

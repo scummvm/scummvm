@@ -1144,7 +1144,7 @@ void Parser::swallow() {
 				return;
 			}
 			_vm->_dialogs->displayScrollChain('U', 1);
-			_vm->_pingo->wobble();
+			_vm->_animation->wobble();
 			_vm->_dialogs->displayScrollChain('U', 2);
 			_vm->_objects[kObjectWine - 1] = false;
 			_vm->refreshObjectList();
@@ -1694,6 +1694,11 @@ void Parser::doThat() {
 		// "Slip" object
 		_thing -= 49;
 
+	if (_vm->_tiedUp) {
+		_vm->_dialogs->displayText("You better stay quiet now!");
+		return;
+	}
+
 	if ((_verb != kVerbCodeLoad) && (_verb != kVerbCodeSave) && (_verb != kVerbCodeQuit) && (_verb != kVerbCodeInfo) && (_verb != kVerbCodeHelp)
 	&& (_verb != kVerbCodeLarrypass) && (_verb != kVerbCodePhaon) && (_verb != kVerbCodeBoss) && (_verb != kVerbCodeCheat) && (_verb != kVerbCodeRestart)
 	&& (_verb != kVerbCodeDir) && (_verb != kVerbCodeScore) && (_verb != kVerbCodeHiscores) && (_verb != kVerbCodeSmartAlec)) {
@@ -1702,7 +1707,7 @@ void Parser::doThat() {
 				"Try restarting, or restoring a saved game!");
 			return;
 		}
-		if (!_vm->_avvyIsAwake  && (_verb != kVerbCodeDie) && (_verb != kVerbCodeExpletive) && (_verb != kVerbCodeWake)) {
+		if (!_vm->_avvyIsAwake && (_verb != kVerbCodeWake)) {
 			_vm->_dialogs->displayText("Talking in your sleep? Try waking up!");
 			return;
 		}
@@ -2108,7 +2113,7 @@ void Parser::doThat() {
 			}
 			break;
 		default: {
-			_vm->_pingo->zonk();
+			_vm->_animation->thunder();
 			Common::String tmpStr = Common::String::format("A crack of lightning shoots from the sky, and fries you." \
 				"%c%c(`Such is the anger of the gods, Avvy!\")", kControlNewLine, kControlNewLine);
 			_vm->_dialogs->displayText(tmpStr);

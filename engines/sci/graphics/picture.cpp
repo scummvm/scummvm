@@ -283,8 +283,6 @@ void GfxPicture::drawCelData(byte *inbuffer, int size, int headerPos, int rlePos
 	//  That needs to be done cause a mirrored picture may be requested
 	pixelCount = width * height;
 	celBitmap = new byte[pixelCount];
-	if (!celBitmap)
-		error("Unable to allocate temporary memory for picture drawing");
 
 	if (g_sci->getPlatform() == Common::kPlatformMacintosh && getSciVersion() >= SCI_VERSION_2) {
 		// See GfxView::unpackCel() for why this black/white swap is done

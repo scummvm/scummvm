@@ -531,7 +531,7 @@ void scene06_initScene(Scene *sc) {
 		g_vars->scene06_mumsy->hide();
 
 	g_fp->lift_setButton(sO_Level3, ST_LBN_3N);
-	g_fp->lift_sub5(sc, QU_SC6_ENTERLIFT, QU_SC6_EXITLIFT);
+	g_fp->lift_init(sc, QU_SC6_ENTERLIFT, QU_SC6_EXITLIFT);
 	g_fp->initArcadeKeys("SC_6");
 
 	sceneHandler06_setExits(sc);
@@ -590,7 +590,7 @@ int sceneHandler06(ExCommand *ex) {
 		break;
 
 	case MSG_LIFT_CLICKBUTTON:
-		g_fp->lift_animation3();
+		g_fp->lift_clickButton();
 		break;
 
 	case MSG_SPINHANDLE:

@@ -43,15 +43,12 @@ public:
 	void copy02();
 	void copy03();
 	void copyPage(byte frp, byte top);
-	void wobble();
-	void zonk();
 	void winningPic();
 
 private:
 	AvalancheEngine *_vm;
 
 	void dPlot(int16 x, int16 y, Common::String z);
-	void zl(int16 x1, int16 y1, int16 x2, int16 y2);
 };
 
 } // End of namespace Avalanche.

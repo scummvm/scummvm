@@ -161,6 +161,7 @@ class TinselEngine : public Engine {
 protected:
 
 	// Engine APIs
+	virtual void initializePath(const Common::FSNode &gamePath);
 	virtual Common::Error run();
 	virtual bool hasFeature(EngineFeature f) const;
 	Common::Error loadGameState(int slot);
