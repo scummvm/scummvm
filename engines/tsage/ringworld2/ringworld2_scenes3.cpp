@@ -4469,7 +4469,7 @@ void Scene3600::postInit(SceneObjectList *OwnerList) {
 	_quinn.changeZoom(-1);
 	_quinn._effect = EFFECT_SHADED;
 
-	if (R2_GLOBALS._player._characterIndex != 1)
+	if (R2_GLOBALS._player._characterIndex != R2_QUINN)
 		_quinn.setDetails(9001, 0, -1, -1, 1, (SceneItem *) NULL);
 
 	_seeker.postInit();
@@ -4478,7 +4478,7 @@ void Scene3600::postInit(SceneObjectList *OwnerList) {
 	_seeker.changeZoom(-1);
 	_seeker._effect = EFFECT_SHADED;
 
-	if (R2_GLOBALS._player._characterIndex != 2)
+	if (R2_GLOBALS._player._characterIndex != R2_SEEKER)
 		_seeker.setDetails(9002, 1, -1, -1, 1, (SceneItem *) NULL);
 
 	_miranda.postInit();
@@ -4486,7 +4486,7 @@ void Scene3600::postInit(SceneObjectList *OwnerList) {
 	_miranda.changeZoom(-1);
 	_miranda._effect = EFFECT_SHADED;
 
-	if (R2_GLOBALS._player._characterIndex != 3)
+	if (R2_GLOBALS._player._characterIndex != R2_MIRANDA)
 		_miranda.setDetails(9003, 1, -1, -1, 1, (SceneItem *) NULL);
 
 	R2_GLOBALS._player.postInit();
