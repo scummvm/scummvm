@@ -243,7 +243,9 @@ void FullpipeEngine::lift_sub1(StaticANIObject *ani) {
 }
 
 void FullpipeEngine::lift_startExitQueue() {
-	warning("STUB: FullpipeEngine::lift_startExitQueue()");
+	MessageQueue *mq = new MessageQueue(_liftExitMQ, 0, 0);
+
+	mq->chain(0);
 }
 
 void FullpipeEngine::lift_sub05(ExCommand *ex) {
