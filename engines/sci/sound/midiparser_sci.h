@@ -89,7 +89,7 @@ public:
 
 protected:
 	void parseNextEvent(EventInfo &info);
-	void processEvent(const EventInfo &info, bool fireEvents = true);
+	bool processEvent(const EventInfo &info, bool fireEvents = true);
 	byte *midiMixChannels();
 	byte *midiFilterChannels(int channelMask);
 	byte midiGetNextChannel(long ticker);
