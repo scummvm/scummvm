@@ -25,7 +25,7 @@
 
 namespace Bbvs {
 
-#define DEBUG_DUMP
+//#define DEBUG_DUMP
 
 GameModule::GameModule()
 	: _bgSpriteCount(0), _bgSpriteIndices(0), _bgSpritePriorities(0), _walkRectsCount(0),
