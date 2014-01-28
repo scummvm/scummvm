@@ -95,7 +95,7 @@ static const byte kTurnTbl[] = {
 
 static const int kAfterVideoSceneNum[] = {
 	 0, 43, 23, 12,  4, 44,  2,
-	16,  4,  4,  4, 44, 12, 32
+	16,  4,  4,  4, 44, 12, 44
 };
 
 const int kMainMenu = 44;
@@ -164,10 +164,10 @@ Common::Error BbvsEngine::run() {
 	_currInventoryItem = -1;
 	_currTalkObjectIndex = -1;
 	_currSceneNum = 0;
-	//_newSceneNum = 31;
+	_newSceneNum = 31;
 
 	//_newSceneNum = 23; // Class room
-	_newSceneNum = kMainMenu; // Main menu (TODO Buttons etc.)
+	//_newSceneNum = kMainMenu; // Main menu (TODO Buttons etc.)
 	//_newSceneNum = 25;// Tank and crash
 	//_newSceneNum = 7;
 	//_newSceneNum = 12;
