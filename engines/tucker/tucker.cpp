@@ -3682,7 +3682,8 @@ void TuckerEngine::setActionForInventoryObject() {
 		_actionRequiresTwoObjects = false;
 		return;
 	}
-	if ((_partNum == 3 && (_actionObj1Num == 6 || _actionObj1Num == 3 || _actionObj1Num == 17)) ||
+	// Items with unary usage i.e. "Use X", rather than "Use X on Y"
+	if ((_partNum == 3 && (_actionObj1Num == 6 || _actionObj1Num == 3 || _actionObj1Num == 17 || _actionObj1Num == 33)) ||
 		(_partNum == 2 && _actionObj1Num == 19) ||
 		(_partNum == 3 && (_actionObj1Num == 42 && _selectedObjectNum == 18)) ) {
 		_actionVerbLocked = 0;
