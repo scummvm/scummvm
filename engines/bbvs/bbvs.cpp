@@ -183,9 +183,8 @@ Common::Error BbvsEngine::run() {
 		else if (_currSceneNum == kMainMenu)
 			runMainMenu();
 		else if (_currSceneNum == kCredits &&
-			(_mouseButtons & (kLeftButtonClicked | kRightButtonClicked))) {
-			_mouseButtons &= ~kLeftButtonClicked;
-			_mouseButtons &= ~kRightButtonClicked;
+			(_mouseButtons & kAnyButtonClicked)) {
+			_mouseButtons &= ~kAnyButtonClicked;
 			_newSceneNum = kMainMenu;
 		}
 		if (_playVideoNumber > 0) {
@@ -2042,8 +2041,6 @@ void BbvsEngine::walkFoundPath(int count) {
 
 	Common::Point destPt = _destWalkAreaPt, newDestPt;
 	
-	// TODO This needs some cleanup but seems to work
-
 	while (1) {
 
 		int index = 0;
