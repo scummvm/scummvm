@@ -41,6 +41,8 @@ namespace Fullpipe {
 #define MV_FLY_FLY 4917
 #define MV_MAN_GOLADDER 451
 #define MV_MAN_GOLADDER2 2844
+#define MV_MAN_LIFTDOWN 1052
+#define MV_MAN_LIFTUP 1051
 #define MV_MAN_LOOKUP 4773
 #define rMV_MAN_LOOKUP 4775
 #define MV_MAN_TOLADDER 448

@@ -29,6 +29,7 @@
 #include "fullpipe/scene.h"
 #include "fullpipe/statics.h"
 #include "fullpipe/messages.h"
+#include "fullpipe/gameloader.h"
 
 namespace Fullpipe {
 
@@ -234,8 +235,52 @@ void FullpipeEngine::lift_clickButton() {
 		lift_walkAndGo();
 }
 
-void FullpipeEngine::lift_goAnimation() {
-	warning("STUB: FullpipeEngine::lift_goAnimation()");
+void FullpipeEngine::lift_goAnimation() {	if (_lastLiftButton) {
+		int parentId = _currentScene->_sceneId;
+		int buttonId = lift_getButtonIdN(_lastLiftButton->_statics->_staticsId);
+
+		if (!buttonId)
+			return;
+
+		int numItems = _gameLoader->_preloadItems.size();
+
+		for (int i = 0; i < numItems; i++) {
+			PreloadItem *pre = _gameLoader->_preloadItems[i];
+
+			if (pre->preloadId2 == buttonId && pre->preloadId1 == _currentScene->_sceneId) {
+				MessageQueue *mq = new MessageQueue(_globalMessageQueueList->compact());
+
+				ExCommand *ex = new ExCommand(ANI_MAN, 1, (pre->keyCode != LiftDown ? MV_MAN_LIFTDOWN : MV_MAN_LIFTUP), 0, 0, 0, 1, 0, 0, 0);
+
+				ex->_keyCode = -1;
+				ex->_field_24 = 1;
+				ex->_excFlags |= 2;
+
+				mq->addExCommandToEnd(ex);
+
+				ex = new ExCommand(parentId, 17, 61, 0, 0, 0, 1, 0, 0, 0);
+
+				ex->_keyCode = buttonId;
+				ex->_excFlags |= 3;
+
+				mq->addExCommandToEnd(ex);
+
+				_aniMan->_flags &= 0xFEFF;
+
+				if (!mq->chain(_aniMan))
+					delete mq;
+
+				_aniMan->_flags |= 1;
+			}
+		}
+	}
+
+	lift_exitSeq(0);
+
+	if (_lastLiftButton) {
+		_lastLiftButton->_statics = _lastLiftButton->getStaticsById(lift_getButtonIdN(_lastLiftButton->_statics->_staticsId));
+		_lastLiftButton = 0;
+	}
 }
 
 void FullpipeEngine::lift_sub1(StaticANIObject *ani) {
