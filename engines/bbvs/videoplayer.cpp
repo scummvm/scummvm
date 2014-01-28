@@ -32,7 +32,7 @@ void BbvsEngine::playVideo(int videoNum) {
 	Common::String videoFilename;
 
 	if (videoNum >= 100)
-		videoFilename = Common::String::format("snd/snd%05d.avi", videoNum + 1400);
+		videoFilename = Common::String::format("snd/snd%05d.aif", videoNum + 1400);
 	else
 		videoFilename = Common::String::format("vid/video%03d.avi", videoNum - 1);
 

@@ -300,6 +300,8 @@ public:
 	byte *_snapshot;
 	Common::SeekableMemoryWriteStream *_snapshotStream;
 	
+	char _easterEggInput[7];
+	
 	void updateEvents();
 	int getRandom(int max);
 
@@ -366,6 +368,7 @@ public:
 	void playVideo(int videoNum);
 	
 	void runMainMenu();
+	void checkEasterEgg(char key);
 
 	// Savegame API
 

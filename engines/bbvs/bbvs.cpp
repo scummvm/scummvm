@@ -94,13 +94,12 @@ static const byte kTurnTbl[] = {
 };
 
 static const int kAfterVideoSceneNum[] = {
-//	 0, 43, 23, 12,  4, 44,  2,
-//	16,  4,  4,  4, 44, 12, 44
 	 0, 43, 23, 12,  4, 44,  2,
 	16,  4,  4,  4, 44, 12, 32
 };
 
 const int kMainMenu = 44;
+const int kCredits	= 45;
 
 bool WalkArea::contains(const Common::Point &pt) const {
 	return Common::Rect(x, y, x + width, y + height).contains(pt);
@@ -147,6 +146,7 @@ Common::Error BbvsEngine::run() {
 	_sound = new SoundMan();
 	
 	allocSnapshot();
+	memset(_easterEggInput, 0, sizeof(_easterEggInput));
 	
 	_gameTicks = 0;
 	_playVideoNumber = 0;
@@ -181,6 +181,12 @@ Common::Error BbvsEngine::run() {
 			updateGame();
 		else if (_currSceneNum == kMainMenu)
 			runMainMenu();
+		else if (_currSceneNum == kCredits &&
+			(_mouseButtons & (kLeftButtonClicked | kRightButtonClicked))) {
+			_mouseButtons &= ~kLeftButtonClicked;
+			_mouseButtons &= ~kRightButtonClicked;
+			_newSceneNum = kMainMenu;
+		}
 		if (_playVideoNumber > 0) {
 			playVideo(_playVideoNumber);
 			_playVideoNumber = 0;
@@ -217,6 +223,7 @@ void BbvsEngine::updateEvents() {
 			_keyCode = event.kbd.keycode;
 			break;
 		case Common::EVENT_KEYUP:
+			checkEasterEgg(event.kbd.ascii);
 			_keyCode = Common::KEYCODE_INVALID;
 			break;
 		case Common::EVENT_MOUSEMOVE:
@@ -702,7 +709,7 @@ void BbvsEngine::initScene(bool sounds) {
 bool BbvsEngine::changeScene() {
 
 	writeContinueSavegame();
-
+	
 	if (_newSceneNum >= 27 && _newSceneNum <= 30) {
 		// Run minigames
 		stopSpeech();
@@ -719,12 +726,12 @@ bool BbvsEngine::changeScene() {
 		_playVideoNumber = _newSceneNum - 30;
 		_currSceneNum = _newSceneNum;
 		_newSceneNum = kAfterVideoSceneNum[_playVideoNumber];
-	} else if (_newSceneNum >= 100 && _currSceneNum == 45) {
+	} else if (_newSceneNum >= 100 && _currSceneNum == kCredits) {
 		// Play secret video
 		stopSounds();
 		_playVideoNumber = _newSceneNum;
 		_currSceneNum = 49;
-		_newSceneNum = 45;
+		_newSceneNum = kCredits;
 	} else {
 		// Normal scene
 		initScene(true);
@@ -2193,6 +2200,33 @@ void BbvsEngine::runMainMenu() {
 	MainMenu *mainMenu = new MainMenu(this);
 	mainMenu->runModal();
 	delete mainMenu;
+}
+
+void BbvsEngine::checkEasterEgg(char key) {
+
+	static const char *kEasterEggStrings[] = {
+		"BOIDUTS",
+		"YNNIF",
+		"SKCUS",
+		"NAMTAH"
+	};
+	
+	static const int kEasterEggLengths[] = {
+		7, 5, 5, 6
+	};
+	
+	if (_currSceneNum == kCredits) {
+		memcpy(&_easterEggInput[1], &_easterEggInput[0], 6);
+		_easterEggInput[0] = key;
+		for (int i = 0; i < ARRAYSIZE(kEasterEggStrings); ++i) {
+			if (!scumm_strnicmp(kEasterEggStrings[i], _easterEggInput, kEasterEggLengths[i])) {
+				_easterEggInput[0] = 0;
+				_newSceneNum = 100 + i;
+				break;
+			}
+		}
+	}
+
 }
 
 } // End of namespace Bbvs
