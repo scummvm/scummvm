@@ -561,6 +561,7 @@ void VoyeurEngine::playAVideoDuration(int videoId, int duration) {
 	decoder.seek(Audio::Timestamp(_voy._vocSecondsOffset * 1000, decoder.getHeader().getFrameRate()));
 	int endFrame = decoder.getCurFrame() + totalFrames; 
 
+	_eventsManager.getMouseInfo();
 	while (!shouldQuit() && !decoder.endOfVideo() && !_eventsManager._mouseClicked &&
 			(decoder.getCurFrame() < endFrame)) {
 		if (decoder.needsUpdate()) {

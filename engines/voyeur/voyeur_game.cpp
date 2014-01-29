@@ -535,10 +535,10 @@ void VoyeurEngine::reviewTape() {
 					foundIndex = 999;
 				} else if (!_eventsManager._leftClick) {
 					_eventsManager.setCursorColor(128, 2);
-					foundIndex = 999;
+					foundIndex = -1;
 				} else {
 					_eventsManager.setCursorColor(128, 2);
-					eventLine = foundIndex;
+					eventLine =  foundIndex;
 
 					flipPageAndWait();
 
@@ -562,7 +562,7 @@ void VoyeurEngine::reviewTape() {
 						Common::String msg = _eventsManager.getEvidString(evtIndex);
 						_graphicsManager._backgroundPage->drawText(msg);
 
-						yp += 115;
+						yp += 15;
 						++evtIndex;
 					}
 
@@ -575,7 +575,7 @@ void VoyeurEngine::reviewTape() {
 					flipPageAndWait();
 
 					_eventsManager.getMouseInfo();
-					foundIndex = 999;
+					foundIndex = -1;
 				}
 			} else if ((_voy._field478 & 0x40) && _voy._viewBounds->left == pt.x &&
 					_voy._viewBounds->bottom == pt.y) {

@@ -436,7 +436,7 @@ void ThreadResource::parsePlayCommands() {
 					_vm->_videoId = -1;
 				} else {
 					_vm->_voy._vocSecondsOffset = _vm->_voy._RTVNum - _vm->_voy._field468;
-					_vm->_voy.addAudioEventStart();
+					_vm->_voy.addVideoEventStart();
 					_vm->_voy._field478 &= ~1;
 					_vm->_voy._field478 |= 0x10;
 					_vm->playAVideo(_vm->_videoId);
