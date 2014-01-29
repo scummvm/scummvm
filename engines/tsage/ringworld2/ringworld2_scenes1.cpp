@@ -7439,7 +7439,7 @@ void Scene1550::DishControlsWindow::setup2(int visage, int stripFrameNum, int fr
 	if (scene->_dish._frame == 1)
 		_lever.setup(1559, 2, 1);
 	else
-		_lever.setup(1559, 2, 2);
+		_lever.setup(1559, 2, 5);
 	_lever.setPosition(Common::Point(156, 103));
 	_lever.fixPriority(251);
 	_lever.setDetails(1550, 69, -1, -1, 2, (SceneItem *) NULL);
