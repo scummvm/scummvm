@@ -7773,7 +7773,7 @@ void Scene1550::signal() {
 		_dishControlsWindow.remove();
 		_sceneMode = 20;
 		setAction(&_sequenceManager1, this, 1566, &_dish, &_dishTowerShadow, NULL);
-		R2_GLOBALS.setFlag(21);
+		R2_GLOBALS.setFlag(19);
 		break;
 	case 24:
 		_dishControlsWindow.remove();
@@ -8699,7 +8699,7 @@ void Scene1550::enterArea() {
 				warning("missing for loop, to be implemented");
 				warning("gfx_draw_slice");
 			}
-			warning("Missing sub2957D()");
+			warning("gfx_flip_screen()");
 			warning("gfx_set_pane_p()");
 #endif
 			R2_GLOBALS._sceneManager._fadeMode = FADEMODE_IMMEDIATE;
