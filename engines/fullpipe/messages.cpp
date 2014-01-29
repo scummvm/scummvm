@@ -619,6 +619,12 @@ MessageQueue *GlobalMessageQueueList::getMessageQueueById(int id) {
 	return 0;
 }
 
+int MessageQueue::activateExCommandsByKind(int kind) {
+	warning("STUB: MessageQueue::activateExCommandsByKind()");
+
+	return 0;
+}
+
 void GlobalMessageQueueList::deleteQueueById(int id) {
 	for (uint i = 0; i < size(); i++)
 		if (_storage[i]->_id == id) {

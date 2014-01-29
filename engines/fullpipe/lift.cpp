@@ -218,8 +218,63 @@ void FullpipeEngine::lift_init(Scene *sc, int enterSeq, int exitSeq) {
 	}
 }
 
-void FullpipeEngine::lift_exitSeq(ExCommand *ex) {
-	warning("STUB: FullpipeEngine::lift_exitSeq()");
+void FullpipeEngine::lift_exitSeq(ExCommand *cmd) {
+	if (cmd)
+		_globalMessageQueueList->getMessageQueueById(cmd->_parId)->activateExCommandsByKind(34);
+
+	_lift->changeStatics2(ST_LFT_CLOSED);
+
+	MessageQueue *mq = new MessageQueue(_globalMessageQueueList->compact());
+
+	ExCommand *ex = new ExCommand(_aniMan->_id, 34, 256, 0, 0, 0, 1, 0, 0, 0);
+
+	ex->_field_14 = 256;
+	ex->_messageNum = 256;
+	ex->_excFlags |= 3;
+	mq->addExCommandToEnd(ex);
+
+	if (!ex) {
+		ex = new ExCommand(_aniMan->_id, 2, 40, 0, 0, 0, 1, 0, 0, 0);
+		ex->_keyCode = _aniMan->_okeyCode;
+		ex->_excFlags |= 2;
+		mq->addExCommandToEnd(ex);
+	}
+
+	ex = new ExCommand(_lift->_id, 1, MV_LFT_OPEN, 0, 0, 0, 1, 0, 0, 0);
+	ex->_keyCode = _lift->_okeyCode;
+	ex->_excFlags |= 2;
+	mq->addExCommandToEnd(ex);
+
+	ex = new ExCommand(_aniMan->_id, 1, MV_MAN_STARTD, 0, 0, 0, 1, 0, 0, 0);
+	ex->_keyCode = _aniMan->_okeyCode;
+	ex->_excFlags |= 2;
+	mq->addExCommandToEnd(ex);
+
+	ex = new ExCommand(_aniMan->_id, 5, -1, 0, 0, 0, 1, 0, 0, 0);
+	ex->_keyCode = _aniMan->_okeyCode;
+	ex->_field_14 = 10;
+	ex->_x = -1;
+	ex->_y = -1;
+	ex->_excFlags |= 3;
+	mq->addExCommandToEnd(ex);
+
+	ex = new ExCommand(_aniMan->_id, 34, 256, 0, 0, 0, 1, 0, 0, 0);
+	ex->_excFlags |= 3;
+	ex->_field_14 = 256;
+	ex->_messageNum = 0;
+	mq->addExCommandToEnd(ex);
+
+	ex = new ExCommand(0, 17, MSG_LIFT_STARTEXITQUEUE, 0, 0, 0, 1, 0, 0, 0);
+	ex->_excFlags |= 3;
+	mq->addExCommandToEnd(ex);
+
+	ex = new ExCommand(_lift->_id, 1, MV_LFT_CLOSE, 0, 0, 0, 1, 0, 0, 0);
+	ex->_keyCode = _lift->_okeyCode;
+	ex->_excFlags |= 2;
+
+	mq->addExCommandToEnd(ex);
+
+	mq->chain(0);
 }
 
 void FullpipeEngine::lift_closedoorSeq() {

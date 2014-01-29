@@ -39,6 +39,8 @@ namespace Fullpipe {
 #define MSG_MANSHADOWSOFF 5196
 #define MSG_MANSHADOWSON 5197
 #define MV_FLY_FLY 4917
+#define MV_LFT_CLOSE 1053
+#define MV_LFT_OPEN 1048
 #define MV_MAN_GOLADDER 451
 #define MV_MAN_GOLADDER2 2844
 #define MV_MAN_LIFTDOWN 1052
@@ -47,6 +49,7 @@ namespace Fullpipe {
 #define rMV_MAN_LOOKUP 4775
 #define MV_MAN_TOLADDER 448
 #define MV_MAN_TOLADDER2 2841
+#define MV_MAN_STARTD 478
 #define MV_MAN_STARTLADDER 452
 #define MV_MAN_STARTLADDER2 2842
 #define MV_MAN_STOPLADDER 454
@@ -251,6 +254,7 @@ namespace Fullpipe {
 #define ST_LBN_7P 2772
 #define ST_LBN_8P 2775
 #define ST_LBN_9P 2778
+#define ST_LFT_CLOSED 1049
 #define ST_MAN_EMPTY 476
 #define ST_MAN_GOU 459
 #define ST_MAN_RIGHT 325
