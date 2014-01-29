@@ -437,6 +437,10 @@ void EditGameDialog::open() {
 			sel = i + 2;
 	}
 	_platformPopUp->setSelected(sel);
+
+	// ResidualVM: disable platform selection
+	_platformPopUp->setEnabled(false);
+	_platformPopUpDesc->setEnabled(false);
 }
 
 

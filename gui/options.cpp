@@ -1142,6 +1142,7 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 
 	// TODO: cd drive setting
 
+#if 0 // ResidualVM does not use it
 	//
 	// 3) The MIDI tab
 	//
@@ -1153,6 +1154,7 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 	//
 	tab->addTab(_("MT-32"));
 	addMT32Controls(tab, "GlobalOptions_MT32.");
+#endif
 
 	//
 	// 5) The Paths tab
@@ -1535,15 +1537,17 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 void GlobalOptionsDialog::reflowLayout() {
 	int activeTab = _tabWidget->getActiveTab();
 
+#if 0 // ResidualVM does not use it
 	if (_midiTabId != -1) {
 		_tabWidget->setActiveTab(_midiTabId);
-#if 0 // Residual do not use it
+
 		_tabWidget->removeWidget(_soundFontClearButton);
 		_soundFontClearButton->setNext(0);
 		delete _soundFontClearButton;
 		_soundFontClearButton = addClearButton(_tabWidget, "GlobalOptions_MIDI.mcFontClearButton", kClearSoundFontCmd);
-#endif
+
 	}
+#endif
 
 	if (_pathsTabId != -1) {
 		_tabWidget->setActiveTab(_pathsTabId);
