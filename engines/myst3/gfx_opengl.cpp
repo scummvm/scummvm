@@ -27,6 +27,7 @@
 #endif
 
 #include "engines/myst3/gfx.h"
+#include "engines/myst3/gfx_opengl_texture.h"
 
 #include "common/rect.h"
 #include "common/textconsole.h"
@@ -38,87 +39,7 @@
 
 #include "math/vector2d.h"
 
-#ifdef SDL_BACKEND
-#include <SDL_opengl.h>
-#else
-#include <GL/gl.h>
-#include <GL/glu.h>
-#endif
-
 namespace Myst3 {
-
-class OpenGLTexture : public Texture {
-public:
-	OpenGLTexture(const Graphics::Surface *surface, bool nonPoTSupport);
-	virtual ~OpenGLTexture();
-
-	void update(const Graphics::Surface *surface);
-
-	GLuint id;
-	GLuint internalFormat;
-	GLuint sourceFormat;
-	uint32 internalWidth;
-	uint32 internalHeight;
-};
-
-// From Bit Twiddling Hacks
-static uint32 upperPowerOfTwo(uint32 v)
-{
-    v--;
-    v |= v >> 1;
-    v |= v >> 2;
-    v |= v >> 4;
-    v |= v >> 8;
-    v |= v >> 16;
-    v++;
-    return v;
-}
-
-OpenGLTexture::OpenGLTexture(const Graphics::Surface *surface, bool nonPoTSupport) {
-	width = surface->w;
-	height = surface->h;
-	format = surface->format;
-
-	// Pad the textures if non power of two support is unavailable
-	if (nonPoTSupport) {
-		internalHeight = height;
-		internalWidth = width;
-	} else {
-		internalHeight = upperPowerOfTwo(height);
-		internalWidth = upperPowerOfTwo(width);
-	}
-
-	if (format.bytesPerPixel == 4) {
-		internalFormat = GL_RGBA;
-		sourceFormat = GL_UNSIGNED_BYTE;
-	} else if (format.bytesPerPixel == 2) {
-		internalFormat = GL_RGB;
-		sourceFormat = GL_UNSIGNED_SHORT_5_6_5;
-	} else
-		error("Unknown pixel format");
-
-	glGenTextures(1, &id);
-	glBindTexture(GL_TEXTURE_2D, id);
-	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, internalWidth, internalHeight, 0, internalFormat, sourceFormat, 0);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	// TODO: If non power of two textures are unavailable this clamping
-	// has no effect on the padded sides (resulting in white lines on the edges)
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-	update(surface);
-}
-
-OpenGLTexture::~OpenGLTexture() {
-	glDeleteTextures(1, &id);
-}
-
-void OpenGLTexture::update(const Graphics::Surface *surface) {
-	glBindTexture(GL_TEXTURE_2D, id);
-	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, surface->w, surface->h, internalFormat, sourceFormat, surface->getPixels());
-}
 
 Renderer::Renderer(OSystem *system) :
 	_system(system),
