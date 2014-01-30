@@ -818,7 +818,7 @@ void Animation::callSpecial(uint16 which) {
 		_vm->fadeOut();
 		_sprites[0]->turn(kDirRight); // you'll see this after we get back from bootstrap
 		_vm->_timer->addTimer(1, Timer::kProcGhostRoomPhew, Timer::kReasonGhostRoomPhew);
-		//_vm->_enid->backToBootstrap(3); TODO: Replace it with proper ScummVM-friendly function(s)!  Do not remove until then!
+		_vm->_ghostroom->run();
 		break;
 	case 5:
 		if (_vm->_friarWillTieYouUp) {
