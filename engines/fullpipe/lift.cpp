@@ -352,8 +352,11 @@ void FullpipeEngine::lift_sub05(ExCommand *ex) {
 	warning("STUB: FullpipeEngine::lift_sub05()");
 }
 
-bool FullpipeEngine::lift_checkButton(const char *varname) {
-	warning("STUB: FullpipeEngine::lift_checkButton(%s)", varname);
+bool FullpipeEngine::lift_checkButton(const char *varName) {
+	GameVar *var = g_fp->getGameLoaderGameVar()->getSubVarByName("OBJSTATES")->getSubVarByName(sO_LiftButtons);
+
+	if (var)
+		return lift_getButtonIdP(var->getSubVarByName(varName)->_value.intValue) > 0;
 
 	return false;
 }
