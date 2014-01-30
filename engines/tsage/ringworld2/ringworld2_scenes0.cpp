@@ -3486,7 +3486,7 @@ void Scene300::postInit(SceneObjectList *OwnerList) {
 						R2_GLOBALS.clearFlag(60);
 						R2_GLOBALS._events.setCursor(CURSOR_ARROW);
 						_sceneMode = 16;
-						_stripManager.start(404, this);
+						_stripManager.start3(404, this, R2_GLOBALS._stripManager_lookupList);
 					} else {
 						R2_GLOBALS._player.enableControl();
 						R2_GLOBALS._player._canWalk = false;
