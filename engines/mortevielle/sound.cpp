@@ -55,7 +55,8 @@ namespace Mortevielle {
 	const byte _tabdph[16] = {0, 10, 2, 0, 2, 10, 3, 0, 3, 7, 5, 0, 6, 7, 7, 10};
 	const byte _tabdbc[18] = {7, 23, 7, 14, 13, 9, 14, 9, 5, 12, 6, 12, 13, 4, 0, 4, 5, 9};
 
-SoundManager::SoundManager(Audio::Mixer *mixer) {
+SoundManager::SoundManager(MortevielleEngine *vm, Audio::Mixer *mixer) {
+	_vm = vm;
 	_mixer = mixer;
 	_audioStream = nullptr;
 	_ambiantNoiseBuf = nullptr;
@@ -72,6 +73,8 @@ SoundManager::SoundManager(Audio::Mixer *mixer) {
 		_queue[i]._rep = 0;
 	}
 	_buildingSentence = false;
+	_ptr_oct = 0;
+	_cfiphBuffer = nullptr;
 }
 
 SoundManager::~SoundManager() {
@@ -279,10 +282,6 @@ void SoundManager::playSong(const byte* buf, uint size, uint loops) {
 		;
 	// In case the handle is still active, stop it.
 	_mixer->stopHandle(songHandle);
-}
-
-void SoundManager::setParent(MortevielleEngine *vm) {
-	_vm = vm;
 }
 
 void SoundManager::spfrac(int wor) {

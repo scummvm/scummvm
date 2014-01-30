@@ -134,6 +134,19 @@ static Common::Error runGame(const EnginePlugin *plugin, OSystem &system, const 
 	Common::Error err = Common::kNoError;
 	Engine *engine = 0;
 
+#if defined(SDL_BACKEND) && defined(USE_OPENGL) && defined(USE_RGB_COLOR)
+	// HACK: We set up the requested graphics mode setting here to allow the
+	// backend to switch from Surface SDL to OpenGL if necessary. This is
+	// needed because otherwise the g_system->getSupportedFormats might return
+	// bad values.
+	g_system->beginGFXTransaction();
+		g_system->setGraphicsMode(ConfMan.get("gfx_mode").c_str());
+	if (g_system->endGFXTransaction() != OSystem::kTransactionSuccess) {
+		warning("Switching graphics mode to '%s' failed", ConfMan.get("gfx_mode").c_str());
+		return Common::kUnknownError;
+	}
+#endif
+
 	// Verify that the game path refers to an actual directory
 	if (!(dir.exists() && dir.isDirectory()))
 		err = Common::kPathNotDirectory;
@@ -184,7 +197,7 @@ static Common::Error runGame(const EnginePlugin *plugin, OSystem &system, const 
 	//
 
 	// Add the game path to the directory search list
-	SearchMan.addDirectory(dir.getPath(), dir, 0, 4);
+	engine->initializePath(dir);
 
 	// Add extrapath (if any) to the directory search list
 	if (ConfMan.hasKey("extrapath")) {

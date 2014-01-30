@@ -25,9 +25,6 @@
 #include "graphics/surface.h"
 #include "engines/wintermute/graphics/transform_struct.h"
 
-#define ENABLE_BILINEAR 0
-
-
 /*
  * This code is based on Broken Sword 2.5 engine
  *
@@ -53,31 +50,6 @@ struct TransparentSurface : public Graphics::Surface {
 	void setColorKey(char r, char g, char b);
 	void disableColorKey();
 
-#if ENABLE_BILINEAR
-	/*
-	 * Pick color from a point in source and copy it to a pixel in target.
-	 * The point in the source can be a float - we have subpixel accuracy in the arguments.
-	 * We do bilinear interpolation to estimate the color of the point even if the 
-	 * point is specuified w/subpixel accuracy.
-	 *
-	 * @param projX, projY, point in the source to pick color from.
-	 * @param dstX, dstY destionation pixel
-	 * @param *src, *dst pointer to the source and dest surfaces
-	 */
-	static void copyPixelBilinear(float projX, float projY, int dstX, int dstY, const Common::Rect &srcRect, const Common::Rect &dstRect, const TransparentSurface *src, TransparentSurface *dst);
-#else
-	/*
-	 * Pick color from a point in source and copy it to a pixel in target.
-	 * The point in the source can be a float - we have subpixel accuracy in the arguments.
-	 * HOWEVER, this particular function just does nearest neighbor.
-	 * Use copyPixelBilinear if you interpolation.
-	 *
-	 * @param projX, projY, point in the source to pick color from.
-	 * @param dstX, dstY destionation pixel
-	 * @param *src, *dst pointer to the source and dest surfaces
-	 */
-	static void copyPixelNearestNeighbor(float projX, float projY, int dstX, int dstY, const Common::Rect &srcRect, const Common::Rect &dstRect, const TransparentSurface *src, TransparentSurface *dst);
-#endif
 	// Enums
 	/**
 	 @brief The possible flipping parameters for the blit methode.
@@ -100,8 +72,6 @@ struct TransparentSurface : public Graphics::Surface {
 	    ALPHA_BINARY = 1,
 	    ALPHA_FULL = 2
 	};
-
-	AlphaType _alphaMode;
 
 	#ifdef SCUMM_LITTLE_ENDIAN
 	static const int kAIndex = 0;
@@ -129,32 +99,31 @@ struct TransparentSurface : public Graphics::Surface {
 
 	/**
 	 @brief renders the surface to another surface
-	 @param pDest a pointer to the target image. In most cases this is the framebuffer.
-	 @param PosX the position on the X-axis in the target image in pixels where the image is supposed to be rendered.<br>
+	 @param target a pointer to the target surface. In most cases this is the framebuffer.
+	 @param posX the position on the X-axis in the target image in pixels where the image is supposed to be rendered.<br>
 	 The default value is 0.
-	 @param PosY the position on the Y-axis in the target image in pixels where the image is supposed to be rendered.<br>
+	 @param posY the position on the Y-axis in the target image in pixels where the image is supposed to be rendered.<br>
 	 The default value is 0.
-	 @param Flipping how the the image should be flipped.<br>
+	 @param flipping how the the image should be flipped.<br>
 	 The default value is BS_Image::FLIP_NONE (no flipping)
-	 @param pSrcPartRect Pointer on Common::Rect which specifies the section to be rendered. If the whole image has to be rendered the Pointer is NULL.<br>
+	 @param pPartRect Pointer on Common::Rect which specifies the section to be rendered. If the whole image has to be rendered the Pointer is NULL.<br>
 	 This referes to the unflipped and unscaled image.<br>
 	 The default value is NULL.
-	 @param Color an ARGB color value, which determines the parameters for the color modulation und alpha blending.<br>
+	 @param color an ARGB color value, which determines the parameters for the color modulation und alpha blending.<br>
 	 The alpha component of the color determines the alpha blending parameter (0 = no covering, 255 = full covering).<br>
 	 The color components determines the color for color modulation.<br>
 	 The default value is BS_ARGB(255, 255, 255, 255) (full covering, no color modulation).
 	 The macros BS_RGB and BS_ARGB can be used for the creation of the color value.
-	 @param Width the output width of the screen section.
+	 @param width the output width of the screen section.
 	 The images will be scaled if the output width of the screen section differs from the image section.<br>
 	 The value -1 determines that the image should not be scaled.<br>
 	 The default value is -1.
-	 @param Width the output height of the screen section.
+	 @param height the output height of the screen section.
 	 The images will be scaled if the output width of the screen section differs from the image section.<br>
 	 The value -1 determines that the image should not be scaled.<br>
 	 The default value is -1.
 	 @return returns false if the rendering failed.
 	 */
-
 	Common::Rect blit(Graphics::Surface &target, int posX = 0, int posY = 0,
 	                  int flipping = FLIP_NONE,
 	                  Common::Rect *pPartRect = nullptr,
@@ -167,8 +136,9 @@ struct TransparentSurface : public Graphics::Surface {
 	 * @brief Scale function; this returns a transformed version of this surface after rotation and
 	 * scaling. Please do not use this if angle != 0, use rotoscale.
 	 *
-	 * @param transform a TransformStruct wrapping the required info. @see TransformStruct
-	 * 
+	 * @param newWidth the resulting width.
+	 * @param newHeight the resulting height. 
+	 * @see TransformStruct
 	 */
 	TransparentSurface *scale(uint16 newWidth, uint16 newHeight) const;
 
@@ -180,6 +150,11 @@ struct TransparentSurface : public Graphics::Surface {
 	 * 
 	 */
 	TransparentSurface *rotoscale(const TransformStruct &transform) const;
+	AlphaType getAlphaMode() const;
+	void setAlphaMode(AlphaType);
+private:
+	AlphaType _alphaMode;
+
 };
 
 /**

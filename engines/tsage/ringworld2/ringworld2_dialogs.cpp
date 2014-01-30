@@ -50,6 +50,7 @@ RightClickDialog::RightClickDialog() : GfxDialog() {
 	_btnList[5] = Common::Point(83, 47);
 
 	// Set the palette and change the cursor
+	_previousCursor = R2_GLOBALS._events.getCursor();
 	R2_GLOBALS._events.setCursor(CURSOR_ARROW);
 
 	setPalette();
@@ -136,7 +137,7 @@ bool RightClickDialog::process(Event &event) {
 	return false;
 }
 
-void RightClickDialog::execute() {
+int RightClickDialog::execute() {
 	// Draw the dialog
 	draw();
 
@@ -157,7 +158,8 @@ void RightClickDialog::execute() {
 	}
 
 	// Execute the specified action
-	CursorType cursorNum = CURSOR_NONE;
+	CursorType cursorNum = _previousCursor;
+	int result = -1;
 	switch (_selectedAction) {
 	case 0:
 		// Look action
@@ -165,7 +167,7 @@ void RightClickDialog::execute() {
 		break;
 	case 1:
 		// Walk action
-		cursorNum = CURSOR_WALK;
+		cursorNum = R2_GLOBALS._player._canWalk ? CURSOR_WALK : CURSOR_USE;
 		break;
 	case 2:
 		// Use action
@@ -177,17 +179,18 @@ void RightClickDialog::execute() {
 		break;
 	case 4:
 		// Change player
-		CharacterDialog::show();
+		result = 0;
 		break;
 	case 5:
 		// Options dialog
+		result = 1;
 		break;
 	}
 
-	if (cursorNum != CURSOR_NONE)
-		R2_GLOBALS._events.setCursor(cursorNum);
-
+	R2_GLOBALS._events.setCursor(cursorNum);
 	_gfxManager.deactivate();
+
+	return result;
 }
 
 /*--------------------------------------------------------------------------*/
@@ -200,13 +203,13 @@ void CharacterDialog::show() {
 	GfxButton *btn = NULL;
 	int oldCharacter = R2_GLOBALS._player._characterIndex;
 	switch (oldCharacter) {
-	case 1:
+	case R2_QUINN:
 		btn = &dlg->_btnQuinn;
 		break;
-	case 2:
+	case R2_SEEKER:
 		btn = &dlg->_btnSeeker;
 		break;
-	case 3:
+	case R2_MIRANDA:
 		btn = &dlg->_btnMiranda;
 		break;
 	default:
@@ -234,7 +237,7 @@ void CharacterDialog::show() {
 		SceneExt *scene = (SceneExt *)R2_GLOBALS._sceneManager._scene;
 		scene->saveCharacter(oldCharacter);
 
-		// Play the correctfrequency, if any, of the character being switched to's scanner device 
+		// Play the correctfrequency, if any, of the character being switched to's scanner device
 		if (R2_GLOBALS._player._characterScene[R2_NONE] != 300) {
 			switch (R2_GLOBALS._scannerFrequencies[R2_GLOBALS._player._characterIndex] - 1) {
 			case 0:
@@ -312,6 +315,9 @@ void CharacterDialog::show() {
 			}
 		}
 
+		// Reset the current cursor
+		R2_GLOBALS._events.setCursor(CURSOR_CROSSHAIRS);
+
 		// Change to whichever scene the newly selected character is in
 		R2_GLOBALS._sceneManager.changeScene(R2_GLOBALS._player._characterScene[R2_GLOBALS._player._characterIndex]);
 	}
@@ -344,7 +350,7 @@ CharacterDialog::CharacterDialog() {
 /*--------------------------------------------------------------------------*/
 
 void HelpDialog::show() {
-	// Set the palette and change the cursor
+	// change the cursor
 	R2_GLOBALS._events.setCursor(CURSOR_ARROW);
 
 	// Create the dialog and draw it
@@ -381,6 +387,8 @@ void HelpDialog::show() {
 	// If a action button was selected, dispatch to handle it
 	if (evt.kbd.keycode != Common::KEYCODE_INVALID)
 		R2_GLOBALS._game->processEvent(evt);
+	else
+		R2_GLOBALS._events.setCursorFromFlag();
 }
 
 HelpDialog::HelpDialog() {

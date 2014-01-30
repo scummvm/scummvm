@@ -33,7 +33,6 @@ namespace Neverhood {
 // TODO This code is horrible and weird and a lot of stuff needs renaming once a better name is found
 // TODO Also the methods should probably rearranged and be grouped together more consistently
 
-class Klaymen;
 class Scene;
 
 const uint32 kKlaymenSpeedUpHash = 0x004A2148;
@@ -67,28 +66,24 @@ public:
 	void startIdleAnimation(uint32 fileHash, AnimationCb callback);
 	void upIdleAnimation();
 
+	// Idle animations - start
 	void stIdlePickEar();
 	void evIdlePickEarDone();
-	uint32 hmIdlePickEar(int messageNum, const MessageParam &param, Entity *sender);
-
 	void stIdleSpinHead();
-	uint32 hmIdleSpinHead(int messageNum, const MessageParam &param, Entity *sender);
-
 	void stIdleArms();
 	void evIdleArmsDone();
-	uint32 hmIdleArms(int messageNum, const MessageParam &param, Entity *sender);
-
 	void stIdleChest();
-	uint32 hmIdleChest(int messageNum, const MessageParam &param, Entity *sender);
-
 	void stIdleHeadOff();
-	uint32 hmIdleHeadOff(int messageNum, const MessageParam &param, Entity *sender);
-
 	void stIdleWonderAbout();
-
 	void stIdleTeleporterHands();
-
 	void stIdleTeleporterHands2();
+
+	uint32 hmIdlePickEar(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmIdleSpinHead(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmIdleArms(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmIdleChest(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmIdleHeadOff(int messageNum, const MessageParam &param, Entity *sender);
+	// Idle animations - end
 
 	void stTryStandIdle();
 	void stStandAround();
@@ -150,12 +145,6 @@ public:
 	void stInsertKey();
 	uint32 hmInsertKey(int messageNum, const MessageParam &param, Entity *sender);
 
-	void stReadNote();
-	uint32 hmReadNote(int messageNum, const MessageParam &param, Entity *sender);
-
-	void stHitByDoor();
-	uint32 hmHitByDoor(int messageNum, const MessageParam &param, Entity *sender);
-
 	void stPeekWall();
 	uint32 hmPeekWall(int messageNum, const MessageParam &param, Entity *sender);
 
@@ -166,20 +155,7 @@ public:
 	void upPeekWallBlink();
 
 	void stPeekWall1();
-
 	void stPeekWall2();
-
-	void stPullHammerLever();
-	uint32 hmPullHammerLever(int messageNum, const MessageParam &param, Entity *sender);
-
-	void stRidePlatformDown();
-	void suRidePlatformDown();
-
-	void stCrashDown();
-	void stCrashDownFinished();
-
-	void stShrink();
-	uint32 hmShrink(int messageNum, const MessageParam &param, Entity *sender);
 
 	void stGrow();
 	uint32 hmGrow(int messageNum, const MessageParam &param, Entity *sender);
@@ -203,11 +179,6 @@ public:
 	void stLetGoOfLever();
 	void evLeverReleasedEvent();
 
-	void stWakeUp();
-
-	void stSleeping();
-	uint32 hmSleeping(int messageNum, const MessageParam &param, Entity *sender);
-
 	void stPressButton();
 	void stPressFloorButton();
 	void stPressButtonSide();
@@ -227,20 +198,6 @@ public:
 
 	void stClimbLadderHalf();
 	uint32 hmClimbLadderHalf(int messageNum, const MessageParam &param, Entity *sender);
-
-	void setupJumpToRing();
-	void stJumpToRing1();
-	void stJumpToRing2();
-	void stJumpToRing4();
-	uint32 hmJumpToRing(int messageNum, const MessageParam &param, Entity *sender);
-
-	void stHangOnRing();
-
-	void stJumpToRing3();
-	uint32 hmJumpToRing3(int messageNum, const MessageParam &param, Entity *sender);
-
-	void stHoldRing3();
-	uint32 hmHoldRing3(int messageNum, const MessageParam &param, Entity *sender);
 
 	void stReleaseRing();
 
@@ -272,23 +229,16 @@ public:
 
 	void stSitIdleTeleporter();
 	void upSitIdleTeleporter();
-
 	void stSitIdleTeleporterBlink();
-
 	void stSitIdleTeleporterBlinkSecond();
 
 	void stTurnToUseInTeleporter();
-
 	void stReturnFromUseInTeleporter();
-
 	void stGetUpFromTeleporter();
 
 	void teleporterAppear(uint32 fileHash);
 	void teleporterDisappear(uint32 fileHash);
 	uint32 hmTeleporterAppearDisappear(int messageNum, const MessageParam &param, Entity *sender);
-
-	void stClayDoorOpen();
-	uint32 hmClayDoorOpen(int messageNum, const MessageParam &param, Entity *sender);
 
 	void stFallSkipJump();
 	void suFallSkipJump();
@@ -297,19 +247,6 @@ public:
 	void stContinueMoveObject();
 	uint32 hmMoveObject(int messageNum, const MessageParam &param, Entity *sender);
 	void upMoveObject();
-
-	void stCloseEyes();
-
-	void stTumbleHeadless();
-	uint32 hmTumbleHeadless(int messageNum, const MessageParam &param, Entity *sender);
-
-	void stFetchMatch();
-	void stLightMatch();
-	uint32 hmMatch(int messageNum, const MessageParam &param, Entity *sender);
-
-	void stHitByBoxingGlove();
-	uint32 hmHitByBoxingGlove(int messageNum, const MessageParam &param, Entity *sender);
-	void evHitByBoxingGloveDone();
 
 	void stStandIdleSmall();
 	void stWonderAboutSmall();
@@ -327,33 +264,16 @@ public:
 	void stFinishGrow();
 	uint32 hmFinishGrow(int messageNum, const MessageParam &param, Entity *sender);
 
-	void stJumpToRingVenusFlyTrap();
-	uint32 hmJumpToRingVenusFlyTrap(int messageNum, const MessageParam &param, Entity *sender);
-
-	void stDropFromRing();
-
 	void stStandIdleSpecial();
 	uint32 hmStandIdleSpecial(int messageNum, const MessageParam &param, Entity *sender);
-
-	void stPressDoorButton();
-	uint32 hmPressDoorButton(int messageNum, const MessageParam &param, Entity *sender);
 
 	void stSpitOutFall0();
 	void stSpitOutFall2();
 	void suFallDown();
 	void upSpitOutFall();
 
-	void stJumpAndFall();
-	uint32 hmJumpAndFall(int messageNum, const MessageParam &param, Entity *sender);
-
 	void stFalling();
 	void stFallTouchdown();
-
-	void stMoveVenusFlyTrap();
-	void stContinueMovingVenusFlyTrap();
-	uint32 hmMoveVenusFlyTrap(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 hmFirstMoveVenusFlyTrap(int messageNum, const MessageParam &param, Entity *sender);
-	void evMoveVenusFlyTrapDone();
 
 	void stPeekInside();
 	void stPeekInsideReturn();
@@ -377,11 +297,6 @@ public:
 	void setKlaymenIdleTable3();
 
 	void setSoundFlag(bool value) { _soundFlag = value; }
-
-	void spitIntoPipe();
-	void stTrySpitIntoPipe();
-	void stContSpitIntoPipe();
-	uint32 hmSpit(int messageNum, const MessageParam &param, Entity *sender);
 
 	void stRidePlatform();
 	void suRidePlatform();
@@ -432,13 +347,6 @@ protected:
 
 	int _moveObjectCountdown;
 
-	bool _canSpitPipe;
-	bool _contSpitPipe;
-	bool _readyToSpit;
-	uint32 _spitPipeIndex;
-	uint32 _spitDestPipeIndex;
-	uint32 _spitContDestPipeIndex;
-
 	virtual void xUpdate();
 	virtual uint32 xHandleMessage(int messageNum, const MessageParam &param);
 
@@ -459,311 +367,6 @@ protected:
 
 	void enterIdleAnimation(uint idleAnimation);
 	void walkAlongPathPoints();
-
-};
-
-class KmScene1001 : public Klaymen {
-public:
-	KmScene1001(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
-protected:
-	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-};
-
-class KmScene1002 : public Klaymen {
-public:
-	KmScene1002(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
-protected:
-	void xUpdate();
-	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-};
-
-class KmScene1004 : public Klaymen {
-public:
-	KmScene1004(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
-protected:
-	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-};
-
-class KmScene1109 : public Klaymen {
-public:
-	KmScene1109(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
-protected:
-	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-};
-
-class KmScene1201 : public Klaymen {
-public:
-	KmScene1201(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
-protected:
-	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-};
-
-class KmScene1303 : public Klaymen {
-public:
-	KmScene1303(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
-protected:
-	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-};
-
-class KmScene1304 : public Klaymen {
-public:
-	KmScene1304(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
-protected:
-	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-};
-
-class KmScene1305 : public Klaymen {
-public:
-	KmScene1305(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
-protected:
-	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-};
-
-class KmScene1306 : public Klaymen {
-public:
-	KmScene1306(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
-protected:
-	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-};
-
-class KmScene1308 : public Klaymen {
-public:
-	KmScene1308(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
-protected:
-	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-};
-
-class KmScene1401 : public Klaymen {
-public:
-	KmScene1401(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
-protected:
-	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-};
-
-class KmScene1402 : public Klaymen {
-public:
-	KmScene1402(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
-protected:
-	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-};
-
-class KmScene1403 : public Klaymen {
-public:
-	KmScene1403(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
-protected:
-	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-};
-
-class KmScene1404 : public Klaymen {
-public:
-	KmScene1404(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
-protected:
-	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-};
-
-class KmScene1608 : public Klaymen {
-public:
-	KmScene1608(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
-protected:
-	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-};
-
-class KmScene1705 : public Klaymen {
-public:
-	KmScene1705(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
-protected:
-	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-};
-
-class KmScene1901 : public Klaymen {
-public:
-	KmScene1901(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
-protected:
-	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-};
-
-class KmScene2001 : public Klaymen {
-public:
-	KmScene2001(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
-protected:
-	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-};
-
-class KmScene2101 : public Klaymen {
-public:
-	KmScene2101(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
-protected:
-	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-};
-
-class KmScene2201 : public Klaymen {
-public:
-	KmScene2201(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y, NRect *clipRects, int clipRectsCount);
-protected:
-	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-};
-
-class KmScene2203 : public Klaymen {
-public:
-	KmScene2203(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
-protected:
-	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-};
-
-class KmScene2205 : public Klaymen {
-public:
-	KmScene2205(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
-protected:
-	void xUpdate();
-	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-};
-
-class KmScene2206 : public Klaymen {
-public:
-	KmScene2206(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
-	~KmScene2206();
-protected:
-	void xUpdate();
-	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-};
-
-class KmScene2207 : public Klaymen {
-public:
-	KmScene2207(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
-protected:
-	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-};
-
-class KmScene2242 : public Klaymen {
-public:
-	KmScene2242(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
-protected:
-	void xUpdate();
-	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-};
-
-class KmHallOfRecords : public Klaymen {
-public:
-	KmHallOfRecords(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
-protected:
-	void xUpdate();
-	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-};
-
-class KmScene2247 : public Klaymen {
-public:
-	KmScene2247(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
-protected:
-	void xUpdate();
-	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-};
-
-class KmScene2401 : public Klaymen {
-public:
-	KmScene2401(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
-protected:
-	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-};
-
-class KmScene2402 : public Klaymen {
-public:
-	KmScene2402(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
-protected:
-	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-};
-
-class KmScene2403 : public Klaymen {
-public:
-	KmScene2403(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
-protected:
-	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-};
-
-class KmScene2406 : public Klaymen {
-public:
-	KmScene2406(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y, NRect *clipRects, int clipRectsCount);
-protected:
-	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-};
-
-class KmScene2501 : public Klaymen {
-public:
-	KmScene2501(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
-protected:
-	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-};
-
-class KmScene2732 : public Klaymen {
-public:
-	KmScene2732(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
-protected:
-	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-};
-
-class KmScene2801 : public Klaymen {
-public:
-	KmScene2801(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
-protected:
-	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-};
-
-class KmScene2803 : public Klaymen {
-public:
-	KmScene2803(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y, NRect *clipRects, int clipRectsCount);
-protected:
-	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-};
-
-class KmScene2803Small : public Klaymen {
-public:
-	KmScene2803Small(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
-protected:
-	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-};
-
-class KmScene2805 : public Klaymen {
-public:
-	KmScene2805(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
-protected:
-	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-};
-
-class KmScene2806 : public Klaymen {
-public:
-	KmScene2806(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y,
-		bool needsLargeSurface, NRect *clipRects, uint clipRectsCount);
-protected:
-	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-};
-
-class KmScene2809 : public Klaymen {
-public:
-	KmScene2809(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y,
-		bool needsLargeSurface, NRect *clipRects, uint clipRectsCount);
-protected:
-	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-};
-
-class KmScene2810Small : public Klaymen {
-public:
-	KmScene2810Small(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
-protected:
-	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-};
-
-class KmScene2810 : public Klaymen {
-public:
-	KmScene2810(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y,
-		NRect *clipRects, uint clipRectsCount);
-protected:
-	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-};
-
-class KmScene2812 : public Klaymen {
-public:
-	KmScene2812(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
-protected:
-	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };
 
 } // End of namespace Neverhood

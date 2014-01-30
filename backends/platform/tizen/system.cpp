@@ -267,7 +267,7 @@ result TizenSystem::initModules() {
 	}
 
 	_graphicsManager = (GraphicsManager *)new TizenGraphicsManager(_appForm);
-	if (!_graphicsManager) {
+	if (!_graphicsManager || graphicsManager->Construct() != E_SUCCESS) {
 		return E_OUT_OF_MEMORY;
 	}
 

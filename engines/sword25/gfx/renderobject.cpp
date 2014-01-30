@@ -219,27 +219,27 @@ Common::Rect RenderObject::calcBoundingBox() const {
 	return bbox;
 }
 
-void RenderObject::calcAbsolutePos(int &x, int &y, int &z) const {
+void RenderObject::calcAbsolutePos(int32 &x, int32 &y, int32 &z) const {
 	x = calcAbsoluteX();
 	y = calcAbsoluteY();
 	z = calcAbsoluteZ();
 }
 
-int RenderObject::calcAbsoluteX() const {
+int32 RenderObject::calcAbsoluteX() const {
 	if (_parentPtr.isValid())
 		return _parentPtr->getAbsoluteX() + _x;
 	else
 		return _x;
 }
 
-int RenderObject::calcAbsoluteY() const {
+int32 RenderObject::calcAbsoluteY() const {
 	if (_parentPtr.isValid())
 		return _parentPtr->getAbsoluteY() + _y;
 	else
 		return _y;
 }
 
-int RenderObject::calcAbsoluteZ() const {
+int32 RenderObject::calcAbsoluteZ() const {
 	if (_parentPtr.isValid())
 		return _parentPtr->getAbsoluteZ() + _z;
 	else
@@ -399,7 +399,7 @@ RenderObjectPtr<Text> RenderObject::addText(const Common::String &font, const Co
 
 bool RenderObject::persist(OutputPersistenceBlock &writer) {
 	// Typ und Handle werden als erstes gespeichert, damit beim Laden ein Objekt vom richtigen Typ mit dem richtigen Handle erzeugt werden kann.
-	writer.write(static_cast<uint>(_type));
+	writer.write(static_cast<uint32>(_type));
 	writer.write(_handle);
 
 	// Restliche Objekteigenschaften speichern.
@@ -413,14 +413,14 @@ bool RenderObject::persist(OutputPersistenceBlock &writer) {
 	writer.write(_visible);
 	writer.write(_childChanged);
 	writer.write(_initSuccess);
-	writer.write(_bbox.left);
-	writer.write(_bbox.top);
-	writer.write(_bbox.right);
-	writer.write(_bbox.bottom);
-	writer.write(_oldBbox.left);
-	writer.write(_oldBbox.top);
-	writer.write(_oldBbox.right);
-	writer.write(_oldBbox.bottom);
+	writer.write((int32)_bbox.left);
+	writer.write((int32)_bbox.top);
+	writer.write((int32)_bbox.right);
+	writer.write((int32)_bbox.bottom);
+	writer.write((int32)_oldBbox.left);
+	writer.write((int32)_oldBbox.top);
+	writer.write((int32)_oldBbox.right);
+	writer.write((int32)_oldBbox.bottom);
 	writer.write(_oldX);
 	writer.write(_oldY);
 	writer.write(_oldZ);
@@ -455,7 +455,7 @@ bool RenderObject::unpersist(InputPersistenceBlock &reader) {
 	reader.read(_oldY);
 	reader.read(_oldZ);
 	reader.read(_oldVisible);
-	uint parentHandle;
+	uint32 parentHandle;
 	reader.read(parentHandle);
 	_parentPtr = RenderObjectPtr<RenderObject>(parentHandle);
 	reader.read(_refreshForced);
@@ -470,7 +470,7 @@ bool RenderObject::persistChildren(OutputPersistenceBlock &writer) {
 	bool result = true;
 
 	// Kinderanzahl speichern.
-	writer.write(_children.size());
+	writer.write((uint32)_children.size());
 
 	// Rekursiv alle Kinder speichern.
 	RENDEROBJECT_LIST::iterator it = _children.begin();
@@ -486,13 +486,13 @@ bool RenderObject::unpersistChildren(InputPersistenceBlock &reader) {
 	bool result = true;
 
 	// Kinderanzahl einlesen.
-	uint childrenCount;
+	uint32 childrenCount;
 	reader.read(childrenCount);
 	if (!reader.isGood())
 		return false;
 
 	// Alle Kinder rekursiv wieder herstellen.
-	for (uint i = 0; i < childrenCount; ++i) {
+	for (uint32 i = 0; i < childrenCount; ++i) {
 		if (!recreatePersistedRenderObject(reader).isValid())
 			return false;
 	}
@@ -504,8 +504,8 @@ RenderObjectPtr<RenderObject> RenderObject::recreatePersistedRenderObject(InputP
 	RenderObjectPtr<RenderObject> result;
 
 	// Typ und Handle auslesen.
-	uint type;
-	uint handle;
+	uint32 type;
+	uint32 handle;
 	reader.read(type);
 	reader.read(handle);
 	if (!reader.isGood())

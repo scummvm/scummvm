@@ -58,6 +58,8 @@ Bitmap::Bitmap(Bitmap *src) {
 Bitmap::~Bitmap() {
 	if (_pixels)
 		free(_pixels);
+
+	_pixels = 0;
 }
 
 void Bitmap::load(Common::ReadStream *s) {
@@ -87,6 +89,10 @@ Background::Background() {
 	_palette = 0;
 }
 
+Background::~Background() {
+	warning("STUB: Background::~Background()");
+}
+
 bool Background::load(MfcArchive &file) {
 	debug(5, "Background::load()");
 	_bgname = file.readPascalString();
@@ -100,11 +106,11 @@ bool Background::load(MfcArchive &file) {
 		addPictureObject(pct);
 	}
 
-	assert(g_fullpipe->_gameProjectVersion >= 4);
+	assert(g_fp->_gameProjectVersion >= 4);
 
 	_bigPictureArray1Count = file.readUint32LE();
 
-	assert(g_fullpipe->_gameProjectVersion >= 5);
+	assert(g_fp->_gameProjectVersion >= 5);
 
 	_bigPictureArray2Count = file.readUint32LE();
 
@@ -129,8 +135,8 @@ void Background::addPictureObject(PictureObject *pct) {
 		pct->renumPictures(&_picObjList);
 
 	bool inserted = false;
-	for (uint i = 0; i < _picObjList.size(); i++) {
-		if (((PictureObject *)_picObjList[i])->_priority == pct->_priority) {
+	for (uint i = 1; i < _picObjList.size(); i++) {
+		if (((PictureObject *)_picObjList[i])->_priority <= pct->_priority) {
 			_picObjList.insert_at(i, pct);
 			inserted = true;
 			break;
@@ -150,6 +156,10 @@ PictureObject::PictureObject() {
 	_oy2 = 0;
 	_pictureObject2List = 0;
 	_objtype = kObjTypePictureObject;
+}
+
+PictureObject::~PictureObject() {
+	warning("STUB: PictureObject::~PictureObject()");
 }
 
 PictureObject::PictureObject(PictureObject *src) : GameObject(src) {
@@ -222,7 +232,7 @@ void PictureObject::drawAt(int x, int y) {
 
 bool PictureObject::setPicAniInfo(PicAniInfo *picAniInfo) {
 	if (!(picAniInfo->type & 2) || (picAniInfo->type & 1)) {
-		error("Picture::setPicAniInfo(): Wrong type: %d", picAniInfo->type);
+		error("PictureObject::setPicAniInfo(): Wrong type: %d", picAniInfo->type);
 
 		return false;
 	}
@@ -269,6 +279,11 @@ bool PictureObject::isPixelHitAtPos(int x, int y) {
 	return res;
 }
 
+void PictureObject::setOXY2() {
+	_ox2 = _ox;
+	_oy2 = _oy;
+}
+
 GameObject::GameObject() {
 	_okeyCode = 0;
 	_flags = 0;
@@ -313,7 +328,7 @@ bool GameObject::load(MfcArchive &file) {
 	_oy = file.readUint32LE();
 	_priority = file.readUint16LE();
 
-	if (g_fullpipe->_gameProjectVersion >= 11) {
+	if (g_fp->_gameProjectVersion >= 11) {
 		_field_8 = file.readUint32LE();
 	}
 
@@ -329,8 +344,8 @@ void GameObject::renumPictures(PtrList *lst) {
 	int *buf = (int *)calloc(lst->size() + 2, sizeof(int));
 
 	for (uint i = 0; i < lst->size(); i++) {
-		if (_id == ((PictureObject *)((*lst)[i]))->_id)
-			buf[((PictureObject *)((*lst)[i]))->_okeyCode] = 1;
+		if (_id == ((GameObject *)((*lst)[i]))->_id)
+			buf[((GameObject *)((*lst)[i]))->_okeyCode] = 1;
 	}
 
 	if (buf[_okeyCode]) {
@@ -464,10 +479,12 @@ Picture::~Picture() {
 }
 
 void Picture::freePicture() {
+	debug(5, "Picture::freePicture(): file: %s", _memfilename);
+
 	if (_bitmap) {
 		if (testFlags() && !_field_54) {
 			freeData();
-			delete _bitmap;
+			free(_bitmap);
 			_bitmap = 0;
 		}
 	}
@@ -484,6 +501,11 @@ void Picture::freePicture() {
 	}
 }
 
+void Picture::freePixelData() {
+	freePicture();
+	freeData();
+}
+
 bool Picture::load(MfcArchive &file) {
 	debug(5, "Picture::load()");
 	MemoryObject::load(file);
@@ -492,7 +514,7 @@ bool Picture::load(MfcArchive &file) {
 	_y = file.readUint32LE();
 	_field_44 = file.readUint16LE();
 	
-	assert(g_fullpipe->_gameProjectVersion >= 2);
+	assert(g_fp->_gameProjectVersion >= 2);
 
 	_width = file.readUint32LE();
 	_height = file.readUint32LE();
@@ -506,7 +528,7 @@ bool Picture::load(MfcArchive &file) {
 		setAOIDs();
 	}
 
-	assert (g_fullpipe->_gameProjectVersion >= 12);
+	assert (g_fp->_gameProjectVersion >= 12);
 
 	_alpha = file.readUint32LE() & 0xff;
 
@@ -519,14 +541,14 @@ bool Picture::load(MfcArchive &file) {
 
 	getData();
 
-	debug(5, "Picture::load: <%s>", _memfilename);
+	debug(5, "Picture::load: loaded <%s>", _memfilename);
 
 	return true;
 }
 
 void Picture::setAOIDs() {
-	int w = (g_fullpipe->_pictureScale + _width - 1) / g_fullpipe->_pictureScale;
-	int h = (g_fullpipe->_pictureScale + _height - 1) / g_fullpipe->_pictureScale;
+	int w = (g_fp->_pictureScale + _width - 1) / g_fp->_pictureScale;
+	int h = (g_fp->_pictureScale + _height - 1) / g_fp->_pictureScale;
 
 	_memoryObject2->_rows = (byte **)malloc(w * sizeof(int *));
 
@@ -539,6 +561,10 @@ void Picture::setAOIDs() {
 }
 
 void Picture::init() {
+	debug(5, "Picture::init(), %s", _memfilename);
+
+	MemoryObject::getData();
+
 	_bitmap = new Bitmap();
 
 	getDibInfo();
@@ -567,6 +593,12 @@ void Picture::getDibInfo() {
 		warning("Uneven data size: 0x%x", _dataSize);
 	}
 
+	if (!_data) {
+		warning("Picture::getDibInfo: data is empty <%s>", _memfilename);
+
+		MemoryObject::load();
+	}
+
 	Common::MemoryReadStream *s = new Common::MemoryReadStream(_data + off - 32, 32);
 
 	_bitmap->load(s);
@@ -584,7 +616,7 @@ void Picture::draw(int x, int y, int style, int angle) {
 	int x1 = x;
 	int y1 = y;
 
-	debug(0, "Picture::draw(%d, %d, %d, %d) (%s)", x, y, style, angle, _memfilename);
+	debug(7, "Picture::draw(%d, %d, %d, %d) (%s)", x, y, style, angle, _memfilename);
 
 	if (x != -1)
 		x1 = x;
@@ -599,14 +631,14 @@ void Picture::draw(int x, int y, int style, int angle) {
 		return;
 
 	if ((_alpha & 0xff) < 0xff) {
-		debug(0, "Picture:draw: alpha = %0x", _alpha);
+		debug(7, "Picture:draw: alpha = %0x", _alpha);
 	}
 
 	byte *pal = _paletteData;
 
 	if (!pal) {
 		//warning("Picture:draw: using global palette");
-		pal = g_fullpipe->_globalPalette;
+		pal = g_fp->_globalPalette;
 	}
 
 	Common::Point point;
@@ -638,7 +670,7 @@ void Picture::drawRotated(int x, int y, int angle) {
 }
 
 void Picture::displayPicture() {
-	if (!g_fullpipe->_gameContinue)
+	if (!g_fp->_gameContinue)
 		return;
 
 	getData();
@@ -647,22 +679,22 @@ void Picture::displayPicture() {
 	if (!_dataSize)
 		return;
 
-	g_fullpipe->_backgroundSurface.fillRect(Common::Rect(0, 0, 799, 599), 0);
-	g_fullpipe->_system->copyRectToScreen(g_fullpipe->_backgroundSurface.getBasePtr(0, 0), g_fullpipe->_backgroundSurface.pitch, 0, 0, 799, 599);
+	g_fp->_backgroundSurface.fillRect(Common::Rect(0, 0, 800, 600), 0);
+	g_fp->_system->copyRectToScreen(g_fp->_backgroundSurface.getBasePtr(0, 0), g_fp->_backgroundSurface.pitch, 0, 0, 800, 600);
 
 	draw(0, 0, 0, 0);
 
-	g_fullpipe->updateEvents();
-	g_fullpipe->_system->delayMillis(10);
-	g_fullpipe->_system->updateScreen();
+	g_fp->updateEvents();
+	g_fp->_system->delayMillis(10);
+	g_fp->_system->updateScreen();
 
-	while (g_fullpipe->_gameContinue) {
-		g_fullpipe->updateEvents();
-		g_fullpipe->_system->delayMillis(10);
-		g_fullpipe->_system->updateScreen();
+	while (g_fp->_gameContinue) {
+		g_fp->updateEvents();
+		g_fp->_system->delayMillis(10);
+		g_fp->_system->updateScreen();
 
-		if (g_fullpipe->_keyState == ' ') {
-			g_fullpipe->_keyState = Common::KEYCODE_INVALID;
+		if (g_fp->_keyState == ' ') {
+			g_fp->_keyState = Common::KEYCODE_INVALID;
 			break;
 		}
 	}
@@ -710,7 +742,7 @@ bool Picture::isPixelHitAtPos(int x, int y) {
 }
 
 int Picture::getPixelAtPos(int x, int y) {
-	return getPixelAtPosEx(x / g_fullpipe->_pictureScale, y / g_fullpipe->_pictureScale);
+	return getPixelAtPosEx(x / g_fp->_pictureScale, y / g_fp->_pictureScale);
 
 	return false;
 }
@@ -719,8 +751,8 @@ int Picture::getPixelAtPosEx(int x, int y) {
 	if (x < 0 || y < 0)
 		return 0;
 
-	if (x < (g_fullpipe->_pictureScale + _width - 1) / g_fullpipe->_pictureScale &&
-			y < (g_fullpipe->_pictureScale + _height - 1) / g_fullpipe->_pictureScale &&
+	if (x < (g_fp->_pictureScale + _width - 1) / g_fp->_pictureScale &&
+			y < (g_fp->_pictureScale + _height - 1) / g_fp->_pictureScale &&
 			_memoryObject2 != 0 && _memoryObject2->_rows != 0)
 		return _memoryObject2->_rows[x][2 * y];
 
@@ -771,10 +803,10 @@ bool Bitmap::isPixelAtHitPosRB(int x, int y) {
 }
 
 void Bitmap::putDib(int x, int y, int32 *palette) {
-	debug(0, "Bitmap::putDib(%d, %d)", x, y);
+	debug(7, "Bitmap::putDib(%d, %d)", x, y);
 
-	_x = x - g_fullpipe->_sceneRect.left;
-	_y = y - g_fullpipe->_sceneRect.top;
+	_x = x - g_fp->_sceneRect.left;
+	_y = y - g_fp->_sceneRect.top;
 
 	if (_type == MKTAG('R', 'B', '\0', '\0'))
 		putDibRB(palette);
@@ -795,7 +827,7 @@ bool Bitmap::putDibRB(int32 *palette, int pX, int pY) {
 	uint16 *srcPtr;
 
 	if (!palette && pX == -1) {
-		warning("Bitmap::putDibRB(): Both global and local palettes are empty");
+		debug(2, "Bitmap::putDibRB(): Both global and local palettes are empty");
 		return false;
 	}
 
@@ -867,7 +899,7 @@ bool Bitmap::putDibRB(int32 *palette, int pX, int pY) {
 						if (y <= endy) {
 							if (pX == -1) {
 								int bgcolor = palette[(pixel >> 8) & 0xff];
-								curDestPtr = (uint16 *)g_fullpipe->_backgroundSurface.getBasePtr(start1, y);
+								curDestPtr = (uint16 *)g_fp->_backgroundSurface.getBasePtr(start1, y);
 								colorFill(curDestPtr, fillLen, bgcolor);
 							} else {
 								if (y == pY && pX >= start1 && pX < start1 + fillLen)
@@ -898,7 +930,7 @@ bool Bitmap::putDibRB(int32 *palette, int pX, int pY) {
 
 				if (y <= endy) {
 					if (pX == -1) {
-						curDestPtr = (uint16 *)g_fullpipe->_backgroundSurface.getBasePtr(start1, y);
+						curDestPtr = (uint16 *)g_fp->_backgroundSurface.getBasePtr(start1, y);
 						paletteFill(curDestPtr, (byte *)srcPtr2, fillLen, (int32 *)palette);
 					} else {
 						if (y == pY && pX >= start1 && pX < start1 + fillLen)
@@ -910,7 +942,7 @@ bool Bitmap::putDibRB(int32 *palette, int pX, int pY) {
 	}
 
 	if (pX == -1)
-		g_fullpipe->_system->copyRectToScreen(g_fullpipe->_backgroundSurface.getBasePtr(startx, starty), g_fullpipe->_backgroundSurface.pitch, startx, starty, endx + 1 - startx, endy + 1 - starty);
+		g_fp->_system->copyRectToScreen(g_fp->_backgroundSurface.getBasePtr(startx, starty), g_fp->_backgroundSurface.pitch, startx, starty, endx + 1 - startx, endy + 1 - starty);
 
 	return false;
 }
@@ -961,17 +993,17 @@ void Bitmap::putDibCB(int32 *palette) {
 
 	if (_flags & 0x1000000) {
 		for (int y = starty; y < endy; srcPtr -= pitch, y++) {
-			curDestPtr = (uint16 *)g_fullpipe->_backgroundSurface.getBasePtr(startx, y);
+			curDestPtr = (uint16 *)g_fp->_backgroundSurface.getBasePtr(startx, y);
 			copierKeyColor(curDestPtr, srcPtr, endx - startx + 1, _flags & 0xff, (int32 *)palette, cb05_format);
 		}
 	} else {
 		for (int y = starty; y <= endy; srcPtr -= pitch, y++) {
-			curDestPtr = (uint16 *)g_fullpipe->_backgroundSurface.getBasePtr(startx, y);
+			curDestPtr = (uint16 *)g_fp->_backgroundSurface.getBasePtr(startx, y);
 			copier(curDestPtr, srcPtr, endx - startx + 1, (int32 *)palette, cb05_format);
 		}
 	}
 
-	g_fullpipe->_system->copyRectToScreen(g_fullpipe->_backgroundSurface.getBasePtr(startx, starty), g_fullpipe->_backgroundSurface.pitch, startx, starty, endx + 1 - startx, endy + 1 - starty);
+	g_fp->_system->copyRectToScreen(g_fp->_backgroundSurface.getBasePtr(startx, starty), g_fp->_backgroundSurface.pitch, startx, starty, endx + 1 - startx, endy + 1 - starty);
 }
 
 void Bitmap::colorFill(uint16 *dest, int len, int32 color) {
@@ -1166,6 +1198,34 @@ bool BigPicture::load(MfcArchive &file) {
 	return true;
 }
 
+void BigPicture::draw(int x, int y, int style, int angle) {
+	if (!_bitmap)
+		init();
+
+	if (_bitmap) {
+		_bitmap->_flags &= 0xFEFFFFFF;
+
+		int nx = _x;
+		int ny = _y;
+
+		if (x != -1)
+			nx = x;
+
+		if (y != -1)
+			ny = y;
+
+		if (_alpha < 0xFF) {
+			//vrtSetAlphaBlendMode(g_vrtDrawHandle, 1, v9);
+		}
+
+		_bitmap->putDib(nx, ny, 0);
+
+		if (_alpha < 0xFF) {
+			//vrtSetAlphaBlendMode(g_vrtDrawHandle, 0, 255);
+		}
+	}
+}
+
 Shadows::Shadows() {
 	_staticAniObjectId = 0;
 	_movementId = 0;
@@ -1182,7 +1242,7 @@ bool Shadows::load(MfcArchive &file) {
 }
 
 void Shadows::init() {
-	Scene *scene = g_fullpipe->accessScene(_sceneId);
+	Scene *scene = g_fp->accessScene(_sceneId);
 
 	StaticANIObject *st;
 	Movement *mov;
@@ -1233,6 +1293,10 @@ DynamicPhase *Shadows::findSize(int width, int height) {
 		}
 	}
 	return _items[idx].dynPhase;
+}
+
+void FullpipeEngine::drawAlphaRectangle(int x1, int y1, int x2, int y2, int alpha) {
+	warning("STUB: FullpipeEngine::drawAlphaRectangle()");
 }
 
 } // End of namespace Fullpipe

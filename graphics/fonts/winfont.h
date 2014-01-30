@@ -62,8 +62,8 @@ public:
 	// Font API
 	int getFontHeight() const { return _pixHeight; }
 	int getMaxCharWidth() const { return _maxWidth; }
-	int getCharWidth(byte chr) const;
-	void drawChar(Surface *dst, byte chr, int x, int y, uint32 color) const;
+	int getCharWidth(uint32 chr) const;
+	void drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color) const;
 
 private:
 	bool loadFromPE(const Common::String &fileName, const WinFontDirEntry &dirEntry);
@@ -72,7 +72,7 @@ private:
 	uint32 getFontIndex(Common::SeekableReadStream &stream, const WinFontDirEntry &dirEntry);
 	bool loadFromFNT(Common::SeekableReadStream &stream);
 	char indexToCharacter(uint16 index) const;
-	uint16 characterToIndex(byte character) const;
+	uint16 characterToIndex(uint32 character) const;
 
 	uint16 _pixHeight;
 	uint16 _maxWidth;

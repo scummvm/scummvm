@@ -368,9 +368,6 @@ int QuickTimeParser::readMVHD(Atom atom) {
 int QuickTimeParser::readTRAK(Atom atom) {
 	Track *track = new Track();
 
-	if (!track)
-		return -1;
-
 	track->codecType = CODEC_TYPE_MOV_OTHER;
 	track->startTime = 0; // XXX: check
 	_tracks.push_back(track);

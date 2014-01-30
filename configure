@@ -97,7 +97,9 @@ add_feature() {
 _srcdir=`dirname $0`
 
 # Read list of engines
-. $_srcdir/engines/configure.engines
+for i in $_srcdir/engines/*/configure.engine; do
+	. "$i"
+done
 
 #
 # Default settings
@@ -124,7 +126,7 @@ _opengl=auto
 _opengles=auto
 _readline=auto
 _freetype2=auto
-_taskbar=yes
+_taskbar=auto
 _updates=no
 _libunity=auto
 # Default option behavior yes/no
@@ -864,6 +866,7 @@ Special configuration feature:
                                            motomagx for MotoMAGX
                                            n64 for Nintendo 64
                                            openpandora for OpenPandora
+                                           ouya for OUYA
                                            ps2 for PlayStation 2
                                            ps3 for PlayStation 3
                                            psp for PlayStation Portable
@@ -1268,7 +1271,7 @@ get_system_exe_extension $guessed_host
 NATIVEEXEEXT=$_exeext
 
 case $_host in
-android | android-v7a)
+android | android-v7a | ouya)
 	_host_os=android
 	_host_cpu=arm
 	_host_alias=arm-linux-androideabi
@@ -1302,7 +1305,7 @@ ds)
 gamecube)
 	_host_os=gamecube
 	_host_cpu=ppc
-	_host_alias=powerpc-gekko
+	_host_alias=powerpc-eabi
 	;;
 gp2x)
 	_host_os=gph-linux
@@ -1425,7 +1428,7 @@ webos)
 wii)
 	_host_os=wii
 	_host_cpu=ppc
-	_host_alias=powerpc-gekko
+	_host_alias=powerpc-eabi
 	;;
 wince)
 	_host_os=wince
@@ -2043,12 +2046,21 @@ case $_host_os in
 				CXXFLAGS="$CXXFLAGS -march=armv5te"
 				CXXFLAGS="$CXXFLAGS -mtune=xscale"
 				CXXFLAGS="$CXXFLAGS -msoft-float"
+				ABI="armeabi"
 				;;
 			android-v7a)
 				CXXFLAGS="$CXXFLAGS -march=armv7-a"
 				CXXFLAGS="$CXXFLAGS -mfloat-abi=softfp"
 				CXXFLAGS="$CXXFLAGS -mfpu=vfp"
 				LDFLAGS="$LDFLAGS -Wl,--fix-cortex-a8"
+				ABI="armeabi-v7a"
+				;;
+			ouya)
+				CXXFLAGS="$CXXFLAGS -march=armv7-a"
+				CXXFLAGS="$CXXFLAGS -mtune=cortex-a9"
+				CXXFLAGS="$CXXFLAGS -mfloat-abi=softfp"
+				CXXFLAGS="$CXXFLAGS -mfpu=neon"
+				ABI="armeabi-v7a"
 				;;
 		esac
 		CXXFLAGS="$CXXFLAGS --sysroot=$ANDROID_NDK/platforms/android-4/arch-arm"
@@ -2074,6 +2086,8 @@ case $_host_os in
 		CXXFLAGS="$CXXFLAGS -Wno-psabi"
 		LDFLAGS="$LDFLAGS --sysroot=$ANDROID_NDK/platforms/android-4/arch-arm"
 		LDFLAGS="$LDFLAGS -mthumb-interwork"
+		LDFLAGS="$LDFLAGS -L$ANDROID_NDK/sources/cxx-stl/gnu-libstdc++/`$CXX -dumpversion`/libs/$ABI/"
+		LIBS="$LIBS -lsupc++"
 		add_line_to_config_mk "ANDROID_SDK = $ANDROID_SDK"
 		_seq_midi=no
 		;;
@@ -2338,7 +2352,7 @@ if test -n "$_host"; then
 	# Cross-compiling mode - add your target here if needed
 	echo "Cross-compiling to $_host"
 	case "$_host" in
-		android | android-v7a)
+		android | android-v7a | ouya)
 			# we link a .so as default
 			LDFLAGS="$LDFLAGS -shared"
 			LDFLAGS="$LDFLAGS -Wl,-Bsymbolic,--no-undefined"
@@ -2414,6 +2428,8 @@ if test -n "$_host"; then
 			CXXFLAGS="$CXXFLAGS -fschedule-insns2"
 			CXXFLAGS="$CXXFLAGS -fomit-frame-pointer"
 			CXXFLAGS="$CXXFLAGS -fdelete-null-pointer-checks"
+			# no-delayed-branch is a workaround for GCC bug #42841 - "SH: Assembler complains pcrel too far."
+			CXXFLAGS="$CXXFLAGS -fno-delayed-branch"
 			_backend="dc"
 			_build_scalers=no
 			_mad=yes
@@ -2674,7 +2690,6 @@ if test -n "$_host"; then
 			_backend="tizen"
 			_port_mk="backends/platform/tizen/tizen.mk"
 			_arm_asm=yes
-			_taskbar=no
 			_build_scalers=no
 			_seq_midi=no
 			_mt32emu=no
@@ -3410,10 +3425,10 @@ int main(void) {
   return 0;
 }
 EOF
-	cc_check $PNG_CFLAGS $PNG_LIBS -lpng && _png=yes
+	cc_check $PNG_CFLAGS $PNG_LIBS -lpng -lz && _png=yes
 fi
 if test "$_png" = yes ; then
-	LIBS="$LIBS $PNG_LIBS -lpng"
+	LIBS="$LIBS $PNG_LIBS -lpng -lz"
 	INCLUDES="$INCLUDES $PNG_CFLAGS"
 fi
 define_in_config_if_yes "$_png" 'USE_PNG'
@@ -3658,6 +3673,25 @@ fi
 if test "$_readline" = yes ; then
 	LIBS="$LIBS $READLINE_LIBS $_READLINE_LIBS"
 	INCLUDES="$INCLUDES $READLINE_CFLAGS"
+
+	#
+	# Check the type of rl_completion_entry_function.
+	# It can be int(*)(const char *, int) or char *(*)(const char *, int).
+	#
+	cat > $TMPC << EOF
+#include <stdio.h>
+#include <readline/readline.h>
+#include <readline/history.h>
+
+int readline_completionFunction(const char *, int);
+
+int main(void) {
+	char *x = readline("");
+	rl_completion_entry_function = &readline_completionFunction;
+}
+EOF
+	cc_check -c && add_line_to_config_h '#define USE_READLINE_INT_COMPLETION'
+
 fi
 define_in_config_h_if_yes "$_readline" 'USE_READLINE'
 
@@ -3696,7 +3730,7 @@ if test "$_libunity" = yes ; then
 	LIBS="$LIBS $LIBUNITY_LIBS"
 	INCLUDES="$INCLUDES $LIBUNITY_CFLAGS"
 fi
-define_in_config_h_if_yes "$_libunity" 'USE_TASKBAR_UNITY'
+define_in_config_h_if_yes "$_libunity" 'USE_UNITY'
 fi
 echo "$_libunity"
 
@@ -3958,24 +3992,27 @@ fi
 # Check whether to build taskbar integration support
 #
 echo_n "Building taskbar integration support... "
-define_in_config_if_yes $_taskbar 'USE_TASKBAR'
-if test "$_taskbar" = yes; then
+if test "$_taskbar" = "no"; then
+	echo "no"
+else
 	case $_host_os in
 	mingw*)
 		LIBS="$LIBS -lole32 -luuid"
 		echo "win32"
+		_taskbar=yes
 		;;
 	*)
 		if test "$_libunity" = yes; then
 			echo "unity"
+			_taskbar=yes
 		else
-			echo "$_taskbar"
+			echo "no"
+			_taskbar=no
 		fi
 		;;
 	esac
-else
-	echo "$_taskbar"
 fi
+define_in_config_if_yes $_taskbar 'USE_TASKBAR'
 
 #
 # Check whether to build Bink video support
@@ -4190,8 +4227,18 @@ for engine in $_engines; do
 	fi
 done
 
-# Prepare the information to be shown
+# Sort engines to place our headline engine at start...
+# No technical reason, just historical convention
+headline_engine=scumm
+_sorted_engines="${headline_engine}"
 for engine in $_engines; do
+	if test "${engine}" != "${headline_engine}" ; then
+		_sorted_engines="${_sorted_engines} ${engine}"
+	fi
+done
+
+# Prepare the information to be shown
+for engine in $_sorted_engines; do
 	if test "`get_engine_sub $engine`" = "no" ; then
 		# It's a main engine
 		prepare_engine_build_strings $engine
@@ -4373,3 +4420,59 @@ include \$(srcdir)/Makefile
 EOF
 
 fi
+
+# Ensure engines folder exists prior to trying to generate
+# files into it (used for out-of-tree-builds)
+mkdir -p engines
+
+echo "Creating engines/engines.mk"
+cat > engines/engines.mk << EOF
+# This file is automatically generated by configure
+# DO NOT EDIT MANUALLY
+# This file is being included by "Makefile.common"
+EOF
+
+for engine in $_sorted_engines; do
+	j=`echo $engine | tr '[:lower:]' '[:upper:]'`
+	if test "`get_engine_sub $engine`" = "no" ; then
+		# main engine
+		cat >> engines/engines.mk << EOF
+
+ifdef ENABLE_$j
+DEFINES += -DENABLE_$j=\$(ENABLE_$j)
+MODULES += engines/$engine
+EOF
+
+	for subeng in `get_engine_subengines $engine` ; do
+		k=`echo $subeng | tr '[:lower:]' '[:upper:]'`
+		cat >> engines/engines.mk << EOF
+
+ifdef ENABLE_$k
+DEFINES += -DENABLE_$k
+endif
+EOF
+	done
+
+	cat >> engines/engines.mk << EOF
+endif
+EOF
+	fi
+done
+
+echo "Creating engines/plugins_table.h"
+cat > engines/plugins_table.h << EOF
+/* This file is automatically generated by configure */
+/* DO NOT EDIT MANUALLY */
+// This file is being included by "base/plugins.cpp"
+EOF
+
+for engine in $_sorted_engines; do
+	if test "`get_engine_sub $engine`" = "no" ; then
+		j=`echo $engine | tr '[:lower:]' '[:upper:]'`
+		cat >> engines/plugins_table.h << EOF
+#if PLUGIN_ENABLED_STATIC($j)
+LINK_PLUGIN($j)
+#endif
+EOF
+	fi
+done

@@ -6,9 +6,9 @@ ScummVM Team
 
   PR Office
   ---------
-     Arnaud Boutonne         - Public Relations Officer, Project
-                               Administrator
-     Eugene Sandulenko       - Project Leader
+     Arnaud Boutonne              - Public Relations Officer, Project
+                                    Administrator
+     Eugene Sandulenko            - Project Leader
 
   Core Team
   ---------
@@ -19,30 +19,30 @@ ScummVM Team
   Retired Project Leaders
   -----------------------
      James Brown
-     Vincent Hamm            - ScummVM co-founder, Original Cruise/CinE
-                               author
+     Vincent Hamm                 - ScummVM co-founder, Original Cruise/CinE
+                                    author
      Max Horn
-     Ludvig Strigeus         - Original ScummVM and SimonVM author
+     Ludvig Strigeus              - Original ScummVM and SimonVM author
 
   Engine Teams
   ------------
     SCUMM:
        Torbjorn Andersson
-       James Brown             - (retired)
-       Jonathan Gray           - (retired)
-       Vincent Hamm            - (retired)
-       Max Horn                - (retired)
+       James Brown                  - (retired)
+       Jonathan Gray                - (retired)
+       Vincent Hamm                 - (retired)
+       Max Horn                     - (retired)
        Travis Howell
-       Pawel Kolodziejski      - Codecs, iMUSE, Smush, etc.
-       Gregory Montoir         - (retired)
-       Eugene Sandulenko       - FT INSANE, MM NES, MM C64, game detection,
-                                 Herc/CGA
-       Ludvig Strigeus         - (retired)
+       Pawel Kolodziejski           - Codecs, iMUSE, Smush, etc.
+       Gregory Montoir              - (retired)
+       Eugene Sandulenko            - FT INSANE, MM NES, MM C64, game
+                                      detection, Herc/CGA
+       Ludvig Strigeus              - (retired)
 
     HE:
-       Jonathan Gray           - (retired)
+       Jonathan Gray                - (retired)
        Travis Howell
-       Gregory Montoir         - (retired)
+       Gregory Montoir              - (retired)
        Eugene Sandulenko
 
     AGI:
@@ -50,26 +50,30 @@ ScummVM Team
        Matthew Hoops
        Filippos Karapetis
        Pawel Kolodziejski
-       Walter van Niftrik      - (retired)
+       Walter van Niftrik           - (retired)
        Kari Salminen
        Eugene Sandulenko
-       David Symonds           - (retired)
+       David Symonds                - (retired)
 
     AGOS:
        Torbjorn Andersson
        Paul Gilbert
        Travis Howell
-       Oliver Kiehl            - (retired)
-       Ludvig Strigeus         - (retired)
+       Oliver Kiehl                 - (retired)
+       Ludvig Strigeus              - (retired)
+
+    Avalanche:
+       Peter Bozso
+       Arnaud Boutonne
 
     CGE:
        Arnaud Boutonne
        Paul Gilbert
 
     Cine:
-       Vincent Hamm            - (retired)
+       Vincent Hamm                 - (retired)
        Pawel Kolodziejski
-       Gregory Montoir         - (retired)
+       Gregory Montoir              - (retired)
        Kari Salminen
        Eugene Sandulenko
 
@@ -78,7 +82,7 @@ ScummVM Team
 
     CruisE:
        Paul Gilbert
-       Vincent Hamm            - (retired)
+       Vincent Hamm                 - (retired)
 
     Draci:
        Denis Kasak
@@ -92,7 +96,7 @@ ScummVM Team
        Torbjorn Andersson
        Bertrand Augereau
        Filippos Karapetis
-       Vladimir Menshakov      - (retired)
+       Vladimir Menshakov           - (retired)
        Willem Jan Palenstijn
 
     Gob:
@@ -116,10 +120,10 @@ ScummVM Team
        Eugene Sandulenko
 
     Kyra:
-       Torbjorn Andersson      - VQA Player
+       Torbjorn Andersson           - VQA Player
        Oystein Eftevaag
        Florian Kagerer
-       Gregory Montoir         - (retired)
+       Gregory Montoir              - (retired)
        Johannes Schickel
 
     Lastexpress:
@@ -157,14 +161,14 @@ ScummVM Team
        Matthew Hoops
 
     Queen:
-       David Eriksson          - (retired)
-       Gregory Montoir         - (retired)
+       David Eriksson               - (retired)
+       Gregory Montoir              - (retired)
        Joost Peters
 
     SAGA:
        Torbjorn Andersson
-       Daniel Balsom           - Original engine reimplementation author
-                                 (retired)
+       Daniel Balsom                - Original engine reimplementation author
+                                      (retired)
        Filippos Karapetis
        Andrew Kurushin
        Eugene Sandulenko
@@ -172,46 +176,46 @@ ScummVM Team
     SCI:
        Greg Frieger
        Paul Gilbert
-       Max Horn                - (retired)
+       Max Horn                     - (retired)
        Filippos Karapetis
        Martin Kiewitz
-       Walter van Niftrik      - (retired)
+       Walter van Niftrik           - (retired)
        Willem Jan Palenstijn
        Jordi Vilalta Prat
        Lars Skovlund
 
     Sky:
-       Robert Goeffringmann    - (retired)
-       Oliver Kiehl            - (retired)
+       Robert Goeffringmann         - (retired)
+       Oliver Kiehl                 - (retired)
        Joost Peters
 
     Sword1:
-       Fabio Battaglia         - PSX version support
-       Thierry Crozat          - Mac version support
-       Robert Goeffringmann    - (retired)
+       Fabio Battaglia              - PSX version support
+       Thierry Crozat               - Mac version support
+       Robert Goeffringmann         - (retired)
 
     Sword2:
        Torbjorn Andersson
-       Fabio Battaglia         - PSX version support
-       Jonathan Gray           - (retired)
+       Fabio Battaglia              - PSX version support
+       Jonathan Gray                - (retired)
 
     Sword25:
        Torbjorn Andersson
        Paul Gilbert
-       Max Horn                - (retired)
+       Max Horn                     - (retired)
        Filippos Karapetis
        Eugene Sandulenko
 
     TeenAgent:
-       Robert Megone           - Help with callback rewriting
-       Vladimir Menshakov      - (retired)
+       Robert Megone                - Help with callback rewriting
+       Vladimir Menshakov           - (retired)
 
     Tinsel:
        Torbjorn Andersson
-       Fabio Battaglia         - PSX version support
+       Fabio Battaglia              - PSX version support
        Paul Gilbert
        Sven Hesse
-       Max Horn                - (retired)
+       Max Horn                     - (retired)
        Filippos Karapetis
        Joost Peters
 
@@ -228,17 +232,20 @@ ScummVM Team
        Sylvain Dupont
 
     Touche:
-       Gregory Montoir         - (retired)
+       Gregory Montoir              - (retired)
 
     TsAGE:
        Arnaud Boutonne
        Paul Gilbert
 
     Tucker:
-       Gregory Montoir         - (retired)
+       Gregory Montoir              - (retired)
 
     Wintermute:
        Einar Johan T. Somaaen
+
+    ZVision:
+       Adrian Astley
 
   Backend Teams
   -------------
@@ -259,26 +266,26 @@ ScummVM Team
        Lubomyr Lisen
 
     Maemo:
-       Frantisek Dufka         - (retired)
+       Frantisek Dufka              - (retired)
        Tarek Soliman
 
     Nintendo 64:
        Fabio Battaglia
 
     Nintendo DS:
-       Bertrand Augereau       - HQ software scaler
+       Bertrand Augereau            - HQ software scaler
        Neil Millstone
 
     OpenPandora:
        John Willis
 
     PocketPC / WinCE:
-       Nicolas Bacca           - (retired)
+       Nicolas Bacca                - (retired)
        Ismail Khatib
-       Kostas Nakos            - (retired)
+       Kostas Nakos                 - (retired)
 
     PlayStation 2:
-       Robert Goeffringmann    - (retired)
+       Robert Goeffringmann         - (retired)
        Max Lingua
 
     PSP (PlayStation Portable):
@@ -286,8 +293,8 @@ ScummVM Team
        Joost Peters
 
     SDL (Win/Linux/OS X/etc.):
-       Max Horn                - (retired)
-       Eugene Sandulenko       - Asm routines, GFX layers
+       Max Horn                     - (retired)
+       Eugene Sandulenko            - Asm routines, GFX layers
 
     SymbianOS:
        Jurgen Braam
@@ -305,9 +312,9 @@ ScummVM Team
   Other subsystems
   ----------------
     Infrastructure:
-       Max Horn                - Backend & Engine APIs, file API, sound
-                                 mixer, audiostreams, data structures, etc.
-                                 (retired)
+       Max Horn                     - Backend & Engine APIs, file API, sound
+                                      mixer, audiostreams, data structures,
+                                      etc. (retired)
        Eugene Sandulenko
        Johannes Schickel
 
@@ -317,33 +324,35 @@ ScummVM Team
        Johannes Schickel
 
     Miscellaneous:
-       David Corrales-Lopez    - Filesystem access improvements (GSoC 2007
-                                 task) (retired)
-       Jerome Fisher           - MT-32 emulator
-       Benjamin Haisch         - Heavily improved de-/encoder for DXA videos
-       Jochen Hoenicke         - Speaker & PCjr sound support, AdLib work
-                                 (retired)
-       Daniel ter Laan         - Restoring original Drascula tracks, and
-                                 writing convert_dxa.bat
-       Chris Page              - Return to launcher, savestate improvements,
-                                 leak fixes, ... (GSoC 2008 task) (retired)
-       Robin Watts             - ARM assembly routines for nice speedups on
-                                 several ports; improvements to the sound
-                                 mixer
+       David Corrales-Lopez         - Filesystem access improvements (GSoC
+                                      2007 task) (retired)
+       Jerome Fisher                - MT-32 emulator
+       Benjamin Haisch              - Heavily improved de-/encoder for DXA
+                                      videos
+       Jochen Hoenicke              - Speaker & PCjr sound support, AdLib
+                                      work (retired)
+       Daniel ter Laan              - Restoring original Drascula tracks, and
+                                      writing convert_dxa.bat
+       Chris Page                   - Return to launcher, savestate
+                                      improvements, leak fixes, ... (GSoC
+                                      2008 task) (retired)
+       Robin Watts                  - ARM assembly routines for nice speedups
+                                      on several ports; improvements to the
+                                      sound mixer
 
   Website (code)
   --------------
-     Fredrik Wendel          - (retired)
+     Fredrik Wendel               - (retired)
 
   Website (maintenance)
   ---------------------
-     James Brown             - IRC Logs maintainer
-     Thierry Crozat          - Wiki maintainer
-     Andre Heider            - Buildbot maintainer
-     Joost Peters            - Doxygen Project Documentation maintainer
-     Jordi Vilalta Prat      - Wiki maintainer
-     Eugene Sandulenko       - Forum, IRC channel, Screen Shots and Mailing
-                               list maintainer
+     James Brown                  - IRC Logs maintainer
+     Thierry Crozat               - Wiki maintainer
+     Andre Heider                 - Buildbot maintainer
+     Joost Peters                 - Doxygen Project Documentation maintainer
+     Jordi Vilalta Prat           - Wiki maintainer
+     Eugene Sandulenko            - Forum, IRC channel, Screen Shots and
+                                    Mailing list maintainer
      John Willis
 
   Website (content)
@@ -352,31 +361,31 @@ ScummVM Team
 
   Documentation
   -------------
-     Thierry Crozat          - Numerous contributions to documentation
-     Joachim Eberhard        - Numerous contributions to documentation
-                               (retired)
-     Matthew Hoops           - Wiki editor
+     Thierry Crozat               - Numerous contributions to documentation
+     Joachim Eberhard             - Numerous contributions to documentation
+                                    (retired)
+     Matthew Hoops                - Wiki editor
 
   Retired Team Members
   --------------------
-     Chris Apers             - Former PalmOS porter
-     Ralph Brorsen           - Help with GUI implementation
-     Jamieson Christian      - iMUSE, MIDI, all things musical
-     Felix Jakschitsch       - Zak256 reverse engineering
-     Mutwin Kraus            - Original MacOS porter
-     Peter Moraliyski        - Port: GP32
-     Jeremy Newman           - Former webmaster
-     Lionel Ulmer            - Port: X11
-     Won Star                - Former GP32 porter
+     Chris Apers                  - Former PalmOS porter
+     Ralph Brorsen                - Help with GUI implementation
+     Jamieson Christian           - iMUSE, MIDI, all things musical
+     Felix Jakschitsch            - Zak256 reverse engineering
+     Mutwin Kraus                 - Original MacOS porter
+     Peter Moraliyski             - Port: GP32
+     Jeremy Newman                - Former webmaster
+     Lionel Ulmer                 - Port: X11
+     Won Star                     - Former GP32 porter
 
 Other contributions
 *******************
   Packages
   --------
     AmigaOS 4:
-       Hans-Joerg Frieden      - (retired)
+       Hans-Joerg Frieden           - (retired)
        Hubert Maier
-       Juha Niemimaki          - (retired)
+       Juha Niemimaki               - (retired)
 
     Atari/FreeMiNT:
        Keith Scroggins
@@ -386,22 +395,22 @@ Other contributions
        Luc Schrijvers
 
     Debian GNU/Linux:
-       Tore Anderson           - (retired)
+       Tore Anderson                - (retired)
        David Weinehall
 
     Fedora / RedHat:
        Willem Jan Palenstijn
 
     Mac OS X:
-       Max Horn                - (retired)
+       Max Horn                     - (retired)
        Oystein Eftevaag
 
     Mandriva:
-       Dominik Scherer         - (retired)
+       Dominik Scherer              - (retired)
 
     MorphOS:
        Fabien Coeurjoly
-       Ruediger Hanke          - (retired)
+       Ruediger Hanke               - (retired)
 
     OS/2:
        Paul Smedley
@@ -419,12 +428,12 @@ Other contributions
        Travis Howell
 
     Win64:
-       Chris Gray              - (retired)
+       Chris Gray                   - (retired)
        Johannes Schickel
 
-  Translations
-  ------------
-     Thierry Crozat          - Translation Lead
+  GUI Translations
+  ----------------
+     Thierry Crozat               - Translation Lead
 
     Basque:
        Mikel Iturbe Urretxa
@@ -452,7 +461,7 @@ Other contributions
 
     German:
        Simon Sawatzki
-       Lothar Serra Mari       - (retired)
+       Lothar Serra Mari            - (retired)
 
     Hungarian:
        Alex Bevilacqua
@@ -486,97 +495,118 @@ Other contributions
     Ukrainian:
        Lubomyr Lisen
 
+  Game Translations
+  -----------------
+    CGE:
+       Dan Serban                   - Soltys English translation
+       Victor Gonzalez              - Soltys Spanish translation
+       Alejandro Gomez de la Munoza - Soltys Spanish translation
+
+    Drascula:
+       Thierry Crozat               - Improve French translation
+
+    Mortevielle:
+       Hugo Labrande                - Improve English translation
+       Thierry Crozat               - Improve English translation
+
   Websites (design)
   -----------------
-     Dobo Balazs             - Website design
-     William Claydon         - Skins for doxygen, buildbot and wiki
-     Yaroslav Fedevych       - HTML/CSS for the website
-     Jean Marc Gimenez       - ScummVM logo
-     David Jensen            - SVG logo conversion
-     Raina                   - ScummVM forum buttons
+     Dobo Balazs                  - Website design
+     William Claydon              - Skins for doxygen, buildbot and wiki
+     Yaroslav Fedevych            - HTML/CSS for the website
+     Jean Marc Gimenez            - ScummVM logo
+     David Jensen                 - SVG logo conversion
+     Raina                        - ScummVM forum buttons
 
   Code contributions
   ------------------
-     Ori Avtalion            - Subtitle control options in the GUI; BASS GUI
-                               fixes
-     Stuart Caie             - Decoders for Amiga and AtariST data files
-                               (AGOS engine)
-     Paolo Costabel          - PSP port contributions
-     Martin Doucha           - CinE engine objectification
-     Thomas Fach-Pedersen    - ProTracker module player, Smacker video
-                               decoder
-     Tobias Gunkel           - Sound support for C64 version of MM/Zak, Loom
-                               PCE support
-     Janne Huttunen          - V3 actor mask support, Dig/FT SMUSH audio
-     Kovacs Endre Janos      - Several fixes for Simon1
-     Jeroen Janssen          - Numerous readability and bugfix patches
-     Andreas Karlsson        - Initial port for SymbianOS
-     Claudio Matsuoka        - Daily Linux builds
-     Thomas Mayer            - PSP port contributions
-     Sean Murray             - ScummVM tools GUI application (GSoC 2007 task)
-     n0p                     - Windows CE port aspect ratio correction scaler
-                               and right click input method
-     Mikesch Nepomuk         - MI1 VGA floppy patches
-     Nicolas Noble           - Config file and ALSA support
-     Tim Phillips            - Initial MI1 CD music support
-     Quietust                - Sound support for Amiga SCUMM V2/V3 games, MM
-                               NES support
-     Robert Crossfield       - Improved support for Apple II/C64 versions of
-                               MM
-     Andreas Roever          - Broken Sword I & II MPEG2 cutscene support
-     Edward Rudd             - Fixes for playing MP3 versions of MI1/Loom
-                               audio
-     Daniel Schepler         - Final MI1 CD music support, initial Ogg Vorbis
-                               support
-     Andre Souza             - SDL-based OpenGL renderer
-     Tom Frost               - WebOS port contributions
+     Ori Avtalion                 - Subtitle control options in the GUI; BASS
+                                    GUI fixes
+     Stuart Caie                  - Decoders for Amiga and AtariST data files
+                                    (AGOS engine)
+     Paolo Costabel               - PSP port contributions
+     Martin Doucha                - CinE engine objectification
+     Thomas Fach-Pedersen         - ProTracker module player, Smacker video
+                                    decoder
+     Tobias Gunkel                - Sound support for C64 version of MM/Zak,
+                                    Loom PCE support
+     Janne Huttunen               - V3 actor mask support, Dig/FT SMUSH audio
+     Kovacs Endre Janos           - Several fixes for Simon1
+     Jeroen Janssen               - Numerous readability and bugfix patches
+     Keith Kaisershot             - Several Pegasus Prime patches
+     Andreas Karlsson             - Initial port for SymbianOS
+     Claudio Matsuoka             - Daily Linux builds
+     Thomas Mayer                 - PSP port contributions
+     Sean Murray                  - ScummVM tools GUI application (GSoC 2007
+                                    task)
+     n0p                          - Windows CE port aspect ratio correction
+                                    scaler and right click input method
+     Mikesch Nepomuk              - MI1 VGA floppy patches
+     Nicolas Noble                - Config file and ALSA support
+     Tim Phillips                 - Initial MI1 CD music support
+     Quietust                     - Sound support for Amiga SCUMM V2/V3
+                                    games, MM NES support
+     Robert Crossfield            - Improved support for Apple II/C64
+                                    versions of MM
+     Andreas Roever               - Broken Sword I & II MPEG2 cutscene
+                                    support
+     Edward Rudd                  - Fixes for playing MP3 versions of
+                                    MI1/Loom audio
+     Daniel Schepler              - Final MI1 CD music support, initial Ogg
+                                    Vorbis support
+     Andre Souza                  - SDL-based OpenGL renderer
+     Tom Frost                    - WebOS port contributions
 
   FreeSCI Contributors
   --------------------
-     Francois-R Boyer        - MT-32 information and mapping code
-     Rainer Canavan          - IRIX MIDI driver and bug fixes
+     Francois-R Boyer             - MT-32 information and mapping code
+     Rainer Canavan               - IRIX MIDI driver and bug fixes
      Xiaojun Chen
-     Paul David Doherty      - Game version information
-     Vyacheslav Dikonov      - Config script improvements
-     Ruediger Hanke          - Port to the MorphOS platform
-     Matt Hargett            - Clean-ups, bugfixes, Hardcore QA, Win32
-     Max Horn                - SetJump implementation
-     Ravi I.                 - SCI0 sound resource specification
-     Emmanuel Jeandel        - Bugfixes and bug reports
-     Dmitry Jemerov          - Port to the Win32 platform, numerous bugfixes
-     Chris Kehler            - Makefile enhancements
-     Christopher T. Lansdown - Original CVS maintainer, Alpha compatibility
-                               fixes
-     Sergey Lapin            - Port of Carl's type 2 decompression code
-     Rickard Lind            - MT-32->GM MIDI mapping magic, sound research
-     Hubert Maier            - AmigaOS 4 port
-     Johannes Manhave        - Document format translation
-     Claudio Matsuoka        - CVS snapshots, daily builds, BeOS and cygwin
-                               ports
-     Dark Minister           - SCI research (bytecode and parser)
-     Carl Muckenhoupt        - Sources to the SCI resource viewer tools that
-                               started it all
-     Anders Baden Nielsen    - PPC testing
-     Walter van Niftrik      - Ports to the Dreamcast and GP32 platforms
-     Rune Orsval             - Configuration file editor
-     Solomon Peachy          - SDL ports and much of the sound subsystem
-     Robey Pointer           - Bug tracking system hosting
-     Magnus Reftel           - Heap implementation, Python class viewer,
-                               bugfixes
-     Christoph Reichenbach   - UN*X code, VM/Graphics/Sound/other
-                               infrastructure
-     George Reid             - FreeBSD package management
-     Lars Skovlund           - Project maintenance, most documentation,
-                               bugfixes, SCI1 support
-     Rink Springer           - Port to the DOS platform, several bug fixes
-     Rainer De Temple        - SCI research
+     Paul David Doherty           - Game version information
+     Vyacheslav Dikonov           - Config script improvements
+     Ruediger Hanke               - Port to the MorphOS platform
+     Matt Hargett                 - Clean-ups, bugfixes, Hardcore QA, Win32
+     Max Horn                     - SetJump implementation
+     Ravi I.                      - SCI0 sound resource specification
+     Emmanuel Jeandel             - Bugfixes and bug reports
+     Dmitry Jemerov               - Port to the Win32 platform, numerous
+                                    bugfixes
+     Chris Kehler                 - Makefile enhancements
+     Christopher T. Lansdown      - Original CVS maintainer, Alpha
+                                    compatibility fixes
+     Sergey Lapin                 - Port of Carl's type 2 decompression code
+     Rickard Lind                 - MT-32->GM MIDI mapping magic, sound
+                                    research
+     Hubert Maier                 - AmigaOS 4 port
+     Johannes Manhave             - Document format translation
+     Claudio Matsuoka             - CVS snapshots, daily builds, BeOS and
+                                    cygwin ports
+     Dark Minister                - SCI research (bytecode and parser)
+     Carl Muckenhoupt             - Sources to the SCI resource viewer tools
+                                    that started it all
+     Anders Baden Nielsen         - PPC testing
+     Walter van Niftrik           - Ports to the Dreamcast and GP32 platforms
+     Rune Orsval                  - Configuration file editor
+     Solomon Peachy               - SDL ports and much of the sound subsystem
+     Robey Pointer                - Bug tracking system hosting
+     Magnus Reftel                - Heap implementation, Python class viewer,
+                                    bugfixes
+     Christoph Reichenbach        - UN*X code, VM/Graphics/Sound/other
+                                    infrastructure
+     George Reid                  - FreeBSD package management
+     Lars Skovlund                - Project maintenance, most documentation,
+                                    bugfixes, SCI1 support
+     Rink Springer                - Port to the DOS platform, several bug
+                                    fixes
+     Rainer De Temple             - SCI research
      Sean Terrell
-     Hugues Valois           - Game selection menu
-     Jordi Vilalta           - Numerous code and website clean-up patches
-     Petr Vyhnak             - The DCL-INFLATE algorithm, many Win32
-                               improvements
-     Bas Zoetekouw           - Man pages, debian package management, CVS
-                               maintenance
+     Hugues Valois                - Game selection menu
+     Jordi Vilalta                - Numerous code and website clean-up
+                                    patches
+     Petr Vyhnak                  - The DCL-INFLATE algorithm, many Win32
+                                    improvements
+     Bas Zoetekouw                - Man pages, debian package management, CVS
+                                    maintenance
 
      Special thanks to Prof. Dr. Gary Nutt for allowing the FreeSCI VM
      extension as a course project in his Advanced OS course.
@@ -609,6 +639,8 @@ Special thanks to
    Jimmi Thogersen   - For ScummRev, and much obscure code/documentation
    Tristan           - For additional work on the original MT-32 emulator
    James Woodcock    - Soundtrack enhancements
+   Anton Yartsev     - For the original re-implementation of the ZVision
+                       engine
 
    Tony Warriner and everyone at Revolution Software Ltd. for sharing with us
    the source of some of their brilliant games, allowing us to release

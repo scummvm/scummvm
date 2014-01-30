@@ -34,6 +34,8 @@ class ContainerWidget;
 class StaticTextWidget;
 
 class RecorderDialog : public GUI::Dialog {
+	using GUI::Dialog::runModal;
+
 private:
 	bool _firstScreenshotUpdate;
 	Common::PlaybackFile _playbackFile;

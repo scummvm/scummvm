@@ -83,15 +83,15 @@ class ResourceManager {
 	} _buff[kBtLevel];
 
 	BtPage *getPage(int level, uint16 pageId);
-	uint16 catRead(void *buf, uint16 length);
+	uint16 catRead(byte *buf, uint16 length);
 	Common::File *_catFile;
 	Common::File *_datFile;
-	uint16  XCrypt(void *buf, uint16 length);
+	uint16  XCrypt(byte *buf, uint16 length);
 public:
 
 	ResourceManager();
 	~ResourceManager();
-	uint16 read(void *buf, uint16 length);
+	uint16 read(byte *buf, uint16 length);
 	bool seek(int32 offs, int whence = 0);
 
 	BtKeypack *find(const char *key);
@@ -111,7 +111,7 @@ public:
 	bool seek(int32 offset);
 	int32 pos();
 	int32 size();
-	uint32 read(void *dataPtr, uint32 dataSize);
+	uint32 read(byte *dataPtr, uint32 dataSize);
 	Common::String readLine();
 };
 

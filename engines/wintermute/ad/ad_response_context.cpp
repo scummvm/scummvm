@@ -50,8 +50,8 @@ AdResponseContext::~AdResponseContext() {
 //////////////////////////////////////////////////////////////////////////
 bool AdResponseContext::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferPtr(TMEMBER_PTR(_gameRef));
-	persistMgr->transfer(TMEMBER(_context));
-	persistMgr->transfer(TMEMBER(_id));
+	persistMgr->transferCharPtr(TMEMBER(_context));
+	persistMgr->transferSint32(TMEMBER(_id));
 
 	return STATUS_OK;
 }

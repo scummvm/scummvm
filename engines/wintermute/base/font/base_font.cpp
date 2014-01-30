@@ -118,18 +118,18 @@ bool BaseFont::isTrueType(BaseGame *gameRef, const Common::String &filename) {
 	TOKEN_TABLE_END
 
 
-	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
+	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
 		return false;
 	}
 
-	byte *workBuffer = buffer;
+	char *workBuffer = buffer;
 
 	char *params;
 	BaseParser parser;
 
 	bool ret = false;
-	if (parser.getCommand((char **)&workBuffer, commands, (char **)&params) == TOKEN_TTFONT) {
+	if (parser.getCommand(&workBuffer, commands, &params) == TOKEN_TTFONT) {
 		ret = true;
 	}
 

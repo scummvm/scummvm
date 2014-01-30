@@ -32,6 +32,8 @@
 #include "common/system.h"
 #include "audio/mixer.h"
 #include "engines/engine.h"
+#include "gui/debugger.h"
+#include "neverhood/console.h"
 #include "neverhood/messages.h"
 
 namespace Neverhood {
@@ -48,7 +50,6 @@ class Screen;
 class SoundMan;
 class AudioResourceMan;
 class StaticData;
-class Console;
 struct NPoint;
 
 struct GameState {
@@ -90,6 +91,7 @@ public:
 	GameModule *_gameModule;
 	StaticData *_staticData;
 	Console *_console;
+	GUI::Debugger *getDebugger() { return _console; }
 
 	SoundMan *_soundMan;
 	AudioResourceMan *_audioResourceMan;

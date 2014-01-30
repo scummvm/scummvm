@@ -27,6 +27,7 @@
 #include "common/ptr.h"
 #include "common/util.h"
 #include "common/stream.h"
+#include "common/textconsole.h"
 
 #if defined(USE_ZLIB)
   #ifdef __SYMBIAN32__
@@ -158,10 +159,11 @@ protected:
 	uint32 _pos;
 	uint32 _origSize;
 	bool _eos;
+	bool _shownBackwardSeekingWarning;
 
 public:
 
-	GZipReadStream(SeekableReadStream *w, uint32 knownSize = 0) : _wrapped(w), _stream() {
+	GZipReadStream(SeekableReadStream *w, uint32 knownSize = 0) : _wrapped(w), _stream(), _shownBackwardSeekingWarning(false) {
 		assert(w != 0);
 
 		// Verify file header is correct
@@ -241,13 +243,17 @@ public:
 	}
 	bool seek(int32 offset, int whence = SEEK_SET) {
 		int32 newPos = 0;
-		assert(whence != SEEK_END);	// SEEK_END not supported
 		switch (whence) {
 		case SEEK_SET:
 			newPos = offset;
 			break;
 		case SEEK_CUR:
 			newPos = _pos + offset;
+			break;
+		case SEEK_END:
+			// NOTE: This can be an expensive operation (see below).
+			newPos = size() + offset;
+			break;
 		}
 
 		assert(newPos >= 0);
@@ -256,9 +262,15 @@ public:
 			// To search backward, we have to restart the whole decompression
 			// from the start of the file. A rather wasteful operation, best
 			// to avoid it. :/
-#if DEBUG
-			warning("Backward seeking in GZipReadStream detected");
-#endif
+
+			if (!_shownBackwardSeekingWarning) {
+				// We only throw this warning once per stream, to avoid
+				// getting the console swarmed with warnings when consecutive
+				// seeks are made.
+				warning("Backward seeking in GZipReadStream detected");
+				_shownBackwardSeekingWarning = true;
+			}
+
 			_pos = 0;
 			_wrapped->seek(0, SEEK_SET);
 			_zlibErr = inflateReset(&_stream);

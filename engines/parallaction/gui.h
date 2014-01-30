@@ -43,7 +43,7 @@ class MenuInputHelper {
 	MenuInputState *_newState;
 
 public:
-	MenuInputHelper() : _state(0) {
+	MenuInputHelper() : _state(0), _newState(0) {
 	}
 
 	~MenuInputHelper();

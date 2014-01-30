@@ -30,7 +30,7 @@
 #include "scumm/charset.h"
 #include "scumm/imuse_digi/dimuse.h"
 #include "scumm/imuse/imuse.h"
-#include "scumm/player_towns.h"
+#include "scumm/players/player_towns.h"
 #include "scumm/he/intern_he.h"
 #include "scumm/object.h"
 #include "scumm/resource.h"
@@ -148,7 +148,17 @@ void ScummEngine::requestLoad(int slot) {
 	_saveLoadFlag = 2;		// 2 for load
 }
 
-static bool saveSaveGameHeader(Common::OutSaveFile *out, SaveGameHeader &hdr) {
+Common::SeekableReadStream *ScummEngine::openSaveFileForReading(int slot, bool compat, Common::String &fileName) {
+	fileName = makeSavegameName(slot, compat);
+	return _saveFileMan->openForLoading(fileName);
+}
+
+Common::WriteStream *ScummEngine::openSaveFileForWriting(int slot, bool compat, Common::String &fileName) {
+	fileName = makeSavegameName(slot, compat);
+	return _saveFileMan->openForSaving(fileName);
+}
+
+static bool saveSaveGameHeader(Common::WriteStream *out, SaveGameHeader &hdr) {
 	hdr.type = MKTAG('S','C','V','M');
 	hdr.size = 0;
 	hdr.ver = CURRENT_VER;
@@ -160,7 +170,7 @@ static bool saveSaveGameHeader(Common::OutSaveFile *out, SaveGameHeader &hdr) {
 	return true;
 }
 
-bool ScummEngine::saveState(Common::OutSaveFile *out, bool writeHeader) {
+bool ScummEngine::saveState(Common::WriteStream *out, bool writeHeader) {
 	SaveGameHeader hdr;
 
 	if (writeHeader) {
@@ -177,20 +187,13 @@ bool ScummEngine::saveState(Common::OutSaveFile *out, bool writeHeader) {
 	return true;
 }
 
-bool ScummEngine::saveState(int slot, bool compat) {
+bool ScummEngine::saveState(int slot, bool compat, Common::String &filename) {
 	bool saveFailed;
-	Common::String filename;
-	Common::OutSaveFile *out;
 
 	pauseEngine(true);
 
-	if (_saveLoadSlot == 255) {
-		// Allow custom filenames for save game system in HE Games
-		filename = _saveLoadFileName;
-	} else {
-		filename = makeSavegameName(slot, compat);
-	}
-	if (!(out = _saveFileMan->openForSaving(filename)))
+	Common::WriteStream *out = openSaveFileForWriting(slot, compat, filename);
+	if (!out)
 		return false;
 
 	saveFailed = false;
@@ -307,18 +310,17 @@ static bool loadSaveGameHeader(Common::SeekableReadStream *in, SaveGameHeader &h
 }
 
 bool ScummEngine::loadState(int slot, bool compat) {
+	// Wrapper around the other variant
 	Common::String filename;
-	Common::SeekableReadStream *in;
+	return loadState(slot, compat, filename);
+}
+
+bool ScummEngine::loadState(int slot, bool compat, Common::String &filename) {
 	SaveGameHeader hdr;
 	int sb, sh;
 
-	if (_saveLoadSlot == 255) {
-		// Allow custom filenames for save game system in HE Games
-		filename = _saveLoadFileName;
-	} else {
-		filename = makeSavegameName(slot, compat);
-	}
-	if (!(in = _saveFileMan->openForLoading(filename)))
+	Common::SeekableReadStream *in = openSaveFileForReading(slot, compat, filename);
+	if (!in)
 		return false;
 
 	if (!loadSaveGameHeader(in, hdr)) {
@@ -634,100 +636,83 @@ bool ScummEngine::getSavegameName(int slot, Common::String &desc) {
 	return result;
 }
 
-bool getSavegameName(Common::InSaveFile *in, Common::String &desc, int heversion) {
-	SaveGameHeader hdr;
-
+namespace {
+bool loadAndCheckSaveGameHeader(Common::InSaveFile *in, int heversion, SaveGameHeader &hdr, Common::String *error = nullptr) {
 	if (!loadSaveGameHeader(in, hdr)) {
-		desc = "Invalid savegame";
+		if (error) {
+			*error = "Invalid savegame";
+		}
 		return false;
 	}
 
-	if (hdr.ver > CURRENT_VER)
+	if (hdr.ver > CURRENT_VER) {
 		hdr.ver = TO_LE_32(hdr.ver);
+	}
+
 	if (hdr.ver < VER(7) || hdr.ver > CURRENT_VER) {
-		desc = "Invalid version";
+		if (error) {
+			*error = "Invalid version";
+		}
 		return false;
 	}
 
 	// We (deliberately) broke HE savegame compatibility at some point.
 	if (hdr.ver < VER(57) && heversion >= 60) {
-		desc = "Unsupported version";
+		if (error) {
+			*error = "Unsupported version";
+		}
 		return false;
 	}
 
 	hdr.name[sizeof(hdr.name) - 1] = 0;
+	return true;
+}
+} // End of anonymous namespace
+
+bool getSavegameName(Common::InSaveFile *in, Common::String &desc, int heversion) {
+	SaveGameHeader hdr;
+
+	if (!loadAndCheckSaveGameHeader(in, heversion, hdr, &desc)) {
+		return false;
+	}
+
 	desc = hdr.name;
 	return true;
 }
 
-Graphics::Surface *ScummEngine::loadThumbnailFromSlot(const char *target, int slot) {
-	Common::SeekableReadStream *in;
+bool ScummEngine::querySaveMetaInfos(const char *target, int slot, int heversion, Common::String &desc, Graphics::Surface *&thumbnail, SaveStateMetaInfos *&timeInfos) {
+	if (slot < 0) {
+		return false;
+	}
+
 	SaveGameHeader hdr;
+	const Common::String filename = ScummEngine::makeSavegameName(target, slot, false);
+	Common::ScopedPtr<Common::SeekableReadStream> in(g_system->getSavefileManager()->openForLoading(filename));
 
-	if (slot < 0)
-		return 0;
-
-	Common::String filename = ScummEngine::makeSavegameName(target, slot, false);
-	if (!(in = g_system->getSavefileManager()->openForLoading(filename))) {
-		return 0;
-	}
-
-	if (!loadSaveGameHeader(in, hdr)) {
-		delete in;
-		return 0;
-	}
-
-	if (hdr.ver > CURRENT_VER)
-		hdr.ver = TO_LE_32(hdr.ver);
-	if (hdr.ver < VER(52)) {
-		delete in;
-		return 0;
-	}
-
-	Graphics::Surface *thumb = 0;
-	if (Graphics::checkThumbnailHeader(*in)) {
-		thumb = Graphics::loadThumbnail(*in);
-	}
-
-	delete in;
-	return thumb;
-}
-
-bool ScummEngine::loadInfosFromSlot(const char *target, int slot, SaveStateMetaInfos *stuff) {
-	Common::SeekableReadStream *in;
-	SaveGameHeader hdr;
-
-	if (slot < 0)
-		return 0;
-
-	Common::String filename = makeSavegameName(target, slot, false);
-	if (!(in = g_system->getSavefileManager()->openForLoading(filename))) {
+	if (!in) {
 		return false;
 	}
 
-	if (!loadSaveGameHeader(in, hdr)) {
-		delete in;
+	if (!loadAndCheckSaveGameHeader(in.get(), heversion, hdr)) {
 		return false;
 	}
 
-	if (hdr.ver > CURRENT_VER)
-		hdr.ver = TO_LE_32(hdr.ver);
-	if (hdr.ver < VER(56)) {
-		delete in;
-		return false;
+	desc = hdr.name;
+
+	if (hdr.ver > VER(52)) {
+		if (Graphics::checkThumbnailHeader(*in)) {
+			thumbnail = Graphics::loadThumbnail(*in);
+		}
+
+		if (hdr.ver > VER(57)) {
+			if (!loadInfos(in.get(), timeInfos)) {
+				return false;
+			}
+		} else {
+			timeInfos = nullptr;
+		}
 	}
 
-	if (!Graphics::skipThumbnail(*in)) {
-		delete in;
-		return false;
-	}
-
-	if (!loadInfos(in, stuff)) {
-		delete in;
-		return false;
-	}
-
-	delete in;
 	return true;
 }
 
@@ -781,7 +766,7 @@ bool ScummEngine::loadInfos(Common::SeekableReadStream *file, SaveStateMetaInfos
 	return true;
 }
 
-void ScummEngine::saveInfos(Common::WriteStream* file) {
+void ScummEngine::saveInfos(Common::WriteStream *file) {
 	SaveInfoSection section;
 	section.type = MKTAG('I','N','F','O');
 	section.version = INFOSECTION_VERSION;

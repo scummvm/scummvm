@@ -84,14 +84,12 @@ private:
 	void litph(tablint &t, int typ, int tempo);
 
 public:
-	SoundManager(Audio::Mixer *mixer);
+	SoundManager(MortevielleEngine *vm, Audio::Mixer *mixer);
 	~SoundManager();
 
 	Audio::Mixer *_mixer;
 	Audio::SoundHandle _soundHandle;
 	uint16 *_cfiphBuffer;
-
-	void setParent(MortevielleEngine *vm);
 
 	int decodeMusic(const byte *PSrc, byte *PDest, int size);
 	void playSong(const byte *buf, uint usize, uint loops);

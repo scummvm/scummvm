@@ -138,9 +138,9 @@ bool MemoryObject::load(MfcArchive &file) {
 		}
 	}
 
-	if (g_fullpipe->_currArchive) {
+	if (g_fp->_currArchive) {
 		_mfield_14 = 0;
-		_libHandle = g_fullpipe->_currArchive;
+		_libHandle = g_fp->_currArchive;
 	}
 
 	return true;
@@ -148,8 +148,17 @@ bool MemoryObject::load(MfcArchive &file) {
 
 void MemoryObject::loadFile(char *filename) {
 	debug(5, "MemoryObject::loadFile(<%s>)", filename);
+
+	if (!*filename)
+		return;
+
 	if (!_data) {
-		Common::SeekableReadStream *s = g_fullpipe->_currArchive->createReadStreamForMember(filename);
+		NGIArchive *arr = g_fp->_currArchive;
+
+		if (g_fp->_currArchive != _libHandle && _libHandle)
+			g_fp->_currArchive = _libHandle;
+
+		Common::SeekableReadStream *s = g_fp->_currArchive->createReadStreamForMember(filename);
 
 		if (s) {
 			assert(s->size() > 0);
@@ -161,7 +170,11 @@ void MemoryObject::loadFile(char *filename) {
 			s->read(_data, _dataSize);
 
 			delete s;
+		} else {
+			warning("MemoryObject::loadFile(): reading failure");
 		}
+
+		g_fp->_currArchive = arr;
 	}
 }
 
@@ -181,6 +194,8 @@ byte *MemoryObject::loadData() {
 }
 
 void MemoryObject::freeData() {
+	debug(8, "MemoryObject::freeData(): file: %s", _memfilename);
+
 	if (_data)
 		free(_data);
 

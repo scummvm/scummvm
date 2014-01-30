@@ -110,6 +110,8 @@ protected:
 	virtual Common::Error run();
 	virtual bool hasFeature(EngineFeature f) const;
 
+	GUI::Debugger *getDebugger() { return _console; }
+
 public:
 	DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gameDesc);
 	virtual ~DreamWebEngine();
@@ -144,8 +146,6 @@ public:
 
 	bool loadSpeech(const Common::String &filename);
 
-	void enableSavingOrLoading(bool enable = true) { _enableSavingOrLoading = enable; }
-
 	Common::Language getLanguage() const;
 	uint8 modifyChar(uint8 c) const;
 	Common::String modifyFileName(const char *);
@@ -171,7 +171,6 @@ private:
 	uint _speed;
 	bool _turbo;
 	uint _oldMouseState;
-	bool _enableSavingOrLoading;
 
 protected:
 	GameVars _vars; // saved variables

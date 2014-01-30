@@ -117,6 +117,18 @@ static const CgeGameDescription gameDescriptions[] = {
 	},
 	{
 		{
+			"soltys", "Soltys Freeware v1.0",
+			{
+				{"vol.cat", 0, "fcae86b20eaa5cedec17b24fa5e85eb4", 50176},
+				{"vol.dat", 0, "ff10d54acc2c95696c57e05819b6906f", 8450151},
+				AD_LISTEND
+			},
+			Common::ES_ESP, Common::kPlatformDOS, ADGF_NO_FLAGS , GUIO0()
+		},
+		kGameTypeSoltys
+	},
+	{
+		{
 			// Polish version, provided by Strangerke
 			"sfinx", "Sfinx Freeware",
 			{

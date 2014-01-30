@@ -48,7 +48,7 @@ if ($mode eq "") {
 $Text::Wrap::unexpand = 0;
 if ($mode eq "TEXT") {
 	$Text::Wrap::columns = 78;
-	$max_name_width = 23; # The maximal width of a name.
+	$max_name_width = 28; # The maximal width of a name.
 } elsif ($mode eq "CPP") {
 	$Text::Wrap::columns = 48;	# Approx.
 }
@@ -60,6 +60,7 @@ sub html_entities_to_ascii {
 	# For now we hardcode these mappings
 	# &aacute;  -> a
 	# &eacute;  -> e
+	# &iacute;  -> i
 	# &igrave;  -> i
 	# &oacute;  -> o
 	# &oslash;  -> o
@@ -72,8 +73,10 @@ sub html_entities_to_ascii {
 	# &#322;    -> l
 	# &#347;    -> s
 	# &Scaron;  -> S
+	# &ntilde;  -> n
 	$text =~ s/&aacute;/a/g;
 	$text =~ s/&eacute;/e/g;
+	$text =~ s/&iacute;/i/g;
 	$text =~ s/&igrave;/i/g;
 	$text =~ s/&oacute;/o/g;
 	$text =~ s/&oslash;/o/g;
@@ -81,6 +84,7 @@ sub html_entities_to_ascii {
 	$text =~ s/&#347;/s/g;
 	$text =~ s/&Scaron;/S/g;
 	$text =~ s/&aring;/aa/g;
+	$text =~ s/&ntilde;/n/g;
 
 	$text =~ s/&auml;/a/g;
 	$text =~ s/&euml;/e/g;
@@ -101,6 +105,7 @@ sub html_entities_to_cpp {
 	# The numerical values are octal!
 	$text =~ s/&aacute;/\\341/g;
 	$text =~ s/&eacute;/\\351/g;
+	$text =~ s/&iacute;/\\355/g;
 	$text =~ s/&igrave;/\\354/g;
 	$text =~ s/&oacute;/\\363/g;
 	$text =~ s/&oslash;/\\370/g;
@@ -108,6 +113,7 @@ sub html_entities_to_cpp {
 	$text =~ s/&#347;/s/g;
 	$text =~ s/&Scaron;/S/g;
 	$text =~ s/&aring;/\\345/g;
+	$text =~ s/&ntilde;/\\361/g;
 
 	$text =~ s/&auml;/\\344/g;
 	$text =~ s/&euml;/\\353/g;
@@ -126,6 +132,7 @@ sub html_entities_to_rtf {
 
 	$text =~ s/&aacute;/\\'87/g;
 	$text =~ s/&eacute;/\\'8e/g;
+	$text =~ s/&iacute;/\\'92/g;
 	$text =~ s/&igrave;/\\'93/g;
 	$text =~ s/&oacute;/\\'97/g;
 	$text =~ s/&oslash;/\\'bf/g;
@@ -135,6 +142,8 @@ sub html_entities_to_rtf {
 	$text =~ s/&Scaron;/\\uc0\\u540 /g;
 
 	# Back to hex numbers
+	$text =~ s/&ntilde;/\\'96/g;
+
 	$text =~ s/&auml;/\\'8a/g;
 	$text =~ s/&euml;/\\'eb/g;
 	$text =~ s/&ouml;/\\'9a/g;
@@ -151,12 +160,14 @@ sub html_entities_to_tex {
 
 	$text =~ s/&aacute;/\\'a/g;
 	$text =~ s/&eacute;/\\'e/g;
+	$text =~ s/&iacute;/\\'i/g;
 	$text =~ s/&igrave;/\\`\\i/g;
 	$text =~ s/&oacute;/\\'o/g;
 	$text =~ s/&oslash;/{\\o}/g;
 	$text =~ s/&aring;/\\aa /g;
 	$text =~ s/&#322;/{\\l}/g;
 	$text =~ s/&Scaron;/{\\v S}/g;
+	$text =~ s/&ntilde;/\\˜n/g;
 
 	$text =~ s/&auml;/\\"a/g;
 	$text =~ s/&ouml;/\\"o/g;
@@ -541,6 +552,11 @@ begin_credits("Credits");
 				add_person("Oliver Kiehl", "olki", "(retired)");
 				add_person("Ludvig Strigeus", "ludde", "(retired)");
 			end_section();
+			
+			begin_section("Avalanche");
+				add_person("Peter Bozs&oacute;", "uruk", "");
+				add_person("Arnaud Boutonn&eacute;", "Strangerke", "");
+			end_section();
 
 			begin_section("CGE");
 				add_person("Arnaud Boutonn&eacute;", "Strangerke", "");
@@ -753,6 +769,10 @@ begin_credits("Credits");
 
 			begin_section("Wintermute");
 				add_person("Einar Johan T. S&oslash;m&aring;en", "somaen", "");
+			end_section();
+            
+			begin_section("ZVision");
+				add_person("Adrian Astley", "RichieSams", "");
 			end_section();
 
 		end_section();
@@ -975,7 +995,7 @@ begin_credits("Credits");
 			end_section();
 		end_section();
 
-		begin_section("Translations");
+		begin_section("GUI Translations");
 				begin_persons();
 					add_person("Thierry Crozat", "criezy", "Translation Lead");
 				end_persons();
@@ -1040,6 +1060,20 @@ begin_credits("Credits");
 					add_person("Lubomyr Lisen", "", "");
 				end_section();
 		end_section();
+		begin_section("Game Translations");
+				begin_section("CGE");
+					add_person("Dan Serban", "nutron", "Soltys English translation");
+					add_person("V&iacute;ctor Gonz&aacute;lez", "IlDucci", "Soltys Spanish translation");
+					add_person("Alejandro G&oacute;mez de la Mu&ntilde;oza", "TheFireRed", "Soltys Spanish translation");
+				end_section();
+				begin_section("Drascula");
+					add_person("Thierry Crozat", "criezy", "Improve French translation");
+				end_section();
+				begin_section("Mortevielle");
+					add_person("Hugo Labrande", "", "Improve English translation");
+					add_person("Thierry Crozat", "criezy", "Improve English translation");
+				end_section();
+		end_section();
 
 		begin_section("Websites (design)");
 			begin_persons();
@@ -1063,6 +1097,7 @@ begin_credits("Credits");
 				add_person("Janne Huttunen", "", "V3 actor mask support, Dig/FT SMUSH audio");
 				add_person("Kov&aacute;cs Endre J&aacute;nos", "", "Several fixes for Simon1");
 				add_person("Jeroen Janssen", "japj", "Numerous readability and bugfix patches");
+				add_person("Keith Kaisershot", "blitter", "Several Pegasus Prime patches");
 				add_person("Andreas Karlsson", "Sprawl", "Initial port for SymbianOS");
 				add_person("Claudio Matsuoka", "", "Daily Linux builds");
 				add_person("Thomas Mayer", "", "PSP port contributions");
@@ -1154,6 +1189,7 @@ begin_credits("Credits");
 			add_person("Jimmi Th&oslash;gersen", "", "For ScummRev, and much obscure code/documentation");
 			add_person("", "Tristan", "For additional work on the original MT-32 emulator");
 			add_person("James Woodcock", "", "Soundtrack enhancements");
+			add_person("Anton Yartsev", "Zidane", "For the original re-implementation of the ZVision engine");
 		end_persons();
 
 	add_paragraph(

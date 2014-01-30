@@ -28,23 +28,26 @@
 #include "fullpipe/statics.h"
 #include "fullpipe/interaction.h"
 #include "fullpipe/motion.h"
+#include "fullpipe/constants.h"
+#include "fullpipe/scenes.h"
+#include "fullpipe/floaters.h"
 
 namespace Fullpipe {
 
 Inventory2 *getGameLoaderInventory() {
-	return &g_fullpipe->_gameLoader->_inventory;
+	return &g_fp->_gameLoader->_inventory;
 }
 
 MctlCompound *getSc2MctlCompoundBySceneId(int16 sceneId) {
-	for (uint i = 0; i < g_fullpipe->_gameLoader->_sc2array.size(); i++)
-		if (g_fullpipe->_gameLoader->_sc2array[i]._sceneId == sceneId)
-			return (MctlCompound *)g_fullpipe->_gameLoader->_sc2array[i]._motionController;
+	for (uint i = 0; i < g_fp->_gameLoader->_sc2array.size(); i++)
+		if (g_fp->_gameLoader->_sc2array[i]._sceneId == sceneId)
+			return (MctlCompound *)g_fp->_gameLoader->_sc2array[i]._motionController;
 
 	return 0;
 }
 
 InteractionController *getGameLoaderInteractionController() {
-	return g_fullpipe->_gameLoader->_interactionController;
+	return g_fp->_gameLoader->_interactionController;
 }
 
 GameLoader::GameLoader() {
@@ -68,10 +71,10 @@ GameLoader::GameLoader() {
 	_preloadEntranceId = 0;
 	_updateCounter = 0;
 
-	g_fullpipe->_msgX = 0;
-	g_fullpipe->_msgY = 0;
-	g_fullpipe->_msgObjectId2 = 0;
-	g_fullpipe->_msgId = 0;
+	g_fp->_msgX = 0;
+	g_fp->_msgY = 0;
+	g_fp->_msgObjectId2 = 0;
+	g_fp->_msgId = 0;
 }
 
 GameLoader::~GameLoader() {
@@ -79,6 +82,8 @@ GameLoader::~GameLoader() {
 	delete _gameProject;
 	delete _interactionController;
 	delete _inputController;
+
+	warning("STUB: GameLoader::~GameLoader()");
 }
 
 bool GameLoader::load(MfcArchive &file) {
@@ -91,10 +96,10 @@ bool GameLoader::load(MfcArchive &file) {
 
 	_gameProject->load(file);
 
-	g_fullpipe->_gameProject = _gameProject;
+	g_fp->_gameProject = _gameProject;
 
-	if (g_fullpipe->_gameProjectVersion < 12) {
-		error("Old gameProjectVersion: %d", g_fullpipe->_gameProjectVersion);
+	if (g_fp->_gameProjectVersion < 12) {
+		error("Old gameProjectVersion: %d", g_fp->_gameProjectVersion);
 	}
 
 	_gameName = file.readPascalString();
@@ -167,7 +172,7 @@ bool GameLoader::gotoScene(int sceneId, int entranceId) {
 		return false;
 
 	if (_sc2array[sc2idx]._entranceDataCount < 1) {
-		g_fullpipe->_currentScene = st->_scene;
+		g_fp->_currentScene = st->_scene;
 		return true;
 	}
 
@@ -186,20 +191,20 @@ bool GameLoader::gotoScene(int sceneId, int entranceId) {
 	if (sg || (sg = _gameVar->getSubVarByName("OBJSTATES")->addSubVarAsInt("SAVEGAME", 0)) != 0)
 		sg->setSubVarAsInt("Entrance", entranceId);
 
-	if (!g_fullpipe->sceneSwitcher(_sc2array[sc2idx]._entranceData[entranceIdx]))
+	if (!g_fp->sceneSwitcher(_sc2array[sc2idx]._entranceData[entranceIdx]))
 		return false;
 
-	g_fullpipe->_msgObjectId2 = 0;
-	g_fullpipe->_msgY = -1;
-	g_fullpipe->_msgX = -1;
+	g_fp->_msgObjectId2 = 0;
+	g_fp->_msgY = -1;
+	g_fp->_msgX = -1;
 
-	g_fullpipe->_currentScene = st->_scene;
+	g_fp->_currentScene = st->_scene;
 
-	MessageQueue *mq1 = g_fullpipe->_currentScene->getMessageQueueById(_sc2array[sc2idx]._entranceData[entranceIdx]->_messageQueueId);
+	MessageQueue *mq1 = g_fp->_currentScene->getMessageQueueById(_sc2array[sc2idx]._entranceData[entranceIdx]->_messageQueueId);
 	if (mq1) {
 		MessageQueue *mq = new MessageQueue(mq1, 0, 0);
 
-		StaticANIObject *stobj = g_fullpipe->_currentScene->getStaticANIObject1ById(_field_FA, -1);
+		StaticANIObject *stobj = g_fp->_currentScene->getStaticANIObject1ById(_field_FA, -1);
 		if (stobj) {
 			stobj->_flags &= 0x100;
 
@@ -209,7 +214,7 @@ bool GameLoader::gotoScene(int sceneId, int entranceId) {
 			ex->_messageNum = 0;
 			ex->_excFlags |= 3;
 
-			mq->_exCommands.push_back(ex);
+			mq->addExCommandToEnd(ex);
 		}
 
 		mq->setFlags(mq->getFlags() | 1);
@@ -220,7 +225,7 @@ bool GameLoader::gotoScene(int sceneId, int entranceId) {
 			return false;
 		}
 	} else {
-		StaticANIObject *stobj = g_fullpipe->_currentScene->getStaticANIObject1ById(_field_FA, -1);
+		StaticANIObject *stobj = g_fp->_currentScene->getStaticANIObject1ById(_field_FA, -1);
 		if (stobj)
 			stobj->_flags &= 0xfeff;
 	}
@@ -228,8 +233,100 @@ bool GameLoader::gotoScene(int sceneId, int entranceId) {
 	return true;
 }
 
-bool preloadCallback(const PreloadItem &pre, int flag) {
-	warning("STUB: preloadCallback");
+bool preloadCallback(PreloadItem &pre, int flag) {
+	if (flag) {
+		if (flag == 50)
+			g_fp->_aniMan->preloadMovements(g_fp->_movTable);
+
+		StaticANIObject *pbar = g_fp->_loaderScene->getStaticANIObject1ById(ANI_PBAR, -1);
+
+		if (pbar) {
+			int sz;
+
+			if (pbar->_movement->_currMovement)
+				sz = pbar->_movement->_currMovement->_dynamicPhases.size();
+			else
+				sz = pbar->_movement->_dynamicPhases.size();
+
+			pbar->_movement->setDynamicPhaseIndex(flag * (sz - 1) / 100);
+		}
+
+		g_fp->updateMap(&pre);
+
+		g_fp->_currentScene = g_fp->_loaderScene;
+
+		g_fp->_loaderScene->draw();
+
+		g_fp->_system->updateScreen();
+	} else {
+		if (g_fp->_scene2) {
+			g_fp->_aniMan = g_fp->_scene2->getAniMan();
+			g_fp->_scene2 = 0;
+			setInputDisabled(1);
+		}
+
+		g_fp->_floaters->stopAll();
+
+		if (g_fp->_soundEnabled) {
+			g_fp->_currSoundListCount = 1;
+			g_fp->_currSoundList1[0] = g_fp->accessScene(SC_COMMON)->_soundList;
+		}
+
+		g_vars->scene18_var01 = 0;
+
+		if ((pre.preloadId1 != SC_18 || pre.sceneId != SC_19) && (pre.preloadId1 != SC_19 || (pre.sceneId != SC_18 && pre.sceneId != SC_19))) {
+			if (g_fp->_scene3) {
+				if (pre.preloadId1 != SC_18)
+					g_fp->_gameLoader->unloadScene(SC_18);
+
+				g_fp->_scene3 = 0;
+			}
+		} else {
+			scene19_preload(g_fp->accessScene(pre.preloadId1), pre.keyCode);
+
+			g_vars->scene18_var01 = 1;
+
+			if (pre.preloadId1 == SC_18) {
+				g_fp->_gameLoader->saveScenePicAniInfos(SC_18);
+
+				scene18_preload();
+			}
+		}
+
+		if (((pre.sceneId == SC_19 && pre.keyCode == TrubaRight) || (pre.sceneId == SC_18 && pre.keyCode == TrubaRight)) && !pre.preloadId2) {
+			pre.sceneId = SC_18;
+			pre.keyCode = TrubaLeft;
+		}
+
+		if (!g_fp->_loaderScene) {
+			g_fp->_gameLoader->loadScene(SC_LDR);
+			g_fp->_loaderScene = g_fp->accessScene(SC_LDR);;
+		}
+
+		StaticANIObject *pbar = g_fp->_loaderScene->getStaticANIObject1ById(ANI_PBAR, -1);
+
+		if (pbar) {
+			pbar->show1(ST_EGTR_SLIMSORROW, ST_MAN_GOU, MV_PBAR_RUN, 0);
+			pbar->startAnim(MV_PBAR_RUN, 0, -1);
+		}
+
+		g_fp->_inventoryScene = 0;
+		g_fp->_updateCursorCallback = 0;
+
+		g_fp->_sceneRect.translate(-g_fp->_sceneRect.left, -g_fp->_sceneRect.top);
+
+		g_fp->_system->delayMillis(10);
+
+		Scene *oldsc = g_fp->_currentScene;
+
+		g_fp->_currentScene = g_fp->_loaderScene;
+
+		g_fp->_loaderScene->draw();
+
+		g_fp->_system->updateScreen();
+
+		g_fp->_currentScene = oldsc;
+	}
 
 	return true;
 }
@@ -262,8 +359,8 @@ bool GameLoader::preloadScene(int sceneId, int entranceId) {
 			return false;
 	}
 
-	if (g_fullpipe->_currentScene && g_fullpipe->_currentScene->_sceneId == sceneId)
-		g_fullpipe->_currentScene = 0;
+	if (g_fp->_currentScene && g_fp->_currentScene->_sceneId == sceneId)
+		g_fp->_currentScene = 0;
 
 	saveScenePicAniInfos(sceneId);
 	clearGlobalMessageQueueList1();
@@ -358,7 +455,7 @@ void GameLoader::applyPicAniInfos(Scene *sc, PicAniInfo **picAniInfo, int picAni
 			if (!(picAniInfo[i]->type & 1))
 				continue;
 
-			Scene *scNew = g_fullpipe->accessScene(picAniInfo[i]->sceneId);
+			Scene *scNew = g_fp->accessScene(picAniInfo[i]->sceneId);
 			if (!scNew)
 				continue;
 
@@ -386,8 +483,8 @@ void GameLoader::saveScenePicAniInfos(int sceneId) {
 }
 
 void GameLoader::updateSystems(int counterdiff) {
-	if (g_fullpipe->_currentScene) {
-		g_fullpipe->_currentScene->update(counterdiff);
+	if (g_fp->_currentScene) {
+		g_fp->_currentScene->update(counterdiff);
 
 		_exCommand._messageKind = 17;
 		_updateCounter++;
@@ -481,7 +578,7 @@ bool PreloadItems::load(MfcArchive &file) {
 
 	int count = file.readCount();
 
-	resize(count);
+	clear();
 
 	for (int i = 0; i < count; i++) {
 		PreloadItem *t = new PreloadItem();
@@ -508,6 +605,10 @@ InputController *FullpipeEngine::getGameLoaderInputController() {
 		return _gameLoader->_inputController;
 	else
 		return 0;
+}
+
+MctlCompound *getCurrSceneSc2MotionController() {
+	return getSc2MctlCompoundBySceneId(g_fp->_currentScene->_sceneId);
 }
 
 } // End of namespace Fullpipe

@@ -328,22 +328,22 @@ bool WalkRegion::persist(OutputPersistenceBlock &writer) {
 	result &= Region::persist(writer);
 
 	// Persist the nodes
-	writer.write(_nodes.size());
+	writer.write((uint32)_nodes.size());
 	Common::Array<Vertex>::const_iterator it = _nodes.begin();
 	while (it != _nodes.end()) {
-		writer.write(it->x);
-		writer.write(it->y);
+		writer.write((int32)it->x);
+		writer.write((int32)it->y);
 		++it;
 	}
 
 	// Persist the visibility matrix
-	writer.write(_visibilityMatrix.size());
+	writer.write((uint32)_visibilityMatrix.size());
 	Common::Array< Common::Array<int> >::const_iterator rowIter = _visibilityMatrix.begin();
 	while (rowIter != _visibilityMatrix.end()) {
-		writer.write(rowIter->size());
+		writer.write((uint32)rowIter->size());
 		Common::Array<int>::const_iterator colIter = rowIter->begin();
 		while (colIter != rowIter->end()) {
-			writer.write(*colIter);
+			writer.write((int32)*colIter);
 			++colIter;
 		}
 
@@ -360,7 +360,7 @@ bool WalkRegion::unpersist(InputPersistenceBlock &reader) {
 	// this point only the additional data from BS_WalkRegion needs to be loaded
 
 	// Node load
-	uint nodeCount;
+	uint32 nodeCount;
 	reader.read(nodeCount);
 	_nodes.clear();
 	_nodes.resize(nodeCount);
@@ -372,18 +372,20 @@ bool WalkRegion::unpersist(InputPersistenceBlock &reader) {
 	}
 
 	// Visibility matrix load
-	uint rowCount;
+	uint32 rowCount;
 	reader.read(rowCount);
 	_visibilityMatrix.clear();
 	_visibilityMatrix.resize(rowCount);
 	Common::Array< Common::Array<int> >::iterator rowIter = _visibilityMatrix.begin();
 	while (rowIter != _visibilityMatrix.end()) {
-		uint colCount;
+		uint32 colCount;
 		reader.read(colCount);
 		rowIter->resize(colCount);
 		Common::Array<int>::iterator colIter = rowIter->begin();
 		while (colIter != rowIter->end()) {
-			reader.read(*colIter);
+			int32 t;
+			reader.read(t);
+			*colIter = t;
 			++colIter;
 		}
 

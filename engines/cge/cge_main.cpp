@@ -539,14 +539,12 @@ void CGEEngine::setMapBrick(int x, int z) {
 	debugC(1, kCGEDebugEngine, "CGEEngine::setMapBrick(%d, %d)", x, z);
 
 	Square *s = new Square(this);
-	if (s) {
-		char n[6];
-		s->gotoxy(x * kMapGridX, kMapTop + z * kMapGridZ);
-		sprintf(n, "%02d:%02d", x, z);
-		_clusterMap[z][x] = 1;
-		s->setName(n);
-		_vga->_showQ->insert(s, _vga->_showQ->first());
-	}
+	char n[6];
+	s->gotoxy(x * kMapGridX, kMapTop + z * kMapGridZ);
+	sprintf(n, "%02d:%02d", x, z);
+	_clusterMap[z][x] = 1;
+	s->setName(n);
+	_vga->_showQ->insert(s, _vga->_showQ->first());
 }
 
 void CGEEngine::keyClick() {
@@ -1046,7 +1044,7 @@ void CGEEngine::loadSprite(const char *fname, int ref, int scene, int col = 0, i
 		for (line = sprf.readLine(); !sprf.eos(); line = sprf.readLine()) {
 			len = line.size();
 			lcnt++;
-			strcpy(tmpStr, line.c_str());
+			Common::strlcpy(tmpStr, line.c_str(), sizeof(tmpStr));
 			if (len == 0 || *tmpStr == '.')
 				continue;
 
@@ -1132,7 +1130,7 @@ void CGEEngine::loadSprite(const char *fname, int ref, int scene, int col = 0, i
 		_sprite->_flags._bDel = true;
 
 		// Extract the filename, without the extension
-		strcpy(_sprite->_file, fname);
+		Common::strlcpy(_sprite->_file, fname, sizeof(_sprite->_file));
 		char *p = strchr(_sprite->_file, '.');
 		if (p)
 			*p = '\0';
@@ -1158,7 +1156,7 @@ void CGEEngine::loadScript(const char *fname) {
 		char *p;
 
 		lcnt++;
-		strcpy(tmpStr, line.c_str());
+		Common::strlcpy(tmpStr, line.c_str(), sizeof(tmpStr));
 		if ((line.size() == 0) || (*tmpStr == '.'))
 			continue;
 

@@ -148,7 +148,7 @@ void Globals::setConfig() {
 		_language = LANG_SP;
 		break;
 	default:
-		warning("Unknown language in internal language mapping");
+		error("Hopkins - SetConfig(): Unknown language in internal language mapping");
 		break;
 	}
 	// End of CHECKME

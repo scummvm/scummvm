@@ -58,7 +58,7 @@ UIEntity::~UIEntity() {
 
 //////////////////////////////////////////////////////////////////////////
 bool UIEntity::loadFile(const char *filename) {
-	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
+	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
 		_gameRef->LOG(0, "UIEntity::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
@@ -92,7 +92,7 @@ TOKEN_DEF(SCRIPT)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-bool UIEntity::loadBuffer(byte *buffer, bool complete) {
+bool UIEntity::loadBuffer(char *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(ENTITY_CONTAINER)
 	TOKEN_TABLE(TEMPLATE)
@@ -106,54 +106,54 @@ bool UIEntity::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE(EDITOR_PROPERTY)
 	TOKEN_TABLE_END
 
-	byte *params;
+	char *params;
 	int cmd = 2;
 	BaseParser parser;
 
 	if (complete) {
-		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_ENTITY_CONTAINER) {
+		if (parser.getCommand(&buffer, commands, &params) != TOKEN_ENTITY_CONTAINER) {
 			_gameRef->LOG(0, "'ENTITY_CONTAINER' keyword expected.");
 			return STATUS_FAILED;
 		}
 		buffer = params;
 	}
 
-	while (cmd > 0 && (cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
+	while (cmd > 0 && (cmd = parser.getCommand(&buffer, commands, &params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
-			if (DID_FAIL(loadFile((char *)params))) {
+			if (DID_FAIL(loadFile(params))) {
 				cmd = PARSERR_GENERIC;
 			}
 			break;
 
 		case TOKEN_NAME:
-			setName((char *)params);
+			setName(params);
 			break;
 
 		case TOKEN_X:
-			parser.scanStr((char *)params, "%d", &_posX);
+			parser.scanStr(params, "%d", &_posX);
 			break;
 
 		case TOKEN_Y:
-			parser.scanStr((char *)params, "%d", &_posY);
+			parser.scanStr(params, "%d", &_posY);
 			break;
 
 		case TOKEN_DISABLED:
-			parser.scanStr((char *)params, "%b", &_disable);
+			parser.scanStr(params, "%b", &_disable);
 			break;
 
 		case TOKEN_VISIBLE:
-			parser.scanStr((char *)params, "%b", &_visible);
+			parser.scanStr(params, "%b", &_visible);
 			break;
 
 		case TOKEN_ENTITY:
-			if (DID_FAIL(setEntity((char *)params))) {
+			if (DID_FAIL(setEntity(params))) {
 				cmd = PARSERR_GENERIC;
 			}
 			break;
 
 		case TOKEN_SCRIPT:
-			addScript((char *)params);
+			addScript(params);
 			break;
 
 		case TOKEN_EDITOR_PROPERTY:

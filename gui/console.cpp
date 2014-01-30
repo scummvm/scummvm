@@ -82,8 +82,6 @@ ConsoleDialog::ConsoleDialog(float widthPercent, float heightPercent)
 	_historyIndex = 0;
 	_historyLine = 0;
 	_historySize = 0;
-	for (int i = 0; i < kHistorySize; i++)
-		_history[i][0] = '\0';
 
 	// Display greetings & prompt
 	print(gScummVMFullVersion);
@@ -274,24 +272,19 @@ void ConsoleDialog::handleKeyDown(Common::KeyState state) {
 
 		if (len > 0) {
 
-			// We have to allocate the string buffer with new, since VC++ sadly does not
-			// comply to the C++ standard, so we can't use a dynamic sized stack array.
-			char *str = new char[len + 1];
+			Common::String str;
 
 			// Copy the user input to str
 			for (i = 0; i < len; i++)
-				str[i] = buffer(_promptStartPos + i);
-			str[len] = '\0';
+				str.insertChar(buffer(_promptStartPos + i), i);
 
 			// Add the input to the history
 			addToHistory(str);
 
 			// Pass it to the input callback, if any
 			if (_callbackProc)
-				keepRunning = (*_callbackProc)(this, str, _callbackRefCon);
+				keepRunning = (*_callbackProc)(this, str.c_str(), _callbackRefCon);
 
-				// Get rid of the string buffer
-			delete[] str;
 		}
 
 		print(PROMPT);
@@ -575,8 +568,8 @@ void ConsoleDialog::killLastWord() {
 	}
 }
 
-void ConsoleDialog::addToHistory(const char *str) {
-	strcpy(_history[_historyIndex], str);
+void ConsoleDialog::addToHistory(const Common::String &str) {
+	_history[_historyIndex] = str;
 	_historyIndex = (_historyIndex + 1) % kHistorySize;
 	_historyLine = 0;
 	if (_historySize < kHistorySize)
@@ -590,8 +583,7 @@ void ConsoleDialog::historyScroll(int direction) {
 	if (_historyLine == 0 && direction > 0) {
 		int i;
 		for (i = 0; i < _promptEndPos - _promptStartPos; i++)
-			_history[_historyIndex][i] = buffer(_promptStartPos + i);
-		_history[_historyIndex][i] = '\0';
+			_history[_historyIndex].insertChar(buffer(_promptStartPos + i), i);
 	}
 
 	// Advance to the next line in the history
@@ -617,7 +609,8 @@ void ConsoleDialog::historyScroll(int direction) {
 		idx = (_historyIndex - _historyLine + _historySize) % _historySize;
 	else
 		idx = _historyIndex;
-	for (int i = 0; i < kLineBufferSize && _history[idx][i] != '\0'; i++)
+	int length = _history[idx].size();
+	for (int i = 0; i < length; i++)
 		printCharIntern(_history[idx][i]);
 	_promptEndPos = _currentPos;
 

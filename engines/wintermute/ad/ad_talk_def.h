@@ -46,7 +46,7 @@ public:
 	AdTalkDef(BaseGame *inGame);
 	virtual ~AdTalkDef();
 	bool loadFile(const char *filename);
-	bool loadBuffer(byte *buffer, bool complete = true);
+	bool loadBuffer(char *buffer, bool complete = true);
 	BaseArray<AdTalkNode *> _nodes;
 	char *_defaultSpriteFilename;
 	BaseSprite *_defaultSprite;

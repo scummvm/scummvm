@@ -186,7 +186,7 @@ bool ScStack::persist(BasePersistenceManager *persistMgr) {
 
 	persistMgr->transferPtr(TMEMBER_PTR(_gameRef));
 
-	persistMgr->transfer(TMEMBER(_sP));
+	persistMgr->transferSint32(TMEMBER(_sP));
 	_values.persist(persistMgr);
 
 	return STATUS_OK;

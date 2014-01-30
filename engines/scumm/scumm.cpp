@@ -45,26 +45,26 @@
 #include "scumm/imuse_digi/dimuse.h"
 #include "scumm/smush/smush_mixer.h"
 #include "scumm/smush/smush_player.h"
-#include "scumm/player_towns.h"
+#include "scumm/players/player_towns.h"
 #include "scumm/insane/insane.h"
 #include "scumm/he/animation_he.h"
 #include "scumm/he/intern_he.h"
 #include "scumm/he/logic_he.h"
 #include "scumm/he/sound_he.h"
 #include "scumm/object.h"
-#include "scumm/player_ad.h"
-#include "scumm/player_nes.h"
-#include "scumm/player_sid.h"
-#include "scumm/player_pce.h"
-#include "scumm/player_apple2.h"
-#include "scumm/player_v1.h"
-#include "scumm/player_v2.h"
-#include "scumm/player_v2cms.h"
-#include "scumm/player_v2a.h"
-#include "scumm/player_v3a.h"
-#include "scumm/player_v3m.h"
-#include "scumm/player_v4a.h"
-#include "scumm/player_v5m.h"
+#include "scumm/players/player_ad.h"
+#include "scumm/players/player_nes.h"
+#include "scumm/players/player_sid.h"
+#include "scumm/players/player_pce.h"
+#include "scumm/players/player_apple2.h"
+#include "scumm/players/player_v1.h"
+#include "scumm/players/player_v2.h"
+#include "scumm/players/player_v2cms.h"
+#include "scumm/players/player_v2a.h"
+#include "scumm/players/player_v3a.h"
+#include "scumm/players/player_v3m.h"
+#include "scumm/players/player_v4a.h"
+#include "scumm/players/player_v5m.h"
 #include "scumm/resource.h"
 #include "scumm/he/resource_he.h"
 #include "scumm/scumm_v0.h"
@@ -2307,15 +2307,16 @@ void ScummEngine::scummLoop_handleSaveLoad() {
 		if (_game.version == 8 && _saveTemporaryState)
 			VAR(VAR_GAME_LOADED) = 0;
 
+		Common::String filename;
 		if (_saveLoadFlag == 1) {
-			success = saveState(_saveLoadSlot, _saveTemporaryState);
+			success = saveState(_saveLoadSlot, _saveTemporaryState, filename);
 			if (!success)
 				errMsg = _("Failed to save game state to file:\n\n%s");
 
 			if (success && _saveTemporaryState && VAR_GAME_LOADED != 0xFF && _game.version <= 7)
 				VAR(VAR_GAME_LOADED) = 201;
 		} else {
-			success = loadState(_saveLoadSlot, _saveTemporaryState);
+			success = loadState(_saveLoadSlot, _saveTemporaryState, filename);
 			if (!success)
 				errMsg = _("Failed to load game state from file:\n\n%s");
 
@@ -2323,7 +2324,6 @@ void ScummEngine::scummLoop_handleSaveLoad() {
 				VAR(VAR_GAME_LOADED) = (_game.version == 8) ? 1 : 203;
 		}
 
-		Common::String filename = makeSavegameName(_saveLoadSlot, _saveTemporaryState);
 		if (!success) {
 			displayMessage(0, errMsg, filename.c_str());
 		} else if (_saveLoadFlag == 1 && _saveLoadSlot != 0 && !_saveTemporaryState) {

@@ -33,14 +33,16 @@
 
 namespace Mortevielle {
 
+MouseHandler::MouseHandler(MortevielleEngine *vm) {
+	_vm = vm;
+}
+
 /**
  * Initialize the mouse
  * @remarks	Originally called 'init_mouse'
  */
 void MouseHandler::initMouse() {
-	_counter = 0;
 	_pos = Common::Point(0, 0);
-
 	_vm->setMouseClick(false);
 }
 
@@ -264,10 +266,6 @@ bool MouseHandler::isMouseIn(Common::Rect r) {
 		return true;
 
 	return false;
-}
-
-void MouseHandler::setParent(MortevielleEngine *vm) {
-	_vm = vm;
 }
 
 } // End of namespace Mortevielle

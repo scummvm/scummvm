@@ -54,6 +54,7 @@ class Codec;
  *  - sci
  *  - sword1
  *  - sword2
+ *  - zvision
  */
 class AVIDecoder : public VideoDecoder {
 public:
@@ -71,10 +72,12 @@ public:
 	bool isSeekable() const;
 
 protected:
-	 void readNextPacket();
-	 bool seekIntern(const Audio::Timestamp &time);
+	// VideoDecoder API
+	void readNextPacket();
+	bool seekIntern(const Audio::Timestamp &time);
+	bool supportsAudioTrackSwitching() const { return true; }
+	AudioTrack *getAudioTrack(int index);
 
-private:
 	struct BitmapInfoHeader {
 		uint32 size;
 		uint32 width;
@@ -166,6 +169,7 @@ private:
 		~AVIVideoTrack();
 
 		void decodeFrame(Common::SeekableReadStream *stream);
+		void forceTrackEnd();
 
 		uint16 getWidth() const { return _bmInfo.width; }
 		uint16 getHeight() const { return _bmInfo.height; }
@@ -203,7 +207,7 @@ private:
 		AVIAudioTrack(const AVIStreamHeader &streamHeader, const PCMWaveFormat &waveFormat, Audio::Mixer::SoundType soundType);
 		~AVIAudioTrack();
 
-		void queueSound(Common::SeekableReadStream *stream);
+		virtual void queueSound(Common::SeekableReadStream *stream);
 		Audio::Mixer::SoundType getSoundType() const { return _soundType; }
 		void skipAudio(const Audio::Timestamp &time, const Audio::Timestamp &frameTime);
 		void resetStream();
@@ -214,7 +218,6 @@ private:
 	protected:
 		Audio::AudioStream *getAudioStream() const;
 
-	private:
 		// Audio Codecs
 		enum {
 			kWaveFormatNone = 0,
@@ -231,13 +234,15 @@ private:
 		Audio::QueuingAudioStream *createAudioStream();
 	};
 
-	Common::Array<OldIndex> _indexEntries;
 	AVIHeader _header;
+
+	void readOldIndex(uint32 size);
+	Common::Array<OldIndex> _indexEntries;
 
 	Common::SeekableReadStream *_fileStream;
 	bool _decodedHeader;
 	bool _foundMovieList;
-	uint32 _movieListStart;
+	uint32 _movieListStart, _movieListEnd;
 
 	Audio::Mixer::SoundType _soundType;
 	Common::Rational _frameRateOverride;
@@ -249,6 +254,10 @@ private:
 	void handleStreamHeader(uint32 size);
 	uint16 getStreamType(uint32 tag) const { return tag & 0xFFFF; }
 	byte getStreamIndex(uint32 tag) const;
+	void forceVideoEnd();
+
+public:
+	virtual AVIAudioTrack *createAudioTrack(AVIStreamHeader sHeader, PCMWaveFormat wvInfo);
 };
 
 } // End of namespace Video

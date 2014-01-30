@@ -92,6 +92,9 @@ bool SceneTag::load(MfcArchive &file) {
 
 SceneTag::~SceneTag() {
 	free(_tag);
+
+	delete _scene;
+	delete _field_4;
 }
 
 void SceneTag::loadScene() {
@@ -114,7 +117,7 @@ void SceneTag::loadScene() {
 
 	delete file;
 
-	g_fullpipe->_currArchive = 0;
+	g_fp->_currArchive = 0;
 
 	free(fname);
 	free(archname);
@@ -127,6 +130,10 @@ Scene::Scene() {
 	_soundList = 0;
 	_libHandle = 0;
 	_sceneName = 0;
+}
+
+Scene::~Scene() {
+	warning("STUB: Scene::~Scene()");
 }
 
 bool Scene::load(MfcArchive &file) {
@@ -146,7 +153,7 @@ bool Scene::load(MfcArchive &file) {
 		int aniNum = file.readUint16LE();
 		char *aniname = genFileName(0, aniNum, "ani");
 
-		Common::SeekableReadStream *f = g_fullpipe->_currArchive->createReadStreamForMember(aniname);
+		Common::SeekableReadStream *f = g_fp->_currArchive->createReadStreamForMember(aniname);
 
 		StaticANIObject *ani = new StaticANIObject();
 
@@ -168,7 +175,7 @@ bool Scene::load(MfcArchive &file) {
 		int qNum = file.readUint16LE();
 		char *qname = genFileName(0, qNum, "qu");
 
-		Common::SeekableReadStream *f = g_fullpipe->_currArchive->createReadStreamForMember(qname);
+		Common::SeekableReadStream *f = g_fp->_currArchive->createReadStreamForMember(qname);
 		MfcArchive archive(f);
 
 		archive.readUint16LE(); // Skip 2 bytes
@@ -191,7 +198,7 @@ bool Scene::load(MfcArchive &file) {
 		assert(0);
 	}
 
-	_libHandle = g_fullpipe->_currArchive;
+	_libHandle = g_fp->_currArchive;
 
 	if (_picObjList.size() > 0 && _bgname && strlen(_bgname) > 1) {
 		char fname[260];
@@ -216,10 +223,10 @@ bool Scene::load(MfcArchive &file) {
 
 	char *slsname = genFileName(0, _sceneId, "sls");
 
-	if (g_fullpipe->_soundEnabled) {
+	if (g_fp->_soundEnabled) {
 		_soundList = new SoundList();
 
-		if (g_fullpipe->_flgSoundList) {
+		if (g_fp->_flgSoundList) {
 			char *nlname = genFileName(17, _sceneId, "nl");
 
 			_soundList->loadFile(slsname, nlname);
@@ -249,7 +256,7 @@ void Scene::init() {
 	_x = 0;
 	_y = 0;
 
-	g_fullpipe->_sceneRect.moveTo(0, 0);
+	g_fp->_sceneRect.moveTo(0, 0);
 
 	for (uint i = 0; i < _picObjList.size(); i++)
 		((PictureObject *)_picObjList[i])->clearFlags();
@@ -328,7 +335,7 @@ void Scene::setPictureObjectsFlag4() {
 }
 
 PictureObject *Scene::getPictureObjectById(int objId, int flags) {
-	for (uint i = 1; i < _picObjList.size(); i++) {
+	for (uint i = 0; i < _picObjList.size(); i++) {
 		if (((PictureObject *)_picObjList[i])->_id == objId && ((PictureObject *)_picObjList[i])->_okeyCode == flags)
 			return (PictureObject *)_picObjList[i];
 	}
@@ -398,7 +405,7 @@ void Scene::preloadMovements(GameVar *var) {
 }
 
 void Scene::initObjectCursors(const char *varname) {
-	GameVar *cursorsVar = g_fullpipe->getGameLoaderGameVar()->getSubVarByName(varname)->getSubVarByName("CURSORS");
+	GameVar *cursorsVar = g_fp->getGameLoaderGameVar()->getSubVarByName(varname)->getSubVarByName("CURSORS");
 
 	if (!cursorsVar || !cursorsVar->_subVars)
 		return;
@@ -417,10 +424,10 @@ void Scene::initObjectCursors(const char *varname) {
         }
     }
 
-	g_fullpipe->_minCursorId = minId;
-	g_fullpipe->_maxCursorId = maxId;
+	g_fp->_minCursorId = minId;
+	g_fp->_maxCursorId = maxId;
 
-	g_fullpipe->_objectIdCursors.resize(maxId - minId + 1);
+	g_fp->_objectIdCursors.resize(maxId - minId + 1);
 
 	for (GameVar *sub = cursorsVar->_subVars; sub; sub = sub->_nextVarObj) {
 		GameObject *obj = getPictureObjectByName(sub->_varName, -1);
@@ -431,7 +438,7 @@ void Scene::initObjectCursors(const char *varname) {
 		PictureObject *pic = getGameLoaderInventory()->getScene()->getPictureObjectByName(sub->_value.stringValue, -1);
 
 		if (obj && pic)
-			g_fullpipe->_objectIdCursors[obj->_id - minId] = pic->_id;
+			g_fp->_objectIdCursors[obj->_id - minId] = pic->_id;
 	}
 }
 
@@ -442,13 +449,24 @@ bool Scene::compareObjPriority(const void *p1, const void *p2) {
 	return false;
 }
 
-void Scene::objectList_sortByPriority(PtrList &list) {
-	Common::sort(list.begin(), list.end(), Scene::compareObjPriority);
+void Scene::objectList_sortByPriority(PtrList &list, bool skipFirst) {
+	if (skipFirst) {
+		PtrList::iterator s = list.begin();
+
+		++s;
+
+		Common::sort(s, list.end(), Scene::compareObjPriority);
+	} else {
+		Common::sort(list.begin(), list.end(), Scene::compareObjPriority);
+	}
 }
 
 void Scene::draw() {
-	debug(0, ">>>>> Scene::draw()");
+	debug(6, ">>>>> Scene::draw()");
 	updateScrolling();
+
+	// Clean previous stuff
+	g_fp->_backgroundSurface.fillRect(Common::Rect(0, 0, 800, 600), 0);
 
 	drawContent(60000, 0, true);
 
@@ -470,11 +488,74 @@ void Scene::draw() {
 }
 
 void Scene::updateScrolling() {
-	debug(0, "STUB Scene::updateScrolling()");
+	if (_messageQueueId && !_x && !_y) {
+		MessageQueue *mq = g_fp->_globalMessageQueueList->getMessageQueueById(_messageQueueId);
+
+		if (mq)
+			mq->update();
+
+		_messageQueueId = 0;
+	}
+
+	if (_x || _y) {
+		int offsetX = 0;
+		int offsetY = 0;
+
+		if (_x < 0) {
+			if (!g_fp->_sceneRect.left && !(((PictureObject *)_picObjList[0])->_flags & 2))
+				_x = 0;
+
+			if (_x <= -g_fp->_scrollSpeed) {
+				offsetX = -g_fp->_scrollSpeed;
+				_x += g_fp->_scrollSpeed;
+			}
+		} else if (_x >= g_fp->_scrollSpeed) {
+			offsetX = g_fp->_scrollSpeed;
+			_x -= g_fp->_scrollSpeed;
+		} else {
+			_x = 0;
+		}
+
+		if (_y > 0) {
+			offsetY = g_fp->_scrollSpeed;
+			_y -= g_fp->_scrollSpeed;
+		}
+
+		if (_y < 0) {
+			offsetY -= g_fp->_scrollSpeed;
+			_y += g_fp->_scrollSpeed;
+		}
+
+		g_fp->_sceneRect.translate(offsetX, offsetY);
+	}
+
+	updateScrolling2();
 }
 
 void Scene::updateScrolling2() {
-	warning("STUB Scene::updateScrolling2()");
+	if (_picObjList.size()) {
+		Common::Point point;
+		int offsetY = 0;
+		int offsetX = 0;
+
+		((PictureObject *)_picObjList[0])->getDimensions(&point);
+
+		int flags = ((PictureObject *)_picObjList[0])->_flags;
+
+		if (g_fp->_sceneRect.left < 0 && !(flags & 2))
+			offsetX = -g_fp->_sceneRect.left;
+
+		if (g_fp->_sceneRect.top < 0 && !(flags & 0x20))
+			offsetY = -g_fp->_sceneRect.top;
+
+		if (g_fp->_sceneRect.right > point.x - 1 && g_fp->_sceneRect.left > 0 && !(flags & 2))
+			offsetX = point.x - g_fp->_sceneRect.right - 1;
+
+		if (g_fp->_sceneRect.bottom > point.y - 1 && g_fp->_sceneRect.top > 0 && !(flags & 0x20))
+			offsetY = point.y - g_fp->_sceneRect.bottom - 1;
+
+		g_fp->_sceneRect.translate(offsetX, offsetY);
+	}
 }
 
 StaticANIObject *Scene::getStaticANIObjectAtPos(int x, int y) {
@@ -525,7 +606,7 @@ int Scene::getPictureObjectIdAtPos(int x, int y) {
 }
 
 void Scene::update(int counterdiff) {
-	debug(0, "Scene::update(%d)", counterdiff);
+	debug(6, "Scene::update(%d)", counterdiff);
 
 	for (PtrList::iterator s = _staticANIObjectList2.begin(); s != _staticANIObjectList2.end(); ++s)
 		((StaticANIObject *)*s)->update(counterdiff);
@@ -536,13 +617,13 @@ void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
 		return;
 
 	if (_palette) {
-		g_fullpipe->_globalPalette = _palette->_data;
+		g_fp->_globalPalette = _palette->_data;
 	}
 
 	debug(8, "Scene::drawContent(>%d, <%d, %d)", minPri, maxPri, drawBg);
 
 	if (_picObjList.size() > 2) { // We need to z-sort them
-		objectList_sortByPriority(_picObjList);
+		objectList_sortByPriority(_picObjList, true);
 	}
 
 	if (minPri == -1 && _picObjList.size())
@@ -569,7 +650,7 @@ void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
 
 		debug(8, "w2: %d h2:%d", point.x, point.y);
 
-		int bgStX = g_fullpipe->_sceneRect.left % point.x;
+		int bgStX = g_fp->_sceneRect.left % point.x;
 
 		if (bgStX < 0)
 			bgStX += point.x;
@@ -577,7 +658,7 @@ void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
 		int bgNumX = bgStX / width;
 		int bgOffsetX = bgStX % width;
 
-		int bgStY = g_fullpipe->_sceneRect.top % point.y;
+		int bgStY = g_fp->_sceneRect.top % point.y;
 
 		if (bgStY < 0)
 			bgStY += point.y;
@@ -585,12 +666,12 @@ void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
 		int bgNumY = bgStY / height;
 		int bgOffsetY = bgStY % height;
 
-		int bgPosX = g_fullpipe->_sceneRect.left - bgOffsetX;
+		int bgPosX = g_fp->_sceneRect.left - bgOffsetX;
 
-		if (bgPosX < g_fullpipe->_sceneRect.right - 1) {
+		if (bgPosX < g_fp->_sceneRect.right - 1) {
 			while (1) {
 				int v25 = bgNumY;
-				for (int y = g_fullpipe->_sceneRect.top - bgOffsetY; y < g_fullpipe->_sceneRect.bottom - 1;) {
+				for (int y = g_fp->_sceneRect.top - bgOffsetY; y < g_fp->_sceneRect.bottom - 1;) {
 					BigPicture *v27 = _bigPictureArray[bgNumX][v25];
 					v27->draw(bgPosX, y, 0, 0);
 					y += v27->getDimensions(&point)->y;
@@ -603,7 +684,7 @@ void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
 					}
 				}
 				_bigPictureArray[bgNumX][0]->getDimensions(&point);
-				int v32 = point.x + bgPosX;
+				int oldx = point.x + bgPosX;
 				bgPosX += point.x;
 				bgNumX++;
 
@@ -612,7 +693,7 @@ void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
 						break;
 					bgNumX = 0;
 				}
-				if (v32 >= g_fullpipe->_sceneRect.right - 1)
+				if (oldx >= g_fp->_sceneRect.right - 1)
 					break;
 			}
 		}
@@ -637,22 +718,22 @@ void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
 		int height = point.y;
 
 		if (obj->_flags & 8) {
-			while (objX > g_fullpipe->_sceneRect.right) {
+			while (objX > g_fp->_sceneRect.right) {
 				objX -= width;
 				obj->setOXY(objX, objY);
 			}
-			for (int j = width + objX; width + objX < g_fullpipe->_sceneRect.left; j = width + objX) {
+			for (int j = width + objX; width + objX < g_fp->_sceneRect.left; j = width + objX) {
 				objX = j;
 				obj->setOXY(j, objY);
 			}
 		}
 
 		if (obj->_flags & 0x10) {
-			while (objY > g_fullpipe->_sceneRect.bottom) {
+			while (objY > g_fp->_sceneRect.bottom) {
 				objY -= height;
 				obj->setOXY(objX, objY);
 			}
-			for (int j = objY + height; objY + height < g_fullpipe->_sceneRect.top; j = objY + height) {
+			for (int j = objY + height; objY + height < g_fp->_sceneRect.top; j = objY + height) {
 				objY = j;
 				obj->setOXY(objX, j);
 			}
@@ -661,12 +742,12 @@ void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
 			obj->draw();
 
 		if (obj->_flags & 2) {
-			if (objX > g_fullpipe->_sceneRect.left) {
+			if (objX > g_fp->_sceneRect.left) {
 				obj->setOXY(objX - width, objY);
 				obj->draw();
 				obj->setOXY(objX, objY);
 			}
-			if (width + objX < g_fullpipe->_sceneRect.right) {
+			if (width + objX < g_fp->_sceneRect.right) {
 				obj->setOXY(width + objX, objY);
 				obj->draw();
 				obj->setOXY(objX, objY);
@@ -674,12 +755,12 @@ void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
 		}
 
 		if (obj->_flags & 0x20) {
-			if (objY > g_fullpipe->_sceneRect.top) {
+			if (objY > g_fp->_sceneRect.top) {
 				obj->setOXY(objX, objY - height);
 				obj->draw();
 				obj->setOXY(objX, objY);
 			}
-			if (height + objY < g_fullpipe->_sceneRect.bottom) {
+			if (height + objY < g_fp->_sceneRect.bottom) {
 				obj->setOXY(objX, height + objY);
 				obj->draw();
 				obj->setOXY(objX, objY);

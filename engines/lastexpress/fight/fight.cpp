@@ -222,7 +222,7 @@ Fight::FightEndType Fight::setup(FightType type) {
 		break;
 
 	case kFightMilos:
-		sceneIndex = (getObjects()->get(kObjectCompartment1).location2 < kObjectLocation3) ? kSceneFightMilos : kSceneFightMilosBedOpened;
+		sceneIndex = (getObjects()->get(kObjectCompartment1).model < kObjectModel3) ? kSceneFightMilos : kSceneFightMilosBedOpened;
 		break;
 
 	case kFightAnna:

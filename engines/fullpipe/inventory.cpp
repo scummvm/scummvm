@@ -30,6 +30,10 @@
 
 namespace Fullpipe {
 
+Inventory::~Inventory() {
+	warning("STUB: Inventory::~Inventory()");
+}
+
 bool Inventory::load(MfcArchive &file) {
 	debug(5, "Inventory::load()");
 
@@ -83,6 +87,10 @@ Inventory2::Inventory2() {
 	_isInventoryOut = false;
 	_isLocked = 0;
 	_topOffset = -65;
+}
+
+Inventory2::~Inventory2() {
+	warning("STUB: Inventory2::~Inventory2()");
 }
 
 bool Inventory2::loadPartial(MfcArchive &file) { // Inventory2_SerializePartially
@@ -161,7 +169,7 @@ int Inventory2::getItemFlags(int itemId) {
 }
 
 void Inventory2::rebuildItemRects() {
-	_scene = g_fullpipe->accessScene(_sceneId);
+	_scene = g_fp->accessScene(_sceneId);
 
 	if (!_scene)
 		return;
@@ -226,11 +234,11 @@ void Inventory2::draw() {
 	if (!_scene)
 		return;
 
-	int oldScLeft = g_fullpipe->_sceneRect.left;
-	int oldScTop = g_fullpipe->_sceneRect.top;
+	int oldScLeft = g_fp->_sceneRect.left;
+	int oldScTop = g_fp->_sceneRect.top;
 
-	g_fullpipe->_sceneRect.top = -_topOffset;
-	g_fullpipe->_sceneRect.left = 0;
+	g_fp->_sceneRect.top = -_topOffset;
+	g_fp->_sceneRect.left = 0;
 
 	_picture->draw(-1, -1, 0, 0);
 
@@ -290,8 +298,8 @@ LABEL_25:
 
 reset:
 
-	g_fullpipe->_sceneRect.top = oldScTop;
-	g_fullpipe->_sceneRect.left = oldScLeft;
+	g_fp->_sceneRect.top = oldScTop;
+	g_fp->_sceneRect.left = oldScLeft;
 
 }
 
@@ -365,7 +373,7 @@ int Inventory2::selectItem(int itemId) {
 		int idx = getInventoryPoolItemIndexById(itemId);
 
 		Picture *pic = _scene->getPictureObjectById(_itemsPool[idx]->pictureObjectId1, 0)->_picture;
-		g_fullpipe->getGameLoaderInputController()->setCursorItemPicture(pic);
+		g_fp->getGameLoaderInputController()->setCursorItemPicture(pic);
 	}
 
 	return _selectedId;
@@ -382,7 +390,7 @@ bool Inventory2::unselectItem(bool flag) {
 			_inventoryIcons[i]->isSelected = false;
    }
 
-	g_fullpipe->getGameLoaderInputController()->setCursorItemPicture(0);
+	g_fp->getGameLoaderInputController()->setCursorItemPicture(0);
 
 	return true;
 }

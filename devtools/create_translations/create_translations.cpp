@@ -22,6 +22,8 @@
  * The generated files is used by ScummVM to propose translation of its GUI.
  */
 
+#include "create_translations.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -34,7 +36,6 @@
 #undef main
 #endif // main
 
-#include "create_translations.h"
 #include "po_parser.h"
 #include "cp_parser.h"
 

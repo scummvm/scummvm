@@ -25,6 +25,8 @@
 
 namespace Fullpipe {
 
+class PictureObject;
+
 class BaseModalObject {
  public:
 
@@ -34,25 +36,131 @@ class BaseModalObject {
  	BaseModalObject() : _parentObj(0) {}
 	virtual ~BaseModalObject() {}
 
-	virtual bool handleMessage(ExCommand *message);
-	virtual bool init(int counterdiff);
-	virtual bool update();
 
-	void saveload();
+	virtual bool pollEvent() = 0;
+	virtual bool handleMessage(ExCommand *message) = 0;
+	virtual bool init(int counterdiff) = 0;
+	virtual void update() = 0;
+
+	virtual void saveload() = 0;
 };
 
 class ModalIntro : public BaseModalObject {
 	int _field_8;
 	int _introFlags;
 	int _countDown;
-	int _needRedraw;
+	int _stillRunning;
 	int _sfxVolume;
 
  public:
 	ModalIntro();
+	virtual ~ModalIntro();
 
+	virtual bool pollEvent() { return true; }
 	virtual bool handleMessage(ExCommand *message);
+	virtual bool init(int counterdiff);
+	virtual void update();
+	virtual void saveload() {}
+
+	void finish();
 };
+
+class ModalVideoPlayer : public BaseModalObject {
+public:
+
+	virtual bool pollEvent() { return true; }
+	virtual bool handleMessage(ExCommand *message) { return true; }
+	virtual bool init(int counterdiff) { return false; }
+	virtual void update() {}
+	virtual void saveload() {}
+
+	void play(const char *fname);
+};
+
+class ModalMap : public BaseModalObject {
+	Scene *_mapScene;
+	PictureObject *_pic;
+	bool _isRunning;
+	Common::Rect _rect1;
+	int _x;
+	int _y;
+	int _flag;
+	int _mouseX;
+	int _mouseY;
+	int _field_38;
+	int _field_3C;
+	int _field_40;
+	Common::Rect _rect2;
+
+ public:
+	ModalMap();
+	virtual ~ModalMap();
+
+	virtual bool pollEvent() { return true; }
+	virtual bool handleMessage(ExCommand *message);
+	virtual bool init(int counterdiff);
+	virtual void update();
+	virtual void saveload() {}
+
+	void initMap();
+	PictureObject *getScenePicture();
+};
+
+class ModalFinal : public BaseModalObject {
+	int _flags;
+	int _counter;
+	int _sfxVolume;
+
+ public:
+	ModalFinal();
+	virtual ~ModalFinal();
+
+	virtual bool pollEvent() { return true; }
+	virtual bool handleMessage(ExCommand *message);
+	virtual bool init(int counterdiff);
+	virtual void update();
+	virtual void saveload() {}
+
+	void unloadScenes();
+};
+
+class ModalCredits : public BaseModalObject {
+	Scene *_sceneTitles;
+	PictureObject *_creditsPic;
+	bool _fadeIn;
+	bool _fadeOut;
+	int _countdown;
+	int _sfxVolume;
+	int _currX;
+	int _currY;
+	int _maxY;
+
+ public:
+	ModalCredits();
+	virtual ~ModalCredits();
+
+	virtual bool pollEvent() { return true; }
+	virtual bool handleMessage(ExCommand *message);
+	virtual bool init(int counterdiff);
+	virtual void update();
+	virtual void saveload() {}
+};
+
+class ModalMainMenu : public BaseModalObject {
+public:
+	int _field_34;
+
+public:
+	ModalMainMenu();
+	virtual ~ModalMainMenu() {}
+
+	virtual bool pollEvent() { return true; }
+	virtual bool handleMessage(ExCommand *message) { return false; }
+	virtual bool init(int counterdiff) { return true; }
+	virtual void update() {}
+	virtual void saveload() {}
+};
+
 
 } // End of namespace Fullpipe
 

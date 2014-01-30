@@ -42,41 +42,7 @@ protected:
 	void updateMusic(bool halfVolume);
 };
 
-class SsScene2901LocationButton : public StaticSprite {
-public:
-	SsScene2901LocationButton(NeverhoodEngine *vm, Scene *parentScene, int which, uint index);
-protected:
-	Scene *_parentScene;
-	uint _index;
-	int _countdown1;
-	void update();
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-};
-
-class SsScene2901LocationButtonLight : public StaticSprite {
-public:
-	SsScene2901LocationButtonLight(NeverhoodEngine *vm, int which, uint index);
-	void show();
-	void hide();
-protected:
-	uint _index;
-};
-
-class SsScene2901BrokenButton : public StaticSprite {
-public:
-	SsScene2901BrokenButton(NeverhoodEngine *vm, int which);
-};
-
-class SsScene2901BigButton : public StaticSprite {
-public:
-	SsScene2901BigButton(NeverhoodEngine *vm, Scene *parentScene, int which);
-protected:
-	Scene *_parentScene;
-	int _which;
-	int _countdown1;
-	void update();
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-};
+class SsScene2901LocationButtonLight;
 
 class Scene2901 : public Scene {
 public:

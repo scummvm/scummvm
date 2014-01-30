@@ -33,8 +33,9 @@ ifeq "$(HAVE_GCC)" "1"
 	#CXXFLAGS+= -Wmissing-format-attribute
 
 ifneq "$(BACKEND)" "tizen"
-	# Disable RTTI and exceptions. These settings cause tizen apps to crash
-	CXXFLAGS+= -fno-rtti -fno-exceptions
+	# Disable exceptions. This setting causes tizen apps to crash
+	# TODO: Does this still apply after enabling RTTI again?
+	CXXFLAGS+= -fno-exceptions
 endif
 
 ifneq "$(HAVE_CLANG)" "1"
@@ -82,7 +83,8 @@ EXECUTABLE  := $(EXEPRE)scummvm$(EXEEXT)
 include $(srcdir)/Makefile.common
 
 # check if configure has been run or has been changed since last run
-config.h config.mk: $(srcdir)/configure $(srcdir)/engines/configure.engines
+ENGINE_SUBDIRS_CONFIGURE := $(wildcard $(srcdir)/engines/*/configure.engine)
+config.h: $(srcdir)/configure $(ENGINE_SUBDIRS_CONFIGURE)
 ifeq "$(findstring config.mk,$(MAKEFILE_LIST))" "config.mk"
 	@echo "Running $(srcdir)/configure with the last specified parameters"
 	@sleep 2
@@ -93,6 +95,14 @@ ifeq "$(findstring config.mk,$(MAKEFILE_LIST))" "config.mk"
 else
 	$(error You need to run $(srcdir)/configure before you can run make. Check $(srcdir)/configure --help for a list of parameters)
 endif
+
+config.mk engines/plugins_table.h engines/engines.mk: config.h
+	@if test -f $@; then \
+		touch $@; \
+	else \
+		rm -f config.h; \
+		$(MAKE) config.h; \
+	fi
 
 ifneq ($(origin port_mk), undefined)
 include $(srcdir)/$(port_mk)

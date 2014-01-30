@@ -34,7 +34,6 @@
 #include "engines/wintermute/base/gfx/base_image.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/base/sound/base_sound_manager.h"
-#include "engines/wintermute/platform_osystem.h"
 #include "video/theora_decoder.h"
 #include "engines/wintermute/wintermute.h"
 #include "common/system.h"
@@ -306,8 +305,15 @@ bool VideoTheoraPlayer::update() {
 			if (!_theoraDecoder->endOfVideo() && _theoraDecoder->getTimeToNextFrame() == 0) {
 				const Graphics::Surface *decodedFrame = _theoraDecoder->decodeNextFrame();
 				if (decodedFrame) {
-					_surface.free();
-					_surface.copyFrom(*decodedFrame);
+					if (decodedFrame->format == _surface.format && decodedFrame->w == _surface.w && decodedFrame->h == _surface.h) {
+						const byte *src = (const byte *)decodedFrame->getBasePtr(0, 0);
+						byte *dst = (byte *)_surface.getBasePtr(0, 0);
+						memcpy(dst, src, _surface.pitch * _surface.h);
+					} else {
+						_surface.free();
+						_surface.copyFrom(*decodedFrame);
+					}
+
 					if (_texture) {
 						writeVideo();
 					}
@@ -396,7 +402,7 @@ bool VideoTheoraPlayer::display(uint32 alpha) {
 	bool res;
 
 	if (_texture && _videoFrameReady) {
-		BasePlatform::setRect(&rc, 0, 0, _texture->getWidth(), _texture->getHeight());
+		rc.setRect(0, 0, _texture->getWidth(), _texture->getHeight());
 		if (_playZoom == 100.0f) {
 			res = _texture->displayTrans(_posX, _posY, rc, alpha);
 		} else {
@@ -492,16 +498,16 @@ bool VideoTheoraPlayer::persist(BasePersistenceManager *persistMgr) {
 	}
 
 	persistMgr->transferPtr(TMEMBER_PTR(_gameRef));
-	persistMgr->transfer(TMEMBER(_savedPos));
-	persistMgr->transfer(TMEMBER(_savedState));
-	persistMgr->transfer(TMEMBER(_filename));
-	persistMgr->transfer(TMEMBER(_alphaFilename));
-	persistMgr->transfer(TMEMBER(_posX));
-	persistMgr->transfer(TMEMBER(_posY));
+	persistMgr->transferUint32(TMEMBER(_savedPos));
+	persistMgr->transferSint32(TMEMBER(_savedState));
+	persistMgr->transferString(TMEMBER(_filename));
+	persistMgr->transferString(TMEMBER(_alphaFilename));
+	persistMgr->transferSint32(TMEMBER(_posX));
+	persistMgr->transferSint32(TMEMBER(_posY));
 	persistMgr->transferFloat(TMEMBER(_playZoom));
-	persistMgr->transfer(TMEMBER_INT(_playbackType));
-	persistMgr->transfer(TMEMBER(_looping));
-	persistMgr->transfer(TMEMBER(_volume));
+	persistMgr->transferSint32(TMEMBER_INT(_playbackType));
+	persistMgr->transferBool(TMEMBER(_looping));
+	persistMgr->transferSint32(TMEMBER(_volume));
 
 	if (!persistMgr->getIsSaving() && (_savedState != THEORA_STATE_NONE)) {
 		initializeSimple();

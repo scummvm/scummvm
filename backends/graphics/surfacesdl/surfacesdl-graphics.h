@@ -75,18 +75,18 @@ public:
 /**
  * SDL graphics manager
  */
-class SurfaceSdlGraphicsManager : public GraphicsManager, public SdlGraphicsManager, public Common::EventObserver {
+class SurfaceSdlGraphicsManager : public SdlGraphicsManager, public Common::EventObserver {
 public:
 	SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSource);
 	virtual ~SurfaceSdlGraphicsManager();
 
-	virtual void initEventObserver();
+	virtual void activateManager();
+	virtual void deactivateManager();
 
 	virtual bool hasFeature(OSystem::Feature f);
 	virtual void setFeatureState(OSystem::Feature f, bool enable);
 	virtual bool getFeatureState(OSystem::Feature f);
 
-	static const OSystem::GraphicsMode *supportedGraphicsModes();
 	virtual const OSystem::GraphicsMode *getSupportedGraphicsModes() const;
 	virtual int getDefaultGraphicsMode() const;
 	virtual bool setGraphicsMode(int mode);

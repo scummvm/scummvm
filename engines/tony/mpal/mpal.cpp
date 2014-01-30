@@ -409,7 +409,7 @@ static uint32 *getSelectList(uint32 i) {
 			sl[k++] = dialog->_choice[i]._select[j]._dwData;
 	}
 
-	sl[k] = (uint32)NULL;
+	sl[k] = 0;
 	return sl;
 }
 
@@ -436,7 +436,7 @@ static uint32 *GetItemList(uint32 nLoc) {
 		}
 	}
 
-	il[j] = (uint32)NULL;
+	il[j] = 0;
 	return il;
 }
 
@@ -832,7 +832,7 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 
 		if (_ctx->k == 0)
 			// We can remove this item from the list
-			_ctx->il[_ctx->i] = (uint32)NULL;
+			_ctx->il[_ctx->i] = 0;
 		else
 			_ctx->nRealItems++;
 	}
@@ -963,7 +963,7 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 
 					// Ok, we can perform the action. For convenience, we do it in a new process
 					_ctx->newItem = (LpMpalItem)globalAlloc(GMEM_FIXED | GMEM_ZEROINIT, sizeof(MpalItem));
-					if (_ctx->newItem == false) {
+					if (!_ctx->newItem) {
 						globalDestroy(_ctx->myThreads);
 						globalDestroy(_ctx->myActions);
 
@@ -1935,7 +1935,7 @@ bool mpalExecuteScript(int nScript) {
 
 	// !!! New process management
 	if (CoroScheduler.createProcess(ScriptThread, &s, sizeof(LpMpalScript)) == CORO_INVALID_PID_VALUE)
- 		return false;
+		return false;
 
 	return true;
 }

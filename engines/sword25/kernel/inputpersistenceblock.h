@@ -50,8 +50,8 @@ public:
 	virtual ~InputPersistenceBlock();
 
 	void read(int16 &value);
-	void read(signed int &value);
-	void read(uint &value);
+	void read(int32 &value);
+	void read(uint32 &value);
 	void read(float &value);
 	void read(bool &value);
 	void readString(Common::String &value);

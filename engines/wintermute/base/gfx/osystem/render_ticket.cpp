@@ -38,11 +38,9 @@ RenderTicket::RenderTicket(BaseSurfaceOSystem *owner, const Graphics::Surface *s
 	_owner(owner),
 	_srcRect(*srcRect),
 	_dstRect(*dstRect),
-	_drawNum(0),
 	_isValid(true),
 	_wantsDraw(true),
 	_transform(transform) {
-	_batchNum = 0;
 	if (surf) {
 		_surface = new Graphics::Surface();
 		_surface->create((uint16)srcRect->width(), (uint16)srcRect->height(), surf->format);
@@ -52,13 +50,22 @@ RenderTicket::RenderTicket(BaseSurfaceOSystem *owner, const Graphics::Surface *s
 			memcpy(_surface->getBasePtr(0, i), surf->getBasePtr(srcRect->left, srcRect->top + i), srcRect->width() * _surface->format.bytesPerPixel);
 		}
 		// Then scale it if necessary
+		//
+		// NB: The numTimesX/numTimesY properties don't yet mix well with
+		// scaling and rotation, but there is no need for that functionality at
+		// the moment.
+		// NB: Mirroring and rotation are probably done in the wrong order.
+		// (Mirroring should most likely be done before rotation. See also
+		// TransformTools.)
 		if (_transform._angle != kDefaultAngle) {
 			TransparentSurface src(*_surface, false);
 			Graphics::Surface *temp = src.rotoscale(transform);
 			_surface->free();
 			delete _surface;
 			_surface = temp;
-		} else if (dstRect->width() != srcRect->width() || dstRect->height() != srcRect->height()) { 
+		} else if ((dstRect->width() != srcRect->width() ||
+					dstRect->height() != srcRect->height()) &&
+					_transform._numTimesX * _transform._numTimesY == 1) {
 			TransparentSurface src(*_surface, false);
 			Graphics::Surface *temp = src.scale(dstRect->width(), dstRect->height());
 			_surface->free();
@@ -67,14 +74,6 @@ RenderTicket::RenderTicket(BaseSurfaceOSystem *owner, const Graphics::Surface *s
 		}
 	} else {
 		_surface = nullptr;
-		
-		if (transform._angle != kDefaultAngle) { // Make sure comparison-tickets get the correct width
-			Rect32 newDstRect;
-			Point32 newHotspot;
-			newDstRect = TransformTools::newRect(_srcRect, transform, &newHotspot);
-			_dstRect.setWidth(newDstRect.right - newDstRect.left);
-			_dstRect.setHeight(newDstRect.bottom - newDstRect.top);
-		}
 	}
 }
 
@@ -87,7 +86,6 @@ RenderTicket::~RenderTicket() {
 
 bool RenderTicket::operator==(const RenderTicket &t) const {
 	if ((t._owner != _owner) ||
-		(t._batchNum != _batchNum) ||
 		(t._transform != _transform)  || 
 		(t._dstRect != _dstRect) ||
 		(t._srcRect != _srcRect) 
@@ -107,12 +105,24 @@ void RenderTicket::drawToSurface(Graphics::Surface *_targetSurface) const {
 
 	if (_owner) {
 		if (_transform._alphaDisable) {
-			src._alphaMode = TransparentSurface::ALPHA_OPAQUE;
+			src.setAlphaMode(TransparentSurface::ALPHA_OPAQUE);
 		} else {
-			src._alphaMode = _owner->getAlphaType();
+			src.setAlphaMode(_owner->getAlphaType());
 		}
 	}
-	src.blit(*_targetSurface, _dstRect.left, _dstRect.top, _transform._flip, &clipRect, _transform._rgbaMod, clipRect.width(), clipRect.height());
+
+	int y = _dstRect.top;
+	int w = _dstRect.width() / _transform._numTimesX;
+	int h = _dstRect.height() / _transform._numTimesY;
+
+	for (int ry = 0; ry < _transform._numTimesY; ++ry) {
+		int x = _dstRect.left;
+		for (int rx = 0; rx < _transform._numTimesX; ++rx) {
+			src.blit(*_targetSurface, x, y, _transform._flip, &clipRect, _transform._rgbaMod, clipRect.width(), clipRect.height());
+			x += w;
+		}
+		y += h;
+	}
 }
 
 void RenderTicket::drawToSurface(Graphics::Surface *_targetSurface, Common::Rect *dstRect, Common::Rect *clipRect) const {
@@ -121,18 +131,58 @@ void RenderTicket::drawToSurface(Graphics::Surface *_targetSurface, Common::Rect
 	if (!clipRect) {
 		doDelete = true;
 		clipRect = new Common::Rect();
-		clipRect->setWidth(getSurface()->w);
-		clipRect->setHeight(getSurface()->h);
+		clipRect->setWidth(getSurface()->w * _transform._numTimesX);
+		clipRect->setHeight(getSurface()->h * _transform._numTimesY);
 	}
 
 	if (_owner) {
 		if (_transform._alphaDisable) {
-			src._alphaMode = TransparentSurface::ALPHA_OPAQUE;
+			src.setAlphaMode(TransparentSurface::ALPHA_OPAQUE);
 		} else {
-			src._alphaMode = _owner->getAlphaType();
+			src.setAlphaMode(_owner->getAlphaType());
 		}
 	}
-	src.blit(*_targetSurface, dstRect->left, dstRect->top, _transform._flip, clipRect, _transform._rgbaMod, clipRect->width(), clipRect->height(), _transform._blendMode);
+
+	if (_transform._numTimesX * _transform._numTimesY == 1) {
+
+		src.blit(*_targetSurface, dstRect->left, dstRect->top, _transform._flip, clipRect, _transform._rgbaMod, clipRect->width(), clipRect->height(), _transform._blendMode);
+
+	} else {
+
+		// clipRect is a subrect of the full numTimesX*numTimesY rect
+		Common::Rect subRect;
+
+		int y = 0;
+		int w = getSurface()->w;
+		int h = getSurface()->h;
+		assert(w == _dstRect.width() / _transform._numTimesX);
+		assert(h == _dstRect.height() / _transform._numTimesY);
+
+		int basex = dstRect->left - clipRect->left;
+		int basey = dstRect->top - clipRect->top;
+
+		for (int ry = 0; ry < _transform._numTimesY; ++ry) {
+			int x = 0;
+			for (int rx = 0; rx < _transform._numTimesX; ++rx) {
+
+				subRect.left = x;
+				subRect.top = y;
+				subRect.setWidth(w);
+				subRect.setHeight(h);
+
+				if (subRect.intersects(*clipRect)) {
+					subRect.clip(*clipRect);
+					subRect.translate(-x, -y);
+					src.blit(*_targetSurface, basex + x + subRect.left, basey + y + subRect.top, _transform._flip, &subRect, _transform._rgbaMod, subRect.width(), subRect.height(), _transform._blendMode);
+
+				}
+
+				x += w;
+			}
+			y += h;
+		}
+	}
+
 	if (doDelete) {
 		delete clipRect;
 	}

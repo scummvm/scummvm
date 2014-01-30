@@ -257,7 +257,7 @@ class Scene570: public SceneExt {
 	class Icon: public NamedObject {
 	public:
 		SceneText _sceneText;
-		int _iconId, _folderId, _parentFolderId, _mode;
+		int _iconId, _folderId, _parentFolderId;
 		Common::String _text;
 
 		Icon();
@@ -266,7 +266,7 @@ class Scene570: public SceneExt {
 		virtual void remove();
 		virtual bool startAction(CursorType action, Event &event);
 
-		void setDetails(int iconId, int folderId, int parentFolderId, int unused, const Common::String &msg);
+		void setDetails(int iconId, int folderId, int parentFolderId, const Common::String &msg);
 	};
 	class IconManager: public EventHandler {
 	public:

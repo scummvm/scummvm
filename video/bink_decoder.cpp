@@ -214,6 +214,16 @@ void BinkDecoder::readNextPacket() {
 	frame.bits = 0;
 }
 
+VideoDecoder::AudioTrack *BinkDecoder::getAudioTrack(int index) {
+	// Bink audio track indexes are relative to the first audio track
+	Track *track = getTrack(index + 1);
+
+	if (!track || track->getTrackType() != Track::kTrackTypeAudio)
+		return 0;
+
+	return (AudioTrack *)track;
+}
+
 BinkDecoder::VideoFrame::VideoFrame() : bits(0) {
 }
 

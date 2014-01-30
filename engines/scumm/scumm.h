@@ -595,13 +595,17 @@ protected:
 	Common::String _saveLoadFileName;
 	Common::String _saveLoadDescription;
 
-	bool saveState(Common::OutSaveFile *out, bool writeHeader = true);
-	bool saveState(int slot, bool compat);
+	bool saveState(Common::WriteStream *out, bool writeHeader = true);
+	bool saveState(int slot, bool compat, Common::String &fileName);
 	bool loadState(int slot, bool compat);
+	bool loadState(int slot, bool compat, Common::String &fileName);
 	virtual void saveOrLoad(Serializer *s);
 	void saveResource(Serializer *ser, ResType type, ResId idx);
 	void loadResource(Serializer *ser, ResType type, ResId idx);
 	void loadResourceOLD(Serializer *ser, ResType type, ResId idx);	// "Obsolete"
+
+	virtual Common::SeekableReadStream *openSaveFileForReading(int slot, bool compat, Common::String &fileName);
+	virtual Common::WriteStream *openSaveFileForWriting(int slot, bool compat, Common::String &fileName);
 
 	Common::String makeSavegameName(int slot, bool temporary) const {
 		return makeSavegameName(_targetName, slot, temporary);
@@ -618,17 +622,14 @@ public:
 	void requestSave(int slot, const Common::String &name);
 	void requestLoad(int slot);
 
+	Common::String getTargetName() const { return _targetName; }
+
 // thumbnail + info stuff
 public:
-	Graphics::Surface *loadThumbnailFromSlot(int slot) {
-		return loadThumbnailFromSlot(_targetName.c_str(), slot);
-	}
-	static Graphics::Surface *loadThumbnailFromSlot(const char *target, int slot);
-
-	static bool loadInfosFromSlot(const char *target, int slot, SaveStateMetaInfos *stuff);
+	static bool querySaveMetaInfos(const char *target, int slot, int heversion, Common::String &desc, Graphics::Surface *&thumbnail, SaveStateMetaInfos *&timeInfos);
 
 protected:
-	void saveInfos(Common::WriteStream* file);
+	void saveInfos(Common::WriteStream *file);
 	static bool loadInfos(Common::SeekableReadStream *file, SaveStateMetaInfos *stuff);
 
 protected:

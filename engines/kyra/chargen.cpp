@@ -155,8 +155,10 @@ CharacterGenerator::~CharacterGenerator() {
 }
 
 bool CharacterGenerator::start(EoBCharacter *characters, uint8 ***faceShapes) {
-	if (!characters && !faceShapes)
+	if (!characters || !faceShapes) {
+		warning("CharacterGenerator::start: Called without character data");
 		return true;
+	}
 
 	_characters = characters;
 	_faceShapes = *faceShapes;

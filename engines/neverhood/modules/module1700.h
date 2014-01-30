@@ -26,7 +26,6 @@
 #include "neverhood/neverhood.h"
 #include "neverhood/module.h"
 #include "neverhood/scene.h"
-#include "neverhood/smackerscene.h"
 
 namespace Neverhood {
 
@@ -38,22 +37,6 @@ protected:
 	int _sceneNum;
 	void createScene(int sceneNum, int which);
 	void updateScene();
-};
-
-// Scene1705
-
-class SsScene1705WallSymbol : public StaticSprite {
-public:
-	SsScene1705WallSymbol(NeverhoodEngine *vm, uint32 fileHash, int symbolIndex);
-};
-
-class SsScene1705Tape : public StaticSprite {
-public:
-	SsScene1705Tape(NeverhoodEngine *vm, Scene *parentScene, uint32 tapeIndex, int surfacePriority, int16 x, int16 y, uint32 fileHash);
-protected:
-	Scene *_parentScene;
-	uint32 _tapeIndex;
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
 class Scene1705 : public Scene {

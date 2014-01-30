@@ -26,11 +26,23 @@
 
 namespace Wintermute {
 
-FloatPoint TransformTools::transformPoint(const FloatPoint &point, const float rotate, const Point32 &zoom, const bool mirrorX, const bool mirrorY) {
+FloatPoint TransformTools::transformPoint(FloatPoint point, const float rotate, const Point32 &zoom, const bool mirrorX, const bool mirrorY) {
 	float rotateRad = rotate * M_PI / 180.0f;
+	float x = point.x;
+	float y = point.y;
+	x = (x * zoom.x) / kDefaultZoomX;
+	y = (y * zoom.y) / kDefaultZoomY;
+#if 0
+	// TODO: Mirroring should be done before rotation, but the blitting
+	// code does the inverse, so we match that for now.
+	if (mirrorX)
+		x *= -1;
+	if (mirrorY)
+		y *= -1;
+#endif
 	FloatPoint newPoint;
-	newPoint.x = (point.x * cos(rotateRad) - point.y * sin(rotateRad)) * zoom.x / kDefaultZoomX;
-	newPoint.y = (point.x * sin(rotateRad) + point.y * cos(rotateRad)) * zoom.y / kDefaultZoomY;
+	newPoint.x = x * cos(rotateRad) - y * sin(rotateRad);
+	newPoint.y = x * sin(rotateRad) + y * cos(rotateRad);
 	if (mirrorX) {
 		newPoint.x *= -1;
 	}
@@ -58,10 +70,12 @@ Rect32 TransformTools::newRect(const Rect32 &oldRect, const TransformStruct &tra
 	float left = MIN(nw1.x, MIN(ne1.x, MIN(sw1.x, se1.x)));
 	float right = MAX(nw1.x, MAX(ne1.x, MAX(sw1.x, se1.x)));
 
-	Rect32 res;
-	newHotspot->y = (uint32)(-floor(top));
-	newHotspot->x = (uint32)(-floor(left));
+	if (newHotspot) {
+		newHotspot->y = (uint32)(-floor(top));
+		newHotspot->x = (uint32)(-floor(left));
+	}
 
+	Rect32 res;
 	res.top = (int32)(floor(top)) + transform._hotspot.y;
 	res.bottom = (int32)(ceil(bottom)) + transform._hotspot.y;
 	res.left = (int32)(floor(left)) + transform._hotspot.x;

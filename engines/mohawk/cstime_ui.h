@@ -167,7 +167,8 @@ protected:
 enum CSTimeInterfaceState {
 	kCSTimeInterfaceStateNormal = 1,
 	kCSTimeInterfaceStateDragStart = 2,
-	kCSTimeInterfaceStateDragging = 3
+	kCSTimeInterfaceStateDragging = 3,
+	kCSTimeInterfaceDroppedInventory = 4
 };
 
 class CSTimeInterface {

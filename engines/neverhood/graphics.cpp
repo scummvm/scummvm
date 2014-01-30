@@ -299,11 +299,11 @@ void unpackSpriteRle(const byte *source, int width, int height, byte *dest, int 
 					}
 					source += copy;
 				}
-				dest += destPitch;
 				if (replaceColors)
 					for (int xc = 0; xc < width; xc++)
 						if (dest[xc] == oldColor)
 							dest[xc] = newColor;
+				dest += destPitch;
 			}
 		}
 		rows = READ_LE_UINT16(source);

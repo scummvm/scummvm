@@ -81,10 +81,11 @@ private:
 	static void startStrip();
 	static void endStrip();
 public:
-	byte _field312[256];
+	byte _shadowPaletteMap[256];
 	bool _savedPlayerEnabled;
 	bool _savedUiEnabled;
 	bool _savedCanWalk;
+	bool _preventSaving;
 
 	Visage _cursorVisage;
 	SynchronizedList<EventHandler *> _sceneAreas;
@@ -228,6 +229,7 @@ public:
 class Ringworld2Game: public Game {
 public:
 	virtual void start();
+	virtual void restartGame();
 	virtual void restart();
 	virtual void endGame(int resNum, int lineNum);
 
@@ -305,7 +307,6 @@ public:
 	int _frameCount;
 	int _resCount;
 	int _mapImagePitch;
-	int _unused;
 public:
 	MazeUI();
 	virtual ~MazeUI();
@@ -405,11 +406,11 @@ public:
 	AnimationData *_sliceNext;
 	Common::File _resourceFile;
 	Rect _rect1, _screenBounds;
-	int _field38;
-	int _field3A;
+	bool _animLoaded;
+	bool _canSkip;
 	AnimationPaletteMode _paletteMode;
 	AnimationObjectMode _objectMode;
-	int _field58, _sliceHeight;
+	int _sliceHeight;
 	byte _palIndexes[256];
 	ScenePalette _palette;
 	AnimationPlayerSubData _subData;
@@ -441,7 +442,7 @@ public:
 
 class AnimationPlayerExt: public AnimationPlayer {
 public:
-	int _v;
+	bool _isActive;
 public:
 	AnimationPlayerExt();
 
@@ -459,8 +460,8 @@ public:
 	virtual void synchronize(Serializer &s);
 	virtual Common::String getClassName() { return "ModalWindow"; }
 	virtual void process(Event &event);
-	virtual void proc12(int visage, int stripFrameNum, int frameNum, int posX, int posY);
-	virtual void proc13(int resNum, int lookLineNum, int talkLineNum, int useLineNum);
+	virtual void setup2(int visage, int stripFrameNum, int frameNum, int posX, int posY);
+	virtual void setup3(int resNum, int lookLineNum, int talkLineNum, int useLineNum);
 };
 
 class ScannerDialog: public ModalWindow {
@@ -513,7 +514,7 @@ public:
 
 	virtual Common::String getClassName() { return "ScannerDialog"; }
 	virtual void remove();
-	void proc12(int visage, int stripFrameNum, int frameNum, int posX, int posY);
+	virtual void setup2(int visage, int stripFrameNum, int frameNum, int posX, int posY);
 };
 
 } // End of namespace Ringworld2

@@ -41,8 +41,8 @@ class OutputPersistenceBlock : public PersistenceBlock {
 public:
 	OutputPersistenceBlock();
 
-	void write(signed int value);
-	void write(uint value);
+	void write(int32 value);
+	void write(uint32 value);
 	void write(float value);
 	void write(bool value);
 	void writeString(const Common::String &string);

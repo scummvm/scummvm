@@ -65,7 +65,7 @@ ScriptInterpreter::ScriptInterpreter(ToltecsEngine *vm) : _vm(vm) {
 	_savedSp = 0;
 
 	_slots[kMaxScriptSlots - 1].size = 1024;
- 	_slots[kMaxScriptSlots - 1].data = new byte[_slots[kMaxScriptSlots - 1].size];
+	_slots[kMaxScriptSlots - 1].data = new byte[_slots[kMaxScriptSlots - 1].size];
 
 	setupScriptFunctions();
 
@@ -184,11 +184,11 @@ void ScriptInterpreter::loadScript(uint resIndex, uint slotIndex) {
 
 	delete[] _slots[slotIndex].data;
 
- 	_slots[slotIndex].resIndex = resIndex;
+	_slots[slotIndex].resIndex = resIndex;
 	Resource *scriptResource = _vm->_res->load(resIndex);
 	_slots[slotIndex].size = scriptResource->size;
- 	_slots[slotIndex].data = new byte[_slots[slotIndex].size];
- 	memcpy(_slots[slotIndex].data, scriptResource->data, _slots[slotIndex].size);
+	_slots[slotIndex].data = new byte[_slots[slotIndex].size];
+	memcpy(_slots[slotIndex].data, scriptResource->data, _slots[slotIndex].size);
 }
 
 void ScriptInterpreter::setMainScript(uint slotIndex) {
@@ -852,7 +852,7 @@ void ScriptInterpreter::sfFindMouseInRectIndex2() {
 }
 
 void ScriptInterpreter::sfDrawGuiImage() {
-  	_vm->_screen->drawGuiImage(arg16(5), arg16(3), arg16(7));
+	_vm->_screen->drawGuiImage(arg16(5), arg16(3), arg16(7));
 }
 
 void ScriptInterpreter::sfAddAnimatedSpriteNoLoop() {

@@ -45,6 +45,8 @@ PlaybackFile::PlaybackFile() : _tmpRecordFile(_tmpBuffer, kRecordBuffSize), _tmp
 	_recordCount = 0;
 	_eventsSize = 0;
 	memset(_tmpBuffer, 1, kRecordBuffSize);
+
+	_playbackParseState = kFileStateCheckFormat;
 }
 
 PlaybackFile::~PlaybackFile() {

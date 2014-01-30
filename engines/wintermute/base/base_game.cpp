@@ -185,7 +185,7 @@ BaseGame::BaseGame(const Common::String &targetName) : BaseObject(this), _target
 
 	_lastCursor = nullptr;
 
-	BasePlatform::setRectEmpty(&_mouseLockRect);
+	_mouseLockRect.setEmpty();
 
 	_suppressScriptErrors = false;
 	_lastMiniUpdate = 0;
@@ -573,7 +573,7 @@ bool BaseGame::initLoop() {
 
 	_focusedWindow = nullptr;
 	for (int i = _windows.size() - 1; i >= 0; i--) {
-		if (_windows[i]->_visible) {
+		if (_windows[i]->isVisible()) {
 			_focusedWindow = _windows[i];
 			break;
 		}
@@ -620,7 +620,7 @@ void BaseGame::getOffset(int *offsetX, int *offsetY) const {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::loadFile(const char *filename) {
-	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
+	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
 		_gameRef->LOG(0, "BaseGame::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
@@ -690,7 +690,7 @@ TOKEN_DEF(GUID)
 TOKEN_DEF(COMPAT_KILL_METHOD_THREADS)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-bool BaseGame::loadBuffer(byte *buffer, bool complete) {
+bool BaseGame::loadBuffer(char *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(GAME)
 	TOKEN_TABLE(TEMPLATE)
@@ -740,32 +740,32 @@ bool BaseGame::loadBuffer(byte *buffer, bool complete) {
 	Common::String loadImageName = "";
 	Common::String saveImageName = "";
 
-	byte *params;
+	char *params;
 	int cmd;
 	BaseParser parser;
 
 	if (complete) {
-		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_GAME) {
+		if (parser.getCommand(&buffer, commands, &params) != TOKEN_GAME) {
 			_gameRef->LOG(0, "'GAME' keyword expected.");
 			return STATUS_FAILED;
 		}
 		buffer = params;
 	}
 
-	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
+	while ((cmd = parser.getCommand(&buffer, commands, &params)) > 0) {
 		switch (cmd) {
 		case TOKEN_TEMPLATE:
-			if (DID_FAIL(loadFile((char *)params))) {
+			if (DID_FAIL(loadFile(params))) {
 				cmd = PARSERR_GENERIC;
 			}
 			break;
 
 		case TOKEN_NAME:
-			setName((char *)params);
+			setName(params);
 			break;
 
 		case TOKEN_CAPTION:
-			setCaption((char *)params);
+			setCaption(params);
 			break;
 
 		case TOKEN_SYSTEM_FONT:
@@ -774,7 +774,7 @@ bool BaseGame::loadBuffer(byte *buffer, bool complete) {
 			}
 			_systemFont = nullptr;
 
-			_systemFont = _gameRef->_fontStorage->addFont((char *)params);
+			_systemFont = _gameRef->_fontStorage->addFont(params);
 			break;
 
 		case TOKEN_VIDEO_FONT:
@@ -783,14 +783,14 @@ bool BaseGame::loadBuffer(byte *buffer, bool complete) {
 			}
 			_videoFont = nullptr;
 
-			_videoFont = _gameRef->_fontStorage->addFont((char *)params);
+			_videoFont = _gameRef->_fontStorage->addFont(params);
 			break;
 
 
 		case TOKEN_CURSOR:
 			delete _cursor;
 			_cursor = new BaseSprite(_gameRef);
-			if (!_cursor || DID_FAIL(_cursor->loadFile((char *)params))) {
+			if (!_cursor || DID_FAIL(_cursor->loadFile(params))) {
 				delete _cursor;
 				_cursor = nullptr;
 				cmd = PARSERR_GENERIC;
@@ -801,7 +801,7 @@ bool BaseGame::loadBuffer(byte *buffer, bool complete) {
 			delete _activeCursor;
 			_activeCursor = nullptr;
 			_activeCursor = new BaseSprite(_gameRef);
-			if (!_activeCursor || DID_FAIL(_activeCursor->loadFile((char *)params))) {
+			if (!_activeCursor || DID_FAIL(_activeCursor->loadFile(params))) {
 				delete _activeCursor;
 				_activeCursor = nullptr;
 				cmd = PARSERR_GENERIC;
@@ -811,7 +811,7 @@ bool BaseGame::loadBuffer(byte *buffer, bool complete) {
 		case TOKEN_NONINTERACTIVE_CURSOR:
 			delete _cursorNoninteractive;
 			_cursorNoninteractive = new BaseSprite(_gameRef);
-			if (!_cursorNoninteractive || DID_FAIL(_cursorNoninteractive->loadFile((char *)params))) {
+			if (!_cursorNoninteractive || DID_FAIL(_cursorNoninteractive->loadFile(params))) {
 				delete _cursorNoninteractive;
 				_cursorNoninteractive = nullptr;
 				cmd = PARSERR_GENERIC;
@@ -819,23 +819,23 @@ bool BaseGame::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_SCRIPT:
-			addScript((char *)params);
+			addScript(params);
 			break;
 
 		case TOKEN_PERSONAL_SAVEGAMES:
-			parser.scanStr((char *)params, "%b", &_personalizedSave);
+			parser.scanStr(params, "%b", &_personalizedSave);
 			break;
 
 		case TOKEN_SUBTITLES:
-			parser.scanStr((char *)params, "%b", &_subtitles);
+			parser.scanStr(params, "%b", &_subtitles);
 			break;
 
 		case TOKEN_SUBTITLES_SPEED:
-			parser.scanStr((char *)params, "%d", &_subtitlesSpeed);
+			parser.scanStr(params, "%d", &_subtitlesSpeed);
 			break;
 
 		case TOKEN_VIDEO_SUBTITLES:
-			parser.scanStr((char *)params, "%b", &_videoSubtitles);
+			parser.scanStr(params, "%b", &_videoSubtitles);
 			break;
 
 		case TOKEN_PROPERTY:
@@ -847,66 +847,66 @@ bool BaseGame::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_THUMBNAIL_WIDTH:
-			parser.scanStr((char *)params, "%d", &_thumbnailWidth);
+			parser.scanStr(params, "%d", &_thumbnailWidth);
 			break;
 
 		case TOKEN_THUMBNAIL_HEIGHT:
-			parser.scanStr((char *)params, "%d", &_thumbnailHeight);
+			parser.scanStr(params, "%d", &_thumbnailHeight);
 			break;
 
 		case TOKEN_INDICATOR_X:
-			parser.scanStr((char *)params, "%d", &indicatorX);
+			parser.scanStr(params, "%d", &indicatorX);
 			break;
 
 		case TOKEN_INDICATOR_Y:
-			parser.scanStr((char *)params, "%d", &indicatorY);
+			parser.scanStr(params, "%d", &indicatorY);
 			break;
 
 		case TOKEN_INDICATOR_COLOR: {
 			int r, g, b, a;
-			parser.scanStr((char *)params, "%d,%d,%d,%d", &r, &g, &b, &a);
+			parser.scanStr(params, "%d,%d,%d,%d", &r, &g, &b, &a);
 			indicatorColor = BYTETORGBA(r, g, b, a);
 		}
 		break;
 
 		case TOKEN_INDICATOR_WIDTH:
-			parser.scanStr((char *)params, "%d", &indicatorWidth);
+			parser.scanStr(params, "%d", &indicatorWidth);
 			break;
 
 		case TOKEN_INDICATOR_HEIGHT:
-			parser.scanStr((char *)params, "%d", &indicatorHeight);
+			parser.scanStr(params, "%d", &indicatorHeight);
 			break;
 
 		case TOKEN_SAVE_IMAGE:
-			saveImageName = (char *) params;
+			saveImageName = params;
 			break;
 
 		case TOKEN_SAVE_IMAGE_X:
-			parser.scanStr((char *)params, "%d", &saveImageX);
+			parser.scanStr(params, "%d", &saveImageX);
 			break;
 
 		case TOKEN_SAVE_IMAGE_Y:
-			parser.scanStr((char *)params, "%d", &saveImageY);
+			parser.scanStr(params, "%d", &saveImageY);
 			break;
 
 		case TOKEN_LOAD_IMAGE:
-			loadImageName = (char *) params;
+			loadImageName = params;
 			break;
 
 		case TOKEN_LOAD_IMAGE_X:
-			parser.scanStr((char *)params, "%d", &loadImageX);
+			parser.scanStr(params, "%d", &loadImageX);
 			break;
 
 		case TOKEN_LOAD_IMAGE_Y:
-			parser.scanStr((char *)params, "%d", &loadImageY);
+			parser.scanStr(params, "%d", &loadImageY);
 			break;
 
 		case TOKEN_LOCAL_SAVE_DIR:
-			_localSaveDir = (char *)params;
+			_localSaveDir = params;
 			break;
 
 		case TOKEN_COMPAT_KILL_METHOD_THREADS:
-			parser.scanStr((char *)params, "%b", &_compatKillMethodThreads);
+			parser.scanStr(params, "%b", &_compatKillMethodThreads);
 			break;
 		}
 	}
@@ -1123,7 +1123,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 			BaseUtils::swap(&top, &bottom);
 		}
 
-		BasePlatform::setRect(&_mouseLockRect, left, top, right, bottom);
+		_mouseLockRect.setRect(left, top, right, bottom);
 
 		stack->pushNULL();
 		return STATUS_OK;
@@ -3019,10 +3019,10 @@ bool BaseGame::displayWindows(bool inGame) {
 	bool res;
 
 	// did we lose focus? focus topmost window
-	if (_focusedWindow == nullptr || !_focusedWindow->_visible || _focusedWindow->_disable) {
+	if (_focusedWindow == nullptr || !_focusedWindow->isVisible() || _focusedWindow->isDisabled()) {
 		_focusedWindow = nullptr;
 		for (int i = _windows.size() - 1; i >= 0; i--) {
-			if (_windows[i]->_visible && !_windows[i]->_disable) {
+			if (_windows[i]->isVisible() && !_windows[i]->isDisabled()) {
 				_focusedWindow = _windows[i];
 				break;
 			}
@@ -3031,7 +3031,7 @@ bool BaseGame::displayWindows(bool inGame) {
 
 	// display all windows
 	for (uint32 i = 0; i < _windows.size(); i++) {
-		if (_windows[i]->_visible && _windows[i]->_inGame == inGame) {
+		if (_windows[i]->isVisible() && _windows[i]->getInGame() == inGame) {
 
 			res = _windows[i]->display();
 			if (DID_FAIL(res)) {
@@ -3054,61 +3054,61 @@ bool BaseGame::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferPtr(TMEMBER_PTR(_activeObject));
 	persistMgr->transferPtr(TMEMBER_PTR(_capturedObject));
 	persistMgr->transferPtr(TMEMBER_PTR(_cursorNoninteractive));
-	persistMgr->transfer(TMEMBER(_editorMode));
+	persistMgr->transferBool(TMEMBER(_editorMode));
 	persistMgr->transferPtr(TMEMBER_PTR(_fader));
-	persistMgr->transfer(TMEMBER(_freezeLevel));
+	persistMgr->transferSint32(TMEMBER(_freezeLevel));
 	persistMgr->transferPtr(TMEMBER_PTR(_focusedWindow));
 	persistMgr->transferPtr(TMEMBER_PTR(_fontStorage));
-	persistMgr->transfer(TMEMBER(_interactive));
+	persistMgr->transferBool(TMEMBER(_interactive));
 	persistMgr->transferPtr(TMEMBER_PTR(_keyboardState));
-	persistMgr->transfer(TMEMBER(_lastTime));
+	persistMgr->transferUint32(TMEMBER(_lastTime));
 	persistMgr->transferPtr(TMEMBER_PTR(_mainObject));
 	_musicSystem->persistChannels(persistMgr);
 	_musicSystem->persistCrossfadeSettings(persistMgr);
 
-	persistMgr->transfer(TMEMBER(_offsetX));
-	persistMgr->transfer(TMEMBER(_offsetY));
+	persistMgr->transferSint32(TMEMBER(_offsetX));
+	persistMgr->transferSint32(TMEMBER(_offsetY));
 	persistMgr->transferFloat(TMEMBER(_offsetPercentX));
 	persistMgr->transferFloat(TMEMBER(_offsetPercentY));
 
-	persistMgr->transfer(TMEMBER(_origInteractive));
-	persistMgr->transfer(TMEMBER_INT(_origState));
-	persistMgr->transfer(TMEMBER(_personalizedSave));
-	persistMgr->transfer(TMEMBER(_quitting));
+	persistMgr->transferBool(TMEMBER(_origInteractive));
+	persistMgr->transferSint32(TMEMBER_INT(_origState));
+	persistMgr->transferBool(TMEMBER(_personalizedSave));
+	persistMgr->transferBool(TMEMBER(_quitting));
 
 	_regObjects.persist(persistMgr);
 
 	persistMgr->transferPtr(TMEMBER_PTR(_scEngine));
 	//persistMgr->transfer(TMEMBER(_soundMgr));
-	persistMgr->transfer(TMEMBER_INT(_state));
+	persistMgr->transferSint32(TMEMBER_INT(_state));
 	//persistMgr->transfer(TMEMBER(_surfaceStorage));
-	persistMgr->transfer(TMEMBER(_subtitles));
-	persistMgr->transfer(TMEMBER(_subtitlesSpeed));
+	persistMgr->transferBool(TMEMBER(_subtitles));
+	persistMgr->transferSint32(TMEMBER(_subtitlesSpeed));
 	persistMgr->transferPtr(TMEMBER_PTR(_systemFont));
 	persistMgr->transferPtr(TMEMBER_PTR(_videoFont));
-	persistMgr->transfer(TMEMBER(_videoSubtitles));
+	persistMgr->transferBool(TMEMBER(_videoSubtitles));
 
 	_timerNormal.persist(persistMgr);
 	_timerLive.persist(persistMgr);
 
 	_renderer->persistSaveLoadImages(persistMgr);
 
-	persistMgr->transfer(TMEMBER_INT(_textEncoding));
-	persistMgr->transfer(TMEMBER(_textRTL));
+	persistMgr->transferSint32(TMEMBER_INT(_textEncoding));
+	persistMgr->transferBool(TMEMBER(_textRTL));
 
-	persistMgr->transfer(TMEMBER(_soundBufferSizeSec));
-	persistMgr->transfer(TMEMBER(_suspendedRendering));
+	persistMgr->transferSint32(TMEMBER(_soundBufferSizeSec));
+	persistMgr->transferBool(TMEMBER(_suspendedRendering));
 
-	persistMgr->transfer(TMEMBER(_mouseLockRect));
+	persistMgr->transferRect32(TMEMBER(_mouseLockRect));
 
 	_windows.persist(persistMgr);
 
-	persistMgr->transfer(TMEMBER(_suppressScriptErrors));
-	persistMgr->transfer(TMEMBER(_autorunDisabled));
+	persistMgr->transferBool(TMEMBER(_suppressScriptErrors));
+	persistMgr->transferBool(TMEMBER(_autorunDisabled));
 
-	persistMgr->transfer(TMEMBER(_autoSaveOnExit));
-	persistMgr->transfer(TMEMBER(_autoSaveSlot));
-	persistMgr->transfer(TMEMBER(_cursorHidden));
+	persistMgr->transferBool(TMEMBER(_autoSaveOnExit));
+	persistMgr->transferUint32(TMEMBER(_autoSaveSlot));
+	persistMgr->transferBool(TMEMBER(_cursorHidden));
 
 	if (!persistMgr->getIsSaving()) {
 		_quitting = false;
@@ -3131,7 +3131,7 @@ bool BaseGame::focusWindow(UIWindow *window) {
 				_gameRef->_focusedWindow = window;
 			}
 
-			if (window->_mode == WINDOW_NORMAL && prev != window && _gameRef->validObject(prev) && (prev->_mode == WINDOW_EXCLUSIVE || prev->_mode == WINDOW_SYSTEM_EXCLUSIVE)) {
+			if (window->getMode() == WINDOW_NORMAL && prev != window && _gameRef->validObject(prev) && (prev->getMode() == WINDOW_EXCLUSIVE || prev->getMode() == WINDOW_SYSTEM_EXCLUSIVE)) {
 				return focusWindow(prev);
 			} else {
 				return STATUS_OK;
@@ -3361,10 +3361,10 @@ bool BaseGame::getCurrentViewportRect(Rect32 *rect, bool *custom) const {
 				*custom = true;
 			}
 		} else {
-			BasePlatform::setRect(rect,   _renderer->_drawOffsetX,
-			                      _renderer->_drawOffsetY,
-			                      _renderer->getWidth() + _renderer->_drawOffsetX,
-			                      _renderer->getHeight() + _renderer->_drawOffsetY);
+			rect->setRect(_renderer->_drawOffsetX,
+						  _renderer->_drawOffsetY,
+						  _renderer->getWidth() + _renderer->_drawOffsetX,
+						  _renderer->getHeight() + _renderer->_drawOffsetY);
 			if (custom) {
 				*custom = false;
 			}
@@ -3577,7 +3577,6 @@ bool BaseGame::onMouseLeftDown() {
 		_capturedObject = _activeObject;
 	}
 	_mouseLeftDown = true;
-	BasePlatform::setCapture(/*_renderer->_window*/);
 
 	return STATUS_OK;
 }
@@ -3588,7 +3587,6 @@ bool BaseGame::onMouseLeftUp() {
 		_activeObject->handleMouse(MOUSE_RELEASE, MOUSE_BUTTON_LEFT);
 	}
 
-	BasePlatform::releaseCapture();
 	_capturedObject = nullptr;
 	_mouseLeftDown = false;
 

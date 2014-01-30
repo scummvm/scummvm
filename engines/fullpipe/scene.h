@@ -44,6 +44,7 @@ class Scene : public Background {
 
   public:
 	Scene();
+	virtual ~Scene();
 
 	virtual bool load(MfcArchive &file);
 
@@ -79,12 +80,12 @@ class Scene : public Background {
 
   private:
 	static bool compareObjPriority(const void *p1, const void *p2);
-	void objectList_sortByPriority(PtrList &list);
+	void objectList_sortByPriority(PtrList &list, bool skipFirst = false);
 };
 
 class SceneTag : public CObject {
  public:
-	int _field_4;
+	CObject *_field_4;
 	char *_tag;
 	Scene *_scene;
 	int16 _sceneId;

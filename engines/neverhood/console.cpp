@@ -29,6 +29,7 @@
 #include "neverhood/smackerscene.h"
 #include "neverhood/sound.h"
 #include "neverhood/modules/module1600.h"
+#include "neverhood/modules/module3000_sprites.h"
 
 namespace Neverhood {
 

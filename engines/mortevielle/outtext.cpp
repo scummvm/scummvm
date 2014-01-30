@@ -35,6 +35,10 @@
 
 namespace Mortevielle {
 
+TextHandler::TextHandler(MortevielleEngine *vm) {
+	_vm = vm;
+}
+
 /**
  * Next word
  * @remarks	Originally called 'l_motsuiv'
@@ -59,7 +63,7 @@ void TextHandler::displayStr(Common::String inputStr, int x, int y, int dx, int 
 	// Safeguard: add $ just in case
 	inputStr += '$';
 
-	_vm->_screenSurface.putxy(x, y);
+	_vm->_screenSurface->putxy(x, y);
 	int tab = 6;
 	dx *= 6;
 	dy *= 6;
@@ -73,19 +77,19 @@ void TextHandler::displayStr(Common::String inputStr, int x, int y, int dx, int 
 	while (!stringParsed) {
 		switch (inputStr[p]) {
 		case '@':
-			_vm->_screenSurface.drawString(s, typ);
+			_vm->_screenSurface->drawString(s, typ);
 			s = "";
 			++p;
 			xc = x;
 			yc += 6;
-			_vm->_screenSurface.putxy(xc, yc);
+			_vm->_screenSurface->putxy(xc, yc);
 			break;
 		case ' ':
 			s += ' ';
 			xc += tab;
 			++p;
 			if (nextWord(p, inputStr.c_str(), tab) + xc > xf) {
-				_vm->_screenSurface.drawString(s, typ);
+				_vm->_screenSurface->drawString(s, typ);
 				s = "";
 				xc = x;
 				yc += 6;
@@ -96,20 +100,20 @@ void TextHandler::displayStr(Common::String inputStr, int x, int y, int dx, int 
 					do {
 						j = x;
 						do {
-							_vm->_screenSurface.putxy(j, i);
-							_vm->_screenSurface.drawString(" ", 0);
+							_vm->_screenSurface->putxy(j, i);
+							_vm->_screenSurface->drawString(" ", 0);
 							j += 6;
 						} while (j <= xf);
 						i += 6;
 					} while (i <= yf);
 					yc = y;
 				}
-				_vm->_screenSurface.putxy(xc, yc);
+				_vm->_screenSurface->putxy(xc, yc);
 			}
 			break;
 		case '$':
 			stringParsed = true;
-			_vm->_screenSurface.drawString(s, typ);
+			_vm->_screenSurface->drawString(s, typ);
 			break;
 		default:
 			s += inputStr[p];
@@ -218,7 +222,7 @@ void TextHandler::taffich() {
 	}
 
 	_vm->_destinationOk = true;
-	_vm->_mouse.hideMouse();
+	_vm->_mouse->hideMouse();
 	drawingStartPos = 0;
 	Common::String filename, altFilename;
 
@@ -291,18 +295,14 @@ void TextHandler::taffich() {
 		}
 		loadAniFile(filename, drawingStartPos, drawingSize);
 	}
-	_vm->_mouse.showMouse();
-	if ((a < COAT_ARMS) && ((_vm->_maff < COAT_ARMS) || (_vm->_coreVar._currPlace == LANDING)) && (_vm->_currAction != _vm->_menu._opcodeEnter)) {
+	_vm->_mouse->showMouse();
+	if ((a < COAT_ARMS) && ((_vm->_maff < COAT_ARMS) || (_vm->_coreVar._currPlace == LANDING)) && (_vm->_currAction != _vm->_menu->_opcodeEnter)) {
 		if ((a == ATTIC) || (a == CELLAR))
 			_vm->displayAloneText();
-		else if (!_vm->_blo)
+		else if (!_vm->_outsideOnlyFl)
 			_vm->getPresence(_vm->_coreVar._currPlace);
 		_vm->_savedBitIndex =  0;
 	}
-}
-
-void TextHandler::setParent(MortevielleEngine *vm) {
-	_vm = vm;
 }
 
 } // End of namespace Mortevielle

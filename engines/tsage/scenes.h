@@ -35,7 +35,6 @@ class Scene : public StripCallback {
 private:
 	void drawBackgroundObjects();
 public:
-	int _field12;
 	int _screenNumber;
 	int _activeScreenNumber;
 	int _sceneMode;
@@ -49,9 +48,6 @@ public:
 	int _zoomPercents[256];
 	ScenePriorities _priorities;
 	SceneObjectList _bgSceneObjects;
-
-	int _fieldA;
-	int _fieldE;
 public:
 	Scene();
 	virtual ~Scene();

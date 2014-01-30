@@ -37,7 +37,7 @@ class BaseSubFrame;
 class BaseFontBitmap : public BaseFont {
 public:
 	DECLARE_PERSISTENT(BaseFontBitmap, BaseFont)
-	bool loadBuffer(byte *Buffer);
+	bool loadBuffer(char *buffer);
 	bool loadFile(const Common::String &filename);
 	virtual int getTextWidth(const byte *text, int maxLength = -1) override;
 	virtual int getTextHeight(const byte *text, int width) override;

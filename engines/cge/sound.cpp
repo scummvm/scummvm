@@ -186,6 +186,10 @@ DataCk *Fx::load(int idx, int ref) {
 
 DataCk *Fx::loadWave(EncryptedStream *file) {
 	byte *data = (byte *)malloc(file->size());
+
+	if (!data)
+		return 0;
+
 	file->read(data, file->size());
 
 	return new DataCk(data, file->size());

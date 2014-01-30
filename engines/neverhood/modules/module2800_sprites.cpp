@@ -22,12 +22,6 @@
 
 #include "neverhood/modules/module2800.h"
 #include "neverhood/modules/module2800_sprites.h"
-#include "neverhood/gamemodule.h"
-#include "neverhood/modules/module1000.h"
-#include "neverhood/modules/module1200.h"
-#include "neverhood/modules/module1700.h"
-#include "neverhood/modules/module2200.h"
-#include "neverhood/diskplayerscene.h"
 
 namespace Neverhood {
 
@@ -46,20 +40,20 @@ AsScene2803LightCord::AsScene2803LightCord(NeverhoodEngine *vm, Scene *parentSce
 uint32 AsScene2803LightCord::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x100D:
+	case NM_ANIMATION_START:
 		if (!_isBusy && param.asInteger() == calcHash("ClickSwitch")) {
-			sendMessage(_parentScene, 0x480F, 0);
+			sendMessage(_parentScene, NM_KLAYMEN_LOWER_LEVER, 0);
 			playSound(0, 0x4E1CA4A0);
 		}
 		break;
-	case 0x480F:
+	case NM_KLAYMEN_LOWER_LEVER:
 		stPulled();
 		break;
-	case 0x482A:
-		sendMessage(_parentScene, 0x1022, 990);
+	case NM_MOVE_TO_BACK:
+		sendMessage(_parentScene, NM_PRIORITY_CHANGE, 990);
 		break;
-	case 0x482B:
-		sendMessage(_parentScene, 0x1022, 1010);
+	case NM_MOVE_TO_FRONT:
+		sendMessage(_parentScene, NM_PRIORITY_CHANGE, 1010);
 		break;
 	}
 	return messageResult;
@@ -68,7 +62,7 @@ uint32 AsScene2803LightCord::handleMessage(int messageNum, const MessageParam &p
 uint32 AsScene2803LightCord::hmPulled(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		gotoNextState();
 		break;
 	}
@@ -113,7 +107,7 @@ AsScene2803TestTubeOne::AsScene2803TestTubeOne(NeverhoodEngine *vm, uint32 fileH
 uint32 AsScene2803TestTubeOne::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		if (param.asInteger())
 			startAnimation(_fileHash2, 0, -1);
 		else
@@ -139,15 +133,15 @@ AsScene2803Rope::AsScene2803Rope(NeverhoodEngine *vm, Scene *parentScene, int16 
 uint32 AsScene2803Rope::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		startAnimation(0x9D098C23, 50, -1);
 		SetMessageHandler(&AsScene2803Rope::hmReleased);
 		break;
-	case 0x482A:
-		sendMessage(_parentScene, 0x1022, 990);
+	case NM_MOVE_TO_BACK:
+		sendMessage(_parentScene, NM_PRIORITY_CHANGE, 990);
 		break;
-	case 0x482B:
-		sendMessage(_parentScene, 0x1022, 1010);
+	case NM_MOVE_TO_FRONT:
+		sendMessage(_parentScene, NM_PRIORITY_CHANGE, 1010);
 		break;
 	}
 	return messageResult;
@@ -156,14 +150,14 @@ uint32 AsScene2803Rope::handleMessage(int messageNum, const MessageParam &param,
 uint32 AsScene2803Rope::hmReleased(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		gotoNextState();
 		break;
-	case 0x482A:
-		sendMessage(_parentScene, 0x1022, 990);
+	case NM_MOVE_TO_BACK:
+		sendMessage(_parentScene, NM_PRIORITY_CHANGE, 990);
 		break;
-	case 0x482B:
-		sendMessage(_parentScene, 0x1022, 1010);
+	case NM_MOVE_TO_FRONT:
+		sendMessage(_parentScene, NM_PRIORITY_CHANGE, 1010);
 		break;
 	}
 	return messageResult;
@@ -223,7 +217,7 @@ SsScene2804LightCoil::SsScene2804LightCoil(NeverhoodEngine *vm)
 uint32 SsScene2804LightCoil::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x2002:
+	case NM_POSITION_CHANGE:
 		setVisible(true);
 		updatePosition();
 		messageResult = 1;
@@ -253,7 +247,7 @@ uint32 SsScene2804LightTarget::handleMessage(int messageNum, const MessageParam 
 		updatePosition();
 		messageResult = 1;
 		break;
-	case 0x2005:
+	case NM_KLAYMEN_CLIMB_LADDER:
 		setVisible(false);
 		updatePosition();
 		messageResult = 1;
@@ -476,7 +470,7 @@ void AsScene2804BeamCoil::update() {
 uint32 AsScene2804BeamCoil::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x2002:
+	case NM_POSITION_CHANGE:
 		show();
 		_countdown = 92;
 		messageResult = 1;
@@ -515,7 +509,7 @@ void AsScene2804BeamCoil::stBeaming() {
 uint32 AsScene2804BeamCoil::hmBeaming(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		gotoNextState();
 		break;
 	}
@@ -543,7 +537,7 @@ uint32 AsScene2804BeamTarget::handleMessage(int messageNum, const MessageParam &
 		startAnimation(0x03842000, 0, -1);
 		messageResult = 1;
 		break;
-	case 0x2005:
+	case NM_KLAYMEN_CLIMB_LADDER:
 		setVisible(false);
 		stopAnimation();
 		messageResult = 1;
@@ -567,12 +561,12 @@ AsScene2806Spew::AsScene2806Spew(NeverhoodEngine *vm)
 uint32 AsScene2806Spew::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		playSound(0, 0x48640244);
 		startAnimation(0x04211490, 0, -1);
 		setVisible(true);
 		break;
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		stopAnimation();
 		setVisible(false);
 		break;
@@ -780,7 +774,7 @@ uint32 AsScene2808Handle::handleMessage(int messageNum, const MessageParam &para
 uint32 AsScene2808Handle::hmActivating(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		gotoNextState();
 		break;
 	}
@@ -797,7 +791,7 @@ void AsScene2808Handle::activate() {
 
 void AsScene2808Handle::stActivated() {
 	stopAnimation();
-	sendMessage(_parentScene, 0x2002, 0);
+	sendMessage(_parentScene, NM_POSITION_CHANGE, 0);
 }
 
 AsScene2808Flow::AsScene2808Flow(NeverhoodEngine *vm, Scene *parentScene, int testTubeSetNum)
@@ -823,7 +817,7 @@ AsScene2808Flow::AsScene2808Flow(NeverhoodEngine *vm, Scene *parentScene, int te
 uint32 AsScene2808Flow::hmFlowing(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		gotoNextState();
 		break;
 	}
@@ -881,12 +875,12 @@ AsScene2809Spew::AsScene2809Spew(NeverhoodEngine *vm)
 uint32 AsScene2809Spew::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		playSound(0, 0x48640244);
 		startAnimation(0x04211490, 0, -1);
 		setVisible(true);
 		break;
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		stopAnimation();
 		setVisible(false);
 		break;
@@ -895,7 +889,7 @@ uint32 AsScene2809Spew::handleMessage(int messageNum, const MessageParam &param,
 }
 
 AsScene2810Rope::AsScene2810Rope(NeverhoodEngine *vm, Scene *parentScene, int16 x)
-	: AnimatedSprite(vm, 1100) {
+	: AnimatedSprite(vm, 1100), _parentScene(parentScene) {
 
 	createSurface(990, 68, 476);
 	SetUpdateHandler(&AnimatedSprite::update);
@@ -909,14 +903,14 @@ AsScene2810Rope::AsScene2810Rope(NeverhoodEngine *vm, Scene *parentScene, int16 
 uint32 AsScene2810Rope::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		startAnimation(0x9D098C23, 35, 53);
 		break;
-	case 0x482A:
-		sendMessage(_parentScene, 0x1022, 990);
+	case NM_MOVE_TO_BACK:
+		sendMessage(_parentScene, NM_PRIORITY_CHANGE, 990);
 		break;
-	case 0x482B:
-		sendMessage(_parentScene, 0x1022, 1010);
+	case NM_MOVE_TO_FRONT:
+		sendMessage(_parentScene, NM_PRIORITY_CHANGE, 1010);
 		break;
 	}
 	return messageResult;
@@ -940,13 +934,13 @@ AsScene2812Winch::~AsScene2812Winch() {
 uint32 AsScene2812Winch::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		startAnimation(0x20DA08A0, 0, -1);
 		setVisible(true);
 		_vm->_soundMan->addSound(0x00B000E2, 0xC874EE6C);
 		_vm->_soundMan->playSoundLooping(0xC874EE6C);
 		break;
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		startAnimation(0x20DA08A0, 7, -1);
 		break;
 	}
@@ -968,15 +962,15 @@ AsScene2812Rope::AsScene2812Rope(NeverhoodEngine *vm, Scene *parentScene)
 uint32 AsScene2812Rope::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x4806:
+	case NM_KLAYMEN_USE_OBJECT:
 		setDoDeltaX(((Sprite*)sender)->isDoDeltaX() ? 1 : 0);
 		stRopingDown();
 		break;
-	case 0x482A:
-		sendMessage(_parentScene, 0x1022, 990);
+	case NM_MOVE_TO_BACK:
+		sendMessage(_parentScene, NM_PRIORITY_CHANGE, 990);
 		break;
-	case 0x482B:
-		sendMessage(_parentScene, 0x1022, 1010);
+	case NM_MOVE_TO_FRONT:
+		sendMessage(_parentScene, NM_PRIORITY_CHANGE, 1010);
 		break;
 	}
 	return messageResult;
@@ -985,7 +979,7 @@ uint32 AsScene2812Rope::handleMessage(int messageNum, const MessageParam &param,
 uint32 AsScene2812Rope::hmRopingDown(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x3002:
+	case NM_ANIMATION_STOP:
 		gotoNextState();
 		break;
 	}
@@ -993,7 +987,7 @@ uint32 AsScene2812Rope::hmRopingDown(int messageNum, const MessageParam &param, 
 }
 
 void AsScene2812Rope::stRopingDown() {
-	sendMessage(_parentScene, 0x4806, 0);
+	sendMessage(_parentScene, NM_KLAYMEN_USE_OBJECT, 0);
 	startAnimation(0x9D098C23, 0, -1);
 	SetMessageHandler(&AsScene2812Rope::hmRopingDown);
 }
@@ -1008,13 +1002,625 @@ AsScene2812TrapDoor::AsScene2812TrapDoor(NeverhoodEngine *vm)
 uint32 AsScene2812TrapDoor::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case 0x2000:
+	case NM_ANIMATION_UPDATE:
 		startAnimation(0x805D0029, 0, -1);
 		playSound(0, 0xEA005F40);
 		_newStickFrameIndex = STICK_LAST_FRAME;
 		break;
 	}
 	return messageResult;
+}
+
+KmScene2801::KmScene2801(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
+	: Klaymen(vm, parentScene, x, y) {
+
+	// Empty
+}
+
+uint32 KmScene2801::xHandleMessage(int messageNum, const MessageParam &param) {
+	switch (messageNum) {
+	case 0x4001:
+	case 0x4800:
+		startWalkToX(param.asPoint().x, false);
+		break;
+	case NM_KLAYMEN_STAND_IDLE:
+		GotoState(&Klaymen::stTryStandIdle);
+		break;
+	case NM_KLAYMEN_PICKUP:
+		GotoState(&Klaymen::stPickUpGeneric);
+		break;
+	case 0x4817:
+		setDoDeltaX(param.asInteger());
+		gotoNextStateExt();
+		break;
+	case 0x481B:
+		if (param.asPoint().y != 0)
+			startWalkToXDistance(param.asPoint().y, param.asPoint().x);
+		else
+			startWalkToAttachedSpriteXDistance(param.asPoint().x);
+		break;
+	case NM_KLAYMEN_TURN_TO_USE:
+		GotoState(&Klaymen::stTurnToUse);
+		break;
+	case NM_KLAYMEN_RETURN_FROM_USE:
+		GotoState(&Klaymen::stReturnFromUse);
+		break;
+	case 0x481F:
+		if (param.asInteger() == 1)
+			GotoState(&Klaymen::stWonderAboutAfter);
+		else if (param.asInteger() == 0)
+			GotoState(&Klaymen::stWonderAboutHalf);
+		else if (param.asInteger() == 4)
+			GotoState(&Klaymen::stTurnAwayFromUse);
+		else if (param.asInteger() == 3)
+			GotoState(&Klaymen::stTurnToUseHalf);
+		else
+			GotoState(&Klaymen::stWonderAbout);
+		break;
+	case 0x482D:
+		setDoDeltaX(_x > (int16)param.asInteger() ? 1 : 0);
+		gotoNextStateExt();
+		break;
+	case 0x482E:
+		if (param.asInteger() == 1)
+			GotoState(&Klaymen::stWalkToFrontNoStep);
+		else
+			GotoState(&Klaymen::stWalkToFront);
+		break;
+	case 0x482F:
+		if (param.asInteger() == 1)
+			GotoState(&Klaymen::stTurnToFront);
+		else
+			GotoState(&Klaymen::stTurnToBack);
+		break;
+	case 0x4837:
+		stopWalking();
+		break;
+	}
+	return 0;
+}
+
+KmScene2803::KmScene2803(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y, NRect *clipRects, int clipRectsCount)
+	: Klaymen(vm, parentScene, x, y) {
+
+	_surface->setClipRects(clipRects, clipRectsCount);
+	_dataResource.load(0x00900849);
+}
+
+uint32 KmScene2803::xHandleMessage(int messageNum, const MessageParam &param) {
+	switch (messageNum) {
+	case 0x4001:
+	case 0x4800:
+		startWalkToX(param.asPoint().x, false);
+		break;
+	case NM_KLAYMEN_STAND_IDLE:
+		GotoState(&Klaymen::stTryStandIdle);
+		break;
+	case 0x4803:
+		_destY = param.asInteger();
+		GotoState(&Klaymen::stJumpToGrab);
+		break;
+	case 0x4804:
+		if (param.asInteger() == 3)
+			GotoState(&Klaymen::stFinishGrow);
+		break;
+	case 0x480D:
+		GotoState(&Klaymen::stPullCord);
+		break;
+	case 0x4817:
+		setDoDeltaX(param.asInteger());
+		gotoNextStateExt();
+		break;
+	case 0x4818:
+		startWalkToX(_dataResource.getPoint(param.asInteger()).x, false);
+		break;
+	case NM_KLAYMEN_TURN_TO_USE:
+		GotoState(&Klaymen::stTurnToUse);
+		break;
+	case NM_KLAYMEN_RETURN_FROM_USE:
+		GotoState(&Klaymen::stReturnFromUse);
+		break;
+	case 0x481F:
+		if (param.asInteger() == 1)
+			GotoState(&Klaymen::stWonderAboutAfter);
+		else
+			GotoState(&Klaymen::stWonderAboutHalf);
+		break;
+	case 0x482E:
+		GotoState(&Klaymen::stWalkToFront);
+		break;
+	case 0x482F:
+		GotoState(&Klaymen::stTurnToBack);
+		break;
+	case 0x4834:
+		GotoState(&Klaymen::stStepOver);
+		break;
+	case 0x4838:
+		GotoState(&Klaymen::stJumpToGrabRelease);
+		break;
+	}
+	return 0;
+}
+
+KmScene2803Small::KmScene2803Small(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
+	: Klaymen(vm, parentScene, x, y) {
+
+	_dataResource.load(0x81120132);
+}
+
+uint32 KmScene2803Small::xHandleMessage(int messageNum, const MessageParam &param) {
+	switch (messageNum) {
+	case 0x4001:
+	case 0x4800:
+		startWalkToXSmall(param.asPoint().x);
+		break;
+	case NM_KLAYMEN_STAND_IDLE:
+		GotoState(&Klaymen::stStandIdleSmall);
+		break;
+	case 0x4817:
+		setDoDeltaX(param.asInteger());
+		gotoNextStateExt();
+		break;
+	case 0x4818:
+		startWalkToXSmall(_dataResource.getPoint(param.asInteger()).x);
+		break;
+	case 0x481F:
+		if (param.asInteger() == 1)
+			GotoState(&Klaymen::stWonderAboutAfterSmall);
+		else if (param.asInteger() == 0)
+			GotoState(&Klaymen::stWonderAboutHalfSmall);
+		else
+			GotoState(&Klaymen::stWonderAboutSmall);
+		break;
+	case 0x482E:
+		if (param.asInteger() == 1)
+			GotoState(&Klaymen::stWalkToFrontNoStepSmall);
+		else if (param.asInteger() == 2)
+			GotoState(&Klaymen::stWalkToFront2Small);
+		else
+			GotoState(&Klaymen::stWalkToFrontSmall);
+		break;
+	case 0x482F:
+		if (param.asInteger() == 1)
+			GotoState(&Klaymen::stTurnToBackHalfSmall);
+		else if (param.asInteger() == 2)
+			GotoState(&Klaymen::stTurnToBackWalkSmall);
+		else
+			GotoState(&Klaymen::stTurnToBackSmall);
+		break;
+	case 0x4830:
+		GotoState(&KmScene2803Small::stShrink);
+		break;
+	}
+	return 0;
+}
+
+uint32 KmScene2803Small::hmShrink(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = hmLowLevelAnimation(messageNum, param, sender);
+	switch (messageNum) {
+	case NM_ANIMATION_START:
+		if (param.asInteger() == 0x80C110B5)
+			sendMessage(_parentScene, NM_MOVE_TO_BACK, 0);
+		else if (param.asInteger() == 0x33288344)
+			playSound(2, 0x10688664);
+		break;
+	}
+	return messageResult;
+}
+
+void KmScene2803Small::stShrink() {
+	_busyStatus = 0;
+	_acceptInput = false;
+	playSound(0, 0x4C69EA53);
+	startAnimation(0x1AE88904, 0, -1);
+	SetUpdateHandler(&Klaymen::update);
+	SetMessageHandler(&KmScene2803Small::hmShrink);
+	SetSpriteUpdate(&AnimatedSprite::updateDeltaXY);
+}
+
+KmScene2805::KmScene2805(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
+	: Klaymen(vm, parentScene, x, y) {
+
+	// Empty
+}
+
+uint32 KmScene2805::xHandleMessage(int messageNum, const MessageParam &param) {
+	uint32 messageResult = 0;
+	switch (messageNum) {
+	case NM_ANIMATION_UPDATE:
+		_isSittingInTeleporter = param.asInteger() != 0;
+		messageResult = 1;
+		break;
+	case 0x4001:
+	case 0x4800:
+		startWalkToX(param.asPoint().x, false);
+		break;
+	case NM_KLAYMEN_STAND_IDLE:
+		if (_isSittingInTeleporter)
+			GotoState(&Klaymen::stSitIdleTeleporter);
+		else
+			GotoState(&Klaymen::stTryStandIdle);
+		break;
+	case 0x4817:
+		setDoDeltaX(param.asInteger());
+		gotoNextStateExt();
+		break;
+	case NM_KLAYMEN_TURN_TO_USE:
+		if (_isSittingInTeleporter)
+			GotoState(&Klaymen::stTurnToUseInTeleporter);
+		break;
+	case NM_KLAYMEN_RETURN_FROM_USE:
+		if (_isSittingInTeleporter)
+			GotoState(&Klaymen::stReturnFromUseInTeleporter);
+		break;
+	case 0x4834:
+		GotoState(&Klaymen::stStepOver);
+		break;
+	case 0x4835:
+		sendMessage(_parentScene, 0x2000, 1);
+		_isSittingInTeleporter = true;
+		GotoState(&Klaymen::stSitInTeleporter);
+		break;
+	case 0x4836:
+		sendMessage(_parentScene, 0x2000, 0);
+		_isSittingInTeleporter = false;
+		GotoState(&Klaymen::stGetUpFromTeleporter);
+		break;
+	case 0x483D:
+		teleporterAppear(0xDE284B74);
+		break;
+	case 0x483E:
+		teleporterDisappear(0xD82A4094);
+		break;
+	}
+	return messageResult;
+}
+
+KmScene2806::KmScene2806(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y,
+	bool needsLargeSurface, NRect *clipRects, uint clipRectsCount)
+	: Klaymen(vm, parentScene, x, y) {
+
+	if (needsLargeSurface) {
+		NDimensions dimensions = _animResource.loadSpriteDimensions(0x2838C010);
+		delete _surface;
+		createSurface(1000, dimensions.width, dimensions.height);
+		loadSound(3, 0x58E0C341);
+		loadSound(4, 0x40A00342);
+		loadSound(5, 0xD0A1C348);
+		loadSound(6, 0x166FC6E0);
+		loadSound(7, 0x00018040);
+	}
+
+	_dataResource.load(0x98182003);
+	_surface->setClipRects(clipRects, clipRectsCount);
+}
+
+uint32 KmScene2806::xHandleMessage(int messageNum, const MessageParam &param) {
+	switch (messageNum) {
+	case 0x4001:
+	case 0x4800:
+		startWalkToX(param.asPoint().x, false);
+		break;
+	case NM_KLAYMEN_STAND_IDLE:
+		GotoState(&Klaymen::stTryStandIdle);
+		break;
+	case 0x4804:
+		startWalkToX(440, true);
+		break;
+	case 0x480D:
+		GotoState(&Klaymen::stPullCord);
+		break;
+	case NM_KLAYMEN_PRESS_BUTTON:
+		if (param.asInteger() == 0)
+			GotoState(&Klaymen::stPressButtonSide);
+		break;
+	case 0x4817:
+		setDoDeltaX(param.asInteger());
+		gotoNextStateExt();
+		break;
+	case 0x4818:
+		startWalkToX(_dataResource.getPoint(param.asInteger()).x, false);
+		break;
+	case 0x4831:
+		GotoState(&Klaymen::stGrow);
+		break;
+	case 0x4832:
+		if (param.asInteger() == 1)
+			GotoState(&Klaymen::stDrinkPotion);
+		else
+			GotoState(&Klaymen::stUseTube);
+		break;
+	}
+	return 0;
+}
+
+KmScene2809::KmScene2809(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y,
+	bool needsLargeSurface, NRect *clipRects, uint clipRectsCount)
+	: Klaymen(vm, parentScene, x, y) {
+
+	if (needsLargeSurface) {
+		NDimensions dimensions = _animResource.loadSpriteDimensions(0x2838C010);
+		delete _surface;
+		createSurface(1000, dimensions.width, dimensions.height);
+		loadSound(3, 0x58E0C341);
+		loadSound(4, 0x40A00342);
+		loadSound(5, 0xD0A1C348);
+		loadSound(6, 0x166FC6E0);
+		loadSound(7, 0x00018040);
+	}
+
+	_dataResource.load(0x1830009A);
+	_surface->setClipRects(clipRects, clipRectsCount);
+}
+
+uint32 KmScene2809::xHandleMessage(int messageNum, const MessageParam &param) {
+	switch (messageNum) {
+	case 0x4001:
+	case 0x4800:
+		startWalkToX(param.asPoint().x, false);
+		break;
+	case NM_KLAYMEN_STAND_IDLE:
+		GotoState(&Klaymen::stTryStandIdle);
+		break;
+	case 0x4804:
+		startWalkToX(226, true);
+		break;
+	case 0x480D:
+		GotoState(&Klaymen::stPullCord);
+		break;
+	case NM_KLAYMEN_PRESS_BUTTON:
+		if (param.asInteger() == 0)
+			GotoState(&Klaymen::stPressButtonSide);
+		break;
+	case 0x4817:
+		setDoDeltaX(param.asInteger());
+		gotoNextStateExt();
+		break;
+	case 0x4818:
+		startWalkToX(_dataResource.getPoint(param.asInteger()).x, false);
+		break;
+	case 0x4831:
+		GotoState(&Klaymen::stGrow);
+		break;
+	case 0x4832:
+		if (param.asInteger() == 1)
+			GotoState(&Klaymen::stDrinkPotion);
+		else
+			GotoState(&Klaymen::stUseTube);
+		break;
+	}
+	return 0;
+}
+
+KmScene2810Small::KmScene2810Small(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
+	: Klaymen(vm, parentScene, x, y) {
+
+	// Empty
+}
+
+uint32 KmScene2810Small::xHandleMessage(int messageNum, const MessageParam &param) {
+	switch (messageNum) {
+	case 0x4001:
+	case 0x4800:
+		startWalkToXSmall(param.asPoint().x);
+		break;
+	case NM_KLAYMEN_STAND_IDLE:
+		GotoState(&Klaymen::stStandIdleSmall);
+		break;
+	case 0x4817:
+		setDoDeltaX(param.asInteger());
+		gotoNextStateExt();
+		break;
+	case 0x4818:
+		startWalkToXSmall(_dataResource.getPoint(param.asInteger()).x);
+		break;
+	case 0x481F:
+		if (param.asInteger() == 1)
+			GotoState(&Klaymen::stWonderAboutAfterSmall);
+		else if (param.asInteger() == 0)
+			GotoState(&Klaymen::stWonderAboutHalfSmall);
+		else
+			GotoState(&Klaymen::stWonderAboutSmall);
+		break;
+	case 0x482E:
+		if (param.asInteger() == 1)
+			GotoState(&Klaymen::stWalkToFrontNoStepSmall);
+		else
+			GotoState(&Klaymen::stWalkToFrontSmall);
+		break;
+	case 0x482F:
+		if (param.asInteger() == 1)
+			GotoState(&Klaymen::stTurnToBackHalfSmall);
+		else
+			GotoState(&Klaymen::stTurnToBackSmall);
+		break;
+	case 0x4837:
+		stopWalking();
+		break;
+	}
+	return 0;
+}
+
+KmScene2810::KmScene2810(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y, NRect *clipRects, uint clipRectsCount)
+	: Klaymen(vm, parentScene, x, y) {
+
+	_surface->setClipRects(clipRects, clipRectsCount);
+}
+
+uint32 KmScene2810::xHandleMessage(int messageNum, const MessageParam &param) {
+	switch (messageNum) {
+	case 0x4001:
+	case 0x4800:
+		startWalkToX(param.asPoint().x, false);
+		break;
+	case NM_KLAYMEN_STAND_IDLE:
+		GotoState(&Klaymen::stTryStandIdle);
+		break;
+	case 0x4803:
+		_destY = param.asInteger();
+		GotoState(&Klaymen::stJumpToGrab);
+		break;
+	case 0x4804:
+		if (param.asInteger() == 3)
+			GotoState(&Klaymen::stFinishGrow);
+		break;
+	case NM_KLAYMEN_PICKUP:
+		GotoState(&Klaymen::stPickUpGeneric);
+		break;
+	case 0x4817:
+		setDoDeltaX(param.asInteger());
+		gotoNextStateExt();
+		break;
+	case 0x4818:
+		startWalkToX(_dataResource.getPoint(param.asInteger()).x, false);
+		break;
+	case 0x481B:
+		if (param.asPoint().y != 0)
+			startWalkToXDistance(param.asPoint().y, param.asPoint().x);
+		else
+			startWalkToAttachedSpriteXDistance(param.asPoint().x);
+		break;
+	case 0x481F:
+		if (param.asInteger() == 0)
+			GotoState(&Klaymen::stWonderAboutHalf);
+		else if (param.asInteger() == 1)
+			GotoState(&Klaymen::stWonderAboutAfter);
+		else if (param.asInteger() == 3)
+			GotoState(&Klaymen::stTurnToUseHalf);
+		else if (param.asInteger() == 4)
+			GotoState(&Klaymen::stTurnAwayFromUse);
+		else if (param.asInteger() == 5)
+			GotoState(&Klaymen::stTurnToUseExt);
+		else
+			GotoState(&Klaymen::stWonderAbout);
+		break;
+	case 0x4820:
+		sendMessage(_parentScene, 0x2000, 0);
+		GotoState(&Klaymen::stContinueClimbLadderUp);
+		break;
+	case 0x4821:
+		sendMessage(_parentScene, 0x2000, 0);
+		_destY = param.asInteger();
+		GotoState(&Klaymen::stStartClimbLadderDown);
+		break;
+	case 0x4822:
+		sendMessage(_parentScene, 0x2000, 0);
+		_destY = param.asInteger();
+		GotoState(&Klaymen::stStartClimbLadderUp);
+		break;
+	case 0x4823:
+		sendMessage(_parentScene, 0x2001, 0);
+		GotoState(&Klaymen::stClimbLadderHalf);
+		break;
+	case 0x4824:
+		sendMessage(_parentScene, 0x2000, 0);
+		_destY = _dataResource.getPoint(param.asInteger()).y;
+		GotoState(&Klaymen::stStartClimbLadderDown);
+		break;
+	case 0x4825:
+		sendMessage(_parentScene, 0x2000, 0);
+		_destY = _dataResource.getPoint(param.asInteger()).y;
+		GotoState(&Klaymen::stStartClimbLadderUp);
+		break;
+	case 0x482D:
+		setDoDeltaX(_x > (int16)param.asInteger() ? 1 : 0);
+		gotoNextStateExt();
+		break;
+	case 0x4837:
+		stopWalking();
+		break;
+	}
+	return 0;
+}
+
+KmScene2812::KmScene2812(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
+	: Klaymen(vm, parentScene, x, y) {
+
+	// Empty
+}
+
+uint32 KmScene2812::xHandleMessage(int messageNum, const MessageParam &param) {
+	switch (messageNum) {
+	case 0x4001:
+	case 0x4800:
+		startWalkToX(param.asPoint().x, false);
+		break;
+	case NM_KLAYMEN_STAND_IDLE:
+		GotoState(&Klaymen::stTryStandIdle);
+		break;
+	case 0x4805:
+		_destY = param.asInteger();
+		GotoState(&Klaymen::stJumpToGrabFall);
+		break;
+	case NM_KLAYMEN_PICKUP:
+		if (param.asInteger() == 2)
+			GotoState(&Klaymen::stPickUpNeedle);
+		else if (param.asInteger() == 1)
+			GotoState(&Klaymen::stPickUpTube);
+		else
+			GotoState(&Klaymen::stPickUpGeneric);
+		break;
+	case 0x4817:
+		setDoDeltaX(param.asInteger());
+		gotoNextStateExt();
+		break;
+	case NM_KLAYMEN_INSERT_DISK:
+		GotoState(&Klaymen::stInsertDisk);
+		break;
+	case 0x481B:
+		if (param.asPoint().y != 0)
+			startWalkToXDistance(param.asPoint().y, param.asPoint().x);
+		else
+			startWalkToAttachedSpriteXDistance(param.asPoint().x);
+		break;
+	case NM_KLAYMEN_TURN_TO_USE:
+		GotoState(&Klaymen::stTurnToUse);
+		break;
+	case NM_KLAYMEN_RETURN_FROM_USE:
+		GotoState(&Klaymen::stReturnFromUse);
+		break;
+	case 0x4820:
+		sendMessage(_parentScene, 0x2001, 0);
+		GotoState(&Klaymen::stContinueClimbLadderUp);
+		break;
+	case 0x4821:
+		sendMessage(_parentScene, 0x2001, 0);
+		_destY = param.asInteger();
+		GotoState(&Klaymen::stStartClimbLadderDown);
+		break;
+	case 0x4822:
+		sendMessage(_parentScene, 0x2001, 0);
+		_destY = param.asInteger();
+		GotoState(&Klaymen::stStartClimbLadderUp);
+		break;
+	case 0x4823:
+		sendMessage(_parentScene, NM_POSITION_CHANGE, 0);
+		GotoState(&Klaymen::stClimbLadderHalf);
+		break;
+	case 0x482D:
+		setDoDeltaX(_x > (int16)param.asInteger() ? 1 : 0);
+		gotoNextStateExt();
+		break;
+	case 0x482E:
+		if (param.asInteger() == 1)
+			GotoState(&Klaymen::stWalkToFrontNoStep);
+		else
+			GotoState(&Klaymen::stWalkToFront);
+		break;
+	case 0x482F:
+		if (param.asInteger() == 1)
+			GotoState(&Klaymen::stTurnToFront);
+		else
+			GotoState(&Klaymen::stTurnToBack);
+		break;
+	case 0x483F:
+		startSpecialWalkRight(param.asInteger());
+		break;
+	case 0x4840:
+		startSpecialWalkLeft(param.asInteger());
+		break;
+	}
+	return 0;
 }
 
 } // End of namespace Neverhood

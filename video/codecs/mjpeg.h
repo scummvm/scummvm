@@ -40,12 +40,12 @@ namespace Video {
  * Motion JPEG decoder.
  *
  * Used in video:
- *  - QuickTimeDecoder
+ *  - AVIDecoder
  */
-class JPEGDecoder : public Codec {
+class MJPEGDecoder : public Codec {
 public:
-	JPEGDecoder();
-	~JPEGDecoder();
+	MJPEGDecoder();
+	~MJPEGDecoder();
 
 	const Graphics::Surface *decodeImage(Common::SeekableReadStream *stream);
 	Graphics::PixelFormat getPixelFormat() const { return _pixelFormat; }

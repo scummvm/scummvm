@@ -266,8 +266,8 @@ Common::SeekableReadStream *AGOSEngine::openTablesFile(const char *filename) {
 }
 
 Common::SeekableReadStream *AGOSEngine::openTablesFile_simon1(const char *filename) {
-	Common::SeekableReadStream *in = _archives.createReadStreamForMember(filename);
-	if (!in)
+	Common::File *in = new Common::File();
+	if (!in->open(filename))
 		error("openTablesFile: Can't open '%s'", filename);
 	return in;
 }

@@ -224,6 +224,18 @@ public:
 	}
 };
 
+// RGBA8888 texture
+class GLES8888Texture : public GLESTexture {
+public:
+	GLES8888Texture();
+	virtual ~GLES8888Texture();
+
+	static inline Graphics::PixelFormat pixelFormat() {
+		// We assume LE since all Android platforms are LE.
+		return Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
+	}
+};
+
 class GLESFakePaletteTexture : public GLESBaseTexture {
 protected:
 	GLESFakePaletteTexture(GLenum glFormat, GLenum glType,

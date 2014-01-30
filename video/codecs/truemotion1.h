@@ -22,8 +22,8 @@
 
 // Based on the TrueMotion 1 decoder by Alex Beregszaszi & Mike Melanson in FFmpeg
 
-// Only compile if SCI32 is enabled or if we're building dynamic modules
-#if defined(ENABLE_SCI32) || defined(DYNAMIC_MODULES)
+// Only compile if SCI32 is enabled, ZVISION is enabled, or if we're building dynamic modules
+#if defined(ENABLE_SCI32) || defined(ENABLE_ZVISION) || defined(DYNAMIC_MODULES)
 
 #ifndef VIDEO_CODECS_TRUEMOTION1_H
 #define VIDEO_CODECS_TRUEMOTION1_H

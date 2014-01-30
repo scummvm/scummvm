@@ -91,10 +91,10 @@ public:
 	virtual Common::String getClassName() { return "Speaker"; }
 	virtual void synchronize(Serializer &s);
 	virtual void remove();
-	virtual void proc12(Action *action);
+	virtual void startSpeaking(Action *action);
 	virtual void setText(const Common::String &msg);
 	virtual void removeText();
-	virtual void proc16() {}
+	virtual void stopSpeaking() {}
 
 	void setTextPos(const Common::Point &pt) { _textPos = pt; }
 };
@@ -212,8 +212,8 @@ private:
 	int getNewIndex(int newId);
 public:
 	int _stripNum;
-	int _obj44Index;
-	int _field20;
+	int _obj44ListIndex;
+	int _useless;
 	int _sceneNumber;
 	Rect _sceneBounds;
 	ConversationChoiceDialog _choiceDialog;
@@ -221,8 +221,8 @@ public:
 	StripCallback *_callbackObject;
 	Speaker *_activeSpeaker;
 	bool _textShown;
-	bool _field2E6;
-	int _field2E8;
+	bool _uselessFl;
+	int _currObj44Id;
 	int _exitMode;
 	Common::Array<Obj44> _obj44List;
 	Common::Array<byte> _script;
@@ -237,6 +237,7 @@ public:
 
 	virtual void synchronize(Serializer &s);
 	virtual void remove();
+	virtual void dispatch();
 	virtual void signal();
 	virtual void process(Event &event);
 

@@ -94,6 +94,7 @@ Common::List<Graphics::PixelFormat> OSystem_Android::getSupportedFormats() const
 	Common::List<Graphics::PixelFormat> res;
 	res.push_back(GLES565Texture::pixelFormat());
 	res.push_back(GLES5551Texture::pixelFormat());
+	res.push_back(GLES8888Texture::pixelFormat());
 	res.push_back(GLES4444Texture::pixelFormat());
 	res.push_back(Graphics::PixelFormat::createFormatCLUT8());
 
@@ -147,6 +148,8 @@ void OSystem_Android::initTexture(GLESBaseTexture **texture,
 			*texture = new GLES565Texture();
 		else if (format_new == GLES5551Texture::pixelFormat())
 			*texture = new GLES5551Texture();
+		else if (format_new == GLES8888Texture::pixelFormat())
+			*texture = new GLES8888Texture();
 		else if (format_new == GLES4444Texture::pixelFormat())
 			*texture = new GLES4444Texture();
 		else {
@@ -233,7 +236,7 @@ void OSystem_Android::initViewport() {
 	GLCALL(glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST));
 
 	GLCALL(glEnable(GL_BLEND));
-	GLCALL(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+	GLCALL(glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA));
 
 	GLCALL(glEnableClientState(GL_VERTEX_ARRAY));
 	GLCALL(glEnableClientState(GL_TEXTURE_COORD_ARRAY));
@@ -726,7 +729,7 @@ void OSystem_Android::setMouseCursor(const void *buf, uint w, uint h,
 		_mouse_keycolor = keycolor;
 
 		p = _mouse_texture_palette->palette() + _mouse_keycolor * 2;
-		WRITE_UINT16(p, READ_UINT16(p) & ~1);
+		WRITE_UINT16(p, 0);
 	}
 
 	if (w == 0 || h == 0)
@@ -779,7 +782,7 @@ void OSystem_Android::setCursorPaletteInternal(const byte *colors,
 		WRITE_UINT16(p, pf.RGBToColor(colors[0], colors[1], colors[2]));
 
 	p = _mouse_texture_palette->palette() + _mouse_keycolor * 2;
-	WRITE_UINT16(p, READ_UINT16(p) & ~1);
+	WRITE_UINT16(p, 0);
 }
 
 void OSystem_Android::setCursorPalette(const byte *colors,
@@ -821,7 +824,7 @@ void OSystem_Android::disableCursorPalette() {
 		}
 
 		byte *p = _mouse_texture_palette->palette() + _mouse_keycolor * 2;
-		WRITE_UINT16(p, READ_UINT16(p) & ~1);
+		WRITE_UINT16(p, 0);
 	}
 }
 

@@ -48,7 +48,7 @@ public:
 	bool pointInRegion(int x, int y);
 	bool createRegion();
 	bool loadFile(const char *filename);
-	bool loadBuffer(byte *buffer, bool complete = true);
+	bool loadBuffer(char *buffer, bool complete = true);
 	Rect32 _rect;
 	BaseArray<BasePoint *> _points;
 	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent) { return saveAsText(buffer, indent, nullptr); }
