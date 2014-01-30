@@ -396,7 +396,7 @@ void ThreadResource::parsePlayCommands() {
 					_vm->flipPageAndWaitForFade();
 
 					_vm->_voy._field478 &= ~1;
-					_vm->_soundManager.setVOCOffset(_vm->_voy._vocSecondsOffset * 11025);
+					_vm->_soundManager.setVOCOffset(_vm->_voy._vocSecondsOffset);
 					Common::String filename = _vm->_soundManager.getVOCFileName(
 						_vm->_videoId + 159);
 					_vm->_soundManager.startVOCPlay(filename);

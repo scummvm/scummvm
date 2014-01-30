@@ -670,6 +670,8 @@ void VoyeurEngine::reviewTape() {
 		case EVTYPE_AUDIO: {
 			_videoId = e._videoId;
 			_voy._vocSecondsOffset = e._computerOn;
+
+			_bVoy->getBoltGroup(0x7F00);
 			_graphicsManager._backgroundPage = _bVoy->boltEntry(0x7F00 +
 				BLIND_TABLE[_videoId])._picResource;
 			_graphicsManager._backColors = _bVoy->boltEntry(0x7F01 +
@@ -684,7 +686,7 @@ void VoyeurEngine::reviewTape() {
 			_voy._field478 &= ~1;
 
 			// Play suond for the given duration
-			_soundManager.setVOCOffset(_voy._vocSecondsOffset * 11025);
+			_soundManager.setVOCOffset(_voy._vocSecondsOffset);
 			_soundManager.startVOCPlay(_videoId + 159);
 			uint32 offFrame = e._computerOff;
 

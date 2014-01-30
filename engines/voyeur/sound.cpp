@@ -30,6 +30,7 @@ namespace Voyeur {
 
 SoundManager::SoundManager(Audio::Mixer *mixer) {
 	_mixer = mixer;
+	_vocOffset = 0;
 }
 
 void SoundManager::playVOCMap(byte *voc, int vocSize) {
@@ -40,7 +41,7 @@ void SoundManager::playVOCMap(byte *voc, int vocSize) {
 }
 
 bool SoundManager::vocMapStatus() {
-	// TODO
+	error("TODO: vocMapStatus");
 	return false;
 }
 
@@ -54,10 +55,11 @@ void SoundManager::abortVOCMap() {
 
 void SoundManager::stopVOCPlay() {
 	_mixer->stopHandle(_soundHandle);
+	_vocOffset = 0;
 }
 
 void SoundManager::setVOCOffset(int offset) {
-	error("TODO: setVOCOffset");
+	_vocOffset = offset;
 }
 
 Common::String SoundManager::getVOCFileName(int idx) {
@@ -69,10 +71,11 @@ void SoundManager::startVOCPlay(const Common::String &filename) {
 	if (!f.open(filename))
 		error("Could not find voc file - %s", filename.c_str());
 
-	Audio::AudioStream *audioStream = Audio::makeVOCStream(f.readStream(f.size()), 
+	Audio::SeekableAudioStream *audioStream = Audio::makeVOCStream(f.readStream(f.size()), 
 		Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
 
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, audioStream);
+	audioStream->seek(Audio::Timestamp(_vocOffset * 1000, 11025));
 }
 
 void SoundManager::startVOCPlay(int soundId) {
