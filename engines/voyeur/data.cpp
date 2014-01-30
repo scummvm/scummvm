@@ -153,7 +153,7 @@ void SVoy::addAudioEventStart() {
 	e._isAM = _isAM;
 	e._type = EVTYPE_AUDIO;
 	e._videoId = _vm->_videoId;
-	e._computerOn = _field47A;
+	e._computerOn = _vocSecondsOffset;
 	e._dead = _vm->_eventsManager._videoDead;
 }
 

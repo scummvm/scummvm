@@ -87,7 +87,8 @@ int SoundManager::getVOCStatus() {
 }
 
 uint32 SoundManager::getVOCFrame() {
-	error("TODO: getVOCFrame");
+	Audio::Timestamp timestamp = _mixer->getElapsedTime(_soundHandle);
+	return timestamp.secs();
 }
 
 } // End of namespace Voyeur

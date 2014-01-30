@@ -688,10 +688,11 @@ void VoyeurEngine::reviewTape() {
 			// Play suond for the given duration
 			_soundManager.setVOCOffset(_voy._vocSecondsOffset);
 			_soundManager.startVOCPlay(_videoId + 159);
-			uint32 offFrame = e._computerOff;
+			uint32 secondsDuration = e._computerOff;
 
+			_eventsManager.getMouseInfo();
 			while (!_eventsManager._mouseClicked && _soundManager.getVOCStatus() && 
-					_soundManager.getVOCFrame() < offFrame) {
+					_soundManager.getVOCFrame() < secondsDuration) {
 				_eventsManager.getMouseInfo();
 				_eventsManager.delay(10);
 			}
