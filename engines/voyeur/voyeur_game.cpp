@@ -413,15 +413,14 @@ void VoyeurEngine::doPiracy() {
 }
 
 void VoyeurEngine::reviewTape() {
-//	int var22 = 0;
 	int eventStart = 0;
 	int newX = -1;
 	int newY = -1;
 	int eventLine = 7;
 	Common::Rect tempRect(58, 30, 58 + 223, 30 + 124);
 	Common::Point pt;
-	int evtIndex = 0;
 	int foundIndex;
+	int eventNum;
 
 	_bVoy->getBoltGroup(0x900);
 	PictureResource *cursor = _bVoy->boltEntry(0x903)._picResource;
@@ -485,8 +484,8 @@ void VoyeurEngine::reviewTape() {
 				_graphicsManager._backgroundPage->sFillBox(tempRect.width(), tempRect.height());
 
 				int yp = 45;
-				evtIndex = eventStart;
-				for (int lineNum = 0; lineNum < 8 && evtIndex < _voy._eventCount; ++lineNum) {
+				int eventNum = eventStart;
+				for (int lineNum = 0; lineNum < 8 && eventNum < _voy._eventCount; ++lineNum, ++eventNum) {
 					_graphicsManager._fontPtr->_picFlags = 0;
 					_graphicsManager._fontPtr->_picSelect = 0xff;
 					_graphicsManager._fontPtr->_picPick = 7;
@@ -496,11 +495,10 @@ void VoyeurEngine::reviewTape() {
 					_graphicsManager._fontPtr->_justifyWidth = 0;
 					_graphicsManager._fontPtr->_justifyHeight = 0;
 
-					Common::String msg = _eventsManager.getEvidString(evtIndex);
+					Common::String msg = _eventsManager.getEvidString(eventNum);
 					_graphicsManager._backgroundPage->drawText(msg);
 					
 					yp += 15;
-					++evtIndex;
 				}
 
 				(*_graphicsManager._vPort)->addSaveRect(
@@ -517,6 +515,7 @@ void VoyeurEngine::reviewTape() {
 
 			_eventsManager.getMouseInfo();
 			foundIndex = -1;
+
 			Common::Point tempPos = _eventsManager.getMousePos() + Common::Point(14, 7);
 			for (uint idx = 0; idx < hotspots.size(); ++idx) {
 				if (hotspots[idx].contains(tempPos)) {
@@ -546,10 +545,9 @@ void VoyeurEngine::reviewTape() {
 					_graphicsManager._drawPtr->_pos = Common::Point(tempRect.left, tempRect.top);				
 					_graphicsManager._backgroundPage->sFillBox(tempRect.width(), tempRect.height());
 
-					evtIndex = eventStart;
 					int yp = 45;
-					
-					for (int idx = 0; idx < 8 && evtIndex < _voy._eventCount; ++idx) {
+					eventNum = eventStart;
+					for (int idx = 0; idx < 8 && eventNum < _voy._eventCount; ++idx, ++eventNum) {
 						_graphicsManager._fontPtr->_picFlags = 0;
 						_graphicsManager._fontPtr->_picSelect = 0xff;
 						_graphicsManager._fontPtr->_picPick = 7;
@@ -559,11 +557,10 @@ void VoyeurEngine::reviewTape() {
 						_graphicsManager._fontPtr->_justifyWidth = 0;
 						_graphicsManager._fontPtr->_justifyHeight = 0;
 
-						Common::String msg = _eventsManager.getEvidString(evtIndex);
+						Common::String msg = _eventsManager.getEvidString(eventNum);
 						_graphicsManager._backgroundPage->drawText(msg);
 
 						yp += 15;
-						++evtIndex;
 					}
 
 					(*_graphicsManager._vPort)->addSaveRect(
@@ -667,7 +664,7 @@ void VoyeurEngine::reviewTape() {
 		VoyeurEvent &e = _voy._events[eventIndex];
 		switch (e._type) {
 		case EVTYPE_VIDEO:
-			playAVideoEvent(eventIndex);
+			playAVideoEvent(eventLine);
 			break;
 
 		case EVTYPE_AUDIO: {
@@ -705,7 +702,7 @@ void VoyeurEngine::reviewTape() {
 
 		case EVTYPE_EVID:
 			_bVoy->freeBoltGroup(0x900);
-			_voy.reviewAnEvidEvent(evtIndex);
+			_voy.reviewAnEvidEvent(eventLine);
 			
 			_voy._vocSecondsOffset = _voy._RTVNum - _voy._field4AC;
 			_soundManager.stopVOCPlay();
@@ -714,7 +711,7 @@ void VoyeurEngine::reviewTape() {
 
 		case EVTYPE_COMPUTER:
 			_bVoy->freeBoltGroup(0x900);
-			_voy.reviewComputerEvent(evtIndex);
+			_voy.reviewComputerEvent(eventLine);
 			
 			_voy._vocSecondsOffset = _voy._RTVNum - _voy._field4AC;
 			_soundManager.stopVOCPlay();
@@ -1364,7 +1361,7 @@ void VoyeurEngine::doEvidDisplay(int evidId, int eventId) {
 	_eventsManager.stopEvidDim();
 
 	if (eventId == 999)
-		_voy.addEvidEventStart(eventId);
+		_voy.addEvidEventStart(evidId);
 
 	_eventsManager.getMouseInfo();
 
@@ -1403,7 +1400,7 @@ void VoyeurEngine::doEvidDisplay(int evidId, int eventId) {
 		--count;
 	}
 
-	if (eventId != 999)
+	if (eventId == 999)
 		_voy.addEvidEventEnd(evidIdx);
 
 	count = (int16)READ_LE_UINT16(dataP + evidId * 12 + 4);

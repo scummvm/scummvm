@@ -131,7 +131,7 @@ public:
 	void addAudioEventStart();
 	void addAudioEventEnd();
 	void addEvidEventStart(int v);
-	void addEvidEventEnd(int dead);
+	void addEvidEventEnd(int totalPages);
 	void addComputerEventStart();
 	void addComputerEventEnd(int v);
 	void reviewAnEvidEvent(int eventIndex);

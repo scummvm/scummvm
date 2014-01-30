@@ -170,15 +170,14 @@ void SVoy::addEvidEventStart(int v) {
 	e._minute = _vm->_gameMinute;
 	e._isAM = _isAM;
 	e._type = EVTYPE_EVID;
-	e._videoId = _vm->_videoId;
-	e._computerOn = _vocSecondsOffset;
-	e._dead = _vm->_eventsManager._videoDead;
-
+	e._videoId = _vm->_playStampGroupId;
+	e._computerOn = _field47A;
+	e._computerOff = v;
 }
 
-void SVoy::addEvidEventEnd(int dead) {
+void SVoy::addEvidEventEnd(int totalPages) {
 	VoyeurEvent &e = _events[_eventCount];
-	e._dead = dead;
+	e._dead = totalPages;
 	if (_eventCount < (TOTAL_EVENTS - 1))
 		++_eventCount;
 }
