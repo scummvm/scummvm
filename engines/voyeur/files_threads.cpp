@@ -373,7 +373,7 @@ void ThreadResource::parsePlayCommands() {
 			v2 = READ_LE_UINT16(dataP);
 
 			if (v2 == 0 || READ_LE_UINT16(_vm->_controlPtr->_ptr + 4) == 0) {
-				_vm->_videoId = READ_LE_UINT16(dataP + 2);
+				_vm->_videoId = READ_LE_UINT16(dataP + 2) - 1;
 				_vm->_voy._field468 = READ_LE_UINT16(dataP + 4);
 				_vm->_voy._field46A = READ_LE_UINT16(dataP + 6);
 
@@ -385,6 +385,7 @@ void ThreadResource::parsePlayCommands() {
 					_vm->_voy.addAudioEventStart();
 
 					assert(_vm->_videoId < 38);
+					_vm->_bVoy->getBoltGroup(0x7F00);
 					_vm->_graphicsManager._backgroundPage = _vm->_bVoy->boltEntry(
 						0x7F00 + BLIND_TABLE[_vm->_videoId])._picResource;
 					_vm->_graphicsManager._backColors = _vm->_bVoy->boltEntry(0x7F01 + 
