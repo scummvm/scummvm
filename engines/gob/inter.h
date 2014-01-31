@@ -439,6 +439,7 @@ protected:
 	void o2_animPalInit(OpFuncParams &params);
 	void o2_addHotspot(OpFuncParams &params);
 	void o2_removeHotspot(OpFuncParams &params);
+	void o2_getTotTextItemPart(OpFuncParams &params);
 	void o2_goblinFunc(OpFuncParams &params);
 	void o2_stopSound(OpFuncParams &params);
 	void o2_loadSound(OpFuncParams &params);
@@ -540,7 +541,6 @@ protected:
 	virtual void setupOpcodesFunc();
 	virtual void setupOpcodesGob();
 
-	void o3_getTotTextItemPart(OpFuncParams &params);
 	void o3_speakerOn(OpFuncParams &params);
 	void o3_speakerOff(OpFuncParams &params);
 	void o3_copySprite(OpFuncParams &params);
