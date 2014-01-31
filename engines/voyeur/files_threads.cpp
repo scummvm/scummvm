@@ -601,6 +601,7 @@ void ThreadResource::parsePlayCommands() {
 			break;
 
 		case 9:
+			// Load up initial timeframese for third set of hotspots
 			v2 = READ_LE_UINT16(dataP);
 			v3 = READ_LE_UINT16(dataP + 2) - 1;
 
@@ -1456,7 +1457,7 @@ int ThreadResource::doInterface() {
 					}
 
 					if (_vm->_voy._arr5[arrIndex][idx] <= _vm->_voy._RTVNum &&
-							_vm->_voy._arr6[idx][idx] > _vm->_voy._RTVNum) {
+							_vm->_voy._arr6[arrIndex][idx] > _vm->_voy._RTVNum) {
 						// Set unk? cursor 
 						_vm->_eventsManager.setCursor(mangifyCursor);
 						regionIndex = idx;
