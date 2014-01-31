@@ -1816,31 +1816,26 @@ MessageQueue *MGM::genMovement(MGMInfo *mgminfo) {
 	return 0;
 
 #if 0
-	v3 = mgminfo->ani;
-
 	if (!mgminfo->ani)
 		return 0;
 
-	mov = v3->_movement;
+	mov = mgminfo->ani->_movement;
 
-	if (!mov && !v3->_statics)
+	if (!mov && !mgminfo->ani->_statics)
 		return 0;
-
-	v5 = mgminfo->flags;
 
 	if (!(mgminfo->flags & 1)) {
 		if (mov)
-			v6 = mov->_staticsObj2->_staticsId;
+			mgminfo->staticsId1 = mov->_staticsObj2->_staticsId;
 		else
-			v6 = v3->_statics->_staticsId;
-		mgminfo->staticsId1 = (unsigned __int16)v6;
+			mgminfo->staticsId1 = mgminfo->ani->_statics->_staticsId;
 	}
 
-	if (!(v5 & 0x10) || !(v5 & 0x20)) {
-		v7 = v3->go._ox;
-		v8 = v3->go._oy;
-		if (v3->_movement) {
-			v9 = StaticANIObject_calcNextStep(&point2, v3);
+	if (!(mgminfo->flags & 0x10) || !(mgminfo->flags & 0x20)) {
+		v7 = mgminfo->ani->_ox;
+		v8 = mgminfo->ani->_oy;
+		if (mgminfo->ani->_movement) {
+			v9 = StaticANIObject_calcNextStep(&point2, mgminfo->ani);
 			v7 += v9->x;
 			v8 += v9->y;
 		}
@@ -1856,18 +1851,18 @@ MessageQueue *MGM::genMovement(MGMInfo *mgminfo) {
 	if (!mov)
 		return 0;
 
-	v11 = MGM_getItemIndexById(this, mgminfo->ani->go._id);
+	v11 = getItemIndexById(mgminfo->ani->_id);
 	v12 = v11;
-	v13 = MGM_getStaticsIndexById(this, v11, LOWORD(mgminfo->staticsId1));
+	v13 = getStaticsIndexById(v11, LOWORD(mgminfo->staticsId1));
 	v14 = v13;
 	subIdx = v13;
-	st2idx = MGM_getStaticsIndexById(this, v12, mov->_staticsObj1->_staticsId);
-	st1idx = MGM_getStaticsIndexById(this, v12, mov->_staticsObj2->_staticsId);
-	subOffset = MGM_getStaticsIndexById(this, v12, LOWORD(mgminfo->staticsId2));
-	MGM_clearMovements2(this, v12);
-	MGM_recalcOffsets(this, v12, v14, st2idx, 0, 1);
-	MGM_clearMovements2(this, v12);
-	MGM_recalcOffsets(this, v12, st1idx, subOffset, 0, 1);
+	st2idx = getStaticsIndexById(v12, mov->_staticsObj1->_staticsId);
+	st1idx = getStaticsIndexById(v12, mov->_staticsObj2->_staticsId);
+	subOffset = getStaticsIndexById(v12, LOWORD(mgminfo->staticsId2));
+	clearMovements2(v12);
+	recalcOffsets(v12, v14, st2idx, 0, 1);
+	clearMovements2(v12);
+	recalcOffsets(v12, st1idx, subOffset, 0, 1);
 	v15 = this->items;
 	v71 = (Message *)(28 * v12);
 	v16 = (int)&v15[v12].objId;
@@ -1912,7 +1907,7 @@ MessageQueue *MGM::genMovement(MGMInfo *mgminfo) {
 		point1.x = v62 * v26;
 		point1.y = v62 * v27;
 	} else {
-		v29 = MGM_calcLength(this, &point, mov, point.x, v24, &v62, &a2, 1);
+		v29 = calcLength(&point, mov, point.x, v24, &v62, &a2, 1);
 		point1.x = v29->x;
 		v26 = v56;
 		v30 = v29->y;
@@ -1943,10 +1938,10 @@ MessageQueue *MGM::genMovement(MGMInfo *mgminfo) {
 	v57 = 0;
 
 	if (x1) {
-		v35 = MGM_countPhases(this, v12, subIdx, st2idx, 1);
+		v35 = countPhases(v12, subIdx, st2idx, 1);
 		v34 = v35;
 		point.x = v35;
-		v57 = MGM_countPhases(this, v12, subIdx, st2idx, 2);
+		v57 = countPhases(v12, subIdx, st2idx, 2);
 		v28 = v62;
 	}
 
@@ -1966,9 +1961,9 @@ MessageQueue *MGM::genMovement(MGMInfo *mgminfo) {
 	}
 
 	if (v69) {
-		v34 += MGM_countPhases(this, v12, st1idx, subOffset, 1);
+		v34 += countPhases(v12, st1idx, subOffset, 1);
 		point.x = v34;
-		v57 += MGM_countPhases(this, v12, st1idx, subOffset, 2);
+		v57 += countPhases(v12, st1idx, subOffset, 2);
 	}
 
 	v69 = v75 - point1.x;
@@ -2001,54 +1996,50 @@ MessageQueue *MGM::genMovement(MGMInfo *mgminfo) {
 		v74 = 0;
 	else
 		v74 = (v38 - v57 * y1) / abs(v38 - v57 * y1);
-	v39 = (MessageQueue *)operator new(0x48u);
-	v69 = (LONG)v39;
-	mq = 0;
 
-	if (v39) {
-		v41 = GlobalMessageQueueList_compact(&g_globalMessageQueueList);
-		mq = MessageQueue_ctor1(v39, v41);
-	}
+	MessageQueue *mq = new MessageQueue(g_fp->_globalMessageQueueList->compact());
+	ExCommand2 *ex2;
 
 	for (v42 = subIdx; v42 != st2idx; v42 = v43->staticsIndex) {
 		v43 = &(*(MGMSubItem **)((char *)&this->items->subItems + (unsigned int)v71))[v42 + st2idx * *(int *)((char *)&this->items->staticsListCount + (unsigned int)v71)];
-		v44 = MGM_buildExCommand2(this, v43->movement, mgminfo->ani->go._id, x1, y1, (POINT *)&x2, (POINT *)&y2, -1);
-		v44->ex._parId = mq->_id;
-		v44->ex.msg._keyCode = mgminfo->ani->go._okeyCode;
-		CPtrList::AddTail(&mq->exCommands, v44);
+		ex2 = buildExCommand2(v43->movement, mgminfo->ani->go._id, x1, y1, (POINT *)&x2, (POINT *)&y2, -1);
+		ex2->_parId = mq->_id;
+		ex2->_keyCode = mgminfo->ani->_okeyCode;
+
+		mq->addExCommandToEnd(ex2);
 	}
-	v45 = v62;
 
 	for (i = 0; i < v62; ++i) {
-		if (i == v45 - 1)
+		if (i == v62 - 1)
 			v47 = a2;
 		else
 			v47 = -1;
-		v48 = MGM_buildExCommand2(this, mov, mgminfo->ani->go._id, x1, y1, (POINT *)&x2, (POINT *)&y2, v47);
-		v48->ex._parId = mq->_id;
-		v48->ex.msg._keyCode = mgminfo->ani->go._okeyCode;
-		CPtrList::AddTail(&mq->exCommands, v48);
-		v45 = v62;
+
+		ex2 = buildExCommand2(mov, mgminfo->ani->_id, x1, y1, (POINT *)&x2, (POINT *)&y2, v47);
+		ex2->_parId = mq->_id;
+		ex2->_keyCode = mgminfo->ani->_okeyCode;
+
+		mq->addExCommandToEnd(ex2);
 	}
 
 	for (j = st1idx; j != subOffset; j = v50->staticsIndex) {
 		v50 = &(*(MGMSubItem **)((char *)&this->items->subItems + (unsigned int)v71))[j + subOffset * *(int *)((char *)&this->items->staticsListCount + (unsigned int)v71)];
-		v51 = MGM_buildExCommand2(this, v50->movement, mgminfo->ani->go._id, x1, y1, (POINT *)&x2, (POINT *)&y2, -1);
-		v51->ex._parId = mq->_id;
-		v51->ex.msg._keyCode = mgminfo->ani->go._okeyCode;
-		CPtrList::AddTail(&mq->exCommands, v51);
+
+		ex2 = buildExCommand2(v50->movement, mgminfo->ani->_id, x1, y1, (POINT *)&x2, (POINT *)&y2, -1);
+		ex2->_parId = mq->_id;
+		ex2->_keyCode = mgminfo->ani->_okeyCode;
+
+		mq->addExCommandToEnd(ex2);
 	}
 
-	v52 = ExCommand_ctor((ExCommand *)v71, mgminfo->ani->go._id, 5, -1, mgminfo->x1, mgminfo->y1, 0, 1, 0, 0, 0);
-	v52->msg._field_14 = mgminfo->field_1C;
-	v53 = mgminfo->ani;
+	ExCommand *ex = new ExCommand(mgminfo->ani->_id, 5, -1, mgminfo->x1, mgminfo->y1, 0, 1, 0, 0, 0);
 
-	v54 = v53->go._okeyCode;
-	v55 = v52->_excFlags;
-	v52->msg._keyCode = (unsigned __int16)v54;
-	v52->msg._field_24 = 0;
-	v52->_excFlags = v55 | 3;
-	CPtrList::AddTail(&mq->exCommands, v52);
+	ex->_field_14 = mgminfo->field_1C;
+	ex->_keyCode = mgminfo->ani->_okeyCode;
+	ex->_field_24 = 0;
+	ex->_excFlags |= 3;
+
+	mq->addExCommandToEnd(ex);
 
 	return mq;
 #endif
