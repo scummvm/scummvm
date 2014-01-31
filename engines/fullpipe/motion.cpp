@@ -1867,10 +1867,10 @@ MessageQueue *MGM::genMovement(MGMInfo *mgminfo) {
 	v71 = (Message *)(28 * itemIdx);
 	v16 = items[itemIdx].objId;
 	v17 = *(_DWORD *)(v16 + offsetof(MGMItem, staticsListCount));
-	point.x = *(_DWORD *)(v16 + offsetof(MGMItem, subItems));
-	v18 = (MGMSubItem *)(point.x + 24 * (subIdx + st2idx * v17));
+	off = *(_DWORD *)(v16 + offsetof(MGMItem, subItems));
+	v18 = (MGMSubItem *)(off + 24 * (subIdx + st2idx * v17));
 	x1 = (int)&v18->movement->go.CObject.vmt;
-	v19 = (MGMSubItem *)(point.x + 24 * (st1idx + subOffset * v17));
+	v19 = (MGMSubItem *)(off + 24 * (st1idx + subOffset * v17));
 	v69 = (LONG)&v19->movement->go.CObject.vmt;
 
 	if (subIdx != st2idx && !x1)
@@ -1891,110 +1891,90 @@ MessageQueue *MGM::genMovement(MGMInfo *mgminfo) {
 	v23 = mgminfo->y1;
 	v75 = v21;
 	v24 = v23 - v20 - v76 - v22;
-	point.x = mgminfo->x1 - mgminfo->x2 - v21 - point1.x;
-	v75 = point.x;
+	v99 = mgminfo->x1 - mgminfo->x2 - v21 - point1.x;
+	v75 = v99;
 	v76 = v24;
 
 	mov->calcSomeXY(&point1, 0);
 	v26 = point1.x;
-	v56 = point1.x;
 	v27 = point1.y;
-	v58 = point1.y;
 
 	if (mgminfo->flags & 0x40) {
 		v62 = mgminfo->field_10;
-		v28 = v62;
 		a2 = -1;
 		point1.x = v62 * v26;
 		point1.y = v62 * v27;
 	} else {
-		v29 = calcLength(&point, mov, point.x, v24, &v62, &a2, 1);
-		point1.x = v29->x;
-		v26 = v56;
-		v30 = v29->y;
-		v28 = v62;
-		point1.y = v30;
+		calcLength(&point, mov, v99, v24, &v62, &a2, 1);
+		point1.x = point.x;
+		point1.y = point.y;
 	}
 
 	if (!(mgminfo->flags & 2)) {
 		v32 = point3.x + mgminfo->x2;
 		a2 = -1;
-		point1.x = v28 * v26;
-		v75 = v28 * v26;
-		mgminfo->x1 = v28 * v26 + point2.x + v32;
+		point1.x = v62 * v26;
+		v75 = v62 * v26;
+		mgminfo->x1 = v62 * v26 + point2.x + v32;
 	}
 
 	if (!(mgminfo->flags & 4)) {
-		point1.y = v28 * v58;
-		v76 = v28 * v58;
-		v33 = mgminfo->y2;
+		point1.y = v62 * v27;
+		v76 = v62 * v27;
 		a2 = -1;
-		mgminfo->y1 = v33 + v28 * v58 + point2.y + point3.y;
+		mgminfo->y1 = mgminfo->y2 + v62 * v27 + point2.y + point3.y;
 	}
 
-	v34 = 0;
-	point.x = 0;
-	v57 = 0;
+	int px = 0;
+	int py = 0;
 
 	if (x1) {
-		v35 = countPhases(itemIdx, subIdx, st2idx, 1);
-		v34 = v35;
-		point.x = v35;
-		v57 = countPhases(itemIdx, subIdx, st2idx, 2);
-		v28 = v62;
+		px = countPhases(itemIdx, subIdx, st2idx, 1);
+		py = countPhases(itemIdx, subIdx, st2idx, 2);
 	}
 
-	if (v28 > 1) {
-		v36 = Movement_countPhasesWithFlag(mov, -1, 1);
-		v34 += (v62 - 1) * v36;
-		point.x = v34;
-		v37 = Movement_countPhasesWithFlag(mov, -1, 2);
-		v28 = v62;
-		v57 += (v62 - 1) * v37;
+	if (v62 > 1) {
+		px += (v62 - 1) * mov->countPhasesWithFlag(-1, 1);
+		py += (v62 - 1) * mov->countPhasesWithFlag(-1, 2);
 	}
 
-	if (v28 > 0) {
-		v34 += Movement_countPhasesWithFlag(mov, a2, 1);
-		point.x = v34;
-		v57 += Movement_countPhasesWithFlag(mov, a2, 2);
+	if (v62 > 0) {
+		px += mov->countPhasesWithFlag(a2, 1);
+		py += mov->countPhasesWithFlag(a2, 2);
 	}
 
 	if (v69) {
-		v34 += countPhases(itemIdx, st1idx, subOffset, 1);
-		point.x = v34;
-		v57 += countPhases(itemIdx, st1idx, subOffset, 2);
+		px += countPhases(itemIdx, st1idx, subOffset, 1);
+		py += countPhases(itemIdx, st1idx, subOffset, 2);
 	}
 
 	v69 = v75 - point1.x;
 	v38 = v76 - point1.y;
-	v70 = v76 - point1.y;
 
-	if (v34) {
-		x1 = (signed __int64)((double)v69 / (double)point.x);
-		v38 = v70;
+	if (px) {
+		x1 = (signed __int64)((double)v69 / (double)px);
 	} else {
 		x1 = 0;
 	}
 
-	if (v57) {
-		y1 = (signed __int64)((double)v70 / (double)v57);
-		v38 = v70;
+	if (py) {
+		y1 = (signed __int64)((double)v38 / (double)py);
 	} else {
 		y1 = 0;
 	}
 
-	y2 = v75 - point1.x - v34 * x1;
-	v78 = v38 - v57 * y1;
+	y2 = v75 - point1.x - px * x1;
+	v78 = v38 - py * y1;
 
-	if (v75 - point1.x == v34 * x1)
+	if (v75 - point1.x == px * x1)
 		x2 = 0;
 	else
-		x2 = (v75 - point1.x - v34 * x1) / abs(v75 - point1.x - v34 * x1);
+		x2 = (v75 - point1.x - px * x1) / abs(v75 - point1.x - px * x1);
 
-	if (v38 == v57 * y1)
+	if (v38 == py * y1)
 		v74 = 0;
 	else
-		v74 = (v38 - v57 * y1) / abs(v38 - v57 * y1);
+		v74 = (v38 - py * y1) / abs(v38 - py * y1);
 
 	MessageQueue *mq = new MessageQueue(g_fp->_globalMessageQueueList->compact());
 	ExCommand2 *ex2;
