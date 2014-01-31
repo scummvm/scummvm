@@ -55,6 +55,7 @@ static const PlainGameDescriptor gobGames[] = {
 	{"ajworld", "A.J.'s World of Discovery"},
 	{"gob3", "Goblins Quest 3"},
 	{"gob3cd", "Goblins Quest 3 CD"},
+	{"crousti", "Croustibat"},
 	{"lit1", "Lost in Time Part 1"},
 	{"lit2", "Lost in Time Part 2"},
 	{"lit", "Lost in Time"},
@@ -110,6 +111,7 @@ static const GOBGameDescription gameDescriptions[] = {
 	#include "gob/detection/tables_adi4.h"      // The ADI / Addy 4 series
 	#include "gob/detection/tables_adibou.h"    // The Adibou / Addy Junior series
 	#include "gob/detection/tables_ajworld.h"   // A.J.'s World of Discovery / ADI Jr.
+	#include "gob/detection/tables_crousti.h"   // Croustibat
 
 	{ AD_TABLE_END_MARKER, kGameTypeNone, kFeaturesNone, 0, 0, 0}
 };

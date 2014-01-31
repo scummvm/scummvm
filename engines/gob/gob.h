@@ -55,6 +55,7 @@ class StaticTextWidget;
  * - Bambou le sauveur de la jungle
  * - Geisha
  * - Once Upon A Time: Little Red Riding Hood
+ * - Croustibat
  */
 namespace Gob {
 
@@ -134,7 +135,8 @@ enum GameType {
 	kGameTypeBabaYaga,
 	kGameTypeLittleRed,
 	kGameTypeOnceUponATime, // Need more inspection to see if Baba Yaga or Abracadabra
-	kGameTypeAJWorld
+	kGameTypeAJWorld,
+	kGameTypeCrousti
 };
 
 enum Features {

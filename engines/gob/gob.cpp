@@ -457,6 +457,7 @@ Common::Error GobEngine::initGameParts() {
 
 	case kGameTypeWeen:
 	case kGameTypeGob2:
+	case kGameTypeCrousti:
 		_init     = new Init_v2(this);
 		_video    = new Video_v2(this);
 		_inter    = new Inter_v2(this);
