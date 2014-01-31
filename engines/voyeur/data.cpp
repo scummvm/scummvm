@@ -30,7 +30,7 @@ void VoyeurEvent::synchronize(Common::Serializer &s) {
 	s.syncAsByte(_minute);
 	s.syncAsByte(_isAM);
 	s.syncAsByte(_type);
-	s.syncAsSint16LE(_videoId);
+	s.syncAsSint16LE(_audioVideoId);
 	s.syncAsSint16LE(_computerOn);
 	s.syncAsSint16LE(_computerOff);
 	s.syncAsSint16LE(_dead);
@@ -47,14 +47,14 @@ void SVoy::setVm(VoyeurEngine *vm) {
 	_vm = vm;
 }
 
-void SVoy::addEvent(int hour, int minute, VoyeurEventType type, int videoId, 
+void SVoy::addEvent(int hour, int minute, VoyeurEventType type, int audioVideoId, 
 		int on, int off, int dead) {
 	VoyeurEvent &e = _events[_eventCount++];
 
 	e._hour = hour;
 	e._minute = minute;
 	e._isAM = hour < 12;
-	e._videoId = videoId;
+	e._audioVideoId = audioVideoId;
 	e._computerOn = on;
 	e._computerOff = off;
 	e._dead = dead;
@@ -134,7 +134,7 @@ void SVoy::addVideoEventStart() {
 	e._minute = _vm->_gameMinute;
 	e._isAM = _isAM;
 	e._type = EVTYPE_VIDEO;
-	e._videoId = _vm->_videoId;
+	e._audioVideoId = _vm->_audioVideoId;
 	e._computerOn = _vocSecondsOffset;
 	e._dead = _vm->_eventsManager._videoDead;
 }
@@ -152,7 +152,7 @@ void SVoy::addAudioEventStart() {
 	e._minute = _vm->_gameMinute;
 	e._isAM = _isAM;
 	e._type = EVTYPE_AUDIO;
-	e._videoId = _vm->_videoId;
+	e._audioVideoId = _vm->_audioVideoId;
 	e._computerOn = _vocSecondsOffset;
 	e._dead = _vm->_eventsManager._videoDead;
 }
@@ -170,7 +170,7 @@ void SVoy::addEvidEventStart(int v) {
 	e._minute = _vm->_gameMinute;
 	e._isAM = _isAM;
 	e._type = EVTYPE_EVID;
-	e._videoId = _vm->_playStampGroupId;
+	e._audioVideoId = _vm->_playStampGroupId;
 	e._computerOn = _field47A;
 	e._computerOff = v;
 }
@@ -188,7 +188,7 @@ void SVoy::addComputerEventStart() {
 	e._minute = _vm->_gameMinute;
 	e._isAM = _isAM;
 	e._type = EVTYPE_COMPUTER;
-	e._videoId = _vm->_playStampGroupId;
+	e._audioVideoId = _vm->_playStampGroupId;
 	e._computerOn = _computerTextId;
 }
 
@@ -201,7 +201,7 @@ void SVoy::addComputerEventEnd(int v) {
 
 void SVoy::reviewAnEvidEvent(int eventIndex) {
 	VoyeurEvent &e = _events[eventIndex];
-	_vm->_playStampGroupId = e._videoId;
+	_vm->_playStampGroupId = e._audioVideoId;
 	_field47A = e._computerOn;
 	int frameOff = e._computerOff;
 
@@ -224,7 +224,7 @@ void SVoy::reviewAnEvidEvent(int eventIndex) {
 
 void SVoy::reviewComputerEvent(int eventIndex) {
 	VoyeurEvent &e = _events[eventIndex];
-	_vm->_playStampGroupId = e._videoId;
+	_vm->_playStampGroupId = e._audioVideoId;
 	_computerTextId = e._computerOn;
 
 	if (_vm->_bVoy->getBoltGroup(_vm->_playStampGroupId)) {

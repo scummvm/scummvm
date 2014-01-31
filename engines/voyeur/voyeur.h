@@ -173,7 +173,11 @@ public:
 	int _stampFlags;
 	int _playStampGroupId;
 	int _currentVocId;
-	int _videoId;
+
+	/**
+	 * Id for the current video, audio, or evidence scene being viewed
+	 */
+	int _audioVideoId;
 	const int *_resolvePtr;
 	int _iForceDeath; // CHECKME: The original initializes it in ESP_init()
 	int _checkTransitionId;

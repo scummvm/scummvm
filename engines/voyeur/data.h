@@ -39,7 +39,7 @@ struct VoyeurEvent {
 	int _minute;
 	bool _isAM;
 	VoyeurEventType _type;
-	int _videoId;
+	int _audioVideoId;
 	int _computerOn;
 	int _computerOff;
 	int _dead;
@@ -123,8 +123,8 @@ public:
 	/**
 	 * Add an event to the list of game events that have occurred
 	 */
-	void addEvent(int hour, int minute, VoyeurEventType type, int videoId, int on,
-		int off, int dead);
+	void addEvent(int hour, int minute, VoyeurEventType type, int audioVideoId, 
+		int on, int off, int dead);
 
 	void addVideoEventStart();
 	void addVideoEventEnd();

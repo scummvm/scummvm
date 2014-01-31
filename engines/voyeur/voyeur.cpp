@@ -46,7 +46,7 @@ VoyeurEngine::VoyeurEngine(OSystem *syst, const VoyeurGameDescription *gameDesc)
 	_bob = false;
 	_stampFlags = 0;
 	_playStampGroupId = _currentVocId = 0;
-	_videoId = -1;
+	_audioVideoId = -1;
 	_checkTransitionId = -1;
 	_gameHour = 0;
 	_gameMinute = 0;
@@ -469,7 +469,7 @@ void VoyeurEngine::doOpening() {
 	_voy._field478 = 16;
 	_gameHour = 4;
 	_gameMinute  = 0;
-	_videoId = 1;
+	_audioVideoId = 1;
 	_eventsManager._videoDead = -1;
 	_voy.addVideoEventStart();
 
@@ -745,7 +745,7 @@ void VoyeurEngine::synchronize(Common::Serializer &s) {
 	s.syncAsSint16LE(_stampFlags);
 	s.syncAsSint16LE(_playStampGroupId);
 	s.syncAsSint16LE(_currentVocId);
-	s.syncAsSint16LE(_videoId);
+	s.syncAsSint16LE(_audioVideoId);
 
 	s.syncAsSint16LE(_iForceDeath);
 	s.syncAsSint16LE(_gameHour);

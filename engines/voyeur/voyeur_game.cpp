@@ -49,7 +49,7 @@ void VoyeurEngine::playStamp() {
 		_voyeurArea = AREA_NONE;
 		_eventsManager.getMouseInfo();
 		_playStampGroupId = _currentVocId = -1;
-		_videoId = -1;
+		_audioVideoId = -1;
 
 		_mainThread->parsePlayCommands();
 
@@ -178,7 +178,7 @@ void VoyeurEngine::playStamp() {
 					_currentVocId = -1;
 				}
 
-				_videoId = -1;
+				_audioVideoId = -1;
 
 				if (_voy._field47A != -1) {
 					_bVoy->freeBoltGroup(_voy._field47A);
@@ -668,14 +668,14 @@ void VoyeurEngine::reviewTape() {
 			break;
 
 		case EVTYPE_AUDIO: {
-			_videoId = e._videoId;
+			_audioVideoId = e._audioVideoId;
 			_voy._vocSecondsOffset = e._computerOn;
 
 			_bVoy->getBoltGroup(0x7F00);
 			_graphicsManager._backgroundPage = _bVoy->boltEntry(0x7F00 +
-				BLIND_TABLE[_videoId])._picResource;
+				BLIND_TABLE[_audioVideoId])._picResource;
 			_graphicsManager._backColors = _bVoy->boltEntry(0x7F01 +
-				BLIND_TABLE[_videoId])._cMapResource;
+				BLIND_TABLE[_audioVideoId])._cMapResource;
 
 			(*_graphicsManager._vPort)->setupViewPort(_graphicsManager._backgroundPage);
 			_graphicsManager._backColors->startFade();
@@ -687,7 +687,7 @@ void VoyeurEngine::reviewTape() {
 
 			// Play suond for the given duration
 			_soundManager.setVOCOffset(_voy._vocSecondsOffset);
-			_soundManager.startVOCPlay(_videoId + 159);
+			_soundManager.startVOCPlay(_audioVideoId + 159);
 			uint32 secondsDuration = e._computerOff;
 
 			_eventsManager.getMouseInfo();
@@ -812,28 +812,28 @@ bool VoyeurEngine::checkForMurder() {
 		if (evt._type == EVTYPE_VIDEO) {
 			switch (READ_LE_UINT32(_controlPtr->_ptr + 4)) {
 			case 1:
-				if (evt._videoId == 41 && evt._computerOn <= 15 &&
+				if (evt._audioVideoId == 41 && evt._computerOn <= 15 &&
 						(evt._computerOff + evt._computerOn) >= 16) {
 					WRITE_LE_UINT32(_controlPtr->_ptr + 12, 1);
 				}
 				break;
 
 			case 2:
-				if (evt._videoId == 53 && evt._computerOn <= 19 &&
+				if (evt._audioVideoId == 53 && evt._computerOn <= 19 &&
 						(evt._computerOff + evt._computerOn) >= 21) {
 					WRITE_LE_UINT32(_controlPtr->_ptr + 12, 2);
 				}
 				break;
 
 			case 3:
-				if (evt._videoId == 50 && evt._computerOn <= 28 &&
+				if (evt._audioVideoId == 50 && evt._computerOn <= 28 &&
 						(evt._computerOff + evt._computerOn) >= 29) {
 					WRITE_LE_UINT32(_controlPtr->_ptr + 12, 3);
 				}
 				break;
 
 			case 4:
-				if (evt._videoId == 43 && evt._computerOn <= 10 &&
+				if (evt._audioVideoId == 43 && evt._computerOn <= 10 &&
 						(evt._computerOff + evt._computerOn) >= 14) {
 					WRITE_LE_UINT32(_controlPtr->_ptr + 12, 4);
 				}
@@ -862,27 +862,27 @@ bool VoyeurEngine::checkForIncriminate() {
 		VoyeurEvent &evt = _voy._events[idx];
 		
 		if (evt._type == EVTYPE_VIDEO) {
-			if (evt._videoId == 44 && evt._computerOn <= 40 &&
+			if (evt._audioVideoId == 44 && evt._computerOn <= 40 &&
 					(evt._computerOff + evt._computerOn) >= 70) {
 				_voy._field4382 = 1;
 			}
 
-			if (evt._videoId == 44 && evt._computerOn <= 79 &&
+			if (evt._audioVideoId == 44 && evt._computerOn <= 79 &&
 					(evt._computerOff + evt._computerOn) >= 129) {
 				_voy._field4382 = 1;
 			}
 
-			if (evt._videoId == 20 && evt._computerOn <= 28 &&
+			if (evt._audioVideoId == 20 && evt._computerOn <= 28 &&
 					(evt._computerOff + evt._computerOn) >= 45) {
 				_voy._field4382 = 2;
 			}
 
-			if (evt._videoId == 35 && evt._computerOn <= 17 &&
+			if (evt._audioVideoId == 35 && evt._computerOn <= 17 &&
 					(evt._computerOff + evt._computerOn) >= 36) {
 				_voy._field4382 = 3;
 			}
 
-			if (evt._videoId == 30 && evt._computerOn <= 80 &&
+			if (evt._audioVideoId == 30 && evt._computerOn <= 80 &&
 					(evt._computerOff + evt._computerOn) >= 139) {
 				_voy._field4382 = 4;
 			}
@@ -901,12 +901,12 @@ bool VoyeurEngine::checkForIncriminate() {
 
 void VoyeurEngine::playAVideoEvent(int eventIndex) {
 	VoyeurEvent &evt = _voy._events[eventIndex];
-	_videoId = evt._videoId;
+	_audioVideoId = evt._audioVideoId;
 	_voy._vocSecondsOffset = evt._computerOn;
 	_eventsManager._videoDead = evt._dead;
 	_voy._field478 &= ~1;
 	
-	playAVideoDuration(_videoId, evt._computerOff);
+	playAVideoDuration(_audioVideoId, evt._computerOff);
 
 	_voy._field478 |= 1;
 	if (_eventsManager._videoDead != -1) {
@@ -916,7 +916,7 @@ void VoyeurEngine::playAVideoEvent(int eventIndex) {
 		_eventsManager._videoDead = -1;
 	}
 
-	_videoId = -1;
+	_audioVideoId = -1;
 	if (_eventsManager._videoDead != -1) {
 		_bVoy->freeBoltGroup(0xE00);
 		_eventsManager._videoDead = -1;
