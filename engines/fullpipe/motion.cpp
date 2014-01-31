@@ -1832,48 +1832,48 @@ MessageQueue *MGM::genMovement(MGMInfo *mgminfo) {
 	}
 
 	if (!(mgminfo->flags & 0x10) || !(mgminfo->flags & 0x20)) {
-		v7 = mgminfo->ani->_ox;
-		v8 = mgminfo->ani->_oy;
+		int nx = mgminfo->ani->_ox;
+		int ny = mgminfo->ani->_oy;
+
 		if (mgminfo->ani->_movement) {
-			v9 = StaticANIObject_calcNextStep(&point2, mgminfo->ani);
-			v7 += v9->x;
-			v8 += v9->y;
+			mgminfo->ani->calcNextStep(&point2);
+			nx += point2.x;
+			ny += point2.y;
 		}
-		v10 = mgminfo->flags;
+
 		if (!(mgminfo->flags & 0x10))
-			mgminfo->x2 = v7;
-		if (!(v10 & 0x20))
-			mgminfo->y2 = v8;
+			mgminfo->x2 = nx;
+
+		if (!(mgminfo->flags & 0x20))
+			mgminfo->y2 = ny;
 	}
 
-	mov = StaticANIObject_getMovementById(mgminfo->ani, LOWORD(mgminfo->movementId));
+	mov = mgminfo->ani->getMovementById(mgminfo->movementId);
 
 	if (!mov)
 		return 0;
 
-	v11 = getItemIndexById(mgminfo->ani->_id);
-	v12 = v11;
-	v13 = getStaticsIndexById(v11, LOWORD(mgminfo->staticsId1));
-	v14 = v13;
-	subIdx = v13;
-	st2idx = getStaticsIndexById(v12, mov->_staticsObj1->_staticsId);
-	st1idx = getStaticsIndexById(v12, mov->_staticsObj2->_staticsId);
-	subOffset = getStaticsIndexById(v12, LOWORD(mgminfo->staticsId2));
-	clearMovements2(v12);
-	recalcOffsets(v12, v14, st2idx, 0, 1);
-	clearMovements2(v12);
-	recalcOffsets(v12, st1idx, subOffset, 0, 1);
-	v15 = this->items;
-	v71 = (Message *)(28 * v12);
-	v16 = (int)&v15[v12].objId;
+	itemIdx = getItemIndexById(mgminfo->ani->_id);
+	subIdx = getStaticsIndexById(itemIdx, mgminfo->staticsId1);
+	st2idx = getStaticsIndexById(itemIdx, mov->_staticsObj1->_staticsId);
+	st1idx = getStaticsIndexById(itemIdx, mov->_staticsObj2->_staticsId);
+	subOffset = getStaticsIndexById(itemIdx, mgminfo->staticsId2);
+
+	clearMovements2(itemIdx);
+	recalcOffsets(itemIdx, subIdx, st2idx, 0, 1);
+	clearMovements2(itemIdx);
+	recalcOffsets(itemIdx, st1idx, subOffset, 0, 1);
+
+	v71 = (Message *)(28 * itemIdx);
+	v16 = items[itemIdx].objId;
 	v17 = *(_DWORD *)(v16 + offsetof(MGMItem, staticsListCount));
 	point.x = *(_DWORD *)(v16 + offsetof(MGMItem, subItems));
-	v18 = (MGMSubItem *)(point.x + 24 * (v14 + st2idx * v17));
+	v18 = (MGMSubItem *)(point.x + 24 * (subIdx + st2idx * v17));
 	x1 = (int)&v18->movement->go.CObject.vmt;
 	v19 = (MGMSubItem *)(point.x + 24 * (st1idx + subOffset * v17));
 	v69 = (LONG)&v19->movement->go.CObject.vmt;
 
-	if (v14 != st2idx && !x1)
+	if (subIdx != st2idx && !x1)
 		return 0;
 
 	if (st1idx != subOffset && !v69)
@@ -1894,11 +1894,12 @@ MessageQueue *MGM::genMovement(MGMInfo *mgminfo) {
 	point.x = mgminfo->x1 - mgminfo->x2 - v21 - point1.x;
 	v75 = point.x;
 	v76 = v24;
-	v25 = Movement_calcSomeXY(mov, &point1, 0);
-	v26 = v25->x;
-	v56 = v25->x;
-	v27 = v25->y;
-	v58 = v25->y;
+
+	mov->calcSomeXY(&point1, 0);
+	v26 = point1.x;
+	v56 = point1.x;
+	v27 = point1.y;
+	v58 = point1.y;
 
 	if (mgminfo->flags & 0x40) {
 		v62 = mgminfo->field_10;
@@ -1915,8 +1916,6 @@ MessageQueue *MGM::genMovement(MGMInfo *mgminfo) {
 		point1.y = v30;
 	}
 
-	v31 = mgminfo->flags;
-
 	if (!(mgminfo->flags & 2)) {
 		v32 = point3.x + mgminfo->x2;
 		a2 = -1;
@@ -1925,7 +1924,7 @@ MessageQueue *MGM::genMovement(MGMInfo *mgminfo) {
 		mgminfo->x1 = v28 * v26 + point2.x + v32;
 	}
 
-	if (!(v31 & 4)) {
+	if (!(mgminfo->flags & 4)) {
 		point1.y = v28 * v58;
 		v76 = v28 * v58;
 		v33 = mgminfo->y2;
@@ -1938,10 +1937,10 @@ MessageQueue *MGM::genMovement(MGMInfo *mgminfo) {
 	v57 = 0;
 
 	if (x1) {
-		v35 = countPhases(v12, subIdx, st2idx, 1);
+		v35 = countPhases(itemIdx, subIdx, st2idx, 1);
 		v34 = v35;
 		point.x = v35;
-		v57 = countPhases(v12, subIdx, st2idx, 2);
+		v57 = countPhases(itemIdx, subIdx, st2idx, 2);
 		v28 = v62;
 	}
 
@@ -1961,9 +1960,9 @@ MessageQueue *MGM::genMovement(MGMInfo *mgminfo) {
 	}
 
 	if (v69) {
-		v34 += countPhases(v12, st1idx, subOffset, 1);
+		v34 += countPhases(itemIdx, st1idx, subOffset, 1);
 		point.x = v34;
-		v57 += countPhases(v12, st1idx, subOffset, 2);
+		v57 += countPhases(itemIdx, st1idx, subOffset, 2);
 	}
 
 	v69 = v75 - point1.x;
@@ -1971,7 +1970,7 @@ MessageQueue *MGM::genMovement(MGMInfo *mgminfo) {
 	v70 = v76 - point1.y;
 
 	if (v34) {
-		x1 = (signed __int64)((double)v69 / (double)*(signed int *)&point);
+		x1 = (signed __int64)((double)v69 / (double)point.x);
 		v38 = v70;
 	} else {
 		x1 = 0;
