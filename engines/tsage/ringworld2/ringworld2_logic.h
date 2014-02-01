@@ -114,6 +114,7 @@ public:
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void process(Event &event);
 	virtual void postLoad(int priorSceneBeforeLoad, int currentSceneBeforeLoad);
+	virtual void dispatch();
 
 	void setupPaletteMaps();
 };

@@ -625,6 +625,11 @@ void SceneHandlerExt::process(Event &event) {
 		SceneHandler::process(event);
 }
 
+void SceneHandlerExt::dispatch() {
+	R2_GLOBALS._playStream.dispatch();
+	SceneHandler::dispatch();
+}
+
 void SceneHandlerExt::postLoad(int priorSceneBeforeLoad, int currentSceneBeforeLoad) {
 	// Set up the shading maps used for showing the player in shadows
 	setupPaletteMaps();
