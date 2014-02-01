@@ -180,6 +180,8 @@ public:
 	virtual bool init(int counterdiff);
 	virtual void update();
 	virtual void saveload() {}
+
+	void launch();
 };
 
 class ModalQuery : public BaseModalObject {

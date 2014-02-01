@@ -807,6 +807,15 @@ void ModalHelp::update() {
 	_bg->draw(0, 0, 0, 0);
 }
 
+void ModalHelp::launch() {
+	_mainMenuScene = g_fp->accessScene(SC_MAINMENU);
+
+	if (_mainMenuScene) {
+		_bg = _mainMenuScene->getPictureObjectById(PIC_HLP_BGR, 0)->_picture;
+		_isRunning = 1;
+	}
+}
+
 void FullpipeEngine::openHelp() {
 	warning("STUB: FullpipeEngine::openHelp()");
 }

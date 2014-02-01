@@ -88,6 +88,7 @@ namespace Fullpipe {
 #define PIC_CSR_ITN_RED 5329
 #define PIC_CSR_LIFT 5176
 #define PIC_CSR_MAP 5339
+#define PIC_HLP_BGR 3562
 #define PIC_IN1_GAMETITLE 5169
 #define PIC_IN1_PIPETITLE 5167
 #define PIC_INV_MENU 991
