@@ -1879,19 +1879,12 @@ MessageQueue *MGM::genMovement(MGMInfo *mgminfo) {
 	if (st1idx != subOffset && !v69)
 		return 0;
 
-	v20 = mgminfo->y2;
 	point2.x = v18->x;
 	point2.y = v18->y;
 	point3.x = v19->x;
 	point3.y = v19->y;
-	point1.x = v19->x;
-	v21 = v18->x;
-	v22 = v19->y;
-	v76 = v18->y;
-	v23 = mgminfo->y1;
-	v75 = v21;
-	v24 = v23 - v20 - v76 - v22;
-	v99 = mgminfo->x1 - mgminfo->x2 - v21 - point1.x;
+	v24 = mgminfo->y1 - mgminfo->y2 - v18->y - v19->y;
+	v99 = mgminfo->x1 - mgminfo->x2 - v18->x - v19->x;
 	v75 = v99;
 	v76 = v24;
 
