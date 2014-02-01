@@ -4151,11 +4151,22 @@ void Scene325::signal() {
 				--v;
 			if (_priorConsoleAction == 5)
 				v += 8;
+
 			if (R2_GLOBALS.getFlag(51) && (v == 2))
 				R2_GLOBALS.setFlag(57);
 
 			if (R2_GLOBALS.getFlag(44) && !R2_GLOBALS.getFlag(51)) {
 				if (v != 13) {
+					if (_priorConsoleAction == 6) {
+					// Fix for original game bug. 
+					// The passive short scan geographical and astronomical sentences 
+					// are inverted in the original game.
+						if (v == 6)
+							v = 8;
+						else if (v == 8)
+							v = 6;
+					}
+
 					setMessage(328, v);
 				} else {
 					_scannerLocation = 864;
@@ -4513,6 +4524,7 @@ void Scene325::consoleAction(int id) {
 	case 14:
 		if (R2_GLOBALS.getFlag(55)) {
 			consoleAction(4);
+			// Workaround for original game bug.
 			// Empty message crashing the game. It should be a warning message forbidding to switch to active scan
 			// SceneItem::display2(329, 17);
 		} else {
