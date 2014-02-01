@@ -344,12 +344,10 @@ void ThreadResource::parsePlayCommands() {
 	_vm->_voy._field478 &= ~8;
 	_vm->_eventsManager._videoDead = -1;
 
-	Common::fill(&_vm->_voy._arr1[0][0], &_vm->_voy._arr1[8][20], 9999);
-	Common::fill(&_vm->_voy._arr2[0][0], &_vm->_voy._arr2[8][20], 0);
-	Common::fill(&_vm->_voy._arr3[0][0], &_vm->_voy._arr3[3][20], 9999);
-	Common::fill(&_vm->_voy._arr4[0][0], &_vm->_voy._arr4[3][20], 0);
-	Common::fill(&_vm->_voy._arr5[0][0], &_vm->_voy._arr5[3][20], 9999);
-	Common::fill(&_vm->_voy._arr6[0][0], &_vm->_voy._arr6[3][20], 0);
+	// Reset hotspot times data
+	_vm->_voy._videoHotspotTimes.reset();
+	_vm->_voy._audioHotspotTimes.reset();
+	_vm->_voy._evidenceHotspotTimes.reset();
 	Common::fill(&_vm->_voy._arr7[0], &_vm->_voy._arr7[20], 0);
 
 	byte *dataP = _playCommandsPtr;
@@ -542,52 +540,54 @@ void ThreadResource::parsePlayCommands() {
 			break;
 
 		case 7:
+			// Load the video event scene hotspot times data
 			v2 = READ_LE_UINT16(dataP);
 			v3 = READ_LE_UINT16(dataP + 2) - 1;
 
 			if (v2 == 0 || READ_LE_UINT16(_vm->_controlPtr->_ptr + 4) == 0) {
 				int idx = 0;
-				while (_vm->_voy._arr1[idx][v3] != 9999)
+				while (_vm->_voy._videoHotspotTimes._min[idx][v3] != 9999)
 					++idx;
 
 				v2 = READ_LE_UINT16(dataP + 4);
-				_vm->_voy._arr1[idx][v3] = v2;
-				_vm->_voy._arr2[idx][v3] = v2 + READ_LE_UINT16(dataP + 6) - 2;
+				_vm->_voy._videoHotspotTimes._min[idx][v3] = v2;
+				_vm->_voy._videoHotspotTimes._max[idx][v3] = v2 + READ_LE_UINT16(dataP + 6) - 2;
 			}
 
 			dataP += 8;
 			break;
 
 		case 8:
+			// Load the audio event scene hotspot times data
  			v2 = READ_LE_UINT16(dataP);
 			v3 = READ_LE_UINT16(dataP + 2) - 1;
 
 			if (v2 == 0 || READ_LE_UINT16(_vm->_controlPtr->_ptr + 4) == 0) {
 				int idx = 0;
-				while (_vm->_voy._arr3[idx][v3] != 9999)
+				while (_vm->_voy._audioHotspotTimes._min[idx][v3] != 9999)
 					++idx;
 
 				v2 = READ_LE_UINT16(dataP + 4);
-				_vm->_voy._arr3[idx][v3] = v2;
-				_vm->_voy._arr4[idx][v3] = v2 + READ_LE_UINT16(dataP + 6) - 2;
+				_vm->_voy._audioHotspotTimes._min[idx][v3] = v2;
+				_vm->_voy._audioHotspotTimes._max[idx][v3] = v2 + READ_LE_UINT16(dataP + 6) - 2;
 			}
 
 			dataP += 8;
 			break;
 
 		case 9:
-			// Load up initial timeframese for third set of hotspots
+			// Load up evidence event scene hotspot times data
 			v2 = READ_LE_UINT16(dataP);
 			v3 = READ_LE_UINT16(dataP + 2) - 1;
 
 			if (v2 == 0 || READ_LE_UINT16(_vm->_controlPtr->_ptr + 4) == 0) {
 				int idx = 0;
-				while (_vm->_voy._arr5[idx][v3] != 9999)
+				while (_vm->_voy._evidenceHotspotTimes._min[idx][v3] != 9999)
 					++idx;
 
 				v2 = READ_LE_UINT16(dataP + 4);
-				_vm->_voy._arr5[idx][v3] = v2;
-				_vm->_voy._arr6[idx][v3] = v2 + READ_LE_UINT16(dataP + 6) - 2;
+				_vm->_voy._evidenceHotspotTimes._min[idx][v3] = v2;
+				_vm->_voy._evidenceHotspotTimes._max[idx][v3] = v2 + READ_LE_UINT16(dataP + 6) - 2;
 			}
 
 			dataP += 8;
@@ -1417,31 +1417,28 @@ int ThreadResource::doInterface() {
 				Common::Point(pt.x - MANSION_VIEW_X, pt.y - MANSION_VIEW_Y);
 		regionIndex = -1;
 
-		for (int idx = 0; idx < (int)hotspots->size(); ++idx) {
-			if ((*hotspots)[idx].contains(pt)) {
+		for (int hotspotIdx = 0; hotspotIdx < (int)hotspots->size(); ++hotspotIdx) {
+			if ((*hotspots)[hotspotIdx].contains(pt)) {
 				// Rect check done
 				for (int arrIndex = 0; arrIndex < 3; ++arrIndex) {
-					if (_vm->_voy._arr3[arrIndex][idx] <= _vm->_voy._RTVNum &&
-							_vm->_voy._arr4[arrIndex][idx] > _vm->_voy._RTVNum) {
-						// Found a hotspot - switch to the magnifying glass cursor
+					if (_vm->_voy._audioHotspotTimes.isInRange(arrIndex, hotspotIdx, _vm->_voy._RTVNum)) {
+						// Set the ear cursor for an audio event
 						_vm->_eventsManager.setCursor(listenCursor);
-						regionIndex = idx;
+						regionIndex = hotspotIdx;
 					}
 
-					if (_vm->_voy._arr5[arrIndex][idx] <= _vm->_voy._RTVNum &&
-							_vm->_voy._arr6[arrIndex][idx] > _vm->_voy._RTVNum) {
-						// Set unk? cursor 
+					if (_vm->_voy._evidenceHotspotTimes.isInRange(arrIndex, hotspotIdx, _vm->_voy._RTVNum)) {
+						// Set the magnifier cursor for an evidence event
 						_vm->_eventsManager.setCursor(mangifyCursor);
-						regionIndex = idx;
+						regionIndex = hotspotIdx;
 					}
 				}
 
 				for (int arrIndex = 0; arrIndex < 8; ++arrIndex) {
-					if (_vm->_voy._arr1[arrIndex][idx] <= _vm->_voy._RTVNum &&
-							_vm->_voy._arr2[arrIndex][idx] > _vm->_voy._RTVNum) {
-						// Draw the picture
+					if (_vm->_voy._videoHotspotTimes.isInRange(arrIndex, hotspotIdx, _vm->_voy._RTVNum)) {
+						// Set the eye cursor for a video event
 						_vm->_eventsManager.setCursor(eyeCursor);
-						regionIndex = idx;
+						regionIndex = hotspotIdx;
 					}
 				}
 			}

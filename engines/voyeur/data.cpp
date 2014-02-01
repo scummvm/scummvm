@@ -66,24 +66,10 @@ void SVoy::synchronize(Common::Serializer &s) {
 	s.syncAsSint16LE(_RTVNum);
 	s.syncAsSint16LE(_switchBGNum);
 
-	for (int v1 = 0; v1 < 8; ++v1) {
-		for (int v2 = 0; v2 < 20; ++v2) {
-			s.syncAsSint16LE(_arr1[v1][v2]);
-			s.syncAsSint16LE(_arr2[v1][v2]);
-		}
-	}
-	for (int v1 = 0; v1 < 4; ++v1) {
-		for (int v2 = 0; v2 < 20; ++v2) {
-			s.syncAsSint16LE(_arr3[v1][v2]);
-			s.syncAsSint16LE(_arr4[v1][v2]);
-		}
-	}
-	for (int v1 = 0; v1 < 4; ++v1) {
-		for (int v2 = 0; v2 < 20; ++v2) {
-			s.syncAsSint16LE(_arr5[v1][v2]);
-			s.syncAsSint16LE(_arr6[v1][v2]);
-		}
-	}
+	_videoHotspotTimes.synchronize(s);
+	_audioHotspotTimes.synchronize(s);
+	_evidenceHotspotTimes.synchronize(s);
+
 	for (int v1 = 0; v1 < 20; ++v1) {
 		s.syncAsSint16LE(_arr7[20]);
 	}

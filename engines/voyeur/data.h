@@ -49,6 +49,50 @@ struct VoyeurEvent {
 
 class VoyeurEngne;
 
+/**
+ * Encapsulates a list of the time expired ranges that hotspots in the mansion
+ * view are enabled for in a given time period.
+ */
+template<int SLOTS>
+class HotspotTimes {
+public:
+	int _min[SLOTS][20];	// Min time expired
+	int _max[SLOTS][20];	// Max time expired
+
+	HotspotTimes() {
+		reset();
+	}
+
+	/**
+	 * Resets the data to an initial state
+	 */
+	void reset() {
+		Common::fill(&_min[0][0], &_min[SLOTS][20], 9999);
+		Common::fill(&_max[0][0], &_max[SLOTS][20], 0);
+	}
+
+	/**
+	 * Synchronise the data
+	 */
+	void synchronize(Common::Serializer &s) {
+		for (int slotIndex = 0; slotIndex < SLOTS; ++slotIndex) {
+			for (int hotspotIndex = 0; hotspotIndex < 20; ++hotspotIndex) {
+				s.syncAsSint16LE(_min[slotIndex][hotspotIndex]);
+				s.syncAsSint16LE(_max[slotIndex][hotspotIndex]);
+			}
+		}
+	}
+
+	/**
+	 * Returns true if the given value is in the range specified by the
+	 * min and max at the given hotspot and slot indexes
+	 */
+	bool isInRange(int slotIndex, int hotspotIndex, int v) const {
+		return _min[slotIndex][hotspotIndex] <= v &&
+			v < _max[slotIndex][hotspotIndex];				
+	}
+};
+
 class SVoy {
 private:
 	VoyeurEngine *_vm;
@@ -57,12 +101,9 @@ public:
 	int _RTANum;
 	int _RTVNum;
 	int _switchBGNum;
-	int _arr1[8][20];
-	int _arr2[8][20];
-	int _arr3[3][20];
-	int _arr4[3][20];
-	int _arr5[3][20];
-	int _arr6[3][20];
+	HotspotTimes<8> _videoHotspotTimes;
+	HotspotTimes<3> _audioHotspotTimes;
+	HotspotTimes<3> _evidenceHotspotTimes;
 	int _arr7[20];
 
 	int _field468;
