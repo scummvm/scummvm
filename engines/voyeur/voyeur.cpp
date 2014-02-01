@@ -633,7 +633,7 @@ void VoyeurEngine::doTransitionCard(const Common::String &time, const Common::St
 	_eventsManager._intPtr.field38 = true;
 	_eventsManager._intPtr._hasPalette = true;
 
-	(*_graphicsManager._vPort)->setupViewPort();
+	(*_graphicsManager._vPort)->setupViewPort(NULL);
 	(*_graphicsManager._vPort)->fillPic(128);
 	_graphicsManager.flipPage();
 	_eventsManager.sWaitFlip();

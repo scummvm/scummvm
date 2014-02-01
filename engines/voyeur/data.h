@@ -67,8 +67,12 @@ public:
 	 * Resets the data to an initial state
 	 */
 	void reset() {
-		Common::fill(&_min[0][0], &_min[SLOTS][20], 9999);
-		Common::fill(&_max[0][0], &_max[SLOTS][20], 0);
+		for (int hotspotIdx = 0; hotspotIdx < 20; ++hotspotIdx) {
+			for (int slotIdx = 0; slotIdx < SLOTS; ++slotIdx) {
+				_min[slotIdx][hotspotIdx] = 9999;
+				_max[slotIdx][hotspotIdx] = 0;
+			}
+		}
 	}
 
 	/**
