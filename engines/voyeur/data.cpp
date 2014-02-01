@@ -70,8 +70,8 @@ void SVoy::synchronize(Common::Serializer &s) {
 	_audioHotspotTimes.synchronize(s);
 	_evidenceHotspotTimes.synchronize(s);
 
-	for (int v1 = 0; v1 < 20; ++v1) {
-		s.syncAsSint16LE(_arr7[20]);
+	for (int idx = 0; idx < 20; ++idx) {
+		s.syncAsByte(_roomHotspotsEnabled[idx]);
 	}
 
 	s.syncAsSint16LE(_field468);

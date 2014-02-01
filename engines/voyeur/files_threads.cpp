@@ -344,11 +344,11 @@ void ThreadResource::parsePlayCommands() {
 	_vm->_voy._field478 &= ~8;
 	_vm->_eventsManager._videoDead = -1;
 
-	// Reset hotspot times data
+	// Reset hotspot data
 	_vm->_voy._videoHotspotTimes.reset();
 	_vm->_voy._audioHotspotTimes.reset();
 	_vm->_voy._evidenceHotspotTimes.reset();
-	Common::fill(&_vm->_voy._arr7[0], &_vm->_voy._arr7[20], 0);
+	Common::fill(&_vm->_voy._roomHotspotsEnabled[0], &_vm->_voy._roomHotspotsEnabled[20], false);
 
 	byte *dataP = _playCommandsPtr;
 	int v2, v3;
@@ -619,7 +619,7 @@ void ThreadResource::parsePlayCommands() {
 
 			if (v2 == 0 || READ_LE_UINT16(_vm->_controlPtr->_ptr + 4) == 0) {
 				_vm->_voy._field47A = _vm->_resolvePtr[READ_LE_UINT16(dataP + 2)];
-				_vm->_voy._arr7[READ_LE_UINT16(dataP + 4) - 1] = 1;
+				_vm->_voy._roomHotspotsEnabled[READ_LE_UINT16(dataP + 4) - 1] = true;
 			}
 
 			dataP += 6;
@@ -1145,7 +1145,7 @@ void ThreadResource::doRoom() {
 	voy._field437E = 1;
 	
 	Common::Array<RectEntry> &hotspots = vm._bVoy->boltEntry(vm._playStampGroupId + 4)._rectResource->_entries;
-	int i4e4 = -1;
+	int hotspotId = -1;
 
 	PictureResource *pic1 = vm._bVoy->boltEntry(vm._playStampGroupId + 2)._picResource;
 	PictureResource *pic2 = vm._bVoy->boltEntry(vm._playStampGroupId + 3)._picResource;
@@ -1179,25 +1179,25 @@ void ThreadResource::doRoom() {
 
 			vm._eventsManager.getMouseInfo();
 			Common::Point pt = vm._eventsManager.getMousePos();
-			i4e4 = -1;
+			hotspotId = -1;
 			if (voy._computerTextId != -1 && voy._rect4E4.contains(pt))
-				i4e4 = 999;
+				hotspotId = 999;
 
 			for (uint idx = 0; idx < hotspots.size(); ++idx) {
 				if (hotspots[idx].contains(pt)) {
 					int arrIndex = hotspots[idx]._arrIndex;
-					if (voy._arr7[arrIndex - 1] == 1) {
-						i4e4 = idx;
+					if (voy._roomHotspotsEnabled[arrIndex - 1]) {
+						hotspotId = idx;
 						break;
 					}
 				}
 			}
 
-			if (i4e4 == -1) {
+			if (hotspotId == -1) {
 				vm._graphicsManager.sDrawPic(pic1, *vm._graphicsManager._vPort,
 					Common::Point(pt.x - 9, pt.y - 9));
 				vm._eventsManager.setCursorColor(128, 0);
-			} else if (i4e4 != 999 || voy._RTVNum < voy._field4EC ||
+			} else if (hotspotId != 999 || voy._RTVNum < voy._field4EC ||
 					(voy._field4EE - 2) < voy._RTVNum) {
 				vm._graphicsManager.sDrawPic(pic2, *vm._graphicsManager._vPort,
 					Common::Point(pt.x - 12, pt.y - 9));
@@ -1215,7 +1215,7 @@ void ThreadResource::doRoom() {
 			vm._eventsManager.sWaitFlip();
 		} while (!vm.shouldQuit() && !vm._eventsManager._mouseClicked);
 
-		if (!vm._eventsManager._leftClick || i4e4 == -1) {
+		if (!vm._eventsManager._leftClick || hotspotId == -1) {
 			if (vm._eventsManager._rightClick)
 				breakFlag = true;
 
@@ -1226,7 +1226,7 @@ void ThreadResource::doRoom() {
 			voy._field478 |= 16;
 			vm._eventsManager.startCursorBlink();
 
-			if (i4e4 == 999) {
+			if (hotspotId == 999) {
 				_vm->flipPageAndWait();
 
 				if (vm._currentVocId != -1) {
@@ -1248,7 +1248,7 @@ void ThreadResource::doRoom() {
 
 				vm._bVoy->freeBoltGroup(0x4900);
 			} else {
-				vm.doEvidDisplay(i4e4, 999);
+				vm.doEvidDisplay(hotspotId, 999);
 			}
 
 			voy._field478 &= ~0x10;

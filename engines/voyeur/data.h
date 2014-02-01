@@ -104,7 +104,7 @@ public:
 	HotspotTimes<8> _videoHotspotTimes;
 	HotspotTimes<3> _audioHotspotTimes;
 	HotspotTimes<3> _evidenceHotspotTimes;
-	int _arr7[20];
+	bool _roomHotspotsEnabled[20];
 
 	int _field468;
 	int _field46A;
