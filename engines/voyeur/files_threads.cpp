@@ -349,7 +349,6 @@ void ThreadResource::parsePlayCommands() {
 	_vm->_voy._audioHotspotTimes.reset();
 	_vm->_voy._evidenceHotspotTimes.reset();
 	Common::fill(&_vm->_voy._roomHotspotsEnabled[0], &_vm->_voy._roomHotspotsEnabled[20], false);
-
 	byte *dataP = _playCommandsPtr;
 	int v2, v3;
 	PictureResource *pic;
@@ -1749,6 +1748,14 @@ void ThreadResource::doAptAnim(int mode) {
 void ThreadResource::synchronize(Common::Serializer &s) {
 	s.syncAsSint16LE(_aptPos.x);
 	s.syncAsSint16LE(_aptPos.y);
+	
+	int sceneId = _threadId;
+	int stackId = _controlIndex;
+	s.syncAsSint16LE(sceneId);
+	s.syncAsSint16LE(stackId);
+
+	if (s.isLoading() && (sceneId != _threadId || stackId != _controlIndex))
+		goToState(stackId, sceneId);
 }
 
 } // End of namespace Voyeur
