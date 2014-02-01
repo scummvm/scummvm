@@ -256,6 +256,7 @@ namespace Fullpipe {
 #define ST_LBN_8P 2775
 #define ST_LBN_9P 2778
 #define ST_LFT_CLOSED 1049
+#define ST_LFT_OPEN_NEW 1071
 #define ST_MAN_EMPTY 476
 #define ST_MAN_GOU 459
 #define ST_MAN_RIGHT 325

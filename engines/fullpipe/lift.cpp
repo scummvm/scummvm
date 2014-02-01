@@ -278,7 +278,40 @@ void FullpipeEngine::lift_exitSeq(ExCommand *cmd) {
 }
 
 void FullpipeEngine::lift_closedoorSeq() {
-	warning("STUB: FullpipeEngine::lift_closedoorSeq()");
+	if (_lift->_movement) {
+		if (_lift->_movement->_id == MV_LFT_CLOSE) {
+			_lift->queueMessageQueue(0);
+		} else if (_lift->_movement->_id == MV_LFT_OPEN) {
+			int ph = _lift->_movement->_currDynamicPhaseIndex;
+
+			_lift->changeStatics2(ST_LFT_OPEN_NEW);
+			_lift->startAnim(MV_LFT_CLOSE, 0, -1);
+
+			if (_lift->_movement->_currMovement)
+				_lift->_movement->setDynamicPhaseIndex(_lift->_movement->_currMovement->_dynamicPhases.size() - ph);
+			else
+				_lift->_movement->setDynamicPhaseIndex(_lift->_movement->_dynamicPhases.size() - ph);
+		} else {
+			_lift->changeStatics2(ST_LFT_OPEN_NEW);
+
+			_lift->startAnim(MV_LFT_CLOSE, 0, -1);
+		}
+	} else {
+		if (_lift->_statics->_staticsId == ST_LFT_CLOSED ) {
+			_lift->changeStatics2(ST_LFT_CLOSED);
+		} else {
+			_lift->startAnim(MV_LFT_CLOSE, 0, -1);
+		}
+	}
+
+	MessageQueue *mq = new MessageQueue(_globalMessageQueueList->compact());
+	ExCommand *ex = new ExCommand(0, 17, MSG_LIFT_GO, 0, 0, 0, 1, 0, 0, 0);
+
+	ex->_excFlags |= 3;
+	mq->addExCommandToEnd(ex);
+
+	if (!mq->chain(_lift))
+		delete mq;
 }
 
 void FullpipeEngine::lift_walkAndGo() {
