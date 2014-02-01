@@ -1351,6 +1351,7 @@ int ThreadResource::doInterface() {
 
 		while (!_vm->shouldQuit() && _vm->_voy._RTVNum < _vm->_voy._RTVLimit) {
 			_vm->flashTimeBar();
+			_vm->_eventsManager.delayClick(1);
 		}
 
 		_vm->_voy._field478 = 1;
