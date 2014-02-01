@@ -778,6 +778,35 @@ ModalHelp::~ModalHelp() {
 	g_fp->_currentScene->_y = _hy;
 }
 
+bool ModalHelp::handleMessage(ExCommand *cmd) {
+	if (cmd->_messageKind == 17) {
+		int msg = cmd->_messageNum;
+
+		if (msg == 29 || msg == 36 || msg == 107) {
+			_isRunning = 0;
+
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool ModalHelp::init(int counterdiff) {
+	g_fp->setCursor(PIC_CSR_DEFAULT);
+
+	return _isRunning;
+}
+
+void ModalHelp::update() {
+	g_fp->_sceneRect.left = 0;
+	g_fp->_sceneRect.top = 0;
+	g_fp->_sceneRect.right = 800;
+	g_fp->_sceneRect.bottom = 600;
+
+	_bg->draw(0, 0, 0, 0);
+}
+
 void FullpipeEngine::openHelp() {
 	warning("STUB: FullpipeEngine::openHelp()");
 }
