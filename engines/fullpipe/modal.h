@@ -161,6 +161,42 @@ public:
 	virtual void saveload() {}
 };
 
+class ModalHelp : public BaseModalObject {
+public:
+	ModalHelp();
+	virtual ~ModalHelp() {}
+
+	virtual bool pollEvent() { return true; }
+	virtual bool handleMessage(ExCommand *message) { return false; }
+	virtual bool init(int counterdiff) { return true; }
+	virtual void update() {}
+	virtual void saveload() {}
+};
+
+class ModalQuery : public BaseModalObject {
+public:
+	ModalQuery();
+	virtual ~ModalQuery() {}
+
+	virtual bool pollEvent() { return true; }
+	virtual bool handleMessage(ExCommand *message) { return false; }
+	virtual bool init(int counterdiff) { return true; }
+	virtual void update() {}
+	virtual void saveload() {}
+};
+
+class ModalSaveGame : public BaseModalObject {
+public:
+	ModalSaveGame();
+	virtual ~ModalSaveGame() {}
+
+	virtual bool pollEvent() { return true; }
+	virtual bool handleMessage(ExCommand *message) { return false; }
+	virtual bool init(int counterdiff) { return true; }
+	virtual void update() {}
+	virtual void saveload() {}
+};
+
 
 } // End of namespace Fullpipe
 
