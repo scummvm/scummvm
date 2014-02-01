@@ -215,6 +215,7 @@ namespace Fullpipe {
 #define SC_INTRO2 3907
 #define SC_INV 858
 #define SC_LDR 635
+#define SC_MAINMENU 4620
 #define SC_MAP 5222
 #define SC_TITLES 5166
 #define SND_CMN_031 3516

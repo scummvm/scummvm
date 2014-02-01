@@ -755,6 +755,29 @@ ModalMainMenu::ModalMainMenu() {
 	_field_34 = 0;
 }
 
+ModalHelp::ModalHelp() {
+	_mainMenuScene = 0;
+	_bg = 0;
+	_isRunning = false;
+	_rect = g_fp->_sceneRect;
+	_hx = g_fp->_currentScene->_x;
+	_hy = g_fp->_currentScene->_y;
+
+	g_fp->_sceneRect.left = 0;
+	g_fp->_sceneRect.bottom = 600;
+	g_fp->_sceneRect.top = 0;
+	g_fp->_sceneRect.right = 800;
+}
+
+ModalHelp::~ModalHelp() {
+	g_fp->_gameLoader->unloadScene(SC_MAINMENU);
+
+	g_fp->_sceneRect = _rect;
+
+	g_fp->_currentScene->_x = _hx;
+	g_fp->_currentScene->_y = _hy;
+}
+
 void FullpipeEngine::openHelp() {
 	warning("STUB: FullpipeEngine::openHelp()");
 }

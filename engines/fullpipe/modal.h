@@ -26,6 +26,7 @@
 namespace Fullpipe {
 
 class PictureObject;
+class Picture;
 
 class BaseModalObject {
  public:
@@ -163,8 +164,16 @@ public:
 
 class ModalHelp : public BaseModalObject {
 public:
+	Scene *_mainMenuScene;
+	Picture *_bg;
+	bool _isRunning;
+	Common::Rect _rect;
+	int _hx;
+	int _hy;
+
+public:
 	ModalHelp();
-	virtual ~ModalHelp() {}
+	virtual ~ModalHelp();
 
 	virtual bool pollEvent() { return true; }
 	virtual bool handleMessage(ExCommand *message) { return false; }
