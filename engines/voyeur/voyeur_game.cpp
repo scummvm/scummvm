@@ -704,7 +704,6 @@ void VoyeurEngine::reviewTape() {
 		}
 
 		case EVTYPE_EVID:
-			_bVoy->freeBoltGroup(0x900);
 			_voy.reviewAnEvidEvent(eventIndex);
 			
 			_voy._vocSecondsOffset = _voy._RTVNum - _voy._field4AC;
@@ -713,7 +712,6 @@ void VoyeurEngine::reviewTape() {
 			break;
 
 		case EVTYPE_COMPUTER:
-			_bVoy->freeBoltGroup(0x900);
 			_voy.reviewComputerEvent(eventIndex);
 			
 			_voy._vocSecondsOffset = _voy._RTVNum - _voy._field4AC;
