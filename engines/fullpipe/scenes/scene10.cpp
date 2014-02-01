@@ -170,7 +170,7 @@ int sceneHandler10(ExCommand *ex) {
 		break;
 
 	case 64:
-		g_fp->lift_sub05(ex);
+		g_fp->lift_hoverButton(ex);
 		break;
 
 	case 29:

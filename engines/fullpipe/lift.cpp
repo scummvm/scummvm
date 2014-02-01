@@ -479,8 +479,13 @@ void FullpipeEngine::lift_startExitQueue() {
 	mq->chain(0);
 }
 
-void FullpipeEngine::lift_sub05(ExCommand *ex) {
-	warning("STUB: FullpipeEngine::lift_sub05()");
+void FullpipeEngine::lift_hoverButton(ExCommand *cmd) {
+	if (_lastLiftButton) {
+		if (!(cmd->_keyCode & 2) || _liftX != cmd->_x || _liftY != cmd->_y) {
+			_lastLiftButton->_statics = _lastLiftButton->getStaticsById(lift_getButtonIdN(_lastLiftButton->_statics->_staticsId));
+			_lastLiftButton = 0;
+		}
+	}
 }
 
 bool FullpipeEngine::lift_checkButton(const char *varName) {

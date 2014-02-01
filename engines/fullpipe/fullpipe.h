@@ -290,7 +290,7 @@ public:
 	void lift_goAnimation();
 	void lift_animateButton(StaticANIObject *button);
 	void lift_startExitQueue();
-	void lift_sub05(ExCommand *ex);
+	void lift_hoverButton(ExCommand *ex);
 	bool lift_checkButton(const char *varname);
 	void lift_openLift();
 

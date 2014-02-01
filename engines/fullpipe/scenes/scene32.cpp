@@ -339,7 +339,7 @@ int sceneHandler32(ExCommand *cmd) {
 		break;
 
 	case 64:
-		g_fp->lift_sub05(cmd);
+		g_fp->lift_hoverButton(cmd);
 		break;
 
 	case MSG_SC6_INSTHANDLE:
