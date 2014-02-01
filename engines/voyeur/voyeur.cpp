@@ -594,6 +594,40 @@ void VoyeurEngine::playAVideoDuration(int videoId, int duration) {
 	}
 }
 
+void VoyeurEngine::playAudio(int audioId) {
+	_bVoy->getBoltGroup(0x7F00);
+	_graphicsManager._backgroundPage = _bVoy->boltEntry(0x7F00 + 
+		BLIND_TABLE[audioId])._picResource;
+	_graphicsManager._backColors = _bVoy->boltEntry(0x7F01 + 
+		BLIND_TABLE[audioId])._cMapResource;
+
+	(*_graphicsManager._vPort)->setupViewPort();
+	_graphicsManager._backColors->startFade();
+	flipPageAndWaitForFade();
+
+	_voy._field478 &= ~1;
+	_soundManager.setVOCOffset(_voy._vocSecondsOffset);
+	Common::String filename = _soundManager.getVOCFileName(
+		audioId + 159);
+	_soundManager.startVOCPlay(filename);
+	_voy._field478 |= 16;
+	_eventsManager.startCursorBlink();
+
+	while (!shouldQuit() && !_eventsManager._mouseClicked && 
+			_soundManager.getVOCStatus())
+		_eventsManager.delayClick(1);
+
+	_voy._field478 |= 1;
+	_soundManager.stopVOCPlay();
+
+	_bVoy->freeBoltGroup(0x7F00);
+	flipPageAndWait();
+
+	_voy._field478 &= ~0x10;
+	audioId = -1;
+	_voy._field470 = 129;
+}
+
 void VoyeurEngine::doTransitionCard(const Common::String &time, const Common::String &location) {
 	_graphicsManager.setColor(128, 16, 16, 16);
 	_graphicsManager.setColor(224, 220, 220, 220);

@@ -137,6 +137,9 @@ private:
 	 */
 	bool checkForIncriminate();
 
+	/**
+	 * Plays a video event previously witnessed
+	 */
 	void playAVideoEvent(int eventIndex);
 
 	/**
@@ -212,8 +215,23 @@ public:
 
 	void playRL2Video(const Common::String &filename);
 	void doTransitionCard(const Common::String &time, const Common::String &location);
+
+	/**
+	 * Play a given video
+	 */
 	void playAVideo(int videoId);
+
+	/**
+	 * Play a given video for a given amount of time. This is particularly used
+	 * for later tape playback, where it will only play back as much of the video
+	 * as the user originally watched (since they can break out of watching a video).
+	 */
 	void playAVideoDuration(int videoId, int duration);
+
+	/**
+	 * Play an audio sequence
+	 */
+	void playAudio(int audioId);
 
 	/**
 	 * Saves the last time the game was played

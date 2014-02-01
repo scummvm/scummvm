@@ -57,10 +57,10 @@ bool Debugger::Cmd_Time(int argc, const char **argv) {
 			DebugPrintf("Time is now off\n\n");
 		} else if (!strcmp(argv[1], "val")) {
 			if (argc < 3) {
-				DebugPrintf("Time remaining is currently %d.\n", _vm->_voy._RTVNum);
+				DebugPrintf("Time expired is currently %d.\n", _vm->_voy._RTVNum);
 			} else {
 				_vm->_voy._RTVNum = atoi(argv[2]);
-				DebugPrintf("Time remaining is now %d.\n", _vm->_voy._RTVNum);
+				DebugPrintf("Time expired is now %d.\n", _vm->_voy._RTVNum);
 			}
 		} else {
 			int timeId = atoi(argv[1]);

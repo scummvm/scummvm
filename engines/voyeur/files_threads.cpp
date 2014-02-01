@@ -384,39 +384,13 @@ void ThreadResource::parsePlayCommands() {
 					_vm->_voy._vocSecondsOffset = _vm->_voy._RTVNum - _vm->_voy._field468;
 					_vm->_voy.addAudioEventStart();
 
+					// Play the audio
 					assert(_vm->_audioVideoId < 38);
-					_vm->_bVoy->getBoltGroup(0x7F00);
-					_vm->_graphicsManager._backgroundPage = _vm->_bVoy->boltEntry(
-						0x7F00 + BLIND_TABLE[_vm->_audioVideoId])._picResource;
-					_vm->_graphicsManager._backColors = _vm->_bVoy->boltEntry(0x7F01 + 
-						BLIND_TABLE[_vm->_audioVideoId])._cMapResource;
+					_vm->playAudio(_vm->_audioVideoId);
 
-					(*_vm->_graphicsManager._vPort)->setupViewPort();
-					_vm->_graphicsManager._backColors->startFade();
-					_vm->flipPageAndWaitForFade();
-
-					_vm->_voy._field478 &= ~1;
-					_vm->_soundManager.setVOCOffset(_vm->_voy._vocSecondsOffset);
-					Common::String filename = _vm->_soundManager.getVOCFileName(
-						_vm->_audioVideoId + 159);
-					_vm->_soundManager.startVOCPlay(filename);
-					_vm->_voy._field478 |= 16;
-					_vm->_eventsManager.startCursorBlink();
-
-					while (!_vm->shouldQuit() && !_vm->_eventsManager._mouseClicked && 
-							_vm->_soundManager.getVOCStatus())
-						_vm->_eventsManager.delayClick(1);
-
-					_vm->_voy._field478 |= 1;
-					_vm->_soundManager.stopVOCPlay();
 					_vm->_voy.addAudioEventEnd();
 					_vm->_eventsManager.incrementTime(1);
 					_vm->_eventsManager.incrementTime(1);
-
-					_vm->_bVoy->freeBoltGroup(0x7F00);
-					_vm->_voy._field478 &= ~0x10;
-					_vm->_audioVideoId = -1;
-					_vm->_voy._field470 = 129;
 					parseIndex = 999;
 				}				
 			} 
