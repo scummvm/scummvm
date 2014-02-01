@@ -238,7 +238,7 @@ void FullpipeEngine::lift_exitSeq(ExCommand *cmd) {
 	ex->_excFlags |= 3;
 	mq->addExCommandToEnd(ex);
 
-	if (!ex) {
+	if (!cmd) {
 		ex = new ExCommand(_aniMan->_id, 2, 40, 0, 0, 0, 1, 0, 0, 0);
 		ex->_keyCode = _aniMan->_okeyCode;
 		ex->_excFlags |= 2;
