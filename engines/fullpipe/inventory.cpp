@@ -31,7 +31,7 @@
 namespace Fullpipe {
 
 Inventory::~Inventory() {
-	warning("STUB: Inventory::~Inventory()");
+	_itemsPool.clear();
 }
 
 bool Inventory::load(MfcArchive &file) {
@@ -90,7 +90,7 @@ Inventory2::Inventory2() {
 }
 
 Inventory2::~Inventory2() {
-	warning("STUB: Inventory2::~Inventory2()");
+	removeMessageHandler(125, -1);
 }
 
 bool Inventory2::loadPartial(MfcArchive &file) { // Inventory2_SerializePartially
