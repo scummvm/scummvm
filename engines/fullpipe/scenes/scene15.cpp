@@ -171,7 +171,7 @@ int sceneHandler15(ExCommand *cmd) {
 			StaticANIObject *ani = g_fp->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
 
 			if (ani && ani->_id == ANI_LIFTBUTTON) {
-				g_fp->lift_sub1(ani);
+				g_fp->lift_animateButton(ani);
 
 				cmd->_messageKind = 0;
 			}

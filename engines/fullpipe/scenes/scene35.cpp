@@ -208,7 +208,7 @@ int sceneHandler35(ExCommand *cmd) {
 
 			if (ani)
 				if (ani->_id == ANI_LIFTBUTTON) {
-					g_fp->lift_sub1(ani);
+					g_fp->lift_animateButton(ani);
 					cmd->_messageKind = 0;
 					break;
 				}

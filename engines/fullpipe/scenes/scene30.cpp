@@ -123,7 +123,7 @@ int sceneHandler30(ExCommand *cmd) {
 			StaticANIObject *ani = g_fp->_currentScene->getStaticANIObjectAtPos(g_fp->_sceneRect.left + cmd->_x, g_fp->_sceneRect.top + cmd->_y);
 
 			if (ani && ani->_id == ANI_LIFTBUTTON) {
-				g_fp->lift_sub1(ani);
+				g_fp->lift_animateButton(ani);
 
 				cmd->_messageKind = 0;
 			}

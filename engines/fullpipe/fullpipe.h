@@ -288,7 +288,7 @@ public:
 	void lift_clickButton();
 	void lift_walkAndGo();
 	void lift_goAnimation();
-	void lift_sub1(StaticANIObject *ani);
+	void lift_animateButton(StaticANIObject *button);
 	void lift_startExitQueue();
 	void lift_sub05(ExCommand *ex);
 	bool lift_checkButton(const char *varname);

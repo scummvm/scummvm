@@ -218,6 +218,7 @@ namespace Fullpipe {
 #define SC_MAP 5222
 #define SC_TITLES 5166
 #define SND_CMN_031 3516
+#define SND_CMN_032 3517
 #define SND_CMN_060 4921
 #define SND_CMN_061 4922
 #define SND_CMN_070 5199

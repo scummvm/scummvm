@@ -647,7 +647,7 @@ int sceneHandler06(ExCommand *ex) {
 
 			if (st) {
 				if (!g_vars->scene06_arcadeEnabled && st->_id == ANI_LIFTBUTTON) {
-					g_fp->lift_sub1(st);
+					g_fp->lift_animateButton(st);
 					ex->_messageKind = 0;
 					return 0;
 				}

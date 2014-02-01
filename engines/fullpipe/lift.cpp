@@ -338,8 +338,41 @@ void FullpipeEngine::lift_goAnimation() {	if (_lastLiftButton) {
 	}
 }
 
-void FullpipeEngine::lift_sub1(StaticANIObject *ani) {
-	warning("STUB: FullpipeEngine::lift_sub1()");
+void FullpipeEngine::lift_animateButton(StaticANIObject *button) {
+	int butId = lift_getButtonIdP(button->_statics->_staticsId);
+
+	if (butId && butId != button->_statics->_staticsId) {
+		if (button == _lastLiftButton) {
+			playSound(SND_CMN_032, 0);
+		} else {
+			if (_lastLiftButton) {
+				int id = lift_getButtonIdN(_lastLiftButton->_statics->_staticsId);
+
+				if (id)
+					_lastLiftButton->_statics = _lastLiftButton->getStaticsById(id);
+
+				_lastLiftButton = 0;
+			}
+
+			if (_aniMan->isIdle() && !(_aniMan->_flags & 0x100)) {
+				_lastLiftButton = button;
+				button->_statics = button->getStaticsById(butId);
+
+				ExCommand *ex = new ExCommand(0, 35, SND_CMN_032, 0, 0, 0, 1, 0, 0, 0);
+				ex->_excFlags |= 3;
+				ex->_field_14 = 1;
+				ex->postMessage();
+
+				int id = lift_getButtonIdH(_lastLiftButton->_statics->_staticsId);
+
+				if (id) {
+					_lastLiftButton->_statics = _lastLiftButton->getStaticsById(id);
+
+					lift_walkAndGo();
+				}
+			}
+		}
+	}
 }
 
 void FullpipeEngine::lift_startExitQueue() {
