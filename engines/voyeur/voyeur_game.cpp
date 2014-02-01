@@ -664,7 +664,7 @@ void VoyeurEngine::reviewTape() {
 		VoyeurEvent &e = _voy._events[eventIndex];
 		switch (e._type) {
 		case EVTYPE_VIDEO:
-			playAVideoEvent(eventLine);
+			playAVideoEvent(eventIndex);
 			break;
 
 		case EVTYPE_AUDIO: {
@@ -705,7 +705,7 @@ void VoyeurEngine::reviewTape() {
 
 		case EVTYPE_EVID:
 			_bVoy->freeBoltGroup(0x900);
-			_voy.reviewAnEvidEvent(eventLine);
+			_voy.reviewAnEvidEvent(eventIndex);
 			
 			_voy._vocSecondsOffset = _voy._RTVNum - _voy._field4AC;
 			_soundManager.stopVOCPlay();
@@ -714,7 +714,7 @@ void VoyeurEngine::reviewTape() {
 
 		case EVTYPE_COMPUTER:
 			_bVoy->freeBoltGroup(0x900);
-			_voy.reviewComputerEvent(eventLine);
+			_voy.reviewComputerEvent(eventIndex);
 			
 			_voy._vocSecondsOffset = _voy._RTVNum - _voy._field4AC;
 			_soundManager.stopVOCPlay();
