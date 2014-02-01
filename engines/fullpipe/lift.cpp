@@ -220,8 +220,12 @@ void FullpipeEngine::lift_init(Scene *sc, int enterSeq, int exitSeq) {
 }
 
 void FullpipeEngine::lift_exitSeq(ExCommand *cmd) {
-	if (cmd)
-		_globalMessageQueueList->getMessageQueueById(cmd->_parId)->activateExCommandsByKind(34);
+	if (cmd) {
+		MessageQueue *mq = _globalMessageQueueList->getMessageQueueById(cmd->_parId);
+
+		if (mq)
+			mq->activateExCommandsByKind(34);
+	}
 
 	_lift->changeStatics2(ST_LFT_CLOSED);
 
