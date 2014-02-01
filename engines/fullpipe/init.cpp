@@ -96,7 +96,7 @@ void FullpipeEngine::initObjectStates() {
 	setObjectState(sO_Pool, getObjectEnumState(sO_Pool, sO_Overfull));
 	setObjectState(sO_Board_25, getObjectEnumState(sO_Board_25, sO_NearDudesStairs));
 	setObjectState(sO_Driver, getObjectEnumState(sO_Driver, sO_WithSteering));
-	setObjectState(sO_Janitress, getObjectEnumState(sO_Janitress, sO_WithMop));
+	setObjectState(sO_Maid, getObjectEnumState(sO_Maid, sO_WithSwab));
 	setObjectState(sO_LeftPipe_29, getObjectEnumState(sO_LeftPipe_29, sO_IsClosed));
 	setObjectState(sO_LeftPipe_30, getObjectEnumState(sO_LeftPipe_30, sO_IsClosed));
 	setObjectState(sO_Leg, getObjectEnumState(sO_Leg, sO_ShowingHeel));
