@@ -59,7 +59,7 @@ void scene03_initScene(Scene *sc) {
 
 	g_fp->lift_setButton(sO_Level2, ST_LBN_2N);
 
-	g_fp->lift_sub5(sc, QU_SC3_ENTERLIFT, QU_SC3_EXITLIFT);
+	g_fp->lift_init(sc, QU_SC3_ENTERLIFT, QU_SC3_EXITLIFT);
 }
 
 void scene03_setEaterState() {
@@ -215,7 +215,7 @@ int sceneHandler03(ExCommand *ex) {
 		break;
 
 	case MSG_LIFT_CLICKBUTTON:
-		g_fp->lift_animation3();
+		g_fp->lift_clickButton();
 		break;
 
 	case MSG_SC3_HIDEDOMINO:
@@ -239,14 +239,14 @@ int sceneHandler03(ExCommand *ex) {
 		break;
 
 	case 64:
-		g_fp->lift_sub05(ex);
+		g_fp->lift_hoverButton(ex);
 		break;
 
 	case 29:
 		{
 			StaticANIObject *ani = g_fp->_currentScene->getStaticANIObjectAtPos(ex->_sceneClickX, ex->_sceneClickY);
 			if (ani && ani->_id == ANI_LIFTBUTTON) {
-				g_fp->lift_sub1(ani);
+				g_fp->lift_animateButton(ani);
 				ex->_messageKind = 0;
 
 				return 0;

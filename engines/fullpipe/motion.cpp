@@ -1814,6 +1814,204 @@ MessageQueue *MGM::genMovement(MGMInfo *mgminfo) {
 	warning("STUB: MGM::genMovement()");
 
 	return 0;
+
+#if 0
+	if (!mgminfo->ani)
+		return 0;
+
+	mov = mgminfo->ani->_movement;
+
+	if (!mov && !mgminfo->ani->_statics)
+		return 0;
+
+	if (!(mgminfo->flags & 1)) {
+		if (mov)
+			mgminfo->staticsId1 = mov->_staticsObj2->_staticsId;
+		else
+			mgminfo->staticsId1 = mgminfo->ani->_statics->_staticsId;
+	}
+
+	if (!(mgminfo->flags & 0x10) || !(mgminfo->flags & 0x20)) {
+		int nx = mgminfo->ani->_ox;
+		int ny = mgminfo->ani->_oy;
+
+		if (mgminfo->ani->_movement) {
+			mgminfo->ani->calcNextStep(&point2);
+			nx += point2.x;
+			ny += point2.y;
+		}
+
+		if (!(mgminfo->flags & 0x10))
+			mgminfo->x2 = nx;
+
+		if (!(mgminfo->flags & 0x20))
+			mgminfo->y2 = ny;
+	}
+
+	mov = mgminfo->ani->getMovementById(mgminfo->movementId);
+
+	if (!mov)
+		return 0;
+
+	itemIdx = getItemIndexById(mgminfo->ani->_id);
+	subIdx = getStaticsIndexById(itemIdx, mgminfo->staticsId1);
+	st2idx = getStaticsIndexById(itemIdx, mov->_staticsObj1->_staticsId);
+	st1idx = getStaticsIndexById(itemIdx, mov->_staticsObj2->_staticsId);
+	subOffset = getStaticsIndexById(itemIdx, mgminfo->staticsId2);
+
+	clearMovements2(itemIdx);
+	recalcOffsets(itemIdx, subIdx, st2idx, 0, 1);
+	clearMovements2(itemIdx);
+	recalcOffsets(itemIdx, st1idx, subOffset, 0, 1);
+
+	v71 = (Message *)(28 * itemIdx);
+	v16 = items[itemIdx].objId;
+	v17 = *(_DWORD *)(v16 + offsetof(MGMItem, staticsListCount));
+	off = *(_DWORD *)(v16 + offsetof(MGMItem, subItems));
+	v18 = (MGMSubItem *)(off + 24 * (subIdx + st2idx * v17));
+	x1 = (int)&v18->movement->go.CObject.vmt;
+	v19 = (MGMSubItem *)(off + 24 * (st1idx + subOffset * v17));
+	v69 = (LONG)&v19->movement->go.CObject.vmt;
+
+	if (subIdx != st2idx && !x1)
+		return 0;
+
+	if (st1idx != subOffset && !v69)
+		return 0;
+
+	int n1x = mgminfo->x1 - mgminfo->x2 - v18->x - v19->x;
+	int n1y = mgminfo->y1 - mgminfo->y2 - v18->y - v19->y;
+
+	mov->calcSomeXY(&point1, 0);
+
+	int n2x = point1.x;
+	int n2y = point1.y;
+	int mult;
+
+	if (mgminfo->flags & 0x40) {
+		mult = mgminfo->field_10;
+		len = -1;
+		n2x *= mult;
+		n2y *= mult;
+	} else {
+		calcLength(&point, mov, n1x, n1y, &mult, &len, 1);
+		n2x = point.x;
+		n2y = point.y;
+	}
+
+	if (!(mgminfo->flags & 2)) {
+		len = -1;
+		n2x = mult * point1.x;
+		n1x = mult * point1.x;
+		mgminfo->x1 = mgminfo->x2 + mult * point1.x + v18->x + v19->x;
+	}
+
+	if (!(mgminfo->flags & 4)) {
+		n2y = mult * point1.y;
+		n1y = mult * point1.y;
+		len = -1;
+		mgminfo->y1 = mgminfo->y2 + mult * point1.y + v18->y + v19->y;
+	}
+
+	int px = 0;
+	int py = 0;
+
+	if (x1) {
+		px = countPhases(itemIdx, subIdx, st2idx, 1);
+		py = countPhases(itemIdx, subIdx, st2idx, 2);
+	}
+
+	if (mult > 1) {
+		px += (mult - 1) * mov->countPhasesWithFlag(-1, 1);
+		py += (mult - 1) * mov->countPhasesWithFlag(-1, 2);
+	}
+
+	if (mult > 0) {
+		px += mov->countPhasesWithFlag(len, 1);
+		py += mov->countPhasesWithFlag(len, 2);
+	}
+
+	if (v69) {
+		px += countPhases(itemIdx, st1idx, subOffset, 1);
+		py += countPhases(itemIdx, st1idx, subOffset, 2);
+	}
+
+	int dx1 = n1x - n2x;
+	int dy1 = n1y - n2y;
+
+	if (px) {
+		x1 = (int)((double)dx1 / (double)px);
+	} else {
+		x1 = 0;
+	}
+
+	if (py) {
+		y1 = (int)((double)dy1 / (double)py);
+	} else {
+		y1 = 0;
+	}
+
+	y2.x = dx1 - px * x1;
+	y2.y = dy1 - py * y1;
+
+	if (n1x - n2x == px * x1)
+		x2.x = 0;
+	else
+		x2.x = (dx1 - px * x1) / abs(dx1 - px * x1);
+
+	if (dy1 == py * y1)
+		x2.y = 0;
+	else
+		x2.y = (dy1 - py * y1) / abs(dy1 - py * y1);
+
+	MessageQueue *mq = new MessageQueue(g_fp->_globalMessageQueueList->compact());
+	ExCommand2 *ex2;
+
+	for (v42 = subIdx; v42 != st2idx; v42 = v43->staticsIndex) {
+		v43 = &(*(MGMSubItem **)((char *)&this->items->subItems + (unsigned int)v71))[v42 + st2idx * *(int *)((char *)&this->items->staticsListCount + (unsigned int)v71)];
+		ex2 = buildExCommand2(v43->movement, mgminfo->ani->go._id, x1, y1, &x2, &y2, -1);
+		ex2->_parId = mq->_id;
+		ex2->_keyCode = mgminfo->ani->_okeyCode;
+
+		mq->addExCommandToEnd(ex2);
+	}
+
+	for (i = 0; i < mult; ++i) {
+		int plen;
+
+		if (i == mult - 1)
+			plen = len;
+		else
+			plen = -1;
+
+		ex2 = buildExCommand2(mov, mgminfo->ani->_id, x1, y1, &x2, &y2, plen);
+		ex2->_parId = mq->_id;
+		ex2->_keyCode = mgminfo->ani->_okeyCode;
+
+		mq->addExCommandToEnd(ex2);
+	}
+
+	for (j = st1idx; j != subOffset; j = v50->staticsIndex) {
+		v50 = &(*(MGMSubItem **)((char *)&this->items->subItems + (unsigned int)v71))[j + subOffset * *(int *)((char *)&this->items->staticsListCount + (unsigned int)v71)];
+
+		ex2 = buildExCommand2(v50->movement, mgminfo->ani->_id, x1, y1, &x2, &y2, -1);
+		ex2->_parId = mq->_id;
+		ex2->_keyCode = mgminfo->ani->_okeyCode;
+
+		mq->addExCommandToEnd(ex2);
+	}
+
+	ExCommand *ex = new ExCommand(mgminfo->ani->_id, 5, -1, mgminfo->x1, mgminfo->y1, 0, 1, 0, 0, 0);
+
+	ex->_field_14 = mgminfo->field_1C;
+	ex->_keyCode = mgminfo->ani->_okeyCode;
+	ex->_field_24 = 0;
+	ex->_excFlags |= 3;
+
+	mq->addExCommandToEnd(ex);
+
+	return mq;
+#endif
 }
 
 void MGM::updateAnimStatics(StaticANIObject *ani, int staticsId) {
@@ -1919,34 +2117,34 @@ int MGM::recalcOffsets(int idx, int st1idx, int st2idx, bool flip, bool flop) {
 	return 0;
 }
 
-Common::Point *MGM::calcLength(Common::Point *pRes, Movement *mov, int x, int y, int *x1, int *y1, int flag) {
+Common::Point *MGM::calcLength(Common::Point *pRes, Movement *mov, int x, int y, int *mult, int *len, int flag) {
 	Common::Point point;
 
 	mov->calcSomeXY(point, 0);
 	int p1x = point.x;
 	int p1y = point.y;
 
-	int newx1 = 0;
-	int oldy1 = *y1;
+	int newmult = 0;
+	int oldlen = *len;
 
 	if (abs(p1y) > abs(p1x)) {
 		if (mov->calcSomeXY(point, 0)->y)
-			newx1 = (int)((double)y / point.y);
+			newmult = (int)((double)y / point.y);
 	} else if (mov->calcSomeXY(point, 0)->x) {
-		newx1 = (int)((double)x / point.y);
+		newmult = (int)((double)x / point.y);
 	}
 
-	if (newx1 < 0)
-		newx1 = 0;
+	if (newmult < 0)
+		newmult = 0;
 
-	*x1 = newx1;
+	*mult = newmult;
 
 	int phase = 1;
 	int sz;
 
 	if (flag) {
 		if (abs(p1y) > abs(p1x)) {
-			while (abs(p1y * newx1 + mov->calcSomeXY(point, 0)->y) < abs(y)) {
+			while (abs(p1y * newmult + mov->calcSomeXY(point, 0)->y) < abs(y)) {
 				sz = mov->_currMovement ? mov->_currMovement->_dynamicPhases.size() : mov->_dynamicPhases.size();
 
 				if (phase >= sz) {
@@ -1958,7 +2156,7 @@ Common::Point *MGM::calcLength(Common::Point *pRes, Movement *mov, int x, int y,
 				phase++;
 			}
 		} else {
-			while (abs(p1x * newx1 + mov->calcSomeXY(point, 0)->x) < abs(x)) {
+			while (abs(p1x * newmult + mov->calcSomeXY(point, 0)->x) < abs(x)) {
 				sz = mov->_currMovement ? mov->_currMovement->_dynamicPhases.size() : mov->_dynamicPhases.size();
 
 				if (phase >= sz) {
@@ -1971,19 +2169,19 @@ Common::Point *MGM::calcLength(Common::Point *pRes, Movement *mov, int x, int y,
 			}
 		}
 
-		*y1 = phase - 1;
+		*len = phase - 1;
 	} else {
-		*y1 = -1;
+		*len = -1;
 	}
 
 	int p2x = 0;
 	int p2y = 0;
 
-	if (!oldy1)
-		oldy1 = -1;
+	if (!oldlen)
+		oldlen = -1;
 
-	if (oldy1 > 0) {
-		++*x1;
+	if (oldlen > 0) {
+		++*mult;
 
 		mov->calcSomeXY(point, 0);
 		p2x = point.x;
@@ -1995,8 +2193,8 @@ Common::Point *MGM::calcLength(Common::Point *pRes, Movement *mov, int x, int y,
 			p2y = p1y;
 	}
 
-	pRes->x = p2x + p1x * newx1;
-	pRes->y = p2y + p1y * newx1;
+	pRes->x = p2x + p1x * newmult;
+	pRes->y = p2y + p1y * newmult;
 
 	return pRes;
 }

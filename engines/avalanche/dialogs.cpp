@@ -34,6 +34,12 @@
 
 namespace Avalanche {
 
+const Dialogs::TuneType Dialogs::kTune = {
+	kPitchHigher, kPitchHigher, kPitchLower, kPitchSame, kPitchHigher, kPitchHigher, kPitchLower, kPitchHigher, kPitchHigher, kPitchHigher,
+	kPitchLower, kPitchHigher, kPitchHigher, kPitchSame, kPitchHigher, kPitchLower, kPitchLower, kPitchLower, kPitchLower, kPitchHigher,
+	kPitchHigher, kPitchLower, kPitchLower, kPitchLower, kPitchLower, kPitchSame, kPitchLower, kPitchHigher, kPitchSame, kPitchLower, kPitchHigher
+};
+
 // A quasiped defines how people who aren't sprites talk. For example, quasiped
 // "A" is Dogfood. The rooms aren't stored because I'm leaving that to context.
 const QuasipedType Dialogs::kQuasipeds[16] = {
@@ -270,7 +276,7 @@ bool Dialogs::theyMatch(TuneType &played) {
 	byte mistakes = 0;
 
 	for (unsigned int i = 0; i < sizeof(played); i++) {
-		if (played[i] != _vm->kTune[i])
+		if (played[i] != kTune[i])
 			mistakes++;
 	}
 

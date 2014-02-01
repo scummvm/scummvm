@@ -195,6 +195,8 @@ bool ModalIntro::init(int counterdiff) {
 }
 
 void ModalIntro::update() {
+	warning("STUB: ModalIntro::update()");
+
 	if (g_fp->_currentScene) {
 		if (_introFlags & 1) {
 			//sceneFade(virt, g_currentScene, 1);
@@ -381,7 +383,7 @@ void ModalMap::initMap() {
 	PictureObject *pic;
 
 	for (int i = 0; i < 200; i++) {
-		if (!g_fp->_mapTable[i] >> 16)
+		if (!(g_fp->_mapTable[i] >> 16))
 			break;
 
 		pic = _mapScene->getPictureObjectById(g_fp->_mapTable[i] >> 16, 0);
@@ -560,12 +562,209 @@ void FullpipeEngine::openMap() {
 	}
 }
 
+ModalFinal::ModalFinal() {
+	_flags = 0;
+	_counter = 255;
+	_sfxVolume = g_fp->_sfxVolume;
+}
+
+ModalFinal::~ModalFinal() {
+	if (g_vars->sceneFinal_var01) {
+		g_fp->_gameLoader->unloadScene(SC_FINAL2);
+		g_fp->_gameLoader->unloadScene(SC_FINAL3);
+		g_fp->_gameLoader->unloadScene(SC_FINAL4);
+
+		g_fp->_currentScene = g_fp->accessScene(SC_FINAL1);
+
+		g_fp->stopAllSounds();
+
+		g_vars->sceneFinal_var01 = 0;
+	}
+
+	g_fp->_sfxVolume = _sfxVolume;
+}
+
+bool ModalFinal::init(int counterdiff) {
+	if (g_vars->sceneFinal_var01) {
+		g_fp->_gameLoader->updateSystems(42);
+
+		return true;
+	}
+
+	if (_counter > 0) {
+		_flags |= 2u;
+
+		g_fp->_gameLoader->updateSystems(42);
+
+		return true;
+	}
+
+	unloadScenes();
+
+	g_fp->_modalObject = new ModalCredits();
+
+	return true;
+}
+
+void ModalFinal::unloadScenes() {
+	g_fp->_gameLoader->unloadScene(SC_FINAL2);
+	g_fp->_gameLoader->unloadScene(SC_FINAL3);
+	g_fp->_gameLoader->unloadScene(SC_FINAL4);
+
+	g_fp->_currentScene = g_fp->accessScene(SC_FINAL1);
+
+	g_fp->stopAllSounds();
+}
+
+bool ModalFinal::handleMessage(ExCommand *cmd) {
+	if (cmd->_messageKind == 17 && cmd->_messageNum == 36 && cmd->_keyCode == 27) {
+		g_fp->_modalObject = new ModalMainMenu();
+		g_fp->_modalObject->_parentObj = this;
+
+		return true;
+	}
+
+	return false;
+}
+
+void ModalFinal::update() {
+	if (g_fp->_currentScene) {
+		g_fp->_currentScene->draw();
+
+		if (_flags & 1) {
+			g_fp->drawAlphaRectangle(0, 0, 800, 600, 0xff - _counter);
+
+			_counter += 10;
+
+			if (_counter >= 255) {
+				_counter = 255;
+				_flags &= 0xfe;
+			}
+		} else {
+			if (!(_flags & 2))
+				return;
+
+			g_fp->drawAlphaRectangle(0, 0, 800, 600, 0xff - _counter);
+			_counter -= 10;
+
+			if (_counter <= 0) {
+				_counter = 0;
+				_flags &= 0xFD;
+			}
+		}
+
+		g_fp->_sfxVolume = _counter * (_sfxVolume + 3000) / 255 - 3000;
+
+		g_fp->updateSoundVolume();
+	}
+}
+
+ModalCredits::ModalCredits() {
+	Common::Point point;
+
+	_sceneTitles = g_fp->accessScene(SC_TITLES);
+
+	_creditsPic = _sceneTitles->getPictureObjectById(PIC_TTL_CREDITS, 0);
+	_creditsPic->_flags |= 4;
+
+	_fadeIn = true;
+	_fadeOut = false;
+
+	_creditsPic->getDimensions(&point);
+
+	_countdown = point.y / 2 + 470;
+	_sfxVolume = g_fp->_sfxVolume;
+
+	_currY = 630;
+	_maxY = -1000 - point.y;
+
+	_currX = 400 - point.x / 2;
+
+	_creditsPic->setOXY(_currX, _currY);
+}
+
+ModalCredits::~ModalCredits() {
+	g_fp->_gameLoader->unloadScene(SC_TITLES);
+
+	g_fp->_sfxVolume = _sfxVolume;
+}
+
+bool ModalCredits::handleMessage(ExCommand *cmd) {
+	if (cmd->_messageKind == 17 && cmd->_messageNum == 36 && cmd->_keyCode == 27) {
+		_fadeIn = false;
+
+		return true;
+	}
+
+	return false;
+}
+
+bool ModalCredits::init(int counterdiff) {
+	if (_fadeIn || _fadeOut) {
+		_countdown--;
+
+		if (_countdown < 0)
+			_fadeIn = false;
+
+		_creditsPic->setOXY(_currX, _currY);
+
+		if (_currY > _maxY)
+			_currY -= 2;
+	} else {
+		if (_parentObj)
+			return 0;
+
+		ModalMainMenu *menu = new ModalMainMenu;
+
+		g_fp->_modalObject = menu;
+
+		menu->_field_34 = 1;
+	}
+
+	return true;
+}
+
+void ModalCredits::update() {
+	warning("STUB: ModalCredits::update()");
+
+	if (_fadeOut) {
+		if (_fadeIn) {
+			_sceneTitles->draw();
+
+			return;
+		}
+	} else if (_fadeIn) {
+		//sceneFade(virt, this->_sceneTitles, 1); // TODO
+		_fadeOut = 1;
+
+		return;
+	}
+
+	if (_fadeOut) {
+		//sceneFade(virt, this->_sceneTitles, 0); // TODO
+		_fadeOut = 0;
+		return;
+	}
+
+	_sceneTitles->draw();
+}
+
+ModalMainMenu::ModalMainMenu() {
+	warning("STUB: ModalMainMenu::ModalMainMenu()");
+
+	_field_34 = 0;
+}
+
 void FullpipeEngine::openHelp() {
 	warning("STUB: FullpipeEngine::openHelp()");
 }
 
 void FullpipeEngine::openMainMenu() {
-	warning("STUB: FullpipeEngine::openMainMenu()");
+	ModalMainMenu *menu = new ModalMainMenu;
+
+	menu->_parentObj = g_fp->_modalObject;
+
+	g_fp->_modalObject = menu;
 }
 
 } // End of namespace Fullpipe

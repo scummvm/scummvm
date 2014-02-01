@@ -295,7 +295,7 @@ bool PluginManagerUncached::loadPluginFromGameId(const Common::String &gameId) {
 		if (domain->contains(gameId)) {
 			Common::String filename = (*domain)[gameId];
 
-		    if (loadPluginByFileName(filename)) {
+			if (loadPluginByFileName(filename)) {
 				return true;
 			}
 		}

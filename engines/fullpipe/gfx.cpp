@@ -979,6 +979,9 @@ void Bitmap::putDibCB(int32 *palette) {
 
 	byte *srcPtr = &_pixels[pitch * (endy - _y)];
 
+	if (endy - _y < _height)
+		srcPtr = &_pixels[pitch * (_height - 1)];
+
 	int starty = _y;
 	if (starty < 0) {
 		starty = 0;
@@ -992,7 +995,7 @@ void Bitmap::putDibCB(int32 *palette) {
 	}
 
 	if (_flags & 0x1000000) {
-		for (int y = starty; y < endy; srcPtr -= pitch, y++) {
+		for (int y = starty; y <= endy; srcPtr -= pitch, y++) {
 			curDestPtr = (uint16 *)g_fp->_backgroundSurface.getBasePtr(startx, y);
 			copierKeyColor(curDestPtr, srcPtr, endx - startx + 1, _flags & 0xff, (int32 *)palette, cb05_format);
 		}
@@ -1293,6 +1296,10 @@ DynamicPhase *Shadows::findSize(int width, int height) {
 		}
 	}
 	return _items[idx].dynPhase;
+}
+
+void FullpipeEngine::drawAlphaRectangle(int x1, int y1, int x2, int y2, int alpha) {
+	warning("STUB: FullpipeEngine::drawAlphaRectangle()");
 }
 
 } // End of namespace Fullpipe

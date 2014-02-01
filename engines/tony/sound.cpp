@@ -88,7 +88,7 @@ FPSound::~FPSound() {
 bool FPSound::createStream(FPStream **streamPtr) {
 	(*streamPtr) = new FPStream(_soundSupported);
 
-	return (*streamPtr != NULL);
+	return true;
 }
 
 /**

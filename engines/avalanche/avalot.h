@@ -38,9 +38,6 @@ class AvalancheEngine;
 static const byte kObjectNum = 18; // always preface with a #
 static const int16 kCarryLimit = 12;  // carry limit
 
-static const int16 kNumlockCode = 32;  // Code for Num Lock
-static const int16 kMouseSize = 134;
-
 struct PedType {
 	int16 _x, _y;
 	Direction _direction;
@@ -59,8 +56,6 @@ struct LineType : public FieldType {
 	Color _color;
 };
 
-typedef int8 TuneType[31];
-
 struct QuasipedType {
 	byte   _whichPed;
 	Color  _textColor;
@@ -68,15 +63,6 @@ struct QuasipedType {
 	Color  _backgroundColor;
 	People _who;
 };
-
-#if 0
-struct Sundry { // Things which must be saved over a backtobootstrap, outside DNA.
-	Common::String _qEnidFilename;
-	bool _qSoundFx;
-	byte _qThinks;
-	bool _qThinkThing;
-};
-#endif
 
 } // End of namespace Avalanche
 

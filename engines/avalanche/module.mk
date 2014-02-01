@@ -17,7 +17,8 @@ MODULE_OBJS = \
 	sound.o \
 	timer.o \
 	nim.o \
-	clock.o
+	clock.o \
+	ghostroom.o
 	
 # This module can be built as a plugin
 ifeq ($(ENABLE_AVALANCHE), DYNAMIC_PLUGIN)

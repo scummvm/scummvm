@@ -188,7 +188,7 @@ void OSystem_Wii::initEvents() {
 	_padAcceleration = 9 - ConfMan.getInt("wii_pad_acceleration");
 
 #ifdef USE_WII_KBD
-	_kbd_active = KEYBOARD_Init() >= 0;
+	_kbd_active = KEYBOARD_Init(NULL) >= 0;
 #endif
 }
 

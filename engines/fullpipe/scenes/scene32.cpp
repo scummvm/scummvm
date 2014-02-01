@@ -88,7 +88,7 @@ void scene32_initScene(Scene *sc) {
 	}
 
 	g_fp->lift_setButton(sO_Level9, ST_LBN_9N);
-	g_fp->lift_sub5(sc, QU_SC32_ENTERLIFT, QU_SC32_EXITLIFT);
+	g_fp->lift_init(sc, QU_SC32_ENTERLIFT, QU_SC32_EXITLIFT);
 
 	g_fp->initArcadeKeys("SC_32");
 }
@@ -291,7 +291,7 @@ int sceneHandler32(ExCommand *cmd) {
 		break;
 
 	case MSG_LIFT_CLICKBUTTON:
-		g_fp->lift_animation3();
+		g_fp->lift_clickButton();
 		break;
 
 	case MSG_SC33_TRYKUBIK:
@@ -339,7 +339,7 @@ int sceneHandler32(ExCommand *cmd) {
 		break;
 
 	case 64:
-		g_fp->lift_sub05(cmd);
+		g_fp->lift_hoverButton(cmd);
 		break;
 
 	case MSG_SC6_INSTHANDLE:
@@ -403,7 +403,7 @@ int sceneHandler32(ExCommand *cmd) {
 			StaticANIObject *ani = g_fp->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
 
 			if (ani && ani->_id == ANI_LIFTBUTTON) {
-				g_fp->lift_sub1(ani);
+				g_fp->lift_animateButton(ani);
 
 				cmd->_messageKind = 0;
 				break;

@@ -76,11 +76,6 @@ namespace Avalanche {
 
 const char AvalancheEngine::kSpludwicksOrder[3] = {kObjectOnion, kObjectInk, kObjectMushroom};
 const uint16 AvalancheEngine::kNotes[12] = {196, 220, 247, 262, 294, 330, 350, 392, 440, 494, 523, 587};
-const TuneType AvalancheEngine::kTune = {
-	kPitchHigher, kPitchHigher, kPitchLower, kPitchSame, kPitchHigher, kPitchHigher, kPitchLower, kPitchHigher, kPitchHigher, kPitchHigher,
-	kPitchLower, kPitchHigher, kPitchHigher, kPitchSame, kPitchHigher, kPitchLower, kPitchLower, kPitchLower, kPitchLower, kPitchHigher,
-	kPitchHigher, kPitchLower, kPitchLower, kPitchLower, kPitchLower, kPitchSame, kPitchLower, kPitchHigher, kPitchSame, kPitchLower, kPitchHigher
-};
 
 Room AvalancheEngine::_whereIs[29] = {
 	// The Lads
@@ -256,13 +251,6 @@ void AvalancheEngine::init() {
 		for (int j = 0; j < 2; j++)
 			_also[i][j] = nullptr;
 	}
-
-#if 0
-	if (_vm->_enhanced->atbios)
-		atkey = "f1";
-	else
-		atkey = "alt-";
-#endif
 
 	_letMeOut = false;
 	_currentMouse = 177;
@@ -1287,7 +1275,7 @@ void AvalancheEngine::minorRedraw() {
 }
 
 void AvalancheEngine::majorRedraw() {
-	warning("STUB: major_redraw()");
+	_graphics->refreshScreen();
 }
 
 uint16 AvalancheEngine::bearing(byte whichPed) {

@@ -724,14 +724,13 @@ int Vocabulary::parseNodes(int *i, int *pos, int type, int nr, int argc, const c
 
 		newPos = parseNodes(i, pos, nextToken, nextValue, argc, argv);
 
+		if (newPos == -1)
+			return -1;
+
 		if (j == 0)
 			 _parserNodes[oldPos].left = &_parserNodes[newPos];
 		else
 			 _parserNodes[oldPos].right = &_parserNodes[newPos];
-
-
-		if (newPos == -1)
-			return -1;
 	}
 
 	const char *token = argv[(*i)++];

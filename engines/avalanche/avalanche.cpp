@@ -56,6 +56,7 @@ AvalancheEngine::AvalancheEngine(OSystem *syst, const AvalancheGameDescription *
 	_closing = nullptr;
 	_sound = nullptr;
 	_nim = nullptr;
+	_ghostroom = nullptr;
 
 	_platform = gd->desc.platform;
 	initVariables();
@@ -79,6 +80,7 @@ AvalancheEngine::~AvalancheEngine() {
 	delete _closing;
 	delete _sound;
 	delete _nim;
+	delete _ghostroom;
 
 	for (int i = 0; i < 31; i++) {
 		for (int j = 0; j < 2; j++) {
@@ -162,6 +164,7 @@ Common::ErrorCode AvalancheEngine::initialize() {
 	_closing = new Closing(this);
 	_sound = new SoundHandler(this);
 	_nim = new Nim(this);
+	_ghostroom = new GhostRoom(this);
 
 	_graphics->init();
 	_dialogs->init();
@@ -532,75 +535,9 @@ Common::Error AvalancheEngine::run() {
 
 	do {
 		runAvalot();
-
-#if 0
-		switch (_storage._operation) {
-		case kRunShootemup:
-			run("seu.avx", kJsb, kBflight, kNormal);
-			break;
-		case kRunDosshell:
-			dosShell();
-			break;
-		case kRunGhostroom:
-			run("g-room.avx", kJsb, kNoBflight, kNormal);
-			break;
-		case kRunGolden:
-			run("golden.avx", kJsb, kBflight, kMusical);
-			break;
-		}
-#endif
-
 	} while (!_letMeOut && !shouldQuit());
 
 	return Common::kNoError;
 }
-
-#if 0
-void AvalancheEngine::run(Common::String what, bool withJsb, bool withBflight, Elm how) {
-	// Probably there'll be no need of this function, as all *.AVX-es will become classes.
-	warning("STUB: run(%s)", what.c_str());
-}
-
-Common::String AvalancheEngine::elmToStr(Elm how) {
-	switch (how) {
-	case kNormal:
-	case kMusical:
-		return Common::String("jsb");
-	case kRegi:
-		return Common::String("REGI");
-	case kElmpoyten:
-		return Common::String("ELMPOYTEN");
-	// Useless, but silent a warning
-	default:
-		return Common::String("");
-	}
-}
-
-// Same as keypressed1().
-void AvalancheEngine::flushBuffer() {
-	warning("STUB: flushBuffer()");
-}
-
-void AvalancheEngine::dosShell() {
-	warning("STUB: dosShell()");
-}
-
-// Needed in dos_shell(). TODO: Remove later.
-Common::String AvalancheEngine::commandCom() {
-	warning("STUB: commandCom()");
-	return ("STUB: commandCom()");
-}
-
-// Needed for run_avalot()'s errors. TODO: Remove later.
-void AvalancheEngine::explain(byte error) {
-	warning("STUB: explain()");
-}
-
-// Needed later.
-void AvalancheEngine::quit() {
-	cursorOn();
-}
-
-#endif
 
 } // End of namespace Avalanche

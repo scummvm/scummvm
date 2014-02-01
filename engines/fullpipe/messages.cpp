@@ -610,6 +610,23 @@ void MessageQueue::changeParam28ForObjectId(int objId, int oldParam28, int newPa
     }
 }
 
+int MessageQueue::activateExCommandsByKind(int kind) {
+	int res = 0;
+
+	for (uint i = 0; i < getCount(); i++) {
+		ExCommand *ex = getExCommandByIndex(i);
+
+		if (ex->_messageKind == kind) {
+			ex->_messageKind = 0;
+			ex->_excFlags |= 1;
+
+			res++;
+		}
+	}
+
+	return res;
+}
+
 MessageQueue *GlobalMessageQueueList::getMessageQueueById(int id) {
 	for (Common::Array<MessageQueue *>::iterator s = begin(); s != end(); ++s) {
 		if ((*s)->_id == id)

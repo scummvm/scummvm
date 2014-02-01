@@ -36,6 +36,7 @@
 // Video Codecs
 #include "video/codecs/cinepak.h"
 #include "video/codecs/indeo3.h"
+#include "video/codecs/mjpeg.h"
 #include "video/codecs/mpeg.h"
 #include "video/codecs/msvideo1.h"
 #include "video/codecs/msrle.h"
@@ -82,6 +83,7 @@ namespace Video {
 #define ID_IV32 MKTAG('i','v','3','2')
 #define ID_DUCK MKTAG('D','U','C','K')
 #define ID_MPG2 MKTAG('m','p','g','2')
+#define ID_MJPG MKTAG('m','j','p','g')
 
 // Stream Types
 enum {
@@ -786,6 +788,8 @@ Codec *AVIDecoder::AVIVideoTrack::createCodec() {
 	case ID_MPG2:
 		return new MPEGDecoder();
 #endif
+	case ID_MJPG:
+		return new MJPEGDecoder();
 	default:
 		warning("Unknown/Unhandled compression format \'%s\'", tag2str(_vidsHeader.streamHandler));
 	}

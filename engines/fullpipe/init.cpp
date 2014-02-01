@@ -116,7 +116,7 @@ void FullpipeEngine::initObjectStates() {
 	setObjectState(sO_BellyInflater, getObjectEnumState(sO_BellyInflater, sO_WithCork));
 	setObjectState(sO_Jawcrucnher, getObjectEnumState(sO_Jawcrucnher, sO_WithoutCarpet));
 	setObjectState(sO_Guard_1, getObjectEnumState(sO_Guard_1, sO_On));
-	setObjectState(sO_Gurad_2, getObjectEnumState(sO_Gurad_2, sO_On));
+	setObjectState(sO_Guard_2, getObjectEnumState(sO_Guard_2, sO_On));
 	setObjectState(sO_Guard_3, getObjectEnumState(sO_Guard_3, sO_On));
 	setObjectState(sO_Bottle_38, getObjectEnumState(sO_Bottle_38, sO_OnTheTable));
 	setObjectState(sO_Boss, getObjectEnumState(sO_Boss, sO_WithHammer));

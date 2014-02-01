@@ -82,6 +82,13 @@ FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc)
 
 	_modalObject = 0;
 
+	_liftEnterMQ = 0;
+	_liftExitMQ = 0;
+	_lift = 0;
+	_lastLiftButton = 0;
+	_liftX = 0;
+	_liftY = 0;
+
 	_gameContinue = true;
 	_needRestart = false;
 	_flgPlayIntro = true;

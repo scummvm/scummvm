@@ -203,13 +203,13 @@ void CharacterDialog::show() {
 	GfxButton *btn = NULL;
 	int oldCharacter = R2_GLOBALS._player._characterIndex;
 	switch (oldCharacter) {
-	case 1:
+	case R2_QUINN:
 		btn = &dlg->_btnQuinn;
 		break;
-	case 2:
+	case R2_SEEKER:
 		btn = &dlg->_btnSeeker;
 		break;
-	case 3:
+	case R2_MIRANDA:
 		btn = &dlg->_btnMiranda;
 		break;
 	default:
@@ -314,6 +314,9 @@ void CharacterDialog::show() {
 				break;
 			}
 		}
+
+		// Reset the current cursor
+		R2_GLOBALS._events.setCursor(CURSOR_USE);
 
 		// Change to whichever scene the newly selected character is in
 		R2_GLOBALS._sceneManager.changeScene(R2_GLOBALS._player._characterScene[R2_GLOBALS._player._characterIndex]);

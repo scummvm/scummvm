@@ -252,7 +252,7 @@ Common::String SciEngine::getSciLanguageString(const Common::String &str, kLangu
 		}
 	}
 
-	if (seeker)
+	if (*seeker)
 		return Common::String(str.c_str(), seeker - str.c_str());
 	else
 		return str;

@@ -94,6 +94,7 @@ Common::List<Graphics::PixelFormat> OSystem_Android::getSupportedFormats() const
 	Common::List<Graphics::PixelFormat> res;
 	res.push_back(GLES565Texture::pixelFormat());
 	res.push_back(GLES5551Texture::pixelFormat());
+	res.push_back(GLES8888Texture::pixelFormat());
 	res.push_back(GLES4444Texture::pixelFormat());
 	res.push_back(Graphics::PixelFormat::createFormatCLUT8());
 
@@ -147,6 +148,8 @@ void OSystem_Android::initTexture(GLESBaseTexture **texture,
 			*texture = new GLES565Texture();
 		else if (format_new == GLES5551Texture::pixelFormat())
 			*texture = new GLES5551Texture();
+		else if (format_new == GLES8888Texture::pixelFormat())
+			*texture = new GLES8888Texture();
 		else if (format_new == GLES4444Texture::pixelFormat())
 			*texture = new GLES4444Texture();
 		else {

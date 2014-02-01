@@ -601,11 +601,10 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 	}// switch (info.command())
 }
 
-void MidiParser_SCI::processEvent(const EventInfo &info, bool fireEvents) {
+bool MidiParser_SCI::processEvent(const EventInfo &info, bool fireEvents) {
 	if (!fireEvents) {
 		// We don't do any processing that should be done while skipping events
-		MidiParser::processEvent(info, fireEvents);
-		return;
+		return MidiParser::processEvent(info, fireEvents);
 	}
 
 	switch (info.command()) {
@@ -657,7 +656,7 @@ void MidiParser_SCI::processEvent(const EventInfo &info, bool fireEvents) {
 			}
 
 			// Done with this event.
-			return;
+			return true;
 		}
 
 		// Break to let parent handle the rest.
@@ -684,7 +683,7 @@ void MidiParser_SCI::processEvent(const EventInfo &info, bool fireEvents) {
 			switch (info.basic.param1) {
 			case kSetReverb:
 				// Already handled above
-				return;
+				return true;
 			case kMidiHold:
 				// Check if the hold ID marker is the same as the hold ID
 				// marker set for that song by cmdSetSoundHold.
@@ -692,9 +691,9 @@ void MidiParser_SCI::processEvent(const EventInfo &info, bool fireEvents) {
 				if (info.basic.param2 == _pSnd->hold) {
 					jumpToTick(_loopTick, false, false);
 					// Done with this event.
-					return;
+					return true;
 				}
-				return;
+				return true;
 			case kUpdateCue:
 				if (!_jumpingToTick) {
 					int inc;
@@ -715,17 +714,17 @@ void MidiParser_SCI::processEvent(const EventInfo &info, bool fireEvents) {
 					debugC(4, kDebugLevelSound, "datainc %04x", inc);
 
 				}
-				return;
+				return true;
 			case kResetOnPause:
 				_resetOnPause = info.basic.param2;
-				return;
+				return true;
 			// Unhandled SCI commands
 			case 0x46: // LSL3 - binoculars
 			case 0x61: // Iceman (AdLib?)
 			case 0x73: // Hoyle
 			case 0xD1: // KQ4, when riding the unicorn
 				// Obscure SCI commands - ignored
-				return;
+				return true;
 			// Standard MIDI commands
 			case 0x01:	// mod wheel
 			case 0x04:	// foot controller
@@ -740,10 +739,10 @@ void MidiParser_SCI::processEvent(const EventInfo &info, bool fireEvents) {
 			case 0x4B:	// voice mapping
 				// TODO: is any support for this needed at the MIDI parser level?
 				warning("Unhanded SCI MIDI command 0x%x - voice mapping (parameter %d)", info.basic.param1, info.basic.param2);
-				return;
+				return true;
 			default:
 				warning("Unhandled SCI MIDI command 0x%x (parameter %d)", info.basic.param1, info.basic.param2);
-				return;
+				return true;
 			}
 
 		}
@@ -762,7 +761,7 @@ void MidiParser_SCI::processEvent(const EventInfo &info, bool fireEvents) {
 				jumpToTick(_loopTick);
 
 				// Done with this event.
-				return;
+				return true;
 
 			} else {
 				_pSnd->status = kSoundStopped;
@@ -782,7 +781,7 @@ void MidiParser_SCI::processEvent(const EventInfo &info, bool fireEvents) {
 
 
 	// Let parent handle the rest
-	MidiParser::processEvent(info, fireEvents);
+	return MidiParser::processEvent(info, fireEvents);
 }
 
 byte MidiParser_SCI::getSongReverb() {

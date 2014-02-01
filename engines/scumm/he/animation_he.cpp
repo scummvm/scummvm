@@ -57,7 +57,7 @@ int MoviePlayer::getImageNum() {
 	return _wizResNum;
 }
 
-int MoviePlayer::load(const char *filename, int flags, int image) {
+int MoviePlayer::load(const Common::String &filename, int flags, int image) {
 	if (_video->isVideoLoaded())
 		_video->close();
 
@@ -65,13 +65,13 @@ int MoviePlayer::load(const char *filename, int flags, int image) {
 	_video->setDefaultHighColorFormat(g_system->getScreenFormat());
 
 	if (!_video->loadFile(filename)) {
-		warning("Failed to load video file %s", filename);
+		warning("Failed to load video file %s", filename.c_str());
 		return -1;
 	}
 
 	_video->start();
 
-	debug(1, "Playing video %s", filename);
+	debug(1, "Playing video %s", filename.c_str());
 
 	if (flags & 2)
 		_vm->_wiz->createWizEmptyImage(image, 0, 0, _video->getWidth(), _video->getHeight());

@@ -2993,7 +2993,7 @@ void Scene300::Action4::signal() {
 bool Scene300::QuinnWorkstation::startAction(CursorType action, Event &event) {
 	switch (action) {
 	case CURSOR_USE:
-		if (R2_GLOBALS._player._characterIndex != 1)
+		if (R2_GLOBALS._player._characterIndex != R2_QUINN)
 			SceneItem::display2(300, 46);
 		else if (R2_GLOBALS.getFlag(44)) {
 			R2_GLOBALS._player.setAction(NULL);
@@ -3024,7 +3024,7 @@ bool Scene300::QuinnWorkstation::startAction(CursorType action, Event &event) {
 bool Scene300::MirandaWorkstation::startAction(CursorType action, Event &event) {
 	switch (action) {
 	case CURSOR_USE:
-		if (R2_GLOBALS._player._characterIndex != 3)
+		if (R2_GLOBALS._player._characterIndex != R2_MIRANDA)
 			SceneItem::display2(300, 49);
 		else
 			R2_GLOBALS._sceneManager.changeScene(325);
@@ -3054,7 +3054,7 @@ bool Scene300::SeekerWorkstation::startAction(CursorType action, Event &event) {
 		break;
 
 	case CURSOR_USE:
-		if (R2_GLOBALS._player._characterIndex != 2)
+		if (R2_GLOBALS._player._characterIndex != R2_SEEKER)
 			SceneItem::display2(300, 48);
 		else
 			R2_GLOBALS._sceneManager.changeScene(325);
@@ -3465,7 +3465,7 @@ void Scene300::postInit(SceneObjectList *OwnerList) {
 	_background.setDetails(Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 300, 0, -1, -1, 1, NULL);
 
 	switch (R2_GLOBALS._player._characterIndex) {
-	case 1:
+	case R2_QUINN:
 		_sceneMode = 300;
 
 		switch (R2_GLOBALS._sceneManager._previousScene) {
@@ -3486,7 +3486,7 @@ void Scene300::postInit(SceneObjectList *OwnerList) {
 						R2_GLOBALS.clearFlag(60);
 						R2_GLOBALS._events.setCursor(CURSOR_ARROW);
 						_sceneMode = 16;
-						_stripManager.start(404, this);
+						_stripManager.start3(404, this, R2_GLOBALS._stripManager_lookupList);
 					} else {
 						R2_GLOBALS._player.enableControl();
 						R2_GLOBALS._player._canWalk = false;
@@ -3554,7 +3554,7 @@ void Scene300::postInit(SceneObjectList *OwnerList) {
 		}
 		break;
 
-	case 3:
+	case R2_MIRANDA:
 		if (R2_GLOBALS._sceneManager._previousScene == 1500) {
 			R2_GLOBALS._player._oldCharacterScene[R2_MIRANDA] = 3150;
 			R2_GLOBALS._player._characterScene[R2_MIRANDA] = 3150;
@@ -3639,7 +3639,7 @@ void Scene300::signal() {
 		default:
 			R2_GLOBALS._player.enableControl(CURSOR_TALK);
 
-			if ((R2_GLOBALS._player._characterIndex != 1) || R2_GLOBALS.getFlag(44))
+			if ((R2_GLOBALS._player._characterIndex != R2_QUINN) || R2_GLOBALS.getFlag(44))
 				R2_GLOBALS._player._canWalk = false;
 			break;
 		}
@@ -4151,11 +4151,22 @@ void Scene325::signal() {
 				--v;
 			if (_priorConsoleAction == 5)
 				v += 8;
+
 			if (R2_GLOBALS.getFlag(51) && (v == 2))
 				R2_GLOBALS.setFlag(57);
 
 			if (R2_GLOBALS.getFlag(44) && !R2_GLOBALS.getFlag(51)) {
 				if (v != 13) {
+					if (_priorConsoleAction == 6) {
+					// Fix for original game bug. 
+					// The passive short scan geographical and astronomical sentences 
+					// are inverted in the original game.
+						if (v == 6)
+							v = 8;
+						else if (v == 8)
+							v = 6;
+					}
+
 					setMessage(328, v);
 				} else {
 					_scannerLocation = 864;
@@ -4513,6 +4524,7 @@ void Scene325::consoleAction(int id) {
 	case 14:
 		if (R2_GLOBALS.getFlag(55)) {
 			consoleAction(4);
+			// Workaround for original game bug.
 			// Empty message crashing the game. It should be a warning message forbidding to switch to active scan
 			// SceneItem::display2(329, 17);
 		} else {

@@ -259,11 +259,15 @@ void GLESTexture::fillBuffer(uint32 color) {
 	assert(_surface.getPixels());
 
 	if (_pixelFormat.bytesPerPixel == 1 ||
-			((color & 0xff) == ((color >> 8) & 0xff)))
+			(_pixelFormat.bytesPerPixel == 2 &&
+			((color & 0xff) == ((color >> 8) & 0xff))))
 		memset(_pixels, color & 0xff, _surface.pitch * _surface.h);
-	else
-		Common::fill(_pixels, _pixels + _surface.pitch * _surface.h,
+	else if (_pixelFormat.bytesPerPixel == 2)
+		Common::fill((uint16 *)_pixels, (uint16 *)(_pixels + _surface.pitch * _surface.h),
 						(uint16)color);
+	else
+		Common::fill((uint32 *)_pixels, (uint32 *)(_pixels + _surface.pitch * _surface.h),
+						color);
 
 	setDirty();
 }
@@ -332,6 +336,13 @@ GLES565Texture::GLES565Texture() :
 }
 
 GLES565Texture::~GLES565Texture() {
+}
+
+GLES8888Texture::GLES8888Texture() :
+	GLESTexture(GL_RGBA, GL_UNSIGNED_BYTE, pixelFormat()) {
+}
+
+GLES8888Texture::~GLES8888Texture() {
 }
 
 GLESFakePaletteTexture::GLESFakePaletteTexture(GLenum glFormat, GLenum glType,

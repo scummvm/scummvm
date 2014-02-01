@@ -31,7 +31,7 @@
 namespace Fullpipe {
 
 Inventory::~Inventory() {
-	warning("STUB: Inventory::~Inventory()");
+	_itemsPool.clear();
 }
 
 bool Inventory::load(MfcArchive &file) {
@@ -90,7 +90,7 @@ Inventory2::Inventory2() {
 }
 
 Inventory2::~Inventory2() {
-	warning("STUB: Inventory2::~Inventory2()");
+	removeMessageHandler(125, -1);
 }
 
 bool Inventory2::loadPartial(MfcArchive &file) { // Inventory2_SerializePartially
@@ -123,7 +123,25 @@ void Inventory2::removeItem(int itemId, int count) {
 }
 
 void Inventory2::removeItem2(Scene *sceneObj, int itemId, int x, int y, int priority) {
-	warning("STUB: void removeItem2(sc, %d, %d, %d, %d)", itemId, x, y, priority);
+	int idx = getInventoryItemIndexById(itemId);
+
+	if (idx >= 0) {
+		if (_inventoryItems[idx]->itemId >> 16) {
+			removeItem(itemId, 1);
+
+			Scene *sc = g_fp->accessScene(_sceneId);
+
+			if (sc) {
+				StaticANIObject *ani = new StaticANIObject(sc->getStaticANIObject1ById(itemId, -1));
+
+				sceneObj->addStaticANIObject(ani, 1);
+
+				ani->_statics = (Statics *)ani->_staticsList[0];
+				ani->setOXY(x, y);
+				ani->_priority = priority;
+			}
+		}
+	}
 }
 
 int Inventory2::getCountItemsWithId(int itemId) {

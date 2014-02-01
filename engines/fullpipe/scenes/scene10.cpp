@@ -43,7 +43,7 @@ void scene10_initScene(Scene *sc) {
 	g_vars->scene10_ladder = sc->getPictureObjectById(PIC_SC10_LADDER, 0);
 
 	g_fp->lift_setButton(sO_Level1, ST_LBN_1N);
-	g_fp->lift_sub5(sc, QU_SC10_ENTERLIFT, QU_SC10_EXITLIFT);
+	g_fp->lift_init(sc, QU_SC10_ENTERLIFT, QU_SC10_EXITLIFT);
 
 	if (g_fp->getObjectState(sO_Inflater) == g_fp->getObjectEnumState(sO_Inflater, sO_WithGum)) {
 		g_vars->scene10_hasGum = 1;
@@ -140,7 +140,7 @@ int sceneHandler10(ExCommand *ex) {
 		break;
 
 	case MSG_LIFT_CLICKBUTTON:
-		g_fp->lift_animation3();
+		g_fp->lift_clickButton();
 		break;
 
 	case MSG_SC10_LADDERTOBACK:
@@ -170,7 +170,7 @@ int sceneHandler10(ExCommand *ex) {
 		break;
 
 	case 64:
-		g_fp->lift_sub05(ex);
+		g_fp->lift_hoverButton(ex);
 		break;
 
 	case 29:
@@ -185,7 +185,7 @@ int sceneHandler10(ExCommand *ex) {
 			StaticANIObject *ani = g_fp->_currentScene->getStaticANIObjectAtPos(ex->_sceneClickX, ex->_sceneClickY);
 
 			if (ani && ani->_id == ANI_LIFTBUTTON) {
-				g_fp->lift_sub1(ani);
+				g_fp->lift_animateButton(ani);
 				ex->_messageKind = 0;
 
 				return 0;
