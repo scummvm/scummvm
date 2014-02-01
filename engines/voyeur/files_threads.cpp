@@ -391,6 +391,7 @@ void ThreadResource::parsePlayCommands() {
 					_vm->_voy.addAudioEventEnd();
 					_vm->_eventsManager.incrementTime(1);
 					_vm->_eventsManager.incrementTime(1);
+					_vm->_audioVideoId = -1;
 					parseIndex = 999;
 				}				
 			} 

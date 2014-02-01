@@ -621,10 +621,9 @@ void VoyeurEngine::playAudio(int audioId) {
 	_soundManager.stopVOCPlay();
 
 	_bVoy->freeBoltGroup(0x7F00);
-	flipPageAndWait();
+	(*_graphicsManager._vPort)->setupViewPort(NULL);
 
 	_voy._field478 &= ~0x10;
-	audioId = -1;
 	_voy._field470 = 129;
 }
 
