@@ -1678,7 +1678,7 @@ void Scene180::signal() {
 	case 24:
 	case 26:
 	case 46:
-		setSceneDelay((R2_GLOBALS._speechSubtitles & 1) ? 1 : 18);
+		setSceneDelay((R2_GLOBALS._speechSubtitles & SPEECH_TEXT) ? 1 : 18);
 		break;
 
 	case 13:
@@ -4313,7 +4313,7 @@ void Scene325::signal() {
 		if (_soundCount)
 			--_soundCount;
 
-		if (!_soundCount || (R2_GLOBALS._speechSubtitles == 2)) {
+		if (!_soundCount || !(R2_GLOBALS._speechSubtitles & SPEECH_VOICE)) {
 			_soundIndex = 0;
 			R2_GLOBALS._playStream.stop();
 		} else {
@@ -4700,7 +4700,7 @@ void Scene325::setMessage(int resNum, int lineNum) {
 
 		R2_GLOBALS._sceneObjects->draw();
 
-		if ((_soundCount != 0) && (R2_GLOBALS._speechSubtitles != 2)) {
+		if ((_soundCount != 0) && (R2_GLOBALS._speechSubtitles & SPEECH_VOICE)) {
 			_sceneMode = 15;
 			R2_GLOBALS._playStream.play(_soundQueue[_soundIndex++], this);
 		}
