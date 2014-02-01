@@ -359,7 +359,28 @@ void FullpipeEngine::lift_walkAndGo() {
 }
 
 void FullpipeEngine::lift_openLift() {
-	warning("STUB: FullpipeEngine::lift_openLift()");
+	if (_lift->_movement) {
+		if (_lift->_movement->_id == MV_LFT_OPEN) {
+			_lift->queueMessageQueue(0);
+		} else if (_lift->_movement->_id == MV_LFT_CLOSE) {
+			int idx = _lift->_movement->_currDynamicPhaseIndex;
+
+			_lift->changeStatics2(ST_LFT_CLOSED);
+			_lift->startAnim(MV_LFT_OPEN, 0, -1);
+
+			if (_lift->_movement->_currMovement)
+				_lift->_movement->setDynamicPhaseIndex(_lift->_movement->_currMovement->_dynamicPhases.size() - idx);
+			else
+				_lift->_movement->setDynamicPhaseIndex(_lift->_movement->_dynamicPhases.size() - idx);
+		} else {
+			_lift->changeStatics2(ST_LFT_CLOSED);
+			_lift->startAnim(MV_LFT_OPEN, 0, -1);
+		}
+	} else if (_lift->_statics->_staticsId == ST_LFT_OPEN_NEW) {
+		_lift->changeStatics2(ST_LFT_OPEN_NEW);
+	} else {
+		_lift->startAnim(MV_LFT_OPEN, 0, -1);
+	}
 }
 
 void FullpipeEngine::lift_clickButton() {
