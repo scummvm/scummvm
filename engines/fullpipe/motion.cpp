@@ -1879,14 +1879,8 @@ MessageQueue *MGM::genMovement(MGMInfo *mgminfo) {
 	if (st1idx != subOffset && !v69)
 		return 0;
 
-	point2.x = v18->x;
-	point2.y = v18->y;
-	point3.x = v19->x;
-	point3.y = v19->y;
-	v24 = mgminfo->y1 - mgminfo->y2 - v18->y - v19->y;
-	v99 = mgminfo->x1 - mgminfo->x2 - v18->x - v19->x;
-	v75 = v99;
-	v76 = v24;
+	v75 = mgminfo->x1 - mgminfo->x2 - v18->x - v19->x;
+	v76 = mgminfo->y1 - mgminfo->y2 - v18->y - v19->y;
 
 	mov->calcSomeXY(&point1, 0);
 	v26 = point1.x;
@@ -1894,28 +1888,27 @@ MessageQueue *MGM::genMovement(MGMInfo *mgminfo) {
 
 	if (mgminfo->flags & 0x40) {
 		v62 = mgminfo->field_10;
-		a2 = -1;
+		len = -1;
 		point1.x = v62 * v26;
 		point1.y = v62 * v27;
 	} else {
-		calcLength(&point, mov, v99, v24, &v62, &a2, 1);
+		calcLength(&point, mov, v75, v76, &v62, &len, 1);
 		point1.x = point.x;
 		point1.y = point.y;
 	}
 
 	if (!(mgminfo->flags & 2)) {
-		v32 = point3.x + mgminfo->x2;
-		a2 = -1;
+		len = -1;
 		point1.x = v62 * v26;
 		v75 = v62 * v26;
-		mgminfo->x1 = v62 * v26 + point2.x + v32;
+		mgminfo->x1 = mgminfo->x2 + v62 * v26 + v18->x + v19->x;
 	}
 
 	if (!(mgminfo->flags & 4)) {
 		point1.y = v62 * v27;
 		v76 = v62 * v27;
-		a2 = -1;
-		mgminfo->y1 = mgminfo->y2 + v62 * v27 + point2.y + point3.y;
+		len = -1;
+		mgminfo->y1 = mgminfo->y2 + v62 * v27 + v18->y + v19->y;
 	}
 
 	int px = 0;
@@ -1932,8 +1925,8 @@ MessageQueue *MGM::genMovement(MGMInfo *mgminfo) {
 	}
 
 	if (v62 > 0) {
-		px += mov->countPhasesWithFlag(a2, 1);
-		py += mov->countPhasesWithFlag(a2, 2);
+		px += mov->countPhasesWithFlag(len, 1);
+		py += mov->countPhasesWithFlag(len, 2);
 	}
 
 	if (v69) {
@@ -1956,25 +1949,25 @@ MessageQueue *MGM::genMovement(MGMInfo *mgminfo) {
 		y1 = 0;
 	}
 
-	y2 = v75 - point1.x - px * x1;
-	v78 = v38 - py * y1;
+	y2.x = v69 - px * x1;
+	y2.y = v38 - py * y1;
 
 	if (v75 - point1.x == px * x1)
-		x2 = 0;
+		x2.x = 0;
 	else
-		x2 = (v75 - point1.x - px * x1) / abs(v75 - point1.x - px * x1);
+		x2.x = (v69 - px * x1) / abs(v69 - px * x1);
 
 	if (v38 == py * y1)
-		v74 = 0;
+		x2.y = 0;
 	else
-		v74 = (v38 - py * y1) / abs(v38 - py * y1);
+		x2.y = (v38 - py * y1) / abs(v38 - py * y1);
 
 	MessageQueue *mq = new MessageQueue(g_fp->_globalMessageQueueList->compact());
 	ExCommand2 *ex2;
 
 	for (v42 = subIdx; v42 != st2idx; v42 = v43->staticsIndex) {
 		v43 = &(*(MGMSubItem **)((char *)&this->items->subItems + (unsigned int)v71))[v42 + st2idx * *(int *)((char *)&this->items->staticsListCount + (unsigned int)v71)];
-		ex2 = buildExCommand2(v43->movement, mgminfo->ani->go._id, x1, y1, (POINT *)&x2, (POINT *)&y2, -1);
+		ex2 = buildExCommand2(v43->movement, mgminfo->ani->go._id, x1, y1, &x2, &y2, -1);
 		ex2->_parId = mq->_id;
 		ex2->_keyCode = mgminfo->ani->_okeyCode;
 
@@ -1982,12 +1975,14 @@ MessageQueue *MGM::genMovement(MGMInfo *mgminfo) {
 	}
 
 	for (i = 0; i < v62; ++i) {
-		if (i == v62 - 1)
-			v47 = a2;
-		else
-			v47 = -1;
+		int plen;
 
-		ex2 = buildExCommand2(mov, mgminfo->ani->_id, x1, y1, (POINT *)&x2, (POINT *)&y2, v47);
+		if (i == v62 - 1)
+			plen = len;
+		else
+			plen = -1;
+
+		ex2 = buildExCommand2(mov, mgminfo->ani->_id, x1, y1, &x2, &y2, plen);
 		ex2->_parId = mq->_id;
 		ex2->_keyCode = mgminfo->ani->_okeyCode;
 
@@ -1997,7 +1992,7 @@ MessageQueue *MGM::genMovement(MGMInfo *mgminfo) {
 	for (j = st1idx; j != subOffset; j = v50->staticsIndex) {
 		v50 = &(*(MGMSubItem **)((char *)&this->items->subItems + (unsigned int)v71))[j + subOffset * *(int *)((char *)&this->items->staticsListCount + (unsigned int)v71)];
 
-		ex2 = buildExCommand2(v50->movement, mgminfo->ani->_id, x1, y1, (POINT *)&x2, (POINT *)&y2, -1);
+		ex2 = buildExCommand2(v50->movement, mgminfo->ani->_id, x1, y1, &x2, &y2, -1);
 		ex2->_parId = mq->_id;
 		ex2->_keyCode = mgminfo->ani->_okeyCode;
 
