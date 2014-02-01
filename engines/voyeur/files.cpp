@@ -705,8 +705,15 @@ RectResource::RectResource(const byte *src, int size) {
 	}
 
 	for (int i = 0; i < count; ++i, src += 8) {
-		_entries.push_back(Common::Rect(READ_LE_UINT16(src), READ_LE_UINT16(src + 2),
-			READ_LE_UINT16(src + 4), READ_LE_UINT16(src + 6)));
+		int x1 = READ_LE_UINT16(src);
+		int y1 = READ_LE_UINT16(src + 2);
+		int x2 = READ_LE_UINT16(src + 4); 
+		int y2 = READ_LE_UINT16(src + 6);
+
+		if (x2 >= x1 && y2 >= y1)
+			_entries.push_back(Common::Rect(x1, y1, x2, y2));
+		else
+			_entries.push_back(Common::Rect());
 	}
 
 	left = _entries[0].left;
