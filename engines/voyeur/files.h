@@ -513,8 +513,8 @@ private:
 	uint32 getSID(int sid);
 	void cardAction(const byte *p);
 	void doSTAMPCardAction();
-	bool goToStateID(int stackId, int sceneId);
-	bool goToState(int stackId, int sceneId);
+	bool goToStateID(int stackId, int id);
+	bool goToState(int stackId, int stateId);
 	const byte *cardPerform(const byte *card);
 	bool cardPerform2(const byte *p, int cardCmdId);
 	void savePrevious();
@@ -537,9 +537,9 @@ private:
 	 */
 	bool checkMansionScroll();
 public:
-	int _threadId;
-	int _controlIndex;
-	int _field4, _field6;
+	int _stateId;
+	int _stackId;
+	int _savedStateId, _savedStackId;
 	byte _flags;
 	int _field9;
 	int _fieldA[8];
@@ -562,8 +562,8 @@ public:
 	virtual ~ThreadResource() {}
 
 	void initThreadStruct(int idx, int id);
-	bool loadAStack(int idx);
-	void unloadAStack(int idx);
+	bool loadAStack(int stackId);
+	void unloadAStack(int stackId);
 	bool doState();
 
 	bool chooseSTAMPButton(int buttonId);

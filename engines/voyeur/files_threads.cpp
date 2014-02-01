@@ -39,20 +39,20 @@ void ThreadResource::init() {
 
 ThreadResource::ThreadResource(BoltFilesState &state, const byte *src):
 		_vm(state._vm) {
-	_threadId = READ_LE_UINT16(&src[0]);
-	_controlIndex = READ_LE_UINT16(&src[0]);
-	_field4 = READ_LE_UINT16(&src[0]);
-	_field6 = READ_LE_UINT16(&src[0]);
+	_stateId = READ_LE_UINT16(&src[0]);
+	_stackId = READ_LE_UINT16(&src[0]);
+	_savedStateId = READ_LE_UINT16(&src[0]);
+	_savedStackId = READ_LE_UINT16(&src[0]);
 	_flags = src[8];
 	_ctlPtr = nullptr;
 	_aptPos = Common::Point(-1, -1);
 }
 
 void ThreadResource::initThreadStruct(int idx, int id) {
-	_controlIndex = -1;
+	_stackId = -1;
 	if (loadAStack(idx)) {
-		_field4 = _field6 = -1;
-		_threadId = id;
+		_savedStateId = _savedStackId = -1;
+		_stateId = id;
 		_newSceneId = -1;
 		_newStackId = -1;
 
@@ -60,29 +60,29 @@ void ThreadResource::initThreadStruct(int idx, int id) {
 	}
 }
 
-bool ThreadResource::loadAStack(int idx) {
+bool ThreadResource::loadAStack(int stackId) {
 	if (_vm->_stampFlags & 1) {
-		unloadAStack(_controlIndex);
-		if  (!_useCount[idx]) {
-			BoltEntry &boltEntry = _vm->_stampLibPtr->boltEntry(_vm->_controlPtr->_memberIds[idx]);
+		unloadAStack(_stackId);
+		if  (!_useCount[stackId]) {
+			BoltEntry &boltEntry = _vm->_stampLibPtr->boltEntry(_vm->_controlPtr->_memberIds[stackId]);
 			if (!boltEntry._data)
 				return false;
 
-			_vm->_controlPtr->_entries[idx] = boltEntry._data;
+			_vm->_controlPtr->_entries[stackId] = boltEntry._data;
 		}
 
-		++_useCount[idx];
+		++_useCount[stackId];
 	}
 
-	_ctlPtr = _vm->_controlPtr->_entries[idx];
-	_controlIndex = idx;
+	_ctlPtr = _vm->_controlPtr->_entries[stackId];
+	_stackId = stackId;
 	return true;
 }
 
-void ThreadResource::unloadAStack(int idx) {
-	if ((_vm->_stampFlags & 1) && _useCount[idx]) {
-		if (--_useCount[idx] == 0) {
-			_vm->_stampLibPtr->freeBoltMember(_vm->_controlPtr->_memberIds[idx]);
+void ThreadResource::unloadAStack(int stackId) {
+	if ((_vm->_stampFlags & 1) && _useCount[stackId]) {
+		if (--_useCount[stackId] == 0) {
+			_vm->_stampLibPtr->freeBoltMember(_vm->_controlPtr->_memberIds[stackId]);
 		}
 	}
 }
@@ -111,12 +111,12 @@ bool ThreadResource::getStateInfo() {
 	_field9 = 0;
 	int id = READ_LE_UINT16(_ctlPtr);
 
-	if (id <= _threadId) {
+	if (id <= _stateId) {
 		_field9 |= 0x80;
 		return false;
 	} else {
 		uint32 fld = READ_LE_UINT32(_ctlPtr + 2);
-		fld += _threadId << 3;
+		fld += _stateId << 3;
 		_field46 = READ_LE_UINT32(_ctlPtr + fld + 4);
 		
 		fld = READ_LE_UINT32(_ctlPtr + fld);
@@ -930,7 +930,7 @@ const byte *ThreadResource::cardPerform(const byte *card) {
 	
 	case 45:
 		_newSceneId = _field46;
-		_newStackId = _controlIndex;
+		_newStackId = _stackId;
 		break;
 
 	case 46:
@@ -1543,34 +1543,34 @@ bool ThreadResource::checkMansionScroll() {
 	return result;
 }
 
-bool ThreadResource::goToStateID(int stackId, int sceneId) {
-	debugC(DEBUG_BASIC, kDebugScripts, "goToStateID - %d, %d", stackId, sceneId);
+bool ThreadResource::goToStateID(int stackId, int id) {
+	debugC(DEBUG_BASIC, kDebugScripts, "goToStateID - %d, %d", stackId, id);
 
 	// Save current stack
 	savePrevious();
 
-	if (_controlIndex == stackId || stackId == -1 || loadAStack(stackId)) {
+	if (_stackId == stackId || stackId == -1 || loadAStack(stackId)) {
 		// Now in the correct state
-		_threadId = getStateFromID(sceneId);
+		_stateId = getStateFromID(id);
 
-		if (_threadId != -1) {
+		if (_stateId != -1) {
 			return doState();
 		} else {
-			_threadId = _field4;
-			_controlIndex = _field6;
+			_stateId = _savedStateId;
+			_stackId = _savedStackId;
 		}
 	}
 
 	return false;
 }
 
-bool ThreadResource::goToState(int stackId, int sceneId) {
-	debugC(DEBUG_BASIC, kDebugScripts, "goToState - %d, %d", stackId, sceneId);
+bool ThreadResource::goToState(int stackId, int stateId) {
+	debugC(DEBUG_BASIC, kDebugScripts, "goToState - %d, %d", stackId, stateId);
 
 	savePrevious();
 	if (stackId == -1 || loadAStack(stackId)) {
-		if (sceneId != -1)
-			_threadId = sceneId;
+		if (stateId != -1)
+			_stateId = stateId;
 
 		return doState();
 	} else {
@@ -1579,12 +1579,12 @@ bool ThreadResource::goToState(int stackId, int sceneId) {
 }
 
 void ThreadResource::savePrevious() {
-	if (_field4 == _threadId && _controlIndex == _field6) {
+	if (_savedStateId == _stateId && _stackId == _savedStackId) {
 		_flags &= ~1;
 	} else {
 		_flags |= 1;
-		_field4 = _threadId;
-		_field6 = _controlIndex;
+		_savedStateId = _stateId;
+		_savedStackId = _stackId;
 	}
 }
 
@@ -1749,12 +1749,12 @@ void ThreadResource::synchronize(Common::Serializer &s) {
 	s.syncAsSint16LE(_aptPos.x);
 	s.syncAsSint16LE(_aptPos.y);
 	
-	int sceneId = _threadId;
-	int stackId = _controlIndex;
+	int sceneId = _stateId;
+	int stackId = _stackId;
 	s.syncAsSint16LE(sceneId);
 	s.syncAsSint16LE(stackId);
 
-	if (s.isLoading() && (sceneId != _threadId || stackId != _controlIndex))
+	if (s.isLoading() && (sceneId != _stateId || stackId != _stackId))
 		goToState(stackId, sceneId);
 }
 
