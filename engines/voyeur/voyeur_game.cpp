@@ -434,7 +434,7 @@ void VoyeurEngine::reviewTape() {
 	bool breakFlag = false;
 	while (!shouldQuit() && !breakFlag) {
 		_voy._viewBounds = _bVoy->boltEntry(0x907)._rectResource;
-		Common::Array<Common::Rect> &hotspots = _bVoy->boltEntry(0x906)._rectResource->_entries;
+		Common::Array<RectEntry> &hotspots = _bVoy->boltEntry(0x906)._rectResource->_entries;
 
 		_graphicsManager._backColors = _bVoy->boltEntry(0x902)._cMapResource;
 		_graphicsManager._backgroundPage = _bVoy->boltEntry(0x901)._picResource;
@@ -926,7 +926,7 @@ void VoyeurEngine::playAVideoEvent(int eventIndex) {
 
 int VoyeurEngine::getChooseButton()  {
 	int prevIndex = -2;
-	Common::Array<Common::Rect> &hotspots = _bVoy->boltEntry(_playStampGroupId 
+	Common::Array<RectEntry> &hotspots = _bVoy->boltEntry(_playStampGroupId 
 		+ 6)._rectResource->_entries;
 	int selectedIndex = -1;
 
@@ -1348,8 +1348,8 @@ void VoyeurEngine::doEvidDisplay(int evidId, int eventId) {
 		_eventsManager.delay(1);
 	_bVoy->freeBoltMember(_voy._field47A + evidId * 2 + 1);
 
-	byte *dataP = _bVoy->memberAddr(_playStampGroupId + 4);
-	int count = (int16)READ_LE_UINT16(dataP + evidId * 12 + 4);
+	Common::Array<RectEntry> &hotspots = _bVoy->boltEntry(_playStampGroupId + 4)._rectResource->_entries;
+	int count = hotspots[evidId]._count;
 
 	if (count > 0) {
 		for (int idx = 1; idx <= count; ++idx) {
@@ -1406,8 +1406,7 @@ void VoyeurEngine::doEvidDisplay(int evidId, int eventId) {
 	if (eventId == 999)
 		_voy.addEvidEventEnd(evidIdx);
 
-	count = (int16)READ_LE_UINT16(dataP + evidId * 12 + 4);
-	for (int idx = 1; idx <= count; ++idx) {
+	for (int idx = 1; idx <= hotspots[evidId]._count; ++idx) {
 		_bVoy->freeBoltMember(_voy._field47A + (evidId + idx) * 2);
 		_bVoy->freeBoltMember(_voy._field47A + (evidId + idx) * 2 + 1);
 	}

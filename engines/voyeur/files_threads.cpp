@@ -1033,7 +1033,7 @@ int ThreadResource::doApt() {
 
 	_vm->_currentVocId = 151;
 	_vm->_voy._viewBounds = _vm->_bVoy->boltEntry(_vm->_playStampGroupId)._rectResource; 
-	Common::Array<Common::Rect> &hotspots = _vm->_bVoy->boltEntry(
+	Common::Array<RectEntry> &hotspots = _vm->_bVoy->boltEntry(
 		_vm->_playStampGroupId + 1)._rectResource->_entries;
 	_vm->_eventsManager.getMouseInfo();
 
@@ -1169,8 +1169,7 @@ void ThreadResource::doRoom() {
 	voy._field437C = 0;
 	voy._field437E = 1;
 	
-	byte *dataP = vm._bVoy->memberAddr(vm._playStampGroupId + 4);
-	int count = READ_LE_UINT16(dataP);
+	Common::Array<RectEntry> &hotspots = vm._bVoy->boltEntry(vm._playStampGroupId + 4)._rectResource->_entries;
 	int i4e4 = -1;
 
 	PictureResource *pic1 = vm._bVoy->boltEntry(vm._playStampGroupId + 2)._picResource;
@@ -1209,12 +1208,9 @@ void ThreadResource::doRoom() {
 			if (voy._computerTextId != -1 && voy._rect4E4.contains(pt))
 				i4e4 = 999;
 
-			for (int idx = 0; idx < count; ++idx) {
-				if (pt.x > READ_LE_UINT16(dataP + idx * 12 + 6) &&
-						pt.x < READ_LE_UINT16(dataP + idx * 12 + 10) &&
-						pt.y > READ_LE_UINT16(dataP + idx * 12 + 8) &&
-						pt.y < READ_LE_UINT16(dataP + idx * 12 + 12)) {
-					int arrIndex = READ_LE_UINT16(dataP + idx * 12 + 2);
+			for (uint idx = 0; idx < hotspots.size(); ++idx) {
+				if (hotspots[idx].contains(pt)) {
+					int arrIndex = hotspots[idx]._arrIndex;
 					if (voy._arr7[arrIndex - 1] == 1) {
 						i4e4 = idx;
 						break;
@@ -1289,7 +1285,7 @@ void ThreadResource::doRoom() {
 			//vm._bVoy->freeBoltGroup(vm._playStampGroupId);
 			//vm._bVoy->getBoltGroup(vm._playStampGroupId);
 
-			dataP = vm._bVoy->memberAddr(vm._playStampGroupId + 4);
+			hotspots = vm._bVoy->boltEntry(vm._playStampGroupId + 4)._rectResource->_entries;
 			pic1 = vm._bVoy->boltEntry(vm._playStampGroupId + 2)._picResource;
 			pic2 = vm._bVoy->boltEntry(vm._playStampGroupId + 3)._picResource;
 			vm._graphicsManager._backColors = vm._bVoy->boltEntry(
@@ -1392,7 +1388,7 @@ int ThreadResource::doInterface() {
 	_vm->_eventsManager.getMouseInfo();
 	_vm->initIFace();
 
-	Common::Array<Common::Rect> *hotspots = &_vm->_bVoy->boltEntry(
+	Common::Array<RectEntry> *hotspots = &_vm->_bVoy->boltEntry(
 		_vm->_playStampGroupId + 1)._rectResource->_entries;
 	_vm->_currentVocId = 151 - _vm->getRandomNumber(5);
 	_vm->_voy._vocSecondsOffset = _vm->getRandomNumber(29);

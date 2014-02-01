@@ -179,7 +179,7 @@ public:
 	BoltGroup(Common::SeekableReadStream *f); 
 	virtual ~BoltGroup();
 
-	void load();
+	void load(uint16 groupId);
 	void unload();
 };
 
@@ -188,6 +188,7 @@ class BoltEntry {
 private:
 	Common::SeekableReadStream *_file;
 public:
+	uint16 _id;
 	byte _mode;
 	byte _field1;
 	byte _initMethod;
@@ -211,7 +212,7 @@ public:
 	ControlResource *_controlResource;
 	ThreadResource *_threadResource;
 public:
-	BoltEntry(Common::SeekableReadStream *f);
+	BoltEntry(Common::SeekableReadStream *f, uint16 id);
 	virtual ~BoltEntry();
 
 	void load();
@@ -232,11 +233,19 @@ public:
 	byte *fload(const Common::String &filename, int *size = NULL);
 };
 
+class RectEntry: public Common::Rect {
+public:
+	int _arrIndex;
+	int _count;
+
+	RectEntry(int x1, int y1, int x2, int y2, int arrIndex, int count);
+};
+
 class RectResource: public Common::Rect {
 public:
-	Common::Array<Common::Rect> _entries;
+	Common::Array<RectEntry> _entries;
 public:
-	RectResource(const byte *src, int size);
+	RectResource(const byte *src, int size, bool isExtendedRects);
 	RectResource(int xp, int yp, int width, int height);
 	virtual ~RectResource() {}
 };

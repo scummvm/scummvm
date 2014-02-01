@@ -251,7 +251,7 @@ BoltGroup *BoltFile::getBoltGroup(uint16 id, bool process) {
 
 	if (!_state._curGroupPtr->_loaded) {
 		// Load the group index
-		_state._curGroupPtr->load();
+		_state._curGroupPtr->load(id & 0xff00);
 	}
 
 	if (_state._curGroupPtr->_callInitGro)
@@ -266,7 +266,7 @@ BoltGroup *BoltFile::getBoltGroup(uint16 id, bool process) {
 		}
 	} else if (!_state._curGroupPtr->_processed) {
 		_state._curGroupPtr->_processed = true;
-		_state._curGroupPtr->load();
+		_state._curGroupPtr->load(id & 0xff00);
 	}
 
 	resolveAll();
@@ -397,7 +397,7 @@ byte *BoltFile::getBoltMember(uint32 id) {
 	// Get the group, and load it's entry list if not already loaded
 	_state._curGroupPtr = &_groups[(id >> 8) & 0xff];
 	if (!_state._curGroupPtr->_loaded)
-		_state._curGroupPtr->load();
+		_state._curGroupPtr->load(id & 0xff00);
 
 	// Get the entry
 	_state._curMemberPtr = &_state._curGroupPtr->_entries[id & 0xff];
@@ -529,9 +529,15 @@ void BVoyBoltFile::sInitRect() {
 	_state._curMemberPtr->_data = _state.decompress(NULL, _state._curMemberPtr->_size, 
 		_state._curMemberPtr->_mode);
 
-	if ((_state._curMemberPtr->_size % 8) == 0 || (_state._curMemberPtr->_size % 8) == 2)
-	_state._curMemberPtr->_rectResource = new RectResource(_state._curMemberPtr->_data,
-		_state._curMemberPtr->_size);
+	// Check whether the resouce Id is in the list of extended rects
+	bool isExtendedRects = false;
+	for (int i = 0; i < 49 && !isExtendedRects; ++i)
+		isExtendedRects = RESOLVE_TABLE[i] == (_state._curMemberPtr->_id & 0xff00);
+
+	int rectSize = isExtendedRects ? 12 : 8;
+	if ((_state._curMemberPtr->_size % rectSize) == 0 || (_state._curMemberPtr->_size % rectSize) == 2)
+		_state._curMemberPtr->_rectResource = new RectResource(_state._curMemberPtr->_data,
+			_state._curMemberPtr->_size, isExtendedRects);
 }
 
 void BVoyBoltFile::sInitPic() {
@@ -619,12 +625,12 @@ BoltGroup::BoltGroup(Common::SeekableReadStream *f): _file(f) {
 BoltGroup::~BoltGroup() {
 }
 
-void BoltGroup::load() {
+void BoltGroup::load(uint16 groupId) {
 	_file->seek(_fileOffset);
 
 	// Read the entries
 	for (int i = 0; i < _count; ++i)
-		_entries.push_back(BoltEntry(_file));
+		_entries.push_back(BoltEntry(_file, groupId + i));
 
 	_loaded = true;
 }
@@ -639,7 +645,7 @@ void BoltGroup::unload() {
 
 /*------------------------------------------------------------------------*/
 
-BoltEntry::BoltEntry(Common::SeekableReadStream *f): _file(f) {
+BoltEntry::BoltEntry(Common::SeekableReadStream *f, uint16 id): _file(f), _id(id) {
 	_data = nullptr;
 	_rectResource = nullptr;
 	_picResource = nullptr;
@@ -660,7 +666,7 @@ BoltEntry::BoltEntry(Common::SeekableReadStream *f): _file(f) {
 	_field1 = buffer[1];
 	_initMethod = buffer[3];
 	_xorMask = buffer[4] & 0xff;	// TODO: Is this right??
-	_size = READ_LE_UINT32(&buffer[4]);
+	_size = READ_LE_UINT32(&buffer[4]) & 0xffffff;
 	_fileOffset = READ_LE_UINT32(&buffer[8]); 
 }
 
@@ -695,25 +701,36 @@ bool BoltEntry::hasResource() const {
 
 /*------------------------------------------------------------------------*/
 
-RectResource::RectResource(const byte *src, int size) {
+RectEntry::RectEntry(int x1, int y1, int x2, int y2, int arrIndex, int count):
+		Common::Rect(x1, y1, x2, y2), _arrIndex(arrIndex), _count(count) {
+}
+
+/*------------------------------------------------------------------------*/
+
+RectResource::RectResource(const byte *src, int size, bool isExtendedRects) {
 	int count;
-	if ((size % 8) == 2) {
+	int rectSize = isExtendedRects ? 12 : 8;
+	if ((size % rectSize) == 2) {
 		count = READ_LE_UINT16(src);
 		src += 2;
 	} else {
-		count = size / 8;
+		count = size / rectSize;
 	}
 
 	for (int i = 0; i < count; ++i, src += 8) {
+		int arrIndex = 0, count = 0;
+		if (isExtendedRects) {
+			arrIndex = READ_LE_UINT16(src);
+			count = READ_LE_UINT16(src + 2);
+			src += 4;
+		}
+
 		int x1 = READ_LE_UINT16(src);
 		int y1 = READ_LE_UINT16(src + 2);
 		int x2 = READ_LE_UINT16(src + 4); 
 		int y2 = READ_LE_UINT16(src + 6);
 
-		if (x2 >= x1 && y2 >= y1)
-			_entries.push_back(Common::Rect(x1, y1, x2, y2));
-		else
-			_entries.push_back(Common::Rect());
+		_entries.push_back(RectEntry(x1, y1, x2, y2, arrIndex, count));
 	}
 
 	left = _entries[0].left;
