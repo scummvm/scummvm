@@ -177,9 +177,6 @@ public:
 	int _playStampGroupId;
 	int _currentVocId;
 
-	/**
-	 * Id for the current video, audio, or evidence scene being viewed
-	 */
 	int _audioVideoId;
 	const int *_resolvePtr;
 	int _iForceDeath; // CHECKME: The original initializes it in ESP_init()
@@ -259,7 +256,16 @@ public:
 	 */
 	void doScroll(const Common::Point &pt);
 
+	/**
+	 * Check for phone call
+	 */
 	void checkPhoneCall();
+
+	/**
+	 * Display evidence sequence from within a room
+	 * Suspension of disbelief needed to believe that recording from a distance,
+	 * you could still flip through the often pages of evidence for a single hotspot.
+	 */
 	void doEvidDisplay(int evidId, int eventId);
 
 	/**
@@ -285,6 +291,9 @@ public:
 
 #define VOYEUR_SAVEGAME_VERSION 1
 
+/**
+ * Header for Voyeur savegame files
+ */
 struct VoyeurSavegameHeader {
 	uint8 _version;
 	Common::String _saveName;
@@ -293,7 +302,14 @@ struct VoyeurSavegameHeader {
 	int _saveHour, _saveMinutes;
 	int _totalFrames;
 
+	/**
+	 * Read in the header from the specified file
+	 */
 	bool read(Common::InSaveFile *f);
+
+	/**
+	 * Write out header information to the specified file
+	 */
 	void write(Common::OutSaveFile *f, VoyeurEngine *vm, const Common::String &saveName);
 };
 

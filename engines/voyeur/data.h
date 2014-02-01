@@ -129,16 +129,6 @@ public:
 	int _field4F0;
 	int _field4F2;
 
-	/**
-	 * Total number of game events that have occurred
-	 */
-	int _eventCount;
-
-	/**
-	 * List of game events that have occurred
-	 */
-	VoyeurEvent _events[TOTAL_EVENTS];
-
 	int _field4376;
 	int _field4378;
 	int _field437A;
@@ -152,6 +142,9 @@ public:
 	int _curICF1;
 	int _fadeICF0;
 	int _policeEvent;
+	
+	int _eventCount;
+	VoyeurEvent _events[TOTAL_EVENTS];
 public:
 	SVoy();
 	void setVm(VoyeurEngine *vm);
@@ -167,15 +160,54 @@ public:
 	void addEvent(int hour, int minute, VoyeurEventType type, int audioVideoId, 
 		int on, int off, int dead);
 
+	/**
+	 * Adds the start of a video event happening
+	 */
 	void addVideoEventStart();
+
+	/**
+	 * Adds the finish of a video event happening
+	 */
 	void addVideoEventEnd();
+
+	/**
+	 * Adds the start of an audio event happening
+	 */
 	void addAudioEventStart();
+	
+	/**
+	 * Adsd the finish of an audio event happening
+	 */
 	void addAudioEventEnd();
+
+	/**
+	 * Adds the start of an evidence event happening
+	 */
 	void addEvidEventStart(int v);
+	
+	/**
+	 * Adds the finish of an evidence event happening
+	 */
 	void addEvidEventEnd(int totalPages);
+	
+	/**
+	 * Adds the start of a computer event happening
+	 */
 	void addComputerEventStart();
+	
+	/**
+	 * Adds the finish of a computer event happening
+	 */
 	void addComputerEventEnd(int v);
+
+	/**
+	 * Review a previously recorded evidence event
+	 */
 	void reviewAnEvidEvent(int eventIndex);
+
+	/**
+	 * Review a previously recorded computer event
+	 */
 	void reviewComputerEvent(int eventIndex);
 };
 
