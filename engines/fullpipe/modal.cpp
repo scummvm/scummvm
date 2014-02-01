@@ -817,7 +817,13 @@ void ModalHelp::launch() {
 }
 
 void FullpipeEngine::openHelp() {
-	warning("STUB: FullpipeEngine::openHelp()");
+	if (!_modalObject) {
+		ModalHelp *help = new ModalHelp;
+
+		_modalObject = help;
+
+		help->launch();
+	}
 }
 
 void FullpipeEngine::openMainMenu() {
