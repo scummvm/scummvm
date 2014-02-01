@@ -292,6 +292,7 @@ public:
 	void lift_startExitQueue();
 	void lift_sub05(ExCommand *ex);
 	bool lift_checkButton(const char *varname);
+	void lift_openLift();
 
 	GameVar *_musicGameVar;
 	Audio::SoundHandle _sceneTrackHandle;

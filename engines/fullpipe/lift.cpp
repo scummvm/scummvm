@@ -30,6 +30,7 @@
 #include "fullpipe/statics.h"
 #include "fullpipe/messages.h"
 #include "fullpipe/gameloader.h"
+#include "fullpipe/motion.h"
 
 namespace Fullpipe {
 
@@ -315,7 +316,50 @@ void FullpipeEngine::lift_closedoorSeq() {
 }
 
 void FullpipeEngine::lift_walkAndGo() {
-	warning("STUB: FullpipeEngine::lift_walkAndGo()");
+	MessageQueue *mq;
+	ExCommand *ex;
+
+	if (abs(_liftX - _aniMan->_ox) > 1 || abs(_liftY - _aniMan->_oy) > 1 || _aniMan->_movement || _aniMan->_statics->_staticsId != ST_MAN_UP) {
+		mq = getCurrSceneSc2MotionController()->method34(_aniMan, _liftX, _liftY, 1, ST_MAN_UP);
+
+		if (mq) {
+			ex = new ExCommand(0, 17, MSG_LIFT_CLICKBUTTON, 0, 0, 0, 1, 0, 0, 0);
+			ex->_excFlags |= 3;
+
+			mq->addExCommandToEnd(ex);
+		}
+	} else {
+		lift_openLift();
+
+		mq = new MessageQueue(_liftEnterMQ, 0, 0);
+
+		mq->setFlags(mq->getFlags() | 1);
+
+		ex = new ExCommand(_aniMan->_id, 2, 15, 0, 0, 0, 1, 0, 0, 0);
+		ex->_keyCode = _aniMan->_okeyCode;
+		ex->_excFlags |= 2;
+		mq->addExCommand(ex);
+
+		ex = new ExCommand(_aniMan->_id, 5, -1, 0, 0, 0, 1, 0, 0, 0);
+		ex->_keyCode = _aniMan->_okeyCode;
+		ex->_field_14 = _lift->_priority + 1;
+		ex->_x = -1;
+		ex->_y = -1;
+		ex->_excFlags |= 3;
+		mq->addExCommandToEnd(ex);
+
+		ex = new ExCommand(0, 17, MSG_LIFT_CLOSEDOOR, 0, 0, 0, 1, 0, 0, 0);
+		ex->_excFlags |= 3;
+		mq->addExCommandToEnd(ex);
+
+		mq->chain(0);
+
+		_aniMan->_flags |= 1;
+	}
+}
+
+void FullpipeEngine::lift_openLift() {
+	warning("STUB: FullpipeEngine::lift_openLift()");
 }
 
 void FullpipeEngine::lift_clickButton() {
