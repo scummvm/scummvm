@@ -47,7 +47,7 @@ bool Debugger::Cmd_Time(int argc, const char **argv) {
 
 		DebugPrintf("Current date/time is: %s, time is %s\n", 
 			dtString.c_str(), _isTimeActive ? "on" : "off");
-		DebugPrintf("Format: %s [on | off | 1..17]\n\n", argv[0]);
+		DebugPrintf("Format: %s [on | off | 1..17 | val <amount>]\n\n", argv[0]);
 	} else {
 		if (!strcmp(argv[1], "on")) {
 			_isTimeActive = true;
@@ -55,6 +55,13 @@ bool Debugger::Cmd_Time(int argc, const char **argv) {
 		} else if (!strcmp(argv[1], "off")) {
 			_isTimeActive = false;
 			DebugPrintf("Time is now off\n\n");
+		} else if (!strcmp(argv[1], "val")) {
+			if (argc < 3) {
+				DebugPrintf("Time remaining is currently %d.\n", _vm->_voy._RTVNum);
+			} else {
+				_vm->_voy._RTVNum = atoi(argv[2]);
+				DebugPrintf("Time remaining is now %d.\n", _vm->_voy._RTVNum);
+			}
 		} else {
 			int timeId = atoi(argv[1]);
 			if (timeId >= 1 && timeId <= 17) {
