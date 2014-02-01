@@ -53,7 +53,7 @@ void ThreadResource::initThreadStruct(int idx, int id) {
 	if (loadAStack(idx)) {
 		_savedStateId = _savedStackId = -1;
 		_stateId = id;
-		_newSceneId = -1;
+		_newStateId = -1;
 		_newStackId = -1;
 
 		doState();
@@ -108,11 +108,11 @@ bool ThreadResource::doState() {
 }
 
 bool ThreadResource::getStateInfo() {
-	_field9 = 0;
+	_flags &= 0xff;
 	int id = READ_LE_UINT16(_ctlPtr);
 
 	if (id <= _stateId) {
-		_field9 |= 0x80;
+		_flags |= 0x8000;
 		return false;
 	} else {
 		uint32 fld = READ_LE_UINT32(_ctlPtr + 2);
@@ -929,14 +929,14 @@ const byte *ThreadResource::cardPerform(const byte *card) {
 		card += 2;
 	
 	case 45:
-		_newSceneId = _field46;
+		_newStateId = _field46;
 		_newStackId = _stackId;
 		break;
 
 	case 46:
-		_vm->_glGoScene = _newSceneId;
+		_vm->_glGoScene = _newStateId;
 		_vm->_glGoStack = _newStackId;
-		_newSceneId = -1;
+		_newStateId = -1;
 		_newStackId = -1;
 		break;
 

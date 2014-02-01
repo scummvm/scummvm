@@ -539,13 +539,13 @@ private:
 public:
 	int _stateId;
 	int _stackId;
-	int _savedStateId, _savedStackId;
-	byte _flags;
-	int _field9;
+	int _savedStateId;
+	int _savedStackId;
+	int _newStateId;
+	int _newStackId;
+	int _flags;
 	int _fieldA[8];
 	int _field2A[8];
-	int _newSceneId;
-	int _newStackId;
 	int _stateFlags;
 	int _stateCount;
 	int _parseCount;
