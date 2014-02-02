@@ -181,7 +181,7 @@ void ThreadResource::getButtonsFlags() {
 void ThreadResource::getField1CE() {
 	int idx = 0;
 	
-	for (const byte *p = _threadInfoPtr; *p++ != 0x49; p = getNextRecord(p)) {
+	for (const byte *p = _threadInfoPtr; *p++ != 0x4A; p = getNextRecord(p)) {
 		assert(idx < 47);
 		_field1CE[idx++] = getRecordOffset(p);
 		_field1CE[idx] = NULL;
