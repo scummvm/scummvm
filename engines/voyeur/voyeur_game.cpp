@@ -1221,7 +1221,7 @@ int VoyeurEngine::doComputerText(int maxLen) {
 					yp += 10;
 				} else {
 					_eventsManager.delay(90);
-					_graphicsManager._drawPtr->_pos = Common::Point(54, 96);
+					_graphicsManager._drawPtr->_pos = Common::Point(96, 54);
 					_graphicsManager._drawPtr->_penColor = 255;
 					(*_graphicsManager._vPort)->sFillBox(196, 124);
 					yp = 60;
