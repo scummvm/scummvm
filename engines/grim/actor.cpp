@@ -2200,6 +2200,7 @@ void Actor::attachToActor(Actor *other, const char *joint) {
 
 	Common::String jointStr = joint ? joint : "";
 
+	setPos(other->getWorldPos() - getWorldPos());
 	EMICostume *cost = static_cast<EMICostume *>(other->getCurrentCostume());
 	// If 'other' has a skeleton, check if it has the joint.
 	// Some models (pile o' boulders) don't have a skeleton,
