@@ -47,9 +47,9 @@ void scene27_initScene(Scene *sc) {
 	g_vars->scene27_batHandler = sc->getStaticANIObject1ById(ANI_BITAHANDLER, -1);
 
 	g_vars->scene27_balls.numBalls = 0;
-	g_vars->scene27_balls.pPrev = 0;
-	g_vars->scene27_balls.pNext = 0;
-	g_vars->scene27_balls.ball = 0;
+	g_vars->scene27_balls.pTail = 0;
+	g_vars->scene27_balls.field_8 = 0;
+	g_vars->scene27_balls.pHead = 0;
 	CPlex::FreeDataChain(g_vars->scene27_balls.cPlex);
 	g_vars->scene27_balls.cPlex = 0;
 	scene27_bats.clear();
@@ -61,16 +61,16 @@ void scene27_initScene(Scene *sc) {
 	for (int i = 0; i < 4; i++) {
 		StaticANIObject *newbat = new StaticANIObject(g_vars->scene27_bat);
 
-		v5 = g_vars->scene27_balls.pPrev;
-		v6 = g_vars->scene27_balls.pNext;
+		v5 = g_vars->scene27_balls.pTail;
+		v6 = g_vars->scene27_balls.field_8;
 
-		if (!g_vars->scene27_balls.pPrev) {
+		if (!g_vars->scene27_balls.pTail) {
 			v7 = CPlex::Create(&g_vars->scene27_balls.cPlex, g_vars->scene27_balls.cPlexLen, 12) + 4 + 12 * g_vars->scene27_balls.cPlexLen - 12;
 			if (g_vars->scene27_balls.cPlexLen - 1 < 0) {
-				v5 = g_vars->scene27_balls.pPrev;
+				v5 = g_vars->scene27_balls.pTail;
 			} else {
 				v8 = g_vars->scene27_balls.cPlexLen;
-				v5 = g_vars->scene27_balls.pPrev;
+				v5 = g_vars->scene27_balls.pTail;
 				do {
 					*(_DWORD *)v7 = v5;
 					v5 = (Ball *)v7;
@@ -78,22 +78,22 @@ void scene27_initScene(Scene *sc) {
 					--v8;
 				} while (v8);
 
-				g_vars->scene27_balls.pPrev = v5;
+				g_vars->scene27_balls.pTail = v5;
 			}
 		}
 
-		g_vars->scene27_balls.pPrev = v5->pNext;
+		g_vars->scene27_balls.pTail = v5->pNext;
 		v5->pPrev = v6;
 		v5->pNext = 0;
 		++g_vars->scene27_balls.numBalls;
 		v5->ani = 0;
 		v5->ani = newbat;
 
-		if (g_vars->scene27_balls.pNext)
-			g_vars->scene27_balls.pNext->pNext = v5;
+		if (g_vars->scene27_balls.field_8)
+			g_vars->scene27_balls.field_8->pNext = v5;
 		else
-			g_vars->scene27_balls.ball = v5;
-		g_vars->scene27_balls.pNext = v5;
+			g_vars->scene27_balls.pHead = v5;
+		g_vars->scene27_balls.field_8 = v5;
 
 		sc->addStaticANIObject(newbat, 1);
 	}
@@ -120,6 +120,22 @@ void scene27_initScene(Scene *sc) {
 	g_fp->_currentScene = oldsc;
 
 	g_fp->setArcadeOverlay(PIC_CSR_ARCADE7);
+}
+
+int scene27_updateCursor() {
+	g_fp->updateCursorCommon();
+
+	if (g_vars->scene27_var08) {
+		if (g_fp->_cursorId != PIC_CSR_DEFAULT_INV && g_fp->_cursorId != PIC_CSR_ITN_INV)
+			g_fp->_cursorId = PIC_CSR_ARCADE7_D;
+
+	} else if (g_fp->_objectIdAtCursor == ANI_MAN) {
+		if (g_vars->scene27_var09)
+			if (g_fp->_cursorId == PIC_CSR_DEFAULT)
+				g_fp->_cursorId = PIC_CSR_ITN;
+	}
+
+	return g_fp->_cursorId;
 }
 
 } // End of namespace Fullpipe
