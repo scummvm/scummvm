@@ -615,6 +615,13 @@ Common::SeekableReadStream *GraphicsManager::findArialStream(bool bold) const {
 				stream = resFork.getResource(MKTAG('s', 'f', 'n', 't'), baseName);
 		}
 	}
+#elif defined(__linux__)
+	// TODO: Could also check for other fonts, other paths, etc.
+	Common::String baseName = bold ? "arialbd.ttf" : "arial.ttf";
+	Common::FSNode fontPath("/usr/share/fonts/truetype/msttcorefonts/" + baseName);
+
+	if (fontPath.exists() && !fontPath.isDirectory() && fontPath.isReadable())
+		stream = fontPath.createReadStream();
 #endif
 
 	if (!stream) {
