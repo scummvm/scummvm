@@ -37,13 +37,11 @@ void BbvsEngine::playVideo(int videoNum) {
 		videoFilename = Common::String::format("vid/video%03d.avi", videoNum - 1);
 
 	// Set the correct video mode
-	Common::List<Graphics::PixelFormat> formats;
-	// RGB565 16bit
-	Graphics::PixelFormat pixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
-	formats.push_back(pixelFormat);
-	initGraphics(320, 240, false, formats);
-	if (_system->getScreenFormat().bytesPerPixel != pixelFormat.bytesPerPixel)
-		error("Could not switch screen format for the video");
+	initGraphics(320, 240, false, 0);
+	if (_system->getScreenFormat().bytesPerPixel == 1) {
+		warning("Couldn't switch to a RGB color video mode to play a video.");
+		return;
+	}
 		
 	Video::VideoDecoder *videoDecoder = new Video::AVIDecoder();
 	videoDecoder->loadFile(videoFilename);
