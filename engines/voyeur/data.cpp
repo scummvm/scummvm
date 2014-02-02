@@ -88,8 +88,8 @@ void SVoy::synchronize(Common::Serializer &s) {
 	s.syncAsSint16LE(_field4AC);
 	s.syncAsSint16LE(_field4B8);
 	s.syncAsSint16LE(_computerTextId);
-	s.syncAsSint16LE(_field4EC);
-	s.syncAsSint16LE(_field4EE);
+	s.syncAsSint16LE(_computerTimeMin);
+	s.syncAsSint16LE(_computerTimeMax);
 	s.syncAsSint16LE(_field4F0);
 	s.syncAsSint16LE(_field4F2);
 

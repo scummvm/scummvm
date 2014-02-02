@@ -238,7 +238,7 @@ public:
 	void makeViewFinderP();
 	void initIFace();
 	void checkTransition();
-	bool doComputerText(int maxLen);
+	int doComputerText(int maxLen);
 	void getComputerBrush();
 
 	/**

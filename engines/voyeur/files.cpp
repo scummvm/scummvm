@@ -1398,6 +1398,23 @@ void ViewPortResource::drawIfaceTime() {
 		Common::Point(215, 27));
 }
 
+void ViewPortResource::drawPicPerm(PictureResource *pic, const Common::Point &pt) {
+	Common::Rect bounds = pic->_bounds;
+	bounds.translate(pt.x, pt.y);
+
+	bool saveBack = _state._vm->_graphicsManager._saveBack;
+	_state._vm->_graphicsManager._saveBack = false;
+	_state._vm->_graphicsManager.sDrawPic(pic, this, pt);
+	clipRect(bounds);
+
+	for (int pageIndex = 0; pageIndex < _pageCount; ++pageIndex) {
+		if (_pageIndex != pageIndex) {
+			addSaveRect(pageIndex, bounds);
+		}
+	}
+
+	_state._vm->_graphicsManager._saveBack = saveBack;
+}
 /*------------------------------------------------------------------------*/
 
 ViewPortListResource::ViewPortListResource(BoltFilesState &state, const byte *src) {

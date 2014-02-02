@@ -128,8 +128,8 @@ public:
 
 	int _computerTextId;
 	Common::Rect _rect4E4;
-	int _field4EC;
-	int _field4EE;
+	int _computerTimeMin;
+	int _computerTimeMax;
 	int _field4F0;
 	int _field4F2;
 

@@ -373,6 +373,7 @@ public:
 	void addSaveRect(int pageIndex, const Common::Rect &r);
 	void fillPic(byte onOff = 0);
 	void drawIfaceTime();
+	void drawPicPerm(PictureResource *pic, const Common::Point &pt);
 };
 
 class ViewPortPalEntry  {

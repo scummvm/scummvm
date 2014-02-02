@@ -1160,7 +1160,7 @@ Common::String VoyeurEngine::getTimeOfDay() {
 	return Common::String::format("%d:%02d%s", _gameHour, _gameMinute, _voy._isAM ? AM : PM);
 }
 
-bool VoyeurEngine::doComputerText(int maxLen) {
+int VoyeurEngine::doComputerText(int maxLen) {
 	FontInfoResource &font = *_graphicsManager._fontPtr;
 	int totalChars = 0;
 
@@ -1171,7 +1171,7 @@ bool VoyeurEngine::doComputerText(int maxLen) {
 	if (_voy._vocSecondsOffset > 60)
 		_voy._vocSecondsOffset = 0;
 
-	if (_voy._RTVNum > _voy._field4EE && maxLen == 9999) {
+	if (_voy._RTVNum > _voy._computerTimeMax && maxLen == 9999) {
 		if (_currentVocId != -1)
 			_soundManager.startVOCPlay(_currentVocId);
 		font._justify = ALIGN_LEFT;
@@ -1179,7 +1179,7 @@ bool VoyeurEngine::doComputerText(int maxLen) {
 		font._justifyHeight = 100;
 		font._pos = Common::Point(128, 100);
 		(*_graphicsManager._vPort)->drawText(END_OF_MESSAGE);
-	} else if (_voy._RTVNum < _voy._field4EC && maxLen == 9999) {
+	} else if (_voy._RTVNum < _voy._computerTimeMin && maxLen == 9999) {
 		if (_currentVocId != -1)
 			_soundManager.startVOCPlay(_currentVocId);
 		font._justify = ALIGN_LEFT;
@@ -1244,7 +1244,7 @@ bool VoyeurEngine::doComputerText(int maxLen) {
 
 		} while (!shouldQuit() && !_eventsManager._mouseClicked && totalChars < maxLen);
 
-		_voy._field4EE = 0;
+		_voy._computerTimeMax = 0;
 	}
 
 	flipPageAndWait();
@@ -1254,9 +1254,16 @@ bool VoyeurEngine::doComputerText(int maxLen) {
 }
 
 void VoyeurEngine::getComputerBrush() {
-	error("TODO: getComputerBrush");
-//	if (_bVoy->getBoltGroup(0x4900)) {
-//	}
+	if (_bVoy->getBoltGroup(0x4900)) {
+		PictureResource *pic = _bVoy->boltEntry(0x490E)._picResource;
+		int xp = (384 - pic->_bounds.width()) / 2;
+		int yp = (240 - pic->_bounds.height()) / 2 - 4;
+
+		(*_graphicsManager._vPort)->drawPicPerm(pic, Common::Point(xp, yp));
+
+		CMapResource *pal = _bVoy->boltEntry(0x490F)._cMapResource;
+		pal->startFade();
+	}
 }
 
 void VoyeurEngine::doTimeBar(bool force) {

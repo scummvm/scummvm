@@ -629,8 +629,8 @@ void ThreadResource::parsePlayCommands() {
 
 			if (v2 == 0 || READ_LE_UINT16(_vm->_controlPtr->_ptr + 4) == 0) {
 				_vm->_voy._computerTextId = READ_LE_UINT16(dataP + 2);
-				_vm->_voy._field4EC = READ_LE_UINT16(dataP + 4);
-				_vm->_voy._field4EE = READ_LE_UINT16(dataP + 6);
+				_vm->_voy._computerTimeMin = READ_LE_UINT16(dataP + 4);
+				_vm->_voy._computerTimeMax = READ_LE_UINT16(dataP + 6);
 
 				_vm->_voy._rect4E4.left = COMP_BUT_TABLE[_vm->_voy._computerTextId * 4];
 				_vm->_voy._rect4E4.top = COMP_BUT_TABLE[_vm->_voy._computerTextId * 4 + 1];
@@ -1198,8 +1198,8 @@ void ThreadResource::doRoom() {
 			if (hotspotId == -1) {
 				vm._eventsManager.setCursorColor(128, 0);
 				vm._eventsManager.setCursor(crosshairsCursor);
-			} else if (hotspotId != 999 || voy._RTVNum < voy._field4EC ||
-					(voy._field4EE - 2) < voy._RTVNum) {
+			} else if (hotspotId != 999 || voy._RTVNum < voy._computerTimeMin ||
+					(voy._computerTimeMax - 2) < voy._RTVNum) {
 				vm._eventsManager.setCursorColor(128, 1);
 				vm._eventsManager.setCursor(magnifierCursor);
 			} else {
@@ -1241,9 +1241,9 @@ void ThreadResource::doRoom() {
 				vm._eventsManager._mouseClicked = false;
 				vm._eventsManager.startCursorBlink();
 
-				int v = vm.doComputerText(9999); 
-				if (v)
-					vm._voy.addComputerEventEnd(v);
+				int totalChars = vm.doComputerText(9999); 
+				if (totalChars)
+					vm._voy.addComputerEventEnd(totalChars);
 
 				vm._bVoy->freeBoltGroup(0x4900);
 			} else {
@@ -1262,6 +1262,7 @@ void ThreadResource::doRoom() {
 			vm._graphicsManager._backgroundPage = vm._bVoy->boltEntry(
 				vm._playStampGroupId)._picResource;
 
+			(*vm._graphicsManager._vPort)->setupViewPort();
 			vm._graphicsManager._backColors->startFade();
 			_vm->flipPageAndWait();
 
