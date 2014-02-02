@@ -241,7 +241,7 @@ bool BitmapData::loadTGA(Common::SeekableReadStream *data) {
 
 	const Graphics::Surface *origSurf = dec.getSurface();
 	Graphics::PixelFormat pixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
-	const Graphics::Surface *surf = origSurf->convertTo(pixelFormat);
+	Graphics::Surface *surf = origSurf->convertTo(pixelFormat);
 
 	_width = surf->w;
 	_height = surf->h;
