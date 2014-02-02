@@ -25,8 +25,6 @@
 
 namespace Bbvs {
 
-//#define DEBUG_DUMP
-
 GameModule::GameModule()
 	: _bgSpriteCount(0), _bgSpriteIndices(0), _bgSpritePriorities(0), _walkRectsCount(0),
 	_walkRects(0), _sceneExitsCount(0), _sceneExits(0), _bgObjectsCount(0), _bgObjects(0),
@@ -273,12 +271,6 @@ void GameModule::loadBgSprites(Common::SeekableReadStream &s) {
 	for (int i = 0; i < _bgSpriteCount; ++i)
 		_bgSpritePriorities[i] = s.readUint16LE();
 
-#ifdef DEBUG_DUMP
-	for (int i = 0; i < _bgSpriteCount; ++i) {
-		debug(0, "BgSprite(%d) %04X %d", i, _bgSpriteIndices[i], _bgSpritePriorities[i]);
-	}
-#endif
-		
 }
 
 void GameModule::loadCameraInits(Common::SeekableReadStream &s) {
@@ -293,21 +285,6 @@ void GameModule::loadCameraInits(Common::SeekableReadStream &s) {
 		for (int j = 0; j < 8; ++j)
 			cameraInit.rects[j] = readRect(s); 
 	}
-
-#ifdef DEBUG_DUMP
-	for (int i = 0; i < 4; ++i) {
-		CameraInit &cameraInit = _cameraInits[i];
-		debug(0, "CameraInit(%d) (%d, %d)", i, cameraInit.cameraPos.x, cameraInit.cameraPos.y);
-		debugN(0, "CameraInit(%d) ", i);
-		for (int j = 0; j < 8; ++j)
-			debugN(0, "%d ", cameraInit.cameraLinks[j]);
-		debug(0, ".");
-		for (int j = 0; j < 8; ++j)
-			debug(0, "CameraInit(%d) (%d, %d, %d, %d)", i, cameraInit.rects[j].left,
-				cameraInit.rects[j].top, cameraInit.rects[j].right, cameraInit.rects[j].bottom);
-	}
-#endif
-
 }
 
 void GameModule::loadWalkRects(Common::SeekableReadStream &s) {
@@ -320,10 +297,6 @@ void GameModule::loadWalkRects(Common::SeekableReadStream &s) {
 	s.seek(offs);
 	for (int i = 0; i < _walkRectsCount; ++i)
 		_walkRects[i] = readRect(s);
-
-#ifdef DEBUG_DUMP
-#endif
-
 }
 
 void GameModule::loadSceneExits(Common::SeekableReadStream &s) {
@@ -338,14 +311,6 @@ void GameModule::loadSceneExits(Common::SeekableReadStream &s) {
 		_sceneExits[i].rect = readRect(s);
 		_sceneExits[i].newModuleNum = s.readUint32LE();
 	}
-
-#ifdef DEBUG_DUMP
-	for (int i = 0; i < _sceneExitsCount; ++i) {
-		debug(0, "SceneExit(%d) (%d, %d, %d, %d) %d", i, _sceneExits[i].rect.left, _sceneExits[i].rect.top,
-			_sceneExits[i].rect.right, _sceneExits[i].rect.bottom, _sceneExits[i].newModuleNum);
-	}
-#endif
-
 }
 
 void GameModule::loadBgObjects(Common::SeekableReadStream &s) {
@@ -360,14 +325,6 @@ void GameModule::loadBgObjects(Common::SeekableReadStream &s) {
 		s.read(_bgObjects[i].name, 20);
 		_bgObjects[i].rect = readRect(s);
 	}
-
-#ifdef DEBUG_DUMP
-	for (int i = 0; i < _bgObjectsCount; ++i) {
-		debug(0, "BgObject(%d) [%s] (%d, %d, %d, %d)", i, _bgObjects[i].name, _bgObjects[i].rect.left,
-			_bgObjects[i].rect.top, _bgObjects[i].rect.right, _bgObjects[i].rect.bottom);
-	}
-#endif
-
 }
 
 void GameModule::loadAnimations(Common::SeekableReadStream &s) {
@@ -402,21 +359,6 @@ void GameModule::loadAnimations(Common::SeekableReadStream &s) {
 		for (int j = 0; j < anim.frameCount; ++j)
 			anim.frameRects2[j] = readRect(s);
 	}
-
-#ifdef DEBUG_DUMP
-	for (int i = 0; i < _animationsCount; ++i) {
-		Animation &anim = _animations[i];
-		debug(0, "Animation(%d) frameCount: %d", i, anim.frameCount);
-		for (int j = 0; j < anim.frameCount; ++j) {
-			debug(0, "Frame %d: %04X %d (%d, %d, %d, %d) (%d, %d, %d, %d) ",
-				j, anim.frameSpriteIndices[j], anim.frameTicks[j],
-				anim.frameRects1[j].left, anim.frameRects1[j].top, anim.frameRects1[j].right,
-				anim.frameRects1[j].bottom, anim.frameRects2[j].left, anim.frameRects2[j].top,
-				anim.frameRects2[j].right, anim.frameRects2[j].bottom);
-		}
-	}		
-#endif
-
 }
 
 void GameModule::loadSceneObjectDefs(Common::SeekableReadStream &s) {
@@ -433,16 +375,6 @@ void GameModule::loadSceneObjectDefs(Common::SeekableReadStream &s) {
 		for (int j = 0; j < 16; ++j)
 			_sceneObjectDefs[i].animIndices[j] = s.readUint32LE();
 	}
-
-#ifdef DEBUG_DUMP
-	for (int i = 0; i < _sceneObjectDefsCount; ++i) {
-		debugN(0, "SceneObjectDef(%d) [%s] %d ", i, _sceneObjectDefs[i].name, _sceneObjectDefs[i].walkSpeed);
-		for (int j = 0; j < 16; ++j)
-			debugN(0, " %d", _sceneObjectDefs[i].animIndices[j]);
-		debug(0, ".");
-	}
-#endif
-
 }
 
 void GameModule::loadSceneObjectInits(Common::SeekableReadStream &s) {
@@ -460,17 +392,6 @@ void GameModule::loadSceneObjectInits(Common::SeekableReadStream &s) {
 		_sceneObjectInits[i].x = s.readUint16LE();
 		_sceneObjectInits[i].y = s.readUint16LE();
 	}
-
-#ifdef DEBUG_DUMP
-	for (int i = 0; i < _sceneObjectInitsCount; ++i) {
-		debug(0, "SceneObjectInit(%d) %d %d (%d, %d)", i, _sceneObjectInits[i].sceneObjectIndex,
-			_sceneObjectInits[i].animIndex, _sceneObjectInits[i].x, _sceneObjectInits[i].y);
-		for (int j = 0; j < 8; ++j)
-			debug(0, "  condition(%d) %d %d %d", j, _sceneObjectInits[i].conditions.conditions[j].cond,
-				_sceneObjectInits[i].conditions.conditions[j].value1, _sceneObjectInits[i].conditions.conditions[j].value2);
-	}
-#endif
-
 }
 
 void GameModule::loadActions(Common::SeekableReadStream &s) {
@@ -502,25 +423,6 @@ void GameModule::loadActions(Common::SeekableReadStream &s) {
 			_actions[i].actionCommands.push_back(actionCommand);
 		}
 	}
-
-#ifdef DEBUG_DUMP
-	for (int i = 0; i < _actionsCount; ++i) {
-		debug(0, "Action(%d)", i);
-		for (int j = 0; j < 8; ++j)
-			debug(0, "  condition(%d) %d %d %d", j, _actions[i].conditions.conditions[j].cond,
-				_actions[i].conditions.conditions[j].value1, _actions[i].conditions.conditions[j].value2);
-		for (int j = 0; j < 8; ++j)
-			debug(0, "  result(%d) %d %d %d", j, _actions[i].results.actionResults[j].kind,
-				_actions[i].results.actionResults[j].value1, _actions[i].results.actionResults[j].value2);
-		for (uint j = 0; j < _actions[i].actionCommands.size(); ++j) {
-			ActionCommand &actionCommand = _actions[i].actionCommands[j];
-			debug(0, "  entry(%d) cmd: %d sceneObjectIndex: %d timeStamp: %d walkDest: (%d, %d) param: %d", j, actionCommand.cmd, actionCommand.sceneObjectIndex,
-				actionCommand.timeStamp, actionCommand.walkDest.x, actionCommand.walkDest.y,
-				actionCommand.param);
-		}
-	}
-#endif
-
 }
 
 void GameModule::loadGuiSpriteIndices(Common::SeekableReadStream &s) {
@@ -531,10 +433,6 @@ void GameModule::loadGuiSpriteIndices(Common::SeekableReadStream &s) {
 	s.seek(offs);
 	for (int i = 0; i < kGuiSpriteCount; ++i)
 		_guiSpriteIndices[i] = s.readUint32LE();
-
-#ifdef DEBUG_DUMP
-#endif
-
 }
 
 void GameModule::loadInventoryItemSpriteIndices(Common::SeekableReadStream &s) {
@@ -545,10 +443,6 @@ void GameModule::loadInventoryItemSpriteIndices(Common::SeekableReadStream &s) {
 	s.seek(offs);
 	for (int i = 0; i < kInventoryItemSpriteCount; ++i)
 		_inventoryItemSpriteIndices[i] = s.readUint32LE();
-
-#ifdef DEBUG_DUMP
-#endif
-
 }
 
 void GameModule::loadInventoryItemInfos(Common::SeekableReadStream &s) {
@@ -564,10 +458,6 @@ void GameModule::loadInventoryItemInfos(Common::SeekableReadStream &s) {
 		_inventoryItemInfos[i].height = s.readUint16LE();
 		s.skip(8); // Unused
 	}
-
-#ifdef DEBUG_DUMP
-#endif
-
 }
 
 void GameModule::loadDialogItemSpriteIndices(Common::SeekableReadStream &s) {
@@ -579,10 +469,6 @@ void GameModule::loadDialogItemSpriteIndices(Common::SeekableReadStream &s) {
 	for (int i = 0; i < kDialogItemSpriteCount; ++i) {
 		_dialogItemSpriteIndices[i] = s.readUint32LE();
 	}
-
-#ifdef DEBUG_DUMP
-#endif
-
 }
 
 void GameModule::loadSceneSounds(Common::SeekableReadStream &s) {
@@ -597,14 +483,6 @@ void GameModule::loadSceneSounds(Common::SeekableReadStream &s) {
 		_sceneSounds[i].conditions = readConditions(s);
 		_sceneSounds[i].soundNum = s.readUint32LE();
 	}
-
-#ifdef DEBUG_DUMP
-	debug("_sceneSoundsCount: %d", _sceneSoundsCount);
-	for (int i = 0; i < _sceneSoundsCount; ++i) {
-		debug("sound(%d) soundNum: %d", i, _sceneSounds[i].soundNum);
-	}
-#endif
-
 }
 
 void GameModule::loadPreloadSounds(Common::SeekableReadStream &s) {
@@ -617,14 +495,6 @@ void GameModule::loadPreloadSounds(Common::SeekableReadStream &s) {
 	s.seek(offs);
 	for (uint i = 0; i < _preloadSoundsCount; ++i)
 		_preloadSounds[i] = s.readUint32LE();
-
-#ifdef DEBUG_DUMP
-	debug("_preloadSoundsCount: %d", _preloadSoundsCount);
-	for (uint i = 0; i < _preloadSoundsCount; ++i) {
-		debug("preloadSound(%d) soundNum: %d", i, _preloadSounds[i]);
-	}
-#endif
-
 }
 
 } // End of namespace Bbvs
