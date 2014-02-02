@@ -31,17 +31,27 @@
 namespace Avalanche {
 
 const int8 GhostRoom::kAdjustment[5] = { 7, 0, 7, 7, 7 };
-
 const byte GhostRoom::kPlaneToUse[4] = { 2, 2, 2, 3 };
-
 const byte GhostRoom::kWaveOrder[5] = { 5, 1, 2, 3, 4 };
-
 const byte GhostRoom::kGlerkFade[26] = { 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 3, 3, 3, 2, 2, 1 };
-
 const byte GhostRoom::kGreldetFade[18] = { 1, 2, 3, 4, 5, 6, 6, 6, 5, 5, 4, 4, 3, 3, 2, 2, 1, 1 };
 
 GhostRoom::GhostRoom(AvalancheEngine *vm) {
 	_vm = vm;
+
+	for (int i = 0; i < 5; i++)
+		_greenEyes[i] = nullptr;
+
+	_glerk = nullptr;
+	_gd = _gm = 0;
+	_glerkStage = 0;
+	_aarghCount = 0;
+	_batX = _batY = 0;
+	_batCount = 0;
+	_greldetX = _greldetY = 0;
+	_greldetCount = 0;
+	_gb = false;
+	_redGreldet = false;
 }
 
 void GhostRoom::plainGrab() {
