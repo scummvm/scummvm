@@ -85,8 +85,7 @@ void VideoTheoraPlayer::SetDefaults() {
 	_volume = 100;
 	_theoraDecoder = nullptr;
 
-	// TODO: Add subtitles-support
-	//_subtitler = nullptr;
+	_subtitler = new CVidSubtitler(_gameRef);
 }
 
 //////////////////////////////////////////////////////////////////////////
