@@ -23,6 +23,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  Gob:
    - Improved video quality in Urban Runner.
 
+ Hopkins:
+   - Added an option to toggle Gore Mode from the ScummVM GUI.
+
  SCI:
    - Added support for the more detailed RAVE lip syncing data in the Windows
      version of King's Quest 6. Portraits should now be much more expressive
