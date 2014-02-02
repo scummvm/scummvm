@@ -65,19 +65,19 @@ void VoyeurEngine::playStamp() {
 					_voy._aptLoadMode = 140;
 					break;
 				case 1:
-					_voy._eventFlags &= ~EVTFLAG_1;
+					_voy._eventFlags &= ~EVTFLAG_TIME_DISABLED;
 					_voy._field46E = true;
 					_mainThread->chooseSTAMPButton(22);
 					_voy._aptLoadMode = 143;
 					break;
 				case 2:
-					_voy._eventFlags &= ~EVTFLAG_1;
+					_voy._eventFlags &= ~EVTFLAG_TIME_DISABLED;
 					reviewTape();
 					_voy._field46E = true;
 					_voy._aptLoadMode = 142;
 					break;
 				case 3:
-					_voy._eventFlags &= ~EVTFLAG_1;
+					_voy._eventFlags &= ~EVTFLAG_TIME_DISABLED;
 					_mainThread->chooseSTAMPButton(21);
 					break;
 				case 4:
@@ -683,7 +683,7 @@ void VoyeurEngine::reviewTape() {
 
 			_eventsManager._intPtr.field1E = 1;
 			_eventsManager._intPtr.field1A = 0;
-			_voy._eventFlags &= ~EVTFLAG_1;
+			_voy._eventFlags &= ~EVTFLAG_TIME_DISABLED;
 
 			// Play suond for the given duration
 			_soundManager.setVOCOffset(_voy._vocSecondsOffset);
@@ -697,7 +697,7 @@ void VoyeurEngine::reviewTape() {
 				_eventsManager.delay(10);
 			}
 
-			_voy._eventFlags |= EVTFLAG_1;
+			_voy._eventFlags |= EVTFLAG_TIME_DISABLED;
 			_soundManager.stopVOCPlay();
 			_bVoy->freeBoltGroup(0x7F00);
 			break;
@@ -902,11 +902,11 @@ void VoyeurEngine::playAVideoEvent(int eventIndex) {
 	_audioVideoId = evt._audioVideoId;
 	_voy._vocSecondsOffset = evt._computerOn;
 	_eventsManager._videoDead = evt._dead;
-	_voy._eventFlags &= ~EVTFLAG_1;
+	_voy._eventFlags &= ~EVTFLAG_TIME_DISABLED;
 	
 	playAVideoDuration(_audioVideoId, evt._computerOff);
 
-	_voy._eventFlags |= EVTFLAG_1;
+	_voy._eventFlags |= EVTFLAG_TIME_DISABLED;
 	if (_eventsManager._videoDead != -1) {
 		_bVoy->freeBoltGroup(0xE00);
 		_eventsManager._videoDead = -1;

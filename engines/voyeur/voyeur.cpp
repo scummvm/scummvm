@@ -117,7 +117,7 @@ void VoyeurEngine::globalInitBolt() {
 	assert(_graphicsManager._fontPtr->_curFont);
 
 	// Setup default flags
-	_voy._eventFlags = EVTFLAG_1;
+	_voy._eventFlags = EVTFLAG_TIME_DISABLED;
 	_voy._field4376 = _voy._field4378 = 127;
 	_voy._field4F2 = 9999;
 	_voy._aptLoadMode = -1;
@@ -463,7 +463,7 @@ void VoyeurEngine::doOpening() {
 	_eventsManager._videoDead = -1;
 	_voy.addVideoEventStart();
 
-	_voy._eventFlags &= ~EVTFLAG_1;
+	_voy._eventFlags &= ~EVTFLAG_TIME_DISABLED;
 
 	for (int i = 0; i < 256; ++i)
 		_graphicsManager.setColor(i, 8, 8, 8);
@@ -498,7 +498,7 @@ void VoyeurEngine::doOpening() {
 	if ((_voy._RTVNum - _voy._field468) < 2)
 		_eventsManager.delay(60);
 
-	_voy._eventFlags |= EVTFLAG_1;
+	_voy._eventFlags |= EVTFLAG_TIME_DISABLED;
 	_voy.addVideoEventEnd();
 	_voy._eventFlags &= EVTFLAG_RECORDING;
 
@@ -600,7 +600,7 @@ void VoyeurEngine::playAudio(int audioId) {
 	_graphicsManager._backColors->startFade();
 	flipPageAndWaitForFade();
 
-	_voy._eventFlags &= ~EVTFLAG_1;
+	_voy._eventFlags &= ~EVTFLAG_TIME_DISABLED;
 	_soundManager.setVOCOffset(_voy._vocSecondsOffset);
 	Common::String filename = _soundManager.getVOCFileName(
 		audioId + 159);
@@ -612,7 +612,7 @@ void VoyeurEngine::playAudio(int audioId) {
 			_soundManager.getVOCStatus())
 		_eventsManager.delayClick(1);
 
-	_voy._eventFlags |= EVTFLAG_1;
+	_voy._eventFlags |= EVTFLAG_TIME_DISABLED;
 	_soundManager.stopVOCPlay();
 
 	_bVoy->freeBoltGroup(0x7F00);

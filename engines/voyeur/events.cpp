@@ -102,7 +102,7 @@ void EventsManager::startMainClockInt() {
 }
 
 void EventsManager::mainVoyeurIntFunc() {
-	if (!(_vm->_voy._eventFlags & EVTFLAG_1)) {
+	if (!(_vm->_voy._eventFlags & EVTFLAG_TIME_DISABLED)) {
 		++_vm->_voy._switchBGNum;
 
 		if (_vm->_debugger._isTimeActive) {

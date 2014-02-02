@@ -34,7 +34,7 @@ namespace Voyeur {
 enum VoyeurEventType { EVTYPE_VIDEO = 1, EVTYPE_AUDIO = 2, EVTYPE_EVID = 3,
 	EVTYPE_COMPUTER = 4 };
 
-enum EventFlag { EVTFLAG_1 = 1, EVTFLAG_2 = 2, EVTFLAG_8 = 8, EVTFLAG_RECORDING = 0x10,
+enum EventFlag { EVTFLAG_TIME_DISABLED = 1, EVTFLAG_2 = 2, EVTFLAG_8 = 8, EVTFLAG_RECORDING = 0x10,
 	EVTFLAG_40 = 0x40, EVTFLAG_100 = 0x100 };
 
 struct VoyeurEvent {
