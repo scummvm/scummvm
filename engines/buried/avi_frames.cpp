@@ -27,6 +27,7 @@
 #include "buried/buried.h"
 #include "buried/graphics.h"
 
+#include "common/system.h"
 #include "graphics/surface.h"
 #include "video/avi_decoder.h"
 
@@ -113,8 +114,13 @@ const Graphics::Surface *AVIFrames::getFrame(int frameIndex) {
 	if (!frame)
 		return 0;
 
-	Graphics::Surface *copy = new Graphics::Surface();
-	copy->copyFrom(*frame);
+	Graphics::Surface *copy;
+	if (frame->format == g_system->getScreenFormat()) {
+		copy = new Graphics::Surface();
+		copy->copyFrom(*frame);
+	} else {
+		copy = frame->convertTo(g_system->getScreenFormat());
+	}
 
 	if (_cacheEnabled)
 		addFrameToCache(frameIndex, copy);
