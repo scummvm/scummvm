@@ -4318,7 +4318,7 @@ void Scene325::signal() {
 			R2_GLOBALS._playStream.stop();
 		} else {
 			_sceneMode = 15;
-			R2_GLOBALS._playStream.play(_soundQueue[_soundIndex], this);
+			R2_GLOBALS._playStream.play(_soundQueue[_soundIndex++], this);
 		}
 		break;
 	default:
