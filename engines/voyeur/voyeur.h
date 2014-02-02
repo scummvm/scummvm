@@ -172,7 +172,6 @@ public:
 	BoltGroup *_stackGroupPtr;
 	int _glGoScene;
 	int _glGoStack;
-	bool _bob;
 	int _stampFlags;
 	int _playStampGroupId;
 	int _currentVocId;

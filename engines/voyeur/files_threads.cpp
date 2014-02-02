@@ -341,7 +341,7 @@ void ThreadResource::parsePlayCommands() {
 	_vm->_voy._field46A = 0;
 	_vm->_voy._field47A = -1;
 	_vm->_voy._computerTextId = -1;
-	_vm->_voy._field478 &= ~8;
+	_vm->_voy._eventFlags &= ~EVTFLAG_8;
 	_vm->_eventsManager._videoDead = -1;
 
 	// Reset hotspot data
@@ -410,12 +410,12 @@ void ThreadResource::parsePlayCommands() {
 				} else {
 					_vm->_voy._vocSecondsOffset = _vm->_voy._RTVNum - _vm->_voy._field468;
 					_vm->_voy.addVideoEventStart();
-					_vm->_voy._field478 &= ~1;
-					_vm->_voy._field478 |= 0x10;
+					_vm->_voy._eventFlags &= ~EVTFLAG_1;
+					_vm->_voy._eventFlags |= EVTFLAG_RECORDING;
 					_vm->playAVideo(_vm->_audioVideoId);
 
-					_vm->_voy._field478 &= ~0x10;
-					_vm->_voy._field478 |= 1;
+					_vm->_voy._eventFlags &= ~EVTFLAG_RECORDING;
+					_vm->_voy._eventFlags |= EVTFLAG_1;
 					_vm->_voy.addVideoEventEnd();
 					_vm->_eventsManager.incrementTime(1);
 				
@@ -454,9 +454,9 @@ void ThreadResource::parsePlayCommands() {
 
 			_vm->_voy._vocSecondsOffset = 0;
 			_vm->_voy._field468 = _vm->_voy._RTVNum;
-			_vm->_voy._field478 &= ~0x11;
+			_vm->_voy._eventFlags &= ~(EVTFLAG_1 | EVTFLAG_RECORDING);
 			_vm->playAVideo(_vm->_audioVideoId);
-			_vm->_voy._field478 |= 1;
+			_vm->_voy._eventFlags |= EVTFLAG_1;
 
 			if (id != 22) {
 				_vm->_audioVideoId = -1;
@@ -515,7 +515,7 @@ void ThreadResource::parsePlayCommands() {
 
 				if (_vm->_voy._transitionId != count) {
 					if (_vm->_voy._transitionId > 1)
-						_vm->_voy._field478 &= ~0x100;
+						_vm->_voy._eventFlags &= ~EVTFLAG_100;
 
 					_vm->_voy._transitionId = count;
 					_vm->_gameMinute = LEVEL_M[count - 1];
@@ -610,7 +610,7 @@ void ThreadResource::parsePlayCommands() {
 			break;
 
 		case 11:
-			_vm->_voy._field478 |= 2;
+			_vm->_voy._eventFlags |= EVTFLAG_2;
 			break;
 
 		case 12:
@@ -1034,7 +1034,7 @@ int ThreadResource::doApt() {
 	_vm->_graphicsManager.setColor(131, 215, 215, 215);
 	_vm->_graphicsManager.setColor(132, 235, 235, 235);
 
-	_vm->_eventsManager._intPtr.field38 = true;
+	_vm->_eventsManager._intPtr._palChanged = true;
 	_vm->_eventsManager._intPtr._hasPalette = true;
 
 	// Main loop to allow users to move the cursor and select hotspots
@@ -1070,7 +1070,7 @@ int ThreadResource::doApt() {
 				if (hotspotId != prevHotspotId) {
 					// Check for whether to replace hotspot Id for "Watch TV" for
 					// "Review the Tape" if player has already watched the TV
-					if ((_vm->_voy._field478 & 0x100) && (hotspotId == 2))
+					if ((_vm->_voy._eventFlags & 0x100) && (hotspotId == 2))
 						hotspotId = 5;
 
 					// Draw the text description for the highlighted hotspot
@@ -1161,13 +1161,13 @@ void ThreadResource::doRoom() {
 
 	voy._vocSecondsOffset = 0;
 	vm._soundManager.startVOCPlay(vm._currentVocId);
-	voy._field478 &= ~1;
+	voy._eventFlags &= ~EVTFLAG_1;
 
 	bool breakFlag = false;
 	while (!vm.shouldQuit() && !breakFlag) {
 		_vm->_voyeurArea = AREA_ROOM;
 		vm._graphicsManager.setColor(128, 0, 255, 0);
-		vm._eventsManager._intPtr.field38 = true;
+		vm._eventsManager._intPtr._palChanged = true;
 		vm._eventsManager._intPtr._hasPalette = true;
 
 		do {
@@ -1207,7 +1207,7 @@ void ThreadResource::doRoom() {
 				vm._eventsManager.setCursor(magnifierCursor);
 			}
 
-			vm._eventsManager._intPtr.field38 = true;
+			vm._eventsManager._intPtr._palChanged = true;
 			vm._eventsManager._intPtr._hasPalette = true;
 			vm._graphicsManager.flipPage();
 			vm._eventsManager.sWaitFlip();
@@ -1221,7 +1221,7 @@ void ThreadResource::doRoom() {
 			vm._eventsManager.getMouseInfo();
 			vm._eventsManager.setMousePos(pt);
 		} else {
-			voy._field478 |= 16;
+			voy._eventFlags |= EVTFLAG_RECORDING;
 			vm._eventsManager.hideCursor();
 			vm._eventsManager.startCursorBlink();
 
@@ -1250,7 +1250,7 @@ void ThreadResource::doRoom() {
 				vm.doEvidDisplay(hotspotId, 999);
 			}
 
-			voy._field478 &= ~0x10;
+			voy._eventFlags &= ~EVTFLAG_RECORDING;
 			if (!vm._eventsManager._mouseClicked)
 				vm._eventsManager.delayClick(18000);
 
@@ -1289,12 +1289,12 @@ void ThreadResource::doRoom() {
 			_vm->flipPageAndWait();
 
 			vm._graphicsManager.fadeUpICF1(0);
-			voy._field478 &= 0x10;
+			voy._eventFlags &= EVTFLAG_RECORDING;
 			vm._eventsManager.showCursor();
 		}
 	}
 
-	voy._field478 = 1;
+	voy._eventFlags = EVTFLAG_1;
 	vm._eventsManager.incrementTime(1);
 	voy._viewBounds = nullptr;
 	voy._field437E = 0;
@@ -1323,13 +1323,13 @@ int ThreadResource::doInterface() {
 	PictureResource *pic;
 	Common::Point pt;
 
-	_vm->_voy._field478 |= 1;
+	_vm->_voy._eventFlags |= EVTFLAG_1;
 	if (_vm->_voy._field46E) {
 		_vm->_voy._field46E = false;
 		return -2;
 	}
 
-	_vm->_voy._field478 &= ~0x100;
+	_vm->_voy._eventFlags &= ~EVTFLAG_100;
 	_vm->_playStampGroupId = -1;
 	_vm->_eventsManager._intPtr.field1E = 1;
 	_vm->_eventsManager._intPtr.field1A = 0;
@@ -1344,14 +1344,14 @@ int ThreadResource::doInterface() {
 
 		_vm->initIFace();
 		_vm->_voy._RTVNum = _vm->_voy._RTVLimit - 4;
-		_vm->_voy._field478 &= ~1;
+		_vm->_voy._eventFlags &= ~EVTFLAG_1;
 
 		while (!_vm->shouldQuit() && _vm->_voy._RTVNum < _vm->_voy._RTVLimit) {
 			_vm->flashTimeBar();
 			_vm->_eventsManager.delayClick(1);
 		}
 
-		_vm->_voy._field478 = 1;
+		_vm->_voy._eventFlags |= EVTFLAG_1;
 		chooseSTAMPButton(20);
 		parsePlayCommands();
 	}
@@ -1371,9 +1371,9 @@ int ThreadResource::doInterface() {
 	_vm->_eventsManager.getMouseInfo();
 	
 	_vm->_graphicsManager.setColor(240, 220, 220, 220);
-	_vm->_eventsManager._intPtr.field38 = true;
+	_vm->_eventsManager._intPtr._palChanged = true;
 	_vm->_eventsManager._intPtr._hasPalette = true;
-	_vm->_voy._field478 &= ~1;
+	_vm->_voy._eventFlags &= ~EVTFLAG_1;
 
 	// Set the cusor 
 	PictureResource *crosshairsCursor = _vm->_bVoy->boltEntry(0x112)._picResource;
@@ -1470,7 +1470,7 @@ int ThreadResource::doInterface() {
 		_vm->flipPageAndWait();
 
 		pt = _vm->_eventsManager.getMousePos();
-		if ((_vm->_voy._RTVNum >= _vm->_voy._RTVLimit) || ((_vm->_voy._field478 & 0x80) &&
+		if ((_vm->_voy._RTVNum >= _vm->_voy._RTVLimit) || ((_vm->_voy._eventFlags & 0x80) &&
 				_vm->_eventsManager._rightClick && (pt.x == 0))) {
 			// Time to transition to the next time period
 			_vm->_eventsManager.getMouseInfo();
@@ -1482,7 +1482,7 @@ int ThreadResource::doInterface() {
 				_vm->checkTransition();
 				_vm->_eventsManager._leftClick = true;
 			} else {
-				_vm->_voy._field478 = 1;
+				_vm->_voy._eventFlags |= EVTFLAG_1;
 
 				chooseSTAMPButton(20);
 				parsePlayCommands();
@@ -1494,7 +1494,7 @@ int ThreadResource::doInterface() {
 				hotspots = &_vm->_bVoy->boltEntry(_vm->_playStampGroupId + 1)._rectResource->_entries;
 				_vm->_eventsManager.getMouseInfo();
 
-				_vm->_voy._field478 &= ~2;
+				_vm->_voy._eventFlags &= ~2;
 				_vm->_eventsManager._intPtr.field1E = 1;
 				_vm->_eventsManager._intPtr.field1A = 0;
 			}
@@ -1503,7 +1503,7 @@ int ThreadResource::doInterface() {
 		(!_vm->_eventsManager._leftClick || regionIndex == -1));
 
 	_vm->_eventsManager.hideCursor();
-	_vm->_voy._field478 |= 1;
+	_vm->_voy._eventFlags |= EVTFLAG_1;
 	_vm->_bVoy->freeBoltGroup(_vm->_playStampGroupId);
 	if (_vm->_currentVocId != -1)
 		_vm->_soundManager.stopVOCPlay();

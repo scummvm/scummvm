@@ -82,7 +82,7 @@ void SVoy::synchronize(Common::Serializer &s) {
 	s.syncAsSint16LE(_aptLoadMode);
 	s.syncAsSint16LE(_transitionId);
 	s.syncAsSint16LE(_RTVLimit);
-	s.syncAsSint16LE(_field478);
+	s.syncAsSint16LE(_eventFlags);
 	s.syncAsSint16LE(_field47A);
 
 	s.syncAsSint16LE(_field4AC);

@@ -53,7 +53,7 @@ void VoyeurEngine::playStamp() {
 
 		_mainThread->parsePlayCommands();
 
-		bool flag = breakFlag = (_voy._field478 & 2) != 0;
+		bool flag = breakFlag = (_voy._eventFlags & EVTFLAG_2) != 0;
 		 
 		switch (_voy._field470) {
 		case 5:
@@ -65,19 +65,19 @@ void VoyeurEngine::playStamp() {
 					_voy._aptLoadMode = 140;
 					break;
 				case 1:
-					_voy._field478 &= ~1;
+					_voy._eventFlags &= ~EVTFLAG_1;
 					_voy._field46E = true;
 					_mainThread->chooseSTAMPButton(22);
 					_voy._aptLoadMode = 143;
 					break;
 				case 2:
-					_voy._field478 &= ~1;
+					_voy._eventFlags &= ~EVTFLAG_1;
 					reviewTape();
 					_voy._field46E = true;
 					_voy._aptLoadMode = 142;
 					break;
 				case 3:
-					_voy._field478 &= ~1;
+					_voy._eventFlags &= ~EVTFLAG_1;
 					_mainThread->chooseSTAMPButton(21);
 					break;
 				case 4:
@@ -87,7 +87,7 @@ void VoyeurEngine::playStamp() {
 					doGossip();
 					_voy._field46E = true;
 					_voy._aptLoadMode = 141;
-					_voy._field478 &= ~0x100;
+					_voy._eventFlags &= ~EVTFLAG_100;
 					break;
 				default:
 					break;
@@ -133,7 +133,7 @@ void VoyeurEngine::playStamp() {
 
 			if (_voy._videoEventId != -1) {
 				playAVideoEvent(_voy._videoEventId);
-				_voy._field478 &= ~0x10;
+				_voy._eventFlags &= ~EVTFLAG_RECORDING;
 			}
 
 			_mainThread->chooseSTAMPButton(0);
@@ -279,7 +279,7 @@ void VoyeurEngine::doClosingCredits() {
 	(*_graphicsManager._vPort)->setupViewPort(NULL);
 	_graphicsManager.setColor(1, 180, 180, 180);
 	_graphicsManager.setColor(2, 200, 200, 200);
-	_eventsManager._intPtr.field38 = true;
+	_eventsManager._intPtr._palChanged = true;
 	_eventsManager._intPtr._hasPalette = true;
 
 	_graphicsManager._fontPtr->_curFont = _bVoy->boltEntry(0x402)._fontResource;
@@ -383,7 +383,7 @@ void VoyeurEngine::doPiracy() {
 	_graphicsManager.screenReset();
 	_graphicsManager.setColor(1, 0, 0, 0);
 	_graphicsManager.setColor(2, 255, 255, 255);
-	_eventsManager._intPtr.field38 = true;
+	_eventsManager._intPtr._palChanged = true;
 	_eventsManager._intPtr._hasPalette = true;
 	(*_graphicsManager._vPort)->setupViewPort(NULL);
 	(*_graphicsManager._vPort)->fillPic(1);
@@ -453,7 +453,7 @@ void VoyeurEngine::reviewTape() {
 		_graphicsManager.setColor(12, 120, 248, 120);
 		_eventsManager.setCursorColor(128, 1);
 
-		_eventsManager._intPtr.field38 = true;
+		_eventsManager._intPtr._palChanged = true;
 		_eventsManager._intPtr._hasPalette = true;
 		_graphicsManager._fontPtr->_curFont = _bVoy->boltEntry(0x909)._fontResource;
 		_graphicsManager._fontPtr->_fontSaveBack = false;
@@ -574,17 +574,17 @@ void VoyeurEngine::reviewTape() {
 					_eventsManager.getMouseInfo();
 					foundIndex = -1;
 				}
-			} else if ((_voy._field478 & 0x40) && _voy._viewBounds->left == pt.x &&
+			} else if ((_voy._eventFlags & EVTFLAG_40) && _voy._viewBounds->left == pt.x &&
 					_voy._viewBounds->bottom == pt.y) {
 				foundIndex = 999;
-			} else if ((_voy._field478 & 0x40) && _voy._viewBounds->left == pt.x &&
+			} else if ((_voy._eventFlags & EVTFLAG_40) && _voy._viewBounds->left == pt.x &&
 					_voy._viewBounds->top == pt.y) {
 				foundIndex = 998;
 			} else {
 				_eventsManager.setCursorColor(128, (foundIndex == -1) ? 0 : 1);
 			}
 
-			_eventsManager._intPtr.field38 = true;
+			_eventsManager._intPtr._palChanged = true;
 			_eventsManager._intPtr._hasPalette = true;
 
 			if (_eventsManager._mouseClicked || _eventsManager._mouseUnk) {
@@ -635,7 +635,7 @@ void VoyeurEngine::reviewTape() {
 
 			pt = _eventsManager.getMousePos();
 			if (_eventsManager._mouseClicked && _voy._viewBounds->left == pt.x &&
-					(_voy._field478 & 0x40) && _eventsManager._rightClick) {
+					(_voy._eventFlags & EVTFLAG_40) && _eventsManager._rightClick) {
 				WRITE_LE_UINT32(_controlPtr->_ptr + 4, (pt.y / 60) + 1);
 				foundIndex = -1;
 				_eventsManager._rightClick = 0;
@@ -683,7 +683,7 @@ void VoyeurEngine::reviewTape() {
 
 			_eventsManager._intPtr.field1E = 1;
 			_eventsManager._intPtr.field1A = 0;
-			_voy._field478 &= ~1;
+			_voy._eventFlags &= ~EVTFLAG_1;
 
 			// Play suond for the given duration
 			_soundManager.setVOCOffset(_voy._vocSecondsOffset);
@@ -697,7 +697,7 @@ void VoyeurEngine::reviewTape() {
 				_eventsManager.delay(10);
 			}
 
-			_voy._field478 |= 1;
+			_voy._eventFlags |= EVTFLAG_1;
 			_soundManager.stopVOCPlay();
 			_bVoy->freeBoltGroup(0x7F00);
 			break;
@@ -902,11 +902,11 @@ void VoyeurEngine::playAVideoEvent(int eventIndex) {
 	_audioVideoId = evt._audioVideoId;
 	_voy._vocSecondsOffset = evt._computerOn;
 	_eventsManager._videoDead = evt._dead;
-	_voy._field478 &= ~1;
+	_voy._eventFlags &= ~EVTFLAG_1;
 	
 	playAVideoDuration(_audioVideoId, evt._computerOff);
 
-	_voy._field478 |= 1;
+	_voy._eventFlags |= EVTFLAG_1;
 	if (_eventsManager._videoDead != -1) {
 		_bVoy->freeBoltGroup(0xE00);
 		_eventsManager._videoDead = -1;
@@ -1023,7 +1023,7 @@ void VoyeurEngine::makeViewFinder() {
 	_graphicsManager.setColor(243, 105, 105, 105);
 	_graphicsManager.setColor(palOffset + 241, 219, 235, 235);
 
-	_eventsManager._intPtr.field38 = true;
+	_eventsManager._intPtr._palChanged = true;
 	_eventsManager._intPtr._hasPalette = true;
 }
 
@@ -1283,7 +1283,7 @@ void VoyeurEngine::doTimeBar(bool force) {
 		(*_graphicsManager._vPort)->sFillBox(6, fullHeight - 92);
 		if (height > 0) {
 			_graphicsManager.setColor(215, 238, 238, 238);
-			_eventsManager._intPtr.field38 = true;
+			_eventsManager._intPtr._palChanged = true;
 			_eventsManager._intPtr._hasPalette = true;
 
 			_graphicsManager._drawPtr->_penColor = 215;
@@ -1305,7 +1305,7 @@ void VoyeurEngine::flashTimeBar(){
 		else
 			_graphicsManager.setColor(240, 220, 220, 220);
 		
-		_eventsManager._intPtr.field38 = true;
+		_eventsManager._intPtr._palChanged = true;
 		_eventsManager._intPtr._hasPalette = true;
 		_flashTimeFlag = !_flashTimeFlag;
 	}

@@ -62,7 +62,7 @@ public:
 	int field26;
 	int field2A;   // CHECKME: Useless variable
 	bool _hasPalette;
-	bool field38;  // CHECKME: Useless variable
+	bool _palChanged;  // CHECKME: Useless variable
 	bool field3B;  // Skip fading
 	bool field3D;  // CHECKME: Useless variable
 	int _palStartIndex;
@@ -78,12 +78,14 @@ class EventsManager {
 private:
 	VoyeurEngine *_vm;
 	uint32 _priorFrameTime;
+	bool _counterFlag;
 	uint32 _gameCounter;
-	uint32 _joe;
+	uint32 _recordBlinkCounter;	// Original field was called _joe :)
 	bool _keyState[256];
 	int _mouseButton;
 	Common::List<IntNode *> _intNodes;
 	Common::Point _mousePos;
+	bool _cursorBlinked;
 
 	void mainVoyeurIntFunc();
 private:

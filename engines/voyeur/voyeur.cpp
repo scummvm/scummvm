@@ -42,7 +42,6 @@ VoyeurEngine::VoyeurEngine(OSystem *syst, const VoyeurGameDescription *gameDesc)
 	_bVoy = NULL;
 	_iForceDeath = -1;
 	_controlPtr = NULL;
-	_bob = false;
 	_stampFlags = 0;
 	_playStampGroupId = _currentVocId = 0;
 	_audioVideoId = -1;
@@ -70,7 +69,7 @@ Common::Error VoyeurEngine::run() {
 	_eventsManager.resetMouse();
 	if (doHeadTitle()) {
 		if (_iForceDeath >= 1 && _iForceDeath <= 4)
-			_voy._field478 |= 0x80;
+			_voy._eventFlags |= 0x80;
 
 		playStamp();
 		if (!shouldQuit())
@@ -118,11 +117,11 @@ void VoyeurEngine::globalInitBolt() {
 	assert(_graphicsManager._fontPtr->_curFont);
 
 	// Setup default flags
-	_voy._field478 = 1;
+	_voy._eventFlags = EVTFLAG_1;
 	_voy._field4376 = _voy._field4378 = 127;
 	_voy._field4F2 = 9999;
 	_voy._aptLoadMode = -1;
-	_voy._field478 = 256;
+	_voy._eventFlags |= EVTFLAG_100;
 	
 	_voy._curICF0 = _graphicsManager._palFlag ? 0xFFFFA5E0 : 0x5F90; 
 	_eventsManager.addFadeInt();
@@ -179,7 +178,7 @@ bool VoyeurEngine::doHeadTitle() {
 			_eventsManager._mouseClicked = false;
 		}
 	*/
-		if (_voy._field478 & 0x80) {
+		if (_voy._eventFlags & 0x80) {
 			// Add initial game event set
 			if (_voy._eventCount <= 1)
 				_voy.addEvent(18, 1, EVTYPE_VIDEO, 33, 0, 998, -1);
@@ -275,7 +274,7 @@ bool VoyeurEngine::doLock() {
 		_eventsManager.setCursor(cursorPic);
 		_eventsManager.showCursor();
 
-		_eventsManager._intPtr. field38 = true;
+		_eventsManager._intPtr. _palChanged = true;
 		_eventsManager._intPtr._hasPalette = true;
 
 		_graphicsManager._fontPtr->_curFont = _bVoy->boltEntry(0x708)._fontResource;
@@ -326,7 +325,7 @@ bool VoyeurEngine::doLock() {
 					}
 
 					_eventsManager.setCursorColor(127, (key == -1) ? 0 : 1);
-					_eventsManager._intPtr.field38 = true;
+					_eventsManager._intPtr._palChanged = true;
 					_eventsManager._intPtr._hasPalette = true;
 
 					_eventsManager.delay(1);
@@ -457,19 +456,19 @@ void VoyeurEngine::doOpening() {
 	_voy._vocSecondsOffset = 0;
 	_voy._RTVNum = 0;
 	_voy._field468 = _voy._RTVNum;
-	_voy._field478 = 16;
+	_voy._eventFlags = 16;
 	_gameHour = 4;
 	_gameMinute  = 0;
 	_audioVideoId = 1;
 	_eventsManager._videoDead = -1;
 	_voy.addVideoEventStart();
 
-	_voy._field478 &= ~1;
+	_voy._eventFlags &= ~EVTFLAG_1;
 
 	for (int i = 0; i < 256; ++i)
 		_graphicsManager.setColor(i, 8, 8, 8);
 
-	_eventsManager._intPtr.field38 = 1;
+	_eventsManager._intPtr._palChanged = true;
 	_eventsManager._intPtr._hasPalette = true;
 	(*_graphicsManager._vPort)->setupViewPort();
 	flipPageAndWait();
@@ -499,9 +498,9 @@ void VoyeurEngine::doOpening() {
 	if ((_voy._RTVNum - _voy._field468) < 2)
 		_eventsManager.delay(60);
 
-	_voy._field478 |= 1;
+	_voy._eventFlags |= EVTFLAG_1;
 	_voy.addVideoEventEnd();
-	_voy._field478 &= 0x10;
+	_voy._eventFlags &= EVTFLAG_RECORDING;
 
 	_bVoy->freeBoltGroup(0x200);
 }
@@ -553,6 +552,9 @@ void VoyeurEngine::playAVideoDuration(int videoId, int duration) {
 	int endFrame = decoder.getCurFrame() + totalFrames; 
 
 	_eventsManager.getMouseInfo();
+	if (!_voy._fadeICF0)
+		_eventsManager.startCursorBlink();
+
 	while (!shouldQuit() && !decoder.endOfVideo() && !_eventsManager._mouseClicked &&
 			(decoder.getCurFrame() < endFrame)) {
 		if (decoder.needsUpdate()) {
@@ -560,6 +562,7 @@ void VoyeurEngine::playAVideoDuration(int videoId, int duration) {
 
 			Common::copy((const byte *)frame->getPixels(), (const byte *)frame->getPixels() + 320 * 200,
 				(byte *)_graphicsManager._screenSurface.getPixels());
+			_graphicsManager.drawDot();
 		}
 
 		if (decoder.hasDirtyPalette()) {
@@ -574,14 +577,14 @@ void VoyeurEngine::playAVideoDuration(int videoId, int duration) {
 
 	// RL2 finished
 	_graphicsManager.screenReset();
-	_voy._field478 &= ~0x10;
+	_voy._eventFlags &= ~EVTFLAG_RECORDING;
 
-	if (_voy._field478 & 8) {
+	if (_voy._eventFlags & EVTFLAG_8) {
 		assert(pic);
 		byte *imgData = (*_graphicsManager._vPort)->_currentPic->_imgData;
 		(*_graphicsManager._vPort)->_currentPic->_imgData = pic->_imgData;
 		pic->_imgData = imgData;
-		_voy._field478 &= ~8;
+		_voy._eventFlags &= ~EVTFLAG_8;
 	}
 }
 
@@ -596,32 +599,32 @@ void VoyeurEngine::playAudio(int audioId) {
 	_graphicsManager._backColors->startFade();
 	flipPageAndWaitForFade();
 
-	_voy._field478 &= ~1;
+	_voy._eventFlags &= ~EVTFLAG_1;
 	_soundManager.setVOCOffset(_voy._vocSecondsOffset);
 	Common::String filename = _soundManager.getVOCFileName(
 		audioId + 159);
 	_soundManager.startVOCPlay(filename);
-	_voy._field478 |= 16;
+	_voy._eventFlags |= EVTFLAG_RECORDING;
 	_eventsManager.startCursorBlink();
 
 	while (!shouldQuit() && !_eventsManager._mouseClicked && 
 			_soundManager.getVOCStatus())
 		_eventsManager.delayClick(1);
 
-	_voy._field478 |= 1;
+	_voy._eventFlags |= EVTFLAG_1;
 	_soundManager.stopVOCPlay();
 
 	_bVoy->freeBoltGroup(0x7F00);
 	(*_graphicsManager._vPort)->setupViewPort(NULL);
 
-	_voy._field478 &= ~0x10;
+	_voy._eventFlags &= ~EVTFLAG_RECORDING;
 	_voy._field470 = 129;
 }
 
 void VoyeurEngine::doTransitionCard(const Common::String &time, const Common::String &location) {
 	_graphicsManager.setColor(128, 16, 16, 16);
 	_graphicsManager.setColor(224, 220, 220, 220);
-	_eventsManager._intPtr.field38 = true;
+	_eventsManager._intPtr._palChanged = true;
 	_eventsManager._intPtr._hasPalette = true;
 
 	(*_graphicsManager._vPort)->setupViewPort(NULL);
@@ -761,7 +764,6 @@ Common::Error VoyeurEngine::saveGameState(int slot, const Common::String &desc) 
 void VoyeurEngine::synchronize(Common::Serializer &s) {
 	s.syncAsSint16LE(_glGoScene);
 	s.syncAsSint16LE(_glGoStack);
-	s.syncAsSint16LE(_bob);
 	s.syncAsSint16LE(_stampFlags);
 	s.syncAsSint16LE(_playStampGroupId);
 	s.syncAsSint16LE(_currentVocId);

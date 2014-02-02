@@ -56,7 +56,7 @@ IntData::IntData() {
 	field24 = 0;
 	field26 = 0;
 	field2A = 0;
-	field38 = false;
+	_palChanged = false;
 	field3B = false;
 	field3D = false;
 	_palStartIndex = 0;
@@ -73,7 +73,10 @@ EventsManager::EventsManager(): _intPtr(_gameData),
 	_fadeStatus = 0;
 	_priorFrameTime = g_system->getMillis();
 	_gameCounter = 0;
-	_joe = 0;
+	_counterFlag = false;
+	_recordBlinkCounter = 0;
+	_cursorBlinked = false;
+
 	Common::fill(&_keyState[0], &_keyState[256], false);
 	Common::fill(&_cycleTime[0], &_cycleTime[4], 0);
 	Common::fill(&_cycleNext[0], &_cycleNext[4], (byte *)nullptr);
@@ -99,7 +102,7 @@ void EventsManager::startMainClockInt() {
 }
 
 void EventsManager::mainVoyeurIntFunc() {
-	if (!(_vm->_voy._field478 & 1)) {
+	if (!(_vm->_voy._eventFlags & EVTFLAG_1)) {
 		++_vm->_voy._switchBGNum;
 
 		if (_vm->_debugger._isTimeActive) {
@@ -141,7 +144,9 @@ void EventsManager::checkForNextFrameCounter() {
 	// Check for next game frame
 	uint32 milli = g_system->getMillis();
 	if ((milli - _priorFrameTime) >= GAME_FRAME_TIME) {
-		++_gameCounter;
+		_counterFlag = !_counterFlag;
+		if (_counterFlag)
+			++_gameCounter;
 		_priorFrameTime = milli;
 
 		// Run the timer-based updates
@@ -173,7 +178,7 @@ void EventsManager::voyeurTimer() {
 
 	if (--_gameData.field26 <= 0) {
 		if (_gameData._flipWait) {
-			_gameData.field38 = true;
+			_gameData._palChanged = true;
 			_gameData._flipWait = false;
 			_gameData.field3B = false;
 		}
@@ -338,7 +343,7 @@ void EventsManager::startFade(CMapResource *cMap) {
 
 		_intPtr._hasPalette = true;
 		if (!(cMap->_fadeStatus & 2))
-			_intPtr.field38 = true;
+			_intPtr._palChanged = true;
 	}
 
 	if (_cycleStatus & 1)
@@ -388,7 +393,7 @@ void EventsManager::vDoFadeInt() {
 		_intPtr._palEndIndex = _fadeLastCol;
 
 	_intPtr._hasPalette = true;
-	_intPtr.field38 = true;
+	_intPtr._palChanged = true;
 }
 
 void EventsManager::vDoCycleInt() {
@@ -471,7 +476,7 @@ void EventsManager::vDoCycleInt() {
 			}
 
 			_intPtr._hasPalette = true;
-			_intPtr.field38 = true;
+			_intPtr._palChanged = true;
 		}
 	}
 }
@@ -535,18 +540,18 @@ void EventsManager::hideCursor() {
 void EventsManager::getMouseInfo() {
 	pollEvents();
 
-	if (_vm->_voy._field478 & 0x10) {
-		if ((_gameCounter - _joe) > 8) {
-			_joe = _gameCounter;
+	if (_vm->_voy._eventFlags & EVTFLAG_RECORDING) {
+		if ((_gameCounter - _recordBlinkCounter) > 8) {
+			_recordBlinkCounter = _gameCounter;
 
-			if (_vm->_bob) {
-				_vm->_bob = false;
-				_vm->_graphicsManager.setOneColor(128, 55, 5, 5);
+			if (_cursorBlinked) {
+				_cursorBlinked = false;
+				_vm->_graphicsManager.setOneColor(128, 220, 20, 20);
 				_vm->_graphicsManager.setColor(128, 220, 20, 20);
 			} else {
-				_vm->_bob = true;
-				_vm->_graphicsManager.setOneColor(128, 55, 55, 55);
-				_vm->_graphicsManager.setColor(128, 220, 20, 20);
+				_cursorBlinked = true;
+				_vm->_graphicsManager.setOneColor(128, 220, 220, 220);
+				_vm->_graphicsManager.setColor(128, 220, 220, 220);
 			}
 		}
 	}
@@ -567,10 +572,10 @@ void EventsManager::checkForKey() {
 }
 
 void EventsManager::startCursorBlink() {
-	if (_vm->_voy._field478 & 0x10) {
+	if (_vm->_voy._eventFlags & EVTFLAG_RECORDING) {
 		_vm->_graphicsManager.setOneColor(128, 55, 5, 5);
 		_vm->_graphicsManager.setColor(128, 220, 20, 20);
-		_intPtr.field38 = true;
+		_intPtr._palChanged = true;
 		_intPtr._hasPalette = true;
 
 		_vm->_graphicsManager.drawDot();

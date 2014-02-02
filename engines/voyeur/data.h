@@ -34,6 +34,9 @@ namespace Voyeur {
 enum VoyeurEventType { EVTYPE_VIDEO = 1, EVTYPE_AUDIO = 2, EVTYPE_EVID = 3,
 	EVTYPE_COMPUTER = 4 };
 
+enum EventFlag { EVTFLAG_1 = 1, EVTFLAG_2 = 2, EVTFLAG_8 = 8, EVTFLAG_RECORDING = 0x10,
+	EVTFLAG_40 = 0x40, EVTFLAG_100 = 0x100 };
+
 struct VoyeurEvent {
 	int _hour;
 	int _minute;
@@ -118,7 +121,7 @@ public:
 	int _aptLoadMode;
 	int _transitionId;
 	int _RTVLimit;
-	int _field478;
+	int _eventFlags;
 	int _field47A;
 	PictureResource *_evPicPtrs[6];
 	CMapResource *_evCmPtrs[6];
