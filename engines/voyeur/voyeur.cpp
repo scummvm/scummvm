@@ -591,9 +591,9 @@ void VoyeurEngine::playAVideoDuration(int videoId, int duration) {
 void VoyeurEngine::playAudio(int audioId) {
 	_bVoy->getBoltGroup(0x7F00);
 	_graphicsManager._backgroundPage = _bVoy->boltEntry(0x7F00 + 
-		BLIND_TABLE[audioId])._picResource;
+		BLIND_TABLE[audioId] * 2)._picResource;
 	_graphicsManager._backColors = _bVoy->boltEntry(0x7F01 + 
-		BLIND_TABLE[audioId])._cMapResource;
+		BLIND_TABLE[audioId] * 2)._cMapResource;
 
 	(*_graphicsManager._vPort)->setupViewPort();
 	_graphicsManager._backColors->startFade();
