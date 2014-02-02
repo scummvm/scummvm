@@ -24,7 +24,6 @@
 #include "voyeur/animation.h"
 #include "voyeur/graphics.h"
 #include "voyeur/staticres.h"
-#include "voyeur/utils.h"
 #include "common/scummsys.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
@@ -241,16 +240,12 @@ bool VoyeurEngine::doLock() {
 	int buttonVocSize, wrongVocSize;
 	byte *buttonVoc = _filesManager.fload("button.voc", &buttonVocSize);
 	byte *wrongVoc = _filesManager.fload("wrong.voc", &wrongVocSize);
-	LockClass lock;
 
 	if (_bVoy->getBoltGroup(0x700)) {
-		lock.getSysDate();
-		lock.getThePassword();
-		
-		_voy._field4380 = lock.fieldC;
+		_voy._field4380 = 0;
 		_voy._viewBounds = _bVoy->boltEntry(0x704)._rectResource;
 
-		Common::String password = lock._password;
+		Common::String password = "3333";
 		PictureResource *cursorPic = _bVoy->getPictureResource(0x702);
 		assert(cursorPic);
 
@@ -287,7 +282,7 @@ bool VoyeurEngine::doLock() {
 		_graphicsManager._fontPtr->_fontSaveBack = 0;
 		_graphicsManager._fontPtr->_fontFlags = 0;
 
-		Common::String dateString = lock.getDateString();
+		Common::String dateString = "ScummVM";
  		Common::String displayString = Common::String::format("Last Play %s", dateString.c_str());
 
 		bool firstLoop = true;
@@ -395,10 +390,6 @@ bool VoyeurEngine::doLock() {
 		_graphicsManager.fillPic(*_graphicsManager._vPort);
 		flipPageAndWait();
 		_graphicsManager.resetPalette();
-
-		if (flag && result)
-			lock._password = displayString;
-		lock.saveThePassword();
 
 		_voy._viewBounds = nullptr;
 		_bVoy->freeBoltGroup(0x700);
@@ -665,11 +656,7 @@ void VoyeurEngine::doTransitionCard(const Common::String &time, const Common::St
 }
 
 void VoyeurEngine::saveLastInplay() {
-	LockClass lock;
-	lock.getThePassword();
-	lock.fieldC = _voy._field4380;
-	lock.getSysDate();
-	lock.saveThePassword();
+	// No implementation in ScummVM version
 }
 
 void VoyeurEngine::flipPageAndWait() {

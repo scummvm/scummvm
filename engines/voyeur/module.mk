@@ -11,7 +11,6 @@ MODULE_OBJS := \
 	graphics.o \
 	sound.o \
 	staticres.o \
-	utils.o \
 	voyeur.o \
 	voyeur_game.o
 
