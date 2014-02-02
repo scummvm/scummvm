@@ -163,14 +163,14 @@ byte *BoltFilesState::decompress(byte *buf, int size, int mode) {
 #undef NEXT_BYTE
 
 void BoltFilesState::nextBlock() {
-	if (&_curLibPtr->_file != _curFd || _curFilePosition != _bufferEnd)
+	if (&_curLibPtr->_file != _curFd || _curFd->pos() != _bufferEnd)
 		_curLibPtr->_file.seek(_bufferEnd);
 
 	_curFd = &_curLibPtr->_file;
 	_bufferBegin = _bufferEnd;
 	int bytesRead = _curFd->read(_bufStart, _bufSize);
 
-	_bufferEnd = _curFilePosition = _bufferBegin + bytesRead;
+	_bufferEnd = _curFilePosition = _curFd->pos();
 	_bytesLeft = bytesRead - 1;
 	_bufPos = _bufStart;
 }
