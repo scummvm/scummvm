@@ -22,6 +22,9 @@
 
 namespace Hopkins {
 
+#define GAMEOPTION_GORE_DEFAULT_ON  GUIO_GAMEOPTIONS1
+#define GAMEOPTION_GORE_DEFAULT_OFF GUIO_GAMEOPTIONS2
+
 static const HopkinsGameDescription gameDescriptions[] = {
 	{
 		// Hopkins FBI Linux Demo UK 1.00 and 1.02
@@ -35,7 +38,7 @@ static const HopkinsGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformLinux,
 			ADGF_DEMO,
-			GUIO1(GUIO_NONE)
+			GUIO1(GAMEOPTION_GORE_DEFAULT_ON)
 		},
 	},
 	{
@@ -51,7 +54,7 @@ static const HopkinsGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformOS2,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NONE)
+			GUIO1(GAMEOPTION_GORE_DEFAULT_ON)
 		},
 	},
 	{
@@ -66,7 +69,7 @@ static const HopkinsGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformBeOS,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NONE)
+			GUIO1(GAMEOPTION_GORE_DEFAULT_ON)
 		},
 	},
 	{
@@ -81,7 +84,7 @@ static const HopkinsGameDescription gameDescriptions[] = {
 			Common::ES_ESP,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NONE)
+			GUIO1(GAMEOPTION_GORE_DEFAULT_ON)
 		},
 	},
 	{
@@ -96,7 +99,7 @@ static const HopkinsGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NONE)
+			GUIO1(GAMEOPTION_GORE_DEFAULT_OFF)
 		},
 	},
 	{
@@ -111,7 +114,7 @@ static const HopkinsGameDescription gameDescriptions[] = {
 			Common::RU_RUS,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NONE)
+			GUIO1(GAMEOPTION_GORE_DEFAULT_ON)
 		},
 	},
 	{
@@ -126,7 +129,7 @@ static const HopkinsGameDescription gameDescriptions[] = {
 			Common::FR_FRA,
 			Common::kPlatformLinux,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NONE)
+			GUIO1(GAMEOPTION_GORE_DEFAULT_ON)
 		},
 	},
 	{
@@ -141,7 +144,7 @@ static const HopkinsGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformLinux,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NONE)
+			GUIO1(GAMEOPTION_GORE_DEFAULT_ON)
 		},
 	},
 	{
@@ -156,7 +159,7 @@ static const HopkinsGameDescription gameDescriptions[] = {
 			Common::FR_FRA,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NONE)
+			GUIO1(GAMEOPTION_GORE_DEFAULT_ON)
 		},
 
 	},
@@ -172,7 +175,7 @@ static const HopkinsGameDescription gameDescriptions[] = {
 			Common::PL_POL,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NONE)
+			GUIO1(GAMEOPTION_GORE_DEFAULT_OFF)
 		},
 	},
 
@@ -189,7 +192,7 @@ static const HopkinsGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_DEMO,
-			GUIO1(GUIO_NONE)
+			GUIO1(GAMEOPTION_GORE_DEFAULT_ON)
 		},
 	},
 	{
@@ -204,7 +207,7 @@ static const HopkinsGameDescription gameDescriptions[] = {
 			Common::PL_POL,
 			Common::kPlatformWindows,
 			ADGF_DEMO,
-			GUIO1(GUIO_NONE)
+			GUIO1(GAMEOPTION_GORE_DEFAULT_OFF)
 		},
 	},
 	{ AD_TABLE_END_MARKER }

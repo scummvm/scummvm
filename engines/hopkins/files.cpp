@@ -25,6 +25,7 @@
 #include "hopkins/hopkins.h"
 #include "hopkins/globals.h"
 
+#include "common/config-manager.h"
 #include "common/system.h"
 #include "common/debug.h"
 #include "common/file.h"
@@ -68,20 +69,11 @@ int FileManager::readStream(Common::ReadStream &stream, void *buf, size_t nbytes
 }
 
 /**
- * Initialize censorship based on blood.dat file
+ * The original censorship was based on blood.dat file.
+ * It's now using the config manager and a per-engine GUI option.
  */
 void FileManager::initCensorship() {
-	_vm->_globals->_censorshipFl = false;
-
-	// If file doesn't exist, fallback to uncensored
-	if (fileExists("BLOOD.DAT")) {
-		char *data = (char *)loadFile("BLOOD.DAT");
-
-		if ((data[6] == 'u' && data[7] == 'k') || (data[6] == 'U' && data[7] == 'K'))
-			_vm->_globals->_censorshipFl = true;
-
-		_vm->_globals->freeMemory((byte *)data);
-	}
+	_vm->_globals->_censorshipFl = ConfMan.getBool("enable_gore");
 }
 
 /**

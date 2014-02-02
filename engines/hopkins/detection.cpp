@@ -29,6 +29,7 @@
 #include "common/memstream.h"
 #include "engines/advancedDetector.h"
 #include "common/system.h"
+#include "common/translation.h"
 #include "graphics/colormasks.h"
 #include "graphics/surface.h"
 
@@ -69,6 +70,30 @@ static const PlainGameDescriptor hopkinsGames[] = {
 
 #include "hopkins/detection_tables.h"
 
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_GORE_DEFAULT_OFF,
+		{
+			_s("Gore Mode"),
+			_s("Enable Gore Mode when available"),
+			"enable_gore",
+			false
+		}
+	},
+
+	{
+		GAMEOPTION_GORE_DEFAULT_ON,
+		{
+			_s("Gore Mode"),
+			_s("Enable Gore Mode when available"),
+			"enable_gore",
+			true
+		}
+	},
+
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
+
 const static char *directoryGlobs[] = {
 	"voice",
 	"link",
@@ -77,7 +102,7 @@ const static char *directoryGlobs[] = {
 
 class HopkinsMetaEngine : public AdvancedMetaEngine {
 public:
-	HopkinsMetaEngine() : AdvancedMetaEngine(Hopkins::gameDescriptions, sizeof(Hopkins::HopkinsGameDescription), hopkinsGames) {
+	HopkinsMetaEngine() : AdvancedMetaEngine(Hopkins::gameDescriptions, sizeof(Hopkins::HopkinsGameDescription), hopkinsGames, optionsList) {
 		_maxScanDepth = 3;
 		_directoryGlobs = directoryGlobs;
 	}
