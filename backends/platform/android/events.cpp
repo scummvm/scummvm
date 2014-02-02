@@ -87,9 +87,7 @@ void OSystem_Android::warpMouse(int x, int y) {
 
 	clipMouse(e.mouse);
 
-	lockMutex(_event_queue_lock);
-	_event_queue.push(e);
-	unlockMutex(_event_queue_lock);
+	pushEvent(e);
 }
 
 void OSystem_Android::clipMouse(Common::Point &p) {
@@ -164,9 +162,7 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 			e.kbd.keycode = Common::KEYCODE_ESCAPE;
 			e.kbd.ascii = Common::ASCII_ESCAPE;
 
-			lockMutex(_event_queue_lock);
-			_event_queue.push(e);
-			unlockMutex(_event_queue_lock);
+			pushEvent(e);
 
 			return;
 
@@ -174,9 +170,7 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 		case JKEYCODE_MENU:
 			e.type = Common::EVENT_MAINMENU;
 
-			lockMutex(_event_queue_lock);
-			_event_queue.push(e);
-			unlockMutex(_event_queue_lock);
+			pushEvent(e);
 
 			return;
 
@@ -189,9 +183,7 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 
 			e.mouse = getEventManager()->getMousePos();
 
-			lockMutex(_event_queue_lock);
-			_event_queue.push(e);
-			unlockMutex(_event_queue_lock);
+			pushEvent(e);
 
 			return;
 
@@ -299,9 +291,7 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 		if (arg4 & (JMETA_SYM | JMETA_CTRL))
 			e.kbd.flags |= Common::KBD_CTRL;
 
-		lockMutex(_event_queue_lock);
-		_event_queue.push(e);
-		unlockMutex(_event_queue_lock);
+		pushEvent(e);
 
 		return;
 
@@ -343,9 +333,7 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 
 				clipMouse(e.mouse);
 
-				lockMutex(_event_queue_lock);
-				_event_queue.push(e);
-				unlockMutex(_event_queue_lock);
+				pushEvent(e);
 
 				return;
 			} else {
@@ -376,9 +364,7 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 					break;
 				}
 
-				lockMutex(_event_queue_lock);
-				_event_queue.push(e);
-				unlockMutex(_event_queue_lock);
+				pushEvent(e);
 				return;
 			}
 
@@ -397,9 +383,7 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 
 			e.mouse = getEventManager()->getMousePos();
 
-			lockMutex(_event_queue_lock);
-			_event_queue.push(e);
-			unlockMutex(_event_queue_lock);
+			pushEvent(e);
 
 			return;
 		}
@@ -430,9 +414,7 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 				clipMouse(e.mouse);
 			}
 
-			lockMutex(_event_queue_lock);
-			_event_queue.push(e);
-			unlockMutex(_event_queue_lock);
+			pushEvent(e);
 		}
 
 		return;
@@ -634,18 +616,14 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 			return;
 		}
 
-		lockMutex(_event_queue_lock);
-		_event_queue.push(e);
-		unlockMutex(_event_queue_lock);
+		pushEvent(e);
 
 		return;
 
 	case JE_QUIT:
 		e.type = Common::EVENT_QUIT;
 
-		lockMutex(_event_queue_lock);
-		_event_queue.push(e);
-		unlockMutex(_event_queue_lock);
+		pushEvent(e);
 
 		return;
 
@@ -716,6 +694,12 @@ bool OSystem_Android::pollEvent(Common::Event &event) {
 	}
 
 	return true;
+}
+
+void OSystem_Android::pushEvent(const Common::Event &event) {
+	lockMutex(_event_queue_lock);
+	_event_queue.push(event);
+	unlockMutex(_event_queue_lock);
 }
 
 void OSystem_Android::keyPress(const Common::KeyCode keycode, const KeyReceiver::KeyPressType type) {
