@@ -1146,8 +1146,9 @@ void ThreadResource::doRoom() {
 	Common::Array<RectEntry> &hotspots = vm._bVoy->boltEntry(vm._playStampGroupId + 4)._rectResource->_entries;
 	int hotspotId = -1;
 
-	PictureResource *pic1 = vm._bVoy->boltEntry(vm._playStampGroupId + 2)._picResource;
-	PictureResource *pic2 = vm._bVoy->boltEntry(vm._playStampGroupId + 3)._picResource;
+	PictureResource *crosshairsCursor = vm._bVoy->boltEntry(vm._playStampGroupId + 2)._picResource;
+	PictureResource *magnifierCursor = vm._bVoy->boltEntry(vm._playStampGroupId + 3)._picResource;
+	vm._eventsManager.showCursor();
 
 	RectResource viewBounds(48, 38, 336, 202);
 	voy._viewBounds = &viewBounds;
@@ -1178,6 +1179,8 @@ void ThreadResource::doRoom() {
 
 			vm._eventsManager.getMouseInfo();
 			Common::Point pt = vm._eventsManager.getMousePos();
+			pt += Common::Point(30, 15);
+
 			hotspotId = -1;
 			if (voy._computerTextId != -1 && voy._rect4E4.contains(pt))
 				hotspotId = 999;
@@ -1193,19 +1196,15 @@ void ThreadResource::doRoom() {
 			}
 
 			if (hotspotId == -1) {
-				vm._graphicsManager.sDrawPic(pic1, *vm._graphicsManager._vPort,
-					Common::Point(pt.x - 9, pt.y - 9));
 				vm._eventsManager.setCursorColor(128, 0);
+				vm._eventsManager.setCursor(crosshairsCursor);
 			} else if (hotspotId != 999 || voy._RTVNum < voy._field4EC ||
 					(voy._field4EE - 2) < voy._RTVNum) {
-				vm._graphicsManager.sDrawPic(pic2, *vm._graphicsManager._vPort,
-					Common::Point(pt.x - 12, pt.y - 9));
 				vm._eventsManager.setCursorColor(128, 1);
+				vm._eventsManager.setCursor(magnifierCursor);
 			} else {
-				vm._graphicsManager.sDrawPic(pic2, 
-					*vm._graphicsManager._vPort,
-					Common::Point(pt.x - 12, pt.y - 9));
 				vm._eventsManager.setCursorColor(128, 2);
+				vm._eventsManager.setCursor(magnifierCursor);
 			}
 
 			vm._eventsManager._intPtr.field38 = true;
@@ -1223,6 +1222,7 @@ void ThreadResource::doRoom() {
 			vm._eventsManager.setMousePos(pt);
 		} else {
 			voy._field478 |= 16;
+			vm._eventsManager.hideCursor();
 			vm._eventsManager.startCursorBlink();
 
 			if (hotspotId == 999) {
@@ -1254,14 +1254,9 @@ void ThreadResource::doRoom() {
 			if (!vm._eventsManager._mouseClicked)
 				vm._eventsManager.delayClick(18000);
 
-			// WORKAROUND: Done in original, but not now, since freeing and reloading
-			// the group would invalidate the _backgroundPage picture resource
-			//vm._bVoy->freeBoltGroup(vm._playStampGroupId);
-			//vm._bVoy->getBoltGroup(vm._playStampGroupId);
+			// WORKAROUND: Skipped code from the original, that freed the group,
+			// reloaded it, and reloaded the cursors
 
-			hotspots = vm._bVoy->boltEntry(vm._playStampGroupId + 4)._rectResource->_entries;
-			pic1 = vm._bVoy->boltEntry(vm._playStampGroupId + 2)._picResource;
-			pic2 = vm._bVoy->boltEntry(vm._playStampGroupId + 3)._picResource;
 			vm._graphicsManager._backColors = vm._bVoy->boltEntry(
 				vm._playStampGroupId + 1)._cMapResource;
 			vm._graphicsManager._backgroundPage = vm._bVoy->boltEntry(
@@ -1294,6 +1289,7 @@ void ThreadResource::doRoom() {
 
 			vm._graphicsManager.fadeUpICF1(0);
 			voy._field478 &= 0x10;
+			vm._eventsManager.showCursor();
 		}
 	}
 
@@ -1318,6 +1314,7 @@ void ThreadResource::doRoom() {
 		vm._currentVocId = -1;
 	}
 
+	vm._eventsManager.hideCursor();
 	chooseSTAMPButton(0);
 }
 
@@ -1749,13 +1746,16 @@ void ThreadResource::synchronize(Common::Serializer &s) {
 	s.syncAsSint16LE(_aptPos.x);
 	s.syncAsSint16LE(_aptPos.y);
 	
-	int sceneId = _stateId;
+	int stateId = _stateId;
 	int stackId = _stackId;
-	s.syncAsSint16LE(sceneId);
+	s.syncAsSint16LE(stateId);
 	s.syncAsSint16LE(stackId);
 
-	if (s.isLoading() && (sceneId != _stateId || stackId != _stackId))
-		goToState(stackId, sceneId);
+	if (s.isLoading() && (stateId != _stateId || stackId != _stackId))
+		goToState(stackId, stateId);
+
+	s.syncAsSint16LE(_savedStateId);
+	s.syncAsSint16LE(_savedStackId);
 }
 
 } // End of namespace Voyeur
