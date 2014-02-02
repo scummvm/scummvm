@@ -116,7 +116,6 @@ OSystem_Android::OSystem_Android(int audio_sample_rate, int audio_buffer_size) :
 	_screen_changeid(0),
 	_egl_surface_width(0),
 	_egl_surface_height(0),
-	_htc_fail(true),
 	_force_redraw(false),
 	_game_texture(0),
 	_game_pbuf(),
@@ -136,7 +135,6 @@ OSystem_Android::OSystem_Android(int audio_sample_rate, int audio_buffer_size) :
 	_virtcontrols_on(false),
 	_enable_zoning(false),
 	_mixer(0),
-	_shake_offset(0),
 	_queuedEventTime(0),
 	_event_queue_lock(createMutex()),
 	_touch_pt_down(),
@@ -165,10 +163,6 @@ OSystem_Android::OSystem_Android(int audio_sample_rate, int audio_buffer_size) :
 			getSystemProperty("ro.product.cpu.abi").c_str());
 
 	mf.toLowercase();
-	/*_htc_fail = mf.contains("htc");
-
-	if (_htc_fail)
-		LOGI("Enabling HTC workaround");*/
 }
 
 OSystem_Android::~OSystem_Android() {

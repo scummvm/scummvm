@@ -31,6 +31,7 @@
 #include "graphics/palette.h"
 #include "graphics/surface.h"
 #include "graphics/pixelbuffer.h"
+#include "graphics/opengles2/system_headers.h"
 #include "graphics/opengles2/framebuffer.h"
 #include "backends/base-backend.h"
 #include "backends/plugins/posix/posix-provider.h"
@@ -43,9 +44,6 @@
 #include <pthread.h>
 
 #include <android/log.h>
-
-#include <GLES/gl.h>
-#include <GLES/glext.h>
 
 // toggles start
 //#define ANDROID_DEBUG_ENTER
@@ -109,7 +107,6 @@ private:
 	int _screen_changeid;
 	int _egl_surface_width;
 	int _egl_surface_height;
-	bool _htc_fail;
 
 	bool _force_redraw;
 
@@ -120,7 +117,6 @@ private:
 	Graphics::PixelBuffer _game_pbuf;
 	Graphics::FrameBuffer *_frame_buffer;
 
-	int _shake_offset;
 	Common::Rect _focus_rect;
 
 	// Overlay layer

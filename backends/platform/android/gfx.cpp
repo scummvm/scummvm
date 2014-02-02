@@ -484,25 +484,8 @@ void OSystem_Android::updateScreen() {
 		}
 
 		// clear pointer leftovers in dead areas
-		// also, HTC's GLES drivers are made of fail and don't preserve the buffer
-		// ( http://www.khronos.org/registry/egl/specs/EGLTechNote0001.html )
-		if ((_show_overlay || _htc_fail) && !_fullscreen)
+		if ((_show_overlay) && !_fullscreen)
 			clearScreen(kClear);
-
-// TODO: Do we have engines that use this?
-#if 0
-		if (_shake_offset != 0 ||
-				(!_focus_rect.isEmpty() &&
-				!Common::Rect(_game_texture->width(),
-								_game_texture->height()).contains(_focus_rect))) {
-			// These are the only cases where _game_texture doesn't
-			// cover the entire screen.
-			clearScreen(kClear);
-
-			// Move everything up by _shake_offset (game) pixels
-			GLCALL(glTranslatex(0, -_shake_offset << 16, 0));
-		}
-#endif
 
 	// TODO this doesnt work on those sucky drivers, do it differently
 	//	if (_show_overlay)
@@ -604,12 +587,7 @@ void OSystem_Android::unlockScreen() {
 }
 
 void OSystem_Android::setShakePos(int shake_offset) {
-	ENTER("%d", shake_offset);
-
-	if (_shake_offset != shake_offset) {
-		_shake_offset = shake_offset;
-		_force_redraw = true;
-	}
+	/* not used in any engine */
 }
 
 void OSystem_Android::fillScreen(uint32 col) {
