@@ -161,6 +161,22 @@ static const HopkinsGameDescription gameDescriptions[] = {
 
 	},
 	{
+		// Hopkins FBI Win95 Polish, provided by Paput in bug #6511
+		{
+			"hopkins",
+			0,
+			{
+				{"RES_VAN.RES", 0, "f2fec5172e4a7a9d35cb2a5f948ef6a9", 39400865},
+				AD_LISTEND
+			},
+			Common::PL_POL,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NONE)
+		},
+	},
+
+	{
 		// Hopkins FBI Win95 Demo, provided by Strangerke
 		// CHECKME: No voice! a second file is required though... Also, it has multi-language support
 		{
