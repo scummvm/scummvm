@@ -562,7 +562,8 @@ void VoyeurEngine::playAVideoDuration(int videoId, int duration) {
 
 			Common::copy((const byte *)frame->getPixels(), (const byte *)frame->getPixels() + 320 * 200,
 				(byte *)_graphicsManager._screenSurface.getPixels());
-			_graphicsManager.drawDot();
+			if (_voy._eventFlags & EVTFLAG_RECORDING)
+				_graphicsManager.drawDot();
 		}
 
 		if (decoder.hasDirtyPalette()) {
@@ -673,6 +674,63 @@ void VoyeurEngine::flipPageAndWaitForFade() {
 
 	while (!shouldQuit() && (_eventsManager._fadeStatus & 1))
 		_eventsManager.delay(1);
+}
+
+void VoyeurEngine::showEndingNews() {
+	_playStampGroupId = (_voy._field4382 - 1) * 256 + 0x7700;
+	_voy._field47A = (READ_LE_UINT16(_controlPtr->_ptr + 4) 
+		- 1) * 256 + 0x7B00;
+
+	_bVoy->getBoltGroup(_playStampGroupId);
+	_bVoy->getBoltGroup(_voy._field47A);
+
+	PictureResource *pic = _bVoy->boltEntry(_playStampGroupId)._picResource;
+	CMapResource *pal = _bVoy->boltEntry(_playStampGroupId + 1)._cMapResource;
+
+	(*_graphicsManager._vPort)->setupViewPort(pic);
+	pal->startFade();
+	flipPageAndWaitForFade();
+
+	_eventsManager.getMouseInfo();
+
+	for (int idx = 1; idx < 4; ++idx) {
+		if (idx == 3) {
+			pic = _bVoy->boltEntry(_voy._field47A)._picResource;
+			pal = _bVoy->boltEntry(_voy._field47A + 1)._cMapResource;
+		} else {
+			pic = _bVoy->boltEntry(_playStampGroupId + idx * 2)._picResource;
+			pal = _bVoy->boltEntry(_playStampGroupId + idx * 2 + 1)._cMapResource;
+		}
+
+		(*_graphicsManager._vPort)->setupViewPort(pic);
+		pal->startFade();
+		flipPageAndWaitForFade();
+
+		_bVoy->freeBoltMember(_playStampGroupId + (idx - 1) * 2);
+		_bVoy->freeBoltMember(_playStampGroupId + (idx - 1) * 2 + 1);
+
+		Common::String fname = Common::String::format("news%d.voc", idx);
+		_soundManager.startVOCPlay(fname);
+
+		_eventsManager.getMouseInfo();
+		while (!shouldQuit() && !_eventsManager._mouseClicked && 
+				_soundManager.getVOCStatus()) {
+			_eventsManager.delay(1);
+			_eventsManager.getMouseInfo();
+		}
+
+		_soundManager.stopVOCPlay();
+		if (idx == 3)
+			_eventsManager.delay(3);
+
+		if (shouldQuit() || _eventsManager._mouseClicked)
+			break;
+	}
+
+	_bVoy->freeBoltGroup(_playStampGroupId);
+	_bVoy->freeBoltGroup(_voy._field47A);
+	_playStampGroupId = -1;
+	_voy._field47A = -1;
 }
 
 /*------------------------------------------------------------------------*/

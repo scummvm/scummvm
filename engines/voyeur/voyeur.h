@@ -286,6 +286,11 @@ public:
 	 * Returns the string for the current in-game time of day
 	 */
 	Common::String getTimeOfDay();
+
+	/**
+	 * Show the ending sequence of the arrest
+	 */
+	void showEndingNews();
 };
 
 #define VOYEUR_SAVEGAME_VERSION 1

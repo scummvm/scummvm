@@ -460,9 +460,34 @@ error("TODO: var22/var24/var2C not initialised before use?");
 						srcP = srcImgData;
 
 						if (isClipped) {
-							// loc_26424
-							error("TODO: sDrawPic");
+							var22 = (var22 < 0) ? -var22 : 0;
+							var26 = var22 + width2;
+							var24 = (var24 < 0) ? -var24 : 0;
+							width2 = srcPic->_bounds.width();
+							height1 = var24 + height1;
 
+							for (int yp = 0; yp < height1; ++yp) {
+								byteVal2 = 0;
+								for (int xp = 0; xp < width2; ++xp) {
+									if (!byteVal2) {
+										pixel = *srcP++;
+										if (pixel & 0x80) {
+											pixel = 0x7F;
+											byteVal2 = *srcP++;
+
+											if (!byteVal2)
+												byteVal2 = width2;
+										}
+									}
+
+									if (yp >= var24 && xp >= var22 && xp < var26) {
+										*destP++ = pixel;
+									}
+								}
+
+								if (yp >= var24)
+									destP += widthDiff2;
+							}
 						} else {
 							// loc_26543
 							for (int yp = 0; yp < height1; ++yp) {
