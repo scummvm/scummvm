@@ -944,6 +944,7 @@ void GraphicsManager::clearPalette() {
 
 void GraphicsManager::setPalette(const byte *palette, int start, int count) {
 	g_system->getPaletteManager()->setPalette(palette, start, count);
+	_vm->_eventsManager._gameData._hasPalette = false;
 }
 
 void GraphicsManager::setPalette128(const byte *palette, int start, int count) {
