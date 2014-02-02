@@ -30,7 +30,7 @@
 #include "graphics/thumbnail.h"
 
 static const PlainGameDescriptor bbvsGames[] = {
-	{ "bbvs", "Bbvs" },
+	{ "bbvs", "Beavis and Butthead in Virtual Stupidity" },
 	{ 0, 0 }
 };
 
@@ -38,12 +38,13 @@ namespace Bbvs {
 
 static const ADGameDescription gameDescriptions[] = {
 	{
-		"bbvs", "",
-		{
-			{"game0001.vnm", 0, "637e5411751c7065bc385dd73d224561", 64004},
-			AD_LISTEND
-		},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_NO_FLAGS, GUIO0()
+		"bbvs",
+		0,
+		AD_ENTRY1s("game0001.vnm", "637e5411751c7065bc385dd73d224561", 64004),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO0()
 	},
 
 	AD_TABLE_END_MARKER
