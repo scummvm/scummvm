@@ -140,6 +140,7 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 	bool isClipped = false;
 	int var26;
 	byte pixel = 0;
+	int runLength;
 
 	byte *srcImgData, *destImgData;
 	byte *srcP, *destP;
@@ -375,38 +376,30 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 						srcP = srcImgData;
 						if (isClipped) {
 							// loc_26199
-error("TODO: var22/var24/var2C not initialised before use?");
-							if (var22 < 0) {
-								var22 = -var22;
-							} else {
-								var22 = 0;
-							}
+							var22 = (var22 < 0) ? -var22 : 0;
 							var26 = var22 + width2;
-							if (var24 < 0) {
-								var24 = -var24;
-							} else {
-								var24 = 0;
-							}
+							var24 = (var24 < 0) ? -var24 : 0;
 
 							width2 = srcPic->_bounds.width();
 							height1 = var24 + height1;
-							byteVal = 0;
 							
 							for (int yp = 0; yp < height1; ++yp) {
-								for (int xp = 0; xp < width2; ++xp) {
-									if (byteVal2 <= 0) {
-										byteVal = *srcP++;
-										if (byteVal & 0x80) {
-											byteVal &= 0x7f;
-											byteVal2 = *srcP++;
-											if (!byteVal2)
-												byteVal2 = width2;
+								runLength = 0;
+
+								for (int xp = 0; xp < width2; ++xp, --runLength) {
+									if (runLength <= 0) {
+										pixel = *srcP++;
+										if (pixel & 0x80) {
+											pixel &= 0x7f;
+											runLength = *srcP++;
+											if (!runLength)
+												runLength = width2;
 										}
 									}
 
 									if (yp >= var24 && xp >= var22 && xp < var26) {
-										if (byteVal > 0)
-											*destP = byteVal;
+										if (pixel > 0)
+											*destP = pixel;
 										++destP;
 									}
 								}
@@ -460,6 +453,7 @@ error("TODO: var22/var24/var2C not initialised before use?");
 						srcP = srcImgData;
 
 						if (isClipped) {
+							// loc_26424
 							var22 = (var22 < 0) ? -var22 : 0;
 							var26 = var22 + width2;
 							var24 = (var24 < 0) ? -var24 : 0;
@@ -467,16 +461,16 @@ error("TODO: var22/var24/var2C not initialised before use?");
 							height1 = var24 + height1;
 
 							for (int yp = 0; yp < height1; ++yp) {
-								byteVal2 = 0;
-								for (int xp = 0; xp < width2; ++xp) {
-									if (!byteVal2) {
+								runLength = 0;
+								for (int xp = 0; xp < width2; ++xp, --runLength) {
+									if (runLength <= 0) {
 										pixel = *srcP++;
 										if (pixel & 0x80) {
-											pixel = 0x7F;
-											byteVal2 = *srcP++;
+											pixel &= 0x7F;
+											runLength = *srcP++;
 
-											if (!byteVal2)
-												byteVal2 = width2;
+											if (!runLength)
+												runLength = width2;
 										}
 									}
 
@@ -591,15 +585,15 @@ error("TODO: var22/var24/var2C not initialised before use?");
 								height1 = var24 + height1;
 
 								for (int yp = 0; yp < height1; ++yp) {
-									int byteVal2 = 0;
-									for (int xp = 0; xp < width2; ++xp, --byteVal2) {
-										if (byteVal2 <= 0) {
+									int runLength = 0;
+									for (int xp = 0; xp < width2; ++xp, --runLength) {
+										if (runLength <= 0) {
 											pixel = *srcP++;
 											if (pixel & 0x80) {
 												pixel &= 0x7F;
-												byteVal2 = *srcP++;
-												if (!byteVal2)
-													byteVal2 = width2;
+												runLength = *srcP++;
+												if (!runLength)
+													runLength = width2;
 											}
 										}
 
@@ -664,16 +658,16 @@ error("TODO: var22/var24/var2C not initialised before use?");
 							height1 = var24 + height1;
 
 							for (int yp = 0; yp < height1; ++yp) {
-								byteVal2 = 0;
-								for (int xp = 0; xp < width2; ++xp) {
-									if (!byteVal2) {
+								runLength = 0;
+								for (int xp = 0; xp < width2; ++xp, --runLength) {
+									if (runLength <= 0) {
 										pixel = *srcP++;
 										if (pixel & 0x80) {
-											pixel = 0x7F;
-											byteVal2 = *srcP++;
+											pixel &= 0x7F;
+											runLength = *srcP++;
 
-											if (!byteVal2)
-												byteVal2 = width2;
+											if (!runLength)
+												runLength = width2;
 										}
 									}
 
@@ -736,16 +730,16 @@ error("TODO: var22/var24/var2C not initialised before use?");
 								height1 = var24 + height1;
 
 								for (int yp = 0; yp < height1; ++yp) {
-									byteVal2 = 0;
+									runLength = 0;
 
-									for (int xp = 0; xp < width2; ++xp, --byteVal2) {
-										if (!byteVal2) {
+									for (int xp = 0; xp < width2; ++xp, --runLength) {
+										if (runLength <= 0) {
 											pixel = *srcP++;
 											if (pixel & 0x80) {
 												pixel &= 0x7F;
-												byteVal2 = *srcP++;
-												if (!byteVal2)
-													byteVal2 = width2;
+												runLength = *srcP++;
+												if (!runLength)
+													runLength = width2;
 											}
 										}
 
@@ -817,16 +811,16 @@ error("TODO: var22/var24/var2C not initialised before use?");
 								height1 = var24 + height1;
 
 								for (int yp = 0; yp < height1; ++yp) {
-									byteVal2 = 0;
+									runLength = 0;
 
-									for (int xp = 0; xp < width2; ++xp, --byteVal2) {
-										if (!byteVal2) {
+									for (int xp = 0; xp < width2; ++xp, --runLength) {
+										if (runLength <= 0) {
 											pixel = *srcP++;
 											if (pixel & 0x80) {
 												pixel &= 0x7F;
-												byteVal2 = *srcP++;
-												if (!byteVal2)
-													byteVal2 = width2;
+												runLength = *srcP++;
+												if (!runLength)
+													runLength = width2;
 											}
 										}
 
