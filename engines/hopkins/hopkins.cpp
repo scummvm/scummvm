@@ -232,7 +232,7 @@ bool HopkinsEngine::runWin95Demo() {
 				if (!_globals->_censorshipFl)
 					_animMan->playAnim("BANQUE.ANM", "BANKUK.ANM", 200, 28, 200);
 				else
-					_animMan->playAnim("BANQUE.ANM", "BANKUK.ANM", 200, 28, 200);
+					_animMan->playAnim("BANKUK.ANM", "BANQUE.ANM", 200, 28, 200);
 				_soundMan->_specialSoundNum = 0;
 				_soundMan->removeSample(1);
 				_soundMan->removeSample(2);
