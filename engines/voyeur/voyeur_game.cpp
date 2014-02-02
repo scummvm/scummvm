@@ -1204,7 +1204,7 @@ int VoyeurEngine::doComputerText(int maxLen) {
 			if (c == '\0') {
 				if (showEnd) {
 					_eventsManager.delay(90);
-					_graphicsManager._drawPtr->_pos = Common::Point(54, 96);
+					_graphicsManager._drawPtr->_pos = Common::Point(96, 54);
 					_graphicsManager._drawPtr->_penColor = 254;
 					(*_graphicsManager._vPort)->sFillBox(196, 124);
 					_graphicsManager._fontPtr->_justify = ALIGN_LEFT;
