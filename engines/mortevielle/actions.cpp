@@ -481,13 +481,24 @@ void MortevielleEngine::fctLook() {
 		}
 		return;
 	}
+
 	int cx = _coreVar._currPlace;
-	if (_coreVar._currPlace == CHAPEL)
+	switch (_coreVar._currPlace) {
+	case CHAPEL:
 		cx = 17;
-	if ((_coreVar._currPlace > MANOR_FRONT) && (_coreVar._currPlace < DOOR))
+		break;
+	case MANOR_BACK:
+	case INSIDE_WELL:
+	case WELL:
 		cx -= 4;
-	if (_coreVar._currPlace == ROOM26)
+		break;
+	case ROOM26:
 		cx = 21;
+		break;
+	default:
+		break;
+	}
+
 	_crep = _tabdon[kArega + (cx * 7) + _num - 1];
 	if ((_coreVar._currPlace == ATTIC) && (_num == 8))
 		_crep = 126;
