@@ -339,9 +339,13 @@ bool sceneHandler27_batFallLogic(int bat) {
 }
 
 bool sceneHandler27_batCalcDistance(int bat1, int bat2) {
-	warning("STUB: sceneHandler27_batCalcDistance()");
+	double at = atan2(g_vars->scene27_bats[bat1]->currX - g_vars->scene27_bats[bat2]->currX, g_vars->scene27_bats[bat1]->currY - g_vars->scene27_bats[bat2]->currY);
+	double dy = g_vars->scene27_bats[bat1]->currY - g_vars->scene27_bats[bat2]->currY;
+	double dx = g_vars->scene27_bats[bat1]->currX - g_vars->scene27_bats[bat2]->currX;
+	double ay = cos(at);
+	double ax = sin(at);
 
-	return false;
+	return sqrt(ax * ax * 0.25 + ay * ay) * 54.0 > sqrt(dx * dx + dy * dy);
 }
 
 void sceneHandler27_knockBats(int bat1, int bat2) {
