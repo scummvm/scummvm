@@ -29,6 +29,9 @@
 #include "engines/wintermute/video/video_subtitler.h"
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/utils/path_util.h"
+#include "engines/wintermute/base/font/base_font.h"
+#include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/base/gfx/base_renderer.h"
 
 namespace Wintermute {
 //////////////////////////////////////////////////////////////////////////
@@ -165,14 +168,14 @@ bool CVidSubtitler::LoadSubtitles(const char *Filename, const char *SubtitleFile
 
 //////////////////////////////////////////////////////////////////////////
 bool CVidSubtitler::Display() {
-	warning((const char *)m_Subtitles[m_CurrentSubtitle]->m_Text);
-#if 0
 	if (m_ShowSubtitle) {
-		CBFont *font = Game->m_VideoFont ? Game->m_VideoFont : Game->m_SystemFont;
-		int Height = font->GetTextHeight((byte *)m_Subtitles[m_CurrentSubtitle]->m_Text, Game->m_Renderer->m_Width);
-		font->DrawText((byte *)m_Subtitles[m_CurrentSubtitle]->m_Text, 0, Game->m_Renderer->m_Height - Height - 5, Game->m_Renderer->m_Width, TAL_CENTER);
+		BaseFont *font = _gameRef->getVideoFont() ? _gameRef->getVideoFont() : _gameRef->getSystemFont();
+		int textHeight = font->getTextHeight((byte *)m_Subtitles[m_CurrentSubtitle]->m_Text, _gameRef->_renderer->getWidth());
+		font->drawText((byte *)m_Subtitles[m_CurrentSubtitle]->m_Text,
+		               0,
+		               (_gameRef->_renderer->getHeight() - textHeight - 5),
+		               (_gameRef->_renderer->getWidth(), TAL_CENTER));
 	}
-#endif
 	return false;
 }
 
