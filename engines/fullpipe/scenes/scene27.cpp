@@ -157,4 +157,129 @@ int scene27_updateCursor() {
 	return g_fp->_cursorId;
 }
 
+void sceneHandler27_winArcade() {
+	warning("STUB: sceneHandler27_winArcade()");
+}
+
+void sceneHandler27_takeVent() {
+	warning("STUB: sceneHandler27_takeVent()");
+}
+
+void sceneHandler27_showNextBat() {
+	warning("STUB: sceneHandler27_showNextBat()");
+}
+
+void sceneHandler27_clickBat(ExCommand *cmd) {
+	warning("STUB: sceneHandler27_clickBat()");
+}
+
+void sceneHandler27_startBat(StaticANIObject *bat) {
+	warning("STUB: sceneHandler27_startBat()");
+}
+
+void sceneHandler27_startAiming() {
+	warning("STUB: sceneHandler27_startAiming()");
+}
+
+void sceneHandler27_sub04(ExCommand *cmd) {
+	warning("STUB: sceneHandler27_sub04()");
+}
+
+void sceneHandler27_aimDude() {
+	warning("STUB: sceneHandler27_aimDude()");
+}
+
+void sceneHandler27_throwBat() {
+	warning("STUB: sceneHandler27_throwBat()");
+}
+
+void sceneHandler27_animateBats() {
+	warning("STUB: sceneHandler27_animateBats()");
+}
+
+
+
+int sceneHandler27(ExCommand *cmd) {
+	if (cmd->_messageKind != 17)
+		return 0;
+
+	switch (cmd->_messageNum) {
+	case MSG_CMN_WINARCADE:
+		sceneHandler27_winArcade();
+		break;
+
+	case MSG_SC27_TAKEVENT:
+		sceneHandler27_takeVent();
+		break;
+
+	case MSG_SC27_SHOWNEXTBET:
+		sceneHandler27_showNextBat();
+		break;
+
+	case MSG_SC27_HANDLERTOFRONT:
+		g_vars->scene27_batHandler->_priority = 1005;
+		break;
+
+	case MSG_SC27_STARTWIPE:
+		g_vars->scene27_var10 = 1;
+
+		g_fp->playSound(SND_27_027, 0);
+
+		break;
+
+	case MSG_SC27_CLICKBET:
+		sceneHandler27_clickBat(cmd);
+		break;
+
+	case MSG_SC27_STARTBET:
+		if (g_vars->scene27_bat)
+			sceneHandler27_startBat(g_vars->scene27_bat);
+
+		break;
+
+	case 30:
+		if (g_vars->scene27_var08)
+			sceneHandler27_startAiming();
+
+		break;
+
+	case 29:
+		if (g_fp->_aniMan == g_fp->_currentScene->getStaticANIObjectAtPos(g_fp->_sceneRect.left + cmd->_x, g_fp->_sceneRect.top + cmd->_y)
+			&& g_vars->scene27_var09)
+			sceneHandler27_sub04(cmd);
+
+		break;
+
+	case 33:
+		if (g_fp->_aniMan2) {
+			int x = g_fp->_aniMan2->_ox;
+
+			if (x < g_fp->_sceneRect.left + g_vars->scene27_var01)
+				g_fp->_currentScene->_x = x - g_vars->scene27_var03 - g_fp->_sceneRect.left;
+
+			if (x > g_fp->_sceneRect.right - g_vars->scene27_var01)
+				g_fp->_currentScene->_x = x + g_vars->scene27_var03 - g_fp->_sceneRect.right;
+		}
+
+		if (g_vars->scene27_var08)
+			sceneHandler27_aimDude();
+
+		if (g_vars->scene27_var10) {
+			sceneHandler27_throwBat();
+
+			if (!g_fp->_aniMan->_movement && g_fp->_aniMan->_statics->_staticsId == ST_MAN_RIGHT)
+				g_fp->_aniMan->startAnim(MV_MAN27_FLOW, 0, -1);
+		}
+
+		sceneHandler27_animateBats();
+
+		g_fp->_behaviorManager->updateBehaviors();
+		g_fp->startSceneTrack();
+
+		break;
+	}
+
+	return 0;
+}
+
 } // End of namespace Fullpipe
