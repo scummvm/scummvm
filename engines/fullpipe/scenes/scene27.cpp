@@ -189,7 +189,24 @@ void sceneHandler27_startBat(StaticANIObject *bat) {
 }
 
 void sceneHandler27_startAiming() {
-	warning("STUB: sceneHandler27_startAiming()");
+	g_vars->scene27_var08 = 0;
+	g_vars->scene27_var09 = 0;
+
+	g_fp->_aniMan->_callback2 = 0;
+
+	g_vars->scene27_launchPhase = g_fp->_aniMan->_movement->_currDynamicPhaseIndex - 6;
+
+	int phase = 21 - g_vars->scene27_launchPhase;
+
+    if (phase < 14)
+		phase = 14;
+
+    if (phase > 20)
+		phase = 20;
+
+	g_fp->playSound(SND_27_044, 0);
+
+	g_fp->_aniMan->_movement->setDynamicPhaseIndex(phase);
 }
 
 void sceneHandler27_sub04(ExCommand *cmd) {
