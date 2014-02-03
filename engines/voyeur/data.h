@@ -216,6 +216,12 @@ public:
 	 * Review a previously recorded computer event
 	 */
 	void reviewComputerEvent(int eventIndex);
+
+	/**
+	 * Checks for key information in determining what kind of murder
+	 * should take place
+	 */
+	bool checkForKey();
 };
 
 } // End of namespace Voyeur

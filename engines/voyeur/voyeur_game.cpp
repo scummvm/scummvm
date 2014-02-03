@@ -161,7 +161,7 @@ void VoyeurEngine::playStamp() {
 
 				if (buttonId != 4) {
 					_voy._field470 = 131;
-					_eventsManager.checkForKey();
+					_voy.checkForKey();
 					_mainThread->chooseSTAMPButton(buttonId);
 				} else {
 					_mainThread->chooseSTAMPButton(buttonId);

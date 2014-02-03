@@ -590,10 +590,6 @@ void EventsManager::getMouseInfo() {
 	_vm->_eventsManager._mouseUnk = false;
 }
 
-void EventsManager::checkForKey() {
-	warning("TODO: checkForKey");
-}
-
 void EventsManager::startCursorBlink() {
 	if (_vm->_voy._eventFlags & EVTFLAG_RECORDING) {
 		_vm->_graphicsManager.setOneColor(128, 55, 5, 5);

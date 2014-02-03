@@ -230,4 +230,92 @@ void SVoy::reviewComputerEvent(int eventIndex) {
 	}
 }
 
+bool SVoy::checkForKey() {
+	WRITE_LE_UINT32(_vm->_controlPtr->_ptr + 8, 0);
+	if (_vm->_voy._field4F0)
+		return false;
+
+	for (int eventIdx = 0; eventIdx < _eventCount; ++eventIdx) {
+		VoyeurEvent &e = _events[eventIdx];
+		int v1;
+
+		switch (e._type) {
+		case EVTYPE_VIDEO:
+			switch (READ_LE_UINT32(_vm->_controlPtr->_ptr + 4)) {
+			case 1:
+				if (e._audioVideoId == 33 && e._computerOn < 1 && e._computerOff > 40)
+					WRITE_LE_UINT32(_vm->_controlPtr->_ptr + 8, 1);
+				break;
+
+			case 2:
+				if (e._audioVideoId == 47 && e._computerOn < 1 && e._computerOff > 11)
+					WRITE_LE_UINT32(_vm->_controlPtr->_ptr + 8, 2);
+				break;
+
+			case 3:
+				if (e._audioVideoId == 46 && e._computerOn < 2 && e._computerOff > 2)
+					WRITE_LE_UINT32(_vm->_controlPtr->_ptr + 8, 3);
+				break;
+
+			case 4:
+				if (e._audioVideoId == 40 && e._computerOn < 2 && e._computerOff > 7)
+					WRITE_LE_UINT32(_vm->_controlPtr->_ptr + 8, 4);
+				break;
+			
+			default:
+				break;
+			}
+			break;
+
+		case EVTYPE_AUDIO:
+			switch (READ_LE_UINT32(_vm->_controlPtr->_ptr + 4)) {
+			case 1:
+				if (e._audioVideoId == 8 && e._computerOn < 2 && e._computerOff > 28)
+					WRITE_LE_UINT32(_vm->_controlPtr->_ptr + 8, 1);
+				break;
+	
+			case 3:
+				if (e._audioVideoId == 20 && e._computerOn < 2 && e._computerOff > 30)
+					WRITE_LE_UINT32(_vm->_controlPtr->_ptr + 8, 3);
+				if (e._audioVideoId == 35 && e._computerOn < 2 && e._computerOff > 20)
+					WRITE_LE_UINT32(_vm->_controlPtr->_ptr + 8, 3);
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		case EVTYPE_EVID:
+			switch (READ_LE_UINT32(_vm->_controlPtr->_ptr + 4)) {
+			case 4:
+				if (e._audioVideoId == 0x2400 && e._computerOn == 0x4f00 && e._computerOff == 17)
+					WRITE_LE_UINT32(_vm->_controlPtr->_ptr + 8, 4);
+
+			default:
+				break;
+			}
+			break;
+
+		case EVTYPE_COMPUTER:
+			switch (READ_LE_UINT32(_vm->_controlPtr->_ptr + 4)) {
+			case 2:
+				if (e._computerOn == 13 && e._computerOff > 76)
+					WRITE_LE_UINT32(_vm->_controlPtr->_ptr + 8, 2);
+				break;
+
+			default:
+				break;
+			}
+			break;
+		}
+
+		if (READ_LE_UINT32(_vm->_controlPtr->_ptr + 8) == 
+				READ_LE_UINT32(_vm->_controlPtr->_ptr + 4))
+			return true;
+	}
+
+	return false;
+}
+
 } // End of namespace Voyeur
