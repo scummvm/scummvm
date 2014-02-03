@@ -498,6 +498,7 @@ public:
 	int scene27_var11;
 	int scene27_var12;
 	int scene27_var13;
+	int scene27_var16;
 	int scene27_launchPhase;
 	BallChain scene27_balls;
 	Common::List<Bat *> scene27_bats;

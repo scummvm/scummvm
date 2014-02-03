@@ -186,7 +186,16 @@ void sceneHandler27_sub04(ExCommand *cmd) {
 }
 
 void sceneHandler27_aimDude() {
-	warning("STUB: sceneHandler27_aimDude()");
+	int phase = (g_vars->scene27_var16 - g_fp->_mouseScreenPos.x) / 20 + 6;
+
+	if (phase < 6)
+		phase = 6;
+
+	if (phase > 11)
+		phase = 11;
+
+	if (g_fp->_aniMan->_movement)
+		g_fp->_aniMan->_movement->setDynamicPhaseIndex(phase);
 }
 
 void sceneHandler27_throwBat() {
