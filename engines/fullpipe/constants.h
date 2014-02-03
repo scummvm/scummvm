@@ -1083,6 +1083,16 @@ namespace Fullpipe {
 #define ST_VNT26_RIGHT2 3348
 #define ST_VNT26_UP2 1948
 
+// Scene 27
+#define ANI_BITA 2026
+#define ANI_BITAHANDLER 3349
+#define ANI_MAID 2015
+#define ANI_VODILLA 1994
+#define PIC_SC27_HITZONE2 4756
+#define ST_MID_BROOM 2022
+#define ST_MID_SPADE 3489
+#define ST_MID_SWAB2 2019
+
 // Scene 28
 #define ANI_LIFT 982
 #define ANI_LIFT_28 4238

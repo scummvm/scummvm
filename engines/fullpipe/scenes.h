@@ -25,6 +25,7 @@
 
 namespace Fullpipe {
 
+struct Bat;
 struct BehaviorEntryInfo;
 class MGM;
 class MctlLadder;
@@ -182,6 +183,26 @@ int sceneHandlerFinal(ExCommand *cmd);
 
 void sceneDbgMenu_initScene(Scene *sc);
 int sceneHandlerDbgMenu(ExCommand *cmd);
+
+struct Ball {
+	Ball *p0;
+	Ball *p1;
+	StaticANIObject *ani;
+
+	Ball() : p0(0), p1(0), ani(0) {}
+};
+
+struct BallChain {
+	Ball *pHead;
+	Ball *field_8;
+	int numBalls;
+	Ball *pTail;
+	Ball *cPlex;
+	int cPlexLen;
+
+	BallChain() : pHead(0), field_8(0), pTail(0), numBalls(0), cPlex(0), cPlexLen(0) {}
+	~BallChain() { free(cPlex); }
+};
 
 class Vars {
 public:
@@ -460,6 +481,27 @@ public:
 	PictureObject *scene26_sockPic;
 	StaticANIObject *scene26_sock;
 	StaticANIObject *scene26_activeVent;
+
+	int scene27_var01;
+	int scene27_var02;
+	int scene27_var03;
+	int scene27_var04;
+	PictureObject *scene27_hitZone;
+	StaticANIObject *scene27_driver;
+	StaticANIObject *scene27_maid;
+	StaticANIObject *scene27_batHandler;
+	int scene27_var15;
+	StaticANIObject *scene27_bat;
+	int scene27_var08;
+	int scene27_var09;
+	int scene27_var10;
+	int scene27_var11;
+	int scene27_var12;
+	int scene27_var13;
+	int scene27_launchPhase;
+	BallChain scene27_balls;
+	Common::List<Bat *> scene27_bats;
+	Common::List<Bat *> scene27_var07;
 
 	bool scene28_fliesArePresent;
 	bool scene28_beardedDirection;

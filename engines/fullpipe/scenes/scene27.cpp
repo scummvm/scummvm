@@ -36,6 +36,18 @@
 
 namespace Fullpipe {
 
+struct Bat {
+	StaticANIObject *ani;
+	int field_4;
+	double power;
+	int field_10;
+	int field_14;
+	double currX;
+	double currY;
+	double powerCos;
+	double powerSin;
+};
+
 void scene27_initScene(Scene *sc) {
 	g_vars->scene27_var01 = 200;
 	g_vars->scene27_var02 = 200;
@@ -50,10 +62,13 @@ void scene27_initScene(Scene *sc) {
 	g_vars->scene27_balls.pTail = 0;
 	g_vars->scene27_balls.field_8 = 0;
 	g_vars->scene27_balls.pHead = 0;
-	CPlex::FreeDataChain(g_vars->scene27_balls.cPlex);
+	g_vars->scene27_balls.cPlexLen = 10;
+
+	free(g_vars->scene27_balls.cPlex);
 	g_vars->scene27_balls.cPlex = 0;
-	scene27_bats.clear();
-	scene27_var07.clear();
+
+	g_vars->scene27_bats.clear();
+	g_vars->scene27_var07.clear();
 
 	g_vars->scene27_var15 = 1;
 	g_vars->scene27_bat = sc->getStaticANIObject1ById(ANI_BITA, -1);
@@ -61,39 +76,43 @@ void scene27_initScene(Scene *sc) {
 	for (int i = 0; i < 4; i++) {
 		StaticANIObject *newbat = new StaticANIObject(g_vars->scene27_bat);
 
-		v5 = g_vars->scene27_balls.pTail;
-		v6 = g_vars->scene27_balls.field_8;
+		Ball *runPtr = g_vars->scene27_balls.pTail;
+		Ball *lastP = g_vars->scene27_balls.field_8;
 
 		if (!g_vars->scene27_balls.pTail) {
-			v7 = CPlex::Create(&g_vars->scene27_balls.cPlex, g_vars->scene27_balls.cPlexLen, 12) + 4 + 12 * g_vars->scene27_balls.cPlexLen - 12;
-			if (g_vars->scene27_balls.cPlexLen - 1 < 0) {
-				v5 = g_vars->scene27_balls.pTail;
-			} else {
-				v8 = g_vars->scene27_balls.cPlexLen;
-				v5 = g_vars->scene27_balls.pTail;
-				do {
-					*(_DWORD *)v7 = v5;
-					v5 = (Ball *)v7;
-					v7 -= 12;
-					--v8;
-				} while (v8);
+			g_vars->scene27_balls.cPlex = (Ball *)calloc(g_vars->scene27_balls.cPlexLen, sizeof(Ball));
 
-				g_vars->scene27_balls.pTail = v5;
+			Ball *p1 = g_vars->scene27_balls.cPlex + (g_vars->scene27_balls.cPlexLen - 1) * sizeof(Ball);
+
+			if (g_vars->scene27_balls.cPlexLen - 1 < 0) {
+				runPtr = g_vars->scene27_balls.pTail;
+			} else {
+				runPtr = g_vars->scene27_balls.pTail;
+
+				for (int j = 0; j < g_vars->scene27_balls.cPlexLen; j++) {
+					p1->p1 = runPtr;
+					runPtr = p1;
+
+					p1 -= sizeof(Ball);
+				}
+
+				g_vars->scene27_balls.pTail = runPtr;
 			}
 		}
 
-		g_vars->scene27_balls.pTail = v5->pNext;
-		v5->pPrev = v6;
-		v5->pNext = 0;
-		++g_vars->scene27_balls.numBalls;
-		v5->ani = 0;
-		v5->ani = newbat;
+		g_vars->scene27_balls.pTail = runPtr->p0;
+		runPtr->p1 = lastP;
+		runPtr->p0 = 0;
+		runPtr->ani = newbat;
+
+		g_vars->scene27_balls.numBalls++;
 
 		if (g_vars->scene27_balls.field_8)
-			g_vars->scene27_balls.field_8->pNext = v5;
+			g_vars->scene27_balls.field_8->p0 = runPtr;
 		else
-			g_vars->scene27_balls.pHead = v5;
-		g_vars->scene27_balls.field_8 = v5;
+			g_vars->scene27_balls.pHead = runPtr;
+
+		g_vars->scene27_balls.field_8 = runPtr;
 
 		sc->addStaticANIObject(newbat, 1);
 	}
@@ -106,15 +125,15 @@ void scene27_initScene(Scene *sc) {
 	g_vars->scene27_var13 = 0;
 	g_vars->scene27_launchPhase = 0;
 
-	oldsc = g_fp->_currentScene;
+	Scene *oldsc = g_fp->_currentScene;
 	g_fp->_currentScene = sc;
 
 	if (g_fp->getObjectState(sO_Maid) == g_fp->getObjectEnumState(sO_Maid, sO_WithSwab)) {
-		StaticANIObject_changeStatics2(g_vars->scene27_maid, ST_MID_SWAB2);
+		g_vars->scene27_maid->changeStatics2(ST_MID_SWAB2);
 	} else if (g_fp->getObjectState(sO_Maid) == g_fp->getObjectEnumState(sO_Maid, sO_WithBroom)) {
-		StaticANIObject_changeStatics2(g_vars->scene27_maid, ST_MID_BROOM);
+		g_vars->scene27_maid->changeStatics2(ST_MID_BROOM);
 	} else if (g_fp->getObjectState(sO_Maid) == g_fp->getObjectEnumState(sO_Maid, sO_WithSpade)) {
-		StaticANIObject_changeStatics2(g_vars->scene27_maid, ST_MID_SPADE);
+		g_vars->scene27_maid->changeStatics2(ST_MID_SPADE);
 	}
 
 	g_fp->_currentScene = oldsc;
