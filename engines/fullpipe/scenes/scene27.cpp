@@ -192,7 +192,14 @@ void sceneHandler27_takeVent() {
 }
 
 void sceneHandler27_showNextBat() {
-	warning("STUB: sceneHandler27_showNextBat()");
+	if (g_vars->scene27_bat) {
+		MessageQueue *mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC27_SHOWBET), 0, 1);
+
+		mq->replaceKeyCode(-1, g_vars->scene27_bat->_okeyCode);
+		mq->chain(0);
+	}
+
+	g_vars->scene27_batHandler->_priority = 1045;
 }
 
 int sceneHandler27_updateScreenCallback() {
