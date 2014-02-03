@@ -123,6 +123,7 @@ public:
 
 	inline BaseObject *getMainObject() { return _mainObject; }
 	inline BaseFont *getSystemFont() { return _systemFont; }
+	inline BaseFont *getVideoFont() { return _videoFont; }
 
 	bool initInput();
 	bool initLoop();
