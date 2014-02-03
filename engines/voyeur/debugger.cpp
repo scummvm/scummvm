@@ -32,9 +32,12 @@ Debugger::Debugger() : GUI::Debugger() {
 	DCmd_Register("continue", WRAP_METHOD(Debugger, Cmd_Exit));
 	DCmd_Register("exit", WRAP_METHOD(Debugger, Cmd_Exit));
 	DCmd_Register("time", WRAP_METHOD(Debugger, Cmd_Time));
+	DCmd_Register("hotspots", WRAP_METHOD(Debugger, Cmd_Hotspots));
+	DCmd_Register("mouse", WRAP_METHOD(Debugger, Cmd_Mouse));
 
 	// Set fields
 	_isTimeActive = true;
+	_showMousePosition = false;
 }
 
 bool Debugger::Cmd_Time(int argc, const char **argv) {
@@ -85,6 +88,60 @@ bool Debugger::Cmd_Time(int argc, const char **argv) {
 				DebugPrintf("Unknown parameter\n\n");
 			}
 		}
+	}
+
+	return true;
+}
+
+bool Debugger::Cmd_Hotspots(int argc, const char **argv) {
+	BoltEntry &boltEntry = _vm->_bVoy->boltEntry(_vm->_playStampGroupId + 1);
+	if (!boltEntry._rectResource) {
+		DebugPrintf("No hotspots available\n");
+	} else {
+		Common::Array<RectEntry> &hotspots = boltEntry._rectResource->_entries;
+
+		for (uint hotspotIdx = 0; hotspotIdx < hotspots.size(); ++hotspotIdx) {
+			Common::String pos = Common::String::format("(%d,%d->%d,%d)",
+				hotspots[hotspotIdx].left, hotspots[hotspotIdx].top,
+				hotspots[hotspotIdx].right, hotspots[hotspotIdx].bottom);
+
+			for (int arrIndex = 0; arrIndex < 3; ++arrIndex) {
+				if (_vm->_voy._audioHotspotTimes._min[arrIndex][hotspotIdx] != 9999) {
+					DebugPrintf("Hotspot %d %s Audio slot %d, time: %d to %d\n", 
+						hotspotIdx, pos.c_str(), arrIndex,
+						_vm->_voy._audioHotspotTimes._min[arrIndex][hotspotIdx],
+						_vm->_voy._audioHotspotTimes._max[arrIndex][hotspotIdx]);
+				}
+
+				if (_vm->_voy._evidenceHotspotTimes._min[arrIndex][hotspotIdx] != 9999) {
+					DebugPrintf("Hotspot %d %s Evidence slot %d, time: %d to %d\n", 
+						hotspotIdx, pos.c_str(), arrIndex,
+						_vm->_voy._evidenceHotspotTimes._min[arrIndex][hotspotIdx],
+						_vm->_voy._evidenceHotspotTimes._max[arrIndex][hotspotIdx]);
+				}
+			}
+
+			for (int arrIndex = 0; arrIndex < 8; ++arrIndex) {
+				if (_vm->_voy._videoHotspotTimes._min[arrIndex][hotspotIdx] != 9999) {
+					DebugPrintf("Hotspot %d %s Video slot %d, time: %d to %d\n", 
+						hotspotIdx, pos.c_str(), arrIndex,
+						_vm->_voy._videoHotspotTimes._min[arrIndex][hotspotIdx],
+						_vm->_voy._videoHotspotTimes._max[arrIndex][hotspotIdx]);
+				}
+			}
+		}
+	}
+
+	DebugPrintf("\n");
+	return true;
+}
+
+bool Debugger::Cmd_Mouse(int argc, const char **argv) {
+	if (argc < 2) {
+		DebugPrintf("mouse [ on | off ]\n");
+	} else {
+		_showMousePosition = !strcmp(argv[1], "on");
+		DebugPrintf("Mouse position is now %s\n", _showMousePosition ? "on" : "off");
 	}
 
 	return true;

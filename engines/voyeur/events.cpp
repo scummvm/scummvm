@@ -25,6 +25,8 @@
 #include "voyeur/staticres.h"
 #include "common/events.h"
 #include "graphics/cursorman.h"
+#include "graphics/font.h"
+#include "graphics/fontman.h"
 #include "graphics/palette.h"
 
 namespace Voyeur {
@@ -158,6 +160,10 @@ void EventsManager::checkForNextFrameCounter() {
 		// Give time to the debugger
 		_vm->_debugger.onFrame();
 
+		// If mouse position display is on, display the position
+		if (_vm->_debugger._showMousePosition)
+			showMousePosition();
+
 		// Display the frame
 		g_system->copyRectToScreen((byte *)_vm->_graphicsManager._screenSurface.getPixels(), 
 			SCREEN_WIDTH, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -166,6 +172,23 @@ void EventsManager::checkForNextFrameCounter() {
 		// Signal the ScummVM debugger
 		_vm->_debugger.onFrame();
 	}
+}
+
+void EventsManager::showMousePosition() {
+	const Graphics::Font &font(*FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont));
+	Common::String mousePos = Common::String::format("(%d,%d)", _mousePos.x, _mousePos.y);
+	if (_vm->_voyeurArea == AREA_INTERFACE) {
+		Common::Point pt = _mousePos + _vm->_mansionViewPos - Common::Point(40, 27);
+		if (pt.x < 0) pt.x = 0;
+		if (pt.y < 0) pt.y = 0;
+
+		mousePos += Common::String::format(" - (%d,%d)", pt.x, pt.y);
+	}
+
+	_vm->_graphicsManager._screenSurface.fillRect(
+		Common::Rect(0, 0, 110, font.getFontHeight()), 0);
+	font.drawString(&_vm->_graphicsManager._screenSurface, mousePos,
+		0, 0, 110, 63);
 }
 
 void EventsManager::voyeurTimer() {

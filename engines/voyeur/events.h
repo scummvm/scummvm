@@ -96,6 +96,11 @@ private:
 	void vDoCycleInt();
 	void fadeIntFunc();
 	void deleteIntNode(IntNode *node);
+
+	/**
+	 * Debugger support method to show the mouse position
+	 */
+	void showMousePosition();
 public:
 	IntData _gameData;
 	IntData &_intPtr;

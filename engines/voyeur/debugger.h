@@ -39,9 +39,27 @@ public:
 	 * @default true
 	 */
 	bool _isTimeActive;
+
+	/*
+	 * Specifies whether to show the current mouse position on the screen
+	 */
+	bool _showMousePosition;
 protected:
+	/**
+	 * Turn time on or off, set the current time period, or the camera delay
+	 * within the current time period.
+	 */
 	bool Cmd_Time(int argc, const char **argv);
 
+	/**
+	 * List the active hotspots during the current time period
+	 */
+	bool Cmd_Hotspots(int argc, const char **argv);
+
+	/**
+	 * Toggle showing the mouse on the screen
+	 */
+	bool Cmd_Mouse(int argc, const char **argv);
 public:
 	Debugger();
 	virtual ~Debugger() {}
