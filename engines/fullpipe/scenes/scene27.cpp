@@ -257,8 +257,28 @@ void sceneHandler27_clickBat(ExCommand *cmd) {
 	}
 }
 
+void sceneHandler27_maidSwab() {
+	warning("STUB: sceneHandler27_maidSwab()");
+}
+
 void sceneHandler27_startBat(StaticANIObject *bat) {
-	warning("STUB: sceneHandler27_startBat()");
+	Bat *newbat = new Bat;
+
+	newbat->power = g_vars->scene27_launchPhase * 2.5 + 8.0;
+	newbat->field_10 = 0;
+	newbat->ani = bat;
+	newbat->powerCos = newbat->power * cos(0.0);
+	newbat->powerSin = sin(0.0) * newbat->power;
+	newbat->currX = newbat->powerCos + (double)g_fp->_aniMan->_ox + 42.0;
+	newbat->currY = newbat->powerSin + (double)g_fp->_aniMan->_oy + 58.0;
+
+	bat->_statics = (Statics *)bat->_staticsList[0];
+	bat->setOXY((int)newbat->currX, (int)newbat->currY);
+	bat->_flags |= 4;
+
+	g_vars->scene27_bats.push_back(newbat);
+
+	sceneHandler27_maidSwab();
 }
 
 void sceneHandler27_startAiming() {
