@@ -507,9 +507,10 @@ void ThreadResource::parsePlayCommands() {
 			break;			
 
 		case 5:
-			// Load the time information for the new time period
+			// Check whether transition to a given time period is allowed, and
+			// if so, load the time information for the new time period
 			v2 = READ_LE_UINT16(dataP);
-			if (v2 == 0 || READ_LE_UINT16(_vm->_controlPtr->_ptr + 4) == 0) {
+			if (v2 == 0 || READ_LE_UINT16(_vm->_controlPtr->_ptr + 4) == v2) {
 				_vm->_voy._field470 = 5;
 				int count = READ_LE_UINT16(dataP + 2);
 				_vm->_voy._RTVLimit = READ_LE_UINT16(dataP + 4);
@@ -997,6 +998,8 @@ int ThreadResource::doApt() {
 	int prevHotspotId = -1;
 	Common::Point pt;
 	PictureResource *pic;
+	Common::Rect gmmHotspot(75, 125, 130, 140);
+
 	do {
 		_vm->_voyeurArea = AREA_APARTMENT;
 
@@ -1044,12 +1047,22 @@ int ThreadResource::doApt() {
 			}
 		}
 
+		// Check for presence in ScummVM GMM
+		if (gmmHotspot.contains(pt))
+			hotspotId = 42;
+
 		// Draw either standard or highlighted eye cursor
 		pic = _vm->_bVoy->boltEntry((hotspotId == -1) ? _vm->_playStampGroupId + 2 :
 			_vm->_playStampGroupId + 3)._picResource;
 		_vm->_graphicsManager.sDrawPic(pic, *_vm->_graphicsManager._vPort, pt);
 
 		_vm->flipPageAndWait();
+
+		if (hotspotId == 42 && _vm->_eventsManager._leftClick) {
+			// Show the ScummVM GMM
+			_vm->_eventsManager.getMouseInfo();
+			_vm->openMainMenuDialog();
+		}
 
 	} while (!_vm->shouldQuit() && (!_vm->_eventsManager._leftClick || hotspotId == -1));
 
