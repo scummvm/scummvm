@@ -77,13 +77,13 @@ void SVoy::synchronize(Common::Serializer &s) {
 	s.syncAsSint16LE(_field468);
 	s.syncAsSint16LE(_field46A);
 	s.syncAsSint16LE(_vocSecondsOffset);
-	s.syncAsSint16LE(_field46E);
+	s.syncAsSint16LE(_abortInterface);
 	s.syncAsSint16LE(_field470);
 	s.syncAsSint16LE(_aptLoadMode);
 	s.syncAsSint16LE(_transitionId);
 	s.syncAsSint16LE(_RTVLimit);
 	s.syncAsSint16LE(_eventFlags);
-	s.syncAsSint16LE(_field47A);
+	s.syncAsSint16LE(_boltGroupId2);
 
 	s.syncAsSint16LE(_field4AC);
 	s.syncAsSint16LE(_field4B8);
@@ -157,7 +157,7 @@ void SVoy::addEvidEventStart(int v) {
 	e._isAM = _isAM;
 	e._type = EVTYPE_EVID;
 	e._audioVideoId = _vm->_playStampGroupId;
-	e._computerOn = _field47A;
+	e._computerOn = _boltGroupId2;
 	e._computerOff = v;
 }
 
@@ -188,7 +188,7 @@ void SVoy::addComputerEventEnd(int v) {
 void SVoy::reviewAnEvidEvent(int eventIndex) {
 	VoyeurEvent &e = _events[eventIndex];
 	_vm->_playStampGroupId = e._audioVideoId;
-	_field47A = e._computerOn;
+	_boltGroupId2 = e._computerOn;
 	int frameOff = e._computerOff;
 
 	if (_vm->_bVoy->getBoltGroup(_vm->_playStampGroupId)) {
@@ -201,9 +201,9 @@ void SVoy::reviewAnEvidEvent(int eventIndex) {
 		_vm->_bVoy->freeBoltGroup(_vm->_playStampGroupId);
 		_vm->_playStampGroupId = -1;
 
-		if (_field47A != -1) {
-			_vm->_bVoy->freeBoltGroup(_field47A);
-			_field47A = -1;
+		if (_boltGroupId2 != -1) {
+			_vm->_bVoy->freeBoltGroup(_boltGroupId2);
+			_boltGroupId2 = -1;
 		}
 	}
 }

@@ -678,11 +678,11 @@ void VoyeurEngine::flipPageAndWaitForFade() {
 
 void VoyeurEngine::showEndingNews() {
 	_playStampGroupId = (_voy._field4382 - 1) * 256 + 0x7700;
-	_voy._field47A = (READ_LE_UINT16(_controlPtr->_ptr + 4) 
+	_voy._boltGroupId2 = (READ_LE_UINT16(_controlPtr->_ptr + 4) 
 		- 1) * 256 + 0x7B00;
 
 	_bVoy->getBoltGroup(_playStampGroupId);
-	_bVoy->getBoltGroup(_voy._field47A);
+	_bVoy->getBoltGroup(_voy._boltGroupId2);
 
 	PictureResource *pic = _bVoy->boltEntry(_playStampGroupId)._picResource;
 	CMapResource *pal = _bVoy->boltEntry(_playStampGroupId + 1)._cMapResource;
@@ -695,8 +695,8 @@ void VoyeurEngine::showEndingNews() {
 
 	for (int idx = 1; idx < 4; ++idx) {
 		if (idx == 3) {
-			pic = _bVoy->boltEntry(_voy._field47A)._picResource;
-			pal = _bVoy->boltEntry(_voy._field47A + 1)._cMapResource;
+			pic = _bVoy->boltEntry(_voy._boltGroupId2)._picResource;
+			pal = _bVoy->boltEntry(_voy._boltGroupId2 + 1)._cMapResource;
 		} else {
 			pic = _bVoy->boltEntry(_playStampGroupId + idx * 2)._picResource;
 			pal = _bVoy->boltEntry(_playStampGroupId + idx * 2 + 1)._cMapResource;
@@ -728,9 +728,9 @@ void VoyeurEngine::showEndingNews() {
 	}
 
 	_bVoy->freeBoltGroup(_playStampGroupId);
-	_bVoy->freeBoltGroup(_voy._field47A);
+	_bVoy->freeBoltGroup(_voy._boltGroupId2);
 	_playStampGroupId = -1;
-	_voy._field47A = -1;
+	_voy._boltGroupId2 = -1;
 }
 
 /*------------------------------------------------------------------------*/
@@ -820,7 +820,7 @@ Common::Error VoyeurEngine::saveGameState(int slot, const Common::String &desc) 
 }
 
 void VoyeurEngine::synchronize(Common::Serializer &s) {
-	s.syncAsSint16LE(_glGoScene);
+	s.syncAsSint16LE(_glGoState);
 	s.syncAsSint16LE(_glGoStack);
 	s.syncAsSint16LE(_stampFlags);
 	s.syncAsSint16LE(_playStampGroupId);

@@ -41,7 +41,7 @@ void VoyeurEngine::playStamp() {
 	_voy._isAM = false;
 	_gameHour = 9;
 	_gameMinute = 0;
-	_voy._field46E = true;
+	_voy._abortInterface = true;
 
 	int buttonId;
 	bool breakFlag = false;
@@ -66,14 +66,14 @@ void VoyeurEngine::playStamp() {
 					break;
 				case 1:
 					_voy._eventFlags &= ~EVTFLAG_TIME_DISABLED;
-					_voy._field46E = true;
+					_voy._abortInterface = true;
 					_mainThread->chooseSTAMPButton(22);
 					_voy._aptLoadMode = 143;
 					break;
 				case 2:
 					_voy._eventFlags &= ~EVTFLAG_TIME_DISABLED;
 					reviewTape();
-					_voy._field46E = true;
+					_voy._abortInterface = true;
 					_voy._aptLoadMode = 142;
 					break;
 				case 3:
@@ -85,7 +85,7 @@ void VoyeurEngine::playStamp() {
 					break;
 				case 5:
 					doGossip();
-					_voy._field46E = true;
+					_voy._abortInterface = true;
 					_voy._aptLoadMode = 141;
 					_voy._eventFlags &= ~EVTFLAG_100;
 					break;
@@ -115,7 +115,7 @@ void VoyeurEngine::playStamp() {
 				break;
 			case 2:
 				reviewTape();
-				_voy._field46E = true;
+				_voy._abortInterface = true;
 				break;
 			case 4:
 				flag = true;
@@ -165,7 +165,7 @@ void VoyeurEngine::playStamp() {
 					_mainThread->chooseSTAMPButton(buttonId);
 				} else {
 					_mainThread->chooseSTAMPButton(buttonId);
-					_voy._field46E = true;
+					_voy._abortInterface = true;
 				}
 			}
 			break;
@@ -184,9 +184,9 @@ void VoyeurEngine::playStamp() {
 
 				_audioVideoId = -1;
 
-				if (_voy._field47A != -1) {
-					_bVoy->freeBoltGroup(_voy._field47A);
-					_voy._field47A = -1;
+				if (_voy._boltGroupId2 != -1) {
+					_bVoy->freeBoltGroup(_voy._boltGroupId2);
+					_voy._boltGroupId2 = -1;
 				}
 
 				if (_playStampGroupId != -1) {
@@ -1344,27 +1344,27 @@ void VoyeurEngine::doEvidDisplay(int evidId, int eventId) {
 		_soundManager.stopVOCPlay();
 	}
 
-	_bVoy->getBoltGroup(_voy._field47A);
-	PictureResource *pic = _bVoy->boltEntry(_voy._field47A + evidId * 2)._picResource;
+	_bVoy->getBoltGroup(_voy._boltGroupId2);
+	PictureResource *pic = _bVoy->boltEntry(_voy._boltGroupId2 + evidId * 2)._picResource;
 	_graphicsManager.sDrawPic(pic, *_graphicsManager._vPort, Common::Point(
 		(384 - pic->_bounds.width()) / 2, (240 - pic->_bounds.height()) / 2));
-	_bVoy->freeBoltMember(_voy._field47A + evidId * 2);
+	_bVoy->freeBoltMember(_voy._boltGroupId2 + evidId * 2);
 
-	CMapResource *pal = _bVoy->boltEntry(_voy._field47A + evidId * 2 + 1)._cMapResource;
+	CMapResource *pal = _bVoy->boltEntry(_voy._boltGroupId2 + evidId * 2 + 1)._cMapResource;
 	pal->startFade();
 
 	while (!shouldQuit() && (_eventsManager._fadeStatus & 1))
 		_eventsManager.delay(1);
-	_bVoy->freeBoltMember(_voy._field47A + evidId * 2 + 1);
+	_bVoy->freeBoltMember(_voy._boltGroupId2 + evidId * 2 + 1);
 
 	Common::Array<RectEntry> &hotspots = _bVoy->boltEntry(_playStampGroupId + 4)._rectResource->_entries;
 	int count = hotspots[evidId]._count;
 
 	if (count > 0) {
 		for (int idx = 1; idx <= count; ++idx) {
-			_voy._evPicPtrs[idx - 1] = _bVoy->boltEntry(_voy._field47A + 
+			_voy._evPicPtrs[idx - 1] = _bVoy->boltEntry(_voy._boltGroupId2 + 
 				(evidId + idx) * 2)._picResource;
-			_voy._evCmPtrs[idx - 1] = _bVoy->boltEntry(_voy._field47A + 
+			_voy._evCmPtrs[idx - 1] = _bVoy->boltEntry(_voy._boltGroupId2 + 
 				(evidId + idx) * 2 + 1)._cMapResource;
 		}
 	}
@@ -1416,8 +1416,8 @@ void VoyeurEngine::doEvidDisplay(int evidId, int eventId) {
 		_voy.addEvidEventEnd(evidIdx);
 
 	for (int idx = 1; idx <= hotspots[evidId]._count; ++idx) {
-		_bVoy->freeBoltMember(_voy._field47A + (evidId + idx) * 2);
-		_bVoy->freeBoltMember(_voy._field47A + (evidId + idx) * 2 + 1);
+		_bVoy->freeBoltMember(_voy._boltGroupId2 + (evidId + idx) * 2);
+		_bVoy->freeBoltMember(_voy._boltGroupId2 + (evidId + idx) * 2 + 1);
 	}
 }
 

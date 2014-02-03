@@ -505,7 +505,7 @@ private:
 	byte *getDataOffset();
 	void getButtonsText();
 	void getButtonsFlags();
-	void getField1CE();
+	void getButtonsUnused();
 	void performOpenCard();
 	const byte *getRecordOffset(const byte *p);
 	const byte *getNextRecord(const byte *p);
@@ -554,26 +554,50 @@ public:
 	byte *_threadInfoPtr;
 	byte _buttonFlags[64];
 	const byte *_field8E[64];
-	byte _field18E[64];
-	const byte *_field1CE[48];
+	byte _buttonIds[64];
+	const byte *_buttonUnused[48];
 	byte *_ctlPtr;
 	byte *_playCommandsPtr;
 public:
 	ThreadResource(BoltFilesState &state, const byte *src);
 	virtual ~ThreadResource() {}
 
+	/**
+	 * Initialise the thread
+	 */
 	void initThreadStruct(int idx, int id);
+
+	/**
+	 * Loads the specified stack
+	 */
 	bool loadAStack(int stackId);
+
+	/**
+	 * Unloads the specified stack
+	 */
 	void unloadAStack(int stackId);
+
+	/**
+	 * Initialises data for the thread based on the current state
+	 */
 	bool doState();
 
 	bool chooseSTAMPButton(int buttonId);
+
+	/**
+	 * Parses the script commands from the currently active stack
+	 */
 	void parsePlayCommands();
 
 	/**
 	 * Do the camera view looking at the mansion
 	 */
 	int doInterface();
+
+	/**
+	 * Do the display of a room that has one or more evidence hotspots
+	 * available for display
+	 */
 	void doRoom();
 
 	/**
@@ -586,7 +610,14 @@ public:
 	 */
 	void loadTheApt();
 
+	/**
+	 * Check for whether a murder has been recorded
+	 */
 	void checkForMurder();
+
+	/**
+	 * Check for whether incriminating evidence has been recorded
+	 */
 	void checkForIncriminate();
 
 	/**

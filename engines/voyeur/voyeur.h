@@ -170,7 +170,7 @@ public:
 	ControlResource *_controlPtr;
 	byte *_stampData;
 	BoltGroup *_stackGroupPtr;
-	int _glGoScene;
+	int _glGoState;
 	int _glGoStack;
 	int _stampFlags;
 	int _playStampGroupId;

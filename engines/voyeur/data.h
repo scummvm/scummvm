@@ -116,13 +116,13 @@ public:
 	int _field468;
 	int _field46A;
 	int _vocSecondsOffset;
-	bool _field46E;
+	bool _abortInterface;
 	int _field470;
 	int _aptLoadMode;
 	int _transitionId;
 	int _RTVLimit;
 	int _eventFlags;
-	int _field47A;
+	int _boltGroupId2;
 	PictureResource *_evPicPtrs[6];
 	CMapResource *_evCmPtrs[6];
 	int _field4AC;

@@ -94,9 +94,9 @@ bool ThreadResource::doState() {
 		return false;
 
 	getButtonsFlags();
-	getField1CE();
+	getButtonsUnused();
 
-	_vm->_glGoScene = -1;
+	_vm->_glGoState = -1;
 	_vm->_glGoStack = -1;
 
 	performOpenCard();
@@ -168,7 +168,7 @@ void ThreadResource::getButtonsFlags() {
 				_stateFlags |= 2;
 
 			_buttonFlags[idx] = *p++;
-			_field18E[idx] = *p++;
+			_buttonIds[idx] = *p++;
 
 			if (_buttonFlags[idx] & 0x80)
 				p += 4;
@@ -178,13 +178,13 @@ void ThreadResource::getButtonsFlags() {
 	}
 }
 
-void ThreadResource::getField1CE() {
+void ThreadResource::getButtonsUnused() {
 	int idx = 0;
 	
 	for (const byte *p = _threadInfoPtr; *p++ != 0x4A; p = getNextRecord(p)) {
 		assert(idx < 47);
-		_field1CE[idx++] = getRecordOffset(p);
-		_field1CE[idx] = NULL;
+		_buttonUnused[idx++] = getRecordOffset(p);
+		_buttonUnused[idx] = nullptr;
 		p += 4;
 	}
 }
@@ -300,11 +300,11 @@ void ThreadResource::doSTAMPCardAction() {
 }
 
 void ThreadResource::cardAction(const byte *card) {
-	_vm->_glGoScene = -1;
+	_vm->_glGoState = -1;
 	_vm->_glGoStack = -1;
 
 	// Loop to perform card commands
-	while (!_vm->shouldQuit() && *card < 70 && _vm->_glGoScene == -1) {
+	while (!_vm->shouldQuit() && *card < 70 && _vm->_glGoState == -1) {
 		card = cardPerform(card);
 	}
 }
@@ -313,19 +313,19 @@ bool ThreadResource::chooseSTAMPButton(int buttonId) {
 	_flags &= ~1;
 
 	for (int idx = 0; idx < _stateCount; ++idx) {
-		if (_field18E[idx] == buttonId) {
+		if (_buttonIds[idx] == buttonId) {
 			const byte *card = getSTAMPCard(idx);
 			cardAction(card);
 
 			bool flag = true;
 			while (!_vm->shouldQuit() && _vm->_glGoStack != -1 && flag) {
 				doSTAMPCardAction();
-				flag = goToStateID(_vm->_glGoStack, _vm->_glGoScene);
+				flag = goToStateID(_vm->_glGoStack, _vm->_glGoState);
 			}
 
-			while (!_vm->shouldQuit() && _vm->_glGoScene != -1 && flag) {
+			while (!_vm->shouldQuit() && _vm->_glGoState != -1 && flag) {
 				doSTAMPCardAction();
-				flag = goToState(-1, _vm->_glGoScene);
+				flag = goToState(-1, _vm->_glGoState);
 			}
 
 			return flag;
@@ -339,7 +339,7 @@ void ThreadResource::parsePlayCommands() {
 	_vm->_voy._field470 = -1;
 	_vm->_voy._field468 = 0;
 	_vm->_voy._field46A = 0;
-	_vm->_voy._field47A = -1;
+	_vm->_voy._boltGroupId2 = -1;
 	_vm->_voy._computerTextId = -1;
 	_vm->_voy._eventFlags &= ~EVTFLAG_8;
 	_vm->_eventsManager._videoDead = -1;
@@ -507,6 +507,7 @@ void ThreadResource::parsePlayCommands() {
 			break;			
 
 		case 5:
+			// Load the time information for the new time period
 			v2 = READ_LE_UINT16(dataP);
 			if (v2 == 0 || READ_LE_UINT16(_vm->_controlPtr->_ptr + 4) == 0) {
 				_vm->_voy._field470 = 5;
@@ -617,7 +618,7 @@ void ThreadResource::parsePlayCommands() {
 			v2 = READ_LE_UINT16(dataP);
 
 			if (v2 == 0 || READ_LE_UINT16(_vm->_controlPtr->_ptr + 4) == 0) {
-				_vm->_voy._field47A = _vm->_resolvePtr[READ_LE_UINT16(dataP + 2)];
+				_vm->_voy._boltGroupId2 = _vm->_resolvePtr[READ_LE_UINT16(dataP + 2)];
 				_vm->_voy._roomHotspotsEnabled[READ_LE_UINT16(dataP + 4) - 1] = true;
 			}
 
@@ -798,18 +799,18 @@ const byte *ThreadResource::cardPerform(const byte *card) {
 		break;
 
 	case 17:
-		_vm->_glGoScene = READ_LE_UINT16(card);
+		_vm->_glGoState = READ_LE_UINT16(card);
 		card += 2;
 		_vm->_glGoStack = -1;
 		break;
 
 	case 18:
 		v2 = READ_LE_UINT32(_vm->_controlPtr->_ptr + (*card++ << 2));
-		_vm->_glGoScene = getStateFromID(v2);
+		_vm->_glGoState = getStateFromID(v2);
 		break;
 
 	case 19:
-		_vm->_glGoScene = READ_LE_UINT32(card);
+		_vm->_glGoState = READ_LE_UINT32(card);
 		card += 4;
 		_vm->_glGoStack = READ_LE_UINT16(card);
 		card += 2;
@@ -888,7 +889,7 @@ const byte *ThreadResource::cardPerform(const byte *card) {
 		break;
 
 	case 46:
-		_vm->_glGoScene = _newStateId;
+		_vm->_glGoState = _newStateId;
 		_vm->_glGoStack = _newStackId;
 		_newStateId = -1;
 		_newStackId = -1;
@@ -1259,9 +1260,9 @@ void ThreadResource::doRoom() {
 	voy._field437E = 0;
 	vm.makeViewFinderP();
 
-	if (voy._field47A != -1) {
-		vm._bVoy->freeBoltGroup(voy._field47A, 1);
-		voy._field47A = -1;
+	if (voy._boltGroupId2 != -1) {
+		vm._bVoy->freeBoltGroup(voy._boltGroupId2, 1);
+		voy._boltGroupId2 = -1;
 	}
 
 	if (vm._playStampGroupId != -1) {
@@ -1283,8 +1284,8 @@ int ThreadResource::doInterface() {
 	Common::Point pt;
 
 	_vm->_voy._eventFlags |= EVTFLAG_TIME_DISABLED;
-	if (_vm->_voy._field46E) {
-		_vm->_voy._field46E = false;
+	if (_vm->_voy._abortInterface) {
+		_vm->_voy._abortInterface = false;
 		return -2;
 	}
 
