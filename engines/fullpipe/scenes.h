@@ -507,7 +507,7 @@ public:
 	int scene27_launchPhase;
 	BallChain scene27_balls;
 	Common::Array<Bat *> scene27_bats;
-	Common::List<Bat *> scene27_var07;
+	Common::Array<Bat *> scene27_var07;
 
 	bool scene28_fliesArePresent;
 	bool scene28_beardedDirection;

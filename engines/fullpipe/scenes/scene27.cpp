@@ -258,7 +258,8 @@ void sceneHandler27_clickBat(ExCommand *cmd) {
 }
 
 void sceneHandler27_maidSwab() {
-	warning("STUB: sceneHandler27_maidSwab()");
+	if (g_fp->getObjectState(sO_Maid) == g_fp->getObjectEnumState(sO_Maid, sO_WithSwab))
+		g_vars->scene27_maid->changeStatics2(ST_MID_SWAB);
 }
 
 void sceneHandler27_startBat(StaticANIObject *bat) {
@@ -268,7 +269,7 @@ void sceneHandler27_startBat(StaticANIObject *bat) {
 	newbat->field_10 = 0;
 	newbat->ani = bat;
 	newbat->powerCos = newbat->power * cos(0.0);
-	newbat->powerSin = sin(0.0) * newbat->power;
+	newbat->powerSin = newbat->power * sin(0.0);
 	newbat->currX = newbat->powerCos + (double)g_fp->_aniMan->_ox + 42.0;
 	newbat->currY = newbat->powerSin + (double)g_fp->_aniMan->_oy + 58.0;
 
@@ -331,8 +332,94 @@ void sceneHandler27_sub07() {
     }
 }
 
+bool sceneHandler27_batFallLogic(int bat) {
+	warning("STUB: sceneHandler27_batFallLogic()");
+
+	return false;
+}
+
+bool sceneHandler27_batCalcDistance(int bat1, int bat2) {
+	warning("STUB: sceneHandler27_batCalcDistance()");
+
+	return false;
+}
+
+void sceneHandler27_knockBats(int bat1, int bat2) {
+	warning("STUB: sceneHandler27_knockBats()");
+}
+
+void sceneHandler27_batSetColors(int bat) {
+	warning("STUB: sceneHandler27_batSetColors()");
+}
+
+void sceneHandler27_calcWinArcade() {
+	warning("STUB: sceneHandler27_calcWinArcade()");
+}
+
+void sceneHandler27_sub02() {
+	warning("STUB: sceneHandler27_sub02()");
+}
+
 void sceneHandler27_animateBats() {
-	warning("STUB: sceneHandler27_animateBats()");
+	int oldCount = g_vars->scene27_var13;
+
+	g_vars->scene27_var12 = 0;
+	g_vars->scene27_var13 = 0;
+
+	for (uint i = 0; i < g_vars->scene27_bats.size(); i++) {
+		Bat *bat = g_vars->scene27_bats[i];
+
+		bat->currX = cos(bat->field_10) * bat->power + bat->currX;
+		bat->currY = sin(bat->field_10) * bat->power + bat->currY;
+
+		bat->ani->setOXY((int)bat->currX, (int)bat->currY);
+		bat->ani->_priority = (int)(600.0 - bat->currY);
+
+		double powerDelta;
+
+		if (cos(bat->field_10) >= 0.0 || bat->currX >= 362.0)
+			powerDelta = bat->power * 0.035;
+		else
+			powerDelta = bat->power * 0.4;
+
+		bat->power -= powerDelta;
+		bat->powerCos = cos(bat->field_10) * bat->power;
+		bat->powerSin = sin(bat->field_10) * bat->power;
+
+		if (bat->power >= 0.5)
+			g_vars->scene27_var13++;
+		else
+			bat->power = 0;
+
+		sceneHandler27_batSetColors(i);
+
+		if (!sceneHandler27_batFallLogic(i) && !g_vars->scene27_var10) {
+			for (uint j = 0; j < g_vars->scene27_bats.size(); j++) {
+				if (i != j && sceneHandler27_batCalcDistance(i, j))
+					sceneHandler27_knockBats(i, j);
+			}
+		}
+	}
+
+	for (uint i = 0; i < g_vars->scene27_var07.size(); i++) {
+		Bat *bat = g_vars->scene27_var07[i];
+
+		if (bat->currY >= 700.0) {
+			g_vars->scene27_var12++;
+		} else {
+			bat->currX = bat->powerCos + bat->currX;
+			bat->currY = bat->powerSin + bat->currY;
+			bat->ani->setOXY((int)bat->currX, (int)bat->currY);
+			bat->powerSin = bat->powerSin + 1.0;
+		}
+	}
+	if (oldCount != g_vars->scene27_var13 && !g_vars->scene27_var13)
+		sceneHandler27_calcWinArcade();
+
+	if (g_vars->scene27_var10) {
+		if (g_vars->scene27_var12 == 5)
+			sceneHandler27_sub02();
+	}
 }
 
 int sceneHandler27(ExCommand *cmd) {

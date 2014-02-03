@@ -1106,6 +1106,7 @@ namespace Fullpipe {
 #define ST_DRV_VENT 1996
 #define ST_MID_BROOM 2022
 #define ST_MID_SPADE 3489
+#define ST_MID_SWAB 2017
 #define ST_MID_SWAB2 2019
 
 // Scene 28
