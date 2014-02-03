@@ -157,8 +157,19 @@ int scene27_updateCursor() {
 	return g_fp->_cursorId;
 }
 
+void sceneHandler27_driverGiveVent() {
+	warning("STUB: sceneHandler27_driverGiveVent()");
+}
+
 void sceneHandler27_winArcade() {
-	warning("STUB: sceneHandler27_winArcade()");
+	if (g_fp->getObjectState(sO_Driver) == g_fp->getObjectEnumState(sO_Driver, sO_WithSteering)) {
+		g_vars->scene27_var08 = 0;
+
+		g_fp->_aniMan->_callback2 = 0;
+		g_fp->_aniMan->changeStatics2(ST_MAN_RIGHT);
+
+		sceneHandler27_driverGiveVent();
+	}
 }
 
 void sceneHandler27_takeVent() {
