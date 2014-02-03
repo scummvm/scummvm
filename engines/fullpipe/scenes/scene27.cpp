@@ -180,8 +180,32 @@ void sceneHandler27_showNextBat() {
 	warning("STUB: sceneHandler27_showNextBat()");
 }
 
+int sceneHandler27_updateScreenCallback() {
+	warning("STUB: sceneHandler27_updateScreenCallback()");
+
+	return 0;
+}
+
+void sceneHandler27_aniManCallback(int *arg) {
+	warning("STUB: sceneHandler27_aniManCallback()");
+}
+
 void sceneHandler27_throwBat() {
-	warning("STUB: sceneHandler27_throwBat()");
+	if (getGameLoaderInteractionController()->_flag24)
+		g_fp->_updateScreenCallback = sceneHandler27_updateScreenCallback;
+
+	g_fp->_aniMan->_callback2 = sceneHandler27_aniManCallback;
+
+	g_fp->_aniMan->startAnim(MV_MAN27_THROWBET, 0, -1);
+
+	getCurrSceneSc2MotionController()->clearEnabled();
+	getGameLoaderInteractionController()->disableFlag24();
+
+	g_fp->_behaviorManager->setFlagByStaticAniObject(g_fp->_aniMan, 0);
+
+	g_vars->scene27_var09 = 0;
+
+	g_vars->scene27_bat->hide();
 }
 
 void sceneHandler27_clickBat(ExCommand *cmd) {
