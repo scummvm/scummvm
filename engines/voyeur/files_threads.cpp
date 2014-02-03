@@ -1016,15 +1016,20 @@ int ThreadResource::doApt() {
 		hotspotId = -1;
 		pt = _vm->_eventsManager.getMousePos();
 		for (int idx = 0; idx < (int)hotspots.size(); ++idx) {
-			if (pt.x > hotspots[idx].left && pt.x < hotspots[idx].right &&
-				pt.y > hotspots[idx].top && pt.y < hotspots[idx].bottom) {
+			if (hotspots[idx].contains(pt)) {
 				// Cursor is within hotspot area
+
+				// Don't allow the camera to be highlighted on Monday morning.
+				if (idx == 0 && _vm->_voy._transitionId == 17)
+					continue;
+
+				// Set the highlighted hotspot Id
 				hotspotId = idx;
 
 				if (hotspotId != prevHotspotId) {
 					// Check for whether to replace hotspot Id for "Watch TV" for
 					// "Review the Tape" if player has already watched the TV
-					if ((_vm->_voy._eventFlags & 0x100) && (hotspotId == 2))
+					if ((_vm->_voy._eventFlags & EVTFLAG_100) && (hotspotId == 2))
 						hotspotId = 5;
 
 					// Draw the text description for the highlighted hotspot
