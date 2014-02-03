@@ -127,27 +127,31 @@ void VoyeurEngine::playStamp() {
 			break;
 
 		case 17:
+			// Called the police, showing the tape
 			doTapePlaying();
 			if (!checkForMurder() && _voy._transitionId <= 15)
 				checkForIncriminate();
 
 			if (_voy._videoEventId != -1) {
+				// Show the found video that is of interest to the police
 				playAVideoEvent(_voy._videoEventId);
 				_voy._eventFlags &= ~EVTFLAG_RECORDING;
 			}
 
+			// Handle response
 			_mainThread->chooseSTAMPButton(0);
 			flag = true;
 			break;
 
 		case 130: {
-			//_tmflag = 1;
+			// user selected to send the tape
 			if (_bVoy->getBoltGroup(_playStampGroupId)) {
 				_graphicsManager._backgroundPage = _bVoy->boltEntry(_playStampGroupId)._picResource;
 				_graphicsManager._backColors = _bVoy->boltEntry(_playStampGroupId + 1)._cMapResource;
 
 				buttonId = getChooseButton();
 				if (_eventsManager._rightClick)
+					// Aborted out of selecting a recipient
 					buttonId = 4;
 
 				_bVoy->freeBoltGroup(_playStampGroupId);
