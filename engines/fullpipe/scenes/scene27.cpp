@@ -180,8 +180,26 @@ void sceneHandler27_showNextBat() {
 	warning("STUB: sceneHandler27_showNextBat()");
 }
 
+void sceneHandler27_throwBat() {
+	warning("STUB: sceneHandler27_throwBat()");
+}
+
 void sceneHandler27_clickBat(ExCommand *cmd) {
-	warning("STUB: sceneHandler27_clickBat()");
+	int bx = g_vars->scene27_bat->_ox - 5;
+	int by = g_vars->scene27_bat->_oy - 71;
+
+	if (ABS(bx - g_fp->_aniMan->_ox) > 1 || ABS(by - g_fp->_aniMan->_oy) > 1
+		|| g_fp->_aniMan->_movement || g_fp->_aniMan->_statics->_staticsId != ST_MAN_RIGHT) {
+		MessageQueue *mq = getCurrSceneSc2MotionController()->method34(g_fp->_aniMan, bx, by, 1, ST_MAN_RIGHT);
+
+		if (mq) {
+			mq->addExCommandToEnd(cmd->createClone());
+
+			postExCommand(g_fp->_aniMan->_id, 2, bx, by, 0, -1);
+		}
+	} else {
+		sceneHandler27_throwBat();
+	}
 }
 
 void sceneHandler27_startBat(StaticANIObject *bat) {
@@ -226,8 +244,8 @@ void sceneHandler27_aimDude() {
 		g_fp->_aniMan->_movement->setDynamicPhaseIndex(phase);
 }
 
-void sceneHandler27_throwBat() {
-	warning("STUB: sceneHandler27_throwBat()");
+void sceneHandler27_sub07() {
+	warning("STUB: sceneHandler27_sub07()");
 }
 
 void sceneHandler27_animateBats() {
@@ -302,7 +320,7 @@ int sceneHandler27(ExCommand *cmd) {
 			sceneHandler27_aimDude();
 
 		if (g_vars->scene27_var10) {
-			sceneHandler27_throwBat();
+			sceneHandler27_sub07();
 
 			if (!g_fp->_aniMan->_movement && g_fp->_aniMan->_statics->_staticsId == ST_MAN_RIGHT)
 				g_fp->_aniMan->startAnim(MV_MAN27_FLOW, 0, -1);
