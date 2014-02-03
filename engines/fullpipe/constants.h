@@ -1098,8 +1098,10 @@ namespace Fullpipe {
 #define MV_MAN27_FLOW 1990
 #define MV_MAN27_THROWBET 1989
 #define PIC_SC27_HITZONE2 4756
+#define QU_DRV_GIVEVENT 2040
 #define SND_27_027 4128
 #define SND_27_044 4687
+#define ST_DRV_VENT 1996
 #define ST_MID_BROOM 2022
 #define ST_MID_SPADE 3489
 #define ST_MID_SWAB2 2019

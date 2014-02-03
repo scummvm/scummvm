@@ -158,7 +158,15 @@ int scene27_updateCursor() {
 }
 
 void sceneHandler27_driverGiveVent() {
-	warning("STUB: sceneHandler27_driverGiveVent()");
+	g_vars->scene27_driver->changeStatics2(ST_DRV_VENT);
+	g_vars->scene27_driver->startMQIfIdle(QU_DRV_GIVEVENT, 1);
+
+	g_vars->scene27_var15 = 0;
+
+	getCurrSceneSc2MotionController()->setEnabled();
+	getGameLoaderInteractionController()->enableFlag24();
+
+	g_fp->_behaviorManager->setFlagByStaticAniObject(g_fp->_aniMan, 1);
 }
 
 void sceneHandler27_winArcade() {
