@@ -317,6 +317,7 @@ Vars::Vars() {
 	scene27_var12 = 0;
 	scene27_var13 = 0;
 	scene27_var16 = 0;
+	scene27_var17 = 0;
 	scene27_launchPhase = 0;
 
 	scene28_fliesArePresent = true;

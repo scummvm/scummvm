@@ -40,8 +40,7 @@ struct Bat {
 	StaticANIObject *ani;
 	int field_4;
 	double power;
-	int field_10;
-	int field_14;
+	double field_10;
 	double currX;
 	double currY;
 	double powerCos;
@@ -284,7 +283,10 @@ void sceneHandler27_startAiming() {
 }
 
 void sceneHandler27_sub04(ExCommand *cmd) {
-	warning("STUB: sceneHandler27_sub04()");
+	g_vars->scene27_var16 = cmd->_x;
+	g_vars->scene27_var17 = cmd->_y;
+	g_vars->scene27_var08 = 1;
+	g_vars->scene27_var09 = 0;
 }
 
 void sceneHandler27_aimDude() {
@@ -301,14 +303,17 @@ void sceneHandler27_aimDude() {
 }
 
 void sceneHandler27_sub07() {
-	warning("STUB: sceneHandler27_sub07()");
+	for (uint i = 0; i < g_vars->scene27_bats.size(); i++) {
+		if (g_vars->scene27_bats[i]->currX < 800.0 ) {
+			g_vars->scene27_bats[i]->field_10 = atan2(800.0 - g_vars->scene27_bats[i]->currX, 520.0 - g_vars->scene27_bats[i]->currY);
+			g_vars->scene27_bats[i]->power += 1.0;
+		}
+    }
 }
 
 void sceneHandler27_animateBats() {
 	warning("STUB: sceneHandler27_animateBats()");
 }
-
-
 
 int sceneHandler27(ExCommand *cmd) {
 	if (cmd->_messageKind != 17)
