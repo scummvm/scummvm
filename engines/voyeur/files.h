@@ -515,7 +515,6 @@ private:
 	void cardAction(const byte *p);
 	void doSTAMPCardAction();
 	bool goToStateID(int stackId, int id);
-	bool goToState(int stackId, int stateId);
 	const byte *cardPerform(const byte *card);
 	bool cardPerform2(const byte *p, int cardCmdId);
 	void savePrevious();
@@ -576,6 +575,11 @@ public:
 	 * Unloads the specified stack
 	 */
 	void unloadAStack(int stackId);
+
+	/**
+	 * Go to a new state and/or stack
+	 */
+	bool goToState(int stackId, int stateId);
 
 	/**
 	 * Initialises data for the thread based on the current state

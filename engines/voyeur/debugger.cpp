@@ -40,6 +40,10 @@ Debugger::Debugger() : GUI::Debugger() {
 	_showMousePosition = false;
 }
 
+static const int TIME_STATES[] = {
+	0, 31, 0, 43, 59, 0, 67, 75, 85, 93, 0, 0, 111, 121, 0, 0
+};
+
 bool Debugger::Cmd_Time(int argc, const char **argv) {
 	if (argc < 2) {
 		// Get the current day and time of day 
@@ -48,8 +52,8 @@ bool Debugger::Cmd_Time(int argc, const char **argv) {
 		if (!timeString.empty())
 			dtString += " " + timeString;
 
-		DebugPrintf("Current date/time is: %s, time is %s\n", 
-			dtString.c_str(), _isTimeActive ? "on" : "off");
+		DebugPrintf("Time period = %d, date/time is: %s, time is %s\n", 
+			_vm->_voy._transitionId, dtString.c_str(), _isTimeActive ? "on" : "off");
 		DebugPrintf("Format: %s [on | off | 1..17 | val <amount>]\n\n", argv[0]);
 	} else {
 		if (!strcmp(argv[1], "on")) {
@@ -68,22 +72,16 @@ bool Debugger::Cmd_Time(int argc, const char **argv) {
 		} else {
 			int timeId = atoi(argv[1]);
 			if (timeId >= 1 && timeId <= 17) {
-				_vm->_voy._transitionId = timeId;
-				_vm->_gameHour = LEVEL_H[timeId - 1];
-				_vm->_gameMinute = LEVEL_M[timeId - 1];
-				_vm->_voy._isAM = (timeId == 6);
+				int stateId = TIME_STATES[timeId - 1];
+				if (!stateId) {
+					DebugPrintf("Given time period is not used in-game\n");
+				} else {
+					DebugPrintf("Changing to time period: %d\n", timeId);
+					if (_vm->_mainThread->goToState(-1, stateId))
+						_vm->_mainThread->parsePlayCommands();
 
-				// Camera back to full charge
-				_vm->_voy._RTVNum = 0;
-				_vm->_voy._RTANum = 255;
-
-				// Get the new current day and time of day 
-				Common::String dtString = _vm->getDayName();
-				Common::String timeString = _vm->getTimeOfDay();
-				if (!timeString.empty())
-					dtString += " " + timeString;
-
-				DebugPrintf("Current date/time is now: %s\n\n", dtString.c_str());
+					return false;
+				}
 			} else {
 				DebugPrintf("Unknown parameter\n\n");
 			}
