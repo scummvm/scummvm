@@ -857,6 +857,7 @@ bool VoyeurSavegameHeader::read(Common::InSaveFile *f) {
 		return false;
 
 	char c;
+	_saveName = "";
 	while ((c = f->readByte()) != 0)
 		_saveName += c;
 
