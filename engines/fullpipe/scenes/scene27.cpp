@@ -181,13 +181,23 @@ void sceneHandler27_showNextBat() {
 }
 
 int sceneHandler27_updateScreenCallback() {
-	warning("STUB: sceneHandler27_updateScreenCallback()");
+	int res;
 
-	return 0;
+	res = g_fp->drawArcadeOverlay(getGameLoaderInteractionController()->_flag24 == 0);
+
+	if (!res)
+		g_fp->_updateScreenCallback = 0;
+
+	return res;
 }
 
-void sceneHandler27_aniManCallback(int *arg) {
-	warning("STUB: sceneHandler27_aniManCallback()");
+void sceneHandler27_aniManCallback(int *phase) {
+	if (!g_vars->scene27_var09) {
+		if (*phase >= 5)
+			g_vars->scene27_var09 = 1;
+		else
+			++*phase;
+	}
 }
 
 void sceneHandler27_throwBat() {
