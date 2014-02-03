@@ -66,8 +66,7 @@ namespace Voyeur {
 #define MANSION_SCROLL_INC_Y 4
 
 enum VoyeurDebugChannels {
-	kDebugPath      = 1 << 0,
-	kDebugScripts	= 1 << 1
+	kDebugScripts	= 1 << 0
 };
 
 enum VoyeurArea { AREA_NONE, AREA_APARTMENT, AREA_INTERFACE, AREA_ROOM, AREA_EVIDENCE };

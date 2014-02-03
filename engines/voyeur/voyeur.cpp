@@ -55,6 +55,8 @@ VoyeurEngine::VoyeurEngine(OSystem *syst, const VoyeurGameDescription *gameDesc)
 	_voyeurArea = AREA_NONE;
 	_loadGameSlot = -1;
 
+	DebugMan.addDebugChannel(kDebugScripts, "scripts", "Game scripts");
+
 	initialiseManagers();
 }
 
@@ -97,9 +99,6 @@ void VoyeurEngine::initialiseManagers() {
 
 void VoyeurEngine::ESP_Init() {
 	ThreadResource::init();
-
-	DebugMan.addDebugChannel(kDebugPath, "Path", "Pathfinding debug level");
-	DebugMan.addDebugChannel(kDebugScripts, "scripts", "Game scripts");
 
 	if (ConfMan.hasKey("save_slot"))
 		_loadGameSlot = ConfMan.getInt("save_slot");
