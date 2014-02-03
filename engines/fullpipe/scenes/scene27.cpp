@@ -181,7 +181,14 @@ void sceneHandler27_winArcade() {
 }
 
 void sceneHandler27_takeVent() {
-	warning("STUB: sceneHandler27_takeVent()");
+	if (g_fp->getObjectState(sO_Maid) == g_fp->getObjectEnumState(sO_Maid, sO_WithSwab)) {
+		if (g_vars->scene27_maid->isIdle()) {
+			if (g_vars->scene27_maid->_flags & 4) {
+				g_vars->scene27_maid->changeStatics2(ST_MID_SWAB2);
+				g_vars->scene27_maid->startMQIfIdle(QU_MID_CLEANVENT, 1);
+			}
+		}
+	}
 }
 
 void sceneHandler27_showNextBat() {
