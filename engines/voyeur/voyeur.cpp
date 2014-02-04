@@ -143,7 +143,6 @@ bool VoyeurEngine::doHeadTitle() {
 	_eventsManager.startMainClockInt();
 
 	if (_loadGameSlot == -1) {
-	/*
 		// Show starting screen
 		if (_bVoy->getBoltGroup(0x500)) {
 			showConversionScreen();
@@ -168,14 +167,16 @@ bool VoyeurEngine::doHeadTitle() {
 		// Opening
 		if (!_eventsManager._mouseClicked) {
 			doOpening();
+
+			_eventsManager.getMouseInfo();
 			doTransitionCard("Saturday Afternoon", "Player's Apartment");
 			_eventsManager.delayClick(90);
 		} else {
 			_eventsManager._mouseClicked = false;
 		}
-	*/
-		if (_voy._eventFlags & 0x80) {
-			// Add initial game event set
+
+		if (_voy._eventFlags & EVTFLAG_VICTIM_PRESET) {
+			// Preset victim turned on, so add a default set of incriminating videos
 			if (_voy._eventCount <= 1)
 				_voy.addEvent(18, 1, EVTYPE_VIDEO, 33, 0, 998, -1);
 			if (_voy._eventCount <= 2)
@@ -443,15 +444,16 @@ void VoyeurEngine::doOpening() {
 
 	byte *frameTable = _bVoy->memberAddr(0x215);
 	byte *xyTable = _bVoy->memberAddr(0x216);
-	byte *whTable = _bVoy->memberAddr(0x217);
+//	byte *whTable = _bVoy->memberAddr(0x217);
 	int frameIndex = 0;
-	int creditShow = 1;
-	warning("TODO: %x %x %x %d %d", frameTable, xyTable, whTable, creditShow, frameIndex);
+	bool creditShow = true;
+	PictureResource *textPic = nullptr;
+	Common::Point textPos;
 
 	_voy._vocSecondsOffset = 0;
 	_voy._RTVNum = 0;
 	_voy._field468 = _voy._RTVNum;
-	_voy._eventFlags = 16;
+	_voy._eventFlags |= EVTFLAG_RECORDING;
 	_gameHour = 4;
 	_gameMinute  = 0;
 	_audioVideoId = 1;
@@ -467,11 +469,11 @@ void VoyeurEngine::doOpening() {
 	_eventsManager._intPtr._hasPalette = true;
 	(*_graphicsManager._vPort)->setupViewPort();
 	flipPageAndWait();
-	/*
+	
 	::Video::RL2Decoder decoder;
 	decoder.loadFile("a2300100.rl2");
 	decoder.start();
-	decoder.play(this);
+	
 	while (!shouldQuit() && !decoder.endOfVideo() && !_eventsManager._mouseClicked) {
 		if (decoder.hasDirtyPalette()) {
 			const byte *palette = decoder.getPalette();
@@ -483,19 +485,40 @@ void VoyeurEngine::doOpening() {
 
 			Common::copy((const byte *)frame->getPixels(), (const byte *)frame->getPixels() + 320 * 200,
 				(byte *)_graphicsManager._screenSurface.getPixels());
+
+			if (decoder.getCurFrame() >= READ_LE_UINT16(frameTable + frameIndex * 2)) {
+				if (creditShow) {
+					// Show a credit
+					textPic = _bVoy->boltEntry(frameIndex / 2 + 0x202)._picResource;
+					textPos = Common::Point(READ_LE_UINT16(xyTable + frameIndex * 2),
+						READ_LE_UINT16(xyTable + (frameIndex + 1) * 2));
+					
+					creditShow = false;
+				} else {
+					flipPageAndWait();
+
+					creditShow = true;
+				}
+
+				++frameIndex;
+			}
+
+			if (textPic) {
+				_graphicsManager.sDrawPic(textPic, *_graphicsManager._vPort, textPos);
+				flipPageAndWait();
+			}
 		}
 
-		_eventsManager.pollEvents();
-		g_system->delayMillis(10);
+		_eventsManager.getMouseInfo();
+		_eventsManager.delay(5);
 	}
-	*/
 
 	if ((_voy._RTVNum - _voy._field468) < 2)
 		_eventsManager.delay(60);
 
 	_voy._eventFlags |= EVTFLAG_TIME_DISABLED;
 	_voy.addVideoEventEnd();
-	_voy._eventFlags &= EVTFLAG_RECORDING;
+	_voy._eventFlags &= ~EVTFLAG_RECORDING;
 
 	_bVoy->freeBoltGroup(0x200);
 }
