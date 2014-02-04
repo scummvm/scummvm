@@ -34,12 +34,10 @@
 namespace Avalanche {
 class AvalancheEngine;
 
-enum FlavourType { ch_EGA, ch_BGI, ch_Natural, ch_Two, ch_One };
-
-struct ChunkBlockType {
-	FlavourType _flavour;
+struct ChunkBlock {
+	Flavour _flavour;
 	int16 _x, _y;
-	int16 _xl, _yl;
+	int16 _width, _height;
 	int32 _size;
 };
 
@@ -49,7 +47,7 @@ public:
 	~GhostRoom();
 
 	void run();
-	ChunkBlockType readChunkBlock(Common::File &file);
+	ChunkBlock readChunkBlock(Common::File &file);
 
 private:
 	AvalancheEngine *_vm;

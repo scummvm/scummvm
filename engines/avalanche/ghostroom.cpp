@@ -74,13 +74,13 @@ void GhostRoom::bigGreenEyes(byte how) {
 	warning("STUB: bigGreenEyes()");
 }
 
-ChunkBlockType GhostRoom::readChunkBlock(Common::File &file) {
-	ChunkBlockType cb;
-	cb._flavour = (FlavourType)file.readByte();
+ChunkBlock GhostRoom::readChunkBlock(Common::File &file) {
+	ChunkBlock cb;
+	cb._flavour = (Flavour)file.readByte();
 	cb._x = file.readSint16LE();
 	cb._y = file.readSint16LE();
-	cb._xl = file.readSint16LE();
-	cb._yl = file.readSint16LE();
+	cb._width = file.readSint16LE();
+	cb._height = file.readSint16LE();
 	cb._size = file.readSint32LE();
 	return cb;
 }
@@ -105,10 +105,10 @@ void GhostRoom::run() {
 
 	// Reading in the pictures of the ghost.
 	for (int i = 0; i < 5; i++) {
-		ChunkBlockType cb = readChunkBlock(_file);
+		ChunkBlock cb = readChunkBlock(_file);
 		for (int j = 0; j < 2; j++)
-			for (uint16 y = 0; y <= cb._yl; y++)
-				_file.read(_ghost[i][j][y], cb._xl / 8);
+			for (uint16 y = 0; y <= cb._height; y++)
+				_file.read(_ghost[i][j][y], cb._width / 8);
 	}
 
 	// Load some smaller pictures.

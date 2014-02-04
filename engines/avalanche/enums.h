@@ -29,6 +29,10 @@
 #define AVALANCHE_ENUMS_H
 
 namespace Avalanche {
+
+
+enum Flavour { kFlavourEga, kFlavourBgi, kFlavourNatural, kFlavourTwo, kFlavourOne };
+
 enum Color {
 	kColorBlack = 0,       kColorBlue,      kColorGreen,     kColorCyan,         kColorRed,
 	kColorMagenta = 5,     kColorBrown,     kColorLightgray, kColorDarkgray,     kColorLightblue,

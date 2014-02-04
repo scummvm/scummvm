@@ -531,7 +531,7 @@ void GraphicManager::ghostDrawGhost(byte ghostArr[2][66][26], uint16 destX, uint
  * @remarks	Originally called 'get_me' and was located in Ghostroom.
  */
 Graphics::Surface GraphicManager::ghostLoadPicture(Common::File &file) {
-	ChunkBlockType cb = _vm->_ghostroom->readChunkBlock(file);
+	ChunkBlock cb = _vm->_ghostroom->readChunkBlock(file);
 	
 	Graphics::Surface picture = loadPictureGraphic(file);
 

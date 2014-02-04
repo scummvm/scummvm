@@ -38,7 +38,7 @@ namespace Avalanche {
 class AvalancheEngine;
 class AnimationType;
 struct SpriteType;
-struct ChunkBlockType;
+struct ChunkBlock;
 
 typedef byte FontType[256][16];
 typedef byte ManiType[2049];
