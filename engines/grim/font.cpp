@@ -59,15 +59,11 @@ void Font::load(const Common::String &filename, Common::SeekableReadStream *data
 
 	// Read character indexes - are the key/value reversed?
 	_charIndex = new uint16[_numChars];
-	if (!_charIndex)
-		error("Could not load font %s. Out of memory", _filename.c_str());
 	for (uint i = 0; i < _numChars; ++i)
 		_charIndex[i] = data->readUint16LE();
 
 	// Read character headers
 	_charHeaders = new CharHeader[_numChars];
-	if (!_charHeaders)
-		error("Could not load font %s. Out of memory", _filename.c_str());
 	for (uint i = 0; i < _numChars; ++i) {
 		_charHeaders[i].offset = data->readUint32LE();
 		_charHeaders[i].width = data->readSByte();
@@ -85,8 +81,6 @@ void Font::load(const Common::String &filename, Common::SeekableReadStream *data
 	}
 	// Read font data
 	_fontData = new byte[_dataSize];
-	if (!_fontData)
-		error("Could not load font %s. Out of memory", _filename.c_str());
 
 	data->read(_fontData, _dataSize);
 

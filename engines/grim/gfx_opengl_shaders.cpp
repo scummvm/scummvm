@@ -1074,8 +1074,6 @@ void GfxOpenGLS::createFont(Font *font) {
 
 	uint arraySize = size * size * bpp * charsWide * charsHigh;
 	byte *temp = new byte[arraySize];
-	if (!temp)
-		error("Could not allocate %d bytes", arraySize);
 
 	memset(temp, 0, arraySize);
 

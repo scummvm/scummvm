@@ -257,8 +257,6 @@ bool MsCabinet::Decompressor::decompressFile(byte *&fileBuf, const FileEntry &en
 		return false;
 
 	_fileBuf = new byte[entry.length];
-	if (!_fileBuf)
-		return false;
 
 	buf_tmp = _fileBuf;
 
