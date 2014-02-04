@@ -369,7 +369,7 @@ void ThreadResource::parsePlayCommands() {
 		case 2:
 			v2 = READ_LE_UINT16(dataP);
 
-			if (v2 == 0 || READ_LE_UINT16(_vm->_controlPtr->_ptr + 4) == 0) {
+			if (v2 == 0 || READ_LE_UINT16(_vm->_controlPtr->_ptr + 4) == v2) {
 				_vm->_audioVideoId = READ_LE_UINT16(dataP + 2) - 1;
 				_vm->_voy._field468 = READ_LE_UINT16(dataP + 4);
 				_vm->_voy._field46A = READ_LE_UINT16(dataP + 6);
@@ -399,7 +399,7 @@ void ThreadResource::parsePlayCommands() {
 		case 3:
 			v2 = READ_LE_UINT16(dataP);
 
-			if (v2 == 0 || READ_LE_UINT16(_vm->_controlPtr->_ptr + 4) == 0) {
+			if (v2 == 0 || READ_LE_UINT16(_vm->_controlPtr->_ptr + 4) == v2) {
 				_vm->_audioVideoId = READ_LE_UINT16(dataP + 2) - 1;
 				_vm->_voy._field468 = READ_LE_UINT16(dataP + 4);
 				_vm->_voy._field46A = READ_LE_UINT16(dataP + 6);
@@ -544,7 +544,7 @@ void ThreadResource::parsePlayCommands() {
 			v2 = READ_LE_UINT16(dataP);
 			v3 = READ_LE_UINT16(dataP + 2) - 1;
 
-			if (v2 == 0 || READ_LE_UINT16(_vm->_controlPtr->_ptr + 4) == 0) {
+			if (v2 == 0 || READ_LE_UINT16(_vm->_controlPtr->_ptr + 4) == v2) {
 				int idx = 0;
 				while (_vm->_voy._videoHotspotTimes._min[idx][v3] != 9999)
 					++idx;
@@ -562,7 +562,7 @@ void ThreadResource::parsePlayCommands() {
  			v2 = READ_LE_UINT16(dataP);
 			v3 = READ_LE_UINT16(dataP + 2) - 1;
 
-			if (v2 == 0 || READ_LE_UINT16(_vm->_controlPtr->_ptr + 4) == 0) {
+			if (v2 == 0 || READ_LE_UINT16(_vm->_controlPtr->_ptr + 4) == v2) {
 				int idx = 0;
 				while (_vm->_voy._audioHotspotTimes._min[idx][v3] != 9999)
 					++idx;
@@ -580,7 +580,7 @@ void ThreadResource::parsePlayCommands() {
 			v2 = READ_LE_UINT16(dataP);
 			v3 = READ_LE_UINT16(dataP + 2) - 1;
 
-			if (v2 == 0 || READ_LE_UINT16(_vm->_controlPtr->_ptr + 4) == 0) {
+			if (v2 == 0 || READ_LE_UINT16(_vm->_controlPtr->_ptr + 4) == v2) {
 				int idx = 0;
 				while (_vm->_voy._evidenceHotspotTimes._min[idx][v3] != 9999)
 					++idx;
@@ -617,7 +617,7 @@ void ThreadResource::parsePlayCommands() {
 		case 12:
 			v2 = READ_LE_UINT16(dataP);
 
-			if (v2 == 0 || READ_LE_UINT16(_vm->_controlPtr->_ptr + 4) == 0) {
+			if (v2 == 0 || READ_LE_UINT16(_vm->_controlPtr->_ptr + 4) == v2) {
 				_vm->_voy._boltGroupId2 = _vm->_resolvePtr[READ_LE_UINT16(dataP + 2)];
 				_vm->_voy._roomHotspotsEnabled[READ_LE_UINT16(dataP + 4) - 1] = true;
 			}
@@ -628,7 +628,7 @@ void ThreadResource::parsePlayCommands() {
 		case 13:
 			v2 = READ_LE_UINT16(dataP);
 
-			if (v2 == 0 || READ_LE_UINT16(_vm->_controlPtr->_ptr + 4) == 0) {
+			if (v2 == 0 || READ_LE_UINT16(_vm->_controlPtr->_ptr + 4) == v2) {
 				_vm->_voy._computerTextId = READ_LE_UINT16(dataP + 2);
 				_vm->_voy._computerTimeMin = READ_LE_UINT16(dataP + 4);
 				_vm->_voy._computerTimeMax = READ_LE_UINT16(dataP + 6);
@@ -663,7 +663,7 @@ void ThreadResource::parsePlayCommands() {
 			v2 = READ_LE_UINT16(dataP);
 			v3 = READ_LE_UINT16(dataP + 2);
 
-			if (v2 == 0 || READ_LE_UINT16(_vm->_controlPtr->_ptr + 4) == 0)
+			if (v2 == 0 || READ_LE_UINT16(_vm->_controlPtr->_ptr + 4) == v2)
 				_vm->_voy._field4F2 = v3;
 			
 			dataP += 4;
