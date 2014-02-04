@@ -486,7 +486,7 @@ void VoyeurEngine::doOpening() {
 			Common::copy((const byte *)frame->getPixels(), (const byte *)frame->getPixels() + 320 * 200,
 				(byte *)_graphicsManager._screenSurface.getPixels());
 
-			if (decoder.getCurFrame() >= READ_LE_UINT16(frameTable + frameIndex * 2)) {
+			if (decoder.getCurFrame() >= READ_LE_UINT32(frameTable + frameIndex * 4)) {
 				if (creditShow) {
 					// Show a credit
 					textPic = _bVoy->boltEntry(frameIndex / 2 + 0x202)._picResource;
@@ -495,7 +495,7 @@ void VoyeurEngine::doOpening() {
 					
 					creditShow = false;
 				} else {
-					flipPageAndWait();
+					textPic = nullptr;
 
 					creditShow = true;
 				}
