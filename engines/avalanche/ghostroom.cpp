@@ -38,24 +38,33 @@ const byte GhostRoom::kGreldetFade[18] = { 1, 2, 3, 4, 5, 6, 6, 6, 5, 5, 4, 4, 3
 GhostRoom::GhostRoom(AvalancheEngine *vm) {
 	_vm = vm;
 
-	for (int i = 0; i < 5; i++)
-		_greenEyes[i] = nullptr;
-
-	_glerk = nullptr;
 	_glerkStage = 0;
 	_aarghCount = 0;
 	_batX = _batY = 0;
 	_batCount = 0;
 	_greldetX = _greldetY = 0;
 	_greldetCount = 0;
-	_gb = false;
 	_redGreldet = false;
 }
 
 GhostRoom::~GhostRoom() {
 	for (int i = 0; i < 2; i++)
 		_eyes[i].free();
+
 	_exclamation.free();
+
+	for (int i = 0; i < 3; i++)
+		_bat[i].free();
+
+	for (int i = 0; i < 6; i++)
+		_aargh[i].free();
+
+	for (int i = 0; i < 5; i++)
+		_greenEyes[i].free();
+
+	for (int i = 0; i < 2; i++)
+		for (int j = 0; j < 6; j++)
+			_greldet[j][i].free();
 }
 
 void GhostRoom::wait(uint16 howLong) {
@@ -81,16 +90,13 @@ ChunkBlock GhostRoom::readChunkBlock(Common::File &file) {
 	return cb;
 }
 
-void GhostRoom::run() {
-	_vm->_graphics->saveScreen();
-	_vm->fadeOut();
-	_vm->fadeIn();
-	_vm->_graphics->drawFilledRectangle(Common::Rect(0, 0, 640, 200), kColorBlack);
+void GhostRoom::loadPictures() {
+	Common::File file;
 
-	if (!_file.open("spooky.avd"))
+	if (!file.open("spooky.avd"))
 		error("AVALANCHE: GhostRoom: File not found: spooky.avd");
 
-	_file.seek(44);
+	file.seek(44);
 
 	// Initializing ghost's array.
 	for (int i = 0; i < 5; i++)
@@ -99,21 +105,63 @@ void GhostRoom::run() {
 				for (int x = 0; x < 26; x++)
 					_ghost[i][j][y][x] = 0;
 
-	// Reading in the pictures of the ghost.
+	// Read in the pictures of the ghost.
 	for (int i = 0; i < 5; i++) {
-		ChunkBlock cb = readChunkBlock(_file);
+		ChunkBlock cb = readChunkBlock(file);
 		for (int j = 0; j < 2; j++)
-			for (uint16 y = 0; y <= cb._height; y++)
-				_file.read(_ghost[i][j][y], cb._width / 8);
+			for (int y = 0; y <= cb._height; y++)
+				file.read(_ghost[i][j][y], cb._width / 8);
 	}
 
-	// Load some smaller pictures.
 	for (int i = 0; i < 2; i++)
-		_eyes[i] = _vm->_graphics->ghostLoadPicture(_file);
-	_exclamation = _vm->_graphics->ghostLoadPicture(_file);
+		_eyes[i] = _vm->_graphics->ghostLoadPicture(file, dummyCoord);
 
-	_vm->_graphics->ghostDrawBackgroundItems(_file);
+	_exclamation = _vm->_graphics->ghostLoadPicture(file, dummyCoord);
 
+	// Actually this function not just loads, but also draws the images, but they are part of the background
+	// and they are need to be drawn only once.
+	_vm->_graphics->ghostDrawBackgroundItems(file);
+
+	for (int i = 0; i < 3; i++)
+		_bat[i] = _vm->_graphics->ghostLoadPicture(file, dummyCoord);
+
+
+	// Initializing glerk's array.
+	for (int i = 0; i < 6; i++)
+		for (int j = 0; j < 4; j++)
+			for (int y = 0; y < 35; y++)
+				for (int x = 0; x < 9; x++)
+					_glerk[i][j][y][x] = 0;
+
+	// Read in the pictures of the "glerk".
+	for (int i = 0; i < 6; i++) {
+		ChunkBlock cb = readChunkBlock(file);
+		for (int j = 0; j < 4; j++)
+			for (int y = 0; y <= cb._height; y++)
+				file.read(_glerk[i][j][y], cb._width / 8);
+	}
+
+	for (int i = 0; i < 6; i++)
+		_aargh[i] = _vm->_graphics->ghostLoadPicture(file, _aarghWhere[i]);
+
+	for (int i = 0; i < 5; i++)
+		_greenEyes[i] = _vm->_graphics->ghostLoadPicture(file, dummyCoord);
+
+	for (int i = 0; i < 2; i++)
+		for (int j = 0; j < 6; j++)
+			_greldet[j][i] = _vm->_graphics->ghostLoadPicture(file, dummyCoord);
+
+	file.close();
+}
+
+void GhostRoom::run() {
+	_vm->_graphics->saveScreen();
+	_vm->fadeOut();
+	_vm->fadeIn();
+	_vm->_graphics->drawFilledRectangle(Common::Rect(0, 0, 640, 200), kColorBlack); // Black out the whole screen.
+
+	loadPictures();
+	
 	warning("STUB: run()");
 }
 

@@ -528,10 +528,14 @@ void GraphicManager::ghostDrawGhost(byte ghostArr[2][66][26], uint16 destX, uint
 }
 
 /**
+ *	With the use of the second argument, it replaces get_meg_aargh as well.
  * @remarks	Originally called 'get_me' and was located in Ghostroom.
  */
-Graphics::Surface GraphicManager::ghostLoadPicture(Common::File &file) {
+Graphics::Surface GraphicManager::ghostLoadPicture(Common::File &file, Common::Point &coord) {
 	ChunkBlock cb = _vm->_ghostroom->readChunkBlock(file);
+
+	coord.x = cb._x;
+	coord.y = cb._y;
 	
 	Graphics::Surface picture = loadPictureGraphic(file);
 

@@ -56,22 +56,18 @@ private:
 	static const byte kWaveOrder[5];
 	static const byte kGlerkFade[26];
 	static const byte kGreldetFade[18];
-
-	typedef byte GlerkType[6][4][35][9];
 	
-	Common::File _file;
+	Common::Point dummyCoord;
 	byte _ghost[5][2][66][26];
-	void *_memLevel;
-	byte _y, _yy, _bit, _xofs;
 	Graphics::Surface _eyes[2];
 	Graphics::Surface _exclamation;
-	Graphics::Surface _aargh[6];
 	Graphics::Surface _bat[3];
-	GlerkType *_glerk;
-	void *_greenEyes[5];
-	void *_greldet[6][2];
+	byte _glerk[6][4][35][9];
+	Graphics::Surface _aargh[6];
 	Common::Point _aarghWhere[6];
-	bool _gb;
+	Graphics::Surface _greenEyes[5];
+	Graphics::Surface _greldet[6][2];
+
 	byte _glerkStage;
 	int16 _batX, _batY;
 	uint16 _batCount;
@@ -80,6 +76,7 @@ private:
 	byte _greldetCount;
 	bool _redGreldet;
 
+	void loadPictures();
 	void wait(uint16 howLong);
 	void doBat();
 	void bigGreenEyes(byte how);
