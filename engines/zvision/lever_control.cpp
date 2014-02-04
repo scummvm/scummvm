@@ -86,7 +86,7 @@ LeverControl::~LeverControl() {
 
 void LeverControl::parseLevFile(const Common::String &fileName) {
 	Common::File file;
-	if (!file.open(fileName)) {
+	if (!_engine->getSearchManager()->openFile(file, fileName)) {
 		warning("LEV file %s could could be opened", fileName.c_str());
 		return;
 	}
@@ -103,7 +103,7 @@ void LeverControl::parseLevFile(const Common::String &fileName) {
 			Common::String animationFileName(fileNameBuffer);
 
 			if (animationFileName.hasSuffix(".avi") || animationFileName.hasSuffix(".rlf"))
-				_animation = new MetaAnimation(animationFileName);
+				_animation = new MetaAnimation(animationFileName, _engine);
 
 		} else if (line.matchString("*skipcolor*", true)) {
 			// Not used

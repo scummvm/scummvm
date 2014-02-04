@@ -51,7 +51,7 @@ MusicNode::MusicNode(ZVision *engine, uint32 key, Common::String &filename, bool
 
 	if (filename.contains(".wav")) {
 		Common::File *file = new Common::File();
-		if (file->open(filename)) {
+		if (_engine->getSearchManager()->openFile(*file, filename)) {
 			audioStream = Audio::makeWAVStream(file, DisposeAfterUse::YES);
 		}
 	} else {

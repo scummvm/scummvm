@@ -26,6 +26,7 @@
 
 #include "zvision/detection.h"
 #include "zvision/clock.h"
+#include "zvision/search_manager.h"
 
 #include "common/random.h"
 #include "common/events.h"
@@ -99,6 +100,7 @@ private:
 	SaveManager *_saveManager;
 	StringManager *_stringManager;
 	menuHandler *_menu;
+	sManager *_searchManager;
 
 	// Clock
 	Clock _clock;
@@ -134,6 +136,9 @@ public:
 	}
 	StringManager *getStringManager() const {
 		return _stringManager;
+	}
+	sManager *getSearchManager() const {
+		return _searchManager;
 	}
 	Common::RandomSource *getRandomSource() const {
 		return _rnd;

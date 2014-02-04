@@ -22,6 +22,7 @@
 
 #include "common/scummsys.h"
 
+#include "zvision/zvision.h"
 #include "zvision/render_manager.h"
 
 #include "zvision/lzss_read_stream.h"
@@ -37,8 +38,9 @@
 
 namespace ZVision {
 
-RenderManager::RenderManager(OSystem *system, uint32 windowWidth, uint32 windowHeight, const Common::Rect workingWindow, const Graphics::PixelFormat pixelFormat)
-	: _system(system),
+RenderManager::RenderManager(ZVision *engine, uint32 windowWidth, uint32 windowHeight, const Common::Rect workingWindow, const Graphics::PixelFormat pixelFormat)
+	: _engine(engine),
+	  _system(engine->_system),
 	  _wrkWidth(workingWindow.width()),
 	  _wrkHeight(workingWindow.height()),
 	  _screenCenterX(_wrkWidth / 2),
@@ -113,7 +115,7 @@ void RenderManager::renderImageToBackground(const Common::String &fileName, int1
 void RenderManager::readImageToSurface(const Common::String &fileName, Graphics::Surface &destination) {
 	Common::File file;
 
-	if (!file.open(fileName)) {
+	if (!_engine->getSearchManager()->openFile(file, fileName)) {
 		warning("Could not open file %s", fileName.c_str());
 		return;
 	}
@@ -207,7 +209,7 @@ void RenderManager::readImageToSurface(const Common::String &fileName, Graphics:
 void RenderManager::readImageToSurface(const Common::String &fileName, Graphics::Surface &destination, bool transposed) {
 	Common::File file;
 
-	if (!file.open(fileName)) {
+	if (!_engine->getSearchManager()->openFile(file, fileName)) {
 		warning("Could not open file %s", fileName.c_str());
 		return;
 	}

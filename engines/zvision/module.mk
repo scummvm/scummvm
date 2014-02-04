@@ -35,7 +35,8 @@ MODULE_OBJS := \
 	inventory_manager.o \
 	slot_control.o \
 	menu.o \
-	meta_animation.o
+	meta_animation.o \
+	search_manager.o
  
 MODULE_DIRS += \
 	engines/zvision

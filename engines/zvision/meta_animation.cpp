@@ -37,17 +37,19 @@
 
 namespace ZVision {
 
-MetaAnimation::MetaAnimation(const Common::String &fileName)
+MetaAnimation::MetaAnimation(const Common::String &fileName, ZVision *engine)
 	: _fileType(RLF),
 	  _cur_frame(NULL) {
 	if (fileName.hasSuffix(".rlf")) {
 		_fileType = RLF;
-		_animation.rlf = new RlfAnimation(fileName, false);
+		Common::File *_file = engine->getSearchManager()->openFile(fileName);
+		_animation.rlf = new RlfAnimation(_file, false);
 		_frmDelay = _animation.rlf->frameTime();
 	} else if (fileName.hasSuffix(".avi")) {
 		_fileType = AVI;
+		Common::File *_file = engine->getSearchManager()->openFile(fileName);
 		_animation.avi = new ZorkAVIDecoder();
-		_animation.avi->loadFile(fileName);
+		_animation.avi->loadStream(_file);
 		_frmDelay = 1000.0 / _animation.avi->getDuration().framerate();
 	} else {
 		warning("Unrecognized animation file type: %s", fileName.c_str());

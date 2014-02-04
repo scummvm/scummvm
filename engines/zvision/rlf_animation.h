@@ -37,6 +37,7 @@ namespace ZVision {
 class RlfAnimation {
 public:
 	RlfAnimation(const Common::String &fileName, bool stream = true);
+	RlfAnimation(Common::SeekableReadStream *rstream, bool stream);
 	~RlfAnimation();
 
 private:
@@ -52,7 +53,7 @@ private:
 	};
 
 private:
-	Common::File _file;
+	Common::SeekableReadStream *_readStream;
 	bool _stream;
 	uint _lastFrameRead;
 

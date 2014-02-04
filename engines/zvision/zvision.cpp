@@ -33,8 +33,10 @@
 #include "zvision/zfs_archive.h"
 #include "zvision/detection.h"
 #include "zvision/menu.h"
+#include "zvision/search_manager.h"
 
 #include "common/config-manager.h"
+#include "common/str.h"
 #include "common/debug.h"
 #include "common/debug-channels.h"
 #include "common/textconsole.h"
@@ -88,6 +90,29 @@ ZVision::~ZVision() {
 
 void ZVision::initialize() {
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
+
+	_searchManager = new sManager(ConfMan.get("path"), 6);
+
+	_searchManager->addDir("addon");
+
+	if (_gameDescription->gameId == GID_GRANDINQUISITOR) {
+		_searchManager->loadZix("INQUIS.ZIX");
+		_searchManager->addPatch("C000H01Q.RAW", "C000H01Q.SRC");
+		_searchManager->addPatch("CM00H01Q.RAW", "CM00H01Q.SRC");
+		_searchManager->addPatch("DM00H01Q.RAW", "DM00H01Q.SRC");
+		_searchManager->addPatch("E000H01Q.RAW", "E000H01Q.SRC");
+		_searchManager->addPatch("EM00H50Q.RAW", "EM00H50Q.SRC");
+		_searchManager->addPatch("GJNPH65P.RAW", "GJNPH65P.SRC");
+		_searchManager->addPatch("GJNPH72P.RAW", "GJNPH72P.SRC");
+		_searchManager->addPatch("H000H01Q.RAW", "H000H01Q.SRC");
+		_searchManager->addPatch("M000H01Q.RAW", "M000H01Q.SRC");
+		_searchManager->addPatch("P000H01Q.RAW", "P000H01Q.SRC");
+		_searchManager->addPatch("Q000H01Q.RAW", "Q000H01Q.SRC");
+		_searchManager->addPatch("SW00H01Q.RAW", "SW00H01Q.SRC");
+		_searchManager->addPatch("T000H01Q.RAW", "T000H01Q.SRC");
+		_searchManager->addPatch("U000H01Q.RAW", "U000H01Q.SRC");
+	} else if (_gameDescription->gameId == GID_NEMESIS)
+		_searchManager->loadZix("NEMESIS.ZIX");
 	// TODO: There are 10 file clashes when we flatten the directories.
 	// From a quick look, the files are exactly the same, so it shouldn't matter.
 	// But I'm noting it here just in-case it does become a problem.
@@ -123,7 +148,7 @@ void ZVision::initialize() {
 
 	// Create managers
 	_scriptManager = new ScriptManager(this);
-	_renderManager = new RenderManager(_system, WINDOW_WIDTH, WINDOW_HEIGHT, _workingWindow, _pixelFormat);
+	_renderManager = new RenderManager(this, WINDOW_WIDTH, WINDOW_HEIGHT, _workingWindow, _pixelFormat);
 	_saveManager = new SaveManager(this);
 	_stringManager = new StringManager(this);
 	_cursorManager = new CursorManager(this, &_pixelFormat);

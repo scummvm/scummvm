@@ -57,15 +57,15 @@ CursorManager::CursorManager(ZVision *engine, const Graphics::PixelFormat *pixel
 		if (_engine->getGameId() == GID_NEMESIS) {
 			Common::String name;
 			name = Common::String::format("%sa.zcr", _zNemCursorFileNames[i]);
-			_cursors[i][0] = ZorkCursor(name); // Up cursor
+			_cursors[i][0] = ZorkCursor(_engine, name); // Up cursor
 			name = Common::String::format("%sb.zcr", _zNemCursorFileNames[i]);
-			_cursors[i][1] = ZorkCursor(name); // Down cursor
+			_cursors[i][1] = ZorkCursor(_engine, name); // Down cursor
 		} else if (_engine->getGameId() == GID_GRANDINQUISITOR) {
-			_cursors[i][0] = ZorkCursor(_zgiCursorFileNames[i]); // Up cursor
+			_cursors[i][0] = ZorkCursor(_engine, _zgiCursorFileNames[i]); // Up cursor
 			char buffer[25];
 			strcpy(buffer, _zgiCursorFileNames[i]);
 			buffer[3] += 2;
-			_cursors[i][1] = ZorkCursor(buffer); // Down cursor
+			_cursors[i][1] = ZorkCursor(_engine, buffer); // Down cursor
 		}
 	}
 }
@@ -76,22 +76,22 @@ void CursorManager::setItemID(int id) {
 			Common::String file;
 			if (_engine->getGameId() == GID_NEMESIS) {
 				file = Common::String::format("%2.2d%s%c.zcr", id, "idle", 'a');
-				_cursors[NUM_CURSORS][0] = ZorkCursor(file);
+				_cursors[NUM_CURSORS][0] = ZorkCursor(_engine, file);
 				file = Common::String::format("%2.2d%s%c.zcr", id, "idle", 'b');
-				_cursors[NUM_CURSORS][1] = ZorkCursor(file);
+				_cursors[NUM_CURSORS][1] = ZorkCursor(_engine, file);
 				file = Common::String::format("%2.2d%s%c.zcr", id, "act", 'a');
-				_cursors[NUM_CURSORS + 1][0] = ZorkCursor(file);
+				_cursors[NUM_CURSORS + 1][0] = ZorkCursor(_engine, file);
 				file = Common::String::format("%2.2d%s%c.zcr", id, "act", 'b');
-				_cursors[NUM_CURSORS + 1][0] = ZorkCursor(file);
+				_cursors[NUM_CURSORS + 1][0] = ZorkCursor(_engine, file);
 			} else if (_engine->getGameId() == GID_GRANDINQUISITOR) {
 				file = Common::String::format("g0b%cc%2.2x1.zcr", 'a' , id);
-				_cursors[NUM_CURSORS][0] = ZorkCursor(file);
+				_cursors[NUM_CURSORS][0] = ZorkCursor(_engine, file);
 				file = Common::String::format("g0b%cc%2.2x1.zcr", 'c' , id);
-				_cursors[NUM_CURSORS][1] = ZorkCursor(file);
+				_cursors[NUM_CURSORS][1] = ZorkCursor(_engine, file);
 				file = Common::String::format("g0b%cc%2.2x1.zcr", 'b' , id);
-				_cursors[NUM_CURSORS + 1][0] = ZorkCursor(file);
+				_cursors[NUM_CURSORS + 1][0] = ZorkCursor(_engine, file);
 				file = Common::String::format("g0b%cc%2.2x1.zcr", 'd' , id);
-				_cursors[NUM_CURSORS + 1][1] = ZorkCursor(file);
+				_cursors[NUM_CURSORS + 1][1] = ZorkCursor(_engine, file);
 			} else
 				return;
 		}

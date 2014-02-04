@@ -37,6 +37,7 @@ namespace ZVision {
 
 RlfAnimation::RlfAnimation(const Common::String &fileName, bool stream)
 	: _stream(stream),
+	  _readStream(NULL),
 	  _lastFrameRead(0),
 	  _frameCount(0),
 	  _width(0),
@@ -45,13 +46,47 @@ RlfAnimation::RlfAnimation(const Common::String &fileName, bool stream)
 	  _frames(0),
 	  _currentFrame(0),
 	  _frameBufferByteSize(0) {
-	if (!_file.open(fileName)) {
+
+	Common::File *_file = new Common::File;
+	if (!_file->open(fileName)) {
 		warning("RLF animation file %s could not be opened", fileName.c_str());
 		return;
 	}
 
+	_readStream = _file;
+
 	if (!readHeader()) {
 		warning("%s is not a RLF animation file. Wrong magic number", fileName.c_str());
+		return;
+	}
+
+	_currentFrameBuffer.create(_width, _height, Graphics::createPixelFormat<565>());
+	_frameBufferByteSize = _width * _height * sizeof(uint16);
+
+	if (!stream) {
+		_frames = new Frame[_frameCount];
+
+		// Read in each frame
+		for (uint i = 0; i < _frameCount; ++i) {
+			_frames[i] = readNextFrame();
+		}
+	}
+}
+
+RlfAnimation::RlfAnimation(Common::SeekableReadStream *rstream, bool stream)
+	: _stream(stream),
+	  _readStream(rstream),
+	  _lastFrameRead(0),
+	  _frameCount(0),
+	  _width(0),
+	  _height(0),
+	  _frameTime(0),
+	  _frames(0),
+	  _currentFrame(0),
+	  _frameBufferByteSize(0) {
+
+	if (!readHeader()) {
+		warning("Stream is not a RLF animation. Wrong magic number");
 		return;
 	}
 
@@ -73,54 +108,55 @@ RlfAnimation::~RlfAnimation() {
 		delete[] _frames[i].encodedData;
 	}
 	delete[] _frames;
+	delete _readStream;
 	_currentFrameBuffer.free();
 }
 
 bool RlfAnimation::readHeader() {
-	if (_file.readUint32BE() != MKTAG('F', 'E', 'L', 'R')) {
+	if (_readStream->readUint32BE() != MKTAG('F', 'E', 'L', 'R')) {
 		return false;
 	}
 
 	// Read the header
-	_file.readUint32LE();                // Size1
-	_file.readUint32LE();                // Unknown1
-	_file.readUint32LE();                // Unknown2
-	_frameCount = _file.readUint32LE();  // Frame count
+	_readStream->readUint32LE();                // Size1
+	_readStream->readUint32LE();                // Unknown1
+	_readStream->readUint32LE();                // Unknown2
+	_frameCount = _readStream->readUint32LE();  // Frame count
 
 	// Since we don't need any of the data, we can just seek right to the
 	// entries we need rather than read in all the individual entries.
-	_file.seek(136, SEEK_CUR);
+	_readStream->seek(136, SEEK_CUR);
 
 	//// Read CIN header
-	//_file.readUint32BE();          // Magic number FNIC
-	//_file.readUint32LE();          // Size2
-	//_file.readUint32LE();          // Unknown3
-	//_file.readUint32LE();          // Unknown4
-	//_file.readUint32LE();          // Unknown5
-	//_file.seek(0x18, SEEK_CUR);    // VRLE
-	//_file.readUint32LE();          // LRVD
-	//_file.readUint32LE();          // Unknown6
-	//_file.seek(0x18, SEEK_CUR);    // HRLE
-	//_file.readUint32LE();          // ELHD
-	//_file.readUint32LE();          // Unknown7
-	//_file.seek(0x18, SEEK_CUR);    // HKEY
-	//_file.readUint32LE();          // ELRH
+	//_readStream->readUint32BE();          // Magic number FNIC
+	//_readStream->readUint32LE();          // Size2
+	//_readStream->readUint32LE();          // Unknown3
+	//_readStream->readUint32LE();          // Unknown4
+	//_readStream->readUint32LE();          // Unknown5
+	//_readStream->seek(0x18, SEEK_CUR);    // VRLE
+	//_readStream->readUint32LE();          // LRVD
+	//_readStream->readUint32LE();          // Unknown6
+	//_readStream->seek(0x18, SEEK_CUR);    // HRLE
+	//_readStream->readUint32LE();          // ELHD
+	//_readStream->readUint32LE();          // Unknown7
+	//_readStream->seek(0x18, SEEK_CUR);    // HKEY
+	//_readStream->readUint32LE();          // ELRH
 
 	//// Read MIN info header
-	//_file.readUint32BE();          // Magic number FNIM
-	//_file.readUint32LE();          // Size3
-	//_file.readUint32LE();          // OEDV
-	//_file.readUint32LE();          // Unknown8
-	//_file.readUint32LE();          // Unknown9
-	//_file.readUint32LE();          // Unknown10
-	_width = _file.readUint32LE();   // Width
-	_height = _file.readUint32LE();  // Height
+	//_readStream->readUint32BE();          // Magic number FNIM
+	//_readStream->readUint32LE();          // Size3
+	//_readStream->readUint32LE();          // OEDV
+	//_readStream->readUint32LE();          // Unknown8
+	//_readStream->readUint32LE();          // Unknown9
+	//_readStream->readUint32LE();          // Unknown10
+	_width = _readStream->readUint32LE();   // Width
+	_height = _readStream->readUint32LE();  // Height
 
 	// Read time header
-	_file.readUint32BE();                    // Magic number EMIT
-	_file.readUint32LE();                    // Size4
-	_file.readUint32LE();                    // Unknown11
-	_frameTime = _file.readUint32LE() / 10;  // Frame time in microseconds
+	_readStream->readUint32BE();                    // Magic number EMIT
+	_readStream->readUint32LE();                    // Size4
+	_readStream->readUint32LE();                    // Unknown11
+	_frameTime = _readStream->readUint32LE() / 10;  // Frame time in microseconds
 
 	return true;
 }
@@ -128,17 +164,17 @@ bool RlfAnimation::readHeader() {
 RlfAnimation::Frame RlfAnimation::readNextFrame() {
 	RlfAnimation::Frame frame;
 
-	_file.readUint32BE();                        // Magic number MARF
-	uint32 size = _file.readUint32LE();          // Size
-	_file.readUint32LE();                        // Unknown1
-	_file.readUint32LE();                        // Unknown2
-	uint32 type = _file.readUint32BE();          // Either ELHD or ELRH
-	uint32 headerSize = _file.readUint32LE();    // Offset from the beginning of this frame to the frame data. Should always be 28
-	_file.readUint32LE();                        // Unknown3
+	_readStream->readUint32BE();                        // Magic number MARF
+	uint32 size = _readStream->readUint32LE();          // Size
+	_readStream->readUint32LE();                        // Unknown1
+	_readStream->readUint32LE();                        // Unknown2
+	uint32 type = _readStream->readUint32BE();          // Either ELHD or ELRH
+	uint32 headerSize = _readStream->readUint32LE();    // Offset from the beginning of this frame to the frame data. Should always be 28
+	_readStream->readUint32LE();                        // Unknown3
 
 	frame.encodedSize = size - headerSize;
 	frame.encodedData = new int8[frame.encodedSize];
-	_file.read(frame.encodedData, frame.encodedSize);
+	_readStream->read(frame.encodedData, frame.encodedSize);
 
 	if (type == MKTAG('E', 'L', 'H', 'D')) {
 		frame.type = Masked;

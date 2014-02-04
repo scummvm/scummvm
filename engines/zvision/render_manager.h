@@ -47,7 +47,7 @@ namespace ZVision {
 
 class RenderManager {
 public:
-	RenderManager(OSystem *system, uint32 windowWidth, uint32 windowHeight, const Common::Rect workingWindow, const Graphics::PixelFormat pixelFormat);
+	RenderManager(ZVision *engine, uint32 windowWidth, uint32 windowHeight, const Common::Rect workingWindow, const Graphics::PixelFormat pixelFormat);
 	~RenderManager();
 
 private:
@@ -70,6 +70,7 @@ private:
 	typedef Common::HashMap<uint16, oneSub> subMap;
 
 private:
+	ZVision *_engine;
 	OSystem *_system;
 	const Graphics::PixelFormat _pixelFormat;
 

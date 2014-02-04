@@ -24,6 +24,7 @@
 #define ZVISION_METAANIM_NODE_H
 
 #include "zvision/sidefx.h"
+#include "zvision/zvision.h"
 #include "common/rect.h"
 #include "common/list.h"
 
@@ -47,7 +48,7 @@ class RlfAnimation;
 
 class MetaAnimation {
 public:
-	MetaAnimation(const Common::String &fileName);
+	MetaAnimation(const Common::String &fileName, ZVision *engine);
 	~MetaAnimation();
 
 	struct playnode {

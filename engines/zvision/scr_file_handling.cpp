@@ -22,6 +22,7 @@
 
 #include "common/scummsys.h"
 
+#include "zvision/zvision.h"
 #include "zvision/script_manager.h"
 
 #include "zvision/utility.h"
@@ -40,7 +41,7 @@ namespace ZVision {
 
 void ScriptManager::parseScrFile(const Common::String &fileName, script_scope &scope) {
 	Common::File file;
-	if (!file.open(fileName)) {
+	if (!_engine->getSearchManager()->openFile(file, fileName)) {
 		warning("Script file not found: %s", fileName.c_str());
 		return;
 	}

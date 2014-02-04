@@ -312,27 +312,11 @@ ActionMusic::~ActionMusic() {
 bool ActionMusic::execute() {
 	if (_engine->getScriptManager()->getSideFX(_slotkey))
 		return true;
-	Common::File *file = new Common::File();
-	if (!file->exists(_fileName) && _fileName.size() >= 12) {
-		_fileName.setChar('r', 9);
-		_fileName.setChar('a', 10);
-		_fileName.setChar('w', 11);
-		if (!file->exists(_fileName)) {
-			_fileName.setChar('i', 9);
-			_fileName.setChar('f', 10);
-			_fileName.setChar('p', 11);
-			if (!file->exists(_fileName)) {
-				_fileName.setChar('s', 9);
-				_fileName.setChar('r', 10);
-				_fileName.setChar('c', 11);
-				if (!file->exists(_fileName))
-					return true;
-			}
-		}
-	}
-	if (file->exists(_fileName))
-		_engine->getScriptManager()->addSideFX(new MusicNode(_engine, _slotkey, _fileName, _loop, _volume));
-	delete file;
+
+	if (!_engine->getSearchManager()->hasFile(_fileName))
+		return true;
+
+	_engine->getScriptManager()->addSideFX(new MusicNode(_engine, _slotkey, _fileName, _loop, _volume));
 
 	return true;
 }
@@ -585,16 +569,21 @@ ActionStreamVideo::ActionStreamVideo(ZVision *engine, int32 slotkey, const Commo
 
 bool ActionStreamVideo::execute() {
 	ZorkAVIDecoder decoder;
-	if (!decoder.loadFile(_fileName)) {
-		return true;
+	Common::File *_file = _engine->getSearchManager()->openFile(_fileName);
+
+	if (_file) {
+		if (!decoder.loadStream(_file)) {
+			return true;
+		}
+
+		Common::Rect destRect;
+		if ((_flags & DIFFERENT_DIMENSIONS) == DIFFERENT_DIMENSIONS) {
+			destRect = Common::Rect(_x1, _y1, _x2, _y2);
+		}
+
+		_engine->playVideo(decoder, destRect, _skippable);
 	}
 
-	Common::Rect destRect;
-	if ((_flags & DIFFERENT_DIMENSIONS) == DIFFERENT_DIMENSIONS) {
-		destRect = Common::Rect(_x1, _y1, _x2, _y2);
-	}
-
-	_engine->playVideo(decoder, destRect, _skippable);
 	return true;
 }
 
