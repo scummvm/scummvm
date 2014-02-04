@@ -332,10 +332,24 @@ void sceneHandler27_sub07() {
     }
 }
 
-bool sceneHandler27_batFallLogic(int bat) {
-	warning("STUB: sceneHandler27_batFallLogic()");
+bool sceneHandler27_batFallLogic(int batn) {
+	Bat *bat = g_vars->scene27_bats[batn];
 
-	return false;
+	int y = (bat->currY - 458.0) * 0.4848484848484849 + 734.0;
+
+	if (y >= bat->currX)
+		return false;
+
+	if (bat->currX - y > 15.0 || bat->ani->_statics->_staticsId == ST_BTA_FALL) {
+		bat->ani->_priority = 2020;
+
+		g_vars->scene27_var07.remove_at(batn);
+		g_vars->scene27_var07.push_back(bat);
+    } else if (!bat->ani->_movement) {
+		bat->ani->startAnim(MV_BTA_FALL, 0, -1);
+    }
+
+	return true;
 }
 
 bool sceneHandler27_batCalcDistance(int bat1, int bat2) {

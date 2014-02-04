@@ -1095,6 +1095,7 @@ namespace Fullpipe {
 #define MSG_SC27_STARTBET 2047
 #define MSG_SC27_STARTWIPE 2057
 #define MSG_SC27_TAKEVENT 4584
+#define MV_BTA_FALL 2049
 #define MV_MAN27_FLOW 1990
 #define MV_MAN27_THROWBET 1989
 #define PIC_SC27_HITZONE2 4756
@@ -1103,6 +1104,7 @@ namespace Fullpipe {
 #define QU_SC27_SHOWBET 3368
 #define SND_27_027 4128
 #define SND_27_044 4687
+#define ST_BTA_FALL 2054
 #define ST_DRV_VENT 1996
 #define ST_MID_BROOM 2022
 #define ST_MID_SPADE 3489
