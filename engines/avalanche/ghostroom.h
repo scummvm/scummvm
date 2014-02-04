@@ -34,26 +34,27 @@
 namespace Avalanche {
 class AvalancheEngine;
 
+enum FlavourType { ch_EGA, ch_BGI, ch_Natural, ch_Two, ch_One };
+
+struct ChunkBlockType {
+	FlavourType _flavour;
+	int16 _x, _y;
+	int16 _xl, _yl;
+	int32 _size;
+};
+
 class GhostRoom {
 public:
 	GhostRoom(AvalancheEngine *vm);
+	~GhostRoom();
 
 	void run();
+	ChunkBlockType readChunkBlock(Common::File &file);
 
 private:
-	enum FlavourType { ch_EGA, ch_BGI, ch_Natural, ch_Two, ch_One };
-
-	struct ChunkBlockType {
-		FlavourType _flavour;
-		int16 _x, _y;
-		int16 _xl, _yl;
-		int32 _size;
-	};
-
 	AvalancheEngine *_vm;
 
 	static const int8 kAdjustment[5];
-	static const byte kPlaneToUse[4];
 	static const byte kWaveOrder[5];
 	static const byte kGlerkFade[26];
 	static const byte kGreldetFade[18];
@@ -64,8 +65,8 @@ private:
 	byte _ghost[5][2][66][26];
 	void *_memLevel;
 	byte _y, _yy, _bit, _xofs;
-	void *_eyes[2];
-	void *_exclamation;
+	Graphics::Surface _eyes[2];
+	Graphics::Surface _exclamation;
 	void *_aargh[6];
 	void *_bat[3];
 	GlerkType *_glerk;
@@ -82,12 +83,10 @@ private:
 	bool _redGreldet;
 
 	void plainGrab();
-	void getMe(void *p);
 	void getMeAargh(byte which);
 	void wait(uint16 howLong);
 	void doBat();
 	void bigGreenEyes(byte how);
-	ChunkBlockType readChunkBlock(Common::File &file);
 };
 
 } // End of namespace Avalanche

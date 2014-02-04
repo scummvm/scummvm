@@ -31,7 +31,6 @@
 namespace Avalanche {
 
 const int8 GhostRoom::kAdjustment[5] = { 7, 0, 7, 7, 7 };
-const byte GhostRoom::kPlaneToUse[4] = { 2, 2, 2, 3 };
 const byte GhostRoom::kWaveOrder[5] = { 5, 1, 2, 3, 4 };
 const byte GhostRoom::kGlerkFade[26] = { 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 3, 3, 3, 2, 2, 1 };
 const byte GhostRoom::kGreldetFade[18] = { 1, 2, 3, 4, 5, 6, 6, 6, 5, 5, 4, 4, 3, 3, 2, 2, 1, 1 };
@@ -53,12 +52,14 @@ GhostRoom::GhostRoom(AvalancheEngine *vm) {
 	_redGreldet = false;
 }
 
-void GhostRoom::plainGrab() {
-	warning("STUB: plainGrab()");
+GhostRoom::~GhostRoom() {
+	for (int i = 0; i < 2; i++)
+		_eyes[i].free();
+	_exclamation.free();
 }
 
-void GhostRoom::getMe(void *p) {
-	warning("STUB: getMe()");
+void GhostRoom::plainGrab() {
+	warning("STUB: plainGrab()");
 }
 
 void GhostRoom::getMeAargh(byte which) {
@@ -77,7 +78,7 @@ void GhostRoom::bigGreenEyes(byte how) {
 	warning("STUB: bigGreenEyes()");
 }
 
-GhostRoom::ChunkBlockType GhostRoom::readChunkBlock(Common::File &file) {
+ChunkBlockType GhostRoom::readChunkBlock(Common::File &file) {
 	ChunkBlockType cb;
 	cb._flavour = (FlavourType)file.readByte();
 	cb._x = file.readSint16LE();
@@ -99,7 +100,7 @@ void GhostRoom::run() {
 
 	_file.seek(44);
 
-	// Initializing array.
+	// Initializing ghost's array.
 	for (int i = 0; i < 5; i++)
 		for (int j = 0; j < 2; j++)
 			for (int y = 0; y < 66; y++)
@@ -113,6 +114,11 @@ void GhostRoom::run() {
 			for (uint16 y = 0; y <= cb._yl; y++)
 				_file.read(_ghost[i][j][y], cb._xl / 8);
 	}
+
+	// Load some smaller pictures.
+	for (int i = 0; i < 2; i++)
+		_eyes[i] = _vm->_graphics->ghostLoadPicture(_file);
+	_exclamation = _vm->_graphics->ghostLoadPicture(_file);
 
 	warning("STUB: run()");
 }

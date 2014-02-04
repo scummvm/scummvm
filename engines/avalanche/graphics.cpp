@@ -500,7 +500,7 @@ void GraphicManager::nimFree() {
 	_nimLogo.free();
 }
 
-void GraphicManager::ghostDrawPicture(byte ghostArr[2][66][26], uint16 destX, uint16 destY) {
+void GraphicManager::ghostDrawGhost(byte ghostArr[2][66][26], uint16 destX, uint16 destY) {
 	const byte kPlaneToUse[4] = { 0, 0, 0, 1 };
 	// Constants from the original code.
 	uint16 height = 66;
@@ -528,6 +528,30 @@ void GraphicManager::ghostDrawPicture(byte ghostArr[2][66][26], uint16 destX, ui
 }
 
 /**
+ * @remarks	Originally called 'get_me' and was located in Ghostroom.
+ */
+Graphics::Surface GraphicManager::ghostLoadPicture(Common::File &file) {
+	ChunkBlockType cb = _vm->_ghostroom->readChunkBlock(file);
+	
+	Graphics::Surface picture = loadPictureGraphic(file);
+
+	int bytesPerRow = (picture.w / 8);
+	if ((picture.w % 8) > 0)
+		bytesPerRow += 1;
+	int loadedBytes = picture.h * bytesPerRow * 4 + 4;
+	// * 4 is for the four planes, + 4 is for the reading of the width and the height at loadPictureGraphic's beginning.
+
+	int bytesToSkip = cb._size - loadedBytes;
+	file.skip(bytesToSkip);
+		
+	return picture;
+}
+
+void GraphicManager::ghostDrawPicture(const Graphics::Surface &picture, uint16 destX, uint16 destY) {
+	drawPicture(_surface, picture, destX, destY);
+}
+
+/**
  * This function mimics Pascal's getimage().
  */
 Graphics::Surface GraphicManager::loadPictureGraphic(Common::File &file) {
@@ -537,7 +561,7 @@ Graphics::Surface GraphicManager::loadPictureGraphic(Common::File &file) {
 
 	Graphics::Surface picture; // We make a Surface object for the picture itself.
 	picture.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
-
+	
 	// Produce the picture. We read it in row-by-row, and every row has 4 planes.
 	for (int y = 0; y < height; y++) {
 		for (int8 plane = 3; plane >= 0; plane--) { // The planes are in the opposite way.
