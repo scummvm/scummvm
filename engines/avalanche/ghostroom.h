@@ -67,8 +67,8 @@ private:
 	byte _y, _yy, _bit, _xofs;
 	Graphics::Surface _eyes[2];
 	Graphics::Surface _exclamation;
-	void *_aargh[6];
-	void *_bat[3];
+	Graphics::Surface _aargh[6];
+	Graphics::Surface _bat[3];
 	GlerkType *_glerk;
 	void *_greenEyes[5];
 	void *_greldet[6][2];
@@ -83,7 +83,6 @@ private:
 	bool _redGreldet;
 
 	void plainGrab();
-	void getMeAargh(byte which);
 	void wait(uint16 howLong);
 	void doBat();
 	void bigGreenEyes(byte how);
