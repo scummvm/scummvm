@@ -617,16 +617,6 @@ public:
 	void loadTheApt();
 
 	/**
-	 * Check for whether a murder has been recorded
-	 */
-	void checkForMurder();
-
-	/**
-	 * Check for whether incriminating evidence has been recorded
-	 */
-	void checkForIncriminate();
-
-	/**
 	 * Synchronizes the game data
 	 */
 	void synchronize(Common::Serializer &s);
