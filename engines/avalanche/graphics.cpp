@@ -552,6 +552,47 @@ void GraphicManager::ghostDrawPicture(const Graphics::Surface &picture, uint16 d
 }
 
 /**
+ * Loads and puts 3 images (in this order: cobweb, Mark's signature, open door) into the background at the beginning of the ghostroom scene.
+ * @remarks	Originally called 'plain_grab' and was located in Ghostroom. It was originally called 3 times. I unified these in one function, used a for cycle.
+ */
+void GraphicManager::ghostDrawBackgroundItems(Common::File &file) {
+	for (int num = 0; num < 3; num++) {
+		ChunkBlock cb = _vm->_ghostroom->readChunkBlock(file);
+
+		int width = cb._width;
+		int height = cb._height + 1;
+
+		Graphics::Surface picture;
+		picture.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
+
+		// Load the picture according to it's type.
+		switch (cb._flavour) {
+		case kFlavourOne: // There is only one plane.
+			for (uint16 y = 0; y < height; y++) {
+				for (uint16 x = 0; x < width; x += 8) {
+					byte pixel = file.readByte();
+					for (int i = 0; i < 8; i++) {
+						byte pixelBit = (pixel >> i) & 1;
+						*(byte *)picture.getBasePtr(x + 7 - i, y) = (pixelBit << 3);
+					}
+				}
+			}
+			break;
+		case kFlavourEga:
+			picture = loadPictureRaw(file, width, height);
+			break;
+		default:
+			break;
+		}
+
+		drawPicture(_surface, picture, cb._x, cb._y);
+
+		picture.free();
+	}
+	refreshScreen();
+}
+
+/**
  * This function mimics Pascal's getimage().
  */
 Graphics::Surface GraphicManager::loadPictureGraphic(Common::File &file) {

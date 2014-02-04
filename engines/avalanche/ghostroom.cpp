@@ -58,10 +58,6 @@ GhostRoom::~GhostRoom() {
 	_exclamation.free();
 }
 
-void GhostRoom::plainGrab() {
-	warning("STUB: plainGrab()");
-}
-
 void GhostRoom::wait(uint16 howLong) {
 	warning("STUB: wait()");
 }
@@ -92,7 +88,7 @@ void GhostRoom::run() {
 	_vm->_graphics->drawFilledRectangle(Common::Rect(0, 0, 640, 200), kColorBlack);
 
 	if (!_file.open("spooky.avd"))
-		error("AVALANCHE: Trip: File not found: spooky.avd");
+		error("AVALANCHE: GhostRoom: File not found: spooky.avd");
 
 	_file.seek(44);
 
@@ -115,6 +111,8 @@ void GhostRoom::run() {
 	for (int i = 0; i < 2; i++)
 		_eyes[i] = _vm->_graphics->ghostLoadPicture(_file);
 	_exclamation = _vm->_graphics->ghostLoadPicture(_file);
+
+	_vm->_graphics->ghostDrawBackgroundItems(_file);
 
 	warning("STUB: run()");
 }

@@ -80,7 +80,6 @@ private:
 	byte _greldetCount;
 	bool _redGreldet;
 
-	void plainGrab();
 	void wait(uint16 howLong);
 	void doBat();
 	void bigGreenEyes(byte how);
