@@ -500,6 +500,33 @@ void GraphicManager::nimFree() {
 	_nimLogo.free();
 }
 
+void GraphicManager::ghostDrawPicture(byte ghostArr[2][66][26], uint16 destX, uint16 destY) {
+	const byte kPlaneToUse[4] = { 0, 0, 0, 1 };
+	// Constants from the original code.
+	uint16 height = 66;
+	uint16 width = 26 * 8;
+
+	Graphics::Surface ghostPic;
+	ghostPic.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
+
+	for (int y = 0; y < height; y++) {
+		for (int plane = 0; plane < 4; plane++) {
+			for (uint16 x = 0; x < width / 8; x ++) {
+				byte pixel = ghostArr[kPlaneToUse[plane]][y][x];
+				for (int bit = 0; bit < 8; bit++) {
+					byte pixelBit = (pixel >> bit) & 1;
+					if (pixelBit != 0)
+						*(byte *)ghostPic.getBasePtr(x * 8 + 7 - bit, y) += (pixelBit << plane);
+				}
+			}
+		}
+	}
+	
+	drawPicture(_surface, ghostPic, destX, destY);
+
+	ghostPic.free();
+}
+
 /**
  * This function mimics Pascal's getimage().
  */

@@ -78,7 +78,43 @@ void GhostRoom::bigGreenEyes(byte how) {
 	warning("STUB: bigGreenEyes()");
 }
 
+GhostRoom::ChunkBlockType GhostRoom::readChunkBlock(Common::File &file) {
+	ChunkBlockType cb;
+	cb._flavour = (FlavourType)file.readByte();
+	cb._x = file.readSint16LE();
+	cb._y = file.readSint16LE();
+	cb._xl = file.readSint16LE();
+	cb._yl = file.readSint16LE();
+	cb._size = file.readSint32LE();
+	return cb;
+}
+
 void GhostRoom::run() {
+	_vm->_graphics->saveScreen();
+	_vm->fadeOut();
+	_vm->fadeIn();
+	_vm->_graphics->drawFilledRectangle(Common::Rect(0, 0, 640, 200), kColorBlack);
+
+	if (!_file.open("spooky.avd"))
+		error("AVALANCHE: Trip: File not found: spooky.avd");
+
+	_file.seek(44);
+
+	// Initializing array.
+	for (int i = 0; i < 5; i++)
+		for (int j = 0; j < 2; j++)
+			for (int y = 0; y < 66; y++)
+				for (int x = 0; x < 26; x++)
+					_ghost[i][j][y][x] = 0;
+
+	// Reading in the pictures of the ghost.
+	for (int i = 0; i < 5; i++) {
+		ChunkBlockType cb = readChunkBlock(_file);
+		for (int j = 0; j < 2; j++)
+			for (uint16 y = 0; y <= cb._yl; y++)
+				_file.read(_ghost[i][j][y], cb._xl / 8);
+	}
+
 	warning("STUB: run()");
 }
 

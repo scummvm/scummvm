@@ -38,6 +38,7 @@ namespace Avalanche {
 class AvalancheEngine;
 class AnimationType;
 struct SpriteType;
+struct ChunkBlockType;
 
 typedef byte FontType[256][16];
 typedef byte ManiType[2049];
@@ -62,6 +63,8 @@ public:
 	Common::Point drawScreenArc(int16 x, int16 y, int16 stAngle, int16 endAngle, uint16 radius, Color color);
 	void drawPieSlice(int16 x, int16 y, int16 stAngle, int16 endAngle, uint16 radius, Color color);
 	void drawTriangle(Common::Point *p, Color color);
+	void drawFilledRectangle(Common::Rect rect, Color color);
+	void drawRectangle(Common::Rect rect, Color color);
 	void drawNormalText(const Common::String text, FontType font, byte fontHeight, int16 x, int16 y, Color color);
 	void drawScrollText(const Common::String text, FontType font, byte fontHeight, int16 x, int16 y, Color color);
 	void drawDigit(int index, int x, int y);
@@ -79,8 +82,6 @@ public:
 	void drawDebugLines();
 
 	// For the mini-game "Nim".
-	void drawFilledRectangle(Common::Rect rect, Color color);
-	void drawRectangle(Common::Rect rect, Color color);
 	void nimLoad();
 	void nimDrawStone(int x, int y);
 	void nimDrawInitials();
@@ -89,6 +90,9 @@ public:
 
 	// Used in wobble()
 	void shiftScreen();
+
+	// Ghostroom's functions:
+	void ghostDrawPicture(byte ghostArr[2][66][26], uint16 destX, uint16 destY); // Very similar to loadPictureSign(). TODO: Unify the two later if possible.
 
 	void clearAlso();
 	void clearTextBar();

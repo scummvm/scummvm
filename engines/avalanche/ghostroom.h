@@ -29,6 +29,7 @@
 #define AVALANCHE_GHOSTROOM_H
 
 #include "common/scummsys.h"
+#include "graphics/surface.h"
 
 namespace Avalanche {
 class AvalancheEngine;
@@ -40,6 +41,15 @@ public:
 	void run();
 
 private:
+	enum FlavourType { ch_EGA, ch_BGI, ch_Natural, ch_Two, ch_One };
+
+	struct ChunkBlockType {
+		FlavourType _flavour;
+		int16 _x, _y;
+		int16 _xl, _yl;
+		int32 _size;
+	};
+
 	AvalancheEngine *_vm;
 
 	static const int8 kAdjustment[5];
@@ -48,19 +58,9 @@ private:
 	static const byte kGlerkFade[26];
 	static const byte kGreldetFade[18];
 
-	enum FlavourType { ch_EGA, ch_BGI, ch_Natural, ch_Two, ch_One };
-
-	struct ChunkBlockType {
-		FlavourType _flavour;
-		int8 _x, _y;
-		int8 _xl, _yl;
-		int32 _size;
-	};
-
 	typedef byte GlerkType[6][4][35][9];
 	
-	Common::File _f;
-	ChunkBlockType _cb;
+	Common::File _file;
 	byte _ghost[5][2][66][26];
 	void *_memLevel;
 	byte _y, _yy, _bit, _xofs;
@@ -72,7 +72,6 @@ private:
 	void *_greenEyes[5];
 	void *_greldet[6][2];
 	Common::Point _aarghWhere[6];
-	int16 _gd, _gm;
 	bool _gb;
 	byte _glerkStage;
 	int16 _batX, _batY;
@@ -88,6 +87,7 @@ private:
 	void wait(uint16 howLong);
 	void doBat();
 	void bigGreenEyes(byte how);
+	ChunkBlockType readChunkBlock(Common::File &file);
 };
 
 } // End of namespace Avalanche
