@@ -335,7 +335,7 @@ bool VoyeurEngine::doLock() {
 			_soundManager.abortVOCMap();
 			_soundManager.playVOCMap(buttonVoc, buttonVocSize);
 
-			while (_soundManager.vocMapStatus()) {
+			while (_soundManager.getVOCStatus()) {
 				if (shouldQuit())
 					break;
 

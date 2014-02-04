@@ -146,10 +146,6 @@ void RL2Decoder::readNextPacket() {
 }
 
 bool RL2Decoder::seek(const Audio::Timestamp &where) {
-	// TODO: Ideally, I need a way to clear the audio track's QueuingAudioStream when
-	// a seek is done. Otherwise, as current, seeking can only be done correctly when
-	// the video is first loaded.
-
 	_soundFrameNumber = -1;
 	return VideoDecoder::seek(where);
 }

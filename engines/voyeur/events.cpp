@@ -458,8 +458,6 @@ void EventsManager::vDoCycleInt() {
 					byte g = pPal[start * 3 + 1];
 					byte b = pPal[start * 3 + 2];
 
-					// Move the remainder of the range backwards one entry
-					// TODO: Is this allowing for overlap properly?
 					Common::copy(&pPal[start * 3 + 3], &pPal[end * 3 + 3], &pPal[start * 3]);
 					
 					// Place the original saved entry at the end of the range
@@ -483,7 +481,6 @@ void EventsManager::vDoCycleInt() {
 					byte b = pPal[end * 3 + 2];
 
 					// Move the remainder of the range forwards one entry
-					// TODO: Does this allow for overlap range correctly?
 					Common::copy_backward(&pPal[start * 3], &pPal[end * 3], &pPal[end * 3 + 3]);
 					
 					// Place the original saved entry at the end of the range

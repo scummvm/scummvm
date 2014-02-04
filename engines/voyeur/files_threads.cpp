@@ -462,7 +462,6 @@ void ThreadResource::parsePlayCommands() {
 				_vm->_audioVideoId = -1;
 				parseIndex = 999;
 			} else {
-				// TODO: Double-check this
 				int count = _vm->_bVoy->getBoltGroup(_vm->_playStampGroupId)->_entries.size();
 				_vm->_soundManager.stopVOCPlay();
 				_vm->_eventsManager.getMouseInfo();

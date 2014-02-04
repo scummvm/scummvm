@@ -93,9 +93,10 @@ public:
 	byte *decompress(byte *buf, int size, int mode);
 	void nextBlock();
 
-	void EMSGetFrameAddr(byte **pageFrame) {} // TODO: Maybe?
-	bool EMSAllocatePages(uint *planeSize) { return false; } // TODO: Maybe?
-	void EMSMapPageHandle(int planeSize, int idx1, int idx2) {} // TODO: Maybe?
+	// Methods in the original stubbed under ScummVM
+	void EMSGetFrameAddr(byte **pageFrame) {} 
+	bool EMSAllocatePages(uint *planeSize) { return false; }
+	void EMSMapPageHandle(int planeSize, int idx1, int idx2) {}
 };
 
 class BoltFile {
@@ -110,11 +111,12 @@ private:
 	void resolveAll();
 	byte *getBoltMember(uint32 id);
 
-	void termType() {}	// TODO
-	void initMem(int id) {}	// TODO
-	void termMem() {}	// TODO
-	void initGro() {}	// TODO
-	void termGro() {}	// TODO
+	// Methods in the original that are stubbed in ScummVM
+	void termType() {}
+	void initMem(int id) {}
+	void termMem() {}
+	void initGro() {}
+	void termGro() {}
 public:
 	Common::File _file;
 public:

@@ -120,7 +120,7 @@ void GraphicsManager::restoreMCGASaveRect(ViewPortResource *viewPort) {
 }
 
 void GraphicsManager::addRectNoSaveBack(ViewPortResource *viewPort, int idx, const Common::Rect &bounds) {
-	// TODO: more
+	// Stubbed/dummy method in the original.
 }
 
 void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *destDisplay,
@@ -290,7 +290,7 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 
 	if (srcPic->_pick == 0xff) {
 		if (srcFlags & DISPFLAG_8) {
-			error("TODO: sDrawPic");
+			error("TODO: sDrawPic variation");
 		} else {
 			// loc_258B8
 			srcP = srcImgData + srcOffset;
@@ -353,7 +353,7 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 					// loc_25D40
 					if (srcFlags & DISPFLAG_100) {
 						// loc_25D4A
-						error("TODO: sDrawPic");
+						error("TODO: sDrawPic variation");
 					} else {
 						// loc_2606D
 						destP = (byte *)_screenSurface.getPixels() + screenOffset;
@@ -527,7 +527,7 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 					
 					if (destFlags & DISPFLAG_8) {
 						// loc_272C3
-						error("TODO");
+						error("TODO: sDrawPic variation");
 					} else {
 						destP = destImgData + screenOffset;
 						for (int yp = 0; yp < height1; ++yp) {
@@ -897,10 +897,6 @@ void GraphicsManager::sDisplayPic(PictureResource *pic) {
 	}
 
 	_vm->_eventsManager._intPtr._flipWait = true;
-}
-
-void GraphicsManager::EMSMapPageHandle(int v1, int v2, int v3) {
-	// TODO
 }
 
 void GraphicsManager::flipPage() {

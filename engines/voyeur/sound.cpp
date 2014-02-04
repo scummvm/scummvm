@@ -40,15 +40,6 @@ void SoundManager::playVOCMap(byte *voc, int vocSize) {
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, audioStream);
 }
 
-bool SoundManager::vocMapStatus() {
-	error("TODO: vocMapStatus");
-	return false;
-}
-
-void SoundManager::continueVocMap() {
-	// No implementation needed in ScummVM
-}
-
 void SoundManager::abortVOCMap() {
 	_mixer->stopHandle(_soundHandle);
 }

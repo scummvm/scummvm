@@ -276,8 +276,6 @@ BoltGroup *BoltFile::getBoltGroup(uint16 id, bool process) {
 }
 
 void BoltFile::freeBoltGroup(uint16 id, bool freeEntries) {
-	// TODO: I currently ignore freeEntries flag, in favour of always
-	// freeing. Need to check whether this can really ever be false.
 	_state._curLibPtr = this;
 	_state._curGroupPtr = &_groups[(id >> 8) & 0xff];
 
@@ -286,8 +284,7 @@ void BoltFile::freeBoltGroup(uint16 id, bool freeEntries) {
 }
 
 void BoltFile::freeBoltMember(uint32 id) {
-	// TODO: Determine whether this is needed, given all group entries are automatically loaded
-//	warning("TODO: BoltFile::freeBoltMember");
+	// No implementation in ScummVM
 }
 
 BoltEntry &BoltFile::getBoltEntryFromLong(uint32 id) {
@@ -412,9 +409,7 @@ byte *BoltFile::getBoltMember(uint32 id) {
 	_state._encrypt = (_state._curMemberPtr->_mode & 0x10) != 0;
 
 	if (_state._curGroupPtr->_processed) {
-		// TODO: Figure out weird access type. Uncompressed read perhaps?
-		//int fileDiff = _state._curGroupPtr->_fileOffset - _state._curMemberPtr->_fileOffset;
-		error("TODO: processed bolt flag");
+		error("Processed resources are not supported");
 	} else {
 		_state._bufStart = _state._decompressBuf;
 		_state._bufSize = DECOMPRESS_SIZE;
@@ -618,7 +613,7 @@ BoltGroup::BoltGroup(Common::SeekableReadStream *f): _file(f) {
 	_processed = buffer[0] != 0;
 	_callInitGro = buffer[1] != 0;
 	_termGroIndex = buffer[2];
-	_count = buffer[3] ? buffer[3] : 256;	// TODO: Added this in. Check it's okay
+	_count = buffer[3] ? buffer[3] : 256;
 	_fileOffset = READ_LE_UINT32(&buffer[8]);
 }
 
@@ -665,7 +660,7 @@ BoltEntry::BoltEntry(Common::SeekableReadStream *f, uint16 id): _file(f), _id(id
 	_mode = buffer[0];
 	_field1 = buffer[1];
 	_initMethod = buffer[3];
-	_xorMask = buffer[4] & 0xff;	// TODO: Is this right??
+	_xorMask = buffer[4] & 0xff;
 	_size = READ_LE_UINT32(&buffer[4]) & 0xffffff;
 	_fileOffset = READ_LE_UINT32(&buffer[8]); 
 }
@@ -685,8 +680,7 @@ BoltEntry::~BoltEntry() {
 }
 
 void BoltEntry::load() {
-	// TODO: Currently, all entry loading and decompression is done in BoltFile::memberAddr.
-	// Ideally, a lot of the code should be moved here
+	// Currently, all entry loading and decompression is done in BoltFile::memberAddr.
 }
 
 /**
@@ -1062,10 +1056,11 @@ PictureResource::PictureResource(BoltFilesState &state, const byte *src):
 			byte *imgData = state._curLibPtr->boltEntry(id)._picResource->_imgData;
 			_freeImgData = DisposeAfterUse::NO;
 
+			// TODO: Double check code below. Despite different coding in the 
+			// original, both looked like they do the same formula
 			if (_flags & PICFLAG_PIC_OFFSET) {
 				_imgData = imgData + (READ_LE_UINT32(&src[18]) & 0xffff);
 			} else {
-				warning("TODO: Double-check if this is correct");
 				_imgData = imgData + (READ_LE_UINT32(&src[18]) & 0xffff);
 			}
 		}
@@ -1362,7 +1357,6 @@ void ViewPortResource::setupViewPort(PictureResource *pic, Common::Rect *clipRec
 }
 
 void ViewPortResource::addSaveRect(int pageIndex, const Common::Rect &r) {
-	// TODO
 	Common::Rect rect = r;
 	
 	if (clipRect(rect)) {

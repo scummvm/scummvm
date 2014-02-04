@@ -42,8 +42,6 @@ public:
 	void setVm(VoyeurEngine *vm) { _vm = vm; }
 
 	void playVOCMap(byte *voc, int vocSize);
-	bool vocMapStatus();
-	void continueVocMap();
 	void stopVOCPlay();
 	void abortVOCMap();
 	void setVOCOffset(int offset);
@@ -52,6 +50,9 @@ public:
 	void startVOCPlay(int soundId);
 	int getVOCStatus();
 	uint32 getVOCFrame();
+
+	// Methods in the original that are stubbed in ScummVM
+	void continueVocMap() {}
 };
 
 } // End of namespace Voyeur

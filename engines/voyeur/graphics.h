@@ -102,7 +102,6 @@ public:
 	void restoreMCGASaveRect(ViewPortResource *viewPort);
 	void addRectNoSaveBack(ViewPortResource *viewPort, int idx, const Common::Rect &bounds);
 
-	void EMSMapPageHandle(int v1, int v2, int v3);
 	void sDrawPic(DisplayResource *srcDisplay, DisplayResource *destDisplay, const Common::Point &initialOffset);
 	void fillPic(DisplayResource *display, byte onOff = 0);
 	void sDisplayPic(PictureResource *pic);
@@ -125,6 +124,9 @@ public:
 	 * Synchronizes the game data
 	 */
 	void synchronize(Common::Serializer &s);
+
+	// Methods in the original that are stubbed in ScummVM
+	void EMSMapPageHandle(int v1, int v2, int v3) {}
 };
 
 } // End of namespace Voyeur
