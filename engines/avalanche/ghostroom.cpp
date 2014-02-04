@@ -62,10 +62,6 @@ void GhostRoom::plainGrab() {
 	warning("STUB: plainGrab()");
 }
 
-void GhostRoom::getMeAargh(byte which) {
-	warning("STUB: getMeAargh()");
-}
-
 void GhostRoom::wait(uint16 howLong) {
 	warning("STUB: wait()");
 }
