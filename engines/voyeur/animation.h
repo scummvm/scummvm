@@ -37,17 +37,13 @@ namespace Voyeur {
 
 class VoyeurEngine;
 
-}
-
-namespace Video {
-
 /**
  * Decoder for RL2 videos.
  *
  * Video decoder used in engines:
  *  - voyeur
  */
-class RL2Decoder : public VideoDecoder {
+class RL2Decoder : public Video::VideoDecoder {
 private:
 	class RL2FileHeader {
 	public:
@@ -180,14 +176,7 @@ public:
 	int getPaletteStart() const { return _paletteStart; }
 	int getPaletteCount() const { return _header._colorCount; }
 	const RL2FileHeader &getHeader() { return _header; }
-};
 
-} // End of namespace Video
-
-namespace Voyeur {
-
-class VoyeurRL2Decoder: public Video::RL2Decoder {
-public:
 	/**
 	 * Play back a given Voyeur RL2 video
 	 * @param vm			Engine reference
@@ -198,6 +187,6 @@ public:
 	void play(VoyeurEngine *vm, int resourceOffset = 0, byte *frames = NULL, byte *imgPos = NULL);
 };
 
-}
+} // End of namespace Voyeur
 
 #endif /* VOYEUR_ANIMATION_H */

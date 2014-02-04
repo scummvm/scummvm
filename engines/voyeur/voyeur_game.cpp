@@ -233,7 +233,7 @@ void VoyeurEngine::doTailTitle() {
 	_graphicsManager.screenReset();
 	
 	if (_bVoy->getBoltGroup(0x600)) {
-		VoyeurRL2Decoder decoder;
+		RL2Decoder decoder;
 		decoder.loadFile("a1100200.rl2");
 		decoder.start();
 		decoder.play(this);
@@ -743,7 +743,7 @@ void VoyeurEngine::doGossip() {
 		return;
 
 	// Load the gossip animation
-	VoyeurRL2Decoder decoder;
+	RL2Decoder decoder;
 	decoder.loadFile("a2050100.rl2", false);
 	decoder.start();
 

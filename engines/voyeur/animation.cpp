@@ -29,7 +29,7 @@
 #include "audio/decoders/raw.h"
 #include "graphics/surface.h"
 
-namespace Video {
+namespace Voyeur {
 
 // Number of audio frames to keep audio track topped up when playing back video
 #define SOUND_FRAMES_READAHEAD 3
@@ -467,13 +467,7 @@ Audio::AudioStream *RL2Decoder::RL2AudioTrack::getAudioStream() const {
 	return _audStream;
 }
 
-} // End of namespace Video
-
-/*------------------------------------------------------------------------*/
-
-namespace Voyeur {
-
-void VoyeurRL2Decoder::play(VoyeurEngine *vm, int resourceOffset, 
+void RL2Decoder::play(VoyeurEngine *vm, int resourceOffset, 
 		byte *frames, byte *imgPos) {
 	vm->flipPageAndWait();
 	int paletteStart = getPaletteStart();
@@ -513,4 +507,4 @@ void VoyeurRL2Decoder::play(VoyeurEngine *vm, int resourceOffset,
 	}
 }
 
-} // End of namespace Video
+} // End of namespace Voyeur
