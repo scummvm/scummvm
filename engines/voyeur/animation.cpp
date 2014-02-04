@@ -71,14 +71,15 @@ bool RL2Decoder::loadStream(Common::SeekableReadStream *stream) {
 	}
 
 	// Add an audio track if sound is present
-	RL2AudioTrack *audioTrack = NULL;
+	_audioTrack = nullptr;
 	if (_header._soundRate) {
-		audioTrack = new RL2AudioTrack(_header, stream, _soundType);
-		addTrack(audioTrack);
+		_audioTrack = new RL2AudioTrack(_header, stream, _soundType);
+		addTrack(_audioTrack);
 	}
 
 	// Create a video track
-	addTrack(new RL2VideoTrack(_header, audioTrack, stream));
+	_videoTrack = new RL2VideoTrack(_header, _audioTrack, stream);
+	addTrack(_videoTrack);
 
 	// Load the offset/sizes of the video's audio data
 	_soundFrames.reserve(_header._numFrames);
@@ -93,40 +94,20 @@ bool RL2Decoder::loadStream(Common::SeekableReadStream *stream) {
 }
 
 const Common::List<Common::Rect> *RL2Decoder::getDirtyRects() const {
-	const Track *track = getTrack(1);
-
-	if (track)
-		return ((const RL2VideoTrack *)track)->getDirtyRects();
+	if (_videoTrack)
+		return _videoTrack->getDirtyRects();
 
 	return 0;
 }
 
 void RL2Decoder::clearDirtyRects() {
-	Track *track = getTrack(1);
-
-	if (track)
-		((RL2VideoTrack *)track)->clearDirtyRects();
+	if (_videoTrack)
+		_videoTrack->clearDirtyRects();
 }
 
 void RL2Decoder::copyDirtyRectsToBuffer(uint8 *dst, uint pitch) {
-	Track *track = getTrack(1);
-
-	if (track)
-		((RL2VideoTrack *)track)->copyDirtyRectsToBuffer(dst, pitch);
-}
-
-RL2Decoder::RL2VideoTrack *RL2Decoder::getVideoTrack() {
-	Track *track = getTrack(1);
-	assert(track);
-
-	return (RL2VideoTrack *)track;
-}
-
-RL2Decoder::RL2AudioTrack *RL2Decoder::getAudioTrack() {
-	Track *track = getTrack(0);
-	assert(track);
-
-	return (RL2AudioTrack *)track;
+	if (_videoTrack)
+		_videoTrack->copyDirtyRectsToBuffer(dst, pitch);
 }
 
 void RL2Decoder::readNextPacket() {

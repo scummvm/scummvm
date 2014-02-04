@@ -150,6 +150,8 @@ private:
 	};
 
 private:
+	RL2AudioTrack *_audioTrack;
+	RL2VideoTrack *_videoTrack;
 	Common::SeekableReadStream *_fileStream;
 	Audio::Mixer::SoundType _soundType;
 	RL2FileHeader _header;
@@ -171,8 +173,8 @@ public:
 	const Common::List<Common::Rect> *getDirtyRects() const;
 	void clearDirtyRects();
 	void copyDirtyRectsToBuffer(uint8 *dst, uint pitch);
-	RL2VideoTrack *getVideoTrack();
-	RL2AudioTrack *getAudioTrack();
+	RL2VideoTrack *getVideoTrack() { return _videoTrack; }
+	RL2AudioTrack *getAudioTrack() { return _audioTrack; }
 	int getPaletteStart() const { return _paletteStart; }
 	int getPaletteCount() const { return _header._colorCount; }
 	const RL2FileHeader &getHeader() { return _header; }
