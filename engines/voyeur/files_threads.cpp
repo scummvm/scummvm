@@ -367,6 +367,7 @@ void ThreadResource::parsePlayCommands() {
 			break;
 
 		case 2:
+			// Play an audio event
 			v2 = READ_LE_UINT16(dataP);
 
 			if (v2 == 0 || READ_LE_UINT16(_vm->_controlPtr->_ptr + 4) == v2) {
@@ -397,6 +398,7 @@ void ThreadResource::parsePlayCommands() {
 			break;
 
 		case 3:
+			// Play a video event
 			v2 = READ_LE_UINT16(dataP);
 
 			if (v2 == 0 || READ_LE_UINT16(_vm->_controlPtr->_ptr + 4) == v2) {
@@ -443,6 +445,7 @@ void ThreadResource::parsePlayCommands() {
 
 		case 4:
 		case 22:
+			// Case 22: Endgame news reports
 			_vm->_audioVideoId = READ_LE_UINT16(dataP) - 1;
 			dataP += 2;
 
@@ -462,7 +465,7 @@ void ThreadResource::parsePlayCommands() {
 				_vm->_audioVideoId = -1;
 				parseIndex = 999;
 			} else {
-				int count = _vm->_bVoy->getBoltGroup(_vm->_playStampGroupId)->_entries.size();
+				int count = _vm->_bVoy->getBoltGroup(_vm->_playStampGroupId)->_entries.size() / 2;
 				_vm->_soundManager.stopVOCPlay();
 				_vm->_eventsManager.getMouseInfo();
 
@@ -492,7 +495,7 @@ void ThreadResource::parsePlayCommands() {
 					_vm->_soundManager.stopVOCPlay();
 
 					if (i == (count - 1))
-						_vm->_eventsManager.delay(480);
+						_vm->_eventsManager.delayClick(480);
 
 					if (_vm->shouldQuit() || _vm->_eventsManager._mouseClicked)
 						break;
@@ -594,16 +597,21 @@ void ThreadResource::parsePlayCommands() {
 			break;
 
 		case 10:
+			// Pick the person who is to die, during startup
 			if (_vm->_iForceDeath == -1) {
+				// No specific person has been preset to be killed, so pick one randomly. 
+				// The loop below was used because the victim was persisted from the previous 
+				// play-through, so it ensured that a different victim is picked.
 				int randomVal;
 				do {
 					randomVal = _vm->getRandomNumber(3) + 1;
-				} while (randomVal == _vm->_voy._field4380);
+				} while (randomVal == _vm->_voy._victimNumber);
 
-				_vm->_voy._field4380 = randomVal;
+				_vm->_voy._victimNumber = randomVal;
 				WRITE_LE_UINT16(_vm->_controlPtr->_ptr + 4, randomVal);
 			} else {
-				_vm->_voy._field4380 = _vm->_iForceDeath;
+				// Player has seen something that locks in the character to die
+				_vm->_voy._victimNumber = _vm->_iForceDeath;
 				WRITE_LE_UINT16(_vm->_controlPtr->_ptr + 4, _vm->_iForceDeath);
 			}
 
@@ -660,11 +668,13 @@ void ThreadResource::parsePlayCommands() {
 			break;
 
 		case 18:
+			// Called during the murder (Sunday 10:30PM) time period, to specify the
+			// time expired point at which the murder takes place
 			v2 = READ_LE_UINT16(dataP);
 			v3 = READ_LE_UINT16(dataP + 2);
 
 			if (v2 == 0 || READ_LE_UINT16(_vm->_controlPtr->_ptr + 4) == v2)
-				_vm->_voy._field4F2 = v3;
+				_vm->_voy._murderThreshold = v3;
 			
 			dataP += 4;
 			break;

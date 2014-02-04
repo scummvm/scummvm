@@ -111,8 +111,10 @@ void EventsManager::mainVoyeurIntFunc() {
 			// Increase camera discharge
 			++_vm->_voy._RTVNum;
 
-			if (_vm->_voy._RTVNum >= _vm->_voy._field4F2)
-				_vm->_voy._field4F0 = 1;
+			// If the murder threshold has been set, and is passed, then flag the victim
+			// as murdered, which prevents sending the tape from succeeding
+			if (_vm->_voy._RTVNum >= _vm->_voy._murderThreshold)
+				_vm->_voy._victimMurdered = true;
 		}
 	}
 }

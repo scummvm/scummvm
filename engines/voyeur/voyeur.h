@@ -177,7 +177,7 @@ public:
 
 	int _audioVideoId;
 	const int *_resolvePtr;
-	int _iForceDeath; // CHECKME: The original initializes it in ESP_init()
+	int _iForceDeath;
 	int _checkTransitionId;
 	int _gameHour;
 	int _gameMinute;

@@ -951,7 +951,7 @@ int VoyeurEngine::getChooseButton()  {
 			
 			for (uint idx = 0; idx < hotspots.size(); ++idx) {
 				if (hotspots[idx].contains(pt)) {
-					if (!_voy._field4F0 || (idx + 1) != READ_LE_UINT32(_controlPtr->_ptr + 4)) {
+					if (!_voy._victimMurdered || (idx + 1) != READ_LE_UINT32(_controlPtr->_ptr + 4)) {
 						selectedIndex = idx;
 						if (selectedIndex != prevIndex) {
 							PictureResource *btnPic = _bVoy->boltEntry(_playStampGroupId + 8 + idx)._picResource;

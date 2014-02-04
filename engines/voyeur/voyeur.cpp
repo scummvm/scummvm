@@ -70,8 +70,11 @@ Common::Error VoyeurEngine::run() {
 
 	_eventsManager.resetMouse();
 	if (doHeadTitle()) {
+		// The original allows the victim to be explicitly specified via the command line.
+		// We don't currently support this in ScummVM, but I'm leaving the code below
+		// in case we ever want to make use of it.
 		if (_iForceDeath >= 1 && _iForceDeath <= 4)
-			_voy._eventFlags |= 0x80;
+			_voy._eventFlags |= EVTFLAG_VICTIM_PRESET;
 
 		playStamp();
 		if (!shouldQuit())
@@ -116,12 +119,6 @@ void VoyeurEngine::globalInitBolt() {
 	assert(_graphicsManager._fontPtr->_curFont);
 
 	// Setup default flags
-	_voy._eventFlags = EVTFLAG_TIME_DISABLED;
-	_voy._field4376 = _voy._field4378 = 127;
-	_voy._field4F2 = 9999;
-	_voy._aptLoadMode = -1;
-	_voy._eventFlags |= EVTFLAG_100;
-	
 	_voy._curICF0 = _graphicsManager._palFlag ? 0xFFFFA5E0 : 0x5F90; 
 	_eventsManager.addFadeInt();
 }
@@ -240,7 +237,6 @@ bool VoyeurEngine::doLock() {
 	byte *wrongVoc = _filesManager.fload("wrong.voc", &wrongVocSize);
 
 	if (_bVoy->getBoltGroup(0x700)) {
-		_voy._field4380 = 0;
 		_voy._viewBounds = _bVoy->boltEntry(0x704)._rectResource;
 
 		Common::String password = "3333";

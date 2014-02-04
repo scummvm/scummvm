@@ -35,7 +35,7 @@ enum VoyeurEventType { EVTYPE_VIDEO = 1, EVTYPE_AUDIO = 2, EVTYPE_EVID = 3,
 	EVTYPE_COMPUTER = 4 };
 
 enum EventFlag { EVTFLAG_TIME_DISABLED = 1, EVTFLAG_2 = 2, EVTFLAG_8 = 8, EVTFLAG_RECORDING = 0x10,
-	EVTFLAG_40 = 0x40, EVTFLAG_100 = 0x100 };
+	EVTFLAG_40 = 0x40, EVTFLAG_VICTIM_PRESET = 0x80, EVTFLAG_100 = 0x100 };
 
 struct VoyeurEvent {
 	int _hour;
@@ -133,15 +133,15 @@ public:
 	Common::Rect _rect4E4;
 	int _computerTimeMin;
 	int _computerTimeMax;
-	int _field4F0;
-	int _field4F2;
+	bool _victimMurdered;
+	int _murderThreshold;
 
 	int _field4376;
 	int _field4378;
 	int _field437A;
 	int _field437C;
 	int _field437E;
-	int _field4380;
+	int _victimNumber;
 	int _field4382;
 	int _videoEventId;
 	RectResource *_viewBounds;
