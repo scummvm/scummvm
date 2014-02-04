@@ -220,8 +220,9 @@ bool RL2Decoder::RL2FileHeader::isValid() const {
 	return _signature == MKTAG('R','L','V','2') || _signature != MKTAG('R','L','V','3');
 }
 
-double RL2Decoder::RL2FileHeader::getFrameRate() const {
-	return (_soundRate > 0) ? _rate / _defSoundSize : 11025 / 1103;
+Common::Rational RL2Decoder::RL2FileHeader::getFrameRate() const {
+	return (_soundRate > 0) ? Common::Rational(_rate, _defSoundSize) : 
+		Common::Rational(11025, 1103);
 }
 
 /*------------------------------------------------------------------------*/

@@ -69,7 +69,7 @@ private:
 		~RL2FileHeader();
 		void load(Common::SeekableReadStream *stream);
 		bool isValid() const;
-		double getFrameRate() const;
+		Common::Rational getFrameRate() const;
 	};
 
 	class SoundFrame {

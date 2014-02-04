@@ -565,8 +565,9 @@ void VoyeurEngine::playAVideoDuration(int videoId, int duration) {
 	RL2Decoder decoder;
 	decoder.loadVideo(videoId);
 
+	decoder.seek(Audio::Timestamp(_voy._vocSecondsOffset * 1000, 
+		decoder.getHeader().getFrameRate().toInt()));
 	decoder.start();
-	decoder.seek(Audio::Timestamp(_voy._vocSecondsOffset * 1000, decoder.getHeader().getFrameRate()));
 	int endFrame = decoder.getCurFrame() + totalFrames; 
 
 	_eventsManager.getMouseInfo();
