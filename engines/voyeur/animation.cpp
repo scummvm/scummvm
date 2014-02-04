@@ -268,8 +268,8 @@ bool RL2Decoder::RL2VideoTrack::endOfTrack() const {
 }
 
 bool RL2Decoder::RL2VideoTrack::seek(const Audio::Timestamp &time) {
-	int frame = time.totalNumberOfFrames();
-
+	int frame = getFrameAtTime(time);
+		
 	if (frame < 0 || frame >= _header._numFrames)
 		return false;
 
