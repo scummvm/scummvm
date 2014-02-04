@@ -43,7 +43,6 @@ GhostRoom::GhostRoom(AvalancheEngine *vm) {
 		_greenEyes[i] = nullptr;
 
 	_glerk = nullptr;
-	_gd = _gm = 0;
 	_glerkStage = 0;
 	_aarghCount = 0;
 	_batX = _batY = 0;
