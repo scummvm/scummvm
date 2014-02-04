@@ -40,7 +40,7 @@ enum PictureType {kEga, kBgi, kNaturalImage};
 struct SpriteType {
 	PictureType _type;
 	int16 _x, _y;
-	int16 _xl, _yl;
+	int16 _width, _height;
 	int32 _size;
 	Graphics::Surface _picture;
 };

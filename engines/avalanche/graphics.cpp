@@ -850,10 +850,10 @@ void GraphicManager::showScroll() {
 
 void GraphicManager::getNaturalPicture(SpriteType &sprite) {
 	sprite._type = kNaturalImage; // We simply read from the screen and later, in drawSprite() we draw it right back.
-	sprite._size = sprite._xl * 8 * sprite._yl + 1;
-	sprite._picture.create(sprite._xl * 8, sprite._yl + 1, Graphics::PixelFormat::createFormatCLUT8());
-	for (uint16 y = 0; y < sprite._yl + 1; y++) {
-		for (uint16 x = 0; x < sprite._xl * 8; x++)
+	sprite._size = sprite._width * 8 * sprite._height + 1;
+	sprite._picture.create(sprite._width * 8, sprite._height + 1, Graphics::PixelFormat::createFormatCLUT8());
+	for (uint16 y = 0; y < sprite._height + 1; y++) {
+		for (uint16 x = 0; x < sprite._width * 8; x++)
 			*(byte *)sprite._picture.getBasePtr(x, y) = *(byte *)_vm->_graphics->_surface.getBasePtr(sprite._x * 8 + x, sprite._y + y);
 	}
 }

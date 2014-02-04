@@ -279,24 +279,24 @@ void Background::load(byte number) {
 		sprite._type = (PictureType)(f.readByte());
 		sprite._x = f.readSint16LE();
 		sprite._y = f.readSint16LE();
-		sprite._xl = f.readSint16LE();
-		sprite._yl = f.readSint16LE();
+		sprite._width = f.readSint16LE();
+		sprite._height = f.readSint16LE();
 		sprite._size = f.readSint32LE();
 		bool natural = f.readByte();
 		bool memorize = f.readByte();
 
 		if (memorize) {
 			_sprites[i]._x = sprite._x;
-			_sprites[i]._xl = sprite._xl;
+			_sprites[i]._width = sprite._width;
 			_sprites[i]._y = sprite._y;
-			_sprites[i]._yl = sprite._yl;
+			_sprites[i]._height = sprite._height;
 			_sprites[i]._type = sprite._type;
 
 			if (natural)
 				_vm->_graphics->getNaturalPicture(_sprites[i]);
 			else {
 				_sprites[i]._size = sprite._size;
-				_sprites[i]._picture = _vm->_graphics->loadPictureRaw(f, _sprites[i]._xl * 8, _sprites[i]._yl + 1);
+				_sprites[i]._picture = _vm->_graphics->loadPictureRaw(f, _sprites[i]._width * 8, _sprites[i]._height + 1);
 			}
 		} else
 			_sprites[i]._x = kOnDisk;
@@ -335,11 +335,11 @@ void Background::draw(int16 destX, int16 destY, byte sprId) {
 		sprite._type = (PictureType)(f.readByte());
 		sprite._x = f.readSint16LE();
 		sprite._y = f.readSint16LE();
-		sprite._xl = f.readSint16LE();
-		sprite._yl = f.readSint16LE();
+		sprite._width = f.readSint16LE();
+		sprite._height = f.readSint16LE();
 		sprite._size = f.readSint32LE();
 		f.skip(2); // Natural and Memorize are used in Load()
-		sprite._picture = _vm->_graphics->loadPictureRaw(f, sprite._xl * 8, sprite._yl + 1);
+		sprite._picture = _vm->_graphics->loadPictureRaw(f, sprite._width * 8, sprite._height + 1);
 
 		if (destX < 0) {
 			destX = sprite._x * 8;
