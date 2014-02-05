@@ -366,8 +366,20 @@ void sceneHandler27_knockBats(int bat1, int bat2) {
 	warning("STUB: sceneHandler27_knockBats()");
 }
 
-void sceneHandler27_batSetColors(int bat) {
-	warning("STUB: sceneHandler27_batSetColors()");
+void sceneHandler27_batSetColors(int batn) {
+	Bat *bat = g_vars->scene27_bats[batn];
+
+	if (g_vars->scene27_hitZone->isPixelHitAtPos((int)bat->currX, (int)bat->currY) ) {
+		if (bat->ani->_statics->_staticsId == ST_BTA_NORM) {
+			if (!bat->ani->_movement)
+				bat->ani->_statics = bat->ani->getStaticsById(ST_BTA_HILITE);
+		}
+	} else {
+		if (bat->ani->_statics->_staticsId == ST_BTA_HILITE) {
+			if (!bat->ani->_movement)
+				bat->ani->_statics = bat->ani->getStaticsById(ST_BTA_NORM);
+		}
+	}
 }
 
 void sceneHandler27_calcWinArcade() {

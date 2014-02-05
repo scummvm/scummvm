@@ -1105,6 +1105,8 @@ namespace Fullpipe {
 #define SND_27_027 4128
 #define SND_27_044 4687
 #define ST_BTA_FALL 2054
+#define ST_BTA_HILITE 2052
+#define ST_BTA_NORM 2028
 #define ST_DRV_VENT 1996
 #define ST_MID_BROOM 2022
 #define ST_MID_SPADE 3489
