@@ -32,7 +32,7 @@ namespace Avalanche {
 
 const int8 GhostRoom::kAdjustment[5] = { 7, 0, 7, 7, 7 };
 const byte GhostRoom::kWaveOrder[5] = { 5, 1, 2, 3, 4 };
-const byte GhostRoom::kGlerkFade[26] = { 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 3, 3, 3, 2, 2, 1 };
+const byte GhostRoom::kGlerkFade[26] = { 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 2, 2, 2, 1, 1, 0 };
 const byte GhostRoom::kGreldetFade[18] = { 1, 2, 3, 4, 5, 6, 6, 6, 5, 5, 4, 4, 3, 3, 2, 2, 1, 1 };
 
 GhostRoom::GhostRoom(AvalancheEngine *vm) {
@@ -168,7 +168,44 @@ void GhostRoom::run() {
 	_vm->_graphics->drawFilledRectangle(Common::Rect(0, 0, 640, 200), kColorBlack); // Black out the whole screen.
 
 	loadPictures();
+
+	_glerkStage = 0;
+
+	for (int x = 500; x >= 217; x--) {
+		// The floating eyeballs:
+		int xBound = x % 30;
+		if ((22 <= xBound) && (xBound <= 27)) {
+			if (xBound == 27)
+				_vm->_graphics->drawFilledRectangle(Common::Rect(x, 134, x + 17, 137), kColorBlack);
+			_vm->_graphics->ghostDrawPicture(_eyes[0], x, 136);
+			_vm->_graphics->drawDot(x + 16, 137, kColorBlack);
+		} else {
+			if (xBound == 21)
+				_vm->_graphics->drawFilledRectangle(Common::Rect(x, 136, x + 18, 140), kColorBlack);
+			_vm->_graphics->ghostDrawPicture(_eyes[0], x, 135);
+			_vm->_graphics->drawDot(x + 16, 136, kColorBlack); // Eyes would leave a trail 1 pixel high behind them.
+		}
+		
+		// Plot the Glerk:
+		if ((x % 10) == 0) {
+			if (_glerkStage > 25)
+				break;
+
+			_vm->_graphics->ghostDrawGlerk(_glerk[kGlerkFade[_glerkStage]], 456, 14);
+			_glerkStage++;
+		}
+
+		_vm->_graphics->refreshScreen();
+
+		doBat();
+
+		wait(15);
+	}
 	
+	// Blank out the Glerk's space.
+	_vm->_graphics->drawFilledRectangle(Common::Rect(456, 14, 530, 50), kColorBlack);
+	_vm->_graphics->refreshScreen();
+
 	warning("STUB: run()");
 
 	CursorMan.showMouse(true);

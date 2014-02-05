@@ -59,6 +59,7 @@ public:
 	void loadDigits();
 	void loadMouse(byte which);
 
+	void drawDot(int x, int y, Color color);
 	void drawLine(int x1, int y1, int x2, int y2, int penX, int penY, Color color);
 	Common::Point drawScreenArc(int16 x, int16 y, int16 stAngle, int16 endAngle, uint16 radius, Color color);
 	void drawPieSlice(int16 x, int16 y, int16 stAngle, int16 endAngle, uint16 radius, Color color);

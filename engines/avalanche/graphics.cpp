@@ -281,6 +281,10 @@ Common::Point GraphicManager::drawArc(Graphics::Surface &surface, int16 x, int16
 	return endPoint;
 }
 
+void GraphicManager::drawDot(int x, int y, Color color) {
+	*(byte *)_surface.getBasePtr(x, y) = color;
+}
+
 void GraphicManager::drawLine(int x1, int y1, int x2, int y2, int penX, int penY, Color color) {
 	_surface.drawThickLine(x1, y1, x2, y2, penX, penY, color);
 }
