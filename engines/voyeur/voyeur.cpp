@@ -160,20 +160,20 @@ bool VoyeurEngine::doHeadTitle() {
 		}
 
 		// Show the title screen
+		_eventsManager.getMouseInfo();
 		showTitleScreen();
 		if (shouldQuit())
 			return false;
 
 		// Opening
-		if (!_eventsManager._mouseClicked) {
-			doOpening();
+		_eventsManager.getMouseInfo();
+		doOpening();
+		if (shouldQuit())
+			return false;
 
-			_eventsManager.getMouseInfo();
-			doTransitionCard("Saturday Afternoon", "Player's Apartment");
-			_eventsManager.delayClick(90);
-		} else {
-			_eventsManager._mouseClicked = false;
-		}
+		_eventsManager.getMouseInfo();
+		doTransitionCard("Saturday Afternoon", "Player's Apartment");
+		_eventsManager.delayClick(90);
 
 		if (_voy._eventFlags & EVTFLAG_VICTIM_PRESET) {
 			// Preset victim turned on, so add a default set of incriminating videos
