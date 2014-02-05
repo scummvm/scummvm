@@ -46,13 +46,14 @@ VideoSubtitler::~VideoSubtitler(void) {
 	for (uint i = 0; i < _subtitles.size(); i++) {
 		delete _subtitles[i];
 	}
+
 	_subtitles.clear();
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool VideoSubtitler::loadSubtitles(const char *Filename, const char *subtitleFile) {
-	if (!Filename) {
+bool VideoSubtitler::loadSubtitles(const char *filename, const char *subtitleFile) {
+	if (!filename) {
 		return false;
 	}
 
@@ -72,8 +73,8 @@ bool VideoSubtitler::loadSubtitles(const char *Filename, const char *subtitleFil
 	if (subtitleFile) {
 		newFile = Common::String(subtitleFile);
 	} else {
-		Common::String path = PathUtil::getDirectoryName(Filename);
-		Common::String name = PathUtil::getFileNameWithoutExtension(Filename);
+		Common::String path = PathUtil::getDirectoryName(filename);
+		Common::String name = PathUtil::getFileNameWithoutExtension(filename);
 		Common::String ext = ".SUB";
 		newFile = PathUtil::combine(path, name + ext);
 	}
@@ -107,10 +108,22 @@ bool VideoSubtitler::loadSubtitles(const char *Filename, const char *subtitleFil
 		textLength = 0;
 
 		lineLength = 0;
-		while (pos + lineLength < size && buffer[pos + lineLength] != '\n' && buffer[pos + lineLength] != '\0') lineLength++;
 
-		int realLength = lineLength - (pos + lineLength >= size ? 0 : 1);
-		char *Text = new char[realLength + 1];
+		while (pos + lineLength < size &&
+		        buffer[pos + lineLength] != '\n' &&
+		        buffer[pos + lineLength] != '\0') {
+			lineLength++;
+		}
+
+		int realLength;
+
+		if (pos + lineLength >= size) {
+			realLength = lineLength - 0;
+		} else {
+			realLength = lineLength - 1;
+		}
+
+		char *text = new char[realLength + 1];
 		char *line = (char *)&buffer[pos];
 
 		for (int i = 0; i < realLength; i++) {
@@ -134,31 +147,31 @@ bool VideoSubtitler::loadSubtitles(const char *Filename, const char *subtitleFil
 					} else if (tokenPos == 1) {
 						end = atoi(token);
 					}
-
 					delete[] token;
 				} else {
-					Text[textLength] = line[i];
+					text[textLength] = line[i];
 					textLength++;
 				}
 			} else {
 				if (inToken) {
 					tokenLength++;
 				} else {
-					Text[textLength] = line[i];
-					if (Text[textLength] == '|') {
-						Text[textLength] = '\n';
+					text[textLength] = line[i];
+					if (text[textLength] == '|') {
+						text[textLength] = '\n';
 					}
 					textLength++;
 				}
 			}
 		}
-		Text[textLength] = '\0';
+
+		text[textLength] = '\0';
 
 		if (start != -1 && textLength > 0 && (start != 1 || end != 1)) {
-			_subtitles.push_back(new VideoSubtitle(_gameRef, Text, start, end));
+			_subtitles.push_back(new VideoSubtitle(_gameRef, text, start, end));
 		}
 
-		delete [] Text;
+		delete [] text;
 
 		pos += lineLength + 1;
 	}
@@ -184,27 +197,57 @@ bool VideoSubtitler::display() {
 //////////////////////////////////////////////////////////////////////////
 bool VideoSubtitler::update(long frame) {
 	if (frame != _lastSample) {
+		/*
+		 * If the frame count hasn't advanced the previous state still matches
+		 * the current frame (obviously).
+		 */
+
 		_lastSample = frame;
+		// Otherwise, we update _lastSample; see above.
 
-		// process subtitles
 		_showSubtitle = false;
-		while (_currentSubtitle < _subtitles.size()) {
-			int end = _subtitles[_currentSubtitle]->_endFrame;
 
-			bool nextFrameOK = (_currentSubtitle < _subtitles.size() - 1 && _subtitles[_currentSubtitle + 1]->_startFrame <= frame);
+		bool overdue = (frame > _subtitles[_currentSubtitle]->_endFrame);
+		bool hasNext = (_currentSubtitle + 1 < _subtitles.size());
+		bool nextStarted = false;
+		if (hasNext) {
+			nextStarted = (_subtitles[_currentSubtitle + 1]->_startFrame <= frame);
+		}
 
-			if (frame > end) {
-				if (nextFrameOK) {
-					_currentSubtitle++;
-				} else {
-					_showSubtitle = (end == 0);
-					break;
-				}
+		while (_currentSubtitle < _subtitles.size() &&
+		        overdue && hasNext && nextStarted) {
+			/*
+			 *  We advance until we get past all overdue subtitles.
+			 *  We should exit the cycle when we either reach the first
+			 *  subtitle which is not overdue whose subsequent subtitle
+			 *  has not started yet (aka the one we must display now or
+			 *  the one which WILL be displayed when its time comes)
+			 *  and / or when we reach the last one.
+			 */
+
+			_currentSubtitle++;
+
+			overdue = (frame > _subtitles[_currentSubtitle]->_endFrame);
+			hasNext = (_currentSubtitle + 1 < _subtitles.size());
+			if (hasNext) {
+				nextStarted = (_subtitles[_currentSubtitle + 1]->_startFrame <= frame);
 			} else {
-				_showSubtitle = true;
-				break;
+				nextStarted = false;
 			}
 		}
+
+		bool currentValid = (_subtitles[_currentSubtitle]->_endFrame != 0);
+		/*
+		 * No idea why we do this check, carried over from Mnemonic's code.
+		 * Possibly a workaround for buggy subtitles or some kind of sentinel? :-\
+		 */
+
+		bool currentStarted = frame >= _subtitles[_currentSubtitle]->_startFrame;
+
+		if (currentStarted && !overdue && currentValid) {
+			_showSubtitle = true;
+		}
+
 	}
 	return false;
 }
