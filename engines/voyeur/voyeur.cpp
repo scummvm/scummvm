@@ -696,7 +696,7 @@ void VoyeurEngine::flipPageAndWaitForFade() {
 
 void VoyeurEngine::showEndingNews() {
 	_playStampGroupId = (_voy._field4382 - 1) * 256 + 0x7700;
-	_voy._boltGroupId2 = (_controlPtr->_state->_v1 - 1) * 256 + 0x7B00;
+	_voy._boltGroupId2 = (_controlPtr->_state->_victimIndex - 1) * 256 + 0x7B00;
 
 	_bVoy->getBoltGroup(_playStampGroupId);
 	_bVoy->getBoltGroup(_voy._boltGroupId2);

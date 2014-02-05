@@ -494,13 +494,15 @@ public:
 	virtual ~ControlResource() {}
 };
 
+/**
+ * Stores data about the intended victim
+ */
 class StateResource {
 public:
 	int _vals[4];
-	int &_v0;
-	int &_v1;
-	int &_v2;
-	int &_v3;
+	int &_victimIndex;
+	int &_victimEvidenceIndex;
+	int &_victimMurderIndex;
 
 	StateResource(BoltFilesState &state, const byte *src);
 	virtual ~StateResource() {}

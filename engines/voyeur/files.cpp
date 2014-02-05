@@ -1645,7 +1645,8 @@ ControlResource::ControlResource(BoltFilesState &state, const byte *src) {
 /*------------------------------------------------------------------------*/
 
 StateResource::StateResource(BoltFilesState &state, const byte *src):
-		_v0(_vals[0]), _v1(_vals[1]), _v2(_vals[2]), _v3(_vals[3]) {
+		_victimIndex(_vals[1]), _victimEvidenceIndex(_vals[2]), 
+		_victimMurderIndex(_vals[3]) {
 	for (int i = 0; i < 4; ++i)
 		_vals[i] = READ_LE_UINT32(src + i * 4);
 }

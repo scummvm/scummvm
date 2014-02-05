@@ -370,7 +370,7 @@ void ThreadResource::parsePlayCommands() {
 			// Play an audio event
 			v2 = READ_LE_UINT16(dataP);
 
-			if (v2 == 0 || _vm->_controlPtr->_state->_v1 == v2) {
+			if (v2 == 0 || _vm->_controlPtr->_state->_victimIndex == v2) {
 				_vm->_audioVideoId = READ_LE_UINT16(dataP + 2) - 1;
 				_vm->_voy._field468 = READ_LE_UINT16(dataP + 4);
 				_vm->_voy._field46A = READ_LE_UINT16(dataP + 6);
@@ -401,7 +401,7 @@ void ThreadResource::parsePlayCommands() {
 			// Play a video event
 			v2 = READ_LE_UINT16(dataP);
 
-			if (v2 == 0 || _vm->_controlPtr->_state->_v1 == v2) {
+			if (v2 == 0 || _vm->_controlPtr->_state->_victimIndex == v2) {
 				_vm->_audioVideoId = READ_LE_UINT16(dataP + 2) - 1;
 				_vm->_voy._field468 = READ_LE_UINT16(dataP + 4);
 				_vm->_voy._field46A = READ_LE_UINT16(dataP + 6);
@@ -512,7 +512,7 @@ void ThreadResource::parsePlayCommands() {
 			// Check whether transition to a given time period is allowed, and
 			// if so, load the time information for the new time period
 			v2 = READ_LE_UINT16(dataP);
-			if (v2 == 0 || _vm->_controlPtr->_state->_v1 == v2) {
+			if (v2 == 0 || _vm->_controlPtr->_state->_victimIndex == v2) {
 				_vm->_voy._field470 = 5;
 				int count = READ_LE_UINT16(dataP + 2);
 				_vm->_voy._RTVLimit = READ_LE_UINT16(dataP + 4);
@@ -547,7 +547,7 @@ void ThreadResource::parsePlayCommands() {
 			v2 = READ_LE_UINT16(dataP);
 			v3 = READ_LE_UINT16(dataP + 2) - 1;
 
-			if (v2 == 0 || _vm->_controlPtr->_state->_v1 == v2) {
+			if (v2 == 0 || _vm->_controlPtr->_state->_victimIndex == v2) {
 				int idx = 0;
 				while (_vm->_voy._videoHotspotTimes._min[idx][v3] != 9999)
 					++idx;
@@ -565,7 +565,7 @@ void ThreadResource::parsePlayCommands() {
  			v2 = READ_LE_UINT16(dataP);
 			v3 = READ_LE_UINT16(dataP + 2) - 1;
 
-			if (v2 == 0 || _vm->_controlPtr->_state->_v1 == v2) {
+			if (v2 == 0 || _vm->_controlPtr->_state->_victimIndex == v2) {
 				int idx = 0;
 				while (_vm->_voy._audioHotspotTimes._min[idx][v3] != 9999)
 					++idx;
@@ -583,7 +583,7 @@ void ThreadResource::parsePlayCommands() {
 			v2 = READ_LE_UINT16(dataP);
 			v3 = READ_LE_UINT16(dataP + 2) - 1;
 
-			if (v2 == 0 || _vm->_controlPtr->_state->_v1 == v2) {
+			if (v2 == 0 || _vm->_controlPtr->_state->_victimIndex == v2) {
 				int idx = 0;
 				while (_vm->_voy._evidenceHotspotTimes._min[idx][v3] != 9999)
 					++idx;
@@ -608,11 +608,11 @@ void ThreadResource::parsePlayCommands() {
 				} while (randomVal == _vm->_voy._victimNumber);
 
 				_vm->_voy._victimNumber = randomVal;
-				_vm->_controlPtr->_state->_v1 = randomVal;
+				_vm->_controlPtr->_state->_victimIndex = randomVal;
 			} else {
 				// Player has seen something that locks in the character to die
 				_vm->_voy._victimNumber = _vm->_iForceDeath;
-				_vm->_controlPtr->_state->_v1 = _vm->_iForceDeath;
+				_vm->_controlPtr->_state->_victimIndex = _vm->_iForceDeath;
 			}
 
 			_vm->saveLastInplay();
@@ -625,7 +625,7 @@ void ThreadResource::parsePlayCommands() {
 		case 12:
 			v2 = READ_LE_UINT16(dataP);
 
-			if (v2 == 0 || _vm->_controlPtr->_state->_v1 == v2) {
+			if (v2 == 0 || _vm->_controlPtr->_state->_victimIndex == v2) {
 				_vm->_voy._boltGroupId2 = _vm->_resolvePtr[READ_LE_UINT16(dataP + 2)];
 				_vm->_voy._roomHotspotsEnabled[READ_LE_UINT16(dataP + 4) - 1] = true;
 			}
@@ -636,7 +636,7 @@ void ThreadResource::parsePlayCommands() {
 		case 13:
 			v2 = READ_LE_UINT16(dataP);
 
-			if (v2 == 0 || _vm->_controlPtr->_state->_v1 == v2) {
+			if (v2 == 0 || _vm->_controlPtr->_state->_victimIndex == v2) {
 				_vm->_voy._computerTextId = READ_LE_UINT16(dataP + 2);
 				_vm->_voy._computerTimeMin = READ_LE_UINT16(dataP + 4);
 				_vm->_voy._computerTimeMax = READ_LE_UINT16(dataP + 6);
@@ -673,7 +673,7 @@ void ThreadResource::parsePlayCommands() {
 			v2 = READ_LE_UINT16(dataP);
 			v3 = READ_LE_UINT16(dataP + 2);
 
-			if (v2 == 0 || _vm->_controlPtr->_state->_v1 == v2)
+			if (v2 == 0 || _vm->_controlPtr->_state->_victimIndex == v2)
 				_vm->_voy._murderThreshold = v3;
 			
 			dataP += 4;

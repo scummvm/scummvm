@@ -643,7 +643,7 @@ void VoyeurEngine::reviewTape() {
 			pt = _eventsManager.getMousePos();
 			if (_eventsManager._mouseClicked && _voy._viewBounds->left == pt.x &&
 					(_voy._eventFlags & EVTFLAG_40) && _eventsManager._rightClick) {
-				_controlPtr->_state->_v1 = (pt.y / 60) + 1;
+				_controlPtr->_state->_victimIndex = (pt.y / 60) + 1;
 				foundIndex = -1;
 				_eventsManager._rightClick = 0;
 			}
@@ -809,38 +809,38 @@ void VoyeurEngine::doTapePlaying() {
 }
 
 bool VoyeurEngine::checkForMurder() {
-	int v = _controlPtr->_state->_v3;
+	int v = _controlPtr->_state->_victimMurderIndex;
 
 	for (int idx = 0; idx < _voy._eventCount; ++idx) {
 		VoyeurEvent &evt = _voy._events[idx];
 
 		if (evt._type == EVTYPE_VIDEO) {
-			switch (_controlPtr->_state->_v1) {
+			switch (_controlPtr->_state->_victimIndex) {
 			case 1:
 				if (evt._audioVideoId == 41 && evt._computerOn <= 15 &&
 						(evt._computerOff + evt._computerOn) >= 16) {
-					_controlPtr->_state->_v3 = 1;
+					_controlPtr->_state->_victimMurderIndex = 1;
 				}
 				break;
 
 			case 2:
 				if (evt._audioVideoId == 53 && evt._computerOn <= 19 &&
 						(evt._computerOff + evt._computerOn) >= 21) {
-					_controlPtr->_state->_v3 = 2;
+					_controlPtr->_state->_victimMurderIndex = 2;
 				}
 				break;
 
 			case 3:
 				if (evt._audioVideoId == 50 && evt._computerOn <= 28 &&
 						(evt._computerOff + evt._computerOn) >= 29) {
-					_controlPtr->_state->_v3 = 3;
+					_controlPtr->_state->_victimMurderIndex = 3;
 				}
 				break;
 
 			case 4:
 				if (evt._audioVideoId == 43 && evt._computerOn <= 10 &&
 						(evt._computerOff + evt._computerOn) >= 14) {
-					_controlPtr->_state->_v3 = 4;
+					_controlPtr->_state->_victimMurderIndex = 4;
 				}
 				break;
 
@@ -849,13 +849,13 @@ bool VoyeurEngine::checkForMurder() {
 			}
 		}
 
-		if (_controlPtr->_state->_v3 == _controlPtr->_state->_v1) {
+		if (_controlPtr->_state->_victimMurderIndex == _controlPtr->_state->_victimIndex) {
 			_voy._videoEventId = idx;
 			return true;
 		}
 	}
 
-	_controlPtr->_state->_v3 = v;
+	_controlPtr->_state->_victimMurderIndex = v;
 	_voy._videoEventId = -1;
 	return false;
 }
@@ -894,7 +894,7 @@ bool VoyeurEngine::checkForIncriminate() {
 		}
 
 		if (_voy._field4382) {
-			_controlPtr->_state->_v3 = 88;
+			_controlPtr->_state->_victimMurderIndex = 88;
 			_voy._videoEventId = idx;
 			return true;
 		}
@@ -954,7 +954,7 @@ int VoyeurEngine::getChooseButton()  {
 			
 			for (uint idx = 0; idx < hotspots.size(); ++idx) {
 				if (hotspots[idx].contains(pt)) {
-					if (!_voy._victimMurdered || ((int)idx + 1) != _controlPtr->_state->_v1) {
+					if (!_voy._victimMurdered || ((int)idx + 1) != _controlPtr->_state->_victimIndex) {
 						selectedIndex = idx;
 						if (selectedIndex != prevIndex) {
 							PictureResource *btnPic = _bVoy->boltEntry(_playStampGroupId + 8 + idx)._picResource;
