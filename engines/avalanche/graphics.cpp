@@ -527,6 +527,32 @@ void GraphicManager::ghostDrawGhost(byte ghostArr[2][66][26], uint16 destX, uint
 	ghostPic.free();
 }
 
+void GraphicManager::ghostDrawGlerk(byte glerkArr[4][35][9], uint16 destX, uint16 destY) {
+	// Constants from the original code.
+	uint16 height = 35;
+	uint16 width = 9 * 8;
+
+	Graphics::Surface glerkPic;
+	glerkPic.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
+
+	for (int y = 0; y < height; y++) {
+		for (int plane = 0; plane < 4; plane++) {
+			for (uint16 x = 0; x < width / 8; x++) {
+				byte pixel = glerkArr[plane][y][x];
+				for (int bit = 0; bit < 8; bit++) {
+					byte pixelBit = (pixel >> bit) & 1;
+					if (pixelBit != 0)
+						*(byte *)glerkPic.getBasePtr(x * 8 + 7 - bit, y) += (pixelBit << plane);
+				}
+			}
+		}
+	}
+
+	drawPicture(_surface, glerkPic, destX, destY);
+
+	glerkPic.free();
+}
+
 /**
  *	With the use of the second argument, it replaces get_meg_aargh as well.
  * @remarks	Originally called 'get_me' and was located in Ghostroom.
@@ -538,7 +564,7 @@ Graphics::Surface GraphicManager::ghostLoadPicture(Common::File &file, Common::P
 	coord.y = cb._y;
 	
 	Graphics::Surface picture = loadPictureGraphic(file);
-
+	
 	int bytesPerRow = (picture.w / 8);
 	if ((picture.w % 8) > 0)
 		bytesPerRow += 1;
