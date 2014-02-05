@@ -68,14 +68,14 @@ Common::Error VoyeurEngine::run() {
 	ESP_Init();
 	globalInitBolt();
 
+	// The original allows the victim to be explicitly specified via the command line.
+	// We don't currently support this in ScummVM, but I'm leaving the code below
+	// in case we ever want to make use of it.
+	if (_iForceDeath >= 1 && _iForceDeath <= 4)
+		_voy._eventFlags |= EVTFLAG_VICTIM_PRESET;
+
 	_eventsManager.resetMouse();
 	if (doHeadTitle()) {
-		// The original allows the victim to be explicitly specified via the command line.
-		// We don't currently support this in ScummVM, but I'm leaving the code below
-		// in case we ever want to make use of it.
-		if (_iForceDeath >= 1 && _iForceDeath <= 4)
-			_voy._eventFlags |= EVTFLAG_VICTIM_PRESET;
-
 		playStamp();
 		if (!shouldQuit())
 			doTailTitle();
@@ -177,24 +177,15 @@ bool VoyeurEngine::doHeadTitle() {
 
 		if (_voy._eventFlags & EVTFLAG_VICTIM_PRESET) {
 			// Preset victim turned on, so add a default set of incriminating videos
-			if (_voy._eventCount <= 1)
-				_voy.addEvent(18, 1, EVTYPE_VIDEO, 33, 0, 998, -1);
-			if (_voy._eventCount <= 2)
-				_voy.addEvent(18, 2, EVTYPE_VIDEO, 41, 0, 998, -1);
-			if (_voy._eventCount <= 3)
-				_voy.addEvent(18, 3, EVTYPE_VIDEO, 47, 0, 998, -1);
-			if (_voy._eventCount <= 4)
-				_voy.addEvent(18, 4, EVTYPE_VIDEO, 53, 0, 998, -1);
-			if (_voy._eventCount <= 5)
-				_voy.addEvent(18, 5, EVTYPE_VIDEO, 46, 0, 998, -1);
-			if (_voy._eventCount <= 6)
-				_voy.addEvent(18, 6, EVTYPE_VIDEO, 50, 0, 998, -1);
-			if (_voy._eventCount <= 7)
-				_voy.addEvent(18, 7, EVTYPE_VIDEO, 40, 0, 998, -1);
-			if (_voy._eventCount <= 8)
-				_voy.addEvent(18, 8, EVTYPE_VIDEO, 43, 0, 998, -1);
-			if (_voy._eventCount <= 9)
-				_voy.addEvent(19, 1, EVTYPE_AUDIO, 20, 0, 998, -1);
+			_voy.addEvent(18, 1, EVTYPE_VIDEO, 33, 0, 998, -1);
+			_voy.addEvent(18, 2, EVTYPE_VIDEO, 41, 0, 998, -1);
+			_voy.addEvent(18, 3, EVTYPE_VIDEO, 47, 0, 998, -1);
+			_voy.addEvent(18, 4, EVTYPE_VIDEO, 53, 0, 998, -1);
+			_voy.addEvent(18, 5, EVTYPE_VIDEO, 46, 0, 998, -1);
+			_voy.addEvent(18, 6, EVTYPE_VIDEO, 50, 0, 998, -1);
+			_voy.addEvent(18, 7, EVTYPE_VIDEO, 40, 0, 998, -1);
+			_voy.addEvent(18, 8, EVTYPE_VIDEO, 43, 0, 998, -1);
+			_voy.addEvent(19, 1, EVTYPE_AUDIO, 20, 0, 998, -1);
 		} 
 	}
 

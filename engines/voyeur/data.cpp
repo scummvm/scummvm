@@ -57,6 +57,7 @@ void SVoy::addEvent(int hour, int minute, VoyeurEventType type, int audioVideoId
 		int on, int off, int dead) {
 	VoyeurEvent &e = _events[_eventCount++];
 
+	e._type = type;
 	e._hour = hour;
 	e._minute = minute;
 	e._isAM = hour < 12;
