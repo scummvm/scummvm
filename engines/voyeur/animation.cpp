@@ -126,9 +126,9 @@ void RL2Decoder::readNextPacket() {
 	}
 }
 
-bool RL2Decoder::seek(const Audio::Timestamp &where) {
+bool RL2Decoder::seekIntern(const Audio::Timestamp &where) {
 	_soundFrameNumber = -1;
-	return VideoDecoder::seek(where);
+	return VideoDecoder::seekIntern(where);
 }
 
 void RL2Decoder::close() {

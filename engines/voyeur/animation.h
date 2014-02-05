@@ -168,7 +168,7 @@ public:
 
 	virtual void readNextPacket();
 	virtual void close();
-	virtual bool seek(const Audio::Timestamp &where);
+	virtual bool seekIntern(const Audio::Timestamp &time);
 
 	const Common::List<Common::Rect> *getDirtyRects() const;
 	void clearDirtyRects();
