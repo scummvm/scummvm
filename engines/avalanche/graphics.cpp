@@ -503,8 +503,8 @@ void GraphicManager::nimFree() {
 void GraphicManager::ghostDrawGhost(byte ghostArr[2][66][26], uint16 destX, uint16 destY) {
 	const byte kPlaneToUse[4] = { 0, 0, 0, 1 };
 	// Constants from the original code.
-	uint16 height = 66;
-	uint16 width = 26 * 8;
+	const uint16 height = 66;
+	const uint16 width = 26 * 8;
 
 	Graphics::Surface ghostPic;
 	ghostPic.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
@@ -528,8 +528,8 @@ void GraphicManager::ghostDrawGhost(byte ghostArr[2][66][26], uint16 destX, uint
 
 void GraphicManager::ghostDrawGlerk(byte glerkArr[4][35][9], uint16 destX, uint16 destY) {
 	// Constants from the original code.
-	uint16 height = 35;
-	uint16 width = 9 * 8;
+	const uint16 height = 35;
+	const uint16 width = 9 * 8;
 
 	Graphics::Surface glerkPic;
 	glerkPic.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
