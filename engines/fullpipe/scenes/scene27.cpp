@@ -362,8 +362,56 @@ bool sceneHandler27_batCalcDistance(int bat1, int bat2) {
 	return sqrt(ax * ax * 0.25 + ay * ay) * 54.0 > sqrt(dx * dx + dy * dy);
 }
 
-void sceneHandler27_knockBats(int bat1, int bat2) {
-	warning("STUB: sceneHandler27_knockBats()");
+void sceneHandler27_knockBats(int bat1n, int bat2n) {
+	Bat *bat1 = g_vars->scene27_bats[bat1n];
+	Bat *bat2 = g_vars->scene27_bats[bat2n];
+
+	if (0.0 != bat1->power) {
+		double rndF = (double)g_fp->_rnd->getRandomNumber(32767) * 0.0000009155552842799158 - 0.015
+			+ atan2(bat2->currX - bat1->currX, bat2->currY - bat1->currY);
+		double rndCos = cos(rndF);
+		double rndSin = sin(rndF);
+
+		double pow1x = cos(bat1->field_10 - rndF) * (double)((int)(bat2->currX - bat1->currX) >= 0 ? 1 : -1) * bat1->power;
+		double pow1y = sin(bat1->field_10 - rndF) * (double)((int)(bat2->currY - bat1->currY) >= 0 ? 1 : -1) * bat1->power;
+
+		bat1->powerCos -= pow1x * 1.1;
+		bat1->powerSin -= pow1y * 1.1;
+
+		rndF = ((double)g_fp->_rnd->getRandomNumber(32767) * 0.0000009155552842799158 - 0.015
+							   + atan2(bat1->currX - bat2->currX, bat1->currY - bat2->currY));
+		double pow2x = cos(bat2->field_10 - rndF) * (double)((int)(bat1->currX - bat2->currX) >= 0 ? 1 : -1) * bat2->power;
+		double pow2y = sin(bat2->field_10 - rndF) * (double)((int)(bat1->currY - bat2->currY) >= 0 ? 1 : -1) * bat2->power;
+
+		bat2->powerCos -= pow2x * 1.1;
+		bat2->powerSin -= pow2y * 1.1;
+
+		double dy = bat1->currY - bat2->currY;
+	    double dx = bat1->currX - bat2->currX;
+		double dist = (sqrt(rndSin * rndSin * 0.25 + rndCos * rndCos) * 54.0 - sqrt(dx * dx + dy * dy)) / cos(rndF - bat1->field_10);
+		bat1->currX -= cos(bat1->field_10) * (dist + 1.0);
+		bat1->currY -= sin(bat1->field_10) * (dist + 1.0);
+		bat1->powerCos += pow2x * 0.64;
+
+		if (bat1->currX <= 500.0)
+			bat1->powerSin = 0.0;
+		else
+			bat1->powerSin += pow2y * 0.64;
+
+		bat1->field_10 = atan2(bat1->powerCos, bat1->powerSin);
+		bat1->power = sqrt(bat1->powerCos * bat1->powerCos + bat1->powerSin * bat1->powerSin);
+		bat2->powerCos += pow1x * 0.64;
+
+		if (bat2->currX <= 500.0)
+			bat2->powerSin = 0;
+		else
+			bat2->powerSin += pow1y * 0.64;
+
+		bat2->field_10 = atan2(bat2->powerCos, bat2->powerSin);
+		bat2->power = sqrt(bat2->powerCos * bat2->powerCos + bat2->powerSin * bat2->powerSin);
+
+		g_fp->playSound(SND_27_026, 0);
+	}
 }
 
 void sceneHandler27_batSetColors(int batn) {

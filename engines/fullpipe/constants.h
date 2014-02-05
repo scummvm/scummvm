@@ -1102,6 +1102,7 @@ namespace Fullpipe {
 #define QU_DRV_GIVEVENT 2040
 #define QU_MID_CLEANVENT 4583
 #define QU_SC27_SHOWBET 3368
+#define SND_27_026 4127
 #define SND_27_027 4128
 #define SND_27_044 4687
 #define ST_BTA_FALL 2054
