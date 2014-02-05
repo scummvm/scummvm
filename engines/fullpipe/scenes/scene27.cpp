@@ -33,6 +33,7 @@
 #include "fullpipe/interaction.h"
 #include "fullpipe/behavior.h"
 
+#define DBG 1
 
 namespace Fullpipe {
 
@@ -243,6 +244,11 @@ void sceneHandler27_clickBat(ExCommand *cmd) {
 	int bx = g_vars->scene27_bat->_ox - 5;
 	int by = g_vars->scene27_bat->_oy - 71;
 
+#if DBG
+	sceneHandler27_throwBat();
+	return;
+#endif
+
 	if (ABS(bx - g_fp->_aniMan->_ox) > 1 || ABS(by - g_fp->_aniMan->_oy) > 1
 		|| g_fp->_aniMan->_movement || g_fp->_aniMan->_statics->_staticsId != ST_MAN_RIGHT) {
 		MessageQueue *mq = getCurrSceneSc2MotionController()->method34(g_fp->_aniMan, bx, by, 1, ST_MAN_RIGHT);
@@ -258,6 +264,9 @@ void sceneHandler27_clickBat(ExCommand *cmd) {
 }
 
 void sceneHandler27_maidSwab() {
+#if DBG
+	return;
+#endif
 	if (g_fp->getObjectState(sO_Maid) == g_fp->getObjectEnumState(sO_Maid, sO_WithSwab))
 		g_vars->scene27_maid->changeStatics2(ST_MID_SWAB);
 }
@@ -343,8 +352,10 @@ bool sceneHandler27_batFallLogic(int batn) {
 	if (bat->currX - y > 15.0 || bat->ani->_statics->_staticsId == ST_BTA_FALL) {
 		bat->ani->_priority = 2020;
 
-		g_vars->scene27_var07.remove_at(batn);
 		g_vars->scene27_var07.push_back(bat);
+
+		if (batn != g_vars->scene27_var07.size() - 1)
+			g_vars->scene27_var07.remove_at(batn);
     } else if (!bat->ani->_movement) {
 		bat->ani->startAnim(MV_BTA_FALL, 0, -1);
     }
