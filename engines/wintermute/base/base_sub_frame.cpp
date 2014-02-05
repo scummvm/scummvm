@@ -671,4 +671,11 @@ bool BaseSubFrame::setSurfaceSimple() {
 	}
 }
 
-} // End of namespace Wintermute
+
+//////////////////////////////////////////////////////////////////////////
+Common::String BaseSubFrame::debuggerToString() const {
+	return Common::String::format("%p: BaseSubFrame \"%s\" - Mirror:(%d, %d), Hotspot:(%d, %d), ", (const void *)this, getName(), _mirrorX, _mirrorY, _hotspotX, _hotspotY);
+}
+
+
+} // end of namespace Wintermute

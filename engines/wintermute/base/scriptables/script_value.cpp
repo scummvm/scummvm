@@ -703,6 +703,18 @@ TValType ScValue::getType() {
 	return _type;
 }
 
+//////////////////////////////////////////////////////////////////////////
+Common::String ScValue::getTypeStr() {
+	if (this->isString()) return "[string]";
+	else if (this->isBool()) return "[bool]";
+	else if (this->isFloat()) return "[float]";
+	else if (this->isNULL()) return "[NULL]";
+	else if (this->isNative()) return "[native]";
+	else if (this->isInt()) return "[int]";
+	else if (this->isObject()) return "[object]";
+	assert(false); // We should never get here
+	return "[error in ScValue::getTypeStr]";
+}
 
 //////////////////////////////////////////////////////////////////////////
 void ScValue::copy(ScValue *orig, bool copyWhole) {
@@ -753,6 +765,10 @@ void ScValue::copy(ScValue *orig, bool copyWhole) {
 }
 
 
+//////////////////////////////////////////////////////////////////////////
+void ScValue::setType(TValType type) {
+	_type = type;
+}
 //////////////////////////////////////////////////////////////////////////
 void ScValue::setValue(ScValue *val) {
 	if (val->_type == VAL_VARIABLE_REF) {

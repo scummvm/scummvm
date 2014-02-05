@@ -29,6 +29,7 @@
 
 namespace Wintermute {
 
+class DebuggerAdapter;
 class Console;
 class BaseGame;
 class SystemClassRegistry;
@@ -48,7 +49,7 @@ public:
 	WintermuteEngine();
 	~WintermuteEngine();
 
-	virtual GUI::Debugger *getDebugger() { return _debugger; }
+	virtual Wintermute::Console *getConsole() { return _debugger; }
 	void trigDebugger() { _trigDebug = true; }
 
 	virtual Common::Error run();
@@ -60,12 +61,14 @@ public:
 	virtual bool canSaveGameStateCurrently();
 	// For detection-purposes:
 	static bool getGameInfo(const Common::FSList &fslist, Common::String &name, Common::String &caption);
+	BaseGame* getGame();
 private:
 	bool _trigDebug;
 	int init();
 	void deinit();
 	int messageLoop();
-	GUI::Debugger *_debugger;
+	Wintermute::Console *_debugger;
+	Wintermute::DebuggerAdapter *_adapter;
 	BaseGame *_game;
 	const ADGameDescription *_gameDescription;
 

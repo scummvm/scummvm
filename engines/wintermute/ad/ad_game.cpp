@@ -66,7 +66,6 @@ namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(AdGame, true)
 
-//////////////////////////////////////////////////////////////////////////
 AdGame::AdGame(const Common::String &gameId) : BaseGame(gameId) {
 	_responseBox = nullptr;
 	_inventoryBox = nullptr;
@@ -2280,4 +2279,7 @@ bool AdGame::onScriptShutdown(ScScript *script) {
 	return STATUS_OK;
 }
 
-} // End of namespace Wintermute
+Common::String AdGame::debuggerToString() const {
+	return Common::String::format("%p: Game \"%s\"", (const void *)this, getName());
+}
+} // end of namespace Wintermute

@@ -188,4 +188,10 @@ ScScript *BaseScriptable::invokeMethodThread(const char *methodName) {
 	return nullptr;
 }
 
-} // End of namespace Wintermute
+//////////////////////////////////////////////////////////////////////////
+Common::String BaseScriptable::debuggerToString() const {
+	return Common::String::format("%p: BaseScriptable %s", (const void *)this, getName());
+}
+
+
+} // end of namespace Wintermute

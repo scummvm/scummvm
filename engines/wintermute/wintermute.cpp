@@ -34,6 +34,7 @@
 #include "engines/wintermute/ad/ad_game.h"
 #include "engines/wintermute/wintermute.h"
 #include "engines/wintermute/debugger.h"
+#include "engines/wintermute/debugger_adapter.h"
 #include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/base/base_engine.h"
 
@@ -84,6 +85,7 @@ WintermuteEngine::~WintermuteEngine() {
 	deinit();
 	delete _game;
 	delete _debugger;
+	delete _adapter;
 
 	// Remove all of our debug levels here
 	DebugMan.clearAllDebugChannels();
@@ -112,7 +114,9 @@ Common::Error WintermuteEngine::run() {
 	}
 
 	// Create debugger console. It requires GFX to be initialized
+	_adapter = new DebuggerAdapter(this);
 	_debugger = new Console(this);
+
 
 //	DebugMan.enableDebugChannel("enginelog");
 	debugC(1, kWintermuteDebugLog, "Engine Debug-LOG enabled");
@@ -147,6 +151,8 @@ int WintermuteEngine::init() {
 	_game->initialize1();
 
 	// set gameId, for savegame-naming:
+	_game->_adapter = _adapter;
+
 	_game->setGameTargetName(_targetName);
 
 	if (DID_FAIL(_game->loadSettings("startup.settings"))) {
@@ -375,5 +381,11 @@ bool WintermuteEngine::getGameInfo(const Common::FSList &fslist, Common::String 
 	BaseEngine::destroy();
 	return retVal;
 }
+
+BaseGame* WintermuteEngine::getGame() {
+	return _game;
+}
+
+
 
 } // End of namespace Wintermute

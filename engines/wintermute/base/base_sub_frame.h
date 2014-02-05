@@ -85,6 +85,8 @@ public:
 	virtual bool scSetProperty(const char *name, ScValue *value);
 	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name);
 	virtual const char *scToString();
+	Common::String debuggerToString() const override;
+
 
 };
 

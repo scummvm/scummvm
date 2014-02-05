@@ -85,6 +85,7 @@ public:
 	ScValue *getProp(const char *name);
 	BaseScriptable *_valNative;
 	ScValue *_valRef;
+	Common::String getTypeStr();
 private:
 	bool _valBool;
 	int32 _valInt;
@@ -92,6 +93,7 @@ private:
 	char *_valString;
 public:
 	TValType _type;
+	void setType(TValType type);
 	ScValue(BaseGame *inGame);
 	ScValue(BaseGame *inGame, bool Val);
 	ScValue(BaseGame *inGame, int32 Val);

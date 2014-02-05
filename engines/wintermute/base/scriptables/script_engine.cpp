@@ -76,7 +76,6 @@ ScEngine::ScEngine(BaseGame *inGame) : BaseClass(inGame) {
 
 	_isProfiling = false;
 	_profilingStartTime = 0;
-
 	//EnableProfiling();
 }
 
@@ -88,6 +87,12 @@ ScEngine::~ScEngine() {
 	disableProfiling();
 
 	cleanup();
+}
+
+
+ScEngine::ScWatch::~ScWatch() {
+	// be careful to delete _lastValue manually
+	// to prevent leaks 
 }
 
 
@@ -162,10 +167,123 @@ ScScript *ScEngine::runScript(const char *filename, BaseScriptHolder *owner) {
 		script->_globals->setProp("self", &val);
 		script->_globals->setProp("this", &val);
 
+		script->mapWatchList();
 		_scripts.add(script);
-
 		return script;
 	}
+}
+
+bool ScEngine::addWatchpoint(const char *filename, const char *name) {
+	ScWatch *watch = new ScWatch(filename);
+	watch->_symbol = name;
+	watch->_lastValue = new ScValue(_gameRef);
+	_watchlist.insert_at(_watchlist.size(), *watch);
+	refreshWatchlist();
+	return false;
+}
+
+bool ScEngine::refreshWatchlist() {
+	for (uint i = 0; i < _scripts.size(); i++) {
+		_scripts[i]->_watchlist.clear();
+		for (uint j = 0; j < _watchlist.size(); j++) {
+			if (!strcmp(_scripts[i]->_filename, _watchlist[j]._filename.c_str())) {
+				_scripts[i]->_watchlist.add(_watchlist[j]);
+
+			}
+		}
+	}
+	return true;
+}
+
+bool ScEngine::addBreakpoint(const char *filename, int line) {
+	// Add a <filename, line> pair to the per-Engine list of breakpoints.
+	ScBreakpoint breakpoint = ScBreakpoint(filename);
+	breakpoint._line = line;
+	breakpoint._hits = 0;
+	_breakpoints.insert_at(_breakpoints.size(), breakpoint);
+	return true;
+}
+
+bool ScEngine::removeBreakpoint(uint id) {
+	if (id >= _breakpoints.size()) {
+		return false;
+	}
+	_breakpoints.remove_at(id);
+	return true;
+}
+
+bool ScEngine::removeWatchpoint(uint id) {
+	if (id >= _watchlist.size()) {
+		return false;
+	}
+	delete _watchlist[id]._lastValue;
+	_watchlist.remove_at(id);
+	refreshWatchlist();
+	return true;
+}
+
+bool ScEngine::enableBreakpoint(uint id) {
+	if (id >= _breakpoints.size()) {
+		return false;
+	}
+	_breakpoints[id]._enabled = true;
+	return true;
+}
+
+bool ScEngine::disableBreakpoint(uint id) {
+	if (id >= _breakpoints.size()) {
+		return false;
+	}
+	_breakpoints[id]._enabled = false;
+	return true;
+}
+
+bool ScEngine::enableWatchpoint(uint id) {
+	if (id >= _watchlist.size()) {
+		return false;
+	}
+	_watchlist[id]._enabled = true;
+	return true;
+}
+
+bool ScEngine::disableWatchpoint(uint id) {
+	if (id >= _watchlist.size()) {
+		return false;
+	}
+	_watchlist[id]._enabled = false;
+	return true;
+}
+
+int ScEngine::incrementWatchpoint(uint id) {
+	if (id >= _watchlist.size()) {
+		return 0;
+	}
+	_watchlist[id]._hits = _watchlist[id]._hits + 1;
+	return 0;
+}
+
+int ScEngine::incrementBreakpoint(uint id) {
+	if (id >= _breakpoints.size()) {
+		return 0;
+	}
+	_breakpoints[id]._hits = _breakpoints[id]._hits + 1;
+	return 0;
+}
+
+int ScEngine::resetWatchpoint(uint id) {
+	if (id >= _watchlist.size()) { 
+		return 0;
+	}
+	_watchlist[id]._hits = 0;
+	return 0;
+}
+
+int ScEngine::resetBreakpoint(uint id) {
+	if (id >= _breakpoints.size()) {
+		return 0;
+	}
+	_breakpoints[id]._hits = 0;
+	return 0;
 }
 
 

@@ -33,22 +33,25 @@
 #include "engines/wintermute/base/base.h"
 #include "engines/wintermute/base/scriptables/dcscript.h"   // Added by ClassView
 #include "engines/wintermute/coll_templ.h"
+#include "engines/wintermute/base/scriptables/script_value.h"
+#include "engines/wintermute/base/scriptables/script_engine.h"
 
 namespace Wintermute {
 class BaseScriptHolder;
 class BaseObject;
 class ScEngine;
 class ScStack;
+class DebuggerAdapter;
+const int kDefaultStep = -2;
 class ScScript : public BaseClass {
 public:
-	BaseArray<int> _breakpoints;
+	BaseArray<ScEngine::ScWatch> _watchlist; 
+	// We need a per-script watchlist, we can have different threads, same filename, different rvalues.
 	bool _tracingMode;
-
 	ScScript *_parentScript;
 	bool _unbreakable;
 	bool finishThreads();
 	bool copyParameters(ScStack *stack);
-
 	void afterLoad();
 private:
 	ScValue *_operand;
@@ -76,7 +79,7 @@ public:
 	ScScript *_waitScript;
 	TScriptState _state;
 	TScriptState _origState;
-	ScValue *getVar(char *name);
+	ScValue *getVar(const char *name);
 	uint32 getFuncPos(const Common::String &name);
 	uint32 getEventPos(const Common::String &name) const;
 	uint32 getMethodPos(const Common::String &name) const;
@@ -124,6 +127,7 @@ public:
 	ScStack *_stack;
 	ScValue *_globals;
 	ScEngine *_engine;
+	DebuggerAdapter *_adapter;
 	int32 _currentLine;
 	bool executeInstruction();
 	char *getString();
@@ -132,6 +136,8 @@ public:
 	void cleanup();
 	bool create(const char *filename, byte *buffer, uint32 size, BaseScriptHolder *owner);
 	uint32 _iP;
+	int32 getCallDepth();
+	int32 _step;
 private:
 	void readHeader();
 	uint32 _bufferSize;
@@ -147,9 +153,11 @@ public:
 	BaseScriptHolder *_owner;
 	ScScript::TExternalFunction *getExternal(char *name);
 	bool externalCall(ScStack *stack, ScStack *thisStack, ScScript::TExternalFunction *function);
-private:
 	char **_symbols;
 	uint32 _numSymbols;
+	ScValue *resolveName(const char *name);
+	void mapWatchList();
+private:
 	TFunctionPos *_functions;
 	TMethodPos *_methods;
 	TEventPos *_events;
@@ -161,7 +169,6 @@ private:
 
 	bool initScript();
 	bool initTables();
-
 
 // IWmeDebugScript interface implementation
 public:

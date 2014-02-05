@@ -66,19 +66,31 @@ public:
 		Common::String _filename;
 	};
 
-	class CScBreakpoint {
+	class ScBreakpoint {
 	public:
-		CScBreakpoint(const char *filename) {
+		ScBreakpoint(const Common::String &filename) {
 			_filename = filename;
 		}
 
-		~CScBreakpoint() {
-			_lines.clear();
-		}
-
 		Common::String _filename;
-		BaseArray<int> _lines;
+		int _line; 
+		int _hits;
+		int _enabled;
 	};
+
+	class ScWatch {
+	public:
+		ScWatch(const Common::String &filename) {
+			_filename = filename;
+		}
+		~ScWatch();
+		Common::String _filename;
+		Common::String _symbol;
+		ScValue *_lastValue; 
+		int _hits;
+		int _enabled;
+	};
+
 
 public:
 	bool clearGlobals(bool includingNatives = false);
@@ -101,8 +113,26 @@ public:
 	ScValue *_globals;
 	ScScript *runScript(const char *filename, BaseScriptHolder *owner = nullptr);
 	static const bool _compilerAvailable = false;
-
+	Common::Array<ScBreakpoint> _breakpoints;
+	Common::Array<ScWatch> _watchlist;
 	ScEngine(BaseGame *inGame);
+
+	bool addBreakpoint(const char *filename, int line);
+	bool removeBreakpoint(uint id);
+	bool enableBreakpoint(uint id);
+	bool disableBreakpoint(uint id);
+	int incrementBreakpoint(uint id);
+	int resetBreakpoint(uint id);
+	bool refreshBreakpoints();
+
+	bool addWatchpoint(const char *filename, const char *name);
+	bool removeWatchpoint(uint id);
+	bool enableWatchpoint(uint id);
+	bool disableWatchpoint(uint id);
+	int incrementWatchpoint(uint id);
+	int resetWatchpoint(uint id);
+	bool refreshWatchlist();
+
 	virtual ~ScEngine();
 	static byte *loadFile(void *data, char *filename, uint32 *size);
 	static void closeFile(void *data, byte *buffer);

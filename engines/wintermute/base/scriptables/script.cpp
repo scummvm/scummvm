@@ -31,7 +31,9 @@
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/scriptables/script_engine.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
+#include "common/tokenizer.h"
 #include "common/memstream.h"
+#include "engines/wintermute/debugger_adapter.h"
 
 namespace Wintermute {
 
@@ -51,7 +53,6 @@ ScScript::ScScript(BaseGame *inGame, ScEngine *engine) : BaseClass(inGame) {
 	_engine = engine;
 
 	_globals = nullptr;
-
 	_scopeStack = nullptr;
 	_callStack  = nullptr;
 	_thisStack  = nullptr;
@@ -91,8 +92,11 @@ ScScript::ScScript(BaseGame *inGame, ScEngine *engine) : BaseClass(inGame) {
 
 	_unbreakable = false;
 	_parentScript = nullptr;
+	
+	_adapter = _gameRef->_adapter;
 
 	_tracingMode = false;
+	_step = kDefaultStep;
 }
 
 
@@ -318,11 +322,20 @@ bool ScScript::createThread(ScScript *original, uint32 initIP, const Common::Str
 	_engine = original->_engine;
 	_parentScript = original;
 
+	mapWatchList();
+
+	_step = kDefaultStep;
+
 	return STATUS_OK;
 }
 
 
-
+void ScScript::mapWatchList () {
+	for (uint i = 0; i < _engine->_watchlist.size(); i++) {
+		if (!strcmp(_engine->_watchlist[i]._filename.c_str(), _filename))
+			_watchlist.add(_engine->_watchlist[i]);
+	}
+}
 
 //////////////////////////////////////////////////////////////////////////
 bool ScScript::createMethodThread(ScScript *original, const Common::String &methodName) {
@@ -521,6 +534,7 @@ bool ScScript::executeInstruction() {
 	ScValue *op2;
 
 	uint32 inst = getDWORD();
+	
 	switch (inst) {
 
 	case II_DEF_VAR:
@@ -1079,9 +1093,34 @@ bool ScScript::executeInstruction() {
 
 	case II_DBG_LINE: {
 		int newLine = getDWORD();
+
 		if (newLine != _currentLine) {
 			_currentLine = newLine;
 		}
+
+		for (uint j = 0; j < _engine->_breakpoints.size(); j++) {
+			if (_engine->_breakpoints[j]._line == _currentLine &&
+			        !strcmp(_engine->_breakpoints[j]._filename.c_str(), _filename) &&
+			        _engine->_breakpoints[j]._enabled
+			   ) {
+				_engine->_breakpoints[j]._hits++;
+				_adapter->triggerBreakpoint(this);
+			}
+		}
+
+
+		if (_callStack->_sP <= _step) {
+			_adapter->triggerStep(this);
+		}
+
+		for (uint i = 0; i < _watchlist.size(); i++) {
+			if (ScValue::compare(resolveName(_watchlist[i]._symbol.c_str()), _watchlist[i]._lastValue) &&
+			    _watchlist[i]._enabled) {
+				_watchlist[i]._lastValue->copy(resolveName(_watchlist[i]._symbol.c_str()));
+				_adapter->triggerWatch(this, _watchlist[i]._symbol.c_str());
+			}
+		}
+
 		break;
 
 	}
@@ -1120,7 +1159,7 @@ uint32 ScScript::getMethodPos(const Common::String &name) const {
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *ScScript::getVar(char *name) {
+ScValue *ScScript::getVar(const char *name) {
 	ScValue *ret = nullptr;
 
 	// scope locals
@@ -1457,7 +1496,6 @@ void ScScript::afterLoad() {
 
 		_buffer = new byte [_bufferSize];
 		memcpy(_buffer, buffer, _bufferSize);
-
 		delete _scriptStream;
 		_scriptStream = new Common::MemoryReadStream(_buffer, _bufferSize);
 
@@ -1465,4 +1503,30 @@ void ScScript::afterLoad() {
 	}
 }
 
-} // End of namespace Wintermute
+////////////////////////////////////////////////
+ScValue *ScScript::resolveName(const char *name) {
+	// TODO: Some edge cases still left?
+	Common::String strName = Common::String(name);
+	strName.trim();
+	Common::StringTokenizer st = Common::StringTokenizer(strName.c_str(), ".");
+	
+	Common::String varName = st.nextToken();
+	ScValue *value = getVar(varName.c_str());
+
+	if (value == nullptr) {
+		return nullptr;
+	}
+	
+	while(value != nullptr && !st.empty() && (value->isNative() || value->isObject())) {
+		value = value->getProp(st.nextToken().c_str());
+	}
+	
+	return value;
+
+}
+
+int32 ScScript::getCallDepth() {
+	return _callStack->_sP;
+}
+
+} // end of namespace Wintermute
