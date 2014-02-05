@@ -27,7 +27,7 @@
  */
 
 #include "engines/wintermute/video/video_subtitle.h"
-
+#include "engines/wintermute/base/base_game.h"
 namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
@@ -40,7 +40,7 @@ VideoSubtitle::VideoSubtitle(BaseGame *inGame): BaseClass(inGame) {
 VideoSubtitle::VideoSubtitle(BaseGame *inGame, char *text, long startFrame, long endFrame): BaseClass(inGame) {
 	_text = new char[strlen(text) + 1];
 	strcpy(_text, text);
-	// _gameRef->m_StringTable->Expand(&this->text);
+	_gameRef->expandStringByStringTable(&_text);
 	_startFrame = startFrame;
 	_endFrame = endFrame;
 }
