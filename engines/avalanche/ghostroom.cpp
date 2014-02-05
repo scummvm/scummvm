@@ -161,6 +161,7 @@ void GhostRoom::loadPictures() {
 }
 
 void GhostRoom::run() {
+	CursorMan.showMouse(false);
 	_vm->_graphics->saveScreen();
 	_vm->fadeOut();
 	_vm->fadeIn();
@@ -169,6 +170,8 @@ void GhostRoom::run() {
 	loadPictures();
 	
 	warning("STUB: run()");
+
+	CursorMan.showMouse(true);
 }
 
 } // End of namespace Avalanche
