@@ -515,8 +515,7 @@ void GraphicManager::ghostDrawGhost(byte ghostArr[2][66][26], uint16 destX, uint
 				byte pixel = ghostArr[kPlaneToUse[plane]][y][x];
 				for (int bit = 0; bit < 8; bit++) {
 					byte pixelBit = (pixel >> bit) & 1;
-					if (pixelBit != 0)
-						*(byte *)ghostPic.getBasePtr(x * 8 + 7 - bit, y) += (pixelBit << plane);
+					*(byte *)ghostPic.getBasePtr(x * 8 + 7 - bit, y) += (pixelBit << plane);
 				}
 			}
 		}
@@ -541,8 +540,7 @@ void GraphicManager::ghostDrawGlerk(byte glerkArr[4][35][9], uint16 destX, uint1
 				byte pixel = glerkArr[plane][y][x];
 				for (int bit = 0; bit < 8; bit++) {
 					byte pixelBit = (pixel >> bit) & 1;
-					if (pixelBit != 0)
-						*(byte *)glerkPic.getBasePtr(x * 8 + 7 - bit, y) += (pixelBit << plane);
+					*(byte *)glerkPic.getBasePtr(x * 8 + 7 - bit, y) += (pixelBit << plane);
 				}
 			}
 		}
@@ -640,8 +638,7 @@ Graphics::Surface GraphicManager::loadPictureGraphic(Common::File &file) {
 				byte pixel = file.readByte();
 				for (int bit = 0; bit < 8; bit++) {
 					byte pixelBit = (pixel >> bit) & 1;
-					if (pixelBit != 0)
-						*(byte *)picture.getBasePtr(x + 7 - bit, y) += (pixelBit << plane);
+					*(byte *)picture.getBasePtr(x + 7 - bit, y) += (pixelBit << plane);
 				}
 			}
 		}
@@ -689,8 +686,7 @@ Graphics::Surface GraphicManager::loadPictureSign(Common::File &file, int xl, in
 				byte pixel = file.readByte();
 				for (int bit = 0; bit < 8; bit++) {
 					byte pixelBit = (pixel >> bit) & 1;
-					if (pixelBit != 0)
-						*(byte *)picture.getBasePtr(xx + 7 - bit, yy) += (pixelBit << plane);
+					*(byte *)picture.getBasePtr(xx + 7 - bit, yy) += (pixelBit << plane);
 				}
 			}
 		}
