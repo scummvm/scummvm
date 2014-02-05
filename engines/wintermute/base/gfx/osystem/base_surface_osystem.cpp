@@ -447,7 +447,7 @@ bool BaseSurfaceOSystem::drawSprite(int x, int y, Rect32 *rect, Rect32 *newRect,
 
 bool BaseSurfaceOSystem::putSurface(const Graphics::Surface &surface, bool hasAlpha) {
 	_loaded = true;
-	if (surface.format == _surface->format && surface.w == _surface->w && surface.h == _surface->h) {
+	if (surface.format == _surface->format && surface.pitch == _surface->pitch && surface.h == _surface->h) {
 		const byte *src = (const byte *)surface.getBasePtr(0, 0);
 		byte *dst = (byte *)_surface->getBasePtr(0, 0);
 		memcpy(dst, src, surface.pitch * surface.h);
