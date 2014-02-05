@@ -696,8 +696,7 @@ void VoyeurEngine::flipPageAndWaitForFade() {
 
 void VoyeurEngine::showEndingNews() {
 	_playStampGroupId = (_voy._field4382 - 1) * 256 + 0x7700;
-	_voy._boltGroupId2 = (READ_LE_UINT16(_controlPtr->_ptr + 4) 
-		- 1) * 256 + 0x7B00;
+	_voy._boltGroupId2 = (_controlPtr->_state->_v1 - 1) * 256 + 0x7B00;
 
 	_bVoy->getBoltGroup(_playStampGroupId);
 	_bVoy->getBoltGroup(_voy._boltGroupId2);
@@ -857,6 +856,7 @@ void VoyeurEngine::synchronize(Common::Serializer &s) {
 	_voy.synchronize(s);
 	_graphicsManager.synchronize(s);
 	_mainThread->synchronize(s);
+	_controlPtr->_state->synchronize(s);
 }
 
 /*------------------------------------------------------------------------*/

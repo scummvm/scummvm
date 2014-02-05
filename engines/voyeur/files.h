@@ -44,6 +44,7 @@ class CMapResource;
 class VInitCycleResource;
 class PtrResource;
 class ControlResource;
+class StateResource;
 class ThreadResource;
 
 #define DECOMPRESS_SIZE 0x7000
@@ -158,6 +159,7 @@ public:
 class StampBoltFile: public BoltFile {
 private:
 	void initThread();
+	void initState();
 	void initPtr();
 	void initControl();
 protected:
@@ -212,6 +214,7 @@ public:
 	// stampblt.blt resource types
 	PtrResource *_ptrResource;
 	ControlResource *_controlResource;
+	StateResource *_stateResource;
 	ThreadResource *_threadResource;
 public:
 	BoltEntry(Common::SeekableReadStream *f, uint16 id);
@@ -484,10 +487,28 @@ class ControlResource {
 public:
 	int _memberIds[8];
 	byte *_entries[8];
-	byte *_ptr;
+	int _stateId;
+	StateResource *_state;
 
 	ControlResource(BoltFilesState &state, const byte *src);
 	virtual ~ControlResource() {}
+};
+
+class StateResource {
+public:
+	int _vals[4];
+	int &_v0;
+	int &_v1;
+	int &_v2;
+	int &_v3;
+
+	StateResource(BoltFilesState &state, const byte *src);
+	virtual ~StateResource() {}
+
+	/**
+	 * Synchronizes the game data
+	 */
+	void synchronize(Common::Serializer &s);
 };
 
 class ThreadResource {

@@ -370,7 +370,7 @@ void ThreadResource::parsePlayCommands() {
 			// Play an audio event
 			v2 = READ_LE_UINT16(dataP);
 
-			if (v2 == 0 || READ_LE_UINT16(_vm->_controlPtr->_ptr + 4) == v2) {
+			if (v2 == 0 || _vm->_controlPtr->_state->_v1 == v2) {
 				_vm->_audioVideoId = READ_LE_UINT16(dataP + 2) - 1;
 				_vm->_voy._field468 = READ_LE_UINT16(dataP + 4);
 				_vm->_voy._field46A = READ_LE_UINT16(dataP + 6);
@@ -401,7 +401,7 @@ void ThreadResource::parsePlayCommands() {
 			// Play a video event
 			v2 = READ_LE_UINT16(dataP);
 
-			if (v2 == 0 || READ_LE_UINT16(_vm->_controlPtr->_ptr + 4) == v2) {
+			if (v2 == 0 || _vm->_controlPtr->_state->_v1 == v2) {
 				_vm->_audioVideoId = READ_LE_UINT16(dataP + 2) - 1;
 				_vm->_voy._field468 = READ_LE_UINT16(dataP + 4);
 				_vm->_voy._field46A = READ_LE_UINT16(dataP + 6);
@@ -512,7 +512,7 @@ void ThreadResource::parsePlayCommands() {
 			// Check whether transition to a given time period is allowed, and
 			// if so, load the time information for the new time period
 			v2 = READ_LE_UINT16(dataP);
-			if (v2 == 0 || READ_LE_UINT16(_vm->_controlPtr->_ptr + 4) == v2) {
+			if (v2 == 0 || _vm->_controlPtr->_state->_v1 == v2) {
 				_vm->_voy._field470 = 5;
 				int count = READ_LE_UINT16(dataP + 2);
 				_vm->_voy._RTVLimit = READ_LE_UINT16(dataP + 4);
@@ -547,7 +547,7 @@ void ThreadResource::parsePlayCommands() {
 			v2 = READ_LE_UINT16(dataP);
 			v3 = READ_LE_UINT16(dataP + 2) - 1;
 
-			if (v2 == 0 || READ_LE_UINT16(_vm->_controlPtr->_ptr + 4) == v2) {
+			if (v2 == 0 || _vm->_controlPtr->_state->_v1 == v2) {
 				int idx = 0;
 				while (_vm->_voy._videoHotspotTimes._min[idx][v3] != 9999)
 					++idx;
@@ -565,7 +565,7 @@ void ThreadResource::parsePlayCommands() {
  			v2 = READ_LE_UINT16(dataP);
 			v3 = READ_LE_UINT16(dataP + 2) - 1;
 
-			if (v2 == 0 || READ_LE_UINT16(_vm->_controlPtr->_ptr + 4) == v2) {
+			if (v2 == 0 || _vm->_controlPtr->_state->_v1 == v2) {
 				int idx = 0;
 				while (_vm->_voy._audioHotspotTimes._min[idx][v3] != 9999)
 					++idx;
@@ -583,7 +583,7 @@ void ThreadResource::parsePlayCommands() {
 			v2 = READ_LE_UINT16(dataP);
 			v3 = READ_LE_UINT16(dataP + 2) - 1;
 
-			if (v2 == 0 || READ_LE_UINT16(_vm->_controlPtr->_ptr + 4) == v2) {
+			if (v2 == 0 || _vm->_controlPtr->_state->_v1 == v2) {
 				int idx = 0;
 				while (_vm->_voy._evidenceHotspotTimes._min[idx][v3] != 9999)
 					++idx;
@@ -608,11 +608,11 @@ void ThreadResource::parsePlayCommands() {
 				} while (randomVal == _vm->_voy._victimNumber);
 
 				_vm->_voy._victimNumber = randomVal;
-				WRITE_LE_UINT16(_vm->_controlPtr->_ptr + 4, randomVal);
+				_vm->_controlPtr->_state->_v1 = randomVal;
 			} else {
 				// Player has seen something that locks in the character to die
 				_vm->_voy._victimNumber = _vm->_iForceDeath;
-				WRITE_LE_UINT16(_vm->_controlPtr->_ptr + 4, _vm->_iForceDeath);
+				_vm->_controlPtr->_state->_v1 = _vm->_iForceDeath;
 			}
 
 			_vm->saveLastInplay();
@@ -625,7 +625,7 @@ void ThreadResource::parsePlayCommands() {
 		case 12:
 			v2 = READ_LE_UINT16(dataP);
 
-			if (v2 == 0 || READ_LE_UINT16(_vm->_controlPtr->_ptr + 4) == v2) {
+			if (v2 == 0 || _vm->_controlPtr->_state->_v1 == v2) {
 				_vm->_voy._boltGroupId2 = _vm->_resolvePtr[READ_LE_UINT16(dataP + 2)];
 				_vm->_voy._roomHotspotsEnabled[READ_LE_UINT16(dataP + 4) - 1] = true;
 			}
@@ -636,7 +636,7 @@ void ThreadResource::parsePlayCommands() {
 		case 13:
 			v2 = READ_LE_UINT16(dataP);
 
-			if (v2 == 0 || READ_LE_UINT16(_vm->_controlPtr->_ptr + 4) == v2) {
+			if (v2 == 0 || _vm->_controlPtr->_state->_v1 == v2) {
 				_vm->_voy._computerTextId = READ_LE_UINT16(dataP + 2);
 				_vm->_voy._computerTimeMin = READ_LE_UINT16(dataP + 4);
 				_vm->_voy._computerTimeMax = READ_LE_UINT16(dataP + 6);
@@ -673,7 +673,7 @@ void ThreadResource::parsePlayCommands() {
 			v2 = READ_LE_UINT16(dataP);
 			v3 = READ_LE_UINT16(dataP + 2);
 
-			if (v2 == 0 || READ_LE_UINT16(_vm->_controlPtr->_ptr + 4) == v2)
+			if (v2 == 0 || _vm->_controlPtr->_state->_v1 == v2)
 				_vm->_voy._murderThreshold = v3;
 			
 			dataP += 4;
@@ -715,9 +715,6 @@ void ThreadResource::parsePlayCommands() {
 }
 
 const byte *ThreadResource::cardPerform(const byte *card) {
-	const byte *p2;
-	byte *pDest;
-
 	uint16 id = *card++;
 	int varD = 5;
 	uint32 v2;
@@ -730,82 +727,87 @@ const byte *ThreadResource::cardPerform(const byte *card) {
 	case 1:
 		v2 = READ_LE_UINT32(card);
 		card += 4;
-		WRITE_LE_UINT32(_vm->_controlPtr->_ptr + (*card << 2), v2);
-		++card;
+		_vm->_controlPtr->_state->_vals[*card++] = v2;
 		break;
 
 	case 2:
-		v2 = READ_LE_UINT32(_vm->_controlPtr->_ptr + (*card++ << 2)),
-		WRITE_LE_UINT32(_vm->_controlPtr->_ptr + (*card++ << 2), v2);
+		v2 = _vm->_controlPtr->_state->_vals[*card++];
+		_vm->_controlPtr->_state->_vals[*card++] = v2;
 		break;
 
 	case 3:
 		v2 = READ_LE_UINT32(card);
 		card += 4;
-		WRITE_LE_UINT32(_vm->_controlPtr->_ptr + (*card++ << 2), v2);
+		_vm->_controlPtr->_state->_vals[*card++] = v2;
 		break;
 
 	case 4:
-		v2 = READ_LE_UINT32(_vm->_controlPtr->_ptr + (*card++ << 2));
-		WRITE_LE_UINT32(_vm->_controlPtr->_ptr + (*card++ << 2), v2);
+		v2 = _vm->_controlPtr->_state->_vals[*card++];
+		_vm->_controlPtr->_state->_vals[*card++] = v2;
 		break;
 
-	case 5:
+	case 5: {
 		v2 = READ_LE_UINT32(card);
 		card += 4;
-		pDest = _vm->_controlPtr->_ptr + (*card++ << 2);
-		WRITE_LE_UINT32(pDest, READ_LE_UINT32(pDest) - v2);
+		int &v = _vm->_controlPtr->_state->_vals[*card++];
+		v -= v2;
 		break;
+	}
 
-	case 6:
+	case 6: {
 		idx1 = *card++;
 		idx2 = *card++;
 
-		v2 = READ_LE_UINT32(_vm->_controlPtr->_ptr + idx2);
-		pDest = _vm->_controlPtr->_ptr + idx1;
-		WRITE_LE_UINT32(pDest, READ_LE_UINT32(pDest) - v2);
+		v2 = _vm->_controlPtr->_state->_vals[idx1];
+		int &v = _vm->_controlPtr->_state->_vals[idx2];
+		v -= v2;
 		break;
+	}
 
-	case 7:
+	case 7: {
 		v3 = *card++;
 		v2 = READ_LE_UINT32(card);
 		card += 4;
-		pDest = _vm->_controlPtr->_ptr + (v3 << 2);
-		WRITE_LE_UINT32(pDest, READ_LE_UINT32(pDest) * v2);
+		int &v = _vm->_controlPtr->_state->_vals[v3];
+		v *= v2;
 		break;
+	}
 
-	case 8:
+	case 8: {
 		idx1 = *card++;
 		idx2 = *card++;
 
-		pDest = _vm->_controlPtr->_ptr + (idx1 << 2);
-		p2 = _vm->_controlPtr->_ptr + (idx2 << 2);
-		WRITE_LE_UINT32(pDest, READ_LE_UINT32(pDest) * READ_LE_UINT32(p2));
+		int &v1 = _vm->_controlPtr->_state->_vals[idx1];
+		int &v2 = _vm->_controlPtr->_state->_vals[idx2];
+		v1 *= v2;
 		break;
+	}
 
-	case 9:
+	case 9: {
 		idx1 = *card++;
 		v2 = READ_LE_UINT32(card);
 		card += 4;
 
-		pDest = _vm->_controlPtr->_ptr + (idx1 << 2);
-		WRITE_LE_UINT32(pDest, READ_LE_UINT32(pDest) / v2);
+		int &v = _vm->_controlPtr->_state->_vals[idx1];
+		v /= v2;
 		break;
+	}
 
-	case 10:
+	case 10: {
 		idx1 = *card++;
 		idx2 = *card++;
 
-		pDest = _vm->_controlPtr->_ptr + (idx1 << 2);
-		p2 = _vm->_controlPtr->_ptr + (idx2 << 2);
-		WRITE_LE_UINT32(pDest, READ_LE_UINT32(pDest) / READ_LE_UINT32(p2));
+		int &v1 = _vm->_controlPtr->_state->_vals[idx1];
+		int &v2 = _vm->_controlPtr->_state->_vals[idx2];
+		v1 /= v2;
 		break;
-	
+	}
+
 	case 11:
 		v2 = READ_LE_UINT32(card);
 		card += 4;
 		v2 = _vm->getRandomNumber(v2 - 1) + 1;
-		WRITE_LE_UINT32(_vm->_controlPtr->_ptr + (*card++ << 2), v2);
+		_vm->_controlPtr->_state->_vals[*card++] = v2;
 		break;
 
 	case 17:
@@ -815,7 +817,7 @@ const byte *ThreadResource::cardPerform(const byte *card) {
 		break;
 
 	case 18:
-		v2 = READ_LE_UINT32(_vm->_controlPtr->_ptr + (*card++ << 2));
+		v2 = _vm->_controlPtr->_state->_vals[*card++];
 		_vm->_glGoState = getStateFromID(v2);
 		break;
 
@@ -921,45 +923,45 @@ const byte *ThreadResource::cardPerform(const byte *card) {
 }
 
 bool ThreadResource::cardPerform2(const byte *pSrc, int cardCmdId) {
-	uint32 vLong, vLong2;
+	int vLong, vLong2;
 
 	switch (cardCmdId) {
 	case 21:
-		vLong = READ_LE_UINT32(pSrc + 1);
-		return READ_LE_UINT32(_vm->_controlPtr->_ptr + (*pSrc << 2)) == vLong;
+		vLong = (int32)READ_LE_UINT32(pSrc + 1);
+		return _vm->_controlPtr->_state->_vals[*pSrc] == vLong;
 
 	case 22:
-		vLong = READ_LE_UINT32(pSrc + 1);
-		return READ_LE_UINT32(_vm->_controlPtr->_ptr + (*pSrc << 2)) != vLong;
+		vLong = (int32)READ_LE_UINT32(pSrc + 1);
+		return _vm->_controlPtr->_state->_vals[*pSrc] != vLong;
 
 	case 23:
-		vLong = READ_LE_UINT32(_vm->_controlPtr->_ptr + (*pSrc << 2));
-		vLong2 = READ_LE_UINT32(_vm->_controlPtr->_ptr + (*(pSrc + 1) << 2));
+		vLong = _vm->_controlPtr->_state->_vals[*pSrc];
+		vLong2 = _vm->_controlPtr->_state->_vals[*(pSrc + 1)];
 		return vLong == vLong2;
 
 	case 24:
-		vLong = READ_LE_UINT32(_vm->_controlPtr->_ptr + (*pSrc << 2));
-		vLong2 = READ_LE_UINT32(_vm->_controlPtr->_ptr + (*(pSrc + 1) << 2));
+		vLong = _vm->_controlPtr->_state->_vals[*pSrc];
+		vLong2 = _vm->_controlPtr->_state->_vals[*(pSrc + 1)];
 		return vLong != vLong2;
 
 	case 25:
-		vLong = READ_LE_UINT32(_vm->_controlPtr->_ptr + (*pSrc << 2)); 
-		vLong2 = READ_LE_UINT32(pSrc + 1);
+		vLong = _vm->_controlPtr->_state->_vals[*pSrc]; 
+		vLong2 = (int32)READ_LE_UINT32(pSrc + 1);
 		return vLong < vLong2;
 
 	case 26:
-		vLong = READ_LE_UINT32(_vm->_controlPtr->_ptr + (*pSrc << 2)); 
-		vLong2 = READ_LE_UINT32(pSrc + 1);
+		vLong = _vm->_controlPtr->_state->_vals[*pSrc]; 
+		vLong2 = (int32)READ_LE_UINT32(pSrc + 1);
 		return vLong > vLong2;
 
 	case 27:
-		vLong = READ_LE_UINT32(_vm->_controlPtr->_ptr + (*pSrc << 2));
-		vLong2 = READ_LE_UINT32(_vm->_controlPtr->_ptr + (*(pSrc + 1) << 2));
+		vLong = _vm->_controlPtr->_state->_vals[*pSrc];
+		vLong2 = _vm->_controlPtr->_state->_vals[*(pSrc + 1)];
 		return vLong < vLong2;
 
 	case 28:
-		vLong = READ_LE_UINT32(_vm->_controlPtr->_ptr + (*pSrc << 2));
-		vLong2 = READ_LE_UINT32(_vm->_controlPtr->_ptr + (*(pSrc + 1) << 2));
+		vLong = _vm->_controlPtr->_state->_vals[*pSrc];
+		vLong2 = _vm->_controlPtr->_state->_vals[*(pSrc + 1)];
 		return vLong > vLong2;
 
 	default:

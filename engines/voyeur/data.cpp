@@ -237,7 +237,7 @@ void SVoy::reviewComputerEvent(int eventIndex) {
 }
 
 bool SVoy::checkForKey() {
-	WRITE_LE_UINT32(_vm->_controlPtr->_ptr + 8, 0);
+	_vm->_controlPtr->_state->_v2 = 0;
 	if (_vm->_voy._victimMurdered)
 		return false;
 
@@ -247,25 +247,25 @@ bool SVoy::checkForKey() {
 
 		switch (e._type) {
 		case EVTYPE_VIDEO:
-			switch (READ_LE_UINT32(_vm->_controlPtr->_ptr + 4)) {
+			switch (_vm->_controlPtr->_state->_v1) {
 			case 1:
 				if (e._audioVideoId == 33 && e._computerOn < 2 && e._computerOff >= 38)
-					WRITE_LE_UINT32(_vm->_controlPtr->_ptr + 8, 1);
+					_vm->_controlPtr->_state->_v2 = 1;
 				break;
 
 			case 2:
 				if (e._audioVideoId == 47 && e._computerOn < 2 && e._computerOff >= 9)
-					WRITE_LE_UINT32(_vm->_controlPtr->_ptr + 8, 2);
+					_vm->_controlPtr->_state->_v2 = 2;
 				break;
 
 			case 3:
 				if (e._audioVideoId == 46 && e._computerOn < 2 && e._computerOff > 2)
-					WRITE_LE_UINT32(_vm->_controlPtr->_ptr + 8, 3);
+					_vm->_controlPtr->_state->_v2 = 3;
 				break;
 
 			case 4:
 				if (e._audioVideoId == 40 && e._computerOn < 2 && e._computerOff > 6)
-					WRITE_LE_UINT32(_vm->_controlPtr->_ptr + 8, 4);
+					_vm->_controlPtr->_state->_v2 = 4;
 				break;
 			
 			default:
@@ -274,17 +274,17 @@ bool SVoy::checkForKey() {
 			break;
 
 		case EVTYPE_AUDIO:
-			switch (READ_LE_UINT32(_vm->_controlPtr->_ptr + 4)) {
+			switch (_vm->_controlPtr->_state->_v1) {
 			case 1:
 				if (e._audioVideoId == 8 && e._computerOn < 2 && e._computerOff > 26)
-					WRITE_LE_UINT32(_vm->_controlPtr->_ptr + 8, 1);
+					_vm->_controlPtr->_state->_v2 = 1;
 				break;
 	
 			case 3:
 				if (e._audioVideoId == 20 && e._computerOn < 2 && e._computerOff > 28)
-					WRITE_LE_UINT32(_vm->_controlPtr->_ptr + 8, 3);
+					_vm->_controlPtr->_state->_v2 = 3;
 				if (e._audioVideoId == 35 && e._computerOn < 2 && e._computerOff > 18)
-					WRITE_LE_UINT32(_vm->_controlPtr->_ptr + 8, 3);
+					_vm->_controlPtr->_state->_v2 = 3;
 				break;
 
 			default:
@@ -293,10 +293,10 @@ bool SVoy::checkForKey() {
 			break;
 
 		case EVTYPE_EVID:
-			switch (READ_LE_UINT32(_vm->_controlPtr->_ptr + 4)) {
+			switch (_vm->_controlPtr->_state->_v1) {
 			case 4:
 				if (e._audioVideoId == 0x2400 && e._computerOn == 0x4f00 && e._computerOff == 17)
-					WRITE_LE_UINT32(_vm->_controlPtr->_ptr + 8, 4);
+					_vm->_controlPtr->_state->_v2 = 4;
 
 			default:
 				break;
@@ -304,10 +304,10 @@ bool SVoy::checkForKey() {
 			break;
 
 		case EVTYPE_COMPUTER:
-			switch (READ_LE_UINT32(_vm->_controlPtr->_ptr + 4)) {
+			switch (_vm->_controlPtr->_state->_v1) {
 			case 2:
 				if (e._computerOn == 13 && e._computerOff > 76)
-					WRITE_LE_UINT32(_vm->_controlPtr->_ptr + 8, 2);
+					_vm->_controlPtr->_state->_v2 = 2;
 				break;
 
 			default:
@@ -316,8 +316,7 @@ bool SVoy::checkForKey() {
 			break;
 		}
 
-		if (READ_LE_UINT32(_vm->_controlPtr->_ptr + 8) == 
-				READ_LE_UINT32(_vm->_controlPtr->_ptr + 4))
+		if (_vm->_controlPtr->_state->_v2 == _vm->_controlPtr->_state->_v1)
 			return true;
 	}
 

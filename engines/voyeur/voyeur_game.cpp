@@ -31,6 +31,9 @@ void VoyeurEngine::playStamp() {
 	_filesManager.openBoltLib("stampblt.blt", _stampLibPtr);
 
 	_stampLibPtr->getBoltGroup(0);
+	_controlPtr->_state = _stampLibPtr->boltEntry(_controlPtr->_stateId >> 16)._stateResource;
+	assert(_controlPtr->_state);
+	
 	_resolvePtr = &RESOLVE_TABLE[0];
 	initStamp();
 
@@ -640,7 +643,7 @@ void VoyeurEngine::reviewTape() {
 			pt = _eventsManager.getMousePos();
 			if (_eventsManager._mouseClicked && _voy._viewBounds->left == pt.x &&
 					(_voy._eventFlags & EVTFLAG_40) && _eventsManager._rightClick) {
-				WRITE_LE_UINT32(_controlPtr->_ptr + 4, (pt.y / 60) + 1);
+				_controlPtr->_state->_v1 = (pt.y / 60) + 1;
 				foundIndex = -1;
 				_eventsManager._rightClick = 0;
 			}
@@ -806,38 +809,38 @@ void VoyeurEngine::doTapePlaying() {
 }
 
 bool VoyeurEngine::checkForMurder() {
-	int v = READ_LE_UINT32(_controlPtr->_ptr + 12);
+	int v = _controlPtr->_state->_v3;
 
 	for (int idx = 0; idx < _voy._eventCount; ++idx) {
 		VoyeurEvent &evt = _voy._events[idx];
 
 		if (evt._type == EVTYPE_VIDEO) {
-			switch (READ_LE_UINT32(_controlPtr->_ptr + 4)) {
+			switch (_controlPtr->_state->_v1) {
 			case 1:
 				if (evt._audioVideoId == 41 && evt._computerOn <= 15 &&
 						(evt._computerOff + evt._computerOn) >= 16) {
-					WRITE_LE_UINT32(_controlPtr->_ptr + 12, 1);
+					_controlPtr->_state->_v3 = 1;
 				}
 				break;
 
 			case 2:
 				if (evt._audioVideoId == 53 && evt._computerOn <= 19 &&
 						(evt._computerOff + evt._computerOn) >= 21) {
-					WRITE_LE_UINT32(_controlPtr->_ptr + 12, 2);
+					_controlPtr->_state->_v3 = 2;
 				}
 				break;
 
 			case 3:
 				if (evt._audioVideoId == 50 && evt._computerOn <= 28 &&
 						(evt._computerOff + evt._computerOn) >= 29) {
-					WRITE_LE_UINT32(_controlPtr->_ptr + 12, 3);
+					_controlPtr->_state->_v3 = 3;
 				}
 				break;
 
 			case 4:
 				if (evt._audioVideoId == 43 && evt._computerOn <= 10 &&
 						(evt._computerOff + evt._computerOn) >= 14) {
-					WRITE_LE_UINT32(_controlPtr->_ptr + 12, 4);
+					_controlPtr->_state->_v3 = 4;
 				}
 				break;
 
@@ -846,13 +849,13 @@ bool VoyeurEngine::checkForMurder() {
 			}
 		}
 
-		if (READ_LE_UINT32(_controlPtr->_ptr + 12) == READ_LE_UINT32(_controlPtr->_ptr + 4)) {
+		if (_controlPtr->_state->_v3 == _controlPtr->_state->_v1) {
 			_voy._videoEventId = idx;
 			return true;
 		}
 	}
 
-	WRITE_LE_UINT32(_controlPtr->_ptr + 12, v);
+	_controlPtr->_state->_v3 = v;
 	_voy._videoEventId = -1;
 	return false;
 }
@@ -891,7 +894,7 @@ bool VoyeurEngine::checkForIncriminate() {
 		}
 
 		if (_voy._field4382) {
-			WRITE_LE_UINT32(_controlPtr->_ptr + 12, 88);
+			_controlPtr->_state->_v3 = 88;
 			_voy._videoEventId = idx;
 			return true;
 		}
@@ -951,7 +954,7 @@ int VoyeurEngine::getChooseButton()  {
 			
 			for (uint idx = 0; idx < hotspots.size(); ++idx) {
 				if (hotspots[idx].contains(pt)) {
-					if (!_voy._victimMurdered || (idx + 1) != READ_LE_UINT32(_controlPtr->_ptr + 4)) {
+					if (!_voy._victimMurdered || ((int)idx + 1) != _controlPtr->_state->_v1) {
 						selectedIndex = idx;
 						if (selectedIndex != prevIndex) {
 							PictureResource *btnPic = _bVoy->boltEntry(_playStampGroupId + 8 + idx)._picResource;

@@ -565,6 +565,9 @@ void StampBoltFile::initResource(int resType) {
 	case 0:
 		initThread();
 		break;
+	case 4:
+		initState();
+		break;
 	case 6:
 		initPtr();
 		break;
@@ -591,6 +594,9 @@ void StampBoltFile::initPtr() {
 		_state._curMemberPtr->_data);
 }
 
+	void initControlData();
+
+
 void StampBoltFile::initControl() {
 	initDefault();
 
@@ -600,6 +606,14 @@ void StampBoltFile::initControl() {
 
 	_state._vm->_controlGroupPtr = _state._curGroupPtr;
 	_state._vm->_controlPtr = res;
+}
+
+void StampBoltFile::initState() {
+	initDefault();
+
+	assert(_state._curMemberPtr->_size == 16);
+	_state._curMemberPtr->_stateResource = new StateResource(_state, 
+		_state._curMemberPtr->_data);
 }
 
 /*------------------------------------------------------------------------*/
@@ -650,7 +664,9 @@ BoltEntry::BoltEntry(Common::SeekableReadStream *f, uint16 id): _file(f), _id(id
 	_fontInfoResource = nullptr;
 	_cMapResource = nullptr;
 	_vInitCycleResource = nullptr;
+
 	_ptrResource = nullptr;
+	_stateResource = nullptr;
 	_controlResource = nullptr;
 	_vInitCycleResource = nullptr;
 	_threadResource = nullptr;
@@ -674,9 +690,12 @@ BoltEntry::~BoltEntry() {
 	delete _fontResource;
 	delete _fontInfoResource;
 	delete _cMapResource;
-	delete _vInitCycleResource;
+
 	delete _ptrResource;
 	delete _controlResource;
+	delete _stateResource;
+	delete _vInitCycleResource;
+	delete _threadResource;
 }
 
 void BoltEntry::load() {
@@ -690,7 +709,7 @@ bool BoltEntry::hasResource() const {
 	return _rectResource ||  _picResource || _viewPortResource || _viewPortListResource
 		|| _fontResource || _fontInfoResource || _cMapResource 
 		|| _vInitCycleResource 
-		|| _ptrResource || _controlResource || _threadResource;
+		|| _ptrResource || _controlResource || _stateResource || _threadResource;
 }
 
 /*------------------------------------------------------------------------*/
@@ -1604,9 +1623,10 @@ PtrResource::PtrResource(BoltFilesState &state, const byte *src) {
 /*------------------------------------------------------------------------*/
 
 ControlResource::ControlResource(BoltFilesState &state, const byte *src) {
-	// Get pointer
-	uint32 ptrId = READ_LE_UINT32(&src[0x32]);
-	state._curLibPtr->resolveIt(ptrId, &_ptr);
+	// Get Id for the state data. Since it refers to a following entry in the same
+	// group, for simplicity we set the _state back in the main playStamp method
+	_stateId = READ_LE_UINT32(&src[0x32]);
+	_state = nullptr;
 
 	for (int i = 0; i < 8; ++i)
 		_memberIds[i] = READ_LE_UINT16(src + i * 2);
@@ -1623,5 +1643,16 @@ ControlResource::ControlResource(BoltFilesState &state, const byte *src) {
 }
 
 /*------------------------------------------------------------------------*/
+
+StateResource::StateResource(BoltFilesState &state, const byte *src):
+		_v0(_vals[0]), _v1(_vals[1]), _v2(_vals[2]), _v3(_vals[3]) {
+	for (int i = 0; i < 4; ++i)
+		_vals[i] = READ_LE_UINT32(src + i * 4);
+}
+
+void StateResource::synchronize(Common::Serializer &s) {
+	for (int i = 0; i < 4; ++i)
+		s.syncAsSint32LE(_vals[i]);
+}
 
 } // End of namespace Voyeur
