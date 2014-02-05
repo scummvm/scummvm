@@ -26,7 +26,6 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-// #include "dcgf.h"
 #include "engines/wintermute/video/video_subtitle.h"
 
 namespace Wintermute {
@@ -42,8 +41,7 @@ CVidSubtitle::CVidSubtitle(BaseGame *inGame): BaseClass(inGame) {
 CVidSubtitle::CVidSubtitle(BaseGame *inGame, char *Text, long StartFrame, long EndFrame): BaseClass(inGame) {
 	m_Text = new char[strlen(Text) + 1];
 	strcpy(m_Text, Text);
-//	_gameRef->m_StringTable->Expand(&m_Text);
-
+	// _gameRef->m_StringTable->Expand(&m_Text);
 	m_StartFrame = StartFrame;
 	m_EndFrame = EndFrame;
 }
@@ -51,6 +49,9 @@ CVidSubtitle::CVidSubtitle(BaseGame *inGame, char *Text, long StartFrame, long E
 
 //////////////////////////////////////////////////////////////////////////
 CVidSubtitle::~CVidSubtitle() {
-	// SAFE_DELETE_ARRAY(m_Text);
+	if (m_Text) {
+		delete [] m_Text;
+		m_Text = NULL;
+	}
 }
 }
