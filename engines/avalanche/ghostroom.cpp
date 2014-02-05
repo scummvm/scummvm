@@ -68,7 +68,13 @@ GhostRoom::~GhostRoom() {
 }
 
 void GhostRoom::wait(uint16 howLong) {
-	warning("STUB: wait()");
+	for (int i = 0; i < howLong; i++) {
+		Common::Event event;
+		_vm->getEvent(event);
+		if (event.type == Common::EVENT_KEYDOWN)
+			_vm->_sound->playNote(6177, 1);
+		_vm->_system->delayMillis(1);
+	}
 }
 
 void GhostRoom::doBat() {
