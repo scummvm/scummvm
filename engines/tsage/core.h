@@ -465,7 +465,7 @@ enum AnimateMode {ANIM_MODE_NONE = 0, ANIM_MODE_1 = 1, ANIM_MODE_2 = 2, ANIM_MOD
 };
 
 // Actor effect enumeration used in Return to Ringworld 2
-enum Effect { EFFECT_NONE = 0, EFFECT_SHADED = 1, EFFECT_3 = 3,
+enum Effect { EFFECT_NONE = 0, EFFECT_SHADED = 1, EFFECT_SMOKE = 3,
 	EFFECT_SHADOW_MAP = 5, EFFECT_SHADED2 = 6 };
 
 class SceneObject;

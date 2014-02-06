@@ -5858,7 +5858,7 @@ bool Scene600::Laser::startAction(CursorType action, Event &event) {
 
 				scene->_smoke.postInit();
 				scene->_smoke.setup(601, 3, 1);
-				scene->_smoke._effect = EFFECT_3;
+				scene->_smoke._effect = EFFECT_SMOKE;
 				scene->_smoke._moveDiff = Common::Point(1, 1);
 				scene->_smoke._moveRate = 2;
 				scene->_smoke._numFrames = 3;
@@ -6039,7 +6039,7 @@ void Scene600::postInit(SceneObjectList *OwnerList) {
 			_smoke._numFrames = 3;
 			_smoke.animate(ANIM_MODE_2, NULL);
 			_smoke.fixPriority(130);
-			_smoke._effect = EFFECT_3;
+			_smoke._effect = EFFECT_SMOKE;
 			_smoke.setDetails(600, 24, 25, 26, 1, (SceneItem *) NULL);
 			_smoke.signal();
 		}
@@ -6110,7 +6110,7 @@ void Scene600::signal() {
 		R2_INVENTORY.setObjectScene(R2_AEROSOL, 600);
 		R2_GLOBALS.setFlag(5);
 
-		_smoke._effect = EFFECT_3;
+		_smoke._effect = EFFECT_SMOKE;
 		_smoke.signal();
 		break;
 	case 606:
