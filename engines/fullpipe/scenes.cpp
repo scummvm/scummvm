@@ -31,6 +31,7 @@
 #include "fullpipe/behavior.h"
 
 #include "fullpipe/constants.h"
+#include "fullpipe/objectnames.h"
 #include "fullpipe/scenes.h"
 #include "fullpipe/interaction.h"
 
@@ -1229,7 +1230,7 @@ void FullpipeEngine::updateMap(PreloadItem *pre) {
 		break;
 
 	case SC_23:
-		if (getObjectState("Верхний люк_23") == getObjectEnumState("Верхний люк_23", "Открыт")) {
+		if (getObjectState(sO_UpperHatch_23) == getObjectEnumState(sO_UpperHatch_23, sO_Opened)) {
 			updateMapPiece(PIC_MAP_S23_1, 0);
 			updateMapPiece(PIC_MAP_S23_2, 1);
 			updateMapPiece(PIC_MAP_P07, 1);
@@ -1302,7 +1303,7 @@ void FullpipeEngine::updateMap(PreloadItem *pre) {
 	case SC_31:
 		updateMapPiece(PIC_MAP_S31_2, 1);
 
-		if (getObjectState("Кактус") == getObjectEnumState("Кактус", "Вырос"))
+		if (getObjectState(sO_Cactus) == getObjectEnumState(sO_Cactus, sO_HasGrown))
 			updateMapPiece(PIC_MAP_S31_1, 1);
 
 		if (pre->keyCode == TrubaRight)
@@ -1313,7 +1314,7 @@ void FullpipeEngine::updateMap(PreloadItem *pre) {
 	case SC_32:
 		updateMapPiece(PIC_MAP_S32_2, 1);
 
-		if (getObjectState("Кактус") == getObjectEnumState("Кактус", "Вырос"))
+		if (getObjectState(sO_Cactus) == getObjectEnumState(sO_Cactus, sO_HasGrown))
 			updateMapPiece(PIC_MAP_S32_1, 1);
 
 		break;
