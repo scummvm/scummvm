@@ -1275,7 +1275,7 @@ void Scene3250::signal() {
 }
 
 void Scene3250::dispatch() {
-	if ((R2_GLOBALS._player._visage == 3250) && (R2_GLOBALS._player._strip == 3) && (R2_GLOBALS._player._effect == 0)) {
+	if ((R2_GLOBALS._player._visage == 3250) && (R2_GLOBALS._player._strip == 3) && (R2_GLOBALS._player._effect == EFFECT_NONE)) {
 		R2_GLOBALS._player._effect = EFFECT_SHADED2;
 		R2_GLOBALS._player._shade = 6;
 	}
@@ -2221,24 +2221,24 @@ void Scene3375::signal() {
 }
 
 void Scene3375::dispatch() {
-	if ((R2_GLOBALS._player._position.y >= 168) && (R2_GLOBALS._player._effect == 1))
+	if ((R2_GLOBALS._player._position.y >= 168) && (R2_GLOBALS._player._effect == EFFECT_SHADED))
 		R2_GLOBALS._player._effect = EFFECT_SHADED2;
-	else if ((R2_GLOBALS._player._position.y < 168) && (R2_GLOBALS._player._effect == 6))
+	else if ((R2_GLOBALS._player._position.y < 168) && (R2_GLOBALS._player._effect == EFFECT_SHADED2))
 		R2_GLOBALS._player._effect = EFFECT_SHADED;
 
-	if ((_companion1._position.y >= 168) && (_companion1._effect == 1))
+	if ((_companion1._position.y >= 168) && (_companion1._effect == EFFECT_SHADED))
 		_companion1._effect = EFFECT_SHADED2;
-	else if ((_companion1._position.y < 168) && (_companion1._effect == 6))
+	else if ((_companion1._position.y < 168) && (_companion1._effect == EFFECT_SHADED2))
 		_companion1._effect = EFFECT_SHADED;
 
-	if ((_companion2._position.y >= 168) && (_companion2._effect == 1))
+	if ((_companion2._position.y >= 168) && (_companion2._effect == EFFECT_SHADED))
 		_companion2._effect = EFFECT_SHADED2;
-	else if ((_companion2._position.y < 168) && (_companion2._effect == 6))
+	else if ((_companion2._position.y < 168) && (_companion2._effect == EFFECT_SHADED2))
 		_companion2._effect = EFFECT_SHADED;
 
-	if ((_webbster._position.y >= 168) && (_webbster._effect == 1))
+	if ((_webbster._position.y >= 168) && (_webbster._effect == EFFECT_SHADED))
 		_webbster._effect = EFFECT_SHADED2;
-	else if ((_webbster._position.y < 168) && (_webbster._effect == 6))
+	else if ((_webbster._position.y < 168) && (_webbster._effect == EFFECT_SHADED2))
 		_webbster._effect = EFFECT_SHADED;
 
 	Scene::dispatch();

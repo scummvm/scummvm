@@ -5768,7 +5768,7 @@ bool Scene600::Smoke::startAction(CursorType action, Event &event) {
 GfxSurface Scene600::Smoke::getFrame() {
 	GfxSurface frame = SceneActor::getFrame();
 
-	if (_effect) {
+	if (_effect != EFFECT_NONE) {
 		// Translate the frame using the scene's pixel map
 		byte *pixelMap = static_cast<Scene600 *>(R2_GLOBALS._sceneManager._scene)->_pixelMap;
 		Graphics::Surface surface = frame.lockSurface();
