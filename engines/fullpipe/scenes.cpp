@@ -1374,5 +1374,8 @@ void FullpipeEngine::updateMap(PreloadItem *pre) {
     }
 }
 
+void BallChain::init(Ball **ball) {
+	warning("STUB: BallChain::init()");
+}
 
 } // End of namespace Fullpipe

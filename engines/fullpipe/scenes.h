@@ -206,6 +206,8 @@ struct BallChain {
 
 	BallChain() : pHead(0), field_8(0), pTail(0), numBalls(0), cPlex(0), cPlexLen(0) {}
 	~BallChain() { free(cPlex); }
+
+	void init(Ball **ball);
 };
 
 class Vars {
