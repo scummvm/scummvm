@@ -441,8 +441,46 @@ void sceneHandler27_batSetColors(int batn) {
 	}
 }
 
+void sceneHandler27_driverPushButton() {
+	warning("STUB: sceneHandler27_driverPushButton()");
+}
+
+void sceneHandler27_maidSwitchback() {
+	warning("STUB: sceneHandler27_maidSwitchback()");
+}
+
+void sceneHandler27_batLogic() {
+	warning("STUB: sceneHandler27_batLogic()");
+}
+
 void sceneHandler27_calcWinArcade() {
-	warning("STUB: sceneHandler27_calcWinArcade()");
+	if (!g_vars->scene27_var10 && !g_vars->scene27_var11) {
+		int numHilite = 0;
+
+		for (uint i = 0; i < g_vars->scene27_bats.size(); i++) {
+			if (g_vars->scene27_bats[i]->ani->_statics->_staticsId == ST_BTA_HILITE)
+				numHilite++;
+		}
+
+		if (numHilite >= 3) {
+			if (g_fp->getObjectState(sO_Driver) == g_fp->getObjectEnumState(sO_Driver, sO_WithSteering)) {
+				sceneHandler27_driverGiveVent();
+				sceneHandler27_maidSwitchback();
+
+				return;
+			}
+		}
+
+		if (!g_vars->scene27_balls.numBalls) {
+			sceneHandler27_driverPushButton();
+			sceneHandler27_maidSwitchback();
+			return;
+		}
+
+		sceneHandler27_batLogic();
+	}
+
+	sceneHandler27_maidSwitchback();
 }
 
 void sceneHandler27_sub02() {
