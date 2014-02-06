@@ -177,8 +177,9 @@ bool VideoSubtitler::loadSubtitles(const char *filename, const char *subtitleFil
 	}
 
 	delete[] buffer;
+	// Succeeded loading subtitles!
 
-	return false;
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
