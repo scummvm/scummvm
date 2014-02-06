@@ -1376,7 +1376,20 @@ void FullpipeEngine::updateMap(PreloadItem *pre) {
 }
 
 void BallChain::init(Ball **ball) {
-	warning("STUB: BallChain::init()");
+	*ball = pTail;
+	pTail = (Ball *)ball;
+	numBalls--;
+
+	if (!numBalls) {
+		for (Ball *i = pHead; i; i = i->p0 )
+			;
+		numBalls = 0;
+		pTail = 0;
+		field_8 = 0;
+		pHead = 0;
+		free(cPlex);
+		cPlex = 0;
+	}
 }
 
 } // End of namespace Fullpipe
