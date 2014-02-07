@@ -30,12 +30,10 @@
 #include "engines/wintermute/base/base_game.h"
 namespace Wintermute {
 
-//////////////////////////////////////////////////////////////////////////
 VideoSubtitle::VideoSubtitle(BaseGame *inGame): BaseClass(inGame) {
 	_startFrame = _endFrame = 0;
 }
 
-//////////////////////////////////////////////////////////////////////////
 VideoSubtitle::VideoSubtitle(BaseGame *inGame, char *text, const long &startFrame, const long &endFrame): BaseClass(inGame) {
 	_gameRef->expandStringByStringTable(&text);
 	_text = Common::String(text);
@@ -54,4 +52,5 @@ long VideoSubtitle::getEndFrame() {
 Common::String VideoSubtitle::getText() {
 	return _text;
 }
-}
+
+} // End of namespace Wintermute

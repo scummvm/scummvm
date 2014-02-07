@@ -34,14 +34,13 @@
 #include "engines/wintermute/base/gfx/base_renderer.h"
 
 namespace Wintermute {
-//////////////////////////////////////////////////////////////////////////
+
 VideoSubtitler::VideoSubtitler(BaseGame *inGame): BaseClass(inGame) {
 	_lastSample = -1;
 	_currentSubtitle = 0;
 	_showSubtitle = false;
 }
 
-//////////////////////////////////////////////////////////////////////////
 VideoSubtitler::~VideoSubtitler(void) {
 	for (uint i = 0; i < _subtitles.size(); i++) {
 		delete _subtitles[i];
@@ -50,8 +49,6 @@ VideoSubtitler::~VideoSubtitler(void) {
 	_subtitles.clear();
 }
 
-
-//////////////////////////////////////////////////////////////////////////
 bool VideoSubtitler::loadSubtitles(const char *filename, const char *subtitleFile) {
 	if (!filename) {
 		return false;
@@ -182,7 +179,6 @@ bool VideoSubtitler::loadSubtitles(const char *filename, const char *subtitleFil
 	return true;
 }
 
-//////////////////////////////////////////////////////////////////////////
 bool VideoSubtitler::display() {
 	if (_showSubtitle) {
 		BaseFont *font = _gameRef->getVideoFont() ? _gameRef->getVideoFont() : _gameRef->getSystemFont();
@@ -195,7 +191,6 @@ bool VideoSubtitler::display() {
 	return false;
 }
 
-//////////////////////////////////////////////////////////////////////////
 bool VideoSubtitler::update(long frame) {
 	if (frame != _lastSample) {
 		/*
@@ -252,4 +247,5 @@ bool VideoSubtitler::update(long frame) {
 	}
 	return false;
 }
-}
+
+} // End of namespace Wintermute

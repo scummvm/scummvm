@@ -45,6 +45,7 @@ private:
 	long _startFrame;
 	Common::String _text;
 };
-}
+
+} // End of namespace Wintermute
 
 #endif

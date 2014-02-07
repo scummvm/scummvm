@@ -48,6 +48,7 @@ public:
 	long _lastSample;
 	Common::Array<VideoSubtitle *> _subtitles;
 };
-}
+
+} // End of namespace Wintermute
 
 #endif
