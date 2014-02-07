@@ -44,7 +44,7 @@ public:
 	uint _currentSubtitle;
 	bool loadSubtitles(const Common::String &filename, const Common::String &subtitleFile);
 	bool display();
-	bool update(long frame);
+	bool update(uint frame);
 private:
 	Common::Array<VideoSubtitle *> _subtitles;
 	long _lastSample;

@@ -76,7 +76,7 @@ bool VideoSubtitler::loadSubtitles(const Common::String &filename, const Common:
 		newFile = PathUtil::combine(path, name + ext);
 	}
 
-	long size;
+	int size;
 
 	Common::SeekableReadStream *file = BaseFileManager::getEngineInstance()->openFile(newFile, true, false);
 
@@ -88,7 +88,7 @@ bool VideoSubtitler::loadSubtitles(const Common::String &filename, const Common:
 	char *buffer = new char[size];
 	file->read(buffer, size);
 
-	long start, end;
+	int start, end;
 	bool inToken;
 	char *tokenStart;
 	int tokenLength;
@@ -184,7 +184,7 @@ bool VideoSubtitler::display() {
 	return false;
 }
 
-bool VideoSubtitler::update(long frame) {
+bool VideoSubtitler::update(uint frame) {
 
 	if (_subtitles.size() == 0) {
 		// Edge case: we have loaded subtitles early on... from a blank file.

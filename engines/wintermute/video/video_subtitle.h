@@ -36,13 +36,13 @@ namespace Wintermute {
 class VideoSubtitle : public BaseClass {
 public:
 	VideoSubtitle(BaseGame *inGame);
-	VideoSubtitle(BaseGame *inGame, const Common::String &text, const long &startFrame, const long &endFrame);
-	long getEndFrame();
-	long getStartFrame();
+	VideoSubtitle(BaseGame *inGame, const Common::String &text, const uint &startFrame, const uint &endFrame);
+	uint getEndFrame();
+	uint getStartFrame();
 	Common::String getText();
 private:
-	long _endFrame;
-	long _startFrame;
+	uint _endFrame;
+	uint _startFrame;
 	Common::String _text;
 };
 
