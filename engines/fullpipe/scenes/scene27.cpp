@@ -442,7 +442,19 @@ void sceneHandler27_batSetColors(int batn) {
 }
 
 void sceneHandler27_driverPushButton() {
-	warning("STUB: sceneHandler27_driverPushButton()");
+	if (g_fp->getObjectState(sO_Driver) == g_fp->getObjectEnumState(sO_Driver, sO_WithSteering)) {
+		g_vars->scene27_driver->changeStatics2(ST_DRV_VENT);
+		chainQueue(QU_DRV_PUSHBUTTON, 1);
+
+		g_vars->scene27_var11 = 1;
+	} else {
+		g_vars->scene27_driver->changeStatics2(ST_DRV_SITNOVENT);
+
+
+		chainQueue(QU_DRV_PUSHBUTTON_NOVENT, 1);
+
+		g_vars->scene27_var11 = 1;
+	}
 }
 
 void sceneHandler27_maidSwitchback() {
