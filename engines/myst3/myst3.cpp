@@ -144,7 +144,7 @@ Common::Error Myst3Engine::run() {
 		return Common::kUserCanceled;
 	}
 
-	_gfx = new Renderer(_system);
+	_gfx = Renderer::createRenderer(_system);
 	_sound = new Sound(this);
 	_ambient = new Ambient(this);
 	_rnd = new Common::RandomSource("sprint");

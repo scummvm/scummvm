@@ -26,9 +26,6 @@
 #undef ARRAYSIZE
 #endif
 
-#include "engines/myst3/gfx.h"
-#include "engines/myst3/gfx_opengl_texture.h"
-
 #include "common/rect.h"
 #include "common/textconsole.h"
 
@@ -39,29 +36,34 @@
 
 #include "math/vector2d.h"
 
+#include "engines/myst3/gfx.h"
+#include "engines/myst3/gfx_opengl.h"
+#include "engines/myst3/gfx_opengl_texture.h"
+
 namespace Myst3 {
 
-Renderer::Renderer(OSystem *system) :
-	_system(system),
-	_font(0),
+Renderer *Renderer::createRenderer(OSystem *system) {
+	return new OpenGLRenderer(system);
+}
+
+OpenGLRenderer::OpenGLRenderer(OSystem *system) :
+	BaseRenderer(system),
 	_nonPowerOfTwoTexSupport(false) {
 }
 
-Renderer::~Renderer() {
-	if (_font)
-		freeTexture(_font);
+OpenGLRenderer::~OpenGLRenderer() {
 }
 
-Texture *Renderer::createTexture(const Graphics::Surface *surface) {
+Texture *OpenGLRenderer::createTexture(const Graphics::Surface *surface) {
 	return new OpenGLTexture(surface, _nonPowerOfTwoTexSupport);
 }
 
-void Renderer::freeTexture(Texture *texture) {
+void OpenGLRenderer::freeTexture(Texture *texture) {
 	OpenGLTexture *glTexture = static_cast<OpenGLTexture *>(texture);
 	delete glTexture;
 }
 
-void Renderer::init() {
+void OpenGLRenderer::init() {
 	// Check the available OpenGL extensions
 	const char* extensions = (const char*)glGetString(GL_EXTENSIONS);
 	if (strstr(extensions, "GL_ARB_texture_non_power_of_two"))
@@ -80,16 +82,12 @@ void Renderer::init() {
 	glEnable(GL_DEPTH_TEST);
 }
 
-void Renderer::initFont(const Graphics::Surface *surface) {
-	_font = createTexture(surface);
-}
-
-void Renderer::clear() {
+void OpenGLRenderer::clear() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glColor3f(1.0f, 1.0f, 1.0f);
 }
 
-void Renderer::setupCameraOrtho2D() {
+void OpenGLRenderer::setupCameraOrtho2D() {
 	glViewport(0, 0, kOriginalWidth, kOriginalHeight);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -99,7 +97,7 @@ void Renderer::setupCameraOrtho2D() {
 	glLoadIdentity();
 }
 
-void Renderer::setupCameraPerspective(float pitch, float heading, float fov) {
+void OpenGLRenderer::setupCameraPerspective(float pitch, float heading, float fov) {
 	// TODO: Find a correct and exact formula for the FOV
 	GLfloat glFOV = 0.63 * fov; // Approximative and experimental formula
 	if (fov > 79.0 && fov < 81.0)
@@ -123,7 +121,7 @@ void Renderer::setupCameraPerspective(float pitch, float heading, float fov) {
 	glGetIntegerv(GL_VIEWPORT, (GLint *)_cubeViewport);
 }
 
-void Renderer::drawRect2D(const Common::Rect &rect, uint32 color) {
+void OpenGLRenderer::drawRect2D(const Common::Rect &rect, uint32 color) {
 	uint8 a, r, g, b;
 	Graphics::colorToARGB< Graphics::ColorMasks<8888> >(color, a, r, g, b);
 
@@ -145,7 +143,7 @@ void Renderer::drawRect2D(const Common::Rect &rect, uint32 color) {
 	glDisable(GL_BLEND);
 }
 
-void Renderer::drawTexturedRect2D(const Common::Rect &screenRect, const Common::Rect &textureRect,
+void OpenGLRenderer::drawTexturedRect2D(const Common::Rect &screenRect, const Common::Rect &textureRect,
 		Texture *texture, float transparency) {
 
 	OpenGLTexture *glTexture = static_cast<OpenGLTexture *>(texture);
@@ -190,22 +188,7 @@ void Renderer::drawTexturedRect2D(const Common::Rect &screenRect, const Common::
 	glDepthMask(GL_TRUE);
 }
 
-Common::Rect Renderer::getFontCharacterRect(uint8 character) {
-	uint index = 0;
-
-	if (character == ' ')
-		index = 0;
-	else if (character >= '0' && character <= '9')
-		index = 1 + character - '0';
-	else if (character >= 'A' && character <= 'Z')
-		index = 1 + 10 + character - 'A';
-	else if (character == '|')
-		index = 1 + 10 + 26;
-
-	return Common::Rect(16 * index, 0, 16 * (index + 1), 32);
-}
-
-void Renderer::draw2DText(const Common::String &text, const Common::Point &position) {
+void OpenGLRenderer::draw2DText(const Common::String &text, const Common::Point &position) {
 	OpenGLTexture *glFont = static_cast<OpenGLTexture *>(_font);
 
 	// The font only has uppercase letters
@@ -253,7 +236,7 @@ void Renderer::draw2DText(const Common::String &text, const Common::Point &posit
 	glDepthMask(GL_TRUE);
 }
 
-void Renderer::drawCube(Texture **textures) {
+void OpenGLRenderer::drawCube(Texture **textures) {
 	OpenGLTexture *texture0 = static_cast<OpenGLTexture *>(textures[0]);
 
 	// Size of the cube
@@ -316,7 +299,7 @@ void Renderer::drawCube(Texture **textures) {
 	glDepthMask(GL_TRUE);
 }
 
-void Renderer::drawTexturedRect3D(const Math::Vector3d &topLeft, const Math::Vector3d &bottomLeft,
+void OpenGLRenderer::drawTexturedRect3D(const Math::Vector3d &topLeft, const Math::Vector3d &bottomLeft,
 		const Math::Vector3d &topRight, const Math::Vector3d &bottomRight, Texture *texture) {
 
 	OpenGLTexture *glTexture = static_cast<OpenGLTexture *>(texture);
@@ -346,7 +329,7 @@ void Renderer::drawTexturedRect3D(const Math::Vector3d &topLeft, const Math::Vec
 	glDisable(GL_BLEND);
 }
 
-Graphics::Surface *Renderer::getScreenshot() {
+Graphics::Surface *OpenGLRenderer::getScreenshot() {
 	Graphics::Surface *s = new Graphics::Surface();
 	s->create(kOriginalWidth, kOriginalHeight, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
 
@@ -355,7 +338,7 @@ Graphics::Surface *Renderer::getScreenshot() {
 	return s;
 }
 
-void Renderer::screenPosToDirection(const Common::Point screen, float &pitch, float &heading) {
+void OpenGLRenderer::screenPosToDirection(const Common::Point screen, float &pitch, float &heading) {
 	double x, y, z;
 
 	// Screen coords to 3D coords
