@@ -26,6 +26,7 @@
 #include "zvision/control.h"
 
 #include "common/rect.h"
+#include "common/events.h"
 
 
 namespace ZVision {
@@ -35,6 +36,13 @@ public:
 	PushToggleControl(ZVision *engine, uint32 key, Common::SeekableReadStream &stream);
 	~PushToggleControl();
 
+	/**
+	 * Called when LeftMouse is pushed. Default is NOP.
+	 *
+	 * @param screenSpacePos             The position of the mouse in screen space
+	 * @param backgroundImageSpacePos    The position of the mouse in background image space
+	 */
+	bool onMouseDown(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos);
 	/**
 	 * Called when LeftMouse is lifted. Calls ScriptManager::setStateValue(_key, 1);
 	 *
@@ -60,6 +68,10 @@ private:
 	Common::Rect _hotspot;
 	/** The cursor to use when hovering over _hotspot */
 	Common::String _hoverCursor;
+	/** Button maximal values count */
+	uint _countTo;
+
+	Common::EventType _event;
 };
 
 } // End of namespace ZVision

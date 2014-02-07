@@ -35,10 +35,13 @@
 namespace ZVision {
 
 PushToggleControl::PushToggleControl(ZVision *engine, uint32 key, Common::SeekableReadStream &stream)
-	: Control(engine, key) {
+	: Control(engine, key),
+	  _countTo(2),
+	  _event(Common::EVENT_LBUTTONUP) {
 	// Loop until we find the closing brace
 	Common::String line = stream.readLine();
 	trimCommentsAndWhiteSpace(&line);
+	line.toLowercase();
 
 	while (!stream.eos() && !line.contains('}')) {
 		if (line.matchString("*_hotspot*", true)) {
@@ -56,6 +59,27 @@ PushToggleControl::PushToggleControl(ZVision *engine, uint32 key, Common::Seekab
 			sscanf(line.c_str(), "%*[^(](%25[^)])", nameBuffer);
 
 			_hoverCursor = Common::String(nameBuffer);
+		} else if (line.matchString("animation*", true)) {
+			// Not used
+		} else if (line.matchString("sound*", true)) {
+			// Not used
+		} else if (line.matchString("count_to*", true)) {
+			sscanf(line.c_str(), "%*[^(](%u)", &_countTo);
+		} else if (line.matchString("mouse_event*", true)) {
+			char nameBuffer[25];
+
+			sscanf(line.c_str(), "%*[^(](%25[^)])", nameBuffer);
+
+			Common::String evntStr(nameBuffer);
+			if (evntStr.equalsIgnoreCase("up")) {
+				_event = Common::EVENT_LBUTTONUP;
+			} else if (evntStr.equalsIgnoreCase("down")) {
+				_event = Common::EVENT_LBUTTONDOWN;
+			} else if (evntStr.equalsIgnoreCase("double")) {
+				// Not used
+			}
+		} else if (line.matchString("venus_id*", true)) {
+			// Not used
 		}
 
 		line = stream.readLine();
@@ -68,16 +92,35 @@ PushToggleControl::PushToggleControl(ZVision *engine, uint32 key, Common::Seekab
 }
 
 PushToggleControl::~PushToggleControl() {
-	// Clear the state value back to 0
-	_engine->getScriptManager()->setStateValue(_key, 0);
 }
 
 bool PushToggleControl::onMouseUp(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) {
 	if (_engine->getScriptManager()->getStateFlag(_key) & Puzzle::DISABLED)
 		return false;
 
+	if (_event != Common::EVENT_LBUTTONUP)
+		return false;
+
 	if (_hotspot.contains(backgroundImageSpacePos)) {
-		_engine->getScriptManager()->setStateValue(_key, 1);
+		int32 val = _engine->getScriptManager()->getStateValue(_key);
+		val = (val + 1) % _countTo;
+		_engine->getScriptManager()->setStateValue(_key, val);
+		return true;
+	}
+	return false;
+}
+
+bool PushToggleControl::onMouseDown(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) {
+	if (_engine->getScriptManager()->getStateFlag(_key) & Puzzle::DISABLED)
+		return false;
+
+	if (_event != Common::EVENT_LBUTTONDOWN)
+		return false;
+
+	if (_hotspot.contains(backgroundImageSpacePos)) {
+		int32 val = _engine->getScriptManager()->getStateValue(_key);
+		val = (val + 1) % _countTo;
+		_engine->getScriptManager()->setStateValue(_key, val);
 		return true;
 	}
 	return false;
