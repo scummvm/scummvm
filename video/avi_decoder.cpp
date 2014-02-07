@@ -82,6 +82,7 @@ namespace Video {
 #define ID_CVID MKTAG('c','v','i','d')
 #define ID_IV32 MKTAG('i','v','3','2')
 #define ID_DUCK MKTAG('D','U','C','K')
+#define ID_DUCK2 MKTAG('d','u','c','k') // Some videos have DUCK tag in lowercase
 #define ID_MPG2 MKTAG('m','p','g','2')
 #define ID_MJPG MKTAG('m','j','p','g')
 
@@ -782,6 +783,7 @@ Codec *AVIDecoder::AVIVideoTrack::createCodec() {
 		return new Indeo3Decoder(_bmInfo.width, _bmInfo.height);
 #ifdef VIDEO_CODECS_TRUEMOTION1_H
 	case ID_DUCK:
+	case ID_DUCK2:
 		return new TrueMotion1Decoder(_bmInfo.width, _bmInfo.height);
 #endif
 #ifdef USE_MPEG2
