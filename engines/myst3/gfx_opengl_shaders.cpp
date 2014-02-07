@@ -98,7 +98,7 @@ void ShaderRenderer::setupQuadEBO() {
     p[5] = start++;
   }
 
-  g_quadEBO = Graphics::Shader::createBuffer(GL_ELEMENT_ARRAY_BUFFER, sizeof(quad_indices), quad_indices, GL_STATIC_DRAW);
+  _quadEBO = Graphics::Shader::createBuffer(GL_ELEMENT_ARRAY_BUFFER, sizeof(quad_indices), quad_indices, GL_STATIC_DRAW);
 }
 
 static Math::Vector2d scaled(float x, float y) {
@@ -134,21 +134,21 @@ void ShaderRenderer::init() {
   glEnable(GL_DEPTH_TEST);
 
   const char* attributes[] = { "position", "texcoord", NULL };
-  g_box_shader = Graphics::Shader::fromFiles("myst3_box", attributes);
-  g_boxVBO = Graphics::Shader::createBuffer(GL_ARRAY_BUFFER, sizeof(box_vertices), box_vertices);
-  g_box_shader->enableVertexAttribute("position", g_boxVBO, 2, GL_FLOAT, GL_TRUE, 2 * sizeof(float), 0);
-  g_box_shader->enableVertexAttribute("texcoord", g_boxVBO, 2, GL_FLOAT, GL_TRUE, 2 * sizeof(float), 0);
+  _box_shader = Graphics::Shader::fromFiles("myst3_box", attributes);
+  _boxVBO = Graphics::Shader::createBuffer(GL_ARRAY_BUFFER, sizeof(box_vertices), box_vertices);
+  _box_shader->enableVertexAttribute("position", _boxVBO, 2, GL_FLOAT, GL_TRUE, 2 * sizeof(float), 0);
+  _box_shader->enableVertexAttribute("texcoord", _boxVBO, 2, GL_FLOAT, GL_TRUE, 2 * sizeof(float), 0);
 
 
-  g_cube_shader = Graphics::Shader::fromFiles("myst3_cube", attributes);
-  g_cubeVBO = Graphics::Shader::createBuffer(GL_ARRAY_BUFFER, sizeof(cube_vertices), cube_vertices);
-  g_cube_shader->enableVertexAttribute("texcoord", g_cubeVBO, 2, GL_FLOAT, GL_TRUE, 5 * sizeof(float), 0);
-  g_cube_shader->enableVertexAttribute("position", g_cubeVBO, 3, GL_FLOAT, GL_TRUE, 5 * sizeof(float), 2 * sizeof(float));
+  _cube_shader = Graphics::Shader::fromFiles("myst3_cube", attributes);
+  _cubeVBO = Graphics::Shader::createBuffer(GL_ARRAY_BUFFER, sizeof(cube_vertices), cube_vertices);
+  _cube_shader->enableVertexAttribute("texcoord", _cubeVBO, 2, GL_FLOAT, GL_TRUE, 5 * sizeof(float), 0);
+  _cube_shader->enableVertexAttribute("position", _cubeVBO, 3, GL_FLOAT, GL_TRUE, 5 * sizeof(float), 2 * sizeof(float));
 
-  g_rect3d_shader = Graphics::Shader::fromFiles("myst3_cube", attributes);
-  g_rect3dVBO = Graphics::Shader::createBuffer(GL_ARRAY_BUFFER, 20 * sizeof(float), NULL);
-  g_rect3d_shader->enableVertexAttribute("texcoord", g_rect3dVBO, 2, GL_FLOAT, GL_TRUE, 5 * sizeof(float), 0);
-  g_rect3d_shader->enableVertexAttribute("position", g_rect3dVBO, 3, GL_FLOAT, GL_TRUE, 5 * sizeof(float), 2 * sizeof(float));
+  _rect3d_shader = Graphics::Shader::fromFiles("myst3_cube", attributes);
+  _rect3dVBO = Graphics::Shader::createBuffer(GL_ARRAY_BUFFER, 20 * sizeof(float), NULL);
+  _rect3d_shader->enableVertexAttribute("texcoord", _rect3dVBO, 2, GL_FLOAT, GL_TRUE, 5 * sizeof(float), 0);
+  _rect3d_shader->enableVertexAttribute("position", _rect3dVBO, 3, GL_FLOAT, GL_TRUE, 5 * sizeof(float), 2 * sizeof(float));
 
   setupQuadEBO();
 }
@@ -173,10 +173,10 @@ void ShaderRenderer::setupCameraPerspective(float pitch, float heading, float fo
 
   const Math::Vector2d topLeft = Math::Vector2d(0, kBottomBorderHeight + kFrameHeight);
   const Math::Vector2d bottomRight = Math::Vector2d(kOriginalWidth, kBottomBorderHeight);
-  g_viewport = Math::Rect2d(topLeft, bottomRight);
+  _viewport = Math::Rect2d(topLeft, bottomRight);
 
   float nclip = 1.0, fclip = 10000.0;
-  float aspect = g_viewport.getWidth() / g_viewport.getHeight();
+  float aspect = _viewport.getWidth() / _viewport.getHeight();
 
   // taken from glm
   float range = nclip * tan(glFOV / 2 * (LOCAL_PI / 180));
@@ -199,19 +199,19 @@ void ShaderRenderer::setupCameraPerspective(float pitch, float heading, float fo
   Math::Matrix4 model = Math::Quaternion::fromEuler(180.0f - heading, pitch, 0.0f).toMatrix();
   model.transpose();
 
-  g_mvpMatrix = proj * model;
-  g_mvpMatrix.transpose();
+  _mvpMatrix = proj * model;
+  _mvpMatrix.transpose();
 }
 
 void ShaderRenderer::drawRect2D(const Common::Rect &rect, uint32 color) {
   uint8 a, r, g, b;
   Graphics::colorToARGB< Graphics::ColorMasks<8888> >(color, a, r, g, b);
 
-  g_box_shader->use();
-  g_box_shader->setUniform("textured", false);
-  g_box_shader->setUniform("color", Math::Vector4d(r / 255.0, g / 255.0, b / 255.0, a / 255.0));
-  g_box_shader->setUniform("verOffsetXY", scaled(rect.left, rect.top));
-  g_box_shader->setUniform("verSizeWH", scaled(rect.width(), rect.height()));
+  _box_shader->use();
+  _box_shader->setUniform("textured", false);
+  _box_shader->setUniform("color", Math::Vector4d(r / 255.0, g / 255.0, b / 255.0, a / 255.0));
+  _box_shader->setUniform("verOffsetXY", scaled(rect.left, rect.top));
+  _box_shader->setUniform("verSizeWH", scaled(rect.width(), rect.height()));
 
   glDisable(GL_TEXTURE_2D);
   glDepthMask(GL_FALSE);
@@ -249,13 +249,13 @@ void ShaderRenderer::drawTexturedRect2D(const Common::Rect &screenRect, const Co
     transparency = 1.0;
   }
 
-  g_box_shader->use();
-  g_box_shader->setUniform("textured", true);
-  g_box_shader->setUniform("color", Math::Vector4d(1.0f, 1.0f, 1.0f, transparency));
-  g_box_shader->setUniform("verOffsetXY", scaled(sLeft, sTop));
-  g_box_shader->setUniform("verSizeWH", scaled(sWidth, sHeight));
-  g_box_shader->setUniform("texOffsetXY", Math::Vector2d(tLeft, tTop));
-  g_box_shader->setUniform("texSizeWH", Math::Vector2d(tWidth, tHeight));
+  _box_shader->use();
+  _box_shader->setUniform("textured", true);
+  _box_shader->setUniform("color", Math::Vector4d(1.0f, 1.0f, 1.0f, transparency));
+  _box_shader->setUniform("verOffsetXY", scaled(sLeft, sTop));
+  _box_shader->setUniform("verSizeWH", scaled(sWidth, sHeight));
+  _box_shader->setUniform("texOffsetXY", Math::Vector2d(tLeft, tTop));
+  _box_shader->setUniform("texSizeWH", Math::Vector2d(tWidth, tHeight));
 
   glEnable(GL_TEXTURE_2D);
   glDepthMask(GL_FALSE);
@@ -292,16 +292,16 @@ void ShaderRenderer::draw2DText(const Common::String &text, const Common::Point 
     if (_prevVBO)
       glDeleteBuffers(1, &_prevVBO);
 
-    float x = position.x / g_viewport.getWidth();
-    float y = position.y / g_viewport.getHeight();
+    float x = position.x / _viewport.getWidth();
+    float y = position.y / _viewport.getHeight();
 
     float *bufData = new float[textToDraw.size()];
     float *cur = bufData;
 
     for (uint i = 0; i < textToDraw.size(); i++) {
       Common::Rect textureRect = getFontCharacterRect(textToDraw[i]);
-      float w = textureRect.width() / g_viewport.getWidth();
-      float h = textureRect.height() / g_viewport.getHeight();
+      float w = textureRect.width() / _viewport.getWidth();
+      float h = textureRect.height() / _viewport.getHeight();
 
       float cw = textureRect.width() / (float) glFont->internalWidth;
       float ch = textureRect.height() / (float) glFont->internalHeight;
@@ -325,13 +325,13 @@ void ShaderRenderer::draw2DText(const Common::String &text, const Common::Point 
     _prevVBO = vbo;
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
-    g_text_shader->enableVertexAttribute("texcoord", vbo, 2, GL_FLOAT, GL_TRUE, 5 * sizeof(float), 0);
-    g_text_shader->enableVertexAttribute("position", vbo, 3, GL_FLOAT, GL_TRUE, 5 * sizeof(float), 2 * sizeof(float));
+    _text_shader->enableVertexAttribute("texcoord", vbo, 2, GL_FLOAT, GL_TRUE, 5 * sizeof(float), 0);
+    _text_shader->enableVertexAttribute("position", vbo, 3, GL_FLOAT, GL_TRUE, 5 * sizeof(float), 2 * sizeof(float));
   }
 
-  g_text_shader->use();
+  _text_shader->use();
   glBindTexture(GL_TEXTURE_2D, glFont->id);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, g_quadEBO);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _quadEBO);
   glDrawElements(GL_TRIANGLES, textToDraw.size(), GL_UNSIGNED_SHORT, 0);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
@@ -346,10 +346,10 @@ void ShaderRenderer::drawCube(Texture **textures) {
   glEnable(GL_TEXTURE_2D);
   glDepthMask(GL_FALSE);
 
-  g_cube_shader->use();
-  g_cube_shader->setUniform1f("verScale", 256.0f);
-  g_cube_shader->setUniform1f("texScale", (texture0->width - 1) / (float) texture0->internalWidth);
-  g_cube_shader->setUniform("mvpMatrix", g_mvpMatrix);
+  _cube_shader->use();
+  _cube_shader->setUniform1f("verScale", 256.0f);
+  _cube_shader->setUniform1f("texScale", (texture0->width - 1) / (float) texture0->internalWidth);
+  _cube_shader->setUniform("mvpMatrix", _mvpMatrix);
 
   glBindTexture(GL_TEXTURE_2D, static_cast<OpenGLTexture *>(textures[4])->id);
   glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
@@ -392,11 +392,11 @@ void ShaderRenderer::drawTexturedRect3D(const Math::Vector3d &topLeft, const Mat
     w,  h,  -bottomRight.x(),  bottomRight.y(),  bottomRight.z(),
   };
 
-  g_rect3d_shader->use();
-  g_rect3d_shader->setUniform1f("verScale", 1.0f);
-  g_rect3d_shader->setUniform1f("texScale", 1.0f);
-  g_rect3d_shader->setUniform("mvpMatrix", g_mvpMatrix);
-  glBindBuffer(GL_ARRAY_BUFFER, g_rect3dVBO);
+  _rect3d_shader->use();
+  _rect3d_shader->setUniform1f("verScale", 1.0f);
+  _rect3d_shader->setUniform1f("texScale", 1.0f);
+  _rect3d_shader->setUniform("mvpMatrix", _mvpMatrix);
+  glBindBuffer(GL_ARRAY_BUFFER, _rect3dVBO);
   glBufferSubData(GL_ARRAY_BUFFER, 0, 20 * sizeof(float), vertices);
 
   glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
@@ -420,14 +420,14 @@ void ShaderRenderer::screenPosToDirection(const Common::Point screen, float &pit
   y = kOriginalHeight - screen.y;
   z = 0.9f;
 
-  const Math::Vector2d tl = g_viewport.getTopLeft();
-  x = 2 * double(x - tl.getX()) / g_viewport.getWidth() - 1.0f;
-  y = 2 * double(y - tl.getY()) / g_viewport.getHeight() - 1.0f;
+  const Math::Vector2d tl = _viewport.getTopLeft();
+  x = 2 * double(x - tl.getX()) / _viewport.getWidth() - 1.0f;
+  y = 2 * double(y - tl.getY()) / _viewport.getHeight() - 1.0f;
   z = 2 * z - 1.0f;
 
   // Screen coords to 3D coords
   Math::Vector4d point = Math::Vector4d(x, y, z, 1.0f);
-  point = g_mvpMatrix * point;
+  point = _mvpMatrix * point;
 
   // 3D coords to polar coords
   Math::Vector3d v = Math::Vector3d(point.x(), point.y(), point.z());

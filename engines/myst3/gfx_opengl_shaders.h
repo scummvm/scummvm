@@ -62,18 +62,18 @@ public:
 private:
 	void setupQuadEBO();
 
-	Graphics::Shader *g_box_shader;
-	Graphics::Shader *g_cube_shader;
-	Graphics::Shader *g_rect3d_shader;
-	Graphics::Shader *g_text_shader;
+	Graphics::Shader *_box_shader;
+	Graphics::Shader *_cube_shader;
+	Graphics::Shader *_rect3d_shader;
+	Graphics::Shader *_text_shader;
 
-	GLuint g_boxVBO;
-	GLuint g_cubeVBO;
-	GLuint g_rect3dVBO;
-	GLuint g_quadEBO;
+	GLuint _boxVBO;
+	GLuint _cubeVBO;
+	GLuint _rect3dVBO;
+	GLuint _quadEBO;
 
-	Math::Matrix4 g_mvpMatrix;
-	Math::Rect2d g_viewport;
+	Math::Matrix4 _mvpMatrix;
+	Math::Rect2d _viewport;
 };
 
 } // end of namespace Myst3
