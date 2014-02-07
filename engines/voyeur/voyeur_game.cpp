@@ -765,17 +765,20 @@ void VoyeurEngine::doGossip() {
 
 	// Play the initial gossip video
 	decoder.play(this, 0x302, frameNumsP, posP);
+	decoder.close();
 
 	// Reset the palette and clear the screen
 	_graphicsManager.resetPalette();
 	_graphicsManager.screenReset();
 
 	// Play interview video
-	decoder.loadFile("a2110100.rl2", true);
-	decoder.start();
+	RL2Decoder decoder2;
+	decoder2.loadFile("a2110100.rl2", true);
+	decoder2.start();
 
 	_eventsManager.getMouseInfo();
-	decoder.play(this);
+	decoder2.play(this);
+	decoder2.close();
 
 	_bVoy->freeBoltGroup(0x300);
 	_graphicsManager.screenReset();
