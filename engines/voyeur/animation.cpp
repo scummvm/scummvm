@@ -116,7 +116,7 @@ void RL2Decoder::readNextPacket() {
 
 	// Handle queueing sound data
 	if (_soundFrameNumber == -1)
-		_soundFrameNumber = frameNumber;
+		_soundFrameNumber = (frameNumber == -1) ? 0 : frameNumber;
 
 	while (audioTrack->numQueuedStreams() < SOUND_FRAMES_READAHEAD && 
 			(_soundFrameNumber < (int)_soundFrames.size())) {
@@ -225,7 +225,7 @@ RL2Decoder::RL2VideoTrack::RL2VideoTrack(const RL2FileHeader &header, RL2AudioTr
 	_videoBase = header._videoBase;
 	_dirtyPalette = header._colorCount > 0;
 
-	_curFrame = 0;
+	_curFrame = -1;
 	_initialFrame = true;
 }
 
@@ -283,7 +283,7 @@ const Graphics::Surface *RL2Decoder::RL2VideoTrack::decodeNextFrame() {
 	}
 
 	// Move to the next frame data
-	_fileStream->seek(_header._frameOffsets[_curFrame]);
+	_fileStream->seek(_header._frameOffsets[++_curFrame]);
 
 	// If there's any sound data, pass it to the audio track
 	_fileStream->seek(_header._frameSoundSizes[_curFrame], SEEK_CUR);
@@ -295,8 +295,6 @@ const Graphics::Surface *RL2Decoder::RL2VideoTrack::decodeNextFrame() {
 	} else {
 		rl2DecodeFrameWithoutTransparency(_videoBase);
 	}
-
-	_curFrame++;
 
 	return _surface;
 }
