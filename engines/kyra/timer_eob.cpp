@@ -347,7 +347,7 @@ void EoBCoreEngine::timerUpdateFoodStatus(int timerNum) {
 }
 
 void EoBCoreEngine::timerUpdateMonsterIdleAnim(int timerNum) {
-	for (int i = 0; i < 18; i++) {
+	for (int i = 0; i < 30; i++) {
 		EoBMonsterInPlay *m = &_monsters[i];
 		if (m->mode == 7 || m->mode == 10 || (m->flags & 0x20) || (rollDice(1, 2, 0) != 1))
 			continue;
