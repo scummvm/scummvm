@@ -185,6 +185,12 @@ bool VideoSubtitler::display() {
 }
 
 bool VideoSubtitler::update(long frame) {
+
+	if (_subtitles.size() == 0) {
+		// Edge case: we have loaded subtitles early on... from a blank file.
+		return false;
+	}
+
 	if (frame != _lastSample) {
 		/*
 		 * If the frame count hasn't advanced the previous state still matches
