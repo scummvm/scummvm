@@ -91,9 +91,11 @@ void LeverControl::parseLevFile(const Common::String &fileName) {
 		return;
 	}
 
-	Common::String line = file.readLine();
+	Common::String line;
 
 	while (!file.eos()) {
+		line = file.readLine();
+
 		if (line.matchString("*animation_id*", true)) {
 			// Not used
 		} else if (line.matchString("*filename*", true)) {
@@ -142,6 +144,8 @@ void LeverControl::parseLevFile(const Common::String &fileName) {
 			uint frameNumber;
 			uint x, y;
 
+			line.toLowercase();
+
 			if (sscanf(line.c_str(), "%u:%u %u", &frameNumber, &x, &y) == 3) {
 				_frameInfo[frameNumber].hotspot.left = x;
 				_frameInfo[frameNumber].hotspot.top = y;
@@ -149,13 +153,13 @@ void LeverControl::parseLevFile(const Common::String &fileName) {
 				_frameInfo[frameNumber].hotspot.bottom = y + _hotspotDelta.y;
 			}
 
-			Common::StringTokenizer tokenizer(line, " ^=()");
+			Common::StringTokenizer tokenizer(line, " ^=()~");
 			tokenizer.nextToken();
 			tokenizer.nextToken();
 
 			Common::String token = tokenizer.nextToken();
 			while (!tokenizer.empty()) {
-				if (token == "D") {
+				if (token == "d") {
 					token = tokenizer.nextToken();
 
 					uint angle;
@@ -163,7 +167,7 @@ void LeverControl::parseLevFile(const Common::String &fileName) {
 					sscanf(token.c_str(), "%u,%u", &toFrame, &angle);
 
 					_frameInfo[frameNumber].directions.push_back(Direction(angle, toFrame));
-				} else if (token.hasPrefix("P")) {
+				} else if (token.hasPrefix("p")) {
 					// Format: P(<from> to <to>)
 					tokenizer.nextToken();
 					tokenizer.nextToken();
@@ -177,7 +181,7 @@ void LeverControl::parseLevFile(const Common::String &fileName) {
 			}
 		}
 
-		line = file.readLine();
+		// Don't read lines in this place because last will not be parsed.
 	}
 }
 
@@ -290,7 +294,7 @@ int LeverControl::calculateVectorAngle(const Common::Point &pointOne, const Comm
 
 		// Calculate the angle using arctan
 		// Then convert to degrees. (180 / 3.14159 = 57.2958)
-		int angle = int(atan((float)yDist / (float)xDist) * 57);
+		int angle = int(atan((float)yDist / (float)abs(xDist)) * 57);
 
 		// Calculate what quadrant pointTwo is in
 		uint quadrant = ((yDist > 0 ? 1 : 0) << 1) | (xDist < 0 ? 1 : 0);
@@ -339,16 +343,16 @@ int LeverControl::calculateVectorAngle(const Common::Point &pointOne, const Comm
 		// Convert the local angles to unit circle angles
 		switch (quadrant) {
 		case 0:
-			angle = 180 + angle;
+			angle = -angle;
 			break;
 		case 1:
-			// Do nothing
+			angle = angle + 180;
 			break;
 		case 2:
-			angle = 180 + angle;
+			angle = 360 - angle;
 			break;
 		case 3:
-			angle = 360 + angle;
+			angle = 180 + angle;
 			break;
 		}
 
