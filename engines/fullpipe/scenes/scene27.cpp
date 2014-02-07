@@ -458,7 +458,10 @@ void sceneHandler27_driverPushButton() {
 }
 
 void sceneHandler27_maidSwitchback() {
-	warning("STUB: sceneHandler27_maidSwitchback()");
+	if (g_fp->getObjectState(sO_Maid) == g_fp->getObjectEnumState(sO_Maid, sO_WithSwab)) {
+		g_vars->scene27_maid->changeStatics2(ST_MID_SWAB);
+		g_vars->scene27_maid->startMQIfIdle(QU_MID_SWITCHBACK, 1);
+	}
 }
 
 void sceneHandler27_batLogic() {
