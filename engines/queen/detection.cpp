@@ -47,11 +47,20 @@ static const PlainGameDescriptor queenGames[] = {
 	{0, 0}
 };
 
-static const ExtraGuiOption queenExtraGuiOption = {
-	_s("Alternative intro"),
-	_s("Use an alternative game intro (CD version only)"),
-	"alt_intro",
-	false
+#define GAMEOPTION_ALT_INTRO  GUIO_GAMEOPTIONS1
+
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_ALT_INTRO,
+		{
+			_s("Alternative intro"),
+			_s("Use an alternative game intro (CD version only)"),
+			"alt_intro",
+			false
+		}
+	},
+
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
 namespace Queen {
@@ -159,7 +168,7 @@ static const QueenGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GAMEOPTION_ALT_INTRO)
 		},
 	},
 
@@ -188,7 +197,7 @@ static const QueenGameDescription gameDescriptions[] = {
 			Common::FR_FRA,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GAMEOPTION_ALT_INTRO)
 		},
 	},
 #endif
@@ -218,7 +227,7 @@ static const QueenGameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GAMEOPTION_ALT_INTRO)
 		},
 	},
 #endif
@@ -233,7 +242,7 @@ static const QueenGameDescription gameDescriptions[] = {
 			Common::HE_ISR,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GAMEOPTION_ALT_INTRO)
 		},
 	},
 #endif
@@ -262,7 +271,7 @@ static const QueenGameDescription gameDescriptions[] = {
 			Common::IT_ITA,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GAMEOPTION_ALT_INTRO)
 		},
 	},
 
@@ -276,7 +285,7 @@ static const QueenGameDescription gameDescriptions[] = {
 			Common::ES_ESP,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GAMEOPTION_ALT_INTRO)
 		},
 	},
 #endif
@@ -290,7 +299,7 @@ static const QueenGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GAMEOPTION_ALT_INTRO)
 		},
 	},
 
@@ -303,7 +312,7 @@ static const QueenGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GAMEOPTION_ALT_INTRO)
 		},
 	},
 
@@ -316,7 +325,7 @@ static const QueenGameDescription gameDescriptions[] = {
 			Common::FR_FRA,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GAMEOPTION_ALT_INTRO)
 		},
 	},
 
@@ -329,7 +338,7 @@ static const QueenGameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GAMEOPTION_ALT_INTRO)
 		},
 	},
 
@@ -342,7 +351,7 @@ static const QueenGameDescription gameDescriptions[] = {
 			Common::HE_ISR,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GAMEOPTION_ALT_INTRO)
 		},
 	},
 
@@ -355,7 +364,7 @@ static const QueenGameDescription gameDescriptions[] = {
 			Common::IT_ITA,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GAMEOPTION_ALT_INTRO)
 		},
 	},
 
@@ -370,7 +379,7 @@ static const QueenGameDescription gameDescriptions[] = {
 			Common::ES_ESP,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GAMEOPTION_ALT_INTRO)
 		},
 	},
 #endif
@@ -382,7 +391,7 @@ static const QueenGameDescription gameDescriptions[] = {
 
 class QueenMetaEngine : public AdvancedMetaEngine {
 public:
-	QueenMetaEngine() : AdvancedMetaEngine(Queen::gameDescriptions, sizeof(Queen::QueenGameDescription), queenGames) {
+	QueenMetaEngine() : AdvancedMetaEngine(Queen::gameDescriptions, sizeof(Queen::QueenGameDescription), queenGames, optionsList) {
 		_singleid = "queen";
 	}
 
@@ -396,7 +405,6 @@ public:
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
-	virtual const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const;
 	virtual SaveStateList listSaves(const char *target) const;
 	virtual int getMaximumSaveSlot() const { return 99; }
 	virtual void removeSaveState(const char *target, int slot) const;
@@ -409,25 +417,6 @@ bool QueenMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup) ||
 		(f == kSupportsDeleteSave);
-}
-
-const ExtraGuiOptions QueenMetaEngine::getExtraGuiOptions(const Common::String &target) const {
-	Common::String guiOptions;
-	ExtraGuiOptions options;
-
-	if (target.empty()) {
-		options.push_back(queenExtraGuiOption);
-		return options;
-	}
-
-	if (ConfMan.hasKey("guioptions", target)) {
-		guiOptions = ConfMan.get("guioptions", target);
-		guiOptions = parseGameGUIOptions(guiOptions);
-	}
-
-	if (!guiOptions.contains(GUIO_NOSPEECH))
-		options.push_back(queenExtraGuiOption);
-	return options;
 }
 
 const ADGameDescription *QueenMetaEngine::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
@@ -463,6 +452,7 @@ const ADGameDescription *QueenMetaEngine::fallbackDetect(const FileMap &allFiles
 					desc.guioptions = GUIO_NOSPEECH;
 				} else if (version.features & Queen::GF_TALKIE) {
 					desc.extra = "Talkie";
+					desc.guioptions = GAMEOPTION_ALT_INTRO;
 				}
 				return (const ADGameDescription *)&desc;
 			}
