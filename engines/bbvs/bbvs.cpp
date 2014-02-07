@@ -1492,7 +1492,7 @@ bool BbvsEngine::processCurrAction() {
 		if (sceneObject->walkDestPt.x != -1) {
 			debug(5, "waiting for walk to finish");
 			actionsFinished = false;
-		} else if ((sceneObject->x >> 16) != soAction->walkDest.x || (sceneObject->y >> 16) != soAction->walkDest.y) {
+		} else if ((int16)(sceneObject->x >> 16) != soAction->walkDest.x || (int16)(sceneObject->y >> 16) != soAction->walkDest.y) {
 			debug(5, "starting to walk");
 			sceneObject->walkDestPt = soAction->walkDest;
 			actionsFinished = false;
