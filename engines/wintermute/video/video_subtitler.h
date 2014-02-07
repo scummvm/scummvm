@@ -45,8 +45,9 @@ public:
 	bool loadSubtitles(const Common::String &filename, const Common::String &subtitleFile);
 	bool display();
 	bool update(long frame);
-	long _lastSample;
+private:
 	Common::Array<VideoSubtitle *> _subtitles;
+	long _lastSample;
 };
 
 } // End of namespace Wintermute
