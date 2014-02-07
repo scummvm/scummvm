@@ -106,7 +106,10 @@ static Math::Vector2d scaled(float x, float y) {
 }
 
 ShaderRenderer::ShaderRenderer(OSystem *system) :
-	BaseRenderer(system) {
+	BaseRenderer(system),
+	_prevText(""),
+	_prevTextPosition(0,0),
+	_viewport(Math::Vector2d(0.0, 0.0), Math::Vector2d(kOriginalWidth, kOriginalHeight)) {
 }
 
 ShaderRenderer::~ShaderRenderer() {
@@ -139,7 +142,6 @@ void ShaderRenderer::init() {
   _box_shader->enableVertexAttribute("position", _boxVBO, 2, GL_FLOAT, GL_TRUE, 2 * sizeof(float), 0);
   _box_shader->enableVertexAttribute("texcoord", _boxVBO, 2, GL_FLOAT, GL_TRUE, 2 * sizeof(float), 0);
 
-
   _cube_shader = Graphics::Shader::fromFiles("myst3_cube", attributes);
   _cubeVBO = Graphics::Shader::createBuffer(GL_ARRAY_BUFFER, sizeof(cube_vertices), cube_vertices);
   _cube_shader->enableVertexAttribute("texcoord", _cubeVBO, 2, GL_FLOAT, GL_TRUE, 5 * sizeof(float), 0);
@@ -149,6 +151,11 @@ void ShaderRenderer::init() {
   _rect3dVBO = Graphics::Shader::createBuffer(GL_ARRAY_BUFFER, 20 * sizeof(float), NULL);
   _rect3d_shader->enableVertexAttribute("texcoord", _rect3dVBO, 2, GL_FLOAT, GL_TRUE, 5 * sizeof(float), 0);
   _rect3d_shader->enableVertexAttribute("position", _rect3dVBO, 3, GL_FLOAT, GL_TRUE, 5 * sizeof(float), 2 * sizeof(float));
+
+  _text_shader = Graphics::Shader::fromFiles("myst3_text", attributes);
+  _textVBO = Graphics::Shader::createBuffer(GL_ARRAY_BUFFER, 100 * 16 * sizeof(float), NULL, GL_DYNAMIC_DRAW);
+  _text_shader->enableVertexAttribute("texcoord", _textVBO, 2, GL_FLOAT, GL_TRUE, 4 * sizeof(float), 0);
+  _text_shader->enableVertexAttribute("position", _textVBO, 2, GL_FLOAT, GL_TRUE, 4 * sizeof(float), 2 * sizeof(float));
 
   setupQuadEBO();
 }
@@ -269,10 +276,6 @@ void ShaderRenderer::drawTexturedRect2D(const Common::Rect &screenRect, const Co
 }
 
 void ShaderRenderer::draw2DText(const Common::String &text, const Common::Point &position) {
-  return;
-  static Common::String _prevText = "";
-  static Common::Point _prevPosition = Common::Point(0.0, 0.0);
-  static GLuint _prevVBO = 0;
 
   OpenGLTexture *glFont = static_cast<OpenGLTexture *>(_font);
 
@@ -284,18 +287,17 @@ void ShaderRenderer::draw2DText(const Common::String &text, const Common::Point 
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
   glEnable(GL_TEXTURE_2D);
+  glDisable(GL_DEPTH_TEST);
   glDepthMask(GL_FALSE);
 
-  if (_prevText != textToDraw || _prevPosition != position) {
+  if (_prevText != textToDraw || _prevTextPosition != position) {
     _prevText = textToDraw;
-    _prevPosition = position;
-    if (_prevVBO)
-      glDeleteBuffers(1, &_prevVBO);
+    _prevTextPosition = position;
 
     float x = position.x / _viewport.getWidth();
     float y = position.y / _viewport.getHeight();
 
-    float *bufData = new float[textToDraw.size()];
+    float *bufData = new float[16 * textToDraw.size()];
     float *cur = bufData;
 
     for (uint i = 0; i < textToDraw.size(); i++) {
@@ -309,34 +311,32 @@ void ShaderRenderer::draw2DText(const Common::String &text, const Common::Point 
       float cy = textureRect.top / (float) glFont->internalHeight;
 
       const float charData[] = {
-        cx,      cy + ch, x,     y,     1.0f,
-        cx + cw, cy + ch, x + w, y,     1.0f,
-        cx + cw, cy,      x + w, y + h, 1.0f,
-        cx,      cy,      x,     y + h, 1.0f,
+        cx,      cy + ch, x,     y,    
+        cx + cw, cy + ch, x + w, y,    
+        cx + cw, cy,      x + w, y + h,
+        cx,      cy,      x,     y + h,
       };
 
-      memcpy(cur, charData, 20 * sizeof(float));
-      cur += 20;
+      memcpy(cur, charData, 16 * sizeof(float));
+      cur += 16;
 
-      x += textureRect.width() - 3;
+      x += (textureRect.width() - 3) / _viewport.getWidth();
     }
 
-    GLuint vbo = Graphics::Shader::createBuffer(GL_ARRAY_BUFFER, textToDraw.size() * 20 * sizeof(float), bufData, GL_STATIC_DRAW);
-    _prevVBO = vbo;
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-
-    _text_shader->enableVertexAttribute("texcoord", vbo, 2, GL_FLOAT, GL_TRUE, 5 * sizeof(float), 0);
-    _text_shader->enableVertexAttribute("position", vbo, 3, GL_FLOAT, GL_TRUE, 5 * sizeof(float), 2 * sizeof(float));
+    glBindBuffer(GL_ARRAY_BUFFER, _textVBO);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, textToDraw.size() * 16 * sizeof(float), bufData);
+    delete[] bufData;
   }
 
   _text_shader->use();
   glBindTexture(GL_TEXTURE_2D, glFont->id);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _quadEBO);
-  glDrawElements(GL_TRIANGLES, textToDraw.size(), GL_UNSIGNED_SHORT, 0);
+  glDrawElements(GL_TRIANGLES, 6 * textToDraw.size(), GL_UNSIGNED_SHORT, 0);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
   glDisable(GL_TEXTURE_2D);
   glDisable(GL_BLEND);
+  glEnable(GL_DEPTH_TEST);
   glDepthMask(GL_TRUE);
 }
 

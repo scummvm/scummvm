@@ -70,10 +70,14 @@ private:
 	GLuint _boxVBO;
 	GLuint _cubeVBO;
 	GLuint _rect3dVBO;
+	GLuint _textVBO;
 	GLuint _quadEBO;
 
 	Math::Matrix4 _mvpMatrix;
 	Math::Rect2d _viewport;
+
+	Common::String _prevText;
+	Common::Point _prevTextPosition;
 };
 
 } // end of namespace Myst3
