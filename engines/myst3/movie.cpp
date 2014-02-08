@@ -63,7 +63,8 @@ Movie::Movie(Myst3Engine *vm, uint16 id) :
 	_bink.setDefaultHighColorFormat(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
 	_bink.loadStream(binkStream);
 
-	if (binkDesc->getType() == DirectorySubEntry::kMultitrackMovie) {
+	if (binkDesc->getType() == DirectorySubEntry::kMultitrackMovie
+			|| binkDesc->getType() == DirectorySubEntry::kDialogMovie) {
 		uint language = ConfMan.getInt("audio_language");
 		_bink.setAudioTrack(language);
 	}
