@@ -81,19 +81,19 @@ void SVoy::synchronize(Common::Serializer &s) {
 		s.syncAsByte(_roomHotspotsEnabled[idx]);
 	}
 
-	s.syncAsSint16LE(_field468);
-	s.syncAsSint16LE(_field46A);
+	s.syncAsSint16LE(_audioVisualStartTime);
+	s.syncAsSint16LE(_audioVisualDuration);
 	s.syncAsSint16LE(_vocSecondsOffset);
 	s.syncAsSint16LE(_abortInterface);
-	s.syncAsSint16LE(_field470);
+	s.syncAsSint16LE(_playStampMode);
 	s.syncAsSint16LE(_aptLoadMode);
 	s.syncAsSint16LE(_transitionId);
 	s.syncAsSint16LE(_RTVLimit);
 	s.syncAsSint16LE(_eventFlags);
 	s.syncAsSint16LE(_boltGroupId2);
 
-	s.syncAsSint16LE(_field4AC);
-	s.syncAsSint16LE(_field4B8);
+	s.syncAsSint16LE(_musicStartTime);
+	s.syncAsSint16LE(_totalPhoneCalls);
 	s.syncAsSint16LE(_computerTextId);
 	s.syncAsSint16LE(_computerTimeMin);
 	s.syncAsSint16LE(_computerTimeMax);
@@ -111,7 +111,7 @@ void SVoy::synchronize(Common::Serializer &s) {
 	s.syncAsSint16LE(_field437C);
 	s.syncAsSint16LE(_field437E);
 	s.syncAsSint16LE(_victimNumber);
-	s.syncAsSint16LE(_field4382);
+	s.syncAsSint16LE(_incriminatedVictimNumber);
 	s.syncAsSint16LE(_videoEventId);
 
 	if (s.isLoading()) {
@@ -134,7 +134,7 @@ void SVoy::addVideoEventStart() {
 
 void SVoy::addVideoEventEnd() {
 	VoyeurEvent &e = _events[_eventCount];
-	e._computerOff = _RTVNum - _field468 - _vocSecondsOffset;
+	e._computerOff = _RTVNum - _audioVisualStartTime - _vocSecondsOffset;
 	if (_eventCount < (TOTAL_EVENTS - 1))
 		++_eventCount;
 }
@@ -152,7 +152,7 @@ void SVoy::addAudioEventStart() {
 
 void SVoy::addAudioEventEnd() {
 	VoyeurEvent &e = _events[_eventCount];
-	e._computerOff = _RTVNum - _field468 - _vocSecondsOffset;
+	e._computerOff = _RTVNum - _audioVisualStartTime - _vocSecondsOffset;
 	if (_eventCount < (TOTAL_EVENTS - 1))
 		++_eventCount;
 }

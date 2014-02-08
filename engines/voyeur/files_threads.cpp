@@ -336,9 +336,9 @@ bool ThreadResource::chooseSTAMPButton(int buttonId) {
 }
 
 void ThreadResource::parsePlayCommands() {
-	_vm->_voy._field470 = -1;
-	_vm->_voy._field468 = 0;
-	_vm->_voy._field46A = 0;
+	_vm->_voy._playStampMode = -1;
+	_vm->_voy._audioVisualStartTime = 0;
+	_vm->_voy._audioVisualDuration = 0;
 	_vm->_voy._boltGroupId2 = -1;
 	_vm->_voy._computerTextId = -1;
 	_vm->_voy._eventFlags &= ~EVTFLAG_8;
@@ -372,14 +372,14 @@ void ThreadResource::parsePlayCommands() {
 
 			if (v2 == 0 || _vm->_controlPtr->_state->_victimIndex == v2) {
 				_vm->_audioVideoId = READ_LE_UINT16(dataP + 2) - 1;
-				_vm->_voy._field468 = READ_LE_UINT16(dataP + 4);
-				_vm->_voy._field46A = READ_LE_UINT16(dataP + 6);
+				_vm->_voy._audioVisualStartTime = READ_LE_UINT16(dataP + 4);
+				_vm->_voy._audioVisualDuration = READ_LE_UINT16(dataP + 6);
 
-				if (_vm->_voy._RTVNum < _vm->_voy._field468 ||
-						(_vm->_voy._field468 + _vm->_voy._field46A)  < _vm->_voy._RTVNum) {
+				if (_vm->_voy._RTVNum < _vm->_voy._audioVisualStartTime ||
+						(_vm->_voy._audioVisualStartTime + _vm->_voy._audioVisualDuration)  < _vm->_voy._RTVNum) {
 					_vm->_audioVideoId = -1;
 				} else {
-					_vm->_voy._vocSecondsOffset = _vm->_voy._RTVNum - _vm->_voy._field468;
+					_vm->_voy._vocSecondsOffset = _vm->_voy._RTVNum - _vm->_voy._audioVisualStartTime;
 					_vm->_voy.addAudioEventStart();
 
 					// Play the audio
@@ -403,14 +403,14 @@ void ThreadResource::parsePlayCommands() {
 
 			if (v2 == 0 || _vm->_controlPtr->_state->_victimIndex == v2) {
 				_vm->_audioVideoId = READ_LE_UINT16(dataP + 2) - 1;
-				_vm->_voy._field468 = READ_LE_UINT16(dataP + 4);
-				_vm->_voy._field46A = READ_LE_UINT16(dataP + 6);
+				_vm->_voy._audioVisualStartTime = READ_LE_UINT16(dataP + 4);
+				_vm->_voy._audioVisualDuration = READ_LE_UINT16(dataP + 6);
 
-				if (_vm->_voy._RTVNum < _vm->_voy._field468 ||
-						(_vm->_voy._field468 + _vm->_voy._field46A)  < _vm->_voy._RTVNum) {
+				if (_vm->_voy._RTVNum < _vm->_voy._audioVisualStartTime ||
+						(_vm->_voy._audioVisualStartTime + _vm->_voy._audioVisualDuration)  < _vm->_voy._RTVNum) {
 					_vm->_audioVideoId = -1;
 				} else {
-					_vm->_voy._vocSecondsOffset = _vm->_voy._RTVNum - _vm->_voy._field468;
+					_vm->_voy._vocSecondsOffset = _vm->_voy._RTVNum - _vm->_voy._audioVisualStartTime;
 					_vm->_voy.addVideoEventStart();
 					_vm->_voy._eventFlags &= ~EVTFLAG_TIME_DISABLED;
 					_vm->_voy._eventFlags |= EVTFLAG_RECORDING;
@@ -432,10 +432,10 @@ void ThreadResource::parsePlayCommands() {
 
 					_vm->_eventsManager._videoDead = -1;
 					if (_stateCount == 2 && _vm->_eventsManager._mouseClicked == 0) {
-						_vm->_voy._field470 = 132;
+						_vm->_voy._playStampMode = 132;
 						parseIndex = 999;
 					} else {
-						_vm->_voy._field470 = 129;
+						_vm->_voy._playStampMode = 129;
 					}
 				}
 			}
@@ -456,7 +456,7 @@ void ThreadResource::parsePlayCommands() {
 			}
 
 			_vm->_voy._vocSecondsOffset = 0;
-			_vm->_voy._field468 = _vm->_voy._RTVNum;
+			_vm->_voy._audioVisualStartTime = _vm->_voy._RTVNum;
 			_vm->_voy._eventFlags &= ~(EVTFLAG_TIME_DISABLED | EVTFLAG_RECORDING);
 			_vm->playAVideo(_vm->_audioVideoId);
 			_vm->_voy._eventFlags |= EVTFLAG_TIME_DISABLED;
@@ -513,7 +513,7 @@ void ThreadResource::parsePlayCommands() {
 			// if so, load the time information for the new time period
 			v2 = READ_LE_UINT16(dataP);
 			if (v2 == 0 || _vm->_controlPtr->_state->_victimIndex == v2) {
-				_vm->_voy._field470 = 5;
+				_vm->_voy._playStampMode = 5;
 				int count = READ_LE_UINT16(dataP + 2);
 				_vm->_voy._RTVLimit = READ_LE_UINT16(dataP + 4);
 
@@ -536,7 +536,7 @@ void ThreadResource::parsePlayCommands() {
 			break;
 
 		case 6:
-			_vm->_voy._field470 = 6;
+			_vm->_voy._playStampMode = 6;
 			v2 = READ_LE_UINT16(dataP);
 			_vm->_playStampGroupId = _vm->_resolvePtr[v2];
 			dataP += 2;
@@ -652,7 +652,7 @@ void ThreadResource::parsePlayCommands() {
 
 		case 14:
 			_vm->_playStampGroupId = 2048;
-			_vm->_voy._field470 = 130;
+			_vm->_voy._playStampMode = 130;
 			break;
 
 		case 15:
@@ -660,11 +660,11 @@ void ThreadResource::parsePlayCommands() {
 			break;
 
 		case 16:
-			_vm->_voy._field470 = 16;
+			_vm->_voy._playStampMode = 16;
 			break;
 
 		case 17:
-			_vm->_voy._field470 = 17;
+			_vm->_voy._playStampMode = 17;
 			break;
 
 		case 18:
@@ -985,7 +985,7 @@ int ThreadResource::doApt() {
 		_vm->_currentVocId = 153;
 	}
 
-	if (_vm->_voy._field470 == 16) {
+	if (_vm->_voy._playStampMode == 16) {
 		hotspots[0].left = 999;
 		hotspots[3].left = 999;
 		_aptPos.x = hotspots[4].left + 28;
@@ -1141,7 +1141,7 @@ void ThreadResource::doRoom() {
 	vm._eventsManager.setMousePos(Common::Point(192, 120));
 	voy._field437E = 0;
 	vm._currentVocId = 146;
-	voy._field4AC = voy._RTVNum;
+	voy._musicStartTime = voy._RTVNum;
 
 	voy._vocSecondsOffset = 0;
 	vm._soundManager.startVOCPlay(vm._currentVocId);
@@ -1156,7 +1156,7 @@ void ThreadResource::doRoom() {
 
 		do {
 			if (vm._currentVocId != -1 && !vm._soundManager.getVOCStatus()) {
-				voy._field4AC = voy._RTVNum;
+				voy._musicStartTime = voy._RTVNum;
 				voy._vocSecondsOffset = 0;
 				vm._soundManager.startVOCPlay(vm._currentVocId);
 			}
@@ -1213,7 +1213,7 @@ void ThreadResource::doRoom() {
 				_vm->flipPageAndWait();
 
 				if (vm._currentVocId != -1) {
-					voy._vocSecondsOffset = voy._RTVNum - voy._field4AC;
+					voy._vocSecondsOffset = voy._RTVNum - voy._musicStartTime;
 					vm._soundManager.stopVOCPlay();
 				}
 

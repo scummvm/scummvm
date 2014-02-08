@@ -58,7 +58,7 @@ void VoyeurEngine::playStamp() {
 
 		bool flag = breakFlag = (_voy._eventFlags & EVTFLAG_2) != 0;
 		 
-		switch (_voy._field470) {
+		switch (_voy._playStampMode) {
 		case 5:
 			buttonId = _mainThread->doInterface();
 			
@@ -163,7 +163,7 @@ void VoyeurEngine::playStamp() {
 				flag = true;
 
 				if (buttonId != 4) {
-					_voy._field470 = 131;
+					_voy._playStampMode = 131;
 					_voy.checkForKey();
 					_mainThread->chooseSTAMPButton(buttonId);
 				} else {
@@ -478,7 +478,7 @@ void VoyeurEngine::reviewTape() {
 		bool var1E = true;
 		do {
 			if (_currentVocId != -1 && !_soundManager.getVOCStatus()) {
-				_voy._field4AC = _voy._RTVNum;
+				_voy._musicStartTime = _voy._RTVNum;
 				_soundManager.startVOCPlay(_currentVocId);
 			}
 
@@ -659,7 +659,7 @@ void VoyeurEngine::reviewTape() {
 		(*_graphicsManager._vPort)->setupViewPort(NULL);
 			
 		if (_currentVocId != -1) {
-			_voy._vocSecondsOffset = _voy._RTVNum - _voy._field4AC;
+			_voy._vocSecondsOffset = _voy._RTVNum - _voy._musicStartTime;
 			_soundManager.stopVOCPlay();
 		}
 
@@ -713,7 +713,7 @@ void VoyeurEngine::reviewTape() {
 		case EVTYPE_EVID:
 			_voy.reviewAnEvidEvent(eventIndex);
 			
-			_voy._vocSecondsOffset = _voy._RTVNum - _voy._field4AC;
+			_voy._vocSecondsOffset = _voy._RTVNum - _voy._musicStartTime;
 			_soundManager.stopVOCPlay();
 			_bVoy->getBoltGroup(0x900);
 			break;
@@ -721,7 +721,7 @@ void VoyeurEngine::reviewTape() {
 		case EVTYPE_COMPUTER:
 			_voy.reviewComputerEvent(eventIndex);
 			
-			_voy._vocSecondsOffset = _voy._RTVNum - _voy._field4AC;
+			_voy._vocSecondsOffset = _voy._RTVNum - _voy._musicStartTime;
 			_soundManager.stopVOCPlay();
 			_bVoy->getBoltGroup(0x900);
 			break;
@@ -864,7 +864,7 @@ bool VoyeurEngine::checkForMurder() {
 }
 
 bool VoyeurEngine::checkForIncriminate() {
-	_voy._field4382 = 0;
+	_voy._incriminatedVictimNumber = 0;
 
 	for (int idx = 0; idx < _voy._eventCount; ++idx) {
 		VoyeurEvent &evt = _voy._events[idx];
@@ -872,31 +872,31 @@ bool VoyeurEngine::checkForIncriminate() {
 		if (evt._type == EVTYPE_VIDEO) {
 			if (evt._audioVideoId == 44 && evt._computerOn <= 40 &&
 					(evt._computerOff + evt._computerOn) >= 70) {
-				_voy._field4382 = 1;
+				_voy._incriminatedVictimNumber = 1;
 			}
 
 			if (evt._audioVideoId == 44 && evt._computerOn <= 79 &&
 					(evt._computerOff + evt._computerOn) >= 129) {
-				_voy._field4382 = 1;
+				_voy._incriminatedVictimNumber = 1;
 			}
 
 			if (evt._audioVideoId == 20 && evt._computerOn <= 28 &&
 					(evt._computerOff + evt._computerOn) >= 45) {
-				_voy._field4382 = 2;
+				_voy._incriminatedVictimNumber = 2;
 			}
 
 			if (evt._audioVideoId == 35 && evt._computerOn <= 17 &&
 					(evt._computerOff + evt._computerOn) >= 36) {
-				_voy._field4382 = 3;
+				_voy._incriminatedVictimNumber = 3;
 			}
 
 			if (evt._audioVideoId == 30 && evt._computerOn <= 80 &&
 					(evt._computerOff + evt._computerOn) >= 139) {
-				_voy._field4382 = 4;
+				_voy._incriminatedVictimNumber = 4;
 			}
 		}
 
-		if (_voy._field4382) {
+		if (_voy._incriminatedVictimNumber) {
 			_controlPtr->_state->_victimMurderIndex = 88;
 			_voy._videoEventId = idx;
 			return true;
@@ -1322,21 +1322,21 @@ void VoyeurEngine::flashTimeBar(){
 }
 
 void VoyeurEngine::checkPhoneCall() {
-	if ((_voy._RTVLimit - _voy._RTVNum) >= 36 && _voy._field4B8 < 5 && 
+	if ((_voy._RTVLimit - _voy._RTVNum) >= 36 && _voy._totalPhoneCalls < 5 && 
 			_currentVocId <= 151 && _currentVocId > 146) {
 		if ((_voy._switchBGNum < _checkPhoneVal || _checkPhoneVal > 180) &&
 				!_soundManager.getVOCStatus()) {
 			int soundIndex;
 			do {
 				soundIndex = getRandomNumber(4);
-			} while (_voy._field4AE[soundIndex]);
+			} while (_voy._phoneCallsReceived[soundIndex]);
 			_currentVocId = 154 + soundIndex;
 
 			_soundManager.stopVOCPlay();
 			_soundManager.startVOCPlay(_currentVocId);
 			_checkPhoneVal = _voy._switchBGNum;
-			++_voy._field4AE[soundIndex];
-			++_voy._field4B8;
+			++_voy._phoneCallsReceived[soundIndex];
+			++_voy._totalPhoneCalls;
 		}
 	}
 }
@@ -1346,7 +1346,7 @@ void VoyeurEngine::doEvidDisplay(int evidId, int eventId) {
 	flipPageAndWait();
 
 	if (_currentVocId != -1) {
-		_voy._vocSecondsOffset = _voy._RTVNum - _voy._field4AC;
+		_voy._vocSecondsOffset = _voy._RTVNum - _voy._musicStartTime;
 		_soundManager.stopVOCPlay();
 	}
 

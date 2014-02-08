@@ -443,7 +443,7 @@ void VoyeurEngine::doOpening() {
 
 	_voy._vocSecondsOffset = 0;
 	_voy._RTVNum = 0;
-	_voy._field468 = _voy._RTVNum;
+	_voy._audioVisualStartTime = _voy._RTVNum;
 	_voy._eventFlags |= EVTFLAG_RECORDING;
 	_gameHour = 4;
 	_gameMinute  = 0;
@@ -504,7 +504,7 @@ void VoyeurEngine::doOpening() {
 		_eventsManager.delay(5);
 	}
 
-	if ((_voy._RTVNum - _voy._field468) < 2)
+	if ((_voy._RTVNum - _voy._audioVisualStartTime) < 2)
 		_eventsManager.delay(60);
 
 	_voy._eventFlags |= EVTFLAG_TIME_DISABLED;
@@ -628,7 +628,7 @@ void VoyeurEngine::playAudio(int audioId) {
 	(*_graphicsManager._vPort)->setupViewPort(NULL);
 
 	_voy._eventFlags &= ~EVTFLAG_RECORDING;
-	_voy._field470 = 129;
+	_voy._playStampMode = 129;
 }
 
 void VoyeurEngine::doTransitionCard(const Common::String &time, const Common::String &location) {
@@ -686,7 +686,7 @@ void VoyeurEngine::flipPageAndWaitForFade() {
 }
 
 void VoyeurEngine::showEndingNews() {
-	_playStampGroupId = (_voy._field4382 - 1) * 256 + 0x7700;
+	_playStampGroupId = (_voy._incriminatedVictimNumber - 1) * 256 + 0x7700;
 	_voy._boltGroupId2 = (_controlPtr->_state->_victimIndex - 1) * 256 + 0x7B00;
 
 	_bVoy->getBoltGroup(_playStampGroupId);

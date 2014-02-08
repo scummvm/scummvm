@@ -113,11 +113,11 @@ public:
 	HotspotTimes<3> _evidenceHotspotTimes;
 	bool _roomHotspotsEnabled[20];
 
-	int _field468;
-	int _field46A;
+	int _audioVisualStartTime;
+	int _audioVisualDuration;
 	int _vocSecondsOffset;
 	bool _abortInterface;
-	int _field470;
+	int _playStampMode;
 	int _aptLoadMode;
 	int _transitionId;
 	int _RTVLimit;
@@ -125,9 +125,9 @@ public:
 	int _boltGroupId2;
 	PictureResource *_evPicPtrs[6];
 	CMapResource *_evCmPtrs[6];
-	int _field4AC;
-	int _field4AE[5];
-	int _field4B8;
+	int _musicStartTime;
+	bool _phoneCallsReceived[5];
+	int _totalPhoneCalls;
 
 	int _computerTextId;
 	Common::Rect _rect4E4;
@@ -142,7 +142,7 @@ public:
 	int _field437C;
 	int _field437E;
 	int _victimNumber;
-	int _field4382;
+	int _incriminatedVictimNumber;
 	int _videoEventId;
 	RectResource *_viewBounds;
 	int _curICF0;
