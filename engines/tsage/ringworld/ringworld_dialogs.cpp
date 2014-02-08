@@ -385,7 +385,6 @@ void InventoryDialog::execute() {
 	if ((RING_INVENTORY._selectedItem) && RING_INVENTORY._selectedItem->inInventory())
 		RING_INVENTORY._selectedItem->setCursor();
 
-	GfxElement *hiliteObj;
 	bool lookFlag = false;
 	_gfxManager.activate();
 
@@ -399,7 +398,7 @@ void InventoryDialog::execute() {
 		if (g_vm->shouldQuit())
 			break;
 
-		hiliteObj = NULL;
+		GfxElement *hiliteObj = nullptr;
 		if ((event.eventType == EVENT_BUTTON_DOWN) && !_bounds.contains(event.mousePos))
 			break;
 

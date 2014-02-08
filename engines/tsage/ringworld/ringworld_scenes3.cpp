@@ -4946,8 +4946,6 @@ void Scene2310::synchronize(Serializer &s) {
 }
 
 void Scene2310::process(Event &event) {
-	int frameNum = 0;
-
 	if (!event.handled && (event.eventType == EVENT_BUTTON_DOWN)) {
 		int idx = 0;
 		while (idx < 5) {
@@ -4961,7 +4959,7 @@ void Scene2310::process(Event &event) {
 			if (_wireIndex == 5) {
 				// No wire is currently active, so start moving designated wire
 				_wireIndex = idx;
-				frameNum = idx + 2;
+				int frameNum = idx + 2;
 
 				if (event.mousePos.y > 105)
 					idx = findObject(idx);
