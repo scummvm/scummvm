@@ -208,12 +208,12 @@ void GhostRoom::run() {
 		int xBound = x % 30;
 		if ((22 <= xBound) && (xBound <= 27)) {
 			if (xBound == 27)
-				_vm->_graphics->drawFilledRectangle(Common::Rect(x, 134, x + 17, 137), kColorBlack);
+				_vm->_graphics->drawFilledRectangle(Common::Rect(x, 135, x + 17, 137), kColorBlack);
 			_vm->_graphics->ghostDrawPicture(_eyes[0], x, 136);
 			_vm->_graphics->drawDot(x + 16, 137, kColorBlack);
 		} else {
 			if (xBound == 21)
-				_vm->_graphics->drawFilledRectangle(Common::Rect(x, 136, x + 18, 140), kColorBlack);
+				_vm->_graphics->drawFilledRectangle(Common::Rect(x, 137, x + 18, 139), kColorBlack);
 			_vm->_graphics->ghostDrawPicture(_eyes[0], x, 135);
 			_vm->_graphics->drawDot(x + 16, 136, kColorBlack); // Eyes would leave a trail 1 pixel high behind them.
 		}
@@ -285,6 +285,31 @@ void GhostRoom::run() {
 	// Erase the exclamation mark:
 	_vm->_graphics->drawFilledRectangle(Common::Rect(246, 127, 252, 134), kColorBlack); 
 	_vm->_graphics->refreshScreen();
+
+	// Avvy hurries back:
+	_glerkStage = 1;
+	_greldetCount = 18;
+	_redGreldet = false;
+	
+	for (int x = 217; x <= 479; x++) {
+		// The floating eyeballs again:
+		int xBound = x % 30;
+		if ((22 <= xBound) && (xBound <= 27)) {
+			if (xBound == 22)
+				_vm->_graphics->drawFilledRectangle(Common::Rect(x + 22, 134, x + 38, 138), kColorBlack);
+			_vm->_graphics->ghostDrawPicture(_eyes[1], x + 23, 136);
+			_vm->_graphics->drawDot(x + 22, 137, kColorBlack);
+		} else {
+			if (xBound == 28)
+				_vm->_graphics->drawFilledRectangle(Common::Rect(x + 22, 135, x + 38, 139), kColorBlack);
+			_vm->_graphics->ghostDrawPicture(_eyes[1], x + 23, 135);
+			_vm->_graphics->drawDot(x + 22, 136, kColorBlack); // Eyes would leave a trail 1 pixel high behind them.
+		}
+
+		_vm->_graphics->refreshScreen();
+
+		wait(10);
+	}
 
 	warning("STUB: run()");
 
