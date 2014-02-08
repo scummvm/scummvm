@@ -112,7 +112,9 @@ void GhostRoom::doBat() {
 }
 
 void GhostRoom::bigGreenEyes(byte how) {
-	warning("STUB: bigGreenEyes()");
+	_vm->_graphics->ghostDrawPicture(_greenEyes[how], 330, 103);
+	_vm->_graphics->ghostDrawPicture(_greenEyes[how], 376, 103);
+	_vm->_graphics->refreshScreen();
 }
 
 ChunkBlock GhostRoom::readChunkBlock(Common::File &file) {
@@ -265,6 +267,24 @@ void GhostRoom::run() {
 
 			wait(177);
 		}
+
+	// The exclamation mark appears:
+	_vm->_graphics->ghostDrawPicture(_exclamation, 246, 127);
+	_vm->_graphics->refreshScreen();
+	wait(777);
+
+	// Erase "aargh":
+	_vm->_graphics->drawFilledRectangle(Common::Rect(172, 78, 348, 112), kColorBlack); 
+	_vm->_graphics->refreshScreen();
+
+	for (int i = 4; i >= 0; i--) {
+		wait(377);
+		bigGreenEyes(i);
+	}
+
+	// Erase the exclamation mark:
+	_vm->_graphics->drawFilledRectangle(Common::Rect(246, 127, 252, 134), kColorBlack); 
+	_vm->_graphics->refreshScreen();
 
 	warning("STUB: run()");
 
