@@ -69,8 +69,6 @@ private:
 	Graphics::Surface _greldet[6][2];
 
 	byte _glerkStage;
-	int16 _batX, _batY;
-	uint16 _batCount;
 	int8 _aarghCount;
 	int16 _greldetX, _greldetY;
 	byte _greldetCount;
