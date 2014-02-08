@@ -31,7 +31,7 @@
 namespace Avalanche {
 
 const int8 GhostRoom::kAdjustment[5] = { 7, 0, 7, 7, 7 };
-const byte GhostRoom::kWaveOrder[5] = { 5, 1, 2, 3, 4 };
+const byte GhostRoom::kWaveOrder[5] = { 4, 0, 1, 2, 3 };
 const byte GhostRoom::kGlerkFade[26] = { 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 2, 2, 2, 1, 1, 0 };
 const byte GhostRoom::kGreldetFade[18] = { 1, 2, 3, 4, 5, 6, 6, 6, 5, 5, 4, 4, 3, 3, 2, 2, 1, 1 };
 
@@ -236,6 +236,29 @@ void GhostRoom::run() {
 	_vm->_graphics->drawFilledRectangle(Common::Rect(456, 14, 530, 50), kColorBlack);
 	_vm->_graphics->refreshScreen();
 
+	
+	// Here comes the descending ghost:
+	for (int y = -64; y <= 103; y++) {
+		_vm->_graphics->ghostDrawGhost(_ghost[1 + (abs(y / 7) % 2) * 3], 0, y);
+		if (y > 0)
+			_vm->_graphics->drawFilledRectangle(Common::Rect(0, y - 1, 26 * 8, y), kColorBlack);
+		_vm->_graphics->refreshScreen();
+
+		wait(27);
+	}
+
+	// Then it waves:
+	_aarghCount = -14;
+
+	for (int i = 0; i < 4; i++)
+		for (int j = 0; j < 5; j++) {
+			_vm->_graphics->drawFilledRectangle(Common::Rect(0, 96, 26 * 8, 169 + kAdjustment[j]), kColorBlack);
+			_vm->_graphics->ghostDrawGhost(_ghost[kWaveOrder[j]], 0, 96 + kAdjustment[j]);
+			_vm->_graphics->refreshScreen();
+
+			wait(177);
+		}
+	
 	warning("STUB: run()");
 
 	CursorMan.showMouse(true);

@@ -504,11 +504,20 @@ void GraphicManager::nimFree() {
 	_nimLogo.free();
 }
 
-void GraphicManager::ghostDrawGhost(byte ghostArr[2][66][26], uint16 destX, uint16 destY) {
+void GraphicManager::ghostDrawGhost(byte ghostArr[2][66][26], uint16 destX, int16 destY) {
 	const byte kPlaneToUse[4] = { 0, 0, 0, 1 };
-	// Constants from the original code.
-	const uint16 height = 66;
+	// Constants from the original code:
+	uint16 height = 66;
 	const uint16 width = 26 * 8;
+
+	// We have to mess around with the coords and the sizes since
+	// the ghost isn't always placed fully on the screen.
+	int yStart = 0;
+	if (destY < 0) {
+		yStart = abs(destY);
+		height -= yStart;
+		destY = 0;
+	}
 
 	Graphics::Surface ghostPic;
 	ghostPic.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
@@ -516,7 +525,7 @@ void GraphicManager::ghostDrawGhost(byte ghostArr[2][66][26], uint16 destX, uint
 	for (int y = 0; y < height; y++) {
 		for (int plane = 0; plane < 4; plane++) {
 			for (uint16 x = 0; x < width / 8; x ++) {
-				byte pixel = ghostArr[kPlaneToUse[plane]][y][x];
+				byte pixel = ghostArr[kPlaneToUse[plane]][y + yStart][x];
 				for (int bit = 0; bit < 8; bit++) {
 					byte pixelBit = (pixel >> bit) & 1;
 					*(byte *)ghostPic.getBasePtr(x * 8 + 7 - bit, y) += (pixelBit << plane);
@@ -531,7 +540,7 @@ void GraphicManager::ghostDrawGhost(byte ghostArr[2][66][26], uint16 destX, uint
 }
 
 void GraphicManager::ghostDrawGlerk(byte glerkArr[4][35][9], uint16 destX, uint16 destY) {
-	// Constants from the original code.
+	// Constants from the original code:
 	const uint16 height = 35;
 	const uint16 width = 9 * 8;
 
