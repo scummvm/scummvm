@@ -63,7 +63,6 @@ private:
 
 		uint32 *_frameOffsets;
 		int *_frameSoundSizes;
-		bool _isRLV3;
 	public:
 		RL2FileHeader();
 		~RL2FileHeader();
@@ -105,8 +104,6 @@ private:
 		RL2VideoTrack(const RL2FileHeader &header, RL2AudioTrack *audioTrack, 
 			Common::SeekableReadStream *stream);
 		~RL2VideoTrack();
-
-		bool endOfTrack() const;
 
 		uint16 getWidth() const;
 		uint16 getHeight() const;
