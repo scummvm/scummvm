@@ -248,17 +248,24 @@ void GhostRoom::run() {
 	}
 
 	// Then it waves:
-	_aarghCount = -14;
+	_aarghCount = -15;
 
 	for (int i = 0; i < 4; i++)
 		for (int j = 0; j < 5; j++) {
 			_vm->_graphics->drawFilledRectangle(Common::Rect(0, 96, 26 * 8, 169), kColorBlack);
 			_vm->_graphics->ghostDrawGhost(_ghost[kWaveOrder[j]], 0, 96 + kAdjustment[j]);
+
+			_aarghCount++;
+
+			if (_aarghCount >= 0)
+				for (int k = 0; k <= _aarghCount; k++)
+					_vm->_graphics->ghostDrawPicture(_aargh[k], _aarghWhere[k].x, _aarghWhere[k].y);
+
 			_vm->_graphics->refreshScreen();
 
 			wait(177);
 		}
-	
+
 	warning("STUB: run()");
 
 	CursorMan.showMouse(true);
