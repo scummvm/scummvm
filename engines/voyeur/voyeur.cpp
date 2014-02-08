@@ -501,7 +501,7 @@ void VoyeurEngine::doOpening() {
 		}
 
 		_eventsManager.getMouseInfo();
-		_eventsManager.delay(5);
+		g_system->delayMillis(10);
 	}
 
 	if ((_voy._RTVNum - _voy._audioVisualStartTime) < 2)
