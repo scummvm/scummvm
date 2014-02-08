@@ -1483,7 +1483,6 @@ int GfxFont::getStringFit(const char *&s, int maxWidth) {
 	const char *nextWord = NULL;
 	const char *sStart = s;
 	int numChars = 1;
-	int strWidth = 1;
 	char nextChar;
 
 	for (;;) {
@@ -1497,7 +1496,7 @@ int GfxFont::getStringFit(const char *&s, int maxWidth) {
 			nextWord = s;
 		}
 
-		strWidth = getStringWidth(sStart, numChars);
+		int strWidth = getStringWidth(sStart, numChars);
 		if (strWidth > maxWidth) {
 			if (nextWord) {
 				s = nextWord;

@@ -1593,12 +1593,12 @@ bool SceneItem::startAction(CursorType action, Event &event) {
 }
 
 void SceneItem::doAction(int action) {
-	const char *msg = NULL;
-
 	if (g_vm->getGameID() == GType_Ringworld2) {
 		Event dummyEvent;
 		((Ringworld2::SceneExt *)GLOBALS._sceneManager._scene)->display((CursorType)action, dummyEvent);
 	} else {
+		const char *msg = NULL;
+
 		switch ((int)action) {
 		case CURSOR_LOOK:
 			msg = LOOK_SCENE_HOTSPOT;
@@ -2909,7 +2909,6 @@ void BackgroundSceneObject::copySceneToBackground() {
 void SceneObjectList::draw() {
 	Common::Array<SceneObject *> objList;
 	int paneNum = 0;
-	int xAmount = 0, yAmount = 0;
 
 	if (_objList.size() == 0) {
 		// Alternate draw mode
@@ -2936,6 +2935,7 @@ void SceneObjectList::draw() {
 				g_globals->_scrollFollower->_position.x - g_globals->_sceneManager._scene->_sceneBounds.left,
 				g_globals->_scrollFollower->_position.y - g_globals->_sceneManager._scene->_sceneBounds.top);
 			int loadCount = 0;
+			int xAmount = 0, yAmount = 0;
 
 			if (objPos.x >= scrollerRect.right) {
 				xAmount = 8;
