@@ -2334,7 +2334,7 @@ void ScannerDialog::Button::reset() {
 		case 1800:
 			if (R2_GLOBALS._rimLocation < 1201)
 				scanner._obj4.setup(4, 3, 3);
-			else if (R2_GLOBALS._rimLocation < 1201)
+			else if (R2_GLOBALS._rimLocation > 1201)
 				scanner._obj4.setup(4, 3, 4);
 			else
 				scanner._obj4.setup(4, 3, 5);
