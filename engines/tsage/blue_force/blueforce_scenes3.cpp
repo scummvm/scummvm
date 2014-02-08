@@ -4438,7 +4438,7 @@ void Scene360::postInit(SceneObjectList *OwnerList) {
 	BF_GLOBALS._player._moveDiff.y = 4;
 	BF_GLOBALS._player.enableControl();
 
-	if ((BF_GLOBALS._sceneManager._previousScene == 355) || (BF_GLOBALS._sceneManager._previousScene != 370)) {
+	if (BF_GLOBALS._sceneManager._previousScene != 370) {
 		BF_GLOBALS._player.setPosition(Common::Point(253, 135));
 		BF_GLOBALS._player.setStrip(2);
 
