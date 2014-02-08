@@ -66,6 +66,13 @@ bool VideoSubtitler::loadSubtitles(const Common::String &filename, const Common:
 
 	Common::String newFile;
 
+	/*
+	 * Okay, the expected behaviour is this: either we are
+	 * provided with a subtitle file to use by the script when
+	 * calling PlayTheora(), or we try to autodetect a suitable
+	 * one which, for /some/path/movie/ogg is to be called
+	 * /some/path/movie.sub
+	 */
 	if (subtitleFile.size() != 0) {
 		newFile = Common::String(subtitleFile);
 	} else {
