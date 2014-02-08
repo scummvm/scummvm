@@ -166,6 +166,7 @@ void ShaderRenderer::clear() {
 
 void ShaderRenderer::setupCameraOrtho2D() {
   glViewport(0, 0, kOriginalWidth, kOriginalHeight);
+  _viewport = Math::Rect2d(Math::Vector2d(0, 0), Math::Vector2d(kOriginalWidth, kOriginalHeight));
 }
 
 void ShaderRenderer::setupCameraPerspective(float pitch, float heading, float fov) {
