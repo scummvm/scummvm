@@ -64,7 +64,6 @@ bool VideoSubtitler::loadSubtitles(const Common::String &filename, const Common:
 	_currentSubtitle = 0;
 	_showSubtitle = false;
 
-
 	Common::String newFile;
 
 	if (subtitleFile.size() != 0) {
@@ -174,18 +173,28 @@ bool VideoSubtitler::loadSubtitles(const Common::String &filename, const Common:
 
 bool VideoSubtitler::display() {
 	if (_showSubtitle) {
-		BaseFont *font = _gameRef->getVideoFont() ? _gameRef->getVideoFont() : _gameRef->getSystemFont();
-		int textHeight = font->getTextHeight((byte *)_subtitles[_currentSubtitle]->getText().c_str(), _gameRef->_renderer->getWidth());
-		font->drawText((byte *)_subtitles[_currentSubtitle]->getText().c_str(),
+
+		BaseFont *font;
+
+		if (_gameRef->getVideoFont() == nullptr) {
+			font = _gameRef->getSystemFont();
+		} else {
+			font = _gameRef->getVideoFont();
+		}
+
+		int textHeight = font->getTextHeight(
+		                     (const byte *)_subtitles[_currentSubtitle]->getText().c_str(),
+		                     _gameRef->_renderer->getWidth());
+		font->drawText((const byte *)_subtitles[_currentSubtitle]->getText().c_str(),
 		               0,
 		               (_gameRef->_renderer->getHeight() - textHeight - 5),
-		               (_gameRef->_renderer->getWidth(), TAL_CENTER));
+		               (_gameRef->_renderer->getWidth()),
+		               TAL_CENTER);
 	}
 	return false;
 }
 
 bool VideoSubtitler::update(uint frame) {
-
 	if (_subtitles.size() == 0) {
 		// Edge case: we have loaded subtitles early on... from a blank file.
 		return false;
@@ -242,7 +251,6 @@ bool VideoSubtitler::update(uint frame) {
 		if (currentStarted && !overdue && currentValid) {
 			_showSubtitle = true;
 		}
-
 	}
 	return false;
 }
