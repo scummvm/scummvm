@@ -120,6 +120,9 @@ void Cursor::changeCursor(uint32 index) {
 }
 
 void Cursor::lockPosition(bool lock) {
+	if (_lockedAtCenter == lock)
+		return;
+
 	_lockedAtCenter = lock;
 
 	g_system->lockMouse(lock);
