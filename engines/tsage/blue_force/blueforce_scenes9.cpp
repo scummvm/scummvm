@@ -516,7 +516,7 @@ void Scene900::postInit(SceneObjectList *OwnerList) {
 	_door.setPosition(Common::Point(847, 45));
 	_door._flag = 1;
 
-	if ((BF_GLOBALS._sceneManager._previousScene == 880) || (BF_GLOBALS._sceneManager._previousScene != 910)) {
+	if (BF_GLOBALS._sceneManager._previousScene != 910) {
 		BF_GLOBALS._walkRegions.disableRegion(26);
 		BF_GLOBALS._player.disableControl();
 		if (BF_GLOBALS._bookmark == bFinishedWGreen) {
