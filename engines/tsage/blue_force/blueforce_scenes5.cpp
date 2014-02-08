@@ -1623,7 +1623,7 @@ void Scene570::PasswordEntry::process(Event &event) {
 
 			checkPassword();
 			remove();
-		} else if ((key >= 32) || (key <= 126)) {
+		} else if ((key >= 32) && (key <= 126)) {
 			// Valid character pressed
 			if (_entryBuffer.size() < 10)
 				_entryBuffer += (char)key;
