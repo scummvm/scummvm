@@ -68,6 +68,8 @@ private:
 	Graphics::Surface _greenEyes[5];
 	Graphics::Surface _greldet[6][2];
 
+	int16 _batX, _batY;
+	uint16 _batCount;
 	byte _glerkStage;
 	int8 _aarghCount;
 	int16 _greldetX, _greldetY;

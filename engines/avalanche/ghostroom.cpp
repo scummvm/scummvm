@@ -41,6 +41,9 @@ GhostRoom::GhostRoom(AvalancheEngine *vm) {
 	_vm = vm;
 
 	_glerkStage = 0;
+	_batX = 0;
+	_batY = 0;
+	_batCount = 0;
 	_aarghCount = 0;
 	_greldetX = _greldetY = 0;
 	_greldetCount = 0;
@@ -78,38 +81,34 @@ void GhostRoom::wait(uint16 howLong) {
 }
 
 void GhostRoom::doBat() {
-	static int16 batX = 277;
-	static int16 batY = 40;
-	static uint16 batCount = 0;
-
-	batCount++;
+	_batCount++;
 
 	int8 dx, iy;
 	byte batImage;
-	if ((batCount % 2) == 1) {
-		if ((1 <= batCount) && (batCount <= 90)) {
+	if ((_batCount % 2) == 1) {
+		if ((1 <= _batCount) && (_batCount <= 90)) {
 			dx = 2;
 			iy = 1;
 			batImage = 0;
-		} else if ((91 <= batCount) && (batCount <= 240)) {
+		} else if ((91 <= _batCount) && (_batCount <= 240)) {
 			dx = 1;
 			iy = 1;
 			batImage = 1;
-		} else if((241 <= batCount) && (batCount <= 260)) {
+		} else if((241 <= _batCount) && (_batCount <= 260)) {
 			dx = 1;
 			iy = 4;
 			batImage = 2;
 		}
 
-		if ((batCount == 91) || (batCount == 241)) // When the bat changes, blank out the old one.
-			_vm->_graphics->drawFilledRectangle(Common::Rect(batX + _bat[batImage].w, batY, batX + _bat[batImage - 1].w, batY + _bat[batImage - 1].h), kColorBlack);
+		if ((_batCount == 91) || (_batCount == 241)) // When the bat changes, blank out the old one.
+			_vm->_graphics->drawFilledRectangle(Common::Rect(_batX + _bat[batImage].w, _batY, _batX + _bat[batImage - 1].w, _batY + _bat[batImage - 1].h), kColorBlack);
 
-		_vm->_graphics->drawFilledRectangle(Common::Rect(batX, batY, batX + _bat[batImage].w, batY + iy), kColorBlack);
-		_vm->_graphics->drawFilledRectangle(Common::Rect(batX + _bat[batImage].w - dx, batY, batX + _bat[batImage].w, batY + _bat[batImage].h), kColorBlack);
+		_vm->_graphics->drawFilledRectangle(Common::Rect(_batX, _batY, _batX + _bat[batImage].w, _batY + iy), kColorBlack);
+		_vm->_graphics->drawFilledRectangle(Common::Rect(_batX + _bat[batImage].w - dx, _batY, _batX + _bat[batImage].w, _batY + _bat[batImage].h), kColorBlack);
 
-		batX -= dx;
-		batY++;
-		_vm->_graphics->ghostDrawPicture(_bat[batImage], batX, batY);
+		_batX -= dx;
+		_batY++;
+		_vm->_graphics->ghostDrawPicture(_bat[batImage], _batX, _batY);
 	}
 }
 
@@ -203,7 +202,11 @@ void GhostRoom::run() {
 
 	loadPictures();
 
+	// Avvy walks over:
 	_glerkStage = 0;
+	_batX = 277;
+	_batY = 40;
+	_batCount = 0;
 
 	for (int x = 500; x >= 217; x--) {
 		// The floating eyeballs:
