@@ -4872,10 +4872,10 @@ void Scene2900::Map::drawBlock(const byte *data, int xp, int yp,
 void Scene2900::Map::moveArea(Rect &r, int xAmt, int yAmt) {
 	Rect tempRect = r;
 	tempRect.translate(xAmt, yAmt);
-	int xpSrc, xpDest, width;
-	int ypSrc, ypDest, height;
 
 	if (tempRect.intersects(r)) {
+		int xpSrc, xpDest, width;
+		int ypSrc, ypDest, height;
 		if (xAmt >= 0) {
 			xpSrc = tempRect.left;
 			width = tempRect.width() - xAmt;

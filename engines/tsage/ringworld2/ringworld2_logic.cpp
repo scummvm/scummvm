@@ -561,14 +561,14 @@ void SceneExt::saveCharacter(int characterIndex) {
 void SceneExt::scalePalette(int RFactor, int GFactor, int BFactor) {
 	byte *tmpPal = R2_GLOBALS._scenePalette._palette;
 	byte newR, newG, newB;
-	int tmp, varC, varD = 0;
+	int tmp, varD = 0;
 
 	for (int i = 0; i < 256; i++) {
 		newR = (RFactor * tmpPal[(3 * i)]) / 100;
 		newG = (GFactor * tmpPal[(3 * i) + 1]) / 100;
 		newB = (BFactor * tmpPal[(3 * i) + 2]) / 100;
 
-		varC = 769;
+		int varC = 769;
 		for (int j = 255; j >= 0; j--) {
 			tmp = abs(tmpPal[(3 * j)] - newR);
 			if (tmp >= varC)

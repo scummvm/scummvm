@@ -3896,7 +3896,6 @@ void Scene3500::dispatch() {
 	int16 mazePosY = 0;
 	int deltaX = 0;
 	int deltaY = 0;
-	int tmpCellId = 0;
 	int cellId = 0;
 
 	if ((_mazeChangeAmount == 0) && !_postFixupFl) {
@@ -3912,7 +3911,7 @@ void Scene3500::dispatch() {
 		mazePosY = _mazeUI.cellFromY(_mazePosition.y + 46) - 46;
 		deltaX = abs(mazePosX - newMazeX);
 		deltaY = abs(mazePosY - newMazeY);
-		tmpCellId = 0;
+		int tmpCellId = 0;
 
 		switch (_mazeDirection) {
 		case MAZEDIR_NORTH:

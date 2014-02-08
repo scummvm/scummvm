@@ -3913,8 +3913,6 @@ void Scene1337::Action10::signal() {
 void Scene1337::Action11::signal() {
 	Scene1337 *scene = (Scene1337 *)R2_GLOBALS._sceneManager._scene;
 
-	bool noAction = true;
-
 	switch (_actionIndex++) {
 	case 0: {
 		scene->_actionCard2->_card.postInit();
@@ -3944,6 +3942,8 @@ void Scene1337::Action11::signal() {
 		scene->_aSound1.play(57);
 
 		bool found = false;
+		bool noAction = true;
+
 		int i = -1;
 
 		switch (scene->_actionIdx2) {
@@ -5411,10 +5411,10 @@ void Scene1337::showOptionsDialog() {
 }
 
 void Scene1337::handleClick(int arg1, Common::Point pt) {
-	bool found = false;
 	int curReg = R2_GLOBALS._sceneRegions.indexOf(g_globals->_events._mousePos);
 
 	if (arg1 == 3) {
+		bool found = false;
 		int i;
 		for (i = 0; i <= 7; i++) {
 			if ( _gameBoardSide[2]._outpostStation[i].isIn(pt)
