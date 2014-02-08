@@ -560,7 +560,56 @@ void sceneHandler27_calcWinArcade() {
 }
 
 void sceneHandler27_sub02() {
-	warning("STUB: sceneHandler27_sub02()");
+	g_vars->scene27_var10 = 0;
+
+	for (uint i = 0; i < g_vars->scene27_var07.size(); i++) {
+		g_vars->scene27_var07[i]->ani->hide();
+
+		Ball *runPtr = g_vars->scene27_balls.pTail;
+		Ball *lastP = g_vars->scene27_balls.field_8;
+		StaticANIObject *newbat = g_vars->scene27_var07[i]->ani;
+
+		if (!g_vars->scene27_balls.pTail) {
+			g_vars->scene27_balls.cPlex = (Ball *)calloc(g_vars->scene27_balls.cPlexLen, sizeof(Ball));
+
+			Ball *p1 = g_vars->scene27_balls.cPlex + (g_vars->scene27_balls.cPlexLen - 1) * sizeof(Ball);
+
+			if (g_vars->scene27_balls.cPlexLen - 1 < 0) {
+				runPtr = g_vars->scene27_balls.pTail;
+			} else {
+				runPtr = g_vars->scene27_balls.pTail;
+
+				for (int j = 0; j < g_vars->scene27_balls.cPlexLen; j++) {
+					p1->p1 = runPtr;
+					runPtr = p1;
+
+					p1 -= sizeof(Ball);
+				}
+
+				g_vars->scene27_balls.pTail = runPtr;
+			}
+		}
+
+		g_vars->scene27_balls.pTail = runPtr->p0;
+		runPtr->p1 = lastP;
+		runPtr->p0 = 0;
+		runPtr->ani = newbat;
+
+		g_vars->scene27_balls.numBalls++;
+
+		if (g_vars->scene27_balls.field_8)
+			g_vars->scene27_balls.field_8->p0 = runPtr;
+		else
+			g_vars->scene27_balls.pHead = runPtr;
+
+		g_vars->scene27_balls.field_8 = runPtr;
+	}
+
+	g_vars->scene27_var07.clear();
+
+	sceneHandler27_batLogic();
+
+	g_vars->scene27_var11 = 0;
 }
 
 void sceneHandler27_animateBats() {
