@@ -1217,7 +1217,7 @@ void Scene9500::postInit(SceneObjectList *OwnerList) {
 	g_globals->_events.setCursor(CURSOR_WALK);
 	g_globals->_player.disableControl();
 
-	if ((g_globals->_sceneManager._previousScene == 9200) || (g_globals->_sceneManager._previousScene != 9850)) {
+	if (g_globals->_sceneManager._previousScene != 9850) {
 		_sceneMode = 0;
 		if (RING_INVENTORY._helmet._sceneNumber != 1) {
 			setAction(&_sequenceManager, this, 9501, &g_globals->_player, &_candle, NULL);
