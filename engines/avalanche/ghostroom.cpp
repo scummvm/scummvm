@@ -252,7 +252,7 @@ void GhostRoom::run() {
 
 	for (int i = 0; i < 4; i++)
 		for (int j = 0; j < 5; j++) {
-			_vm->_graphics->drawFilledRectangle(Common::Rect(0, 96, 26 * 8, 169 + kAdjustment[j]), kColorBlack);
+			_vm->_graphics->drawFilledRectangle(Common::Rect(0, 96, 26 * 8, 169), kColorBlack);
 			_vm->_graphics->ghostDrawGhost(_ghost[kWaveOrder[j]], 0, 96 + kAdjustment[j]);
 			_vm->_graphics->refreshScreen();
 
