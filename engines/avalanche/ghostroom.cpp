@@ -28,12 +28,14 @@
 #include "avalanche/avalanche.h"
 #include "avalanche/ghostroom.h"
 
+#include "common/random.h"
+
 namespace Avalanche {
 
 const int8 GhostRoom::kAdjustment[5] = { 7, 0, 7, 7, 7 };
 const byte GhostRoom::kWaveOrder[5] = { 4, 0, 1, 2, 3 };
 const byte GhostRoom::kGlerkFade[26] = { 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 2, 2, 2, 1, 1, 0 };
-const byte GhostRoom::kGreldetFade[18] = { 1, 2, 3, 4, 5, 6, 6, 6, 5, 5, 4, 4, 3, 3, 2, 2, 1, 1 };
+const byte GhostRoom::kGreldetFade[18] = { 0, 1, 2, 3, 4, 5, 5, 5, 4, 4, 3, 3, 2, 2, 1, 1, 0, 0 };
 
 GhostRoom::GhostRoom(AvalancheEngine *vm) {
 	_vm = vm;
@@ -287,7 +289,7 @@ void GhostRoom::run() {
 	_vm->_graphics->refreshScreen();
 
 	// Avvy hurries back:
-	_glerkStage = 1;
+	_glerkStage = 0;
 	_greldetCount = 18;
 	_redGreldet = false;
 	
@@ -306,14 +308,34 @@ void GhostRoom::run() {
 			_vm->_graphics->drawDot(x + 22, 136, kColorBlack); // Eyes would leave a trail 1 pixel high behind them.
 		}
 
+		// Plot the Green Eyes:
+		if ((x % 53) == 5) {
+			bigGreenEyes(_glerkStage);
+			_glerkStage++;
+		}
+
+		// Plot the Greldet:
+		
+		if (_greldetCount == 18) {
+			_greldetX = _vm->_rnd->getRandomNumber(599);
+			_greldetY = _vm->_rnd->getRandomNumber(79);
+			_greldetCount = 0;
+			_redGreldet = !_redGreldet;
+		}
+		
+		_vm->_graphics->ghostDrawPicture(_greldet[kGreldetFade[_greldetCount]][_redGreldet], _greldetX, _greldetY);
+		_greldetCount++;
+
 		_vm->_graphics->refreshScreen();
 
 		wait(10);
 	}
 
-	warning("STUB: run()");
-
 	CursorMan.showMouse(true);
+	_vm->_graphics->restoreScreen();
+	_vm->_graphics->removeBackup();
+	_vm->fadeOut();
+	_vm->fadeIn();
 }
 
 } // End of namespace Avalanche

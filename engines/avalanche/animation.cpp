@@ -815,7 +815,7 @@ void Animation::callSpecial(uint16 which) {
 		}
 		break;
 	case 4: // This is the ghost room link.
-		_sprites[0]->turn(kDirRight); // you'll see this after we get back from bootstrap
+		_sprites[0]->turn(kDirRight); // You'll see this after we get back.
 		_vm->_timer->addTimer(1, Timer::kProcGhostRoomPhew, Timer::kReasonGhostRoomPhew);
 		_vm->_ghostroom->run();
 		break;
