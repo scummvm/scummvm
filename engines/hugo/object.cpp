@@ -134,19 +134,19 @@ void ObjectHandler::restoreSeq(Object *obj) {
 void ObjectHandler::useObject(int16 objId) {
 	debugC(1, kDebugObject, "useObject(%d)", objId);
 
-	const char *verb;                               // Background verb to use directly
 	int16 inventObjId = _vm->_inventory->getInventoryObjId();
-	Object *obj = &_objects[objId];               // Ptr to object
+	Object *obj = &_objects[objId];                       // Ptr to object
 	if (inventObjId == -1) {
+		const char *verb;                                 // Background verb to use directly
 		// Get or use objid directly
 		if ((obj->_genericCmd & TAKE) || obj->_objValue)  // Get collectible item
 			sprintf(_vm->_line, "%s %s", _vm->_text->getVerb(_vm->_take, 0), _vm->_text->getNoun(obj->_nounIndex, 0));
-		else if (obj->_cmdIndex != 0)                // Use non-collectible item if able
+		else if (obj->_cmdIndex != 0)                     // Use non-collectible item if able
 			sprintf(_vm->_line, "%s %s", _vm->_text->getVerb(_vm->_parser->getCmdDefaultVerbIdx(obj->_cmdIndex), 0), _vm->_text->getNoun(obj->_nounIndex, 0));
 		else if ((verb = _vm->_parser->useBG(_vm->_text->getNoun(obj->_nounIndex, 0))) != 0)
 			sprintf(_vm->_line, "%s %s", verb, _vm->_text->getNoun(obj->_nounIndex, 0));
 		else
-			return;                                 // Can't use object directly
+			return;                                       // Can't use object directly
 	} else {
 		// Use status.objid on objid
 		// Default to first cmd verb
@@ -540,10 +540,8 @@ void ObjectHandler::setCarriedScreen(int screenNum) {
  * Load _numObj from Hugo.dat
  */
 void ObjectHandler::loadNumObj(Common::ReadStream &in) {
-	int numElem;
-
 	for (int varnt = 0; varnt < _vm->_numVariant; varnt++) {
-		numElem = in.readUint16BE();
+		int numElem = in.readUint16BE();
 		if (varnt == _vm->_gameVariant)
 			_numObj = numElem;
 	}

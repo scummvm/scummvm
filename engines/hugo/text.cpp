@@ -91,16 +91,14 @@ char **TextHandler::getVerbArray(int idx1) const {
 }
 
 char **TextHandler::loadTextsVariante(Common::ReadStream &in, uint16 *arraySize) {
-	int  numTexts;
-	int  entryLen;
 	int  len;
 	char **res = nullptr;
 	char *pos = nullptr;
 	char *posBck = nullptr;
 
 	for (int varnt = 0; varnt < _vm->_numVariant; varnt++) {
-		numTexts = in.readUint16BE();
-		entryLen = in.readUint16BE();
+		int numTexts = in.readUint16BE();
+		int entryLen = in.readUint16BE();
 		pos = (char *)malloc(entryLen);
 		if (varnt == _vm->_gameVariant) {
 			if (arraySize)
