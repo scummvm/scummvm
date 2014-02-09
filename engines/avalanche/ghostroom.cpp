@@ -48,6 +48,7 @@ GhostRoom::GhostRoom(AvalancheEngine *vm) {
 	_greldetX = _greldetY = 0;
 	_greldetCount = 0;
 	_redGreldet = false;
+	_wasLoaded = false;
 }
 
 GhostRoom::~GhostRoom() {
@@ -200,7 +201,12 @@ void GhostRoom::run() {
 	_vm->fadeIn();
 	_vm->_graphics->drawFilledRectangle(Common::Rect(0, 0, 640, 200), kColorBlack); // Black out the whole screen.
 
-	loadPictures();
+	// Only load the pictures if it's our first time walking into the room.
+	// After that we simply use the already loaded images.
+	if (!_wasLoaded) {
+		loadPictures();
+		_wasLoaded = true;
+	}
 
 	// Avvy walks over:
 	_glerkStage = 0;

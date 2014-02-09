@@ -75,6 +75,7 @@ private:
 	int16 _greldetX, _greldetY;
 	byte _greldetCount;
 	bool _redGreldet;
+	bool _wasLoaded;
 
 	void loadPictures();
 	void wait(uint16 howLong);
