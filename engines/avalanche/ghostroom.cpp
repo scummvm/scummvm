@@ -84,8 +84,9 @@ void GhostRoom::wait(uint16 howLong) {
 void GhostRoom::doBat() {
 	_batCount++;
 
-	int8 dx, iy;
-	byte batImage;
+	int8 dx = 0;
+	int8 iy = 0;
+	byte batImage = 0;
 	if ((_batCount % 2) == 1) {
 		if ((1 <= _batCount) && (_batCount <= 90)) {
 			dx = 2;
