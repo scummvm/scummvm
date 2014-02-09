@@ -107,7 +107,6 @@ void TopMenu::reflowLayout() {
 	x += kButtonWidth + kButtonPad;
 
 	_inventButton->resize(x * scale, y * scale, kButtonWidth * scale, kButtonHeight * scale);
-	x += kButtonWidth + kButtonPad;
 
 	// Set the graphics to the 'on' buttons, except for the variable ones
 	_whatButton->setGfx(_arrayBmp[4 * kMenuWhat + scale - 1]);
