@@ -32,7 +32,6 @@
 #include "avalanche/graphics.h"
 #include "avalanche/parser.h"
 #include "avalanche/avalot.h"
-#include "avalanche/pingo.h"
 #include "avalanche/dialogs.h"
 #include "avalanche/background.h"
 #include "avalanche/sequence.h"
@@ -79,7 +78,6 @@ public:
 	Clock *_clock;
 	GraphicManager *_graphics;
 	Parser *_parser;
-	Pingo *_pingo;
 	Dialogs *_dialogs;
 	Background *_background;
 	Sequence *_sequence;

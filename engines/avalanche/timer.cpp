@@ -634,15 +634,9 @@ void Timer::arkataShouts() {
 
 void Timer::winning() {
 	_vm->_dialogs->displayScrollChain('Q', 79);
-	_vm->_pingo->winningPic();
 
+	//_vm->_pingo->winningPic();
 	warning("STUB: Timer::winning()");
-#if 0
-	do {
-		_vm->checkclick();
-	} while (!(_vm->mrelease == 0));
-#endif
-	// TODO: To be implemented with Pingo::winningPic().
 
 	_vm->callVerb(kVerbCodeScore);
 	_vm->_dialogs->displayText(" T H E    E N D ");

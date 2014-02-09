@@ -46,7 +46,6 @@ AvalancheEngine::AvalancheEngine(OSystem *syst, const AvalancheGameDescription *
 	_clock = nullptr;
 	_graphics = nullptr;
 	_parser = nullptr;
-	_pingo = nullptr;
 	_dialogs = nullptr;
 	_background = nullptr;
 	_sequence = nullptr;
@@ -71,7 +70,6 @@ AvalancheEngine::~AvalancheEngine() {
 	delete _parser;
 
 	delete _clock;
-	delete _pingo;
 	delete _dialogs;
 	delete _background;
 	delete _sequence;
@@ -156,7 +154,6 @@ Common::ErrorCode AvalancheEngine::initialize() {
 	_parser = new Parser(this);
 
 	_clock = new Clock(this);
-	_pingo = new Pingo(this);
 	_dialogs = new Dialogs(this);
 	_background = new Background(this);
 	_sequence = new Sequence(this);
