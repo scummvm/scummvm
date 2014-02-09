@@ -254,7 +254,7 @@ void purgeSeqList() {
 			it = g_cine->_seqList.erase(it);
 		} else {
 			// Let the element be and jump to the next element
-			it++;
+			++it;
 		}
 	}
 }
