@@ -418,24 +418,22 @@ void GfxOpenGLS::startActorDraw(const Actor *actor) {
 	const Math::Quaternion &quat = actor->getRotationQuat();
 	const float scale = actor->getScale();
 	const float alpha = actor->getEffectiveAlpha();
-	Math::Matrix4 modelMatrix = quat.toMatrix();
 
 	if (g_grim->getGameType() == GType_MONKEY4) {
-		Math::Matrix4 viewMatrix = _currentQuat.toMatrix();
-
-		Math::Matrix4 extraMatrix;
-//		_mvpMatrix = _projMatrix * viewMatrix * modelMatrix;
+		const Math::Matrix4 &viewMatrix = _currentQuat.toMatrix();
+		Math::Matrix4 modelMatrix = actor->getFinalMatrix();
+		modelMatrix.transpose();
 
 		_actorProgram->setUniform("modelMatrix", modelMatrix);
-		_actorProgram->setUniform("projMatrix", _projMatrix);
 		_actorProgram->setUniform("viewMatrix", viewMatrix);
-		_actorProgram->setUniform("extraMatrix", extraMatrix);
+		_actorProgram->setUniform("projMatrix", _projMatrix);
 
 		_actorProgram->setUniform("cameraPos", _currentPos);
 		_actorProgram->setUniform("actorPos", pos);
 		_actorProgram->setUniform("isBillboard", GL_FALSE);
 		_actorProgram->setUniform1f("alpha", alpha);
 	} else {
+		Math::Matrix4 modelMatrix = quat.toMatrix();
 		bool hasZBuffer = g_grim->getCurrSet()->getCurrSetup()->_bkgndZBm;
 		Math::Matrix4 extraMatrix;
 
@@ -446,8 +444,8 @@ void GfxOpenGLS::startActorDraw(const Actor *actor) {
 		_mvpMatrix.transpose();
 
 		_actorProgram->setUniform("modelMatrix", modelMatrix);
-		_actorProgram->setUniform("projMatrix", _projMatrix);
 		_actorProgram->setUniform("viewMatrix", _viewMatrix);
+		_actorProgram->setUniform("projMatrix", _projMatrix);
 		_actorProgram->setUniform("extraMatrix", extraMatrix);
 		_actorProgram->setUniform("mvpMatrix", _mvpMatrix);
 		_actorProgram->setUniform("tex", 0);
@@ -641,9 +639,6 @@ void GfxOpenGLS::drawEMIModelFace(const EMIModel* model, const EMIMeshFace* face
 	mud->_shader->setUniform("textured", face->_hasTexture ? GL_TRUE : GL_FALSE);
 	mud->_shader->setUniform("lightsEnabled", _lightsEnabled);
 
-	Math::Matrix4 extraMatrix;
-	mud->_shader->setUniform("extraMatrix", extraMatrix);
-
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, face->_indicesEBO);
 
 	glDrawElements(GL_TRIANGLES, 3 * face->_faceLength, GL_UNSIGNED_INT, 0);
@@ -694,12 +689,18 @@ void GfxOpenGLS::drawSprite(const Sprite *sprite) {
 	glDisable(GL_DEPTH_TEST);
 
 	_spriteProgram->use();
+
+	const Math::Quaternion quat = Math::Quaternion::fromEuler(0, 0, _currentActor->getYaw());
+	const Math::Matrix4 &rotateMatrix = quat.toMatrix();
+
 	Math::Matrix4 extraMatrix;
 	extraMatrix.setPosition(sprite->_pos);
-	extraMatrix(0,0) *= sprite->_width;
-	extraMatrix(1,1) *= sprite->_height;
-	_spriteProgram->setUniform("extraMatrix", extraMatrix);
+	extraMatrix(0,0) = sprite->_width;
+	extraMatrix(1,1) = sprite->_height;
 
+	extraMatrix = extraMatrix * rotateMatrix;
+	extraMatrix.transpose();
+	_spriteProgram->setUniform("extraMatrix", extraMatrix);
 	_spriteProgram->setUniform("textured", GL_TRUE);
 	_spriteProgram->setUniform("isBillboard", GL_TRUE);
 	_spriteProgram->setUniform("lightsEnabled", false);
