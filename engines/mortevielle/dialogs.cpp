@@ -292,7 +292,7 @@ bool DialogManager::showKnowledgeCheck() {
 
 	Common::String choiceArray[15];
 
-	int currChoice, prevChoice;
+	int currChoice;
 	int correctCount = 0;
 
 	for (int indx = 0; indx < 10; ++indx) {
@@ -317,7 +317,7 @@ bool DialogManager::showKnowledgeCheck() {
 		int optionPosY = 35;
 		int maxLength = 0;
 
-		prevChoice = 1;
+		int prevChoice = 1;
 		for (int j = firstOption; j <= lastOption; ++j, ++prevChoice) {
 			tmpStr = _vm->getString(j);
 			if ((int) tmpStr.size() > maxLength)

@@ -91,13 +91,12 @@ int SoundManager::decodeMusic(const byte *PSrc, byte *PDest, int size) {
 	static const int tab[16] = { -96, -72, -48, -32, -20, -12, -8, -4, 0, 4, 8, 12, 20, 32, 48, 72 };
 
 	uint seed = 128;
-	int v;
 	int decompSize = 0;
 	int skipSize = 0;
 
 	for (int idx1 = 0; idx1 < size; ++idx1) {
 		byte srcByte = *PSrc++;
-		v = tab[srcByte >> 4];
+		int v = tab[srcByte >> 4];
 		seed += v;
 		*PDest++ = seed & 0xff;
 

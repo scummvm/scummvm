@@ -258,7 +258,6 @@ void MortevielleEngine::handleAction() {
 
 	clearVerbBar();
 
-	bool handledOpcodeFl = false;
 	_controlMenu = 0;
 	if (!_keyPressedEsc) {
 		_menu->drawMenu();
@@ -319,6 +318,7 @@ void MortevielleEngine::handleAction() {
 			_menuOpcode = _currMenu;
 			if ((_currMenu == MENU_ACTION) || (_currMenu == MENU_SELF))
 				_menuOpcode = _currAction;
+			bool handledOpcodeFl = false;
 			if (!_anyone) {
 				if ((_heroSearching) || (_obpart)) {
 					if (_mouse->_pos.y < 12)
