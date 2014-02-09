@@ -20,7 +20,11 @@ RESOURCES = \
 	$(PATH_BUILD_RES)/menu/game_menu.xml \
 	$(PATH_BUILD_RES)/layout/main.xml \
 	$(PATH_BUILD_RES)/drawable/residualvm.png \
-	$(PATH_BUILD_RES)/drawable/residualvm_big.png
+	$(PATH_BUILD_RES)/drawable/residualvm_big.png \
+	$(PATH_BUILD_RES)/drawable-hdpi/ic_action_settings.png \
+	$(PATH_BUILD_RES)/drawable-mdpi/ic_action_settings.png \
+	$(PATH_BUILD_RES)/drawable-xhdpi/ic_action_settings.png \
+	$(PATH_BUILD_RES)/drawable-xxhdpi/ic_action_settings.png
 
 JAVA_EXTRA_LIBS = \
 	$(PATH_BUILD)/libs/ouya-sdk.jar
