@@ -882,8 +882,6 @@ bool Draw_Fascination::overlapWin(int16 idWin1, int16 idWin2) {
 void Draw_Fascination::activeWin(int16 id) {
 	bool found = false;
 	int16 t[10], t2[10];
-	int nextId = -1;
-	int oldId  = -1;
 	SurfacePtr tempSrf;
 	SurfacePtr oldSrf[10];
 
@@ -906,6 +904,8 @@ void Draw_Fascination::activeWin(int16 id) {
 	}
 
 	if (found) {
+		int nextId = -1;
+		int oldId  = -1;
 		for (int i = 9; i >= 0; i--) {
 			if (t[i] != -1) {
 				if (nextId != -1)
