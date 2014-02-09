@@ -61,8 +61,8 @@ void Help::continueHelp() {
 }
 
 /**
-* @remarks Originally called 'boot_help'
-*/
+ * @remarks Originally called 'boot_help'
+ */
 void Help::run() {
 	warning("STUB: Help::run()");
 }
