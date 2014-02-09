@@ -210,10 +210,10 @@ Sprite *Sprite::expand() {
 			error("Bad SPR [%s]", fname);
 		Common::String line;
 		char tmpStr[kLineMax + 1];
-		int len = 0, lcnt = 0;
+		int lcnt = 0;
 
 		for (line = sprf.readLine(); !sprf.eos(); line = sprf.readLine()) {
-			len = line.size();
+			int len = line.size();
 			Common::strlcpy(tmpStr, line.c_str(), sizeof(tmpStr));
 			lcnt++;
 			if (len == 0 || *tmpStr == '.')

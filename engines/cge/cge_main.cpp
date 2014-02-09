@@ -125,9 +125,8 @@ char *CGEEngine::mergeExt(char *buf, const char *name, const char *ext) {
 }
 
 int CGEEngine::takeEnum(const char **tab, const char *text) {
-	const char **e;
 	if (text) {
-		for (e = tab; *e; e++) {
+		for (const char **e = tab; *e; e++) {
 			if (scumm_stricmp(text, *e) == 0) {
 				return e - tab;
 			}
@@ -1029,7 +1028,6 @@ void CGEEngine::loadSprite(const char *fname, int ref, int scene, int col = 0, i
 	bool east = false;
 	bool port = false;
 	bool tran = false;
-	int i, lcnt = 0;
 
 	char tmpStr[kLineMax + 1];
 	Common::String line;
@@ -1041,6 +1039,7 @@ void CGEEngine::loadSprite(const char *fname, int ref, int scene, int col = 0, i
 			error("Bad SPR [%s]", tmpStr);
 
 		uint16 len;
+		int i, lcnt = 0;
 		for (line = sprf.readLine(); !sprf.eos(); line = sprf.readLine()) {
 			len = line.size();
 			lcnt++;
