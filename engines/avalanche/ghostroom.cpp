@@ -198,8 +198,8 @@ void GhostRoom::run() {
 	CursorMan.showMouse(false);
 	_vm->_graphics->saveScreen();
 	_vm->fadeOut();
-	_vm->fadeIn();
 	_vm->_graphics->drawFilledRectangle(Common::Rect(0, 0, 640, 200), kColorBlack); // Black out the whole screen.
+	_vm->fadeIn();
 
 	// Only load the pictures if it's our first time walking into the room.
 	// After that we simply use the already loaded images.
@@ -324,7 +324,6 @@ void GhostRoom::run() {
 		}
 
 		// Plot the Greldet:
-		
 		if (_greldetCount == 18) {
 			_greldetX = _vm->_rnd->getRandomNumber(599);
 			_greldetY = _vm->_rnd->getRandomNumber(79);
@@ -341,9 +340,11 @@ void GhostRoom::run() {
 	}
 
 	CursorMan.showMouse(true);
+	
+	_vm->fadeOut();
 	_vm->_graphics->restoreScreen();
 	_vm->_graphics->removeBackup();
-	_vm->fadeOut();
+	_vm->_animation->animLink();
 	_vm->fadeIn();
 }
 
