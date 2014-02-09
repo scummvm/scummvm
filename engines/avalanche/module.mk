@@ -11,7 +11,6 @@ MODULE_OBJS = \
 	graphics.o \
 	menu.o \
 	parser.o \
-	pingo.o \
 	dialogs.o \
 	sequence.o \
 	sound.o \
