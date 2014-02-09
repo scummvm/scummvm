@@ -2043,8 +2043,7 @@ void Parser::doThat() {
 		}
 		break;
 	case kVerbCodeHelp:
-		// boot_help();
-		warning("STUB: Parser::doThat() - case kVerbCodehelp");
+		_vm->_help->run();
 		break;
 	case kVerbCodeLarrypass:
 		_vm->_dialogs->displayText("Wrong game!");

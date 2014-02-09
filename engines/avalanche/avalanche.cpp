@@ -57,6 +57,7 @@ AvalancheEngine::AvalancheEngine(OSystem *syst, const AvalancheGameDescription *
 	_sound = nullptr;
 	_nim = nullptr;
 	_ghostroom = nullptr;
+	_help = nullptr;
 
 	_platform = gd->desc.platform;
 	initVariables();
@@ -81,6 +82,7 @@ AvalancheEngine::~AvalancheEngine() {
 	delete _sound;
 	delete _nim;
 	delete _ghostroom;
+	delete _help;
 
 	for (int i = 0; i < 31; i++) {
 		for (int j = 0; j < 2; j++) {
@@ -165,6 +167,7 @@ Common::ErrorCode AvalancheEngine::initialize() {
 	_sound = new SoundHandler(this);
 	_nim = new Nim(this);
 	_ghostroom = new GhostRoom(this);
+	_help = new Help(this);
 
 	_graphics->init();
 	_dialogs->init();

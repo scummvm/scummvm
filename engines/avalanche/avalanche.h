@@ -44,6 +44,7 @@
 #include "avalanche/nim.h"
 #include "avalanche/clock.h"
 #include "avalanche/ghostroom.h"
+#include "avalanche/help.h"
 
 #include "common/serializer.h"
 
@@ -89,6 +90,7 @@ public:
 	SoundHandler *_sound;
 	Nim *_nim;
 	GhostRoom *_ghostroom;
+	Help *_help;
 
 	OSystem *_system;
 
