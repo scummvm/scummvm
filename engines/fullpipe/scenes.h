@@ -201,7 +201,7 @@ struct BallChain {
 	Ball *field_8;
 	int numBalls;
 	Ball *pTail;
-	Ball *cPlex;
+	byte *cPlex;
 	int cPlexLen;
 
 	BallChain() : pHead(0), field_8(0), pTail(0), numBalls(0), cPlex(0), cPlexLen(0) {}

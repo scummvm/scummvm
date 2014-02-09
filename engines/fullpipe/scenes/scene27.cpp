@@ -80,9 +80,9 @@ void scene27_initScene(Scene *sc) {
 		Ball *lastP = g_vars->scene27_balls.field_8;
 
 		if (!g_vars->scene27_balls.pTail) {
-			g_vars->scene27_balls.cPlex = (Ball *)calloc(g_vars->scene27_balls.cPlexLen, sizeof(Ball));
+			g_vars->scene27_balls.cPlex = (byte *)calloc(g_vars->scene27_balls.cPlexLen, sizeof(Ball));
 
-			Ball *p1 = g_vars->scene27_balls.cPlex + (g_vars->scene27_balls.cPlexLen - 1) * sizeof(Ball);
+			byte *p1 = g_vars->scene27_balls.cPlex + (g_vars->scene27_balls.cPlexLen - 1) * sizeof(Ball);
 
 			if (g_vars->scene27_balls.cPlexLen - 1 < 0) {
 				runPtr = g_vars->scene27_balls.pTail;
@@ -90,8 +90,8 @@ void scene27_initScene(Scene *sc) {
 				runPtr = g_vars->scene27_balls.pTail;
 
 				for (int j = 0; j < g_vars->scene27_balls.cPlexLen; j++) {
-					p1->p1 = runPtr;
-					runPtr = p1;
+					((Ball *)p1)->p1 = runPtr;
+					runPtr = (Ball *)p1;
 
 					p1 -= sizeof(Ball);
 				}
@@ -458,10 +458,12 @@ void sceneHandler27_driverPushButton() {
 }
 
 void sceneHandler27_maidSwitchback() {
+#ifndef DBG
 	if (g_fp->getObjectState(sO_Maid) == g_fp->getObjectEnumState(sO_Maid, sO_WithSwab)) {
 		g_vars->scene27_maid->changeStatics2(ST_MID_SWAB);
 		g_vars->scene27_maid->startMQIfIdle(QU_MID_SWITCHBACK, 1);
 	}
+#endif
 }
 
 void sceneHandler27_batLogic() {
@@ -570,9 +572,9 @@ void sceneHandler27_sub02() {
 		StaticANIObject *newbat = g_vars->scene27_var07[i]->ani;
 
 		if (!g_vars->scene27_balls.pTail) {
-			g_vars->scene27_balls.cPlex = (Ball *)calloc(g_vars->scene27_balls.cPlexLen, sizeof(Ball));
+			g_vars->scene27_balls.cPlex = (byte *)calloc(g_vars->scene27_balls.cPlexLen, sizeof(Ball));
 
-			Ball *p1 = g_vars->scene27_balls.cPlex + (g_vars->scene27_balls.cPlexLen - 1) * sizeof(Ball);
+			byte *p1 = g_vars->scene27_balls.cPlex + (g_vars->scene27_balls.cPlexLen - 1) * sizeof(Ball);
 
 			if (g_vars->scene27_balls.cPlexLen - 1 < 0) {
 				runPtr = g_vars->scene27_balls.pTail;
@@ -580,8 +582,8 @@ void sceneHandler27_sub02() {
 				runPtr = g_vars->scene27_balls.pTail;
 
 				for (int j = 0; j < g_vars->scene27_balls.cPlexLen; j++) {
-					p1->p1 = runPtr;
-					runPtr = p1;
+					((Ball *)p1)->p1 = runPtr;
+					runPtr = (Ball *)p1;
 
 					p1 -= sizeof(Ball);
 				}
