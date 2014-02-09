@@ -5765,24 +5765,47 @@ bool Scene600::Smoke::startAction(CursorType action, Event &event) {
 	return false;
 }
 
-GfxSurface Scene600::Smoke::getFrame() {
-	GfxSurface frame = SceneActor::getFrame();
-
-	if (_effect != EFFECT_NONE) {
-		// Translate the frame using the scene's pixel map
-		byte *pixelMap = static_cast<Scene600 *>(R2_GLOBALS._sceneManager._scene)->_pixelMap;
-		Graphics::Surface surface = frame.lockSurface();
-		byte *srcP = (byte *)surface.getPixels();
-
-		while (srcP < ((byte *)surface.getBasePtr(0, surface.h))) {
-			*srcP = pixelMap[*srcP];
-			srcP++;
-		}
-
-		frame.unlockSurface();
+void Scene600::Smoke::draw() {
+	// Effect should always be active on smoke, but since the original had this
+	// check, include it here too
+	if (_effect == EFFECT_NONE) {
+		SceneActor::draw();
+		return;
 	}
 
-	return frame;
+	// Determine the area of the screen to be updated
+	Rect destRect = _bounds;
+	destRect.translate(-g_globals->_sceneManager._scene->_sceneBounds.left,
+		-g_globals->_sceneManager._scene->_sceneBounds.top);
+
+	// Get the smoke frame, screen reference, and pixel palette translation map
+	GfxSurface frame = getFrame();
+	Graphics::Surface s = frame.lockSurface();
+	Graphics::Surface screen = g_globals->gfxManager().getSurface().lockSurface();
+	byte *pixelMap = static_cast<Scene600 *>(R2_GLOBALS._sceneManager._scene)->_pixelMap;
+
+	// Loop through every pixel of the frame. Any pixel of the frame that's not a 
+	// tranparency, get the same pixel from the screen background, and shade it using
+	// the scene's pixel translation map
+	for (int yp = 0; yp < s.h; ++yp) {
+		byte *frameSrcP = (byte *)s.getBasePtr(0, yp);
+		byte *screenP = (byte *)screen.getBasePtr(destRect.left, destRect.top + yp);
+
+		for (int xp = 0; xp < s.w; ++xp, ++frameSrcP, ++screenP) {
+			if (*frameSrcP != frame._transColor) {
+				*frameSrcP = pixelMap[*screenP];
+			}
+		}
+	}
+
+	// Finished updating the frame
+	frame.unlockSurface();
+	g_globals->gfxManager().getSurface().unlockSurface();
+
+	// Draw the processed frame
+	Region *priorityRegion = g_globals->_sceneManager._scene->_priorities.find(_priority);
+	g_globals->gfxManager().copyFrom(frame, destRect, priorityRegion);
+
 }
 
 bool Scene600::Doorway::startAction(CursorType action, Event &event) {

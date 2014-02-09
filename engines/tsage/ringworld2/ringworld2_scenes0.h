@@ -661,7 +661,7 @@ class Scene600 : public SceneExt {
 	public:
 		virtual void signal();
 		virtual bool startAction(CursorType action, Event &event);
-		virtual GfxSurface getFrame();
+		virtual void draw();
 	};
 	class Doorway : public SceneActor {
 	public:
