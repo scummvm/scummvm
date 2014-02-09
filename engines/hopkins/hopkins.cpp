@@ -2860,7 +2860,6 @@ void HopkinsEngine::syncSoundSettings() {
 }
 
 bool HopkinsEngine::displayAdultDisclaimer() {
-	int xp, yp;
 	int buttonIndex;
 
 	_graphicsMan->_minX = 0;
@@ -2880,8 +2879,8 @@ bool HopkinsEngine::displayAdultDisclaimer() {
 	_events->_mouseSpriteId = 0;
 
 	do {
-		xp = _events->getMouseX();
-		yp = _events->getMouseY();
+		int xp = _events->getMouseX();
+		int yp = _events->getMouseY();
 
 		buttonIndex = 0;
 		if (xp >= 37 && xp <= 169 && yp >= 406 && yp <= 445)

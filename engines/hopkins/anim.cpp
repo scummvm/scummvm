@@ -668,7 +668,6 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
  */
 void AnimationManager::playSequence2(const Common::String &file, uint32 rate1, uint32 rate2, uint32 rate3, bool skipSeqFl) {
 	byte *screenP;
-	int frameNumber;
 	Common::File f;
 
 	if (_vm->shouldQuit())
@@ -708,7 +707,7 @@ void AnimationManager::playSequence2(const Common::String &file, uint32 rate1, u
 
 	if (!_vm->_events->_escKeyFl) {
 		_vm->_events->_rateCounter = 0;
-		frameNumber = 0;
+		int frameNumber = 0;
 		while (!_vm->shouldQuit()) {
 			_vm->_soundMan->playAnimSound(frameNumber++);
 

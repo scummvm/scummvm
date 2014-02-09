@@ -439,9 +439,7 @@ void GraphicsManager::display8BitRect(const byte *surface, int xs, int ys, int w
 }
 
 void GraphicsManager::displayScaled8BitRect(const byte *surface, int xp, int yp, int width, int height, int destX, int destY) {
-	int xCtr;
 	const byte *palette;
-	int savedXCount;
 	byte *loopDestP;
 	const byte *loopSrcP;
 	int yCtr;
@@ -454,10 +452,10 @@ void GraphicsManager::displayScaled8BitRect(const byte *surface, int xp, int yp,
 
 	do {
 		yCtr = yCount;
-		xCtr = xCount;
+		int xCtr = xCount;
 		loopSrcP = srcP;
 		loopDestP = destP;
-		savedXCount = xCount;
+		int savedXCount = xCount;
 		palette = _palettePixels;
 
 		do {
