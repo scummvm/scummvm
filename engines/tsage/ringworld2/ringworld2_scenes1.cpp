@@ -11188,7 +11188,7 @@ void Scene1800::SouthExit::changeScene() {
 	} else {
 		scene->_sceneMode = 1802;
 		if (R2_GLOBALS._player._characterIndex == R2_QUINN)
-			scene->setAction(&scene->_sequenceManager, scene, 1802, &R2_GLOBALS._player, &scene->_companion, NULL);
+			scene->setAction(&scene->_sequenceManager, scene, 1803, &R2_GLOBALS._player, &scene->_companion, NULL);
 		else
 			scene->setAction(&scene->_sequenceManager, scene, 1802, &R2_GLOBALS._player, &scene->_companion, NULL);
 	}
