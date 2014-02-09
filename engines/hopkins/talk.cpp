@@ -613,7 +613,6 @@ void TalkManager::displayBobDialogAnim(int idx) {
 			_vm->_objectsMan->_bob[idx]._flipFl = false;
 			_vm->_objectsMan->_bob[idx]._animData = _vm->_animMan->_animBqe[idx]._data;
 			_vm->_objectsMan->_bob[idx]._bobMode = 10;
-			bqeData = _characterSprite;
 			_vm->_objectsMan->_bob[idx]._spriteData = _characterSprite;
 			_vm->_objectsMan->_bob[idx]._bobModeChange = newMode;
 			_vm->_objectsMan->_bob[idx]._modeChangeCtr = -1;
