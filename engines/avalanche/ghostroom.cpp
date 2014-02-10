@@ -66,9 +66,10 @@ GhostRoom::~GhostRoom() {
 	for (int i = 0; i < 5; i++)
 		_greenEyes[i].free();
 
-	for (int i = 0; i < 2; i++)
+	for (int i = 0; i < 2; i++) {
 		for (int j = 0; j < 6; j++)
 			_greldet[j][i].free();
+	}
 }
 
 void GhostRoom::wait(uint16 howLong) {
@@ -140,18 +141,22 @@ void GhostRoom::loadPictures() {
 	file.seek(44);
 
 	// Initializing ghost's array.
-	for (int i = 0; i < 5; i++)
-		for (int j = 0; j < 2; j++)
-			for (int y = 0; y < 66; y++)
+	for (int i = 0; i < 5; i++) {
+		for (int j = 0; j < 2; j++) {
+			for (int y = 0; y < 66; y++) {
 				for (int x = 0; x < 26; x++)
 					_ghost[i][j][y][x] = 0;
+			}
+		}
+	}
 
 	// Read in the pictures of the ghost.
 	for (int i = 0; i < 5; i++) {
 		ChunkBlock cb = readChunkBlock(file);
-		for (int j = 0; j < 2; j++)
+		for (int j = 0; j < 2; j++) {
 			for (int y = 0; y <= cb._height; y++)
 				file.read(_ghost[i][j][y], cb._width / 8);
+		}
 	}
 
 	for (int i = 0; i < 2; i++)
@@ -168,18 +173,22 @@ void GhostRoom::loadPictures() {
 
 
 	// Initializing glerk's array.
-	for (int i = 0; i < 6; i++)
-		for (int j = 0; j < 4; j++)
-			for (int y = 0; y < 35; y++)
+	for (int i = 0; i < 6; i++) {
+		for (int j = 0; j < 4; j++) {
+			for (int y = 0; y < 35; y++) {
 				for (int x = 0; x < 9; x++)
 					_glerk[i][j][y][x] = 0;
+			}
+		}
+	}
 
 	// Read in the pictures of the "glerk".
 	for (int i = 0; i < 6; i++) {
 		ChunkBlock cb = readChunkBlock(file);
-		for (int j = 0; j < 4; j++)
+		for (int j = 0; j < 4; j++) {
 			for (int y = 0; y <= cb._height; y++)
 				file.read(_glerk[i][j][y], cb._width / 8);
+		}
 	}
 
 	for (int i = 0; i < 6; i++)
@@ -188,9 +197,10 @@ void GhostRoom::loadPictures() {
 	for (int i = 0; i < 5; i++)
 		_greenEyes[i] = _vm->_graphics->ghostLoadPicture(file, dummyCoord);
 
-	for (int i = 0; i < 2; i++)
+	for (int i = 0; i < 2; i++) {
 		for (int j = 0; j < 6; j++)
 			_greldet[j][i] = _vm->_graphics->ghostLoadPicture(file, dummyCoord);
+	}
 
 	file.close();
 }
@@ -264,21 +274,23 @@ void GhostRoom::run() {
 	// Then it waves:
 	_aarghCount = -15;
 
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < 5; j++) {
 			_vm->_graphics->drawFilledRectangle(Common::Rect(0, 96, 26 * 8, 169), kColorBlack);
 			_vm->_graphics->ghostDrawGhost(_ghost[kWaveOrder[j]], 0, 96 + kAdjustment[j]);
 
 			_aarghCount++;
 
-			if (_aarghCount >= 0)
+			if (_aarghCount >= 0) {
 				for (int k = 0; k <= _aarghCount; k++)
 					_vm->_graphics->ghostDrawPicture(_aargh[k], _aarghWhere[k].x, _aarghWhere[k].y);
+			}
 
 			_vm->_graphics->refreshScreen();
 
 			wait(177);
 		}
+	}
 
 	// The exclamation mark appears:
 	_vm->_graphics->ghostDrawPicture(_exclamation, 246, 127);
