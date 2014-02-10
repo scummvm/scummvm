@@ -66,7 +66,7 @@ void scene27_initScene(Scene *sc) {
 	g_vars->scene27_bats.clear();
 	g_vars->scene27_var07.clear();
 
-	g_vars->scene27_var15 = 1;
+	g_vars->scene27_driverHasVent = true;
 	g_vars->scene27_bat = sc->getStaticANIObject1ById(ANI_BITA, -1);
 
 	for (int i = 0; i < 4; i++) {
@@ -115,10 +115,10 @@ void scene27_initScene(Scene *sc) {
 
 	g_vars->scene27_dudeIsAiming = false;
 	g_vars->scene27_maxPhaseReached = false;
-	g_vars->scene27_var10 = 0;
-	g_vars->scene27_var11 = 0;
-	g_vars->scene27_var12 = 0;
-	g_vars->scene27_var13 = 0;
+	g_vars->scene27_wipeIsNeeded = false;
+	g_vars->scene27_driverPushedButton = false;
+	g_vars->scene27_numLostBats = 0;
+	g_vars->scene27_knockCount = 0;
 	g_vars->scene27_launchPhase = 0;
 
 	Scene *oldsc = g_fp->_currentScene;
@@ -157,7 +157,7 @@ void sceneHandler27_driverGiveVent() {
 	g_vars->scene27_driver->changeStatics2(ST_DRV_VENT);
 	g_vars->scene27_driver->startMQIfIdle(QU_DRV_GIVEVENT, 1);
 
-	g_vars->scene27_var15 = 0;
+	g_vars->scene27_driverHasVent = false;
 
 	getCurrSceneSc2MotionController()->setEnabled();
 	getGameLoaderInteractionController()->enableFlag24();
@@ -309,14 +309,14 @@ void sceneHandler27_startAiming() {
 }
 
 void sceneHandler27_sub04(ExCommand *cmd) {
-	g_vars->scene27_var16 = cmd->_x;
-	g_vars->scene27_var17 = cmd->_y;
+	g_vars->scene27_aimStartX = cmd->_x;
+	g_vars->scene27_aimStartY = cmd->_y;
 	g_vars->scene27_dudeIsAiming = true;
 	g_vars->scene27_maxPhaseReached = false;
 }
 
 void sceneHandler27_aimDude() {
-	int phase = (g_vars->scene27_var16 - g_fp->_mouseScreenPos.x) / 20 + 6;
+	int phase = (g_vars->scene27_aimStartX - g_fp->_mouseScreenPos.x) / 20 + 6;
 
 	if (phase < 6)
 		phase = 6;
@@ -442,14 +442,14 @@ void sceneHandler27_driverPushButton() {
 		g_vars->scene27_driver->changeStatics2(ST_DRV_VENT);
 		chainQueue(QU_DRV_PUSHBUTTON, 1);
 
-		g_vars->scene27_var11 = 1;
+		g_vars->scene27_driverPushedButton = true;
 	} else {
 		g_vars->scene27_driver->changeStatics2(ST_DRV_SITNOVENT);
 
 
 		chainQueue(QU_DRV_PUSHBUTTON_NOVENT, 1);
 
-		g_vars->scene27_var11 = 1;
+		g_vars->scene27_driverPushedButton = true;
 	}
 }
 
@@ -528,7 +528,7 @@ void sceneHandler27_batLogic() {
 }
 
 void sceneHandler27_calcWinArcade() {
-	if (!g_vars->scene27_var10 && !g_vars->scene27_var11) {
+	if (!g_vars->scene27_wipeIsNeeded && !g_vars->scene27_driverPushedButton) {
 		int numHilite = 0;
 
 		for (uint i = 0; i < g_vars->scene27_bats.size(); i++) {
@@ -557,8 +557,8 @@ void sceneHandler27_calcWinArcade() {
 	sceneHandler27_maidSwitchback();
 }
 
-void sceneHandler27_sub02() {
-	g_vars->scene27_var10 = 0;
+void sceneHandler27_regenBats() {
+	g_vars->scene27_wipeIsNeeded = false;
 
 	for (uint i = 0; i < g_vars->scene27_var07.size(); i++) {
 		g_vars->scene27_var07[i]->ani->hide();
@@ -607,14 +607,14 @@ void sceneHandler27_sub02() {
 
 	sceneHandler27_batLogic();
 
-	g_vars->scene27_var11 = 0;
+	g_vars->scene27_driverPushedButton = false;
 }
 
 void sceneHandler27_animateBats() {
-	int oldCount = g_vars->scene27_var13;
+	int oldCount = g_vars->scene27_knockCount;
 
-	g_vars->scene27_var12 = 0;
-	g_vars->scene27_var13 = 0;
+	g_vars->scene27_numLostBats = 0;
+	g_vars->scene27_knockCount = 0;
 
 	for (uint i = 0; i < g_vars->scene27_bats.size(); i++) {
 		Bat *bat = g_vars->scene27_bats[i];
@@ -637,13 +637,13 @@ void sceneHandler27_animateBats() {
 		bat->powerSin = sin(bat->field_10) * bat->power;
 
 		if (bat->power >= 0.5)
-			g_vars->scene27_var13++;
+			g_vars->scene27_knockCount++;
 		else
 			bat->power = 0;
 
 		sceneHandler27_batSetColors(i);
 
-		if (!sceneHandler27_batFallLogic(i) && !g_vars->scene27_var10) {
+		if (!sceneHandler27_batFallLogic(i) && !g_vars->scene27_wipeIsNeeded) {
 			for (uint j = 0; j < g_vars->scene27_bats.size(); j++) {
 				if (i != j && sceneHandler27_batCalcDistance(i, j))
 					sceneHandler27_knockBats(i, j);
@@ -655,7 +655,7 @@ void sceneHandler27_animateBats() {
 		Bat *bat = g_vars->scene27_var07[i];
 
 		if (bat->currY >= 700.0) {
-			g_vars->scene27_var12++;
+			g_vars->scene27_numLostBats++;
 		} else {
 			bat->currX = bat->powerCos + bat->currX;
 			bat->currY = bat->powerSin + bat->currY;
@@ -663,12 +663,13 @@ void sceneHandler27_animateBats() {
 			bat->powerSin = bat->powerSin + 1.0;
 		}
 	}
-	if (oldCount != g_vars->scene27_var13 && !g_vars->scene27_var13)
+
+	if (oldCount != g_vars->scene27_knockCount && !g_vars->scene27_knockCount)
 		sceneHandler27_calcWinArcade();
 
-	if (g_vars->scene27_var10) {
-		if (g_vars->scene27_var12 == 5)
-			sceneHandler27_sub02();
+	if (g_vars->scene27_wipeIsNeeded) {
+		if (g_vars->scene27_numLostBats == 5)
+			sceneHandler27_regenBats();
 	}
 }
 
@@ -694,7 +695,7 @@ int sceneHandler27(ExCommand *cmd) {
 		break;
 
 	case MSG_SC27_STARTWIPE:
-		g_vars->scene27_var10 = 1;
+		g_vars->scene27_wipeIsNeeded = true;
 
 		g_fp->playSound(SND_27_027, 0);
 
@@ -737,7 +738,7 @@ int sceneHandler27(ExCommand *cmd) {
 		if (g_vars->scene27_dudeIsAiming)
 			sceneHandler27_aimDude();
 
-		if (g_vars->scene27_var10) {
+		if (g_vars->scene27_wipeIsNeeded) {
 			sceneHandler27_sub07();
 
 			if (!g_fp->_aniMan->_movement && g_fp->_aniMan->_statics->_staticsId == ST_MAN_RIGHT)

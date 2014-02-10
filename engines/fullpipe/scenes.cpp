@@ -305,16 +305,16 @@ Vars::Vars() {
 	scene27_driver = 0;
 	scene27_maid = 0;
 	scene27_batHandler = 0;
-	scene27_var15 = 0;
+	scene27_driverHasVent = true;
 	scene27_bat = 0;
 	scene27_dudeIsAiming = false;
 	scene27_maxPhaseReached = false;
-	scene27_var10 = 0;
-	scene27_var11 = 0;
-	scene27_var12 = 0;
-	scene27_var13 = 0;
-	scene27_var16 = 0;
-	scene27_var17 = 0;
+	scene27_wipeIsNeeded = false;
+	scene27_driverPushedButton = false;
+	scene27_numLostBats = 0;
+	scene27_knockCount = 0;
+	scene27_aimStartX = 0;
+	scene27_aimStartY = 0;
 	scene27_launchPhase = 0;
 
 	scene28_fliesArePresent = true;
