@@ -718,7 +718,6 @@ const byte *ThreadResource::cardPerform(const byte *card) {
 	uint16 id = *card++;
 	int varD = 5;
 	uint32 v2;
-	int v3;
 	byte bVal;
 	uint32 idx1, idx2;
 	debugC(DEBUG_BASIC, kDebugScripts, "cardPerform - %d", id);
@@ -765,7 +764,7 @@ const byte *ThreadResource::cardPerform(const byte *card) {
 	}
 
 	case 7: {
-		v3 = *card++;
+		int v3 = *card++;
 		v2 = READ_LE_UINT32(card);
 		card += 4;
 		int &v = _vm->_controlPtr->_state->_vals[v3];

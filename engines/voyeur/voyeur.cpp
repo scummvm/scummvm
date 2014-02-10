@@ -223,7 +223,6 @@ void VoyeurEngine::showConversionScreen() {
 
 bool VoyeurEngine::doLock() {
 	bool result = true;
-	bool flag = false;
 	int buttonVocSize, wrongVocSize;
 	byte *buttonVoc = _filesManager.fload("button.voc", &buttonVocSize);
 	byte *wrongVoc = _filesManager.fload("wrong.voc", &wrongVocSize);
@@ -273,6 +272,7 @@ bool VoyeurEngine::doLock() {
 
 		bool firstLoop = true;
 		bool breakFlag = false;
+		bool flag = false;
 		while (!breakFlag && !shouldQuit()) {
 			(*_graphicsManager._vPort)->setupViewPort();
 			flipPageAndWait();
