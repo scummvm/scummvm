@@ -33,7 +33,7 @@
 #include "fullpipe/interaction.h"
 #include "fullpipe/behavior.h"
 
-#define DBG 1
+#define DBG 0
 
 namespace Fullpipe {
 
@@ -308,7 +308,7 @@ void sceneHandler27_startAiming() {
 	g_fp->_aniMan->_movement->setDynamicPhaseIndex(phase);
 }
 
-void sceneHandler27_sub04(ExCommand *cmd) {
+void sceneHandler27_initAiming(ExCommand *cmd) {
 	g_vars->scene27_aimStartX = cmd->_x;
 	g_vars->scene27_aimStartY = cmd->_y;
 	g_vars->scene27_dudeIsAiming = true;
@@ -328,9 +328,9 @@ void sceneHandler27_aimDude() {
 		g_fp->_aniMan->_movement->setDynamicPhaseIndex(phase);
 }
 
-void sceneHandler27_sub07() {
+void sceneHandler27_wipeDo() {
 	for (uint i = 0; i < g_vars->scene27_bats.size(); i++) {
-		if (g_vars->scene27_bats[i]->currX < 800.0 ) {
+		if (g_vars->scene27_bats[i]->currX < 800.0) {
 			g_vars->scene27_bats[i]->field_10 = atan2(800.0 - g_vars->scene27_bats[i]->currX, 520.0 - g_vars->scene27_bats[i]->currY);
 			g_vars->scene27_bats[i]->power += 1.0;
 		}
@@ -720,7 +720,7 @@ int sceneHandler27(ExCommand *cmd) {
 	case 29:
 		if (g_fp->_aniMan == g_fp->_currentScene->getStaticANIObjectAtPos(g_fp->_sceneRect.left + cmd->_x, g_fp->_sceneRect.top + cmd->_y)
 			&& g_vars->scene27_maxPhaseReached)
-			sceneHandler27_sub04(cmd);
+			sceneHandler27_initAiming(cmd);
 
 		break;
 
@@ -739,7 +739,7 @@ int sceneHandler27(ExCommand *cmd) {
 			sceneHandler27_aimDude();
 
 		if (g_vars->scene27_wipeIsNeeded) {
-			sceneHandler27_sub07();
+			sceneHandler27_wipeDo();
 
 			if (!g_fp->_aniMan->_movement && g_fp->_aniMan->_statics->_staticsId == ST_MAN_RIGHT)
 				g_fp->_aniMan->startAnim(MV_MAN27_FLOW, 0, -1);
