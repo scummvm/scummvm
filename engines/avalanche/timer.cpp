@@ -632,11 +632,39 @@ void Timer::arkataShouts() {
 	addTimer(160, kProcArkataShouts, kReasonArkataShouts);
 }
 
+/**
+ * @remarks Contains the content of the function 'winning_pic', originally located in PINGO.
+ */
 void Timer::winning() {
 	_vm->_dialogs->displayScrollChain('Q', 79);
 
-	//_vm->_pingo->winningPic();
-	warning("STUB: Timer::winning()");
+	// This was originally located in winning_pic:
+	CursorMan.showMouse(false);
+	_vm->_graphics->saveScreen();
+	_vm->fadeOut();
+	_vm->_graphics->drawWinningPic();
+	_vm->_graphics->refreshScreen();
+	_vm->fadeIn();
+
+	// Waiting for a keypress or a left mouseclick:
+	Common::Event event;
+	bool escape = false;
+	while (!_vm->shouldQuit() && !escape) {
+		_vm->_graphics->refreshScreen();
+		while (_vm->getEvent(event)) {
+			if ((event.type == Common::EVENT_LBUTTONUP) || (event.type == Common::EVENT_KEYDOWN)) {
+				escape = true;
+				break;
+			}
+		}
+	}
+
+	_vm->fadeOut();
+	_vm->_graphics->restoreScreen();
+	_vm->_graphics->removeBackup();
+	_vm->fadeIn();
+	CursorMan.showMouse(true);
+	// winning_pic's end.
 
 	_vm->callVerb(kVerbCodeScore);
 	_vm->_dialogs->displayText(" T H E    E N D ");

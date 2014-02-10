@@ -718,6 +718,19 @@ void GraphicManager::shiftScreen() {
 	_surface.drawLine(0, 0, _surface.w, 0, kColorBlack);
 }
 
+void GraphicManager::drawWinningPic() {
+	Common::File file;
+
+	if (!file.open("finale.avd"))
+		error("AVALANCHE: Timer: File not found: finale.avd");
+
+	Graphics::Surface winning = loadPictureRaw(file, 640, 200);
+	drawPicture(_surface, winning, 0, 0);
+
+	winning.free();
+	file.close();
+}
+
 void GraphicManager::clearAlso() {
 	_magics.fillRect(Common::Rect(0, 0, 640, 200), 0);
 	_magics.frameRect(Common::Rect(0, 45, 640, 161), 15);
