@@ -1371,16 +1371,13 @@ int ThreadResource::doInterface() {
 	Common::Rect mansionViewBounds(MANSION_VIEW_X, MANSION_VIEW_Y,
 		MANSION_VIEW_X + MANSION_VIEW_WIDTH, MANSION_VIEW_Y + MANSION_VIEW_HEIGHT);
 
-	int priorRegionIndex = -1;
 	do {
 		_vm->_voyeurArea = AREA_INTERFACE;
 		_vm->doTimeBar(true);
 		_vm->_eventsManager.getMouseInfo();
 
-		if (checkMansionScroll()) {
-			priorRegionIndex = regionIndex;
+		if (checkMansionScroll())
 			_vm->doScroll(_vm->_mansionViewPos);
-		}
 
 		_vm->checkPhoneCall();
 		if (!_vm->_soundManager.getVOCStatus()) {
