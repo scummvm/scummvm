@@ -301,18 +301,14 @@ Vars::Vars() {
 	scene26_sock = 0;
 	scene26_activeVent = 0;
 
-	scene27_var01 = 0;
-	scene27_var02 = 0;
-	scene27_var03 = 0;
-	scene27_var04 = 0;
 	scene27_hitZone = 0;
 	scene27_driver = 0;
 	scene27_maid = 0;
 	scene27_batHandler = 0;
 	scene27_var15 = 0;
 	scene27_bat = 0;
-	scene27_var08 = 0;
-	scene27_var09 = 0;
+	scene27_dudeIsAiming = false;
+	scene27_maxPhaseReached = false;
 	scene27_var10 = 0;
 	scene27_var11 = 0;
 	scene27_var12 = 0;

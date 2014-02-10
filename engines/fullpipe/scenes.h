@@ -488,18 +488,14 @@ public:
 	StaticANIObject *scene26_sock;
 	StaticANIObject *scene26_activeVent;
 
-	int scene27_var01;
-	int scene27_var02;
-	int scene27_var03;
-	int scene27_var04;
 	PictureObject *scene27_hitZone;
 	StaticANIObject *scene27_driver;
 	StaticANIObject *scene27_maid;
 	StaticANIObject *scene27_batHandler;
 	int scene27_var15;
 	StaticANIObject *scene27_bat;
-	int scene27_var08;
-	int scene27_var09;
+	bool scene27_dudeIsAiming;
+	bool scene27_maxPhaseReached;
 	int scene27_var10;
 	int scene27_var11;
 	int scene27_var12;

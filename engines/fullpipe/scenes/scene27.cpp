@@ -49,10 +49,6 @@ struct Bat {
 };
 
 void scene27_initScene(Scene *sc) {
-	g_vars->scene27_var01 = 200;
-	g_vars->scene27_var02 = 200;
-	g_vars->scene27_var03 = 300;
-	g_vars->scene27_var04 = 300;
 	g_vars->scene27_hitZone = sc->getPictureObjectById(PIC_SC27_HITZONE2, 0);
 	g_vars->scene27_driver = sc->getStaticANIObject1ById(ANI_VODILLA, -1);
 	g_vars->scene27_maid = sc->getStaticANIObject1ById(ANI_MAID, -1);
@@ -117,8 +113,8 @@ void scene27_initScene(Scene *sc) {
 		sc->addStaticANIObject(newbat, 1);
 	}
 
-	g_vars->scene27_var08 = 0;
-	g_vars->scene27_var09 = 0;
+	g_vars->scene27_dudeIsAiming = false;
+	g_vars->scene27_maxPhaseReached = false;
 	g_vars->scene27_var10 = 0;
 	g_vars->scene27_var11 = 0;
 	g_vars->scene27_var12 = 0;
@@ -144,12 +140,12 @@ void scene27_initScene(Scene *sc) {
 int scene27_updateCursor() {
 	g_fp->updateCursorCommon();
 
-	if (g_vars->scene27_var08) {
+	if (g_vars->scene27_dudeIsAiming) {
 		if (g_fp->_cursorId != PIC_CSR_DEFAULT_INV && g_fp->_cursorId != PIC_CSR_ITN_INV)
 			g_fp->_cursorId = PIC_CSR_ARCADE7_D;
 
 	} else if (g_fp->_objectIdAtCursor == ANI_MAN) {
-		if (g_vars->scene27_var09)
+		if (g_vars->scene27_maxPhaseReached)
 			if (g_fp->_cursorId == PIC_CSR_DEFAULT)
 				g_fp->_cursorId = PIC_CSR_ITN;
 	}
@@ -171,7 +167,7 @@ void sceneHandler27_driverGiveVent() {
 
 void sceneHandler27_winArcade() {
 	if (g_fp->getObjectState(sO_Driver) == g_fp->getObjectEnumState(sO_Driver, sO_WithSteering)) {
-		g_vars->scene27_var08 = 0;
+		g_vars->scene27_dudeIsAiming = false;
 
 		g_fp->_aniMan->_callback2 = 0;
 		g_fp->_aniMan->changeStatics2(ST_MAN_RIGHT);
@@ -214,9 +210,9 @@ int sceneHandler27_updateScreenCallback() {
 }
 
 void sceneHandler27_aniManCallback(int *phase) {
-	if (!g_vars->scene27_var09) {
+	if (!g_vars->scene27_maxPhaseReached) {
 		if (*phase >= 5)
-			g_vars->scene27_var09 = 1;
+			g_vars->scene27_maxPhaseReached = true;
 		else
 			++*phase;
 	}
@@ -235,7 +231,7 @@ void sceneHandler27_throwBat() {
 
 	g_fp->_behaviorManager->setFlagByStaticAniObject(g_fp->_aniMan, 0);
 
-	g_vars->scene27_var09 = 0;
+	g_vars->scene27_maxPhaseReached = false;
 
 	g_vars->scene27_bat->hide();
 }
@@ -292,8 +288,8 @@ void sceneHandler27_startBat(StaticANIObject *bat) {
 }
 
 void sceneHandler27_startAiming() {
-	g_vars->scene27_var08 = 0;
-	g_vars->scene27_var09 = 0;
+	g_vars->scene27_dudeIsAiming = false;
+	g_vars->scene27_maxPhaseReached = false;
 
 	g_fp->_aniMan->_callback2 = 0;
 
@@ -315,8 +311,8 @@ void sceneHandler27_startAiming() {
 void sceneHandler27_sub04(ExCommand *cmd) {
 	g_vars->scene27_var16 = cmd->_x;
 	g_vars->scene27_var17 = cmd->_y;
-	g_vars->scene27_var08 = 1;
-	g_vars->scene27_var09 = 0;
+	g_vars->scene27_dudeIsAiming = true;
+	g_vars->scene27_maxPhaseReached = false;
 }
 
 void sceneHandler27_aimDude() {
@@ -715,14 +711,14 @@ int sceneHandler27(ExCommand *cmd) {
 		break;
 
 	case 30:
-		if (g_vars->scene27_var08)
+		if (g_vars->scene27_dudeIsAiming)
 			sceneHandler27_startAiming();
 
 		break;
 
 	case 29:
 		if (g_fp->_aniMan == g_fp->_currentScene->getStaticANIObjectAtPos(g_fp->_sceneRect.left + cmd->_x, g_fp->_sceneRect.top + cmd->_y)
-			&& g_vars->scene27_var09)
+			&& g_vars->scene27_maxPhaseReached)
 			sceneHandler27_sub04(cmd);
 
 		break;
@@ -731,14 +727,14 @@ int sceneHandler27(ExCommand *cmd) {
 		if (g_fp->_aniMan2) {
 			int x = g_fp->_aniMan2->_ox;
 
-			if (x < g_fp->_sceneRect.left + g_vars->scene27_var01)
-				g_fp->_currentScene->_x = x - g_vars->scene27_var03 - g_fp->_sceneRect.left;
+			if (x < g_fp->_sceneRect.left + 200)
+				g_fp->_currentScene->_x = x - 300 - g_fp->_sceneRect.left;
 
-			if (x > g_fp->_sceneRect.right - g_vars->scene27_var01)
-				g_fp->_currentScene->_x = x + g_vars->scene27_var03 - g_fp->_sceneRect.right;
+			if (x > g_fp->_sceneRect.right - 200)
+				g_fp->_currentScene->_x = x + 300 - g_fp->_sceneRect.right;
 		}
 
-		if (g_vars->scene27_var08)
+		if (g_vars->scene27_dudeIsAiming)
 			sceneHandler27_aimDude();
 
 		if (g_vars->scene27_var10) {
