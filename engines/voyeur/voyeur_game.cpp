@@ -654,7 +654,7 @@ void VoyeurEngine::reviewTape() {
 		} while (!shouldQuit() && (!_eventsManager._mouseClicked || foundIndex == -1));
 
 		newY = _eventsManager.getMousePos().y;
-		_voy._field437E = 0;
+		_voy._fadingType = 0;
 		_voy._viewBounds = nullptr;
 		(*_graphicsManager._vPort)->setupViewPort(NULL);
 			

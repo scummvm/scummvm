@@ -43,7 +43,7 @@ SVoy::SVoy() {
 	Common::fill((byte *)this, (byte *)this + sizeof(SVoy), 0);
 
 	_eventFlags = EVTFLAG_TIME_DISABLED;
-	_field4376 = _field4378 = 127;
+	_fadingAmount1 = _fadingAmount2 = 127;
 	_murderThreshold = 9999;
 	_aptLoadMode = -1;
 	_eventFlags |= EVTFLAG_100;
@@ -105,11 +105,11 @@ void SVoy::synchronize(Common::Serializer &s) {
 	for (int idx = 0; idx < _eventCount; ++idx)
 		_events[idx].synchronize(s);
 
-	s.syncAsSint16LE(_field4376);
-	s.syncAsSint16LE(_field4378);
-	s.syncAsSint16LE(_field437A);
-	s.syncAsSint16LE(_field437C);
-	s.syncAsSint16LE(_field437E);
+	s.syncAsSint16LE(_fadingAmount1);
+	s.syncAsSint16LE(_fadingAmount2);
+	s.syncAsSint16LE(_fadingStep1);
+	s.syncAsSint16LE(_fadingStep2);
+	s.syncAsSint16LE(_fadingType);
 	s.syncAsSint16LE(_victimNumber);
 	s.syncAsSint16LE(_incriminatedVictimNumber);
 	s.syncAsSint16LE(_videoEventId);

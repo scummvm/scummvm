@@ -136,11 +136,11 @@ public:
 	bool _victimMurdered;
 	int _murderThreshold;
 
-	int _field4376;
-	int _field4378;
-	int _field437A;
-	int _field437C;
-	int _field437E;
+	int _fadingAmount1;
+	int _fadingAmount2;
+	int _fadingStep1;
+	int _fadingStep2;
+	int _fadingType;
 	int _victimNumber;
 	int _incriminatedVictimNumber;
 	int _videoEventId;

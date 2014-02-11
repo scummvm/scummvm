@@ -1112,7 +1112,7 @@ void ThreadResource::doRoom() {
 	SVoy &voy = vm._voy;
 	
 	vm.makeViewFinderP();
-	voy._field437E = 0;
+	voy._fadingType = 0;
 	
 	if (!vm._bVoy->getBoltGroup(vm._playStampGroupId, true))
 		return;
@@ -1122,9 +1122,9 @@ void ThreadResource::doRoom() {
 	(*vm._graphicsManager._vPort)->setupViewPort(vm._graphicsManager._backgroundPage);
 	vm._graphicsManager._backColors->startFade();
 
-	voy._field437A = 2;
-	voy._field437C = 0;
-	voy._field437E = 1;
+	voy._fadingStep1 = 2;
+	voy._fadingStep2 = 0;
+	voy._fadingType = 1;
 	
 	Common::Array<RectEntry> &hotspots = vm._bVoy->boltEntry(vm._playStampGroupId + 4)._rectResource->_entries;
 	int hotspotId = -1;
@@ -1138,7 +1138,7 @@ void ThreadResource::doRoom() {
 
 	vm._eventsManager.getMouseInfo();
 	vm._eventsManager.setMousePos(Common::Point(192, 120));
-	voy._field437E = 0;
+	voy._fadingType = 0;
 	vm._currentVocId = 146;
 	voy._musicStartTime = voy._RTVNum;
 
@@ -1253,17 +1253,17 @@ void ThreadResource::doRoom() {
 				vm._eventsManager.delay(1);
 			vm._eventsManager.hideCursor();
 
-			while (!vm.shouldQuit() && voy._field4378 > 0) {
-				if (voy._field4376 < 63) {
-					voy._field4376 += 4;
-					if (voy._field4376 > 63)
-						voy._field4376 = 63;
+			while (!vm.shouldQuit() && voy._fadingAmount2 > 0) {
+				if (voy._fadingAmount1 < 63) {
+					voy._fadingAmount1 += 4;
+					if (voy._fadingAmount1 > 63)
+						voy._fadingAmount1 = 63;
 				}
 
-				if (voy._field4378 > 0) {
-					voy._field4378 -= 8;
-					if (voy._field4378 < 0)
-						voy._field4378 = 0;
+				if (voy._fadingAmount2 > 0) {
+					voy._fadingAmount2 -= 8;
+					if (voy._fadingAmount2 < 0)
+						voy._fadingAmount2 = 0;
 				}
 
 				vm._eventsManager.delay(1);
@@ -1280,7 +1280,7 @@ void ThreadResource::doRoom() {
 	voy._eventFlags = EVTFLAG_TIME_DISABLED;
 	vm._eventsManager.incrementTime(1);
 	voy._viewBounds = nullptr;
-	voy._field437E = 0;
+	voy._fadingType = 0;
 	vm.makeViewFinderP();
 
 	if (voy._boltGroupId2 != -1) {
