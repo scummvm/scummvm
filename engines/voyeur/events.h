@@ -52,7 +52,6 @@ public:
 
 class IntData {
 public:
-	bool _field9;  // CHECKME: Useless variable
 	bool _flipWait;
 	int field16;   // CHECKME: Useless variable
 	int field1A;
@@ -70,8 +69,6 @@ public:
 	byte *_palette;
 public:
 	IntData();
-
-	void audioInit();
 };
 
 class EventsManager {

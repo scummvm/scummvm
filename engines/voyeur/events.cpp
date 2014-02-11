@@ -48,7 +48,6 @@ IntNode::IntNode(uint16 curTime, uint16 timeReset, uint16 flags) {
 /*------------------------------------------------------------------------*/
 
 IntData::IntData() {
-	_field9 = false;
 	_flipWait = false;
 	_hasPalette = false;
 	field16 = 0;
