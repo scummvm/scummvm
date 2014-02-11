@@ -308,6 +308,14 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 		flags |= SDL_RESIZABLE;
 	}
 
+	if (_hwScreen) {
+		// When a video mode has been setup already we notify the manager that
+		// the context is about to be destroyed.
+		// We do this because on Windows SDL_SetVideoMode can destroy and
+		// recreate the OpenGL context.
+		notifyContextDestroy();
+	}
+
 	_hwScreen = SDL_SetVideoMode(width, height, 32, flags);
 
 	if (!_hwScreen) {
