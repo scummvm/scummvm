@@ -505,7 +505,34 @@ void EventsManager::vDoCycleInt() {
 
 
 void EventsManager::fadeIntFunc() {
-	warning("TODO");
+	switch (_vm->_voy._field437E) {
+	case 1:
+		if (_vm->_voy._field4376 < 63)
+			_vm->_voy._field4376 += _vm->_voy._field437A;
+		if (_vm->_voy._field4378 < 63)
+			_vm->_voy._field4378 += _vm->_voy._field437C;
+		if (_vm->_voy._field4376 > 63)
+			_vm->_voy._field4376 = 63;
+		if (_vm->_voy._field4378 > 63)
+			_vm->_voy._field4378 = 63;
+		if ((_vm->_voy._field4376 == 63) && (_vm->_voy._field4378 == 63))
+			_vm->_voy._field437E = 0;
+		break;
+	case 2:
+		if (_vm->_voy._field4376 > 0)
+			_vm->_voy._field4376 -= _vm->_voy._field437A;
+		if (_vm->_voy._field4378 > 0)
+			_vm->_voy._field4378 -= _vm->_voy._field437C;
+		if (_vm->_voy._field4376 < 0)
+			_vm->_voy._field4376 = 0;
+		if (_vm->_voy._field4378 < 0)
+			_vm->_voy._field4378 = 0;
+		if ((_vm->_voy._field4376 == 0) && (_vm->_voy._field4378 == 0))
+			_vm->_voy._field437E = 0;
+		break;
+	default:
+		break;
+	}
 }
 
 void EventsManager::deleteIntNode(IntNode *node) {
