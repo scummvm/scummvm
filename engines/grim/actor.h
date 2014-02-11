@@ -509,6 +509,7 @@ public:
 	void attachToActor(Actor *other, const char *joint);
 	void detach();
 	Math::Quaternion getRotationQuat() const;
+	const Math::Matrix4 getFinalMatrix() const;
 
 	void setInOverworld(bool inOverworld) { _inOverworld = inOverworld; }
 	bool isInOverworld() const { return _inOverworld; }

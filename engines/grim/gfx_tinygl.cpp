@@ -611,27 +611,37 @@ void GfxTinyGL::startActorDraw(const Actor *actor) {
 //    tglBlendFunc(TGL_SRC_ALPHA, TGL_ONE_MINUS_SRC_ALPHA);
 	}
 
-	const Math::Vector3d &pos = actor->getWorldPos();
 	const Math::Quaternion &quat = actor->getRotationQuat();
 	const float &scale = actor->getScale();
 
-	if (actor->isInOverworld()) {
-		tglMatrixMode(TGL_PROJECTION);
-		tglLoadIdentity();
-		float right = 1;
-		float top = right * 0.75;
-		tglFrustum(-right, right, -top, top, 1, 3276.8f);
-		tglMatrixMode(TGL_MODELVIEW);
-		tglLoadIdentity();
-		tglScalef(1.0, 1.0, -1.0);
-		tglTranslatef(pos.x(), pos.y(), pos.z());
-		tglMultMatrixf(quat.toMatrix().getData());
-	} else {
-		Math::Vector3d relPos = (pos - _currentPos);
+	if (g_grim->getGameType() == GType_MONKEY4) {
+		if (actor->isInOverworld()) {
+			const Math::Vector3d &pos = actor->getWorldPos();
+			tglMatrixMode(TGL_PROJECTION);
+			tglLoadIdentity();
+			float right = 1;
+			float top = right * 0.75;
+			tglFrustum(-right, right, -top, top, 1, 3276.8f);
+			tglMatrixMode(TGL_MODELVIEW);
+			tglLoadIdentity();
+			tglScalef(1.0, 1.0, -1.0);
+			tglTranslatef(pos.x(), pos.y(), pos.z());
+			tglMultMatrixf(quat.toMatrix().getData());
+		} else {
+			Math::Matrix4 worldRot = _currentQuat.toMatrix();
+			tglMultMatrixf(worldRot.getData());
+                        tglTranslatef(-_currentPos.x(), -_currentPos.y(), -_currentPos.z());
 
+			Math::Matrix4 m = actor->getFinalMatrix();
+			m.transpose();
+                        tglMultMatrixf(m.getData());
+		}
+	} else {
+		// Grim
+		Math::Vector3d pos = actor->getWorldPos();
 		Math::Matrix4 worldRot = _currentQuat.toMatrix();
-		worldRot.inverseRotate(&relPos);
-		tglTranslatef(relPos.x(), relPos.y(), relPos.z());
+		worldRot.inverseRotate(&pos);
+		tglTranslatef(pos.x(), pos.y(), pos.z());
 		tglMultMatrixf(worldRot.getData());
 
 		tglScalef(scale, scale, scale);

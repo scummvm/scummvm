@@ -478,28 +478,38 @@ void GfxOpenGL::startActorDraw(const Actor *actor) {
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
 
-	const Math::Vector3d &pos = actor->getWorldPos();
-	const Math::Quaternion &quat = actor->getRotationQuat();
-	const float &scale = actor->getScale();
+	if (g_grim->getGameType() == GType_MONKEY4) {
+		if (actor->isInOverworld()) {
+			const Math::Vector3d &pos = actor->getWorldPos();
+			const Math::Quaternion &quat = actor->getRotationQuat();
+			// At distance 3.2, a 6.4x4.8 actor fills the screen.
+			glMatrixMode(GL_PROJECTION);
+			glLoadIdentity();
+			float right = 1;
+			float top = right * 0.75;
+			glFrustum(-right, right, -top, top, 1, 3276.8f);
+			glMatrixMode(GL_MODELVIEW);
+			glLoadIdentity();
+			glScalef(1.0, 1.0, -1.0);
+			glTranslatef(pos.x(), pos.y(), pos.z());
+			glMultMatrixf(quat.toMatrix().getData());
+		} else {
+			Math::Matrix4 worldRot = _currentQuat.toMatrix();
+			glMultMatrixf(worldRot.getData());
+			glTranslatef(-_currentPos.x(), -_currentPos.y(), -_currentPos.z());
 
-	if (actor->isInOverworld()) {
-		// At distance 3.2, a 6.4x4.8 actor fills the screen.
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		float right = 1;
-		float top = right * 0.75;
-		glFrustum(-right, right, -top, top, 1, 3276.8f);
-		glMatrixMode(GL_MODELVIEW);
-		glLoadIdentity();
-		glScalef(1.0, 1.0, -1.0);
-		glTranslatef(pos.x(), pos.y(), pos.z());
-		glMultMatrixf(quat.toMatrix().getData());
+			const Math::Matrix4 &m = actor->getFinalMatrix();
+			glMultTransposeMatrixf(m.getData());
+		}
 	} else {
-		Math::Vector3d relPos = (pos - _currentPos);
+		// Grim
+		Math::Vector3d pos = actor->getWorldPos();
+		const Math::Quaternion &quat = actor->getRotationQuat();
+		const float &scale = actor->getScale();
 
 		Math::Matrix4 worldRot = _currentQuat.toMatrix();
-		worldRot.inverseRotate(&relPos);
-		glTranslatef(relPos.x(), relPos.y(), relPos.z());
+		worldRot.inverseRotate(&pos);
+		glTranslatef(pos.x(), pos.y(), pos.z());
 		glMultMatrixf(worldRot.getData());
 
 		glScalef(scale, scale, scale);

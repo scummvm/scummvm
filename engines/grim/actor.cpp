@@ -2074,6 +2074,50 @@ void Actor::collisionHandlerCallback(Actor *other) const {
 	LuaBase::instance()->callback("collisionHandler", objects2);
 }
 
+const Math::Matrix4 Actor::getFinalMatrix() const {
+	Math::Matrix4 m;
+
+	if (isAttached()) {
+		Actor *attachedActor = Actor::getPool().getObject(_attachedActor);
+		m = attachedActor->getFinalMatrix();
+
+		EMICostume *cost = static_cast<EMICostume *>(attachedActor->getCurrentCostume());
+		if (cost && cost->_emiSkel && cost->_emiSkel->_obj) {
+			Joint *j = cost->_emiSkel->_obj->getJointNamed(_attachedJoint);
+			m = m * j->_finalMatrix;
+		}
+	} else {
+		m.setToIdentity();
+	}
+
+	Math::Vector3d pp = getPos();
+	Math::Matrix4 t;
+	t.setToIdentity();
+	t.setPosition(pp);
+	m = m * t;
+
+	// Scaling could be applied here as follows:
+	//
+	// const float &scale = getScale();
+	// t.setToIdentity();
+	// t.setValue(3, 3, 1.0 / scale);
+	// m = m * t;
+	//
+	// However, actor's _scale is only changed via the lua call SetActorScale
+	// which is not used in EMI. Actor::getFinalMatrix() is only used for EMI
+	// so the additional scaling can be omitted.
+
+	// Math::Quaternion::fromEuler(getYaw(), getPitch(), getRoll()) can't
+	// be used here since it seems to apply the rotations in a wrong order.
+	// The used order was determined by testing.
+	Math::Quaternion y = Math::Quaternion::fromEuler(getYaw(), 0, 0);
+	Math::Quaternion p = Math::Quaternion::fromEuler(0, getPitch(), 0);
+	Math::Quaternion r = Math::Quaternion::fromEuler(0, 0, getRoll());
+	m = m * (r*y*p).toMatrix();
+
+	return  m;
+}
+
 Math::Vector3d Actor::getWorldPos() const {
 	if (! isAttached())
 		return getPos();
@@ -2089,6 +2133,10 @@ Math::Vector3d Actor::getWorldPos() const {
 	EMICostume *cost = static_cast<EMICostume *>(attachedActor->getCurrentCostume());
 	if (cost && cost->_emiSkel && cost->_emiSkel->_obj) {
 		Joint *j = cost->_emiSkel->_obj->getJointNamed(_attachedJoint);
+		if (!j) {
+			warning("Actor::getRotationQuat: joint \"%s\" not found", _attachedJoint.c_str());
+			j = cost->_emiSkel->_obj->getJointNamed("");
+		}
 		const Math::Matrix4 &jointToAttached = j->_finalMatrix;
 		attachedToWorld = attachedToWorld * jointToAttached;
 	}
@@ -2111,6 +2159,10 @@ Math::Quaternion Actor::getRotationQuat() const {
 			EMICostume *cost = static_cast<EMICostume *>(attachedActor->getCurrentCostume());
 			if (cost && cost->_emiSkel && cost->_emiSkel->_obj) {
 				Joint *j = cost->_emiSkel->_obj->getJointNamed(_attachedJoint);
+				if (!j) {
+					warning("Actor::getRotationQuat: joint \"%s\" not found", _attachedJoint.c_str());
+					j = cost->_emiSkel->_obj->getJointNamed("");
+				}
 				const Math::Quaternion &jointQuat = j->_finalQuat;
 				ret = ret * jointQuat * attachedQuat;
 			} else {
@@ -2148,6 +2200,7 @@ void Actor::attachToActor(Actor *other, const char *joint) {
 
 	Common::String jointStr = joint ? joint : "";
 
+	setPos(other->getWorldPos() - getWorldPos());
 	EMICostume *cost = static_cast<EMICostume *>(other->getCurrentCostume());
 	// If 'other' has a skeleton, check if it has the joint.
 	// Some models (pile o' boulders) don't have a skeleton,
