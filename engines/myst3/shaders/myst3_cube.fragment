@@ -3,8 +3,12 @@ in vec2 Texcoord;
 OUTPUT
 
 uniform sampler2D tex;
+uniform float texClamp;
 
 void main()
 {
-	outColor = texture(tex, Texcoord);
+	vec2 coord = Texcoord;
+	coord.x = min(coord.x, texClamp);
+	coord.y = min(coord.y, texClamp);
+	outColor = texture(tex, coord);
 }
