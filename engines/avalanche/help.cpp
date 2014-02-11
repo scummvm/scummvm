@@ -64,7 +64,21 @@ void Help::continueHelp() {
  * @remarks Originally called 'boot_help'
  */
 void Help::run() {
-	warning("STUB: Help::run()");
+	_vm->_graphics->saveScreen();
+	_vm->fadeOut();
+	_vm->_graphics->drawFilledRectangle(Common::Rect(0, 0, 640, 200), kColorBlack); // Black out the whole screen.
+	_vm->fadeIn();
+
+	_vm->_graphics->loadMouse(kCurHelp);
+	
+	getMe(0);
+
+	continueHelp();
+
+	_vm->fadeOut();
+	_vm->_graphics->restoreScreen();
+	_vm->_graphics->removeBackup();
+	_vm->fadeIn();
 }
 
 } // End of namespace Avalanche

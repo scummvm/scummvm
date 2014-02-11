@@ -91,7 +91,7 @@ enum VerbCode {
 
 enum MouseCursor {
 	kCurUpArrow = 0,   kCurScrewDriver = 1, kCurRightArrow = 2, kCurFletch = 3, kCurWait = 4, kCurHand = 5,
-	kCurCrosshair = 6, kCurIBeam = 7
+	kCurCrosshair = 6, kCurIBeam = 7, kCurHelp = 8
 };
 
 // Magic/portal constants:
