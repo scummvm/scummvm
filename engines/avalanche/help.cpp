@@ -38,11 +38,8 @@ Help::Help(AvalancheEngine *vm) {
 	_highlightWas = 0;
 }
 
-void Help::plotButton(int8 y, byte which) {
-	warning("STUB: Help::plotButton()");
-}
-
 void Help::getMe(byte which) {
+	// Help icons are 80x20.
 	
 	_highlightWas = 177; // Forget where the highlight was.
 
@@ -61,7 +58,7 @@ void Help::getMe(byte which) {
 	_vm->_graphics->drawFilledRectangle(Common::Rect(8, 40, 450, 200), kColorWhite);
 
 	byte index = file.readByte();
-	plotButton(-177, index);
+	_vm->_graphics->helpDrawButton(-177, index);
 
 	// Plot the title:
 	_vm->_graphics->drawNormalText(title, _vm->_font, 8, 629 - 8 * title.size(), 26, kColorBlack);

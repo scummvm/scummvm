@@ -653,6 +653,40 @@ void GraphicManager::ghostDrawBackgroundItems(Common::File &file) {
 }
 
 /**
+* @remarks	Originally called 'plot_button'
+*/
+void GraphicManager::helpDrawButton(int y, byte which) {
+	if (y > 200) {
+		_vm->_graphics->setBackgroundColor(kColorGreen);
+		_vm->_system->delayMillis(10);
+		_vm->_graphics->setBackgroundColor(kColorBlack);
+		return;
+	}
+
+	Common::File file;
+
+	if (!file.open("buttons.avd"))
+		error("AVALANCHE: Help: File not found: buttons.avd");
+
+	file.seek(which * 930); // 930 is the size of one button.
+
+	Graphics::Surface button = loadPictureGraphic(file);
+
+	int x = 0;
+	if (y == -177) {
+		x = 229;
+		y = 5;
+	}
+	else
+		x = 470;
+
+	_vm->_graphics->drawPicture(_surface, button, x, y);
+
+	button.free();
+	file.close();
+}
+
+/**
  * This function mimics Pascal's getimage().
  */
 Graphics::Surface GraphicManager::loadPictureGraphic(Common::File &file) {

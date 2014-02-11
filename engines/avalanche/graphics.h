@@ -103,6 +103,9 @@ public:
 	void ghostDrawPicture(const Graphics::Surface &picture, uint16 destX, uint16 destY);
 	void ghostDrawBackgroundItems(Common::File &file);
 
+	// Help's function:
+	void helpDrawButton(int y, byte which);
+
 	void clearAlso();
 	void clearTextBar();
 	void setAlsoLine(int x1, int y1, int x2, int y2, Color color);

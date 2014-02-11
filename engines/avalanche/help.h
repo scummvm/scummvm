@@ -49,7 +49,6 @@ private:
 	Button _buttons[10];
 	byte _highlightWas;
 
-	void plotButton(int8 y, byte which);
 	void getMe(byte which);
 	Common::String getLine(Common::File &file); // It was a nested function in getMe().
 	byte checkMouse(); // Returns clicked-on button, or 0 if none.
