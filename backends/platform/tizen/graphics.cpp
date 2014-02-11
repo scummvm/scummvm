@@ -43,6 +43,7 @@ TizenGraphicsManager::~TizenGraphicsManager() {
 	logEntered();
 
 	if (_eglDisplay != EGL_NO_DISPLAY) {
+		notifyContextDestroy();
 		eglMakeCurrent(_eglDisplay, NULL, NULL, NULL);
 		if (_eglContext != EGL_NO_CONTEXT) {
 			eglDestroyContext(_eglDisplay, _eglContext);
