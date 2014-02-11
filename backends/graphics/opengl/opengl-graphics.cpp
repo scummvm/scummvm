@@ -272,7 +272,7 @@ OSystem::TransactionError OpenGLGraphicsManager::endGFXTransaction() {
 #endif
 		assert(_gameScreen);
 		if (_gameScreen->hasPalette()) {
-			_gameScreen->setPalette(0, 255, _gamePalette);
+			_gameScreen->setPalette(0, 256, _gamePalette);
 		}
 
 		_gameScreen->allocate(_currentState.gameWidth, _currentState.gameHeight);
