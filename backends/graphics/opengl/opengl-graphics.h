@@ -127,14 +127,14 @@ protected:
 
 	/**
 	 * Notify the manager of a OpenGL context change. This should be the first
-	 * thing to call when you create an OpenGL (ES) context!
+	 * thing to call after you created an OpenGL (ES) context!
 	 *
 	 * @param defaultFormat      The new default format for the game screen
 	 *                           (this is used for the CLUT8 game screens).
 	 * @param defaultFromatAlpha The new default format with an alpha channel
 	 *                           (this is used for the overlay and cursor).
 	 */
-	void notifyContextChange(const Graphics::PixelFormat &defaultFormat, const Graphics::PixelFormat &defaultFormatAlpha);
+	void notifyContextCreate(const Graphics::PixelFormat &defaultFormat, const Graphics::PixelFormat &defaultFormatAlpha);
 
 	/**
 	 * Notify the manager that the OpenGL context is about to be destroyed.

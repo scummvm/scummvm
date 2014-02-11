@@ -59,7 +59,7 @@ result TizenGraphicsManager::Construct() {
 
 	// We default to RGB565 and RGBA5551 which is closest to the actual output
 	// mode we setup.
-	notifyContextChange(Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0), Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0));
+	notifyContextCreate(Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0), Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0));
 
 	// Tell our size.
 	int x, y, width, height;

@@ -328,7 +328,7 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 
 	if (_hwScreen) {
 		const Graphics::PixelFormat rgba8888 = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
-		notifyContextChange(rgba8888, rgba8888);
+		notifyContextCreate(rgba8888, rgba8888);
 		setActualScreenSize(_hwScreen->w, _hwScreen->h);
 	}
 

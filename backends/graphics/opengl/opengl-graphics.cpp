@@ -816,7 +816,7 @@ void OpenGLGraphicsManager::setActualScreenSize(uint width, uint height) {
 	++_screenChangeID;
 }
 
-void OpenGLGraphicsManager::notifyContextChange(const Graphics::PixelFormat &defaultFormat, const Graphics::PixelFormat &defaultFormatAlpha) {
+void OpenGLGraphicsManager::notifyContextCreate(const Graphics::PixelFormat &defaultFormat, const Graphics::PixelFormat &defaultFormatAlpha) {
 	// Initialize all extensions.
 	initializeGLExtensions();
 
