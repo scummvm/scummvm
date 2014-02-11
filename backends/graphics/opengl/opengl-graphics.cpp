@@ -572,7 +572,7 @@ void OpenGLGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, int 
 		} else {
 			textureFormat = _defaultFormatAlpha;
 		}
-		_cursor = createTexture(textureFormat);
+		_cursor = createTexture(textureFormat, true);
 		assert(_cursor);
 		_cursor->enableLinearFiltering(_currentState.graphicsMode == GFX_LINEAR);
 	}
@@ -911,14 +911,15 @@ void OpenGLGraphicsManager::adjustMousePosition(int16 &x, int16 &y) {
 	}
 }
 
-Texture *OpenGLGraphicsManager::createTexture(const Graphics::PixelFormat &format) {
+Texture *OpenGLGraphicsManager::createTexture(const Graphics::PixelFormat &format, bool wantAlpha) {
 	GLenum glIntFormat, glFormat, glType;
 	if (format.bytesPerPixel == 1) {
-		const bool supported = getGLPixelFormat(_defaultFormat, glIntFormat, glFormat, glType);
+		const Graphics::PixelFormat &virtFormat = wantAlpha ? _defaultFormatAlpha : _defaultFormat;
+		const bool supported = getGLPixelFormat(virtFormat, glIntFormat, glFormat, glType);
 		if (!supported) {
 			return nullptr;
 		} else {
-			return new TextureCLUT8(glIntFormat, glFormat, glType, _defaultFormat);
+			return new TextureCLUT8(glIntFormat, glFormat, glType, virtFormat);
 		}
 	} else {
 		const bool supported = getGLPixelFormat(format, glIntFormat, glFormat, glType);

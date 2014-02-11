@@ -174,10 +174,13 @@ private:
 	/**
 	 * Create a texture with the specified pixel format.
 	 *
-	 * @param format The pixel format the Texture object should accept as input.
+	 * @param format    The pixel format the Texture object should accept as
+	 *                  input.
+	 * @param wantAlpha For CLUT8 textures this marks whether an alpha
+	 *                  channel should be used.
 	 * @return A pointer to the texture or nullptr on failure.
 	 */
-	Texture *createTexture(const Graphics::PixelFormat &format);
+	Texture *createTexture(const Graphics::PixelFormat &format, bool wantAlpha = false);
 
 	//
 	// Transaction support
