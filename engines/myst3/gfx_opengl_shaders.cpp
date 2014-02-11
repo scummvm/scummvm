@@ -347,6 +347,14 @@ void ShaderRenderer::drawCube(Texture **textures) {
   glEnable(GL_TEXTURE_2D);
   glDepthMask(GL_FALSE);
 
+  // WORKAROUND: The texture scale is set to a slightly incorrect value below,
+  // (the "texture0->width - 1" part should be just "texture0->width"), in order
+  // to work around a white line appearing along the edges of the cube due
+  // enabling linear filtering on partially used textures, resulting in the
+  // unused part leaking into the used part.
+  // FIXME: This causes a very subtle misalignment between the videos blended
+  // into the scenes and the background.
+
   _cube_shader->use();
   _cube_shader->setUniform1f("verScale", 256.0f);
   _cube_shader->setUniform1f("texScale", (texture0->width - 1) / (float) texture0->internalWidth);
