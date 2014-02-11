@@ -49,47 +49,54 @@ protected:
 };
 
 class Renderer {
-public:
-	Renderer(OSystem *_system);
-	virtual ~Renderer();
+	public:
+	virtual ~Renderer() {}
+	virtual void init() = 0;
+	virtual void initFont(const Graphics::Surface *surface) = 0;
 
-	void init();
-	void initFont(const Graphics::Surface *surface);
+	static Renderer *createRenderer(OSystem *system);
 
-	void clear();
-	void setupCameraOrtho2D();
-	void setupCameraPerspective(float pitch, float heading, float fov);
+	virtual void clear() = 0;
+	virtual void setupCameraOrtho2D() = 0;
+	virtual void setupCameraPerspective(float pitch, float heading, float fov) = 0;
 
-	Texture *createTexture(const Graphics::Surface *surface);
-	void freeTexture(Texture *texture);
+	virtual Texture *createTexture(const Graphics::Surface *surface) = 0;
+	virtual void freeTexture(Texture *texture) = 0;
 
-	void drawRect2D(const Common::Rect &rect, uint32 color);
-	void drawTexturedRect2D(const Common::Rect &screenRect, const Common::Rect &textureRect, Texture *texture, float transparency = -1.0);
-	void drawTexturedRect3D(const Math::Vector3d &topLeft, const Math::Vector3d &bottomLeft,
-			const Math::Vector3d &topRight, const Math::Vector3d &bottomRight, Texture *texture);
+	virtual void drawRect2D(const Common::Rect &rect, uint32 color) = 0;
+	virtual void drawTexturedRect2D(const Common::Rect &screenRect, const Common::Rect &textureRect, Texture *texture, float transparency = -1.0) = 0;
+	virtual void drawTexturedRect3D(const Math::Vector3d &topLeft, const Math::Vector3d &bottomLeft,
+	                                const Math::Vector3d &topRight, const Math::Vector3d &bottomRight,
+	                                Texture *texture) = 0;
 
-	void drawCube(Texture **textures);
-	void draw2DText(const Common::String &text, const Common::Point &position);
+	virtual void drawCube(Texture **textures) = 0;
+	virtual void draw2DText(const Common::String &text, const Common::Point &position) = 0;
 
-	Graphics::Surface *getScreenshot();
+	virtual Graphics::Surface *getScreenshot() = 0;
 
-	void screenPosToDirection(const Common::Point screen, float &pitch, float &heading);
+	virtual void screenPosToDirection(const Common::Point screen, float &pitch, float &heading) = 0;
 
 	static const int kOriginalWidth = 640;
 	static const int kOriginalHeight = 480;
 	static const int kTopBorderHeight = 30;
 	static const int kBottomBorderHeight = 90;
 	static const int kFrameHeight = 360;
+};
+
+class BaseRenderer : public Renderer {
+public:
+	BaseRenderer(OSystem *system);
+	virtual ~BaseRenderer();
+
+	virtual Texture *createTexture(const Graphics::Surface *surface);
+	virtual void freeTexture(Texture *texture);
+
+	virtual void init();
+	virtual void initFont(const Graphics::Surface *surface);
 
 protected:
 	OSystem *_system;
 	Texture *_font;
-
-	int _cubeViewport[4];
-	double _cubeProjectionMatrix[16];
-	double _cubeModelViewMatrix[16];
-
-	bool _nonPowerOfTwoTexSupport;
 
 	Common::Rect getFontCharacterRect(uint8 character);
 };

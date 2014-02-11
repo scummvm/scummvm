@@ -10,6 +10,9 @@ MODULE_OBJS := \
 	directoryentry.o \
 	directorysubentry.o \
 	gfx.o \
+	gfx_opengl.o \
+	gfx_opengl_shaders.o \
+	gfx_opengl_texture.o \
 	hotspot.o \
 	inventory.o \
 	menu.o \

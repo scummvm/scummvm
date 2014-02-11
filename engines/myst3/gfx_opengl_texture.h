@@ -1,7 +1,7 @@
 /* ResidualVM - A 3D game interpreter
  *
  * ResidualVM is the legal property of its developers, whose names
- * are too numerous to list here. Please refer to the COPYRIGHT
+ * are too numerous to list here. Please refer to the AUTHORS
  * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
@@ -11,7 +11,7 @@
 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
@@ -20,39 +20,31 @@
  *
  */
 
-#ifndef GRAPHICS_SYSTEM_HEADERS_H
-#define GRAPHICS_SYSTEM_HEADERS_H
+#ifndef GFX_OPENGL_TEXTURE_H
+#define GFX_OPENGL_TEXTURE_H
 
-#include "common/scummsys.h"
+#include "graphics/surface.h"
+#include "graphics/opengles2/system_headers.h"
+#include "common/textconsole.h"
 
-#ifdef USE_GLES2
+#include "engines/myst3/gfx.h"
 
-#define GL_GLEXT_PROTOTYPES
-#ifdef IPHONE
-#include <OpenGLES/ES2/gl.h>
-#include <OpenGLES/ES2/glext.h>
-#else
-#include <GLES2/gl2.h>
-#include <GLES2/gl2ext.h>
-#endif
-#undef GL_GLEXT_PROTOTYPES
+namespace Myst3 {
 
-#define glMapBuffer glMapBufferOES
-#define glUnmapBuffer glUnmapBufferOES
-#define GL_WRITE_ONLY GL_WRITE_ONLY_OES
-#define GL_DEPTH24_STENCIL8 GL_DEPTH24_STENCIL8_OES
+class OpenGLTexture : public Texture {
+public:
+	OpenGLTexture(const Graphics::Surface *surface, bool nonPoTSupport = false);
+	virtual ~OpenGLTexture();
 
-#ifndef GL_BGRA
-#	define GL_BGRA GL_BGRA_EXT
-#endif
+	void update(const Graphics::Surface *surface);
 
-#elif defined(USE_OPENGL_SHADERS)
-#include <GL/glew.h>
-#elif defined(SDL_BACKEND)
-#include <SDL_opengl.h>
-#else
-#include <GL/gl.h>
-#include <GL/glu.h>
-#endif
+	GLuint id;
+	GLuint internalFormat;
+	GLuint sourceFormat;
+	uint32 internalWidth;
+	uint32 internalHeight;
+};
+
+} // end of namespace Myst3
 
 #endif
