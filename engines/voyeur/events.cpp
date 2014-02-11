@@ -58,7 +58,7 @@ IntData::IntData() {
 	field26 = 0;
 	field2A = 0;
 	_palChanged = false;
-	field3B = false;
+	_skipFading = false;
 	field3D = false;
 	_palStartIndex = 0;
 	_palEndIndex = 0;
@@ -204,7 +204,7 @@ void EventsManager::voyeurTimer() {
 		if (_gameData._flipWait) {
 			_gameData._palChanged = true;
 			_gameData._flipWait = false;
-			_gameData.field3B = false;
+			_gameData._skipFading = false;
 		}
 
 		_gameData.field26 >>= 8;
@@ -347,7 +347,7 @@ void EventsManager::startFade(CMapResource *cMap) {
 		}
 
 		if (cMap->_fadeStatus & 2)
-			_intPtr.field3B = true;
+			_intPtr._skipFading = true;
 		_fadeIntNode._flags &= ~1;
 	} else {
 		byte *vgaP = &_vm->_graphicsManager._VGAColors[_fadeFirstCol * 3];
@@ -389,7 +389,7 @@ void EventsManager::addFadeInt() {
 }
 
 void EventsManager::vDoFadeInt() {
-	if (_intPtr.field3B)
+	if (_intPtr._skipFading)
 		return;
 	if (--_fadeCount == 0) {
 		_fadeIntNode._flags |= 1;

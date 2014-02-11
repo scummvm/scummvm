@@ -62,7 +62,7 @@ public:
 	int field2A;   // CHECKME: Useless variable
 	bool _hasPalette;
 	bool _palChanged;  // CHECKME: Useless variable
-	bool field3B;  // Skip fading
+	bool _skipFading;
 	bool field3D;  // CHECKME: Useless variable
 	int _palStartIndex;
 	int _palEndIndex;
