@@ -171,6 +171,14 @@ protected:
 	virtual void setInternalMousePosition(int x, int y) = 0;
 
 private:
+	/**
+	 * Create a texture with the specified pixel format.
+	 *
+	 * @param format The pixel format the Texture object should accept as input.
+	 * @return A pointer to the texture or nullptr on failure.
+	 */
+	Texture *createTexture(const Graphics::PixelFormat &format);
+
 	//
 	// Transaction support
 	//

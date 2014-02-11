@@ -265,21 +265,15 @@ OSystem::TransactionError OpenGLGraphicsManager::endGFXTransaction() {
 		delete _gameScreen;
 		_gameScreen = nullptr;
 
-		GLenum glIntFormat, glFormat, glType;
 #ifdef USE_RGB_COLOR
-		if (_currentState.gameFormat.bytesPerPixel == 1) {
+		_gameScreen = createTexture(_currentState.gameFormat);
+#else
+		_gameScreen = createTexture(Graphics::PixelFormat::createFormatCLUT8());
 #endif
-			const bool supported = getGLPixelFormat(_defaultFormat, glIntFormat, glFormat, glType);
-			assert(supported);
-			_gameScreen = new TextureCLUT8(glIntFormat, glFormat, glType, _defaultFormat);
+		assert(_gameScreen);
+		if (_gameScreen->hasPalette()) {
 			_gameScreen->setPalette(0, 255, _gamePalette);
-#ifdef USE_RGB_COLOR
-		} else {
-			const bool supported = getGLPixelFormat(_currentState.gameFormat, glIntFormat, glFormat, glType);
-			assert(supported);
-			_gameScreen = new Texture(glIntFormat, glFormat, glType, _currentState.gameFormat);
 		}
-#endif
 
 		_gameScreen->allocate(_currentState.gameWidth, _currentState.gameHeight);
 		_gameScreen->enableLinearFiltering(_currentState.graphicsMode == GFX_LINEAR);
@@ -566,27 +560,19 @@ void OpenGLGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, int 
 
 		GLenum glIntFormat, glFormat, glType;
 
-		if (inputFormat.bytesPerPixel == 1) {
-			// In case this is not supported this is a serious programming
-			// error and the assert a bit below will trigger!
-			const bool supported = getGLPixelFormat(_defaultFormatAlpha, glIntFormat, glFormat, glType);
-			assert(supported);
-			_cursor = new TextureCLUT8(glIntFormat, glFormat, glType, _defaultFormatAlpha);
+		Graphics::PixelFormat textureFormat;
+		if (inputFormat.bytesPerPixel == 1 || (inputFormat.aBits() && getGLPixelFormat(inputFormat, glIntFormat, glFormat, glType))) {
+			// There is two cases when we can use the cursor format directly.
+			// The first is when it's CLUT8, here color key handling can
+			// always be applied because we use the alpha channel of
+			// _defaultFormatAlpha for that.
+			// The other is when the input format has alpha bits and
+			// furthermore is directly supported.
+			textureFormat = inputFormat;
 		} else {
-			// Try to use the format specified as input directly. We can only
-			// do so when it actually has alpha bits.
-			if (inputFormat.aBits() != 0 && getGLPixelFormat(inputFormat, glIntFormat, glFormat, glType)) {
-				_cursor = new Texture(glIntFormat, glFormat, glType, inputFormat);
-			}
-
-			// Otherwise fall back to the default alpha format.
-			if (!_cursor) {
-				const bool supported = getGLPixelFormat(_defaultFormatAlpha, glIntFormat, glFormat, glType);
-				assert(supported);
-				_cursor = new Texture(glIntFormat, glFormat, glType, _defaultFormatAlpha);
-			}
+			textureFormat = _defaultFormatAlpha;
 		}
-
+		_cursor = createTexture(textureFormat);
 		assert(_cursor);
 		_cursor->enableLinearFiltering(_currentState.graphicsMode == GFX_LINEAR);
 	}
@@ -778,10 +764,8 @@ void OpenGLGraphicsManager::setActualScreenSize(uint width, uint height) {
 		delete _overlay;
 		_overlay = nullptr;
 
-		GLenum glIntFormat, glFormat, glType;
-		const bool supported = getGLPixelFormat(_defaultFormatAlpha, glIntFormat, glFormat, glType);
-		assert(supported);
-		_overlay = new Texture(glIntFormat, glFormat, glType, _defaultFormatAlpha);
+		_overlay = createTexture(_defaultFormatAlpha);
+		assert(_overlay);
 		// We always filter the overlay with GL_LINEAR. This assures it's
 		// readable in case it needs to be scaled and does not affect it
 		// otherwise.
@@ -795,10 +779,8 @@ void OpenGLGraphicsManager::setActualScreenSize(uint width, uint height) {
 		delete _osd;
 		_osd = nullptr;
 
-		GLenum glIntFormat, glFormat, glType;
-		const bool supported = getGLPixelFormat(_defaultFormatAlpha, glIntFormat, glFormat, glType);
-		assert(supported);
-		_osd = new Texture(glIntFormat, glFormat, glType, _defaultFormatAlpha);
+		_osd = createTexture(_defaultFormatAlpha);
+		assert(_osd);
 		// We always filter the osd with GL_LINEAR. This assures it's
 		// readable in case it needs to be scaled and does not affect it
 		// otherwise.
@@ -926,6 +908,25 @@ void OpenGLGraphicsManager::adjustMousePosition(int16 &x, int16 &y) {
 		// Make sure we only supply valid coordinates.
 		x = CLIP<int16>(x, 0, width - 1);
 		y = CLIP<int16>(y, 0, height - 1);
+	}
+}
+
+Texture *OpenGLGraphicsManager::createTexture(const Graphics::PixelFormat &format) {
+	GLenum glIntFormat, glFormat, glType;
+	if (format.bytesPerPixel == 1) {
+		const bool supported = getGLPixelFormat(_defaultFormat, glIntFormat, glFormat, glType);
+		if (!supported) {
+			return nullptr;
+		} else {
+			return new TextureCLUT8(glIntFormat, glFormat, glType, _defaultFormat);
+		}
+	} else {
+		const bool supported = getGLPixelFormat(format, glIntFormat, glFormat, glType);
+		if (!supported) {
+			return nullptr;
+		} else {
+			return new Texture(glIntFormat, glFormat, glType, format);
+		}
 	}
 }
 
