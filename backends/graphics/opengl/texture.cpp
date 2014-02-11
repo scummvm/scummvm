@@ -65,6 +65,9 @@ void Texture::releaseInternalTexture() {
 }
 
 void Texture::recreateInternalTexture() {
+	// Release old texture name in case it exists.
+	releaseInternalTexture();
+
 	// Get a new texture name.
 	GLCALL(glGenTextures(1, &_glTexture));
 
