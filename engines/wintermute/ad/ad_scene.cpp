@@ -2041,6 +2041,10 @@ bool AdScene::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "ScrollSpeedX") == 0) {
 		_scrollTimeH = value->getInt();
+		if (_scrollTimeH == 0) {
+			warning("_scrollTimeH can't be 0, resetting to default");
+			_scrollTimeH = 10;
+		}
 		return STATUS_OK;
 	}
 
@@ -2049,6 +2053,10 @@ bool AdScene::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "ScrollSpeedY") == 0) {
 		_scrollTimeV = value->getInt();
+		if (_scrollTimeV == 0) {
+			warning("_scrollTimeV can't be 0, resetting to default");
+			_scrollTimeV = 10;
+		}
 		return STATUS_OK;
 	}
 
