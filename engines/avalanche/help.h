@@ -51,7 +51,7 @@ private:
 
 	void plotButton(int8 y, byte which);
 	void getMe(byte which);
-	Common::String getLine(); // It was a nested function in getMe().
+	Common::String getLine(Common::File &file); // It was a nested function in getMe().
 	byte checkMouse(); // Returns clicked-on button, or 0 if none.
 	void continueHelp();
 };

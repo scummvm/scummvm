@@ -43,12 +43,64 @@ void Help::plotButton(int8 y, byte which) {
 }
 
 void Help::getMe(byte which) {
+	
+	_highlightWas = 177; // Forget where the highlight was.
+
+	Common::File file;
+
+	if (!file.open("help.avd"))
+		error("AVALANCHE: Help: File not found: help.avd");
+
+	file.seek(which * 2);
+	uint16 offset = file.readUint16LE();
+	file.seek(offset);
+
+	Common::String title = getLine(file);
+
+	_vm->_graphics->drawFilledRectangle(Common::Rect(0, 0, 640, 200), kColorBlue);
+	_vm->_graphics->drawFilledRectangle(Common::Rect(8, 40, 450, 200), kColorWhite);
+
+	byte index = file.readByte();
+	plotButton(-177, index);
+
+	// Plot the title:
+	_vm->_graphics->drawNormalText(title, _vm->_font, 8, 629 - 8 * title.size(), 26, kColorBlack);
+	_vm->_graphics->drawNormalText(title, _vm->_font, 8, 630 - 8 * title.size(), 25, kColorCyan);
+
+	_vm->_graphics->drawBigText("help!", _vm->_font, 8, 549, 1, kColorBlack);
+	_vm->_graphics->drawBigText("help!", _vm->_font, 8, 550, 0, kColorCyan);
+	
+	byte y = 0;
+	do {
+		Common::String line = getLine(file);
+		if (!line.empty()) {
+			if (line.compareTo(Common::String('!')) == 0)  // End of the help text is signalled with a '!'.
+				break;
+			if (line[0] == '\\') {
+				line.deleteChar(0);
+				_vm->_graphics->drawNormalText(line, _vm->_font, 8, 16, 41 + y * 10, kColorRed);
+			}
+			else
+				_vm->_graphics->drawNormalText(line, _vm->_font, 8, 16, 41 + y * 10, kColorBlack);
+		}
+		y++;
+	} while (true);
+
 	warning("STUB: Help::getMe()");
+
+	_vm->_graphics->refreshScreen();
+
+	file.close();
 }
 
-Common::String Help::getLine() {
-	warning("STUB: Help::getLine()");
-	return "STUB: Help::getLine()";
+Common::String Help::getLine(Common::File &file) {
+	Common::String line;
+	byte length = file.readByte();
+	for (int i = 0; i < length; i++) {
+		char c = file.readByte();
+		line += (c ^ 177);
+	}
+	return line;
 }
 
 byte Help::checkMouse() {

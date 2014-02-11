@@ -67,6 +67,7 @@ public:
 	void drawFilledRectangle(Common::Rect rect, Color color);
 	void drawRectangle(Common::Rect rect, Color color);
 	void drawNormalText(const Common::String text, FontType font, byte fontHeight, int16 x, int16 y, Color color);
+	void drawBigText(const Common::String text, FontType font, byte fontHeight, int16 x, int16 y, Color color); // Very similar to drawText. TODO: Try to unify the two.
 	void drawScrollText(const Common::String text, FontType font, byte fontHeight, int16 x, int16 y, Color color);
 	void drawDigit(int index, int x, int y);
 	void drawDirection(int index, int x, int y);

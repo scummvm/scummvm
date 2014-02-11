@@ -352,6 +352,25 @@ void GraphicManager::drawNormalText(const Common::String text, FontType font, by
 	drawText(_surface, text, font, fontHeight, x, y, color);
 }
 
+/**
+ * Used in Help. Draws text double the size of the normal.
+ */
+void GraphicManager::drawBigText(const Common::String text, FontType font, byte fontHeight, int16 x, int16 y, Color color) {
+	for (uint i = 0; i < text.size(); i++) {
+		for (int j = 0; j < fontHeight; j++) {
+			byte pixel = font[(byte)text[i]][j];
+			byte pixelBit = 0;
+			for (int bit = 0; bit < 16; bit++) {
+				if ((bit % 2) == 0)
+					pixelBit = (pixel >> (bit / 2)) & 1;
+				for (int k = 0; k < 2; k++) 
+					if (pixelBit) 
+						*(byte *)_surface.getBasePtr(x + i * 16 + 16 - bit, y + j * 2 + k) = color;
+			}
+		}
+	}
+}
+
 void GraphicManager::drawScrollText(const Common::String text, FontType font, byte fontHeight, int16 x, int16 y, Color color) {
 	drawText(_scrolls, text, font, fontHeight, x, y, color);
 }
