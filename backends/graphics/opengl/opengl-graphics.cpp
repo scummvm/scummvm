@@ -881,6 +881,26 @@ void OpenGLGraphicsManager::notifyContextChange(const Graphics::PixelFormat &def
 #endif
 }
 
+void OpenGLGraphicsManager::notifyContextDestroy() {
+	if (_gameScreen) {
+		_gameScreen->releaseInternalTexture();
+	}
+
+	if (_overlay) {
+		_overlay->releaseInternalTexture();
+	}
+
+	if (_cursor) {
+		_cursor->releaseInternalTexture();
+	}
+
+#ifdef USE_OSD
+	if (_osd) {
+		_osd->releaseInternalTexture();
+	}
+#endif
+}
+
 void OpenGLGraphicsManager::adjustMousePosition(int16 &x, int16 &y) {
 	if (_overlayVisible) {
 		// It might be confusing that we actually have to handle something

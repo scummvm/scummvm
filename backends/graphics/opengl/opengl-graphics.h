@@ -137,6 +137,14 @@ protected:
 	void notifyContextChange(const Graphics::PixelFormat &defaultFormat, const Graphics::PixelFormat &defaultFormatAlpha);
 
 	/**
+	 * Notify the manager that the OpenGL context is about to be destroyed.
+	 * This will free up/reset internal OpenGL related state and *must* be
+	 * called whenever a context might be created again after destroying a
+	 * context.
+	 */
+	void notifyContextDestroy();
+
+	/**
 	 * Adjust the physical mouse coordinates according to the currently visible screen.
 	 */
 	void adjustMousePosition(int16 &x, int16 &y);
