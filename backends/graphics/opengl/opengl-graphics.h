@@ -386,12 +386,12 @@ private:
 	/**
 	 * X coordinate of the cursor in phyiscal coordinates.
 	 */
-	uint _cursorX;
+	int _cursorX;
 
 	/**
 	 * Y coordinate of the cursor in physical coordinates.
 	 */
-	uint _cursorY;
+	int _cursorY;
 
 	/**
 	 * The X offset for the cursor hotspot in unscaled coordinates.
