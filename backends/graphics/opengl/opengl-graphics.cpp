@@ -1072,14 +1072,14 @@ void OpenGLGraphicsManager::recalculateCursorScaling() {
 	// In case scaling is actually enabled we will scale the cursor according
 	// to the game screen.
 	if (!_cursorDontScale) {
-		const uint screenScaleFactorX = _displayWidth  * 10000 / _gameScreen->getWidth();
-		const uint screenScaleFactorY = _displayHeight * 10000 / _gameScreen->getHeight();
+		const frac_t screenScaleFactorX = intToFrac(_displayWidth)  / _gameScreen->getWidth();
+		const frac_t screenScaleFactorY = intToFrac(_displayHeight) / _gameScreen->getHeight();
 
-		_cursorHotspotXScaled = (_cursorHotspotXScaled * screenScaleFactorX) / 10000;
-		_cursorWidthScaled    = (_cursorWidthScaled    * screenScaleFactorX) / 10000;
+		_cursorHotspotXScaled = fracToInt(_cursorHotspotXScaled * screenScaleFactorX);
+		_cursorWidthScaled    = fracToInt(_cursorWidthScaled    * screenScaleFactorX);
 
-		_cursorHotspotYScaled = (_cursorHotspotYScaled * screenScaleFactorY) / 10000;
-		_cursorHeightScaled   = (_cursorHeightScaled   * screenScaleFactorY) / 10000;
+		_cursorHotspotYScaled = fracToInt(_cursorHotspotYScaled * screenScaleFactorY);
+		_cursorHeightScaled   = fracToInt(_cursorHeightScaled   * screenScaleFactorY);
 	}
 }
 
