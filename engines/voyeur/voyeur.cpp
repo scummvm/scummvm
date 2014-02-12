@@ -57,7 +57,7 @@ VoyeurEngine::VoyeurEngine(OSystem *syst, const VoyeurGameDescription *gameDesc)
 
 	DebugMan.addDebugChannel(kDebugScripts, "scripts", "Game scripts");
 
-	initialiseManagers();
+	initializeManagers();
 }
 
 VoyeurEngine::~VoyeurEngine() {
@@ -91,7 +91,7 @@ int VoyeurEngine::getRandomNumber(int maxNumber) {
 	return _randomSource.getRandomNumber(maxNumber);
 }
 
-void VoyeurEngine::initialiseManagers() {
+void VoyeurEngine::initializeManagers() {
 	_debugger.setVm(this);
 	_eventsManager.setVm(this);
 	_filesManager.setVm(this);

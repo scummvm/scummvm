@@ -587,7 +587,7 @@ public:
 	virtual ~ThreadResource() {}
 
 	/**
-	 * Initialise the thread
+	 * Initialize the thread
 	 */
 	void initThreadStruct(int idx, int id);
 
@@ -607,7 +607,7 @@ public:
 	bool goToState(int stackId, int stateId);
 
 	/**
-	 * Initialises data for the thread based on the current state
+	 * Initializes data for the thread based on the current state
 	 */
 	bool doState();
 

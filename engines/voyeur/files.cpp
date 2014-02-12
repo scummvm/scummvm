@@ -429,7 +429,7 @@ byte *BoltFile::getBoltMember(uint32 id) {
 	_state._decompState = 0;
 	_state._historyIndex = 0;
 
-	// Initialise the resource
+	// Initialize the resource
 	assert(_state._curMemberPtr->_initMethod < 25);
 	initResource(_state._curMemberPtr->_initMethod);
 

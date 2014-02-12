@@ -39,7 +39,7 @@ void VoyeurEvent::synchronize(Common::Serializer &s) {
 /*------------------------------------------------------------------------*/
 
 SVoy::SVoy() {
-	// Initialise all the data fields of SVoy to empty values
+	// Initialize all the data fields of SVoy to empty values
 	Common::fill((byte *)this, (byte *)this + sizeof(SVoy), 0);
 
 	_eventFlags = EVTFLAG_TIME_DISABLED;
