@@ -200,14 +200,6 @@ SoundManager::SoundManager(HopkinsEngine *vm) {
 	_currentSoundIndex = 0;
 	_oldSoundNumber = 0;
 	_modPlayingFl = false;
-
-	for (int i = 0; i < VOICE_COUNT; ++i)
-		Common::fill((byte *)&_voice[i], (byte *)&_voice[i] + sizeof(VoiceItem), 0);
-	for (int i = 0; i < SWAV_COUNT; ++i)
-		Common::fill((byte *)&_sWav[i], (byte *)&_sWav[i] + sizeof(SwavItem), 0);
-	for (int i = 0; i < SOUND_COUNT; ++i)
-		Common::fill((byte *)&_sound[i], (byte *)&_sound[i] + sizeof(SoundItem), 0);
-	Common::fill((byte *)&_music, (byte *)&_music + sizeof(MusicItem), 0);
 }
 
 SoundManager::~SoundManager() {

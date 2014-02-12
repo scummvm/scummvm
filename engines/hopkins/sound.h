@@ -33,12 +33,16 @@ namespace Hopkins {
 
 class VoiceItem {
 public:
+	VoiceItem() : _status(false), _wavIndex(0) {}
+
 	bool _status;
 	int _wavIndex;
 };
 
 class SwavItem {
 public:
+	SwavItem() : _active(false), _audioStream(NULL), _freeSampleFl(false) {}
+
 	bool _active;
 	Audio::RewindableAudioStream *_audioStream;
 	Audio::SoundHandle _soundHandle;
@@ -47,11 +51,15 @@ public:
 
 class MusicItem {
 public:
+	MusicItem() : _active(false) {}
+
 	bool _active;
 };
 
 class SoundItem {
 public:
+	SoundItem() : _active(false) {}
+
 	bool _active;
 };
 
