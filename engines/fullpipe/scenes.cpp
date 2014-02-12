@@ -170,6 +170,8 @@ Vars::Vars() {
 	scene09_numMovingHangers = 0;
 	scene09_var13 = 0;
 	scene09_var15 = 0;
+	scene09_var17 = 0;
+	scene09_var19 = 0;
 
 	scene10_gum = 0;
 	scene10_packet = 0;

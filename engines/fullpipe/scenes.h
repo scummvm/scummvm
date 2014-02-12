@@ -361,6 +361,8 @@ public:
 	int scene09_numMovingHangers;
 	int scene09_var13;
 	int scene09_var15;
+	int scene09_var17;
+	int scene09_var19;
 
 	StaticANIObject *scene10_gum;
 	StaticANIObject *scene10_packet;
