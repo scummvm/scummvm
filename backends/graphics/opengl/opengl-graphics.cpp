@@ -918,12 +918,7 @@ Texture *OpenGLGraphicsManager::createTexture(const Graphics::PixelFormat &forma
 }
 
 bool OpenGLGraphicsManager::getGLPixelFormat(const Graphics::PixelFormat &pixelFormat, GLenum &glIntFormat, GLenum &glFormat, GLenum &glType) const {
-	if (pixelFormat == Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0)) { // RGBA8888
-		glIntFormat = GL_RGBA;
-		glFormat = GL_RGBA;
-		glType = GL_UNSIGNED_INT_8_8_8_8;
-		return true;
-	} else if (pixelFormat == Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0)) { // RGB565
+	if (pixelFormat == Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0)) { // RGB565
 		glIntFormat = GL_RGB;
 		glFormat = GL_RGB;
 		glType = GL_UNSIGNED_SHORT_5_6_5;
@@ -939,6 +934,11 @@ bool OpenGLGraphicsManager::getGLPixelFormat(const Graphics::PixelFormat &pixelF
 		glType = GL_UNSIGNED_SHORT_4_4_4_4;
 		return true;
 #ifndef USE_GLES
+	} else if (pixelFormat == Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0)) { // RGBA8888
+		glIntFormat = GL_RGBA;
+		glFormat = GL_RGBA;
+		glType = GL_UNSIGNED_INT_8_8_8_8;
+		return true;
 	} else if (pixelFormat == Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0)) { // RGB555
 		// GL_BGRA does not exist in every GLES implementation so should not be configured if
 		// USE_GLES is set.
