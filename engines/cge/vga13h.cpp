@@ -26,6 +26,7 @@
  */
 
 #include "common/array.h"
+#include "common/config-manager.h"
 #include "common/rect.h"
 #include "graphics/palette.h"
 #include "cge/general.h"
@@ -636,6 +637,10 @@ Vga::Vga(CGEEngine *vm) : _frmCnt(0), _msg(NULL), _name(NULL), _setPal(false), _
 		_page[idx] = new Graphics::Surface();
 		_page[idx]->create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
 	}
+
+	if (ConfMan.getBool("enable_color_blind"))
+		_mono = 1;
+	
 
 	_oldColors = (Dac *)malloc(sizeof(Dac) * kPalCount);
 	_newColors = (Dac *)malloc(sizeof(Dac) * kPalCount);

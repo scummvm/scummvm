@@ -20,6 +20,8 @@ For a more comprehensive changelog of the latest experimental code, see:
  Broken Sword 2:
    - Added back support for MPEG-2 videos.
 
+ CGE:
+   - Added an option to enable Color Blind deom the ScummVM GUI.
  Gob:
    - Improved video quality in Urban Runner.
 
