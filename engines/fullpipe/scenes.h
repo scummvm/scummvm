@@ -71,6 +71,10 @@ void scene08_setupMusic();
 int sceneHandler08(ExCommand *cmd);
 int scene08_updateCursor();
 
+int scene09_updateCursor();
+void scene09_initScene(Scene *sc);
+int sceneHandler09(ExCommand *cmd);
+
 void scene10_initScene(Scene *sc);
 int sceneHandler10(ExCommand *cmd);
 int scene10_updateCursor();
