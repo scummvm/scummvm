@@ -274,6 +274,14 @@ void OSystem_SDL::initSDL() {
 		if (SDL_Init(sdlFlags) == -1)
 			error("Could not initialize SDL: %s", SDL_GetError());
 
+		const int maxNameLen = 20;
+		char sdlDriverName[maxNameLen];
+		sdlDriverName[0] = '\0';
+		SDL_VideoDriverName(sdlDriverName, maxNameLen);
+		// Using printf rather than debug() here as debug()/logging
+		// is not active by this point.
+		printf("Using SDL Video Driver \"%s\" ...\n", sdlDriverName);
+
 		_initedSDL = true;
 	}
 }
