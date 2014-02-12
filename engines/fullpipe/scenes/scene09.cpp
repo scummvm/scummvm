@@ -36,6 +36,20 @@
 
 namespace Fullpipe {
 
+void scene09_setupGrit(Scene *sc) {
+	if (g_vars->scene09_grit->_statics->_staticsId == ST_GRT9_GRIT) {
+		if (!getGameLoaderInventory()->getCountItemsWithId(ANI_INV_COIN)) {
+			if (getObjectState(sO_CoinSlot_1) == getObjectEnumState(sO_CoinSlot_1, sO_Empty)
+				&& (g_vars->swallowedEgg1->_value.intValue == ANI_INV_EGGBOOT || g_vars->swallowedEgg2->_value.intValue == ANI_INV_EGGBOOT || g_vars->swallowedEgg3->_value.intValue == ANI_INV_EGGBOOT)) {
+				Scene *oldsc = g_currentScene;
+				g_fp->_currentScene = sc;
+				g_vars->scene09_grit->changeStatics2(ST_GRT9_NORM);
+				g_fp->_currentScene = oldsc;
+			}
+		}
+	}
+}
+
 void scene09_initScene(Scene *sc) {
 	g_vars->scene09_flyingBall = 0;
 	g_vars->scene09_var05 = 0;
@@ -107,7 +121,7 @@ void scene09_initScene(Scene *sc) {
 		ani->show1(x + hanger->_ox, haner->_oy, MV_VSN_CYCLE2, 0);
 		sc->addStaticANIObject(hanger, 1);
 
-		g_vars->scene09_hangers[i].ani = v2;
+		g_vars->scene09_hangers[i].ani = ani;
 		g_vars->scene09_hangers[i].phase = 0;
 		g_vars->scene09_hangers[i].field_4 = 0;
 		g_vars->scene09_hangers[i].field_8 = 0;
