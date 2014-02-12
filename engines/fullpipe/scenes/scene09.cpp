@@ -211,9 +211,12 @@ void scene09_initScene(Scene *sc) {
 }
 
 int sceneHandler09_updateScreenCallback() {
-	warning("STUB: int sceneHandler09_updateScreenCallback()");
+	int res = g_fp->drawArcadeOverlay(g_fp->_objectIdAtCursor == ANI_VISUNCHIK || g_vars->scene09_var10 >= 0);
 
-	return 0;
+	if (!res)
+		g_fp->_updateScreenCallback = 0;
+
+	return res;
 }
 
 int scene09_updateCursor() {
