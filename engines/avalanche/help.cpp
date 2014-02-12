@@ -103,10 +103,10 @@ void Help::switchPage(byte which) {
 		case 254:
 			text = Common::String("Esc");
 			break;
-		case 214: // 'Ö'
+		case 214: // Latin capital letter O with diaeresis
 			text = Common::String(24);
 			break;
-		case 216: // 'Ø'
+		case 216: // Latin capital letter O with stroke
 			text = Common::String(25);
 			break;
 		default:
