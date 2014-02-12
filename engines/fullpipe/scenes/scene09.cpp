@@ -79,52 +79,45 @@ void scene09_initScene(Scene *sc) {
 
 	if (g_vars->scene09_hangers) {
 		if (g_vars->scene09_var15 < 4) {
-			v5 = g_vars->scene09_var15 + 3;
-
-			if (g_vars->scene09_var15 + 3 <= 4)
-				v5 = 4;
-
-			v6 = operator new(16 * v5);
-			memcpy(v6, g_vars->scene09_hangers, 16 * g_vars->scene09_numMovingHangers);
-			Hanger_clear((Hanger *)v6 + g_vars->scene09_numMovingHangers, 4 - g_vars->scene09_numMovingHangers);
-
-			CObjectFree(g_vars->scene09_hangers);
-
-			g_vars->scene09_var15 = v5;
-			g_vars->scene09_hangers = (Hanger *)v6;
-			g_vars->scene09_numMovingHangers = 4;
+			error("scene09_initScene(): old code"):
 		} else {
 			if (g_vars->scene09_numMovingHangers < 4)
-				Hanger_clear(&g_vars->scene09_hangers[g_vars->scene09_numMovingHangers], 4 - g_vars->scene09_numMovingHangers);
+				error("scene09_initScene(): old code2");
 
 			g_vars->scene09_numMovingHangers = 4;
 		}
 	} else {
-		g_vars->scene09_hangers = (Hanger *)operator new(0x40u);
-		Hanger_clear(g_vars->scene09_hangers, 4);
+		g_vars->scene09_hangers.clear();
 		g_vars->scene09_var15 = 4;
 		g_vars->scene09_numMovingHangers = 4;
 	}
 
 	StaticANIObject *hanger = sc->getStaticANIObject1ById(ANI_VISUNCHIK, -1);
+	Hanger *hng = new Hanger;
 
-	g_vars->scene09_hangers[0]->ani = hanger;
-	g_vars->scene09_hangers[0]->phase = 0;
-	g_vars->scene09_hangers[0]->field_4 = 0;
-	g_vars->scene09_hangers[0]->field_8 = 0;
+	hng->ani = hanger;
+	hng->phase = 0;
+	hng->field_4 = 0;
+	hng->field_8 = 0;
+
+	g_vars->scene09_hangers.push_back(hng);
 
 	int x = 75;
 
 	for (int i = 1; x < 300; i++, x += 75)
 		StaicANIObject *ani = new StaticANIObject(hanger);
 
-		ani->show1(x + hanger->_ox, haner->_oy, MV_VSN_CYCLE2, 0);
+		ani->show1(x + hanger->_ox, hanger->_oy, MV_VSN_CYCLE2, 0);
 		sc->addStaticANIObject(hanger, 1);
 
-		g_vars->scene09_hangers[i].ani = ani;
-		g_vars->scene09_hangers[i].phase = 0;
-		g_vars->scene09_hangers[i].field_4 = 0;
-		g_vars->scene09_hangers[i].field_8 = 0;
+		hng = new Hanger;
+
+		hng->ani = ani;
+		hng->phase = 0;
+		hng->field_4 = 0;
+		hng->field_8 = 0;
+
+		g_vars->scene09_hangers.push_back(hng);
 	}
 
 	while (g_vars->scene09_var07.numBalls) {
@@ -163,37 +156,44 @@ void scene09_initScene(Scene *sc) {
 
 		newball->setAlpha(0xc8);
 
-		v19 = g_vars->scene09_var07.pTail;
-		v20 = g_vars->scene09_var07.field_8;
+		Ball *runPtr = g_vars->scene09_var07.pTail;
+		ball *lastP = g_vars->scene09_var07.field_8;
 
 		if (!g_vars->scene09_var07.pTail) {
-			v21 = (Ball_p4 *)((char *)CPlex::Create((int)&g_vars->scene09_var07.cPlex, g_vars->scene09_var07.cPlexLen, 12) + 12 * g_vars->scene09_var07.cPlexLen - 8);
+			g_vars->scene09_var07.cPlex = (byte *)calloc(g_vars->scene09_var07.cPlexLen, sizeof(Ball));
+
+			byte *p1 = g_vars->scene09_var07.cPlex + (g_vars->scene09_var07.cPlexLen - 1) * sizeof(Ball);
+
 			if (g_vars->scene09_var07.cPlexLen - 1 < 0) {
-				v19 = g_vars->scene09_var07.pTail;
+				runPtr = g_vars->scene09_var07.pTail;
 			} else {
-				v22 = g_vars->scene09_var07.cPlexLen;
-				v19 = g_vars->scene09_var07.pTail;
-				do {
-					v21->p1 = v19;
-					v19 = (Ball *)v21;
-					--v21;
-					--v22;
-				} while (v22);
-				g_vars->scene09_var07.pTail = v19;
+				runPtr = g_vars->scene09_var07.pTail;
+
+				for (int j = 0; j < g_vars->scene09_var07.cPlexLen; j++) {
+					((Ball *)p1)->p1 = runPtr;
+					runPtr = (Ball *)p1;
+
+					p1 -= sizeof(Ball);
+				}
+
+				g_vars->scene09_var07.pTail = runPtr;
 			}
 		}
 
-		g_vars->scene09_var07.pTail = v19->p0;
-		v19->p1 = v20;
-		v19->p0 = 0;
+		g_vars->scene09_var07.pTail = runPtr->p0;
+		runPtr->p1 = lastP;
+		runPtr->p0 = 0;
+		runPtr->ani = newball;
+
 		g_vars->scene09_var07.numBalls++;
-		v19->ani = 0;
-		v19->ani = newball;
+
 		if (g_vars->scene09_var07.field_8)
-			g_vars->scene09_var07.field_8->p0 = v19;
+			g_vars->scene09_var07.field_8->p0 = runPtr;
 		else
-			g_vars->scene09_var07.pHead = v19;
-		g_vars->scene09_var07.field_8 = v19;
+			g_vars->scene09_var07.pHead = runPtr;
+
+		g_vars->scene09_var07.field_8 = runPtr;
+
 		sc->addStaticANIObject(newball, 1);
 	}
 
