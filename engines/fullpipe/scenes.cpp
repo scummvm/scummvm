@@ -161,6 +161,7 @@ Vars::Vars() {
 	scene09_glotatel = 0;
 	scene09_spitter = 0;
 	scene09_grit = 0;
+	scene09_var02 = 0;
 	scene09_var08 = 1;
 	scene09_var09 = 0;
 	scene09_var10 = -1;

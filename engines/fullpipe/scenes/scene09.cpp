@@ -210,4 +210,28 @@ void scene09_initScene(Scene *sc) {
 	g_fp->setArcadeOverlay(PIC_CSR_ARCADE4);
 }
 
+int sceneHandler09_updateScreenCallback() {
+	warning("STUB: int sceneHandler09_updateScreenCallback()");
+
+	return 0;
+}
+
+int scene09_updateCursor() {
+	g_fp->updateCursorCommon();
+
+	if (g_vars->scene09_var10 < 0) {
+		if (g_fp->_objectIdAtCursor == ANI_VISUNCHIK) {
+			if (g_fp->_cursorId == PIC_CSR_ITN)
+				g_fp->_updateScreenCallback = sceneHandler09_updateScreenCallback;
+		} else {
+			if (g_fp->_objectIdAtCursor == PIC_SC9_LADDER_R && g_fp->_cursorId == PIC_CSR_ITN)
+				g_fp->_cursorId = (g_vars->scene09_var02 < 350) ? PIC_CSR_GOD : PIC_CSR_GOU;
+		}
+	} else {
+		g_fp->_cursorId = PIC_CSR_ITN;
+	}
+
+	return g_fp->_cursorId;
+}
+
 } // End of namespace Fullpipe

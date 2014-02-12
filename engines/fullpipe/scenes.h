@@ -344,6 +344,7 @@ public:
 	bool scene08_stairsVisible;
 	int scene08_manOffsetY;
 
+	int scene09_var02;
 	StaticANIObject *scene09_flyingBall;
 	int scene09_var05;
 	StaticANIObject *scene09_glotatel;

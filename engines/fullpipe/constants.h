@@ -592,6 +592,7 @@ namespace Fullpipe {
 #define ANI_PLEVATEL 919
 #define ANI_VISUNCHIK 904
 #define MV_VSN_CYCLE2 2987
+#define PIC_SC9_LADDER_R 2700
 #define ST_GRT9_GRIT 2722
 #define ST_GRT9_NORM 2721
 
