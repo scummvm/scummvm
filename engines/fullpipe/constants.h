@@ -585,6 +585,16 @@ namespace Fullpipe {
 #define ST_MAN8_STAND 774
 #define ST_VMT_MIN 766
 
+// Scene 9
+#define ANI_BALL9 933
+#define ANI_GLOTATEL 924
+#define ANI_GRIT_9 2719
+#define ANI_PLEVATEL 919
+#define ANI_VISUNCHIK 904
+#define MV_VSN_CYCLE2 2987
+#define ST_GRT9_GRIT 2722
+#define ST_GRT9_NORM 2721
+
 // Scene 10
 #define ANI_GUM 978
 #define ANI_NADUVATEL 944

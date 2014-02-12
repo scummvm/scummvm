@@ -36,12 +36,19 @@
 
 namespace Fullpipe {
 
+struct Hanger {
+	StaticANIObject *ani;
+	int field_4;
+	int field_8;
+	int phase;
+};
+
 void scene09_setupGrit(Scene *sc) {
 	if (g_vars->scene09_grit->_statics->_staticsId == ST_GRT9_GRIT) {
 		if (!getGameLoaderInventory()->getCountItemsWithId(ANI_INV_COIN)) {
-			if (getObjectState(sO_CoinSlot_1) == getObjectEnumState(sO_CoinSlot_1, sO_Empty)
+			if (g_fp->getObjectState(sO_CoinSlot_1) == g_fp->getObjectEnumState(sO_CoinSlot_1, sO_Empty)
 				&& (g_vars->swallowedEgg1->_value.intValue == ANI_INV_EGGBOOT || g_vars->swallowedEgg2->_value.intValue == ANI_INV_EGGBOOT || g_vars->swallowedEgg3->_value.intValue == ANI_INV_EGGBOOT)) {
-				Scene *oldsc = g_currentScene;
+				Scene *oldsc = g_fp->_currentScene;
 				g_fp->_currentScene = sc;
 				g_vars->scene09_grit->changeStatics2(ST_GRT9_NORM);
 				g_fp->_currentScene = oldsc;
@@ -63,7 +70,7 @@ void scene09_initScene(Scene *sc) {
 	g_vars->scene09_var12 = -1000;
 
 	while (g_vars->scene09_balls.numBalls) {
-		Ball *b = &g_vars->scene09_balls.pHead->p0;
+		Ball *b = g_vars->scene09_balls.pHead->p0;
 
 		g_vars->scene09_balls.pHead = g_vars->scene09_balls.pHead->p0;
 
@@ -72,25 +79,14 @@ void scene09_initScene(Scene *sc) {
 		else
 			g_vars->scene09_balls.field_8 = 0;
 
-		g_vars->scene09_balls->init(b);
+		g_vars->scene09_balls.init(&b);
 	}
 
 	g_vars->scene09_var13 = 3;
 
-	if (g_vars->scene09_hangers) {
-		if (g_vars->scene09_var15 < 4) {
-			error("scene09_initScene(): old code"):
-		} else {
-			if (g_vars->scene09_numMovingHangers < 4)
-				error("scene09_initScene(): old code2");
-
-			g_vars->scene09_numMovingHangers = 4;
-		}
-	} else {
-		g_vars->scene09_hangers.clear();
-		g_vars->scene09_var15 = 4;
-		g_vars->scene09_numMovingHangers = 4;
-	}
+	g_vars->scene09_hangers.clear();
+	g_vars->scene09_var15 = 4;
+	g_vars->scene09_numMovingHangers = 4;
 
 	StaticANIObject *hanger = sc->getStaticANIObject1ById(ANI_VISUNCHIK, -1);
 	Hanger *hng = new Hanger;
@@ -104,8 +100,8 @@ void scene09_initScene(Scene *sc) {
 
 	int x = 75;
 
-	for (int i = 1; x < 300; i++, x += 75)
-		StaicANIObject *ani = new StaticANIObject(hanger);
+	for (int i = 1; x < 300; i++, x += 75) {
+		StaticANIObject *ani = new StaticANIObject(hanger);
 
 		ani->show1(x + hanger->_ox, hanger->_oy, MV_VSN_CYCLE2, 0);
 		sc->addStaticANIObject(hanger, 1);
@@ -137,9 +133,9 @@ void scene09_initScene(Scene *sc) {
 		g_vars->scene09_var07.numBalls--;
 	}
 
-	g_vars->scene09_var07->reset();
+	g_vars->scene09_var07.reset();
 
-	Ball *b9 = g_vars->scene09_var07->sub04(g_vars->scene09_var07.field_8, 0);
+	Ball *b9 = g_vars->scene09_var07.sub04(g_vars->scene09_var07.field_8, 0);
 	b9->ani = sc->getStaticANIObject1ById(ANI_BALL9, -1);
 	b9->ani->setAlpha(0xc8);
 
@@ -152,12 +148,12 @@ void scene09_initScene(Scene *sc) {
 	}
 
 	for (int i = 0; i < 4; i++) {
-		Ball *newball = new StaticANIObject(b9);
+		StaticANIObject *newball = new StaticANIObject(b9->ani);
 
 		newball->setAlpha(0xc8);
 
 		Ball *runPtr = g_vars->scene09_var07.pTail;
-		ball *lastP = g_vars->scene09_var07.field_8;
+		Ball *lastP = g_vars->scene09_var07.field_8;
 
 		if (!g_vars->scene09_var07.pTail) {
 			g_vars->scene09_var07.cPlex = (byte *)calloc(g_vars->scene09_var07.cPlexLen, sizeof(Ball));
@@ -197,9 +193,9 @@ void scene09_initScene(Scene *sc) {
 		sc->addStaticANIObject(newball, 1);
 	}
 
-	setObjectState(sO_RightStairs_9, getObjectEnumState(sO_RightStairs_9, sO_IsClosed));
+	g_fp->setObjectState(sO_RightStairs_9, g_fp->getObjectEnumState(sO_RightStairs_9, sO_IsClosed));
 
-	GameVar *eggvar = getGameLoaderGameVar()->getSubVarByName("OBJSTATES")->getSubVarByName(sO_GulpedEggs);
+	GameVar *eggvar = g_fp->getGameLoaderGameVar()->getSubVarByName("OBJSTATES")->getSubVarByName(sO_GulpedEggs);
 
 	g_vars->swallowedEgg1 = eggvar->getSubVarByName(sO_Egg1);
 	g_vars->swallowedEgg2 = eggvar->getSubVarByName(sO_Egg2);
@@ -211,7 +207,7 @@ void scene09_initScene(Scene *sc) {
 
 	g_fp->lift_setButton(sO_Level1, ST_LBN_1N);
 
-	g-fp->setArcadeOverlay(PIC_CSR_ARCADE4);
+	g_fp->setArcadeOverlay(PIC_CSR_ARCADE4);
 }
 
 } // End of namespace Fullpipe

@@ -156,6 +156,20 @@ Vars::Vars() {
 	scene08_stairsVisible = true;
 	scene08_manOffsetY = 0;
 
+	scene09_flyingBall = 0;
+	scene09_var05 = 0;
+	scene09_glotatel = 0;
+	scene09_spitter = 0;
+	scene09_grit = 0;
+	scene09_var08 = 1;
+	scene09_var09 = 0;
+	scene09_var10 = -1;
+	scene09_var11 = -1;
+	scene09_var12 = -1000;
+	scene09_numMovingHangers = 0;
+	scene09_var13 = 0;
+	scene09_var15 = 0;
+
 	scene10_gum = 0;
 	scene10_packet = 0;
 	scene10_packet2 = 0;
@@ -1387,5 +1401,12 @@ void BallChain::init(Ball **ball) {
 		cPlex = 0;
 	}
 }
+
+Ball *BallChain::sub04(Ball *ballP, Ball *ballN) {
+	warning("STUB: BallChain::sub04");
+
+	return pTail;
+}
+
 
 } // End of namespace Fullpipe

@@ -27,6 +27,7 @@ namespace Fullpipe {
 
 struct Bat;
 struct BehaviorEntryInfo;
+struct Hanger;
 class MGM;
 class MctlLadder;
 struct Ring;
@@ -208,6 +209,8 @@ struct BallChain {
 	~BallChain() { free(cPlex); }
 
 	void init(Ball **ball);
+	Ball *sub04(Ball *ballP, Ball *ballN);
+	void reset() { pHead = 0; pTail = 0; field_8 = 0; numBalls = 0; free(cPlex); cPlex = 0; cPlexLen = 0; }
 };
 
 class Vars {
@@ -340,6 +343,23 @@ public:
 	bool scene08_inArcade;
 	bool scene08_stairsVisible;
 	int scene08_manOffsetY;
+
+	StaticANIObject *scene09_flyingBall;
+	int scene09_var05;
+	StaticANIObject *scene09_glotatel;
+	StaticANIObject *scene09_spitter;
+	StaticANIObject *scene09_grit;
+	int scene09_var08;
+	int scene09_var09;
+	int scene09_var10;
+	int scene09_var11;
+	int scene09_var12;
+	BallChain scene09_balls;
+	Common::Array<Hanger *> scene09_hangers;
+	BallChain scene09_var07;
+	int scene09_numMovingHangers;
+	int scene09_var13;
+	int scene09_var15;
 
 	StaticANIObject *scene10_gum;
 	StaticANIObject *scene10_packet;
