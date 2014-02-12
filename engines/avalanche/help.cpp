@@ -93,7 +93,7 @@ void Help::switchPage(byte which) {
 		_buttons[y]._trigger = file.readByte();
 		if (_buttons[y]._trigger == 177)
 			break;
-		byte index = file.readByte();
+		index = file.readByte();
 		if (_buttons[y]._trigger != 0)
 			_vm->_graphics->helpDrawButton(13 + (y + 1) * 27, index);
 		_buttons[y]._whither = file.readByte(); // This is the position to jump to.
@@ -103,10 +103,10 @@ void Help::switchPage(byte which) {
 		case 254:
 			text = Common::String("Esc");
 			break;
-		case 'Ö':
+		case 214: // 'Ö'
 			text = Common::String(24);
 			break;
-		case 'Ø':
+		case 216: // 'Ø'
 			text = Common::String(25);
 			break;
 		default:
