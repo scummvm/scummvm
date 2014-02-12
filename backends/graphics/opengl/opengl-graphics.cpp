@@ -353,15 +353,7 @@ void OpenGLGraphicsManager::updateScreen() {
 	const GLfloat shakeOffset = _gameScreenShakeOffset * (GLfloat)_displayHeight / _gameScreen->getHeight();
 
 	// First step: Draw the (virtual) game screen.
-	glPushMatrix();
-
-	// Adjust game screen shake position
-	GLCALL(glTranslatef(0, shakeOffset, 0));
-
-	// Draw the game screen
-	_gameScreen->draw(_displayX, _displayY, _displayWidth, _displayHeight);
-
-	glPopMatrix();
+	_gameScreen->draw(_displayX, _displayY + shakeOffset, _displayWidth, _displayHeight);
 
 	// Second step: Draw the overlay if visible.
 	if (_overlayVisible) {
@@ -370,18 +362,12 @@ void OpenGLGraphicsManager::updateScreen() {
 
 	// Third step: Draw the cursor if visible.
 	if (_cursorVisible && _cursor) {
-		glPushMatrix();
-
 		// Adjust game screen shake position, but only when the overlay is not
 		// visible.
-		if (!_overlayVisible) {
-			GLCALL(glTranslatef(0, shakeOffset, 0));
-		}
+		const GLfloat cursorOffset = _overlayVisible ? 0 : shakeOffset;
 
-		_cursor->draw(_cursorX - _cursorHotspotXScaled, _cursorY - _cursorHotspotYScaled,
+		_cursor->draw(_cursorX - _cursorHotspotXScaled, _cursorY - _cursorHotspotYScaled + cursorOffset,
 		              _cursorWidthScaled, _cursorHeightScaled);
-
-		glPopMatrix();
 	}
 
 #ifdef USE_OSD
