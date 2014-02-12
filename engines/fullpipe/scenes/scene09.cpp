@@ -49,15 +49,16 @@ void scene09_initScene(Scene *sc) {
 	g_vars->scene09_var12 = -1000;
 
 	while (g_vars->scene09_balls.numBalls) {
-		v3 = &g_vars->scene09_balls.pHead->p0;
-		v4 = g_vars->scene09_balls.pHead->p0;
+		Ball *b = &g_vars->scene09_balls.pHead->p0;
+
 		g_vars->scene09_balls.pHead = g_vars->scene09_balls.pHead->p0;
+
 		if (g_vars->scene09_balls.pHead)
-			v4->p1 = 0;
+			g_vars->scene09_balls.pHead->p0->p1 = 0;
 		else
 			g_vars->scene09_balls.field_8 = 0;
 
-		BallChain_init(&g_vars->scene09_balls, v3);
+		g_vars->scene09_balls->init(b);
 	}
 
 	g_vars->scene09_var13 = 3;
@@ -111,7 +112,7 @@ void scene09_initScene(Scene *sc) {
 		g_vars->scene09_hangers[i].field_4 = 0;
 		g_vars->scene09_hangers[i].field_8 = 0;
 	}
-	v11 = 0;
+
 	if (g_vars->scene09_var07.numBalls) {
 		while (1) {
 			v12 = g_vars->scene09_var07.pHead;
@@ -132,24 +133,26 @@ void scene09_initScene(Scene *sc) {
 			}
 		}
 	}
-	v16 = Scene_getStaticANIObject1ById(sc, ANI_BALL9, -1);
-	StaticANIObject_setAlpha(v16, -56);
-	v17 = BallChain_sub04(&g_vars->scene09_var07, g_vars->scene09_var07.field_8, 0);
-	v17->ani = v16;
+
+	Ball *b9 = g_vars->scene09_var07->sub04(g_vars->scene09_var07.field_8, 0);
+	b9->ani = sc->getStaticANIObject1ById(ANI_BALL9, -1);
+	b9->ani->setAlpha(0xc8);
+
 	if (g_vars->scene09_var07.field_8) {
-		g_vars->scene09_var07.field_8->p0 = v17;
-		g_vars->scene09_var07.field_8 = v17;
+		g_vars->scene09_var07.field_8->p0 = b9;
+		g_vars->scene09_var07.field_8 = b9;
 		numVis = 4;
 	} else {
-		g_vars->scene09_var07.pHead = v17;
-		g_vars->scene09_var07.field_8 = v17;
+		g_vars->scene09_var07.pHead = b9;
+		g_vars->scene09_var07.field_8 = b9;
 		numVis = 4;
 	}
+
 	while (1) {
-		v18 = (StaticANIObject *)operator new(0xACu);
-		if (v18)
-			v11 = StaticANIObject_ctorCopy(v18, v16);
-		StaticANIObject_setAlpha(v11, -56);
+		Ball *newball = new StaticANIObject(b9);
+
+		newball->setAlpha(0xc8);
+
 		v19 = g_vars->scene09_var07.pTail;
 		v20 = g_vars->scene09_var07.field_8;
 		if (!g_vars->scene09_var07.pTail) {
@@ -173,30 +176,33 @@ void scene09_initScene(Scene *sc) {
 		v19->p0 = 0;
 		++g_vars->scene09_var07.numBalls;
 		v19->ani = 0;
-		v19->ani = v11;
+		v19->ani = newball;
 		if (g_vars->scene09_var07.field_8)
 			g_vars->scene09_var07.field_8->p0 = v19;
 		else
 			g_vars->scene09_var07.pHead = v19;
 		g_vars->scene09_var07.field_8 = v19;
-		Scene_addStaticANIObject(sc, v11, 1);
+		sc->addStaticANIObject(newball, 1);
 		--numVis;
 		if (!numVis)
 			break;
-		v11 = 0;
 	}
-	v23 = getObjectEnumState("Правая лестница_9", "Закрыта");
-	setObjectState("Правая лестница_9", v23);
-	v24 = getGameLoaderGameVar();
-	v25 = GameVar_getSubVarByName(v24, "OBJSTATES");
-	v26 = GameVar_getSubVarByName(v25, "Проглоченные яйца");
-	g_vars->swallowedEgg1 = GameVar_getSubVarByName(v26, "Яйцо1");
-	g_vars->swallowedEgg2 = GameVar_getSubVarByName(v26, "Яйцо2");
-	g_vars->swallowedEgg3 = GameVar_getSubVarByName(v26, "Яйцо3");
+
+	setObjectState(sO_RightStairs_9, getObjectEnumState(sO_RightStairs_9, sO_IsClosed));
+
+	GameVar *eggvar = getGameLoaderGameVar()->getSubVarByName("OBJSTATES")->getSubVarByName(sO_GulpedEggs);
+
+	g_vars->swallowedEgg1 = eggvar->getSubVarByName(sO_Egg1);
+	g_vars->swallowedEgg2 = eggvar->getSubVarByName(sO_Egg2);
+	g_vars->swallowedEgg3 = eggvar->getSubVarByName(sO_Egg3);
+
 	scene09_setupGrit(sc);
-	initArcadeKeys("SC_9");
-	lift_setButton("Этаж 1", ST_LBN_1N);
-	setArcadeOverlay(PIC_CSR_ARCADE4);
+
+	g_fp->initArcadeKeys("SC_9");
+
+	g_fp->lift_setButton(sO_Level1, ST_LBN_1N);
+
+	g-fp->setArcadeOverlay(PIC_CSR_ARCADE4);
 }
 
 } // End of namespace Fullpipe
