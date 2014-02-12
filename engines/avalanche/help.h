@@ -48,6 +48,7 @@ private:
 
 	Button _buttons[10];
 	byte _highlightWas;
+	byte _buttonNum; // How many buttons do we have on the screen at the moment.
 
 	void switchPage(byte which);
 	Common::String getLine(Common::File &file); // It was a nested function in getMe().

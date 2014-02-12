@@ -29,6 +29,7 @@
 
 #include "avalanche/avalanche.h"
 #include "avalanche/help.h"
+#include <cctype>
 
 namespace Avalanche {
 
@@ -36,6 +37,7 @@ Help::Help(AvalancheEngine *vm) {
 	_vm = vm;
 
 	_highlightWas = 0;
+	_buttonNum = 0;
 }
 
 /**
@@ -89,6 +91,7 @@ void Help::switchPage(byte which) {
 
 	// We are now at the end of the text. Next we must read the icons:
 	y = 0;
+	_buttonNum = 0;
 	while (!file.eos()) {
 		_buttons[y]._trigger = file.readByte();
 		if (_buttons[y]._trigger == 177)
@@ -103,10 +106,10 @@ void Help::switchPage(byte which) {
 		case 254:
 			text = Common::String("Esc");
 			break;
-		case 214: // Latin capital letter O with diaeresis
+		case 214: // PageUp
 			text = Common::String(24);
 			break;
-		case 216: // Latin capital letter O with stroke
+		case 216: // PageDown
 			text = Common::String(25);
 			break;
 		default:
@@ -118,6 +121,7 @@ void Help::switchPage(byte which) {
 		_vm->_graphics->drawBigText(text, _vm->_font, 8, 590 - (text.size() * 8), 17 + (y + 1) * 27, kColorCyan);
 		
 		y++;
+		_buttonNum++;
 	}
 
 	_vm->_graphics->refreshScreen();
@@ -142,6 +146,35 @@ byte Help::checkMouse() {
 
 void Help::continueHelp() {
 	warning("STUB: Help::continueHelp()");
+
+	do {
+		Common::Event event;
+		bool escape = false;
+		while (!_vm->shouldQuit() && !escape) {
+			_vm->_graphics->refreshScreen();
+			while (_vm->getEvent(event)) {
+				if (event.type == Common::EVENT_KEYDOWN) {
+					escape = true;
+					break;
+				}
+			}
+		}
+
+		if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
+			break;
+
+		for (int i = 0; i < _buttonNum; i++) {
+			char upperCase = toupper(event.kbd.ascii);
+			if (((_buttons[i]._trigger == upperCase) && (65 <= upperCase) && (upperCase <= 90)) ||
+				((event.kbd.keycode == Common::KEYCODE_PAGEUP) && (_buttons[i]._trigger == 214)) ||
+				((event.kbd.keycode == Common::KEYCODE_PAGEDOWN) && (_buttons[i]._trigger == 216))) { // We had to handle the pageups/pagedowns separately.
+				_vm->fadeOut();
+				switchPage(_buttons[i]._whither);
+				_vm->fadeIn();
+				break;
+			}
+		}
+	} while (true);
 }
 
 /**
