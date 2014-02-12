@@ -145,8 +145,8 @@ public:
 	int _incriminatedVictimNumber;
 	int _videoEventId;
 	RectResource *_viewBounds;
-	int _curICF0;
-	int _curICF1;
+	int _curICF0;   // Useless variable
+	int _curICF1;   // Useless variable
 	bool _fadeICF0; // Useless variable? (always the same value)
 	int _policeEvent;
 	

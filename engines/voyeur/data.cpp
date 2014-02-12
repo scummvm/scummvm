@@ -47,6 +47,9 @@ SVoy::SVoy() {
 	_murderThreshold = 9999;
 	_aptLoadMode = -1;
 	_eventFlags |= EVTFLAG_100;
+	_totalPhoneCalls = 0;
+	_victimMurdered = false;
+	_computerTimeMin = _computerTimeMax = 0;
 }
 
 void SVoy::setVm(VoyeurEngine *vm) {
