@@ -147,7 +147,7 @@ public:
 	RectResource *_viewBounds;
 	int _curICF0;
 	int _curICF1;
-	int _fadeICF0;
+	bool _fadeICF0; // Useless variable? (always the same value)
 	int _policeEvent;
 	
 	int _eventCount;

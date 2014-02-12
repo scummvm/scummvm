@@ -119,7 +119,10 @@ void VoyeurEngine::globalInitBolt() {
 	assert(_graphicsManager._fontPtr->_curFont);
 
 	// Setup default flags
+	_voy._fadeICF0 = false;
+	_voy._viewBounds = nullptr;
 	_voy._curICF0 = _graphicsManager._palFlag ? 0xFFFFA5E0 : 0x5F90; 
+
 	_eventsManager.addFadeInt();
 }
 
