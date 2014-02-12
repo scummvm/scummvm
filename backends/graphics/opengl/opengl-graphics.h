@@ -396,12 +396,12 @@ private:
 	/**
 	 * The X offset for the cursor hotspot in unscaled coordinates.
 	 */
-	uint _cursorHotspotX;
+	int _cursorHotspotX;
 
 	/**
 	 * The Y offset for the cursor hotspot in unscaled coordinates.
 	 */
-	uint _cursorHotspotY;
+	int _cursorHotspotY;
 
 	/**
 	 * Recalculate the cursor scaling. Scaling is always done according to
@@ -412,12 +412,12 @@ private:
 	/**
 	 * The X offset for the cursor hotspot in scaled coordinates.
 	 */
-	uint _cursorHotspotXScaled;
+	int _cursorHotspotXScaled;
 
 	/**
 	 * The Y offset for the cursor hotspot in scaled coordinates.
 	 */
-	uint _cursorHotspotYScaled;
+	int _cursorHotspotYScaled;
 
 	/**
 	 * The width of the cursor scaled coordinates.
