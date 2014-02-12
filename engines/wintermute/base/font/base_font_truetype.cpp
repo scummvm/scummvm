@@ -271,11 +271,7 @@ BaseSurface *BaseFontTT::renderTextToTexture(const WideString &text, int width, 
 	//debugC(kWintermuteDebugFont, "%s %d %d %d %d", text.c_str(), RGBCOLGetR(_layers[0]->_color), RGBCOLGetG(_layers[0]->_color), RGBCOLGetB(_layers[0]->_color), RGBCOLGetA(_layers[0]->_color));
 //	void drawString(Surface *dst, const Common::String &str, int x, int y, int w, uint32 color, TextAlign align = kTextAlignLeft, int deltax = 0, bool useEllipsis = true) const;
 	Graphics::Surface *surface = new Graphics::Surface();
-	if (_deletableFont) { // We actually have a TTF
-		surface->create((uint16)width, (uint16)(_lineHeight * lines.size()), _gameRef->_renderer->getPixelFormat());
-	} else { // We are using a fallback, they can't do 32bpp
-		surface->create((uint16)width, (uint16)(_lineHeight * lines.size()), Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0));
-	}
+	surface->create((uint16)width, (uint16)(_lineHeight * lines.size()), _gameRef->_renderer->getPixelFormat());
 	uint32 useColor = 0xffffffff;
 	Common::Array<WideString>::iterator it;
 	int heightOffset = 0;
@@ -285,7 +281,6 @@ BaseSurface *BaseFontTT::renderTextToTexture(const WideString &text, int width, 
 	}
 
 	BaseSurface *retSurface = _gameRef->_renderer->createSurface();
-	Graphics::Surface *convertedSurface = surface->convertTo(_gameRef->_renderer->getPixelFormat());
 
 	if (_deletableFont) {
 		// Reconstruct the alpha channel of the font.
@@ -295,7 +290,7 @@ BaseSurface *BaseFontTT::renderTextToTexture(const WideString &text, int width, 
 		// to its original alpha value.
 
 		Graphics::PixelFormat format = _gameRef->_renderer->getPixelFormat();
-		uint32 *pixels = (uint32 *)convertedSurface->getPixels();
+		uint32 *pixels = (uint32 *)surface->getPixels();
 
 		// This is a Surface we created ourselves, so no empty space between rows.
 		for (int i = 0; i < surface->w * surface->h; ++i) {
@@ -306,11 +301,9 @@ BaseSurface *BaseFontTT::renderTextToTexture(const WideString &text, int width, 
 		}
 	}
 
-	retSurface->putSurface(*convertedSurface, true);
-	convertedSurface->free();
+	retSurface->putSurface(*surface, true);
 	surface->free();
 	delete surface;
-	delete convertedSurface;
 	return retSurface;
 	// TODO: _isUnderline, _isBold, _isItalic, _isStriked
 }
