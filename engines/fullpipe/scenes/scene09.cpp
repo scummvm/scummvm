@@ -113,26 +113,24 @@ void scene09_initScene(Scene *sc) {
 		g_vars->scene09_hangers[i].field_8 = 0;
 	}
 
-	if (g_vars->scene09_var07.numBalls) {
-		while (1) {
-			v12 = g_vars->scene09_var07.pHead;
-			v13 = g_vars->scene09_var07.pHead->p0;
-			g_vars->scene09_var07.pHead = g_vars->scene09_var07.pHead->p0;
-			if (g_vars->scene09_var07.pHead)
-				v13->p1 = 0;
-			else
-				g_vars->scene09_var07.field_8 = 0;
-			v12->p0 = g_vars->scene09_var07.pTail;
-			v14 = g_vars->scene09_var07.numBalls == 1;
-			g_vars->scene09_var07.pTail = v12;
-			--g_vars->scene09_var07.numBalls;
-			if (v14) {
-				BallChain_reset(&g_vars->scene09_var07);
-				if (!g_vars->scene09_var07.numBalls)
-					break;
-			}
-		}
+	while (g_vars->scene09_var07.numBalls) {
+		Ball *ohead = g_vars->scene09_var07.pHead;
+
+		g_vars->scene09_var07.pHead = g_vars->scene09_var07.pHead->p0;
+
+		if (g_vars->scene09_var07.pHead)
+			ohead->p0->p1 = 0;
+		else
+			g_vars->scene09_var07.field_8 = 0;
+
+		ohead->p0 = g_vars->scene09_var07.pTail;
+
+		g_vars->scene09_var07.pTail = ohead;
+
+		g_vars->scene09_var07.numBalls--;
 	}
+
+	g_vars->scene09_var07->reset();
 
 	Ball *b9 = g_vars->scene09_var07->sub04(g_vars->scene09_var07.field_8, 0);
 	b9->ani = sc->getStaticANIObject1ById(ANI_BALL9, -1);
@@ -141,20 +139,19 @@ void scene09_initScene(Scene *sc) {
 	if (g_vars->scene09_var07.field_8) {
 		g_vars->scene09_var07.field_8->p0 = b9;
 		g_vars->scene09_var07.field_8 = b9;
-		numVis = 4;
 	} else {
 		g_vars->scene09_var07.pHead = b9;
 		g_vars->scene09_var07.field_8 = b9;
-		numVis = 4;
 	}
 
-	while (1) {
+	for (int i = 0; i < 4; i++) {
 		Ball *newball = new StaticANIObject(b9);
 
 		newball->setAlpha(0xc8);
 
 		v19 = g_vars->scene09_var07.pTail;
 		v20 = g_vars->scene09_var07.field_8;
+
 		if (!g_vars->scene09_var07.pTail) {
 			v21 = (Ball_p4 *)((char *)CPlex::Create((int)&g_vars->scene09_var07.cPlex, g_vars->scene09_var07.cPlexLen, 12) + 12 * g_vars->scene09_var07.cPlexLen - 8);
 			if (g_vars->scene09_var07.cPlexLen - 1 < 0) {
@@ -171,10 +168,11 @@ void scene09_initScene(Scene *sc) {
 				g_vars->scene09_var07.pTail = v19;
 			}
 		}
+
 		g_vars->scene09_var07.pTail = v19->p0;
 		v19->p1 = v20;
 		v19->p0 = 0;
-		++g_vars->scene09_var07.numBalls;
+		g_vars->scene09_var07.numBalls++;
 		v19->ani = 0;
 		v19->ani = newball;
 		if (g_vars->scene09_var07.field_8)
@@ -183,9 +181,6 @@ void scene09_initScene(Scene *sc) {
 			g_vars->scene09_var07.pHead = v19;
 		g_vars->scene09_var07.field_8 = v19;
 		sc->addStaticANIObject(newball, 1);
-		--numVis;
-		if (!numVis)
-			break;
 	}
 
 	setObjectState(sO_RightStairs_9, getObjectEnumState(sO_RightStairs_9, sO_IsClosed));
