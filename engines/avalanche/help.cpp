@@ -38,7 +38,11 @@ Help::Help(AvalancheEngine *vm) {
 	_highlightWas = 0;
 }
 
-void Help::getMe(byte which) {
+/**
+ * Loads and draws the chosen page of the help.
+ * @remarks Originally called 'getme'
+ */
+void Help::switchPage(byte which) {
 	// Help icons are 80x20.
 	
 	_highlightWas = 177; // Forget where the highlight was.
@@ -83,7 +87,38 @@ void Help::getMe(byte which) {
 		y++;
 	} while (true);
 
-	warning("STUB: Help::getMe()");
+	// We are now at the end of the text. Next we must read the icons:
+	y = 0;
+	while (!file.eos()) {
+		_buttons[y]._trigger = file.readByte();
+		if (_buttons[y]._trigger == 177)
+			break;
+		byte index = file.readByte();
+		if (_buttons[y]._trigger != 0)
+			_vm->_graphics->helpDrawButton(13 + (y + 1) * 27, index);
+		_buttons[y]._whither = file.readByte(); // This is the position to jump to.
+
+		Common::String text = "";
+		switch (_buttons[y]._trigger) {
+		case 254:
+			text = Common::String("Esc");
+			break;
+		case 'Ö':
+			text = Common::String(24);
+			break;
+		case 'Ø':
+			text = Common::String(25);
+			break;
+		default:
+			text = Common::String(_buttons[y]._trigger);
+			break;
+		}
+
+		_vm->_graphics->drawBigText(text, _vm->_font, 8, 589 - (text.size() * 8), 18 + (y + 1) * 27, kColorBlack);
+		_vm->_graphics->drawBigText(text, _vm->_font, 8, 590 - (text.size() * 8), 17 + (y + 1) * 27, kColorCyan);
+		
+		y++;
+	}
 
 	_vm->_graphics->refreshScreen();
 
@@ -120,7 +155,7 @@ void Help::run() {
 
 	_vm->_graphics->loadMouse(kCurHelp);
 	
-	getMe(0);
+	switchPage(0);
 
 	continueHelp();
 

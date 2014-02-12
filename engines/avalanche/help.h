@@ -49,7 +49,7 @@ private:
 	Button _buttons[10];
 	byte _highlightWas;
 
-	void getMe(byte which);
+	void switchPage(byte which);
 	Common::String getLine(Common::File &file); // It was a nested function in getMe().
 	byte checkMouse(); // Returns clicked-on button, or 0 if none.
 	void continueHelp();
