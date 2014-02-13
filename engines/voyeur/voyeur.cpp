@@ -263,7 +263,6 @@ bool VoyeurEngine::doLock() {
 		_eventsManager.setCursor(cursorPic);
 		_eventsManager.showCursor();
 
-		_eventsManager._intPtr. _palChanged = true;
 		_eventsManager._intPtr._hasPalette = true;
 
 		_graphicsManager._fontPtr->_curFont = _bVoy->boltEntry(0x708)._fontResource;
@@ -315,7 +314,6 @@ bool VoyeurEngine::doLock() {
 					}
 
 					_eventsManager.setCursorColor(127, (key == -1) ? 0 : 1);
-					_eventsManager._intPtr._palChanged = true;
 					_eventsManager._intPtr._hasPalette = true;
 
 					_eventsManager.delay(1);
@@ -459,7 +457,6 @@ void VoyeurEngine::doOpening() {
 	for (int i = 0; i < 256; ++i)
 		_graphicsManager.setColor(i, 8, 8, 8);
 
-	_eventsManager._intPtr._palChanged = true;
 	_eventsManager._intPtr._hasPalette = true;
 	(*_graphicsManager._vPort)->setupViewPort();
 	flipPageAndWait();
@@ -637,7 +634,6 @@ void VoyeurEngine::playAudio(int audioId) {
 void VoyeurEngine::doTransitionCard(const Common::String &time, const Common::String &location) {
 	_graphicsManager.setColor(128, 16, 16, 16);
 	_graphicsManager.setColor(224, 220, 220, 220);
-	_eventsManager._intPtr._palChanged = true;
 	_eventsManager._intPtr._hasPalette = true;
 
 	(*_graphicsManager._vPort)->setupViewPort(NULL);

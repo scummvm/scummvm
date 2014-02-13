@@ -892,10 +892,6 @@ void GraphicsManager::fillPic(DisplayResource *display, byte onOff) {
  * Queues the given picture for display
  */
 void GraphicsManager::sDisplayPic(PictureResource *pic) {
-	if (pic->_flags & DISPFLAG_8) {
-		_vm->_eventsManager._intPtr.field2A = READ_LE_UINT32(pic->_imgData) >> _sImageShift;
-	}
-
 	_vm->_eventsManager._intPtr._flipWait = true;
 }
 
@@ -974,7 +970,6 @@ void GraphicsManager::resetPalette() {
 	for (int i = 0; i < 256; ++i)
 		setColor(i, 0, 0, 0);
 
-	_vm->_eventsManager._intPtr._palChanged = true;
 	_vm->_eventsManager._intPtr._hasPalette = true;
 }
 
@@ -1004,7 +999,6 @@ void GraphicsManager::setColors(int start, int count, const byte *pal) {
 		}
 	}
 
-	_vm->_eventsManager._intPtr._palChanged = true;
 	_vm->_eventsManager._intPtr._hasPalette = true;
 }
 

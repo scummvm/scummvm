@@ -1000,7 +1000,6 @@ int ThreadResource::doApt() {
 	_vm->_graphicsManager.setColor(131, 215, 215, 215);
 	_vm->_graphicsManager.setColor(132, 235, 235, 235);
 
-	_vm->_eventsManager._intPtr._palChanged = true;
 	_vm->_eventsManager._intPtr._hasPalette = true;
 
 	// Main loop to allow users to move the cursor and select hotspots
@@ -1150,7 +1149,6 @@ void ThreadResource::doRoom() {
 	while (!vm.shouldQuit() && !breakFlag) {
 		_vm->_voyeurArea = AREA_ROOM;
 		vm._graphicsManager.setColor(128, 0, 255, 0);
-		vm._eventsManager._intPtr._palChanged = true;
 		vm._eventsManager._intPtr._hasPalette = true;
 
 		do {
@@ -1190,7 +1188,6 @@ void ThreadResource::doRoom() {
 				vm._eventsManager.setCursor(magnifierCursor);
 			}
 
-			vm._eventsManager._intPtr._palChanged = true;
 			vm._eventsManager._intPtr._hasPalette = true;
 			vm._graphicsManager.flipPage();
 			vm._eventsManager.sWaitFlip();
@@ -1314,8 +1311,8 @@ int ThreadResource::doInterface() {
 
 	_vm->_voy._eventFlags &= ~EVTFLAG_100;
 	_vm->_playStampGroupId = -1;
-	_vm->_eventsManager._intPtr.field1E = 1;
-	_vm->_eventsManager._intPtr.field1A = 0;
+	_vm->_eventsManager._intPtr._flashStep = 1;
+	_vm->_eventsManager._intPtr._flashTimer = 0;
 
 	if (_vm->_voy._RTVNum >= _vm->_voy._RTVLimit || _vm->_voy._RTVNum < 0)
 		_vm->_voy._RTVNum = _vm->_voy._RTVLimit - 1;
@@ -1354,7 +1351,6 @@ int ThreadResource::doInterface() {
 	_vm->_eventsManager.getMouseInfo();
 	
 	_vm->_graphicsManager.setColor(240, 220, 220, 220);
-	_vm->_eventsManager._intPtr._palChanged = true;
 	_vm->_eventsManager._intPtr._hasPalette = true;
 	_vm->_voy._eventFlags &= ~EVTFLAG_TIME_DISABLED;
 
@@ -1475,8 +1471,8 @@ int ThreadResource::doInterface() {
 				_vm->_eventsManager.getMouseInfo();
 
 				_vm->_voy._eventFlags &= ~EVTFLAG_TIME_DISABLED;
-				_vm->_eventsManager._intPtr.field1E = 1;
-				_vm->_eventsManager._intPtr.field1A = 0;
+				_vm->_eventsManager._intPtr._flashStep = 1;
+				_vm->_eventsManager._intPtr._flashTimer = 0;
 			}
 		}
 	} while (!_vm->_eventsManager._rightClick && !_vm->shouldQuit() && 

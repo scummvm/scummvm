@@ -50,16 +50,10 @@ IntNode::IntNode(uint16 curTime, uint16 timeReset, uint16 flags) {
 IntData::IntData() {
 	_flipWait = false;
 	_hasPalette = false;
-	field16 = 0;
-	field1A = 0;
-	field1E = 0;
-	field22 = 0;
-	field24 = 0;
+	_flashTimer = 0;
+	_flashStep = 0;
 	field26 = 0;
-	field2A = 0;
-	_palChanged = false;
 	_skipFading = false;
-	field3D = false;
 	_palStartIndex = 0;
 	_palEndIndex = 0;
 	_palette = NULL;
@@ -193,16 +187,10 @@ void EventsManager::showMousePosition() {
 }
 
 void EventsManager::voyeurTimer() {
-	_gameData.field22 += _gameData.field24;
-	_gameData.field1A += _gameData.field1E;
-	// _gameData.field1C += _gameData._timerFn; *** WHY INC field by a function pointer?!
-
-	_gameData.field16 = 0;
-	_gameData.field3D = true;
+	_gameData._flashTimer += _gameData._flashStep;
 
 	if (--_gameData.field26 <= 0) {
 		if (_gameData._flipWait) {
-			_gameData._palChanged = true;
 			_gameData._flipWait = false;
 			_gameData._skipFading = false;
 		}
@@ -366,8 +354,6 @@ void EventsManager::startFade(CMapResource *cMap) {
 			_intPtr._palEndIndex = _fadeLastCol;
 
 		_intPtr._hasPalette = true;
-		if (!(cMap->_fadeStatus & 2))
-			_intPtr._palChanged = true;
 	}
 
 	if (_cycleStatus & 1)
@@ -417,7 +403,6 @@ void EventsManager::vDoFadeInt() {
 		_intPtr._palEndIndex = _fadeLastCol;
 
 	_intPtr._hasPalette = true;
-	_intPtr._palChanged = true;
 }
 
 void EventsManager::vDoCycleInt() {
@@ -497,7 +482,6 @@ void EventsManager::vDoCycleInt() {
 			}
 
 			_intPtr._hasPalette = true;
-			_intPtr._palChanged = true;
 		}
 	}
 }
@@ -619,7 +603,6 @@ void EventsManager::startCursorBlink() {
 	if (_vm->_voy._eventFlags & EVTFLAG_RECORDING) {
 		_vm->_graphicsManager.setOneColor(128, 55, 5, 5);
 		_vm->_graphicsManager.setColor(128, 220, 20, 20);
-		_intPtr._palChanged = true;
 		_intPtr._hasPalette = true;
 
 		_vm->_graphicsManager.drawDot();

@@ -53,17 +53,11 @@ public:
 class IntData {
 public:
 	bool _flipWait;
-	int field16;   // CHECKME: Useless variable
-	int field1A;
-	int field1E;
-	int field22;   // CHECKME: Useless variable
-	int field24;   // CHECKME: Useless variable
+	int _flashTimer;
+	int _flashStep;
 	int field26;
-	int field2A;   // CHECKME: Useless variable
 	bool _hasPalette;
-	bool _palChanged;  // CHECKME: Useless variable
 	bool _skipFading;
-	bool field3D;  // CHECKME: Useless variable
 	int _palStartIndex;
 	int _palEndIndex;
 	byte *_palette;

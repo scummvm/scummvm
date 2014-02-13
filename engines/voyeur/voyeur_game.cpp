@@ -286,7 +286,6 @@ void VoyeurEngine::doClosingCredits() {
 	(*_graphicsManager._vPort)->setupViewPort(NULL);
 	_graphicsManager.setColor(1, 180, 180, 180);
 	_graphicsManager.setColor(2, 200, 200, 200);
-	_eventsManager._intPtr._palChanged = true;
 	_eventsManager._intPtr._hasPalette = true;
 
 	_graphicsManager._fontPtr->_curFont = _bVoy->boltEntry(0x402)._fontResource;
@@ -390,7 +389,6 @@ void VoyeurEngine::doPiracy() {
 	_graphicsManager.screenReset();
 	_graphicsManager.setColor(1, 0, 0, 0);
 	_graphicsManager.setColor(2, 255, 255, 255);
-	_eventsManager._intPtr._palChanged = true;
 	_eventsManager._intPtr._hasPalette = true;
 	(*_graphicsManager._vPort)->setupViewPort(NULL);
 	(*_graphicsManager._vPort)->fillPic(1);
@@ -460,7 +458,6 @@ void VoyeurEngine::reviewTape() {
 		_graphicsManager.setColor(12, 120, 248, 120);
 		_eventsManager.setCursorColor(128, 1);
 
-		_eventsManager._intPtr._palChanged = true;
 		_eventsManager._intPtr._hasPalette = true;
 		_graphicsManager._fontPtr->_curFont = _bVoy->boltEntry(0x909)._fontResource;
 		_graphicsManager._fontPtr->_fontSaveBack = false;
@@ -591,7 +588,6 @@ void VoyeurEngine::reviewTape() {
 				_eventsManager.setCursorColor(128, (foundIndex == -1) ? 0 : 1);
 			}
 
-			_eventsManager._intPtr._palChanged = true;
 			_eventsManager._intPtr._hasPalette = true;
 
 			if (_eventsManager._mouseClicked || _eventsManager._mouseUnk) {
@@ -688,8 +684,8 @@ void VoyeurEngine::reviewTape() {
 			_graphicsManager._backColors->startFade();
 			flipPageAndWaitForFade();
 
-			_eventsManager._intPtr.field1E = 1;
-			_eventsManager._intPtr.field1A = 0;
+			_eventsManager._intPtr._flashStep = 1;
+			_eventsManager._intPtr._flashTimer = 0;
 			_voy._eventFlags &= ~EVTFLAG_TIME_DISABLED;
 
 			// Play suond for the given duration
@@ -1033,7 +1029,6 @@ void VoyeurEngine::makeViewFinder() {
 	_graphicsManager.setColor(243, 105, 105, 105);
 	_graphicsManager.setColor(palOffset + 241, 219, 235, 235);
 
-	_eventsManager._intPtr._palChanged = true;
 	_eventsManager._intPtr._hasPalette = true;
 }
 
@@ -1293,7 +1288,6 @@ void VoyeurEngine::doTimeBar(bool force) {
 		(*_graphicsManager._vPort)->sFillBox(6, fullHeight - 92);
 		if (height > 0) {
 			_graphicsManager.setColor(215, 238, 238, 238);
-			_eventsManager._intPtr._palChanged = true;
 			_eventsManager._intPtr._hasPalette = true;
 
 			_graphicsManager._drawPtr->_penColor = 215;
@@ -1305,17 +1299,16 @@ void VoyeurEngine::doTimeBar(bool force) {
 
 void VoyeurEngine::flashTimeBar(){
 	if (_voy._RTVNum >= 0 && (_voy._RTVLimit - _voy._RTVNum) < 11 &&
-		(_eventsManager._intPtr.field1A >= (_flashTimeVal + 15) ||
-		_eventsManager._intPtr.field1A < _flashTimeVal)) {
+		(_eventsManager._intPtr._flashTimer >= (_flashTimeVal + 15) ||
+		_eventsManager._intPtr._flashTimer < _flashTimeVal)) {
 		// Within camera low power range
-		_flashTimeVal = _eventsManager._intPtr.field1A;
+		_flashTimeVal = _eventsManager._intPtr._flashTimer;
 
 		if (_flashTimeFlag)
 			_graphicsManager.setColor(240, 220, 20, 20);
 		else
 			_graphicsManager.setColor(240, 220, 220, 220);
 		
-		_eventsManager._intPtr._palChanged = true;
 		_eventsManager._intPtr._hasPalette = true;
 		_flashTimeFlag = !_flashTimeFlag;
 	}
