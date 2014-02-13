@@ -69,6 +69,9 @@ void scene09_initScene(Scene *sc) {
 	g_vars->scene09_var11 = -1;
 	g_vars->scene09_var12 = -1000;
 
+	g_vars->scene09_balls.cPlexLen = 10;
+	g_vars->scene09_var07.cPlexLen = 10;
+
 	while (g_vars->scene09_balls.numBalls) {
 		Ball *b = g_vars->scene09_balls.pHead->p0;
 
