@@ -194,7 +194,7 @@ private:
 public:
 	uint16 _id;
 	byte _mode;
-	byte _field1;
+	byte _initMemRequired;
 	byte _initMethod;
 	int _fileOffset;
 	byte _xorMask;
@@ -350,7 +350,7 @@ public:
 	int _pageIndex;
 	int _lastPage;
 	Common::Rect _bounds;
-	int _field18;
+	int _field18;  // Useless variable
 	PictureResource *_currentPic;
 	PictureResource *_activePage;
 	PictureResource *_pages[2];
@@ -403,7 +403,7 @@ public:
 class FontResource {
 public:
 	int _minChar, _maxChar;
-	int field2;
+	int _fontDepth;
 	int _padding;
 	int _fontHeight;
 	int _topPadding;
@@ -569,15 +569,15 @@ public:
 	int _newStateId;
 	int _newStackId;
 	int _flags;
-	int _fieldA[8];
-	int _field2A[8];
+	int _fieldA[8];  // Useless variable
+	int _field2A[8]; // Useless variable
 	int _stateFlags;
 	int _stateCount;
 	int _parseCount;
-	uint32 _field46;
+	uint32 _nextStateId;
 	byte *_threadInfoPtr;
 	byte _buttonFlags[64];
-	const byte *_field8E[64];
+	const byte *_field8E[64]; // Useless variable
 	byte _buttonIds[64];
 	const byte *_buttonUnused[48];
 	byte *_ctlPtr;

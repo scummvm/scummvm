@@ -117,7 +117,7 @@ bool ThreadResource::getStateInfo() {
 	} else {
 		uint32 fld = READ_LE_UINT32(_ctlPtr + 2);
 		fld += _stateId << 3;
-		_field46 = READ_LE_UINT32(_ctlPtr + fld + 4);
+		_nextStateId = READ_LE_UINT32(_ctlPtr + fld + 4);
 		
 		fld = READ_LE_UINT32(_ctlPtr + fld);
 		byte *baseP = _ctlPtr + fld;
@@ -895,7 +895,7 @@ const byte *ThreadResource::cardPerform(const byte *card) {
 		card += 2;
 	
 	case 45:
-		_newStateId = _field46;
+		_newStateId = _nextStateId;
 		_newStackId = _stackId;
 		break;
 

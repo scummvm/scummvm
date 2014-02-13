@@ -398,8 +398,8 @@ byte *BoltFile::getBoltMember(uint32 id) {
 
 	// Get the entry
 	_state._curMemberPtr = &_state._curGroupPtr->_entries[id & 0xff];
-	if (_state._curMemberPtr->_field1)
-		initMem(_state._curMemberPtr->_field1);
+	if (_state._curMemberPtr->_initMemRequired)
+		initMem(_state._curMemberPtr->_initMemRequired);
 
 	// Return the data for the entry if it's already been loaded
 	if (_state._curMemberPtr->_data)
@@ -674,7 +674,7 @@ BoltEntry::BoltEntry(Common::SeekableReadStream *f, uint16 id): _file(f), _id(id
 	byte buffer[16];
 	_file->read(&buffer[0], 16);
 	_mode = buffer[0];
-	_field1 = buffer[1];
+	_initMemRequired = buffer[1];
 	_initMethod = buffer[3];
 	_xorMask = buffer[4] & 0xff;
 	_size = READ_LE_UINT32(&buffer[4]) & 0xffffff;
@@ -965,13 +965,13 @@ int DisplayResource::drawText(const Common::String &msg) {
 		if (i != 0) {
 			fontChar._pick = 0;
 			fontChar._onOff = fontInfo._shadowColor;
-		} else if (fontData.field2 == 1 || (fontInfo._fontFlags & 0x10)) {
+		} else if (fontData._fontDepth == 1 || (fontInfo._fontFlags & 0x10)) {
 			fontChar._pick = 0;
 			fontChar._onOff = fontInfo._foreColor;
 		} else {
 			fontChar._pick = fontInfo._picPick;
 			fontChar._onOff = fontInfo._picOnOff;
-			fontChar._depth = fontData.field2;
+			fontChar._depth = fontData._fontDepth;
 		}
 
 		// Loop to draw each character in turn
@@ -1469,7 +1469,7 @@ ViewPortPalEntry::ViewPortPalEntry(const byte *src) {
 FontResource::FontResource(BoltFilesState &state, byte *src) {
 	_minChar = src[0];
 	_maxChar = src[1];
-	field2 = src[2];
+	_fontDepth = src[2];
 	_padding = src[3];
 	_fontHeight = src[5];
 	_topPadding = (int8)src[6];
