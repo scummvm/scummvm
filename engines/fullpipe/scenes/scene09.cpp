@@ -238,7 +238,15 @@ int scene09_updateCursor() {
 }
 
 void sceneHandler09_winArcade() {
-	warning("STUB: sceneHandler09_winArcade()");
+	if (g_vars->scene09_glotatel->_flags & 4) {
+		g_vars->scene09_glotatel->changeStatics2(ST_GLT_SIT);
+		g_vars->scene09_glotatel->startAnim(MV_GLT_FLYAWAY, 0, -1);
+
+		g_fp->setObjectState(sO_Jug, g_fp->getObjectEnumState(sO_Jug, sO_Unblocked));
+		g_fp->setObjectState(sO_RightStairs_9, g_fp->getObjectEnumState(sO_RightStairs_9, sO_IsOpened));
+
+		g_vars->scene09_var08 = 0;
+	}
 }
 
 void sceneHandler09_startAuntie() {
