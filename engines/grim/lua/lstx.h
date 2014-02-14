@@ -1,5 +1,5 @@
 
-#ifndef LSTXING_H
+#ifndef LSTX_H
 #define LSTX_H
 
 namespace Grim {
