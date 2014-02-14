@@ -4,7 +4,7 @@
 */
 
 #ifndef GRIM_LMEM_H
-#define GRIM_LEME_H
+#define GRIM_LMEM_H
 
 #include "common/scummsys.h"
 
