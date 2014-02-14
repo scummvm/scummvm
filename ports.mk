@@ -174,9 +174,8 @@ iphone: $(OBJS)
 	$(CXX) $(LDFLAGS) -o scummvm $(OBJS) \
 		$(OSX_STATIC_LIBS) \
 		-framework UIKit -framework CoreGraphics -framework OpenGLES \
-		-framework GraphicsServices -framework CoreFoundation -framework QuartzCore \
-		-framework Foundation -framework AudioToolbox -framework CoreAudio \
-		-lobjc -lz
+		-framework CoreFoundation -framework QuartzCore -framework Foundation \
+		-framework AudioToolbox -framework CoreAudio -lobjc -lz
 
 # Special target to create a snapshot disk image for Mac OS X
 # TODO: Replace AUTHORS by Credits.rtf
