@@ -569,29 +569,29 @@ int ToucheEngine::displayQuitDialog() {
 				quitLoop = true;
 				switch (_language) {
 				case Common::FR_FRA:
-					if (event.kbd.ascii == 'o' || event.kbd.ascii == 'O') {
+					if (event.kbd.keycode == Common::KEYCODE_o) {
 						ret = 1;
 					}
 					break;
 				case Common::DE_DEU:
-					if (event.kbd.ascii == 'j' || event.kbd.ascii == 'J') {
+					if (event.kbd.keycode == Common::KEYCODE_j) {
 						ret = 1;
 					}
 					break;
 				case Common::ES_ESP:
-					if (event.kbd.ascii == 's' || event.kbd.ascii == 'S') {
+					if (event.kbd.keycode == Common::KEYCODE_s) {
 						ret = 1;
 					}
 					break;
 				case Common::PL_POL:
-					if (event.kbd.ascii == 's' || event.kbd.ascii == 'S' || event.kbd.ascii == 't' || event.kbd.ascii == 'T') {
+					if (event.kbd.keycode == Common::KEYCODE_s || event.kbd.keycode == Common::KEYCODE_t) {
 						ret = 1;
 					}
 					break;
 				default:
 					// According to cyx, the Italian version uses the same
 					// keys as the English one.
-					if (event.kbd.ascii == 'y' || event.kbd.ascii == 'Y') {
+					if (event.kbd.keycode == Common::KEYCODE_y) {
 						ret = 1;
 					}
 					break;

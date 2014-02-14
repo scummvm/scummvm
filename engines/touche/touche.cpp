@@ -416,13 +416,13 @@ void ToucheEngine::processEvents(bool handleKeyEvents) {
 					this->getDebugger()->onFrame();
 				}
 			} else {
-				if (event.kbd.ascii == 't') {
+				if (event.kbd.keycode == Common::KEYCODE_t) {
 					++_talkTextMode;
 					if (_talkTextMode == kTalkModeCount) {
 						_talkTextMode = 0;
 					}
 					displayTextMode(-(92 + _talkTextMode));
-				} else if (event.kbd.ascii == ' ') {
+				} else if (event.kbd.keycode == Common::KEYCODE_SPACE) {
 					updateKeyCharTalk(2);
 				}
 			}
