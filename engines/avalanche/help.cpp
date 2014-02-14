@@ -218,7 +218,18 @@ bool Help::handleKeyboard(const Common::Event &event) {
 	return false;
 }
 
-void Help::continueHelp() {
+/**
+ * @remarks Originally called 'boot_help'
+ */
+void Help::run() {
+	_vm->_graphics->saveScreen();
+	_vm->fadeOut();
+	switchPage(0);
+	_vm->fadeIn();
+
+	_vm->_graphics->loadMouse(kCurHelp);
+	
+	// Originally it was the body of 'continue_help':
 	bool close = false;
 	while (!_vm->shouldQuit() && !close) {
 		Common::Event event;
@@ -230,22 +241,7 @@ void Help::continueHelp() {
 
 		_vm->_graphics->refreshScreen();
 	}
-}
-
-/**
- * @remarks Originally called 'boot_help'
- */
-void Help::run() {
-	_vm->_graphics->saveScreen();
-	_vm->fadeOut();
-	_vm->_graphics->drawFilledRectangle(Common::Rect(0, 0, 640, 200), kColorBlack); // Black out the whole screen.
-	_vm->fadeIn();
-
-	_vm->_graphics->loadMouse(kCurHelp);
-	
-	switchPage(0);
-
-	continueHelp();
+	// End of 'continue_help'.
 
 	_vm->fadeOut();
 	_vm->_graphics->restoreScreen();

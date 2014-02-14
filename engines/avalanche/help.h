@@ -57,8 +57,6 @@ private:
 	// These two return true if we have to leave the Help:
 	bool handleMouse(const Common::Event &event);
 	bool handleKeyboard(const Common::Event &event);
-
-	void continueHelp();
 };
 
 } // End of namespace Avalanche
