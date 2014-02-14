@@ -103,56 +103,54 @@ public:
 class SVoy {
 private:
 	VoyeurEngine *_vm;
-public:
-	bool _isAM;
-	int _RTANum;
-	int _RTVNum;
-	int _switchBGNum;
-	HotspotTimes<8> _videoHotspotTimes;
-	HotspotTimes<3> _audioHotspotTimes;
-	HotspotTimes<3> _evidenceHotspotTimes;
-	bool _roomHotspotsEnabled[20];
 
+public:
+	bool _abortInterface;
+	bool _fadeICF0; // Useless variable? (always the same value)
+	bool _isAM;
+	bool _phoneCallsReceived[5];
+	bool _roomHotspotsEnabled[20];
+	bool _victimMurdered;
+
+	int _aptLoadMode;
 	int _audioVisualStartTime;
 	int _audioVisualDuration;
-	int _vocSecondsOffset;
-	bool _abortInterface;
-	int _playStampMode;
-	int _aptLoadMode;
-	int _transitionId;
-	int _RTVLimit;
-	int _eventFlags;
 	int _boltGroupId2;
-	PictureResource *_evPicPtrs[6];
-	CMapResource *_evCmPtrs[6];
-	int _musicStartTime;
-	bool _phoneCallsReceived[5];
-	int _totalPhoneCalls;
-
 	int _computerTextId;
-	Common::Rect _rect4E4;
 	int _computerTimeMin;
 	int _computerTimeMax;
-	bool _victimMurdered;
-	int _murderThreshold;
-
+	int _curICF0;   // Useless variable
+	int _eventCount;
+	int _eventFlags;
 	int _fadingAmount1;
 	int _fadingAmount2;
 	int _fadingStep1;
 	int _fadingStep2;
 	int _fadingType;
-	int _victimNumber;
 	int _incriminatedVictimNumber;
+	int _murderThreshold;
+	int _musicStartTime;
+	int _playStampMode;
+	int _switchBGNum;
+	int _totalPhoneCalls;
+	int _transitionId;
+	int _victimNumber;
 	int _videoEventId;
+	int _vocSecondsOffset;
+	int _RTANum;
+	int _RTVLimit;
+	int _RTVNum;
+
+	HotspotTimes<3> _audioHotspotTimes;
+	HotspotTimes<3> _evidenceHotspotTimes;
+	HotspotTimes<8> _videoHotspotTimes;
+
+	Common::Rect _rect4E4;
 	RectResource *_viewBounds;
-	int _curICF0;   // Useless variable
-	int _curICF1;   // Useless variable
-	bool _fadeICF0; // Useless variable? (always the same value)
-	int _policeEvent;
-	
-	int _eventCount;
+	PictureResource *_evPicPtrs[6];
+	CMapResource *_evCmPtrs[6];
 	VoyeurEvent _events[TOTAL_EVENTS];
-public:
+
 	SVoy();
 	void setVm(VoyeurEngine *vm);
 
@@ -222,6 +220,10 @@ public:
 	 * should take place
 	 */
 	bool checkForKey();
+
+private:
+	int _curICF1;   // Useless variable
+	int _policeEvent;
 };
 
 } // End of namespace Voyeur
