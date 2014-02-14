@@ -165,7 +165,7 @@ void Help::continueHelp() {
 
 		for (int i = 0; i < _buttonNum; i++) {
 			char upperCase = toupper(event.kbd.ascii);
-			if (((_buttons[i]._trigger == upperCase) && (65 <= upperCase) && (upperCase <= 90)) ||
+			if (((Common::KEYCODE_a <= event.kbd.keycode) && (event.kbd.keycode <= Common::KEYCODE_z) && (_buttons[i]._trigger == upperCase)) ||
 				((event.kbd.keycode == Common::KEYCODE_PAGEUP) && (_buttons[i]._trigger == 214)) ||
 				((event.kbd.keycode == Common::KEYCODE_PAGEDOWN) && (_buttons[i]._trigger == 216))) { // We had to handle the pageups/pagedowns separately.
 				_vm->fadeOut();
