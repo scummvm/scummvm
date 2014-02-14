@@ -187,7 +187,7 @@ void ToonEngine::parseInput() {
 		const bool hasModifier = (event.kbd.flags & Common::KBD_NON_STICKY) != 0;
 		switch (event.type) {
 		case Common::EVENT_KEYDOWN:
-			if ((event.kbd.ascii == 27 || event.kbd.ascii == 32) && !hasModifier) {
+			if ((event.kbd.keycode == Common::KEYCODE_ESCAPE || event.kbd.keycode == Common::KEYCODE_SPACE) && !hasModifier) {
 				_audioManager->stopCurrentVoice();
 			}
 			if (event.kbd.keycode == Common::KEYCODE_F5 && !hasModifier) {
@@ -198,21 +198,21 @@ void ToonEngine::parseInput() {
 				if (canLoadGameStateCurrently())
 					loadGame(-1);
 			}
-			if (event.kbd.ascii == 't' && !hasModifier) {
+			if (event.kbd.keycode == Common::KEYCODE_t && !hasModifier) {
 				_showConversationText = !_showConversationText;
 			}
-			if (event.kbd.ascii == 'm' && !hasModifier) {
+			if (event.kbd.keycode == Common::KEYCODE_m && !hasModifier) {
 				_audioManager->muteMusic(!_audioManager->isMusicMuted());
 			}
-			if (event.kbd.ascii == 'd' && !hasModifier) {
+			if (event.kbd.keycode == Common::KEYCODE_d && !hasModifier) {
 				_audioManager->muteVoice(!_audioManager->isVoiceMuted());
 			}
-			if (event.kbd.ascii == 's' && !hasModifier) {
+			if (event.kbd.keycode == Common::KEYCODE_s && !hasModifier) {
 				_audioManager->muteSfx(!_audioManager->isSfxMuted());
 			}
 
 			if (event.kbd.flags & Common::KBD_ALT) {
-				int slotNum = event.kbd.ascii - '0';
+				int slotNum = event.kbd.keycode - (event.kbd.keycode >= Common::KEYCODE_KP0 ? Common::KEYCODE_KP0 : Common::KEYCODE_0);
 				if (slotNum >= 0 && slotNum <= 9 && canSaveGameStateCurrently()) {
 					if (saveGame(slotNum, "")) {
 						// ok
@@ -229,7 +229,7 @@ void ToonEngine::parseInput() {
 			}
 
 			if (event.kbd.flags & Common::KBD_CTRL) {
-				int slotNum = event.kbd.ascii - '0';
+				int slotNum = event.kbd.keycode - (event.kbd.keycode >= Common::KEYCODE_KP0 ? Common::KEYCODE_KP0 : Common::KEYCODE_0);
 				if (slotNum >= 0 && slotNum <= 9 && canLoadGameStateCurrently()) {
 					if (loadGame(slotNum)) {
 						// ok
