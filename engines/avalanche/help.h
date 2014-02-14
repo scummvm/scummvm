@@ -53,6 +53,7 @@ private:
 	void switchPage(byte which);
 	Common::String getLine(Common::File &file); // It was a nested function in getMe().
 	byte checkMouse(); // Returns clicked-on button, or 0 if none.
+	bool handleKeyboard(const Common::Event &event);
 	void continueHelp();
 };
 

@@ -144,37 +144,38 @@ byte Help::checkMouse() {
 	return 0;
 }
 
+bool Help::handleKeyboard(const Common::Event &event) {
+	if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
+		return true;
+
+	for (int i = 0; i < _buttonNum; i++) {
+		char upperCase = toupper(event.kbd.ascii);
+		if (((Common::KEYCODE_a <= event.kbd.keycode) && (event.kbd.keycode <= Common::KEYCODE_z) && (_buttons[i]._trigger == upperCase)) ||
+			((event.kbd.keycode == Common::KEYCODE_PAGEUP) && (_buttons[i]._trigger == 214)) ||
+			((event.kbd.keycode == Common::KEYCODE_PAGEDOWN) && (_buttons[i]._trigger == 216))) { // We had to handle the pageups/pagedowns separately.
+			_vm->fadeOut();
+			switchPage(_buttons[i]._whither);
+			_vm->fadeIn();
+			return false;
+		}
+	}
+
+	return false;
+}
+
 void Help::continueHelp() {
 	warning("STUB: Help::continueHelp()");
 
-	do {
-		Common::Event event;
-		bool escape = false;
-		while (!_vm->shouldQuit() && !escape) {
-			_vm->_graphics->refreshScreen();
-			while (_vm->getEvent(event)) {
-				if (event.type == Common::EVENT_KEYDOWN) {
-					escape = true;
-					break;
-				}
-			}
-		}
-
-		if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
-			break;
-
-		for (int i = 0; i < _buttonNum; i++) {
-			char upperCase = toupper(event.kbd.ascii);
-			if (((Common::KEYCODE_a <= event.kbd.keycode) && (event.kbd.keycode <= Common::KEYCODE_z) && (_buttons[i]._trigger == upperCase)) ||
-				((event.kbd.keycode == Common::KEYCODE_PAGEUP) && (_buttons[i]._trigger == 214)) ||
-				((event.kbd.keycode == Common::KEYCODE_PAGEDOWN) && (_buttons[i]._trigger == 216))) { // We had to handle the pageups/pagedowns separately.
-				_vm->fadeOut();
-				switchPage(_buttons[i]._whither);
-				_vm->fadeIn();
-				break;
-			}
-		}
-	} while (true);
+	bool close = false;
+	Common::Event event;
+	while (!_vm->shouldQuit() && !close) {
+		_vm->_graphics->refreshScreen();
+		_vm->getEvent(event);
+		if (event.type == Common::EVENT_KEYDOWN) {
+			close = handleKeyboard(event);
+		}		
+	}
+	
 }
 
 /**
