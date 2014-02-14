@@ -18,7 +18,8 @@ MODULE_OBJS = \
 	nim.o \
 	clock.o \
 	ghostroom.o \
-	help.o
+	help.o \
+	shootemup.o
 	
 # This module can be built as a plugin
 ifeq ($(ENABLE_AVALANCHE), DYNAMIC_PLUGIN)

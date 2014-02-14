@@ -44,6 +44,7 @@
 #include "avalanche/clock.h"
 #include "avalanche/ghostroom.h"
 #include "avalanche/help.h"
+#include "avalanche/shootemup.h"
 
 #include "common/serializer.h"
 
@@ -89,6 +90,7 @@ public:
 	Nim *_nim;
 	GhostRoom *_ghostroom;
 	Help *_help;
+	ShootEmUp *_shootemup;
 
 	OSystem *_system;
 

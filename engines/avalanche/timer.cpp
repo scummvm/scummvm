@@ -327,12 +327,11 @@ void Timer::hangAround2() {
 	_vm->_animation->_sprites[0]->remove();
 	spr->remove(); // Get rid of Robin Hood and Friar Tuck.
 
-	addTimer(1, kProcAfterTheShootemup, kReasonHangingAround);
-	// Immediately call the following proc (when you have a chance).
+	addTimer(1, kProcAfterTheShootemup, kReasonHangingAround); // Immediately call the following proc (when you have a chance).
 
 	_vm->_tiedUp = false;
 
-	// _vm->_enid->backToBootstrap(1); Call the shoot-'em-up. TODO: Replace it with proper ScummVM-friendly function(s)! Do not remove until then!
+	_vm->_shootemup->run();
 }
 
 void Timer::afterTheShootemup() {
