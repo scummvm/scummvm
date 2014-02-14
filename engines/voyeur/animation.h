@@ -47,28 +47,32 @@ class RL2Decoder : public Video::VideoDecoder {
 private:
 	class RL2FileHeader {
 	public:
-		uint32 _form;
-		uint32 _backSize;
-		uint32 _signature;
-		uint32 _dataSize;
-		int _numFrames;
-		int _method;
-		int _soundRate;
-		int _rate;
-		int _channels;
-		int _defSoundSize;
-		int _videoBase;
-		int _colorCount;
-		byte _palette[768];
-
-		uint32 *_frameOffsets;
-		int *_frameSoundSizes;
-	public:
 		RL2FileHeader();
 		~RL2FileHeader();
+
+		int _channels;
+		int _colorCount;
+		int _numFrames;
+		int _rate;
+		int _soundRate;
+		int _videoBase;
+		int *_frameSoundSizes;
+
+		uint32 _backSize;
+		uint32 _signature;
+		uint32 *_frameOffsets;
+
+		byte _palette[768];
+
 		void load(Common::SeekableReadStream *stream);
-		bool isValid() const;
 		Common::Rational getFrameRate() const;
+		bool isValid() const;
+
+	private:
+		uint32 _form;
+		uint32 _dataSize;
+		int _method;
+		int _defSoundSize;
 	};
 
 	class SoundFrame {
@@ -155,26 +159,25 @@ private:
 	int _paletteStart;
 	Common::Array<SoundFrame> _soundFrames;
 	int _soundFrameNumber;
+	const Common::List<Common::Rect> *getDirtyRects() const;
+
+	void clearDirtyRects();
+	void copyDirtyRectsToBuffer(uint8 *dst, uint pitch);
+	int getPaletteStart() const { return _paletteStart; }
+	const RL2FileHeader &getHeader() { return _header; }
+	virtual void readNextPacket();
+	virtual bool seekIntern(const Audio::Timestamp &time);
+
 public:
 	RL2Decoder(Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType);
 	virtual ~RL2Decoder();
 
+	virtual void close();
+
 	bool loadStream(Common::SeekableReadStream *stream);
 	bool loadFile(const Common::String &file, bool palFlag = false);
 	bool loadVideo(int videoId);
-
-	virtual void readNextPacket();
-	virtual void close();
-	virtual bool seekIntern(const Audio::Timestamp &time);
-
-	const Common::List<Common::Rect> *getDirtyRects() const;
-	void clearDirtyRects();
-	void copyDirtyRectsToBuffer(uint8 *dst, uint pitch);
-	RL2VideoTrack *getVideoTrack() { return _videoTrack; }
-	RL2AudioTrack *getAudioTrack() { return _audioTrack; }
-	int getPaletteStart() const { return _paletteStart; }
 	int getPaletteCount() const { return _header._colorCount; }
-	const RL2FileHeader &getHeader() { return _header; }
 
 	/**
 	 * Play back a given Voyeur RL2 video
@@ -184,6 +187,8 @@ public:
 	 * @param imgPos		Position to draw image data
 	 */
 	void play(VoyeurEngine *vm, int resourceOffset = 0, byte *frames = NULL, byte *imgPos = NULL);
+	RL2VideoTrack *getVideoTrack() { return _videoTrack; }
+	RL2AudioTrack *getAudioTrack() { return _audioTrack; }
 };
 
 } // End of namespace Voyeur
