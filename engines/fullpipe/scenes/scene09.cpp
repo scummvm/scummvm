@@ -257,7 +257,44 @@ void sceneHandler09_startAuntie() {
 }
 
 void sceneHandler09_spitterClick() {
-	warning("STUB: sceneHandler09_spitterClick()");
+	if (g_vars->scene09_spitter->_flags & 4) {
+		PicAniInfo info;
+
+		g_vars->scene09_spitter->getPicAniInfo(&info);
+		g_vars->scene09_spitter->_messageQueueId = 0;
+		g_vars->scene09_spitter->changeStatics2(ST_PLV_SIT);
+
+		int x = g_vars->scene09_spitter->_ox - 10;
+		int y = g_vars->scene09_spitter->_oy + 145;
+
+		g_vars->scene09_spitter->setPicAniInfo(&info);
+
+		if (ABS(x - g_fp->_aniMan->_ox) > 1 || ABS(y - g_fp->_aniMan->_oy) > 1) {
+			MessageQueue *mq = getCurrSceneSc2MotionController()->method34(g_fp->_aniMan, x, y, 1, ST_MAN_UP);
+
+			if (mq) {
+				ExCommand *ex = new ExCommand(0, 17, MSG_SC9_PLVCLICK, 0, 0, 0, 1, 0, 0, 0);
+				ex->_excFlags = 2;
+				mq->addExCommandToEnd(ex);
+
+				postExCommand(g_fp->_aniMan->_id, 2, x, y, 0, -1);
+			}
+		} else {
+			if (!g_fp->_aniMan->_movement) {
+				g_vars->scene09_spitter->changeStatics2(ST_PLV_SIT);
+				g_vars->scene09_spitter->hide();
+
+				g_fp->_aniMan->startAnim(MV_MAN9_SHOOT, 0, -1);
+
+				g_fp->stopAllSoundInstances(SND_9_006);
+			}
+
+			g_fp->_aniMan2 = 0;
+
+			if (g_fp->_sceneRect.left < 800)
+				g_fp->_currentScene->_x = 800 - g_fp->_sceneRect.left;
+		}
+	}
 }
 
 void sceneHandler09_eatBall() {

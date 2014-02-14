@@ -603,10 +603,12 @@ namespace Fullpipe {
 #define MV_MAN9_SHOOT 922
 #define MV_VSN_CYCLE2 2987
 #define PIC_SC9_LADDER_R 2700
+#define SND_9_006 3650
 #define SND_9_018 4200
 #define ST_GLT_SIT 926
 #define ST_GRT9_GRIT 2722
 #define ST_GRT9_NORM 2721
+#define ST_PLV_SIT 921
 #define ST_VSN_NORMAL 906
 
 // Scene 10
