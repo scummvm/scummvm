@@ -39,7 +39,7 @@ ShootEmUp::ShootEmUp(AvalancheEngine *vm) {
 }
 
 void ShootEmUp::run() {
-	titles();
+	_vm->_graphics->seuDrawTitle();
 	setup();
 	initRunner(20, 70, 48, 54, _vm->_rnd->getRandomNumber(4) + 1, _vm->_rnd->getRandomNumber(3) - 2);
 	initRunner(600, 70, 48, 54, _vm->_rnd->getRandomNumber(4) + 1, _vm->_rnd->getRandomNumber(3) - 2);
@@ -126,10 +126,6 @@ void ShootEmUp::setup() {
 
 void ShootEmUp::initRunner(int16 xx, int16 yy, byte f1, byte f2, int8 ixx, int8 iyy) {
 	warning("STUB: ShootEmUp::initRunner()");
-}
-
-void ShootEmUp::titles() {
-	warning("STUB: ShootEmUp::titles()");
 }
 
 void ShootEmUp::moveAvvy() {

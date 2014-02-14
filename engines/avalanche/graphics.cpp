@@ -698,6 +698,39 @@ void GraphicManager::helpDrawHighlight(byte which, Color color) {
 }
 
 /**
+ * @remarks	Originally called 'titles'
+ */
+void GraphicManager::seuDrawTitle() {
+	Common::File file;
+
+	if (!file.open("shoot1.avd"))
+		error("AVALANCHE: ShootEmUp: File not found: shoot1.avd");
+
+	const uint16 width = 320;
+	const uint16 height = 200;
+
+	Graphics::Surface picture = loadPictureRaw(file, width, height);
+
+	Graphics::Surface doubledPicture;
+	doubledPicture.create(width * 2, height, Graphics::PixelFormat::createFormatCLUT8());
+
+	// These cycles are for doubling the picture's width.
+	for (int x = (width * 2) - 2 ; x >= 0; x -= 2) {
+		for (int y = 0; y < height; y++) {
+			*(byte *)doubledPicture.getBasePtr(x, y) = *(byte *)doubledPicture.getBasePtr(x + 1, y) = *(byte *)picture.getBasePtr(x / 2, y);
+		}
+	}
+
+	drawPicture(_surface, doubledPicture, 0, 0);
+	refreshScreen();
+
+	picture.free();
+	doubledPicture.free();
+
+	file.close();
+}
+
+/**
  * This function mimics Pascal's getimage().
  */
 Graphics::Surface GraphicManager::loadPictureGraphic(Common::File &file) {

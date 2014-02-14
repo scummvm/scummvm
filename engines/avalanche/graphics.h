@@ -107,6 +107,9 @@ public:
 	void helpDrawButton(int y, byte which);
 	void helpDrawHighlight(byte which, Color color);
 
+	// Shoot em' up's functions:
+	void seuDrawTitle();
+
 	void clearAlso();
 	void clearTextBar();
 	void setAlsoLine(int x1, int y1, int x2, int y2, Color color);

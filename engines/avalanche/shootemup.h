@@ -58,7 +58,6 @@ private:
 	void instructions();
 	void setup();
 	void initRunner(int16 xx, int16 yy, byte f1, byte f2, int8 ixx, int8 iyy);
-	void titles();
 	void moveAvvy();
 	void readKbd();
 	void animate();
