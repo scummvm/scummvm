@@ -105,6 +105,7 @@ public:
 
 	// Help's function:
 	void helpDrawButton(int y, byte which);
+	void helpDrawHighlight(byte which, Color color);
 
 	void clearAlso();
 	void clearTextBar();

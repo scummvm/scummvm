@@ -36,8 +36,13 @@ namespace Avalanche {
 Help::Help(AvalancheEngine *vm) {
 	_vm = vm;
 
+	for (int i = 0; i < 10; i++) {
+		_buttons[i]._trigger = 0;
+		_buttons[i]._whither = 0;
+	}
 	_highlightWas = 0;
 	_buttonNum = 0;
+	_holdLeft = false;
 }
 
 /**
@@ -139,9 +144,59 @@ Common::String Help::getLine(Common::File &file) {
 	return line;
 }
 
-byte Help::checkMouse() {
-	warning("STUB: Help::checkMouse()");
-	return 0;
+bool Help::handleMouse(const Common::Event &event) {
+	Common::Point mousePos;
+	mousePos.x = event.mouse.x;
+	mousePos.y = event.mouse.y / 2;
+
+	int index = -1;
+
+	if (event.type == Common::EVENT_LBUTTONUP) { // Clicked *somewhere*...
+		_holdLeft = false;
+
+		if ((mousePos.x < 470) || (mousePos.x > 550) || (((mousePos.y - 13) % 27) > 20))
+			index = -1;
+		else // Clicked on a button. 
+			index = ((mousePos.y - 13) / 27) - 1;
+	} else { // LBUTTONDOWN or MOUSEMOVE
+		int highlightIs = 0;
+
+		if ((mousePos.x > 470) && (mousePos.x <= 550) && (((mousePos.y - 13) % 27) <= 20)) { // No click, so highlight.
+			highlightIs = (mousePos.y - 13) / 27 - 1;
+			if ((highlightIs < 0) || (5 < highlightIs))
+				highlightIs = 177; // In case of silly values.
+		} else
+			highlightIs = 177;
+
+		if (((highlightIs != 177) && (event.type == Common::EVENT_LBUTTONDOWN)) || _holdLeft) {
+			_holdLeft = true;
+			highlightIs += 32;
+		}
+
+		if (_highlightWas != highlightIs) {
+			_vm->_graphics->helpDrawHighlight(_highlightWas, kColorBlue);
+			_highlightWas = highlightIs;
+			if (_buttons[highlightIs & 31]._trigger != 0) {
+				if (highlightIs > 31)
+					_vm->_graphics->helpDrawHighlight(highlightIs, kColorLightcyan);
+				else
+					_vm->_graphics->helpDrawHighlight(highlightIs, kColorLightblue);
+			}
+		}
+	}
+
+	if ((index >= 0) && (_buttons[index]._trigger != 0)) {
+		if (_buttons[index]._trigger == 254)
+			return true;
+		else {
+			_vm->fadeOut();
+			switchPage(_buttons[index]._whither);
+			_vm->fadeIn();
+			return false;
+		}
+	}
+
+	return false;
 }
 
 bool Help::handleKeyboard(const Common::Event &event) {
@@ -164,18 +219,17 @@ bool Help::handleKeyboard(const Common::Event &event) {
 }
 
 void Help::continueHelp() {
-	warning("STUB: Help::continueHelp()");
-
 	bool close = false;
-	Common::Event event;
 	while (!_vm->shouldQuit() && !close) {
-		_vm->_graphics->refreshScreen();
+		Common::Event event;
 		_vm->getEvent(event);
-		if (event.type == Common::EVENT_KEYDOWN) {
+		if (event.type == Common::EVENT_KEYDOWN)
 			close = handleKeyboard(event);
-		}		
+		else if ((event.type == Common::EVENT_LBUTTONDOWN) || (event.type == Common::EVENT_LBUTTONUP) || (event.type == Common::EVENT_MOUSEMOVE))
+			close = handleMouse(event);
+
+		_vm->_graphics->refreshScreen();
 	}
-	
 }
 
 /**

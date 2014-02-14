@@ -48,12 +48,16 @@ private:
 
 	Button _buttons[10];
 	byte _highlightWas;
-	byte _buttonNum; // How many buttons do we have on the screen at the moment.
+	byte _buttonNum; // How many buttons do we have on the screen at the moment?
+	bool _holdLeft; // Is the left mouse button is still being held?
 
 	void switchPage(byte which);
 	Common::String getLine(Common::File &file); // It was a nested function in getMe().
-	byte checkMouse(); // Returns clicked-on button, or 0 if none.
+
+	// These two return true if we have to leave the Help:
+	bool handleMouse(const Common::Event &event);
 	bool handleKeyboard(const Common::Event &event);
+
 	void continueHelp();
 };
 

@@ -687,6 +687,17 @@ void GraphicManager::helpDrawButton(int y, byte which) {
 }
 
 /**
+ * @remarks	Originally called 'light'
+ */
+void GraphicManager::helpDrawHighlight(byte which, Color color) {
+	if (which == 177) // Dummy value for "no button at all".
+		return;
+
+	which &= 31;
+	drawRectangle(Common::Rect(466, 38 + which * 27, 555, 63 + which * 27), color);
+}
+
+/**
  * This function mimics Pascal's getimage().
  */
 Graphics::Surface GraphicManager::loadPictureGraphic(Common::File &file) {
