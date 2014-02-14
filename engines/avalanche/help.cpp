@@ -29,7 +29,6 @@
 
 #include "avalanche/avalanche.h"
 #include "avalanche/help.h"
-#include <cctype>
 
 namespace Avalanche {
 
@@ -204,7 +203,11 @@ bool Help::handleKeyboard(const Common::Event &event) {
 		return true;
 
 	for (int i = 0; i < _buttonNum; i++) {
-		char upperCase = toupper(event.kbd.ascii);
+		char upperCase = 255; // Dummy value.
+		if ((97 <= event.kbd.ascii) && (event.kbd.ascii <= 122)) {
+			upperCase = event.kbd.ascii - 32;
+		}
+
 		if (((Common::KEYCODE_a <= event.kbd.keycode) && (event.kbd.keycode <= Common::KEYCODE_z) && (_buttons[i]._trigger == upperCase)) ||
 			((event.kbd.keycode == Common::KEYCODE_PAGEUP) && (_buttons[i]._trigger == 214)) ||
 			((event.kbd.keycode == Common::KEYCODE_PAGEDOWN) && (_buttons[i]._trigger == 216))) { // We had to handle the pageups/pagedowns separately.
