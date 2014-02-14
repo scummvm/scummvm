@@ -184,7 +184,7 @@ void ToonEngine::parseInput() {
 	Common::Event event;
 	while (_event->pollEvent(event)) {
 
-		bool hasModifier = event.kbd.hasFlags(Common::KBD_ALT|Common::KBD_CTRL|Common::KBD_SHIFT);
+		const bool hasModifier = (event.kbd.flags & (Common::KBD_ALT|Common::KBD_CTRL|Common::KBD_SHIFT)) != 0;
 		switch (event.type) {
 		case Common::EVENT_KEYDOWN:
 			if ((event.kbd.ascii == 27 || event.kbd.ascii == 32) && !hasModifier) {
