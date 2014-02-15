@@ -736,7 +736,7 @@ int MinigameBbAirGuitar::run(bool fromMainGame) {
 
 	memset(_objects, 0, sizeof(_objects));
 
-    _modified = false;
+	_modified = false;
 	_currPatchNum = -1;
 	_btn3KindToggle = 0;
 	_currButtonNum = 27;
