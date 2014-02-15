@@ -31,10 +31,10 @@
 namespace Bbvs {
 
 enum {
-	kMinigameBbLoogie		= 0,
-	kMinigameBbTennis		= 1,
-	kMinigameBbAnt			= 2,
-	kMinigameBbAirGuitar	= 3,
+	kMinigameBbLoogie       = 0,
+	kMinigameBbTennis       = 1,
+	kMinigameBbAnt          = 2,
+	kMinigameBbAirGuitar    = 3,
 	kMinigameCount
 };
 

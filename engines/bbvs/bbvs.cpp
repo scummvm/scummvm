@@ -99,7 +99,7 @@ static const int kAfterVideoSceneNum[] = {
 };
 
 const int kMainMenu = 44;
-const int kCredits	= 45;
+const int kCredits  = 45;
 
 bool WalkArea::contains(const Common::Point &pt) const {
 	return Common::Rect(x, y, x + width, y + height).contains(pt);

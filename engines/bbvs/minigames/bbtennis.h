@@ -57,10 +57,10 @@ public:
 	};
 	
 	enum {
-		kGSTitleScreen		= 0,	// Title screen
-		kGSMainGame			= 1,	// Game when called as part of the main game
-		kGSStandaloneGame	= 2,	// Game when called as standalone game
-		kGSScoreCountUp		= 3		// Score countup and next level text
+		kGSTitleScreen      = 0,    // Title screen
+		kGSMainGame         = 1,    // Game when called as part of the main game
+		kGSStandaloneGame   = 2,    // Game when called as standalone game
+		kGSScoreCountUp     = 3     // Score countup and next level text
 	};
 	
 	Obj _objects[kMaxObjectsCount];
