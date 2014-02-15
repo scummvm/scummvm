@@ -30,13 +30,15 @@
 #include "avalanche/avalanche.h"
 #include "avalanche/help.h"
 
+#include "common/scummsys.h"
+
 namespace Avalanche {
 
 Help::Help(AvalancheEngine *vm) {
 	_vm = vm;
 
 	for (int i = 0; i < 10; i++) {
-		_buttons[i]._trigger = 0;
+		_buttons[i]._trigger = Common::KEYCODE_INVALID;
 		_buttons[i]._whither = 0;
 	}
 	_highlightWas = 0;
@@ -97,27 +99,45 @@ void Help::switchPage(byte which) {
 	y = 0;
 	_buttonNum = 0;
 	while (!file.eos()) {
-		_buttons[y]._trigger = file.readByte();
-		if (_buttons[y]._trigger == 177)
+		int trigger = file.readByte();
+
+		if (trigger == 177)
 			break;
+		switch (trigger) {
+		case 254: // Escape
+			trigger = 27;
+			break;
+		case 214: // PageUp
+			trigger = 280;
+			break;
+		case 216: // PageDown
+			trigger = 281;
+			break;
+		default: // A - Z
+			// The characters are stored in the file in uppercase, but we need the lowercase versions for KeyCode:
+			trigger = tolower(trigger);
+			break;
+		}
+
+		_buttons[y]._trigger = Common::KeyCode(trigger);
 		index = file.readByte();
-		if (_buttons[y]._trigger != 0)
+		if (_buttons[y]._trigger != Common::KEYCODE_INVALID)
 			_vm->_graphics->helpDrawButton(13 + (y + 1) * 27, index);
 		_buttons[y]._whither = file.readByte(); // This is the position to jump to.
 
 		Common::String text = "";
 		switch (_buttons[y]._trigger) {
-		case 254:
+		case Common::KEYCODE_ESCAPE:
 			text = Common::String("Esc");
 			break;
-		case 214: // PageUp
+		case Common::KEYCODE_PAGEUP:
 			text = Common::String(24);
 			break;
-		case 216: // PageDown
+		case Common::KEYCODE_PAGEDOWN:
 			text = Common::String(25);
 			break;
 		default:
-			text = Common::String(_buttons[y]._trigger);
+			text = Common::String(toupper(_buttons[y]._trigger));
 			break;
 		}
 
@@ -175,7 +195,7 @@ bool Help::handleMouse(const Common::Event &event) {
 		if (_highlightWas != highlightIs) {
 			_vm->_graphics->helpDrawHighlight(_highlightWas, kColorBlue);
 			_highlightWas = highlightIs;
-			if (_buttons[highlightIs & 31]._trigger != 0) {
+			if (_buttons[highlightIs & 31]._trigger != Common::KEYCODE_INVALID) {
 				if (highlightIs > 31)
 					_vm->_graphics->helpDrawHighlight(highlightIs, kColorLightcyan);
 				else
@@ -184,8 +204,8 @@ bool Help::handleMouse(const Common::Event &event) {
 		}
 	}
 
-	if ((index >= 0) && (_buttons[index]._trigger != 0)) {
-		if (_buttons[index]._trigger == 254)
+	if ((index >= 0) && (_buttons[index]._trigger != Common::KEYCODE_INVALID)) {
+		if (_buttons[index]._trigger == Common::KEYCODE_ESCAPE)
 			return true;
 		else {
 			_vm->fadeOut();
@@ -203,14 +223,7 @@ bool Help::handleKeyboard(const Common::Event &event) {
 		return true;
 
 	for (int i = 0; i < _buttonNum; i++) {
-		char upperCase = 255; // Dummy value.
-		if ((97 <= event.kbd.ascii) && (event.kbd.ascii <= 122)) {
-			upperCase = event.kbd.ascii - 32;
-		}
-
-		if (((Common::KEYCODE_a <= event.kbd.keycode) && (event.kbd.keycode <= Common::KEYCODE_z) && (_buttons[i]._trigger == upperCase)) ||
-			((event.kbd.keycode == Common::KEYCODE_PAGEUP) && (_buttons[i]._trigger == 214)) ||
-			((event.kbd.keycode == Common::KEYCODE_PAGEDOWN) && (_buttons[i]._trigger == 216))) { // We had to handle the pageups/pagedowns separately.
+		if (_buttons[i]._trigger == event.kbd.keycode) {
 			_vm->fadeOut();
 			switchPage(_buttons[i]._whither);
 			_vm->fadeIn();

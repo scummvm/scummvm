@@ -41,7 +41,8 @@ public:
 
 private:
 	struct Button {
-		byte _trigger, _whither;
+		Common::KeyCode _trigger;
+		byte _whither;
 	};
 
 	AvalancheEngine *_vm;
