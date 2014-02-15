@@ -177,7 +177,7 @@ static const QueenGameDescription gameDescriptions[] = {
 		{
 			"queen",
 			"Floppy",
-			AD_ENTRY1s("queen.1", f5e827645d3c887be3bdf4729d847756, 22157304),
+			AD_ENTRY1s("queen.1", "f5e827645d3c887be3bdf4729d847756", 22157304),
 			Common::FR_FRA,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
