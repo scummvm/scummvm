@@ -253,7 +253,10 @@ void sceneHandler09_winArcade() {
 }
 
 void sceneHandler09_startAuntie() {
-	warning("STUB: sceneHandler09_startAuntie()");
+	MessageQueue *mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_TTA9_GOL), 0, 1);
+
+	mq->getExCommandByIndex(0)->_x = g_fp->_sceneRect.right + 30;
+	mq->chain(0);
 }
 
 void sceneHandler09_spitterClick() {
