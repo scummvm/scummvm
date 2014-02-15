@@ -166,13 +166,6 @@ Common::Error BbvsEngine::run() {
 	_currSceneNum = 0;
 	_newSceneNum = 31;
 
-	// DEBUG Jump directly to rooms
-	//_newSceneNum = 23; // Class room
-	//_newSceneNum = kMainMenu;
-	//_newSceneNum = 25;// Tank and crash
-	//_newSceneNum = 7;
-	//_newSceneNum = 12;
-
 	if (ConfMan.hasKey("save_slot"))
 		_bootSaveSlot = ConfMan.getInt("save_slot");
 
