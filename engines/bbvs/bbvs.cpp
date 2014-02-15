@@ -2209,7 +2209,7 @@ void BbvsEngine::runMainMenu() {
 
 void BbvsEngine::checkEasterEgg(char key) {
 
-	static const char *kEasterEggStrings[] = {
+	static const char * const kEasterEggStrings[] = {
 		"BOIDUTS",
 		"YNNIF",
 		"SKCUS",

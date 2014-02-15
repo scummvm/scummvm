@@ -24,7 +24,7 @@
 
 namespace Bbvs {
 
-static const char *kNoteSoundFilenames[] = {
+static const char * const kNoteSoundFilenames[] = {
 	"a.aif", "a#.aif", "b.aif", "c.aif", "c#.aif",
 	"d.aif", "d#.aif", "e.aif", "f.aif", "f#.aif",
 	"g.aif", "g#.aif", "a_oct.aif"
@@ -32,7 +32,7 @@ static const char *kNoteSoundFilenames[] = {
 
 static const uint kNoteSoundFilenamesCount = ARRAYSIZE(kNoteSoundFilenames);
 
-static const char *kPatchDirectories[] = {
+static const char * const kPatchDirectories[] = {
 	"rock", "burp", "fart"
 };
 

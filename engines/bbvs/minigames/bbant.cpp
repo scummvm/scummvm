@@ -42,7 +42,7 @@ static const int kScoreTbl[] = {
 	0, 1, 1, 3, 2, 4
 };
 
-static const char *kSoundFilenames[] = {
+static const char * const kSoundFilenames[] = {
 	"ant1.aif", "ant2.aif", "ant3.aif", "ant4.aif", "ant5.aif",
 	"ant6.aif", "ant7.aif", "ant8.aif", "ant9.aif", "ant10.aif",
 	"ant11.aif", "antmus1.aif", "fryant.aif", "stomp.aif", "bing.aif",

@@ -75,7 +75,7 @@ static const uint kPrincipalSounds[] = {
 	3, 4, 5, 7
 };
 
-static const char *kSoundFilenames[] = {
+static const char * const kSoundFilenames[] = {
 	"loog1.aif", "loog2.aif", "loog3.aif", "loog4.aif", "loog5.aif",
 	"loog6.aif", "loog7.aif", "loog8.aif", "loog9.aif", "loog10.aif",
 	"loog11.aif", "loog12.aif", "loog13.aif", "loog14.aif", "loog15.aif",

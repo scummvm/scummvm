@@ -35,7 +35,7 @@ static const int kLeftPlayerOffY[] = {
 	-18, -18, -14, -11, -11, -11, -11
 };
 
-static const char *kSoundFilenames[] = {
+static const char * const kSoundFilenames[] = {
 	"tenis9.aif", "tenis10.aif", "tenis11.aif", "tenis12.aif", "tenis13.aif",
 	"tenis14.aif", "tenis15.aif", "tenis16.aif", "tenis17.aif", "tenis18.aif",
 	"tenis19.aif", "tenis20.aif", "tenis21.aif", "1ahh.aif", "1dammit.aif",
