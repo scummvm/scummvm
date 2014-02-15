@@ -2127,7 +2127,7 @@ void BbvsEngine::playSpeech(int soundNum) {
 	Common::String sndFilename = Common::String::format("snd/snd%05d.aif", soundNum);
 	Common::File *fd = new Common::File();
 	fd->open(sndFilename);
-	Audio::AudioStream *audioStream = Audio::makeLoopingAudioStream(Audio::makeAIFFStream(fd, DisposeAfterUse::YES), 1);
+	Audio::AudioStream *audioStream = Audio::makeAIFFStream(fd, DisposeAfterUse::YES);
 	_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_speechSoundHandle, audioStream);
 
 }
