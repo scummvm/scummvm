@@ -172,35 +172,31 @@ static const QueenGameDescription gameDescriptions[] = {
 		},
 	},
 
-#if 0
 	// DOS Floppy - French
 	{
 		{
 			"queen",
 			"Floppy",
-			AD_ENTRY1s("queen.1", NULL, 22157304), // TODO: Fill in correct MD5
+			AD_ENTRY1s("queen.1", f5e827645d3c887be3bdf4729d847756, 22157304),
 			Common::FR_FRA,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NOSPEECH)
 		},
 	},
-#endif
 
-#if 0
 	// DOS CD - French
 	{
 		{
 			"queen",
 			"Talkie",
-			AD_ENTRY1s("queen.1", NULL, 186689095), // TODO: Fill in correct MD5
+			AD_ENTRY1s("queen.1", "6fd5486a0db75bae2e023b575c3d6a5d", 186689095),
 			Common::FR_FRA,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO1(GAMEOPTION_ALT_INTRO)
 		},
 	},
-#endif
 
 #if 0
 	// DOS Floppy - German
