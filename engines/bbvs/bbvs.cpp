@@ -1780,18 +1780,10 @@ void BbvsEngine::turnObject(SceneObject *sceneObject) {
 	}
 }
 
-bool BbvsEngine::rectIntersection(const Common::Rect &rect1, const Common::Rect &rect2, Common::Rect &outRect) {
-	outRect.left = MAX(rect1.left, rect2.left);
-	outRect.top = MAX(rect1.top, rect2.top);
-	outRect.right = MIN(rect1.right, rect2.right);
-	outRect.bottom = MIN(rect1.bottom, rect2.bottom);
-	return !outRect.isEmpty();
-}
-
 int BbvsEngine::rectSubtract(const Common::Rect &rect1, const Common::Rect &rect2, Common::Rect *outRects) {
 	int count = 0;
-	Common::Rect workRect;
-	if (rectIntersection(rect1, rect2, workRect)) {
+	Common::Rect workRect = rect1.findIntersectingRect(rect2);
+	if (!workRect.isEmpty()) {
 		count = 0;
 		outRects[count] = Common::Rect(rect2.width(), workRect.top - rect2.top);
 		if (!outRects[count].isEmpty()) {

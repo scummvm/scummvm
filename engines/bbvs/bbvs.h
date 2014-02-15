@@ -341,7 +341,6 @@ public:
 	void walkObject(SceneObject *sceneObject, const Common::Point &destPt, int walkSpeed);
 	void turnObject(SceneObject *sceneObject);
 
-	bool rectIntersection(const Common::Rect &rect1, const Common::Rect &rect2, Common::Rect &outRect);
 	int rectSubtract(const Common::Rect &rect1, const Common::Rect &rect2, Common::Rect *outRects);
 
 	WalkInfo *addWalkInfo(int16 x, int16 y, int delta, int direction, int16 midPtX, int16 midPtY, int walkAreaIndex);
