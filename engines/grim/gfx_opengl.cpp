@@ -402,7 +402,7 @@ void GfxOpenGL::getBoundingBoxPos(const EMIModel *model, int *x1, int *y1, int *
 	glGetDoublev(GL_PROJECTION_MATRIX, projection);
 	glGetIntegerv(GL_VIEWPORT, viewPort);
 	
-	for (int i = 0; i < model->_numFaces; i++) {
+	for (uint i = 0; i < model->_numFaces; i++) {
 		int *indices = (int *)model->_faces[i]._indexes;
 
 		for (uint j = 0; j < model->_faces[i]._faceLength * 3; j++) {
@@ -644,7 +644,7 @@ void GfxOpenGL::drawEMIModelFace(const EMIModel *model, const EMIMeshFace *face)
 	glEnable(GL_ALPHA_TEST);
 	glEnable(GL_LIGHTING);
 	glDisable(GL_BLEND);
-	glDepthMask(true);
+	glDepthMask(GL_TRUE);
 	glColor3f(1.0f, 1.0f, 1.0f);
 }
 
@@ -1325,7 +1325,7 @@ void GfxOpenGL::selectMaterial(const Texture *material) {
 
 	if (material->_hasAlpha && g_grim->getGameType() == GType_MONKEY4) {
 		glEnable(GL_BLEND);
-		glDepthMask(false);
+		glDepthMask(GL_FALSE);
 	}
 
 	// Grim has inverted tex-coords, EMI doesn't

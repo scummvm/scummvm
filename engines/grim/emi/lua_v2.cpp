@@ -438,13 +438,13 @@ void Lua_V2::NewLayer() {
 	lua_Object param3 = lua_getparam(3);
 
 	const char *til = NULL;
-	int sortorder = 0, zero = 0;
+	int sortorder = 0; // zero = 0;
 	if (lua_isstring(param1) && lua_isnumber(param2) && lua_isnumber(param3)) {
 		til = lua_getstring(param1);
 		sortorder = (int)lua_getnumber(param2);
 
 		//This one is always specified, but also always 0...
-		zero = (int)lua_getnumber(param3);
+		//zero = (int)lua_getnumber(param3);
 
 		Layer *layer = new Layer(til, sortorder);
 
