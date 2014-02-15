@@ -157,7 +157,7 @@ struct BBPolygon {
 };
 
 struct Rect {
-	int left, top, right, bottom;
+	int16 left, top, right, bottom;
 };
 
 struct SceneObject {
