@@ -24,16 +24,12 @@
 
 namespace Bbvs {
 
-struct Point {
-	int x, y;
-};
-
-static const Point kPosIncrTbl1[] = {
+static const BBPoint kPosIncrTbl1[] = {
 	{0, -1}, {-1, -1}, {-1, 0}, {-1,  1},
 	{ 0, 1}, { 1,  1}, { 1, 0}, { 1, -1}
 };
 
-static const Point kPosIncrTbl2[] = {
+static const BBPoint kPosIncrTbl2[] = {
 	{0, -2}, {-2, -2}, {-2, 0}, {-2,  2},
 	{ 0, 2}, { 2,  2}, { 2, 0}, { 2, -2}
 };
