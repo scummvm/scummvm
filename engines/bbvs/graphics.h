@@ -58,4 +58,4 @@ public:
 
 } // End of namespace Bbvs
 
-#endif // BBVS_H
+#endif // BBVS_GRAPHICS_H

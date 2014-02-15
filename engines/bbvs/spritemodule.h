@@ -65,4 +65,4 @@ protected:
 
 } // End of namespace Bbvs
 
-#endif // BBVS_H
+#endif // BBVS_SPRITEMODULE_H

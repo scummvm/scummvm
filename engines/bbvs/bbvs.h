@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef BBVS_H
-#define BBVS_H
+#ifndef BBVS_BBVS_H
+#define BBVS_BBVS_H
 
 #include "audio/mixer.h"
 #include "audio/decoders/aiff.h"
@@ -413,4 +413,4 @@ public:
 
 } // End of namespace Bbvs
 
-#endif // BBVS_H
+#endif // BBVS_BBVS_H
