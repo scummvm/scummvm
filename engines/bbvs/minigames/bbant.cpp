@@ -644,7 +644,7 @@ void MinigameBbAnt::removeStompObj(Obj *obj) {
 void MinigameBbAnt::insertBugObj(int kind, int animIndexIncr, int always0, int x, int y, int field30, int always1) {
 	Obj *obj = getFreeObject();
 	if (obj) {
-		const ObjAnimation **objKindAnimTable = getObjKindAnimTable(kind);
+		const ObjAnimation * const *objKindAnimTable = getObjKindAnimTable(kind);
 		obj->field30 = field30;
 		obj->animIndexIncr = animIndexIncr;
 		obj->kind = kind;
@@ -691,7 +691,7 @@ void MinigameBbAnt::updateBugObjAnim(int objIndex) {
 		obj->animIndexIncr = 6;
 		break;
 	}
-	const ObjAnimation **objKindAnimTable = getObjKindAnimTable(obj->kind);
+	const ObjAnimation * const *objKindAnimTable = getObjKindAnimTable(obj->kind);
 	obj->xIncr = kPosIncrTbl1[obj->animIndexIncr].x << 16;
 	obj->yIncr = kPosIncrTbl1[obj->animIndexIncr].y << 16;
 	obj->anim = objKindAnimTable[obj->animIndexIncr];
@@ -710,7 +710,7 @@ void MinigameBbAnt::updateObjAnim2(int objIndex) {
 	obj->animIndexIncr += 4;
 	if (obj->animIndexIncr >= 8)
 		obj->animIndexIncr %= 8;
-	const ObjAnimation **objKindAnimTable = getObjKindAnimTable(obj->kind);
+	const ObjAnimation * const *objKindAnimTable = getObjKindAnimTable(obj->kind);
 	obj->xIncr = kPosIncrTbl1[obj->animIndex + obj->animIndexIncr].x << 16;
 	obj->yIncr = kPosIncrTbl1[obj->animIndex + obj->animIndexIncr].y << 16;
 	obj->anim = objKindAnimTable[obj->animIndex + obj->animIndexIncr];
@@ -742,7 +742,7 @@ void MinigameBbAnt::updateObjAnim3(int objIndex) {
 		obj->animIndexIncr = 7;
 	if (obj->animIndexIncr > 7)
 		obj->animIndexIncr = 0;
-	const ObjAnimation **objKindAnimTable = getObjKindAnimTable(obj->kind);
+	const ObjAnimation * const *objKindAnimTable = getObjKindAnimTable(obj->kind);
 	obj->xIncr = kPosIncrTbl1[obj->animIndexIncr].x << 16;
 	obj->yIncr = kPosIncrTbl1[obj->animIndexIncr].y << 16;
 	obj->anim = objKindAnimTable[obj->animIndexIncr];
@@ -786,7 +786,7 @@ void MinigameBbAnt::updateBugObj1(int objIndex) {
 					playSound(kSoundTbl2[_vm->getRandom(3)]);
 			}
 			flag1 = false;
-			const ObjAnimation **objKindAnimTable = getObjKindAnimTable(obj->kind);
+			const ObjAnimation * const *objKindAnimTable = getObjKindAnimTable(obj->kind);
 			obj->hasSmoke = false;
 			obj->status = 4;
 			obj->xIncr = 0;
@@ -833,7 +833,7 @@ void MinigameBbAnt::updateBugObj1(int objIndex) {
 
 	case 4:
 		if (flag1) {
-			const ObjAnimation **objKindAnimTable = getObjKindAnimTable(obj->kind);
+			const ObjAnimation * const *objKindAnimTable = getObjKindAnimTable(obj->kind);
 			obj->status = 6;
 			obj->xIncr = 0;
 			obj->yIncr = 0;
@@ -845,7 +845,7 @@ void MinigameBbAnt::updateBugObj1(int objIndex) {
 
 	case 6:
 		if (flag1) {
-			const ObjAnimation **objKindAnimTable = getObjKindAnimTable(obj->kind);
+			const ObjAnimation * const *objKindAnimTable = getObjKindAnimTable(obj->kind);
 			obj->status = 7;
 			obj->xIncr = kPosIncrTbl2[obj->animIndexIncr].x << 16;
 			obj->yIncr = kPosIncrTbl2[obj->animIndexIncr].y << 16;
@@ -976,7 +976,7 @@ void MinigameBbAnt::updateFootObj(int objIndex) {
 				Obj *bugObj = &_objects[i];
 				if (bugObj->kind >= 1 && bugObj->kind <= 5) {
 					bugObj->counter = _vm->getRandom(200) + 360;
-					const ObjAnimation **objKindAnimTable = getObjKindAnimTable(bugObj->kind);
+					const ObjAnimation * const *objKindAnimTable = getObjKindAnimTable(bugObj->kind);
 					if (bugObj->status == 8) {
 						bugObj->hasSmoke = false;
 						bugObj->xIncr = 0;

@@ -730,9 +730,9 @@ static const MinigameBbAnt::ObjInit kObjInits[] = {
 	{&kAnimations[152], &kAnimations[153], &kAnimations[154], 145, 165},
 	{&kAnimations[155], &kAnimations[156], &kAnimations[157], 110, 175}
 };
-static const ObjAnimation *kAnimationsTbl[] = {&kAnimations[0], &kAnimations[1], &kAnimations[2], &kAnimations[3], &kAnimations[4], &kAnimations[5], &kAnimations[6], &kAnimations[7], &kAnimations[16], &kAnimations[17], &kAnimations[18], &kAnimations[19], &kAnimations[20], &kAnimations[21], &kAnimations[22], &kAnimations[23], &kAnimations[24], &kAnimations[25], &kAnimations[26], &kAnimations[27], &kAnimations[28], &kAnimations[29], &kAnimations[30], &kAnimations[31], &kAnimations[32], &kAnimations[33], &kAnimations[42], &kAnimations[43], &kAnimations[44], &kAnimations[45], &kAnimations[46], &kAnimations[47], &kAnimations[48], &kAnimations[49], &kAnimations[50], &kAnimations[51], &kAnimations[52], &kAnimations[53], &kAnimations[54], &kAnimations[55], &kAnimations[56], &kAnimations[57], &kAnimations[58], &kAnimations[59], &kAnimations[68], &kAnimations[69], &kAnimations[70], &kAnimations[71], &kAnimations[72], &kAnimations[73], &kAnimations[74], &kAnimations[75], &kAnimations[76], &kAnimations[77], &kAnimations[78], &kAnimations[79], &kAnimations[80], &kAnimations[81], &kAnimations[82], &kAnimations[83], &kAnimations[84], &kAnimations[85], &kAnimations[94], &kAnimations[95], &kAnimations[96], &kAnimations[97], &kAnimations[98], &kAnimations[99], &kAnimations[100], &kAnimations[101], &kAnimations[102], &kAnimations[103], &kAnimations[104], &kAnimations[105], &kAnimations[106], &kAnimations[107], &kAnimations[108], &kAnimations[109], &kAnimations[110], &kAnimations[111], &kAnimations[120], &kAnimations[121], &kAnimations[122], &kAnimations[123], &kAnimations[124], &kAnimations[125], &kAnimations[126], &kAnimations[127], &kAnimations[128], &kAnimations[129]};
+static const ObjAnimation * const kAnimationsTbl[] = {&kAnimations[0], &kAnimations[1], &kAnimations[2], &kAnimations[3], &kAnimations[4], &kAnimations[5], &kAnimations[6], &kAnimations[7], &kAnimations[16], &kAnimations[17], &kAnimations[18], &kAnimations[19], &kAnimations[20], &kAnimations[21], &kAnimations[22], &kAnimations[23], &kAnimations[24], &kAnimations[25], &kAnimations[26], &kAnimations[27], &kAnimations[28], &kAnimations[29], &kAnimations[30], &kAnimations[31], &kAnimations[32], &kAnimations[33], &kAnimations[42], &kAnimations[43], &kAnimations[44], &kAnimations[45], &kAnimations[46], &kAnimations[47], &kAnimations[48], &kAnimations[49], &kAnimations[50], &kAnimations[51], &kAnimations[52], &kAnimations[53], &kAnimations[54], &kAnimations[55], &kAnimations[56], &kAnimations[57], &kAnimations[58], &kAnimations[59], &kAnimations[68], &kAnimations[69], &kAnimations[70], &kAnimations[71], &kAnimations[72], &kAnimations[73], &kAnimations[74], &kAnimations[75], &kAnimations[76], &kAnimations[77], &kAnimations[78], &kAnimations[79], &kAnimations[80], &kAnimations[81], &kAnimations[82], &kAnimations[83], &kAnimations[84], &kAnimations[85], &kAnimations[94], &kAnimations[95], &kAnimations[96], &kAnimations[97], &kAnimations[98], &kAnimations[99], &kAnimations[100], &kAnimations[101], &kAnimations[102], &kAnimations[103], &kAnimations[104], &kAnimations[105], &kAnimations[106], &kAnimations[107], &kAnimations[108], &kAnimations[109], &kAnimations[110], &kAnimations[111], &kAnimations[120], &kAnimations[121], &kAnimations[122], &kAnimations[123], &kAnimations[124], &kAnimations[125], &kAnimations[126], &kAnimations[127], &kAnimations[128], &kAnimations[129]};
 
-static const ObjAnimation **kObjKindAnimTables[] = {
+static const ObjAnimation * const * const kObjKindAnimTables[] = {
 	0, &kAnimationsTbl[0],
 	&kAnimationsTbl[18], &kAnimationsTbl[36],
 	&kAnimationsTbl[54], &kAnimationsTbl[72]
@@ -746,7 +746,7 @@ const MinigameBbAnt::ObjInit *MinigameBbAnt::getObjInit(int index) {
 	return &kObjInits[index];
 }
 
-const ObjAnimation **MinigameBbAnt::getObjKindAnimTable(int kind) {
+const ObjAnimation * const *MinigameBbAnt::getObjKindAnimTable(int kind) {
 	return kObjKindAnimTables[kind];
 }
 

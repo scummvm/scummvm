@@ -101,7 +101,7 @@ public:
 
 	const ObjAnimation *getAnimation(int animIndex);
 	const ObjInit *getObjInit(int index);
-	const ObjAnimation **getObjKindAnimTable(int kind);
+	const ObjAnimation * const *getObjKindAnimTable(int kind);
 	const ObjAnimation *getObjAnim(int index);
 	
 	void buildDrawList0(DrawList &drawList);
