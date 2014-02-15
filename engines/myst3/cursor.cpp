@@ -125,7 +125,7 @@ void Cursor::lockPosition(bool lock) {
 
 	_lockedAtCenter = lock;
 
-	//g_system->lockMouse(lock);
+	g_system->lockMouse(lock);
 
 	if (_lockedAtCenter) {
 		// Locking, just mouve the cursor at the center of the screen
