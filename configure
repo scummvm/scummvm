@@ -2735,9 +2735,6 @@ case $_backend in
 		CXXFLAGS="$CXXFLAGS -Wa,--noexecstack"
 		LDFLAGS="$LDFLAGS -Wl,-z,noexecstack"
 		INCLUDES="$INCLUDES -I$ANDROID_NDK/sources/cxx-stl/system/include"
-		# ResidualVM specific: below two lines:
-		DEFINES="$DEFINES -DANDROID_BACKEND"
-		add_line_to_config_mk "ANDROID_BACKEND = 1"
 		;;
 	dc)
 		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/dc'
