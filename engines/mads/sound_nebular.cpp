@@ -70,7 +70,11 @@ void AdlibChannel::reset() {
 void AdlibChannel::enable(int flag) {
 	if (_activeCount) {
 		_fieldE = flag;
-		_soundData = nullptr; // TODO: Check original set it to flag??!
+
+		// WORKAROUND: Original set _soundData pointer to flag. Since this seems
+		// just intended to invalidate any prior pointer, I've replaced it with
+		// a simple null pointer
+		_soundData = nullptr; 
 	}
 }
 
@@ -930,11 +934,13 @@ int ASound1::command17() {
 }
 
 int ASound1::command18() {
+	command1();
 	playSound(0xCA6, 20);
 	return 0;
 }
 
 int ASound1::command19() {
+	command1();
 	playSound(0xCBA, 74);
 	return 0;
 }

@@ -42,7 +42,9 @@ void SoundManager::setVm(MADSEngine *vm, Audio::Mixer *mixer) {
 
 void SoundManager::test() {
 	_asound = new Nebular::ASound1(_mixer);
+	_asound->command(5);
 	_asound->command(28);
+	_asound->command(19);
 }
 
 void SoundManager::poll() {
