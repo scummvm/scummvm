@@ -35,7 +35,7 @@
 
 namespace ZVision {
 
-RlfAnimation::RlfAnimation(const Common::String &fileName, bool stream) 
+RlfAnimation::RlfAnimation(const Common::String &fileName, bool stream)
 		: _stream(stream),
 		  _lastFrameRead(0),
 		  _frameCount(0),
@@ -301,7 +301,7 @@ void RlfAnimation::decodeSimpleRunLengthEncoding(int8 *source, int8 *dest, uint3
 				numberOfSamples--;
 			}
 
-		// If numberOfSamples is >= 0, copy one sample from source to the 
+		// If numberOfSamples is >= 0, copy one sample from source to the
 		// next (numberOfSamples + 2) dest spots
 		} else {
 			if (sourceOffset + 1 >= sourceSize) {

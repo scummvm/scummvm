@@ -51,7 +51,7 @@ class CursorManager;
 class StringManager;
 class SaveManager;
 class RlfAnimation;
- 
+
 class ZVision : public Engine {
 public:
 	ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc);
@@ -70,11 +70,11 @@ private:
 	enum {
 		WINDOW_WIDTH = 640,
 		WINDOW_HEIGHT = 480,
-		
+
 		//Zork nemesis working window sizes
 		ZNEM_WORKING_WINDOW_WIDTH = 512,
 		ZNEM_WORKING_WINDOW_HEIGHT = 320,
-		
+
 		//ZGI(and default) working window sizes
 		ZGI_WORKING_WINDOW_WIDTH = 640,
 		ZGI_WORKING_WINDOW_HEIGHT = 344,
@@ -148,5 +148,5 @@ private:
 };
 
 } // End of namespace ZVision
- 
+
 #endif

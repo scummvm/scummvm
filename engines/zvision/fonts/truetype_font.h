@@ -60,10 +60,10 @@ public:
 	 *
 	 * @param filename    The file name of the .ttf file to load
 	 */
-	bool loadFile(const Common::String &filename);	
+	bool loadFile(const Common::String &filename);
 	/**
-	 * Renders the supplied text to a Surface using 0x0 as the 
-	 * background color. 
+	 * Renders the supplied text to a Surface using 0x0 as the
+	 * background color.
 	 *
 	 * @param text         The to render
 	 * @param textColor    The color to render the text with

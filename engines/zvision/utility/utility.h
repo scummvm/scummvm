@@ -93,7 +93,7 @@ void removeDuplicateEntries(Common::Array<T> &container) {
 }
 
 /**
- * Gets the name of the file (including extension). Forward or back slashes 
+ * Gets the name of the file (including extension). Forward or back slashes
  * are interpreted as directory changes
  *
  * @param fullPath    A full or partial path to the file. Ex: folderOne/folderTwo/file.txt

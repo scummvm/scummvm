@@ -25,7 +25,7 @@
 #define ZORK_AVI_DECODER_H
 
 #include "video/avi_decoder.h"
- 
+
 
 namespace ZVision {
 
@@ -56,5 +56,5 @@ private:
 };
 
 } // End of namespace ZVision
- 
+
 #endif

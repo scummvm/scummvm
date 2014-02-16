@@ -62,7 +62,7 @@ private:
 	bool _endOfData;                                           // Whether the stream end has been reached
 	uint _stereo;
 
-	/** 
+	/**
 	 * Holds the frequency and index from the last sample
 	 * 0 holds the left channel, 1 holds the right channel
 	 */

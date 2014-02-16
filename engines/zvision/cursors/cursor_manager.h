@@ -77,7 +77,7 @@ public:
 	/**
 	 * Parses a cursor name into a cursor file then creates and shows that cursor.
 	 *
-	 * @param cursorName    The name of a cursor. This *HAS* to correspond to one of the entries in _cursorNames[] 
+	 * @param cursorName    The name of a cursor. This *HAS* to correspond to one of the entries in _cursorNames[]
 	 * @param pushed        Should the cursor be pushed (true) or not pushed (false) (Another way to say it: down or up)
 	 */
 	void changeCursor(const Common::String &cursorName, bool pushed);

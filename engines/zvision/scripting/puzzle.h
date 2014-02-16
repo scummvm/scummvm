@@ -52,7 +52,7 @@ struct Puzzle {
 	struct CriteriaEntry {
 		/** The key of a global state */
 		uint32 key;
-		/**  
+		/**
 		 * What we're comparing the value of the global state against
 		 * This can either be a pure value or it can be the key of another global state
 		 */

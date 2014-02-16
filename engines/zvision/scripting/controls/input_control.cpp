@@ -37,7 +37,7 @@
 
 namespace ZVision {
 
-InputControl::InputControl(ZVision *engine, uint32 key, Common::SeekableReadStream &stream) 
+InputControl::InputControl(ZVision *engine, uint32 key, Common::SeekableReadStream &stream)
 		: Control(engine, key),
 		  _nextTabstop(0),
 		  _focused(false),

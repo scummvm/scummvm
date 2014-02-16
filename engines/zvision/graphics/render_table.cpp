@@ -115,7 +115,7 @@ void RenderTable::mutateImage(uint16 *sourceBuffer, uint16* destBuffer, uint32 d
 			// RenderTable only stores offsets from the original coordinates
 			uint32 sourceYIndex = y + _internalBuffer[index].y;
 			uint32 sourceXIndex = x + _internalBuffer[index].x;
-			
+
 			destBuffer[destOffset + normalizedX] = sourceBuffer[sourceYIndex * _numColumns + sourceXIndex];
 		}
 
@@ -154,11 +154,11 @@ void RenderTable::generatePanoramaLookupTable() {
 		// To get x in cylinder coordinates, we just need to calculate the arc length
 		// We also scale it by _panoramaOptions.linearScale
 		int32 xInCylinderCoords = int32(floor((cylinderRadius * _panoramaOptions.linearScale * alpha) + halfWidth));
-		
+
 		float cosAlpha = cos(alpha);
 
 		for (uint y = 0; y < _numRows; ++y) {
-			// To calculate y in cylinder coordinates, we can do similar triangles comparison, 
+			// To calculate y in cylinder coordinates, we can do similar triangles comparison,
 			// comparing the triangle from the center to the screen and from the center to the edge of the cylinder
 			int32 yInCylinderCoords = int32(floor(halfHeight + ((float)y - halfHeight) * cosAlpha));
 
@@ -179,7 +179,7 @@ void RenderTable::generateTiltLookupTable() {
 	float cylinderRadius = halfWidth / tan(fovInRadians);
 
 	for (uint y = 0; y < _numRows; ++y) {
-	
+
 		// Add an offset of 0.01 to overcome zero tan/atan issue (horizontal line on half of screen)
 		// Alpha represents the vertical angle between the viewer at the center of a cylinder and y
 		float alpha = atan(((float)y - halfHeight + 0.01f) / cylinderRadius);
@@ -192,7 +192,7 @@ void RenderTable::generateTiltLookupTable() {
 		uint32 columnIndex = y * _numColumns;
 
 		for (uint x = 0; x < _numColumns; ++x) {
-			// To calculate x in cylinder coordinates, we can do similar triangles comparison, 
+			// To calculate x in cylinder coordinates, we can do similar triangles comparison,
 			// comparing the triangle from the center to the screen and from the center to the edge of the cylinder
 			int32 xInCylinderCoords = int32(floor(halfWidth + ((float)x - halfWidth) * cosAlpha));
 

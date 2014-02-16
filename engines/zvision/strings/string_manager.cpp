@@ -36,7 +36,7 @@
 
 namespace ZVision {
 
-StringManager::StringManager(ZVision *engine) 
+StringManager::StringManager(ZVision *engine)
 	: _engine(engine) {
 }
 
@@ -218,7 +218,7 @@ Common::String StringManager::readWideLine(Common::SeekableReadStream &stream) {
 	// Don't spam the user with warnings about UTF-16 support.
 	// Just do one warning per String
 	bool charOverflowWarning = false;
-	
+
 	uint16 value = stream.readUint16LE();
 	while (!stream.eos()) {
 		// Check for CRLF
@@ -235,7 +235,7 @@ Common::String StringManager::readWideLine(Common::SeekableReadStream &stream) {
 			value = '?';
 		}
 		char charValue = (char)value;
-		
+
 		asciiString += charValue;
 
 		value = stream.readUint16LE();

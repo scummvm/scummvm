@@ -38,7 +38,7 @@
 namespace ZVision {
 
 AnimationControl::AnimationControl(ZVision *engine, uint32 controlKey, const Common::String &fileName)
-		: Control(engine, controlKey), 
+		: Control(engine, controlKey),
 		  _fileType(RLF),
 		  _loopCount(1),
 		  _currentLoop(0),

@@ -36,7 +36,7 @@ namespace ZVision {
 class LzssReadStream : public Common::ReadStream {
 public:
 	/**
-	 * A class that decompresses LZSS data and implements ReadStream for easy access 
+	 * A class that decompresses LZSS data and implements ReadStream for easy access
 	 * to the decompiled data.
 	 *
 	 * @param source              The source data

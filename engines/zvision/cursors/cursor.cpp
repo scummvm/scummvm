@@ -30,14 +30,14 @@
 
 namespace ZVision {
 
-ZorkCursor::ZorkCursor() 
+ZorkCursor::ZorkCursor()
 	: _width(0),
 	  _height(0),
 	  _hotspotX(0),
 	  _hotspotY(0) {
 }
 
-ZorkCursor::ZorkCursor(const Common::String &fileName) 
+ZorkCursor::ZorkCursor(const Common::String &fileName)
 		: _width(0),
 		  _height(0),
 		  _hotspotX(0),

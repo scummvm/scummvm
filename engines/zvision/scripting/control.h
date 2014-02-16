@@ -95,7 +95,7 @@ public:
 	 * store the amount of time left on the timer. Any Controls overriding this *MUST* write
 	 * their key as the first data outputted. The default implementation is NOP.
 	 *
-	 * NOTE: If this method is overridden, you MUST also override deserialize() 
+	 * NOTE: If this method is overridden, you MUST also override deserialize()
 	 * and needsSerialization()
 	 *
 	 * @param stream    Stream to write any needed data to
