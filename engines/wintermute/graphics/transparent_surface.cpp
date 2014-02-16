@@ -356,7 +356,7 @@ void doBlitBinaryFast(byte *ino, byte *outo, uint32 width, uint32 height, uint32
  * @color colormod in 0xAARRGGBB format - 0xFFFFFFFF for no colormod
  */
 
-template<class Blender> 
+template<class Blender>
 void doBlit(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep, uint32 color) {
 	Blender b;
 	byte *in;
@@ -769,7 +769,7 @@ TransparentSurface *TransparentSurface::scale(uint16 newWidth, uint16 newHeight)
 	assert(sax && say);
 
 	/*
-	* Precalculate row increments 
+	* Precalculate row increments
 	*/
 	int spixelw = (srcW - 1);
 	int spixelh = (srcH - 1);
@@ -789,8 +789,8 @@ TransparentSurface *TransparentSurface::scale(uint16 newWidth, uint16 newHeight)
 		csx += sx;
 
 		/* Guard from overflows */
-		if (csx > ssx) { 
-			csx = ssx; 
+		if (csx > ssx) {
+			csx = ssx;
 		}
 	}
 

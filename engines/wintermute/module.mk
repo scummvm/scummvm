@@ -1,5 +1,5 @@
 MODULE := engines/wintermute
- 
+
 MODULE_OBJS := \
 	ad/ad_actor.o \
 	ad/ad_entity.o \
@@ -116,14 +116,14 @@ MODULE_OBJS := \
 	debugger.o \
 	wintermute.o \
 	persistent.o
- 
+
 MODULE_DIRS += \
 	engines/wintermute
- 
+
 # This module can be built as a plugin
 ifeq ($(ENABLE_WINTERMUTE), DYNAMIC_PLUGIN)
 PLUGIN := 1
 endif
- 
-# Include common rules 
+
+# Include common rules
 include $(srcdir)/rules.mk

@@ -341,7 +341,7 @@ bool BaseSurfaceOSystem::display(int x, int y, Rect32 rect, TSpriteBlendMode ble
 //////////////////////////////////////////////////////////////////////////
 bool BaseSurfaceOSystem::displayTrans(int x, int y, Rect32 rect, uint32 alpha, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
 	_rotation = 0;
-	return drawSprite(x, y, &rect, nullptr, TransformStruct(kDefaultZoomX, kDefaultZoomY, blendMode, alpha, mirrorX, mirrorY)); 
+	return drawSprite(x, y, &rect, nullptr, TransformStruct(kDefaultZoomX, kDefaultZoomY, blendMode, alpha, mirrorX, mirrorY));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -441,7 +441,7 @@ bool BaseSurfaceOSystem::drawSprite(int x, int y, Rect32 *rect, Rect32 *newRect,
 		transform._alphaDisable = true;
 	}
 
-	renderer->drawSurface(this, _surface, &srcRect, &position, transform); 
+	renderer->drawSurface(this, _surface, &srcRect, &position, transform);
 	return STATUS_OK;
 }
 

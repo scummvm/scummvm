@@ -131,13 +131,13 @@ struct TransparentSurface : public Graphics::Surface {
 	                  int width = -1, int height = -1,
 	                  TSpriteBlendMode blend = BLEND_NORMAL);
 	void applyColorKey(uint8 r, uint8 g, uint8 b, bool overwriteAlpha = false);
-	
+
 	/**
 	 * @brief Scale function; this returns a transformed version of this surface after rotation and
 	 * scaling. Please do not use this if angle != 0, use rotoscale.
 	 *
 	 * @param newWidth the resulting width.
-	 * @param newHeight the resulting height. 
+	 * @param newHeight the resulting height.
 	 * @see TransformStruct
 	 */
 	TransparentSurface *scale(uint16 newWidth, uint16 newHeight) const;
@@ -147,7 +147,7 @@ struct TransparentSurface : public Graphics::Surface {
 	 * scaling. Please do not use this if angle == 0, use plain old scaling function.
 	 *
 	 * @param transform a TransformStruct wrapping the required info. @see TransformStruct
-	 * 
+	 *
 	 */
 	TransparentSurface *rotoscale(const TransformStruct &transform) const;
 	AlphaType getAlphaMode() const;

@@ -297,7 +297,7 @@ BaseSurface *BaseFontTT::renderTextToTexture(const WideString &text, int width, 
 			uint8 a, r, g, b;
 			format.colorToRGB(*pixels, r, g, b);
 			a = r;
-			*pixels++ = format.ARGBToColor(a, r, g, b); 
+			*pixels++ = format.ARGBToColor(a, r, g, b);
 		}
 	}
 

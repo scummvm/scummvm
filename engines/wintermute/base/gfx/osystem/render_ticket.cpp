@@ -86,9 +86,9 @@ RenderTicket::~RenderTicket() {
 
 bool RenderTicket::operator==(const RenderTicket &t) const {
 	if ((t._owner != _owner) ||
-		(t._transform != _transform)  || 
+		(t._transform != _transform)  ||
 		(t._dstRect != _dstRect) ||
-		(t._srcRect != _srcRect) 
+		(t._srcRect != _srcRect)
 	) {
 		return false;
 	}

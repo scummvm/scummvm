@@ -235,7 +235,7 @@ const char* BaseSubFrame::getSurfaceFilename() {
 
 //////////////////////////////////////////////////////////////////////
 bool BaseSubFrame::draw(int x, int y, BaseObject *registerOwner, float zoomX, float zoomY, bool precise, uint32 alpha, float rotate, TSpriteBlendMode blendMode) {
-	
+
 	rotate = fmod(rotate, 360.0f);
 	if (rotate < 0) {
 		rotate += 360.0f;
@@ -271,7 +271,7 @@ bool BaseSubFrame::draw(int x, int y, BaseObject *registerOwner, float zoomX, fl
 		TransformStruct transform = TransformStruct(zoomX, zoomY, (uint32)rotate, _hotspotX, _hotspotY, blendMode, alpha, _mirrorX, _mirrorY, 0, 0);
 		Rect32 newRect = TransformTools::newRect (oldRect, transform, &newHotspot);
 		newOrigin = origin - newHotspot;
-		res = _surface->displayTransform(newOrigin.x, newOrigin.y, oldRect, newRect, transform); 
+		res = _surface->displayTransform(newOrigin.x, newOrigin.y, oldRect, newRect, transform);
 	} else {
 		if (zoomX == kDefaultZoomX && zoomY == kDefaultZoomY) {
 			res = _surface->displayTrans(x - _hotspotX, y - _hotspotY, getRect(), alpha, blendMode, _mirrorX, _mirrorY);
