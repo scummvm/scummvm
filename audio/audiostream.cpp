@@ -30,7 +30,7 @@
 #include "audio/audiostream.h"
 #include "audio/decoders/flac.h"
 #include "audio/decoders/mp3.h"
-//#include "audio/decoders/quicktime.h" do not include in REsidualVM
+//#include "audio/decoders/quicktime.h" do not include in ResidualVM
 #include "audio/decoders/raw.h"
 #include "audio/decoders/vorbis.h"
 
