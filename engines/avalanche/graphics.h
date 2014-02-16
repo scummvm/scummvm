@@ -109,6 +109,9 @@ public:
 
 	// Shoot em' up's functions:
 	void seuDrawTitle();
+	void seuLoad();
+	void seuFree();
+	void seuDrawPicture(int x, int y, byte which);
 
 	void clearAlso();
 	void clearTextBar();
@@ -163,9 +166,14 @@ private:
 	Graphics::Surface _nimInitials[3];
 	Graphics::Surface _nimLogo;
 
+	// For the mini-game "Shoot em' up".
+	Graphics::Surface _seuPictures[99];
+
 	byte _egaPalette[64][3];
 
 	AvalancheEngine *_vm;
+
+	void skipDifference(int size, const Graphics::Surface &picture, Common::File &file);
 
 	// Further information about these two: http://www.shikadi.net/moddingwiki/Raw_EGA_data
 	Graphics::Surface loadPictureGraphic(Common::File &file); // Reads Graphic-planar EGA data.

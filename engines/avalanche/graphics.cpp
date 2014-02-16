@@ -594,15 +594,8 @@ Graphics::Surface GraphicManager::ghostLoadPicture(Common::File &file, Common::P
 	coord.y = cb._y;
 	
 	Graphics::Surface picture = loadPictureGraphic(file);
-	
-	int bytesPerRow = (picture.w / 8);
-	if ((picture.w % 8) > 0)
-		bytesPerRow += 1;
-	int loadedBytes = picture.h * bytesPerRow * 4 + 4;
-	// * 4 is for the four planes, + 4 is for the reading of the width and the height at loadPictureGraphic's beginning.
 
-	int bytesToSkip = cb._size - loadedBytes;
-	file.skip(bytesToSkip);
+	skipDifference(cb._size, picture, file);
 		
 	return picture;
 }
@@ -728,6 +721,51 @@ void GraphicManager::seuDrawTitle() {
 	doubledPicture.free();
 
 	file.close();
+}
+
+void GraphicManager::seuLoad() {
+	Common::File file;
+
+	if (!file.open("notts.avd"))
+		error("AVALANCHE: ShootEmUp: File not found: notts.avd");
+	
+	for (int i = 0; i < 99; i++) {
+		int size = file.readUint16LE();
+		_seuPictures[i] = loadPictureGraphic(file);
+		skipDifference(size, _seuPictures[i], file);
+	}
+
+	file.close();
+}
+
+void GraphicManager::seuFree() {
+	for (int i = 0; i < 99; i++)
+		_seuPictures[i].free();
+}
+
+/**
+ * @remarks	Originally called 'display'
+ */
+void GraphicManager::seuDrawPicture(int x, int y, byte which) {
+	drawPicture(_surface, _seuPictures[which], x, y);
+}
+
+/**
+ * This function is for skipping the difference between a stored 'size' value associated with a picture
+ * and the actual size of the pictures  when reading them from files for Ghostroom and Shoot em' up.
+ * It's needed bacuse the original code loaded the pictures to arrays first and only used the useful parts
+ * of these arrays when drawing the images, but in the ScummVM version, we only read the
+ * useful parts from the files, so we have to skip these differences between readings.
+ */
+void GraphicManager::skipDifference(int size, const Graphics::Surface &picture, Common::File &file) {
+	int bytesPerRow = (picture.w / 8);
+	if ((picture.w % 8) > 0)
+		bytesPerRow += 1;
+	int loadedBytes = picture.h * bytesPerRow * 4 + 4;
+	// * 4 is for the four planes, + 4 is for the reading of the width and the height at loadPictureGraphic's beginning.
+
+	int bytesToSkip = size - loadedBytes;
+	file.skip(bytesToSkip);
 }
 
 /**

@@ -38,6 +38,9 @@ public:
 	void run();
 
 private:
+	static const byte kFacingRight;
+	static const byte kStocks;
+
 	AvalancheEngine *_vm;
 
 	byte _time;

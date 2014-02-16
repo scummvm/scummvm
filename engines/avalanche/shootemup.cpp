@@ -32,6 +32,9 @@
 
 namespace Avalanche {
 
+const byte ShootEmUp::kFacingRight = 87;
+const byte ShootEmUp::kStocks = 27;
+
 ShootEmUp::ShootEmUp(AvalancheEngine *vm) {
 	_vm = vm;
 
@@ -39,7 +42,25 @@ ShootEmUp::ShootEmUp(AvalancheEngine *vm) {
 }
 
 void ShootEmUp::run() {
+	CursorMan.showMouse(false);
+	_vm->_graphics->saveScreen();
+	_vm->fadeOut();
 	_vm->_graphics->seuDrawTitle();
+	_vm->fadeIn();
+
+	_vm->_graphics->seuLoad();
+
+	// Should we show the instructions?
+	while (!_vm->shouldQuit()) {
+		Common::Event event;
+		_vm->getEvent(event);
+		if (event.type == Common::EVENT_KEYDOWN) {
+			if ((event.kbd.keycode == Common::KEYCODE_i) || (event.kbd.keycode == Common::KEYCODE_F1))
+				instructions();
+			break; // We don't show the instructions and simply go on with the minigame if not I or F1 was pressed.
+		}
+	}
+
 	setup();
 	initRunner(20, 70, 48, 54, _vm->_rnd->getRandomNumber(4) + 1, _vm->_rnd->getRandomNumber(3) - 2);
 	initRunner(600, 70, 48, 54, _vm->_rnd->getRandomNumber(4) + 1, _vm->_rnd->getRandomNumber(3) - 2);
@@ -60,6 +81,12 @@ void ShootEmUp::run() {
 		check321();
 		readKbd();
 	} while (_time != 0);
+
+	_vm->fadeOut();
+	_vm->_graphics->restoreScreen();
+	_vm->_graphics->removeBackup();
+	_vm->fadeIn();
+	CursorMan.showMouse(true);
 }
 
 bool ShootEmUp::overlap(uint16 a1x, uint16 a1y, uint16 a2x, uint16 a2y, uint16 b1x, uint16 b1y, uint16 b2x, uint16 b2y) {
@@ -113,11 +140,58 @@ void ShootEmUp::newEscape() {
 }
 
 void ShootEmUp::nextPage() {
-	warning("STUB: ShootEmUp::nextPage()");
+	_vm->_graphics->drawNormalText("Press a key for next page >", _vm->_font, 8, 400, 190, kColorWhite);
+	_vm->_graphics->refreshScreen();
+
+	while (!_vm->shouldQuit()) {
+		Common::Event event;
+		_vm->getEvent(event);
+		if (event.type == Common::EVENT_KEYDOWN) {
+			break;
+		}
+	}
+
+	_vm->_graphics->drawFilledRectangle(Common::Rect(0, 0, 640, 200), kColorBlack);
 }
 
 void ShootEmUp::instructions() {
-	warning("STUB: ShootEmUp::instructions()");
+	_vm->_graphics->drawFilledRectangle(Common::Rect(0, 0, 640, 200), kColorBlack); // Black out the whole screen.
+	_vm->_graphics->seuDrawPicture(25, 25, kFacingRight);
+	_vm->_graphics->drawNormalText("< Avvy, our hero, needs your help - you must move him around.", _vm->_font, 8, 60, 35, kColorWhite);
+	_vm->_graphics->drawNormalText("(He''s too terrified to move himself!)", _vm->_font, 8, 80, 45, kColorWhite);
+	_vm->_graphics->drawNormalText("Your task is to prevent the people in the stocks from escaping", _vm->_font, 8, 0, 75, kColorWhite);
+	_vm->_graphics->drawNormalText("by pelting them with rotten fruit, eggs and bread. The keys are:", _vm->_font, 8, 0, 85, kColorWhite);
+	_vm->_graphics->drawNormalText("LEFT SHIFT", _vm->_font, 8, 80, 115, kColorWhite);
+	_vm->_graphics->drawNormalText("Move left.", _vm->_font, 8, 200, 115, kColorWhite);
+	_vm->_graphics->drawNormalText("RIGHT SHIFT", _vm->_font, 8, 72, 135, kColorWhite);
+	_vm->_graphics->drawNormalText("Move right.", _vm->_font, 8, 200, 135, kColorWhite);
+	_vm->_graphics->drawNormalText("ALT", _vm->_font, 8, 136, 155, kColorWhite);
+	_vm->_graphics->drawNormalText("Throw something.", _vm->_font, 8, 200, 155, kColorWhite);
+
+	nextPage();
+
+	_vm->_graphics->seuDrawPicture(25, 35, kStocks);
+	_vm->_graphics->drawNormalText("This man is in the stocks. Your job is to stop him getting out.", _vm->_font, 8, 80, 35, kColorWhite);
+	_vm->_graphics->drawNormalText("UNFORTUNATELY... the locks on the stocks are loose, and every", _vm->_font, 8, 88, 45, kColorWhite);
+	_vm->_graphics->drawNormalText("so often, someone will discover this and try to get out.", _vm->_font, 8, 88, 55, kColorWhite);
+	_vm->_graphics->seuDrawPicture(25, 85, kStocks + 2);
+	_vm->_graphics->drawNormalText("< Someone who has found a way out!", _vm->_font, 8, 80, 85, kColorWhite);
+	_vm->_graphics->drawNormalText("You MUST IMMEDIATELY hit people smiling like this, or they", _vm->_font, 8, 88, 95, kColorWhite);
+	_vm->_graphics->drawNormalText("will disappear and lose you points.", _vm->_font, 8, 88, 105, kColorWhite);
+	_vm->_graphics->seuDrawPicture(25, 125, kStocks + 5);
+	_vm->_graphics->seuDrawPicture(25, 155, kStocks + 4);
+	_vm->_graphics->drawNormalText("< Oh dear!", _vm->_font, 8, 80, 125, kColorWhite);
+
+	nextPage();
+
+	_vm->_graphics->drawNormalText("Your task is made harder by:", _vm->_font, 8, 0, 35, kColorWhite);
+	_vm->_graphics->seuDrawPicture(25, 55, 48);
+	_vm->_graphics->drawNormalText("< Yokels. These people will run in front of you. If you hit", _vm->_font, 8, 60, 55, kColorWhite);
+	_vm->_graphics->drawNormalText("them, you will lose MORE points than you get hitting people", _vm->_font, 8, 68, 65, kColorWhite);
+	_vm->_graphics->drawNormalText("in the stocks. So BEWARE!", _vm->_font, 8, 68, 75, kColorWhite);
+	_vm->_graphics->drawNormalText("Good luck with the game!", _vm->_font, 8, 80, 125, kColorWhite);
+
+	nextPage();
 }
 
 void ShootEmUp::setup() {
