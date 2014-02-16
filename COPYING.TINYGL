@@ -1,6 +1,8 @@
-NOTE: This implementation of TinyGL contains additional code and
-modifications added only for ResidualVM project.
-Look into the source code file "Changelog" for more info.
+NOTE: ResidualVM uses code from TinyGL, which is covered by the following license.
+This implementation of TinyGL contains additional code and modifications
+added only for ResidualVM project.
+Look into the source code file "graphics/tinygl/Changelog" for more info.
+
 
 Copyright notice:
 

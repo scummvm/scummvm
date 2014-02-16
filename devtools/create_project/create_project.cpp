@@ -1320,7 +1320,11 @@ void ProjectProvider::createProject(BuildSetup &setup) {
 		in.push_back(setup.srcDir + "/COPYING.FREEFONT");
 		in.push_back(setup.srcDir + "/COPYRIGHT");
 		//ResidualVM specific:
+		in.push_back(setup.srcDir + "/COPYING.ISC");
+		in.push_back(setup.srcDir + "/COPYING.LUA");
+		in.push_back(setup.srcDir + "/COPYING.TINYGL");
 		in.push_back(setup.srcDir + "/KNOWN_BUGS");
+
 		in.push_back(setup.srcDir + "/NEWS");
 		in.push_back(setup.srcDir + "/README");
 		in.push_back(setup.srcDir + "/TODO");
