@@ -321,7 +321,25 @@ void sceneHandler09_checkHangerCollide() {
 }
 
 void sceneHandler09_hangerStartCycle() {
-	warning("STUB: sceneHandler09_hangerStartCycle()");
+	StaticANIObject *ani = g_vars->scene09_hangers[g_vars->scene09_var10]->ani;
+
+	if (ani->_movement) {
+		ani->startAnim(MV_VSN_CYCLE2, 0, -1);
+		g_vars->scene09_hangers[g_vars->scene09_var10]->field_8 = 0;
+		g_vars->scene09_hangers[g_vars->scene09_var10]->phase = g_vars->scene09_var11 + (g_fp->_mouseScreenPos.y - g_vars->scene09_var19) / 2;
+
+		if (g_vars->scene09_var12 != -1000 && g_vars->scene09_hangers[g_vars->scene09_var10]->phase != g_vars->scene09_var12) {
+			ExCommand *ex = new ExCommand(0, 35, SND_9_019, 0, 0, 0, 1, 0, 0, 0);
+
+			ex->_field_14 = 1;
+			ex->_excFlags |= 2;
+			ex->postMessage();
+
+			g_vars->scene09_var12 = -1000;
+		}
+	} else {
+		g_vars->scene09_var10 = -1;
+	}
 }
 
 int sceneHandler09(ExCommand *cmd) {

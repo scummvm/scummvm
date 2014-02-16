@@ -606,6 +606,7 @@ namespace Fullpipe {
 #define QU_TTA9_GOL 4937
 #define SND_9_006 3650
 #define SND_9_018 4200
+#define SND_9_019 4201
 #define ST_GLT_SIT 926
 #define ST_GRT9_GRIT 2722
 #define ST_GRT9_NORM 2721
