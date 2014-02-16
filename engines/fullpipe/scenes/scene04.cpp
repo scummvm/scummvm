@@ -263,8 +263,8 @@ void sceneHandler04_clickButton() {
 	StaticANIObject *but = g_fp->_currentScene->getStaticANIObject1ById(ANI_BUTTON, -1);
 
 	if (but) {
-		if (!g_vars->scene04_clock->_movement || 
-			(g_vars->scene04_clock->_movement->_id == MV_CLK_GO && g_vars->scene04_clock->_movement->_currDynamicPhaseIndex > 3 && 
+		if (!g_vars->scene04_clock->_movement ||
+			(g_vars->scene04_clock->_movement->_id == MV_CLK_GO && g_vars->scene04_clock->_movement->_currDynamicPhaseIndex > 3 &&
 			 g_vars->scene04_clock->_movement->_currDynamicPhaseIndex < 105)) {
 			if (!g_vars->scene04_hand->_movement && !g_vars->scene04_bottleIsTaken) {
 				but->startAnim(MV_BTN_CLICK, 0, -1);
@@ -1196,7 +1196,7 @@ void sceneHandler04_takeBottle() {
 
 void sceneHandler04_takeKozyawka() {
 	if (g_vars->scene04_kozyawkiAni.size() > 0) {
-		if (g_vars->scene04_kozyawkiAni.size() == 1) 
+		if (g_vars->scene04_kozyawkiAni.size() == 1)
 			g_vars->scene04_objectIsTaken = true;
 
 		StaticANIObject *koz = g_vars->scene04_kozyawkiAni.front();
@@ -1284,7 +1284,7 @@ int sceneHandler04(ExCommand *ex) {
 	case MSG_UPDATEBOTTLE:
 		sceneHandler04_updateBottle();
 		break;
-		
+
 	case MSG_CLICKBOTTLE:
 		sceneHandler04_clickBottle();
 		break;
@@ -1486,7 +1486,7 @@ int sceneHandler04(ExCommand *ex) {
 	case MSG_SC4_DROPBOTTLE:
 		sceneHandler04_dropBottle();
 		break;
-		
+
 	case MSG_SC4_COINOUT:
 		g_vars->scene04_clock->changeStatics2(ST_CLK_CLOSED);
 		g_vars->scene04_coinPut = false;

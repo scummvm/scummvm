@@ -123,7 +123,7 @@ void sceneHandler05_makeWackoFeedback() {
 }
 
 void sceneHandler05_resetTicks() {
-	if (g_fp->_aniMan->_movement && (g_fp->_aniMan->_movement->_id == MV_MANHDL_HANDLEUP 
+	if (g_fp->_aniMan->_movement && (g_fp->_aniMan->_movement->_id == MV_MANHDL_HANDLEUP
 										   || g_fp->_aniMan->_movement->_id == MV_MANHDL_HANDLEDOWN))
 		g_vars->scene05_wackoTicker = g_fp->_updateTicks;
 	else
@@ -312,7 +312,7 @@ int sceneHandler05(ExCommand *ex) {
 		break;
 
 	case MSG_SC5_MAKEOTMFEEDBACK:
-		if (!g_fp->_aniMan->_movement || (g_fp->_aniMan->_movement->_id != MV_MANHDL_HANDLEUP 
+		if (!g_fp->_aniMan->_movement || (g_fp->_aniMan->_movement->_id != MV_MANHDL_HANDLEUP
 												&& g_fp->_aniMan->_movement->_id != MV_MANHDL_HANDLEDOWN)) {
 			sceneHandler05_makeWackoFeedback();
 			g_vars->scene05_wackoTicker = 0;
@@ -341,7 +341,7 @@ int sceneHandler05(ExCommand *ex) {
 		sceneHandler05_testHatch(ex);
 		break;
 
-	case 33: 
+	case 33:
 		{
 			int res = 0;
 			if (g_fp->_aniMan2) {
@@ -356,7 +356,7 @@ int sceneHandler05(ExCommand *ex) {
 
 			if (g_vars->scene05_wackoTicker) {
 				if ((g_fp->_updateTicks - g_vars->scene05_wackoTicker) > 62) {
-					if (!g_fp->_aniMan->_movement || (g_fp->_aniMan->_movement->_id != MV_MANHDL_HANDLEUP 
+					if (!g_fp->_aniMan->_movement || (g_fp->_aniMan->_movement->_id != MV_MANHDL_HANDLEUP
 															&& g_fp->_aniMan->_movement->_id != MV_MANHDL_HANDLEDOWN)) {
 						if (g_vars->scene05_handleFlipper % 2)
 							sceneHandler05_makeWackoFeedback();

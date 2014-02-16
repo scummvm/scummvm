@@ -255,7 +255,7 @@ int MctlLadder::collisionDetection(StaticANIObject *man) {
 
 	if ((double)(man->_oy - _ladderY) / (double)_height < 0.0)
 		delta = -0.5;
-	else 
+	else
 		delta = 0.5;
 
 	int res = (int)((double)(man->_oy - _ladderY) / (double)_height + delta);
@@ -269,7 +269,7 @@ int MctlLadder::collisionDetection(StaticANIObject *man) {
 void MctlLadder::addObject(StaticANIObject *obj) {
 	if (findObjectPos(obj) < 0) {
 		MctlLadderMovement *movement = new MctlLadderMovement;
-		
+
 		if (initMovement(obj, movement)) {
 			_mgm.addItem(obj->_id);
 			_movements.push_back(movement);
@@ -1693,7 +1693,7 @@ double MovGraph2::findMinPath(LinkInfo *linkInfoSource, LinkInfo *linkInfoDest, 
 		} else if (linkInfoSource->link) {
 			linkInfoWorkSource.node = linkInfoSource->link->_movGraphNode1;
 			linkInfoWorkSource.link = 0;
-			
+
 			Common::Array<MovGraphLink *> tmpList;
 
 			double newDistance = findMinPath(&linkInfoWorkSource, linkInfoDest, &tmpList);
@@ -1709,9 +1709,9 @@ double MovGraph2::findMinPath(LinkInfo *linkInfoSource, LinkInfo *linkInfoDest, 
 
 			linkInfoWorkSource.link = 0;
 			linkInfoWorkSource.node = linkInfoSource->link->_movGraphNode2;
-			
+
 			tmpList.clear();
-			
+
 			newDistance = findMinPath(&linkInfoWorkSource, linkInfoDest, &tmpList);
 
 			if (newDistance >= 0 && (minDistance < 0.0 || newDistance < minDistance)) {

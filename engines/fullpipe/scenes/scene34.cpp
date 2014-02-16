@@ -216,7 +216,7 @@ void sceneHandler34_animateAction(ExCommand *cmd) {
 		int qId = 0;
 
 		if (ox == 887) {
-			if (oy != 370) 
+			if (oy != 370)
 				return;
 
 			qId = QU_SC34_FROMSTOOL;

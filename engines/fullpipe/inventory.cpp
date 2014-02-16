@@ -219,7 +219,7 @@ void Inventory2::rebuildItemRects() {
 		InventoryIcon *icn = new InventoryIcon();
 
 		icn->inventoryItemId = _itemsPool[idx]->id;
-		
+
 		icn->pictureObjectNormal = _scene->getPictureObjectById(_itemsPool[idx]->pictureObjectNormal, 0);
 		icn->pictureObjectHover = _scene->getPictureObjectById(_itemsPool[idx]->pictureObjectHover, 0);
 		icn->pictureObjectSelected = _scene->getPictureObjectById(_itemsPool[idx]->pictureObjectSelected, 0);
@@ -352,7 +352,7 @@ bool Inventory2::handleLeftClick(ExCommand *cmd) {
 	bool res = false;
 
 	for (uint i = 0; i < _inventoryIcons.size(); i++) {
-		if (cmd->_x >= _inventoryIcons[i]->x1 && cmd->_x <= _inventoryIcons[i]->x2 && 
+		if (cmd->_x >= _inventoryIcons[i]->x1 && cmd->_x <= _inventoryIcons[i]->x2 &&
 			cmd->_y >= _inventoryIcons[i]->y1 && cmd->_y <= _inventoryIcons[i]->y2) {
 			if (getSelectedItemId()) {
 				if (getSelectedItemId() != _inventoryIcons[i]->inventoryItemId)

@@ -671,7 +671,7 @@ int sceneHandler06(ExCommand *ex) {
 
 				if (!pic || !canInteractAny(g_fp->_aniMan, pic, ex->_keyCode)) {
 					if ((g_fp->_sceneRect.right - ex->_sceneClickX < 47
-						 && g_fp->_sceneRect.right < g_fp->_sceneWidth - 1) 
+						 && g_fp->_sceneRect.right < g_fp->_sceneWidth - 1)
 						|| (ex->_sceneClickX - g_fp->_sceneRect.left < 47 && g_fp->_sceneRect.left > 0)) {
 						g_fp->processArcade(ex);
 						return 0;

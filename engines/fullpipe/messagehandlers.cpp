@@ -151,7 +151,7 @@ int global_messageHandler1(ExCommand *cmd) {
 
 			if (g_fp->_updateFlag && (invItem = g_fp->_inventory->getHoveredItem(&g_fp->_mouseScreenPos))) {
 				g_fp->_cursorId = PIC_CSR_ITN;
-				if (!g_fp->_currSelectedInventoryItemId && !g_fp->_aniMan->_movement && 
+				if (!g_fp->_currSelectedInventoryItemId && !g_fp->_aniMan->_movement &&
 					!(g_fp->_aniMan->_flags & 0x100) && g_fp->_aniMan->isIdle()) {
 					int st = g_fp->_aniMan->_statics->_staticsId;
 					ExCommand *newex = 0;
