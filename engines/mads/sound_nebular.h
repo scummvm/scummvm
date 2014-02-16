@@ -45,7 +45,7 @@ public:
 	int _field2;
 	int _field3;
 	int _field4;
-	int _field5;
+	int _sampleIndex;
 	int _volume;
 	int _field7;
 	int _field8;
@@ -83,29 +83,29 @@ public:
 	int _field6;
 };
 
-class SoundData {
+class AdlibSample {
 public:
-	int _field0;
-	int _field1;
-	int _field2;
-	int _field3;
-	int _field4;
-	int _field5;
-	int _field6;
-	int _field7;
-	int _field8;
-	int _field9;
-	int _fieldA;
-	int _fieldB;
-	int _fieldC;
-	int _fieldD;
+	int _attackRate;
+	int _decayRate;
+	int _sustainLevel;
+	int _releaseRate;
+	bool _egTyp;
+	bool _ksr;
+	int _totalLevel;
+	int _scalingLevel;
+	int _waveformSelect;
+	int _freqMultiple;
+	int _feedback;
+	bool _ampMod;
+	int _vib;
+	int _alg;
 	int _fieldE;
-	int _field10;
-	int _field12;
+	int _freqMask;
+	int _freqBase;
 	int _field14;
 
-	SoundData() {}
-	SoundData(Common::SeekableReadStream &s);
+	AdlibSample() {}
+	AdlibSample(Common::SeekableReadStream &s);
 };
 
 #define ADLIB_CHANNEL_COUNT 9
@@ -155,8 +155,17 @@ private:
 
 	void updateChannelState();
 	void updateActiveChannel();
-	void channelProc1(int recIndex);
-	void channelProc2();
+	
+	/**
+	 * Loads up the specified sample
+	 */
+	void loadSample(int sampleIndex);
+
+	/**
+	 * Writes out the data of the selected sample to the Adlib
+	 */
+	void processSample();
+
 	void updateFNumber();
 protected:
 	/**
@@ -233,8 +242,8 @@ public:
 	AdlibChannel _channels[ADLIB_CHANNEL_COUNT];
 	AdlibChannel *_activeChannelPtr;
 	AdlibChannelData _channelData[11];
-	Common::Array<SoundData> _soundData;
-	SoundData *_soundDataPtr;
+	Common::Array<AdlibSample> _samples;
+	AdlibSample *_samplePtr;
 	Common::File _soundFile;
 	int _dataOffset;
 	int _frameCounter;

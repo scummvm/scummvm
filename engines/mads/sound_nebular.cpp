@@ -38,7 +38,7 @@ AdlibChannel::AdlibChannel() {
 	_field2 = 0;
 	_field3 = 0;
 	_field4 = 0;
-	_field5 = 0;
+	_sampleIndex = 0;
 	_volume = 0;
 	_field7 = 0;
 	_field8 = 0;
@@ -115,24 +115,25 @@ void AdlibChannel::check(byte *nullPtr) {
 
 /*-----------------------------------------------------------------------*/
 
-SoundData::SoundData(Common::SeekableReadStream &s) {
-	_field0 = s.readByte();
-	_field1 = s.readByte();
-	_field2 = s.readByte();
-	_field3 = s.readByte();
-	_field4 = s.readByte();
-	_field5 = s.readByte();
-	_field6 = s.readByte();
-	_field7 = s.readByte();
-	_field8 = s.readByte();
-	_field9 = s.readByte();
-	_fieldA = s.readByte();
-	_fieldB = s.readByte();
-	_fieldC = s.readByte();
-	_fieldD = s.readByte();
+AdlibSample::AdlibSample(Common::SeekableReadStream &s) {
+	_attackRate = s.readByte();
+	_decayRate = s.readByte();
+	_sustainLevel = s.readByte();
+	_releaseRate = s.readByte();
+	_egTyp = s.readByte() != 0;
+	_ksr = s.readByte() != 0;
+	_totalLevel = s.readByte();
+	_scalingLevel = s.readByte();
+	_waveformSelect = s.readByte();
+	_freqMultiple = s.readByte();
+	_feedback = s.readByte();
+	_ampMod = s.readByte() != 0;
+	_vib = s.readByte();
+	_alg = s.readByte();
 	_fieldE = s.readByte();
-	_field10 = s.readUint16LE();
-	_field12 = s.readUint16LE();
+	s.skip(1);
+	_freqMask = s.readUint16LE();
+	_freqBase = s.readUint16LE();
 	_field14 = s.readUint16LE();
 }
 
@@ -151,7 +152,7 @@ ASound::ASound(Audio::Mixer *mixer, const Common::String &filename, int dataOffs
 
 	// Initialise fields
 	_activeChannelPtr = nullptr;
-	_soundDataPtr = nullptr;
+	_samplePtr = nullptr;
 	_frameCounter = 0;
 	_isDisabled = false;
 	_v1 = 0;
@@ -456,9 +457,9 @@ void ASound::pollActiveChannel() {
 						break;
 
 					case 3:
-						chan->_field5 = *++pSrc;
+						chan->_sampleIndex = *++pSrc;
 						chan->_pSrc += 2;
-						channelProc1(chan->_field5);
+						loadSample(chan->_sampleIndex);
 						break;
 
 					case 4:
@@ -669,27 +670,27 @@ void ASound::updateActiveChannel() {
 	write2(2, reg, val2);
 }
 
-void ASound::channelProc1(int recIndex) {
+void ASound::loadSample(int sampleIndex) {
 	_activeChannelReg = 0xB0 + _activeChannelNumber;
 	write2(8, _activeChannelReg, _ports[_activeChannelReg] & 0xDF);
 
 	_activeChannelReg = _activeChannelNumber;
-	_soundDataPtr = &_soundData[recIndex * 2];
+	_samplePtr = &_samples[sampleIndex * 2];
 	_v11 = outputChannels[outputIndexes[_activeChannelReg * 2 - 1]];
-	channelProc2();
+	processSample();
 
 	AdlibChannelData &cd = _channelData[_activeChannelNumber];
-	cd._field6 = _soundDataPtr->_field14;
-	cd._freqBase = _soundDataPtr->_field12;
-	cd._freqMask = _soundDataPtr->_field10;
-	cd._field0 = _soundDataPtr->_fieldE;
+	cd._field6 = _samplePtr->_field14;
+	cd._freqBase = _samplePtr->_freqBase;
+	cd._freqMask = _samplePtr->_freqMask;
+	cd._field0 = _samplePtr->_fieldE;
 
-	_soundDataPtr = &_soundData[recIndex * 2 + 1];
+	_samplePtr = &_samples[sampleIndex * 2 + 1];
 	_v11 = outputChannels[outputIndexes[_activeChannelReg * 2]];
-	channelProc2();
+	processSample();
 }
 
-void ASound::channelProc2() {
+void ASound::processSample() {
 	// Write out vib flags and split point
 	write2(8, 0x40 + _v11, 0x3F);
 	int depthRhythm = _ports[0xBD] & 0x3F | (_amDep ? 0x80 : 0) |
@@ -697,24 +698,29 @@ void ASound::channelProc2() {
 	write2(8, 0xBD, depthRhythm);
 	write2(8, 8, _splitPoint ? 0x40 : 0);
 
-	int val = _soundDataPtr->_fieldA;
-	val = (val << 1) | (1 - _soundDataPtr->_fieldD);
+	// Write out feedback & Alg
+	int val = (_samplePtr->_feedback << 1) | (1 - _samplePtr->_alg);
 	write2(8, 0xC0 + _activeChannelReg, val);
 
-	val = (_soundDataPtr->_field0 << 4) | (_soundDataPtr->_field1 & 0xF);
+	// Write out attack/decay rate
+	val = (_samplePtr->_attackRate << 4) | (_samplePtr->_decayRate & 0xF);
 	write2(8, 0x60 + _v11, val);
 
-	val = (_soundDataPtr->_field2 << 4) | (_soundDataPtr->_field3 & 0xF);
+	// Write out sustain level/release rate
+	val = (_samplePtr->_sustainLevel << 4) | (_samplePtr->_releaseRate & 0xF);
 	write2(8, 0x80 + _v11, val);
 
-	val = (_soundDataPtr->_fieldB ? 0x80 : 0) | (_soundDataPtr->_fieldC ? 0x40 : 0)
-		| (_soundDataPtr->_field4 ? 0x20 : 0) | (_soundDataPtr->_field5 ? 0x10 : 0)
-		| (_soundDataPtr->_field9 & 0xF);
+	// Write out misc flags
+	val = (_samplePtr->_ampMod ? 0x80 : 0) | (_samplePtr->_vib ? 0x40 : 0)
+		| (_samplePtr->_egTyp ? 0x20 : 0) | (_samplePtr->_ksr ? 0x10 : 0)
+		| (_samplePtr->_freqMultiple & 0xF);
 	write2(8, 0x20 + _v11, val);
 
-	write2(8, 0xE0 + _v11, _soundDataPtr->_field8 & 3);
+	// Write out waveform select
+	write2(8, 0xE0 + _v11, _samplePtr->_waveformSelect & 3);
 	
-	val = -(_soundDataPtr->_field6 & 0x3F - 0x3F) | (_soundDataPtr->_field7 << 6);
+	// Write out total level & scaling level
+	val = -(_samplePtr->_totalLevel & 0x3F - 0x3F) | (_samplePtr->_scalingLevel << 6);
 	write2(8, 0x40 + _v11, val);
 }
 
@@ -841,10 +847,10 @@ const ASound1::CommandPtr ASound1::_commandList[42] = {
 ASound1::ASound1(Audio::Mixer *mixer): ASound(mixer, "asound.001", 0x1520) {
 	_cmd23Toggle = false;
 	
-	// Load sound data
+	// Load sound samples
 	_soundFile.seek(_dataOffset + 0x12C);
 	for (int i = 0; i < 98; ++i)
-		_soundData.push_back(SoundData(_soundFile));
+		_samples.push_back(AdlibSample(_soundFile));
 }
 
 int ASound1::command(int commandId) {
