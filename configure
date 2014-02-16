@@ -185,8 +185,6 @@ _nasmpath="$PATH"
 NASMFLAGS=""
 NASM=""
 _tainted_build=no
-# ResidualVM specific:
-_android_sysroot_path=""
 # The following variables are automatically detected, and should not
 # be modified otherwise. Consider them read-only.
 _posix=no
@@ -920,8 +918,10 @@ Optional Libraries:
   --with-mpeg2-prefix=DIR  Prefix where libmpeg2 is installed (optional)
   --enable-mpeg2           enable mpeg2 codec for cutscenes [autodetect]
 
+  --with-opengl-prefix=DIR Prefix where OpenGL (ES) is installed (optional)
   --disable-opengl         disable OpenGL (ES) support [autodetect]
   --enable-opengl-shaders  enable use of modern OpenGL with shaders
+  --force-opengles2        only deteect OpenGL ES2
 
   --with-jpeg-prefix=DIR   Prefix where libjpeg is installed (optional)
   --disable-jpeg           disable JPEG decoder [autodetect]
@@ -1029,6 +1029,7 @@ for ac_option in $@; do
 	--disable-opengl)         _opengl=no      ;;
 	--enable-opengl-shaders)  _opengl_shaders=yes     ;; #ResidualVM specific option
 	--disable-opengl-shaders) _opengl_shaders=no      ;; #ResidualVM specific option
+	--force-opengles2)        _opengles2=yes  ;; #ResidualVM specific option
 	--enable-bink)            _bink=yes       ;;
 	--disable-bink)           _bink=no        ;;
 	--enable-safedisc)        _safedisc=yes   ;; #ResidualVM specific option
@@ -1133,12 +1134,11 @@ for ac_option in $@; do
 		LIBUNITY_CFLAGS="-I$arg/include"
 		LIBUNITY_LIBS="-L$arg/lib"
 		;;
-# ResidualVM don't use that
-#	--with-opengl-prefix=*)
-#		arg=`echo $ac_option | cut -d '=' -f 2`
-#		OPENGL_CFLAGS="-I$arg/include"
-#		OPENGL_LIBS="-L$arg/lib"
-#		;;
+	--with-opengl-prefix=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		OPENGL_CFLAGS="-I$arg/include"
+		OPENGL_LIBS="-L$arg/lib"
+		;;
 	--backend=*)
 		_backend=`echo $ac_option | cut -d '=' -f 2`
 		;;
@@ -1506,16 +1506,6 @@ android)
 		echo "Please set ANDROID_NDK in your environment. export ANDROID_NDK=<path to Android NDK>"
 		exit 1
 	fi
-	# ResidualVM specific start ->
-	if test ! -d android-toolchain; then
-		echo "Installing Android toolchain to build directory..."
-		"$ANDROID_NDK/build/tools/make-standalone-toolchain.sh" --platform=android-9 --install-dir=android-toolchain
-	else
-		echo "Android toolchain already installed."
-	fi
-	PATH="android-toolchain/bin:$PATH"
-	_android_sysroot_path="android-toolchain/bin:"
-	# ResidualVM specific end <-
 	;;
 ds | gamecube | wii)
 	if test -z "$DEVKITPRO"; then
@@ -3781,7 +3771,6 @@ echo "$_freetype2"
 
 define_in_config_if_yes "$_freetype2" "USE_FREETYPE2"
 
-
 #
 # Check for OpenGL (ES)
 #
@@ -3801,28 +3790,41 @@ case $_backend in
 		;;
 esac
 
+# ResidualVM specific start ->
 if test "$_opengl" = auto ; then
 	_opengl=no
-	if test "$_backend" = "sdl" ; then
+	if test "$_backend" = "sdl" || test "$_backend" = "android"; then
 		# Try different header filenames
 		# 1) GL/gl.h         This is usually used on POSIX and Windows systems
 		# 2) OpenGL/gl.h     This is used on Mac OS X
-		# 3) GLES/gl.h       This is used for OpenGL ES 1.x
-		for i in "GL/gl.h" "OpenGL/gl.h" "GLES/gl.h"; do
+		# 3) GLES2/gl2.h     This is used for OpenGL ES 2.x
+		# 4) GLES/gl.h       This is used for OpenGL ES 1.x
+		for i in "GL/gl.h" "OpenGL/gl.h" "GLES2/gl2.h" "GLES/gl.h"; do
 			# Test the current header for OpenGL
-			cat > $TMPC << EOF
+			if test "$_opengles2" = no ; then
+				cat > $TMPC << EOF
 #include <$i>
 #include <stdio.h>
 int main(void) { printf("ANTIVIRUS FALSE POSITIVE WORKAROUND"); return GL_VERSION_1_1; }
 EOF
-			cc_check $DEFINES $OPENGL_CFLAGS $OPENGL_LIBS && _opengl=yes && break
+				cc_check $DEFINES $OPENGL_CFLAGS $OPENGL_LIBS && _opengl=yes && break
+			fi
+
+			# Test the current header for OpenGL ES2
+			cat > $TMPC << EOF
+#include <$i>
+int main(void) { return GL_ES_VERSION_2_0; }
+EOF
+			cc_check $DEFINES $OPENGL_CFLAGS $OPENGL_LIBS && _opengl=yes && _opengles2=yes && break
 
 			# Test the current header for OpenGL ES
-			cat > $TMPC << EOF
+			if test "$_opengles2" = no ; then
+				cat > $TMPC << EOF
 #include <$i>
 int main(void) { return GL_OES_VERSION_1_1; }
 EOF
-			cc_check $DEFINES $OPENGL_CFLAGS $OPENGL_LIBS && _opengl=yes && _opengles=yes && break
+				cc_check $DEFINES $OPENGL_CFLAGS $OPENGL_LIBS && _opengl=yes && _opengles=yes && break
+			fi
 		done
 	fi
 fi
@@ -3848,9 +3850,14 @@ EOF
 				break
 			fi
 		done
-# ResidualVM specific start ->
-	elif test "$_opengles2" = "yes" ; then
-		OPENGL_LIBS="$OPENGL_LIBS -lGLESv2"
+	elif test "$_opengles2" = yes ; then
+		_opengles2=no
+		if cc_check_no_clean $DEFINES $OPENGL_CFLAGS $OPENGL_LIBS "-lGLESv2"
+			then
+			_opengl=yes
+			_opengles2=yes
+			OPENGL_LIBS="$OPENGL_LIBS -lGLESv2"
+		fi
 	else
 		case $_host_os in
 		darwin*)
@@ -3867,24 +3874,30 @@ EOF
 			then
 			_opengl=yes
 		fi
-# ResidualVM specific end <-
 	fi
-	cc_check_clean
 
 	if test "$_opengl" = yes ; then
 		LIBS="$LIBS $OPENGL_LIBS"
 		INCLUDES="$INCLUDES $OPENGL_CFLAGS"
-# ResidualVM specific:
 		if test "$_opengl_shaders" = yes ; then
 			if test "$_opengles2" = no ; then
-				LIBS="$LIBS `pkg-config --libs glew`"
-				INCLUDES="$INCLUDES `pkg-config --cflags glew`"
+				_opengl_shaders=no
+				GLEW_LIBS=`pkg-config --libs glew`
+				GLEW_INCLUDES=`pkg-config --cflags glew`
+				if cc_check_no_clean $DEFINES $GLEW_LIBS $GLEW_INCLUDES
+					then
+					_opengl_shaders=yes
+					LIBS="$LIBS $GLEW_LIBS"
+					INCLUDES="$INCLUDES $GLEW_INCLUDES"
+				fi
 			fi
 		fi
 	else
-		_opengl_shaders="no"
+		_opengl_shaders=no
 	fi
+	cc_check_clean
 fi
+# ResidualVM specific end <-
 
 case $_host_os in
 	tizen)
@@ -3892,28 +3905,26 @@ case $_host_os in
 		_opengl=yes
 		_opengles=yes
 		;;
-	android) # ResidualVM specific case:
-		_opengl=yes
-		_opengles2=yes
-		LDFLAGS="$LDFLAGS -Landroid-toolchain/sysroot/usr/lib"
-		LDFLAGS="$LDFLAGS -lGLESv2"
-		;;
 esac
 
 if test "$_opengles" = "yes" ; then
 	echo "yes (OpenGL ES)"
-# ResidualVM specific:
+# ResidualVM specific start here ->
 elif test "$_opengles2" = "yes" ; then
 	echo "yes (OpenGL ES2)"
 else
-	echo "$_opengl"
+	if test "$_opengl_shaders" = "yes" ; then
+		echo "$_opengl (shaders enabled)"
+	else
+		echo "$_opengl (shaders disabled)"
+	fi
 fi
 
 define_in_config_if_yes "$_opengl" "USE_OPENGL"
 define_in_config_if_yes "$_opengles" "USE_GLES"
-# ResidualVM specific:
 define_in_config_if_yes "$_opengles2" "USE_GLES2"
 define_in_config_if_yes "$_opengl_shaders" "USE_OPENGL_SHADERS"
+# ResidualVM specific ends here <-
 
 
 #
@@ -4202,7 +4213,7 @@ case $_backend in
 		system_libs=''
 		for lib in $LIBS; do
 			case $lib in
-			-lz|-lm|-ldl)
+			-lz|-lm|-ldl|android|-lGLESv1_CM|-lGLESv2) # ResidualVM specific
 				system_libs="$system_libs $lib"
 				;;
 			*)
@@ -4214,11 +4225,7 @@ case $_backend in
 		# -lgcc is carefully placed here - we want to catch
 		# all toolchain symbols in *our* libraries rather
 		# than pick up anything unhygenic from the Android libs.
-		LIBS="-Wl,-Bstatic $static_libs -Wl,-Bdynamic -lgcc $system_libs -llog -landroid"
-		# ResidualVM specific if:
-		if test "$_opengles2" != "yes" ; then
-			LIBS="$LIBS -lGLESv1_CM"
-		fi
+		LIBS="-Wl,-Bstatic $static_libs -Wl,-Bdynamic -lgcc $system_libs -llog" # ResidualVM removed: -lGLESv1_CM
 		;;
 	n64)
 		# Move some libs down here, otherwise some symbols requires by libvorbis aren't found
@@ -4424,8 +4431,6 @@ STAGINGPATH=$_stagingpath
 WIN32PATH=$_win32path
 AOS4PATH=$_aos4path
 STATICLIBPATH=$_staticlibpath
-# ResidualVM specific:
-PATH := ${_android_sysroot_path}\$(PATH)
 
 BACKEND := $_backend
 MODULES += $MODULES
