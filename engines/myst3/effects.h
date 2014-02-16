@@ -28,7 +28,7 @@
 #include "engines/myst3/directorysubentry.h"
 
 namespace Graphics {
-class Surface;
+struct Surface;
 }
 
 namespace Myst3 {
