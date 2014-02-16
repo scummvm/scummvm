@@ -332,8 +332,8 @@ endif
 	cp $(srcdir)/dists/win32/ResidualVM.iss ResidualVMWin32
 	cp /usr/i586-mingw32msvc/README-SDL.txt ResidualVMWin32
 	cp /usr/i586-mingw32msvc/bin/SDL.dll ResidualVMWin32
-	toms ResidualVMWin32/*.txt
-	toms ResidualVMWin32/ResidualVM.iss
+	unix2dos ResidualVMWin32/*.txt
+	unix2dos ResidualVMWin32/ResidualVM.iss
 
 #
 # AmigaOS specific
