@@ -1,0 +1,15 @@
+MODULE := engines/mads
+
+MODULE_OBJS := \
+	detection.o \
+	sound.o \
+	sound_nebular.o \
+	mads.o
+
+# This module can be built as a plugin
+ifeq ($(ENABLE_MADS), DYNAMIC_PLUGIN)
+PLUGIN := 1
+endif
+
+# Include common rules
+include $(srcdir)/rules.mk

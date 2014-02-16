@@ -1,0 +1,354 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
+
+#ifndef MADS_SOUND_NEBULAR_H
+#define MADS_SOUND_NEBULAR_H
+
+#include "common/scummsys.h"
+#include "common/file.h"
+#include "audio/audiostream.h"
+#include "audio/fmopl.h"
+#include "audio/mixer.h"
+
+namespace MADS {
+
+namespace Nebular {
+
+class SoundManager;
+
+/**
+ * Represents the data for a channel on the Adlib
+ */
+class AdlibChannel {
+public:
+	int _activeCount;
+	int _field1;
+	int _field2;
+	int _field3;
+	int _field4;
+	int _field5;
+	int _volume;
+	int _field7;
+	int _field8;
+	int _field9;
+	int _fieldA;
+	int _fieldB;
+	int _fieldC;
+	int _fieldD;
+	int _fieldE;
+	byte *_ptr1;
+	byte *_pSrc;
+	byte *_ptr3;
+	byte *_ptr4;
+	int _field17;
+	int _field19;
+	byte *_soundData;
+	int _field1D;
+	int _field1E;
+	int _field1F;
+public:
+	AdlibChannel();
+
+	void reset();
+	void enable(int flag);
+	void setPtr2(byte *pData);
+	void load(byte *pData);
+	void check(byte *nullPtr);
+};
+
+class AdlibChannelData {
+public:
+	int _field0;
+	int _freqMask;
+	int _freqBase;
+	int _field6;
+};
+
+class SoundData {
+public:
+	int _field0;
+	int _field1;
+	int _field2;
+	int _field3;
+	int _field4;
+	int _field5;
+	int _field6;
+	int _field7;
+	int _field8;
+	int _field9;
+	int _fieldA;
+	int _fieldB;
+	int _fieldC;
+	int _fieldD;
+	int _fieldE;
+	int _field10;
+	int _field12;
+	int _field14;
+
+	SoundData() {}
+	SoundData(Common::SeekableReadStream &s);
+};
+
+#define ADLIB_CHANNEL_COUNT 9
+#define ADLIB_CHANNEL_MIDWAY 5
+
+/**
+ * Base class for the sound player resource files
+ */
+class ASound {
+private:
+	struct CachedDataEntry {
+		int _offset;
+		byte *_data;
+	};
+	Common::List<CachedDataEntry> _dataCache;
+	uint16 _randomSeed;
+
+	/**
+	 * Does the initial Adlib initialisation
+	 */
+	void adlibInit();
+
+	/**
+	 * Does on-going processing for the Adlib sounds being played
+	 */
+	void update();
+
+	/**
+	 * Polls each of the channels for updates
+	 */
+	void pollChannels();
+
+	/**
+	 * Checks the status of the channels
+	 */
+	void checkChannels();
+
+	/**
+	 * Polls the currently active channel
+	 */
+	void pollActiveChannel();
+
+	/**
+	 * Updates the octave of the currently active channel
+	 */
+	void updateOctave();
+
+	void updateChannelState();
+	void updateActiveChannel();
+	void channelProc1(int recIndex);
+	void channelProc2();
+	void updateFNumber();
+protected:
+	/**
+	 * Write a byte to an Adlib register
+	 */
+	void write(int reg, int val);
+
+	/**
+	 * Write a byte to an Adlib register, and store it in the _ports array
+	 */
+	int write2(int state, int reg, int val);
+
+	/**
+	 * Turn a channel on
+	 */
+	void channelOn(int reg, int volume);
+
+	/**
+	 * Turn a channel off
+	 */
+	void channelOff(int reg);
+
+	/**
+	 * Checks for whether a poll result needs to be set
+	 */
+	void resultCheck();
+
+	/**
+	 * Loads a data block from the sound file, caching the result for any future
+	 * calls for the same data
+	 */
+	byte *loadData(int offset, int size);
+
+	/**
+	 * Play the specified sound
+	 * @param offset	Offset of sound data within sound player data segment
+	 * @param size		Size of sound data block
+	 */
+	void playSound(int offset, int size);
+
+	/**
+	 * Play the specified raw sound data
+	 * @param pData		Pointer to data block containing sound data
+	 */
+	void playSound(byte *pData);
+
+	/**
+	 * Checks to see whether the given block of data is already loaded into a channel.
+	 */
+	bool isSoundActive(byte *pData);
+
+	/**
+	 * Sets the frequency for a given channel.
+	 */
+	void setFrequency(int channel, int freq);
+
+	/**
+	 * Returns a 16-bit random number
+	 */
+	int getRandomNumber();
+
+	int command0();
+	int command1();
+	int command2();
+	int command3();
+	int command4();
+	int command5();
+	int command6();
+	int command7();
+	int command8();
+public:
+	Audio::Mixer *_mixer;
+	FM_OPL *_opl;
+	AdlibChannel _channels[ADLIB_CHANNEL_COUNT];
+	AdlibChannel *_activeChannelPtr;
+	AdlibChannelData _channelData[11];
+	Common::Array<SoundData> _soundData;
+	SoundData *_soundDataPtr;
+	Common::File _soundFile;
+	int _dataOffset;
+	int _frameCounter;
+	bool _isDisabled;
+	int _v1;
+	int _v2;
+	int _activeChannelNumber;
+	int _freqMask1;
+	int _freqMask2;
+	int _freqBase1;
+	int _freqBase2;
+	int _channelNum1, _channelNum2;
+	int _v7;
+	int _v8;
+	int _v9;
+	int _v10;
+	int _pollResult;
+	int _resultFlag;
+	byte _nullData[2];
+	int _ports[256];
+	bool _stateFlag;
+	int _activeChannelReg;
+	int _v11;
+	bool _amDep, _vibDep, _splitPoint;
+public:
+	/**
+	 * Constructor
+	 * @param filename		Specifies the adlib sound player file to use
+	 * @param dataOffset	Offset in the file of the data segment
+	 */
+	ASound(Audio::Mixer *mixer, const Common::String &filename, int dataOffset);
+
+	/**
+	 * Destructor
+	 */
+	virtual ~ASound();
+
+	/**
+	 * Execute a player command. Most commands represent sounds to play, but some
+	 * low number commands also provide control operations
+	 */
+	virtual int command(int commandId) = 0;
+
+	/**
+	 * Stop all currently playing sounds
+	 */
+	int stop();
+
+	/**
+	 * Main poll method to allow sounds to progress
+	 */
+	int poll();
+
+	/**
+	 * General noise/note output
+	 */
+	void noise();
+
+	/**
+	 * Return the current frame counter
+	 */
+	int getFrameCounter() { return _frameCounter; }
+};
+
+class ASound1: public ASound {
+private:
+	typedef int (ASound1::*CommandPtr)();
+	static const CommandPtr _commandList[42];
+	bool _cmd23Toggle;
+
+	int command9();
+	int command10();
+	int command11();
+	int command12();
+	int command13();
+	int command14();
+	int command15();
+	int command16();
+	int command17();
+	int command18();
+	int command19();
+	int command20();
+	int command21();
+	int command22();
+	int command23();
+	int command24();
+	int command25();
+	int command26();
+	int command27();
+	int command28();
+	int command29();
+	int command30();
+	int command31();
+	int command32();
+	int command33();
+	int command34();
+	int command35();
+	int command36();
+	int command37();
+	int command38();
+	int command39();
+	int command40();
+	int command41();
+
+	void command111213();
+	void command2627293032();
+public:
+	ASound1(Audio::Mixer *mixer);
+
+	virtual int command(int commandId);
+};
+
+} // End of namespace Nebular
+
+} // End of namespace MADS
+
+#endif /* MADS_SOUND_NEBULAR_H */
