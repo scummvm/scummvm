@@ -197,6 +197,11 @@ int RightClickDialog::execute() {
 
 void CharacterDialog::show() {
 	CharacterDialog *dlg = new CharacterDialog();
+	CursorType cursorNum = R2_GLOBALS._events.getCursor();
+
+	// Reset the current cursor
+	R2_GLOBALS._events.setCursor(CURSOR_ARROW);
+
 	dlg->draw();
 
 	// Make the default button the currently active character
@@ -315,12 +320,11 @@ void CharacterDialog::show() {
 			}
 		}
 
-		// Reset the current cursor
-		R2_GLOBALS._events.setCursor(CURSOR_USE);
-
 		// Change to whichever scene the newly selected character is in
 		R2_GLOBALS._sceneManager.changeScene(R2_GLOBALS._player._characterScene[R2_GLOBALS._player._characterIndex]);
-	}
+	} else
+		// Restore previous cursor
+		R2_GLOBALS._events.setCursor(cursorNum);
 }
 
 CharacterDialog::CharacterDialog() {
