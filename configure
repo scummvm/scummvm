@@ -107,6 +107,7 @@ done
 #ResidualVM defaults: mpeg2=auto, faad=no, opengles=no, vorbis=no, tremor=no
 # mt32emu=no, translation=no, flac=no, seq_midi=no, snd_io=no, timidity=no, png=no
 # theoradec=no, fluidsynth=no, opengles2=no, eventrec=no, jpeg=auto
+# build_scalers=no, build_hq_scalers=no
 #
 # Default lib behaviour yes/no/auto
 _vorbis=no
@@ -143,8 +144,8 @@ _use_cxx11=no
 _verbose_build=no
 _text_console=no
 _mt32emu=no
-_build_scalers=yes
-_build_hq_scalers=yes
+_build_scalers=no
+_build_hq_scalers=no
 _enable_prof=no
 _global_constructors=no
 _bink=yes
