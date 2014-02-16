@@ -140,7 +140,7 @@ void Scene410::Action5::signal() {
 			ADD_PLAYER_MOVER(114, 133);
 		} else {
 			ADD_PLAYER_MOVER(195, 139);
-		} 
+		}
 		break;
 	case 1:
 		BF_GLOBALS._player.updateAngle(scene->_passenger._position);

@@ -2561,7 +2561,7 @@ void Scene205Demo::postInit(SceneObjectList *OwnerList) {
 	loadScene(1000);
 	R2_GLOBALS._uiElements._active = false;
 	R2_GLOBALS._player.enableControl();
-	
+
 	SceneExt::postInit();
 
 	_sound1.play(337);
@@ -4158,8 +4158,8 @@ void Scene325::signal() {
 			if (R2_GLOBALS.getFlag(44) && !R2_GLOBALS.getFlag(51)) {
 				if (v != 13) {
 					if (_priorConsoleAction == 6) {
-					// Fix for original game bug. 
-					// The passive short scan geographical and astronomical sentences 
+					// Fix for original game bug.
+					// The passive short scan geographical and astronomical sentences
 					// are inverted in the original game.
 						if (v == 6)
 							v = 8;
@@ -5784,7 +5784,7 @@ void Scene600::Smoke::draw() {
 	Graphics::Surface screen = g_globals->gfxManager().getSurface().lockSurface();
 	byte *pixelMap = static_cast<Scene600 *>(R2_GLOBALS._sceneManager._scene)->_pixelMap;
 
-	// Loop through every pixel of the frame. Any pixel of the frame that's not a 
+	// Loop through every pixel of the frame. Any pixel of the frame that's not a
 	// tranparency, get the same pixel from the screen background, and shade it using
 	// the scene's pixel translation map
 	for (int yp = 0; yp < s.h; ++yp) {

@@ -2277,11 +2277,11 @@ void Scene1337::Action1337::waitFrames(int32 frameCount) {
 		g_globals->_events.getEvent(event);
 		curFrame = g_globals->_events.getFrameNumber();
 	}
-	
+
 	// CHECKME: The original is calling _eventManager.waitEvent();
 }
 
-/** 
+/**
  * Display instructions
  */
 void Scene1337::Action1::signal() {
@@ -3366,7 +3366,7 @@ void Scene1337::Action3::signal() {
 	}
 }
 
-/** 
+/**
  * Action used to handle the other players' turn
  */
 void Scene1337::Action4::signal() {
@@ -3542,7 +3542,7 @@ void Scene1337::Action4::signal() {
 	}
 }
 
-/** 
+/**
  * Animations for discarding a card
  */
 void Scene1337::Action5::signal() {
@@ -3587,7 +3587,7 @@ void Scene1337::Action5::signal() {
 	}
 }
 
-/** 
+/**
  * Animations for playing a platform card
  */
 void Scene1337::Action6::signal() {
@@ -4529,9 +4529,9 @@ void Scene1337::actionDisplay(int resNum, int lineNum, int x, int y, int keepOnS
 	// TODO: Check if it's normal that arg5 is unused and replaced by an hardcoded 0 value
 	// May hide an original bug
 
-	SceneItem::display(resNum, lineNum, SET_X, x, SET_Y, y, SET_KEEP_ONSCREEN, 0, 
-		               SET_WIDTH, width, SET_POS_MODE, -1, SET_TEXT_MODE, textMode, 
-					   SET_FONT, fontNum, SET_FG_COLOR, colFG, SET_EXT_BGCOLOR, colBGExt, 
+	SceneItem::display(resNum, lineNum, SET_X, x, SET_Y, y, SET_KEEP_ONSCREEN, 0,
+		               SET_WIDTH, width, SET_POS_MODE, -1, SET_TEXT_MODE, textMode,
+					   SET_FONT, fontNum, SET_FG_COLOR, colFG, SET_EXT_BGCOLOR, colBGExt,
 					   SET_EXT_FGCOLOR, colFGExt, LIST_END);
 }
 
@@ -5956,7 +5956,7 @@ void Scene1337::handlePlayer1() {
 						break;
 				}
 			}
-			// The original was only updating in the rndVal block, 
+			// The original was only updating in the rndVal block,
 			// which was a bug as the checks were stopping at this point
 			rndVal--;
 			if (rndVal < 0)
@@ -6261,7 +6261,7 @@ void Scene1337::handlePlayer2() {
 		return;
 	} else {
 		// The original code is calling a function full of dead code.
-		// Only this message remains after a cleanup. 
+		// Only this message remains after a cleanup.
 		MessageDialog::show(WRONG_ANSWER_MSG, OK_BTN_STRING);
 		//
 		handleAutoplayPlayer2();
@@ -6635,11 +6635,11 @@ void Scene1337::setCursorData(int resNum, int rlbNum, int frameNum) {
 	_cursorCurFrame = frameNum;
 
 	if (!frameNum) {
-		// Should be a hardcoded cursor displaying only a dot. 
+		// Should be a hardcoded cursor displaying only a dot.
 		// FIXME: Use another cursor when possible
 		R2_GLOBALS._events.setCursor(CURSOR_CROSSHAIRS);
 	} else {
-		// TODO: The original was using some ressource caching, which was useless and complex 
+		// TODO: The original was using some ressource caching, which was useless and complex
 		// and which has been removed. This cursor behavior clearly made intensive use of this caching...
 		// We now have to find a way to cache these cursor pointers and avoid loading them multiple times per seconds
 		uint size;
@@ -6697,7 +6697,7 @@ void Scene1337::OptionsDialog::show() {
 		R2_GLOBALS._sceneManager.changeScene(125);
 	else if (btn == &dlg->_restartGame)
 		R2_GLOBALS._sceneManager.changeScene(1330);
-	
+
 	// Remove the dialog
 	dlg->remove();
 	delete dlg;
@@ -8560,7 +8560,7 @@ void Scene1550::enterArea() {
 
 	int varA = 0;
 
-	// This section handles checks if the ARM spacecraft have not yet seized 
+	// This section handles checks if the ARM spacecraft have not yet seized
 	// control of Lance of Truth.
 	if (!R2_GLOBALS.getFlag(16)) {
 		switch (R2_GLOBALS._s1550PlayerArea[R2_GLOBALS._player._characterIndex].y - 2) {
@@ -8654,9 +8654,9 @@ void Scene1550::enterArea() {
 		default:
 			break;
 		}
-		if ((R2_GLOBALS._s1550PlayerArea[R2_GLOBALS._player._characterIndex].y > 0) && 
-				(R2_GLOBALS._s1550PlayerArea[R2_GLOBALS._player._characterIndex].x <= 29) && 
-				((R2_GLOBALS._s1550PlayerArea[R2_GLOBALS._player._characterIndex].x < 20) || 
+		if ((R2_GLOBALS._s1550PlayerArea[R2_GLOBALS._player._characterIndex].y > 0) &&
+				(R2_GLOBALS._s1550PlayerArea[R2_GLOBALS._player._characterIndex].x <= 29) &&
+				((R2_GLOBALS._s1550PlayerArea[R2_GLOBALS._player._characterIndex].x < 20) ||
 				(R2_GLOBALS._s1550PlayerArea[R2_GLOBALS._player._characterIndex].y > 7))) {
 			// In an area where the cutscene can be triggered, so start it
 			R2_GLOBALS.setFlag(16);
@@ -11095,7 +11095,7 @@ bool Scene1800::Doors::startAction(CursorType action, Event &event) {
 		} else {
 			// Seeker failing to force open doors
 			scene->_sceneMode = 1813;
-			// Original was using 1813 in setAction too, but it somewhat broken. 
+			// Original was using 1813 in setAction too, but it somewhat broken.
 			// Seeker goes 2 pixels to high, hiding behind the door
 			scene->setAction(&scene->_sequenceManager, scene, 1808, &R2_GLOBALS._player, &scene->_doors, NULL);
 		}
@@ -13182,7 +13182,7 @@ bool Scene1945::Ladder::startAction(CursorType action, Event &event) {
 	} else if (  ((R2_GLOBALS._player._position.x == 197) && (R2_GLOBALS._player._position.y == 158))
 		      || ((R2_GLOBALS._player._position.x == 191) && (R2_GLOBALS._player._position.y == 142)) ) {
 		scene->_sceneMode = 1947;
-	} else if ((R2_GLOBALS._player._position.x == 154) && (R2_GLOBALS._player._position.y == 50) 
+	} else if ((R2_GLOBALS._player._position.x == 154) && (R2_GLOBALS._player._position.y == 50)
 			&& (event.mousePos.y >= 30)) {
 		scene->_sceneMode = 1940;
 	} else {

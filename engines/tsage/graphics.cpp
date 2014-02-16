@@ -199,9 +199,9 @@ void Rect::resize(const GfxSurface &surface, int xp, int yp, int percent) {
 
 	this->moveTo(xp, yp);
 
-	int xa = (surface._flags & FRAME_FLIP_CENTROID_X) == 0 ? surface._centroid.x : 
+	int xa = (surface._flags & FRAME_FLIP_CENTROID_X) == 0 ? surface._centroid.x :
 		bounds.width() - (surface._centroid.x + 1);
-	int ya = (surface._flags & FRAME_FLIP_CENTROID_Y) == 0 ? surface._centroid.y : 
+	int ya = (surface._flags & FRAME_FLIP_CENTROID_Y) == 0 ? surface._centroid.y :
 		bounds.height() - (surface._centroid.y + 1);
 
 	int xd = xa * percent / 100;

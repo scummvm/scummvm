@@ -2721,7 +2721,7 @@ GfxSurface SceneObject::getFrame() {
 	_visageImages.setVisage(_visage, _strip);
 	GfxSurface frame = _visageImages.getFrame(_frame);
 
-	// Reset any centroid adjustment flags, in 
+	// Reset any centroid adjustment flags, in
 	frame._flags &= ~(FRAME_FLIP_CENTROID_X | FRAME_FLIP_CENTROID_Y);
 
 	// For later games, check whether the appropriate object flags are set for flipping
