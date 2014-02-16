@@ -158,6 +158,14 @@ void OSystem_SDL::initBackend() {
 	// Check if backend has not been initialized
 	assert(!_inited);
 
+	const int maxNameLen = 20;
+	char sdlDriverName[maxNameLen];
+	sdlDriverName[0] = '\0';
+	SDL_VideoDriverName(sdlDriverName, maxNameLen);
+	// Using printf rather than debug() here as debug()/logging
+	// is not active by this point.
+	debug(1, "Using SDL Video Driver \"%s\"", sdlDriverName);
+
 	// Create the default event source, in case a custom backend
 	// manager didn't provide one yet.
 	if (_eventSource == 0)
@@ -273,14 +281,6 @@ void OSystem_SDL::initSDL() {
 		// Initialize SDL (SDL Subsystems are initiliazed in the corresponding sdl managers)
 		if (SDL_Init(sdlFlags) == -1)
 			error("Could not initialize SDL: %s", SDL_GetError());
-
-		const int maxNameLen = 20;
-		char sdlDriverName[maxNameLen];
-		sdlDriverName[0] = '\0';
-		SDL_VideoDriverName(sdlDriverName, maxNameLen);
-		// Using printf rather than debug() here as debug()/logging
-		// is not active by this point.
-		printf("Using SDL Video Driver \"%s\" ...\n", sdlDriverName);
 
 		_initedSDL = true;
 	}
