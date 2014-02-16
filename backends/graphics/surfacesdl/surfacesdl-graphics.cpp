@@ -673,10 +673,6 @@ void SurfaceSdlGraphicsManager::displayMessageOnOSD(const char *msg) {
 }
 #endif
 
-bool SurfaceSdlGraphicsManager::notifyEvent(const Common::Event &event) {
-	//ResidualVM specific
-	return false;
-}
 
 #ifdef USE_OPENGL
 void SurfaceSdlGraphicsManager::setAntialiasing(bool enable) {
@@ -693,6 +689,20 @@ void SurfaceSdlGraphicsManager::setAntialiasing(bool enable) {
 	}
 }
 #endif
+
+bool SurfaceSdlGraphicsManager::notifyEvent(const Common::Event &event) {
+	//ResidualVM specific:
+	switch ((int)event.type) {
+	case Common::EVENT_KEYDOWN:
+		break;
+	case Common::EVENT_KEYUP:
+		break;
+	default:
+		break;
+	}
+
+	return false;
+}
 
 void SurfaceSdlGraphicsManager::notifyVideoExpose() {
 	_forceFull = true;
