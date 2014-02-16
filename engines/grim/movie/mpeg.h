@@ -34,7 +34,7 @@ public:
 	MpegPlayer();
 private:
 	bool loadFile(const Common::String &filename);
-	bool _demo;
+	//bool _demo;
 };
 
 } // end of namespace Grim

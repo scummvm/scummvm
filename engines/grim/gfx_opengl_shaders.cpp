@@ -416,7 +416,7 @@ void GfxOpenGLS::startActorDraw(const Actor *actor) {
 
 	const Math::Vector3d &pos = actor->getWorldPos();
 	const Math::Quaternion &quat = actor->getRotationQuat();
-	const float scale = actor->getScale();
+	//const float scale = actor->getScale();
 	const float alpha = actor->getEffectiveAlpha();
 
 	if (g_grim->getGameType() == GType_MONKEY4) {
