@@ -189,7 +189,11 @@ void Shader::enableVertexAttribute(const char *attrib, GLuint vbo, GLint size, G
 	va._type = type;
 	va._normalized = normalized;
 	va._stride = stride;
-	va._offset = (const GLvoid *) offset;
+#ifdef SCUMM_64BITS
+	va._offset = (const GLvoid *)(uint64)offset;
+#else
+	va._offset = (const GLvoid *)offset;
+#endif
 }
 
 void Shader::disableVertexAttribute(const char *attrib, int size, const float *data) {
