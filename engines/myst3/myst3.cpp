@@ -313,7 +313,7 @@ bool Myst3Engine::checkDatafiles() {
 				"corresponding to your game's language and redetect the game.\n"
 				"These updates don't contain the copy-protection and can be downloaded from\n"
 				"http://www.residualvm.org/downloads/");
-		warning(safediscMessage);
+		warning("%s", safediscMessage);
 		GUI::displayErrorDialog(safediscMessage);
 		return false;
 	}
