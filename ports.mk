@@ -82,8 +82,15 @@ endif
 ifdef DIST_FILES_ENGINEDATA
 	cp $(DIST_FILES_ENGINEDATA) $(bundle_name)/Contents/Resources/
 endif
+ifdef USE_OPENGL_SHADERS
+	mkdir -p $(bundle_name)/Contents/Resources/shaders
+	cp $(DIST_FILES_SHADERS) $(bundle_name)/Contents/Resources/shaders/
+endif
 	$(srcdir)/devtools/credits.pl --rtf > $(bundle_name)/Contents/Resources/Credits.rtf
 	chmod 644 $(bundle_name)/Contents/Resources/*
+ifdef USE_OPENGL_SHADERS
+	chmod 755 $(bundle_name)/Contents/Resources/shaders
+endif
 	cp residualvm-static $(bundle_name)/Contents/MacOS/residualvm
 	chmod 755 $(bundle_name)/Contents/MacOS/residualvm
 	$(STRIP) $(bundle_name)/Contents/MacOS/residualvm
@@ -115,7 +122,7 @@ ifneq ($(BACKEND), iphone)
 # Static libaries, used for the residualvm-static and iphone targets
 OSX_STATIC_LIBS := `$(STATICLIBPATH)/bin/sdl-config --static-libs`
 ifdef USE_FREETYPE2
-OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libfreetype.a $(STATICLIBPATH)/lib/libbz2.a
+OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libfreetype.a $(STATICLIBPATH)/lib/libbz2.a $(STATICLIBPATH)/lib/libpng.a
 endif
 endif
 
@@ -170,6 +177,11 @@ endif
 
 ifdef USE_SPARKLE
 OSX_STATIC_LIBS += -framework Sparkle -F$(STATICLIBPATH)
+endif
+
+# ResidualVM specific:
+ifdef USE_OPENGL_SHADERS
+OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libglew.a
 endif
 
 ifdef USE_TERMCONV
