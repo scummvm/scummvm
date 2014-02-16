@@ -4210,7 +4210,7 @@ case $_backend in
 		system_libs=''
 		for lib in $LIBS; do
 			case $lib in
-			-lz|-lm|-ldl|android|-lGLESv1_CM|-lGLESv2) # ResidualVM specific
+			-lz|-lm|-ldl|-landroid|-lGLESv1_CM|-lGLESv2) # ResidualVM specific
 				system_libs="$system_libs $lib"
 				;;
 			*)
