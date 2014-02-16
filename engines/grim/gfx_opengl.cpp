@@ -498,8 +498,9 @@ void GfxOpenGL::startActorDraw(const Actor *actor) {
 			glMultMatrixf(worldRot.getData());
 			glTranslatef(-_currentPos.x(), -_currentPos.y(), -_currentPos.z());
 
-			const Math::Matrix4 &m = actor->getFinalMatrix();
-			glMultTransposeMatrixf(m.getData());
+			Math::Matrix4 m = actor->getFinalMatrix();
+			m.transpose();
+			glMultMatrixf(m.getData());
 		}
 	} else {
 		// Grim
