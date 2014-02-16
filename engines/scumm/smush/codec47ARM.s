@@ -28,6 +28,7 @@
 
 	.global	_ARM_Smush_decode2
 
+	.align 2
 _ARM_Smush_decode2:
 	@ r0 = dst
 	@ r1 = src
