@@ -38,12 +38,52 @@ public:
 	void run();
 
 private:
-	static const byte kFacingRight;
+	struct Sprite {
+		int8 _ix, _iy;
+		int16 _x, _y;
+		byte _p;
+		int16 _timeout;
+		bool _cameo;
+		byte _cameoFrame;
+		bool _missile;
+		bool _wipe;
+	};
+
+	struct Runner {
+		int16 _x, _y;
+		byte _frame;
+		byte _tooHigh;
+		byte _lowest;
+		int8 _ix, _iy;
+		byte _frameDelay;
+	};
+
 	static const byte kStocks;
+	static const byte kFacingRight;
+	static const byte kFacingLeft;
+	static const long int kFlag;
 
 	AvalancheEngine *_vm;
 
+	uint16 _score;
 	byte _time;
+	byte _stockStatus[7];
+	Sprite _sprites[99];
+	byte _rectNum; // Original: 'rsize'
+	uint16 _avvyWas;
+	uint16 _avvyPos;
+	byte _avvyAnim;
+	byte _avvyFacing;
+	bool _altWasPressedBefore;
+	byte _throwNext;
+	bool _firing;
+	Runner _running[4];
+	bool _hasEscaped[7];
+	byte _count321;
+	byte _howManyHaveEscaped;
+	uint16 _escapeCount;
+	bool _escaping;
+	byte _timeThisSecond;
 
 	bool overlap(uint16 a1x, uint16 a1y, uint16 a2x, uint16 a2y, uint16 b1x, uint16 b1y, uint16 b2x, uint16 b2y);
 	byte getStockNumber(byte x);
@@ -53,6 +93,7 @@ private:
 	void define(int16 xx, int16 yy, byte pp, int8 ixx, int8 iyy, int16 time, bool isAMissile, bool doWeWipe);
 	void defineCameo(int16 xx, int16 yy, byte pp, int16 time);
 	void showStock(byte x);
+	void drawNumber(int number, int size, int x);
 	void showScore();
 	void showTime();
 	void gain(int8 howMuch);

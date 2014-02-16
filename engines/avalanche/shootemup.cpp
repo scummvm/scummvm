@@ -32,13 +32,54 @@
 
 namespace Avalanche {
 
-const byte ShootEmUp::kFacingRight = 87;
 const byte ShootEmUp::kStocks = 27;
+const byte ShootEmUp::kFacingRight = 87;
+const byte ShootEmUp::kFacingLeft = 93;
+const long int ShootEmUp::kFlag = -20047;
 
 ShootEmUp::ShootEmUp(AvalancheEngine *vm) {
 	_vm = vm;
 
 	_time = 0;
+	for (int i = 0; i < 7; i++)
+		_stockStatus[i] = 0;
+	for (int i = 0; i < 99; i++) {
+		_sprites[i]._ix = 0;
+		_sprites[i]._iy = 0;
+		_sprites[i]._x = 0;
+		_sprites[i]._y = 0;
+		_sprites[i]._p = 0;
+		_sprites[i]._timeout = 0;
+		_sprites[i]._cameo = false;
+		_sprites[i]._cameoFrame = 0;
+		_sprites[i]._missile = false;
+		_sprites[i]._wipe = false;
+	}
+	_rectNum = 0;
+	_avvyWas = 0;
+	_avvyPos = 0;
+	_avvyAnim = 0;
+	_avvyFacing = 0;
+	_altWasPressedBefore = false;
+	_throwNext = 0;
+	_firing = false;
+	for (int i = 0; i < 4; i++) {
+		_running[i]._x = 0;
+		_running[i]._y = 0;
+		_running[i]._frame = 0;
+		_running[i]._tooHigh = 0;
+		_running[i]._lowest = 0;
+		_running[i]._ix = 0;
+		_running[i]._iy = 0;
+		_running[i]._frameDelay = 0;
+	}
+	for (int i = 0; i < 7; i++)
+		_hasEscaped[i] = false;
+	_count321 = 0;
+	_howManyHaveEscaped = 0;
+	_escapeCount = 0;
+	_escaping = false;
+	_timeThisSecond = 0;
 }
 
 void ShootEmUp::run() {
@@ -62,10 +103,7 @@ void ShootEmUp::run() {
 	}
 
 	setup();
-	initRunner(20, 70, 48, 54, _vm->_rnd->getRandomNumber(4) + 1, _vm->_rnd->getRandomNumber(3) - 2);
-	initRunner(600, 70, 48, 54, _vm->_rnd->getRandomNumber(4) + 1, _vm->_rnd->getRandomNumber(3) - 2);
-	initRunner(600, 100, 61, 67, -(_vm->_rnd->getRandomNumber(4)) + 1, _vm->_rnd->getRandomNumber(3) - 2);
-	initRunner(20, 100, 61, 67, -(_vm->_rnd->getRandomNumber(4)) + 1, _vm->_rnd->getRandomNumber(3) - 2);
+	
 	do {
 		blankIt();
 		hitPeople();
@@ -123,12 +161,24 @@ void ShootEmUp::showStock(byte x) {
 	warning("STUB: ShootEmUp::showStock()");
 }
 
+void ShootEmUp::drawNumber(int number, int size, int x) {
+	for (int i = 0; i < size - 1; i++) {
+		int divisor = 10;
+		for (int j = 0; j < size - 2 - i; j++)
+			divisor *= 10;
+		char value = number / divisor;
+		_vm->_graphics->seuDrawPicture(x + i * 10, 0, value);
+		number -= value * divisor;
+	}
+	_vm->_graphics->seuDrawPicture(x + (size - 1) * 10, 0, number % 10);
+}
+
 void ShootEmUp::showScore() {
-	warning("STUB: ShootEmUp::showScore()");
+	drawNumber(_score, 5, 40);
 }
 
 void ShootEmUp::showTime() {
-	warning("STUB: ShootEmUp::showTime()");
+	drawNumber(_time, 3, 140);
 }
 
 void ShootEmUp::gain(int8 howMuch) {
@@ -136,7 +186,8 @@ void ShootEmUp::gain(int8 howMuch) {
 }
 
 void ShootEmUp::newEscape() {
-	warning("STUB: ShootEmUp::newEscape()");
+	_escapeCount = _vm->_rnd->getRandomNumber(17) * 20;
+	_escaping = false;
 }
 
 void ShootEmUp::nextPage() {
@@ -195,7 +246,45 @@ void ShootEmUp::instructions() {
 }
 
 void ShootEmUp::setup() {
-	warning("STUB: ShootEmUp::setup()");
+	_score = 0;
+	_time = 120;
+
+	for (int i = 0; i < 7; i++) {
+		_stockStatus[i] = _vm->_rnd->getRandomNumber(1);
+		showStock(i);
+	}
+
+	_avvyWas = 320;
+	_avvyPos = 320;
+	_avvyAnim = 1;
+	_avvyFacing = kFacingLeft;
+
+	_altWasPressedBefore = false;
+	_throwNext = 74;
+	_firing = false;
+
+	for (int i = 0; i < 4; i++)
+		_running[i]._x = kFlag;
+
+	newEscape();
+
+	_count321 = 255; // Counting down.
+
+	_vm->_graphics->drawFilledRectangle(Common::Rect(0, 0, 640, 200), kColorBlack); // Black out the whole screen.
+
+	// Set up status line:
+	_vm->_graphics->seuDrawPicture(0, 0, 16); // Score:
+	showScore(); // Value of score (00000 here).
+	_vm->_graphics->seuDrawPicture(110, 0, 19); // Time:
+	showTime(); // Value of time.
+
+	_vm->_graphics->refreshScreen();
+
+	// From the original core cycle:
+	initRunner(20, 70, 48, 54, _vm->_rnd->getRandomNumber(4) + 1, _vm->_rnd->getRandomNumber(3) - 2);
+	initRunner(600, 70, 48, 54, _vm->_rnd->getRandomNumber(4) + 1, _vm->_rnd->getRandomNumber(3) - 2);
+	initRunner(600, 100, 61, 67, -(_vm->_rnd->getRandomNumber(4)) + 1, _vm->_rnd->getRandomNumber(3) - 2);
+	initRunner(20, 100, 61, 67, -(_vm->_rnd->getRandomNumber(4)) + 1, _vm->_rnd->getRandomNumber(3) - 2);
 }
 
 void ShootEmUp::initRunner(int16 xx, int16 yy, byte f1, byte f2, int8 ixx, int8 iyy) {

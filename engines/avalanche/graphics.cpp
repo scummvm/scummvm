@@ -744,7 +744,7 @@ void GraphicManager::seuFree() {
 }
 
 /**
- * @remarks	Originally called 'display'
+ * @remarks	Originally called 'display' and it also replaces 'display_const'
  */
 void GraphicManager::seuDrawPicture(int x, int y, byte which) {
 	drawPicture(_surface, _seuPictures[which], x, y);
