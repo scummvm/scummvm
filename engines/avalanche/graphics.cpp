@@ -363,8 +363,8 @@ void GraphicManager::drawBigText(const Common::String text, FontType font, byte 
 			for (int bit = 0; bit < 16; bit++) {
 				if ((bit % 2) == 0)
 					pixelBit = (pixel >> (bit / 2)) & 1;
-				for (int k = 0; k < 2; k++) 
-					if (pixelBit) 
+				for (int k = 0; k < 2; k++)
+					if (pixelBit)
 						*(byte *)_surface.getBasePtr(x + i * 16 + 16 - bit, y + j * 2 + k) = color;
 			}
 		}
@@ -552,7 +552,7 @@ void GraphicManager::ghostDrawGhost(byte ghostArr[2][66][26], uint16 destX, int1
 			}
 		}
 	}
-	
+
 	drawPicture(_surface, ghostPic, destX, destY);
 
 	ghostPic.free();
@@ -592,11 +592,11 @@ Graphics::Surface GraphicManager::ghostLoadPicture(Common::File &file, Common::P
 
 	coord.x = cb._x;
 	coord.y = cb._y;
-	
+
 	Graphics::Surface picture = loadPictureGraphic(file);
 
 	skipDifference(cb._size, picture, file);
-		
+
 	return picture;
 }
 
@@ -728,7 +728,7 @@ void GraphicManager::seuLoad() {
 
 	if (!file.open("notts.avd"))
 		error("AVALANCHE: ShootEmUp: File not found: notts.avd");
-	
+
 	for (int i = 0; i < 99; i++) {
 		int size = file.readUint16LE();
 		_seuPictures[i] = loadPictureGraphic(file);
@@ -778,7 +778,7 @@ Graphics::Surface GraphicManager::loadPictureGraphic(Common::File &file) {
 
 	Graphics::Surface picture; // We make a Surface object for the picture itself.
 	picture.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
-	
+
 	// Produce the picture. We read it in row-by-row, and every row has 4 planes.
 	for (int y = 0; y < height; y++) {
 		for (int8 plane = 3; plane >= 0; plane--) { // The planes are in the opposite way.

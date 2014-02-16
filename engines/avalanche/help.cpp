@@ -52,7 +52,7 @@ Help::Help(AvalancheEngine *vm) {
  */
 void Help::switchPage(byte which) {
 	// Help icons are 80x20.
-	
+
 	_highlightWas = 177; // Forget where the highlight was.
 
 	Common::File file;
@@ -78,7 +78,7 @@ void Help::switchPage(byte which) {
 
 	_vm->_graphics->drawBigText("help!", _vm->_font, 8, 549, 1, kColorBlack);
 	_vm->_graphics->drawBigText("help!", _vm->_font, 8, 550, 0, kColorCyan);
-	
+
 	byte y = 0;
 	do {
 		Common::String line = getLine(file);
@@ -143,7 +143,7 @@ void Help::switchPage(byte which) {
 
 		_vm->_graphics->drawBigText(text, _vm->_font, 8, 589 - (text.size() * 8), 18 + (y + 1) * 27, kColorBlack);
 		_vm->_graphics->drawBigText(text, _vm->_font, 8, 590 - (text.size() * 8), 17 + (y + 1) * 27, kColorCyan);
-		
+
 		y++;
 		_buttonNum++;
 	}
@@ -175,7 +175,7 @@ bool Help::handleMouse(const Common::Event &event) {
 
 		if ((mousePos.x < 470) || (mousePos.x > 550) || (((mousePos.y - 13) % 27) > 20))
 			index = -1;
-		else // Clicked on a button. 
+		else // Clicked on a button.
 			index = ((mousePos.y - 13) / 27) - 1;
 	} else { // LBUTTONDOWN or MOUSEMOVE
 		int highlightIs = 0;
@@ -244,7 +244,7 @@ void Help::run() {
 	_vm->fadeIn();
 
 	_vm->_graphics->loadMouse(kCurHelp);
-	
+
 	// Originally it was the body of 'continue_help':
 	bool close = false;
 	while (!_vm->shouldQuit() && !close) {

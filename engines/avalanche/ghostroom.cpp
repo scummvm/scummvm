@@ -239,7 +239,7 @@ void GhostRoom::run() {
 			_vm->_graphics->ghostDrawPicture(_eyes[0], x, 135);
 			_vm->_graphics->drawDot(x + 16, 136, kColorBlack); // Eyes would leave a trail 1 pixel high behind them.
 		}
-		
+
 		// Plot the Glerk:
 		if ((x % 10) == 0) {
 			if (_glerkStage > 25)
@@ -255,12 +255,12 @@ void GhostRoom::run() {
 
 		wait(15);
 	}
-	
+
 	// Blank out the Glerk's space.
 	_vm->_graphics->drawFilledRectangle(Common::Rect(456, 14, 530, 50), kColorBlack);
 	_vm->_graphics->refreshScreen();
 
-	
+
 	// Here comes the descending ghost:
 	for (int y = -64; y <= 103; y++) {
 		_vm->_graphics->ghostDrawGhost(_ghost[1 + (abs(y / 7) % 2) * 3], 0, y);
@@ -298,7 +298,7 @@ void GhostRoom::run() {
 	wait(777);
 
 	// Erase "aargh":
-	_vm->_graphics->drawFilledRectangle(Common::Rect(172, 78, 348, 112), kColorBlack); 
+	_vm->_graphics->drawFilledRectangle(Common::Rect(172, 78, 348, 112), kColorBlack);
 	_vm->_graphics->refreshScreen();
 
 	for (int i = 4; i >= 0; i--) {
@@ -307,14 +307,14 @@ void GhostRoom::run() {
 	}
 
 	// Erase the exclamation mark:
-	_vm->_graphics->drawFilledRectangle(Common::Rect(246, 127, 252, 134), kColorBlack); 
+	_vm->_graphics->drawFilledRectangle(Common::Rect(246, 127, 252, 134), kColorBlack);
 	_vm->_graphics->refreshScreen();
 
 	// Avvy hurries back:
 	_glerkStage = 0;
 	_greldetCount = 18;
 	_redGreldet = false;
-	
+
 	for (int x = 217; x <= 479; x++) {
 		// The floating eyeballs again:
 		int xBound = x % 30;
@@ -343,7 +343,7 @@ void GhostRoom::run() {
 			_greldetCount = 0;
 			_redGreldet = !_redGreldet;
 		}
-		
+
 		_vm->_graphics->ghostDrawPicture(_greldet[kGreldetFade[_greldetCount]][_redGreldet], _greldetX, _greldetY);
 		_greldetCount++;
 
@@ -353,7 +353,7 @@ void GhostRoom::run() {
 	}
 
 	CursorMan.showMouse(true);
-	
+
 	_vm->fadeOut();
 	_vm->_graphics->restoreScreen();
 	_vm->_graphics->removeBackup();
