@@ -111,7 +111,7 @@ public:
 		_turningFinished = 0;
 		_callbackOffset = 0;
 
-		stopWalking(); 
+		stopWalking();
 	}
 
 	~WalkingState() {}
