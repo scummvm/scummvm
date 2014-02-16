@@ -1252,7 +1252,6 @@ int16 Talk::selectSentence() {
 		_vm->input()->clearKeyVerb();
 
 		if (sentenceCount > 0) {
-			int zone = 0;
 			int oldZone = 0;
 
 			while (0 == selectedSentence) {
@@ -1263,7 +1262,7 @@ int16 Talk::selectSentence() {
 				_vm->update();
 
 				Common::Point mouse = _vm->input()->getMousePos();
-				zone = _vm->grid()->findZoneForPos(GS_PANEL, mouse.x, mouse.y);
+				int zone = _vm->grid()->findZoneForPos(GS_PANEL, mouse.x, mouse.y);
 
 				int mouseButton = _vm->input()->mouseButton();
 				_vm->input()->clearMouseButton();

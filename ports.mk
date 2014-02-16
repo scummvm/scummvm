@@ -97,9 +97,10 @@ endif
 ifneq ($(BACKEND), iphone)
 # Static libaries, used for the scummvm-static and iphone targets
 OSX_STATIC_LIBS := `$(STATICLIBPATH)/bin/sdl-config --static-libs`
+endif
+
 ifdef USE_FREETYPE2
 OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libfreetype.a $(STATICLIBPATH)/lib/libbz2.a
-endif
 endif
 
 ifdef USE_VORBIS

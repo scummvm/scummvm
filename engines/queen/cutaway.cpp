@@ -552,7 +552,6 @@ void Cutaway::dumpCutawayAnim(CutawayAnim &anim) {
 const byte *Cutaway::handleAnimation(const byte *ptr, CutawayObject &object) {
 	// lines 1517-1770 in cutaway.c
 	int frameCount = 0;
-	int header = 0;
 	int i;
 
 	CutawayAnim objAnim[56];
@@ -560,7 +559,7 @@ const byte *Cutaway::handleAnimation(const byte *ptr, CutawayObject &object) {
 	// Read animation frames
 	for (;;) {
 
-		header = (int16)READ_BE_INT16(ptr);
+		int header = (int16)READ_BE_INT16(ptr);
 		ptr += 2;
 
 		if (-2 == header)

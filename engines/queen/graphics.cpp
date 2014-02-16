@@ -522,7 +522,7 @@ void Graphics::setBobText(const BobSlot *pbs, const char *text, int textX, int t
 
 	// Calc text position
 
-	short x, y, width, height;
+	short x, y, width;
 
 	if (flags) {
 		if (flags == 2)
@@ -540,7 +540,7 @@ void Graphics::setBobText(const BobSlot *pbs, const char *text, int textX, int t
 		BobFrame *pbf = _vm->bankMan()->fetchFrame(pbs->frameNum);
 
 		width  = (pbf->width  * pbs->scale) / 100;
-		height = (pbf->height * pbs->scale) / 100;
+		short height = (pbf->height * pbs->scale) / 100;
 
 		y = y - height - 16 - lineCount * 9;
 	}
