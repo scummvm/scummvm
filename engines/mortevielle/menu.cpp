@@ -141,19 +141,19 @@ void Menu::readVerbNums(Common::File &f, int dataSize) {
 	_actionMenu[1]._actionId  = _opcodeSHide  & 0xFF;
 
 	_actionMenu[2]._menuId    = _opcodeAttach >> 8;
-	_actionMenu[2]._actionId  = _opcodeAttach & 0xFF; 
+	_actionMenu[2]._actionId  = _opcodeAttach & 0xFF;
 
 	_actionMenu[3]._menuId    = _opcodeForce  >> 8;
-	_actionMenu[3]._actionId  = _opcodeForce  & 0xFF; 
+	_actionMenu[3]._actionId  = _opcodeForce  & 0xFF;
 
 	_actionMenu[4]._menuId    = _opcodeSleep  >> 8;
 	_actionMenu[4]._actionId  = _opcodeSleep  & 0xFF;
 
 	_actionMenu[5]._menuId    = _opcodeEnter  >> 8;
-	_actionMenu[5]._actionId  = _opcodeEnter  & 0xFF; 
+	_actionMenu[5]._actionId  = _opcodeEnter  & 0xFF;
 
 	_actionMenu[6]._menuId    = _opcodeClose  >> 8;
-	_actionMenu[6]._actionId  = _opcodeClose  & 0xFF; 
+	_actionMenu[6]._actionId  = _opcodeClose  & 0xFF;
 
 	_actionMenu[7]._menuId    = _opcodeKnock  >> 8;
 	_actionMenu[7]._actionId  = _opcodeKnock  & 0xFF;
@@ -612,7 +612,7 @@ void Menu::updateMenu() {
 
 void Menu::initMenu() {
 	Common::File f;
-	
+
 	bool menuLoaded = false;
 	// First try to read it from mort.dat if useOriginalData() is false
 	if (!_vm->useOriginalData()) {
@@ -636,7 +636,7 @@ void Menu::initMenu() {
 				desiredLanguageId = MORTDAT_LANG_ENGLISH;
 				break;
 			}
-		
+
 			// Validate the data file header
 			char fileId[4];
 			f.read(fileId, 4);
@@ -654,7 +654,7 @@ void Menu::initMenu() {
 						// Read in the language
 						byte languageId = f.readByte();
 						--dataSize;
-					
+
 						// If the language isn't correct, then skip the entire block
 						if (languageId != desiredLanguageId) {
 							f.skip(dataSize);

@@ -203,7 +203,7 @@ void SoundManager::litph(tablint &t, int typ, int tempo) {
 				}
 			} else { // 2
 				debugC(5, kMortevielleSounds, "litph - vadson");
-				const static int ambiantNoiseAdr[] = {0,     14020, 
+				const static int ambiantNoiseAdr[] = {0,     14020,
 													  14020, 18994,
 													  18994, 19630,
 													  19630, 22258,
@@ -695,7 +695,7 @@ void SoundManager::handlePhoneme() {
 	uint16 startPos = _cfiphBuffer[_phonemeNumb - 1] + deca[_soundType];
 	uint16 endPos = _cfiphBuffer[_phonemeNumb] + deca[_soundType];
 	int wordCount = endPos - startPos;
-	
+
 	startPos /= 2;
 	endPos /= 2;
 	assert((endPos - startPos) < 1711);

@@ -125,7 +125,7 @@ Common::Error SavegameManager::loadGame(const Common::String &filename) {
 		g_vm->gameLoaded();
 		g_vm->_mouse->showMouse();
 		return Common::kNoError;
-	} else 
+	} else
 		return Common::kUnknownError;
 }
 

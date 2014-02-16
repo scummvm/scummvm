@@ -287,8 +287,8 @@ void TextHandler::taffich() {
 			filename = "AXX.mor";
 		} else { // b == 50
 			// CHECKME: the size of AZZ.mor is 1280 for the DOS version
-			//          and 1260 for the Amiga version. Maybe the 20 bytes 
-			//          are a filler (to get 10 blocks of 128 bytes), 
+			//          and 1260 for the Amiga version. Maybe the 20 bytes
+			//          are a filler (to get 10 blocks of 128 bytes),
 			//          or the size should be variable.
 			drawingSize = 1260;
 			filename = "AZZ.mor";
