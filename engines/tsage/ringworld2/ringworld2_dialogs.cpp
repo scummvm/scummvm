@@ -322,6 +322,10 @@ void CharacterDialog::show() {
 
 		// Change to whichever scene the newly selected character is in
 		R2_GLOBALS._sceneManager.changeScene(R2_GLOBALS._player._characterScene[R2_GLOBALS._player._characterIndex]);
+
+		// Force the reset the current cursor
+		R2_GLOBALS._events.setCursor(CURSOR_USE);
+
 	} else
 		// Restore previous cursor
 		R2_GLOBALS._events.setCursor(cursorNum);
