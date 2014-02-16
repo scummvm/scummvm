@@ -142,7 +142,7 @@ void Shader::use(bool forceReload) {
 		if (attrib._enabled) {
 			glEnableVertexAttribArray(i);
 			glBindBuffer(GL_ARRAY_BUFFER, attrib._vbo);
-			glVertexAttribPointer(i, attrib._size, attrib._type, attrib._normalized, attrib._stride, attrib._offset);
+			glVertexAttribPointer(i, attrib._size, attrib._type, attrib._normalized, attrib._stride, (const GLvoid *)attrib._offset);
 		} else {
 			glDisableVertexAttribArray(i);
 			switch (attrib._size) {
@@ -189,11 +189,7 @@ void Shader::enableVertexAttribute(const char *attrib, GLuint vbo, GLint size, G
 	va._type = type;
 	va._normalized = normalized;
 	va._stride = stride;
-#ifdef SCUMM_64BITS
-	va._offset = (const GLvoid *)(uint64)offset;
-#else
-	va._offset = (const GLvoid *)offset;
-#endif
+	va._offset = offset;
 }
 
 void Shader::disableVertexAttribute(const char *attrib, int size, const float *data) {

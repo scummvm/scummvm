@@ -52,7 +52,7 @@ struct VertexAttrib {
 	GLenum _type;
 	bool _normalized;
 	GLsizei _stride;
-	const GLvoid *_offset;
+	size_t _offset;
 	float _const[4];
 };
 
