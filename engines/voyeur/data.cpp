@@ -39,8 +39,40 @@ void VoyeurEvent::synchronize(Common::Serializer &s) {
 /*------------------------------------------------------------------------*/
 
 SVoy::SVoy() {
-	// Initialize all the data fields of SVoy to empty values
-	Common::fill((byte *)this, (byte *)this + sizeof(SVoy), 0);
+	// Initialize all the data fields
+	_abortInterface = false;
+	_fadeICF0 = false;
+	_isAM = false;
+	Common::fill(&_phoneCallsReceived[0], &_phoneCallsReceived[5], false);
+	Common::fill(&_roomHotspotsEnabled[0], &_roomHotspotsEnabled[20], false);
+	_victimMurdered = false;
+
+	_audioVisualStartTime = 0;
+	_audioVisualDuration = 0;
+	_boltGroupId2 = 0;
+	_computerTextId = 0;
+	_computerTimeMin = _computerTimeMax = 0;
+	_curICF0 = 0;
+	_eventCount = 0;
+	_fadingStep1 = 0;
+	_fadingStep2 = 0;
+	_fadingType = 0;
+	_incriminatedVictimNumber = 0;
+	_musicStartTime = 0;
+	_playStampMode = 0;
+	_switchBGNum = 0;
+	_transitionId = 0;
+	_victimNumber = 0;
+	_videoEventId = 0;
+	_vocSecondsOffset = 0;
+	_RTANum = 0;
+	_RTVLimit = 0;
+	_RTVNum = 0;
+	_viewBounds = nullptr;
+	Common::fill(&_evPicPtrs[0], &_evPicPtrs[6], (PictureResource *)nullptr);
+	Common::fill(&_evCmPtrs[0], &_evCmPtrs[6], (CMapResource *)nullptr);
+	_curICF1 = 0;
+	_policeEvent = 0;
 
 	_eventFlags = EVTFLAG_TIME_DISABLED;
 	_fadingAmount1 = _fadingAmount2 = 127;
@@ -48,8 +80,6 @@ SVoy::SVoy() {
 	_aptLoadMode = -1;
 	_eventFlags |= EVTFLAG_100;
 	_totalPhoneCalls = 0;
-	_victimMurdered = false;
-	_computerTimeMin = _computerTimeMax = 0;
 }
 
 void SVoy::setVm(VoyeurEngine *vm) {
