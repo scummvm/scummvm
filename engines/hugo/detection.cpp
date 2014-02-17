@@ -275,9 +275,9 @@ void HugoMetaEngine::removeSaveState(const char *target, int slot) const {
 } // End of namespace Hugo
 
 #if PLUGIN_ENABLED_DYNAMIC(HUGO)
-REGISTER_PLUGIN_DYNAMIC(HUGO, PLUGIN_TYPE_ENGINE, Hugo::HugoMetaEngine);
+	REGISTER_PLUGIN_DYNAMIC(HUGO, PLUGIN_TYPE_ENGINE, Hugo::HugoMetaEngine);
 #else
-REGISTER_PLUGIN_STATIC(HUGO, PLUGIN_TYPE_ENGINE, Hugo::HugoMetaEngine);
+	REGISTER_PLUGIN_STATIC(HUGO, PLUGIN_TYPE_ENGINE, Hugo::HugoMetaEngine);
 #endif
 
 namespace Hugo {
