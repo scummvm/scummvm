@@ -45,8 +45,6 @@ void MADSEngine::initialise() {
 	_soundManager.setVm(this, _mixer);
 }
 
-static uint32 lastSoundFrame = 0;
-
 Common::Error MADSEngine::run() {
 	initGraphics(320, 200, false);
 	initialise();
@@ -56,12 +54,6 @@ Common::Error MADSEngine::run() {
 	while (!shouldQuit()) {
 		g_system->getEventManager()->pollEvent(e);
 		g_system->delayMillis(10);
-
-		uint32 milli = g_system->getMillis();
-		if (milli > (lastSoundFrame + 50)) {
-			lastSoundFrame = milli;
-			_soundManager.poll();
-		}
 	}
 
 	return Common::kNoError;

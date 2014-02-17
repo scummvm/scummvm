@@ -148,12 +148,6 @@ ASound::ASound(Audio::Mixer *mixer, const Common::String &filename, int dataOffs
 	if (!_soundFile.open(filename))
 		error("Could not open file - %s", filename.c_str());
 
-	_dataOffset = dataOffset;
-	_mixer = mixer;
-	_opl = OPL::Config::create();
-	assert(_opl);
-	_opl->init(11025);
-
 	// Initialise fields
 	_activeChannelPtr = nullptr;
 	_samplePtr = nullptr;
@@ -179,6 +173,21 @@ ASound::ASound(Audio::Mixer *mixer, const Common::String &filename, int dataOffs
 	_randomSeed = 1234;
 	_amDep = _vibDep = _splitPoint = true;
 
+	_samplesTillCallback = 0;
+	_samplesTillCallbackRemainder = 0;
+	_samplesPerCallback = getRate() / CALLBACKS_PER_SECOND;
+	_samplesPerCallbackRemainder = getRate() % CALLBACKS_PER_SECOND;
+
+	// Store passed parameters, and setup OPL
+	_dataOffset = dataOffset;
+	_mixer = mixer;
+	_opl = OPL::Config::create();
+	assert(_opl);
+
+	_opl->init(getRate());
+	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, this, -1, 
+		Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
+
 	// Initialise the Adlib
 	adlibInit();
 
@@ -191,6 +200,7 @@ ASound::~ASound() {
 	for (i = _dataCache.begin(); i != _dataCache.end(); ++i)
 		delete[] (*i)._data;
 
+	_mixer->stopHandle(_soundHandle);
 	delete _opl;
 }
 
@@ -233,7 +243,7 @@ void ASound::noise() {
 }
 
 void ASound::write(int reg, int val) {
-	_opl->write(reg, val);
+	_queue.push(RegisterValue(reg, val));
 }
 
 int ASound::write2(int state, int reg, int val) {
@@ -241,6 +251,15 @@ int ASound::write2(int state, int reg, int val) {
 	_ports[reg] = val;
 	write(reg, val);
 	return state;
+}
+
+void ASound::flush() {
+	Common::StackLock slock(_driverMutex);
+
+	while (!_queue.empty()) {
+		RegisterValue v = _queue.pop();
+		_opl->writeReg(v._regNum, v._value);
+	}
 }
 
 void ASound::channelOn(int reg, int volume) {
@@ -752,6 +771,34 @@ void ASound::updateFNumber() {
 
 	int val2 = (_ports[hiReg] & 0x20) | (val1 >> 8);
 	write2(8, hiReg, val2);
+}
+
+int ASound::readBuffer(int16 *buffer, const int numSamples) {
+	Common::StackLock slock(_driverMutex);
+
+	int32 samplesLeft = numSamples;
+	memset(buffer, 0, sizeof(int16) * numSamples);
+	while (samplesLeft) {
+		if (!_samplesTillCallback) {
+			poll();
+			flush();
+
+			_samplesTillCallback = _samplesPerCallback;
+			_samplesTillCallbackRemainder += _samplesPerCallbackRemainder;
+			if (_samplesTillCallbackRemainder >= CALLBACKS_PER_SECOND) {
+				_samplesTillCallback++;
+				_samplesTillCallbackRemainder -= CALLBACKS_PER_SECOND;
+			}
+		}
+
+		int32 render = MIN<int>(samplesLeft, _samplesTillCallback);
+		samplesLeft -= render;
+		_samplesTillCallback -= render;
+
+		_opl->readBuffer(buffer, render);
+		buffer += render;
+	}
+	return numSamples;
 }
 
 int ASound::command0() {

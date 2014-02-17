@@ -25,6 +25,8 @@
 
 #include "common/scummsys.h"
 #include "common/file.h"
+#include "common/mutex.h"
+#include "common/queue.h"
 #include "audio/audiostream.h"
 #include "audio/fmopl.h"
 #include "audio/mixer.h"
@@ -108,13 +110,23 @@ public:
 	AdlibSample(Common::SeekableReadStream &s);
 };
 
+struct RegisterValue {
+	uint8 _regNum;
+	uint8 _value;
+
+	RegisterValue(int regNum, int value) {
+		_regNum = regNum; _value = value;
+	}
+};
+
 #define ADLIB_CHANNEL_COUNT 9
 #define ADLIB_CHANNEL_MIDWAY 5
+#define CALLBACKS_PER_SECOND 60
 
 /**
  * Base class for the sound player resource files
  */
-class ASound {
+class ASound: public Audio::AudioStream {
 private:
 	struct CachedDataEntry {
 		int _offset;
@@ -169,14 +181,19 @@ private:
 	void updateFNumber();
 protected:
 	/**
-	 * Write a byte to an Adlib register
+	 * Queue a byte for an Adlib register
 	 */
 	void write(int reg, int val);
 
 	/**
-	 * Write a byte to an Adlib register, and store it in the _ports array
+	 * Queue a byte for an Adlib register, and store it in the _ports array
 	 */
 	int write2(int state, int reg, int val);
+
+	/**
+	 * Flush any pending Adlib register values to the OPL driver
+	 */
+	void flush();
 
 	/**
 	 * Turn a channel on
@@ -239,12 +256,15 @@ protected:
 public:
 	Audio::Mixer *_mixer;
 	FM_OPL *_opl;
+	Audio::SoundHandle _soundHandle;
 	AdlibChannel _channels[ADLIB_CHANNEL_COUNT];
 	AdlibChannel *_activeChannelPtr;
 	AdlibChannelData _channelData[11];
 	Common::Array<AdlibSample> _samples;
 	AdlibSample *_samplePtr;
 	Common::File _soundFile;
+	Common::Queue<RegisterValue> _queue;
+	Common::Mutex _driverMutex;
 	int _dataOffset;
 	int _frameCounter;
 	bool _isDisabled;
@@ -268,6 +288,10 @@ public:
 	int _activeChannelReg;
 	int _v11;
 	bool _amDep, _vibDep, _splitPoint;
+	int _samplesPerCallback;
+	int _samplesPerCallbackRemainder;
+	int _samplesTillCallback;
+	int _samplesTillCallbackRemainder;
 public:
 	/**
 	 * Constructor
@@ -306,6 +330,27 @@ public:
 	 * Return the current frame counter
 	 */
 	int getFrameCounter() { return _frameCounter; }
+
+	// AudioStream interface
+	/**
+	 * Main buffer read
+	 */
+	virtual int readBuffer(int16 *buffer, const int numSamples);
+	
+	/**
+	 * Mono sound only
+	 */
+	virtual bool isStereo() const { return false; }
+	
+	/**
+	 * Data is continuously pushed, so definitive end
+	 */
+	virtual bool endOfData() const { return false; }
+
+	/**
+	 * Return sample rate
+	 */
+	virtual int getRate() const { return 11025; }
 };
 
 class ASound1: public ASound {
