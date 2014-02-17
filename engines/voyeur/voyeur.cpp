@@ -855,8 +855,8 @@ bool VoyeurSavegameHeader::read(Common::InSaveFile *f) {
 	char id[4];
 	_thumbnail = NULL;
 
-	f->read(&id[0], 4);
-	if (strncmp(id, "VOYR", 4)) {
+	uint32 signature = f->readUint32BE();
+	if (signature != MKTAG('V', 'O', 'Y', 'R')) {
 		warning("Invalid savegame");
 		return false;
 	}
@@ -888,7 +888,7 @@ bool VoyeurSavegameHeader::read(Common::InSaveFile *f) {
 
 void VoyeurSavegameHeader::write(Common::OutSaveFile *f, VoyeurEngine *vm, const Common::String &saveName) {
 	// Write ident string
-	f->write("VOYR", 4);
+	f->writeUint32BE(MKTAG('V', 'O', 'Y', 'R'));
 
 	// Write out savegame version
 	f->writeByte(VOYEUR_SAVEGAME_VERSION);
