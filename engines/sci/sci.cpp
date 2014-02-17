@@ -286,6 +286,11 @@ Common::Error SciEngine::run() {
 		// We set this, so that the game automatically quit right after init
 		_gamestate->variables[VAR_GLOBAL][4] = TRUE_REG;
 
+		// Jones only initializes its menus when restarting/restoring, thus set
+		// the gameIsRestarting flag here before initializing. Fixes bug #6536.
+		if (g_sci->getGameId() == GID_JONES)
+			_gamestate->gameIsRestarting = GAMEISRESTARTING_RESTORE;
+
 		_gamestate->_executionStackPosChanged = false;
 		run_vm(_gamestate);
 
