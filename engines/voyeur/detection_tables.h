@@ -28,10 +28,7 @@ static const VoyeurGameDescription gameDescriptions[] = {
 		{
 			"voyeur",
 			0,
-			{
-				{"a1100100.rl2", 0, "b44630677618d034970ca0a13c1c1237", 336361},
-				AD_LISTEND
-			},
+			AD_ENTRY1s("a1100100.rl2", "b44630677618d034970ca0a13c1c1237", 336361),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
