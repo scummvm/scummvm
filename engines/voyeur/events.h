@@ -72,7 +72,6 @@ private:
 	bool _counterFlag;
 	uint32 _gameCounter;
 	uint32 _recordBlinkCounter;	// Original field was called _joe :)
-	bool _keyState[256];
 	int _mouseButton;
 	Common::List<IntNode *> _intNodes;
 	Common::Point _mousePos;

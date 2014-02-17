@@ -72,7 +72,6 @@ EventsManager::EventsManager(): _intPtr(_gameData),
 	_recordBlinkCounter = 0;
 	_cursorBlinked = false;
 
-	Common::fill(&_keyState[0], &_keyState[256], false);
 	Common::fill(&_cycleTime[0], &_cycleTime[4], 0);
 	Common::fill(&_cycleNext[0], &_cycleNext[4], (byte *)nullptr);
 	_cyclePtr = NULL;
@@ -260,6 +259,7 @@ void EventsManager::pollEvents() {
 		switch (event.type) {
 		case Common::EVENT_QUIT:
 		case Common::EVENT_RTL:
+		case Common::EVENT_KEYUP:
 			return;
 
 		case Common::EVENT_KEYDOWN:
@@ -268,12 +268,7 @@ void EventsManager::pollEvents() {
 				// Attach to the debugger
 				_vm->_debugger.attach();
 				_vm->_debugger.onFrame();
-			} else {
-				_keyState[(byte)toupper(event.kbd.ascii)] = true;
 			}
-			return;
-		case Common::EVENT_KEYUP:
-			_keyState[(byte)toupper(event.kbd.ascii)] = false;
 			return;
 		case Common::EVENT_LBUTTONDOWN:
 			_mouseButton = 1;
