@@ -743,11 +743,11 @@ reg_t kSaveGame(EngineState *s, int argc, reg_t *argv) {
 		savegameId = dialog->runModalWithCurrentTarget();
 		game_description = dialog->getResultString();
 		if (game_description.empty()) {
-			// create our own description for the saved game, the user didnt enter it
+			// create our own description for the saved game, the user didn't enter it
 			game_description = dialog->createDefaultSaveDescription(savegameId);
 		}
 		delete dialog;
-		g_sci->_soundCmd->pauseAll(false); // unpause music ( we can't have it paused during save)
+		g_sci->_soundCmd->pauseAll(false); // unpause music (we can't have it paused during save)
 		if (savegameId < 0)
 			return NULL_REG;
 
@@ -849,8 +849,6 @@ reg_t kRestoreGame(EngineState *s, int argc, reg_t *argv) {
 		}
 		// don't adjust ID of the saved game, it's already correct
 	} else {
-		if (argv[2].isNull())
-			error("kRestoreGame: called with parameter 2 being NULL");
 		if (g_sci->getGameId() == GID_JONES) {
 			// Jones has one save slot only
 			savegameId = 0;
@@ -879,7 +877,6 @@ reg_t kRestoreGame(EngineState *s, int argc, reg_t *argv) {
 		in = saveFileMan->openForLoading(filename);
 		if (in) {
 			// found a savegame file
-
 			gamestate_restore(s, in);
 			delete in;
 
