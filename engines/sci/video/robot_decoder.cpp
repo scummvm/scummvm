@@ -116,6 +116,10 @@ bool RobotDecoder::load(GuiResourceId id) {
 	if (g_sci->getGameId() == GID_RAMA && id == 1003)
 		return false;
 
+	// Robots for the options in the RAMA menu
+	if (g_sci->getGameId() == GID_RAMA && (id >= 1004 && id <= 1009))
+		return false;
+
 	// TODO: The robot video in the Lighthouse demo gets stuck
 	if (g_sci->getGameId() == GID_LIGHTHOUSE && id == 16)
 		return false;
