@@ -581,7 +581,7 @@ bool SciEngine::initGame() {
 
 	// Script 0 should always be at segment 1
 	if (script0Segment != 1) {
-		debug(2, "Failed to instantiate script.000");
+		debug(2, "Failed to instantiate script 0");
 		return false;
 	}
 
