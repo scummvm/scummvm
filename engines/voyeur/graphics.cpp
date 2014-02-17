@@ -39,9 +39,7 @@ DrawInfo::DrawInfo(int penColor, const Common::Point &pos, int flags) {
 
 /*------------------------------------------------------------------------*/
 
-GraphicsManager::GraphicsManager():
-		_defaultDrawInfo(1, Common::Point(), 0),
-			_drawPtr(&_defaultDrawInfo) {
+GraphicsManager::GraphicsManager(): _defaultDrawInfo(1, Common::Point(), 0), _drawPtr(&_defaultDrawInfo) {
 	_SVGAPage = 0;
 	_SVGAMode = 0;
 	_SVGAReset = 0;
@@ -63,9 +61,7 @@ GraphicsManager::GraphicsManager():
 
 void GraphicsManager::sInitGraphics() {
 	initGraphics(SCREEN_WIDTH, SCREEN_HEIGHT, false);
-	_screenSurface.create(SCREEN_WIDTH, SCREEN_HEIGHT,
-		Graphics::PixelFormat::createFormatCLUT8());
-
+	_screenSurface.create(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
 	clearPalette();
 }
 
