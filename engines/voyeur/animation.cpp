@@ -162,7 +162,7 @@ void RL2Decoder::RL2FileHeader::load(Common::SeekableReadStream *stream) {
 
 	_form = stream->readUint32LE();
 	_backSize = stream->readUint32LE();
-	_signature = stream->readUint32LE();
+	_signature = stream->readUint32BE();
 
 	if (!isValid())
 		return;
@@ -197,7 +197,7 @@ void RL2Decoder::RL2FileHeader::load(Common::SeekableReadStream *stream) {
 }
 
 bool RL2Decoder::RL2FileHeader::isValid() const {
-	return _signature == MKTAG('R','L','V','2') || _signature != MKTAG('R','L','V','3');
+	return _signature == MKTAG('R','L','V','2') || _signature == MKTAG('R','L','V','3');
 }
 
 Common::Rational RL2Decoder::RL2FileHeader::getFrameRate() const {
