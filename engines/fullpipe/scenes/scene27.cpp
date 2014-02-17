@@ -337,7 +337,7 @@ void sceneHandler27_wipeDo() {
     }
 }
 
-bool sceneHandler27_batFallLogic(int batn) {
+bool sceneHandler27_batFallLogic(uint batn) {
 	Bat *bat = g_vars->scene27_bats[batn];
 
 	int y = (bat->currY - 458.0) * 0.4848484848484849 + 734.0;
