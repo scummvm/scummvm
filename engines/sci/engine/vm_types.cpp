@@ -28,6 +28,43 @@
 
 namespace Sci {
 
+SegmentId reg_t::getSegment() const {
+	if (getSciVersion() <= SCI_VERSION_2_1) {
+		return _segment;
+	} else {
+		// Return the lower 14 bits of the segment
+		return (_segment & 0x3FFF);
+	}
+}
+
+void reg_t::setSegment(SegmentId segment) {
+	if (getSciVersion() <= SCI_VERSION_2_1) {
+		_segment = segment;
+	} else {
+		// Set the lower 14 bits of the segment, and preserve the upper 2 ones for the offset
+		_segment = (_segment & 0xC000) | (segment & 0x3FFF);
+	}
+}
+
+uint32 reg_t::getOffset() const {
+	if (getSciVersion() <= SCI_VERSION_2_1) {
+		return _offset;
+	} else {
+		// Return the lower 16 bits from the offset, and the 17th and 18th bits from the segment
+		return ((_segment & 0xC000) << 2) | _offset;
+	}
+}
+
+void reg_t::setOffset(uint32 offset) {
+	if (getSciVersion() <= SCI_VERSION_2_1) {
+		_offset = offset;
+	} else {
+		// Store the lower 16 bits in the offset, and the 17th and 18th bits in the segment
+		_offset = offset & 0xFFFF;
+		_segment = ((offset & 0x30000) >> 2) | (_segment & 0x3FFF);
+	}
+}
+
 reg_t reg_t::lookForWorkaround(const reg_t right, const char *operation) const {
 	SciTrackOriginReply originReply;
 	SciWorkaroundSolution solution = trackOriginAndFindWorkaround(0, arithmeticWorkarounds, &originReply);

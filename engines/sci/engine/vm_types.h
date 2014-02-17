@@ -35,36 +35,25 @@ struct reg_t {
 	SegmentId _segment;
 	uint16 _offset;
 
-	inline SegmentId getSegment() const {
-		return _segment;
-	}
-
-	inline void setSegment(SegmentId segment) {
-		_segment = segment;
-	}
-
-	inline uint16 getOffset() const {
-		return _offset;
-	}
-
-	inline void setOffset(uint16 offset) {
-		_offset = offset;
-	}
+	SegmentId getSegment() const;
+	void setSegment(SegmentId segment);
+	uint32 getOffset() const;
+	void setOffset(uint32 offset);
 
 	inline void incOffset(int16 offset) {
 		setOffset(getOffset() + offset);
 	}
 
 	inline bool isNull() const {
-		return (_offset | getSegment()) == 0;
+		return (getOffset() | getSegment()) == 0;
 	}
 
 	inline uint16 toUint16() const {
-		return _offset;
+		return (uint16)getOffset();
 	}
 
 	inline int16 toSint16() const {
-		return (int16)_offset;
+		return (int16)getOffset();
 	}
 
 	bool isNumber() const {
