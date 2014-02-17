@@ -142,7 +142,15 @@ reg_t kIsOnMe(EngineState *s, int argc, reg_t *argv) {
 	uint16 y = argv[1].toUint16();
 	reg_t targetObject = argv[2];
 	uint16 illegalBits = argv[3].getOffset();
-	Common::Rect nsRect = g_sci->_gfxCompare->getNSRect(targetObject, true);
+	Common::Rect nsRect = g_sci->_gfxCompare->getNSRect(targetObject);
+
+	uint16 itemX = readSelectorValue(s->_segMan, targetObject, SELECTOR(x));
+	uint16 itemY = readSelectorValue(s->_segMan, targetObject, SELECTOR(y));
+	// If top and left are negative, we need to adjust coordinates by the item's x and y
+	if (nsRect.left < 0)
+		nsRect.translate(itemX, 0);
+	if (nsRect.top < 0)
+		nsRect.translate(0, itemY);
 
 	// we assume that x, y are local coordinates
 

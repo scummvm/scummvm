@@ -42,7 +42,7 @@ public:
 	reg_t kernelCanBeHere(reg_t curObject, reg_t listReference);
 	bool kernelIsItSkip(GuiResourceId viewId, int16 loopNo, int16 celNo, Common::Point position);
 	void kernelBaseSetter(reg_t object);
-	Common::Rect getNSRect(reg_t object, bool fixRect = false);
+	Common::Rect getNSRect(reg_t object);
 	void setNSRect(reg_t object, Common::Rect nsRect);
 
 private:

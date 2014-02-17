@@ -241,20 +241,12 @@ void GfxCompare::kernelBaseSetter(reg_t object) {
 	}
 }
 
-Common::Rect GfxCompare::getNSRect(reg_t object, bool fixRect) {
+Common::Rect GfxCompare::getNSRect(reg_t object) {
 	Common::Rect nsRect;
 	nsRect.top = readSelectorValue(_segMan, object, SELECTOR(nsTop));
 	nsRect.left = readSelectorValue(_segMan, object, SELECTOR(nsLeft));
 	nsRect.bottom = readSelectorValue(_segMan, object, SELECTOR(nsBottom));
 	nsRect.right = readSelectorValue(_segMan, object, SELECTOR(nsRight));
-
-	if (fixRect) {
-		// nsRect top/left may be negative, adjust accordingly
-		if (nsRect.top < 0)
-			nsRect.top = 0;
-		if (nsRect.left < 0)
-			nsRect.left = 0;
-	}
 
 	return nsRect;
 }
