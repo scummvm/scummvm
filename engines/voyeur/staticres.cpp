@@ -75,7 +75,7 @@ const int COMP_BUT_TABLE[] = {
 };
 
 const char *const SZ_FILENAMES[] = {
-    "A2110100", nullptr, "A2300100", nullptr, "B1220100", nullptr, "C1220100", nullptr, 
+	"A2110100", nullptr, "A2300100", nullptr, "B1220100", nullptr, "C1220100", nullptr, 
 	"C1290100", nullptr, "D1220100", nullptr, "D1270100", nullptr, "E1210100", nullptr, 
 	"E1260100", nullptr, "E1280100", nullptr, "E1325100", nullptr, "F1200100", nullptr,
 	"G1250100", nullptr, "G1260100", nullptr, "H1200100", nullptr, "H1230100", nullptr, 
