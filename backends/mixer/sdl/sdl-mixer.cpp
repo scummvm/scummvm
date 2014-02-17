@@ -64,10 +64,6 @@ void SdlMixerManager::init() {
 	SDL_AudioDriverName(sdlDriverName, maxNameLen);
 	debug(1, "Using SDL Audio Driver \"%s\"", sdlDriverName);
 
-	// Warning if SDL on Windows is using the fallback waveout driver, rather than the nominal DX DirectSound driver, which can cause issues with audio.
-	if (strcmp(sdlDriverName, "waveout") == 0)
-		warning("Using the fallback \"waveout\" SDL audio driver instead of \"dsound\" can cause audio lag. Fix your DirectX setup and/or SDL.dll to avoid this.");
-	
 	// Get the desired audio specs
 	SDL_AudioSpec desired = getAudioSpec(SAMPLES_PER_SEC);
 
