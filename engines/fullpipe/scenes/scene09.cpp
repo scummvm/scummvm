@@ -316,6 +316,23 @@ void sceneHandler09_limitHangerPhase() {
 	warning("STUB: sceneHandler09_limitHangerPhase()");
 }
 
+void sceneHandler09_collideBall(Ball *ball) {
+	if (g_vars->scene09_var08) {
+		g_vars->scene09_flyingBall = ball->ani;
+
+		if (g_vars->scene09_glotatel) {
+			g_vars->scene09_glotatel->changeStatics2(ST_GLT_SIT);
+
+			MessageQueue *mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC9_EATBALL), 0, 0);
+
+			mq->setFlags(mq->getFlags() | 1);
+
+			if (!mq->chain(g_vars->scene09_glotatel))
+				delete mq;
+		}
+	}
+}
+
 void sceneHandler09_checkHangerCollide() {
 	warning("STUB: sceneHandler09_checkHangerCollide()");
 }
