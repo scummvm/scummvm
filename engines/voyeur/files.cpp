@@ -178,7 +178,7 @@ void BoltFilesState::nextBlock() {
 /*------------------------------------------------------------------------*/
 
 FilesManager::FilesManager() {
-	_decompressSize = 0x7000;
+	_decompressSize = DECOMPRESS_SIZE;
 }
 
 bool FilesManager::openBoltLib(const Common::String &filename, BoltFile *&boltFile) {
