@@ -51,7 +51,7 @@ public:
 	int _field8;
 	int _field9;
 	int _fieldA;
-	int _fieldB;
+	uint8 _fieldB;
 	int _fieldC;
 	int _fieldD;
 	int _fieldE;

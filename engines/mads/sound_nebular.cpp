@@ -195,7 +195,12 @@ ASound::~ASound() {
 }
 
 void ASound::adlibInit() {
-	// No implementation
+	write(4, 0x60);
+	write(4, 0x80);
+	write(2, 0xff);
+	write(4, 0x21);
+	write(4, 0x60);
+	write(4, 0x80);
 }
 
 int ASound::stop() { 
@@ -228,7 +233,6 @@ void ASound::noise() {
 }
 
 void ASound::write(int reg, int val) {
-	debug("reg %.2x = %.2x", reg, val);
 	_opl->write(reg, val);
 }
 
@@ -369,9 +373,9 @@ void ASound::checkChannels() {
 }
 
 void ASound::pollActiveChannel() {
-	bool flag = false;
-
 	AdlibChannel *chan = _activeChannelPtr; 
+	bool updateFlag = true;
+
 	if (chan->_activeCount) {
 		if (chan->_field8 > 0 && --chan->_field8 == 0)
 			updateOctave();
@@ -380,7 +384,7 @@ void ASound::pollActiveChannel() {
 			for (;;) {
 				byte *pSrc = chan->_pSrc;
 				if (!(*pSrc & 0x80) || (*pSrc <= 0xF0)) {
-					if (flag)
+					if (updateFlag)
 						updateActiveChannel();
 
 					chan->_field4 = *pSrc++;
@@ -394,9 +398,10 @@ void ASound::pollActiveChannel() {
 						updateChannelState();
 					}
 
+					// Break out of processing loop
 					break;
 				} else {
-					flag = false;
+					updateFlag = false;
 
 					switch ((~*pSrc) & 0xF) {
 					case 0:
@@ -479,10 +484,10 @@ void ASound::pollActiveChannel() {
 					case 6:
 						++pSrc;
 						if (chan->_fieldE) {
-							chan->_volume = *pSrc >> 1;
-							flag = 1;
 							chan->_pSrc += 2;
 						} else {
+							chan->_volume = *pSrc >> 1;
+							updateFlag = true;
 							chan->_pSrc += 2;
 						}
 						break;
@@ -521,14 +526,14 @@ void ASound::pollActiveChannel() {
 							chan->_pSrc += 2;
 						} else {
 							chan->_field1E = *pSrc >> 1;
-							flag = 1;
+							updateFlag = true;
 							chan->_pSrc += 2;
 						}
 						break;
 
 					case 11:
 						chan->_fieldD = *++pSrc;
-						flag = 1;
+						updateFlag = true;
 						chan->_pSrc += 2;
 						break;
 
@@ -559,12 +564,22 @@ void ASound::pollActiveChannel() {
 		if (chan->_field1)
 			updateFNumber();
 
-		flag = false;
-		if (chan->_field9 || chan->_field8) {
+		updateFlag = false;
+		if (chan->_field9 || chan->_fieldB) {
 			if (!--chan->_field9) {
 				chan->_field9 = chan->_fieldA;
 				if (chan->_field2) {
-					chan->_field9 = CLIP(chan->_field2 + chan->_field1E, 0, 63);
+					int8 newVal = (int8)chan->_field2 + (int8)chan->_field1E;
+					if (newVal < 0) {
+						chan->_field9 = 0;
+						newVal = 0;
+					} else if (newVal > 63) {
+						chan->_field9 = 0;
+						newVal = 63;
+					}
+
+					chan->_field1E = newVal;
+					updateFlag = true;
 				}
 			}
 
@@ -572,11 +587,11 @@ void ASound::pollActiveChannel() {
 				chan->_fieldB = chan->_fieldC;
 				if (chan->_field3) {
 					chan->_fieldD = chan->_field3;
-					flag = true;
+					updateFlag = true;
 				}
 			}
 
-			if (flag)
+			if (updateFlag)
 				updateActiveChannel();
 		}
 	}
@@ -628,14 +643,13 @@ void ASound::updateChannelState() {
 		resultCheck();
 	} else {
 		int reg = 0xA0 + _activeChannelNumber;
-		int v = (_activeChannelPtr->_field4 + _activeChannelPtr->_field1F) / 12;
-		int vHi = v >> 8;
-		int vLo = v & 0xFF;
-		int val = _vList1[vHi] + vHi;
+		int vTimes = (_activeChannelPtr->_field4 + _activeChannelPtr->_field1F) / 12;
+		int vOffset = (_activeChannelPtr->_field4 + _activeChannelPtr->_field1F) % 12;
+		int val = _vList1[vOffset] + _activeChannelPtr->_field1D;
 		write2(8, reg, val & 0xFF);
 
 		reg += 0x10;
-		write2(8, reg, (_ports[reg] & 0x20) | (vLo << 2) | (val >> 8));
+		write2(8, reg, (_ports[reg] & 0x20) | (vTimes << 2) | (val >> 8));
 
 		write2(8, reg, _ports[reg] | 0x20);
 	}
@@ -664,7 +678,8 @@ void ASound::updateActiveChannel() {
 	int portVal = _ports[reg] & 0xFFC0;
 	int newVolume = CLIP(_activeChannelPtr->_volume + _activeChannelPtr->_field1E, 0, 63);
 	
-	// TODO: Double-check _v5660 = 5600h
+	// Note: Original had a whole block not seeming to be used, since the initialisation
+	// sets a variable to 5660h, and doesn't change it, so the branch is never taken
 	int val = CLIP(newVolume - volumeList[_activeChannelPtr->_fieldD], 0, 63);
 	val = (63 - val) | portVal;
 
@@ -752,6 +767,15 @@ int ASound::command0() {
 	_freqBase1 = _freqBase2 = 0;
 	_v7 = 0;
 	_v8 = 0;	
+
+	// Reset Adlib port registers
+	for (int reg = 0x4F; reg >= 0x40; --reg)
+		write2(8, reg, 0x3F);
+	for (int reg = 0xFF; reg >= 0x60; --reg)
+		write2(8, reg, 0);
+	for (int reg = 0x3F; reg > 0; --reg)
+		write2(8, reg, 0);
+	write2(8, 1, 0x20);
 
 	_isDisabled = isDisabled;
 	return 0;
