@@ -1036,7 +1036,7 @@ void VoyeurEngine::makeViewFinderP() {
 	_graphicsManager.screenReset();
 }
 
-void VoyeurEngine::initIFace(){
+void VoyeurEngine::initIFace() {
 	int playStamp1 = _playStampGroupId;
 	switch (_voy._transitionId) {
 	case 0:
@@ -1119,7 +1119,7 @@ void VoyeurEngine::doScroll(const Common::Point &pt) {
 	(*_graphicsManager._vPort)->setupViewPort(NULL);
 }
 
-void VoyeurEngine::checkTransition(){
+void VoyeurEngine::checkTransition() {
 	Common::String time, day;
 
 	if (_voy._transitionId != _checkTransitionId) {
@@ -1297,7 +1297,7 @@ void VoyeurEngine::doTimeBar(bool force) {
 	}
 }
 
-void VoyeurEngine::flashTimeBar(){
+void VoyeurEngine::flashTimeBar() {
 	if (_voy._RTVNum >= 0 && (_voy._RTVLimit - _voy._RTVNum) < 11 &&
 		(_eventsManager._intPtr._flashTimer >= (_flashTimeVal + 15) ||
 		_eventsManager._intPtr._flashTimer < _flashTimeVal)) {
