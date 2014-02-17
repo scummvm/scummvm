@@ -317,11 +317,12 @@ PictureResource *BoltFile::getPictureResource(uint32 id) {
 }
 
 CMapResource *BoltFile::getCMapResource(uint32 id) {
-		if ((int32)id == -1)
+	if ((int32)id == -1)
 		return NULL;
 
 	if (id & 0xffff)
 		id <<= 16;
+
 	return getBoltEntryFromLong(id)._cMapResource;
 }
 
@@ -370,11 +371,10 @@ void BoltFile::resolveIt(uint32 id, byte **p) {
 }
 
 void BoltFile::resolveFunction(uint32 id, GraphicMethodPtr *fn) {
-	if ((int32)id == -1) {
+	if ((int32)id == -1)
 		*fn = NULL;
-	} else {
+	else
 		error("Function fnTermGro array not supported");
-	}
 }
 
 /**
