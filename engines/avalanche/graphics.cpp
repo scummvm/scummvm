@@ -826,22 +826,21 @@ Graphics::Surface GraphicManager::loadPictureRaw(Common::File &file, uint16 widt
 	return picture;
 }
 
-Graphics::Surface GraphicManager::loadPictureSign(Common::File &file, int xl, int yl) {
+Graphics::Surface GraphicManager::loadPictureSign(Common::File &file, uint16 width, uint16 height) {
 	// I know it looks very similar to the other loadPicture methods, but in truth it's the combination of the two.
-	uint16 width = xl * 8;
-	uint16 height = yl;
+	width *= 8;
 
 	Graphics::Surface picture; // We make a Surface object for the picture itself.
 	picture.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 
 	// Produce the picture. We read it in row-by-row, and every row has 4 planes.
-	for (int yy = 0; yy < height; yy++) {
+	for (int y = 0; y < height; y++) {
 		for (int8 plane = 0; plane < 4; plane++) { // The planes are in the "right" order.
-			for (uint16 xx = 0; xx < width; xx += 8) {
+			for (uint16 x = 0; x < width; x += 8) {
 				byte pixel = file.readByte();
 				for (int bit = 0; bit < 8; bit++) {
 					byte pixelBit = (pixel >> bit) & 1;
-					*(byte *)picture.getBasePtr(xx + 7 - bit, yy) += (pixelBit << plane);
+					*(byte *)picture.getBasePtr(x + 7 - bit, y) += (pixelBit << plane);
 				}
 			}
 		}

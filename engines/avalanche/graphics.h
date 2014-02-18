@@ -180,7 +180,7 @@ private:
 
 	// Further information about these two: http://www.shikadi.net/moddingwiki/Raw_EGA_data
 	Graphics::Surface loadPictureGraphic(Common::File &file); // Reads Graphic-planar EGA data.
-	Graphics::Surface loadPictureSign(Common::File &file, int xl, int yl); // Reads a tricky type of picture used for the "game over"/"about" scrolls and in the mini-game Nim.
+	Graphics::Surface loadPictureSign(Common::File &file, uint16 width, uint16 height); // Reads a tricky type of picture used for the "game over"/"about" scrolls and in the mini-game Nim.
 
 	void drawText(Graphics::Surface &surface, const Common::String text, FontType font, byte fontHeight, int16 x, int16 y, Color color);
 	void drawPicture(Graphics::Surface &target, const Graphics::Surface picture, uint16 destX, uint16 destY);
