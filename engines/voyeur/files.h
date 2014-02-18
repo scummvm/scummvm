@@ -102,7 +102,7 @@ private:
 
 public:
 	Common::File _file;
-public:
+
 	BoltFile(const Common::String &filename, BoltFilesState &state);
 	virtual ~BoltFile();
 
@@ -154,10 +154,8 @@ class BoltGroup {
 private:
 	Common::SeekableReadStream *_file;
 public:
-	byte _loaded;
+	bool _loaded;
 	bool _processed;
-	bool _callInitGro;
-	int _termGroIndex;
 	int _count;
 	int _fileOffset;
 	Common::Array<BoltEntry> _entries;
@@ -176,10 +174,8 @@ private:
 public:
 	uint16 _id;
 	byte _mode;
-	byte _initMemRequired;
 	byte _initMethod;
 	int _fileOffset;
-	byte _xorMask;
 	int _size;
 	byte *_data;
 
@@ -207,8 +203,6 @@ public:
 };
 
 class FilesManager {
-private:
-	int _decompressSize;
 public:
 	BoltFilesState _boltFilesState;
 	BoltFile *_curLibPtr;
@@ -295,7 +289,6 @@ public:
 	byte _select;
 	byte _pick;
 	byte _onOff;
-	byte _depth;
 	Common::Rect _bounds;
 	uint32 _maskData;
 	uint _planeSize;
@@ -311,7 +304,7 @@ public:
 	DisposeAfterUse::Flag _freeImgData;
 public:
 	PictureResource(BoltFilesState &state, const byte *src);
-	PictureResource(int flags, int select, int pick, int onOff, int depth, 
+	PictureResource(int flags, int select, int pick, int onOff, 
 		const Common::Rect &bounds, int maskData, byte *imgData, int planeSize);
 	PictureResource(Graphics::Surface *surface);
 	PictureResource();

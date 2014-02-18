@@ -173,7 +173,7 @@ void BoltFilesState::nextBlock() {
 /*------------------------------------------------------------------------*/
 
 FilesManager::FilesManager() {
-	_decompressSize = DECOMPRESS_SIZE;
+
 }
 
 bool FilesManager::openBoltLib(const Common::String &filename, BoltFile *&boltFile) {
@@ -609,8 +609,6 @@ BoltGroup::BoltGroup(Common::SeekableReadStream *f): _file(f) {
 
 	_file->read(&buffer[0], BOLT_GROUP_SIZE);
 	_processed = buffer[0] != 0;
-	_callInitGro = buffer[1] != 0;
-	_termGroIndex = buffer[2];
 	_count = buffer[3] ? buffer[3] : 256;
 	_fileOffset = READ_LE_UINT32(&buffer[8]);
 }
@@ -658,9 +656,7 @@ BoltEntry::BoltEntry(Common::SeekableReadStream *f, uint16 id): _file(f), _id(id
 	byte buffer[16];
 	_file->read(&buffer[0], 16);
 	_mode = buffer[0];
-	_initMemRequired = buffer[1];
 	_initMethod = buffer[3];
-	_xorMask = buffer[4] & 0xff;
 	_size = READ_LE_UINT32(&buffer[4]) & 0xffffff;
 	_fileOffset = READ_LE_UINT32(&buffer[8]); 
 }
@@ -955,7 +951,6 @@ int DisplayResource::drawText(const Common::String &msg) {
 		} else {
 			fontChar._pick = fontInfo._picPick;
 			fontChar._onOff = fontInfo._picOnOff;
-			fontChar._depth = fontData._fontDepth;
 		}
 
 		// Loop to draw each character in turn
@@ -1029,7 +1024,7 @@ PictureResource::PictureResource(BoltFilesState &state, const byte *src):
 	_select = src[2];
 	_pick = src[3];
 	_onOff = src[4];
-	_depth = src[5];
+	// depth is in src[5], unused.
 
 	int xs = READ_LE_UINT16(&src[6]);
 	int ys = READ_LE_UINT16(&src[8]);
@@ -1131,7 +1126,6 @@ PictureResource::PictureResource(Graphics::Surface *surface) {
 	_select = 0;
 	_pick = 0;
 	_onOff = 0;
-	_depth = 0;
 	_maskData = 0;
 	_planeSize = 0;
 	
@@ -1145,7 +1139,6 @@ PictureResource::PictureResource() {
 	_select = 0;
 	_pick = 0;
 	_onOff = 0;
-	_depth = 0;
 	_maskData = 0;
 	_planeSize = 0;
 
@@ -1154,13 +1147,11 @@ PictureResource::PictureResource() {
 }
 
 PictureResource::PictureResource(int flags, int select, int pick, int onOff, 
-		int depth,  const Common::Rect &bounds, int maskData, byte *imgData,
-		int planeSize) {
+		const Common::Rect &bounds, int maskData, byte *imgData, int planeSize) {
 	_flags = flags;
 	_select = select;
 	_pick = pick;
 	_onOff = onOff;
-	_depth = depth;
 	_bounds = bounds;
 	_maskData = maskData;
 	_imgData = imgData;
@@ -1210,7 +1201,6 @@ ViewPortResource::ViewPortResource(BoltFilesState &state, const byte *src):
 	int ys = READ_LE_UINT16(src + 14);
 	_bounds = Common::Rect(xs, ys, xs + READ_LE_UINT16(src + 16), 
 		ys + READ_LE_UINT16(src + 18));
-	_field18 = READ_LE_UINT16(src + 0x18);
 
 	_currentPic = state._curLibPtr->getPictureResource(READ_LE_UINT32(src + 0x20));
 	_activePage = state._curLibPtr->getPictureResource(READ_LE_UINT32(src + 0x24));
@@ -1320,7 +1310,6 @@ void ViewPortResource::setupViewPort(PictureResource *page, Common::Rect *clipRe
 	}
 
 	_activePage = page;
-	_field18 = 0;
 	_clipRect = r;
 	_setupFn = setupFn;
 	_addFn = addFn;

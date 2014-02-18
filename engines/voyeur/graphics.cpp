@@ -56,7 +56,7 @@ GraphicsManager::GraphicsManager(): _defaultDrawInfo(1, Common::Point(), 0), _dr
 	_vPort = NULL;
 	_fontPtr = NULL;
 	Common::fill(&_VGAColors[0], &_VGAColors[PALETTE_SIZE], 0);
-	_fontChar = new PictureResource(0, 0xff, 0xff, 0, 0, Common::Rect(), 0, NULL, 0);
+	_fontChar = new PictureResource(0, 0xff, 0xff, 0, Common::Rect(), 0, NULL, 0);
 }
 
 void GraphicsManager::sInitGraphics() {
