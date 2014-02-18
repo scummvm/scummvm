@@ -41,7 +41,6 @@ void VoyeurEvent::synchronize(Common::Serializer &s) {
 SVoy::SVoy() {
 	// Initialize all the data fields
 	_abortInterface = false;
-	_fadeICF0 = false;
 	_isAM = false;
 	Common::fill(&_phoneCallsReceived[0], &_phoneCallsReceived[5], false);
 	Common::fill(&_roomHotspotsEnabled[0], &_roomHotspotsEnabled[20], false);
@@ -52,7 +51,6 @@ SVoy::SVoy() {
 	_boltGroupId2 = 0;
 	_computerTextId = 0;
 	_computerTimeMin = _computerTimeMax = 0;
-	_curICF0 = 0;
 	_eventCount = 0;
 	_fadingStep1 = 0;
 	_fadingStep2 = 0;
@@ -71,7 +69,6 @@ SVoy::SVoy() {
 	_viewBounds = nullptr;
 	Common::fill(&_evPicPtrs[0], &_evPicPtrs[6], (PictureResource *)nullptr);
 	Common::fill(&_evCmPtrs[0], &_evCmPtrs[6], (CMapResource *)nullptr);
-	_curICF1 = 0;
 	_policeEvent = 0;
 
 	_eventFlags = EVTFLAG_TIME_DISABLED;

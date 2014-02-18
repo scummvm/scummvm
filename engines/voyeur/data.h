@@ -106,7 +106,6 @@ private:
 
 public:
 	bool _abortInterface;
-	bool _fadeICF0; // Useless variable? (always the same value)
 	bool _isAM;
 	bool _phoneCallsReceived[5];
 	bool _roomHotspotsEnabled[20];
@@ -119,7 +118,6 @@ public:
 	int _computerTextId;
 	int _computerTimeMin;
 	int _computerTimeMax;
-	int _curICF0;   // Useless variable
 	int _eventCount;
 	int _eventFlags;
 	int _fadingAmount1;
@@ -155,7 +153,7 @@ public:
 	void setVm(VoyeurEngine *vm);
 
 	/**
-	 * Synchronise the data
+	 * Synchronize the data
 	 */
 	void synchronize(Common::Serializer &s);
 
@@ -222,7 +220,6 @@ public:
 	bool checkForKey();
 
 private:
-	int _curICF1;   // Useless variable
 	int _policeEvent;
 };
 

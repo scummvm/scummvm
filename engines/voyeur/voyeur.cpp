@@ -119,9 +119,7 @@ void VoyeurEngine::globalInitBolt() {
 	assert(_graphicsManager._fontPtr->_curFont);
 
 	// Setup default flags
-	_voy._fadeICF0 = false;
 	_voy._viewBounds = nullptr;
-	_voy._curICF0 = _graphicsManager._palFlag ? 0xFFFFA5E0 : 0x5F90; 
 
 	_eventsManager.addFadeInt();
 }
@@ -561,8 +559,7 @@ void VoyeurEngine::playAVideoDuration(int videoId, int duration) {
 	int endFrame = decoder.getCurFrame() + totalFrames; 
 
 	_eventsManager.getMouseInfo();
-	if (!_voy._fadeICF0)
-		_eventsManager.startCursorBlink();
+	_eventsManager.startCursorBlink();
 
 	while (!shouldQuit() && !decoder.endOfVideo() && !_eventsManager._mouseClicked &&
 			(decoder.getCurFrame() < endFrame)) {
