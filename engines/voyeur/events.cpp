@@ -64,7 +64,6 @@ IntData::IntData() {
 EventsManager::EventsManager(): _intPtr(_gameData),
 		_fadeIntNode(0, 0, 3), _cycleIntNode(0, 0, 3) {
 	_cycleStatus = 0;
-	_mouseButton = 0;
 	_fadeStatus = 0;
 	_priorFrameTime = g_system->getMillis();
 	_gameCounter = 0;
@@ -77,9 +76,8 @@ EventsManager::EventsManager(): _intPtr(_gameData),
 	_cyclePtr = NULL;
 	
 	_leftClick = _rightClick = false;
-	_mouseClicked = _mouseUnk = false;
+	_mouseClicked = _newMouseClicked = false;
 	_newLeftClick = _newRightClick = false;;
-	_newMouseClicked = _newMouseUnk = false;
 
 	_videoDead = 0;
 }
@@ -271,12 +269,10 @@ void EventsManager::pollEvents() {
 			}
 			return;
 		case Common::EVENT_LBUTTONDOWN:
-			_mouseButton = 1;
 			_vm->_eventsManager._newLeftClick = true;
 			_vm->_eventsManager._newMouseClicked = true;
 			return;
 		case Common::EVENT_RBUTTONDOWN:
-			_mouseButton = 2;
 			_vm->_eventsManager._newRightClick = true;
 			_vm->_eventsManager._newMouseClicked = true;
 			return;
@@ -285,7 +281,6 @@ void EventsManager::pollEvents() {
 			_vm->_eventsManager._newMouseClicked = false;
 			_vm->_eventsManager._newLeftClick = false;
 			_vm->_eventsManager._newRightClick = false;
-			_mouseButton = 0;
 			return;
 		case Common::EVENT_MOUSEMOVE:
 			_mousePos = event.mouse;
@@ -586,12 +581,10 @@ void EventsManager::getMouseInfo() {
 	_vm->_eventsManager._mouseClicked = _vm->_eventsManager._newMouseClicked;
 	_vm->_eventsManager._leftClick = _vm->_eventsManager._newLeftClick;
 	_vm->_eventsManager._rightClick = _vm->_eventsManager._newRightClick;
-	_vm->_eventsManager._mouseUnk = _vm->_eventsManager._newMouseUnk;
 
 	_vm->_eventsManager._newMouseClicked = false;
 	_vm->_eventsManager._newLeftClick = false;
 	_vm->_eventsManager._newRightClick = false;
-	_vm->_eventsManager._mouseUnk = false;
 }
 
 void EventsManager::startCursorBlink() {

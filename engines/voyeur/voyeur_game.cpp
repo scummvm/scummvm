@@ -590,7 +590,7 @@ void VoyeurEngine::reviewTape() {
 
 			_eventsManager._intPtr._hasPalette = true;
 
-			if (_eventsManager._mouseClicked || _eventsManager._mouseUnk) {
+			if (_eventsManager._mouseClicked) {
 				switch (foundIndex) {
 				case 2:
 					if (eventStart > 0) {

@@ -45,7 +45,7 @@ public:
 	uint16 _curTime;
 	uint16 _timeReset;
 	uint32 _flags;
-public:
+
 	IntNode();
 	IntNode(uint16 curTime, uint16 timeReset, uint16 flags);
 };
@@ -61,30 +61,29 @@ public:
 	int _palStartIndex;
 	int _palEndIndex;
 	byte *_palette;
-public:
+
 	IntData();
 };
 
 class EventsManager {
 private:
 	VoyeurEngine *_vm;
-	uint32 _priorFrameTime;
 	bool _counterFlag;
+	bool _cursorBlinked;
 	uint32 _gameCounter;
+	uint32 _priorFrameTime;
 	uint32 _recordBlinkCounter;	// Original field was called _joe :)
-	int _mouseButton;
 	Common::List<IntNode *> _intNodes;
 	Common::Point _mousePos;
-	bool _cursorBlinked;
 
 	void mainVoyeurIntFunc();
-private:
 	void checkForNextFrameCounter();
 	void voyeurTimer();
 	void videoTimer();
 	void vDoFadeInt();
 	void vDoCycleInt();
 	void fadeIntFunc();
+	void addIntNode(IntNode *node);
 	void deleteIntNode(IntNode *node);
 
 	/**
@@ -105,17 +104,14 @@ public:
 	int _fadeStatus;
 
 	bool _leftClick, _rightClick;
-	bool _mouseClicked;
-	bool _mouseUnk;
-	bool _newMouseClicked;
+	bool _mouseClicked, _newMouseClicked;
 	bool _newLeftClick, _newRightClick;
-	bool _newMouseUnk;
 
 	int _videoDead;
 	int _cycleTime[4];
 	byte *_cycleNext[4];
 	VInitCycleResource *_cyclePtr;
-public:
+
 	EventsManager();
 	void setVm(VoyeurEngine *vm) { _vm = vm; }
 
@@ -129,7 +125,6 @@ public:
 	void delayClick(int cycles);
 	void pollEvents();
 	void startFade(CMapResource *cMap);
-	void addIntNode(IntNode *node);
 	void addFadeInt();
 
 	void setCursor(PictureResource *pic);
