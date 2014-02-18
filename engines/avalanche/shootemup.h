@@ -70,6 +70,7 @@ private:
 	byte _stockStatus[7];
 	Sprite _sprites[99];
 	byte _rectNum; // Original: 'rsize'
+	Common::Rect _rectangles[99];
 	uint16 _avvyWas;
 	uint16 _avvyPos;
 	byte _avvyAnim;

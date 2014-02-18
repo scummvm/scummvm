@@ -138,7 +138,9 @@ byte ShootEmUp::getStockNumber(byte x) {
 }
 
 void ShootEmUp::blankIt() {
-	warning("STUB: ShootEmUp::blankIt()");
+	for (int i = 0; i < _rectNum; i++)
+		_vm->_graphics->drawFilledRectangle(_rectangles[i], kColorBlack);
+	_rectNum = 0;
 }
 
 void ShootEmUp::moveThem() {
